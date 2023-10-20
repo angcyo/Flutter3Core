@@ -36,6 +36,7 @@ extension StringEx on String {
   /// 字符转换成Color对象
   toColor() => ColorEx.fromHex(this);
 
+  /// "yyyy-MM-dd HH:mm:ss" 转换成时间
   toDateTime() => DateTime.parse(this);
 }
 
@@ -47,4 +48,4 @@ extension StringEx on String {
   }
 }*/
 
-//endregion
+//endregion 基础扩展
