@@ -1,9 +1,10 @@
 # Flutter3Core
+
 2023-10-20
 
-https://github.com/angcyo/flutter3_abc
+https://github.com/angcyo/Flutter3Abc
 
-https://github.com/angcyo/flutter3_core
+https://github.com/angcyo/Flutter3Core
 
 ## flutter3_basics
 
