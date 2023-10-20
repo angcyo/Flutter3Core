@@ -1,0 +1,1 @@
+library flutter3_core;
