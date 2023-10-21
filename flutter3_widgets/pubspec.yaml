@@ -1,5 +1,5 @@
-name: flutter3_core
-description: flutter3 core package
+name: flutter3_widgets
+description: flutter3 widgets
 version: 0.0.1
 homepage: https://github.com/angcyo/Flutter3Core
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -13,8 +13,6 @@ dependencies:
     sdk: flutter
   flutter3_basics:
     path: ../flutter3_basics
-  flutter3_widgets:
-    path: ../flutter3_widgets
 
 dev_dependencies:
   flutter_test:

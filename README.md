@@ -10,6 +10,10 @@ https://github.com/angcyo/Flutter3Core
 
 2023-10-20
 
-### flutter3_core
+### flutter3_widgets
+
+2023-10-21
+
+#### flutter3_core
 
 2023-10-20
