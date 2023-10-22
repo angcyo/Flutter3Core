@@ -1,36 +1,9 @@
-import 'dart:math';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/10/20
 ///
-
-//region 基础扩展
-
-final random = Random();
-
-int nowTime() => DateTime.now().millisecondsSinceEpoch;
-
-/// [min] ~ [max] 之间的随机数
-int nextInt(int max, {int min = 0}) => min + random.nextInt(max);
-
-bool nextBool() => random.nextBool();
-
-/// [0~1] 之间的随机数
-double nextDouble() => random.nextDouble();
-
-/// [print] 的简写
-void p(Object? object) {
-  if (kDebugMode) {
-    print(object);
-  }
-}
-
-//endregion 基础扩展
 
 //region Color 扩展
 
@@ -67,9 +40,46 @@ extension StringEx on String {
 
   /// "yyyy-MM-dd HH:mm:ss" 转换成时间
   toDateTime() => DateTime.parse(this);
+
+  /// 确保前缀是指定的字符串
+  ensurePrefix(String prefix) {
+    if (!startsWith(prefix)) {
+      return '$prefix$this';
+    }
+    return this;
+  }
 }
 
 //endregion String 扩展
+
+//region Rect 扩展
+
+extension RectEx on Rect {
+  /// [Rect]的中心点
+  Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
+
+  /// 转换成圆角矩形
+  /// [RRect]
+  toRRect(double radius) =>
+      RRect.fromRectAndRadius(this, Radius.circular(radius));
+
+  /// [toRRect]
+  toRRectFromRadius(Radius radius) => RRect.fromRectAndRadius(this, radius);
+
+  /// [toRRect]
+  toRRectFromXY(double radiusX, double radiusY) =>
+      RRect.fromRectXY(this, radiusX, radiusY);
+}
+
+//endregion Rect 扩展
+
+//region Size 扩展
+
+extension SizeEx on Size {
+  Rect toRect([Offset? offset]) => (offset ?? Offset.zero) & this;
+}
+
+//endregion Size 扩展
 
 /// https://pub.dev/packages/date_format
 /*extension DateTimeEx on DateTime {
@@ -78,27 +88,3 @@ extension StringEx on String {
     return dateFormat.format(this);
   }
 }*/
-
-//region Asset 扩展
-
-/// ```
-/// await loadAssetString('assets/config.json');
-/// ```
-/// https://flutter.cn/docs/development/ui/assets-and-images#loading-text-assets
-Future<String> loadAssetString(String key) async {
-  return await rootBundle.loadString(key);
-}
-
-/// ```
-/// loadAssetImageWidget('assets/png/flutter.png');
-/// ```
-/// https://flutter.cn/docs/development/ui/assets-and-images#loading-images-1
-Image loadAssetImageWidget(String key) => Image.asset(key);
-
-/// [ImageProvider]
-/// [AssetBundleImageProvider]
-/// [AssetImage]
-/// [ExactAssetImage]
-AssetImage loadAssetImage(String key) => AssetImage(key);
-
-//endregion Asset 扩展
