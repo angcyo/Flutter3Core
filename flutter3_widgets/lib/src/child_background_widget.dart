@@ -15,6 +15,10 @@ class ChildBackgroundWidget extends SingleChildRenderObjectWidget {
   @override
   RenderObject createRenderObject(BuildContext context) =>
       _RenderChildBackground();
+
+  @override
+  void updateRenderObject(BuildContext context, covariant RenderObject renderObject) {
+  }
 }
 
 class _RenderChildBackground extends RenderProxyBox {
