@@ -17,8 +17,8 @@ class ChildBackgroundWidget extends SingleChildRenderObjectWidget {
       _RenderChildBackground();
 
   @override
-  void updateRenderObject(BuildContext context, covariant RenderObject renderObject) {
-  }
+  void updateRenderObject(
+      BuildContext context, covariant RenderObject renderObject) {}
 }
 
 class _RenderChildBackground extends RenderProxyBox {
@@ -32,8 +32,8 @@ class _RenderChildBackground extends RenderProxyBox {
     //context.canvas.drawColor(Colors.red, BlendMode.color);
     if (child != null) {
       //final themeData = Theme.of(context);
-      l.i(child!.parentData);
-      l.d("offset:$offset size:$size childSize:${child!.size}");
+      //l.i(child!.parentData);
+      //l.d("offset:$offset size:$size childSize:${child!.size}");
       final paint = Paint()
         ..color = Colors.red
         ..shader = const LinearGradient(
