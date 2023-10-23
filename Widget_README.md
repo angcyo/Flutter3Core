@@ -59,5 +59,15 @@ void test() {
 
 https://juejin.cn/post/6847902216871739400
 
+## 判断当前路由下面是否还有路由
 
+```dart
+Navigator.of(context).canPop()
+Navigator.of(context).impliesAppBarDismissal
+```
 
+# 杂料
+
+```
+/flutter/packages/flutter/lib/src/material/material_localizations.dart:33 //返回按钮的提示文本
+```
