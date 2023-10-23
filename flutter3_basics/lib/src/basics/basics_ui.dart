@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -32,5 +32,17 @@ extension FrameCallbackEx on int {
   cancelFrameCallbackWithId() {
     WidgetsFlutterBinding.ensureInitialized();
     WidgetsBinding.instance.cancelFrameCallbackWithId(this);
+  }
+}
+
+/// 导航扩展
+extension NavigatorEx on BuildContext {
+  Future<T?> push<T extends Object?>(Route<T> route) {
+    return Navigator.of(this).push(route);
+  }
+
+  Future<T?> pushWidget<T extends Object?>(Widget route) {
+    dynamic targetRoute = MaterialPageRoute(builder: (context) => route);
+    return push(targetRoute);
   }
 }
