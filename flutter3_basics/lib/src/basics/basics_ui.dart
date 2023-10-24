@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 /// @since 2023/10/23
 ///
 
+//region 帧相关
+
 /// 立即安排一帧
 void scheduleFrame() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +37,12 @@ extension FrameCallbackEx on int {
   }
 }
 
+//endregion 帧相关
+
+//region 导航相关
+
 /// 导航扩展
+///使用 ModalRoute.of(context).settings.arguments; 获取参数
 extension NavigatorEx on BuildContext {
   Future<T?> push<T extends Object?>(Route<T> route) {
     return Navigator.of(this).push(route);
@@ -46,3 +53,34 @@ extension NavigatorEx on BuildContext {
     return push(targetRoute);
   }
 }
+
+//endregion 导航相关
+
+//region 渐变相关
+
+/// 返回一个线性渐变的小部件
+Widget linearGradientWidget(
+  List<Color> colors, {
+  Widget? child,
+  AlignmentGeometry begin = Alignment.centerLeft,
+  AlignmentGeometry end = Alignment.centerRight,
+  Key? key,
+  TileMode tileMode = TileMode.clamp,
+  GradientTransform? transform,
+}) {
+  return Container(
+    key: key,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: colors,
+        begin: begin,
+        end: end,
+        tileMode: tileMode,
+        transform: transform,
+      ),
+    ),
+    child: child,
+  );
+}
+
+//endregion 渐变相关

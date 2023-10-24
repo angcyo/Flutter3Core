@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -60,6 +61,18 @@ String currentFileName([bool? fileLineNumber]) {
   return buffer.toString();
 }
 
+/// 使用[Timer]尽快执行[callback]
+void postCallback(void Function() callback) {
+  Timer.run(callback);
+}
+
+/// 使用[Future]延迟执行[callback]
+/// 内部也是使用[Timer]实现的
+/// [Future.wait] 会等待所有的[Future]执行完毕
+Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
+  return Future.delayed(duration ?? Duration.zero, callback);
+}
+
 //endregion 基础
 
 //region Asset
@@ -69,8 +82,8 @@ String currentFileName([bool? fileLineNumber]) {
 /// await loadAssetString('assets/config.json');
 /// ```
 /// https://flutter.cn/docs/development/ui/assets-and-images#loading-text-assets
-Future<String> loadAssetString(String key) async {
-  return await rootBundle.loadString(key.ensurePrefix('assets/'));
+Future<String> loadAssetString(String key, [String prefix = 'assets/']) async {
+  return await rootBundle.loadString(key.ensurePrefix(prefix));
 }
 
 /// ```
@@ -78,14 +91,14 @@ Future<String> loadAssetString(String key) async {
 /// loadAssetImageWidget('assets/png/flutter.png');
 /// ```
 /// https://flutter.cn/docs/development/ui/assets-and-images#loading-images-1
-Image loadAssetImageWidget(String key) =>
-    Image.asset(key.ensurePrefix('assets/'));
+Image loadAssetImageWidget(String key, [String prefix = 'assets/']) =>
+    Image.asset(key.ensurePrefix(prefix));
 
 /// [ImageProvider]
 /// [AssetBundleImageProvider]
 /// [AssetImage]
 /// [ExactAssetImage]
-AssetImage loadAssetImage(String key) =>
-    AssetImage(key.ensurePrefix('assets/'));
+AssetImage loadAssetImage(String key, [String prefix = 'assets/']) =>
+    AssetImage(key.ensurePrefix(prefix));
 
 //endregion Asset

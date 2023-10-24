@@ -2,6 +2,8 @@
 
 一些有意义的关键类收集
 
+- `WidgetsBinding.instance.platformDispatcher.locale` 平台当前的语言
+
 ## AppLifecycleListener
 
 生命周期监听
