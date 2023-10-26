@@ -91,6 +91,7 @@ Future<String> loadAssetString(String key, [String prefix = 'assets/']) async {
 /// loadAssetImageWidget('assets/png/flutter.png');
 /// ```
 /// https://flutter.cn/docs/development/ui/assets-and-images#loading-images-1
+/// [ImageIcon]
 Image loadAssetImageWidget(String key, [String prefix = 'assets/']) =>
     Image.asset(key.ensurePrefix(prefix));
 

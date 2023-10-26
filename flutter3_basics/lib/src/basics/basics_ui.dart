@@ -39,11 +39,23 @@ extension FrameCallbackEx on int {
 
 //endregion 帧相关
 
+//region 界面相关
+
+extension ContextEx on BuildContext {
+  /// 请求焦点, 传null, 可以收起键盘
+  requestFocus([FocusNode? node]) {
+    FocusScope.of(this).requestFocus(node ?? FocusNode());
+  }
+}
+
+//endregion 界面相关
+
 //region 导航相关
 
 /// 导航扩展
 ///使用 ModalRoute.of(context).settings.arguments; 获取参数
 extension NavigatorEx on BuildContext {
+  /// 推送一个路由
   Future<T?> push<T extends Object?>(Route<T> route) {
     return Navigator.of(this).push(route);
   }
@@ -51,6 +63,16 @@ extension NavigatorEx on BuildContext {
   Future<T?> pushWidget<T extends Object?>(Widget route) {
     dynamic targetRoute = MaterialPageRoute(builder: (context) => route);
     return push(targetRoute);
+  }
+
+  /// 推送一个路由, 并且移除之前的路由
+  Future<T?> pushReplacement<T extends Object?>(Route<T> route) {
+    return Navigator.of(this).pushReplacement(route);
+  }
+
+  Future<T?> pushReplacementWidget<T extends Object?>(Widget route) {
+    dynamic targetRoute = MaterialPageRoute(builder: (context) => route);
+    return pushReplacement(targetRoute);
   }
 }
 

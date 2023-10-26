@@ -79,3 +79,9 @@ flutter/packages/flutter/lib/src/painting/text_style.dart:34
 ## Directionality
 
 ### TextDirection
+
+## MediaQuery
+
+```
+MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first)
+```
