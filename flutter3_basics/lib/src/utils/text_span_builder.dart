@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+part of flutter3_basics;
 
 ///
 /// https://guoshuyu.cn/home/wx/Flutter-TWHP.html

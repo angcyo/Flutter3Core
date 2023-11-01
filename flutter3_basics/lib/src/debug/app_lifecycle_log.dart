@@ -1,8 +1,4 @@
-import 'dart:ui';
-
-import 'package:flutter/widgets.dart';
-
-import '../l.dart';
+part of flutter3_basics;
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -10,7 +6,6 @@ import '../l.dart';
 ///
 
 mixin AppLifecycleLog on AppLifecycleListener {
-
   @override
   Future<AppExitResponse> didRequestAppExit() {
     l.d('AppLifecycle didRequestAppExit');

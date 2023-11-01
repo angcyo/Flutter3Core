@@ -1,4 +1,4 @@
-import '../flutter3_basics.dart';
+part of flutter3_basics;
 
 ///
 /// Email:angcyo@126.com

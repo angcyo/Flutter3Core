@@ -1,10 +1,4 @@
-import 'dart:async';
-import 'dart:math';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter3_basics/flutter3_basics.dart';
+part of flutter3_basics;
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -75,6 +69,7 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 
 //error() => Future.error("asynchronous error");
 //SystemChrome.setPreferredOrientations
+//debugger(message: "等待调试...");
 
 //endregion 基础
 

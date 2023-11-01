@@ -1,9 +1,23 @@
 library flutter3_basics;
 
-export 'src/basics/basics.dart';
-export 'src/basics/basics_ex.dart';
-export 'src/basics/basics_ui.dart';
-export 'src/l.dart';
-export 'src/utils/list_utils.dart';
-export 'src/utils/text_span_builder.dart';
-export 'src/debug/app_lifecycle_log.dart';
+import 'dart:async';
+import 'dart:math';
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+part 'src/basics/basics.dart';
+
+part 'src/basics/basics_ex.dart';
+
+part 'src/basics/basics_ui.dart';
+
+part 'src/debug/app_lifecycle_log.dart';
+
+part 'src/l.dart';
+
+part 'src/utils/list_utils.dart';
+
+part 'src/utils/text_span_builder.dart';

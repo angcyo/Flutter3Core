@@ -1,3 +1,8 @@
 library flutter3_widgets;
 
-export 'src/child_background_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter3_basics/flutter3_basics.dart';
+
+part 'src/child_background_widget.dart';
