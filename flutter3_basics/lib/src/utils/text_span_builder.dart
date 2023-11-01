@@ -10,21 +10,27 @@ import 'package:flutter/widgets.dart';
 class TextSpanBuilder {
   final List<InlineSpan> _textSpans = <InlineSpan>[];
 
+  /// 简单的添加一个文本样式的字符串
+  /// [addTextSpan]
+  /// [addTextSpans]
   TextSpanBuilder addText(String text, {TextStyle? style}) {
     _textSpans.add(TextSpan(text: text, style: style));
     return this;
   }
 
+  /// 添加一个[widget]可以是图片,也可以是点击事件的小部件等
   TextSpanBuilder addWidget(Widget widget) {
     _textSpans.add(WidgetSpan(child: widget) as TextSpan);
     return this;
   }
 
+  /// [addText]
   TextSpanBuilder addTextSpan(TextSpan textSpan) {
     _textSpans.add(textSpan);
     return this;
   }
 
+  /// [addText]
   TextSpanBuilder addTextSpans(List<TextSpan> textSpans) {
     _textSpans.addAll(textSpans);
     return this;

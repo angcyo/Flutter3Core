@@ -73,6 +73,9 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
   return Future.delayed(duration ?? Duration.zero, callback);
 }
 
+//error() => Future.error("asynchronous error");
+//SystemChrome.setPreferredOrientations
+
 //endregion 基础
 
 //region Asset
