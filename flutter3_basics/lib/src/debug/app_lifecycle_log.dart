@@ -5,7 +5,7 @@ part of flutter3_basics;
 /// @since 2023/11/01
 ///
 
-mixin AppLifecycleLog on AppLifecycleListener {
+mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// [AppExitResponse.exit]
   /// [AppExitResponse.cancel]
   /// [AppExitResponse.values]
@@ -104,3 +104,29 @@ mixin AppLifecycleLog on AppLifecycleListener {
     return super.didPopRoute();
   }
 }
+
+
+///
+/// App的声明周期
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
+/// @since 2023/10/23
+///
+
+class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
+  /// 注册一个全局的生命周期监听
+  static AppLifecycleLog install() {
+    WidgetsFlutterBinding.ensureInitialized();
+    return AppLifecycleLog();
+  }
+
+  /// 移除监听
+  void uninstall() {
+    dispose();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+}
+

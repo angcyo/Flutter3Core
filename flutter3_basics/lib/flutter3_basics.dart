@@ -15,6 +15,7 @@ part 'src/basics/basics_ex.dart';
 part 'src/basics/basics_ui.dart';
 
 part 'src/debug/app_lifecycle_log.dart';
+part 'src/debug/state_log.dart';
 
 part 'src/l.dart';
 
