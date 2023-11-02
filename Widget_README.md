@@ -93,3 +93,12 @@ bool hitTest(BoxHitTestResult result, { required Offset position }) {
 }
 ```
 
+## 手势
+
+`GestureDetector`内部使用`RawGestureDetector`内部使用`Listener`;
+
+`class Listener extends SingleChildRenderObjectWidget`;
+
+使用`RenderPointerListener`的`handleEvent` 方法实现手势;
+
+

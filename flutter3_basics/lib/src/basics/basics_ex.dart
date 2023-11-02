@@ -28,6 +28,9 @@ extension ColorEx on Color {
 
 //region String 扩展
 
+typedef StringEachCallback = void Function(String element);
+typedef StringIndexEachCallback = void Function(int index, String element);
+
 extension StringEx on String {
   /// 字符串转换成int
   toInt({int? radix}) => int.parse(this, radix: radix);
@@ -42,11 +45,50 @@ extension StringEx on String {
   toDateTime() => DateTime.parse(this);
 
   /// 确保前缀是指定的字符串
+  /// 返回新的字符串
   ensurePrefix(String prefix) {
     if (!startsWith(prefix)) {
       return '$prefix$this';
     }
     return this;
+  }
+
+  /// 确保后缀
+  /// 返回新的字符串
+  ensureSuffix(String suffix) {
+    if (!endsWith(suffix)) {
+      return '$this$suffix';
+    }
+    return this;
+  }
+
+  /// 遍历字符串, 不带索引
+  forEach(StringEachCallback callback) {
+    for (var i = 0; i < length; i++) {
+      callback(this[i]);
+    }
+  }
+
+  /// 遍历字符串, 带索引
+  forEachIndex(StringIndexEachCallback callback) {
+    for (var i = 0; i < length; i++) {
+      callback(i, this[i]);
+    }
+  }
+
+  /// 遍历字符串, 不带索引
+  forEachByChars(StringEachCallback callback) {
+    for (var element in characters) {
+      callback(element);
+    }
+  }
+
+  /// 遍历字符串, 带索引
+  forEachIndexByChars(StringIndexEachCallback callback) {
+    var index = 0;
+    for (var element in characters) {
+      callback(index++, element);
+    }
   }
 }
 
