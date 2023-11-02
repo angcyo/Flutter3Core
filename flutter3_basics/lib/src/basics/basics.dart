@@ -70,6 +70,7 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 //error() => Future.error("asynchronous error");
 //SystemChrome.setPreferredOrientations
 //debugger(message: "等待调试...");
+//String.fromEnvironment
 
 //endregion 基础
 

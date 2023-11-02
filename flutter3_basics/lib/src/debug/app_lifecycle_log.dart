@@ -6,6 +6,9 @@ part of flutter3_basics;
 ///
 
 mixin AppLifecycleLog on AppLifecycleListener {
+  /// [AppExitResponse.exit]
+  /// [AppExitResponse.cancel]
+  /// [AppExitResponse.values]
   @override
   Future<AppExitResponse> didRequestAppExit() {
     l.d('AppLifecycle didRequestAppExit');

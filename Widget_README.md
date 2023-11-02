@@ -64,8 +64,12 @@ https://juejin.cn/post/6847902216871739400
 ## 判断当前路由下面是否还有路由
 
 ```dart
-Navigator.of(context).canPop()
-Navigator.of(context).impliesAppBarDismissal
+void build(context) {
+  Navigator.of(context).canPop();
+  Navigator
+      .of(context)
+      .impliesAppBarDismissal; // 下方是否还有路由
+}
 ```
 
 # 杂料
@@ -73,3 +77,19 @@ Navigator.of(context).impliesAppBarDismissal
 ```
 /flutter/packages/flutter/lib/src/material/material_localizations.dart:33 //返回按钮的提示文本
 ```
+
+# Widget
+
+## IgnorePointer
+
+忽略区域内的点击事件
+
+`/flutter/packages/flutter/lib/src/rendering/proxy_box.dart:3608`
+
+```dart 
+@override
+bool hitTest(BoxHitTestResult result, { required Offset position }) {
+  return !ignoring && super.hitTest(result, position: position);
+}
+```
+
