@@ -9,6 +9,14 @@ part of flutter3_basics;
 
 final random = Random();
 
+/// 获取一个随机的颜色
+Color randomColor({int min = 120, int max = 250}) => Color.fromARGB(
+      255,
+      nextInt(max, min: min),
+      nextInt(max, min: min),
+      nextInt(max, min: min),
+    );
+
 int nowTime() => DateTime.now().millisecondsSinceEpoch;
 
 /// 格式化时间
