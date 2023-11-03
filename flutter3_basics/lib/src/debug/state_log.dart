@@ -11,38 +11,38 @@ mixin StateLogMixin<T extends StatefulWidget> on State<T> {
 
   @override
   void initState() {
-    l.d('[${widget.runtimeType}]initState:$_logTag');
+    l.d('[$widget]initState:$_logTag');
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    l.d('[${widget.runtimeType}]didChangeDependencies:$_logTag');
+    l.d('[$widget]didChangeDependencies:$_logTag');
     super.didChangeDependencies();
   }
 
   @override
   void didUpdateWidget(covariant T oldWidget) {
-    l.d('[${widget.runtimeType}]didUpdateWidget:$_logTag');
+    l.d('[$widget]didUpdateWidget:$_logTag');
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void deactivate() {
-    l.d('[${widget.runtimeType}]deactivate:$_logTag');
+    l.d('[$widget]deactivate:$_logTag');
     super.deactivate();
   }
 
   @override
   void dispose() {
-    l.d('[${widget.runtimeType}]dispose:$_logTag');
+    l.d('[$widget]dispose:$_logTag');
     super.dispose();
   }
 
   @mustCallSuper
   @override
   Widget build(BuildContext context) {
-    l.i('[${widget.runtimeType}]build from:$context:${context.widget}:$_logTag');
+    l.i('[$widget]build from:$context:${context.widget}:$_logTag');
 
     //The class doesn't have a concrete implementation of the super-invoked member 'build'.
     //return super.build(context);

@@ -22,6 +22,10 @@ extension ColorEx on Color {
       '${red.toRadixString(16).padLeft(2, '0')}'
       '${green.toRadixString(16).padLeft(2, '0')}'
       '${blue.toRadixString(16).padLeft(2, '0')}';
+
+  /// 返回#ff00ff00
+  String toHexColor([bool leadingHashSign = true]) =>
+      toHex(leadingHashSign: leadingHashSign);
 }
 
 //endregion Color 扩展
@@ -122,6 +126,16 @@ extension SizeEx on Size {
 }
 
 //endregion Size 扩展
+
+//region Int 扩展
+
+extension IntEx on int {
+  /// 转换成颜色
+  /// [Color]
+  Color toColor() => Color(this);
+}
+
+//endregion Int 扩展
 
 /// https://pub.dev/packages/date_format
 /*extension DateTimeEx on DateTime {

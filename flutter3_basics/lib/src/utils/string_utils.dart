@@ -11,3 +11,27 @@ String stringBuilder(void Function(StringBuffer builder) action) {
   action(stringBuffer);
   return stringBuffer.toString();
 }
+
+class StringBuilder {
+  StringBuffer stringBuffer = StringBuffer();
+
+  StringBuilder append(Object? object) {
+    stringBuffer.write(object);
+    return this;
+  }
+
+  StringBuilder appendLine(Object? object) {
+    stringBuffer.writeln(object);
+    return this;
+  }
+
+  StringBuilder newLine() {
+    stringBuffer.writeln();
+    return this;
+  }
+
+  @override
+  String toString() {
+    return stringBuffer.toString();
+  }
+}
