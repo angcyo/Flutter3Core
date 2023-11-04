@@ -136,11 +136,50 @@ class _RScrollViewState extends State<RScrollView> {
     for (var tile in widget.children) {
       if (tile is RItemTile) {
         //RItemTile
-        if (tile.isSliverItem) {
+        if (tile.isSliverItem ||
+            tile.pinned ||
+            tile.floating ||
+            tile.fillRemaining) {
           //简单的
           clearAndAppendList();
           clearAndAppendGrid();
-          result.add(tile);
+          if (tile.fillRemaining) {
+            // SliverFillRemaining wrap
+            final Widget child;
+            if (tile.fillExpand) {
+              child = SizedBox.expand(child: tile);
+            } else {
+              child = tile;
+            }
+            result.add(SliverFillRemaining(
+              hasScrollBody: tile.fillHasScrollBody,
+              fillOverscroll: tile.fillOverscroll,
+              child: child,
+            ));
+          } else if (tile.pinned || tile.floating) {
+            // SliverPersistentHeader wrap
+            if (tile.headerDelegate == null) {
+              result.add(SliverPersistentHeader(
+                delegate: SingleSliverPersistentHeaderDelegate(
+                  child: tile,
+                  childBuilder: tile.headerChildBuilder,
+                  headerFixedHeight: tile.headerFixedHeight,
+                  headerMaxHeight: tile.headerMaxHeight,
+                  headerMinHeight: tile.headerMinHeight,
+                ),
+                pinned: tile.pinned,
+                floating: tile.floating,
+              ));
+            } else {
+              result.add(SliverPersistentHeader(
+                delegate: tile.headerDelegate!,
+                pinned: tile.pinned,
+                floating: tile.floating,
+              ));
+            }
+          } else {
+            result.add(tile);
+          }
         } else {
           //复合的
           if (tile.crossAxisCount > 0) {
