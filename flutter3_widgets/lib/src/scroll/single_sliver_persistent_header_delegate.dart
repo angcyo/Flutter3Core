@@ -19,6 +19,9 @@ class SingleSliverPersistentHeaderDelegate
   /// 子部件构建器
   final SliverPersistentHeaderWidgetBuilder? childBuilder;
 
+  /// 是否使用固定的高度
+  final double? fixedHeight;
+
   /// 最大高度
   final double headerMaxHeight;
 
@@ -28,6 +31,7 @@ class SingleSliverPersistentHeaderDelegate
   SingleSliverPersistentHeaderDelegate({
     this.child,
     this.childBuilder,
+    this.fixedHeight = kMinInteractiveDimension,
     this.headerMaxHeight = kToolbarHeight,
     this.headerMinHeight = kMinInteractiveDimension,
   });
@@ -41,15 +45,16 @@ class SingleSliverPersistentHeaderDelegate
   }
 
   @override
-  double get maxExtent => headerMaxHeight;
+  double get maxExtent => fixedHeight ?? headerMaxHeight;
 
   @override
-  double get minExtent => headerMinHeight;
+  double get minExtent => fixedHeight ?? headerMinHeight;
 
   @override
   bool shouldRebuild(
       covariant SingleSliverPersistentHeaderDelegate oldDelegate) {
-    return oldDelegate.headerMinHeight != headerMinHeight ||
+    return oldDelegate.fixedHeight != fixedHeight ||
+        oldDelegate.headerMinHeight != headerMinHeight ||
         oldDelegate.headerMaxHeight != headerMaxHeight;
   }
 }

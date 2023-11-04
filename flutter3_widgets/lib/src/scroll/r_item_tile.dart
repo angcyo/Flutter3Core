@@ -41,6 +41,18 @@ class RItemTile extends StatefulWidget {
 
   //endregion 普通布局
 
+  //region SliverPersistentHeader
+
+  /// 决定是否使用[SliverPersistentHeader]包裹[RItemTile]
+
+  //endregion SliverPersistentHeader
+
+  // region SliverFillRemaining
+
+  /// 决定是否使用[SliverFillRemaining]包裹[RItemTile]
+
+  //endregion SliverFillRemaining
+
   //region SliverList
 
   /// 决定是否使用[SliverList]组合[RItemTile]

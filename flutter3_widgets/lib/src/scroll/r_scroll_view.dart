@@ -8,6 +8,8 @@ part of flutter3_widgets;
 typedef RItemTileBuilder = void Function(RItemTileListBuilder builder);
 
 /// 使用[CustomScrollView]快速组合界面
+/// [SliverPersistentHeader] 可以在顶部固定,可以实现悬浮效果 [SliverFillRemaining] 可以填充剩余空间
+/// [SliverList] - [SliverGrid]
 /// [RItemTile] 的容器
 class RScrollView extends StatefulWidget {
   const RScrollView(
@@ -87,41 +89,45 @@ class _RScrollViewState extends State<RScrollView> {
   /// 构建[RItemTile]的列表
   List<Widget> _buildItemTileList(BuildContext context) {
     final result = <Widget>[];
-    final listResult = <Widget>[];
-    final gridResult = <Widget>[];
+
+    // 收集到的list tile, 使用[SliverList]包裹
+    final listWrap = <Widget>[];
+
+    // 收集到的grid tile, 使用[SliverGrid]包裹
+    final gridWrap = <Widget>[];
 
     // 清除收集到的list tile, 并添加到result中
     clearAndAppendList() {
-      final widget = _buildSliverList(context, listResult);
+      final widget = _buildSliverList(context, listWrap);
       if (widget != null) {
         result.add(widget);
       }
-      listResult.clear();
+      listWrap.clear();
     }
 
     // 清除收集到的grid tile, 并添加到result中
     clearAndAppendGrid() {
-      final widget = _buildSliverGrid(context, gridResult);
+      final widget = _buildSliverGrid(context, gridWrap);
       if (widget != null) {
         result.add(widget);
       }
-      gridResult.clear();
+      gridWrap.clear();
     }
 
     // 检查是否要合并网格tile
     checkAndAppendGrid(RItemTile element) {
-      if (gridResult.isEmpty) {
+      if (gridWrap.isEmpty) {
         //网格的第一个
-        gridResult.add(element);
+        gridWrap.add(element);
       } else {
-        final first = gridResult.first as RItemTile;
+        final first = gridWrap.first as RItemTile;
         if (first.crossAxisCount == element.crossAxisCount) {
           //合并
-          gridResult.add(element);
+          gridWrap.add(element);
         } else {
           //不合并, 新的网格
           clearAndAppendGrid();
-          gridResult.add(element);
+          gridWrap.add(element);
         }
       }
     }
@@ -142,7 +148,7 @@ class _RScrollViewState extends State<RScrollView> {
             checkAndAppendGrid(tile);
           } else {
             clearAndAppendGrid();
-            listResult.add(tile);
+            listWrap.add(tile);
           }
         }
       } else {
@@ -152,7 +158,7 @@ class _RScrollViewState extends State<RScrollView> {
           clearAndAppendGrid();
           result.add(tile);
         } else {
-          listResult.add(tile);
+          listWrap.add(tile);
         }
       }
     }
