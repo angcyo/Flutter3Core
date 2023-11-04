@@ -20,7 +20,7 @@ class SingleSliverPersistentHeaderDelegate
   final SliverPersistentHeaderWidgetBuilder? childBuilder;
 
   /// 是否使用固定的高度
-  final double? fixedHeight;
+  final double? headerFixedHeight;
 
   /// 最大高度
   final double headerMaxHeight;
@@ -31,29 +31,32 @@ class SingleSliverPersistentHeaderDelegate
   SingleSliverPersistentHeaderDelegate({
     this.child,
     this.childBuilder,
-    this.fixedHeight = kMinInteractiveDimension,
+    this.headerFixedHeight = kMinInteractiveDimension,
     this.headerMaxHeight = kToolbarHeight,
     this.headerMinHeight = kMinInteractiveDimension,
   });
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return child ??
         (childBuilder?.call(context, shrinkOffset, overlapsContent)) ??
         const Placeholder();
   }
 
   @override
-  double get maxExtent => fixedHeight ?? headerMaxHeight;
+  double get maxExtent => headerFixedHeight ?? headerMaxHeight;
 
   @override
-  double get minExtent => fixedHeight ?? headerMinHeight;
+  double get minExtent => headerFixedHeight ?? headerMinHeight;
 
   @override
   bool shouldRebuild(
       covariant SingleSliverPersistentHeaderDelegate oldDelegate) {
-    return oldDelegate.fixedHeight != fixedHeight ||
+    return oldDelegate.headerFixedHeight != headerFixedHeight ||
         oldDelegate.headerMinHeight != headerMinHeight ||
         oldDelegate.headerMaxHeight != headerMaxHeight;
   }

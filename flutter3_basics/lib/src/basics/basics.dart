@@ -7,11 +7,16 @@ part of flutter3_basics;
 
 //region 基础
 
+/// 是否是debug模式
+const bool isDebug = kDebugMode;
+
+/// 随机数生成器
 final random = Random();
 
+/// 当前时间戳 `1699064019689`
 int nowTime() => DateTime.now().millisecondsSinceEpoch;
 
-/// 格式化时间
+/// 格式化时间 `2023-11-04 10:13:40.083707`
 String nowTimeString() => DateTime.now().toIso8601String().replaceAll("T", " ");
 
 /// [min] ~ [max] 之间的随机数
@@ -20,10 +25,19 @@ int nextInt(int max, {int min = 0}) => min + random.nextInt(max);
 bool nextBool() => random.nextBool();
 
 /// [0~1] 之间的随机数
-double nextDouble() => random.nextDouble();
-
-/// 是否是debug模式
-const bool isDebug = kDebugMode;
+/// [min~max] 之间的随机数
+double nextDouble({double? min, double? max}) {
+  final value = random.nextDouble();
+  if (min != null && max != null) {
+    return min + value * (max - min);
+  } else if (min != null) {
+    return min + min * value;
+  } else if (max != null) {
+    return value * max;
+  } else {
+    return value;
+  }
+}
 
 /// 获取当前调用此方法的文件名
 /// ```
@@ -71,6 +85,10 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 //SystemChrome.setPreferredOrientations
 //debugger(message: "等待调试...");
 //String.fromEnvironment
+
+/// 获取当前平台的[MediaQueryData]
+MediaQueryData platformMediaQuery() =>
+    MediaQueryData.fromView(WidgetsBinding.instance.renderView.flutterView);
 
 //endregion 基础
 

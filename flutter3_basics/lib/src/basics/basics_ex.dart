@@ -5,6 +5,10 @@ part of flutter3_basics;
 /// @since 2023/10/20
 ///
 
+//const kDebugMode = bool.fromEnvironment("dart.vm.product") == false;
+/// 默认的小数点后几位
+const kDefaultDigits = 2;
+
 //region Color 扩展
 
 extension ColorEx on Color {
@@ -126,6 +130,51 @@ extension SizeEx on Size {
 }
 
 //endregion Size 扩展
+
+//region Int 扩展
+
+extension NumEx on num {
+  /// 保留小数点后几位
+  /// [digits] 小数点后几位
+  /// [removeZero] 是否移除小数点后面的0
+  /// [ensureInt] 如果是整数, 是否优先使用整数格式输出
+  /// ```
+  /// 8.10 -> 8.1   //removeZero
+  /// 8.00 -> 8     //removeZero or ensureInt
+  /// 8.10 -> 8.10  //ensureInt
+  /// ```
+  String toDigits({
+    int digits = kDefaultDigits,
+    bool removeZero = true,
+    bool ensureInt = false,
+  }) {
+    if (ensureInt) {
+      if (this is int) {
+        return toString();
+      } else {
+        var int = toInt();
+        if (this == int) {
+          return int.toString();
+        }
+      }
+    }
+
+    // 直接转出来的字符串, 会有小数点后面的0
+    var value = toStringAsFixed(digits);
+    // 去掉小数点后面的0
+    if (value.contains('.')) {
+      while (value.endsWith('0')) {
+        value = value.substring(0, value.length - 1);
+      }
+      if (value.endsWith('.')) {
+        value = value.substring(0, value.length - 1);
+      }
+    }
+    return value;
+  }
+}
+
+//endregion Int 扩展
 
 //region Int 扩展
 
