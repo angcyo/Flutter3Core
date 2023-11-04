@@ -2,15 +2,19 @@ library flutter3_basics;
 
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui' as ui;
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 part 'src/basics/basics.dart';
 
 part 'src/basics/basics_ex.dart';
+
+part 'src/basics/basics_image.dart';
 
 part 'src/basics/basics_ui.dart';
 

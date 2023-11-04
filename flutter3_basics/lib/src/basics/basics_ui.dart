@@ -39,12 +39,18 @@ extension FrameCallbackEx on int {
 
 //region 界面相关
 
+extension WidgetEx on Widget {}
+
 extension ContextEx on BuildContext {
   /// 请求焦点, 传null, 可以收起键盘
   requestFocus([FocusNode? node]) {
     FocusScope.of(this).requestFocus(node ?? FocusNode());
   }
 }
+
+extension RenderObjectEx on RenderObject {}
+
+extension ElementEx on Element {}
 
 //endregion 界面相关
 
