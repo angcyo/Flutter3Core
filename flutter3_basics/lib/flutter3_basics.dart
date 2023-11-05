@@ -28,6 +28,8 @@ part 'src/l.dart';
 
 part 'src/meta/meta.dart';
 
+part 'src/utils/frame_split.dart';
+
 part 'src/utils/list_utils.dart';
 
 part 'src/utils/string_utils.dart';

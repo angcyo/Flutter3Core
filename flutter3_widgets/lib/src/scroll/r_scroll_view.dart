@@ -32,6 +32,9 @@ class RScrollView extends StatefulWidget {
     this.physics = const AlwaysScrollableScrollPhysics(
       parent: BouncingScrollPhysics(),
     ),
+    this.enableFrameLoad = false,
+    this.frameSplitCount = 1,
+    this.frameSplitDuration = const Duration(milliseconds: 16),
   });
 
   /// 使用[RItemTile]的构建器
@@ -55,6 +58,9 @@ class RScrollView extends StatefulWidget {
     this.physics = const AlwaysScrollableScrollPhysics(
       parent: BouncingScrollPhysics(),
     ),
+    this.enableFrameLoad = false,
+    this.frameSplitCount = 1,
+    this.frameSplitDuration = const Duration(milliseconds: 16),
   }) : children = RItemTileListBuilder().apply(builder);
 
   /// [RItemTile] 的列表核心的数据集合
@@ -63,29 +69,71 @@ class RScrollView extends StatefulWidget {
   //region ScrollView属性
   /// [ScrollView]
 
+  /// [ScrollView.scrollDirection]
   final Axis scrollDirection;
+
+  /// [ScrollView.reverse]
   final bool reverse;
+
+  /// [ScrollView.controller]
   final ScrollController? controller;
+
+  /// [ScrollView.primary]
   final bool? primary;
+
+  /// [ScrollView.physics]
   final ScrollPhysics? physics;
+
+  /// [ScrollView.scrollBehavior]
   final ScrollBehavior? scrollBehavior;
+
+  /// [ScrollView.shrinkWrap]
   final bool shrinkWrap;
+
+  /// [ScrollView.center]
   final Key? center;
+
+  /// [ScrollView.anchor]
   final double anchor;
+
+  /// [ScrollView.cacheExtent]
   final double? cacheExtent;
+
+  /// [ScrollView.semanticChildCount]
   final int? semanticChildCount;
+
+  /// [ScrollView.dragStartBehavior]
   final DragStartBehavior dragStartBehavior;
+
+  /// [ScrollView.keyboardDismissBehavior]
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+
+  /// [ScrollView.restorationId]
   final String? restorationId;
+
+  ///[ScrollView.clipBehavior]
   final Clip clipBehavior;
 
   //endregion ScrollView属性
+
+  //region 分帧加载属性
+
+  /// [FrameSplitLoad.enableFrameLoad]
+  final bool enableFrameLoad;
+
+  /// [FrameSplitLoad.frameSplitCount]
+  final int frameSplitCount;
+
+  /// [FrameSplitLoad.frameSplitDuration]
+  final Duration frameSplitDuration;
+
+  //endregion 分帧加载属性
 
   @override
   State<RScrollView> createState() => _RScrollViewState();
 }
 
-class _RScrollViewState extends State<RScrollView> {
+class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   /// 构建[RItemTile]的列表
   List<Widget> _buildItemTileList(BuildContext context) {
     final result = <Widget>[];
@@ -203,7 +251,8 @@ class _RScrollViewState extends State<RScrollView> {
     }
     clearAndAppendList();
     clearAndAppendGrid();
-    return result;
+
+    return frameLoad(result);
   }
 
   /// 构建成[SliverList]
@@ -235,6 +284,14 @@ class _RScrollViewState extends State<RScrollView> {
       childAspectRatio: first.childAspectRatio,
       children: list.toList(growable: false), //复制一份
     );
+  }
+
+  @override
+  void initState() {
+    enableFrameLoad = widget.enableFrameLoad;
+    frameSplitCount = widget.frameSplitCount;
+    frameSplitDuration = widget.frameSplitDuration;
+    super.initState();
   }
 
   @override

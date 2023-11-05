@@ -70,9 +70,14 @@ String currentFileName([bool? fileLineNumber]) {
 }
 
 /// 使用[Timer]尽快执行[callback]
-void postCallback(void Function() callback) {
+void postCallback(VoidCallback callback) {
   Timer.run(callback);
 }
+
+/// 使用[Timer]尽快执行[callback]
+Timer postDelayCallback(VoidCallback callback,
+        [Duration duration = Duration.zero]) =>
+    Timer(duration, callback);
 
 /// 使用[Future]延迟执行[callback]
 /// 内部也是使用[Timer]实现的

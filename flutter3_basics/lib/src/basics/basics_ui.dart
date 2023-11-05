@@ -41,6 +41,12 @@ extension FrameCallbackEx on int {
 
 extension WidgetEx on Widget {}
 
+extension StateEx on State {
+  void updateState() {
+    setState(() {});
+  }
+}
+
 extension ContextEx on BuildContext {
   /// 请求焦点, 传null, 可以收起键盘
   requestFocus([FocusNode? node]) {
