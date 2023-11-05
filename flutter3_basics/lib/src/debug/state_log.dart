@@ -7,42 +7,43 @@ part of flutter3_basics;
 ///
 
 mixin StateLogMixin<T extends StatefulWidget> on State<T> {
-  late final String _logTag;
+  @protected
+  late final String logTag;
 
   @override
   void initState() {
-    l.d('[$widget]initState:$_logTag');
+    l.d('[$widget]initState:$logTag');
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    l.d('[$widget]didChangeDependencies:$_logTag');
+    l.d('[$widget]didChangeDependencies:$logTag');
     super.didChangeDependencies();
   }
 
   @override
   void didUpdateWidget(covariant T oldWidget) {
-    l.d('[$widget]didUpdateWidget:$_logTag');
+    l.d('[$widget]didUpdateWidget:$logTag');
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void deactivate() {
-    l.d('[$widget]deactivate:$_logTag');
+    l.d('[$widget]deactivate:$logTag');
     super.deactivate();
   }
 
   @override
   void dispose() {
-    l.d('[$widget]dispose:$_logTag');
+    l.d('[$widget]dispose:$logTag');
     super.dispose();
   }
 
   @mustCallSuper
   @override
   Widget build(BuildContext context) {
-    l.i('[$widget]build from:$context:${context.widget}:$_logTag');
+    l.i('[$widget]build from:$context:${context.widget}:$logTag');
 
     //The class doesn't have a concrete implementation of the super-invoked member 'build'.
     //return super.build(context);
@@ -64,7 +65,7 @@ class StateLogWidget extends StatefulWidget {
 
 class _StateLogWidgetState extends State<StateLogWidget> with StateLogMixin {
   @override
-  String get _logTag => widget._logTag;
+  String get logTag => widget._logTag;
 
   @override
   Widget build(BuildContext context) {
