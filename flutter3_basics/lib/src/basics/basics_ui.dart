@@ -48,7 +48,35 @@ extension ContextEx on BuildContext {
   }
 }
 
-extension RenderObjectEx on RenderObject {}
+extension RenderObjectEx on RenderObject {
+  /// 获取RenderObject的大小
+  Size? getSizeOrNull() {
+    if (this is RenderBox) {
+      return (this as RenderBox).size;
+    }
+    return null;
+  }
+
+  /// 获取RenderObject的全局绘制位置和坐标大小
+  Rect? getRenderObjectBounds([RenderObject? ancestor]) {
+    var offset = getOffsetOrNull(ancestor);
+    var size = getSizeOrNull();
+    if (offset != null && size != null) {
+      return offset & size;
+    }
+    return null;
+  }
+
+  /// 获取RenderObject的位置
+  Offset? getOffsetOrNull([RenderObject? ancestor]) {
+    if (this is RenderBox) {
+      final Offset location =
+          (this as RenderBox).localToGlobal(Offset.zero, ancestor: ancestor);
+      return location;
+    }
+    return null;
+  }
+}
 
 extension ElementEx on Element {}
 
