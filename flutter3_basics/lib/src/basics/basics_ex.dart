@@ -172,6 +172,13 @@ extension NumEx on num {
     }
     return value;
   }
+
+  /// 在两个数字之间线性插值，通过 b外推因子 t。
+  /// [progress] [0~1]
+  /// [lerpDouble]
+  num lerp(double begin, double end, double progress) {
+    return begin + (end - begin) * progress;
+  }
 }
 
 //endregion Int 扩展
