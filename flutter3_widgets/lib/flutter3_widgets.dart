@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
+part 'src/pub/flutter_page_indicator.dart';
+
 part 'src/scroll/r_item_tile.dart';
 
 part 'src/scroll/r_scroll_view.dart';
