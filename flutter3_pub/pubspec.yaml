@@ -1,5 +1,5 @@
 name: flutter3_pub
-description: flutter3 pub
+description: flutter3 pub package
 version: 0.0.1
 homepage: https://github.com/angcyo/Flutter3Core
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -13,6 +13,10 @@ dependencies:
     sdk: flutter
   flutter3_basics:
     path: ../flutter3_basics
+  # https://pub.dev/packages/cached_network_image
+  # https://pub.dev/packages/flutter_cache_manager
+  # https://pub.dev/packages/octo_image
+  cached_network_image: ^3.3.0
 
 dev_dependencies:
   flutter_test:

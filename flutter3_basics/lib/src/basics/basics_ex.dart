@@ -9,6 +9,18 @@ part of flutter3_basics;
 /// 默认的小数点后几位
 const kDefaultDigits = 2;
 
+//region Int 扩展
+
+extension ObjectEx on Object {
+  /// [Object]的hash值
+  String hash() => hashCode.toRadixString(16);
+
+  /// [Object]的hash值
+  String classHash() => "$runtimeType(${hash()})";
+}
+
+//endregion Int 扩展
+
 //region Color 扩展
 
 extension ColorEx on Color {

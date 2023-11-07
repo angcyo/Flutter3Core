@@ -2,6 +2,12 @@
 
 https://pub.dev/ 上的一些开源库
 
+## cached_network_image
+
+- [cached_network_image: ^3.3.0](https://pub.dev/packages/cached_network_image)
+- [flutter_cache_manager: ^3.3.1](https://pub.dev/packages/flutter_cache_manager)
+- [octo_image: ^2.0.0](https://pub.dev/packages/octo_image)
+
 ## swiper
 
 - [flutter_swiper_view: ^1.1.8](https://pub.dev/packages/flutter_swiper_view)

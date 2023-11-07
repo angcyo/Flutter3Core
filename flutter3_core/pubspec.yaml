@@ -11,8 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter3_basics:
-    path: ../flutter3_basics
   flutter3_widgets:
     path: ../flutter3_widgets
 

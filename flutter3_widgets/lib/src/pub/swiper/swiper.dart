@@ -3,13 +3,6 @@
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/02
-///
-/// https://pub.dev/packages/card_swiper
-/// https://github.com/TheAnkurPanchani/card_swiper
-/// card_swiper: ^3.0.1
-///
-/// https://github.com/best-flutter/flutter_page_indicator
-/// https://github.com/best-flutter/transformer_page_view
 library swiper;
 
 import 'dart:async';
@@ -44,9 +37,6 @@ const int kDefaultAutoplayDelayMs = 3000;
 
 ///  Default auto play transition duration (in millisecond)
 const int kDefaultAutoplayTransactionDuration = 300;
-
-const int kMaxValue = 2000000000;
-const int kMiddleValue = 1000000000;
 
 enum SwiperLayout {
   DEFAULT,
@@ -980,40 +970,5 @@ class _StackViewState extends _CustomLayoutStateBase<_StackSwiper> {
         ),
       ),
     );
-  }
-}
-
-class ScaleAndFadeTransformer extends PageTransformer {
-  ScaleAndFadeTransformer({double? fade = 0.3, double? scale = 0.8})
-      : _fade = fade,
-        _scale = scale;
-
-  final double? _scale;
-  final double? _fade;
-
-  @override
-  Widget transform(Widget child, TransformInfo info) {
-    final position = info.position;
-    var c = child;
-    if (_scale != null) {
-      final scaleFactor = (1 - position!.abs()) * (1 - _scale!);
-      final scale = _scale! + scaleFactor;
-
-      c = Transform.scale(
-        scale: scale,
-        child: c,
-      );
-    }
-
-    if (_fade != null) {
-      final fadeFactor = (1 - position!.abs()) * (1 - _fade!);
-      final opacity = _fade! + fadeFactor;
-      c = Opacity(
-        opacity: opacity,
-        child: c,
-      );
-    }
-
-    return c;
   }
 }

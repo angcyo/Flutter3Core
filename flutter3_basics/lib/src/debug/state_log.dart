@@ -12,38 +12,38 @@ mixin StateLogMixin<T extends StatefulWidget> on State<T> {
 
   @override
   void initState() {
-    l.d('[$widget]initState:$logTag');
+    l.d('[${widget.classHash()}]initState:$logTag');
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    l.d('[$widget]didChangeDependencies:$logTag');
+    l.d('[${widget.classHash()}]didChangeDependencies:$logTag');
     super.didChangeDependencies();
   }
 
   @override
   void didUpdateWidget(covariant T oldWidget) {
-    l.d('[$widget]didUpdateWidget:$logTag');
+    l.d('[${widget.classHash()}]didUpdateWidget:$logTag');
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void deactivate() {
-    l.d('[$widget]deactivate:$logTag');
+    l.d('[${widget.classHash()}]deactivate:$logTag');
     super.deactivate();
   }
 
   @override
   void dispose() {
-    l.d('[$widget]dispose:$logTag');
+    l.d('[${widget.classHash()}]dispose:$logTag');
     super.dispose();
   }
 
   @mustCallSuper
   @override
   Widget build(BuildContext context) {
-    l.i('[$widget]build from:$context:${context.widget}:$logTag');
+    l.i('[${widget.classHash()}]build:$logTag from:$context:${context.widget == widget ? "Self" : context.widget.classHash()}');
 
     //The class doesn't have a concrete implementation of the super-invoked member 'build'.
     //return super.build(context);

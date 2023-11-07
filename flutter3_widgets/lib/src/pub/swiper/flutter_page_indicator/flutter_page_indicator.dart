@@ -309,11 +309,11 @@ enum PageIndicatorLayout {
 class PageIndicator extends StatefulWidget {
   const PageIndicator({
     Key? key,
-    this.size = 20.0,
-    this.space = 5.0,
     required this.count,
-    this.activeSize = 20.0,
     required this.controller,
+    this.size = 8.0,
+    this.space = 5.0,
+    this.activeSize = 10.0,
     this.color = Colors.white30,
     this.layout = PageIndicatorLayout.SLIDE,
     this.activeColor = Colors.white,
