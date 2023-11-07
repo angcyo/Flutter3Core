@@ -339,7 +339,8 @@ class RItemTileListBuilder {
   }
 }
 
+/// [RItemTileListBuilder]
 @dsl
-List<Widget> itemTileBuilder(RItemTileBuilder builder) {
+List<Widget> itemTileListBuilder(RItemTileBuilder builder) {
   return RItemTileListBuilder().apply(builder);
 }
