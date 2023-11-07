@@ -6,6 +6,38 @@ part of flutter3_basics;
 /// @date 2023/11/04
 ///
 
+/// 获取随机中文英文字符串
+String randomString([int? length]) {
+  length ??= nextInt(1000, min: 1);
+  final buffer = StringBuffer();
+  for (var i = 0; i < length; i++) {
+    buffer.writeCharCode(nextInt(0x9fa5, min: 0x4e00));
+  }
+  return buffer.toString();
+}
+
+/// 需要翻墙才能访问
+String randomImageUrl() {
+  final random = Random();
+  final width = random.nextInt(1000) + 100;
+  final height = random.nextInt(1000) + 100;
+  //return "https://picsum.photos/id/${random.nextInt(1000)}/$width/$height";
+  return "https://picsum.photos/$width/$height";
+}
+
+/// 国内可以访问的占位图片, 只有纯色和文字
+String randomImagePlaceholderUrl({String? text}) {
+  final random = Random();
+  final width = random.nextInt(1000) + 100;
+  final height = random.nextInt(1000) + 100;
+  //return "https://via.placeholder.com/$width/$height?text=${randomString(1)}&bg=${randomColor().toHexColor()}";
+  if (text == null) {
+    return "https://via.placeholder.com/$width/$height";
+  } else {
+    return "https://via.placeholder.com/$width/$height?text=$text";
+  }
+}
+
 /// 获取一个随机的颜色
 Color randomColor({int min = 120, int max = 200}) => Color.fromARGB(
       255,
