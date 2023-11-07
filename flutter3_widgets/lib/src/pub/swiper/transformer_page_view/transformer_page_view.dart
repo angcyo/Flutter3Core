@@ -11,6 +11,8 @@ import 'index_controller.dart';
 
 part '../transformers/builtin_transformers.dart';
 
+part 'parallax.dart';
+
 ///
 /// NOTICE::
 ///

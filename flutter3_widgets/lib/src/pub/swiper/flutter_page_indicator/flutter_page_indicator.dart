@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 
 import '../transformer_page_view/transformer_page_view.dart';
 
-class WarmPainter extends BasePainter {
-  WarmPainter(PageIndicator widget, double page, int index, Paint paint)
+class _WarmPainter extends _BasePainter {
+  _WarmPainter(PageIndicator widget, double page, int index, Paint paint)
       : super(widget, page, index, paint);
 
   @override
@@ -35,8 +35,8 @@ class WarmPainter extends BasePainter {
   }
 }
 
-class DropPainter extends BasePainter {
-  DropPainter(PageIndicator widget, double page, int index, Paint paint)
+class _DropPainter extends _BasePainter {
+  _DropPainter(PageIndicator widget, double page, int index, Paint paint)
       : super(widget, page, index, paint);
 
   @override
@@ -56,8 +56,8 @@ class DropPainter extends BasePainter {
   }
 }
 
-class NonePainter extends BasePainter {
-  NonePainter(PageIndicator widget, double page, int index, Paint paint)
+class _NonePainter extends _BasePainter {
+  _NonePainter(PageIndicator widget, double page, int index, Paint paint)
       : super(widget, page, index, paint);
 
   @override
@@ -76,8 +76,8 @@ class NonePainter extends BasePainter {
   }
 }
 
-class SlidePainter extends BasePainter {
-  SlidePainter(PageIndicator widget, double page, int index, Paint paint)
+class _SlidePainter extends _BasePainter {
+  _SlidePainter(PageIndicator widget, double page, int index, Paint paint)
       : super(widget, page, index, paint);
 
   @override
@@ -87,8 +87,8 @@ class SlidePainter extends BasePainter {
   }
 }
 
-class ScalePainter extends BasePainter {
-  ScalePainter(PageIndicator widget, double page, int index, Paint paint)
+class _ScalePainter extends _BasePainter {
+  _ScalePainter(PageIndicator widget, double page, int index, Paint paint)
       : super(widget, page, index, paint);
 
   @override
@@ -136,8 +136,8 @@ class ScalePainter extends BasePainter {
   }
 }
 
-class ColorPainter extends BasePainter {
-  ColorPainter(PageIndicator widget, double page, int index, Paint paint)
+class _ColorPainter extends _BasePainter {
+  _ColorPainter(PageIndicator widget, double page, int index, Paint paint)
       : super(widget, page, index, paint);
 
   @override
@@ -165,8 +165,8 @@ class ColorPainter extends BasePainter {
   }
 }
 
-abstract class BasePainter extends CustomPainter {
-  BasePainter(this.widget, this.page, this.index, this._paint);
+abstract class _BasePainter extends CustomPainter {
+  _BasePainter(this.widget, this.page, this.index, this._paint);
 
   final PageIndicator widget;
   final double page;
@@ -209,7 +209,7 @@ abstract class BasePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(BasePainter oldDelegate) {
+  bool shouldRepaint(_BasePainter oldDelegate) {
     return oldDelegate.page != page;
   }
 }
@@ -219,20 +219,20 @@ class _PageIndicatorState extends State<PageIndicator> {
   double page = 0;
   final _paint = Paint();
 
-  BasePainter _createPainter() {
+  _BasePainter _createPainter() {
     switch (widget.layout) {
       case PageIndicatorLayout.NONE:
-        return NonePainter(widget, page, index, _paint);
+        return _NonePainter(widget, page, index, _paint);
       case PageIndicatorLayout.SLIDE:
-        return SlidePainter(widget, page, index, _paint);
+        return _SlidePainter(widget, page, index, _paint);
       case PageIndicatorLayout.WARM:
-        return WarmPainter(widget, page, index, _paint);
+        return _WarmPainter(widget, page, index, _paint);
       case PageIndicatorLayout.COLOR:
-        return ColorPainter(widget, page, index, _paint);
+        return _ColorPainter(widget, page, index, _paint);
       case PageIndicatorLayout.SCALE:
-        return ScalePainter(widget, page, index, _paint);
+        return _ScalePainter(widget, page, index, _paint);
       case PageIndicatorLayout.DROP:
-        return DropPainter(widget, page, index, _paint);
+        return _DropPainter(widget, page, index, _paint);
       default:
         throw Exception('Not a valid layout');
     }

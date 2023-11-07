@@ -146,7 +146,7 @@ class DotSwiperPaginationBuilder extends SwiperPlugin {
     this.activeColor,
     this.color,
     this.key,
-    this.size = 10.0,
+    this.size = 8.0,
     this.activeSize = 10.0,
     this.space = 3.0,
   });

@@ -1,11 +1,9 @@
-import 'package:flutter/widgets.dart';
-
-import 'transformer_page_view.dart';
+part of transformer_page_view;
 
 // typedef PaintCallback = Function(Canvas canvas, Size size);
 
-class ColorPainter extends CustomPainter {
-  ColorPainter(this._paint, this.info, this.colors);
+class _ParallaxColorPainter extends CustomPainter {
+  _ParallaxColorPainter(this._paint, this.info, this.colors);
 
   final Paint _paint;
   final TransformInfo info;
@@ -63,7 +61,7 @@ class ColorPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(ColorPainter oldDelegate) {
+  bool shouldRepaint(_ParallaxColorPainter oldDelegate) {
     return oldDelegate.info != info;
   }
 }
@@ -74,7 +72,7 @@ class _ParallaxColorState extends State<ParallaxColor> {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: ColorPainter(paint, widget.info, widget.colors),
+      painter: _ParallaxColorPainter(paint, widget.info, widget.colors),
       child: widget.child,
     );
   }
