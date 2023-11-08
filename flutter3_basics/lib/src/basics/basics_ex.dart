@@ -53,20 +53,23 @@ typedef StringIndexEachCallback = void Function(int index, String element);
 
 extension StringEx on String {
   /// 字符串转换成int
-  toInt({int? radix}) => int.parse(this, radix: radix);
+  int toInt({int? radix}) => int.parse(this, radix: radix);
 
   /// 字符串转换成int
-  toIntOrNull({int? radix}) => int.tryParse(this, radix: radix);
+  int? toIntOrNull({int? radix}) => int.tryParse(this, radix: radix);
 
   /// 字符转换成Color对象
-  toColor() => ColorEx.fromHex(this);
+  Color toColor() => ColorEx.fromHex(this);
 
   /// "yyyy-MM-dd HH:mm:ss" 转换成时间
-  toDateTime() => DateTime.parse(this);
+  DateTime toDateTime() => DateTime.parse(this);
+
+  /// [Uri]
+  Uri toUri() => Uri.parse(this);
 
   /// 确保前缀是指定的字符串
   /// 返回新的字符串
-  ensurePrefix(String prefix) {
+  String ensurePrefix(String prefix) {
     if (!startsWith(prefix)) {
       return '$prefix$this';
     }
@@ -75,7 +78,7 @@ extension StringEx on String {
 
   /// 确保后缀
   /// 返回新的字符串
-  ensureSuffix(String suffix) {
+  String ensureSuffix(String suffix) {
     if (!endsWith(suffix)) {
       return '$this$suffix';
     }

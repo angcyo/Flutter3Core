@@ -18,6 +18,8 @@ part 'src/basics/basics_image.dart';
 
 part 'src/basics/basics_ui.dart';
 
+part 'src/config/basics_global_config.dart';
+
 part 'src/debug/app_lifecycle_log.dart';
 
 part 'src/debug/debug.dart';
