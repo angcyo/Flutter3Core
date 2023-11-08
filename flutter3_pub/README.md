@@ -20,6 +20,7 @@ https://github.com/feicien/flutter_swiper_view
 
 - [flutter_swiper_view: ^1.1.8](https://pub.dev/packages/flutter_swiper_view)
 - [card_swiper: ^3.0.1](https://pub.dev/packages/card_swiper)
+- [carousel_slider: ^4.2.1](https://pub.dev/packages/carousel_slider)
 
 ## ref
 
@@ -53,3 +54,40 @@ https://github.com/Sub6Resources/flutter_html
 - [csslib: ^0.17.2](https://pub.dev/packages/csslib)
 - [collection: ^1.17.0](https://pub.dev/packages/collection)
 - [list_counter: ^1.0.2](https://pub.dev/packages/list_counter)
+
+## lottie
+
+Lottie 是一个适用于 Android 和 iOS 的移动库，它使用 Bodymovin 解析导出为 json 的 Adobe After Effects 动画，并在移动设备上原生渲染它们！
+
+- [lottie: ^2.7.0](https://pub.dev/packages/lottie)
+
+## objectbox
+
+ObjectBox Flutter 数据库是将 Dart 对象存储在跨平台应用程序中的绝佳选择。
+ObjectBox Flutter 数据库专为高性能而设计，是移动和物联网设备的理想选择。
+ObjectBox 使用最少的 CPU、内存和电池，使您的应用程序不仅有效，而且可持续。
+通过在设备上本地存储数据，ObjectBox 可帮助您降低云成本，并制作一个不依赖于连接的应用程序。
+在几分钟内开始使用我们直观的原生 Dart API，无需 SQL 的麻烦。
+另外：我们构建了一个数据同步解决方案，允许您在设备和服务器之间保持数据同步，包括在线和离线。
+
+https://docs.objectbox.io/getting-started
+
+- [objectbox: ^2.3.1](https://pub.dev/packages/objectbox)
+
+```yaml
+dependencies:
+  objectbox: ^2.3.1
+  objectbox_flutter_libs: any
+  # For ObjectBox Sync this dependency should appear instead:
+  # objectbox_sync_flutter_libs: any
+
+dev_dependencies:
+  build_runner: ^2.0.0
+  objectbox_generator: any
+```
+
+## animate_do
+
+受 Animate.css 启发的动画包，仅使用 Flutter 动画构建，零依赖性。
+
+- [animate_do: ^3.1.2](https://pub.dev/packages/animate_do)
