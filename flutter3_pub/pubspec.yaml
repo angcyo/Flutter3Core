@@ -18,6 +18,15 @@ dependencies:
   # https://pub.dev/packages/octo_image
   cached_network_image: ^3.3.0
 
+  # https://pub.dev/packages/flutter_html
+  # https://pub.dev/packages/html
+  # https://pub.dev/packages/csslib
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/list_counter
+  flutter_html: ^3.0.0-beta.2
+
+# dependency_overrides:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
