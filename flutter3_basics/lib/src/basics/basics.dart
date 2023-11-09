@@ -95,6 +95,20 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 MediaQueryData platformMediaQuery() =>
     MediaQueryData.fromView(WidgetsBinding.instance.renderView.flutterView);
 
+/// 延迟随机发生器
+/// [delay] 延迟多久触发一次[generate]
+/// [count] 总共要出发几次[generate]
+Stream<T?> delayGenerate<T>(
+  T? Function(int index) generate, {
+  Duration delay = Duration.zero,
+  int count = 1,
+}) async* {
+  for (int i = 0; i < count; i++) {
+    await Future.delayed(delay);
+    yield generate(i);
+  }
+}
+
 //endregion 基础
 
 //region Asset

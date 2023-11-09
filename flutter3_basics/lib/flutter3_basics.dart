@@ -1,6 +1,7 @@
 library flutter3_basics;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:ui';
@@ -29,6 +30,12 @@ part 'src/debug/state_log.dart';
 part 'src/l.dart';
 
 part 'src/meta/meta.dart';
+
+part 'src/overlay/loading_indicator.dart';
+
+part 'src/overlay/loading_overlay.dart';
+
+part 'src/overlay/route_will_pop_scope.dart';
 
 part 'src/utils/frame_split.dart';
 

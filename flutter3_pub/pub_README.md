@@ -139,6 +139,11 @@ https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher
 
 https://github.com/googlefonts/noto-emoji
 
+## overlay
+
+- [overlay_support: ^2.1.0](https://pub.dev/packages/overlay_support) 提供程序支持 overlay ，使构建 Toast 和应用内通知变得容易。
+- [debug_overlay: ^0.2.10](https://pub.dev/packages/debug_overlay) 🐛 通过应用的中央叠加层查看调试信息和更改设置。
+
 ## others
 
 - [quiver: ^3.2.1](https://pub.dev/packages/quiver) Quiver 是一组 Dart 的实用程序库，它使许多 Dart

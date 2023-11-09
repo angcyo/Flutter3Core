@@ -6,6 +6,9 @@ part of flutter3_basics;
 /// @date 2023/11/04
 ///
 
+/// 调试模式下目标平台覆盖
+/// debugDefaultTargetPlatformOverride = TargetPlatform.android;
+
 /// 获取随机中文英文字符串
 String randomString([int? length]) {
   length ??= nextInt(1000, min: 1);
@@ -96,5 +99,13 @@ Widget randomWidget(
         color: textColor,
       ),
     ),
+  );
+}
+
+/// 获取一个随机的文本[Widget]
+Widget randomTextWidget([String? text, int? length]) {
+  return Text(
+    text ?? randomString(length ?? nextInt(5, min: 1)),
+    textAlign: TextAlign.center,
   );
 }

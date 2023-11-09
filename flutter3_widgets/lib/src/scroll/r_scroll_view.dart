@@ -245,7 +245,10 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
           clearAndAppendGrid();
           result.add(tile);
         } else {
-          listWrap.add(tile);
+          result.add(SliverToBoxAdapter(
+            child: tile,
+          ));
+          //listWrap.add(tile);
         }
       }
     }
@@ -292,6 +295,11 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     frameSplitCount = widget.frameSplitCount;
     frameSplitDuration = widget.frameSplitDuration;
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant RScrollView oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
