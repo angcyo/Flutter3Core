@@ -1,7 +1,6 @@
 library flutter3_basics;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:ui';
@@ -24,6 +23,8 @@ part 'src/config/basics_global_config.dart';
 part 'src/debug/app_lifecycle_log.dart';
 
 part 'src/debug/debug.dart';
+
+part 'src/debug/navigator_observer_log.dart';
 
 part 'src/debug/state_log.dart';
 

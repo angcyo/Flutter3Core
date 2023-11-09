@@ -105,7 +105,6 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   }
 }
 
-
 ///
 /// App的声明周期
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -129,4 +128,3 @@ class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
     super.dispose();
   }
 }
-

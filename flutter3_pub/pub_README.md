@@ -139,12 +139,36 @@ https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher
 
 https://github.com/googlefonts/noto-emoji
 
+## font_awesome_flutter
+
+免费的 Font Awesome Icon 包以一组 Flutter 图标的形式提供 - 基于 font awesome 版本 6.4.2。
+
+- [font_awesome_flutter: ^10.6.0](https://pub.dev/packages/font_awesome_flutter)
+
 ## overlay
 
-- [overlay_support: ^2.1.0](https://pub.dev/packages/overlay_support) 提供程序支持 overlay ，使构建 Toast 和应用内通知变得容易。
+- [overlay_support: ^2.1.0](https://pub.dev/packages/overlay_support) 提供程序支持 overlay ，使构建
+  Toast 和应用内通知变得容易。
 - [debug_overlay: ^0.2.10](https://pub.dev/packages/debug_overlay) 🐛 通过应用的中央叠加层查看调试信息和更改设置。
 
+## flutter_neumorphic
+
+一个完整的、随时可用的、用于 Flutter 的 Neumorphic ui 套件
+
+https://github.com/Idean/Flutter-Neumorphic
+
+- [flutter_neumorphic: ^3.2.0](https://pub.dev/packages/flutter_neumorphic)
+
+## flutter_colorpicker
+
+HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUTTER 应用程序的所有优秀设计。
+开箱即用的可爱颜色选择器，具有高度定制的小部件，可满足所有开发人员的需求。
+
+- [flutter_colorpicker: ^1.0.3](https://pub.dev/packages/flutter_colorpicker)
+
 ## others
+
+https://github.com/fluttercommunity/plus_plugins
 
 - [quiver: ^3.2.1](https://pub.dev/packages/quiver) Quiver 是一组 Dart 的实用程序库，它使许多 Dart
   库的使用更轻松、更方便，或者添加了额外的功能。
@@ -154,3 +178,12 @@ https://github.com/googlefonts/noto-emoji
 - [json_serializable: ^6.7.1](https://pub.dev/packages/json_serializable) 为操作 JSON 提供 Dart
   构建系统构建器。
 - [vector_math: ^2.1.4](https://pub.dev/packages/vector_math) 用于 2D 和 3D 应用程序的矢量数学库。
+- [intent: ^1.4.0](https://pub.dev/packages/intent) 一个简单的 flutter 插件来处理 Android Intents。
+- [android_intent_plus: ^4.0.3](https://pub.dev/packages/android_intent_plus) 该插件允许 Flutter 应用程序在平台为 Android 时启动任意意图。
+- [device_info_plus: ^9.1.0](https://pub.dev/packages/device_info_plus) 从 Flutter 应用程序中获取当前设备信息。
+- [package_info_plus: ^4.2.0](https://pub.dev/packages/package_info_plus) 这个 Flutter 插件提供了一个 API，用于查询有关应用程序包的信息。
+- [share_plus: ^7.2.1](https://pub.dev/packages/share_plus) 一个 Flutter 插件，用于通过平台的共享对话框共享 Flutter 应用程序中的内容。
+- [get_it: ^7.6.4](https://pub.dev/packages/get_it) 
+- [rxdart: ^0.27.7](https://pub.dev/packages/rxdart) RxDart 扩展了 Dart Streams 和 StreamController 的功能。
+- [flutter_downloader: ^1.11.4](https://pub.dev/packages/flutter_downloader) 用于创建和管理下载任务的插件。支持 iOS 和 Android。
+- [flutter_blurhash: ^0.7.0](https://pub.dev/packages/flutter_blurhash) 图像占位符的紧凑表示形式。
