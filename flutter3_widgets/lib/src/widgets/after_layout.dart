@@ -1,6 +1,6 @@
 part of flutter3_widgets;
 
-///
+/// https://github.com/flutterchina/flukit
 /// Email:angcyo@126.com
 /// @author angcyo
 /// @date 2023/11/05

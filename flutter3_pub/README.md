@@ -57,7 +57,8 @@ https://github.com/Sub6Resources/flutter_html
 
 ## lottie
 
-Lottie 是一个适用于 Android 和 iOS 的移动库，它使用 Bodymovin 解析导出为 json 的 Adobe After Effects 动画，并在移动设备上原生渲染它们！
+Lottie 是一个适用于 Android 和 iOS 的移动库，它使用 Bodymovin 解析导出为 json 的 Adobe After Effects
+动画，并在移动设备上原生渲染它们！
 
 - [lottie: ^2.7.0](https://pub.dev/packages/lottie)
 
@@ -90,4 +91,41 @@ dev_dependencies:
 
 受 Animate.css 启发的动画包，仅使用 Flutter 动画构建，零依赖性。
 
+https://github.com/Klerith/animate_do_package
+
 - [animate_do: ^3.1.2](https://pub.dev/packages/animate_do)
+
+## flutter_gen
+
+用于资产、字体、颜色等的 Flutter 代码生成器 — 摆脱所有基于字符串的 API。
+
+- [flutter_gen: ^5.3.2](https://pub.dev/packages/flutter_gen)
+
+## flutter_svg
+
+使用 Flutter 绘制 SVG 文件。
+
+https://github.com/dnfield/flutter_svg/tree/master/packages/flutter_svg
+
+https://github.com/dnfield/vector_graphics
+
+- [flutter_svg: ^2.0.9](https://pub.dev/packages/flutter_svg)
+- [vector_graphics: ^1.1.9+1](https://pub.dev/packages/vector_graphics)
+- [vector_graphics_codec: ^1.1.9+1](https://pub.dev/packages/vector_graphics_codec)
+- [vector_graphics_compiler: ^1.1.9+1](https://pub.dev/packages/vector_graphics_compiler)
+
+## jovial_svg
+
+强大、高效的 SVG 静态图像渲染，支持定义明确的 SVG 配置文件和高效的二进制存储格式。
+使用这种二进制格式可以带来非常快的加载时间——加载预编译的二进制文件通常比解析 XML SVG 文件快一个数量级。
+观察到加载较大 SVG 文件的加速范围从 5 倍到 20 倍不等。
+
+https://github.com/zathras/jovial_svg
+
+- [jovial_svg: ^1.1.18](https://pub.dev/packages/jovial_svg)
+
+## emoji
+
+https://github.com/googlefonts/noto-emoji
+
+

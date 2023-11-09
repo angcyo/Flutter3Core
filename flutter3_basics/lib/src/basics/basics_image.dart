@@ -6,6 +6,20 @@ part of flutter3_basics;
 /// @date 2023/11/04
 ///
 
+typedef CanvasCallback = void Function(Canvas canvas);
+
+/// 使用[Canvas]绘制图片
+Picture drawPicture(
+  Size size,
+  CanvasCallback callback,
+) {
+  final PictureRecorder recorder = PictureRecorder();
+  final Canvas canvas =
+      Canvas(recorder, Rect.fromLTWH(0, 0, size.width, size.height));
+  callback(canvas);
+  return recorder.endRecording();
+}
+
 extension ImageEx on ui.Image {
   /// 获取图片的字节数据
   Future<Uint8List> toBytes(

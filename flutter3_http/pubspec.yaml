@@ -1,5 +1,5 @@
-name: flutter3_pub
-description: flutter3 pub package
+name: flutter3_http
+description: flutter3 http package
 version: 0.0.1
 homepage: https://github.com/angcyo/Flutter3Core
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -13,22 +13,16 @@ dependencies:
     sdk: flutter
   flutter3_basics:
     path: ../flutter3_basics
-  # https://pub.dev/packages/cached_network_image
-  # https://pub.dev/packages/flutter_cache_manager
-  # https://pub.dev/packages/octo_image
-  cached_network_image: ^3.3.0
-
-  # https://pub.dev/packages/flutter_html
-  # https://pub.dev/packages/html
-  # https://pub.dev/packages/csslib
-  # https://pub.dev/packages/collection
-  # https://pub.dev/packages/list_counter
-  flutter_html: ^3.0.0-beta.2
-
-  # https://pub.dev/packages/flutter_svg
-  flutter_svg: ^2.0.9
-
-# dependency_overrides:
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/async
+  # https://pub.dev/packages/http_parser
+  http: ^1.1.0
+  # https://pub.dev/packages/dio
+  # https://pub.dev/packages/async
+  # https://pub.dev/packages/http_parser
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/path
+  dio: ^5.3.3
 
 dev_dependencies:
   flutter_test:
