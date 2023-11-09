@@ -11,7 +11,7 @@ typedef GlobalOpenUrlFn = void Function(BuildContext context, String? url);
 final class BasicsGlobalConfig {
   BasicsGlobalConfig();
 
-  /// 全局的打开url方法, 一般是跳转到web页面
+  /// 注册一个全局的打开url方法, 一般是跳转到web页面
   /// 打开url
   GlobalOpenUrlFn? openUrlFn = (context, url) {
     l.w("企图打开url:$url from:$context");

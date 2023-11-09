@@ -28,7 +28,7 @@ extension HtmlStringEx on String {
     return Html(
       data: this,
       onLinkTap: (url, attributes, element) {
-        l.d("Link点击:$url");
+        l.d("Link点击[${element?.text}]:$url");
         if (onLinkTap != null) {
           onLinkTap(url, attributes, element);
         } else {
@@ -37,7 +37,7 @@ extension HtmlStringEx on String {
       },
       onAnchorTap: (url, attributes, element) {
         //onAnchorTap 会覆盖 onLinkTap
-        l.d("Anchor点击:$url");
+        l.d("Anchor点击[${element?.text}]:$url");
         if (onAnchorTap != null) {
           onAnchorTap(url, attributes, element);
         } else {

@@ -123,9 +123,29 @@ https://github.com/dnfield/vector_graphics
 https://github.com/zathras/jovial_svg
 
 - [jovial_svg: ^1.1.18](https://pub.dev/packages/jovial_svg)
+- [xml: ^6.4.2](https://pub.dev/packages/xml)
+- [args: ^2.4.2](https://pub.dev/packages/args)
+- [vector_math: ^2.1.4](https://pub.dev/packages/vector_math)
+
+# url_launcher
+
+用于启动 URL 的 Flutter 插件。
+
+https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher
+
+- [url_launcher: ^6.2.1](https://pub.dev/packages/url_launcher)
 
 ## emoji
 
 https://github.com/googlefonts/noto-emoji
 
+## others
 
+- [quiver: ^3.2.1](https://pub.dev/packages/quiver) Quiver 是一组 Dart 的实用程序库，它使许多 Dart
+  库的使用更轻松、更方便，或者添加了额外的功能。
+- [flutter_simple_treeview: ^3.0.2](https://pub.dev/packages/flutter_simple_treeview)
+  此小部件可视化了树形结构，其中节点可以是任何小部件。
+- [file: ^7.0.0](https://pub.dev/packages/file) Dart 的通用文件系统抽象。
+- [json_serializable: ^6.7.1](https://pub.dev/packages/json_serializable) 为操作 JSON 提供 Dart
+  构建系统构建器。
+- [vector_math: ^2.1.4](https://pub.dev/packages/vector_math) 用于 2D 和 3D 应用程序的矢量数学库。
