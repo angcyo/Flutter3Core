@@ -39,6 +39,36 @@ extension FrameCallbackEx on int {
 
 //region 界面相关
 
+typedef WidgetList = List<Widget>;
+
+extension WidgetListEx on WidgetList {
+  /// 将当前的小部件集合, 包裹在一个[Wrap]中
+  Widget wrap({
+    double spacing = 8,
+    double runSpacing = 8,
+    Axis direction = Axis.horizontal,
+    WrapAlignment alignment = WrapAlignment.start,
+    WrapAlignment runAlignment = WrapAlignment.start,
+    WrapCrossAlignment crossAxisAlignment = WrapCrossAlignment.start,
+    TextDirection? textDirection,
+    VerticalDirection verticalDirection = VerticalDirection.down,
+    Clip clipBehavior = Clip.none,
+  }) {
+    return Wrap(
+      spacing: spacing,
+      runSpacing: runSpacing,
+      direction: direction,
+      alignment: alignment,
+      runAlignment: runAlignment,
+      crossAxisAlignment: crossAxisAlignment,
+      textDirection: textDirection,
+      verticalDirection: verticalDirection,
+      clipBehavior: clipBehavior,
+      children: this,
+    );
+  }
+}
+
 extension WidgetEx on Widget {
   //---Padding---
 
