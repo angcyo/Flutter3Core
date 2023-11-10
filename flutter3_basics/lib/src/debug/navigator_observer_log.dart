@@ -9,32 +9,32 @@ part of flutter3_basics;
 mixin NavigatorObserverLogMixin on NavigatorObserver {
   @override
   void didPop(Route route, Route? previousRoute) {
-    l.d('Navigator didPop↓\n$route\n$previousRoute');
+    l.v('Navigator didPop↓\n$route\n$previousRoute');
   }
 
   @override
   void didPush(Route route, Route? previousRoute) {
-    l.d('Navigator didPush↓\n$route\n$previousRoute');
+    l.v('Navigator didPush↓\n$route\n$previousRoute');
   }
 
   @override
   void didRemove(Route route, Route? previousRoute) {
-    l.d('Navigator didRemove↓\n$route\n$previousRoute');
+    l.v('Navigator didRemove↓\n$route\n$previousRoute');
   }
 
   @override
   void didReplace({Route? newRoute, Route? oldRoute}) {
-    l.d('Navigator didReplace:$newRoute $oldRoute');
+    l.v('Navigator didReplace:$newRoute $oldRoute');
   }
 
   @override
   void didStartUserGesture(Route route, Route? previousRoute) {
-    l.d('Navigator didStartUserGesture↓\n$route\n$previousRoute');
+    l.v('Navigator didStartUserGesture↓\n$route\n$previousRoute');
   }
 
   @override
   void didStopUserGesture() {
-    l.d('Navigator didStopUserGesture');
+    l.v('Navigator didStopUserGesture');
   }
 }
 
