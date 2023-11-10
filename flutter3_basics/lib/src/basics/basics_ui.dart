@@ -39,7 +39,81 @@ extension FrameCallbackEx on int {
 
 //region 界面相关
 
-extension WidgetEx on Widget {}
+extension WidgetEx on Widget {
+  //---Padding---
+
+  /// 将当前的小部件, 包裹在一个[Padding]中
+  Widget paddingAll(double value) {
+    return Padding(
+      padding: EdgeInsets.all(value),
+      child: this,
+    );
+  }
+
+  Widget paddingLTRB(double left, double top, double right, double bottom) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        left,
+        top,
+        right,
+        bottom,
+      ),
+      child: this,
+    );
+  }
+
+  /// 对称
+  Widget paddingSymmetric({double vertical = 0, double horizontal = 0}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: vertical,
+        horizontal: horizontal,
+      ),
+      child: this,
+    );
+  }
+
+  Widget paddingOnly({
+    double left = 0,
+    double top = 0,
+    double right = 0,
+    double bottom = 0,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: left,
+        top: top,
+        right: right,
+        bottom: bottom,
+      ),
+      child: this,
+    );
+  }
+
+/*Widget paddingFromWindowPadding() {
+    return Padding(
+      padding: EdgeInsets.fromWindowPadding(WidgetsBinding.instance!.window.viewInsets, WidgetsBinding.instance!.window.devicePixelRatio),
+      child: this,
+    );
+  }*/
+
+  //---Padding---
+
+  /// 占满剩余空间的多少比例, 弹性系数
+  /// [Flex]
+  ///  - [Row]
+  ///  - [Column]
+  /// [Flexible]
+  ///  - [Expanded]
+  /// [Spacer] 空白占位 `const SizedBox.shrink()`
+  Widget expanded({int flex = 1, FlexFit fit = FlexFit.loose}) {
+    return Flexible(
+      flex: flex,
+      fit: fit,
+      child: this,
+    );
+  }
+}
 
 extension StateEx on State {
   void updateState() {
