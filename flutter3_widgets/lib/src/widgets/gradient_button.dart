@@ -19,6 +19,10 @@ class GradientButton extends StatelessWidget {
     this.disabledColor,
     this.disabledTextColor,
     this.onHighlightChanged,
+    this.minWidth = 88,
+    this.maxWidth = double.infinity,
+    this.minHeight = 36,
+    this.maxHeight = double.infinity,
   }) : super(key: key);
 
   // 渐变色数组
@@ -34,6 +38,18 @@ class GradientButton extends StatelessWidget {
 
   final GestureTapCallback? onPressed;
   final ValueChanged<bool>? onHighlightChanged;
+
+  /// [BoxConstraints.minWidth]
+  final double minWidth;
+
+  /// [BoxConstraints.maxWidth]
+  final double maxWidth;
+
+  /// [BoxConstraints.minHeight]
+  final double minHeight;
+
+  /// [BoxConstraints.maxHeight]
+  final double maxHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +70,11 @@ class GradientButton extends StatelessWidget {
         borderRadius: radius,
         clipBehavior: Clip.hardEdge,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 88.0, minHeight: 36.0),
+          constraints: BoxConstraints(
+              minWidth: minWidth,
+              minHeight: minHeight,
+              maxWidth: maxWidth,
+              maxHeight: maxHeight),
           child: InkWell(
             splashColor: splashColor ?? _colors.last,
             highlightColor: Colors.transparent,
@@ -99,6 +119,10 @@ class ElevatedGradientButton extends StatefulWidget {
     this.onHighlightChanged,
     this.shadowColor,
     required this.child,
+    this.minWidth = 88,
+    this.maxWidth = double.infinity,
+    this.minHeight = 36,
+    this.maxHeight = double.infinity,
   }) : super(key: key);
 
   // 渐变色数组
@@ -115,6 +139,18 @@ class ElevatedGradientButton extends StatefulWidget {
 
   final GestureTapCallback? onPressed;
   final ValueChanged<bool>? onHighlightChanged;
+
+  /// [BoxConstraints.minWidth]
+  final double minWidth;
+
+  /// [BoxConstraints.maxWidth]
+  final double maxWidth;
+
+  /// [BoxConstraints.minHeight]
+  final double minHeight;
+
+  /// [BoxConstraints.maxHeight]
+  final double maxHeight;
 
   @override
   _ElevatedGradientButtonState createState() => _ElevatedGradientButtonState();
@@ -157,7 +193,10 @@ class _ElevatedGradientButtonState extends State<ElevatedGradientButton> {
         splashColor: widget.splashColor,
         disabledColor: widget.disabledColor,
         disabledTextColor: widget.disabledTextColor,
-        child: widget.child,
+        minWidth: widget.minWidth,
+        maxWidth: widget.maxWidth,
+        minHeight: widget.minHeight,
+        maxHeight: widget.maxHeight,
         onHighlightChanged: (v) {
           setState(() {
             _tapDown = v;
@@ -166,6 +205,7 @@ class _ElevatedGradientButtonState extends State<ElevatedGradientButton> {
             widget.onHighlightChanged!(v);
           }
         },
+        child: widget.child,
       ),
     );
   }
