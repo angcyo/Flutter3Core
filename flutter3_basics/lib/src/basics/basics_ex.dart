@@ -9,7 +9,19 @@ part of flutter3_basics;
 /// 默认的小数点后几位
 const kDefaultDigits = 2;
 
-//region Int 扩展
+/// 一天的毫秒数
+const kDay = 24 * 60 * 60 * kSecond;
+
+/// 一小时的毫秒数
+const kHour = 60 * 60 * kSecond;
+
+/// 一分钟的毫秒数
+const kMinute = 60 * kSecond;
+
+/// 一秒的毫秒数
+const kSecond = 1000;
+
+//region Object 扩展
 
 extension ObjectEx on Object {
   /// [Object]的hash值
@@ -19,7 +31,7 @@ extension ObjectEx on Object {
   String classHash() => "$runtimeType(${hash()})";
 }
 
-//endregion Int 扩展
+//endregion Object 扩展
 
 //region Color 扩展
 
@@ -204,6 +216,32 @@ extension IntEx on int {
   /// 转换成颜色
   /// [Color]
   Color toColor() => Color(this);
+
+  /// 将13位毫秒时间, 拆成对应的
+  /// 0:多少毫秒
+  /// 1:多少秒
+  /// 2:多少分
+  /// 3:多少小时
+  /// 4:多少天
+  List<int> toPartTimes() {
+    var list = <int>[];
+    var time = this;
+    var day = time ~/ kDay;
+    time = time % kDay;
+    var hour = time ~/ kHour;
+    time = time % kHour;
+    var minute = time ~/ kMinute;
+    time = time % kMinute;
+    var second = time ~/ kSecond;
+    time = time % kSecond;
+    var millisecond = time;
+    list.add(millisecond);
+    list.add(second);
+    list.add(minute);
+    list.add(hour);
+    list.add(day);
+    return list;
+  }
 }
 
 //endregion Int 扩展

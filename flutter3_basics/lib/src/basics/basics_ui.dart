@@ -151,10 +151,33 @@ extension StateEx on State {
   }
 }
 
+/// [ConditionalElementVisitor] 返回false 可以停止遍历
+/// [depth] 从0开始的递归深度
+typedef ConditionalElementVisitorDepth = bool Function(
+    Element element, int depth, int childIndex);
+
 extension ContextEx on BuildContext {
   /// 请求焦点, 传null, 可以收起键盘
   requestFocus([FocusNode? node]) {
     FocusScope.of(this).requestFocus(node ?? FocusNode());
+  }
+
+  /// 遍历所有的子元素
+  /// [visitor] 返回false 可以停止遍历
+  eachVisitChildElements(
+    ConditionalElementVisitorDepth visitor, {
+    int depth = 0,
+  }) {
+    if (owner == null || debugDoingBuild) {
+      return;
+    }
+    int childIndex = 0;
+    visitChildElements((element) {
+      bool interrupt = !visitor(element, depth, childIndex++);
+      if (!interrupt) {
+        element.eachVisitChildElements(visitor, depth: depth + 1);
+      }
+    });
   }
 }
 

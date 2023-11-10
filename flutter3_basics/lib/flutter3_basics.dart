@@ -1,10 +1,12 @@
 library flutter3_basics;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,6 +20,8 @@ part 'src/basics/basics_image.dart';
 
 part 'src/basics/basics_ui.dart';
 
+part 'src/component/stack_list.dart';
+
 part 'src/config/basics_global_config.dart';
 
 part 'src/debug/app_lifecycle_log.dart';
@@ -27,6 +31,10 @@ part 'src/debug/debug.dart';
 part 'src/debug/navigator_observer_log.dart';
 
 part 'src/debug/state_log.dart';
+
+part 'src/global/global.dart';
+
+part 'src/global/global_config.dart';
 
 part 'src/l.dart';
 
@@ -39,6 +47,8 @@ part 'src/overlay/loading_overlay.dart';
 part 'src/overlay/route_will_pop_scope.dart';
 
 part 'src/utils/frame_split.dart';
+
+part 'src/utils/l_time.dart';
 
 part 'src/utils/list_utils.dart';
 
