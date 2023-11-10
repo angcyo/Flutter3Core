@@ -79,7 +79,7 @@ class _GlobalAppState extends State<GlobalApp> {
   Widget build(BuildContext context) {
     GlobalConfig config = widget.globalConfig ?? GlobalConfig.def;
     config.globalContext = context;
-    GlobalApp.logWidget(const Duration(milliseconds: 16));
+    //GlobalApp.logWidget(const Duration(milliseconds: 16));
     return GlobalAppConfig(
       globalConfig: widget.globalConfig ?? GlobalConfig.def,
       child: widget.app,
