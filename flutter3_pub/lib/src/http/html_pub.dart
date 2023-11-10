@@ -32,7 +32,7 @@ extension HtmlStringEx on String {
         if (onLinkTap != null) {
           onLinkTap(url, attributes, element);
         } else {
-          openWebUrl(context, url);
+          context.openWebUrl(url);
         }
       },
       onAnchorTap: (url, attributes, element) {
@@ -41,7 +41,7 @@ extension HtmlStringEx on String {
         if (onAnchorTap != null) {
           onAnchorTap(url, attributes, element);
         } else {
-          openWebUrl(context, url);
+          context.openWebUrl(url);
         }
       },
       style: mergeStyle,
