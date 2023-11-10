@@ -165,6 +165,17 @@ HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUT
 开箱即用的可爱颜色选择器，具有高度定制的小部件，可满足所有开发人员的需求。
 
 - [flutter_colorpicker: ^1.0.3](https://pub.dev/packages/flutter_colorpicker)
+- [flutter_material_color_picker: ^1.2.0](https://pub.dev/packages/flutter_material_color_picker) 默认情况下，它是材质颜色，但您可以定义自己的颜色。
+- [flutter_hsvcolor_picker: ^1.5.0](https://pub.dev/packages/flutter_hsvcolor_picker) 专为您的 Flutter 应用程序设计的 HSV 颜色选择器。
+- [iglu_color_picker_flutter: ^1.0.4](https://pub.dev/packages/iglu_color_picker_flutter)
+- [flex_color_picker: ^3.3.0](https://pub.dev/packages/flex_color_picker) FlexColorPicker 是 Flutter 的可自定义颜色选择器。 ColorPicker 可以显示六种不同类型的颜色选择器，其中三种用于标准的 Flutter Material Design 2 颜色及其阴影。用于拣选物品的尺寸和样式可以定制。
+- [fast_color_picker: ^0.1.1](https://pub.dev/packages/fast_color_picker)
+
+## flutter_smart_dialog: ^4.9.5+1
+
+一个优雅的 Flutter Dialog 解决方案。
+
+- [flutter_smart_dialog: ^4.9.5+1](https://pub.dev/packages/flutter_smart_dialog)
 
 ## others
 
