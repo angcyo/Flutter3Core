@@ -11,6 +11,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # https://pub.dev/packages/async
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/meta
+  async: ^2.11.0
 
 dev_dependencies:
   flutter_test:

@@ -37,7 +37,7 @@ extension GlobalConfigEx on BuildContext {
   }
 }
 
-class GlobalConfig with Diagnosticable {
+class GlobalConfig with Diagnosticable, OverlayManage {
   GlobalConfig._();
 
   /// 全局默认
@@ -47,15 +47,15 @@ class GlobalConfig with Diagnosticable {
 
   /// 获取全局配置
   /// 使用[GlobalAppConfig]可以覆盖[GlobalConfig]
-  static GlobalConfig of(BuildContext context, {bool depend = false}) {
+  static GlobalConfig of(BuildContext? context, {bool depend = false}) {
     GlobalConfig? globalConfig;
     if (depend) {
-      globalConfig = context
-          .dependOnInheritedWidgetOfExactType<GlobalAppConfig>()
+      globalConfig = (context ?? GlobalConfig.def.globalContext)
+          ?.dependOnInheritedWidgetOfExactType<GlobalAppConfig>()
           ?.globalConfig;
     } else {
       globalConfig = context
-          .findAncestorWidgetOfExactType<GlobalAppConfig>()
+          ?.findAncestorWidgetOfExactType<GlobalAppConfig>()
           ?.globalConfig;
     }
     return globalConfig ?? GlobalConfig.def;
@@ -70,6 +70,40 @@ class GlobalConfig with Diagnosticable {
     l.w("企图打开url:$url from:$context");
     return Future.value(false);
   };
+
+  //region Widget
+
+  /// 全局的Loading指示器
+  WidgetBuilder loadingIndicatorBuilder = (context) {
+    return const LoadingIndicator();
+  };
+
+  /// 全局的加载[Overlay]提示
+  WidgetBuilder loadingWidgetBuilder = (context) {
+    Widget loadingIndicator =
+        GlobalConfig.of(context).loadingIndicatorBuilder(context);
+    return Container(
+      alignment: Alignment.center,
+      child: SizedBox.fromSize(
+        size: kDefaultLoadingSize,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withAlpha(80),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: loadingIndicator,
+        ),
+      ),
+    );
+  };
+
+  //endregion Widget
+
+  //region Overlay
+
+  /// [OverlayManage]
+
+  //endregion Overlay
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

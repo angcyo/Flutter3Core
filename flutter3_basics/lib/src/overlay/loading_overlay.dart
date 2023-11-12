@@ -8,8 +8,7 @@ part of flutter3_basics;
 
 Size kDefaultLoadingSize = const Size(50, 50);
 
-OverlayState? _overlayState;
-OverlayEntry? _currentLoading;
+WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 
 /// 显示加载提示
 showLoading({
@@ -20,60 +19,55 @@ showLoading({
   Duration? duration,
   VoidCallback? onDismiss,
 }) {
-  if (_currentLoading != null) {
-    _currentLoading?.remove();
-    _currentLoading = null;
+  var currentLoadingEntry = _currentLoadingEntryRef?.target;
+  if (currentLoadingEntry != null) {
+    currentLoadingEntry.remove();
+    currentLoadingEntry = null;
   }
 
-  _overlayState = Overlay.of(context);
+  var overlayState = Overlay.of(context);
+  /*if (overlayState == null) {
+    assert(() {
+      debugPrint('overlayState is null, dispose this call');
+      return true;
+    }());
+    return;
+  }*/
   var route = ModalRoute.of(context);
 
   ///创建Entry
-  _currentLoading = OverlayEntry(builder: (context) {
+  currentLoadingEntry = OverlayEntry(builder: (context) {
     return _LoadingOverlay(
-      route: route,
-      builder: builder ??= _buildDefaultLoadingWidget,
-    );
+        route: route,
+        builder: builder ??= (context) {
+          return GlobalConfig.of(context).loadingWidgetBuilder(context);
+        });
   });
+  _currentLoadingEntryRef = WeakReference(currentLoadingEntry);
 
-  try {
-    postFrameCallback((duration) {
-      if (_currentLoading != null) {
-        _overlayState?.insert(_currentLoading!);
+  postFrameCallback((duration) {
+    try {
+      if (currentLoadingEntry != null) {
+        overlayState.insert(currentLoadingEntry);
       }
-    });
-  } catch (e) {
-    l.e(e);
-  }
+    } catch (e) {
+      l.e(e);
+    }
+  });
 }
 
 /// 隐藏加载提示
 void hideLoading() {
-  if (_currentLoading != null) {
+  var currentLoadingEntry = _currentLoadingEntryRef?.target;
+  if (currentLoadingEntry != null) {
     try {
-      _currentLoading?.remove();
+      currentLoadingEntry.remove();
     } catch (e) {
       l.e(e);
     } finally {
-      _currentLoading = null;
+      _currentLoadingEntryRef = null;
     }
   }
-}
-
-Widget _buildDefaultLoadingWidget(BuildContext context) {
-  return Container(
-    alignment: Alignment.center,
-    child: SizedBox.fromSize(
-      size: kDefaultLoadingSize,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.black.withAlpha(80),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const LoadingIndicator(),
-      ),
-    ),
-  );
 }
 
 class _LoadingOverlay extends StatefulWidget {

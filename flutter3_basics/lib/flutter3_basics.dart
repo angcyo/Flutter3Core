@@ -6,6 +6,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:ui';
 
+import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,12 @@ part 'src/debug/state_log.dart';
 part 'src/global/global.dart';
 
 part 'src/global/global_config.dart';
+
+part 'src/global/global_overlays.dart';
+
+part 'src/global/overlay/overlay_animation.dart';
+
+part 'src/global/overlay/overlay_manage.dart';
 
 part 'src/l.dart';
 
