@@ -45,7 +45,7 @@ class TextSpanBuilder {
 
   /// 添加一个[widget]可以是图片,也可以是点击事件的小部件等
   TextSpanBuilder addWidget(Widget widget) {
-    _textSpans.add(WidgetSpan(child: widget) as TextSpan);
+    _textSpans.add(WidgetSpan(child: widget));
     return this;
   }
 

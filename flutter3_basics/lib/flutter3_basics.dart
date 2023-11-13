@@ -41,6 +41,8 @@ part 'src/global/overlay/overlay_animation.dart';
 
 part 'src/global/overlay/overlay_manage.dart';
 
+part 'src/global/overlay/overlay_notification.dart';
+
 part 'src/l.dart';
 
 part 'src/meta/meta.dart';

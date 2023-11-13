@@ -195,6 +195,17 @@ extension WidgetEx on Widget {
       child: this,
     );
   }
+
+  /// 添加一个高度
+  /// [PhysicalModel]
+  Widget elevation(double elevation, {Color? color, Color? shadowColor}) {
+    return PhysicalModel(
+      color: color ?? Colors.transparent,
+      shadowColor: shadowColor ?? const Color(0xFF000000),
+      elevation: elevation,
+      child: this,
+    );
+  }
 }
 
 extension StateEx on State {

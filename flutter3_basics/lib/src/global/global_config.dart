@@ -71,6 +71,13 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return Future.value(false);
   };
 
+  //region ThemeData
+
+  /// 全局的主题样式
+  ThemeData themeData = ThemeData();
+
+  //endregion ThemeData
+
   //region Widget
 
   /// 全局的Loading指示器

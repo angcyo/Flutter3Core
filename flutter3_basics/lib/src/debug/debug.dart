@@ -9,6 +9,20 @@ part of flutter3_basics;
 /// 调试模式下目标平台覆盖
 /// debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
+/// 在当前位置挂起
+/*debug({Object? object, bool when = true, String? message}) {
+  debugger(
+    when: when,
+    message: message ?? "!angcyo!debug!${NativeRuntime.buildId}!",
+  );
+  if (object != null) {
+    inspect(object);
+  }
+}*/
+
+/// [randomString]
+String randomText([int? length]) => randomString(length);
+
 /// 获取随机中文英文字符串
 String randomString([int? length]) {
   length ??= nextInt(1000, min: 1);
@@ -103,9 +117,9 @@ Widget randomWidget(
 }
 
 /// 获取一个随机的文本[Widget]
-Widget randomTextWidget([String? text, int? length]) {
+Widget randomTextWidget({int? length, TextAlign? textAlign, String? text}) {
   return Text(
-    text ?? randomString(length ?? nextInt(5, min: 1)),
-    textAlign: TextAlign.center,
+    text ?? randomString(length ?? nextInt(10, min: 1)),
+    textAlign: textAlign ?? TextAlign.center,
   );
 }

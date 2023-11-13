@@ -20,6 +20,7 @@ class _OverlayAnimated extends StatefulWidget {
 
   final OverlayAnimatedWidgetBuilder builder;
 
+  /// https://api.flutter.dev/flutter/animation/Curves-class.html
   final Curve curve;
 
   final Key overlayKey;
@@ -155,7 +156,7 @@ class _OverlayAnimatedState extends State<_OverlayAnimated>
   }
 }
 
-//---具体的动画实现0---
+//---具体的动画实现---
 
 /// 顶部滑动动画
 class TopSlideNotification extends StatelessWidget {
@@ -164,9 +165,11 @@ class TopSlideNotification extends StatelessWidget {
 
   final double progress;
 
-  const TopSlideNotification(
-      {Key? key, required this.builder, required this.progress})
-      : super(key: key);
+  const TopSlideNotification({
+    super.key,
+    required this.builder,
+    required this.progress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -185,9 +188,11 @@ class BottomSlideNotification extends StatelessWidget {
 
   final double progress;
 
-  const BottomSlideNotification(
-      {Key? key, required this.builder, required this.progress})
-      : super(key: key);
+  const BottomSlideNotification({
+    super.key,
+    required this.builder,
+    required this.progress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -200,15 +205,17 @@ class BottomSlideNotification extends StatelessWidget {
 }
 
 /// 透明滑动动画
-class CenterOpacityNotification extends StatelessWidget {
+class OpacityNotification extends StatelessWidget {
   ///build notification content
   final WidgetBuilder builder;
 
   final double progress;
 
-  const CenterOpacityNotification(
-      {Key? key, required this.builder, required this.progress})
-      : super(key: key);
+  const OpacityNotification({
+    super.key,
+    required this.builder,
+    required this.progress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -219,31 +226,26 @@ class CenterOpacityNotification extends StatelessWidget {
   }
 }
 
-/// Can be dismiss by left or right slide.
-class SlideDismissible extends StatelessWidget {
-  final Widget child;
+/// 缩放动画
+class ScaleNotification extends StatelessWidget {
+  ///build notification content
+  final WidgetBuilder builder;
 
-  final DismissDirection direction;
+  final double progress;
+  final AlignmentGeometry? alignment;
 
-  final GlobalKey<_OverlayAnimatedState> overlayAnimatedStateKey;
-
-  const SlideDismissible({
-    Key? key,
-    required this.child,
-    DismissDirection? direction,
-    required this.overlayAnimatedStateKey,
-  })  : direction = direction ?? DismissDirection.none,
-        super(key: key);
+  const ScaleNotification({
+    super.key,
+    required this.builder,
+    required this.progress,
+    this.alignment = Alignment.center,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: key!,
-      direction: direction,
-      onDismissed: (direction) {
-        overlayAnimatedStateKey.currentState?.dismiss(animate: false);
-      },
-      child: child,
+    return Transform.scale(
+      scale: progress,
+      child: builder(context),
     );
   }
 }
