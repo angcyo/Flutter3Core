@@ -97,6 +97,7 @@ toastInfo(
           /*color: GlobalConfig.def.themeData.primaryColor,*/
         ),
         //间隙
+        Empty.width(8),
         Text(msg).expanded(),
       ],
     ),

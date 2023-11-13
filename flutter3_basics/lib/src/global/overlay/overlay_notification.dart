@@ -42,6 +42,7 @@ class ToastWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    EdgeInsetsGeometry padding = const EdgeInsets.all(8);
     Widget result = child;
     final isLight = background?.isLight ?? false;
     final textColor = isLight
@@ -51,7 +52,7 @@ class ToastWidget extends StatelessWidget {
     //添加背景
     result = Container(
       color: background ?? Colors.black.withAlpha(180),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      padding: padding,
       child: result,
     );
     //添加圆角
@@ -66,7 +67,7 @@ class ToastWidget extends StatelessWidget {
     }
     //添加屏幕内边距
     result = Padding(
-      padding: const EdgeInsets.all(16),
+      padding: padding,
       child: result,
     );
     //添加主题样式
