@@ -54,6 +54,14 @@ extension ColorEx on Color {
   /// 返回#ff00ff00
   String toHexColor([bool leadingHashSign = true]) =>
       toHex(leadingHashSign: leadingHashSign);
+
+  /// 判断当前颜色是否是暗色
+  bool get isDark =>
+      ThemeData.estimateBrightnessForColor(this) == Brightness.dark;
+
+  /// 判断当前颜色是否是亮色
+  bool get isLight =>
+      ThemeData.estimateBrightnessForColor(this) == Brightness.light;
 }
 
 //endregion Color 扩展

@@ -70,7 +70,7 @@ extension WidgetListEx on WidgetList {
 }
 
 extension WidgetEx on Widget {
-  //---Padding---
+  //region ---Padding---
 
   /// 将当前的小部件, 包裹在一个[Padding]中
   Widget paddingAll(double value) {
@@ -127,7 +127,9 @@ extension WidgetEx on Widget {
     );
   }*/
 
-  //---Padding---
+  //endregion ---Padding---
+
+  //region ---Flexible---
 
   /// 占满剩余空间的多少比例, 弹性系数
   /// [Flex]
@@ -140,6 +142,56 @@ extension WidgetEx on Widget {
     return Flexible(
       flex: flex,
       fit: fit,
+      child: this,
+    );
+  }
+
+  //endregion ---Flexible---
+
+  //region ---SafeArea---
+
+  /// 将当前的小部件, 包裹在一个[SafeArea]中
+  Widget safeArea({
+    bool left = true,
+    bool top = true,
+    bool right = true,
+    bool bottom = true,
+    EdgeInsets minimum = EdgeInsets.zero,
+    bool maintainBottomViewPadding = false,
+  }) {
+    return SafeArea(
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom,
+      minimum: minimum,
+      maintainBottomViewPadding: maintainBottomViewPadding,
+      child: this,
+    );
+  }
+
+  //endregion ---SafeArea---
+
+  /// 忽略小部件内的所有手势
+  Widget ignorePointer({bool ignoring = true}) {
+    return IgnorePointer(
+      ignoring: ignoring,
+      child: this,
+    );
+  }
+
+  /// 消耗小部件内的所有手势
+  Widget absorbPointer({bool absorbing = true}) {
+    return AbsorbPointer(
+      absorbing: absorbing,
+      child: this,
+    );
+  }
+
+  /// 圆角
+  Widget radiusAll(double radius) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
       child: this,
     );
   }
