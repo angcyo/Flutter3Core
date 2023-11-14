@@ -225,6 +225,12 @@ extension ContextEx on BuildContext {
     FocusScope.of(this).requestFocus(node ?? FocusNode());
   }
 
+  /// 显示一个 [SnackBar]
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar(
+      SnackBar snackBar) {
+    return ScaffoldMessenger.of(this).showSnackBar(snackBar);
+  }
+
   /// 遍历所有的子元素
   /// [visitor] 返回false 可以停止遍历
   eachVisitChildElements(
