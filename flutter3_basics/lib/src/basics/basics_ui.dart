@@ -291,6 +291,7 @@ extension ElementEx on Element {}
 /// 导航扩展
 ///使用 ModalRoute.of(context).settings.arguments; 获取参数
 extension NavigatorEx on BuildContext {
+  //---push
   /// 推送一个路由
   Future<T?> push<T extends Object?>(Route<T> route) {
     return Navigator.of(this).push(route);
@@ -309,6 +310,33 @@ extension NavigatorEx on BuildContext {
   Future<T?> pushReplacementWidget<T extends Object?>(Widget route) {
     dynamic targetRoute = MaterialPageRoute(builder: (context) => route);
     return pushReplacement(targetRoute);
+  }
+
+  //---pop
+
+  /// 弹出一个路由
+  pop<T extends Object?>([T? result]) {
+    Navigator.of(this).pop(result);
+  }
+
+  Future<bool> maybePop<T extends Object?>([T? result]) {
+    return Navigator.of(this).maybePop(result);
+  }
+
+  popUntil<T extends Object?>(RoutePredicate predicate) {
+    Navigator.of(this).popUntil(predicate);
+  }
+
+  Future<T?> popAndPushNamed<T extends Object?, TO extends Object?>(
+    String routeName, {
+    TO? result,
+    Object? arguments,
+  }) {
+    return Navigator.of(this).popAndPushNamed(
+      routeName,
+      arguments: arguments,
+      result: result,
+    );
   }
 }
 
