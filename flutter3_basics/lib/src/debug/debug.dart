@@ -91,7 +91,7 @@ StateLogWidget randomLogWidget(
 
 /// 获取一个随机的[Widget]
 Widget randomWidget(
-  String text, {
+  String? text, {
   double? height,
   double fontSize = 12,
   Color? textColor = Colors.white,
@@ -106,7 +106,7 @@ Widget randomWidget(
     alignment: Alignment.center,
     height: h,
     child: Text(
-      "$text\nh:${h.toDigits()} c:${bgColor.toHexColor()}",
+      "${text ?? ""}\nh:${h.toDigits()} c:${bgColor.toHexColor()}",
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: fontSize,
