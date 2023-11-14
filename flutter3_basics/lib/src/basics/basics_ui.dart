@@ -43,6 +43,8 @@ typedef WidgetList = List<Widget>;
 
 extension WidgetListEx on WidgetList {
   /// 将当前的小部件集合, 包裹在一个[Wrap]中
+  /// [alignment] 主轴对齐方式
+  /// [crossAxisAlignment] 交叉轴对齐方式
   Widget wrap({
     double spacing = 8,
     double runSpacing = 8,
