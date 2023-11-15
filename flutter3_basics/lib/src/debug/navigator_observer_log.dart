@@ -9,12 +9,12 @@ part of flutter3_basics;
 mixin NavigatorObserverLogMixin on NavigatorObserver {
   @override
   void didPop(Route route, Route? previousRoute) {
-    l.v('Navigator didPop↓\n$route\n$previousRoute');
+    l.v('Navigator didPop↓\npop->$route\nold->$previousRoute');
   }
 
   @override
   void didPush(Route route, Route? previousRoute) {
-    l.v('Navigator didPush↓\n$route\n$previousRoute');
+    l.v('Navigator didPush↓\nold->$previousRoute\npush->$route');
   }
 
   @override

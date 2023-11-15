@@ -21,6 +21,8 @@ part 'src/basics/basics_image.dart';
 
 part 'src/basics/basics_ui.dart';
 
+part 'src/basics/custom_page_route.dart';
+
 part 'src/component/stack_list.dart';
 
 part 'src/debug/app_lifecycle_log.dart';

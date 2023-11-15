@@ -123,3 +123,13 @@ Widget randomTextWidget({int? length, TextAlign? textAlign, String? text}) {
     textAlign: textAlign ?? TextAlign.center,
   );
 }
+
+/// 打印动画状态
+void logAnimation(
+  String prefix,
+  Animation animation,
+  Animation secondaryAnimation,
+) {
+  l.d("[$prefix]enter:${animation.status}->${animation.value}");
+  l.v("[$prefix]exit:${secondaryAnimation.status}->${secondaryAnimation.value}");
+}

@@ -410,14 +410,37 @@ extension ElementEx on Element {}
 /// 导航扩展
 ///使用 ModalRoute.of(context).settings.arguments; 获取参数
 extension NavigatorEx on BuildContext {
+  //---Route
+
+  /// [Route]
+  /// [OverlayRoute]
+  /// [TransitionRoute]
+  /// [ModalRoute]
+  ModalRoute? get modalRoute => ModalRoute.of(this);
+
+  RouteSettings? get routeSettings => modalRoute?.settings;
+
+  /// 路由处于活跃状态
+  bool get isRouteActive => modalRoute?.isActive ?? false;
+
+  /// 是否是第一个路由
+  bool get isRouteFirst => modalRoute?.isFirst ?? false;
+
+  /// 是否是最上面的路由
+  bool get isRouteCurrent => modalRoute?.isCurrent ?? false;
+
+  /// 是否要显示返回按键
+  bool get isAppBarDismissal => modalRoute?.impliesAppBarDismissal ?? false;
+
   //---push
+
   /// 推送一个路由
   Future<T?> push<T extends Object?>(Route<T> route) {
     return Navigator.of(this).push(route);
   }
 
-  Future<T?> pushWidget<T extends Object?>(Widget route) {
-    dynamic targetRoute = MaterialPageRoute(builder: (context) => route);
+  Future<T?> pushWidget<T extends Object?>(Widget page) {
+    dynamic targetRoute = MaterialPageRoute(builder: (context) => page);
     return push(targetRoute);
   }
 
@@ -426,9 +449,27 @@ extension NavigatorEx on BuildContext {
     return Navigator.of(this).pushReplacement(route);
   }
 
-  Future<T?> pushReplacementWidget<T extends Object?>(Widget route) {
-    dynamic targetRoute = MaterialPageRoute(builder: (context) => route);
+  Future<T?> pushReplacementWidget<T extends Object?>(Widget page) {
+    dynamic targetRoute = MaterialPageRoute(builder: (context) => page);
     return pushReplacement(targetRoute);
+  }
+
+  /// [FadePageRoute]
+  Future<T?> pushFadeRoute<T extends Object?>(Widget page) {
+    dynamic targetRoute = FadePageRoute(builder: (context) => page);
+    return push(targetRoute);
+  }
+
+  /// [TranslationPageRoute]
+  Future<T?> pushTranslationRoute<T extends Object?>(Widget page) {
+    dynamic targetRoute = TranslationPageRoute(builder: (context) => page);
+    return push(targetRoute);
+  }
+
+  /// [SlidePageRoute]
+  Future<T?> pushSlideRoute<T extends Object?>(Widget page) {
+    dynamic targetRoute = SlidePageRoute(builder: (context) => page);
+    return push(targetRoute);
   }
 
   //---pop
