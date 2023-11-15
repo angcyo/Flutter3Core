@@ -208,6 +208,125 @@ extension WidgetEx on Widget {
       child: this,
     );
   }
+
+  /// 使用一个容器包裹当前的小部件
+  /// [Container]
+  Widget container({
+    AlignmentGeometry? alignment,
+    EdgeInsetsGeometry? padding,
+    Color? color,
+    Decoration? decoration,
+    Decoration? foregroundDecoration,
+    BoxConstraints? constraints,
+    EdgeInsetsGeometry? margin,
+    Matrix4? transform,
+    AlignmentGeometry? transformAlignment,
+    Clip clipBehavior = Clip.none,
+  }) {
+    return Container(
+      alignment: alignment,
+      padding: padding,
+      color: color,
+      decoration: decoration,
+      foregroundDecoration: foregroundDecoration,
+      constraints: constraints,
+      margin: margin,
+      transform: transform,
+      transformAlignment: transformAlignment,
+      clipBehavior: clipBehavior,
+      child: this,
+    );
+  }
+
+  /// 拦截路由的弹出, 返回键.
+  /// [WillPopScope.onWillPop]
+  Widget wrapTextStyle({
+    TextStyle? style,
+    TextAlign? textAlign,
+    bool softWrap = true,
+    TextOverflow overflow = TextOverflow.clip,
+    int? maxLines,
+    TextWidthBasis textWidthBasis = TextWidthBasis.parent,
+    ui.TextHeightBehavior? textHeightBehavior,
+  }) {
+    TextStyle def = GlobalConfig.def.themeData.primaryTextTheme.bodyMedium ??
+        const TextStyle();
+    return DefaultTextStyle(
+      style: def,
+      textAlign: textAlign,
+      softWrap: softWrap,
+      overflow: overflow,
+      maxLines: maxLines,
+      textWidthBasis: textWidthBasis,
+      textHeightBehavior: textHeightBehavior,
+      child: this,
+    );
+  }
+
+  /// 拦截路由的弹出, 返回键.
+  /// [WillPopScope.onWillPop]
+  Widget willPop([WillPopCallback? onWillPop]) {
+    return WillPopScope(
+      onWillPop: onWillPop ?? () async => false,
+      child: this,
+    );
+  }
+
+  /// 取消父组件对子组件的约束信息
+  /// [UnconstrainedBox]
+  Widget unconstrained({
+    TextDirection? textDirection,
+    AlignmentGeometry alignment = Alignment.center,
+    Axis? constrainedAxis,
+    Clip clipBehavior = Clip.none,
+  }) {
+    return UnconstrainedBox(
+      textDirection: textDirection,
+      alignment: alignment,
+      constrainedAxis: constrainedAxis,
+      clipBehavior: clipBehavior,
+      child: this,
+    );
+  }
+
+  /// 约束当前小部件的大小
+  /// [ConstrainedBox]
+  Widget constrainedBox(BoxConstraints constraints) {
+    return ConstrainedBox(
+      constraints: constraints,
+      child: this,
+    );
+  }
+
+  /// 固定大小约束
+  /// [constrainedBox]
+  Widget constrainedFixed(Size size) {
+    return constrainedBox(BoxConstraints.tight(size));
+  }
+
+  /// 约束最小宽高
+  /// [constrainedBox]
+  Widget constrainedMin({
+    double? minWidth,
+    double? minHeight,
+  }) {
+    return constrainedBox(BoxConstraints(
+      minWidth: minWidth ?? double.infinity,
+      minHeight: minHeight ?? double.infinity,
+    ));
+  }
+
+  /// 约束最大宽高
+  /// [constrainedBox]
+  Widget constrainedMax({
+    double? maxWidth,
+    double? maxHeight,
+  }) {
+    return constrainedBox(BoxConstraints(
+      maxWidth: maxWidth ?? double.infinity,
+      maxHeight: maxHeight ?? double.infinity,
+    ));
+  }
 }
 
 extension StateEx on State {

@@ -6,6 +6,7 @@ part of flutter3_basics;
 ///
 
 /// 系统的[WillPopScope]会从当前的context中获取, 有些情况下不一定获取到自己想要的
+/// 这个小部件指定了路由
 class RouteWillPopScope extends StatefulWidget {
   const RouteWillPopScope({
     super.key,
