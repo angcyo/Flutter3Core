@@ -82,7 +82,7 @@ StateLogWidget randomLogWidget(
     StateLogWidget(
       logTag: text,
       child: randomWidget(
-        text,
+        text: text,
         height: height,
         fontSize: fontSize,
         textColor: color,
@@ -90,8 +90,8 @@ StateLogWidget randomLogWidget(
     );
 
 /// 获取一个随机的[Widget]
-Widget randomWidget(
-  String? text, {
+Widget randomWidget({
+  String? text,
   double? height,
   double fontSize = 12,
   Color? textColor = Colors.white,

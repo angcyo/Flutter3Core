@@ -86,6 +86,11 @@ class TextSpanBuilder {
     return this;
   }
 
+  /// [InlineSpan]
+  /// -> [TextSpan]
+  /// -> [WidgetSpan]
+  TextSpan buildTextSpan() => TextSpan(children: _textSpans);
+
   /// 构建
   Text build({
     Key? key,
@@ -104,7 +109,7 @@ class TextSpanBuilder {
     Color? selectionColor,
   }) {
     return Text.rich(
-      TextSpan(children: _textSpans),
+      buildTextSpan(),
       key: key,
       style: style,
       strutStyle: strutStyle,
@@ -123,7 +128,15 @@ class TextSpanBuilder {
   }
 }
 
-/// 构建Text
+/// 构建[InlineSpan]
+@dsl
+TextSpan inlineSpanBuilder(void Function(TextSpanBuilder builder) action) {
+  TextSpanBuilder textSpanBuilder = TextSpanBuilder();
+  action(textSpanBuilder);
+  return textSpanBuilder.buildTextSpan();
+}
+
+/// 构建[Text]
 @dsl
 Text textSpanBuilder(
   void Function(TextSpanBuilder builder) action, {

@@ -253,7 +253,7 @@ extension ContextEx on BuildContext {
 }
 
 extension RenderObjectEx on RenderObject {
-  /// 获取RenderObject的大小
+  /// 获取[RenderObject]的大小
   Size? getSizeOrNull() {
     if (this is RenderBox) {
       return (this as RenderBox).size;
@@ -261,7 +261,7 @@ extension RenderObjectEx on RenderObject {
     return null;
   }
 
-  /// 获取RenderObject的全局绘制位置和坐标大小
+  /// 获取[RenderObject]的全局绘制位置和坐标大小
   Rect? getRenderObjectBounds([RenderObject? ancestor]) {
     var offset = getOffsetOrNull(ancestor);
     var size = getSizeOrNull();
@@ -271,7 +271,7 @@ extension RenderObjectEx on RenderObject {
     return null;
   }
 
-  /// 获取RenderObject的位置
+  /// 获取[RenderObject]的位置
   Offset? getOffsetOrNull([RenderObject? ancestor]) {
     if (this is RenderBox) {
       final Offset location =
