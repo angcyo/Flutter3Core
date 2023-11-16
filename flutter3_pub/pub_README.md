@@ -188,6 +188,8 @@ HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUT
 
 ## 动画
 
+https://guoshuyu.cn/home/wx/Z1.html
+
 - [animated_text_kit: ^4.2.2](https://pub.dev/packages/animated_text_kit) 一个 flutter
   包，其中包含一些很酷和很棒的文本动画的集合。Codemagic 电子书“我们喜欢的 Flutter
   库”中文本动画的推荐包。试用我们的实时示例应用程序。
@@ -195,6 +197,11 @@ HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUT
   Flutter 动画构建，零依赖性。
 - [simple_animations: ^5.0.2](https://pub.dev/packages/simple_animations) Simple Animations
   简化了创建精美自定义动画的过程：
+- [animations: ^2.0.8](https://pub.dev/packages/animations) 用于 Flutter 的高质量预构建动画
+- [spring: ^2.0.2](https://pub.dev/packages/spring) 一个简单而强大的预构建动画套件。
+- [animated_flip_counter: ^0.2.6](https://pub.dev/packages/animated_flip_counter) 一个隐式动画小部件，从一个数字翻转到另一个数字。
+- [odometer: ^3.0.0](https://pub.dev/packages/odometer) 计数器动画
+- [animated_digit: ^3.2.3](https://pub.dev/packages/animated_digit) 滚动动画数字小部件，任何需要动画效果的数字，易于使用。
 
 ## 国际化
 
