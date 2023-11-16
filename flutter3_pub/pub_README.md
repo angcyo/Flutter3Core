@@ -2,6 +2,13 @@
 
 https://pub.dev/ 上的一些开源库
 
+## path_provider: ^2.1.1
+
+一个 Flutter 插件，用于查找文件系统上的常用位置。支持 Android、iOS、Linux、macOS 和
+Windows。并非所有平台都支持所有方法。
+
+- [path_provider: ^2.1.1](https://pub.dev/packages/path_provider)
+
 ## cached_network_image
 
 一个 flutter 库，用于显示来自 Internet 的图像并将它们保存在缓存目录中。
@@ -86,14 +93,6 @@ dev_dependencies:
   build_runner: ^2.0.0
   objectbox_generator: any
 ```
-
-## animate_do
-
-受 Animate.css 启发的动画包，仅使用 Flutter 动画构建，零依赖性。
-
-https://github.com/Klerith/animate_do_package
-
-- [animate_do: ^3.1.2](https://pub.dev/packages/animate_do)
 
 ## flutter_gen
 
@@ -180,6 +179,27 @@ HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUT
 一个优雅的 Flutter Dialog 解决方案。
 
 - [flutter_smart_dialog: ^4.9.5+1](https://pub.dev/packages/flutter_smart_dialog)
+- [awesome_dialog: ^3.1.0](https://pub.dev/packages/awesome_dialog) 一个新的 Flutter 包项目，用于简单而精彩的对话
+
+## hive: ^2.2.3
+
+- [hive: ^2.2.3](https://pub.dev/packages/hive) Hive 是一个用纯 Dart 编写的轻量级且快速的键值数据库。灵感来自Bitcask。
+- [isar: ^3.1.0+1](https://pub.dev/packages/isar) 💙 专为 Flutter 而生。易于使用，无需配置，无需样板
+
+## 动画
+
+- [animated_text_kit: ^4.2.2](https://pub.dev/packages/animated_text_kit) 一个 flutter
+  包，其中包含一些很酷和很棒的文本动画的集合。Codemagic 电子书“我们喜欢的 Flutter
+  库”中文本动画的推荐包。试用我们的实时示例应用程序。
+- [animate_do: ^3.1.2](https://pub.dev/packages/animate_do) 受 Animate.css 启发的动画包，仅使用
+  Flutter 动画构建，零依赖性。
+- [simple_animations: ^5.0.2](https://pub.dev/packages/simple_animations) Simple Animations
+  简化了创建精美自定义动画的过程：
+
+## 国际化
+
+- [easy_localization: ^3.0.3](https://pub.dev/packages/easy_localization) 轻松快速地实现 Flutter
+  应用的国际化
 
 ## others
 
@@ -214,6 +234,28 @@ https://github.com/fluttercommunity/plus_plugins
   API，用于集成、扩展和管理应用中的点播和低延迟直播功能。 https://api.video/
 - [apivideo_player: ^1.2.0](https://pub.dev/packages/apivideo_player) api.video
   是产品构建者的视频基础设施。闪电般快速的视频 API，用于集成、扩展和管理应用中的点播和低延迟直播功能。
+- [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 一个 Flutter
+  小部件，用于实现滑动删除列表项，支持左滑和右滑两种操作。 可滑动列表项的 Flutter 实现，具有可以关闭的方向滑动操作。
+- [flutter_staggered_grid_view: ^0.7.0](https://pub.dev/packages/flutter_staggered_grid_view)
+  提供颤振网格布局的集合。
+- [overflow_view: ^0.3.1](https://pub.dev/packages/overflow_view)
+  如果没有足够的空间，则在一行中显示子项的小部件，末尾有一个溢出指示器。
+- [flutter_sticky_header: ^0.6.5](https://pub.dev/packages/flutter_sticky_header) 带有条子的粘性标头的
+  Flutter 实现。
+- [visual_effect: ^0.0.5](https://pub.dev/packages/visual_effect) VisualEffect API for Flutter
+  可以轻松地在小部件上添加绘画效果。
+- [local_hero: ^0.2.0](https://pub.dev/packages/local_hero) 当英雄动画在同一路线内的位置发生变化时，隐式启动英雄动画的小部件。
+- [auto_size_text: ^3.0.0](https://pub.dev/packages/auto_size_text) Flutter 小部件，可自动调整文本大小以使其完全适合其边界。
+- [video_player: ^2.8.1](https://pub.dev/packages/video_player) 适用于 iOS、Android 和 Web 的 Flutter
+  插件，用于在 Widget 表面上播放视频。
+- [showcaseview: ^2.0.3](https://pub.dev/packages/showcaseview) Flutter 包允许你一步一步地展示/突出显示你的小部件。
+- [readmore: ^2.2.0](https://pub.dev/packages/readmore) 一个 Flutter 插件，而不是允许展开和折叠文本。
+- [retrofit: ^4.0.3](https://pub.dev/packages/retrofit) retrofit.dart 是一个使用 source_gen 并受
+  Chopper 和 Retrofit 启发的类型转换 dio 客户端生成器。
+- [intl_phone_number_input: ^0.7.3+1](https://pub.dev/packages/intl_phone_number_input)  一个简单且可定制的
+  flutter 包，用于以国际/国际格式输入电话号码，使用 Google 的 libphonenumber
+- [flutter_markdown: ^0.6.18+2](https://pub.dev/packages/flutter_markdown) Flutter 的 Markdown
+  渲染器。它支持原始格式，但不支持内联 HTML。
 
 ## 平台特有
 
@@ -237,3 +279,15 @@ https://github.com/fluttercommunity/plus_plugins
   通过单个函数调用重新启动整个 Flutter 应用。
 - [open_filex: ^4.3.4](https://pub.dev/packages/open_filex)
   一个可以调用原生APP打开字符串导致颤动文件的插件，支持iOS（DocumentInteraction）/android（intent）/PC（ffi）/web（dart：html）
+- [location: ^5.0.3](https://pub.dev/packages/location) 这个 Flutter 插件处理在 Android 和 iOS
+  上获取位置。它还在位置更改时提供回调。
+- [video_compress: ^3.1.2](https://pub.dev/packages/video_compress)
+  通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
+- [mobile_scanner: ^3.5.2](https://pub.dev/packages/mobile_scanner) 基于 MLKit 的 Flutter 通用扫描仪。在
+  Android 上使用 CameraX，在 iOS 上使用 AVFoundation。
+- [flutter_barcode_scanner: ^2.0.0](https://pub.dev/packages/flutter_barcode_scanner) 一个用于
+  Flutter 应用程序的插件，可在 Android 和 iOS 上添加条形码扫描支持。
+- [file_picker: ^6.1.1](https://pub.dev/packages/file_picker)
+  一个包，允许您使用本机文件资源管理器来选取单个或多个文件，并具有扩展筛选支持。
+- [excel: ^3.0.0](https://pub.dev/packages/excel) Excel 是一个 flutter 和 dart 库，用于读取、创建和更新
+  XLSX 文件的 excel 工作表
