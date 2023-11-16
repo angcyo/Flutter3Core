@@ -19,6 +19,8 @@ part 'src/basics/basics_ex.dart';
 
 part 'src/basics/basics_image.dart';
 
+part 'src/basics/basics_paint.dart';
+
 part 'src/basics/basics_ui.dart';
 
 part 'src/basics/custom_page_route.dart';

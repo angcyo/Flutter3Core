@@ -432,6 +432,13 @@ extension NavigatorEx on BuildContext {
   /// 是否要显示返回按键
   bool get isAppBarDismissal => modalRoute?.impliesAppBarDismissal ?? false;
 
+  /// 获取导航中的所有页面
+  List<Page<dynamic>>? getRoutePages({
+    bool rootNavigator = false,
+  }) {
+    return Navigator.of(this, rootNavigator: rootNavigator).widget.pages;
+  }
+
   //---push
 
   /// 推送一个路由
