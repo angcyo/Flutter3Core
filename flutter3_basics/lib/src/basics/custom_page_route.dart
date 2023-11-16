@@ -10,6 +10,7 @@ part of flutter3_basics;
 /// 渐变路由动画
 /// [PageRouteBuilder]
 /// [MaterialPageRoute]
+/// [PageTransitionsTheme]
 class FadePageRoute<T> extends MaterialPageRoute<T> {
   FadePageRoute({
     required super.builder,

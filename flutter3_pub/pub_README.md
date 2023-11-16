@@ -165,10 +165,14 @@ HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUT
 开箱即用的可爱颜色选择器，具有高度定制的小部件，可满足所有开发人员的需求。
 
 - [flutter_colorpicker: ^1.0.3](https://pub.dev/packages/flutter_colorpicker)
-- [flutter_material_color_picker: ^1.2.0](https://pub.dev/packages/flutter_material_color_picker) 默认情况下，它是材质颜色，但您可以定义自己的颜色。
-- [flutter_hsvcolor_picker: ^1.5.0](https://pub.dev/packages/flutter_hsvcolor_picker) 专为您的 Flutter 应用程序设计的 HSV 颜色选择器。
+- [flutter_material_color_picker: ^1.2.0](https://pub.dev/packages/flutter_material_color_picker)
+  默认情况下，它是材质颜色，但您可以定义自己的颜色。
+- [flutter_hsvcolor_picker: ^1.5.0](https://pub.dev/packages/flutter_hsvcolor_picker) 专为您的
+  Flutter 应用程序设计的 HSV 颜色选择器。
 - [iglu_color_picker_flutter: ^1.0.4](https://pub.dev/packages/iglu_color_picker_flutter)
-- [flex_color_picker: ^3.3.0](https://pub.dev/packages/flex_color_picker) FlexColorPicker 是 Flutter 的可自定义颜色选择器。 ColorPicker 可以显示六种不同类型的颜色选择器，其中三种用于标准的 Flutter Material Design 2 颜色及其阴影。用于拣选物品的尺寸和样式可以定制。
+- [flex_color_picker: ^3.3.0](https://pub.dev/packages/flex_color_picker) FlexColorPicker 是 Flutter
+  的可自定义颜色选择器。 ColorPicker 可以显示六种不同类型的颜色选择器，其中三种用于标准的 Flutter
+  Material Design 2 颜色及其阴影。用于拣选物品的尺寸和样式可以定制。
 - [fast_color_picker: ^0.1.1](https://pub.dev/packages/fast_color_picker)
 
 ## flutter_smart_dialog: ^4.9.5+1
@@ -189,12 +193,47 @@ https://github.com/fluttercommunity/plus_plugins
 - [json_serializable: ^6.7.1](https://pub.dev/packages/json_serializable) 为操作 JSON 提供 Dart
   构建系统构建器。
 - [vector_math: ^2.1.4](https://pub.dev/packages/vector_math) 用于 2D 和 3D 应用程序的矢量数学库。
+- [get_it: ^7.6.4](https://pub.dev/packages/get_it)
+- [watch_it: ^1.1.0](https://pub.dev/packages/watch_it) 由 get_it 提供支持的简单状态管理解决方案。
+- [rxdart: ^0.27.7](https://pub.dev/packages/rxdart) RxDart 扩展了 Dart Streams 和 StreamController
+  的功能。
+- [flutter_blurhash: ^0.7.0](https://pub.dev/packages/flutter_blurhash) 图像占位符的紧凑表示形式。模糊图片占位
+- [flutter_page_lifecycle: ^1.1.0](https://pub.dev/packages/flutter_page_lifecycle) Android 的
+  onResume/onPause 和 iOS 的 viewDidAppear/viewDidDisappear 用于 Flutter。
+- [flutter_lifecycle_aware: ^0.0.3](https://pub.dev/packages/flutter_lifecycle_aware)
+  flutter_lifecycle 借鉴原生平台 Android/iOS 的生命周期思想，实现了在 Flutter
+  上的一套生命周期系统。开发者可以在任何你需要的地方感知 StatefulWidget 的生命周期。
+- [lifecycle_aware_state: ^0.0.4](https://pub.dev/packages/lifecycle_aware_state) 生命周期回调，用于了解
+  flutter 项目中路由导航和状态生命周期中的不同事件
+- [lifecycle: ^0.8.0](https://pub.dev/packages/lifecycle) 对 Flutter widget 的生命周期支持。
+- [flutter_responsive: ^1.1.0](https://pub.dev/packages/flutter_responsive)
+  这个插件提供了一种简单而高效的方式来处理移动、桌面和 Web 中 Flutter
+  应用程序的响应式布局，允许你的布局适应和包装小部件（容器、行、列和 RichText）引用他的父元素的大小。
+- [apivideo_live_stream: ^1.1.3](https://pub.dev/packages/apivideo_live_stream) api.video
+  是产品构建者的视频基础设施。闪电般快速的视频
+  API，用于集成、扩展和管理应用中的点播和低延迟直播功能。 https://api.video/
+- [apivideo_player: ^1.2.0](https://pub.dev/packages/apivideo_player) api.video
+  是产品构建者的视频基础设施。闪电般快速的视频 API，用于集成、扩展和管理应用中的点播和低延迟直播功能。
+
+## 平台特有
+
+- [camera: ^0.10.5+5](https://pub.dev/packages/camera) 适用于 iOS、Android 和 Web 的 Flutter
+  插件，允许访问设备摄像头。
+- [quick_actions: ^1.0.6](https://pub.dev/packages/quick_actions) 这个 Flutter
+  插件允许您管理应用程序的主屏幕快速操作并与之交互。
+- [awesome_notifications: ^0.8.2](https://pub.dev/packages/awesome_notifications) 在 Flutter
+  上使用自定义本地和推送通知吸引用户。获取实时事件，绝不会错过用户与 Awesome Notifications 的互动。
 - [intent: ^1.4.0](https://pub.dev/packages/intent) 一个简单的 flutter 插件来处理 Android Intents。
-- [android_intent_plus: ^4.0.3](https://pub.dev/packages/android_intent_plus) 该插件允许 Flutter 应用程序在平台为 Android 时启动任意意图。
+- [android_intent_plus: ^4.0.3](https://pub.dev/packages/android_intent_plus) 该插件允许 Flutter
+  应用程序在平台为 Android 时启动任意意图。
 - [device_info_plus: ^9.1.0](https://pub.dev/packages/device_info_plus) 从 Flutter 应用程序中获取当前设备信息。
-- [package_info_plus: ^4.2.0](https://pub.dev/packages/package_info_plus) 这个 Flutter 插件提供了一个 API，用于查询有关应用程序包的信息。
-- [share_plus: ^7.2.1](https://pub.dev/packages/share_plus) 一个 Flutter 插件，用于通过平台的共享对话框共享 Flutter 应用程序中的内容。
-- [get_it: ^7.6.4](https://pub.dev/packages/get_it) 
-- [rxdart: ^0.27.7](https://pub.dev/packages/rxdart) RxDart 扩展了 Dart Streams 和 StreamController 的功能。
-- [flutter_downloader: ^1.11.4](https://pub.dev/packages/flutter_downloader) 用于创建和管理下载任务的插件。支持 iOS 和 Android。
-- [flutter_blurhash: ^0.7.0](https://pub.dev/packages/flutter_blurhash) 图像占位符的紧凑表示形式。
+- [package_info_plus: ^4.2.0](https://pub.dev/packages/package_info_plus) 这个 Flutter 插件提供了一个
+  API，用于查询有关应用程序包的信息。
+- [share_plus: ^7.2.1](https://pub.dev/packages/share_plus) 一个 Flutter 插件，用于通过平台的共享对话框共享
+  Flutter 应用程序中的内容。
+- [flutter_downloader: ^1.11.4](https://pub.dev/packages/flutter_downloader) 用于创建和管理下载任务的插件。支持
+  iOS 和 Android。
+- [restart_app: ^1.2.1](https://pub.dev/packages/restart_app) 一个 Flutter 插件，可帮助您使用原生 API
+  通过单个函数调用重新启动整个 Flutter 应用。
+- [open_filex: ^4.3.4](https://pub.dev/packages/open_filex)
+  一个可以调用原生APP打开字符串导致颤动文件的插件，支持iOS（DocumentInteraction）/android（intent）/PC（ffi）/web（dart：html）

@@ -5,6 +5,8 @@ part of flutter3_basics;
 /// @since 2023/11/01
 ///
 
+/// [WidgetsBinding.addObserver]
+/// [WidgetsBindingObserver]
 mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// [AppExitResponse.exit]
   /// [AppExitResponse.cancel]

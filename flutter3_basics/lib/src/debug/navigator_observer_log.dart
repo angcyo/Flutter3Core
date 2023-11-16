@@ -6,6 +6,11 @@ part of flutter3_basics;
 /// @date 2023/11/09
 ///
 
+/// [Navigator]
+/// [RouteObserver].[RouteAware] 路由感知
+/// ```
+/// final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
+/// ```
 mixin NavigatorObserverLogMixin on NavigatorObserver {
   @override
   void didPop(Route route, Route? previousRoute) {
@@ -38,5 +43,6 @@ mixin NavigatorObserverLogMixin on NavigatorObserver {
   }
 }
 
+/// [NavigatorObserverLogMixin]的实现类
 class NavigatorObserverLog extends NavigatorObserver
     with NavigatorObserverLogMixin {}
