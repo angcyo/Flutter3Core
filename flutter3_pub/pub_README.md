@@ -8,9 +8,10 @@ https://pub.dev/ 上的一些开源库
 - [flutter_riverpod: ^2.4.6](https://pub.dev/packages/flutter_riverpod)
 - [hooks_riverpod: ^2.4.6](https://pub.dev/packages/hooks_riverpod)
 
-- [provider: ^6.1.1](https://pub.dev/packages/provider) 对 InheritedWidget 组件的上层封装，使其更易用，更易复用。
 - [jetpack: ^1.0.3](https://pub.dev/packages/jetpack) 一组抽象的实用程序，灵感来自 Android Jetpack
+- [provider: ^6.1.1](https://pub.dev/packages/provider) 对 InheritedWidget 组件的上层封装，使其更易用，更易复用。
   🚀，用于帮助管理 flutter 应用程序中的状态。
+- [nested: ^1.0.0](https://pub.dev/packages/nested) 一个小组件，用于简化深度嵌套小组件树的语法。
 
 ## ref
 

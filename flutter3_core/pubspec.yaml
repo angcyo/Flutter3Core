@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
   flutter3_widgets:
     path: ../flutter3_widgets
+  flutter3_http:
+    path: ../flutter3_http
 
   # https://pub.dev/packages/objectbox
   # https://docs.objectbox.io/getting-started
