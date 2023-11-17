@@ -1,8 +1,10 @@
 library flutter3_core;
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import 'flutter3_core.dart';
 
@@ -28,5 +30,5 @@ part 'src/view_model/view_model_ex.dart';
 /// 初始化Flutter3核心库
 Future<void> initFlutter3Core() async {
   //初始化Hive数据库
-  await Hive.initFlutter();
+  await Hive.initFlutterEx();
 }

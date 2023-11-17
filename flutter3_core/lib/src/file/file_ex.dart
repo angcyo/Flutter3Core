@@ -5,7 +5,7 @@ part of flutter3_core;
 /// @since 2023/11/17
 ///
 
-/// 获取一个在files类型的文件夹
+/// 获取一个files类型的文件夹
 Future<Directory> fileDirectory() async {
   Directory? directory;
   try {
@@ -25,7 +25,34 @@ Future<Directory> fileDirectory() async {
         l.e(e);
       }
     }
-    directory = await getTemporaryDirectory();
+    directory ??= await getTemporaryDirectory();
+  } catch (e) {
+    l.e(e);
+  }
+  return directory ?? Directory.systemTemp;
+}
+
+/// 获取一个cache类型的文件夹
+Future<Directory> cacheDirectory() async {
+  Directory? directory;
+  try {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      // /storage/emulated/0/Android/data/com.angcyo.flutter3_abc/cache
+      try {
+        directory = (await getExternalCacheDirectories())?.firstOrNull;
+      } catch (e) {
+        l.e(e);
+      }
+    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      try {
+        // /data/user/0/com.angcyo.flutter3_abc/cache
+        directory = await getTemporaryDirectory();
+      } catch (e) {
+        l.e(e);
+      }
+    }
+    directory ??= await getTemporaryDirectory();
   } catch (e) {
     l.e(e);
   }
