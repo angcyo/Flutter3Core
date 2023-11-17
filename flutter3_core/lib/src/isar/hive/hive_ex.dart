@@ -14,6 +14,9 @@ late Box _hiveBox;
 /// [hiveBoxPath/kHiveBox.hive] 完整的文件路径
 String hiveBoxPath = "";
 
+/// 默认的[_hiveBox]文件路径
+String defHiveBoxFilePath = "";
+
 /// 获取所有
 Map<String, dynamic> hiveAll([Box? box]) {
   box ??= _hiveBox;
@@ -59,6 +62,8 @@ extension HiveEx on HiveInterface {
     init(hiveBoxPath);
 
     _hiveBox = await Hive.openBox(kHiveBox);
+    defHiveBoxFilePath = hiveBoxPath.join("${kHiveBox.toLowerCase()}.hive");
+    l.i("[$kHiveBox]HiveBox数据库路径:$defHiveBoxFilePath");
     //_hiveBox.add(value)
     //_hiveBox.get(key)
     //Hive.box

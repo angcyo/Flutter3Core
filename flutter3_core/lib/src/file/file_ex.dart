@@ -60,6 +60,15 @@ Future<Directory> cacheDirectory() async {
 }
 
 extension PathStringEx on String {
+  /// 异步创建目录
+  Future<Directory> createAsync({bool recursive = true}) =>
+      Directory(this).create(recursive: recursive);
+
+  /// 同步创建目录
+  void createDirectory({bool recursive = true}) {
+    Directory(this).createSync(recursive: recursive);
+  }
+
   /// 通过[part1]...[part15]拼接路径
   /// ```
   /// var context = p.Context(style: Style.windows);
