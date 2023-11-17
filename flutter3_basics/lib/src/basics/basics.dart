@@ -92,6 +92,7 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 //String.fromEnvironment
 
 /// 获取当前平台的[MediaQueryData]
+/// [defaultTargetPlatform]
 MediaQueryData platformMediaQuery() =>
     MediaQueryData.fromView(WidgetsBinding.instance.renderView.flutterView);
 

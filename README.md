@@ -9,6 +9,8 @@
 │  │   ├─flutter3_http
 │  │   │   ├─http
 │  │   │   ├─dio
+│  │   ├─path_provider
+│  │   ├─path
 │  │   ├─provider
 │  │   ├─jetpack
 │  │   ├─isar

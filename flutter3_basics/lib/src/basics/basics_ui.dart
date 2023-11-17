@@ -330,6 +330,9 @@ extension WidgetEx on Widget {
 }
 
 extension StateEx on State {
+  /// 标记当前状态脏, 会在下一帧重建
+  /// [Element.markNeedsBuild]
+  /// [ContextEx.tryUpdateState]
   void updateState() {
     setState(() {});
   }
@@ -341,6 +344,14 @@ typedef ConditionalElementVisitorDepth = bool Function(
     Element element, int depth, int childIndex);
 
 extension ContextEx on BuildContext {
+  /// 尝试更新状态, 如果可以
+  /// [StateEx.updateState]
+  void tryUpdateState() {
+    if (this is Element) {
+      (this as Element).markNeedsBuild();
+    }
+  }
+
   /// 请求焦点, 传null, 可以收起键盘
   requestFocus([FocusNode? node]) {
     FocusScope.of(this).requestFocus(node ?? FocusNode());
