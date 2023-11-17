@@ -4,10 +4,16 @@
 ├─flutter3_app
 │  ├─flutter3_core
 │  │   ├─flutter3_widgets
-│  │   │   └─flutter3_basics  
-│  │   └─flutter3_http
-│  │       ├─http
-│  │       ├─dio
+│  │   │   ├─flutter3_basics
+│  │   │   │   └─async
+│  │   ├─flutter3_http
+│  │   │   ├─http
+│  │   │   ├─dio
+│  │   ├─provider
+│  │   ├─jetpack
+│  │   ├─isar
+│  │   ├─isar_flutter_libs
+│  │   ├─hive
 │  ├─flutter3_pub
 │  │   ├─flutter3_basics
 │  │   ├─cached_network_image

@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
+export 'package:async/async.dart';
+
 part 'src/basics/basics.dart';
 
 part 'src/basics/basics_ex.dart';

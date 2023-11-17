@@ -11,7 +11,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # https://pub.dev/packages/collection
+  # https://github.com/dart-lang/collection
+  #collection: ^1.18.0
+
+  # https://pub.dev/packages/meta
+  # https://github.com/dart-lang/sdk/tree/main/pkg/meta
+  #meta: ^1.11.0
+
   # https://pub.dev/packages/async
+  # https://github.com/dart-lang/async
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/meta
   async: ^2.11.0
