@@ -2,6 +2,36 @@
 
 https://pub.dev/ 上的一些开源库
 
+## 状态管理
+
+- [riverpod: ^2.4.6](https://pub.dev/packages/riverpod) https://github.com/rrousselGit/riverpod
+- [flutter_riverpod: ^2.4.6](https://pub.dev/packages/flutter_riverpod)
+- [hooks_riverpod: ^2.4.6](https://pub.dev/packages/hooks_riverpod)
+
+- [provider: ^6.1.1](https://pub.dev/packages/provider) 对 InheritedWidget 组件的上层封装，使其更易用，更易复用。
+- [jetpack: ^1.0.3](https://pub.dev/packages/jetpack) 一组抽象的实用程序，灵感来自 Android Jetpack
+  🚀，用于帮助管理 flutter 应用程序中的状态。
+
+## ref
+
+Ref: 这是一个支持flutter数据响应式的组合Api插件
+
+响应式，简单，灵活，可组合，可移植性高，侵入性低。支持数据同步修改，缓存队列异步刷新。
+
+https://gitee.com/kgm0515/flutter_ref
+https://pub.dev/packages/ref
+
+### 特征
+
+- Ref：把数据包装成一个响应式对象
+- RefBuilder：数据修改通知对应的widget刷新
+- Ref.update：内部监听所有响应对象的读取和修改，执行副作用并更新widget
+- RefCompute：支持计算属性
+- RefWatch：数据修改，执行副作用
+- RefKey：可以很方便的代理复杂响应式对象的某一个属性值
+- refKeys： 函数，可以把一个复杂响应式对象的所有键代理到一个简单对象中，返回一个Map<dynamic, RefKey>对象
+- ...
+
 ## path_provider: ^2.1.1
 
 一个 Flutter 插件，用于查找文件系统上的常用位置。支持 Android、iOS、Linux、macOS 和
@@ -28,27 +58,6 @@ https://github.com/feicien/flutter_swiper_view
 - [flutter_swiper_view: ^1.1.8](https://pub.dev/packages/flutter_swiper_view)
 - [card_swiper: ^3.0.1](https://pub.dev/packages/card_swiper)
 - [carousel_slider: ^4.2.1](https://pub.dev/packages/carousel_slider)
-
-## ref
-
-Ref: 这是一个支持flutter数据响应式的组合Api插件
-
-响应式，简单，灵活，可组合，可移植性高，侵入性低。支持数据同步修改，缓存队列异步刷新。
-
-https://gitee.com/kgm0515/flutter_ref
-
-### 特征
-
-- Ref：把数据包装成一个响应式对象
-- RefBuilder：数据修改通知对应的widget刷新
-- Ref.update：内部监听所有响应对象的读取和修改，执行副作用并更新widget
-- RefCompute：支持计算属性
-- RefWatch：数据修改，执行副作用
-- RefKey：可以很方便的代理复杂响应式对象的某一个属性值
-- refKeys： 函数，可以把一个复杂响应式对象的所有键代理到一个简单对象中，返回一个Map<dynamic, RefKey>对象
-- ...
-
-https://pub.dev/packages/ref
 
 ## flutter_html
 
@@ -199,7 +208,8 @@ https://guoshuyu.cn/home/wx/Z1.html
   简化了创建精美自定义动画的过程：
 - [animations: ^2.0.8](https://pub.dev/packages/animations) 用于 Flutter 的高质量预构建动画
 - [spring: ^2.0.2](https://pub.dev/packages/spring) 一个简单而强大的预构建动画套件。
-- [animated_flip_counter: ^0.2.6](https://pub.dev/packages/animated_flip_counter) 一个隐式动画小部件，从一个数字翻转到另一个数字。
+- [animated_flip_counter: ^0.2.6](https://pub.dev/packages/animated_flip_counter)
+  一个隐式动画小部件，从一个数字翻转到另一个数字。
 - [odometer: ^3.0.0](https://pub.dev/packages/odometer) 计数器动画
 - [animated_digit: ^3.2.3](https://pub.dev/packages/animated_digit) 滚动动画数字小部件，任何需要动画效果的数字，易于使用。
 
