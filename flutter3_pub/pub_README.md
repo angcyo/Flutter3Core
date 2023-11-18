@@ -309,3 +309,10 @@ https://github.com/fluttercommunity/plus_plugins
   一个包，允许您使用本机文件资源管理器来选取单个或多个文件，并具有扩展筛选支持。
 - [excel: ^3.0.0](https://pub.dev/packages/excel) Excel 是一个 flutter 和 dart 库，用于读取、创建和更新
   XLSX 文件的 excel 工作表
+- [uri_to_file: ^1.0.0](https://pub.dev/packages/uri_to_file) 一个 Flutter 插件，用于将支持的 uri
+  转换为文件。支持 Android 和 iOS。
+- [flutter_file_downloader: ^1.1.4](https://pub.dev/packages/flutter_file_downloader) 一个简单的
+  flutter 插件，可将所有文件类型下载到所有 android 设备的下载目录。当 android 10
+  问世时，隐私限制发生了很大的变化，并且没有足够的 flutter 相关信息，所以我想出了一个简单的 ANDROID
+  插件来下载任何文件类型到下载目录 此外，它还具有回调和进度侦听器，安装非常简单 注意：此插件不是为 iOS
+  构建的， 它根本不会影响它。
