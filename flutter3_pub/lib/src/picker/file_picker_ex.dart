@@ -8,6 +8,7 @@ part of flutter3_pub;
 /// 选择文件
 /// [MethodChannelFilePicker] Unsupported operation. Method not found.
 /// The exception thrown was: Binding has not yet been initialized.
+/// initialDirectory 可以选择设置为绝对路径，以指定对话框的打开位置。仅在 Linux、macOS 和 Windows 上受支持
 Future<FilePickerResult?> pickFiles({
   String? dialogTitle,
   String? initialDirectory,
@@ -46,6 +47,7 @@ Future<FilePickerResult?> pickFiles({
 }
 
 /// 选择文件夹路径
+/// initialDirectory 可以选择设置为绝对路径，以指定对话框的打开位置。仅在 Linux 和 macOS 上受支持
 Future<String?> pickDirectoryPath({
   String? dialogTitle,
   bool lockParentWindow = false,
@@ -60,6 +62,32 @@ Future<String?> pickDirectoryPath({
     l.d('选择文件夹->$path');
   } else {
     l.d('取消选择文件夹');
+  }
+  return path;
+}
+
+/// 保存文件
+/// 此方法仅适用于桌面平台（Linux、macOS 和 Windows）。
+Future<String?> saveFile({
+  String? dialogTitle,
+  String? fileName,
+  String? initialDirectory,
+  FileType type = FileType.any,
+  List<String>? allowedExtensions,
+  bool lockParentWindow = false,
+}) async {
+  var path = await FilePicker.platform.saveFile(
+    dialogTitle: dialogTitle,
+    fileName: fileName,
+    initialDirectory: initialDirectory,
+    type: type,
+    allowedExtensions: allowedExtensions,
+    lockParentWindow: lockParentWindow,
+  );
+  if (path != null) {
+    l.d('保存文件至->$path');
+  } else {
+    l.d('取消保存文件');
   }
   return path;
 }
