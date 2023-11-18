@@ -82,6 +82,7 @@ Future<Directory> cacheDirectory() async {
 
 /// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
 /// https://api.dart.dev/stable/3.2.0/dart-io/Process-class.html
+/// https://pub.dev/packages/uri_to_file
 extension PathStringEx on String {
   /// 获取目录名称, 去掉了文件名的路径
   String dirname() => p.dirname(this);
