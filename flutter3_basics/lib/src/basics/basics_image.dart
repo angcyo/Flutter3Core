@@ -22,10 +22,52 @@ Picture drawPicture(
 
 extension ImageEx on ui.Image {
   /// 获取图片的字节数据
-  Future<Uint8List> toBytes(
-      [ImageByteFormat format = ImageByteFormat.png]) async {
+  Future<Uint8List> toBytes([
+    ImageByteFormat format = ImageByteFormat.png,
+  ]) async {
     final ByteData? byteData = await toByteData(format: format);
     return byteData!.buffer.asUint8List();
+  }
+
+  /// 保存图片到相册
+  /// https://pub.dev/packages/image_gallery_saver
+  /*Future<bool> saveToGallery({
+    String? albumName,
+    String? fileName,
+    ImageByteFormat format = ImageByteFormat.png,
+  }) async {
+    final Uint8List bytes = await toBytes(format);
+    return ImageGallerySaver.saveImage(bytes,
+        albumName: albumName, name: fileName);
+  }*/
+
+  /// 保存图片到文件
+  Future<File?> saveToFile(
+    String path, {
+    ImageByteFormat format = ImageByteFormat.png,
+  }) async {
+    final Uint8List bytes = await toBytes(format);
+    return File(path).writeAsBytes(bytes);
+  }
+}
+
+extension ImageStringEx on String {
+  /// 从文件路径中读取图片
+  Future<ui.Image?> toImage() async {
+    final Uint8List bytes = await File(this).readAsBytes();
+    return decodeImageFromList(bytes);
+  }
+
+  /// 从网络路径中读取图片
+  Future<ui.Image?> toImageFromNetwork() async {
+    /*final Uint8List bytes = await http.get(Uri.parse(this)).then((value) => value.bodyBytes);
+    return decodeImageFromList(bytes);*/
+    final Completer<ui.Image> completer = Completer();
+    final img = NetworkImage(this);
+    img.resolve(const ImageConfiguration()).addListener(
+          ImageStreamListener((info, bool _) => completer.complete(info.image)),
+        );
+    return completer.future;
   }
 }
 

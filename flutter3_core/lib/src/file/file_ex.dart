@@ -5,6 +5,19 @@ part of flutter3_core;
 /// @since 2023/11/17
 ///
 
+/// 保存屏幕截图
+/// [filePath] 文件路径
+/// [context] 截图来源, 默认是全屏
+Future<UiImage?> saveScreenCapture([
+  String? filePath,
+  BuildContext? context,
+]) async {
+  var path = (filePath ?? await cacheFilePath("ScreenCapture${nowTime()}.png"));
+  var image = await (context ?? GlobalConfig.def.globalContext)?.captureImage();
+  image?.saveToFile(path);
+  return image;
+}
+
 /// 获取一个files类型的文件夹
 /// ```
 /// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
@@ -144,4 +157,340 @@ extension PathStringEx on String {
       part15,
     );
   }
+}
+
+/// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
+/// 文件扩展操作
+extension FileEx on String {
+  /// 文件大小
+  int fileSizeSync() {
+    var file = File(this);
+    if (file.existsSync()) {
+      return file.lengthSync();
+    }
+    return 0;
+  }
+
+  /// 文件大小
+  Future<int> fileSize() async {
+    var file = File(this);
+    if (await file.exists()) {
+      return file.length();
+    }
+    return 0;
+  }
+
+  /// 确保文件夹存在, 如果不存在, 则创建
+  void ensureDirectory() {
+    var dir = Directory(this);
+    if (!dir.existsSync()) {
+      dir.createSync(recursive: true);
+    }
+  }
+
+  /// 确保文件的文件夹目录存在, 如果不存在, 则创建
+  void ensureFileDirectory() {
+    parentPath().ensureDirectory();
+  }
+
+  /// 读取文件内容
+  Future<String?> readString({Encoding encoding = utf8}) async {
+    try {
+      return await File(this).readAsString(encoding: encoding);
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  String? readStringSync({Encoding encoding = utf8}) {
+    try {
+      return File(this).readAsStringSync(encoding: encoding);
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 写入图片到文件
+  Future<File?> writeImage(
+    UiImage? image, {
+    ImageByteFormat format = ImageByteFormat.png,
+  }) async {
+    if (image == null) {
+      return null;
+    }
+    return image.saveToFile(this, format: format);
+  }
+
+  /// 写入文件内容
+  Future<File?> writeString(
+    String contents, {
+    FileMode mode = FileMode.write,
+    Encoding encoding = utf8,
+    bool flush = false,
+  }) async {
+    try {
+      var file = File(this);
+      file.parent.path.ensureDirectory();
+      return await file.writeAsString(
+        contents,
+        mode: mode,
+        encoding: encoding,
+        flush: flush,
+      );
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 写入文件内容
+  File? writeStringSync(
+    String contents, {
+    FileMode mode = FileMode.write,
+    Encoding encoding = utf8,
+    bool flush = false,
+  }) {
+    try {
+      return File(this)
+        ..writeAsStringSync(
+          contents,
+          mode: mode,
+          encoding: encoding,
+          flush: flush,
+        );
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  Future<Uint8List?> readBytes() async {
+    try {
+      return await File(this).readAsBytes();
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  Uint8List? readBytesSync() {
+    try {
+      return File(this).readAsBytesSync();
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 写入文件内容
+  Future<File?> writeBytes(
+    List<int> bytes, {
+    FileMode mode = FileMode.write,
+    bool flush = false,
+  }) async {
+    try {
+      return await File(this).writeAsBytes(
+        bytes,
+        mode: mode,
+        flush: flush,
+      );
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 写入文件内容
+  File? writeBytesSync(
+    List<int> bytes, {
+    FileMode mode = FileMode.write,
+    bool flush = false,
+  }) {
+    try {
+      return File(this)
+        ..writeAsBytesSync(
+          bytes,
+          mode: mode,
+          flush: flush,
+        );
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  Future<List<String>?> readLines({Encoding encoding = utf8}) async {
+    try {
+      return await File(this).readAsLines(encoding: encoding);
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  List<String>? readLinesSync({Encoding encoding = utf8}) {
+    try {
+      return File(this).readAsLinesSync(encoding: encoding);
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 获取文件夹中的文件列表
+  Future<List<FileSystemEntity>?> listFiles({
+    bool recursive = false,
+    bool followLinks = true,
+  }) async {
+    try {
+      return await Directory(this)
+          .list(
+            recursive: recursive,
+            followLinks: followLinks,
+          )
+          .toList();
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+}
+
+/// 快速获取一个文件类型的文件夹路径
+Future<String> fileFolderPath([
+  String? part1,
+  String? part2,
+  String? part3,
+  String? part4,
+  String? part5,
+  String? part6,
+  String? part7,
+  String? part8,
+  String? part9,
+  String? part10,
+  String? part11,
+  String? part12,
+  String? part13,
+  String? part14,
+  String? part15,
+]) async {
+  var folder = (await fileDirectory()).path;
+  if (part1 != null) {
+    folder = p.join(
+      folder,
+      part1,
+      part2,
+      part3,
+      part4,
+      part5,
+      part6,
+      part7,
+      part8,
+      part9,
+      part10,
+      part11,
+      part12,
+      part13,
+      part14,
+      part15,
+    );
+  }
+  return folder..ensureDirectory();
+}
+
+/// 快速获取一个文件路径
+Future<String> filePath(
+  String fileName, [
+  String? part1,
+  String? part2,
+  String? part3,
+  String? part4,
+  String? part5,
+  String? part6,
+  String? part7,
+  String? part8,
+  String? part9,
+  String? part10,
+  String? part11,
+  String? part12,
+  String? part13,
+  String? part14,
+  String? part15,
+]) async {
+  var folder = await fileFolderPath(part1, part2, part3, part4, part5, part6,
+      part7, part8, part9, part10, part11, part12, part13, part14, part15);
+  return p.join(folder, fileName);
+}
+
+/// 快速获取一个缓存文件路径
+Future<String> cacheFolderPath([
+  String? part1,
+  String? part2,
+  String? part3,
+  String? part4,
+  String? part5,
+  String? part6,
+  String? part7,
+  String? part8,
+  String? part9,
+  String? part10,
+  String? part11,
+  String? part12,
+  String? part13,
+  String? part14,
+  String? part15,
+]) async {
+  var folder = (await cacheDirectory()).path;
+  if (part1 != null) {
+    folder = p.join(
+      folder,
+      part1,
+      part2,
+      part3,
+      part4,
+      part5,
+      part6,
+      part7,
+      part8,
+      part9,
+      part10,
+      part11,
+      part12,
+      part13,
+      part14,
+      part15,
+    );
+  }
+  return folder..ensureDirectory();
+}
+
+/// 快速获取一个缓存文件路径
+Future<String> cacheFilePath(
+  String fileName, [
+  String? part1,
+  String? part2,
+  String? part3,
+  String? part4,
+  String? part5,
+  String? part6,
+  String? part7,
+  String? part8,
+  String? part9,
+  String? part10,
+  String? part11,
+  String? part12,
+  String? part13,
+  String? part14,
+  String? part15,
+]) async {
+  var folder = await cacheFolderPath(part1, part2, part3, part4, part5, part6,
+      part7, part8, part9, part10, part11, part12, part13, part14, part15);
+  return p.join(folder, fileName);
 }

@@ -13,6 +13,10 @@ const bool isDebug = kDebugMode;
 /// 随机数生成器
 final random = Random();
 
+/// Channel需要先初始化这个
+/// [WidgetsFlutterBinding.ensureInitialized]
+void ensureInitialized() => WidgetsFlutterBinding.ensureInitialized();
+
 /// 当前时间戳 `1699064019689`
 int nowTime() => DateTime.now().millisecondsSinceEpoch;
 

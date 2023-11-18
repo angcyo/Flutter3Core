@@ -27,6 +27,10 @@ dependencies:
   # https://github.com/dart-lang/path
   path: ^1.8.3
 
+  # https://pub.dev/packages/filesize
+  # https://github.com/synw/filesize
+  #filesize: ^2.0.1
+
   # https://pub.dev/packages/provider
   # https://github.com/rrousselGit/provider
   # https://pub.dev/packages/collection

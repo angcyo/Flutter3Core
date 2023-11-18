@@ -2,6 +2,7 @@ library flutter3_basics;
 
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:ui';
@@ -61,6 +62,8 @@ part 'src/overlay/loading_overlay.dart';
 
 part 'src/overlay/route_will_pop_scope.dart';
 
+part 'src/utils/filesize.dart';
+
 part 'src/utils/frame_split.dart';
 
 part 'src/utils/l_time.dart';
@@ -72,3 +75,6 @@ part 'src/utils/string_utils.dart';
 part 'src/utils/text_span_builder.dart';
 
 part 'src/widgets/empty.dart';
+
+/// 类型重定义
+typedef UiImage = ui.Image;
