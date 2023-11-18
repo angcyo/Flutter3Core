@@ -6,6 +6,10 @@ part of flutter3_core;
 ///
 
 /// 获取一个files类型的文件夹
+/// ```
+/// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
+/// ```
+///
 Future<Directory> fileDirectory() async {
   Directory? directory;
   try {
@@ -33,6 +37,10 @@ Future<Directory> fileDirectory() async {
 }
 
 /// 获取一个cache类型的文件夹
+/// ```
+/// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
+/// ```
+///
 Future<Directory> cacheDirectory() async {
   Directory? directory;
   try {
@@ -59,7 +67,34 @@ Future<Directory> cacheDirectory() async {
   return directory ?? Directory.systemTemp;
 }
 
+/// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
+/// https://api.dart.dev/stable/3.2.0/dart-io/Process-class.html
 extension PathStringEx on String {
+  /// 获取目录名称, 去掉了文件名的路径
+  String dirname() => p.dirname(this);
+
+  /// 父路径
+  String parentPath() => FileSystemEntity.parentOf(this);
+
+  /// 分割路径
+  List<String> splitPath() => p.split(this);
+
+  /// 获取文件扩展名, 包含.本身
+  String extension([int level = 1]) => p.extension(this, level);
+
+  /// 当前文件是否存在
+  Future<bool> isExists() async => File(this).exists();
+
+  /// 是否是文件夹
+  Future<bool> isDirectory() async => FileSystemEntity.isDirectory(this);
+
+  bool isDirectorySync() => FileSystemEntity.isDirectorySync(this);
+
+  /// 是否是文件
+  Future<bool> isFile() async => FileSystemEntity.isFile(this);
+
+  bool isFileSync() => FileSystemEntity.isFileSync(this);
+
   /// 异步创建目录
   Future<Directory> createAsync({bool recursive = true}) =>
       Directory(this).create(recursive: recursive);

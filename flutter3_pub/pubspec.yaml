@@ -31,6 +31,14 @@ dependencies:
   # https://pub.dev/packages/url_launcher
   url_launcher: ^6.2.1
 
+  # https://pub.dev/packages/file_picker
+  # https://github.com/miguelpruivo/flutter_file_picker
+  # https://pub.dev/packages/flutter_plugin_android_lifecycle
+  # https://pub.dev/packages/plugin_platform_interface
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/win32
+  file_picker: ^6.1.1
+
 # dependency_overrides:
 
 dev_dependencies:

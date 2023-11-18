@@ -137,6 +137,7 @@ TextSpan inlineSpanBuilder(void Function(TextSpanBuilder builder) action) {
 }
 
 /// 构建[Text]
+/// `class Text extends StatelessWidget`
 @dsl
 Text textSpanBuilder(
   void Function(TextSpanBuilder builder) action, {

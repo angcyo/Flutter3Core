@@ -44,7 +44,8 @@ Future<void> openIsar([
   name ??= kIsarName;
   isarPath.createDirectory(); //创建目录
   isar = await Isar.open(
-    [TestCollectionSchema, ...schemas ?? []],
+    //At least one collection needs to be opened.
+    [TestCollectionSchema, ...?schemas],
     directory: isarPath,
     name: name,
     inspector: isDebug,

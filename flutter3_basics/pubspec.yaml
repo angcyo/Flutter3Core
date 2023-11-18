@@ -14,11 +14,11 @@ dependencies:
 
   # https://pub.dev/packages/collection
   # https://github.com/dart-lang/collection
-  #collection: ^1.18.0
+  collection: any #^1.18.0
 
   # https://pub.dev/packages/meta
   # https://github.com/dart-lang/sdk/tree/main/pkg/meta
-  #meta: ^1.11.0
+  meta: any #^1.11.0
 
   # https://pub.dev/packages/async
   # https://github.com/dart-lang/async
