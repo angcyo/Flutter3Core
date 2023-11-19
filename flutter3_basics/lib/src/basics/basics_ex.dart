@@ -71,7 +71,16 @@ extension ColorEx on Color {
 typedef StringEachCallback = void Function(String element);
 typedef StringIndexEachCallback = void Function(int index, String element);
 
+/// 获取剪切板的文本
+Future<String?> getClipboardText() async {
+  var data = await Clipboard.getData(Clipboard.kTextPlain);
+  return data?.text;
+}
+
 extension StringEx on String {
+  /// 复制当前的字符串到剪切板
+  Future<void> copy() async => Clipboard.setData(ClipboardData(text: this));
+
   /// 字符串转换成int
   int toInt({int? radix}) => int.parse(this, radix: radix);
 
