@@ -26,6 +26,10 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
 
   # https://pub.dev/packages/flutter_svg
+  # https://github.com/dnfield/flutter_svg/tree/master/packages/flutter_svg
+  # https://pub.dev/packages/vector_graphics
+  # https://pub.dev/packages/vector_graphics_codec
+  # https://pub.dev/packages/vector_graphics_compiler
   flutter_svg: ^2.0.9
 
   # https://pub.dev/packages/url_launcher

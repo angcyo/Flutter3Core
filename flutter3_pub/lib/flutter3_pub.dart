@@ -1,9 +1,12 @@
 library flutter3_pub;
 
+import 'dart:html';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 export 'package:cached_network_image/cached_network_image.dart';
@@ -23,3 +26,5 @@ part 'src/http/html_pub.dart';
 part 'src/launcher_pub.dart';
 
 part 'src/picker/file_picker_ex.dart';
+
+part 'src/svg_pub.dart';

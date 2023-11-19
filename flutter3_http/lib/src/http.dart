@@ -6,16 +6,39 @@ part of flutter3_http;
 ///
 
 extension HttpUriEx on Uri {
-  ///获取http内容
+  /// 获取http字节内容
+  Future<Uint8List?> getHttpBytes({Map<String, String>? headers}) async {
+    Uint8List? result;
+    final HttpClient httpClient = HttpClient();
+    //final Uri uri = Uri.base.resolve(url);
+    try {
+      final HttpClientRequest request = await httpClient.getUrl(this);
+      if (headers != null) {
+        headers.forEach((String key, String value) {
+          request.headers.add(key, value);
+        });
+      }
+      final HttpClientResponse response = await request.close();
+      if (response.statusCode == HttpStatus.ok) {
+        //throw HttpException('Could not get network asset', uri: this);
+        result = await consolidateHttpClientResponseBytes(response);
+      }
+    } finally {
+      httpClient.close();
+    }
+    return result;
+  }
+
+  ///获取http字符串内容
   Future<String?> getHttpContent({
     Encoding defaultEncoding = utf8,
-    Map<String, String>? httpHeaders,
+    Map<String, String>? headers,
   }) async {
     String? content = data?.contentAsString(encoding: defaultEncoding);
     if (content == null) {
       final client = http.Client();
       try {
-        final response = await client.get(this, headers: httpHeaders);
+        final response = await client.get(this, headers: headers);
         //response.statusCode
         final ct = response.headers['content-type'];
         if (ct == null || !ct.toLowerCase().contains('charset')) {
@@ -33,14 +56,17 @@ extension HttpUriEx on Uri {
 }
 
 extension HttpStringEx on String {
-  ///获取http内容
+  /// [HttpUriEx.getHttpContent]
   Future<String?> getHttpContent({
     Encoding defaultEncoding = utf8,
-    Map<String, String>? httpHeaders,
-  }) async {
-    return Uri.parse(this).getHttpContent(
-      defaultEncoding: defaultEncoding,
-      httpHeaders: httpHeaders,
-    );
-  }
+    Map<String, String>? headers,
+  }) async =>
+      Uri.parse(this).getHttpContent(
+        defaultEncoding: defaultEncoding,
+        headers: headers,
+      );
+
+  /// [HttpUriEx.getHttpBytes]
+  Future<Uint8List?> getHttpBytes({Map<String, String>? headers}) async =>
+      Uri.parse(this).getHttpBytes(headers: headers);
 }
