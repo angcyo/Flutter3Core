@@ -275,6 +275,14 @@ extension IntEx on int {
   }
 }
 
+extension Uint8ListEx on Uint8List {
+  /// [Uint8List]转换成字符串
+  String toStr([Utf8Codec codec = utf8, bool allowMalformed = true]) {
+    return utf8.decode(this, allowMalformed: allowMalformed);
+    //return String.fromCharCodes(this);
+  }
+}
+
 //endregion Int 扩展
 
 /// https://pub.dev/packages/date_format
