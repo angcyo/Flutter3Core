@@ -29,6 +29,9 @@ extension ObjectEx on Object {
 
   /// [Object]的hash值
   String classHash() => "$runtimeType(${hash()})";
+
+  /// 类型转换
+  List<T> ofList<T>() => [this as T];
 }
 
 //endregion Object 扩展
@@ -62,6 +65,11 @@ extension ColorEx on Color {
   /// 判断当前颜色是否是亮色
   bool get isLight =>
       ThemeData.estimateBrightnessForColor(this) == Brightness.light;
+
+  /// `import 'dart:ui' as ui;`
+  /// [ui.ColorFilter]
+  UiColorFilter toColorFilter([BlendMode blendMode = BlendMode.srcIn]) =>
+      ui.ColorFilter.mode(this, blendMode);
 }
 
 //endregion Color 扩展
@@ -98,7 +106,10 @@ extension StringEx on String {
 
   /// 确保前缀是指定的字符串
   /// 返回新的字符串
-  String ensurePrefix(String prefix) {
+  String ensurePrefix(String? prefix) {
+    if (prefix == null || prefix.isEmpty) {
+      return this;
+    }
     if (!startsWith(prefix)) {
       return '$prefix$this';
     }
@@ -107,7 +118,10 @@ extension StringEx on String {
 
   /// 确保后缀
   /// 返回新的字符串
-  String ensureSuffix(String suffix) {
+  String ensureSuffix(String? suffix) {
+    if (suffix == null || suffix.isEmpty) {
+      return this;
+    }
     if (!endsWith(suffix)) {
       return '$this$suffix';
     }

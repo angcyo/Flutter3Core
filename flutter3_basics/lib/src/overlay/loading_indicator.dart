@@ -15,8 +15,8 @@ class LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = size?.width ?? kMinLoadingIndicatorDimension;
-    double height = size?.height ?? kMinLoadingIndicatorDimension;
+    double? width = size?.width ?? kMinLoadingIndicatorDimension;
+    double? height = size?.height ?? kMinLoadingIndicatorDimension;
     return UnconstrainedBox(
       child: SizedBox(
         width: width,
@@ -25,6 +25,32 @@ class LoadingIndicator extends StatelessWidget {
           strokeWidth: 2,
         ),
       ),
+    );
+  }
+}
+
+/// 加载圈圈包裹小部件
+class LoadingWrapWidget extends StatelessWidget {
+  final double? width;
+  final double? height;
+  final AlignmentGeometry? alignment;
+
+  const LoadingWrapWidget({
+    super.key,
+    this.alignment = Alignment.center,
+    this.width,
+    this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget indicator =
+        GlobalConfig.of(context).loadingIndicatorBuilder(context);
+    return Container(
+      width: width,
+      height: height,
+      alignment: alignment,
+      child: indicator,
     );
   }
 }

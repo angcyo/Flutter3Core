@@ -122,6 +122,7 @@ https://github.com/dnfield/vector_graphics
 - [vector_graphics: ^1.1.9+1](https://pub.dev/packages/vector_graphics)
 - [vector_graphics_codec: ^1.1.9+1](https://pub.dev/packages/vector_graphics_codec)
 - [vector_graphics_compiler: ^1.1.9+1](https://pub.dev/packages/vector_graphics_compiler)
+- [svg_path_parser: ^1.1.1](https://pub.dev/packages/svg_path_parser) 一个 Flutter/Dart 实用程序，用于将 SVG 路径解析为库中的 dart:ui 等效 Path 对象。
 
 ## jovial_svg
 
