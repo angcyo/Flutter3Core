@@ -14,6 +14,8 @@ export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';
 export 'src/pub/swiper/transformer_page_view/transformer_page_view.dart';
 
+part 'src/navigation/navigate_ex.dart';
+
 part 'src/pub/accurate_sized_box.dart';
 
 part 'src/scroll/r_item_tile.dart';

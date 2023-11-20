@@ -69,6 +69,46 @@ extension WidgetListEx on WidgetList {
       children: this,
     );
   }
+
+  /// 使用[Column]包裹
+  Widget column({
+    MainAxisAlignment? mainAxisAlignment,
+    MainAxisSize? mainAxisSize,
+    CrossAxisAlignment? crossAxisAlignment,
+    TextDirection? textDirection,
+    VerticalDirection? verticalDirection,
+    TextBaseline? textBaseline,
+  }) {
+    return Column(
+      mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+      mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+      crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
+      textDirection: textDirection,
+      verticalDirection: verticalDirection ?? VerticalDirection.down,
+      textBaseline: textBaseline,
+      children: this,
+    );
+  }
+
+  /// 使用[Row]包裹
+  Widget row({
+    MainAxisAlignment? mainAxisAlignment,
+    MainAxisSize? mainAxisSize,
+    CrossAxisAlignment? crossAxisAlignment,
+    TextDirection? textDirection,
+    VerticalDirection? verticalDirection,
+    TextBaseline? textBaseline,
+  }) {
+    return Row(
+      mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+      mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+      crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
+      textDirection: textDirection,
+      verticalDirection: verticalDirection ?? VerticalDirection.down,
+      textBaseline: textBaseline,
+      children: this,
+    );
+  }
 }
 
 extension WidgetEx on Widget {
@@ -222,6 +262,8 @@ extension WidgetEx on Widget {
     Matrix4? transform,
     AlignmentGeometry? transformAlignment,
     Clip clipBehavior = Clip.none,
+    double? width,
+    double? height,
   }) {
     return Container(
       alignment: alignment,
@@ -231,6 +273,8 @@ extension WidgetEx on Widget {
       foregroundDecoration: foregroundDecoration,
       constraints: constraints,
       margin: margin,
+      width: width,
+      height: height,
       transform: transform,
       transformAlignment: transformAlignment,
       clipBehavior: clipBehavior,
@@ -326,6 +370,19 @@ extension WidgetEx on Widget {
       maxWidth: maxWidth ?? double.infinity,
       maxHeight: maxHeight ?? double.infinity,
     ));
+  }
+
+  /// 指定大小
+  /// [SizedBox]
+  Widget size({
+    double? width,
+    double? height,
+  }) {
+    return SizedBox(
+      width: width,
+      height: height,
+      child: this,
+    );
   }
 }
 

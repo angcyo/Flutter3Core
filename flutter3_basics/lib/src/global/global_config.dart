@@ -76,6 +76,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 全局的主题样式
   ThemeData themeData = ThemeData();
 
+  /// 全局主题配置
+  GlobalTheme globalThemeConfig = GlobalTheme();
+
   //endregion ThemeData
 
   //region Widget

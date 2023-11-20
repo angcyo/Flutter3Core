@@ -8,21 +8,27 @@ part of flutter3_pub;
 
 //region Asset
 
+const kDefAssetsSvgPrefix = 'assets/svg/';
+
 /// [loadAssetImageWidget]
+/// [package] 如果资源不在当前项目中, 需要指定package才能访问
 SvgPicture loadAssetSvgWidget(
   String key, {
-  String? prefix = 'assets/',
+  String? prefix = kDefAssetsSvgPrefix,
+  String? package,
   double? width,
   double? height,
+  BoxFit fit = BoxFit.contain,
   UiColorFilter? colorFilter,
   WidgetBuilder? placeholderBuilder,
 }) =>
     SvgPicture.asset(
-      key.ensurePrefix(prefix),
+      key.ensurePackagePrefix(package, prefix),
       semanticsLabel: key,
       colorFilter: colorFilter,
       width: width,
       height: height,
+      fit: fit,
       placeholderBuilder: placeholderBuilder ??
           (context) => LoadingWrapWidget(
                 width: width,

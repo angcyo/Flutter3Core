@@ -50,6 +50,8 @@ part 'src/global/global_config.dart';
 
 part 'src/global/global_overlays.dart';
 
+part 'src/global/global_ui.dart';
+
 part 'src/global/overlay/overlay_animation.dart';
 
 part 'src/global/overlay/overlay_manage.dart';

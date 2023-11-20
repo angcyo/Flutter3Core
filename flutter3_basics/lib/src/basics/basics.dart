@@ -118,13 +118,21 @@ Stream<T?> delayGenerate<T>(
 
 //region Asset
 
+const kDefAssetsPngPrefix = 'assets/png/';
+
 /// ```
 /// await loadAssetString('config.json');
 /// await loadAssetString('assets/config.json');
 /// ```
 /// https://flutter.cn/docs/development/ui/assets-and-images#loading-text-assets
-Future<String> loadAssetString(String key, [String prefix = 'assets/']) async {
-  return await rootBundle.loadString(key.ensurePrefix(prefix));
+Future<String> loadAssetString(
+  String key, {
+  String prefix = 'assets/',
+  String? package,
+}) async {
+  return await rootBundle.loadString(
+    key.ensurePackagePrefix(package, prefix),
+  );
 }
 
 /// ```
@@ -133,14 +141,27 @@ Future<String> loadAssetString(String key, [String prefix = 'assets/']) async {
 /// ```
 /// https://flutter.cn/docs/development/ui/assets-and-images#loading-images-1
 /// [ImageIcon]
-Image loadAssetImageWidget(String key, [String? prefix = 'assets/']) =>
-    Image.asset(key.ensurePrefix(prefix));
+/// [loadAssetSvgWidget]
+Image loadAssetImageWidget(
+  String key, {
+  String? prefix = kDefAssetsPngPrefix,
+  String? package,
+}) =>
+    Image.asset(
+      key.ensurePackagePrefix(package, prefix),
+    );
 
 /// [ImageProvider]
 /// [AssetBundleImageProvider]
 /// [AssetImage]
 /// [ExactAssetImage]
-AssetImage loadAssetImage(String key, [String prefix = 'assets/']) =>
-    AssetImage(key.ensurePrefix(prefix));
+AssetImage loadAssetImage(
+  String key, {
+  String? prefix = kDefAssetsPngPrefix,
+  String? package,
+}) =>
+    AssetImage(
+      key.ensurePackagePrefix(package, prefix),
+    );
 
 //endregion Asset

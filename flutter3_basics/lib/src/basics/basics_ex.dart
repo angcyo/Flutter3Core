@@ -116,6 +116,22 @@ extension StringEx on String {
     return this;
   }
 
+  /// 指定[package]的前缀
+  String ensurePackagePrefix(String? package, String? prefix) {
+    var before = "";
+    if (package == null || package.isEmpty) {
+    } else {
+      before = "packages/$package/";
+    }
+    if (prefix == null || prefix.isEmpty) {
+      return '$before$this';
+    }
+    if (!startsWith(prefix)) {
+      return '$before$prefix$this';
+    }
+    return '$before$this';
+  }
+
   /// 确保后缀
   /// 返回新的字符串
   String ensureSuffix(String? suffix) {
