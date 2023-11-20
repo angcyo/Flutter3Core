@@ -172,6 +172,18 @@ extension StringEx on String {
       callback(index++, element);
     }
   }
+
+  /// 使用[Text]包裹
+  Widget text({
+    TextStyle? style,
+    TextAlign? textAlign,
+  }) {
+    return Text(
+      this,
+      style: style,
+      textAlign: textAlign,
+    );
+  }
 }
 
 //endregion String 扩展

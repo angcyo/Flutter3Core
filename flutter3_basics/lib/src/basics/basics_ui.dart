@@ -180,7 +180,7 @@ extension WidgetEx on Widget {
   /// [Flexible]
   ///  - [Expanded]
   /// [Spacer] 空白占位 `const SizedBox.shrink()`
-  Widget expanded({int flex = 1, FlexFit fit = FlexFit.loose}) {
+  Widget expanded({int flex = 1, FlexFit fit = FlexFit.tight}) {
     return Flexible(
       flex: flex,
       fit: fit,
@@ -226,6 +226,32 @@ extension WidgetEx on Widget {
   Widget absorbPointer({bool absorbing = true}) {
     return AbsorbPointer(
       absorbing: absorbing,
+      child: this,
+    );
+  }
+
+  /// 圆角
+  Widget clip({
+    BorderRadiusGeometry borderRadius = BorderRadius.zero,
+    CustomClipper<RRect>? clipper,
+    Clip clipBehavior = Clip.antiAlias,
+  }) {
+    return ClipRRect(
+      borderRadius: borderRadius,
+      clipper: clipper,
+      clipBehavior: clipBehavior,
+      child: this,
+    );
+  }
+
+  /// 椭圆形
+  Widget clipOval({
+    CustomClipper<Rect>? clipper,
+    Clip clipBehavior = Clip.antiAlias,
+  }) {
+    return ClipOval(
+      clipper: clipper,
+      clipBehavior: clipBehavior,
       child: this,
     );
   }
@@ -282,8 +308,98 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// 拦截路由的弹出, 返回键.
-  /// [WillPopScope.onWillPop]
+  /// 圆形阴影包裹
+  Widget circleShadow({
+    bool clipContent = true,
+    Color? decorationColor = Colors.white,
+    Color shadowColor = Colors.black12,
+    double blurRadius = 4,
+    Color? color,
+    AlignmentGeometry? alignment = Alignment.center,
+    EdgeInsetsGeometry? padding,
+    Decoration? foregroundDecoration,
+    BoxConstraints? constraints,
+    EdgeInsetsGeometry? margin,
+    Matrix4? transform,
+    AlignmentGeometry? transformAlignment,
+    Clip clipBehavior = Clip.none,
+    double? width,
+    double? height,
+  }) {
+    return (clipContent ? clipOval() : this).container(
+      alignment: alignment,
+      padding: padding,
+      color: color,
+      foregroundDecoration: foregroundDecoration,
+      constraints: constraints,
+      margin: margin,
+      width: width,
+      height: height,
+      transform: transform,
+      transformAlignment: transformAlignment,
+      clipBehavior: clipBehavior,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: decorationColor,
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: blurRadius,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 圆角矩形阴影包裹
+  /// [clipContent] 是否裁剪内容
+  Widget radiusShadow({
+    bool clipContent = true,
+    Color? decorationColor = Colors.white,
+    Color shadowColor = Colors.black12,
+    double blurRadius = 24,
+    BorderRadiusGeometry? borderRadius,
+    Color? color,
+    AlignmentGeometry? alignment = Alignment.center,
+    EdgeInsetsGeometry? padding,
+    Decoration? foregroundDecoration,
+    BoxConstraints? constraints,
+    EdgeInsetsGeometry? margin,
+    Matrix4? transform,
+    AlignmentGeometry? transformAlignment,
+    Clip clipBehavior = Clip.none,
+    double? width,
+    double? height,
+  }) {
+    borderRadius ??= const BorderRadius.all(Radius.circular(24));
+    return (clipContent ? clip(borderRadius: borderRadius) : this).container(
+      alignment: alignment,
+      padding: padding,
+      color: color,
+      foregroundDecoration: foregroundDecoration,
+      constraints: constraints,
+      margin: margin,
+      width: width,
+      height: height,
+      transform: transform,
+      transformAlignment: transformAlignment,
+      clipBehavior: clipBehavior,
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        borderRadius: borderRadius,
+        color: decorationColor,
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: blurRadius,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 文本样式包裹
+  /// [DefaultTextStyle]
   Widget wrapTextStyle({
     TextStyle? style,
     TextAlign? textAlign,
@@ -308,6 +424,7 @@ extension WidgetEx on Widget {
   }
 
   /// 拦截路由的弹出, 返回键.
+  /// [PopScope]
   /// [WillPopScope.onWillPop]
   Widget willPop([WillPopCallback? onWillPop]) {
     return WillPopScope(
@@ -355,8 +472,8 @@ extension WidgetEx on Widget {
     double? minHeight,
   }) {
     return constrainedBox(BoxConstraints(
-      minWidth: minWidth ?? double.infinity,
-      minHeight: minHeight ?? double.infinity,
+      minWidth: minWidth ?? 0,
+      minHeight: minHeight ?? 0,
     ));
   }
 
@@ -384,6 +501,42 @@ extension WidgetEx on Widget {
       child: this,
     );
   }
+
+  /// 使用涟漪动画包裹
+  /// https://api.flutter.dev/flutter/material/InkWell-class.html
+  /// [splashColor] 涟漪颜色
+  /// [highlightColor] 高亮颜色
+  Widget ink({
+    GestureTapCallback? onTap,
+    BorderRadius? borderRadius,
+    Color? splashColor,
+    Color? highlightColor,
+    double? radius,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      radius: radius,
+      splashColor: splashColor,
+      highlightColor: highlightColor,
+      borderRadius: borderRadius,
+      child: this,
+    );
+  }
+
+  /// ink
+  Widget inkCircle({
+    GestureTapCallback? onTap,
+    Color? splashColor,
+    Color? highlightColor,
+    double? radius,
+  }) =>
+      ink(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        splashColor: splashColor,
+        highlightColor: highlightColor,
+        radius: radius,
+      );
 }
 
 extension StateEx on State {

@@ -1,5 +1,6 @@
 library flutter3_widgets;
 
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/gestures.dart';
@@ -29,3 +30,5 @@ part 'src/widgets/after_layout.dart';
 part 'src/widgets/child_background_widget.dart';
 
 part 'src/widgets/gradient_button.dart';
+
+part 'src/widgets/wrap_content_layout.dart';

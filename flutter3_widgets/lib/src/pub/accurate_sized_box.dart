@@ -81,3 +81,17 @@ class RenderAccurateSizedBox extends RenderProxyBoxWithHitTestBehavior {
     );
   }
 }
+
+extension AccurateSizedBoxEx on Widget {
+  /// [AccurateSizedBox]
+  Widget accurateSizedBox({
+    double width = 0,
+    double height = 0,
+  }) {
+    return AccurateSizedBox(
+      width: width,
+      height: height,
+      child: this,
+    );
+  }
+}
