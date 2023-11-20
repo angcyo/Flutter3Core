@@ -221,10 +221,15 @@ https://guoshuyu.cn/home/wx/Z1.html
 `arb`占位符、复数和选项:
 https://flutter.cn/docs/ui/accessibility-and-internationalization/internationalization#placeholders-plurals-and-selects
 
+配置 l10n.yaml 文件:
+https://flutter.cn/docs/ui/accessibility-and-internationalization/internationalization#configuring-the-l10nyaml-file
+
 - [easy_localization: ^3.0.3](https://pub.dev/packages/easy_localization) 轻松快速地实现 Flutter
   应用的国际化
 - [intl: ^0.18.1](https://pub.dev/packages/intl)
   提供国际化和本地化功能，包括消息翻译、复数和性别、日期/数字格式和解析以及双向文本。 https://github.com/cfug/flutter.cn/tree/main/examples/internationalization/gen_l10n_example
+- [intl_utils: ^2.8.5](https://pub.dev/packages/intl_utils) Dart 包，用于在 .arb 文件中的翻译和
+  Flutter 应用之间创建绑定。它为官方 Dart Intl 库生成样板代码，并为 Dart 代码中的键添加自动完成功能。
 
 ## others
 
@@ -281,7 +286,8 @@ https://github.com/fluttercommunity/plus_plugins
   flutter 包，用于以国际/国际格式输入电话号码，使用 Google 的 libphonenumber
 - [flutter_markdown: ^0.6.18+2](https://pub.dev/packages/flutter_markdown) Flutter 的 Markdown
   渲染器。它支持原始格式，但不支持内联 HTML。
-- [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility) 对键盘可见性更改做出反应。
+- [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility)
+  对键盘可见性更改做出反应。
 
 ## 平台特有
 
