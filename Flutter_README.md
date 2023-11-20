@@ -2,13 +2,15 @@
 
 直接打包`apk`体积大约`17MB`, 加入一些基础库之后`apk`体积大约`24.5MB`
 
-- `lib\x86_64\libflutter.so`      4.7MB
+## libflutter.so
 - `lib\arm64-v8a\libflutter.so`   4.6MB
 - `lib\armeabi-v7a\libflutter.so` 3.9MB
+- `lib\x86_64\libflutter.so`      4.7MB
 
-- `lib\x86_64\libapp.so`          965.6KB  2.8MB
+## libapp.so
 - `lib\arm64-v8a\libapp.so`       958.8KB  2.8MB
 - `lib\armeabi-v7a\libapp.so`     1.1MB    3.1MB
+- `lib\x86_64\libapp.so`          965.6KB  2.8MB
 
 # RenderObject
 
