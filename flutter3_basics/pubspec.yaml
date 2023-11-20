@@ -11,6 +11,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # https://pub.dev/packages/intl
+  # https://github.com/localizely/flutter-intl-plugin-sample-app
+  # https://pub.dev/packages/clock
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/path
+  intl: any
+  clock: any
 
   # https://pub.dev/packages/collection
   # https://github.com/dart-lang/collection
@@ -36,7 +45,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  generate: true # Add this line to enable code generation
 # To add assets to your package, add an assets section, like this:
 # assets:
 #   - images/a_dot_burr.jpeg

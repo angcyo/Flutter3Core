@@ -122,7 +122,8 @@ https://github.com/dnfield/vector_graphics
 - [vector_graphics: ^1.1.9+1](https://pub.dev/packages/vector_graphics)
 - [vector_graphics_codec: ^1.1.9+1](https://pub.dev/packages/vector_graphics_codec)
 - [vector_graphics_compiler: ^1.1.9+1](https://pub.dev/packages/vector_graphics_compiler)
-- [svg_path_parser: ^1.1.1](https://pub.dev/packages/svg_path_parser) 一个 Flutter/Dart 实用程序，用于将 SVG 路径解析为库中的 dart:ui 等效 Path 对象。
+- [svg_path_parser: ^1.1.1](https://pub.dev/packages/svg_path_parser) 一个 Flutter/Dart 实用程序，用于将
+  SVG 路径解析为库中的 dart:ui 等效 Path 对象。
 
 ## jovial_svg
 
@@ -219,6 +220,8 @@ https://guoshuyu.cn/home/wx/Z1.html
 
 - [easy_localization: ^3.0.3](https://pub.dev/packages/easy_localization) 轻松快速地实现 Flutter
   应用的国际化
+- [intl: ^0.18.1](https://pub.dev/packages/intl)
+  提供国际化和本地化功能，包括消息翻译、复数和性别、日期/数字格式和解析以及双向文本。 https://github.com/cfug/flutter.cn/tree/main/examples/internationalization/gen_l10n_example
 
 ## others
 
