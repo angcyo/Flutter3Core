@@ -1,7 +1,5 @@
 library flutter3_pub;
 
-import 'dart:html';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
