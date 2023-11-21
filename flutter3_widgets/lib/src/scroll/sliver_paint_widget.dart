@@ -93,6 +93,15 @@ class SliverPaintRender extends RenderSliverSingleBoxAdapter {
           constraints.viewportMainAxisExtent,
         ).toRect(),
         Paint()..color = Colors.black54);*/
-    painter?.call(context.canvas, offset & size);
+    painter?.call(
+      context.canvas,
+      offset & size,
+      Rect.fromLTWH(
+        0,
+        0,
+        constraints.crossAxisExtent,
+        constraints.viewportMainAxisExtent,
+      ),
+    );
   }
 }

@@ -5,6 +5,7 @@ part of flutter3_basics;
 /// @since 2023/11/10
 ///
 
+@dp
 const double kS = 2;
 const double kM = 4;
 const double kL = 6;

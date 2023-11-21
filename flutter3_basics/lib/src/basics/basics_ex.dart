@@ -208,17 +208,79 @@ extension RectEx on Rect {
 
   Offset get lb => Offset(left, bottom);
 
+  Rect operator -(Offset offset) => Rect.fromLTWH(
+        left - offset.dx,
+        top - offset.dy,
+        width,
+        height,
+      );
+
+  Rect operator +(Offset offset) => Rect.fromLTWH(
+        left + offset.dx,
+        top + offset.dy,
+        width,
+        height,
+      );
+
+  /// 偏移矩形
+  Rect offset(Offset offset) => Rect.fromLTWH(
+        left + offset.dx,
+        top + offset.dy,
+        width,
+        height,
+      );
+
   /// 转换成圆角矩形
   /// [RRect]
-  toRRect(double radius) =>
+  RRect toRRect(double radius) =>
       RRect.fromRectAndRadius(this, Radius.circular(radius));
 
   /// [toRRect]
-  toRRectFromRadius(Radius radius) => RRect.fromRectAndRadius(this, radius);
+  RRect toRRectFromRadius(Radius radius) =>
+      RRect.fromRectAndRadius(this, radius);
 
   /// [toRRect]
-  toRRectFromXY(double radiusX, double radiusY) =>
+  RRect toRRectFromXY(double radiusX, double radiusY) =>
       RRect.fromRectXY(this, radiusX, radiusY);
+
+  /// [toRRect]
+  RRect toRRectTB({double topRadius = 0, double bottomRadius = 0}) =>
+      RRect.fromLTRBAndCorners(
+        left,
+        top,
+        right,
+        bottom,
+        topLeft: Radius.circular(topRadius),
+        topRight: Radius.circular(topRadius),
+        bottomLeft: Radius.circular(bottomRadius),
+        bottomRight: Radius.circular(bottomRadius),
+      );
+
+  /// [toRRect]
+  RRect toRRectLR({double leftRadius = 0, double rightRadius = 0}) =>
+      RRect.fromLTRBAndCorners(
+        left,
+        top,
+        right,
+        bottom,
+        topLeft: Radius.circular(leftRadius),
+        topRight: Radius.circular(rightRadius),
+        bottomLeft: Radius.circular(leftRadius),
+        bottomRight: Radius.circular(rightRadius),
+      );
+
+  /// [toRRect]
+  RRect toRRectSymmetric({double vertical = 0, double horizontal = 0}) =>
+      RRect.fromLTRBAndCorners(
+        left,
+        top,
+        right,
+        bottom,
+        topLeft: Radius.circular(vertical),
+        topRight: Radius.circular(horizontal),
+        bottomLeft: Radius.circular(vertical),
+        bottomRight: Radius.circular(horizontal),
+      );
 }
 
 //endregion Rect 扩展
