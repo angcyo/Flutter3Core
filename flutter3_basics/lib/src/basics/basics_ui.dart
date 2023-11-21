@@ -293,6 +293,7 @@ extension WidgetEx on Widget {
 
   /// 使用一个容器包裹当前的小部件
   /// [Container]
+  /// [radiusFillDecoration]
   Widget container({
     AlignmentGeometry? alignment,
     EdgeInsetsGeometry? padding,

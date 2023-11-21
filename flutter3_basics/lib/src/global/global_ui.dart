@@ -21,7 +21,7 @@ class GlobalThemeConfig extends InheritedWidget {
 
 /// 全局颜色配置
 class GlobalTheme {
-  /// 颜色配置
+  /// 颜色配置, 主要颜色
   Color get primaryColor => "#2febff".toColor();
 
   /// 暗一点的主题色
