@@ -18,6 +18,8 @@ part 'src/navigation/navigate_ex.dart';
 
 part 'src/pub/accurate_sized_box.dart';
 
+part 'src/pub/keep_alive.dart';
+
 part 'src/scroll/r_item_tile.dart';
 
 part 'src/scroll/r_scroll_view.dart';
