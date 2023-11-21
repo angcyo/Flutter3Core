@@ -5,6 +5,36 @@ part of flutter3_basics;
 /// @since 2023/11/03
 ///
 
+//region---单位
+
+class _Pixel {
+  final String reason;
+
+  const _Pixel([this.reason = '像素单位']);
+}
+
+const pixel = _Pixel();
+
+class _Dp {
+  final String reason;
+
+  const _Dp([this.reason = 'Dp单位']);
+}
+
+const dp = _Dp();
+
+class _Mm {
+  final String reason;
+
+  const _Mm([this.reason = 'Mm单位']);
+}
+
+const mm = _Mm();
+
+//endregion---单位
+
+//region---base
+
 class _Dsl {
   final String reason;
 
@@ -33,3 +63,5 @@ class _TestPoint {
 
 /// 测试点
 const testPoint = _TestPoint();
+
+//endregion---base

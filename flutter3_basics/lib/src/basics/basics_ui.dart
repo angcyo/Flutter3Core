@@ -811,21 +811,75 @@ extension NavigatorEx on BuildContext {
 
 //region 渐变相关
 
+/// 线性渐变 [Shader]
+UiGradient linearGradientShader(
+  List<Color> colors, {
+  Rect? rect,
+  Offset? from,
+  Offset? to,
+}) =>
+    UiGradient.linear(
+      from ?? rect?.lt ?? Offset.zero,
+      to ?? rect?.rt ?? Offset.zero,
+      colors,
+    );
+
+/// 径向渐变 [Shader]
+UiGradient radialGradientShader(
+  double radius,
+  List<Color> colors, {
+  Rect? rect,
+  Offset? center,
+}) =>
+    UiGradient.radial(
+      center ?? rect?.center ?? Offset.zero,
+      radius,
+      colors,
+    );
+
+/// 扫描渐变 [Shader]
+UiGradient sweepGradientShader(
+  List<Color> colors, {
+  Rect? rect,
+  Offset? center,
+}) =>
+    UiGradient.sweep(
+      center ?? rect?.center ?? Offset.zero,
+      colors,
+    );
+
+/// [Gradient]
+/// [UiGradient]
+Gradient linearGradient(
+  List<Color> colors, {
+  AlignmentGeometry begin = Alignment.centerLeft,
+  AlignmentGeometry end = Alignment.centerRight,
+  TileMode tileMode = TileMode.clamp,
+  GradientTransform? transform,
+}) =>
+    LinearGradient(
+      colors: colors,
+      begin: begin,
+      end: end,
+      tileMode: tileMode,
+      transform: transform,
+    );
+
 /// 返回一个线性渐变的小部件
 Widget linearGradientWidget(
   List<Color> colors, {
+  Key? key,
   Widget? child,
   AlignmentGeometry begin = Alignment.centerLeft,
   AlignmentGeometry end = Alignment.centerRight,
-  Key? key,
   TileMode tileMode = TileMode.clamp,
   GradientTransform? transform,
 }) {
   return Container(
     key: key,
     decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: colors,
+      gradient: linearGradient(
+        colors,
         begin: begin,
         end: end,
         tileMode: tileMode,

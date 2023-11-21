@@ -198,6 +198,16 @@ extension RectEx on Rect {
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
 
+  /// [Rect]的起点
+  Offset get lt => Offset(left, top);
+
+  Offset get rt => Offset(right, top);
+
+  /// [Rect]的右下角
+  Offset get rb => Offset(right, bottom);
+
+  Offset get lb => Offset(left, bottom);
+
   /// 转换成圆角矩形
   /// [RRect]
   toRRect(double radius) =>

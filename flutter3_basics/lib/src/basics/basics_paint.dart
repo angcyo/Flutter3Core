@@ -5,6 +5,9 @@ part of flutter3_basics;
 /// @since 2023/11/16
 ///
 
+/// 自定义的绘制方法
+typedef Painter = void Function(Canvas canvas, Rect rect);
+
 extension StringPaintEx on String {
   /// [TextSpanPaintEx.textSize]
   Size textSize({double? fontSize, TextStyle? style}) => TextSpan(

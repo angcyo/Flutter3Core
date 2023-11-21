@@ -87,3 +87,4 @@ part 'src/widgets/empty.dart';
 /// 类型重定义
 typedef UiImage = ui.Image;
 typedef UiColorFilter = ui.ColorFilter;
+typedef UiGradient = ui.Gradient;

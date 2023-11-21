@@ -95,10 +95,42 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 //debugger(message: "等待调试...");
 //String.fromEnvironment
 
+/// [RendererBinding.instance]
+/// [RendererBinding.renderViews]
+FlutterView get flutterView => WidgetsBinding.instance.renderView.flutterView;
+
 /// 获取当前平台的[MediaQueryData]
 /// [defaultTargetPlatform]
-MediaQueryData platformMediaQuery() =>
-    MediaQueryData.fromView(WidgetsBinding.instance.renderView.flutterView);
+/// [PlatformDispatcher.instance]
+/// [PlatformDispatcher.displays]
+/// [PlatformDispatcher.views]
+MediaQueryData platformMediaQuery() => MediaQueryData.fromView(flutterView);
+
+/// 屏幕宽度 [screenWidthPixel]
+@dp
+double get screenWidth => platformMediaQuery().size.width;
+
+/// 屏幕高度, 此高度不包含导航栏的高度 [screenHeightPixel]
+@dp
+double get screenHeight => platformMediaQuery().size.height;
+
+/// 屏幕宽度 [screenWidth]
+@pixel
+double get screenWidthPixel =>
+    platformMediaQuery().size.width * platformMediaQuery().devicePixelRatio;
+
+/// 屏幕高度 [screenHeight]
+@pixel
+double get screenHeightPixel =>
+    platformMediaQuery().size.height * platformMediaQuery().devicePixelRatio;
+
+/// 设备的宽度 [screenWidth]
+@pixel
+double get deviceWidthPixel => flutterView.display.size.width;
+
+/// 设备的高度 [screenHeight], 包含导航栏的高度
+@pixel
+double get deviceHeightPixel => flutterView.display.size.height;
 
 /// 延迟随机发生器
 /// [delay] 延迟多久触发一次[generate]
