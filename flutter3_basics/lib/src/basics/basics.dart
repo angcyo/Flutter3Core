@@ -146,9 +146,15 @@ Image loadAssetImageWidget(
   String key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,
+  BoxFit? fit,
+  double? width,
+  double? height,
 }) =>
     Image.asset(
       key.ensurePackagePrefix(package, prefix),
+      fit: fit,
+      width: width,
+      height: height,
     );
 
 /// [ImageProvider]

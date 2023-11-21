@@ -1,5 +1,6 @@
 library flutter3_pub;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
@@ -20,6 +21,8 @@ export 'package:octo_image/octo_image.dart';
 export 'package:url_launcher/url_launcher.dart';
 
 part 'src/http/html_pub.dart';
+
+part 'src/image_pub.dart';
 
 part 'src/launcher_pub.dart';
 

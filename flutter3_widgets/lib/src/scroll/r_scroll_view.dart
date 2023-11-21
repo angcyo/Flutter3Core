@@ -183,6 +183,9 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     // 开始遍历, 组装
     for (var tile in widget.children) {
       if (tile is RItemTile) {
+        if (tile.hide) {
+          continue;
+        }
         //RItemTile
         if (tile.isSliverItem ||
             tile.pinned ||
@@ -199,34 +202,58 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
             } else {
               child = tile;
             }
-            result.add(SliverFillRemaining(
-              hasScrollBody: tile.fillHasScrollBody,
-              fillOverscroll: tile.fillOverscroll,
-              child: child,
-            ));
+            result.add(tile.buildWrapChild(
+                context,
+                result,
+                _wrapSliverPadding(
+                  tile.sliverPadding,
+                  SliverFillRemaining(
+                    hasScrollBody: tile.fillHasScrollBody,
+                    fillOverscroll: tile.fillOverscroll,
+                    child: child,
+                  ),
+                )));
           } else if (tile.pinned || tile.floating) {
             // SliverPersistentHeader wrap
             if (tile.headerDelegate == null) {
-              result.add(SliverPersistentHeader(
-                delegate: SingleSliverPersistentHeaderDelegate(
-                  child: tile,
-                  childBuilder: tile.headerChildBuilder,
-                  headerFixedHeight: tile.headerFixedHeight,
-                  headerMaxHeight: tile.headerMaxHeight,
-                  headerMinHeight: tile.headerMinHeight,
-                ),
-                pinned: tile.pinned,
-                floating: tile.floating,
-              ));
+              result.add(tile.buildWrapChild(
+                  context,
+                  result,
+                  _wrapSliverPadding(
+                    tile.sliverPadding,
+                    SliverPersistentHeader(
+                      delegate: SingleSliverPersistentHeaderDelegate(
+                        child: tile,
+                        childBuilder: tile.headerChildBuilder,
+                        headerFixedHeight: tile.headerFixedHeight,
+                        headerMaxHeight: tile.headerMaxHeight,
+                        headerMinHeight: tile.headerMinHeight,
+                      ),
+                      pinned: tile.pinned,
+                      floating: tile.floating,
+                    ),
+                  )));
             } else {
-              result.add(SliverPersistentHeader(
-                delegate: tile.headerDelegate!,
-                pinned: tile.pinned,
-                floating: tile.floating,
-              ));
+              result.add(tile.buildWrapChild(
+                  context,
+                  result,
+                  _wrapSliverPadding(
+                    tile.sliverPadding,
+                    SliverPersistentHeader(
+                      delegate: tile.headerDelegate!,
+                      pinned: tile.pinned,
+                      floating: tile.floating,
+                    ),
+                  )));
             }
           } else {
-            result.add(tile);
+            result.add(tile.buildWrapChild(
+                context,
+                result,
+                _wrapSliverPadding(
+                  tile.sliverPadding,
+                  tile,
+                )));
           }
         } else {
           //复合的
@@ -240,9 +267,9 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
         }
       } else {
         //普通的Widget
+        clearAndAppendList();
+        clearAndAppendGrid();
         if ("$tile".toLowerCase().startsWith("sliver")) {
-          clearAndAppendList();
-          clearAndAppendGrid();
           result.add(tile);
         } else {
           result.add(SliverToBoxAdapter(
@@ -259,33 +286,74 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   }
 
   /// 构建成[SliverList]
-  SliverList? _buildSliverList(BuildContext context, List<Widget> list) {
+  Widget? _buildSliverList(BuildContext context, List<Widget> list) {
     if (list.isEmpty) {
       return null;
     }
-    RItemTile first = list.firstWhere((element) => element is RItemTile,
-        orElse: () => const RItemTile()) as RItemTile;
-    return SliverList.list(
-      addAutomaticKeepAlives: first.addAutomaticKeepAlives,
-      addRepaintBoundaries: first.addRepaintBoundaries,
-      addSemanticIndexes: first.addSemanticIndexes,
-      children: list.toList(growable: false), //复制一份
+    RItemTile first = list.firstWhere(
+      (element) => element is RItemTile,
+      orElse: () => const RItemTile(),
+    ) as RItemTile;
+
+    List<Widget> newList = [];
+    list.forEachIndexed((index, element) {
+      if (element is RItemTile) {
+        newList.add(element.buildListWrapChild(context, list, element, index));
+      } else {
+        newList.add(element);
+      }
+    });
+    return _wrapSliverPadding(
+      first.sliverPadding,
+      SliverList.list(
+        addAutomaticKeepAlives: first.addAutomaticKeepAlives,
+        addRepaintBoundaries: first.addRepaintBoundaries,
+        addSemanticIndexes: first.addSemanticIndexes,
+        children: newList,
+      ),
     );
   }
 
   /// 构建成[SliverGrid]
-  SliverGrid? _buildSliverGrid(BuildContext context, List<Widget> list) {
+  Widget? _buildSliverGrid(BuildContext context, List<Widget> list) {
     if (list.isEmpty) {
       return null;
     }
-    RItemTile first = list.firstWhere((element) => element is RItemTile,
-        orElse: () => const RItemTile()) as RItemTile;
-    return SliverGrid.count(
-      crossAxisCount: first.crossAxisCount,
-      mainAxisSpacing: first.mainAxisSpacing,
-      crossAxisSpacing: first.crossAxisSpacing,
-      childAspectRatio: first.childAspectRatio,
-      children: list.toList(growable: false), //复制一份
+    RItemTile first = list.firstWhere(
+      (element) => element is RItemTile,
+      orElse: () => const RItemTile(),
+    ) as RItemTile;
+
+    List<Widget> newList = [];
+    list.forEachIndexed((index, element) {
+      if (element is RItemTile) {
+        newList.add(element.buildGridWrapChild(context, list, element, index));
+      } else {
+        newList.add(element);
+      }
+    });
+    return _wrapSliverPadding(
+      first.sliverPadding,
+      SliverGrid.count(
+        crossAxisCount: first.crossAxisCount,
+        mainAxisSpacing: first.mainAxisSpacing,
+        crossAxisSpacing: first.crossAxisSpacing,
+        childAspectRatio: first.childAspectRatio,
+        children: newList,
+      ),
+    );
+  }
+
+  Widget _wrapSliverPadding(
+    EdgeInsetsGeometry? sliverPadding,
+    Widget sliverChild,
+  ) {
+    if (sliverPadding == null) {
+      return sliverChild;
+    }
+    return SliverPadding(
+      padding: sliverPadding,
+      sliver: sliverChild,
     );
   }
 
@@ -351,4 +419,16 @@ class RItemTileListBuilder {
 @dsl
 List<Widget> itemTileListBuilder(RItemTileBuilder builder) {
   return RItemTileListBuilder().apply(builder);
+}
+
+extension RScrollViewEx on WidgetList {
+  /// [RScrollView]
+  Widget rScroll({
+    ScrollController? controller,
+  }) {
+    return RScrollView(
+      this,
+      controller: controller,
+    );
+  }
 }

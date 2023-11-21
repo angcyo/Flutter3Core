@@ -5,8 +5,26 @@ part of flutter3_basics;
 /// @since 2023/11/10
 ///
 
+const double kS = 2;
+const double kM = 4;
+const double kL = 6;
+const double kH = 8;
+const double kX = 12;
+const double kXh = 16;
+const double kXxh = 32;
+const double kXxxh = 48;
+const double kDefaultBlurRadius = 4.0;
+const double kDefaultBorderRadiusX = 6.0;
+const double kDefaultBorderRadiusXX = 12.0;
+const double kDefaultBorderRadiusXXX = 24.0;
+
+/// 打开[url]的回调方法
 typedef GlobalOpenUrlFn = Future<bool> Function(
     BuildContext? context, String? url);
+
+/// 带参数的[WidgetBuilder]
+typedef WidgetArgumentBuilder = Widget Function<T>(
+    BuildContext context, T? arg);
 
 /// 快速打开url
 @dsl
@@ -83,9 +101,23 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   //region Widget
 
+  /// 全局的图片占位小部件
+  WidgetArgumentBuilder imagePlaceholderBuilder = <T>(context, arg) {
+    var color = GlobalTheme.of(context).imagePlaceholderColor;
+    //纯色背景小部件
+    return Container(
+      color: color,
+    );
+  };
+
   /// 全局的Loading指示器
   WidgetBuilder loadingIndicatorBuilder = (context) {
     return const LoadingIndicator();
+  };
+
+  /// 全局的错误占位小部件
+  WidgetArgumentBuilder errorPlaceholderBuilder = <T>(context, error) {
+    return const Icon(Icons.error);
   };
 
   /// 全局的加载[Overlay]提示

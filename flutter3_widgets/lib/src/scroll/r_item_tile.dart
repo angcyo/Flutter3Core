@@ -5,13 +5,28 @@ part of flutter3_widgets;
 /// @since 2023/11/03
 ///
 
+/// 用来实现[RItemTile]包裹, 比如添加边距等
+typedef ItemTileWrapBuilder = Widget Function(
+  BuildContext context,
+  List<Widget> list,
+  Widget child,
+  int index,
+);
+
 /// [RScrollView] 的子项
 class RItemTile extends StatefulWidget {
   const RItemTile({
     super.key,
     this.child,
     this.childBuilder,
+    this.tileWrapBuilder,
     this.isSliverItem = false,
+    this.hide = false,
+    this.sliverPadding,
+    this.edgePaddingLeft = 0,
+    this.edgePaddingTop = 0,
+    this.edgePaddingRight = 0,
+    this.edgePaddingBottom = 0,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.addSemanticIndexes = true,
@@ -34,11 +49,21 @@ class RItemTile extends StatefulWidget {
 
   //region 基础
 
+  /// 是否要隐藏当前tile
+  final bool hide;
+
   /// 强制指定子部件
   final Widget? child;
 
   /// 用来构建子部件的构建器
   final WidgetBuilder? childBuilder;
+
+  /// 用来包裹[RItemTile]的构建器
+  final ItemTileWrapBuilder? tileWrapBuilder;
+
+  /// [SliverList].[SliverGrid].[SliverFillRemaining].[SliverPersistentHeader]
+  /// 所有sliver tile是否要包裹在[SliverPadding]小部件中
+  final EdgeInsetsGeometry? sliverPadding;
 
   //endregion 基础
 
@@ -139,23 +164,99 @@ class RItemTile extends StatefulWidget {
   /// [SliverGridDelegateWithFixedCrossAxisCount.crossAxisCount]
   final int crossAxisCount;
 
+  /// 主轴间隙, 如果方向是垂直的, 则是行间隙, 如果方向是水平的, 则是列间隙
   /// [SliverGridDelegateWithFixedCrossAxisCount.mainAxisSpacing]
   final double mainAxisSpacing;
 
+  /// 交叉轴间隙
   /// [SliverGridDelegateWithFixedCrossAxisCount.crossAxisSpacing]
   final double crossAxisSpacing;
 
   /// [SliverGridDelegateWithFixedCrossAxisCount.childAspectRatio]
   final double childAspectRatio;
 
+  /// 当item在网格的边界时, 是否需要处理填充距离. 此方式的填充会占用tile的高度
+  /// 为`null`是, 自动根据[mainAxisSpacing] [crossAxisSpacing]设置
+  /// [Padding]
+  /// [EdgeInsets]
+  final double? edgePaddingLeft;
+
+  final double? edgePaddingTop;
+  final double? edgePaddingRight;
+  final double? edgePaddingBottom;
+
   //endregion SliverGrid
 
+  /// 构建子部件
   Widget buildChild(BuildContext context) {
     return child ??
         childBuilder?.call(context) ??
         (isSliverItem
             ? const SliverToBoxAdapter(child: Placeholder())
             : const Placeholder());
+  }
+
+  //---
+
+  Widget buildWrapChild(
+    BuildContext context,
+    List<Widget> list,
+    Widget child,
+  ) {
+    return tileWrapBuilder?.call(context, list, child, list.length) ?? child;
+  }
+
+  Widget buildListWrapChild(
+    BuildContext context,
+    List<Widget> list,
+    Widget child,
+    int index,
+  ) {
+    return tileWrapBuilder?.call(context, list, child, index) ?? child;
+  }
+
+  Widget buildGridWrapChild(
+    BuildContext context,
+    List<Widget> list,
+    Widget child,
+    int index,
+  ) {
+    if (tileWrapBuilder == null) {
+      var first = list.firstOrNull;
+      if (first is RItemTile) {
+        final isEdgeLeft = index % first.crossAxisCount == 0;
+        final isEdgeRight =
+            index % first.crossAxisCount == first.crossAxisCount - 1;
+        final isEdgeTop = index < first.crossAxisCount;
+        //总行数
+        final int totalRow = (list.length / first.crossAxisCount).ceil();
+        //最后一行索引
+        final int lastRowIndex = totalRow - 1;
+        //当前行数
+        final int currentRow = (index / first.crossAxisCount).floor();
+        final isEdgeBottom = currentRow == lastRowIndex;
+        final isEdge = isEdgeLeft || isEdgeRight || isEdgeTop || isEdgeBottom;
+        if (isEdge) {
+          //需要padding
+          final double left =
+              isEdgeLeft ? first.edgePaddingLeft ?? first.crossAxisSpacing : 0;
+          final double top =
+              isEdgeTop ? first.edgePaddingTop ?? first.mainAxisSpacing : 0;
+          final double right = isEdgeRight
+              ? first.edgePaddingRight ?? first.crossAxisSpacing
+              : 0;
+          final double bottom = isEdgeBottom
+              ? first.edgePaddingBottom ?? first.mainAxisSpacing
+              : 0;
+
+          // 有值
+          if (left != 0 || top != 0 || right != 0 || bottom != 0) {
+            return child.paddingLTRB(left, top, right, bottom);
+          }
+        }
+      }
+    }
+    return tileWrapBuilder?.call(context, list, child, index) ?? child;
   }
 
   @override
@@ -166,5 +267,99 @@ class _RItemTileState extends State<RItemTile> {
   @override
   Widget build(BuildContext context) {
     return widget.buildChild(context);
+  }
+}
+
+extension RItemTileExtension on Widget {
+  /// 网格item
+  /// [gridCount] 网格的列数
+  RItemTile rGridTile(
+    int gridCount, {
+    double childAspectRatio = 1,
+    double mainAxisSpacing = 0,
+    double crossAxisSpacing = 0,
+    EdgeInsetsGeometry? sliverPadding,
+    bool hide = false,
+  }) {
+    return RItemTile(
+      crossAxisCount: gridCount,
+      childAspectRatio: childAspectRatio,
+      mainAxisSpacing: mainAxisSpacing,
+      crossAxisSpacing: crossAxisSpacing,
+      sliverPadding: sliverPadding ??
+          EdgeInsets.symmetric(
+            vertical: mainAxisSpacing,
+            horizontal: crossAxisSpacing,
+          ),
+      hide: hide,
+      child: this,
+    );
+  }
+
+  /// [RItemTile]的快捷构造方法
+  RItemTile rItemTile({
+    Key? key,
+    Widget? child,
+    WidgetBuilder? childBuilder,
+    bool isSliverItem = false,
+    bool addAutomaticKeepAlives = true,
+    bool addRepaintBoundaries = true,
+    bool addSemanticIndexes = true,
+    int crossAxisCount = 0,
+    double mainAxisSpacing = 0,
+    double crossAxisSpacing = 0,
+    double childAspectRatio = 1.0,
+    SliverPersistentHeaderWidgetBuilder? headerChildBuilder,
+    double? headerFixedHeight,
+    double headerMaxHeight = kMinInteractiveDimension,
+    double headerMinHeight = kMinInteractiveDimension,
+    SliverPersistentHeaderDelegate? headerDelegate,
+    bool pinned = false,
+    bool floating = false,
+    bool fillRemaining = false,
+    bool fillHasScrollBody = false,
+    bool fillOverscroll = false,
+    bool fillExpand = false,
+  }) {
+    return RItemTile(
+      key: key,
+      childBuilder: childBuilder,
+      isSliverItem: isSliverItem,
+      addAutomaticKeepAlives: addAutomaticKeepAlives,
+      addRepaintBoundaries: addRepaintBoundaries,
+      addSemanticIndexes: addSemanticIndexes,
+      crossAxisCount: crossAxisCount,
+      mainAxisSpacing: mainAxisSpacing,
+      crossAxisSpacing: crossAxisSpacing,
+      childAspectRatio: childAspectRatio,
+      headerChildBuilder: headerChildBuilder,
+      headerFixedHeight: headerFixedHeight,
+      headerMaxHeight: headerMaxHeight,
+      headerMinHeight: headerMinHeight,
+      headerDelegate: headerDelegate,
+      pinned: pinned,
+      floating: floating,
+      fillRemaining: fillRemaining,
+      fillHasScrollBody: fillHasScrollBody,
+      fillOverscroll: fillOverscroll,
+      fillExpand: fillExpand,
+      child: this,
+    );
+  }
+
+  /// 填充底部剩余空间
+  RItemTile rFill({
+    bool fillRemaining = true,
+    bool fillHasScrollBody = false,
+    bool fillOverscroll = false,
+    bool fillExpand = true,
+  }) {
+    return RItemTile(
+      fillRemaining: fillRemaining,
+      fillHasScrollBody: fillHasScrollBody,
+      fillOverscroll: fillOverscroll,
+      fillExpand: fillExpand,
+      child: this,
+    );
   }
 }

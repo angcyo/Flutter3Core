@@ -30,6 +30,9 @@ class GlobalTheme {
   /// 图标按下的颜色/选择的颜色等
   Color get icoSelectedColor => primaryColor;
 
+  /// 图片占位颜色
+  Color get imagePlaceholderColor => icoNormalColor;
+
   /// 图标正常的颜色
   Color get icoNormalColor => "#6f6f6f".toColor();
 
@@ -37,17 +40,21 @@ class GlobalTheme {
   double get elevation => 2;
 
   /// 基础距离配置
-  double get s => 2;
+  double get s => kS;
 
-  double get m => 4;
+  double get m => kM;
 
-  double get l => 6;
+  double get l => kL;
 
-  double get h => 6;
+  double get h => kH;
 
-  double get xh => 10;
+  double get x => kX;
 
-  double get xxh => 20;
+  double get xh => kXh;
+
+  double get xxh => kXxh;
+
+  double get xxxh => kXxxh;
 
   /// [GlobalTheme]
   static GlobalTheme of(BuildContext? context, {bool depend = false}) {

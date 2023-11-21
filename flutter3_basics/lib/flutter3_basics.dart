@@ -24,6 +24,8 @@ export 'package:meta/meta.dart';
 
 part 'src/basics/basics.dart';
 
+part 'src/basics/basics_decoration.dart';
+
 part 'src/basics/basics_ex.dart';
 
 part 'src/basics/basics_image.dart';

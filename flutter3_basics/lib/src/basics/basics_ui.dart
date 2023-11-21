@@ -244,6 +244,22 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 圆角
+  Widget clipRadius({
+    double radius = kDefaultBorderRadiusXX,
+    BorderRadiusGeometry? borderRadius,
+    CustomClipper<RRect>? clipper,
+    Clip clipBehavior = Clip.antiAlias,
+  }) =>
+      clip(
+        borderRadius: borderRadius ??
+            BorderRadius.all(
+              Radius.circular(radius),
+            ),
+        clipper: clipper,
+        clipBehavior: clipBehavior,
+      );
+
   /// 椭圆形
   Widget clipOval({
     CustomClipper<Rect>? clipper,
@@ -313,7 +329,7 @@ extension WidgetEx on Widget {
     bool clipContent = true,
     Color? decorationColor = Colors.white,
     Color shadowColor = Colors.black12,
-    double blurRadius = 4,
+    double blurRadius = kDefaultBlurRadius,
     Color? color,
     AlignmentGeometry? alignment = Alignment.center,
     EdgeInsetsGeometry? padding,
@@ -357,7 +373,7 @@ extension WidgetEx on Widget {
     bool clipContent = true,
     Color? decorationColor = Colors.white,
     Color shadowColor = Colors.black12,
-    double blurRadius = 24,
+    double blurRadius = kDefaultBlurRadius,
     BorderRadiusGeometry? borderRadius,
     Color? color,
     AlignmentGeometry? alignment = Alignment.center,
@@ -371,7 +387,8 @@ extension WidgetEx on Widget {
     double? width,
     double? height,
   }) {
-    borderRadius ??= const BorderRadius.all(Radius.circular(24));
+    borderRadius ??=
+        const BorderRadius.all(Radius.circular(kDefaultBorderRadiusXXX));
     return (clipContent ? clip(borderRadius: borderRadius) : this).container(
       alignment: alignment,
       padding: padding,
@@ -502,11 +519,50 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// 使用涟漪动画包裹
+  /// 比例box [AspectRatio]
+  Widget ratio(double aspectRatio) => AspectRatio(
+        aspectRatio: aspectRatio,
+        child: this,
+      );
+
+  /// 圆角波纹效果
+  /// [radius] 背景/波纹圆角大小
+  /// [backgroundColor] 背景颜色
+  /// [splashColor] 波纹颜色
+  /// [decoration] 强行指定装饰
+  Widget inkRadius({
+    double radius = kDefaultBorderRadiusXXX,
+    Color? backgroundColor,
+    EdgeInsetsGeometry? padding,
+    Decoration? decoration,
+    double? width,
+    double? height,
+    GestureTapCallback? onTap,
+    Color? splashColor,
+  }) {
+    var borderRadius = BorderRadius.all(Radius.circular(radius));
+    decoration ??= BoxDecoration(
+      color: backgroundColor,
+      borderRadius: borderRadius,
+    );
+    return Ink(
+      padding: padding,
+      decoration: decoration,
+      width: width,
+      height: height,
+      child: inkWell(
+        borderRadius: borderRadius,
+        onTap: onTap,
+        splashColor: splashColor,
+      ),
+    );
+  }
+
+  /// 使用涟漪动画包裹, 无法控制背景颜色, 波纹会超出范围. [ink]
   /// https://api.flutter.dev/flutter/material/InkWell-class.html
   /// [splashColor] 涟漪颜色
   /// [highlightColor] 高亮颜色
-  Widget ink({
+  Widget inkWell({
     GestureTapCallback? onTap,
     BorderRadius? borderRadius,
     Color? splashColor,
@@ -523,19 +579,42 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// ink
-  Widget inkCircle({
+  /// [inkWell]
+  /// [InkWell]
+  Widget inkWellCircle({
     GestureTapCallback? onTap,
     Color? splashColor,
     Color? highlightColor,
     double? radius,
   }) =>
-      ink(
+      inkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),
         splashColor: splashColor,
         highlightColor: highlightColor,
         radius: radius,
+      );
+
+  /// 将[this]和[child] 使用[Column]包裹
+  Widget columnOf(
+    Widget child, {
+    MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
+    MainAxisSize? mainAxisSize,
+    CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
+    TextDirection? textDirection,
+    VerticalDirection? verticalDirection,
+    TextBaseline? textBaseline,
+  }) =>
+      [
+        this,
+        child,
+      ].column(
+        mainAxisAlignment: mainAxisAlignment,
+        mainAxisSize: mainAxisSize,
+        crossAxisAlignment: crossAxisAlignment,
+        textDirection: textDirection,
+        verticalDirection: verticalDirection,
+        textBaseline: textBaseline,
       );
 }
 
