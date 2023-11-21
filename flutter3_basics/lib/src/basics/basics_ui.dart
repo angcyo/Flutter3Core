@@ -536,13 +536,17 @@ extension WidgetEx on Widget {
     Color? backgroundColor,
     EdgeInsetsGeometry? padding,
     Decoration? decoration,
+    BoxShape shape = BoxShape.rectangle,
     double? width,
     double? height,
     GestureTapCallback? onTap,
     Color? splashColor,
   }) {
-    var borderRadius = BorderRadius.all(Radius.circular(radius));
+    var borderRadius = shape == BoxShape.circle
+        ? null
+        : BorderRadius.all(Radius.circular(radius));
     decoration ??= BoxDecoration(
+      shape: shape,
       color: backgroundColor,
       borderRadius: borderRadius,
     );
@@ -553,6 +557,7 @@ extension WidgetEx on Widget {
       height: height,
       child: inkWell(
         borderRadius: borderRadius,
+        highlightShape: shape,
         onTap: onTap,
         splashColor: splashColor,
       ),
@@ -563,19 +568,24 @@ extension WidgetEx on Widget {
   /// https://api.flutter.dev/flutter/material/InkWell-class.html
   /// [splashColor] 涟漪颜色
   /// [highlightColor] 高亮颜色
+  /// [InkWell]
+  /// [InkResponse]
   Widget inkWell({
     GestureTapCallback? onTap,
     BorderRadius? borderRadius,
     Color? splashColor,
     Color? highlightColor,
+    BoxShape highlightShape = BoxShape.rectangle,
     double? radius,
   }) {
-    return InkWell(
+    return InkResponse(
       onTap: onTap,
       radius: radius,
       splashColor: splashColor,
       highlightColor: highlightColor,
       borderRadius: borderRadius,
+      highlightShape: highlightShape,
+      containedInkWell: true,
       child: this,
     );
   }
