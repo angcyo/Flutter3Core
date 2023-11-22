@@ -38,7 +38,7 @@ class GlobalTheme {
   Color get icoNormalColor => "#6f6f6f".toColor();
 
   /// 主题白色, 受暗色模式影响
-  Color get themeWhiteColor => Colors.white;
+  Color get themeWhiteColor => "#fbfdfd".toColor();
 
   /// 阴影
   double get elevation => 2;
