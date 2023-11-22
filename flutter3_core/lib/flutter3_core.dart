@@ -19,6 +19,7 @@ export 'package:hive_flutter/hive_flutter.dart';
 export 'package:isar/isar.dart';
 export 'package:isar_flutter_libs/isar_flutter_libs.dart';
 export 'package:jetpack/jetpack.dart';
+export 'package:mime/mime.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:provider/provider.dart';
 
@@ -42,4 +43,26 @@ Future<void> initFlutter3Core() async {
   //初始化Hive数据库
   //Hive.registerAdapter(adapter)
   await Hive.initFlutterEx();
+}
+
+extension MimeEx on String {
+  /// 获取文件的Mime类型
+  /// ```
+  /// print(lookupMimeType('test.html')); // text/html
+  ///
+  /// print(lookupMimeType('test', headerBytes: [0xFF, 0xD8])); // image/jpeg
+  ///
+  /// print(lookupMimeType('test.html', headerBytes: [0xFF, 0xD8])); // image/jpeg
+  ///
+  /// ```
+  String? mimeType({List<int>? headerBytes}) {
+    final mimeType = lookupMimeType(
+      this,
+      headerBytes: headerBytes,
+    );
+    if (mimeType == null) {
+      return null;
+    }
+    return mimeType.split('/').firstOrNull;
+  }
 }

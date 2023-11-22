@@ -530,18 +530,18 @@ extension WidgetEx on Widget {
       );
 
   /// 圆角波纹效果
-  /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果.
+  /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
   /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
   /// [backgroundColor] 背景颜色
   /// [splashColor] 波纹颜色
   /// [decoration] 强行指定装饰
-  Widget inkRadius({
+  Widget ink({
     GestureTapCallback? onTap,
-    BoxShape shape = BoxShape.rectangle,
-    double radius = kDefaultBorderRadiusXXX,
+    double radius = 0,
     Color? backgroundColor,
     EdgeInsetsGeometry? padding,
     Decoration? decoration,
+    BoxShape shape = BoxShape.rectangle,
     double? width,
     double? height,
     Color? splashColor,
@@ -594,6 +594,7 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// [ink]
   /// [inkWell]
   /// [InkWell]
   Widget inkWellCircle({

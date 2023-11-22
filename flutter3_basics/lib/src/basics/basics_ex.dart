@@ -52,9 +52,9 @@ extension ObjectEx on Object {
 
 extension FutureEx<T> on Future<T> {
   /// [Future.then]
-  void get(void Function(T? value, Object? error) get) =>
-      then((value) => get(value, null),
-          onError: (error, stackTrace) => get(null, error));
+  void get([void Function(T? value, Object? error)? get]) =>
+      then((value) => get?.call(value, null),
+          onError: (error, stackTrace) => get?.call(null, error));
 
   /// [FutureBuilder]
   Widget toWidget(

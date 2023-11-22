@@ -17,7 +17,37 @@ dependencies:
     path: ../flutter3_pub
 
   # https://pub.dev/packages/package_info_plus
+  # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/package_info_plus/package_info_plus
+  # https://pub.dev/packages/ffi
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/package_info_plus_platform_interface
+  # https://pub.dev/packages/web
+  # https://pub.dev/packages/win32
   package_info_plus: ^5.0.1
+
+  # https://pub.dev/packages/device_info_plus
+  # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/device_info_plus/device_info_plus
+  # https://pub.dev/packages/device_info_plus_platform_interface
+  # https://pub.dev/packages/ffi
+  # https://pub.dev/packages/file
+  # https://pub.dev/packages/flutter_web_plugins
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/win32
+  # https://pub.dev/packages/win32_registry
+  device_info_plus: ^9.1.1
+
+  # https://pub.dev/packages/share_plus
+  # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/share_plus/share_plus
+  # https://pub.dev/packages/cross_file
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/mime
+  # https://pub.dev/packages/share_plus_platform_interface
+  # https://pub.dev/packages/file
+  # https://pub.dev/packages/ffi
+  # https://pub.dev/packages/win32
+  share_plus: ^7.2.1
 
 dev_dependencies:
   flutter_test:
