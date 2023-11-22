@@ -50,8 +50,12 @@ class FadePageRoute<T> extends MaterialPageRoute<T> {
 
 /// 上下滑动路由动画
 class TranslationPageRoute<T> extends MaterialPageRoute<T> {
+  /// 通否同时激活透明渐隐动画
+  final bool fade;
+
   TranslationPageRoute({
     required super.builder,
+    this.fade = true,
     super.settings,
     super.maintainState = true,
     super.fullscreenDialog,
@@ -77,11 +81,57 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T> {
       end: const Offset(0, -0.2),
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
 
-    return SlideTransition(
+    var slide = SlideTransition(
       position: enter,
       child: SlideTransition(
         position: exit,
         child: child,
+      ),
+    );
+    if (fade) {
+      return slide.fade(opacity: animation);
+    }
+    return slide;
+  }
+}
+
+/// 上下滑动并伴随透明的路由动画
+class TranslationFadePageRoute<T> extends MaterialPageRoute<T> {
+  TranslationFadePageRoute({
+    required super.builder,
+    super.settings,
+    super.maintainState = true,
+    super.fullscreenDialog,
+    super.allowSnapshotting = true,
+  });
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    logAnimation("TranslationFade", animation, secondaryAnimation);
+    //顶部进入动画
+    var enter = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: Curves.easeOut)).animate(animation);
+    //底部退出动画
+    var exit = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0, -0.2),
+    ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
+
+    return FadeTransition(
+      opacity: animation,
+      child: SlideTransition(
+        position: enter,
+        child: SlideTransition(
+          position: exit,
+          child: child,
+        ),
       ),
     );
   }

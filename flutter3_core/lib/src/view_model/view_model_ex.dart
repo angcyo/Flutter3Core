@@ -19,12 +19,16 @@ MutableOnceLiveData<T?> vmDataOnce<T>([T? value]) =>
 
 //region ---ViewModel---
 
-/// 全局[ViewModel]
-final _vmMap = <Type, ViewModel>{};
+/// [ViewModel]构建函数
+typedef ViewModelCreate = Object Function();
 
-/// 注册全局的[ViewModel]
-void registerGlobalViewModel<T extends ViewModel>(T viewModel) {
-  _vmMap[T] = viewModel;
+/// 全局[ViewModel]构造函数
+final _vmCreateMap = <Type, ViewModelCreate>{};
+
+/// 注册全局的[ViewModel]构造器[ViewModelCreate]
+void registerGlobalViewModel<T extends ViewModel>(
+    ViewModelCreate viewModelCreate) {
+  _vmCreateMap[T] = viewModelCreate;
 }
 
 /// 用来创建[ViewModel]的工厂
@@ -33,11 +37,12 @@ class GlobalViewModelFactory extends ViewModelFactory {
 
   @override
   T create<T extends ViewModel>() {
-    var viewModel = _vmMap[T];
-    if (viewModel == null) {
-      throw Exception("Unknown ViewModel type:$T");
+    var viewModelCreate = _vmCreateMap[T];
+    if (viewModelCreate == null) {
+      throw Exception(
+          "Unknown ViewModel type:$T, 请调用[registerGlobalViewModel]注册ViewModel.");
     }
-    return viewModel as T;
+    return viewModelCreate() as T;
   }
 }
 
@@ -59,11 +64,14 @@ class ListViewModelFactory extends ViewModelFactory {
 
 /// [ViewModelScope] 用来提供[ViewModelStore]
 /// [ViewModelStore] 用来存储[ViewModel]
-/// [ViewModelProviderExtension]
 /// [LiveDataBuilder]
+/// [ViewModelProviderExtension]
+/// [ViewModelProviderExtension.getViewModel]
 extension ViewModelWidgetEx on Widget {
-  /// 全局的[ViewModelScope]
+  ///
+  /// 全局的[ViewModelScope], 提供一个全局的[GlobalViewModelFactory], 也提供一个全局的[ViewModelStore]
   /// [ViewModelFactoryProvider]
+  /// [registerGlobalViewModel]
   Widget wrapGlobalViewModelProvider([ViewModelFactory? viewModelFactory]) {
     return ViewModelFactoryProvider(
       viewModelFactory: viewModelFactory ?? const GlobalViewModelFactory(),
@@ -73,13 +81,18 @@ extension ViewModelWidgetEx on Widget {
     );
   }
 
-  ///
+  /// 用来提供[ViewModelFactoryProvider], 里面有[ViewModelFactory]
   Widget wrapViewModelListProvider(List<ViewModel> list) {
     return ViewModelFactoryProvider(
       viewModelFactory: ListViewModelFactory(list),
-      child: ViewModelScope(
-        builder: (context) => this,
-      ),
+      child: wrapViewModelScope(),
+    );
+  }
+
+  /// 提供一个[ViewModelScope], 用来存储[ViewModelStore]
+  Widget wrapViewModelScope() {
+    return ViewModelScope(
+      builder: (context) => this,
     );
   }
 }

@@ -181,12 +181,16 @@ Image loadAssetImageWidget(
   BoxFit? fit,
   double? width,
   double? height,
+  Color? color,
+  BlendMode? colorBlendMode,
 }) =>
     Image.asset(
       key.ensurePackagePrefix(package, prefix),
       fit: fit,
       width: width,
       height: height,
+      color: color,
+      colorBlendMode: colorBlendMode,
     );
 
 /// [ImageProvider]

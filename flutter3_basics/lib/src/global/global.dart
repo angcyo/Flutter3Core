@@ -44,7 +44,7 @@ class GlobalApp extends StatefulWidget {
 
   ///
   /// 打印所有子元素
-  /// 0:[GlobalAppConfig] 1:[MyApp] 2:[MaterialApp] 3:[ScrollConfiguration] 4:[HeroControllerScope] 5:[Focus] 6:[_FocusInheritedScope] 7:[Semantics] 8:[WidgetsApp]√ 9:[RootRestorationScope] 10:[UnmanagedRestorationScope]
+  /// 0:[GlobalConfigScope] 1:[MyApp] 2:[MaterialApp] 3:[ScrollConfiguration] 4:[HeroControllerScope] 5:[Focus] 6:[_FocusInheritedScope] 7:[Semantics] 8:[WidgetsApp]√ 9:[RootRestorationScope] 10:[UnmanagedRestorationScope]
   /// 11:[RestorationScope] 12:[UnmanagedRestorationScope] 13:[SharedAppData] 14:[_SharedAppModel] 15:[Shortcuts] 16:[Focus] 17:[_FocusInheritedScope] 18:[Semantics] 19:[DefaultTextEditingShortcuts] 20:[Shortcuts]
   /// 21:[Focus] 22:[_FocusInheritedScope] 23:[Semantics] 24:[Actions] 25:[_ActionsScope] 26:[FocusTraversalGroup] 27:[Focus] 28:[_FocusInheritedScope] 29:[TapRegionSurface] 30:[ShortcutRegistrar]
   /// 31:[_ShortcutRegistrarScope] 32:[Shortcuts] 33:[Focus] ... 36:[Localizations] ... 39:[Directionality] 40:[Title]√ 41:[CheckedModeBanner]√ 42:[Banner] 43:[CustomPaint] 44:[DefaultTextStyle] 45:[Builder] 46:[ScaffoldMessenger]
@@ -80,25 +80,9 @@ class _GlobalAppState extends State<GlobalApp> {
     GlobalConfig config = widget.globalConfig ?? GlobalConfig.def;
     config.globalContext = context;
     //GlobalApp.logWidget(const Duration(milliseconds: 16));
-    return GlobalAppConfig(
+    return GlobalConfigScope(
       globalConfig: widget.globalConfig ?? GlobalConfig.def,
       child: widget.app,
     );
   }
-}
-
-/// 全局配置, 提供一个全局配置
-class GlobalAppConfig extends InheritedWidget {
-  const GlobalAppConfig({
-    super.key,
-    required super.child,
-    required this.globalConfig,
-  });
-
-  /// 配置存放
-  final GlobalConfig globalConfig;
-
-  @override
-  bool updateShouldNotify(covariant GlobalAppConfig oldWidget) =>
-      globalConfig != oldWidget.globalConfig;
 }

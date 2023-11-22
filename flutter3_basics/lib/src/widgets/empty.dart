@@ -9,7 +9,7 @@ part of flutter3_basics;
 class Empty extends StatelessWidget {
   final Size size;
 
-  const Empty({super.key, required this.size});
+  const Empty({super.key, this.size = Size.zero});
 
   Empty.width(double width, {super.key}) : size = Size(width, 0);
 

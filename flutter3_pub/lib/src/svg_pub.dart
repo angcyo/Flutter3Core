@@ -14,6 +14,7 @@ const kDefAssetsSvgPrefix = 'assets/svg/';
 /// [package] 如果资源不在当前项目中, 需要指定package才能访问
 SvgPicture loadAssetSvgWidget(
   String key, {
+  Color? tintColor,
   String? prefix = kDefAssetsSvgPrefix,
   String? package,
   double? width,
@@ -25,7 +26,7 @@ SvgPicture loadAssetSvgWidget(
     SvgPicture.asset(
       key.ensurePackagePrefix(package, prefix),
       semanticsLabel: key,
-      colorFilter: colorFilter,
+      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
       width: width,
       height: height,
       fit: fit,
@@ -38,6 +39,7 @@ SvgPicture loadAssetSvgWidget(
 
 SvgPicture loadHttpSvgWidget(
   String url, {
+  Color? tintColor,
   double? width,
   double? height,
   UiColorFilter? colorFilter,
@@ -46,7 +48,7 @@ SvgPicture loadHttpSvgWidget(
     SvgPicture.network(
       url,
       semanticsLabel: url,
-      colorFilter: colorFilter,
+      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
       width: width,
       height: height,
       placeholderBuilder: placeholderBuilder ??

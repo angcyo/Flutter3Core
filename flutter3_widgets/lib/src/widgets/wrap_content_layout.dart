@@ -8,20 +8,32 @@ part of flutter3_widgets;
 ///
 
 class WrapContentLayout extends SingleChildRenderObjectWidget {
+  final AlignmentDirectional alignment;
+
   const WrapContentLayout({
     super.key,
     super.child,
+    this.alignment = AlignmentDirectional.center,
   });
 
   @override
-  RenderObject createRenderObject(BuildContext context) => WrapContentBox();
+  RenderObject createRenderObject(BuildContext context) =>
+      WrapContentBox(alignment);
+
+  @override
+  void updateRenderObject(BuildContext context, WrapContentBox renderObject) {
+    renderObject.alignment = alignment;
+  }
 }
 
 /// [rebuild]->[performRebuild]->[updateChild]->[inflateWidget]->
 /// [mount]->[attachRenderObject]->[insertRenderObjectChild].(renderObject.child = child;)
 /// [RenderObjectWithChildMixin.child]
 class WrapContentBox extends RenderProxyBox {
-  WrapContentBox();
+  /// 在有效空间内的对齐方式
+  AlignmentDirectional alignment;
+
+  WrapContentBox(this.alignment);
 
   @override
   bool get sizedByParent => super.sizedByParent;
@@ -70,11 +82,58 @@ class WrapContentBox extends RenderProxyBox {
   /// 最终调用[paintsChild]
   @override
   void paint(PaintingContext context, Offset offset) {
-    super.paint(context, offset);
+    //alignment 对齐
+    if (child != null) {
+      var dx = 0.0;
+      var dy = 0.0;
+      switch (alignment) {
+        case AlignmentDirectional.topStart:
+        case AlignmentDirectional.centerStart:
+        case AlignmentDirectional.bottomStart:
+          dx = 0;
+          break;
+        case AlignmentDirectional.topCenter:
+        case AlignmentDirectional.center:
+        case AlignmentDirectional.bottomCenter:
+          dx = (size.width - child!.size.width) / 2;
+          break;
+        case AlignmentDirectional.topEnd:
+        case AlignmentDirectional.centerEnd:
+        case AlignmentDirectional.bottomEnd:
+          dx = size.width - child!.size.width;
+          break;
+      }
+      switch (alignment) {
+        case AlignmentDirectional.topStart:
+        case AlignmentDirectional.topCenter:
+        case AlignmentDirectional.topEnd:
+          dy = 0;
+          break;
+        case AlignmentDirectional.centerStart:
+        case AlignmentDirectional.center:
+        case AlignmentDirectional.centerEnd:
+          dy = (size.height - child!.size.height) / 2;
+          break;
+        case AlignmentDirectional.bottomStart:
+        case AlignmentDirectional.bottomCenter:
+        case AlignmentDirectional.bottomEnd:
+          dy = size.height - child!.size.height;
+          break;
+      }
+      super.paint(context, offset + Offset(dx, dy));
+    } else {
+      super.paint(context, offset);
+    }
   }
 }
 
 extension WrapContentLayoutEx on Widget {
   /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
-  WrapContentLayout wrapContent() => WrapContentLayout(child: this);
+  WrapContentLayout wrapContent([
+    AlignmentDirectional alignment = AlignmentDirectional.center,
+  ]) =>
+      WrapContentLayout(
+        alignment: alignment,
+        child: this,
+      );
 }

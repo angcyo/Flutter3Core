@@ -56,39 +56,25 @@ extension GlobalConfigEx on BuildContext {
   }
 }
 
+/// 全局配置, 提供一个全局配置[GlobalConfig]
+class GlobalConfigScope extends InheritedWidget {
+  const GlobalConfigScope({
+    super.key,
+    required super.child,
+    required this.globalConfig,
+  });
+
+  /// 配置存放
+  final GlobalConfig globalConfig;
+
+  @override
+  bool updateShouldNotify(covariant GlobalConfigScope oldWidget) =>
+      isDebug || globalConfig != oldWidget.globalConfig;
+}
+
 class GlobalConfig with Diagnosticable, OverlayManage {
-  GlobalConfig._();
-
-  /// 全局默认
-  static GlobalConfig? _def;
-
-  static GlobalConfig get def => _def ??= GlobalConfig._();
-
-  /// 获取全局配置
-  /// 使用[GlobalAppConfig]可以覆盖[GlobalConfig]
-  static GlobalConfig of(BuildContext? context, {bool depend = false}) {
-    GlobalConfig? globalConfig;
-    if (depend) {
-      globalConfig = (context ?? GlobalConfig.def.globalContext)
-          ?.dependOnInheritedWidgetOfExactType<GlobalAppConfig>()
-          ?.globalConfig;
-    } else {
-      globalConfig = context
-          ?.findAncestorWidgetOfExactType<GlobalAppConfig>()
-          ?.globalConfig;
-    }
-    return globalConfig ?? GlobalConfig.def;
-  }
-
   /// 全局的上下文
   BuildContext? globalContext;
-
-  /// 注册一个全局的打开url方法, 一般是跳转到web页面
-  /// 打开url
-  GlobalOpenUrlFn? openUrlFn = (context, url) {
-    l.w("企图打开url:$url from:$context");
-    return Future.value(false);
-  };
 
   //region ThemeData
 
@@ -96,9 +82,41 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ThemeData themeData = ThemeData();
 
   /// 全局主题配置
-  GlobalTheme globalThemeConfig = GlobalTheme();
+  GlobalTheme globalTheme = GlobalTheme();
 
   //endregion ThemeData
+
+  GlobalConfig({
+    this.globalContext,
+  });
+
+  /// 全局默认
+  static GlobalConfig? _def;
+
+  static GlobalConfig get def => _def ??= GlobalConfig();
+
+  /// 获取全局配置
+  /// 使用[GlobalConfigScope]可以覆盖[GlobalConfig]
+  static GlobalConfig of(BuildContext? context, {bool depend = false}) {
+    GlobalConfig? globalConfig;
+    if (depend) {
+      globalConfig = (context ?? GlobalConfig.def.globalContext)
+          ?.dependOnInheritedWidgetOfExactType<GlobalConfigScope>()
+          ?.globalConfig;
+    } else {
+      globalConfig = context
+          ?.findAncestorWidgetOfExactType<GlobalConfigScope>()
+          ?.globalConfig;
+    }
+    return globalConfig ?? GlobalConfig.def;
+  }
+
+  /// 注册一个全局的打开url方法, 一般是跳转到web页面
+  /// 打开url
+  GlobalOpenUrlFn? openUrlFn = (context, url) {
+    l.w("企图打开url:$url from:$context");
+    return Future.value(false);
+  };
 
   //region Widget
 
@@ -141,6 +159,48 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   //endregion Widget
+
+  //region AppBar
+
+  /// 用来创建[AppBar]
+  /// [AppBarTheme] 相关默认样式在此声明, 可以通过[Theme]小部件覆盖
+  /// [scrolledUnderElevation] 滚动时, 阴影的高度
+  /// [backgroundColor] 透明的背景颜色, 会影响Android状态栏的颜色
+  PreferredSizeWidget? Function(
+    BuildContext context,
+    State state, {
+    Widget? leading,
+    Widget? title,
+    Color? backgroundColor,
+    Color? foregroundColor,
+    double? elevation,
+    double? scrolledUnderElevation,
+    Color? shadowColor,
+  }) appBarBuilder = (
+    context,
+    state, {
+    leading,
+    title,
+    backgroundColor,
+    foregroundColor,
+    elevation,
+    scrolledUnderElevation,
+    shadowColor,
+  }) {
+    var globalTheme = GlobalTheme.of(context);
+    return AppBar(
+      title: title,
+      leading: leading,
+      elevation: elevation,
+      shadowColor: shadowColor ?? globalTheme.shadowColor,
+      backgroundColor: backgroundColor ?? globalTheme.themeWhiteColor,
+      foregroundColor: foregroundColor ?? globalTheme.textPrimaryStyle.color,
+      scrolledUnderElevation:
+          scrolledUnderElevation ?? (elevation == 0 ? 0 : null),
+    );
+  };
+
+  //endregion AppBar
 
   //region Overlay
 

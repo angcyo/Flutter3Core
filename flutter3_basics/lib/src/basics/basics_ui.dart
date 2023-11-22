@@ -115,6 +115,38 @@ extension WidgetListEx on WidgetList {
 }
 
 extension WidgetEx on Widget {
+  /// [Tooltip] 提示
+  Widget tooltip(String? tip, {InlineSpan? richMessage}) => Tooltip(
+        message: tip,
+        richMessage: richMessage,
+        child: this,
+      );
+
+  /// 点击事件
+  /// [GestureDetector] 多个手势识别器, 才会有手势竞争
+  /// [Listener] 监听手势, 不会有手势竞争
+  /// [GestureRecognizer] 手势识别器base
+  /// [TapGestureRecognizer] 单击手势识别器
+  /// [DoubleTapGestureRecognizer] 双击手势识别器
+  /// [LongPressGestureRecognizer] 长按手势识别器
+  /// [DragGestureRecognizer] 拖动手势识别器
+  /// [ScaleGestureRecognizer] 缩放手势识别器
+  /// [PanGestureRecognizer] 拖动手势识别器
+  /// [MultiTapGestureRecognizer] 多击手势识别器
+  /// [EagerGestureRecognizer] 急切手势识别器
+  /// [RotateGestureRecognizer] 旋转手势识别
+  ///
+  Widget click(GestureTapCallback? onTap) => GestureDetector(
+        onTap: onTap,
+        child: this,
+      );
+
+  /// 双击事件
+  Widget doubleClick(GestureTapCallback? onDoubleTap) => GestureDetector(
+        onDoubleTap: onDoubleTap,
+        child: this,
+      );
+
   //region ---Padding---
 
   /// 将当前的小部件, 包裹在一个[Padding]中

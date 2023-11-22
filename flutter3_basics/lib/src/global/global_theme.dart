@@ -5,18 +5,19 @@ part of flutter3_basics;
 /// @since 2023/11/20
 ///
 
-class GlobalThemeConfig extends InheritedWidget {
+/// 提供[GlobalTheme]的[InheritedWidget]
+class GlobalThemeScope extends InheritedWidget {
   final GlobalTheme globalTheme;
 
-  const GlobalThemeConfig({
+  const GlobalThemeScope({
     super.key,
     required super.child,
     required this.globalTheme,
   });
 
   @override
-  bool updateShouldNotify(covariant GlobalThemeConfig oldWidget) =>
-      globalTheme != oldWidget.globalTheme;
+  bool updateShouldNotify(covariant GlobalThemeScope oldWidget) =>
+      isDebug || globalTheme != oldWidget.globalTheme;
 }
 
 /// 全局颜色配置
@@ -41,6 +42,9 @@ class GlobalTheme {
 
   /// 阴影
   double get elevation => 2;
+
+  /// 阴影颜色
+  Color get shadowColor => Colors.black;
 
   /// 基础距离配置
   double get s => kS;
@@ -91,14 +95,14 @@ class GlobalTheme {
     if (context != null) {
       if (depend) {
         result = context
-            .dependOnInheritedWidgetOfExactType<GlobalThemeConfig>()
+            .dependOnInheritedWidgetOfExactType<GlobalThemeScope>()
             ?.globalTheme;
       } else {
         result = context
-            .findAncestorWidgetOfExactType<GlobalThemeConfig>()
+            .findAncestorWidgetOfExactType<GlobalThemeScope>()
             ?.globalTheme;
       }
     }
-    return result ?? GlobalConfig.of(context, depend: depend).globalThemeConfig;
+    return result ?? GlobalConfig.of(context, depend: depend).globalTheme;
   }
 }

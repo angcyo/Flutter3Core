@@ -24,6 +24,8 @@ export 'package:meta/meta.dart';
 
 part 'src/basics/basics.dart';
 
+part 'src/basics/basics_animation.dart';
+
 part 'src/basics/basics_decoration.dart';
 
 part 'src/basics/basics_ex.dart';
@@ -52,7 +54,7 @@ part 'src/global/global_config.dart';
 
 part 'src/global/global_overlays.dart';
 
-part 'src/global/global_ui.dart';
+part 'src/global/global_theme.dart';
 
 part 'src/global/overlay/overlay_animation.dart';
 
