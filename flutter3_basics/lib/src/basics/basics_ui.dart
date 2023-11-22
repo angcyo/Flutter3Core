@@ -687,6 +687,19 @@ extension WidgetEx on Widget {
         verticalDirection: verticalDirection,
         textBaseline: textBaseline,
       );
+
+  /// 简单的滚动小组件[SingleChildScrollView]
+  Widget scroll({
+    Axis scrollDirection = Axis.vertical,
+    ScrollPhysics? physics,
+    ScrollController? controller,
+  }) =>
+      SingleChildScrollView(
+        scrollDirection: scrollDirection,
+        physics: physics,
+        controller: controller,
+        child: this,
+      );
 }
 
 extension StateEx on State {
