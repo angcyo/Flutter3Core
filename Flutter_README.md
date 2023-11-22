@@ -77,3 +77,32 @@ https://juejin.cn/post/7049563669562146846
 ## visitChildElements
 
 `visitChildElements`方法可以遍历当前节点的所有子节点。
+
+
+# Widget
+
+## StatelessWidget
+
+`createElement`->`StatelessElement`
+
+`StatelessElement.build`又强制调用`(widget as StatelessWidget).build(this)`;
+
+## StatefulWidget
+
+`createElement`->`StatefulElement`
+
+`StatefulElement`构造时直接调用`widget.createState()`并存储在`StatefulElement._state`;
+
+`StatefulElement.build`又直接调用`state.build(this)`;
+
+## RenderObjectWidget
+
+`RenderObjectElement`
+`RenderObjectElement._renderObject`
+
+- [LeafRenderObjectWidget]
+- [SingleChildRenderObjectWidget]
+- [MultiChildRenderObjectWidget]
+
+此对象才有`RenderObject createRenderObject(BuildContext context)`, 才能通过`RenderObject`绘制东西;
+

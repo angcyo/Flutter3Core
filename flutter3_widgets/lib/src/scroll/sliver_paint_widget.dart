@@ -9,7 +9,7 @@ part of flutter3_widgets;
 /// [CustomPainter] 回调对象
 
 /// https://book.flutterchina.club/chapter6/sliver.html#_6-11-1-sliver-%E5%B8%83%E5%B1%80%E5%8D%8F%E8%AE%AE
-class SliverPaintWidget extends SingleChildRenderObjectWidget {
+class SliverPaintWidget extends LeafRenderObjectWidget {
   /// Sliver要占用的长度, 为0也不影响绘制的回调
   /// [SliverGeometry.paintExtent]
   final double sliverExtent;

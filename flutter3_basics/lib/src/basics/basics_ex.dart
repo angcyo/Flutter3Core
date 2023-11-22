@@ -50,6 +50,36 @@ extension ObjectEx on Object {
   }
 }
 
+extension FutureEx<T> on Future<T> {
+  /// [Future.then]
+  void get(void Function(T? value, Object? error) get) =>
+      then((value) => get(value, null),
+          onError: (error, stackTrace) => get(null, error));
+
+  /// [FutureBuilder]
+  Widget toWidget(
+    Widget Function(T? value) builder, {
+    Widget Function(Object? error)? errorBuilder,
+    Widget Function()? loadingBuilder,
+  }) {
+    return FutureBuilder<T>(
+      future: this,
+      builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
+        if (snapshot.hasError) {
+          return errorBuilder?.call(snapshot.error) ??
+              GlobalConfig.of(context)
+                  .errorPlaceholderBuilder(context, snapshot.error);
+        }
+        if (snapshot.hasData) {
+          return builder.call(snapshot.data);
+        }
+        return loadingBuilder?.call() ??
+            GlobalConfig.of(context).loadingIndicatorBuilder(context);
+      },
+    );
+  }
+}
+
 //endregion Object 扩展
 
 //region Color 扩展

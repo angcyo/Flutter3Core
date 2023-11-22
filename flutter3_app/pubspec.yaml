@@ -16,6 +16,9 @@ dependencies:
   flutter3_pub:
     path: ../flutter3_pub
 
+  # https://pub.dev/packages/package_info_plus
+  package_info_plus: ^5.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

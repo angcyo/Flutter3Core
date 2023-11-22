@@ -19,6 +19,12 @@ dependencies:
   flutter3_http:
     path: ../flutter3_http
 
+  # https://pub.dev/packages/cross_file
+  # https://github.com/flutter/packages/tree/main/packages/cross_file
+  # https://pub.dev/packages/js
+  # https://pub.dev/packages/meta
+  cross_file: ^0.3.3+6
+
   # https://pub.dev/packages/path_provider
   # https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider
   path_provider: ^2.1.1
