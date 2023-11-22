@@ -6,18 +6,57 @@ part of flutter3_basics;
 
 /// [BoxDecoration] 装饰
 
-/// 圆角纯色装饰
-BoxDecoration radiusFillDecoration({
+/// 描边装饰
+/// [strokeColor] 描边颜色
+/// [strokeWidth] 描边宽度
+BoxDecoration strokeDecoration({
+  BuildContext? context,
+  Color? strokeColor,
+  double strokeWidth = 1,
+  double borderRadius = kDefaultBorderRadiusXX,
+  BorderStyle style = BorderStyle.solid,
+  double strokeAlign = BorderSide.strokeAlignInside,
+  BorderSide? top,
+  BorderSide? bottom,
+  BorderSide? start,
+  BorderSide? end,
+}) {
+  var color = strokeColor ?? GlobalTheme.of(context).primaryColor;
+  final BorderSide side = BorderSide(
+    color: color,
+    width: strokeWidth,
+    style: style,
+    strokeAlign: strokeAlign,
+  );
+  return BoxDecoration(
+    border: BorderDirectional(
+      top: top ?? side,
+      bottom: bottom ?? side,
+      start: start ?? side,
+      end: end ?? side,
+    ),
+    borderRadius: borderRadius > 0
+        ? BorderRadius.all(
+            Radius.circular(borderRadius),
+          )
+        : null,
+  );
+}
+
+/// 纯色填充装饰, 支持圆角
+BoxDecoration fillDecoration({
   BuildContext? context,
   Color? fillColor,
-  double radius = kDefaultBorderRadiusXX,
+  double borderRadius = kDefaultBorderRadiusXX,
 }) {
   var color = fillColor ?? GlobalTheme.of(context).primaryColor;
   return BoxDecoration(
     color: color,
-    borderRadius: BorderRadius.all(
-      Radius.circular(radius),
-    ),
+    borderRadius: borderRadius > 0
+        ? BorderRadius.all(
+            Radius.circular(borderRadius),
+          )
+        : null,
     //gradient:
   );
 }
@@ -40,9 +79,11 @@ BoxDecoration lineaGradientDecoration(
       begin: begin,
       end: end,
     ),
-    borderRadius: BorderRadius.all(
-      Radius.circular(borderRadius),
-    ),
+    borderRadius: borderRadius > 0
+        ? BorderRadius.all(
+            Radius.circular(borderRadius),
+          )
+        : null,
     //gradient:
   );
 }

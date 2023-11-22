@@ -91,6 +91,9 @@ extension WidgetListEx on WidgetList {
   }
 
   /// 使用[Row]包裹
+  /// [mainAxisAlignment] 主轴对齐方式, 水平方向, 水平左对齐, 水平居中, 水平右对齐
+  /// [mainAxisSize] 主轴尺寸, 是要用最大尺寸, 还是要最小尺寸
+  /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   Widget row({
     MainAxisAlignment? mainAxisAlignment,
     MainAxisSize? mainAxisSize,
@@ -293,7 +296,7 @@ extension WidgetEx on Widget {
 
   /// 使用一个容器包裹当前的小部件
   /// [Container]
-  /// [radiusFillDecoration]
+  /// [fillDecoration]
   Widget container({
     AlignmentGeometry? alignment,
     EdgeInsetsGeometry? padding,
@@ -527,19 +530,20 @@ extension WidgetEx on Widget {
       );
 
   /// 圆角波纹效果
-  /// [radius] 背景/波纹圆角大小
+  /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果.
+  /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
   /// [backgroundColor] 背景颜色
   /// [splashColor] 波纹颜色
   /// [decoration] 强行指定装饰
   Widget inkRadius({
+    GestureTapCallback? onTap,
+    BoxShape shape = BoxShape.rectangle,
     double radius = kDefaultBorderRadiusXXX,
     Color? backgroundColor,
     EdgeInsetsGeometry? padding,
     Decoration? decoration,
-    BoxShape shape = BoxShape.rectangle,
     double? width,
     double? height,
-    GestureTapCallback? onTap,
     Color? splashColor,
   }) {
     var borderRadius = shape == BoxShape.circle
@@ -603,6 +607,7 @@ extension WidgetEx on Widget {
         borderRadius: BorderRadius.circular(999),
         splashColor: splashColor,
         highlightColor: highlightColor,
+        highlightShape: BoxShape.rectangle,
         radius: radius,
       );
 
@@ -620,6 +625,28 @@ extension WidgetEx on Widget {
         this,
         child,
       ].column(
+        mainAxisAlignment: mainAxisAlignment,
+        mainAxisSize: mainAxisSize,
+        crossAxisAlignment: crossAxisAlignment,
+        textDirection: textDirection,
+        verticalDirection: verticalDirection,
+        textBaseline: textBaseline,
+      );
+
+  /// 将[this]和[child] 使用[Row]包裹
+  Widget rowOf(
+    Widget child, {
+    MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
+    MainAxisSize? mainAxisSize,
+    CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
+    TextDirection? textDirection,
+    VerticalDirection? verticalDirection,
+    TextBaseline? textBaseline,
+  }) =>
+      [
+        this,
+        child,
+      ].row(
         mainAxisAlignment: mainAxisAlignment,
         mainAxisSize: mainAxisSize,
         crossAxisAlignment: crossAxisAlignment,

@@ -36,6 +36,9 @@ class GlobalTheme {
   /// 图标正常的颜色
   Color get icoNormalColor => "#6f6f6f".toColor();
 
+  /// 主题白色, 受暗色模式影响
+  Color get themeWhiteColor => Colors.white;
+
   /// 阴影
   double get elevation => 2;
 
@@ -55,6 +58,32 @@ class GlobalTheme {
   double get xxh => kXxh;
 
   double get xxxh => kXxxh;
+
+  /// [_kDefaultFontSize] 14
+  TextStyle get textPrimaryStyle => TextStyle(
+        fontSize: 14,
+        color: "#161B26".toColor(),
+      );
+
+  TextStyle get textGeneralStyle => TextStyle(
+        fontSize: 14,
+        color: "#182334".toColor(),
+      );
+
+  TextStyle get textSubStyle => TextStyle(
+        fontSize: 14,
+        color: "#ACAFB7".toColor(),
+      );
+
+  TextStyle get textPlaceStyle => TextStyle(
+        fontSize: 14,
+        color: "#B0B0B0".toColor(),
+      );
+
+  TextStyle get textDisableStyle => TextStyle(
+        fontSize: 14,
+        color: "#aab1bd".toColor(),
+      );
 
   /// [GlobalTheme]
   static GlobalTheme of(BuildContext? context, {bool depend = false}) {
