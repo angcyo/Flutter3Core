@@ -25,6 +25,9 @@ class GlobalTheme {
   /// 颜色配置, 主要颜色
   Color get primaryColor => "#2febff".toColor();
 
+  /// 主题强调色
+  Color get accentColor => primaryColor;
+
   /// 暗一点的主题色
   Color get primaryColorDark => "#0cabea".toColor();
 
@@ -38,7 +41,10 @@ class GlobalTheme {
   Color get icoNormalColor => "#6f6f6f".toColor();
 
   /// 主题白色, 受暗色模式影响
-  Color get themeWhiteColor => "#fbfdfd".toColor();
+  Color get themeWhiteColor => Colors.white;
+
+  /// 白色背景颜色
+  Color get whiteBgColor => "#f9f9f9".toColor();
 
   /// 阴影
   double get elevation => 2;

@@ -15,7 +15,8 @@ const double kXh = 16;
 const double kXxh = 32;
 const double kXxxh = 48;
 const double kDefaultBlurRadius = 4.0;
-const double kDefaultBorderRadiusX = 6.0;
+const double kDefaultBorderRadiusH = 6.0;
+const double kDefaultBorderRadiusX = 8.0;
 const double kDefaultBorderRadiusXX = 12.0;
 const double kDefaultBorderRadiusXXX = 24.0;
 

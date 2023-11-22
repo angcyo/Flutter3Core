@@ -30,6 +30,8 @@ part 'src/scroll/sliver_paint_widget.dart';
 
 part 'src/widgets/after_layout.dart';
 
+part 'src/widgets/app/text_field.dart';
+
 part 'src/widgets/child_background_widget.dart';
 
 part 'src/widgets/gestures/rotate_gesture_reorganizer.dart';
