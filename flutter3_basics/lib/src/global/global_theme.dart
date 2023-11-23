@@ -49,6 +49,12 @@ class GlobalTheme {
   /// 白色背景颜色
   Color get whiteBgColor => "#f9f9f9".toColor();
 
+  /// 白色背景上的白色按钮背景颜色
+  Color get whiteSubBgColor => "#ececec".toColor();
+
+  /// 禁用时的背景颜色(偏白色)
+  Color get disableBgColor => "#ECECEC".toColor();
+
   /// 链接的颜色
   Color get linkColor => "#0a84ff".toColor();
 
@@ -98,7 +104,7 @@ class GlobalTheme {
 
   TextStyle get textDisableStyle => TextStyle(
         fontSize: 14,
-        color: "#aab1bd".toColor(),
+        color: "#b0b0b0".toColor(),
       );
 
   /// [GlobalTheme]

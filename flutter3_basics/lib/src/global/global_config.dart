@@ -14,7 +14,17 @@ const double kX = 12;
 const double kXh = 16;
 const double kXxh = 32;
 const double kXxxh = 48;
+
+/// [kMinInteractiveDimension] 最小交互高度
+const double kMinInteractiveHeight = 36;
+
+/// 设计最佳最小交互高度
+const double kInteractiveHeight = kMinInteractiveDimension;
+
 const double kDefaultBlurRadius = 4.0;
+
+const double kDefaultBorderRadius = 2.0;
+const double kDefaultBorderRadiusL = 4.0;
 const double kDefaultBorderRadiusH = 6.0;
 const double kDefaultBorderRadiusX = 8.0;
 const double kDefaultBorderRadiusXX = 12.0;

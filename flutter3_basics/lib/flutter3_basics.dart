@@ -14,11 +14,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:hsluv/hsluvcolor.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 
 export 'package:async/async.dart';
 export 'package:clock/clock.dart';
 export 'package:collection/collection.dart';
 export 'package:flutter_localizations/flutter_localizations.dart';
+export 'package:hsluv/hsluv.dart';
 export 'package:intl/intl.dart';
 export 'package:meta/meta.dart';
 

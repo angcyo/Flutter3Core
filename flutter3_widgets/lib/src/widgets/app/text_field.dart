@@ -250,7 +250,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 
     var decoration = InputDecoration(
       fillColor:
-          widget.enabled ? widget.fillColor : widget.fillColor.withOpacity(0.6),
+          widget.enabled ? widget.fillColor : widget.fillColor.disabledColor,
       filled: true,
       isDense: widget.isDense,
       isCollapsed: widget.isCollapsed,

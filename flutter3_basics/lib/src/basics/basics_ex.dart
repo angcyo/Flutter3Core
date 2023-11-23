@@ -84,6 +84,7 @@ extension FutureEx<T> on Future<T> {
 
 //region Color 扩展
 
+/// https://pub.dev/packages/hsluv
 extension ColorEx on Color {
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
   static Color fromHex(String hexString) {
@@ -116,6 +117,23 @@ extension ColorEx on Color {
   /// [ui.ColorFilter]
   UiColorFilter toColorFilter([BlendMode blendMode = BlendMode.srcIn]) =>
       ui.ColorFilter.mode(this, blendMode);
+
+  /// 获取当前颜色暗一点的颜色变体
+  /// [ColorScheme]
+  /// [Scheme]
+  Color get darkColor => HSLuvColor.fromColor(this).addLightness(-4).toColor();
+
+  Color get lightColor => HSLuvColor.fromColor(this).addLightness(4).toColor();
+
+  /// 获取当前颜色的禁用颜色变体
+  /// [withAlpha] [0~255] 值越大, 越不透明.
+  /// [withOpacity] [0~1] 值越小, 越透明.
+  Color get disabledColor => withOpacity(0.6);
+
+  /// 获取当前颜色的强调色,
+  /// 值越小, 越弱调, 越暗, 黑色, min:0
+  /// 值越大, 越强调, 越亮, 白色, max:100
+  Color tone(int tone) => CorePalette.of(value).primary.get(tone).toColor();
 }
 
 //endregion Color 扩展

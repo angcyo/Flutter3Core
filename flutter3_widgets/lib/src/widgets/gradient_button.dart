@@ -9,6 +9,7 @@ part of flutter3_widgets;
 class GradientButton extends StatelessWidget {
   const GradientButton({
     Key? key,
+    this.color,
     this.colors,
     required this.onPressed,
     required this.child,
@@ -21,12 +22,13 @@ class GradientButton extends StatelessWidget {
     this.onHighlightChanged,
     this.minWidth = 88,
     this.maxWidth = double.infinity,
-    this.minHeight = 36,
+    this.minHeight = kInteractiveHeight,
     this.maxHeight = double.infinity,
   }) : super(key: key);
 
   // 渐变色数组
   final List<Color>? colors;
+  final Color? color;
   final Color? textColor;
   final Color? splashColor;
   final Color? disabledTextColor;
@@ -61,8 +63,10 @@ class GradientButton extends StatelessWidget {
     bool disabled = onPressed == null;
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: disabled ? null : LinearGradient(colors: _colors),
-        color: disabled ? disabledColor ?? theme.disabledColor : null,
+        gradient: disabled || _colors.isEmpty
+            ? null
+            : LinearGradient(colors: _colors),
+        color: disabled ? disabledColor ?? theme.disabledColor : color,
         borderRadius: radius,
       ),
       child: Material(
@@ -76,7 +80,7 @@ class GradientButton extends StatelessWidget {
               maxWidth: maxWidth,
               maxHeight: maxHeight),
           child: InkWell(
-            splashColor: splashColor ?? _colors.last,
+            splashColor: splashColor ?? _colors.lastOrNull ?? color,
             highlightColor: Colors.transparent,
             onHighlightChanged: onHighlightChanged,
             onTap: onPressed,
