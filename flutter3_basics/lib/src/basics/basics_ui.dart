@@ -41,6 +41,17 @@ extension FrameCallbackEx on int {
 
 typedef WidgetList = List<Widget>;
 
+/// 通过[Builder]小部件, 获取当前元素的[BuildContext]
+/// 然后当前[BuildContext]更新只会影响其子元素, 父元素不会受到影响
+Widget builder(
+  WidgetBuilder builder, [
+  Key? key,
+]) =>
+    Builder(
+      builder: builder,
+      key: key,
+    );
+
 extension WidgetListEx on WidgetList {
   /// 将当前的小部件集合, 包裹在一个[Wrap]中
   /// [alignment] 主轴对齐方式
@@ -680,7 +691,7 @@ extension WidgetEx on Widget {
 
   /// 将[this]和[child] 使用[Column]包裹
   Widget columnOf(
-    Widget child, {
+    Widget? child, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize,
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -690,7 +701,7 @@ extension WidgetEx on Widget {
   }) =>
       [
         this,
-        child,
+        if (child != null) child,
       ].column(
         mainAxisAlignment: mainAxisAlignment,
         mainAxisSize: mainAxisSize,
@@ -702,7 +713,7 @@ extension WidgetEx on Widget {
 
   /// 将[this]和[child] 使用[Row]包裹
   Widget rowOf(
-    Widget child, {
+    Widget? child, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize,
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -712,7 +723,7 @@ extension WidgetEx on Widget {
   }) =>
       [
         this,
-        child,
+        if (child != null) child,
       ].row(
         mainAxisAlignment: mainAxisAlignment,
         mainAxisSize: mainAxisSize,

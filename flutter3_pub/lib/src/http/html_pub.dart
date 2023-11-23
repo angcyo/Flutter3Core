@@ -7,9 +7,14 @@ part of flutter3_pub;
 
 extension HtmlStringEx on String {
   /// 将html字符串文本,快速转换成对应的[Widget]
+  /// 默认所有的文本都将放在`body`标签中, 并且默认会有8.0的margin
+  ///
+  /// [bodyMargin] body的margin, 默认是8.0
+  /// [StyledElementBuiltIn.prepare]
   @dsl
   Widget toHtmlWidget(
     BuildContext context, {
+    double bodyMargin = 0.0,
     OnTap? onLinkTap,
     OnTap? onAnchorTap,
     List<HtmlExtension> extensions = const [],
@@ -20,6 +25,9 @@ extension HtmlStringEx on String {
     Map<String, Style>? style,
   }) {
     Map<String, Style> mergeStyle = {
+      "body": Style(
+        margin: Margins.all(bodyMargin),
+      ),
       "a": Style(
         textDecoration: TextDecoration.none, //去掉下划线
       ),

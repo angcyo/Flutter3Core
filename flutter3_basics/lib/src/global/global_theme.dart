@@ -92,6 +92,21 @@ class GlobalTheme {
         color: "#182334".toColor(),
       );
 
+  TextStyle get textBodyStyle => TextStyle(
+        fontSize: 14,
+        color: "#ACAFB7".toColor(),
+      );
+
+  TextStyle get textTitleStyle => TextStyle(
+        fontSize: 14,
+        color: "#ACAFB7".toColor(),
+      );
+
+  TextStyle get textSubTitleStyle => TextStyle(
+        fontSize: 14,
+        color: "#ACAFB7".toColor(),
+      );
+
   TextStyle get textSubStyle => TextStyle(
         fontSize: 14,
         color: "#ACAFB7".toColor(),
