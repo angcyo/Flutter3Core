@@ -41,6 +41,8 @@ part 'src/basics/basics_ui.dart';
 
 part 'src/basics/custom_page_route.dart';
 
+part 'src/component/custom_painter.dart';
+
 part 'src/component/stack_list.dart';
 
 part 'src/debug/app_lifecycle_log.dart';

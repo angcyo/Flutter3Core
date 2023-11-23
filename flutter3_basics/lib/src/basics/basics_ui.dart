@@ -158,6 +158,12 @@ extension WidgetEx on Widget {
         child: this,
       );
 
+  /// [CustomPaint]
+  Widget paint(PaintFn paint) => CustomPaint(
+        painter: CustomPaintWrap(paint),
+        child: this,
+      );
+
   //region ---Padding---
 
   /// 将当前的小部件, 包裹在一个[Padding]中

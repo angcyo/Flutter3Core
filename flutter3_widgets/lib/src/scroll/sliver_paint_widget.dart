@@ -19,7 +19,7 @@ class SliverPaintWidget extends LeafRenderObjectWidget {
   final double? sliverPaintOrigin;
 
   /// 绘制的回调
-  final Painter? painter;
+  final PainterFn? painter;
 
   const SliverPaintWidget({
     super.key,
@@ -48,7 +48,7 @@ class SliverPaintWidget extends LeafRenderObjectWidget {
 }
 
 class SliverPaintRender extends RenderSliverSingleBoxAdapter {
-  Painter? painter;
+  PainterFn? painter;
   double sliverExtent;
   double? sliverPaintOrigin;
 
