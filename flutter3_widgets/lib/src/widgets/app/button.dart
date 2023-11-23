@@ -167,6 +167,8 @@ class CheckButton extends StatelessWidget {
     return Checkbox(
       value: isChecked,
       onChanged: onChanged,
+      activeColor: fillColor,
+      checkColor: checkColor,
       side: BorderSide(
         color: borderColor,
         width: borderWidth,
