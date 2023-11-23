@@ -5,21 +5,70 @@ part of flutter3_widgets;
 /// @since 2023/11/22
 ///
 
-/// https://juejin.cn/post/6910163213778681864
+/// https://fonts.google.com/icons
+/// 输入框控制配置
+class TextFieldConfig {
+  /// 输入控制, 用于获取输入内容
+  final TextEditingController controller;
 
+  /// 焦点模式
+  /// [EditableTextState.requestKeyboard]
+  final FocusNode focusNode;
+
+  /// 密码输入控制
+  final ObscureNode obscureNode;
+
+  TextFieldConfig({
+    String? text,
+    TextEditingController? controller,
+    FocusNode? focusNode,
+    bool? obscureText,
+  })  : controller = controller ?? TextEditingController(text: text),
+        focusNode = focusNode ?? FocusNode(),
+        obscureNode = ObscureNode(obscureText ?? false);
+}
+
+/// 用来控制密码输入控件, 密码的可见性
+class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier {
+  /// 是否是密码输入框
+  bool obscureText;
+
+  ObscureNode(this.obscureText);
+
+  /// 是否要显示密码
+  bool _showObscureText = false;
+
+  /// 是否隐藏密码
+  bool get showObscureText => _showObscureText;
+
+  /// 显示密码
+  set showObscureText(bool value) {
+    if (_showObscureText != value) {
+      _showObscureText = value;
+      notifyListeners();
+    }
+  }
+
+  /// 切换密码的可见性
+  void toggle() {
+    showObscureText = !showObscureText;
+  }
+}
+
+/// https://juejin.cn/post/6910163213778681864
 /// 单行输入框
 class SingleInputWidget extends StatefulWidget {
   /// 是否激活
   final bool enabled;
 
-  /// 是否隐藏输入内容, 也就是密码输入框
-  final bool obscureText;
+  /// 是否自动显示后缀图标, 一般是清除按钮和查看密码按钮
+  final bool autoShowSuffixIcon;
+
+  /// 输入控制配置
+  final TextFieldConfig config;
 
   /// 光标的颜色
   final Color? cursorColor;
-
-  /// 是否显示清楚按钮
-  final bool showClearSuffix;
 
   /// 背景填充颜色
   final Color fillColor;
@@ -36,8 +85,6 @@ class SingleInputWidget extends StatefulWidget {
   /// 圆角大小
   final double borderRadius;
 
-  /// 输入控制, 用于获取输入内容
-  final TextEditingController controller;
   final double gapPadding;
 
   /// 浮动在输入框上方的提示文字
@@ -81,9 +128,8 @@ class SingleInputWidget extends StatefulWidget {
 
   const SingleInputWidget({
     super.key,
-    required this.controller,
+    required this.config,
     this.fillColor = Colors.white,
-    this.obscureText = false,
     this.borderColor,
     this.focusBorderColor,
     this.borderRadius = kDefaultBorderRadiusX,
@@ -92,7 +138,7 @@ class SingleInputWidget extends StatefulWidget {
     this.maxLines = 1,
     this.minLines,
     this.enabled = true,
-    this.showClearSuffix = true,
+    this.autoShowSuffixIcon = true,
     this.textAlign = TextAlign.start,
     this.cursorColor,
     this.labelText,
@@ -112,6 +158,70 @@ class SingleInputWidget extends StatefulWidget {
 }
 
 class _SingleInputWidgetState extends State<SingleInputWidget> {
+  /// 是否显示后缀图标, 一般是清除按钮和查看密码按钮
+  bool get _showSuffixIcon =>
+      widget.autoShowSuffixIcon &&
+      widget.enabled &&
+      widget.config.focusNode.hasFocus == true &&
+      widget.config.controller.text.isNotEmpty;
+
+  Widget? _buildSuffixIcon() {
+    if (_showSuffixIcon) {
+      var globalTheme = GlobalTheme.of(context);
+      if (widget.config.obscureNode.obscureText) {
+        //密码输入框
+        return IconButton(
+          color: globalTheme.icoGrayColor,
+          onPressed: () {
+            widget.config.obscureNode.toggle();
+            setState(() {});
+          },
+          icon: Icon(
+            widget.config.obscureNode.showObscureText
+                ? Icons.visibility
+                : Icons.visibility_off,
+          ),
+        );
+      } else {
+        //普通文本输入框
+        return IconButton(
+          color: globalTheme.icoGrayColor,
+          onPressed: () {
+            widget.config.controller.clear();
+            setState(() {});
+          },
+          icon: const Icon(Icons.clear),
+        );
+      }
+    }
+    return null;
+  }
+
+  /// 检查是否需要显示后缀图标
+  void _checkSuffixIcon() {
+    if (widget.autoShowSuffixIcon) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    widget.config.focusNode.addListener(_checkSuffixIcon);
+    if (widget.config.obscureNode.obscureText) {
+      widget.config.obscureNode.addListener(_checkSuffixIcon);
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.config.focusNode.removeListener(_checkSuffixIcon);
+    if (widget.config.obscureNode.obscureText) {
+      widget.config.obscureNode.removeListener(_checkSuffixIcon);
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     //圆角填充的输入装饰样式
@@ -139,7 +249,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     );
 
     var decoration = InputDecoration(
-      fillColor: widget.fillColor,
+      fillColor:
+          widget.enabled ? widget.fillColor : widget.fillColor.withOpacity(0.6),
       filled: true,
       isDense: widget.isDense,
       isCollapsed: widget.isCollapsed,
@@ -162,26 +273,17 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       /*suffixIcon: const Icon(Icons.clear).click(() {
         widget.controller.clear();
       }),*/
-      suffixIcon: (widget.showClearSuffix && widget.controller.text.isNotEmpty)
-          ? IconButton(
-              onPressed: () {
-                widget.controller.clear();
-                setState(() {});
-              },
-              icon: const Icon(Icons.clear),
-            )
-          : null,
+      suffixIcon: _buildSuffixIcon(),
       prefix: widget.prefix,
     );
 
     return TextField(
+      focusNode: widget.config.focusNode,
       decoration: decoration,
-      controller: widget.controller,
+      controller: widget.config.controller,
       enabled: widget.enabled,
       onChanged: (value) {
-        if (widget.showClearSuffix) {
-          setState(() {});
-        }
+        _checkSuffixIcon();
       },
       //expands: true,
       textAlign: widget.textAlign,
@@ -189,7 +291,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       minLines: widget.minLines,
       maxLength: widget.maxLength,
       //scrollPadding: EdgeInsets.zero,
-      obscureText: widget.obscureText,
+      obscureText: widget.config.obscureNode.obscureText &&
+          !widget.config.obscureNode._showObscureText,
       keyboardType: widget.keyboardType,
       cursorColor: widget.cursorColor,
     );

@@ -40,11 +40,17 @@ class GlobalTheme {
   /// 图标正常的颜色
   Color get icoNormalColor => "#6f6f6f".toColor();
 
+  /// 灰度图标的颜色
+  Color get icoGrayColor => "#333333".toColor();
+
   /// 主题白色, 受暗色模式影响
   Color get themeWhiteColor => Colors.white;
 
   /// 白色背景颜色
   Color get whiteBgColor => "#f9f9f9".toColor();
+
+  /// 链接的颜色
+  Color get linkColor => "#0a84ff".toColor();
 
   /// 阴影
   double get elevation => 2;
