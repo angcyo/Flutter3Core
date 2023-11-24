@@ -71,7 +71,10 @@ class SingleInputWidget extends StatefulWidget {
   final Color? cursorColor;
 
   /// 背景填充颜色
-  final Color fillColor;
+  final Color? fillColor;
+
+  /// 禁用时的填充颜色
+  final Color? disabledFillColor;
 
   /// 边框的宽度, 为0取消边框
   final double borderWidth;
@@ -129,7 +132,7 @@ class SingleInputWidget extends StatefulWidget {
   const SingleInputWidget({
     super.key,
     required this.config,
-    this.fillColor = Colors.white,
+    this.fillColor,
     this.borderColor,
     this.focusBorderColor,
     this.borderRadius = kDefaultBorderRadiusX,
@@ -140,6 +143,7 @@ class SingleInputWidget extends StatefulWidget {
     this.enabled = true,
     this.autoShowSuffixIcon = true,
     this.textAlign = TextAlign.start,
+    this.disabledFillColor,
     this.cursorColor,
     this.labelText,
     this.hintText,
@@ -230,18 +234,20 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     var normalBorder = OutlineInputBorder(
       gapPadding: widget.gapPadding,
       borderRadius: BorderRadius.circular(widget.borderRadius),
-      borderSide: widget.borderColor == null || widget.borderWidth <= 0
-          ? BorderSide.none
-          : BorderSide(
-              color: widget.borderColor!,
-              width: widget.borderWidth,
-            ),
+      borderSide:
+          widget.borderColor == Colors.transparent || widget.borderWidth <= 0
+              ? BorderSide.none
+              : BorderSide(
+                  color: widget.borderColor ?? globalTheme.borderColor,
+                  width: widget.borderWidth,
+                ),
     );
 
     var focusedBorder = OutlineInputBorder(
       gapPadding: widget.gapPadding,
       borderRadius: BorderRadius.circular(widget.borderRadius),
-      borderSide: widget.borderWidth <= 0
+      borderSide: widget.focusBorderColor == Colors.transparent ||
+              widget.borderWidth <= 0
           ? BorderSide.none
           : BorderSide(
               color: widget.focusBorderColor ?? globalTheme.accentColor,
@@ -250,9 +256,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     );
 
     var decoration = InputDecoration(
-      fillColor:
-          widget.enabled ? widget.fillColor : widget.fillColor.disabledColor,
-      filled: true,
+      fillColor: widget.enabled
+          ? widget.fillColor
+          : widget.disabledFillColor ?? widget.fillColor?.disabledColor,
+      filled: widget.fillColor != null,
       isDense: widget.isDense,
       isCollapsed: widget.isCollapsed,
       counterText: widget.counterText,

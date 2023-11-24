@@ -58,6 +58,9 @@ class GlobalTheme {
   /// 链接的颜色
   Color get linkColor => "#0a84ff".toColor();
 
+  /// 边框的颜色
+  Color get borderColor => "#6f6f6f".toColor();
+
   /// 阴影
   double get elevation => 2;
 
