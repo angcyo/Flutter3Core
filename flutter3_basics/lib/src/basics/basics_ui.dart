@@ -164,6 +164,24 @@ extension WidgetEx on Widget {
         child: this,
       );
 
+  /// 监听一个通知
+  /// [ContextEx.postNotification]
+  /// [Notification]
+  Widget listenerNotification<T extends Notification>({
+    required NotificationListenerCallback<T> onNotification,
+    bool? Function(T)? shouldNotify,
+  }) =>
+      NotificationListener<T>(
+        onNotification: onNotification,
+        child: this,
+      );
+
+  /// 为[child]小部件提供一个数据
+  Widget dataProvider([Object? data]) => DataProviderScope(
+        data: data,
+        child: this,
+      );
+
   //region ---Padding---
 
   /// 将当前的小部件, 包裹在一个[Padding]中
@@ -775,6 +793,11 @@ extension ContextEx on BuildContext {
       (this as Element).markNeedsBuild();
     }
   }
+
+  /// 分发一个通知, 可以通过[NotificationListener]小部件接收通知
+  /// [dispatchNotification]
+  void postNotification(Notification notification) =>
+      notification.dispatch(this);
 
   /// 请求焦点, 传null, 可以收起键盘
   requestFocus([FocusNode? node]) {

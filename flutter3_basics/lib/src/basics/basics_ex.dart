@@ -56,6 +56,12 @@ extension FutureEx<T> on Future<T> {
       then((value) => get?.call(value, null),
           onError: (error, stackTrace) => get?.call(null, error));
 
+  /// 不需要等待当前的[Future]执行完成, 但是会报告错误
+  /// [ignore] 完成和错误都被忽略
+  void unAwait() {
+    unawaited(this);
+  }
+
   /// [FutureBuilder]
   Widget toWidget(
     Widget Function(T? value) builder, {

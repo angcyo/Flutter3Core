@@ -6,6 +6,12 @@ part of flutter3_basics;
 ///
 
 /// 一样的路由弹窗时的动画处理, 不一样的路由弹窗使用系统默认动画
+/// 启动当前路由:
+///  [didPush]->[didChangeNext]->[didChangePrevious]->[buildTransitions]->[buildPage]
+/// 关闭当前路由:
+///  [didPop]->[didComplete]->[buildTransitions]
+/// 关闭上层路由:
+///  [didPopNext]->[buildTransitions]->[buildPage]
 mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   /// 是否pop相同的路由
   bool _isPopSameRoute = true;
@@ -27,6 +33,8 @@ mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   /// [nextRoute] 下一个路由, 如果有; 如果没有, 则有可能是自身.
   @override
   void didChangeNext(Route? nextRoute) {
+    var settings = this.settings;
+    var setting = nextRoute?.settings;
     //debugger();
     _isPopSameRoute = nextRoute == null || nextRoute.runtimeType == runtimeType;
     super.didChangeNext(nextRoute);
@@ -71,11 +79,20 @@ mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   }
 
   @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    //debugger();
+    return super.buildPage(context, animation, secondaryAnimation);
+  }
+
+  @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
+    var settings = this.settings;
+    //debugger();
     if (_isPopSameRoute) {
-      return buildSameTransitions(
-          context, animation, secondaryAnimation, child);
+      return buildSameTransitions(context, animation, secondaryAnimation,
+          child) /*.dataProvider(animation)*/;
     }
     return super
         .buildTransitions(context, animation, secondaryAnimation, child);

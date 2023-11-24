@@ -222,6 +222,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     super.dispose();
   }
 
+  /// [MaterialTextSelectionControls.buildHandle]选中后的控制按钮构建
   @override
   Widget build(BuildContext context) {
     //圆角填充的输入装饰样式
@@ -277,24 +278,36 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       prefix: widget.prefix,
     );
 
-    return TextField(
-      focusNode: widget.config.focusNode,
-      decoration: decoration,
-      controller: widget.config.controller,
-      enabled: widget.enabled,
-      onChanged: (value) {
-        _checkSuffixIcon();
-      },
-      //expands: true,
-      textAlign: widget.textAlign,
-      maxLines: widget.maxLines,
-      minLines: widget.minLines,
-      maxLength: widget.maxLength,
-      //scrollPadding: EdgeInsets.zero,
-      obscureText: widget.config.obscureNode.obscureText &&
-          !widget.config.obscureNode._showObscureText,
-      keyboardType: widget.keyboardType,
-      cursorColor: widget.cursorColor,
+    return TextSelectionTheme(
+      data: TextSelectionThemeData(
+        cursorColor: widget.cursorColor,
+        selectionColor: widget.cursorColor,
+        selectionHandleColor: widget.cursorColor,
+      ),
+      child: DefaultSelectionStyle(
+        cursorColor: widget.cursorColor, //光标的颜色
+        selectionColor: widget.cursorColor, //选中文本的颜色
+        //mouseCursor: SystemMouseCursors.text,//鼠标的样式
+        child: TextField(
+          focusNode: widget.config.focusNode,
+          decoration: decoration,
+          controller: widget.config.controller,
+          enabled: widget.enabled,
+          onChanged: (value) {
+            _checkSuffixIcon();
+          },
+          //expands: true,
+          textAlign: widget.textAlign,
+          maxLines: widget.maxLines,
+          minLines: widget.minLines,
+          maxLength: widget.maxLength,
+          //scrollPadding: EdgeInsets.zero,
+          obscureText: widget.config.obscureNode.obscureText &&
+              !widget.config.obscureNode._showObscureText,
+          keyboardType: widget.keyboardType,
+          cursorColor: widget.cursorColor,
+        ),
+      ),
     );
   }
 }
