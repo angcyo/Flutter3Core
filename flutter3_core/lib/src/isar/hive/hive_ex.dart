@@ -8,6 +8,8 @@ part of flutter3_core;
 /// 默认的盒子名称
 const kHiveBox = "HiveBox";
 const kHiveBoxPath = "hive";
+
+/// 默认的数据盒子
 late Box _hiveBox;
 
 /// 默认的Hive数据库路径, 不支持修改
@@ -37,7 +39,7 @@ extension HiveStringEx on String {
   Stream<BoxEvent> hiveWatch() => _hiveBox.watch(key: this);
 
   /// 获取指定键的值
-  Future<dynamic> hiveGet([dynamic defaultValue]) =>
+  T? hiveGet<T>([T? defaultValue]) =>
       _hiveBox.get(this, defaultValue: defaultValue);
 }
 

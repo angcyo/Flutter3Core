@@ -57,15 +57,14 @@ class GradientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     //确保colors数组不空
-    List<Color> _colors =
-        colors ?? [theme.primaryColor, theme.primaryColorDark];
+    List<Color> colors =
+        this.colors ?? [theme.primaryColor, theme.primaryColorDark];
     final radius = borderRadius;
     bool disabled = onPressed == null;
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: disabled || _colors.isEmpty
-            ? null
-            : LinearGradient(colors: _colors),
+        gradient:
+            disabled || colors.isEmpty ? null : LinearGradient(colors: colors),
         color: disabled ? disabledColor ?? theme.disabledColor : color,
         borderRadius: radius,
       ),
@@ -80,7 +79,7 @@ class GradientButton extends StatelessWidget {
               maxWidth: maxWidth,
               maxHeight: maxHeight),
           child: InkWell(
-            splashColor: splashColor ?? _colors.lastOrNull ?? color,
+            splashColor: splashColor ?? colors.lastOrNull ?? color,
             highlightColor: Colors.transparent,
             onHighlightChanged: onHighlightChanged,
             onTap: onPressed,

@@ -30,19 +30,30 @@ class ToastWidget extends StatelessWidget {
   /// 背景颜色
   final Color? background;
 
+  /// 背景模糊的伽马值
+  final double? bgBlurSigma;
+
   /// 阴影高度
   final double? elevation;
+
+  /// 整体的内边距, 距离屏幕的内边距
+  final EdgeInsetsGeometry? padding;
+
+  /// 内容内边距
+  final EdgeInsetsGeometry? contentPadding;
 
   const ToastWidget({
     super.key,
     required this.child,
     this.background,
+    this.bgBlurSigma,
     this.elevation,
+    this.contentPadding = const EdgeInsets.all(kXh),
+    this.padding = const EdgeInsets.all(kXh),
   });
 
   @override
   Widget build(BuildContext context) {
-    EdgeInsetsGeometry padding = const EdgeInsets.all(8);
     Widget result = child;
     final isLight = background?.isLight ?? false;
     final textColor = isLight
@@ -51,13 +62,13 @@ class ToastWidget extends StatelessWidget {
         : Colors.white;
     //添加背景
     result = Container(
-      color: background ?? Colors.black.withAlpha(180),
-      padding: padding,
+      color: background ?? "#333333".toColor().withOpacity(0.6),
+      padding: contentPadding,
       child: result,
-    );
+    ).blur(sigma: bgBlurSigma);
     //添加圆角
     result = ClipRRect(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(kDefaultBorderRadiusXX),
       child: result,
     );
     if (elevation != null) {
@@ -67,7 +78,7 @@ class ToastWidget extends StatelessWidget {
     }
     //添加屏幕内边距
     result = Padding(
-      padding: padding,
+      padding: padding ?? EdgeInsets.zero,
       child: result,
     );
     //添加主题样式

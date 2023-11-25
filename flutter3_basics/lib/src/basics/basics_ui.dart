@@ -520,6 +520,25 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 模糊背景
+  Widget blur({
+    double? sigma = kM,
+    UiImageFilter? filter,
+    BlendMode blendMode = BlendMode.srcOver,
+  }) =>
+      (sigma ?? 0) > 0 || filter != null
+          ? BackdropFilter(
+              filter: filter ??
+                  ImageFilter.blur(
+                    sigmaX: sigma!,
+                    sigmaY: sigma,
+                    tileMode: TileMode.clamp,
+                  ),
+              blendMode: blendMode,
+              child: this,
+            )
+          : this;
+
   /// 文本样式包裹
   /// [DefaultTextStyle]
   Widget wrapTextStyle({

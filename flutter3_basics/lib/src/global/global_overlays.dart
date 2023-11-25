@@ -49,6 +49,9 @@ toast(
   /// 背景颜色
   Color? background,
 
+  /// 背景模糊的伽马值
+  double? bgBlurSigma,
+
   /// 显示的位置
   OverlayPosition position = OverlayPosition.bottom,
 
@@ -58,6 +61,7 @@ toast(
   showNotification((context) {
     return ToastWidget(
       background: background,
+      bgBlurSigma: bgBlurSigma,
       child: msg,
     );
   }, position: position, animate: animate ?? OverlayAnimate.opacity);

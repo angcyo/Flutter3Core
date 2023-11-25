@@ -16,6 +16,9 @@ class FillButton extends StatelessWidget {
   /// 按钮是否可用
   final bool enabled;
 
+  /// 手势事件
+  final GestureTapCallback? onTap;
+
   /// 圆角大小
   final double radius;
 
@@ -60,6 +63,7 @@ class FillButton extends StatelessWidget {
     super.key,
     this.text,
     this.child,
+    this.onTap,
     this.enabled = true,
     this.radius = kDefaultBorderRadiusX,
     this.gradientColors,
@@ -88,7 +92,15 @@ class FillButton extends StatelessWidget {
     var disabledTextColor =
         this.disabledTextColor ?? (textColor ?? Colors.black38).disabledColor;
     return GradientButton(
-      onPressed: enabled ? () {} : null,
+      onPressed: enabled
+          ? onTap ??
+              () {
+                assert(() {
+                  debugPrint("FillButton.onTap is null");
+                  return true;
+                }());
+              }
+          : null,
       color: fillColor,
       colors: fillColor == null ? gradientColors : [],
       disabledColor: disabledFillColor ?? fillRefColor?.disabledColor,

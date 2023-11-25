@@ -97,5 +97,6 @@ part 'src/widgets/value_listener.dart';
 
 /// 类型重定义
 typedef UiImage = ui.Image;
+typedef UiImageFilter = ui.ImageFilter;
 typedef UiColorFilter = ui.ColorFilter;
 typedef UiGradient = ui.Gradient;
