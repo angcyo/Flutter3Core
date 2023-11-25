@@ -38,6 +38,14 @@ part 'src/view_model/view_model_ex.dart';
 
 /// 初始化Flutter3核心库
 Future<void> initFlutter3Core() async {
+  GlobalConfig.def.writeFileFn = (fileName, folder, content) async {
+    return "$content".appendToFile(
+      fileName,
+      folder: folder,
+      limitLength: fileName.endsWith('.log'),
+    );
+  };
+
   //初始化isar数据库
   await openIsar();
 

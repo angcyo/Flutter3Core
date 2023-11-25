@@ -9,6 +9,7 @@ import 'dart:ui' as ui;
 import 'dart:ui';
 
 import 'package:async/async.dart';
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:hsluv/hsluvcolor.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
+import 'package:uuid/uuid.dart';
 
 export 'package:async/async.dart';
 export 'package:clock/clock.dart';

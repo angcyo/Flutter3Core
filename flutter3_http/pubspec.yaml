@@ -23,6 +23,10 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
   dio: ^5.3.3
+  # https://pub.dev/packages/dio_http2_adapter
+  # https://pub.dev/packages/http2
+  # https://pub.dev/packages/dio
+  #dio_http2_adapter: ^2.3.2
 
 dev_dependencies:
   flutter_test:

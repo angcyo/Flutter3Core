@@ -118,6 +118,21 @@ extension PathStringEx on String {
     Directory(this).createSync(recursive: recursive);
   }
 
+  /// 获取一个对应平台的文件路径
+  /// [this] 文件名
+  /// [subFolder] 子文件夹, 不包含根目录
+  Future<String> filePathOf([String? subFolder]) async {
+    var folderPath = await fileFolderPath();
+    if (subFolder == null) {
+      subFolder = folderPath;
+    } else {
+      subFolder = p.join(folderPath, subFolder);
+    }
+    subFolder.ensureDirectory();
+    var filePath = p.join(subFolder, this);
+    return filePath;
+  }
+
   /// 通过[part1]...[part15]拼接路径
   /// ```
   /// var context = p.Context(style: Style.windows);

@@ -16,19 +16,13 @@ extension LogEx on Object {
   /// [fileName] 日志文件名
   /// [folder] 上层文件夹
   /// [limitLength] 是否限制日志文件的最大长度
+  /// @return 返回文件路径
   Future<String> appendToFile(
     String fileName, {
     String? folder,
     bool limitLength = true,
   }) async {
-    var folderPath = await fileFolderPath();
-    if (folder == null) {
-      folder = folderPath;
-    } else {
-      folder = p.join(folderPath, folder);
-    }
-    folder.ensureDirectory();
-    var filePath = p.join(folder, fileName);
+    var filePath = await fileName.filePathOf(folder);
     var mode = FileMode.append;
     if (limitLength && filePath.length > kMaxLogLength) {
       mode = FileMode.write;
@@ -42,6 +36,7 @@ extension LogEx on Object {
   }
 
   /// 写入内容到日志文件
+  /// @return 返回文件路径
   Future<String> appendToLog({
     String fileName = "log.log",
     String? folder = "log",
@@ -51,22 +46,29 @@ extension LogEx on Object {
   }
 
   /// 写入内容到日志文件, 同步方法
-  String toLogSync({
+  void toLogSync({
     String fileName = "log.log",
     String? folder = "log",
     bool limitLength = true,
   }) {
     unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));
-    return "$this";
   }
 
   /// 写入内容到日志文件, 同步方法
-  String toErrorLogSync({
+  void toErrorLogSync({
     String fileName = "error.log",
     String? folder = "log",
     bool limitLength = true,
   }) {
     unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));
-    return "$this";
+  }
+
+  /// 写入内容到日志文件, 同步方法
+  void toHttpLogSync({
+    String fileName = "http.log",
+    String? folder = "log",
+    bool limitLength = true,
+  }) {
+    unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));
   }
 }

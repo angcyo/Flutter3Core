@@ -38,6 +38,10 @@ typedef GlobalOpenUrlFn = Future<bool> Function(
 typedef WidgetArgumentBuilder = Widget Function<T>(
     BuildContext context, T? arg);
 
+/// 写入文件的回调方法
+typedef GlobalWriteFileFn = Future<String?> Function(
+    String fileName, String? folder, Object? content);
+
 /// 快速打开url
 @dsl
 Future<bool> openWebUrl(String? url, [BuildContext? context]) async {
@@ -127,6 +131,12 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   GlobalOpenUrlFn? openUrlFn = (context, url) {
     l.w("企图打开url:$url from:$context");
     return Future.value(false);
+  };
+
+  /// 注册一个全局写入文件内容的方法, 返回文件路径
+  GlobalWriteFileFn? writeFileFn = (fileName, folder, content) async {
+    l.w("企图打开写入文件:$fileName :$content");
+    return Future.value(null);
   };
 
   //region Widget

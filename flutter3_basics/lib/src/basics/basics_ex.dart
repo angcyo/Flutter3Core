@@ -21,6 +21,29 @@ const kMinute = 60 * kSecond;
 /// 一秒的毫秒数
 const kSecond = 1000;
 
+/// ```
+/// // Generate a v1 (time-based) id
+/// uuid.v1(); // -> '6c84fb90-12c4-11e1-840d-7b25c5ee775a'
+///
+/// // Generate a v4 (random) id
+/// uuid.v4(); // -> '110ec58a-a0f2-4ac4-8393-c866d813b8d1'
+///
+/// // Generate a v5 (namespace-name-sha1-based) id
+/// uuid.v5(Uuid.NAMESPACE_URL, 'www.google.com'); // -> 'c74a196f-f19d-5ea9-bffd-a2742432fc9c'
+/// ```
+//String get uuid => uuidOrigin(true);
+String uuid([bool trim = true]) {
+  var v4 = const Uuid().v4();
+  if (trim) {
+    v4 = v4.replaceAll("-" /*RegExp(r'-')*/, '');
+  }
+  return v4.toUpperCase();
+}
+
+/// 行的分隔符
+/// [_newlineRegExp]
+String get lineSeparator => Platform.isWindows ? "\r\n" : "\n";
+
 //region Object 扩展
 
 extension ObjectEx on Object {
@@ -170,6 +193,12 @@ extension StringEx on String {
 
   /// "yyyy-MM-dd HH:mm:ss" 转换成时间
   DateTime toDateTime() => DateTime.parse(this);
+
+  String sha1() => utf8.encode(this).sha1();
+
+  String sha256() => utf8.encode(this).sha256();
+
+  String md5() => utf8.encode(this).md5();
 
   /// [Uri]
   Uri toUri() => Uri.parse(this);
@@ -433,12 +462,19 @@ extension IntEx on int {
   }
 }
 
-extension Uint8ListEx on Uint8List {
+/// [Uint8List]
+extension ListIntEx on List<int> {
   /// [Uint8List]转换成字符串
   String toStr([Utf8Codec codec = utf8, bool allowMalformed = true]) {
     return utf8.decode(this, allowMalformed: allowMalformed);
     //return String.fromCharCodes(this);
   }
+
+  String sha1() => crypto.sha1.convert(this).toString();
+
+  String sha256() => crypto.sha256.convert(this).toString();
+
+  String md5() => crypto.md5.convert(this).toString();
 }
 
 extension ListEx<T> on List<T> {

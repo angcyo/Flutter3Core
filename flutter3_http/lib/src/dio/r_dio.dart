@@ -12,7 +12,14 @@ final RDio rDio = RDio();
 
 class RDio {
   /// dio对象
-  late final Dio dio = Dio();
+  late final Dio dio = Dio()
+        ..options.baseUrl = Http.getBaseUrl?.call() ?? ""
+        ..interceptors.add(LogFileInterceptor())
+
+      /*..httpClientAdapter = Http2Adapter(
+      ConnectionManager(idleTimeout: const Duration(seconds: 10)),
+    )*/
+      ;
 
   /// 获取一个上层提供的[RDio],如果有.
   /// 如果有没有则返回单例
