@@ -2,7 +2,6 @@ library flutter3_core;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -14,6 +13,7 @@ import 'package:path/path.dart' as p;
 import 'flutter3_core.dart';
 
 export 'package:cross_file/cross_file.dart';
+export 'package:flutter3_http/flutter3_http.dart';
 export 'package:flutter3_widgets/flutter3_widgets.dart';
 export 'package:hive/hive.dart';
 export 'package:hive_flutter/hive_flutter.dart';

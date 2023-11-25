@@ -5,7 +5,8 @@ part of flutter3_basics;
 /// @since 2023/11/24
 ///
 
-typedef ValueWidgetBuilder<T> = Widget Function(BuildContext context, T data);
+typedef ValueWidgetBuilder = Widget Function(
+    BuildContext context, dynamic data);
 
 /// 监听[Listenable]并自动重建小部件
 class ValueListener<T extends Listenable> extends StatefulWidget {
@@ -64,30 +65,28 @@ class _ValueListenerState extends State<ValueListener> {
 
 extension ValueListenerEx on Listenable {
   /// 监听[Listenable]并自动重建小部件
-  Widget listener<T extends Listenable>(WidgetBuilder builder) => ValueListener(
+  Widget listener(WidgetBuilder builder) => ValueListener(
         listenableList: [this],
         builder: (context, value) => builder(context),
       );
 
   /// 监听[Listenable]并自动重建小部件, 并把[value]回调出来
-  Widget listenerValue<T extends Listenable>(ValueWidgetBuilder<T> builder) =>
-      ValueListener(
+  Widget listenerValue(ValueWidgetBuilder builder) => ValueListener(
         listenableList: [this],
-        builder: (context, value) => builder(context, value as T),
+        builder: (context, value) => builder(context, value),
       );
 }
 
 extension ValueListListenerEx on List<Listenable> {
   /// 监听[Listenable]并自动重建小部件
-  Widget listener<T extends Listenable>(WidgetBuilder builder) => ValueListener(
+  Widget listener(WidgetBuilder builder) => ValueListener(
         listenableList: this,
         builder: (context, value) => builder(context),
       );
 
   /// 监听[Listenable]并自动重建小部件, 并把[value]回调出来
-  Widget listenerValue<T extends Listenable>(ValueWidgetBuilder<T> builder) =>
-      ValueListener(
+  Widget listenerValue(ValueWidgetBuilder builder) => ValueListener(
         listenableList: this,
-        builder: (context, value) => builder(context, value as T),
+        builder: (context, value) => builder(context, value),
       );
 }

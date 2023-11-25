@@ -5,6 +5,14 @@ part of flutter3_http;
 /// @since 2023/11/09
 ///
 
+class Http {
+  /// api host
+  static String? baseUrl;
+
+  /// 获取一个[baseUrl]
+  static String? Function()? getBaseUrl = () => baseUrl;
+}
+
 extension HttpUriEx on Uri {
   /// 获取http字节内容
   Future<Uint8List?> getHttpBytes({Map<String, String>? headers}) async {
@@ -56,6 +64,24 @@ extension HttpUriEx on Uri {
 }
 
 extension HttpStringEx on String {
+  /// 拼接接口
+  String toApi(String api) {
+    if (api.startsWith('http://') || api.startsWith('https://')) {
+      return api;
+    }
+    var base = Http.getBaseUrl?.call() ?? '';
+    if (base.isNotEmpty) {
+      if (base.endsWith('/')) {
+        base = base.substring(0, base.length - 1);
+      }
+      if (api.startsWith('/')) {
+        api = api.substring(1);
+      }
+      return '$base/$api';
+    }
+    return api;
+  }
+
   /// [HttpUriEx.getHttpContent]
   Future<String?> getHttpContent({
     Encoding defaultEncoding = utf8,

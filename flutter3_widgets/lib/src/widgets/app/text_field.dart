@@ -18,6 +18,9 @@ class TextFieldConfig {
   /// 密码输入控制
   final ObscureNode obscureNode;
 
+  /// 输入的文本
+  String get text => controller.text;
+
   TextFieldConfig({
     String? text,
     TextEditingController? controller,
