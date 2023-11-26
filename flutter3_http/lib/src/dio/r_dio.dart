@@ -14,6 +14,9 @@ class RDio {
   /// dio对象
   late final Dio dio = Dio()
         ..options.baseUrl = Http.getBaseUrl?.call() ?? ""
+        ..options.connectTimeout = const Duration(seconds: 5) //5s
+        ..options.sendTimeout = const Duration(seconds: 5)
+        ..options.receiveTimeout = const Duration(seconds: 5) //3s
         ..interceptors.add(LogFileInterceptor())
 
       /*..httpClientAdapter = Http2Adapter(

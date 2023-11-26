@@ -8,12 +8,31 @@ part of flutter3_core;
 /// https://pub.dev/packages/jetpack
 /// https://github.com/praja/jetpack
 
+/// [ViewModel]
+abstract class BaseViewModel extends ViewModel {
+  @override
+  void onDispose() {
+    super.onDispose();
+  }
+}
+
 //region ---LiveData---
 
 MutableLiveData<T?> vmData<T>([T? value]) => MutableLiveData<T?>(value);
 
 MutableOnceLiveData<T?> vmDataOnce<T>([T? value]) =>
     MutableOnceLiveData<T?>(value);
+
+extension LiveDataEx<T> on LiveData<T> {
+  /// 监听当前的[LiveData]数据变化
+  /// [observe]
+  /// [LiveDataBuilder]
+  Widget listener(Widget Function(BuildContext, T) builder) =>
+      LiveDataBuilder<T>(
+        liveData: this,
+        builder: builder,
+      );
+}
 
 //endregion ---LiveData---
 

@@ -37,7 +37,7 @@ String uuid([bool trim = true]) {
   if (trim) {
     v4 = v4.replaceAll("-" /*RegExp(r'-')*/, '');
   }
-  return v4.toUpperCase();
+  return v4;
 }
 
 /// 行的分隔符
@@ -46,7 +46,17 @@ String get lineSeparator => Platform.isWindows ? "\r\n" : "\n";
 
 //region Object 扩展
 
+/*extension DynamicEx on dynamic {
+  /// [runtimeType]
+  /// [toString]
+  String toRuntimeString() => "[$runtimeType]${toString()}";
+}*/
+
 extension ObjectEx on Object {
+  /// [runtimeType]
+  /// [toString]
+  String toRuntimeString() => "[$runtimeType]${toString()}";
+
   /// [Object]的hash值
   String hash() => hashCode.toRadixString(16);
 

@@ -6,7 +6,7 @@ part of flutter3_http;
 ///
 
 class Http {
-  /// api host
+  /// api host, 不需要/结尾
   static String? baseUrl;
 
   /// 获取一个[baseUrl]

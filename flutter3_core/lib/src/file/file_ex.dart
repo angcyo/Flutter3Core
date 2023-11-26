@@ -87,6 +87,11 @@ extension PathStringEx on String {
   /// 获取目录名称, 去掉了文件名的路径
   String dirname() => p.dirname(this);
 
+  /// 获取文件名, 包含扩展名, 去掉路径
+  /// [withoutExtension] 是否去掉扩展名
+  String basename([bool withoutExtension = false]) =>
+      withoutExtension ? p.basenameWithoutExtension(this) : p.basename(this);
+
   /// 父路径
   String parentPath() => FileSystemEntity.parentOf(this);
 
