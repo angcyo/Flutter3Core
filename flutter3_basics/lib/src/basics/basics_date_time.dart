@@ -1,4 +1,4 @@
-part of flutter3_basics;
+import 'package:intl/intl.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
