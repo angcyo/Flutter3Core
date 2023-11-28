@@ -5,6 +5,16 @@ part of flutter3_basics;
 /// @since 2023/10/20
 ///
 
+//region Fn Callback
+
+/// 只有一个值回调
+typedef ValueCallback = dynamic Function(dynamic value);
+
+/// 回调一个值和一个错误
+typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
+
+//endregion Fn
+
 //region 基础
 
 /// 是否是debug模式

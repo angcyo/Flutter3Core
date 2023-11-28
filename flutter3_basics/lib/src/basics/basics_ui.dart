@@ -839,7 +839,7 @@ extension ContextEx on BuildContext {
   }
 
   /// 遍历所有的子元素
-  /// [visitor] 返回false 可以停止遍历
+  /// [visitor] 返回值表示是否继续遍历; true: 继续深度遍历; false: 停止深度遍历;
   eachVisitChildElements(
     ConditionalElementVisitorDepth visitor, {
     int depth = 0,
@@ -854,6 +854,19 @@ extension ContextEx on BuildContext {
         element.eachVisitChildElements(visitor, depth: depth + 1);
       }
     });
+  }
+
+  /// 通过指定的[Widget]类型查找对应的[Element]
+  Element? findElementOfWidget<T extends Widget>() {
+    Element? result;
+    eachVisitChildElements((element, depth, childIndex) {
+      if (element.widget is T) {
+        result = element;
+        return false;
+      }
+      return true;
+    });
+    return result;
   }
 }
 

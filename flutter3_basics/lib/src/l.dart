@@ -136,6 +136,7 @@ class L {
     final time = showTime ?? SHOW_TIME ? '${nowTimeString()} ' : '';
     final levelStr = showLevel ?? SHOW_LEVEL ? _levelStr(level) : '';
     final tagStr = showTag ?? SHOW_TAG ? '[${tag ?? TAG}] ' : '';
+    final msgType = object?.runtimeType ?? '';
     final msg = object?.toString() ?? 'null';
     if ((isDebug && level >= verbose) || level > debug) {
       //print(StackTrace.fromString("...test"));
@@ -151,7 +152,7 @@ class L {
       //print(StackTrace.current);
       //print("(package:flutter3_widgets/src/child_background_widget.dart:29:7)");
       //print("child_background_widget.dart:29:7");
-      print('$time[$fileStr] $tagStr$levelStr->$msg');
+      print('$time[$fileStr] $tagStr$levelStr->[$msgType]$msg');
     }
   }
 

@@ -11,8 +11,8 @@ Size kDefaultLoadingSize = const Size(50, 50);
 WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 
 /// 显示加载提示
-showLoading({
-  required BuildContext context,
+OverlayEntry? showLoading({
+  BuildContext? context,
   WidgetBuilder? builder,
   bool barrierDismissible = false,
   Color? barrierColor,
@@ -25,15 +25,20 @@ showLoading({
     currentLoadingEntry = null;
   }
 
-  var overlayState = Overlay.of(context);
-  /*if (overlayState == null) {
+  var overlayState = context == null
+      ? GlobalConfig.def.findOverlayState()
+      : Overlay.of(context);
+  if (overlayState == null) {
     assert(() {
-      debugPrint('overlayState is null, dispose this call');
+      debugPrint('overlayState is null, dispose this call.');
       return true;
     }());
-    return;
-  }*/
-  var route = ModalRoute.of(context);
+    return currentLoadingEntry;
+  }
+
+  var route = context == null
+      ? GlobalConfig.def.findModalRouteList().lastOrNull
+      : ModalRoute.of(context);
 
   ///创建Entry
   currentLoadingEntry = OverlayEntry(builder: (context) {
@@ -54,6 +59,8 @@ showLoading({
       l.e(e);
     }
   });
+
+  return currentLoadingEntry;
 }
 
 /// 隐藏加载提示
@@ -68,6 +75,27 @@ void hideLoading() {
       _currentLoadingEntryRef = null;
     }
   }
+}
+
+/// 包裹[showLoading].[hideLoading].[Future]
+Future wrapLoading<T>(
+  Future<T?> future, {
+  VoidCallback? onStart,
+  VoidCallback? onEnd,
+}) {
+  if (onStart == null) {
+    showLoading();
+  } else {
+    onStart.call();
+  }
+  return future.get((value, error) {
+    if (onEnd == null) {
+      hideLoading();
+    } else {
+      onEnd.call();
+    }
+    return value;
+  });
 }
 
 class _LoadingOverlay extends StatefulWidget {

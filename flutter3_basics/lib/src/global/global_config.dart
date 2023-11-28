@@ -42,6 +42,15 @@ typedef WidgetArgumentBuilder = Widget Function<T>(
 typedef GlobalWriteFileFn = Future<String?> Function(
     String fileName, String? folder, Object? content);
 
+/// [GlobalConfig.allModalRouteList]
+ModalRoute? get lastModalRoute => GlobalConfig.allModalRouteList().lastOrNull;
+
+/// [GlobalConfig.findOverlayState]
+OverlayState? get overlayState => GlobalConfig.def.findOverlayState();
+
+/// [GlobalConfig.findNavigatorState]
+NavigatorState? get navigatorState => GlobalConfig.def.findNavigatorState();
+
 /// 快速打开url
 @dsl
 Future<bool> openWebUrl(String? url, [BuildContext? context]) async {
@@ -125,6 +134,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     }
     return globalConfig ?? GlobalConfig.def;
   }
+
+  /// 获取当前程序中的所有路由
+  static List<ModalRoute> allModalRouteList() =>
+      GlobalConfig.def.findModalRouteList();
 
   /// 注册一个全局的打开url方法, 一般是跳转到web页面
   /// 打开url
@@ -228,6 +241,57 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [OverlayManage]
 
   //endregion Overlay
+
+  //region app
+
+  /// 从上往下查找 [OverlayState]
+  /// [Overlay.of]
+  OverlayState? findOverlayState() {
+    var element = globalContext?.findElementOfWidget<Overlay>();
+    if (element is StatefulElement) {
+      return element.state as OverlayState;
+    }
+    return null;
+  }
+
+  /// 从上往下查找 [NavigatorState]
+  /// [Navigator.of]
+  NavigatorState? findNavigatorState() {
+    var element = globalContext?.findElementOfWidget<Navigator>();
+    if (element is StatefulElement) {
+      return element.state as NavigatorState;
+    }
+    return null;
+  }
+
+  /// 从上往下查找所有[ModalRoute]
+  List<ModalRoute> findModalRouteList() {
+    List<Element> routeElementList = [];
+    List<ModalRoute> result = [];
+    globalContext?.eachVisitChildElements((element, depth, childIndex) {
+      if ("$element".startsWith("_ModalScopeStatus(")) {
+        routeElementList.add(element);
+        return false;
+      }
+      return true;
+    });
+    for (var element in routeElementList) {
+      //获取第一个子元素
+      var isAdd = false;
+      element.visitChildElements((element) {
+        if (!isAdd) {
+          var route = ModalRoute.of(element);
+          route?.let<ModalRoute>((it) {
+            isAdd = true;
+            result.add(it);
+          });
+        }
+      });
+    }
+    return result;
+  }
+
+  //endregion app
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

@@ -66,6 +66,12 @@ extension ObjectEx on Object {
   /// 类型转换
   List<T> ofList<T>() => [this as T];
 
+  /// block
+  T let<T>(void Function(T it) block) {
+    block(this as T);
+    return this as T;
+  }
+
   /// 使用[Text]包裹
   Widget text({
     TextStyle? style,
@@ -85,7 +91,7 @@ extension ObjectEx on Object {
 
 extension FutureEx<T> on Future<T> {
   /// [Future.then]
-  void get([void Function(T? value, Object? error)? get]) =>
+  Future get([ValueErrorCallback? get]) =>
       then((value) => get?.call(value, null),
           onError: (error, stackTrace) => get?.call(null, error));
 
@@ -498,4 +504,3 @@ extension ListEx<T> on List<T> {
 }
 
 //endregion Int 扩展
-

@@ -40,6 +40,7 @@ extension DioMapEx on Map<String, dynamic> {
 /// https://github.com/cfug/dio/blob/main/dio/README-ZH.md
 extension DioStringEx on String {
   /// get请求
+  /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   Future<Response<T>> get<T>({
     BuildContext? context,
@@ -61,6 +62,7 @@ extension DioStringEx on String {
   }
 
   /// post请求
+  /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   Future<Response<T>> post<T>({
     BuildContext? context,
@@ -85,6 +87,7 @@ extension DioStringEx on String {
   }
 
   /// put请求
+  /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   Future<Response<T>> put<T>({
     BuildContext? context,
@@ -109,6 +112,7 @@ extension DioStringEx on String {
   }
 
   /// 下载
+  /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   /// [savePath] 保存路径
   Future<Response> download({
