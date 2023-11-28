@@ -13,6 +13,9 @@ class Http {
   static String? Function()? getBaseUrl = () => baseUrl;
 }
 
+/// api host, 不需要/结尾
+String? get host => Http.getBaseUrl?.call() ?? Http.baseUrl;
+
 extension HttpUriEx on Uri {
   /// 获取http字节内容
   Future<Uint8List?> getHttpBytes({Map<String, String>? headers}) async {
