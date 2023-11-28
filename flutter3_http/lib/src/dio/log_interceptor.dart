@@ -7,6 +7,7 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 /// @date 2023/11/25
 ///
 
+/// [LogInterceptor]
 class LogFileInterceptor extends Interceptor {
   final Map<int, String> uuidMap = {};
   final bool toFile;
@@ -28,8 +29,17 @@ class LogFileInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
-    print("错误:${err.requestOptions.uri}");
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    var hashCode = err.requestOptions;
+    var id = uuidMap.remove(hashCode);
+    var log = stringBuilder((builder) {
+      builder.appendLine("<--$id");
+      builder.appendLine("$err");
+      if (err.response != null) {
+        builder.append(_responseLog(err.response!));
+      }
+    });
+    _printLog(log);
     super.onError(err, handler);
   }
 
@@ -60,21 +70,25 @@ class LogFileInterceptor extends Interceptor {
       options.headers
           .forEach((key, v) => builder.append(' $key:', v, lineSeparator));
       if (options.data != null) {
-        builder.appendLine('data↓');
+        builder.appendLine('data(${options.data.runtimeType})↓');
         builder.appendAll(options.data);
       }
     });
-    if (toFile) {
-      GlobalConfig.def.writeFileFn?.call('http.log', 'log', log);
-    }
-    l.d(log);
+    _printLog(log);
   }
 
   void _logResponse(Response response) {
     var hashCode = response.requestOptions.hashCode;
-    var id = uuidMap[hashCode];
+    var id = uuidMap.remove(hashCode);
     var log = stringBuilder((builder) {
       builder.appendLine("<--$id");
+      builder.append(_responseLog(response));
+    });
+    _printLog(log);
+  }
+
+  String _responseLog(Response response) {
+    var log = stringBuilder((builder) {
       builder
           .appendLine("[${response.statusCode}]${response.requestOptions.uri}");
       if (response.isRedirect == true) {
@@ -83,9 +97,13 @@ class LogFileInterceptor extends Interceptor {
       builder.appendLine('headers↓');
       response.headers
           .forEach((key, v) => builder.append(' $key:', v, lineSeparator));
-      builder.appendLine('data↓');
+      builder.appendLine('data(${response.data.runtimeType})↓');
       builder.appendAll(response.toString());
     });
+    return log;
+  }
+
+  void _printLog(String log) {
     if (toFile) {
       GlobalConfig.def.writeFileFn?.call('http.log', 'log', log);
     }

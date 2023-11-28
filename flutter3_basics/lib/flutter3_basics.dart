@@ -9,6 +9,7 @@ import 'dart:ui' as ui;
 import 'dart:ui';
 
 import 'package:async/async.dart';
+import 'package:collection/collection.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';

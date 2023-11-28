@@ -492,6 +492,9 @@ extension ListEx<T> on List<T> {
   List<Type> toTypeList<Type>() {
     return map((e) => e as Type).toList();
   }
+
+  /// 最后一个元素的索引
+  int get lastIndex => length - 1;
 }
 
 //endregion Int 扩展
