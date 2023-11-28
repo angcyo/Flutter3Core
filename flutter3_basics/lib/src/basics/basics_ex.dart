@@ -499,10 +499,3 @@ extension ListEx<T> on List<T> {
 
 //endregion Int 扩展
 
-/// https://pub.dev/packages/date_format
-/*extension DateTimeEx on DateTime {
-  toFormatString() {
-    DateFormat dateFormat = new DateFormat("yyyy-MM-dd HH:mm:ss");
-    return dateFormat.format(this);
-  }
-}*/
