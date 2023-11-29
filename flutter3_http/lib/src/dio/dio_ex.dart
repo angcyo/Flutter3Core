@@ -61,6 +61,44 @@ extension DioStringEx on String {
     return response;
   }
 
+  /// 获取http字符串内容
+  Future<String?> getString({
+    BuildContext? context,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final response = await RDio.get(context: context).dio.get<String>(
+          this,
+          queryParameters: queryParameters,
+          options: (options ?? Options())..responseType = ResponseType.plain,
+          cancelToken: cancelToken,
+          onReceiveProgress: onReceiveProgress,
+        );
+    //debugger();
+    return response.data;
+  }
+
+  /// 获取http字节数据
+  Future<Uint8List?> getBytes({
+    BuildContext? context,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final response = await RDio.get(context: context).dio.get(
+          this,
+          queryParameters: queryParameters,
+          options: (options ?? Options())..responseType = ResponseType.bytes,
+          cancelToken: cancelToken,
+          onReceiveProgress: onReceiveProgress,
+        );
+    //debugger();
+    return Uint8List.fromList(response.data);
+  }
+
   /// post请求
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
