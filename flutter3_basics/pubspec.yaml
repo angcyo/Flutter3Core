@@ -53,6 +53,9 @@ dependencies:
   # https://pub.dev/packages/crypto
   crypto: ^3.0.3
 
+  # https://pub.dev/packages/nil
+  nil: ^1.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -7,6 +7,9 @@ part of flutter3_basics;
 
 //region Fn Callback
 
+/// 只有返回值的回调
+typedef ResultCallback<T> = T Function();
+
 /// 只有一个值回调
 typedef ValueCallback = dynamic Function(dynamic value);
 
@@ -18,6 +21,8 @@ typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
 //region 基础
 
 /// 是否是debug模式
+/// 性能优化: https://juejin.cn/post/7066954522655981581
+/// 性能检查视图: https://docs.flutter.dev/tools/devtools/inspector
 const bool isDebug = kDebugMode;
 
 /// 随机数生成器
@@ -157,6 +162,22 @@ Stream<T?> delayGenerate<T>(
 }
 
 //endregion 基础
+
+//region 性能
+
+/// io计算
+/// [compute] 会创建一个新的[Isolate]来执行[callback]
+/// https://pub.dev/documentation/compute/latest/compute/compute-constant.html
+Future<R> io<Object, R>(ResultCallback<R> callback) async =>
+    compute((message) => callback(), null, debugLabel: "io-${nowTimeString()}");
+
+/// 安排一个轻量的任务
+Future<R> scheduleTask<R>(ResultCallback<R> callback,
+        [Priority priority = Priority.animation]) =>
+    SchedulerBinding.instance.scheduleTask(() => callback(), priority,
+        debugLabel: "scheduleTask-${nowTimeString()}");
+
+//endregion 性能
 
 //region Asset
 

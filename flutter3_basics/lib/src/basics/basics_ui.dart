@@ -127,6 +127,7 @@ extension WidgetListEx on WidgetList {
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
   /// [WidgetEx.repaintBoundary]
+  /// [debugRepaintRainbowEnabled]
   WidgetList repaintBoundary() => RepaintBoundary.wrapAll(this);
 }
 
@@ -556,6 +557,7 @@ extension WidgetEx on Widget {
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
   /// [WidgetListEx.repaintBoundary]
+  /// [debugRepaintRainbowEnabled]
   Widget repaintBoundary({int? childIndex}) => childIndex == null
       ? RepaintBoundary(
           child: this,

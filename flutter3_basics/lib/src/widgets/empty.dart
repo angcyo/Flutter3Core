@@ -6,8 +6,16 @@ part of flutter3_basics;
 ///
 
 /// 一个空的占位小组件
+/// [nil]
+/// ```
+/// // BEST
+/// text != null ? Text(text) : nil
+/// or
+/// if (text != null) Text(text)
+/// text != null ? Text(text) : const Container()/SizedBox()
+/// ```
 class Empty extends StatelessWidget {
-  final Size size;
+  final Size? size;
 
   const Empty({super.key, this.size = Size.zero});
 
@@ -17,8 +25,10 @@ class Empty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints.tight(size),
-    );
+    return size == null
+        ? nil
+        : ConstrainedBox(
+            constraints: BoxConstraints.tight(size!),
+          );
   }
 }
