@@ -330,3 +330,4 @@ https://github.com/fluttercommunity/plus_plugins
   问世时，隐私限制发生了很大的变化，并且没有足够的 flutter 相关信息，所以我想出了一个简单的 ANDROID
   插件来下载任何文件类型到下载目录 此外，它还具有回调和进度侦听器，安装非常简单 注意：此插件不是为 iOS
   构建的， 它根本不会影响它。
+- [app_settings: ^5.1.1](https://pub-web.flutter-io.cn/packages/app_settings) 一个 Flutter 插件，用于从应用程序打开 iOS 和 Android 手机设置。
