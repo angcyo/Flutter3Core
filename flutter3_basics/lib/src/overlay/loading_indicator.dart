@@ -25,7 +25,7 @@ class LoadingIndicator extends StatelessWidget {
           strokeWidth: 2,
         ),
       ),
-    );
+    ).repaintBoundary();
   }
 }
 

@@ -123,6 +123,11 @@ extension WidgetListEx on WidgetList {
       children: this,
     );
   }
+
+  /// 绘制边界
+  /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
+  /// [WidgetEx.repaintBoundary]
+  WidgetList repaintBoundary() => RepaintBoundary.wrapAll(this);
 }
 
 extension WidgetEx on Widget {
@@ -547,6 +552,18 @@ extension WidgetEx on Widget {
               child: this,
             )
           : this;
+
+  /// 绘制边界
+  /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
+  /// [WidgetListEx.repaintBoundary]
+  Widget repaintBoundary({int? childIndex}) => childIndex == null
+      ? RepaintBoundary(
+          child: this,
+        )
+      : RepaintBoundary.wrap(
+          this,
+          childIndex,
+        );
 
   /// 文本样式包裹
   /// [DefaultTextStyle]
