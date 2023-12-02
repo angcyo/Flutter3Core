@@ -92,6 +92,13 @@ extension PathStringEx on String {
   String basename([bool withoutExtension = false]) =>
       withoutExtension ? p.basenameWithoutExtension(this) : p.basename(this);
 
+  /// [dirname]
+  String folderPath() => dirname();
+
+  /// [basename]
+  String fileName([bool withoutExtension = false]) =>
+      basename(withoutExtension);
+
   /// 父路径
   String parentPath() => FileSystemEntity.parentOf(this);
 

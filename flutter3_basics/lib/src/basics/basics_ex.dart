@@ -501,6 +501,22 @@ extension ListEx<T> on List<T> {
 
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
+
+  /// [List]
+  T? getOrNull(int index, [T? nul]) {
+    if (index < 0 || index >= length) {
+      return nul;
+    }
+    return this[index];
+  }
+
+  /// [List]
+  T get(int index, T def) {
+    if (index < 0 || index >= length) {
+      return def;
+    }
+    return this[index];
+  }
 }
 
 //endregion Int 扩展

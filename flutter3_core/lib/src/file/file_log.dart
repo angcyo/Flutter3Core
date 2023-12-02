@@ -7,6 +7,10 @@ part of flutter3_core;
 
 /// 日志文件的最大大小字节
 const kMaxLogLength = 2 * 1024 * 1024; //2M
+const kLogFileName = "log.log";
+const kErrorFileName = "error.log";
+const kHttpFileName = "http.log";
+const kLogPathName = "log";
 
 extension LogEx on Object {
   /// 包裹一下日志信息
@@ -38,8 +42,8 @@ extension LogEx on Object {
   /// 写入内容到日志文件
   /// @return 返回文件路径
   Future<String> appendToLog({
-    String fileName = "log.log",
-    String? folder = "log",
+    String fileName = kLogFileName,
+    String? folder = kLogPathName,
     bool limitLength = true,
   }) async {
     return appendToFile(fileName, folder: folder, limitLength: limitLength);
@@ -47,8 +51,8 @@ extension LogEx on Object {
 
   /// 写入内容到日志文件, 同步方法
   void toLogSync({
-    String fileName = "log.log",
-    String? folder = "log",
+    String fileName = kLogFileName,
+    String? folder = kLogPathName,
     bool limitLength = true,
   }) {
     unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));
@@ -56,8 +60,8 @@ extension LogEx on Object {
 
   /// 写入内容到日志文件, 同步方法
   void toErrorLogSync({
-    String fileName = "error.log",
-    String? folder = "log",
+    String fileName = kErrorFileName,
+    String? folder = kLogPathName,
     bool limitLength = true,
   }) {
     unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));
@@ -65,8 +69,8 @@ extension LogEx on Object {
 
   /// 写入内容到日志文件, 同步方法
   void toHttpLogSync({
-    String fileName = "http.log",
-    String? folder = "log",
+    String fileName = kHttpFileName,
+    String? folder = kLogPathName,
     bool limitLength = true,
   }) {
     unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));

@@ -18,6 +18,7 @@
 │  │   ├─hive
 │  ├─flutter3_pub
 │  │   ├─flutter3_basics
+│  │   ├─flutter3_core
 │  │   ├─cached_network_image
 │  │   ├─flutter_html
 │  │   ├─flutter_svg

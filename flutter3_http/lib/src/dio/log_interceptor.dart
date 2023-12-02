@@ -9,7 +9,7 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 
 /// [LogInterceptor]
 class LogFileInterceptor extends Interceptor {
-  final Map<int, String> uuidMap = {};
+  final Map<int, (String id, int startTime)> uuidMap = {};
   final bool toFile;
 
   LogFileInterceptor({
@@ -30,10 +30,10 @@ class LogFileInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    var hashCode = err.requestOptions;
-    var id = uuidMap.remove(hashCode);
+    var hashCode = err.requestOptions.hashCode;
+    var value = uuidMap.remove(hashCode);
     var log = stringBuilder((builder) {
-      builder.appendLine("<--$id");
+      builder.appendLine("<--${value?.$1} ${LTime.diffTime(value?.$2)}");
       builder.appendLine("$err");
       if (err.response != null) {
         builder.append(_responseLog(err.response!));
@@ -47,7 +47,7 @@ class LogFileInterceptor extends Interceptor {
     var hashCode = options.hashCode;
     var id = uuid();
     options.headers["uuid"] = id;
-    uuidMap[hashCode] = id;
+    uuidMap[hashCode] = (id, nowTime());
     var log = stringBuilder((builder) {
       builder.appendLine("-->$id");
       builder.appendLine("[${options.method}]${options.uri}");
@@ -79,9 +79,9 @@ class LogFileInterceptor extends Interceptor {
 
   void _logResponse(Response response) {
     var hashCode = response.requestOptions.hashCode;
-    var id = uuidMap.remove(hashCode);
+    var value = uuidMap.remove(hashCode);
     var log = stringBuilder((builder) {
-      builder.appendLine("<--$id");
+      builder.appendLine("<--${value?.$1} ${LTime.diffTime(value?.$2)}");
       builder.append(_responseLog(response));
     });
     _printLog(log);

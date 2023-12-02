@@ -22,11 +22,16 @@ class LTime {
   final StackList<int> stack = StackList();
 
   /// 计算2个毫秒时间的差值
+  /// [pattern] 当前位置的值是否要输出显示. 0智能判断 1强制 -1忽略.
   static String diffTime(
-    int startTime, {
+    int? startTime, {
     int? endTime,
+    List<int> pattern = const [0, 0, 0, 0, 0],
     List<String> unit = const ["ms", "s", "m", "h", "d"],
   }) {
+    if (startTime == null) {
+      return "--";
+    }
     DateTime start = DateTime.fromMillisecondsSinceEpoch(startTime);
     DateTime end = DateTime.fromMillisecondsSinceEpoch(endTime ?? nowTime());
     Duration diff = end.difference(start);
@@ -37,21 +42,21 @@ class LTime {
     final h = times[3];
     final d = times[4];
     return stringBuilder((builder) {
-      if (d > 0) {
+      if (pattern.getOrNull(4) == 1 || (pattern.getOrNull(4) == 0 && d > 0)) {
         builder.write("$d${unit[4]}");
       }
-      if (h > 0) {
+      if (pattern.getOrNull(3) == 1 || (pattern.getOrNull(3) == 0 && h > 0)) {
         builder.write("$h${unit[3]}");
       }
-      if (m > 0) {
+      if (pattern.getOrNull(2) == 1 || (pattern.getOrNull(2) == 0 && m > 0)) {
         builder.write("$m${unit[2]}");
       }
-      //if (s > 0) {
-      builder.write("$s${unit[1]}");
-      //}
-      //if (ms > 0) {
-      builder.write("$ms${unit[0]}");
-      //}
+      if (pattern.getOrNull(1) == 1 || (pattern.getOrNull(1) == 0 && s > 0)) {
+        builder.write("$s${unit[1]}");
+      }
+      if (pattern.getOrNull(0) == 1 || (pattern.getOrNull(0) == 0 && ms > 0)) {
+        builder.write("$ms${unit[0]}");
+      }
     });
     return "$d天 $h时 $m分 $s秒 $ms毫秒";
   }

@@ -94,6 +94,9 @@ Future wrapLoading<T>(
     } else {
       onEnd.call();
     }
+    if (error != null) {
+      throw error;
+    }
     return value;
   });
 }
