@@ -17,6 +17,8 @@ export 'package:json_annotation/json_annotation.dart';
 
 part 'src/dio/dio_ex.dart';
 
+part 'src/dio/http_result.dart';
+
 part 'src/dio/r_dio.dart';
 
 part 'src/http.dart';

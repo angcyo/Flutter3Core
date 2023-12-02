@@ -120,7 +120,6 @@ extension DioStringEx on String {
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress,
         );
-    debugger();
     return response;
   }
 
@@ -187,5 +186,32 @@ extension DioStringEx on String {
     );
     //debugger();
     return response;
+  }
+}
+
+extension DioFutureResponseEx<T> on Future<T> {
+  /// 解析网络请求返回的[Response]数据
+  Future http(ValueErrorCallback? callback, [HttpResult? result]) async {
+    result ??= HttpResult();
+    return get((response, error) {
+      //debugger();
+      if (error != null) {
+        result!.handleError(error);
+        callback?.call(response, error);
+        return null;
+      } else if (response == null) {
+        var error = RException("response is null");
+        result!.handleError(error);
+        callback?.call(response, error);
+        return null;
+      } else {
+        var data = result!.handleResponse(response);
+        callback?.call(data, null);
+        return data;
+      }
+    }).catchError((error) {
+      result!.handleError(error);
+      callback?.call(null, error);
+    });
   }
 }
