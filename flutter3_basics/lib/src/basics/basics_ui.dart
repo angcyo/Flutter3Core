@@ -925,6 +925,107 @@ extension ElementEx on Element {}
 
 //region 导航相关
 
+/// 路由动画
+enum TranslationType {
+  /// [MaterialPageRoute]
+  material,
+
+  /// [CupertinoPageRoute]
+  cupertino,
+
+  /// [FadePageRoute]
+  fade,
+
+  /// [SlidePageRoute]
+  slide,
+
+  /// [TranslationPageRoute]
+  translation,
+
+  /// [TranslationPageRoute]
+  translationFade,
+}
+
+extension RouteWidgetEx on Widget {
+  /// [MaterialPageRoute]
+  /// [CupertinoPageRoute]
+  Route<T> toRoute<T>({
+    RouteSettings? settings,
+    TranslationType? type,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) {
+    dynamic targetRoute;
+    switch (type) {
+      case TranslationType.cupertino:
+        targetRoute = CupertinoPageRoute(
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.fade:
+        targetRoute = FadePageRoute(
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.slide:
+        targetRoute = SlidePageRoute(
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.translation:
+        targetRoute = TranslationPageRoute(
+          fade: false,
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.translationFade:
+        targetRoute = TranslationPageRoute(
+          fade: true,
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      default:
+        targetRoute = MaterialPageRoute(
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+    }
+    return targetRoute;
+  }
+}
+
 /// 导航扩展
 ///使用 ModalRoute.of(context).settings.arguments; 获取参数
 extension NavigatorEx on BuildContext {
@@ -964,9 +1065,13 @@ extension NavigatorEx on BuildContext {
     return Navigator.of(this).push(route);
   }
 
-  Future<T?> pushWidget<T extends Object?>(Widget page) {
-    dynamic targetRoute = MaterialPageRoute(builder: (context) => page);
-    return push(targetRoute);
+  /// 支持路由动画
+  /// [push]
+  Future<T?> pushWidget<T extends Object?>(
+    Widget page, {
+    TranslationType? type,
+  }) {
+    return push(page.toRoute(type: type));
   }
 
   /// 推送一个路由, 并且移除之前的路由
@@ -974,27 +1079,12 @@ extension NavigatorEx on BuildContext {
     return Navigator.of(this).pushReplacement(route);
   }
 
-  Future<T?> pushReplacementWidget<T extends Object?>(Widget page) {
-    dynamic targetRoute = MaterialPageRoute(builder: (context) => page);
-    return pushReplacement(targetRoute);
-  }
-
-  /// [FadePageRoute]
-  Future<T?> pushFadeRoute<T extends Object?>(Widget page) {
-    dynamic targetRoute = FadePageRoute(builder: (context) => page);
-    return push(targetRoute);
-  }
-
-  /// [TranslationPageRoute]
-  Future<T?> pushTranslationRoute<T extends Object?>(Widget page) {
-    dynamic targetRoute = TranslationPageRoute(builder: (context) => page);
-    return push(targetRoute);
-  }
-
-  /// [SlidePageRoute]
-  Future<T?> pushSlideRoute<T extends Object?>(Widget page) {
-    dynamic targetRoute = SlidePageRoute(builder: (context) => page);
-    return push(targetRoute);
+  /// [pushReplacement]
+  Future<T?> pushReplacementWidget<T extends Object?>(
+    Widget page, {
+    TranslationType? type,
+  }) {
+    return pushReplacement(page.toRoute(type: type));
   }
 
   //---pop

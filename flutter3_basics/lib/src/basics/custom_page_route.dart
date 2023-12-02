@@ -118,6 +118,7 @@ class FadePageRoute<T> extends MaterialPageRoute<T>
     super.maintainState = true,
     super.fullscreenDialog,
     super.allowSnapshotting = true,
+    super.barrierDismissible = false,
   });
 
   @override
@@ -161,6 +162,7 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
     super.maintainState = true,
     super.fullscreenDialog,
     super.allowSnapshotting = true,
+    super.barrierDismissible = false,
   });
 
   @override
@@ -207,6 +209,7 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
     super.maintainState = true,
     super.fullscreenDialog,
     super.allowSnapshotting = true,
+    super.barrierDismissible = false,
   });
 
   @override
