@@ -38,12 +38,18 @@ part 'src/view_model/view_model_ex.dart';
 
 /// 初始化Flutter3核心库
 Future<void> initFlutter3Core() async {
+  // 写入文件fn
   GlobalConfig.def.writeFileFn = (fileName, folder, content) async {
     return "$content".appendToFile(
       fileName,
       folder: folder,
-      limitLength: fileName.endsWith('.log'),
+      limitLength: fileName.endsWith(kLogExtension),
     );
+  };
+
+  // 文件日志
+  l.filePrint = (log) {
+    GlobalConfig.def.writeFileFn?.call(kLFileName, kLogPathName, log);
   };
 
   //初始化isar数据库

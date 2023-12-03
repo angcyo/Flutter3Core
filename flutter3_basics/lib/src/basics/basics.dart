@@ -36,7 +36,9 @@ void ensureInitialized() => WidgetsFlutterBinding.ensureInitialized();
 int nowTime() => DateTime.now().millisecondsSinceEpoch;
 
 /// 格式化时间 `2023-11-04 10:13:40.083707`
-String nowTimeString() => DateTime.now().toIso8601String().replaceAll("T", " ");
+String nowTimeString([String? newPattern = "yyyy-MM-dd HH:mm:ss.SSS"]) =>
+    //DateTime.now().toIso8601String().replaceAll("T", " ");
+    DateTime.now().format(newPattern);
 
 /// [min] ~ [max] 之间的随机数
 int nextInt(int max, {int min = 0}) => min + random.nextInt(max);

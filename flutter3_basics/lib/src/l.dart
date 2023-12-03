@@ -6,6 +6,8 @@ part of flutter3_basics;
 /// @date 2023/10/22
 ///
 
+typedef LPrint = void Function(String log);
+
 class L {
   /// 私有的命名构造函数, 外部无法调用
   L._();
@@ -28,6 +30,12 @@ class L {
   static bool SHOW_LEVEL = true;
   static bool SHOW_TAG = true;
   static String TAG = 'angcyo';
+
+  /// 日志输出函数
+  LPrint? filePrint;
+
+  /// 文件日志输出级别>=info
+  int fileLogLevel = info;
 
   /// 开始输出日志
   /// [object] 日志内容
@@ -136,23 +144,32 @@ class L {
     final time = showTime ?? SHOW_TIME ? '${nowTimeString()} ' : '';
     final levelStr = showLevel ?? SHOW_LEVEL ? _levelStr(level) : '';
     final tagStr = showTag ?? SHOW_TAG ? '[${tag ?? TAG}] ' : '';
-    final msgType = object?.runtimeType ?? '';
+    final msgType =
+        object?.runtimeType == null ? '' : '[${object?.runtimeType}]';
     final msg = object?.toString() ?? 'null';
+
+    //获取当前调用方法的文件名和行数
+    final stackTrace = StackTrace.current.toString();
+    final stackTraceList = stackTrace.split("\n");
+    final lineStackTrace = stackTraceList[2];
+    final fileStr = lineStackTrace.substring(
+        lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
+
+    var log = '$time[$fileStr] $tagStr$levelStr->$msgType$msg';
+
     if ((isDebug && level >= verbose) || level > debug) {
       //print(StackTrace.fromString("...test"));
       //StringBuffer()
 
-      //获取当前调用方法的文件名和行数
-      final stackTrace = StackTrace.current.toString();
-      final stackTraceList = stackTrace.split("\n");
-      final lineStackTrace = stackTraceList[2];
-      final fileStr = lineStackTrace.substring(
-          lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
-
       //print(StackTrace.current);
       //print("(package:flutter3_widgets/src/child_background_widget.dart:29:7)");
       //print("child_background_widget.dart:29:7");
-      print('$time[$fileStr] $tagStr$levelStr->[$msgType]$msg');
+      print(log);
+    }
+
+    //输出到文件
+    if (level >= fileLogLevel) {
+      filePrint?.call(log);
     }
   }
 

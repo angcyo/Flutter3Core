@@ -39,14 +39,14 @@ extension LiveDataEx<T> on LiveData<T> {
 //region ---ViewModel---
 
 /// [ViewModel]构建函数
-typedef ViewModelCreate = Object Function();
+typedef ViewModelCreateFn = dynamic Function();
 
 /// 全局[ViewModel]构造函数
-final _vmCreateMap = <Type, ViewModelCreate>{};
+final _vmCreateMap = <Type, ViewModelCreateFn>{};
 
-/// 注册全局的[ViewModel]构造器[ViewModelCreate]
+/// 注册全局的[ViewModel]构造器[ViewModelCreateFn]
 void registerGlobalViewModel<T extends ViewModel>(
-    ViewModelCreate viewModelCreate) {
+    ViewModelCreateFn viewModelCreate) {
   _vmCreateMap[T] = viewModelCreate;
 }
 
@@ -59,11 +59,14 @@ class GlobalViewModelFactory extends ViewModelFactory {
     var viewModelCreate = _vmCreateMap[T];
     if (viewModelCreate == null) {
       throw Exception(
-          "Unknown ViewModel type:$T, 请调用[registerGlobalViewModel]注册ViewModel.");
+          "Unknown ViewModel type:$T, 请调用[registerGlobalViewModel]注册:$T");
     }
     return viewModelCreate() as T;
   }
 }
+
+/// 全局的[GlobalViewModelFactory]工厂
+const globalViewModelFactory = GlobalViewModelFactory();
 
 /// 用来创建[ViewModel]的工厂
 class ListViewModelFactory extends ViewModelFactory {
@@ -93,7 +96,7 @@ extension ViewModelWidgetEx on Widget {
   /// [registerGlobalViewModel]
   Widget wrapGlobalViewModelProvider([ViewModelFactory? viewModelFactory]) {
     return ViewModelFactoryProvider(
-      viewModelFactory: viewModelFactory ?? const GlobalViewModelFactory(),
+      viewModelFactory: viewModelFactory ?? globalViewModelFactory,
       child: ViewModelScope(
         builder: (context) => this,
       ),
@@ -114,6 +117,19 @@ extension ViewModelWidgetEx on Widget {
       builder: (context) => this,
     );
   }
+}
+
+/// [ViewModelProviderExtension]
+extension ViewModelStateEx<T extends StatefulWidget> on State<T> {
+  /// [ViewModelProviderExtension.getViewModel]
+  Type vm<Type extends ViewModel>({String key = ""}) =>
+      context.getViewModel(key: key);
+}
+
+/// [ViewModel]
+T vmGlobal<T extends ViewModel>() {
+  var element = GlobalConfig.def.findWidgetsAppElement();
+  return element?.getViewModel<T>() ?? globalViewModelFactory.create<T>();
 }
 
 //endregion ---ViewModel---

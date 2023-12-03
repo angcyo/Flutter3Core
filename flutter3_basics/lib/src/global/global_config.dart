@@ -148,7 +148,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 注册一个全局写入文件内容的方法, 返回文件路径
   GlobalWriteFileFn? writeFileFn = (fileName, folder, content) async {
-    l.w("企图打开写入文件:$fileName :$content");
+    l.w("企图写入文件:$fileName :$content");
     return Future.value(null);
   };
 
@@ -243,6 +243,13 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   //endregion Overlay
 
   //region app
+
+  /// 从上往下查找 [WidgetsApp]
+  /// [Overlay.of]
+  Element? findWidgetsAppElement() {
+    var element = globalContext?.findElementOfWidget<WidgetsApp>();
+    return element;
+  }
 
   /// 从上往下查找 [OverlayState]
   /// [Overlay.of]

@@ -859,6 +859,11 @@ extension ContextEx on BuildContext {
 
   /// 遍历所有的子元素
   /// [visitor] 返回值表示是否继续遍历; true: 继续深度遍历; false: 停止深度遍历;
+  /// ```
+  /// The BuildContext.visitChildElements() method can't be called during build because the child list is
+  /// still being updated at that point, so the children might not be constructed yet, or might be old
+  /// children that are going to be replaced.
+  /// ```
   eachVisitChildElements(
     ConditionalElementVisitorDepth visitor, {
     int depth = 0,
@@ -867,6 +872,7 @@ extension ContextEx on BuildContext {
       return;
     }
     int childIndex = 0;
+    //此方法不能再build期间调用
     visitChildElements((element) {
       bool interrupt = !visitor(element, depth, childIndex++);
       if (!interrupt) {

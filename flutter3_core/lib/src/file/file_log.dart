@@ -7,6 +7,9 @@ part of flutter3_core;
 
 /// 日志文件的最大大小字节
 const kMaxLogLength = 2 * 1024 * 1024; //2M
+/// 日志文件的扩展名
+const kLogExtension = ".log";
+const kLFileName = "l.log";
 const kLogFileName = "log.log";
 const kErrorFileName = "error.log";
 const kHttpFileName = "http.log";
@@ -34,7 +37,10 @@ extension LogEx on Object {
     if (this is UiImage) {
       filePath.writeImage(this as UiImage?);
     } else {
-      filePath.writeString(wrapLog(), mode: mode);
+      filePath.writeString(
+        fileName.endsWith(kLogExtension) ? wrapLog() : "$this",
+        mode: mode,
+      );
     }
     return filePath;
   }

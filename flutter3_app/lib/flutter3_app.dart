@@ -9,6 +9,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter3_app/test_app.dart';
 import 'package:flutter3_core/flutter3_core.dart';
+import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -21,6 +22,8 @@ export 'package:package_info_plus/package_info_plus.dart';
 export 'package:share_plus/share_plus.dart';
 
 part 'src/app_ex.dart';
+
+part 'src/app_log.dart';
 
 @callPoint
 void runGlobalApp(Widget app) {
