@@ -1,6 +1,7 @@
 library flutter3_app;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -23,6 +24,8 @@ export 'package:share_plus/share_plus.dart';
 
 part 'src/app_ex.dart';
 
+part 'src/app_info_interceptor.dart';
+
 part 'src/app_log.dart';
 
 @callPoint
@@ -41,6 +44,10 @@ void runGlobalApp(Widget app) {
       await testRunBefore();
     }
     ensureInitialized();
+
+    //网络请求基础信息拦截器
+    rDio.dio.interceptors.add(AppInfoInterceptor());
+
     "开始启动[main]:${PlatformDispatcher.instance.defaultRouteName}".toLogSync();
     await initFlutter3Core();
     if (isDebug) {

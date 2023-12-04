@@ -46,7 +46,7 @@ class LogFileInterceptor extends Interceptor {
   void _logRequest(RequestOptions options) {
     var hashCode = options.hashCode;
     var id = uuid();
-    options.headers["uuid"] = id;
+    options.headers["log-uuid"] = id;
     uuidMap[hashCode] = (id, nowTime());
     var log = stringBuilder((builder) {
       builder.appendLine("-->$id");

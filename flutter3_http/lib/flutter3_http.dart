@@ -1,7 +1,6 @@
 library flutter3_http;
 
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -12,7 +11,7 @@ import 'package:http/http.dart' as http;
 
 import 'src/dio/log_interceptor.dart';
 
-export 'package:http/http.dart';
+export 'package:dio/dio.dart';
 export 'package:json_annotation/json_annotation.dart';
 
 part 'src/dio/dio_ex.dart';
