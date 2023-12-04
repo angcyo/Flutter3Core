@@ -67,6 +67,13 @@ toast(
   }, position: position, animate: animate ?? OverlayAnimate.opacity);
 }
 
+/// [toast]
+toastBlur({Widget? msg, dynamic text}) => toast(
+      msg ?? text.text(),
+      bgBlurSigma: kM,
+      position: OverlayPosition.center,
+    );
+
 /// 顶部全屏toast
 toastMessage(
   Widget msg, {
