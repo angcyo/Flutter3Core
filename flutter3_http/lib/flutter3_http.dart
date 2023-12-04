@@ -20,4 +20,6 @@ part 'src/dio/http_result.dart';
 
 part 'src/dio/r_dio.dart';
 
+part 'src/dio/token_interceptor.dart';
+
 part 'src/http.dart';
