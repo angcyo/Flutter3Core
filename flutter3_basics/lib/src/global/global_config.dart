@@ -21,7 +21,11 @@ const double kMinInteractiveHeight = 36;
 /// 设计最佳最小交互高度
 const double kInteractiveHeight = kMinInteractiveDimension;
 
+/// 默认的模糊半径
 const double kDefaultBlurRadius = 4.0;
+
+/// 默认的高度
+const double kDefaultElevation = 4.0;
 
 const double kDefaultBorderRadius = 2.0;
 const double kDefaultBorderRadiusL = 4.0;

@@ -121,25 +121,37 @@ FlutterView get flutterView => WidgetsBinding.instance.renderView.flutterView;
 /// [PlatformDispatcher.instance]
 /// [PlatformDispatcher.displays]
 /// [PlatformDispatcher.views]
-MediaQueryData platformMediaQuery() => MediaQueryData.fromView(flutterView);
+MediaQueryData get platformMediaQueryData =>
+    MediaQueryData.fromView(flutterView);
+
+/// 获取当前平台的亮度模式
+Brightness get platformBrightness => platformMediaQueryData.platformBrightness;
+
+/// 获取当前平台的语言设置[Locale]
+/// http://www.lingoes.net/en/translator/langcode.htm
+Locale get platformLocale => PlatformDispatcher.instance.locale;
+
+/// 获取当前平台的语言设置列表[Locale]
+List<Locale> get platformLocales => PlatformDispatcher.instance.locales;
 
 /// 屏幕宽度 [screenWidthPixel]
 @dp
-double get screenWidth => platformMediaQuery().size.width;
+double get screenWidth => platformMediaQueryData.size.width;
 
 /// 屏幕高度, 此高度不包含导航栏的高度 [screenHeightPixel]
 @dp
-double get screenHeight => platformMediaQuery().size.height;
+double get screenHeight => platformMediaQueryData.size.height;
 
 /// 屏幕宽度 [screenWidth]
 @pixel
 double get screenWidthPixel =>
-    platformMediaQuery().size.width * platformMediaQuery().devicePixelRatio;
+    platformMediaQueryData.size.width * platformMediaQueryData.devicePixelRatio;
 
 /// 屏幕高度 [screenHeight]
 @pixel
 double get screenHeightPixel =>
-    platformMediaQuery().size.height * platformMediaQuery().devicePixelRatio;
+    platformMediaQueryData.size.height *
+    platformMediaQueryData.devicePixelRatio;
 
 /// 设备的宽度 [screenWidth]
 @pixel

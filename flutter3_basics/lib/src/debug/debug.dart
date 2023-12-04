@@ -96,7 +96,7 @@ Widget randomWidget({
   double fontSize = 12,
   Color? textColor = Colors.white,
 }) {
-  final max = platformMediaQuery().size.width;
+  final max = platformMediaQueryData.size.width;
   final h = height ?? nextDouble(min: kMinInteractiveDimension, max: max);
   //保留2位小数点
   fontSize = double.parse(fontSize.toStringAsFixed(2));

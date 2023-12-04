@@ -81,7 +81,7 @@ extension WidgetImageEx on Widget {
     Duration? wait,
     Size imageSize = Size.infinite,
   }) async {
-    var devicePixelRatio = platformMediaQuery().devicePixelRatio;
+    var devicePixelRatio = platformMediaQueryData.devicePixelRatio;
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
     final RenderView renderView = RenderView(
       view: ui.PlatformDispatcher.instance.implicitView ??

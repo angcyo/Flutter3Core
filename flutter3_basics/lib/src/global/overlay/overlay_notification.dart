@@ -98,7 +98,7 @@ class ToastWidget extends StatelessWidget {
       maintainBottomViewPadding: true,
       child: Padding(
         padding: EdgeInsets.only(
-            bottom: platformMediaQuery().viewInsets.bottom +
+            bottom: platformMediaQueryData.viewInsets.bottom +
                 kMinInteractiveDimension),
         child: result,
       ),

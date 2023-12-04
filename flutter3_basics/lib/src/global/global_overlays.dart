@@ -69,7 +69,7 @@ toast(
 
 /// [toast]
 toastBlur({Widget? msg, dynamic text}) => toast(
-      msg ?? text.text(),
+      msg ?? "$text".text(),
       bgBlurSigma: kM,
       position: OverlayPosition.center,
     );

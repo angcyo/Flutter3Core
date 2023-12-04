@@ -448,11 +448,13 @@ extension WidgetEx on Widget {
   /// [shadowColor] 阴影颜色
   /// [shadowBlurRadius] 阴影模糊半径
   /// [shadowOffset] 阴影偏移
+  /// [shadowSpreadRadius] 阴影扩散半径
   Widget circleShadow({
     bool clipContent = true,
     Color? decorationColor = Colors.white,
     Color shadowColor = Colors.black12,
     double shadowBlurRadius = kDefaultBlurRadius,
+    double shadowSpreadRadius = kS,
     Offset shadowOffset = Offset.zero,
     Color? color,
     AlignmentGeometry? alignment = Alignment.center,
@@ -486,6 +488,7 @@ extension WidgetEx on Widget {
             offset: shadowOffset,
             color: shadowColor,
             blurRadius: shadowBlurRadius,
+            spreadRadius: shadowSpreadRadius,
           ),
         ],
       ),
