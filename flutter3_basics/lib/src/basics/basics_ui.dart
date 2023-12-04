@@ -445,11 +445,15 @@ extension WidgetEx on Widget {
   }
 
   /// 圆形阴影包裹
+  /// [shadowColor] 阴影颜色
+  /// [shadowBlurRadius] 阴影模糊半径
+  /// [shadowOffset] 阴影偏移
   Widget circleShadow({
     bool clipContent = true,
     Color? decorationColor = Colors.white,
     Color shadowColor = Colors.black12,
-    double blurRadius = kDefaultBlurRadius,
+    double shadowBlurRadius = kDefaultBlurRadius,
+    Offset shadowOffset = Offset.zero,
     Color? color,
     AlignmentGeometry? alignment = Alignment.center,
     EdgeInsetsGeometry? padding,
@@ -479,8 +483,9 @@ extension WidgetEx on Widget {
         color: decorationColor,
         boxShadow: [
           BoxShadow(
+            offset: shadowOffset,
             color: shadowColor,
-            blurRadius: blurRadius,
+            blurRadius: shadowBlurRadius,
           ),
         ],
       ),
