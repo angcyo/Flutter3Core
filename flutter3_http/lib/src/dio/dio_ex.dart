@@ -210,6 +210,7 @@ extension DioFutureResponseEx<T> on Future<T> {
         return data;
       }
     }).catchError((error) {
+      debugger();
       result!.handleError(error);
       callback?.call(null, error);
     });

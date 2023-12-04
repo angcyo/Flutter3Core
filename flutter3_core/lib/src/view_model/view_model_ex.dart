@@ -27,7 +27,7 @@ extension LiveDataEx<T> on LiveData<T> {
   /// 监听当前的[LiveData]数据变化
   /// [observe]
   /// [LiveDataBuilder]
-  Widget listener(Widget Function(BuildContext, T) builder) =>
+  Widget listener(Widget Function(BuildContext context, T liveData) builder) =>
       LiveDataBuilder<T>(
         liveData: this,
         builder: builder,

@@ -46,11 +46,11 @@ String get lineSeparator => Platform.isWindows ? "\r\n" : "\n";
 
 //region Object 扩展
 
-/*extension DynamicEx on dynamic {
+extension DynamicEx on dynamic {
   /// [runtimeType]
   /// [toString]
   String toRuntimeString() => "[$runtimeType]${toString()}";
-}*/
+}
 
 extension ObjectEx on Object {
   /// [runtimeType]
@@ -71,6 +71,9 @@ extension ObjectEx on Object {
     block(this as T);
     return this as T;
   }
+
+  /// 转换成json字符串
+  String toJsonString() => json.encode(this);
 
   /// 使用[Text]包裹
   Widget text({
@@ -218,6 +221,12 @@ extension StringEx on String {
 
   /// [Uri]
   Uri toUri() => Uri.parse(this);
+
+  /// 从json字符串中解析出对应的数据类型
+  dynamic fromJson() => json.decode(this);
+
+  /// 将`8000`转换成`8.0.0.0`
+  String toVersionString() => split("").join(".");
 
   /// 确保前缀是指定的字符串
   /// 返回新的字符串
@@ -493,17 +502,52 @@ extension ListIntEx on List<int> {
   String md5() => crypto.md5.convert(this).toString();
 }
 
-extension ListEx<T> on List<T> {
-  /// [List]转换成[Type]的[List]
-  List<Type> toTypeList<Type>() {
-    return map((e) => e as Type).toList();
+extension IterableEx on Iterable {
+  /// [Iterable]转换成[Type]的[Iterable]
+  Iterable<Type> toTypeIterable<Type>() {
+    return map((e) => e as Type);
   }
 
+  /// [List]转换成[Type]的[List]
+  List<Type> toTypeList<Type>({bool growable = false}) {
+    return map((e) => e as Type).toList(growable: growable);
+  }
+
+  /// 映射类型转换成[Type]的[List]
+  /// [IterableEx.mapToList]
+  /// [ListEx.mapToList]
+  List<Type> mapToList<Type>(
+    Type Function(dynamic e) toElement, {
+    bool growable = false,
+  }) {
+    return map<Type>((e) {
+      debugger();
+      var r = toElement(e);
+      return r;
+    }).toList(growable: growable);
+  }
+}
+
+extension ListEx on List<dynamic> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 
+  /// 映射类型转换成[Type]的[List]
+  /// [IterableEx.mapToList]
+  /// [ListEx.mapToList]
+  List<Type> mapToList<Type>(
+    Type Function(dynamic e) toElement, {
+    bool growable = false,
+  }) {
+    return map<Type>((e) {
+      debugger();
+      var r = toElement(e);
+      return r;
+    }).toList(growable: growable);
+  }
+
   /// [List]
-  T? getOrNull(int index, [T? nul]) {
+  T? getOrNull<T>(int index, [T? nul]) {
     if (index < 0 || index >= length) {
       return nul;
     }
@@ -511,7 +555,7 @@ extension ListEx<T> on List<T> {
   }
 
   /// [List]
-  T get(int index, T def) {
+  T get<T>(int index, T def) {
     if (index < 0 || index >= length) {
       return def;
     }

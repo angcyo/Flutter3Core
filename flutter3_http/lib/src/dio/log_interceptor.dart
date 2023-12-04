@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
@@ -30,6 +32,7 @@ class LogFileInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    //debugger();
     var hashCode = err.requestOptions.hashCode;
     var value = uuidMap.remove(hashCode);
     var log = stringBuilder((builder) {
