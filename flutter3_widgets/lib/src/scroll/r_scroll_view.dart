@@ -17,6 +17,7 @@ class RScrollView extends StatefulWidget {
     super.key,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
+    this.showScrollbar = false,
     this.controller,
     this.primary,
     this.scrollBehavior = const MaterialScrollBehavior(),
@@ -65,6 +66,11 @@ class RScrollView extends StatefulWidget {
 
   /// [RItemTile] 的列表核心的数据集合
   final List<Widget> children;
+
+  /// 是否要显示滚动条
+  /// [ScrollbarTheme]
+  /// [ScrollbarThemeData]
+  final bool showScrollbar;
 
   //region ScrollView属性
   /// [ScrollView]
@@ -374,7 +380,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   Widget build(BuildContext context) {
     //SliverGrid.builder(gridDelegate: gridDelegate, itemBuilder: itemBuilder);
     //SliverList.builder(itemBuilder: itemBuilder);
-    return CustomScrollView(
+    Widget result = CustomScrollView(
       scrollDirection: widget.scrollDirection,
       reverse: widget.reverse,
       controller: widget.controller,
@@ -392,6 +398,13 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
       clipBehavior: widget.clipBehavior,
       slivers: _buildItemTileList(context),
     );
+    if (widget.showScrollbar) {
+      result = Scrollbar(
+        controller: widget.controller,
+        child: result,
+      );
+    }
+    return result;
   }
 }
 
