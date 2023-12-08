@@ -67,6 +67,22 @@ class GlobalTheme {
   /// 阴影颜色
   Color get shadowColor => Colors.black;
 
+  /// [AppBar]的阴影
+  double get appBarElevation => 4;
+
+  /// [AppBar]的阴影颜色
+  Color get appBarShadowColor => shadowColor;
+
+  /// [AppBar]的背景颜色
+  Color get appBarBackgroundColor => primaryColor;
+
+  /// [AppBar]的前景颜色
+  Color get appBarForegroundColor => themeWhiteColor;
+
+  /// [AppBar]渐变背景颜色, 如果有
+  List<Color>? get appBarGradientBackgroundColorList =>
+      listOf(primaryColor, primaryColorDark);
+
   /// 基础距离配置
   double get s => kS;
 

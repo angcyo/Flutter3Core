@@ -224,6 +224,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     double? elevation,
     double? scrolledUnderElevation,
     Color? shadowColor,
+    Widget? flexibleSpace,
   }) appBarBuilder = (
     context,
     state, {
@@ -234,8 +235,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     elevation,
     scrolledUnderElevation,
     shadowColor,
+    flexibleSpace,
   }) {
     var globalTheme = GlobalTheme.of(context);
+    elevation ??= globalTheme.appBarElevation;
     return AppBar(
       title: title,
       leading: leading ??
@@ -243,11 +246,15 @@ class GlobalConfig with Diagnosticable, OverlayManage {
               ? null
               : appBarLeadingBuilder(context, state)),
       elevation: elevation,
-      shadowColor: shadowColor ?? globalTheme.shadowColor,
-      backgroundColor: backgroundColor ?? globalTheme.themeWhiteColor,
-      foregroundColor: foregroundColor ?? globalTheme.textPrimaryStyle.color,
-      scrolledUnderElevation:
-          scrolledUnderElevation ?? (elevation == 0 ? 0 : null),
+      shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
+      backgroundColor: backgroundColor ?? globalTheme.appBarBackgroundColor,
+      foregroundColor: foregroundColor ?? globalTheme.appBarForegroundColor,
+      scrolledUnderElevation: scrolledUnderElevation ?? elevation,
+      flexibleSpace: flexibleSpace ??
+          (globalTheme.appBarGradientBackgroundColorList == null
+              ? null
+              : linearGradientWidget(
+                  globalTheme.appBarGradientBackgroundColorList!)),
     );
   };
 
