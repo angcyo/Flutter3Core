@@ -127,6 +127,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
     if (child == null) {
       size = constraints.smallest;
     } else {
+      //在可以滚动的布局中, maxWidth和maxHeight会是无限大
       child!.layout(
         BoxConstraints(
           maxWidth: constraints.maxWidth,

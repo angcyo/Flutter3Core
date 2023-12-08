@@ -12,13 +12,13 @@ typedef RItemTileBuilder = void Function(RItemTileListBuilder builder);
 /// [SliverList] - [SliverGrid]
 /// [RItemTile] 的容器
 class RScrollView extends StatefulWidget {
-  const RScrollView(
-    this.children, {
+  const RScrollView({
+    required this.children,
     super.key,
+    this.controller,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
     this.showScrollbar = false,
-    this.controller,
     this.primary,
     this.scrollBehavior = const MaterialScrollBehavior(),
     this.shrinkWrap = false,
@@ -42,10 +42,10 @@ class RScrollView extends StatefulWidget {
   RScrollView.builder(
     RItemTileBuilder builder, {
     super.key,
+    this.controller,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
     this.showScrollbar = false,
-    this.controller,
     this.primary,
     this.scrollBehavior = const MaterialScrollBehavior(),
     this.shrinkWrap = false,
@@ -73,6 +73,11 @@ class RScrollView extends StatefulWidget {
   /// [ScrollbarThemeData]
   final bool showScrollbar;
 
+  /// 滚动控制, 状态切换控制, 刷新/加载更多控制
+  /// [ScrollController]
+  /// [ScrollView.controller]
+  final RScrollController? controller;
+
   //region ScrollView属性
   /// [ScrollView]
 
@@ -81,9 +86,6 @@ class RScrollView extends StatefulWidget {
 
   /// [ScrollView.reverse]
   final bool reverse;
-
-  /// [ScrollView.controller]
-  final ScrollController? controller;
 
   /// [ScrollView.primary]
   final bool? primary;
@@ -142,7 +144,15 @@ class RScrollView extends StatefulWidget {
 
 class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   /// 构建[RItemTile]的列表
-  List<Widget> _buildItemTileList(BuildContext context) {
+  /// [children] 入参
+  /// [useFrameLoad]是否需要使用分帧加载
+  List<Widget> _buildItemTileList(
+    BuildContext context, {
+    List<Widget>? children,
+    bool? useFrameLoad,
+  }) {
+    children ??= widget.children;
+
     final result = <Widget>[];
 
     // 收集到的list tile, 使用[SliverList]包裹
@@ -188,7 +198,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     }
 
     // 开始遍历, 组装
-    for (var tile in widget.children) {
+    for (var tile in children) {
       if (tile is RItemTile) {
         if (tile.hide) {
           continue;
@@ -289,7 +299,12 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     clearAndAppendList();
     clearAndAppendGrid();
 
-    return frameLoad(result);
+    //result
+    if (useFrameLoad == true) {
+      return frameLoad(result);
+    } else {
+      return result;
+    }
   }
 
   /// 构建成[SliverList]
@@ -381,6 +396,19 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   Widget build(BuildContext context) {
     //SliverGrid.builder(gridDelegate: gridDelegate, itemBuilder: itemBuilder);
     //SliverList.builder(itemBuilder: itemBuilder);
+    WidgetList slivers;
+    var controller = widget.controller;
+    if (controller == null ||
+        controller.widgetStateValue.value == WidgetState.none) {
+      //需要显示内容
+      slivers = _buildItemTileList(context);
+    } else {
+      slivers = _buildItemTileList(
+        context,
+        children: [controller.buildWidgetStateWidget(this.context).rFill()],
+        useFrameLoad: false,
+      );
+    }
     Widget result = CustomScrollView(
       scrollDirection: widget.scrollDirection,
       reverse: widget.reverse,
@@ -397,7 +425,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
       keyboardDismissBehavior: widget.keyboardDismissBehavior,
       restorationId: widget.restorationId,
       clipBehavior: widget.clipBehavior,
-      slivers: _buildItemTileList(context),
+      slivers: slivers,
     );
     if (widget.showScrollbar) {
       result = Scrollbar(
@@ -438,11 +466,11 @@ List<Widget> itemTileListBuilder(RItemTileBuilder builder) {
 extension RScrollViewEx on WidgetList {
   /// [RScrollView]
   Widget rScroll({
-    ScrollController? controller,
+    RScrollController? controller,
   }) {
     return RScrollView(
-      this,
       controller: controller,
+      children: this,
     );
   }
 }

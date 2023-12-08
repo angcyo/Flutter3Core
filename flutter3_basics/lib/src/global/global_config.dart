@@ -178,7 +178,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   /// 全局的加载[Overlay]提示
-  WidgetBuilder loadingWidgetBuilder = (context) {
+  /// [OverlayEntry]
+  WidgetBuilder loadingOverlayWidgetBuilder = (context) {
     Widget loadingIndicator =
         GlobalConfig.of(context).loadingIndicatorBuilder(context);
     return Container(
@@ -200,11 +201,20 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   //region AppBar
 
+  /// 用来创建自定义的[AppBar]左边的返回小部件
+  /// @return null 使用系统默认的
+  Widget? Function(BuildContext context, State state) appBarLeadingBuilder = (
+    context,
+    state,
+  ) {
+    return null;
+  };
+
   /// 用来创建[AppBar]
   /// [AppBarTheme] 相关默认样式在此声明, 可以通过[Theme]小部件覆盖
   /// [scrolledUnderElevation] 滚动时, 阴影的高度
   /// [backgroundColor] 透明的背景颜色, 会影响Android状态栏的颜色
-  PreferredSizeWidget? Function(
+  late PreferredSizeWidget? Function(
     BuildContext context,
     State state, {
     Widget? leading,
@@ -228,7 +238,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     var globalTheme = GlobalTheme.of(context);
     return AppBar(
       title: title,
-      leading: leading,
+      leading: leading ??
+          (context.isAppBarDismissal
+              ? null
+              : appBarLeadingBuilder(context, state)),
       elevation: elevation,
       shadowColor: shadowColor ?? globalTheme.shadowColor,
       backgroundColor: backgroundColor ?? globalTheme.themeWhiteColor,

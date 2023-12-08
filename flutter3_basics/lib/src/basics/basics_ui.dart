@@ -14,6 +14,10 @@ void scheduleFrame() {
 }
 
 /// 一帧后回调, 只会触发一次. 不会请求新的帧
+/// [postFrameCallback]
+/// [postCallback]
+/// [postDelayCallback]
+/// [delayCallback]
 void postFrameCallback(FrameCallback callback) {
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsBinding.instance.addPostFrameCallback(callback);
@@ -443,6 +447,25 @@ extension WidgetEx on Widget {
       child: this,
     );
   }
+
+  /// [Card]
+  /// [CardTheme]
+  /// [ThemeData.cardTheme]
+  Widget card({
+    Color? color,
+    Color? shadowColor,
+    double? elevation,
+    ShapeBorder? shape,
+    EdgeInsetsGeometry? margin,
+  }) =>
+      Card(
+        color: color,
+        shadowColor: shadowColor,
+        elevation: elevation,
+        shape: shape,
+        margin: margin,
+        child: this,
+      );
 
   /// 圆形阴影包裹
   /// [shadowColor] 阴影颜色

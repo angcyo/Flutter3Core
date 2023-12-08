@@ -1,5 +1,6 @@
 library flutter3_widgets;
 
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -24,11 +25,15 @@ part 'src/pub/keep_alive.dart';
 
 part 'src/scroll/r_item_tile.dart';
 
+part 'src/scroll/r_scroll_controller.dart';
+
 part 'src/scroll/r_scroll_view.dart';
 
 part 'src/scroll/single_sliver_persistent_header_delegate.dart';
 
 part 'src/scroll/sliver_paint_widget.dart';
+
+part 'src/scroll/widget_state.dart';
 
 part 'src/widgets/after_layout.dart';
 
@@ -41,5 +46,7 @@ part 'src/widgets/child_background_widget.dart';
 part 'src/widgets/gestures/rotate_gesture_reorganizer.dart';
 
 part 'src/widgets/gradient_button.dart';
+
+part 'src/widgets/match_parent_layout.dart';
 
 part 'src/widgets/wrap_content_layout.dart';

@@ -45,7 +45,7 @@ OverlayEntry? showLoading({
     return _LoadingOverlay(
         route: route,
         builder: builder ??= (context) {
-          return GlobalConfig.of(context).loadingWidgetBuilder(context);
+          return GlobalConfig.of(context).loadingOverlayWidgetBuilder(context);
         });
   });
   _currentLoadingEntryRef = WeakReference(currentLoadingEntry);

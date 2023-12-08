@@ -284,10 +284,12 @@ https://github.com/fluttercommunity/plus_plugins
   Chopper 和 Retrofit 启发的类型转换 dio 客户端生成器。
 - [intl_phone_number_input: ^0.7.3+1](https://pub.dev/packages/intl_phone_number_input)  一个简单且可定制的
   flutter 包，用于以国际/国际格式输入电话号码，使用 Google 的 libphonenumber
+- [markdown: ^7.1.1](https://pub.dev/packages/markdown) 用 Dart 编写的可移植 Markdown 库。它可以在客户端和服务器上将 Markdown 解析为 HTML。
 - [flutter_markdown: ^0.6.18+2](https://pub.dev/packages/flutter_markdown) Flutter 的 Markdown
   渲染器。它支持原始格式，但不支持内联 HTML。
 - [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility)
   对键盘可见性更改做出反应。
+- [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter 可滚动小部件提供了固定/可变行高的滚动到索引机制。
 
 ## 平台特有
 

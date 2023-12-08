@@ -91,6 +91,10 @@ String currentFileName([bool? fileLineNumber]) {
 }
 
 /// 使用[Timer]尽快执行[callback]
+/// [postFrameCallback]
+/// [postCallback]
+/// [postDelayCallback]
+/// [delayCallback]
 void postCallback(VoidCallback callback) {
   Timer.run(callback);
 }
