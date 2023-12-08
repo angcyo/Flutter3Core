@@ -44,6 +44,7 @@ class RScrollView extends StatefulWidget {
     super.key,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
+    this.showScrollbar = false,
     this.controller,
     this.primary,
     this.scrollBehavior = const MaterialScrollBehavior(),

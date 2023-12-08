@@ -1,6 +1,5 @@
 library flutter3_widgets;
 
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -11,6 +10,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
 export 'package:flutter3_basics/flutter3_basics.dart';
+export 'package:sliver_tools/sliver_tools.dart';
 
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';
