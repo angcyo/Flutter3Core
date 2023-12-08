@@ -831,7 +831,9 @@ extension StateEx on State {
   /// [Element.markNeedsBuild]
   /// [ContextEx.tryUpdateState]
   void updateState() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
 
@@ -845,7 +847,10 @@ extension ContextEx on BuildContext {
   /// [StateEx.updateState]
   void tryUpdateState() {
     if (this is Element) {
-      (this as Element).markNeedsBuild();
+      var element = this as Element;
+      if (element.mounted) {
+        element.markNeedsBuild();
+      }
     }
   }
 

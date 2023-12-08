@@ -191,6 +191,15 @@ extension DioStringEx on String {
 
 extension DioFutureResponseEx<T> on Future<T> {
   /// 解析网络请求返回的[Response]数据
+  /// 转换成[response.data]转换成简单的Bean
+  /// ```
+  /// UserBean.fromJson(value)
+  /// ```
+  /// 转换成[response.data]转换成集合的Bean
+  /// ```
+  /// value.map<ConnectDeviceBean>((e) => ConnectDeviceBean.fromJson(e))
+  ///      .toList();
+  /// ```
   Future http(ValueErrorCallback? callback, [HttpResult? result]) async {
     result ??= HttpResult();
     return get((response, error) {

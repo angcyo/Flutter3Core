@@ -16,6 +16,9 @@ class HttpResult {
   String dataKey = "data";
   String messageKey = "errMsg";
 
+  /// 是否要显示错误提示
+  bool showErrorToast = true;
+
   /// 处理网络请求返回的数据
   late dynamic Function(dynamic response) handleResponse = (response) {
     //debugger();
@@ -42,16 +45,18 @@ class HttpResult {
   /// [Exception]
   /// [DioException]
   late void Function(dynamic error) handleError = (error) {
-    var tip = kDefHttpErrorMessage;
-    if (error is DioException) {
-      var errorMessage = error.response?.data[messageKey];
-      tip = errorMessage ?? error.message ?? kDefHttpErrorMessage;
-    } else {
-      tip = error.toString();
+    if (showErrorToast) {
+      var tip = kDefHttpErrorMessage;
+      if (error is DioException) {
+        var errorMessage = error.response?.data[messageKey];
+        tip = errorMessage ?? error.message ?? kDefHttpErrorMessage;
+      } else {
+        tip = error.toString();
+      }
+      toast(
+        tip.text(textAlign: TextAlign.center),
+        position: OverlayPosition.center,
+      );
     }
-    toast(
-      tip.text(textAlign: TextAlign.center),
-      position: OverlayPosition.center,
-    );
   };
 }
