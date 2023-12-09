@@ -1,5 +1,6 @@
 library flutter3_widgets;
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:math';
 
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter3_widgets/assets_generated/assets.gen.dart';
 
 export 'package:flutter3_basics/flutter3_basics.dart';
 export 'package:sliver_tools/sliver_tools.dart';

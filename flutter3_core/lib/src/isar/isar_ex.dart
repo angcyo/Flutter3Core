@@ -52,5 +52,5 @@ Future<void> openIsar([
   );
 
   defIsarFilePath = isarPath.join("$name.isar");
-  l.i("[$name]isar数据库路径:$defIsarFilePath");
+  l.i("[$name]isar数据库路径:$defIsarFilePath :${defIsarFilePath.file().lengthSync().toFileSizeStr()}");
 }

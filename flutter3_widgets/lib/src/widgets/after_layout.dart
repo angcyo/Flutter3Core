@@ -7,7 +7,9 @@ part of flutter3_widgets;
 ///
 
 typedef AfterLayoutCallback = void Function(
-    BuildContext parentContext, RenderObject? childRenderObject);
+  BuildContext parentContext,
+  RenderObject? childRenderObject,
+);
 
 /// 在小部件布局完成之后第一时间触发回调
 class AfterLayout extends SingleChildRenderObjectWidget {
@@ -25,7 +27,11 @@ class AfterLayout extends SingleChildRenderObjectWidget {
   /// consider scheduling the frame in a post-frame callback using SchedulerBinding.addPostFrameCallback or using an AnimationController to trigger the animation.
   final AfterLayoutCallback callback;
 
-  const AfterLayout({super.key, super.child, required this.callback});
+  const AfterLayout({
+    super.key,
+    super.child,
+    required this.callback,
+  });
 
   @override
   AfterLayoutRenderObject createRenderObject(BuildContext context) =>
@@ -49,12 +55,14 @@ class AfterLayoutRenderObject extends RenderProxyBox {
 
   @override
   void layout(Constraints constraints, {bool parentUsesSize = false}) {
+    //debugger();
     super.layout(constraints, parentUsesSize: parentUsesSize);
     callback(context, child);
   }
 
   @override
   void performLayout() {
+    //debugger();
     super.performLayout();
     /*WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       callback(context);

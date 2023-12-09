@@ -10,22 +10,33 @@ part of flutter3_widgets;
 class WrapContentLayout extends SingleChildRenderObjectWidget {
   final AlignmentDirectional alignment;
 
+  /// 指定最小的宽度, 不指定则使用[child]的宽度
+  /// [BoxConstraints.minWidth]
+  final double? minWidth;
+  final double? minHeight;
+
   const WrapContentLayout({
     super.key,
     super.child,
     this.alignment = AlignmentDirectional.center,
+    this.minWidth,
+    this.minHeight,
   });
 
   @override
   RenderObject createRenderObject(BuildContext context) => WrapContentBox(
         alignment: alignment,
         textDirection: Directionality.of(context),
+        minWidth: minWidth,
+        minHeight: minHeight,
       );
 
   @override
   void updateRenderObject(BuildContext context, WrapContentBox renderObject) {
     renderObject
       ..alignment = alignment
+      ..minWidth = minWidth
+      ..minHeight = minHeight
       ..markNeedsLayout();
   }
 }
@@ -37,9 +48,14 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
 /// [RenderShiftedBox.paint]实现绘制上的偏移
 /// [RenderShiftedBox.hitTestChildren]实现点击事件的偏移
 class WrapContentBox extends RenderAligningShiftedBox {
+  double? minWidth;
+  double? minHeight;
+
   WrapContentBox({
     super.alignment,
     super.textDirection,
+    this.minWidth,
+    this.minHeight,
   });
 
   @override
@@ -130,6 +146,8 @@ class WrapContentBox extends RenderAligningShiftedBox {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
       child!.layout(
         BoxConstraints(
+          minWidth: minWidth ?? 0,
+          minHeight: minHeight ?? 0,
           maxWidth: constraints.maxWidth,
           maxHeight: constraints.maxHeight,
         ),
@@ -155,11 +173,15 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
 extension WrapContentLayoutEx on Widget {
   /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
-  WrapContentLayout wrapContent([
+  WrapContentLayout wrapContent({
     AlignmentDirectional alignment = AlignmentDirectional.center,
-  ]) =>
+    double? minWidth,
+    double? minHeight,
+  }) =>
       WrapContentLayout(
         alignment: alignment,
+        minWidth: minWidth,
+        minHeight: minHeight,
         child: this,
       );
 }

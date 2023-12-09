@@ -33,6 +33,11 @@ class GradientButton extends StatelessWidget {
   final Color? splashColor;
   final Color? disabledTextColor;
   final Color? disabledColor;
+
+  /// Defaults to 24.0 on the left and right if [textTheme] is [ButtonTextTheme.primary],
+  /// otherwise defaults to 16.0.
+  /// [EdgeInsets]
+  /// [ButtonThemeData.padding]
   final EdgeInsetsGeometry? padding;
 
   final Widget child;

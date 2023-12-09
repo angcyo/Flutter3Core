@@ -100,9 +100,18 @@ class GlobalTheme {
 
   double get xxxh => kXxxh;
 
+  /// 无数据时的提示
+  String? get noDataTip => "暂无数据";
+
+  /// 没有更多数据时的提示
+  String? get noMoreDataTip => "~已经到底啦~";
+
+  /// 数据加载失败的提示
+  String? get loadDataErrorTip => "加载失败, 点击重试";
+
   /// [_kDefaultFontSize] 14
   TextStyle get textPrimaryStyle => TextStyle(
-        fontSize: 14,
+        fontSize: 18,
         color: "#161B26".toColor(),
       );
 
@@ -111,29 +120,29 @@ class GlobalTheme {
         color: "#182334".toColor(),
       );
 
-  TextStyle get textBodyStyle => TextStyle(
-        fontSize: 14,
-        color: "#ACAFB7".toColor(),
-      );
-
   TextStyle get textTitleStyle => TextStyle(
-        fontSize: 14,
-        color: "#ACAFB7".toColor(),
+        fontSize: 18,
+        color: "#333333".toColor(),
       );
 
   TextStyle get textSubTitleStyle => TextStyle(
         fontSize: 14,
-        color: "#ACAFB7".toColor(),
+        color: "#333333".toColor(),
+      );
+
+  TextStyle get textBodyStyle => TextStyle(
+        fontSize: 14,
+        color: "#333333".toColor(),
       );
 
   TextStyle get textSubStyle => TextStyle(
-        fontSize: 14,
-        color: "#ACAFB7".toColor(),
+        fontSize: 12,
+        color: "#B0B0B0".toColor(),
       );
 
   TextStyle get textPlaceStyle => TextStyle(
-        fontSize: 14,
-        color: "#B0B0B0".toColor(),
+        fontSize: 12,
+        color: "#6F6F6F".toColor(),
       );
 
   TextStyle get textDisableStyle => TextStyle(

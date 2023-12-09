@@ -372,6 +372,9 @@ extension FileEx on String {
     return null;
   }
 
+  /// 转换成文件对象
+  File file() => File(this);
+
   /// 获取文件夹中的文件列表
   Future<List<FileSystemEntity>?> listFiles({
     bool recursive = false,

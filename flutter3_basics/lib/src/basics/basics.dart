@@ -60,6 +60,11 @@ double nextDouble({double? min, double? max}) {
   }
 }
 
+/// 最小值/最大值
+/// [double.maxFinite]
+int intMaxValue = double.maxFinite.toInt();
+int intMinValue = -double.maxFinite.toInt();
+
 /// 获取当前调用此方法的文件名
 /// ```
 /// I/flutter ( 2526): #0      currentFileName (package:flutter3_basics/src/basics.dart:36:33)
@@ -195,6 +200,9 @@ Future<R> scheduleTask<R>(ResultCallback<R> callback,
     SchedulerBinding.instance.scheduleTask(() => callback(), priority,
         debugLabel: "scheduleTask-${nowTimeString()}");
 
+
+
+
 //endregion 性能
 
 //region Asset
@@ -216,6 +224,9 @@ Future<String> loadAssetString(
   );
 }
 
+/// 所有加载在子包中的资源都需要指定包名前缀[package].
+/// Unable to load asset: "assets/png/loadError.png".
+/// Exception: Asset not found.
 /// ```
 /// loadAssetImageWidget('png/flutter.png');
 /// loadAssetImageWidget('assets/png/flutter.png');

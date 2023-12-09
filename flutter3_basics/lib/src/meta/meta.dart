@@ -52,16 +52,24 @@ class _CallPoint {
   const _CallPoint([this.reason = '调用点']);
 }
 
-/// 调用点
 const callPoint = _CallPoint();
 
+/// 测试点
 class _TestPoint {
   final String reason;
 
   const _TestPoint([this.reason = '测试点']);
 }
 
-/// 测试点
 const testPoint = _TestPoint();
+
+/// 可以被调用的api接口
+class _Api {
+  final String des;
+
+  const _Api([this.des = 'api']);
+}
+
+const api = _Api();
 
 //endregion---base

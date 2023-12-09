@@ -7,6 +7,9 @@ part of flutter3_widgets;
 
 typedef RItemTileBuilder = void Function(RItemTileListBuilder builder);
 
+/// 是否要显示底部的加载更多
+typedef ShowLoadMoreCallback = bool Function();
+
 /// 使用[CustomScrollView]快速组合界面
 /// [SliverPersistentHeader] 可以在顶部固定,可以实现悬浮效果 [SliverFillRemaining] 可以填充剩余空间
 /// [SliverList] - [SliverGrid]
@@ -19,6 +22,9 @@ class RScrollView extends StatefulWidget {
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
     this.showScrollbar = false,
+    this.enableRefresh = false,
+    this.enableLoadMore = false,
+    this.showLoadMoreCallback,
     this.primary,
     this.scrollBehavior = const MaterialScrollBehavior(),
     this.shrinkWrap = false,
@@ -46,6 +52,9 @@ class RScrollView extends StatefulWidget {
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
     this.showScrollbar = false,
+    this.enableRefresh = false,
+    this.enableLoadMore = false,
+    this.showLoadMoreCallback,
     this.primary,
     this.scrollBehavior = const MaterialScrollBehavior(),
     this.shrinkWrap = false,
@@ -77,6 +86,15 @@ class RScrollView extends StatefulWidget {
   /// [ScrollController]
   /// [ScrollView.controller]
   final RScrollController? controller;
+
+  /// 是否启用下拉刷新
+  final bool enableRefresh;
+
+  /// 是否启用上拉加载更多
+  final bool enableLoadMore;
+
+  /// 是否要显示底部的加载更多
+  final ShowLoadMoreCallback? showLoadMoreCallback;
 
   //region ScrollView属性
   /// [ScrollView]
@@ -152,7 +170,39 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     bool? useFrameLoad,
   }) {
     children ??= widget.children;
+    final result = _resolveItemTileList(context, children);
 
+    //加载更多显示处理
+    if (widget.enableLoadMore) {
+      //debugger();
+      Widget? loadMoreWidget;
+      var controller = widget.controller;
+      if (controller != null) {
+        var callback = widget.showLoadMoreCallback;
+        if ((callback == null &&
+                children.length >= controller.requestPage.requestPageSize) ||
+            (callback != null && callback())) {
+          //show load more
+          loadMoreWidget = controller.buildLoadMoreStateWidget.call(context,
+              controller.loadMoreStateValue.value, controller._widgetStateData);
+        }
+      }
+      if (loadMoreWidget != null) {
+        result.addAll(_resolveItemTileList(context, [loadMoreWidget]));
+      }
+    }
+
+    //result
+    if (useFrameLoad == true) {
+      return frameLoad(result);
+    } else {
+      return result;
+    }
+  }
+
+  /// 将普通的[Widget]解析成[SliverWidget]
+  List<Widget> _resolveItemTileList(
+      BuildContext context, List<Widget> children) {
     final result = <Widget>[];
 
     // 收集到的list tile, 使用[SliverList]包裹
@@ -300,11 +350,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     clearAndAppendGrid();
 
     //result
-    if (useFrameLoad == true) {
-      return frameLoad(result);
-    } else {
-      return result;
-    }
+    return result;
   }
 
   /// 构建成[SliverList]
@@ -399,15 +445,20 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     WidgetList slivers;
     var controller = widget.controller;
     if (controller == null ||
-        controller.widgetStateValue.value == WidgetState.none) {
+        controller.adapterStateValue.value == WidgetState.none) {
       //需要显示内容
       slivers = _buildItemTileList(context);
     } else {
-      slivers = _buildItemTileList(
-        context,
-        children: [controller.buildWidgetStateWidget(this.context).rFill()],
-        useFrameLoad: false,
-      );
+      //debugger();
+      slivers = _resolveItemTileList(context, [
+        controller
+            .buildAdapterStateWidget(
+              context,
+              controller.adapterStateValue.value,
+              controller._widgetStateData,
+            )
+            .rFill()
+      ]);
     }
     Widget result = CustomScrollView(
       scrollDirection: widget.scrollDirection,
@@ -427,6 +478,9 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
       clipBehavior: widget.clipBehavior,
       slivers: slivers,
     );
+    if (widget.enableRefresh) {
+      result = widget.controller?.wrapRefreshWidget(context, result) ?? result;
+    }
     if (widget.showScrollbar) {
       result = Scrollbar(
         controller: widget.controller,
