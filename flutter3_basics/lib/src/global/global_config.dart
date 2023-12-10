@@ -121,7 +121,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 全局默认
   static GlobalConfig? _def;
 
-  static GlobalConfig get def => _def ??= GlobalConfig();
+  /// 全局app临时全局配置
+  static GlobalConfig? app;
+
+  /// 获取全局配置
+  static GlobalConfig get def => app ?? (_def ??= GlobalConfig());
 
   /// 获取全局配置
   /// 使用[GlobalConfigScope]可以覆盖[GlobalConfig]
@@ -152,7 +156,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 注册一个全局写入文件内容的方法, 返回文件路径
   GlobalWriteFileFn? writeFileFn = (fileName, folder, content) async {
-    l.w("企图写入文件:$fileName :$content");
+    if (kDebugMode) {
+      print("企图写入文件:$fileName ->$content");
+    }
+    //return Future.error(RException("未注册写入文件方法"), StackTrace.current);
     return Future.value(null);
   };
 
@@ -202,6 +209,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   //region AppBar
 
   /// 用来创建自定义的[AppBar]左边的返回小部件
+  /// [state] 用来识别界面, 做一些特殊处理
   /// @return null 使用系统默认的
   Widget? Function(BuildContext context, State state) appBarLeadingBuilder = (
     context,
@@ -214,6 +222,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [AppBarTheme] 相关默认样式在此声明, 可以通过[Theme]小部件覆盖
   /// [scrolledUnderElevation] 滚动时, 阴影的高度
   /// [backgroundColor] 透明的背景颜色, 会影响Android状态栏的颜色
+  /// [flexibleSpace] 纯白色的[AppBar]推荐使用此属性设置白色, 否则会和底色叠加.
   late PreferredSizeWidget? Function(
     BuildContext context,
     State state, {
@@ -225,6 +234,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     double? scrolledUnderElevation,
     Color? shadowColor,
     Widget? flexibleSpace,
+    bool? centerTitle,
+    double? titleSpacing,
   }) appBarBuilder = (
     context,
     state, {
@@ -236,7 +247,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     scrolledUnderElevation,
     shadowColor,
     flexibleSpace,
+    centerTitle,
+    titleSpacing,
   }) {
+    //debugger();
     var globalConfig = GlobalConfig.of(context);
     var globalTheme = GlobalTheme.of(context);
     elevation ??= globalConfig.themeData.appBarTheme.elevation;
@@ -244,18 +258,22 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       title: title,
       leading: leading ??
           (context.isAppBarDismissal
-              ? null
-              : appBarLeadingBuilder(context, state)),
+              ? appBarLeadingBuilder(context, state)
+              : null),
       elevation: elevation,
       shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
       backgroundColor: backgroundColor ?? globalTheme.appBarBackgroundColor,
       foregroundColor: foregroundColor ?? globalTheme.appBarForegroundColor,
       scrolledUnderElevation: scrolledUnderElevation ?? elevation,
       flexibleSpace: flexibleSpace ??
-          (globalTheme.appBarGradientBackgroundColorList == null
-              ? null
-              : linearGradientWidget(
-                  globalTheme.appBarGradientBackgroundColorList!)),
+          (backgroundColor == null
+              ? ((globalTheme.appBarGradientBackgroundColorList == null
+                  ? null
+                  : linearGradientWidget(
+                      globalTheme.appBarGradientBackgroundColorList!)))
+              : null),
+      centerTitle: centerTitle,
+      titleSpacing: titleSpacing,
     );
   };
 
@@ -329,5 +347,51 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(StringProperty('GlobalConfig', "~GlobalConfig~"));
+  }
+
+  //
+
+  /// 复制
+  GlobalConfig copyWith({
+    BuildContext? globalContext,
+    ThemeData? themeData,
+    GlobalTheme? globalTheme,
+    GlobalOpenUrlFn? openUrlFn,
+    GlobalWriteFileFn? writeFileFn,
+    WidgetArgumentBuilder? imagePlaceholderBuilder,
+    WidgetBuilder? loadingIndicatorBuilder,
+    WidgetArgumentBuilder? errorPlaceholderBuilder,
+    WidgetBuilder? loadingOverlayWidgetBuilder,
+    PreferredSizeWidget? Function(
+      BuildContext context,
+      State state, {
+      Widget? leading,
+      Widget? title,
+      Color? backgroundColor,
+      Color? foregroundColor,
+      double? elevation,
+      double? scrolledUnderElevation,
+      Color? shadowColor,
+      Widget? flexibleSpace,
+      bool? centerTitle,
+      double? titleSpacing,
+    })? appBarBuilder,
+  }) {
+    return GlobalConfig(
+      globalContext: globalContext ?? this.globalContext,
+    )
+      ..themeData = themeData ?? this.themeData
+      ..globalTheme = globalTheme ?? this.globalTheme
+      ..openUrlFn = openUrlFn ?? this.openUrlFn
+      ..writeFileFn = writeFileFn ?? this.writeFileFn
+      ..imagePlaceholderBuilder =
+          imagePlaceholderBuilder ?? this.imagePlaceholderBuilder
+      ..loadingIndicatorBuilder =
+          loadingIndicatorBuilder ?? this.loadingIndicatorBuilder
+      ..errorPlaceholderBuilder =
+          errorPlaceholderBuilder ?? this.errorPlaceholderBuilder
+      ..loadingOverlayWidgetBuilder =
+          loadingOverlayWidgetBuilder ?? this.loadingOverlayWidgetBuilder
+      ..appBarBuilder = appBarBuilder ?? this.appBarBuilder;
   }
 }

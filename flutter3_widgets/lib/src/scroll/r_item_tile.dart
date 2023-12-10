@@ -23,10 +23,10 @@ class RItemTile extends StatefulWidget {
     this.isSliverItem = false,
     this.hide = false,
     this.sliverPadding,
-    this.edgePaddingLeft = 0,
-    this.edgePaddingTop = 0,
-    this.edgePaddingRight = 0,
-    this.edgePaddingBottom = 0,
+    this.edgePaddingLeft,
+    this.edgePaddingTop,
+    this.edgePaddingRight,
+    this.edgePaddingBottom,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.addSemanticIndexes = true,
@@ -45,6 +45,14 @@ class RItemTile extends StatefulWidget {
     this.fillHasScrollBody = false,
     this.fillOverscroll = false,
     this.fillExpand = false,
+    this.firstPaddingLeft,
+    this.firstPaddingTop,
+    this.firstPaddingRight,
+    this.firstPaddingBottom,
+    this.lastPaddingLeft,
+    this.lastPaddingTop,
+    this.lastPaddingRight,
+    this.lastPaddingBottom,
   });
 
   //region 基础
@@ -151,6 +159,20 @@ class RItemTile extends StatefulWidget {
   /// [SliverChildListDelegate.addSemanticIndexes]
   final bool addSemanticIndexes;
 
+  /// 只在[SliverList]中有效
+  /// 列表第一个位置的padding
+  /// [buildListWrapChild]
+  final double? firstPaddingLeft;
+  final double? firstPaddingTop;
+  final double? firstPaddingRight;
+  final double? firstPaddingBottom;
+
+  /// 列表最后一个位置的padding
+  final double? lastPaddingLeft;
+  final double? lastPaddingTop;
+  final double? lastPaddingRight;
+  final double? lastPaddingBottom;
+
   //endregion SliverList
 
   //region SliverGrid
@@ -176,11 +198,12 @@ class RItemTile extends StatefulWidget {
   final double childAspectRatio;
 
   /// 当item在网格的边界时, 是否需要处理填充距离. 此方式的填充会占用tile的高度
+  /// 只在[SliverGrid]中有效
   /// 为`null`是, 自动根据[mainAxisSpacing] [crossAxisSpacing]设置
   /// [Padding]
   /// [EdgeInsets]
+  /// [buildGridWrapChild]
   final double? edgePaddingLeft;
-
   final double? edgePaddingTop;
   final double? edgePaddingRight;
   final double? edgePaddingBottom;
@@ -212,6 +235,45 @@ class RItemTile extends StatefulWidget {
     Widget child,
     int index,
   ) {
+    if (tileWrapBuilder == null) {
+      var first = list.firstOrNull;
+      var last = list.lastOrNull;
+      var length = list.length;
+
+      double left = 0.0;
+      double top = 0.0;
+      double right = 0.0;
+      double bottom = 0.0;
+
+      if (first is RItemTile) {
+        if (length == 1) {
+          //只有一个
+          left = first.firstPaddingLeft ?? first.lastPaddingLeft ?? left;
+          top = first.firstPaddingTop ?? first.lastPaddingTop ?? top;
+          right = first.firstPaddingRight ?? first.lastPaddingRight ?? right;
+          bottom =
+              first.firstPaddingBottom ?? first.lastPaddingBottom ?? bottom;
+        } else if (index == 0) {
+          //第一个
+          left = first.firstPaddingLeft ?? left;
+          top = first.firstPaddingTop ?? top;
+          right = first.firstPaddingRight ?? right;
+          bottom = first.firstPaddingBottom ?? bottom;
+        }
+      }
+      if (last is RItemTile && length > 1 && index == length - 1) {
+        //最后一个
+        left = last.lastPaddingLeft ?? left;
+        top = last.lastPaddingTop ?? top;
+        right = last.lastPaddingRight ?? right;
+        bottom = last.lastPaddingBottom ?? bottom;
+      }
+
+      // 有值
+      if (left != 0 || top != 0 || right != 0 || bottom != 0) {
+        return child.paddingLTRB(left, top, right, bottom);
+      }
+    }
     return tileWrapBuilder?.call(context, list, child, index) ?? child;
   }
 
@@ -320,6 +382,18 @@ extension RItemTileExtension on Widget {
     bool fillHasScrollBody = false,
     bool fillOverscroll = false,
     bool fillExpand = false,
+    double? firstPaddingLeft,
+    double? firstPaddingTop,
+    double? firstPaddingRight,
+    double? firstPaddingBottom,
+    double? lastPaddingLeft,
+    double? lastPaddingTop,
+    double? lastPaddingRight,
+    double? lastPaddingBottom,
+    double? edgePaddingLeft,
+    double? edgePaddingTop,
+    double? edgePaddingRight,
+    double? edgePaddingBottom,
   }) {
     return RItemTile(
       key: key,
@@ -343,7 +417,19 @@ extension RItemTileExtension on Widget {
       fillHasScrollBody: fillHasScrollBody,
       fillOverscroll: fillOverscroll,
       fillExpand: fillExpand,
-      child: this,
+      firstPaddingLeft: firstPaddingLeft,
+      firstPaddingTop: firstPaddingTop,
+      firstPaddingRight: firstPaddingRight,
+      firstPaddingBottom: firstPaddingBottom,
+      lastPaddingLeft: lastPaddingLeft,
+      lastPaddingTop: lastPaddingTop,
+      lastPaddingRight: lastPaddingRight,
+      lastPaddingBottom: lastPaddingBottom,
+      edgePaddingLeft: edgePaddingLeft,
+      edgePaddingTop: edgePaddingTop,
+      edgePaddingRight: edgePaddingRight,
+      edgePaddingBottom: edgePaddingBottom,
+      child: child ?? this,
     );
   }
 

@@ -121,13 +121,13 @@ class GlobalTheme {
       );
 
   TextStyle get textTitleStyle => TextStyle(
-        fontSize: 18,
+        fontSize: 17,
         color: "#333333".toColor(),
       );
 
   TextStyle get textSubTitleStyle => TextStyle(
         fontSize: 14,
-        color: "#333333".toColor(),
+        color: "#929292".toColor(),
       );
 
   TextStyle get textBodyStyle => TextStyle(

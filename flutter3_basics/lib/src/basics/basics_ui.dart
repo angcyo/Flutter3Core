@@ -1216,6 +1216,7 @@ Gradient linearGradient(
     );
 
 /// 返回一个线性渐变的小部件
+/// [colors] 渐变颜色, 必须要2个颜色
 Widget linearGradientWidget(
   List<Color> colors, {
   Key? key,
@@ -1225,6 +1226,9 @@ Widget linearGradientWidget(
   TileMode tileMode = TileMode.clamp,
   GradientTransform? transform,
 }) {
+  if (colors.length == 1) {
+    colors = [...colors, ...colors];
+  }
   return Container(
     key: key,
     decoration: BoxDecoration(

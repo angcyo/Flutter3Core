@@ -11,12 +11,15 @@ part of flutter3_http;
 final RDio rDio = RDio();
 final LogFileInterceptor _logFileInterceptor = LogFileInterceptor();
 
+/// 默认的超时时长, s
+const kDefTimeout = 10;
+
 class RDio {
   /// dio对象
   late final Dio _dio = Dio()
-        ..options.connectTimeout = const Duration(seconds: 5) //5s
-        ..options.sendTimeout = const Duration(seconds: 5)
-        ..options.receiveTimeout = const Duration(seconds: 5) //3s;
+        ..options.connectTimeout = const Duration(seconds: kDefTimeout)
+        ..options.sendTimeout = const Duration(seconds: kDefTimeout)
+        ..options.receiveTimeout = const Duration(seconds: kDefTimeout) //超时设置
       ;
 
   /*..httpClientAdapter = Http2Adapter(

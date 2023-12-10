@@ -235,7 +235,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
         "$stateData"
             .text(
               textAlign: TextAlign.center,
-              style: globalTheme.textBodyStyle,
+              style: globalTheme.textSubTitleStyle,
             )
             .padding(globalTheme.xh),
       );
@@ -321,7 +321,7 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
     Widget result = "$stateData"
         .text(
           textAlign: TextAlign.center,
-          style: globalTheme.textBodyStyle,
+          style: globalTheme.textSubTitleStyle,
         )
         .padding(globalTheme.xh);
 

@@ -113,10 +113,14 @@ class RScrollController extends ScrollController {
       if (stateData is Exception) {
         toState = WidgetState.error;
       } else {
-        if (loadData == null ||
-            loadData.isEmpty ||
-            loadData.length < requestPage.requestPageSize) {
+        if (loadData == null || loadData.isEmpty) {
           toState = WidgetState.empty;
+        } else if (loadData.length < requestPage.requestPageSize) {
+          if (requestPage.isFirstPage) {
+            toState = WidgetState.none;
+          } else {
+            toState = WidgetState.empty;
+          }
         } else {
           toState = WidgetState.none;
         }
@@ -131,7 +135,7 @@ class RScrollController extends ScrollController {
       _refreshCompleter = Completer();
     }
     if (requestPage.isFirstPage) {
-      jumpTo(0); //回到顶部
+      //jumpTo(0); //回到顶部
       updateAdapterState(state, toState, stateData);
     } else {
       updateLoadMoreState(state, toState, stateData);

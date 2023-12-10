@@ -528,3 +528,77 @@ extension RScrollViewEx on WidgetList {
     );
   }
 }
+
+/// 混入一个[RScrollView], 支持刷新/加载更多
+/// [RScrollView]
+mixin RScrollViewPage<T extends StatefulWidget> on State<T> {
+  /// 刷新/加载更多/滚动控制
+  /// [RequestPage]
+  late final RScrollController scrollController = RScrollController()
+    ..onLoadDataCallback = onLoadData;
+
+  /// 默认的情感图状态, 同时也会触发对应的事件
+  WidgetState defWidgetState = WidgetState.loading;
+
+  /// 当前界面的数据
+  WidgetList pageDataList = [];
+
+  /// 重写此方法, 加载数据
+  /// 通过[RequestPage]实现页面分页
+  @protected
+  void onLoadData();
+
+  /// 调用此方法, 加载数据完成, 并自动处理情感图/加载更多状态控制
+  /// [loadData] 当前加载到的数据, 非所有数据
+  /// [stateData] 当前状态的附加信息, 用来识别是否有错误
+  /// [handleData] 是否自动处理数据到[pageDataList]
+  @callPoint
+  void loadDataEnd(
+    List? loadData, [
+    dynamic stateData,
+    bool handleData = true,
+  ]) {
+    if (handleData) {
+      if (loadData is WidgetList) {
+        if (scrollController.requestPage.isFirstPage) {
+          pageDataList.clear();
+        }
+        pageDataList.addAll(loadData);
+      }
+    }
+    scrollController.finishRefresh(this, loadData, stateData);
+  }
+
+  @override
+  void initState() {
+    scrollController.updateAdapterState(this, defWidgetState);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  //---
+
+  /// 分页请求参数
+  Map<String, dynamic> pageRequestData() =>
+      scrollController.requestPage.toMap();
+
+  /// 包裹内容
+  /// [RScrollView]
+  @callPoint
+  RScrollView pageRScrollView({
+    WidgetList? children,
+    bool enableRefresh = true,
+    bool enableLoadMore = true,
+  }) {
+    return RScrollView(
+      controller: scrollController,
+      enableRefresh: enableRefresh,
+      enableLoadMore: enableLoadMore,
+      children: children ?? pageDataList,
+    );
+  }
+}

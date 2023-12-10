@@ -13,10 +13,18 @@ class RequestPage {
   /// 默认第一页的索引
   static var FIRST_PAGE_INDEX = 1;
 
+  /// 请求体中, 默认的header key
+  static var KEY_PAGE_INDEX = "pageNo";
+  static var KEY_PAGE_SIZE = "pageSize";
+
   /// 单列表数据, 无加载更多
   static RequestPage singlePage() {
     return RequestPage()..requestPageSize = intMaxValue;
   }
+
+  /// 网络请求中的header key
+  var keyPageIndex = KEY_PAGE_INDEX;
+  var keyPageSize = KEY_PAGE_SIZE;
 
   /// 默认的第一页
   var _firstPageIndex = FIRST_PAGE_INDEX;
@@ -81,5 +89,13 @@ class RequestPage {
   @override
   String toString() {
     return "首页[$firstPageIndex],请求页[$requestPageIndex],请求数量[$requestPageSize].";
+  }
+
+  /// 请求体重中的参数
+  Map<String, dynamic> toMap() {
+    final map = <String, dynamic>{};
+    map[keyPageIndex] = requestPageIndex;
+    map[keyPageSize] = requestPageSize;
+    return map;
   }
 }

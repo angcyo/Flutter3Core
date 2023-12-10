@@ -48,6 +48,7 @@ class HttpResult {
     if (showErrorToast) {
       var tip = kDefHttpErrorMessage;
       if (error is DioException) {
+        debugger();
         var errorMessage = error.response?.data[messageKey];
         tip = errorMessage ?? error.message ?? kDefHttpErrorMessage;
       } else {
