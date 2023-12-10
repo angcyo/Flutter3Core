@@ -86,7 +86,8 @@ class _GlobalAppState extends State<GlobalApp> {
       l.d(list);
     }, const Duration(milliseconds: 3060));*/
     return GlobalConfigScope(
-      globalConfig: widget.globalConfig ?? GlobalConfig.def,
+      globalConfig: widget.globalConfig,
+      globalConfigGet: () => config,
       child: widget.app,
     );
   }

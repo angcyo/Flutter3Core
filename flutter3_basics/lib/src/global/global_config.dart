@@ -46,6 +46,9 @@ typedef WidgetArgumentBuilder = Widget Function<T>(
 typedef GlobalWriteFileFn = Future<String?> Function(
     String fileName, String? folder, Object? content);
 
+/// 获取[GlobalConfig]的方法
+typedef GlobalConfigGetFn = GlobalConfig Function();
+
 /// [GlobalConfig.allModalRouteList]
 ModalRoute? get lastModalRoute => GlobalConfig.allModalRouteList().lastOrNull;
 
@@ -89,15 +92,23 @@ class GlobalConfigScope extends InheritedWidget {
   const GlobalConfigScope({
     super.key,
     required super.child,
-    required this.globalConfig,
+    this.globalConfig,
+    this.globalConfigGet,
   });
 
   /// 配置存放
-  final GlobalConfig globalConfig;
+  final GlobalConfig? globalConfig;
+
+  final GlobalConfigGetFn? globalConfigGet;
+
+  /// get
+  GlobalConfig? get getGlobalConfig => globalConfig ?? globalConfigGet?.call();
 
   @override
   bool updateShouldNotify(covariant GlobalConfigScope oldWidget) =>
-      isDebug || globalConfig != oldWidget.globalConfig;
+      isDebug ||
+      globalConfig != oldWidget.globalConfig ||
+      globalConfigGet != oldWidget.globalConfigGet;
 }
 
 class GlobalConfig with Diagnosticable, OverlayManage {
@@ -134,11 +145,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     if (depend) {
       globalConfig = (context ?? GlobalConfig.def.globalContext)
           ?.dependOnInheritedWidgetOfExactType<GlobalConfigScope>()
-          ?.globalConfig;
+          ?.getGlobalConfig;
     } else {
       globalConfig = context
           ?.findAncestorWidgetOfExactType<GlobalConfigScope>()
-          ?.globalConfig;
+          ?.getGlobalConfig;
     }
     return globalConfig ?? GlobalConfig.def;
   }

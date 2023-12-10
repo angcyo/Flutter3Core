@@ -76,6 +76,38 @@ class RScrollController extends ScrollController {
     }
   }
 
+  /// 释放资源
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  /// 滚动到顶部
+  void scrollToTop({bool anim = true}) {
+    if (anim) {
+      animateTo(
+        0,
+        duration: kDefaultAnimationDuration,
+        curve: Curves.easeOut,
+      );
+    } else {
+      jumpTo(0);
+    }
+  }
+
+  /// 滚动到底部
+  void scrollToBottom({bool anim = true}) {
+    if (anim) {
+      animateTo(
+        position.maxScrollExtent,
+        duration: kDefaultAnimationDuration,
+        curve: Curves.easeOut,
+      );
+    } else {
+      jumpTo(position.maxScrollExtent);
+    }
+  }
+
   //---
 
   /// 开始触发刷新, 并显示刷新头

@@ -8,7 +8,7 @@ part of flutter3_basics;
 
 mixin StateLogMixin<T extends StatefulWidget> on State<T> {
   @protected
-  late final String logTag;
+  late String logTag = "${nowTime()}";
 
   @override
   void initState() {
@@ -29,6 +29,12 @@ mixin StateLogMixin<T extends StatefulWidget> on State<T> {
   }
 
   @override
+  void activate() {
+    l.d('[${widget.classHash()}]activate:$logTag');
+    super.activate();
+  }
+
+  @override
   void deactivate() {
     l.d('[${widget.classHash()}]deactivate:$logTag');
     super.deactivate();
@@ -40,11 +46,16 @@ mixin StateLogMixin<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
+  @override
+  void reassemble() {
+    l.d('[${widget.classHash()}]reassemble:$logTag');
+    super.reassemble();
+  }
+
   @mustCallSuper
   @override
   Widget build(BuildContext context) {
     l.i('[${widget.classHash()}]build:$logTag from:$context:${context.widget == widget ? "Self" : context.widget.classHash()}');
-
     //The class doesn't have a concrete implementation of the super-invoked member 'build'.
     //return super.build(context);
     return const Placeholder();
