@@ -237,8 +237,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     shadowColor,
     flexibleSpace,
   }) {
+    var globalConfig = GlobalConfig.of(context);
     var globalTheme = GlobalTheme.of(context);
-    elevation ??= globalTheme.appBarElevation;
+    elevation ??= globalConfig.themeData.appBarTheme.elevation;
     return AppBar(
       title: title,
       leading: leading ??

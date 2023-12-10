@@ -61,13 +61,13 @@ class GlobalTheme {
   /// 边框的颜色
   Color get borderColor => "#6f6f6f".toColor();
 
-  /// 阴影
+  /// 阴影高度默认取值
   double get elevation => 2;
 
   /// 阴影颜色
   Color get shadowColor => Colors.black;
 
-  /// [AppBar]的阴影
+  /// [AppBar]的默认阴影高度
   double get appBarElevation => 4;
 
   /// [AppBar]的阴影颜色
