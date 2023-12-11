@@ -49,9 +49,9 @@ Future<void> _testProcess() async {
 
 @testPoint
 Future<void> _testFile() async {
-  (await cacheFilePath("cache.log", "f1", "f2"))
+  (await cacheFilePath("cache.log", "f1", "f2")).file()
       .writeString("${nowTimeString()}\nangcyo~", mode: FileMode.append);
-  (await filePath("file.log", "f1", "f2"))
+  (await filePath("file.log", "f1", "f2")).file()
       .writeString("${nowTimeString()}\nangcyo~", mode: FileMode.append);
   delayCallback(() async => await saveScreenCapture());
 }

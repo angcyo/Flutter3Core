@@ -26,7 +26,7 @@ Future shareAppLog([String? name]) async {
   var logFolderPath = await fileFolderPath(kLogPathName);
   list.add(logFolderPath);
   list.zip(output).ignore();
-  var log = "压缩完成:$output :${(await output.fileSize()).toFileSizeStr()}";
+  var log = "压缩完成:$output :${(await output.file().fileSize()).toFileSizeStr()}";
   l.i(log);
   output.shareFile().ignore();
 }

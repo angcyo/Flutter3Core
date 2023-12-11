@@ -35,12 +35,12 @@ extension LogEx on Object {
       mode = FileMode.write;
     }
     if (this is UiImage) {
-      filePath.writeImage(this as UiImage?);
+      filePath.file().writeImage(this as UiImage?);
     } else {
-      filePath.writeString(
-        fileName.endsWith(kLogExtension) ? wrapLog() : "$this",
-        mode: mode,
-      );
+      filePath.file().writeString(
+            fileName.endsWith(kLogExtension) ? wrapLog() : "$this",
+            mode: mode,
+          );
     }
     return filePath;
   }

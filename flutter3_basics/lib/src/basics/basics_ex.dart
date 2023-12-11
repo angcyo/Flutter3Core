@@ -222,6 +222,12 @@ extension StringEx on String {
   /// [Uri]
   Uri toUri() => Uri.parse(this);
 
+  /// [Uri]
+  String decodeUri() => Uri.decodeFull(this);
+
+  /// [Uri]
+  String encodeUri() => Uri.encodeFull(this);
+
   /// 从json字符串中解析出对应的数据类型
   dynamic fromJson() => json.decode(this);
 

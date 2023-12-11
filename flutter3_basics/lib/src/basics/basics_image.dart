@@ -43,11 +43,11 @@ extension ImageEx on ui.Image {
 
   /// 保存图片到文件
   Future<File?> saveToFile(
-    String path, {
+    File? file, {
     ImageByteFormat format = ImageByteFormat.png,
   }) async {
     final Uint8List bytes = await toBytes(format);
-    return File(path).writeAsBytes(bytes);
+    return file?.writeAsBytes(bytes);
   }
 }
 

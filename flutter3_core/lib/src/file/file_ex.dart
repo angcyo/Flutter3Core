@@ -14,7 +14,7 @@ Future<UiImage?> saveScreenCapture([
 ]) async {
   var path = (filePath ?? await cacheFilePath("ScreenCapture${nowTime()}.png"));
   var image = await (context ?? GlobalConfig.def.globalContext)?.captureImage();
-  image?.saveToFile(path);
+  image?.saveToFile(path.file());
   return image;
 }
 
@@ -78,6 +78,179 @@ Future<Directory> cacheDirectory() async {
     l.e(e);
   }
   return directory ?? Directory.systemTemp;
+}
+
+extension FileEx on File {
+  /// 文件大小
+  int fileSizeSync() {
+    if (existsSync()) {
+      return lengthSync();
+    }
+    return 0;
+  }
+
+  /// 文件大小
+  Future<int> fileSize() async {
+    if (await exists()) {
+      return length();
+    }
+    return 0;
+  }
+
+  /// 读取文件内容
+  Future<Uint8List?> readBytes() async {
+    try {
+      return await readAsBytes();
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  Uint8List? readBytesSync() {
+    try {
+      return readAsBytesSync();
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  Future<String?> readString({Encoding encoding = utf8}) async {
+    try {
+      return await readAsString(encoding: encoding);
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  String? readStringSync({Encoding encoding = utf8}) {
+    try {
+      return readAsStringSync(encoding: encoding);
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  Future<List<String>?> readLines({Encoding encoding = utf8}) async {
+    try {
+      return await readAsLines(encoding: encoding);
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 读取文件内容
+  List<String>? readLinesSync({Encoding encoding = utf8}) {
+    try {
+      return readAsLinesSync(encoding: encoding);
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 写入图片到文件
+  Future<File?> writeImage(
+    UiImage? image, {
+    ImageByteFormat format = ImageByteFormat.png,
+  }) async {
+    if (image == null) {
+      return null;
+    }
+    return image.saveToFile(this, format: format);
+  }
+
+  /// 写入文件内容
+  Future<File?> writeString(
+    String contents, {
+    FileMode mode = FileMode.write,
+    Encoding encoding = utf8,
+    bool flush = false,
+  }) async {
+    try {
+      parent.path.ensureDirectory();
+      return await writeAsString(
+        contents,
+        mode: mode,
+        encoding: encoding,
+        flush: flush,
+      );
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 写入文件内容
+  File? writeStringSync(
+    String contents, {
+    FileMode mode = FileMode.write,
+    Encoding encoding = utf8,
+    bool flush = false,
+  }) {
+    try {
+      return this
+        ..writeAsStringSync(
+          contents,
+          mode: mode,
+          encoding: encoding,
+          flush: flush,
+        );
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 写入文件内容
+  Future<File?> writeBytes(
+    List<int> bytes, {
+    FileMode mode = FileMode.write,
+    bool flush = false,
+  }) async {
+    try {
+      return await writeAsBytes(
+        bytes,
+        mode: mode,
+        flush: flush,
+      );
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 写入文件内容
+  File? writeBytesSync(
+    List<int> bytes, {
+    FileMode mode = FileMode.write,
+    bool flush = false,
+  }) {
+    try {
+      return this
+        ..writeAsBytesSync(
+          bytes,
+          mode: mode,
+          flush: flush,
+        );
+    } catch (e) {
+      l.e(e);
+    }
+    return null;
+  }
+
+  /// 文件的md5值
+  String? md5() => readBytesSync()?.md5();
+
+  String? sha1() => readBytesSync()?.sha1();
 }
 
 /// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
@@ -189,25 +362,7 @@ extension PathStringEx on String {
 
 /// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
 /// 文件扩展操作
-extension FileEx on String {
-  /// 文件大小
-  int fileSizeSync() {
-    var file = File(this);
-    if (file.existsSync()) {
-      return file.lengthSync();
-    }
-    return 0;
-  }
-
-  /// 文件大小
-  Future<int> fileSize() async {
-    var file = File(this);
-    if (await file.exists()) {
-      return file.length();
-    }
-    return 0;
-  }
-
+extension FilePathEx on String {
   /// 确保文件夹存在, 如果不存在, 则创建
   void ensureDirectory() {
     var dir = Directory(this);
@@ -219,157 +374,6 @@ extension FileEx on String {
   /// 确保文件的文件夹目录存在, 如果不存在, 则创建
   void ensureFileDirectory() {
     parentPath().ensureDirectory();
-  }
-
-  /// 读取文件内容
-  Future<String?> readString({Encoding encoding = utf8}) async {
-    try {
-      return await File(this).readAsString(encoding: encoding);
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 读取文件内容
-  String? readStringSync({Encoding encoding = utf8}) {
-    try {
-      return File(this).readAsStringSync(encoding: encoding);
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 写入图片到文件
-  Future<File?> writeImage(
-    UiImage? image, {
-    ImageByteFormat format = ImageByteFormat.png,
-  }) async {
-    if (image == null) {
-      return null;
-    }
-    return image.saveToFile(this, format: format);
-  }
-
-  /// 写入文件内容
-  Future<File?> writeString(
-    String contents, {
-    FileMode mode = FileMode.write,
-    Encoding encoding = utf8,
-    bool flush = false,
-  }) async {
-    try {
-      var file = File(this);
-      file.parent.path.ensureDirectory();
-      return await file.writeAsString(
-        contents,
-        mode: mode,
-        encoding: encoding,
-        flush: flush,
-      );
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 写入文件内容
-  File? writeStringSync(
-    String contents, {
-    FileMode mode = FileMode.write,
-    Encoding encoding = utf8,
-    bool flush = false,
-  }) {
-    try {
-      return File(this)
-        ..writeAsStringSync(
-          contents,
-          mode: mode,
-          encoding: encoding,
-          flush: flush,
-        );
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 读取文件内容
-  Future<Uint8List?> readBytes() async {
-    try {
-      return await File(this).readAsBytes();
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 读取文件内容
-  Uint8List? readBytesSync() {
-    try {
-      return File(this).readAsBytesSync();
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 写入文件内容
-  Future<File?> writeBytes(
-    List<int> bytes, {
-    FileMode mode = FileMode.write,
-    bool flush = false,
-  }) async {
-    try {
-      return await File(this).writeAsBytes(
-        bytes,
-        mode: mode,
-        flush: flush,
-      );
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 写入文件内容
-  File? writeBytesSync(
-    List<int> bytes, {
-    FileMode mode = FileMode.write,
-    bool flush = false,
-  }) {
-    try {
-      return File(this)
-        ..writeAsBytesSync(
-          bytes,
-          mode: mode,
-          flush: flush,
-        );
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 读取文件内容
-  Future<List<String>?> readLines({Encoding encoding = utf8}) async {
-    try {
-      return await File(this).readAsLines(encoding: encoding);
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
-  }
-
-  /// 读取文件内容
-  List<String>? readLinesSync({Encoding encoding = utf8}) {
-    try {
-      return File(this).readAsLinesSync(encoding: encoding);
-    } catch (e) {
-      l.e(e);
-    }
-    return null;
   }
 
   /// 转换成文件对象
