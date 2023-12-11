@@ -11,7 +11,7 @@ typedef RItemTileBuilder = void Function(RItemTileListBuilder builder);
 typedef ShowLoadMoreCallback = bool Function();
 
 /// 使用[CustomScrollView]快速组合界面
-/// [SliverPersistentHeader] 可以在顶部固定,可以实现悬浮效果 [SliverFillRemaining] 可以填充剩余空间
+/// [SliverPersistentHeader] 可以在顶部固定,可以实现悬浮效果. [SliverFillRemaining]可以填充剩余空间
 /// [SliverList] - [SliverGrid]
 /// [RItemTile] 的容器
 class RScrollView extends StatefulWidget {
