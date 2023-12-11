@@ -10,8 +10,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_widgets/assets_generated/assets.gen.dart';
+import 'package:lifecycle/lifecycle.dart';
 
 export 'package:flutter3_basics/flutter3_basics.dart';
+export 'package:lifecycle/lifecycle.dart';
 export 'package:sliver_tools/sliver_tools.dart';
 
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
@@ -23,6 +25,8 @@ part 'src/navigation/navigate_ex.dart';
 part 'src/pub/accurate_sized_box.dart';
 
 part 'src/pub/keep_alive.dart';
+
+part 'src/pub/lifecycle.dart';
 
 part 'src/scroll/r_item_tile.dart';
 
