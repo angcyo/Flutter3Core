@@ -28,9 +28,12 @@ class SingleSliverPersistentHeaderDelegate
   /// 最小高度
   final double headerMinHeight;
 
+  final TickerProvider? vSync;
+
   SingleSliverPersistentHeaderDelegate({
     this.child,
     this.childBuilder,
+    this.vSync,
     this.headerFixedHeight = kMinInteractiveDimension,
     this.headerMaxHeight = kToolbarHeight,
     this.headerMinHeight = kMinInteractiveDimension,
@@ -52,6 +55,21 @@ class SingleSliverPersistentHeaderDelegate
 
   @override
   double get minExtent => headerFixedHeight ?? headerMinHeight;
+
+  @override
+  TickerProvider? get vsync => vSync;
+
+  @override
+  FloatingHeaderSnapConfiguration? get snapConfiguration =>
+      super.snapConfiguration;
+
+  @override
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration =>
+      super.stretchConfiguration;
+
+  @override
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
+      super.showOnScreenConfiguration;
 
   @override
   bool shouldRebuild(

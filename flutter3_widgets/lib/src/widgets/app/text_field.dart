@@ -36,7 +36,13 @@ class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier {
   /// 是否是密码输入框
   bool obscureText;
 
-  ObscureNode(this.obscureText);
+  /// 密码替换字符
+  final String obscuringCharacter;
+
+  ObscureNode(
+    this.obscureText, {
+    this.obscuringCharacter = '•',
+  });
 
   /// 是否要显示密码
   bool _showObscureText = false;
@@ -314,6 +320,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           //scrollPadding: EdgeInsets.zero,
           obscureText: widget.config.obscureNode.obscureText &&
               !widget.config.obscureNode._showObscureText,
+          obscuringCharacter: widget.config.obscureNode.obscuringCharacter,
           keyboardType: widget.keyboardType,
           cursorColor: widget.cursorColor,
         ),

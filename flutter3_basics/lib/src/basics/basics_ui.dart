@@ -725,9 +725,9 @@ extension WidgetEx on Widget {
     double? height,
     Color? splashColor,
   }) {
-    var borderRadius = shape == BoxShape.circle
-        ? null
-        : BorderRadius.all(Radius.circular(radius));
+    var isCircle = shape == BoxShape.circle;
+    var borderRadius =
+        isCircle ? null : BorderRadius.all(Radius.circular(radius));
     decoration ??= BoxDecoration(
       shape: shape,
       color: backgroundColor,
@@ -740,6 +740,7 @@ extension WidgetEx on Widget {
       height: height,
       child: inkWell(
         borderRadius: borderRadius,
+        customBorder: isCircle ? const CircleBorder() : null,
         highlightShape: shape,
         onTap: onTap,
         splashColor: splashColor,
@@ -753,6 +754,7 @@ extension WidgetEx on Widget {
   /// [highlightColor] 高亮颜色
   /// [InkWell]
   /// [InkResponse]
+  /// [CircleBorder]
   Widget inkWell({
     GestureTapCallback? onTap,
     BorderRadius? borderRadius,
@@ -760,6 +762,7 @@ extension WidgetEx on Widget {
     Color? highlightColor,
     BoxShape highlightShape = BoxShape.rectangle,
     double? radius,
+    ShapeBorder? customBorder,
   }) {
     return InkResponse(
       onTap: onTap,
@@ -767,6 +770,8 @@ extension WidgetEx on Widget {
       splashColor: splashColor,
       highlightColor: highlightColor,
       borderRadius: borderRadius,
+      customBorder: customBorder,
+      //边框裁剪
       highlightShape: highlightShape,
       containedInkWell: true,
       child: this,
@@ -784,7 +789,8 @@ extension WidgetEx on Widget {
   }) =>
       inkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
+        //borderRadius: BorderRadius.circular(999),
+        customBorder: const CircleBorder(),
         splashColor: splashColor,
         highlightColor: highlightColor,
         highlightShape: BoxShape.rectangle,
@@ -953,6 +959,9 @@ extension RenderObjectEx on RenderObject {
 
   /// 获取[RenderObject]的位置
   /// [RenderBox.localToGlobal]
+  /// ```
+  /// Scrollable.of(context).context.findRenderObject();
+  /// ```
   Offset? getGlobalOffset(
       [RenderObject? ancestor, Offset point = Offset.zero]) {
     if (this is RenderBox) {

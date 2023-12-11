@@ -131,19 +131,24 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 }
 
 //error() => Future.error("asynchronous error");
-//SystemChrome.setPreferredOrientations
+//SystemChrome.setPreferredOrientations //设置屏幕方向
+//SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark); //设置状态栏样式
 //debugger(message: "等待调试...");
 //String.fromEnvironment
 
 /// [RendererBinding.instance]
-/// [RendererBinding.renderViews]
+/// [PlatformDispatcher.implicitView]
 /// [FlutterView.display]
 /// [FlutterView.display.size] //可以获取屏幕尺寸
 FlutterView get flutterView => WidgetsBinding.instance.renderView.flutterView;
 
+/// [WidgetsBinding.instance]
+/// [WidgetsBinding.platformDispatcher]
+/// [PlatformDispatcher.views]
 Iterable<FlutterView> get flutterViews =>
     WidgetsBinding.instance.renderViews.map((e) => e.flutterView);
 
+/// [RendererBinding.renderViews]
 Iterable<RenderView> get renderViews => WidgetsBinding.instance.renderViews;
 
 /// 获取当前平台的[MediaQueryData]
