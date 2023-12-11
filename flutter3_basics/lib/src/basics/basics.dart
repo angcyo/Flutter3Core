@@ -184,6 +184,22 @@ Stream<T?> delayGenerate<T>(
   }
 }
 
+/// 平台
+/// [defaultTargetPlatform]
+bool get isAndroid => Platform.isAndroid;
+
+bool get isIos => Platform.isIOS;
+
+/// 是否是web
+bool get isWeb => kIsWeb;
+
+/// 是否是移动设备
+bool get isMobile => isAndroid || isIos;
+
+/// 是否是pc客户端
+bool get isDesktop =>
+    Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+
 //endregion 基础
 
 //region 性能
@@ -199,9 +215,6 @@ Future<R> scheduleTask<R>(ResultCallback<R> callback,
         [Priority priority = Priority.animation]) =>
     SchedulerBinding.instance.scheduleTask(() => callback(), priority,
         debugLabel: "scheduleTask-${nowTimeString()}");
-
-
-
 
 //endregion 性能
 
