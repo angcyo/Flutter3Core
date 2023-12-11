@@ -12,7 +12,7 @@ class TextSpanBuilder {
 
   /// 换行
   TextSpanBuilder newLine() {
-    _textSpans.add(const TextSpan(text: "\n"));
+    _textSpans.add(TextSpan(text: lineSeparator));
     return this;
   }
 

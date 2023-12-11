@@ -941,8 +941,9 @@ extension RenderObjectEx on RenderObject {
   }
 
   /// 获取[RenderObject]的全局绘制位置和坐标大小
-  Rect? getRenderObjectBounds([RenderObject? ancestor]) {
-    var offset = getOffsetOrNull(ancestor);
+  /// [RenderBox.localToGlobal]
+  Rect? getGlobalBounds([RenderObject? ancestor, Offset point = Offset.zero]) {
+    var offset = getGlobalOffset(ancestor, point);
     var size = getSizeOrNull();
     if (offset != null && size != null) {
       return offset & size;
@@ -951,10 +952,12 @@ extension RenderObjectEx on RenderObject {
   }
 
   /// 获取[RenderObject]的位置
-  Offset? getOffsetOrNull([RenderObject? ancestor]) {
+  /// [RenderBox.localToGlobal]
+  Offset? getGlobalOffset(
+      [RenderObject? ancestor, Offset point = Offset.zero]) {
     if (this is RenderBox) {
       final Offset location =
-          (this as RenderBox).localToGlobal(Offset.zero, ancestor: ancestor);
+          (this as RenderBox).localToGlobal(point, ancestor: ancestor);
       return location;
     }
     return null;

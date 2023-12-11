@@ -23,6 +23,20 @@ typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
 /// 是否是debug模式
 /// 性能优化: https://juejin.cn/post/7066954522655981581
 /// 性能检查视图: https://docs.flutter.dev/tools/devtools/inspector
+///
+/// ```
+/// assert(() {
+///   final List<DebugPaintCallback> localCallbacks = _debugPaintCallbacks.toList();
+///   for (final DebugPaintCallback paintCallback in localCallbacks) {
+///     if (_debugPaintCallbacks.contains(paintCallback)) {
+///       paintCallback(context, offset, this);
+///     }
+///   }
+///   return true;
+/// }());
+/// ```
+/// [RenderView.paint]
+/// [debugAddPaintCallback]
 const bool isDebug = kDebugMode;
 
 /// 随机数生成器
@@ -77,7 +91,7 @@ String currentFileName([bool? fileLineNumber]) {
   //获取当前调用方法的文件名和行数
   final stackTrace = StackTrace.current.toString();
   //print(stackTrace);
-  final stackTraceList = stackTrace.split("\n");
+  final stackTraceList = stackTrace.split(lineSeparator);
 
   //#1      main (package:flutter3_abc/main.dart:8:7)
   final lineStackTrace = stackTraceList[1];
@@ -123,7 +137,14 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 
 /// [RendererBinding.instance]
 /// [RendererBinding.renderViews]
+/// [FlutterView.display]
+/// [FlutterView.display.size] //可以获取屏幕尺寸
 FlutterView get flutterView => WidgetsBinding.instance.renderView.flutterView;
+
+Iterable<FlutterView> get flutterViews =>
+    WidgetsBinding.instance.renderViews.map((e) => e.flutterView);
+
+Iterable<RenderView> get renderViews => WidgetsBinding.instance.renderViews;
 
 /// 获取当前平台的[MediaQueryData]
 /// [defaultTargetPlatform]

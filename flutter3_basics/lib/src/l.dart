@@ -150,7 +150,7 @@ class L {
 
     //获取当前调用方法的文件名和行数
     final stackTrace = StackTrace.current.toString();
-    final stackTraceList = stackTrace.split("\n");
+    final stackTraceList = stackTrace.split(lineSeparator);
     final lineStackTrace = stackTraceList[2];
     final fileStr = lineStackTrace.substring(
         lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));

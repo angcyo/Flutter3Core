@@ -72,4 +72,13 @@ class _Api {
 
 const api = _Api();
 
+/// 描述当前对象是全局单例对象
+class _GlobalInstance {
+  final String des;
+
+  const _GlobalInstance([this.des = '单例对象']);
+}
+
+const globalInstance = _GlobalInstance();
+
 //endregion---base

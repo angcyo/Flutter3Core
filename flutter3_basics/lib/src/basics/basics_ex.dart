@@ -42,7 +42,9 @@ String uuid([bool trim = true]) {
 
 /// 行的分隔符
 /// [_newlineRegExp]
-String get lineSeparator => Platform.isWindows ? "\r\n" : "\n";
+/// [Platform.lineTerminator]
+String get lineSeparator =>
+    Platform.lineTerminator; //Platform.isWindows ? "\r\n" : "\n";
 
 //region Object 扩展
 
