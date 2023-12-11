@@ -321,6 +321,7 @@ https://github.com/fluttercommunity/plus_plugins
   Android 上使用 CameraX，在 iOS 上使用 AVFoundation。
 - [flutter_barcode_scanner: ^2.0.0](https://pub.dev/packages/flutter_barcode_scanner) 一个用于
   Flutter 应用程序的插件，可在 Android 和 iOS 上添加条形码扫描支持。
+- [flutter_mrz_scanner: ^2.1.0](https://pub.dev/packages/flutter_mrz_scanner) 使用 iOS 和 Android 扫描身份证件（护照、身份证、签证）的 MRZ（机器可读区域）。被 QKMRZScanner 严重啃食。
 - [file_picker: ^6.1.1](https://pub.dev/packages/file_picker)
   一个包，允许您使用本机文件资源管理器来选取单个或多个文件，并具有扩展筛选支持。
 - [excel: ^3.0.0](https://pub.dev/packages/excel) Excel 是一个 flutter 和 dart 库，用于读取、创建和更新
