@@ -1,7 +1,6 @@
 library flutter3_widgets;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -44,6 +43,8 @@ part 'src/widgets/app/button.dart';
 part 'src/widgets/app/text_field.dart';
 
 part 'src/widgets/child_background_widget.dart';
+
+part 'src/widgets/gestures/matrix_gesture_detector.dart';
 
 part 'src/widgets/gestures/rotate_gesture_reorganizer.dart';
 

@@ -109,7 +109,7 @@ class RItemTile extends StatefulWidget {
   /// [SliverPersistentHeader.delegate]
   final SliverPersistentHeaderDelegate? headerDelegate;
 
-  /// 是否固定在顶部, 支持多个
+  /// 是否固定在顶部, 支持多个悬浮在顶部
   /// 开启后, 当滚动到元素时, 会固定在顶部.
   /// [SliverPersistentHeader.pinned]
   final bool pinned;
@@ -430,6 +430,18 @@ extension RItemTileExtension on Widget {
       edgePaddingRight: edgePaddingRight,
       edgePaddingBottom: edgePaddingBottom,
       child: child ?? this,
+    );
+  }
+
+  /// 悬浮头
+  RItemTile rFloated({
+    bool pinned = true,
+    bool floating = false,
+  }) {
+    return RItemTile(
+      pinned: pinned,
+      floating: floating,
+      child: this,
     );
   }
 

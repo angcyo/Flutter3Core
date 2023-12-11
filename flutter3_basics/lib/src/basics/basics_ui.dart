@@ -853,6 +853,24 @@ extension WidgetEx on Widget {
         controller: controller,
         child: this,
       );
+
+  /// 控制当前的[Widget]可见性
+  /// [AnimatedContainer]
+  /// [AnimatedOpacity]
+  Widget visible({required bool visible, bool anim = false}) {
+    var result = Visibility(
+      visible: visible,
+      child: this,
+    );
+    if (anim) {
+      return AnimatedOpacity(
+        opacity: visible ? 1 : 0,
+        duration: kDefaultAnimationDuration,
+        child: result,
+      );
+    }
+    return result;
+  }
 }
 
 extension StateEx on State {

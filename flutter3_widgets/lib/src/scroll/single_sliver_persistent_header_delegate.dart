@@ -13,6 +13,11 @@ typedef SliverPersistentHeaderWidgetBuilder = Widget Function(
 
 class SingleSliverPersistentHeaderDelegate
     extends SliverPersistentHeaderDelegate {
+  /// 是否要顶掉其他部件
+
+  @experimental
+  final bool edgeOut;
+
   /// 子部件
   final Widget? child;
 
@@ -34,6 +39,7 @@ class SingleSliverPersistentHeaderDelegate
     this.child,
     this.childBuilder,
     this.vSync,
+    this.edgeOut = true,
     this.headerFixedHeight = kMinInteractiveDimension,
     this.headerMaxHeight = kToolbarHeight,
     this.headerMinHeight = kMinInteractiveDimension,
@@ -45,9 +51,40 @@ class SingleSliverPersistentHeaderDelegate
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return child ??
+    Widget result = child ??
         (childBuilder?.call(context, shrinkOffset, overlapsContent)) ??
         const Placeholder();
+    /*if (edgeOut) {
+      var state = Scrollable.of(context);
+
+      ///整个 item 的大小
+      var itemHeight = headerHeight + contentHeight;
+
+      ///当前顶部的位置
+      var position = state.position.pixels ~/ itemHeight;
+
+      ///当前和挂着的 header 相邻的 item 位置
+      var offsetPosition = (state.position.pixels + headerHeight) ~/ itemHeight;
+
+      ///当前和挂着的 header 相邻的 item ，需要改变的偏移
+      var changeOffset = state.position.pixels - offsetPosition * itemHeight;
+
+      /// header 动态显示需要的高度
+      var height = offsetPosition == (widget.index + 1)
+          ? (changeOffset < 0)
+              ? -changeOffset
+              : widget.headerHeight
+          : widget.headerHeight;
+
+      result = Visibility(
+        visible: (position <= widget.index),
+        child: new Transform.translate(
+          offset: Offset(0, -(widget.headerHeight - height)),
+          child: widget.child,
+        ),
+      );
+    }*/
+    return result;
   }
 
   @override

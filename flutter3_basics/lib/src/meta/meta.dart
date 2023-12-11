@@ -54,6 +54,15 @@ class _CallPoint {
 
 const callPoint = _CallPoint();
 
+/// 测试功能
+class _Experimental {
+  final String reason;
+
+  const _Experimental([this.reason = '测试功能']);
+}
+
+const experimental = _Experimental();
+
 /// 测试点
 class _TestPoint {
   final String reason;

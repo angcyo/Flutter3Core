@@ -47,6 +47,35 @@ extension AnimationEx on Widget {
     );
   }
 
+  /// 旋转动画
+  Widget rotation({
+    Animation<double>? rotate,
+    double? from,
+    double? to,
+    bool out = false,
+  }) {
+    return RotationTransition(
+      turns: rotate ??
+          Tween(
+            begin: from ?? (out ? 360 : 0),
+            end: to ?? (out ? 360 : 0),
+          ).animate(CurvedAnimation(
+            parent: AlwaysStoppedAnimation(out ? 0 : 360),
+            curve: Curves.easeIn,
+          )),
+      child: this,
+    );
+  }
+
+  /// 不透明动画, 不需要动画控制
+  /// [AnimatedContainer]
+  /// [AnimatedOpacity]
+  Widget opacity({required double opacity}) => AnimatedOpacity(
+        opacity: opacity,
+        duration: kDefaultAnimationDuration,
+        child: this,
+      );
+
   /// 动画切换2个[Widget].[AnimatedSwitcher]
   Widget animatedSwitcher({
     Key? key,
