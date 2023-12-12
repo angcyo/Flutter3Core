@@ -8,13 +8,14 @@ part of flutter3_widgets;
 
 class GradientButton extends StatelessWidget {
   const GradientButton({
-    Key? key,
+    super.key,
     this.color,
     this.colors,
     required this.onPressed,
     required this.child,
     this.padding,
-    this.borderRadius = const BorderRadius.all(Radius.circular(4)),
+    this.radius,
+    this.borderRadius,
     this.textColor,
     this.splashColor,
     this.disabledColor,
@@ -24,14 +25,20 @@ class GradientButton extends StatelessWidget {
     this.maxWidth = double.infinity,
     this.minHeight = kInteractiveHeight,
     this.maxHeight = double.infinity,
-  }) : super(key: key);
+  });
 
-  // 渐变色数组
+  /// 渐变色数组
   final List<Color>? colors;
+
+  /// 单一颜色
   final Color? color;
   final Color? textColor;
   final Color? splashColor;
+
+  /// 禁用时的文本颜色
   final Color? disabledTextColor;
+
+  /// 禁用时的颜色
   final Color? disabledColor;
 
   /// Defaults to 24.0 on the left and right if [textTheme] is [ButtonTextTheme.primary],
@@ -41,6 +48,7 @@ class GradientButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   final Widget child;
+  final double? radius;
   final BorderRadius? borderRadius;
 
   final GestureTapCallback? onPressed;
@@ -62,9 +70,12 @@ class GradientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     //确保colors数组不空
-    List<Color> colors =
-        this.colors ?? [theme.primaryColor, theme.primaryColorDark];
-    final radius = borderRadius;
+    List<Color> colors = this.colors ??
+        (color == null
+            ? [theme.primaryColor, theme.primaryColorDark]
+            : [color!, color!]);
+    final radius = borderRadius ??
+        (this.radius == null ? null : BorderRadius.circular(this.radius!));
     bool disabled = onPressed == null;
     return DecoratedBox(
       decoration: BoxDecoration(
