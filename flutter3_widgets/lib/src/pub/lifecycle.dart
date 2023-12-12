@@ -15,7 +15,10 @@ part of flutter3_widgets;
 /// ```
 final NavigatorObserver lifecycleNavigatorObserver = defaultLifecycleObserver;
 
+/// https://pub.dev/packages/lifecycle
+/// https://github.com/chenenyu/lifecycle
 extension WidgetLifecycleEx on Widget {
+  /// 监听当前页面的生命周期
   /// [LifecycleWrapper]
   /// [LifecycleEvent]
   Widget lifecycle(OnLifecycleEvent onLifecycleEvent) => LifecycleWrapper(
@@ -23,6 +26,7 @@ extension WidgetLifecycleEx on Widget {
         child: this,
       );
 
+  /// 为[PageView]提供生命周期支持
   /// Wrap PageView
   /// [PageView]
   /// [PageViewLifecycleWrapper]
@@ -34,6 +38,7 @@ extension WidgetLifecycleEx on Widget {
       );
 
   /// [ChildPageLifecycleWrapper]
+  /// [LifecycleWrapper]
   Widget pageLifecycleChild({
     required int index,
     OnLifecycleEvent? onLifecycleEvent,

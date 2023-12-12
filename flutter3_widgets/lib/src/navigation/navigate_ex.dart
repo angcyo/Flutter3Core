@@ -5,7 +5,4 @@ part of flutter3_widgets;
 /// @since 2023/11/20
 ///
 
-mixin BottomNavigationMixin<T extends StatefulWidget> on State<T> {
-
-
-}
+mixin BottomNavigationMixin<T extends StatefulWidget> on State<T> {}

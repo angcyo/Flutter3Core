@@ -702,7 +702,22 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 首选大小
+  /// [PreferredSizeWidget]
+  /// [PreferredSize]
+  /// [TabBar]
+  PreferredSizeWidget sizePreferred({
+    double? width,
+    double? height = kTabHeight,
+  }) {
+    return PreferredSize(
+      preferredSize: Size(width ?? double.infinity, height ?? double.infinity),
+      child: this,
+    );
+  }
+
   /// 比例box [AspectRatio]
+  /// 纵横比表示为宽度与高度的比率。例如，16:9宽高比的值为16.0/9.0。
   Widget ratio(double aspectRatio) => AspectRatio(
         aspectRatio: aspectRatio,
         child: this,

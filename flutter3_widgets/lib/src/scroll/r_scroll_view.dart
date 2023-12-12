@@ -531,7 +531,7 @@ extension RScrollViewEx on WidgetList {
 
 /// 混入一个[RScrollView], 支持刷新/加载更多
 /// [RScrollView]
-mixin RScrollViewPage<T extends StatefulWidget> on State<T> {
+mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 刷新/加载更多/滚动控制
   /// [RequestPage]
   late final RScrollController scrollController = RScrollController()
@@ -571,13 +571,21 @@ mixin RScrollViewPage<T extends StatefulWidget> on State<T> {
 
   @override
   void initState() {
-    scrollController.updateAdapterState(this, defWidgetState);
+    if (defWidgetState == WidgetState.loading) {
+      firstLoad();
+    }
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  /// 首次加载, 请主动调用, 触发
+  @callPoint
+  void firstLoad() {
+    scrollController.updateAdapterState(this, defWidgetState);
   }
 
   //---

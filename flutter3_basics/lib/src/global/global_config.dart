@@ -18,6 +18,10 @@ const double kXxxh = 48;
 /// [kMinInteractiveDimension] 最小交互高度
 const double kMinInteractiveHeight = 36;
 
+/// [kToolbarHeight]
+/// [kInteractiveHeight]
+const double kTabHeight = 46;
+
 /// 设计最佳最小交互高度
 const double kInteractiveHeight = kMinInteractiveDimension;
 
@@ -48,6 +52,23 @@ typedef GlobalWriteFileFn = Future<String?> Function(
 
 /// 获取[GlobalConfig]的方法
 typedef GlobalConfigGetFn = GlobalConfig Function();
+
+/// [AppBar]构建器函数
+typedef AppBarBuilderFn = PreferredSizeWidget? Function(
+  BuildContext context,
+  State state, {
+  Widget? leading,
+  Widget? title,
+  PreferredSizeWidget? bottom,
+  Color? backgroundColor,
+  Color? foregroundColor,
+  double? elevation,
+  double? scrolledUnderElevation,
+  Color? shadowColor,
+  Widget? flexibleSpace,
+  bool? centerTitle,
+  double? titleSpacing,
+});
 
 /// [GlobalConfig.allModalRouteList]
 ModalRoute? get lastModalRoute => GlobalConfig.allModalRouteList().lastOrNull;
@@ -140,6 +161,14 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 获取全局配置
   /// 使用[GlobalConfigScope]可以覆盖[GlobalConfig]
+  /// 请勿在[State.dispose]方法中调用此方法
+  /// ```
+  /// The following assertion was thrown while finalizing the widget tree:
+  /// Looking up a deactivated widget's ancestor is unsafe.
+  /// At this point the state of the widget's element tree is no longer stable.
+  /// To safely refer to a widget's ancestor in its dispose() method, save a reference to the ancestor by
+  /// calling dependOnInheritedWidgetOfExactType() in the widget's didChangeDependencies() method.
+  /// ```
   static GlobalConfig of(BuildContext? context, {bool depend = false}) {
     GlobalConfig? globalConfig;
     if (depend) {
@@ -234,24 +263,14 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [scrolledUnderElevation] 滚动时, 阴影的高度
   /// [backgroundColor] 透明的背景颜色, 会影响Android状态栏的颜色
   /// [flexibleSpace] 纯白色的[AppBar]推荐使用此属性设置白色, 否则会和底色叠加.
-  late PreferredSizeWidget? Function(
-    BuildContext context,
-    State state, {
-    Widget? leading,
-    Widget? title,
-    Color? backgroundColor,
-    Color? foregroundColor,
-    double? elevation,
-    double? scrolledUnderElevation,
-    Color? shadowColor,
-    Widget? flexibleSpace,
-    bool? centerTitle,
-    double? titleSpacing,
-  }) appBarBuilder = (
+  /// [bottom] [AppBar.bottom]属性[PreferredSizeWidget]
+  /// [copyWith]
+  late AppBarBuilderFn appBarBuilder = (
     context,
     state, {
     leading,
     title,
+    bottom,
     backgroundColor,
     foregroundColor,
     elevation,
@@ -271,6 +290,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
           (context.isAppBarDismissal
               ? appBarLeadingBuilder(context, state)
               : null),
+      bottom: bottom,
       elevation: elevation,
       shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
       backgroundColor: backgroundColor ?? globalTheme.appBarBackgroundColor,
@@ -373,20 +393,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     WidgetBuilder? loadingIndicatorBuilder,
     WidgetArgumentBuilder? errorPlaceholderBuilder,
     WidgetBuilder? loadingOverlayWidgetBuilder,
-    PreferredSizeWidget? Function(
-      BuildContext context,
-      State state, {
-      Widget? leading,
-      Widget? title,
-      Color? backgroundColor,
-      Color? foregroundColor,
-      double? elevation,
-      double? scrolledUnderElevation,
-      Color? shadowColor,
-      Widget? flexibleSpace,
-      bool? centerTitle,
-      double? titleSpacing,
-    })? appBarBuilder,
+    AppBarBuilderFn? appBarBuilder,
   }) {
     return GlobalConfig(
       globalContext: globalContext ?? this.globalContext,

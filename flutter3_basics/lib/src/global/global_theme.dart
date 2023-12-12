@@ -143,6 +143,11 @@ class GlobalTheme {
         color: "#B0B0B0".toColor(),
       );
 
+  TextStyle get textDesStyle => TextStyle(
+        fontSize: 12,
+        color: "#949496".toColor(),
+      );
+
   TextStyle get textPlaceStyle => TextStyle(
         fontSize: 12,
         color: "#6F6F6F".toColor(),

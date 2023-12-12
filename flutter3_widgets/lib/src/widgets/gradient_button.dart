@@ -14,7 +14,7 @@ class GradientButton extends StatelessWidget {
     required this.onPressed,
     required this.child,
     this.padding,
-    this.radius,
+    this.radius = kDefaultBorderRadiusL,
     this.borderRadius,
     this.textColor,
     this.splashColor,

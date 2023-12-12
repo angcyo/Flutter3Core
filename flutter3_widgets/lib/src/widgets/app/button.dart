@@ -6,7 +6,9 @@ part of flutter3_widgets;
 ///
 
 /// 色块填充样式的按钮
-class FillButton extends StatelessWidget {
+/// [FilledButton]
+/// [GradientButton]
+class FillGradientButton extends StatelessWidget {
   /// 按钮文本, 设置之后, [child]无效
   final String? text;
 
@@ -59,7 +61,7 @@ class FillButton extends StatelessWidget {
   /// 禁用时的文本颜色, 不指定同样会自动匹配
   final Color? disabledTextColor;
 
-  const FillButton({
+  const FillGradientButton({
     super.key,
     this.text,
     this.child,
@@ -113,6 +115,158 @@ class FillButton extends StatelessWidget {
       maxHeight: height != null ? height! : maxHeight,
       child: text?.text() ?? child ?? const Empty(),
     );
+  }
+}
+
+/// 填充样式的按钮
+/// [FilledButton]
+/// [GradientButton]
+/// [ButtonStyle]
+class FillButton extends StatelessWidget {
+  /// 按钮文本, 设置之后, [child]无效
+  final String? text;
+
+  /// 文本颜色
+  final Color? textColor;
+
+  /// [child]
+  final Widget? child;
+
+  /// 按钮是否可用
+  final bool enabled;
+
+  /// 填充颜色
+  final Color? fillColor;
+
+  /// 边框的宽度
+  final double borderWidth;
+
+  /// 圆角大小
+  final double? radius;
+  final BorderRadius? borderRadius;
+
+  /// 按钮的内边距
+  final EdgeInsetsGeometry? padding;
+
+  /// 手势事件
+  final GestureTapCallback? onTap;
+
+  const FillButton({
+    super.key,
+    this.onTap,
+    this.text,
+    this.child,
+    this.enabled = true,
+    this.fillColor,
+    this.textColor,
+    this.borderWidth = 1,
+    this.radius = kDefaultBorderRadiusX,
+    this.borderRadius,
+    this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kH),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var globalTheme = GlobalTheme.of(context);
+    final radius = borderRadius ??
+        (this.radius == null ? null : BorderRadius.circular(this.radius!));
+    var fillColor = this.fillColor ?? globalTheme.accentColor;
+    var textColor = this.textColor ?? globalTheme.themeWhiteColor;
+    return Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          color: fillColor,
+          borderRadius: radius,
+        ),
+        child: DefaultTextStyle(
+          style: TextStyle(
+            color: textColor,
+          ),
+          child: text?.text() ?? child ?? const Empty(),
+        ));
+  }
+}
+
+/// 空心描边样式的按钮
+/// [OutlinedButton]
+/// [ButtonStyle]
+class StrokeButton extends StatelessWidget {
+  /// 按钮文本, 设置之后, [child]无效
+  final String? text;
+
+  /// 文本颜色
+  final Color? textColor;
+
+  /// [child]
+  final Widget? child;
+
+  /// 按钮是否可用
+  final bool enabled;
+
+  /// 边框颜色
+  final Color? borderColor;
+
+  /// 边框的宽度
+  final double borderWidth;
+
+  /// 圆角大小
+  final double? radius;
+  final BorderRadius? borderRadius;
+
+  /// 按钮的内边距
+  final EdgeInsetsGeometry? padding;
+
+  /// 手势事件
+  final GestureTapCallback? onTap;
+
+  const StrokeButton({
+    super.key,
+    this.onTap,
+    this.text,
+    this.child,
+    this.enabled = true,
+    this.borderColor,
+    this.textColor,
+    this.borderWidth = 1,
+    this.radius = kDefaultBorderRadiusX,
+    this.borderRadius,
+    this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kH),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var globalTheme = GlobalTheme.of(context);
+    final radius = borderRadius ??
+        (this.radius == null ? null : BorderRadius.circular(this.radius!));
+    var borderColor = this.borderColor ?? globalTheme.accentColor;
+    var textColor = this.textColor ?? borderColor;
+    return Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: borderColor,
+            width: borderWidth,
+          ),
+          borderRadius: radius,
+        ),
+        child: DefaultTextStyle(
+          style: TextStyle(
+            color: textColor,
+          ),
+          child: text?.text() ?? child ?? const Empty(),
+        ));
+    /*return OutlinedButton(
+      onPressed: enabled
+          ? onTap ??
+              () {
+                assert(() {
+                  debugPrint("FillButton.onTap is null");
+                  return true;
+                }());
+              }
+          : null,
+      child: text?.text() ?? child ?? const Empty(),
+    );*/
   }
 }
 
