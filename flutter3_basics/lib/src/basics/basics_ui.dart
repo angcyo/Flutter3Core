@@ -736,17 +736,19 @@ extension WidgetEx on Widget {
     EdgeInsetsGeometry? padding,
     Decoration? decoration,
     BoxShape shape = BoxShape.rectangle,
+    BorderRadius? borderRadius,
     double? width,
     double? height,
+    Color? highlightColor,
     Color? splashColor,
   }) {
     var isCircle = shape == BoxShape.circle;
-    var borderRadius =
-        isCircle ? null : BorderRadius.all(Radius.circular(radius));
+    var bRadius = borderRadius ??
+        (isCircle ? null : BorderRadius.all(Radius.circular(radius)));
     decoration ??= BoxDecoration(
       shape: shape,
       color: backgroundColor,
-      borderRadius: borderRadius,
+      borderRadius: bRadius,
     );
     return Ink(
       padding: padding,
@@ -754,10 +756,11 @@ extension WidgetEx on Widget {
       width: width,
       height: height,
       child: inkWell(
-        borderRadius: borderRadius,
+        borderRadius: bRadius,
         customBorder: isCircle ? const CircleBorder() : null,
         highlightShape: shape,
         onTap: onTap,
+        highlightColor: highlightColor,
         splashColor: splashColor,
       ),
     );

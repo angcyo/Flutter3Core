@@ -54,3 +54,66 @@ class LoadingWrapWidget extends StatelessWidget {
     );
   }
 }
+
+/// 如果是加载中, 则显示转圈圈, 否则显示本体
+class LoadingStateWidget extends StatelessWidget {
+  /// 是否加载中
+  final bool isLoading;
+
+  /// 指定加载中的小部件
+  final Widget? loading;
+
+  /// 本体
+  final Widget child;
+
+  const LoadingStateWidget({
+    super.key,
+    this.loading,
+    required this.child,
+    required this.isLoading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget loading = this.loading ??
+        GlobalConfig.of(context).loadingIndicatorBuilder(context);
+    return AnimatedSwitcher(
+      duration: kDefaultAnimationDuration,
+      child: isLoading ? loading : child,
+    );
+  }
+}
+
+extension LoadingWidgetEx on Widget {
+  /// 加载圈圈包裹小部件
+  Widget loadingWidget(
+    bool isLoading, {
+    Widget? loading,
+  }) {
+    return LoadingStateWidget(
+      isLoading: isLoading,
+      loading: loading,
+      child: this,
+    );
+  }
+}
+
+extension LoadingValueListenableEx on ValueListenable<bool> {
+  /// 加载圈圈包裹小部件
+  Widget loadingWidget({
+    required Widget child,
+    Widget? loading,
+  }) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: this,
+      builder: (context, value, child) {
+        return LoadingStateWidget(
+          isLoading: value,
+          loading: loading,
+          child: child!,
+        );
+      },
+      child: child,
+    );
+  }
+}
