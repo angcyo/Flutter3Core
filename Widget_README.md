@@ -6,6 +6,7 @@
 - [Material 3](https://m3.material.io/)
 - [Material 3 Components](https://m3.material.io/components) 
 - [Material 3 Demo](https://flutter.github.io/samples/web/material_3_demo/)
+- [Material Symbols and Icons](https://fonts.google.com/icons) 图标
 
 一些有意义的关键类收集
 
