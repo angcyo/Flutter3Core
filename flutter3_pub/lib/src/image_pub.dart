@@ -44,6 +44,17 @@ class _CircleNetworkImageState extends State<CircleNetworkImage> {
 }
 
 extension ImagePubEx on String {
+  /// 网络图片提供器
+  /// [ImageProvider]
+  ImageProvider toNetworkImageProvider() => CachedNetworkImageProvider(this);
+
+  /// 文件图片提供器
+  /// [FileImage]
+  /// [AssetImage]
+  /// [MemoryImage]
+  /// [NetworkImage]
+  FileImage toFileImageProvider() => FileImage(file());
+
   /// [loadAssetImageWidget]
   /// [placeholder] [progressIndicatorBuilder] 只能设置一个
   Widget toNetworkImageWidget({
