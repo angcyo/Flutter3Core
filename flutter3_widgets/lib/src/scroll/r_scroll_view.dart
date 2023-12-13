@@ -253,6 +253,10 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
         if (tile.hide) {
           continue;
         }
+        if (tile.part) {
+          clearAndAppendList();
+          clearAndAppendGrid();
+        }
         //RItemTile
         if (tile.isSliverItem ||
             tile.pinned ||
@@ -272,8 +276,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
             result.add(tile.buildWrapChild(
                 context,
                 result,
-                _wrapSliverPadding(
-                  tile.sliverPadding,
+                _wrapSliverTile(
+                  tile,
                   SliverFillRemaining(
                     hasScrollBody: tile.fillHasScrollBody,
                     fillOverscroll: tile.fillOverscroll,
@@ -286,8 +290,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
               result.add(tile.buildWrapChild(
                   context,
                   result,
-                  _wrapSliverPadding(
-                    tile.sliverPadding,
+                  _wrapSliverTile(
+                    tile,
                     SliverPersistentHeader(
                       delegate: SingleSliverPersistentHeaderDelegate(
                         child: tile,
@@ -304,8 +308,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
               result.add(tile.buildWrapChild(
                   context,
                   result,
-                  _wrapSliverPadding(
-                    tile.sliverPadding,
+                  _wrapSliverTile(
+                    tile,
                     SliverPersistentHeader(
                       delegate: tile.headerDelegate!,
                       pinned: tile.pinned,
@@ -317,13 +321,13 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
             result.add(tile.buildWrapChild(
                 context,
                 result,
-                _wrapSliverPadding(
-                  tile.sliverPadding,
+                _wrapSliverTile(
+                  tile,
                   tile,
                 )));
           }
         } else {
-          //复合的
+          //复合的, 需要丢到List或Grid中
           if (tile.crossAxisCount > 0) {
             clearAndAppendList();
             checkAndAppendGrid(tile);
@@ -371,8 +375,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
         newList.add(element);
       }
     });
-    return _wrapSliverPadding(
-      first.sliverPadding,
+    return _wrapSliverTile(
+      first,
       SliverList.list(
         addAutomaticKeepAlives: first.addAutomaticKeepAlives,
         addRepaintBoundaries: first.addRepaintBoundaries,
@@ -400,8 +404,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
         newList.add(element);
       }
     });
-    return _wrapSliverPadding(
-      first.sliverPadding,
+    return _wrapSliverTile(
+      first,
       SliverGrid.count(
         crossAxisCount: first.crossAxisCount,
         mainAxisSpacing: first.mainAxisSpacing,
@@ -412,6 +416,20 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     );
   }
 
+  /// [SliverPadding]
+  /// [DecoratedSliver]
+  /// [_wrapSliverPadding]
+  /// [_wrapSliverDecoration]
+  Widget _wrapSliverTile(
+    RItemTile tile,
+    Widget sliverChild,
+  ) =>
+      _wrapSliverPadding(
+          tile.sliverPadding,
+          _wrapSliverDecoration(tile.sliverDecoration,
+              tile.sliverDecorationPosition, sliverChild));
+
+  /// [SliverPadding]
   Widget _wrapSliverPadding(
     EdgeInsetsGeometry? sliverPadding,
     Widget sliverChild,
@@ -419,8 +437,26 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     if (sliverPadding == null) {
       return sliverChild;
     }
+
     return SliverPadding(
       padding: sliverPadding,
+      sliver: sliverChild,
+    );
+  }
+
+  /// [DecoratedSliver]
+  Widget _wrapSliverDecoration(
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition,
+    Widget sliverChild,
+  ) {
+    if (sliverDecoration == null) {
+      return sliverChild;
+    }
+
+    return DecoratedSliver(
+      decoration: sliverDecoration,
+      position: sliverDecorationPosition,
       sliver: sliverChild,
     );
   }

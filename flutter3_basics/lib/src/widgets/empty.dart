@@ -32,3 +32,13 @@ class Empty extends StatelessWidget {
           );
   }
 }
+
+/// 当识别此小部件时, 表示要丢弃
+class IgnoreWidget extends StatelessWidget {
+  const IgnoreWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Empty();
+  }
+}

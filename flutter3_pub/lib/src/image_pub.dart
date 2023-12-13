@@ -18,7 +18,7 @@ class CircleNetworkImage extends StatefulWidget {
   const CircleNetworkImage({
     super.key,
     required this.url,
-    required this.size,
+    this.size = kAvatarSize,
   });
 
   @override

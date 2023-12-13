@@ -495,6 +495,14 @@ extension IntEx on int {
   }
 }
 
+extension DoubleEx on double {
+  /// 弧度转角度
+  double get toDegrees => this * 180 / pi;
+
+  /// 角度转弧度
+  double get toRadians => this * pi / 180;
+}
+
 /// [Uint8List]
 extension ListIntEx on List<int> {
   /// [Uint8List]转换成字符串

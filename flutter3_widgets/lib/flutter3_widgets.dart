@@ -38,6 +38,10 @@ part 'src/scroll/single_sliver_persistent_header_delegate.dart';
 
 part 'src/scroll/sliver_paint_widget.dart';
 
+part 'src/scroll/tile/label_info_mixin.dart';
+
+part 'src/scroll/tile/single_label_info_tile.dart';
+
 part 'src/scroll/widget_state.dart';
 
 part 'src/widgets/after_layout.dart';

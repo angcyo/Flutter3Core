@@ -15,14 +15,23 @@ typedef ItemTileWrapBuilder = Widget Function(
 
 /// [RScrollView] 的子项
 class RItemTile extends StatefulWidget {
+  /// [rItemTile]
+  /// [rDecoration]
   const RItemTile({
     super.key,
     this.child,
     this.childBuilder,
     this.tileWrapBuilder,
     this.isSliverItem = false,
+    this.part = false,
     this.hide = false,
+    this.bottomLineColor,
+    this.bottomLineHeight,
+    this.bottomLineMargin,
+    this.bottomLeading,
     this.sliverPadding,
+    this.sliverDecoration,
+    this.sliverDecorationPosition = DecorationPosition.background,
     this.edgePaddingLeft,
     this.edgePaddingTop,
     this.edgePaddingRight,
@@ -57,6 +66,9 @@ class RItemTile extends StatefulWidget {
 
   //region 基础
 
+  /// 是否要重新分割一部分
+  final bool part;
+
   /// 是否要隐藏当前tile
   final bool hide;
 
@@ -69,15 +81,49 @@ class RItemTile extends StatefulWidget {
   /// 用来包裹[RItemTile]的构建器
   final ItemTileWrapBuilder? tileWrapBuilder;
 
+  //endregion 基础
+
+  //region style
+
+  /// 底部分割线的颜色
+  final Color? bottomLineColor;
+
+  /// 线的高度, 也就是厚度
+  /// [Divider.thickness]
+  final double? bottomLineHeight;
+
+  /// 线的偏移距离, 也就是下左右的边距. 不支持上边距
+  final EdgeInsets? bottomLineMargin;
+
+  /// 覆盖在底部的小部件, 比如分割线
+  final Widget? bottomLeading;
+
+  //endregion style
+
+  //region SliverPadding
+
   /// [SliverList].[SliverGrid].[SliverFillRemaining].[SliverPersistentHeader]
   /// 所有sliver tile是否要包裹在[SliverPadding]小部件中
+  /// [SliverPadding]
   final EdgeInsetsGeometry? sliverPadding;
 
-  //endregion 基础
+  //endregion SliverPadding
+
+  //region DecoratedSliver
+
+  /// [DecoratedSliver]
+  /// [BoxDecoration]
+  /// [DecoratedSliver.position]
+  final Decoration? sliverDecoration;
+
+  /// [DecoratedSliver.decoration]
+  final DecorationPosition sliverDecorationPosition;
+
+  //endregion DecoratedSliver
 
   //region 普通布局
 
-  /// 决定是否直接塞到[CustomScrollView.slivers]中
+  /// 决定是否直接塞到[CustomScrollView.slivers]中, 要不然就会放到[SliverList]中
 
   /// 是否是[Sliver]布局
   /// 需要使用[SliverToBoxAdapter]包裹
@@ -221,12 +267,26 @@ class RItemTile extends StatefulWidget {
 
   //---
 
+  /// 是否需要重新包裹[SliverChild].[child]
   Widget buildWrapChild(
     BuildContext context,
     List<Widget> list,
     Widget child,
   ) {
     return tileWrapBuilder?.call(context, list, child, list.length) ?? child;
+  }
+
+  Widget? _buildBottomWidget(BuildContext context) {
+    return bottomLeading ??
+        (bottomLineColor == null
+            ? null
+            : Divider(
+                height: bottomLineMargin?.bottom,
+                thickness: bottomLineHeight,
+                indent: bottomLineMargin?.left,
+                endIndent: bottomLineMargin?.right,
+                color: bottomLineColor,
+              ));
   }
 
   Widget buildListWrapChild(
@@ -245,7 +305,10 @@ class RItemTile extends StatefulWidget {
       double right = 0.0;
       double bottom = 0.0;
 
+      Widget? bWidget;
+
       if (first is RItemTile) {
+        //底部需要堆叠的小部件
         if (length == 1) {
           //只有一个
           left = first.firstPaddingLeft ?? first.lastPaddingLeft ?? left;
@@ -261,6 +324,12 @@ class RItemTile extends StatefulWidget {
           bottom = first.firstPaddingBottom ?? bottom;
         }
       }
+
+      if (length > 1 && index < length - 1) {
+        bWidget = _buildBottomWidget(context) ??
+            (first as RItemTile?)?._buildBottomWidget(context);
+      }
+
       if (last is RItemTile && length > 1 && index == length - 1) {
         //最后一个
         left = last.lastPaddingLeft ?? left;
@@ -269,10 +338,21 @@ class RItemTile extends StatefulWidget {
         bottom = last.lastPaddingBottom ?? bottom;
       }
 
+      Widget result = child;
+
       // 有值
       if (left != 0 || top != 0 || right != 0 || bottom != 0) {
-        return child.paddingLTRB(left, top, right, bottom);
+        result = child.paddingLTRB(left, top, right, bottom);
       }
+
+      if (bWidget != null) {
+        result = Stack(
+          alignment: Alignment.bottomCenter,
+          children: [result, bWidget],
+        );
+      }
+
+      return result;
     }
     return tileWrapBuilder?.call(context, list, child, index) ?? child;
   }
@@ -364,6 +444,12 @@ extension RItemTileExtension on Widget {
     Widget? child,
     WidgetBuilder? childBuilder,
     bool isSliverItem = false,
+    bool hide = false,
+    bool part = false,
+    Color? bottomLineColor,
+    double? bottomLineHeight,
+    EdgeInsets? bottomLineMargin,
+    Widget? bottomLeading,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
@@ -399,6 +485,12 @@ extension RItemTileExtension on Widget {
       key: key,
       childBuilder: childBuilder,
       isSliverItem: isSliverItem,
+      hide: hide,
+      part: part,
+      bottomLineColor: bottomLineColor,
+      bottomLineHeight: bottomLineHeight,
+      bottomLineMargin: bottomLineMargin,
+      bottomLeading: bottomLeading,
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       addRepaintBoundaries: addRepaintBoundaries,
       addSemanticIndexes: addSemanticIndexes,
@@ -457,6 +549,40 @@ extension RItemTileExtension on Widget {
       fillHasScrollBody: fillHasScrollBody,
       fillOverscroll: fillOverscroll,
       fillExpand: fillExpand,
+      child: this,
+    );
+  }
+
+  /// 装饰
+  /// [fillColor].[borderRadius] 简单替代[sliverDecoration]
+  /// [BoxDecoration]
+  /// [rItemTile]
+  /// [rDecoration]
+  RItemTile rDecoration({
+    bool part = false,
+    Color? fillColor,
+    double borderRadius = kDefaultBorderRadiusXX,
+    EdgeInsetsGeometry? sliverPadding,
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    Color? bottomLineColor,
+    double? bottomLineHeight,
+    EdgeInsets? bottomLineMargin,
+    Widget? bottomLeading,
+  }) {
+    return RItemTile(
+      part: part,
+      sliverPadding: sliverPadding,
+      sliverDecoration: sliverDecoration ??
+          fillDecoration(
+            fillColor: fillColor,
+            borderRadius: borderRadius,
+          ),
+      sliverDecorationPosition: sliverDecorationPosition,
+      bottomLeading: bottomLeading,
+      bottomLineColor: bottomLineColor,
+      bottomLineHeight: bottomLineHeight,
+      bottomLineMargin: bottomLineMargin,
       child: this,
     );
   }

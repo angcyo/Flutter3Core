@@ -58,7 +58,7 @@ class GlobalTheme {
   /// 链接的颜色
   Color get linkColor => "#0a84ff".toColor();
 
-  /// 线的颜色
+  /// 线的颜色 #F6F6F6
   Color get lineColor => "#ECECEC".toColor();
 
   /// 边框的颜色
@@ -156,6 +156,18 @@ class GlobalTheme {
   TextStyle get textDisableStyle => TextStyle(
         fontSize: 14,
         color: "#b0b0b0".toColor(),
+      );
+
+  TextStyle get textLabelStyle => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: "#333333".toColor(),
+      );
+
+  TextStyle get textInfoStyle => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: "#949496".toColor(),
       );
 
   /// [GlobalTheme]

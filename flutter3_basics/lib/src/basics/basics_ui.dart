@@ -157,16 +157,20 @@ extension WidgetEx on Widget {
   /// [EagerGestureRecognizer] 急切手势识别器
   /// [RotateGestureRecognizer] 旋转手势识别
   ///
-  Widget click(GestureTapCallback? onTap) => GestureDetector(
-        onTap: onTap,
-        child: this,
-      );
+  Widget click(GestureTapCallback? onTap) => onTap == null
+      ? this
+      : GestureDetector(
+          onTap: onTap,
+          child: this,
+        );
 
   /// 双击事件
-  Widget doubleClick(GestureTapCallback? onDoubleTap) => GestureDetector(
-        onDoubleTap: onDoubleTap,
-        child: this,
-      );
+  Widget doubleClick(GestureTapCallback? onDoubleTap) => onDoubleTap == null
+      ? this
+      : GestureDetector(
+          onDoubleTap: onDoubleTap,
+          child: this,
+        );
 
   /// [CustomPaint]
   Widget paint(PaintFn paint) => CustomPaint(
@@ -307,6 +311,37 @@ extension WidgetEx on Widget {
     return Flexible(
       flex: flex,
       fit: fit,
+      child: this,
+    );
+  }
+
+  /// 对齐
+  Widget align({
+    AlignmentGeometry alignment = Alignment.center,
+    double? widthFactor,
+    double? heightFactor,
+  }) {
+    return Align(
+      alignment: alignment,
+      widthFactor: widthFactor,
+      heightFactor: heightFactor,
+      child: this,
+    );
+  }
+
+  /// 旋转元素
+  /// [angle] 旋转角度, 顺时针为正, 弧度单位
+  Widget rotate(
+    double angle, {
+    AlignmentGeometry alignment = Alignment.center,
+    Offset? origin,
+    bool transformHitTests = true,
+  }) {
+    return Transform.rotate(
+      alignment: alignment,
+      angle: angle,
+      origin: origin,
+      transformHitTests: transformHitTests,
       child: this,
     );
   }
@@ -723,11 +758,12 @@ extension WidgetEx on Widget {
         child: this,
       );
 
-  /// 圆角波纹效果
+  /// 支持圆角波纹效果
   /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
   /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
-  /// [backgroundColor] 背景颜色
-  /// [splashColor] 波纹颜色
+  /// [backgroundColor] 背景颜色, 此时波纹依旧有效. 用[container]的背景颜色则波纹效果无效.
+  /// [highlightColor] 高亮的颜色, 波纹扩散结束之后可见的颜色
+  /// [splashColor] 波纹颜色, 动画扩散时的颜色
   /// [decoration] 强行指定装饰
   Widget ink({
     GestureTapCallback? onTap,
@@ -787,6 +823,7 @@ extension WidgetEx on Widget {
       radius: radius,
       splashColor: splashColor,
       highlightColor: highlightColor,
+      //overlayColor: MaterialStateProperty.all(Colors.blue),
       borderRadius: borderRadius,
       customBorder: customBorder,
       //边框裁剪
