@@ -345,11 +345,37 @@ class RItemTile extends StatefulWidget {
         result = child.paddingLTRB(left, top, right, bottom);
       }
 
+      //stack
       if (bWidget != null) {
         result = Stack(
           alignment: Alignment.bottomCenter,
           children: [result, bWidget],
         );
+      }
+
+      //clip
+      if (first is RItemTile) {
+        var decoration = first.sliverDecoration;
+        if (decoration is BoxDecoration) {
+          var borderRadius = decoration.borderRadius;
+          if (length == 1) {
+            result = result.clip(borderRadius: borderRadius);
+          } else if (borderRadius is BorderRadius) {
+            if (index == 0) {
+              result = result.clip(
+                  borderRadius: BorderRadius.only(
+                topLeft: borderRadius.topLeft,
+                topRight: borderRadius.topRight,
+              ));
+            } else if (index == length - 1) {
+              result = result.clip(
+                  borderRadius: BorderRadius.only(
+                bottomLeft: borderRadius.bottomLeft,
+                bottomRight: borderRadius.bottomRight,
+              ));
+            }
+          }
+        }
       }
 
       return result;
@@ -558,6 +584,7 @@ extension RItemTileExtension on Widget {
   /// [BoxDecoration]
   /// [rItemTile]
   /// [rDecoration]
+  /// [DecoratedSliver]
   RItemTile rDecoration({
     bool part = false,
     Color? fillColor,

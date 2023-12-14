@@ -440,12 +440,12 @@ extension WidgetEx on Widget {
 
   /// 圆角
   Widget clip({
-    BorderRadiusGeometry borderRadius = BorderRadius.zero,
+    BorderRadiusGeometry? borderRadius,
     CustomClipper<RRect>? clipper,
     Clip clipBehavior = Clip.antiAlias,
   }) {
     return ClipRRect(
-      borderRadius: borderRadius,
+      borderRadius: borderRadius ?? BorderRadius.zero,
       clipper: clipper,
       clipBehavior: clipBehavior,
       child: this,
@@ -808,7 +808,33 @@ extension WidgetEx on Widget {
         child: this,
       );
 
-  /// 支持圆角波纹效果
+  /// [Material]
+  Widget material({
+    ShapeBorder? shape,
+    Color? color = Colors.transparent,
+    Color? shadowColor,
+    Color? surfaceTintColor,
+    double elevation = 0,
+    MaterialType type = MaterialType.canvas,
+    Clip clipBehavior = Clip.none,
+    BorderRadiusGeometry? borderRadius,
+    TextStyle? textStyle,
+  }) =>
+      Material(
+        borderOnForeground: true,
+        color: color,
+        shadowColor: shadowColor,
+        elevation: elevation,
+        type: type,
+        surfaceTintColor: surfaceTintColor,
+        clipBehavior: clipBehavior,
+        borderRadius: borderRadius,
+        textStyle: textStyle,
+        shape: shape,
+        child: this,
+      );
+
+  /// 支持圆角波纹效果, 有的时候可能需要包裹在[[Material]]部件中才有预期效果
   /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
   /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
   /// [backgroundColor] 背景颜色, 此时波纹依旧有效. 用[container]的背景颜色则波纹效果无效.
@@ -976,6 +1002,50 @@ extension WidgetEx on Widget {
     }
     return result;
   }
+
+  //--theme---
+
+  /// [ButtonStyle]
+  /// [FilledButton]
+  /// [FilledButtonTheme]
+  Widget filledButtonTheme({
+    ButtonStyle? style,
+    FilledButtonThemeData? theme,
+  }) =>
+      FilledButtonTheme(
+        data: theme ?? FilledButtonThemeData(style: style),
+        child: this,
+      );
+
+  /// [ElevatedButton]
+  Widget elevatedButtonTheme({
+    ButtonStyle? style,
+    ElevatedButtonThemeData? theme,
+  }) =>
+      ElevatedButtonTheme(
+        data: theme ?? ElevatedButtonThemeData(style: style),
+        child: this,
+      );
+
+  /// [OutlinedButton]
+  Widget outlinedButtonTheme({
+    ButtonStyle? style,
+    OutlinedButtonThemeData? theme,
+  }) =>
+      OutlinedButtonTheme(
+        data: theme ?? OutlinedButtonThemeData(style: style),
+        child: this,
+      );
+
+  /// [TextButton]
+  Widget textButtonTheme({
+    ButtonStyle? style,
+    TextButtonThemeData? theme,
+  }) =>
+      TextButtonTheme(
+        data: theme ?? TextButtonThemeData(style: style),
+        child: this,
+      );
 }
 
 extension StateEx on State {
