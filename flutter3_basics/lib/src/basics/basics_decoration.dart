@@ -43,6 +43,38 @@ BoxDecoration strokeDecoration({
   );
 }
 
+/// 四条边都是线条的装饰器
+BoxDecoration lineDecoration({
+  BuildContext? context,
+  Color? topLineColor,
+  Color? bottomLineColor,
+  Color? leftLineColor,
+  Color? rightLineColor,
+  double topLineWidth = 1,
+  double bottomLineWidth = 1,
+  double leftLineWidth = 1,
+  double rightLineWidth = 1,
+  BorderSide? topSide,
+  BorderSide? bottomSide,
+  BorderSide? leftSide,
+  BorderSide? rightSide,
+}) {
+  var lineColor = GlobalTheme.of(context).lineColor;
+  return BoxDecoration(
+    border: Border(
+      left: leftSide ??
+          BorderSide(color: leftLineColor ?? lineColor, width: leftLineWidth),
+      top: topSide ??
+          BorderSide(color: topLineColor ?? lineColor, width: topLineWidth),
+      right: rightSide ??
+          BorderSide(color: rightLineColor ?? lineColor, width: rightLineWidth),
+      bottom: bottomSide ??
+          BorderSide(
+              color: bottomLineColor ?? lineColor, width: bottomLineWidth),
+    ),
+  );
+}
+
 /// 纯色填充装饰, 支持圆角
 BoxDecoration fillDecoration({
   BuildContext? context,

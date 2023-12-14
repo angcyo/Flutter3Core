@@ -43,12 +43,13 @@ String randomString([int? length]) {
 }
 
 /// 需要翻墙才能访问
-String randomImageUrl() {
+String randomImageUrl([String? prompt]) {
   final random = Random();
   final width = random.nextInt(1000) + 100;
   final height = random.nextInt(1000) + 100;
   //return "https://picsum.photos/id/${random.nextInt(1000)}/$width/$height";
-  return "https://picsum.photos/$width/$height";
+  //return "https://picsum.photos/$width/$height";//需要翻墙
+  return "https://source.unsplash.com/${width}x$height?$prompt"; //不需要翻墙
 }
 
 /// 国内可以访问的占位图片, 只有纯色和文字

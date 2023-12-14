@@ -128,6 +128,15 @@ extension WidgetListEx on WidgetList {
     );
   }
 
+  /// [Stack]
+  Widget stack({
+    AlignmentGeometry alignment = AlignmentDirectional.topStart,
+  }) =>
+      Stack(
+        alignment: alignment,
+        children: this,
+      );
+
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
   /// [WidgetEx.repaintBoundary]
@@ -142,6 +151,9 @@ extension WidgetEx on Widget {
         richMessage: richMessage,
         child: this,
       );
+
+  /// [Hero]
+  Widget hero(Object? tag) => tag == null ? this : Hero(tag: tag!, child: this);
 
   /// 点击事件
   /// [GestureDetector] 多个手势识别器, 才会有手势竞争
@@ -316,6 +328,8 @@ extension WidgetEx on Widget {
   }
 
   /// 对齐
+  /// [Align]
+  /// [Center]
   Widget align({
     AlignmentGeometry alignment = Alignment.center,
     double? widthFactor,
@@ -325,6 +339,42 @@ extension WidgetEx on Widget {
       alignment: alignment,
       widthFactor: widthFactor,
       heightFactor: heightFactor,
+      child: this,
+    );
+  }
+
+  /// 居中对齐
+  /// [Align]
+  /// [Center]
+  Widget center({
+    double? widthFactor,
+    double? heightFactor,
+  }) {
+    return Center(
+      widthFactor: widthFactor,
+      heightFactor: heightFactor,
+      child: this,
+    );
+  }
+
+  /// [Positioned]
+  /// [PositionedDirectional]
+  /// [AnimatedPositioned]
+  Widget position({
+    double? left,
+    double? top,
+    double? right,
+    double? bottom,
+    double? width,
+    double? height,
+  }) {
+    return Positioned(
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom,
+      width: width,
+      height: height,
       child: this,
     );
   }

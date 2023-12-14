@@ -52,6 +52,10 @@ dependencies:
   # https://pub.dev/packages/pointycastle
   archive: ^3.4.9
 
+  # https://pub.dev/packages/photo_view
+  # https://github.com/bluefireteam/photo_view
+  photo_view: ^0.14.0
+
 # dependency_overrides:
 
 dev_dependencies:

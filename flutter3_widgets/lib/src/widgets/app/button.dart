@@ -119,6 +119,9 @@ class FillGradientButton extends StatelessWidget {
 }
 
 /// 填充样式的按钮
+/// [IconButton]
+/// [TextButton]
+/// [OutlinedButton]
 /// [FilledButton]
 /// [GradientButton]
 /// [ButtonStyle]
