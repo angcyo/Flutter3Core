@@ -64,6 +64,9 @@ class GlobalTheme {
   /// 边框的颜色
   Color get borderColor => "#6f6f6f".toColor();
 
+  /// 错误提示颜色
+  Color get errorColor => "#FF443D".toColor();
+
   /// 阴影高度默认取值
   double get elevation => 2;
 

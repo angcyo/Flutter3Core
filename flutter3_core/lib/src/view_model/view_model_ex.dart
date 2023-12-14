@@ -18,7 +18,8 @@ abstract class BaseViewModel extends ViewModel {
 
 //region ---LiveData---
 
-MutableLiveData<T?> vmData<T>([T? value]) => MutableLiveData<T?>(value);
+MutableErrorLiveData<T?> vmData<T>([T? value]) =>
+    MutableErrorLiveData<T?>(value);
 
 MutableOnceLiveData<T?> vmDataOnce<T>([T? value]) =>
     MutableOnceLiveData<T?>(value);
@@ -27,10 +28,21 @@ extension LiveDataEx<T> on LiveData<T> {
   /// 监听当前的[LiveData]数据变化
   /// [observe]
   /// [LiveDataBuilder]
-  Widget listener(Widget Function(BuildContext context, T liveData) builder) =>
+  Widget listener(
+          Widget Function(
+            BuildContext context,
+            T liveData,
+            Object? error,
+          ) builder) =>
       LiveDataBuilder<T>(
         liveData: this,
-        builder: builder,
+        builder: (context, liveData) {
+          Object? error;
+          if (liveData is MutableErrorLiveData) {
+            error = liveData.error;
+          }
+          return builder(context, liveData, error);
+        },
       );
 }
 

@@ -32,7 +32,7 @@ part 'src/isar/hive/hive_ex.dart';
 
 part 'src/isar/isar_ex.dart';
 
-part 'src/view_model/mutable_once_live_data.dart';
+part 'src/view_model/mutable_live_data.dart';
 
 part 'src/view_model/view_model_ex.dart';
 
@@ -49,7 +49,11 @@ Future<void> initFlutter3Core() async {
 
   // 文件日志
   l.filePrint = (log) {
-    GlobalConfig.def.writeFileFn?.call(kLFileName, kLogPathName, log);
+    GlobalConfig.def.writeFileFn
+        ?.call(kLFileName, kLogPathName, log)
+        .catchError((error) {
+      print('写入文件调用失败: $error');
+    });
   };
 
   //初始化isar数据库

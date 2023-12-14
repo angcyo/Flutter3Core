@@ -154,6 +154,10 @@ class FillButton extends StatelessWidget {
   /// 手势事件
   final GestureTapCallback? onTap;
 
+  /// 最小宽度/高度
+  final double? minWidth;
+  final double? minHeight;
+
   const FillButton({
     super.key,
     this.onTap,
@@ -162,6 +166,8 @@ class FillButton extends StatelessWidget {
     this.enabled = true,
     this.fillColor,
     this.textColor,
+    this.minWidth,
+    this.minHeight,
     this.borderWidth = 1,
     this.radius = kDefaultBorderRadiusX,
     this.borderRadius,
@@ -177,16 +183,24 @@ class FillButton extends StatelessWidget {
     var textColor = this.textColor ?? globalTheme.themeWhiteColor;
     return Container(
         padding: padding,
-        decoration: BoxDecoration(
-          color: fillColor,
-          borderRadius: radius,
+        alignment: Alignment.center,
+        constraints: BoxConstraints(
+          minWidth: minWidth ?? 0,
+          minHeight: minHeight ?? 0,
         ),
         child: DefaultTextStyle(
+          textAlign: TextAlign.center,
           style: TextStyle(
             color: textColor,
           ),
           child: text?.text() ?? child ?? const Empty(),
-        )).ink(borderRadius: radius, onTap: onTap);
+        )).ink(
+        borderRadius: radius,
+        decoration: BoxDecoration(
+          color: fillColor,
+          borderRadius: radius,
+        ),
+        onTap: onTap);
   }
 }
 
@@ -245,6 +259,13 @@ class StrokeButton extends StatelessWidget {
     var textColor = this.textColor ?? borderColor;
     return Container(
         padding: padding,
+        child: DefaultTextStyle(
+          style: TextStyle(
+            color: textColor,
+          ),
+          child: text?.text() ?? child ?? const Empty(),
+        )).ink(
+        borderRadius: radius,
         decoration: BoxDecoration(
           border: Border.all(
             color: borderColor,
@@ -252,12 +273,7 @@ class StrokeButton extends StatelessWidget {
           ),
           borderRadius: radius,
         ),
-        child: DefaultTextStyle(
-          style: TextStyle(
-            color: textColor,
-          ),
-          child: text?.text() ?? child ?? const Empty(),
-        )).ink(borderRadius: radius, onTap: onTap);
+        onTap: onTap);
     /*return OutlinedButton(
       onPressed: enabled
           ? onTap ??

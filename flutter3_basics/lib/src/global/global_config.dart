@@ -56,7 +56,7 @@ typedef GlobalConfigGetFn = GlobalConfig Function();
 /// [AppBar]构建器函数
 typedef AppBarBuilderFn = PreferredSizeWidget? Function(
   BuildContext context,
-  State state, {
+  Object? page, {
   Widget? leading,
   Widget? title,
   PreferredSizeWidget? bottom,
@@ -249,9 +249,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   //region AppBar
 
   /// 用来创建自定义的[AppBar]左边的返回小部件
-  /// [state] 用来识别界面, 做一些特殊处理
+  /// [page] 用来识别界面, 做一些特殊处理
   /// @return null 使用系统默认的
-  Widget? Function(BuildContext context, State state) appBarLeadingBuilder = (
+  Widget? Function(BuildContext context, Object? page) appBarLeadingBuilder = (
     context,
     state,
   ) {
