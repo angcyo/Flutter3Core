@@ -834,7 +834,7 @@ extension WidgetEx on Widget {
         child: this,
       );
 
-  /// 支持圆角波纹效果, 有的时候可能需要包裹在[[Material]]部件中才有预期效果
+  /// 支持圆角波纹效果, 有的时候可能需要包裹在[Material]部件中才有预期效果
   /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
   /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
   /// [backgroundColor] 背景颜色, 此时波纹依旧有效. 用[container]的背景颜色则波纹效果无效.

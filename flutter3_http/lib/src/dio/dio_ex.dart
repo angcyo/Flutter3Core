@@ -37,6 +37,7 @@ extension DioMapEx on Map<String, dynamic> {
   FormData toFormData() => FormData.fromMap(this);
 }
 
+/// 请求的子路径需要以`/`开头
 /// https://github.com/cfug/dio/blob/main/dio/README-ZH.md
 extension DioStringEx on String {
   /// get请求
@@ -200,28 +201,30 @@ extension DioFutureResponseEx<T> on Future<T> {
   /// value.map<ConnectDeviceBean>((e) => ConnectDeviceBean.fromJson(e))
   ///      .toList();
   /// ```
-  Future http(ValueErrorCallback? callback, [HttpResult? result]) async {
-    result ??= HttpResult();
+  Future http(
+    ValueErrorCallback? callback, {
+    HttpResultHandle? resultHandle,
+    bool? showErrorToast,
+  }) async {
+    resultHandle ??= HttpResultHandle();
+    resultHandle.showErrorToast = showErrorToast ?? resultHandle.showErrorToast;
     return get((response, error) {
       //debugger();
       if (error != null) {
-        result!.handleError(error);
-        callback?.call(response, error);
+        callback?.call(response, resultHandle!.handleError(error));
         return null;
       } else if (response == null) {
-        var error = RException("response is null");
-        result!.handleError(error);
-        callback?.call(response, error);
+        var exception = RException("response is null", cause: error);
+        callback?.call(response, resultHandle!.handleError(exception));
         return null;
       } else {
-        var data = result!.handleResponse(response);
+        var data = resultHandle!.handleResponse(response);
         callback?.call(data, null);
         return data;
       }
     }).catchError((error) {
       //debugger();
-      result!.handleError(error);
-      callback?.call(null, error);
+      callback?.call(null, resultHandle!.handleError(error));
     });
   }
 }

@@ -17,11 +17,13 @@ class LoadingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     double? width = size?.width ?? kMinLoadingIndicatorDimension;
     double? height = size?.height ?? kMinLoadingIndicatorDimension;
+    var globalTheme = GlobalTheme.of(context);
     return UnconstrainedBox(
       child: SizedBox(
         width: width,
         height: height,
-        child: const CircularProgressIndicator(
+        child: CircularProgressIndicator(
+          color: globalTheme.accentColor,
           strokeWidth: 2,
         ),
       ),

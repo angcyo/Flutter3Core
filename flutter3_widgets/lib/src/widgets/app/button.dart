@@ -181,26 +181,29 @@ class FillButton extends StatelessWidget {
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
     var fillColor = this.fillColor ?? globalTheme.accentColor;
     var textColor = this.textColor ?? globalTheme.themeWhiteColor;
+
     return Container(
-        padding: padding,
-        alignment: Alignment.center,
-        constraints: BoxConstraints(
-          minWidth: minWidth ?? 0,
-          minHeight: minHeight ?? 0,
-        ),
-        child: DefaultTextStyle(
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: textColor,
-          ),
-          child: text?.text() ?? child ?? const Empty(),
-        )).ink(
-        borderRadius: radius,
-        decoration: BoxDecoration(
-          color: fillColor,
-          borderRadius: radius,
-        ),
-        onTap: onTap);
+            padding: padding,
+            alignment: Alignment.center,
+            constraints: BoxConstraints(
+              minWidth: minWidth ?? 0,
+              minHeight: minHeight ?? 0,
+            ),
+            child: DefaultTextStyle(
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: textColor,
+              ),
+              child: text?.text() ?? child ?? const Empty(),
+            ))
+        .ink(
+            borderRadius: radius,
+            decoration: BoxDecoration(
+              color: fillColor,
+              borderRadius: radius,
+            ),
+            onTap: onTap)
+        .material();
   }
 }
 
@@ -258,22 +261,24 @@ class StrokeButton extends StatelessWidget {
     var borderColor = this.borderColor ?? globalTheme.accentColor;
     var textColor = this.textColor ?? borderColor;
     return Container(
-        padding: padding,
-        child: DefaultTextStyle(
-          style: TextStyle(
-            color: textColor,
-          ),
-          child: text?.text() ?? child ?? const Empty(),
-        )).ink(
-        borderRadius: radius,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: borderColor,
-            width: borderWidth,
-          ),
-          borderRadius: radius,
-        ),
-        onTap: onTap);
+            padding: padding,
+            child: DefaultTextStyle(
+              style: TextStyle(
+                color: textColor,
+              ),
+              child: text?.text() ?? child ?? const Empty(),
+            ))
+        .ink(
+            borderRadius: radius,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: borderColor,
+                width: borderWidth,
+              ),
+              borderRadius: radius,
+            ),
+            onTap: onTap)
+        .material();
     /*return OutlinedButton(
       onPressed: enabled
           ? onTap ??

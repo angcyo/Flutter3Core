@@ -24,7 +24,7 @@ class SingleLabelInfoTile extends StatelessWidget {
   /// 最小高度
   final double? minHeight;
 
-  /// 点击事件, 同事决定是否要显示默认的箭头
+  /// 点击事件, 同时决定是否要显示默认的箭头
   final GestureTapCallback? onTap;
 
   const SingleLabelInfoTile({

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
@@ -26,13 +24,14 @@ class LogFileInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    //debugger();
     _logResponse(response);
     super.onResponse(response, handler);
+    //debugger();
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    //debugger();
     var hashCode = err.requestOptions.hashCode;
     var value = uuidMap.remove(hashCode);
     var log = stringBuilder((builder) {
@@ -49,7 +48,11 @@ class LogFileInterceptor extends Interceptor {
   void _logRequest(RequestOptions options) {
     var hashCode = options.hashCode;
     var id = uuid();
+
+    //添加请求头
     options.headers["log-uuid"] = id;
+    options.headers["request-time"] = nowTime(); //请求时间
+
     uuidMap[hashCode] = (id, nowTime());
     var log = stringBuilder((builder) {
       builder.appendLine("-->$id");

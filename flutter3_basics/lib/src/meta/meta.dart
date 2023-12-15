@@ -81,6 +81,15 @@ class _Api {
 
 const api = _Api();
 
+/// 包含网络请求的方法
+class _Http {
+  final String des;
+
+  const _Http([this.des = '包含网络请求']);
+}
+
+const http = _Http();
+
 /// 描述当前对象是全局单例对象
 class _GlobalInstance {
   final String des;

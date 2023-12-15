@@ -8,6 +8,7 @@ part of flutter3_app;
 /// 公共的请求头
 const kAppInfoHeader = <String, dynamic>{};
 
+/// App的一些信息拦截器
 class AppInfoInterceptor extends Interceptor {
   PackageInfo? _packageInfo;
 
@@ -26,6 +27,20 @@ class AppInfoInterceptor extends Interceptor {
       options.headers["appSignature"] = _packageInfo!.buildSignature;
       options.headers.addAll(kAppInfoHeader);
     }
+    //一些运行的环境信息
+    /*GlobalConfig.def.globalContext?.let((it) {
+      options.headers["appDeviceId"] = ;
+    });*/
+    platformLocale.let<Locale>((it) {
+      //platformLocale:zh_Hans_CN
+      options.headers["platformLocale"] = it.toString();
+      //zh
+      options.headers["platformLanguageCode"] = it.languageCode;
+      //CN
+      options.headers["platformCountryCode"] = it.countryCode;
+      //Hans
+      options.headers["platformScriptCode"] = it.scriptCode;
+    });
     super.onRequest(options, handler);
   }
 }

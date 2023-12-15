@@ -216,6 +216,7 @@ class RScrollController extends ScrollController {
     }
     return RefreshIndicator(
       key: scrollRefreshKey,
+      color: GlobalTheme.of(context).accentColor,
       onRefresh: _onRefresh,
       child: child,
     );

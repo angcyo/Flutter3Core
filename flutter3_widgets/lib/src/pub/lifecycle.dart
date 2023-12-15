@@ -15,6 +15,8 @@ part of flutter3_widgets;
 /// ```
 final NavigatorObserver lifecycleNavigatorObserver = defaultLifecycleObserver;
 
+NavigatorObserver get lifecycleNavigatorObserverGet => LifecycleObserver();
+
 /// https://pub.dev/packages/lifecycle
 /// https://github.com/chenenyu/lifecycle
 extension WidgetLifecycleEx on Widget {

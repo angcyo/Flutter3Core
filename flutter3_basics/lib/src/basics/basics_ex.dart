@@ -83,12 +83,14 @@ extension ObjectEx on Object {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool? softWrap,
   }) {
     return Text(
       "$this",
       style: style,
       textAlign: textAlign,
       maxLines: maxLines,
+      softWrap: softWrap,
       overflow: overflow,
     );
   }

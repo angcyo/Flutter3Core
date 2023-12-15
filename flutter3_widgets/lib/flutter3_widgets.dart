@@ -40,6 +40,8 @@ part 'src/scroll/sliver_paint_widget.dart';
 
 part 'src/scroll/tile/label_info_mixin.dart';
 
+part 'src/scroll/tile/single_grid_tile.dart';
+
 part 'src/scroll/tile/single_label_info_tile.dart';
 
 part 'src/scroll/widget_state.dart';

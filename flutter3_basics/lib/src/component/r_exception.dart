@@ -8,12 +8,13 @@ part of flutter3_basics;
 /// [Error]
 /// [Exception]
 class RException implements Exception {
+  final dynamic cause;
   final String? message;
 
-  RException([this.message]);
+  RException(this.message, {this.cause});
 
   @override
   String toString() {
-    return message ?? super.toString();
+    return message ?? cause ?? super.toString();
   }
 }

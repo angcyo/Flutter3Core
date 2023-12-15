@@ -15,6 +15,17 @@ final LogFileInterceptor _logFileInterceptor = LogFileInterceptor();
 const kDefTimeout = 10;
 
 class RDio {
+  /// 获取一个上层提供的[RDio],如果有.
+  /// 如果有没有则返回单例
+  static RDio get({BuildContext? context, bool depend = false}) {
+    if (depend) {
+      return context?.dependOnInheritedWidgetOfExactType<DioScope>()?.rDio ??
+          rDio;
+    } else {
+      return context?.findAncestorWidgetOfExactType<DioScope>()?.rDio ?? rDio;
+    }
+  }
+
   /// dio对象
   late final Dio _dio = Dio()
         ..options.connectTimeout = const Duration(seconds: kDefTimeout)
@@ -33,14 +44,17 @@ class RDio {
         ..interceptors.add(_logFileInterceptor) //日志拦截器需要放在最后
       ;
 
-  /// 获取一个上层提供的[RDio],如果有.
-  /// 如果有没有则返回单例
-  static RDio get({BuildContext? context, bool depend = false}) {
-    if (depend) {
-      return context?.dependOnInheritedWidgetOfExactType<DioScope>()?.rDio ??
-          rDio;
-    } else {
-      return context?.findAncestorWidgetOfExactType<DioScope>()?.rDio ?? rDio;
-    }
+  /// 添加一个拦截器, 调用此方法. 方便调试
+  void addInterceptor(Interceptor interceptor) {
+    dio.interceptors.add(interceptor);
   }
+
+  /// 移除一个拦截器
+  void removeInterceptor(Interceptor interceptor) {
+    dio.interceptors.remove(interceptor);
+  }
+
+  /// 重新请求
+  Future<Response<T>> reRequest<T>(RequestOptions options) =>
+      dio.fetch(options);
 }

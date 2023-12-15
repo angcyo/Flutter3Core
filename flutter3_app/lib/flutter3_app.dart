@@ -46,7 +46,7 @@ void runGlobalApp(Widget app) {
     ensureInitialized();
 
     //网络请求基础信息拦截器
-    rDio.dio.interceptors.add(AppInfoInterceptor());
+    rDio.addInterceptor(AppInfoInterceptor());
 
     "开始启动[main]:${PlatformDispatcher.instance.defaultRouteName}".toLogSync();
     await initFlutter3Core();

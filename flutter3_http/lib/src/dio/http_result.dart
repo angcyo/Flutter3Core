@@ -11,7 +11,7 @@ const kDefHttpErrorMessage = "网络正忙";
 /// ```
 /// {"errMsg":"操作成功","code":200,"data":{"id":18434,"nickname":"8️⃣🅱️Q了","say":null}}
 /// ```
-class HttpResult {
+class HttpResultHandle {
   String codeKey = "code";
   String dataKey = "data";
   String messageKey = "errMsg";
@@ -41,23 +41,29 @@ class HttpResult {
     throw RException("无法解析的数据类型");
   };
 
-  /// 处理网络错误信息
+  /// 处理网络错误信息, 返回处理后的错误提示信息
   /// [Exception]
   /// [DioException]
-  late void Function(dynamic error) handleError = (error) {
-    if (showErrorToast) {
-      var tip = kDefHttpErrorMessage;
-      if (error is DioException) {
-        debugger();
-        var errorMessage = error.response?.data[messageKey];
-        tip = errorMessage ?? error.message ?? kDefHttpErrorMessage;
-      } else {
-        tip = error.toString();
+  late dynamic Function(dynamic error) handleError = (error) {
+    //debugger();
+    var tip = kDefHttpErrorMessage;
+    if (error is DioException) {
+      var errorMessage = error.response?.data[messageKey];
+      if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.sendTimeout) {
+        errorMessage ??= kDefHttpErrorMessage;
       }
+      tip = errorMessage ?? error.message ?? kDefHttpErrorMessage;
+    } else {
+      tip = error;
+    }
+    if (showErrorToast) {
       toast(
-        tip.text(textAlign: TextAlign.center),
+        tip.toString().text(textAlign: TextAlign.center),
         position: OverlayPosition.center,
       );
     }
+    return RException(tip, cause: error);
   };
 }
