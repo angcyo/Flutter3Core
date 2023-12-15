@@ -61,6 +61,9 @@ class GlobalTheme {
   /// 线的颜色 #F6F6F6
   Color get lineColor => "#ECECEC".toColor();
 
+  /// 线的颜色 (更暗一点)
+  Color get lineDarkColor => "#D8D8D8".toColor();
+
   /// 边框的颜色
   Color get borderColor => "#6f6f6f".toColor();
 

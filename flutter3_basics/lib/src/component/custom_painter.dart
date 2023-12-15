@@ -5,6 +5,7 @@ part of flutter3_basics;
 /// @since 2023/11/23
 ///
 
+/// [CustomPaint] widget
 class CustomPaintWrap extends CustomPainter {
   final PaintFn? paintIt;
 

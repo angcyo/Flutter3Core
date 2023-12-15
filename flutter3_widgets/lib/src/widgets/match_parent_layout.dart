@@ -11,15 +11,25 @@ part of flutter3_widgets;
 class MatchParentLayout extends SingleChildRenderObjectWidget {
   final AlignmentDirectional alignment;
 
+  /// 是否撑满宽度
+  final bool matchWidth;
+
+  /// 是否撑满高度
+  final bool matchHeight;
+
   const MatchParentLayout({
     super.key,
     super.child,
+    this.matchWidth = true,
+    this.matchHeight = true,
     this.alignment = AlignmentDirectional.center,
   });
 
   @override
   RenderObject createRenderObject(BuildContext context) => MatchParentBox(
         alignment: alignment,
+        matchHeight: matchHeight,
+        matchWidth: matchWidth,
         textDirection: Directionality.of(context),
       );
 
@@ -27,15 +37,25 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
   void updateRenderObject(BuildContext context, MatchParentBox renderObject) {
     renderObject
       ..alignment = alignment
+      ..matchWidth = matchWidth
+      ..matchHeight = matchHeight
       ..markNeedsLayout();
   }
 }
 
 /// [WrapContentBox]
 class MatchParentBox extends WrapContentBox {
+  /// 是否撑满宽度
+  bool matchWidth;
+
+  /// 是否撑满高度
+  bool matchHeight;
+
   MatchParentBox({
     super.alignment,
     super.textDirection,
+    this.matchWidth = true,
+    this.matchHeight = true,
   });
 
   @override
@@ -47,8 +67,9 @@ class MatchParentBox extends WrapContentBox {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
       child!.layout(
         BoxConstraints(
-          minWidth: constraints.maxWidth,
-          minHeight: constraints.maxHeight,
+          minWidth: matchWidth ? constraints.maxWidth : constraints.minWidth,
+          minHeight:
+              matchHeight ? constraints.maxHeight : constraints.minHeight,
           maxWidth: constraints.maxWidth,
           maxHeight: constraints.maxHeight,
         ),
@@ -62,11 +83,15 @@ class MatchParentBox extends WrapContentBox {
 
 extension MatchParentLayoutEx on Widget {
   /// [WrapContentLayoutEx.wrapContent]
-  MatchParentLayout matchParent([
+  MatchParentLayout matchParent({
+    bool matchWidth = true,
+    bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
-  ]) =>
+  }) =>
       MatchParentLayout(
         alignment: alignment,
+        matchWidth: matchWidth,
+        matchHeight: matchHeight,
         child: this,
       );
 }

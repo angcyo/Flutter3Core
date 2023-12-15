@@ -1134,7 +1134,9 @@ extension RenderObjectEx on RenderObject {
   /// 获取[RenderObject]的大小
   Size? getSizeOrNull() {
     if (this is RenderBox) {
-      return (this as RenderBox).size;
+      if ((this as RenderBox).hasSize) {
+        return (this as RenderBox).size;
+      }
     }
     return null;
   }

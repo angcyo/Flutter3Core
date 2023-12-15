@@ -1,6 +1,7 @@
 library flutter3_widgets;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,10 @@ export 'package:sliver_tools/sliver_tools.dart';
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';
 export 'src/pub/swiper/transformer_page_view/transformer_page_view.dart';
+
+part 'src/dialog/dialog_mixin.dart';
+
+part 'src/dialog/ios_normal_dialog.dart';
 
 part 'src/navigation/navigate_ex.dart';
 
@@ -59,6 +64,8 @@ part 'src/widgets/gestures/matrix_gesture_detector.dart';
 part 'src/widgets/gestures/rotate_gesture_reorganizer.dart';
 
 part 'src/widgets/gradient_button.dart';
+
+part 'src/widgets/line.dart';
 
 part 'src/widgets/match_parent_layout.dart';
 
