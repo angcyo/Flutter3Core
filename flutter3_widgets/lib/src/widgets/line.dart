@@ -115,18 +115,26 @@ class LineRender extends RenderBox {
     if (line.axis == Axis.horizontal) {
       //var lineHeight = size.height - topMargin - bottomMargin;
       canvas.drawLine(
+          offset.translate(line.indent ?? 0 + leftMargin + line.thickness / 2,
+              topMargin + line.thickness / 2),
           offset.translate(
-              line.indent ?? 0 + leftMargin, topMargin + line.thickness / 2),
-          offset.translate(size.width - (line.endIndent ?? 0) - rightMargin,
+              size.width -
+                  (line.endIndent ?? 0) -
+                  rightMargin -
+                  line.thickness / 2,
               topMargin + line.thickness / 2),
           paint);
     } else {
       //var lineWidth = size.width - leftMargin - rightMargin;
       canvas.drawLine(
-          offset.translate(
-              leftMargin + line.thickness / 2, line.indent ?? 0 + topMargin),
           offset.translate(leftMargin + line.thickness / 2,
-              size.height - (line.endIndent ?? 0) - bottomMargin),
+              line.indent ?? 0 + topMargin + line.thickness / 2),
+          offset.translate(
+              leftMargin + line.thickness / 2,
+              size.height -
+                  (line.endIndent ?? 0) -
+                  bottomMargin -
+                  line.thickness / 2),
           paint);
     }
   }
