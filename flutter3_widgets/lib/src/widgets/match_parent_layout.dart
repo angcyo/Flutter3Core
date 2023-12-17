@@ -9,6 +9,8 @@ part of flutter3_widgets;
 
 /// [WrapContentLayout]
 class MatchParentLayout extends SingleChildRenderObjectWidget {
+
+  /// 对齐方式
   final AlignmentDirectional alignment;
 
   /// 是否撑满宽度
