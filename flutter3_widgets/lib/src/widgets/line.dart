@@ -25,6 +25,9 @@ class Line extends LeafRenderObjectWidget {
   /// 线条的外边距
   final EdgeInsets? margin;
 
+  final StrokeCap lineStrokeCap;
+  final StrokeJoin lineStrokeJoin;
+
   const Line({
     super.key,
     this.lineSize,
@@ -34,6 +37,8 @@ class Line extends LeafRenderObjectWidget {
     this.indent,
     this.endIndent,
     this.margin,
+    this.lineStrokeCap = StrokeCap.round,
+    this.lineStrokeJoin = StrokeJoin.round,
   });
 
   @override
@@ -97,7 +102,12 @@ class LineRender extends RenderBox {
     super.paint(context, offset);
     var size = this.size;
     var canvas = context.canvas;
-    var paint = Paint()..color = line.color;
+    var paint = Paint()
+      ..color = line.color
+      ..strokeWidth = line.thickness
+      ..strokeCap = line.lineStrokeCap
+      ..strokeJoin = line.lineStrokeJoin
+      ..style = PaintingStyle.stroke;
     var leftMargin = line.margin?.left ?? 0;
     var topMargin = line.margin?.top ?? 0;
     var rightMargin = line.margin?.right ?? 0;
@@ -105,16 +115,18 @@ class LineRender extends RenderBox {
     if (line.axis == Axis.horizontal) {
       //var lineHeight = size.height - topMargin - bottomMargin;
       canvas.drawLine(
-          offset.translate(line.indent ?? 0 + leftMargin, topMargin),
           offset.translate(
-              size.width - (line.endIndent ?? 0) - rightMargin, topMargin),
+              line.indent ?? 0 + leftMargin, topMargin + line.thickness / 2),
+          offset.translate(size.width - (line.endIndent ?? 0) - rightMargin,
+              topMargin + line.thickness / 2),
           paint);
     } else {
       //var lineWidth = size.width - leftMargin - rightMargin;
       canvas.drawLine(
-          offset.translate(leftMargin, line.indent ?? 0 + topMargin),
           offset.translate(
-              leftMargin, size.height - (line.endIndent ?? 0) - bottomMargin),
+              leftMargin + line.thickness / 2, line.indent ?? 0 + topMargin),
+          offset.translate(leftMargin + line.thickness / 2,
+              size.height - (line.endIndent ?? 0) - bottomMargin),
           paint);
     }
   }
