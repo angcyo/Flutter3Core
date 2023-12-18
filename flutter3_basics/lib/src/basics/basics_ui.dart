@@ -1300,18 +1300,27 @@ extension NavigatorEx on BuildContext {
   /// 是否要显示返回按键
   bool get isAppBarDismissal => modalRoute?.impliesAppBarDismissal ?? false;
 
+  /// 获取一个导航器[NavigatorState]
+  NavigatorState navigatorOf([bool rootNavigator = false]) => Navigator.of(
+        this,
+        rootNavigator: rootNavigator,
+      );
+
   /// 获取导航中的所有页面
   List<Page<dynamic>>? getRoutePages({
     bool rootNavigator = false,
   }) {
-    return Navigator.of(this, rootNavigator: rootNavigator).widget.pages;
+    return navigatorOf(rootNavigator).widget.pages;
   }
 
   //---push↓
 
   /// 推送一个路由
-  Future<T?> push<T extends Object?>(Route<T> route) {
-    return Navigator.of(this).push(route);
+  Future<T?> push<T extends Object?>(
+    Route<T> route, {
+    bool rootNavigator = false,
+  }) {
+    return navigatorOf(rootNavigator).push(route);
   }
 
   /// 支持路由动画
@@ -1319,38 +1328,51 @@ extension NavigatorEx on BuildContext {
   Future<T?> pushWidget<T extends Object?>(
     Widget page, {
     TranslationType? type,
+    bool rootNavigator = false,
   }) {
-    return push(page.toRoute(type: type));
+    return push(page.toRoute(type: type), rootNavigator: rootNavigator);
   }
 
   /// 推送一个路由, 并且移除之前的路由
-  Future<T?> pushReplacement<T extends Object?>(Route<T> route) {
-    return Navigator.of(this).pushReplacement(route);
+  Future<T?> pushReplacement<T extends Object?>(
+    Route<T> route, {
+    bool rootNavigator = false,
+  }) {
+    return navigatorOf(rootNavigator).pushReplacement(route);
   }
 
   /// [pushReplacement]
   Future<T?> pushReplacementWidget<T extends Object?>(
     Widget page, {
     TranslationType? type,
+    bool rootNavigator = false,
   }) {
-    return pushReplacement(page.toRoute(type: type));
+    return pushReplacement(page.toRoute(type: type),
+        rootNavigator: rootNavigator);
   }
 
   /// [pushAndRemoveUntil]
-  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(Widget page,
-      {TranslationType? type, RoutePredicate? predicate}) {
+  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(
+    Widget page, {
+    TranslationType? type,
+    RoutePredicate? predicate,
+    bool rootNavigator = false,
+  }) {
     var root = ModalRoute.withName('/');
-    return Navigator.of(this).pushAndRemoveUntil(
+    return navigatorOf(rootNavigator).pushAndRemoveUntil(
       page.toRoute(type: type),
       predicate ?? root,
     );
   }
 
   /// [pushAndRemoveUntil]
-  Future<T?> pushAndRemoveToRoot<T extends Object?>(Route<T> route,
-      {RoutePredicate? predicate}) {
+  Future<T?> pushAndRemoveToRoot<T extends Object?>(
+    Route<T> route, {
+    RoutePredicate? predicate,
+    bool rootNavigator = false,
+  }) {
     var root = ModalRoute.withName('/');
-    return Navigator.of(this).pushAndRemoveUntil(
+    return navigatorOf(rootNavigator).pushAndRemoveUntil(
       route,
       predicate ?? root,
     );
@@ -1359,24 +1381,34 @@ extension NavigatorEx on BuildContext {
   //---pop↓
 
   /// 弹出一个路由
-  pop<T extends Object?>([T? result]) {
-    Navigator.of(this).pop(result);
+  void pop<T extends Object?>([
+    T? result,
+    bool rootNavigator = false,
+  ]) {
+    navigatorOf(rootNavigator).pop(result);
   }
 
-  Future<bool> maybePop<T extends Object?>([T? result]) {
-    return Navigator.of(this).maybePop(result);
+  Future<bool> maybePop<T extends Object?>([
+    T? result,
+    bool rootNavigator = false,
+  ]) {
+    return navigatorOf(rootNavigator).maybePop(result);
   }
 
-  popUntil<T extends Object?>(RoutePredicate predicate) {
-    Navigator.of(this).popUntil(predicate);
+  void popUntil<T extends Object?>(
+    RoutePredicate predicate, [
+    bool rootNavigator = false,
+  ]) {
+    navigatorOf(rootNavigator).popUntil(predicate);
   }
 
   Future<T?> popAndPushNamed<T extends Object?, TO extends Object?>(
     String routeName, {
     TO? result,
     Object? arguments,
+    bool rootNavigator = false,
   }) {
-    return Navigator.of(this).popAndPushNamed(
+    return navigatorOf(rootNavigator).popAndPushNamed(
       routeName,
       arguments: arguments,
       result: result,
@@ -1385,9 +1417,12 @@ extension NavigatorEx on BuildContext {
 
   /// 弹出所有非指定的路由
   /// [RoutePredicate]
-  void popToRoot([RoutePredicate? predicate]) {
+  void popToRoot([
+    RoutePredicate? predicate,
+    bool rootNavigator = false,
+  ]) {
     var root = ModalRoute.withName('/');
-    return Navigator.of(this).popUntil(root);
+    return navigatorOf(rootNavigator).popUntil(root);
   }
 }
 
