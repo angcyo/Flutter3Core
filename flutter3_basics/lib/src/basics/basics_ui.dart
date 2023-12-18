@@ -1380,6 +1380,12 @@ extension NavigatorEx on BuildContext {
 
   //---pop↓
 
+  /// 是否可以弹出一个路由
+  bool canPop([
+    bool rootNavigator = false,
+  ]) =>
+      navigatorOf(rootNavigator).canPop();
+
   /// 弹出一个路由
   void pop<T extends Object?>([
     T? result,
@@ -1388,6 +1394,7 @@ extension NavigatorEx on BuildContext {
     navigatorOf(rootNavigator).pop(result);
   }
 
+  /// 尝试弹出一个路由
   Future<bool> maybePop<T extends Object?>([
     T? result,
     bool rootNavigator = false,
