@@ -1336,6 +1336,26 @@ extension NavigatorEx on BuildContext {
     return pushReplacement(page.toRoute(type: type));
   }
 
+  /// [pushAndRemoveUntil]
+  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(Widget page,
+      {TranslationType? type, RoutePredicate? predicate}) {
+    var root = ModalRoute.withName('/');
+    return Navigator.of(this).pushAndRemoveUntil(
+      page.toRoute(type: type),
+      predicate ?? root,
+    );
+  }
+
+  /// [pushAndRemoveUntil]
+  Future<T?> pushAndRemoveToRoot<T extends Object?>(Route<T> route,
+      {RoutePredicate? predicate}) {
+    var root = ModalRoute.withName('/');
+    return Navigator.of(this).pushAndRemoveUntil(
+      route,
+      predicate ?? root,
+    );
+  }
+
   //---pop↓
 
   /// 弹出一个路由
