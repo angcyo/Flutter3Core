@@ -128,7 +128,7 @@ class FadePageRoute<T> extends MaterialPageRoute<T>
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    logAnimation("Fade", animation, secondaryAnimation);
+    //logAnimation("Fade", animation, secondaryAnimation);
     //顶部进入动画
     var enter = Tween<double>(
       begin: 0,
@@ -173,7 +173,7 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
     Widget child,
   ) {
     //debugger();
-    logAnimation("Translation", animation, secondaryAnimation);
+    //logAnimation("Translation", animation, secondaryAnimation);
 
     //顶部进入动画
     var enter = Tween<Offset>(
@@ -256,7 +256,7 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
       opacity: animation.value,
       child: child,
     );*/
-    logAnimation("Slide", animation, secondaryAnimation);
+    //logAnimation("Slide", animation, secondaryAnimation);
     //顶部进入动画
     var enter = Tween<Offset>(
       begin: const Offset(1.0, 0),

@@ -16,6 +16,9 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
   final String? confirm;
   final Widget? confirmWidget;
 
+  /// 确定按钮点击回调, 返回true, 表示拦截默认处理
+  final FutureResultCallback<bool>? onConfirmTap;
+
   const IosNormalDialog({
     super.key,
     this.title,
@@ -26,6 +29,7 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
     this.cancelWidget,
     this.confirm = '确定',
     this.confirmWidget,
+    this.onConfirmTap,
   });
 
   @override
@@ -51,21 +55,33 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
         cancel
             ?.text(
                 style: globalTheme.textLabelStyle, textAlign: TextAlign.center)
-            .paddingAll(kXh)
-            .ink(onTap: () {
-          Navigator.pop(context, false);
-        }).material();
+            .paddingAll(kXh);
+
+    c = c?.ink(onTap: () {
+      Navigator.pop(context, false);
+    }).material();
+
     Widget? f = confirmWidget ??
         confirm
             ?.text(
                 style: globalTheme.textLabelStyle
                     .copyWith(color: globalTheme.accentColor),
                 textAlign: TextAlign.center)
-            .paddingAll(kXh)
-            .ink(onTap: () {
-          Navigator.pop(context, true);
-        }).material();
+            .paddingAll(kXh);
+    f = f?.ink(onTap: () async {
+      if (onConfirmTap == null) {
+        Navigator.pop(context, true);
+      } else {
+        var intercept = await onConfirmTap!() == true;
+        if (!intercept) {
+          if (context.mounted) {
+            Navigator.pop(context, true);
+          }
+        }
+      }
+    }).material();
 
+    //line
     Widget? hLine = (c != null || f != null)
         ? Line(
             axis: Axis.horizontal,

@@ -1278,7 +1278,7 @@ extension RouteWidgetEx on Widget {
 /// 导航扩展
 ///使用 ModalRoute.of(context).settings.arguments; 获取参数
 extension NavigatorEx on BuildContext {
-  //---Route
+  //---Route↓
 
   /// [Route]
   /// [OverlayRoute]
@@ -1307,7 +1307,7 @@ extension NavigatorEx on BuildContext {
     return Navigator.of(this, rootNavigator: rootNavigator).widget.pages;
   }
 
-  //---push
+  //---push↓
 
   /// 推送一个路由
   Future<T?> push<T extends Object?>(Route<T> route) {
@@ -1336,7 +1336,7 @@ extension NavigatorEx on BuildContext {
     return pushReplacement(page.toRoute(type: type));
   }
 
-  //---pop
+  //---pop↓
 
   /// 弹出一个路由
   pop<T extends Object?>([T? result]) {
@@ -1361,6 +1361,13 @@ extension NavigatorEx on BuildContext {
       arguments: arguments,
       result: result,
     );
+  }
+
+  /// 弹出所有非指定的路由
+  /// [RoutePredicate]
+  void popToRoot([RoutePredicate? predicate]) {
+    var root = ModalRoute.withName('/');
+    return Navigator.of(this).popUntil(root);
   }
 }
 

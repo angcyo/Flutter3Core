@@ -20,7 +20,7 @@ class TokenInterceptor extends Interceptor {
   bool Function(Response response)? isTokenInvalid;
 
   /// 刷新token
-  /// @return true 表示刷新成功
+  /// @return true:表示刷新成功, false/null: 默认处理
   Future<bool> Function(Response response)? refreshToken;
 
   TokenInterceptor({
