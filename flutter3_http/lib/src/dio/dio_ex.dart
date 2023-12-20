@@ -205,8 +205,14 @@ extension DioFutureResponseEx<T> on Future<T> {
     ValueErrorCallback? callback, {
     HttpResultHandle? resultHandle,
     bool? showErrorToast,
+    String? codeKey,
+    String? dataKey,
+    String? messageKey,
   }) async {
     resultHandle ??= HttpResultHandle();
+    resultHandle.codeKey = codeKey ?? resultHandle.codeKey;
+    resultHandle.dataKey = dataKey ?? resultHandle.dataKey;
+    resultHandle.messageKey = messageKey ?? resultHandle.messageKey;
     resultHandle.showErrorToast = showErrorToast ?? resultHandle.showErrorToast;
     return get((response, error) {
       //debugger();
