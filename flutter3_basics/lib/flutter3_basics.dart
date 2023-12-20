@@ -60,8 +60,6 @@ part 'src/component/request_page.dart';
 
 part 'src/component/stack_list.dart';
 
-part 'src/debug/app_lifecycle_log.dart';
-
 part 'src/debug/debug.dart';
 
 part 'src/debug/navigator_observer_log.dart';

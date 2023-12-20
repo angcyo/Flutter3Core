@@ -2,7 +2,6 @@ library flutter3_core;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -24,6 +23,8 @@ export 'package:jetpack/jetpack.dart';
 export 'package:mime/mime.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:provider/provider.dart';
+
+part 'src/file/app_lifecycle_log.dart';
 
 part 'src/file/file_ex.dart';
 
@@ -53,7 +54,7 @@ Future<void> initFlutter3Core() async {
     GlobalConfig.def.writeFileFn
         ?.call(kLFileName, kLogPathName, log)
         .catchError((error) {
-      print('写入文件调用失败: $error');
+      debugPrint('写入文件调用失败: $error');
     });
   };
 

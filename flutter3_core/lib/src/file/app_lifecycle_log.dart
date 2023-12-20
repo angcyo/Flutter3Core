@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of flutter3_core;
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -13,43 +13,43 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// [AppExitResponse.values]
   @override
   Future<AppExitResponse> didRequestAppExit() {
-    l.d('AppLifecycle didRequestAppExit');
+    l.d('AppLifecycle didRequestAppExit'..toLogSync());
     return super.didRequestAppExit();
   }
 
   @override
   void didChangeAccessibilityFeatures() {
-    l.d('AppLifecycle didChangeAccessibilityFeatures');
+    l.d('AppLifecycle didChangeAccessibilityFeatures'..toLogSync());
     super.didChangeAccessibilityFeatures();
   }
 
   @override
   void didChangeLocales(List<Locale>? locales) {
-    l.d('AppLifecycle didChangeLocales:$locales');
+    l.d('AppLifecycle didChangeLocales:$locales'..toLogSync());
     super.didChangeLocales(locales);
   }
 
   @override
   void didChangePlatformBrightness() {
-    l.d('AppLifecycle didChangePlatformBrightness');
+    l.d('AppLifecycle didChangePlatformBrightness'..toLogSync());
     super.didChangePlatformBrightness();
   }
 
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
-    l.d('AppLifecycle didPushRouteInformation:$routeInformation');
+    l.d('AppLifecycle didPushRouteInformation:$routeInformation'..toLogSync());
     return super.didPushRouteInformation(routeInformation);
   }
 
   @override
   void dispose() {
-    l.d('AppLifecycle dispose');
+    l.d('AppLifecycle dispose'..toLogSync());
     super.dispose();
   }
 
   @override
   void didChangeMetrics() {
-    l.d('AppLifecycle didChangeMetrics');
+    l.d('AppLifecycle didChangeMetrics'..toLogSync());
     super.didChangeMetrics();
   }
 
@@ -77,32 +77,32 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// ```
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    l.d('AppLifecycle didChangeAppLifecycleState:$state');
+    l.d('AppLifecycle didChangeAppLifecycleState:$state'..toLogSync());
     super.didChangeAppLifecycleState(state);
   }
 
   /// 低内存回调
   @override
   void didHaveMemoryPressure() {
-    l.d('AppLifecycle didHaveMemoryPressure');
+    l.d('AppLifecycle didHaveMemoryPressure'..toLogSync());
     super.didHaveMemoryPressure();
   }
 
   @override
   void didChangeTextScaleFactor() {
-    l.d('AppLifecycle didChangeTextScaleFactor');
+    l.d('AppLifecycle didChangeTextScaleFactor'..toLogSync());
     super.didChangeTextScaleFactor();
   }
 
   @override
   Future<bool> didPushRoute(String route) {
-    l.d('AppLifecycle didPushRoute:$route');
+    l.d('AppLifecycle didPushRoute:$route'..toLogSync());
     return super.didPushRoute(route);
   }
 
   @override
   Future<bool> didPopRoute() {
-    l.d('AppLifecycle didPopRoute');
+    l.d('AppLifecycle didPopRoute'..toLogSync());
     return super.didPopRoute();
   }
 }
@@ -112,7 +112,9 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/10/23
 ///
-
+/// [WidgetsBindingObserver]
+/// [WidgetsBinding.addObserver]
+/// [WidgetsBinding.removeObserver]
 class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
   /// 注册一个全局的生命周期监听
   static AppLifecycleLog install() {
