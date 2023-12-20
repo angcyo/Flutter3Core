@@ -652,6 +652,7 @@ extension WidgetEx on Widget {
   }
 
   /// 模糊背景
+  /// [ColorFiltered]
   Widget blur({
     double? sigma = kM,
     UiImageFilter? filter,
@@ -669,6 +670,18 @@ extension WidgetEx on Widget {
               child: this,
             )
           : this;
+
+  /// 可以实现灰度效果,灰度化app
+  /// [ColorFiltered]
+  Widget colorFiltered({
+    ColorFilter? colorFilter,
+    Color color = Colors.grey,
+    BlendMode blendMode = BlendMode.saturation,
+  }) =>
+      ColorFiltered(
+        colorFilter: colorFilter ?? ColorFilter.mode(color, blendMode),
+        child: this,
+      );
 
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
