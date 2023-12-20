@@ -12,6 +12,20 @@ extension LauncherUriEx on Uri {
   }
 
   ///打开一个Url
+  ///支持的Scheme
+  ///```
+  ///https://flutter.dev
+  ///mailto:smith@example.org?subject=News&body=New%20plugin
+  ///tel:+1-555-010-999
+  ///sms:5550101234
+  ///file:/home
+  ///```
+  ///https://pub.dev/packages/url_launcher#supported-url-schemes
+  ///https://pub.dev/packages/url_launcher
+  ///[mode] 启动模式
+  ///[LaunchMode.platformDefault] 使用平台浏览器打开url,打开网页
+  ///[LaunchMode.inAppWebView] 在app内打开, 需要手动控制导航栏, scheme拦截.
+  ///[LaunchMode.inAppBrowserView].[LaunchMode.externalApplication].[LaunchMode.externalNonBrowserApplication]与[LaunchMode.platformDefault]一样
   Future<bool> launch({
     LaunchMode mode = LaunchMode.platformDefault,
     WebViewConfiguration webViewConfiguration = const WebViewConfiguration(),

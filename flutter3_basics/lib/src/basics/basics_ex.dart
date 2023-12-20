@@ -308,7 +308,7 @@ extension StringEx on String {
   }
 
   ///[GlobalConfigEx.openWebUrl]
-  Future<bool> openUrl({BuildContext? context}) => openWebUrl(this, context);
+  Future<bool> openUrl([BuildContext? context]) => openWebUrl(this, context);
 }
 
 //endregion String 扩展
