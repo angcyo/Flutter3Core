@@ -17,6 +17,16 @@ class Http {
 String? get host => Http.getBaseUrl?.call() ?? Http.baseUrl;
 
 extension HttpUriEx on Uri {
+  /// 获取uri对应的查询参数
+  /// [queryParameters]
+  /*Map<String, String?> get queryMap {
+    final map = <String, String?>{};
+    queryParameters.forEach((key, value) {
+      map[key] = value;
+    });
+    return map;
+  }*/
+
   /// 获取http字节内容
   Future<Uint8List?> getHttpBytes({Map<String, String>? headers}) async {
     Uint8List? result;

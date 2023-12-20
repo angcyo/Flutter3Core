@@ -1,7 +1,6 @@
 library flutter3_app;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -27,6 +26,8 @@ part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';
 
 part 'src/app_log.dart';
+
+part 'src/app_swiper_ex.dart';
 
 @callPoint
 void runGlobalApp(Widget app) {
