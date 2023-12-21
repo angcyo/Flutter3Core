@@ -64,7 +64,8 @@ extension ImagePubEx on String {
       NetworkImage(this, scale: scale, headers: headers);
 
   /// [loadAssetImageWidget]
-  /// [placeholder] [progressIndicatorBuilder] 只能设置一个
+  /// [placeholder].[progressIndicatorBuilder] 只能设置一个
+  /// [usePlaceholder] 是否使用默认的占位图, 否则使用进度指示器
   Widget toNetworkImageWidget({
     BoxFit? fit = BoxFit.cover,
     bool usePlaceholder = false,
@@ -83,8 +84,8 @@ extension ImagePubEx on String {
           : null,
       progressIndicatorBuilder: needPlaceholder
           ? null
-          : (context, url, downloadProgress) =>
-              GlobalConfig.of(context).loadingIndicatorBuilder(context),
+          : (context, url, downloadProgress) => GlobalConfig.of(context)
+              .loadingIndicatorBuilder(context, downloadProgress.progress),
       errorWidget: (context, url, error) =>
           GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
       fit: fit,

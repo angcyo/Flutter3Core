@@ -117,7 +117,13 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
   }
 
   Widget _buildLoading(BuildContext context, ImageChunkEvent? event) {
-    return GlobalConfig.of(context).loadingIndicatorBuilder(context).center();
+    double? progressValue;
+    if (event != null && event.expectedTotalBytes != null) {
+      progressValue = event.cumulativeBytesLoaded / event.expectedTotalBytes!;
+    }
+    return GlobalConfig.of(context)
+        .loadingIndicatorBuilder(context, progressValue)
+        .center();
   }
 
   /// 翻页通知

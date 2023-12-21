@@ -18,6 +18,7 @@ OverlayEntry? showLoading({
   Color? barrierColor,
   Duration? duration,
   VoidCallback? onDismiss,
+  double? progressValue,
 }) {
   var currentLoadingEntry = _currentLoadingEntryRef?.target;
   if (currentLoadingEntry != null) {
@@ -45,7 +46,8 @@ OverlayEntry? showLoading({
     return _LoadingOverlay(
         route: route,
         builder: builder ??= (context) {
-          return GlobalConfig.of(context).loadingOverlayWidgetBuilder(context);
+          return GlobalConfig.of(context)
+              .loadingOverlayWidgetBuilder(context, progressValue);
         });
   });
   _currentLoadingEntryRef = WeakReference(currentLoadingEntry);

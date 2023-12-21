@@ -123,10 +123,11 @@ class WidgetStateWidgetState extends State<WidgetStateWidget> {
   WidgetState get _buildState => _updateState ?? widget.widgetState;
 
   /// [WidgetState.loading]状态
-  Widget _buildLoadingWidget(BuildContext context) {
+  Widget _buildLoadingWidget(BuildContext context, [double? progressValue]) {
     return (widget.buildLoadingWidgetState ?? widget.buildWidgetStateWidget)
             ?.call(context, _buildState, widget.stateData) ??
-        GlobalConfig.of(context).loadingIndicatorBuilder(context);
+        GlobalConfig.of(context)
+            .loadingIndicatorBuilder(context, progressValue);
   }
 
   /// [WidgetState.empty]状态
@@ -211,8 +212,9 @@ class AdapterStateWidget extends WidgetStateWidget {
 class AdapterStateWidgetState extends WidgetStateWidgetState {
   /// [WidgetState.loading]状态
   @override
-  Widget _buildLoadingWidget(BuildContext context) {
-    return GlobalConfig.of(context).loadingIndicatorBuilder(context);
+  Widget _buildLoadingWidget(BuildContext context, [double? progressValue]) {
+    return GlobalConfig.of(context)
+        .loadingIndicatorBuilder(context, progressValue);
   }
 
   /// [WidgetState.empty]状态
@@ -303,9 +305,9 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
 
   /// [WidgetState.loading]状态
   @override
-  Widget _buildLoadingWidget(BuildContext context) {
+  Widget _buildLoadingWidget(BuildContext context, [double? progressValue]) {
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context)
+        .loadingIndicatorBuilder(context, progressValue)
         .wrapContent(minHeight: kInteractiveHeight);
   }
 

@@ -10,8 +10,13 @@ const double kMinLoadingIndicatorDimension = 24.0;
 
 class LoadingIndicator extends StatelessWidget {
   final Size? size;
+  final double? progressValue;
 
-  const LoadingIndicator({super.key, this.size});
+  const LoadingIndicator({
+    super.key,
+    this.size,
+    this.progressValue,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,7 @@ class LoadingIndicator extends StatelessWidget {
         width: width,
         height: height,
         child: CircularProgressIndicator(
+          value: progressValue,
           color: globalTheme.accentColor,
           strokeWidth: 2,
         ),
@@ -36,18 +42,20 @@ class LoadingWrapWidget extends StatelessWidget {
   final double? width;
   final double? height;
   final AlignmentGeometry? alignment;
+  final double? progressValue;
 
   const LoadingWrapWidget({
     super.key,
     this.alignment = Alignment.center,
     this.width,
     this.height,
+    this.progressValue,
   });
 
   @override
   Widget build(BuildContext context) {
-    Widget indicator =
-        GlobalConfig.of(context).loadingIndicatorBuilder(context);
+    Widget indicator = GlobalConfig.of(context)
+        .loadingIndicatorBuilder(context, progressValue);
     return Container(
       width: width,
       height: height,
@@ -68,9 +76,12 @@ class LoadingStateWidget extends StatelessWidget {
   /// 本体
   final Widget child;
 
+  final double? progressValue;
+
   const LoadingStateWidget({
     super.key,
     this.loading,
+    this.progressValue,
     required this.child,
     required this.isLoading,
   });
@@ -78,7 +89,8 @@ class LoadingStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget loading = this.loading ??
-        GlobalConfig.of(context).loadingIndicatorBuilder(context);
+        GlobalConfig.of(context)
+            .loadingIndicatorBuilder(context, progressValue);
     return AnimatedSwitcher(
       duration: kDefaultAnimationDuration,
       child: isLoading ? loading : child,

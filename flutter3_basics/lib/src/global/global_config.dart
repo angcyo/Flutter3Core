@@ -53,6 +53,11 @@ typedef GlobalWriteFileFn = Future<String?> Function(
 /// 获取[GlobalConfig]的方法
 typedef GlobalConfigGetFn = GlobalConfig Function();
 
+/// 进度小部件构建器
+/// [progress] 进度[0~1]
+typedef ProgressWidgetBuilder = Widget Function(
+    BuildContext context, double? progress);
+
 /// [AppBar]构建器函数
 typedef AppBarBuilderFn = PreferredSizeWidget? Function(
   BuildContext context,
@@ -215,8 +220,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   /// 全局的Loading指示器
-  WidgetBuilder loadingIndicatorBuilder = (context) {
-    return const LoadingIndicator();
+  ProgressWidgetBuilder loadingIndicatorBuilder = (context, progress) {
+    return LoadingIndicator(
+      progressValue: progress,
+    );
   };
 
   /// 全局的错误占位小部件
@@ -226,9 +233,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局的加载[Overlay]提示
   /// [OverlayEntry]
-  WidgetBuilder loadingOverlayWidgetBuilder = (context) {
+  ProgressWidgetBuilder loadingOverlayWidgetBuilder = (context, progress) {
     Widget loadingIndicator =
-        GlobalConfig.of(context).loadingIndicatorBuilder(context);
+        GlobalConfig.of(context).loadingIndicatorBuilder(context, progress);
     return Container(
       alignment: Alignment.center,
       child: SizedBox.fromSize(
@@ -390,9 +397,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     GlobalOpenUrlFn? openUrlFn,
     GlobalWriteFileFn? writeFileFn,
     WidgetArgumentBuilder? imagePlaceholderBuilder,
-    WidgetBuilder? loadingIndicatorBuilder,
+    ProgressWidgetBuilder? loadingIndicatorBuilder,
     WidgetArgumentBuilder? errorPlaceholderBuilder,
-    WidgetBuilder? loadingOverlayWidgetBuilder,
+    ProgressWidgetBuilder? loadingOverlayWidgetBuilder,
     AppBarBuilderFn? appBarBuilder,
   }) {
     return GlobalConfig(

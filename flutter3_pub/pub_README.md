@@ -284,14 +284,19 @@ https://github.com/fluttercommunity/plus_plugins
   Chopper 和 Retrofit 启发的类型转换 dio 客户端生成器。
 - [intl_phone_number_input: ^0.7.3+1](https://pub.dev/packages/intl_phone_number_input)  一个简单且可定制的
   flutter 包，用于以国际/国际格式输入电话号码，使用 Google 的 libphonenumber
-- [markdown: ^7.1.1](https://pub.dev/packages/markdown) 用 Dart 编写的可移植 Markdown 库。它可以在客户端和服务器上将 Markdown 解析为 HTML。
+- [markdown: ^7.1.1](https://pub.dev/packages/markdown) 用 Dart 编写的可移植 Markdown
+  库。它可以在客户端和服务器上将 Markdown 解析为 HTML。
 - [flutter_markdown: ^0.6.18+2](https://pub.dev/packages/flutter_markdown) Flutter 的 Markdown
   渲染器。它支持原始格式，但不支持内联 HTML。
 - [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility)
   对键盘可见性更改做出反应。
-- [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter 可滚动小部件提供了固定/可变行高的滚动到索引机制。
-- [matrix_gesture_detector: ^0.1.0](https://pub.dev/packages/matrix_gesture_detector) MatrixGestureDetector 检测平移、缩放和旋转手势，并将它们组合成 Matrix4 可由 Transform 小部件或低级 CustomPainter 代码使用的对象。
+- [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter
+  可滚动小部件提供了固定/可变行高的滚动到索引机制。
+- [matrix_gesture_detector: ^0.1.0](https://pub.dev/packages/matrix_gesture_detector)
+  MatrixGestureDetector 检测平移、缩放和旋转手势，并将它们组合成 Matrix4 可由 Transform 小部件或低级
+  CustomPainter 代码使用的对象。
 - [matrix_gesture_detector_pro: ^1.0.0](https://pub.dev/packages/matrix_gesture_detector_pro) https://github.com/zhaolongs/matrix_gesture_detector_pro
+- [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 滑动删除列表项，支持左滑和右滑两种操作。
 
 ## 平台特有
 
@@ -323,7 +328,8 @@ https://github.com/fluttercommunity/plus_plugins
   Android 上使用 CameraX，在 iOS 上使用 AVFoundation。
 - [flutter_barcode_scanner: ^2.0.0](https://pub.dev/packages/flutter_barcode_scanner) 一个用于
   Flutter 应用程序的插件，可在 Android 和 iOS 上添加条形码扫描支持。
-- [flutter_mrz_scanner: ^2.1.0](https://pub.dev/packages/flutter_mrz_scanner) 使用 iOS 和 Android 扫描身份证件（护照、身份证、签证）的 MRZ（机器可读区域）。被 QKMRZScanner 严重啃食。
+- [flutter_mrz_scanner: ^2.1.0](https://pub.dev/packages/flutter_mrz_scanner) 使用 iOS 和 Android
+  扫描身份证件（护照、身份证、签证）的 MRZ（机器可读区域）。被 QKMRZScanner 严重啃食。
 - [file_picker: ^6.1.1](https://pub.dev/packages/file_picker)
   一个包，允许您使用本机文件资源管理器来选取单个或多个文件，并具有扩展筛选支持。
 - [excel: ^3.0.0](https://pub.dev/packages/excel) Excel 是一个 flutter 和 dart 库，用于读取、创建和更新
@@ -335,5 +341,7 @@ https://github.com/fluttercommunity/plus_plugins
   问世时，隐私限制发生了很大的变化，并且没有足够的 flutter 相关信息，所以我想出了一个简单的 ANDROID
   插件来下载任何文件类型到下载目录 此外，它还具有回调和进度侦听器，安装非常简单 注意：此插件不是为 iOS
   构建的， 它根本不会影响它。
-- [app_settings: ^5.1.1](https://pub-web.flutter-io.cn/packages/app_settings) 一个 Flutter 插件，用于从应用程序打开 iOS 和 Android 手机设置。
-- [flutter_local_notifications: ^16.2.0](https://pub.dev/packages/flutter_local_notifications) 用于显示本地通知的跨平台插件。
+- [app_settings: ^5.1.1](https://pub-web.flutter-io.cn/packages/app_settings) 一个 Flutter
+  插件，用于从应用程序打开 iOS 和 Android 手机设置。
+- [flutter_local_notifications: ^16.2.0](https://pub.dev/packages/flutter_local_notifications)
+  用于显示本地通知的跨平台插件。
