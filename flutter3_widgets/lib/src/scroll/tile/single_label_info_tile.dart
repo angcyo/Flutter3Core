@@ -11,6 +11,10 @@ class SingleLabelInfoTile extends StatelessWidget {
   final String? label;
   final Widget? labelWidget;
 
+  /// 标签下面的描述信息
+  final String? des;
+  final Widget? desWidget;
+
   /// 信息
   final String? info;
   final Widget? infoWidget;
@@ -31,6 +35,8 @@ class SingleLabelInfoTile extends StatelessWidget {
     super.key,
     this.label,
     this.labelWidget,
+    this.des,
+    this.desWidget,
     this.info,
     this.padding,
     this.infoWidget,
@@ -42,12 +48,15 @@ class SingleLabelInfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final left = labelWidget ??
-        label?.text(style: globalTheme.textLabelStyle) ??
-        const Empty();
+
+    final left = labelWidget ?? label?.text(style: globalTheme.textLabelStyle);
+    final leftBottom = desWidget ?? des?.text(style: globalTheme.textDesStyle);
+
+    //一定要用来撑满line
     final right = infoWidget ??
         info?.text(style: globalTheme.textInfoStyle) ??
-        const Empty();
+        const Empty.zero();
+
     final rightIco = infoIcon ??
         (onTap == null
             ? null
@@ -57,11 +66,25 @@ class SingleLabelInfoTile extends StatelessWidget {
                 color: globalTheme.textInfoStyle.color,
               ));
 
+    final columnList = [
+      if (left != null) left,
+      if (leftBottom != null) leftBottom,
+    ];
+
+    Widget? column;
+    if (columnList.isNotEmpty) {
+      column = columnList
+          .column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start)
+          .wrapContent();
+    }
+
     return Padding(
       padding:
           padding ?? const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
       child: [
-        left,
+        if (column != null) column,
         right.align(alignment: Alignment.centerRight).expanded(),
         if (rightIco != null && rightIco is! IgnoreWidget) rightIco
       ].row().constrainedMin(minHeight: minHeight),

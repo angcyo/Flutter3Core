@@ -76,6 +76,8 @@ class WrapContentBox extends RenderAligningShiftedBox {
   @override
   void setupParentData(covariant RenderObject child) {
     //这里不能调用super, 因为会在[RenderProxyBoxMixin.setupParentData]中重置为[ParentData]
+    var parentData = child.parentData;
+    debugger();
     super.setupParentData(child);
     /*if (child.parentData is! BoxParentData) {
       child.parentData = BoxParentData();
@@ -134,6 +136,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
           break;
       }
       final BoxParentData childParentData = child!.parentData! as BoxParentData;
+      //debugger();
       childParentData.offset = Offset(dx, dy);
     }
   }
@@ -145,12 +148,28 @@ class WrapContentBox extends RenderAligningShiftedBox {
       size = constraints.smallest;
     } else {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
+      final p = parent;
+      final parentConstraints = p?.constraints;
+      double parentMaxWidth = double.infinity;
+      double parentMaxHeight = double.infinity;
+      if (p is RenderBox && p.hasSize) {
+        parentMaxWidth = p.size.width;
+        parentMaxHeight = p.size.height;
+      } else if (parentConstraints is BoxConstraints) {
+        parentMaxWidth = parentConstraints.maxWidth;
+        parentMaxHeight = parentConstraints.maxHeight;
+      }
+      //debugger();
       child!.layout(
         BoxConstraints(
           minWidth: minWidth ?? 0,
           minHeight: minHeight ?? 0,
-          maxWidth: constraints.maxWidth,
-          maxHeight: constraints.maxHeight,
+          maxWidth: constraints.maxWidth == double.infinity
+              ? parentMaxWidth
+              : constraints.maxWidth,
+          maxHeight: constraints.maxHeight == double.infinity
+              ? parentMaxHeight
+              : constraints.maxHeight,
         ),
         parentUsesSize: true,
       );

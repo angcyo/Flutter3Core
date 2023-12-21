@@ -1,6 +1,7 @@
 library flutter3_widgets;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -31,6 +32,8 @@ part 'src/pub/accurate_sized_box.dart';
 part 'src/pub/keep_alive.dart';
 
 part 'src/pub/lifecycle.dart';
+
+part 'src/scroll/page/scroll_mixin.dart';
 
 part 'src/scroll/r_item_tile.dart';
 
