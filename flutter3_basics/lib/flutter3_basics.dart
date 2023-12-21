@@ -113,3 +113,40 @@ typedef UiImage = ui.Image;
 typedef UiImageFilter = ui.ImageFilter;
 typedef UiColorFilter = ui.ColorFilter;
 typedef UiGradient = ui.Gradient;
+
+/// 将所有非空对象转换为字符串
+/// [separator] 分隔符
+String join(String separator,
+    [Object? part1,
+    Object? part2,
+    Object? part3,
+    Object? part4,
+    Object? part5,
+    Object? part6,
+    Object? part7,
+    Object? part8,
+    Object? part9,
+    Object? part10,
+    Object? part11,
+    Object? part12,
+    Object? part13,
+    Object? part14,
+    Object? part15]) {
+  return [
+    part1,
+    part2,
+    part3,
+    part4,
+    part5,
+    part6,
+    part7,
+    part8,
+    part9,
+    part10,
+    part11,
+    part12,
+    part13,
+    part14,
+    part15
+  ].whereNotNull().join(separator);
+}
