@@ -4,7 +4,7 @@ part of flutter3_widgets;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/13
 ///
-
+///
 /// 左[label] 右[info] 的信息展示tile
 class SingleLabelInfoTile extends StatelessWidget {
   /// 标签
@@ -41,14 +41,14 @@ class SingleLabelInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
-    var left = labelWidget ??
+    final globalTheme = GlobalTheme.of(context);
+    final left = labelWidget ??
         label?.text(style: globalTheme.textLabelStyle) ??
         const Empty();
-    var right = infoWidget ??
+    final right = infoWidget ??
         info?.text(style: globalTheme.textInfoStyle) ??
         const Empty();
-    var rightIco = infoIcon ??
+    final rightIco = infoIcon ??
         (onTap == null
             ? null
             : Icon(

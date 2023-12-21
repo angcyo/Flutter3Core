@@ -1,7 +1,6 @@
 library flutter3_widgets;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -48,6 +47,8 @@ part 'src/scroll/tile/label_info_mixin.dart';
 part 'src/scroll/tile/single_grid_tile.dart';
 
 part 'src/scroll/tile/single_label_info_tile.dart';
+
+part 'src/scroll/tile/text_tile.dart';
 
 part 'src/scroll/widget_state.dart';
 

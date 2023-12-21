@@ -56,6 +56,28 @@ Widget builder(
       key: key,
     );
 
+/// 将当前的小部件, 包裹在一个[Padding]中
+/// 根据html的padding属性, 生成padding
+EdgeInsets? edgeInsets([double? v1, double? v2, double? v3, double? v4]) {
+  //如果是4个参数
+  if (v1 != null && v2 != null && v3 != null && v4 != null) {
+    return EdgeInsets.fromLTRB(v1, v2, v3, v4);
+  }
+  //如果是3个参数
+  if (v1 != null && v2 != null && v3 != null) {
+    return EdgeInsets.fromLTRB(v1, v2, v3, v2);
+  }
+  //如果是2个参数
+  if (v1 != null && v2 != null) {
+    return EdgeInsets.fromLTRB(v1, v2, v1, v2);
+  }
+  //如果是1个参数
+  if (v1 != null) {
+    return EdgeInsets.all(v1);
+  }
+  return null;
+}
+
 extension WidgetListEx on WidgetList {
   /// 将当前的小部件集合, 包裹在一个[Wrap]中
   /// [alignment] 主轴对齐方式
@@ -213,35 +235,13 @@ extension WidgetEx on Widget {
   /// 将当前的小部件, 包裹在一个[Padding]中
   /// 根据html的padding属性, 生成padding
   Widget padding([double? v1, double? v2, double? v3, double? v4]) {
-    //如果是4个参数
-    if (v1 != null && v2 != null && v3 != null && v4 != null) {
-      return Padding(
-        padding: EdgeInsets.fromLTRB(v1, v2, v3, v4),
-        child: this,
-      );
-    }
-    //如果是3个参数
-    if (v1 != null && v2 != null && v3 != null) {
-      return Padding(
-        padding: EdgeInsets.fromLTRB(v1, v2, v3, v2),
-        child: this,
-      );
-    }
-    //如果是2个参数
-    if (v1 != null && v2 != null) {
-      return Padding(
-        padding: EdgeInsets.fromLTRB(v1, v2, v1, v2),
-        child: this,
-      );
-    }
-    //如果是1个参数
-    if (v1 != null) {
-      return Padding(
-        padding: EdgeInsets.all(v1),
-        child: this,
-      );
-    }
-    return this;
+    final insets = edgeInsets(v1, v2, v3, v4);
+    return insets == null
+        ? this
+        : Padding(
+            padding: insets,
+            child: this,
+          );
   }
 
   /// 将当前的小部件, 包裹在一个[Padding]中
