@@ -76,8 +76,8 @@ class WrapContentBox extends RenderAligningShiftedBox {
   @override
   void setupParentData(covariant RenderObject child) {
     //这里不能调用super, 因为会在[RenderProxyBoxMixin.setupParentData]中重置为[ParentData]
-    var parentData = child.parentData;
-    debugger();
+    //var parentData = child.parentData;
+    //debugger();
     super.setupParentData(child);
     /*if (child.parentData is! BoxParentData) {
       child.parentData = BoxParentData();

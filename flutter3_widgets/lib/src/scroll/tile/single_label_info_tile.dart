@@ -52,10 +52,7 @@ class SingleLabelInfoTile extends StatelessWidget {
     final left = labelWidget ?? label?.text(style: globalTheme.textLabelStyle);
     final leftBottom = desWidget ?? des?.text(style: globalTheme.textDesStyle);
 
-    //一定要用来撑满line
-    final right = infoWidget ??
-        info?.text(style: globalTheme.textInfoStyle) ??
-        const Empty.zero();
+    var right = infoWidget ?? info?.text(style: globalTheme.textInfoStyle);
 
     final rightIco = infoIcon ??
         (onTap == null
@@ -73,11 +70,16 @@ class SingleLabelInfoTile extends StatelessWidget {
 
     Widget? column;
     if (columnList.isNotEmpty) {
-      column = columnList
-          .column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start)
-          .wrapContent();
+      column = columnList.column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start);
+    }
+
+    right = right?.align(alignment: Alignment.centerRight);
+    if (right == null) {
+      column = column?.expanded();
+    } else {
+      right = right.expanded();
     }
 
     return Padding(
@@ -85,7 +87,7 @@ class SingleLabelInfoTile extends StatelessWidget {
           padding ?? const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
       child: [
         if (column != null) column,
-        right.align(alignment: Alignment.centerRight).expanded(),
+        if (right != null) right,
         if (rightIco != null && rightIco is! IgnoreWidget) rightIco
       ].row().constrainedMin(minHeight: minHeight),
     )
