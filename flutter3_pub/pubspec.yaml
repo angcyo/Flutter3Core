@@ -32,6 +32,11 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
   flutter_markdown: ^0.6.18+2
+  # https://pub.dev/packages/markdown
+  # https://github.com/dart-lang/markdown
+  # https://pub.dev/packages/args
+  # https://pub.dev/packages/meta
+  markdown: ^7.1.1
 
   # https://pub.dev/packages/flutter_svg
   # https://github.com/dnfield/flutter_svg/tree/master/packages/flutter_svg

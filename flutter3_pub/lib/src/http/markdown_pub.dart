@@ -35,6 +35,9 @@ extension MarkdownStringEx on String {
       },
     );
   }
+
+  /// 将markdown字符串文本内容,快速转换成html内容
+  String toHtmlWithMarkdown() => markdownToHtml(this);
 }
 
 /// [Markdown]

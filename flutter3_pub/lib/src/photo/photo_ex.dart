@@ -184,7 +184,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
       );
       result = [
         result,
-        Text(
+        material.Text(
           "${currentIndex + 1}/${widget.photoItems.length}",
           style: const TextStyle(color: Colors.white),
         ).align(alignment: Alignment.bottomCenter).padding(kXh),
