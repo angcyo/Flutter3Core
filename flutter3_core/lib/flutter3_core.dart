@@ -19,10 +19,12 @@ export 'package:hive/hive.dart';
 export 'package:hive_flutter/hive_flutter.dart';
 export 'package:isar/isar.dart';
 export 'package:isar_flutter_libs/isar_flutter_libs.dart';
-export 'package:jetpack/jetpack.dart';
 export 'package:mime/mime.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:provider/provider.dart';
+
+export 'src/view_model/jetpack/livedata.dart';
+export 'src/view_model/jetpack/viewmodel.dart';
 
 part 'src/file/app_lifecycle_log.dart';
 

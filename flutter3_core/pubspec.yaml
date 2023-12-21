@@ -50,7 +50,7 @@ dependencies:
   # https://pub.dev/packages/jetpack
   # https://github.com/praja/jetpack
   # https://pub.dev/packages/provider
-  jetpack: ^1.0.3
+  #jetpack: ^1.0.4
 
   # https://pub.dev/packages/objectbox
   # https://docs.objectbox.io/getting-started

@@ -18,8 +18,6 @@ class MutableErrorLiveData<T> extends MutableLiveData<T?> {
     notifyObservers();
   }
 
-  final Set<LiveDataObserver<T?>> _observers = {};
-
   MutableErrorLiveData(super.currentValue);
 
   @override
@@ -29,29 +27,6 @@ class MutableErrorLiveData<T> extends MutableLiveData<T?> {
       error = null;
     }
     super.value = value;
-  }
-
-  @override
-  void observe(LiveDataObserver<T?> observer, {bool emitCurrentValue = true}) {
-    _observers.add(observer);
-    super.observe(observer, emitCurrentValue: emitCurrentValue);
-    if (emitCurrentValue) {
-      observer(value);
-    }
-  }
-
-  @override
-  void removeObserver(LiveDataObserver<T?> observer) {
-    _observers.remove(observer);
-    super.removeObserver(observer);
-  }
-
-  void notifyObservers() {
-    // copying to allow for observers to call `removeObserver` during iteration
-    final observersToNotify = Set.of(_observers);
-    for (final LiveDataObserver<T> observer in observersToNotify) {
-      observer(value as T);
-    }
   }
 }
 
@@ -64,7 +39,7 @@ class MutableOnceLiveData<T> extends MutableErrorLiveData<T?> {
     super.value = value;
     if (value != null) {
       postCallback(() {
-        if (_observers.isNotEmpty) {
+        if (observers.isNotEmpty) {
           super.value = null;
         }
       });
