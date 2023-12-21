@@ -7,9 +7,14 @@ part of flutter3_web;
 
 /// 简单的浏览web网页
 class SingleWebPage extends StatefulWidget {
-  const SingleWebPage({super.key, this.url});
+  const SingleWebPage({super.key, this.url, this.html, this.baseUrl});
 
+  /// 需要加载的网页地址
   final String? url;
+
+  /// 需要加载的网页内容
+  final String? html;
+  final String? baseUrl;
 
   @override
   State<SingleWebPage> createState() => _SingleWebPageState();
@@ -72,8 +77,16 @@ class _SingleWebPageState extends State<SingleWebPage> {
           },
         ),
       );
-    if (widget.url != null) {
-      webViewController.loadRequest(Uri.parse(widget.url!));
+
+    if (widget.html?.isNotEmpty == true) {
+      webViewController.loadHtmlString(widget.html!, baseUrl: widget.baseUrl);
+    } else {
+      var url = widget.url;
+      if (url?.isEmpty == true) {
+        webViewController.loadRequest('about:blank'.toUri());
+      } else {
+        webViewController.loadRequest(url!.toUri("http"));
+      }
     }
   }
 

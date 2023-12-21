@@ -297,6 +297,7 @@ https://github.com/fluttercommunity/plus_plugins
   CustomPainter 代码使用的对象。
 - [matrix_gesture_detector_pro: ^1.0.0](https://pub.dev/packages/matrix_gesture_detector_pro) https://github.com/zhaolongs/matrix_gesture_detector_pro
 - [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 滑动删除列表项，支持左滑和右滑两种操作。
+- [connectivity_plus: ^5.0.2](https://pub.dev/packages/connectivity_plus) 监视网络连接状态（WiFi、移动数据、蜂窝）。
 
 ## 平台特有
 

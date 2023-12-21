@@ -224,7 +224,19 @@ extension StringEx on String {
   String md5() => utf8.encode(this).md5();
 
   /// [Uri]
-  Uri toUri() => Uri.parse(this);
+  /// [amendScheme] 如果解析失败, 则使用此scheme再解析一次
+  /// [Uri.parse]
+  /// [Uri.tryParse]
+  Uri toUri([String? amendScheme]) {
+    //debugger();
+    final uri = Uri.tryParse(this);
+    if (isNotEmpty &&
+        amendScheme?.isNotEmpty == true &&
+        uri?.scheme.isEmpty == true) {
+      return Uri.parse("$amendScheme://$this");
+    }
+    return uri!;
+  }
 
   /// [Uri]
   String decodeUri() => Uri.decodeFull(this);

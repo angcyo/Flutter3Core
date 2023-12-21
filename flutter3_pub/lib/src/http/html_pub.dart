@@ -4,9 +4,9 @@ part of flutter3_pub;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/08
 ///
-
+/// [flutter_html](https://pub.dev/packages/flutter_html)
 extension HtmlStringEx on String {
-  /// 将html字符串文本,快速转换成对应的[Widget]
+  /// 将html字符串文本内容,快速转换成对应的[Widget]
   /// 默认所有的文本都将放在`body`标签中, 并且默认会有8.0的margin
   ///
   /// [bodyMargin] body的margin, 默认是8.0
@@ -26,7 +26,7 @@ extension HtmlStringEx on String {
   }) {
     Map<String, Style> mergeStyle = {
       "body": Style(
-        margin: Margins.all(bodyMargin),
+        margin: Margins.all(bodyMargin), //去掉body的margin, 默认是8.0
       ),
       "a": Style(
         textDecoration: TextDecoration.none, //去掉下划线
