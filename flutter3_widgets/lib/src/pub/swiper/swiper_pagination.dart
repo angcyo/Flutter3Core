@@ -1,5 +1,6 @@
 part of 'swiper.dart';
 
+/// 数字页面指示器
 class FractionPaginationBuilder extends SwiperPlugin {
   const FractionPaginationBuilder({
     this.color,
@@ -25,8 +26,10 @@ class FractionPaginationBuilder extends SwiperPlugin {
 
   @override
   Widget build(BuildContext context, SwiperPluginConfig? config) {
+    final globalTheme = GlobalTheme.of(context);
     final themeData = Theme.of(context);
-    final activeColor = this.activeColor ?? themeData.primaryColor;
+    final activeColor =
+        this.activeColor ?? globalTheme.accentColor /*themeData.primaryColor*/;
     final color = this.color ?? themeData.scaffoldBackgroundColor;
 
     if (Axis.vertical == config!.scrollDirection) {
@@ -67,6 +70,7 @@ class FractionPaginationBuilder extends SwiperPlugin {
   }
 }
 
+/// 宽高不一样的矩形指示器
 class RectSwiperPaginationBuilder extends SwiperPlugin {
   const RectSwiperPaginationBuilder({
     this.activeColor,
@@ -96,8 +100,10 @@ class RectSwiperPaginationBuilder extends SwiperPlugin {
 
   @override
   Widget build(BuildContext context, SwiperPluginConfig config) {
+    final globalTheme = GlobalTheme.of(context);
     final themeData = Theme.of(context);
-    final activeColor = this.activeColor ?? themeData.primaryColor;
+    final activeColor =
+        this.activeColor ?? globalTheme.accentColor /*themeData.primaryColor*/;
     final color = this.color ?? themeData.scaffoldBackgroundColor;
 
     final list = <Widget>[];
@@ -141,6 +147,7 @@ class RectSwiperPaginationBuilder extends SwiperPlugin {
   }
 }
 
+/// 大小不一样的圆点指示器
 class DotSwiperPaginationBuilder extends SwiperPlugin {
   const DotSwiperPaginationBuilder({
     this.activeColor,
@@ -170,6 +177,7 @@ class DotSwiperPaginationBuilder extends SwiperPlugin {
 
   @override
   Widget build(BuildContext context, SwiperPluginConfig config) {
+    final globalTheme = GlobalTheme.of(context);
     if (config.itemCount > 20) {
       log(
         'The itemCount is too big, we suggest use FractionPaginationBuilder '
@@ -181,7 +189,8 @@ class DotSwiperPaginationBuilder extends SwiperPlugin {
 
     if (activeColor == null || color == null) {
       final themeData = Theme.of(context);
-      activeColor = this.activeColor ?? themeData.primaryColor;
+      activeColor = this.activeColor ??
+          globalTheme.accentColor /*?? themeData.primaryColor*/;
       color = this.color ?? themeData.scaffoldBackgroundColor;
     }
 
@@ -250,6 +259,8 @@ class SwiperCustomPagination extends SwiperPlugin {
   }
 }
 
+/// 指示器[builder]
+/// [SwiperPlugin]
 class SwiperPagination extends SwiperPlugin {
   const SwiperPagination({
     this.alignment,
