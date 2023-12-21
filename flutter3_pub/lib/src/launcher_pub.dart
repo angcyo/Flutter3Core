@@ -23,9 +23,10 @@ extension LauncherUriEx on Uri {
   ///https://pub.dev/packages/url_launcher#supported-url-schemes
   ///https://pub.dev/packages/url_launcher
   ///[mode] 启动模式
-  ///[LaunchMode.platformDefault] 使用平台浏览器打开url,打开网页
+  ///[LaunchMode.platformDefault] 使用平台浏览器打开url,打开网页, 在高版本Edge浏览器中也会在App内打开网页, 但是不用手动控制导航栏.
   ///[LaunchMode.inAppWebView] 在app内打开, 需要手动控制导航栏, scheme拦截.
-  ///[LaunchMode.inAppBrowserView].[LaunchMode.externalApplication].[LaunchMode.externalNonBrowserApplication]与[LaunchMode.platformDefault]一样
+  ///[LaunchMode.inAppBrowserView]与[LaunchMode.platformDefault]一样
+  ///[LaunchMode.externalApplication].[LaunchMode.externalNonBrowserApplication]与[LaunchMode.platformDefault]一样, 但是一定会启动外部应用.
   Future<bool> launch({
     LaunchMode mode = LaunchMode.platformDefault,
     WebViewConfiguration webViewConfiguration = const WebViewConfiguration(),
