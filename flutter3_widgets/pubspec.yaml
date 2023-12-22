@@ -33,6 +33,10 @@ dependencies:
   # https://github.com/thierryoliveira/rich_readmore
   rich_readmore: ^1.1.1
 
+  # https://pub.dev/packages/flutter_slidable
+  # https://github.com/letsar/flutter_slidable
+  flutter_slidable: ^3.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

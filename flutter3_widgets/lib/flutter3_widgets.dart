@@ -11,11 +11,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_widgets/assets_generated/assets.gen.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:lifecycle/lifecycle.dart';
 import 'package:rich_readmore/rich_readmore.dart';
 
 export 'package:expandable/expandable.dart';
 export 'package:flutter3_basics/flutter3_basics.dart';
+export 'package:flutter_slidable/flutter_slidable.dart';
 export 'package:lifecycle/lifecycle.dart';
 export 'package:sliver_tools/sliver_tools.dart';
 
