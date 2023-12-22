@@ -114,6 +114,23 @@ typedef UiImageFilter = ui.ImageFilter;
 typedef UiColorFilter = ui.ColorFilter;
 typedef UiGradient = ui.Gradient;
 
+/// 判断[value]是否为空
+bool isNullOrEmpty(Object? value) {
+  if (value == null) {
+    return true;
+  }
+  if (value is String) {
+    return value.isEmpty;
+  }
+  if (value is Iterable) {
+    return value.isEmpty;
+  }
+  if (value is Map) {
+    return value.isEmpty;
+  }
+  return false;
+}
+
 /// 将所有非空对象转换为字符串
 /// [separator] 分隔符
 String join(String separator,
