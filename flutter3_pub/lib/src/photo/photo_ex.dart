@@ -221,12 +221,18 @@ extension PhotoViewOptionsEx on ImageProvider {
 
 extension PhotoViewEx on BuildContext {
   /// 显示图片预览界面
+  /// [imageProvider] 单张图片, 传递这一个值就行
+  /// [initialIndex].[imageProviders] 多张图片, 传递这两个值就行
   /// [PhotoPreviewPage]
   void showPhotoPage({
     ImageProvider? imageProvider,
     int initialIndex = 0,
     List<ImageProvider>? imageProviders,
   }) {
+    assert(!isNullOrEmpty(imageProvider) || !isNullOrEmpty(imageProviders));
+    if (isNullOrEmpty(imageProvider) && isNullOrEmpty(imageProviders)) {
+      return;
+    }
     push(MaterialPageRoute(
       builder: (context) => PhotoPreviewPage(
         initialIndex: initialIndex,
