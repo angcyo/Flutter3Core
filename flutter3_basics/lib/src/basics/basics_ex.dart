@@ -202,9 +202,6 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
-  /// 复制当前的字符串到剪切板
-  Future<void> copy() async => Clipboard.setData(ClipboardData(text: this));
-
   /// 字符串转换成int
   int toInt({int? radix}) => int.parse(this, radix: radix);
 
@@ -217,11 +214,52 @@ extension StringEx on String {
   /// "yyyy-MM-dd HH:mm:ss" 转换成时间
   DateTime toDateTime() => DateTime.parse(this);
 
+  /// 从json字符串中解析出对应的数据类型
+  dynamic fromJson() => json.decode(this);
+
+  /// [TextSpan]
+  TextSpan toTextSpan({TextStyle? style}) => TextSpan(text: this, style: style);
+
+  //region 正则
+
+  /// 当前的文本是否正则匹配通过
+  /// ```dart
+  /// var string = 'Dash is a bird';
+  /// var regExp = RegExp(r'(humming)?bird');
+  /// var match = regExp.hasMatch(string); // true
+  ///
+  /// regExp = RegExp(r'dog');
+  /// match = regExp.hasMatch(string); // false
+  /// ```
+  bool isMatch(String regex) => RegExp(regex).hasMatch(this);
+
+  /// 获取匹配的字符串集合
+  List<String> matchList(String regex) =>
+      RegExp(regex).allMatches(this).map((e) => e.group(0)!).toList();
+
+  /// 使用正则替换字符串
+  String replaceAll(String regex, String replace) =>
+      RegExp(regex).allMatches(this).fold(this, (previousValue, element) {
+        return previousValue.replaceRange(element.start, element.end, replace);
+      });
+
+  //endregion 正则
+
+  //region 加密
+
   String sha1() => utf8.encode(this).sha1();
 
   String sha256() => utf8.encode(this).sha256();
 
   String md5() => utf8.encode(this).md5();
+
+  /// [Uri]
+  String decodeUri() => Uri.decodeFull(this);
+
+  /// [Uri]
+  String encodeUri() => Uri.encodeFull(this);
+
+  //endregion 加密
 
   /// [Uri]
   /// [amendScheme] 如果解析失败, 则使用此scheme再解析一次
@@ -237,18 +275,6 @@ extension StringEx on String {
     }
     return uri!;
   }
-
-  /// [Uri]
-  String decodeUri() => Uri.decodeFull(this);
-
-  /// [Uri]
-  String encodeUri() => Uri.encodeFull(this);
-
-  /// 从json字符串中解析出对应的数据类型
-  dynamic fromJson() => json.decode(this);
-
-  /// 将`8000`转换成`8.0.0.0`
-  String toVersionString() => split("").join(".");
 
   /// 确保前缀是指定的字符串
   /// 返回新的字符串
@@ -290,6 +316,8 @@ extension StringEx on String {
     return this;
   }
 
+  //region 遍历
+
   /// 遍历字符串, 不带索引
   forEach(StringEachCallback callback) {
     for (var i = 0; i < length; i++) {
@@ -319,8 +347,20 @@ extension StringEx on String {
     }
   }
 
+  //endregion 遍历
+
+  //region 功能
+
   ///[GlobalConfigEx.openWebUrl]
   Future<bool> openUrl([BuildContext? context]) => openWebUrl(this, context);
+
+  /// 复制当前的字符串到剪切板
+  Future<void> copy() async => Clipboard.setData(ClipboardData(text: this));
+
+  /// 将`8000`转换成`8.0.0.0`
+  String toVersionString() => split("").join(".");
+
+//endregion 功能
 }
 
 //endregion String 扩展
@@ -425,6 +465,28 @@ extension SizeEx on Size {
 }
 
 //endregion Size 扩展
+
+//region bool 扩展
+
+extension BoolEx on bool {
+  /// 转换成对错字符显示
+  /// 对错字符
+  /// https://manual.toulan.fun/posts/macos-type-right-wrong-symbol/
+  ///
+  /// ✅
+  /// ❎
+  /// ❌
+  /// ✖
+  /// 红色
+  /// ✘
+  /// ✔︎
+  /// ✓
+  /// ✗
+  ///
+  String toDC() => this ? "✔︎" : "✘"; //if (this == true) "√" else "×"
+}
+
+//endregion bool 扩展
 
 //region Int 扩展
 

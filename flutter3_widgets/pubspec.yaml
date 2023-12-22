@@ -25,6 +25,14 @@ dependencies:
   # https://github.com/chenenyu/lifecycle
   lifecycle: ^0.8.0
 
+  # https://pub.dev/packages/expandable
+  # https://github.com/aryzhov/flutter-expandable
+  expandable: ^5.0.1
+
+  # https://pub.dev/packages/rich_readmore
+  # https://github.com/thierryoliveira/rich_readmore
+  rich_readmore: ^1.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

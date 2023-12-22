@@ -229,7 +229,8 @@ extension PhotoViewEx on BuildContext {
     int initialIndex = 0,
     List<ImageProvider>? imageProviders,
   }) {
-    assert(!isNullOrEmpty(imageProvider) || !isNullOrEmpty(imageProviders));
+    assert(!isNullOrEmpty(imageProvider) || !isNullOrEmpty(imageProviders),
+        "未指定数据, 操作被取消");
     if (isNullOrEmpty(imageProvider) && isNullOrEmpty(imageProviders)) {
       return;
     }

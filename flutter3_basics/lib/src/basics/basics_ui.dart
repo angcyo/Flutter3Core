@@ -153,9 +153,15 @@ extension WidgetListEx on WidgetList {
   /// [Stack]
   Widget stack({
     AlignmentGeometry alignment = AlignmentDirectional.topStart,
+    TextDirection? textDirection,
+    StackFit fit = StackFit.loose,
+    Clip clipBehavior = Clip.hardEdge,
   }) =>
       Stack(
         alignment: alignment,
+        textDirection: textDirection,
+        fit: fit,
+        clipBehavior: clipBehavior,
         children: this,
       );
 
@@ -534,6 +540,7 @@ extension WidgetEx on Widget {
   }
 
   /// [Card]
+  /// [elevation] 阴影的高度, 默认1.0
   /// [CardTheme]
   /// [ThemeData.cardTheme]
   Widget card({
@@ -542,6 +549,7 @@ extension WidgetEx on Widget {
     double? elevation,
     ShapeBorder? shape,
     EdgeInsetsGeometry? margin,
+    Clip? clipBehavior = Clip.antiAlias,
   }) =>
       Card(
         color: color,
@@ -549,6 +557,7 @@ extension WidgetEx on Widget {
         elevation: elevation,
         shape: shape,
         margin: margin,
+        clipBehavior: clipBehavior,
         child: this,
       );
 
@@ -1077,6 +1086,8 @@ extension StateEx on State {
 typedef ConditionalElementVisitorDepth = bool Function(
     Element element, int depth, int childIndex);
 
+/// [BuildContext.findRenderObject]
+/// [RenderObject.showOnScreen]
 extension ContextEx on BuildContext {
   /// 尝试更新状态, 如果可以
   /// [StateEx.updateState]

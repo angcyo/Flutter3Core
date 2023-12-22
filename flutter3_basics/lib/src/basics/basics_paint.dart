@@ -8,7 +8,8 @@ part of flutter3_basics;
 /// 自定义的绘制方法
 /// [childRect] 当前元素的绘制区域
 /// [parentRect] 父元素的绘制区域
-typedef PainterFn = void Function(Canvas canvas, Rect childRect, Rect parentRect);
+typedef PainterFn = void Function(
+    Canvas canvas, Rect childRect, Rect parentRect);
 
 /// [CustomPaint]
 /// [CustomPainter]
@@ -37,6 +38,7 @@ extension TextSpanPaintEx on InlineSpan {
   Size textSize() {
     final TextPainter textPainter = TextPainter(
       textDirection: TextDirection.ltr,
+      textScaler: TextScaler.noScaling,
       text: this,
     );
     textPainter.layout();

@@ -279,7 +279,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [video_player: ^2.8.1](https://pub.dev/packages/video_player) 适用于 iOS、Android 和 Web 的 Flutter
   插件，用于在 Widget 表面上播放视频。
 - [showcaseview: ^2.0.3](https://pub.dev/packages/showcaseview) Flutter 包允许你一步一步地展示/突出显示你的小部件。
-- [readmore: ^2.2.0](https://pub.dev/packages/readmore) 一个 Flutter 插件，而不是允许展开和折叠文本。
+- [rich_readmore: ^1.1.1](https://pub.dev/packages/rich_readmore) 折叠和展开文本内容,支持span
 - [retrofit: ^4.0.3](https://pub.dev/packages/retrofit) retrofit.dart 是一个使用 source_gen 并受
   Chopper 和 Retrofit 启发的类型转换 dio 客户端生成器。
 - [intl_phone_number_input: ^0.7.3+1](https://pub.dev/packages/intl_phone_number_input)  一个简单且可定制的
@@ -288,6 +288,8 @@ https://github.com/fluttercommunity/plus_plugins
   库。它可以在客户端和服务器上将 Markdown 解析为 HTML。
 - [flutter_markdown: ^0.6.18+2](https://pub.dev/packages/flutter_markdown) Flutter 的 Markdown
   渲染器。它支持原始格式，但不支持内联 HTML。
+- [markdown_widget: ^2.3.2+2](https://pub.dev/packages/markdown_widget)
+  支持TOC功能，可以通过Heading快速定位;支持代码高亮;支持夜间模式;
 - [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility)
   对键盘可见性更改做出反应。
 - [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter
@@ -298,6 +300,9 @@ https://github.com/fluttercommunity/plus_plugins
 - [matrix_gesture_detector_pro: ^1.0.0](https://pub.dev/packages/matrix_gesture_detector_pro) https://github.com/zhaolongs/matrix_gesture_detector_pro
 - [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 滑动删除列表项，支持左滑和右滑两种操作。
 - [connectivity_plus: ^5.0.2](https://pub.dev/packages/connectivity_plus) 监视网络连接状态（WiFi、移动数据、蜂窝）。
+- [flutter_highlight: ^0.7.0](https://pub.dev/packages/flutter_highlight) 语法高亮, 代码高亮小部件，支持
+  170+
+  语言和 80+ 风格。
 
 ## 平台特有
 
