@@ -6,17 +6,24 @@ part of flutter3_pub;
 ///
 
 /// 选择文件
+/// ```
+/// /data/user/0/com.angcyo.flutter3.abc/cache/file_picker/girl.jpg
+/// ```
 /// [MethodChannelFilePicker] Unsupported operation. Method not found.
 /// The exception thrown was: Binding has not yet been initialized.
-/// initialDirectory 可以选择设置为绝对路径，以指定对话框的打开位置。仅在 Linux、macOS 和 Windows 上受支持
+/// [initialDirectory] 可以选择设置为绝对路径，以指定对话框的打开位置。仅在 Linux、macOS 和 Windows 上受支持
+/// [allowCompression] 是否允许压缩文件
+/// [allowMultiple] 是否允许多选
+/// [withData] 是否返回数据,而非文件. 在web端时需要.
+/// [withReadStream] 是否返回文件流
 Future<FilePickerResult?> pickFiles({
+  FileType type = FileType.any,
+  bool allowMultiple = false,
   String? dialogTitle,
   String? initialDirectory,
-  FileType type = FileType.any,
   List<String>? allowedExtensions,
   Function(FilePickerStatus)? onFileLoading,
   bool allowCompression = true,
-  bool allowMultiple = false,
   bool withData = false,
   bool withReadStream = false,
   bool lockParentWindow = false,
@@ -37,9 +44,12 @@ Future<FilePickerResult?> pickFiles({
   );
 
   if (result != null) {
-    result.files.forEachIndexed((index, element) {
-      l.d('选择文件[$index]->${element.name}:${element.path}');
-    });
+    //Android girl.jpg:/data/user/0/com.angcyo.flutter3.abc/cache/file_picker/girl.jpg
+    if (isDebug) {
+      result.files.forEachIndexed((index, element) {
+        l.d('选择文件[$index]->${element.name}:${element.path}');
+      });
+    }
   } else {
     l.d('取消选择文件');
   }

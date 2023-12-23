@@ -88,4 +88,19 @@ extension MimeEx on String {
     }
     return mimeType.split('/').firstOrNull;
   }
+
+  ///判断当前是否是http/https网络地址
+  bool get isHttpUrl {
+    return startsWith('http://') || startsWith('https://');
+  }
+
+  ///判断当前是否是本地文件地址
+  bool get isLocalUrl {
+    return startsWith('file://');
+  }
+
+  ///判断当前字符串是否是文件路径
+  bool get isFilePath {
+    return File(this).existsSync();
+  }
 }

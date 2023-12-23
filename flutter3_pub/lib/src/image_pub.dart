@@ -44,6 +44,14 @@ class _CircleNetworkImageState extends State<CircleNetworkImage> {
 }
 
 extension ImagePubEx on String {
+  /// 根据类型, 自动转换成对应的图片提供器
+  /// [ImageProvider]
+  ImageProvider toImageProvider() => isHttpUrl
+      ? toCacheNetworkImageProvider()
+      : (isLocalUrl || isFilePath
+          ? toFileImageProvider()
+          : toAssetImageProvider()) as ImageProvider;
+
   /// 网络图片提供器
   /// [ImageProvider]
   CachedNetworkImageProvider toCacheNetworkImageProvider() =>
@@ -57,10 +65,20 @@ extension ImagePubEx on String {
   FileImage toFileImageProvider({double scale = 1}) =>
       FileImage(file(), scale: scale);
 
+  /// Asset图片提供器
+  /// [AssetImage]
+  AssetImage toAssetImageProvider({
+    AssetBundle? bundle,
+    String? package,
+  }) =>
+      AssetImage(this, bundle: bundle, package: package);
+
   /// [toFileImageProvider]
   /// [Image.network]
-  NetworkImage toNetworkImageProvider(
-          {double scale = 1, Map<String, String>? headers}) =>
+  NetworkImage toNetworkImageProvider({
+    double scale = 1,
+    Map<String, String>? headers,
+  }) =>
       NetworkImage(this, scale: scale, headers: headers);
 
   /// [loadAssetImageWidget]
@@ -73,24 +91,58 @@ extension ImagePubEx on String {
     int? memCacheWidth,
     int? memCacheHeight,
   }) {
+    //debugger();
     var url = this;
     var needPlaceholder = (usePlaceholder || placeholder != null);
-    return CachedNetworkImage(
-      imageUrl: url,
-      placeholder: needPlaceholder
-          ? placeholder ??
-              (context, url) =>
-                  GlobalConfig.of(context).imagePlaceholderBuilder(context, url)
-          : null,
-      progressIndicatorBuilder: needPlaceholder
-          ? null
-          : (context, url, downloadProgress) => GlobalConfig.of(context)
-              .loadingIndicatorBuilder(context, downloadProgress.progress),
-      errorWidget: (context, url, error) =>
-          GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
-      fit: fit,
-      memCacheWidth: memCacheWidth,
-      memCacheHeight: memCacheHeight,
-    );
+    if (url.isHttpUrl) {
+      return CachedNetworkImage(
+        imageUrl: url,
+        fit: fit,
+        memCacheWidth: memCacheWidth,
+        memCacheHeight: memCacheHeight,
+        placeholder: needPlaceholder
+            ? placeholder ??
+                (context, url) => GlobalConfig.of(context)
+                    .imagePlaceholderBuilder(context, url)
+            : null,
+        progressIndicatorBuilder: needPlaceholder
+            ? null
+            : (context, url, downloadProgress) => GlobalConfig.of(context)
+                .loadingIndicatorBuilder(context, downloadProgress.progress),
+        errorWidget: (context, url, error) =>
+            GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
+      );
+    } else {
+      return OctoImage(
+        image: url.toImageProvider(),
+        fit: fit,
+        memCacheWidth: memCacheWidth,
+        memCacheHeight: memCacheHeight,
+        placeholderBuilder: needPlaceholder
+            ? (context) => placeholder == null
+                ? GlobalConfig.of(context).imagePlaceholderBuilder(context, url)
+                : placeholder(context, url)
+            : null,
+        progressIndicatorBuilder: needPlaceholder
+            ? null
+            : (context, progress) => GlobalConfig.of(context)
+                .loadingIndicatorBuilder(
+                    context,
+                    (progress == null || progress.expectedTotalBytes == null)
+                        ? null
+                        : progress.cumulativeBytesLoaded /
+                            progress.expectedTotalBytes!),
+        errorBuilder: (context, url, error) =>
+            GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
+      );
+      /*return Image.file(
+        url.file(),
+        fit: fit,
+        cacheWidth: memCacheWidth,
+        cacheHeight: memCacheHeight,
+        errorBuilder: (context, error, stackTrace) =>
+            GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
+      );*/
+    }
   }
 }
