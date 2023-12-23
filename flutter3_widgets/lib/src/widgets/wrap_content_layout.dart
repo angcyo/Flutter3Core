@@ -153,8 +153,12 @@ class WrapContentBox extends RenderAligningShiftedBox {
       double parentMaxWidth = double.infinity;
       double parentMaxHeight = double.infinity;
       if (p is RenderBox && p.hasSize) {
-        parentMaxWidth = p.size.width;
-        parentMaxHeight = p.size.height;
+        if (constraints.maxWidth == double.infinity) {
+          parentMaxWidth = p.size.width;
+        }
+        if (constraints.maxHeight == double.infinity) {
+          parentMaxHeight = p.size.height;
+        }
       } else if (parentConstraints is BoxConstraints) {
         parentMaxWidth = parentConstraints.maxWidth;
         parentMaxHeight = parentConstraints.maxHeight;
