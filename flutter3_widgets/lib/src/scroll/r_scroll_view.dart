@@ -5,8 +5,6 @@ part of flutter3_widgets;
 /// @since 2023/11/02
 ///
 
-typedef RItemTileBuilder = void Function(RItemTileListBuilder builder);
-
 /// 是否要显示底部的加载更多
 typedef ShowLoadMoreCallback = bool Function();
 
@@ -16,8 +14,9 @@ typedef ShowLoadMoreCallback = bool Function();
 /// [RItemTile] 的容器
 class RScrollView extends StatefulWidget {
   const RScrollView({
-    required this.children,
     super.key,
+    required this.children,
+    this.filterChain = _defaultFilterChain,
     this.controller,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
@@ -44,38 +43,11 @@ class RScrollView extends StatefulWidget {
     this.frameSplitDuration = const Duration(milliseconds: 16),
   });
 
-  /// 使用[RItemTile]的构建器
-  RScrollView.builder(
-    RItemTileBuilder builder, {
-    super.key,
-    this.controller,
-    this.scrollDirection = Axis.vertical,
-    this.reverse = false,
-    this.showScrollbar = false,
-    this.enableRefresh = false,
-    this.enableLoadMore = false,
-    this.showLoadMoreCallback,
-    this.primary,
-    this.scrollBehavior = const MaterialScrollBehavior(),
-    this.shrinkWrap = false,
-    this.center,
-    this.anchor = 0.0,
-    this.cacheExtent,
-    this.semanticChildCount,
-    this.dragStartBehavior = DragStartBehavior.start,
-    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
-    this.restorationId,
-    this.clipBehavior = Clip.hardEdge,
-    this.physics = const AlwaysScrollableScrollPhysics(
-      parent: BouncingScrollPhysics(),
-    ),
-    this.enableFrameLoad = false,
-    this.frameSplitCount = 1,
-    this.frameSplitDuration = const Duration(milliseconds: 16),
-  }) : children = RItemTileListBuilder().apply(builder);
-
   /// [RItemTile] 的列表核心的数据集合
   final List<Widget> children;
+
+  /// [RItemTile] 的列表过滤器
+  final RFilterChain? filterChain;
 
   /// 是否要显示滚动条
   /// [ScrollbarTheme]
@@ -170,6 +142,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     bool? useFrameLoad,
   }) {
     children ??= widget.children;
+
     final result = _resolveItemTileList(context, children);
 
     //加载更多显示处理
@@ -203,6 +176,9 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   /// 将普通的[Widget]解析成[SliverWidget]
   List<Widget> _resolveItemTileList(
       BuildContext context, List<Widget> children) {
+    //过滤
+    children = widget.filterChain?.doFilter(children) ?? children;
+
     final result = <Widget>[];
 
     // 收集到的list tile, 使用[SliverList]包裹
@@ -211,22 +187,34 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     // 收集到的grid tile, 使用[SliverGrid]包裹
     final gridWrap = <Widget>[];
 
+    // 普通的sliver tile, 用来放到sliver group
+    final normalGroupWrap = <Widget>[];
+
+    //分组的头, 如果有
+    Widget? groupHeader;
+
     // 清除收集到的list tile, 并添加到result中
     clearAndAppendList() {
-      final widget = _buildSliverList(context, listWrap);
-      if (widget != null) {
-        result.add(widget);
+      if (listWrap.isNotEmpty) {
+        final widget = _buildSliverList(context, groupHeader, listWrap);
+        if (widget != null) {
+          result.add(widget);
+          groupHeader = null;
+        }
+        listWrap.clear();
       }
-      listWrap.clear();
     }
 
     // 清除收集到的grid tile, 并添加到result中
     clearAndAppendGrid() {
-      final widget = _buildSliverGrid(context, gridWrap);
-      if (widget != null) {
-        result.add(widget);
+      if (gridWrap.isNotEmpty) {
+        final widget = _buildSliverGrid(context, groupHeader, gridWrap);
+        if (widget != null) {
+          result.add(widget);
+          groupHeader = null;
+        }
+        gridWrap.clear();
       }
-      gridWrap.clear();
     }
 
     // 检查是否要合并网格tile
@@ -247,24 +235,37 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
       }
     }
 
+    // 不在list/grid中的sliver group中的item
+    clearNormalSliverGroupList() {
+      if (groupHeader != null) {
+        var sliverGroup = _wrapSliverGroup(groupHeader!, normalGroupWrap);
+        result.removeWhere((e) => normalGroupWrap.contains(e));
+        result.add(sliverGroup);
+      }
+      groupHeader = null;
+      normalGroupWrap.clear();
+    }
+
     // 开始遍历, 组装
     for (var tile in children) {
+      //debugger();
       if (tile is RItemTile) {
-        if (tile.hide) {
-          continue;
-        }
         if (tile.part) {
           clearAndAppendList();
           clearAndAppendGrid();
+          clearNormalSliverGroupList();
         }
+        Widget sliverTile = tile;
         //RItemTile
         if (tile.isSliverItem ||
-            tile.pinned ||
-            tile.floating ||
-            tile.fillRemaining) {
+            tile.isHeader ||
+            tile.fillRemaining ||
+            tile.isGroup) {
           //简单的
-          clearAndAppendList();
-          clearAndAppendGrid();
+          if (groupHeader == null) {
+            clearAndAppendList();
+            clearAndAppendGrid();
+          }
           if (tile.fillRemaining) {
             // SliverFillRemaining wrap
             final Widget child;
@@ -273,7 +274,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
             } else {
               child = tile;
             }
-            result.add(tile.buildWrapChild(
+            sliverTile = tile.buildWrapChild(
                 context,
                 result,
                 _wrapSliverTile(
@@ -283,55 +284,44 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
                     fillOverscroll: tile.fillOverscroll,
                     child: child,
                   ),
-                )));
-          } else if (tile.pinned || tile.floating) {
+                ));
+          } else if (tile.isHeader) {
             // SliverPersistentHeader wrap
-            if (tile.headerDelegate == null) {
-              result.add(tile.buildWrapChild(
-                  context,
-                  result,
-                  _wrapSliverTile(
-                    tile,
-                    SliverPersistentHeader(
-                      delegate: SingleSliverPersistentHeaderDelegate(
-                        child: tile,
-                        childBuilder: tile.headerChildBuilder,
-                        headerFixedHeight: tile.headerFixedHeight,
-                        headerMaxHeight: tile.headerMaxHeight,
-                        headerMinHeight: tile.headerMinHeight,
-                      ),
-                      pinned: tile.pinned,
-                      floating: tile.floating,
-                    ),
-                  )));
-            } else {
-              result.add(tile.buildWrapChild(
-                  context,
-                  result,
-                  _wrapSliverTile(
-                    tile,
-                    SliverPersistentHeader(
-                      delegate: tile.headerDelegate!,
-                      pinned: tile.pinned,
-                      floating: tile.floating,
-                    ),
-                  )));
-            }
+            sliverTile = tile.buildWrapChild(
+                context,
+                result,
+                _wrapSliverTile(
+                  tile,
+                  wrapHeader(tile),
+                ));
           } else {
-            result.add(tile.buildWrapChild(
+            sliverTile = tile.buildWrapChild(
                 context,
                 result,
                 _wrapSliverTile(
                   tile,
                   tile,
-                )));
+                ));
+          }
+
+          if (tile.isGroup) {
+            clearNormalSliverGroupList();
+            groupHeader = sliverTile;
+          } else {
+            if (groupHeader == null) {
+              result.add(sliverTile);
+            } else {
+              normalGroupWrap.add(sliverTile);
+            }
           }
         } else {
           //复合的, 需要丢到List或Grid中
           if (tile.crossAxisCount > 0) {
+            //网格tile
             clearAndAppendList();
             checkAndAppendGrid(tile);
           } else {
+            //列表tile
             clearAndAppendGrid();
             listWrap.add(tile);
           }
@@ -340,27 +330,80 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
         //普通的Widget
         clearAndAppendList();
         clearAndAppendGrid();
-        if ("$tile".toLowerCase().startsWith("sliver")) {
-          result.add(tile);
-        } else {
-          result.add(SliverToBoxAdapter(
-            child: tile,
-          ));
-          //listWrap.add(tile);
-        }
+        clearNormalSliverGroupList();
+        result.add(ensureSliver(tile));
       }
     }
     clearAndAppendList();
     clearAndAppendGrid();
+    clearNormalSliverGroupList();
 
     //result
     return result;
   }
 
+  /// 确保是[Sliver]小部件
+  Widget ensureSliver(Widget tile) {
+    if ("$tile".toLowerCase().startsWith("sliver")) {
+      return tile;
+    } else {
+      return SliverToBoxAdapter(
+        child: tile,
+      );
+    }
+  }
+
+  /// 悬浮头包裹
+  Widget wrapHeader(RItemTile tile) {
+    if (tile.useSliverAppBar) {
+      var height = tile.headerFixedHeight ?? tile.headerMinHeight;
+      return SliverAppBar(
+        title: tile,
+        floating: tile.floating,
+        pinned: tile.pinned,
+        titleSpacing: 0,
+        toolbarHeight: height,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        backgroundColor: tile.headerBackgroundColor,
+        foregroundColor: tile.headerForegroundColor,
+        expandedHeight: null,
+        collapsedHeight: null,
+        titleTextStyle: tile.headerTitleTextStyle,
+        primary: false,
+        snap: false,
+      );
+    }
+    if (tile.headerDelegate == null) {
+      return SliverPersistentHeader(
+        delegate: SingleSliverPersistentHeaderDelegate(
+          child: tile,
+          childBuilder: tile.headerChildBuilder,
+          headerFixedHeight: tile.headerFixedHeight,
+          headerMaxHeight: tile.headerMaxHeight,
+          headerMinHeight: tile.headerMinHeight,
+        ),
+        pinned: tile.pinned,
+        floating: tile.floating,
+      );
+    }
+    return SliverPersistentHeader(
+      delegate: tile.headerDelegate!,
+      pinned: tile.pinned,
+      floating: tile.floating,
+    );
+  }
+
+  //region 组装成list grid
+
   /// 构建成[SliverList]
-  Widget? _buildSliverList(BuildContext context, List<Widget> list) {
+  Widget? _buildSliverList(
+    BuildContext context,
+    Widget? groupHeader,
+    List<Widget> list,
+  ) {
     if (list.isEmpty) {
-      return null;
+      return groupHeader == null ? null : _wrapSliverGroup(groupHeader, list);
     }
     RItemTile first = list.firstWhere(
       (element) => element is RItemTile,
@@ -375,21 +418,28 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
         newList.add(element);
       }
     });
+    var sliverList = SliverList.list(
+      addAutomaticKeepAlives: first.addAutomaticKeepAlives,
+      addRepaintBoundaries: first.addRepaintBoundaries,
+      addSemanticIndexes: first.addSemanticIndexes,
+      children: newList,
+    );
     return _wrapSliverTile(
       first,
-      SliverList.list(
-        addAutomaticKeepAlives: first.addAutomaticKeepAlives,
-        addRepaintBoundaries: first.addRepaintBoundaries,
-        addSemanticIndexes: first.addSemanticIndexes,
-        children: newList,
-      ),
+      groupHeader == null
+          ? sliverList
+          : _wrapSliverGroup(groupHeader, [sliverList]),
     );
   }
 
   /// 构建成[SliverGrid]
-  Widget? _buildSliverGrid(BuildContext context, List<Widget> list) {
+  Widget? _buildSliverGrid(
+    BuildContext context,
+    Widget? groupHeader,
+    List<Widget> list,
+  ) {
     if (list.isEmpty) {
-      return null;
+      return groupHeader == null ? null : _wrapSliverGroup(groupHeader, list);
     }
     RItemTile first = list.firstWhere(
       (element) => element is RItemTile,
@@ -404,18 +454,27 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
         newList.add(element);
       }
     });
+    var sliverGrid = SliverGrid.count(
+      crossAxisCount: first.crossAxisCount,
+      mainAxisSpacing: first.mainAxisSpacing,
+      crossAxisSpacing: first.crossAxisSpacing,
+      childAspectRatio: first.childAspectRatio,
+      children: newList,
+    );
     return _wrapSliverTile(
       first,
-      SliverGrid.count(
-        crossAxisCount: first.crossAxisCount,
-        mainAxisSpacing: first.mainAxisSpacing,
-        crossAxisSpacing: first.crossAxisSpacing,
-        childAspectRatio: first.childAspectRatio,
-        children: newList,
-      ),
+      groupHeader == null
+          ? sliverGrid
+          : _wrapSliverGroup(groupHeader, [sliverGrid]),
     );
   }
 
+  //endregion 组装成list grid
+
+  //region 装饰tile
+
+  /// 判断tile是否需要padding和装饰
+  /// [sliverChild] 需要包装的child
   /// [SliverPadding]
   /// [DecoratedSliver]
   /// [_wrapSliverPadding]
@@ -426,9 +485,24 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   ) =>
       _wrapSliverPadding(
           tile.sliverPadding,
-          _wrapSliverDecoration(tile.sliverDecoration,
-              tile.sliverDecorationPosition, sliverChild));
+          _wrapSliverDecoration(
+            tile.sliverDecoration,
+            tile.sliverDecorationPosition,
+            sliverChild,
+          ));
 
+  /// 一组[sliverChild]
+  /// [SliverMainAxisGroup]
+  Widget _wrapSliverGroup(Widget groupHeader, WidgetList sliverChild) {
+    return SliverMainAxisGroup(
+      slivers: [
+        groupHeader,
+        ...sliverChild,
+      ],
+    );
+  }
+
+  /// 间隙填充当前的[sliverChild]
   /// [SliverPadding]
   Widget _wrapSliverPadding(
     EdgeInsetsGeometry? sliverPadding,
@@ -444,12 +518,14 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     );
   }
 
+  /// 装饰当前的[sliverChild]
   /// [DecoratedSliver]
   Widget _wrapSliverDecoration(
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition,
     Widget sliverChild,
   ) {
+    //debugger();
     if (sliverDecoration == null) {
       return sliverChild;
     }
@@ -460,6 +536,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
       sliver: sliverChild,
     );
   }
+
+  //endregion 装饰tile
 
   @override
   void initState() {
@@ -527,32 +605,6 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   }
 }
 
-/// [RScrollView] 的子项 [RItemTile] 构建
-class RItemTileListBuilder {
-  final List<Widget> _itemTileList = [];
-
-  RItemTileListBuilder add(Widget itemTile) {
-    _itemTileList.add(itemTile);
-    return this;
-  }
-
-  RItemTileListBuilder operator +(Widget itemTile) {
-    _itemTileList.add(itemTile);
-    return this;
-  }
-
-  apply(RItemTileBuilder action) {
-    action(this);
-    return _itemTileList;
-  }
-}
-
-/// [RItemTileListBuilder]
-@dsl
-List<Widget> itemTileListBuilder(RItemTileBuilder builder) {
-  return RItemTileListBuilder().apply(builder);
-}
-
 extension RScrollViewEx on WidgetList {
   /// [RScrollView]
   Widget rScroll({
@@ -565,7 +617,7 @@ extension RScrollViewEx on WidgetList {
   }
 }
 
-/// 混入一个[RScrollView], 支持刷新/加载更多
+/// 混入一个[RScrollView]的页面, 支持刷新/加载更多等基础功能的页面
 /// [RScrollView]
 mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 刷新/加载更多/滚动控制

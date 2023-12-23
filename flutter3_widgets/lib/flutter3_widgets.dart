@@ -1,6 +1,7 @@
 library flutter3_widgets;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:expandable/expandable.dart';
@@ -48,6 +49,8 @@ part 'src/scroll/r_item_tile.dart';
 part 'src/scroll/r_scroll_controller.dart';
 
 part 'src/scroll/r_scroll_view.dart';
+
+part 'src/scroll/r_tile_filter_chain.dart';
 
 part 'src/scroll/single_sliver_persistent_header_delegate.dart';
 

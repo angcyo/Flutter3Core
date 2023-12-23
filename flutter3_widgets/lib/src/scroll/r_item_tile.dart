@@ -62,6 +62,12 @@ class RItemTile extends StatefulWidget {
     this.lastPaddingTop,
     this.lastPaddingRight,
     this.lastPaddingBottom,
+    this.groups,
+    this.groupExpanded,
+    this.useSliverAppBar = false,
+    this.headerBackgroundColor,
+    this.headerForegroundColor,
+    this.headerTitleTextStyle = const TextStyle(fontSize: 14),
   });
 
   //region 基础
@@ -83,7 +89,7 @@ class RItemTile extends StatefulWidget {
 
   //endregion 基础
 
-  //region style
+  //region style 下划线
 
   /// 底部分割线的颜色
   final Color? bottomLineColor;
@@ -109,7 +115,7 @@ class RItemTile extends StatefulWidget {
 
   //endregion SliverPadding
 
-  //region DecoratedSliver
+  //region DecoratedSliver 装饰
 
   /// [DecoratedSliver]
   /// [BoxDecoration]
@@ -131,7 +137,7 @@ class RItemTile extends StatefulWidget {
 
   //endregion 普通布局
 
-  //region SliverPersistentHeader
+  //region SliverPersistentHeader / SliverAppBar 悬浮头部
 
   /// 决定是否使用[SliverPersistentHeader]包裹[RItemTile]
 
@@ -152,6 +158,9 @@ class RItemTile extends StatefulWidget {
 
   //---
 
+  /// [SliverAppBar] 也可以实现[pinned].[floating]的效果.
+  /// 使用[SliverMainAxisGroup]包裹,就可以实现Stick效果. 悬浮头部效果.
+
   /// [SliverPersistentHeader.delegate]
   final SliverPersistentHeaderDelegate? headerDelegate;
 
@@ -165,9 +174,43 @@ class RItemTile extends StatefulWidget {
   /// [SliverPersistentHeader.floating]
   final bool floating;
 
-  //endregion SliverPersistentHeader
+  /// 决定是否使用[SliverAppBar]实现悬浮效果
+  /// [SliverAppBar] 有2个间隙属性[SliverAppBar.titleSpacing]
+  /// [NavigationToolbar]
+  /// [NavigationToolbar.middleSpacing]
+  /// [kMiddleSpacing]
+  /// [RScrollView.wrapHeader]
+  final bool useSliverAppBar;
 
-  // region SliverFillRemaining
+  /// [SliverAppBar.backgroundColor]
+  final Color? headerBackgroundColor;
+
+  /// [SliverAppBar.foregroundColor]
+  final Color? headerForegroundColor;
+
+  /// [SliverAppBar.titleTextStyle]
+  final TextStyle? headerTitleTextStyle;
+
+  /// 是否启动悬浮头
+  bool get isHeader => pinned || floating;
+
+  //endregion SliverPersistentHeader / SliverAppBar
+
+  //region SliverMainAxisGroup 分组/折叠
+
+  /// 是否展开当前的组
+  /// 不为空时, 会将相同组的元素放到[SliverMainAxisGroup]中
+  final bool? groupExpanded;
+
+  /// 当前元素所属的组名称
+  final List<String>? groups;
+
+  /// 是否启动分组功能
+  bool get isGroup => groupExpanded != null;
+
+  //endregion SliverMainAxisGroup
+
+  //region SliverFillRemaining 填充剩余空间
 
   /// 决定是否使用[SliverFillRemaining]包裹[RItemTile]
 
@@ -427,6 +470,33 @@ class RItemTile extends StatefulWidget {
     return tileWrapBuilder?.call(context, list, child, index) ?? child;
   }
 
+  /// 当[anchor]隐藏时, 自己是否要隐藏
+  bool isHideFrom(Widget anchor) {
+    return false;
+  }
+
+  /// 当前的元素, 是否属于指定的组
+  bool isInGroup(RItemTile? tile, [List<String>? groups]) {
+    var thisGroups = this.groups;
+    if (thisGroups == null) {
+      return false;
+    }
+    if (thisGroups.isEmpty) {
+      //没有指定组, 则当前元素属于任意组
+      return true;
+    }
+
+    if (tile != null) {
+      if (thisGroups.hasSameElement(tile.groups)) {
+        return true;
+      }
+      if (thisGroups.hasSameElement(groups)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   State<RItemTile> createState() => _RItemTileState();
 }
@@ -506,6 +576,8 @@ extension RItemTileExtension on Widget {
     double? edgePaddingTop,
     double? edgePaddingRight,
     double? edgePaddingBottom,
+    bool? groupExpanded,
+    List<String>? groups = const [],
   }) {
     return RItemTile(
       key: key,
@@ -547,6 +619,8 @@ extension RItemTileExtension on Widget {
       edgePaddingTop: edgePaddingTop,
       edgePaddingRight: edgePaddingRight,
       edgePaddingBottom: edgePaddingBottom,
+      groupExpanded: groupExpanded,
+      groups: groups,
       child: child ?? this,
     );
   }
@@ -563,18 +637,45 @@ extension RItemTileExtension on Widget {
     );
   }
 
-  /// 填充底部剩余空间
-  RItemTile rFill({
-    bool fillRemaining = true,
-    bool fillHasScrollBody = false,
-    bool fillOverscroll = false,
-    bool fillExpand = true,
+  /// 分组/悬浮分组头
+  /// [groupExpanded] 启动分组的关键
+  /// [headerHeight] 头部固定的高度
+  /// [useSliverAppBar] 是否使用[SliverAppBar]实现[pinned]功能
+  RItemTile rGroup({
+    bool? groupExpanded = true,
+    bool pinned = true,
+    bool floating = false,
+    bool useSliverAppBar = true,
+    Color? headerBackgroundColor,
+    Color? headerForegroundColor,
+    double headerHeight = kMinInteractiveHeight,
+    List<String>? groups,
+    Color? fillColor,
+    double borderRadius = kDefaultBorderRadiusXX,
+    EdgeInsetsGeometry? sliverPadding,
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition = DecorationPosition.background,
   }) {
     return RItemTile(
-      fillRemaining: fillRemaining,
-      fillHasScrollBody: fillHasScrollBody,
-      fillOverscroll: fillOverscroll,
-      fillExpand: fillExpand,
+      groups: groups,
+      headerFixedHeight: headerHeight,
+      headerMaxHeight: headerHeight,
+      headerMinHeight: headerHeight,
+      groupExpanded: groupExpanded,
+      pinned: pinned,
+      floating: floating,
+      useSliverAppBar: useSliverAppBar,
+      headerBackgroundColor: headerBackgroundColor,
+      headerForegroundColor: headerForegroundColor,
+      sliverPadding: sliverPadding,
+      sliverDecoration: sliverDecoration ??
+          (fillColor == null
+              ? null
+              : fillDecoration(
+                  fillColor: fillColor,
+                  borderRadius: borderRadius,
+                )),
+      sliverDecorationPosition: sliverDecorationPosition,
       child: this,
     );
   }
@@ -610,6 +711,22 @@ extension RItemTileExtension on Widget {
       bottomLineColor: bottomLineColor,
       bottomLineHeight: bottomLineHeight,
       bottomLineMargin: bottomLineMargin,
+      child: this,
+    );
+  }
+
+  /// 填充底部剩余空间
+  RItemTile rFill({
+    bool fillRemaining = true,
+    bool fillHasScrollBody = false,
+    bool fillOverscroll = false,
+    bool fillExpand = true,
+  }) {
+    return RItemTile(
+      fillRemaining: fillRemaining,
+      fillHasScrollBody: fillHasScrollBody,
+      fillOverscroll: fillOverscroll,
+      fillExpand: fillExpand,
       child: this,
     );
   }

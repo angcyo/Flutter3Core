@@ -656,6 +656,15 @@ extension ListEx on List<dynamic> {
     }
     return this[index];
   }
+
+  /// 判断2个List是否至少有一个相同的元素
+  /// 交叉的数据
+  bool hasSameElement(List? list) {
+    if (list == null || list.isEmpty || isEmpty) {
+      return false;
+    }
+    return any((element) => list.contains(element));
+  }
 }
 
 //endregion Int 扩展
