@@ -179,7 +179,7 @@ class RItemTile extends StatefulWidget {
   /// [NavigationToolbar]
   /// [NavigationToolbar.middleSpacing]
   /// [kMiddleSpacing]
-  /// [RScrollView.wrapHeader]
+  /// [RScrollView._wrapHeader]
   final bool useSliverAppBar;
 
   /// [SliverAppBar.backgroundColor]

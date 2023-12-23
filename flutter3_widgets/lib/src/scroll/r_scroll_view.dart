@@ -191,15 +191,15 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     final normalGroupWrap = <Widget>[];
 
     //分组的头, 如果有
-    Widget? groupHeader;
+    _GroupHeaderInfo? groupHeaderInfo;
 
     // 清除收集到的list tile, 并添加到result中
     clearAndAppendList() {
       if (listWrap.isNotEmpty) {
-        final widget = _buildSliverList(context, groupHeader, listWrap);
+        final widget = _buildSliverList(context, groupHeaderInfo, listWrap);
         if (widget != null) {
           result.add(widget);
-          groupHeader = null;
+          groupHeaderInfo = null;
         }
         listWrap.clear();
       }
@@ -208,10 +208,10 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     // 清除收集到的grid tile, 并添加到result中
     clearAndAppendGrid() {
       if (gridWrap.isNotEmpty) {
-        final widget = _buildSliverGrid(context, groupHeader, gridWrap);
+        final widget = _buildSliverGrid(context, groupHeaderInfo, gridWrap);
         if (widget != null) {
           result.add(widget);
-          groupHeader = null;
+          groupHeaderInfo = null;
         }
         gridWrap.clear();
       }
@@ -237,12 +237,12 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
 
     // 不在list/grid中的sliver group中的item
     clearNormalSliverGroupList() {
-      if (groupHeader != null) {
-        var sliverGroup = _wrapSliverGroup(groupHeader!, normalGroupWrap);
+      if (groupHeaderInfo != null) {
+        var sliverGroup = _wrapSliverGroup(groupHeaderInfo!, normalGroupWrap);
         result.removeWhere((e) => normalGroupWrap.contains(e));
         result.add(sliverGroup);
       }
-      groupHeader = null;
+      groupHeaderInfo = null;
       normalGroupWrap.clear();
     }
 
@@ -262,7 +262,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
             tile.fillRemaining ||
             tile.isGroup) {
           //简单的
-          if (groupHeader == null) {
+          if (groupHeaderInfo == null) {
             clearAndAppendList();
             clearAndAppendGrid();
           }
@@ -287,13 +287,17 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
                 ));
           } else if (tile.isHeader) {
             // SliverPersistentHeader wrap
-            sliverTile = tile.buildWrapChild(
-                context,
-                result,
-                _wrapSliverTile(
-                  tile,
-                  wrapHeader(tile),
-                ));
+            if (tile.isGroup) {
+              sliverTile = _wrapHeader(tile);
+            } else {
+              sliverTile = tile.buildWrapChild(
+                  context,
+                  result,
+                  _wrapSliverTile(
+                    tile,
+                    _wrapHeader(tile),
+                  ));
+            }
           } else {
             sliverTile = tile.buildWrapChild(
                 context,
@@ -306,9 +310,9 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
 
           if (tile.isGroup) {
             clearNormalSliverGroupList();
-            groupHeader = sliverTile;
+            groupHeaderInfo = _GroupHeaderInfo(sliverTile, tile);
           } else {
-            if (groupHeader == null) {
+            if (groupHeaderInfo == null) {
               result.add(sliverTile);
             } else {
               normalGroupWrap.add(sliverTile);
@@ -354,7 +358,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   }
 
   /// 悬浮头包裹
-  Widget wrapHeader(RItemTile tile) {
+  Widget _wrapHeader(RItemTile tile) {
     if (tile.useSliverAppBar) {
       var height = tile.headerFixedHeight ?? tile.headerMinHeight;
       return SliverAppBar(
@@ -397,13 +401,16 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   //region 组装成list grid
 
   /// 构建成[SliverList]
+  /// [SliverAnimatedList]
   Widget? _buildSliverList(
     BuildContext context,
-    Widget? groupHeader,
+    _GroupHeaderInfo? groupHeaderInfo,
     List<Widget> list,
   ) {
     if (list.isEmpty) {
-      return groupHeader == null ? null : _wrapSliverGroup(groupHeader, list);
+      return groupHeaderInfo == null
+          ? null
+          : _wrapSliverGroup(groupHeaderInfo, list);
     }
     RItemTile first = list.firstWhere(
       (element) => element is RItemTile,
@@ -426,20 +433,23 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     );
     return _wrapSliverTile(
       first,
-      groupHeader == null
+      groupHeaderInfo == null
           ? sliverList
-          : _wrapSliverGroup(groupHeader, [sliverList]),
+          : _wrapSliverGroup(groupHeaderInfo, [sliverList]),
     );
   }
 
   /// 构建成[SliverGrid]
+  /// [SliverAnimatedGrid]
   Widget? _buildSliverGrid(
     BuildContext context,
-    Widget? groupHeader,
+    _GroupHeaderInfo? groupHeaderInfo,
     List<Widget> list,
   ) {
     if (list.isEmpty) {
-      return groupHeader == null ? null : _wrapSliverGroup(groupHeader, list);
+      return groupHeaderInfo == null
+          ? null
+          : _wrapSliverGroup(groupHeaderInfo, list);
     }
     RItemTile first = list.firstWhere(
       (element) => element is RItemTile,
@@ -463,9 +473,9 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     );
     return _wrapSliverTile(
       first,
-      groupHeader == null
+      groupHeaderInfo == null
           ? sliverGrid
-          : _wrapSliverGroup(groupHeader, [sliverGrid]),
+          : _wrapSliverGroup(groupHeaderInfo, [sliverGrid]),
     );
   }
 
@@ -493,12 +503,17 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
 
   /// 一组[sliverChild]
   /// [SliverMainAxisGroup]
-  Widget _wrapSliverGroup(Widget groupHeader, WidgetList sliverChild) {
-    return SliverMainAxisGroup(
-      slivers: [
-        groupHeader,
+  Widget _wrapSliverGroup(
+    _GroupHeaderInfo groupHeaderInfo,
+    WidgetList sliverChild,
+  ) {
+    //debugger();
+    return _wrapSliverTile(
+      groupHeaderInfo.headerTile,
+      SliverMainAxisGroup(slivers: [
+        groupHeaderInfo.headerWidget,
         ...sliverChild,
-      ],
+      ]),
     );
   }
 
@@ -603,6 +618,17 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     }
     return result;
   }
+}
+
+/// 分组头的信息
+class _GroupHeaderInfo {
+  Widget headerWidget;
+  RItemTile headerTile;
+
+  _GroupHeaderInfo(
+    this.headerWidget,
+    this.headerTile,
+  );
 }
 
 extension RScrollViewEx on WidgetList {
