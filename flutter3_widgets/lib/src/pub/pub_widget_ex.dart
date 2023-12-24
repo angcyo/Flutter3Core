@@ -44,7 +44,7 @@ extension PubStringEx on String {
       );
 }
 
-/// [Slidable] 侧滑菜单
+/// [Slidable] 侧滑菜单action
 SlidableAction slideAction({
   BuildContext? context,
   String? label,
@@ -76,7 +76,8 @@ SlidableAction slideAction({
     );
 
 extension PubWidgetEx on Widget {
-  /// [Slidable] 侧滑删除
+  /// [Slidable] 侧滑删除小部件
+  /// [slideAction] 侧滑菜单action
   /// 几种效果: https://pub.dev/packages/flutter_slidable#motions
   /// [BehindMotion]
   /// [StretchMotion]
