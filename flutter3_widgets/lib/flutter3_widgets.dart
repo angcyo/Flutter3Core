@@ -1,7 +1,6 @@
 library flutter3_widgets;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:expandable/expandable.dart';
@@ -25,6 +24,10 @@ export 'package:sliver_tools/sliver_tools.dart';
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';
 export 'src/pub/swiper/transformer_page_view/transformer_page_view.dart';
+
+part 'src/dialog/cancel_button.dart';
+
+part 'src/dialog/confirm_button.dart';
 
 part 'src/dialog/dialog_mixin.dart';
 

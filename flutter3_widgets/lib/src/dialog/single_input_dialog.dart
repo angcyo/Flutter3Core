@@ -10,6 +10,9 @@ const kDefaultInputLength = 30;
 
 /// 简单的输入框对话框
 class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
+  /// 是否使用图标按钮
+  final bool useIcon;
+
   final String? title;
   final Widget? titleWidget;
 
@@ -17,6 +20,11 @@ class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
   final Widget? cancelWidget;
   final String? save;
   final Widget? saveWidget;
+
+  /// 对话框的位置, 居中还是底部全屏
+  /// [Alignment.center]
+  /// [Alignment.bottomCenter]
+  final AlignmentGeometry alignment;
 
   /// 输入框提示文本
   final String? hintText;
@@ -43,8 +51,10 @@ class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
     this.save = kDialogSave,
     this.saveWidget,
     this.onSaveTap,
+    this.alignment = Alignment.center,
     this.maxLines = 1,
     this.maxLength = kDefaultInputLength,
+    this.useIcon = false,
     TextFieldConfig? inputConfig,
     String? text,
   }) : _inputConfig = inputConfig ?? TextFieldConfig(text: text);
@@ -60,8 +70,12 @@ class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
             ?.text(
                 style: globalTheme.textBodyStyle
                     .copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.start)
-            .paddingAll(kX);
+                textAlign: TextAlign.center)
+            .paddingOnly(
+                left: kX,
+                right: kX,
+                top: kX,
+                bottom: alignment == Alignment.center ? 0 : kX);
     //输入框
     Widget input = SingleInputWidget(
       config: _inputConfig,
@@ -69,50 +83,50 @@ class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
       maxLength: maxLength,
       border: underlineInputBorder(color: globalTheme.borderColor),
       focusedBorder: underlineInputBorder(color: globalTheme.accentColor),
-      //labelText: "",
       hintText: hintText,
+      //labelText: "",
+      //isDense: false,
+      //contentPadding: EdgeInsets.zero,
     );
 
     // 取消 和 保存
-    Widget? cancel = cancelWidget ??
-        this
-            .cancel
-            ?.text(
-                style: globalTheme.textLabelStyle, textAlign: TextAlign.center)
-            .paddingAll(kXh);
+    Widget? cancel = (cancelWidget == null && this.cancel == null)
+        ? null
+        : CancelButton(
+            widget: cancelWidget,
+            text: this.cancel,
+            useIcon: useIcon,
+            onTap: () {
+              Navigator.pop(context, false);
+            });
 
-    cancel = cancel?.ink(onTap: () {
-      Navigator.pop(context, false);
-    }).material();
-
-    Widget? save = saveWidget ??
-        this
-            .save
-            ?.text(
-                style: globalTheme.textLabelStyle
-                    .copyWith(color: globalTheme.accentColor),
-                textAlign: TextAlign.center)
-            .paddingAll(kXh);
-    save = save?.ink(onTap: () async {
-      var result = _inputConfig.text;
-      if (onSaveTap == null) {
-        Navigator.pop(context, result);
-      } else {
-        var intercept = await onSaveTap!(result) == true;
-        if (!intercept) {
-          if (context.mounted) {
-            Navigator.pop(context, result);
-          }
-        }
-      }
-    }).material();
+    Widget? save = (saveWidget == null && this.save == null)
+        ? null
+        : ConfirmButton(
+            widget: saveWidget,
+            text: this.save,
+            useIcon: useIcon,
+            onTap: () async {
+              var result = _inputConfig.text;
+              if (onSaveTap == null) {
+                Navigator.pop(context, result);
+              } else {
+                var intercept = await onSaveTap!(result) == true;
+                if (!intercept) {
+                  if (context.mounted) {
+                    Navigator.pop(context, result);
+                  }
+                }
+              }
+            });
 
     //line
-    Widget? hLine = (cancel != null || save != null)
+    Widget? hLine = (cancel != null || save != null || title != null)
         ? Line(
             axis: Axis.horizontal,
             color: globalTheme.lineDarkColor,
-            margin: const EdgeInsets.only(top: kL),
+            margin:
+                EdgeInsets.only(top: alignment == Alignment.center ? kL : 0),
           )
         : null;
     Widget? vLine = (cancel != null && save != null)
@@ -122,32 +136,64 @@ class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
           )
         : null;
 
-    var controlRow = Row(
+    //result
+    if (alignment == Alignment.center) {
+      //居中样式的对话框
+      var controlRow = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          if (cancel != null) cancel.expanded(),
+          if (vLine != null) vLine,
+          if (save != null) save.expanded(),
+        ],
+      );
+
+      var bodyColumn = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (title != null) title,
+          input.paddingSymmetric(horizontal: kX),
+          if (hLine != null) hLine,
+          controlRow,
+        ],
+      );
+
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: true,
+        body: dialogCenterContainer(
+          context: context,
+          child: bodyColumn,
+        ),
+      );
+    }
+    //底部全屏样式的对话框
+    var topRow = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
-        if (cancel != null) cancel.expanded(),
-        if (vLine != null) vLine,
-        if (save != null) save.expanded(),
+        if (cancel != null) cancel,
+        (title ?? const Empty.zero()).expanded(),
+        if (save != null) save,
       ],
     );
-
     var bodyColumn = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (title != null) title,
-        input.paddingSymmetric(horizontal: kX),
+        topRow,
         if (hLine != null) hLine,
-        controlRow,
+        input.paddingSymmetric(vertical: kX),
       ],
     );
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: true,
-      body: dialogCenterContainer(
+      body: dialogBottomContainer(
         context: context,
         child: bodyColumn,
       ),

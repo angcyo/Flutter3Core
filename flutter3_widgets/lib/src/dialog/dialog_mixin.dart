@@ -24,22 +24,21 @@ mixin DialogConstraintMixin {
       maxHeight: max(screenWidth, screenHeight));
 
   /// 对话框的容器, 带圆角, 带margin
+  /// [color] 背景颜色
   /// [fillDecoration]
   /// [strokeDecoration]
   Widget dialogContainer({
     required BuildContext context,
     required Widget child,
     EdgeInsets? margin,
-    EdgeInsets? padding,
     Color? color,
     Decoration? decoration,
-    AlignmentGeometry? alignment = Alignment.center,
     BoxConstraints? constraints,
-    Matrix4? transform,
     BorderRadiusGeometry? borderRadius,
+    double radius = kDefaultBorderRadiusXX,
   }) {
     var globalTheme = GlobalTheme.of(context);
-    borderRadius ??= BorderRadius.circular(kDefaultBorderRadiusXX);
+    borderRadius ??= BorderRadius.circular(radius);
     return Padding(
       padding: margin ?? dialogMargin,
       child: ConstrainedBox(
@@ -61,14 +60,42 @@ mixin DialogConstraintMixin {
   Widget dialogCenterContainer({
     required BuildContext context,
     required Widget child,
+    double radius = kDefaultBorderRadiusXX,
   }) {
     return Center(
       child: dialogContainer(
         context: context,
+        radius: radius,
         child: child.matchParent(matchHeight: false),
       ).material(),
     );
   }
+
+  /// 底部全屏显示的对话框样式
+  @api
+  Widget dialogBottomContainer({
+    required BuildContext context,
+    required Widget child,
+    double radius = kDefaultBorderRadiusXX,
+  }) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: dialogContainer(
+        context: context,
+        margin: EdgeInsets.zero,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(radius),
+          topRight: Radius.circular(radius),
+        ),
+        child: child.matchParent(matchHeight: false),
+      ) /*.material()*/,
+    );
+  }
+
+  //region 辅助方法
+
+  //endregion 辅助方法
+
 }
 
 /// 对话框的一些基础方法

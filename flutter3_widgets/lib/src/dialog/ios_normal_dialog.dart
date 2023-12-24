@@ -7,6 +7,9 @@ part of flutter3_widgets;
 ///
 /// ios 风格的对话框, 居中显示
 class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
+  /// 是否使用图标按钮
+  final bool useIcon;
+
   final String? title;
   final Widget? titleWidget;
   final String? message;
@@ -30,6 +33,7 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
     this.confirm = kDialogConfirm,
     this.confirmWidget,
     this.onConfirmTap,
+    this.useIcon = false,
   });
 
   @override
@@ -53,37 +57,34 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
             .paddingAll(kX);
 
     // 取消 和 确定
-    Widget? cancel = cancelWidget ??
-        this
-            .cancel
-            ?.text(
-                style: globalTheme.textLabelStyle, textAlign: TextAlign.center)
-            .paddingAll(kXh);
+    Widget? cancel = (cancelWidget == null && this.cancel == null)
+        ? null
+        : CancelButton(
+            widget: cancelWidget,
+            text: this.cancel,
+            useIcon: useIcon,
+            onTap: () {
+              Navigator.pop(context, false);
+            });
 
-    cancel = cancel?.ink(onTap: () {
-      Navigator.pop(context, false);
-    }).material();
-
-    Widget? confirm = confirmWidget ??
-        this
-            .confirm
-            ?.text(
-                style: globalTheme.textLabelStyle
-                    .copyWith(color: globalTheme.accentColor),
-                textAlign: TextAlign.center)
-            .paddingAll(kXh);
-    confirm = confirm?.ink(onTap: () async {
-      if (onConfirmTap == null) {
-        Navigator.pop(context, true);
-      } else {
-        var intercept = await onConfirmTap!(true) == true;
-        if (!intercept) {
-          if (context.mounted) {
-            Navigator.pop(context, true);
-          }
-        }
-      }
-    }).material();
+    Widget? confirm = (confirmWidget == null && this.confirm == null)
+        ? null
+        : ConfirmButton(
+            widget: confirmWidget,
+            text: this.confirm,
+            useIcon: useIcon,
+            onTap: () async {
+              if (onConfirmTap == null) {
+                Navigator.pop(context, true);
+              } else {
+                var intercept = await onConfirmTap!(true) == true;
+                if (!intercept) {
+                  if (context.mounted) {
+                    Navigator.pop(context, true);
+                  }
+                }
+              }
+            });
 
     //line
     Widget? hLine = (cancel != null || confirm != null)
