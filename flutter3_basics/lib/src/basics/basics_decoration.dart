@@ -4,6 +4,8 @@ part of flutter3_basics;
 /// @since 2023/11/21
 ///
 
+//region BoxDecoration
+
 /// [BoxDecoration] 装饰
 
 /// 描边装饰
@@ -119,3 +121,51 @@ BoxDecoration lineaGradientDecoration(
     //gradient:
   );
 }
+
+//endregion BoxDecoration
+
+//region InputDecoration
+
+/// [InputDecoration]
+/// [OutlineInputBorder]
+OutlineInputBorder outlineInputBorder({
+  BuildContext? context,
+  Color? color,
+  double width = 1,
+  double gapPadding = 4,
+  double? borderRadius,
+  BorderSide? borderSide,
+}) {
+  var globalTheme = GlobalTheme.of(context);
+  return OutlineInputBorder(
+    borderRadius: borderRadius != null
+        ? BorderRadius.circular(borderRadius)
+        : BorderRadius.circular(kDefaultBorderRadiusXX),
+    borderSide: borderSide ??
+        BorderSide(
+          color: color ?? globalTheme.borderColor,
+          width: width,
+        ),
+    gapPadding: gapPadding,
+  );
+}
+
+/// [InputDecoration]
+/// [UnderlineInputBorder]
+UnderlineInputBorder underlineInputBorder({
+  BuildContext? context,
+  Color? color,
+  double width = 1,
+  double borderRadius = 0,
+}) {
+  var globalTheme = GlobalTheme.of(context);
+  return UnderlineInputBorder(
+    borderSide: BorderSide(
+      color: color ?? globalTheme.borderColor,
+      width: width,
+    ),
+    borderRadius: BorderRadius.circular(borderRadius),
+  );
+}
+
+//endregion InputDecoration

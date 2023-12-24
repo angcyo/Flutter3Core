@@ -30,6 +30,8 @@ part 'src/dialog/dialog_mixin.dart';
 
 part 'src/dialog/ios_normal_dialog.dart';
 
+part 'src/dialog/single_input_dialog.dart';
+
 part 'src/navigation/navigate_ex.dart';
 
 part 'src/pub/accurate_sized_box.dart';

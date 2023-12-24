@@ -4,8 +4,8 @@ part of flutter3_widgets;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/15
 ///
-
-/// ios 风格的对话框
+///
+/// ios 风格的对话框, 居中显示
 class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
   final String? title;
   final Widget? titleWidget;
@@ -17,7 +17,7 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
   final Widget? confirmWidget;
 
   /// 确定按钮点击回调, 返回true, 表示拦截默认处理
-  final FutureResultCallback<bool>? onConfirmTap;
+  final FutureResultCallback<bool, bool>? onConfirmTap;
 
   const IosNormalDialog({
     super.key,
@@ -25,9 +25,9 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
     this.titleWidget,
     this.message,
     this.messageWidget,
-    this.cancel = '取消',
+    this.cancel = kDialogCancel,
     this.cancelWidget,
-    this.confirm = '确定',
+    this.confirm = kDialogConfirm,
     this.confirmWidget,
     this.onConfirmTap,
   });
@@ -37,42 +37,46 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
     var globalTheme = GlobalTheme.of(context);
 
     //标题 和 内容
-    Widget? t = titleWidget ??
-        title
+    Widget? title = titleWidget ??
+        this
+            .title
             ?.text(
                 style: globalTheme.textTitleStyle
                     .copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center)
             .paddingAll(kX);
-    Widget? m = messageWidget ??
-        message
+    Widget? message = messageWidget ??
+        this
+            .message
             ?.text(
                 style: globalTheme.textInfoStyle, textAlign: TextAlign.center)
             .paddingAll(kX);
 
     // 取消 和 确定
-    Widget? c = cancelWidget ??
-        cancel
+    Widget? cancel = cancelWidget ??
+        this
+            .cancel
             ?.text(
                 style: globalTheme.textLabelStyle, textAlign: TextAlign.center)
             .paddingAll(kXh);
 
-    c = c?.ink(onTap: () {
+    cancel = cancel?.ink(onTap: () {
       Navigator.pop(context, false);
     }).material();
 
-    Widget? f = confirmWidget ??
-        confirm
+    Widget? confirm = confirmWidget ??
+        this
+            .confirm
             ?.text(
                 style: globalTheme.textLabelStyle
                     .copyWith(color: globalTheme.accentColor),
                 textAlign: TextAlign.center)
             .paddingAll(kXh);
-    f = f?.ink(onTap: () async {
+    confirm = confirm?.ink(onTap: () async {
       if (onConfirmTap == null) {
         Navigator.pop(context, true);
       } else {
-        var intercept = await onConfirmTap!() == true;
+        var intercept = await onConfirmTap!(true) == true;
         if (!intercept) {
           if (context.mounted) {
             Navigator.pop(context, true);
@@ -82,46 +86,44 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
     }).material();
 
     //line
-    Widget? hLine = (c != null || f != null)
+    Widget? hLine = (cancel != null || confirm != null)
         ? Line(
             axis: Axis.horizontal,
             color: globalTheme.lineDarkColor,
             margin: const EdgeInsets.only(top: kL),
           )
         : null;
-    Widget? vLine = (c != null && f != null)
+    Widget? vLine = (cancel != null && confirm != null)
         ? Line(
             axis: Axis.vertical,
             color: globalTheme.lineDarkColor,
           )
         : null;
 
-    var row = Row(
+    var controlRow = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
-        if (c != null) c.expanded(),
+        if (cancel != null) cancel.expanded(),
         if (vLine != null) vLine,
-        if (f != null) f.expanded(),
+        if (confirm != null) confirm.expanded(),
       ],
     );
 
-    var column = Column(
+    var bodyColumn = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (t != null) t,
-        if (m != null) m,
+        if (title != null) title,
+        if (message != null) message,
         if (hLine != null) hLine,
-        row,
+        controlRow,
       ],
     );
 
-    return Center(
-      child: dialogContainer(
-        context: context,
-        child: column.matchParent(matchHeight: false),
-      ).material(),
+    return dialogCenterContainer(
+      context: context,
+      child: bodyColumn,
     );
   }
 }

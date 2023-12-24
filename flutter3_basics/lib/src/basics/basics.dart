@@ -11,7 +11,7 @@ part of flutter3_basics;
 typedef ResultCallback<T> = T Function();
 
 /// [Future] 返回值的回调
-typedef FutureResultCallback<T> = Future<T> Function();
+typedef FutureResultCallback<R, T> = Future<R> Function(T value);
 
 /// 只有一个值回调
 typedef ValueCallback = dynamic Function(dynamic value);

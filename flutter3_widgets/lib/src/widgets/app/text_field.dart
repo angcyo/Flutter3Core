@@ -31,6 +31,9 @@ class TextFieldConfig {
         obscureNode = ObscureNode(obscureText ?? false);
 }
 
+const kSuffixIconSize = 14.0;
+const kSuffixIconConstraintsSize = 30.0;
+
 /// 用来控制密码输入控件, 密码的可见性
 class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier {
   /// 是否是密码输入框
@@ -111,6 +114,13 @@ class SingleInputWidget extends StatefulWidget {
   /// 后缀小部件
   final Widget? suffix;
 
+  /// 后缀/前缀图标的大小
+  //final double? prefixIconSize;
+  final double? suffixIconSize;
+
+  /// 后缀/前缀图标的约束
+  final BoxConstraints? suffixIconConstraints;
+
   /// 是否折叠显示, true: 则输入框的高度和文本一致
   final bool? isCollapsed;
 
@@ -124,6 +134,8 @@ class SingleInputWidget extends StatefulWidget {
   /// keyboardType = keyboardType ?? (maxLines == 1 ? TextInputType.text : TextInputType.multiline),
   final TextInputType? keyboardType;
 
+  /// 输入的文本样式
+  final TextStyle? textStyle;
   final TextAlign textAlign;
 
   /// 限制输入的最大长度
@@ -138,6 +150,13 @@ class SingleInputWidget extends StatefulWidget {
   /// 计数器的文本, 为""时, 会不显示计数器, 但是又可以限制输入的最大长度
   final String? counterText;
 
+  /// 输入框的装饰样式
+  /// [InputDecoration]
+  final InputDecoration? decoration;
+  final InputBorder? border;
+  final InputBorder? focusedBorder;
+  final InputBorder? disabledBorder;
+
   const SingleInputWidget({
     super.key,
     required this.config,
@@ -151,6 +170,7 @@ class SingleInputWidget extends StatefulWidget {
     this.minLines,
     this.enabled = true,
     this.autoShowSuffixIcon = true,
+    this.textStyle,
     this.textAlign = TextAlign.start,
     this.disabledFillColor,
     this.cursorColor,
@@ -158,12 +178,24 @@ class SingleInputWidget extends StatefulWidget {
     this.hintText,
     this.suffix,
     this.prefix,
+    //this.prefixIconSize = kSuffixIconSize,
+    this.suffixIconSize = kSuffixIconSize,
+    this.suffixIconConstraints = const BoxConstraints(
+      maxWidth: kSuffixIconConstraintsSize,
+      maxHeight: kSuffixIconConstraintsSize,
+      minHeight: kSuffixIconConstraintsSize,
+      minWidth: kSuffixIconConstraintsSize,
+    ),
     this.keyboardType,
     this.maxLength,
     this.counterText,
     this.isCollapsed,
     this.isDense = true,
     this.contentPadding,
+    this.decoration,
+    this.border,
+    this.focusedBorder,
+    this.disabledBorder,
   });
 
   @override
@@ -178,6 +210,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       widget.config.focusNode.hasFocus == true &&
       widget.config.controller.text.isNotEmpty;
 
+  /// 后缀图标
   Widget? _buildSuffixIcon() {
     if (_showSuffixIcon) {
       var globalTheme = GlobalTheme.of(context);
@@ -185,6 +218,17 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         //密码输入框
         return IconButton(
           color: globalTheme.icoGrayColor,
+          iconSize: widget.suffixIconSize,
+          constraints: widget.suffixIconConstraints,
+          //tapTargetSize: MaterialTapTargetSize.shrinkWrap, //收紧大小
+          //最小视觉密度
+          //visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+          /*style: ButtonStyle(
+              //minimumSize: MaterialStateProperty.all(Size.zero),
+              //padding: MaterialStateProperty.all(EdgeInsets.zero),
+              //tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              //visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+              ),*/
           onPressed: () {
             widget.config.obscureNode.toggle();
             setState(() {});
@@ -199,6 +243,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         //普通文本输入框
         return IconButton(
           color: globalTheme.icoGrayColor,
+          iconSize: widget.suffixIconSize,
+          constraints: widget.suffixIconConstraints,
           onPressed: () {
             widget.config.controller.clear();
             setState(() {});
@@ -240,59 +286,69 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   Widget build(BuildContext context) {
     //圆角填充的输入装饰样式
     var globalTheme = GlobalTheme.of(context);
-    var normalBorder = OutlineInputBorder(
-      gapPadding: widget.gapPadding,
-      borderRadius: BorderRadius.circular(widget.borderRadius),
-      borderSide:
-          widget.borderColor == Colors.transparent || widget.borderWidth <= 0
+    var normalBorder = widget.border ??
+        OutlineInputBorder(
+          gapPadding: widget.gapPadding,
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          borderSide: widget.borderColor == Colors.transparent ||
+                  widget.borderWidth <= 0
               ? BorderSide.none
               : BorderSide(
                   color: widget.borderColor ?? globalTheme.borderColor,
                   width: widget.borderWidth,
                 ),
-    );
+        );
 
-    var focusedBorder = OutlineInputBorder(
-      gapPadding: widget.gapPadding,
-      borderRadius: BorderRadius.circular(widget.borderRadius),
-      borderSide: widget.focusBorderColor == Colors.transparent ||
-              widget.borderWidth <= 0
-          ? BorderSide.none
-          : BorderSide(
-              color: widget.focusBorderColor ?? globalTheme.accentColor,
-              width: widget.borderWidth,
-            ),
-    );
+    var focusedBorder = widget.focusedBorder ??
+        OutlineInputBorder(
+          gapPadding: widget.gapPadding,
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          borderSide: widget.focusBorderColor == Colors.transparent ||
+                  widget.borderWidth <= 0
+              ? BorderSide.none
+              : BorderSide(
+                  color: widget.focusBorderColor ?? globalTheme.accentColor,
+                  width: widget.borderWidth,
+                ),
+        );
 
-    var decoration = InputDecoration(
-      fillColor: widget.enabled
-          ? widget.fillColor
-          : widget.disabledFillColor ?? widget.fillColor?.disabledColor,
-      filled: widget.fillColor != null,
-      isDense: widget.isDense,
-      isCollapsed: widget.isCollapsed,
-      counterText: widget.counterText,
-      contentPadding: widget.contentPadding,
-      //contentPadding: const EdgeInsets.only(top: 60),
-      //contentPadding: const EdgeInsets.all(0),
-      //contentPadding: EdgeInsets.symmetric(horizontal: globalTheme.xh),
-      border: normalBorder,
-      focusedBorder: focusedBorder,
-      labelText: widget.labelText ?? widget.hintText,
-      hintText: widget.hintText,
-      //floatingLabelAlignment: FloatingLabelAlignment.center,
-      floatingLabelStyle: TextStyle(
-        color: widget.focusBorderColor ?? globalTheme.accentColor,
-      ),
-      //控制label的行为
-      floatingLabelBehavior: FloatingLabelBehavior.auto,
-      suffix: widget.suffix,
-      /*suffixIcon: const Icon(Icons.clear).click(() {
+    var disabledBorder = widget.disabledBorder ?? normalBorder;
+
+    var decoration = widget.decoration ??
+        InputDecoration(
+          fillColor: widget.enabled
+              ? widget.fillColor
+              : widget.disabledFillColor ?? widget.fillColor?.disabledColor,
+          filled: widget.fillColor != null,
+          isDense: widget.isDense,
+          isCollapsed: widget.isCollapsed,
+          counterText: widget.counterText,
+          contentPadding: widget.contentPadding,
+          //contentPadding: const EdgeInsets.only(top: 60),
+          //contentPadding: const EdgeInsets.all(0),
+          //contentPadding: EdgeInsets.symmetric(horizontal: globalTheme.xh),
+          border: normalBorder,
+          focusedBorder: focusedBorder,
+          disabledBorder: disabledBorder,
+          label: null,
+          labelText: widget.labelText,
+          hintText: widget.hintText,
+          //floatingLabelAlignment: FloatingLabelAlignment.center,
+          floatingLabelStyle: TextStyle(
+            color: widget.focusBorderColor ?? globalTheme.accentColor,
+          ),
+          //控制label的行为
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          suffix: widget.suffix,
+          /*suffixIcon: const Icon(Icons.clear).click(() {
         widget.controller.clear();
       }),*/
-      suffixIcon: _buildSuffixIcon(),
-      prefix: widget.prefix,
-    );
+          suffixIcon: _buildSuffixIcon(),
+          suffixIconConstraints: widget.suffixIconConstraints,
+          prefix: widget.prefix,
+          //prefixIconConstraints: null,
+          //prefixIcon: widget.prefix,
+        );
 
     return TextSelectionTheme(
       data: TextSelectionThemeData(
@@ -312,8 +368,9 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           onChanged: (value) {
             _checkSuffixIcon();
           },
-          //expands: true,
+          style: widget.textStyle,
           textAlign: widget.textAlign,
+          expands: false,
           maxLines: widget.maxLines,
           minLines: widget.minLines,
           maxLength: widget.maxLength,

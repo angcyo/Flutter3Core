@@ -4,6 +4,11 @@ part of flutter3_widgets;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/15
 ///
+///
+
+const String kDialogCancel = '取消';
+const String kDialogConfirm = '确定';
+const String kDialogSave = '保存';
 
 /// 对话框的一下基础约束
 mixin DialogConstraintMixin {
@@ -18,7 +23,7 @@ mixin DialogConstraintMixin {
       minHeight: 0,
       maxHeight: max(screenWidth, screenHeight));
 
-  /// 对话框的容器
+  /// 对话框的容器, 带圆角, 带margin
   /// [fillDecoration]
   /// [strokeDecoration]
   Widget dialogContainer({
@@ -48,6 +53,20 @@ mixin DialogConstraintMixin {
           child: child,
         ),
       ).clip(borderRadius: borderRadius),
+    );
+  }
+
+  /// 居中显示的对话框样式
+  @api
+  Widget dialogCenterContainer({
+    required BuildContext context,
+    required Widget child,
+  }) {
+    return Center(
+      child: dialogContainer(
+        context: context,
+        child: child.matchParent(matchHeight: false),
+      ).material(),
     );
   }
 }

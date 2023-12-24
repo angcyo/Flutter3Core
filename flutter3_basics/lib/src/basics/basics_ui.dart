@@ -108,6 +108,7 @@ extension WidgetListEx on WidgetList {
   }
 
   /// 使用[Column]包裹
+  /// [gap] 间隙
   Widget column({
     MainAxisAlignment? mainAxisAlignment,
     MainAxisSize? mainAxisSize,
@@ -115,7 +116,23 @@ extension WidgetListEx on WidgetList {
     TextDirection? textDirection,
     VerticalDirection? verticalDirection,
     TextBaseline? textBaseline,
+    double? gap,
+    Widget? gapWidget,
   }) {
+    var children = this;
+    if (gap != null || gapWidget != null) {
+      children = <Widget>[];
+      for (var i = 0; i < length; i++) {
+        children.add(this[i]);
+        if (i < length - 1) {
+          if (gapWidget != null) {
+            children.add(gapWidget);
+          } else {
+            children.add(Empty.width(gap!));
+          }
+        }
+      }
+    }
     return Column(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
       mainAxisSize: mainAxisSize ?? MainAxisSize.max,
@@ -123,7 +140,7 @@ extension WidgetListEx on WidgetList {
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
       textBaseline: textBaseline,
-      children: this,
+      children: children,
     );
   }
 
@@ -131,6 +148,7 @@ extension WidgetListEx on WidgetList {
   /// [mainAxisAlignment] 主轴对齐方式, 水平方向, 水平左对齐, 水平居中, 水平右对齐
   /// [mainAxisSize] 主轴尺寸, 是要用最大尺寸, 还是要最小尺寸
   /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
+  /// [gap] 间隙
   Widget row({
     MainAxisAlignment? mainAxisAlignment,
     MainAxisSize? mainAxisSize,
@@ -138,7 +156,23 @@ extension WidgetListEx on WidgetList {
     TextDirection? textDirection,
     VerticalDirection? verticalDirection,
     TextBaseline? textBaseline,
+    double? gap,
+    Widget? gapWidget,
   }) {
+    var children = this;
+    if (gap != null || gapWidget != null) {
+      children = <Widget>[];
+      for (var i = 0; i < length; i++) {
+        children.add(this[i]);
+        if (i < length - 1) {
+          if (gapWidget != null) {
+            children.add(gapWidget);
+          } else {
+            children.add(Empty.width(gap!));
+          }
+        }
+      }
+    }
     return Row(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
       mainAxisSize: mainAxisSize ?? MainAxisSize.max,
@@ -146,7 +180,7 @@ extension WidgetListEx on WidgetList {
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
       textBaseline: textBaseline,
-      children: this,
+      children: children,
     );
   }
 
