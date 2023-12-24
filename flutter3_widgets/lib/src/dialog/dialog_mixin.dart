@@ -92,13 +92,16 @@ mixin DialogConstraintMixin {
     );
   }
 
-  //region 辅助方法
+//region 辅助方法
 
-  //endregion 辅助方法
-
+//endregion 辅助方法
 }
 
 /// 对话框的一些基础方法
+/// [barrierDismissible] 窗口外是否可以销毁对话框
+/// [DialogRoute]
+/// [DialogPageRoute]
+/// [showDialog]
 Future<T?> showDialogWidget<T>({
   required BuildContext context,
   required Widget widget,
@@ -108,18 +111,47 @@ Future<T?> showDialogWidget<T>({
   bool useSafeArea = true,
   bool useRootNavigator = true,
   RouteSettings? routeSettings,
+  TraversalEdgeBehavior? traversalEdgeBehavior,
   Offset? anchorPoint,
-}) =>
-    showDialog<T>(
-      context: context,
-      barrierDismissible: barrierDismissible,
-      barrierColor: barrierColor,
-      barrierLabel: barrierLabel,
-      useSafeArea: useSafeArea,
-      useRootNavigator: useRootNavigator,
-      routeSettings: routeSettings,
-      anchorPoint: anchorPoint,
-      builder: (context) {
-        return widget;
-      },
-    );
+  TranslationType? type,
+}) {
+  final CapturedThemes themes = InheritedTheme.capture(
+    from: context,
+    to: Navigator.of(
+      context,
+      rootNavigator: useRootNavigator,
+    ).context,
+  );
+
+  return Navigator.of(context, rootNavigator: useRootNavigator)
+      .push<T>(DialogPageRoute<T>(
+    context: context,
+    builder: (context) {
+      return widget;
+    },
+    barrierColor: barrierColor ?? Colors.black54,
+    barrierDismissible: barrierDismissible,
+    barrierLabel: barrierLabel,
+    useSafeArea: useSafeArea,
+    settings: routeSettings,
+    themes: themes,
+    anchorPoint: anchorPoint,
+    traversalEdgeBehavior:
+        traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
+    type: type,
+  ));
+
+  /*return showDialog<T>(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    barrierColor: barrierColor,
+    barrierLabel: barrierLabel,
+    useSafeArea: useSafeArea,
+    useRootNavigator: useRootNavigator,
+    routeSettings: routeSettings,
+    anchorPoint: anchorPoint,
+    builder: (context) {
+      return widget;
+    },
+  );*/
+}

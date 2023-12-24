@@ -1246,6 +1246,9 @@ enum TranslationType {
   /// [SlidePageRoute]
   slide,
 
+  /// [ScalePageRoute]
+  scale,
+
   /// [TranslationPageRoute]
   translation,
 
@@ -1288,6 +1291,16 @@ extension RouteWidgetEx on Widget {
         break;
       case TranslationType.slide:
         targetRoute = SlidePageRoute(
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.scale:
+        targetRoute = ScalePageRoute(
           builder: (context) => this,
           settings: settings,
           maintainState: maintainState,

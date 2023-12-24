@@ -277,3 +277,45 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
     );
   }
 }
+
+///缩放路由动画
+class ScalePageRoute<T> extends MaterialPageRoute<T>
+    with SameRouteTransitionMixin<T> {
+  ScalePageRoute({
+    required super.builder,
+    super.settings,
+    super.maintainState = true,
+    super.fullscreenDialog,
+    super.allowSnapshotting = true,
+    super.barrierDismissible = false,
+  });
+
+  @override
+  Widget buildSameTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    //logAnimation("Scale", animation, secondaryAnimation);
+    //顶部进入动画
+    var enter = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).chain(CurveTween(curve: Curves.easeOut)).animate(animation);
+    //底部退出动画
+    var exit = Tween<double>(
+      begin: 1,
+      end: 0.8,
+    ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
+    return ScaleTransition(
+      scale: enter,
+      alignment: Alignment.center,
+      child: ScaleTransition(
+        scale: exit,
+        alignment: Alignment.center,
+        child: child,
+      ),
+    );
+  }
+}

@@ -31,6 +31,8 @@ part 'src/dialog/confirm_button.dart';
 
 part 'src/dialog/dialog_mixin.dart';
 
+part 'src/dialog/dialog_page_route.dart';
+
 part 'src/dialog/ios_normal_dialog.dart';
 
 part 'src/dialog/single_input_dialog.dart';
