@@ -128,6 +128,7 @@ class SingleInputWidget extends StatefulWidget {
   final bool? isDense;
 
   /// [isDense] [isCollapsed] 也是可以通过[InputDecoration]来控制的
+  /// [InputDecoration.contentPadding]
   final EdgeInsetsGeometry? contentPadding;
 
   /// 键盘输入类型

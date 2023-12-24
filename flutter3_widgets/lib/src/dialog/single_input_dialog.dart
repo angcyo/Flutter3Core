@@ -86,7 +86,7 @@ class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
       hintText: hintText,
       //labelText: "",
       //isDense: false,
-      //contentPadding: EdgeInsets.zero,
+      contentPadding: const EdgeInsets.fromLTRB(kH, kL, kH, kL),
     );
 
     // 取消 和 保存
