@@ -15,6 +15,7 @@ import 'package:flutter3_widgets/assets_generated/assets.gen.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:lifecycle/lifecycle.dart';
 import 'package:rich_readmore/rich_readmore.dart';
+import 'package:wheel_picker/wheel_picker.dart';
 
 import 'src/pub/flutter_verification_code.dart';
 
@@ -53,6 +54,8 @@ part 'src/pub/lifecycle.dart';
 part 'src/pub/pub_widget_ex.dart';
 
 part 'src/pub/verify_code.dart';
+
+part 'src/pub/wheel.dart';
 
 part 'src/scroll/page/scroll_mixin.dart';
 

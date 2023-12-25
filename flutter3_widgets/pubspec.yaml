@@ -41,6 +41,10 @@ dependencies:
   # https://github.com/awaik/flutter_verification_code
   # flutter_verification_code: ^1.1.7
 
+  # https://pub.dev/packages/wheel_picker
+  # https://github.com/stavgafny/wheel_picker
+  wheel_picker: ^0.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
