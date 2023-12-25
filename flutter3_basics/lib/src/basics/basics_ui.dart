@@ -83,8 +83,8 @@ extension WidgetListEx on WidgetList {
   /// [alignment] 主轴对齐方式
   /// [crossAxisAlignment] 交叉轴对齐方式
   Widget wrap({
-    double spacing = 8,
-    double runSpacing = 8,
+    double spacing = kH,
+    double runSpacing = kH,
     Axis direction = Axis.horizontal,
     WrapAlignment alignment = WrapAlignment.start,
     WrapAlignment runAlignment = WrapAlignment.start,
@@ -135,7 +135,7 @@ extension WidgetListEx on WidgetList {
     }
     return Column(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
-      mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+      mainAxisSize: mainAxisSize ?? MainAxisSize.min,
       crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
@@ -175,7 +175,7 @@ extension WidgetListEx on WidgetList {
     }
     return Row(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
-      mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+      mainAxisSize: mainAxisSize ?? MainAxisSize.min,
       crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,

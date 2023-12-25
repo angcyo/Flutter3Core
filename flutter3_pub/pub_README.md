@@ -267,7 +267,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 一个 Flutter
   小部件，用于实现滑动删除列表项，支持左滑和右滑两种操作。 可滑动列表项的 Flutter 实现，具有可以关闭的方向滑动操作。
 - [flutter_staggered_grid_view: ^0.7.0](https://pub.dev/packages/flutter_staggered_grid_view)
-  提供颤振网格布局的集合。
+  提供颤振网格布局的集合。瀑布流
 - [overflow_view: ^0.3.1](https://pub.dev/packages/overflow_view)
   如果没有足够的空间，则在一行中显示子项的小部件，末尾有一个溢出指示器。
 - [flutter_sticky_header: ^0.6.5](https://pub.dev/packages/flutter_sticky_header) 带有条子的粘性标头的
