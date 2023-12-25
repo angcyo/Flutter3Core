@@ -268,6 +268,8 @@ https://github.com/fluttercommunity/plus_plugins
   小部件，用于实现滑动删除列表项，支持左滑和右滑两种操作。 可滑动列表项的 Flutter 实现，具有可以关闭的方向滑动操作。
 - [flutter_staggered_grid_view: ^0.7.0](https://pub.dev/packages/flutter_staggered_grid_view)
   提供颤振网格布局的集合。瀑布流
+- [value_layout_builder: ^0.3.1](https://pub.dev/packages/value_layout_builder)
+  布局过程中使用值来构建子项。这个小部件类似于 LayoutBuilder，但它允许您使用值来构建子项，而不是使用约束。
 - [overflow_view: ^0.3.1](https://pub.dev/packages/overflow_view)
   如果没有足够的空间，则在一行中显示子项的小部件，末尾有一个溢出指示器。
 - [flutter_sticky_header: ^0.6.5](https://pub.dev/packages/flutter_sticky_header) 带有条子的粘性标头的

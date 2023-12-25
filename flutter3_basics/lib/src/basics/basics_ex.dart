@@ -196,6 +196,7 @@ typedef StringEachCallback = void Function(String element);
 typedef StringIndexEachCallback = void Function(int index, String element);
 
 /// 获取剪切板的文本
+/// [StringEx.copy]
 Future<String?> getClipboardText() async {
   var data = await Clipboard.getData(Clipboard.kTextPlain);
   return data?.text;
@@ -355,6 +356,7 @@ extension StringEx on String {
   Future<bool> openUrl([BuildContext? context]) => openWebUrl(this, context);
 
   /// 复制当前的字符串到剪切板
+  /// [getClipboardText]
   Future<void> copy() async => Clipboard.setData(ClipboardData(text: this));
 
   /// 将`8000`转换成`8.0.0.0`

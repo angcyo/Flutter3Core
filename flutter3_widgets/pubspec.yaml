@@ -37,6 +37,10 @@ dependencies:
   # https://github.com/letsar/flutter_slidable
   flutter_slidable: ^3.0.1
 
+  # https://pub.dev/packages/flutter_verification_code
+  # https://github.com/awaik/flutter_verification_code
+  # flutter_verification_code: ^1.1.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

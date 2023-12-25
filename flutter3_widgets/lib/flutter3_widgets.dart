@@ -9,11 +9,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_widgets/assets_generated/assets.gen.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:lifecycle/lifecycle.dart';
 import 'package:rich_readmore/rich_readmore.dart';
+
+import 'src/pub/flutter_verification_code.dart';
 
 export 'package:expandable/expandable.dart';
 export 'package:flutter3_basics/flutter3_basics.dart';
@@ -48,6 +51,8 @@ part 'src/pub/keep_alive.dart';
 part 'src/pub/lifecycle.dart';
 
 part 'src/pub/pub_widget_ex.dart';
+
+part 'src/pub/verify_code.dart';
 
 part 'src/scroll/page/scroll_mixin.dart';
 

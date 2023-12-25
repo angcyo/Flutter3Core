@@ -127,3 +127,7 @@ extension PubWidgetEx on Widget {
         child: this,
       );
 }
+
+//region pub widget
+
+//endregion pub widget

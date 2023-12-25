@@ -135,6 +135,11 @@ class SingleInputWidget extends StatefulWidget {
   /// keyboardType = keyboardType ?? (maxLines == 1 ? TextInputType.text : TextInputType.multiline),
   final TextInputType? keyboardType;
 
+  /// 输入的文本格式化
+  /// [FilteringTextInputFormatter.singleLineFormatter]
+  /// [FilteringTextInputFormatter.digitsOnly]
+  final List<TextInputFormatter>? inputFormatters;
+
   /// 输入的文本样式
   final TextStyle? textStyle;
   final TextAlign textAlign;
@@ -188,6 +193,7 @@ class SingleInputWidget extends StatefulWidget {
       minWidth: kSuffixIconConstraintsSize,
     ),
     this.keyboardType,
+    this.inputFormatters,
     this.maxLength,
     this.counterText,
     this.isCollapsed,
@@ -380,6 +386,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
               !widget.config.obscureNode._showObscureText,
           obscuringCharacter: widget.config.obscureNode.obscuringCharacter,
           keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
           cursorColor: widget.cursorColor,
         ),
       ),
