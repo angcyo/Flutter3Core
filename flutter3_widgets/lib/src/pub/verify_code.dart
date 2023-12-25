@@ -21,6 +21,9 @@ class VerifyCode extends StatelessWidget {
   final Color? cursorColor;
   final Color? fillColor;
 
+  /// 下划线/边框的宽度
+  final double? underlineWidth;
+
   /// 输入框的大小
   final double itemSize;
   final double? itemMargin;
@@ -32,6 +35,7 @@ class VerifyCode extends StatelessWidget {
     super.key,
     this.length = 4,
     this.itemSize = 50,
+    this.underlineWidth = 1,
     this.itemMargin,
     this.fullBorder = false,
     this.isSecure = false,
@@ -51,7 +55,7 @@ class VerifyCode extends StatelessWidget {
       keyboardType: TextInputType.number,
       underlineColor: underlineColor ?? globalTheme.accentColor,
       underlineUnfocusedColor: null,
-      underlineWidth: 1,
+      underlineWidth: underlineWidth,
       isSecure: isSecure,
       fullBorder: fullBorder,
       fillColor: fillColor,
