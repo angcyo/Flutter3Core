@@ -215,6 +215,8 @@ https://guoshuyu.cn/home/wx/Z1.html
   一个隐式动画小部件，从一个数字翻转到另一个数字。
 - [odometer: ^3.0.0](https://pub.dev/packages/odometer) 计数器动画
 - [animated_digit: ^3.2.3](https://pub.dev/packages/animated_digit) 滚动动画数字小部件，任何需要动画效果的数字，易于使用。
+- [flutter_animate: ^4.3.0](https://pub.dev/packages/flutter_animate) 一个高性能的库，可以简单地在
+  Flutter 中添加几乎任何类型的动画效果。
 
 ## 国际化
 

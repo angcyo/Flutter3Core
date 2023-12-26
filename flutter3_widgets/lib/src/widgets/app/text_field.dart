@@ -366,15 +366,17 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           //prefixIcon: widget.prefix,
         );
 
+    final cursorColor = widget.cursorColor ?? globalTheme.accentColor;
+    final textSelectionThemeData = TextSelectionThemeData(
+      cursorColor: cursorColor,
+      selectionColor: cursorColor,
+      selectionHandleColor: cursorColor,
+    );
     return TextSelectionTheme(
-      data: TextSelectionThemeData(
-        cursorColor: widget.cursorColor,
-        selectionColor: widget.cursorColor,
-        selectionHandleColor: widget.cursorColor,
-      ),
+      data: textSelectionThemeData,
       child: DefaultSelectionStyle(
-        cursorColor: widget.cursorColor, //光标的颜色
-        selectionColor: widget.cursorColor, //选中文本的颜色
+        cursorColor: cursorColor, //光标的颜色
+        selectionColor: cursorColor, //选中文本的颜色
         //mouseCursor: SystemMouseCursors.text,//鼠标的样式
         child: TextField(
           focusNode: widget.config.focusNode,
@@ -396,7 +398,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           obscuringCharacter: widget.config.obscureNode.obscuringCharacter,
           keyboardType: widget.keyboardType,
           inputFormatters: widget.inputFormatters,
-          cursorColor: widget.cursorColor,
+          cursorColor: cursorColor,
+          //selectionControls: ,
+          //selectionHeightStyle: ,
+          //selectionWidthStyle: ,
         ),
       ),
     );
