@@ -159,8 +159,17 @@ class SingleInputWidget extends StatefulWidget {
   /// 输入框的装饰样式
   /// [InputDecoration]
   final InputDecoration? decoration;
+
+  /// [outlineInputBorder]
+  /// [underlineInputBorder]
   final InputBorder? border;
+
+  /// [outlineInputBorder]
+  /// [underlineInputBorder]
   final InputBorder? focusedBorder;
+
+  /// [outlineInputBorder]
+  /// [underlineInputBorder]
   final InputBorder? disabledBorder;
 
   const SingleInputWidget({
