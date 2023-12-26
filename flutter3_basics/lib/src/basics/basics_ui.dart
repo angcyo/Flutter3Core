@@ -175,7 +175,7 @@ extension WidgetListEx on WidgetList {
     }
     return Row(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
-      mainAxisSize: mainAxisSize ?? MainAxisSize.min,
+      mainAxisSize: mainAxisSize ?? MainAxisSize.max,
       crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
@@ -359,7 +359,14 @@ extension WidgetEx on Widget {
   /// [Flexible]
   ///  - [Expanded]
   /// [Spacer] 空白占位 `const SizedBox.shrink()`
-  Widget expanded({int flex = 1, FlexFit fit = FlexFit.tight}) {
+  Widget expanded({
+    int flex = 1,
+    FlexFit fit = FlexFit.tight,
+    bool enable = true,
+  }) {
+    if (!enable) {
+      return this;
+    }
     return Flexible(
       flex: flex,
       fit: fit,
