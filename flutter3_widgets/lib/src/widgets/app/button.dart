@@ -323,6 +323,12 @@ class CheckButton extends StatelessWidget {
   /// 显示在框框右边的文本
   final String? text;
 
+  /// 主轴大小
+  final MainAxisSize? mainAxisSize;
+
+  /// 按钮和文本的对齐方式
+  final CrossAxisAlignment? crossAxisAlignment;
+
   /// 显示在框框右边的小部件, 会优先[text]
   final Widget? child;
 
@@ -338,6 +344,8 @@ class CheckButton extends StatelessWidget {
     this.isChecked = false,
     this.onChanged,
     this.text,
+    this.mainAxisSize = MainAxisSize.min,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
     this.child,
     this.isCircle,
     this.shape,
@@ -357,7 +365,7 @@ class CheckButton extends StatelessWidget {
     return Checkbox(
       value: isChecked,
       onChanged: onChanged,
-      activeColor: fillColor,
+      activeColor: fillColor ?? globalTheme.accentColor,
       checkColor: checkColor,
       side: BorderSide(
         color: borderColor,
@@ -375,9 +383,111 @@ class CheckButton extends StatelessWidget {
         () {
           onChanged?.call(!isChecked);
         },
-      ).expanded(),
+      ).expanded(enable: mainAxisSize == MainAxisSize.max),
+      mainAxisSize: mainAxisSize,
       mainAxisAlignment: MainAxisAlignment.start, //全部靠左布局
-      crossAxisAlignment: CrossAxisAlignment.start, //全部顶部对齐
+      crossAxisAlignment: crossAxisAlignment, //全部顶部对齐
+    );
+  }
+}
+
+/// 圈圈单选框, 带文本
+class RadioButton extends StatelessWidget {
+  /// 是否选中
+  final bool isChecked;
+
+  /// 状态改变回调
+  final ValueChanged<bool?>? onChanged;
+
+  /// 活跃时框框的颜色
+  final Color? activeColor;
+
+  /// 焦点时的颜色
+  final Color? focusColor;
+
+  /// 正常情况下的填充颜色
+  final Color? normalFillColor;
+
+  /// 选中后, 填充的颜色
+  final Color? fillColor;
+
+  /// 禁用时, 填充的颜色
+  final Color? disabledFillColor;
+
+  /// 显示在框框右边的文本
+  final String? text;
+
+  /// 主轴大小
+  final MainAxisSize? mainAxisSize;
+
+  /// 按钮和文本的对齐方式
+  final CrossAxisAlignment? crossAxisAlignment;
+
+  /// 显示在框框右边的小部件, 会优先[text]
+  final Widget? child;
+
+  /// 按钮的密度, 用来决定box的大小, 最小时按钮32dp, 最大时按钮64dp, 正常48dp
+  /// 32dp 48dp 64dp (±16dp)
+  /// 最大 ±4
+  /// [VisualDensity.minimumDensity]
+  /// [VisualDensity.maximumDensity]
+  final VisualDensity? visualDensity;
+
+  const RadioButton({
+    super.key,
+    this.isChecked = false,
+    this.onChanged,
+    this.text,
+    this.mainAxisSize = MainAxisSize.min,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.child,
+    this.visualDensity,
+    this.activeColor,
+    this.focusColor,
+    this.normalFillColor,
+    this.fillColor,
+    this.disabledFillColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var globalTheme = GlobalTheme.of(context);
+    var normalFillColor = this.normalFillColor ??
+        globalTheme.textPlaceStyle.color ??
+        globalTheme.icoNormalColor;
+    return Radio<bool>(
+      value: true,
+      groupValue: isChecked,
+      onChanged: onChanged,
+      focusColor: focusColor ?? normalFillColor,
+      activeColor: activeColor ?? globalTheme.accentColor,
+      //fillColor: MaterialStateProperty.all(fillColor ?? globalTheme.accentColor),
+      fillColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.disabled)) {
+          return disabledFillColor ?? globalTheme.accentColor.disabledColor;
+        }
+        if (states.contains(MaterialState.selected)) {
+          return fillColor ?? globalTheme.accentColor;
+        }
+        return normalFillColor;
+      }),
+      toggleable: false,
+      //三个状态
+      //visualDensity: VisualDensity.compact,
+      visualDensity: visualDensity ?? VisualDensity.compact,
+    ).rowOf(
+      (child ??
+              text?.text(
+                style: globalTheme.textPrimaryStyle,
+              ))
+          ?.click(
+        () {
+          onChanged?.call(!isChecked);
+        },
+      ).expanded(enable: mainAxisSize == MainAxisSize.max),
+      mainAxisSize: mainAxisSize,
+      mainAxisAlignment: MainAxisAlignment.start, //全部靠左布局
+      crossAxisAlignment: crossAxisAlignment, //全部顶部对齐
     );
   }
 }
