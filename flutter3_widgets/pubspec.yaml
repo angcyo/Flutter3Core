@@ -43,7 +43,7 @@ dependencies:
 
   # https://pub.dev/packages/wheel_picker
   # https://github.com/stavgafny/wheel_picker
-  wheel_picker: ^0.0.3
+  wheel_picker: ^0.0.4
 
   # https://pub.dev/packages/list_wheel_scroll_view_nls
   # https://github.com/JoDeveloper/list_wheel_scroll_view_nls

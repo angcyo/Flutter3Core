@@ -18,8 +18,7 @@ class Wheel extends StatelessWidget {
   final Color? selectedIndexColor;
 
   /// 滚轮宽高
-  final double width;
-  final double height;
+  final double size;
 
   /// 滚轮项高度
   final double itemExtent;
@@ -39,8 +38,7 @@ class Wheel extends StatelessWidget {
     super.key,
     this.builder,
     this.children,
-    this.width = 50,
-    this.height = 150,
+    this.size = 150,
     this.itemExtent = 30,
     this.looping = false,
     this.initialIndex = 0,
@@ -58,8 +56,7 @@ class Wheel extends StatelessWidget {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final wheelStyle = WheelPickerStyle(
-      width: width,
-      height: height,
+      size: size,
       itemExtent: itemExtent,
       // Text height
       // 上下挤压系数
