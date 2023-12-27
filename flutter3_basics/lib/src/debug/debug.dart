@@ -42,11 +42,12 @@ String randomString([int? length]) {
   return buffer.toString();
 }
 
-/// 需要翻墙才能访问
-String randomImageUrl([String? prompt]) {
+/// 需要翻墙才能访问,
+/// 2023-12-27 [source.unsplash.com] 不需要翻墙
+String randomImageUrl({String? prompt, int? width, int? height}) {
   final random = Random();
-  final width = random.nextInt(1000) + 100;
-  final height = random.nextInt(1000) + 100;
+  width ??= random.nextInt(1000) + 100;
+  height ??= random.nextInt(1000) + 100;
   //return "https://picsum.photos/id/${random.nextInt(1000)}/$width/$height";
   //return "https://picsum.photos/$width/$height";//需要翻墙
   return "https://source.unsplash.com/${width}x$height?$prompt"; //不需要翻墙
