@@ -4,6 +4,17 @@ part of flutter3_basics;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/22
 ///
+/// 动画相关小部件
+/// [ShaderMask] 着色器,遮罩. 可以实现闪光灯效果
+/// - [WheelPicker]
+/// - [_WheelPickerState._centerColorShaderMaskWrapper]
+/// - [flutter_animate]
+/// - [ShimmerEffect]
+///
+/// [ColorFiltered] 颜色过滤器. 可以实现黑白/灰度效果
+/// - [WidgetEx.colorFiltered]
+///
+/// [ImageFilter] 图片过滤器. 可以实现高斯模糊效果
 
 /// 默认的动画时长
 const kDefaultAnimationDuration = Duration(milliseconds: 300);

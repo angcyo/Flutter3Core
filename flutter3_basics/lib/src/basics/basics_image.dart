@@ -22,6 +22,8 @@ Picture drawPicture(
 
 extension ImageEx on ui.Image {
   /// 获取图片的字节数据
+  /// [ImageByteFormat.rawRgba]
+  /// [ImageByteFormat.png]
   Future<Uint8List> toBytes([
     ImageByteFormat format = ImageByteFormat.png,
   ]) async {
