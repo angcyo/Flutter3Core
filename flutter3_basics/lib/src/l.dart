@@ -5,7 +5,12 @@ part of flutter3_basics;
 /// @author angcyo
 /// @date 2023/10/22
 ///
-
+/// [ansicolor: ^2.0.2](https://pub.dev/packages/ansicolor) 控制台颜色设置
+/// ```
+/// '\x1B[48;5;${color}m'; //背景色 [0~255]
+/// '\x1B[38;5;${color}m'; //前景色
+/// debugPrint('${_bg(229)}${_fg(0)}[flutter_animate] $message');
+/// ```
 typedef LPrint = void Function(String log);
 
 class L {
