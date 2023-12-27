@@ -56,6 +56,9 @@ dependencies:
   # https://pub.dev/packages/nil
   nil: ^1.1.1
 
+  # https://pub.dev/packages/universal_platform
+  universal_platform: ^1.0.0+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

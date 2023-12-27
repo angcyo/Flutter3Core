@@ -215,19 +215,22 @@ Stream<T?> delayGenerate<T>(
 
 /// 平台
 /// [defaultTargetPlatform]
-bool get isAndroid => Platform.isAndroid;
+bool get isAndroid => UniversalPlatform.isAndroid /*Platform.isAndroid*/;
 
-bool get isIos => Platform.isIOS;
+bool get isIos => UniversalPlatform.isIOS /*Platform.isIOS*/;
 
 /// 是否是web
-bool get isWeb => kIsWeb;
+bool get isWeb => UniversalPlatform.isWeb /*kIsWeb*/;
 
 /// 是否是移动设备
 bool get isMobile => isAndroid || isIos;
 
 /// 是否是pc客户端
-bool get isDesktop =>
-    Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+bool get isDesktop => UniversalPlatform
+    .isDesktop /*Platform.isWindows || Platform.isMacOS || Platform.isLinux*/;
+
+/// 是否是pc客户端或者web
+bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 
 //endregion 基础
 
