@@ -185,6 +185,7 @@ HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUT
   的可自定义颜色选择器。 ColorPicker 可以显示六种不同类型的颜色选择器，其中三种用于标准的 Flutter
   Material Design 2 颜色及其阴影。用于拣选物品的尺寸和样式可以定制。
 - [fast_color_picker: ^0.1.1](https://pub.dev/packages/fast_color_picker)
+- [color: ^3.0.0](https://pub.dev/packages/color) 一个简单的 Dart 包，它公开了一个 Color 类，可用于创建、转换和比较颜色。
 
 ## flutter_smart_dialog: ^4.9.5+1
 
@@ -207,6 +208,7 @@ https://guoshuyu.cn/home/wx/Z1.html
   库”中文本动画的推荐包。试用我们的实时示例应用程序。
 - [animate_do: ^3.1.2](https://pub.dev/packages/animate_do) 受 Animate.css 启发的动画包，仅使用
   Flutter 动画构建，零依赖性。
+- [auto_animated: ^3.2.0](https://pub.dev/packages/auto_animated) 一个 Flutter 包，用于创建动画列表。
 - [simple_animations: ^5.0.2](https://pub.dev/packages/simple_animations) Simple Animations
   简化了创建精美自定义动画的过程：
 - [animations: ^2.0.8](https://pub.dev/packages/animations) 用于 Flutter 的高质量预构建动画
@@ -308,6 +310,7 @@ https://github.com/fluttercommunity/plus_plugins
   170+ 语言和 80+ 风格。
 - [particle_field: ^1.0.0](https://pub.dev/packages/particle_field) 用于向 UI 添加高性能的自定义粒子效果。
 - [rnd: ^0.2.0](https://pub.dev/packages/rnd) 一个 Dart 包，用于生成伪随机数。
+- [statsfl: ^2.3.0](https://pub.dev/packages/statsfl) 一个简单的 Flutter FPS 监视器，用于监视应用程序的帧速率。
 
 ## 平台特有
 

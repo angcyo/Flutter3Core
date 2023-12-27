@@ -40,6 +40,7 @@ class AppInfoInterceptor extends Interceptor {
       options.headers["platformCountryCode"] = it.countryCode;
       //Hans
       options.headers["platformScriptCode"] = it.scriptCode;
+      return it;
     });
     super.onRequest(options, handler);
   }

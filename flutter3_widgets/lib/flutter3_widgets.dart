@@ -23,6 +23,7 @@ export 'package:expandable/expandable.dart';
 export 'package:flutter3_basics/flutter3_basics.dart';
 export 'package:flutter_slidable/flutter_slidable.dart';
 export 'package:lifecycle/lifecycle.dart';
+export 'package:list_wheel_scroll_view_nls/list_wheel_scroll_view_nls.dart';
 export 'package:sliver_tools/sliver_tools.dart';
 
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';

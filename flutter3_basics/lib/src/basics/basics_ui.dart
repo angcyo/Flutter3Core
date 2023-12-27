@@ -247,8 +247,24 @@ extension WidgetEx on Widget {
         );
 
   /// [CustomPaint]
-  Widget paint(PaintFn paint) => CustomPaint(
+  /// [paint] 背景绘制
+  /// [foregroundPaint] 前景绘制
+  /// [isComplex] 是否是复杂的
+  /// [willChange] 是否会在下一帧改变
+  CustomPaint paint(
+    PaintFn paint, {
+    PaintFn? foregroundPaint,
+    Size size = Size.zero,
+    bool isComplex = false,
+    bool willChange = false,
+  }) =>
+      CustomPaint(
         painter: CustomPaintWrap(paint),
+        foregroundPainter:
+            foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
+        size: size,
+        isComplex: isComplex,
+        willChange: willChange,
         child: this,
       );
 
@@ -1140,6 +1156,12 @@ extension ContextEx on BuildContext {
       }
     }
   }
+
+  /// 当前语言环境
+  /// [Locale.languageCode] zh
+  /// [Locale.countryCode] CN
+  /// [Locale.scriptCode] Hans
+  Locale get locale => Localizations.localeOf(this);
 
   /// 分发一个通知, 可以通过[NotificationListener]小部件接收通知
   /// [dispatchNotification]

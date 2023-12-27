@@ -68,12 +68,6 @@ extension ObjectEx on Object {
   /// 类型转换
   List<T> ofList<T>() => [this as T];
 
-  /// block
-  T let<T>(void Function(T it) block) {
-    block(this as T);
-    return this as T;
-  }
-
   /// 转换成json字符串
   String toJsonString() => json.encode(this);
 

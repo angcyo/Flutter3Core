@@ -372,6 +372,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
           route?.let<ModalRoute>((it) {
             isAdd = true;
             result.add(it);
+            return it;
           });
         }
       });

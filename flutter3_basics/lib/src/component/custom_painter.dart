@@ -6,6 +6,7 @@ part of flutter3_basics;
 ///
 
 /// [CustomPaint] widget
+/// [CustomPainter] 绘制回调
 class CustomPaintWrap extends CustomPainter {
   final PaintFn? paintIt;
 
@@ -20,3 +21,20 @@ class CustomPaintWrap extends CustomPainter {
   bool shouldRepaint(CustomPaintWrap oldDelegate) =>
       oldDelegate.paintIt != paintIt;
 }
+
+/// 快速创建[CustomPaint], 并指定绘制回调
+CustomPaint paint(
+  PaintFn paint, {
+  PaintFn? foregroundPaint,
+  Size size = Size.zero,
+  bool isComplex = false,
+  bool willChange = false,
+}) =>
+    CustomPaint(
+      painter: CustomPaintWrap(paint),
+      foregroundPainter:
+          foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
+      size: size,
+      isComplex: isComplex,
+      willChange: willChange,
+    );

@@ -4,8 +4,12 @@ part of flutter3_widgets;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/25
 ///
-/// 滚轮选择器
+/// 滚轮选择器[WheelPicker]
 /// 使用[ListWheelScrollView]底层实现
+/// [CupertinoPicker]
+///
+/// [list_wheel_scroll_view_nls: ^0.0.3] 支持横向
+/// https://pub.dev/packages/list_wheel_scroll_view_nls
 class Wheel extends StatelessWidget {
   /// 是否循环
   final bool looping;

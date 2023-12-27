@@ -45,6 +45,10 @@ dependencies:
   # https://github.com/stavgafny/wheel_picker
   wheel_picker: ^0.0.3
 
+  # https://pub.dev/packages/list_wheel_scroll_view_nls
+  # https://github.com/JoDeveloper/list_wheel_scroll_view_nls
+  list_wheel_scroll_view_nls: ^0.0.3
+
   # https://pub.dev/packages/flutter_animate
   # https://github.com/gskinner/flutter_animate
   #flutter_animate: ^4.3.0
