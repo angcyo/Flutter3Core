@@ -23,7 +23,7 @@ dependencies:
   # https://github.com/flutter/packages/tree/main/packages/cross_file
   # https://pub.dev/packages/js
   # https://pub.dev/packages/meta
-  cross_file: ^0.3.3+6
+  cross_file: ^0.3.3+8
 
   # https://pub.dev/packages/path_provider
   # https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider

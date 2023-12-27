@@ -46,7 +46,15 @@ dependencies:
   flutter_svg: ^2.0.9
 
   # https://pub.dev/packages/url_launcher
-  url_launcher: ^6.2.1
+  # https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher
+  # https://pub.dev/packages/url_launcher_platform_interface
+  # https://pub.dev/packages/url_launcher_android
+  # https://pub.dev/packages/url_launcher_ios
+  # https://pub.dev/packages/url_launcher_linux
+  # https://pub.dev/packages/url_launcher_macos
+  # https://pub.dev/packages/url_launcher_web
+  # https://pub.dev/packages/url_launcher_windows
+  url_launcher: ^6.2.2
 
   # https://pub.dev/packages/file_picker
   # https://github.com/miguelpruivo/flutter_file_picker
