@@ -311,6 +311,14 @@ https://github.com/fluttercommunity/plus_plugins
 - [particle_field: ^1.0.0](https://pub.dev/packages/particle_field) 用于向 UI 添加高性能的自定义粒子效果。
 - [rnd: ^0.2.0](https://pub.dev/packages/rnd) 一个 Dart 包，用于生成伪随机数。
 - [statsfl: ^2.3.0](https://pub.dev/packages/statsfl) 一个简单的 Flutter FPS 监视器，用于监视应用程序的帧速率。
+- [screen_recorder: ^0.2.0](https://pub.dev/packages/screen_recorder) 这是一个用于创建 Flutter 小部件记录的包。录音可以导出为 GIF。
+- [ffmpeg_kit_flutter: ^6.0.3](https://pub.dev/packages/ffmpeg_kit_flutter) 一个 Flutter 插件，用于在 Android 和 iOS 上使用 FFmpeg。
+- [flutter_video_compress: ^0.3.7+8](https://pub.dev/packages/flutter_video_compress) 一个 Flutter 插件，用于压缩视频文件。
+- [video_editor: ^3.0.0](https://pub.dev/packages/video_editor) 一个 Flutter 插件，用于编辑视频文件。
+- [video_trimmer: ^3.0.1](https://pub.dev/packages/video_trimmer) 一个 Flutter 插件，用于裁剪视频文件。
+- [video_compress: ^3.1.2](https://pub.dev/packages/video_compress) 通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
+- [flutter_swipe_detector: ^2.0.0](https://pub.dev/packages/flutter_swipe_detector) 一个 Flutter
+  小部件，用于检测向左、向右、向上和向下的滑动手势。
 
 ## 平台特有
 
@@ -359,3 +367,6 @@ https://github.com/fluttercommunity/plus_plugins
   插件，用于从应用程序打开 iOS 和 Android 手机设置。
 - [flutter_local_notifications: ^16.3.0](https://pub.dev/packages/flutter_local_notifications) 用于显示本地通知的跨平台插件。ANDROID IOS LINUX MACOS 
 - [flutter_app_badger: ^1.5.0](https://pub.dev/packages/flutter_app_badger) 在启动器中更改应用程序徽章的功能。 ANDROID IOS MACOS
+- [geolocator: ^10.1.0](https://pub.dev/packages/geolocator) 一个 Flutter 地理定位插件，它提供了对平台特定位置服务的轻松访问（FusedLocationProviderClient，或者如果不可用，Android 上的 LocationManager 和 iOS 上的 CLLocationManager）。
+- [geocoding: ^2.1.1](https://pub.dev/packages/geocoding) 一个 Flutter Geocoding 插件，提供简单的地理编码和反向地理编码功能。
+- [permission_handler: ^11.1.0](https://pub.dev/packages/permission_handler) 该插件提供了一个跨平台（iOS、Android）API 来请求权限并检查其状态。您还可以打开设备的应用设置，以便用户可以授予权限。
