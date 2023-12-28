@@ -2,6 +2,7 @@ library flutter3_widgets;
 
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:expandable/expandable.dart';
 import 'package:flutter/foundation.dart';
@@ -55,6 +56,8 @@ part 'src/pub/lifecycle.dart';
 part 'src/pub/pub_widget_ex.dart';
 
 part 'src/pub/verify_code.dart';
+
+part 'src/pub/watermark.dart';
 
 part 'src/pub/wheel.dart';
 

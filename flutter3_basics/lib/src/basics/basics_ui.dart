@@ -727,7 +727,7 @@ extension WidgetEx on Widget {
       (sigma ?? 0) > 0 || filter != null
           ? BackdropFilter(
               filter: filter ??
-                  ImageFilter.blur(
+                  ui.ImageFilter.blur(
                     sigmaX: sigma!,
                     sigmaY: sigma,
                     tileMode: TileMode.clamp,

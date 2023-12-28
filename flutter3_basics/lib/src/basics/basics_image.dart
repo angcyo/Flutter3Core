@@ -9,11 +9,11 @@ part of flutter3_basics;
 typedef CanvasCallback = void Function(Canvas canvas);
 
 /// 使用[Canvas]绘制图片
-Picture drawPicture(
+ui.Picture drawPicture(
   Size size,
   CanvasCallback callback,
 ) {
-  final PictureRecorder recorder = PictureRecorder();
+  final ui.PictureRecorder recorder = ui.PictureRecorder();
   final Canvas canvas =
       Canvas(recorder, Rect.fromLTWH(0, 0, size.width, size.height));
   callback(canvas);
@@ -25,7 +25,7 @@ extension ImageEx on ui.Image {
   /// [ImageByteFormat.rawRgba]
   /// [ImageByteFormat.png]
   Future<Uint8List> toBytes([
-    ImageByteFormat format = ImageByteFormat.png,
+    ui.ImageByteFormat format = ui.ImageByteFormat.png,
   ]) async {
     final ByteData? byteData = await toByteData(format: format);
     return byteData!.buffer.asUint8List();
@@ -46,7 +46,7 @@ extension ImageEx on ui.Image {
   /// 保存图片到文件
   Future<File?> saveToFile(
     File? file, {
-    ImageByteFormat format = ImageByteFormat.png,
+    ui.ImageByteFormat format = ui.ImageByteFormat.png,
   }) async {
     final Uint8List bytes = await toBytes(format);
     return file?.writeAsBytes(bytes);

@@ -143,12 +143,13 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 /// [PlatformDispatcher.implicitView]
 /// [FlutterView.display]
 /// [FlutterView.display.size] //可以获取屏幕尺寸
-FlutterView get flutterView => WidgetsBinding.instance.renderView.flutterView;
+ui.FlutterView get flutterView =>
+    WidgetsBinding.instance.renderView.flutterView;
 
 /// [WidgetsBinding.instance]
 /// [WidgetsBinding.platformDispatcher]
 /// [PlatformDispatcher.views]
-Iterable<FlutterView> get flutterViews =>
+Iterable<ui.FlutterView> get flutterViews =>
     WidgetsBinding.instance.renderViews.map((e) => e.flutterView);
 
 /// [RendererBinding.renderViews]
