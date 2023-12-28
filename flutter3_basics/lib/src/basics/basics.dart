@@ -214,17 +214,45 @@ Stream<T?> delayGenerate<T>(
   }
 }
 
+/// 当前设备的平台
+TargetPlatform get currentPlatform {
+  if (isAndroid) {
+    return TargetPlatform.android;
+  } else if (isIos) {
+    return TargetPlatform.iOS;
+  } else if (isMacOs) {
+    return TargetPlatform.macOS;
+  } else if (isWindows) {
+    return TargetPlatform.windows;
+  } else if (isLinux) {
+    return TargetPlatform.linux;
+  } else if (isFuchsia) {
+    return TargetPlatform.fuchsia;
+  } else {
+    return defaultTargetPlatform;
+  }
+}
+
 /// 平台
 /// [defaultTargetPlatform]
+/// [currentUniversalPlatform]
 bool get isAndroid => UniversalPlatform.isAndroid /*Platform.isAndroid*/;
 
 bool get isIos => UniversalPlatform.isIOS /*Platform.isIOS*/;
+
+bool get isMacOs => UniversalPlatform.isMacOS /*Platform.isIOS*/;
 
 /// 是否是web
 bool get isWeb => UniversalPlatform.isWeb /*kIsWeb*/;
 
 /// 是否是移动设备
 bool get isMobile => isAndroid || isIos;
+
+bool get isWindows => UniversalPlatform.isWindows /*Platform.isWindows*/;
+
+bool get isLinux => UniversalPlatform.isLinux /*Platform.isLinux*/;
+
+bool get isFuchsia => UniversalPlatform.isFuchsia /*Platform.isFuchsia*/;
 
 /// 是否是pc客户端
 bool get isDesktop => UniversalPlatform

@@ -11,7 +11,7 @@ class GradientButton extends StatelessWidget {
     super.key,
     this.color,
     this.colors,
-    required this.onPressed,
+    required this.onTap,
     required this.child,
     this.padding,
     this.radius = kDefaultBorderRadiusL,
@@ -51,7 +51,7 @@ class GradientButton extends StatelessWidget {
   final double? radius;
   final BorderRadius? borderRadius;
 
-  final GestureTapCallback? onPressed;
+  final GestureTapCallback? onTap;
   final ValueChanged<bool>? onHighlightChanged;
 
   /// [BoxConstraints.minWidth]
@@ -76,7 +76,7 @@ class GradientButton extends StatelessWidget {
             : [color!, color!]);
     final radius = borderRadius ??
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
-    bool disabled = onPressed == null;
+    bool disabled = onTap == null;
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient:
@@ -98,7 +98,7 @@ class GradientButton extends StatelessWidget {
             splashColor: splashColor ?? colors.lastOrNull ?? color,
             highlightColor: Colors.transparent,
             onHighlightChanged: onHighlightChanged,
-            onTap: onPressed,
+            onTap: onTap,
             child: Padding(
               padding: padding ?? theme.buttonTheme.padding,
               child: DefaultTextStyle(
@@ -205,7 +205,7 @@ class _ElevatedGradientButtonState extends State<ElevatedGradientButton> {
       ),
       child: GradientButton(
         colors: widget.colors,
-        onPressed: widget.onPressed,
+        onTap: widget.onPressed,
         padding: widget.padding,
         borderRadius: widget.borderRadius,
         textColor: widget.textColor,

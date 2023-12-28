@@ -94,7 +94,7 @@ class FillGradientButton extends StatelessWidget {
     var disabledTextColor =
         this.disabledTextColor ?? (textColor ?? Colors.black38).disabledColor;
     return GradientButton(
-      onPressed: enabled
+      onTap: enabled
           ? onTap ??
               () {
                 assert(() {
