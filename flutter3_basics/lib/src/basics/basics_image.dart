@@ -20,6 +20,22 @@ ui.Picture drawPicture(
   return recorder.endRecording();
 }
 
+extension ByteDataEx on ByteData {
+  /// [Uint8List]
+  /// [ImageByteFormat.rawRgba]
+  Uint8List get bytes => buffer.asUint8List();
+
+  /// [Image]
+  /// `class Image extends StatefulWidget`
+  Image toImageWidget() => Image.memory(bytes);
+
+  /// [ui.Image]
+  Future<ui.Image> toImage() => decodeImageFromList(bytes);
+
+  /// [MemoryImage]
+  MemoryImage toMemoryImage() => MemoryImage(bytes);
+}
+
 extension ImageEx on ui.Image {
   /// 获取图片的字节数据
   /// [ImageByteFormat.rawRgba]
