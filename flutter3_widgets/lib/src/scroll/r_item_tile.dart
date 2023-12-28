@@ -519,16 +519,13 @@ extension RItemTileExtension on Widget {
     EdgeInsetsGeometry? sliverPadding,
     bool hide = false,
   }) {
+    /*EdgeInsets.symmetric( vertical: mainAxisSpacing, horizontal: crossAxisSpacing, )*/
     return RItemTile(
       crossAxisCount: gridCount,
       childAspectRatio: childAspectRatio,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
-      sliverPadding: sliverPadding ??
-          EdgeInsets.symmetric(
-            vertical: mainAxisSpacing,
-            horizontal: crossAxisSpacing,
-          ),
+      sliverPadding: sliverPadding,
       hide: hide,
       child: this,
     );
