@@ -357,5 +357,5 @@ https://github.com/fluttercommunity/plus_plugins
   构建的， 它根本不会影响它。
 - [app_settings: ^5.1.1](https://pub-web.flutter-io.cn/packages/app_settings) 一个 Flutter
   插件，用于从应用程序打开 iOS 和 Android 手机设置。
-- [flutter_local_notifications: ^16.2.0](https://pub.dev/packages/flutter_local_notifications)
-  用于显示本地通知的跨平台插件。
+- [flutter_local_notifications: ^16.3.0](https://pub.dev/packages/flutter_local_notifications) 用于显示本地通知的跨平台插件。ANDROID IOS LINUX MACOS 
+- [flutter_app_badger: ^1.5.0](https://pub.dev/packages/flutter_app_badger) 在启动器中更改应用程序徽章的功能。 ANDROID IOS MACOS
