@@ -30,8 +30,18 @@ Map<String, dynamic> hiveAll([Box? box]) {
 }
 
 extension HiveStringEx on String {
-  /// 保存键值对
-  Future<void> hivePut(dynamic value) => _hiveBox.put(this, value);
+  /// 保存键值对, 当[value]不支持时, 会自动使用字符串存储
+  /// `[HiveError]HiveError: Cannot write, unknown type: TextEditingValue. Did you forget to register an adapter?`
+  Future<void> hivePut(dynamic value) {
+    //debugger();
+    return _hiveBox.put(this, value).get((v, error) {
+      if (value != null && error is HiveError) {
+        l.e("存储类型失败:[${value.runtimeType}]:$error, 自动转换为字符串存储");
+        return hivePut("$value");
+      }
+      return v;
+    });
+  }
 
   /// 删除指定键
   Future<void> hiveDelete() => _hiveBox.delete(this);
@@ -70,5 +80,34 @@ extension HiveEx on HiveInterface {
     //_hiveBox.get(key)
     //Hive.box
     //_hiveBox.listenable()
+  }
+}
+
+mixin HiveHookMixin<T extends StatefulWidget> on State<T> {
+  late final Map<ValueListenable, VoidCallback> hiveHookMap = {};
+
+  /// 当[notify]改变时, 自动保存至hive中
+  hookHiveKey(String key, ValueListenable notify) {
+    if (hiveHookMap.containsKey(notify)) {
+      return;
+    }
+    hiveHookMap[notify] = () {
+      final value = notify.value;
+      if (value is TextEditingValue) {
+        key.hivePut(value.text);
+      } else {
+        key.hivePut(notify.value);
+      }
+    };
+    notify.addListener(hiveHookMap[notify]!);
+  }
+
+  @override
+  void dispose() {
+    hiveHookMap.forEach((key, value) {
+      key.removeListener(value);
+    });
+    hiveHookMap.clear();
+    super.dispose();
   }
 }
