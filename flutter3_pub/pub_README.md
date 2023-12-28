@@ -319,6 +319,18 @@ https://github.com/fluttercommunity/plus_plugins
 - [video_compress: ^3.1.2](https://pub.dev/packages/video_compress) 通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
 - [flutter_swipe_detector: ^2.0.0](https://pub.dev/packages/flutter_swipe_detector) 一个 Flutter
   小部件，用于检测向左、向右、向上和向下的滑动手势。
+- [flutterme_credit_card: ^1.0.2](https://pub.dev/packages/flutterme_credit_card) 这是 Flutterme 的信用卡可定制小部件和验证包。
+- [new_image_crop: ^1.0.0+2](https://pub.dev/packages/new_image_crop) 用于裁剪图像。
+- [custom_flutter_painter: ^1.0.1](https://pub.dev/packages/custom_flutter_painter) 用于绘画的纯 Flutter 包。
+- [flutter_painter_v2: ^2.0.1](https://pub.dev/packages/flutter_painter_v2) 用于绘画的纯 Flutter 包。 https://github.com/omarhurani/flutter_painter
+- [dropdown_button2: ^2.3.9](https://pub.dev/packages/dropdown_button2) Flutter 的核心下拉按钮小部件，带有稳定的下拉菜单和许多其他选项，您可以根据需要进行自定义。
+- [pdf: ^3.10.7](https://pub.dev/packages/pdf) 用于创建 PDF 的 Dart 包。
+- [pdfrx: ^0.3.1](https://pub.dev/packages/pdfrx) pdfrx 是建立在 pdfium 之上的 PDF 查看器实现。该插件目前支持 Android、iOS、Windows、macOS、Linux 和 Web。
+- [syncfusion_flutter_pdf: ^24.1.43](https://pub.dev/packages/syncfusion_flutter_pdf) Flutter PDF 是一个功能丰富且高性能的非 UI PDF 库，用 Dart 原生编写。它允许您向 Flutter 应用程序添加强大的 PDF 功能。
+- [syncfusion_flutter_pdfviewer: ^24.1.43](https://pub.dev/packages/syncfusion_flutter_pdfviewer) Flutter PDF Viewer 插件可让您在 Android、iOS、Web、Windows 和 macOS 平台上无缝高效地查看 PDF 文档。它具有高度交互和可定制的功能，例如放大、虚拟双向滚动、页面导航、文本选择、文本搜索、页面布局选项、文档链接导航、书签导航、表单填写和使用文本标记注释进行审阅。
+- [barcode: ^2.2.5](https://pub.dev/packages/barcode) Dart 的条码生成库，可以为任何后端生成通用绘图操作。
+- [barcode_widget: ^2.0.4](https://pub.dev/packages/barcode_widget) 生成条形码小部件。此小部件使用 pub：barcode 生成任何支持的条形码。
+- [pubspec_extract: ^2.0.5](https://pub.dev/packages/pubspec_extract) 提取 Dart pubspec.yaml 文件并在构建时生成 pubspec.dart。
 
 ## 平台特有
 
