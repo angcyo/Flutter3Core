@@ -153,6 +153,7 @@ extension DioStringEx on String {
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   /// [savePath] 保存路径
+  /// https://pub.dev/packages/network_to_file_image
   Future<Response> download({
     String? savePath,
     Future<String>? getSavePath,
