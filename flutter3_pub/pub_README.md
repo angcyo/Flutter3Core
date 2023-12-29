@@ -307,8 +307,12 @@ https://github.com/fluttercommunity/plus_plugins
 - [matrix_gesture_detector_pro: ^1.0.0](https://pub.dev/packages/matrix_gesture_detector_pro) https://github.com/zhaolongs/matrix_gesture_detector_pro
 - [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 滑动删除列表项，支持左滑和右滑两种操作。
 - [connectivity_plus: ^5.0.2](https://pub.dev/packages/connectivity_plus) 监视网络连接状态（WiFi、移动数据、蜂窝）。
+- [highlight: ^0.7.0](https://pub.dev/packages/highlight) Dart 语法高亮库。
 - [flutter_highlight: ^0.7.0](https://pub.dev/packages/flutter_highlight) 语法高亮, 代码高亮小部件，支持
   170+ 语言和 80+ 风格。
+- [substring_highlight: ^1.0.33](https://pub.dev/packages/substring_highlight) 在字符级别突出显示 Flutter 文本。
+- [highlightable: ^1.0.5](https://pub.dev/packages/highlightable) 一个文本小部件替代方案，它突出显示了定义的字符（来自模式/纯字符串）
+- [search_highlight_text: ^1.0.0+2](https://pub.dev/packages/search_highlight_text) 用于突出显示搜索结果中的文本，具有自定义突出显示 Color 和突出显示 TextStyle。
 - [particle_field: ^1.0.0](https://pub.dev/packages/particle_field) 用于向 UI 添加高性能的自定义粒子效果。
 - [rnd: ^0.2.0](https://pub.dev/packages/rnd) 一个 Dart 包，用于生成伪随机数。
 - [statsfl: ^2.3.0](https://pub.dev/packages/statsfl) 一个简单的 Flutter FPS 监视器，用于监视应用程序的帧速率。
@@ -332,6 +336,9 @@ https://github.com/fluttercommunity/plus_plugins
 - [barcode: ^2.2.5](https://pub.dev/packages/barcode) Dart 的条码生成库，可以为任何后端生成通用绘图操作。
 - [barcode_widget: ^2.0.4](https://pub.dev/packages/barcode_widget) 生成条形码小部件。此小部件使用 pub：barcode 生成任何支持的条形码。
 - [pubspec_extract: ^2.0.5](https://pub.dev/packages/pubspec_extract) 提取 Dart pubspec.yaml 文件并在构建时生成 pubspec.dart。
+- [lpinyin: ^2.0.3](https://pub.dev/packages/lpinyin) lpinyin是一个汉字转拼音的Dart Package.
+- [table_calendar: ^3.0.9](https://pub.dev/packages/table_calendar) 高度可定制、功能丰富的 Flutter 日历小部件。
+- [ninepatch_image: ^0.0.3](https://pub.dev/packages/ninepatch_image) Flutter 的可调整大小的位图（九块图像）.9图片
 
 ## 平台特有
 

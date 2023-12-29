@@ -54,6 +54,8 @@ extension DynamicEx on dynamic {
   String toRuntimeString() => "[$runtimeType]${toString()}";
 }
 
+final int __int64MaxValue = double.maxFinite.toInt();
+
 extension ObjectEx on Object {
   /// [runtimeType]
   /// [toString]
@@ -72,13 +74,135 @@ extension ObjectEx on Object {
   String toJsonString() => json.encode(this);
 
   /// 使用[Text]包裹
-  Widget text({
+  /// [highlight] 需要高亮的文本
+  /// [highlightList] 需要高亮的文本列表
+  /// [caseSensitive] 是否区分大小写
+  /// [words] 是否只匹配单词(匹配完整的单词)
+  /// [Text]
+  /// [RichText]
+  /// https://pub.dev/packages/substring_highlight
+  /// https://pub.dev/packages/highlightable
+  /// https://pub.dev/packages/search_highlight_text
+  Text text({
     TextStyle? style,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
     bool? softWrap,
+    String? highlight,
+    TextStyle? highlightTextStyle,
+    List<String>? highlightList,
+    bool caseSensitive = false,
+    String wordDelimiters = ' .,;?!<>[]~`@#\$%^&*()+-=|\/_',
+    // default is to match substrings (hence the package name!)
+    bool words = false,
   }) {
+    //使用正则匹配高亮文本
+    if (!isNullOrEmpty(highlight) || !isNullOrEmpty(highlightList)) {
+      highlightTextStyle ??= style?.copyWith(color: Colors.red);
+
+      final String text = toString();
+      final String textLC = caseSensitive ? text : text.toLowerCase();
+
+      // corner case: if both term and terms array are passed then combine
+      final List<String> termList = [highlight ?? '', ...(highlightList ?? [])];
+
+      // remove empty search terms ('') because they cause infinite loops
+      final List<String> termListLC = termList
+          .where((s) => s.isNotEmpty)
+          .map((s) => caseSensitive ? s : s.toLowerCase())
+          .toList();
+
+      List<InlineSpan> children = [];
+
+      int start = 0;
+      int idx = 0; // walks text (string that is searched)
+      while (idx < textLC.length) {
+        // print('=== idx=$idx');
+        nonHighlightAdd(int end) => children.add(TextSpan(
+            text: text.substring(start, end), style: highlightTextStyle));
+
+        // find index of term that's closest to current idx position
+        int iNearest = -1;
+        int idxNearest = __int64MaxValue;
+        for (int i = 0; i < termListLC.length; i++) {
+          // print('*** i=$i');
+          int at;
+          if ((at = textLC.indexOf(termListLC[i], idx)) >= 0) //MAGIC//CORE
+          {
+            // print('idx=$idx i=$i at=$at => FOUND: ${termListLC[i]}');
+
+            if (words) {
+              if (at > 0 &&
+                  !wordDelimiters.contains(
+                      textLC[at - 1])) // is preceding character a delimiter?
+              {
+                // print('disqualify preceding: idx=$idx i=$i');
+                continue; // preceding character isn't delimiter so disqualify
+              }
+
+              int followingIdx = at + termListLC[i].length;
+              if (followingIdx < textLC.length &&
+                  !wordDelimiters.contains(textLC[
+                      followingIdx])) // is character following the search term a delimiter?
+              {
+                // print('disqualify following: idx=$idx i=$i');
+                continue; // following character isn't delimiter so disqualify
+              }
+            }
+
+            // print('term #$i found at=$at (${termListLC[i]})');
+            if (at < idxNearest) {
+              // print('PEG');
+              iNearest = i;
+              idxNearest = at;
+            }
+          }
+        }
+
+        if (iNearest >= 0) {
+          // found one of the terms at or after idx
+          // iNearest is the index of the closest term at or after idx that matches
+
+          // print('iNearest=$iNearest @ $idxNearest');
+          if (start < idxNearest) {
+            // we found a match BUT FIRST output non-highlighted text that comes BEFORE this match
+            nonHighlightAdd(idxNearest);
+            start = idxNearest;
+          }
+
+          // output the match using desired highlighting
+          int termLen = termListLC[iNearest].length;
+          children.add(TextSpan(
+              text: text.substring(start, idxNearest + termLen),
+              style: highlightTextStyle));
+          start = idx = idxNearest + termLen;
+        } else {
+          if (words) {
+            idx++;
+            nonHighlightAdd(idx);
+            start = idx;
+          } else {
+            // if none match at all (ever!)
+            // --or--
+            // one or more matches but during this iteration there are NO MORE matches
+            // in either case, add reminder of text as non-highlighted text
+            nonHighlightAdd(textLC.length);
+            break;
+          }
+        }
+      }
+
+      return Text.rich(
+        TextSpan(children: children, style: highlightTextStyle),
+        style: style,
+        textAlign: textAlign,
+        maxLines: maxLines,
+        softWrap: softWrap,
+        overflow: overflow,
+      );
+    }
+
     return Text(
       "$this",
       style: style,
@@ -237,6 +361,14 @@ extension StringEx on String {
       RegExp(regex).allMatches(this).fold(this, (previousValue, element) {
         return previousValue.replaceRange(element.start, element.end, replace);
       });
+
+  /// [Match]
+  /// [RegExpMatch]
+  /// [Match.start]
+  /// [Match.end]
+  /// [Match.groupCount]
+  Iterable<RegExpMatch> allMatches(String regex, [int start = 0]) =>
+      RegExp(regex).allMatches(this, start);
 
   //endregion 正则
 
