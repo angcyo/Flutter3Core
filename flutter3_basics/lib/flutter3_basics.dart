@@ -7,8 +7,6 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:async/async.dart';
-import 'package:collection/collection.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -20,7 +18,6 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_basics/src/basics/basics_date_time.dart';
 import 'package:hsluv/hsluvcolor.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
-import 'package:nil/nil.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:uuid/uuid.dart';
 
@@ -33,6 +30,7 @@ export 'package:meta/meta.dart';
 export 'package:nil/nil.dart';
 
 export 'src/component/dart_scope_functions.dart';
+export 'src/component/matrix_ex.dart';
 export 'src/component/rnd.dart';
 
 part 'src/basics/basics.dart';

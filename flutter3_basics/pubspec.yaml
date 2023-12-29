@@ -59,6 +59,10 @@ dependencies:
   # https://pub.dev/packages/universal_platform
   universal_platform: ^1.0.0+1
 
+  # https://pub.dev/packages/vector_math
+  # https://github.com/google/vector_math.dart
+  vector_math: ^2.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
