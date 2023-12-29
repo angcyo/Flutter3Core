@@ -291,6 +291,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     var globalConfig = GlobalConfig.of(context);
     var globalTheme = GlobalTheme.of(context);
     elevation ??= globalConfig.themeData.appBarTheme.elevation;
+    //debugger();
     return AppBar(
       title: title,
       leading: leading ??

@@ -1,6 +1,7 @@
 library flutter3_widgets;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -88,6 +89,8 @@ part 'src/scroll/widget_state.dart';
 part 'src/widgets/after_layout.dart';
 
 part 'src/widgets/app/button.dart';
+
+part 'src/widgets/app/search.dart';
 
 part 'src/widgets/app/text_field.dart';
 

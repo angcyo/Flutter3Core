@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
@@ -35,7 +37,11 @@ class LogFileInterceptor extends Interceptor {
     var hashCode = err.requestOptions.hashCode;
     var value = uuidMap.remove(hashCode);
     var log = stringBuilder((builder) {
-      builder.appendLine("<--${value?.$1} ${LTime.diffTime(value?.$2)}");
+      if (value == null) {
+        builder.appendLine("<--${err.requestOptions.uri}");
+      } else {
+        builder.appendLine("<--${value.$1} ${LTime.diffTime(value.$2)}");
+      }
       builder.appendLine("$err");
       if (err.response != null) {
         builder.append(_responseLog(err.response!));
@@ -110,6 +116,7 @@ class LogFileInterceptor extends Interceptor {
   }
 
   void _printLog(String log) {
+    //debugger();
     if (toFile) {
       GlobalConfig.def.writeFileFn?.call('http.log', 'log', log);
     }

@@ -22,17 +22,44 @@ mixin AbsScrollMixin {
             .copyWith(color: globalConfig.globalTheme.appBarForegroundColor));
   }
 
+  /// 获取标题栏高度
+  double? getAppBarElevation(BuildContext context) {
+    return null;
+  }
+
+  /// 获取标题栏阴影颜色
+  Color? getAppBarShadowColor(BuildContext context) {
+    return null;
+  }
+
+  /// 构建渐变背景
+  Widget? buildAppBarFlexibleSpace(BuildContext context) {
+    /*final globalTheme = GlobalTheme.of(context);
+    return linearGradientWidget(
+        listOf(globalTheme.themeWhiteColor));*/
+    return null;
+  }
+
   /// 构建顶部导航[AppBar]
+  /// [AppBarBuilderFn]
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
+    //debugger();
     return globalConfig.appBarBuilder(
       context,
       this,
       title: buildTitle(context),
-      /*elevation: 0,*/ //阴影高度
-      /*flexibleSpace: linearGradientWidget(
-          listOf(globalConfig.globalTheme.themeWhiteColor)),*/ //渐变背景
+      bottom: buildAppBarBottom(context),
+      elevation: getAppBarElevation(context),
+      //阴影高度
+      shadowColor: getAppBarShadowColor(context),
+      flexibleSpace: buildAppBarFlexibleSpace(context), //渐变背景
     );
+  }
+
+  /// 构建顶部导航[AppBar]
+  PreferredSizeWidget? buildAppBarBottom(BuildContext context) {
+    return null;
   }
 
   //endregion AppBar
@@ -62,6 +89,7 @@ mixin AbsScrollMixin {
   /// 构建脚手架[Scaffold]
   @api
   Widget buildScaffold(BuildContext context, WidgetList? children) {
+    //debugger();
     return Scaffold(
       appBar: buildAppBar(context),
       backgroundColor: getBackgroundColor(context),

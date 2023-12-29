@@ -21,11 +21,37 @@ class TextFieldConfig {
   /// 输入的文本
   String get text => controller.text;
 
+  //region 可以覆盖TextField的属性, 优先级低
+
+  /// 输入框内的提示文字, 占位提示文本
+  /// [SingleInputWidget.hintText]
+  final String? hintText;
+
+  /// 前缀图标小部件
+  /// [SingleInputWidget.prefixIcon]
+  final Widget? prefixIcon;
+
+  /// 键盘上的输入类型, 比如完成, 下一步等
+  /// [SingleInputWidget.textInputAction]
+  final TextInputAction? textInputAction;
+
+  //endregion 可以覆盖TextField的属性, 优先级低
+
+  /// 回调
+  final ValueChanged<String>? onChanged;
+
+  final ValueChanged<String>? onSubmitted;
+
   TextFieldConfig({
     String? text,
     TextEditingController? controller,
     FocusNode? focusNode,
     bool? obscureText,
+    this.textInputAction,
+    this.hintText,
+    this.prefixIcon,
+    this.onChanged,
+    this.onSubmitted,
   })  : controller = controller ?? TextEditingController(text: text),
         focusNode = focusNode ?? FocusNode(),
         obscureNode = ObscureNode(obscureText ?? false);
@@ -111,15 +137,19 @@ class SingleInputWidget extends StatefulWidget {
   /// 前缀小部件
   final Widget? prefix;
 
+  /// 前缀图标小部件
+  final Widget? prefixIcon;
+
   /// 后缀小部件
   final Widget? suffix;
 
   /// 后缀/前缀图标的大小
-  //final double? prefixIconSize;
+  final double? prefixIconSize;
   final double? suffixIconSize;
 
   /// 后缀/前缀图标的约束
   final BoxConstraints? suffixIconConstraints;
+  final BoxConstraints? prefixIconConstraints;
 
   /// 是否折叠显示, true: 则输入框的高度和文本一致
   final bool? isCollapsed;
@@ -172,6 +202,13 @@ class SingleInputWidget extends StatefulWidget {
   /// [underlineInputBorder]
   final InputBorder? disabledBorder;
 
+  /// 键盘上的输入类型, 比如完成, 下一步等
+  final TextInputAction? textInputAction;
+
+  /// 回调
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+
   const SingleInputWidget({
     super.key,
     required this.config,
@@ -193,9 +230,16 @@ class SingleInputWidget extends StatefulWidget {
     this.hintText,
     this.suffix,
     this.prefix,
-    //this.prefixIconSize = kSuffixIconSize,
+    this.prefixIcon,
+    this.prefixIconSize = kSuffixIconSize,
     this.suffixIconSize = kSuffixIconSize,
     this.suffixIconConstraints = const BoxConstraints(
+      maxWidth: kSuffixIconConstraintsSize,
+      maxHeight: kSuffixIconConstraintsSize,
+      minHeight: kSuffixIconConstraintsSize,
+      minWidth: kSuffixIconConstraintsSize,
+    ),
+    this.prefixIconConstraints = const BoxConstraints(
       maxWidth: kSuffixIconConstraintsSize,
       maxHeight: kSuffixIconConstraintsSize,
       minHeight: kSuffixIconConstraintsSize,
@@ -212,6 +256,9 @@ class SingleInputWidget extends StatefulWidget {
     this.border,
     this.focusedBorder,
     this.disabledBorder,
+    this.textInputAction,
+    this.onChanged,
+    this.onSubmitted,
   });
 
   @override
@@ -332,10 +379,11 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 
     var decoration = widget.decoration ??
         InputDecoration(
+          filled: widget.fillColor != null ||
+              (!widget.enabled && widget.disabledFillColor != null),
           fillColor: widget.enabled
               ? widget.fillColor
               : widget.disabledFillColor ?? widget.fillColor?.disabledColor,
-          filled: widget.fillColor != null,
           isDense: widget.isDense,
           isCollapsed: widget.isCollapsed,
           counterText: widget.counterText,
@@ -348,7 +396,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           disabledBorder: disabledBorder,
           label: null,
           labelText: widget.labelText,
-          hintText: widget.hintText,
+          hintText: widget.hintText ?? widget.config.hintText,
           //floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelStyle: TextStyle(
             color: widget.focusBorderColor ?? globalTheme.accentColor,
@@ -356,14 +404,11 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           //控制label的行为
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           suffix: widget.suffix,
-          /*suffixIcon: const Icon(Icons.clear).click(() {
-        widget.controller.clear();
-      }),*/
           suffixIcon: _buildSuffixIcon(),
           suffixIconConstraints: widget.suffixIconConstraints,
           prefix: widget.prefix,
-          //prefixIconConstraints: null,
-          //prefixIcon: widget.prefix,
+          prefixIcon: widget.prefixIcon ?? widget.config.prefixIcon,
+          prefixIconConstraints: widget.prefixIconConstraints,
         );
 
     final cursorColor = widget.cursorColor ?? globalTheme.accentColor;
@@ -375,16 +420,26 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     return TextSelectionTheme(
       data: textSelectionThemeData,
       child: DefaultSelectionStyle(
-        cursorColor: cursorColor, //光标的颜色
-        selectionColor: cursorColor, //选中文本的颜色
+        cursorColor: cursorColor,
+        //光标的颜色
+        selectionColor: cursorColor,
+        //选中文本的颜色
         //mouseCursor: SystemMouseCursors.text,//鼠标的样式
         child: TextField(
           focusNode: widget.config.focusNode,
           decoration: decoration,
           controller: widget.config.controller,
           enabled: widget.enabled,
+          textInputAction:
+              widget.textInputAction ?? widget.config.textInputAction,
           onChanged: (value) {
+            widget.onChanged?.call(value);
+            widget.config.onChanged?.call(value);
             _checkSuffixIcon();
+          },
+          onSubmitted: (value) {
+            widget.onSubmitted?.call(value);
+            widget.config.onSubmitted?.call(value);
           },
           style: widget.textStyle,
           textAlign: widget.textAlign,
