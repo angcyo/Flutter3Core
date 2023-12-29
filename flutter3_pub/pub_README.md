@@ -340,6 +340,8 @@ https://github.com/fluttercommunity/plus_plugins
 - [table_calendar: ^3.0.9](https://pub.dev/packages/table_calendar) 高度可定制、功能丰富的 Flutter 日历小部件。
 - [ninepatch_image: ^0.0.3](https://pub.dev/packages/ninepatch_image) Flutter 的可调整大小的位图（九块图像）.9图片
 - [flutter_popup: ^3.1.8](https://pub.dev/packages/flutter_popup) flutter_popup 包是一个方便的工具，使您能够在 Flutter 应用程序中显示一个简单且可自定义的弹出窗口。它提供了一个突出显示功能，可用于根据需要将用户的注意力引导到特定区域。
+- [azlistview: ^2.0.0](https://pub.dev/packages/azlistview) Flutter 城市列表、联系人列表，索引&悬停。基于scrollable_positioned_list.
+- [flutter_layout_grid: ^2.0.5](https://pub.dev/packages/flutter_layout_grid) 一个强大的 Flutter 网格布局系统，针对复杂的用户界面设计进行了优化。
 
 ## 平台特有
 
