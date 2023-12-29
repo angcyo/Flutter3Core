@@ -247,6 +247,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [json_serializable: ^6.7.1](https://pub.dev/packages/json_serializable) 为操作 JSON 提供 Dart
   构建系统构建器。
 - [vector_math: ^2.1.4](https://pub.dev/packages/vector_math) 用于 2D 和 3D 应用程序的矢量数学库。
+- [matrix4_transform: ^3.0.0](https://pub.dev/packages/matrix4_transform) 此包是一个辅助数学类，可以轻松创建 Matrix4 转换。
 - [get_it: ^7.6.4](https://pub.dev/packages/get_it)
 - [watch_it: ^1.1.0](https://pub.dev/packages/watch_it) 由 get_it 提供支持的简单状态管理解决方案。
 - [rxdart: ^0.27.7](https://pub.dev/packages/rxdart) RxDart 扩展了 Dart Streams 和 StreamController
@@ -360,6 +361,7 @@ https://github.com/fluttercommunity/plus_plugins
   通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
 - [mobile_scanner: ^3.5.2](https://pub.dev/packages/mobile_scanner) 基于 MLKit 的 Flutter 通用扫描仪。在
   Android 上使用 CameraX，在 iOS 上使用 AVFoundation。
+- [barcode_scanner: ^3.6.2](https://pub.dev/packages/barcode_scanner) Scanbot Flutter 条码扫描器插件使您能够轻松实现适用于 iOS 和 Android 的 Scanbot 条码扫描器 SDK。
 - [flutter_barcode_scanner: ^2.0.0](https://pub.dev/packages/flutter_barcode_scanner) 一个用于
   Flutter 应用程序的插件，可在 Android 和 iOS 上添加条形码扫描支持。
 - [flutter_mrz_scanner: ^2.1.0](https://pub.dev/packages/flutter_mrz_scanner) 使用 iOS 和 Android

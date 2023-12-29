@@ -9,6 +9,9 @@ part of flutter3_basics;
 typedef CanvasCallback = void Function(Canvas canvas);
 
 /// 使用[Canvas]绘制图片
+/// [DecorationImage]
+/// [paintImage]
+/// [applyBoxFit]
 ui.Picture drawPicture(
   Size size,
   CanvasCallback callback,
