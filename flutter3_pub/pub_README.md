@@ -301,6 +301,7 @@ https://github.com/fluttercommunity/plus_plugins
   对键盘可见性更改做出反应。
 - [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter
   可滚动小部件提供了固定/可变行高的滚动到索引机制。
+- [indexed_list_view: ^3.0.1](https://pub.dev/packages/indexed_list_view) 按索引跳转到任何项目。
 - [matrix_gesture_detector: ^0.1.0](https://pub.dev/packages/matrix_gesture_detector)
   MatrixGestureDetector 检测平移、缩放和旋转手势，并将它们组合成 Matrix4 可由 Transform 小部件或低级
   CustomPainter 代码使用的对象。
@@ -322,8 +323,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [video_editor: ^3.0.0](https://pub.dev/packages/video_editor) 一个 Flutter 插件，用于编辑视频文件。
 - [video_trimmer: ^3.0.1](https://pub.dev/packages/video_trimmer) 一个 Flutter 插件，用于裁剪视频文件。
 - [video_compress: ^3.1.2](https://pub.dev/packages/video_compress) 通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
-- [flutter_swipe_detector: ^2.0.0](https://pub.dev/packages/flutter_swipe_detector) 一个 Flutter
-  小部件，用于检测向左、向右、向上和向下的滑动手势。
+- [flutter_swipe_detector: ^2.0.0](https://pub.dev/packages/flutter_swipe_detector) 一个 Flutter 小部件，用于检测向左、向右、向上和向下的滑动手势。
 - [flutterme_credit_card: ^1.0.2](https://pub.dev/packages/flutterme_credit_card) 这是 Flutterme 的信用卡可定制小部件和验证包。
 - [new_image_crop: ^1.0.0+2](https://pub.dev/packages/new_image_crop) 用于裁剪图像。
 - [custom_flutter_painter: ^1.0.1](https://pub.dev/packages/custom_flutter_painter) 用于绘画的纯 Flutter 包。
@@ -342,6 +342,12 @@ https://github.com/fluttercommunity/plus_plugins
 - [flutter_popup: ^3.1.8](https://pub.dev/packages/flutter_popup) flutter_popup 包是一个方便的工具，使您能够在 Flutter 应用程序中显示一个简单且可自定义的弹出窗口。它提供了一个突出显示功能，可用于根据需要将用户的注意力引导到特定区域。
 - [azlistview: ^2.0.0](https://pub.dev/packages/azlistview) Flutter 城市列表、联系人列表，索引&悬停。基于scrollable_positioned_list.
 - [flutter_layout_grid: ^2.0.5](https://pub.dev/packages/flutter_layout_grid) 一个强大的 Flutter 网格布局系统，针对复杂的用户界面设计进行了优化。
+- [flutter_constraintlayout: ^1.7.0-stable](https://pub.dev/packages/flutter_constraintlayout) 一个超级强大的 Stack，使用约束构建极为灵活的布局，和 Android 下的 ConstraintLayout 和 iOS 下的 AutoLayout 类似。但代码实现却高效得多，它具有 O(n) 的布局时间复杂度，无需线性方程求解。
+- [layout: ^1.0.5](https://pub.dev/packages/layout) 响应式布局的工具。
+- [flutter_wall_layout: ^2.1.1](https://pub.dev/packages/flutter_wall_layout) 用于在墙上布置小部件。
+- [network_to_file_image: ^6.0.0](https://pub.dev/packages/network_to_file_image) 从网络加载/下载图像并将其保存到本地文件系统中。
+- [device_frame: ^1.1.0](https://pub.dev/packages/device_frame) 常见设备的模型。
+- [device_preview: ^1.1.0](https://pub.dev/packages/device_preview) 大致了解您的应用在其他设备上的外观和性能。
 
 ## 平台特有
 
