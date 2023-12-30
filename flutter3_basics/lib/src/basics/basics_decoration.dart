@@ -126,6 +126,8 @@ BoxDecoration lineaGradientDecoration(
 
 //region InputDecoration
 
+/// [InputBorder.none]
+/// [BorderSide.none]
 /// [InputDecoration]
 /// [OutlineInputBorder]
 OutlineInputBorder outlineInputBorder({
