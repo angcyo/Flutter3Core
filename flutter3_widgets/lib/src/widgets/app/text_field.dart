@@ -39,8 +39,8 @@ class TextFieldConfig {
 
   /// 回调
   final ValueChanged<String>? onChanged;
-
   final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onEditingComplete;
 
   TextFieldConfig({
     String? text,
@@ -52,6 +52,7 @@ class TextFieldConfig {
     this.prefixIcon,
     this.onChanged,
     this.onSubmitted,
+    this.onEditingComplete,
   })  : controller = controller ?? TextEditingController(text: text),
         focusNode = focusNode ?? FocusNode(),
         obscureNode = ObscureNode(obscureText ?? false);
@@ -94,7 +95,8 @@ class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier {
 }
 
 /// https://juejin.cn/post/6910163213778681864
-/// 单行输入框
+/// https://blog.csdn.net/yuzhiqiang_1993/article/details/88204031
+/// 单行/多行输入框
 class SingleInputWidget extends StatefulWidget {
   /// 是否激活
   final bool enabled;
@@ -168,6 +170,8 @@ class SingleInputWidget extends StatefulWidget {
   /// 输入的文本格式化
   /// [FilteringTextInputFormatter.singleLineFormatter]
   /// [FilteringTextInputFormatter.digitsOnly]
+  /// [FilteringTextInputFormatter]
+  /// [LengthLimitingTextInputFormatter]
   final List<TextInputFormatter>? inputFormatters;
 
   /// 输入的文本样式
@@ -206,8 +210,12 @@ class SingleInputWidget extends StatefulWidget {
   final TextInputAction? textInputAction;
 
   /// 回调
+  /// https://blog.csdn.net/yuzhiqiang_1993/article/details/88204031
   final ValueChanged<String>? onChanged;
+
+  ///点击键盘的动作按钮时的回调
   final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onEditingComplete;
 
   const SingleInputWidget({
     super.key,
@@ -259,6 +267,7 @@ class SingleInputWidget extends StatefulWidget {
     this.textInputAction,
     this.onChanged,
     this.onSubmitted,
+    this.onEditingComplete,
   });
 
   @override
@@ -440,6 +449,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           onSubmitted: (value) {
             widget.onSubmitted?.call(value);
             widget.config.onSubmitted?.call(value);
+          },
+          onEditingComplete: () {
+            widget.onEditingComplete?.call();
+            widget.config.onEditingComplete?.call();
           },
           style: widget.textStyle,
           textAlign: widget.textAlign,
