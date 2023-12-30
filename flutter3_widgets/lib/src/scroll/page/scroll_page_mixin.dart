@@ -6,7 +6,7 @@ part of flutter3_widgets;
 ///
 /// 快速创建一个具有[Scaffold]脚手架和[RScrollView]滚动的页面
 ///
-mixin AbsScrollMixin {
+mixin AbsScrollPageMixin {
   //region AppBar
 
   /// 获取页面标题
@@ -80,6 +80,8 @@ mixin AbsScrollMixin {
 
   //endregion Body
 
+  //region Page
+
   /// 获取页面背景颜色
   Color? getBackgroundColor(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
@@ -96,4 +98,6 @@ mixin AbsScrollMixin {
       body: buildBody(context, children),
     );
   }
+
+//endregion Page
 }
