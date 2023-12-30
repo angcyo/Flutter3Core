@@ -52,6 +52,12 @@ extension DynamicEx on dynamic {
   /// [runtimeType]
   /// [toString]
   String toRuntimeString() => "[$runtimeType]${toString()}";
+
+  /// [DynamicEx.fromJson]
+  /// [ObjectEx.fromJson]
+  /// [StringEx.fromJson]
+  /// 从json字符串中解析出对应的数据类型
+  dynamic fromJson() => toString().fromJson();
 }
 
 final int __int64MaxValue = double.maxFinite.toInt();
@@ -72,6 +78,12 @@ extension ObjectEx on Object {
 
   /// 转换成json字符串
   String toJsonString() => json.encode(this);
+
+  /// [DynamicEx.fromJson]
+  /// [ObjectEx.fromJson]
+  /// [StringEx.fromJson]
+  /// 从json字符串中解析出对应的数据类型
+  dynamic fromJson() => toString().fromJson();
 
   /// 使用[Text]包裹
   /// [highlight] 需要高亮的文本
@@ -216,9 +228,14 @@ extension ObjectEx on Object {
 
 extension FutureEx<T> on Future<T> {
   /// [Future.then]
-  Future get([ValueErrorCallback? get]) =>
-      then((value) => get?.call(value, null),
-          onError: (error, stackTrace) => get?.call(null, error));
+  Future get([ValueErrorCallback? get, StackTrace? stack]) => then((value) {
+        try {
+          get?.call(value, null);
+        } catch (e) {
+          printError(e, stack);
+          get?.call(null, e);
+        }
+      }, onError: (error, stackTrace) => get?.call(null, error));
 
   /// 不需要等待当前的[Future]执行完成, 但是会报告错误
   /// [ignore] 完成和错误都被忽略
@@ -334,7 +351,16 @@ extension StringEx on String {
   DateTime toDateTime() => DateTime.parse(this);
 
   /// 从json字符串中解析出对应的数据类型
+  /// [DynamicEx.fromJson]
+  /// [ObjectEx.fromJson]
+  /// [StringEx.fromJson]
   dynamic fromJson() => json.decode(this);
+
+  T? fromJsonType<T>() => json.decode(this) as T?;
+
+  Iterable? fromJsonIterable() => json.decode(this) as Iterable?;
+
+  List<T>? fromJsonList<T>() => json.decode(this) as List<T>?;
 
   /// [TextSpan]
   TextSpan toTextSpan({TextStyle? style}) => TextSpan(text: this, style: style);
@@ -725,7 +751,19 @@ extension ListIntEx on List<int> {
   String md5() => crypto.md5.convert(this).toString();
 }
 
+/// [ListEx]
+/// [IterableEx]
 extension IterableEx on Iterable {
+  /// 过滤掉null
+  List<R> filterNull<R>() =>
+      where((element) => element != null).cast<R>().toList();
+
+  /// 过滤到新的列表中
+  /// [WhereIterable]
+  /// [List]
+  List<R> whereToList<R>(bool Function(dynamic) test) =>
+      where(test).cast<R>().toList();
+
   /// [Iterable]转换成[Type]的[Iterable]
   Iterable<Type> toTypeIterable<Type>() {
     return map((e) => e as Type);
@@ -737,6 +775,7 @@ extension IterableEx on Iterable {
   }
 
   /// 映射类型转换成[Type]的[List]
+  /// [MappedIterable]
   /// [IterableEx.mapToList]
   /// [ListEx.mapToList]
   List<Type> mapToList<Type>(
@@ -744,13 +783,15 @@ extension IterableEx on Iterable {
     bool growable = false,
   }) {
     return map<Type>((e) {
-      debugger();
+      //debugger();
       var r = toElement(e);
       return r;
     }).toList(growable: growable);
   }
 }
 
+/// [ListEx]
+/// [IterableEx]
 extension ListEx on List<dynamic> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;

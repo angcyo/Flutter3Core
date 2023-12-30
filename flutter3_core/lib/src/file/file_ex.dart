@@ -124,6 +124,7 @@ extension FileEx on File {
   }
 
   /// 读取文件内容
+  /// [loadAssetString]
   Future<String?> readString({Encoding encoding = utf8}) async {
     try {
       return await readAsString(encoding: encoding);

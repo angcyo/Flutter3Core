@@ -49,6 +49,9 @@ class GlobalTheme {
   /// 白色背景颜色
   Color get whiteBgColor => "#f8f8f8".toColor();
 
+  /// 容器白色背景颜色
+  Color get itemWhiteBgColor => "#f6f6f6".toColor();
+
   /// 白色背景上的白色按钮背景颜色
   Color get whiteSubBgColor => "#ececec".toColor();
 

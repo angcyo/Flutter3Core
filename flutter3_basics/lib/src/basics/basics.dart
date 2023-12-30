@@ -139,6 +139,32 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 //debugger(message: "等待调试...");
 //String.fromEnvironment
 
+/// 报告错误
+/// [FlutterError.onError] 最终会调用此方法
+void reportError(exception) {
+  FlutterError.reportError(
+    FlutterErrorDetails(
+      exception: exception,
+      stack: StackTrace.current,
+    ),
+  );
+}
+
+/// 打印错误
+/// [FlutterError.presentError]
+/// [StackTrace.current]
+void printError(exception, [StackTrace? stack]) {
+  FlutterError.dumpErrorToConsole(
+    exception is FlutterErrorDetails
+        ? exception
+        : FlutterErrorDetails(
+            exception: exception,
+            stack: stack ?? StackTrace.current,
+          ),
+    forceReport: true,
+  );
+}
+
 /// [RendererBinding.instance]
 /// [PlatformDispatcher.implicitView]
 /// [FlutterView.display]
@@ -283,11 +309,14 @@ Future<R> scheduleTask<R>(ResultCallback<R> callback,
 
 const kDefAssetsPngPrefix = 'assets/png/';
 
+/// 读取资产中的文本内容
 /// ```
 /// await loadAssetString('config.json');
 /// await loadAssetString('assets/config.json');
 /// ```
 /// https://flutter.cn/docs/development/ui/assets-and-images#loading-text-assets
+///
+/// [FileEx.readString]
 Future<String> loadAssetString(
   String key, {
   String prefix = 'assets/',
@@ -308,8 +337,8 @@ Future<String> loadAssetString(
 /// https://flutter.cn/docs/development/ui/assets-and-images#loading-images-1
 /// [ImageIcon]
 /// [loadAssetSvgWidget]
-Image loadAssetImageWidget(
-  String key, {
+Image? loadAssetImageWidget(
+  String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,
   BoxFit? fit,
@@ -318,26 +347,30 @@ Image loadAssetImageWidget(
   Color? color,
   BlendMode? colorBlendMode,
 }) =>
-    Image.asset(
-      key.ensurePackagePrefix(package, prefix),
-      fit: fit,
-      width: width,
-      height: height,
-      color: color,
-      colorBlendMode: colorBlendMode,
-    );
+    key == null
+        ? null
+        : Image.asset(
+            key.ensurePackagePrefix(package, prefix),
+            fit: fit,
+            width: width,
+            height: height,
+            color: color,
+            colorBlendMode: colorBlendMode,
+          );
 
 /// [ImageProvider]
 /// [AssetBundleImageProvider]
 /// [AssetImage]
 /// [ExactAssetImage]
-AssetImage loadAssetImage(
-  String key, {
+AssetImage? loadAssetImage(
+  String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,
 }) =>
-    AssetImage(
-      key.ensurePackagePrefix(package, prefix),
-    );
+    key == null
+        ? null
+        : AssetImage(
+            key.ensurePackagePrefix(package, prefix),
+          );
 
 //endregion Asset

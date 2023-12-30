@@ -44,6 +44,7 @@ extension FrameCallbackEx on int {
 //region 界面相关
 
 typedef WidgetList = List<Widget>;
+typedef WidgetNullList = List<Widget?>;
 
 /// 通过[Builder]小部件, 获取当前元素的[BuildContext]
 /// 然后当前[BuildContext]更新只会影响其子元素, 父元素不会受到影响
@@ -78,7 +79,7 @@ EdgeInsets? edgeInsets([double? v1, double? v2, double? v3, double? v4]) {
   return null;
 }
 
-extension WidgetListEx on WidgetList {
+extension WidgetListEx on WidgetNullList {
   /// 将当前的小部件集合, 包裹在一个[Wrap]中
   /// [alignment] 主轴对齐方式
   /// [crossAxisAlignment] 交叉轴对齐方式
@@ -103,7 +104,7 @@ extension WidgetListEx on WidgetList {
       textDirection: textDirection,
       verticalDirection: verticalDirection,
       clipBehavior: clipBehavior,
-      children: this,
+      children: filterNull(),
     );
   }
 
@@ -140,7 +141,7 @@ extension WidgetListEx on WidgetList {
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
       textBaseline: textBaseline,
-      children: children,
+      children: children.filterNull(),
     );
   }
 
@@ -180,7 +181,7 @@ extension WidgetListEx on WidgetList {
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
       textBaseline: textBaseline,
-      children: children,
+      children: children.filterNull(),
     );
   }
 
@@ -196,14 +197,14 @@ extension WidgetListEx on WidgetList {
         textDirection: textDirection,
         fit: fit,
         clipBehavior: clipBehavior,
-        children: this,
+        children: filterNull(),
       );
 
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
   /// [WidgetEx.repaintBoundary]
   /// [debugRepaintRainbowEnabled]
-  WidgetList repaintBoundary() => RepaintBoundary.wrapAll(this);
+  WidgetList repaintBoundary() => RepaintBoundary.wrapAll(filterNull());
 }
 
 extension WidgetEx on Widget {
@@ -564,6 +565,12 @@ extension WidgetEx on Widget {
 
   /// 使用一个容器包裹当前的小部件
   /// [Container]
+  /// [color] 背景颜色
+  /// [borderColor] 边框颜色, 如果有
+  /// [borderWidth] 边框宽度
+  /// [radius] 圆角, 决定[BorderRadius]
+  /// [borderRadius] 圆角, 决定[decoration]
+  /// [decoration] 背景装饰
   /// [fillDecoration]
   Widget container({
     AlignmentGeometry? alignment,
@@ -571,6 +578,8 @@ extension WidgetEx on Widget {
     Color? color,
     Decoration? decoration,
     Decoration? foregroundDecoration,
+    double? radius,
+    BorderRadius? borderRadius,
     BoxConstraints? constraints,
     EdgeInsetsGeometry? margin,
     Matrix4? transform,
@@ -578,11 +587,32 @@ extension WidgetEx on Widget {
     Clip clipBehavior = Clip.none,
     double? width,
     double? height,
+    Color? borderColor,
+    double borderWidth = 1,
   }) {
+    decoration ??= (borderRadius == null
+        ? (radius == null
+            ? null
+            : BoxDecoration(
+                borderRadius: BorderRadius.circular(radius),
+                color: color,
+                shape: BoxShape.rectangle,
+                border: borderColor == null
+                    ? null
+                    : Border.all(color: borderColor, width: borderWidth),
+              ))
+        : BoxDecoration(
+            borderRadius: borderRadius,
+            color: color,
+            shape: BoxShape.rectangle,
+            border: borderColor == null
+                ? null
+                : Border.all(color: borderColor, width: borderWidth),
+          ));
     return Container(
       alignment: alignment,
       padding: padding,
-      color: color,
+      color: decoration == null ? color : null,
       decoration: decoration,
       foregroundDecoration: foregroundDecoration,
       constraints: constraints,
