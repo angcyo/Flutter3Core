@@ -9,28 +9,36 @@ part of flutter3_basics;
 //region---单位
 
 class _Pixel {
-  final String reason;
+  final String des;
 
-  const _Pixel([this.reason = '像素单位']);
+  const _Pixel([this.des = '像素单位']);
 }
 
 const pixel = _Pixel();
 
 class _Dp {
-  final String reason;
+  final String des;
 
-  const _Dp([this.reason = 'Dp单位']);
+  const _Dp([this.des = 'Dp单位']);
 }
 
 const dp = _Dp();
 
 class _Mm {
-  final String reason;
+  final String des;
 
-  const _Mm([this.reason = 'Mm单位']);
+  const _Mm([this.des = 'Mm单位']);
 }
 
 const mm = _Mm();
+
+class _Unit {
+  final String des;
+
+  const _Unit([this.des = '当前的值根据设置的Unit自动适配']);
+}
+
+const unit = _Unit();
 
 //endregion---单位
 
@@ -48,27 +56,36 @@ const dsl = _Dsl();
 
 /// 调用点
 class _CallPoint {
-  final String reason;
+  final String des;
 
-  const _CallPoint([this.reason = '调用点']);
+  const _CallPoint([this.des = '调用点']);
 }
 
 const callPoint = _CallPoint();
 
+/// 覆盖点
+class _OverridePoint {
+  final String des;
+
+  const _OverridePoint([this.des = '覆盖点']);
+}
+
+const overridePoint = _OverridePoint();
+
 /// 测试功能
 class _Experimental {
-  final String reason;
+  final String des;
 
-  const _Experimental([this.reason = '测试功能']);
+  const _Experimental([this.des = '测试功能']);
 }
 
 const experimental = _Experimental();
 
 /// 测试点
 class _TestPoint {
-  final String reason;
+  final String des;
 
-  const _TestPoint([this.reason = '测试点']);
+  const _TestPoint([this.des = '测试点']);
 }
 
 const testPoint = _TestPoint();
@@ -99,5 +116,30 @@ class _GlobalInstance {
 }
 
 const globalInstance = _GlobalInstance();
+
+/// 可以被操作的属性
+class _Property {
+  final String des;
+
+  const _Property([this.des = '可以被操作的属性']);
+}
+
+const property = _Property();
+
+class _UpdateMark {
+  final String des;
+
+  const _UpdateMark([this.des = '当前的方法会调用[setState]方法, 用来刷新界面']);
+}
+
+const updateMark = _UpdateMark();
+
+class _Private {
+  final String des;
+
+  const _Private([this.des = '私有化的方法, 不建议调用']);
+}
+
+const private = _Private();
 
 //endregion---base

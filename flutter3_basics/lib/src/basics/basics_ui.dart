@@ -560,7 +560,7 @@ extension WidgetEx on Widget {
   Widget elevation(double elevation, {Color? color, Color? shadowColor}) {
     return PhysicalModel(
       color: color ?? Colors.transparent,
-      shadowColor: shadowColor ?? const Color(0xFF000000),
+      shadowColor: shadowColor ?? Colors.black12,
       elevation: elevation,
       child: this,
     );
@@ -574,6 +574,9 @@ extension WidgetEx on Widget {
   /// [radius] 圆角, 决定[BorderRadius]
   /// [borderRadius] 圆角, 决定[decoration]
   /// [decoration] 背景装饰
+  /// [shadowBlurRadius] 阴影模糊半径, 同时决定是否启用阴影 推荐值[kDefaultBlurRadius]
+  /// [shadowColor] 阴影颜色
+  /// [shadowSpreadRadius] 阴影扩散半径
   /// [fillDecoration]
   Widget container({
     AlignmentGeometry? alignment,
@@ -592,26 +595,31 @@ extension WidgetEx on Widget {
     double? height,
     Color? borderColor,
     double borderWidth = 1,
+    double? shadowBlurRadius,
+    Color? shadowColor,
+    double shadowSpreadRadius = 1,
   }) {
-    decoration ??= (borderRadius == null
-        ? (radius == null
-            ? null
-            : BoxDecoration(
-                borderRadius: BorderRadius.circular(radius),
-                color: color,
-                shape: BoxShape.rectangle,
-                border: borderColor == null
-                    ? null
-                    : Border.all(color: borderColor, width: borderWidth),
-              ))
+    borderRadius ??= radius == null ? null : BorderRadius.circular(radius);
+    decoration ??= borderRadius == null
+        ? null
         : BoxDecoration(
             borderRadius: borderRadius,
             color: color,
             shape: BoxShape.rectangle,
+            boxShadow: shadowBlurRadius == null
+                ? null
+                : [
+                    BoxShadow(
+                        color: shadowColor ?? Colors.grey.withOpacity(0.1),
+                        offset: const Offset(2, 2), //阴影y轴偏移量
+                        blurRadius: shadowBlurRadius, //阴影模糊程度
+                        spreadRadius: shadowSpreadRadius //阴影扩散程度
+                        ),
+                  ],
             border: borderColor == null
                 ? null
                 : Border.all(color: borderColor, width: borderWidth),
-          ));
+          );
     return Container(
       alignment: alignment,
       padding: padding,

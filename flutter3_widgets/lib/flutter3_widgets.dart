@@ -1,6 +1,7 @@
 library flutter3_widgets;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -64,6 +65,8 @@ part 'src/pub/wheel.dart';
 part 'src/scroll/page/abs_scroll_page.dart';
 
 part 'src/scroll/page/r_scroll_page.dart';
+
+part 'src/scroll/page/r_status_scroll_page.dart';
 
 part 'src/scroll/r_item_tile.dart';
 

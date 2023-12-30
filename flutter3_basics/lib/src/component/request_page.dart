@@ -23,12 +23,16 @@ class RequestPage {
   }
 
   /// 网络请求中的header key
+  @property
   var keyPageIndex = KEY_PAGE_INDEX;
+
+  @property
   var keyPageSize = KEY_PAGE_SIZE;
 
   /// 默认的第一页
   var _firstPageIndex = FIRST_PAGE_INDEX;
 
+  @property
   int get firstPageIndex => _firstPageIndex;
 
   set firstPageIndex(int value) {
@@ -40,9 +44,11 @@ class RequestPage {
   late var _currentPageIndex = firstPageIndex;
 
   /// 正在请求的页
+  @property
   late var requestPageIndex = firstPageIndex;
 
   /// 每页请求的数量
+  @property
   var requestPageSize = PAGE_SIZE;
 
   /// 当前请求开始的索引
@@ -65,6 +71,7 @@ class RequestPage {
 
   /// 页面加载结束, 刷新结束/加载更多结束
   void pageLoadEnd() {
+    debugger();
     _currentPageIndex = requestPageIndex;
   }
 
@@ -74,10 +81,20 @@ class RequestPage {
     _currentPageIndex = page._currentPageIndex;
     requestPageIndex = page.requestPageIndex;
     requestPageSize = page.requestPageSize;
+    keyPageIndex = page.keyPageIndex;
+    keyPageSize = page.keyPageSize;
   }
 
   /// 是否是第一页请求
   bool get isFirstPage => requestPageIndex <= firstPageIndex;
+
+  /// 是否是当前页, 也就是当前页的数据加载完毕了
+  bool get isCurrentPage => requestPageIndex == _currentPageIndex;
+
+  /// 重置分页信息
+  void reset() {
+    pageRefresh();
+  }
 
   /// 文件分页查询
   void filePage() {
@@ -102,5 +119,21 @@ class RequestPage {
     map[keyPageIndex] = requestPageIndex;
     map[keyPageSize] = requestPageSize;
     return map;
+  }
+
+  RequestPage copyWith({
+    int? firstPageIndex,
+    int? requestPageIndex,
+    int? requestPageSize,
+    String? keyPageIndex,
+    String? keyPageSize,
+  }) {
+    return RequestPage()
+      ..firstPageIndex = firstPageIndex ?? this.firstPageIndex
+      .._currentPageIndex = _currentPageIndex
+      ..requestPageIndex = requestPageIndex ?? this.requestPageIndex
+      ..requestPageSize = requestPageSize ?? this.requestPageSize
+      ..keyPageIndex = keyPageIndex ?? this.keyPageIndex
+      ..keyPageSize = keyPageSize ?? this.keyPageSize;
   }
 }

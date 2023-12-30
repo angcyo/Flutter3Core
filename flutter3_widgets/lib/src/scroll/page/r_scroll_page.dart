@@ -6,6 +6,9 @@ part of flutter3_widgets;
 ///
 /// 混入一个[RScrollView]的页面, 支持刷新/加载更多等基础功能的页面
 /// [RScrollView]
+/// [AbsScrollPage]
+/// [RScrollPage]
+/// [RStatusScrollPage]
 mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 刷新/加载更多/滚动控制
   /// [RequestPage]
@@ -16,8 +19,9 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [initState]
   WidgetState defWidgetState = WidgetState.loading;
 
-  /// 当前界面的数据
-  WidgetList pageDataList = [];
+  /// 当前界面的数据, 用来放到滚动体里面
+  /// [pageRScrollView]
+  WidgetList pageWidgetList = [];
 
   //region 生命周期
 
@@ -48,14 +52,15 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 重写此方法, 加载数据
   /// 通过[RequestPage]实现页面分页
-  @protected
+  @overridePoint
   void onLoadData();
 
   /// 调用此方法, 加载数据完成, 并自动处理情感图/加载更多状态控制
   /// [loadData] 当前加载到的数据, 非所有数据
   /// [stateData] 当前状态的附加信息, 用来识别是否有错误
-  /// [handleData] 是否自动处理数据到[pageDataList]
+  /// [handleData] 是否自动处理数据到[pageWidgetList]
   @callPoint
+  @updateMark
   void loadDataEnd(
     List? loadData, [
     dynamic stateData,
@@ -64,9 +69,9 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     if (handleData) {
       if (loadData is WidgetList) {
         if (scrollController.requestPage.isFirstPage) {
-          pageDataList.clear();
+          pageWidgetList.clear();
         }
-        pageDataList.addAll(loadData);
+        pageWidgetList.addAll(loadData);
       }
     }
     scrollController.finishRefresh(this, loadData, stateData);
@@ -92,6 +97,16 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 是否启用加载更多
   bool get enableLoadMore => true;
 
+  /// 重置分页请求信息
+  @api
+  void resetPage([RequestPage? page]) {
+    if (page == null) {
+      scrollController.requestPage.reset();
+    } else {
+      scrollController.requestPage = page;
+    }
+  }
+
   /// 简单页面请求, 只有一页数据
   @api
   void singlePage() {
@@ -100,15 +115,23 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 显示下拉刷新
   @api
+  @updateMark
   void startRefresh() {
     scrollController.startRefresh();
   }
 
   /// 显示状态刷新
   @api
+  @updateMark
   void startRefreshState() {
     scrollController.startRefresh(state: this, useWidgetState: true);
   }
+
+  /// 更新情感图状态
+  @api
+  @updateMark
+  bool updateAdapterState(WidgetState widgetState, [dynamic stateData]) =>
+      scrollController.updateAdapterState(this, widgetState, stateData);
 
   /// 包裹内容
   /// [RScrollView]
@@ -122,7 +145,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       controller: scrollController,
       enableRefresh: enableRefresh ?? this.enableRefresh,
       enableLoadMore: enableLoadMore ?? this.enableLoadMore,
-      children: children ?? pageDataList,
+      children: children ?? pageWidgetList,
     );
   }
 

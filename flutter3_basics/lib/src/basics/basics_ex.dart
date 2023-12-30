@@ -96,12 +96,16 @@ extension ObjectEx on Object {
   /// https://pub.dev/packages/highlightable
   /// https://pub.dev/packages/search_highlight_text
   Text text({
+    double? fontSize,
+    Color? textColor,
+    FontWeight? fontWeight,
     TextStyle? style,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
     bool? softWrap,
     String? highlight,
+    Color? highlightColor,
     TextStyle? highlightTextStyle,
     List<String>? highlightList,
     bool caseSensitive = false,
@@ -111,7 +115,8 @@ extension ObjectEx on Object {
   }) {
     //使用正则匹配高亮文本
     if (!isNullOrEmpty(highlight) || !isNullOrEmpty(highlightList)) {
-      highlightTextStyle ??= style?.copyWith(color: Colors.red);
+      highlightTextStyle ??=
+          style?.copyWith(color: highlightColor ?? Colors.red);
 
       final String text = toString();
       final String textLC = caseSensitive ? text : text.toLowerCase();
@@ -217,7 +222,13 @@ extension ObjectEx on Object {
 
     return Text(
       "$this",
-      style: style,
+      style: style ??
+          (fontSize == null && textColor == null && fontWeight == null
+              ? null
+              : TextStyle(
+                  fontSize: fontSize,
+                  color: textColor,
+                  fontWeight: fontWeight)),
       textAlign: textAlign,
       maxLines: maxLines,
       softWrap: softWrap,

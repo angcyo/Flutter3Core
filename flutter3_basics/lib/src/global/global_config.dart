@@ -38,6 +38,9 @@ const double kDefaultBorderRadiusX = 8.0;
 const double kDefaultBorderRadiusXX = 12.0;
 const double kDefaultBorderRadiusXXX = 24.0;
 
+/// 最大圆角边框半径
+const double kMaxBorderRadius = 45.0;
+
 /// 打开[url]的回调方法
 typedef GlobalOpenUrlFn = Future<bool> Function(
     BuildContext? context, String? url);

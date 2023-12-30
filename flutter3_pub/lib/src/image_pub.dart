@@ -52,8 +52,84 @@ extension ImagePubEx on String {
           ? toFileImageProvider()
           : toAssetImageProvider()) as ImageProvider;
 
+  /// 根据类型, 自动转换成对应的图片小部件
+  Widget toImageWidget({
+    BoxFit? fit = BoxFit.cover,
+    bool usePlaceholder = false,
+    PlaceholderWidgetBuilder? placeholder,
+    int? memCacheWidth,
+    int? memCacheHeight,
+    Color? tintColor,
+  }) {
+    memCacheHeight ??= memCacheWidth;
+    final type = mimeType();
+    if (type == "image") {
+      //图片类型
+      if (isSvg) {
+        //svg图片
+        fit ??= BoxFit.contain;
+        if (isHttpUrl) {
+          return loadHttpSvgWidget(
+            this,
+            tintColor: tintColor,
+            fit: fit,
+          );
+        } else if (isFilePath) {
+          return loadFileSvgWidget(
+            this,
+            tintColor: tintColor,
+            fit: fit,
+          );
+        } else {
+          return loadStringSvgWidget(
+            this,
+            tintColor: tintColor,
+            fit: fit,
+          );
+        }
+      } else {
+        //普通图片
+        if (isHttpUrl) {
+          return toNetworkImageWidget(
+            fit: fit,
+            usePlaceholder: usePlaceholder,
+            placeholder: placeholder,
+            memCacheWidth: memCacheWidth,
+            memCacheHeight: memCacheHeight,
+          );
+        } else if (isFilePath) {
+          return Image.file(
+            file(),
+            fit: fit,
+            cacheWidth: memCacheWidth,
+            cacheHeight: memCacheHeight,
+            errorBuilder: (context, error, stackTrace) =>
+                GlobalConfig.of(context)
+                    .errorPlaceholderBuilder(context, error),
+          );
+        } else {
+          return Image.asset(
+            this,
+            fit: fit,
+            cacheWidth: memCacheWidth,
+            cacheHeight: memCacheHeight,
+            errorBuilder: (context, error, stackTrace) =>
+                GlobalConfig.of(context)
+                    .errorPlaceholderBuilder(context, error),
+          );
+        }
+      }
+    }
+    debugger();
+    return "不支持的图片类型:$type\n${basename()}".text(
+      textAlign: TextAlign.center,
+      textColor: Colors.red,
+    );
+  }
+
   /// 网络图片提供器
   /// [ImageProvider]
+  /// [toNetworkImageWidget]
   CachedNetworkImageProvider toCacheNetworkImageProvider() =>
       CachedNetworkImageProvider(this);
 
@@ -84,6 +160,8 @@ extension ImagePubEx on String {
   /// [loadAssetImageWidget]
   /// [placeholder].[progressIndicatorBuilder] 只能设置一个
   /// [usePlaceholder] 是否使用默认的占位图, 否则使用进度指示器
+  /// [toCacheNetworkImageProvider]
+  /// [toNetworkImageWidget]
   Widget toNetworkImageWidget({
     BoxFit? fit = BoxFit.cover,
     bool usePlaceholder = false,

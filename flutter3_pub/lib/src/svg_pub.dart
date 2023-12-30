@@ -40,6 +40,7 @@ SvgPicture loadAssetSvgWidget(
 SvgPicture loadHttpSvgWidget(
   String url, {
   Color? tintColor,
+  BoxFit fit = BoxFit.contain,
   double? width,
   double? height,
   UiColorFilter? colorFilter,
@@ -48,6 +49,53 @@ SvgPicture loadHttpSvgWidget(
     SvgPicture.network(
       url,
       semanticsLabel: url,
+      fit: fit,
+      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+      width: width,
+      height: height,
+      placeholderBuilder: placeholderBuilder ??
+          (context) => LoadingWrapWidget(
+                width: width,
+                height: height,
+              ),
+    );
+
+SvgPicture loadFileSvgWidget(
+  String path, {
+  Color? tintColor,
+  BoxFit fit = BoxFit.contain,
+  double? width,
+  double? height,
+  UiColorFilter? colorFilter,
+  WidgetBuilder? placeholderBuilder,
+}) =>
+    SvgPicture.file(
+      path.file(),
+      semanticsLabel: path,
+      fit: fit,
+      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+      width: width,
+      height: height,
+      placeholderBuilder: placeholderBuilder ??
+          (context) => LoadingWrapWidget(
+                width: width,
+                height: height,
+              ),
+    );
+
+SvgPicture loadStringSvgWidget(
+  String string, {
+  Color? tintColor,
+  BoxFit fit = BoxFit.contain,
+  double? width,
+  double? height,
+  UiColorFilter? colorFilter,
+  WidgetBuilder? placeholderBuilder,
+}) =>
+    SvgPicture.string(
+      string,
+      semanticsLabel: string,
+      fit: fit,
       colorFilter: colorFilter ?? tintColor?.toColorFilter(),
       width: width,
       height: height,

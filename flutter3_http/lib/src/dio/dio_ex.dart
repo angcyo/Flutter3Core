@@ -201,6 +201,8 @@ extension DioFutureResponseEx<T> on Future<T> {
   /// ```
   /// value.map<ConnectDeviceBean>((e) => ConnectDeviceBean.fromJson(e))
   ///      .toList();
+  ///
+  /// (value as Iterable?)?.mapToList<ConnectDeviceBean>((e) => ConnectDeviceBean.fromJson(e))
   /// ```
   Future http(
     ValueErrorCallback? callback, {

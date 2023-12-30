@@ -2,7 +2,6 @@ library flutter3_core;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -103,5 +102,10 @@ extension MimeEx on String {
   ///判断当前字符串是否是文件路径
   bool get isFilePath {
     return File(this).existsSync();
+  }
+
+  /// 判断是否是svg
+  bool get isSvg {
+    return toUri().path.toLowerCase().endsWith('.svg');
   }
 }

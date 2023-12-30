@@ -269,8 +269,23 @@ extension PathStringEx on String {
 
   /// 获取文件名, 包含扩展名, 去掉路径
   /// [withoutExtension] 是否去掉扩展名
+  /// [extension] 获取文件扩展名
   String basename([bool withoutExtension = false]) =>
       withoutExtension ? p.basenameWithoutExtension(this) : p.basename(this);
+
+  /// 获取扩展名
+  /// [includeDot] 是否包含.本身
+  /// [extension] 获取文件扩展名
+  String exName([bool includeDot = false]) {
+    var ex = extension();
+    if (includeDot || !ex.startsWith(".")) {
+      return ex;
+    }
+    return ex.substring(1);
+  }
+
+  /// 获取文件扩展名, 包含.本身
+  String extension([int level = 1]) => p.extension(this, level);
 
   /// [dirname]
   String folderPath() => dirname();
@@ -284,9 +299,6 @@ extension PathStringEx on String {
 
   /// 分割路径
   List<String> splitPath() => p.split(this);
-
-  /// 获取文件扩展名, 包含.本身
-  String extension([int level = 1]) => p.extension(this, level);
 
   /// 当前文件是否存在
   Future<bool> isExists() async => File(this).exists();

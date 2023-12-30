@@ -18,6 +18,7 @@ class RScrollController extends ScrollController {
   final GlobalKey<WidgetStateWidgetState> loadMoreKey = GlobalKey();
 
   /// 用来控制刷新完成
+  /// [_onRefresh]
   Completer<void> _refreshCompleter = Completer();
 
   /// 当前的刷新状态, 可以监听这个值的变化触发刷新
@@ -64,7 +65,10 @@ class RScrollController extends ScrollController {
     if (position.pixels >= position.maxScrollExtent) {
       //滚动到底部了
       if (_isEnableLoadMore) {
-        if (loadMoreStateValue.value == WidgetState.loading) {
+        //debugger();
+        if (refreshStateValue.value == WidgetState.loading) {
+          l.d("正在刷新中...忽略加载更多处理.");
+        } else if (loadMoreStateValue.value == WidgetState.loading) {
           //正在加载中...
         } else if (loadMoreStateValue.value == WidgetState.empty) {
           //没有更多数据了
@@ -114,6 +118,7 @@ class RScrollController extends ScrollController {
   /// [useWidgetState] 是否使用[widgetStateValue]来触发刷新, 否则使用刷新头
   /// [state] 用来触发界面刷新
   @callPoint
+  @updateMark
   void startRefresh({
     State? state,
     bool useWidgetState = false,
@@ -133,6 +138,7 @@ class RScrollController extends ScrollController {
   /// [stateData] 当前状态的附加信息, 用来识别是否有错误
   /// [Exception]
   @callPoint
+  @updateMark
   void finishRefresh(
     State? state, [
     List? loadData,
@@ -176,7 +182,9 @@ class RScrollController extends ScrollController {
 
   /// 更新情感图状态
   /// [buildAdapterStateWidget]
-  void updateAdapterState(State? state, WidgetState widgetState, [stateData]) {
+  /// @return true 表示状态更新成功
+  @updateMark
+  bool updateAdapterState(State? state, WidgetState widgetState, [stateData]) {
     //debugger();
     if (adapterStateValue.value != widgetState) {
       _widgetStateData = stateData;
@@ -186,14 +194,17 @@ class RScrollController extends ScrollController {
       if (widgetState == WidgetState.loading) {
         _onRefreshStart();
       }
+      return true;
     } else {
       state?.updateState();
+      return false;
     }
   }
 
   /// 更新加载更多状态
   /// [buildLoadMoreStateWidget]
-  void updateLoadMoreState(State? state, WidgetState widgetState, [stateData]) {
+  @updateMark
+  bool updateLoadMoreState(State? state, WidgetState widgetState, [stateData]) {
     //debugger();
     if (loadMoreStateValue.value != widgetState) {
       _widgetStateData = stateData;
@@ -204,7 +215,9 @@ class RScrollController extends ScrollController {
       } else if (widgetState == WidgetState.none) {
         requestPage.pageLoadEnd();
       }
+      return true;
     }
+    return false;
   }
 
   /// 使用刷新布局包裹[child]
@@ -270,6 +283,7 @@ class RScrollController extends ScrollController {
   /// 内部刷新处理开始处理
   /// 如果[_onRefreshStart]内部有异步方法
   void _onRefreshStart() {
+    //debugger();
     loadMoreStateValue.value = WidgetState.none;
     requestPage.pageRefresh();
     onRefreshCallback?.call();
