@@ -13,7 +13,9 @@ class GradientButton extends StatelessWidget {
     this.colors,
     required this.onTap,
     required this.child,
+    this.enable,
     this.padding,
+    this.textStyle,
     this.radius = kDefaultBorderRadiusL,
     this.borderRadius,
     this.textColor,
@@ -26,6 +28,10 @@ class GradientButton extends StatelessWidget {
     this.minHeight = kInteractiveHeight,
     this.maxHeight = double.infinity,
   });
+
+  /// 是否启用
+  /// 为`null`时, 自动根据[onTap]判断
+  final bool? enable;
 
   /// 渐变色数组
   final List<Color>? colors;
@@ -48,6 +54,9 @@ class GradientButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   final Widget child;
+
+  /// 文本默认样式
+  final TextStyle? textStyle;
   final double? radius;
   final BorderRadius? borderRadius;
 
@@ -68,20 +77,20 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    final globalTheme = GlobalTheme.of(context);
     //确保colors数组不空
     List<Color> colors = this.colors ??
         (color == null
-            ? [theme.primaryColor, theme.primaryColorDark]
+            ? [globalTheme.primaryColor, globalTheme.primaryColorDark]
             : [color!, color!]);
     final radius = borderRadius ??
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
-    bool disabled = onTap == null;
+    bool disabled = enable == null ? onTap == null : !enable!;
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient:
             disabled || colors.isEmpty ? null : LinearGradient(colors: colors),
-        color: disabled ? disabledColor ?? theme.disabledColor : color,
+        color: disabled ? disabledColor ?? globalTheme.disableBgColor : color,
         borderRadius: radius,
       ),
       child: Material(
@@ -98,19 +107,21 @@ class GradientButton extends StatelessWidget {
             splashColor: splashColor ?? colors.lastOrNull ?? color,
             highlightColor: Colors.transparent,
             onHighlightChanged: onHighlightChanged,
-            onTap: onTap,
+            onTap: disabled ? null : onTap,
             child: Padding(
-              padding: padding ?? theme.buttonTheme.padding,
+              padding: padding ?? globalTheme.buttonPadding,
               child: DefaultTextStyle(
                 style: const TextStyle(fontWeight: FontWeight.bold),
                 child: Center(
                   widthFactor: 1,
                   heightFactor: 1,
                   child: DefaultTextStyle(
-                    style: theme.textTheme.button!.copyWith(
+                    style: (textStyle ?? globalTheme.textBodyStyle).copyWith(
                       color: disabled
                           ? disabledTextColor ?? Colors.black38
-                          : textColor ?? Colors.white,
+                          : textStyle == null
+                              ? (textColor ?? Colors.white)
+                              : null,
                     ),
                     child: child,
                   ),

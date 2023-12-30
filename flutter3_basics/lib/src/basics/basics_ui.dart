@@ -301,6 +301,9 @@ extension WidgetEx on Widget {
           );
   }
 
+  Widget paddingCss([double? v1, double? v2, double? v3, double? v4]) =>
+      padding(v1, v2, v3, v4);
+
   /// 将当前的小部件, 包裹在一个[Padding]中
   Widget paddingAll(double value) {
     return Padding(

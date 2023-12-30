@@ -121,6 +121,12 @@ class GlobalTheme {
   /// 数据加载失败的提示
   String? get loadDataErrorTip => "加载失败, 点击重试";
 
+  /// 按钮内边距
+  EdgeInsets get buttonPadding =>
+      EdgeInsets.symmetric(horizontal: x, vertical: h);
+
+  //region 文本样式
+
   /// [_kDefaultFontSize] 14
   TextStyle get textPrimaryStyle => TextStyle(
         fontSize: 18,
@@ -178,6 +184,8 @@ class GlobalTheme {
         fontWeight: FontWeight.w400,
         color: "#949496".toColor(),
       );
+
+  //endregion 文本样式
 
   /// [GlobalTheme]
   static GlobalTheme of(BuildContext? context, {bool depend = false}) {
