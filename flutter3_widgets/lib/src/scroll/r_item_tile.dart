@@ -288,7 +288,8 @@ class RItemTile extends StatefulWidget {
 
   /// 当item在网格的边界时, 是否需要处理填充距离. 此方式的填充会占用tile的高度
   /// 只在[SliverGrid]中有效
-  /// 为`null`是, 自动根据[mainAxisSpacing] [crossAxisSpacing]设置
+  /// 为`null`时, 自动根据[mainAxisSpacing].[crossAxisSpacing]设置.
+  /// 要关闭此功能, 请设置为0
   /// [Padding]
   /// [EdgeInsets]
   /// [buildGridWrapChild]
@@ -511,21 +512,32 @@ class _RItemTileState extends State<RItemTile> {
 extension RItemTileExtension on Widget {
   /// 网格item
   /// [gridCount] 网格的列数
+  /// [childAspectRatio] child宽高比
+  /// [mainAxisSpacing] 主轴间隙, 如果方向是垂直的, 则是行间隙, 如果方向是水平的, 则是列间隙
+  /// [crossAxisSpacing] 交叉轴间隙
   RItemTile rGridTile(
     int gridCount, {
     double childAspectRatio = 1,
-    double mainAxisSpacing = 0,
-    double crossAxisSpacing = 0,
+    double? mainAxisSpacing,
+    double? crossAxisSpacing,
+    bool enablePadding = false,
     EdgeInsetsGeometry? sliverPadding,
     bool hide = false,
   }) {
-    /*EdgeInsets.symmetric( vertical: mainAxisSpacing, horizontal: crossAxisSpacing, )*/
+    mainAxisSpacing ??= 0;
+    crossAxisSpacing ??= mainAxisSpacing;
     return RItemTile(
       crossAxisCount: gridCount,
       childAspectRatio: childAspectRatio,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
-      sliverPadding: sliverPadding,
+      sliverPadding: sliverPadding ??
+          (enablePadding
+              ? EdgeInsets.symmetric(
+                  vertical: mainAxisSpacing,
+                  horizontal: crossAxisSpacing,
+                )
+              : null),
       hide: hide,
       child: this,
     );

@@ -61,7 +61,9 @@ part 'src/pub/watermark.dart';
 
 part 'src/pub/wheel.dart';
 
-part 'src/scroll/page/scroll_page_mixin.dart';
+part 'src/scroll/page/abs_scroll_page.dart';
+
+part 'src/scroll/page/r_scroll_page.dart';
 
 part 'src/scroll/r_item_tile.dart';
 

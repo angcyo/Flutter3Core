@@ -227,7 +227,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
     Widget result = loadAssetImageWidget(
       Assets.png.noData.keyName,
       package: 'flutter3_widgets',
-    ).size(width: size, height: size);
+    )!.size(width: size, height: size);
 
     var stateData = widget.stateData ??
         widget.noDataStringGenerate?.call(context) ??
@@ -254,7 +254,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
     Widget result = loadAssetImageWidget(
       Assets.png.loadError.keyName,
       package: 'flutter3_widgets',
-    ).size(width: size, height: size);
+    )!.size(width: size, height: size);
 
     var stateData = widget.stateData ??
         widget.loadErrorStringGenerate?.call(context) ??

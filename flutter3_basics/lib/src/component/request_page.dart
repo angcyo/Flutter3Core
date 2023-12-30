@@ -18,7 +18,7 @@ class RequestPage {
   static var KEY_PAGE_SIZE = "pageSize";
 
   /// 单列表数据, 无加载更多
-  static RequestPage singlePage() {
+  static RequestPage createSinglePage() {
     return RequestPage()..requestPageSize = intMaxValue;
   }
 
@@ -84,6 +84,11 @@ class RequestPage {
     firstPageIndex = 0;
     _currentPageIndex = firstPageIndex;
     requestPageIndex = firstPageIndex;
+  }
+
+  /// 单列表数据, 无加载更多
+  void singlePage() {
+    requestPageSize = intMaxValue;
   }
 
   @override
