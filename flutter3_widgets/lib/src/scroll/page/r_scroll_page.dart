@@ -149,5 +149,30 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     );
   }
 
+  /// 更新指定的tile
+  /// [test] 测试是否需要更新, 返回true, 表示需要rebuild
+  @api
+  void rebuildTile(
+      bool Function(RItemTile tile, UpdateValueNotifier signal) test) {
+    for (var element in pageWidgetList) {
+      //debugger();
+      if (element is RItemTile) {
+        //element.updateTile();
+        final updateSignal = element.updateSignal;
+        if (updateSignal != null) {
+          try {
+            if (test(element, updateSignal)) {
+              //debugger();
+              updateSignal.updateValue();
+            }
+          } catch (e) {
+            //中断循环
+            printError(e);
+            break;
+          }
+        }
+      }
+    }
+  }
 //endregion 页面控制
 }

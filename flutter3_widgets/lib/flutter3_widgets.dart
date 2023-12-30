@@ -76,6 +76,8 @@ part 'src/scroll/r_scroll_view.dart';
 
 part 'src/scroll/r_tile_filter_chain.dart';
 
+part 'src/scroll/rebuild_widget.dart';
+
 part 'src/scroll/single_sliver_persistent_header_delegate.dart';
 
 part 'src/scroll/sliver_paint_widget.dart';

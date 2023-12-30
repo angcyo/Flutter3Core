@@ -5,13 +5,13 @@ part of flutter3_basics;
 /// @since 2023/11/24
 ///
 
-typedef ValueWidgetBuilder = Widget Function(
+typedef DataWidgetBuilder = Widget Function(
     BuildContext context, dynamic data);
 
 /// 监听[Listenable]并自动重建小部件
 class ValueListener<T extends Listenable> extends StatefulWidget {
   final List<T>? listenableList;
-  final ValueWidgetBuilder builder;
+  final DataWidgetBuilder builder;
 
   const ValueListener({
     super.key,
@@ -71,7 +71,7 @@ extension ValueListenerEx on Listenable {
       );
 
   /// 监听[Listenable]并自动重建小部件, 并把[value]回调出来
-  Widget listenerValue(ValueWidgetBuilder builder) => ValueListener(
+  Widget listenerValue(DataWidgetBuilder builder) => ValueListener(
         listenableList: [this],
         builder: (context, value) => builder(context, value),
       );
@@ -85,7 +85,7 @@ extension ValueListListenerEx on List<Listenable> {
       );
 
   /// 监听[Listenable]并自动重建小部件, 并把[value]回调出来
-  Widget listenerValue(ValueWidgetBuilder builder) => ValueListener(
+  Widget listenerValue(DataWidgetBuilder builder) => ValueListener(
         listenableList: this,
         builder: (context, value) => builder(context, value),
       );

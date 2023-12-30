@@ -68,7 +68,16 @@ class RItemTile extends StatefulWidget {
     this.headerBackgroundColor,
     this.headerForegroundColor,
     this.headerTitleTextStyle = const TextStyle(fontSize: 14),
+    this.updateSignal,
   });
+
+  //region rebuild
+
+  /// 用来触发重构的信号
+  /// [RebuildWidget]
+  final UpdateValueNotifier? updateSignal;
+
+  //endregion rebuild
 
   //region 基础
 
@@ -523,6 +532,7 @@ extension RItemTileExtension on Widget {
     bool enablePadding = false,
     EdgeInsetsGeometry? sliverPadding,
     bool hide = false,
+    UpdateValueNotifier? updateSignal,
   }) {
     mainAxisSpacing ??= 0;
     crossAxisSpacing ??= mainAxisSpacing;
@@ -539,6 +549,7 @@ extension RItemTileExtension on Widget {
                 )
               : null),
       hide: hide,
+      updateSignal: updateSignal,
       child: this,
     );
   }
@@ -586,6 +597,7 @@ extension RItemTileExtension on Widget {
     double? edgePaddingRight,
     double? edgePaddingBottom,
     bool? groupExpanded,
+    UpdateValueNotifier? updateSignal,
     List<String>? groups = const [],
   }) {
     return RItemTile(
@@ -630,6 +642,7 @@ extension RItemTileExtension on Widget {
       edgePaddingBottom: edgePaddingBottom,
       groupExpanded: groupExpanded,
       groups: groups,
+      updateSignal: updateSignal,
       child: child ?? this,
     );
   }
