@@ -79,6 +79,11 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
             pageWidgetList.addAll(loadData);
           }
         }
+        statusInfo.loadMoreWidgetState = scrollController.getFinishWidgetState(
+          requestPage: statusInfo.requestPage,
+          loadData: loadData,
+          stateData: stateData,
+        );
       }
     }
   }
@@ -98,6 +103,8 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
     if (currentStatusInfo != null && currentStatusInfo != statusInfo) {
       currentStatusInfo?.pageWidgetList = pageWidgetList;
       currentStatusInfo?.requestPage = scrollController.requestPage;
+      currentStatusInfo?.loadMoreWidgetState =
+          scrollController.loadMoreStateValue.value;
     }
     //load new status
     currentStatusInfo = statusInfo;
@@ -108,6 +115,8 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
     } else {
       pageWidgetList = statusInfo.pageWidgetList;
       scrollController.requestPage = statusInfo.requestPage;
+      scrollController.loadMoreStateValue.value =
+          statusInfo.loadMoreWidgetState;
 
       var loadData = forceLoad /*|| !statusInfo.requestPage.isCurrentPage*/;
       if (isNullOrEmpty(pageWidgetList) ||
@@ -178,4 +187,7 @@ class StatusInfo {
 
   /// 当前状态已加载的小部件信息
   WidgetList pageWidgetList = [];
+
+  /// 当前状态的加载更多状态
+  WidgetState loadMoreWidgetState = WidgetState.none;
 }

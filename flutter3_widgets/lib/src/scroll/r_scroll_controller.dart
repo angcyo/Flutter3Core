@@ -146,26 +146,12 @@ class RScrollController extends ScrollController {
     WidgetState? widgetState,
   ]) {
     //debugger();
-    WidgetState toState = WidgetState.none;
-    if (widgetState == null) {
-      if (stateData is Exception) {
-        toState = WidgetState.error;
-      } else {
-        if (loadData == null || loadData.isEmpty) {
-          toState = WidgetState.empty;
-        } else if (loadData.length < requestPage.requestPageSize) {
-          if (requestPage.isFirstPage) {
-            toState = WidgetState.none;
-          } else {
-            toState = WidgetState.empty;
-          }
-        } else {
-          toState = WidgetState.none;
-        }
-      }
-    } else {
-      toState = widgetState;
-    }
+    WidgetState toState = widgetState ??
+        getFinishWidgetState(
+          requestPage: requestPage,
+          loadData: loadData,
+          stateData: stateData,
+        );
 
     if (refreshStateValue.value == WidgetState.loading) {
       refreshStateValue.value = toState;
@@ -178,6 +164,31 @@ class RScrollController extends ScrollController {
     } else {
       updateLoadMoreState(state, toState, stateData);
     }
+  }
+
+  /// 获取可能的[WidgetState]
+  WidgetState getFinishWidgetState({
+    required RequestPage requestPage,
+    List? loadData,
+    dynamic stateData,
+  }) {
+    WidgetState toState = WidgetState.none;
+    if (stateData is Exception) {
+      toState = WidgetState.error;
+    } else {
+      if (isNullOrEmpty(loadData)) {
+        toState = WidgetState.empty;
+      } else if (loadData!.length < requestPage.requestPageSize) {
+        if (requestPage.isFirstPage) {
+          toState = WidgetState.none;
+        } else {
+          toState = WidgetState.empty;
+        }
+      } else {
+        toState = WidgetState.none;
+      }
+    }
+    return toState;
   }
 
   /// 更新情感图状态
