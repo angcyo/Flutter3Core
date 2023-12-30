@@ -97,6 +97,8 @@ class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier {
 /// https://juejin.cn/post/6910163213778681864
 /// https://blog.csdn.net/yuzhiqiang_1993/article/details/88204031
 /// 单行/多行输入框
+/// [Autocomplete]
+///
 class SingleInputWidget extends StatefulWidget {
   /// 是否激活
   final bool enabled;

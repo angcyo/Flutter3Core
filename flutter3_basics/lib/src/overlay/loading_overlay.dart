@@ -70,7 +70,8 @@ void hideLoading() {
   var currentLoadingEntry = _currentLoadingEntryRef?.target;
   if (currentLoadingEntry != null) {
     try {
-      currentLoadingEntry.remove();
+      currentLoadingEntry.remove(); //移除
+      currentLoadingEntry.dispose(); //释放资源, 之后不可用
     } catch (e) {
       l.e(e);
     } finally {
