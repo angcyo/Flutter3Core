@@ -120,7 +120,7 @@ extension ImagePubEx on String {
         }
       }
     }
-    debugger();
+    //debugger();
     return "不支持的图片类型:$type\n${basename()}".text(
       textAlign: TextAlign.center,
       textColor: Colors.red,
