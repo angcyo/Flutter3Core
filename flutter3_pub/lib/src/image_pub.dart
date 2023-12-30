@@ -57,10 +57,13 @@ extension ImagePubEx on String {
     BoxFit? fit = BoxFit.cover,
     bool usePlaceholder = false,
     PlaceholderWidgetBuilder? placeholder,
+    double? width,
+    double? height,
     int? memCacheWidth,
     int? memCacheHeight,
     Color? tintColor,
   }) {
+    //debugger();
     memCacheHeight ??= memCacheWidth;
     final type = mimeType();
     if (type == "image") {
@@ -73,18 +76,24 @@ extension ImagePubEx on String {
             this,
             tintColor: tintColor,
             fit: fit,
+            width: width,
+            height: height,
           );
         } else if (isFilePath) {
           return loadFileSvgWidget(
             this,
             tintColor: tintColor,
             fit: fit,
+            width: width,
+            height: height,
           );
         } else {
           return loadStringSvgWidget(
             this,
             tintColor: tintColor,
             fit: fit,
+            width: width,
+            height: height,
           );
         }
       } else {
@@ -96,6 +105,8 @@ extension ImagePubEx on String {
             placeholder: placeholder,
             memCacheWidth: memCacheWidth,
             memCacheHeight: memCacheHeight,
+            width: width,
+            height: height,
           );
         } else if (isFilePath) {
           return Image.file(
@@ -103,6 +114,8 @@ extension ImagePubEx on String {
             fit: fit,
             cacheWidth: memCacheWidth,
             cacheHeight: memCacheHeight,
+            width: width,
+            height: height,
             errorBuilder: (context, error, stackTrace) =>
                 GlobalConfig.of(context)
                     .errorPlaceholderBuilder(context, error),
@@ -113,6 +126,8 @@ extension ImagePubEx on String {
             fit: fit,
             cacheWidth: memCacheWidth,
             cacheHeight: memCacheHeight,
+            width: width,
+            height: height,
             errorBuilder: (context, error, stackTrace) =>
                 GlobalConfig.of(context)
                     .errorPlaceholderBuilder(context, error),
@@ -168,6 +183,8 @@ extension ImagePubEx on String {
     PlaceholderWidgetBuilder? placeholder,
     int? memCacheWidth,
     int? memCacheHeight,
+    double? width,
+    double? height,
   }) {
     //debugger();
     var url = this;
@@ -178,6 +195,8 @@ extension ImagePubEx on String {
         fit: fit,
         memCacheWidth: memCacheWidth,
         memCacheHeight: memCacheHeight,
+        width: width,
+        height: height,
         placeholder: needPlaceholder
             ? placeholder ??
                 (context, url) => GlobalConfig.of(context)
@@ -196,6 +215,8 @@ extension ImagePubEx on String {
         fit: fit,
         memCacheWidth: memCacheWidth,
         memCacheHeight: memCacheHeight,
+        width: width,
+        height: height,
         placeholderBuilder: needPlaceholder
             ? (context) => placeholder == null
                 ? GlobalConfig.of(context).imagePlaceholderBuilder(context, url)

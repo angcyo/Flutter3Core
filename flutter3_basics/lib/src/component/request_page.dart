@@ -71,7 +71,6 @@ class RequestPage {
 
   /// 页面加载结束, 刷新结束/加载更多结束
   void pageLoadEnd() {
-    debugger();
     _currentPageIndex = requestPageIndex;
   }
 

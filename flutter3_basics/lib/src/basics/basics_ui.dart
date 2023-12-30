@@ -577,6 +577,7 @@ extension WidgetEx on Widget {
   /// [shadowBlurRadius] 阴影模糊半径, 同时决定是否启用阴影 推荐值[kDefaultBlurRadius]
   /// [shadowColor] 阴影颜色
   /// [shadowSpreadRadius] 阴影扩散半径
+  /// [decorationImage] 背景装饰图片
   /// [fillDecoration]
   Widget container({
     AlignmentGeometry? alignment,
@@ -595,9 +596,11 @@ extension WidgetEx on Widget {
     double? height,
     Color? borderColor,
     double borderWidth = 1,
+    BoxShape shape = BoxShape.rectangle,
     double? shadowBlurRadius,
     Color? shadowColor,
     double shadowSpreadRadius = 1,
+    DecorationImage? decorationImage,
   }) {
     borderRadius ??= radius == null ? null : BorderRadius.circular(radius);
     decoration ??= borderRadius == null
@@ -605,7 +608,7 @@ extension WidgetEx on Widget {
         : BoxDecoration(
             borderRadius: borderRadius,
             color: color,
-            shape: BoxShape.rectangle,
+            shape: shape,
             boxShadow: shadowBlurRadius == null
                 ? null
                 : [
@@ -619,6 +622,7 @@ extension WidgetEx on Widget {
             border: borderColor == null
                 ? null
                 : Border.all(color: borderColor, width: borderWidth),
+            image: decorationImage,
           );
     return Container(
       alignment: alignment,
