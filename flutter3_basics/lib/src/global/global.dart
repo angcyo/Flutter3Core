@@ -29,13 +29,13 @@ class GlobalApp extends StatefulWidget {
   }
 
   static _logWidget(BuildContext context) {
-    _logAncestorWidget(context);
-    _logChildWidget(context);
+    logAncestorWidget(context);
+    logChildWidget(context);
   }
 
   /// 打印所有祖先元素
   /// [root].[RenderView]->[View]->[_ViewScope]->[_MediaQueryFromView]->[MediaQuery]
-  static _logAncestorWidget(BuildContext context) {
+  static logAncestorWidget(BuildContext context) {
     context.visitAncestorElements((element) {
       if (element is StatefulElement) {}
       return element.owner != null;
@@ -62,7 +62,7 @@ class GlobalApp extends StatefulWidget {
   /// home只有一个[Placeholder]的情况下:
   /// 109:[Placeholder] 110:[LimitedBox] 111:[CustomPaint]
   ///
-  static _logChildWidget(BuildContext context) {
+  static logChildWidget(BuildContext context) {
     context.eachVisitChildElements((element, depth, childIndex) {
       l.w('[$depth:$childIndex]:[$element]');
       if (element is StatefulElement) {}
