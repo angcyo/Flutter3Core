@@ -83,7 +83,7 @@ extension WidgetListEx on WidgetNullList {
   /// 将当前的小部件集合, 包裹在一个[Wrap]中
   /// [alignment] 主轴对齐方式
   /// [crossAxisAlignment] 交叉轴对齐方式
-  Widget wrap({
+  Widget? wrap({
     double spacing = kH,
     double runSpacing = kH,
     Axis direction = Axis.horizontal,
@@ -94,6 +94,10 @@ extension WidgetListEx on WidgetNullList {
     VerticalDirection verticalDirection = VerticalDirection.down,
     Clip clipBehavior = Clip.none,
   }) {
+    WidgetList list = filterNull();
+    if (isNullOrEmpty(list)) {
+      return null;
+    }
     return Wrap(
       spacing: spacing,
       runSpacing: runSpacing,
@@ -104,13 +108,13 @@ extension WidgetListEx on WidgetNullList {
       textDirection: textDirection,
       verticalDirection: verticalDirection,
       clipBehavior: clipBehavior,
-      children: filterNull(),
+      children: list,
     );
   }
 
   /// 使用[Column]包裹
   /// [gap] 间隙
-  Widget column({
+  Widget? column({
     MainAxisAlignment? mainAxisAlignment,
     MainAxisSize? mainAxisSize,
     CrossAxisAlignment? crossAxisAlignment,
@@ -120,11 +124,12 @@ extension WidgetListEx on WidgetNullList {
     double? gap,
     Widget? gapWidget,
   }) {
-    var children = this;
+    WidgetList list = filterNull();
+    WidgetList children = list;
     if (gap != null || gapWidget != null) {
       children = <Widget>[];
       for (var i = 0; i < length; i++) {
-        children.add(this[i]);
+        children.add(list[i]);
         if (i < length - 1) {
           if (gapWidget != null) {
             children.add(gapWidget);
@@ -133,6 +138,9 @@ extension WidgetListEx on WidgetNullList {
           }
         }
       }
+    }
+    if (isNullOrEmpty(children)) {
+      return null;
     }
     return Column(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
@@ -141,7 +149,7 @@ extension WidgetListEx on WidgetNullList {
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
       textBaseline: textBaseline,
-      children: children.filterNull(),
+      children: children,
     );
   }
 
@@ -150,7 +158,7 @@ extension WidgetListEx on WidgetNullList {
   /// [mainAxisSize] 主轴尺寸, 是要用最大尺寸, 还是要最小尺寸
   /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
-  Widget row({
+  Widget? row({
     MainAxisAlignment? mainAxisAlignment,
     MainAxisSize? mainAxisSize,
     CrossAxisAlignment? crossAxisAlignment,
@@ -160,11 +168,12 @@ extension WidgetListEx on WidgetNullList {
     double? gap,
     Widget? gapWidget,
   }) {
-    var children = this;
+    WidgetList list = filterNull();
+    WidgetList children = list;
     if (gap != null || gapWidget != null) {
       children = <Widget>[];
       for (var i = 0; i < length; i++) {
-        children.add(this[i]);
+        children.add(list[i]);
         if (i < length - 1) {
           if (gapWidget != null) {
             children.add(gapWidget);
@@ -174,6 +183,9 @@ extension WidgetListEx on WidgetNullList {
         }
       }
     }
+    if (isNullOrEmpty(children)) {
+      return null;
+    }
     return Row(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
       mainAxisSize: mainAxisSize ?? MainAxisSize.max,
@@ -181,24 +193,29 @@ extension WidgetListEx on WidgetNullList {
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
       textBaseline: textBaseline,
-      children: children.filterNull(),
+      children: children,
     );
   }
 
   /// [Stack]
-  Widget stack({
+  Widget? stack({
     AlignmentGeometry alignment = AlignmentDirectional.topStart,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
     Clip clipBehavior = Clip.hardEdge,
-  }) =>
-      Stack(
-        alignment: alignment,
-        textDirection: textDirection,
-        fit: fit,
-        clipBehavior: clipBehavior,
-        children: filterNull(),
-      );
+  }) {
+    WidgetList list = filterNull();
+    if (isNullOrEmpty(list)) {
+      return null;
+    }
+    return Stack(
+      alignment: alignment,
+      textDirection: textDirection,
+      fit: fit,
+      clipBehavior: clipBehavior,
+      children: list,
+    );
+  }
 
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
@@ -1053,7 +1070,7 @@ extension WidgetEx on Widget {
       );
 
   /// 将[this]和[child] 使用[Column]包裹
-  Widget columnOf(
+  Widget? columnOf(
     Widget? child, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize,
@@ -1075,7 +1092,7 @@ extension WidgetEx on Widget {
       );
 
   /// 将[this]和[child] 使用[Row]包裹
-  Widget rowOf(
+  Widget? rowOf(
     Widget? child, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize,

@@ -66,7 +66,7 @@ class SingleGridTile extends StatelessWidget {
       child: [
         if (top != null) top,
         if (bottom != null) bottom,
-      ].column().constrainedMin(minHeight: minHeight),
+      ].column()!.constrainedMin(minHeight: minHeight),
     )
         .ink(
           onTap: onTap,

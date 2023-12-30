@@ -188,7 +188,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
           "${currentIndex + 1}/${widget.photoItems.length}",
           style: const TextStyle(color: Colors.white),
         ).align(alignment: Alignment.bottomCenter).padding(kXh),
-      ].stack();
+      ].stack()!;
     }
     if (widget.tapDismiss) {
       result = GestureDetector(

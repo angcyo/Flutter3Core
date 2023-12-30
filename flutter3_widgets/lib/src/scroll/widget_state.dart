@@ -240,7 +240,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
               style: globalTheme.textSubTitleStyle,
             )
             .padding(globalTheme.xh),
-      );
+      )!;
     }
     return result.wrapContent();
   }
@@ -268,7 +268,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
               style: globalTheme.textBodyStyle,
             )
             .padding(globalTheme.xh),
-      );
+      )!;
     }
     return result.wrapContent().click(() {
       //点击重试

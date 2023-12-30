@@ -41,7 +41,7 @@ extension ExpandableEx on Widget {
         ].column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-        ),
+        )!,
       ),
     );
   }

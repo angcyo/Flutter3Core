@@ -149,6 +149,19 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     );
   }
 
+  //endregion 页面控制
+
+  //region 页面更新
+
+  /// 更新指定[value]对应的tile
+  @api
+  void updateTile(dynamic value) {
+    rebuildTile((tile, signal) {
+      return signal.value == value ||
+          (value is Iterable && value.contains(signal.value));
+    });
+  }
+
   /// 更新指定的tile
   /// [test] 测试是否需要更新, 返回true, 表示需要rebuild
   @api
@@ -174,5 +187,6 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       }
     }
   }
-//endregion 页面控制
+
+//endregion 页面更新
 }
