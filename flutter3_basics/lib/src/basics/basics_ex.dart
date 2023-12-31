@@ -244,15 +244,19 @@ extension FutureEx<T> on Future<T> {
           //debugger();
           get?.call(value, null);
           return value;
-        } on FutureCancelException catch (cancelToken) {
-          l.w('Future被取消:$cancelToken');
         } catch (e) {
           debugger();
           printError(e, stack);
           get?.call(null, e);
           return null;
         }
-      }, onError: (error, stackTrace) => get?.call(null, error));
+      }, onError: (error, stackTrace) {
+        if (error is FutureCancelException) {
+          l.w('Future被取消:$error');
+        } else {
+          get?.call(null, error);
+        }
+      });
 
   /// 不需要等待当前的[Future]执行完成, 但是会报告错误
   /// [ignore] 完成和错误都被忽略
