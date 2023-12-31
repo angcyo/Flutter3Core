@@ -7,9 +7,6 @@ part of flutter3_widgets;
 
 /// [Completer]
 class RScrollController extends ScrollController {
-  /// 请求的分页信息
-  RequestPage requestPage = RequestPage();
-
   /// 用来控制刷新的key
   /// [RefreshIndicatorState]
   final GlobalKey<RefreshIndicatorState> scrollRefreshKey = GlobalKey();
@@ -35,6 +32,12 @@ class RScrollController extends ScrollController {
   /// [WidgetState]
   final ValueNotifier<WidgetState> loadMoreStateValue =
       ValueNotifier(WidgetState.none);
+
+  /// 请求的分页信息
+  RequestPage requestPage = RequestPage();
+
+  /// 情感图状态拦截
+  WidgetStateIntercept widgetStateIntercept = WidgetStateIntercept();
 
   /// 状态对应的数据
   dynamic _widgetStateData;
@@ -147,10 +150,10 @@ class RScrollController extends ScrollController {
   ]) {
     //debugger();
     WidgetState toState = widgetState ??
-        getFinishWidgetState(
-          requestPage: requestPage,
-          loadData: loadData,
-          stateData: stateData,
+        widgetStateIntercept.interceptor(
+          requestPage,
+          loadData,
+          stateData,
         );
 
     if (refreshStateValue.value == WidgetState.loading) {
@@ -164,31 +167,6 @@ class RScrollController extends ScrollController {
     } else {
       updateLoadMoreState(state, toState, stateData);
     }
-  }
-
-  /// 获取可能的[WidgetState]
-  WidgetState getFinishWidgetState({
-    required RequestPage requestPage,
-    List? loadData,
-    dynamic stateData,
-  }) {
-    WidgetState toState = WidgetState.none;
-    if (stateData is Exception) {
-      toState = WidgetState.error;
-    } else {
-      if (isNullOrEmpty(loadData)) {
-        toState = WidgetState.empty;
-      } else if (loadData!.length < requestPage.requestPageSize) {
-        if (requestPage.isFirstPage) {
-          toState = WidgetState.none;
-        } else {
-          toState = WidgetState.empty;
-        }
-      } else {
-        toState = WidgetState.none;
-      }
-    }
-    return toState;
   }
 
   /// 更新情感图状态
@@ -306,5 +284,36 @@ class RScrollController extends ScrollController {
     requestPage.pageLoadMore();
     onLoadMoreCallback?.call();
     onLoadDataCallback?.call();
+  }
+}
+
+/// 情感图状态拦截
+class WidgetStateIntercept {
+  /// 获取可能的[WidgetState]
+  /// [requestPage] 请求的分页信息
+  /// [loadData] 当前页加载到的数据, 非所有数据
+  /// [stateData] 当前状态的附加信息, 用来识别是否有错误
+  WidgetState interceptor(
+    RequestPage requestPage,
+    List? loadData,
+    dynamic stateData,
+  ) {
+    WidgetState toState = WidgetState.none;
+    if (stateData is Exception) {
+      toState = WidgetState.error;
+    } else {
+      if (isNullOrEmpty(loadData)) {
+        toState = WidgetState.empty;
+      } else if (loadData!.length < requestPage.requestPageSize) {
+        if (requestPage.isFirstPage) {
+          toState = WidgetState.none;
+        } else {
+          toState = WidgetState.empty;
+        }
+      } else {
+        toState = WidgetState.none;
+      }
+    }
+    return toState;
   }
 }

@@ -87,6 +87,8 @@ mixin AbsScrollPage {
   }
 
   /// 构建滚动内容
+  /// [buildScaffold]
+  /// [RScrollPage.pageRScrollView]
   Widget buildBody(BuildContext context, WidgetList? children) {
     children ??= buildScrollBody(context);
     if (this is RScrollPage) {

@@ -133,8 +133,14 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   bool updateAdapterState(WidgetState widgetState, [dynamic stateData]) =>
       scrollController.updateAdapterState(this, widgetState, stateData);
 
+  /// 重写此方法, 实现收尾插入自定义的小部件
+  @overridePoint
+  WidgetList wrapScrollChildren(WidgetList children) => children;
+
   /// 包裹内容
   /// [RScrollView]
+  /// [build]
+  /// [AbsScrollPage.buildBody]
   @callPoint
   RScrollView pageRScrollView({
     WidgetList? children,
@@ -145,7 +151,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       controller: scrollController,
       enableRefresh: enableRefresh ?? this.enableRefresh,
       enableLoadMore: enableLoadMore ?? this.enableLoadMore,
-      children: children ?? pageWidgetList,
+      children: wrapScrollChildren(children ?? pageWidgetList),
     );
   }
 
