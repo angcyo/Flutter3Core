@@ -241,10 +241,16 @@ extension FutureEx<T> on Future<T> {
   /// [Future.then]
   Future get([ValueErrorCallback? get, StackTrace? stack]) => then((value) {
         try {
+          //debugger();
           get?.call(value, null);
+          return value;
+        } on FutureCancelException catch (cancelToken) {
+          l.w('Future被取消:$cancelToken');
         } catch (e) {
+          debugger();
           printError(e, stack);
           get?.call(null, e);
+          return null;
         }
       }, onError: (error, stackTrace) => get?.call(null, error));
 
