@@ -45,7 +45,7 @@ class HttpResultHandle {
   /// [Exception]
   /// [DioException]
   late dynamic Function(dynamic error) handleError = (error) {
-    //debugger();
+    debugger();
     var tip = kDefHttpErrorMessage;
     if (error is DioException) {
       var errorMessage = error.response?.data[messageKey];
@@ -54,9 +54,13 @@ class HttpResultHandle {
           error.type == DioExceptionType.sendTimeout) {
         errorMessage ??= kDefHttpErrorMessage;
       }
-      tip = errorMessage ?? error.message ?? kDefHttpErrorMessage;
-    } else {
-      tip = error;
+      tip = errorMessage ?? error.message ?? tip;
+    }
+    /*else if (error is Exception) {
+      tip = error.toString();
+    } */
+    else {
+      tip = error?.toString() ?? tip;
     }
     if (showErrorToast) {
       toast(

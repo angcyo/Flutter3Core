@@ -489,7 +489,7 @@ extension WidgetEx on Widget {
     bool left = true,
     bool top = true,
     bool right = true,
-    bool bottom = true,
+    bool? bottom,
     EdgeInsets minimum = EdgeInsets.zero,
     bool maintainBottomViewPadding = false,
   }) {
@@ -497,7 +497,7 @@ extension WidgetEx on Widget {
       left: left,
       top: top,
       right: right,
-      bottom: bottom,
+      bottom: bottom ?? maintainBottomViewPadding,
       minimum: minimum,
       maintainBottomViewPadding: maintainBottomViewPadding,
       child: this,
