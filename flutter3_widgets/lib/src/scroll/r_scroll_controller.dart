@@ -26,7 +26,7 @@ class RScrollController extends ScrollController {
   /// 情感图的状态
   /// [WidgetState]
   final ValueNotifier<WidgetState> adapterStateValue =
-      ValueNotifier(WidgetState.none);
+      ValueNotifier(WidgetState.preLoading);
 
   /// 加载更多的状态
   /// [WidgetState]
@@ -212,7 +212,7 @@ class RScrollController extends ScrollController {
   /// 使用刷新布局包裹[child]
   late WidgetWrapBuilder wrapRefreshWidget = (context, child) {
     //debugger();
-    if (adapterStateValue.value == WidgetState.loading) {
+    if (adapterStateValue.value.isLoading) {
       //如果情感图状态是加载中, 则不需要下拉刷新
       return child;
     }

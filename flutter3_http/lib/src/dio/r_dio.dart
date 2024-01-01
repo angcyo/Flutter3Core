@@ -22,7 +22,7 @@ class RDio {
       return context?.dependOnInheritedWidgetOfExactType<DioScope>()?.rDio ??
           rDio;
     } else {
-      return context?.findAncestorWidgetOfExactType<DioScope>()?.rDio ?? rDio;
+      return context?.getInheritedWidgetOfExactType<DioScope>()?.rDio ?? rDio;
     }
   }
 

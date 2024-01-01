@@ -22,7 +22,7 @@ class DataProviderScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<DataProviderScope>()
           ?.data;
     } else {
-      return context.findAncestorWidgetOfExactType<DataProviderScope>()?.data;
+      return context.getInheritedWidgetOfExactType<DataProviderScope>()?.data;
     }
   }
 

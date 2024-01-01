@@ -197,7 +197,7 @@ class GlobalTheme {
             ?.globalTheme;
       } else {
         result = context
-            .findAncestorWidgetOfExactType<GlobalThemeScope>()
+            .getInheritedWidgetOfExactType<GlobalThemeScope>()
             ?.globalTheme;
       }
     }

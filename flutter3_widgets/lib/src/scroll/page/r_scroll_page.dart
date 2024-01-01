@@ -27,14 +27,22 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   @override
   void initState() {
-    if (defWidgetState == WidgetState.loading) {
-      firstLoad();
-    }
+    //延迟一帧, 等待[WidgetStateScope]初始化
+    postFrameCallback((timeStamp) {
+      //debugger();
+      if (mounted) {
+        defWidgetState = WidgetStateScope.of(context) ?? defWidgetState;
+      }
+      if (defWidgetState.isLoading) {
+        firstLoad();
+      }
+    });
     super.initState();
   }
 
   @override
   void dispose() {
+    cancelAllFuture();
     super.dispose();
   }
 
@@ -47,6 +55,43 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }
 
   //endregion 生命周期
+
+  //region Future
+
+  /// 用来取消[Future]
+  late final Map futureCancelMap = {};
+
+  @callPoint
+  Future<T> hookFuture(Future<T> future, [String? tag]) {
+    tag ??= future.hash();
+    //取消旧的
+    cancelFuture(tag);
+    //新的
+    FutureCancelToken cancelToken = FutureCancelToken();
+    futureCancelMap[tag] = cancelToken;
+    return future.listenCancel(cancelToken);
+  }
+
+  /// 取消指定的[Future]
+  @api
+  void cancelFuture(String tag) {
+    FutureCancelToken? cancelToken = futureCancelMap[tag];
+    if (cancelToken != null) {
+      cancelToken.cancel();
+      futureCancelMap.remove(tag);
+    }
+  }
+
+  /// 取消所有的[Future]
+  @api
+  void cancelAllFuture() {
+    for (var element in futureCancelMap.values) {
+      element.cancel();
+    }
+    futureCancelMap.clear();
+  }
+
+  //endregion Future
 
   //region 数据加载
 
@@ -79,8 +124,12 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 首次加载, 如果需要请主动调用, 触发
   @callPoint
-  void firstLoad() {
-    scrollController.updateAdapterState(this, defWidgetState);
+  void firstLoad([WidgetState? state]) {
+    state ??= defWidgetState;
+    if (scrollController.adapterStateValue.value == WidgetState.preLoading ||
+        scrollController.adapterStateValue.value != state) {
+      scrollController.updateAdapterState(this, state);
+    }
   }
 
   /// 分页请求参数

@@ -185,7 +185,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
           ?.getGlobalConfig;
     } else {
       globalConfig = context
-          ?.findAncestorWidgetOfExactType<GlobalConfigScope>()
+          ?.getInheritedWidgetOfExactType<GlobalConfigScope>()
           ?.getGlobalConfig;
     }
     return globalConfig ?? GlobalConfig.def;

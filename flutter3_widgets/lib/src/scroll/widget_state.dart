@@ -23,6 +23,9 @@ typedef RequestChangeStateFn = bool Function(BuildContext context,
     WidgetState oldWidgetState, WidgetState newWidgetState);
 
 enum WidgetState {
+  /// 预加载状态, 会显示加载界面, 但是不会触发加载回调
+  preLoading,
+
   /// 加载中状态
   loading,
 
@@ -42,6 +45,11 @@ enum WidgetState {
 
   final dynamic data;*/
 
+  /// 是否是加载状态
+  bool get isLoading =>
+      this == WidgetState.preLoading || this == WidgetState.loading;
+
+  /// 是否是内容状态
   bool get isNoneState => this == WidgetState.none;
 }
 
@@ -70,6 +78,42 @@ enum WidgetState {
     state?.updateState();
   }
 }*/
+
+/// 为child提供一个初始化的[WidgetState]状态
+class WidgetStateScope extends InheritedWidget {
+  final WidgetState? widgetState;
+
+  const WidgetStateScope({
+    super.key,
+    required super.child,
+    required this.widgetState,
+  });
+
+  /// 获取一个初始化的[WidgetState]状态
+  static WidgetState? of(BuildContext context) {
+    return context
+        .getInheritedWidgetOfExactType<WidgetStateScope>()
+        ?.widgetState;
+  }
+
+  @override
+  bool updateShouldNotify(covariant WidgetStateScope oldWidget) =>
+      widgetState != oldWidget.widgetState;
+}
+
+extension WidgetStateEx on Widget {
+  /// 为[child]提供一个初始化的[WidgetState]状态
+  Widget widgetState({WidgetState? widgetState, bool? loading}) {
+    //debugger();
+    if (widgetState == null && loading != null) {
+      widgetState = loading ? WidgetState.loading : WidgetState.preLoading;
+    }
+    return WidgetStateScope(
+      widgetState: widgetState,
+      child: this,
+    );
+  }
+}
 
 /// [WidgetState]状态控制
 class WidgetStateWidget extends StatefulWidget {
@@ -171,6 +215,7 @@ class WidgetStateWidgetState extends State<WidgetStateWidget> {
   @override
   Widget build(BuildContext context) {
     switch (_buildState) {
+      case WidgetState.preLoading:
       case WidgetState.loading:
         return _buildLoadingWidget(context);
       case WidgetState.empty:
@@ -227,7 +272,8 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
     Widget result = loadAssetImageWidget(
       Assets.png.noData.keyName,
       package: 'flutter3_widgets',
-    )!.size(width: size, height: size);
+    )!
+        .size(width: size, height: size);
 
     var stateData = widget.stateData ??
         widget.noDataStringGenerate?.call(context) ??
@@ -254,7 +300,8 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
     Widget result = loadAssetImageWidget(
       Assets.png.loadError.keyName,
       package: 'flutter3_widgets',
-    )!.size(width: size, height: size);
+    )!
+        .size(width: size, height: size);
 
     var stateData = widget.stateData ??
         widget.loadErrorStringGenerate?.call(context) ??

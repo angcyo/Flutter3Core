@@ -32,16 +32,17 @@ extension WidgetLifecycleEx on Widget {
   /// Wrap PageView
   /// [PageView]
   /// [PageViewLifecycleWrapper]
-  /// [pageLifecycleChild]
+  /// [pageChildLifecycle]
   Widget pageLifecycle([OnLifecycleEvent? onLifecycleEvent]) =>
       PageViewLifecycleWrapper(
         onLifecycleEvent: onLifecycleEvent,
         child: this,
       );
 
+  /// 将page的child界面包裹起来, 提供生命周期支持
   /// [ChildPageLifecycleWrapper]
   /// [LifecycleWrapper]
-  Widget pageLifecycleChild({
+  Widget pageChildLifecycle({
     required int index,
     OnLifecycleEvent? onLifecycleEvent,
     bool wantKeepAlive = true,
