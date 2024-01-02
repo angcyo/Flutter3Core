@@ -217,6 +217,45 @@ extension WidgetListEx on WidgetNullList {
     );
   }
 
+  /// [SingleChildScrollView]
+  /// [scroll]
+  /// [WidgetEx.scroll]
+  Widget? scroll({
+    Axis scrollDirection = Axis.horizontal,
+    ScrollPhysics? physics,
+    ScrollController? controller,
+    EdgeInsetsGeometry? padding,
+    bool? primary,
+    double? gap,
+    Widget? gapWidget,
+  }) {
+    WidgetList list = filterNull();
+    if (isNullOrEmpty(list)) {
+      return null;
+    }
+    Widget body;
+    if (scrollDirection == Axis.vertical) {
+      body = list.column(
+        mainAxisSize: MainAxisSize.min,
+        gap: gap,
+        gapWidget: gapWidget,
+      )!;
+    } else {
+      body = list.row(
+        mainAxisSize: MainAxisSize.min,
+        gap: gap,
+        gapWidget: gapWidget,
+      )!;
+    }
+    return body.scroll(
+      scrollDirection: scrollDirection,
+      physics: physics,
+      controller: controller,
+      padding: padding,
+      primary: primary,
+    );
+  }
+
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
   /// [WidgetEx.repaintBoundary]
@@ -1130,15 +1169,24 @@ extension WidgetEx on Widget {
       );
 
   /// 简单的滚动小组件[SingleChildScrollView]
+  /// [WidgetListEx.scroll]
+  /// [padding] 滚动小部件内边距
+  /// [reverse] 是否反向滚动
   Widget scroll({
     Axis scrollDirection = Axis.vertical,
     ScrollPhysics? physics,
     ScrollController? controller,
+    EdgeInsetsGeometry? padding,
+    bool? primary,
+    bool reverse = false,
   }) =>
       SingleChildScrollView(
         scrollDirection: scrollDirection,
         physics: physics,
         controller: controller,
+        padding: padding,
+        primary: primary,
+        reverse: reverse,
         child: this,
       );
 

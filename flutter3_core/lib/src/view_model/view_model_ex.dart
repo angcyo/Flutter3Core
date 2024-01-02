@@ -57,9 +57,16 @@ typedef ViewModelCreateFn = dynamic Function();
 final _vmCreateMap = <Type, ViewModelCreateFn>{};
 
 /// 注册全局的[ViewModel]构造器[ViewModelCreateFn]
+@api
 void registerGlobalViewModel<T extends ViewModel>(
     ViewModelCreateFn viewModelCreate) {
   _vmCreateMap[T] = viewModelCreate;
+}
+
+/// 注销全局的[ViewModel]构造器[ViewModelCreateFn]
+@api
+void unregisterGlobalViewModel<T extends ViewModel>() {
+  _vmCreateMap.remove(T);
 }
 
 /// 用来创建[ViewModel]的工厂

@@ -40,7 +40,12 @@ class TokenInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     super.onRequest(options, handler);
-    configToken?.call(options);
+    try {
+      configToken?.call(options);
+    } catch (e) {
+      l.w('配置token失败:[${options.uri}]↓');
+      printError(e);
+    }
   }
 
   @override
