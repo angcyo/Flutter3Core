@@ -46,20 +46,31 @@ mixin TabBarMixin on TickerProvider {
 
   /// 构建[TabBar]
   /// [kTabLabelPadding]
+  /// [labelStyle] 选中label的样式
+  /// [unselectedLabelStyle] 未选中label的样式
+  /// [dividerHeight] 底部分割线的高度, 在M3主题下,[isScrollable]为false时才会绘制分割线
+  /// [dividerColor] 分割线的颜色
   @callPoint
   TabBar buildTabBar(
     BuildContext context, {
     bool? isScrollable,
     TabAlignment? tabAlignment,
+    EdgeInsetsGeometry? padding = EdgeInsets.zero,
+    EdgeInsetsGeometry? labelPadding =
+        const EdgeInsets.symmetric(horizontal: kX, vertical: kL),
+    TextStyle? labelStyle,
+    TextStyle? unselectedLabelStyle,
+    double? dividerHeight = 0,
+    Color? dividerColor,
   }) {
     var globalTheme = GlobalTheme.of(context);
     return TabBar(
       tabs: tabItemList,
       //padding: EdgeInsets.all(kX),
       //整体内边距
-      padding: EdgeInsets.zero,
+      padding: padding,
       //tab内边距
-      labelPadding: const EdgeInsets.symmetric(horizontal: kX),
+      labelPadding: labelPadding,
       controller: tabController,
       automaticIndicatorColorAdjustment: true,
       indicatorColor: globalTheme.primaryColor,
@@ -67,14 +78,13 @@ mixin TabBarMixin on TickerProvider {
       //indicatorPadding: EdgeInsets.only(bottom: 10),
       //indicatorPadding: EdgeInsets.all(10),
       //indicator: strokeDecoration(),
-      dividerHeight: 0,
-      //dividerColor: ,
-      unselectedLabelStyle: globalTheme.textBodyStyle,
+      dividerHeight: dividerHeight,
+      dividerColor: dividerColor,
       //labelColor:,
-      labelStyle:
+      labelStyle: labelStyle ??
           globalTheme.textBodyStyle.copyWith(fontWeight: FontWeight.bold),
       //unselectedLabelColor: ,
-      //unselectedLabelStyle:
+      unselectedLabelStyle: unselectedLabelStyle ?? globalTheme.textBodyStyle,
       isScrollable: isScrollable ?? tabAlignment == TabAlignment.start,
       tabAlignment: tabAlignment,
     );

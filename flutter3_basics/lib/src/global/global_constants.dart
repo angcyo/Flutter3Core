@@ -1,0 +1,93 @@
+part of flutter3_basics;
+
+///
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
+/// @since 2024/01/02
+///
+/// 全局常量
+//region 全局常量
+
+@dp
+const double kS = 2;
+const double kM = 4;
+const double kL = 6;
+const double kH = 8;
+const double kX = 12;
+const double kXh = 16;
+const double kXxh = 32;
+const double kXxxh = 48;
+
+/// [kMinInteractiveDimension] 最小交互高度
+const double kMinInteractiveHeight = 36;
+
+/// [kToolbarHeight]
+/// [kInteractiveHeight]
+const double kTabHeight = 46;
+
+/// 设计最佳最小交互高度
+const double kInteractiveHeight = kMinInteractiveDimension;
+
+/// 默认的模糊半径
+const double kDefaultBlurRadius = 4.0;
+
+/// 默认的高度
+const double kDefaultElevation = 4.0;
+
+const double kDefaultBorderRadius = 2.0;
+const double kDefaultBorderRadiusL = 4.0;
+const double kDefaultBorderRadiusH = 6.0;
+const double kDefaultBorderRadiusX = 8.0;
+const double kDefaultBorderRadiusXX = 12.0;
+const double kDefaultBorderRadiusXXX = 24.0;
+
+/// 最大圆角边框半径
+const double kMaxBorderRadius = 45.0;
+
+/// [EdgeInsets.zero]
+/// [kTabLabelPadding]
+const kPaddingX = EdgeInsets.symmetric(horizontal: kX, vertical: kL);
+
+/// 是否是debug模式
+/// 性能优化: https://juejin.cn/post/7066954522655981581
+/// 性能检查视图: https://docs.flutter.dev/tools/devtools/inspector
+///
+/// ```
+/// assert(() {
+///   final List<DebugPaintCallback> localCallbacks = _debugPaintCallbacks.toList();
+///   for (final DebugPaintCallback paintCallback in localCallbacks) {
+///     if (_debugPaintCallbacks.contains(paintCallback)) {
+///       paintCallback(context, offset, this);
+///     }
+///   }
+///   return true;
+/// }());
+/// ```
+/// [RenderView.paint]
+/// [debugAddPaintCallback]
+const bool isDebug = kDebugMode;
+
+/// 随机数生成器
+final random = Random();
+
+/// 最小值/最大值
+/// [double.maxFinite]
+int intMaxValue = double.maxFinite.toInt();
+int intMinValue = -double.maxFinite.toInt();
+
+//endregion 全局常量
+
+//region Fn Callback
+
+/// 只有返回值的回调
+typedef ResultCallback<T> = T Function();
+
+/// [Future] 返回值的回调
+typedef FutureResultCallback<R, T> = Future<R> Function(T value);
+
+/// 只有一个值回调
+typedef ValueCallback = dynamic Function(dynamic value);
+
+/// 回调一个值和一个错误
+typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
+
+//endregion Fn

@@ -5,41 +5,6 @@ part of flutter3_basics;
 /// @since 2023/11/10
 ///
 
-@dp
-const double kS = 2;
-const double kM = 4;
-const double kL = 6;
-const double kH = 8;
-const double kX = 12;
-const double kXh = 16;
-const double kXxh = 32;
-const double kXxxh = 48;
-
-/// [kMinInteractiveDimension] 最小交互高度
-const double kMinInteractiveHeight = 36;
-
-/// [kToolbarHeight]
-/// [kInteractiveHeight]
-const double kTabHeight = 46;
-
-/// 设计最佳最小交互高度
-const double kInteractiveHeight = kMinInteractiveDimension;
-
-/// 默认的模糊半径
-const double kDefaultBlurRadius = 4.0;
-
-/// 默认的高度
-const double kDefaultElevation = 4.0;
-
-const double kDefaultBorderRadius = 2.0;
-const double kDefaultBorderRadiusL = 4.0;
-const double kDefaultBorderRadiusH = 6.0;
-const double kDefaultBorderRadiusX = 8.0;
-const double kDefaultBorderRadiusXX = 12.0;
-const double kDefaultBorderRadiusXXX = 24.0;
-
-/// 最大圆角边框半径
-const double kMaxBorderRadius = 45.0;
 
 /// 打开[url]的回调方法
 typedef GlobalOpenUrlFn = Future<bool> Function(

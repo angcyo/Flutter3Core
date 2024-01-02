@@ -5,45 +5,7 @@ part of flutter3_basics;
 /// @since 2023/10/20
 ///
 
-//region Fn Callback
-
-/// 只有返回值的回调
-typedef ResultCallback<T> = T Function();
-
-/// [Future] 返回值的回调
-typedef FutureResultCallback<R, T> = Future<R> Function(T value);
-
-/// 只有一个值回调
-typedef ValueCallback = dynamic Function(dynamic value);
-
-/// 回调一个值和一个错误
-typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
-
-//endregion Fn
-
 //region 基础
-
-/// 是否是debug模式
-/// 性能优化: https://juejin.cn/post/7066954522655981581
-/// 性能检查视图: https://docs.flutter.dev/tools/devtools/inspector
-///
-/// ```
-/// assert(() {
-///   final List<DebugPaintCallback> localCallbacks = _debugPaintCallbacks.toList();
-///   for (final DebugPaintCallback paintCallback in localCallbacks) {
-///     if (_debugPaintCallbacks.contains(paintCallback)) {
-///       paintCallback(context, offset, this);
-///     }
-///   }
-///   return true;
-/// }());
-/// ```
-/// [RenderView.paint]
-/// [debugAddPaintCallback]
-const bool isDebug = kDebugMode;
-
-/// 随机数生成器
-final random = Random();
 
 /// Channel需要先初始化这个
 /// [WidgetsFlutterBinding.ensureInitialized]
@@ -76,11 +38,6 @@ double nextDouble({double? min, double? max}) {
     return value;
   }
 }
-
-/// 最小值/最大值
-/// [double.maxFinite]
-int intMaxValue = double.maxFinite.toInt();
-int intMinValue = -double.maxFinite.toInt();
 
 /// 获取当前调用此方法的文件名
 /// ```
