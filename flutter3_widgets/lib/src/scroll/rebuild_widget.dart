@@ -58,9 +58,20 @@ class RebuildWidgetState extends State<RebuildWidget> {
 
 /// [ValueNotifier]
 class UpdateValueNotifier<T> extends ValueNotifier<T> {
-  UpdateValueNotifier(super.value);
+  /// 附加的数据
+  dynamic data;
+
+  UpdateValueNotifier(super.value, [this.data]);
+
+  /// 获取数据, 并清空
+  dynamic get dataOnce {
+    final data = this.data;
+    this.data = null;
+    return data;
+  }
 
   /// 更新值
+  @api
   void updateValue([dynamic newValue]) {
     newValue ??= value;
     if (newValue == value) {
@@ -68,6 +79,38 @@ class UpdateValueNotifier<T> extends ValueNotifier<T> {
     } else {
       value = newValue;
     }
+  }
+}
+
+mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
+  /// 用来触发重构的信号
+  late final List<Listenable> listenableList = [];
+
+  /// 用来触发重构的信号
+  @callPoint
+  void hookRebuild(Listenable? value) {
+    if (value == null) {
+      return;
+    }
+    listenableList.remove(value);
+    listenableList.add(value);
+    value.removeListener(requestRebuild);
+    value.addListener(requestRebuild);
+  }
+
+  @override
+  void dispose() {
+    for (var element in listenableList) {
+      element.removeListener(requestRebuild);
+    }
+    listenableList.clear();
+    super.dispose();
+  }
+
+  /// 重构界面
+  @overridePoint
+  void requestRebuild() {
+    updateState();
   }
 }
 

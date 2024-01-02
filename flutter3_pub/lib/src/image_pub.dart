@@ -8,6 +8,7 @@ part of flutter3_pub;
 const Size kAvatarSize = Size(40, 40);
 
 /// 圆形网络图片小部件
+/// [CircleAvatar]
 class CircleNetworkImage extends StatefulWidget {
   /// 网络图片地址
   final String? url;
@@ -33,7 +34,7 @@ class _CircleNetworkImageState extends State<CircleNetworkImage> {
     if (url == null || url.isEmpty) {
       result = "".toNetworkImageWidget(usePlaceholder: true);
     } else {
-      result = url.toNetworkImageWidget(
+      result = url.toImageWidget(
         usePlaceholder: false,
         memCacheWidth: widget.size.width.toInt(),
         memCacheHeight: widget.size.height.toInt(),
@@ -46,6 +47,7 @@ class _CircleNetworkImageState extends State<CircleNetworkImage> {
 extension ImagePubEx on String {
   /// 根据类型, 自动转换成对应的图片提供器
   /// [ImageProvider]
+  /// [toImageWidget]
   ImageProvider toImageProvider() => isHttpUrl
       ? toCacheNetworkImageProvider()
       : (isLocalUrl || isFilePath
@@ -53,6 +55,7 @@ extension ImagePubEx on String {
           : toAssetImageProvider()) as ImageProvider;
 
   /// 根据类型, 自动转换成对应的图片小部件
+  /// [toImageProvider]
   Widget toImageWidget({
     BoxFit? fit = BoxFit.cover,
     bool usePlaceholder = false,
@@ -64,9 +67,9 @@ extension ImagePubEx on String {
     Color? tintColor,
   }) {
     //debugger();
-    memCacheHeight ??= memCacheWidth;
+    //memCacheHeight ??= memCacheWidth; //变成了正方形了
     final type = mimeType();
-    if (type == "image") {
+    if (type == null || type == "image") {
       //图片类型
       if (isSvg) {
         //svg图片
@@ -136,6 +139,7 @@ extension ImagePubEx on String {
       }
     }
     //debugger();
+    l.w("不支持的图片类型:$type\n$this");
     return "不支持的图片类型:$type\n${basename()}".text(
       textAlign: TextAlign.center,
       textColor: Colors.red,

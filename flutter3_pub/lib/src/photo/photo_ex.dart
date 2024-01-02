@@ -222,12 +222,16 @@ extension PhotoViewOptionsEx on ImageProvider {
 extension PhotoViewEx on BuildContext {
   /// 显示图片预览界面
   /// [imageProvider] 单张图片, 传递这一个值就行
+  /// [child] 单元素
+  /// [children] 多元素
   /// [initialIndex].[imageProviders] 多张图片, 传递这两个值就行
   /// [PhotoPreviewPage]
+  /// [photoItems] 指定所有数据
   void showPhotoPage({
     ImageProvider? imageProvider,
     int initialIndex = 0,
     List<ImageProvider>? imageProviders,
+    List<PhotoViewGalleryPageOptions>? photoItems,
   }) {
     assert(!isNullOrEmpty(imageProvider) || !isNullOrEmpty(imageProviders),
         "未指定数据, 操作被取消");
@@ -241,6 +245,7 @@ extension PhotoViewEx on BuildContext {
           if (imageProvider != null) imageProvider.toPhotoPageOptions(),
           if (imageProviders != null)
             ...imageProviders.map((element) => element.toPhotoPageOptions()),
+          ...?photoItems,
         ],
       ),
     ));

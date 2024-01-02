@@ -10,6 +10,9 @@ const double kMinLoadingIndicatorDimension = 24.0;
 
 class LoadingIndicator extends StatelessWidget {
   final Size? size;
+
+  /// 当前进度的值, 如果有. [0.0-1.0]
+  /// 指定表示明确的进度, 未指定表示不明确的进度.
   final double? progressValue;
 
   const LoadingIndicator({
@@ -70,12 +73,13 @@ class LoadingStateWidget extends StatelessWidget {
   /// 是否加载中
   final bool isLoading;
 
-  /// 指定加载中的小部件
+  /// 指定加载中的小部件, 不指定则使用默认的转圈圈小部件
   final Widget? loading;
 
   /// 本体
   final Widget child;
 
+  /// 当前进度的值, 如果有.
   final double? progressValue;
 
   const LoadingStateWidget({

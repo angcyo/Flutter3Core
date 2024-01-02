@@ -63,10 +63,7 @@ class HttpResultHandle {
       tip = error?.toString() ?? tip;
     }
     if (showErrorToast) {
-      toast(
-        tip.toString().text(textAlign: TextAlign.center),
-        position: OverlayPosition.center,
-      );
+      toastBlur(text: tip.toString());
     }
     return RException(tip, cause: error);
   };

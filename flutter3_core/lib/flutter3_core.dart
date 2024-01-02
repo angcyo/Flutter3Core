@@ -79,8 +79,9 @@ extension MimeEx on String {
   ///
   /// ```
   String? mimeType({List<int>? headerBytes}) {
+    final path = toUri()?.path ?? this;
     final mimeType = lookupMimeType(
-      this,
+      path,
       headerBytes: headerBytes,
     );
     if (mimeType == null) {
@@ -106,6 +107,6 @@ extension MimeEx on String {
 
   /// 判断是否是svg
   bool get isSvg {
-    return toUri().path.toLowerCase().endsWith('.svg');
+    return toUri()?.path.toLowerCase().endsWith('.svg') == true;
   }
 }

@@ -11,7 +11,7 @@ part of flutter3_basics;
 /// [WidgetsFlutterBinding.ensureInitialized]
 void ensureInitialized() => WidgetsFlutterBinding.ensureInitialized();
 
-/// 当前时间戳 `1699064019689`
+/// 当前时间戳 `1699064019689` 13位
 int nowTime() => DateTime.now().millisecondsSinceEpoch;
 
 /// 格式化时间 `2023-11-04 10:13:40.083707`

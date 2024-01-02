@@ -67,11 +67,19 @@ toast(
   }, position: position, animate: animate ?? OverlayAnimate.opacity);
 }
 
+/// [msg] 显示小部件
+/// [text] 显示文本
 /// [toast]
-toastBlur({Widget? msg, dynamic text}) => toast(
+toastBlur({
+  Widget? msg,
+  dynamic text,
+  double? bgBlurSigma = kM,
+  OverlayPosition position = OverlayPosition.center,
+}) =>
+    toast(
       msg ?? "$text".text(),
-      bgBlurSigma: kM,
-      position: OverlayPosition.center,
+      bgBlurSigma: bgBlurSigma,
+      position: position,
     );
 
 /// 顶部全屏toast

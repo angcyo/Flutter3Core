@@ -217,6 +217,9 @@ class StrokeButton extends StatelessWidget {
   /// 文本颜色
   final Color? textColor;
 
+  /// 文本样式, 指定之后, [textColor]无效
+  final TextStyle? textStyle;
+
   /// [child]
   final Widget? child;
 
@@ -243,14 +246,15 @@ class StrokeButton extends StatelessWidget {
     super.key,
     this.onTap,
     this.text,
+    this.textColor,
+    this.textStyle,
     this.child,
     this.enabled = true,
     this.borderColor,
-    this.textColor,
     this.borderWidth = 1,
     this.radius = kDefaultBorderRadiusX,
     this.borderRadius,
-    this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kH),
+    this.padding = kPaddingH,
   });
 
   @override
@@ -263,9 +267,10 @@ class StrokeButton extends StatelessWidget {
     return Container(
             padding: padding,
             child: DefaultTextStyle(
-              style: TextStyle(
-                color: textColor,
-              ),
+              style: textStyle ??
+                  TextStyle(
+                    color: textColor,
+                  ),
               child: text?.text() ?? child ?? const Empty(),
             ))
         .ink(

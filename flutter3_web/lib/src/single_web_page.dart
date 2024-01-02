@@ -83,9 +83,9 @@ class _SingleWebPageState extends State<SingleWebPage> {
     } else {
       var url = widget.url;
       if (url?.isEmpty == true) {
-        webViewController.loadRequest('about:blank'.toUri());
+        webViewController.loadRequest('about:blank'.toUri()!);
       } else {
-        webViewController.loadRequest(url!.toUri("http"));
+        webViewController.loadRequest(url!.toUri("http")!);
       }
     }
   }

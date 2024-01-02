@@ -47,6 +47,7 @@ const double kMaxBorderRadius = 45.0;
 
 /// [EdgeInsets.zero]
 /// [kTabLabelPadding]
+const kPaddingH = EdgeInsets.symmetric(horizontal: kH, vertical: kM);
 const kPaddingX = EdgeInsets.symmetric(horizontal: kX, vertical: kL);
 
 /// 是否是debug模式

@@ -396,7 +396,7 @@ extension FilePathEx on String {
   }
 
   /// 转换成文件对象
-  File file() => isLocalUrl ? File.fromUri(toUri()) : File(this);
+  File file() => isLocalUrl ? File.fromUri(toUri()!) : File(this);
 
   /// 获取文件夹中的文件列表
   Future<List<FileSystemEntity>?> listFiles({

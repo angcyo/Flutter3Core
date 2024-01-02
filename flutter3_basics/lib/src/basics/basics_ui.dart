@@ -272,7 +272,7 @@ extension WidgetEx on Widget {
       );
 
   /// [Hero]
-  Widget hero(Object? tag) => tag == null ? this : Hero(tag: tag!, child: this);
+  Widget hero(Object? tag) => tag == null ? this : Hero(tag: tag, child: this);
 
   /// 点击事件
   /// [GestureDetector] 多个手势识别器, 才会有手势竞争

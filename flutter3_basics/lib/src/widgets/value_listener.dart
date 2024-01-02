@@ -5,8 +5,7 @@ part of flutter3_basics;
 /// @since 2023/11/24
 ///
 
-typedef DataWidgetBuilder = Widget Function(
-    BuildContext context, dynamic data);
+typedef DataWidgetBuilder = Widget Function(BuildContext context, dynamic data);
 
 /// 监听[Listenable]并自动重建小部件
 class ValueListener<T extends Listenable> extends StatefulWidget {
@@ -25,7 +24,7 @@ class ValueListener<T extends Listenable> extends StatefulWidget {
 
 class _ValueListenerState extends State<ValueListener> {
   void _onValueChanged() {
-    setState(() {});
+    updateState();
   }
 
   @override

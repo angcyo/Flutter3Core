@@ -15,33 +15,32 @@ extension PubStringEx on String {
     String trimExpandedText = ' 收起',
     TextStyle? textStyle,
     BuildContext? context,
-    TextStyle? moreStyle = const TextStyle(
-      fontWeight: FontWeight.bold,
-    ),
-    TextStyle? lessStyle = const TextStyle(
-      fontWeight: FontWeight.bold,
-    ),
-  }) =>
-      RichReadMoreText(
-        toTextSpan(style: textStyle),
-        settings: trimLines != null
-            ? LineModeSettings(
-                trimLines: trimLines,
-                trimExpandedText: trimExpandedText,
-                trimCollapsedText: trimCollapsedText,
-                moreStyle: moreStyle,
-                lessStyle: lessStyle,
-                textScaler: TextScaler.noScaling,
-              )
-            : LengthModeSettings(
-                trimLength: trimLength!,
-                trimExpandedText: trimExpandedText,
-                trimCollapsedText: trimCollapsedText,
-                moreStyle: moreStyle,
-                lessStyle: lessStyle,
-                textScaler: TextScaler.noScaling,
-              ),
-      );
+    TextStyle? moreStyle,
+    TextStyle? lessStyle,
+  }) {
+    moreStyle ??= textStyle?.copyWith(fontWeight: FontWeight.bold);
+    lessStyle ??= textStyle?.copyWith(fontWeight: FontWeight.bold);
+    return RichReadMoreText(
+      toTextSpan(style: textStyle),
+      settings: trimLines != null
+          ? LineModeSettings(
+              trimLines: trimLines,
+              trimExpandedText: trimExpandedText,
+              trimCollapsedText: trimCollapsedText,
+              moreStyle: moreStyle,
+              lessStyle: lessStyle,
+              textScaler: TextScaler.noScaling,
+            )
+          : LengthModeSettings(
+              trimLength: trimLength!,
+              trimExpandedText: trimExpandedText,
+              trimCollapsedText: trimCollapsedText,
+              moreStyle: moreStyle,
+              lessStyle: lessStyle,
+              textScaler: TextScaler.noScaling,
+            ),
+    );
+  }
 }
 
 /// [Slidable] 侧滑菜单action

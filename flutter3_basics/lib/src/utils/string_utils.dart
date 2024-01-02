@@ -105,7 +105,7 @@ class StringBuilder {
   }
 
   void appendAll(msg) {
-    var list = msg.toString().split('\n');
+    final list = msg.toString().split('\n');
     list.forEachIndexed((index, element) {
       if (index == list.lastIndex) {
         stringBuffer.write(element);

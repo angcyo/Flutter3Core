@@ -39,6 +39,8 @@ part 'src/image_pub.dart';
 
 part 'src/launcher_pub.dart';
 
+part 'src/photo/nine_grid_ex.dart';
+
 part 'src/photo/photo_ex.dart';
 
 part 'src/picker/file_picker_ex.dart';

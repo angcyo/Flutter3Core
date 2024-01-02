@@ -15,8 +15,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
-import 'package:flutter3_basics/src/basics/basics_date_time.dart';
 import 'package:hsluv/hsluvcolor.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:uuid/uuid.dart';
@@ -36,6 +36,8 @@ export 'src/component/rnd.dart';
 part 'src/basics/basics.dart';
 
 part 'src/basics/basics_animation.dart';
+
+part 'src/basics/basics_date_time.dart';
 
 part 'src/basics/basics_decoration.dart';
 

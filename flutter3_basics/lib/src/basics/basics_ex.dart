@@ -246,12 +246,14 @@ extension FutureEx<T> on Future<T> {
           return value;
         } catch (e) {
           debugger();
-          printError(e, stack);
+          if (e is! RException) {
+            printError(e, stack);
+          }
           get?.call(null, e);
           return null;
         }
       }, onError: (error, stackTrace) {
-        //debugger();
+        debugger();
         if (error is FutureCancelException) {
           l.w('Future被取消:$error');
         } else {
@@ -367,6 +369,11 @@ extension StringEx on String {
   /// 字符串转换成int
   int? toIntOrNull({int? radix}) => int.tryParse(this, radix: radix);
 
+  /// 字符串转换成double
+  double toDouble() => double.parse(this);
+
+  double? toDoubleOrNull() => double.tryParse(this);
+
   /// 字符转换成Color对象
   Color toColor() => ColorEx.fromHex(this);
 
@@ -383,7 +390,8 @@ extension StringEx on String {
 
   Iterable? fromJsonIterable() => json.decode(this) as Iterable?;
 
-  List<T>? fromJsonList<T>() => json.decode(this) as List<T>?;
+  /// `List<String> list = "".fromJsonList<String>()`
+  List<T>? fromJsonList<T>() => json.decode(this).cast<T>();
 
   /// [TextSpan]
   TextSpan toTextSpan({TextStyle? style}) => TextSpan(text: this, style: style);
@@ -437,11 +445,18 @@ extension StringEx on String {
 
   //endregion 加密
 
+  /// 去除Url中的参数, 获取没有参数的链接
+  String get baseRawUrl {
+    //var uri = Uri.parse(this);
+    //return uri.replace(queryParameters: null).toString();
+    return split("?").first;
+  }
+
   /// [Uri]
   /// [amendScheme] 如果解析失败, 则使用此scheme再解析一次
   /// [Uri.parse]
   /// [Uri.tryParse]
-  Uri toUri([String? amendScheme]) {
+  Uri? toUri([String? amendScheme]) {
     //debugger();
     final uri = Uri.tryParse(this);
     if (isNotEmpty &&
@@ -449,7 +464,7 @@ extension StringEx on String {
         uri?.scheme.isEmpty == true) {
       return Uri.parse("$amendScheme://$this");
     }
-    return uri!;
+    return uri;
   }
 
   /// 确保前缀是指定的字符串
