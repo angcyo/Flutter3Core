@@ -251,9 +251,11 @@ extension FutureEx<T> on Future<T> {
           return null;
         }
       }, onError: (error, stackTrace) {
+        //debugger();
         if (error is FutureCancelException) {
           l.w('Future被取消:$error');
         } else {
+          printError(error, stackTrace);
           get?.call(null, error);
         }
       });
