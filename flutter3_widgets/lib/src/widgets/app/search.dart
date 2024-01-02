@@ -8,7 +8,7 @@ part of flutter3_widgets;
 
 const double kSearchBarHeight = 60;
 
-class SearchWidget extends StatelessWidget implements PreferredSizeWidget {
+class SearchFieldWidget extends StatelessWidget implements PreferredSizeWidget {
   /// 大小
   final Size size;
 
@@ -21,7 +21,7 @@ class SearchWidget extends StatelessWidget implements PreferredSizeWidget {
   /// 输入框内边距
   final EdgeInsets contentPadding;
 
-  const SearchWidget({
+  const SearchFieldWidget({
     super.key,
     this.size = const Size(double.infinity, kSearchBarHeight),
     required this.searchFieldConfig,
