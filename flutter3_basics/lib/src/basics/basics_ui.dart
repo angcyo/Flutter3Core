@@ -662,6 +662,8 @@ extension WidgetEx on Widget {
     Color? shadowColor,
     double shadowSpreadRadius = 1,
     DecorationImage? decorationImage,
+    Gradient? gradient,
+    List<BoxShadow>? boxShadow,
   }) {
     borderRadius ??= radius == null ? null : BorderRadius.circular(radius);
     decoration ??= borderRadius == null
@@ -670,16 +672,18 @@ extension WidgetEx on Widget {
             borderRadius: borderRadius,
             color: color,
             shape: shape,
-            boxShadow: shadowBlurRadius == null
-                ? null
-                : [
-                    BoxShadow(
-                        color: shadowColor ?? Colors.grey.withOpacity(0.1),
-                        offset: const Offset(2, 2), //阴影y轴偏移量
-                        blurRadius: shadowBlurRadius, //阴影模糊程度
-                        spreadRadius: shadowSpreadRadius //阴影扩散程度
-                        ),
-                  ],
+            gradient: gradient,
+            boxShadow: boxShadow ??
+                (shadowBlurRadius == null
+                    ? null
+                    : [
+                        BoxShadow(
+                            color: shadowColor ?? Colors.grey.withOpacity(0.1),
+                            offset: const Offset(2, 2), //阴影y轴偏移量
+                            blurRadius: shadowBlurRadius, //阴影模糊程度
+                            spreadRadius: shadowSpreadRadius //阴影扩散程度
+                            ),
+                      ]),
             border: borderColor == null
                 ? null
                 : Border.all(color: borderColor, width: borderWidth),
