@@ -62,6 +62,7 @@ mixin TabBarMixin on TickerProvider {
     TextStyle? unselectedLabelStyle,
     double? dividerHeight = 0,
     Color? dividerColor,
+    InteractiveInkFeatureFactory? splashFactory = NoSplash.splashFactory,
   }) {
     var globalTheme = GlobalTheme.of(context);
     return TabBar(
@@ -87,6 +88,7 @@ mixin TabBarMixin on TickerProvider {
       unselectedLabelStyle: unselectedLabelStyle ?? globalTheme.textBodyStyle,
       isScrollable: isScrollable ?? tabAlignment == TabAlignment.start,
       tabAlignment: tabAlignment,
+      splashFactory: splashFactory,
     );
   }
 

@@ -418,12 +418,17 @@ extension WidgetEx on Widget {
     AlignmentGeometry alignment = Alignment.center,
     double? widthFactor,
     double? heightFactor,
+    double? minWidth,
+    double? minHeight,
   }) {
     return Align(
       alignment: alignment,
       widthFactor: widthFactor,
       heightFactor: heightFactor,
       child: this,
+    ).constrainedMin(
+      minWidth: minWidth,
+      minHeight: minHeight,
     );
   }
 
@@ -878,6 +883,8 @@ extension WidgetEx on Widget {
 
   /// 约束当前小部件的大小
   /// [ConstrainedBox]
+  /// [constrainedMin]
+  /// [constrainedMax]
   Widget constrainedBox(BoxConstraints constraints) {
     return ConstrainedBox(
       constraints: constraints,
@@ -897,6 +904,9 @@ extension WidgetEx on Widget {
     double? minWidth,
     double? minHeight,
   }) {
+    if (minWidth == null && minHeight == null) {
+      return this;
+    }
     return constrainedBox(BoxConstraints(
       minWidth: minWidth ?? 0,
       minHeight: minHeight ?? 0,
@@ -909,6 +919,9 @@ extension WidgetEx on Widget {
     double? maxWidth,
     double? maxHeight,
   }) {
+    if (maxWidth == null && maxHeight == null) {
+      return this;
+    }
     return constrainedBox(BoxConstraints(
       maxWidth: maxWidth ?? double.infinity,
       maxHeight: maxHeight ?? double.infinity,
@@ -921,6 +934,9 @@ extension WidgetEx on Widget {
     double? width,
     double? height,
   }) {
+    if (width == null && height == null) {
+      return this;
+    }
     return SizedBox(
       width: width,
       height: height,

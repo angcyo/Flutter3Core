@@ -23,6 +23,7 @@ const double kMinInteractiveHeight = 36;
 /// [kToolbarHeight]
 /// [kInteractiveHeight]
 const double kTabHeight = 46;
+const double kTabItemHeight = 30;
 
 /// 设计最佳最小交互高度
 const double kInteractiveHeight = kMinInteractiveDimension;

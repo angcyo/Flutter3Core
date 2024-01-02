@@ -45,7 +45,7 @@ class HttpResultHandle {
   /// [Exception]
   /// [DioException]
   late dynamic Function(dynamic error) handleError = (error) {
-    debugger();
+    //debugger();
     var tip = kDefHttpErrorMessage;
     if (error is DioException) {
       var errorMessage = error.response?.data[messageKey];
