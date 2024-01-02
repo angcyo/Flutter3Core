@@ -126,8 +126,13 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @callPoint
   void firstLoad([WidgetState? state]) {
     state ??= defWidgetState;
-    if (scrollController.adapterStateValue.value == WidgetState.preLoading ||
-        scrollController.adapterStateValue.value != state) {
+    //debugger();
+    //当前的状态
+    var currentState = scrollController.adapterStateValue.value;
+    if (currentState.isNoneState) {
+      //已经显示了内容
+    } else if (currentState == WidgetState.preLoading ||
+        currentState != state) {
       scrollController.updateAdapterState(this, state);
     }
   }
