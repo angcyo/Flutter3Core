@@ -521,7 +521,7 @@ class _RItemTileState extends State<RItemTile> {
 extension RItemTileExtension on Widget {
   /// 网格item
   /// [gridCount] 网格的列数
-  /// [childAspectRatio] child宽高比
+  /// [childAspectRatio] child宽高比, <1时,高度高; >1时,宽度高;
   /// [mainAxisSpacing] 主轴间隙, 如果方向是垂直的, 则是行间隙, 如果方向是水平的, 则是列间隙
   /// [crossAxisSpacing] 交叉轴间隙
   RItemTile rGridTile(
