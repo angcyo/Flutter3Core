@@ -19,6 +19,7 @@ export 'package:flutter3_basics/flutter3_basics.dart';
 export 'package:flutter3_core/flutter3_core.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
 export 'package:flutter3_widgets/flutter3_widgets.dart';
+export 'package:flutter_animate/flutter_animate.dart';
 export 'package:package_info_plus/package_info_plus.dart';
 export 'package:share_plus/share_plus.dart';
 
@@ -56,8 +57,7 @@ void runGlobalApp(Widget app) {
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
 
-    "开始启动[main]:${PlatformDispatcher.instance.defaultRouteName}"
-        .toLogSync();
+    "开始启动[main]:${PlatformDispatcher.instance.defaultRouteName}".toLogSync();
     await initFlutter3Core();
     if (isDebug) {
       await testRunAfter();
@@ -68,7 +68,6 @@ void runGlobalApp(Widget app) {
   }, (error, stack) {
     l.e("未捕捉的异常:↓"..toErrorLogSync());
     l.e(error..toErrorLogSync());
-    l.e(stack.toString()
-      ..toErrorLogSync());
+    l.e(stack.toString()..toErrorLogSync());
   });
 }
