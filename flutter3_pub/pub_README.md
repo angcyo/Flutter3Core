@@ -427,6 +427,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [flutter_local_notifications: ^16.3.0](https://pub.dev/packages/flutter_local_notifications)
   用于显示本地通知的跨平台插件。ANDROID IOS LINUX MACOS
 - [flutter_app_badger: ^1.5.0](https://pub.dev/packages/flutter_app_badger) 在启动器中更改应用程序徽章的功能。
+- [flutter_app_icon_badge: ^2.0.0](https://pub.dev/packages/flutter_app_icon_badge) 更改应用图标上的徽章。
   ANDROID IOS MACOS
 - [geolocator: ^10.1.0](https://pub.dev/packages/geolocator) 一个 Flutter
   地理定位插件，它提供了对平台特定位置服务的轻松访问（FusedLocationProviderClient，或者如果不可用，Android
