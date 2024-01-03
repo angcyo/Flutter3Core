@@ -156,11 +156,12 @@ class L {
     //获取当前调用方法的文件名和行数
     final stackTrace = StackTrace.current.toString();
     final stackTraceList = stackTrace.split(lineSeparator);
-    final lineStackTrace = stackTraceList[2];
-    final fileStr = lineStackTrace.substring(
+    final lineStackTrace = stackTraceList[min(3, stackTraceList.length) - 1];
+    //获取当前的文件名称以及路径行号:列号
+    final filePathStr = lineStackTrace.substring(
         lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
 
-    var log = '$time[$fileStr] $tagStr$levelStr->$msgType$msg';
+    var log = '$time[$filePathStr] $tagStr$levelStr->$msgType$msg';
 
     if ((isDebug && level >= verbose) || level > debug) {
       //print(StackTrace.fromString("...test"));
@@ -169,7 +170,7 @@ class L {
       //print(StackTrace.current);
       //print("(package:flutter3_widgets/src/child_background_widget.dart:29:7)");
       //print("child_background_widget.dart:29:7");
-      print(log);
+      debugPrint(log);
     }
 
     //输出到文件
