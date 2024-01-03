@@ -1,7 +1,6 @@
 library flutter3_widgets;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -20,6 +19,7 @@ import 'package:rich_readmore/rich_readmore.dart';
 import 'package:wheel_picker/wheel_picker.dart';
 
 import 'src/pub/flutter_verification_code.dart';
+import 'package:badges/badges.dart' as badges;
 
 export 'package:expandable/expandable.dart';
 export 'package:flutter3_basics/flutter3_basics.dart';
@@ -47,6 +47,8 @@ part 'src/dialog/single_input_dialog.dart';
 part 'src/navigation/navigate_ex.dart';
 
 part 'src/pub/accurate_sized_box.dart';
+
+part 'src/pub/badges_ex.dart';
 
 part 'src/pub/expandable_ex.dart';
 
