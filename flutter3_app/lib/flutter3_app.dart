@@ -28,12 +28,16 @@ part 'src/app_info_interceptor.dart';
 
 part 'src/app_log.dart';
 
-part 'src/app_swiper_ex.dart';
-
 part 'src/app_notifications.dart';
+
+part 'src/app_swiper_ex.dart';
 
 @callPoint
 void runGlobalApp(Widget app) {
+  /*if (isDebug) {
+    io(() => testTime());
+  }*/
+
   lTime.tick();
 
   var oldOnError = FlutterError.onError;
@@ -52,7 +56,8 @@ void runGlobalApp(Widget app) {
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
 
-    "开始启动[main]:${PlatformDispatcher.instance.defaultRouteName}".toLogSync();
+    "开始启动[main]:${PlatformDispatcher.instance.defaultRouteName}"
+        .toLogSync();
     await initFlutter3Core();
     if (isDebug) {
       await testRunAfter();
@@ -63,6 +68,7 @@ void runGlobalApp(Widget app) {
   }, (error, stack) {
     l.e("未捕捉的异常:↓"..toErrorLogSync());
     l.e(error..toErrorLogSync());
-    l.e(stack.toString()..toErrorLogSync());
+    l.e(stack.toString()
+      ..toErrorLogSync());
   });
 }
