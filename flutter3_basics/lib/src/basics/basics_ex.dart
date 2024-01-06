@@ -245,7 +245,7 @@ extension FutureEx<T> on Future<T> {
           get?.call(value, null);
           return value;
         } catch (e) {
-          debugger();
+          //debugger();
           if (e is! RException) {
             printError(e, stack);
           }
