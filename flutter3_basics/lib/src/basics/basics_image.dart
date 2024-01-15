@@ -175,12 +175,14 @@ extension ElementImageEx on Element {
 
 extension RenderObjectImageEx on RenderObject {
   /// 获取元素的截图
+  /// https://pub.dev/packages/image_gallery_saver
   Future<ui.Image> captureImage() {
-    /*assert(this is RenderRepaintBoundary);
+    assert(this is RenderRepaintBoundary);
+    final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
     final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
-    return boundary.toImage();*/
-    assert(!debugNeedsPaint);
-    final OffsetLayer layer = debugLayer! as OffsetLayer;
-    return layer.toImage(paintBounds);
+    return boundary.toImage(pixelRatio: devicePixelRatio);
+    /*assert(!debugNeedsPaint);
+    final OffsetLayer layer = this.layer! as OffsetLayer;
+    return layer.toImage(paintBounds, pixelRatio: devicePixelRatio);*/
   }
 }

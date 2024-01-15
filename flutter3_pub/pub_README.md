@@ -437,4 +437,5 @@ https://github.com/fluttercommunity/plus_plugins
 - [geocoding: ^2.1.1](https://pub.dev/packages/geocoding) 一个 Flutter Geocoding
   插件，提供简单的地理编码和反向地理编码功能。
 - [permission_handler: ^11.1.0](https://pub.dev/packages/permission_handler)
-  该插件提供了一个跨平台（iOS、Android）API 来请求权限并检查其状态。您还可以打开设备的应用设置，以便用户可以授予权限。
+  该插件提供了一个跨平台（iOS、Android）API 来请求权限并检查其状态。您还可以打开设备的应用设置，以便用户可以授予权限。https://github.com/baseflow/flutter-permission-handler
+- [image_gallery_saver: ^2.0.3](https://pub.dev/packages/image_gallery_saver) 我们使用插件 image_picker 从 Android 和 iOS 图像库中选择图像，但它无法将图像保存到图库中。这个插件可以提供这个功能。
