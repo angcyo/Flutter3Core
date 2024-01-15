@@ -63,6 +63,15 @@ dependencies:
   # https://github.com/gskinner/flutter_animate
   flutter_animate: ^4.3.0
 
+  # https://pub.dev/packages/permission_handler
+  # https://github.com/baseflow/flutter-permission-handler
+  # https://pub.dev/packages/meta
+  permission_handler: ^11.1.0 #ANDROID IOS WEB WINDOWS
+
+  # https://pub.dev/packages/image_gallery_saver
+  # https://github.com/hui-z/image_gallery_saver
+  image_gallery_saver: ^2.0.3 #ANDROID IOS
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

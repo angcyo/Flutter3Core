@@ -3,7 +3,7 @@ library flutter3_app;
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/widgets.dart';
@@ -11,6 +11,7 @@ import 'package:flutter3_app/test_app.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -32,6 +33,8 @@ part 'src/app_log.dart';
 part 'src/app_notifications.dart';
 
 part 'src/app_swiper_ex.dart';
+
+part 'src/mobile_ex.dart';
 
 @callPoint
 void runGlobalApp(Widget app) {
@@ -57,7 +60,7 @@ void runGlobalApp(Widget app) {
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
 
-    "开始启动[main]:${PlatformDispatcher.instance.defaultRouteName}".toLogSync();
+    "开始启动[main]:${ui.PlatformDispatcher.instance.defaultRouteName}".toLogSync();
     await initFlutter3Core();
     if (isDebug) {
       await testRunAfter();

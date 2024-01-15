@@ -50,18 +50,6 @@ extension ImageEx on ui.Image {
     return byteData!.buffer.asUint8List();
   }
 
-  /// 保存图片到相册
-  /// https://pub.dev/packages/image_gallery_saver
-  /*Future<bool> saveToGallery({
-    String? albumName,
-    String? fileName,
-    ImageByteFormat format = ImageByteFormat.png,
-  }) async {
-    final Uint8List bytes = await toBytes(format);
-    return ImageGallerySaver.saveImage(bytes,
-        albumName: albumName, name: fileName);
-  }*/
-
   /// 保存图片到文件
   Future<File?> saveToFile(
     File? file, {
