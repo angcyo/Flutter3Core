@@ -75,6 +75,17 @@ Widget layout(
       key: key,
     );
 
+/// [SliverLayoutBuilder]
+Widget sliverLayout(
+  Widget Function(BuildContext context, SliverConstraints constraints)
+      builder, [
+  Key? key,
+]) =>
+    SliverLayoutBuilder(
+      builder: builder,
+      key: key,
+    );
+
 /// 将当前的小部件, 包裹在一个[Padding]中
 /// 根据html的padding属性, 生成padding
 EdgeInsets? edgeInsets([double? v1, double? v2, double? v3, double? v4]) {
