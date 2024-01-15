@@ -376,6 +376,8 @@ https://github.com/fluttercommunity/plus_plugins
 - [device_frame: ^1.1.0](https://pub.dev/packages/device_frame) 常见设备的模型。
 - [device_preview: ^1.1.0](https://pub.dev/packages/device_preview) 大致了解您的应用在其他设备上的外观和性能。
 - [badges: ^3.1.2](https://pub.dev/packages/badges) Flutter 的徽章小部件。
+- [dartx: ^1.2.0](https://pub.dev/packages/dartx) Dart 的扩展方法。
+- [crimson: ^0.3.1](https://pub.dev/packages/crimson) 快速、高效且易于使用的 Dart JSON 解析器和序列化器。
 
 ## 平台特有
 

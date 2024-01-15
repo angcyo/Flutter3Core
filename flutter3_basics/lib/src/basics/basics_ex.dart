@@ -77,6 +77,11 @@ extension ObjectEx on Object {
   List<T> ofList<T>() => [this as T];
 
   /// 转换成json字符串
+  /// ```
+  /// @JsonKey(ignore: true)
+  /// @JsonKey(includeFromJson: false, includeToJson: false)
+  /// ```
+  /// [JsonKey]
   String toJsonString() => json.encode(this);
 
   /// [DynamicEx.fromJson]
@@ -685,7 +690,7 @@ extension BoolEx on bool {
 extension NumEx on num {
   /// 保留小数点后几位
   /// [digits] 小数点后几位
-  /// [removeZero] 是否移除小数点后面的0
+  /// [removeZero] 是否移除小数点尾部后面的0
   /// [ensureInt] 如果是整数, 是否优先使用整数格式输出
   /// ```
   /// 8.10 -> 8.1   //removeZero

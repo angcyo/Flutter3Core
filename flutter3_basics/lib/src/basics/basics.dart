@@ -164,6 +164,9 @@ double get screenWidth => platformMediaQueryData.size.width;
 @dp
 double get screenHeight => platformMediaQueryData.size.height;
 
+/// 屏幕像素密度, 1 dp = xx px
+double get devicePixelRatio => platformMediaQueryData.devicePixelRatio;
+
 /// 屏幕宽度 [screenWidth]
 @pixel
 double get screenWidthPixel =>
@@ -198,6 +201,7 @@ Stream<T?> delayGenerate<T>(
 }
 
 /// 当前设备的平台
+/// [defaultTargetPlatform]
 TargetPlatform get currentPlatform {
   if (isAndroid) {
     return TargetPlatform.android;
