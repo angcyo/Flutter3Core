@@ -48,11 +48,29 @@ typedef WidgetNullList = List<Widget?>;
 
 /// 通过[Builder]小部件, 获取当前元素的[BuildContext]
 /// 然后当前[BuildContext]更新只会影响其子元素, 父元素不会受到影响
+/// [Builder]
 Widget builder(
   WidgetBuilder builder, [
   Key? key,
 ]) =>
     Builder(
+      builder: builder,
+      key: key,
+    );
+
+/// 可以在布局过程中拿到父组件传递的约束信息，然后我们可以根据约束信息动态的构建不同的布局。
+/// [Element.mount].[Element.update] 在此回调用安排并触发布局回调
+/// [RenderObject.invokeLayoutCallback] 触发布局回调和执行
+///
+/// [BuildOwner.buildScope] 安排布局
+/// [Element.updateChild] 布局完成后, 更新子元素
+///
+/// [LayoutBuilder]
+Widget layout(
+  Widget Function(BuildContext context, BoxConstraints constraints) builder, [
+  Key? key,
+]) =>
+    LayoutBuilder(
       builder: builder,
       key: key,
     );
