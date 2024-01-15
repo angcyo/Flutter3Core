@@ -31,7 +31,7 @@ Future<Directory> fileDirectory() async {
       try {
         directory = await getExternalStorageDirectory();
       } catch (e) {
-        print(e);
+        debugPrint("$e");
         //l.e(e);
       }
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
@@ -40,13 +40,13 @@ Future<Directory> fileDirectory() async {
         // /data/user/0/com.angcyo.flutter3_abc/files
         directory = await getApplicationSupportDirectory();
       } catch (e) {
-        print(e);
+        debugPrint("$e");
         //l.e(e);
       }
     }
     directory ??= await getTemporaryDirectory();
   } catch (e) {
-    print(e);
+    debugPrint("$e");
     //l.e(e);
   }
   return directory ?? Directory.systemTemp;
@@ -65,7 +65,7 @@ Future<Directory> cacheDirectory() async {
       try {
         directory = (await getExternalCacheDirectories())?.firstOrNull;
       } catch (e) {
-        print(e);
+        debugPrint("$e");
         //l.e(e);
       }
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
@@ -74,13 +74,13 @@ Future<Directory> cacheDirectory() async {
         // /data/user/0/com.angcyo.flutter3_abc/cache
         directory = await getTemporaryDirectory();
       } catch (e) {
-        print(e);
+        debugPrint("$e");
         //l.e(e);
       }
     }
     directory ??= await getTemporaryDirectory();
   } catch (e) {
-    print(e);
+    debugPrint("$e");
     //l.e(e);
   }
   return directory ?? Directory.systemTemp;
