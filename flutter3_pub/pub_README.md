@@ -378,6 +378,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [badges: ^3.1.2](https://pub.dev/packages/badges) Flutter 的徽章小部件。
 - [dartx: ^1.2.0](https://pub.dev/packages/dartx) Dart 的扩展方法。
 - [crimson: ^0.3.1](https://pub.dev/packages/crimson) 快速、高效且易于使用的 Dart JSON 解析器和序列化器。
+- [auto_size_text: ^3.0.0](https://pub.dev/packages/auto_size_text) Flutter 小部件，可自动调整文本大小以使其完全适合其边界。
 
 ## 平台特有
 
