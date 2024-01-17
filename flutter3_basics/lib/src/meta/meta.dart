@@ -142,4 +142,12 @@ class _Private {
 
 const private = _Private();
 
+class _Implemented {
+  final String des;
+
+  const _Implemented([this.des = '当前功能, 正在实现中...']);
+}
+
+const implemented = _Implemented();
+
 //endregion---base
