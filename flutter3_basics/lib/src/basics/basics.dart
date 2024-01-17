@@ -98,6 +98,8 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 
 /// 报告错误
 /// [FlutterError.onError] 最终会调用此方法
+///
+/// [ErrorWidget.builder] 错误小部件构建器
 void reportError(exception) {
   FlutterError.reportError(
     FlutterErrorDetails(

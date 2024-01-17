@@ -240,6 +240,7 @@ https://flutter.cn/docs/ui/accessibility-and-internationalization/internationali
 
 https://github.com/fluttercommunity/plus_plugins
 
+- [logging: ^1.2.0](https://pub.dev/packages/logging) 日志消息处理程序, 并不输出日志。
 - [quiver: ^3.2.1](https://pub.dev/packages/quiver) Quiver 是一组 Dart 的实用程序库，它使许多 Dart
   库的使用更轻松、更方便，或者添加了额外的功能。
 - [flutter_simple_treeview: ^3.0.2](https://pub.dev/packages/flutter_simple_treeview)
@@ -379,6 +380,9 @@ https://github.com/fluttercommunity/plus_plugins
 - [dartx: ^1.2.0](https://pub.dev/packages/dartx) Dart 的扩展方法。
 - [crimson: ^0.3.1](https://pub.dev/packages/crimson) 快速、高效且易于使用的 Dart JSON 解析器和序列化器。
 - [auto_size_text: ^3.0.0](https://pub.dev/packages/auto_size_text) Flutter 小部件，可自动调整文本大小以使其完全适合其边界。
+- [text_sizer_plus: ^1.0.5](https://pub.dev/packages/text_sizer_plus) Flutter 小部件可自动调整文本大小以完全适合其边界最新版本。
+- [auto_size_text_field: ^2.2.2](https://pub.dev/packages/auto_size_text_field) ✍️ Flutter TextField 小部件，可自动调整文本字段的大小以使其完全适合其边界。
+- [auto_size_widget: ^0.0.4](https://pub.dev/packages/auto_size_widget) 一个 Flutter 小部件，可以通过拖动小部件的角来调整子小部件的大小。
 
 ## 平台特有
 
@@ -440,3 +444,4 @@ https://github.com/fluttercommunity/plus_plugins
 - [permission_handler: ^11.1.0](https://pub.dev/packages/permission_handler)
   该插件提供了一个跨平台（iOS、Android）API 来请求权限并检查其状态。您还可以打开设备的应用设置，以便用户可以授予权限。https://github.com/baseflow/flutter-permission-handler
 - [image_gallery_saver: ^2.0.3](https://pub.dev/packages/image_gallery_saver) 我们使用插件 image_picker 从 Android 和 iOS 图像库中选择图像，但它无法将图像保存到图库中。这个插件可以提供这个功能。
+- [flutter_contacts: ^1.1.7+1](https://pub.dev/packages/flutter_contacts) Flutter 插件，用于读取、创建、更新、删除和观察 Android 和 iOS 上的原生联系人，具有群组支持、vCard 支持和联系人权限处理。

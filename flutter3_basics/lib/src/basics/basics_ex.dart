@@ -687,6 +687,11 @@ extension BoolEx on bool {
 
 //region Int 扩展
 
+/// [abs] 绝对值
+/// [floor] 向下取整
+/// [ceil] 向上取整
+/// [round] 四舍五入
+/// [truncate] 截断
 extension NumEx on num {
   /// 保留小数点后几位
   /// [digits] 小数点后几位
@@ -733,6 +738,24 @@ extension NumEx on num {
   num lerp(double begin, double end, double progress) {
     return begin + (end - begin) * progress;
   }
+
+  /// 限制数字的范围
+  num clamp(num min, num max) {
+    return this < min ? min : (this > max ? max : this);
+  }
+
+  //region ---math---
+
+  /// 消除多余的角度, 限制角度范围在[0~360]
+  num get sanitizeDegrees {
+    var degrees = this % 360;
+    if (degrees < 0) {
+      degrees += 360;
+    }
+    return degrees;
+  }
+
+//endregion ---math---
 }
 
 //endregion Int 扩展

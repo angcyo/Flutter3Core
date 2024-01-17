@@ -66,6 +66,7 @@ Widget builder(
 /// [Element.updateChild] 布局完成后, 更新子元素
 ///
 /// [LayoutBuilder]
+/// https://pub.dev/packages/value_layout_builder
 Widget layout(
   Widget Function(BuildContext context, BoxConstraints constraints) builder, [
   Key? key,

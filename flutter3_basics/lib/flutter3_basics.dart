@@ -45,6 +45,8 @@ part 'src/basics/basics_ex.dart';
 
 part 'src/basics/basics_image.dart';
 
+part 'src/basics/basics_math.dart';
+
 part 'src/basics/basics_paint.dart';
 
 part 'src/basics/basics_render.dart';
