@@ -49,6 +49,8 @@ part 'src/basics/basics_math.dart';
 
 part 'src/basics/basics_paint.dart';
 
+part 'src/basics/basics_path.dart';
+
 part 'src/basics/basics_render.dart';
 
 part 'src/basics/basics_ui.dart';

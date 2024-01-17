@@ -383,6 +383,8 @@ https://github.com/fluttercommunity/plus_plugins
 - [text_sizer_plus: ^1.0.5](https://pub.dev/packages/text_sizer_plus) Flutter 小部件可自动调整文本大小以完全适合其边界最新版本。
 - [auto_size_text_field: ^2.2.2](https://pub.dev/packages/auto_size_text_field) ✍️ Flutter TextField 小部件，可自动调整文本字段的大小以使其完全适合其边界。
 - [auto_size_widget: ^0.0.4](https://pub.dev/packages/auto_size_widget) 一个 Flutter 小部件，可以通过拖动小部件的角来调整子小部件的大小。
+- [path_drawing: ^1.0.1](https://pub.dev/packages/path_drawing) 一个 Flutter 库，用于帮助创建和操作路径。
+- [path_parsing: ^1.0.1](https://pub.dev/packages/path_parsing) 从 Flutter 路径绘制库中分离出来，创建一个纯 Dart 解析库，用于 SVG 路径和代码生成（不依赖 Flutter 运行时）。
 
 ## 平台特有
 
