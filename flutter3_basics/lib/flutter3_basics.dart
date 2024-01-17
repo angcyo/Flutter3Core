@@ -47,7 +47,7 @@ part 'src/basics/basics_image.dart';
 
 part 'src/basics/basics_math.dart';
 
-part 'src/basics/basics_paint.dart';
+part 'src/basics/basics_painting.dart';
 
 part 'src/basics/basics_path.dart';
 

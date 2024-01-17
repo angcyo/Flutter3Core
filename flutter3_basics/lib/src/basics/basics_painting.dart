@@ -4,6 +4,13 @@ part of flutter3_basics;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/16
 ///
+/// [Paint]
+/// [Canvas]
+/// [Image]
+/// [ui.Path]
+/// [ui.Image]
+/// [ui.Picture]
+/// [ui.Paragraph]
 
 /// 自定义的绘制方法
 /// [childRect] 当前元素的绘制区域
