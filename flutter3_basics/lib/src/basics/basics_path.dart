@@ -5,3 +5,5 @@ part of flutter3_basics;
 /// 
 /// 虚线
 /// https://github.com/dnfield/flutter_path_drawing/blob/master/lib/src/dash_path.dart
+///
+/// [Matrix4Ex.mapRect]

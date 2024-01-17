@@ -1,7 +1,4 @@
-import 'dart:math';
-
-import 'package:flutter/widgets.dart';
-import 'package:vector_math/vector_math_64.dart';
+part of flutter3_basics;
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,7 +8,7 @@ import 'package:vector_math/vector_math_64.dart';
 /// [MatrixUtils]
 /// [Matrix44Operations]
 /// 4*4矩阵
-extension Matrix4Ex on Matrix4 {
+extension Matrix4Ex on vector.Matrix4 {
   /// 获取X轴缩放比例
   double get scaleX => row0.x;
 
@@ -31,13 +28,13 @@ extension Matrix4Ex on Matrix4 {
   double get translateZ => row3.z;
 
   /// 获取X轴旋转角度
-  double get rotateX => Quaternion.fromRotation(getRotation()).x;
+  double get rotateX => vector.Quaternion.fromRotation(getRotation()).x;
 
   /// 获取Y轴旋转角度
-  double get rotateY => Quaternion.fromRotation(getRotation()).y;
+  double get rotateY => vector.Quaternion.fromRotation(getRotation()).y;
 
   /// 获取Z轴旋转角度
-  double get rotateZ => Quaternion.fromRotation(getRotation()).w;
+  double get rotateZ => vector.Quaternion.fromRotation(getRotation()).z;
 
   /// 获取旋转角度
   double get rotate => max(rotateX, rotateY);

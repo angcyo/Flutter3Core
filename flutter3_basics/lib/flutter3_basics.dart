@@ -20,6 +20,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vector_math/vector_math_64.dart' as vector;
 
 export 'package:async/async.dart';
 export 'package:clock/clock.dart';
@@ -30,7 +31,6 @@ export 'package:meta/meta.dart';
 export 'package:nil/nil.dart';
 
 export 'src/component/dart_scope_functions.dart';
-export 'src/component/matrix_ex.dart';
 export 'src/component/rnd.dart';
 
 part 'src/basics/basics.dart';
@@ -62,6 +62,8 @@ part 'src/component/async_operation.dart';
 part 'src/component/custom_painter.dart';
 
 part 'src/component/future_cancel.dart';
+
+part 'src/component/matrix_ex.dart';
 
 part 'src/component/r_exception.dart';
 
