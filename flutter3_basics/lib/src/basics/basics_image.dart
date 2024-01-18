@@ -166,7 +166,7 @@ extension WidgetImageEx on Widget {
   /// [imageSize] widget的size，推荐使用dp
   /// [wait] widget截屏延时，widget构建时如果有耗时操作，可以添加延时防止截屏时耗时操作尚未完成
   ///
-  Future<ui.Image?> captureImage({
+  Future<ui.Image> captureImage({
     Duration? wait,
     Size imageSize = Size.infinite,
   }) async {

@@ -447,3 +447,4 @@ https://github.com/fluttercommunity/plus_plugins
   该插件提供了一个跨平台（iOS、Android）API 来请求权限并检查其状态。您还可以打开设备的应用设置，以便用户可以授予权限。https://github.com/baseflow/flutter-permission-handler
 - [image_gallery_saver: ^2.0.3](https://pub.dev/packages/image_gallery_saver) 我们使用插件 image_picker 从 Android 和 iOS 图像库中选择图像，但它无法将图像保存到图库中。这个插件可以提供这个功能。
 - [flutter_contacts: ^1.1.7+1](https://pub.dev/packages/flutter_contacts) Flutter 插件，用于读取、创建、更新、删除和观察 Android 和 iOS 上的原生联系人，具有群组支持、vCard 支持和联系人权限处理。
+- [upload_file_oss: ^1.0.0](https://pub.dev/packages/upload_file_oss) 一个简单上传文件到阿里云对象存储OSS的库。 仅支持小文件上传。
