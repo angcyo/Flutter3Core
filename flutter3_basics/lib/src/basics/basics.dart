@@ -254,11 +254,21 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 
 //region 性能
 
+/// 并发
+/// https://dart.cn/guides/language/concurrency
+///
+/// Isolate 的工作原理
+/// https://dart.cn/guides/language/concurrency#how-isolates-work
+///
 /// io计算
 /// [compute] 会创建一个新的[Isolate]来执行[callback]
 /// https://pub.dev/documentation/compute/latest/compute/compute-constant.html
 Future<R> io<Object, R>(ResultCallback<R> callback) async =>
     compute((message) => callback(), null, debugLabel: "io-${nowTimeString()}");
+
+Future<R> run<R>(ResultCallback<R> callback) {
+  return Isolate.run(() => callback(), debugName: "run-${nowTimeString()}");
+}
 
 /// 安排一个轻量的任务
 Future<R> scheduleTask<R>(ResultCallback<R> callback,
