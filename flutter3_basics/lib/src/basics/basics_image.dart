@@ -6,7 +6,7 @@ part of flutter3_basics;
 /// @date 2023/11/04
 ///
 
-typedef CanvasCallback = void Function(Canvas canvas);
+typedef CanvasAction = void Function(Canvas canvas);
 
 /// 使用[Canvas]绘制图片
 /// [DecorationImage]
@@ -14,13 +14,37 @@ typedef CanvasCallback = void Function(Canvas canvas);
 /// [applyBoxFit]
 ui.Picture drawPicture(
   Size size,
-  CanvasCallback callback,
+  CanvasAction action,
 ) {
   final ui.PictureRecorder recorder = ui.PictureRecorder();
   final Canvas canvas =
       Canvas(recorder, Rect.fromLTWH(0, 0, size.width, size.height));
-  callback(canvas);
+  action(canvas);
   return recorder.endRecording();
+}
+
+/// 使用[Canvas]绘制图片
+Future<ui.Image> drawImage(
+  Size size,
+  CanvasAction callback,
+) {
+  final ui.Picture picture = drawPicture(size, callback);
+  return picture.toImage(
+    size.width.ceil(),
+    size.height.ceil(),
+  );
+}
+
+/// 使用[Canvas]绘制图片
+ui.Image drawImageSync(
+  Size size,
+  CanvasAction callback,
+) {
+  final ui.Picture picture = drawPicture(size, callback);
+  return picture.toImageSync(
+    size.width.ceil(),
+    size.height.ceil(),
+  );
 }
 
 extension ByteDataEx on ByteData {
@@ -30,16 +54,63 @@ extension ByteDataEx on ByteData {
 
   /// [Image]
   /// `class Image extends StatefulWidget`
-  Image toImageWidget() => Image.memory(bytes);
+  Image toImageWidget() => bytes.toImageWidget();
 
   /// [ui.Image]
-  Future<ui.Image> toImage() => decodeImageFromList(bytes);
+  Future<ui.Image> toImage() => bytes.toImage();
 
   /// [MemoryImage]
-  MemoryImage toMemoryImage() => MemoryImage(bytes);
+  MemoryImage toMemoryImage() => bytes.toMemoryImage();
+
+  /// 转换成base64字符串图片, 带协议头
+  /// [ImageStringEx.toImageFromBase64]
+  String toBase64Image([
+    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+  ]) =>
+      bytes.toBase64Image(format);
+}
+
+extension Uint8ListImageEx on Uint8List {
+  /// [ByteDataEx.bytes]
+  ByteData get byteData => buffer.asByteData();
+
+  /// [Image]
+  /// `class Image extends StatefulWidget`
+  Image toImageWidget() => Image.memory(this);
+
+  /// [ui.Image]
+  Future<ui.Image> toImage() => decodeImageFromList(this);
+
+  /// [MemoryImage]
+  MemoryImage toMemoryImage() => MemoryImage(this);
+
+  /// 转换成base64字符串图片, 带协议头
+  /// [ImageStringEx.toImageFromBase64]
+  String toBase64Image([
+    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+  ]) =>
+      'data:image/${format == ui.ImageByteFormat.png ? "png" : "jpeg"};base64,${base64Encode(this)}';
 }
 
 extension ImageEx on ui.Image {
+  /// 将图片转换成base64字符串图片, 带协议头
+  String? toBase64([
+    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+  ]) {
+    return toBytesSync(format)?.toBase64Image(format);
+  }
+
+  /// 同步的方式, 将图片转换成字节数据
+  Uint8List? toBytesSync([
+    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+  ]) {
+    Uint8List? result;
+    unawaited(toBytes().get((value, _) {
+      result = value;
+    }));
+    return result;
+  }
+
   /// 获取图片的字节数据
   /// [ImageByteFormat.rawRgba]
   /// [ImageByteFormat.png]
@@ -61,14 +132,23 @@ extension ImageEx on ui.Image {
 }
 
 extension ImageStringEx on String {
+  /// 从Base64字符串中读取图片
+  /// [ByteDataEx.toBase64Image]
+  Future<ui.Image> toImageFromBase64() async {
+    const c = ",";
+    final Uint8List bytes =
+        contains(c) ? base64Decode(this) : base64Decode(split(c).last);
+    return decodeImageFromList(bytes);
+  }
+
   /// 从文件路径中读取图片
-  Future<ui.Image?> toImage() async {
+  Future<ui.Image> toImageFromFile() async {
     final Uint8List bytes = await File(this).readAsBytes();
     return decodeImageFromList(bytes);
   }
 
   /// 从网络路径中读取图片
-  Future<ui.Image?> toImageFromNetwork() async {
+  Future<ui.Image> toImageFromNetwork() async {
     /*final Uint8List bytes = await http.get(Uri.parse(this)).then((value) => value.bodyBytes);
     return decodeImageFromList(bytes);*/
     final Completer<ui.Image> completer = Completer();
