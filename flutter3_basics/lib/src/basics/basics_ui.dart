@@ -859,6 +859,10 @@ extension WidgetEx on Widget {
 
   /// 模糊背景
   /// [ColorFiltered]
+  /// 将所有绘制放在一个模糊的[Layer]上, 以实现模糊的效果
+  /// [BackdropFilterLayer]
+  /// [BackdropFilterLayer.blendMode]
+  /// [PaintingContext.pushLayer]
   Widget blur({
     double? sigma = kM,
     UiImageFilter? filter,
@@ -879,6 +883,10 @@ extension WidgetEx on Widget {
 
   /// 可以实现灰度效果,灰度化app
   /// [ColorFiltered]
+  /// 将所有绘制放在一个颜色过滤的[Layer]上, 以实现颜色过滤的效果
+  /// [ColorFilterLayer]
+  /// [ColorFilterLayer.colorFilter]
+  /// [PaintingContext.pushLayer]
   Widget colorFiltered({
     ColorFilter? colorFilter,
     Color color = Colors.grey,

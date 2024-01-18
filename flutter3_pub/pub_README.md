@@ -412,7 +412,7 @@ https://github.com/fluttercommunity/plus_plugins
   上获取位置。它还在位置更改时提供回调。
 - [video_compress: ^3.1.2](https://pub.dev/packages/video_compress)
   通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
-- [mobile_scanner: ^3.5.2](https://pub.dev/packages/mobile_scanner) 基于 MLKit 的 Flutter 通用扫描仪。在
+- [mobile_scanner: ^3.5.2](https://pub.dev/packages/mobile_scanner) 基于 MLKit 的 Flutter 通用条码和二维码扫描仪。在
   Android 上使用 CameraX，在 iOS 上使用 AVFoundation。
 - [barcode_scanner: ^3.6.2](https://pub.dev/packages/barcode_scanner) Scanbot Flutter
   条码扫描器插件使您能够轻松实现适用于 iOS 和 Android 的 Scanbot 条码扫描器 SDK。
