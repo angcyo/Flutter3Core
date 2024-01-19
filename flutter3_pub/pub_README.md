@@ -220,6 +220,7 @@ https://guoshuyu.cn/home/wx/Z1.html
 - [animated_digit: ^3.2.3](https://pub.dev/packages/animated_digit) 滚动动画数字小部件，任何需要动画效果的数字，易于使用。
 - [flutter_animate: ^4.3.0](https://pub.dev/packages/flutter_animate) 一个高性能的库，可以简单地在
   Flutter 中添加几乎任何类型的动画效果。
+- [animated_size_and_fade: ^3.0.1](https://pub.dev/packages/animated_size_and_fade) 在两个小部件之间执行淡入淡出和大小过渡。[AnimatedSize]+[AnimatedSwitcher]
 
 ## 国际化
 
