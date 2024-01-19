@@ -1,8 +1,13 @@
 # 2023-11-9
 
 ```dart
-/// 条件导入: 如果有`dart.library.html`包, 则导入`_http_web.dart`, 否则导入`_http_io.dart`
+/// 条件导出: 如果有`dart.library.html`包, 则导入`_http_web.dart`, 否则导入`_http_io.dart`
 export '_http_io.dart' if (dart.library.html) '_http_web.dart';
+
+/// 条件导入:
+import 'factory_stub.dart'
+if (dart.library.io) 'gl_canvas_io.dart'
+if (dart.library.html) 'gl_canvas_web.dart';
 ```
 
 直接打包`apk`体积大约`17MB`, 加入一些基础库之后`apk`体积大约`24.5MB`
