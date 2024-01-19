@@ -9,6 +9,9 @@ part of flutter3_basics;
 /// [Matrix44Operations]
 /// 4*4矩阵
 /// [Matrix4Tween]
+///
+/// https://pub.dev/packages/matrix4_transform
+///
 extension Matrix4Ex on vector.Matrix4 {
   /// 获取X轴缩放比例
   /// [getMaxScaleOnAxis]

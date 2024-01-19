@@ -63,6 +63,10 @@ dependencies:
   # https://github.com/google/vector_math.dart
   vector_math: ^2.1.4
 
+  # https://pub.dev/packages/matrix4_transform
+  # https://github.com/marcglasberg/matrix4_transform
+  matrix4_transform: ^3.0.0
+
   # https://pub.dev/packages/dartx
   # https://github.com/simc/dartx
   # https://pub.dev/packages/characters

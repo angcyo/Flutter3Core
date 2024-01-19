@@ -30,6 +30,7 @@ export 'package:flutter_localizations/flutter_localizations.dart';
 export 'package:hsluv/hsluv.dart';
 export 'package:meta/meta.dart';
 export 'package:nil/nil.dart';
+export 'package:matrix4_transform/matrix4_transform.dart';
 
 export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
