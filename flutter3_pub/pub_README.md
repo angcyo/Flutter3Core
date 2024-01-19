@@ -121,7 +121,7 @@ https://github.com/dnfield/vector_graphics
 - [flutter_svg: ^2.0.9](https://pub.dev/packages/flutter_svg)
 - [vector_graphics: ^1.1.9+1](https://pub.dev/packages/vector_graphics)
 - [vector_graphics_codec: ^1.1.9+1](https://pub.dev/packages/vector_graphics_codec)
-- [vector_graphics_compiler: ^1.1.9+1](https://pub.dev/packages/vector_graphics_compiler)
+- [vector_graphics_compiler: ^1.1.9+1](https://pub.dev/packages/vector_graphics_compiler) 此包将 SVG 文件解析为 vector_graphics 运行时可以呈现的格式。
 - [svg_path_parser: ^1.1.1](https://pub.dev/packages/svg_path_parser) 一个 Flutter/Dart 实用程序，用于将
   SVG 路径解析为库中的 dart:ui 等效 Path 对象。
 
@@ -385,6 +385,8 @@ https://github.com/fluttercommunity/plus_plugins
 - [auto_size_widget: ^0.0.4](https://pub.dev/packages/auto_size_widget) 一个 Flutter 小部件，可以通过拖动小部件的角来调整子小部件的大小。
 - [path_drawing: ^1.0.1](https://pub.dev/packages/path_drawing) 一个 Flutter 库，用于帮助创建和操作路径。
 - [path_parsing: ^1.0.1](https://pub.dev/packages/path_parsing) 从 Flutter 路径绘制库中分离出来，创建一个纯 Dart 解析库，用于 SVG 路径和代码生成（不依赖 Flutter 运行时）。
+- [equatable: ^2.0.5](https://pub.dev/packages/equatable) 能够比较对象 Dart 通常涉及必须覆盖 == 运算符以及 hashCode 。
+- [regex_router: ^2.0.2](https://pub.dev/packages/regex_router) 支持正则表达式路径的材料路由器。路由参数解析。
 
 ## 平台特有
 

@@ -1,4 +1,4 @@
-part of flutter3_pub;
+part of flutter3_vector;
 
 ///
 /// Email:angcyo@126.com
@@ -20,7 +20,7 @@ SvgPicture loadAssetSvgWidget(
   double? width,
   double? height,
   BoxFit fit = BoxFit.contain,
-  UiColorFilter? colorFilter,
+  ColorFilter? colorFilter,
   WidgetBuilder? placeholderBuilder,
 }) =>
     SvgPicture.asset(
@@ -107,3 +107,21 @@ SvgPicture loadStringSvgWidget(
     );
 
 //endregion Asset
+
+//region svg
+
+extension SvgStringEx on String {
+  /// 将svg中的path路径字符串转换成[Path]对象
+  /// https://github.com/dnfield/dart_path_parsing
+  ///
+  /// [https://pub.dev/packages/svg_path_parser]
+  /// ```
+  /// Path path = parseSvgPath('m.29 47.85 14.58 14.57 62.2-62.2h-29.02z');
+  /// ```
+  ///
+  /// [vector_graphics_compiler.parse]
+  Path toPath([bool failSilently = false]) =>
+      parseSvgPath(this, failSilently: failSilently);
+}
+
+//endregion svg

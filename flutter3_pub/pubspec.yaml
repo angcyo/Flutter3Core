@@ -15,6 +15,9 @@ dependencies:
     path: ../flutter3_basics
   flutter3_core:
     path: ../flutter3_core
+  flutter3_vector:
+    path: ../flutter3_vector
+
   # https://pub.dev/packages/cached_network_image
   # https://pub.dev/packages/flutter_cache_manager
   # https://pub.dev/packages/octo_image
@@ -37,13 +40,6 @@ dependencies:
   # https://pub.dev/packages/args
   # https://pub.dev/packages/meta
   markdown: ^7.1.1
-
-  # https://pub.dev/packages/flutter_svg
-  # https://github.com/dnfield/flutter_svg/tree/master/packages/flutter_svg
-  # https://pub.dev/packages/vector_graphics
-  # https://pub.dev/packages/vector_graphics_codec
-  # https://pub.dev/packages/vector_graphics_compiler
-  flutter_svg: ^2.0.9
 
   # https://pub.dev/packages/url_launcher
   # https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher

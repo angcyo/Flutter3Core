@@ -66,7 +66,8 @@ String randomImagePlaceholderUrl([String? text]) {
   }
 }
 
-/// 获取一个随机的颜色
+/// 获取一个随机的颜色, 随机颜色
+/// https://pub.dev/packages/random_color
 Color randomColor({int min = 120, int max = 200}) => Color.fromARGB(
       255,
       nextInt(max, min: min),

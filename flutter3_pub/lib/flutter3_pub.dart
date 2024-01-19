@@ -1,6 +1,5 @@
 library flutter3_pub;
 
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
@@ -8,8 +7,8 @@ import 'package:flutter/material.dart' as material;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter3_core/flutter3_core.dart';
+import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markdown/markdown.dart';
 
 import 'flutter3_pub.dart';
@@ -28,6 +27,7 @@ export 'package:octo_image/octo_image.dart';
 export 'package:photo_view/photo_view.dart';
 export 'package:photo_view/photo_view_gallery.dart';
 export 'package:url_launcher/url_launcher.dart';
+export 'package:flutter3_vector/flutter3_vector.dart';
 
 part 'src/archive/zip_ex.dart';
 
@@ -44,5 +44,3 @@ part 'src/photo/nine_grid_ex.dart';
 part 'src/photo/photo_ex.dart';
 
 part 'src/picker/file_picker_ex.dart';
-
-part 'src/svg_pub.dart';

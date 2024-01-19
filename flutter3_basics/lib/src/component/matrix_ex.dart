@@ -8,8 +8,10 @@ part of flutter3_basics;
 /// [MatrixUtils]
 /// [Matrix44Operations]
 /// 4*4矩阵
+/// [Matrix4Tween]
 extension Matrix4Ex on vector.Matrix4 {
   /// 获取X轴缩放比例
+  /// [getMaxScaleOnAxis]
   double get scaleX => row0.x;
 
   /// 获取Y轴缩放比例
