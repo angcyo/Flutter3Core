@@ -1317,10 +1317,20 @@ extension ContextEx on BuildContext {
   /// 尝试更新状态, 如果可以
   /// [StateEx.updateState]
   void tryUpdateState() {
-    if (this is Element) {
-      var element = this as Element;
-      if (element.mounted) {
-        element.markNeedsBuild();
+    final el = this;
+    if (el is Element) {
+      if (el.mounted) {
+        el.markNeedsBuild();
+      }
+    }
+  }
+
+  /// 尝试重绘对象, 如果可以
+  void tryUpdatePaint() {
+    final el = this;
+    if (el is Element) {
+      if (el.mounted) {
+        el.findRenderObject()?.markNeedsPaint();
       }
     }
   }

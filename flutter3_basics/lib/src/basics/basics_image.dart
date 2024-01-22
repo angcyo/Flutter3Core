@@ -50,6 +50,7 @@ ui.Image drawImageSync(
 extension ByteDataEx on ByteData {
   /// [Uint8List]
   /// [ImageByteFormat.rawRgba]
+  /// [Uint8List.sublistView]
   Uint8List get bytes => buffer.asUint8List();
 
   /// [Image]
