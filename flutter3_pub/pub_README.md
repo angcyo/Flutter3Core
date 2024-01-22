@@ -192,7 +192,7 @@ HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUT
 
 一个优雅的 Flutter Dialog 解决方案。
 
-- [flutter_smart_dialog: ^4.9.5+1](https://pub.dev/packages/flutter_smart_dialog)
+- [flutter_smart_dialog: ^4.9.5+1](https://pub.dev/packages/flutter_smart_dialog) 一个优雅的 Flutter Dialog 解决方案。
 - [awesome_dialog: ^3.1.0](https://pub.dev/packages/awesome_dialog) 一个新的 Flutter 包项目，用于简单而精彩的对话
 
 ## hive: ^2.2.3
