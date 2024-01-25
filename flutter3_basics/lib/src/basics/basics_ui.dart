@@ -23,6 +23,17 @@ void postFrameCallback(FrameCallback callback) {
   WidgetsBinding.instance.addPostFrameCallback(callback);
 }
 
+/// 如果正在布局阶段, 则立即安排一帧, 否则立即执行回调
+void postFrameCallbackIfNeed(FrameCallback callback) {
+  WidgetsFlutterBinding.ensureInitialized();
+  var schedulerPhase = WidgetsBinding.instance.schedulerPhase;
+  if (schedulerPhase == SchedulerPhase.persistentCallbacks) {
+    WidgetsBinding.instance.addPostFrameCallback(callback);
+  } else {
+    callback(Duration(milliseconds: nowTime()));
+  }
+}
+
 /// 每一帧都会回调
 /// @return id
 int scheduleFrameCallback(FrameCallback callback, {bool rescheduling = false}) {
