@@ -451,3 +451,5 @@ https://github.com/fluttercommunity/plus_plugins
 - [image_gallery_saver: ^2.0.3](https://pub.dev/packages/image_gallery_saver) 我们使用插件 image_picker 从 Android 和 iOS 图像库中选择图像，但它无法将图像保存到图库中。这个插件可以提供这个功能。
 - [flutter_contacts: ^1.1.7+1](https://pub.dev/packages/flutter_contacts) Flutter 插件，用于读取、创建、更新、删除和观察 Android 和 iOS 上的原生联系人，具有群组支持、vCard 支持和联系人权限处理。
 - [upload_file_oss: ^1.0.0](https://pub.dev/packages/upload_file_oss) 一个简单上传文件到阿里云对象存储OSS的库。 仅支持小文件上传。
+- [nsd: ^3.0.0](https://pub.dev/packages/nsd) 用于网络服务发现和注册的 Flutter 插件（又名 NSD / DNS-SD / Bonjour / mDNS）。
+- [flutter_nsd: ^1.4.0](https://pub.dev/packages/flutter_nsd) 一个用于 Android、iOS、MacOS 和 Windows 上的网络服务发现 （mDNS） 的 Flutter 插件。该插件尽可能使用平台自己的 API。
