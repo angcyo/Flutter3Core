@@ -106,6 +106,8 @@ dev_dependencies:
 
 ## flutter_gen
 
+- [FontLoader] https://juejin.cn/post/6844904113168187405 `FontLoader#addFont` 目前仅支持 OpenType （OTF） 和 TrueType （TTF） 字体。 
+
 用于资产、字体、颜色等的 Flutter 代码生成器 — 摆脱所有基于字符串的 API。
 
 - [flutter_gen: ^5.3.2](https://pub.dev/packages/flutter_gen)

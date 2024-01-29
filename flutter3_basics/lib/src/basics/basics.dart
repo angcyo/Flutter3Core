@@ -290,6 +290,10 @@ const kDefAssetsPngPrefix = 'assets/png/';
 /// https://flutter.cn/docs/development/ui/assets-and-images#loading-text-assets
 ///
 /// [FileEx.readString]
+///
+/// [DefaultAssetBundle]
+/// [NetworkAssetBundle]
+///
 Future<String> loadAssetString(
   String key, {
   String prefix = 'assets/',
