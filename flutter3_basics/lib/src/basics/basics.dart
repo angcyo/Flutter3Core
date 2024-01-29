@@ -294,6 +294,12 @@ const kDefAssetsPngPrefix = 'assets/png/';
 /// [DefaultAssetBundle]
 /// [NetworkAssetBundle]
 ///
+/// https://stackoverflow.com/questions/56544200/flutter-how-to-get-a-list-of-names-of-all-images-in-assets-directory
+/// ```
+/// final assetManifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+/// // This returns a List<String> with all your images
+/// final imageAssetsList = assetManifest.listAssets().where((string) => string.startsWith("assets/images/")).toList()
+/// ```
 Future<String> loadAssetString(
   String key, {
   String prefix = 'assets/',
