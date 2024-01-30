@@ -172,8 +172,8 @@ extension WidgetImageEx on Widget {
     Size imageSize = Size.infinite,
   }) async {
     var devicePixelRatio = platformMediaQueryData.devicePixelRatio;
-    final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
-    final RenderView renderView = RenderView(
+    final repaintBoundary = RenderRepaintBoundary();
+    final renderView = RenderView(
       view: ui.PlatformDispatcher.instance.implicitView ??
           RendererBinding.instance.renderView.flutterView,
       child: RenderPositionedBox(
@@ -186,11 +186,12 @@ extension WidgetImageEx on Widget {
       ),
     );
 
-    final PipelineOwner pipelineOwner = PipelineOwner();
-    final BuildOwner buildOwner = BuildOwner();
+    final pipelineOwner = PipelineOwner();
+    final buildOwner = BuildOwner();
 
     pipelineOwner.rootNode = renderView;
     renderView.prepareInitialFrame();
+
     final RenderObjectToWidgetElement<RenderBox> rootElement =
         RenderObjectToWidgetAdapter<RenderBox>(
             container: repaintBoundary,
@@ -198,17 +199,19 @@ extension WidgetImageEx on Widget {
               textDirection: TextDirection.ltr,
               child: this,
             )).attachToRenderTree(buildOwner);
+
     if (wait != null) {
       await Future.delayed(wait);
     }
+
     buildOwner.buildScope(rootElement);
     buildOwner.finalizeTree();
 
     pipelineOwner.flushLayout();
     pipelineOwner.flushCompositingBits();
     pipelineOwner.flushPaint();
-    final ui.Image image =
-        await repaintBoundary.toImage(pixelRatio: devicePixelRatio);
+
+    final image = await repaintBoundary.toImage(pixelRatio: devicePixelRatio);
     return image;
   }
 }

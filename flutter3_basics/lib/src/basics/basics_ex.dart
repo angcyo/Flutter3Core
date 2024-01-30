@@ -744,6 +744,9 @@ extension NumEx on num {
     return this < min ? min : (this > max ? max : this);
   }
 
+  /// 检查此双精度值是否等于 other，避免浮点错误。
+  bool equalTo(double other) => (this - other).abs() < 0.0000001;
+
   //region ---math---
 
   /// 消除多余的角度, 限制角度范围在[0~360]
