@@ -5,48 +5,6 @@ part of flutter3_basics;
 /// @author angcyo
 /// @date 2023/11/04
 ///
-
-typedef CanvasAction = void Function(Canvas canvas);
-
-/// 使用[Canvas]绘制图片
-/// [DecorationImage]
-/// [paintImage]
-/// [applyBoxFit]
-ui.Picture drawPicture(
-  Size size,
-  CanvasAction action,
-) {
-  final ui.PictureRecorder recorder = ui.PictureRecorder();
-  final Canvas canvas =
-      Canvas(recorder, Rect.fromLTWH(0, 0, size.width, size.height));
-  action(canvas);
-  return recorder.endRecording();
-}
-
-/// 使用[Canvas]绘制图片
-Future<ui.Image> drawImage(
-  Size size,
-  CanvasAction callback,
-) {
-  final ui.Picture picture = drawPicture(size, callback);
-  return picture.toImage(
-    size.width.ceil(),
-    size.height.ceil(),
-  );
-}
-
-/// 使用[Canvas]绘制图片
-ui.Image drawImageSync(
-  Size size,
-  CanvasAction callback,
-) {
-  final ui.Picture picture = drawPicture(size, callback);
-  return picture.toImageSync(
-    size.width.ceil(),
-    size.height.ceil(),
-  );
-}
-
 extension ByteDataEx on ByteData {
   /// [Uint8List]
   /// [ImageByteFormat.rawRgba]
