@@ -20,3 +20,26 @@ double angle(Offset a, Offset b) {
   return atan2((b.dy - a.dy).abs(), (b.dx - a.dx).abs());
 }
 
+/// 获取弧上指定角度的点坐标
+/// [angle] 弧度
+/// Gets the arc point by [angle] on an [oval].
+///
+/// The algorithm is from https://blog.csdn.net/chenlu5201314/article/details/99678398
+Offset getArcPoint(Rect oval, double angle) {
+  final a = oval.width / 2;
+  final b = oval.height / 2;
+  final yc = sin(angle);
+  final xc = cos(angle);
+  final radio = (a * b) / sqrt(pow(yc * a, 2) + pow(xc * b, 2));
+
+  return oval.center.translate(radio * xc, radio * yc);
+}
+
+/// 获取圆上指定角度的点坐标
+/// [center] 圆心坐标
+/// [radius] 圆的半径
+/// [angle] 弧度
+/// https://blog.csdn.net/gongjianbo1992/article/details/107476030
+Offset getCirclePoint(Offset center, double radius, double angle) {
+  return center.translate(radius * cos(angle), radius * sin(angle));
+}
