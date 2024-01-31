@@ -42,10 +42,12 @@ class GestureHitInterceptBox extends RenderProxyBox {
     var hitBox = interceptHitBox;
     if (hitBox != null) {
       final local = hitBox.localToGlobal(Offset.zero, ancestor: this);
-      //debugger();
-      if (hitBox.hitTest(result, position: position - local) == true) {
-        return true;
-      }
+      result.addWithPaintOffset(
+          offset: local,
+          position: position,
+          hitTest: (result, transformed) {
+            return hitBox.hitTest(result, position: transformed);
+          });
       if (ignoreOtherBoxHit ?? true) {
         return true;
       }
@@ -57,16 +59,23 @@ class GestureHitInterceptBox extends RenderProxyBox {
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
     //super.handleEvent(event, entry);
-    if (event.isPointerDown) {
-      l.i('${event.pointer} ${event.position} ${event.localPosition}');
-    } else if (event.isPointerFinish) {
-      l.i('${event.pointer} ${event.runtimeType}');
+    if (event.isPointerFinish) {
       reset();
     }
   }
 
+  /// 重置
   void reset() {
     interceptHitBox = null;
     ignoreOtherBoxHit = null;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty<bool>('ignoreOtherBoxHit', ignoreOtherBoxHit));
+    properties.add(
+        DiagnosticsProperty<RenderBox>('interceptHitBox', interceptHitBox));
   }
 }
