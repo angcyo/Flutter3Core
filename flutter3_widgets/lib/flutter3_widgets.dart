@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:badges/badges.dart' as badges;
 import 'package:expandable/expandable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -19,7 +20,6 @@ import 'package:rich_readmore/rich_readmore.dart';
 import 'package:wheel_picker/wheel_picker.dart';
 
 import 'src/pub/flutter_verification_code.dart';
-import 'package:badges/badges.dart' as badges;
 
 export 'package:expandable/expandable.dart';
 export 'package:flutter3_basics/flutter3_basics.dart';
@@ -105,6 +105,8 @@ part 'src/widgets/app/tab.dart';
 part 'src/widgets/app/text_field.dart';
 
 part 'src/widgets/child_background_widget.dart';
+
+part 'src/widgets/gesture_hit_intercept.dart';
 
 part 'src/widgets/gestures/matrix_gesture_detector.dart';
 

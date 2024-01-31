@@ -7,6 +7,15 @@ part of flutter3_http;
 ///
 
 class DioScope extends InheritedWidget {
+  /// 获取一个上层提供的dio
+  static RDio? of(BuildContext context, {bool depend = false}) {
+    if (depend) {
+      return context.dependOnInheritedWidgetOfExactType<DioScope>()?.rDio;
+    } else {
+      return context.getInheritedWidgetOfExactType<DioScope>()?.rDio;
+    }
+  }
+
   final RDio rDio;
 
   const DioScope({

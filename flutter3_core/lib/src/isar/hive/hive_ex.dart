@@ -87,6 +87,9 @@ mixin HiveHookMixin<T extends StatefulWidget> on State<T> {
   late final Map<ValueListenable, VoidCallback> hiveHookMap = {};
 
   /// 当[notify]改变时, 自动保存至hive中
+  /// [key] 持久化存储的key值
+  /// [ValueListenable]
+  /// [TextEditingValue]
   hookHiveKey(String key, ValueListenable notify) {
     if (hiveHookMap.containsKey(notify)) {
       return;

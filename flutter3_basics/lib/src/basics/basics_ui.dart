@@ -1409,18 +1409,23 @@ extension ContextEx on BuildContext {
 extension RenderObjectEx on RenderObject {
   /// 获取[RenderObject]的大小
   Size? getSizeOrNull() {
-    if (this is RenderBox) {
-      if ((this as RenderBox).hasSize) {
-        return (this as RenderBox).size;
+    final box = this;
+    if (box is RenderBox) {
+      if (box.hasSize) {
+        return box.size;
       }
     }
     return null;
   }
 
   /// 获取[RenderObject]的全局绘制位置和坐标大小
+  /// [ancestor] 祖先节点, 如果为null, 则为根节点
   /// [RenderBox.localToGlobal]
-  Rect? getGlobalBounds([RenderObject? ancestor, Offset point = Offset.zero]) {
-    var offset = getGlobalOffset(ancestor, point);
+  Rect? getGlobalBounds([
+    RenderObject? ancestor,
+    Offset point = Offset.zero,
+  ]) {
+    var offset = getGlobalLocation(ancestor, point);
     var size = getSizeOrNull();
     if (offset != null && size != null) {
       return offset & size;
@@ -1429,15 +1434,19 @@ extension RenderObjectEx on RenderObject {
   }
 
   /// 获取[RenderObject]的位置
+  /// [ancestor] 祖先节点, 如果为null, 则为根节点
   /// [RenderBox.localToGlobal]
   /// ```
   /// Scrollable.of(context).context.findRenderObject();
   /// ```
-  Offset? getGlobalOffset(
-      [RenderObject? ancestor, Offset point = Offset.zero]) {
-    if (this is RenderBox) {
-      final Offset location =
-          (this as RenderBox).localToGlobal(point, ancestor: ancestor);
+  /// [RenderBox.globalToLocal]
+  Offset? getGlobalLocation([
+    RenderObject? ancestor,
+    Offset point = Offset.zero,
+  ]) {
+    final box = this;
+    if (box is RenderBox) {
+      final location = box.localToGlobal(point, ancestor: ancestor);
       return location;
     }
     return null;
