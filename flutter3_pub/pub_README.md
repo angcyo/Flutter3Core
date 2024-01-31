@@ -390,6 +390,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [path_parsing: ^1.0.1](https://pub.dev/packages/path_parsing) 从 Flutter 路径绘制库中分离出来，创建一个纯 Dart 解析库，用于 SVG 路径和代码生成（不依赖 Flutter 运行时）。
 - [equatable: ^2.0.5](https://pub.dev/packages/equatable) 能够比较对象 Dart 通常涉及必须覆盖 == 运算符以及 hashCode 。
 - [regex_router: ^2.0.2](https://pub.dev/packages/regex_router) 支持正则表达式路径的材料路由器。路由参数解析。
+- [primer_progress_bar: ^0.4.1](https://pub.dev/packages/primer_progress_bar) Primer 的进度条由 3 个组件组成：分段条、图例和图例项。进度条可以在水平条中显示多个彩色段，图例放置在条形下方，其中包含每个段的对齐说明。
 
 ## 平台特有
 

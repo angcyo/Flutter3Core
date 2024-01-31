@@ -11,6 +11,15 @@ part of flutter3_basics;
 /// '\x1B[38;5;${color}m'; //前景色
 /// debugPrint('${_bg(229)}${_fg(0)}[flutter_animate] $message');
 /// ```
+///
+/// [console_bars: ^1.2.0](https://pub.dev/packages/console_bars) 控制台进度条
+/// [progressbar2: ^0.3.1](https://pub.dev/packages/progressbar2) Dart 控制台应用程序的进度条。
+/// ```
+/// stdout.write('\u001b[2K'); //清除当前行
+/// stdout.writeCharCode(13); //回到行首
+/// stdout.write("██████............"); //输出
+/// ```
+///
 typedef LPrint = void Function(String log);
 
 class L {
