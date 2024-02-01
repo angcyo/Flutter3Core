@@ -69,17 +69,22 @@ class RItemTile extends StatefulWidget {
     this.headerForegroundColor,
     this.headerTitleTextStyle = const TextStyle(fontSize: 14),
     this.updateSignal,
+    this.tag,
   });
 
   //region rebuild
 
-  /// 用来触发重构的信号
+  /// 用来触发重构的信号, 需要主动监听这个值的变化, 然后触发重构
+  /// 这里的属性, 只是为了触发重构信号, 无功能实现
   /// [RebuildWidget]
   final UpdateValueNotifier? updateSignal;
 
   //endregion rebuild
 
   //region 基础
+
+  /// 标签, 用来标记当前的元素
+  final Object? tag;
 
   /// 是否要重新分割一部分
   final bool part;
@@ -509,6 +514,32 @@ class RItemTile extends StatefulWidget {
 
   @override
   State<RItemTile> createState() => _RItemTileState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<bool>('part', part));
+    properties.add(DiagnosticsProperty<bool>('hide', hide));
+    properties.add(DiagnosticsProperty<Object>('tag', tag));
+    properties.add(DiagnosticsProperty<bool>('isSliverItem', isSliverItem));
+    properties
+        .add(DiagnosticsProperty<Color?>('bottomLineColor', bottomLineColor));
+    properties.add(
+        DiagnosticsProperty<double?>('bottomLineHeight', bottomLineHeight));
+    properties.add(
+        DiagnosticsProperty<EdgeInsets?>('bottomLineMargin', bottomLineMargin));
+    properties
+        .add(DiagnosticsProperty<Widget?>('bottomLeading', bottomLeading));
+    properties.add(DiagnosticsProperty<EdgeInsetsGeometry?>(
+        'sliverPadding', sliverPadding));
+    properties.add(
+        DiagnosticsProperty<Decoration?>('sliverDecoration', sliverDecoration));
+    properties.add(DiagnosticsProperty<DecorationPosition>(
+        'sliverDecorationPosition', sliverDecorationPosition));
+    properties.add(DiagnosticsProperty<bool>('groupExpanded', groupExpanded));
+    properties.add(DiagnosticsProperty<List<String>?>('groups', groups));
+    properties.add(DiagnosticsProperty<bool>('isGroup', isGroup));
+  }
 }
 
 class _RItemTileState extends State<RItemTile> {
@@ -524,6 +555,7 @@ extension RItemTileExtension on Widget {
   /// [childAspectRatio] child宽高比, <1时,高度高; >1时,宽度高;
   /// [mainAxisSpacing] 主轴间隙, 如果方向是垂直的, 则是行间隙, 如果方向是水平的, 则是列间隙
   /// [crossAxisSpacing] 交叉轴间隙
+  /// [RItemTile.buildGridWrapChild]
   RItemTile rGridTile(
     int gridCount, {
     double childAspectRatio = 1,
@@ -533,6 +565,10 @@ extension RItemTileExtension on Widget {
     EdgeInsetsGeometry? sliverPadding,
     bool hide = false,
     UpdateValueNotifier? updateSignal,
+    double? edgePaddingTop,
+    double? edgePaddingBottom,
+    double? edgePaddingLeft,
+    double? edgePaddingRight,
   }) {
     mainAxisSpacing ??= 0;
     crossAxisSpacing ??= mainAxisSpacing;
@@ -541,6 +577,10 @@ extension RItemTileExtension on Widget {
       childAspectRatio: childAspectRatio,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
+      edgePaddingTop: edgePaddingTop,
+      edgePaddingBottom: edgePaddingBottom,
+      edgePaddingLeft: edgePaddingLeft,
+      edgePaddingRight: edgePaddingRight,
       sliverPadding: sliverPadding ??
           (enablePadding
               ? EdgeInsets.symmetric(
@@ -555,6 +595,7 @@ extension RItemTileExtension on Widget {
   }
 
   /// [RItemTile]的快捷构造方法
+  /// [RItemTile.buildListWrapChild]
   RItemTile rItemTile({
     Key? key,
     Widget? child,

@@ -214,6 +214,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   //region 页面更新
 
   /// 更新指定[value]对应的tile
+  /// [value] 可以是单个值, 也可以是多个值(列表)
   @api
   void updateTile(dynamic value) {
     rebuildTile((tile, signal) {
