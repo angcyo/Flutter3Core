@@ -27,6 +27,12 @@ Future<void> testRunBefore() async {
 Future<void> testRunAfter() async {
   //await _testApp();
   //await testFile();
+
+  // Binding has not yet been initialized.
+  // MissingPluginException(No implementation found for method test on channel com.angcyo)
+  /*const MethodChannel("com.angcyo").invokeMethod("test").get((value, error) {
+    debugger();
+  });*/
 }
 
 @testPoint

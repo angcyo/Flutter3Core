@@ -396,6 +396,8 @@ extension FilePathEx on String {
   }
 
   /// 转换成文件对象
+  /// 在web环境下, 会抛出异常
+  /// `The argument type 'File/*1*/' can't be assigned to the parameter type 'File/*2*/'.`
   File file() => isLocalUrl ? File.fromUri(toUri()!) : File(this);
 
   /// 获取文件夹中的文件列表
