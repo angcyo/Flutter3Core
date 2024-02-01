@@ -124,6 +124,7 @@ void printError(exception, [StackTrace? stack]) {
   );
 }
 
+/// [ui.window]
 /// [RendererBinding.instance]
 /// [PlatformDispatcher.implicitView]
 /// [FlutterView.display]
@@ -141,6 +142,7 @@ Iterable<ui.FlutterView> get flutterViews =>
 Iterable<RenderView> get renderViews => WidgetsBinding.instance.renderViews;
 
 /// 获取当前平台的[MediaQueryData]
+/// [ui.window]
 /// [defaultTargetPlatform]
 /// [PlatformDispatcher.instance]
 /// [PlatformDispatcher.displays]
