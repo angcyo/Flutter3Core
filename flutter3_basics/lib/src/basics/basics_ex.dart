@@ -716,6 +716,8 @@ extension NumEx on num {
           return int.toString();
         }
       }
+    } else if (this is int) {
+      return toString();
     }
 
     // 直接转出来的字符串, 会有小数点后面的0

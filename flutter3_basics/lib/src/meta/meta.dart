@@ -32,6 +32,22 @@ class _Mm {
 
 const mm = _Mm();
 
+class _Pt {
+  final String des;
+
+  const _Pt([this.des = '磅单位']);
+}
+
+const pt = _Pt();
+
+class _Inch {
+  final String des;
+
+  const _Inch([this.des = '英寸单位']);
+}
+
+const inch = _Inch();
+
 class _Unit {
   final String des;
 

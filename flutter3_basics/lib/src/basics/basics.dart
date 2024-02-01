@@ -171,6 +171,9 @@ double get screenHeight => platformMediaQueryData.size.height;
 /// 屏幕像素密度, 1 dp = xx px
 double get devicePixelRatio => platformMediaQueryData.devicePixelRatio;
 
+/// 单位英寸中的像素数, 1 in = xx px
+double get dpi => platformMediaQueryData.devicePixelRatio * 160;
+
 /// 屏幕宽度 [screenWidth]
 @pixel
 double get screenWidthPixel =>

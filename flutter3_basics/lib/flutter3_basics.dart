@@ -108,6 +108,8 @@ part 'src/overlay/loading_overlay.dart';
 
 part 'src/overlay/route_will_pop_scope.dart';
 
+part 'src/unit/unit.dart';
+
 part 'src/utils/filesize.dart';
 
 part 'src/utils/frame_split.dart';
