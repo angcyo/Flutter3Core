@@ -59,13 +59,15 @@ class RScrollController extends ScrollController {
   /// 通过[requestPage]判断是否是刷新
   VoidCallback? onLoadDataCallback;
 
-  RScrollController() {
-    addListener(_listenerScrollPosition);
-  }
+  RScrollController();
 
+  /// 检查滚动位置
   /// 监听滚动到底部,驱动触发加载更多
-  void _listenerScrollPosition() {
-    if (position.pixels >= position.maxScrollExtent) {
+  void _checkScrollPosition() {
+    //debugger();
+    if (!position.isScrollingNotifier.value /*没有在滚动*/ &&
+        position.hasContentDimensions /*具有内容的尺寸信息*/ &&
+        position.pixels >= position.maxScrollExtent /*到底了*/) {
       //滚动到底部了
       if (_isEnableLoadMore) {
         //debugger();
@@ -73,14 +75,32 @@ class RScrollController extends ScrollController {
           l.d("正在刷新中...忽略加载更多处理.");
         } else if (loadMoreStateValue.value == WidgetState.loading) {
           //正在加载中...
+          //l.d("正在加载中...忽略加载更多处理.");
         } else if (loadMoreStateValue.value == WidgetState.empty) {
           //没有更多数据了
+          l.d("没有更多数据了...忽略加载更多处理.");
         } else {
           loadMoreKey.currentState?.updateWidgetState(WidgetState.loading);
           updateLoadMoreState(loadMoreKey.currentState, WidgetState.loading);
         }
       }
     }
+  }
+
+  @override
+  void attach(ScrollPosition position) {
+    //debugger();
+    addListener(_checkScrollPosition);
+    position.isScrollingNotifier.addListener(_checkScrollPosition);
+    super.attach(position);
+  }
+
+  @override
+  void detach(ScrollPosition position) {
+    //debugger();
+    removeListener(_checkScrollPosition);
+    position.isScrollingNotifier.removeListener(_checkScrollPosition);
+    super.detach(position);
   }
 
   /// 释放资源
@@ -113,6 +133,11 @@ class RScrollController extends ScrollController {
     } else {
       jumpTo(position.maxScrollExtent);
     }
+  }
+
+  /// 停止滚动
+  void stopScroll() {
+    position.didEndScroll();
   }
 
   //---
@@ -149,6 +174,7 @@ class RScrollController extends ScrollController {
     WidgetState? widgetState,
   ]) {
     //debugger();
+    //stopScroll();
     WidgetState toState = widgetState ??
         widgetStateIntercept.interceptor(
           requestPage,
