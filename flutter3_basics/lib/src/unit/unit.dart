@@ -54,6 +54,23 @@ abstract class IUnit {
   static const pt = PtUnit();
   static const inch = InchUnit();
 
+  /// 正常的刻度
+  static const AXIS_TYPE_NORMAL = 0x1;
+
+  /// 次要的刻度
+  static const AXIS_TYPE_SECONDARY = AXIS_TYPE_NORMAL << 1;
+
+  /// 主要的刻度
+  static const AXIS_TYPE_PRIMARY = AXIS_TYPE_SECONDARY << 1;
+
+  /// 需要绘制Label的刻度
+  static const AXIS_TYPE_MASK = 0xff;
+
+  /// 需要绘制Label的刻度
+  static const AXIS_TYPE_LABEL = AXIS_TYPE_NORMAL << 7;
+
+  //region ---基础---
+
   /// 单位后缀
   String get suffix;
 
@@ -75,6 +92,24 @@ abstract class IUnit {
     bool removeZero,
     bool ensureInt,
   });
+
+  //endregion ---基础---
+
+  //region ---坐标轴---
+
+  /// 在坐标轴上, 每隔多少个dp距离单位, 显示一个刻度
+  @dp
+  double getAxisGap(int index, double scale);
+
+  /// 获取坐标轴的类型
+  /// [index] 当前刻度距离0开始的索引
+  /// [AXIS_TYPE_NORMAL]
+  /// [AXIS_TYPE_SECONDARY]
+  /// [AXIS_TYPE_PRIMARY]
+  /// [AXIS_TYPE_LABEL]
+  int getAxisType(int index, double scale);
+
+//endregion ---坐标轴---
 }
 
 /// 像素单位
@@ -105,6 +140,21 @@ class PixelUnit implements IUnit {
 
   @override
   num toUnit(num value) => value;
+
+  @override
+  double getAxisGap(int index, double scale) => 10;
+
+  @override
+  int getAxisType(int index, double scale) {
+    switch (index % 10) {
+      case 0:
+        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
+      case 5:
+        return IUnit.AXIS_TYPE_SECONDARY;
+      default:
+        return IUnit.AXIS_TYPE_NORMAL;
+    }
+  }
 }
 
 @dp
@@ -134,6 +184,21 @@ class DpUnit implements IUnit {
 
   @override
   num toUnit(num value) => value / dpr;
+
+  @override
+  double getAxisGap(int index, double scale) => 10;
+
+  @override
+  int getAxisType(int index, double scale) {
+    switch (index % 10) {
+      case 0:
+        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
+      case 5:
+        return IUnit.AXIS_TYPE_SECONDARY;
+      default:
+        return IUnit.AXIS_TYPE_NORMAL;
+    }
+  }
 }
 
 @mm
@@ -163,6 +228,21 @@ class MmUnit implements IUnit {
 
   @override
   num toUnit(num value) => value / dpi / INCHES_PER_MM;
+
+  @override
+  double getAxisGap(int index, double scale) => 10;
+
+  @override
+  int getAxisType(int index, double scale) {
+    switch (index % 10) {
+      case 0:
+        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
+      case 5:
+        return IUnit.AXIS_TYPE_SECONDARY;
+      default:
+        return IUnit.AXIS_TYPE_NORMAL;
+    }
+  }
 }
 
 @pt
@@ -192,6 +272,21 @@ class PtUnit implements IUnit {
 
   @override
   num toUnit(num value) => value / dpi / INCHES_PER_PT;
+
+  @override
+  double getAxisGap(int index, double scale) => 10;
+
+  @override
+  int getAxisType(int index, double scale) {
+    switch (index % 10) {
+      case 0:
+        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
+      case 5:
+        return IUnit.AXIS_TYPE_SECONDARY;
+      default:
+        return IUnit.AXIS_TYPE_NORMAL;
+    }
+  }
 }
 
 @inch
@@ -221,6 +316,21 @@ class InchUnit implements IUnit {
 
   @override
   num toUnit(num value) => value / dpi;
+
+  @override
+  double getAxisGap(int index, double scale) => 10;
+
+  @override
+  int getAxisType(int index, double scale) {
+    switch (index % 10) {
+      case 0:
+        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
+      case 5:
+        return IUnit.AXIS_TYPE_SECONDARY;
+      default:
+        return IUnit.AXIS_TYPE_NORMAL;
+    }
+  }
 }
 
 /// 单位转换扩展

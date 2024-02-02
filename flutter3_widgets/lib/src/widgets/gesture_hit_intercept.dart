@@ -29,6 +29,7 @@ class GestureHitInterceptBox extends RenderProxyBox {
   /// [GestureBinding.hitTestInView] -> [RenderView.hitTest] -> [RenderView.hitTestChildren]
   @override
   bool hitTest(BoxHitTestResult result, {required Offset position}) {
+    //debugger();
     return super.hitTest(result, position: position);
   }
 
@@ -41,6 +42,7 @@ class GestureHitInterceptBox extends RenderProxyBox {
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     var hitBox = interceptHitBox;
     if (hitBox != null) {
+      //debugger();
       final local = hitBox.localToGlobal(Offset.zero, ancestor: this);
       result.addWithPaintOffset(
           offset: local,

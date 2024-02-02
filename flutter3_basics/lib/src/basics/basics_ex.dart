@@ -768,6 +768,15 @@ extension NumEx on num {
 //region Int 扩展
 
 extension IntEx on int {
+  /// 是否有指定的标志位
+  bool have(int flag) => (this & flag) == flag;
+
+  /// 添加一个标志位
+  int add(int flag) => this | flag;
+
+  /// 移除一个标志位
+  int remove(int flag) => this & ~flag;
+
   /// 转换成颜色
   /// [Color]
   Color toColor() => Color(this);

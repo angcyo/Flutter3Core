@@ -166,4 +166,12 @@ class _Implemented {
 
 const implemented = _Implemented();
 
+class EntryPoint {
+  final String des;
+
+  const EntryPoint([this.des = '当前类的入口点']);
+}
+
+const entryPoint = EntryPoint();
+
 //endregion---base

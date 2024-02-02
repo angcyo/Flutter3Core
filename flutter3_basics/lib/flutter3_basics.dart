@@ -68,7 +68,7 @@ part 'src/component/custom_painter.dart';
 
 part 'src/component/future_cancel.dart';
 
-part 'src/component/matrix_ex.dart';
+part 'src/basics/matrix_ex.dart';
 
 part 'src/component/r_exception.dart';
 

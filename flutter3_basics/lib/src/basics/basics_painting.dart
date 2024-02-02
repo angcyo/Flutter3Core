@@ -136,6 +136,11 @@ extension CanvasEx on Canvas {
     }
   }
 
+  /// [withTranslate]
+  void withOffset(Offset offset, VoidCallback callback) {
+    withTranslate(offset.dx, offset.dy, callback);
+  }
+
   /// 在指定位置旋转角度
   /// [degrees] 角度
   /// [radians] 弧度, 如果指定了弧度优先使用此值
@@ -207,6 +212,17 @@ extension CanvasEx on Canvas {
     } else {
       withSave(() {
         transform(matrix4.storage);
+        callback();
+      });
+    }
+  }
+
+  void withClipRect(Rect? rect, VoidCallback callback) {
+    if (rect == null || rect.isEmpty) {
+      callback();
+    } else {
+      withSaveLayer(() {
+        clipRect(rect);
         callback();
       });
     }

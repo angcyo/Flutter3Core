@@ -24,6 +24,7 @@ extension Matrix4Ex on vector.Matrix4 {
   double get scaleZ => row2.z;
 
   /// 获取X轴平移距离
+  /// [getTranslation]
   double get translateX => row3.x;
 
   /// 获取Y轴平移距离
@@ -49,6 +50,53 @@ extension Matrix4Ex on vector.Matrix4 {
 
   /// 映射一个矩形
   Rect mapRect(Rect rect) => MatrixUtils.transformRect(this, rect);
+
+  /// 缩放指定倍数
+  void scaleBy({
+    double sx = 1,
+    double sy = 1,
+    double sz = 1,
+    double pivotX = 0,
+    double pivotY = 0,
+    double pivotZ = 0,
+  }) {
+    final translation = vector.Vector3(pivotX, pivotY, pivotZ);
+    final scale = vector.Vector3(sx, sy, sz);
+    translate(translation);
+    this.scale(scale);
+    translate(-translation);
+  }
+
+  /// 缩放到指定倍数
+  void scaleTo({
+    double? sx,
+    double? sy,
+    double? sz,
+    double pivotX = 0,
+    double pivotY = 0,
+    double pivotZ = 0,
+  }) {
+    final translation = vector.Vector3(pivotX, pivotY, pivotZ);
+    translate(translation);
+    if (sx != null) {
+      setEntry(0, 0, sx);
+    }
+    if (sy != null) {
+      setEntry(1, 1, sy);
+    }
+    if (sz != null) {
+      setEntry(2, 2, sz);
+    }
+    translate(-translation);
+  }
+
+  /// 反转矩阵
+  Matrix4 invertMatrix() {
+    final matrix = clone();
+    final det = matrix.invert();
+    debugger();
+    return matrix;
+  }
 
   /// 矩阵转换为字符串
   String toMatrixString() {
