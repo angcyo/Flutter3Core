@@ -32,6 +32,8 @@ export 'package:hsluv/hsluv.dart';
 export 'package:matrix4_transform/matrix4_transform.dart';
 export 'package:meta/meta.dart';
 export 'package:nil/nil.dart';
+export 'package:vector_math/vector_math_64.dart'
+    show Vector, Vector2, Vector3, Vector4, Quaternion, Matrix3, Matrix4;
 
 export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
@@ -62,13 +64,13 @@ part 'src/basics/basics_ui.dart';
 
 part 'src/basics/custom_page_route.dart';
 
+part 'src/basics/matrix_ex.dart';
+
 part 'src/component/async_operation.dart';
 
 part 'src/component/custom_painter.dart';
 
 part 'src/component/future_cancel.dart';
-
-part 'src/basics/matrix_ex.dart';
 
 part 'src/component/r_exception.dart';
 

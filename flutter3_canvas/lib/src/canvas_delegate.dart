@@ -11,14 +11,13 @@ class CanvasDelegate {
   /// 绘制入口点
   @entryPoint
   void paint(PaintingContext context, Offset offset) {
-    //debugger();
     canvasPaintManager.paint(context, offset);
   }
 
   /// 手势入口点
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    refresh();
+    canvasEventManager.handleEvent(event, entry);
   }
 
   //endregion ---入口点---
@@ -33,6 +32,9 @@ class CanvasDelegate {
 
   /// 绘制管理
   late CanvasPaintManager canvasPaintManager = CanvasPaintManager(this);
+
+  /// 事件管理
+  late CanvasEventManager canvasEventManager = CanvasEventManager(this);
 
   //endregion ---core---
 
@@ -56,3 +58,7 @@ class CanvasDelegate {
 
 //endregion ---事件派发---
 }
+
+/*abstract class ICanvasComponent {
+  void onCanvasViewBoxChanged(CanvasViewBox canvasViewBox);
+}*/

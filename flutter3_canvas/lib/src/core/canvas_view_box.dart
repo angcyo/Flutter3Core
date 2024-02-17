@@ -115,11 +115,34 @@ class CanvasViewBox {
 
   //region ---操作---
 
-  /// 使用比例缩放
+  /// 限制matrix
+  void _checkMatrix() {
+    final scaleX = canvasMatrix.scaleX.clamp(minScaleX, maxScaleX);
+    final scaleY = canvasMatrix.scaleY.clamp(minScaleY, maxScaleY);
+    final translateX =
+        canvasMatrix.translateX.clamp(minTranslateX, maxTranslateX);
+    final translateY =
+        canvasMatrix.translateY.clamp(minTranslateY, maxTranslateY);
+
+    canvasMatrix.setValues(scaleX, 0, 0, 0, 0, scaleY, 0, 0, 0, 0, 1, 0,
+        translateX, translateY, 0, 1);
+  }
+
+  /// 平移画布
+  void translateBy(double translateX, double translateY) {
+    l.d('平移画布: $translateX $translateY');
+    canvasMatrix.translate(translateX, translateY);
+    //debugger();
+    _checkMatrix();
+    canvasDelegate.dispatchCanvasViewBoxChanged(this);
+  }
+
+  /// 使用比例缩放画布
   /// [pivot] 缩放的锚点
   void scaleBy(double scaleX, double scaleY, {Offset? pivot}) {
     canvasMatrix.scale(scaleX, scaleY);
-    //checkScale();
+    _checkMatrix();
+    canvasDelegate.dispatchCanvasViewBoxChanged(this);
   }
 
 //endregion ---操作---

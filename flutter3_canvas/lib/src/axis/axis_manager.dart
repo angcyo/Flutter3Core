@@ -70,6 +70,7 @@ class AxisManager extends IPaint {
     xData.clear();
     yData.clear();
 
+    //debugger();
     if (drawType.have(DRAW_AXIS) || drawType.have(DRAW_GRID)) {
     } else {
       return;
@@ -78,6 +79,7 @@ class AxisManager extends IPaint {
     final origin = canvasViewBox.getSceneOrigin();
     final paintBounds = canvasViewBox.paintBounds;
     final scaleX = canvasViewBox.scaleX;
+    final scaleY = canvasViewBox.scaleY;
 
     //剩余的宽度/高度
     double distance = 0;
@@ -91,7 +93,7 @@ class AxisManager extends IPaint {
     distance = paintBounds.right - origin.dx;
     viewValue = origin.dx;
     while (distance > 0) {
-      double gap = axisUnit.getAxisGap(index, scaleX);
+      double gap = axisUnit.getAxisGap(index, scaleX) * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
       xData.add(AxisData(viewValue, index * gap, axisType));
       distance -= gap;
@@ -103,7 +105,7 @@ class AxisManager extends IPaint {
     viewValue = origin.dx;
     index = 0;
     while (distance > yAxisWidth) {
-      double gap = axisUnit.getAxisGap(index, scaleX);
+      double gap = axisUnit.getAxisGap(index, scaleX) * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
       xData.add(AxisData(viewValue, -index * gap, axisType));
       distance -= gap;
@@ -117,8 +119,8 @@ class AxisManager extends IPaint {
     viewValue = origin.dy;
     index = 0;
     while (distance > 0) {
-      double gap = axisUnit.getAxisGap(index, scaleX);
-      int axisType = axisUnit.getAxisType(index, scaleX);
+      double gap = axisUnit.getAxisGap(index, scaleY) * scaleY;
+      int axisType = axisUnit.getAxisType(index, scaleY);
       yData.add(AxisData(viewValue, index * gap, axisType));
       distance -= gap;
       viewValue += gap;
@@ -129,8 +131,8 @@ class AxisManager extends IPaint {
     viewValue = origin.dy;
     index = 0;
     while (distance > xAxisHeight) {
-      double gap = axisUnit.getAxisGap(index, scaleX);
-      int axisType = axisUnit.getAxisType(index, scaleX);
+      double gap = axisUnit.getAxisGap(index, scaleY) * scaleY;
+      int axisType = axisUnit.getAxisType(index, scaleY);
       yData.add(AxisData(viewValue, -index * gap, axisType));
       distance -= gap;
       viewValue -= gap;

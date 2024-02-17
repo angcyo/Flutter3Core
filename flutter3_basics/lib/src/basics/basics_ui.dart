@@ -747,6 +747,38 @@ extension WidgetEx on Widget {
     );
   }
 
+  Widget matrix(
+    Matrix4 transform, {
+    Offset? origin,
+    AlignmentGeometry? alignment = Alignment.center,
+    bool transformHitTests = true,
+    FilterQuality? filterQuality,
+  }) =>
+      this.transform(
+        transform,
+        origin: origin,
+        alignment: alignment,
+        transformHitTests: transformHitTests,
+        filterQuality: filterQuality,
+      );
+
+  /// 应用一个变换[Matrix4].[Transform]
+  Widget transform(
+    Matrix4 transform, {
+    Offset? origin,
+    AlignmentGeometry? alignment = Alignment.center,
+    bool transformHitTests = true,
+    FilterQuality? filterQuality,
+  }) =>
+      Transform(
+        transform: transform,
+        origin: origin,
+        alignment: alignment,
+        transformHitTests: transformHitTests,
+        filterQuality: filterQuality,
+        child: this,
+      );
+
   /// [Card]
   /// [elevation] 阴影的高度, 默认1.0
   /// [CardTheme]

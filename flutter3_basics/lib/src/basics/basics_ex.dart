@@ -693,6 +693,21 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
+  /// 弧度转角度
+  double get toDegrees => this * 180 / pi;
+
+  /// 角度转弧度
+  /// 0 = 0
+  /// 15 = 0.2617993877991494
+  /// 30 = 0.5235987755982988
+  /// 45 = 0.7853981633974483
+  /// 60 = 1.0471975511965976
+  /// 90 = 1.5707963267948966
+  /// 180 = 3.141592653589793
+  /// 270 = 4.71238898038469
+  /// 360 = 6.283185307179586
+  double get toRadians => this * pi / 180;
+
   /// 保留小数点后几位
   /// [digits] 小数点后几位
   /// [removeZero] 是否移除小数点尾部后面的0
@@ -808,13 +823,7 @@ extension IntEx on int {
   }
 }
 
-extension DoubleEx on double {
-  /// 弧度转角度
-  double get toDegrees => this * 180 / pi;
-
-  /// 角度转弧度
-  double get toRadians => this * pi / 180;
-}
+extension DoubleEx on double {}
 
 /// [Uint8List]
 extension ListIntEx on List<int> {
