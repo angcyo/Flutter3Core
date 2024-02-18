@@ -109,3 +109,28 @@ extension AnimationEx on Widget {
     );
   }
 }
+
+/// 创建一个控制动画, 指定时间
+/// 在指定的时间内, 从[0~1]的动画变化回调
+/// [AnimationController.stop] 停止动画
+/// [AnimationController.dispose] 释放资源
+AnimationController animation(
+  TickerProvider vsync,
+  void Function(double value, bool isCompleted) listener, {
+  Duration duration = kDefaultAnimationDuration,
+}) {
+  final controller = AnimationController(
+    duration: duration,
+    vsync: vsync,
+  );
+  controller
+    ..addListener(() {
+      listener(controller.value, false);
+    })
+    ..addStatusListener((status) {
+      listener(controller.value, status == AnimationStatus.completed);
+    })
+    ..forward();
+  //controller.dispose();
+  return controller;
+}

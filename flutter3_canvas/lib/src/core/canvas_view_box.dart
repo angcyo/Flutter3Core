@@ -78,7 +78,7 @@ class CanvasViewBox {
       );
     }
 
-    canvasDelegate.dispatchCanvasViewBoxChanged(this);
+    canvasDelegate.dispatchCanvasViewBoxChanged(this, true);
   }
 
   //region ---api---
@@ -115,34 +115,101 @@ class CanvasViewBox {
 
   //region ---操作---
 
-  /// 限制matrix
-  void _checkMatrix() {
-    final scaleX = canvasMatrix.scaleX.clamp(minScaleX, maxScaleX);
-    final scaleY = canvasMatrix.scaleY.clamp(minScaleY, maxScaleY);
-    final translateX =
-        canvasMatrix.translateX.clamp(minTranslateX, maxTranslateX);
-    final translateY =
-        canvasMatrix.translateY.clamp(minTranslateY, maxTranslateY);
+  /// 限制matrix, min/max值
+  /// [canvasMatrix]
+  Matrix4 _checkMatrix(Matrix4 matrix) {
+    final scaleX = matrix.scaleX.clamp(minScaleX, maxScaleX);
+    final scaleY = matrix.scaleY.clamp(minScaleY, maxScaleY);
+    final translateX = matrix.translateX.clamp(minTranslateX, maxTranslateX);
+    final translateY = matrix.translateY.clamp(minTranslateY, maxTranslateY);
+    /*canvasMatrix.setValues(scaleX, 0, 0, 0, 0, scaleY, 0, 0, 0, 0, 1, 0,
+        translateX, translateY, 0, 1);*/
+    matrix.scaleTo(sx: scaleX, sy: scaleY);
+    matrix.translateTo(x: translateX, y: translateY);
+    return matrix;
+  }
 
-    canvasMatrix.setValues(scaleX, 0, 0, 0, 0, scaleY, 0, 0, 0, 0, 1, 0,
-        translateX, translateY, 0, 1);
+  AnimationController? _lastAnimationController;
+
+  /// 改变画布矩阵, 支持动画
+  void changeMatrix(
+    Matrix4 target, {
+    bool anim = true,
+    void Function(bool isCompleted)? completedAction,
+  }) {
+    _lastAnimationController?.dispose();
+    _lastAnimationController = null;
+    if (anim) {
+      final matrixTween =
+          Matrix4Tween(begin: canvasMatrix, end: _checkMatrix(target));
+      animation(canvasDelegate, (value, isCompleted) {
+        final matrix = matrixTween.lerp(value);
+        canvasMatrix.setFrom(matrix);
+        completedAction?.call(isCompleted);
+        canvasDelegate.dispatchCanvasViewBoxChanged(this, isCompleted);
+      });
+    } else {
+      canvasMatrix.setFrom(_checkMatrix(target));
+      completedAction?.call(true);
+      canvasDelegate.dispatchCanvasViewBoxChanged(this, true);
+    }
+    //canvasMatrix.clone();
+    //canvasMatrix.setFrom(arg)
+    //canvasMatrix.multiply(target);
+    //_checkMatrix();
+    //canvasDelegate.dispatchCanvasViewBoxChanged(this);
+    //Matrix4Tween(begin: begin!.matrix4, end: end!.matrix4).lerp(t)
   }
 
   /// 平移画布
-  void translateBy(double translateX, double translateY) {
-    l.d('平移画布: $translateX $translateY');
-    canvasMatrix.translate(translateX, translateY);
-    //debugger();
-    _checkMatrix();
-    canvasDelegate.dispatchCanvasViewBoxChanged(this);
+  void translateBy(double tx, double ty, {bool anim = true}) {
+    l.d('平移画布by: $tx $ty');
+    changeMatrix(canvasMatrix.clone()..translateBy(x: tx, y: ty), anim: anim);
+  }
+
+  /// 平移画布
+  void translateTo(double tx, double ty, {bool anim = true}) {
+    l.d('平移画布to: $tx $ty');
+    changeMatrix(canvasMatrix.clone()..translateTo(x: tx, y: ty), anim: anim);
   }
 
   /// 使用比例缩放画布
   /// [pivot] 缩放的锚点
-  void scaleBy(double scaleX, double scaleY, {Offset? pivot}) {
-    canvasMatrix.scale(scaleX, scaleY);
-    _checkMatrix();
-    canvasDelegate.dispatchCanvasViewBoxChanged(this);
+  void scaleBy({
+    double? scaleX,
+    double? scaleY,
+    Offset? pivot,
+    bool anim = true,
+  }) {
+    l.d('缩放画布by: $scaleX $scaleY');
+    changeMatrix(
+        canvasMatrix.clone()
+          ..scaleBy(
+            sx: scaleX,
+            sy: scaleY,
+            pivotX: pivot?.dx ?? 0,
+            pivotY: pivot?.dy ?? 0,
+          ),
+        anim: anim);
+  }
+
+  /// 使用指定比例缩放画布
+  void scaleTo({
+    double? scaleX,
+    double? scaleY,
+    Offset? pivot,
+    bool anim = true,
+  }) {
+    l.d('缩放画布to: $scaleX $scaleY');
+    changeMatrix(
+        canvasMatrix.clone()
+          ..scaleTo(
+            sx: scaleX,
+            sy: scaleY,
+            pivotX: pivot?.dx ?? 0,
+            pivotY: pivot?.dy ?? 0,
+          ),
+        anim: anim);
   }
 
 //endregion ---操作---

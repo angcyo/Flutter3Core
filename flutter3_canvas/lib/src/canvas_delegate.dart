@@ -5,7 +5,7 @@ part of flutter3_canvas;
 /// @since 2024/02/02
 ///
 /// 画布代理类, 核心类, 整个框架的入口
-class CanvasDelegate {
+class CanvasDelegate implements TickerProvider {
   //region ---入口点---
 
   /// 绘制入口点
@@ -51,12 +51,24 @@ class CanvasDelegate {
   //region ---事件派发---
 
   /// 当[CanvasViewBox]视口发生变化时触发
-  void dispatchCanvasViewBoxChanged(CanvasViewBox canvasViewBox) {
+  void dispatchCanvasViewBoxChanged(CanvasViewBox canvasViewBox, bool isCompleted) {
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     refresh();
   }
 
-//endregion ---事件派发---
+  //endregion ---事件派发---
+
+  //region ---Ticker---
+
+  Ticker? _ticker;
+
+  @override
+  Ticker createTicker(TickerCallback onTick) {
+    _ticker =
+        Ticker(onTick, debugLabel: 'created by ${describeIdentity(this)}');
+    return _ticker!;
+  }
+//endregion ---Ticker---
 }
 
 /*abstract class ICanvasComponent {

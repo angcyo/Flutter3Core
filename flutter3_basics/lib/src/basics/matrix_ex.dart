@@ -96,23 +96,27 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
-    final translation = vector.Vector3(pivotX, pivotY, pivotZ);
-    translate(translation);
-    action();
-    translate(-translation);
+    if (pivotX == 0 && pivotY == 0 && pivotZ == 0) {
+      action();
+    } else {
+      final translation = vector.Vector3(pivotX, pivotY, pivotZ);
+      translate(translation);
+      action();
+      translate(-translation);
+    }
   }
 
   /// 缩放指定倍数
   void scaleBy({
-    double sx = 1,
-    double sy = 1,
-    double sz = 1,
+    double? sx,
+    double? sy,
+    double? sz,
     double pivotX = 0,
     double pivotY = 0,
     double pivotZ = 0,
   }) {
     withPivot(() {
-      final scale = vector.Vector3(sx, sy, sz);
+      final scale = vector.Vector3(sx ?? 1, sy ?? 1, sz ?? 1);
       this.scale(scale);
     }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
