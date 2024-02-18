@@ -33,7 +33,7 @@ mixin FrameSplitLoad<T extends StatefulWidget> on State<T> {
       frameLoadCount = maxCount;
       return originChildren;
     }
-    final loadCount = min(frameLoadCount + frameSplitCount, maxCount);
+    final loadCount = math.min(frameLoadCount + frameSplitCount, maxCount);
     final result = <Widget>[];
     for (var i = 0; i < loadCount; i++) {
       result.add(originChildren[i]);

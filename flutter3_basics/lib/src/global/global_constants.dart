@@ -70,7 +70,7 @@ const kPaddingX = EdgeInsets.symmetric(horizontal: kX, vertical: kL);
 const bool isDebug = kDebugMode;
 
 /// 随机数生成器
-final random = Random();
+final random = math.Random();
 
 /// 最小值/最大值
 /// [double.maxFinite]

@@ -165,7 +165,8 @@ class L {
     //获取当前调用方法的文件名和行数
     final stackTrace = StackTrace.current.toString();
     final stackTraceList = stackTrace.split(lineSeparator);
-    final lineStackTrace = stackTraceList[min(3, stackTraceList.length) - 1];
+    final lineStackTrace =
+        stackTraceList[math.min(3, stackTraceList.length) - 1];
     //获取当前的文件名称以及路径行号:列号
     final filePathStr = lineStackTrace.substring(
         lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));

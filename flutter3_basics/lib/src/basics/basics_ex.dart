@@ -693,8 +693,10 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
+  //region ---math---
+
   /// 弧度转角度
-  double get toDegrees => this * 180 / pi;
+  double get toDegrees => this * 180 / math.pi;
 
   /// 角度转弧度
   /// 0 = 0
@@ -706,7 +708,30 @@ extension NumEx on num {
   /// 180 = 3.141592653589793
   /// 270 = 4.71238898038469
   /// 360 = 6.283185307179586
-  double get toRadians => this * pi / 180;
+  double get toRadians => this * math.pi / 180;
+
+  /// [sanitizeDegrees]
+  double get toSanitizeDegrees => sanitizeDegrees;
+
+  /// 消除多余的角度, 限制角度范围在[0~360]
+  double get sanitizeDegrees {
+    var degrees = this % 360;
+    if (degrees < 0) {
+      degrees += 360;
+    }
+    return degrees.toDouble();
+  }
+
+  /// N次方
+  dynamic pow(num exponent) => math.pow(this, exponent);
+
+  /// 开平方
+  dynamic get sqrt => math.sqrt(this);
+
+  //endregion ---math---
+
+  /// 正负取反
+  dynamic inverted() => -this;
 
   /// 保留小数点后几位
   /// [digits] 小数点后几位
@@ -735,15 +760,23 @@ extension NumEx on num {
       return toString();
     }
 
-    // 直接转出来的字符串, 会有小数点后面的0
-    var value = toStringAsFixed(digits);
+    // 直接转出来的字符串, 会有小数点后面的0. -0.000000
+    String value = toStringAsFixed(digits);
+    /*if (value.startsWith("-")) {
+      debugger();
+    }*/
     // 去掉小数点后面的0
-    if (value.contains('.')) {
-      while (value.endsWith('0')) {
-        value = value.substring(0, value.length - 1);
+    if (removeZero) {
+      if (value.toDouble() == 0) {
+        return '0';
       }
-      if (value.endsWith('.')) {
-        value = value.substring(0, value.length - 1);
+      if (value.contains('.')) {
+        while (value.endsWith('0')) {
+          value = value.substring(0, value.length - 1);
+        }
+        if (value.endsWith('.')) {
+          value = value.substring(0, value.length - 1);
+        }
       }
     }
     return value;
@@ -752,30 +785,17 @@ extension NumEx on num {
   /// 在两个数字之间线性插值，通过 b外推因子 t。
   /// [progress] [0~1]
   /// [lerpDouble]
-  num lerp(double begin, double end, double progress) {
+  dynamic lerp(dynamic begin, dynamic end, double progress) {
     return begin + (end - begin) * progress;
   }
 
   /// 限制数字的范围
-  num clamp(num min, num max) {
+  dynamic clamp(dynamic min, dynamic max) {
     return this < min ? min : (this > max ? max : this);
   }
 
   /// 检查此双精度值是否等于 other，避免浮点错误。
   bool equalTo(double other) => (this - other).abs() < 0.0000001;
-
-  //region ---math---
-
-  /// 消除多余的角度, 限制角度范围在[0~360]
-  num get sanitizeDegrees {
-    var degrees = this % 360;
-    if (degrees < 0) {
-      degrees += 360;
-    }
-    return degrees;
-  }
-
-//endregion ---math---
 }
 
 //endregion Int 扩展

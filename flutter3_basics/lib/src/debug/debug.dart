@@ -45,7 +45,7 @@ String randomString([int? length]) {
 /// 需要翻墙才能访问,
 /// 2023-12-27 [source.unsplash.com] 不需要翻墙
 String randomImageUrl({String? prompt, int? width, int? height}) {
-  final random = Random();
+  final random = math.Random();
   width ??= random.nextInt(1000) + 100;
   height ??= random.nextInt(1000) + 100;
   //return "https://picsum.photos/id/${random.nextInt(1000)}/$width/$height";
@@ -55,7 +55,7 @@ String randomImageUrl({String? prompt, int? width, int? height}) {
 
 /// 国内可以访问的占位图片, 只有纯色和文字
 String randomImagePlaceholderUrl([String? text]) {
-  final random = Random();
+  final random = math.Random();
   final width = random.nextInt(1000) + 100;
   final height = random.nextInt(1000) + 100;
   //return "https://via.placeholder.com/$width/$height?text=${randomString(1)}&bg=${randomColor().toHexColor()}";
