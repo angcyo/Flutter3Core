@@ -43,6 +43,9 @@ PointerCancelEvent createPointerCancelEvent(PointerEvent event) {
 mixin MultiPointerDetector {
   /// 获取N个手势对应的包裹矩形
   static Rect getPointerBounds(Map<int, PointerEvent> pointerMap) {
+    if (pointerMap.isEmpty) {
+      return Rect.zero;
+    }
     double left = doubleMaxValue;
     double top = doubleMaxValue;
     double right = doubleMinValue;
