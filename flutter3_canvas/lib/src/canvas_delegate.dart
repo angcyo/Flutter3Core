@@ -5,7 +5,7 @@ part of flutter3_canvas;
 /// @since 2024/02/02
 ///
 /// 画布代理类, 核心类, 整个框架的入口
-class CanvasDelegate implements TickerProvider {
+class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---入口点---
 
   /// 绘制入口点
@@ -51,7 +51,8 @@ class CanvasDelegate implements TickerProvider {
   //region ---事件派发---
 
   /// 当[CanvasViewBox]视口发生变化时触发
-  void dispatchCanvasViewBoxChanged(CanvasViewBox canvasViewBox, bool isCompleted) {
+  void dispatchCanvasViewBoxChanged(
+      CanvasViewBox canvasViewBox, bool isCompleted) {
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     refresh();
   }
@@ -68,7 +69,22 @@ class CanvasDelegate implements TickerProvider {
         Ticker(onTick, debugLabel: 'created by ${describeIdentity(this)}');
     return _ticker!;
   }
-//endregion ---Ticker---
+
+  //endregion ---Ticker---
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty("刷新次数", repaint.value));
+    properties.add(DiagnosticsProperty<ValueNotifier<int>>('repaint', repaint));
+    properties.add(
+        DiagnosticsProperty<CanvasViewBox>('canvasViewBox', canvasViewBox));
+    properties.add(DiagnosticsProperty<CanvasPaintManager>(
+        'canvasPaintManager', canvasPaintManager));
+    properties.add(DiagnosticsProperty<CanvasEventManager>(
+        'canvasEventManager', canvasEventManager));
+    properties.add(DiagnosticsProperty<Ticker?>('ticker', _ticker));
+  }
 }
 
 /*abstract class ICanvasComponent {

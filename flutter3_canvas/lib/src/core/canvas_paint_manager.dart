@@ -5,7 +5,7 @@ part of flutter3_canvas;
 /// @since 2024/02/02
 ///
 /// 绘制管理, 所有绘制相关的操作, 都在这里, 绘制的入口
-class CanvasPaintManager {
+class CanvasPaintManager with Diagnosticable{
   final CanvasDelegate canvasDelegate;
 
   /// 坐标系

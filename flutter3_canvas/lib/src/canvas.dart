@@ -20,8 +20,20 @@ class CanvasWidget extends LeafRenderObjectWidget {
   @override
   void updateRenderObject(BuildContext context, CanvasRenderBox renderObject) {
     super.updateRenderObject(context, renderObject);
-    renderObject.context = context;
-    renderObject.canvasDelegate = canvasDelegate;
+    renderObject
+      ..context = context
+      ..canvasDelegate = canvasDelegate;
+  }
+
+  @override
+  void didUnmountRenderObject(covariant RenderObject renderObject) {
+    super.didUnmountRenderObject(renderObject);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('canvasDelegate', canvasDelegate));
   }
 }
 

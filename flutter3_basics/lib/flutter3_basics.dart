@@ -7,10 +7,12 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -71,6 +73,8 @@ part 'src/component/async_operation.dart';
 part 'src/component/custom_painter.dart';
 
 part 'src/component/future_cancel.dart';
+
+part 'src/component/pinch_gesture_recognizer.dart';
 
 part 'src/component/r_exception.dart';
 

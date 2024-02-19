@@ -77,6 +77,10 @@ final random = math.Random();
 int intMaxValue = double.maxFinite.toInt();
 int intMinValue = -double.maxFinite.toInt();
 
+/// 最小值/最大值
+double doubleMaxValue = double.maxFinite;
+double doubleMinValue = -double.maxFinite;
+
 //endregion 全局常量
 
 //region Fn Callback

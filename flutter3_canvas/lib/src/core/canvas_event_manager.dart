@@ -5,7 +5,7 @@ part of flutter3_canvas;
 /// @author angcyo
 /// @date 2024/02/04
 /// 手势入口
-class CanvasEventManager {
+class CanvasEventManager with Diagnosticable {
   final CanvasDelegate canvasDelegate;
 
   /// 画布平移组件
@@ -21,7 +21,8 @@ class CanvasEventManager {
   }
 }
 
-class CanvasTranslateComponent with CanvasComponent {
+class CanvasTranslateComponent extends IHandleEvent
+    with CanvasComponentMixin, MultiPointerDetector, HandleEventMixin {
   final CanvasDelegate canvasDelegate;
 
   CanvasTranslateComponent(this.canvasDelegate);

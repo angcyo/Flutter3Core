@@ -34,7 +34,7 @@ class AxisManager extends IPaint {
   /// 坐标系的单位
   IUnit axisUnit = IUnit.dp;
 
-  /// 需要绘制的类型, 用来控制网格的绘制
+  /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
   int drawType = DRAW_AXIS | DRAW_GRID;
 
   /// 主轴的画笔

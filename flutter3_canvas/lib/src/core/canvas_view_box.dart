@@ -5,7 +5,7 @@ part of flutter3_canvas;
 /// @since 2024/02/02
 /// 视图盒子, 用来限制画布的最小/最大平移/缩放的值
 /// 未特殊说明, 所有可绘制的数值, 都是dp单位
-class CanvasViewBox {
+class CanvasViewBox with Diagnosticable {
   final CanvasDelegate canvasDelegate;
 
   CanvasViewBox(this.canvasDelegate);
@@ -101,6 +101,7 @@ class CanvasViewBox {
   }
 
   /// 将当前相对于场景原点的坐标, 偏移成相对于视图左上角的坐标
+  @viewCoordinate
   Offset offsetToViewOrigin(@viewCoordinate Offset offset) {
     return offset + originOffset;
   }
