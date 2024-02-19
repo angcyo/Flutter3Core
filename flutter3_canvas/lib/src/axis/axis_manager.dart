@@ -4,7 +4,7 @@ part of flutter3_canvas;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/02/02
 /// 坐标轴管理, 负责坐标轴/坐标网格的绘制以及计算
-class AxisManager extends IPaint {
+class AxisManager extends IPainter {
   /// 绘制坐标轴
   static const int DRAW_AXIS = 0X01;
 
@@ -76,7 +76,9 @@ class AxisManager extends IPaint {
       return;
     }
 
+    @viewCoordinate
     final origin = canvasViewBox.getSceneOrigin();
+    l.d('origin: $origin');
     final paintBounds = canvasViewBox.paintBounds;
     final scaleX = canvasViewBox.scaleX;
     final scaleY = canvasViewBox.scaleY;
@@ -95,7 +97,9 @@ class AxisManager extends IPaint {
     while (distance > 0) {
       double gap = axisUnit.getAxisGap(index, scaleX) * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
-      xData.add(AxisData(viewValue, index * gap, axisType));
+      if (viewValue >= yAxisWidth) {
+        xData.add(AxisData(viewValue, index * gap, axisType));
+      }
       distance -= gap;
       viewValue += gap;
       index++;
@@ -104,10 +108,12 @@ class AxisManager extends IPaint {
     distance = origin.dx - paintBounds.left;
     viewValue = origin.dx;
     index = 0;
-    while (distance > yAxisWidth) {
+    while (distance > 0) {
       double gap = axisUnit.getAxisGap(index, scaleX) * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
-      xData.add(AxisData(viewValue, -index * gap, axisType));
+      if (viewValue >= yAxisWidth) {
+        xData.add(AxisData(viewValue, -index * gap, axisType));
+      }
       distance -= gap;
       viewValue -= gap;
       index++;
@@ -121,7 +127,9 @@ class AxisManager extends IPaint {
     while (distance > 0) {
       double gap = axisUnit.getAxisGap(index, scaleY) * scaleY;
       int axisType = axisUnit.getAxisType(index, scaleY);
-      yData.add(AxisData(viewValue, index * gap, axisType));
+      if (viewValue >= xAxisHeight) {
+        yData.add(AxisData(viewValue, index * gap, axisType));
+      }
       distance -= gap;
       viewValue += gap;
       index++;
@@ -130,10 +138,12 @@ class AxisManager extends IPaint {
     distance = origin.dy - paintBounds.top;
     viewValue = origin.dy;
     index = 0;
-    while (distance > xAxisHeight) {
+    while (distance > 0) {
       double gap = axisUnit.getAxisGap(index, scaleY) * scaleY;
       int axisType = axisUnit.getAxisType(index, scaleY);
-      yData.add(AxisData(viewValue, -index * gap, axisType));
+      if (viewValue >= xAxisHeight) {
+        yData.add(AxisData(viewValue, -index * gap, axisType));
+      }
       distance -= gap;
       viewValue -= gap;
       index++;
