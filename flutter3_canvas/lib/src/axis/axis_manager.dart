@@ -78,7 +78,7 @@ class AxisManager extends IPainter {
 
     @viewCoordinate
     final origin = canvasViewBox.getSceneOrigin();
-    l.d('origin: $origin');
+    //l.d('origin: $origin');
     final paintBounds = canvasViewBox.paintBounds;
     final scaleX = canvasViewBox.scaleX;
     final scaleY = canvasViewBox.scaleY;
@@ -97,7 +97,7 @@ class AxisManager extends IPainter {
     while (distance > 0) {
       double gap = axisUnit.getAxisGap(index, scaleX) * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
-      if (viewValue >= yAxisWidth) {
+      if (viewValue >= yAxisWidth && viewValue <= paintBounds.right) {
         xData.add(AxisData(viewValue, index * gap, axisType));
       }
       distance -= gap;
@@ -111,7 +111,7 @@ class AxisManager extends IPainter {
     while (distance > 0) {
       double gap = axisUnit.getAxisGap(index, scaleX) * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
-      if (viewValue >= yAxisWidth) {
+      if (viewValue >= yAxisWidth && viewValue <= paintBounds.right) {
         xData.add(AxisData(viewValue, -index * gap, axisType));
       }
       distance -= gap;
@@ -127,7 +127,7 @@ class AxisManager extends IPainter {
     while (distance > 0) {
       double gap = axisUnit.getAxisGap(index, scaleY) * scaleY;
       int axisType = axisUnit.getAxisType(index, scaleY);
-      if (viewValue >= xAxisHeight) {
+      if (viewValue >= xAxisHeight && viewValue <= paintBounds.bottom) {
         yData.add(AxisData(viewValue, index * gap, axisType));
       }
       distance -= gap;
@@ -141,7 +141,7 @@ class AxisManager extends IPainter {
     while (distance > 0) {
       double gap = axisUnit.getAxisGap(index, scaleY) * scaleY;
       int axisType = axisUnit.getAxisType(index, scaleY);
-      if (viewValue >= xAxisHeight) {
+      if (viewValue >= xAxisHeight && viewValue <= paintBounds.bottom) {
         yData.add(AxisData(viewValue, -index * gap, axisType));
       }
       distance -= gap;
