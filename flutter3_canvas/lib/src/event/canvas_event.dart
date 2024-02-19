@@ -5,7 +5,7 @@ part of flutter3_canvas;
 /// @since 2024/02/18
 ///
 
-mixin HandleEventMixin on IHandleEvent, MultiPointerDetector {
+mixin HandleEventMixin on IHandleEvent, MultiPointerDetectorMixin {
   /// 是否忽略处理事件, 会在手势抬起/取消时, 重置为false
   bool ignoreHandle = false;
 
@@ -13,7 +13,7 @@ mixin HandleEventMixin on IHandleEvent, MultiPointerDetector {
   void dispatchPointerEvent(PointerEvent event) {
     if (!ignoreHandle) {
       //没有忽略事件
-      addPointerEvent(event);
+      addMultiPointerDetectorPointerEvent(event);
     }
     if (event.isPointerFinish) {
       ignoreHandle = false;

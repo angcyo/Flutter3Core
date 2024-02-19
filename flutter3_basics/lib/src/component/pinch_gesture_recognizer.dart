@@ -54,7 +54,7 @@ class PinchGestureWidget extends SingleChildRenderObjectWidget {
   }
 }
 
-class PinchGestureBox extends RenderProxyBox with MultiPointerDetector {
+class PinchGestureBox extends RenderProxyBox with MultiPointerDetectorMixin {
   /// 捏合手势的指针数量
   int pinchPointer;
 
@@ -72,11 +72,11 @@ class PinchGestureBox extends RenderProxyBox with MultiPointerDetector {
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    addPointerEvent(event);
+    addMultiPointerDetectorPointerEvent(event);
   }
 
   @override
-  bool handlePointerEvent(PointerEvent event) {
+  bool handleMultiPointerDetectorPointerEvent(PointerEvent event) {
     if (isHandledEvent) {
       return true;
     }
@@ -84,8 +84,8 @@ class PinchGestureBox extends RenderProxyBox with MultiPointerDetector {
     if (pointerCount == pinchPointer) {
       //debugger();
       if (event is PointerMoveEvent) {
-        Rect downRect = MultiPointerDetector.getPointerBounds(pointerDownMap);
-        Rect moveRect = MultiPointerDetector.getPointerBounds(pointerMoveMap);
+        Rect downRect = MultiPointerDetectorMixin.getPointerBounds(pointerDownMap);
+        Rect moveRect = MultiPointerDetectorMixin.getPointerBounds(pointerMoveMap);
 
         final dWidth = downRect.width - moveRect.width;
         final dHeight = downRect.height - moveRect.height;
@@ -98,7 +98,7 @@ class PinchGestureBox extends RenderProxyBox with MultiPointerDetector {
         }
       }
     }
-    return super.handlePointerEvent(event);
+    return super.handleMultiPointerDetectorPointerEvent(event);
   }
 
   @override

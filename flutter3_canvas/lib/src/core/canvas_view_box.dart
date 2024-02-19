@@ -96,10 +96,12 @@ class CanvasViewBox with Diagnosticable {
   }
 
   /// 将当前相对于视图的坐标, 偏移成相对于场景的坐标
+  @viewCoordinate
   Offset offsetToSceneOriginPoint(@viewCoordinate Offset point) {
     return point - originOffset;
   }
 
+  @viewCoordinate
   Rect offsetToSceneOriginRect(@viewCoordinate Rect rect) {
     return rect - originOffset;
   }
@@ -215,37 +217,52 @@ class CanvasViewBox with Diagnosticable {
   /// [pivot] 缩放的锚点
   @api
   void scaleBy({
-    double? scaleX,
-    double? scaleY,
+    double? sx,
+    double? sy,
     Offset? pivot,
     bool anim = true,
   }) {
-    l.d('缩放画布by: $scaleX $scaleY');
-    changeMatrix(
-        canvasMatrix.clone()
-          ..scaleBy(
-            sx: scaleX,
-            sy: scaleY,
-            pivotX: pivot?.dx ?? 0,
-            pivotY: pivot?.dy ?? 0,
-          ),
-        anim: anim);
+    l.d('缩放画布by: $sx $sy');
+
+    if (sx != null) {
+      if ((sx < 1 && scaleX <= minScaleX) || (sx > 1 && scaleX >= maxScaleX)) {
+        //已经达到了最小/最大, 还想缩放/放大
+        return;
+      }
+    }
+
+    if (sy != null) {
+      if ((sy < 1 && scaleY <= minScaleY) || (sy > 1 && scaleY >= maxScaleY)) {
+        //已经达到了最小/最大, 还想缩放/放大
+        return;
+      }
+    }
+
+    final matrix = canvasMatrix.clone()
+      ..scaleBy(
+        sx: sx,
+        sy: sy,
+        pivotX: pivot?.dx ?? 0,
+        pivotY: pivot?.dy ?? 0,
+      );
+
+    changeMatrix(matrix, anim: anim);
   }
 
   /// 使用指定比例缩放画布
   @api
   void scaleTo({
-    double? scaleX,
-    double? scaleY,
+    double? sx,
+    double? sy,
     Offset? pivot,
     bool anim = true,
   }) {
-    l.d('缩放画布to: $scaleX $scaleY');
+    l.d('缩放画布to: $sx $sy');
     changeMatrix(
         canvasMatrix.clone()
           ..scaleTo(
-            sx: scaleX,
-            sy: scaleY,
+            sx: sx,
+            sy: sy,
             pivotX: pivot?.dx ?? 0,
             pivotY: pivot?.dy ?? 0,
           ),

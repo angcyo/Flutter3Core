@@ -15,6 +15,11 @@ double c(double x1, double y1, double x2, double y2) {
   return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2));
 }
 
+/// 获取2个点之间的中心点
+Offset center(Offset a, Offset b) {
+  return Offset((a.dx + b.dx) / 2, (a.dy + b.dy) / 2);
+}
+
 /// 求2点之间的角度
 double angle(Offset a, Offset b) {
   return math.atan2((b.dy - a.dy).abs(), (b.dx - a.dx).abs());

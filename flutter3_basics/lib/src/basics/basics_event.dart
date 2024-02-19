@@ -116,8 +116,59 @@ PointerCancelEvent createPointerCancelEvent(PointerEvent event) {
   );
 }
 
+/// 双击探测
+mixin DoubleTapDetectorMixin {
+  /// 双击间隔时间
+  /// [kDoubleTapTimeout]
+  /// [kDoubleTapMinTime]
+  Duration doubleTapTime = kDoubleTapTimeout;
+
+  /// 2次手指之间的距离不能超过此值
+  @dp
+  double doubleTapThreshold = kTouchSlop;
+
+  /// 上一次按下的时间
+  DateTime lastDownTime = 0.toDateTime();
+
+  /// 上一次按下的位置
+  Offset lastDownPoint = Offset.zero;
+
+  bool _isFirstTouch = true;
+
+  @entryPoint
+  void addDoubleTapDetectorPointerEvent(PointerEvent event) {
+    final point = event.localPosition;
+    final nowTime = DateTime.now();
+    if (event.isPointerDown) {
+      _isFirstTouch = nowTime - lastDownTime > doubleTapTime ||
+          (point.dx - lastDownPoint.dx).abs() > doubleTapThreshold ||
+          (point.dy - lastDownPoint.dy).abs() > doubleTapThreshold;
+
+      if (_isFirstTouch) {
+        lastDownTime = DateTime.now();
+        lastDownPoint = point;
+      }
+    } else if (event.isPointerUp) {
+      if (!_isFirstTouch) {
+        //debugger();
+        if ((point.dx - lastDownPoint.dx).abs() < doubleTapThreshold &&
+            (point.dy - lastDownPoint.dy).abs() < doubleTapThreshold) {
+          //触发双击事件
+          onDoubleTapDetectorPointerEvent(event);
+        }
+        _isFirstTouch = true;
+      }
+    } else if (event.isPointerCancel) {
+      _isFirstTouch = true;
+    }
+  }
+
+  /// 处理双击事件
+  bool onDoubleTapDetectorPointerEvent(PointerEvent event) => false;
+}
+
 /// 多指探测
-mixin MultiPointerDetector {
+mixin MultiPointerDetectorMixin {
   /// 获取N个手势对应的包裹矩形
   @dp
   static Rect getPointerBounds(Map<int, PointerEvent> pointerMap) {
@@ -158,6 +209,17 @@ mixin MultiPointerDetector {
     return result;
   }
 
+  /// 获取每个手指的位置
+  @dp
+  static List<Offset> getPointerPositionList(
+      Map<int, PointerEvent> pointerMap) {
+    List<Offset> result = [];
+    pointerMap.forEach((key, pointer) {
+      result.add(pointer.localPosition);
+    });
+    return result;
+  }
+
   /// 是否已经处理了事件, 会在手势抬起/取消时, 重置为false
   bool isHandledEvent = false;
 
@@ -175,7 +237,7 @@ mixin MultiPointerDetector {
       math.min(pointerDownMap.length, pointerMoveMap.length);
 
   @entryPoint
-  void addPointerEvent(PointerEvent event) {
+  void addMultiPointerDetectorPointerEvent(PointerEvent event) {
     //1---
     if (event.isPointerDown) {
       //手势按下
@@ -187,7 +249,7 @@ mixin MultiPointerDetector {
       pointerMoveMap[event.pointer] = event;
     }
     //2---
-    if (handlePointerEvent(event)) {
+    if (handleMultiPointerDetectorPointerEvent(event)) {
       //处理了事件, 将down坐标更新
       isHandledEvent = true;
 
@@ -206,8 +268,8 @@ mixin MultiPointerDetector {
     }
   }
 
-  /// 处理事件
-  bool handlePointerEvent(PointerEvent event) => false;
+  /// 处理多指操作事件
+  bool handleMultiPointerDetectorPointerEvent(PointerEvent event) => false;
 
   /// 当前移动的手势与按下的手势, 之间的偏移
   Offset moveDownDelta() {

@@ -19,12 +19,18 @@ extension DateTimeEx on DateTime {
     intl.DateFormat dateFormat = intl.DateFormat(newPattern, locale);
     return dateFormat.format(this);
   }
+
+  /// [difference]
+  Duration operator -(DateTime other) => difference(other);
 }
 
 extension TimeEx on int {
+  /// 毫秒转时间对象
+  DateTime toDateTime() => DateTime.fromMillisecondsSinceEpoch(this);
+
   /// 格式化时间 `2023-11-04 10:13:40.083`
   String format([String? newPattern = "yyyy-MM-dd HH:mm:ss"]) {
-    return DateTime.fromMillisecondsSinceEpoch(this).format(newPattern);
+    return toDateTime().format(newPattern);
   }
 
   /// [format]
