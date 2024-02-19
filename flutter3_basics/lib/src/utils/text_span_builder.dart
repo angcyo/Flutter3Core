@@ -19,6 +19,7 @@ class TextSpanBuilder {
   /// 简单的添加一个文本样式的字符串
   /// [addTextSpan]
   /// [addTextSpans]
+  /// [addTextStyle]
   TextSpanBuilder addText(String text, {TextStyle? style}) {
     _textSpans.add(TextSpan(
       text: text,
@@ -27,11 +28,17 @@ class TextSpanBuilder {
     return this;
   }
 
+  TextSpanBuilder addTextStyle(
+    String text, {
+    Color? color,
+    double? fontSize,
+  }) {
+    addText(text, style: TextStyle(color: color, fontSize: fontSize));
+    return this;
+  }
+
   TextSpanBuilder addTextColor(String text, Color color) {
-    _textSpans.add(TextSpan(
-      text: text,
-      style: TextStyle(color: color),
-    ));
+    addTextStyle(text, color: color);
     return this;
   }
 

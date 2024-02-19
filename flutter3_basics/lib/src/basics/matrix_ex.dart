@@ -216,7 +216,7 @@ extension Matrix4Ex on vector.Matrix4 {
   Matrix4 invertMatrix() {
     final matrix = clone();
     final det = matrix.invert();
-    debugger();
+    //debugger();
     return matrix;
   }
 

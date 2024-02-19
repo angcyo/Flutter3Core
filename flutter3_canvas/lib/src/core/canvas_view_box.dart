@@ -92,32 +92,59 @@ class CanvasViewBox with Diagnosticable {
   /// 获取场景原点相对于视图坐标的位置
   @viewCoordinate
   Offset getSceneOrigin() {
-    return toView(Offset.zero);
+    return toViewPoint(Offset.zero);
   }
 
   /// 将当前相对于视图的坐标, 偏移成相对于场景的坐标
-  Offset offsetToSceneOrigin(@viewCoordinate Offset offset) {
-    return offset - originOffset;
+  Offset offsetToSceneOriginPoint(@viewCoordinate Offset point) {
+    return point - originOffset;
+  }
+
+  Rect offsetToSceneOriginRect(@viewCoordinate Rect rect) {
+    return rect - originOffset;
   }
 
   /// 将视图坐标转换为场景内部坐标
+  /// [isSceneOrigin] 表示[point]是否是相对于场景原点的坐标
   @sceneCoordinate
   @api
-  Offset toScene(@viewCoordinate Offset offset) {
-    return canvasMatrix.invertMatrix().mapPoint(offsetToSceneOrigin(offset));
+  Offset toScenePoint(@viewCoordinate Offset point,
+      {bool isSceneOrigin = false}) {
+    return canvasMatrix
+        .invertMatrix()
+        .mapPoint(isSceneOrigin ? point : offsetToSceneOriginPoint(point));
+  }
+
+  @sceneCoordinate
+  @api
+  Rect toSceneRect(@viewCoordinate Rect rect, {bool isSceneOrigin = false}) {
+    return canvasMatrix
+        .invertMatrix()
+        .mapRect(isSceneOrigin ? rect : offsetToSceneOriginRect(rect));
   }
 
   /// 将当前相对于场景原点的坐标, 偏移成相对于视图左上角的坐标
   @viewCoordinate
-  Offset offsetToViewOrigin(@viewCoordinate Offset offset) {
-    return offset + originOffset;
+  Offset offsetToViewOriginPoint(@viewCoordinate Offset point) {
+    return point + originOffset;
+  }
+
+  @viewCoordinate
+  Rect offsetToViewOriginRect(@viewCoordinate Rect rect) {
+    return rect + originOffset;
   }
 
   /// 将场景内的坐标, 转换成视图坐标
   @viewCoordinate
   @api
-  Offset toView(@sceneCoordinate Offset offset) {
-    return offsetToViewOrigin(canvasMatrix.mapPoint(offset));
+  Offset toViewPoint(@sceneCoordinate Offset point) {
+    return offsetToViewOriginPoint(canvasMatrix.mapPoint(point));
+  }
+
+  @viewCoordinate
+  @api
+  Rect toViewRect(@sceneCoordinate Rect rect) {
+    return offsetToViewOriginRect(canvasMatrix.mapRect(rect));
   }
 
   //endregion ---api---
