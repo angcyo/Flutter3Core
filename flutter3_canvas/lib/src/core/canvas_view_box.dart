@@ -62,7 +62,7 @@ class CanvasViewBox with Diagnosticable {
 
   /// 更新整个绘制区域大小, 顺便更新内容绘制区域
   @entryPoint
-  void updatePaintBounds(Size size) {
+  void updatePaintBounds(Size size, bool isInitialize) {
     paintBounds = Offset.zero & size;
 
     if (isDebug) {
@@ -78,7 +78,13 @@ class CanvasViewBox with Diagnosticable {
       );
     }
 
-    canvasDelegate.dispatchCanvasViewBoxChanged(this, true);
+    if (isInitialize) {
+      postCallback(() {
+        canvasDelegate.dispatchCanvasViewBoxChanged(this, true);
+      });
+    } else {
+      canvasDelegate.dispatchCanvasViewBoxChanged(this, true);
+    }
   }
 
   //region ---api---
@@ -96,6 +102,7 @@ class CanvasViewBox with Diagnosticable {
 
   /// 将视图坐标转换为场景内部坐标
   @sceneCoordinate
+  @api
   Offset toScene(@viewCoordinate Offset offset) {
     return canvasMatrix.invertMatrix().mapPoint(offsetToSceneOrigin(offset));
   }
@@ -108,6 +115,7 @@ class CanvasViewBox with Diagnosticable {
 
   /// 将场景内的坐标, 转换成视图坐标
   @viewCoordinate
+  @api
   Offset toView(@sceneCoordinate Offset offset) {
     return offsetToViewOrigin(canvasMatrix.mapPoint(offset));
   }
@@ -163,12 +171,14 @@ class CanvasViewBox with Diagnosticable {
   }
 
   /// 平移画布
+  @api
   void translateBy(double tx, double ty, {bool anim = true}) {
     l.d('平移画布by: $tx $ty');
     changeMatrix(canvasMatrix.clone()..translateBy(x: tx, y: ty), anim: anim);
   }
 
   /// 平移画布
+  @api
   void translateTo(double tx, double ty, {bool anim = true}) {
     l.d('平移画布to: $tx $ty');
     changeMatrix(canvasMatrix.clone()..translateTo(x: tx, y: ty), anim: anim);
@@ -176,6 +186,7 @@ class CanvasViewBox with Diagnosticable {
 
   /// 使用比例缩放画布
   /// [pivot] 缩放的锚点
+  @api
   void scaleBy({
     double? scaleX,
     double? scaleY,
@@ -195,6 +206,7 @@ class CanvasViewBox with Diagnosticable {
   }
 
   /// 使用指定比例缩放画布
+  @api
   void scaleTo({
     double? scaleX,
     double? scaleY,

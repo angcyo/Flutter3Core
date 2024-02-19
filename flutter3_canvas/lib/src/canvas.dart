@@ -15,11 +15,12 @@ class CanvasWidget extends LeafRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      CanvasRenderBox(context, canvasDelegate);
+      CanvasRenderBox(context, canvasDelegate..delegateContext = context);
 
   @override
   void updateRenderObject(BuildContext context, CanvasRenderBox renderObject) {
     super.updateRenderObject(context, renderObject);
+    canvasDelegate.delegateContext = context;
     renderObject
       ..context = context
       ..canvasDelegate = canvasDelegate;
@@ -56,7 +57,7 @@ class CanvasRenderBox extends RenderBox {
     size =
         Size(width ?? height ?? screenWidth, height ?? width ?? screenHeight);
 
-    canvasDelegate.canvasViewBox.updatePaintBounds(size);
+    canvasDelegate.canvasViewBox.updatePaintBounds(size, true);
   }
 
   @override

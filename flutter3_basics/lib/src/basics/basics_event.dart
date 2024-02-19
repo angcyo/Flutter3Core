@@ -27,6 +27,83 @@ extension EventEx on PointerEvent {
   bool get isPointerFinish => isPointerUp || isPointerCancel;
 }
 
+/// 事件处理
+abstract class IHandleEvent {
+  /// 开始派发事件, 一定会调用
+  void dispatchPointerEvent(PointerEvent event) {}
+
+  /// 询问, 是否要拦截事件, 如果返回true, 则[onPointerEvent]执行, 并中断继续派发事件
+  bool interceptPointerEvent(PointerEvent event) => false;
+
+  /// 处理事件, 返回true表示事件被处理了, 否则继续派发事件
+  bool onPointerEvent(PointerEvent event) => false;
+}
+
+/// 指针事件派发
+mixin PointerDispatchMixin {
+  /// 事件处理客户端列表
+  Set<IHandleEvent> handleEventClientList = {};
+
+  /// 当前事件处理被此目标拦截
+  IHandleEvent? interceptHandleTarget;
+
+  /// N个手指对应的事件
+  Map<int, PointerEvent> pointerMap = {};
+
+  /// 派发事件, 入口点
+  /// 返回事件是否被处理了
+  @entryPoint
+  bool handleDispatchEvent(PointerEvent event) {
+    pointerMap[event.pointer] = event;
+
+    //1:dispatchPointerEvent
+    handleEventClientList.toList(growable: false).forEach((element) {
+      element.dispatchPointerEvent(event);
+    });
+
+    //2:interceptPointerEvent
+    bool handled = false;
+    if (interceptHandleTarget != null) {
+      handled = interceptHandleTarget!.onPointerEvent(event);
+    } else {
+      final iterable = handleEventClientList.toList(growable: false);
+      for (var element in iterable) {
+        if (element.interceptPointerEvent(event)) {
+          interceptHandleTarget = element;
+          handled = element.onPointerEvent(event);
+          break;
+        }
+      }
+      if (interceptHandleTarget == null || !handled) {
+        //3:onPointerEvent
+        for (var element in iterable) {
+          handled = element.onPointerEvent(event);
+          if (handled) break;
+        }
+      }
+    }
+
+    //4:last
+    if (event.isPointerFinish) {
+      pointerMap.remove(event.pointer);
+      if (pointerMap.isEmpty) {
+        interceptHandleTarget = null;
+      }
+    }
+    return handled;
+  }
+
+  /// 添加事件处理
+  void addHandleEventClient(IHandleEvent handleEvent) {
+    handleEventClientList.add(handleEvent);
+  }
+
+  /// 移除事件处理
+  void removeHandleEventClient(IHandleEvent handleEvent) {
+    handleEventClientList.remove(handleEvent);
+  }
+}
+
 /// 创建一个取消手势事件
 /// [GestureBinding.instance]
 /// [GestureBinding.cancelPointer]
@@ -42,6 +119,7 @@ PointerCancelEvent createPointerCancelEvent(PointerEvent event) {
 /// 多指探测
 mixin MultiPointerDetector {
   /// 获取N个手势对应的包裹矩形
+  @dp
   static Rect getPointerBounds(Map<int, PointerEvent> pointerMap) {
     if (pointerMap.isEmpty) {
       return Rect.zero;
@@ -59,6 +137,25 @@ mixin MultiPointerDetector {
     });
 
     return Rect.fromLTRB(left, top, right, bottom);
+  }
+
+  /// 获取每个手指之间的移动距离
+  @dp
+  static List<Offset> getPointerDeltaList(Map<int, PointerEvent> pointerMoveMap,
+      Map<int, PointerEvent> pointerDownMap) {
+    if (pointerMoveMap.isEmpty || pointerDownMap.isEmpty) {
+      return [];
+    }
+    List<Offset> result = [];
+    pointerMoveMap.forEach((key, move) {
+      var down = pointerDownMap[key];
+      if (down != null) {
+        double dx = move.localPosition.dx - down.localPosition.dx;
+        double dy = move.localPosition.dy - down.localPosition.dy;
+        result.add(Offset(dx, dy));
+      }
+    });
+    return result;
   }
 
   /// 是否已经处理了事件, 会在手势抬起/取消时, 重置为false
@@ -111,4 +208,34 @@ mixin MultiPointerDetector {
 
   /// 处理事件
   bool handlePointerEvent(PointerEvent event) => false;
+
+  /// 当前移动的手势与按下的手势, 之间的偏移
+  Offset moveDownDelta() {
+    final offsetList = getPointerDeltaList(pointerMoveMap, pointerDownMap);
+    if (offsetList.isNotEmpty) {
+      //返回最小的偏移
+      return offsetList.reduce((value, element) {
+        if (value.dx < element.dx || value.dy < element.dy) {
+          return value;
+        }
+        return element;
+      });
+    }
+    return Offset.zero;
+  }
+
+  /// 当前移动的手势与上一次移动的手势, 之间的偏移
+  Offset moveLastDelta() {
+    final offsetList = getPointerDeltaList(pointerMoveMap, pointerMoveLastMap);
+    if (offsetList.isNotEmpty) {
+      //返回最小的偏移
+      return offsetList.reduce((value, element) {
+        if (value.dx < element.dx || value.dy < element.dy) {
+          return value;
+        }
+        return element;
+      });
+    }
+    return Offset.zero;
+  }
 }

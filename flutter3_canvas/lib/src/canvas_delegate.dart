@@ -8,6 +8,9 @@ part of flutter3_canvas;
 class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---入口点---
 
+  /// 上下文, 用来发送通知
+  BuildContext? delegateContext;
+
   /// 绘制入口点
   @entryPoint
   void paint(PaintingContext context, Offset offset) {
@@ -36,6 +39,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 事件管理
   late CanvasEventManager canvasEventManager = CanvasEventManager(this);
 
+  /// 画布监听
+  Set<CanvasListener> canvasListeners = {};
+
   //endregion ---core---
 
   //region ---api---
@@ -44,6 +50,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @api
   void refresh() {
     repaint.value++;
+  }
+
+  /// 添加画布监听
+  @api
+  void addCanvasListener(CanvasListener listener) {
+    canvasListeners.add(listener);
+  }
+
+  /// 移除画布监听
+  @api
+  void removeCanvasListener(CanvasListener listener) {
+    canvasListeners.remove(listener);
   }
 
   //endregion ---api---
@@ -55,6 +73,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       CanvasViewBox canvasViewBox, bool isCompleted) {
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     refresh();
+    CanvasViewBoxChangedNotification(canvasViewBox, isCompleted)
+        .dispatch(delegateContext);
+    canvasListeners.toList(growable: false).forEach((element) {
+      element.onCanvasViewBoxChangedAction?.call(canvasViewBox, isCompleted);
+    });
   }
 
   //endregion ---事件派发---
