@@ -13,10 +13,12 @@ class CanvasViewBox with Diagnosticable {
   //region ---属性---
 
   /// 整个可绘制的区域, 包含坐标尺区域和内容区域以及其他空隙区域
+  /// [updatePaintBounds] 在此方法中会更新此值
   @dp
   Rect paintBounds = Rect.zero;
 
   /// 内容绘制的区域, 在[paintBounds]中
+  /// [updatePaintBounds] 在此方法中会更新此值
   @dp
   Rect canvasBounds = Rect.zero;
 
@@ -65,10 +67,10 @@ class CanvasViewBox with Diagnosticable {
   void updatePaintBounds(Size size, bool isInitialize) {
     paintBounds = Offset.zero & size;
 
-    if (isDebug) {
+    /*if (isDebug) {
       double deflate = 50;
       canvasBounds = paintBounds.deflate(deflate);
-    } else {
+    } else*/ {
       var axisManager = canvasDelegate.canvasPaintManager.axisManager;
       canvasBounds = Rect.fromLTRB(
         paintBounds.left + axisManager.yAxisWidth,

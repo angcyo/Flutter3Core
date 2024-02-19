@@ -25,6 +25,12 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
     handleDispatchEvent(event);
+
+    if (event.isPointerUp) {
+      final pivot = event.localPosition;
+      l.d('pivot:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
+          '->${canvasDelegate.canvasViewBox.toScenePoint(pivot)}');
+    }
   }
 }
 
@@ -126,6 +132,7 @@ class CanvasScaleComponent extends IHandleEvent
     }
     final scale = doubleScaleValue;
     final pivot = event.localPosition;
+    //debugger();
     scaleBy(
       scaleX: scale,
       scaleY: scale,
