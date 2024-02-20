@@ -49,6 +49,9 @@ class CanvasRenderBox extends RenderBox {
   );
 
   @override
+  bool get isRepaintBoundary => true;
+
+  @override
   void performLayout() {
     double? width =
         constraints.maxWidth == double.infinity ? null : constraints.maxWidth;
@@ -57,7 +60,7 @@ class CanvasRenderBox extends RenderBox {
     size =
         Size(width ?? height ?? screenWidth, height ?? width ?? screenHeight);
 
-    canvasDelegate.canvasViewBox.updatePaintBounds(size, true);
+    canvasDelegate.layout(size);
   }
 
   @override

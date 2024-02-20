@@ -19,6 +19,16 @@ class AxisManager extends IPainter {
   /// y纵坐标轴的数据
   List<AxisData> yData = [];
 
+  /// x横坐标轴的绘制边界
+  /// [CanvasPaintManager.onUpdatePaintBounds] 会更新此值
+  @dp
+  Rect xAxisBounds = Rect.zero;
+
+  /// y纵坐标轴的绘制边界
+  /// [CanvasPaintManager.onUpdatePaintBounds] 会更新此值
+  @dp
+  Rect yAxisBounds = Rect.zero;
+
   /// x横坐标轴的高度
   @dp
   double xAxisHeight = 20;
@@ -39,28 +49,18 @@ class AxisManager extends IPainter {
 
   /// 主轴的画笔
   Paint primaryPaint = Paint()
-    ..color = const Color(0xFF888888)
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
 
   /// 次要轴的画笔
   Paint secondaryPaint = Paint()
-    ..color = const Color(0xFF666666)
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
 
   /// 正常轴的画笔
   Paint normalPaint = Paint()
-    ..color = const Color(0xFF666666)
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
-
-  /// 标签的画笔
-  Color labelColor = const Color(0xFF666666);
-
-  /// 标签的字体大小
-  @dp
-  double labelFontSize = 8;
 
   AxisManager(this.paintManager);
 
@@ -159,44 +159,19 @@ class AxisManager extends IPainter {
     final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
     final canvasBounds = paintManager.canvasDelegate.canvasViewBox.canvasBounds;
 
+    primaryPaint.color =
+        paintManager.canvasDelegate.canvasStyle.axisPrimaryColor;
+    secondaryPaint.color =
+        paintManager.canvasDelegate.canvasStyle.axisSecondaryColor;
+    normalPaint.color = paintManager.canvasDelegate.canvasStyle.axisNormalColor;
+
+    //绘制坐标刻度
     if (drawType.have(DRAW_AXIS)) {
       // x
-      for (var axisData in xData) {
-        // 绘制坐标轴, 竖线
-        final height = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
-            ? xAxisHeight
-            : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
-                ? xAxisHeight * 0.8
-                : xAxisHeight * 0.5;
-        final bottom = paintBounds.top + xAxisHeight;
+      canvas.withClipRect(isDebug ? null : xAxisBounds, () {
+        paintXAxis(canvas);
+      });
 
-        final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
-            ? primaryPaint
-            : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
-                ? secondaryPaint
-                : normalPaint;
-
-        canvas.drawLine(
-          Offset(axisData.viewValue, bottom - height),
-          Offset(axisData.viewValue, bottom),
-          paint,
-        );
-
-        if (axisData.axisType.have(IUnit.AXIS_TYPE_LABEL)) {
-          // 绘制Label
-          TextPainter(
-              text: TextSpan(
-                  text: axisUnit.format(axisData.sceneValue),
-                  style: TextStyle(
-                    color: labelColor,
-                    fontSize: labelFontSize,
-                  )),
-              textDirection: TextDirection.ltr)
-            ..layout()
-            ..paint(canvas,
-                Offset(axisData.viewValue + axisLabelOffset, bottom - height));
-        }
-      }
       //边界线
       canvas.drawLine(
         Offset(paintBounds.left, paintBounds.top + xAxisHeight),
@@ -205,47 +180,10 @@ class AxisManager extends IPainter {
       );
 
       // y
-      for (var axisData in yData) {
-        // 绘制坐标轴, 横线
-        final width = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
-            ? yAxisWidth
-            : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
-                ? yAxisWidth * 0.8
-                : yAxisWidth * 0.5;
+      canvas.withClipRect(isDebug ? null : yAxisBounds, () {
+        paintYAxis(canvas);
+      });
 
-        final right = paintBounds.left + yAxisWidth;
-
-        final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
-            ? primaryPaint
-            : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
-                ? secondaryPaint
-                : normalPaint;
-
-        canvas.drawLine(
-          Offset(right, axisData.viewValue),
-          Offset(right - width, axisData.viewValue),
-          paint,
-        );
-
-        if (axisData.axisType.have(IUnit.AXIS_TYPE_LABEL)) {
-          // 绘制Label, 需要旋转90度
-          canvas.withRotate(-90, () {
-            TextPainter(
-                text: TextSpan(
-                    text: axisUnit.format(axisData.sceneValue),
-                    style: TextStyle(
-                      color: labelColor,
-                      fontSize: labelFontSize,
-                    )),
-                textDirection: TextDirection.ltr)
-              ..layout()
-              ..paint(canvas,
-                  Offset(right - width, axisData.viewValue - axisLabelOffset));
-          },
-              pivotX: right - width,
-              pivotY: axisData.viewValue - axisLabelOffset);
-        }
-      }
       //边界线
       canvas.drawLine(
         Offset(paintBounds.left + yAxisWidth, paintBounds.top),
@@ -254,9 +192,8 @@ class AxisManager extends IPainter {
       );
     }
 
+    // 绘制坐标网格
     if (drawType.have(DRAW_GRID)) {
-      // 绘制坐标网格
-
       canvas.withClipRect(canvasBounds, () {
         for (var axisData in xData) {
           final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
@@ -280,6 +217,93 @@ class AxisManager extends IPainter {
               Offset(paintBounds.right, axisData.viewValue), paint);
         }
       });
+    }
+  }
+
+  /// 绘制x轴刻度
+  void paintXAxis(Canvas canvas) {
+    final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
+    for (var axisData in xData) {
+      // 绘制坐标轴, 竖线
+      final height = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+          ? xAxisHeight
+          : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+              ? xAxisHeight * 0.8
+              : xAxisHeight * 0.5;
+      final bottom = paintBounds.top + xAxisHeight;
+
+      final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+          ? primaryPaint
+          : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+              ? secondaryPaint
+              : normalPaint;
+
+      canvas.drawLine(
+        Offset(axisData.viewValue, bottom - height),
+        Offset(axisData.viewValue, bottom),
+        paint,
+      );
+
+      if (axisData.axisType.have(IUnit.AXIS_TYPE_LABEL)) {
+        // 绘制Label
+        TextPainter(
+            text: TextSpan(
+                text: axisUnit.format(axisData.sceneValue),
+                style: TextStyle(
+                  color: paintManager.canvasDelegate.canvasStyle.axisLabelColor,
+                  fontSize:
+                      paintManager.canvasDelegate.canvasStyle.axisLabelFontSize,
+                )),
+            textDirection: TextDirection.ltr)
+          ..layout()
+          ..paint(canvas,
+              Offset(axisData.viewValue + axisLabelOffset, bottom - height));
+      }
+    }
+  }
+
+  void paintYAxis(Canvas canvas) {
+    final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
+    for (var axisData in yData) {
+      // 绘制坐标轴, 横线
+      final width = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+          ? yAxisWidth
+          : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+              ? yAxisWidth * 0.8
+              : yAxisWidth * 0.5;
+
+      final right = paintBounds.left + yAxisWidth;
+
+      final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+          ? primaryPaint
+          : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+              ? secondaryPaint
+              : normalPaint;
+
+      canvas.drawLine(
+        Offset(right, axisData.viewValue),
+        Offset(right - width, axisData.viewValue),
+        paint,
+      );
+
+      if (axisData.axisType.have(IUnit.AXIS_TYPE_LABEL)) {
+        // 绘制Label, 需要旋转90度
+        canvas.withRotate(-90, () {
+          TextPainter(
+              text: TextSpan(
+                  text: axisUnit.format(axisData.sceneValue),
+                  style: TextStyle(
+                    color:
+                        paintManager.canvasDelegate.canvasStyle.axisLabelColor,
+                    fontSize: paintManager
+                        .canvasDelegate.canvasStyle.axisLabelFontSize,
+                  )),
+              textDirection: TextDirection.ltr)
+            ..layout()
+            ..paint(canvas,
+                Offset(right - width, axisData.viewValue - axisLabelOffset));
+        }, pivotX: right - width, pivotY: axisData.viewValue - axisLabelOffset);
+      }
     }
   }
 }

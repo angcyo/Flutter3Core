@@ -17,12 +17,26 @@ class CanvasPaintManager with Diagnosticable {
 
   CanvasPaintManager(this.canvasDelegate);
 
+  /// 绘制边界大小更新后触发
+  @entryPoint
+  void onUpdatePaintBounds() {
+    final paintBounds = canvasDelegate.canvasViewBox.paintBounds;
+    final xAxisLeft = paintBounds.left + axisManager.yAxisWidth;
+    final yAxisTop = paintBounds.top + axisManager.xAxisHeight;
+    axisManager.xAxisBounds = Rect.fromLTRB(xAxisLeft, paintBounds.top,
+        paintBounds.right, paintBounds.top + axisManager.xAxisHeight);
+    axisManager.yAxisBounds = Rect.fromLTRB(paintBounds.left, yAxisTop,
+        paintBounds.left + axisManager.yAxisWidth, paintBounds.bottom);
+  }
+
   @entryPoint
   void paint(PaintingContext context, Offset offset) {
     final canvas = context.canvas;
     canvas.withOffset(offset, () {
-      canvas.drawRect(canvasDelegate.canvasViewBox.canvasBounds,
-          Paint()..color = Colors.blue);
+      if (isDebug) {
+        /*canvas.drawRect(canvasDelegate.canvasViewBox.canvasBounds,
+            Paint()..color = Colors.blue);*/
+      }
 
       var paintMeta = PaintMeta(matrix: Matrix4.zero());
       axisManager.paint(canvas, paintMeta);

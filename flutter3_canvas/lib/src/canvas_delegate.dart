@@ -11,21 +11,31 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 上下文, 用来发送通知
   BuildContext? delegateContext;
 
-  /// 绘制入口点
+  /// 绘制的入口点
   @entryPoint
   void paint(PaintingContext context, Offset offset) {
     canvasPaintManager.paint(context, offset);
   }
 
-  /// 手势入口点
+  /// 手势输入的入口点
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     canvasEventManager.handleEvent(event, entry);
   }
 
+  /// 布局完成后的入口点
+  @entryPoint
+  void layout(Size size) {
+    canvasViewBox.updatePaintBounds(size, true);
+    canvasPaintManager.onUpdatePaintBounds();
+  }
+
   //endregion ---入口点---
 
   //region ---core---
+
+  /// 画布样式
+  CanvasStyle canvasStyle = CanvasStyle();
 
   /// 重绘通知, 监听此通知, 主动触发重绘
   ValueNotifier<int> repaint = ValueNotifier(0);
