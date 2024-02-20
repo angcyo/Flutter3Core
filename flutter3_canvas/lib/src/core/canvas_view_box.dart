@@ -67,10 +67,10 @@ class CanvasViewBox with Diagnosticable {
   void updatePaintBounds(Size size, bool isInitialize) {
     paintBounds = Offset.zero & size;
 
-    /*if (isDebug) {
+    if (isDebug) {
       double deflate = 50;
       canvasBounds = paintBounds.deflate(deflate);
-    } else*/ {
+    } else {
       var axisManager = canvasDelegate.canvasPaintManager.axisManager;
       canvasBounds = Rect.fromLTRB(
         paintBounds.left + axisManager.yAxisWidth,
