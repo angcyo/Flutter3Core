@@ -48,19 +48,13 @@ class AxisManager extends IPainter {
   int drawType = DRAW_AXIS | DRAW_GRID;
 
   /// 主轴的画笔
-  Paint primaryPaint = Paint()
-    ..strokeWidth = 1
-    ..style = PaintingStyle.stroke;
+  Paint primaryPaint = Paint()..style = PaintingStyle.stroke;
 
   /// 次要轴的画笔
-  Paint secondaryPaint = Paint()
-    ..strokeWidth = 1
-    ..style = PaintingStyle.stroke;
+  Paint secondaryPaint = Paint()..style = PaintingStyle.stroke;
 
   /// 正常轴的画笔
-  Paint normalPaint = Paint()
-    ..strokeWidth = 1
-    ..style = PaintingStyle.stroke;
+  Paint normalPaint = Paint()..style = PaintingStyle.stroke;
 
   AxisManager(this.paintManager);
 
@@ -164,6 +158,13 @@ class AxisManager extends IPainter {
     secondaryPaint.color =
         paintManager.canvasDelegate.canvasStyle.axisSecondaryColor;
     normalPaint.color = paintManager.canvasDelegate.canvasStyle.axisNormalColor;
+
+    primaryPaint.strokeWidth =
+        paintManager.canvasDelegate.canvasStyle.axisPrimaryWidth;
+    secondaryPaint.strokeWidth =
+        paintManager.canvasDelegate.canvasStyle.axisSecondaryWidth;
+    normalPaint.strokeWidth =
+        paintManager.canvasDelegate.canvasStyle.axisNormalWidth;
 
     //绘制坐标刻度
     if (drawType.have(DRAW_AXIS)) {

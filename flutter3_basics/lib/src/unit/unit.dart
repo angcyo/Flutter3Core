@@ -407,7 +407,7 @@ extension UnitNumEx on num {
 
   /// 将指定单位[unit](默认是像素单位)的值[value]转换成毫米单位的值
   @mm
-  dynamic toMm([@unit IUnit unit = IUnit.px]) {
+  dynamic toMmFromPx([@unit IUnit unit = IUnit.px]) {
     return IUnit.mm.toUnit(toPixel(unit));
   }
 
@@ -418,6 +418,11 @@ extension UnitNumEx on num {
 
   @mm
   dynamic toDpFromMm([@unit IUnit unit = IUnit.mm]) {
+    return IUnit.dp.toUnit(toPixel(unit));
+  }
+
+  @mm
+  dynamic toDpFromPx([@unit IUnit unit = IUnit.px]) {
     return IUnit.dp.toUnit(toPixel(unit));
   }
 }
