@@ -20,10 +20,16 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   late CanvasFlingComponent canvasFlingComponent =
       CanvasFlingComponent(canvasDelegate);
 
+  CanvasBoundsEventComponent canvasBoundsEventComponent =
+      CanvasBoundsEventComponent();
+
   CanvasEventManager(this.canvasDelegate) {
+    //
     addHandleEventClient(canvasTranslateComponent);
     addHandleEventClient(canvasScaleComponent);
     addHandleEventClient(canvasFlingComponent);
+    //
+    addHandleEventClient(canvasBoundsEventComponent);
   }
 
   @entryPoint

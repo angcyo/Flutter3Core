@@ -25,6 +25,12 @@ extension EventEx on PointerEvent {
 
   /// 是否完成
   bool get isPointerFinish => isPointerUp || isPointerCancel;
+
+  /// 当前的事件, 是否超过了指定的移动阈值
+  bool isMoveExceed(Offset offset, [double threshold = kTouchSlop]) {
+    return (localPosition.dx - offset.dx).abs() > threshold ||
+        (localPosition.dy - offset.dy).abs() > threshold;
+  }
 }
 
 /// 事件处理
@@ -114,6 +120,78 @@ PointerCancelEvent createPointerCancelEvent(PointerEvent event) {
     device: 0,
     pointer: 1,
   );
+}
+
+/// 点击/长按事件探测
+mixin TouchDetectorMixin {
+  /// 点击事件
+  static const int TOUCH_TYPE_CLICK = 1;
+
+  /// 长按事件
+  static const int TOUCH_TYPE_LONG_PRESS = 2;
+
+  /// 超过此值的点视为无效
+  @dp
+  double touchDetectorSlop = kTouchSlop;
+
+  /// 按下时长超过此值, 视为长按
+  Duration touchLongPressTimeout = kLongPressTimeout;
+
+  /// N个手指对应的事件
+  final Map<int, PointerEvent> _pointerMap = {};
+
+  /// N个手指的长按定时器
+  final Map<int, Timer> _pointerLongMap = {};
+
+  @entryPoint
+  void addTouchDetectorPointerEvent(PointerEvent event) {
+    final pointer = event.pointer;
+    if (event.isPointerDown) {
+      _pointerMap[pointer] = event;
+      _pointerLongMap[pointer] = Timer(touchLongPressTimeout, () {
+        _checkLongPress(event);
+      });
+    } else if (event.isPointerUp) {
+      _checkClick(event);
+    }
+    if (event.isPointerFinish) {
+      _clear(event);
+    }
+  }
+
+  void _checkClick(PointerEvent event) {
+    final downEvent = _pointerMap[event.pointer];
+    if (downEvent == null ||
+        event.isMoveExceed(downEvent.localPosition, touchDetectorSlop)) {
+      //超出了移动范围
+      return;
+    }
+    onTouchDetectorPointerEvent(event, TOUCH_TYPE_CLICK);
+  }
+
+  /// 检查是否需要触发长按事件回调
+  void _checkLongPress(PointerEvent event) {
+    final downEvent = _pointerMap[event.pointer];
+    if (downEvent == null ||
+        event.isMoveExceed(downEvent.localPosition, touchDetectorSlop)) {
+      //超出了移动范围
+      return;
+    }
+    onTouchDetectorPointerEvent(event, TOUCH_TYPE_LONG_PRESS);
+    _clear(event);
+  }
+
+  /// 清理指定手指的数据
+  void _clear(PointerEvent event) {
+    var pointer = event.pointer;
+    _pointerMap.remove(pointer);
+    _pointerLongMap[pointer]?.cancel();
+    _pointerLongMap.remove(pointer);
+  }
+
+  /// 处理点击事件
+  @overridePoint
+  bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) => false;
 }
 
 /// 双击探测

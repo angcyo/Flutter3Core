@@ -79,6 +79,7 @@ void postCallback(VoidCallback callback) {
 }
 
 /// 使用[Timer]尽快执行[callback]
+/// [Timer.cancel]
 Timer postDelayCallback(VoidCallback callback,
         [Duration duration = Duration.zero]) =>
     Timer(duration, callback);

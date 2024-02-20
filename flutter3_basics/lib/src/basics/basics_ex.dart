@@ -897,6 +897,12 @@ extension IterableEx on Iterable {
       return r;
     }).toList(growable: growable);
   }
+
+  /// 复制一份, 浅拷贝
+  List<T> clone<T>([
+    bool growable = false,
+  ]) =>
+      toList(growable: growable) as List<T>;
 }
 
 /// [ListEx]
