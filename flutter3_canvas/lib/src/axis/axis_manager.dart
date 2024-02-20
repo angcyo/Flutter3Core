@@ -95,13 +95,14 @@ class AxisManager extends IPainter {
     distance = paintBounds.right - origin.dx;
     viewValue = origin.dx;
     while (distance > 0) {
-      double gap = axisUnit.getAxisGap(index, scaleX) * scaleX;
+      double gap = axisUnit.getAxisGap(index, scaleX);
+      double gapValue = gap * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
       if (viewValue >= yAxisWidth && viewValue <= paintBounds.right) {
-        xData.add(AxisData(viewValue, index * gap, axisType));
+        xData.add(AxisData(viewValue, index * gap, axisType, index));
       }
-      distance -= gap;
-      viewValue += gap;
+      distance -= gapValue;
+      viewValue += gapValue;
       index++;
     }
     // 2. x轴负方向
@@ -109,14 +110,15 @@ class AxisManager extends IPainter {
     viewValue = origin.dx;
     index = 0;
     while (distance > 0) {
-      double gap = axisUnit.getAxisGap(index, scaleX) * scaleX;
+      double gap = axisUnit.getAxisGap(index, scaleX);
+      double gapValue = gap * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
       if (viewValue >= yAxisWidth && viewValue <= paintBounds.right) {
-        xData.add(AxisData(viewValue, -index * gap, axisType));
+        xData.add(AxisData(viewValue, index * gap, axisType, index));
       }
-      distance -= gap;
-      viewValue -= gap;
-      index++;
+      distance -= gapValue;
+      viewValue -= gapValue;
+      index--;
     }
 
     // 计算y轴的数据
@@ -125,13 +127,14 @@ class AxisManager extends IPainter {
     viewValue = origin.dy;
     index = 0;
     while (distance > 0) {
-      double gap = axisUnit.getAxisGap(index, scaleY) * scaleY;
+      double gap = axisUnit.getAxisGap(index, scaleY);
+      double gapValue = gap * scaleY;
       int axisType = axisUnit.getAxisType(index, scaleY);
       if (viewValue >= xAxisHeight && viewValue <= paintBounds.bottom) {
-        yData.add(AxisData(viewValue, index * gap, axisType));
+        yData.add(AxisData(viewValue, index * gap, axisType, index));
       }
-      distance -= gap;
-      viewValue += gap;
+      distance -= gapValue;
+      viewValue += gapValue;
       index++;
     }
     // 2. y轴负方向
@@ -139,14 +142,15 @@ class AxisManager extends IPainter {
     viewValue = origin.dy;
     index = 0;
     while (distance > 0) {
-      double gap = axisUnit.getAxisGap(index, scaleY) * scaleY;
+      double gap = axisUnit.getAxisGap(index, scaleY);
+      double gapValue = gap * scaleY;
       int axisType = axisUnit.getAxisType(index, scaleY);
       if (viewValue >= xAxisHeight && viewValue <= paintBounds.bottom) {
-        yData.add(AxisData(viewValue, -index * gap, axisType));
+        yData.add(AxisData(viewValue, index * gap, axisType, index));
       }
-      distance -= gap;
-      viewValue -= gap;
-      index++;
+      distance -= gapValue;
+      viewValue -= gapValue;
+      index--;
     }
   }
 
@@ -282,12 +286,12 @@ class AxisManager extends IPainter {
 
 /// 坐标轴数据
 class AxisData {
-  /// 视图中, 距离视图左上角的距离值
+  /// 视图中, 距离视图左上角的距离值, 用来绘制坐标
   @dp
   @viewCoordinate
   final double viewValue;
 
-  /// 场景中, 距离场景原点的距离值
+  /// 场景中, 距离场景原点的距离值, 用来绘制label
   @dp
   @sceneCoordinate
   final double sceneValue;
@@ -299,5 +303,8 @@ class AxisData {
   /// [AXIS_TYPE_LABEL]
   final int axisType;
 
-  AxisData(this.viewValue, this.sceneValue, this.axisType);
+  /// 当前刻度距离0开始的索引
+  final int index;
+
+  AxisData(this.viewValue, this.sceneValue, this.axisType, this.index);
 }

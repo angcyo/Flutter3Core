@@ -48,7 +48,7 @@ double INCHES_PER_MM = (1.0 / 25.4);
 
 abstract class IUnit {
   /// 单位常量
-  static const pixel = PixelUnit();
+  static const px = PixelUnit();
   static const dp = DpUnit();
   static const mm = MmUnit();
   static const pt = PtUnit();
@@ -76,11 +76,11 @@ abstract class IUnit {
 
   /// 将当前单位的值[value]转换成[px]单位的值
   @pixel
-  num toPx(@unit num value);
+  dynamic toPx(@unit dynamic value);
 
   /// 将[px]单位的值[value]转换成当前单位的值
   @unit
-  num toUnit(@pixel num value);
+  dynamic toUnit(@pixel dynamic value);
 
   /// 格式化当前单位数值的输出
   /// [showSuffix] 是否显示单位后缀
@@ -136,10 +136,10 @@ class PixelUnit implements IUnit {
   }
 
   @override
-  num toPx(num value) => value;
+  dynamic toPx(dynamic value) => value;
 
   @override
-  num toUnit(num value) => value;
+  dynamic toUnit(dynamic value) => value;
 
   @override
   double getAxisGap(int index, double scale) => 10;
@@ -180,10 +180,10 @@ class DpUnit implements IUnit {
   }
 
   @override
-  num toPx(num value) => value * dpr;
+  dynamic toPx(dynamic value) => value * dpr;
 
   @override
-  num toUnit(num value) => value / dpr;
+  dynamic toUnit(dynamic value) => value / dpr;
 
   @override
   double getAxisGap(int index, double scale) => 10;
@@ -224,10 +224,10 @@ class MmUnit implements IUnit {
   }
 
   @override
-  num toPx(num value) => value * dpi * INCHES_PER_MM;
+  dynamic toPx(dynamic value) => value * dpi * INCHES_PER_MM;
 
   @override
-  num toUnit(num value) => value / dpi / INCHES_PER_MM;
+  dynamic toUnit(dynamic value) => value / dpi / INCHES_PER_MM;
 
   @override
   double getAxisGap(int index, double scale) => 10;
@@ -268,10 +268,10 @@ class PtUnit implements IUnit {
   }
 
   @override
-  num toPx(num value) => value * dpi * INCHES_PER_PT;
+  dynamic toPx(dynamic value) => value * dpi * INCHES_PER_PT;
 
   @override
-  num toUnit(num value) => value / dpi / INCHES_PER_PT;
+  dynamic toUnit(dynamic value) => value / dpi / INCHES_PER_PT;
 
   @override
   double getAxisGap(int index, double scale) => 10;
@@ -312,10 +312,10 @@ class InchUnit implements IUnit {
   }
 
   @override
-  num toPx(num value) => value * dpi;
+  dynamic toPx(dynamic value) => value * dpi;
 
   @override
-  num toUnit(num value) => value / dpi;
+  dynamic toUnit(dynamic value) => value / dpi;
 
   @override
   double getAxisGap(int index, double scale) => 10;
@@ -338,7 +338,7 @@ extension UnitNumEx on num {
   /// 将指定单位[unit](默认是毫米单位)的值[value]转换成像素单位的值
   /// [IUnit.mm]
   @pixel
-  num toPixel([@unit IUnit unit = IUnit.mm]) {
+  dynamic toPixel([@unit IUnit unit = IUnit.mm]) {
     return unit.toPx(this);
   }
 
@@ -371,7 +371,7 @@ extension UnitNumEx on num {
       removeZero: removeZero,
       ensureInt: ensureInt,
       fractionDigits: fractionDigits,
-      unit: IUnit.pixel,
+      unit: IUnit.px,
     );
   }
 
@@ -407,12 +407,17 @@ extension UnitNumEx on num {
 
   /// 将指定单位[unit](默认是像素单位)的值[value]转换成毫米单位的值
   @mm
-  num toMm([@unit IUnit unit = IUnit.pixel]) {
+  dynamic toMm([@unit IUnit unit = IUnit.px]) {
     return IUnit.mm.toUnit(toPixel(unit));
   }
 
   @mm
-  num toMmFromDp([@unit IUnit unit = IUnit.dp]) {
+  dynamic toMmFromDp([@unit IUnit unit = IUnit.dp]) {
     return IUnit.mm.toUnit(toPixel(unit));
+  }
+
+  @mm
+  dynamic toDpFromMm([@unit IUnit unit = IUnit.mm]) {
+    return IUnit.dp.toUnit(toPixel(unit));
   }
 }

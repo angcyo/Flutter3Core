@@ -136,7 +136,7 @@ class CanvasScaleComponent extends IHandleEvent
     scaleBy(
       scaleX: scale,
       scaleY: scale,
-      pivot: canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot),
+      pivot: canvasDelegate.canvasViewBox.toScenePoint(pivot),
       anim: true,
     );
     return super.onDoubleTapDetectorPointerEvent(event);
@@ -168,8 +168,7 @@ class CanvasScaleComponent extends IHandleEvent
         scaleBy(
             scaleX: scale,
             scaleY: scale,
-            pivot:
-                canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot));
+            pivot: canvasDelegate.canvasViewBox.toScenePoint(pivot));
         return true;
       }
     }
