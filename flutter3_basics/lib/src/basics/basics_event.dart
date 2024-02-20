@@ -164,6 +164,7 @@ mixin DoubleTapDetectorMixin {
   }
 
   /// 处理双击事件
+  @overridePoint
   bool onDoubleTapDetectorPointerEvent(PointerEvent event) => false;
 }
 
@@ -191,15 +192,19 @@ mixin MultiPointerDetectorMixin {
   }
 
   /// 获取每个手指之间的移动距离
+  /// [pointerMoveMap] 当前移动时的点
+  /// [pointerDownMap] 当前按下的点
+  /// [pointerDownMap2] 最开始按下的点
   @dp
   static List<Offset> getPointerDeltaList(Map<int, PointerEvent> pointerMoveMap,
-      Map<int, PointerEvent> pointerDownMap) {
+      Map<int, PointerEvent> pointerDownMap,
+      [Map<int, PointerEvent>? pointerDownMap2]) {
     if (pointerMoveMap.isEmpty || pointerDownMap.isEmpty) {
       return [];
     }
     List<Offset> result = [];
     pointerMoveMap.forEach((key, move) {
-      var down = pointerDownMap[key];
+      var down = pointerDownMap[key] ?? pointerDownMap2?[key];
       if (down != null) {
         double dx = move.localPosition.dx - down.localPosition.dx;
         double dy = move.localPosition.dy - down.localPosition.dy;
@@ -221,7 +226,7 @@ mixin MultiPointerDetectorMixin {
   }
 
   /// 是否已经处理了事件, 会在手势抬起/取消时, 重置为false
-  bool isHandledEvent = false;
+  bool isHandledMultiPointerDetectorEvent = false;
 
   /// 按下的点
   final Map<int, PointerEvent> pointerDownMap = {};
@@ -251,7 +256,7 @@ mixin MultiPointerDetectorMixin {
     //2---
     if (handleMultiPointerDetectorPointerEvent(event)) {
       //处理了事件, 将down坐标更新
-      isHandledEvent = true;
+      isHandledMultiPointerDetectorEvent = true;
 
       pointerDownMap.clear();
       pointerDownMap.addAll(pointerMoveMap);
@@ -263,12 +268,13 @@ mixin MultiPointerDetectorMixin {
       pointerMoveMap.remove(event.pointer);
       pointerMoveLastMap.remove(event.pointer);
     }
-    if (isHandledEvent && pointerDownMap.isEmpty) {
-      isHandledEvent = false;
+    if (isHandledMultiPointerDetectorEvent && pointerDownMap.isEmpty) {
+      isHandledMultiPointerDetectorEvent = false;
     }
   }
 
   /// 处理多指操作事件
+  @overridePoint
   bool handleMultiPointerDetectorPointerEvent(PointerEvent event) => false;
 
   /// 当前移动的手势与按下的手势, 之间的偏移
@@ -288,7 +294,8 @@ mixin MultiPointerDetectorMixin {
 
   /// 当前移动的手势与上一次移动的手势, 之间的偏移
   Offset moveLastDelta() {
-    final offsetList = getPointerDeltaList(pointerMoveMap, pointerMoveLastMap);
+    final offsetList =
+        getPointerDeltaList(pointerMoveMap, pointerMoveLastMap, pointerDownMap);
     if (offsetList.isNotEmpty) {
       //返回最小的偏移
       return offsetList.reduce((value, element) {
@@ -299,5 +306,159 @@ mixin MultiPointerDetectorMixin {
       });
     }
     return Offset.zero;
+  }
+
+  /// 所有手指移动的距离是否大于指定的阈值, 并且是同方向的
+  /// [isSameDirection] 是否是同方向
+  bool isAllMoveDeltaExceedX(double threshold, [bool isSameDirection = true]) {
+    final offsetList = getPointerDeltaList(pointerMoveMap, pointerDownMap);
+    if (offsetList.isNotEmpty) {
+      int? direction;
+      for (var offset in offsetList) {
+        if (offset.dx.abs() < threshold) {
+          //x轴移动距离不够
+          return false;
+        }
+        if (isSameDirection) {
+          //还需要判断同方向
+          int d = offset.dx > 0 ? 1 : -1;
+          direction ??= d;
+          if (direction != d) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  bool isAllMoveDeltaExceedY(double threshold, [bool isSameDirection = true]) {
+    final offsetList = getPointerDeltaList(pointerMoveMap, pointerDownMap);
+    if (offsetList.isNotEmpty) {
+      int? direction;
+      for (var offset in offsetList) {
+        if (offset.dy.abs() < threshold) {
+          //y轴移动距离不够
+          return false;
+        }
+        if (isSameDirection) {
+          //还需要判断同方向
+          int d = offset.dy > 0 ? 1 : -1;
+          direction ??= d;
+          if (direction != d) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+}
+
+/// fling 快速滑动探测
+/// [DragGestureRecognizer._velocityTrackers]
+/// [DragGestureRecognizer._defaultBuilder]
+/// [DragGestureRecognizer.isFlingGesture]
+mixin FlingDetectorMixin {
+  /// 每个手指的速度追踪器
+  final Map<int, VelocityTracker> velocityTrackersMap = {};
+
+  @entryPoint
+  void addFlingDetectorPointerEvent(PointerEvent event) {
+    if (event is PointerDownEvent) {
+      velocityTrackersMap[event.pointer] = VelocityTracker.withKind(event.kind);
+    }
+
+    //1
+    final tracker = velocityTrackersMap[event.pointer];
+    tracker?.addPosition(event.timeStamp, event.localPosition);
+
+    //2
+    if (tracker != null && event is PointerUpEvent) {
+      final velocity = tracker.getVelocity();
+      if (handleFlingDetectorPointerEvent(event, velocity)) {
+        velocityTrackersMap.remove(event.pointer);
+      }
+    }
+
+    //3
+    if (event is PointerUpEvent || event is PointerCancelEvent) {
+      velocityTrackersMap.remove(event.pointer);
+    }
+  }
+
+  /// 当手势抬起时, 处理是否需要快速滑动事件
+  @overridePoint
+  bool handleFlingDetectorPointerEvent(PointerEvent event, Velocity velocity) {
+    velocity.pixelsPerSecond;
+    return false;
+  }
+
+  /// 开始快速滑动
+  /// [ScrollUpdateNotification]
+  /// [ScrollStartNotification]
+  /// [OverscrollNotification]
+  /// [ScrollPosition.setPixels]
+  /// [ScrollPosition.didOverscrollBy]
+  /// [BouncingScrollPhysics.applyPhysicsToUserOffset]
+  ///
+  /// [ClampingScrollSimulation]
+  /// [BouncingScrollSimulation]
+  @api
+  AnimationController startFling(
+    void Function(double value) flingAction, {
+    required TickerProvider vsync,
+    required double fromValue,
+    required double velocity,
+    Duration duration = const Duration(seconds: 1),
+  }) {
+    /*final physics = const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());
+    final Simulation? simulation = physics.createBallisticSimulation(vsync, velocity);*/
+    final simulation =
+        ClampingScrollSimulation(position: fromValue, velocity: velocity);
+    return animation(vsync, (value, isCompleted) {
+      //debugger();
+      final x = simulation.x(duration.inSeconds * value);
+      l.d('fling $isCompleted :$value x:$x');
+      flingAction(x);
+    }, duration: duration);
+  }
+
+  /// 开始快速滑动
+  /// [AnimationController] 实现的fling必须从当前值开始, 到指定值结束
+  @api
+  @implementation
+  AnimationController startAnimationFling({
+    required TickerProvider vsync,
+    required double fromValue,
+    required double velocity,
+    Duration duration = const Duration(seconds: 1),
+    SpringDescription? springDescription,
+    AnimationBehavior? animationBehavior,
+  }) {
+    AnimationController controller = AnimationController(
+      value: fromValue,
+      vsync: vsync,
+      lowerBound: doubleMinValue,
+      upperBound: doubleMaxValue,
+      duration: duration,
+      debugLabel: '快速滑动:$fromValue :$velocity $duration',
+    );
+    if (isDebug) {
+      controller.addStatusListener((status) {
+        l.d('fling status:$status');
+      });
+      controller.addListener(() {
+        l.d('fling value:${controller.value}');
+      });
+    }
+    debugger();
+    controller.fling(
+        velocity: velocity,
+        springDescription: springDescription,
+        animationBehavior: animationBehavior);
+    return controller;
   }
 }

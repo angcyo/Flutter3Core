@@ -77,7 +77,7 @@ class PinchGestureBox extends RenderProxyBox with MultiPointerDetectorMixin {
 
   @override
   bool handleMultiPointerDetectorPointerEvent(PointerEvent event) {
-    if (isHandledEvent) {
+    if (isHandledMultiPointerDetectorEvent) {
       return true;
     }
 

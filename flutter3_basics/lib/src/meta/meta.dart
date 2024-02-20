@@ -158,13 +158,13 @@ class _Private {
 
 const private = _Private();
 
-class _Implemented {
+class _Implementation {
   final String des;
 
-  const _Implemented([this.des = '当前功能, 正在实现中...']);
+  const _Implementation([this.des = '当前功能, 正在实现中...']);
 }
 
-const implemented = _Implemented();
+const implementation = _Implementation();
 
 class EntryPoint {
   final String des;

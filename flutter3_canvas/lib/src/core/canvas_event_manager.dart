@@ -16,9 +16,14 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   late CanvasScaleComponent canvasScaleComponent =
       CanvasScaleComponent(canvasDelegate);
 
+  /// 画布快速滑动组件
+  late CanvasFlingComponent canvasFlingComponent =
+      CanvasFlingComponent(canvasDelegate);
+
   CanvasEventManager(this.canvasDelegate) {
     addHandleEventClient(canvasTranslateComponent);
     addHandleEventClient(canvasScaleComponent);
+    addHandleEventClient(canvasFlingComponent);
   }
 
   @entryPoint
@@ -26,7 +31,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     //debugger();
     handleDispatchEvent(event);
 
-    if (event.isPointerUp) {
+    if (isDebug && event.isPointerUp) {
       final pivot = event.localPosition;
       l.d('pivot:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
           '->${canvasDelegate.canvasViewBox.toScenePoint(pivot)}');
@@ -34,23 +39,33 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   }
 }
 
-/// 画布平移组件
-class CanvasTranslateComponent extends IHandleEvent
+/// [CanvasViewBox] 操作基础组件
+abstract class BaseCanvasViewBoxEventComponent extends IHandleEvent
     with CanvasComponentMixin, MultiPointerDetectorMixin, HandleEventMixin {
   final CanvasDelegate canvasDelegate;
 
+  BaseCanvasViewBoxEventComponent(this.canvasDelegate);
+
+  @override
+  void dispatchPointerEvent(PointerEvent event) {
+    if (!isCanvasComponentEnable) {
+      return;
+    }
+    super.dispatchPointerEvent(event);
+  }
+}
+
+/// 画布平移组件
+class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
   /// 移动阈值, 移动值, 达到此值时, 才会触发移动
   /// [kTouchSlop] 18
   @dp
   double translateThreshold = 3;
 
-  CanvasTranslateComponent(this.canvasDelegate);
+  CanvasTranslateComponent(super.canvasDelegate);
 
   @override
   bool handleMultiPointerDetectorPointerEvent(PointerEvent event) {
-    if (!isCanvasComponentEnable) {
-      return false;
-    }
     if (event.isPointerMove && pointerCount == 2) {
       //debugger();
       //双指移动
@@ -108,14 +123,8 @@ class CanvasTranslateComponent extends IHandleEvent
 }
 
 /// 画布缩放组件
-class CanvasScaleComponent extends IHandleEvent
-    with
-        CanvasComponentMixin,
-        MultiPointerDetectorMixin,
-        HandleEventMixin,
-        DoubleTapDetectorMixin {
-  final CanvasDelegate canvasDelegate;
-
+class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
+    with DoubleTapDetectorMixin {
   /// 缩放阈值, 缩放值, 达到此值时, 才会触发缩放
   @dp
   double scaleThreshold = 15;
@@ -123,7 +132,7 @@ class CanvasScaleComponent extends IHandleEvent
   /// 双击时, 需要放大的比例
   double doubleScaleValue = 1.5;
 
-  CanvasScaleComponent(this.canvasDelegate);
+  CanvasScaleComponent(super.canvasDelegate);
 
   @override
   void dispatchPointerEvent(PointerEvent event) {
@@ -133,9 +142,6 @@ class CanvasScaleComponent extends IHandleEvent
 
   @override
   bool onDoubleTapDetectorPointerEvent(PointerEvent event) {
-    if (!isCanvasComponentEnable) {
-      return false;
-    }
     final scale = doubleScaleValue;
     final pivot = event.localPosition;
     //debugger();
@@ -209,5 +215,66 @@ class CanvasScaleComponent extends IHandleEvent
       pivot: pivot,
       anim: anim,
     );
+  }
+}
+
+/// 画布快速滑动组件
+class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
+    with FlingDetectorMixin {
+  /// 速度阈值, 速度达到这个值时, 才会触发fling
+  double flingVelocityThreshold = 1000;
+
+  /// 滑动阈值, 滑动超过这个值时, 才会触发fling
+  @dp
+  double flingTranslateThreshold = 3;
+
+  CanvasFlingComponent(super.canvasDelegate);
+
+  AnimationController? _flingController;
+
+  @override
+  bool handleMultiPointerDetectorPointerEvent(PointerEvent event) {
+    //debugger();
+    if (event.isPointerDown) {
+      _flingController?.dispose();
+      _flingController = null;
+    }
+    addFlingDetectorPointerEvent(event);
+    return super.handleMultiPointerDetectorPointerEvent(event);
+  }
+
+  @override
+  bool handleFlingDetectorPointerEvent(PointerEvent event, Velocity velocity) {
+    //debugger();
+    if (pointerCount == 2 && event.isPointerUp) {
+      l.d('fling:$velocity');
+      if (velocity.pixelsPerSecond.dx.abs() > flingVelocityThreshold) {
+        //双指滑动
+        _flingController = startFling((value) {
+          canvasDelegate.canvasViewBox.translateTo(
+            value,
+            canvasDelegate.canvasViewBox.translateY,
+            anim: false,
+          );
+        },
+            vsync: canvasDelegate,
+            fromValue: canvasDelegate.canvasViewBox.translateX,
+            velocity: velocity.pixelsPerSecond.dx);
+      } else if (velocity.pixelsPerSecond.dy.abs() > flingVelocityThreshold) {
+        //双指滑动
+        l.d('fling:$velocity');
+        _flingController = startFling((value) {
+          canvasDelegate.canvasViewBox.translateTo(
+            canvasDelegate.canvasViewBox.translateX,
+            value,
+            anim: false,
+          );
+        },
+            vsync: canvasDelegate,
+            fromValue: canvasDelegate.canvasViewBox.translateY,
+            velocity: velocity.pixelsPerSecond.dy);
+      }
+    }
+    return super.handleFlingDetectorPointerEvent(event, velocity);
   }
 }

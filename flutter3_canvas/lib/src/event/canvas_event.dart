@@ -4,7 +4,7 @@ part of flutter3_canvas;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/02/18
 ///
-
+/// 简单的事件处理混入, 支持[ignoreHandle]
 mixin HandleEventMixin on IHandleEvent, MultiPointerDetectorMixin {
   /// 是否忽略处理事件, 会在手势抬起/取消时, 重置为false
   bool ignoreHandle = false;

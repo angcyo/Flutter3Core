@@ -49,7 +49,7 @@ extension Matrix4Ex on vector.Matrix4 {
   /// ```
   /// vector.Quaternion.fromRotation(getRotation()).z
   /// ```
-  @implemented
+  @implementation
   double get rotationZ => math.atan2(skewZ, scaleZ);
 
   /// 获取旋转角度, 弧度 [-PI..PI]
@@ -62,7 +62,7 @@ extension Matrix4Ex on vector.Matrix4 {
   double get skewY => row1.x;
 
   /// 获取Z轴倾斜比例
-  @implemented
+  @implementation
   double get skewZ => 0;
 
   /// 映射一个点

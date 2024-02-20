@@ -173,13 +173,6 @@ class AxisManager extends IPainter {
         paintXAxis(canvas);
       });
 
-      //边界线
-      canvas.drawLine(
-        Offset(paintBounds.left, paintBounds.top + xAxisHeight),
-        Offset(paintBounds.right, paintBounds.top + xAxisHeight),
-        primaryPaint,
-      );
-
       // y
       canvas.withClipRect(isDebug ? null : yAxisBounds, () {
         paintYAxis(canvas);
@@ -187,8 +180,13 @@ class AxisManager extends IPainter {
 
       //边界线
       canvas.drawLine(
-        Offset(paintBounds.left + yAxisWidth, paintBounds.top),
-        Offset(paintBounds.left + yAxisWidth, paintBounds.bottom),
+        Offset(paintBounds.left, xAxisBounds.bottom),
+        Offset(paintBounds.right, xAxisBounds.bottom),
+        primaryPaint,
+      );
+      canvas.drawLine(
+        Offset(yAxisBounds.right, paintBounds.top),
+        Offset(yAxisBounds.right, paintBounds.bottom),
         primaryPaint,
       );
     }
