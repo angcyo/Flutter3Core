@@ -66,11 +66,11 @@ class CanvasTranslateComponent extends IHandleEvent
         //横向移动
         if (offset1.dx > 0 && offset2.dx > 0) {
           //向右移动
-          translateBy(max(offset1.dx, offset2.dx), 0);
+          _translateBy(max(offset1.dx, offset2.dx), 0);
           return true;
         } else if (offset1.dx < 0 && offset2.dx < 0) {
           //向左移动
-          translateBy(min(offset1.dx, offset2.dx), 0);
+          _translateBy(min(offset1.dx, offset2.dx), 0);
           return true;
         }
       } else if (offset1.dy.abs() >= translateThreshold &&
@@ -78,16 +78,22 @@ class CanvasTranslateComponent extends IHandleEvent
         //纵向移动
         if (offset1.dy > 0 && offset2.dy > 0) {
           //向下移动
-          translateBy(0, max(offset1.dy, offset2.dy));
+          _translateBy(0, max(offset1.dy, offset2.dy));
           return true;
         } else if (offset1.dy < 0 && offset2.dy < 0) {
           //向上移动
-          translateBy(0, min(offset1.dy, offset2.dy));
+          _translateBy(0, min(offset1.dy, offset2.dy));
           return true;
         }
       }
     }
     return super.handleMultiPointerDetectorPointerEvent(event);
+  }
+
+  void _translateBy(double dx, double dy, {bool anim = false}) {
+    dx *= 1 / canvasDelegate.canvasViewBox.scaleX;
+    dy *= 1 / canvasDelegate.canvasViewBox.scaleY;
+    translateBy(dx, dy, anim: anim);
   }
 
   @api
@@ -112,7 +118,7 @@ class CanvasScaleComponent extends IHandleEvent
 
   /// 缩放阈值, 缩放值, 达到此值时, 才会触发缩放
   @dp
-  double scaleThreshold = 10;
+  double scaleThreshold = 15;
 
   /// 双击时, 需要放大的比例
   double doubleScaleValue = 1.5;
