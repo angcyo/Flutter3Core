@@ -258,7 +258,7 @@ class AxisManager extends IPainter {
             textDirection: TextDirection.ltr)
           ..layout()
           ..paint(canvas,
-              Offset(axisData.viewValue + axisLabelOffset, bottom - height));
+              Offset(axisData.viewValue + axisLabelOffset, xAxisBounds.top));
       }
     }
   }
@@ -302,8 +302,10 @@ class AxisManager extends IPainter {
               textDirection: TextDirection.ltr)
             ..layout()
             ..paint(canvas,
-                Offset(right - width, axisData.viewValue - axisLabelOffset));
-        }, pivotX: right - width, pivotY: axisData.viewValue - axisLabelOffset);
+                Offset(yAxisBounds.left, axisData.viewValue - axisLabelOffset));
+        },
+            pivotX: yAxisBounds.left,
+            pivotY: axisData.viewValue - axisLabelOffset);
       }
     }
   }

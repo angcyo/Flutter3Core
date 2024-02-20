@@ -69,6 +69,8 @@ abstract class IUnit {
   /// 需要绘制Label的刻度
   static const AXIS_TYPE_LABEL = AXIS_TYPE_NORMAL << 7;
 
+  const IUnit();
+
   //region ---基础---
 
   /// 单位后缀
@@ -97,6 +99,23 @@ abstract class IUnit {
 
   //region ---坐标轴---
 
+  @dp
+  double baseAxisGap(int index, double scale, @dp double baseGap) {
+    if (scale >= 4) {
+      //放大4倍后
+      return baseGap / 2;
+    } else if (scale <= 0.1) {
+      return baseGap * 50;
+    } else if (scale <= 0.25) {
+      //缩小4倍后
+      return baseGap * 10;
+    } else if (scale <= 0.75) {
+      return baseGap * 5;
+    } else {
+      return baseGap;
+    }
+  }
+
   /// 在坐标轴上, 每隔多少个dp距离单位, 显示一个刻度
   @dp
   double getAxisGap(int index, double scale);
@@ -107,14 +126,25 @@ abstract class IUnit {
   /// [AXIS_TYPE_SECONDARY]
   /// [AXIS_TYPE_PRIMARY]
   /// [AXIS_TYPE_LABEL]
-  int getAxisType(int index, double scale);
+  int getAxisType(int index, double scale) {
+    if (index % 10 == 0) {
+      return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
+    }
+    if (index % 10 == 5) {
+      if (scale < 0.75) {
+        return IUnit.AXIS_TYPE_SECONDARY | IUnit.AXIS_TYPE_LABEL;
+      }
+      return IUnit.AXIS_TYPE_SECONDARY;
+    }
+    return IUnit.AXIS_TYPE_NORMAL;
+  }
 
 //endregion ---坐标轴---
 }
 
 /// 像素单位
 @pixel
-class PixelUnit implements IUnit {
+class PixelUnit extends IUnit {
   @override
   String get suffix => " px";
 
@@ -143,22 +173,10 @@ class PixelUnit implements IUnit {
 
   @override
   double getAxisGap(int index, double scale) => 10;
-
-  @override
-  int getAxisType(int index, double scale) {
-    switch (index % 10) {
-      case 0:
-        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
-      case 5:
-        return IUnit.AXIS_TYPE_SECONDARY;
-      default:
-        return IUnit.AXIS_TYPE_NORMAL;
-    }
-  }
 }
 
 @dp
-class DpUnit implements IUnit {
+class DpUnit extends IUnit {
   @override
   String get suffix => " dp";
 
@@ -186,23 +204,11 @@ class DpUnit implements IUnit {
   dynamic toUnit(dynamic value) => value / dpr;
 
   @override
-  double getAxisGap(int index, double scale) => 10;
-
-  @override
-  int getAxisType(int index, double scale) {
-    switch (index % 10) {
-      case 0:
-        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
-      case 5:
-        return IUnit.AXIS_TYPE_SECONDARY;
-      default:
-        return IUnit.AXIS_TYPE_NORMAL;
-    }
-  }
+  double getAxisGap(int index, double scale) => baseAxisGap(index, scale, 10);
 }
 
 @mm
-class MmUnit implements IUnit {
+class MmUnit extends IUnit {
   @override
   String get suffix => " mm";
 
@@ -230,23 +236,12 @@ class MmUnit implements IUnit {
   dynamic toUnit(dynamic value) => value / dpi / INCHES_PER_MM;
 
   @override
-  double getAxisGap(int index, double scale) => 10;
-
-  @override
-  int getAxisType(int index, double scale) {
-    switch (index % 10) {
-      case 0:
-        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
-      case 5:
-        return IUnit.AXIS_TYPE_SECONDARY;
-      default:
-        return IUnit.AXIS_TYPE_NORMAL;
-    }
-  }
+  double getAxisGap(int index, double scale) =>
+      baseAxisGap(index, scale, 1.toDpFromMm());
 }
 
 @pt
-class PtUnit implements IUnit {
+class PtUnit extends IUnit {
   @override
   String get suffix => " pt";
 
@@ -275,22 +270,10 @@ class PtUnit implements IUnit {
 
   @override
   double getAxisGap(int index, double scale) => 10;
-
-  @override
-  int getAxisType(int index, double scale) {
-    switch (index % 10) {
-      case 0:
-        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
-      case 5:
-        return IUnit.AXIS_TYPE_SECONDARY;
-      default:
-        return IUnit.AXIS_TYPE_NORMAL;
-    }
-  }
 }
 
 @inch
-class InchUnit implements IUnit {
+class InchUnit extends IUnit {
   @override
   String get suffix => " in";
 
@@ -318,14 +301,31 @@ class InchUnit implements IUnit {
   dynamic toUnit(dynamic value) => value / dpi;
 
   @override
-  double getAxisGap(int index, double scale) => 10;
+  double getAxisGap(int index, double scale) {
+    final baseGap = 0.125.toDpFromMm(IUnit.inch);
+    if (scale >= 4) {
+      //放大4倍后
+      return baseGap / 8;
+    } else if (scale >= 2) {
+      return baseGap / 4;
+    } else if (scale <= 0.1) {
+      return baseGap * 4;
+    } else if (scale <= 0.25) {
+      //缩小4倍后
+      return baseGap * 2;
+    } else if (scale <= 0.75) {
+      return baseGap * 1;
+    } else {
+      return baseGap;
+    }
+  }
 
   @override
   int getAxisType(int index, double scale) {
-    switch (index % 10) {
+    switch (index % 8) {
       case 0:
         return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
-      case 5:
+      case 4:
         return IUnit.AXIS_TYPE_SECONDARY;
       default:
         return IUnit.AXIS_TYPE_NORMAL;
