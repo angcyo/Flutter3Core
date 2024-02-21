@@ -6,9 +6,6 @@ part of flutter3_canvas;
 ///
 /// 简单的事件处理混入, 支持[ignoreHandle]
 mixin HandleEventMixin on IHandleEventMixin, MultiPointerDetectorMixin {
-  /// 是否忽略处理事件, 会在手势抬起/取消时, 重置为false
-  bool ignoreHandle = false;
-
   @override
   void dispatchPointerEvent(PointerEvent event) {
     super.dispatchPointerEvent(event);

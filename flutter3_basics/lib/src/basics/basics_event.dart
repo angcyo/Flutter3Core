@@ -37,7 +37,11 @@ extension EventEx on PointerEvent {
 mixin IHandleEventMixin {
   /// 第一个手指按下事件
   PointerEvent? firstDownEvent;
+  PointerEvent? firstMoveEvent;
   bool _isFirstEventCancel = false;
+
+  /// 是否忽略处理事件, 请在手势抬起/取消时, 重置为false
+  bool ignoreHandle = false;
 
   /// 开始派发事件, 一定会调用
   void dispatchPointerEvent(PointerEvent event) {
@@ -46,7 +50,12 @@ mixin IHandleEventMixin {
         _isFirstEventCancel = false;
         firstDownEvent = event;
       }
+    } else if (event is PointerMoveEvent) {
+      if (event.pointer == firstDownEvent?.pointer) {
+        firstMoveEvent = event;
+      }
     } else if (event is PointerUpEvent || event is PointerCancelEvent) {
+      //ignoreHandle = false; //请手动重置
       if (event.pointer == firstDownEvent?.pointer) {
         _isFirstEventCancel = true;
       }
@@ -64,6 +73,14 @@ mixin IHandleEventMixin {
   /// 是否是第一个手指的事件
   bool isFirstPointerEvent(PointerEvent event) =>
       firstDownEvent?.pointer == event.pointer;
+
+  /// 第一个手指, 移动的距离是否超过指定的阈值
+  bool isFirstMoveExceed([double threshold = kTouchSlop]) {
+    if (firstDownEvent == null || firstMoveEvent == null) return false;
+    return firstDownEvent?.isMoveExceed(
+            firstMoveEvent!.localPosition, threshold) ==
+        true;
+  }
 }
 
 /// 指针事件派发
@@ -91,20 +108,26 @@ mixin PointerDispatchMixin {
     //2:interceptPointerEvent
     bool handled = false;
     if (interceptHandleTarget != null) {
-      handled = interceptHandleTarget!.onPointerEvent(event);
+      if (!interceptHandleTarget!.ignoreHandle) {
+        handled = interceptHandleTarget!.onPointerEvent(event);
+      }
     } else {
       final iterable = handleEventClientList.toList(growable: false);
       for (var element in iterable) {
         if (element.interceptPointerEvent(event)) {
           interceptHandleTarget = element;
-          handled = element.onPointerEvent(event);
-          break;
+          if (!element.ignoreHandle) {
+            handled = element.onPointerEvent(event);
+            break;
+          }
         }
       }
       if (interceptHandleTarget == null || !handled) {
         //3:onPointerEvent
         for (var element in iterable) {
-          handled = element.onPointerEvent(event);
+          if (!element.ignoreHandle) {
+            handled = element.onPointerEvent(event);
+          }
           if (handled) break;
         }
       }

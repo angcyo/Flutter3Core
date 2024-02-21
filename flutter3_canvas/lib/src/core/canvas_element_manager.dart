@@ -131,22 +131,32 @@ class ElementSelectComponent extends ElementGroupPainter
   @override
   bool onPointerEvent(PointerEvent event) {
     //debugger();
-    if (isCanvasComponentEnable && isFirstPointerEvent(event)) {
-      if (event.isPointerDown) {
-        _downScenePoint = canvasElementManager.canvasDelegate.canvasViewBox
-            .toScenePoint(event.localPosition);
-        updateSelectBounds(Rect.fromLTRB(_downScenePoint.dx, _downScenePoint.dy,
-            _downScenePoint.dx, _downScenePoint.dy));
-      } else if (event.isPointerMove) {
-        final scenePoint = canvasElementManager.canvasDelegate.canvasViewBox
-            .toScenePoint(event.localPosition);
-        updateSelectBounds(Rect.fromPoints(_downScenePoint, scenePoint));
-        //l.d(' selectBounds:$selectBounds');
-      } else if (event.isPointerUp) {
-        //选择结束
-        updateSelectBounds(null);
+    if (isCanvasComponentEnable) {
+      if (isFirstPointerEvent(event)) {
+        if (event.isPointerDown) {
+          _downScenePoint = canvasElementManager.canvasDelegate.canvasViewBox
+              .toScenePoint(event.localPosition);
+          updateSelectBounds(Rect.fromLTRB(_downScenePoint.dx,
+              _downScenePoint.dy, _downScenePoint.dx, _downScenePoint.dy));
+        } else if (event.isPointerMove) {
+          final scenePoint = canvasElementManager.canvasDelegate.canvasViewBox
+              .toScenePoint(event.localPosition);
+          updateSelectBounds(Rect.fromPoints(_downScenePoint, scenePoint));
+          //l.d(' selectBounds:$selectBounds');
+        } else if (event.isPointerUp) {
+          //选择结束
+          updateSelectBounds(null);
+        }
+        return true;
+      } else if (event.isPointerDown) {
+        //多个手指按下
+        //debugger();
+        if (!isFirstMoveExceed()) {
+          //时, 第一个手指未移动, 则取消滑动选择元素
+          ignoreHandle = true;
+          updateSelectBounds(null);
+        }
       }
-      return true;
     }
     return super.onPointerEvent(event);
   }
