@@ -49,6 +49,7 @@ mixin IHandleEventMixin {
       if (firstDownEvent == null || _isFirstEventCancel) {
         _isFirstEventCancel = false;
         firstDownEvent = event;
+        dispatchFirstPointerEvent(event);
       }
     } else if (event is PointerMoveEvent) {
       if (event.pointer == firstDownEvent?.pointer) {
@@ -63,10 +64,31 @@ mixin IHandleEventMixin {
   }
 
   /// 询问, 是否要拦截事件, 如果返回true, 则[onPointerEvent]执行, 并中断继续派发事件
-  bool interceptPointerEvent(PointerEvent event) => false;
+  bool interceptPointerEvent(PointerEvent event) {
+    if (isFirstPointerEvent(event)) {
+      return onInterceptFirstPointerEvent(event);
+    }
+    return false;
+  }
 
   /// 处理事件, 返回true表示事件被处理了, 否则继续派发事件
-  bool onPointerEvent(PointerEvent event) => false;
+  bool onPointerEvent(PointerEvent event) {
+    if (isFirstPointerEvent(event)) {
+      return onFirstPointerEvent(event);
+    }
+    return false;
+  }
+
+  //---
+
+  /// 只回调第一个点的事件
+  void dispatchFirstPointerEvent(PointerEvent event) {}
+
+  /// 只回调第一个点的事件
+  bool onInterceptFirstPointerEvent(PointerEvent event) => false;
+
+  /// 只回调第一个点的事件
+  bool onFirstPointerEvent(PointerEvent event) => false;
 
   //---
 

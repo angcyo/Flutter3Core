@@ -133,14 +133,13 @@ class ElementSelectComponent extends ElementGroupPainter
     //debugger();
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(event)) {
+        final viewBox = canvasElementManager.canvasDelegate.canvasViewBox;
         if (event.isPointerDown) {
-          _downScenePoint = canvasElementManager.canvasDelegate.canvasViewBox
-              .toScenePoint(event.localPosition);
+          _downScenePoint = viewBox.toScenePoint(event.localPosition);
           updateSelectBounds(Rect.fromLTRB(_downScenePoint.dx,
               _downScenePoint.dy, _downScenePoint.dx, _downScenePoint.dy));
         } else if (event.isPointerMove) {
-          final scenePoint = canvasElementManager.canvasDelegate.canvasViewBox
-              .toScenePoint(event.localPosition);
+          final scenePoint = viewBox.toScenePoint(event.localPosition);
           updateSelectBounds(Rect.fromPoints(_downScenePoint, scenePoint));
           //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
