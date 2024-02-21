@@ -456,3 +456,6 @@ https://github.com/fluttercommunity/plus_plugins
 - [upload_file_oss: ^1.0.0](https://pub.dev/packages/upload_file_oss) 一个简单上传文件到阿里云对象存储OSS的库。 仅支持小文件上传。
 - [nsd: ^3.0.0](https://pub.dev/packages/nsd) 用于网络服务发现和注册的 Flutter 插件（又名 NSD / DNS-SD / Bonjour / mDNS）。
 - [flutter_nsd: ^1.4.0](https://pub.dev/packages/flutter_nsd) 一个用于 Android、iOS、MacOS 和 Windows 上的网络服务发现 （mDNS） 的 Flutter 插件。该插件尽可能使用平台自己的 API。
+- [bluetooth_low_energy: ^5.0.6](https://pub.dev/packages/bluetooth_low_energy) 一个 Flutter 插件，用于控制低功耗蓝牙。
+- [flutter_blue: ^0.8.0](https://pub.dev/packages/flutter_blue) FlutterBlue 是 Flutter 的蓝牙插件，Flutter 是一个新的应用 SDK，可帮助开发者构建现代多平台应用。
+- [flutter_blue_plus: ^1.31.15](https://pub.dev/packages/flutter_blue_plus) FlutterBluePlus 是 Flutter 的蓝牙低功耗插件。

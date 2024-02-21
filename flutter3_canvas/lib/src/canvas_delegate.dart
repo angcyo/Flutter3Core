@@ -49,6 +49,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 事件管理
   late CanvasEventManager canvasEventManager = CanvasEventManager(this);
 
+  /// 元素管理
+  late CanvasElementManager canvasElementManager = CanvasElementManager(this);
+
   /// 画布监听
   Set<CanvasListener> canvasListeners = {};
 
@@ -79,14 +82,23 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---事件派发---
 
   /// 当[CanvasViewBox]视口发生变化时触发
+  /// [CanvasViewBox.changeMatrix]
   void dispatchCanvasViewBoxChanged(
       CanvasViewBox canvasViewBox, bool isCompleted) {
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     refresh();
     CanvasViewBoxChangedNotification(canvasViewBox, isCompleted)
         .dispatch(delegateContext);
-    canvasListeners.toList(growable: false).forEach((element) {
+    canvasListeners.clone().forEach((element) {
       element.onCanvasViewBoxChangedAction?.call(canvasViewBox, isCompleted);
+    });
+  }
+
+  /// 选择边界改变时触发
+  /// [ElementSelectComponent.updateSelectBounds]
+  void dispatchCanvasSelectBoundsChangedAction(Rect? bounds) {
+    canvasListeners.clone().forEach((element) {
+      element.onCanvasSelectBoundsChangedAction?.call(bounds);
     });
   }
 
@@ -109,13 +121,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(IntProperty("刷新次数", repaint.value));
-    properties.add(DiagnosticsProperty<ValueNotifier<int>>('repaint', repaint));
-    properties.add(
-        DiagnosticsProperty<CanvasViewBox>('canvasViewBox', canvasViewBox));
-    properties.add(DiagnosticsProperty<CanvasPaintManager>(
-        'canvasPaintManager', canvasPaintManager));
-    properties.add(DiagnosticsProperty<CanvasEventManager>(
-        'canvasEventManager', canvasEventManager));
+    properties.add(DiagnosticsProperty('delegateContext', delegateContext));
+    properties.add(DiagnosticsProperty('canvasStyle', canvasStyle));
+    properties.add(DiagnosticsProperty('repaint', repaint));
+    properties.add(DiagnosticsProperty('canvasViewBox', canvasViewBox));
+    properties
+        .add(DiagnosticsProperty('canvasPaintManager', canvasPaintManager));
+    properties
+        .add(DiagnosticsProperty('canvasEventManager', canvasEventManager));
+    properties
+        .add(DiagnosticsProperty('canvasElementManager', canvasElementManager));
     properties.add(DiagnosticsProperty<Ticker?>('ticker', _ticker));
   }
 }

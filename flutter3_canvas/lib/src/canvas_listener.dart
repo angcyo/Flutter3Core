@@ -10,5 +10,11 @@ class CanvasListener {
   final void Function(CanvasViewBox canvasViewBox, bool isCompleted)?
       onCanvasViewBoxChangedAction;
 
-  CanvasListener({this.onCanvasViewBoxChangedAction});
+  /// [CanvasDelegate.dispatchCanvasSelectBoundsChangedAction]
+  final void Function(Rect? bounds)? onCanvasSelectBoundsChangedAction;
+
+  CanvasListener({
+    this.onCanvasViewBoxChangedAction,
+    this.onCanvasSelectBoundsChangedAction,
+  });
 }

@@ -34,24 +34,45 @@ extension EventEx on PointerEvent {
 }
 
 /// 事件处理
-abstract class IHandleEvent {
+mixin IHandleEventMixin {
+  /// 第一个手指按下事件
+  PointerEvent? firstDownEvent;
+  bool _isFirstEventCancel = false;
+
   /// 开始派发事件, 一定会调用
-  void dispatchPointerEvent(PointerEvent event) {}
+  void dispatchPointerEvent(PointerEvent event) {
+    if (event is PointerDownEvent) {
+      if (firstDownEvent == null || _isFirstEventCancel) {
+        _isFirstEventCancel = false;
+        firstDownEvent = event;
+      }
+    } else if (event is PointerUpEvent || event is PointerCancelEvent) {
+      if (event.pointer == firstDownEvent?.pointer) {
+        _isFirstEventCancel = true;
+      }
+    }
+  }
 
   /// 询问, 是否要拦截事件, 如果返回true, 则[onPointerEvent]执行, 并中断继续派发事件
   bool interceptPointerEvent(PointerEvent event) => false;
 
   /// 处理事件, 返回true表示事件被处理了, 否则继续派发事件
   bool onPointerEvent(PointerEvent event) => false;
+
+  //---
+
+  /// 是否是第一个手指的事件
+  bool isFirstPointerEvent(PointerEvent event) =>
+      firstDownEvent?.pointer == event.pointer;
 }
 
 /// 指针事件派发
 mixin PointerDispatchMixin {
   /// 事件处理客户端列表
-  Set<IHandleEvent> handleEventClientList = {};
+  Set<IHandleEventMixin> handleEventClientList = {};
 
   /// 当前事件处理被此目标拦截
-  IHandleEvent? interceptHandleTarget;
+  IHandleEventMixin? interceptHandleTarget;
 
   /// N个手指对应的事件
   Map<int, PointerEvent> pointerMap = {};
@@ -100,12 +121,12 @@ mixin PointerDispatchMixin {
   }
 
   /// 添加事件处理
-  void addHandleEventClient(IHandleEvent handleEvent) {
+  void addHandleEventClient(IHandleEventMixin handleEvent) {
     handleEventClientList.add(handleEvent);
   }
 
   /// 移除事件处理
-  void removeHandleEventClient(IHandleEvent handleEvent) {
+  void removeHandleEventClient(IHandleEventMixin handleEvent) {
     handleEventClientList.remove(handleEvent);
   }
 }
@@ -336,8 +357,7 @@ mixin MultiPointerDetectorMixin {
       //处理了事件, 将down坐标更新
       isHandledMultiPointerDetectorEvent = true;
 
-      pointerDownMap.clear();
-      pointerDownMap.addAll(pointerMoveMap);
+      resetPointerMap(pointerDownMap, pointerMoveMap);
     }
     pointerMoveLastMap[event.pointer] = event;
     //3---
@@ -351,12 +371,29 @@ mixin MultiPointerDetectorMixin {
     }
   }
 
+  /// 重置数据
+  void resetPointerMap(Map from, Map to) {
+    from.clear();
+    from.addAll(to);
+  }
+
   /// 处理多指操作事件
   @overridePoint
   bool handleMultiPointerDetectorPointerEvent(PointerEvent event) => false;
 
+  /// 第一个手指移动的距离
+  Offset firstMoveDownDelta() {
+    final first = pointerDownMap.keys.first;
+    final move = pointerMoveMap[first];
+    final down = pointerDownMap[first];
+    if (move != null && down != null) {
+      return move.localPosition - down.localPosition;
+    }
+    return Offset.zero;
+  }
+
   /// 当前移动的手势与按下的手势, 之间的偏移
-  Offset moveDownDelta() {
+  Offset minMoveDownDelta() {
     final offsetList = getPointerDeltaList(pointerMoveMap, pointerDownMap);
     if (offsetList.isNotEmpty) {
       //返回最小的偏移
@@ -366,6 +403,17 @@ mixin MultiPointerDetectorMixin {
         }
         return element;
       });
+    }
+    return Offset.zero;
+  }
+
+  /// 第一个手指移动的距离
+  Offset firstMoveLastDelta() {
+    final first = pointerDownMap.keys.first;
+    final move = pointerMoveMap[first];
+    final down = pointerMoveLastMap[first] ?? pointerDownMap[first];
+    if (move != null && down != null) {
+      return move.localPosition - down.localPosition;
     }
     return Offset.zero;
   }

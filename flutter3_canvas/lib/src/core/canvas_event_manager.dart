@@ -20,6 +20,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   late CanvasFlingComponent canvasFlingComponent =
       CanvasFlingComponent(canvasDelegate);
 
+  /// 画布区域点击事件组件
   CanvasBoundsEventComponent canvasBoundsEventComponent =
       CanvasBoundsEventComponent();
 
@@ -37,6 +38,9 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     //debugger();
     handleDispatchEvent(event);
 
+    //
+    canvasDelegate.canvasElementManager.handleElementEvent(event, entry);
+
     if (isDebug && event.isPointerUp) {
       final pivot = event.localPosition;
       l.d('pivot:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
@@ -46,8 +50,12 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 }
 
 /// [CanvasViewBox] 操作基础组件
-abstract class BaseCanvasViewBoxEventComponent extends IHandleEvent
-    with CanvasComponentMixin, MultiPointerDetectorMixin, HandleEventMixin {
+abstract class BaseCanvasViewBoxEventComponent
+    with
+        IHandleEventMixin,
+        CanvasComponentMixin,
+        MultiPointerDetectorMixin,
+        HandleEventMixin {
   final CanvasDelegate canvasDelegate;
 
   BaseCanvasViewBoxEventComponent(this.canvasDelegate);
@@ -132,8 +140,10 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
 class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
     with DoubleTapDetectorMixin {
   /// 缩放阈值, 缩放值, 达到此值时, 才会触发缩放
+  /// [kScaleSlop]
+  /// [kTouchSlop] 18
   @dp
-  double scaleThreshold = 15;
+  double scaleThreshold = kScaleSlop;
 
   /// 双击时, 需要放大的比例
   double doubleScaleValue = 1.5;
@@ -189,6 +199,8 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
             pivot: canvasDelegate.canvasViewBox.toScenePoint(pivot));
         return true;
       }
+    } else {
+      resetPointerMap(pointerDownMap, pointerMoveMap);
     }
     return super.handleMultiPointerDetectorPointerEvent(event);
   }

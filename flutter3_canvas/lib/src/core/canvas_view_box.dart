@@ -26,14 +26,16 @@ class CanvasViewBox with Diagnosticable {
   double originX = 0;
   double originY = 0;
 
-  /// 绘制原点的偏移矩阵
-  Matrix4 get originMatrix => Matrix4.identity()..translate(originX, originY);
-
   /// 获取绘图原点相对于视图左上角的偏移
   Offset get originOffset =>
       Offset(canvasBounds.left + originX, canvasBounds.top + originY);
 
-  /// 绘制矩阵, 包含缩放/平移操作
+  /// 绘制画布内容时, 需要偏移到画布定义的原点位置
+  /// [canvasMatrix]
+  Matrix4 get originMatrix =>
+      Matrix4.identity()..translate(originOffset.dx, originOffset.dy);
+
+  /// 绘制矩阵, 包含画布的缩放/平移数据
   Matrix4 canvasMatrix = Matrix4.identity();
 
   double get scaleX => canvasMatrix.scaleX;

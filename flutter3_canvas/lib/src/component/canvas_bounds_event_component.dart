@@ -9,8 +9,8 @@ part of flutter3_canvas;
 typedef OnCanvasBoundsEventAction = bool Function(
     PointerEvent event, int touchType);
 
-class CanvasBoundsEventComponent extends IHandleEvent
-    with CanvasComponentMixin, TouchDetectorMixin {
+class CanvasBoundsEventComponent
+    with CanvasComponentMixin, IHandleEventMixin, TouchDetectorMixin {
   /// 事件监听
   Set<OnCanvasBoundsEventAction> boundsEventAction = {};
 

@@ -23,13 +23,13 @@ class GlobalThemeScope extends InheritedWidget {
 /// 全局颜色配置
 class GlobalTheme {
   /// 颜色配置, 主要颜色
-  Color get primaryColor => "#2febff".toColor();
+  Color get primaryColor => const Color(0xff2febff);
 
   /// 主题强调色
   Color get accentColor => primaryColor;
 
   /// 暗一点的主题色
-  Color get primaryColorDark => "#0cabea".toColor();
+  Color get primaryColorDark => const Color(0xff0cabea);
 
   /// 图标按下的颜色/选择的颜色等
   Color get icoSelectedColor => primaryColor;
@@ -38,40 +38,40 @@ class GlobalTheme {
   Color get imagePlaceholderColor => icoNormalColor;
 
   /// 图标正常的颜色
-  Color get icoNormalColor => "#6f6f6f".toColor();
+  Color get icoNormalColor => const Color(0xff6f6f6f);
 
   /// 灰度图标的颜色
-  Color get icoGrayColor => "#333333".toColor();
+  Color get icoGrayColor => const Color(0xff333333);
 
   /// 主题白色, 受暗色模式影响
   Color get themeWhiteColor => Colors.white;
 
   /// 白色背景颜色
-  Color get whiteBgColor => "#f8f8f8".toColor();
+  Color get whiteBgColor => const Color(0xfff8f8f8);
 
   /// 容器白色背景颜色
-  Color get itemWhiteBgColor => "#f6f6f6".toColor();
+  Color get itemWhiteBgColor => const Color(0xfff6f6f6);
 
   /// 白色背景上的白色按钮背景颜色
-  Color get whiteSubBgColor => "#ececec".toColor();
+  Color get whiteSubBgColor => const Color(0xffececec);
 
   /// 禁用时的背景颜色(偏白色)
-  Color get disableBgColor => "#ECECEC".toColor();
+  Color get disableBgColor => const Color(0xffECECEC);
 
   /// 链接的颜色
-  Color get linkColor => "#0a84ff".toColor();
+  Color get linkColor => const Color(0xff0a84ff);
 
   /// 线的颜色 #F6F6F6
-  Color get lineColor => "#ECECEC".toColor();
+  Color get lineColor => const Color(0xffECECEC);
 
   /// 线的颜色 (更暗一点)
-  Color get lineDarkColor => "#D8D8D8".toColor();
+  Color get lineDarkColor => const Color(0xffD8D8D8);
 
   /// 边框的颜色
-  Color get borderColor => "#6f6f6f".toColor();
+  Color get borderColor => const Color(0xff6f6f6f);
 
   /// 错误提示颜色
-  Color get errorColor => "#FF443D".toColor();
+  Color get errorColor => const Color(0xffFF443D);
 
   /// 阴影高度默认取值
   double get elevation => 2;
@@ -128,61 +128,61 @@ class GlobalTheme {
   //region 文本样式
 
   /// [_kDefaultFontSize] 14
-  TextStyle get textPrimaryStyle => TextStyle(
+  TextStyle get textPrimaryStyle => const TextStyle(
         fontSize: 18,
-        color: "#161B26".toColor(),
+        color: Color(0xff161B26),
       );
 
-  TextStyle get textGeneralStyle => TextStyle(
+  TextStyle get textGeneralStyle => const TextStyle(
         fontSize: 14,
-        color: "#182334".toColor(),
+        color: Color(0xff182334),
       );
 
-  TextStyle get textTitleStyle => TextStyle(
+  TextStyle get textTitleStyle => const TextStyle(
         fontSize: 17,
-        color: "#333333".toColor(),
+        color: Color(0xff333333),
       );
 
-  TextStyle get textSubTitleStyle => TextStyle(
+  TextStyle get textSubTitleStyle => const TextStyle(
         fontSize: 14,
-        color: "#929292".toColor(),
+        color: Color(0xff929292),
       );
 
-  TextStyle get textBodyStyle => TextStyle(
+  TextStyle get textBodyStyle => const TextStyle(
         fontSize: 14,
-        color: "#333333".toColor(),
+        color: Color(0xff333333),
       );
 
-  TextStyle get textSubStyle => TextStyle(
+  TextStyle get textSubStyle => const TextStyle(
         fontSize: 12,
-        color: "#B0B0B0".toColor(),
+        color: Color(0xffB0B0B0),
       );
 
-  TextStyle get textDesStyle => TextStyle(
+  TextStyle get textDesStyle => const TextStyle(
         fontSize: 12,
-        color: "#949496".toColor(),
+        color: Color(0xff949496),
       );
 
-  TextStyle get textPlaceStyle => TextStyle(
+  TextStyle get textPlaceStyle => const TextStyle(
         fontSize: 12,
-        color: "#6F6F6F".toColor(),
+        color: Color(0xff6F6F6F),
       );
 
-  TextStyle get textDisableStyle => TextStyle(
+  TextStyle get textDisableStyle => const TextStyle(
         fontSize: 14,
-        color: "#b0b0b0".toColor(),
+        color: Color(0xffb0b0b0),
       );
 
-  TextStyle get textLabelStyle => TextStyle(
+  TextStyle get textLabelStyle => const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        color: "#333333".toColor(),
+        color: Color(0xff333333),
       );
 
-  TextStyle get textInfoStyle => TextStyle(
+  TextStyle get textInfoStyle => const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w400,
-        color: "#949496".toColor(),
+        color: Color(0xff949496),
       );
 
   //endregion 文本样式

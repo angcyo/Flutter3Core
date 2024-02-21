@@ -5,6 +5,13 @@ part of flutter3_canvas;
 /// @since 2024/02/20
 /// 画布样式
 class CanvasStyle {
+  //region ---basics---
+
+  /// 画布强调颜色
+  Color canvasAccentColor = const Color(0xff2febff);
+
+  //endregion ---basics---
+
   //region ---axis---
 
   Color axisPrimaryColor = const Color(0xff888888); //const Color(0xFFB2B2B2);
