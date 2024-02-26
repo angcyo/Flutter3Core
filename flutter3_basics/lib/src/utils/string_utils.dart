@@ -12,6 +12,9 @@ String stringBuffer(void Function(StringBuffer builder) action) {
   return stringBuffer.toString();
 }
 
+String buildString(void Function(StringBuilder builder) action) =>
+    stringBuilder(action);
+
 String stringBuilder(void Function(StringBuilder builder) action) {
   StringBuilder builder = StringBuilder();
   action(builder);
@@ -24,6 +27,8 @@ class StringBuilder {
   void write(Object? object) {
     stringBuffer.write(object);
   }
+
+  void addText(Object? object) => write(object);
 
   void writeln([Object? obj = ""]) {
     stringBuffer.writeln(obj);
