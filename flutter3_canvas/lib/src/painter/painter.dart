@@ -20,6 +20,9 @@ class PaintMeta {
     this.canvasMatrix,
   });
 
+  /// 获取画布缩放的系数
+  double get canvasScale => canvasMatrix?.scaleX ?? 1.0;
+
   /// 组合[originMatrix] 和 [canvasMatrix]
   void withPaintMatrix(Canvas canvas, VoidCallback action) {
     //debugger();
@@ -31,7 +34,8 @@ class PaintMeta {
 
 /// 绘制接口
 abstract class IPainter {
-  void paint(Canvas canvas, PaintMeta paintMeta);
+  /// 绘制入口
+  void painting(Canvas canvas, PaintMeta paintMeta);
 }
 
 /// 绘制一些监视信息, 比如坐标轴的缩放比例
@@ -41,7 +45,7 @@ class CanvasMonitorPainter extends IPainter {
   CanvasMonitorPainter(this.canvasDelegate);
 
   @override
-  void paint(Canvas canvas, PaintMeta paintMeta) {
+  void painting(Canvas canvas, PaintMeta paintMeta) {
     final viewBox = canvasDelegate.canvasViewBox;
     final text = "${(viewBox.scaleX * 100).round()}%";
     final drawAxis = canvasDelegate.canvasPaintManager.axisManager.drawType

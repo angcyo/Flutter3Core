@@ -149,7 +149,7 @@ class AxisManager extends IPainter {
   }
 
   @override
-  void paint(Canvas canvas, PaintMeta paintMeta) {
+  void painting(Canvas canvas, PaintMeta paintMeta) {
     final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
     final canvasBounds = paintManager.canvasDelegate.canvasViewBox.canvasBounds;
 

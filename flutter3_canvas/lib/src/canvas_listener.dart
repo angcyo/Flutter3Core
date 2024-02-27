@@ -13,8 +13,16 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasSelectBoundsChangedAction]
   final void Function(Rect? bounds)? onCanvasSelectBoundsChangedAction;
 
+  /// [CanvasDelegate.dispatchCanvasElementPropertyChanged]
+  final void Function(
+    ElementPainter elementPainter,
+    PaintProperty? old,
+    PaintProperty? value,
+  )? onCanvasElementPropertyChangedAction;
+
   CanvasListener({
     this.onCanvasViewBoxChangedAction,
     this.onCanvasSelectBoundsChangedAction,
+    this.onCanvasElementPropertyChangedAction,
   });
 }

@@ -28,7 +28,7 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
   void paintElements(Canvas canvas, PaintMeta paintMeta) {
     canvas.withClipRect(canvasDelegate.canvasViewBox.canvasBounds, () {
       for (var element in elements) {
-        element.paint(canvas, paintMeta);
+        element.painting(canvas, paintMeta);
       }
       elementSelectComponent.paintSelectBounds(canvas, paintMeta);
     });
@@ -101,7 +101,7 @@ class ElementSelectComponent extends ElementGroupPainter
         boundsPaint
           ..color =
               canvasElementManager.canvasDelegate.canvasStyle.canvasAccentColor
-          ..strokeWidth = 1 / (paintMeta.canvasMatrix?.scaleX ?? 1)
+          ..strokeWidth = 1 / paintMeta.canvasScale
           ..style = PaintingStyle.stroke;
         canvas.drawRect(selectBounds!, boundsPaint);
         boundsPaint
@@ -112,11 +112,6 @@ class ElementSelectComponent extends ElementGroupPainter
         canvas.drawRect(selectBounds!, boundsPaint);
       });
     }
-  }
-
-  @override
-  bool handleMultiPointerDetectorPointerEvent(PointerEvent event) {
-    return super.handleMultiPointerDetectorPointerEvent(event);
   }
 
   @override
@@ -160,10 +155,9 @@ class ElementSelectComponent extends ElementGroupPainter
     return super.onPointerEvent(event);
   }
 
-  /// 更新选择边界
+  /// 更新选择框边界
   void updateSelectBounds(Rect? bounds) {
     selectBounds = bounds;
-    canvasElementManager.canvasDelegate.refresh();
     canvasElementManager.canvasDelegate
         .dispatchCanvasSelectBoundsChangedAction(bounds);
   }

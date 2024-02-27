@@ -44,11 +44,11 @@ class CanvasPaintManager with Diagnosticable {
       );
 
       //
-      axisManager.paint(canvas, paintMeta);
+      axisManager.painting(canvas, paintMeta);
       //
       canvasDelegate.canvasElementManager.paintElements(canvas, paintMeta);
       //
-      monitorPainter.paint(canvas, paintMeta);
+      monitorPainter.painting(canvas, paintMeta);
     });
     /*canvas.drawRect(canvasDelegate.canvasViewBox.canvasBounds + offset,
         Paint()..color = Colors.blue);

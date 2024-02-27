@@ -86,12 +86,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void dispatchCanvasViewBoxChanged(
       CanvasViewBox canvasViewBox, bool isCompleted) {
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
-    refresh();
     CanvasViewBoxChangedNotification(canvasViewBox, isCompleted)
         .dispatch(delegateContext);
     canvasListeners.clone().forEach((element) {
       element.onCanvasViewBoxChangedAction?.call(canvasViewBox, isCompleted);
     });
+    refresh();
   }
 
   /// 选择边界改变时触发
@@ -100,6 +100,20 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasListeners.clone().forEach((element) {
       element.onCanvasSelectBoundsChangedAction?.call(bounds);
     });
+    refresh();
+  }
+
+  /// 元素属性发生改变时触发
+  void dispatchCanvasElementPropertyChanged(
+    ElementPainter elementPainter,
+    PaintProperty? from,
+    PaintProperty? to,
+  ) {
+    canvasListeners.clone().forEach((element) {
+      element.onCanvasElementPropertyChangedAction
+          ?.call(elementPainter, from, to);
+    });
+    refresh();
   }
 
   //endregion ---事件派发---

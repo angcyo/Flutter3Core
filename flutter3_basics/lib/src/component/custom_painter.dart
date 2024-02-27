@@ -23,7 +23,7 @@ class CustomPaintWrap extends CustomPainter {
 }
 
 /// 快速创建[CustomPaint], 并指定绘制回调
-CustomPaint paint(
+CustomPaint paintWidget(
   PaintFn paint, {
   PaintFn? foregroundPaint,
   Size size = Size.zero,

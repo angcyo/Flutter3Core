@@ -162,8 +162,8 @@ extension Matrix4Ex on vector.Matrix4 {
 
   /// 倾斜矩阵
   /// [skewBy]
-  /// [kx] [alpha] 弧度
-  /// [ky] [beta] 弧度
+  /// [kx].[alpha] 弧度
+  /// [ky].[beta] 弧度
   void skewTo({
     double? kx,
     double? ky,
@@ -183,7 +183,7 @@ extension Matrix4Ex on vector.Matrix4 {
   }
 
   /// 旋转矩阵
-  /// [angle] [radians] 弧度
+  /// [angle].[radians] 弧度
   /// [NumEx.toDegrees] 转角度
   /// [NumEx.toRadians] 转弧度
   void rotateBy(

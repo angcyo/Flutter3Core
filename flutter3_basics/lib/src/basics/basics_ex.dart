@@ -698,6 +698,10 @@ extension NumEx on num {
   /// 弧度转角度
   double get toDegrees => this * 180 / math.pi;
 
+  /// 弧度转角度, 并消除多余的角度, 限制角度范围在[0~360]
+  /// [sanitizeDegrees]
+  double get toSanitizeDegrees => toDegrees.sanitizeDegrees;
+
   /// 角度转弧度
   /// 0 = 0
   /// 15 = 0.2617993877991494
@@ -709,9 +713,6 @@ extension NumEx on num {
   /// 270 = 4.71238898038469
   /// 360 = 6.283185307179586
   double get toRadians => this * math.pi / 180;
-
-  /// [sanitizeDegrees]
-  double get toSanitizeDegrees => sanitizeDegrees;
 
   /// 消除多余的角度, 限制角度范围在[0~360]
   double get sanitizeDegrees {
@@ -862,7 +863,7 @@ extension ListIntEx on List<int> {
 
 /// [ListEx]
 /// [IterableEx]
-extension IterableEx on Iterable {
+extension IterableEx<E> on Iterable<E> {
   /// 过滤掉null
   List<R> filterNull<R>() =>
       where((element) => element != null).cast<R>().toList();
@@ -870,8 +871,8 @@ extension IterableEx on Iterable {
   /// 过滤到新的列表中
   /// [WhereIterable]
   /// [List]
-  List<R> whereToList<R>(bool Function(dynamic) test) =>
-      where(test).cast<R>().toList();
+  List<E> whereToList(bool Function(dynamic) test) =>
+      where(test).cast<E>().toList();
 
   /// [Iterable]转换成[Type]的[Iterable]
   Iterable<Type> toTypeIterable<Type>() {
@@ -899,15 +900,15 @@ extension IterableEx on Iterable {
   }
 
   /// 复制一份, 浅拷贝
-  List<T> clone<T>([
+  List<E> clone([
     bool growable = false,
   ]) =>
-      toList(growable: growable) as List<T>;
+      toList(growable: growable);
 }
 
 /// [ListEx]
 /// [IterableEx]
-extension ListEx on List<dynamic> {
+extension ListEx<T> on List<T> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 
@@ -926,7 +927,7 @@ extension ListEx on List<dynamic> {
   }
 
   /// [List]
-  T? getOrNull<T>(int index, [T? nul]) {
+  T? getOrNull(int index, [T? nul]) {
     if (index < 0 || index >= length) {
       return nul;
     }
@@ -934,7 +935,7 @@ extension ListEx on List<dynamic> {
   }
 
   /// [List]
-  T get<T>(int index, T def) {
+  T get(int index, T def) {
     if (index < 0 || index >= length) {
       return def;
     }

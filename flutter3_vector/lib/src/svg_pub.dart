@@ -116,10 +116,15 @@ extension SvgStringEx on String {
   ///
   /// [https://pub.dev/packages/svg_path_parser]
   /// ```
+  /// #大写: 绝对坐标 小写: 相对坐标
   /// Path path = parseSvgPath('m.29 47.85 14.58 14.57 62.2-62.2h-29.02z');
   /// ```
-  ///
+  /// [failSilently] 是否忽略解析错误, 否则会抛出异常
   /// [vector_graphics_compiler.parse]
+  ///
+  /// [VectorGraphicsCodec]
+  /// [decodeVectorGraphics] 解析svg格式文档字符
+  ///
   Path toPath([bool failSilently = false]) =>
       parseSvgPath(this, failSilently: failSilently);
 }
