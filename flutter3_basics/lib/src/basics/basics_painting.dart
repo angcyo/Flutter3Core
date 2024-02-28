@@ -82,6 +82,7 @@ extension StringPaintEx on String {
 
 extension TextSpanPaintEx on InlineSpan {
   /// 获取文本的大小
+  /// [TextPainter.paint]
   Size textSize() {
     final TextPainter textPainter = TextPainter(
       textDirection: TextDirection.ltr,
