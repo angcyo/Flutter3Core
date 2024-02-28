@@ -34,6 +34,7 @@ extension ZipListEx on List<String> {
     encoder.close();
   }
 
+  /// 入参不一样的压缩扩展方法
   /// [zip]
   Future<void> zipEncoder(ZipFileEncoder encoder) async {
     for (var path in this) {
