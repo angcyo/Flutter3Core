@@ -9,6 +9,29 @@ part of flutter3_pub;
 /// https://github.com/brendan-duncan/archive/blob/main/example/example.dart
 
 extension ZipEx on String {
+  /// 读取zip文件
+  /// [extractFileToDisk]
+  Future<bool> readZipFile(void Function(Archive archive) action) async {
+    final input = InputFileStream(this);
+    final archive = ZipDecoder().decodeBuffer(input);
+    //archive.findFile(name); //查找指定文件
+
+    /*for (final file in archive.files) {
+      if (file.isFile) {
+        //是文件
+        //file.writeContent(output);
+        //final bytes = file.content as List<int>; //字节数据
+      } else if (!file.isFile && !file.isSymbolicLink) {
+        //是文件夹
+      }
+    }*/
+
+    action(archive);
+
+    input.close();
+    return true;
+  }
+
   /// 解压文件到指定目录下
   /// [extractFileToDisk]
   /// [extractArchiveToDisk]
