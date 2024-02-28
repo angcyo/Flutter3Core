@@ -73,11 +73,11 @@ extension ImageEx on ui.Image {
   /// 获取图片的字节数据
   /// [ImageByteFormat.rawRgba]
   /// [ImageByteFormat.png]
-  Future<Uint8List> toBytes([
+  Future<Uint8List?> toBytes([
     ui.ImageByteFormat format = ui.ImageByteFormat.png,
   ]) async {
     final ByteData? byteData = await toByteData(format: format);
-    return byteData!.buffer.asUint8List();
+    return byteData?.buffer.asUint8List();
   }
 
   /// 保存图片到文件
@@ -85,7 +85,10 @@ extension ImageEx on ui.Image {
     File? file, {
     ui.ImageByteFormat format = ui.ImageByteFormat.png,
   }) async {
-    final Uint8List bytes = await toBytes(format);
+    final Uint8List? bytes = await toBytes(format);
+    if (bytes == null) {
+      return null;
+    }
     return file?.writeAsBytes(bytes);
   }
 }
@@ -214,5 +217,27 @@ extension RenderObjectImageEx on RenderObject {
     /*assert(!debugNeedsPaint);
     final OffsetLayer layer = this.layer! as OffsetLayer;
     return layer.toImage(paintBounds, pixelRatio: devicePixelRatio);*/
+  }
+}
+
+extension ImageProviderEx<T extends Object> on ImageProvider<T> {
+  /// 获取图片的字节数据
+  Future<ui.Image> toImage([
+    ImageConfiguration configuration = const ImageConfiguration(),
+  ]) async {
+    final Completer completer = Completer<ImageInfo>();
+    final ImageStream stream = resolve(configuration);
+    final listener = ImageStreamListener(
+      (ImageInfo info, bool synchronousCall) {
+        if (!completer.isCompleted) {
+          completer.complete(info);
+        }
+      },
+    );
+    stream.addListener(listener);
+    final imageInfo = await completer.future;
+    final ui.Image image = imageInfo.image;
+    stream.removeListener(listener);
+    return image;
   }
 }
