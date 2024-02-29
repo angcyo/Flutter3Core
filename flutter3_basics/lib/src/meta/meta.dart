@@ -8,45 +8,45 @@ part of flutter3_basics;
 
 //region---单位
 
-class _Pixel {
+class Pixel {
   final String des;
 
-  const _Pixel([this.des = '像素单位']);
+  const Pixel([this.des = '像素单位']);
 }
 
-const pixel = _Pixel();
+const pixel = Pixel();
 
-class _Dp {
+class Dp {
   final String des;
 
-  const _Dp([this.des = 'Dp单位']);
+  const Dp([this.des = 'Dp单位']);
 }
 
-const dp = _Dp();
+const dp = Dp();
 
-class _Mm {
+class Mm {
   final String des;
 
-  const _Mm([this.des = 'Mm单位']);
+  const Mm([this.des = 'Mm单位']);
 }
 
-const mm = _Mm();
+const mm = Mm();
 
-class _Pt {
+class Pt {
   final String des;
 
-  const _Pt([this.des = '磅单位']);
+  const Pt([this.des = '磅单位']);
 }
 
-const pt = _Pt();
+const pt = Pt();
 
-class _Inch {
+class Inch {
   final String des;
 
-  const _Inch([this.des = '英寸单位']);
+  const Inch([this.des = '英寸单位']);
 }
 
-const inch = _Inch();
+const inch = Inch();
 
 class _Unit {
   final String des;
@@ -60,111 +60,102 @@ const unit = _Unit();
 
 //region---base
 
-class _Dsl {
+class Dsl {
   final String reason;
 
-  const _Dsl([this.reason = 'dsl方法']);
+  const Dsl([this.reason = 'dsl方法']);
 }
 
 /// 用于标记, 该方法是一个dsl方法, 推荐的调用方式
 /// [reason] 用于标记dsl方法的原因
-const dsl = _Dsl();
+const dsl = Dsl();
 
 /// 调用点
-class _CallPoint {
+class CallPoint {
   final String des;
 
-  const _CallPoint([this.des = '调用点']);
+  const CallPoint([this.des = '调用点']);
 }
 
-const callPoint = _CallPoint();
+const callPoint = CallPoint();
 
 /// 覆盖点
-class _OverridePoint {
+class OverridePoint {
   final String des;
 
-  const _OverridePoint([this.des = '覆盖点']);
+  const OverridePoint([this.des = '覆盖点']);
 }
 
-const overridePoint = _OverridePoint();
+const overridePoint = OverridePoint();
 
 /// 测试功能
-class _Experimental {
+class Experimental {
   final String des;
 
-  const _Experimental([this.des = '测试功能']);
+  const Experimental([this.des = '测试功能']);
 }
 
-const experimental = _Experimental();
+const experimental = Experimental();
 
 /// 测试点
-class _TestPoint {
+class TestPoint {
   final String des;
 
-  const _TestPoint([this.des = '测试点']);
+  const TestPoint([this.des = '测试点']);
 }
 
-const testPoint = _TestPoint();
+const testPoint = TestPoint();
 
 /// 可以被调用的api接口
-class _Api {
+class Api {
   final String des;
 
-  const _Api([this.des = 'api']);
+  const Api([this.des = 'api']);
 }
 
-const api = _Api();
+const api = Api();
 
 /// 包含网络请求的方法
-class _Http {
+class HttpMask {
   final String des;
 
-  const _Http([this.des = '包含网络请求']);
+  const HttpMask([this.des = '包含网络请求']);
 }
 
-const http = _Http();
+const httpMask = HttpMask();
 
 /// 描述当前对象是全局单例对象
-class _GlobalInstance {
+class GlobalInstance {
   final String des;
 
-  const _GlobalInstance([this.des = '单例对象']);
+  const GlobalInstance([this.des = '单例对象']);
 }
 
-const globalInstance = _GlobalInstance();
+const globalInstance = GlobalInstance();
 
-/// 可以被操作的属性
-class _Property {
+class UpdateMark {
   final String des;
 
-  const _Property([this.des = '可以被操作的属性']);
+  const UpdateMark([this.des = '当前的方法会调用[setState]方法, 用来刷新界面']);
 }
 
-const property = _Property();
+const updateMark = UpdateMark();
 
-class _UpdateMark {
+class Private {
   final String des;
 
-  const _UpdateMark([this.des = '当前的方法会调用[setState]方法, 用来刷新界面']);
+  const Private([this.des = '私有化的方法, 不建议调用']);
 }
 
-const updateMark = _UpdateMark();
+const private = Private();
 
-class _Private {
+class Implementation {
   final String des;
 
-  const _Private([this.des = '私有化的方法, 不建议调用']);
+  const Implementation([this.des = '当前功能, 正在实现中...']);
 }
 
-const private = _Private();
-
-class _Implementation {
-  final String des;
-
-  const _Implementation([this.des = '当前功能, 正在实现中...']);
-}
-
-const implementation = _Implementation();
+const implementation = Implementation();
 
 class EntryPoint {
   final String des;
@@ -173,5 +164,30 @@ class EntryPoint {
 }
 
 const entryPoint = EntryPoint();
+
+class Output {
+  final String des;
+
+  const Output([this.des = '当前的数据用来输出']);
+}
+
+const output = Output();
+
+/// 可以被操作的属性
+class Property {
+  final String des;
+
+  const Property([this.des = '可以被操作的属性']);
+}
+
+const property = Property();
+
+class ConfigProperty {
+  final String des;
+
+  const ConfigProperty([this.des = '当前属性用来配置']);
+}
+
+const configProperty = ConfigProperty();
 
 //endregion---base

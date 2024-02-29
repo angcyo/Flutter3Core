@@ -14,7 +14,10 @@ extension ImageGalleryEx on ui.Image {
     String? fileName,
     ui.ImageByteFormat format = ui.ImageByteFormat.png,
   }) async {
-    final Uint8List bytes = await toBytes(format);
+    final bytes = await toBytes(format);
+    if (bytes == null) {
+      return null;
+    }
     return ImageGallerySaver.saveImage(bytes, name: fileName);
   }
 }
