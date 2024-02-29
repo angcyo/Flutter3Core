@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'dart:ui';
 
 import 'package:flutter3_vector/flutter3_vector.dart';
 
@@ -9,4 +9,11 @@ void main() {
     expect(calculator.addOne(-7), -6);
     expect(calculator.addOne(0), 1);
   });*/
+  testPath();
+}
+
+void testPath() {
+  final path = Path()
+    ..addOval(Rect.fromCircle(center: const Offset(100, 100), radius: 100));
+  print(path.toSvgString());
 }
