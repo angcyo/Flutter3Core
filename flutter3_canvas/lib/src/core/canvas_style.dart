@@ -21,7 +21,7 @@ class CanvasStyle {
   @dp
   double axisPrimaryWidth = 1.toDpFromPx();
   @dp
-  double axisSecondaryWidth = 1.toDpFromPx();
+  double axisSecondaryWidth = 1.toDpFromPx() ;
   @dp
   double axisNormalWidth = 1.toDpFromPx();
 

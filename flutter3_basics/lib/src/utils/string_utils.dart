@@ -6,7 +6,7 @@ part of flutter3_basics;
 ///
 
 /// 创建字符串
-String stringBuffer(void Function(StringBuffer builder) action) {
+String buildStringBuffer(void Function(StringBuffer builder) action) {
   StringBuffer stringBuffer = StringBuffer();
   action(stringBuffer);
   return stringBuffer.toString();

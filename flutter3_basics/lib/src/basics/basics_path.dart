@@ -71,6 +71,7 @@ extension PathEx on Path {
   /// [contourIndex] 路径段的索引, 0开始. 一个路径中,可能包含多个路径段. 每次[moveTo],就是一个新的路径段
   /// [position] 当前点在路径上的位置, 关键数据
   /// [angle] 当前点在路径上的角度, 弧度单位, 关键数据
+  /// [isClosed] 当前轮廓是否是闭合的
   void eachPathMetrics(
     void Function(
       int posIndex,
@@ -78,6 +79,7 @@ extension PathEx on Path {
       int contourIndex,
       Offset position,
       double angle,
+      bool isClosed,
     ) action, [
     @dp double step = 1,
   ]) {
@@ -99,6 +101,7 @@ extension PathEx on Path {
             contourIndex,
             position,
             angle,
+            metric.isClosed,
           );
         }
         posIndex++;
@@ -114,7 +117,7 @@ extension PathEx on Path {
     }
   }
 
-  void token(){
+  void token() {
     //PathMe
     //final commands = this.commands;
   }

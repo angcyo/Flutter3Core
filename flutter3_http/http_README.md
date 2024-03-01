@@ -9,3 +9,5 @@ https://github.com/cfug/dio
 https://github.com/cfug/dio/blob/main/dio/README-ZH.md
 
 - [dio: ^5.3.3](https://pub.dev/packages/dio)
+- [json_rpc_2: ^3.0.2](https://pub.dev/packages/json_rpc_2)
+- [web_socket_channel: ^2.4.4](https://pub.dev/packages/web_socket_channel)

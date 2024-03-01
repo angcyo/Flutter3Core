@@ -48,3 +48,27 @@ Offset getArcPoint(Rect oval, double angle) {
 Offset getCirclePoint(Offset center, double radius, double angle) {
   return center.translate(radius * math.cos(angle), radius * math.sin(angle));
 }
+
+/// 3个点求圆心
+/// https://www.cnblogs.com/jason-star/archive/2013/04/22/3036130.html
+/// https://stackoverflow.com/questions/4103405/what-is-the-algorithm-for-finding-the-center-of-a-circle-from-three-points
+Offset centerOfCircle(Offset a, Offset b, Offset c) {
+  final x1 = a.dx;
+  final y1 = a.dy;
+  final x2 = b.dx;
+  final y2 = b.dy;
+  final x3 = c.dx;
+  final y3 = c.dy;
+
+  final A = x1 - x2;
+  final B = y1 - y2;
+  final C = x1 - x3;
+  final D = y1 - y3;
+  final E = x1 * x1 - x2 * x2 + y1 * y1 - y2 * y2;
+  final F = x1 * x1 - x3 * x3 + y1 * y1 - y3 * y3;
+
+  final x = (E * D - B * F) / (2 * (A * D - B * C));
+  final y = (A * F - E * C) / (2 * (A * D - B * C));
+
+  return Offset(x, y);
+}

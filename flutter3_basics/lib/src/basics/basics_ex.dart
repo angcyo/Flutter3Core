@@ -844,7 +844,11 @@ extension IntEx on int {
   }
 }
 
-extension DoubleEx on double {}
+extension DoubleEx on double {
+  /// 判断2个浮点数是否相等
+  bool equalTo(double other, [double epsilon = 1e-8]) =>
+      (this - other).abs() < epsilon;
+}
 
 /// [Uint8List]
 extension ListIntEx on List<int> {
@@ -949,6 +953,14 @@ extension ListEx<T> on List<T> {
       return false;
     }
     return any((element) => list.contains(element));
+  }
+
+  ///如果列表不为空时, 则删除最后一个元素
+  T? removeLastIfNotEmpty() {
+    if (isNotEmpty) {
+      return removeLast();
+    }
+    return null;
   }
 }
 
