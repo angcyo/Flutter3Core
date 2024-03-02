@@ -1,5 +1,6 @@
 library flutter3_vector;
 
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:math';
 

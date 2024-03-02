@@ -95,6 +95,13 @@ extension PathEx on Path {
           final position = tangent.position;
           final angle = tangent.angle;
           final ratio = distance / length;
+          if (angle == 0) {
+            //水平方向
+          } else if (angle > 0) {
+            //切线指向Y轴下方
+          } else {
+            //切线指向Y轴上方
+          }
           action(
             posIndex,
             ratio,

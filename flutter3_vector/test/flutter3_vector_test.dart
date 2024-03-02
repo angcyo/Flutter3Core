@@ -13,14 +13,23 @@ void main() {
   //print(1.toDpFromMm());
   //print(0.25.toDpFromMm());
 
-  //testPath();
-  testCircle();
+  testPath();
+  //testCircle();
 }
 
 void testPath() {
-  final path = Path()
+  final circlePath = Path()
     ..addOval(Rect.fromCircle(center: const Offset(100, 100), radius: 100));
-  print(path.toSvgString());
+
+  final arcPath = Path()
+    ..addArc(const Rect.fromLTWH(0, 0, 100, 20), 0.toRadians, -360.toRadians);
+
+  final testPath = arcPath;
+  //print(testPath.toSvgPathString());
+  //print(lineSeparator);
+  //print(testPath.toGCodeString());
+  //print(lineSeparator);
+  print(testPath.toPathPointJsonString());
 }
 
 void testCircle() {

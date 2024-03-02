@@ -52,7 +52,7 @@ Offset getCirclePoint(Offset center, double radius, double angle) {
 /// 3个点求圆心
 /// https://www.cnblogs.com/jason-star/archive/2013/04/22/3036130.html
 /// https://stackoverflow.com/questions/4103405/what-is-the-algorithm-for-finding-the-center-of-a-circle-from-three-points
-Offset centerOfCircle(Offset a, Offset b, Offset c) {
+Offset? centerOfCircle(Offset a, Offset b, Offset c) {
   final x1 = a.dx;
   final y1 = a.dy;
   final x2 = b.dx;
@@ -70,5 +70,39 @@ Offset centerOfCircle(Offset a, Offset b, Offset c) {
   final x = (E * D - B * F) / (2 * (A * D - B * C));
   final y = (A * F - E * C) / (2 * (A * D - B * C));
 
-  return Offset(x, y);
+  if (x.isValid && y.isValid) {
+    return Offset(x, y);
+  }
+
+  return null;
+}
+
+/*enum Direction {
+  /// clockwise 顺时针
+  CW, // must match enum in SkPath.h
+  /// counter-clockwise 逆时针
+  CCW; // ust match enum in SkPath.h
+}*/
+
+/// 判断2个点的运动趋势, 计算目标点是否在绕着锚点进行顺时针运动
+/// [startAnchor] 第一个起点
+/// [circleCenter] 圆心
+/// [target] 测试目标点
+/// ![](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/path_add_arc_dark.png#gh-dark-mode-only)
+@implementation
+bool isClockwise(Offset startAnchor, Offset circleCenter, Offset target) {
+  /*Offset v1 = circleCenter - startAnchor;
+  Offset v2 = target - circleCenter;
+
+  double crossProduct = v1.dx * v2.dy - v1.dy * v2.dx;
+  return crossProduct > 0;*/
+
+  /*return (target.dy >= anchor.dy && target.dx <= anchor.dx) ||
+      (target.dy <= anchor.dy && target.dx >= anchor.dx);*/
+
+  Offset v1 = startAnchor - circleCenter;
+  Offset v2 = target - circleCenter;
+
+  double crossProduct = v1.dx * v2.dy - v1.dy * v2.dx;
+  return crossProduct > 0;
 }

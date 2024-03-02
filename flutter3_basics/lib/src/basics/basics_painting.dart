@@ -147,19 +147,36 @@ extension CanvasEx on Canvas {
   /// [radians] 弧度, 如果指定了弧度优先使用此值
   /// [pivotX].[pivotY]旋转的锚点
   void withRotate(
-    double degrees,
+    num degrees,
     VoidCallback callback, {
     double? radians,
     double pivotX = 0,
     double pivotY = 0,
   }) {
-    radians ??= degrees.toRadians;
+    withRotateRadians(
+      radians ??= degrees.toRadians,
+      callback,
+      pivotX: pivotX,
+      pivotY: pivotY,
+    );
+  }
+
+  /// 旋转, 使用弧度单位
+  void withRotateRadians(
+    double radians,
+    VoidCallback callback, {
+    double pivotX = 0,
+    double pivotY = 0,
+    ui.Offset? anchor,
+  }) {
     if (radians == 0) {
       callback();
     } else {
+      pivotX = anchor?.dx ?? pivotX;
+      pivotY = anchor?.dy ?? pivotY;
       withSave(() {
         translate(pivotX, pivotY);
-        rotate(radians!);
+        rotate(radians);
         translate(-pivotX, -pivotY);
         callback();
       });
@@ -249,5 +266,27 @@ extension CanvasEx on Canvas {
         callback();
       });
     }
+  }
+
+  /// 绘制文本, 绘制出来的文本左上角对齐0,0位置
+  /// [getOffset] 获取文本的绘制位置的回调
+  void drawText(
+    String? text, {
+    Color? textColor = Colors.black,
+    double? fontSize = kDefaultFontSize,
+    ui.Offset offset = ui.Offset.zero,
+    Offset? Function(TextPainter painter)? getOffset,
+  }) {
+    final painter = TextPainter(
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: fontSize,
+          ),
+        ),
+        textDirection: TextDirection.ltr)
+      ..layout();
+    painter.paint(this, (getOffset?.call(painter) ?? ui.Offset.zero) + offset);
   }
 }

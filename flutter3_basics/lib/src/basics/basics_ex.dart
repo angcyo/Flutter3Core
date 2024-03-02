@@ -723,6 +723,15 @@ extension NumEx on num {
     return degrees.toDouble();
   }
 
+  /// 消除负数弧度
+  double get sanitizeRadians {
+    var radians = this % (2 * math.pi);
+    if (radians < 0) {
+      radians += 2 * math.pi;
+    }
+    return radians.toDouble();
+  }
+
   /// N次方
   dynamic pow(num exponent) => math.pow(this, exponent);
 
@@ -848,6 +857,9 @@ extension DoubleEx on double {
   /// 判断2个浮点数是否相等
   bool equalTo(double other, [double epsilon = 1e-8]) =>
       (this - other).abs() < epsilon;
+
+  /// 判断浮点数是否是一个有效的数值
+  bool get isValid => !isNaN && !isInfinite;
 }
 
 /// [Uint8List]

@@ -41,6 +41,7 @@ class L {
   static const int error = 4;
 
   static bool SHOW_TIME = true;
+  static String TIME_PATTERN = "HH:mm:ss.SSS";
   static bool SHOW_LEVEL = true;
   static bool SHOW_TAG = true;
   static String TAG = 'angcyo';
@@ -155,7 +156,7 @@ class L {
       bool? showTime,
       bool? showLevel,
       bool? showTag}) {
-    final time = showTime ?? SHOW_TIME ? '${nowTimeString()} ' : '';
+    final time = showTime ?? SHOW_TIME ? '${nowTimeString(TIME_PATTERN)} ' : '';
     final levelStr = showLevel ?? SHOW_LEVEL ? _levelStr(level) : '';
     final tagStr = showTag ?? SHOW_TAG ? '[${tag ?? TAG}] ' : '';
     final msgType =
@@ -164,7 +165,7 @@ class L {
 
     //获取当前调用方法的文件名和行数
     final stackTrace = StackTrace.current.toString();
-    final stackTraceList = stackTrace.split(lineSeparator);
+    final stackTraceList = stackTrace.split("\n");
     final lineStackTrace =
         stackTraceList[math.min(3, stackTraceList.length) - 1];
     //获取当前的文件名称以及路径行号:列号

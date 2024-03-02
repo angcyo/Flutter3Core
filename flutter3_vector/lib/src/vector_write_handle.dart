@@ -13,6 +13,10 @@ part of flutter3_vector;
 @dp
 const double kVectorTolerance = 0.5; //
 
+/// 路径采样误差
+@dp
+const double kPathAcceptableError = 0.01; //
+
 mixin VectorWriteMixin {
   /// 当前点与上一个点之间的关系, 起点
   static const int POINT_TYPE_START = 0;
@@ -34,6 +38,7 @@ mixin VectorWriteMixin {
   double vectorTolerance = kVectorTolerance;
 
   /// 圆心之间的距离小于这个值时, 认为是一个圆
+  @dp
   double get circleTolerance => vectorTolerance;
 
   /// 是否启用矢量拟合曲线, 否则只拟合直线
@@ -61,45 +66,113 @@ mixin VectorWriteMixin {
     Offset position,
     double? angle,
   ) {
-    final point = VectorPoint(position: position, angle: angle);
+    final newPoint = VectorPoint(position: position, angle: angle);
     if (_pointList.isEmpty || _lastContourIndex != contourIndex) {
       //第一个点 or 新的轮廓开始
       handleAndClearPointList();
-      point.type = POINT_TYPE_START;
+      newPoint.type = POINT_TYPE_START;
       _lastContourIndex = contourIndex;
-      _pointList.add(point);
+      _pointList.add(newPoint);
       onContourStart();
+      onWritePoint(newPoint);
+      _checkEnd(ratio);
       return;
     }
     _lastContourIndex = contourIndex;
+    newPoint.type = POINT_TYPE_LINE;
     if (_pointList.length == 1) {
-      //之前只有一个点
-      point.type = POINT_TYPE_LINE;
-      _pointList.add(point);
+      //之前只有1个点
+      _pointList.add(newPoint);
+      _checkEnd(ratio);
       return;
     }
+    //---
     final startPoint = _pointList.first;
     final beforePoint = _pointList.last;
-    calcPointType(point, startPoint, beforePoint);
-    //---
+    if (enableVectorArc) {
+      //曲线拟合
+      newPoint.circleStart = startPoint.position;
+      newPoint.circleCenter = centerOfCircle(
+          newPoint.position, startPoint.position, beforePoint.position);
+      if (beforePoint.circleCenter == null) {
+        //之前的点没有圆心
+        if (isPointInLine(newPoint, startPoint)) {
+          _pointList.removeLastIfNotEmpty();
+          _pointList.add(newPoint);
+        }
+      } else if (isPointInCircle(
+          beforePoint.circleCenter!, newPoint, startPoint, beforePoint)) {
+        newPoint.type = POINT_TYPE_ARC;
+        newPoint.sweepFlag = (angle == null || angle > 0) ? 0 : 1;
 
-    if (point.type == POINT_TYPE_START) {
-      _pointList.add(point);
-      onWritePoint(point);
-    } else if (point.type.have(POINT_TYPE_SAME)) {
-      //相同类型的点
-      _pointList.removeLastIfNotEmpty();
-      _pointList.add(point);
-    } else if (_pointList.length <= 1) {
-      //等待下一个点
-    } else {
-      handleAndClearPointList();
-      if (beforePoint != null) {
-        _pointList.add(beforePoint);
+        /*if (newPoint.angle != null &&
+            startPoint.angle != null &&
+            ((newPoint.angle! > 0 && startPoint.angle! > 0) ||
+                (newPoint.angle! < 0 && startPoint.angle! < 0))) {
+          if (newPoint.angle! > 0 && startPoint.angle! > 0) {
+            newPoint.sweepFlag = (newPoint.angle! - startPoint.angle!) -
+                        (beforePoint.angle! - startPoint.angle!) >
+                    0
+                ? 1
+                : 0;
+          }
+
+          //同向
+          _pointList.removeLastIfNotEmpty();
+          _pointList.add(newPoint);
+        } else {
+          handleAndClearPointList();
+          _pointList.add(beforePoint);
+          _pointList.add(newPoint);
+        }*/
+
+        //如果弧度在变大, 则是顺时针, 否则是逆时针
+        newPoint.sweepFlag = isClockwise(
+                startPoint.position, newPoint.circleCenter!, newPoint.position)
+            ? 1
+            : 0;
+        if (this is SvgWriteHandle &&
+            newPoint.angle != null &&
+            startPoint.angle != null &&
+            (newPoint.angle!.sanitizeRadians -
+                        startPoint.angle!.sanitizeRadians)
+                    .abs() >=
+                pi) {
+          //使用A拟合曲线时, 只能模拟小弧, 不成超过180°
+          handleAndClearPointList();
+          _pointList.add(beforePoint);
+          _pointList.add(newPoint);
+        } else {
+          _pointList.removeLastIfNotEmpty();
+          _pointList.add(newPoint);
+        }
+      } else {
+        if (!beforePoint.type.have(POINT_TYPE_ARC) &&
+            isPointInLine(newPoint, startPoint)) {
+          _pointList.removeLastIfNotEmpty();
+          _pointList.add(newPoint);
+        } else {
+          handleAndClearPointList();
+          _pointList.add(beforePoint);
+          _pointList.add(newPoint);
+        }
       }
-      _pointList.add(point);
+    } else {
+      //直线拟合
+      if (isPointInLine(newPoint, startPoint)) {
+        //相同类型的点
+        _pointList.removeLastIfNotEmpty();
+        _pointList.add(newPoint);
+      } else {
+        handleAndClearPointList();
+        _pointList.add(newPoint);
+      }
     }
-    _lastContourIndex = contourIndex;
+    _checkEnd(ratio);
+  }
+
+  void _checkEnd(double ratio) {
+    //---end---
     if (ratio >= 1) {
       //轮廓结束
       handleAndClearPointList();
@@ -122,62 +195,25 @@ mixin VectorWriteMixin {
   @overridePoint
   void onWritePoint(VectorPoint point) {}
 
+  /// 写入一个点位时可以用来转换坐标
+  @overridePoint
+  Offset transformPoint(Offset point) => point;
+
   /// 输出矢量字符串, 比如svg path数据, 或者 svg xml文档, 或者 gcode 文本字符串
   @api
   String? getVectorString() => stringBuffer?.toString();
 
-  /// 计算点的类型
-  /// [point] 当前点
-  /// [startPoint] 起点
-  /// [beforePoint] 前一个点
-  void calcPointType(
-    VectorPoint point,
-    VectorPoint startPoint,
-    VectorPoint beforePoint,
-  ) {
-    final beforeAngle = beforePoint.angle;
-    final angle = point.angle;
-    if (beforeAngle == null || angle == null) {
-      //没有角度信息, 这个分支不应该进入
-      point.type = POINT_TYPE_LINE;
-      return;
+  /// 判断当前点是否在指定的圆心圆上
+  /// [circleCenter] 指定的圆心坐标
+  bool isPointInCircle(Offset circleCenter, VectorPoint point,
+      VectorPoint startPoint, VectorPoint beforePoint) {
+    final cc = centerOfCircle(
+        point.position, startPoint.position, beforePoint.position);
+    if (cc == null) {
+      return false;
     }
-
-    //---
-    final diffAngle = angle - beforeAngle;
-    if (enableVectorArc) {
-      //拟合曲线
-      final circleCenter = centerOfCircle(
-          point.position, startPoint.position, beforePoint.position);
-      point.circleCenter = circleCenter;
-
-      final beforeCircleCenter = beforePoint.circleCenter;
-      if (beforeCircleCenter == null) {
-        //之前的点没有圆心
-      } else {
-        final c = distance(circleCenter, beforeCircleCenter);
-        if (c.abs() < circleTolerance) {
-          //在一个圆上
-          point.type = POINT_TYPE_ARC;
-          if (beforePoint.type.have(POINT_TYPE_ARC)) {
-            point.type = point.type | POINT_TYPE_SAME;
-          }
-          return;
-        }
-      }
-    }
-
-    //拟合直线, 使用公差采样
-    point.type = POINT_TYPE_LINE;
-    final c = distance(point.position, beforePoint.position);
-    final h = tan(diffAngle.abs() / 4) * c / 2;
-    if (h.abs() < vectorTolerance) {
-      //debugger();
-      //在一条直线上
-      if (beforePoint.type.have(POINT_TYPE_LINE)) {
-        point.type = point.type | POINT_TYPE_SAME;
-      }
-    }
+    final c = distance(circleCenter, cc);
+    return c.abs() < circleTolerance;
   }
 
   /// 判断2个点是否在一条直线上
@@ -192,9 +228,8 @@ mixin VectorWriteMixin {
     return h.abs() < vectorTolerance;
   }
 
-  void initStringBuffer() {
-    stringBuffer ??= StringBuffer();
-  }
+  /// 初始化字符串收集
+  StringBuffer initStringBuffer() => stringBuffer ??= StringBuffer();
 
   //region ---中间数据---
 
@@ -230,14 +265,27 @@ class VectorPoint {
 
   //---
 
+  /// 圆开始的坐标, 如果有
+  @dp
+  Offset? circleStart;
+
   /// 圆心坐标, 如果有
   @dp
   Offset? circleCenter;
+
+  /// 用来确定是要画小弧（0）还是画大弧（1）
+  @implementation
+  int largeArcFlag = 0;
+
+  /// 顺时针方向（1）还是逆时针方向（0）
+  @implementation
+  int sweepFlag = 1;
 
   VectorPoint({
     required this.position,
     this.angle,
     this.type = VectorWriteMixin.POINT_TYPE_START,
+    this.circleStart,
     this.circleCenter,
   });
 }
@@ -247,10 +295,15 @@ class SvgWriteHandle with VectorWriteMixin {
   @override
   void onWritePoint(VectorPoint point) {
     initStringBuffer();
+    final position = transformPoint(point.position);
     if (point.type == VectorWriteMixin.POINT_TYPE_START) {
-      stringBuffer?.write('M${point.position.dx},${point.position.dy} ');
+      stringBuffer?.write('M${position.dx},${position.dy}');
     } else if (point.type.have(VectorWriteMixin.POINT_TYPE_LINE)) {
-      stringBuffer?.write('L${point.position.dx},${point.position.dy} ');
+      stringBuffer?.write(' L${position.dx},${position.dy}');
+    } else if (point.type.have(VectorWriteMixin.POINT_TYPE_ARC)) {
+      final c = distance(position, point.circleCenter!);
+      stringBuffer?.write(
+          ' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} ${position.dx},${position.dy}');
     }
   }
 
@@ -260,25 +313,133 @@ class SvgWriteHandle with VectorWriteMixin {
   }
 }
 
+/// 输出json字符串
+class JsonWriteHandle with VectorWriteMixin {
+  List<List<Map<String, dynamic>>> jsonResultBuilder = [];
+  List<Map<String, dynamic>>? jsonBuilder;
+
+  @override
+  void onContourStart() {
+    jsonBuilder = [];
+  }
+
+  @override
+  void onWritePoint(VectorPoint point) {
+    final position = transformPoint(point.position);
+    if (jsonBuilder != null) {
+      jsonBuilder!.add({
+        "x": position.dx,
+        "y": position.dy,
+        "angle": point.angle,
+      });
+    }
+  }
+
+  @override
+  void onContourEnd() {
+    if (jsonBuilder != null) {
+      jsonResultBuilder.add(jsonBuilder!);
+      jsonBuilder = null;
+    }
+  }
+
+  @override
+  String? getVectorString() => jsonResultBuilder.toJsonString();
+}
+
 /// 用来输出成gcode文本字符串
-class GCodeWriteHandle with VectorWriteMixin {}
+class GCodeWriteHandle with VectorWriteMixin {
+  @override
+  void onContourStart() {
+    initStringBuffer();
+    stringBuffer?.writeln('M03S255');
+  }
+
+  @override
+  void onContourEnd() {
+    stringBuffer?.writeln('M05S0');
+  }
+
+  @override
+  void onWritePoint(VectorPoint point) {
+    initStringBuffer();
+    final position = transformPoint(point.position);
+    if (point.type == VectorWriteMixin.POINT_TYPE_START) {
+      stringBuffer?.writeln('G0X${position.dx}Y${position.dy}');
+    } else if (point.type.have(VectorWriteMixin.POINT_TYPE_LINE)) {
+      stringBuffer?.writeln('G1X${position.dx}Y${position.dy}');
+    } else if (point.type.have(VectorWriteMixin.POINT_TYPE_ARC)) {
+      if (point.sweepFlag == 1) {
+        //顺时针
+        stringBuffer?.write("G3");
+      } else {
+        //逆时针
+        stringBuffer?.write("G2");
+      }
+      final ij = transformPoint(Offset(
+          point.circleCenter!.dx - point.circleStart!.dx,
+          point.circleCenter!.dy - point.circleStart!.dy));
+      stringBuffer?.write('X${position.dx}Y${position.dy}');
+      stringBuffer?.writeln('I${ij.dx}J${ij.dy}');
+    }
+  }
+}
 
 extension VectorPathEx on Path {
-  String? toSvgString() {
-    final svgWriteHandle = SvgWriteHandle();
-    svgWriteHandle.enableVectorArc = true;
-    //svgWriteHandle.vectorTolerance = 10;
+  /// 转换成gcode字符串数据
+  String? toGCodeString() {
+    final handle = GCodeWriteHandle();
+    handle.enableVectorArc = true;
+    handle.initStringBuffer().write('G90\nG21\n');
+    //handle.vectorTolerance = 10;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
-          'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
-      svgWriteHandle.appendPoint(
+      /*l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
+          'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');*/
+      handle.appendPoint(
         posIndex,
         ratio,
         contourIndex,
         position,
         angle,
       );
-    }, kVectorTolerance);
-    return svgWriteHandle.getVectorString();
+    }, kPathAcceptableError);
+    return handle.getVectorString();
+  }
+
+  /// 转换成svg路径字符串数据
+  String? toSvgPathString() {
+    final handle = SvgWriteHandle();
+    handle.enableVectorArc = true;
+    //handle.vectorTolerance = 10;
+    eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
+      l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
+          'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
+      handle.appendPoint(
+        posIndex,
+        ratio,
+        contourIndex,
+        position,
+        angle,
+      );
+    }, 0.3 /*kPathAcceptableError*/);
+    return handle.getVectorString();
+  }
+
+  String? toPathPointJsonString() {
+    final handle = JsonWriteHandle();
+    handle.enableVectorArc = false;
+    handle.vectorTolerance = 0.02;
+    eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
+      l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
+          'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
+      handle.appendPoint(
+        posIndex,
+        ratio,
+        contourIndex,
+        position,
+        angle,
+      );
+    }, 0.02 /*kPathAcceptableError*/);
+    return handle.getVectorString();
   }
 }
