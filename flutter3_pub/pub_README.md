@@ -424,14 +424,11 @@ https://github.com/fluttercommunity/plus_plugins
   条码扫描器插件使您能够轻松实现适用于 iOS 和 Android 的 Scanbot 条码扫描器 SDK。
 - [flutter_barcode_scanner: ^2.0.0](https://pub.dev/packages/flutter_barcode_scanner) 一个用于
   Flutter 应用程序的插件，可在 Android 和 iOS 上添加条形码扫描支持。
-- [flutter_mrz_scanner: ^2.1.0](https://pub.dev/packages/flutter_mrz_scanner) 使用 iOS 和 Android
-  扫描身份证件（护照、身份证、签证）的 MRZ（机器可读区域）。被 QKMRZScanner 严重啃食。
-- [file_picker: ^6.1.1](https://pub.dev/packages/file_picker)
-  一个包，允许您使用本机文件资源管理器来选取单个或多个文件，并具有扩展筛选支持。
-- [excel: ^3.0.0](https://pub.dev/packages/excel) Excel 是一个 flutter 和 dart 库，用于读取、创建和更新
-  XLSX 文件的 excel 工作表
-- [uri_to_file: ^1.0.0](https://pub.dev/packages/uri_to_file) 一个 Flutter 插件，用于将支持的 uri
-  转换为文件。支持 Android 和 iOS。
+- [flutter_mrz_scanner: ^2.1.0](https://pub.dev/packages/flutter_mrz_scanner) 使用 iOS 和 Android 扫描身份证件（护照、身份证、签证）的 MRZ（机器可读区域）。被 QKMRZScanner 严重啃食。
+- [file_picker: ^6.1.1](https://pub.dev/packages/file_picker) 一个包，允许您使用本机文件资源管理器来选取单个或多个文件，并具有扩展筛选支持。
+- [file_selector: ^1.0.3](https://pub.dev/packages/file_selector) 一个 Flutter 插件，用于管理文件和与文件对话框的交互。
+- [excel: ^3.0.0](https://pub.dev/packages/excel) Excel 是一个 flutter 和 dart 库，用于读取、创建和更新 XLSX 文件的 excel 工作表
+- [uri_to_file: ^1.0.0](https://pub.dev/packages/uri_to_file) 一个 Flutter 插件，用于将支持的 uri 转换为文件。支持 Android 和 iOS。
 - [flutter_file_downloader: ^1.1.4](https://pub.dev/packages/flutter_file_downloader) 一个简单的
   flutter 插件，可将所有文件类型下载到所有 android 设备的下载目录。当 android 10
   问世时，隐私限制发生了很大的变化，并且没有足够的 flutter 相关信息，所以我想出了一个简单的 ANDROID
@@ -451,6 +448,7 @@ https://github.com/fluttercommunity/plus_plugins
   插件，提供简单的地理编码和反向地理编码功能。
 - [permission_handler: ^11.1.0](https://pub.dev/packages/permission_handler)
   该插件提供了一个跨平台（iOS、Android）API 来请求权限并检查其状态。您还可以打开设备的应用设置，以便用户可以授予权限。https://github.com/baseflow/flutter-permission-handler
+- [image_picker: ^1.0.7](https://pub.dev/packages/image_picker) 适用于 iOS 和 Android 的 Flutter 插件，用于从图像库中挑选图像，并使用相机拍摄新照片。
 - [image_gallery_saver: ^2.0.3](https://pub.dev/packages/image_gallery_saver) 我们使用插件 image_picker 从 Android 和 iOS 图像库中选择图像，但它无法将图像保存到图库中。这个插件可以提供这个功能。
 - [flutter_contacts: ^1.1.7+1](https://pub.dev/packages/flutter_contacts) Flutter 插件，用于读取、创建、更新、删除和观察 Android 和 iOS 上的原生联系人，具有群组支持、vCard 支持和联系人权限处理。
 - [upload_file_oss: ^1.0.0](https://pub.dev/packages/upload_file_oss) 一个简单上传文件到阿里云对象存储OSS的库。 仅支持小文件上传。
@@ -459,3 +457,5 @@ https://github.com/fluttercommunity/plus_plugins
 - [bluetooth_low_energy: ^5.0.6](https://pub.dev/packages/bluetooth_low_energy) 一个 Flutter 插件，用于控制低功耗蓝牙。
 - [flutter_blue: ^0.8.0](https://pub.dev/packages/flutter_blue) FlutterBlue 是 Flutter 的蓝牙插件，Flutter 是一个新的应用 SDK，可帮助开发者构建现代多平台应用。
 - [flutter_blue_plus: ^1.31.15](https://pub.dev/packages/flutter_blue_plus) FlutterBluePlus 是 Flutter 的蓝牙低功耗插件。
+- [media_kit: ^1.1.10+1](https://pub.dev/packages/media_kit) Flutter & Dart 的跨平台视频播放器和音频播放器。
+- [shared_preferences: ^2.2.2](https://pub.dev/packages/shared_preferences) 为简单数据包装特定于平台的持久性存储（iOS 和 macOS 上的 NSUserDefaults、Android 上的 SharedPreferences 等）。数据可能会异步持久化到磁盘，并且不能保证返回后写入会持久化到磁盘，因此此插件不得用于存储关键数据。
