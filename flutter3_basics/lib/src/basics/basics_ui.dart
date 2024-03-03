@@ -35,6 +35,8 @@ void postFrameCallbackIfNeed(FrameCallback callback) {
 }
 
 /// 每一帧都会回调
+/// [WidgetsFlutterBinding.cancelFrameCallbackWithId]
+/// [Ticker.scheduleTick]
 /// @return id
 int scheduleFrameCallback(FrameCallback callback, {bool rescheduling = false}) {
   WidgetsFlutterBinding.ensureInitialized();
