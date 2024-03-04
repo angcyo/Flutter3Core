@@ -651,6 +651,17 @@ extension RectEx on Rect {
         bottomLeft: Radius.circular(vertical),
         bottomRight: Radius.circular(horizontal),
       );
+
+  /// 将一个点扩展到矩形中, 返回一个新的矩形
+  /// [expandToInclude]
+  ui.Rect union(Offset point) {
+    return Rect.fromLTRB(
+      math.min(left, point.dx),
+      math.min(top, point.dy),
+      math.max(right, point.dx),
+      math.max(bottom, point.dy),
+    );
+  }
 }
 
 //endregion Rect 扩展

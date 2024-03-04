@@ -13,10 +13,6 @@ part of flutter3_vector;
 @dp
 const double kVectorTolerance = 0.5; //
 
-/// 路径采样误差
-@dp
-const double kPathAcceptableError = 0.01; //
-
 mixin VectorWriteMixin {
   /// 当前点与上一个点之间的关系, 起点
   static const int POINT_TYPE_START = 0;
@@ -39,10 +35,11 @@ mixin VectorWriteMixin {
 
   /// 圆心之间的距离小于这个值时, 认为是一个圆
   @dp
-  double get circleTolerance => vectorTolerance;
+  double get circleTolerance => 1;
 
   /// 是否启用矢量拟合曲线, 否则只拟合直线
   @configProperty
+  @implementation
   bool enableVectorArc = false;
 
   /// 字符串收集
@@ -389,7 +386,7 @@ extension VectorPathEx on Path {
   /// 转换成gcode字符串数据
   String? toGCodeString() {
     final handle = GCodeWriteHandle();
-    handle.enableVectorArc = true;
+    handle.enableVectorArc = false;
     handle.initStringBuffer().write('G90\nG21\n');
     //handle.vectorTolerance = 10;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
@@ -409,7 +406,7 @@ extension VectorPathEx on Path {
   /// 转换成svg路径字符串数据
   String? toSvgPathString() {
     final handle = SvgWriteHandle();
-    handle.enableVectorArc = true;
+    handle.enableVectorArc = false;
     //handle.vectorTolerance = 10;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
       l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
@@ -428,7 +425,7 @@ extension VectorPathEx on Path {
   String? toPathPointJsonString() {
     final handle = JsonWriteHandle();
     handle.enableVectorArc = false;
-    handle.vectorTolerance = 0.02;
+    //handle.vectorTolerance = 0.02;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
       l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
           'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');

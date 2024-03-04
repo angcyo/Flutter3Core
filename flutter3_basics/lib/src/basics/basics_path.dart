@@ -7,12 +7,39 @@ part of flutter3_basics;
 /// 虚线
 /// https://github.com/dnfield/flutter_path_drawing/blob/master/lib/src/dash_path.dart
 ///
+
+/// 路径采样误差
+@dp
+const double kPathAcceptableError = 0.025; //
+
 /// [Matrix4Ex.mapRect]
 extension PathEx on Path {
   /// 判断路径是否为空
   bool get isEmpty {
     //return computeMetrics().isEmpty;
     return getBounds().isEmpty;
+  }
+
+  /// 获取精度更高的路径边界
+  /// [exact] 是否获取精确计算的边界
+  /// [pathAcceptableError] 路径采样误差
+  @dp
+  Rect getExactBounds([
+    bool exact = true,
+    double pathAcceptableError = kPathAcceptableError,
+  ]) {
+    if (!exact) {
+      return getBounds();
+    }
+    Rect? rect;
+    eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClosed) {
+      if (rect == null) {
+        rect = Rect.fromPoints(position, position);
+      } else {
+        rect = rect!.union(position);
+      }
+    }, pathAcceptableError);
+    return rect ?? getBounds();
   }
 
   /// 是否包含指定点
@@ -81,7 +108,7 @@ extension PathEx on Path {
       double angle,
       bool isClosed,
     ) action, [
-    @dp double step = 1,
+    @dp double step = kPathAcceptableError,
   ]) {
     final metrics = computeMetrics();
     int contourIndex = 0;
@@ -123,19 +150,19 @@ extension PathEx on Path {
       contourIndex++;
     }
   }
-
-  void token() {
-    //PathMe
-    //final commands = this.commands;
-  }
 }
 
 extension ListPathEx on List<Path> {
   /// 获取包含所有路径的边界
-  Rect getPathBounds() {
+  @dp
+  Rect getExactPathBounds([
+    bool exact = true,
+    double pathAcceptableError = kPathAcceptableError,
+  ]) {
     Rect rect = Rect.zero;
     for (final path in this) {
-      rect = rect.expandToInclude(path.getBounds());
+      rect =
+          rect.expandToInclude(path.getExactBounds(exact, pathAcceptableError));
     }
     return rect;
   }
