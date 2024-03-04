@@ -190,4 +190,12 @@ class ConfigProperty {
 
 const configProperty = ConfigProperty();
 
+class FlagProperty {
+  final String des;
+
+  const FlagProperty([this.des = '标记属性, 不参与底层的逻辑运算']);
+}
+
+const flagProperty = FlagProperty();
+
 //endregion---base

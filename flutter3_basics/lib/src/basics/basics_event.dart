@@ -40,6 +40,10 @@ mixin IHandleEventMixin {
   PointerEvent? firstMoveEvent;
   bool _isFirstEventCancel = false;
 
+  /// 标记, 第一个手指的事件是否处理了, 会在下次down时, 自动重置为false
+  @flagProperty
+  bool isFirstEventHandled = false;
+
   /// 是否忽略处理事件, 请在手势抬起/取消时, 重置为false
   bool ignoreHandle = false;
 
@@ -47,6 +51,7 @@ mixin IHandleEventMixin {
   void dispatchPointerEvent(PointerEvent event) {
     if (event is PointerDownEvent) {
       if (firstDownEvent == null || _isFirstEventCancel) {
+        isFirstEventHandled = false;
         _isFirstEventCancel = false;
         firstDownEvent = event;
         dispatchFirstPointerEvent(event);

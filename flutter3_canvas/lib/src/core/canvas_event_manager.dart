@@ -122,6 +122,7 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
   void _translateBy(double dx, double dy, {bool anim = false}) {
     dx *= 1 / canvasDelegate.canvasViewBox.scaleX;
     dy *= 1 / canvasDelegate.canvasViewBox.scaleY;
+    isFirstEventHandled = true;
     translateBy(dx, dy, anim: anim);
   }
 
@@ -191,6 +192,7 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
 
       if ((c2 - c1).abs() >= scaleThreshold) {
         //缩放
+        isFirstEventHandled = true;
         final scale = c2 / c1;
         final pivot = center(moveList.first, moveList.last);
         scaleBy(
@@ -265,9 +267,10 @@ class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
   bool handleFlingDetectorPointerEvent(PointerEvent event, Velocity velocity) {
     //debugger();
     if (pointerCount == 2 && event.isPointerUp) {
-      l.d('fling:$velocity');
       if (velocity.pixelsPerSecond.dx.abs() > flingVelocityThreshold) {
-        //双指滑动
+        //双指横向滑动
+        l.d('fling:$velocity');
+        isFirstEventHandled = true;
         _flingController = startFling((value) {
           canvasDelegate.canvasViewBox.translateTo(
             value,
@@ -279,8 +282,9 @@ class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
             fromValue: canvasDelegate.canvasViewBox.translateX,
             velocity: velocity.pixelsPerSecond.dx);
       } else if (velocity.pixelsPerSecond.dy.abs() > flingVelocityThreshold) {
-        //双指滑动
+        //双指纵向滑动
         l.d('fling:$velocity');
+        isFirstEventHandled = true;
         _flingController = startFling((value) {
           canvasDelegate.canvasViewBox.translateTo(
             canvasDelegate.canvasViewBox.translateX,

@@ -31,7 +31,6 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
         element.painting(canvas, paintMeta);
       }
       elementSelectComponent.painting(canvas, paintMeta);
-      elementSelectComponent.paintSelectBounds(canvas, paintMeta);
     });
   }
 
@@ -95,6 +94,20 @@ class ElementSelectComponent extends ElementGroupPainter
 
   ElementSelectComponent(this.canvasElementManager);
 
+  @override
+  void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
+    //debugger();
+
+    //绘制选中元素边界
+    paint.color =
+        canvasElementManager.canvasDelegate.canvasStyle.canvasAccentColor;
+    paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
+    paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
+
+    //绘制选择框
+    paintSelectBounds(canvas, paintMeta);
+  }
+
   /// 绘制选中元素的边界
   @entryPoint
   void paintSelectBounds(Canvas canvas, PaintMeta paintMeta) {
@@ -114,15 +127,6 @@ class ElementSelectComponent extends ElementGroupPainter
         canvas.drawRect(selectBounds!, boundsPaint);
       });
     }
-  }
-
-  @override
-  void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
-    //debugger();
-    paint.color =
-        canvasElementManager.canvasDelegate.canvasStyle.canvasAccentColor;
-    paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
-    paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
   }
 
   @override
@@ -153,7 +157,8 @@ class ElementSelectComponent extends ElementGroupPainter
           //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
           //选择结束
-          updateSelectBounds(null, isFirstMoveExceed());
+          updateSelectBounds(
+              null, isFirstMoveExceed() && _noCanvasEventHandle());
         }
         return true;
       } else if (event.isPointerDown) {
@@ -168,6 +173,13 @@ class ElementSelectComponent extends ElementGroupPainter
     }
     return super.onPointerEvent(event);
   }
+
+  /// 没有进行画布的操作
+  bool _noCanvasEventHandle() =>
+      canvasElementManager.canvasDelegate.canvasEventManager.let((it) =>
+          !it.canvasTranslateComponent.isFirstEventHandled &&
+          !it.canvasScaleComponent.isFirstEventHandled &&
+          !it.canvasFlingComponent.isFirstEventHandled);
 
   /// 更新选择框边界, 并且触发选择选择
   void updateSelectBounds(Rect? bounds, bool select) {
