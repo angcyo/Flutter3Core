@@ -96,7 +96,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 选择边界改变时触发
   /// [ElementSelectComponent.updateSelectBounds]
-  void dispatchCanvasSelectBoundsChangedAction(Rect? bounds) {
+  void dispatchCanvasSelectBoundsChanged(Rect? bounds) {
     canvasListeners.clone().forEach((element) {
       element.onCanvasSelectBoundsChangedAction?.call(bounds);
     });
@@ -112,6 +112,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasListeners.clone().forEach((element) {
       element.onCanvasElementPropertyChangedAction
           ?.call(elementPainter, from, to);
+    });
+    refresh();
+  }
+
+  /// 选择的元素改变后回调
+  void dispatchCanvasElementSelectChanged(
+    ElementSelectComponent elementSelect,
+    List<ElementPainter>? from,
+    List<ElementPainter>? to,
+  ) {
+    canvasListeners.clone().forEach((element) {
+      element.onCanvasElementSelectChangedAction?.call(elementSelect, from, to);
     });
     refresh();
   }

@@ -30,6 +30,7 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
       for (var element in elements) {
         element.painting(canvas, paintMeta);
       }
+      elementSelectComponent.painting(canvas, paintMeta);
       elementSelectComponent.paintSelectBounds(canvas, paintMeta);
     });
   }
@@ -58,15 +59,16 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
     elements.clear();
   }
 
-  /// 查找元素
-/*ElementPainter? findElement(Offset offset) {
+  /// 查找元素, 按照元素的先添加先返回的顺序
+  List<ElementPainter> findElement({Offset? point, Rect? rect, Path? path}) {
+    final result = <ElementPainter>[];
     for (var element in elements) {
-      if (element.contains(offset)) {
-        return element;
+      if (element.hitTest(point: point, rect: rect, path: path)) {
+        result.add(element);
       }
     }
-    return null;
-  }*/
+    return result;
+  }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -115,6 +117,15 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   @override
+  void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
+    //debugger();
+    paint.color =
+        canvasElementManager.canvasDelegate.canvasStyle.canvasAccentColor;
+    paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
+    paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
+  }
+
+  @override
   bool interceptPointerEvent(PointerEvent event) {
     //debugger();
     return super.interceptPointerEvent(event);
@@ -131,15 +142,18 @@ class ElementSelectComponent extends ElementGroupPainter
         final viewBox = canvasElementManager.canvasDelegate.canvasViewBox;
         if (event.isPointerDown) {
           _downScenePoint = viewBox.toScenePoint(event.localPosition);
-          updateSelectBounds(Rect.fromLTRB(_downScenePoint.dx,
-              _downScenePoint.dy, _downScenePoint.dx, _downScenePoint.dy));
+          updateSelectBounds(
+              Rect.fromLTRB(_downScenePoint.dx, _downScenePoint.dy,
+                  _downScenePoint.dx, _downScenePoint.dy),
+              false);
         } else if (event.isPointerMove) {
           final scenePoint = viewBox.toScenePoint(event.localPosition);
-          updateSelectBounds(Rect.fromPoints(_downScenePoint, scenePoint));
+          updateSelectBounds(
+              Rect.fromPoints(_downScenePoint, scenePoint), false);
           //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
           //选择结束
-          updateSelectBounds(null);
+          updateSelectBounds(null, isFirstMoveExceed());
         }
         return true;
       } else if (event.isPointerDown) {
@@ -148,17 +162,43 @@ class ElementSelectComponent extends ElementGroupPainter
         if (!isFirstMoveExceed()) {
           //时, 第一个手指未移动, 则取消滑动选择元素
           ignoreHandle = true;
-          updateSelectBounds(null);
+          updateSelectBounds(null, false);
         }
       }
     }
     return super.onPointerEvent(event);
   }
 
-  /// 更新选择框边界
-  void updateSelectBounds(Rect? bounds) {
+  /// 更新选择框边界, 并且触发选择选择
+  void updateSelectBounds(Rect? bounds, bool select) {
+    if (select) {
+      //需要选择元素
+      selectBounds?.let((it) {
+        final elements = canvasElementManager.findElement(rect: it);
+        resetSelectElement(elements);
+      });
+    }
     selectBounds = bounds;
     canvasElementManager.canvasDelegate
-        .dispatchCanvasSelectBoundsChangedAction(bounds);
+        .dispatchCanvasSelectBoundsChanged(bounds);
+  }
+
+  /// 重置选中的元素
+  void resetSelectElement(List<ElementPainter>? elements) {
+    List<ElementPainter>? old = children;
+    if (isNullOrEmpty(elements)) {
+      //取消元素选择
+      if (!isNullOrEmpty(children)) {
+        l.i('取消选中元素: $children');
+        resetChildren();
+        canvasElementManager.canvasDelegate
+            .dispatchCanvasElementSelectChanged(this, old, children);
+      }
+    } else {
+      l.i('选中元素: $elements');
+      resetChildren(elements);
+      canvasElementManager.canvasDelegate
+          .dispatchCanvasElementSelectChanged(this, old, children);
+    }
   }
 }

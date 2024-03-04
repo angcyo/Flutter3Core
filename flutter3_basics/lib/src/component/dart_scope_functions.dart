@@ -34,6 +34,11 @@ extension ScopeFunctionExt<T> on T {
   T? takeUnless(bool Function(T it) predicament) {
     return predicament.call(this) ? null : this;
   }
+
+  T apply(void Function(T it) block) {
+    block.call(this);
+    return this;
+  }
 }
 
 /// Extensions that can be used on any nullable type [T].

@@ -192,11 +192,10 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
-    final translation = vector.Vector3(pivotX, pivotY, pivotZ);
-    translate(translation);
-    //rotate(vector.Quaternion.euler(x, y, z), );
-    rotateZ(angle);
-    translate(-translation);
+    withPivot(() {
+      //rotate(vector.Quaternion.euler(x, y, z), );
+      rotateZ(angle);
+    }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
   /// 旋转到指定角度,弧度
@@ -206,10 +205,9 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
-    final translation = vector.Vector3(pivotX, pivotY, pivotZ);
-    translate(translation);
-    setRotation(Matrix3.rotationZ(angle));
-    translate(-translation);
+    withPivot(() {
+      setRotation(Matrix3.rotationZ(angle));
+    }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
   /// 反转矩阵

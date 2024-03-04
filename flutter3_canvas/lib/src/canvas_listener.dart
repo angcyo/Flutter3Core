@@ -10,7 +10,7 @@ class CanvasListener {
   final void Function(CanvasViewBox canvasViewBox, bool isCompleted)?
       onCanvasViewBoxChangedAction;
 
-  /// [CanvasDelegate.dispatchCanvasSelectBoundsChangedAction]
+  /// [CanvasDelegate.dispatchCanvasSelectBoundsChanged]
   final void Function(Rect? bounds)? onCanvasSelectBoundsChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementPropertyChanged]
@@ -20,9 +20,17 @@ class CanvasListener {
     PaintProperty? value,
   )? onCanvasElementPropertyChangedAction;
 
+  /// [CanvasDelegate.dispatchCanvasElementSelectChanged]
+  final void Function(
+    ElementSelectComponent elementSelect,
+    List<ElementPainter>? from,
+    List<ElementPainter>? to,
+  )? onCanvasElementSelectChangedAction;
+
   CanvasListener({
     this.onCanvasViewBoxChangedAction,
     this.onCanvasSelectBoundsChangedAction,
     this.onCanvasElementPropertyChangedAction,
+    this.onCanvasElementSelectChangedAction,
   });
 }

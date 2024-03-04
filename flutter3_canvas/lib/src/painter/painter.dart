@@ -7,9 +7,11 @@ part of flutter3_canvas;
 
 /// 绘制元数据
 class PaintMeta {
+  /// 坐标系原点偏移
   /// [CanvasViewBox.originMatrix]
   final Matrix4? originMatrix;
 
+  /// 画布缩放/平移/旋转/倾斜
   /// [CanvasViewBox.canvasMatrix]
   final Matrix4? canvasMatrix;
 
@@ -33,7 +35,7 @@ class PaintMeta {
 }
 
 /// 绘制接口
-abstract class IPainter {
+abstract class IPainter with Diagnosticable {
   /// 绘制入口
   void painting(Canvas canvas, PaintMeta paintMeta);
 }

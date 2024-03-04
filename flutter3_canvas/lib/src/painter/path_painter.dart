@@ -11,9 +11,8 @@ class PathElementPainter extends ElementPainter {
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
-    if (path != null) {
-      paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
-      canvas.drawPath(path!, paint);
-    }
+    paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
+    path?.let((it) => canvas.drawPath(it, paint));
+    paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
   }
 }
