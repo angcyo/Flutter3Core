@@ -25,11 +25,11 @@ void testPath() {
     ..addArc(const Rect.fromLTWH(0, 0, 100, 20), 0.toRadians, -360.toRadians);
 
   final testPath = arcPath;
-  //print(testPath.toSvgPathString());
-  //print(lineSeparator);
-  //print(testPath.toGCodeString());
-  //print(lineSeparator);
-  print(testPath.toPathPointJsonString());
+  print(testPath.toSvgPathString());
+  print(lineSeparator);
+  print(testPath.toGCodeString());
+  print(lineSeparator);
+  //print(testPath.toPathPointJsonString());
 }
 
 void testCircle() {
