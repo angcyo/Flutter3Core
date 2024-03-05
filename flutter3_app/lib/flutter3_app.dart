@@ -40,8 +40,8 @@ void runGlobalApp(Widget app) {
 
   var oldOnError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails details) {
-    l.e("发生一个错误:↓"..toErrorLogSync());
-    l.e(details..toErrorLogSync());
+    l.e("发生一个错误:↓"..writeToErrorLog());
+    l.e(details..writeToErrorLog());
     oldOnError?.call(details);
   };
 
@@ -54,17 +54,17 @@ void runGlobalApp(Widget app) {
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
 
-    "开始启动[main]:${ui.PlatformDispatcher.instance.defaultRouteName}".toLogSync();
+    "开始启动[main]:${ui.PlatformDispatcher.instance.defaultRouteName}".writeToLog();
     await initFlutter3Core();
     if (isDebug) {
       await testRunAfter();
     }
     AppLifecycleLog.install();
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
-    l.i("启动完成:${lTime.time()}"..toLogSync());
+    l.i("启动完成:${lTime.time()}"..writeToLog());
   }, (error, stack) {
-    l.e("未捕捉的异常:↓"..toErrorLogSync());
-    l.e(error..toErrorLogSync());
-    l.e(stack.toString()..toErrorLogSync());
+    l.e("未捕捉的异常:↓"..writeToErrorLog());
+    l.e(error..writeToErrorLog());
+    l.e(stack.toString()..writeToErrorLog());
   });
 }

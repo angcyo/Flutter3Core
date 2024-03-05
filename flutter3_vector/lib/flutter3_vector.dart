@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
 
 export 'package:flutter_svg/svg.dart';

@@ -53,21 +53,11 @@ extension Uint8ListImageEx on Uint8List {
 
 extension ImageEx on ui.Image {
   /// 将图片转换成base64字符串图片, 带协议头
-  String? toBase64([
+  Future<String?> toBase64([
     ui.ImageByteFormat format = ui.ImageByteFormat.png,
-  ]) {
-    return toBytesSync(format)?.toBase64Image(format);
-  }
-
-  /// 同步的方式, 将图片转换成字节数据
-  Uint8List? toBytesSync([
-    ui.ImageByteFormat format = ui.ImageByteFormat.png,
-  ]) {
-    Uint8List? result;
-    unawaited(toBytes().get((value, _) {
-      result = value;
-    }));
-    return result;
+  ]) async {
+    final bytes = await toBytes(format);
+    return bytes?.toBase64Image(format);
   }
 
   /// 获取图片的字节数据

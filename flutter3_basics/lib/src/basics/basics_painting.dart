@@ -102,6 +102,8 @@ extension TextSpanPaintEx on InlineSpan {
 
 /// 画布[Canvas]的一些扩展
 extension CanvasEx on Canvas {
+  //region ---with---
+
   /// 入栈出栈, 保证绘制的状态不会影响到其他的绘制
   /// 一些简单的变换操作可以使用此方法
   void withSave(VoidCallback callback) {
@@ -115,9 +117,9 @@ extension CanvasEx on Canvas {
   }
 
   /// 图层的一些操作可以使用此方法, 比如图层透明, 图层颜色过滤等
-  void withSaveLayer(VoidCallback callback) {
+  void withSaveLayer(VoidCallback callback, [Paint? paint]) {
     final saveCount = getSaveCount();
-    saveLayer(null, Paint());
+    saveLayer(null, paint ?? ui.Paint());
     try {
       callback();
     } finally {
@@ -268,6 +270,10 @@ extension CanvasEx on Canvas {
     }
   }
 
+  //endregion ---with---
+
+  //region ---draw---
+
   /// 绘制文本, 绘制出来的文本左上角对齐0,0位置
   /// [getOffset] 获取文本的绘制位置的回调
   void drawText(
@@ -289,4 +295,37 @@ extension CanvasEx on Canvas {
       ..layout();
     painter.paint(this, (getOffset?.call(painter) ?? ui.Offset.zero) + offset);
   }
+
+  /// 绘制[picture]
+  /// [pictureSize] 图片原始的大小
+  /// [dst] 绘制的位置以及大小
+  ///
+  void drawPictureRect(
+    ui.Picture? picture, {
+    Size? pictureSize,
+    Rect? dst,
+    Color? tintColor,
+    ui.ColorFilter? colorFilter,
+  }) {
+    if (picture == null) {
+      return;
+    }
+    withSave(() {
+      colorFilter ??= tintColor?.toColorFilter();
+      if (dst != null) {
+        translate(dst.left, dst.top);
+        if (pictureSize != null) {
+          final sx = dst.width / pictureSize.width;
+          final sy = dst.height / pictureSize.height;
+          scale(sx, sy);
+        }
+      }
+      if (colorFilter != null) {
+        saveLayer(null, Paint()..colorFilter = colorFilter);
+      }
+      this.drawPicture(picture);
+    });
+  }
+
+//endregion ---draw---
 }

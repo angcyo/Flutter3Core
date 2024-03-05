@@ -25,11 +25,18 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   /// 控制点绘制的大小
   @dp
-  double controlSize = 25;
+  double controlSize = 24;
 
   /// 距离目标的偏移量
   @dp
   double controlOffset = 10;
+
+  /// 绘制控制点图片额外的内边距
+  @dp
+  double controlIcoPadding = 2;
+
+  /// 控制点的图片信息
+  PictureInfo? _pictureInfo;
 
   CanvasViewBox get canvasViewBox =>
       canvasElementManager.canvasDelegate.canvasViewBox;
@@ -58,16 +65,34 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 /// 删除元素
 class DeleteControl extends BaseControl {
   DeleteControl(CanvasElementManager canvasElementManager)
-      : super(canvasElementManager, BaseControl.CONTROL_TYPE_DELETE);
+      : super(canvasElementManager, BaseControl.CONTROL_TYPE_DELETE) {
+    loadAssetSvgPicture(
+      'packages/flutter3_canvas/assets_canvas/svg/canvas_delete_point.svg',
+      prefix: null,
+    ).then((value) async {
+      /*final size = value.size;
+      final base64 = await value.picture
+          .toImageSync(size.width.round(), size.height.round())
+          .toBase64();
+      debugger();*/
+      _pictureInfo = value;
+    });
+  }
 
   @override
   void paintControl(Canvas canvas, PaintMeta paintMeta) {
     super.paintControl(canvas, paintMeta);
     getControlSubjectBounds()[0].let((point) {
-      point = canvasViewBox
-          .toViewPoint(point + Offset(-controlOffset, -controlOffset));
+      point = canvasViewBox.toViewPoint(point);
+      point += Offset(-controlOffset, -controlOffset);
+      @viewCoordinate
       final rect = Rect.fromCircle(center: point, radius: controlSize / 2);
-      canvas.drawRect(rect, Paint()..color = Colors.red);
+      canvas.drawCircle(
+          point, controlSize / 2, Paint()..color = Color(0xff333333));
+      canvas.drawPictureRect(_pictureInfo?.picture,
+          dst: rect.deflate(controlIcoPadding),
+          pictureSize: _pictureInfo?.size,
+          tintColor: Colors.white);
     });
   }
 }

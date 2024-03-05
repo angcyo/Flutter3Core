@@ -27,11 +27,12 @@ extension LogEx on Object {
   Future<String> appendToFile(
     String fileName, {
     String? folder,
+    bool append = true,
     bool limitLength = true,
   }) async {
-    var filePath = await fileName.filePathOf(folder);
-    var mode = FileMode.append;
-    if (limitLength && filePath.length > kMaxLogLength) {
+    final filePath = await fileName.filePathOf(folder);
+    FileMode mode = append ? FileMode.append : FileMode.write;
+    if (append && limitLength && (filePath.length > kMaxLogLength)) {
       mode = FileMode.write;
     }
     if (this is UiImage) {
@@ -56,7 +57,7 @@ extension LogEx on Object {
   }
 
   /// 写入内容到日志文件, 同步方法
-  void toLogSync({
+  void writeToLog({
     String fileName = kLogFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
@@ -65,7 +66,7 @@ extension LogEx on Object {
   }
 
   /// 写入内容到日志文件, 同步方法
-  void toErrorLogSync({
+  void writeToErrorLog({
     String fileName = kErrorFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
@@ -74,7 +75,7 @@ extension LogEx on Object {
   }
 
   /// 写入内容到日志文件, 同步方法
-  void toHttpLogSync({
+  void writeToHttpLog({
     String fileName = kHttpFileName,
     String? folder = kLogPathName,
     bool limitLength = true,

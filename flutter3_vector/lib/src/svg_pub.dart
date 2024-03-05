@@ -6,7 +6,39 @@ part of flutter3_vector;
 /// @date 2023/11/19
 ///
 
+const kDefAssetsSvgPrefix = 'assets/svg/';
+
 //region svg
+
+/// 加载svg图片
+/// ```
+/// "packages/flutter3_canvas/assets_canvas/svg/canvas_delete_point.svg".
+/// ```
+/// [SvgPicture]
+/// [createCompatVectorGraphic]
+/// [VectorGraphic]
+/// [RenderPictureVectorGraphic]
+/// [decodeVectorGraphics]
+///
+/// [RenderingStrategy.raster].[_RawVectorGraphicWidget].[RenderVectorGraphic]
+/// [RenderingStrategy.picture].[_RawPictureVectorGraphicWidget].[RenderPictureVectorGraphic]
+Future<PictureInfo> loadAssetSvgPicture(
+  String key, {
+  String? prefix = kDefAssetsSvgPrefix,
+  String? package,
+  BuildContext? context,
+  bool clipViewBox = true,
+  AssetBundle? bundle,
+  SvgTheme? theme,
+}) =>
+    vg.loadPicture(
+        SvgAssetLoader(
+          key.ensurePackagePrefix(package, prefix),
+          packageName: package,
+          assetBundle: bundle,
+          theme: theme,
+        ),
+        context);
 
 extension SvgStringEx on String {
   /// 将svg中的path路径字符串转换成[Path]对象

@@ -267,6 +267,7 @@ extension FutureEx<T> on Future<T> {
         }
       });
 
+  /// 此方法并不能立即出发[Future]
   /// 不需要等待当前的[Future]执行完成, 但是会报告错误
   /// [ignore] 完成和错误都被忽略
   void unAwait() {
@@ -654,12 +655,35 @@ extension RectEx on Rect {
 
   /// 将一个点扩展到矩形中, 返回一个新的矩形
   /// [expandToInclude]
+  /// [deflate]
   ui.Rect union(Offset point) {
     return Rect.fromLTRB(
       math.min(left, point.dx),
       math.min(top, point.dy),
       math.max(right, point.dx),
       math.max(bottom, point.dy),
+    );
+  }
+
+  /// 将一个矩形内缩一定的大小, 返回一个新的矩形
+  /// [deflate]
+  /// [inflate]
+  ui.Rect deflateOffset(ui.Offset value) {
+    return Rect.fromLTRB(
+      left + value.dx,
+      top + value.dy,
+      right - value.dx,
+      bottom - value.dy,
+    );
+  }
+
+  /// 将一个矩形向外扩一定的大小, 返回一个新的矩形
+  ui.Rect inflateOffset(ui.Offset value) {
+    return Rect.fromLTRB(
+      left - value.dx,
+      top - value.dy,
+      right + value.dx,
+      bottom + value.dy,
     );
   }
 }

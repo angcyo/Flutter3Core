@@ -15,6 +15,8 @@ dependencies:
     path: ../flutter3_basics
   flutter3_widgets:
     path: ../flutter3_widgets
+  flutter3_vector:
+    path: ../flutter3_vector
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +28,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets_canvas/
+    - assets_canvas/svg/
 
 # To add assets to your package, add an assets section, like this:
 # assets:

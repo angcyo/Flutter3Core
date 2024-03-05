@@ -8,8 +8,6 @@ part of flutter3_core;
 
 //region Asset
 
-const kDefAssetsSvgPrefix = 'assets/svg/';
-
 /// [loadAssetImageWidget]
 /// [package] 如果资源不在当前项目中, 需要指定package才能访问
 SvgPicture loadAssetSvgWidget(
