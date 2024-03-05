@@ -391,6 +391,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [equatable: ^2.0.5](https://pub.dev/packages/equatable) 能够比较对象 Dart 通常涉及必须覆盖 == 运算符以及 hashCode 。
 - [regex_router: ^2.0.2](https://pub.dev/packages/regex_router) 支持正则表达式路径的材料路由器。路由参数解析。
 - [primer_progress_bar: ^0.4.1](https://pub.dev/packages/primer_progress_bar) Primer 的进度条由 3 个组件组成：分段条、图例和图例项。进度条可以在水平条中显示多个彩色段，图例放置在条形下方，其中包含每个段的对齐说明。
+- [flutter_adaptive_scaffold: ^0.1.8](https://pub.dev/packages/flutter_adaptive_scaffold) 自适应, AdaptiveScaffold 对来自用户、设备和屏幕元素的输入做出反应，并根据 Material 3 指南渲染你的 Flutter 应用程序。
 
 ## 平台特有
 
