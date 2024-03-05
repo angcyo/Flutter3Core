@@ -95,6 +95,14 @@ class ElementSelectComponent extends ElementGroupPainter
   ElementSelectComponent(this.canvasElementManager);
 
   @override
+  void painting(Canvas canvas, PaintMeta paintMeta) {
+    super.painting(canvas, paintMeta);
+
+    //绘制选择框
+    paintSelectBounds(canvas, paintMeta);
+  }
+
+  @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //debugger();
 
@@ -103,9 +111,6 @@ class ElementSelectComponent extends ElementGroupPainter
         canvasElementManager.canvasDelegate.canvasStyle.canvasAccentColor;
     paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
     paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
-
-    //绘制选择框
-    paintSelectBounds(canvas, paintMeta);
   }
 
   /// 绘制选中元素的边界
