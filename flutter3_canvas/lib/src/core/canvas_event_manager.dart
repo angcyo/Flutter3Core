@@ -43,7 +43,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
     if (isDebug && event.isPointerUp) {
       final pivot = event.localPosition;
-      l.d('pivot:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
+      l.i('画布点:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
           '->${canvasDelegate.canvasViewBox.toScenePoint(pivot)}');
     }
   }
