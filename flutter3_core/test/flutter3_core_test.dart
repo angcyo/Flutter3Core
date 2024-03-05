@@ -16,6 +16,7 @@ void main() async {
   //final clone = await gitCloneOrRebase('git@github.com:angcyo/empty.git');
   //print(clone);
 
+  print(Platform.operatingSystem);
   await printIps();
 }
 
