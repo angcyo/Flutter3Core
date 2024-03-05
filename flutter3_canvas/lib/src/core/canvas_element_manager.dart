@@ -13,8 +13,12 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
   late ElementSelectComponent elementSelectComponent =
       ElementSelectComponent(this);
 
+  /// 删除控制
+  late DeleteControl deleteControl = DeleteControl(this);
+
   CanvasElementManager(this.canvasDelegate) {
     addHandleEventClient(elementSelectComponent);
+    addHandleEventClient(deleteControl);
   }
 
   /// 元素列表
@@ -27,10 +31,19 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
   @entryPoint
   void paintElements(Canvas canvas, PaintMeta paintMeta) {
     canvas.withClipRect(canvasDelegate.canvasViewBox.canvasBounds, () {
+      //---元素绘制
       for (var element in elements) {
         element.painting(canvas, paintMeta);
       }
+      //---选择框绘制
       elementSelectComponent.painting(canvas, paintMeta);
+      //---控制点绘制
+      if (elementSelectComponent.isSelectedElement) {
+        if (elementSelectComponent
+            .isSupportControl(deleteControl.controlType)) {
+          deleteControl.paintControl(canvas, paintMeta);
+        }
+      }
     });
   }
 
@@ -92,6 +105,9 @@ class ElementSelectComponent extends ElementGroupPainter
   @sceneCoordinate
   Rect? selectBounds;
 
+  /// 是否选中了元素
+  bool get isSelectedElement => !isNullOrEmpty(children);
+
   ElementSelectComponent(this.canvasElementManager);
 
   @override
@@ -105,7 +121,6 @@ class ElementSelectComponent extends ElementGroupPainter
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //debugger();
-
     //绘制选中元素边界
     paint.color =
         canvasElementManager.canvasDelegate.canvasStyle.canvasAccentColor;
@@ -113,15 +128,14 @@ class ElementSelectComponent extends ElementGroupPainter
     paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
   }
 
-  /// 绘制选中元素的边界
+  /// 绘制选择元素的框框
   @entryPoint
   void paintSelectBounds(Canvas canvas, PaintMeta paintMeta) {
-    if (selectBounds != null) {
-      paintMeta.withPaintMatrix(canvas, () {
+    selectBounds?.let((bounds) {
+      void paintBounds_() {
         boundsPaint
           ..color =
               canvasElementManager.canvasDelegate.canvasStyle.canvasAccentColor
-          ..strokeWidth = 1 / paintMeta.canvasScale
           ..style = PaintingStyle.stroke;
         canvas.drawRect(selectBounds!, boundsPaint);
         boundsPaint
@@ -130,8 +144,13 @@ class ElementSelectComponent extends ElementGroupPainter
               .withOpacity(0.1)
           ..style = PaintingStyle.fill;
         canvas.drawRect(selectBounds!, boundsPaint);
+      }
+
+      paintMeta.withPaintMatrix(canvas, () {
+        boundsPaint.strokeWidth = 1 / paintMeta.canvasScale;
+        paintBounds_();
       });
-    }
+    });
   }
 
   @override
@@ -217,5 +236,14 @@ class ElementSelectComponent extends ElementGroupPainter
       canvasElementManager.canvasDelegate
           .dispatchCanvasElementSelectChanged(this, old, children);
     }
+  }
+
+  /// 当前选中的元素是否支持指定的控制点
+  /// [BaseControl.CONTROL_TYPE_DELETE]
+  /// [BaseControl.CONTROL_TYPE_ROTATE]
+  /// [BaseControl.CONTROL_TYPE_SCALE]
+  /// [BaseControl.CONTROL_TYPE_LOCK]
+  bool isSupportControl(int type) {
+    return true;
   }
 }

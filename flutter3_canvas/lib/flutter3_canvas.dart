@@ -1,7 +1,9 @@
 library flutter3_canvas;
 
+import 'dart:developer';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,7 @@ part 'src/core/canvas_event_manager.dart';
 part 'src/core/canvas_paint_manager.dart';
 part 'src/core/canvas_style.dart';
 part 'src/core/canvas_view_box.dart';
+part 'src/core/element_control.dart';
 part 'src/event/canvas_event.dart';
 part 'src/event/canvas_notify.dart';
 part 'src/painter/element_painter.dart';

@@ -18,6 +18,8 @@ dependencies:
     path: ../flutter3_widgets
   flutter3_http:
     path: ../flutter3_http
+  flutter3_vector:
+    path: ../flutter3_vector
 
   # https://pub.dev/packages/cross_file
   # https://github.com/flutter/packages/tree/main/packages/cross_file

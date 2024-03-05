@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flutter3_core/flutter3_core.dart';
+import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 
 void main() {

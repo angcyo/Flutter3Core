@@ -135,6 +135,10 @@ class PaintProperty {
   /// 元素绘制的矩阵, 包含全属性
   Matrix4 get paintMatrix => translateToAnchor(scaleMatrix..rotateBy(angle));
 
+  /// 仅包含旋转的矩阵
+  Matrix4 get rotateMatrix =>
+      translateToAnchor(Matrix4.identity()..rotateBy(angle));
+
   /// 元素缩放/倾斜后的矩形(不包含旋转)
   Rect get scaleRect => scaleMatrix.mapRect(rect);
 
