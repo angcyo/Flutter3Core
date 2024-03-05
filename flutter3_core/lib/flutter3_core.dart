@@ -13,6 +13,7 @@ import 'package:path/path.dart' as p;
 import 'flutter3_core.dart';
 
 export 'package:cross_file/cross_file.dart';
+export 'package:flutter3_basics/flutter3_basics.dart';
 export 'package:flutter3_http/flutter3_http.dart';
 export 'package:flutter3_widgets/flutter3_widgets.dart';
 export 'package:hive/hive.dart';
@@ -27,18 +28,15 @@ export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
 
 part 'src/file/app_lifecycle_log.dart';
-
 part 'src/file/file_ex.dart';
-
 part 'src/file/file_log.dart';
-
 part 'src/isar/hive/hive_ex.dart';
-
 part 'src/isar/isar_ex.dart';
-
 part 'src/view_model/mutable_live_data.dart';
-
 part 'src/view_model/view_model_ex.dart';
+
+/// 获取当前的工作目录
+String get currentDirPath => p.current;
 
 /// 初始化Flutter3核心库
 Future<void> initFlutter3Core() async {

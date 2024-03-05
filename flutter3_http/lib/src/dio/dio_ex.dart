@@ -233,7 +233,7 @@ extension DioFutureResponseEx<T> on Future<T> {
         callback?.call(response, resultHandle!.handleError(error));
         return null;
       } else if (response == null) {
-        var exception = RException("response is null", cause: error);
+        var exception = RException(message: "response is null", cause: error);
         callback?.call(response, resultHandle!.handleError(exception));
         return null;
       } else {

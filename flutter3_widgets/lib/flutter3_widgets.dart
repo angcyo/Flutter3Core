@@ -23,7 +23,6 @@ import 'package:wheel_picker/wheel_picker.dart';
 import 'src/pub/flutter_verification_code.dart';
 
 export 'package:expandable/expandable.dart';
-export 'package:flutter3_basics/flutter3_basics.dart';
 export 'package:flutter_slidable/flutter_slidable.dart';
 export 'package:lifecycle/lifecycle.dart';
 export 'package:list_wheel_scroll_view_nls/list_wheel_scroll_view_nls.dart';

@@ -5,7 +5,7 @@ part of flutter3_http;
 /// @since 2023/12/02
 ///
 
-const kDefHttpErrorMessage = "网络正忙";
+const kDefHttpErrorMessage = "network error";
 
 /// 用来解析网络请求返回的[Response]
 /// ```
@@ -32,13 +32,13 @@ class HttpResultHandle {
           //成功
           return data[dataKey];
         } else {
-          throw RException(data[messageKey] ?? kDefHttpErrorMessage);
+          throw RException(message: data[messageKey] ?? kDefHttpErrorMessage);
         }
       } else {
-        throw RException("[$code]${response.statusMessage}");
+        throw RException(message: "[$code]${response.statusMessage}");
       }
     }
-    throw RException("无法解析的数据类型");
+    throw RException(message: "无法解析的数据类型");
   };
 
   /// 处理网络错误信息, 返回处理后的错误提示信息
@@ -65,6 +65,6 @@ class HttpResultHandle {
     if (showErrorToast) {
       toastBlur(text: tip.toString());
     }
-    return RException(tip, cause: error);
+    return RException(message: tip, cause: error);
   };
 }

@@ -2,6 +2,7 @@
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/27
 ///
+/// 随机数
 /// [rnd: ^0.2.0](https://pub.dev/packages/rnd) 一个 Dart 包，用于生成伪随机数。
 ///
 import 'dart:math';

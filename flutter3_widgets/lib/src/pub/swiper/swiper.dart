@@ -9,20 +9,16 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter3_widgets/flutter3_widgets.dart';
+import 'package:flutter3_basics/flutter3_basics.dart';
 
 import 'flutter_page_indicator/flutter_page_indicator.dart';
 import 'transformer_page_view/index_controller.dart';
 import 'transformer_page_view/transformer_page_view.dart';
 
 part 'custom_layout.dart';
-
 part 'swiper_control.dart';
-
 part 'swiper_controller.dart';
-
 part 'swiper_pagination.dart';
-
 part 'swiper_plugin.dart';
 
 typedef SwiperOnTap = void Function(int index);

@@ -16,7 +16,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
 export 'package:device_info_plus/device_info_plus.dart';
-export 'package:flutter3_basics/flutter3_basics.dart';
 export 'package:flutter3_core/flutter3_core.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
 export 'package:flutter3_widgets/flutter3_widgets.dart';
@@ -25,15 +24,10 @@ export 'package:package_info_plus/package_info_plus.dart';
 export 'package:share_plus/share_plus.dart';
 
 part 'src/app_ex.dart';
-
 part 'src/app_info_interceptor.dart';
-
 part 'src/app_log.dart';
-
 part 'src/app_notifications.dart';
-
 part 'src/app_swiper_ex.dart';
-
 part 'src/mobile_ex.dart';
 
 @callPoint

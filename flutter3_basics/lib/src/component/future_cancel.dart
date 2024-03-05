@@ -8,6 +8,7 @@ part of flutter3_basics;
 /// 用来实现[Future]取消, 使用[Future.any]来实现
 /// 参考dio的[CancelToken]
 class FutureCancelToken {
+  /// 用来发送取消信号的[Completer]
   final Completer<FutureCancelException> _completer =
       Completer<FutureCancelException>();
 
@@ -19,6 +20,7 @@ class FutureCancelToken {
   /// When cancelled, this future will be resolved.
   Future<FutureCancelException> get whenCancel => _completer.future;
 
+  /// 使用给定的原因, 取消[Future]
   /// Cancel the request with the given [reason].
   void cancel([Object? reason]) {
     if (!isCanceled && !_completer.isCompleted) {
@@ -31,7 +33,7 @@ class FutureCancelToken {
   }
 }
 
-/// [Future]被取消
+/// [Future]被取消时, 传递的异常信息
 class FutureCancelException implements Exception {
   final Object? reason;
   final StackTrace? stackTrace;
@@ -47,6 +49,7 @@ class FutureCancelException implements Exception {
 extension FutureCancelEx<T> on Future<T> {
   //FutureCancelToken hookCancelToken = FutureCancelToken();
 
+  /// 使用[cancelToken]实现当前[Future]的取消操作
   /// 监听取消[Future]执行
   Future<T> listenCancel<T>(FutureCancelToken? cancelToken) {
     // 只要有一个完成, 就算完成.
