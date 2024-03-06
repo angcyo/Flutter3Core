@@ -21,7 +21,8 @@ class CanvasStyle {
   @dp
   double axisPrimaryWidth = 1.toDpFromPx();
   @dp
-  double axisSecondaryWidth = 1.toDpFromPx() ;
+  double axisSecondaryWidth = 1.toDpFromPx();
+
   @dp
   double axisNormalWidth = 1.toDpFromPx();
 
@@ -32,5 +33,12 @@ class CanvasStyle {
   @dp
   double axisLabelFontSize = 8;
 
-//endregion ---axis---
+  //endregion ---axis---
+
+  //region ---basics---
+
+  /// 控制点的背景颜色
+  Color controlBgColor = const Color(0xff333333);
+
+//endregion ---basics---
 }

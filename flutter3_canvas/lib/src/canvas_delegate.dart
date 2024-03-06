@@ -128,6 +128,17 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     refresh();
   }
 
+  /// 元素列表发生改变
+  void dispatchCanvasElementListChanged(
+    List<ElementPainter> from,
+    List<ElementPainter> to,
+  ) {
+    canvasListeners.clone().forEach((element) {
+      element.onCanvasElementListChangedAction?.call(from, to);
+    });
+    refresh();
+  }
+
   //endregion ---事件派发---
 
   //region ---Ticker---

@@ -16,7 +16,7 @@ class ElementPainter extends IPainter {
     final old = _paintProperty;
     _paintProperty = value;
     if (old != value) {
-      canvasDelegate?.dispatchCanvasElementPropertyChanged(this, old, value);
+      onSelfPaintPropertyChanged(old, value);
     }
   }
 
@@ -44,6 +44,13 @@ class ElementPainter extends IPainter {
     }
     path ??= Path()..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
     return _paintProperty?.paintPath.intersects(path) ?? false;
+  }
+
+  //---
+
+  /// 元素属性改变
+  void onSelfPaintPropertyChanged(PaintProperty? old, PaintProperty? value) {
+    canvasDelegate?.dispatchCanvasElementPropertyChanged(this, old, value);
   }
 
   //---

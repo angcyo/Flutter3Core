@@ -27,10 +27,17 @@ class CanvasListener {
     List<ElementPainter>? to,
   )? onCanvasElementSelectChangedAction;
 
+  /// [CanvasDelegate.dispatchCanvasElementListChanged]
+  final void Function(
+    List<ElementPainter> from,
+    List<ElementPainter> to,
+  )? onCanvasElementListChangedAction;
+
   CanvasListener({
     this.onCanvasViewBoxChangedAction,
     this.onCanvasSelectBoundsChangedAction,
     this.onCanvasElementPropertyChangedAction,
     this.onCanvasElementSelectChangedAction,
+    this.onCanvasElementListChangedAction,
   });
 }

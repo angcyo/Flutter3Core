@@ -16,9 +16,25 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
   /// 删除控制
   late DeleteControl deleteControl = DeleteControl(this);
 
+  /// 旋转控制
+  late RotateControl rotateControl = RotateControl(this);
+
+  /// 缩放控制
+  late ScaleControl scaleControl = ScaleControl(this);
+
+  /// 锁定控制
+  late LockControl lockControl = LockControl(this);
+
+  //---
+
+  bool get isSelectedElement => elementSelectComponent.isSelectedElement;
+
   CanvasElementManager(this.canvasDelegate) {
     addHandleEventClient(elementSelectComponent);
     addHandleEventClient(deleteControl);
+    addHandleEventClient(rotateControl);
+    addHandleEventClient(scaleControl);
+    addHandleEventClient(lockControl);
   }
 
   /// 元素列表
@@ -43,6 +59,16 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
             .isSupportControl(deleteControl.controlType)) {
           deleteControl.paintControl(canvas, paintMeta);
         }
+        if (elementSelectComponent
+            .isSupportControl(rotateControl.controlType)) {
+          rotateControl.paintControl(canvas, paintMeta);
+        }
+        if (elementSelectComponent.isSupportControl(scaleControl.controlType)) {
+          scaleControl.paintControl(canvas, paintMeta);
+        }
+        if (elementSelectComponent.isSupportControl(lockControl.controlType)) {
+          lockControl.paintControl(canvas, paintMeta);
+        }
       }
     });
   }
@@ -54,21 +80,44 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
     handleDispatchEvent(event);
   }
 
+  /// 更新控制点的位置
+  void updateControlBounds() {
+    if (isSelectedElement) {
+      elementSelectComponent.paintProperty?.let((it) {
+        deleteControl.updatePaintControlBounds(it);
+        rotateControl.updatePaintControlBounds(it);
+        scaleControl.updatePaintControlBounds(it);
+        lockControl.updatePaintControlBounds(it);
+      });
+    }
+  }
+
   //endregion ---entryPoint----
 
   /// 添加元素
   void addElement(ElementPainter element) {
+    final old = elements.clone();
     elements.add(element);
+    element.attachToCanvasDelegate(canvasDelegate);
+    canvasDelegate.dispatchCanvasElementListChanged(old, elements);
   }
 
   /// 删除元素
   void removeElement(ElementPainter element) {
+    final old = elements.clone();
     elements.remove(element);
+    element.detachFromCanvasDelegate(canvasDelegate);
+    canvasDelegate.dispatchCanvasElementListChanged(old, elements);
   }
 
   /// 清空元素
   void clearElements() {
+    final old = elements.clone();
     elements.clear();
+    for (var element in old) {
+      element.detachFromCanvasDelegate(canvasDelegate);
+    }
+    canvasDelegate.dispatchCanvasElementListChanged(old, elements);
   }
 
   /// 查找元素, 按照元素的先添加先返回的顺序
@@ -204,6 +253,12 @@ class ElementSelectComponent extends ElementGroupPainter
           !it.canvasTranslateComponent.isFirstEventHandled &&
           !it.canvasScaleComponent.isFirstEventHandled &&
           !it.canvasFlingComponent.isFirstEventHandled);
+
+  @override
+  void onSelfPaintPropertyChanged(PaintProperty? old, PaintProperty? value) {
+    canvasElementManager.updateControlBounds();
+    super.onSelfPaintPropertyChanged(old, value);
+  }
 
   /// 更新选择框边界, 并且触发选择选择
   void updateSelectBounds(Rect? bounds, bool select) {
