@@ -85,6 +85,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [CanvasViewBox.changeMatrix]
   void dispatchCanvasViewBoxChanged(
       CanvasViewBox canvasViewBox, bool isCompleted) {
+    canvasElementManager.updateControlBounds();
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     CanvasViewBoxChangedNotification(canvasViewBox, isCompleted)
         .dispatch(delegateContext);

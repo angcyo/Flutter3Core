@@ -60,7 +60,35 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
     paintControlWith(canvas, paintMeta);
   }
 
-  /// 更新控制点的位置
+  @override
+  bool interceptPointerEvent(PointerEvent event) {
+    if (isCanvasComponentEnable) {
+      if (isFirstPointerEvent(event)) {
+        if (event.isPointerDown) {
+          isPointerDownIn =
+              controlBounds?.contains(event.localPosition) ?? false;
+          if (isPointerDownIn) {
+            canvasElementManager.canvasDelegate.refresh();
+            return true;
+          }
+        }
+      }
+    }
+    return super.interceptPointerEvent(event);
+  }
+
+  @override
+  bool onPointerEvent(PointerEvent event) {
+    if (isCanvasComponentEnable) {
+      if (isFirstPointerEvent(event)) {
+        l.d('$event');
+        return true;
+      }
+    }
+    return super.onPointerEvent(event);
+  }
+
+  /// 重写此方法, 更新控制点的位置
   @overridePoint
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {}
 

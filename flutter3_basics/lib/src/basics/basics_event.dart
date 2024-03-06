@@ -125,7 +125,9 @@ mixin PointerDispatchMixin {
   /// 返回事件是否被处理了
   @entryPoint
   bool handleDispatchEvent(PointerEvent event) {
-    pointerMap[event.pointer] = event;
+    if (!event.synthesized) {
+      pointerMap[event.pointer] = event;
+    }
 
     //1:dispatchPointerEvent
     handleEventClientList.toList(growable: false).forEach((element) {
@@ -146,6 +148,15 @@ mixin PointerDispatchMixin {
           if (!element.ignoreHandle) {
             handled = element.onPointerEvent(event);
             break;
+          }
+        }
+      }
+      if (interceptHandleTarget != null && handled) {
+        //事件被拦截, 而且处理了, 则其他接收器发送取消事件
+        final cancelEvent = createPointerCancelEvent(event);
+        for (var element in iterable) {
+          if (element != interceptHandleTarget) {
+            element.onPointerEvent(cancelEvent);
           }
         }
       }
@@ -185,11 +196,12 @@ mixin PointerDispatchMixin {
 /// [GestureBinding.instance]
 /// [GestureBinding.cancelPointer]
 PointerCancelEvent createPointerCancelEvent(PointerEvent event) {
-  return const PointerCancelEvent(
-    timeStamp: Duration.zero,
-    kind: PointerDeviceKind.touch,
-    device: 0,
-    pointer: 1,
+  return PointerCancelEvent(
+    pointer: event.pointer,
+    kind: event.kind,
+    device: event.device,
+    position: event.position,
+    timeStamp: event.timeStamp,
   );
 }
 
