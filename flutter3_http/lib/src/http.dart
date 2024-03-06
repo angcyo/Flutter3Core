@@ -4,7 +4,9 @@ part of flutter3_http;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/09
 ///
-
+/// [NetworkImage] 网络图片请求
+/// [HttpClient].[HttpClientRequest].[HttpClientResponse]
+/// [HttpStatus] http状态码
 class Http {
   /// api host, 不需要/结尾
   static String? baseUrl;

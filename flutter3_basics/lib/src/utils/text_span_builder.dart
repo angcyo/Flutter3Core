@@ -20,7 +20,7 @@ class TextSpanBuilder {
   /// [addTextSpan]
   /// [addTextSpans]
   /// [addTextStyle]
-  TextSpanBuilder addText(String text, {TextStyle? style}) {
+  TextSpanBuilder addText(String? text, {TextStyle? style}) {
     _textSpans.add(TextSpan(
       text: text,
       style: style,
@@ -29,7 +29,7 @@ class TextSpanBuilder {
   }
 
   TextSpanBuilder addTextStyle(
-    String text, {
+    String? text, {
     Color? color,
     double? fontSize,
   }) {
@@ -37,12 +37,12 @@ class TextSpanBuilder {
     return this;
   }
 
-  TextSpanBuilder addTextColor(String text, Color color) {
+  TextSpanBuilder addTextColor(String? text, Color color) {
     addTextStyle(text, color: color);
     return this;
   }
 
-  TextSpanBuilder addTextBackgroundColor(String text, Color color) {
+  TextSpanBuilder addTextBackgroundColor(String? text, Color color) {
     _textSpans.add(TextSpan(
       text: text,
       style: TextStyle(backgroundColor: color),
@@ -143,7 +143,7 @@ TextSpan inlineSpanBuilder(void Function(TextSpanBuilder builder) action) {
   return textSpanBuilder.buildTextSpan();
 }
 
-/// 构建[Text]
+/// 构建[Text].[StatelessWidget]
 /// `class Text extends StatelessWidget`
 @dsl
 Text textSpanBuilder(

@@ -110,6 +110,7 @@ extension ImagePubEx on String {
             memCacheHeight: memCacheHeight,
             width: width,
             height: height,
+            tintColor: tintColor,
           );
         } else if (isFilePath) {
           return Image.file(
@@ -119,6 +120,7 @@ extension ImagePubEx on String {
             cacheHeight: memCacheHeight,
             width: width,
             height: height,
+            color: tintColor,
             errorBuilder: (context, error, stackTrace) =>
                 GlobalConfig.of(context)
                     .errorPlaceholderBuilder(context, error),
@@ -131,6 +133,7 @@ extension ImagePubEx on String {
             cacheHeight: memCacheHeight,
             width: width,
             height: height,
+            color: tintColor,
             errorBuilder: (context, error, stackTrace) =>
                 GlobalConfig.of(context)
                     .errorPlaceholderBuilder(context, error),
@@ -189,6 +192,7 @@ extension ImagePubEx on String {
     int? memCacheHeight,
     double? width,
     double? height,
+    Color? tintColor,
   }) {
     //debugger();
     var url = this;
@@ -201,6 +205,7 @@ extension ImagePubEx on String {
         memCacheHeight: memCacheHeight,
         width: width,
         height: height,
+        color: tintColor,
         placeholder: needPlaceholder
             ? placeholder ??
                 (context, url) => GlobalConfig.of(context)
@@ -221,6 +226,7 @@ extension ImagePubEx on String {
         memCacheHeight: memCacheHeight,
         width: width,
         height: height,
+        color: tintColor,
         placeholderBuilder: needPlaceholder
             ? (context) => placeholder == null
                 ? GlobalConfig.of(context).imagePlaceholderBuilder(context, url)

@@ -392,6 +392,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [regex_router: ^2.0.2](https://pub.dev/packages/regex_router) 支持正则表达式路径的材料路由器。路由参数解析。
 - [primer_progress_bar: ^0.4.1](https://pub.dev/packages/primer_progress_bar) Primer 的进度条由 3 个组件组成：分段条、图例和图例项。进度条可以在水平条中显示多个彩色段，图例放置在条形下方，其中包含每个段的对齐说明。
 - [flutter_adaptive_scaffold: ^0.1.8](https://pub.dev/packages/flutter_adaptive_scaffold) 自适应, AdaptiveScaffold 对来自用户、设备和屏幕元素的输入做出反应，并根据 Material 3 指南渲染你的 Flutter 应用程序。
+- [palette_generator: ^0.3.3+3](https://pub.dev/packages/palette_generator) 一个 Flutter 包，用于从图像中提取突出的颜色，通常用于查找用户界面的颜色。
 
 ## 平台特有
 

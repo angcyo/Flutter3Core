@@ -5,13 +5,106 @@ part of flutter3_basics;
 /// @author angcyo
 /// @date 2023/11/04
 ///
+
+/// 图片元数据
+class ImageMeta {
+  /// 图片对象
+  final ui.Image image;
+
+  /// 图片的字节数据
+  final Uint8List? bytes;
+
+  /// 图片的像素数据
+  /// [ui.ImageByteFormat.rawRgba]
+  final Uint8List? pixels;
+
+  /// 图片像素的格式
+  final ui.ImageByteFormat pixelsFormat;
+
+  int get width => image.width;
+
+  int get height => image.height;
+
+  ImageMeta(this.image, this.bytes, this.pixels,
+      {this.pixelsFormat = ui.ImageByteFormat.rawRgba});
+}
+
+///[MemoryImage]
+class ImageMetaProvider extends ImageProvider<ImageMetaProvider> {
+  final ImageMeta imageMeta;
+  final double scale;
+  late final MemoryImage? memoryImage;
+
+  ImageMetaProvider(this.imageMeta, {this.scale = 1.0}) {
+    if (imageMeta.bytes != null) {
+      memoryImage = MemoryImage(imageMeta.bytes!, scale: scale);
+    } else {
+      memoryImage = null;
+    }
+  }
+
+  @override
+  ImageStreamCompleter loadBuffer(
+      ImageMetaProvider key, DecoderBufferCallback decode) {
+    return memoryImage?.loadBuffer(memoryImage!, decode) ??
+        imageStreamCompleter();
+  }
+
+  @override
+  ImageStreamCompleter loadImage(
+      ImageMetaProvider key, ImageDecoderCallback decode) {
+    return memoryImage?.loadImage(memoryImage!, decode) ??
+        imageStreamCompleter();
+  }
+
+  ImageStreamCompleter imageStreamCompleter() {
+    return OneFrameImageStreamCompleter(
+      SynchronousFuture<ImageInfo>(
+        ImageInfo(image: imageMeta.image.clone(), scale: scale),
+      ),
+    );
+  }
+
+  @override
+  Future<ImageMetaProvider> obtainKey(ImageConfiguration configuration) {
+    return SynchronousFuture<ImageMetaProvider>(this);
+  }
+}
+
+extension ImageMetaEx on ImageMeta {
+  ///[Image]
+  Widget toImageWidget({
+    double scale = 1.0,
+    BoxFit? fit = BoxFit.cover,
+    double? width,
+    double? height,
+    Color? tintColor,
+    int? memCacheWidth,
+    int? memCacheHeight,
+  }) {
+    return Image(
+      image: ResizeImage.resizeIfNeeded(
+        memCacheWidth,
+        memCacheHeight,
+        ImageMetaProvider(this, scale: scale),
+      ),
+      fit: fit,
+      width: width,
+      height: height,
+      color: tintColor,
+      errorBuilder: (context, error, stackTrace) =>
+          GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
+    );
+  }
+}
+
 extension ByteDataEx on ByteData {
   /// [Uint8List]
   /// [ImageByteFormat.rawRgba]
   /// [Uint8List.sublistView]
   Uint8List get bytes => buffer.asUint8List();
 
-  /// [Image]
+  /// [Image].[StatefulWidget]
   /// `class Image extends StatefulWidget`
   Image toImageWidget() => bytes.toImageWidget();
 
@@ -33,12 +126,45 @@ extension Uint8ListImageEx on Uint8List {
   /// [ByteDataEx.bytes]
   ByteData get byteData => buffer.asByteData();
 
-  /// [Image]
+  /// 使用[MemoryImage]显示内存字节图片数据
+  /// [Image].[StatefulWidget]
   /// `class Image extends StatefulWidget`
-  Image toImageWidget() => Image.memory(this);
+  Image toImageWidget({
+    double scale = 1.0,
+    BoxFit? fit = BoxFit.cover,
+    double? width,
+    double? height,
+    Color? tintColor,
+    int? memCacheWidth,
+    int? memCacheHeight,
+  }) =>
+      Image.memory(this,
+          scale: scale,
+          fit: fit,
+          width: width,
+          height: height,
+          color: tintColor,
+          cacheWidth: memCacheWidth,
+          cacheHeight: memCacheHeight,
+          errorBuilder: (context, error, stackTrace) =>
+              GlobalConfig.of(context).errorPlaceholderBuilder(context, error));
 
   /// [ui.Image]
   Future<ui.Image> toImage() => decodeImageFromList(this);
+
+  /// 将[PixelFormat.rgba8888]颜色格式的像素数据转换成图片
+  Future<ui.Image> toImageFromPixels(int width, int height,
+      [PixelFormat format = PixelFormat.rgba8888]) {
+    final Completer<ui.Image> completer = Completer<ui.Image>();
+    decodeImageFromPixels(
+      this,
+      width,
+      height,
+      format,
+      completer.complete,
+    );
+    return completer.future;
+  }
 
   /// [MemoryImage]
   MemoryImage toMemoryImage() => MemoryImage(this);
@@ -70,6 +196,11 @@ extension ImageEx on ui.Image {
     return byteData?.buffer.asUint8List();
   }
 
+  /// 获取图片的颜色数据
+  Future<Uint8List?> toPixels(
+          [ui.ImageByteFormat format = ui.ImageByteFormat.rawRgba]) =>
+      toBytes(format);
+
   /// 保存图片到文件
   Future<File?> saveToFile(
     File? file, {
@@ -93,9 +224,25 @@ extension ImageStringEx on String {
     return decodeImageFromList(bytes);
   }
 
+  /// [toImageFromFile]
+  Future<ImageMeta> toImageMetaFromFile(
+      [ui.ImageByteFormat pixelsFormat = ui.ImageByteFormat.rawRgba]) async {
+    final Uint8List bytes = await File(this).readAsBytes();
+    final uiImage = await decodeImageFromList(bytes);
+    final pixels = await uiImage.toPixels(pixelsFormat);
+    return ImageMeta(uiImage, bytes, pixels, pixelsFormat: pixelsFormat);
+  }
+
   /// 从文件路径中读取图片
+  /// [FileImage._loadAsync]
   Future<ui.Image> toImageFromFile() async {
     final Uint8List bytes = await File(this).readAsBytes();
+
+    /*final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromFilePath(this);
+    final ui.Codec codec = await PaintingBinding.instance.instantiateImageCodecWithSize(buffer);
+    final ui.FrameInfo frameInfo = await codec.getNextFrame();
+    return frameInfo.image;*/
+
     return decodeImageFromList(bytes);
   }
 

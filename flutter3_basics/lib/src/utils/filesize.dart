@@ -5,7 +5,7 @@ part of flutter3_basics;
 /// https://github.com/synw/filesize
 
 extension FileSizeEx on num {
-  ///
+  /// 字节大小转换为人类可读的字符串
   /// filesize(1024);                   // "1 KB"
   /// filesize(664365320);              // "633.59 MB"
   /// filesize(4324324232343);          // "3.93 TB"
