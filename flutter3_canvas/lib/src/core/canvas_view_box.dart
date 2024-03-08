@@ -95,9 +95,7 @@ class CanvasViewBox with Diagnosticable {
 
   /// 获取场景原点相对于视图坐标的位置
   @viewCoordinate
-  Offset getSceneOrigin() {
-    return toViewPoint(Offset.zero);
-  }
+  Offset get sceneOrigin => toViewPoint(Offset.zero);
 
   /// 将当前相对于视图的坐标, 偏移成相对于场景的坐标
   @viewCoordinate

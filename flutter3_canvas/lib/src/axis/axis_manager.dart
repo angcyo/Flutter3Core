@@ -47,14 +47,17 @@ class AxisManager extends IPainter {
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
   int drawType = DRAW_AXIS | DRAW_GRID;
 
-  /// 主轴的画笔
+  /// 主刻度的画笔
   Paint primaryPaint = Paint()..style = PaintingStyle.stroke;
 
-  /// 次要轴的画笔
+  /// 次要刻度的画笔
   Paint secondaryPaint = Paint()..style = PaintingStyle.stroke;
 
-  /// 正常轴的画笔
+  /// 正常刻度的画笔
   Paint normalPaint = Paint()..style = PaintingStyle.stroke;
+
+  /// 选中元素大小提示块绘制的画笔
+  Paint elementBoundsPaint = Paint()..style = PaintingStyle.fill;
 
   AxisManager(this.paintManager);
 
@@ -71,7 +74,7 @@ class AxisManager extends IPainter {
     }
 
     @viewCoordinate
-    final origin = canvasViewBox.getSceneOrigin();
+    final origin = canvasViewBox.sceneOrigin;
     //l.d('origin: $origin');
     final paintBounds = canvasViewBox.paintBounds;
     final scaleX = canvasViewBox.scaleX;
@@ -170,11 +173,13 @@ class AxisManager extends IPainter {
     if (drawType.have(DRAW_AXIS)) {
       // x
       canvas.withClipRect(isDebug ? null : xAxisBounds, () {
+        paintSelectElementWidthSize(canvas, paintMeta);
         paintXAxis(canvas);
       });
 
       // y
       canvas.withClipRect(isDebug ? null : yAxisBounds, () {
+        paintSelectElementHeightSize(canvas, paintMeta);
         paintYAxis(canvas);
       });
 
@@ -215,6 +220,54 @@ class AxisManager extends IPainter {
           canvas.drawLine(Offset(paintBounds.left, axisData.viewValue),
               Offset(paintBounds.right, axisData.viewValue), paint);
         }
+      });
+    }
+  }
+
+  /// 在坐标轴中绘制选中元素的宽度色块
+  void paintSelectElementWidthSize(Canvas canvas, PaintMeta paintMeta) {
+    var elementManager = paintManager.canvasDelegate.canvasElementManager;
+    if (elementManager.isSelectedElement) {
+      elementManager.elementSelectComponent.paintProperty?.let((it) {
+        final bounds = it.paintRect;
+        final scale = paintManager.canvasDelegate.canvasViewBox.scaleX;
+        @viewCoordinate
+        final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
+
+        final left = origin.dx + bounds.left * scale;
+        final top = xAxisBounds.top;
+        final right = origin.dx + bounds.right * scale;
+        final bottom = xAxisBounds.bottom;
+
+        elementBoundsPaint.color = paintManager
+            .canvasDelegate.canvasStyle.canvasAccentColor
+            .withOpacity(0.3);
+        canvas.drawRect(
+            Rect.fromLTRB(left, top, right, bottom), elementBoundsPaint);
+      });
+    }
+  }
+
+  /// 在坐标轴中绘制选中元素的高度色块
+  void paintSelectElementHeightSize(Canvas canvas, PaintMeta paintMeta) {
+    var elementManager = paintManager.canvasDelegate.canvasElementManager;
+    if (elementManager.isSelectedElement) {
+      elementManager.elementSelectComponent.paintProperty?.let((it) {
+        final bounds = it.paintRect;
+        final scale = paintManager.canvasDelegate.canvasViewBox.scaleY;
+        @viewCoordinate
+        final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
+
+        final left = yAxisBounds.left;
+        final top = origin.dy + bounds.top * scale;
+        final right = yAxisBounds.right;
+        final bottom = origin.dy + bounds.bottom * scale;
+
+        elementBoundsPaint.color = paintManager
+            .canvasDelegate.canvasStyle.canvasAccentColor
+            .withOpacity(0.3);
+        canvas.drawRect(
+            Rect.fromLTRB(left, top, right, bottom), elementBoundsPaint);
       });
     }
   }
