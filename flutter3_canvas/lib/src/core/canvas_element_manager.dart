@@ -157,7 +157,9 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 是否选中了元素
   bool get isSelectedElement => !isNullOrEmpty(children);
 
-  ElementSelectComponent(this.canvasElementManager);
+  ElementSelectComponent(this.canvasElementManager) {
+    attachToCanvasDelegate(canvasElementManager.canvasDelegate);
+  }
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
@@ -177,7 +179,7 @@ class ElementSelectComponent extends ElementGroupPainter
     paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
   }
 
-  /// 绘制选择元素的框框
+  /// 绘制手势正在选择时的框框
   @entryPoint
   void paintSelectBounds(Canvas canvas, PaintMeta paintMeta) {
     selectBounds?.let((bounds) {

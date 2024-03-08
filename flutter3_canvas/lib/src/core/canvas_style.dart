@@ -8,7 +8,7 @@ class CanvasStyle {
   //region ---basics---
 
   /// 画布强调颜色
-  Color canvasAccentColor = const Color(0xff2febff);
+  Color canvasAccentColor = const Color(0xff00e3ff);
 
   //endregion ---basics---
 

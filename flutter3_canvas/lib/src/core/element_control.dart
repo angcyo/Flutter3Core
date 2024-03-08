@@ -36,7 +36,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   /// 距离目标的偏移量
   @dp
-  double controlOffset = 10;
+  double controlOffset = -4;
 
   /// 绘制控制点图片额外的内边距
   @dp
@@ -113,19 +113,84 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
     });
   }
 
-  /// 获取控制主体边界4个点位置坐标(场景中的坐标)
-  @sceneCoordinate
-  List<Offset> getControlSubjectBounds(PaintProperty selectComponentProperty) {
-    final result = <Offset>[];
-    selectComponentProperty.let((it) {
-      final bounds = it.scaleRect;
-      final matrix = Matrix4.identity()..rotateBy(it.angle);
-      result.add(matrix.mapPoint(bounds.lt));
-      result.add(matrix.mapPoint(bounds.rt));
-      result.add(matrix.mapPoint(bounds.rb));
-      result.add(matrix.mapPoint(bounds.lb));
-    });
-    return result;
+  /// 获取左上控制点边界
+  @viewCoordinate
+  Rect getLTControlBounds(PaintProperty selectComponentProperty) {
+    @sceneCoordinate
+    final bounds = selectComponentProperty.paintScaleRect;
+    @viewCoordinate
+    final anchor = canvasViewBox.toViewPoint(bounds.center);
+    @viewCoordinate
+    Offset center = canvasViewBox.toViewPoint(bounds.lt);
+
+    center += Offset(-controlSize / 2, -controlSize / 2) +
+        Offset(-controlOffset, -controlOffset);
+
+    final rotateMatrix = Matrix4.identity()
+      ..rotateBy(selectComponentProperty.angle, anchor: anchor);
+    center = rotateMatrix.mapPoint(center);
+
+    return Rect.fromCircle(center: center, radius: controlSize / 2);
+  }
+
+  /// 获取右上控制点边界
+  @viewCoordinate
+  Rect getRTControlBounds(PaintProperty selectComponentProperty) {
+    @sceneCoordinate
+    final bounds = selectComponentProperty.paintScaleRect;
+    @viewCoordinate
+    final anchor = canvasViewBox.toViewPoint(bounds.center);
+    @viewCoordinate
+    Offset center = canvasViewBox.toViewPoint(bounds.rt);
+
+    center += Offset(controlSize / 2, -controlSize / 2) +
+        Offset(controlOffset, -controlOffset);
+
+    final rotateMatrix = Matrix4.identity()
+      ..rotateBy(selectComponentProperty.angle, anchor: anchor);
+    center = rotateMatrix.mapPoint(center);
+
+    return Rect.fromCircle(center: center, radius: controlSize / 2);
+  }
+
+  /// 获取右下控制点边界
+  @viewCoordinate
+  Rect getRBControlBounds(PaintProperty selectComponentProperty) {
+    @sceneCoordinate
+    final bounds = selectComponentProperty.paintScaleRect;
+    @viewCoordinate
+    final anchor = canvasViewBox.toViewPoint(bounds.center);
+    @viewCoordinate
+    Offset center = canvasViewBox.toViewPoint(bounds.rb);
+
+    center += Offset(controlSize / 2, controlSize / 2) +
+        Offset(controlOffset, controlOffset);
+
+    final rotateMatrix = Matrix4.identity()
+      ..rotateBy(selectComponentProperty.angle, anchor: anchor);
+    center = rotateMatrix.mapPoint(center);
+
+    return Rect.fromCircle(center: center, radius: controlSize / 2);
+  }
+
+  /// 获取左下控制点边界
+  @viewCoordinate
+  Rect getLBControlBounds(PaintProperty selectComponentProperty) {
+    @sceneCoordinate
+    final bounds = selectComponentProperty.paintScaleRect;
+    @viewCoordinate
+    final anchor = canvasViewBox.toViewPoint(bounds.center);
+    @viewCoordinate
+    Offset center = canvasViewBox.toViewPoint(bounds.lb);
+
+    center += Offset(-controlSize / 2, controlSize / 2) +
+        Offset(-controlOffset, controlOffset);
+
+    final rotateMatrix = Matrix4.identity()
+      ..rotateBy(selectComponentProperty.angle, anchor: anchor);
+    center = rotateMatrix.mapPoint(center);
+
+    return Rect.fromCircle(center: center, radius: controlSize / 2);
   }
 
   /// 加载控制点图片
@@ -153,13 +218,7 @@ class DeleteControl extends BaseControl {
 
   @override
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    getControlSubjectBounds(selectComponentProperty)[0].let((point) {
-      point = canvasViewBox.toViewPoint(point);
-      point += Offset(-controlOffset, -controlOffset);
-      @viewCoordinate
-      final rect = Rect.fromCircle(center: point, radius: controlSize / 2);
-      controlBounds = rect;
-    });
+    controlBounds = getLTControlBounds(selectComponentProperty);
   }
 }
 
@@ -172,13 +231,7 @@ class RotateControl extends BaseControl {
 
   @override
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    getControlSubjectBounds(selectComponentProperty)[1].let((point) {
-      point = canvasViewBox.toViewPoint(point);
-      point += Offset(controlOffset, -controlOffset);
-      @viewCoordinate
-      final rect = Rect.fromCircle(center: point, radius: controlSize / 2);
-      controlBounds = rect;
-    });
+    controlBounds = getRTControlBounds(selectComponentProperty);
   }
 }
 
@@ -191,13 +244,7 @@ class ScaleControl extends BaseControl {
 
   @override
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    getControlSubjectBounds(selectComponentProperty)[2].let((point) {
-      point = canvasViewBox.toViewPoint(point);
-      point += Offset(controlOffset, controlOffset);
-      @viewCoordinate
-      final rect = Rect.fromCircle(center: point, radius: controlSize / 2);
-      controlBounds = rect;
-    });
+    controlBounds = getRBControlBounds(selectComponentProperty);
   }
 }
 
@@ -210,12 +257,6 @@ class LockControl extends BaseControl {
 
   @override
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    getControlSubjectBounds(selectComponentProperty)[3].let((point) {
-      point = canvasViewBox.toViewPoint(point);
-      point += Offset(-controlOffset, controlOffset);
-      @viewCoordinate
-      final rect = Rect.fromCircle(center: point, radius: controlSize / 2);
-      controlBounds = rect;
-    });
+    controlBounds = getLBControlBounds(selectComponentProperty);
   }
 }

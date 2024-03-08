@@ -730,6 +730,12 @@ extension BoolEx on bool {
 extension NumEx on num {
   //region ---math---
 
+  /// 角度
+  double get jd => toDegrees;
+
+  /// 弧度
+  double get hd => toRadians;
+
   /// 弧度转角度
   double get toDegrees => this * 180 / math.pi;
 

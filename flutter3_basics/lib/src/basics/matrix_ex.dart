@@ -65,37 +65,77 @@ extension Matrix4Ex on vector.Matrix4 {
   @implementation
   double get skewZ => 0;
 
-  /// 映射一个点
+  /// 映射一个点, 返回新的点
   Offset mapPoint(Offset point) => MatrixUtils.transformPoint(this, point);
 
-  /// 映射一个矩形
+  /// 映射一个矩形, 返回新的矩形
+  /// 映射后的矩形left/top依旧是小值, right/bottom依旧是大值
   Rect mapRect(Rect rect) => MatrixUtils.transformRect(this, rect);
+
+  /// Preconcats the matrix with the specified matrix. M' = M * other
+  void preConcat(Matrix4 other) {
+    multiply(other);
+  }
+
+  /// Postconcats the matrix with the specified matrix. M' = other * M
+  void postConcat(Matrix4 other) {
+    setFrom(other * this);
+  }
 
   /// 平移到指定位置
   void translateTo({
+    ui.Offset? anchor,
     double? x,
     double? y,
     double? z,
   }) {
+    if (anchor != null) {
+      x = anchor.dx;
+      y = anchor.dy;
+    }
     setTranslationRaw(x ?? translateX, y ?? translateY, z ?? translateZ);
   }
 
   /// 平移指定的距离
   void translateBy({
+    ui.Offset? anchor,
     double? x,
     double? y,
     double? z,
   }) {
+    if (anchor != null) {
+      x = anchor.dx;
+      y = anchor.dy;
+    }
     translate(x ?? 0, y ?? 0, z ?? 0);
+  }
+
+  /// 将平移矩阵*this
+  void postTranslateBy({
+    ui.Offset? anchor,
+    double? x,
+    double? y,
+    double? z,
+  }) {
+    if (anchor != null) {
+      x = anchor.dx;
+      y = anchor.dy;
+    }
+    leftTranslate(x ?? 0, y ?? 0, z ?? 0);
   }
 
   /// 在指定锚点处操作矩阵
   void withPivot(
     VoidCallback action, {
+    ui.Offset? anchor,
     double pivotX = 0,
     double pivotY = 0,
     double pivotZ = 0,
   }) {
+    if (anchor != null) {
+      pivotX = anchor.dx;
+      pivotY = anchor.dy;
+    }
     if (pivotX == 0 && pivotY == 0 && pivotZ == 0) {
       action();
     } else {
@@ -111,6 +151,7 @@ extension Matrix4Ex on vector.Matrix4 {
     double? sx,
     double? sy,
     double? sz,
+    ui.Offset? anchor,
     double pivotX = 0,
     double pivotY = 0,
     double pivotZ = 0,
@@ -118,7 +159,7 @@ extension Matrix4Ex on vector.Matrix4 {
     withPivot(() {
       final scale = vector.Vector3(sx ?? 1, sy ?? 1, sz ?? 1);
       this.scale(scale);
-    }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
   /// 缩放到指定倍数
@@ -126,6 +167,7 @@ extension Matrix4Ex on vector.Matrix4 {
     double? sx,
     double? sy,
     double? sz,
+    ui.Offset? anchor,
     double pivotX = 0,
     double pivotY = 0,
     double pivotZ = 0,
@@ -140,7 +182,7 @@ extension Matrix4Ex on vector.Matrix4 {
       if (sz != null) {
         setEntry(2, 2, sz);
       }
-    }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
   /// 倾斜矩阵
@@ -149,6 +191,7 @@ extension Matrix4Ex on vector.Matrix4 {
   void skewBy({
     double kx = 0,
     double ky = 0,
+    ui.Offset? anchor,
     double pivotX = 0,
     double pivotY = 0,
     double pivotZ = 0,
@@ -157,7 +200,7 @@ extension Matrix4Ex on vector.Matrix4 {
       final skewMatrix = vector.Matrix4.skew(kx, ky);
       //final matrix = this * skewMatrix;
       multiply(skewMatrix);
-    }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
   /// 倾斜矩阵
@@ -167,6 +210,7 @@ extension Matrix4Ex on vector.Matrix4 {
   void skewTo({
     double? kx,
     double? ky,
+    ui.Offset? anchor,
     double pivotX = 0,
     double pivotY = 0,
     double pivotZ = 0,
@@ -179,7 +223,7 @@ extension Matrix4Ex on vector.Matrix4 {
       if (ky != null) {
         setEntry(1, 0, skewMatrix.entry(1, 0));
       }
-    }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
   /// 旋转矩阵
@@ -188,6 +232,7 @@ extension Matrix4Ex on vector.Matrix4 {
   /// [NumEx.toRadians] 转弧度
   void rotateBy(
     double angle, {
+    ui.Offset? anchor,
     double pivotX = 0,
     double pivotY = 0,
     double pivotZ = 0,
@@ -195,19 +240,20 @@ extension Matrix4Ex on vector.Matrix4 {
     withPivot(() {
       //rotate(vector.Quaternion.euler(x, y, z), );
       rotateZ(angle);
-    }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
   /// 旋转到指定角度,弧度
   void rotateTo(
     double angle, {
+    ui.Offset? anchor,
     double pivotX = 0,
     double pivotY = 0,
     double pivotZ = 0,
   }) {
     withPivot(() {
       setRotation(Matrix3.rotationZ(angle));
-    }, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
   /// 反转矩阵
@@ -265,11 +311,11 @@ extension Matrix4Ex on vector.Matrix4 {
     final resultSkewX = skewX;
     const resultSkewY = skewY;
     return [
-      resultRadians,
-      resultScaleX,
-      resultScaleY,
-      resultSkewX,
-      resultSkewY
+      resultRadians, //弧度
+      resultScaleX, //正负值
+      resultScaleY, //正负值
+      resultSkewX, //弧度
+      resultSkewY //始终为0
     ];
   }
 

@@ -82,7 +82,10 @@ extension PathEx on Path {
   }
 
   /// 变换路径, 返回新的路径
-  Path transformPath(Matrix4 matrix4) {
+  Path transformPath([Matrix4? matrix4]) {
+    if (matrix4 == null) {
+      return ui.Path.from(this);
+    }
     return transform(matrix4.storage);
   }
 
