@@ -5,6 +5,7 @@
 /// 随机数
 /// [rnd: ^0.2.0](https://pub.dev/packages/rnd) 一个 Dart 包，用于生成伪随机数。
 ///
+library;
 import 'dart:math';
 
 import 'package:flutter/material.dart';

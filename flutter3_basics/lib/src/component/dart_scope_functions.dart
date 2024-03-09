@@ -4,6 +4,7 @@
 ///
 /// [dart_scope_functions: ^0.1.4](https://pub.dev/packages/dart_scope_functions)
 ///
+library;
 
 /// Kotlin-inspired scope functions implemented in Dart with the goal of
 /// executing a block of code within the context of an object.
