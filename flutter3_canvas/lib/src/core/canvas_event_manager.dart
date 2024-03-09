@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../../flutter3_canvas.dart';
 
 ///
 /// Email:angcyo@126.com

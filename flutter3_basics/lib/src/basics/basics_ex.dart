@@ -74,7 +74,7 @@ extension ObjectEx on Object {
   String classHash() => "$runtimeType(${hash()})";
 
   /// 类型转换
-  List<T> ofList<T>() => [this as T];
+  List<T> ofList<T>() => null == this ? [] : [this as T];
 
   /// 转换成json字符串
   /// ```

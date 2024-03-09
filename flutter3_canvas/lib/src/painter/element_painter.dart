@@ -58,7 +58,10 @@ class ElementPainter extends IPainter {
   }
 
   /// 判断当前元素是否与指定的点相交
-  bool hitTest({Offset? point, Rect? rect, Path? path}) {
+  bool hitTest(
+      {@sceneCoordinate Offset? point,
+      @sceneCoordinate Rect? rect,
+      @sceneCoordinate Path? path}) {
     if (point == null && rect == null && path == null) {
       return false;
     }

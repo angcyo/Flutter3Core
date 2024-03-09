@@ -26,10 +26,13 @@ extension EventEx on PointerEvent {
   /// 是否完成
   bool get isPointerFinish => isPointerUp || isPointerCancel;
 
-  /// 当前的事件, 是否超过了指定的移动阈值
-  bool isMoveExceed(Offset offset, [double threshold = kTouchSlop]) {
-    return (localPosition.dx - offset.dx).abs() > threshold ||
-        (localPosition.dy - offset.dy).abs() > threshold;
+  /// 当前的事件与[other]之间, 是否超过了指定的移动阈值
+  bool isMoveExceed(Offset? other, [double threshold = kTouchSlop]) {
+    if (other == null) {
+      return false;
+    }
+    return (localPosition.dx - other.dx).abs() > threshold ||
+        (localPosition.dy - other.dy).abs() > threshold;
   }
 }
 

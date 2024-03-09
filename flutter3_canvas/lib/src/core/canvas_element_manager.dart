@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -121,7 +121,10 @@ class CanvasElementManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 查找元素, 按照元素的先添加先返回的顺序
-  List<ElementPainter> findElement({Offset? point, Rect? rect, Path? path}) {
+  List<ElementPainter> findElement(
+      {@sceneCoordinate Offset? point,
+      @sceneCoordinate Rect? rect,
+      @sceneCoordinate Path? path}) {
     final result = <ElementPainter>[];
     for (var element in elements) {
       if (element.hitTest(point: point, rect: rect, path: path)) {
@@ -232,8 +235,16 @@ class ElementSelectComponent extends ElementGroupPainter
           //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
           //选择结束
-          updateSelectBounds(
-              null, isFirstMoveExceed() && _noCanvasEventHandle());
+          if (!event.isMoveExceed(firstDownEvent?.localPosition)) {
+            //未移动手指, 可能是点击选择元素
+            updateSelectBounds(null, false);
+            final elements =
+                canvasElementManager.findElement(point: _downScenePoint);
+            resetSelectElement(elements.lastOrNull?.ofList());
+          } else {
+            updateSelectBounds(
+                null, isFirstMoveExceed() && _noCanvasEventHandle());
+          }
         }
         return true;
       } else if (event.isPointerDown) {
