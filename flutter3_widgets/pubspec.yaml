@@ -19,7 +19,8 @@ dependencies:
   sliver_tools: ^0.2.12
 
   # https://pub.dev/packages/flutter_gen
-  flutter_gen: ^5.3.2
+  # https://github.com/FlutterGen/flutter_gen
+  flutter_gen: ^5.4.0
 
   # https://pub.dev/packages/lifecycle
   # https://github.com/chenenyu/lifecycle
@@ -56,8 +57,15 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  # https://pub.dev/packages/flutter_lints # lints
+  flutter_lints: ^3.0.1
+  # https://pub.dev/packages/build_runner
+  # https://pub.dev/packages/web_socket_channel # async, crypto, stream_channel, web
+  # https://pub.dev/packages/stream_channel
+  # https://pub.dev/packages/async # collection, meta
+  # https://pub.dev/packages/web
   build_runner: any
+  # https://pub.dev/packages/flutter_gen_runner
   flutter_gen_runner: any
 
 # https://pub.dev/packages/flutter_gen#configuration-file

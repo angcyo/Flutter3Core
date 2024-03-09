@@ -21,15 +21,16 @@ dependencies:
   flutter3_vector:
     path: ../flutter3_vector
 
-  # https://pub.dev/packages/cross_file
+  # https://pub.dev/packages/cross_file # meta, web
   # https://github.com/flutter/packages/tree/main/packages/cross_file
   # https://pub.dev/packages/js
   # https://pub.dev/packages/meta
-  cross_file: ^0.3.3+8
+  # https://pub.dev/packages/web
+  cross_file: ^0.3.4
 
   # https://pub.dev/packages/path_provider
   # https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider
-  path_provider: ^2.1.1
+  path_provider: ^2.1.2
 
   # https://pub.dev/packages/path
   # https://github.com/dart-lang/path
@@ -37,7 +38,7 @@ dependencies:
 
   # https://pub.dev/packages/mime
   # https://github.com/dart-lang/mime
-  mime: ^1.0.4
+  mime: ^1.0.5
 
   # https://pub.dev/packages/filesize
   # https://github.com/synw/filesize
@@ -47,7 +48,7 @@ dependencies:
   # https://github.com/rrousselGit/provider
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/nested
-  provider: ^6.1.1
+  provider: ^6.1.2
 
   # https://pub.dev/packages/jetpack
   # https://github.com/praja/jetpack
@@ -95,7 +96,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
   isar_generator: *isar_version
   hive_generator: ^2.0.1
   build_runner: any

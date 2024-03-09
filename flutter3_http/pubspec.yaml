@@ -16,13 +16,13 @@ dependencies:
   # https://pub.dev/packages/http
   # https://pub.dev/packages/async
   # https://pub.dev/packages/http_parser
-  http: ^1.1.2
+  http: ^1.2.0
   # https://pub.dev/packages/dio
   # https://pub.dev/packages/async
   # https://pub.dev/packages/http_parser
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  dio: ^5.4.0
+  dio: ^5.4.1
   # https://pub.dev/packages/dio_http2_adapter
   # https://pub.dev/packages/http2
   # https://pub.dev/packages/dio
@@ -34,7 +34,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
   # https://pub.dev/packages/json_serializable
   # https://github.com/google/json_serializable.dart/tree/master/json_serializable
   # https://pub.dev/packages/analyzer

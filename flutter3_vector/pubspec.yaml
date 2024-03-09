@@ -19,18 +19,18 @@ dependencies:
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/vector_graphics_compiler
-  flutter_svg: ^2.0.9
+  flutter_svg: ^2.0.10+1
   # https://pub.dev/packages/vector_graphics_compiler
   # https://github.com/dnfield/vector_graphics
   # https://pub.dev/packages/args
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path_parsing
-  # https://pub.dev/packages/xml
+  # https://pub.dev/packages/xml # collection, meta, petitparser
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/path
-  vector_graphics_compiler: ^1.1.9+2
+  vector_graphics_compiler: ^1.1.11+1
 
-  # https://pub.dev/packages/svg_path_parser
+  # https://pub.dev/packages/svg_path_parser # flutter, string_scanner
   # https://github.com/masterashu/svg_path_parser
   # https://pub.dev/packages/string_scanner
   svg_path_parser: ^1.1.2
@@ -38,7 +38,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

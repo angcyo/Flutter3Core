@@ -14,7 +14,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +29,7 @@ export 'package:async/async.dart';
 export 'package:clock/clock.dart';
 export 'package:collection/collection.dart';
 export 'package:equatable/equatable.dart';
+export 'package:fixnum/fixnum.dart';
 export 'package:flutter_localizations/flutter_localizations.dart';
 export 'package:hsluv/hsluv.dart';
 export 'package:matrix4_transform/matrix4_transform.dart';
@@ -40,6 +40,8 @@ export 'package:vector_math/vector_math_64.dart'
 
 export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
+
+//export 'package:leak_tracker/leak_tracker.dart';
 
 part 'src/basics/basics.dart';
 part 'src/basics/basics_animation.dart';

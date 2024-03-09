@@ -21,7 +21,7 @@ dependencies:
   # https://pub.dev/packages/cached_network_image
   # https://pub.dev/packages/flutter_cache_manager
   # https://pub.dev/packages/octo_image
-  cached_network_image: ^3.3.0
+  cached_network_image: ^3.3.1
 
   # https://pub.dev/packages/flutter_html
   # https://pub.dev/packages/html
@@ -34,12 +34,12 @@ dependencies:
   # https://pub.dev/packages/markdown
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  flutter_markdown: ^0.6.18+2
+  flutter_markdown: ^0.6.21
   # https://pub.dev/packages/markdown
   # https://github.com/dart-lang/markdown
   # https://pub.dev/packages/args
   # https://pub.dev/packages/meta
-  markdown: ^7.1.1
+  markdown: ^7.2.2
 
   # https://pub.dev/packages/url_launcher
   # https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher
@@ -50,7 +50,7 @@ dependencies:
   # https://pub.dev/packages/url_launcher_macos
   # https://pub.dev/packages/url_launcher_web
   # https://pub.dev/packages/url_launcher_windows
-  url_launcher: ^6.2.2
+  url_launcher: ^6.2.5
 
   # https://pub.dev/packages/file_picker
   # https://github.com/miguelpruivo/flutter_file_picker
@@ -58,14 +58,14 @@ dependencies:
   # https://pub.dev/packages/plugin_platform_interface
   # https://pub.dev/packages/path
   # https://pub.dev/packages/win32
-  file_picker: ^6.1.1
+  file_picker: ^6.2.0
 
   # https://pub.dev/packages/archive
   # https://github.com/brendan-duncan/archive
   # https://pub.dev/packages/crypto
   # https://pub.dev/packages/path
   # https://pub.dev/packages/pointycastle
-  archive: ^3.4.9
+  archive: ^3.4.10
 
   # https://pub.dev/packages/photo_view
   # https://github.com/bluefireteam/photo_view
@@ -80,7 +80,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
