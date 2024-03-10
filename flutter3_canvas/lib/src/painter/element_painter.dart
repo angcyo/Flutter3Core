@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -242,7 +242,8 @@ class PaintProperty {
   }
 
   /// 元素绘制的矩阵, 包含全属性
-  Matrix4 get paintMatrix => translateToAnchor(scaleMatrix..rotateBy(angle));
+  Matrix4 get paintMatrix =>
+      translateToAnchor(scaleMatrix..rotateBy(angle, anchor: scaleRect.center));
 
   /*/// 仅包含旋转的矩阵
   Matrix4 get rotateMatrix =>
@@ -295,14 +296,7 @@ class PaintProperty {
 
     //应用矩阵
     final Matrix4 matrix_ = paintMatrix * matrix;
-    final qr = matrix_.qrDecomposition();
-    angle = qr[0];
-    scaleX = qr[1].abs();
-    scaleY = qr[2].abs();
-    skewX = qr[3];
-    skewY = qr[4];
-    flipX = qr[1] < 0;
-    flipY = qr[2] < 0;
+    qrDecomposition(matrix_);
 
     //现在的中点位置
     final nowCenter = paintRect.center;
@@ -311,9 +305,11 @@ class PaintProperty {
     //更新left top
     left += targetCenter.dx - nowCenter.dx;
     top += targetCenter.dy - nowCenter.dy;
+
+    l.d(this);
   }
 
-  /// 直接使用锚点作为更新锚点依旧
+  /// 直接使用锚点作为更新锚点依据
   void applyMatrixWithAnchor(Matrix4 matrix) {
     Offset anchor = Offset(left, top);
     //锚点的最终位置
@@ -321,7 +317,21 @@ class PaintProperty {
 
     //应用矩阵
     final Matrix4 matrix_ = paintMatrix * matrix;
-    final qr = matrix_.qrDecomposition();
+    //paintMatrix.postConcat(matrix);
+    //final Matrix4 matrix_ = paintMatrix;
+    qrDecomposition(matrix_);
+
+    //debugger();
+
+    //更新left top
+    left = targetAnchor.dx;
+    top = targetAnchor.dy;
+
+    l.d(this);
+  }
+
+  void qrDecomposition(Matrix4 matrix) {
+    final qr = matrix.qrDecomposition();
     angle = qr[0];
     scaleX = qr[1].abs();
     scaleY = qr[2].abs();
@@ -329,12 +339,6 @@ class PaintProperty {
     skewY = qr[4];
     flipX = qr[1] < 0;
     flipY = qr[2] < 0;
-
-    //debugger();
-
-    //更新left top
-    left = targetAnchor.dx;
-    top = targetAnchor.dy;
   }
 
   /// 克隆属性
