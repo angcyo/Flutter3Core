@@ -179,6 +179,8 @@ class ElementGroupPainter extends ElementPainter {
 /// 绘制属性, 包含坐标/缩放/旋转/倾斜等信息
 /// 先倾斜, 再缩放, 最后旋转
 class PaintProperty {
+  //region ---基础属性---
+
   /// 绘制的左上坐标
   /// 旋转后, 这个左上角也要旋转
   @dp
@@ -210,6 +212,10 @@ class PaintProperty {
   /// 是否垂直翻转
   bool flipY = false;
 
+  //endregion ---基础属性---
+
+  //region ---get属性---
+
   /// 元素最基础的矩形
   Rect get rect => Rect.fromLTWH(0, 0, width, height);
 
@@ -224,8 +230,8 @@ class PaintProperty {
 
   /// 元素缩放/倾斜矩阵(不包含旋转和平移)
   Matrix4 get scaleMatrix => Matrix4.identity()
-    ..skewTo(kx: skewX, ky: skewY)
-    ..scaleBy(sx: flipX ? -scaleX : scaleX, sy: flipY ? -scaleY : scaleY);
+    ..skewBy(kx: skewX, ky: skewY)
+    ..postScale(sx: flipX ? -scaleX : scaleX, sy: flipY ? -scaleY : scaleY);
 
   /// 元素缩放/倾斜后的矩形
   /// [scaleMatrix]
@@ -242,8 +248,7 @@ class PaintProperty {
   }
 
   /// 元素绘制的矩阵, 包含全属性
-  Matrix4 get paintMatrix =>
-      translateToAnchor(scaleMatrix..rotateBy(angle, anchor: scaleRect.center));
+  Matrix4 get paintMatrix => translateToAnchor(scaleMatrix..postRotate(angle));
 
   /*/// 仅包含旋转的矩阵
   Matrix4 get rotateMatrix =>
@@ -259,6 +264,10 @@ class PaintProperty {
         it.addRect(rect);
         return it.transformPath(paintMatrix);
       });
+
+  //endregion ---get属性---
+
+  //region ---操作方法---
 
   /// 将矩阵平移到锚点位置
   Matrix4 translateToAnchor(Matrix4 matrix) {
@@ -295,7 +304,7 @@ class PaintProperty {
     final targetCenter = matrix.mapPoint(originCenter);
 
     //应用矩阵
-    final Matrix4 matrix_ = paintMatrix * matrix;
+    final Matrix4 matrix_ = paintMatrix.postConcatIt(matrix);
     qrDecomposition(matrix_);
 
     //现在的中点位置
@@ -316,7 +325,7 @@ class PaintProperty {
     final targetAnchor = matrix.mapPoint(anchor);
 
     //应用矩阵
-    final Matrix4 matrix_ = paintMatrix * matrix;
+    final Matrix4 matrix_ = paintMatrix.postConcatIt(matrix);
     //paintMatrix.postConcat(matrix);
     //final Matrix4 matrix_ = paintMatrix;
     qrDecomposition(matrix_);
@@ -359,4 +368,6 @@ class PaintProperty {
   String toString() {
     return 'PaintProperty{left: $left, top: $top, width: $width, height: $height, scaleX: $scaleX, scaleY: $scaleY, skewX: $skewX, skewY: $skewY, angle: $angle, flipX: $flipX, flipY: $flipY}';
   }
+
+//endregion ---操作方法---
 }

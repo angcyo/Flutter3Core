@@ -77,10 +77,14 @@ extension Matrix4Ex on vector.Matrix4 {
     multiply(other);
   }
 
+  Matrix4 preConcatIt(Matrix4 other) => Matrix4.copy(this)..preConcat(other);
+
   /// Postconcats the matrix with the specified matrix. M' = other * M
   void postConcat(Matrix4 other) {
     setFrom(other * this);
   }
+
+  Matrix4 postConcatIt(Matrix4 other) => Matrix4.copy(this)..postConcat(other);
 
   /// 平移到指定位置
   void translateTo({
@@ -162,6 +166,23 @@ extension Matrix4Ex on vector.Matrix4 {
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
+  /// 缩放指定倍数
+  void postScale({
+    double? sx,
+    double? sy,
+    double? sz,
+    ui.Offset? anchor,
+    double pivotX = 0,
+    double pivotY = 0,
+    double pivotZ = 0,
+  }) {
+    withPivot(() {
+      final scale = vector.Vector3(sx ?? 1, sy ?? 1, sz ?? 1);
+      final matrix = Matrix4.identity()..scale(scale);
+      postConcat(matrix);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+  }
+
   /// 缩放到指定倍数
   void scaleTo({
     double? sx,
@@ -199,7 +220,8 @@ extension Matrix4Ex on vector.Matrix4 {
     withPivot(() {
       final skewMatrix = vector.Matrix4.skew(kx, ky);
       //final matrix = this * skewMatrix;
-      multiply(skewMatrix);
+      postConcat(skewMatrix);
+      //multiply(skewMatrix);
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
@@ -217,10 +239,13 @@ extension Matrix4Ex on vector.Matrix4 {
   }) {
     withPivot(() {
       final skewMatrix = vector.Matrix4.skew(kx ?? 0, ky ?? 0);
+      //debugger();
       if (kx != null) {
+        //final index = this.index(0, 1);
         setEntry(0, 1, skewMatrix.entry(0, 1));
       }
       if (ky != null) {
+        //final index = this.index(1, 0);
         setEntry(1, 0, skewMatrix.entry(1, 0));
       }
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
@@ -240,6 +265,19 @@ extension Matrix4Ex on vector.Matrix4 {
     withPivot(() {
       //rotate(vector.Quaternion.euler(x, y, z), );
       rotateZ(angle);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+  }
+
+  void postRotate(
+    double angle, {
+    ui.Offset? anchor,
+    double pivotX = 0,
+    double pivotY = 0,
+    double pivotZ = 0,
+  }) {
+    withPivot(() {
+      final matrix = Matrix4.identity()..rotateZ(angle);
+      postConcat(matrix);
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
@@ -273,6 +311,10 @@ extension Matrix4Ex on vector.Matrix4 {
     final Vector3 scale = Vector3.zero();
     final rotationMatrix = getRotation();
     decompose(translation, rotation, scale);
+    assert(() {
+      l.d('translation:$translation rotation:$rotation scale:$scale');
+      return true;
+    }());
     //debugger();
   }
 
@@ -291,14 +333,17 @@ extension Matrix4Ex on vector.Matrix4 {
     Matrix4 matrix = this;
     final sx = matrix.scaleX;
     final sy = matrix.scaleY;
-    final radians = math.atan2(matrix.skewY, sx);
-    final denom = sx.pow(2) + matrix.skewY.pow(2);
+    final kx = matrix.skewX;
+    final ky = matrix.skewY;
+
+    final radians = math.atan2(ky, sx);
+    final denom = sx.pow(2) + ky.pow(2);
 
     final scaleX = math.sqrt(denom);
-    final scaleY = (sx * sy - matrix.skewX * matrix.skewY) / scaleX;
+    final scaleY = (sx * sy - kx * ky) / scaleX;
 
     //x倾斜的角度, 弧度单位
-    final skewX = math.atan2((sx * matrix.skewX + matrix.skewY * sy), denom);
+    final skewX = math.atan2(sx * kx + ky * sy, denom);
     //y倾斜的角度, 弧度单位, 始终为0, 这是关键.
     const skewY = 0.0;
 
