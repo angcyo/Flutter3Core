@@ -72,6 +72,10 @@ dependencies:
   # https://github.com/hui-z/image_gallery_saver
   image_gallery_saver: ^2.0.3 #ANDROID IOS
 
+dependency_overrides:
+  cross_file: ^0.3.4+1
+  web: ^0.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -26,7 +26,9 @@ dependencies:
   # https://pub.dev/packages/js
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/web
-  cross_file: ^0.3.4
+  cross_file: ^0.3.4+1
+  # https://pub.dev/packages/web
+  web: ^0.5.1
 
   # https://pub.dev/packages/path_provider
   # https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider
@@ -92,6 +94,8 @@ dependencies:
   # https://pub.dev/packages/path_provider
   # https://pub.dev/packages/path
   hive_flutter: ^1.1.0
+
+# dependency_overrides:
 
 dev_dependencies:
   flutter_test:
