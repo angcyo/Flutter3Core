@@ -2,6 +2,7 @@ library flutter3_core;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -38,6 +39,8 @@ part 'src/view_model/mutable_live_data.dart';
 part 'src/view_model/view_model_ex.dart';
 
 /// 获取当前的工作目录
+/// [Directory.current]
+/// [Directory.systemTemp]
 String get currentDirPath => p.current;
 
 /// 初始化Flutter3核心库

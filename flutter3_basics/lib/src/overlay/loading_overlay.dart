@@ -58,7 +58,10 @@ OverlayEntry? showLoading({
         overlayState.insert(currentLoadingEntry);
       }
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
   });
 
@@ -73,7 +76,10 @@ void hideLoading() {
       currentLoadingEntry.remove(); //移除
       currentLoadingEntry.dispose(); //释放资源, 之后不可用
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     } finally {
       _currentLoadingEntryRef = null;
     }

@@ -31,7 +31,10 @@ Future<Directory> fileDirectory() async {
       try {
         directory = await getExternalStorageDirectory();
       } catch (e) {
-        debugPrint("$e");
+        assert(() {
+          l.e(e);
+          return true;
+        }());
         //l.e(e);
       }
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
@@ -40,13 +43,19 @@ Future<Directory> fileDirectory() async {
         // /data/user/0/com.angcyo.flutter3_abc/files
         directory = await getApplicationSupportDirectory();
       } catch (e) {
-        debugPrint("$e");
+        assert(() {
+          l.e(e);
+          return true;
+        }());
         //l.e(e);
       }
     }
     directory ??= await getTemporaryDirectory();
   } catch (e) {
-    debugPrint("$e");
+    assert(() {
+      l.e(e);
+      return true;
+    }());
     //l.e(e);
   }
   return directory ?? Directory.systemTemp;
@@ -65,7 +74,10 @@ Future<Directory> cacheDirectory() async {
       try {
         directory = (await getExternalCacheDirectories())?.firstOrNull;
       } catch (e) {
-        debugPrint("$e");
+        assert(() {
+          l.e(e);
+          return true;
+        }());
         //l.e(e);
       }
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
@@ -74,13 +86,19 @@ Future<Directory> cacheDirectory() async {
         // /data/user/0/com.angcyo.flutter3_abc/cache
         directory = await getTemporaryDirectory();
       } catch (e) {
-        debugPrint("$e");
+        assert(() {
+          l.e(e);
+          return true;
+        }());
         //l.e(e);
       }
     }
     directory ??= await getTemporaryDirectory();
   } catch (e) {
-    debugPrint("$e");
+    assert(() {
+      l.e(e);
+      return true;
+    }());
     //l.e(e);
   }
   return directory ?? Directory.systemTemp;
@@ -108,7 +126,10 @@ extension FileEx on File {
     try {
       return await readAsBytes();
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -118,7 +139,10 @@ extension FileEx on File {
     try {
       return readAsBytesSync();
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -129,7 +153,10 @@ extension FileEx on File {
     try {
       return await readAsString(encoding: encoding);
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -139,7 +166,10 @@ extension FileEx on File {
     try {
       return readAsStringSync(encoding: encoding);
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -149,7 +179,10 @@ extension FileEx on File {
     try {
       return await readAsLines(encoding: encoding);
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -159,7 +192,10 @@ extension FileEx on File {
     try {
       return readAsLinesSync(encoding: encoding);
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -191,7 +227,10 @@ extension FileEx on File {
         flush: flush,
       );
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -212,7 +251,10 @@ extension FileEx on File {
           flush: flush,
         );
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -230,7 +272,10 @@ extension FileEx on File {
         flush: flush,
       );
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -249,7 +294,10 @@ extension FileEx on File {
           flush: flush,
         );
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }
@@ -258,6 +306,27 @@ extension FileEx on File {
   String? md5() => readBytesSync()?.md5();
 
   String? sha1() => readBytesSync()?.sha1();
+
+  /// 如果是文件夹, 获取文件列表
+  Future<List<FileSystemEntity>?> listFiles({
+    bool recursive = false,
+    bool followLinks = true,
+  }) async {
+    try {
+      if (path.isDirectorySync()) {
+        return path.listFiles(
+          recursive: recursive,
+          followLinks: followLinks,
+        );
+      }
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+    }
+    return null;
+  }
 }
 
 /// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
@@ -398,7 +467,14 @@ extension FilePathEx on String {
   /// 转换成文件对象
   /// 在web环境下, 会抛出异常
   /// `The argument type 'File/*1*/' can't be assigned to the parameter type 'File/*2*/'.`
-  File file() => isLocalUrl ? File.fromUri(toUri()!) : File(this);
+  /// [name] 文件名, 如果指定了文件名, 则返回当前目录下的文件
+  File file([String? name]) {
+    String path = this;
+    if (name != null) {
+      path = p.join(this, name);
+    }
+    return isLocalUrl ? File.fromUri(path.toUri()!) : File(path);
+  }
 
   /// 获取文件夹中的文件列表
   Future<List<FileSystemEntity>?> listFiles({
@@ -413,7 +489,10 @@ extension FilePathEx on String {
           )
           .toList();
     } catch (e) {
-      l.e(e);
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
     return null;
   }

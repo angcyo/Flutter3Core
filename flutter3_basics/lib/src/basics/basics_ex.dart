@@ -921,6 +921,11 @@ extension ListIntEx on List<int> {
 /// [ListEx]
 /// [IterableEx]
 extension IterableEx<E> on Iterable<E> {
+  /// 过滤元素
+  /// [test] 返回true, 则保留元素
+  /// [WhereIterable]
+  List<E> filter(bool Function(E element) test) => where(test).toList();
+
   /// 过滤掉null
   List<R> filterNull<R>() =>
       where((element) => element != null).cast<R>().toList();
