@@ -1,4 +1,4 @@
-part of '../../flutter3_canvas.dart';
+part of '../../../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -18,7 +18,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 控制点: 锁定等比
   static const CONTROL_TYPE_LOCK = 4;
 
-  final CanvasElementManager canvasElementManager;
+  final CanvasElementControlManager canvasElementControlManager;
 
   /// 控制点的类型
   final int controlType;
@@ -48,12 +48,12 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   //---
 
   CanvasStyle get canvasStyle =>
-      canvasElementManager.canvasDelegate.canvasStyle;
+      canvasElementControlManager.canvasDelegate.canvasStyle;
 
   CanvasViewBox get canvasViewBox =>
-      canvasElementManager.canvasDelegate.canvasViewBox;
+      canvasElementControlManager.canvasDelegate.canvasViewBox;
 
-  BaseControl(this.canvasElementManager, this.controlType);
+  BaseControl(this.canvasElementControlManager, this.controlType);
 
   @entryPoint
   void paintControl(Canvas canvas, PaintMeta paintMeta) {
@@ -68,7 +68,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
           isPointerDownIn =
               controlBounds?.contains(event.localPosition) ?? false;
           if (isPointerDownIn) {
-            canvasElementManager.canvasDelegate.refresh();
+            canvasElementControlManager.canvasDelegate.refresh();
             return true;
           }
         }
@@ -211,8 +211,8 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
 /// 删除元素控制
 class DeleteControl extends BaseControl {
-  DeleteControl(CanvasElementManager canvasElementManager)
-      : super(canvasElementManager, BaseControl.CONTROL_TYPE_DELETE) {
+  DeleteControl(CanvasElementControlManager canvasElementControlManager)
+      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_DELETE) {
     loadControlPicture('canvas_delete_point.svg');
   }
 
@@ -224,8 +224,8 @@ class DeleteControl extends BaseControl {
 
 /// 旋转元素控制
 class RotateControl extends BaseControl {
-  RotateControl(CanvasElementManager canvasElementManager)
-      : super(canvasElementManager, BaseControl.CONTROL_TYPE_ROTATE) {
+  RotateControl(CanvasElementControlManager canvasElementControlManager)
+      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_ROTATE) {
     loadControlPicture('canvas_rotate_point.svg');
   }
 
@@ -237,8 +237,8 @@ class RotateControl extends BaseControl {
 
 /// 缩放元素控制
 class ScaleControl extends BaseControl {
-  ScaleControl(CanvasElementManager canvasElementManager)
-      : super(canvasElementManager, BaseControl.CONTROL_TYPE_SCALE) {
+  ScaleControl(CanvasElementControlManager canvasElementControlManager)
+      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_SCALE) {
     loadControlPicture('canvas_scale_point.svg');
   }
 
@@ -250,8 +250,8 @@ class ScaleControl extends BaseControl {
 
 /// 锁定等比元素控制
 class LockControl extends BaseControl {
-  LockControl(CanvasElementManager canvasElementManager)
-      : super(canvasElementManager, BaseControl.CONTROL_TYPE_LOCK) {
+  LockControl(CanvasElementControlManager canvasElementControlManager)
+      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_LOCK) {
     loadControlPicture('canvas_lock_point.svg');
   }
 

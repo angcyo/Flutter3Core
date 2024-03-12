@@ -64,6 +64,7 @@ part 'src/component/pinch_gesture_recognizer.dart';
 part 'src/component/r_exception.dart';
 part 'src/component/request_page.dart';
 part 'src/component/stack_list.dart';
+part 'src/component/undo_manager.dart';
 part 'src/debug/debug.dart';
 part 'src/debug/navigator_observer_log.dart';
 part 'src/debug/state_log.dart';
@@ -93,6 +94,7 @@ part 'src/widgets/empty.dart';
 part 'src/widgets/value_listener.dart';
 
 /// 类型重定义
+typedef Action = VoidCallback;
 typedef UiImage = ui.Image;
 typedef UiImageFilter = ui.ImageFilter;
 typedef UiColorFilter = ui.ColorFilter;

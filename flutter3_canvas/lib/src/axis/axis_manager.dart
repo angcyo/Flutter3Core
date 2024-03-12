@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -228,7 +228,9 @@ class AxisManager extends IPainter {
   void paintSelectElementWidthSize(Canvas canvas, PaintMeta paintMeta) {
     var elementManager = paintManager.canvasDelegate.canvasElementManager;
     if (elementManager.isSelectedElement) {
-      elementManager.elementSelectComponent.paintProperty?.let((it) {
+      elementManager
+          .canvasElementControlManager.elementSelectComponent.paintProperty
+          ?.let((it) {
         final bounds = it.paintRect;
         final scale = paintManager.canvasDelegate.canvasViewBox.scaleX;
         @viewCoordinate
@@ -252,7 +254,9 @@ class AxisManager extends IPainter {
   void paintSelectElementHeightSize(Canvas canvas, PaintMeta paintMeta) {
     var elementManager = paintManager.canvasDelegate.canvasElementManager;
     if (elementManager.isSelectedElement) {
-      elementManager.elementSelectComponent.paintProperty?.let((it) {
+      elementManager
+          .canvasElementControlManager.elementSelectComponent.paintProperty
+          ?.let((it) {
         final bounds = it.paintRect;
         final scale = paintManager.canvasDelegate.canvasViewBox.scaleY;
         @viewCoordinate

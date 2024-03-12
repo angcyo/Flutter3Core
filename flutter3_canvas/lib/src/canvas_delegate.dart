@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -52,7 +52,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 元素管理
   late CanvasElementManager canvasElementManager = CanvasElementManager(this);
 
-  /// 画布监听
+  /// 回退栈管理
+  late CanvasUndoManager canvasUndoManager = CanvasUndoManager(this);
+
+  /// 画布事件监听
   Set<CanvasListener> canvasListeners = {};
 
   //endregion ---core---
@@ -85,7 +88,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [CanvasViewBox.changeMatrix]
   void dispatchCanvasViewBoxChanged(
       CanvasViewBox canvasViewBox, bool isCompleted) {
-    canvasElementManager.updateControlBounds();
+    canvasElementManager.canvasElementControlManager.updateControlBounds();
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     CanvasViewBoxChangedNotification(canvasViewBox, isCompleted)
         .dispatch(delegateContext);
