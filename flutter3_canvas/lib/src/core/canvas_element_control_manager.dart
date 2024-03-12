@@ -8,6 +8,9 @@ part of '../../flutter3_canvas.dart';
 class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   final CanvasElementManager canvasElementManager;
 
+  /// 是否激活元素的控制操作
+  bool enableElementControl = true;
+
   /// 选择元素操作的组件
   late ElementSelectComponent elementSelectComponent =
       ElementSelectComponent(this);
@@ -24,6 +27,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 锁定控制
   late LockControl lockControl = LockControl(this);
 
+  /// 平移控制
+  late TranslateControl translateControl = TranslateControl(this);
+
   CanvasDelegate get canvasDelegate => canvasElementManager.canvasDelegate;
 
   bool get isSelectedElement => elementSelectComponent.isSelectedElement;
@@ -34,6 +40,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     addHandleEventClient(rotateControl);
     addHandleEventClient(scaleControl);
     addHandleEventClient(lockControl);
+    addHandleEventClient(translateControl);
   }
 
   @entryPoint
@@ -61,7 +68,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// [CanvasEventManager.handleEvent]
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    handleDispatchEvent(event);
+    if (enableElementControl) {
+      handleDispatchEvent(event);
+    }
   }
 
   //---
@@ -155,6 +164,9 @@ class ElementSelectComponent extends ElementGroupPainter
   @sceneCoordinate
   Offset _downScenePoint = Offset.zero;
 
+  /// 按下时, 选中的元素列表
+  List<ElementPainter>? _downElementList;
+
   @override
   bool onPointerEvent(PointerEvent event) {
     //debugger();
@@ -164,6 +176,8 @@ class ElementSelectComponent extends ElementGroupPainter
             canvasElementControlManager.canvasDelegate.canvasViewBox;
         if (event.isPointerDown) {
           _downScenePoint = viewBox.toScenePoint(event.localPosition);
+          _downElementList = canvasElementControlManager.canvasElementManager
+              .findElement(point: _downScenePoint);
           updateSelectBounds(
               Rect.fromLTRB(_downScenePoint.dx, _downScenePoint.dy,
                   _downScenePoint.dx, _downScenePoint.dy),
@@ -178,13 +192,12 @@ class ElementSelectComponent extends ElementGroupPainter
           if (!event.isMoveExceed(firstDownEvent?.localPosition)) {
             //未移动手指, 可能是点击选择元素
             updateSelectBounds(null, false);
-            final elements = canvasElementControlManager.canvasElementManager
-                .findElement(point: _downScenePoint);
-            resetSelectElement(elements.lastOrNull?.ofList());
+            resetSelectElement(_downElementList?.lastOrNull?.ofList());
           } else {
             updateSelectBounds(
                 null, isFirstMoveExceed() && _noCanvasEventHandle());
           }
+          _downElementList = null;
         }
         return true;
       } else if (event.isPointerDown) {
@@ -192,7 +205,7 @@ class ElementSelectComponent extends ElementGroupPainter
         //debugger();
         if (!isFirstMoveExceed()) {
           //时, 第一个手指未移动, 则取消滑动选择元素
-          ignoreHandle = true;
+          ignoreEventHandle = true;
           updateSelectBounds(null, false);
         }
       }

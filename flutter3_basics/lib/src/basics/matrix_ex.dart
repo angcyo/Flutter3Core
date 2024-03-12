@@ -88,14 +88,14 @@ extension Matrix4Ex on vector.Matrix4 {
 
   /// 平移到指定位置
   void translateTo({
-    ui.Offset? anchor,
+    ui.Offset? offset,
     double? x,
     double? y,
     double? z,
   }) {
-    if (anchor != null) {
-      x = anchor.dx;
-      y = anchor.dy;
+    if (offset != null) {
+      x = offset.dx;
+      y = offset.dy;
     }
     setTranslationRaw(x ?? translateX, y ?? translateY, z ?? translateZ);
   }

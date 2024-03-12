@@ -38,17 +38,23 @@ extension EventEx on PointerEvent {
 
 /// 事件处理
 mixin IHandleEventMixin {
+  /// 是否要激活手势事件处理, 需要在外层判断
+  /// [PointerDispatchMixin]
+  bool enableEventHandled = true;
+
   /// 第一个手指按下事件
   PointerEvent? firstDownEvent;
   PointerEvent? firstMoveEvent;
+  @flagProperty
   bool _isFirstEventCancel = false;
 
   /// 标记, 第一个手指的事件是否处理了, 会在下次down时, 自动重置为false
   @flagProperty
   bool isFirstEventHandled = false;
 
-  /// 是否忽略处理事件, 请在手势抬起/取消时, 重置为false
-  bool ignoreHandle = false;
+  /// 是否临时忽略处理事件, 请在手势抬起/取消时, 重置为false
+  @flagProperty
+  bool ignoreEventHandle = false;
 
   /// 开始派发事件, 一定会调用
   void dispatchPointerEvent(PointerEvent event) {
@@ -131,24 +137,26 @@ mixin PointerDispatchMixin {
     if (!event.synthesized) {
       pointerMap[event.pointer] = event;
     }
+    final clientList = handleEventClientList
+        .where((event) => event.enableEventHandled)
+        .clone();
 
     //1:dispatchPointerEvent
-    handleEventClientList.toList(growable: false).forEach((element) {
+    for (var element in clientList) {
       element.dispatchPointerEvent(event);
-    });
+    }
 
     //2:interceptPointerEvent
     bool handled = false;
     if (interceptHandleTarget != null) {
-      if (!interceptHandleTarget!.ignoreHandle) {
+      if (!interceptHandleTarget!.ignoreEventHandle) {
         handled = interceptHandleTarget!.onPointerEvent(event);
       }
     } else {
-      final iterable = handleEventClientList.toList(growable: false);
-      for (var element in iterable) {
+      for (var element in clientList) {
         if (element.interceptPointerEvent(event)) {
           interceptHandleTarget = element;
-          if (!element.ignoreHandle) {
+          if (!element.ignoreEventHandle) {
             handled = element.onPointerEvent(event);
             break;
           }
@@ -157,7 +165,7 @@ mixin PointerDispatchMixin {
       if (interceptHandleTarget != null && handled) {
         //事件被拦截, 而且处理了, 则其他接收器发送取消事件
         final cancelEvent = createPointerCancelEvent(event);
-        for (var element in iterable) {
+        for (var element in clientList) {
           if (element != interceptHandleTarget) {
             element.onPointerEvent(cancelEvent);
           }
@@ -165,8 +173,8 @@ mixin PointerDispatchMixin {
       }
       if (interceptHandleTarget == null || !handled) {
         //3:onPointerEvent
-        for (var element in iterable) {
-          if (!element.ignoreHandle) {
+        for (var element in clientList) {
+          if (!element.ignoreEventHandle) {
             handled = element.onPointerEvent(event);
           }
           if (handled) break;

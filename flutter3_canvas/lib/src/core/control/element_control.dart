@@ -18,6 +18,9 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 控制点: 锁定等比
   static const CONTROL_TYPE_LOCK = 4;
 
+  /// 控制行为: 平移
+  static const CONTROL_TYPE_TRANSLATE = 5;
+
   final CanvasElementControlManager canvasElementControlManager;
 
   /// 控制点的类型
@@ -42,7 +45,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   @dp
   double controlIcoPadding = 4;
 
-  /// 控制点的图片信息
+  /// 控制点的图片信息, 用来绘制控制点图标
   PictureInfo? _pictureInfo;
 
   //---
@@ -58,6 +61,16 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   @entryPoint
   void paintControl(Canvas canvas, PaintMeta paintMeta) {
     paintControlWith(canvas, paintMeta);
+  }
+
+  @override
+  void dispatchPointerEvent(PointerEvent event) {
+    if (isCanvasComponentEnable) {
+      if (event.isPointerFinish) {
+        isPointerDownIn = false;
+      }
+    }
+    super.dispatchPointerEvent(event);
   }
 
   @override
@@ -81,8 +94,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   bool onPointerEvent(PointerEvent event) {
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(event)) {
-        l.d('$event');
-        return true;
+        return onFirstPointerEvent(event);
       }
     }
     return super.onPointerEvent(event);
@@ -207,6 +219,29 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
       _pictureInfo = value;
     });
   }
+
+  //---
+
+  @sceneCoordinate
+  Offset downScenePoint = Offset.zero;
+
+  /// 需要操作的目标元素
+  ElementPainter? _targetElement;
+
+  /// 存档
+  ElementStateStack? _elementStateStack;
+
+  /// 初始化控制的目标元素
+  void initControlTarget(ElementPainter? element) {
+    _targetElement = element;
+    _elementStateStack = element?.createStateStack();
+  }
+
+  /// 从按下的位置状态开始, 作用矩阵[matrix]
+  void applyMatrix(Matrix4 matrix) {
+    _elementStateStack?.restore();
+    _targetElement?.applyMatrixWithAnchor(matrix);
+  }
 }
 
 /// 删除元素控制
@@ -258,5 +293,58 @@ class LockControl extends BaseControl {
   @override
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
     controlBounds = getLBControlBounds(selectComponentProperty);
+  }
+}
+
+/// 平移元素控制
+class TranslateControl extends BaseControl {
+  TranslateControl(CanvasElementControlManager canvasElementControlManager)
+      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_TRANSLATE);
+
+  @override
+  bool interceptPointerEvent(PointerEvent event) {
+    if (isCanvasComponentEnable) {
+      if (isFirstPointerEvent(event)) {
+        if (event.isPointerDown) {
+          downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
+          if (canvasElementControlManager.elementSelectComponent
+              .hitTest(point: downScenePoint)) {
+            //需要拖动选中的元素
+            isPointerDownIn = true;
+            initControlTarget(
+                canvasElementControlManager.elementSelectComponent);
+            return true;
+          } else {
+            final downElementList = canvasElementControlManager
+                .canvasElementManager
+                .findElement(point: downScenePoint);
+            final downElement = downElementList.lastOrNull;
+            if (downElement != null) {
+              //按在指定的元素上
+              isPointerDownIn = true;
+              canvasElementControlManager.canvasElementManager
+                  .resetSelectElement(downElement.ofList());
+              initControlTarget(
+                  canvasElementControlManager.elementSelectComponent);
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return super.interceptPointerEvent(event);
+  }
+
+  @override
+  bool onFirstPointerEvent(PointerEvent event) {
+    l.d('$event');
+    //debugger();
+    if (event.isPointerMove) {
+      final moveScenePoint = canvasViewBox.toScenePoint(event.localPosition);
+      final matrix = Matrix4.identity()
+        ..translateTo(offset: moveScenePoint - downScenePoint);
+      applyMatrix(matrix);
+    }
+    return true;
   }
 }

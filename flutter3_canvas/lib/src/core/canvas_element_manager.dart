@@ -86,6 +86,30 @@ class CanvasElementManager with Diagnosticable {
     return result;
   }
 
+  /// 添加一个选中的元素
+  void addSelectElement(ElementPainter element) {
+    final list =
+        canvasElementControlManager.elementSelectComponent.children ?? [];
+    list.add(element);
+    canvasElementControlManager.elementSelectComponent.resetSelectElement(list);
+  }
+
+  /// 移除一个选中的元素
+  void removeSelectElement(ElementPainter element) {
+    final list =
+        canvasElementControlManager.elementSelectComponent.children ?? [];
+    if (list.remove(element)) {
+      canvasElementControlManager.elementSelectComponent
+          .resetSelectElement(list);
+    }
+  }
+
+  /// 重置选中的元素
+  void resetSelectElement(List<ElementPainter>? elements) {
+    canvasElementControlManager.elementSelectComponent
+        .resetSelectElement(elements);
+  }
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);

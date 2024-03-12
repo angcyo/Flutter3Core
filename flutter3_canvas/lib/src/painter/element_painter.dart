@@ -123,6 +123,37 @@ class ElementPainter extends IPainter {
   void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
     this.canvasDelegate = null;
   }
+
+  /// 保存当前元素的状态
+  ElementStateStack createStateStack() => ElementStateStack()..saveFrom(this);
+
+  /// 恢复状态
+  void restoreStateStack(ElementStateStack stateStack) {
+    stateStack.restore();
+  }
+}
+
+/// 元素状态栈, 用来撤销和重做
+class ElementStateStack {
+  /// 元素的属性保存
+  final Map<ElementPainter, PaintProperty?> propertyMap = {};
+
+  /// 保存信息
+  void saveFrom(ElementPainter element) {
+    propertyMap[element] = element.paintProperty?.clone();
+    if (element is ElementGroupPainter) {
+      element.children?.forEach((element) {
+        saveFrom(element);
+      });
+    }
+  }
+
+  /// 恢复信息
+  void restore() {
+    propertyMap.forEach((element, paintProperty) {
+      element.paintProperty = paintProperty;
+    });
+  }
 }
 
 /// 一组元素的绘制
