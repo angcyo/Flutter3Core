@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -153,6 +153,13 @@ extension PathEx on Path {
       contourIndex++;
     }
   }
+
+  /// 将路径平移到0,0的位置
+  Path moveToZero() {
+    final bounds = getExactBounds();
+    return transformPath(
+        Matrix4.translationValues(-bounds.left, -bounds.top, 0));
+  }
 }
 
 extension ListPathEx on List<Path> {
@@ -168,5 +175,14 @@ extension ListPathEx on List<Path> {
           rect.expandToInclude(path.getExactBounds(exact, pathAcceptableError));
     }
     return rect;
+  }
+
+  /// 将所有路径平移到0,0的位置
+  List<Path> moveToZero() {
+    final bounds = getExactPathBounds();
+    final matrix = Matrix4.translationValues(-bounds.left, -bounds.top, 0);
+    return map((path) {
+      return path.transformPath(matrix);
+    }).toList();
   }
 }
