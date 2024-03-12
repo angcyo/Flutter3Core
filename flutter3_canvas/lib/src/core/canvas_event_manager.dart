@@ -159,6 +159,10 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
 
   @override
   bool onDoubleTapDetectorPointerEvent(PointerEvent event) {
+    if (canvasDelegate.canvasElementManager.canvasElementControlManager
+        .isPointerDownElement) {
+      return false;
+    }
     final scale = doubleScaleValue;
     final pivot = event.localPosition;
     //debugger();

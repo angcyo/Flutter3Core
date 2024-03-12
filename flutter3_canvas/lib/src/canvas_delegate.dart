@@ -143,6 +143,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     refresh();
   }
 
+  /// 双击元素时回调
+  void dispatchDoubleTapElement(ElementPainter elementPainter) {
+    canvasListeners.clone().forEach((element) {
+      element.onDoubleTapElementAction?.call(elementPainter);
+    });
+  }
+
   //endregion ---事件派发---
 
   //region ---Ticker---

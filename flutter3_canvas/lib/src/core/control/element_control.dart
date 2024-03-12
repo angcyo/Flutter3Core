@@ -30,8 +30,11 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   @viewCoordinate
   Rect? controlBounds;
 
-  /// 手势是否在控制点上按下
+  /// 手势是否在控制点上按下, 每次按下时重置
   bool isPointerDownIn = false;
+
+  /// 是否是首次处理事件, 每次按下时重置
+  bool isFirstHandle = true;
 
   /// 控制点绘制的大小
   @dp
@@ -66,8 +69,12 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   @override
   void dispatchPointerEvent(PointerEvent event) {
     if (isCanvasComponentEnable) {
-      if (event.isPointerFinish) {
-        isPointerDownIn = false;
+      if (isFirstPointerEvent(event)) {
+        if (event.isPointerDown) {
+          isFirstHandle = true;
+          isControlApply = false;
+          isPointerDownIn = false;
+        }
       }
     }
     super.dispatchPointerEvent(event);
@@ -231,6 +238,9 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 存档
   ElementStateStack? _elementStateStack;
 
+  /// 是否应用了控制
+  bool isControlApply = false;
+
   /// 初始化控制的目标元素
   void initControlTarget(ElementPainter? element) {
     _targetElement = element;
@@ -239,8 +249,28 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   /// 从按下的位置状态开始, 作用矩阵[matrix]
   void applyMatrix(Matrix4 matrix) {
+    isControlApply = true;
     _elementStateStack?.restore();
     _targetElement?.applyMatrixWithAnchor(matrix);
+  }
+
+  /// 结束控制, 并入回退栈
+  @supportUndo
+  void endControl() {
+    if (isControlApply) {
+      if (_targetElement != null) {
+        final stateStack = _targetElement?.createStateStack();
+        canvasElementControlManager.canvasDelegate.canvasUndoManager.addRunRedo(
+          () {
+            _elementStateStack?.restore();
+          },
+          () {
+            stateStack?.restore();
+          },
+          false,
+        );
+      }
+    }
   }
 }
 
@@ -297,7 +327,7 @@ class LockControl extends BaseControl {
 }
 
 /// 平移元素控制
-class TranslateControl extends BaseControl {
+class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
   TranslateControl(CanvasElementControlManager canvasElementControlManager)
       : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_TRANSLATE);
 
@@ -313,6 +343,8 @@ class TranslateControl extends BaseControl {
             isPointerDownIn = true;
             initControlTarget(
                 canvasElementControlManager.elementSelectComponent);
+            canvasElementControlManager.updatePointerDownElement(
+                canvasElementControlManager.elementSelectComponent);
             return true;
           } else {
             final downElementList = canvasElementControlManager
@@ -326,6 +358,8 @@ class TranslateControl extends BaseControl {
                   .resetSelectElement(downElement.ofList());
               initControlTarget(
                   canvasElementControlManager.elementSelectComponent);
+              canvasElementControlManager.updatePointerDownElement(
+                  canvasElementControlManager.elementSelectComponent);
               return true;
             }
           }
@@ -337,14 +371,36 @@ class TranslateControl extends BaseControl {
 
   @override
   bool onFirstPointerEvent(PointerEvent event) {
-    l.d('$event');
+    //l.d('$event');
     //debugger();
-    if (event.isPointerMove) {
-      final moveScenePoint = canvasViewBox.toScenePoint(event.localPosition);
-      final matrix = Matrix4.identity()
-        ..translateTo(offset: moveScenePoint - downScenePoint);
-      applyMatrix(matrix);
+    if (isPointerDownIn) {
+      addDoubleTapDetectorPointerEvent(event);
+      if (event.isPointerMove) {
+        if (isFirstHandle) {
+          if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
+            //首次移动, 并且超过了阈值
+            isFirstHandle = false;
+          }
+        }
+        if (!isFirstHandle) {
+          final moveScenePoint =
+              canvasViewBox.toScenePoint(event.localPosition);
+          final matrix = Matrix4.identity()
+            ..translateTo(offset: moveScenePoint - downScenePoint);
+          applyMatrix(matrix);
+          //debugger();
+        }
+      } else if (event.isPointerFinish) {
+        canvasElementControlManager.updatePointerDownElement(null);
+      }
     }
+    return true;
+  }
+
+  @override
+  bool onDoubleTapDetectorPointerEvent(PointerEvent event) {
+    _targetElement?.let((it) => canvasElementControlManager.canvasDelegate
+        .dispatchDoubleTapElement(it));
     return true;
   }
 }

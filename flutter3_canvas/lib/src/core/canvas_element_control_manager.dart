@@ -32,7 +32,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   CanvasDelegate get canvasDelegate => canvasElementManager.canvasDelegate;
 
+  /// 是否选中了元素
   bool get isSelectedElement => elementSelectComponent.isSelectedElement;
+
+  /// 是否在元素上按下
+  bool get isPointerDownElement => _pointerDownElement != null;
 
   CanvasElementControlManager(this.canvasElementManager) {
     addHandleEventClient(elementSelectComponent);
@@ -48,7 +52,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     //---选择框绘制
     elementSelectComponent.painting(canvas, paintMeta);
     //---控制点绘制
-    if (elementSelectComponent.isSelectedElement) {
+    if (enableElementControl &&
+        elementSelectComponent.isSelectedElement &&
+        !isPointerDownElement) {
       if (elementSelectComponent.isSupportControl(deleteControl.controlType)) {
         deleteControl.paintControl(canvas, paintMeta);
       }
@@ -77,14 +83,27 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 更新控制点的位置
   void updateControlBounds() {
-    if (isSelectedElement) {
+    if (enableElementControl && isSelectedElement) {
       elementSelectComponent.paintProperty?.let((it) {
         deleteControl.updatePaintControlBounds(it);
         rotateControl.updatePaintControlBounds(it);
         scaleControl.updatePaintControlBounds(it);
         lockControl.updatePaintControlBounds(it);
       });
+    } else {
+      deleteControl.controlBounds = null;
+      rotateControl.controlBounds = null;
+      scaleControl.controlBounds = null;
+      lockControl.controlBounds = null;
     }
+  }
+
+  ElementPainter? _pointerDownElement;
+
+  /// 更新当前手势按下的元素
+  void updatePointerDownElement(ElementPainter? element) {
+    _pointerDownElement = element;
+    canvasDelegate.refresh();
   }
 }
 

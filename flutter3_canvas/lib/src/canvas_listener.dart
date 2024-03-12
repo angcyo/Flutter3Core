@@ -33,11 +33,15 @@ class CanvasListener {
     List<ElementPainter> to,
   )? onCanvasElementListChangedAction;
 
+  /// [CanvasDelegate.dispatchDoubleTapElement]
+  final void Function(ElementPainter elementPainter)? onDoubleTapElementAction;
+
   CanvasListener({
     this.onCanvasViewBoxChangedAction,
     this.onCanvasSelectBoundsChangedAction,
     this.onCanvasElementPropertyChangedAction,
     this.onCanvasElementSelectChangedAction,
     this.onCanvasElementListChangedAction,
+    this.onDoubleTapElementAction,
   });
 }
