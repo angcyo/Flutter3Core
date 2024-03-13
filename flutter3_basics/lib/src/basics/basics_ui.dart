@@ -318,6 +318,7 @@ extension WidgetEx on Widget {
   Widget hero(Object? tag) => tag == null ? this : Hero(tag: tag, child: this);
 
   /// 点击事件
+  /// [enable] 是否启用点击事件
   /// [GestureDetector] 多个手势识别器, 才会有手势竞争
   /// [Listener] 监听手势, 不会有手势竞争
   /// [GestureRecognizer] 手势识别器base
@@ -331,20 +332,22 @@ extension WidgetEx on Widget {
   /// [EagerGestureRecognizer] 急切手势识别器
   /// [RotateGestureRecognizer] 旋转手势识别
   ///
-  Widget click(GestureTapCallback? onTap) => onTap == null
-      ? this
-      : GestureDetector(
-          onTap: onTap,
-          child: this,
-        );
+  Widget click(GestureTapCallback? onTap, [bool enable = true]) =>
+      onTap == null || !enable
+          ? this
+          : GestureDetector(
+              onTap: onTap,
+              child: this,
+            );
 
   /// 双击事件
-  Widget doubleClick(GestureTapCallback? onDoubleTap) => onDoubleTap == null
-      ? this
-      : GestureDetector(
-          onDoubleTap: onDoubleTap,
-          child: this,
-        );
+  Widget doubleClick(GestureTapCallback? onDoubleTap, [bool enable = true]) =>
+      onDoubleTap == null || !enable
+          ? this
+          : GestureDetector(
+              onDoubleTap: onDoubleTap,
+              child: this,
+            );
 
   /// [CustomPaint]
   /// [paint] 背景绘制
@@ -496,8 +499,8 @@ extension WidgetEx on Widget {
   /// 对齐
   /// [Align]
   /// [Center]
-  Widget align({
-    AlignmentGeometry alignment = Alignment.center,
+  Widget align(
+    AlignmentGeometry alignment, {
     double? widthFactor,
     double? heightFactor,
     double? minWidth,
@@ -528,7 +531,7 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// [Positioned]
+  /// [Positioned].[ParentDataWidget]
   /// [PositionedDirectional]
   /// [AnimatedPositioned]
   Widget position({
@@ -855,12 +858,15 @@ extension WidgetEx on Widget {
   }
 
   /// 圆角矩形阴影包裹
+  /// [radius] 圆角
   /// [clipContent] 是否裁剪内容
   Widget radiusShadow({
     bool clipContent = true,
     Color? decorationColor = Colors.white,
     Color shadowColor = Colors.black12,
+    Offset shadowOffset = Offset.zero,
     double blurRadius = kDefaultBlurRadius,
+    double? radius,
     BorderRadiusGeometry? borderRadius,
     Color? color,
     AlignmentGeometry? alignment = Alignment.center,
@@ -875,7 +881,7 @@ extension WidgetEx on Widget {
     double? height,
   }) {
     borderRadius ??=
-        const BorderRadius.all(Radius.circular(kDefaultBorderRadiusXXX));
+        BorderRadius.all(Radius.circular(radius ?? kDefaultBorderRadiusXXX));
     return (clipContent ? clip(borderRadius: borderRadius) : this).container(
       alignment: alignment,
       padding: padding,
@@ -895,6 +901,7 @@ extension WidgetEx on Widget {
         boxShadow: [
           BoxShadow(
             color: shadowColor,
+            offset: shadowOffset,
             blurRadius: blurRadius,
           ),
         ],
@@ -926,6 +933,28 @@ extension WidgetEx on Widget {
             )
           : this;
 
+  /// 着色, 可以实现线性着色效果, 高光效果
+  /// [ShaderMask]
+  Widget shaderMask(
+    ui.Shader? shader, {
+    BlendMode blendMode = BlendMode.modulate,
+  }) =>
+      shader == null
+          ? this
+          : ShaderMask(
+              shaderCallback: (Rect bounds) {
+                return shader;
+                /*return RadialGradient(
+            center: Alignment.topLeft,
+            radius: 1.0,
+            colors: <Color>[Colors.yellow, Colors.deepOrange.shade900],
+            tileMode: TileMode.mirror,
+          ).createShader(bounds);*/
+              },
+              blendMode: blendMode,
+              child: this,
+            );
+
   /// 可以实现灰度效果,灰度化app
   /// [ColorFiltered]
   /// 将所有绘制放在一个颜色过滤的[Layer]上, 以实现颜色过滤的效果
@@ -934,13 +963,15 @@ extension WidgetEx on Widget {
   /// [PaintingContext.pushLayer]
   Widget colorFiltered({
     ColorFilter? colorFilter,
-    Color color = Colors.grey,
-    BlendMode blendMode = BlendMode.saturation,
+    Color? color = Colors.grey,
+    BlendMode blendMode = BlendMode.srcIn,
   }) =>
-      ColorFiltered(
-        colorFilter: colorFilter ?? ColorFilter.mode(color, blendMode),
-        child: this,
-      );
+      (colorFilter == null && color == null)
+          ? this
+          : ColorFiltered(
+              colorFilter: colorFilter ?? ColorFilter.mode(color!, blendMode),
+              child: this,
+            );
 
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints

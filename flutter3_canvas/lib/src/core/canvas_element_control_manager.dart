@@ -143,10 +143,12 @@ class ElementSelectComponent extends ElementGroupPainter
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //debugger();
     //绘制选中元素边界
-    paint.color = canvasElementControlManager
-        .canvasDelegate.canvasStyle.canvasAccentColor;
-    paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
-    paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
+    if (isSelectedElement) {
+      paint.color = canvasElementControlManager
+          .canvasDelegate.canvasStyle.canvasAccentColor;
+      paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
+      paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
+    }
   }
 
   /// 绘制手势正在选择时的框框

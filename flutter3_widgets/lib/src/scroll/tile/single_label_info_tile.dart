@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -75,7 +75,7 @@ class SingleLabelInfoTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start);
     }
 
-    right = right?.align(alignment: Alignment.centerRight);
+    right = right?.align(Alignment.centerRight);
     if (right == null) {
       column = column?.expanded();
     } else {

@@ -30,9 +30,7 @@
 │    ├─flutter3_widgets
 │    ├─flutter3_vector
 ├──flutter3_widgets
-│    ├─flutter3_widgets
-├──flutter3_web
-│    ├─flutter3_widgets
+│    ├─flutter3_basics
 ├──flutter3_http
 │    ├─flutter3_basics
 ├──flutter3_vector

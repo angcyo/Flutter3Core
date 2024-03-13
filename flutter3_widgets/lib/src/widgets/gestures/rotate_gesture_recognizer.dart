@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../../flutter3_widgets.dart';
 
 /// Copyright (c) 2021 Razeware LLC
 ///

@@ -187,7 +187,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
         material.Text(
           "${currentIndex + 1}/${widget.photoItems.length}",
           style: const TextStyle(color: Colors.white),
-        ).align(alignment: Alignment.bottomCenter).padding(kXh),
+        ).align(Alignment.bottomCenter).padding(kXh),
       ].stack()!;
     }
     if (widget.tapDismiss) {

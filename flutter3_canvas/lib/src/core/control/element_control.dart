@@ -259,10 +259,11 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   void endControl() {
     if (isControlApply) {
       if (_targetElement != null) {
+        final old = _elementStateStack;
         final stateStack = _targetElement?.createStateStack();
         canvasElementControlManager.canvasDelegate.canvasUndoManager.addRunRedo(
           () {
-            _elementStateStack?.restore();
+            old?.restore();
           },
           () {
             stateStack?.restore();
@@ -392,6 +393,9 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         }
       } else if (event.isPointerFinish) {
         canvasElementControlManager.updatePointerDownElement(null);
+        if (isControlApply) {
+          endControl();
+        }
       }
     }
     return true;

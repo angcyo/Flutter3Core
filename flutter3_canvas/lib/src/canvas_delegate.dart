@@ -150,6 +150,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
+  /// 回退栈发生改变时回调
+  void dispatchCanvasUndoChanged(CanvasUndoManager undoManager) {
+    canvasListeners.clone().forEach((element) {
+      element.onCanvasUndoChangedAction?.call(undoManager);
+    });
+  }
+
   //endregion ---事件派发---
 
   //region ---Ticker---

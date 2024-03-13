@@ -8,4 +8,10 @@ class CanvasUndoManager extends UndoManager {
   final CanvasDelegate canvasDelegate;
 
   CanvasUndoManager(this.canvasDelegate);
+
+  @override
+  void notifyChange() {
+    super.notifyChange();
+    canvasDelegate.dispatchCanvasUndoChanged(this);
+  }
 }

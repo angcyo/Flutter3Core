@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -36,6 +36,9 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchDoubleTapElement]
   final void Function(ElementPainter elementPainter)? onDoubleTapElementAction;
 
+  /// [CanvasDelegate.dispatchCanvasUndoChanged]
+  final void Function(CanvasUndoManager undoManager)? onCanvasUndoChangedAction;
+
   CanvasListener({
     this.onCanvasViewBoxChangedAction,
     this.onCanvasSelectBoundsChangedAction,
@@ -43,5 +46,6 @@ class CanvasListener {
     this.onCanvasElementSelectChangedAction,
     this.onCanvasElementListChangedAction,
     this.onDoubleTapElementAction,
+    this.onCanvasUndoChangedAction,
   });
 }

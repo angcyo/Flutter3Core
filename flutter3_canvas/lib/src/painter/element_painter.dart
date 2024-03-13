@@ -346,7 +346,7 @@ class PaintProperty {
     left += targetCenter.dx - nowCenter.dx;
     top += targetCenter.dy - nowCenter.dy;
 
-    l.d(this);
+    //l.d(this);
   }
 
   /// 直接使用锚点作为更新锚点依据
@@ -367,7 +367,7 @@ class PaintProperty {
     left = targetAnchor.dx;
     top = targetAnchor.dy;
 
-    l.d(this);
+    //l.d(this);
   }
 
   void qrDecomposition(Matrix4 matrix) {

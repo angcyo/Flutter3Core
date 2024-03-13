@@ -96,9 +96,10 @@ BoxDecoration fillDecoration({
 }
 
 /// 线性渐变装饰
+/// [colors] 设置了渐变颜色, 则[fillColor]无效
 /// [borderRadius] 圆角
 BoxDecoration lineaGradientDecoration(
-  List<Color> colors, {
+  List<Color>? colors, {
   BuildContext? context,
   Color? fillColor,
   double borderRadius = 0,
@@ -108,11 +109,13 @@ BoxDecoration lineaGradientDecoration(
   var color = fillColor ?? GlobalTheme.of(context).primaryColor;
   return BoxDecoration(
     color: color,
-    gradient: linearGradient(
-      colors,
-      begin: begin,
-      end: end,
-    ),
+    gradient: colors == null
+        ? null
+        : linearGradient(
+            colors,
+            begin: begin,
+            end: end,
+          ),
     borderRadius: borderRadius > 0
         ? BorderRadius.all(
             Radius.circular(borderRadius),

@@ -15,7 +15,7 @@ class UndoManager {
     undoList.add(item);
     redoList.clear();
 
-    _notifyChange();
+    notifyChange();
   }
 
   /// 回退
@@ -25,7 +25,7 @@ class UndoManager {
       item.doUndo();
       redoList.add(item);
 
-      _notifyChange();
+      notifyChange();
     }
   }
 
@@ -36,7 +36,7 @@ class UndoManager {
       item.doRedo();
       undoList.add(item);
 
-      _notifyChange();
+      notifyChange();
     }
   }
 
@@ -83,7 +83,7 @@ class UndoManager {
     _changeListeners.remove(listener);
   }
 
-  void _notifyChange() {
+  void notifyChange() {
     for (var listener in _changeListeners) {
       listener();
     }
