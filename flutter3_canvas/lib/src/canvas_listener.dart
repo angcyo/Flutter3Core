@@ -31,6 +31,7 @@ class CanvasListener {
   final void Function(
     List<ElementPainter> from,
     List<ElementPainter> to,
+    List<ElementPainter> op,
   )? onCanvasElementListChangedAction;
 
   /// [CanvasDelegate.dispatchDoubleTapElement]

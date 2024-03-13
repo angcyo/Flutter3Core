@@ -46,30 +46,105 @@ class CanvasElementManager with Diagnosticable {
 
   //endregion ---entryPoint----
 
+  //region ---element---
+
   /// 添加元素
-  void addElement(ElementPainter element) {
+  @supportUndo
+  void addElement(ElementPainter element,
+      {UndoType undoType = UndoType.normal}) {
+    addElementList(element.ofList(), undoType: undoType);
+  }
+
+  /// 添加一组元素
+  @supportUndo
+  void addElementList(List<ElementPainter>? list,
+      {UndoType undoType = UndoType.normal}) {
+    if (list == null || isNullOrEmpty(list)) {
+      return;
+    }
+
     final old = elements.clone();
-    elements.add(element);
-    element.attachToCanvasDelegate(canvasDelegate);
-    canvasDelegate.dispatchCanvasElementListChanged(old, elements);
+    elements.addAll(list);
+    for (var element in list) {
+      element.attachToCanvasDelegate(canvasDelegate);
+    }
+    canvasDelegate.dispatchCanvasElementListChanged(old, elements, list);
+
+    if (undoType == UndoType.normal) {
+      final newList = elements.clone();
+      canvasDelegate.canvasUndoManager.add(UndoItem(
+        () {
+          //debugger();
+          elements.reset(old);
+          canvasElementControlManager.onCanvasElementDeleted(list);
+          for (var element in list) {
+            element.detachFromCanvasDelegate(canvasDelegate);
+          }
+          canvasDelegate.dispatchCanvasElementListChanged(newList, old, list);
+        },
+        () {
+          //debugger();
+          elements.reset(newList);
+          for (var element in list) {
+            element.attachToCanvasDelegate(canvasDelegate);
+          }
+          canvasDelegate.dispatchCanvasElementListChanged(old, newList, list);
+        },
+      ));
+    }
   }
 
   /// 删除元素
-  void removeElement(ElementPainter element) {
+  @supportUndo
+  void removeElement(ElementPainter element,
+      {UndoType undoType = UndoType.normal}) {
+    removeElementList(element.ofList(), undoType: undoType);
+  }
+
+  /// 删除一组元素
+  @supportUndo
+  void removeElementList(List<ElementPainter>? list,
+      {UndoType undoType = UndoType.normal}) {
+    if (list == null || isNullOrEmpty(list)) {
+      return;
+    }
     final old = elements.clone();
-    elements.remove(element);
-    element.detachFromCanvasDelegate(canvasDelegate);
-    canvasDelegate.dispatchCanvasElementListChanged(old, elements);
+    final op = elements.removeAll(list);
+    //删除选中的元素
+    canvasElementControlManager.onCanvasElementDeleted(op);
+    for (var element in op) {
+      element.detachFromCanvasDelegate(canvasDelegate);
+    }
+    canvasDelegate.dispatchCanvasElementListChanged(old, elements, op);
+
+    if (undoType == UndoType.normal) {
+      final newList = elements.clone();
+      canvasDelegate.canvasUndoManager.add(UndoItem(
+        () {
+          //debugger();
+          elements.reset(old);
+          for (var element in op) {
+            element.attachToCanvasDelegate(canvasDelegate);
+          }
+          canvasDelegate.dispatchCanvasElementListChanged(newList, old, op);
+        },
+        () {
+          //debugger();
+          elements.reset(newList);
+          canvasElementControlManager.onCanvasElementDeleted(op);
+          for (var element in op) {
+            element.detachFromCanvasDelegate(canvasDelegate);
+          }
+          canvasDelegate.dispatchCanvasElementListChanged(old, newList, op);
+        },
+      ));
+    }
   }
 
   /// 清空元素
-  void clearElements() {
-    final old = elements.clone();
-    elements.clear();
-    for (var element in old) {
-      element.detachFromCanvasDelegate(canvasDelegate);
-    }
-    canvasDelegate.dispatchCanvasElementListChanged(old, elements);
+  @supportUndo
+  void clearElements([UndoType undoType = UndoType.normal]) {
+    removeElementList(elements, undoType: undoType);
   }
 
   /// 查找元素, 按照元素的先添加先返回的顺序
@@ -85,6 +160,10 @@ class CanvasElementManager with Diagnosticable {
     }
     return result;
   }
+
+  //endregion ---element---
+
+  //region ---select---
 
   /// 添加一个选中的元素
   void addSelectElement(ElementPainter element) {
@@ -109,6 +188,8 @@ class CanvasElementManager with Diagnosticable {
     canvasElementControlManager.elementSelectComponent
         .resetSelectElement(elements);
   }
+
+  //endregion ---select---
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

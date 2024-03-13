@@ -88,6 +88,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
           isPointerDownIn =
               controlBounds?.contains(event.localPosition) ?? false;
           if (isPointerDownIn) {
+            downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
             canvasElementControlManager.canvasDelegate.refresh();
             return true;
           }
@@ -285,6 +286,16 @@ class DeleteControl extends BaseControl {
   @override
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
     controlBounds = getLTControlBounds(selectComponentProperty);
+  }
+
+  @override
+  bool onFirstPointerEvent(PointerEvent event) {
+    if (isPointerDownIn) {
+      if (event.isPointerUp) {
+        canvasElementControlManager.removeSelectedElement();
+      }
+    }
+    return super.onFirstPointerEvent(event);
   }
 }
 

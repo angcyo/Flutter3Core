@@ -185,6 +185,22 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
+  void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
+    children?.forEach((element) {
+      element.attachToCanvasDelegate(canvasDelegate);
+    });
+    super.attachToCanvasDelegate(canvasDelegate);
+  }
+
+  @override
+  void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
+    children?.forEach((element) {
+      element.detachFromCanvasDelegate(canvasDelegate);
+    });
+    super.detachFromCanvasDelegate(canvasDelegate);
+  }
+
+  @override
   void applyMatrixWithCenter(Matrix4 matrix) {
     //debugger();
     super.applyMatrixWithCenter(matrix);

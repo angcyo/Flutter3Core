@@ -720,7 +720,7 @@ extension BoolEx on bool {
 
 //endregion bool 扩展
 
-//region Int 扩展
+//region Num 扩展
 
 /// [abs] 绝对值
 /// [floor] 向下取整
@@ -849,10 +849,6 @@ extension NumEx on num {
   bool equalTo(double other) => (this - other).abs() < 0.0000001;
 }
 
-//endregion Int 扩展
-
-//region Int 扩展
-
 extension IntEx on int {
   /// 是否有指定的标志位
   bool have(int flag) => (this & flag) == flag;
@@ -902,6 +898,10 @@ extension DoubleEx on double {
   /// 判断浮点数是否是一个有效的数值
   bool get isValid => !isNaN && !isInfinite;
 }
+
+//endregion Num 扩展
+
+//region List 扩展
 
 /// [Uint8List]
 extension ListIntEx on List<int> {
@@ -962,6 +962,8 @@ extension IterableEx<E> on Iterable<E> {
   }
 
   /// 复制一份, 浅拷贝
+  /// [growable] 是否可变, 不可变的列表, 不能操作元素
+  /// `Cannot remove from a fixed-length list`
   List<E> clone([
     bool growable = false,
   ]) =>
@@ -1020,6 +1022,25 @@ extension ListEx<T> on List<T> {
     }
     return null;
   }
+
+  /// 重置列表的元素
+  void reset(Iterable<T> elements) {
+    clear();
+    addAll(elements);
+  }
+
+  /// 移除所有元素, 并返回移除的元素
+  List<T> removeAll(Iterable<T> elements) {
+    final result = <T>[];
+    for (var element in elements) {
+      if (contains(element)) {
+        if (remove(element)) {
+          result.add(element);
+        }
+      }
+    }
+    return result;
+  }
 }
 
-//endregion Int 扩展
+//endregion List 扩展

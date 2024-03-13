@@ -136,9 +136,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void dispatchCanvasElementListChanged(
     List<ElementPainter> from,
     List<ElementPainter> to,
+    List<ElementPainter> op,
   ) {
+    //debugger();
     canvasListeners.clone().forEach((element) {
-      element.onCanvasElementListChangedAction?.call(from, to);
+      element.onCanvasElementListChangedAction?.call(from, to, op);
     });
     refresh();
   }

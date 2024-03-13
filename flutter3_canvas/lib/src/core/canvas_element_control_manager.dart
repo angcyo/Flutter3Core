@@ -79,6 +79,19 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
+  /// 当有元素被删除时, 调用
+  /// 同时需要检查被删除的元素是否是选中的元素, 如果是, 则需要更新选择框
+  void onCanvasElementDeleted(List<ElementPainter> elements) {
+    final list = elementSelectComponent.children?.clone(true);
+    if (list != null) {
+      final op = list.removeAll(elements);
+      if (op.isNotEmpty) {
+        //有选中的元素被删除了
+        elementSelectComponent.resetSelectElement(list);
+      }
+    }
+  }
+
   //---
 
   /// 更新控制点的位置
@@ -98,6 +111,17 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
+  /// 移除选中的所有元素, 并且清空选择
+  void removeSelectedElement() {
+    if (isSelectedElement) {
+      final list = elementSelectComponent.children;
+      elementSelectComponent.resetChildren();
+      canvasDelegate.canvasElementManager.removeElementList(list);
+    }
+  }
+
+  /// 当前正在按下的元素, 用来标识
+  /// 可以在按下元素时, 减少干扰元素的绘制
   ElementPainter? _pointerDownElement;
 
   /// 更新当前手势按下的元素
