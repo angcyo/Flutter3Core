@@ -196,6 +196,9 @@ class ElementSelectComponent extends ElementGroupPainter
         HandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
 
+  /// 限制最小缩放比例
+  double? minScale = 0.1;
+
   /// 画笔
   final Paint boundsPaint = Paint();
 
@@ -352,7 +355,12 @@ class ElementSelectComponent extends ElementGroupPainter
 
   /// 缩放选中的元素
   @api
-  void applyScaleMatrix({double? sx, double? sy, Offset? anchor}) {
+  void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
+    minScale?.let((it) {
+      sx = max(it, sx);
+      sy = max(it, sy);
+    });
+
     double angle = paintProperty?.angle ?? 0; //弧度
     anchor ??= paintProperty?.anchor ?? Offset.zero;
 
@@ -362,18 +370,27 @@ class ElementSelectComponent extends ElementGroupPainter
     });
 
     //子元素使用矩阵缩放
-    final rotateMatrix = Matrix4.identity()
-      ..rotateBy(angle, anchor: paintProperty?.paintRect.center);
-    final rotateInvertMatrix = rotateMatrix.invertedMatrix();
-    Offset anchorInvert = rotateInvertMatrix.mapPoint(anchor);
-
-    final scaleMatrix = Matrix4.identity()
-      ..scaleBy(sx: sx, sy: sy, anchor: anchorInvert);
-
     final matrix = Matrix4.identity();
-    matrix.setFrom(rotateInvertMatrix);
-    matrix.postConcat(scaleMatrix);
-    matrix.postConcat(rotateMatrix);
+
+    if (angle % (2 * pi) == 0) {
+      //未旋转
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
+
+      matrix.postConcat(scaleMatrix);
+    } else {
+      final rotateMatrix = Matrix4.identity()
+        ..rotateBy(angle, anchor: paintProperty?.paintRect.center);
+      final rotateInvertMatrix = rotateMatrix.invertedMatrix();
+      Offset anchorInvert = rotateInvertMatrix.mapPoint(anchor);
+
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchorInvert);
+
+      matrix.setFrom(rotateInvertMatrix);
+      matrix.postConcat(scaleMatrix);
+      matrix.postConcat(rotateMatrix);
+    }
 
     children?.forEach((element) {
       element.applyMatrixWithCenter(matrix);

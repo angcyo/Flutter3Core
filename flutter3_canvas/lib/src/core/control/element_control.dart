@@ -314,7 +314,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// [applyTargetMatrixWithAnchor]
   /// [PaintProperty.applyMatrixWithCenter]
   @callPoint
-  void applyScaleMatrix({double? sx, double? sy, Offset? anchor}) {
+  void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
     isControlApply = true;
     _elementStateStack?.restore();
     final element = _targetElement;
@@ -508,8 +508,6 @@ class ScaleControl extends BaseControl {
                 l.d('缩放元素: sx:$sx sy:$sy anchor:$_downTargetElementAnchor');
                 return true;
               }());
-              sx = max(0.1, sx);
-              sy = max(0.1, sy);
               applyScaleMatrix(
                   sx: sx, sy: sy, anchor: _downTargetElementAnchor!);
             } else {
