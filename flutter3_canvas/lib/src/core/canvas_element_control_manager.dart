@@ -238,7 +238,7 @@ class ElementSelectComponent extends ElementGroupPainter
     if (isSelectedElement) {
       paint.color = canvasElementControlManager
           .canvasDelegate.canvasStyle.canvasAccentColor;
-      paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
+      paint.strokeWidth = 1 /*1.toDpFromPx()*/ / paintMeta.canvasScale;
       paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
     }
   }
@@ -302,13 +302,22 @@ class ElementSelectComponent extends ElementGroupPainter
           //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
           //选择结束
-          if (!event.isMoveExceed(firstDownEvent?.localPosition)) {
+          //debugger();
+          if (event.isMoveExceed(firstDownEvent?.localPosition)) {
+            //移动了手指, 可能是滑动选择元素
+            final selectList = _getSelectBoundsElementList();
+            if (isNullOrEmpty(selectList) && !_noCanvasEventHandle()) {
+              //想要清除选择
+              //有画布的相关操作, 则取消清除选择
+              updateSelectBounds(null, false);
+            } else {
+              //虽然画布操作了, 但还是要选择元素
+              updateSelectBounds(null, true);
+            }
+          } else {
             //未移动手指, 可能是点击选择元素
             updateSelectBounds(null, false);
             resetSelectElement(_downElementList?.lastOrNull?.ofList());
-          } else {
-            updateSelectBounds(
-                null, isFirstMoveExceed() && _noCanvasEventHandle());
           }
           _downElementList = null;
         }
@@ -367,15 +376,20 @@ class ElementSelectComponent extends ElementGroupPainter
     return super.isElementSupportControl(type);
   }
 
+  /// 获取选择框内的元素
+  List<ElementPainter>? _getSelectBoundsElementList() {
+    return selectBounds?.let((it) {
+      final elements = canvasElementControlManager.canvasElementManager
+          .findElement(rect: it);
+      return elements;
+    });
+  }
+
   /// 更新选择框边界, 并且触发选择选择
   void updateSelectBounds(Rect? bounds, bool select) {
     if (select) {
       //需要选择元素
-      selectBounds?.let((it) {
-        final elements = canvasElementControlManager.canvasElementManager
-            .findElement(rect: it);
-        resetSelectElement(elements);
-      });
+      resetSelectElement(_getSelectBoundsElementList());
     }
     selectBounds = bounds;
     canvasElementControlManager.canvasDelegate
