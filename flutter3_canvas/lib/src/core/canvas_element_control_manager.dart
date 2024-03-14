@@ -341,6 +341,15 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   @override
+  bool get isLockRatio {
+    if (children?.length == 1) {
+      final first = children!.first;
+      return first.isLockRatio;
+    }
+    return super.isLockRatio;
+  }
+
+  @override
   set isLockRatio(bool value) {
     super.isLockRatio = value;
     if (children?.length == 1) {
@@ -379,19 +388,26 @@ class ElementSelectComponent extends ElementGroupPainter
   /// [CanvasElementManager.removeSelectElement]
   /// [CanvasElementManager.removeSelectElementList]
   /// [CanvasElementManager.resetSelectElement]
+  @api
   void resetSelectElement(List<ElementPainter>? elements) {
     List<ElementPainter>? old = children;
     if (isNullOrEmpty(elements)) {
       //取消元素选择
       if (!isNullOrEmpty(children)) {
-        l.i('取消选中元素: $children');
+        assert(() {
+          l.i('取消之前选中的元素: $children');
+          return true;
+        }());
         resetChildren();
         canvasElementControlManager.onSelfSelectElementChanged();
         canvasElementControlManager.canvasDelegate
             .dispatchCanvasElementSelectChanged(this, old, children);
       }
     } else {
-      l.i('选中元素: $elements');
+      assert(() {
+        l.i('选中新的元素: $elements');
+        return true;
+      }());
       resetChildren(elements);
       canvasElementControlManager.onSelfSelectElementChanged();
       canvasElementControlManager.canvasDelegate

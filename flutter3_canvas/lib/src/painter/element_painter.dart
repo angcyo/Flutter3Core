@@ -77,6 +77,7 @@ class ElementPainter extends IPainter {
   bool get isLockRatio => _isLockRatio;
 
   set isLockRatio(bool value) {
+    //debugger();
     if (_isLockRatio != value) {
       _isLockRatio = value;
       onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
