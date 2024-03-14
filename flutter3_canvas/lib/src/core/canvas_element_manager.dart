@@ -180,6 +180,15 @@ class CanvasElementManager with Diagnosticable {
     canvasElementControlManager.elementSelectComponent.resetSelectElement(list);
   }
 
+  /// 添加一组选中的元素
+  @api
+  void addSelectElementList(List<ElementPainter> elements) {
+    final list =
+        canvasElementControlManager.elementSelectComponent.children ?? [];
+    list.addAll(elements);
+    canvasElementControlManager.elementSelectComponent.resetSelectElement(list);
+  }
+
   /// 移除一个选中的元素
   @api
   void removeSelectElement(ElementPainter element) {
@@ -189,6 +198,15 @@ class CanvasElementManager with Diagnosticable {
       canvasElementControlManager.elementSelectComponent
           .resetSelectElement(list);
     }
+  }
+
+  /// 移除一组选中的元素
+  @api
+  void removeSelectElementList(List<ElementPainter> elements) {
+    final list =
+        canvasElementControlManager.elementSelectComponent.children ?? [];
+    list.removeAll(elements);
+    canvasElementControlManager.elementSelectComponent.resetSelectElement(list);
   }
 
   /// 重置选中的元素

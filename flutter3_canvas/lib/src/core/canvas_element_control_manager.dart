@@ -4,12 +4,34 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/03/12
 ///
+
+/// 绘制元素的类型
+enum PaintInfoType {
+  /// 啥也不绘制
+  none,
+
+  /// 默认绘制元素的宽高信息
+  /// 选中元素时, 绘制元素的宽高信息
+  size,
+
+  /// 绘制元素的位置信息
+  /// 拖拽元素时, 绘制元素的位置信息
+  location,
+
+  /// 绘制元素的旋转信息
+  /// 旋转元素时, 绘制元素的旋转信息
+  rotate,
+}
+
 /// 元素控制操作管理
 class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   final CanvasElementManager canvasElementManager;
 
   /// 是否激活元素的控制操作
   bool enableElementControl = true;
+
+  /// 绘制元素的信息
+  PaintInfoType paintInfoType = PaintInfoType.none;
 
   /// 选择元素操作的组件
   late ElementSelectComponent elementSelectComponent =
@@ -55,16 +77,20 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     if (enableElementControl &&
         elementSelectComponent.isSelectedElement &&
         !isPointerDownElement) {
-      if (elementSelectComponent.isSupportControl(deleteControl.controlType)) {
+      if (elementSelectComponent
+          .isElementSupportControl(deleteControl.controlType)) {
         deleteControl.paintControl(canvas, paintMeta);
       }
-      if (elementSelectComponent.isSupportControl(rotateControl.controlType)) {
+      if (elementSelectComponent
+          .isElementSupportControl(rotateControl.controlType)) {
         rotateControl.paintControl(canvas, paintMeta);
       }
-      if (elementSelectComponent.isSupportControl(scaleControl.controlType)) {
+      if (elementSelectComponent
+          .isElementSupportControl(scaleControl.controlType)) {
         scaleControl.paintControl(canvas, paintMeta);
       }
-      if (elementSelectComponent.isSupportControl(lockControl.controlType)) {
+      if (elementSelectComponent
+          .isElementSupportControl(lockControl.controlType)) {
         lockControl.paintControl(canvas, paintMeta);
       }
     }
@@ -94,6 +120,15 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   //---
+
+  /// 当选中的元素发生变化时, 调用
+  /// 此时需要更新控制点的位置
+  /// 需要更新lock状态
+  void onSelfSelectElementChanged() {
+    updateControlBounds();
+    lockControl.isLock = elementSelectComponent.isLockRatio;
+    canvasDelegate.refresh();
+  }
 
   /// 更新控制点的位置
   @property
@@ -132,6 +167,23 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void updatePointerDownElement(ElementPainter? element) {
     _pointerDownElement = element;
     canvasDelegate.refresh();
+  }
+
+  /// 更新绘制元素的信息
+  @flagProperty
+  void updatePaintInfoType(PaintInfoType type) {
+    paintInfoType = type;
+    canvasDelegate.refresh();
+  }
+
+  /// 根据选中元素的状态, 重置绘制信息类型
+  @flagProperty
+  void resetPaintInfoType() {
+    if (isSelectedElement) {
+      updatePaintInfoType(PaintInfoType.size);
+    } else {
+      updatePaintInfoType(PaintInfoType.none);
+    }
   }
 }
 
@@ -270,9 +322,28 @@ class ElementSelectComponent extends ElementGroupPainter
           !it.canvasFlingComponent.isFirstEventHandled);
 
   @override
-  void onSelfPaintPropertyChanged(PaintProperty? old, PaintProperty? value) {
+  void onSelfPaintPropertyChanged(
+      PaintProperty? old, PaintProperty? value, int propertyType) {
     canvasElementControlManager.updateControlBounds();
-    super.onSelfPaintPropertyChanged(old, value);
+    super.onSelfPaintPropertyChanged(old, value, propertyType);
+  }
+
+  @override
+  set isLockRatio(bool value) {
+    super.isLockRatio = value;
+    if (children?.length == 1) {
+      final first = children!.first;
+      first.isLockRatio = value;
+    }
+  }
+
+  @override
+  bool isElementSupportControl(int type) {
+    if (children?.length == 1) {
+      final first = children!.first;
+      return first.isElementSupportControl(type);
+    }
+    return super.isElementSupportControl(type);
   }
 
   /// 更新选择框边界, 并且触发选择选择
@@ -291,6 +362,11 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   /// 重置选中的元素
+  /// [CanvasElementManager.addSelectElement]
+  /// [CanvasElementManager.addSelectElementList]
+  /// [CanvasElementManager.removeSelectElement]
+  /// [CanvasElementManager.removeSelectElementList]
+  /// [CanvasElementManager.resetSelectElement]
   void resetSelectElement(List<ElementPainter>? elements) {
     List<ElementPainter>? old = children;
     if (isNullOrEmpty(elements)) {
@@ -298,23 +374,16 @@ class ElementSelectComponent extends ElementGroupPainter
       if (!isNullOrEmpty(children)) {
         l.i('取消选中元素: $children');
         resetChildren();
+        canvasElementControlManager.onSelfSelectElementChanged();
         canvasElementControlManager.canvasDelegate
             .dispatchCanvasElementSelectChanged(this, old, children);
       }
     } else {
       l.i('选中元素: $elements');
       resetChildren(elements);
+      canvasElementControlManager.onSelfSelectElementChanged();
       canvasElementControlManager.canvasDelegate
           .dispatchCanvasElementSelectChanged(this, old, children);
     }
-  }
-
-  /// 当前选中的元素是否支持指定的控制点
-  /// [BaseControl.CONTROL_TYPE_DELETE]
-  /// [BaseControl.CONTROL_TYPE_ROTATE]
-  /// [BaseControl.CONTROL_TYPE_SCALE]
-  /// [BaseControl.CONTROL_TYPE_LOCK]
-  bool isSupportControl(int type) {
-    return true;
   }
 }

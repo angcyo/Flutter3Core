@@ -112,10 +112,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     ElementPainter elementPainter,
     PaintProperty? from,
     PaintProperty? to,
+    int propertyType,
   ) {
     canvasListeners.clone().forEach((element) {
       element.onCanvasElementPropertyChangedAction
-          ?.call(elementPainter, from, to);
+          ?.call(elementPainter, from, to, propertyType);
     });
     refresh();
   }

@@ -17,7 +17,7 @@ class ElementPainter extends IPainter {
     final old = _paintProperty;
     _paintProperty = value;
     if (old != value) {
-      onSelfPaintPropertyChanged(old, value);
+      onSelfPaintPropertyChanged(old, value, PropertyType.paint);
     }
   }
 
@@ -71,14 +71,41 @@ class ElementPainter extends IPainter {
 
   //---
 
+  /// 是否锁定了宽高比
+  bool _isLockRatio = true;
+
+  bool get isLockRatio => _isLockRatio;
+
+  set isLockRatio(bool value) {
+    if (_isLockRatio != value) {
+      _isLockRatio = value;
+      onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
+    }
+  }
+
+  /// 当前选中的元素是否支持指定的控制点
+  /// [BaseControl.CONTROL_TYPE_DELETE]
+  /// [BaseControl.CONTROL_TYPE_ROTATE]
+  /// [BaseControl.CONTROL_TYPE_SCALE]
+  /// [BaseControl.CONTROL_TYPE_LOCK]
+  bool isElementSupportControl(int type) {
+    return true;
+  }
+
   /// 元素属性改变
-  void onSelfPaintPropertyChanged(PaintProperty? old, PaintProperty? value) {
-    canvasDelegate?.dispatchCanvasElementPropertyChanged(this, old, value);
+  /// [old] 旧的属性
+  /// [value] 新的属性
+  /// [propertyType] 属性类型
+  void onSelfPaintPropertyChanged(
+      PaintProperty? old, PaintProperty? value, int propertyType) {
+    canvasDelegate?.dispatchCanvasElementPropertyChanged(
+        this, old, value, propertyType);
   }
 
   /// 应用矩阵
   /// [applyMatrixWithCenter]
   /// [applyMatrixWithAnchor]
+  @api
   void applyMatrixWithCenter(Matrix4 matrix) {
     //debugger();
     paintProperty?.let((it) {
@@ -89,6 +116,7 @@ class ElementPainter extends IPainter {
   /// 应用矩阵
   /// [applyMatrixWithCenter]
   /// [applyMatrixWithAnchor]
+  @api
   void applyMatrixWithAnchor(Matrix4 matrix) {
     //debugger();
     paintProperty?.let((it) {
@@ -99,6 +127,8 @@ class ElementPainter extends IPainter {
   /// 旋转元素
   /// [angle] 弧度
   /// [anchor] 旋转锚点, 不指定时, 以元素中心点为锚点
+  /// [applyMatrixWithAnchor]
+  @api
   void rotateBy(
     double angle, {
     Offset? anchor,
@@ -341,7 +371,7 @@ class PaintProperty {
     }
   }
 
-  /// 应用矩阵[matrix]
+  /// 应用矩阵[matrix], 通常在缩放时需要使用方法
   /// 使用qr分解矩阵, 使用中心点位置作为锚点的偏移依据
   /// 需要保证操作之后的中心点位置不变
   /// 最后需要更新[left].[top]
@@ -417,4 +447,16 @@ class PaintProperty {
   }
 
 //endregion ---操作方法---
+}
+
+/// 属性类型
+abstract class PropertyType {
+  /// 绘制的相关属性, 比如坐标/缩放/旋转/倾斜等信息
+  static int paint = 0x01;
+
+  /// 元素的状态改变, 比如锁定/可见性等信息
+  static int state = 0x02;
+
+  /// 元素的数据改变, 比如内容等信息
+  static int data = 0x04;
 }

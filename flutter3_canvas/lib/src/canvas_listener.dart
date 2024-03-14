@@ -15,10 +15,10 @@ class CanvasListener {
 
   /// [CanvasDelegate.dispatchCanvasElementPropertyChanged]
   final void Function(
-    ElementPainter elementPainter,
-    PaintProperty? old,
-    PaintProperty? value,
-  )? onCanvasElementPropertyChangedAction;
+      ElementPainter elementPainter,
+      PaintProperty? old,
+      PaintProperty? value,
+      int propertyType)? onCanvasElementPropertyChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementSelectChanged]
   final void Function(

@@ -114,13 +114,21 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   @override
   bool onFirstPointerEvent(PointerEvent event) {
     if (isPointerDownIn) {
+      if (event.isPointerUp && isPointerInBounds(event)) {
+        onFirstPointerTap(event);
+      }
       if (event.isPointerFinish) {
         isPointerDownIn = false;
-        canvasElementControlManager.canvasDelegate.refresh();
+        canvasElementControlManager.resetPaintInfoType();
+        //canvasElementControlManager.canvasDelegate.refresh();
       }
     }
     return super.onFirstPointerEvent(event);
   }
+
+  /// 第一个手指的点击事件回调
+  @property
+  void onFirstPointerTap(PointerEvent event) {}
 
   /// 重写此方法, 更新控制点的位置
   @overridePoint
@@ -228,7 +236,8 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   }
 
   /// 加载控制点图片
-  void loadControlPicture(String svgName) {
+  void loadControlPicture(String svgName,
+      [void Function(PictureInfo)? onLoaded]) {
     loadAssetSvgPicture(
       'packages/flutter3_canvas/assets_canvas/svg/$svgName',
       prefix: null,
@@ -239,6 +248,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
           .toBase64();
       debugger();*/
       _pictureInfo = value;
+      onLoaded?.call(value);
     });
   }
 
@@ -257,21 +267,31 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   bool isControlApply = false;
 
   /// 初始化控制的目标元素
-  void initControlTarget(ElementPainter? element) {
+  /// 开始控制目标元素
+  void startControlTarget(ElementPainter? element) {
     _targetElement = element;
     _elementStateStack = element?.createStateStack();
   }
 
   /// 从按下的位置状态开始, 作用矩阵[matrix]
-  void applyMatrix(Matrix4 matrix) {
+  /// [PaintProperty.applyMatrixWithAnchor]
+  void applyTargetMatrixWithAnchor(Matrix4 matrix) {
     isControlApply = true;
     _elementStateStack?.restore();
     _targetElement?.applyMatrixWithAnchor(matrix);
   }
 
+  /// 缩放时使用此方法
+  /// [PaintProperty.applyMatrixWithCenter]
+  void applyTargetMatrixWithCenter(Matrix4 matrix) {
+    isControlApply = true;
+    _elementStateStack?.restore();
+    _targetElement?.applyMatrixWithCenter(matrix);
+  }
+
   /// 结束控制, 并入回退栈
   @supportUndo
-  void endControl() {
+  void endControlTarget() {
     if (isControlApply) {
       if (_targetElement != null) {
         final old = _elementStateStack;
@@ -303,13 +323,8 @@ class DeleteControl extends BaseControl {
   }
 
   @override
-  bool onFirstPointerEvent(PointerEvent event) {
-    if (isPointerDownIn) {
-      if (event.isPointerUp && isPointerInBounds(event)) {
-        canvasElementControlManager.removeSelectedElement();
-      }
-    }
-    return super.onFirstPointerEvent(event);
+  void onFirstPointerTap(PointerEvent event) {
+    canvasElementControlManager.removeSelectedElement();
   }
 }
 
@@ -341,14 +356,50 @@ class ScaleControl extends BaseControl {
 
 /// 锁定等比元素控制
 class LockControl extends BaseControl {
+  /// 是否锁定了宽高比
+  bool _isLock = true;
+
+  bool get isLock => _isLock;
+
+  set isLock(bool value) {
+    _isLock = value;
+    if (value) {
+      _pictureInfo = _lockPictureInfo;
+    } else {
+      _pictureInfo = _unlockPictureInfo;
+    }
+    canvasElementControlManager.canvasDelegate.refresh();
+  }
+
+  PictureInfo? _lockPictureInfo;
+  PictureInfo? _unlockPictureInfo;
+
   LockControl(CanvasElementControlManager canvasElementControlManager)
       : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_LOCK) {
-    loadControlPicture('canvas_lock_point.svg');
+    loadControlPicture('canvas_lock_point.svg', (value) {
+      _lockPictureInfo = value;
+      if (isLock) {
+        _pictureInfo = value;
+      }
+    });
+    loadControlPicture('canvas_unlock_point.svg', (value) {
+      _unlockPictureInfo = value;
+      if (!isLock) {
+        _pictureInfo = value;
+      }
+    });
   }
 
   @override
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
     controlBounds = getLBControlBounds(selectComponentProperty);
+  }
+
+  @override
+  void onFirstPointerTap(PointerEvent event) {
+    isLock = !isLock;
+    canvasElementControlManager.elementSelectComponent.isLockRatio = isLock;
+    canvasElementControlManager.canvasDelegate.refresh();
   }
 }
 
@@ -367,7 +418,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               .hitTest(point: downScenePoint)) {
             //需要拖动选中的元素
             isPointerDownIn = true;
-            initControlTarget(
+            startControlTarget(
                 canvasElementControlManager.elementSelectComponent);
             canvasElementControlManager.updatePointerDownElement(
                 canvasElementControlManager.elementSelectComponent);
@@ -382,7 +433,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               isPointerDownIn = true;
               canvasElementControlManager.canvasElementManager
                   .resetSelectElement(downElement.ofList());
-              initControlTarget(
+              startControlTarget(
                   canvasElementControlManager.elementSelectComponent);
               canvasElementControlManager.updatePointerDownElement(
                   canvasElementControlManager.elementSelectComponent);
@@ -406,6 +457,8 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
           if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
             //首次移动, 并且超过了阈值
             isFirstHandle = false;
+            canvasElementControlManager
+                .updatePaintInfoType(PaintInfoType.location);
           }
         }
         if (!isFirstHandle) {
@@ -413,16 +466,17 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               canvasViewBox.toScenePoint(event.localPosition);
           final matrix = Matrix4.identity()
             ..translateTo(offset: moveScenePoint - downScenePoint);
-          applyMatrix(matrix);
+          applyTargetMatrixWithAnchor(matrix);
           //debugger();
         }
       } else if (event.isPointerFinish) {
         canvasElementControlManager.updatePointerDownElement(null);
         if (isControlApply) {
-          endControl();
+          endControlTarget();
         }
       }
     }
+    super.onFirstPointerEvent(event);
     return true;
   }
 
