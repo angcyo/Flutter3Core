@@ -350,6 +350,36 @@ class ElementSelectComponent extends ElementGroupPainter
     super.onSelfPaintPropertyChanged(old, value, propertyType);
   }
 
+  /// 缩放选中的元素
+  @api
+  void applyScaleMatrix({double? sx, double? sy, Offset? anchor}) {
+    double angle = paintProperty?.angle ?? 0; //弧度
+    anchor ??= paintProperty?.anchor ?? Offset.zero;
+
+    //自身使用直接缩放
+    paintProperty?.let((it) {
+      paintProperty = it.clone()..applyScale(sxBy: sx, syBy: sy);
+    });
+
+    //子元素使用矩阵缩放
+    final rotateMatrix = Matrix4.identity()
+      ..rotateBy(angle, anchor: paintProperty?.paintRect.center);
+    final rotateInvertMatrix = rotateMatrix.invertedMatrix();
+    Offset anchorInvert = rotateInvertMatrix.mapPoint(anchor);
+
+    final scaleMatrix = Matrix4.identity()
+      ..scaleBy(sx: sx, sy: sy, anchor: anchorInvert);
+
+    final matrix = Matrix4.identity();
+    matrix.setFrom(rotateInvertMatrix);
+    matrix.postConcat(scaleMatrix);
+    matrix.postConcat(rotateMatrix);
+
+    children?.forEach((element) {
+      element.applyMatrixWithCenter(matrix);
+    });
+  }
+
   @override
   bool get isLockRatio {
     if (children?.length == 1) {

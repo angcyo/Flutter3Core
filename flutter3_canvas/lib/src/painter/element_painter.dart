@@ -113,7 +113,19 @@ class ElementPainter extends IPainter {
         this, old, value, propertyType);
   }
 
-  /// 应用矩阵
+  /// 直接作用缩放
+  /// [sx].[sy] 相对缩放
+  /// [sxTo].[syTo] 绝对缩放
+  @api
+  void applyScale({double? sx, double? sy, double? sxTo, double? syTo}) {
+    //debugger();
+    paintProperty?.let((it) {
+      paintProperty = it.clone()
+        ..applyScale(sxBy: sx, syBy: sy, sxTo: sxTo, syTo: syTo);
+    });
+  }
+
+  /// 应用矩阵, 通常在子元素缩放时需要使用方法
   /// [applyMatrixWithCenter]
   /// [applyMatrixWithAnchor]
   @api
@@ -244,8 +256,15 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
+  void applyScale({double? sx, double? sy, double? sxTo, double? syTo}) {
+    super.applyScale(sx: sx, sy: sy, sxTo: sxTo, syTo: syTo);
+    children?.forEach((element) {
+      element.applyScale(sx: sx, sy: sy, sxTo: sxTo, syTo: syTo);
+    });
+  }
+
+  @override
   void applyMatrixWithCenter(Matrix4 matrix) {
-    //debugger();
     super.applyMatrixWithCenter(matrix);
     children?.forEach((element) {
       element.applyMatrixWithCenter(matrix);
@@ -378,6 +397,18 @@ class PaintProperty {
       width = rect.width;
       height = rect.height;
     }
+  }
+
+  /// 直接作用缩放
+  /// [sxBy].[syBy] 相对缩放
+  /// [sxTo].[syTo] 绝对缩放
+  void applyScale({double? sxBy, double? syBy, double? sxTo, double? syTo}) {
+    sxTo ??= scaleX * (sxBy ?? 1);
+    syTo ??= scaleY * (syBy ?? 1);
+    scaleX = sxTo.abs();
+    scaleY = syTo.abs();
+    flipX = sxTo < 0;
+    flipY = syTo < 0;
   }
 
   /// 应用矩阵[matrix], 通常在缩放时需要使用方法

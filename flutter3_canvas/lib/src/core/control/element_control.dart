@@ -311,12 +311,20 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   }
 
   /// 缩放时使用此方法
+  /// [applyTargetMatrixWithAnchor]
   /// [PaintProperty.applyMatrixWithCenter]
   @callPoint
-  void applyTargetMatrixWithCenter(Matrix4 matrix) {
+  void applyScaleMatrix({double? sx, double? sy, Offset? anchor}) {
     isControlApply = true;
     _elementStateStack?.restore();
-    _targetElement?.applyMatrixWithCenter(matrix);
+    final element = _targetElement;
+    if (element is ElementSelectComponent) {
+      element.applyScaleMatrix(sx: sx, sy: sy, anchor: anchor);
+    } else {
+      final matrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
+      element?.applyMatrixWithCenter(matrix);
+    }
   }
 
   /// 结束控制, 并入回退栈
@@ -364,7 +372,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
     if (angle % (2 * pi) == 0) {
       return point;
     }
-    final matrix = Matrix4.identity()..rotateBy(-angle, anchor: center);
+    final matrix = Matrix4.identity()..rotateBy(angle, anchor: center);
     return matrix.invertMatrix().mapPoint(point);
   }
 }
@@ -496,13 +504,14 @@ class ScaleControl extends BaseControl {
             }
 
             if (sx > 0 && sy > 0) {
-              final matrix = Matrix4.identity()
-                ..scaleBy(sx: sx, sy: sy, anchor: _downTargetElementAnchor!);
               assert(() {
                 l.d('缩放元素: sx:$sx sy:$sy anchor:$_downTargetElementAnchor');
                 return true;
               }());
-              applyTargetMatrixWithCenter(matrix);
+              sx = max(0.1, sx);
+              sy = max(0.1, sy);
+              applyScaleMatrix(
+                  sx: sx, sy: sy, anchor: _downTargetElementAnchor!);
             } else {
               assert(() {
                 l.w('缩放比例异常(负数): sx:$sx sy:$sy');
