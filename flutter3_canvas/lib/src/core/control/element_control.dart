@@ -254,8 +254,13 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   //---
 
+  /// 按下时, 手指在场景中的坐标
   @sceneCoordinate
   Offset downScenePoint = Offset.zero;
+
+  /// 按下时, 目标元素的中心点坐标
+  @sceneCoordinate
+  Offset? _downTargetElementCenter;
 
   /// 需要操作的目标元素
   ElementPainter? _targetElement;
@@ -268,13 +273,16 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   /// 初始化控制的目标元素
   /// 开始控制目标元素
+  @callPoint
   void startControlTarget(ElementPainter? element) {
+    _downTargetElementCenter = element?.paintProperty?.paintCenter;
     _targetElement = element;
     _elementStateStack = element?.createStateStack();
   }
 
   /// 从按下的位置状态开始, 作用矩阵[matrix]
   /// [PaintProperty.applyMatrixWithAnchor]
+  @callPoint
   void applyTargetMatrixWithAnchor(Matrix4 matrix) {
     isControlApply = true;
     _elementStateStack?.restore();
@@ -283,6 +291,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   /// 缩放时使用此方法
   /// [PaintProperty.applyMatrixWithCenter]
+  @callPoint
   void applyTargetMatrixWithCenter(Matrix4 matrix) {
     isControlApply = true;
     _elementStateStack?.restore();
@@ -290,8 +299,10 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   }
 
   /// 结束控制, 并入回退栈
+  @callPoint
   @supportUndo
   void endControlTarget() {
+    _downTargetElementCenter = null;
     if (isControlApply) {
       if (_targetElement != null) {
         final old = _elementStateStack;
@@ -338,6 +349,46 @@ class RotateControl extends BaseControl {
   @override
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
     controlBounds = getRTControlBounds(selectComponentProperty);
+  }
+
+  @override
+  bool onFirstPointerEvent(PointerEvent event) {
+    //l.d('$event');
+    //debugger();
+    if (isPointerDownIn) {
+      if (event.isPointerMove) {
+        if (isFirstHandle) {
+          if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
+            //首次移动, 并且超过了阈值
+            isFirstHandle = false;
+            canvasElementControlManager
+                .updatePaintInfoType(PaintInfoType.rotate);
+            startControlTarget(
+                canvasElementControlManager.elementSelectComponent);
+          }
+        }
+        if (!isFirstHandle) {
+          final moveScenePoint =
+              canvasViewBox.toScenePoint(event.localPosition);
+          _downTargetElementCenter?.let((it) {
+            final angle = angleBetween(it, downScenePoint, it, moveScenePoint);
+            final matrix = Matrix4.identity()..rotateBy(angle, anchor: it);
+            /*assert(() {
+              l.d('旋转元素[${angle.jd}]:$angle $it');
+              return true;
+            }());*/
+            applyTargetMatrixWithAnchor(matrix);
+            //debugger();
+          });
+        }
+      } else if (event.isPointerFinish) {
+        if (isControlApply) {
+          endControlTarget();
+        }
+      }
+    }
+    super.onFirstPointerEvent(event);
+    return true;
   }
 }
 

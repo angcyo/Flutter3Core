@@ -8,6 +8,11 @@ part of '../../flutter3_basics.dart';
 /// 手势事件回调
 typedef PointerAction = void Function(PointerEvent event);
 
+/// 手指移动多少距离时, 视为移动
+/// [kTouchSlop] 18.0
+@dp
+const double kTouchMoveSlop = 5;
+
 extension EventEx on PointerEvent {
   /// 是否是手指操作相关事件
   bool get isTouchEvent =>
@@ -30,7 +35,7 @@ extension EventEx on PointerEvent {
   bool get isPointerFinish => isPointerUp || isPointerCancel;
 
   /// 当前的事件与[other]之间, 是否超过了指定的移动阈值
-  bool isMoveExceed(Offset? other, [double threshold = kTouchSlop]) {
+  bool isMoveExceed(Offset? other, [double threshold = kTouchMoveSlop]) {
     if (other == null) {
       return false;
     }

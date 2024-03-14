@@ -26,6 +26,7 @@ double angle(Offset a, Offset b) {
 }
 
 /// 求2根线之间的角度, 夹角, 弧度
+/// 返回的弧度有正负值
 /// [fp1].[fp2] 第一根线的2个点
 /// [sp1].[sp2] 第二根线的2个点
 double angleBetween(Offset fp1, Offset fp2, Offset sp1, Offset sp2) {

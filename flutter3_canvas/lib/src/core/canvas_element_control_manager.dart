@@ -206,6 +206,18 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 是否选中了元素
   bool get isSelectedElement => !isNullOrEmpty(children);
 
+  @override
+  set paintProperty(PaintProperty? value) {
+    /*if (super.paintProperty?.paintCenter != value?.paintCenter) {
+      debugger();
+    }
+    assert(() {
+      l.d('选择框中点:${value?.paintCenter}');
+      return true;
+    }());*/
+    super.paintProperty = value;
+  }
+
   ElementSelectComponent(this.canvasElementControlManager) {
     attachToCanvasDelegate(
         canvasElementControlManager.canvasElementManager.canvasDelegate);
