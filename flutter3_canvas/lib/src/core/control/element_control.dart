@@ -132,7 +132,17 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   /// 重写此方法, 更新控制点的位置
   @overridePoint
-  void updatePaintControlBounds(PaintProperty selectComponentProperty) {}
+  void updatePaintControlBounds(PaintProperty selectComponentProperty) {
+    if (controlType == CONTROL_TYPE_DELETE) {
+      controlBounds = getLTControlBounds(selectComponentProperty);
+    } else if (controlType == CONTROL_TYPE_ROTATE) {
+      controlBounds = getRTControlBounds(selectComponentProperty);
+    } else if (controlType == CONTROL_TYPE_SCALE) {
+      controlBounds = getRBControlBounds(selectComponentProperty);
+    } else if (controlType == CONTROL_TYPE_LOCK) {
+      controlBounds = getLBControlBounds(selectComponentProperty);
+    }
+  }
 
   /// 在指定位置绘制控制点
   @callPoint
@@ -329,11 +339,6 @@ class DeleteControl extends BaseControl {
   }
 
   @override
-  void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    controlBounds = getLTControlBounds(selectComponentProperty);
-  }
-
-  @override
   void onFirstPointerTap(PointerEvent event) {
     canvasElementControlManager.removeSelectedElement();
   }
@@ -344,11 +349,6 @@ class RotateControl extends BaseControl {
   RotateControl(CanvasElementControlManager canvasElementControlManager)
       : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_ROTATE) {
     loadControlPicture('canvas_rotate_point.svg');
-  }
-
-  @override
-  void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    controlBounds = getRTControlBounds(selectComponentProperty);
   }
 
   @override
@@ -398,11 +398,6 @@ class ScaleControl extends BaseControl {
       : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_SCALE) {
     loadControlPicture('canvas_scale_point.svg');
   }
-
-  @override
-  void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    controlBounds = getRBControlBounds(selectComponentProperty);
-  }
 }
 
 /// 锁定等比元素控制
@@ -439,11 +434,6 @@ class LockControl extends BaseControl {
         _pictureInfo = value;
       }
     });
-  }
-
-  @override
-  void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    controlBounds = getLBControlBounds(selectComponentProperty);
   }
 
   @override
