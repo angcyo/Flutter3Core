@@ -68,6 +68,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   @override
   void dispatchPointerEvent(PointerEvent event) {
+    super.dispatchPointerEvent(event);
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(event)) {
         if (event.isPointerDown) {
@@ -77,7 +78,6 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
         }
       }
     }
-    super.dispatchPointerEvent(event);
   }
 
   /// 当前手势是否在控制点上

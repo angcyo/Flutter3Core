@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -20,9 +20,18 @@ Offset center(Offset a, Offset b) {
   return Offset((a.dx + b.dx) / 2, (a.dy + b.dy) / 2);
 }
 
-/// 求2点之间的角度
+/// 求2点之间的角度, 弧度
 double angle(Offset a, Offset b) {
   return math.atan2((b.dy - a.dy).abs(), (b.dx - a.dx).abs());
+}
+
+/// 求2根线之间的角度, 夹角, 弧度
+/// [fp1].[fp2] 第一根线的2个点
+/// [sp1].[sp2] 第二根线的2个点
+double angleBetween(Offset fp1, Offset fp2, Offset sp1, Offset sp2) {
+  double angle1 = math.atan2(fp2.dy - fp1.dy, fp2.dx - fp1.dx);
+  double angle2 = math.atan2(sp2.dy - sp1.dy, sp2.dx - sp1.dx);
+  return angle2 - angle1;
 }
 
 /// 获取弧上指定角度的点坐标

@@ -1286,6 +1286,24 @@ extension WidgetEx on Widget {
         textBaseline: textBaseline,
       );
 
+  /// 将[this]和[child] 使用[Stack]包裹
+  Widget? stackOf(
+    Widget? child, {
+    AlignmentGeometry alignment = AlignmentDirectional.center,
+    TextDirection? textDirection,
+    StackFit fit = StackFit.loose,
+    Clip clipBehavior = Clip.hardEdge,
+  }) =>
+      [
+        this,
+        if (child != null) child,
+      ].stack(
+        alignment: alignment,
+        textDirection: textDirection,
+        fit: fit,
+        clipBehavior: clipBehavior,
+      );
+
   /// 简单的滚动小组件[SingleChildScrollView]
   /// [WidgetListEx.scroll]
   /// [padding] 滚动小部件内边距

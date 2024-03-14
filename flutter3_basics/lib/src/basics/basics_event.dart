@@ -1,9 +1,12 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/01/30
 ///
+
+/// 手势事件回调
+typedef PointerAction = void Function(PointerEvent event);
 
 extension EventEx on PointerEvent {
   /// 是否是手指操作相关事件
@@ -221,8 +224,11 @@ mixin TouchDetectorMixin {
   /// 点击事件
   static const int TOUCH_TYPE_CLICK = 1;
 
-  /// 长按事件
+  /// 长按事件, 此时手势还未抬起
   static const int TOUCH_TYPE_LONG_PRESS = 2;
+
+  /// 是否要检查长按事件
+  bool checkLongPress = true;
 
   /// 超过此值的点视为无效
   @dp
@@ -237,14 +243,17 @@ mixin TouchDetectorMixin {
   /// N个手指的长按定时器
   final Map<int, Timer> _pointerLongMap = {};
 
+  /// 入口方法, 添加手势事件
   @entryPoint
   void addTouchDetectorPointerEvent(PointerEvent event) {
     final pointer = event.pointer;
+    _pointerMap[pointer] = event;
     if (event.isPointerDown) {
-      _pointerMap[pointer] = event;
-      _pointerLongMap[pointer] = Timer(touchLongPressTimeout, () {
-        _checkLongPress(event);
-      });
+      if (checkLongPress) {
+        _pointerLongMap[pointer] = Timer(touchLongPressTimeout, () {
+          _checkLongPress(event);
+        });
+      }
     } else if (event.isPointerUp) {
       _checkClick(event);
     }
@@ -252,6 +261,10 @@ mixin TouchDetectorMixin {
       _clear(event);
     }
   }
+
+  /// 处理点击事件
+  @overridePoint
+  bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) => false;
 
   void _checkClick(PointerEvent event) {
     final downEvent = _pointerMap[event.pointer];
@@ -282,10 +295,6 @@ mixin TouchDetectorMixin {
     _pointerLongMap[pointer]?.cancel();
     _pointerLongMap.remove(pointer);
   }
-
-  /// 处理点击事件
-  @overridePoint
-  bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) => false;
 }
 
 /// 双击探测

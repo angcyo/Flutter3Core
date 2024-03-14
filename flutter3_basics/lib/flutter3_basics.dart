@@ -91,6 +91,7 @@ part 'src/utils/string_utils.dart';
 part 'src/utils/text_span_builder.dart';
 part 'src/widgets/data_provider.dart';
 part 'src/widgets/empty.dart';
+part 'src/widgets/touch_detector_widget.dart';
 part 'src/widgets/value_listener.dart';
 
 /// 类型重定义
