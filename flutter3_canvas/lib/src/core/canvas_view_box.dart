@@ -115,7 +115,7 @@ class CanvasViewBox with Diagnosticable {
   Offset toScenePoint(@viewCoordinate Offset point,
       {bool isSceneOrigin = false}) {
     return canvasMatrix
-        .invertMatrix()
+        .invertedMatrix()
         .mapPoint(isSceneOrigin ? point : offsetToSceneOriginPoint(point));
   }
 
@@ -123,7 +123,7 @@ class CanvasViewBox with Diagnosticable {
   @api
   Rect toSceneRect(@viewCoordinate Rect rect, {bool isSceneOrigin = false}) {
     return canvasMatrix
-        .invertMatrix()
+        .invertedMatrix()
         .mapRect(isSceneOrigin ? rect : offsetToSceneOriginRect(rect));
   }
 
@@ -204,14 +204,20 @@ class CanvasViewBox with Diagnosticable {
   /// 平移画布
   @api
   void translateBy(double tx, double ty, {bool anim = true}) {
-    l.d('平移画布by: $tx $ty');
+    assert(() {
+      l.d('平移画布by: tx:$tx ty:$ty');
+      return true;
+    }());
     changeMatrix(canvasMatrix.clone()..translateBy(x: tx, y: ty), anim: anim);
   }
 
   /// 平移画布
   @api
   void translateTo(double tx, double ty, {bool anim = true}) {
-    l.d('平移画布to: $tx $ty');
+    assert(() {
+      l.d('平移画布to: tx:$tx tx:$ty');
+      return true;
+    }());
     changeMatrix(canvasMatrix.clone()..translateTo(x: tx, y: ty), anim: anim);
   }
 
@@ -224,8 +230,6 @@ class CanvasViewBox with Diagnosticable {
     Offset? pivot,
     bool anim = true,
   }) {
-    l.d('缩放画布by: $sx $sy');
-
     if (sx != null) {
       if ((sx < 1 && scaleX <= minScaleX) || (sx > 1 && scaleX >= maxScaleX)) {
         //已经达到了最小/最大, 还想缩放/放大
@@ -247,7 +251,10 @@ class CanvasViewBox with Diagnosticable {
         pivotX: pivot?.dx ?? 0,
         pivotY: pivot?.dy ?? 0,
       );
-
+    assert(() {
+      l.d('缩放画布by: sx:$sx sy:$sy pivot:$pivot anim:$anim');
+      return true;
+    }());
     changeMatrix(matrix, anim: anim);
   }
 
@@ -259,7 +266,10 @@ class CanvasViewBox with Diagnosticable {
     Offset? pivot,
     bool anim = true,
   }) {
-    l.d('缩放画布to: $sx $sy');
+    assert(() {
+      l.d('缩放画布to: sx:$sx sy:$sy');
+      return true;
+    }());
     changeMatrix(
         canvasMatrix.clone()
           ..scaleTo(

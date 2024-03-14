@@ -125,17 +125,19 @@ AnimationController animation(
   );
   controller
     ..addListener(() {
-      if (isDebug) {
+      assert(() {
         // [0~1] 变化
         //l.d('动画值改变: ${controller.value}');
-      }
+        return true;
+      }());
       listener(controller.value, false);
     })
     ..addStatusListener((status) {
-      if (isDebug) {
+      assert(() {
         //AnimationStatus.forward -> AnimationStatus.completed
         l.d('动画状态改变: $status');
-      }
+        return true;
+      }());
       listener(controller.value, status == AnimationStatus.completed);
     })
     ..forward();

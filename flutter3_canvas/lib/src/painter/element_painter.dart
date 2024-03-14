@@ -41,7 +41,17 @@ class ElementPainter extends IPainter {
   /// 绘制元素的旋转矩形
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
-      var rect = it.paintScaleRect;
+      final rect = it.paintScaleRect;
+      /*final c1 = rect.center;
+      final c2 = it.paintRect.center;
+      final c3 = it.paintCenter;
+      debugger();
+      canvas.drawRect(it.scaleRect, paint);
+      canvas.drawRect(
+          Rect.fromLTWH(
+              it.left, it.top, it.scaleRect.width, it.scaleRect.height),
+          paint);
+      canvas.drawRect(rect, paint);*/
       canvas.withRotateRadians(it.angle, () {
         canvas.drawRect(rect, paint);
       }, anchor: rect.center);
@@ -52,7 +62,7 @@ class ElementPainter extends IPainter {
   void paintPropertyBounds(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       //debugger();
-      canvas.drawPath(it.paintPath, paint);
+      //canvas.drawPath(it.paintPath, paint);
       canvas.drawRect(it.paintRect, paint);
     });
   }
@@ -144,6 +154,8 @@ class ElementPainter extends IPainter {
   //---
 
   CanvasDelegate? canvasDelegate;
+
+  CanvasStyle? get canvasStyle => canvasDelegate?.canvasStyle;
 
   /// 附加到[CanvasDelegate]
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
@@ -294,17 +306,11 @@ class PaintProperty {
 
   //region ---get属性---
 
+  /// 锚点坐标, 这里是旋转后的矩形左上角坐标
+  Offset get anchor => Offset(left, top);
+
   /// 元素最基础的矩形
   Rect get rect => Rect.fromLTWH(0, 0, width, height);
-
-  /// 元素绘制时的中点
-  Offset get paintCenter {
-    Matrix4 matrix = Matrix4.identity()
-      ..rotateBy(angle, pivotX: left, pivotY: top);
-    final rect = scaleRect;
-    Offset center = Offset(left + rect.width / 2, top + rect.height / 2);
-    return matrix.mapPoint(center);
-  }
 
   /// 元素缩放/倾斜矩阵(不包含旋转和平移)
   Matrix4 get scaleMatrix => Matrix4.identity()
@@ -320,7 +326,7 @@ class PaintProperty {
     //debugger();
     final rect = scaleRect;
     final currentCenter = rect.center;
-    final targetCenter = paintCenter;
+    final targetCenter = paintRect.center;
     return rect.offset(Offset(targetCenter.dx - currentCenter.dx,
         targetCenter.dy - currentCenter.dy));
   }
@@ -349,11 +355,13 @@ class PaintProperty {
 
   /// 将矩阵平移到锚点位置
   Matrix4 translateToAnchor(Matrix4 matrix) {
+    final originRect = rect;
+
     //0/0矩阵作用矩阵后, 左上角所处的位置
-    Offset anchor = rect.topLeft;
+    Offset anchor = originRect.topLeft;
     anchor = matrix.mapPoint(anchor);
 
-    Offset center = rect.center;
+    Offset center = originRect.center;
     center = matrix.mapPoint(center);
     //debugger();
 
@@ -377,6 +385,7 @@ class PaintProperty {
   /// 需要保证操作之后的中心点位置不变
   /// 最后需要更新[left].[top]
   void applyMatrixWithCenter(Matrix4 matrix) {
+    //debugger();
     Offset originCenter = paintRect.center;
     //中点的最终位置
     final targetCenter = matrix.mapPoint(originCenter);

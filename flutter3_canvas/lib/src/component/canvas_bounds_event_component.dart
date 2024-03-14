@@ -29,7 +29,7 @@ class CanvasBoundsEventComponent
 
   @override
   bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) {
-    l.d('${event.localPosition} $touchType');
+    //l.d('${event.localPosition} $touchType');
     bool handled = false;
     if (boundsEventAction.isNotEmpty) {
       for (var action in boundsEventAction.clone()) {

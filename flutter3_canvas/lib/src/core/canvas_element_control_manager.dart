@@ -239,7 +239,8 @@ class ElementSelectComponent extends ElementGroupPainter
       paint.color = canvasElementControlManager
           .canvasDelegate.canvasStyle.canvasAccentColor;
       paint.strokeWidth = 1 /*1.toDpFromPx()*/ / paintMeta.canvasScale;
-      paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
+      paintPropertyRect(canvas, paintMeta, paint);
+      //paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
     }
   }
 

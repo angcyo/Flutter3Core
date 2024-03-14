@@ -6,7 +6,7 @@ part of '../../flutter3_basics.dart';
 /// 数学相关函数
 /// [Matrix4Ex]
 
-/// 求2点之间的距离
+/// 求2点之间的距离, 返回值正负数
 double distance(Offset a, Offset b) {
   return math.sqrt(math.pow(a.dx - b.dx, 2) + math.pow(a.dy - b.dy, 2));
 }

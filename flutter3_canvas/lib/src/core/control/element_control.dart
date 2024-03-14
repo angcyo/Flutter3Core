@@ -91,14 +91,19 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
         if (event.isPointerDown) {
           isPointerDownIn = isPointerInBounds(event);
           if (isPointerDownIn) {
-            downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
-            canvasElementControlManager.canvasDelegate.refresh();
+            onSelfFirstPointerDown(event);
             return true;
           }
         }
       }
     }
     return super.interceptPointerEvent(event);
+  }
+
+  /// 第一个手势在当前控制点上按下时回调
+  void onSelfFirstPointerDown(PointerEvent event) {
+    downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
+    canvasElementControlManager.canvasDelegate.refresh();
   }
 
   @override
@@ -272,6 +277,10 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   @sceneCoordinate
   Offset? _downTargetElementCenter;
 
+  /// 按下时, 目标元素的操作锚点坐标
+  @sceneCoordinate
+  Offset? _downTargetElementAnchor;
+
   /// 需要操作的目标元素
   ElementPainter? _targetElement;
 
@@ -285,7 +294,9 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 开始控制目标元素
   @callPoint
   void startControlTarget(ElementPainter? element) {
-    _downTargetElementCenter = element?.paintProperty?.paintCenter;
+    _downTargetElementCenter = element?.paintProperty?.paintRect.center;
+    _downTargetElementAnchor =
+        element?.paintProperty?.let((it) => Offset(it.left, it.top));
     _targetElement = element;
     _elementStateStack = element?.createStateStack();
   }
@@ -313,6 +324,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   @supportUndo
   void endControlTarget() {
     _downTargetElementCenter = null;
+    _downTargetElementAnchor = null;
     if (isControlApply) {
       if (_targetElement != null) {
         final old = _elementStateStack;
@@ -328,6 +340,32 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
         );
       }
     }
+  }
+
+  /// 反向旋转场景中的点坐标
+  /// 默认情况下, 旋转场景中的点坐标可能是旋转之后的坐标. 此时反向旋转可以获取旋转之前的点坐标.
+  /// 此方法通常在计算缩放比例时使用
+  /// [point] 需要反转的点
+  /// [center] 旋转锚点
+  /// [angle].[point]当前旋转的角度, 弧度
+  Offset? reverseRotateScenePoint(Offset? point,
+      [Offset? center, double? angle]) {
+    if (point == null) {
+      return null;
+    }
+    center ??= _downTargetElementCenter;
+    angle ??= _targetElement?.paintProperty?.angle;
+    if (center == null) {
+      return point;
+    }
+    if (angle == null) {
+      return point;
+    }
+    if (angle % (2 * pi) == 0) {
+      return point;
+    }
+    final matrix = Matrix4.identity()..rotateBy(-angle, anchor: center);
+    return matrix.invertMatrix().mapPoint(point);
   }
 }
 
@@ -373,10 +411,10 @@ class RotateControl extends BaseControl {
           _downTargetElementCenter?.let((it) {
             final angle = angleBetween(it, downScenePoint, it, moveScenePoint);
             final matrix = Matrix4.identity()..rotateBy(angle, anchor: it);
-            /*assert(() {
+            assert(() {
               l.d('旋转元素[${angle.jd}]:$angle $it');
               return true;
-            }());*/
+            }());
             applyTargetMatrixWithAnchor(matrix);
             //debugger();
           });
@@ -397,6 +435,95 @@ class ScaleControl extends BaseControl {
   ScaleControl(CanvasElementControlManager canvasElementControlManager)
       : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_SCALE) {
     loadControlPicture('canvas_scale_point.svg');
+  }
+
+  bool get _isLockRatio =>
+      canvasElementControlManager.elementSelectComponent.isLockRatio;
+
+  @sceneCoordinate
+  Offset _downScenePointInvert = Offset.zero;
+
+  @sceneCoordinate
+  Offset? _downTargetElementAnchorInvert;
+
+  @override
+  bool onFirstPointerEvent(PointerEvent event) {
+    if (isPointerDownIn) {
+      if (event.isPointerMove) {
+        if (isFirstHandle) {
+          if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
+            //首次移动, 并且超过了阈值
+            isFirstHandle = false;
+            startControlTarget(
+                canvasElementControlManager.elementSelectComponent);
+            _downScenePointInvert = reverseRotateScenePoint(downScenePoint)!;
+            _downTargetElementAnchorInvert =
+                reverseRotateScenePoint(_downTargetElementAnchor);
+          }
+        }
+        if (!isFirstHandle) {
+          final moveScenePoint =
+              canvasViewBox.toScenePoint(event.localPosition);
+          final _moveScenePointInvert =
+              reverseRotateScenePoint(moveScenePoint)!;
+
+          //需要计算的缩放比例
+          double sx = 1;
+          double sy = 1;
+
+          if (_downTargetElementAnchorInvert != null) {
+            final anchorInvert = _downTargetElementAnchorInvert!;
+            if (_isLockRatio) {
+              //等比缩放
+              final oldC = distance(anchorInvert, _downScenePointInvert);
+              final newC = distance(anchorInvert, _moveScenePointInvert);
+
+              final scale = newC / oldC;
+              sx = scale;
+              sy = scale;
+            } else {
+              //自由缩放
+              final oldWidth = anchorInvert.dx - _downScenePointInvert.dx;
+              final newWidth = anchorInvert.dx - _moveScenePointInvert.dx;
+
+              final oldHeight = anchorInvert.dy - _downScenePointInvert.dy;
+              final newHeight = anchorInvert.dy - _moveScenePointInvert.dy;
+
+              sx = newWidth / oldWidth;
+              sy = newHeight / oldHeight;
+
+              //debugger();
+            }
+
+            if (sx > 0 && sy > 0) {
+              final matrix = Matrix4.identity()
+                ..scaleBy(sx: sx, sy: sy, anchor: _downTargetElementAnchor!);
+              assert(() {
+                l.d('缩放元素: sx:$sx sy:$sy anchor:$_downTargetElementAnchor');
+                return true;
+              }());
+              applyTargetMatrixWithCenter(matrix);
+            } else {
+              assert(() {
+                l.w('缩放比例异常(负数): sx:$sx sy:$sy');
+                return true;
+              }());
+            }
+          } else {
+            assert(() {
+              l.w('缩放操作锚点为空, 不应该出现此情况!');
+              return true;
+            }());
+          }
+        }
+      } else if (event.isPointerFinish) {
+        if (isControlApply) {
+          endControlTarget();
+        }
+      }
+    }
+    super.onFirstPointerEvent(event);
+    return true;
   }
 }
 
@@ -505,8 +632,12 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         if (!isFirstHandle) {
           final moveScenePoint =
               canvasViewBox.toScenePoint(event.localPosition);
-          final matrix = Matrix4.identity()
-            ..translateTo(offset: moveScenePoint - downScenePoint);
+          final offset = moveScenePoint - downScenePoint;
+          final matrix = Matrix4.identity()..translateTo(offset: offset);
+          assert(() {
+            l.d('平移元素: offset:$offset');
+            return true;
+          }());
           applyTargetMatrixWithAnchor(matrix);
           //debugger();
         }

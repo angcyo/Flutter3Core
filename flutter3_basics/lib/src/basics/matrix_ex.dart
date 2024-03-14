@@ -294,13 +294,16 @@ extension Matrix4Ex on vector.Matrix4 {
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
-  /// 反转矩阵
+  /// 反转当前的矩阵
+  /// [invertedMatrix]
   Matrix4 invertMatrix() {
-    final matrix = clone();
-    final det = matrix.invert();
-    //debugger();
-    return matrix;
+    invert();
+    return this;
   }
+
+  /// 反转矩阵, 返回新的矩阵
+  /// [invertMatrix]
+  Matrix4 invertedMatrix() => Matrix4.inverted(this);
 
   /// [Matrix4Tween]
   /// [Matrix4.compose]
