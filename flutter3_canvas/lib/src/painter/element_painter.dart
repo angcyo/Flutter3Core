@@ -217,15 +217,23 @@ class ElementGroupPainter extends ElementPainter {
   List<ElementPainter>? children = [];
 
   /// 重置子元素
+  @api
   void resetChildren([List<ElementPainter>? children]) {
     this.children = children;
+    updatePaintPropertyFromChildren();
+  }
+
+  /// 更新绘制属性, 将旋转角度清零
+  @api
+  void updatePaintPropertyFromChildren() {
     if (isNullOrEmpty(children)) {
       paintProperty = null;
     } else {
       PaintProperty parentProperty = PaintProperty();
       Rect? rect;
       for (final child in children!) {
-        final childBounds = child.paintProperty?.paintPath.getExactBounds();
+        //final childBounds = child.paintProperty?.paintPath.getExactBounds();
+        final childBounds = child.paintProperty?.paintRect;
         if (childBounds != null) {
           if (rect == null) {
             rect = childBounds;
@@ -241,18 +249,18 @@ class ElementGroupPainter extends ElementPainter {
 
   @override
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
+    super.attachToCanvasDelegate(canvasDelegate);
     children?.forEach((element) {
       element.attachToCanvasDelegate(canvasDelegate);
     });
-    super.attachToCanvasDelegate(canvasDelegate);
   }
 
   @override
   void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
+    super.detachFromCanvasDelegate(canvasDelegate);
     children?.forEach((element) {
       element.detachFromCanvasDelegate(canvasDelegate);
     });
-    super.detachFromCanvasDelegate(canvasDelegate);
   }
 
   @override
