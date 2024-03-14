@@ -50,6 +50,7 @@ class CanvasElementManager with Diagnosticable {
 
   /// 添加元素
   @supportUndo
+  @api
   void addElement(ElementPainter element,
       {UndoType undoType = UndoType.normal}) {
     addElementList(element.ofList(), undoType: undoType);
@@ -57,6 +58,7 @@ class CanvasElementManager with Diagnosticable {
 
   /// 添加一组元素
   @supportUndo
+  @api
   void addElementList(List<ElementPainter>? list,
       {UndoType undoType = UndoType.normal}) {
     if (list == null || isNullOrEmpty(list)) {
@@ -96,6 +98,7 @@ class CanvasElementManager with Diagnosticable {
 
   /// 删除元素
   @supportUndo
+  @api
   void removeElement(ElementPainter element,
       {UndoType undoType = UndoType.normal}) {
     removeElementList(element.ofList(), undoType: undoType);
@@ -103,6 +106,7 @@ class CanvasElementManager with Diagnosticable {
 
   /// 删除一组元素
   @supportUndo
+  @api
   void removeElementList(List<ElementPainter>? list,
       {UndoType undoType = UndoType.normal}) {
     if (list == null || isNullOrEmpty(list)) {
@@ -143,11 +147,13 @@ class CanvasElementManager with Diagnosticable {
 
   /// 清空元素
   @supportUndo
+  @api
   void clearElements([UndoType undoType = UndoType.normal]) {
     removeElementList(elements, undoType: undoType);
   }
 
   /// 查找元素, 按照元素的先添加先返回的顺序
+  @api
   List<ElementPainter> findElement(
       {@sceneCoordinate Offset? point,
       @sceneCoordinate Rect? rect,
@@ -166,6 +172,7 @@ class CanvasElementManager with Diagnosticable {
   //region ---select---
 
   /// 添加一个选中的元素
+  @api
   void addSelectElement(ElementPainter element) {
     final list =
         canvasElementControlManager.elementSelectComponent.children ?? [];
@@ -174,6 +181,7 @@ class CanvasElementManager with Diagnosticable {
   }
 
   /// 移除一个选中的元素
+  @api
   void removeSelectElement(ElementPainter element) {
     final list =
         canvasElementControlManager.elementSelectComponent.children ?? [];
@@ -184,6 +192,7 @@ class CanvasElementManager with Diagnosticable {
   }
 
   /// 重置选中的元素
+  @api
   void resetSelectElement(List<ElementPainter>? elements) {
     canvasElementControlManager.elementSelectComponent
         .resetSelectElement(elements);

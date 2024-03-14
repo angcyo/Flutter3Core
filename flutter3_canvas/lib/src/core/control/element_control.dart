@@ -80,13 +80,16 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
     super.dispatchPointerEvent(event);
   }
 
+  /// 当前手势是否在控制点上
+  bool isPointerInBounds(PointerEvent event) =>
+      controlBounds?.contains(event.localPosition) ?? false;
+
   @override
   bool interceptPointerEvent(PointerEvent event) {
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(event)) {
         if (event.isPointerDown) {
-          isPointerDownIn =
-              controlBounds?.contains(event.localPosition) ?? false;
+          isPointerDownIn = isPointerInBounds(event);
           if (isPointerDownIn) {
             downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
             canvasElementControlManager.canvasDelegate.refresh();
@@ -106,6 +109,17 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
       }
     }
     return super.onPointerEvent(event);
+  }
+
+  @override
+  bool onFirstPointerEvent(PointerEvent event) {
+    if (isPointerDownIn) {
+      if (event.isPointerFinish) {
+        isPointerDownIn = false;
+        canvasElementControlManager.canvasDelegate.refresh();
+      }
+    }
+    return super.onFirstPointerEvent(event);
   }
 
   /// 重写此方法, 更新控制点的位置
@@ -291,7 +305,7 @@ class DeleteControl extends BaseControl {
   @override
   bool onFirstPointerEvent(PointerEvent event) {
     if (isPointerDownIn) {
-      if (event.isPointerUp) {
+      if (event.isPointerUp && isPointerInBounds(event)) {
         canvasElementControlManager.removeSelectedElement();
       }
     }

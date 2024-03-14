@@ -81,6 +81,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 当有元素被删除时, 调用
   /// 同时需要检查被删除的元素是否是选中的元素, 如果是, 则需要更新选择框
+  @flagProperty
   void onCanvasElementDeleted(List<ElementPainter> elements) {
     final list = elementSelectComponent.children?.clone(true);
     if (list != null) {
@@ -95,6 +96,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   //---
 
   /// 更新控制点的位置
+  @property
   void updateControlBounds() {
     if (enableElementControl && isSelectedElement) {
       elementSelectComponent.paintProperty?.let((it) {
@@ -112,6 +114,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 移除选中的所有元素, 并且清空选择
+  @api
   void removeSelectedElement() {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
@@ -125,6 +128,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   ElementPainter? _pointerDownElement;
 
   /// 更新当前手势按下的元素
+  @flagProperty
   void updatePointerDownElement(ElementPainter? element) {
     _pointerDownElement = element;
     canvasDelegate.refresh();
