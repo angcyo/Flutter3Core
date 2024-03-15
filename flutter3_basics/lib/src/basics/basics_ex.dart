@@ -582,9 +582,17 @@ extension StringEx on String {
 
 //endregion String 扩展
 
-//region Rect 扩展
+//region Rect/Offset/Size 扩展
+
+extension OffsetEx on Offset {
+  String get log => "Offset(${dx.toStringAsFixed(1)}, ${dy.toStringAsFixed(1)})";
+}
 
 extension RectEx on Rect {
+  /// [toString]
+  String get log =>
+      "Rect(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${right.toStringAsFixed(1)}, ${bottom.toStringAsFixed(1)})";
+
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
 
@@ -710,15 +718,11 @@ extension RectEx on Rect {
   }
 }
 
-//endregion Rect 扩展
-
-//region Size 扩展
-
 extension SizeEx on Size {
   Rect toRect([Offset? offset]) => (offset ?? Offset.zero) & this;
 }
 
-//endregion Size 扩展
+//endregion Rect/Offset/Size 扩展
 
 //region bool 扩展
 

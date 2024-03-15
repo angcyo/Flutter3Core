@@ -15,11 +15,13 @@ class CanvasViewBox with Diagnosticable {
   /// 整个可绘制的区域, 包含坐标尺区域和内容区域以及其他空隙区域
   /// [updatePaintBounds] 在此方法中会更新此值
   @dp
+  @viewCoordinate
   Rect paintBounds = Rect.zero;
 
   /// 内容绘制的区域, 在[paintBounds]中
   /// [updatePaintBounds] 在此方法中会更新此值
   @dp
+  @viewCoordinate
   Rect canvasBounds = Rect.zero;
 
   /// 绘制的原点, 在[canvasBounds]中的偏移位置
@@ -45,6 +47,10 @@ class CanvasViewBox with Diagnosticable {
   double get translateX => canvasMatrix.translateX;
 
   double get translateY => canvasMatrix.translateY;
+
+  /// 当前场景可视的区域
+  @sceneCoordinate
+  Rect get canvasVisibleBounds => toSceneRect(canvasBounds);
 
   //endregion ---属性---
 

@@ -18,8 +18,14 @@ class CanvasElementManager with Diagnosticable {
 
   CanvasElementManager(this.canvasDelegate);
 
-  /// 元素列表
+  /// 绘制在[elements]之前的元素列表
+  final List<ElementPainter> beforeElements = [];
+
+  /// 元素列表, 正常操作区域的元素
   final List<ElementPainter> elements = [];
+
+  /// 绘制在[elements]之后的元素列表
+  final List<ElementPainter> afterElements = [];
 
   //region ---entryPoint----
 
@@ -27,13 +33,36 @@ class CanvasElementManager with Diagnosticable {
   /// [CanvasPaintManager.paint]
   @entryPoint
   void paintElements(Canvas canvas, PaintMeta paintMeta) {
-    canvas.withClipRect(canvasDelegate.canvasViewBox.canvasBounds, () {
+    final canvasViewBox = canvasDelegate.canvasViewBox;
+    canvas.withClipRect(canvasViewBox.canvasBounds, () {
       //---元素绘制
-      for (var element in elements) {
-        element.painting(canvas, paintMeta);
+      for (var element in beforeElements) {
+        paintElement(canvas, paintMeta, element);
       }
+      for (var element in elements) {
+        paintElement(canvas, paintMeta, element);
+      }
+      for (var element in afterElements) {
+        paintElement(canvas, paintMeta, element);
+      }
+      //---控制绘制
       canvasElementControlManager.paint(canvas, paintMeta);
     });
+  }
+
+  /// 绘制元素
+  /// [paintElements]
+  void paintElement(
+      Canvas canvas, PaintMeta paintMeta, ElementPainter element) {
+    final canvasViewBox = canvasDelegate.canvasViewBox;
+    if (element.isVisibleInCanvasBox(canvasViewBox)) {
+      element.painting(canvas, paintMeta);
+    } else {
+      assert(() {
+        l.d('元素不可见,跳过绘制:$element');
+        return true;
+      }());
+    }
   }
 
   /// 事件处理入口
@@ -158,14 +187,18 @@ class CanvasElementManager with Diagnosticable {
   }
 
   /// 查找元素, 按照元素的先添加先返回的顺序
+  /// [checkLockOperate] 是否检查锁定操作
   @api
-  List<ElementPainter> findElement(
-      {@sceneCoordinate Offset? point,
-      @sceneCoordinate Rect? rect,
-      @sceneCoordinate Path? path}) {
+  List<ElementPainter> findElement({
+    @sceneCoordinate Offset? point,
+    @sceneCoordinate Rect? rect,
+    @sceneCoordinate Path? path,
+    bool checkLockOperate = true,
+  }) {
     final result = <ElementPainter>[];
     for (var element in elements) {
-      if (element.hitTest(point: point, rect: rect, path: path)) {
+      if ((!checkLockOperate || !element.isLockOperate) &&
+          element.hitTest(point: point, rect: rect, path: path)) {
         result.add(element);
       }
     }

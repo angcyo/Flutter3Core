@@ -21,6 +21,45 @@ class ElementPainter extends IPainter {
     }
   }
 
+  /// 是否锁定了宽高比
+  bool _isLockRatio = true;
+
+  bool get isLockRatio => _isLockRatio;
+
+  set isLockRatio(bool value) {
+    //debugger();
+    if (_isLockRatio != value) {
+      _isLockRatio = value;
+      onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
+    }
+  }
+
+  /// 元素是否可见, 不可见的元素也不会绘制
+  bool _isVisible = true;
+
+  bool get isVisible => _isVisible;
+
+  set isVisible(bool value) {
+    //debugger();
+    if (_isVisible != value) {
+      _isVisible = value;
+      onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
+    }
+  }
+
+  /// 元素是否锁定了操作, 锁定后, 不可选中操作
+  bool _isLockOperate = false;
+
+  bool get isLockOperate => _isLockOperate;
+
+  set isLockOperate(bool value) {
+    //debugger();
+    if (_isLockOperate != value) {
+      _isLockOperate = value;
+      onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
+    }
+  }
+
   /// 画笔
   Paint paint = Paint()
     ..style = PaintingStyle.stroke
@@ -99,20 +138,11 @@ class ElementPainter extends IPainter {
     return _paintProperty?.paintPath.intersects(path) ?? false;
   }
 
+  /// 当前元素在画布中是否可见, 不可见的元素不会在画布中绘制
+  bool isVisibleInCanvasBox(CanvasViewBox viewBox) =>
+      isVisible && hitTest(rect: viewBox.canvasVisibleBounds);
+
   //---
-
-  /// 是否锁定了宽高比
-  bool _isLockRatio = true;
-
-  bool get isLockRatio => _isLockRatio;
-
-  set isLockRatio(bool value) {
-    //debugger();
-    if (_isLockRatio != value) {
-      _isLockRatio = value;
-      onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
-    }
-  }
 
   /// 当前选中的元素是否支持指定的控制点
   /// [BaseControl.CONTROL_TYPE_DELETE]
@@ -595,7 +625,7 @@ class ElementStateStack {
   }
 }
 
-/// 属性类型
+/// 属性类型, 支持组合
 abstract class PropertyType {
   /// 绘制的相关属性, 比如坐标/缩放/旋转/倾斜等信息
   static int paint = 0x01;

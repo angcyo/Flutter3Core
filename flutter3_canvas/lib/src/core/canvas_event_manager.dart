@@ -41,11 +41,14 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     //
     canvasDelegate.canvasElementManager.handleElementEvent(event, entry);
 
-    if (isDebug && event.isPointerUp) {
-      final pivot = event.localPosition;
-      l.i('画布点:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
-          '->${canvasDelegate.canvasViewBox.toScenePoint(pivot)}');
-    }
+    assert(() {
+      if (event.isPointerUp) {
+        final pivot = event.localPosition;
+        l.i('画布点:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
+            '->${canvasDelegate.canvasViewBox.toScenePoint(pivot)}');
+      }
+      return true;
+    }());
   }
 }
 

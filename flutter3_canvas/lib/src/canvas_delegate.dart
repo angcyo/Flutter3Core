@@ -115,6 +115,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 元素属性发生改变时触发
+  /// [PropertyType.paint]
+  /// [PropertyType.state]
+  /// [PropertyType.data]
   void dispatchCanvasElementPropertyChanged(
     ElementPainter elementPainter,
     PaintProperty? from,
@@ -126,7 +129,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       return true;
     }());
     canvasElementManager.canvasElementControlManager
-        .onSelfElementPropertyChanged(elementPainter);
+        .onSelfElementPropertyChanged(elementPainter, propertyType);
     canvasListeners.clone().forEach((element) {
       element.onCanvasElementPropertyChangedAction
           ?.call(elementPainter, from, to, propertyType);

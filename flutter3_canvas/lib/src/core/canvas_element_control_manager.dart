@@ -133,9 +133,14 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 当有元素绘制属性发生变化时调用
   /// 此时可能需要检查是否需要清空旋转的角度
   /// [CanvasDelegate.dispatchCanvasElementPropertyChanged]
+  ///
+  /// [propertyType] 改变的属性类型
   @property
   @implementation
-  void onSelfElementPropertyChanged(ElementPainter element) {
+  void onSelfElementPropertyChanged(
+    ElementPainter element,
+    int propertyType,
+  ) {
     if (enableResetElementAngle) {
       if (isControlElement) {}
     }
