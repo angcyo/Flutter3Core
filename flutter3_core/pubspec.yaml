@@ -75,6 +75,7 @@ dependencies:
   # https://pub.dev/packages/js
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/source_gen
+  # https://isar.dev/zh/tutorials/quickstart.html
   isar: *isar_version
 
   # https://pub.dev/packages/isar_flutter_libs

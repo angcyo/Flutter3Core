@@ -1,4 +1,4 @@
-part of flutter3_core;
+part of '../../flutter3_core.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -27,6 +27,9 @@ late Isar isar;
 String defIsarFilePath = "";
 
 /// 打开一个isar数据库
+/// [schemas] 指定要打开的数据库表结构
+/// [name] 指定要打开的数据库名称, 默认是[kIsarName]
+/// [subDir] 指定数据库所在的子目录, 默认在[kIsarPath]子目录的根下
 Future<void> openIsar([
   List<CollectionSchema<dynamic>>? schemas,
   String? name,
@@ -45,11 +48,14 @@ Future<void> openIsar([
   isarPath.createDirectory(); //创建目录
   isar = await Isar.open(
     //At least one collection needs to be opened.
-    [TestCollectionSchema, ...?schemas],
+    [if (isDebug) TestCollectionSchema, ...?schemas],
     directory: isarPath,
     name: name,
     inspector: isDebug,
   );
+
+  //检查数据是否需要迁移
+  //https://isar.dev/zh/recipes/data_migration.html
 
   defIsarFilePath = isarPath.join("$name.isar");
   l.i("[$name]isar数据库路径:$defIsarFilePath :${defIsarFilePath.file().lengthSync().toFileSizeStr()}");

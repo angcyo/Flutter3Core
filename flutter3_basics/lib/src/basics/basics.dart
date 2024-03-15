@@ -269,6 +269,15 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 /// io计算
 /// [compute] 会创建一个新的[Isolate]来执行[callback]
 /// https://pub.dev/documentation/compute/latest/compute/compute-constant.html
+///
+/// ```
+/// https://isar.dev/zh/recipes/multi_isolate.html#%E4%BE%8B%E5%AD%90
+/// // 创建一个新的 isolate，写入 10000 条讯息到数据库
+/// compute(createDummyMessages, 10000).then(() {
+///   print('isolate finished');
+/// });
+/// ```
+///
 Future<R> io<Object, R>(ResultCallback<R> callback) async =>
     compute((message) => callback(), null, debugLabel: "io-${nowTimeString()}");
 

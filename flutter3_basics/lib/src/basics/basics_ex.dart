@@ -369,6 +369,22 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+  /// 快速散列函数
+  /// 针对 Dart 字符串优化的 64 位哈希算法 FNV-1a
+  /// https://isar.dev/zh/recipes/string_ids.html#%E5%BF%AB%E9%80%9F%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0
+  int get fastHash {
+    var hash = 0xcbf29ce484222325;
+    var i = 0;
+    while (i < length) {
+      final codeUnit = codeUnitAt(i++);
+      hash ^= codeUnit >> 8;
+      hash *= 0x100000001b3;
+      hash ^= codeUnit & 0xFF;
+      hash *= 0x100000001b3;
+    }
+    return hash;
+  }
+
   /// 字符串转换成int
   int toInt({int? radix}) => int.parse(this, radix: radix);
 

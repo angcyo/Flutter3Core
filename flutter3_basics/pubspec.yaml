@@ -3,6 +3,13 @@ description: flutter3 basics package
 version: 0.0.1
 homepage: https://github.com/angcyo/Flutter3Core
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+repository: https://github.com/angcyo/Flutter3Core
+documentation: https://github.com/angcyo/Flutter3Core
+topics:
+  - angcyo
+screenshots:
+  - description: "angcyo screenshot"
+    # path: png/png.png
 
 environment:
   sdk: '>=3.1.3 <4.0.0'

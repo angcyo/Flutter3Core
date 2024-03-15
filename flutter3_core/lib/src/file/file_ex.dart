@@ -22,6 +22,8 @@ Future<UiImage?> saveScreenCapture([
 /// ```
 /// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
 /// ```
+///[getApplicationDocumentsDirectory]
+///[getApplicationCacheDirectory]
 ///
 Future<Directory> fileDirectory() async {
   Directory? directory;
