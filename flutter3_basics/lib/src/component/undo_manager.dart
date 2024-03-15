@@ -15,28 +15,37 @@ class UndoManager {
     undoList.add(item);
     redoList.clear();
 
-    notifyChange();
+    notifyChange(UndoType.normal);
   }
 
   /// 回退
   void undo() {
+    assert(() {
+      l.d('准备撤销[${undoList.length}]');
+      return true;
+    }());
     if (undoList.isNotEmpty) {
       final item = undoList.removeLast();
       item.doUndo();
       redoList.add(item);
 
-      notifyChange();
+      notifyChange(UndoType.undo);
     }
   }
 
   /// 重做
   void redo() {
+    assert(() {
+      l.d('准备重做[${redoList.length}]');
+      return true;
+    }());
+
     if (redoList.isNotEmpty) {
       final item = redoList.removeLast();
       item.doRedo();
       undoList.add(item);
 
-      notifyChange();
+      notifyChange(UndoType.redo);
     }
   }
 
@@ -83,7 +92,7 @@ class UndoManager {
     _changeListeners.remove(listener);
   }
 
-  void notifyChange() {
+  void notifyChange(UndoType fromType) {
     for (var listener in _changeListeners) {
       listener();
     }
@@ -119,7 +128,11 @@ enum UndoType {
 
   /// 普通操作, 才会被添加到回退栈
   normal,
+
+  /// 撤销操作
   undo,
+
+  /// 重做操作
   redo,
 }
 

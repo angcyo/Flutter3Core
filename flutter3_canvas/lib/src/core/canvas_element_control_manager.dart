@@ -30,6 +30,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 是否激活元素的控制操作
   bool enableElementControl = true;
 
+  /// 是否激活元素[PaintProperty]属性改变后, 重置旋转角度
+  bool enableResetElementAngle = true;
+
   /// 绘制元素的信息
   PaintInfoType paintInfoType = PaintInfoType.none;
 
@@ -58,7 +61,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   bool get isSelectedElement => elementSelectComponent.isSelectedElement;
 
   /// 是否在元素上按下
-  bool get isPointerDownElement => _pointerDownElement != null;
+  bool get isPointerDownElement =>
+      _currentControlRef?.target?.controlType ==
+          BaseControl.CONTROL_TYPE_TRANSLATE &&
+      isControlElement;
+
+  /// 是否正在控制元素中
+  bool get isControlElement => _currentControlState == ControlState.start;
 
   CanvasElementControlManager(this.canvasElementManager) {
     addHandleEventClient(elementSelectComponent);
@@ -121,9 +130,60 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   //---
 
+  /// 当有元素绘制属性发生变化时调用
+  /// 此时可能需要检查是否需要清空旋转的角度
+  /// [CanvasDelegate.dispatchCanvasElementPropertyChanged]
+  @property
+  @implementation
+  void onSelfElementPropertyChanged(ElementPainter element) {
+    if (enableResetElementAngle) {
+      if (isControlElement) {}
+    }
+  }
+
+  /// 当元素列表发生变化时, 调用
+  /// 此时需要检查选中的元素与操作的元素是否有变化
+  /// [CanvasDelegate.dispatchCanvasElementListChanged]
+  @property
+  void onSelfElementListChanged(
+    List<ElementPainter> from,
+    List<ElementPainter> to,
+    List<ElementPainter> op,
+    UndoType undoType,
+  ) {
+    /*if (isSelectedElement) {
+      final list = elementSelectComponent.children;
+      if (list != null) {
+        //debugger();
+        if (to.length > from.length) {
+          //有元素被添加了
+          if (undoType == UndoType.redo) {
+            elementSelectComponent.resetSelectElement(null);
+          }
+        } else {
+          //选中了的元素, 但是被删除了
+          final removeList = <ElementPainter>[];
+          for (var element in list) {
+            if (!to.contains(element)) {
+              removeList.add(element);
+            }
+          }
+
+          if (removeList.isNotEmpty) {
+            //有选中的元素被删除了
+            elementSelectComponent
+                .resetSelectElement(list.clone(true).removeAll(removeList));
+          }
+        }
+      }
+    }*/
+  }
+
   /// 当选中的元素发生变化时, 调用
   /// 此时需要更新控制点的位置
   /// 需要更新lock状态
+  /// [ElementSelectComponent.resetSelectElement]
+  @property
   void onSelfSelectElementChanged() {
     updateControlBounds();
     lockControl.isLock = elementSelectComponent.isLockRatio;
@@ -153,19 +213,45 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void removeSelectedElement() {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
-      elementSelectComponent.resetChildren();
+      elementSelectComponent.resetChildren(null, enableResetElementAngle);
       canvasDelegate.canvasElementManager.removeElementList(list);
     }
   }
 
-  /// 当前正在按下的元素, 用来标识
-  /// 可以在按下元素时, 减少干扰元素的绘制
-  ElementPainter? _pointerDownElement;
+  WeakReference<BaseControl>? _currentControlRef;
+  WeakReference<ElementPainter>? _currentControlElementRef;
+  ControlState? _currentControlState;
 
-  /// 更新当前手势按下的元素
-  @flagProperty
-  void updatePointerDownElement(ElementPainter? element) {
-    _pointerDownElement = element;
+  /// 控制状态发生改变
+  /// [control] 控制器
+  /// [controlElement] 控制的元素
+  /// [BaseControl.startControlTarget]
+  /// [BaseControl.endControlTarget]
+  @property
+  void onSelfControlStateChanged({
+    BaseControl? control,
+    ElementPainter? controlElement,
+    required ControlState state,
+  }) {
+    _currentControlRef = control?.toWeakRef();
+    _currentControlElementRef = controlElement?.toWeakRef();
+    _currentControlState = state;
+
+    final controlType = control?.controlType;
+    if (state == ControlState.start) {
+      if (controlType == BaseControl.CONTROL_TYPE_ROTATE) {
+        updatePaintInfoType(PaintInfoType.rotate);
+      }
+    } else {
+      if (controlType == BaseControl.CONTROL_TYPE_ROTATE) {
+        //旋转结束之后
+        if (enableResetElementAngle) {
+          elementSelectComponent.updateChildPaintPropertyFromChildren(true);
+          elementSelectComponent.updatePaintPropertyFromChildren(true);
+        }
+      }
+      resetPaintInfoType();
+    }
     canvasDelegate.refresh();
   }
 
@@ -347,10 +433,48 @@ class ElementSelectComponent extends ElementGroupPainter
           !it.canvasFlingComponent.isFirstEventHandled);
 
   @override
+  ElementStateStack createStateStack() {
+    return super.createStateStack();
+  }
+
+  @override
+  void onRestoreStateStack(ElementStateStack stateStack) {
+    super.onRestoreStateStack(stateStack);
+    /*canvasElementControlManager.canvasDelegate
+        .dispatchCanvasElementSelectChanged(this, children, children);*/
+  }
+
+  @override
   void onSelfPaintPropertyChanged(
       PaintProperty? old, PaintProperty? value, int propertyType) {
     canvasElementControlManager.updateControlBounds();
     super.onSelfPaintPropertyChanged(old, value, propertyType);
+  }
+
+  @override
+  void resetChildren(List<ElementPainter>? children, bool resetGroupAngle) {
+    super.resetChildren(children, resetGroupAngle);
+  }
+
+  @override
+  void updatePaintPropertyFromChildren(bool resetGroupAngle) {
+    super.updatePaintPropertyFromChildren(resetGroupAngle);
+  }
+
+  @override
+  List<ElementGroupPainter>? getGroupPainterList() {
+    final result = <ElementGroupPainter>[];
+    children?.forEach((element) {
+      result.addAll(element.getGroupPainterList() ?? []);
+    });
+    return result;
+  }
+
+  @property
+  void updateChildPaintPropertyFromChildren([bool resetGroupAngle = false]) {
+    getGroupPainterList()?.forEach((element) {
+      element.updatePaintPropertyFromChildren(resetGroupAngle);
+    });
   }
 
   /// 缩放选中的元素
@@ -480,7 +604,10 @@ class ElementSelectComponent extends ElementGroupPainter
           l.i('取消之前选中的元素: $children');
           return true;
         }());
-        resetChildren();
+        resetChildren(
+          null,
+          canvasElementControlManager.enableResetElementAngle,
+        );
         canvasElementControlManager.onSelfSelectElementChanged();
         canvasElementControlManager.canvasDelegate
             .dispatchCanvasElementSelectChanged(this, old, children);
@@ -490,7 +617,10 @@ class ElementSelectComponent extends ElementGroupPainter
         l.i('选中新的元素: $elements');
         return true;
       }());
-      resetChildren(elements);
+      resetChildren(
+        elements,
+        canvasElementControlManager.enableResetElementAngle,
+      );
       canvasElementControlManager.onSelfSelectElementChanged();
       canvasElementControlManager.canvasDelegate
           .dispatchCanvasElementSelectChanged(this, old, children);

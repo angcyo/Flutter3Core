@@ -51,6 +51,10 @@ class GestureHitInterceptBox extends RenderProxyBox {
             return hitBox.hitTest(result, position: transformed);
           });
       if (ignoreOtherBoxHit ?? true) {
+        assert(() {
+          l.d('手势命中被拦截:$hitBox position:$position');
+          return true;
+        }());
         return true;
       }
     }

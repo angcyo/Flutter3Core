@@ -5,7 +5,6 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/20
 ///
 /// 元素管理, 包含元素的绘制, 选择, 添加/删除等相关操作
-
 class CanvasElementManager with Diagnosticable {
   final CanvasDelegate canvasDelegate;
 
@@ -70,7 +69,8 @@ class CanvasElementManager with Diagnosticable {
     for (var element in list) {
       element.attachToCanvasDelegate(canvasDelegate);
     }
-    canvasDelegate.dispatchCanvasElementListChanged(old, elements, list);
+    canvasDelegate.dispatchCanvasElementListChanged(
+        old, elements, list, undoType);
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -82,7 +82,8 @@ class CanvasElementManager with Diagnosticable {
           for (var element in list) {
             element.detachFromCanvasDelegate(canvasDelegate);
           }
-          canvasDelegate.dispatchCanvasElementListChanged(newList, old, list);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              newList, old, list, UndoType.undo);
         },
         () {
           //debugger();
@@ -90,7 +91,8 @@ class CanvasElementManager with Diagnosticable {
           for (var element in list) {
             element.attachToCanvasDelegate(canvasDelegate);
           }
-          canvasDelegate.dispatchCanvasElementListChanged(old, newList, list);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              old, newList, list, UndoType.redo);
         },
       ));
     }
@@ -119,7 +121,8 @@ class CanvasElementManager with Diagnosticable {
     for (var element in op) {
       element.detachFromCanvasDelegate(canvasDelegate);
     }
-    canvasDelegate.dispatchCanvasElementListChanged(old, elements, op);
+    canvasDelegate.dispatchCanvasElementListChanged(
+        old, elements, op, undoType);
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -130,7 +133,8 @@ class CanvasElementManager with Diagnosticable {
           for (var element in op) {
             element.attachToCanvasDelegate(canvasDelegate);
           }
-          canvasDelegate.dispatchCanvasElementListChanged(newList, old, op);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              newList, old, op, UndoType.undo);
         },
         () {
           //debugger();
@@ -139,7 +143,8 @@ class CanvasElementManager with Diagnosticable {
           for (var element in op) {
             element.detachFromCanvasDelegate(canvasDelegate);
           }
-          canvasDelegate.dispatchCanvasElementListChanged(old, newList, op);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              old, newList, op, UndoType.redo);
         },
       ));
     }
@@ -216,7 +221,37 @@ class CanvasElementManager with Diagnosticable {
         .resetSelectElement(elements);
   }
 
+  /// 清空选中的元素
+  @api
+  void clearSelectedElement() {
+    resetSelectElement(null);
+  }
+
+  /// 获取所有选中的元素
+  /// [onlySingleElement] 是否只返回单元素列表, 拆开了[ElementGroupPainter]
+  @api
+  List<ElementPainter>? getAllSelectedElement({
+    bool onlySingleElement = false,
+  }) {
+    if (onlySingleElement) {
+      return canvasElementControlManager.elementSelectComponent
+          .getSingleElementList();
+    }
+    return canvasElementControlManager.elementSelectComponent.children;
+  }
+
+  /// 是否选中了元素
+  @api
+  bool isElementSelected(ElementPainter? element) {
+    return canvasElementControlManager.elementSelectComponent
+        .containsElement(element);
+  }
+
   //endregion ---select---
+
+  //region ---operate---
+
+  //endregion ---operate---
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

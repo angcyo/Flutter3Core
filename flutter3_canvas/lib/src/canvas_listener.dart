@@ -32,6 +32,7 @@ class CanvasListener {
     List<ElementPainter> from,
     List<ElementPainter> to,
     List<ElementPainter> op,
+    UndoType undoType,
   )? onCanvasElementListChangedAction;
 
   /// [CanvasDelegate.dispatchDoubleTapElement]

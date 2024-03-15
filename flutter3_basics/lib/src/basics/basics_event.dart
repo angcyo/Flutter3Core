@@ -242,8 +242,8 @@ mixin TouchDetectorMixin {
   /// 按下时长超过此值, 视为长按
   Duration touchLongPressTimeout = kLongPressTimeout;
 
-  /// N个手指对应的事件
-  final Map<int, PointerEvent> _pointerMap = {};
+  /// N个手指对应的按下事件
+  final Map<int, PointerEvent> _pointerDownMap = {};
 
   /// N个手指的长按定时器
   final Map<int, Timer> _pointerLongMap = {};
@@ -252,8 +252,8 @@ mixin TouchDetectorMixin {
   @entryPoint
   void addTouchDetectorPointerEvent(PointerEvent event) {
     final pointer = event.pointer;
-    _pointerMap[pointer] = event;
     if (event.isPointerDown) {
+      _pointerDownMap[pointer] = event;
       if (checkLongPress) {
         _pointerLongMap[pointer] = Timer(touchLongPressTimeout, () {
           _checkLongPress(event);
@@ -272,7 +272,7 @@ mixin TouchDetectorMixin {
   bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) => false;
 
   void _checkClick(PointerEvent event) {
-    final downEvent = _pointerMap[event.pointer];
+    final downEvent = _pointerDownMap[event.pointer];
     if (downEvent == null ||
         event.isMoveExceed(downEvent.localPosition, touchDetectorSlop)) {
       //超出了移动范围
@@ -283,7 +283,7 @@ mixin TouchDetectorMixin {
 
   /// 检查是否需要触发长按事件回调
   void _checkLongPress(PointerEvent event) {
-    final downEvent = _pointerMap[event.pointer];
+    final downEvent = _pointerDownMap[event.pointer];
     if (downEvent == null ||
         event.isMoveExceed(downEvent.localPosition, touchDetectorSlop)) {
       //超出了移动范围
@@ -296,7 +296,7 @@ mixin TouchDetectorMixin {
   /// 清理指定手指的数据
   void _clear(PointerEvent event) {
     var pointer = event.pointer;
-    _pointerMap.remove(pointer);
+    _pointerDownMap.remove(pointer);
     _pointerLongMap[pointer]?.cancel();
     _pointerLongMap.remove(pointer);
   }

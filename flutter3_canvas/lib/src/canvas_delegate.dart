@@ -14,6 +14,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 绘制的入口点
   @entryPoint
   void paint(PaintingContext context, Offset offset) {
+    paintCount++;
     canvasPaintManager.paint(context, offset);
   }
 
@@ -57,6 +58,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 画布事件监听
   Set<CanvasListener> canvasListeners = {};
+
+  /// 重绘次数
+  int paintCount = 0;
+
+  /// 获取调用刷新的次数
+  int get refreshCount => repaint.value;
 
   //endregion ---core---
 
@@ -114,6 +121,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     PaintProperty? to,
     int propertyType,
   ) {
+    assert(() {
+      l.d('元素属性发生改变:$elementPainter $from->$to :$propertyType');
+      return true;
+    }());
+    canvasElementManager.canvasElementControlManager
+        .onSelfElementPropertyChanged(elementPainter);
     canvasListeners.clone().forEach((element) {
       element.onCanvasElementPropertyChangedAction
           ?.call(elementPainter, from, to, propertyType);
@@ -138,10 +151,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     List<ElementPainter> from,
     List<ElementPainter> to,
     List<ElementPainter> op,
+    UndoType undoType,
   ) {
     //debugger();
+    canvasElementManager.canvasElementControlManager
+        .onSelfElementListChanged(from, to, op, undoType);
     canvasListeners.clone().forEach((element) {
-      element.onCanvasElementListChangedAction?.call(from, to, op);
+      element.onCanvasElementListChangedAction?.call(from, to, op, undoType);
     });
     refresh();
   }
@@ -154,7 +170,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 回退栈发生改变时回调
-  void dispatchCanvasUndoChanged(CanvasUndoManager undoManager) {
+  void dispatchCanvasUndoChanged(
+      CanvasUndoManager undoManager, UndoType fromType) {
+    if (fromType == UndoType.undo) {
+      //撤销操作时, 取消选中元素
+      canvasElementManager.clearSelectedElement();
+    }
     canvasListeners.clone().forEach((element) {
       element.onCanvasUndoChangedAction?.call(undoManager);
     });

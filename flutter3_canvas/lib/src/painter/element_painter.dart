@@ -36,7 +36,27 @@ class ElementPainter extends IPainter {
 
   /// 重写此方法, 实现在画布内绘制自己
   @overridePoint
-  void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {}
+  void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
+    //paint.color = Colors.black;
+    //paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
+    if (paintMeta.host is CanvasDelegate) {
+      //debugger();
+      if (canvasDelegate?.canvasElementManager.isElementSelected(this) ==
+          true) {
+        //debugger();
+        //绘制元素旋转的矩形边界
+        paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
+        paintPropertyRect(canvas, paintMeta, paint);
+
+        assert(() {
+          //绘制元素包裹的边界矩形
+          paint.color = Colors.red;
+          paintPropertyBounds(canvas, paintMeta, paint);
+          return true;
+        }());
+      }
+    }
+  }
 
   /// 绘制元素的旋转矩形
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
@@ -179,35 +199,32 @@ class ElementPainter extends IPainter {
     this.canvasDelegate = null;
   }
 
+  //---
+
   /// 保存当前元素的状态
   ElementStateStack createStateStack() => ElementStateStack()..saveFrom(this);
 
-  /// 恢复状态
-  void restoreStateStack(ElementStateStack stateStack) {
-    stateStack.restore();
-  }
-}
+  /// 当元素的状态恢复后
+  void onRestoreStateStack(ElementStateStack stateStack) {}
 
-/// 元素状态栈, 用来撤销和重做
-class ElementStateStack {
-  /// 元素的属性保存
-  final Map<ElementPainter, PaintProperty?> propertyMap = {};
+  //---
 
-  /// 保存信息
-  void saveFrom(ElementPainter element) {
-    propertyMap[element] = element.paintProperty?.clone();
-    if (element is ElementGroupPainter) {
-      element.children?.forEach((element) {
-        saveFrom(element);
-      });
-    }
+  /// 单签元素是否包含指定的元素
+  @api
+  bool containsElement(ElementPainter? element) {
+    return this == element;
   }
 
-  /// 恢复信息
-  void restore() {
-    propertyMap.forEach((element, paintProperty) {
-      element.paintProperty = paintProperty;
-    });
+  /// 获取单个元素列表
+  @api
+  List<ElementPainter> getSingleElementList() {
+    return [this];
+  }
+
+  /// 仅获取所有[ElementGroupPainter]的元素
+  @api
+  List<ElementGroupPainter>? getGroupPainterList() {
+    return null;
   }
 }
 
@@ -218,16 +235,19 @@ class ElementGroupPainter extends ElementPainter {
 
   /// 重置子元素
   @api
-  void resetChildren([List<ElementPainter>? children]) {
+  void resetChildren(List<ElementPainter>? children, bool resetGroupAngle) {
     this.children = children;
-    updatePaintPropertyFromChildren();
+    updatePaintPropertyFromChildren(resetGroupAngle);
   }
 
-  /// 更新绘制属性, 将旋转角度清零
+  /// 更新绘制属性
+  /// [resetGroupAngle] 是否要重置旋转角度
   @api
-  void updatePaintPropertyFromChildren() {
+  void updatePaintPropertyFromChildren(bool resetGroupAngle) {
     if (isNullOrEmpty(children)) {
       paintProperty = null;
+    } else if (children!.length == 1 && !resetGroupAngle) {
+      paintProperty = children!.first.paintProperty?.clone();
     } else {
       PaintProperty parentProperty = PaintProperty();
       Rect? rect;
@@ -245,6 +265,15 @@ class ElementGroupPainter extends ElementPainter {
       parentProperty.initWith(rect: rect);
       paintProperty = parentProperty;
     }
+  }
+
+  @override
+  void painting(Canvas canvas, PaintMeta paintMeta) {
+    children?.forEach((element) {
+      //debugger();
+      element.painting(canvas, paintMeta);
+    });
+    super.painting(canvas, paintMeta);
   }
 
   @override
@@ -291,11 +320,36 @@ class ElementGroupPainter extends ElementPainter {
   void rotateBy(double angle, {Offset? anchor}) {
     super.rotateBy(angle, anchor: anchor);
   }
+
+  @override
+  bool containsElement(ElementPainter? element) {
+    return super.containsElement(element) ||
+        children?.any((item) => item.containsElement(element)) == true;
+  }
+
+  @override
+  List<ElementPainter> getSingleElementList() {
+    final result = <ElementPainter>[];
+    children?.forEach((element) {
+      result.addAll(element.getSingleElementList());
+    });
+    return result;
+  }
+
+  @override
+  List<ElementGroupPainter>? getGroupPainterList() {
+    final result = <ElementGroupPainter>[];
+    result.add(this);
+    children?.forEach((element) {
+      result.addAll(element.getGroupPainterList() ?? []);
+    });
+    return result;
+  }
 }
 
 /// 绘制属性, 包含坐标/缩放/旋转/倾斜等信息
 /// 先倾斜, 再缩放, 最后旋转
-class PaintProperty {
+class PaintProperty with EquatableMixin {
   //region ---基础属性---
 
   /// 绘制的左上坐标
@@ -495,7 +549,50 @@ class PaintProperty {
     return 'PaintProperty{left: $left, top: $top, width: $width, height: $height, scaleX: $scaleX, scaleY: $scaleY, skewX: $skewX, skewY: $skewY, angle: $angle, flipX: $flipX, flipY: $flipY}';
   }
 
+  @override
+  List<Object?> get props => [
+        left,
+        top,
+        width,
+        height,
+        scaleX,
+        scaleY,
+        skewX,
+        skewY,
+        angle,
+        flipX,
+        flipY,
+      ];
+
 //endregion ---操作方法---
+}
+
+/// 元素状态栈, 用来撤销和重做
+class ElementStateStack {
+  /// 元素的属性保存
+  final Map<ElementPainter, PaintProperty?> propertyMap = {};
+
+  /// 保存信息
+  @callPoint
+  @mustCallSuper
+  void saveFrom(ElementPainter element) {
+    propertyMap[element] = element.paintProperty?.clone();
+    if (element is ElementGroupPainter) {
+      element.children?.forEach((element) {
+        saveFrom(element);
+      });
+    }
+  }
+
+  /// 恢复信息
+  @callPoint
+  @mustCallSuper
+  void restore() {
+    propertyMap.forEach((element, paintProperty) {
+      element.paintProperty = paintProperty;
+      element.onRestoreStateStack(this);
+    });
+  }
 }
 
 /// 属性类型

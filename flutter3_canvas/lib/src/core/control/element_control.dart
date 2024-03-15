@@ -24,6 +24,11 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
 
   /// 控制点的类型
+  /// [CONTROL_TYPE_DELETE]
+  /// [CONTROL_TYPE_ROTATE]
+  /// [CONTROL_TYPE_SCALE]
+  /// [CONTROL_TYPE_LOCK]
+  /// [CONTROL_TYPE_TRANSLATE]
   final int controlType;
 
   /// 控制点的位置, 视图坐标系
@@ -75,7 +80,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
           isFirstHandle = true;
           isControlApply = false;
           isPointerDownIn = false;
-        }
+        } else if (event.isPointerFinish) {}
       }
     }
   }
@@ -288,6 +293,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   ElementStateStack? _elementStateStack;
 
   /// 是否应用了控制
+  /// [endControlTarget] 后重置
   bool isControlApply = false;
 
   /// 初始化控制的目标元素
@@ -299,6 +305,12 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
         element?.paintProperty?.let((it) => Offset(it.left, it.top));
     _targetElement = element;
     _elementStateStack = element?.createStateStack();
+
+    canvasElementControlManager.onSelfControlStateChanged(
+      state: ControlState.start,
+      control: this,
+      controlElement: _targetElement,
+    );
   }
 
   /// 从按下的位置状态开始, 作用矩阵[matrix]
@@ -331,6 +343,11 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   @callPoint
   @supportUndo
   void endControlTarget() {
+    canvasElementControlManager.onSelfControlStateChanged(
+      state: ControlState.end,
+      control: this,
+      controlElement: _targetElement,
+    );
     _downTargetElementCenter = null;
     _downTargetElementAnchor = null;
     if (isControlApply) {
@@ -348,6 +365,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
         );
       }
     }
+    isControlApply = false;
   }
 
   /// 反向旋转场景中的点坐标
@@ -407,8 +425,6 @@ class RotateControl extends BaseControl {
           if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
             //首次移动, 并且超过了阈值
             isFirstHandle = false;
-            canvasElementControlManager
-                .updatePaintInfoType(PaintInfoType.rotate);
             startControlTarget(
                 canvasElementControlManager.elementSelectComponent);
           }
@@ -428,9 +444,7 @@ class RotateControl extends BaseControl {
           });
         }
       } else if (event.isPointerFinish) {
-        if (isControlApply) {
-          endControlTarget();
-        }
+        endControlTarget();
       }
     }
     super.onFirstPointerEvent(event);
@@ -524,9 +538,7 @@ class ScaleControl extends BaseControl {
           }
         }
       } else if (event.isPointerFinish) {
-        if (isControlApply) {
-          endControlTarget();
-        }
+        endControlTarget();
       }
     }
     super.onFirstPointerEvent(event);
@@ -595,8 +607,6 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
             isPointerDownIn = true;
             startControlTarget(
                 canvasElementControlManager.elementSelectComponent);
-            canvasElementControlManager.updatePointerDownElement(
-                canvasElementControlManager.elementSelectComponent);
             return true;
           } else {
             final downElementList = canvasElementControlManager
@@ -609,8 +619,6 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               canvasElementControlManager.canvasElementManager
                   .resetSelectElement(downElement.ofList());
               startControlTarget(
-                  canvasElementControlManager.elementSelectComponent);
-              canvasElementControlManager.updatePointerDownElement(
                   canvasElementControlManager.elementSelectComponent);
               return true;
             }
@@ -649,10 +657,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
           //debugger();
         }
       } else if (event.isPointerFinish) {
-        canvasElementControlManager.updatePointerDownElement(null);
-        if (isControlApply) {
-          endControlTarget();
-        }
+        endControlTarget();
       }
     }
     super.onFirstPointerEvent(event);
@@ -665,4 +670,13 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         .dispatchDoubleTapElement(it));
     return true;
   }
+}
+
+/// 控制状态
+enum ControlState {
+  /// 开始控制
+  start,
+
+  /// 结束控制
+  end,
 }

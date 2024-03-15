@@ -63,6 +63,9 @@ extension DynamicEx on dynamic {
 final int __int64MaxValue = double.maxFinite.toInt();
 
 extension ObjectEx on Object {
+  /// 弱引用
+  WeakReference<T> toWeakRef<T extends Object>() => WeakReference<T>(this as T);
+
   /// [runtimeType]
   /// [toString]
   String toRuntimeString() => "[$runtimeType]${toString()}";
@@ -74,7 +77,7 @@ extension ObjectEx on Object {
   String classHash() => "$runtimeType(${hash()})";
 
   /// 类型转换
-  List<T> ofList<T>() => null == this ? [] : [this as T];
+  List<T> ofList<T>() => [this as T];
 
   /// 转换成json字符串
   /// ```

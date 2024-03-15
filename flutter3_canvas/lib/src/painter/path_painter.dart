@@ -16,13 +16,6 @@ class PathElementPainter extends ElementPainter {
     //debugger();
     path?.let((it) =>
         canvas.drawPath(it.transformPath(paintProperty?.paintMatrix), paint));
-
-    //paint.color = Colors.black;
-    //paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
-    paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
-    paintPropertyRect(canvas, paintMeta, paint);
-
-    paint.color = Colors.red;
-    paintPropertyBounds(canvas, paintMeta, paint);
+    super.onPaintingSelf(canvas, paintMeta);
   }
 }

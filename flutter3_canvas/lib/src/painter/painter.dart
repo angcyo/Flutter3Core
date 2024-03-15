@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -7,6 +7,10 @@ part of flutter3_canvas;
 
 /// 绘制元数据
 class PaintMeta {
+  /// 宿主对象, 标识当前的绘制操作是由哪个对象发起的
+  @flagProperty
+  final dynamic host;
+
   /// 坐标系原点偏移
   /// [CanvasViewBox.originMatrix]
   final Matrix4? originMatrix;
@@ -18,6 +22,7 @@ class PaintMeta {
   //final CanvasViewBox? viewBox;
 
   PaintMeta({
+    this.host,
     this.originMatrix,
     this.canvasMatrix,
   });

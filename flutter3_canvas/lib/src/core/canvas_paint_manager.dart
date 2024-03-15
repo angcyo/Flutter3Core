@@ -39,6 +39,7 @@ class CanvasPaintManager with Diagnosticable {
       }
       final viewBox = canvasDelegate.canvasViewBox;
       final paintMeta = PaintMeta(
+        host: canvasDelegate,
         originMatrix: viewBox.originMatrix,
         canvasMatrix: viewBox.canvasMatrix,
       );
