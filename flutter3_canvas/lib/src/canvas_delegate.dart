@@ -124,10 +124,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     PaintProperty? to,
     int propertyType,
   ) {
-    assert(() {
+    /*assert(() {
       l.d('元素属性发生改变:$elementPainter $from->$to :$propertyType');
       return true;
-    }());
+    }());*/
     canvasElementManager.canvasElementControlManager
         .onSelfElementPropertyChanged(elementPainter, propertyType);
     canvasListeners.clone().forEach((element) {

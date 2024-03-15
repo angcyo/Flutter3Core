@@ -160,6 +160,12 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
+    if (sx == null && sy == null && sz == null) {
+      return;
+    }
+    if (sx == 1 && sy == 1 && sz == 1) {
+      return;
+    }
     withPivot(() {
       final scale = vector.Vector3(sx ?? 1, sy ?? 1, sz ?? 1);
       this.scale(scale);
@@ -176,6 +182,12 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
+    if (sx == null && sy == null && sz == null) {
+      return;
+    }
+    if (sx == 1 && sy == 1 && sz == 1) {
+      return;
+    }
     withPivot(() {
       final scale = vector.Vector3(sx ?? 1, sy ?? 1, sz ?? 1);
       final matrix = Matrix4.identity()..scale(scale);
@@ -193,6 +205,12 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
+    if (sx == null && sy == null && sz == null) {
+      return;
+    }
+    if (sx == 1 && sy == 1 && sz == 1) {
+      return;
+    }
     withPivot(() {
       if (sx != null) {
         setEntry(0, 0, sx);
@@ -217,6 +235,9 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
+    if (kx == 0 && ky == 0) {
+      return;
+    }
     withPivot(() {
       final skewMatrix = vector.Matrix4.skew(kx, ky);
       //final matrix = this * skewMatrix;
@@ -237,6 +258,12 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
+    if (kx == null && ky == null) {
+      return;
+    }
+    if (kx == 0 && ky == 0) {
+      return;
+    }
     withPivot(() {
       final skewMatrix = vector.Matrix4.skew(kx ?? 0, ky ?? 0);
       //debugger();
@@ -262,12 +289,16 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
+    if (angle % (2 * math.pi) == 0) {
+      return;
+    }
     withPivot(() {
       //rotate(vector.Quaternion.euler(x, y, z), );
       rotateZ(angle);
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
+  /// [rotateBy]
   void postRotate(
     double angle, {
     ui.Offset? anchor,
@@ -275,6 +306,9 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
+    if (angle % (2 * math.pi) == 0) {
+      return;
+    }
     withPivot(() {
       final matrix = Matrix4.identity()..rotateZ(angle);
       postConcat(matrix);

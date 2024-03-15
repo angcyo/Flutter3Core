@@ -585,7 +585,8 @@ extension StringEx on String {
 //region Rect/Offset/Size 扩展
 
 extension OffsetEx on Offset {
-  String get log => "Offset(${dx.toStringAsFixed(1)}, ${dy.toStringAsFixed(1)})";
+  String get log =>
+      "Offset(${dx.toStringAsFixed(1)}, ${dy.toStringAsFixed(1)})";
 }
 
 extension RectEx on Rect {
@@ -781,7 +782,7 @@ extension NumEx on num {
   /// 360 = 6.283185307179586
   double get toRadians => this * math.pi / 180;
 
-  /// 消除多余的角度, 限制角度范围在[0~360]
+  /// 消除多余的角度和负数角度, 限制角度范围在[0~360]
   double get sanitizeDegrees {
     var degrees = this % 360;
     if (degrees < 0) {
@@ -790,7 +791,7 @@ extension NumEx on num {
     return degrees.toDouble();
   }
 
-  /// 消除负数弧度
+  /// 消除多余的弧度和负数弧度, 限制弧度范围在[0~2π]
   double get sanitizeRadians {
     var radians = this % (2 * math.pi);
     if (radians < 0) {

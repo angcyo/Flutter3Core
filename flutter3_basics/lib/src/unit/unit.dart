@@ -342,6 +342,12 @@ extension UnitNumEx on num {
     return unit.toPx(this);
   }
 
+  ///[toPixel]
+  @pixel
+  double toPixelFromDp([@unit IUnit unit = IUnit.dp]) {
+    return unit.toPx(this);
+  }
+
   /// 格式化成对应单位描述的值
   String formatUnitValue({
     bool showSuffix = true,

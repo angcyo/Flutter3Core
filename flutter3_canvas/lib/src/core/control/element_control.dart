@@ -300,7 +300,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 开始控制目标元素
   @callPoint
   void startControlTarget(ElementPainter? element) {
-    _downTargetElementCenter = element?.paintProperty?.paintRect.center;
+    _downTargetElementCenter = element?.paintProperty?.paintRectBounds.center;
     _downTargetElementAnchor =
         element?.paintProperty?.let((it) => Offset(it.left, it.top));
     _targetElement = element;
@@ -420,7 +420,10 @@ class RotateControl extends BaseControl {
     //l.d('$event');
     //debugger();
     if (isPointerDownIn) {
-      if (event.isPointerMove) {
+      if (event.isPointerDown) {
+        //按下时, 就更新绘制的控制信息
+        canvasElementControlManager.updatePaintInfoType(PaintInfoType.rotate);
+      } else if (event.isPointerMove) {
         if (isFirstHandle) {
           if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
             //首次移动, 并且超过了阈值
@@ -436,7 +439,7 @@ class RotateControl extends BaseControl {
             final angle = angleBetween(it, downScenePoint, it, moveScenePoint);
             final matrix = Matrix4.identity()..rotateBy(angle, anchor: it);
             assert(() {
-              l.d('旋转元素[${angle.jd}]:$angle $it');
+              //l.d('旋转元素[${angle.jd}]:$angle $it');
               return true;
             }());
             applyTargetMatrixWithAnchor(matrix);
@@ -518,10 +521,10 @@ class ScaleControl extends BaseControl {
             }
 
             if (sx > 0 && sy > 0) {
-              assert(() {
+              /*assert(() {
                 l.d('缩放元素: sx:$sx sy:$sy anchor:$_downTargetElementAnchor');
                 return true;
-              }());
+              }());*/
               applyScaleMatrix(
                   sx: sx, sy: sy, anchor: _downTargetElementAnchor!);
             } else {
@@ -650,7 +653,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
           final offset = moveScenePoint - downScenePoint;
           final matrix = Matrix4.identity()..translateTo(offset: offset);
           assert(() {
-            l.d('平移元素: offset:$offset');
+            //l.d('平移元素: offset:$offset');
             return true;
           }());
           applyTargetMatrixWithAnchor(matrix);

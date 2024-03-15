@@ -83,24 +83,36 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     //---选择框绘制
     elementSelectComponent.painting(canvas, paintMeta);
     //---控制点绘制
-    if (enableElementControl &&
-        elementSelectComponent.isSelectedElement &&
-        !isPointerDownElement) {
-      if (elementSelectComponent
-          .isElementSupportControl(deleteControl.controlType)) {
-        deleteControl.paintControl(canvas, paintMeta);
+    if (isSelectedElement) {
+      //绘制元素的控制信息
+      if (paintInfoType == PaintInfoType.size) {
+        _paintControlSizeInfo(
+            canvas, paintMeta, elementSelectComponent.paintProperty);
+      } else if (paintInfoType == PaintInfoType.rotate) {
+        _paintControlRotateInfo(
+            canvas, paintMeta, elementSelectComponent.paintProperty);
+      } else if (paintInfoType == PaintInfoType.location) {
+        _paintControlLocationInfo(
+            canvas, paintMeta, elementSelectComponent.paintProperty);
       }
-      if (elementSelectComponent
-          .isElementSupportControl(rotateControl.controlType)) {
-        rotateControl.paintControl(canvas, paintMeta);
-      }
-      if (elementSelectComponent
-          .isElementSupportControl(scaleControl.controlType)) {
-        scaleControl.paintControl(canvas, paintMeta);
-      }
-      if (elementSelectComponent
-          .isElementSupportControl(lockControl.controlType)) {
-        lockControl.paintControl(canvas, paintMeta);
+      //绘制控制点
+      if (enableElementControl && !isPointerDownElement) {
+        if (elementSelectComponent
+            .isElementSupportControl(deleteControl.controlType)) {
+          deleteControl.paintControl(canvas, paintMeta);
+        }
+        if (elementSelectComponent
+            .isElementSupportControl(rotateControl.controlType)) {
+          rotateControl.paintControl(canvas, paintMeta);
+        }
+        if (elementSelectComponent
+            .isElementSupportControl(scaleControl.controlType)) {
+          scaleControl.paintControl(canvas, paintMeta);
+        }
+        if (elementSelectComponent
+            .isElementSupportControl(lockControl.controlType)) {
+          lockControl.paintControl(canvas, paintMeta);
+        }
       }
     }
   }
@@ -126,6 +138,135 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         elementSelectComponent.resetSelectElement(list);
       }
     }
+  }
+
+  /// 绘制选中元素的控制信息
+  /// [_paintControlSizeInfo]
+  /// [_paintControlRotateInfo]
+  /// [_paintControlLocationInfo]
+  void _paintControlInfo(
+    Canvas canvas,
+    PaintMeta paintMeta,
+    PaintProperty paintProperty,
+    String text,
+  ) {
+    final canvasViewBox = canvasDelegate.canvasViewBox;
+    @sceneCoordinate
+    final paintScaleRect = paintProperty.paintScaleRect;
+    @sceneCoordinate
+    final paintRectBounds = paintProperty.paintRectBounds;
+    final angle = paintProperty.angle.sanitizeRadians;
+    @sceneCoordinate
+    final angleAnchor = paintRectBounds.center;
+
+    final textPainter = TextPainter(
+        text: TextSpan(
+            text: text,
+            style: TextStyle(
+              color: canvasDelegate.canvasStyle.paintInfoTextColor,
+              fontSize: canvasDelegate.canvasStyle.paintInfoTextFontSize,
+            )),
+        textDirection: TextDirection.ltr)
+      ..layout();
+
+    @viewCoordinate
+    final elementBounds = canvasViewBox.toViewRect(paintScaleRect);
+    @viewCoordinate
+    final angleCenter = canvasViewBox.toViewPoint(angleAnchor);
+
+    final paintInfoTextPadding =
+        canvasDelegate.canvasStyle.paintInfoTextPadding;
+    final boundsWidth = textPainter.width + paintInfoTextPadding.horizontal;
+    final boundsHeight = textPainter.height + paintInfoTextPadding.vertical;
+
+    final textBounds = Rect.fromLTWH(
+        elementBounds.center.dx - boundsWidth / 2,
+        elementBounds.top -
+            canvasDelegate.canvasStyle.paintInfoOffset -
+            boundsHeight,
+        boundsWidth,
+        boundsHeight);
+
+    canvas.withRotateRadians(angle, () {
+      canvas.drawRRect(
+        textBounds.toRRect(canvasDelegate.canvasStyle.paintInfoBgRadiusSize),
+        Paint()
+          ..color = canvasDelegate.canvasStyle.paintInfoBgColor
+          ..style = PaintingStyle.fill,
+      );
+
+      final flip = angle > pi / 2 && angle < 3 * pi / 2;
+      canvas.withScale(flip ? -1 : 1, flip ? -1 : 1, () {
+        textPainter.paint(canvas, textBounds.lt + paintInfoTextPadding.topLeft);
+      }, anchor: textBounds.center);
+    }, anchor: angleCenter);
+  }
+
+  /// 绘制选中元素的大小信息
+  void _paintControlSizeInfo(
+      Canvas canvas, PaintMeta paintMeta, PaintProperty? paintProperty) {
+    paintProperty?.let((it) {
+      @sceneCoordinate
+      final paintRectBounds = it.paintRectBounds;
+      final Size size;
+      if (enableResetElementAngle) {
+        size = paintRectBounds.size;
+      } else {
+        size = it.paintScaleRotateBounds.size;
+      }
+
+      final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
+      final withString = axisUnit.format(
+        axisUnit.toUnit(size.width.toPixelFromDp()),
+        removeZero: false,
+        ensureInt: false,
+      );
+      final heightString = axisUnit.format(
+        axisUnit.toUnit(size.height.toPixelFromDp()),
+        removeZero: false,
+        ensureInt: false,
+      );
+      final text = 'w:$withString\nh:$heightString';
+      _paintControlInfo(canvas, paintMeta, paintProperty, text);
+    });
+  }
+
+  /// 绘制选中元素的旋转信息
+  void _paintControlRotateInfo(
+      Canvas canvas, PaintMeta paintMeta, PaintProperty? paintProperty) {
+    paintProperty?.let((it) {
+      final text = '${it.angle.jd.sanitizeDegrees.toDigits()}°';
+      _paintControlInfo(canvas, paintMeta, paintProperty, text);
+    });
+  }
+
+  /// 绘制选中元素的位置信息
+  void _paintControlLocationInfo(
+      Canvas canvas, PaintMeta paintMeta, PaintProperty? paintProperty) {
+    paintProperty?.let((it) {
+      @sceneCoordinate
+      final paintRectBounds = it.paintRectBounds;
+      final Offset location;
+      if (enableResetElementAngle) {
+        location = paintRectBounds.lt;
+      } else {
+        location = it.paintScaleRotateBounds.lt;
+      }
+
+      final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
+      final xString = axisUnit.format(
+        axisUnit.toUnit(location.dx.toPixelFromDp()),
+        removeZero: false,
+        ensureInt: false,
+      );
+      final yString = axisUnit.format(
+        axisUnit.toUnit(location.dy.toPixelFromDp()),
+        removeZero: false,
+        ensureInt: false,
+      );
+      final text = 'x:$xString\ny:$yString';
+      _paintControlInfo(canvas, paintMeta, paintProperty, text);
+    });
   }
 
   //---
@@ -246,6 +387,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     if (state == ControlState.start) {
       if (controlType == BaseControl.CONTROL_TYPE_ROTATE) {
         updatePaintInfoType(PaintInfoType.rotate);
+      } else if (controlType == BaseControl.CONTROL_TYPE_TRANSLATE) {
+        //按下时, 就显示元素的位置信息
+        updatePaintInfoType(PaintInfoType.location);
       }
     } else {
       if (controlType == BaseControl.CONTROL_TYPE_ROTATE) {
@@ -270,11 +414,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 根据选中元素的状态, 重置绘制信息类型
   @flagProperty
   void resetPaintInfoType() {
-    if (isSelectedElement) {
-      updatePaintInfoType(PaintInfoType.size);
-    } else {
-      updatePaintInfoType(PaintInfoType.none);
-    }
+    updatePaintInfoType(PaintInfoType.size);
   }
 }
 
@@ -411,8 +551,14 @@ class ElementSelectComponent extends ElementGroupPainter
             }
           } else {
             //未移动手指, 可能是点击选择元素
-            updateSelectBounds(null, false);
-            resetSelectElement(_downElementList?.lastOrNull?.ofList());
+            if (_downElementList?.isEmpty == true) {
+              //没有点击选中元素
+              updateSelectBounds(null, false);
+            } else {
+              //点击选中元素
+              updateSelectBounds(null, false);
+              resetSelectElement(_downElementList?.lastOrNull?.ofList());
+            }
           }
           _downElementList = null;
         }
@@ -529,7 +675,7 @@ class ElementSelectComponent extends ElementGroupPainter
       matrix.postConcat(scaleMatrix);
     } else {
       final rotateMatrix = Matrix4.identity()
-        ..rotateBy(angle, anchor: paintProperty?.paintRect.center);
+        ..rotateBy(angle, anchor: paintProperty?.paintRectBounds.center);
       final rotateInvertMatrix = rotateMatrix.invertedMatrix();
       Offset anchorInvert = rotateInvertMatrix.mapPoint(anchor);
 
@@ -587,6 +733,7 @@ class ElementSelectComponent extends ElementGroupPainter
     if (select) {
       //需要选择元素
       resetSelectElement(_getSelectBoundsElementList());
+      canvasElementControlManager.updatePaintInfoType(PaintInfoType.size);
     }
     selectBounds = bounds;
     canvasElementControlManager.canvasDelegate
@@ -601,6 +748,7 @@ class ElementSelectComponent extends ElementGroupPainter
   /// [CanvasElementManager.resetSelectElement]
   @api
   void resetSelectElement(List<ElementPainter>? elements) {
+    //debugger();
     List<ElementPainter>? old = children;
     if (isNullOrEmpty(elements)) {
       //取消元素选择

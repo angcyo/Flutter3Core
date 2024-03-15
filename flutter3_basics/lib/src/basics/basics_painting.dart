@@ -127,6 +127,32 @@ extension CanvasEx on Canvas {
     }
   }
 
+  /// 在指定锚点处操作矩阵
+  void withPivot(
+    VoidCallback action,
+    VoidCallback callback, {
+    ui.Offset? anchor,
+    double pivotX = 0,
+    double pivotY = 0,
+  }) {
+    if (anchor != null) {
+      pivotX = anchor.dx;
+      pivotY = anchor.dy;
+    }
+
+    withSave(() {
+      if (pivotX == 0 && pivotY == 0) {
+        action();
+        callback();
+      } else {
+        translate(pivotX, pivotY);
+        action();
+        translate(-pivotX, -pivotY);
+        callback();
+      }
+    });
+  }
+
   /// 平移到指定点绘制并恢复画布属性
   void withTranslate(double tx, double ty, VoidCallback callback) {
     if (tx == 0 && ty == 0) {
@@ -174,14 +200,9 @@ extension CanvasEx on Canvas {
     if (radians == 0) {
       callback();
     } else {
-      pivotX = anchor?.dx ?? pivotX;
-      pivotY = anchor?.dy ?? pivotY;
-      withSave(() {
-        translate(pivotX, pivotY);
+      withPivot(() {
         rotate(radians);
-        translate(-pivotX, -pivotY);
-        callback();
-      });
+      }, callback, anchor: anchor, pivotX: pivotX, pivotY: pivotY);
     }
   }
 
@@ -192,16 +213,14 @@ extension CanvasEx on Canvas {
     VoidCallback callback, {
     double pivotX = 0,
     double pivotY = 0,
+    ui.Offset? anchor,
   }) {
     if (sx == 1 && sy == 1) {
       callback();
     } else {
-      withSave(() {
-        translate(pivotX, pivotY);
+      withPivot(() {
         scale(sx, sy);
-        translate(-pivotX, -pivotY);
-        callback();
-      });
+      }, callback, anchor: anchor, pivotX: pivotX, pivotY: pivotY);
     }
   }
 
@@ -212,16 +231,14 @@ extension CanvasEx on Canvas {
     VoidCallback callback, {
     double pivotX = 0,
     double pivotY = 0,
+    ui.Offset? anchor,
   }) {
     if (sx == 0 && sy == 0) {
       callback();
     } else {
-      withSave(() {
-        translate(pivotX, pivotY);
+      withPivot(() {
         skew(sx, sy);
-        translate(-pivotX, -pivotY);
-        callback();
-      });
+      }, callback, anchor: anchor, pivotX: pivotX, pivotY: pivotY);
     }
   }
 

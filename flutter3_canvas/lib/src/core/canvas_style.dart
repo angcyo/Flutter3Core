@@ -7,8 +7,38 @@ part of '../../flutter3_canvas.dart';
 class CanvasStyle {
   //region ---basics---
 
+  /// 圆角大小
+  @dp
+  double canvasRadiusSize = 8;
+
   /// 画布强调颜色
   Color canvasAccentColor = const Color(0xff00e3ff);
+
+  /// 控制点的背景颜色
+  Color controlBgColor = const Color(0xff333333);
+
+  /// 元素信息绘制的字体大小
+  @dp
+  double paintInfoTextFontSize = 8;
+
+  /// [paintInfoBgColor]圆角大小
+  @dp
+  double paintInfoBgRadiusSize = 4;
+
+  /// 绘制背景[paintInfoBgColor]距离元素的额外偏移量
+  @dp
+  double paintInfoOffset = 4;
+
+  /// 文本在背景内,额外的填充内边界
+  @dp
+  EdgeInsets paintInfoTextPadding =
+      const EdgeInsets.symmetric(horizontal: 4, vertical: 2);
+
+  /// 元素信息绘制的背景颜色
+  Color paintInfoBgColor = Colors.black54; //0x61000000
+
+  /// 元素信息绘制的文字颜色
+  Color paintInfoTextColor = const Color(0xffffffff);
 
   //endregion ---basics---
 
@@ -33,12 +63,5 @@ class CanvasStyle {
   @dp
   double axisLabelFontSize = 8;
 
-  //endregion ---axis---
-
-  //region ---basics---
-
-  /// 控制点的背景颜色
-  Color controlBgColor = const Color(0xff333333);
-
-//endregion ---basics---
+//endregion ---axis---
 }

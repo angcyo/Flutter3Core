@@ -122,7 +122,7 @@ class ElementPainter extends IPainter {
     paintProperty?.let((it) {
       //debugger();
       //canvas.drawPath(it.paintPath, paint);
-      canvas.drawRect(it.paintRect, paint);
+      canvas.drawRect(it.paintRectBounds, paint);
     });
   }
 
@@ -207,7 +207,7 @@ class ElementPainter extends IPainter {
     Offset? anchor,
   }) {
     paintProperty?.let((it) {
-      anchor ??= it.paintRect.center;
+      anchor ??= it.paintRectBounds.center;
       final matrix = Matrix4.identity()..rotateBy(angle, anchor: anchor);
       applyMatrixWithAnchor(matrix);
     });
@@ -283,7 +283,7 @@ class ElementGroupPainter extends ElementPainter {
       Rect? rect;
       for (final child in children!) {
         //final childBounds = child.paintProperty?.paintPath.getExactBounds();
-        final childBounds = child.paintProperty?.paintRect;
+        final childBounds = child.paintProperty?.paintRectBounds;
         if (childBounds != null) {
           if (rect == null) {
             rect = childBounds;
@@ -432,14 +432,21 @@ class PaintProperty with EquatableMixin {
   /// [scaleMatrix]
   Rect get scaleRect => scaleMatrix.mapRect(rect);
 
-  /// [scaleRect]平移到目标位置的矩形
+  /// [scaleRect]平移到目标位置的矩形, 此矩形还未旋转
   Rect get paintScaleRect {
     //debugger();
     final rect = scaleRect;
     final currentCenter = rect.center;
-    final targetCenter = paintRect.center;
+    final targetCenter = paintRectBounds.center;
     return rect.offset(Offset(targetCenter.dx - currentCenter.dx,
         targetCenter.dy - currentCenter.dy));
+  }
+
+  /// [paintScaleRect] 旋转后的矩形边界
+  Rect get paintScaleRotateBounds {
+    final rect = paintScaleRect;
+    final matrix = Matrix4.identity()..postRotate(angle, anchor: rect.center);
+    return matrix.mapRect(rect);
   }
 
   /// 元素绘制的矩阵, 包含全属性
@@ -450,7 +457,7 @@ class PaintProperty with EquatableMixin {
       translateToAnchor(Matrix4.identity()..rotateBy(angle));*/
 
   /// 全属性后的最大包裹矩形
-  Rect get paintRect => paintMatrix.mapRect(rect);
+  Rect get paintRectBounds => paintMatrix.mapRect(rect);
 
   /// 元素全属性绘制路径, 用来判断是否相交
   /// 完全包裹的path路径
@@ -509,7 +516,7 @@ class PaintProperty with EquatableMixin {
   /// 最后需要更新[left].[top]
   void applyMatrixWithCenter(Matrix4 matrix) {
     //debugger();
-    Offset originCenter = paintRect.center;
+    Offset originCenter = paintRectBounds.center;
     //中点的最终位置
     final targetCenter = matrix.mapPoint(originCenter);
 
@@ -518,7 +525,7 @@ class PaintProperty with EquatableMixin {
     qrDecomposition(matrix_);
 
     //现在的中点位置
-    final nowCenter = paintRect.center;
+    final nowCenter = paintRectBounds.center;
     //debugger();
 
     //更新left top
