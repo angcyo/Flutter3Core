@@ -186,7 +186,7 @@ class ElementPainter extends IPainter {
     });
   }
 
-  /// 应用矩阵
+  /// 应用矩阵, 在平移旋转时使用
   /// [applyMatrixWithCenter]
   /// [applyMatrixWithAnchor]
   @api
