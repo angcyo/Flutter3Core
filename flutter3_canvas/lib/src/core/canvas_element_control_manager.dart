@@ -356,16 +356,36 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 缩放选中的元素
   @api
   void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
-    minScale?.let((it) {
-      sx = max(it, sx);
-      sy = max(it, sy);
-    });
-
     double angle = paintProperty?.angle ?? 0; //弧度
     anchor ??= paintProperty?.anchor ?? Offset.zero;
 
     //自身使用直接缩放
     paintProperty?.let((it) {
+      final tsx = it.scaleX * sx;
+      final tsy = it.scaleY * sy;
+
+      minScale?.let((min) {
+        double minSx = tsx < min ? min / it.scaleX : sx;
+        double minSy = tsy < min ? min / it.scaleY : sy;
+
+        if (tsx < min || tsy < min) {
+          //最终的缩放比例小于限制的最小值
+          if (sx.equalTo(sy)) {
+            //等比缩放
+            if (tsx < min) {
+              sx = minSx;
+            } else {
+              sx = minSy;
+            }
+            sy = sx;
+          } else {
+            //不等比缩放
+            sx = minSx;
+            sy = minSy;
+          }
+        }
+      });
+
       paintProperty = it.clone()..applyScale(sxBy: sx, syBy: sy);
     });
 
