@@ -38,6 +38,9 @@ class IconStateWidget extends StatelessWidget {
   /// 点击事件
   final GestureTapCallback? onTap;
 
+  /// 长按提示文本
+  final String? tooltip;
+
   //---
 
   /// 按下时的背景装饰
@@ -51,6 +54,7 @@ class IconStateWidget extends StatelessWidget {
     this.icon,
     this.text,
     this.tip,
+    this.tooltip,
     this.tipAlignment = Alignment.topRight,
     this.padding = const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     this.pressedDecoration,
@@ -78,6 +82,6 @@ class IconStateWidget extends StatelessWidget {
           .stackOf(tip?.align(tipAlignment),
               alignment: AlignmentDirectional.center)!
           .onTouchDetector(onTap: onTap, enableClick: enable),
-    );
+    ).tooltip(tooltip);
   }
 }

@@ -80,6 +80,8 @@ Widget builder(
 ///
 /// [LayoutBuilder]
 /// https://pub.dev/packages/value_layout_builder
+///
+/// [_DeferredLayout] 延迟布局
 Widget layout(
   Widget Function(BuildContext context, BoxConstraints constraints) builder, [
   Key? key,
@@ -156,6 +158,8 @@ extension WidgetListEx on WidgetNullList {
   }
 
   /// 使用[Column]包裹
+  /// [mainAxisSize] 主轴尺寸, 是要用最大尺寸, 还是要最小尺寸
+  /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
   Widget? column({
     MainAxisAlignment? mainAxisAlignment,
@@ -308,11 +312,13 @@ extension WidgetListEx on WidgetNullList {
 
 extension WidgetEx on Widget {
   /// [Tooltip] 提示
-  Widget tooltip(String? tip, {InlineSpan? richMessage}) => Tooltip(
-        message: tip,
-        richMessage: richMessage,
-        child: this,
-      );
+  Widget tooltip(String? tip, {InlineSpan? richMessage}) => tip == null
+      ? this
+      : Tooltip(
+          message: tip,
+          richMessage: richMessage,
+          child: this,
+        );
 
   /// [Hero]
   Widget hero(Object? tag) => tag == null ? this : Hero(tag: tag, child: this);
@@ -514,6 +520,7 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 用来决定在[Stack]中的位置
   /// [Positioned].[ParentDataWidget]
   /// [PositionedDirectional]
   /// [AnimatedPositioned]
@@ -1225,9 +1232,9 @@ extension WidgetEx on Widget {
         radius: radius,
       );
 
-  /// 将[this]和[child] 使用[Column]包裹
+  /// 将[this]和[other] 使用[Column]包裹
   Widget? columnOf(
-    Widget? child, {
+    Widget? other, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize,
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -1237,7 +1244,7 @@ extension WidgetEx on Widget {
   }) =>
       [
         this,
-        if (child != null) child,
+        if (other != null) other,
       ].column(
         mainAxisAlignment: mainAxisAlignment,
         mainAxisSize: mainAxisSize,
@@ -1247,9 +1254,9 @@ extension WidgetEx on Widget {
         textBaseline: textBaseline,
       );
 
-  /// 将[this]和[child] 使用[Row]包裹
+  /// 将[this]和[other] 使用[Row]包裹
   Widget? rowOf(
-    Widget? child, {
+    Widget? other, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize,
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -1259,7 +1266,7 @@ extension WidgetEx on Widget {
   }) =>
       [
         this,
-        if (child != null) child,
+        if (other != null) other,
       ].row(
         mainAxisAlignment: mainAxisAlignment,
         mainAxisSize: mainAxisSize,
@@ -1269,9 +1276,9 @@ extension WidgetEx on Widget {
         textBaseline: textBaseline,
       );
 
-  /// 将[this]和[child] 使用[Stack]包裹
+  /// 将[this]和[other] 使用[Stack]包裹
   Widget? stackOf(
-    Widget? child, {
+    Widget? other, {
     AlignmentGeometry alignment = AlignmentDirectional.center,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
@@ -1279,7 +1286,7 @@ extension WidgetEx on Widget {
   }) =>
       [
         this,
-        if (child != null) child,
+        if (other != null) other,
       ].stack(
         alignment: alignment,
         textDirection: textDirection,

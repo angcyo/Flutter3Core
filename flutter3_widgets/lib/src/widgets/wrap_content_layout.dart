@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
@@ -6,8 +6,19 @@ part of flutter3_widgets;
 /// @author angcyo
 /// @date 2023/11/20
 ///
-
+/// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
+/// [child] 的约束永远都不会超过自身的约束
 class WrapContentLayout extends SingleChildRenderObjectWidget {
+  /// 夹紧[child], 如果[child]使用[wrap_content]测量出的大小不超过自身的约束, 则使用[child]的大小
+  /// 如果超过自身的约束, 则使用自身的约束重新测量[child]
+  final bool tightChild;
+
+  /// 是否使用[child]的宽度设置自身的宽度
+  final bool wrapWidth;
+
+  /// 是否使用[child]的高度设置自身的高度
+  final bool wrapHeight;
+
   /// 对齐方式
   final AlignmentDirectional alignment;
 
@@ -19,6 +30,9 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
   const WrapContentLayout({
     super.key,
     super.child,
+    this.tightChild = true,
+    this.wrapWidth = false,
+    this.wrapHeight = false,
     this.alignment = AlignmentDirectional.center,
     this.minWidth,
     this.minHeight,
@@ -26,6 +40,9 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) => WrapContentBox(
+        tightChild: tightChild,
+        wrapWidth: wrapWidth,
+        wrapHeight: wrapHeight,
         alignment: alignment,
         textDirection: Directionality.of(context),
         minWidth: minWidth,
@@ -35,6 +52,9 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
   @override
   void updateRenderObject(BuildContext context, WrapContentBox renderObject) {
     renderObject
+      ..tightChild = tightChild
+      ..wrapWidth = wrapWidth
+      ..wrapHeight = wrapHeight
       ..alignment = alignment
       ..minWidth = minWidth
       ..minHeight = minHeight
@@ -49,12 +69,18 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
 /// [RenderShiftedBox.paint]实现绘制上的偏移
 /// [RenderShiftedBox.hitTestChildren]实现点击事件的偏移
 class WrapContentBox extends RenderAligningShiftedBox {
+  bool tightChild;
+  bool wrapWidth;
+  bool wrapHeight;
   double? minWidth;
   double? minHeight;
 
   WrapContentBox({
     super.alignment,
     super.textDirection,
+    this.tightChild = true,
+    this.wrapWidth = false,
+    this.wrapHeight = false,
     this.minWidth,
     this.minHeight,
   });
@@ -141,9 +167,25 @@ class WrapContentBox extends RenderAligningShiftedBox {
     }
   }
 
+  void _setSize(Size childSize) {
+    //debugger();
+    final double width, height;
+    if (wrapWidth || constraints.maxWidth == double.infinity) {
+      width = childSize.width;
+    } else {
+      width = constraints.maxWidth;
+    }
+    if (wrapHeight || constraints.maxHeight == double.infinity) {
+      height = childSize.height;
+    } else {
+      height = constraints.maxWidth;
+    }
+    size = Size(width, height);
+    _alignChild();
+  }
+
   @override
   void performLayout() {
-    //debugger();
     if (child == null) {
       size = constraints.smallest;
     } else {
@@ -163,22 +205,32 @@ class WrapContentBox extends RenderAligningShiftedBox {
         parentMaxWidth = parentConstraints.maxWidth;
         parentMaxHeight = parentConstraints.maxHeight;
       }
+
+      final maxWidth = constraints.maxWidth == double.infinity
+          ? parentMaxWidth
+          : constraints.maxWidth;
+      final maxHeight = constraints.maxHeight == double.infinity
+          ? parentMaxHeight
+          : constraints.maxHeight;
+
+      if (tightChild) {
+        //关键布局
+        child!.layout(const BoxConstraints(), parentUsesSize: true);
+        if (child!.size.width <= maxWidth && child!.size.height <= maxHeight) {
+          _setSize(child!.size);
+          return;
+        }
+      }
+
       //debugger();
-      child!.layout(
-        BoxConstraints(
-          minWidth: minWidth ?? 0,
-          minHeight: minHeight ?? 0,
-          maxWidth: constraints.maxWidth == double.infinity
-              ? parentMaxWidth
-              : constraints.maxWidth,
-          maxHeight: constraints.maxHeight == double.infinity
-              ? parentMaxHeight
-              : constraints.maxHeight,
-        ),
-        parentUsesSize: true,
+      final innerConstraints = BoxConstraints(
+        minWidth: minWidth ?? 0,
+        minHeight: minHeight ?? 0,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
       );
-      size = constraints.constrain(child!.size);
-      _alignChild();
+      child!.layout(innerConstraints, parentUsesSize: true);
+      _setSize(child!.size);
     }
   }
 
@@ -198,11 +250,17 @@ class WrapContentBox extends RenderAligningShiftedBox {
 extension WrapContentLayoutEx on Widget {
   /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
   WrapContentLayout wrapContent({
+    bool tightChild = true,
+    bool wrapWidth = false,
+    bool wrapHeight = false,
     AlignmentDirectional alignment = AlignmentDirectional.center,
     double? minWidth,
     double? minHeight,
   }) =>
       WrapContentLayout(
+        tightChild: tightChild,
+        wrapWidth: wrapWidth,
+        wrapHeight: wrapHeight,
         alignment: alignment,
         minWidth: minWidth,
         minHeight: minHeight,

@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// 用最大的约束约束child
@@ -9,7 +9,6 @@ part of flutter3_widgets;
 
 /// [WrapContentLayout]
 class MatchParentLayout extends SingleChildRenderObjectWidget {
-
   /// 对齐方式
   final AlignmentDirectional alignment;
 

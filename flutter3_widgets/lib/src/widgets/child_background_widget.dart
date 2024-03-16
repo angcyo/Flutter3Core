@@ -7,6 +7,7 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// 为子布局绘制背景色
+@implementation
 class ChildBackgroundWidget extends SingleChildRenderObjectWidget {
   const ChildBackgroundWidget({super.key, super.child});
 

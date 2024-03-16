@@ -23,7 +23,7 @@ BoxDecoration strokeDecoration({
   BorderSide? start,
   BorderSide? end,
 }) {
-  var color = strokeColor ?? GlobalTheme.of(context).primaryColor;
+  final color = strokeColor ?? GlobalTheme.of(context).primaryColor;
   final BorderSide side = BorderSide(
     color: color,
     width: strokeWidth,
@@ -61,7 +61,7 @@ BoxDecoration lineDecoration({
   BorderSide? leftSide,
   BorderSide? rightSide,
 }) {
-  var lineColor = GlobalTheme.of(context).lineColor;
+  final lineColor = GlobalTheme.of(context).lineColor;
   return BoxDecoration(
     border: Border(
       left: leftSide ??
@@ -83,7 +83,7 @@ BoxDecoration fillDecoration({
   Color? fillColor,
   double borderRadius = kDefaultBorderRadiusXX,
 }) {
-  var color = fillColor ?? GlobalTheme.of(context).primaryColor;
+  final color = fillColor ?? GlobalTheme.of(context).primaryColor;
   return BoxDecoration(
     color: color,
     borderRadius: borderRadius > 0
@@ -106,7 +106,7 @@ BoxDecoration lineaGradientDecoration(
   AlignmentGeometry begin = Alignment.centerLeft,
   AlignmentGeometry end = Alignment.centerRight,
 }) {
-  var color = fillColor ?? GlobalTheme.of(context).primaryColor;
+  final color = fillColor ?? GlobalTheme.of(context).primaryColor;
   return BoxDecoration(
     color: color,
     gradient: colors == null
@@ -141,7 +141,7 @@ OutlineInputBorder outlineInputBorder({
   double? borderRadius,
   BorderSide? borderSide,
 }) {
-  var globalTheme = GlobalTheme.of(context);
+  final globalTheme = GlobalTheme.of(context);
   return OutlineInputBorder(
     borderRadius: borderRadius != null
         ? BorderRadius.circular(borderRadius)
@@ -163,7 +163,7 @@ UnderlineInputBorder underlineInputBorder({
   double width = 1,
   double borderRadius = 0,
 }) {
-  var globalTheme = GlobalTheme.of(context);
+  final globalTheme = GlobalTheme.of(context);
   return UnderlineInputBorder(
     borderSide: BorderSide(
       color: color ?? globalTheme.borderColor,
