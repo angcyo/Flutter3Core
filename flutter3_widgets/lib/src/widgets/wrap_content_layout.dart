@@ -249,6 +249,8 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
 extension WrapContentLayoutEx on Widget {
   /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
+  /// [MatchParentLayoutEx.matchParent]
+  /// [WrapContentLayoutEx.wrapContent]
   WrapContentLayout wrapContent({
     bool tightChild = true,
     bool wrapWidth = false,

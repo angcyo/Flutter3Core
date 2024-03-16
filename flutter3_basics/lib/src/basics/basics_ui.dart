@@ -401,7 +401,7 @@ extension WidgetEx on Widget {
   /// [EdgeInsets]
   /// [EdgeInsetsGeometry]
   Widget paddingInsets(EdgeInsetsGeometry? insets) {
-    return insets == null
+    return insets == null || insets == EdgeInsets.zero
         ? this
         : Padding(
             padding: insets,

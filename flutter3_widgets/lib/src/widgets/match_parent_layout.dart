@@ -84,6 +84,7 @@ class MatchParentBox extends WrapContentBox {
 
 extension MatchParentLayoutEx on Widget {
   /// [WrapContentLayoutEx.wrapContent]
+  /// [MatchParentLayoutEx.matchParent]
   MatchParentLayout matchParent({
     bool matchWidth = true,
     bool matchHeight = true,

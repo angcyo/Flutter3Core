@@ -138,10 +138,20 @@ mixin PointerDispatchMixin {
   /// N个手指对应的事件
   Map<int, PointerEvent> pointerMap = {};
 
+  /// 指定的手势, 是否要忽略处理
+  Map<int, bool> ignorePointerMap = {};
+
   /// 派发事件, 入口点
   /// 返回事件是否被处理了
   @entryPoint
   bool handleDispatchEvent(PointerEvent event) {
+    if (isIgnorePointer(event)) {
+      if (event.isPointerFinish) {
+        ignoreHandlePointer(event, false);
+      }
+      return false;
+    }
+
     if (!event.synthesized) {
       pointerMap[event.pointer] = event;
     }
@@ -208,6 +218,15 @@ mixin PointerDispatchMixin {
   /// 移除事件处理
   void removeHandleEventClient(IHandleEventMixin handleEvent) {
     handleEventClientList.remove(handleEvent);
+  }
+
+  /// 是否忽略了指定手势的处理
+  bool isIgnorePointer(PointerEvent event) =>
+      ignorePointerMap[event.pointer] == true;
+
+  /// 忽略指定手势的处理
+  void ignoreHandlePointer(PointerEvent event, [bool ignore = true]) {
+    ignorePointerMap[event.pointer] = ignore;
   }
 }
 

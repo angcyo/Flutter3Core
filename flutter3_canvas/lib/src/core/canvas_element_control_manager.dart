@@ -119,9 +119,17 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 事件处理入口
   /// [CanvasEventManager.handleEvent]
+  /// [CanvasElementManager.handleElementEvent]
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     if (enableElementControl) {
+      if (event.isPointerDown) {
+        ignoreHandlePointer(
+            event,
+            !canvasDelegate.canvasViewBox.canvasBounds
+                .contains(event.localPosition));
+      }
+      //在画布内点击才响应
       handleDispatchEvent(event);
     }
   }

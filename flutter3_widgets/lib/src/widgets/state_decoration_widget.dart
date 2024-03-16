@@ -156,16 +156,24 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
       enablePressedDecoration || onPointerDownAction != null;
 
   bool _isPointerDown = false;
+  Offset? _pointerDown;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     if (event is PointerDownEvent) {
       if (enablePressedDecoration) {
         _isPointerDown = true;
+        _pointerDown = event.localPosition;
         markNeedsPaint();
       }
       onPointerDownAction?.call(event, true);
-    } else if (event is PointerUpEvent || event is PointerCancelEvent) {
+    } else if (event is PointerMoveEvent) {
+      if (_isPointerDown && event.isMoveExceed(_pointerDown)) {
+        _isPointerDown = false;
+        markNeedsPaint();
+      }
+    } else if (_isPointerDown &&
+        (event is PointerUpEvent || event is PointerCancelEvent)) {
       if (enablePressedDecoration) {
         _isPointerDown = false;
         markNeedsPaint();
