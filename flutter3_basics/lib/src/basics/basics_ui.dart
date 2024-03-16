@@ -392,9 +392,9 @@ extension WidgetEx on Widget {
   //region ---Padding---
 
   /// 将当前的小部件, 包裹在一个[Padding]中
-  /// 根据html的padding属性, 生成padding
-  Widget padding([double? v1, double? v2, double? v3, double? v4]) {
-    final insets = edgeInsets(v1, v2, v3, v4);
+  /// [EdgeInsets]
+  /// [EdgeInsetsGeometry]
+  Widget paddingInsets(EdgeInsetsGeometry? insets) {
     return insets == null
         ? this
         : Padding(
@@ -403,28 +403,21 @@ extension WidgetEx on Widget {
           );
   }
 
+  /// 将当前的小部件, 包裹在一个[Padding]中
+  /// 根据html的padding属性, 生成padding
+  Widget padding([double? v1, double? v2, double? v3, double? v4]) {
+    final insets = edgeInsets(v1, v2, v3, v4);
+    return paddingInsets(insets);
+  }
+
   Widget paddingCss([double? v1, double? v2, double? v3, double? v4]) =>
       padding(v1, v2, v3, v4);
 
   /// 将当前的小部件, 包裹在一个[Padding]中
-  Widget paddingAll(double value) {
-    return Padding(
-      padding: EdgeInsets.all(value),
-      child: this,
-    );
-  }
+  Widget paddingAll(double value) => paddingInsets(EdgeInsets.all(value));
 
-  Widget paddingLTRB(double left, double top, double right, double bottom) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        left,
-        top,
-        right,
-        bottom,
-      ),
-      child: this,
-    );
-  }
+  Widget paddingLTRB(double left, double top, double right, double bottom) =>
+      paddingInsets(EdgeInsets.fromLTRB(left, top, right, bottom));
 
   /// 对称
   /// [paddingSymmetric]
@@ -436,32 +429,22 @@ extension WidgetEx on Widget {
   }
 
   /// 对称
-  Widget paddingSymmetric({double vertical = 0, double horizontal = 0}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: vertical,
-        horizontal: horizontal,
-      ),
-      child: this,
-    );
-  }
+  Widget paddingSymmetric({double vertical = 0, double horizontal = 0}) =>
+      paddingInsets(
+          EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal));
 
   Widget paddingOnly({
     double left = 0,
     double top = 0,
     double right = 0,
     double bottom = 0,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(
+  }) =>
+      paddingInsets(EdgeInsets.only(
         left: left,
         top: top,
         right: right,
         bottom: bottom,
-      ),
-      child: this,
-    );
-  }
+      ));
 
 /*Widget paddingFromWindowPadding() {
     return Padding(

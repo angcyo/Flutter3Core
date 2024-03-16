@@ -47,11 +47,12 @@ class _RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
   }) : super(child);
 
   @override
+  bool hitTest(BoxHitTestResult result, {required ui.Offset position}) {
+    return super.hitTest(result, position: position);
+  }
+
+  @override
   bool hitTestSelf(ui.Offset position) {
-    assert(() {
-      l.d('手势探测命中[TouchDetectorWidget]:$this position:$position');
-      return true;
-    }());
     return _enableTouchDetector;
   }
 
@@ -86,6 +87,9 @@ extension TouchDetectorWidgetEx on Widget {
     bool enableClick = true,
     bool enableLongPress = false,
   }) {
+    if (!enableClick && !enableLongPress) {
+      return this;
+    }
     if (enableClick && onClick == null) {
       if (onTap != null) {
         onClick = (event) {

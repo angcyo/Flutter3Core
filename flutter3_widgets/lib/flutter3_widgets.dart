@@ -1,6 +1,7 @@
 library flutter3_widgets;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -72,6 +73,7 @@ part 'src/widgets/gesture_hit_intercept.dart';
 part 'src/widgets/gestures/matrix_gesture_detector.dart';
 part 'src/widgets/gestures/rotate_gesture_recognizer.dart';
 part 'src/widgets/gradient_button.dart';
+part 'src/widgets/icon_state_widget.dart';
 part 'src/widgets/line.dart';
 part 'src/widgets/match_parent_layout.dart';
 part 'src/widgets/state_decoration_widget.dart';

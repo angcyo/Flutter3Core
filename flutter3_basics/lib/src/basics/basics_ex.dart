@@ -505,6 +505,9 @@ extension StringEx on String {
   }
 
   /// 指定[package]的前缀
+  /// [package] 包名, 比如`flutter3_basics` 或者`flutter3_core` 或者`flutter3_widgets`
+  /// [prefix] 前缀, 比如`assets/images/` 或者`assets/svg/`
+  /// 最终返回`packages/flutter3_basics/assets/images/xxx.xxx`
   String ensurePackagePrefix(String? package, String? prefix) {
     var before = "";
     if (package == null || package.isEmpty) {
