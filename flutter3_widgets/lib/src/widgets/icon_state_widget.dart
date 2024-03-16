@@ -11,7 +11,7 @@ class IconStateWidget extends StatelessWidget {
   //---
 
   /// 图标
-  final Widget? ico;
+  final Widget? icon;
 
   /// 文本
   final Widget? text;
@@ -48,7 +48,7 @@ class IconStateWidget extends StatelessWidget {
 
   const IconStateWidget({
     super.key,
-    this.ico,
+    this.icon,
     this.text,
     this.tip,
     this.tipAlignment = Alignment.topRight,
@@ -67,7 +67,7 @@ class IconStateWidget extends StatelessWidget {
       pressedDecoration: pressedDecoration,
       enablePressedDecoration: enable,
       child: [
-        ico,
+        icon,
         text,
       ]
           .column()!
