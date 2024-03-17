@@ -70,6 +70,7 @@ class IconStateWidget extends StatelessWidget {
     return StateDecorationWidget(
       pressedDecoration: pressedDecoration,
       enablePressedDecoration: enable,
+      selectedDecoration: selectedDecoration,
       child: [
         icon,
         text,

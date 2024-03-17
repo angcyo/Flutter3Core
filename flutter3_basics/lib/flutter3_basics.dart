@@ -100,6 +100,7 @@ typedef UiImage = ui.Image;
 typedef UiImageFilter = ui.ImageFilter;
 typedef UiColorFilter = ui.ColorFilter;
 typedef UiGradient = ui.Gradient;
+typedef AnimateAction = void Function(AnimationController controller);
 
 /// 判断[value]是否为空
 bool isNullOrEmpty(Object? value) {
