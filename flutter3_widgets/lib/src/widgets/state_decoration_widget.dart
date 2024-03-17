@@ -190,17 +190,17 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
     //背景绘制
     _painter ??= decoration?.createBoxPainter(markNeedsPaint);
     _painter?.paint(context.canvas, offset, filledConfiguration);
-    setIsComplexHint(context, decoration);
+    setCanvasIsComplexHint(context, decoration);
     if (_isPointerDown) {
       //
       _pressedPainter ??= pressedDecoration?.createBoxPainter(markNeedsPaint);
       _pressedPainter?.paint(context.canvas, offset, filledConfiguration);
-      setIsComplexHint(context, pressedDecoration);
+      setCanvasIsComplexHint(context, pressedDecoration);
     }
     //
     _selectedPainter ??= selectedDecoration?.createBoxPainter(markNeedsPaint);
     _selectedPainter?.paint(context.canvas, offset, filledConfiguration);
-    setIsComplexHint(context, selectedDecoration);
+    setCanvasIsComplexHint(context, selectedDecoration);
     super.paint(context, offset);
     //前景绘制
     if (_isPointerDown) {
@@ -209,19 +209,19 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
           pressedForegroundDecoration?.createBoxPainter(markNeedsPaint);
       _pressedForegroundPainter?.paint(
           context.canvas, offset, filledConfiguration);
-      setIsComplexHint(context, pressedForegroundDecoration);
+      setCanvasIsComplexHint(context, pressedForegroundDecoration);
     }
     //
     _selectedForegroundPainter ??=
         selectedForegroundDecoration?.createBoxPainter(markNeedsPaint);
     _selectedForegroundPainter?.paint(
         context.canvas, offset, filledConfiguration);
-    setIsComplexHint(context, selectedForegroundDecoration);
+    setCanvasIsComplexHint(context, selectedForegroundDecoration);
     //
     _foregroundPainter ??=
         foregroundDecoration?.createBoxPainter(markNeedsPaint);
     _foregroundPainter?.paint(context.canvas, offset, filledConfiguration);
-    setIsComplexHint(context, foregroundDecoration);
+    setCanvasIsComplexHint(context, foregroundDecoration);
   }
 
   @override
@@ -250,13 +250,5 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
     _pressedForegroundPainter = null;
     _selectedForegroundPainter?.dispose();
     _selectedForegroundPainter = null;
-  }
-
-  void setIsComplexHint(PaintingContext context, Decoration? decoration) {
-    if (decoration != null) {
-      if (decoration.isComplex) {
-        context.setIsComplexHint();
-      }
-    }
   }
 }

@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,6 +11,15 @@ part of flutter3_basics;
 /// [ui.Image]
 /// [ui.Picture]
 /// [ui.Paragraph]
+
+/// 提示当前图层中的绘画很复杂，并且会从缓存中受益
+void setCanvasIsComplexHint(PaintingContext context, Decoration? decoration) {
+  if (decoration != null) {
+    if (decoration.isComplex) {
+      context.setIsComplexHint();
+    }
+  }
+}
 
 /// 自定义的绘制方法
 /// [childRect] 当前元素的绘制区域

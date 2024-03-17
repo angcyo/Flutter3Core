@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -15,7 +15,7 @@ class Line extends LeafRenderObjectWidget {
   /// 线条的方向
   final Axis axis;
 
-  /// 缩进
+  /// 宽或高, 需要收尾缩进多少量
   final double? indent;
   final double? endIndent;
 
@@ -28,6 +28,9 @@ class Line extends LeafRenderObjectWidget {
   final StrokeCap lineStrokeCap;
   final StrokeJoin lineStrokeJoin;
 
+  /// 线额外的装饰绘制
+  final Decoration? decoration;
+
   const Line({
     super.key,
     this.lineSize,
@@ -39,6 +42,7 @@ class Line extends LeafRenderObjectWidget {
     this.margin,
     this.lineStrokeCap = StrokeCap.round,
     this.lineStrokeJoin = StrokeJoin.round,
+    this.decoration,
   });
 
   @override
@@ -47,7 +51,10 @@ class Line extends LeafRenderObjectWidget {
   @override
   void updateRenderObject(BuildContext context, LineRender renderObject) {
     super.updateRenderObject(context, renderObject);
-    renderObject.line = this;
+    renderObject
+      ..reset()
+      ..line = this
+      ..markNeedsPaint();
   }
 }
 
@@ -56,6 +63,12 @@ class LineRender extends RenderBox {
   Line line;
 
   LineRender(this.line);
+
+  ImageConfiguration configuration = ImageConfiguration.empty;
+
+  BoxPainter? _painter;
+
+  void reset() {}
 
   @override
   void performLayout() {
@@ -100,41 +113,61 @@ class LineRender extends RenderBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     super.paint(context, offset);
-    var size = this.size;
-    var canvas = context.canvas;
-    var paint = Paint()
+    final size = this.size;
+    final canvas = context.canvas;
+
+    final paint = Paint()
       ..color = line.color
       ..strokeWidth = line.thickness
       ..strokeCap = line.lineStrokeCap
       ..strokeJoin = line.lineStrokeJoin
       ..style = PaintingStyle.stroke;
-    var leftMargin = line.margin?.left ?? 0;
-    var topMargin = line.margin?.top ?? 0;
-    var rightMargin = line.margin?.right ?? 0;
-    var bottomMargin = line.margin?.bottom ?? 0;
+    final leftMargin = line.margin?.left ?? 0;
+    final topMargin = line.margin?.top ?? 0;
+    final rightMargin = line.margin?.right ?? 0;
+    final bottomMargin = line.margin?.bottom ?? 0;
+
+    final indent = line.indent ?? 0;
+    final endIndent = line.endIndent ?? 0;
+
     if (line.axis == Axis.horizontal) {
+      final ImageConfiguration filledConfiguration = configuration.copyWith(
+          size: ui.Size(
+        size.width - indent - endIndent - leftMargin - rightMargin,
+        size.height - topMargin - bottomMargin,
+      ));
+      //背景绘制
+      _painter ??= line.decoration?.createBoxPainter(markNeedsPaint);
+      _painter?.paint(context.canvas, offset + Offset(leftMargin, topMargin),
+          filledConfiguration);
+      setCanvasIsComplexHint(context, line.decoration);
+
       //var lineHeight = size.height - topMargin - bottomMargin;
       canvas.drawLine(
-          offset.translate(line.indent ?? 0 + leftMargin + line.thickness / 2,
+          offset.translate(indent + leftMargin + line.thickness / 2,
               topMargin + line.thickness / 2),
           offset.translate(
-              size.width -
-                  (line.endIndent ?? 0) -
-                  rightMargin -
-                  line.thickness / 2,
+              size.width - endIndent - rightMargin - line.thickness / 2,
               topMargin + line.thickness / 2),
           paint);
     } else {
+      final ImageConfiguration filledConfiguration = configuration.copyWith(
+          size: ui.Size(
+        size.width - leftMargin - rightMargin,
+        size.height - indent - endIndent,
+      ));
+      //背景绘制
+      _painter ??= line.decoration?.createBoxPainter(markNeedsPaint);
+      _painter?.paint(context.canvas, offset + Offset(leftMargin, topMargin),
+          filledConfiguration);
+      setCanvasIsComplexHint(context, line.decoration);
+
       //var lineWidth = size.width - leftMargin - rightMargin;
       canvas.drawLine(
           offset.translate(leftMargin + line.thickness / 2,
-              line.indent ?? 0 + topMargin + line.thickness / 2),
-          offset.translate(
-              leftMargin + line.thickness / 2,
-              size.height -
-                  (line.endIndent ?? 0) -
-                  bottomMargin -
-                  line.thickness / 2),
+              indent + topMargin + line.thickness / 2),
+          offset.translate(leftMargin + line.thickness / 2,
+              size.height - endIndent - bottomMargin - line.thickness / 2),
           paint);
     }
   }
