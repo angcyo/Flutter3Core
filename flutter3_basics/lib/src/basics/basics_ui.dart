@@ -665,6 +665,8 @@ extension WidgetEx on Widget {
 
   /// 使用一个容器包裹当前的小部件
   /// [Container]
+  /// [AnimatedContainer] 动画容器
+  ///
   /// [color] 背景颜色
   /// [borderColor] 边框颜色, 如果有
   /// [borderWidth] 边框宽度

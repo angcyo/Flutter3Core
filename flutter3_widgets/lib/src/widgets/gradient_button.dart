@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 /// https://github.com/flutterchina/flukit
 /// Email:angcyo@126.com
@@ -6,6 +6,7 @@ part of flutter3_widgets;
 /// @date 2023/11/09
 ///
 
+/// 渐变按钮
 class GradientButton extends StatelessWidget {
   const GradientButton({
     super.key,
@@ -157,6 +158,7 @@ class GradientButton extends StatelessWidget {
   }
 }
 
+/// 阴影变化渐变按钮
 class ElevatedGradientButton extends StatefulWidget {
   const ElevatedGradientButton({
     Key? key,
