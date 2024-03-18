@@ -6,6 +6,9 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/03/17
 ///
 /// 支持宽高动画变化的小部件
+/// [AnimatedSize] 动画容器
+/// [AnimatedContainer] 动画容器
+/// [AnimatedCrossFade] 交叉淡入淡出动画容器
 class SizeAnimationWidget extends StatefulWidget {
   /// 激活宽度动画
   final bool enableWidthAnimation;

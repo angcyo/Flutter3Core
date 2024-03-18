@@ -206,22 +206,16 @@ HSV（HSB）/HSL/RGB/材质颜色选择器的灵感来自您令人惊叹的 FLUT
 
 https://guoshuyu.cn/home/wx/Z1.html
 
-- [animated_text_kit: ^4.2.2](https://pub.dev/packages/animated_text_kit) 一个 flutter
-  包，其中包含一些很酷和很棒的文本动画的集合。Codemagic 电子书“我们喜欢的 Flutter
-  库”中文本动画的推荐包。试用我们的实时示例应用程序。
-- [animate_do: ^3.1.2](https://pub.dev/packages/animate_do) 受 Animate.css 启发的动画包，仅使用
-  Flutter 动画构建，零依赖性。
+- [animated_text_kit: ^4.2.2](https://pub.dev/packages/animated_text_kit) 一个 flutter 包，其中包含一些很酷和很棒的文本动画的集合。Codemagic 电子书“我们喜欢的 Flutter 库”中文本动画的推荐包。试用我们的实时示例应用程序。
+- [animate_do: ^3.1.2](https://pub.dev/packages/animate_do) 受 Animate.css 启发的动画包，仅使用 Flutter 动画构建，零依赖性。
 - [auto_animated: ^3.2.0](https://pub.dev/packages/auto_animated) 一个 Flutter 包，用于创建动画列表。
-- [simple_animations: ^5.0.2](https://pub.dev/packages/simple_animations) Simple Animations
-  简化了创建精美自定义动画的过程：
+- [simple_animations: ^5.0.2](https://pub.dev/packages/simple_animations) Simple Animations 简化了创建精美自定义动画的过程：
 - [animations: ^2.0.8](https://pub.dev/packages/animations) 用于 Flutter 的高质量预构建动画
 - [spring: ^2.0.2](https://pub.dev/packages/spring) 一个简单而强大的预构建动画套件。
-- [animated_flip_counter: ^0.2.6](https://pub.dev/packages/animated_flip_counter)
-  一个隐式动画小部件，从一个数字翻转到另一个数字。
+- [animated_flip_counter: ^0.2.6](https://pub.dev/packages/animated_flip_counter) 一个隐式动画小部件，从一个数字翻转到另一个数字。
 - [odometer: ^3.0.0](https://pub.dev/packages/odometer) 计数器动画
 - [animated_digit: ^3.2.3](https://pub.dev/packages/animated_digit) 滚动动画数字小部件，任何需要动画效果的数字，易于使用。
-- [flutter_animate: ^4.3.0](https://pub.dev/packages/flutter_animate) 一个高性能的库，可以简单地在
-  Flutter 中添加几乎任何类型的动画效果。
+- [flutter_animate: ^4.3.0](https://pub.dev/packages/flutter_animate) 一个高性能的库，可以简单地在 Flutter 中添加几乎任何类型的动画效果。
 - [animated_size_and_fade: ^3.0.1](https://pub.dev/packages/animated_size_and_fade) 在两个小部件之间执行淡入淡出和大小过渡。[AnimatedSize]+[AnimatedSwitcher]
 
 ## 国际化
