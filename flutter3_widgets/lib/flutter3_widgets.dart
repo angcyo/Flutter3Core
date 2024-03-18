@@ -28,16 +28,11 @@ export 'package:lifecycle/lifecycle.dart';
 export 'package:list_wheel_scroll_view_nls/list_wheel_scroll_view_nls.dart';
 export 'package:sliver_tools/sliver_tools.dart';
 
+export 'src/dialog/dialog.dart';
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';
 export 'src/pub/swiper/transformer_page_view/transformer_page_view.dart';
 
-part 'src/dialog/cancel_button.dart';
-part 'src/dialog/confirm_button.dart';
-part 'src/dialog/dialog_mixin.dart';
-part 'src/dialog/dialog_page_route.dart';
-part 'src/dialog/ios_normal_dialog.dart';
-part 'src/dialog/single_input_dialog.dart';
 part 'src/navigation/navigate_ex.dart';
 part 'src/pub/accurate_sized_box.dart';
 part 'src/pub/badges_ex.dart';

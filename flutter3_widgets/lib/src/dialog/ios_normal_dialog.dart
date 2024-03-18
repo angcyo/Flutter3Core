@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of './dialog.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
