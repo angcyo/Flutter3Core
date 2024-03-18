@@ -1868,10 +1868,15 @@ Gradient linearGradient(
 
 /// 返回一个线性渐变的小部件
 /// [colors] 渐变颜色, 必须要2个颜色
+/// [gradientDirection] 渐变方向, 默认水平方向, 此属性只是用来设置[begin]和[end]的
 Widget linearGradientWidget(
   List<Color> colors, {
+  double? width,
+  double? height,
+  BoxConstraints? constraints,
   Key? key,
   Widget? child,
+  Axis? gradientDirection = Axis.horizontal,
   AlignmentGeometry begin = Alignment.centerLeft,
   AlignmentGeometry end = Alignment.centerRight,
   TileMode tileMode = TileMode.clamp,
@@ -1880,8 +1885,18 @@ Widget linearGradientWidget(
   if (colors.length == 1) {
     colors = [...colors, ...colors];
   }
+  if (gradientDirection == Axis.horizontal) {
+    begin = Alignment.centerLeft;
+    end = Alignment.centerRight;
+  } else if (gradientDirection == Axis.vertical) {
+    begin = Alignment.topCenter;
+    end = Alignment.bottomCenter;
+  }
   return Container(
     key: key,
+    width: width,
+    height: height,
+    constraints: constraints,
     decoration: BoxDecoration(
       gradient: linearGradient(
         colors,

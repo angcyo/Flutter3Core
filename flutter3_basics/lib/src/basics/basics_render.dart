@@ -43,7 +43,14 @@ extension RenderObjectMixinEx on RenderObject {
     }
   }
 
-  /// 尝试获取[RenderObject]的大小
+  /// 尝试获取[RenderObject]的大小, 只有[parent]才能合理的获取[ui.Size]否则会警告.
+  /// ```
+  /// RenderBox.size accessed beyond the scope of resize, layout, or permitted parent access.
+  /// RenderBox can always access its own size, otherwise,
+  /// the only object that is allowed to read RenderBox.size is its parent,
+  /// if they have said they will. It you hit this assert trying to access a child's size,
+  /// pass "parentUsesSize: true" to that child's layout().
+  /// ```
   Size? get renderSize {
     if (this is RenderBox) {
       try {
