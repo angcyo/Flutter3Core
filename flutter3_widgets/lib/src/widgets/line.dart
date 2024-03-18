@@ -82,7 +82,7 @@ class LineRender extends RenderBox {
       if (line.lineSize == null) {
         //自适应线宽
         if (constraints.maxWidth == double.infinity) {
-          var siblingSize = _findSiblingSize();
+          final siblingSize = _findSiblingSize();
           width = siblingSize?.width ?? 0;
         } else {
           width = constraints.maxWidth;

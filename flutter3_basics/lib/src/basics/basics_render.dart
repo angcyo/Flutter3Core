@@ -31,6 +31,7 @@ extension ContainerRenderObjectMixinEx<ChildType extends RenderObject,
 
 extension RenderObjectMixinEx on RenderObject {
   /// 遍历当前渲染对象的所有子元素
+  /// `sync*`.`async*`
   Iterable<RenderObject> get childrenList sync* {
     RenderObject? child;
     if (this is ContainerRenderObjectMixin) {
