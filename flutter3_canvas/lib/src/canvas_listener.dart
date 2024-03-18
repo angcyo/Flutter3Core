@@ -7,22 +7,25 @@ part of '../flutter3_canvas.dart';
 /// 画布回调监听
 class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]
-  final void Function(CanvasViewBox canvasViewBox, bool isCompleted)?
-      onCanvasViewBoxChangedAction;
+  final void Function(
+    CanvasViewBox canvasViewBox,
+    bool isCompleted,
+  )? onCanvasViewBoxChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasSelectBoundsChanged]
   final void Function(Rect? bounds)? onCanvasSelectBoundsChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementPropertyChanged]
   final void Function(
-      ElementPainter elementPainter,
-      PaintProperty? old,
-      PaintProperty? value,
-      int propertyType)? onCanvasElementPropertyChangedAction;
+    ElementPainter elementPainter,
+    PaintProperty? from,
+    PaintProperty? to,
+    int propertyType,
+  )? onCanvasElementPropertyChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementSelectChanged]
   final void Function(
-    ElementSelectComponent elementSelect,
+    ElementSelectComponent selectComponent,
     List<ElementPainter>? from,
     List<ElementPainter>? to,
   )? onCanvasElementSelectChangedAction;

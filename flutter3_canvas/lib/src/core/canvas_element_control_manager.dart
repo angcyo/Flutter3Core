@@ -305,7 +305,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     List<ElementPainter> op,
     UndoType undoType,
   ) {
-    /*if (isSelectedElement) {
+    if (isSelectedElement) {
       final list = elementSelectComponent.children;
       if (list != null) {
         //debugger();
@@ -330,7 +330,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           }
         }
       }
-    }*/
+    }
   }
 
   /// 当选中的元素发生变化时, 调用
@@ -367,7 +367,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void removeSelectedElement() {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
-      elementSelectComponent.resetChildren(null, enableResetElementAngle);
+      //elementSelectComponent.resetChildren(null, enableResetElementAngle);
+      elementSelectComponent.resetSelectElement(null);
       canvasDelegate.canvasElementManager.removeElementList(list);
     }
   }

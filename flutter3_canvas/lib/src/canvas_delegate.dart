@@ -138,13 +138,15 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 选择的元素改变后回调
+  /// [to] 为null or empty时, 表示取消选择
   void dispatchCanvasElementSelectChanged(
-    ElementSelectComponent elementSelect,
+    ElementSelectComponent selectComponent,
     List<ElementPainter>? from,
     List<ElementPainter>? to,
   ) {
     canvasListeners.clone().forEach((element) {
-      element.onCanvasElementSelectChangedAction?.call(elementSelect, from, to);
+      element.onCanvasElementSelectChangedAction
+          ?.call(selectComponent, from, to);
     });
     refresh();
   }
