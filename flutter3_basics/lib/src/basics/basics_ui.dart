@@ -81,6 +81,7 @@ Widget builder(
 /// [LayoutBuilder]
 /// https://pub.dev/packages/value_layout_builder
 ///
+/// [sliverLayout]
 /// [_DeferredLayout] 延迟布局
 Widget layout(
   Widget Function(BuildContext context, BoxConstraints constraints) builder, [
@@ -488,6 +489,8 @@ extension WidgetEx on Widget {
   /// 对齐
   /// [Align]
   /// [Center]
+  /// [Alignment.center]
+  /// [AlignmentDirectional.center]
   Widget align(
     AlignmentGeometry alignment, {
     double? widthFactor,
@@ -1043,6 +1046,21 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 约束大小
+  /// [constrainedBox]
+  Widget constrained({
+    double minWidth = 0.0,
+    double maxWidth = double.infinity,
+    double minHeight = 0.0,
+    double maxHeight = double.infinity,
+  }) =>
+      constrainedBox(BoxConstraints(
+        minWidth: minWidth,
+        maxWidth: maxWidth,
+        minHeight: minHeight,
+        maxHeight: maxHeight,
+      ));
+
   /// 固定大小约束
   /// [constrainedBox]
   Widget constrainedFixed(Size size) {
@@ -1051,6 +1069,7 @@ extension WidgetEx on Widget {
 
   /// 约束最小宽高
   /// [constrainedBox]
+  /// [ConstrainedBox]
   Widget constrainedMin({
     double? minWidth,
     double? minHeight,
@@ -1066,6 +1085,7 @@ extension WidgetEx on Widget {
 
   /// 约束最大宽高
   /// [constrainedBox]
+  /// [ConstrainedBox]
   Widget constrainedMax({
     double? maxWidth,
     double? maxHeight,
@@ -1149,6 +1169,8 @@ extension WidgetEx on Widget {
   /// [highlightColor] 高亮的颜色, 波纹扩散结束之后可见的颜色
   /// [splashColor] 波纹颜色, 动画扩散时的颜色
   /// [decoration] 强行指定装饰
+  ///
+  /// [material]
   Widget ink({
     GestureTapCallback? onTap,
     double radius = 0,

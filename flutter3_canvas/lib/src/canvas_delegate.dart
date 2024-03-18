@@ -33,6 +33,17 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //endregion ---入口点---
 
+  //region ---get/set---
+
+  /// 获取画布的单位
+  IUnit get axisUnit => canvasPaintManager.axisManager.axisUnit;
+
+  set axisUnit(IUnit unit) {
+    canvasPaintManager.axisManager.axisUnit = unit;
+  }
+
+  //endregion ---get/set---
+
   //region ---core---
 
   /// 画布样式
@@ -218,7 +229,3 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     properties.add(DiagnosticsProperty<Ticker?>('ticker', _ticker));
   }
 }
-
-/*abstract class ICanvasComponent {
-  void onCanvasViewBoxChanged(CanvasViewBox canvasViewBox);
-}*/

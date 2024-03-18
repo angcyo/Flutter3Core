@@ -69,6 +69,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 是否正在控制元素中
   bool get isControlElement => _currentControlState == ControlState.start;
 
+  /// 获取选中元素的边界
+  Rect? get selectBounds => isSelectedElement
+      ? (enableResetElementAngle
+          ? elementSelectComponent.paintProperty?.paintRectBounds
+          : elementSelectComponent.paintProperty?.paintScaleRotateBounds)
+      : null;
+
   CanvasElementControlManager(this.canvasElementManager) {
     addHandleEventClient(elementSelectComponent);
     addHandleEventClient(deleteControl);
@@ -425,6 +432,22 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void resetPaintInfoType() {
     updatePaintInfoType(PaintInfoType.size);
   }
+
+  //region ---api---
+
+  /// 更新指定元素的锁定宽高比状态
+  void updateElementLockState([ElementPainter? elementPainter]) {
+    elementPainter ??= elementSelectComponent;
+
+    final isLock = !elementPainter.isLockRatio;
+    elementSelectComponent.isLockRatio = isLock;
+    if (elementPainter is ElementSelectComponent) {
+      lockControl.isLock = isLock;
+      canvasDelegate.refresh();
+    }
+  }
+
+//endregion ---api---
 }
 
 /// 选择元素组件, 滑动选择元素

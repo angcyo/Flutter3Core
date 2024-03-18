@@ -84,6 +84,11 @@ abstract class IUnit {
   @unit
   double toUnit(@pixel num value);
 
+  @unit
+  double toUnitFromDp(@dp num value) {
+    return toUnit(value.toPixelFromDp());
+  }
+
   /// 格式化当前单位数值的输出
   /// [showSuffix] 是否显示单位后缀
   /// [fractionDigits] 小数点位数
@@ -94,6 +99,20 @@ abstract class IUnit {
     bool removeZero,
     bool ensureInt,
   });
+
+  String formatFromDp(
+    @dp num value, {
+    bool showSuffix = true,
+    int fractionDigits = kFractionDigits,
+    bool removeZero = true,
+    bool ensureInt = true,
+  }) {
+    return format(toUnitFromDp(value),
+        showSuffix: showSuffix,
+        fractionDigits: fractionDigits,
+        removeZero: removeZero,
+        ensureInt: ensureInt);
+  }
 
   //endregion ---基础---
 
@@ -201,6 +220,9 @@ class DpUnit extends IUnit {
   double toPx(num value) => value * dpr;
 
   @override
+  double toUnitFromDp(num value) => value + 0.0;
+
+  @override
   double toUnit(num value) => value / dpr;
 
   @override
@@ -292,6 +314,21 @@ class InchUnit extends IUnit {
       removeZero: removeZero,
       ensureInt: ensureInt,
     )}${showSuffix ? suffix : ''}";
+  }
+
+  @override
+  String formatFromDp(
+    num value, {
+    bool showSuffix = true,
+    int fractionDigits = kInchFractionDigits,
+    bool removeZero = true,
+    bool ensureInt = true,
+  }) {
+    return super.formatFromDp(value,
+        showSuffix: showSuffix,
+        fractionDigits: fractionDigits,
+        removeZero: removeZero,
+        ensureInt: ensureInt);
   }
 
   @override

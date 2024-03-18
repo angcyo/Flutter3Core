@@ -14,6 +14,21 @@ class CanvasElementManager with Diagnosticable {
 
   //---
 
+  /// 选择元素的组件
+  ElementSelectComponent? get elementSelectComponent => isSelectedElement
+      ? canvasElementControlManager.elementSelectComponent
+      : null;
+
+  /// 选中的元素, 如果是单元素, 则返回选中的元素, 否则返回[ElementSelectComponent]
+  ElementPainter? get selectedElement {
+    final elementSelectComponent = canvasDelegate.canvasElementManager
+        .canvasElementControlManager.elementSelectComponent;
+    if (elementSelectComponent.children?.length == 1) {
+      return elementSelectComponent.children?.first;
+    }
+    return elementSelectComponent;
+  }
+
   bool get isSelectedElement => canvasElementControlManager.isSelectedElement;
 
   CanvasElementManager(this.canvasDelegate);

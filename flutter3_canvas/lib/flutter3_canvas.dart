@@ -1,6 +1,5 @@
 library flutter3_canvas;
 
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -31,3 +30,52 @@ part 'src/event/canvas_notify.dart';
 part 'src/painter/element_painter.dart';
 part 'src/painter/painter.dart';
 part 'src/painter/path_painter.dart';
+
+Widget canvasSvgWidget(
+  String key, {
+  String? package = 'flutter3_canvas',
+  String? prefix = 'assets_canvas/svg/',
+  Color? tintColor,
+  UiColorFilter? colorFilter,
+  BoxFit fit = BoxFit.contain,
+  double? width,
+  double? height,
+}) =>
+    SvgPicture.asset(key.ensurePackagePrefix(package, prefix),
+        semanticsLabel: key,
+        colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+        width: width,
+        height: height,
+        fit: fit);
+
+Widget canvasLockWidget({
+  Color? tintColor,
+  UiColorFilter? colorFilter,
+  BoxFit fit = BoxFit.contain,
+  double? width,
+  double? height,
+}) =>
+    canvasSvgWidget(
+      'canvas_lock_point.svg',
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+      width: width,
+      height: height,
+      fit: fit,
+    );
+
+Widget canvasUnlockWidget({
+  Color? tintColor,
+  UiColorFilter? colorFilter,
+  BoxFit fit = BoxFit.contain,
+  double? width,
+  double? height,
+}) =>
+    canvasSvgWidget(
+      'canvas_unlock_point.svg',
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+      width: width,
+      height: height,
+      fit: fit,
+    );
