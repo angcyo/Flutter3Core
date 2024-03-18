@@ -19,3 +19,4 @@ part 'dialog_mixin.dart';
 part 'dialog_page_route.dart';
 part 'ios_normal_dialog.dart';
 part 'single_input_dialog.dart';
+part 'number_keyboard_dialog.dart';

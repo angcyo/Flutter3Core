@@ -99,6 +99,9 @@ mixin DialogConstraintMixin {
 
 /// 对话框的一些基础方法
 /// [barrierDismissible] 窗口外是否可以销毁对话框
+///
+/// [useSafeArea] 是否使用安全区域
+///
 /// [DialogRoute]
 /// [DialogPageRoute]
 /// [showDialog]

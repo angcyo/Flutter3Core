@@ -877,6 +877,7 @@ extension NumEx on num {
   }
 
   /// 检查此双精度值是否等于 other，避免浮点错误。
+  /// [precisionErrorTolerance] 误差范围
   bool equalTo(double other) => (this - other).abs() < 0.0000001;
 }
 
