@@ -51,7 +51,10 @@ extension RenderObjectMixinEx on RenderObject {
           return (this as RenderBox).size;
         }
       } catch (e) {
-        l.e(e);
+        assert(() {
+          l.e(e);
+          return true;
+        }());
         return null;
       }
     }
@@ -64,7 +67,10 @@ extension RenderObjectMixinEx on RenderObject {
       try {
         return (this as RenderBox).localToGlobal(Offset.zero);
       } catch (e) {
-        l.e(e);
+        assert(() {
+          l.e(e);
+          return true;
+        }());
         return null;
       }
     }
@@ -77,7 +83,10 @@ extension RenderObjectMixinEx on RenderObject {
       try {
         return ((this as RenderBox).parentData as BoxParentData?)?.offset;
       } catch (e) {
-        l.e(e);
+        assert(() {
+          l.e(e);
+          return true;
+        }());
         return null;
       }
     }
