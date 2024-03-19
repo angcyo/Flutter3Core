@@ -12,12 +12,12 @@ import 'package:flutter/widgets.dart';
 class $AssetsPngGen {
   const $AssetsPngGen();
 
-  /// File path: assets/png/loadError.png
+  /// File path: assets/png/load_error.png
   AssetGenImage get loadError =>
-      const AssetGenImage('assets/png/loadError.png');
+      const AssetGenImage('assets/png/load_error.png');
 
-  /// File path: assets/png/noData.png
-  AssetGenImage get noData => const AssetGenImage('assets/png/noData.png');
+  /// File path: assets/png/no_data.png
+  AssetGenImage get noData => const AssetGenImage('assets/png/no_data.png');
 
   /// List of all assets
   List<AssetGenImage> get values => [loadError, noData];
