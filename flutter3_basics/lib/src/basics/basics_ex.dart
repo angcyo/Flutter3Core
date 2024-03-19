@@ -94,20 +94,24 @@ extension ObjectEx on Object {
   dynamic fromJson() => toString().fromJson();
 
   /// 使用[Text]包裹
+  ///
+  /// [style] 文本样式
+  /// ...
   /// [highlight] 需要高亮的文本
   /// [highlightList] 需要高亮的文本列表
   /// [caseSensitive] 是否区分大小写
   /// [words] 是否只匹配单词(匹配完整的单词)
+  /// ...
   /// [Text]
   /// [RichText]
   /// https://pub.dev/packages/substring_highlight
   /// https://pub.dev/packages/highlightable
   /// https://pub.dev/packages/search_highlight_text
   Text text({
+    TextStyle? style,
     double? fontSize,
     Color? textColor,
     FontWeight? fontWeight,
-    TextStyle? style,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,

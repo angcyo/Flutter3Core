@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter3_widgets/assets_generated/assets.gen.dart';
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 
 ///
@@ -19,4 +20,3 @@ part 'dialog_mixin.dart';
 part 'dialog_page_route.dart';
 part 'ios_normal_dialog.dart';
 part 'single_input_dialog.dart';
-part 'number_keyboard_dialog.dart';

@@ -309,6 +309,8 @@ class FlowLayoutRender extends RenderBox
     final horizontalGap = childHorizontalGap ?? childGap;
     final verticalGap = childVerticalGap ?? childGap;
 
+    //debugger();
+
     final double maxWidth;
     if (selfConstraints?.maxWidth != null &&
         selfConstraints?.maxWidth != double.infinity) {
@@ -316,7 +318,7 @@ class FlowLayoutRender extends RenderBox
     } else if (constraints.maxWidth != double.infinity) {
       maxWidth = constraints.maxWidth;
     } else {
-      maxWidth = 100;
+      maxWidth = double.infinity;
       assert(() {
         l.d('无法确定的maxWidth');
         return true;
@@ -330,7 +332,7 @@ class FlowLayoutRender extends RenderBox
     } else if (constraints.maxHeight != double.infinity) {
       maxHeight = constraints.maxHeight;
     } else {
-      maxHeight = 100;
+      maxHeight = double.infinity;
       assert(() {
         l.d('无法确定的maxHeight');
         return true;
@@ -476,7 +478,6 @@ class FlowLayoutRender extends RenderBox
 
       top += lineUsedHeight + verticalGap;
       childUsedWidth = max(childUsedWidth, lineMaxWidth);
-      childUsedHeight += lineUsedHeight;
     });
 
     // 堆叠的child在此布局
@@ -497,9 +498,11 @@ class FlowLayoutRender extends RenderBox
       }
     }
 
+    //debugger();
     Size childSize = Size(childUsedWidth, childUsedHeight);
     size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
         constraints.constrain(childSize);
+    //debugger();
   }
 
   /// 计算所有行的高度, 不包含[padding], 但是包含[childVerticalGap]
@@ -541,12 +544,12 @@ class FlowLayoutRender extends RenderBox
     if (size.isEmpty) {
       return;
     }
-    assert(() {
+    /*assert(() {
       context.canvas.drawRect(
           ui.Rect.fromLTWH(offset.dx, offset.dy, size.width, size.height),
-          Paint()..color = const Color(0x90909090));
+          Paint()..color = Colors.white30);
       return true;
-    }());
+    }());*/
     defaultPaint(context, offset);
   }
 }

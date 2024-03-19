@@ -101,12 +101,14 @@ toastMessage(
 
 /// [toastMessage]
 toastInfo(
-  String msg, {
+  String? msg, {
   /// 图标
   IconData? icon,
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
 }) {
+  if (msg == null) return;
+
   toastMessage(
     Row(
       crossAxisAlignment: CrossAxisAlignment.center,

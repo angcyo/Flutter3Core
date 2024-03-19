@@ -155,9 +155,13 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
   /// 通否同时激活透明渐隐动画
   final bool fade;
 
+  /// 是否从上到下, 默认是从下到上
+  final bool topToBottom;
+
   TranslationPageRoute({
     required super.builder,
     this.fade = true,
+    this.topToBottom = false,
     super.settings,
     super.maintainState = true,
     super.fullscreenDialog,
@@ -175,18 +179,18 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
     //debugger();
     //logAnimation("Translation", animation, secondaryAnimation);
 
-    //顶部进入动画
-    var enter = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
+    //进入动画
+    final enter = Tween<Offset>(
+      begin: topToBottom ? const Offset(0, -1) : const Offset(0, 1),
+      end: topToBottom ? Offset.zero : Offset.zero,
     ).chain(CurveTween(curve: Curves.easeOut)).animate(animation);
-    //底部退出动画
-    var exit = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0, -0.2),
+    //退出动画
+    final exit = Tween<Offset>(
+      begin: topToBottom ? Offset.zero : Offset.zero,
+      end: topToBottom ? const Offset(0, -0.2) : const Offset(0, -0.2),
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
 
-    var slide = SlideTransition(
+    final slide = SlideTransition(
       position: enter,
       child: SlideTransition(
         position: exit,

@@ -38,9 +38,12 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
           transitionBuilder: (BuildContext context, Animation<double> animation,
               Animation<double> secondaryAnimation, Widget child) {
             if (type == TranslationType.translation ||
-                type == TranslationType.translationFade) {
+                type == TranslationType.translationFade ||
+                type == TranslationType.translationTopToBottom) {
               return TranslationPageRoute(
                       builder: (content) => child,
+                      topToBottom:
+                          type == TranslationType.translationTopToBottom,
                       fade: type == TranslationType.translationFade)
                   .buildSameTransitions(
                       context, animation, secondaryAnimation, child);

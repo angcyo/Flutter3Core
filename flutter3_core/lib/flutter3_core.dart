@@ -7,7 +7,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter3_core/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/src/isar/isar_test_collection.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:path/path.dart' as p;
@@ -30,6 +32,7 @@ export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
 
 part 'src/core/svg_core.dart';
+part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/file_ex.dart';
 part 'src/file/file_log.dart';

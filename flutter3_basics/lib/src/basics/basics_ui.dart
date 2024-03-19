@@ -159,8 +159,9 @@ extension WidgetListEx on WidgetNullList {
   }
 
   /// 使用[Column]包裹
+  /// [mainAxisAlignment] 主轴上的对齐方式, 水平方向, 水平左对齐, 水平居中, 水平右对齐
   /// [mainAxisSize] 主轴尺寸, 是要用最大尺寸, 还是要最小尺寸
-  /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
+  /// [crossAxisAlignment] 交叉轴上的对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
   Widget? column({
     MainAxisAlignment? mainAxisAlignment,
@@ -1559,6 +1560,8 @@ extension ElementEx on Element {}
 //region 导航相关
 
 /// 路由动画
+/// [RouteWidgetEx.toRoute] 路由动画
+/// [DialogPageRoute] 对话框路由, 动画
 enum TranslationType {
   /// [MaterialPageRoute]
   material,
@@ -1577,6 +1580,9 @@ enum TranslationType {
 
   /// [TranslationPageRoute]
   translation,
+
+  /// [TranslationPageRoute]
+  translationTopToBottom,
 
   /// [TranslationPageRoute]
   translationFade,
@@ -1638,6 +1644,18 @@ extension RouteWidgetEx on Widget {
       case TranslationType.translation:
         targetRoute = TranslationPageRoute(
           fade: false,
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.translationTopToBottom:
+        targetRoute = TranslationPageRoute(
+          fade: false,
+          topToBottom: true,
           builder: (context) => this,
           settings: settings,
           maintainState: maintainState,
