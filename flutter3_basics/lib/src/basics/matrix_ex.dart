@@ -103,15 +103,15 @@ extension Matrix4Ex on vector.Matrix4 {
   /// 平移指定的距离
   void translateBy({
     ui.Offset? anchor,
-    double? x,
-    double? y,
-    double? z,
+    double? dx,
+    double? dy,
+    double? dz,
   }) {
     if (anchor != null) {
-      x = anchor.dx;
-      y = anchor.dy;
+      dx = anchor.dx;
+      dy = anchor.dy;
     }
-    translate(x ?? 0, y ?? 0, z ?? 0);
+    translate(dx ?? 0, dy ?? 0, dz ?? 0);
   }
 
   /// 将平移矩阵*this

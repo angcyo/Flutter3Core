@@ -214,7 +214,7 @@ class CanvasViewBox with Diagnosticable {
       l.d('平移画布by: tx:$tx ty:$ty');
       return true;
     }());
-    changeMatrix(canvasMatrix.clone()..translateBy(x: tx, y: ty), anim: anim);
+    changeMatrix(canvasMatrix.clone()..translateBy(dx: tx, dy: ty), anim: anim);
   }
 
   /// 平移画布

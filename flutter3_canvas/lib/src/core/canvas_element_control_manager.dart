@@ -449,7 +449,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-  /// 缩放元素
+  /// 按比例缩放元素
+  @api
   @supportUndo
   void scaleElement(
     ElementPainter? elementPainter, {
@@ -469,6 +470,58 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           .addUntoState(undoStateStack, redoStateStack);
     } else {
       elementPainter.applyScaleMatrix(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
+    }
+  }
+
+  /// 按照指定的量平移元素
+  @api
+  @supportUndo
+  void translateElement(
+    ElementPainter? elementPainter, {
+    double? dx,
+    double? dy,
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null) {
+      return;
+    }
+    final matrix = Matrix4.identity()..translateBy(dx: dx ?? 0, dy: dy ?? 0);
+    if (undoType == UndoType.normal) {
+      final undoStateStack = elementPainter.createStateStack();
+      elementPainter.applyMatrixWithAnchor(matrix);
+      final redoStateStack = elementPainter.createStateStack();
+      canvasDelegate.canvasUndoManager
+          .addUntoState(undoStateStack, redoStateStack);
+    } else {
+      elementPainter.applyMatrixWithAnchor(matrix);
+    }
+  }
+
+  /// 旋转元素
+  /// [angle] 旋转的角度, 单位: 弧度
+  @api
+  @supportUndo
+  void rotateElement(
+    ElementPainter? elementPainter,
+    double? angle, {
+    Offset? anchor,
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null || angle == null) {
+      return;
+    }
+    if (undoType == UndoType.normal) {
+      final undoStateStack = elementPainter.createStateStack();
+      elementPainter.rotateBy(angle, anchor: anchor);
+      final redoStateStack = elementPainter.createStateStack();
+      canvasDelegate.canvasUndoManager
+          .addUntoState(undoStateStack, redoStateStack);
+    } else {
+      elementPainter.rotateBy(angle, anchor: anchor);
+    }
+    if (enableResetElementAngle) {
+      elementSelectComponent.updateChildPaintPropertyFromChildren(true);
+      elementSelectComponent.updatePaintPropertyFromChildren(true);
     }
   }
 
