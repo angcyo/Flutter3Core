@@ -525,6 +525,31 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
+  /// 翻转元素
+  /// [flipX] 水平翻转
+  /// [flipY] 垂直翻转
+  @api
+  @supportUndo
+  void flipElement(
+    ElementPainter? elementPainter, {
+    bool? flipX,
+    bool? flipY,
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null) {
+      return;
+    }
+    if (undoType == UndoType.normal) {
+      final undoStateStack = elementPainter.createStateStack();
+      elementPainter.flip(flipX: flipX, flipY: flipY);
+      final redoStateStack = elementPainter.createStateStack();
+      canvasDelegate.canvasUndoManager
+          .addUntoState(undoStateStack, redoStateStack);
+    } else {
+      elementPainter.flip(flipX: flipX, flipY: flipY);
+    }
+  }
+
 //endregion ---api---
 }
 

@@ -225,6 +225,18 @@ class ElementPainter extends IPainter {
     });
   }
 
+  /// 翻转元素
+  /// [flipX] 是否水平翻转
+  /// [flipY] 是否垂直翻转
+  @api
+  void flip({bool? flipX, bool? flipY}) {
+    paintProperty?.let((it) {
+      paintProperty = it.clone()
+        ..flipX = flipX == null ? it.flipX : !it.flipX
+        ..flipY = flipY == null ? it.flipY : !it.flipY;
+    });
+  }
+
   //---
 
   CanvasDelegate? canvasDelegate;
@@ -435,6 +447,14 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
+  void flip({bool? flipX, bool? flipY}) {
+    super.flip(flipX: flipX, flipY: flipY);
+    children?.forEach((element) {
+      element.flip(flipX: flipX, flipY: flipY);
+    });
+  }
+
+  @override
   bool containsElement(ElementPainter? element) {
     return super.containsElement(element) ||
         children?.any((item) => item.containsElement(element)) == true;
@@ -490,6 +510,8 @@ class PaintProperty with EquatableMixin {
   /// [NumEx.toSanitizeDegrees]
   double angle = 0;
 
+  /// 翻转不参与边界的计算, 只是绘制时的翻转
+
   /// 是否水平翻转
   bool flipX = false;
 
@@ -509,7 +531,13 @@ class PaintProperty with EquatableMixin {
   /// 元素缩放/倾斜矩阵(不包含旋转和平移)
   Matrix4 get scaleMatrix => Matrix4.identity()
     ..skewBy(kx: skewX, ky: skewY)
-    ..postScale(sx: flipX ? -scaleX : scaleX, sy: flipY ? -scaleY : scaleY);
+    ..postScale(
+        sx: flipX ? -scaleX : scaleX,
+        sy: flipY ? -scaleY : scaleY,
+        anchor: rect.center);
+
+  //..postScale(sx: scaleX, sy: scaleY);
+  /*..postScale(sx: flipX ? -scaleX : scaleX, sy: flipY ? -scaleY : scaleY);*/
 
   /// 元素缩放/倾斜后的矩形
   /// [scaleMatrix]
@@ -534,6 +562,12 @@ class PaintProperty with EquatableMixin {
 
   /// 元素绘制的矩阵, 包含全属性
   Matrix4 get paintMatrix => translateToAnchor(scaleMatrix..postRotate(angle));
+
+  /// ```
+  /// translateToAnchor(scaleMatrix..postRotate(angle))
+  //     ..postFlip(flipX: flipX, flipY: flipY, anchor: paintScaleRect.center);
+  /// ```
+  Matrix4 get paintMatrix2 => paintMatrix;
 
   /*/// 仅包含旋转的矩阵
   Matrix4 get rotateMatrix =>

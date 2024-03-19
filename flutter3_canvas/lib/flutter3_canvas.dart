@@ -30,7 +30,8 @@ part 'src/event/canvas_event.dart';
 part 'src/event/canvas_notify.dart';
 part 'src/painter/element_painter.dart';
 part 'src/painter/painter.dart';
-part 'src/painter/path_painter.dart';
+part 'src/painter/path_element_painter.dart';
+part 'src/painter/text_element_painter.dart';
 
 Widget canvasSvgWidget(
   String key, {

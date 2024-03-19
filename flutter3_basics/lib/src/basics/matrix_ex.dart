@@ -77,6 +77,7 @@ extension Matrix4Ex on vector.Matrix4 {
     multiply(other);
   }
 
+  /// 返回一个新的矩阵
   Matrix4 preConcatIt(Matrix4 other) => Matrix4.copy(this)..preConcat(other);
 
   /// Postconcats the matrix with the specified matrix. M' = other * M
@@ -84,6 +85,7 @@ extension Matrix4Ex on vector.Matrix4 {
     setFrom(other * this);
   }
 
+  /// 返回一个新的矩阵
   Matrix4 postConcatIt(Matrix4 other) => Matrix4.copy(this)..postConcat(other);
 
   /// 平移到指定位置
@@ -160,16 +162,15 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
-    if (sx == null && sy == null && sz == null) {
-      return;
-    }
-    if (sx == 1 && sy == 1 && sz == 1) {
-      return;
-    }
-    withPivot(() {
-      final scale = vector.Vector3(sx ?? 1, sy ?? 1, sz ?? 1);
-      this.scale(scale);
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    postScale(
+      sx: sx,
+      sy: sy,
+      sz: sz,
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
   }
 
   /// 缩放指定倍数
@@ -188,11 +189,40 @@ extension Matrix4Ex on vector.Matrix4 {
     if (sx == 1 && sy == 1 && sz == 1) {
       return;
     }
-    withPivot(() {
-      final scale = vector.Vector3(sx ?? 1, sy ?? 1, sz ?? 1);
-      final matrix = Matrix4.identity()..scale(scale);
-      postConcat(matrix);
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    final translation =
+        vector.Vector3(anchor?.dx ?? pivotX, anchor?.dy ?? pivotY, pivotZ);
+
+    // 真实的缩放矩阵
+    final scale = vector.Vector3(sx ?? 1, sy ?? 1, sz ?? 1);
+    final scaleMatrix = Matrix4.identity()
+      ..translate(translation)
+      ..scale(scale)
+      ..translate(-translation);
+
+    postConcat(scaleMatrix);
+  }
+
+  /// 在指定位置翻转矩阵
+  void postFlip({
+    bool? flipX,
+    bool? flipY,
+    ui.Offset? anchor,
+    double pivotX = 0,
+    double pivotY = 0,
+    double pivotZ = 0,
+  }) {
+    //debugger();
+    if (flipX == null && flipY == null) {
+      return;
+    }
+    scaleBy(
+      sx: flipX == true ? -1 : 1,
+      sy: flipY == true ? -1 : 1,
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
   }
 
   /// 缩放到指定倍数
