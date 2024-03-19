@@ -36,6 +36,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 绘制元素的信息
   PaintInfoType paintInfoType = PaintInfoType.none;
 
+  /// 限制元素单次最小缩放的比例
+  double? elementMinScale = 0.001;
+
   /// 选择元素操作的组件
   late ElementSelectComponent elementSelectComponent =
       ElementSelectComponent(this);
@@ -71,9 +74,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 获取选中元素的边界
   Rect? get selectBounds => isSelectedElement
-      ? (enableResetElementAngle
-          ? elementSelectComponent.paintProperty?.paintRectBounds
-          : elementSelectComponent.paintProperty?.paintScaleRotateBounds)
+      ? elementSelectComponent.paintProperty?.getBounds(enableResetElementAngle)
       : null;
 
   CanvasElementControlManager(this.canvasElementManager) {
@@ -129,6 +130,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// [CanvasElementManager.handleElementEvent]
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
+    //debugger();
     if (enableElementControl) {
       if (event.isPointerDown) {
         ignoreHandlePointer(
@@ -447,6 +449,29 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
+  /// 缩放元素
+  @supportUndo
+  void scaleElement(
+    ElementPainter? elementPainter, {
+    double? sx,
+    double? sy,
+    Offset? anchor,
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null) {
+      return;
+    }
+    if (undoType == UndoType.normal) {
+      final undoStateStack = elementPainter.createStateStack();
+      elementPainter.applyScaleMatrix(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
+      final redoStateStack = elementPainter.createStateStack();
+      canvasDelegate.canvasUndoManager
+          .addUntoState(undoStateStack, redoStateStack);
+    } else {
+      elementPainter.applyScaleMatrix(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
+    }
+  }
+
 //endregion ---api---
 }
 
@@ -458,9 +483,6 @@ class ElementSelectComponent extends ElementGroupPainter
         MultiPointerDetectorMixin,
         HandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
-
-  /// 限制最小缩放比例
-  double? minScale = 0.1;
 
   /// 画笔
   final Paint boundsPaint = Paint();
@@ -549,9 +571,9 @@ class ElementSelectComponent extends ElementGroupPainter
 
   @override
   bool onPointerEvent(PointerEvent event) {
-    //debugger();
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(event)) {
+        //debugger();
         final viewBox =
             canvasElementControlManager.canvasDelegate.canvasViewBox;
         if (event.isPointerDown) {
@@ -593,6 +615,8 @@ class ElementSelectComponent extends ElementGroupPainter
             }
           }
           _downElementList = null;
+        } else if (event.isPointerCancel) {
+          updateSelectBounds(null, false);
         }
         return true;
       } else if (event.isPointerDown) {
@@ -660,68 +684,16 @@ class ElementSelectComponent extends ElementGroupPainter
     });
   }
 
-  /// 缩放选中的元素
-  @api
+  /// 直接操作缩放属性
+  @override
+  void applyScale({double? sx, double? sy, double? sxTo, double? syTo}) {
+    super.applyScale(sx: sx, sy: sy, sxTo: sxTo, syTo: syTo);
+  }
+
+  /// 组内缩放元素
+  @override
   void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
-    double angle = paintProperty?.angle ?? 0; //弧度
-    anchor ??= paintProperty?.anchor ?? Offset.zero;
-
-    //自身使用直接缩放
-    paintProperty?.let((it) {
-      final tsx = it.scaleX * sx;
-      final tsy = it.scaleY * sy;
-
-      minScale?.let((min) {
-        double minSx = tsx < min ? min / it.scaleX : sx;
-        double minSy = tsy < min ? min / it.scaleY : sy;
-
-        if (tsx < min || tsy < min) {
-          //最终的缩放比例小于限制的最小值
-          if (sx.equalTo(sy)) {
-            //等比缩放
-            if (tsx < min) {
-              sx = minSx;
-            } else {
-              sx = minSy;
-            }
-            sy = sx;
-          } else {
-            //不等比缩放
-            sx = minSx;
-            sy = minSy;
-          }
-        }
-      });
-
-      paintProperty = it.clone()..applyScale(sxBy: sx, syBy: sy);
-    });
-
-    //子元素使用矩阵缩放
-    final matrix = Matrix4.identity();
-
-    if (angle % (2 * pi) == 0) {
-      //未旋转
-      final scaleMatrix = Matrix4.identity()
-        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
-
-      matrix.postConcat(scaleMatrix);
-    } else {
-      final rotateMatrix = Matrix4.identity()
-        ..rotateBy(angle, anchor: paintProperty?.paintRectBounds.center);
-      final rotateInvertMatrix = rotateMatrix.invertedMatrix();
-      Offset anchorInvert = rotateInvertMatrix.mapPoint(anchor);
-
-      final scaleMatrix = Matrix4.identity()
-        ..scaleBy(sx: sx, sy: sy, anchor: anchorInvert);
-
-      matrix.setFrom(rotateInvertMatrix);
-      matrix.postConcat(scaleMatrix);
-      matrix.postConcat(rotateMatrix);
-    }
-
-    children?.forEach((element) {
-      element.applyMatrixWithCenter(matrix);
-    });
+    super.applyScaleMatrix(sx: sx, sy: sy, anchor: anchor);
   }
 
   @override

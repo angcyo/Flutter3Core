@@ -93,7 +93,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   bool interceptPointerEvent(PointerEvent event) {
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(event)) {
-        if (event.isPointerDown) {
+        if (event.isPointerDown && controlBounds != null) {
           isPointerDownIn = isPointerInBounds(event);
           if (isPointerDownIn) {
             onSelfFirstPointerDown(event);
@@ -607,10 +607,11 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
           if (canvasElementControlManager.elementSelectComponent
               .hitTest(point: downScenePoint)) {
             //需要拖动选中的元素
+            //debugger();
             isPointerDownIn = true;
-            startControlTarget(
-                canvasElementControlManager.elementSelectComponent);
-            return true;
+            isFirstHandle = true;
+            canvasElementControlManager
+                .updatePaintInfoType(PaintInfoType.location);
           } else {
             final downElementList = canvasElementControlManager
                 .canvasElementManager
@@ -624,6 +625,19 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               startControlTarget(
                   canvasElementControlManager.elementSelectComponent);
               return true;
+            }
+          }
+        } else if (event.isPointerMove) {
+          //debugger();
+          if (isPointerDownIn) {
+            if (isFirstHandle) {
+              if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
+                //首次移动, 并且超过了阈值
+                isFirstHandle = false;
+                startControlTarget(
+                    canvasElementControlManager.elementSelectComponent);
+                return true;
+              }
             }
           }
         }

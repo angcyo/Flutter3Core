@@ -175,6 +175,18 @@ class ElementPainter extends IPainter {
     });
   }
 
+  /// 作用一个缩放矩阵
+  @api
+  void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
+    if (anchor == null) {
+      applyScale(sx: sx, sy: sy);
+    } else {
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
+      applyMatrixWithCenter(scaleMatrix);
+    }
+  }
+
   /// 应用矩阵, 通常在子元素缩放时需要使用方法
   /// [applyMatrixWithCenter]
   /// [applyMatrixWithAnchor]
@@ -330,6 +342,77 @@ class ElementGroupPainter extends ElementPainter {
     });
   }
 
+  /// 缩放选中的元素
+  /// [anchor] 缩放的锚点, 不指定则使用[PaintProperty]的锚点
+  /// [ScaleControl]
+  @override
+  void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
+    double angle = paintProperty?.angle ?? 0; //弧度
+    anchor ??= paintProperty?.anchor ?? Offset.zero;
+
+    //自身使用直接缩放
+    if (paintProperty != null) {
+      final it = paintProperty!;
+      final tsx = it.scaleX * sx;
+      final tsy = it.scaleY * sy;
+
+      final minScale = canvasDelegate
+          ?.canvasElementManager.canvasElementControlManager.elementMinScale;
+      if (minScale != null) {
+        double minSx = tsx < minScale ? minScale / it.scaleX : sx;
+        double minSy = tsy < minScale ? minScale / it.scaleY : sy;
+
+        //debugger();
+
+        if (tsx < minScale || tsy < minScale) {
+          //最终的缩放比例小于限制的最小值
+          if (sx.equalTo(sy)) {
+            //等比缩放
+            if (tsx < minScale) {
+              sx = minSx;
+            } else {
+              sx = minSy;
+            }
+            sy = sx;
+          } else {
+            //不等比缩放
+            sx = minSx;
+            sy = minSy;
+          }
+        }
+      }
+
+      paintProperty = it.clone()..applyScale(sxBy: sx, syBy: sy);
+    }
+
+    //子元素使用矩阵缩放
+    final matrix = Matrix4.identity();
+
+    if (angle % (2 * pi) == 0) {
+      //未旋转
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
+
+      matrix.postConcat(scaleMatrix);
+    } else {
+      final rotateMatrix = Matrix4.identity()
+        ..rotateBy(angle, anchor: paintProperty?.paintRectBounds.center);
+      final rotateInvertMatrix = rotateMatrix.invertedMatrix();
+      Offset anchorInvert = rotateInvertMatrix.mapPoint(anchor);
+
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchorInvert);
+
+      matrix.setFrom(rotateInvertMatrix);
+      matrix.postConcat(scaleMatrix);
+      matrix.postConcat(rotateMatrix);
+    }
+
+    children?.forEach((element) {
+      element.applyMatrixWithCenter(matrix);
+    });
+  }
+
   @override
   void applyMatrixWithCenter(Matrix4 matrix) {
     super.applyMatrixWithCenter(matrix);
@@ -470,6 +553,11 @@ class PaintProperty with EquatableMixin {
   //endregion ---get属性---
 
   //region ---操作方法---
+
+  /// 获取元素的边界
+  Rect getBounds(bool enableResetElementAngle) {
+    return enableResetElementAngle ? paintRectBounds : paintScaleRotateBounds;
+  }
 
   /// 将矩阵平移到锚点位置
   Matrix4 translateToAnchor(Matrix4 matrix) {

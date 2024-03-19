@@ -14,4 +14,13 @@ class CanvasUndoManager extends UndoManager {
     super.notifyChange(fromType);
     canvasDelegate.dispatchCanvasUndoChanged(this, fromType);
   }
+
+  /// 添加一个可以撤销的操作
+  void addUntoState(ElementStateStack undoState, ElementStateStack redoState) {
+    add(UndoItem(() {
+      undoState.restore();
+    }, () {
+      redoState.restore();
+    }));
+  }
 }

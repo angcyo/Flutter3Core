@@ -1,5 +1,6 @@
 library flutter3_canvas;
 
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';

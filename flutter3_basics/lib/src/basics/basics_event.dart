@@ -173,6 +173,7 @@ mixin PointerDispatchMixin {
     } else {
       for (var element in clientList) {
         if (element.interceptPointerEvent(event)) {
+          //debugger();
           interceptHandleTarget = element;
           if (!element.ignoreEventHandle) {
             handled = element.onPointerEvent(event);
@@ -202,6 +203,7 @@ mixin PointerDispatchMixin {
 
     //4:last
     if (event.isPointerFinish) {
+      //debugger();
       pointerMap.remove(event.pointer);
       if (pointerMap.isEmpty) {
         interceptHandleTarget = null;

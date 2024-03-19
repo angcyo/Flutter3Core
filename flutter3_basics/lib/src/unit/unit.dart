@@ -84,6 +84,12 @@ abstract class IUnit {
   @unit
   double toUnit(@pixel num value);
 
+  /// 将[otherUnit]单位的值[value]转换成当前单位的值
+  @unit
+  double toUnitFromUnit(IUnit otherUnit, @unit num value) {
+    return toUnit(otherUnit.toPx(value));
+  }
+
   @unit
   double toUnitFromDp(@dp num value) {
     return toUnit(value.toPixelFromDp());

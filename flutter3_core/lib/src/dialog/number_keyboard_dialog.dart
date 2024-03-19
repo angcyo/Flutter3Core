@@ -5,6 +5,10 @@ part of '../../flutter3_core.dart';
 /// @author angcyo
 /// @date 2024/03/18
 ///
+
+/// 输入回调
+typedef NumberInputCallback = void Function(num? value);
+
 /// 数字键盘输入对话框
 class NumberKeyboardDialog extends StatefulWidget {
   /// 键盘类型: 数字
