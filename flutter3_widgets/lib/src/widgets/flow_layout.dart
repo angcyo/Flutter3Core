@@ -116,10 +116,17 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
   /// 当前这一行在计算[weight]时, 需要排除多个[child]的gap
   int excludeGapCount;
 
+  //---
+
+  /// 是否堆叠在一起, 如果开启堆叠, 那么当前的child, 不会占据原有的布局空间
+  /// 堆叠元素的起始坐标, 默认就是在当前位置
+  bool stack;
+
   FlowLayoutParentData({
     this.constraints,
     this.weight,
     this.excludeGapCount = 0,
+    this.stack = false,
   });
 
   @override
@@ -130,6 +137,7 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
 
 /// 提供布局数据的小部件
 /// [Flexible]
+/// [FlowLayoutParentData]
 class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
   /// [FlowLayoutParentData.constraints]
   final BoxConstraints? constraints;
@@ -140,11 +148,15 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
   /// [FlowLayoutParentData.excludeGapCount]
   final int excludeGapCount;
 
+  /// [FlowLayoutParentData.stack]
+  final bool stack;
+
   const FlowLayoutData({
     super.key,
     required super.child,
     this.weight,
     this.constraints,
+    this.stack = false,
     this.excludeGapCount = 0,
   });
 
@@ -166,6 +178,16 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
 
     if (parentData.weight != weight) {
       parentData.weight = weight;
+      needsLayout = true;
+    }
+
+    if (parentData.excludeGapCount != excludeGapCount) {
+      parentData.excludeGapCount = excludeGapCount;
+      needsLayout = true;
+    }
+
+    if (parentData.stack != stack) {
+      parentData.stack = stack;
       needsLayout = true;
     }
 
@@ -315,20 +337,23 @@ class FlowLayoutRender extends RenderBox
       }());
     }
 
-    final children = getChildren();
-
-    //一行最大应该布局多少个child
-    final lineMaxChildCount_ =
-        min(lineMaxChildCount ?? children.length, children.length);
-
+    //所有子元素
+    final allChildren = getChildren();
+    //堆叠的资源
+    final stackChildren = <RenderBox>[];
     //存储每一行的child list
     final childrenLineList = <List<RenderBox>>[];
 
     // 一行中的child
     var lineChildList = <RenderBox>[];
 
+    //一行最大应该布局多少个child
+    final lineMaxChildCount_ =
+        min(lineMaxChildCount ?? allChildren.length, allChildren.length);
+
     // 一行中剩余的宽度空间
     double lineRemainWidth = 0;
+    int lineChildIndex = 0;
 
     void newLine() {
       if (lineChildList.isNotEmpty) {
@@ -336,12 +361,13 @@ class FlowLayoutRender extends RenderBox
         lineChildList = [];
       }
       lineRemainWidth = maxWidth - paddingHorizontal;
+      lineChildIndex = 0;
     }
 
     newLine(); //init
 
     //开始测量child大小
-    children.forEachIndexed((index, child) {
+    allChildren.forEachIndexed((index, child) {
       //debugger();
       final FlowLayoutParentData childParentData =
           child.parentData! as FlowLayoutParentData;
@@ -354,6 +380,10 @@ class FlowLayoutRender extends RenderBox
       BoxConstraints childConstraints = childParentData.constraints ??
           this.childConstraints ??
           defChildConstraints;
+
+      /*if (childParentData.stack) {
+        debugger();
+      }*/
 
       if (weight != null) {
         //需要使用权重约束
@@ -375,22 +405,27 @@ class FlowLayoutRender extends RenderBox
       //child 大小
       final childSize = ChildLayoutHelper.layoutChild(child, childConstraints);
 
-      if (childSize.width > lineRemainWidth) {
-        //换行
-        //debugger();
-        newLine();
-        lineChildList.add(child);
+      if (childParentData.stack) {
+        // 堆叠child, 不占用原有的布局空间
+        stackChildren.add(child);
       } else {
-        if (index > 0) {
-          lineRemainWidth -= horizontalGap;
-        }
-        lineRemainWidth -= childSize.width;
-        lineChildList.add(child);
-      }
+        //需要排除的间隙
+        final excludeGap = lineChildIndex > 0 ? horizontalGap : 0;
+        lineChildIndex++;
 
-      if (lineChildList.length >= lineMaxChildCount_) {
         //debugger();
-        newLine();
+        if (childSize.width > lineRemainWidth) {
+          //换行
+          newLine();
+          lineChildList.add(child);
+        } else {
+          lineRemainWidth -= childSize.width + excludeGap;
+          lineChildList.add(child);
+        }
+
+        if (lineChildList.length >= lineMaxChildCount_) {
+          newLine();
+        }
       }
     });
     newLine();
@@ -444,6 +479,24 @@ class FlowLayoutRender extends RenderBox
       childUsedHeight += lineUsedHeight;
     });
 
+    // 堆叠的child在此布局
+    for (var stackChild in stackChildren) {
+      //child 位置
+      final stackChildParentData =
+          stackChild.parentData! as FlowLayoutParentData;
+
+      final anchor = childAfter(stackChild) ?? childBefore(stackChild);
+      if (anchor != null) {
+        final anchorParentData = anchor.parentData! as FlowLayoutParentData;
+        stackChildParentData.offset = anchorParentData.offset;
+      } else {
+        //没有锚点, 则使用默认的位置
+        final lineTop = top;
+        final lineLeft = left;
+        stackChildParentData.offset = Offset(lineLeft, lineTop);
+      }
+    }
+
     Size childSize = Size(childUsedWidth, childUsedHeight);
     size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
         constraints.constrain(childSize);
@@ -496,4 +549,21 @@ class FlowLayoutRender extends RenderBox
     }());
     defaultPaint(context, offset);
   }
+}
+
+extension FlowLayoutEx on Widget {
+  /// [FlowLayoutData]
+  Widget flowLayoutData({
+    BoxConstraints? constraints,
+    double? weight,
+    int excludeGapCount = 0,
+    bool stack = false,
+  }) =>
+      FlowLayoutData(
+        constraints: constraints,
+        weight: weight,
+        excludeGapCount: excludeGapCount,
+        stack: stack,
+        child: this,
+      );
 }
