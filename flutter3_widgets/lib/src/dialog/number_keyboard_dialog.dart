@@ -22,6 +22,7 @@ class NumberKeyboardDialog extends StatelessWidget {
       enableEqualWidth: true,
       lineMaxChildCount: 4,
       mainAxisAlignment: MainAxisAlignment.end,
+      lineMainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         StateDecorationWidget(

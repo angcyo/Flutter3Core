@@ -35,6 +35,9 @@ class FlowLayout extends MultiChildRenderObjectWidget {
   /// [FlowLayoutRender.mainAxisAlignment]
   final MainAxisAlignment mainAxisAlignment;
 
+  /// [FlowLayoutRender.lineMainAxisAlignment]
+  final MainAxisAlignment lineMainAxisAlignment;
+
   /// [FlowLayoutRender.crossAxisAlignment]
   final CrossAxisAlignment crossAxisAlignment;
 
@@ -50,6 +53,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
     this.enableEqualWidth = false,
     this.lineMaxChildCount,
     this.mainAxisAlignment = MainAxisAlignment.start,
+    this.lineMainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
   });
 
@@ -64,6 +68,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
         enableEqualWidth: enableEqualWidth,
         lineMaxChildCount: lineMaxChildCount,
         mainAxisAlignment: mainAxisAlignment,
+        lineMainAxisAlignment: lineMainAxisAlignment,
         crossAxisAlignment: crossAxisAlignment,
       );
 
@@ -79,6 +84,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
       ..enableEqualWidth = enableEqualWidth
       ..lineMaxChildCount = lineMaxChildCount
       ..mainAxisAlignment = mainAxisAlignment
+      ..lineMainAxisAlignment = lineMainAxisAlignment
       ..crossAxisAlignment = crossAxisAlignment
       ..markNeedsLayout();
   }
@@ -224,6 +230,9 @@ class FlowLayoutRender extends RenderBox
   /// [MainAxisAlignment.center] 对齐容器的中心
   MainAxisAlignment mainAxisAlignment;
 
+  /// 在一行中, child的主轴对齐方式
+  MainAxisAlignment lineMainAxisAlignment;
+
   /// 交叉轴对齐方式, 也就是左/右对齐方式
   /// [CrossAxisAlignment.start] 对齐容器的左边
   /// [CrossAxisAlignment.end] 对齐容器的右边
@@ -240,6 +249,7 @@ class FlowLayoutRender extends RenderBox
     this.enableEqualWidth = false,
     this.lineMaxChildCount,
     this.mainAxisAlignment = MainAxisAlignment.start,
+    this.lineMainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
   });
 
@@ -365,10 +375,11 @@ class FlowLayoutRender extends RenderBox
       //child 大小
       final childSize = ChildLayoutHelper.layoutChild(child, childConstraints);
 
-      if (childSize.width + horizontalGap > lineRemainWidth) {
+      if (childSize.width > lineRemainWidth) {
         //换行
         //debugger();
         newLine();
+        lineChildList.add(child);
       } else {
         if (index > 0) {
           lineRemainWidth -= horizontalGap;
@@ -383,6 +394,7 @@ class FlowLayoutRender extends RenderBox
       }
     });
     newLine();
+    //debugger();
 
     //开始布局
     double childUsedWidth = 0;
@@ -399,6 +411,7 @@ class FlowLayoutRender extends RenderBox
     childrenLineList.forEachIndexed((index, lineChildList) {
       //debugger();
       double lineMaxWidth = getLineUsedWidth(lineChildList);
+      double lineMaxHeight = getLineUsedHeight(lineChildList);
       double lineUsedHeight = 0;
       double lineLeft = left;
       if (crossAxisAlignment == CrossAxisAlignment.center) {
@@ -411,8 +424,15 @@ class FlowLayoutRender extends RenderBox
         final FlowLayoutParentData childParentData =
             child.parentData! as FlowLayoutParentData;
 
+        double lineTop = top;
+        if (lineMainAxisAlignment == MainAxisAlignment.center) {
+          lineTop = top + (lineMaxHeight - child.size.height) / 2;
+        } else if (lineMainAxisAlignment == MainAxisAlignment.end) {
+          lineTop = top + lineMaxHeight - child.size.height;
+        }
+
         //child 位置
-        childParentData.offset = Offset(lineLeft, top);
+        childParentData.offset = Offset(lineLeft, lineTop);
 
         final childSize = child.size;
         lineLeft += childSize.width + horizontalGap;
@@ -436,12 +456,7 @@ class FlowLayoutRender extends RenderBox
       if (index > 0) {
         allLineHeight += childVerticalGap ?? childGap;
       }
-      double lineUsedHeight = 0;
-      for (var child in lineChildList) {
-        final childSize = child.size;
-        lineUsedHeight = max(lineUsedHeight, childSize.height);
-      }
-      allLineHeight += lineUsedHeight;
+      allLineHeight += getLineUsedHeight(lineChildList);
     });
     return allLineHeight;
   }
@@ -457,6 +472,15 @@ class FlowLayoutRender extends RenderBox
       lineUsedWidth += childSize.width;
     });
     return lineUsedWidth;
+  }
+
+  double getLineUsedHeight(List<RenderBox> lineChildList) {
+    double lineUsedHeight = 0;
+    lineChildList.forEachIndexed((index, child) {
+      final childSize = child.size;
+      lineUsedHeight = max(lineUsedHeight, childSize.height);
+    });
+    return lineUsedHeight;
   }
 
   @override
