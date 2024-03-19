@@ -302,7 +302,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
 
   /// 键盘输入了一个值
   void _onSelfInput(String value, String type) {
-    if (isClearAll) {
+    if (isClearAll || _numberText.toIntOrNull() == 0) {
       _numberText = "";
       isClearAll = false;
     }
