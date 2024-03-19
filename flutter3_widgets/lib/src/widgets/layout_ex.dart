@@ -6,6 +6,115 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/03/18
 ///
 
+/// 布局约束
+class LayoutBoxConstraints extends BoxConstraints {
+  /// 自身的宽度是否包裹内容
+  final bool? wrapContentWidth;
+
+  /// 自身的高度是否包裹内容
+  final bool? wrapContentHeight;
+
+  /// 自身的宽度是否占满父布局的有效宽度
+  final bool? matchParentWidth;
+
+  /// 自身的高度是否占满父布局的有效高度
+  final bool? matchParentHeight;
+
+  const LayoutBoxConstraints({
+    super.minWidth,
+    super.maxWidth,
+    super.minHeight,
+    super.maxHeight,
+    this.wrapContentWidth,
+    this.wrapContentHeight,
+    this.matchParentWidth,
+    this.matchParentHeight,
+  });
+
+  @override
+  BoxConstraints copyWith({
+    double? minWidth,
+    double? maxWidth,
+    double? minHeight,
+    double? maxHeight,
+    bool? wrapContentWidth,
+    bool? wrapContentHeight,
+    bool? matchParentWidth,
+    bool? matchParentHeight,
+  }) {
+    return LayoutBoxConstraints(
+      minWidth: minWidth ?? this.minWidth,
+      maxWidth: maxWidth ?? this.maxWidth,
+      minHeight: minHeight ?? this.minHeight,
+      maxHeight: maxHeight ?? this.maxHeight,
+      wrapContentWidth: wrapContentWidth ?? this.wrapContentWidth,
+      wrapContentHeight: wrapContentHeight ?? this.wrapContentHeight,
+      matchParentWidth: matchParentWidth ?? this.matchParentWidth,
+      matchParentHeight: matchParentHeight ?? this.matchParentHeight,
+    );
+  }
+
+  /// 约束计算自身的大小
+  /// [parentConstraints] parent给自身的约束
+  /// [childSize] 子节点的大小
+  /// [padding] 内边距, 在[wrapContentWidth].[wrapContentHeight]时有效
+  ///
+  /// [BoxConstraints.isSatisfiedBy] 是否是满意的约束, 满足约束
+  ///
+  Size constrainSize(
+    BoxConstraints parentConstraints,
+    Size childSize,
+    EdgeInsets? padding,
+  ) {
+    if (parentConstraints.isTight) {
+      return parentConstraints.constrain(childSize);
+    }
+
+    final paddingHorizontal = padding?.horizontal ?? 0;
+    final paddingVertical = padding?.vertical ?? 0;
+
+    final childWidth = childSize.width + paddingHorizontal;
+    final childHeight = childSize.height + paddingVertical;
+
+    double width = parentConstraints.constrainWidth(childWidth);
+    double height = parentConstraints.constrainWidth(childHeight);
+
+    if (wrapContentWidth == true) {
+      width = constrainWidth(childWidth);
+    } else if (matchParentWidth == true) {
+      if (parentConstraints.maxWidth != double.infinity) {
+        width = parentConstraints.maxWidth;
+      } else if (maxWidth != double.infinity) {
+        width = maxWidth;
+      } else {
+        assert(() {
+          debugPrint(
+              'matchParentWidth is true, but parentConstraints.maxWidth is double.infinity');
+          return true;
+        }());
+      }
+    }
+
+    if (wrapContentHeight == true) {
+      height = constrainHeight(childHeight);
+    } else if (matchParentHeight == true) {
+      if (parentConstraints.maxHeight != double.infinity) {
+        height = parentConstraints.maxHeight;
+      } else if (maxHeight != double.infinity) {
+        height = maxHeight;
+      } else {
+        assert(() {
+          debugPrint(
+              'matchParentHeight is true, but parentConstraints.maxHeight is double.infinity');
+          return true;
+        }());
+      }
+    }
+
+    return Size(width, height);
+  }
+}
+
 mixin LayoutMixin<ChildType extends RenderObject,
         ParentDataType extends ContainerParentDataMixin<ChildType>>
     on ContainerRenderObjectMixin<ChildType, ParentDataType> {
