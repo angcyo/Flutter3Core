@@ -36,8 +36,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 绘制元素的信息
   PaintInfoType paintInfoType = PaintInfoType.none;
 
-  /// 限制元素单次最小缩放的比例
-  double? elementMinScale = 0.001;
+  /// 控制限制器
+  late ControlLimit controlLimit = ControlLimit(this);
 
   /// 选择元素操作的组件
   late ElementSelectComponent elementSelectComponent =
@@ -171,10 +171,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     @sceneCoordinate
     final paintScaleRect = paintProperty.paintScaleRect;
     @sceneCoordinate
-    final paintRectBounds = paintProperty.scaleRotateRectBounds;
+    final paintRectBounds = paintProperty.paintScaleRotateBounds;
+    //debugger();
     final angle = paintProperty.angle.sanitizeRadians;
     @sceneCoordinate
-    final angleAnchor = paintRectBounds.center;
+    final angleAnchor = paintProperty.paintCenter;
 
     final textPainter = TextPainter(
         text: TextSpan(
@@ -224,13 +225,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       Canvas canvas, PaintMeta paintMeta, PaintProperty? paintProperty) {
     paintProperty?.let((it) {
       @sceneCoordinate
-      final paintRectBounds = it.scaleRotateRectBounds;
-      final Size size;
-      if (enableResetElementAngle) {
-        size = paintRectBounds.size;
-      } else {
-        size = it.paintScaleRotateBounds.size;
-      }
+      final paintRectBounds = it.getBounds(enableResetElementAngle);
+      final Size size = paintRectBounds.size;
 
       final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
       final withString = axisUnit.format(
@@ -262,13 +258,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       Canvas canvas, PaintMeta paintMeta, PaintProperty? paintProperty) {
     paintProperty?.let((it) {
       @sceneCoordinate
-      final paintRectBounds = it.scaleRotateRectBounds;
-      final Offset location;
-      if (enableResetElementAngle) {
-        location = paintRectBounds.lt;
-      } else {
-        location = it.paintScaleRotateBounds.lt;
-      }
+      final paintRectBounds = it.getBounds(enableResetElementAngle);
+      final Offset location = paintRectBounds.lt;
 
       final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
       final xString = axisUnit.format(
@@ -464,12 +455,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
-      elementPainter.applyScaleMatrix(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
+      elementPainter.scaleElement(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager
           .addUntoState(undoStateStack, redoStateStack);
     } else {
-      elementPainter.applyScaleMatrix(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
+      elementPainter.scaleElement(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
     }
   }
 
@@ -488,12 +479,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     final matrix = Matrix4.identity()..translateBy(dx: dx ?? 0, dy: dy ?? 0);
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
-      elementPainter.applyMatrixWithAnchor(matrix);
+      elementPainter.translateElement(matrix);
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager
           .addUntoState(undoStateStack, redoStateStack);
     } else {
-      elementPainter.applyMatrixWithAnchor(matrix);
+      elementPainter.translateElement(matrix);
     }
   }
 
@@ -526,6 +517,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 翻转元素
+  /// 这种方式翻转元素, 有可能会跑到边界外, 所以需要重新计算边界
   /// [flipX] 水平翻转
   /// [flipY] 垂直翻转
   @api
@@ -541,12 +533,39 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
-      elementPainter.flip(flipX: flipX, flipY: flipY);
+      elementPainter.flipElement(flipX: flipX, flipY: flipY);
+      /*elementPainter.scaleElement(sx: flipX == true ? -1 : 1, sy: flipY == true ? -1 : 1, anchor:
+      elementPainter.paintProperty?.paintCenter);*/
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager
           .addUntoState(undoStateStack, redoStateStack);
     } else {
-      elementPainter.flip(flipX: flipX, flipY: flipY);
+      elementPainter.flipElement(flipX: flipX, flipY: flipY);
+    }
+  }
+
+  /// 翻转元素
+  /// [flipX] 水平翻转
+  /// [flipY] 垂直翻转
+  @api
+  @supportUndo
+  void flipElementWithScale(
+    ElementPainter? elementPainter, {
+    bool? flipX,
+    bool? flipY,
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null) {
+      return;
+    }
+    if (undoType == UndoType.normal) {
+      final undoStateStack = elementPainter.createStateStack();
+      elementPainter.flipElementWithScale(flipX: flipX, flipY: flipY);
+      final redoStateStack = elementPainter.createStateStack();
+      canvasDelegate.canvasUndoManager
+          .addUntoState(undoStateStack, redoStateStack);
+    } else {
+      elementPainter.flipElementWithScale(flipX: flipX, flipY: flipY);
     }
   }
 
@@ -764,14 +783,24 @@ class ElementSelectComponent extends ElementGroupPainter
 
   /// 直接操作缩放属性
   @override
-  void applyScale({double? sx, double? sy, double? sxTo, double? syTo}) {
-    super.applyScale(sx: sx, sy: sy, sxTo: sxTo, syTo: syTo);
+  void onlyScaleSelfElement(
+      {double? sx, double? sy, double? sxTo, double? syTo}) {
+    super.onlyScaleSelfElement(sx: sx, sy: sy, sxTo: sxTo, syTo: syTo);
   }
 
   /// 组内缩放元素
   @override
-  void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
-    super.applyScaleMatrix(sx: sx, sy: sy, anchor: anchor);
+  void scaleElement({double sx = 1, double sy = 1, Offset? anchor}) {
+    super.scaleElement(sx: sx, sy: sy, anchor: anchor);
+  }
+
+  @override
+  void flipElementWithScale({bool? flipX, bool? flipY, Offset? anchor}) {
+    //super.flipElementWithScale(flipX: flipX, flipY: flipY, anchor: anchor);
+    //这种方式下的翻转, 自身不用动
+    children?.forEach((element) {
+      element.flipElementWithScale(flipX: flipX, flipY: flipY, anchor: anchor);
+    });
   }
 
   @override

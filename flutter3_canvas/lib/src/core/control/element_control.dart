@@ -300,7 +300,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 开始控制目标元素
   @callPoint
   void startControlTarget(ElementPainter? element) {
-    _downTargetElementCenter = element?.paintProperty?.scaleRotateRectBounds.center;
+    _downTargetElementCenter = element?.paintProperty?.paintCenter;
     _downTargetElementAnchor =
         element?.paintProperty?.let((it) => Offset(it.left, it.top));
     _targetElement = element;
@@ -314,28 +314,39 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   }
 
   /// 从按下的位置状态开始, 作用矩阵[matrix]
-  /// [PaintProperty.applyMatrixWithAnchor]
+  /// [PaintProperty.applyScaleWithAnchor]
   @callPoint
-  void applyTargetMatrixWithAnchor(Matrix4 matrix) {
+  void applyTargetMatrix(Matrix4 matrix, [int? controlType]) {
     isControlApply = true;
     _elementStateStack?.restore();
-    _targetElement?.applyMatrixWithAnchor(matrix);
+
+    controlType ??= this.controlType;
+    if (controlType == BaseControl.CONTROL_TYPE_ROTATE) {
+      _targetElement?.rotateElement(matrix);
+    } else if (controlType == BaseControl.CONTROL_TYPE_TRANSLATE) {
+      _targetElement?.translateElement(matrix);
+    } else {
+      assert(() {
+        l.d('未适配的控制操作[$controlType]');
+        return true;
+      }());
+    }
   }
 
   /// 缩放时使用此方法
-  /// [applyTargetMatrixWithAnchor]
-  /// [PaintProperty.applyMatrixWithCenter]
+  /// [applyTargetMatrix]
+  /// [PaintProperty.applyScaleWithCenter]
   @callPoint
   void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
     isControlApply = true;
     _elementStateStack?.restore();
     final element = _targetElement;
     if (element is ElementSelectComponent) {
-      element.applyScaleMatrix(sx: sx, sy: sy, anchor: anchor);
+      element.scaleElement(sx: sx, sy: sy, anchor: anchor);
     } else {
       final matrix = Matrix4.identity()
         ..scaleBy(sx: sx, sy: sy, anchor: anchor);
-      element?.applyMatrixWithCenter(matrix);
+      element?.scaleElementWithCenter(matrix);
     }
   }
 
@@ -442,7 +453,7 @@ class RotateControl extends BaseControl {
               //l.d('旋转元素[${angle.jd}]:$angle $it');
               return true;
             }());
-            applyTargetMatrixWithAnchor(matrix);
+            applyTargetMatrix(matrix);
             //debugger();
           });
         }
@@ -670,7 +681,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
             //l.d('平移元素: offset:$offset');
             return true;
           }());
-          applyTargetMatrixWithAnchor(matrix);
+          applyTargetMatrix(matrix);
           //debugger();
         }
       } else if (event.isPointerFinish) {

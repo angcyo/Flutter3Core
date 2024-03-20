@@ -15,7 +15,7 @@ class PathElementPainter extends ElementPainter {
     paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
     //debugger();
     path?.let((it) =>
-        canvas.drawPath(it.transformPath(paintProperty?.scaleRotateMatrix), paint));
+        canvas.drawPath(it.transformPath(paintProperty?.operateMatrix), paint));
     super.onPaintingSelf(canvas, paintMeta);
   }
 }

@@ -8,7 +8,9 @@ part of '../../flutter3_canvas.dart';
 class TextElementPainter extends ElementPainter {
   String? text;
 
-  TextElementPainter();
+  TextElementPainter() {
+    debug = false;
+  }
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
@@ -71,8 +73,7 @@ class TextElementPainter extends ElementPainter {
 
       final skewMatrix = Matrix4.identity()
         /*..translate(translation)*/
-        ..postConcat(Matrix4.skew(45.hd, 0))
-        /*..translate(-translation)*/;
+        ..postConcat(Matrix4.skew(45.hd, 0)) /*..translate(-translation)*/;
       /*..skewBy(
           kx: 45.hd,
           ky: 0,
@@ -87,18 +88,27 @@ class TextElementPainter extends ElementPainter {
 
       final rotateMatrix = Matrix4.identity()
         ..rotateBy(
-          10.hd,
+          30.hd,
           anchor: anchor,
         );
+
+      final x = rotateMatrix.rotationX;
+      final y = rotateMatrix.rotationY;
+      final z = rotateMatrix.rotationZ;
+      final r = rotateMatrix.rotation;
+
+      //Quaternion.fromRotation(rotateMatrix.getRotation()).z;
+
+      //debugger();
 
       final translateMatrix = Matrix4.identity()..translate(100.0, 100.0);
 
       /*canvas.withMatrix(
         translateMatrix   * rotateMatrix  *  scaleMatrix   *  skewMatrix
-        *//*pp.paintFlipMatrix*//*
-        *//*translateMatrix **//*
-        *//*rotateMatrix * scaleMatrix *//*
-        *//** rotateMatrix*//* *//* * flipMatrix * skewMatrix*//*,
+        */ /*pp.paintFlipMatrix*/ /*
+        */ /*translateMatrix **/ /*
+        */ /*rotateMatrix * scaleMatrix */ /*
+        */ /** rotateMatrix*/ /* */ /* * flipMatrix * skewMatrix*/ /*,
         () {
           textPainter.paint(canvas, Offset.zero);
         },
@@ -115,7 +125,7 @@ class TextElementPainter extends ElementPainter {
 
       canvas.withMatrix(
         pp.operateMatrix,
-            () {
+        () {
           textPainter.paint(canvas, Offset.zero);
         },
       );

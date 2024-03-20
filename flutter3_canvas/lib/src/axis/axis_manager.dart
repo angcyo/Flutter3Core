@@ -226,12 +226,15 @@ class AxisManager extends IPainter {
 
   /// 在坐标轴中绘制选中元素的宽度色块
   void paintSelectElementWidthSize(Canvas canvas, PaintMeta paintMeta) {
-    var elementManager = paintManager.canvasDelegate.canvasElementManager;
+    final elementManager = paintManager.canvasDelegate.canvasElementManager;
+    final canvasElementControlManager =
+        elementManager.canvasElementControlManager;
     if (elementManager.isSelectedElement) {
       elementManager
           .canvasElementControlManager.elementSelectComponent.paintProperty
           ?.let((it) {
-        final bounds = it.scaleRotateRectBounds;
+        final bounds =
+            it.getBounds(canvasElementControlManager.enableResetElementAngle);
         final scale = paintManager.canvasDelegate.canvasViewBox.scaleX;
         @viewCoordinate
         final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
@@ -252,12 +255,15 @@ class AxisManager extends IPainter {
 
   /// 在坐标轴中绘制选中元素的高度色块
   void paintSelectElementHeightSize(Canvas canvas, PaintMeta paintMeta) {
-    var elementManager = paintManager.canvasDelegate.canvasElementManager;
+    final elementManager = paintManager.canvasDelegate.canvasElementManager;
+    final canvasElementControlManager =
+        elementManager.canvasElementControlManager;
     if (elementManager.isSelectedElement) {
       elementManager
           .canvasElementControlManager.elementSelectComponent.paintProperty
           ?.let((it) {
-        final bounds = it.scaleRotateRectBounds;
+        final bounds =
+            it.getBounds(canvasElementControlManager.enableResetElementAngle);
         final scale = paintManager.canvasDelegate.canvasViewBox.scaleY;
         @viewCoordinate
         final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;

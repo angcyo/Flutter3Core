@@ -21,6 +21,8 @@ class ElementPainter extends IPainter {
     }
   }
 
+  //region ---属性--
+
   /// 是否锁定了宽高比
   bool _isLockRatio = true;
 
@@ -66,6 +68,13 @@ class ElementPainter extends IPainter {
     ..color = Colors.black
     ..strokeWidth = 1.toDpFromPx();
 
+  /// 是否绘制调试信息
+  bool debug = false;
+
+  //endregion ---属性--
+
+  //region ---paint---
+
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     paintMeta.withPaintMatrix(canvas, () {
@@ -80,19 +89,20 @@ class ElementPainter extends IPainter {
     //paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
     if (paintMeta.host is CanvasDelegate) {
       //debugger();
-      if (canvasDelegate?.canvasElementManager.isElementSelected(this) ==
-          true) {
+      if (debug ||
+          canvasDelegate?.canvasElementManager.isElementSelected(this) ==
+              true) {
         //debugger();
         //绘制元素旋转的矩形边界
         paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
         paintPropertyRect(canvas, paintMeta, paint);
 
-        assert(() {
+        /*assert(() {
           //绘制元素包裹的边界矩形
           paint.color = Colors.red;
           paintPropertyBounds(canvas, paintMeta, paint);
           return true;
-        }());
+        }());*/
       }
     }
   }
@@ -100,6 +110,7 @@ class ElementPainter extends IPainter {
   /// 绘制元素的旋转矩形
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
+      //debugger();
       final rect = it.paintScaleRect;
       /*final c1 = rect.center;
       final c2 = it.paintRect.center;
@@ -114,6 +125,11 @@ class ElementPainter extends IPainter {
       canvas.withRotateRadians(it.angle, () {
         canvas.drawRect(rect, paint);
       }, anchor: rect.center);
+
+      /*paint.color = Colors.redAccent;
+      canvas.drawRect(rect, paint);
+
+      canvas.drawRect(it.paintBounds, paint);*/
     });
   }
 
@@ -122,7 +138,7 @@ class ElementPainter extends IPainter {
     paintProperty?.let((it) {
       //debugger();
       //canvas.drawPath(it.paintPath, paint);
-      canvas.drawRect(it.scaleRotateRectBounds, paint);
+      canvas.drawRect(it.paintBounds, paint);
     });
   }
 
@@ -163,49 +179,23 @@ class ElementPainter extends IPainter {
         this, old, value, propertyType);
   }
 
-  /// 直接作用缩放
-  /// [sx].[sy] 相对缩放
-  /// [sxTo].[syTo] 绝对缩放
+  //endregion ---paint---
+
+  //region ---apply--
+
+  /// 平移元素
   @api
-  void applyScale({double? sx, double? sy, double? sxTo, double? syTo}) {
-    //debugger();
+  void translateElement(Matrix4 matrix) {
     paintProperty?.let((it) {
-      paintProperty = it.clone()
-        ..applyScale(sxBy: sx, syBy: sy, sxTo: sxTo, syTo: syTo);
+      paintProperty = it.clone()..applyTranslate(matrix);
     });
   }
 
-  /// 作用一个缩放矩阵
+  /// 旋转元素
   @api
-  void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
-    if (anchor == null) {
-      applyScale(sx: sx, sy: sy);
-    } else {
-      final scaleMatrix = Matrix4.identity()
-        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
-      applyMatrixWithCenter(scaleMatrix);
-    }
-  }
-
-  /// 应用矩阵, 通常在子元素缩放时需要使用方法
-  /// [applyMatrixWithCenter]
-  /// [applyMatrixWithAnchor]
-  @api
-  void applyMatrixWithCenter(Matrix4 matrix) {
-    //debugger();
+  void rotateElement(Matrix4 matrix) {
     paintProperty?.let((it) {
-      paintProperty = it.clone()..applyMatrixWithCenter(matrix);
-    });
-  }
-
-  /// 应用矩阵, 在平移旋转时使用
-  /// [applyMatrixWithCenter]
-  /// [applyMatrixWithAnchor]
-  @api
-  void applyMatrixWithAnchor(Matrix4 matrix) {
-    //debugger();
-    paintProperty?.let((it) {
-      paintProperty = it.clone()..applyMatrixWithAnchor(matrix);
+      paintProperty = it.clone()..applyRotate(matrix);
     });
   }
 
@@ -219,25 +209,79 @@ class ElementPainter extends IPainter {
     Offset? anchor,
   }) {
     paintProperty?.let((it) {
-      anchor ??= it.scaleRotateRectBounds.center;
+      //debugger();
+      anchor ??= it.paintCenter;
       final matrix = Matrix4.identity()..rotateBy(angle, anchor: anchor);
-      applyMatrixWithAnchor(matrix);
+      rotateElement(matrix);
     });
   }
 
-  /// 翻转元素
-  /// [flipX] 是否水平翻转
-  /// [flipY] 是否垂直翻转
+  /// 翻转元素, 互斥操作
+  /// 这种方式翻转元素, 有可能会跑到边界外, 所以需要重新计算边界
+  /// [flipX] 是否要水平翻转
+  /// [flipY] 是否要垂直翻转
   @api
-  void flip({bool? flipX, bool? flipY}) {
+  void flipElement({bool? flipX, bool? flipY}) {
+    paintProperty?.let((it) {
+      paintProperty = it.clone()..applyFlip(flipX: flipX, flipY: flipY);
+    });
+  }
+
+  /// 使用缩放的方式翻转元素
+  /// 这种方法的翻转不会跑到边界外
+  @api
+  void flipElementWithScale({bool? flipX, bool? flipY, Offset? anchor}) {
+    final scaleMatrix = Matrix4.identity()
+      ..scaleBy(
+          sx: flipX == true ? -1 : 1,
+          sy: flipY == true ? -1 : 1,
+          anchor: anchor ?? paintProperty?.paintCenter);
+    scaleElementWithCenter(scaleMatrix);
+  }
+
+  /// 作用一个缩放矩阵
+  /// [onlyScaleSelfElement]
+  /// [scaleElementWithCenter]
+  @api
+  void scaleElement({double sx = 1, double sy = 1, Offset? anchor}) {
+    if (anchor == null) {
+      onlyScaleSelfElement(sx: sx, sy: sy);
+    } else {
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
+      scaleElementWithCenter(scaleMatrix);
+    }
+  }
+
+  /// 应用矩阵, 通常在子元素缩放时需要使用方法
+  @api
+  void scaleElementWithCenter(Matrix4 matrix) {
+    //debugger();
+    paintProperty?.let((it) {
+      paintProperty = it.clone()..applyScaleWithCenter(matrix);
+    });
+  }
+
+  /// 直接作用缩放, 通常在外边框缩放时使用方法
+  /// [sx].[sy] 相对缩放
+  /// [sxTo].[syTo] 绝对缩放
+  @protected
+  void onlyScaleSelfElement({
+    double? sx,
+    double? sy,
+    double? sxTo,
+    double? syTo,
+  }) {
+    //debugger();
     paintProperty?.let((it) {
       paintProperty = it.clone()
-        ..flipX = flipX == null ? it.flipX : !it.flipX
-        ..flipY = flipY == null ? it.flipY : !it.flipY;
+        ..applyScale(sxBy: sx, syBy: sy, sxTo: sxTo, syTo: syTo);
     });
   }
 
-  //---
+  //endregion ---apply--
+
+  //region ---canvas---
 
   CanvasDelegate? canvasDelegate;
 
@@ -280,12 +324,16 @@ class ElementPainter extends IPainter {
   List<ElementGroupPainter>? getGroupPainterList() {
     return null;
   }
+
+//endregion ---canvas---
 }
 
 /// 一组元素的绘制
 class ElementGroupPainter extends ElementPainter {
   /// 子元素列表
   List<ElementPainter>? children = [];
+
+  //region ---core--
 
   /// 重置子元素
   @api
@@ -307,7 +355,8 @@ class ElementGroupPainter extends ElementPainter {
       Rect? rect;
       for (final child in children!) {
         //final childBounds = child.paintProperty?.paintPath.getExactBounds();
-        final childBounds = child.paintProperty?.scaleRotateRectBounds;
+        final childBounds =
+            child.paintProperty?.getBounds(true); //resetGroupAngle
         if (childBounds != null) {
           if (rect == null) {
             rect = childBounds;
@@ -347,114 +396,6 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
-  void applyScale({double? sx, double? sy, double? sxTo, double? syTo}) {
-    super.applyScale(sx: sx, sy: sy, sxTo: sxTo, syTo: syTo);
-    children?.forEach((element) {
-      element.applyScale(sx: sx, sy: sy, sxTo: sxTo, syTo: syTo);
-    });
-  }
-
-  /// 缩放选中的元素
-  /// [anchor] 缩放的锚点, 不指定则使用[PaintProperty]的锚点
-  /// [ScaleControl]
-  @override
-  void applyScaleMatrix({double sx = 1, double sy = 1, Offset? anchor}) {
-    double angle = paintProperty?.angle ?? 0; //弧度
-    anchor ??= paintProperty?.anchor ?? Offset.zero;
-
-    //自身使用直接缩放
-    if (paintProperty != null) {
-      final it = paintProperty!;
-      final tsx = it.scaleX * sx;
-      final tsy = it.scaleY * sy;
-
-      final minScale = canvasDelegate
-          ?.canvasElementManager.canvasElementControlManager.elementMinScale;
-      if (minScale != null) {
-        double minSx = tsx < minScale ? minScale / it.scaleX : sx;
-        double minSy = tsy < minScale ? minScale / it.scaleY : sy;
-
-        //debugger();
-
-        if (tsx < minScale || tsy < minScale) {
-          //最终的缩放比例小于限制的最小值
-          if (sx.equalTo(sy)) {
-            //等比缩放
-            if (tsx < minScale) {
-              sx = minSx;
-            } else {
-              sx = minSy;
-            }
-            sy = sx;
-          } else {
-            //不等比缩放
-            sx = minSx;
-            sy = minSy;
-          }
-        }
-      }
-
-      paintProperty = it.clone()..applyScale(sxBy: sx, syBy: sy);
-    }
-
-    //子元素使用矩阵缩放
-    final matrix = Matrix4.identity();
-
-    if (angle % (2 * pi) == 0) {
-      //未旋转
-      final scaleMatrix = Matrix4.identity()
-        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
-
-      matrix.postConcat(scaleMatrix);
-    } else {
-      final rotateMatrix = Matrix4.identity()
-        ..rotateBy(angle, anchor: paintProperty?.scaleRotateRectBounds.center);
-      final rotateInvertMatrix = rotateMatrix.invertedMatrix();
-      Offset anchorInvert = rotateInvertMatrix.mapPoint(anchor);
-
-      final scaleMatrix = Matrix4.identity()
-        ..scaleBy(sx: sx, sy: sy, anchor: anchorInvert);
-
-      matrix.setFrom(rotateInvertMatrix);
-      matrix.postConcat(scaleMatrix);
-      matrix.postConcat(rotateMatrix);
-    }
-
-    children?.forEach((element) {
-      element.applyMatrixWithCenter(matrix);
-    });
-  }
-
-  @override
-  void applyMatrixWithCenter(Matrix4 matrix) {
-    super.applyMatrixWithCenter(matrix);
-    children?.forEach((element) {
-      element.applyMatrixWithCenter(matrix);
-    });
-  }
-
-  @override
-  void applyMatrixWithAnchor(Matrix4 matrix) {
-    super.applyMatrixWithAnchor(matrix);
-    children?.forEach((element) {
-      element.applyMatrixWithAnchor(matrix);
-    });
-  }
-
-  @override
-  void rotateBy(double angle, {Offset? anchor}) {
-    super.rotateBy(angle, anchor: anchor);
-  }
-
-  @override
-  void flip({bool? flipX, bool? flipY}) {
-    super.flip(flipX: flipX, flipY: flipY);
-    children?.forEach((element) {
-      element.flip(flipX: flipX, flipY: flipY);
-    });
-  }
-
-  @override
   bool containsElement(ElementPainter? element) {
     return super.containsElement(element) ||
         children?.any((item) => item.containsElement(element)) == true;
@@ -478,6 +419,92 @@ class ElementGroupPainter extends ElementPainter {
     });
     return result;
   }
+
+  //endregion ---core--
+
+  //region ---apply--
+
+  @override
+  void translateElement(Matrix4 matrix) {
+    super.translateElement(matrix);
+    children?.forEach((element) {
+      element.translateElement(matrix);
+    });
+  }
+
+  @override
+  void rotateElement(Matrix4 matrix) {
+    super.rotateElement(matrix);
+    children?.forEach((element) {
+      element.rotateElement(matrix);
+    });
+  }
+
+  @override
+  void flipElement({bool? flipX, bool? flipY}) {
+    super.flipElement(flipX: flipX, flipY: flipY);
+    children?.forEach((element) {
+      element.flipElement(flipX: flipX, flipY: flipY);
+    });
+    //这种方式翻转元素, 有可能会跑到边界外, 所以需要重新计算边界
+    updatePaintPropertyFromChildren(true);
+  }
+
+  /// 缩放选中的元素, 在[ElementGroupPainter]中需要分开处理自身和[children]
+  /// [anchor] 缩放的锚点, 不指定则使用[PaintProperty]的锚点
+  /// [ScaleControl]
+  @override
+  void scaleElement({double sx = 1, double sy = 1, Offset? anchor}) {
+    double angle = paintProperty?.angle ?? 0; //弧度
+    anchor ??= paintProperty?.anchor ?? Offset.zero;
+
+    //自身使用直接缩放
+    paintProperty = paintProperty?.clone()?..applyScale(sxBy: sx, syBy: sy);
+
+    //---children处理---
+
+    //子元素使用矩阵缩放
+    final matrix = Matrix4.identity();
+
+    if (angle % (2 * pi) == 0) {
+      //未旋转
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
+
+      matrix.postConcat(scaleMatrix);
+    } else {
+      final rotateMatrix = Matrix4.identity()
+        ..rotateBy(angle, anchor: paintProperty?.scaleRect.center);
+      final rotateInvertMatrix = rotateMatrix.invertedMatrix();
+      Offset anchorInvert = rotateInvertMatrix.mapPoint(anchor);
+
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: anchorInvert);
+
+      matrix.setFrom(rotateInvertMatrix);
+      matrix.postConcat(scaleMatrix);
+      matrix.postConcat(rotateMatrix);
+    }
+
+    children?.forEach((element) {
+      element.scaleElementWithCenter(matrix);
+    });
+  }
+
+  @override
+  void scaleElementWithCenter(Matrix4 matrix) {
+    super.scaleElementWithCenter(matrix);
+    children?.forEach((element) {
+      element.scaleElementWithCenter(matrix);
+    });
+  }
+
+  @override
+  void rotateBy(double angle, {Offset? anchor}) {
+    super.rotateBy(angle, anchor: anchor);
+  }
+
+//endregion ---apply--
 }
 
 /// 绘制属性, 包含坐标/缩放/旋转/倾斜等信息
@@ -535,24 +562,25 @@ class PaintProperty with EquatableMixin {
   Matrix4 get scaleMatrix => Matrix4.identity()..scale(scaleX, scaleY, 1);
 
   /// 镜像矩阵, 锚点需要在中心位置
-  Matrix4 get flipMatrix => Matrix4.identity()
-    ..translate(width / 2, height / 2, 0)
-    ..scale(flipX ? -1.0 : 1.0, flipY ? -1.0 : 1.0, 1.0)
-    ..translate(-width / 2, -height / 2, 0);
+  Matrix4 get flipMatrix => createFlipMatrix(
+        flipX: flipX,
+        flipY: flipY,
+        anchor: rect.center,
+      );
 
   /// 旋转矩阵, 锚点需要在中心位置
-  Matrix4 get rotateMatrix => Matrix4.identity()
-    ..translate(width / 2, height / 2, 0)
-    ..rotateZ(angle)
-    ..translate(-width / 2, -height / 2, 0);
+  Matrix4 get rotateMatrix => createRotateMatrix(
+        angle,
+        anchor: rect.center,
+      );
 
   /// 平移矩阵, 平移到指定的目标位置
   Matrix4 get translateMatrix {
     Offset center = Offset(left + width / 2, top + height / 2);
-    final rotateMatrix = Matrix4.identity()
-      ..translate(left, top, 0)
-      ..rotateZ(angle)
-      ..translate(-left, -top, 0);
+    final rotateMatrix = createRotateMatrix(
+      angle,
+      anchor: anchor,
+    );
     //计算出元素最终的中心点
     center = rotateMatrix.mapPoint(center);
     return Matrix4.identity()
@@ -561,16 +589,50 @@ class PaintProperty with EquatableMixin {
 
   /// 所有属性的矩阵
   Matrix4 get operateMatrix =>
-      translateMatrix * rotateMatrix * skewMatrix * flipMatrix * scaleMatrix;
+      translateMatrix * rotateMatrix * scaleMatrix * flipMatrix * skewMatrix;
 
   //---
+
+  /// 元素最终的中心点
+  Offset get paintCenter => paintBounds.center;
+
+  /// 倾斜和缩放后的矩形大小, 未平移和旋转, 翻转不影响size
+  Rect get scaleRect {
+    final Matrix4 matrix = scaleMatrix * skewMatrix;
+    return matrix.mapRect(rect);
+  }
+
+  /// 平移到目标位置的[scaleRect], 此矩形还未旋转
+  Rect get paintScaleRect {
+    //debugger();
+    final Matrix4 matrix = translateToSelfCenter(scaleMatrix * skewMatrix);
+    return matrix.mapRect(rect);
+  }
+
+  /// 将[paintScaleRect]旋转后的矩形边界
+  Rect get paintScaleRotateBounds {
+    final rect = paintScaleRect;
+    final anchor = Offset(rect.width / 2, rect.height / 2);
+    final matrix = createRotateMatrix(
+      angle,
+      anchor: anchor,
+    );
+    return matrix.mapRect(rect);
+  }
+
+  /// 全属性后的边界
+  Rect get paintBounds => operateMatrix.mapRect(rect);
+
+  ///
+
+  //---old---
 
 /*  /// 元素缩放/倾斜矩阵(不包含旋转和平移和翻转)
   Matrix4 get scaleMatrix => Matrix4.identity()
     ..skewBy(kx: skewX, ky: skewY)
     ..postScale(sx: scaleX, sy: scaleY);*/
 
-  /// 缩放后再旋转的矩阵, 用来计算元素的边界
+  /* /// 缩放后再旋转的矩阵, 用来计算元素的边界
   /// [scaleRotateRectBounds]
   Matrix4 get scaleRotateMatrix =>
       translateToAnchor(scaleMatrix..postRotate(angle));
@@ -607,13 +669,13 @@ class PaintProperty with EquatableMixin {
     final rect = paintScaleRect;
     final matrix = Matrix4.identity()..postRotate(angle, anchor: rect.center);
     return matrix.mapRect(rect);
-  }
+  }*/
 
   /// ```
   /// translateToAnchor(scaleMatrix..postRotate(angle))
   //     ..postFlip(flipX: flipX, flipY: flipY, anchor: paintScaleRect.center);
   /// ```
-  Matrix4 get paintMatrix2 => paintFlipMatrix;
+  /*Matrix4 get paintMatrix2 => paintFlipMatrix;*/
 
   /*/// 仅包含旋转的矩阵
   Matrix4 get rotateMatrix =>
@@ -624,7 +686,7 @@ class PaintProperty with EquatableMixin {
   Path get paintPath => Path().let((it) {
         //debugger();
         it.addRect(rect);
-        return it.transformPath(scaleRotateMatrix);
+        return it.transformPath(operateMatrix);
       });
 
   //endregion ---get属性---
@@ -633,12 +695,24 @@ class PaintProperty with EquatableMixin {
 
   /// 获取元素的边界
   Rect getBounds(bool enableResetElementAngle) {
-    return enableResetElementAngle
-        ? scaleRotateRectBounds
-        : paintScaleRotateBounds;
+    return enableResetElementAngle ? paintBounds : paintScaleRotateBounds;
+  }
+
+  /// 将[matrix]矩阵对应的中心点, 平移到元素的中心点
+  /// [matrix] 全量属性
+  Matrix4 translateToSelfCenter(Matrix4 matrix) {
+    Offset target = paintCenter;
+    Offset center = rect.center;
+    center = matrix.mapPoint(center);
+    matrix.postTranslateBy(
+      x: target.dx - center.dx,
+      y: target.dy - center.dy,
+    );
+    return matrix;
   }
 
   /// 将矩阵平移到锚点位置
+  /// [matrix] 输入的矩阵应该是一个全量属性矩阵
   /// [withCenter] false时, 有[flipX].[flipY]的情况下, 会有问题?
   /// [withCenter] true时, 单独旋转矩阵的情况下, 会有问题?
   Matrix4 translateToAnchor(Matrix4 matrix, {bool withCenter = false}) {
@@ -688,9 +762,55 @@ class PaintProperty with EquatableMixin {
     }
   }
 
+  /// 平移操作
+  @api
+  void applyTranslate(Matrix4 matrix) {
+    final anchor = this.anchor;
+    final targetAnchor = matrix.mapPoint(anchor);
+    left = targetAnchor.dx;
+    top = targetAnchor.dy;
+  }
+
+  /// 旋转操作
+  @api
+  void applyRotate(Matrix4 matrix) {
+    //debugger();
+
+    // 锚点也需要翻转
+    applyTranslate(matrix);
+    angle = (angle + matrix.rotation).sanitizeRadians;
+  }
+
+  /// 翻转操作, 互斥操作. 表示是否要在现有的基础上再次翻转
+  @api
+  void applyFlip({bool? flipX, bool? flipY}) {
+    if (flipX == null && flipY == null) {
+      return;
+    }
+
+    final anchor = paintCenter;
+
+    flipX ??= false;
+    flipY ??= false;
+
+    if (flipX) {
+      this.flipX = !this.flipX;
+    }
+    if (flipY) {
+      this.flipY = !this.flipY;
+    }
+
+    //翻转完之后, 将中心点对齐
+    final targetCenter = paintCenter;
+
+    left += anchor.dx - targetCenter.dx;
+    top += anchor.dy - targetCenter.dy;
+  }
+
   /// 直接作用缩放
   /// [sxBy].[syBy] 相对缩放
   /// [sxTo].[syTo] 绝对缩放
+  @api
   void applyScale({double? sxBy, double? syBy, double? sxTo, double? syTo}) {
     sxTo ??= scaleX * (sxBy ?? 1);
     syTo ??= scaleY * (syBy ?? 1);
@@ -704,18 +824,19 @@ class PaintProperty with EquatableMixin {
   /// 使用qr分解矩阵, 使用中心点位置作为锚点的偏移依据
   /// 需要保证操作之后的中心点位置不变
   /// 最后需要更新[left].[top]
-  void applyMatrixWithCenter(Matrix4 matrix) {
+  @api
+  void applyScaleWithCenter(Matrix4 matrix) {
     //debugger();
-    Offset originCenter = scaleRotateRectBounds.center;
+    Offset originCenter = paintCenter;
     //中点的最终位置
     final targetCenter = matrix.mapPoint(originCenter);
 
     //应用矩阵
-    final Matrix4 matrix_ = paintFlipMatrix.postConcatIt(matrix);
+    final Matrix4 matrix_ = operateMatrix.postConcatIt(matrix);
     qrDecomposition(matrix_);
 
     //现在的中点位置
-    final nowCenter = scaleRotateRectBounds.center;
+    final nowCenter = paintScaleRect.center;
     //debugger();
 
     //更新left top
@@ -726,13 +847,15 @@ class PaintProperty with EquatableMixin {
   }
 
   /// 直接使用锚点作为更新锚点依据
-  void applyMatrixWithAnchor(Matrix4 matrix) {
-    Offset anchor = Offset(left, top);
+  @api
+  void applyScaleWithAnchor(Matrix4 matrix) {
+    //debugger();
+    Offset anchor = this.anchor;
     //锚点的最终位置
     final targetAnchor = matrix.mapPoint(anchor);
 
     //应用矩阵
-    final Matrix4 matrix_ = paintFlipMatrix.postConcatIt(matrix);
+    final Matrix4 matrix_ = operateMatrix.postConcatIt(matrix);
     //paintMatrix.postConcat(matrix);
     //final Matrix4 matrix_ = paintMatrix;
     qrDecomposition(matrix_);
@@ -748,11 +871,14 @@ class PaintProperty with EquatableMixin {
 
   void qrDecomposition(Matrix4 matrix) {
     final qr = matrix.qrDecomposition();
-    angle = qr[0];
+    angle = qr[0].sanitizeRadians;
+
     scaleX = qr[1].abs();
     scaleY = qr[2].abs();
+
     skewX = qr[3];
     skewY = qr[4];
+
     flipX = qr[1] < 0;
     flipY = qr[2] < 0;
   }

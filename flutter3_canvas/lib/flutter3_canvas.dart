@@ -18,6 +18,7 @@ part 'src/canvas_delegate.dart';
 part 'src/canvas_listener.dart';
 part 'src/component/canvas_bounds_event_component.dart';
 part 'src/component/component.dart';
+part 'src/component/control_limit.dart';
 part 'src/core/canvas_element_control_manager.dart';
 part 'src/core/canvas_element_manager.dart';
 part 'src/core/canvas_event_manager.dart';

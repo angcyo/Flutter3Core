@@ -48,6 +48,7 @@ extension Matrix4Ex on vector.Matrix4 {
   /// 获取Z轴旋转角度, 弧度 [-PI..PI]
   /// ```
   /// vector.Quaternion.fromRotation(getRotation()).z
+  /// vector.Quaternion.fromRotation(getRotation()).w
   /// ```
   @implementation
   double get rotationZ => math.atan2(skewZ, scaleZ);
@@ -113,7 +114,7 @@ extension Matrix4Ex on vector.Matrix4 {
       dx = anchor.dx;
       dy = anchor.dy;
     }
-    translate(dx ?? 0, dy ?? 0, dz ?? 0);
+    translate(dx ?? 0.0, dy ?? 0.0, dz ?? 0.0);
   }
 
   /// 将平移矩阵*this
@@ -127,7 +128,7 @@ extension Matrix4Ex on vector.Matrix4 {
       x = anchor.dx;
       y = anchor.dy;
     }
-    leftTranslate(x ?? 0, y ?? 0, z ?? 0);
+    leftTranslate(x ?? 0.0, y ?? 0.0, z ?? 0.0);
   }
 
   /// 在指定锚点处操作矩阵
@@ -309,7 +310,7 @@ extension Matrix4Ex on vector.Matrix4 {
       return;
     }
     withPivot(() {
-      final skewMatrix = vector.Matrix4.skew(kx ?? 0, ky ?? 0);
+      final skewMatrix = vector.Matrix4.skew(kx ?? 0.0, ky ?? 0.0);
       //debugger();
       if (kx != null) {
         //final index = this.index(0, 1);
@@ -496,4 +497,35 @@ extension Matrix3Ex on vector.Matrix3 {
         '[1] ${row1.x.toDigits(digits: digits)}, ${row1.y.toDigits(digits: digits)}, ${row1.z.toDigits(digits: digits)}$lineSeparator'
         '[2] ${row2.x.toDigits(digits: digits)}, ${row2.y.toDigits(digits: digits)}, ${row2.z.toDigits(digits: digits)}';
   }
+}
+
+/// 创建一个翻转矩阵
+Matrix4 createFlipMatrix({bool? flipX, bool? flipY, Offset? anchor}) {
+  anchor ??= Offset.zero;
+  return Matrix4.identity()
+    ..translate(anchor.dx, anchor.dy, 0)
+    ..scale(flipX == true ? -1.0 : 1.0, flipY == true ? -1.0 : 1.0, 1.0)
+    ..translate(-anchor.dx, -anchor.dy, 0);
+}
+
+/// 创建一个缩放矩阵
+Matrix4 createScaleMatrix({double? sx, double? sy, Offset? anchor}) {
+  anchor ??= Offset.zero;
+  final translation = vector.Vector3(anchor.dx, anchor.dy, 0);
+  final scale = vector.Vector3(sx ?? 1.0, sy ?? 1.0, 1.0);
+  return Matrix4.identity()
+    ..translate(translation)
+    ..scale(scale)
+    ..translate(-translation);
+}
+
+/// 创建一个旋转矩阵
+/// [angle] 旋转的弧度
+Matrix4 createRotateMatrix(double? angle, {Offset? anchor}) {
+  anchor ??= Offset.zero;
+  final translation = vector.Vector3(anchor.dx, anchor.dy, 0);
+  return Matrix4.identity()
+    ..translate(translation)
+    ..rotateZ(angle ?? 0)
+    ..translate(-translation);
 }
