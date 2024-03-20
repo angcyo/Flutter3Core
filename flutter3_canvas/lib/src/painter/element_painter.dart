@@ -623,64 +623,6 @@ class PaintProperty with EquatableMixin {
   /// 全属性后的边界
   Rect get paintBounds => operateMatrix.mapRect(rect);
 
-  ///
-
-  //---old---
-
-/*  /// 元素缩放/倾斜矩阵(不包含旋转和平移和翻转)
-  Matrix4 get scaleMatrix => Matrix4.identity()
-    ..skewBy(kx: skewX, ky: skewY)
-    ..postScale(sx: scaleX, sy: scaleY);*/
-
-  /* /// 缩放后再旋转的矩阵, 用来计算元素的边界
-  /// [scaleRotateRectBounds]
-  Matrix4 get scaleRotateMatrix =>
-      translateToAnchor(scaleMatrix..postRotate(angle));
-
-  /// 倾斜/缩放/翻转矩阵的矩阵, 用来绘制元素
-  Matrix4 get scaleFlipMatrix => Matrix4.identity()
-    ..skewBy(kx: skewX, ky: skewY)
-    ..postScale(sx: flipX ? -scaleX : scaleX, sy: flipY ? -scaleY : scaleY);
-
-  /// 元素绘制的矩阵, 包含全属性
-  Matrix4 get paintFlipMatrix =>
-      translateToAnchor(translateToAnchor(scaleFlipMatrix..postRotate(angle)),
-          withCenter: true);
-
-  /// 元素缩放/倾斜后的矩形
-  /// [scaleMatrix]
-  Rect get scaleRect => scaleMatrix.mapRect(rect);
-
-  /// 缩放旋转后的最大包裹矩形
-  Rect get scaleRotateRectBounds => scaleRotateMatrix.mapRect(rect);
-
-  /// [scaleRect]平移到目标位置的矩形, 此矩形还未旋转
-  Rect get paintScaleRect {
-    //debugger();
-    final rect = scaleRect;
-    final currentCenter = rect.center;
-    final targetCenter = scaleRotateRectBounds.center;
-    return rect.offset(Offset(targetCenter.dx - currentCenter.dx,
-        targetCenter.dy - currentCenter.dy));
-  }
-
-  /// [paintScaleRect] 旋转后的矩形边界
-  Rect get paintScaleRotateBounds {
-    final rect = paintScaleRect;
-    final matrix = Matrix4.identity()..postRotate(angle, anchor: rect.center);
-    return matrix.mapRect(rect);
-  }*/
-
-  /// ```
-  /// translateToAnchor(scaleMatrix..postRotate(angle))
-  //     ..postFlip(flipX: flipX, flipY: flipY, anchor: paintScaleRect.center);
-  /// ```
-  /*Matrix4 get paintMatrix2 => paintFlipMatrix;*/
-
-  /*/// 仅包含旋转的矩阵
-  Matrix4 get rotateMatrix =>
-      translateToAnchor(Matrix4.identity()..rotateBy(angle));*/
-
   /// 元素全属性绘制路径, 用来判断是否相交
   /// 完全包裹的path路径
   Path get paintPath => Path().let((it) {
