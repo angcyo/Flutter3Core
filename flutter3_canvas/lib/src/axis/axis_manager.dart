@@ -231,7 +231,7 @@ class AxisManager extends IPainter {
       elementManager
           .canvasElementControlManager.elementSelectComponent.paintProperty
           ?.let((it) {
-        final bounds = it.paintRectBounds;
+        final bounds = it.scaleRotateRectBounds;
         final scale = paintManager.canvasDelegate.canvasViewBox.scaleX;
         @viewCoordinate
         final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
@@ -257,7 +257,7 @@ class AxisManager extends IPainter {
       elementManager
           .canvasElementControlManager.elementSelectComponent.paintProperty
           ?.let((it) {
-        final bounds = it.paintRectBounds;
+        final bounds = it.scaleRotateRectBounds;
         final scale = paintManager.canvasDelegate.canvasViewBox.scaleY;
         @viewCoordinate
         final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;

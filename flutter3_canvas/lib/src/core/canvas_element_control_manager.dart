@@ -171,7 +171,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     @sceneCoordinate
     final paintScaleRect = paintProperty.paintScaleRect;
     @sceneCoordinate
-    final paintRectBounds = paintProperty.paintRectBounds;
+    final paintRectBounds = paintProperty.scaleRotateRectBounds;
     final angle = paintProperty.angle.sanitizeRadians;
     @sceneCoordinate
     final angleAnchor = paintRectBounds.center;
@@ -224,7 +224,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       Canvas canvas, PaintMeta paintMeta, PaintProperty? paintProperty) {
     paintProperty?.let((it) {
       @sceneCoordinate
-      final paintRectBounds = it.paintRectBounds;
+      final paintRectBounds = it.scaleRotateRectBounds;
       final Size size;
       if (enableResetElementAngle) {
         size = paintRectBounds.size;
@@ -262,7 +262,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       Canvas canvas, PaintMeta paintMeta, PaintProperty? paintProperty) {
     paintProperty?.let((it) {
       @sceneCoordinate
-      final paintRectBounds = it.paintRectBounds;
+      final paintRectBounds = it.scaleRotateRectBounds;
       final Offset location;
       if (enableResetElementAngle) {
         location = paintRectBounds.lt;

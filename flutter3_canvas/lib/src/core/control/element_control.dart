@@ -300,7 +300,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 开始控制目标元素
   @callPoint
   void startControlTarget(ElementPainter? element) {
-    _downTargetElementCenter = element?.paintProperty?.paintRectBounds.center;
+    _downTargetElementCenter = element?.paintProperty?.scaleRotateRectBounds.center;
     _downTargetElementAnchor =
         element?.paintProperty?.let((it) => Offset(it.left, it.top));
     _targetElement = element;

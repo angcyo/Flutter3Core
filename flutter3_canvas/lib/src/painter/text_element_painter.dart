@@ -54,9 +54,71 @@ class TextElementPainter extends ElementPainter {
 
       //debugger();
 
-      canvas.withMatrix(paintProperty?.paintMatrix2, () {
-        textPainter.paint(canvas, Offset.zero);
-      });
+      final pp = paintProperty!;
+
+      final ppRect = Rect.fromLTWH(0, 0, pp.width, pp.height);
+      //final anchor = Offset.zero;
+      final anchor = ppRect.center;
+
+      final translation = Vector3(anchor.dx, anchor.dy, 0);
+
+      final flipMatrix = Matrix4.identity()
+        ..postFlip(
+          flipX: true,
+          flipY: false,
+          anchor: anchor,
+        );
+
+      final skewMatrix = Matrix4.identity()
+        /*..translate(translation)*/
+        ..postConcat(Matrix4.skew(45.hd, 0))
+        /*..translate(-translation)*/;
+      /*..skewBy(
+          kx: 45.hd,
+          ky: 0,
+          anchor: anchor,
+        );*/
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(
+          sx: 2,
+          sy: 2,
+          anchor: anchor,
+        );
+
+      final rotateMatrix = Matrix4.identity()
+        ..rotateBy(
+          10.hd,
+          anchor: anchor,
+        );
+
+      final translateMatrix = Matrix4.identity()..translate(100.0, 100.0);
+
+      /*canvas.withMatrix(
+        translateMatrix   * rotateMatrix  *  scaleMatrix   *  skewMatrix
+        *//*pp.paintFlipMatrix*//*
+        *//*translateMatrix **//*
+        *//*rotateMatrix * scaleMatrix *//*
+        *//** rotateMatrix*//* *//* * flipMatrix * skewMatrix*//*,
+        () {
+          textPainter.paint(canvas, Offset.zero);
+        },
+      );*/
+
+      // 真实的缩放矩阵
+      final skewMatrix1 = Matrix4.skew(45.hd, 0);
+      final skewMatrix12 = Matrix4.identity()
+        ..translate(translation)
+        ..postConcat(skewMatrix)
+        ..translate(-translation);
+
+      //debugger();
+
+      canvas.withMatrix(
+        pp.operateMatrix,
+            () {
+          textPainter.paint(canvas, Offset.zero);
+        },
+      );
     });
     super.onPaintingSelf(canvas, paintMeta);
   }

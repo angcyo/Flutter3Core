@@ -198,7 +198,7 @@ class CanvasElementManager with Diagnosticable {
   @supportUndo
   @api
   void clearElements([UndoType undoType = UndoType.normal]) {
-    removeElementList(elements, undoType: undoType);
+    removeElementList(elements.clone(), undoType: undoType);
   }
 
   /// 查找元素, 按照元素的先添加先返回的顺序

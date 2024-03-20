@@ -254,7 +254,7 @@ extension Matrix4Ex on vector.Matrix4 {
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
-  /// 倾斜矩阵
+  /// 倾斜矩阵, 锚点似乎不影响结果
   /// [kx] [alpha] 弧度
   /// [ky] [beta] 弧度
   void skewBy({
@@ -268,12 +268,26 @@ extension Matrix4Ex on vector.Matrix4 {
     if (kx == 0 && ky == 0) {
       return;
     }
+
     withPivot(() {
       final skewMatrix = vector.Matrix4.skew(kx, ky);
       //final matrix = this * skewMatrix;
       postConcat(skewMatrix);
       //multiply(skewMatrix);
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+
+    //倾斜矩阵的translate, 似乎不影响结果
+    /*
+    final translation =
+        vector.Vector3(anchor?.dx ?? pivotX, anchor?.dy ?? pivotY, pivotZ);
+    // 真实的倾斜矩阵
+    final skewMatrix = vector.Matrix4.skew(kx, ky);
+    final targetMatrix = Matrix4.identity()
+      ..translate(translation)
+      ..postConcat(skewMatrix)
+      ..translate(-translation);
+
+    postConcat(targetMatrix);*/
   }
 
   /// 倾斜矩阵
