@@ -190,7 +190,12 @@ extension Matrix4Ex on vector.Matrix4 {
     if (sx == 1 && sy == 1 && sz == 1) {
       return;
     }
-    final translation =
+    withPivot(() {
+      final scale = vector.Vector3(sx ?? 1.0, sy ?? 1.0, sz ?? 1.0);
+      this.scale(scale);
+    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+
+    /*final translation =
         vector.Vector3(anchor?.dx ?? pivotX, anchor?.dy ?? pivotY, pivotZ);
 
     // 真实的缩放矩阵
@@ -200,7 +205,7 @@ extension Matrix4Ex on vector.Matrix4 {
       ..scale(scale)
       ..translate(-translation);
 
-    postConcat(scaleMatrix);
+    postConcat(scaleMatrix);*/
   }
 
   /// 在指定位置翻转矩阵
