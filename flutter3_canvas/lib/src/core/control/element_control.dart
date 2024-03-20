@@ -482,6 +482,15 @@ class ScaleControl extends BaseControl {
   @sceneCoordinate
   Offset? _downTargetElementAnchorInvert;
 
+  /// 如果元素很小时, 则进行放大操作需要额外的放大倍数
+  @dp
+  final double _scaleSizeThreshold = 10;
+
+  /// 额外放大的倍数
+  final double _scaleFactor = 100;
+
+  Rect? _downTargetElementBounds;
+
   @override
   bool onFirstPointerEvent(PointerEvent event) {
     if (isPointerDownIn) {
@@ -495,6 +504,8 @@ class ScaleControl extends BaseControl {
             _downScenePointInvert = reverseRotateScenePoint(downScenePoint)!;
             _downTargetElementAnchorInvert =
                 reverseRotateScenePoint(_downTargetElementAnchor);
+            _downTargetElementBounds = canvasElementControlManager
+                .elementSelectComponent.paintProperty?.paintBounds;
           }
         }
         if (!isFirstHandle) {
@@ -517,6 +528,16 @@ class ScaleControl extends BaseControl {
               final scale = newC / oldC;
               sx = scale;
               sy = scale;
+
+              /*_downTargetElementBounds?.let((it) {
+                if (it.width <= _scaleSizeThreshold ||
+                    it.height <= _scaleSizeThreshold) {
+                  if (scale > 1) {
+                    sx *= _scaleFactor;
+                    sy *= _scaleFactor;
+                  }
+                }
+              });*/
             } else {
               //自由缩放
               final oldWidth = anchorInvert.dx - _downScenePointInvert.dx;
@@ -528,8 +549,21 @@ class ScaleControl extends BaseControl {
               sx = newWidth / oldWidth;
               sy = newHeight / oldHeight;
 
-              //debugger();
+              /*_downTargetElementBounds?.let((it) {
+                if (it.width <= _scaleSizeThreshold) {
+                  if (sx > 1) {
+                    sx *= _scaleFactor;
+                  }
+                }
+
+                if (it.height <= _scaleSizeThreshold) {
+                  if (sy > 1) {
+                    sy *= _scaleFactor;
+                  }
+                }
+              });*/
             }
+            //debugger();
 
             if (sx > 0 && sy > 0) {
               /*assert(() {
@@ -537,7 +571,10 @@ class ScaleControl extends BaseControl {
                 return true;
               }());*/
               applyScaleMatrix(
-                  sx: sx, sy: sy, anchor: _downTargetElementAnchor!);
+                sx: sx,
+                sy: sy,
+                anchor: _downTargetElementAnchor!,
+              );
             } else {
               assert(() {
                 l.w('缩放比例异常(负数): sx:$sx sy:$sy');
