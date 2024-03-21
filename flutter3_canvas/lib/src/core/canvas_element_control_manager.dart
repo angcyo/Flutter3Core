@@ -33,6 +33,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 是否激活元素[PaintProperty]属性改变后, 重置旋转角度
   bool enableResetElementAngle = true;
 
+  /// 是否激活点击元素外, 取消选中元素
+  bool enableOutsideCancelSelectElement = true;
+
   /// 绘制元素的信息
   PaintInfoType paintInfoType = PaintInfoType.none;
 
@@ -708,6 +711,11 @@ class ElementSelectComponent extends ElementGroupPainter
             if (_downElementList?.isEmpty == true) {
               //没有点击选中元素
               updateSelectBounds(null, false);
+              if (canvasElementControlManager
+                  .enableOutsideCancelSelectElement) {
+                //点击元素外, 取消选择
+                resetSelectElement(null);
+              }
             } else {
               //点击选中元素
               updateSelectBounds(null, false);
@@ -835,8 +843,8 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   /// 获取选择框内的元素
-  List<ElementPainter>? _getSelectBoundsElementList() {
-    return selectBounds?.let((it) {
+  List<ElementPainter>? _getSelectBoundsElementList([Rect? bounds]) {
+    return (bounds ?? selectBounds)?.let((it) {
       final elements = canvasElementControlManager.canvasElementManager
           .findElement(rect: it);
       return elements;
@@ -844,10 +852,11 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   /// 更新选择框边界, 并且触发选择选择
+  /// [select] 是否要使用[bounds]进行元素的元素
   void updateSelectBounds(Rect? bounds, bool select) {
     if (select) {
       //需要选择元素
-      resetSelectElement(_getSelectBoundsElementList());
+      resetSelectElement(_getSelectBoundsElementList(bounds));
       canvasElementControlManager.updatePaintInfoType(PaintInfoType.size);
     }
     selectBounds = bounds;
