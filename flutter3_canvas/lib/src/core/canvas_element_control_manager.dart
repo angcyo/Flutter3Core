@@ -66,7 +66,16 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 是否选中了元素
   bool get isSelectedElement => elementSelectComponent.isSelectedElement;
 
+  /// 选中的是否是[ElementGroupPainter]元素
+  bool get isSelectedGroupElement =>
+      elementSelectComponent.children?.let((it) =>
+          it.length > 1 ||
+          (it.length == 1 && it.first is ElementGroupPainter)) ==
+      true;
+
   /// 是否在元素上按下
+  /// 按下时, 不绘制控制点
+  /// [paint]
   bool get isPointerDownElement =>
       _currentControlRef?.target?.controlType ==
           BaseControl.CONTROL_TYPE_TRANSLATE &&

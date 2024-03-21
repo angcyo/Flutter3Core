@@ -6,6 +6,8 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 元素管理, 包含元素的绘制, 选择, 添加/删除等相关操作
 class CanvasElementManager with Diagnosticable {
+  //region ---属性----
+
   final CanvasDelegate canvasDelegate;
 
   /// 元素控制管理
@@ -29,9 +31,12 @@ class CanvasElementManager with Diagnosticable {
     return elementSelectComponent;
   }
 
+  /// [canvasElementControlManager.isSelectedElement]
   bool get isSelectedElement => canvasElementControlManager.isSelectedElement;
 
-  CanvasElementManager(this.canvasDelegate);
+  /// [canvasElementControlManager.isSelectedGroupElement]
+  bool get isSelectedGroupElement =>
+      canvasElementControlManager.isSelectedGroupElement;
 
   /// 绘制在[elements]之前的元素列表
   final List<ElementPainter> beforeElements = [];
@@ -41,6 +46,10 @@ class CanvasElementManager with Diagnosticable {
 
   /// 绘制在[elements]之后的元素列表
   final List<ElementPainter> afterElements = [];
+
+  //endregion ---属性----
+
+  CanvasElementManager(this.canvasDelegate);
 
   //region ---entryPoint----
 
@@ -89,7 +98,7 @@ class CanvasElementManager with Diagnosticable {
 
   //endregion ---entryPoint----
 
-  //region ---element---
+  //region ---element操作---
 
   /// 添加元素
   @supportUndo
@@ -220,7 +229,7 @@ class CanvasElementManager with Diagnosticable {
     return result;
   }
 
-  //endregion ---element---
+  //endregion ---element操作---
 
   //region ---select---
 
