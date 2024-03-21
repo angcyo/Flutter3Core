@@ -34,6 +34,10 @@ class CanvasElementManager with Diagnosticable {
   /// [canvasElementControlManager.isSelectedElement]
   bool get isSelectedElement => canvasElementControlManager.isSelectedElement;
 
+  /// [canvasElementControlManager.selectedElementCount]
+  int get selectedElementCount =>
+      canvasElementControlManager.selectedElementCount;
+
   /// [canvasElementControlManager.isSelectedGroupElement]
   bool get isSelectedGroupElement =>
       canvasElementControlManager.isSelectedGroupElement;
@@ -382,7 +386,8 @@ class CanvasElementManager with Diagnosticable {
 
   /// 解组元素
   @api
-  void ungroupElement(ElementPainter? group) {
+  void ungroupElement(ElementPainter? group,
+      {UndoType undoType = UndoType.normal}) {
     if (group == null || group is! ElementGroupPainter) {
       assert(() {
         l.d('不是[ElementGroupPainter]元素,不能解组');
@@ -405,10 +410,87 @@ class CanvasElementManager with Diagnosticable {
     newList.addAll(children);
 
     //重置元素列表
-    resetElementList(newList);
+    resetElementList(newList, undoType: undoType);
 
     //选中组合元素
     resetSelectElement(children);
+  }
+
+  /// 对齐组内元素
+  @api
+  void alignElement(ElementGroupPainter? group, CanvasAlign align,
+      {UndoType undoType = UndoType.normal}) {
+    final children = group?.children;
+    if (group == null || children == null || children.length < 2) {
+      assert(() {
+        l.d('不满足对齐条件');
+        return true;
+      }());
+      return;
+    }
+    final bounds = group.paintProperty
+        ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+    if (bounds == null) {
+      assert(() {
+        l.d('获取不到组合元素的边界');
+        return true;
+      }());
+      return;
+    }
+
+    final undoState = group.createStateStack();
+    for (var element in children) {
+      final elementBounds = element.paintProperty
+          ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+      if (elementBounds != null) {
+        switch (align) {
+          case CanvasAlign.left:
+            //所有元素对齐bounds的左边
+            element.translateElement(Matrix4.identity()
+              ..translate(bounds.left - elementBounds.left, 0.0));
+            break;
+          case CanvasAlign.top:
+            //所有元素对齐bounds的上边
+            element.translateElement(Matrix4.identity()
+              ..translate(0.0, bounds.top - elementBounds.top));
+            break;
+          case CanvasAlign.right:
+            //所有元素对齐bounds的右边
+            element.translateElement(Matrix4.identity()
+              ..translate(bounds.right - elementBounds.right, 0.0));
+            break;
+          case CanvasAlign.bottom:
+            //所有元素对齐bounds的下边
+            element.translateElement(Matrix4.identity()
+              ..translate(0.0, bounds.bottom - elementBounds.bottom));
+            break;
+          case CanvasAlign.center:
+            //所有元素对齐bounds的中心
+            element.translateElement(Matrix4.identity()
+              ..translate(bounds.center.dx - elementBounds.center.dx,
+                  bounds.center.dy - elementBounds.center.dy));
+            break;
+          case CanvasAlign.centerHorizontal:
+            //所有元素对齐bounds的水平中心
+            element.translateElement(Matrix4.identity()
+              ..translate(0.0, bounds.center.dy - elementBounds.center.dy));
+            break;
+          case CanvasAlign.centerVertical:
+            //所有元素对齐bounds的垂直中心
+            element.translateElement(Matrix4.identity()
+              ..translate(bounds.center.dx - elementBounds.center.dx, 0.0));
+            break;
+        }
+      }
+    }
+    if (undoType == UndoType.normal) {
+      final redoState = group.createStateStack();
+      canvasDelegate.canvasUndoManager.addUntoState(undoState, redoState);
+    }
+    //更新选择元素的边界
+    canvasElementControlManager.elementSelectComponent
+        .updatePaintPropertyFromChildren(
+            canvasElementControlManager.enableResetElementAngle);
   }
 
   //endregion ---operate---
@@ -421,4 +503,21 @@ class CanvasElementManager with Diagnosticable {
     properties.add(DiagnosticsProperty('afterElements', afterElements));
     properties.add(DiagnosticsProperty('selectedElement', selectedElement));
   }
+}
+
+/// 元素对齐方式
+enum CanvasAlign {
+  left,
+  top,
+  right,
+  bottom,
+
+  /// 居中对齐
+  center,
+
+  ///在水平方向上对齐
+  centerHorizontal,
+
+  ///在垂直方向上对齐
+  centerVertical,
 }

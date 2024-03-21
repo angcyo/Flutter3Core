@@ -342,7 +342,7 @@ class ElementGroupPainter extends ElementPainter {
     updatePaintPropertyFromChildren(resetGroupAngle);
   }
 
-  /// 更新绘制属性
+  /// 使用子元素的属性, 更新自身的绘制属性
   /// [resetGroupAngle] 是否要重置旋转角度
   @api
   void updatePaintPropertyFromChildren(bool resetGroupAngle) {

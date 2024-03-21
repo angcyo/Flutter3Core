@@ -66,6 +66,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 是否选中了元素
   bool get isSelectedElement => elementSelectComponent.isSelectedElement;
 
+  /// 选中元素的数量
+  int get selectedElementCount => elementSelectComponent.children?.length ?? 0;
+
   /// 是否选中了一组元素
   bool get isSelectedGroupElement =>
       elementSelectComponent.children?.let((it) =>
@@ -787,11 +790,6 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   @override
-  void updatePaintPropertyFromChildren(bool resetGroupAngle) {
-    super.updatePaintPropertyFromChildren(resetGroupAngle);
-  }
-
-  @override
   List<ElementGroupPainter>? getGroupPainterList() {
     final result = <ElementGroupPainter>[];
     children?.forEach((element) {
@@ -800,6 +798,14 @@ class ElementSelectComponent extends ElementGroupPainter
     return result;
   }
 
+  @override
+  void updatePaintPropertyFromChildren(bool resetGroupAngle) {
+    super.updatePaintPropertyFromChildren(resetGroupAngle);
+  }
+
+  /// 仅更新子元素的绘制属性, 不更新自身的
+  /// [updatePaintPropertyFromChildren]
+  /// [updateChildPaintPropertyFromChildren]
   @property
   void updateChildPaintPropertyFromChildren([bool resetGroupAngle = false]) {
     getGroupPainterList()?.forEach((element) {

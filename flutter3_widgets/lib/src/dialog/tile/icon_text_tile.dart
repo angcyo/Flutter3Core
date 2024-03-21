@@ -29,6 +29,18 @@ class IconTextTile extends StatelessWidget with TileMixin {
   /// 文本的内边距
   final EdgeInsets? textPadding;
 
+  /// 所有小组件需要的着色
+  final Color? tintColor;
+
+  /// 禁用时的着色
+  final Color? disableTintColor;
+
+  /// 是否激活
+  final bool enable;
+
+  /// 点击事件
+  final GestureTapCallback? onTap;
+
   const IconTextTile({
     super.key,
     this.iconWidget,
@@ -37,7 +49,11 @@ class IconTextTile extends StatelessWidget with TileMixin {
     this.text,
     this.iconPadding,
     this.textPadding,
+    this.tintColor,
+    this.disableTintColor,
+    this.enable = true,
     this.direction = Axis.horizontal,
+    this.onTap,
   });
 
   @override
@@ -64,11 +80,11 @@ class IconTextTile extends StatelessWidget with TileMixin {
       result = [iconWidget, textWidget?.expanded()].row(gap: gap)!;
     }
 
-    result = result.paddingInsets(padding).ink(
-      onTap: () {
-        toastInfo("...");
-      },
-    ).material();
+    result = result
+        .colorFiltered(color: enable ? tintColor : disableTintColor)
+        .paddingInsets(padding)
+        .ink(onTap: enable ? onTap : null)
+        .material();
 
     return result;
   }
