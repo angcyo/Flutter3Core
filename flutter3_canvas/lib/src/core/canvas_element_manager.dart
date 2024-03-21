@@ -518,11 +518,13 @@ class CanvasElementManager with Diagnosticable {
       }
     } else {
       //等宽高, 所有元素的大小, 参考第一个元素
-      final firstElement = children.first;
-      final firstBounds = firstElement.paintProperty
+
+      //先获取左上角的元素
+      final anchorElement = children.first;
+      final anchorBounds = anchorElement.paintProperty
           ?.getBounds(canvasElementControlManager.enableResetElementAngle);
 
-      if (firstBounds == null) {
+      if (anchorBounds == null) {
         assert(() {
           l.d('获取不到元素的边界');
           return true;
@@ -532,7 +534,7 @@ class CanvasElementManager with Diagnosticable {
 
       final undoState = group.createStateStack();
       for (var element in children) {
-        if (element == firstElement) {
+        if (element == anchorElement) {
           continue;
         }
         final elementBounds = element.paintProperty
@@ -540,16 +542,16 @@ class CanvasElementManager with Diagnosticable {
         if (elementBounds != null) {
           switch (average) {
             case CanvasAverageType.width:
-              final sx = firstBounds.width / elementBounds.width;
+              final sx = anchorBounds.width / elementBounds.width;
               element.scaleElement(sx: sx);
               break;
             case CanvasAverageType.height:
-              final sy = firstBounds.height / elementBounds.height;
+              final sy = anchorBounds.height / elementBounds.height;
               element.scaleElement(sy: sy);
               break;
             case CanvasAverageType.size:
-              final sx = firstBounds.width / elementBounds.width;
-              final sy = firstBounds.height / elementBounds.height;
+              final sx = anchorBounds.width / elementBounds.width;
+              final sy = anchorBounds.height / elementBounds.height;
               element.scaleElement(sx: sx, sy: sy);
               break;
             default:
