@@ -1,11 +1,11 @@
-part of flutter3_widgets;
+part of '../../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/15
 ///
 
-/// 上图标, 下文字的tile
+/// 上图标[icon], 下文字[label]的tile
 class SingleGridTile extends StatelessWidget {
   /// 图标
   final IconData? icon;

@@ -1,10 +1,10 @@
-part of flutter3_widgets;
+part of '../../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/21
 ///
-/// 单文本显示tile
+/// 单文本[text]显示的tile
 class TextTile extends StatelessWidget {
   /// 文本
   final String? text;
