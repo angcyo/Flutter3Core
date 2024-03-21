@@ -22,10 +22,13 @@ class Line extends LeafRenderObjectWidget {
   /// 线条的颜色
   final Color color;
 
-  /// 线条的外边距
+  /// 线条的外边距, 可以用来控制小部件的大小
   final EdgeInsets? margin;
 
+  /// 线条的端点样式
   final StrokeCap lineStrokeCap;
+
+  /// 线条的连接样式
   final StrokeJoin lineStrokeJoin;
 
   /// 线额外的装饰绘制

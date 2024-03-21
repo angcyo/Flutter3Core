@@ -8,10 +8,7 @@ part of flutter3_canvas;
 class CanvasWidget extends LeafRenderObjectWidget {
   final CanvasDelegate canvasDelegate;
 
-  const CanvasWidget({
-    super.key,
-    required this.canvasDelegate,
-  });
+  const CanvasWidget(this.canvasDelegate, {super.key});
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
