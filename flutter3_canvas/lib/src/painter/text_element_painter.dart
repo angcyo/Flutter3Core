@@ -12,21 +12,53 @@ class TextElementPainter extends ElementPainter {
     debug = false;
   }
 
+  void initFromText(String? text) {
+    this.text = text;
+    final textPainter = createTextPainter(text);
+    final size = textPainter.size;
+    paintProperty = PaintProperty()
+      ..width = size.width
+      ..height = size.height;
+  }
+
+  TextPainter createTextPainter(String? text) => TextPainter(
+        textAlign: TextAlign.right,
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            /*color: paint.color,*/
+            fontSize: 12,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.normal,
+            decoration: TextDecoration.lineThrough,
+            decorationColor: Colors.redAccent /*paint.color*/,
+            foreground: Paint()
+              /*..strokeWidth = 1*/
+              ..color = paint.color
+              ..style = PaintingStyle.stroke,
+            /*background: Paint()
+              ..color = Colors.redAccent
+              ..style = PaintingStyle.stroke,*/
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+        textHeightBehavior: TextHeightBehavior(
+            /*applyHeightToFirstAscent: false,
+          applyHeightToLastDescent: false,*/
+            ),
+      )..layout();
+
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     paint.color = Colors.black;
     text?.let((it) {
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: it,
-          style: TextStyle(
-            color: paint.color,
-            fontSize: 12,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
+      final textPainter = createTextPainter(text);
+      final size = textPainter.size;
+      final metrics = textPainter.computeLineMetrics();
+      final boxes = textPainter.getBoxesForSelection(
+        TextSelection(baseOffset: 0, extentOffset: it.length),
       );
-      textPainter.layout();
+      final textHeightBehavior = textPainter.textHeightBehavior;
 
       //debugger();
 
