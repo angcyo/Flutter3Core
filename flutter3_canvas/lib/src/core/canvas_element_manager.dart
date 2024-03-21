@@ -38,6 +38,10 @@ class CanvasElementManager with Diagnosticable {
   bool get isSelectedGroupElement =>
       canvasElementControlManager.isSelectedGroupElement;
 
+  /// [canvasElementControlManager.isSelectedGroupPainter]
+  bool get isSelectedGroupPainter =>
+      canvasElementControlManager.isSelectedGroupPainter;
+
   /// 绘制在[elements]之前的元素列表
   final List<ElementPainter> beforeElements = [];
 
@@ -203,6 +207,46 @@ class CanvasElementManager with Diagnosticable {
     }
   }
 
+  /// 重置元素列表
+  @api
+  @supportUndo
+  void resetElementList(List<ElementPainter>? list,
+      {UndoType undoType = UndoType.normal}) {
+    list ??= [];
+    final old = elements.clone();
+    final op = list.clone();
+    _resetElementList(old, op);
+    canvasDelegate.dispatchCanvasElementListChanged(old, op, op, undoType);
+
+    if (undoType == UndoType.normal) {
+      final newList = op;
+      canvasDelegate.canvasUndoManager.add(UndoItem(
+        () {
+          //debugger();
+          _resetElementList(newList, old);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              newList, old, op, UndoType.undo);
+        },
+        () {
+          //debugger();
+          _resetElementList(old, newList);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              old, newList, op, UndoType.redo);
+        },
+      ));
+    }
+  }
+
+  void _resetElementList(List<ElementPainter> from, List<ElementPainter> to) {
+    for (var element in from) {
+      element.detachFromCanvasDelegate(canvasDelegate);
+    }
+    elements.reset(to);
+    for (var element in to) {
+      element.attachToCanvasDelegate(canvasDelegate);
+    }
+  }
+
   /// 清空元素
   @supportUndo
   @api
@@ -308,11 +352,73 @@ class CanvasElementManager with Diagnosticable {
 
   //region ---operate---
 
+  /// 组合元素
+  @api
+  void groupElement(List<ElementPainter>? elements) {
+    if (elements == null || elements.length < 2) {
+      assert(() {
+        l.d('不满足组合条件');
+        return true;
+      }());
+      return;
+    }
+
+    //删除原来的元素
+    final newList = this.elements.clone(true);
+    newList.removeAll(elements);
+
+    //创建新的组合元素
+    final group = ElementGroupPainter();
+    group.resetChildren(
+        elements, canvasElementControlManager.enableResetElementAngle);
+    newList.add(group);
+
+    //重置元素列表
+    resetElementList(newList);
+
+    //选中组合元素
+    resetSelectElement([group]);
+  }
+
+  /// 解组元素
+  @api
+  void ungroupElement(ElementPainter? group) {
+    if (group == null || group is! ElementGroupPainter) {
+      assert(() {
+        l.d('不是[ElementGroupPainter]元素,不能解组');
+        return true;
+      }());
+      return;
+    }
+
+    var children = group.children;
+    if (children == null || children.isEmpty) {
+      assert(() {
+        l.d('不满足解组条件');
+        return true;
+      }());
+      return;
+    }
+
+    final newList = elements.clone(true);
+    newList.remove(group);
+    newList.addAll(children);
+
+    //重置元素列表
+    resetElementList(newList);
+
+    //选中组合元素
+    resetSelectElement(children);
+  }
+
   //endregion ---operate---
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('beforeElements', beforeElements));
     properties.add(DiagnosticsProperty('elements', elements));
+    properties.add(DiagnosticsProperty('afterElements', afterElements));
+    properties.add(DiagnosticsProperty('selectedElement', selectedElement));
   }
 }
