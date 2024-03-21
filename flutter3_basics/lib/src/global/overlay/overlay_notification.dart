@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../../flutter3_basics.dart';
 
 ///
 /// 通知基础小部件

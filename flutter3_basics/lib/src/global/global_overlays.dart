@@ -275,6 +275,12 @@ showNotification(
 
 /// 全局显示一个[OverlayEntry]
 /// [curve] 动画曲线/差值器
+///
+/// [OverlayState]
+/// [Overlay.of]
+///
+/// [Navigator.of]
+/// [NavigatorState.overlay]
 showOverlay(
   OverlayAnimatedWidgetBuilder builder, {
   BuildContext? context,

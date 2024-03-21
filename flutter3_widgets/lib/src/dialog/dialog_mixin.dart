@@ -14,7 +14,7 @@ const String kDialogSave = '保存';
 mixin DialogConstraintMixin {
   /// 对话框外边距
   EdgeInsets get dialogMargin =>
-      const EdgeInsets.symmetric(horizontal: 61, vertical: kToolbarHeight);
+      const EdgeInsets.symmetric(horizontal: 60, vertical: kToolbarHeight);
 
   /// 对话框的最大宽度/高度限制
   BoxConstraints get dialogConstraints => BoxConstraints(

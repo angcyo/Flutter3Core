@@ -130,6 +130,10 @@ void printError(exception, [StackTrace? stack]) {
 /// [PlatformDispatcher.implicitView]
 /// [FlutterView.display]
 /// [FlutterView.display.size] //可以获取屏幕尺寸
+///
+/// [SingletonFlutterWindow].[FlutterView]
+/// [window.physicalSize]
+/// [window.devicePixelRatio]]
 ui.FlutterView get flutterView =>
     WidgetsBinding.instance.renderView.flutterView;
 

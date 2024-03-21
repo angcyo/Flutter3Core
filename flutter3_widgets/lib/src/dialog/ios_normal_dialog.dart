@@ -6,6 +6,7 @@ part of './dialog.dart';
 ///
 ///
 /// ios 风格的对话框, 居中显示
+/// [showDialogWidget]
 class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
   /// 是否使用图标按钮
   final bool useIcon;

@@ -9,6 +9,7 @@ part of './dialog.dart';
 const kDefaultInputLength = 30;
 
 /// 简单的输入框对话框
+/// [showDialogWidget]
 class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
   /// 是否使用图标按钮
   final bool useIcon;
