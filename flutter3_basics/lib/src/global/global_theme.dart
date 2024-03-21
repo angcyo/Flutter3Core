@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -57,6 +57,9 @@ class GlobalTheme {
 
   /// 禁用时的背景颜色(偏白色)
   Color get disableBgColor => const Color(0xffECECEC);
+
+  /// 禁用时的颜色
+  Color get disableColor => Colors.black26;
 
   /// 链接的颜色
   Color get linkColor => const Color(0xff0a84ff);

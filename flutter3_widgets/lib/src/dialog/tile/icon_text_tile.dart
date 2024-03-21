@@ -58,6 +58,8 @@ class IconTextTile extends StatelessWidget with TileMixin {
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final disableTintColor = this.disableTintColor ?? globalTheme.disableColor;
     const gap = kX;
     const padding = EdgeInsets.symmetric(vertical: gap, horizontal: gap);
     final iconWidget = buildIconWidget(
