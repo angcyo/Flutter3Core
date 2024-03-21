@@ -1579,13 +1579,23 @@ enum TranslationType {
   scale,
 
   /// [TranslationPageRoute]
-  translation,
+  translation(withTranslation: true),
 
   /// [TranslationPageRoute]
-  translationTopToBottom,
+  translationTopToBottom(withTranslation: true, withTopToBottom: true),
 
   /// [TranslationPageRoute]
-  translationFade,
+  translationFade(withTranslation: true, withFade: true);
+
+  const TranslationType({
+    this.withTranslation = false,
+    this.withFade = false,
+    this.withTopToBottom = false,
+  });
+
+  final bool withTranslation;
+  final bool withFade;
+  final bool withTopToBottom;
 }
 
 extension RouteWidgetEx on Widget {
