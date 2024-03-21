@@ -841,7 +841,9 @@ class PaintProperty with EquatableMixin {
 
   @override
   String toString() {
-    return 'PaintProperty{left: $left, top: $top, width: $width, height: $height, scaleX: $scaleX, scaleY: $scaleY, skewX: $skewX, skewY: $skewY, angle: $angle, flipX: $flipX, flipY: $flipY}';
+    return 'PaintProperty{left: $left, top: $top, '
+        'width: $width, height: $height, scaleX: $scaleX, scaleY: $scaleY, '
+        'skewX: $skewX, skewY: $skewY, angle: $angle, flipX: $flipX, flipY: $flipY}';
   }
 
   @override
