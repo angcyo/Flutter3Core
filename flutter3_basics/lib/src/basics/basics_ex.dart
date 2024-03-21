@@ -392,6 +392,9 @@ extension StringEx on String {
     return hash;
   }
 
+  /// 重复字符串多少次[repeat]
+  String operator *(int repeat) => List.filled(repeat, this).join();
+
   /// 字符串转换成int
   int toInt({int? radix}) => int.parse(this, radix: radix);
 

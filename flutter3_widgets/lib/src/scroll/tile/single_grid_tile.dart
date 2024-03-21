@@ -6,7 +6,7 @@ part of '../../../flutter3_widgets.dart';
 ///
 
 /// 上图标[icon], 下文字[label]的tile
-class SingleGridTile extends StatelessWidget {
+class SingleGridTile extends StatelessWidget with TileMixin {
   /// 图标
   final IconData? icon;
   final double? iconSize;
@@ -41,18 +41,17 @@ class SingleGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
 
-    var top = iconWidget ??
-        (icon == null
-            ? null
-            : Icon(
-                icon,
-                size: iconSize,
-                color: iconColor ?? globalTheme.accentColor,
-              ));
+    final top = buildIconWidget(
+      context,
+      iconWidget,
+      icon: icon,
+      iconSize: iconSize,
+      iconColor: iconColor,
+    );
 
-    var bottom = labelWidget ??
+    final bottom = labelWidget ??
         label
             ?.text(
                 style: globalTheme.textBodyStyle,

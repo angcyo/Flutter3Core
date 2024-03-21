@@ -933,6 +933,8 @@ extension WidgetEx on Widget {
 
   /// 着色, 可以实现线性着色效果, 高光效果
   /// [ShaderMask]
+  /// [ColorFiltered]
+  /// [colorFiltered]
   Widget shaderMask(
     ui.Shader? shader, {
     BlendMode blendMode = BlendMode.modulate,
@@ -959,6 +961,8 @@ extension WidgetEx on Widget {
   /// [ColorFilterLayer]
   /// [ColorFilterLayer.colorFilter]
   /// [PaintingContext.pushLayer]
+  /// [ShaderMask]
+  /// [shaderMask]
   Widget colorFiltered({
     ColorFilter? colorFilter,
     Color? color = Colors.grey,

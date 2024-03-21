@@ -99,6 +99,7 @@ mixin DialogConstraintMixin {
 
 /// 对话框的一些基础方法
 /// [barrierDismissible] 窗口外是否可以销毁对话框
+/// [barrierColor] 障碍的颜色, 默认是[Colors.black54]
 ///
 /// [useSafeArea] 是否使用安全区域
 ///
@@ -109,7 +110,7 @@ Future<T?> showDialogWidget<T>({
   required BuildContext context,
   required Widget widget,
   bool barrierDismissible = true,
-  Color? barrierColor,
+  Color? barrierColor = Colors.black54,
   String? barrierLabel,
   bool useSafeArea = true,
   bool useRootNavigator = true,
@@ -132,7 +133,7 @@ Future<T?> showDialogWidget<T>({
     builder: (context) {
       return widget;
     },
-    barrierColor: barrierColor ?? Colors.black54,
+    barrierColor: barrierColor,
     barrierDismissible: barrierDismissible,
     barrierLabel: barrierLabel,
     useSafeArea: useSafeArea,

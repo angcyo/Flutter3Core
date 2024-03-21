@@ -20,3 +20,4 @@ part 'dialog_mixin.dart';
 part 'dialog_page_route.dart';
 part 'ios_normal_dialog.dart';
 part 'single_input_dialog.dart';
+part 'tile/icon_text_tile.dart';

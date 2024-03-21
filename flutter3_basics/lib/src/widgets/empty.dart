@@ -14,6 +14,7 @@ part of flutter3_basics;
 /// if (text != null) Text(text)
 /// text != null ? Text(text) : const Container()/SizedBox()
 /// ```
+/// [nil]
 class Empty extends StatelessWidget {
   final Size? size;
 

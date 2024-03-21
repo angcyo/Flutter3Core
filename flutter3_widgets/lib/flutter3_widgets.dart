@@ -73,6 +73,7 @@ part 'src/widgets/icon_state_widget.dart';
 part 'src/widgets/layout_ex.dart';
 part 'src/widgets/line.dart';
 part 'src/widgets/match_parent_layout.dart';
+part 'src/widgets/mixin/tile_mixin.dart';
 part 'src/widgets/size_animation_widget.dart';
 part 'src/widgets/state_decoration_widget.dart';
 part 'src/widgets/test_constraints_layout.dart';

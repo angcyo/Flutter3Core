@@ -16,6 +16,8 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
     String? barrierLabel,
     bool useSafeArea = true,
     super.settings,
+
+    /// [DisplayFeatureSubScreen.anchorPoint]
     super.anchorPoint,
     super.traversalEdgeBehavior,
     //---新增的参数---
