@@ -418,7 +418,7 @@ class CanvasElementManager with Diagnosticable {
 
   /// 对齐组内元素
   @api
-  void alignElement(ElementGroupPainter? group, CanvasAlign align,
+  void alignElement(ElementGroupPainter? group, CanvasAlignType align,
       {UndoType undoType = UndoType.normal}) {
     final children = group?.children;
     if (group == null || children == null || children.length < 2) {
@@ -444,38 +444,38 @@ class CanvasElementManager with Diagnosticable {
           ?.getBounds(canvasElementControlManager.enableResetElementAngle);
       if (elementBounds != null) {
         switch (align) {
-          case CanvasAlign.left:
+          case CanvasAlignType.left:
             //所有元素对齐bounds的左边
             element.translateElement(Matrix4.identity()
               ..translate(bounds.left - elementBounds.left, 0.0));
             break;
-          case CanvasAlign.top:
+          case CanvasAlignType.top:
             //所有元素对齐bounds的上边
             element.translateElement(Matrix4.identity()
               ..translate(0.0, bounds.top - elementBounds.top));
             break;
-          case CanvasAlign.right:
+          case CanvasAlignType.right:
             //所有元素对齐bounds的右边
             element.translateElement(Matrix4.identity()
               ..translate(bounds.right - elementBounds.right, 0.0));
             break;
-          case CanvasAlign.bottom:
+          case CanvasAlignType.bottom:
             //所有元素对齐bounds的下边
             element.translateElement(Matrix4.identity()
               ..translate(0.0, bounds.bottom - elementBounds.bottom));
             break;
-          case CanvasAlign.center:
+          case CanvasAlignType.center:
             //所有元素对齐bounds的中心
             element.translateElement(Matrix4.identity()
               ..translate(bounds.center.dx - elementBounds.center.dx,
                   bounds.center.dy - elementBounds.center.dy));
             break;
-          case CanvasAlign.centerHorizontal:
+          case CanvasAlignType.horizontalCenter:
             //所有元素对齐bounds的水平中心
             element.translateElement(Matrix4.identity()
               ..translate(0.0, bounds.center.dy - elementBounds.center.dy));
             break;
-          case CanvasAlign.centerVertical:
+          case CanvasAlignType.verticalCenter:
             //所有元素对齐bounds的垂直中心
             element.translateElement(Matrix4.identity()
               ..translate(bounds.center.dx - elementBounds.center.dx, 0.0));
@@ -493,6 +493,83 @@ class CanvasElementManager with Diagnosticable {
             canvasElementControlManager.enableResetElementAngle);
   }
 
+  /// 均分组内元素
+  @api
+  void averageElement(ElementGroupPainter? group, CanvasAverageType average,
+      {UndoType undoType = UndoType.normal}) {
+    final children = group?.children;
+    if (group == null || children == null || children.length < 2) {
+      assert(() {
+        l.d('不满足均分条件');
+        return true;
+      }());
+      return;
+    }
+
+    if (average == CanvasAverageType.horizontal ||
+        average == CanvasAverageType.vertical) {
+      //均分
+      if (children.length <= 2) {
+        assert(() {
+          l.d('不满足均分条件');
+          return true;
+        }());
+        return;
+      }
+    } else {
+      //等宽高, 所有元素的大小, 参考第一个元素
+      final firstElement = children.first;
+      final firstBounds = firstElement.paintProperty
+          ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+
+      if (firstBounds == null) {
+        assert(() {
+          l.d('获取不到元素的边界');
+          return true;
+        }());
+        return;
+      }
+
+      final undoState = group.createStateStack();
+      for (var element in children) {
+        if (element == firstElement) {
+          continue;
+        }
+        final elementBounds = element.paintProperty
+            ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+        if (elementBounds != null) {
+          switch (average) {
+            case CanvasAverageType.width:
+              final sx = firstBounds.width / elementBounds.width;
+              element.scaleElement(sx: sx);
+              break;
+            case CanvasAverageType.height:
+              final sy = firstBounds.height / elementBounds.height;
+              element.scaleElement(sy: sy);
+              break;
+            case CanvasAverageType.size:
+              final sx = firstBounds.width / elementBounds.width;
+              final sy = firstBounds.height / elementBounds.height;
+              element.scaleElement(sx: sx, sy: sy);
+              break;
+            default:
+              break;
+          }
+        }
+      }
+
+      if (undoType == UndoType.normal) {
+        final redoState = group.createStateStack();
+        canvasDelegate.canvasUndoManager.addUntoState(undoState, redoState);
+      }
+
+      //更新选择元素的边界
+      canvasElementControlManager.elementSelectComponent
+          .updatePaintPropertyFromChildren(
+              canvasElementControlManager.enableResetElementAngle);
+    }
+  }
+
   //endregion ---operate---
 
   @override
@@ -506,7 +583,7 @@ class CanvasElementManager with Diagnosticable {
 }
 
 /// 元素对齐方式
-enum CanvasAlign {
+enum CanvasAlignType {
   left,
   top,
   right,
@@ -516,8 +593,26 @@ enum CanvasAlign {
   center,
 
   ///在水平方向上对齐
-  centerHorizontal,
+  horizontalCenter,
 
   ///在垂直方向上对齐
-  centerVertical,
+  verticalCenter,
+}
+
+/// 均分方式
+enum CanvasAverageType {
+  /// 水平均分
+  horizontal,
+
+  /// 垂直均分
+  vertical,
+
+  /// 等高
+  height,
+
+  /// 等宽
+  width,
+
+  /// 等大小
+  size,
 }
