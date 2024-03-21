@@ -558,14 +558,17 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     if (elementPainter == null) {
       return;
     }
+    final anchor = elementPainter.paintProperty?.paintCenter;
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
-      elementPainter.flipElementWithScale(flipX: flipX, flipY: flipY);
+      elementPainter.flipElementWithScale(
+          flipX: flipX, flipY: flipY, anchor: anchor);
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager
           .addUntoState(undoStateStack, redoStateStack);
     } else {
-      elementPainter.flipElementWithScale(flipX: flipX, flipY: flipY);
+      elementPainter.flipElementWithScale(
+          flipX: flipX, flipY: flipY, anchor: anchor);
     }
   }
 
@@ -798,6 +801,7 @@ class ElementSelectComponent extends ElementGroupPainter
   void flipElementWithScale({bool? flipX, bool? flipY, Offset? anchor}) {
     //super.flipElementWithScale(flipX: flipX, flipY: flipY, anchor: anchor);
     //这种方式下的翻转, 自身不用动
+    anchor ??= paintProperty?.paintCenter;
     children?.forEach((element) {
       element.flipElementWithScale(flipX: flipX, flipY: flipY, anchor: anchor);
     });
