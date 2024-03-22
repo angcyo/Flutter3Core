@@ -636,8 +636,9 @@ class PaintProperty with EquatableMixin {
   //region ---操作方法---
 
   /// 获取元素的边界
-  Rect getBounds(bool enableResetElementAngle) {
-    return enableResetElementAngle ? paintBounds : paintScaleRotateBounds;
+  /// [resetElementAngle] 是否要获取重置角度后的元素边界
+  Rect getBounds(bool resetElementAngle) {
+    return resetElementAngle ? paintBounds : paintScaleRotateBounds;
   }
 
   /// 将[matrix]矩阵对应的中心点, 平移到元素的中心点
