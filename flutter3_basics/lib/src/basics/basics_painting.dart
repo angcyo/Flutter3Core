@@ -53,8 +53,14 @@ Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
   final width = size.width * radio;
   final height = size.height * radio;
   final ui.Picture picture = drawPicture(size, callback);
-  //final ui.Picture result = drawPicture(size, callback);
-  return picture.toImage(width.ceil(), height.ceil());
+  if (radio == 1) {
+    return picture.toImage(width.ceil(), height.ceil());
+  }
+  final ui.Picture result = drawPicture(ui.Size(width, height), (canvas) {
+    canvas.scale(radio, radio);
+    canvas.drawPicture(picture);
+  });
+  return result.toImage(width.ceil(), height.ceil());
 }
 
 /// 使用[Canvas]绘制图片
