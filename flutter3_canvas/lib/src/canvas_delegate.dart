@@ -14,7 +14,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [extend] 扩展的边距. 默认会在元素的边界上, 扩展1个dp的边距
   static Future<UiImage?> rasterizeElement(
     ElementPainter? element, {
-    EdgeInsets? extend,
+    EdgeInsets? extend = const EdgeInsets.all(1),
   }) async {
     if (element == null) {
       return null;
@@ -23,10 +23,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     if (bounds == null) {
       return null;
     }
-    extend ??= const EdgeInsets.all(1);
     final size = Size(
-      bounds.width + extend.horizontal,
-      bounds.height + extend.vertical,
+      bounds.width + (extend?.horizontal ?? 0),
+      bounds.height + (extend?.vertical ?? 0),
     );
     final result = await drawImage(size, (canvas) {
       canvas.drawInRect(size.toRect(), bounds, () {
@@ -36,8 +35,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         );
       }, dstPadding: extend);
     });
-    final base64 = await result.toBase64();
-    debugger();
+    /*final base64 = await result.toBase64();
+    debugger();*/
     return result;
   }
 

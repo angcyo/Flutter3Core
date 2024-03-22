@@ -356,6 +356,112 @@ class CanvasElementManager with Diagnosticable {
 
   //region ---operate---
 
+  /// 替换元素
+  /// [oldElement] 需要被替换的旧元素
+  /// [newElement] 新元素
+  /// [keepIndex] 是否保持原来的索引位置
+  @api
+  @supportUndo
+  void replaceElement(ElementPainter? oldElement, ElementPainter? newElement,
+      {UndoType undoType = UndoType.normal, bool keepIndex = false}) {
+    if (oldElement == null && newElement == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+
+    final List<ElementPainter> oldElementList;
+    if (oldElement is ElementSelectComponent) {
+      oldElementList = oldElement.children ?? [];
+    } else {
+      oldElementList = oldElement == null ? [] : [oldElement];
+    }
+
+    final List<ElementPainter> newElementList =
+        newElement == null ? [] : [newElement];
+
+    replaceElementList(oldElementList, newElementList,
+        keepIndex: keepIndex, undoType: undoType);
+  }
+
+  @api
+  @supportUndo
+  void replaceElementList(List<ElementPainter>? oldElementList,
+      List<ElementPainter>? newElementList,
+      {UndoType undoType = UndoType.normal, bool keepIndex = false}) {
+    if (isNullOrEmpty(oldElementList) && isNullOrEmpty(newElementList)) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+
+    final oldFirstElement = oldElementList?.first;
+
+    final old = elements.clone();
+    final index = (keepIndex && oldFirstElement != null)
+        ? elements.indexOf(oldFirstElement)
+        : -1;
+
+    elements.removeAll(oldElementList ?? []);
+    if (index >= 0 && newElementList != null) {
+      elements.insertAll(index, newElementList);
+    } else {
+      if (newElementList != null) {
+        elements.addAll(newElementList);
+      }
+    }
+
+    oldElementList?.forEach((element) {
+      element.detachFromCanvasDelegate(canvasDelegate);
+    });
+    newElementList?.forEach((element) {
+      element.attachToCanvasDelegate(canvasDelegate);
+    });
+
+    final List<ElementPainter> op = newElementList ?? [];
+    canvasDelegate.dispatchCanvasElementListChanged(
+        old, elements, op, undoType);
+
+    if (undoType == UndoType.normal) {
+      final newList = elements.clone();
+      canvasDelegate.canvasUndoManager.add(UndoItem(
+        () {
+          //debugger();
+          elements.reset(old);
+          newElementList?.forEach((element) {
+            element.detachFromCanvasDelegate(canvasDelegate);
+          });
+          oldElementList?.forEach((element) {
+            element.attachToCanvasDelegate(canvasDelegate);
+          });
+          canvasDelegate.dispatchCanvasElementListChanged(
+              newList, old, op, UndoType.undo);
+        },
+        () {
+          //debugger();
+          elements.reset(newList);
+          oldElementList?.forEach((element) {
+            element.detachFromCanvasDelegate(canvasDelegate);
+          });
+          newElementList?.forEach((element) {
+            element.attachToCanvasDelegate(canvasDelegate);
+          });
+          canvasDelegate.dispatchCanvasElementListChanged(
+              old, newList, op, UndoType.redo);
+        },
+      ));
+    }
+
+    //选中组合元素
+    if (!isNullOrEmpty(op)) {
+      resetSelectElement(op);
+    }
+  }
+
   /// 组合元素
   @api
   @supportUndo
