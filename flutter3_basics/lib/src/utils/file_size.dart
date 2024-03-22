@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 /// 2023-11-18
 /// https://pub.dev/packages/filesize

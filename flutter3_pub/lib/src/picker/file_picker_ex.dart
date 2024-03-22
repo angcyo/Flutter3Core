@@ -13,6 +13,8 @@ Future<PlatformFile?> pickSingleImage() async {
 }
 
 /// 选择文件, 使用系统自带的文件选择器
+/// 选择图片
+/// 选择视频
 /// ```
 /// /data/user/0/com.angcyo.flutter3.abc/cache/file_picker/girl.jpg
 /// ```
@@ -21,6 +23,7 @@ Future<PlatformFile?> pickSingleImage() async {
 /// [allowedExtensions] 允许的文件扩展名, Optionally, [allowedExtensions] might be provided (e.g. `[pdf, svg, jpg]`.).
 /// [initialDirectory] 可以选择设置为绝对路径，以指定对话框的打开位置。仅在 Linux、macOS 和 Windows 上受支持
 /// [allowCompression] 是否允许压缩文件
+/// [onFileLoading] 文件加载状态回调
 /// [allowMultiple] 是否允许多选
 /// [withData] 是否返回数据,而非文件. 在web端时需要.
 /// [withReadStream] 是否返回文件流
@@ -51,16 +54,18 @@ Future<FilePickerResult?> pickFiles({
     readSequential: readSequential,
   );
 
-  if (result != null) {
-    //Android girl.jpg:/data/user/0/com.angcyo.flutter3.abc/cache/file_picker/girl.jpg
-    if (isDebug) {
+  //Android girl.jpg:/data/user/0/com.angcyo.flutter3.abc/cache/file_picker/girl.jpg
+  assert(() {
+    if (result != null) {
       result.files.forEachIndexed((index, element) {
         l.d('选择文件[$index][${element.name}:${element.size.toFileSizeStr()}]->${element.path} bytes:${element.bytes?.length}');
       });
+    } else {
+      l.d('取消选择文件');
     }
-  } else {
-    l.d('取消选择文件');
-  }
+    return true;
+  }());
+
   return result;
 }
 
