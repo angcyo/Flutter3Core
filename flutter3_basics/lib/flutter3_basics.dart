@@ -103,8 +103,11 @@ typedef UiGradient = ui.Gradient;
 typedef AnimateAction = void Function(AnimationController controller);
 typedef NumFormat = String? Function(num? number);
 
+///[isNullOrEmpty]
+bool isNil(dynamic value) => isNullOrEmpty(value);
+
 /// 判断[value]是否为空
-bool isNullOrEmpty(Object? value) {
+bool isNullOrEmpty(dynamic value) {
   if (value == null) {
     return true;
   }
