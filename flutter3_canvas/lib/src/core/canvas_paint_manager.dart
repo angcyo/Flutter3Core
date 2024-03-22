@@ -5,7 +5,7 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/02
 ///
 /// 绘制管理, 所有绘制相关的操作, 都在这里, 绘制的入口
-class CanvasPaintManager with Diagnosticable {
+class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   final CanvasDelegate canvasDelegate;
 
   /// 坐标系
@@ -64,5 +64,19 @@ class CanvasPaintManager with Diagnosticable {
         textDirection: TextDirection.ltr)
       ..layout()
       ..paint(canvas, offset);*/
+  }
+
+  @override
+  String toStringShort() => '画布大小:${canvasDelegate.canvasViewBox.paintBounds} '
+      '可视区域:${canvasDelegate.canvasViewBox.canvasVisibleBounds} ';
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('坐标系单位', axisManager.axisUnit));
+    properties.add(
+        DiagnosticsProperty('画布大小', canvasDelegate.canvasViewBox.paintBounds));
+    properties.add(DiagnosticsProperty(
+        '可视区域', canvasDelegate.canvasViewBox.canvasVisibleBounds));
   }
 }

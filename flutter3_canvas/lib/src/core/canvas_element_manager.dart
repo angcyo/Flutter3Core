@@ -5,7 +5,7 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/20
 ///
 /// 元素管理, 包含元素的绘制, 选择, 添加/删除等相关操作
-class CanvasElementManager with Diagnosticable {
+class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   //region ---属性----
 
   final CanvasDelegate canvasDelegate;
@@ -819,14 +819,139 @@ class CanvasElementManager with Diagnosticable {
     }
   }
 
+  /// 是否可以按照指定的方式排列元素
+  @api
+  bool canArrangeElement(dynamic element, CanvasArrangeType arrange) {
+    final targetElement = element is ElementSelectComponent
+        ? element.children?.first
+        : element is ElementPainter
+            ? element
+            : null;
+    if (targetElement == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return false;
+    }
+    final index = elements.indexOf(targetElement);
+    final size = elements.length;
+    switch (arrange) {
+      case CanvasArrangeType.up || CanvasArrangeType.top:
+        return index < size - 1;
+      case CanvasArrangeType.down || CanvasArrangeType.bottom:
+        return index > 0;
+    }
+  }
+
+  /// 排列元素
+  @api
+  @supportUndo
+  void arrangeElement(
+    ElementPainter? element,
+    CanvasArrangeType arrange, {
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (element == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    arrangeElementList(
+        element is ElementSelectComponent ? element.children : element.ofList(),
+        arrange,
+        undoType: undoType);
+  }
+
+  /// 排列元素
+  @api
+  @supportUndo
+  void arrangeElementList(
+    List<ElementPainter>? elementList,
+    CanvasArrangeType arrange, {
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (isNil(elementList)) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+
+    final first = elementList!.first;
+    final index = elements.indexOf(first);
+
+    if (index < 0) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+
+    //debugger();
+    final old = elements.clone();
+    elements.removeAll(elementList);
+    switch (arrange) {
+      case CanvasArrangeType.up:
+        elements.insertAll(min(index + 1, elements.length), elementList);
+        break;
+      case CanvasArrangeType.down:
+        elements.insertAll(max(index - 1, 0), elementList);
+        break;
+      case CanvasArrangeType.top:
+        elements.addAll(elementList);
+        break;
+      case CanvasArrangeType.bottom:
+        elements.insertAll(0, elementList);
+        break;
+    }
+
+    canvasDelegate.dispatchCanvasElementListChanged(
+        old, elements, elementList, undoType);
+
+    if (undoType == UndoType.normal) {
+      final newList = elements.clone();
+      canvasDelegate.canvasUndoManager.add(UndoItem(
+        () {
+          //debugger();
+          elements.reset(old);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              newList, old, elementList, UndoType.undo);
+        },
+        () {
+          //debugger();
+          elements.reset(newList);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              old, newList, elementList, UndoType.redo);
+        },
+      ));
+    }
+  }
+
   //endregion ---operate---
 
   @override
+  String toStringShort() => buildString((builder) {
+        builder
+          ..addText(isSelectedElement
+              ? "选中[${elementSelectComponent?.children?.length}个元素 "
+              : "")
+          ..addText(
+              "[${beforeElements.length}][${elements.length}][${afterElements.length}]");
+      });
+
+  @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('beforeElements', beforeElements));
-    properties.add(DiagnosticsProperty('elements', elements));
-    properties.add(DiagnosticsProperty('afterElements', afterElements));
+    properties.add(ElementDiagnosticsNode(beforeElements).toDiagnosticsNode(
+        name: 'beforeElements', style: DiagnosticsTreeStyle.sparse));
+    properties.add(ElementDiagnosticsNode(elements).toDiagnosticsNode(
+        name: 'elements', style: DiagnosticsTreeStyle.whitespace));
+    properties.add(ElementDiagnosticsNode(afterElements).toDiagnosticsNode(
+        name: 'afterElements', style: DiagnosticsTreeStyle.dense));
     properties.add(DiagnosticsProperty('selectedElement', selectedElement));
   }
 }
@@ -864,4 +989,19 @@ enum CanvasAverageType {
 
   /// 等大小
   size,
+}
+
+/// 排列元素
+enum CanvasArrangeType {
+  /// 上移一层->[top]
+  up,
+
+  /// 下移一层->[bottom]
+  down,
+
+  /// 置为顶层[topMost]
+  top,
+
+  /// 置为底层[bottomMost]
+  bottom,
 }

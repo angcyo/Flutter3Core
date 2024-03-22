@@ -5,7 +5,7 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/02
 /// 视图盒子, 用来限制画布的最小/最大平移/缩放的值
 /// 未特殊说明, 所有可绘制的数值, 都是dp单位
-class CanvasViewBox with Diagnosticable {
+class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   final CanvasDelegate canvasDelegate;
 
   CanvasViewBox(this.canvasDelegate);
@@ -288,4 +288,26 @@ class CanvasViewBox with Diagnosticable {
   }
 
 //endregion ---操作---
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty<Rect>('paintBounds', paintBounds))
+      ..add(DiagnosticsProperty<Rect>('canvasBounds', canvasBounds))
+      ..add(DiagnosticsProperty<Offset>('originOffset', originOffset))
+      ..add(DiagnosticsProperty<Matrix4>('canvasMatrix', canvasMatrix))
+      ..add(DiagnosticsProperty<double>('scaleX', scaleX))
+      ..add(DiagnosticsProperty<double>('scaleY', scaleY))
+      ..add(DiagnosticsProperty<double>('translateX', translateX))
+      ..add(DiagnosticsProperty<double>('translateY', translateY))
+      ..add(DiagnosticsProperty<double>('minScaleX', minScaleX))
+      ..add(DiagnosticsProperty<double>('minScaleY', minScaleY))
+      ..add(DiagnosticsProperty<double>('maxScaleX', maxScaleX))
+      ..add(DiagnosticsProperty<double>('maxScaleY', maxScaleY))
+      ..add(DiagnosticsProperty<double>('minTranslateX', minTranslateX))
+      ..add(DiagnosticsProperty<double>('minTranslateY', minTranslateY))
+      ..add(DiagnosticsProperty<double>('maxTranslateX', maxTranslateX))
+      ..add(DiagnosticsProperty<double>('maxTranslateY', maxTranslateY));
+  }
 }

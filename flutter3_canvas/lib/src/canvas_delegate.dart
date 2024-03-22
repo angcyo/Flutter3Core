@@ -246,20 +246,44 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //endregion ---Ticker---
 
+  //region ---diagnostic---
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(IntProperty("刷新次数", repaint.value));
-    properties.add(DiagnosticsProperty('delegateContext', delegateContext));
-    properties.add(DiagnosticsProperty('canvasStyle', canvasStyle));
-    properties.add(DiagnosticsProperty('repaint', repaint));
-    properties.add(DiagnosticsProperty('canvasViewBox', canvasViewBox));
-    properties
-        .add(DiagnosticsProperty('canvasPaintManager', canvasPaintManager));
-    properties
-        .add(DiagnosticsProperty('canvasEventManager', canvasEventManager));
-    properties
-        .add(DiagnosticsProperty('canvasElementManager', canvasElementManager));
+
+    properties.add(IntProperty("请求刷新次数", refreshCount));
+    properties.add(IntProperty("重绘次数", paintCount));
+    properties.add(DiagnosticsProperty('代理上下文', delegateContext));
+    properties.add(DiagnosticsProperty('画布样式', canvasStyle));
+    properties.add(canvasViewBox.toDiagnosticsNode(
+      name: '视口控制',
+      style: DiagnosticsTreeStyle.sparse,
+    ));
     properties.add(DiagnosticsProperty<Ticker?>('ticker', _ticker));
+
+    properties.add(DiagnosticsProperty<bool>(
+        "重置旋转角度",
+        canvasElementManager
+            .canvasElementControlManager.enableResetElementAngle));
+    properties.add(DiagnosticsProperty<bool>("激活控制交互",
+        canvasElementManager.canvasElementControlManager.enableElementControl));
+    properties.add(DiagnosticsProperty<bool>(
+        "激活点击元素外取消选择",
+        canvasElementManager
+            .canvasElementControlManager.enableOutsideCancelSelectElement));
+
+    properties.add(canvasPaintManager.toDiagnosticsNode(
+      name: '画布管理',
+      style: DiagnosticsTreeStyle.sparse,
+    ));
+    properties.add(
+        DiagnosticsProperty<CanvasEventManager>('手势管理', canvasEventManager));
+    properties.add(canvasElementManager.toDiagnosticsNode(
+      name: '元素管理',
+      style: DiagnosticsTreeStyle.sparse,
+    ));
   }
+
+//endregion ---diagnostic---
 }

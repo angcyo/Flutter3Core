@@ -5,7 +5,8 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/20
 ///
 /// 绘制元素数据
-class ElementPainter extends IPainter {
+class ElementPainter extends IPainter
+    with DiagnosticableTreeMixin, DiagnosticsMixin {
   //region ---PaintProperty---
 
   /// 元素绘制的属性信息
@@ -355,6 +356,26 @@ class ElementPainter extends IPainter {
   }
 
 //endregion ---canvas---
+
+  @override
+  String toStringShort() =>
+      '${classHash()} 边界:${paintProperty?.getBounds(canvasDelegate?.canvasElementManager.canvasElementControlManager.enableResetElementAngle == true)}';
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('paintProperty', paintProperty));
+    properties.add(FlagProperty('isLockRatio',
+        value: isLockRatio, ifTrue: 'isLockRatio', ifFalse: 'notLockRatio'));
+    properties.add(FlagProperty('isVisible',
+        value: isVisible, ifTrue: 'isVisible', ifFalse: 'notVisible'));
+
+    final canvasViewBox = canvasDelegate?.canvasViewBox;
+    if (canvasViewBox != null) {
+      properties.add(
+          DiagnosticsProperty('是否在画布中', isVisibleInCanvasBox(canvasViewBox)));
+    }
+  }
 }
 
 /// 一组元素的绘制
@@ -934,4 +955,21 @@ abstract class PropertyType {
 
   /// 元素的数据改变, 比如内容等信息
   static int data = 0x04;
+}
+
+/// 诊断
+class ElementDiagnosticsNode with DiagnosticableTreeMixin, DiagnosticsMixin {
+  final List<ElementPainter> elements;
+
+  ElementDiagnosticsNode(this.elements);
+
+  @override
+  String toStringShort() => elements.isEmpty ? '空' : '共[${elements.length}]个元素';
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    elements.forEachIndexed((index, element) {
+      properties.add(DiagnosticsProperty('[$index]', element));
+    });
+  }
 }

@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -135,4 +135,16 @@ void logAnimation(
 ) {
   l.d("[$prefix]enter:${animation.status}->${animation.value}");
   l.v("[$prefix]exit:${secondaryAnimation.status}->${secondaryAnimation.value}");
+}
+
+mixin DiagnosticsMixin on DiagnosticableTreeMixin {
+  /// [DiagnosticsNode]
+  /// [DiagnosticableTreeNode]
+  @override
+  List<DiagnosticsNode> debugDescribeChildren() {
+    final builder = DiagnosticPropertiesBuilder();
+    //builder.defaultDiagnosticsTreeStyle=DiagnosticsTreeStyle.sparse;
+    debugFillProperties(builder);
+    return builder.properties;
+  }
 }
