@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,8 +11,10 @@ class CanvasWidget extends LeafRenderObjectWidget {
   const CanvasWidget(this.canvasDelegate, {super.key});
 
   @override
-  RenderObject createRenderObject(BuildContext context) =>
-      CanvasRenderBox(context, canvasDelegate..delegateContext = context);
+  RenderObject createRenderObject(BuildContext context) => CanvasRenderBox(
+        context,
+        canvasDelegate..delegateContext = context,
+      );
 
   @override
   void updateRenderObject(BuildContext context, CanvasRenderBox renderObject) {
@@ -20,7 +22,8 @@ class CanvasWidget extends LeafRenderObjectWidget {
     canvasDelegate.delegateContext = context;
     renderObject
       ..context = context
-      ..canvasDelegate = canvasDelegate;
+      ..canvasDelegate = canvasDelegate
+      ..markNeedsPaint();
   }
 
   @override
@@ -103,11 +106,42 @@ class CanvasRenderBox extends RenderBox {
 }
 
 /// 坐标系
-class CanvasCoordinate {
-  final String des;
+const viewCoordinate = AnnotationMeta('视图坐标的值, 以屏幕左上角为原点');
+const sceneCoordinate = AnnotationMeta('场景坐标的值, 以内容坐标中心为原点');
 
-  const CanvasCoordinate(this.des);
+/// 画布扩展方法
+extension CanvasIterableEx on Iterable<ElementPainter> {
+  /// [topLeft] 按照从上到下, 从左到右的顺序, 排序元素. 默认
+  /// [leftTop] 按照从左到右, 从上到下的顺序, 排序元素
+  List<ElementPainter> sortElement({
+    bool resetElementAngle = true,
+    bool? topLeft,
+    bool? leftTop,
+  }) {
+    return toList()
+      ..sort((a, b) {
+        final aBounds = a.paintProperty?.getBounds(resetElementAngle);
+        final bBounds = b.paintProperty?.getBounds(resetElementAngle);
+
+        final aTop = aBounds?.top ?? 0;
+        final bTop = bBounds?.top ?? 0;
+
+        final aLeft = aBounds?.left ?? 0;
+        final bLeft = bBounds?.left ?? 0;
+
+        if (leftTop == true) {
+          // 从左到右, 从上到下
+          if (aLeft == bLeft) {
+            return aTop.compareTo(bTop);
+          }
+          return aLeft.compareTo(bLeft);
+        } else {
+          // 从上到下, 从左到右
+          if (aTop == bTop) {
+            return aLeft.compareTo(bLeft);
+          }
+          return aTop.compareTo(bTop);
+        }
+      });
+  }
 }
-
-const viewCoordinate = CanvasCoordinate('视图坐标的值, 以屏幕左上角为原点');
-const sceneCoordinate = CanvasCoordinate('场景坐标的值, 以内容坐标中心为原点');
