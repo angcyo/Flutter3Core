@@ -2,13 +2,11 @@ library flutter3_core;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter3_core/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/src/isar/isar_test_collection.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
@@ -36,6 +34,7 @@ part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/file_ex.dart';
 part 'src/file/file_log.dart';
+part 'src/file/file_type.dart';
 part 'src/isar/hive/hive_ex.dart';
 part 'src/isar/isar_ex.dart';
 part 'src/view_model/mutable_live_data.dart';
@@ -75,6 +74,9 @@ Future<void> initFlutter3Core() async {
 }
 
 extension MimeEx on String {
+  /// 是否是图片类型
+  bool get isImageType => toLowerCase() == 'image';
+
   /// 获取文件的Mime类型
   /// ```
   /// print(lookupMimeType('test.html')); // text/html

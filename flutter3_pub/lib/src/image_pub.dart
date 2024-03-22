@@ -69,7 +69,7 @@ extension ImagePubEx on String {
     //debugger();
     //memCacheHeight ??= memCacheWidth; //变成了正方形了
     final type = mimeType();
-    if (type == null || type == "image") {
+    if (type?.isImageType == true) {
       //图片类型
       if (isSvg) {
         //svg图片
