@@ -644,7 +644,7 @@ class ElementSelectComponent extends ElementGroupPainter
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //debugger();
     //绘制选中元素边界
-    if (isSelectedElement) {
+    if (paintMeta.host is CanvasDelegate && isSelectedElement) {
       paint.color = canvasElementControlManager
           .canvasDelegate.canvasStyle.canvasAccentColor;
       paint.strokeWidth = 1 /*1.toDpFromPx()*/ / paintMeta.canvasScale;

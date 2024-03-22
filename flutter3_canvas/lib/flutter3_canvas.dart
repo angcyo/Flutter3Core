@@ -2,6 +2,7 @@ library flutter3_canvas;
 
 import 'dart:developer';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';

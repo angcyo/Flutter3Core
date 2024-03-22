@@ -358,6 +358,7 @@ class CanvasElementManager with Diagnosticable {
 
   /// 组合元素
   @api
+  @supportUndo
   void groupElement(List<ElementPainter>? elements) {
     if (elements == null || elements.length < 2) {
       assert(() {
@@ -386,6 +387,7 @@ class CanvasElementManager with Diagnosticable {
 
   /// 解组元素
   @api
+  @supportUndo
   void ungroupElement(ElementPainter? group,
       {UndoType undoType = UndoType.normal}) {
     if (group == null || group is! ElementGroupPainter) {
@@ -418,6 +420,7 @@ class CanvasElementManager with Diagnosticable {
 
   /// 对齐组内元素
   @api
+  @supportUndo
   void alignElement(ElementGroupPainter? group, CanvasAlignType align,
       {UndoType undoType = UndoType.normal}) {
     final children = group?.children;
@@ -496,6 +499,7 @@ class CanvasElementManager with Diagnosticable {
   /// 均分组内元素
   /// [useCenterAverage] 是否使用中心点进行均分分布, 否则使用元素之间的等距进行均分分布
   @api
+  @supportUndo
   void averageElement(
     ElementGroupPainter? group,
     CanvasAverageType average, {

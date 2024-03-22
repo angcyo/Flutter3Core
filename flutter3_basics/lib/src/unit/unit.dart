@@ -490,3 +490,26 @@ extension UnitNumEx on num {
     return IUnit.dp.toUnit(toPixel(unit));
   }
 }
+
+/// 单位转换扩展
+extension UnitSizeEx on Size {
+  ///[toPixel]
+  @pixel
+  Size toPixelFromDp([@unit IUnit unit = IUnit.dp]) {
+    return Size(width.toPixelFromDp(unit), height.toPixelFromDp(unit));
+  }
+}
+
+/// 单位转换扩展
+extension UnitRectEx on Rect {
+  ///[toPixel]
+  @pixel
+  Rect toPixelFromDp([@unit IUnit unit = IUnit.dp]) {
+    return Rect.fromLTRB(
+      left.toPixelFromDp(unit),
+      top.toPixelFromDp(unit),
+      right.toPixelFromDp(unit),
+      bottom.toPixelFromDp(unit),
+    );
+  }
+}

@@ -4,8 +4,43 @@ part of '../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/02/02
 ///
+
+const rasterizeElement = AnnotationMeta('栅格化元素, 栅格化时, 不应该绘制额外的干扰信息');
+
 /// 画布代理类, 核心类, 整个框架的入口
 class CanvasDelegate with Diagnosticable implements TickerProvider {
+  /// 栅格化元素
+  /// [element] 要栅格化的元素
+  /// [extend] 扩展的边距. 默认会在元素的边界上, 扩展1个dp的边距
+  static Future<UiImage?> rasterizeElement(
+    ElementPainter? element, {
+    EdgeInsets? extend,
+  }) async {
+    if (element == null) {
+      return null;
+    }
+    final bounds = element.paintProperty?.getBounds(true);
+    if (bounds == null) {
+      return null;
+    }
+    extend ??= const EdgeInsets.all(1);
+    final size = Size(
+      bounds.width + extend.horizontal,
+      bounds.height + extend.vertical,
+    );
+    final result = await drawImage(size, (canvas) {
+      canvas.drawInRect(size.toRect(), bounds, () {
+        element.painting(
+          canvas,
+          PaintMeta(host: rasterizeElement),
+        );
+      }, dstPadding: extend);
+    });
+    final base64 = await result.toBase64();
+    debugger();
+    return result;
+  }
+
   //region ---入口点---
 
   /// 上下文, 用来发送通知

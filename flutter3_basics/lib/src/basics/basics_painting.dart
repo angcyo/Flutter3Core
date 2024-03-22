@@ -37,10 +37,7 @@ typedef CanvasAction = void Function(Canvas canvas);
 /// [DecorationImage]
 /// [paintImage]
 /// [applyBoxFit]
-ui.Picture drawPicture(
-  Size size,
-  CanvasAction action,
-) {
+ui.Picture drawPicture(@dp Size size, CanvasAction action) {
   final ui.PictureRecorder recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, size.width, size.height));
   action(canvas);
@@ -48,27 +45,22 @@ ui.Picture drawPicture(
 }
 
 /// 使用[Canvas]绘制图片
-Future<ui.Image> drawImage(
-  Size size,
-  CanvasAction callback,
-) {
+/// [size] 绘制的大小, 像素单位
+/// [pixelRatio] 像素密度
+Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
+    [double? pixelRatio]) {
+  final radio = pixelRatio ?? dpr;
+  final width = size.width * radio;
+  final height = size.height * radio;
   final ui.Picture picture = drawPicture(size, callback);
-  return picture.toImage(
-    size.width.ceil(),
-    size.height.ceil(),
-  );
+  //final ui.Picture result = drawPicture(size, callback);
+  return picture.toImage(width.ceil(), height.ceil());
 }
 
 /// 使用[Canvas]绘制图片
-ui.Image drawImageSync(
-  Size size,
-  CanvasAction callback,
-) {
+ui.Image drawImageSync(Size size, CanvasAction callback) {
   final ui.Picture picture = drawPicture(size, callback);
-  return picture.toImageSync(
-    size.width.ceil(),
-    size.height.ceil(),
-  );
+  return picture.toImageSync(size.width.ceil(), size.height.ceil());
 }
 
 extension StringPaintEx on String {
@@ -300,6 +292,51 @@ extension CanvasEx on Canvas {
 
   //region ---draw---
 
+  /// 在指定的矩形位置和大小绘制
+  /// 会自动平移到矩形位置, 并且缩放至矩形大小
+  /// [dst] 目标位置和大小. 包含了[dstPadding]
+  /// [dstPadding] 目标位置的内边距
+  /// [src] 目标的大小和位置
+  /// [colorFilter] 着色器. [tintColor]着色
+  void drawInRect(
+    Rect? dst,
+    Rect? src,
+    VoidCallback drawCallback, {
+    EdgeInsets? dstPadding,
+    Color? tintColor,
+    ui.ColorFilter? colorFilter,
+  }) {
+    //debugger();
+    colorFilter ??= tintColor?.toColorFilter();
+    if (dst == null || src == null) {
+      drawCallback();
+      return;
+    }
+    final targetSize = src.size;
+    withSave(() {
+      //debugger();
+      final drawLeft = dst.left + (dstPadding?.left ?? 0);
+      final drawTop = dst.top + (dstPadding?.top ?? 0);
+      final drawWidth = dst.width - (dstPadding?.horizontal ?? 0);
+      final drawHeight = dst.height - (dstPadding?.vertical ?? 0);
+
+      //平移到目标
+      translate(drawLeft - src.left, drawTop - src.top);
+      final sx = drawWidth / targetSize.width;
+      final sy = drawHeight / targetSize.height;
+      //缩放到目标大小
+      scale(sx, sy);
+
+      //着色
+      if (colorFilter != null) {
+        saveLayer(null, Paint()..colorFilter = colorFilter);
+      }
+
+      //绘制
+      drawCallback();
+    });
+  }
+
   /// 绘制文本, 绘制出来的文本左上角对齐0,0位置
   /// [getOffset] 获取文本的绘制位置的回调
   void drawText(
@@ -336,21 +373,25 @@ extension CanvasEx on Canvas {
     if (picture == null) {
       return;
     }
-    withSave(() {
-      colorFilter ??= tintColor?.toColorFilter();
-      if (dst != null) {
-        translate(dst.left, dst.top);
-        if (pictureSize != null) {
-          final sx = dst.width / pictureSize.width;
-          final sy = dst.height / pictureSize.height;
-          scale(sx, sy);
-        }
-      }
-      if (colorFilter != null) {
-        saveLayer(null, Paint()..colorFilter = colorFilter);
-      }
+    drawInRect(dst, pictureSize?.toRect(), () {
       this.drawPicture(picture);
-    });
+    }, tintColor: tintColor, colorFilter: colorFilter);
+  }
+
+  /// 绘制[ui.Image]
+  void drawImageInRect(
+    ui.Image? image, {
+    Rect? dst,
+    Color? tintColor,
+    ui.ColorFilter? colorFilter,
+  }) {
+    if (image == null) {
+      return;
+    }
+    final imageSize = Size(image.width + 0.0, image.height + 0.0);
+    drawInRect(dst, imageSize.toRect(), () {
+      this.drawImage(image, ui.Offset.zero, Paint());
+    }, tintColor: tintColor, colorFilter: colorFilter);
   }
 
 //endregion ---draw---

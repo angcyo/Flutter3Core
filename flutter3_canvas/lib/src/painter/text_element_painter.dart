@@ -50,6 +50,7 @@ class TextElementPainter extends ElementPainter {
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
+    //debugger();
     paint.color = Colors.black;
     text?.let((it) {
       final textPainter = createTextPainter(text);
