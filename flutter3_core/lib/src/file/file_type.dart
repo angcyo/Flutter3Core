@@ -10,5 +10,5 @@ extension FileTypeEx on Uint8List {
   /// 判断头几个字节是否是图片类型
   /// [path] 指定路径, 备用从扩展名中获取类型
   bool isImageType([String path = ""]) =>
-      lookupMimeType(path, headerBytes: this)?.isImageType == true;
+      lookupMimeType(path, headerBytes: this)?.isImageMimeType == true;
 }

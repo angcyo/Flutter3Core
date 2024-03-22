@@ -73,9 +73,34 @@ Future<void> initFlutter3Core() async {
   await Hive.initFlutterEx();
 }
 
+/// [defaultExtensionMap]
+/// [MimeTypeResolver]
 extension MimeEx on String {
-  /// 是否是图片类型
-  bool get isImageType => toLowerCase() == 'image';
+  /// 是否是图片类型, svg也属性图片类型
+  /// ```
+  /// 'svg': 'image/svg+xml',
+  /// 'svgz': 'image/svg+xml',
+  /// ```
+  bool get isImageMimeType => toLowerCase().startsWith('image');
+
+  ///svg类型
+  bool get isSvgMimeType => toLowerCase().startsWith('image/svg');
+
+  /// 是否是ttf/otf字体
+  /// ```
+  /// 'otf': 'application/x-font-otf',
+  /// 'ttc': 'application/x-font-ttf',
+  /// 'ttf': 'application/x-font-ttf',
+  /// ```
+  bool get isFontMimeType =>
+      toLowerCase().startsWith('application/x-font-otf') ||
+      toLowerCase().startsWith('application/x-font-ttf');
+
+  /// 'zip': 'application/zip'
+  bool get isZipMimeType => toLowerCase().startsWith('application/zip');
+
+  /// 'txt': 'text/plain',
+  bool get isTextMimeType => toLowerCase().startsWith('text/');
 
   /// 获取文件的Mime类型
   /// ```
@@ -95,7 +120,7 @@ extension MimeEx on String {
     if (mimeType == null) {
       return null;
     }
-    return mimeType.split('/').firstOrNull;
+    return mimeType; // image/jpeg
   }
 
   ///判断当前是否是http/https网络地址
