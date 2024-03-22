@@ -324,7 +324,7 @@ extension CanvasEx on Canvas {
 
   /// 绘制[picture]
   /// [pictureSize] 图片原始的大小
-  /// [dst] 绘制的位置以及大小
+  /// [dst] 绘制的目标位置以及大小
   ///
   void drawPictureInRect(
     ui.Picture? picture, {
