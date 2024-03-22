@@ -6,6 +6,8 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 绘制元素数据
 class ElementPainter extends IPainter {
+  //region ---PaintProperty---
+
   /// 元素绘制的属性信息
   /// 为空表示未初始化
   PaintProperty? _paintProperty;
@@ -20,6 +22,33 @@ class ElementPainter extends IPainter {
       onSelfPaintPropertyChanged(old, value, PropertyType.paint);
     }
   }
+
+  /// 更新当前元素的边界到指定位置
+  /// 只有修改[PaintProperty.left].[PaintProperty.top].[PaintProperty.scaleX].[PaintProperty.scaleY]
+  @api
+  void updateBoundsTo(@sceneCoordinate @dp Rect? bounds) {
+    if (bounds == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    paintProperty?.let((it) {
+      final oldBounds = it.getBounds(true);
+      final sx = bounds.width / oldBounds.width;
+      final sy = bounds.height / oldBounds.height;
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(sx: sx, sy: sy, anchor: oldBounds.topLeft);
+      final translate = Matrix4.identity()
+        ..translate(bounds.left - oldBounds.left, bounds.top - oldBounds.top);
+      paintProperty = it.clone()
+        ..applyScaleWithCenter(scaleMatrix)
+        ..applyTranslate(translate);
+    });
+  }
+
+  //endregion ---PaintProperty---
 
   //region ---属性--
 
@@ -764,7 +793,7 @@ class PaintProperty with EquatableMixin {
   }
 
   /// 应用矩阵[matrix], 通常在缩放时需要使用方法
-  /// 使用qr分解矩阵, 使用中心点位置作为锚点的偏移依据
+  /// 使用`qr分解`矩阵, 使用中心点位置作为锚点的偏移依据
   /// 需要保证操作之后的中心点位置不变
   /// 最后需要更新[left].[top]
   @api
@@ -789,8 +818,10 @@ class PaintProperty with EquatableMixin {
     //l.d(this);
   }
 
-  /// 直接使用锚点作为更新锚点依据
+  /// 使用`qr分解`矩阵, 直接使用锚点作为更新锚点依据
+  /// 使用场景待定
   @api
+  @implementation
   void applyScaleWithAnchor(Matrix4 matrix) {
     //debugger();
     Offset anchor = this.anchor;
