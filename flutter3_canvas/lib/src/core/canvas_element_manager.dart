@@ -494,9 +494,14 @@ class CanvasElementManager with Diagnosticable {
   }
 
   /// 均分组内元素
+  /// [useCenterAverage] 是否使用中心点进行均分分布, 否则使用元素之间的等距进行均分分布
   @api
-  void averageElement(ElementGroupPainter? group, CanvasAverageType average,
-      {UndoType undoType = UndoType.normal}) {
+  void averageElement(
+    ElementGroupPainter? group,
+    CanvasAverageType average, {
+    UndoType undoType = UndoType.normal,
+    bool useCenterAverage = false,
+  }) {
     final children = group?.children;
     if (group == null || children == null || children.length < 2) {
       assert(() {
@@ -516,11 +521,143 @@ class CanvasElementManager with Diagnosticable {
         }());
         return;
       }
+
+      final undoState = group.createStateStack();
+      final list = children.sortElement(
+        resetElementAngle: canvasElementControlManager.enableResetElementAngle,
+        leftTop: average == CanvasAverageType.horizontal,
+      );
+      final first = list.first;
+      final last = list.last;
+      final firstBounds = first.paintProperty
+          ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+      final lastBounds = last.paintProperty
+          ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+
+      if (firstBounds == null || lastBounds == null) {
+        assert(() {
+          l.d('获取不到元素的边界');
+          return true;
+        }());
+        return;
+      }
+
+      if (useCenterAverage) {
+        //中心点均匀分布, 元素中心点之间的距离保持等距
+
+        //首尾中心点之间的距离
+        final centerMiddleSpace = average == CanvasAverageType.horizontal
+            ? lastBounds.center.dx - firstBounds.center.dx
+            : lastBounds.center.dy - firstBounds.center.dy;
+
+        //每个元素中点之间的距离
+        final space = centerMiddleSpace / (children.length - 1);
+
+        double position = 0.0;
+        for (var element in list) {
+          final bounds = element.paintProperty
+              ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+          if (element == first) {
+            if (average == CanvasAverageType.horizontal) {
+              position = bounds?.center.dx ?? 0;
+            } else {
+              position = bounds?.center.dy ?? 0;
+            }
+            continue;
+          }
+          if (element == last) {
+            break;
+          }
+          if (bounds != null) {
+            if (average == CanvasAverageType.horizontal) {
+              final newCenter = position + space;
+              final dx = newCenter - bounds.center.dx;
+              element.translateElement(Matrix4.identity()..translate(dx, 0.0));
+              position += space;
+            } else {
+              final newCenter = position + space;
+              final dy = newCenter - bounds.center.dy;
+              element.translateElement(Matrix4.identity()..translate(0.0, dy));
+              position += space;
+            }
+          }
+        }
+      } else {
+        //所有元素的大小, 排除首尾元素
+        final childrenSize = list.fold(0.0, (value, element) {
+          if (element == first || element == last) {
+            return value;
+          }
+          final bounds = element.paintProperty
+              ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+          return value +
+              (average == CanvasAverageType.horizontal
+                  ? bounds?.width ?? 0
+                  : bounds?.height ?? 0);
+        });
+
+        //去掉首尾元素, 计算可用的空间大小
+        final totalSpace = average == CanvasAverageType.horizontal
+            ? lastBounds.left - firstBounds.right
+            : lastBounds.top - firstBounds.bottom;
+
+        //去掉中间元素的大小, 计算剩余的空间大小
+        final middleSpace = totalSpace - childrenSize;
+
+        //计算每个元素与上一个元素之间的间隔
+        final space = middleSpace / (children.length - 1);
+
+        double position = 0.0;
+        for (var element in list) {
+          final bounds = element.paintProperty
+              ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+          if (element == first) {
+            if (average == CanvasAverageType.horizontal) {
+              position = bounds?.right ?? 0;
+            } else {
+              position = bounds?.bottom ?? 0;
+            }
+            continue;
+          }
+          if (element == last) {
+            break;
+          }
+          if (bounds != null) {
+            if (average == CanvasAverageType.horizontal) {
+              final newLeft = position + space;
+              final dx = newLeft - bounds.left;
+              element.translateElement(Matrix4.identity()..translate(dx, 0.0));
+              position += space + bounds.width;
+            } else {
+              final newTop = position + space;
+              final dy = newTop - bounds.top;
+              element.translateElement(Matrix4.identity()..translate(0.0, dy));
+              position += space + bounds.height;
+            }
+          }
+        }
+      }
+
+      if (undoType == UndoType.normal) {
+        final redoState = group.createStateStack();
+        canvasDelegate.canvasUndoManager.addUntoState(undoState, redoState);
+      }
+
+      //更新选择元素的边界
+      canvasElementControlManager.elementSelectComponent
+          .updatePaintPropertyFromChildren(
+              canvasElementControlManager.enableResetElementAngle);
     } else {
-      //等宽高, 所有元素的大小, 参考第一个元素
+      //等宽高, 所有元素的大小, 参考左上的元素
 
       //先获取左上角的元素
-      final anchorElement = children.first;
+      final anchorElement = children
+          .sortElement(
+            resetElementAngle:
+                canvasElementControlManager.enableResetElementAngle,
+            leftTop: true,
+          )
+          .first;
       final anchorBounds = anchorElement.paintProperty
           ?.getBounds(canvasElementControlManager.enableResetElementAngle);
 
