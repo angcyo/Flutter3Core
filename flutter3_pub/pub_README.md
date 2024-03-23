@@ -67,7 +67,7 @@ https://github.com/feicien/flutter_swiper_view
 https://github.com/Sub6Resources/flutter_html
 
 - [flutter_html: ^3.0.0-beta.2](https://pub.dev/packages/flutter_html/versions/3.0.0-beta.2)
-- [html: ^0.15.3](https://pub.dev/packages/html)
+- [html: ^0.15.3](https://pub.dev/packages/html) A Dart implementation of an HTML5 parser.
 - [csslib: ^0.17.2](https://pub.dev/packages/csslib)
 - [collection: ^1.17.0](https://pub.dev/packages/collection)
 - [list_counter: ^1.0.2](https://pub.dev/packages/list_counter)
