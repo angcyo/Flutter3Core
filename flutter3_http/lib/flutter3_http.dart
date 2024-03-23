@@ -1,7 +1,6 @@
 library flutter3_http;
 
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -16,11 +15,7 @@ export 'package:dio/dio.dart';
 export 'package:json_annotation/json_annotation.dart';
 
 part 'src/dio/dio_ex.dart';
-
 part 'src/dio/http_result.dart';
-
 part 'src/dio/r_dio.dart';
-
 part 'src/dio/token_interceptor.dart';
-
 part 'src/http.dart';

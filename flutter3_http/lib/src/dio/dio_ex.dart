@@ -1,4 +1,4 @@
-part of flutter3_http;
+part of '../../flutter3_http.dart';
 
 ///
 /// Email:angcyo@126.com
