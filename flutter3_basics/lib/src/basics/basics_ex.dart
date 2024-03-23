@@ -48,16 +48,26 @@ String get lineSeparator =>
 
 //region Object 扩展
 
+/// 动态[dynamic]的扩展, 只是在编译的时候有代码提示,
+/// 最终还是要对应的类型上有方法才行, 否则会抛异常.
 extension DynamicEx on dynamic {
-  /// [runtimeType]
-  /// [toString]
-  String toRuntimeString() => "[$runtimeType]${toString()}";
-
   /// [DynamicEx.fromJson]
   /// [ObjectEx.fromJson]
   /// [StringEx.fromJson]
+  /// [JsonDecoder]
+  /// [JsonEncoder]
+  /// [encode]
+  /// [_defaultToEncodable]
   /// 从json字符串中解析出对应的数据类型
   dynamic fromJson() => toString().fromJson();
+
+  /// 请在具体的类型上实现[toJson]方法, 否则会抛异常
+  dynamic toJson() => this.toJson();
+
+  /// [runtimeType]
+  /// [toString]
+  /// [classHash]
+  String toRuntimeString() => "[$runtimeType]${toString()}";
 }
 
 final int __int64MaxValue = double.maxFinite.toInt();
@@ -416,6 +426,10 @@ extension StringEx on String {
   /// [DynamicEx.fromJson]
   /// [ObjectEx.fromJson]
   /// [StringEx.fromJson]
+  /// [JsonDecoder]
+  /// [JsonEncoder]
+  /// [encode]
+  /// [_defaultToEncodable]
   dynamic fromJson() => json.decode(this);
 
   T? fromJsonType<T>() => json.decode(this) as T?;
