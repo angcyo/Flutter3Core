@@ -6,10 +6,10 @@ part of '../../flutter3_canvas.dart';
 /// 坐标轴管理, 负责坐标轴/坐标网格的绘制以及计算
 class AxisManager extends IPainter {
   /// 绘制坐标轴
-  static const int DRAW_AXIS = 0X01;
+  static const int drawAxis = 0X01;
 
   /// 绘制坐标网格
-  static const int DRAW_GRID = DRAW_AXIS << 1;
+  static const int drawGrid = drawAxis << 1;
 
   final CanvasPaintManager paintManager;
 
@@ -45,7 +45,7 @@ class AxisManager extends IPainter {
   IUnit axisUnit = IUnit.dp;
 
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
-  int drawType = DRAW_AXIS | DRAW_GRID;
+  int drawType = drawAxis | drawGrid;
 
   /// 主刻度的画笔
   Paint primaryPaint = Paint()..style = PaintingStyle.stroke;
@@ -68,7 +68,7 @@ class AxisManager extends IPainter {
     yData.clear();
 
     //debugger();
-    if (drawType.have(DRAW_AXIS) || drawType.have(DRAW_GRID)) {
+    if (drawType.have(drawAxis) || drawType.have(drawGrid)) {
     } else {
       return;
     }
@@ -170,7 +170,7 @@ class AxisManager extends IPainter {
         paintManager.canvasDelegate.canvasStyle.axisNormalWidth;
 
     //绘制坐标刻度
-    if (drawType.have(DRAW_AXIS)) {
+    if (drawType.have(drawAxis)) {
       // x
       canvas.withClipRect(isDebug ? null : xAxisBounds, () {
         paintSelectElementWidthSize(canvas, paintMeta);
@@ -197,12 +197,12 @@ class AxisManager extends IPainter {
     }
 
     // 绘制坐标网格
-    if (drawType.have(DRAW_GRID)) {
+    if (drawType.have(drawGrid)) {
       canvas.withClipRect(canvasBounds, () {
         for (var axisData in xData) {
-          final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+          final paint = axisData.axisType.have(IUnit.axisTypePrimary)
               ? primaryPaint
-              : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+              : axisData.axisType.have(IUnit.axisTypeSecondary)
                   ? secondaryPaint
                   : normalPaint;
 
@@ -211,9 +211,9 @@ class AxisManager extends IPainter {
         }
 
         for (var axisData in yData) {
-          final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+          final paint = axisData.axisType.have(IUnit.axisTypePrimary)
               ? primaryPaint
-              : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+              : axisData.axisType.have(IUnit.axisTypeSecondary)
                   ? secondaryPaint
                   : normalPaint;
 
@@ -287,16 +287,16 @@ class AxisManager extends IPainter {
     final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
     for (var axisData in xData) {
       // 绘制坐标轴, 竖线
-      final height = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+      final height = axisData.axisType.have(IUnit.axisTypePrimary)
           ? xAxisHeight
-          : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+          : axisData.axisType.have(IUnit.axisTypeSecondary)
               ? xAxisHeight * 0.8
               : xAxisHeight * 0.5;
       final bottom = paintBounds.top + xAxisHeight;
 
-      final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+      final paint = axisData.axisType.have(IUnit.axisTypePrimary)
           ? primaryPaint
-          : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+          : axisData.axisType.have(IUnit.axisTypeSecondary)
               ? secondaryPaint
               : normalPaint;
 
@@ -306,7 +306,7 @@ class AxisManager extends IPainter {
         paint,
       );
 
-      if (axisData.axisType.have(IUnit.AXIS_TYPE_LABEL)) {
+      if (axisData.axisType.have(IUnit.axisTypeLabel)) {
         // 绘制Label
         TextPainter(
             text: TextSpan(
@@ -328,17 +328,17 @@ class AxisManager extends IPainter {
     final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
     for (var axisData in yData) {
       // 绘制坐标轴, 横线
-      final width = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+      final width = axisData.axisType.have(IUnit.axisTypePrimary)
           ? yAxisWidth
-          : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+          : axisData.axisType.have(IUnit.axisTypeSecondary)
               ? yAxisWidth * 0.8
               : yAxisWidth * 0.5;
 
       final right = paintBounds.left + yAxisWidth;
 
-      final paint = axisData.axisType.have(IUnit.AXIS_TYPE_PRIMARY)
+      final paint = axisData.axisType.have(IUnit.axisTypePrimary)
           ? primaryPaint
-          : axisData.axisType.have(IUnit.AXIS_TYPE_SECONDARY)
+          : axisData.axisType.have(IUnit.axisTypeSecondary)
               ? secondaryPaint
               : normalPaint;
 
@@ -348,7 +348,7 @@ class AxisManager extends IPainter {
         paint,
       );
 
-      if (axisData.axisType.have(IUnit.AXIS_TYPE_LABEL)) {
+      if (axisData.axisType.have(IUnit.axisTypeLabel)) {
         // 绘制Label, 需要旋转90度
         canvas.withRotate(-90, () {
           TextPainter(
@@ -385,10 +385,10 @@ class AxisData {
   final double sceneValue;
 
   /// 坐标轴类型
-  /// [AXIS_TYPE_NORMAL]
-  /// [AXIS_TYPE_SECONDARY]
-  /// [AXIS_TYPE_PRIMARY]
-  /// [AXIS_TYPE_LABEL]
+  /// [axisTypeNormal]
+  /// [axisTypeSecondary]
+  /// [axisTypePrimary]
+  /// [axisTypeLabel]
   final int axisType;
 
   /// 当前刻度距离0开始的索引

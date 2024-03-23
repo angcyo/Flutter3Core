@@ -15,16 +15,16 @@ const double kVectorTolerance = 0.5; //
 
 mixin VectorWriteMixin {
   /// 当前点与上一个点之间的关系, 起点
-  static const int POINT_TYPE_START = 0;
+  static const int pointTypeStart = 0;
 
   /// 当前点和上一个点在一条直线上
-  static const int POINT_TYPE_LINE = 1;
+  static const int pointTypeLine = 1;
 
   /// 当前点和上一个点在一条圆弧上
-  static const int POINT_TYPE_ARC = 2;
+  static const int pointTypeArc = 2;
 
   /// flag: 标识位, 表示当前的点和上一个点是同一类型的点
-  static const int POINT_TYPE_SAME = 0x10000;
+  static const int pointTypeSame = 0x10000;
 
   /// 矢量公差, 2点之间的凸起或凹陷小于这个值时, 认为是一条直线
   /// 值越大曲线误差越大, 返回的数据量越少;
@@ -67,7 +67,7 @@ mixin VectorWriteMixin {
     if (_pointList.isEmpty || _lastContourIndex != contourIndex) {
       //第一个点 or 新的轮廓开始
       handleAndClearPointList();
-      newPoint.type = POINT_TYPE_START;
+      newPoint.type = pointTypeStart;
       _lastContourIndex = contourIndex;
       _pointList.add(newPoint);
       onContourStart();
@@ -76,7 +76,7 @@ mixin VectorWriteMixin {
       return;
     }
     _lastContourIndex = contourIndex;
-    newPoint.type = POINT_TYPE_LINE;
+    newPoint.type = pointTypeLine;
     if (_pointList.length == 1) {
       //之前只有1个点
       _pointList.add(newPoint);
@@ -99,7 +99,7 @@ mixin VectorWriteMixin {
         }
       } else if (isPointInCircle(
           beforePoint.circleCenter!, newPoint, startPoint, beforePoint)) {
-        newPoint.type = POINT_TYPE_ARC;
+        newPoint.type = pointTypeArc;
         newPoint.sweepFlag = (angle == null || angle > 0) ? 0 : 1;
 
         /*if (newPoint.angle != null &&
@@ -144,7 +144,7 @@ mixin VectorWriteMixin {
           _pointList.add(newPoint);
         }
       } else {
-        if (!beforePoint.type.have(POINT_TYPE_ARC) &&
+        if (!beforePoint.type.have(pointTypeArc) &&
             isPointInLine(newPoint, startPoint)) {
           _pointList.removeLastIfNotEmpty();
           _pointList.add(newPoint);
@@ -281,7 +281,7 @@ class VectorPoint {
   VectorPoint({
     required this.position,
     this.angle,
-    this.type = VectorWriteMixin.POINT_TYPE_START,
+    this.type = VectorWriteMixin.pointTypeStart,
     this.circleStart,
     this.circleCenter,
   });
@@ -293,11 +293,11 @@ class SvgWriteHandle with VectorWriteMixin {
   void onWritePoint(VectorPoint point) {
     initStringBuffer();
     final position = transformPoint(point.position);
-    if (point.type == VectorWriteMixin.POINT_TYPE_START) {
+    if (point.type == VectorWriteMixin.pointTypeStart) {
       stringBuffer?.write('M${position.dx},${position.dy}');
-    } else if (point.type.have(VectorWriteMixin.POINT_TYPE_LINE)) {
+    } else if (point.type.have(VectorWriteMixin.pointTypeLine)) {
       stringBuffer?.write(' L${position.dx},${position.dy}');
-    } else if (point.type.have(VectorWriteMixin.POINT_TYPE_ARC)) {
+    } else if (point.type.have(VectorWriteMixin.pointTypeArc)) {
       final c = distance(position, point.circleCenter!);
       stringBuffer?.write(
           ' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} ${position.dx},${position.dy}');
@@ -361,11 +361,11 @@ class GCodeWriteHandle with VectorWriteMixin {
   void onWritePoint(VectorPoint point) {
     initStringBuffer();
     final position = transformPoint(point.position);
-    if (point.type == VectorWriteMixin.POINT_TYPE_START) {
+    if (point.type == VectorWriteMixin.pointTypeStart) {
       stringBuffer?.writeln('G0X${position.dx}Y${position.dy}');
-    } else if (point.type.have(VectorWriteMixin.POINT_TYPE_LINE)) {
+    } else if (point.type.have(VectorWriteMixin.pointTypeLine)) {
       stringBuffer?.writeln('G1X${position.dx}Y${position.dy}');
-    } else if (point.type.have(VectorWriteMixin.POINT_TYPE_ARC)) {
+    } else if (point.type.have(VectorWriteMixin.pointTypeArc)) {
       if (point.sweepFlag == 1) {
         //顺时针
         stringBuffer?.write("G3");

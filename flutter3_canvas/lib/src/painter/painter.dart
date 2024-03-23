@@ -56,7 +56,7 @@ class CanvasMonitorPainter extends IPainter {
     final viewBox = canvasDelegate.canvasViewBox;
     final text = "${(viewBox.scaleX * 100).round()}%";
     final drawAxis = canvasDelegate.canvasPaintManager.axisManager.drawType
-        .have(AxisManager.DRAW_AXIS);
+        .have(AxisManager.drawAxis);
     final x = drawAxis
         ? canvasDelegate.canvasPaintManager.axisManager.yAxisWidth
         : 0.0;

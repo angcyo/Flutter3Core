@@ -55,19 +55,19 @@ abstract class IUnit {
   static const inch = InchUnit();
 
   /// 正常的刻度
-  static const AXIS_TYPE_NORMAL = 0x1;
+  static const axisTypeNormal = 0x1;
 
   /// 次要的刻度
-  static const AXIS_TYPE_SECONDARY = AXIS_TYPE_NORMAL << 1;
+  static const axisTypeSecondary = axisTypeNormal << 1;
 
   /// 主要的刻度
-  static const AXIS_TYPE_PRIMARY = AXIS_TYPE_SECONDARY << 1;
+  static const axisTypePrimary = axisTypeSecondary << 1;
+
+  /// mask
+  static const axisTypeMask = 0xff;
 
   /// 需要绘制Label的刻度
-  static const AXIS_TYPE_MASK = 0xff;
-
-  /// 需要绘制Label的刻度
-  static const AXIS_TYPE_LABEL = AXIS_TYPE_NORMAL << 7;
+  static const axisTypeLabel = axisTypeNormal << 7;
 
   const IUnit();
 
@@ -147,21 +147,21 @@ abstract class IUnit {
 
   /// 获取坐标轴的类型
   /// [index] 当前刻度距离0开始的索引
-  /// [AXIS_TYPE_NORMAL]
-  /// [AXIS_TYPE_SECONDARY]
-  /// [AXIS_TYPE_PRIMARY]
-  /// [AXIS_TYPE_LABEL]
+  /// [axisTypeNormal]
+  /// [axisTypeSecondary]
+  /// [axisTypePrimary]
+  /// [axisTypeLabel]
   int getAxisType(int index, double scale) {
     if (index % 10 == 0) {
-      return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
+      return IUnit.axisTypePrimary | IUnit.axisTypeLabel;
     }
     if (index % 10 == 5) {
       if (scale < 0.75) {
-        return IUnit.AXIS_TYPE_SECONDARY | IUnit.AXIS_TYPE_LABEL;
+        return IUnit.axisTypeSecondary | IUnit.axisTypeLabel;
       }
-      return IUnit.AXIS_TYPE_SECONDARY;
+      return IUnit.axisTypeSecondary;
     }
-    return IUnit.AXIS_TYPE_NORMAL;
+    return IUnit.axisTypeNormal;
   }
 
 //endregion ---坐标轴---
@@ -367,11 +367,11 @@ class InchUnit extends IUnit {
   int getAxisType(int index, double scale) {
     switch (index % 8) {
       case 0:
-        return IUnit.AXIS_TYPE_PRIMARY | IUnit.AXIS_TYPE_LABEL;
+        return IUnit.axisTypePrimary | IUnit.axisTypeLabel;
       case 4:
-        return IUnit.AXIS_TYPE_SECONDARY;
+        return IUnit.axisTypeSecondary;
       default:
-        return IUnit.AXIS_TYPE_NORMAL;
+        return IUnit.axisTypeNormal;
     }
   }
 }

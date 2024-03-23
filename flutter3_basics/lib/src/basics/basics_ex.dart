@@ -21,6 +21,9 @@ const kMinute = 60 * kSecond;
 /// 一秒的毫秒数
 const kSecond = 1000;
 
+/// [uuid]
+String get uuid_ => uuid();
+
 /// ```
 /// // Generate a v1 (time-based) id
 /// uuid.v1(); // -> '6c84fb90-12c4-11e1-840d-7b25c5ee775a'
@@ -95,6 +98,8 @@ extension ObjectEx on Object {
   /// @JsonKey(includeFromJson: false, includeToJson: false)
   /// ```
   /// [JsonKey]
+  /// [jsonDecode]
+  /// [jsonEncode]
   String toJsonString() => json.encode(this);
 
   /// [DynamicEx.fromJson]
@@ -416,7 +421,7 @@ extension StringEx on String {
 
   double? toDoubleOrNull() => double.tryParse(this);
 
-  /// 字符转换成Color对象
+  /// 字符`#ffaabbcc`转换成Color对象
   Color toColor() => ColorEx.fromHex(this);
 
   /// "yyyy-MM-dd HH:mm:ss" 转换成时间
@@ -430,6 +435,7 @@ extension StringEx on String {
   /// [JsonEncoder]
   /// [encode]
   /// [_defaultToEncodable]
+  /// [jsonDecode]
   dynamic fromJson() => json.decode(this);
 
   T? fromJsonType<T>() => json.decode(this) as T?;
