@@ -39,6 +39,11 @@ double nextDouble({double? min, double? max}) {
   }
 }
 
+/// 横向
+const kHorizontal = 0;
+/// 纵向
+const kVertical = 1;
+
 /// 获取当前调用此方法的文件名
 /// ```
 /// I/flutter ( 2526): #0      currentFileName (package:flutter3_basics/src/basics.dart:36:33)
@@ -47,7 +52,7 @@ double nextDouble({double? min, double? max}) {
 /// I/flutter ( 2526): #3      _delayEntrypointInvocation.<anonymous closure> (dart:isolate-patch/isolate_patch.dart:296:19)
 /// I/flutter ( 2526): #4      _RawReceivePort._handleMessage (dart:isolate-patch/isolate_patch.dart:189:12)
 /// ```
-String currentFileName([bool? fileLineNumber]) {
+String currentTraceFileName([bool? fileLineNumber]) {
   //获取当前调用方法的文件名和行数
   final stackTrace = StackTrace.current.toString();
   //print(stackTrace);

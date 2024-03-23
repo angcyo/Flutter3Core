@@ -32,8 +32,11 @@ Map<String, dynamic> hiveAll([Box? box]) {
 extension HiveStringEx on String {
   /// 保存键值对, 当[value]不支持时, 会自动使用字符串存储
   /// `[HiveError]HiveError: Cannot write, unknown type: TextEditingValue. Did you forget to register an adapter?`
-  Future<void> hivePut(dynamic value) {
+  Future<void> hivePut(dynamic value, [bool notifyChanged = true]) {
     //debugger();
+    if (notifyChanged) {
+      notifyDebugValueChanged(value);
+    }
     return _hiveBox.put(this, value).get((v, error) {
       if (value != null && error is HiveError) {
         l.e("存储类型失败:[${value.runtimeType}]:$error, 自动转换为字符串存储");

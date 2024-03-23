@@ -29,6 +29,7 @@ export 'package:provider/provider.dart';
 export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
 
+part 'src/core/core_keys.dart';
 part 'src/core/svg_core.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';

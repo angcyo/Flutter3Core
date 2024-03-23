@@ -66,6 +66,7 @@ part 'src/component/request_page.dart';
 part 'src/component/stack_list.dart';
 part 'src/component/undo_manager.dart';
 part 'src/debug/debug.dart';
+part 'src/debug/debug_keys.dart';
 part 'src/debug/navigator_observer_log.dart';
 part 'src/debug/state_log.dart';
 part 'src/global/global.dart';
