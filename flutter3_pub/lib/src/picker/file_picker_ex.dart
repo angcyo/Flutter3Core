@@ -1,13 +1,22 @@
-part of flutter3_pub;
+part of '../../flutter3_pub.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/18
 ///
 
-/// 选择单图片
-Future<PlatformFile?> pickSingleImage() async {
-  return (await pickFiles(type: FileType.image, allowMultiple: false))
+/// 选择单图片, 默认关闭了图片压缩.
+/// 关闭图片压缩后, `file_picker`插件不会走sd卡权限获取
+Future<PlatformFile?> pickSingleImage({
+  bool allowCompression = false,
+  int compressionQuality = 0,
+}) async {
+  return (await pickFiles(
+    type: FileType.image,
+    allowCompression: allowCompression,
+    compressionQuality: compressionQuality,
+    allowMultiple: false,
+  ))
       ?.files
       .firstOrNull;
 }
@@ -35,6 +44,7 @@ Future<FilePickerResult?> pickFiles({
   List<String>? allowedExtensions,
   Function(FilePickerStatus)? onFileLoading,
   bool allowCompression = true,
+  int compressionQuality = 30,
   bool withData = false,
   bool withReadStream = false,
   bool lockParentWindow = false,
@@ -45,6 +55,7 @@ Future<FilePickerResult?> pickFiles({
     initialDirectory: initialDirectory,
     type: type,
     allowedExtensions: allowedExtensions,
+    compressionQuality: compressionQuality,
     onFileLoading: onFileLoading,
     allowCompression: allowCompression,
     allowMultiple: allowMultiple,
