@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -8,6 +8,8 @@ part of flutter3_widgets;
 /// https://pub.dev/packages/matrix_gesture_detector
 /// https://pub.dev/packages/matrix_gesture_detector_pro
 /// https://github.com/zhaolongs/matrix_gesture_detector_pro
+///
+/// https://github.com/rajeshbdabhi/easy_image_editor/blob/master/lib/src/matrix_gesture_detector.dart
 
 typedef MatrixGestureDetectorCallback = void Function(
     Matrix4 matrix,
