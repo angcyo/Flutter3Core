@@ -97,10 +97,15 @@ extension ObjectEx on Object {
   /// @JsonKey(ignore: true)
   /// @JsonKey(includeFromJson: false, includeToJson: false)
   /// ```
+  /// [indent] 缩进后就是多行输出, 如果不指定则是单行输出.
+  /// 所有的类型, 必须实现`toJson`这个方法, 否则会报错.
+  ///
+  /// [json]
   /// [JsonKey]
   /// [jsonDecode]
   /// [jsonEncode]
-  String toJsonString() => json.encode(this);
+  String toJsonString([String? indent = '  ']) =>
+      JsonEncoder.withIndent(indent).convert(this);
 
   /// [DynamicEx.fromJson]
   /// [ObjectEx.fromJson]
