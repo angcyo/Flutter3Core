@@ -39,6 +39,26 @@ class DebugFileTile extends StatelessWidget {
     List<Widget?> result;
     if (path.isDirectorySync()) {
       final folder = path.folder;
+      final infoRow = [
+        "${folder.listSync().length} 项".text(
+          style: globalConfig.globalTheme.textDesStyle,
+        ),
+        Empty.width(kX),
+        stat.size
+            .toFileSizeStr()
+            .text(
+              style: globalConfig.globalTheme.textDesStyle,
+            )
+            .expanded(),
+        Empty.width(kX),
+        stat.modeString().text(
+              style: globalConfig.globalTheme.textDesStyle,
+            ),
+        Empty.width(kX),
+        modified.text(
+          style: globalConfig.globalTheme.textDesStyle,
+        ),
+      ].row();
       result = [
         loadCoreAssetImageWidget(
           Assets.assetsCore.png.coreFileIconFolder.keyName,
@@ -50,10 +70,17 @@ class DebugFileTile extends StatelessWidget {
           fileName.text(
             style: globalConfig.globalTheme.textBodyStyle,
           ),
-          "${folder.listSync().length} 项".text(
-            style: globalConfig.globalTheme.textDesStyle,
-          ),
+          infoRow,
         ].column(crossAxisAlignment: CrossAxisAlignment.start)!.expanded(),
+      ];
+    } else {
+      final infoRow = [
+        stat.size
+            .toFileSizeStr()
+            .text(
+              style: globalConfig.globalTheme.textDesStyle,
+            )
+            .expanded(),
         Empty.width(kX),
         stat.modeString().text(
               style: globalConfig.globalTheme.textDesStyle,
@@ -62,8 +89,7 @@ class DebugFileTile extends StatelessWidget {
         modified.text(
           style: globalConfig.globalTheme.textDesStyle,
         ),
-      ];
-    } else {
+      ].row();
       result = [
         getFileIconWidget(fileName, width: iconSize, height: iconSize),
         Empty.width(kX),
@@ -72,27 +98,12 @@ class DebugFileTile extends StatelessWidget {
             fileName.text(
               style: globalConfig.globalTheme.textBodyStyle,
             ),
-            stat.size.toFileSizeStr().text(
+            infoRow,
+            file.md5()?.toUpperCase().text(
                   style: globalConfig.globalTheme.textDesStyle,
                 ),
           ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
-          Empty.width(kX),
-          stat.modeString().text(
-                style: globalConfig.globalTheme.textDesStyle,
-              ),
-          Empty.width(kX),
-          modified.text(
-            style: globalConfig.globalTheme.textDesStyle,
-          ),
-        ]
-            .row()
-            ?.columnOf(
-              file.md5()?.toUpperCase().text(
-                    style: globalConfig.globalTheme.textDesStyle,
-                  ),
-              crossAxisAlignment: CrossAxisAlignment.start,
-            )
-            ?.expanded(),
+        ].row()?.expanded(),
       ];
     }
 

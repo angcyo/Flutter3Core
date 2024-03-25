@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -12,6 +12,7 @@ typedef ShowLoadMoreCallback = bool Function();
 /// [SliverPersistentHeader] 可以在顶部固定,可以实现悬浮效果. [SliverFillRemaining]可以填充剩余空间
 /// [SliverList] - [SliverGrid]
 /// [RItemTile] 的容器
+/// [RScrollController]
 class RScrollView extends StatefulWidget {
   const RScrollView({
     super.key,
@@ -349,7 +350,11 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
 
   /// 确保是[Sliver]小部件
   Widget ensureSliver(Widget tile) {
-    if ("$tile".toLowerCase().startsWith("sliver")) {
+    if (tile is! NotSliverTile && "$tile".toLowerCase().startsWith("sliver")) {
+      assert(() {
+        l.d('未使用[SliverToBoxAdapter]包裹的[Sliver]小部件:${tile.runtimeType}');
+        return true;
+      }());
       return tile;
     } else {
       return SliverToBoxAdapter(

@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -12,6 +12,9 @@ typedef ItemTileWrapBuilder = Widget Function(
   Widget child,
   int index,
 );
+
+/// 标识当前的元素, 不是[Sliver]布局
+mixin NotSliverTile {}
 
 /// [RScrollView] 的子项
 class RItemTile extends StatefulWidget {

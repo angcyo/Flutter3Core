@@ -1555,6 +1555,15 @@ extension RenderObjectEx on RenderObject {
     }
     return null;
   }
+
+  ///一直往上查找, 直到找到[SliverConstraints]为止
+  SliverConstraints? findSliverConstraints() {
+    final box = this;
+    if (box is RenderSliver) {
+      return box.constraints;
+    }
+    return parent?.findSliverConstraints();
+  }
 }
 
 extension ElementEx on Element {}

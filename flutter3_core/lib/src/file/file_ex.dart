@@ -331,6 +331,47 @@ extension FileEx on File {
   }
 }
 
+extension DirectoryEx on Directory {
+  /// 枚举所有文件, 并按照文件夹, 文件的顺序返回
+  /// [sort] 是否排序
+  /// [throwError] 是否抛出异常
+  List<FileSystemEntity>? listFilesSync({
+    bool recursive = false,
+    bool followLinks = true,
+    bool sort = true,
+    bool throwError = false,
+  }) {
+    try {
+      final list = listSync(
+        recursive: recursive,
+        followLinks: followLinks,
+      );
+      if (!sort) {
+        return list;
+      }
+      //文件夹在前, 文件在后
+      list.sort((a, b) {
+        if (a.path.isDirectorySync() && b.path.isFileSync()) {
+          return -1;
+        } else if (a.path.isFileSync() && b.path.isDirectorySync()) {
+          return 1;
+        }
+        return a.path.fileName().compareTo(b.path.fileName());
+      });
+      return list;
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      if (throwError) {
+        rethrow;
+      }
+    }
+    return null;
+  }
+}
+
 /// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
 /// https://api.dart.dev/stable/3.2.0/dart-io/Process-class.html
 /// https://pub.dev/packages/uri_to_file
@@ -367,7 +408,7 @@ extension PathStringEx on String {
       basename(withoutExtension);
 
   /// 父路径
-  String parentPath() => FileSystemEntity.parentOf(this);
+  String get parentPath => FileSystemEntity.parentOf(this);
 
   /// 分割路径
   List<String> splitPath() => p.split(this);
@@ -464,7 +505,7 @@ extension FilePathEx on String {
 
   /// 确保文件的文件夹目录存在, 如果不存在, 则创建
   void ensureFileDirectory() {
-    parentPath().ensureDirectory();
+    parentPath.ensureDirectory();
   }
 
   /// 转换成文件夹对象

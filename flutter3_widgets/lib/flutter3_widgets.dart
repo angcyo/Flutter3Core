@@ -76,6 +76,7 @@ part 'src/widgets/line.dart';
 part 'src/widgets/match_parent_layout.dart';
 part 'src/widgets/mixin/tile_mixin.dart';
 part 'src/widgets/size_animation_widget.dart';
+part 'src/widgets/sliver_expand_widget.dart';
 part 'src/widgets/state_decoration_widget.dart';
 part 'src/widgets/test_constraints_layout.dart';
 part 'src/widgets/wrap_content_layout.dart';

@@ -5,7 +5,6 @@ part of flutter3_basics;
 /// @since 2023/11/10
 ///
 
-
 /// 打开[url]的回调方法
 typedef GlobalOpenUrlFn = Future<bool> Function(
     BuildContext? context, String? url);
@@ -182,16 +181,12 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   WidgetArgumentBuilder imagePlaceholderBuilder = <T>(context, arg) {
     var color = GlobalTheme.of(context).imagePlaceholderColor;
     //纯色背景小部件
-    return Container(
-      color: color,
-    );
+    return Container(color: color);
   };
 
   /// 全局的Loading指示器
   ProgressWidgetBuilder loadingIndicatorBuilder = (context, progress) {
-    return LoadingIndicator(
-      progressValue: progress,
-    );
+    return LoadingIndicator(progressValue: progress);
   };
 
   /// 全局的错误占位小部件

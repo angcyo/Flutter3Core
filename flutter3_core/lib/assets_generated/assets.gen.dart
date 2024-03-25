@@ -97,6 +97,9 @@ class $AssetsCorePngGen {
 class $AssetsCoreSvgGen {
   const $AssetsCoreSvgGen();
 
+  /// File path: assets_core/svg/file_browse_home.svg
+  String get fileBrowseHome => 'assets_core/svg/file_browse_home.svg';
+
   /// File path: assets_core/svg/keyboard_backspace.svg
   String get keyboardBackspace => 'assets_core/svg/keyboard_backspace.svg';
 
@@ -104,7 +107,8 @@ class $AssetsCoreSvgGen {
   String get keyboardPackUp => 'assets_core/svg/keyboard_pack_up.svg';
 
   /// List of all assets
-  List<String> get values => [keyboardBackspace, keyboardPackUp];
+  List<String> get values =>
+      [fileBrowseHome, keyboardBackspace, keyboardPackUp];
 }
 
 class Assets {

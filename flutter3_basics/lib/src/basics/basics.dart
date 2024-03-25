@@ -41,6 +41,7 @@ double nextDouble({double? min, double? max}) {
 
 /// 横向
 const kHorizontal = 0;
+
 /// 纵向
 const kVertical = 1;
 
@@ -287,8 +288,10 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 /// });
 /// ```
 ///
-Future<R> io<Object, R>(ResultCallback<R> callback) async =>
-    compute((message) => callback(), null, debugLabel: "io-${nowTimeString()}");
+/// io中操作的数据必须通过参数的方式传入/传出, 否则会报错.
+///
+Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
+    compute(callback, message, debugLabel: "io-${nowTimeString()}");
 
 Future<R> run<R>(ResultCallback<R> callback) {
   return Isolate.run(() => callback(), debugName: "run-${nowTimeString()}");

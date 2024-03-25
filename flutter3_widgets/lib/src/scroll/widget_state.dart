@@ -266,9 +266,9 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
   /// @override
   @override
   Widget _buildEmptyWidget(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
     //def 360*360
-    var size = 160.0;
+    const size = 160.0;
     Widget result = loadAssetImageWidget(
       Assets.png.noData.keyName,
       package: 'flutter3_widgets',

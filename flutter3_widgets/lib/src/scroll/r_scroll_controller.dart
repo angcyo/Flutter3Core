@@ -347,6 +347,9 @@ class WidgetStateIntercept {
 extension ScrollControllerEx on ScrollController {
   /// 滚动到底部
   void scrollToBottom({bool anim = true}) {
+    if (!hasClients) {
+      return;
+    }
     if (anim) {
       animateTo(
         position.maxScrollExtent,

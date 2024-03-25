@@ -9,11 +9,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_core/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/src/debug/debug_file_tiles.dart';
-import 'package:flutter3_core/src/isar/isar_test_collection.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:path/path.dart' as p;
 
 import 'flutter3_core.dart';
+import 'src/isar/isar_test_collection.dart';
 
 export 'package:cross_file/cross_file.dart';
 export 'package:flutter3_basics/flutter3_basics.dart';
@@ -75,6 +75,27 @@ Future<void> initFlutter3Core() async {
   //Hive.registerAdapter(adapter)
   await Hive.initFlutterEx();
 }
+
+/// [Image].[StatefulWidget]
+SvgPicture? loadCoreAssetSvgPicture(
+  String? key, {
+  String? prefix = 'assets_core/svg/',
+  String? package = 'flutter3_core',
+  BoxFit? fit,
+  double? width,
+  double? height,
+  Color? color,
+  UiColorFilter? colorFilter,
+}) =>
+    key == null
+        ? null
+        : SvgPicture.asset(
+            key.ensurePackagePrefix(package, prefix),
+            fit: fit ?? BoxFit.contain,
+            width: width,
+            height: height,
+            colorFilter: colorFilter ?? color?.toColorFilter(),
+          );
 
 /// [Image].[StatefulWidget]
 Image? loadCoreAssetImageWidget(
