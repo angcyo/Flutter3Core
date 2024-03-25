@@ -67,6 +67,7 @@ part 'src/widgets/child_background_widget.dart';
 part 'src/widgets/flow_layout.dart';
 part 'src/widgets/gesture_hit_intercept.dart';
 part 'src/widgets/gestures/matrix_gesture_detector.dart';
+part 'src/widgets/gestures/pinch_gesture_recognizer.dart';
 part 'src/widgets/gestures/rotate_gesture_recognizer.dart';
 part 'src/widgets/gradient_button.dart';
 part 'src/widgets/icon_state_widget.dart';

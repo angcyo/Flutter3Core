@@ -60,7 +60,6 @@ part 'src/basics/matrix_ex.dart';
 part 'src/component/async_operation.dart';
 part 'src/component/custom_painter.dart';
 part 'src/component/future_cancel.dart';
-part 'src/component/pinch_gesture_recognizer.dart';
 part 'src/component/r_exception.dart';
 part 'src/component/request_page.dart';
 part 'src/component/stack_list.dart';

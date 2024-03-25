@@ -43,6 +43,10 @@ class GestureHitInterceptBox extends RenderProxyBox {
     var hitBox = interceptHitBox;
     if (hitBox != null) {
       //debugger();
+      if (child is GestureHitInterceptBoxTranslucentMixin && child != hitBox) {
+        super.hitTestChildren(result, position: position);
+      }
+
       final local = hitBox.localToGlobal(Offset.zero, ancestor: this);
       result.addWithPaintOffset(
           offset: local,
@@ -85,3 +89,8 @@ class GestureHitInterceptBox extends RenderProxyBox {
         DiagnosticsProperty<RenderBox>('interceptHitBox', interceptHitBox));
   }
 }
+
+/// 拦截手势命中的盒子
+/// [GestureHitInterceptBox]
+/// 声明此类的[RenderObject]不会受到拦截盒子的事件拦截
+mixin GestureHitInterceptBoxTranslucentMixin {}

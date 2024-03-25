@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -54,7 +54,8 @@ class PinchGestureWidget extends SingleChildRenderObjectWidget {
   }
 }
 
-class PinchGestureBox extends RenderProxyBox with MultiPointerDetectorMixin {
+class PinchGestureBox extends RenderProxyBox
+    with MultiPointerDetectorMixin, GestureHitInterceptBoxTranslucentMixin {
   /// 捏合手势的指针数量
   int pinchPointer;
 
@@ -84,8 +85,10 @@ class PinchGestureBox extends RenderProxyBox with MultiPointerDetectorMixin {
     if (pointerCount == pinchPointer) {
       //debugger();
       if (event is PointerMoveEvent) {
-        Rect downRect = MultiPointerDetectorMixin.getPointerBounds(pointerDownMap);
-        Rect moveRect = MultiPointerDetectorMixin.getPointerBounds(pointerMoveMap);
+        Rect downRect =
+            MultiPointerDetectorMixin.getPointerBounds(pointerDownMap);
+        Rect moveRect =
+            MultiPointerDetectorMixin.getPointerBounds(pointerMoveMap);
 
         final dWidth = downRect.width - moveRect.width;
         final dHeight = downRect.height - moveRect.height;
