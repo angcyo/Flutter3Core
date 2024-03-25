@@ -1,4 +1,4 @@
-part of flutter3_core;
+part of '../../flutter3_core.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -6,7 +6,7 @@ part of flutter3_core;
 ///
 
 /// 保存屏幕截图
-/// [filePath] 文件路径
+/// [filePath] 需要保存到的文件路径
 /// [context] 截图来源, 默认是全屏
 Future<UiImage?> saveScreenCapture([
   String? filePath,
@@ -501,6 +501,7 @@ extension FilePathEx on String {
 }
 
 /// 快速获取一个文件类型的文件夹路径
+/// [filePath]
 Future<String> fileFolderPath([
   String? part1,
   String? part2,
@@ -543,6 +544,7 @@ Future<String> fileFolderPath([
 }
 
 /// 快速获取一个文件路径
+/// [fileFolderPath]
 Future<String> filePath(
   String fileName, [
   String? part1,
@@ -567,6 +569,7 @@ Future<String> filePath(
 }
 
 /// 快速获取一个缓存文件路径
+/// [cacheFilePath]
 Future<String> cacheFolderPath([
   String? part1,
   String? part2,
@@ -609,6 +612,7 @@ Future<String> cacheFolderPath([
 }
 
 /// 快速获取一个缓存文件路径
+/// [cacheFolderPath]
 Future<String> cacheFilePath(
   String fileName, [
   String? part1,
