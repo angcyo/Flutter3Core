@@ -18,10 +18,6 @@ dependencies:
   # https://github.com/Kavantix/sliver_tools
   sliver_tools: ^0.2.12
 
-  # https://pub.dev/packages/flutter_gen
-  # https://github.com/FlutterGen/flutter_gen
-  flutter_gen: ^5.4.0
-
   # https://pub.dev/packages/lifecycle
   # https://github.com/chenenyu/lifecycle
   lifecycle: ^0.8.0
