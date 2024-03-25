@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 /// 滚动控制, 刷新/加载更多控制, 情感图状态切换控制
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -341,5 +341,25 @@ class WidgetStateIntercept {
       }
     }
     return toState;
+  }
+}
+
+extension ScrollControllerEx on ScrollController {
+  /// 滚动到底部
+  void scrollToBottom({bool anim = true}) {
+    if (anim) {
+      animateTo(
+        position.maxScrollExtent,
+        duration: kDefaultAnimationDuration,
+        curve: Curves.easeOut,
+      );
+    } else {
+      jumpTo(position.maxScrollExtent);
+    }
+  }
+
+  /// 停止滚动
+  void stopScroll() {
+    position.didEndScroll();
   }
 }
