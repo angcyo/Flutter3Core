@@ -294,6 +294,19 @@ extension FutureEx<T> on Future<T> {
         }
       });
 
+  /// 支持类型的[FutureEx.get]方法
+  Future getValue([
+    dynamic Function(T? value, dynamic error)? get,
+    StackTrace? stack,
+  ]) =>
+      this.get((value, error) {
+        if (error != null) {
+          get?.call(null, error);
+        } else {
+          get?.call(value, null);
+        }
+      }, stack);
+
   /// 此方法并不能立即出发[Future]
   /// 不需要等待当前的[Future]执行完成, 但是会报告错误
   /// [ignore] 完成和错误都被忽略

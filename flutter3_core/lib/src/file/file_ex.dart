@@ -361,6 +361,7 @@ extension PathStringEx on String {
   /// [dirname]
   String folderPath() => dirname();
 
+  /// 包含扩展名的文件名
   /// [basename]
   String fileName([bool withoutExtension = false]) =>
       basename(withoutExtension);
@@ -455,7 +456,7 @@ extension PathStringEx on String {
 extension FilePathEx on String {
   /// 确保文件夹存在, 如果不存在, 则创建
   void ensureDirectory() {
-    var dir = Directory(this);
+    final dir = Directory(this);
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }
@@ -465,6 +466,9 @@ extension FilePathEx on String {
   void ensureFileDirectory() {
     parentPath().ensureDirectory();
   }
+
+  /// 转换成文件夹对象
+  Directory get folder => Directory(this);
 
   /// 转换成文件对象
   /// 在web环境下, 会抛出异常
@@ -479,6 +483,7 @@ extension FilePathEx on String {
   }
 
   /// 获取文件夹中的文件列表
+  /// [recursive] 是否递归
   Future<List<FileSystemEntity>?> listFiles({
     bool recursive = false,
     bool followLinks = true,
@@ -486,6 +491,28 @@ extension FilePathEx on String {
     try {
       return await Directory(this)
           .list(
+            recursive: recursive,
+            followLinks: followLinks,
+          )
+          .toList();
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+    }
+    return null;
+  }
+
+  /// 同步方法
+  /// [listFiles]
+  List<FileSystemEntity>? listFilesSync({
+    bool recursive = false,
+    bool followLinks = true,
+  }) {
+    try {
+      return Directory(this)
+          .listSync(
             recursive: recursive,
             followLinks: followLinks,
           )

@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_core/assets_generated/assets.gen.dart';
+import 'package:flutter3_core/src/debug/debug_file_tiles.dart';
 import 'package:flutter3_core/src/isar/isar_test_collection.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:path/path.dart' as p;
@@ -31,6 +32,7 @@ export 'src/view_model/jetpack/viewmodel.dart';
 
 part 'src/core/core_keys.dart';
 part 'src/core/svg_core.dart';
+part 'src/debug/debug_file_page.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/file_ex.dart';
@@ -74,73 +76,24 @@ Future<void> initFlutter3Core() async {
   await Hive.initFlutterEx();
 }
 
-/// [defaultExtensionMap]
-/// [MimeTypeResolver]
-extension MimeEx on String {
-  /// 是否是图片类型, svg也属性图片类型
-  /// ```
-  /// 'svg': 'image/svg+xml',
-  /// 'svgz': 'image/svg+xml',
-  /// ```
-  bool get isImageMimeType => toLowerCase().startsWith('image');
-
-  ///svg类型
-  bool get isSvgMimeType => toLowerCase().startsWith('image/svg');
-
-  /// 是否是ttf/otf字体
-  /// ```
-  /// 'otf': 'application/x-font-otf',
-  /// 'ttc': 'application/x-font-ttf',
-  /// 'ttf': 'application/x-font-ttf',
-  /// ```
-  bool get isFontMimeType =>
-      toLowerCase().startsWith('application/x-font-otf') ||
-      toLowerCase().startsWith('application/x-font-ttf');
-
-  /// 'zip': 'application/zip'
-  bool get isZipMimeType => toLowerCase().startsWith('application/zip');
-
-  /// 'txt': 'text/plain',
-  bool get isTextMimeType => toLowerCase().startsWith('text/');
-
-  /// 获取文件的Mime类型
-  /// ```
-  /// print(lookupMimeType('test.html')); // text/html
-  ///
-  /// print(lookupMimeType('test', headerBytes: [0xFF, 0xD8])); // image/jpeg
-  ///
-  /// print(lookupMimeType('test.html', headerBytes: [0xFF, 0xD8])); // image/jpeg
-  ///
-  /// ```
-  String? mimeType({List<int>? headerBytes}) {
-    final path = toUri()?.path ?? this;
-    final mimeType = lookupMimeType(
-      path,
-      headerBytes: headerBytes,
-    );
-    if (mimeType == null) {
-      return null;
-    }
-    return mimeType; // image/jpeg
-  }
-
-  ///判断当前是否是http/https网络地址
-  bool get isHttpUrl {
-    return startsWith('http://') || startsWith('https://');
-  }
-
-  ///判断当前是否是本地文件地址
-  bool get isLocalUrl {
-    return startsWith('file://');
-  }
-
-  ///判断当前字符串是否是文件路径
-  bool get isFilePath {
-    return File(this).existsSync();
-  }
-
-  /// 判断是否是svg
-  bool get isSvg {
-    return toUri()?.path.toLowerCase().endsWith('.svg') == true;
-  }
-}
+/// [Image].[StatefulWidget]
+Image? loadCoreAssetImageWidget(
+  String? key, {
+  String? prefix = 'assets_core/png/',
+  String? package = 'flutter3_core',
+  BoxFit? fit,
+  double? width,
+  double? height,
+  Color? color,
+  BlendMode? colorBlendMode,
+}) =>
+    key == null
+        ? null
+        : Image.asset(
+            key.ensurePackagePrefix(package, prefix),
+            fit: fit,
+            width: width,
+            height: height,
+            color: color,
+            colorBlendMode: colorBlendMode,
+          );
