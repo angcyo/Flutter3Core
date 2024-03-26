@@ -8,44 +8,49 @@ part of '../../flutter3_canvas.dart';
 class ControlLimit {
   final CanvasElementControlManager canvasElementControlManager;
 
-  /// 限制元素单次最小缩放的比例
-  double? elementMinScale = 0.001;
+  ///限制元素最小的宽度
+  @dp
+  double? elementMinWidth = 1;
+
+  /// 限制元素最小的高度
+  @dp
+  double? elementMinHeight = 1;
 
   ControlLimit(this.canvasElementControlManager);
 
-  /// 限制缩放
-  Matrix4 limitScale() {
-    /*final tsx = it.scaleX * sx;
-    final tsy = it.scaleY * sy;
+  /// 限制缩放, 输入需要进行的缩放比例, 输出最终的缩放比例
+  /// [sx] x轴缩放比例
+  /// [sy] y轴缩放比例
+  /// [isLockRatio] 是否锁定比例
+  /// [bounds] 元素现有的边界
+  List<double> limitScale(
+    double sx,
+    double sy,
+    bool isLockRatio,
+    @dp Rect? bounds,
+  ) {
+    if (bounds == null) {
+      return [sx, sy];
+    }
+    final minWidth = elementMinWidth;
+    final minHeight = elementMinHeight;
 
-    final minScale = canvasDelegate
-        ?.canvasElementManager.canvasElementControlManager.elementMinScale;
-    if (minScale != null) {
-      double minSx = tsx < minScale ? minScale / it.scaleX : sx;
-      double minSy = tsy < minScale ? minScale / it.scaleY : sy;
+    if (minWidth == null && minHeight == null) {
+      return [sx, sy];
+    }
 
-      //debugger();
+    final minSx = minWidth == null ? sx : minWidth / bounds.width;
+    final minSy = minHeight == null ? sy : minHeight / bounds.height;
 
-      if (tsx < minScale || tsy < minScale) {
-        //最终的缩放比例小于限制的最小值
-        if (sx.equalTo(sy)) {
-          //等比缩放
-          if (tsx < minScale) {
-            sx = minSx;
-          } else {
-            sx = minSy;
-          }
-          sy = sx;
-        } else {
-          //不等比缩放
-          sx = minSx;
-          sy = minSy;
-        }
+    if (isLockRatio) {
+      //锁定比例
+      if (sx < minSx || sy < minSy) {
+        final s = max(minSx, minSy);
+        return [s, s];
       }
-    }*/
-    return Matrix4
-        .identity(); /*
-      ..translate(it.translateX, it.translateY)
-      ..scale(sx, sy, 1.0);*/
+      return [sx, sy];
+    } else {
+      return [max(sx, minSx), max(sy, minSy)];
+    }
   }
 }

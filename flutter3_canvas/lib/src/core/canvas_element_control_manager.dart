@@ -469,19 +469,26 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     double? sx,
     double? sy,
     Offset? anchor,
+    bool isLockRatio = false,
     UndoType undoType = UndoType.normal,
   }) {
     if (elementPainter == null) {
       return;
     }
+    sx ??= 1;
+    sy ??= 1;
+    final limit = controlLimit.limitScale(sx, sy, isLockRatio,
+        elementPainter.paintProperty?.getBounds(enableResetElementAngle));
+    sx = limit[0];
+    sy = limit[1];
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
-      elementPainter.scaleElement(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
+      elementPainter.scaleElement(sx: sx, sy: sy, anchor: anchor);
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager
           .addUntoState(undoStateStack, redoStateStack);
     } else {
-      elementPainter.scaleElement(sx: sx ?? 1, sy: sy ?? 1, anchor: anchor);
+      elementPainter.scaleElement(sx: sx, sy: sy, anchor: anchor);
     }
   }
 
