@@ -296,6 +296,7 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
     compute(callback, message, debugLabel: "io-${nowTimeString()}");
 
+/// [Isolate]中运行
 Future<R> run<R>(ResultCallback<R> callback) {
   return Isolate.run(() => callback(), debugName: "run-${nowTimeString()}");
 }

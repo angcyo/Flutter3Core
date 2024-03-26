@@ -156,6 +156,7 @@ extension Uint8ListImageEx on Uint8List {
   Future<ui.Image> toImage() => decodeImageFromList(this);
 
   /// 将[PixelFormat.rgba8888]颜色格式的像素数据转换成图片
+  /// [ImageEx.toPixels]
   Future<ui.Image> toImageFromPixels(int width, int height,
       [PixelFormat format = PixelFormat.rgba8888]) {
     final Completer<ui.Image> completer = Completer<ui.Image>();
@@ -200,6 +201,7 @@ extension ImageEx on ui.Image {
   }
 
   /// 获取图片的颜色数据
+  /// [Uint8ListImageEx.toImageFromPixels]
   Future<Uint8List?> toPixels(
           [ui.ImageByteFormat format = ui.ImageByteFormat.rawRgba]) =>
       toBytes(format);

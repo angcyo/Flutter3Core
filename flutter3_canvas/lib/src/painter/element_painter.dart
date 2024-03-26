@@ -25,7 +25,7 @@ class ElementPainter extends IPainter
   }
 
   /// 更新当前元素的边界到指定位置
-  /// 只有修改[PaintProperty.left].[PaintProperty.top].[PaintProperty.scaleX].[PaintProperty.scaleY]
+  /// 只修改[PaintProperty.left].[PaintProperty.top].[PaintProperty.scaleX].[PaintProperty.scaleY]
   @api
   void updateBoundsTo(@sceneCoordinate @dp Rect? bounds) {
     if (bounds == null) {
@@ -46,6 +46,39 @@ class ElementPainter extends IPainter
       paintProperty = it.clone()
         ..applyScaleWithCenter(scaleMatrix)
         ..applyTranslate(translate);
+    });
+  }
+
+  /// 更新当前元素的实际宽高到指定大小
+  /// [keepVisibleBounds] 是否保持可见的边界宽高不变
+  @api
+  void updateWidthHeight({
+    @dp double? newWidth,
+    @dp double? newHeight,
+    bool keepVisibleBounds = true,
+  }) {
+    if (newWidth == null && newHeight == null) {
+      return;
+    }
+    paintProperty?.let((it) {
+      final resetElementAngle = canvasDelegate?.canvasElementManager
+              .canvasElementControlManager.enableResetElementAngle ??
+          true;
+      final oldBounds = it.getBounds(resetElementAngle);
+      final oldWidth = oldBounds.width;
+      final oldHeight = oldBounds.height;
+
+      //更新宽高属性
+      it.width = newWidth ?? it.width;
+      it.height = newHeight ?? it.height;
+
+      if (keepVisibleBounds && oldWidth > 0 && oldHeight > 0) {
+        //保持可见边界不变
+        final newBounds = it.getBounds(resetElementAngle);
+        final sx = newBounds.width / oldWidth;
+        final sy = newBounds.height / oldHeight;
+        it.applyScale(sxBy: sx, syBy: sy);
+      }
     });
   }
 
