@@ -1053,9 +1053,24 @@ extension WidgetEx on Widget {
   /// 拦截路由的弹出, 返回键.
   /// [PopScope]
   /// [WillPopScope.onWillPop]
+  /// [popScope]
+  /// `typedef WillPopCallback = Future<bool> Function();`
   Widget willPop([WillPopCallback? onWillPop]) {
     return WillPopScope(
       onWillPop: onWillPop ?? () async => false,
+      child: this,
+    );
+  }
+
+  /// `typedef PopInvokedCallback = void Function(bool didPop);`
+  /// [willPop]
+  Widget popScope([
+    PopInvokedCallback? onPopInvoked,
+    bool canPop = true,
+  ]) {
+    return PopScope(
+      canPop: canPop,
+      onPopInvoked: onPopInvoked,
       child: this,
     );
   }
