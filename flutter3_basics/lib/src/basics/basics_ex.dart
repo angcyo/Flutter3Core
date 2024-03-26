@@ -322,6 +322,7 @@ extension FutureEx<T> on Future<T> {
     Widget Function(T? value) builder, {
     Widget Function(Object? error)? errorBuilder,
     Widget Function()? loadingBuilder,
+    Widget Function()? emptyBuilder,
   }) {
     return FutureBuilder<T>(
       future: this,
@@ -332,7 +333,12 @@ extension FutureEx<T> on Future<T> {
                   .errorPlaceholderBuilder(context, snapshot.error);
         }
         if (snapshot.hasData) {
-          return builder.call(snapshot.data);
+          if (snapshot.data == null) {
+            return emptyBuilder?.call() ??
+                GlobalConfig.of(context).emptyPlaceholderBuilder(context, null);
+          } else {
+            return builder.call(snapshot.data);
+          }
         }
         return loadingBuilder?.call() ??
             GlobalConfig.of(context)

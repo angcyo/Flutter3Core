@@ -136,10 +136,12 @@ class DebugFileTile extends StatelessWidget {
       //长按分享文件
       //l.d('长按');
       //globalConfig.shareDataFn?.call(context, file);
-      context.showDialog(DebugFileMenuDialog(
-        this.path,
-        onDeleteAction: onDeleteAction,
-      ));
+      context.showDialog(
+          DebugFileMenuDialog(
+            this.path,
+            onDeleteAction: onDeleteAction,
+          ),
+          type: TranslationType.translation);
     });
 
     return result;

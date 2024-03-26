@@ -643,20 +643,35 @@ extension WidgetEx on Widget {
   }
 
   /// 圆角
+  /// [topRadius] 如果配置了, 则只有顶部有圆角
+  /// [bottomRadius] 如果配置了, 则只有底部有圆角
   Widget clipRadius({
     double radius = kDefaultBorderRadiusXX,
+    double? topRadius,
+    double? bottomRadius,
     BorderRadiusGeometry? borderRadius,
     CustomClipper<RRect>? clipper,
     Clip clipBehavior = Clip.antiAlias,
-  }) =>
-      clip(
-        borderRadius: borderRadius ??
-            BorderRadius.all(
-              Radius.circular(radius),
-            ),
-        clipper: clipper,
-        clipBehavior: clipBehavior,
+  }) {
+    BorderRadiusGeometry? borderRadiusGeometry;
+    if (borderRadius != null) {
+      borderRadiusGeometry = borderRadius;
+    } else if (topRadius != null || bottomRadius != null) {
+      borderRadiusGeometry = BorderRadius.only(
+        topLeft: Radius.circular(topRadius ?? 0),
+        topRight: Radius.circular(topRadius ?? 0),
+        bottomLeft: Radius.circular(bottomRadius ?? 0),
+        bottomRight: Radius.circular(bottomRadius ?? 0),
       );
+    } else {
+      borderRadiusGeometry = BorderRadius.circular(radius);
+    }
+    return clip(
+      borderRadius: borderRadiusGeometry,
+      clipper: clipper,
+      clipBehavior: clipBehavior,
+    );
+  }
 
   /// 椭圆形
   Widget clipOval({

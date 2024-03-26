@@ -2,6 +2,7 @@ library flutter3_core;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -34,6 +35,8 @@ part 'src/core/core_keys.dart';
 part 'src/core/svg_core.dart';
 part 'src/debug/debug_file_page.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
+part 'src/dialog/single_image_dialog.dart';
+part 'src/dialog/single_text_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/file_ex.dart';
 part 'src/file/file_log.dart';

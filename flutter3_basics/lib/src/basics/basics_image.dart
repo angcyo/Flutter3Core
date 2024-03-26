@@ -215,6 +215,26 @@ extension ImageEx on ui.Image {
     }
     return file?.writeAsBytes(bytes);
   }
+
+  /// 转换成[Widget]
+  Widget toImageWidget({
+    double scale = 1.0,
+    BoxFit? fit,
+    double? width,
+    double? height,
+    Color? tintColor,
+    BlendMode? colorBlendMode = BlendMode.srcIn,
+    int? memCacheWidth,
+    int? memCacheHeight,
+  }) =>
+      RawImage(
+          image: this,
+          fit: fit,
+          scale: scale,
+          colorBlendMode: colorBlendMode,
+          width: width,
+          height: height,
+          color: tintColor);
 }
 
 extension ImageStringEx on String {
