@@ -109,18 +109,28 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   //region ---element操作---
 
   /// 添加元素
+  /// [element] 要添加的元素
+  /// [selected] 是否选中
   @supportUndo
   @api
-  void addElement(ElementPainter element,
-      {UndoType undoType = UndoType.normal}) {
-    addElementList(element.ofList(), undoType: undoType);
+  void addElement(
+    ElementPainter element, {
+    bool selected = false,
+    UndoType undoType = UndoType.normal,
+  }) {
+    addElementList(element.ofList(), selected: selected, undoType: undoType);
   }
 
   /// 添加一组元素
+  /// [list] 要添加的一组元素
+  /// [selected] 添加完成后,是否选中
   @supportUndo
   @api
-  void addElementList(List<ElementPainter>? list,
-      {UndoType undoType = UndoType.normal}) {
+  void addElementList(
+    List<ElementPainter>? list, {
+    bool selected = false,
+    UndoType undoType = UndoType.normal,
+  }) {
     if (list == null || isNullOrEmpty(list)) {
       return;
     }
@@ -132,6 +142,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     canvasDelegate.dispatchCanvasElementListChanged(
         old, elements, list, undoType);
+
+    if (selected) {
+      resetSelectElement(list);
+    }
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
