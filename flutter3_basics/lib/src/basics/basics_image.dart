@@ -219,7 +219,7 @@ extension ImageEx on ui.Image {
   /// 转换成[Widget]
   Widget toImageWidget({
     double scale = 1.0,
-    BoxFit? fit,
+    BoxFit? fit = BoxFit.contain,
     double? width,
     double? height,
     Color? tintColor,
@@ -369,14 +369,17 @@ extension ElementImageEx on Element {
 extension RenderObjectImageEx on RenderObject {
   /// 获取元素的截图
   /// https://pub.dev/packages/image_gallery_saver
-  Future<ui.Image> captureImage() {
-    assert(this is RenderRepaintBoundary);
-    final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
-    final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
-    return boundary.toImage(pixelRatio: devicePixelRatio);
-    /*assert(!debugNeedsPaint);
-    final OffsetLayer layer = this.layer! as OffsetLayer;
-    return layer.toImage(paintBounds, pixelRatio: devicePixelRatio);*/
+  Future<ui.Image?> captureImage() async {
+    //assert(!debugNeedsPaint);
+    final OffsetLayer? layer = this.layer as OffsetLayer?;
+    ui.Image? result =
+        await layer?.toImage(paintBounds, pixelRatio: devicePixelRatio);
+    if (result == null && this is RenderRepaintBoundary) {
+      final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
+      final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
+      return boundary.toImage(pixelRatio: devicePixelRatio);
+    }
+    return result;
   }
 }
 

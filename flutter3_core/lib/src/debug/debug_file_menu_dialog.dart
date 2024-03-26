@@ -34,9 +34,15 @@ class DebugFileMenuDialog extends StatelessWidget {
           text: "打开文件",
           onTap: () {
             close(context);
-            context.showDialog(SingleTextDialog(
-              filePath: filePath,
-            ));
+            if (filePath?.mimeType()?.isImageMimeType == true) {
+              context.showDialog(SingleImageDialog(
+                filePath: filePath,
+              ));
+            } else {
+              context.showDialog(SingleTextDialog(
+                filePath: filePath,
+              ));
+            }
           },
         ),
       if (isFile)

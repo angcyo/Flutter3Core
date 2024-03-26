@@ -52,6 +52,28 @@ class GradientButton extends StatelessWidget {
     this.maxHeight = double.infinity,
   });
 
+  const GradientButton.normal({
+    super.key,
+    this.color,
+    this.colors,
+    required this.onTap,
+    required this.child,
+    this.enable,
+    this.padding = const EdgeInsets.symmetric(vertical: kL, horizontal: kH),
+    this.textStyle,
+    this.radius = kDefaultBorderRadiusL,
+    this.borderRadius,
+    this.textColor,
+    this.splashColor,
+    this.disabledColor,
+    this.disabledTextColor,
+    this.onHighlightChanged,
+    this.minWidth = 0,
+    this.maxWidth = double.infinity,
+    this.minHeight = 0,
+    this.maxHeight = double.infinity,
+  });
+
   /// 是否启用
   /// 为`null`时, 自动根据[onTap]判断
   final bool? enable;

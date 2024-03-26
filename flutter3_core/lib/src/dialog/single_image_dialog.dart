@@ -25,10 +25,10 @@ class SingleImageDialog extends StatelessWidget {
         content != null ? Future(() => content) : filePath?.toImageFromFile();
     return body!
         .toWidget((value) => value!.toImageWidget())
-        .scroll()
-        .container(
+        /*.scroll()*/
+        /*.container(
           color: globalConfig.globalTheme.whiteBgColor,
-        )
-        .clipRadius(topRadius: kDefaultBorderRadiusXX);
+        )*/
+        /*.clipRadius(topRadius: kDefaultBorderRadiusXX)*/;
   }
 }

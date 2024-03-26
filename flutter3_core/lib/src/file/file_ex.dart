@@ -12,9 +12,14 @@ Future<UiImage?> saveScreenCapture([
   String? filePath,
   BuildContext? context,
 ]) async {
-  var path = (filePath ?? await cacheFilePath("ScreenCapture${nowTime()}.png"));
+  final path =
+      (filePath ?? await cacheFilePath("ScreenCapture${nowTime()}.png"));
   var image = await (context ?? GlobalConfig.def.globalContext)?.captureImage();
   image?.saveToFile(path.file());
+  assert(() {
+    l.d('屏幕截图保存至->$path');
+    return true;
+  }());
   return image;
 }
 

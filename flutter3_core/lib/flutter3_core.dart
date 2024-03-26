@@ -2,7 +2,6 @@ library flutter3_core;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -34,6 +33,7 @@ export 'src/view_model/jetpack/viewmodel.dart';
 part 'src/core/core_keys.dart';
 part 'src/core/svg_core.dart';
 part 'src/debug/debug_file_page.dart';
+part 'src/debug/debug_page.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
