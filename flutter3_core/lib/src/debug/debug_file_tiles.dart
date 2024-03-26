@@ -15,18 +15,26 @@ class DebugFileTile extends StatelessWidget {
   /// 文件/文件夹路径
   final String? path;
 
+  /// 是否选中了
+  final bool isSelected;
+
   /// 点击事件
   final FilePathTapAction? onTap;
 
   /// 图标大小
   final iconSize = 50.0;
 
-  const DebugFileTile({super.key, this.path, this.onTap});
+  const DebugFileTile({
+    super.key,
+    this.path,
+    this.onTap,
+    this.isSelected = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
-
+    final globalTheme = GlobalTheme.of(context);
     final path = this.path;
     final file = path?.file();
     if (path == null || file == null) {
@@ -35,9 +43,10 @@ class DebugFileTile extends StatelessWidget {
     final fileName = path.fileName();
     final stat = file.statSync();
     final modified = stat.modified.format();
+    final isFolder = path.isDirectorySync();
 
-    List<Widget?> result;
-    if (path.isDirectorySync()) {
+    List<Widget?> list;
+    if (isFolder) {
       final folder = path.folder;
       final infoRow = [
         "${folder.listFilesSync(sort: false)?.length ?? "--"} 项".text(
@@ -59,7 +68,7 @@ class DebugFileTile extends StatelessWidget {
           style: globalConfig.globalTheme.textDesStyle,
         ),
       ].row();
-      result = [
+      list = [
         loadCoreAssetImageWidget(
           Assets.assetsCore.png.coreFileIconFolder.keyName,
           width: iconSize,
@@ -90,7 +99,7 @@ class DebugFileTile extends StatelessWidget {
           style: globalConfig.globalTheme.textDesStyle,
         ),
       ].row();
-      result = [
+      list = [
         getFileIconWidget(fileName, width: iconSize, height: iconSize),
         Empty.width(kX),
         [
@@ -107,10 +116,26 @@ class DebugFileTile extends StatelessWidget {
       ];
     }
 
-    return result.row()!.paddingAll(kH).ink(
+    Widget result = list
+        .row()!
+        .paddingAll(kH)
+        .container(
+            color: isSelected ? globalTheme.accentColor.withOpacity(0.3) : null)
+        .ink(
       onTap: () {
         onTap?.call(path);
       },
     );
+
+    if (!isFolder) {
+      //debugger();
+      result = result.longClick(() {
+        //长按分享文件
+        l.d('长按');
+        globalConfig.shareDataFn?.call(context, file);
+      });
+    }
+
+    return result;
   }
 }

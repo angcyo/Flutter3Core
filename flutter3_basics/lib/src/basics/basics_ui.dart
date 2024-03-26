@@ -339,7 +339,7 @@ extension WidgetEx on Widget {
   /// [MultiTapGestureRecognizer] 多击手势识别器
   /// [EagerGestureRecognizer] 急切手势识别器
   /// [RotateGestureRecognizer] 旋转手势识别
-  ///
+  /// [RenderProxyBoxWithHitTestBehavior]
   Widget click(GestureTapCallback? onTap, [bool enable = true]) =>
       onTap == null || !enable
           ? this
@@ -349,11 +349,33 @@ extension WidgetEx on Widget {
             );
 
   /// 双击事件
-  Widget doubleClick(GestureTapCallback? onDoubleTap, [bool enable = true]) =>
+  /// [RenderProxyBoxWithHitTestBehavior]
+  Widget doubleClick(
+    GestureTapCallback? onDoubleTap, [
+    bool enable = true,
+    HitTestBehavior? behavior = HitTestBehavior.opaque,
+  ]) =>
       onDoubleTap == null || !enable
           ? this
           : GestureDetector(
               onDoubleTap: onDoubleTap,
+              behavior: behavior,
+              child: this,
+            );
+
+  /// 长按事件
+  /// [behavior] 手势的命中测试行为, 父子都需要手势, 但是不想冲突, 可以设置[HitTestBehavior.opaque]
+  /// [RenderProxyBoxWithHitTestBehavior]
+  Widget longClick(
+    GestureLongPressCallback? onLongPress, [
+    bool enable = true,
+    HitTestBehavior? behavior = HitTestBehavior.opaque,
+  ]) =>
+      onLongPress == null || !enable
+          ? this
+          : GestureDetector(
+              onLongPress: onLongPress,
+              behavior: behavior,
               child: this,
             );
 

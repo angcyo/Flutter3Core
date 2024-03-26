@@ -55,7 +55,7 @@ extension MimeEx on String {
   /// print(lookupMimeType('test.html', headerBytes: [0xFF, 0xD8])); // image/jpeg
   ///
   /// ```
-  String? mimeType({List<int>? headerBytes}) {
+  String? mimeType([List<int>? headerBytes]) {
     final path = toUri()?.path ?? this;
     final mimeType = lookupMimeType(
       path,

@@ -5,17 +5,21 @@ part of '../../flutter3_basics.dart';
 /// @since 2023/11/10
 ///
 
-/// 打开[url]的回调方法
-typedef GlobalOpenUrlFn = Future<bool> Function(
-    BuildContext? context, String? url);
-
 /// 带参数的[WidgetBuilder]
 typedef WidgetArgumentBuilder = Widget Function<T>(
     BuildContext context, T? arg);
 
-/// 写入文件的回调方法
+/// 全局打开[url]的回调方法, 返回成功or失败
+typedef GlobalOpenUrlFn = Future<bool> Function(
+    BuildContext? context, String? url);
+
+/// 全局写入文件的回调方法, 返回文件路径
 typedef GlobalWriteFileFn = Future<String?> Function(
     String fileName, String? folder, Object? content);
+
+/// 全局分享[data]的回调方法, 返回成功or失败
+typedef GlobalShareDataFn = Future<bool> Function(
+    BuildContext? context, dynamic data);
 
 /// 获取[GlobalConfig]的方法
 typedef GlobalConfigGetFn = GlobalConfig Function();
@@ -162,17 +166,31 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 注册一个全局的打开url方法, 一般是跳转到web页面
   /// 打开url
   GlobalOpenUrlFn? openUrlFn = (context, url) {
-    l.w("企图打开url:$url from:$context");
+    assert(() {
+      l.w("企图打开url:$url from:$context");
+      return true;
+    }());
     return Future.value(false);
   };
 
   /// 注册一个全局写入文件内容的方法, 返回文件路径
   GlobalWriteFileFn? writeFileFn = (fileName, folder, content) async {
-    if (kDebugMode) {
-      print("企图写入文件:$fileName ->$content");
-    }
+    assert(() {
+      l.w("企图写入文件:$fileName ->$content");
+      return true;
+    }());
     //return Future.error(RException("未注册写入文件方法"), StackTrace.current);
     return Future.value(null);
+  };
+
+  /// 注册一个全局的分享数据的方法, 一般是调用系统分享
+  /// 分享数据给第三方app
+  GlobalShareDataFn? shareDataFn = (context, data) {
+    assert(() {
+      l.w("企图分享数据:$data");
+      return true;
+    }());
+    return Future.value(false);
   };
 
   //region Widget
@@ -394,6 +412,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     ThemeData? themeData,
     GlobalTheme? globalTheme,
     GlobalOpenUrlFn? openUrlFn,
+    GlobalShareDataFn? shareDataFn,
     GlobalWriteFileFn? writeFileFn,
     WidgetArgumentBuilder? imagePlaceholderBuilder,
     ProgressWidgetBuilder? loadingIndicatorBuilder,
@@ -407,6 +426,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       ..themeData = themeData ?? this.themeData
       ..globalTheme = globalTheme ?? this.globalTheme
       ..openUrlFn = openUrlFn ?? this.openUrlFn
+      ..shareDataFn = shareDataFn ?? this.shareDataFn
       ..writeFileFn = writeFileFn ?? this.writeFileFn
       ..imagePlaceholderBuilder =
           imagePlaceholderBuilder ?? this.imagePlaceholderBuilder

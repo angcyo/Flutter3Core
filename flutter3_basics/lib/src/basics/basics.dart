@@ -104,7 +104,8 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 //String.fromEnvironment
 
 /// 报告错误
-/// [FlutterError.onError] 最终会调用此方法
+/// 上报错误到[FlutterError.onError] 最终会调用此方法
+/// 通过重写[FlutterError.onError]实现将错误信息写入文件
 ///
 /// [ErrorWidget.builder] 错误小部件构建器
 void reportError(exception) {

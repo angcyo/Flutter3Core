@@ -38,6 +38,37 @@ void runGlobalApp(Widget app) {
 
   lTime.tick();
 
+  // 分享数据
+  GlobalConfig.def.shareDataFn = (context, data) async {
+    try {
+      if (data is File) {
+        await data.path.shareFile(shareContext: context);
+        return true;
+      } else if (data is Uint8List) {
+        await data.share(shareContext: context);
+        return true;
+      } else if (data is UiImage) {
+        await data.share(shareContext: context);
+        return true;
+      } else if (data is String) {
+        await data.share(shareContext: context);
+        return true;
+      }
+      assert(() {
+        l.w('不支持的分享数据类型:${data.runtimeType}');
+        return true;
+      }());
+      return false;
+    } catch (e) {
+      assert(() {
+        l.w(e);
+        return true;
+      }());
+      reportError(e);
+      return false;
+    }
+  };
+
   var oldOnError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails details) {
     l.e("发生一个错误:↓"..writeToErrorLog());
@@ -54,7 +85,8 @@ void runGlobalApp(Widget app) {
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
 
-    "开始启动[main]:${ui.PlatformDispatcher.instance.defaultRouteName}".writeToLog();
+    "开始启动[main]:${ui.PlatformDispatcher.instance.defaultRouteName}"
+        .writeToLog();
     await initFlutter3Core();
     if (isDebug) {
       await testRunAfter();

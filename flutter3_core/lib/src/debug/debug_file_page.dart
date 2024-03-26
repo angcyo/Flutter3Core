@@ -22,6 +22,9 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
   /// 当前加载的路径
   String? currentLoadPath;
 
+  /// 选中的文件路径
+  String? _selectPath;
+
   /// 加载出来的文件列表, 如果为null, 则表示正在加载中
   List<FileSystemEntity>? _fileList;
 
@@ -50,8 +53,19 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
             .ink(onTap: () {
           _loadPath(currentLoadPath?.parentPath);
         }).expanded(),
+        GradientButton.min(
+            onTap: _handleResult,
+            enable: _selectPath != null,
+            padding: const EdgeInsets.symmetric(horizontal: kX, vertical: kL),
+            child: "确定".text()),
+        Empty.width(kX),
       ].row()!.safeArea(),
     );
+  }
+
+  /// 选中文件并返回路由
+  void _handleResult() {
+    Navigator.of(context).pop(_selectPath);
   }
 
   @override
@@ -111,6 +125,7 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
           DebugFileTile(
             path: path.path,
             onTap: _loadPath,
+            isSelected: path.path == _selectPath,
           ),
     ]);
   }
@@ -123,6 +138,12 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
       l.d('准备加载路径:$path');
       return true;
     }());
+    if (path?.isFileSync() == true) {
+      _selectPath = path;
+      updateState();
+      return;
+    }
+
     _error = null;
     _fileList = null;
     _beforePath = currentLoadPath;
