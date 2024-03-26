@@ -39,8 +39,11 @@ class ControlLimit {
       return [sx, sy];
     }
 
-    final minSx = minWidth == null ? sx : minWidth / bounds.width;
-    final minSy = minHeight == null ? sy : minHeight / bounds.height;
+    final minSx =
+        (minWidth == null || bounds.width == 0) ? sx : minWidth / bounds.width;
+    final minSy = (minHeight == null || bounds.height == 0)
+        ? sy
+        : minHeight / bounds.height;
 
     if (isLockRatio) {
       //锁定比例
