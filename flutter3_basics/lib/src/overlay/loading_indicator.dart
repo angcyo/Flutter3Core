@@ -58,7 +58,7 @@ class LoadingWrapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget indicator = GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, progressValue);
+        .loadingIndicatorBuilder(context, this, progressValue);
     return Container(
       width: width,
       height: height,
@@ -94,7 +94,7 @@ class LoadingStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget loading = this.loading ??
         GlobalConfig.of(context)
-            .loadingIndicatorBuilder(context, progressValue);
+            .loadingIndicatorBuilder(context, this, progressValue);
     return AnimatedSwitcher(
       duration: kDefaultAnimationDuration,
       child: isLoading ? loading : child,

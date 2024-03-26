@@ -35,7 +35,7 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
           Assets.assetsCore.svg.fileBrowseHome,
           width: 25,
           height: 25,
-        )?.inkWellCircle(onTap: () {
+        )?.paddingAll(kX).inkWellCircle(onTap: () {
           _reload();
         }),
         currentLoadPath
@@ -43,11 +43,11 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
             .scroll(
                 scrollDirection: Axis.horizontal,
                 controller: _pathScrollController)
-            .paddingSymmetric(horizontal: kX)
+            .padding(0, kX, kX, kX)
             .ink(onTap: () {
           _loadPath(currentLoadPath?.parentPath);
         }).expanded(),
-      ].row()!.paddingAll(kX).safeArea(),
+      ].row()!.safeArea(),
     );
   }
 
@@ -90,7 +90,7 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
     return buildScaffold(context, children: [
       if (_fileList == null)
         globalConfig
-            .loadingIndicatorBuilder(context, null)
+            .loadingIndicatorBuilder(context, this, null)
             .align(Alignment.center)
             .sliverExpand(),
       if (_fileList?.isEmpty == true) "No Data".text().align(Alignment.center),

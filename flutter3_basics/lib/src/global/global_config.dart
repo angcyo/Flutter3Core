@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -23,7 +23,7 @@ typedef GlobalConfigGetFn = GlobalConfig Function();
 /// 进度小部件构建器
 /// [progress] 进度[0~1]
 typedef ProgressWidgetBuilder = Widget Function(
-    BuildContext context, double? progress);
+    BuildContext context, dynamic data, double? progress);
 
 /// [AppBar]构建器函数
 typedef AppBarBuilderFn = PreferredSizeWidget? Function(
@@ -185,8 +185,13 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   /// 全局的Loading指示器
-  ProgressWidgetBuilder loadingIndicatorBuilder = (context, progress) {
+  ProgressWidgetBuilder loadingIndicatorBuilder = (context, data, progress) {
     return LoadingIndicator(progressValue: progress);
+  };
+
+  /// 全局的无数据占位小部件
+  WidgetArgumentBuilder emptyPlaceholderBuilder = <T>(context, data) {
+    return const Icon(Icons.privacy_tip);
   };
 
   /// 全局的错误占位小部件
@@ -196,9 +201,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局的加载[Overlay]提示
   /// [OverlayEntry]
-  ProgressWidgetBuilder loadingOverlayWidgetBuilder = (context, progress) {
-    Widget loadingIndicator =
-        GlobalConfig.of(context).loadingIndicatorBuilder(context, progress);
+  ProgressWidgetBuilder loadingOverlayWidgetBuilder =
+      (context, data, progress) {
+    Widget loadingIndicator = GlobalConfig.of(context)
+        .loadingIndicatorBuilder(context, data, progress);
     return Container(
       alignment: Alignment.center,
       child: SizedBox.fromSize(

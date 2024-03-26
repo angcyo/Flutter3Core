@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// 情感图状态控制
@@ -8,7 +8,10 @@ part of flutter3_widgets;
 
 /// [WidgetBuilder]
 typedef WidgetStateBuilder = Widget Function(
-    BuildContext context, WidgetState widgetState, dynamic stateData);
+  BuildContext context,
+  WidgetState widgetState,
+  dynamic stateData,
+);
 
 /// 创建一个字符串
 typedef GenerateString = String? Function(BuildContext context);
@@ -117,6 +120,8 @@ extension WidgetStateEx on Widget {
 
 /// [WidgetState]状态控制
 class WidgetStateWidget extends StatefulWidget {
+  /// 当前的状态数据
+  /// 不同状态下,携带的数据
   final dynamic stateData;
 
   /// 当前的状态
@@ -128,11 +133,13 @@ class WidgetStateWidget extends StatefulWidget {
   /// 加载失败时, 显示的字符串
   final GenerateString? loadErrorStringGenerate;
 
-  /// 请求改变状态
+  /// 请求改变状态, 拦截器
   final RequestChangeStateFn? requestChangeStateFn;
 
   /// 构建不同状态的Widget
   final WidgetStateBuilder? buildWidgetStateWidget;
+
+  //---
 
   /// 细分的[WidgetState.loading]状态
   final WidgetStateBuilder? buildLoadingWidgetState;
@@ -160,45 +167,41 @@ class WidgetStateWidget extends StatefulWidget {
   State<WidgetStateWidget> createState() => WidgetStateWidgetState();
 }
 
-class WidgetStateWidgetState extends State<WidgetStateWidget> {
+class WidgetStateWidgetState extends State<WidgetStateWidget>
+    with StateWidgetMixin {
   /// 更新后的状态
   WidgetState? _updateState;
 
   WidgetState get _buildState => _updateState ?? widget.widgetState;
 
   /// [WidgetState.loading]状态
-  Widget _buildLoadingWidget(BuildContext context, [double? progressValue]) {
+  @override
+  Widget _buildLoadingWidget(BuildContext context,
+      [dynamic data, double? progressValue]) {
     return (widget.buildLoadingWidgetState ?? widget.buildWidgetStateWidget)
             ?.call(context, _buildState, widget.stateData) ??
-        GlobalConfig.of(context)
-            .loadingIndicatorBuilder(context, progressValue);
+        super._buildLoadingWidget(context, widget.stateData, progressValue);
   }
 
   /// [WidgetState.empty]状态
-  Widget _buildEmptyWidget(BuildContext context) {
-    var result =
-        (widget.buildEmptyWidgetStateWidget ?? widget.buildWidgetStateWidget)
-            ?.call(context, _buildState, widget.stateData);
-    if (result != null) {
-      return result;
-    }
-    return const Placeholder();
+  @override
+  Widget _buildEmptyWidget(BuildContext context, [dynamic data]) {
+    return (widget.buildEmptyWidgetStateWidget ?? widget.buildWidgetStateWidget)
+            ?.call(context, _buildState, widget.stateData) ??
+        super._buildEmptyWidget(context);
   }
 
   /// [WidgetState.error]状态
-  Widget _buildErrorWidget(BuildContext context) {
-    var result =
-        (widget.buildErrorWidgetStateWidget ?? widget.buildWidgetStateWidget)
-            ?.call(context, _buildState, widget.stateData);
-    if (result != null) {
-      return result;
-    }
-    return const Placeholder();
+  @override
+  Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
+    return (widget.buildErrorWidgetStateWidget ?? widget.buildWidgetStateWidget)
+            ?.call(context, _buildState, widget.stateData) ??
+        super._buildErrorWidget(context, error);
   }
 
   /// 其他默认状态
   Widget _buildDefaultWidget(BuildContext context) {
-    var result = (widget.buildWidgetStateWidget)
+    var result = widget.buildWidgetStateWidget
         ?.call(context, _buildState, widget.stateData);
     if (result != null) {
       return result;
@@ -214,17 +217,8 @@ class WidgetStateWidgetState extends State<WidgetStateWidget> {
 
   @override
   Widget build(BuildContext context) {
-    switch (_buildState) {
-      case WidgetState.preLoading:
-      case WidgetState.loading:
-        return _buildLoadingWidget(context);
-      case WidgetState.empty:
-        return _buildEmptyWidget(context);
-      case WidgetState.error:
-        return _buildErrorWidget(context);
-      default:
-        return _buildDefaultWidget(context);
-    }
+    return buildStateWidget(context, _buildState, widget.stateData) ??
+        _buildDefaultWidget(context);
   }
 
   @override
@@ -257,15 +251,16 @@ class AdapterStateWidget extends WidgetStateWidget {
 class AdapterStateWidgetState extends WidgetStateWidgetState {
   /// [WidgetState.loading]状态
   @override
-  Widget _buildLoadingWidget(BuildContext context, [double? progressValue]) {
+  Widget _buildLoadingWidget(BuildContext context,
+      [dynamic data, double? progressValue]) {
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, progressValue);
+        .loadingIndicatorBuilder(context, data, progressValue);
   }
 
   /// [WidgetState.empty]状态
   /// @override
   @override
-  Widget _buildEmptyWidget(BuildContext context) {
+  Widget _buildEmptyWidget(BuildContext context, [dynamic data]) {
     final globalTheme = GlobalTheme.of(context);
     //def 360*360
     const size = 160.0;
@@ -275,7 +270,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
     )!
         .size(width: size, height: size);
 
-    var stateData = widget.stateData ??
+    final stateData = widget.stateData ??
         widget.noDataStringGenerate?.call(context) ??
         globalTheme.noDataTip;
     if (stateData != null) {
@@ -293,17 +288,17 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
 
   /// [WidgetState.error]状态
   @override
-  Widget _buildErrorWidget(BuildContext context) {
+  Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
     var globalTheme = GlobalTheme.of(context);
     //def 360*360
-    var size = 160.0;
+    const size = 160.0;
     Widget result = loadAssetImageWidget(
       Assets.png.loadError.keyName,
       package: 'flutter3_widgets',
     )!
         .size(width: size, height: size);
 
-    var stateData = widget.stateData ??
+    final stateData = widget.stateData ??
         widget.loadErrorStringGenerate?.call(context) ??
         globalTheme.loadDataErrorTip;
 
@@ -352,16 +347,17 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
 
   /// [WidgetState.loading]状态
   @override
-  Widget _buildLoadingWidget(BuildContext context, [double? progressValue]) {
+  Widget _buildLoadingWidget(BuildContext context,
+      [dynamic data, double? progressValue]) {
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, progressValue)
+        .loadingIndicatorBuilder(context, data, progressValue)
         .wrapContent(minHeight: kInteractiveHeight);
   }
 
   /// [WidgetState.empty]状态
   /// @override
   @override
-  Widget _buildEmptyWidget(BuildContext context) {
+  Widget _buildEmptyWidget(BuildContext context, [dynamic data]) {
     var globalTheme = GlobalTheme.of(context);
     var stateData = widget.stateData ??
         widget.noDataStringGenerate?.call(context) ??
@@ -380,9 +376,9 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
 
   /// [WidgetState.error]状态
   @override
-  Widget _buildErrorWidget(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
-    var stateData = widget.stateData ??
+  Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
+    final globalTheme = GlobalTheme.of(context);
+    final stateData = widget.stateData ??
         widget.loadErrorStringGenerate?.call(context) ??
         globalTheme.loadDataErrorTip;
 
@@ -406,5 +402,46 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
         updateState();
       }
     });
+  }
+}
+
+/// 情感图状态切换混入
+mixin StateWidgetMixin {
+  /// 根据传入的状态, 构建对应的[Widget]
+  /// [otherBuilder] 用来构建其他未处理状态的[Widget]
+  ///
+  /// [WidgetState]
+  @entryPoint
+  Widget? buildStateWidget(
+      BuildContext context, WidgetState state, dynamic stateData,
+      [WidgetStateBuilder? otherBuilder]) {
+    switch (state) {
+      case WidgetState.preLoading:
+      case WidgetState.loading:
+        return _buildLoadingWidget(context);
+      case WidgetState.empty:
+        return _buildEmptyWidget(context);
+      case WidgetState.error:
+        return _buildErrorWidget(context, stateData);
+      default:
+        return otherBuilder?.call(context, state, stateData);
+    }
+  }
+
+  /// [WidgetState.loading]状态
+  Widget _buildLoadingWidget(BuildContext context,
+      [dynamic data, double? progressValue]) {
+    return GlobalConfig.of(context)
+        .loadingIndicatorBuilder(context, data, progressValue);
+  }
+
+  /// [WidgetState.empty]状态
+  Widget _buildEmptyWidget(BuildContext context, [dynamic data]) {
+    return GlobalConfig.of(context).emptyPlaceholderBuilder(context, data);
+  }
+
+  /// [WidgetState.error]状态
+  Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
+    return GlobalConfig.of(context).errorPlaceholderBuilder(context, error);
   }
 }

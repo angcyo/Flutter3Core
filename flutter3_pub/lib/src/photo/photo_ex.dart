@@ -1,4 +1,4 @@
-part of flutter3_pub;
+part of '../../flutter3_pub.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -122,7 +122,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
       progressValue = event.cumulativeBytesLoaded / event.expectedTotalBytes!;
     }
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, progressValue)
+        .loadingIndicatorBuilder(context, this, progressValue)
         .center();
   }
 

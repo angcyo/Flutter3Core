@@ -332,7 +332,8 @@ extension FutureEx<T> on Future<T> {
           return builder.call(snapshot.data);
         }
         return loadingBuilder?.call() ??
-            GlobalConfig.of(context).loadingIndicatorBuilder(context, null);
+            GlobalConfig.of(context)
+                .loadingIndicatorBuilder(context, this, null);
       },
     );
   }

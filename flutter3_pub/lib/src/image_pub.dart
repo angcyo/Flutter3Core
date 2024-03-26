@@ -1,4 +1,4 @@
-part of flutter3_pub;
+part of '../flutter3_pub.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -214,7 +214,8 @@ extension ImagePubEx on String {
         progressIndicatorBuilder: needPlaceholder
             ? null
             : (context, url, downloadProgress) => GlobalConfig.of(context)
-                .loadingIndicatorBuilder(context, downloadProgress.progress),
+                .loadingIndicatorBuilder(
+                    context, url, downloadProgress.progress),
         errorWidget: (context, url, error) =>
             GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
       );
@@ -237,6 +238,7 @@ extension ImagePubEx on String {
             : (context, progress) => GlobalConfig.of(context)
                 .loadingIndicatorBuilder(
                     context,
+                    this,
                     (progress == null || progress.expectedTotalBytes == null)
                         ? null
                         : progress.cumulativeBytesLoaded /
