@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 
 import '../../assets_generated/assets.gen.dart';
+import 'debug_file_menu_dialog.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -24,11 +25,15 @@ class DebugFileTile extends StatelessWidget {
   /// 图标大小
   final iconSize = 50.0;
 
+  /// 删除文件回调
+  final VoidAction? onDeleteAction;
+
   const DebugFileTile({
     super.key,
     this.path,
     this.onTap,
     this.isSelected = false,
+    this.onDeleteAction,
   });
 
   @override
@@ -70,7 +75,7 @@ class DebugFileTile extends StatelessWidget {
       ].row();
       list = [
         loadCoreAssetImageWidget(
-          Assets.assetsCore.png.coreFileIconFolder.keyName,
+          Assets.png.coreFileIconFolder.keyName,
           width: iconSize,
           height: iconSize,
         ),
@@ -127,14 +132,15 @@ class DebugFileTile extends StatelessWidget {
       },
     );
 
-    if (!isFolder) {
-      //debugger();
-      result = result.longClick(() {
-        //长按分享文件
-        l.d('长按');
-        globalConfig.shareDataFn?.call(context, file);
-      });
-    }
+    result = result.longClick(() {
+      //长按分享文件
+      //l.d('长按');
+      //globalConfig.shareDataFn?.call(context, file);
+      context.showDialog(DebugFileMenuDialog(
+        this.path,
+        onDeleteAction: onDeleteAction,
+      ));
+    });
 
     return result;
   }

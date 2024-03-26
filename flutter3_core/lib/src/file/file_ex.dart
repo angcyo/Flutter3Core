@@ -572,6 +572,44 @@ extension FilePathEx on String {
     }
     return null;
   }
+
+  /// 删除文件或文件夹
+  /// [recursive] 如果是文件夹,是否递归删除
+  Future<bool> delete({bool recursive = false}) async {
+    try {
+      if (isFileSync()) {
+        await file().delete();
+        return true;
+      }
+      await folder.delete(recursive: recursive);
+      return true;
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+    }
+    return false;
+  }
+
+  /// 同步删除
+  /// [delete]
+  bool deleteSync({bool recursive = false}) {
+    try {
+      if (isFileSync()) {
+        file().deleteSync();
+        return true;
+      }
+      folder.deleteSync(recursive: recursive);
+      return true;
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+    }
+    return false;
+  }
 }
 
 /// 快速获取一个文件类型的文件夹路径

@@ -38,7 +38,7 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: [
         loadCoreAssetSvgPicture(
-          Assets.assetsCore.svg.fileBrowseHome,
+          Assets.svg.fileBrowseHome,
           width: 25,
           height: 25,
         )?.paddingAll(kX).inkWellCircle(onTap: () {
@@ -126,6 +126,9 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
             path: path.path,
             onTap: _loadPath,
             isSelected: path.path == _selectPath,
+            onDeleteAction: () {
+              _loadPath(currentLoadPath);
+            },
           ),
     ]);
   }

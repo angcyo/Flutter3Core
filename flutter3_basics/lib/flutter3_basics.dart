@@ -148,6 +148,7 @@ part 'src/widgets/value_listener.dart';
 
 /// 类型重定义
 typedef Action = VoidCallback;
+typedef VoidAction = Action;
 typedef UiImage = ui.Image;
 typedef UiImageByteFormat = ui.ImageByteFormat;
 typedef UiImageFilter = ui.ImageFilter;

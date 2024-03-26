@@ -9,15 +9,8 @@
 
 import 'package:flutter/widgets.dart';
 
-class $AssetsCoreGen {
-  const $AssetsCoreGen();
-
-  $AssetsCorePngGen get png => const $AssetsCorePngGen();
-  $AssetsCoreSvgGen get svg => const $AssetsCoreSvgGen();
-}
-
-class $AssetsCorePngGen {
-  const $AssetsCorePngGen();
+class $AssetsPngGen {
+  const $AssetsPngGen();
 
   /// File path: assets/png/core_file_icon_7z.png
   AssetGenImage get coreFileIcon7z =>
@@ -94,11 +87,20 @@ class $AssetsCorePngGen {
       ];
 }
 
-class $AssetsCoreSvgGen {
-  const $AssetsCoreSvgGen();
+class $AssetsSvgGen {
+  const $AssetsSvgGen();
+
+  /// File path: assets/svg/file_browse_delete.svg
+  String get fileBrowseDelete => 'assets/svg/file_browse_delete.svg';
 
   /// File path: assets/svg/file_browse_home.svg
   String get fileBrowseHome => 'assets/svg/file_browse_home.svg';
+
+  /// File path: assets/svg/file_browse_open.svg
+  String get fileBrowseOpen => 'assets/svg/file_browse_open.svg';
+
+  /// File path: assets/svg/file_browse_share.svg
+  String get fileBrowseShare => 'assets/svg/file_browse_share.svg';
 
   /// File path: assets/svg/keyboard_backspace.svg
   String get keyboardBackspace => 'assets/svg/keyboard_backspace.svg';
@@ -107,14 +109,21 @@ class $AssetsCoreSvgGen {
   String get keyboardPackUp => 'assets/svg/keyboard_pack_up.svg';
 
   /// List of all assets
-  List<String> get values =>
-      [fileBrowseHome, keyboardBackspace, keyboardPackUp];
+  List<String> get values => [
+        fileBrowseDelete,
+        fileBrowseHome,
+        fileBrowseOpen,
+        fileBrowseShare,
+        keyboardBackspace,
+        keyboardPackUp
+      ];
 }
 
 class Assets {
   Assets._();
 
-  static const $AssetsCoreGen assetsCore = $AssetsCoreGen();
+  static const $AssetsPngGen png = $AssetsPngGen();
+  static const $AssetsSvgGen svg = $AssetsSvgGen();
 }
 
 class AssetGenImage {

@@ -97,6 +97,36 @@ mixin DialogConstraintMixin {
 //endregion 辅助方法
 }
 
+extension DialogExtension on BuildContext {
+  /// 显示对话框
+  Future<T?> showDialog<T>(
+    Widget widget, {
+    bool barrierDismissible = true,
+    Color? barrierColor = Colors.black54,
+    String? barrierLabel,
+    bool useSafeArea = true,
+    bool useRootNavigator = true,
+    RouteSettings? routeSettings,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
+    Offset? anchorPoint,
+    TranslationType? type,
+  }) {
+    return showDialogWidget<T>(
+      context: this,
+      widget: widget,
+      barrierDismissible: barrierDismissible,
+      barrierColor: barrierColor,
+      barrierLabel: barrierLabel,
+      useSafeArea: useSafeArea,
+      useRootNavigator: useRootNavigator,
+      routeSettings: routeSettings,
+      traversalEdgeBehavior: traversalEdgeBehavior,
+      anchorPoint: anchorPoint,
+      type: type,
+    );
+  }
+}
+
 /// 对话框的一些基础方法
 /// [barrierDismissible] 窗口外是否可以销毁对话框
 /// [barrierColor] 障碍的颜色, 默认是[Colors.black54]
@@ -106,6 +136,7 @@ mixin DialogConstraintMixin {
 /// [DialogRoute]
 /// [DialogPageRoute]
 /// [showDialog]
+/// [DialogExtension.showDialog]
 Future<T?> showDialogWidget<T>({
   required BuildContext context,
   required Widget widget,

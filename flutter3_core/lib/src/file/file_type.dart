@@ -104,29 +104,30 @@ Image? getFileIconWidget(
   }
   final mime = fileName?.mimeType();
 
-  String key = Assets.assetsCore.png.coreFileIconUnknown.keyName;
+  var pngAssets = Assets.png;
+  String key = pngAssets.coreFileIconUnknown.keyName;
   if (mime?.isImageMimeType == true) {
-    key = Assets.assetsCore.png.coreFileIconPicture.keyName;
+    key = pngAssets.coreFileIconPicture.keyName;
   } else if (mime?.isVideoMimeType == true) {
-    key = Assets.assetsCore.png.coreFileIconVideo.keyName;
+    key = pngAssets.coreFileIconVideo.keyName;
   } else if (mime?.isFontMimeType == true) {
-    key = Assets.assetsCore.png.coreFileIconFont.keyName;
+    key = pngAssets.coreFileIconFont.keyName;
   } else if (mime?.isTextMimeType == true || ext == '.txt') {
-    key = Assets.assetsCore.png.coreFileIconText.keyName;
+    key = pngAssets.coreFileIconText.keyName;
   } else if (mime?.isAudioMimeType == true) {
-    key = Assets.assetsCore.png.coreFileIconAudio.keyName;
+    key = pngAssets.coreFileIconAudio.keyName;
   } else if (mime?.isZipMimeType == true || ext == '.zip') {
-    key = Assets.assetsCore.png.coreFileIconZip.keyName;
+    key = pngAssets.coreFileIconZip.keyName;
   } else if (ext == '.7z') {
-    key = Assets.assetsCore.png.coreFileIcon7z.keyName;
+    key = pngAssets.coreFileIcon7z.keyName;
   } else if (ext == '.rar') {
-    key = Assets.assetsCore.png.coreFileIconRar.keyName;
+    key = pngAssets.coreFileIconRar.keyName;
   } else if (ext == '.log') {
-    key = Assets.assetsCore.png.coreFileIconLog.keyName;
+    key = pngAssets.coreFileIconLog.keyName;
   } else if (ext == '.xml') {
-    key = Assets.assetsCore.png.coreFileIconXml.keyName;
+    key = pngAssets.coreFileIconXml.keyName;
   } else if (ext == '.apk') {
-    key = Assets.assetsCore.png.coreFileIconApk.keyName;
+    key = pngAssets.coreFileIconApk.keyName;
   }
   return loadCoreAssetImageWidget(key, width: width, height: height);
 }

@@ -145,7 +145,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
           decoration: decoration,
           pressedDecoration: pressedDecoration,
           child: loadAssetSvgWidget(
-            Assets.assetsCore.svg.keyboardBackspace,
+            Assets.svg.keyboardBackspace,
             package: 'flutter3_core',
             prefix: 'assets/svg/',
           ).align(Alignment.center),
@@ -201,7 +201,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
             decoration: decoration,
             pressedDecoration: pressedDecoration,
             child: loadAssetSvgWidget(
-              Assets.assetsCore.svg.keyboardPackUp,
+              Assets.svg.keyboardPackUp,
               package: 'flutter3_core',
               prefix: 'assets/svg/',
             ).align(Alignment.center),
