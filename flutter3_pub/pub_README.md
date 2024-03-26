@@ -388,6 +388,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [flutter_adaptive_scaffold: ^0.1.8](https://pub.dev/packages/flutter_adaptive_scaffold) 自适应, AdaptiveScaffold 对来自用户、设备和屏幕元素的输入做出反应，并根据 Material 3 指南渲染你的 Flutter 应用程序。
 - [palette_generator: ^0.3.3+3](https://pub.dev/packages/palette_generator) 一个 Flutter 包，用于从图像中提取突出的颜色，通常用于查找用户界面的颜色。
 - [leak_tracker: ^10.0.4](https://pub.dev/packages/leak_tracker) 一个用于检测内存泄漏的 Flutter 插件。
+- [modal_bottom_sheet: ^3.0.0](https://pub.dev/packages/modal_bottom_sheet) 创建令人敬畏且功能强大的模态底板。
 
 ## 平台特有
 

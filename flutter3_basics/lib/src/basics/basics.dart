@@ -291,6 +291,8 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 ///
 /// io中操作的数据必须通过参数的方式传入/传出, 否则会报错.
 ///
+/// `Illegal argument in isolate message: object is unsendable`
+///
 Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
     compute(callback, message, debugLabel: "io-${nowTimeString()}");
 
