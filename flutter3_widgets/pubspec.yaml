@@ -74,7 +74,7 @@ flutter_gen:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/png/
+    #- assets/png/
 # To add assets to your package, add an assets section, like this:
 # assets:
 #   - images/a_dot_burr.jpeg

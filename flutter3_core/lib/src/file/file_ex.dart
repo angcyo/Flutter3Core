@@ -335,17 +335,23 @@ extension DirectoryEx on Directory {
   /// 枚举所有文件, 并按照文件夹, 文件的顺序返回
   /// [sort] 是否排序
   /// [throwError] 是否抛出异常
+  /// [PathAccessException]
   List<FileSystemEntity>? listFilesSync({
     bool recursive = false,
-    bool followLinks = true,
+    bool followLinks = false,
     bool sort = true,
     bool throwError = false,
   }) {
     try {
+      //2024-3-26`listSync`偶尔会返回数据空
       final list = listSync(
         recursive: recursive,
         followLinks: followLinks,
       );
+      assert(() {
+        l.d('listFilesSync->$path:${list.length}');
+        return true;
+      }());
       if (!sort) {
         return list;
       }
@@ -504,7 +510,7 @@ extension FilePathEx on String {
   }
 
   /// 确保文件的文件夹目录存在, 如果不存在, 则创建
-  void ensureFileDirectory() {
+  void ensureParentDirectory() {
     parentPath.ensureDirectory();
   }
 

@@ -45,6 +45,9 @@ const double kDefaultBorderRadiusXXX = 24.0;
 /// 最大圆角边框半径
 const double kMaxBorderRadius = 45.0;
 
+/// 情感图的默认的最大大小
+const double kStateImageSize = 160.0;
+
 /// [EdgeInsets.zero]
 /// [kTabLabelPadding]
 const kPaddingH = EdgeInsets.symmetric(horizontal: kH, vertical: kM);

@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,8 @@ import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
+
+import 'assets_generated/assets.gen.dart';
 
 export 'package:async/async.dart';
 export 'package:clock/clock.dart';
@@ -159,3 +162,9 @@ String join(String separator,
     part15
   ].whereNotNull().join(separator);
 }
+
+/// 情感状态: 加载失败的图片资源key
+String get libAssetsStateLoadErrorKey => Assets.png.stateLoadError.keyName;
+
+/// 情感状态: 没有数据的图片资源key
+String get libAssetsStateNoDataKey => Assets.png.stateNoData.keyName;

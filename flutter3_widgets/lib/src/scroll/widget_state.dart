@@ -265,8 +265,8 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
     //def 360*360
     const size = 160.0;
     Widget result = loadAssetImageWidget(
-      Assets.png.noData.keyName,
-      package: 'flutter3_widgets',
+      libAssetsStateNoDataKey,
+      package: 'flutter3_basics',
     )!
         .size(width: size, height: size);
 
@@ -289,12 +289,12 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
   /// [WidgetState.error]状态
   @override
   Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
     //def 360*360
     const size = 160.0;
     Widget result = loadAssetImageWidget(
-      Assets.png.loadError.keyName,
-      package: 'flutter3_widgets',
+      libAssetsStateLoadErrorKey,
+      package: 'flutter3_basics',
     )!
         .size(width: size, height: size);
 

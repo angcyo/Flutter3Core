@@ -25,6 +25,9 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
   /// 加载出来的文件列表, 如果为null, 则表示正在加载中
   List<FileSystemEntity>? _fileList;
 
+  /// 加载出错时的数据
+  dynamic _error;
+
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -88,6 +91,11 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
   Widget _buildPathWidget(BuildContext context, String? path) {
     final globalConfig = GlobalConfig.of(context);
     return buildScaffold(context, children: [
+      if (_error != null)
+        globalConfig
+            .errorPlaceholderBuilder(context, _error)
+            .align(Alignment.center)
+            .sliverExpand(),
       if (_fileList == null)
         globalConfig
             .loadingIndicatorBuilder(context, this, null)
@@ -95,7 +103,7 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
             .sliverExpand(),
       if (_fileList?.isEmpty == true)
         globalConfig
-            .emptyPlaceholderBuilder(context, this)
+            .emptyPlaceholderBuilder(context, "暂无数据")
             .align(Alignment.center)
             .sliverExpand(),
       if (_fileList != null)
@@ -115,6 +123,7 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
       l.d('准备加载路径:$path');
       return true;
     }());
+    _error = null;
     _fileList = null;
     _beforePath = currentLoadPath;
     currentLoadPath = path;
@@ -128,9 +137,14 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
       updateState();
     });*/
 
-    io(path, (message) => message?.folder.listFilesSync())
+    io(path, (message) => message?.folder.listFilesSync(throwError: true))
         .getValue((value, error) {
+      assert(() {
+        l.d('加载->$value $error');
+        return true;
+      }());
       _fileList = value;
+      _error = error;
       updateState();
     });
   }

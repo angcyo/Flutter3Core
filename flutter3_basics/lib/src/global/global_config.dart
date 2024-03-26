@@ -191,12 +191,40 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局的无数据占位小部件
   WidgetArgumentBuilder emptyPlaceholderBuilder = <T>(context, data) {
-    return const Icon(Icons.privacy_tip);
+    final icon = loadAssetImageWidget(libAssetsStateNoDataKey,
+                package: 'flutter3_basics')
+            ?.constrainedMax(
+                maxWidth: kStateImageSize, maxHeight: kStateImageSize) ??
+        const Icon(Icons.privacy_tip);
+
+    if (data == null) {
+      return icon;
+    }
+
+    return [
+      icon,
+      if (data is Widget) data,
+      "$data".text(textAlign: TextAlign.center).paddingAll(kX),
+    ].column()!;
   };
 
   /// 全局的错误占位小部件
   WidgetArgumentBuilder errorPlaceholderBuilder = <T>(context, error) {
-    return const Icon(Icons.error);
+    final icon = loadAssetImageWidget(libAssetsStateLoadErrorKey,
+                package: 'flutter3_basics')
+            ?.constrainedMax(
+                maxWidth: kStateImageSize, maxHeight: kStateImageSize) ??
+        const Icon(Icons.error);
+
+    if (error == null) {
+      return icon;
+    }
+
+    return [
+      icon,
+      if (error is Widget) error,
+      "$error".text(textAlign: TextAlign.center).paddingAll(kX),
+    ].column()!;
   };
 
   /// 全局的加载[Overlay]提示

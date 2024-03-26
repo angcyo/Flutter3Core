@@ -236,6 +236,7 @@ class RScrollController extends ScrollController {
   }
 
   /// 使用刷新布局包裹[child]
+  /// [RefreshIndicator]
   late WidgetWrapBuilder wrapRefreshWidget = (context, child) {
     //debugger();
     if (adapterStateValue.value.isLoading) {
