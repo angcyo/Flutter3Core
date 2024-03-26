@@ -39,7 +39,7 @@ part 'src/painter/text_element_painter.dart';
 Widget canvasSvgWidget(
   String key, {
   String? package = 'flutter3_canvas',
-  String? prefix = 'assets_canvas/svg/',
+  String? prefix = 'assets/svg/',
   Color? tintColor,
   UiColorFilter? colorFilter,
   BoxFit fit = BoxFit.contain,

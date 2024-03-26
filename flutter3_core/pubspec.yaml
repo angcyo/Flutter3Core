@@ -122,8 +122,8 @@ flutter_gen:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets_core/png/
-    - assets_core/svg/
+    - assets/png/
+    - assets/svg/
 
 # To add assets to your package, add an assets section, like this:
 # assets:

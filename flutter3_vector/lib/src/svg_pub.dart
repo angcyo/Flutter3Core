@@ -12,7 +12,7 @@ const kDefAssetsSvgPrefix = 'assets/svg/';
 
 /// 加载svg图片
 /// ```
-/// "packages/flutter3_canvas/assets_canvas/svg/canvas_delete_point.svg".
+/// "packages/flutter3_canvas/assets/svg/canvas_delete_point.svg".
 /// ```
 /// [SvgPicture]
 /// [createCompatVectorGraphic]

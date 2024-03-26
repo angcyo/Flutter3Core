@@ -7,13 +7,26 @@ https://pub-web.flutter-io.cn/packages/flutter_gen
 
 # 1.添加依赖
 
+全局添加`dart pub global activate flutter_gen`,
+或者单独在`dev_dependencies`中添加`flutter_gen`依赖
+
 ```yaml
 dev_dependencies:
+  flutter_gen: ^5.4.0
   build_runner: any
   flutter_gen_runner: any
 ```
 
 `flutter pub get`
+
+配置`flutter_gen`:
+
+```yaml
+# https://pub.dev/packages/flutter_gen#configuration-file
+# dart run build_runner build
+flutter_gen:
+  output: lib/assets_generated/ # Optional (default: lib/gen/)
+```
 
 # 2.执行命令, 生成对应的资源引用
 

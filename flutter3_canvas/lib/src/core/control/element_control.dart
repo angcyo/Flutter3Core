@@ -259,7 +259,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   void loadControlPicture(String svgName,
       [void Function(PictureInfo)? onLoaded]) {
     loadAssetSvgPicture(
-      'packages/flutter3_canvas/assets_canvas/svg/$svgName',
+      'packages/flutter3_canvas/assets/svg/$svgName',
       prefix: null,
     ).then((value) async {
       /*final size = value.size;

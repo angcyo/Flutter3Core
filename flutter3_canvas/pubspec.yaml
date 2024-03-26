@@ -29,8 +29,8 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets_canvas/
-    - assets_canvas/svg/
+    - assets/
+    - assets/svg/
 
 # To add assets to your package, add an assets section, like this:
 # assets:

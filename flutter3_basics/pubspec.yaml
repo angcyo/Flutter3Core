@@ -99,6 +99,21 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
+  # https://pub.dev/packages/flutter_gen
+  flutter_gen: ^5.4.0
+  # https://pub.dev/packages/build_runner
+  # https://pub.dev/packages/web_socket_channel # async, crypto, stream_channel, web
+  # https://pub.dev/packages/stream_channel
+  # https://pub.dev/packages/async # collection, meta
+  # https://pub.dev/packages/web
+  build_runner: any
+  # https://pub.dev/packages/flutter_gen_runner
+  flutter_gen_runner: any
+
+# https://pub.dev/packages/flutter_gen#configuration-file
+# dart run build_runner build
+flutter_gen:
+  output: lib/assets_generated/ # Optional (default: lib/gen/)
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -106,6 +121,10 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   generate: true # Add this line to enable code generation
+  assets:
+    #- assets/svg/
+    - assets/png/
+    #- assets/json/
 # To add assets to your package, add an assets section, like this:
 # assets:
 #   - images/a_dot_burr.jpeg

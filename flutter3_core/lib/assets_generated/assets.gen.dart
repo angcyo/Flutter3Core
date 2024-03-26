@@ -19,61 +19,61 @@ class $AssetsCoreGen {
 class $AssetsCorePngGen {
   const $AssetsCorePngGen();
 
-  /// File path: assets_core/png/core_file_icon_7z.png
+  /// File path: assets/png/core_file_icon_7z.png
   AssetGenImage get coreFileIcon7z =>
-      const AssetGenImage('assets_core/png/core_file_icon_7z.png');
+      const AssetGenImage('assets/png/core_file_icon_7z.png');
 
-  /// File path: assets_core/png/core_file_icon_apk.png
+  /// File path: assets/png/core_file_icon_apk.png
   AssetGenImage get coreFileIconApk =>
-      const AssetGenImage('assets_core/png/core_file_icon_apk.png');
+      const AssetGenImage('assets/png/core_file_icon_apk.png');
 
-  /// File path: assets_core/png/core_file_icon_audio.png
+  /// File path: assets/png/core_file_icon_audio.png
   AssetGenImage get coreFileIconAudio =>
-      const AssetGenImage('assets_core/png/core_file_icon_audio.png');
+      const AssetGenImage('assets/png/core_file_icon_audio.png');
 
-  /// File path: assets_core/png/core_file_icon_emptyfile.png
+  /// File path: assets/png/core_file_icon_emptyfile.png
   AssetGenImage get coreFileIconEmptyfile =>
-      const AssetGenImage('assets_core/png/core_file_icon_emptyfile.png');
+      const AssetGenImage('assets/png/core_file_icon_emptyfile.png');
 
-  /// File path: assets_core/png/core_file_icon_folder.png
+  /// File path: assets/png/core_file_icon_folder.png
   AssetGenImage get coreFileIconFolder =>
-      const AssetGenImage('assets_core/png/core_file_icon_folder.png');
+      const AssetGenImage('assets/png/core_file_icon_folder.png');
 
-  /// File path: assets_core/png/core_file_icon_font.png
+  /// File path: assets/png/core_file_icon_font.png
   AssetGenImage get coreFileIconFont =>
-      const AssetGenImage('assets_core/png/core_file_icon_font.png');
+      const AssetGenImage('assets/png/core_file_icon_font.png');
 
-  /// File path: assets_core/png/core_file_icon_log.png
+  /// File path: assets/png/core_file_icon_log.png
   AssetGenImage get coreFileIconLog =>
-      const AssetGenImage('assets_core/png/core_file_icon_log.png');
+      const AssetGenImage('assets/png/core_file_icon_log.png');
 
-  /// File path: assets_core/png/core_file_icon_picture.png
+  /// File path: assets/png/core_file_icon_picture.png
   AssetGenImage get coreFileIconPicture =>
-      const AssetGenImage('assets_core/png/core_file_icon_picture.png');
+      const AssetGenImage('assets/png/core_file_icon_picture.png');
 
-  /// File path: assets_core/png/core_file_icon_rar.png
+  /// File path: assets/png/core_file_icon_rar.png
   AssetGenImage get coreFileIconRar =>
-      const AssetGenImage('assets_core/png/core_file_icon_rar.png');
+      const AssetGenImage('assets/png/core_file_icon_rar.png');
 
-  /// File path: assets_core/png/core_file_icon_text.png
+  /// File path: assets/png/core_file_icon_text.png
   AssetGenImage get coreFileIconText =>
-      const AssetGenImage('assets_core/png/core_file_icon_text.png');
+      const AssetGenImage('assets/png/core_file_icon_text.png');
 
-  /// File path: assets_core/png/core_file_icon_unknown.png
+  /// File path: assets/png/core_file_icon_unknown.png
   AssetGenImage get coreFileIconUnknown =>
-      const AssetGenImage('assets_core/png/core_file_icon_unknown.png');
+      const AssetGenImage('assets/png/core_file_icon_unknown.png');
 
-  /// File path: assets_core/png/core_file_icon_video.png
+  /// File path: assets/png/core_file_icon_video.png
   AssetGenImage get coreFileIconVideo =>
-      const AssetGenImage('assets_core/png/core_file_icon_video.png');
+      const AssetGenImage('assets/png/core_file_icon_video.png');
 
-  /// File path: assets_core/png/core_file_icon_xml.png
+  /// File path: assets/png/core_file_icon_xml.png
   AssetGenImage get coreFileIconXml =>
-      const AssetGenImage('assets_core/png/core_file_icon_xml.png');
+      const AssetGenImage('assets/png/core_file_icon_xml.png');
 
-  /// File path: assets_core/png/core_file_icon_zip.png
+  /// File path: assets/png/core_file_icon_zip.png
   AssetGenImage get coreFileIconZip =>
-      const AssetGenImage('assets_core/png/core_file_icon_zip.png');
+      const AssetGenImage('assets/png/core_file_icon_zip.png');
 
   /// List of all assets
   List<AssetGenImage> get values => [
@@ -97,14 +97,14 @@ class $AssetsCorePngGen {
 class $AssetsCoreSvgGen {
   const $AssetsCoreSvgGen();
 
-  /// File path: assets_core/svg/file_browse_home.svg
-  String get fileBrowseHome => 'assets_core/svg/file_browse_home.svg';
+  /// File path: assets/svg/file_browse_home.svg
+  String get fileBrowseHome => 'assets/svg/file_browse_home.svg';
 
-  /// File path: assets_core/svg/keyboard_backspace.svg
-  String get keyboardBackspace => 'assets_core/svg/keyboard_backspace.svg';
+  /// File path: assets/svg/keyboard_backspace.svg
+  String get keyboardBackspace => 'assets/svg/keyboard_backspace.svg';
 
-  /// File path: assets_core/svg/keyboard_pack_up.svg
-  String get keyboardPackUp => 'assets_core/svg/keyboard_pack_up.svg';
+  /// File path: assets/svg/keyboard_pack_up.svg
+  String get keyboardPackUp => 'assets/svg/keyboard_pack_up.svg';
 
   /// List of all assets
   List<String> get values =>

@@ -93,7 +93,11 @@ class _DebugFileFragmentState extends State<DebugFileFragment>
             .loadingIndicatorBuilder(context, this, null)
             .align(Alignment.center)
             .sliverExpand(),
-      if (_fileList?.isEmpty == true) "No Data".text().align(Alignment.center),
+      if (_fileList?.isEmpty == true)
+        globalConfig
+            .emptyPlaceholderBuilder(context, this)
+            .align(Alignment.center)
+            .sliverExpand(),
       if (_fileList != null)
         for (var path in _fileList!)
           DebugFileTile(

@@ -40,7 +40,7 @@ class DebugFileTile extends StatelessWidget {
     if (path.isDirectorySync()) {
       final folder = path.folder;
       final infoRow = [
-        "${folder.listSync().length} 项".text(
+        "${folder.listFilesSync()?.length ?? "--"} 项".text(
           style: globalConfig.globalTheme.textDesStyle,
         ),
         Empty.width(kX),
