@@ -43,8 +43,17 @@ class GestureHitInterceptBox extends RenderProxyBox {
     var hitBox = interceptHitBox;
     if (hitBox != null) {
       //debugger();
-      if (child is GestureHitInterceptBoxTranslucentMixin && child != hitBox) {
-        super.hitTestChildren(result, position: position);
+      final child = this.child;
+      if (child != null &&
+          child is GestureHitInterceptBoxTranslucentMixin &&
+          child != hitBox) {
+        //debugger();
+        //super.hitTestChildren(result, position: position);
+        if (child.size.contains(position)) {
+          if (child.hitTestSelf(position)) {
+            result.add(BoxHitTestEntry(child, position));
+          }
+        }
       }
 
       final local = hitBox.localToGlobal(Offset.zero, ancestor: this);
