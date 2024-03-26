@@ -12,16 +12,16 @@ typedef NumberInputCallback = void Function(num? value);
 /// 数字键盘输入对话框
 class NumberKeyboardDialog extends StatefulWidget {
   /// 键盘类型: 数字
-  static const String KEYBOARD_TYPE_NUMBER = "number";
+  static const String keyboardTypeNumber = "number";
 
   /// 键盘类型: 退格
-  static const String KEYBOARD_TYPE_BACKSPACE = "backspace";
+  static const String keyboardTypeBackspace = "backspace";
 
   /// 键盘类型: 小数点
-  static const String KEYBOARD_TYPE_DECIMAL = "decimal";
+  static const String keyboardTypeDecimal = "decimal";
 
   /// 键盘类型: 正负
-  static const String KEYBOARD_TYPE_POSITIVE_NEGATIVE = "positive_negative";
+  static const String keyboardTypePositiveNegative = "positive_negative";
 
   //---
 
@@ -138,9 +138,9 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       lineMaxChildCount: 4,
       padding: EdgeInsets.all(gap),
       children: [
-        _createNumberButton("1", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
-        _createNumberButton("2", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
-        _createNumberButton("3", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
+        _createNumberButton("1", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("2", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("3", NumberKeyboardDialog.keyboardTypeNumber),
         StateDecorationWidget(
           decoration: decoration,
           pressedDecoration: pressedDecoration,
@@ -150,11 +150,11 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
             prefix: 'assets/svg/',
           ).align(Alignment.center),
         ).click(() {
-          _onSelfInput("", NumberKeyboardDialog.KEYBOARD_TYPE_BACKSPACE);
+          _onSelfInput("", NumberKeyboardDialog.keyboardTypeBackspace);
         }),
-        _createNumberButton("4", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
-        _createNumberButton("5", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
-        _createNumberButton("6", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
+        _createNumberButton("4", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("5", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("6", NumberKeyboardDialog.keyboardTypeNumber),
         StateDecorationWidget(
           decoration: fillDecoration(
             fillColor: globalTheme.accentColor,
@@ -182,20 +182,20 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
           ),
         ),
         _createEmptyButton(),
-        _createNumberButton("7", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
-        _createNumberButton("8", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
-        _createNumberButton("9", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER),
+        _createNumberButton("7", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("8", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("9", NumberKeyboardDialog.keyboardTypeNumber),
         _createEmptyButton(),
         if (isSupportDecimal || isSupportNegative)
-          _createNumberButton("0", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER)
+          _createNumberButton("0", NumberKeyboardDialog.keyboardTypeNumber)
         else
-          _createNumberButton("0", NumberKeyboardDialog.KEYBOARD_TYPE_NUMBER)
+          _createNumberButton("0", NumberKeyboardDialog.keyboardTypeNumber)
               .flowLayoutData(weight: 1.0 / 4 * 2, excludeGapCount: 2),
         if (isSupportDecimal)
-          _createNumberButton(".", NumberKeyboardDialog.KEYBOARD_TYPE_DECIMAL),
+          _createNumberButton(".", NumberKeyboardDialog.keyboardTypeDecimal),
         if (isSupportNegative)
           _createNumberButton(
-              "±", NumberKeyboardDialog.KEYBOARD_TYPE_POSITIVE_NEGATIVE),
+              "±", NumberKeyboardDialog.keyboardTypePositiveNegative),
         if (isShowPackUp)
           StateDecorationWidget(
             decoration: decoration,
@@ -307,17 +307,17 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       isClearAll = false;
     }
 
-    if (type == NumberKeyboardDialog.KEYBOARD_TYPE_BACKSPACE) {
+    if (type == NumberKeyboardDialog.keyboardTypeBackspace) {
       if (_numberText.isNotEmpty) {
         _numberText = _numberText.substring(0, _numberText.length - 1);
       }
-    } else if (type == NumberKeyboardDialog.KEYBOARD_TYPE_POSITIVE_NEGATIVE) {
+    } else if (type == NumberKeyboardDialog.keyboardTypePositiveNegative) {
       if (_numberText.startsWith("-")) {
         _numberText = _numberText.substring(1);
       } else {
         _numberText = "-$_numberText";
       }
-    } else if (type == NumberKeyboardDialog.KEYBOARD_TYPE_DECIMAL) {
+    } else if (type == NumberKeyboardDialog.keyboardTypeDecimal) {
       if (isSupportDecimal && !_numberText.contains(".")) {
         _numberText += value;
       }
