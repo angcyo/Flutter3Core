@@ -72,7 +72,6 @@ part 'src/widgets/gradient_button.dart';
 part 'src/widgets/icon_state_widget.dart';
 part 'src/widgets/layout_ex.dart';
 part 'src/widgets/line.dart';
-part 'src/widgets/loading/stroke_loading.dart';
 part 'src/widgets/match_parent_layout.dart';
 part 'src/widgets/mixin/layout_mixin.dart';
 part 'src/widgets/mixin/tile_mixin.dart';

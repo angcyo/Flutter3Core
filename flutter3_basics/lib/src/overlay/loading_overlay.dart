@@ -11,6 +11,7 @@ Size kDefaultLoadingSize = const Size(50, 50);
 WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 
 /// 显示加载提示
+/// [showStrokeLoading]
 OverlayEntry? showLoading({
   BuildContext? context,
   WidgetBuilder? builder,
@@ -46,8 +47,8 @@ OverlayEntry? showLoading({
     return _LoadingOverlay(
         route: route,
         builder: builder ??= (context) {
-          return GlobalConfig.of(context)
-              .loadingOverlayWidgetBuilder(context, route, progressValue);
+          return GlobalConfig.of(context).loadingOverlayWidgetBuilder(
+              context, OverlayEntry, progressValue);
         });
   });
   _currentLoadingEntryRef = WeakReference(currentLoadingEntry);
@@ -70,7 +71,7 @@ OverlayEntry? showLoading({
 
 /// 隐藏加载提示
 void hideLoading() {
-  var currentLoadingEntry = _currentLoadingEntryRef?.target;
+  final currentLoadingEntry = _currentLoadingEntryRef?.target;
   if (currentLoadingEntry != null) {
     try {
       currentLoadingEntry.remove(); //移除

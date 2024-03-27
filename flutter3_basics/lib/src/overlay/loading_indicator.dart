@@ -6,7 +6,8 @@ part of '../../flutter3_basics.dart';
 ///
 
 /// 加载圈圈最小的尺寸大小
-const double kMinLoadingIndicatorDimension = 24.0;
+const double kMinLoadingIndicatorDimension = 28.0;
+const double kStrokeLoadingIndicatorDimension = 36.0;
 
 class LoadingIndicator extends StatelessWidget {
   final Size? size;
@@ -15,26 +16,38 @@ class LoadingIndicator extends StatelessWidget {
   /// 指定表示明确的进度, 未指定表示不明确的进度.
   final double? progressValue;
 
+  /// 是否使用系统样式
+  final bool useSystemStyle;
+
   const LoadingIndicator({
     super.key,
     this.size,
     this.progressValue,
+    this.useSystemStyle = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    double? width = size?.width ?? kMinLoadingIndicatorDimension;
-    double? height = size?.height ?? kMinLoadingIndicatorDimension;
-    var globalTheme = GlobalTheme.of(context);
+    double? width = size?.width ??
+        (useSystemStyle
+            ? kMinLoadingIndicatorDimension
+            : kStrokeLoadingIndicatorDimension);
+    double? height = size?.height ??
+        (useSystemStyle
+            ? kMinLoadingIndicatorDimension
+            : kStrokeLoadingIndicatorDimension);
+    final globalTheme = GlobalTheme.of(context);
     return UnconstrainedBox(
       child: SizedBox(
         width: width,
         height: height,
-        child: CircularProgressIndicator(
-          value: progressValue,
-          color: globalTheme.accentColor,
-          strokeWidth: 2,
-        ),
+        child: useSystemStyle
+            ? CircularProgressIndicator(
+                value: progressValue,
+                color: globalTheme.accentColor,
+                strokeWidth: 2,
+              )
+            : const StrokeLoadingWidget(color: Colors.white),
       ),
     ).repaintBoundary();
   }

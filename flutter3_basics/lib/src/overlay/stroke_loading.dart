@@ -1,4 +1,4 @@
-part of '../../../flutter3_widgets.dart';
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -92,7 +92,11 @@ class _StrokeLoadingRenderObject extends RenderBox {
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
-    final size = contentSize ?? this.size;
+    Size size = contentSize ?? this.size;
+    size = ui.Size(
+      math.min(size.width, this.size.width),
+      math.min(size.width, this.size.height),
+    );
     final off = offset + alignChildOffset(Alignment.center, this.size, size);
 
     Rect rect = (off & size).deflateValue(lineWidth / 2);

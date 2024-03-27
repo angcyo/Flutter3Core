@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -281,7 +281,7 @@ showNotification(
 ///
 /// [Navigator.of]
 /// [NavigatorState.overlay]
-showOverlay(
+OverlayEntry? showOverlay(
   OverlayAnimatedWidgetBuilder builder, {
   BuildContext? context,
   Curve? curve,
@@ -310,7 +310,7 @@ showOverlay(
       debugPrint('overlayState is null, dispose this call');
       return true;
     }());
-    return;
+    return null;
   }
   context ??= GlobalConfig.def.globalContext;
   if (context == null) {
@@ -318,7 +318,7 @@ showOverlay(
       debugPrint('context is null, dispose this call');
       return true;
     }());
-    return;
+    return null;
   }
   final overlayKey = key ?? UniqueKey();
   final stateKey = overlayStateKey ?? GlobalKey<_OverlayAnimatedState>();
@@ -342,4 +342,5 @@ showOverlay(
 
   GlobalConfig.of(context).addOverlayEntry(entry, key: overlayKey);
   overlayState?.insert(entry);
+  return entry;
 }

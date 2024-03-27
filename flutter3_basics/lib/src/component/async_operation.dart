@@ -68,7 +68,10 @@ Future<T> awaitFor<T>(Function(Function(T) action) doOperation) {
   try {
     doOperation((result) => completer.complete(result));
   } catch (e) {
-    debugPrint("$e");
+    assert(() {
+      l.e("$e");
+      return true;
+    }());
     completer.completeError(e, StackTrace.current);
   }
   return completer.future;

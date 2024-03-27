@@ -53,12 +53,13 @@ class _OverlayAnimatedState extends State<_OverlayAnimated>
   bool _dismissed = false;
   final Completer _dismissedCompleter = Completer();
 
+  /// 使用动画的方式显示[OverlayEntry]
   void show() {
     _autoHideOperation?.cancel();
     _controller.forward(from: _controller.value);
   }
 
-  /// 隐藏[OverlayEntry]
+  /// 使用动画的方式隐藏[OverlayEntry]
   /// [immediately] True to dismiss notification immediately. 立即执行
   ///
   Future hide({bool immediately = false}) async {
@@ -71,6 +72,7 @@ class _OverlayAnimatedState extends State<_OverlayAnimated>
     await _controller.reverse(from: _controller.value);
   }
 
+  /// 真正的移除[OverlayEntry] Dismiss the overlay entry.
   void dismiss({bool animate = true}) {
     if (_dismissed || (_dismissScheduled && animate)) {
       return;

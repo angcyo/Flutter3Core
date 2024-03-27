@@ -203,8 +203,13 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   /// 全局的Loading指示器
+  /// [OverlayEntry.type]
   ProgressWidgetBuilder loadingIndicatorBuilder = (context, data, progress) {
-    return LoadingIndicator(progressValue: progress);
+    //debugger();
+    return LoadingIndicator(
+      progressValue: progress,
+      useSystemStyle: !"$data".toLowerCase().startsWith("overlay"),
+    );
   };
 
   /// 全局的无数据占位小部件
@@ -247,6 +252,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局的加载[Overlay]提示
   /// [OverlayEntry]
+  /// [showLoading]
   ProgressWidgetBuilder loadingOverlayWidgetBuilder =
       (context, data, progress) {
     Widget loadingIndicator = GlobalConfig.of(context)
