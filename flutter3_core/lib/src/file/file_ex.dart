@@ -172,6 +172,10 @@ extension FileEx on File {
   String? readStringSync({Encoding encoding = utf8}) {
     try {
       return readAsStringSync(encoding: encoding);
+    } on FileSystemException catch (e) {
+      //有些时候, 直接读取字符串会失败
+      //但是读取字节流, 然后转换成字符串, 就可以成功
+      return readBytesSync()?.decode(utf8);
     } catch (e) {
       assert(() {
         l.e(e);

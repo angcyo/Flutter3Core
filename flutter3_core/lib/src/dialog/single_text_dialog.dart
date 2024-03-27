@@ -21,9 +21,17 @@ class SingleTextDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
-    final body = content ?? filePath?.file().readAsStringSync();
-    final result = body?.text().paddingAll(kX) ??
-        globalConfig.emptyPlaceholderBuilder.call(context, null);
+
+    Widget result;
+
+    try {
+      final body = content ?? filePath?.file().readStringSync();
+      result = body?.text().paddingAll(kX) ??
+          globalConfig.emptyPlaceholderBuilder.call(context, null);
+    } catch (e) {
+      result = globalConfig.errorPlaceholderBuilder.call(context, e);
+    }
+
     return result
         .scroll()
         .container(
