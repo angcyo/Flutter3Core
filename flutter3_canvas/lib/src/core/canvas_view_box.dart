@@ -29,6 +29,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   double originY = 0;
 
   /// 获取绘图原点相对于视图左上角的偏移
+  @viewCoordinate
   Offset get originOffset =>
       Offset(canvasBounds.left + originX, canvasBounds.top + originY);
 
@@ -180,15 +181,16 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 改变画布矩阵, 支持动画
   void changeMatrix(
     Matrix4 target, {
-    bool anim = true,
+    bool animate = true,
     void Function(bool isCompleted)? completedAction,
   }) {
     _lastAnimationController?.dispose();
     _lastAnimationController = null;
-    if (anim) {
+    if (animate) {
       final matrixTween =
           Matrix4Tween(begin: canvasMatrix, end: _checkMatrix(target));
-      animation(canvasDelegate, (value, isCompleted) {
+      _lastAnimationController =
+          animation(canvasDelegate, (value, isCompleted) {
         final matrix = matrixTween.lerp(value);
         canvasMatrix.setFrom(matrix);
         completedAction?.call(isCompleted);
@@ -214,7 +216,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       l.d('平移画布by: tx:$tx ty:$ty');
       return true;
     }());
-    changeMatrix(canvasMatrix.clone()..translateBy(dx: tx, dy: ty), anim: anim);
+    changeMatrix(canvasMatrix.clone()..translateBy(dx: tx, dy: ty),
+        animate: anim);
   }
 
   /// 平移画布
@@ -224,7 +227,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       l.d('平移画布to: tx:$tx tx:$ty');
       return true;
     }());
-    changeMatrix(canvasMatrix.clone()..translateTo(x: tx, y: ty), anim: anim);
+    changeMatrix(canvasMatrix.clone()..translateTo(x: tx, y: ty),
+        animate: anim);
   }
 
   /// 使用比例缩放画布
@@ -261,7 +265,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       l.d('缩放画布by: sx:$sx sy:$sy pivot:$pivot anim:$anim');
       return true;
     }());
-    changeMatrix(matrix, anim: anim);
+    changeMatrix(matrix, animate: anim);
   }
 
   /// 使用指定比例缩放画布
@@ -284,7 +288,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
             pivotX: pivot?.dx ?? 0,
             pivotY: pivot?.dy ?? 0,
           ),
-        anim: anim);
+        animate: anim);
   }
 
 //endregion ---操作---

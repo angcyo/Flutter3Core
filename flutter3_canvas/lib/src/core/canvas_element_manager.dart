@@ -55,6 +55,19 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 绘制在[elements]之后的元素列表
   final List<ElementPainter> afterElements = [];
 
+  /// 获取所有元素[elements]的边界
+  Rect? get allElementsBounds {
+    final list = elements;
+    if (isNullOrEmpty(list)) {
+      return null;
+    }
+    final group = ElementGroupPainter();
+    group.resetChildren(
+        list, canvasElementControlManager.enableResetElementAngle);
+    return group.paintProperty
+        ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+  }
+
   //endregion ---属性----
 
   CanvasElementManager(this.canvasDelegate);

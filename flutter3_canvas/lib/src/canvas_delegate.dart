@@ -134,6 +134,60 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasListeners.remove(listener);
   }
 
+  /// 将一个指定的矩形完整显示在视口中
+  /// [rect] 矩形区域, 如果为null, 则显示所有元素边界
+  /// [elementPainter] 要显示的元素, 用来获取[rect]
+  /// [margin] 矩形区域的外边距, 额外的外边距
+  ///
+  /// [enableZoomIn] 是否允许视口放大处理, 否则只有平移[rect]到视口中心的效果
+  /// [enableZoomOut] 是否允许视口缩小处理, 否则只有平移[rect]到视口中心的效果
+  @api
+  void showRect({
+    Rect? rect,
+    ElementPainter? elementPainter,
+    EdgeInsets? margin = const EdgeInsets.all(kXx),
+    bool enableZoomOut = true,
+    bool enableZoomIn = true,
+    bool animate = true,
+  }) {
+    rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
+            .canvasElementControlManager.enableResetElementAngle) ??
+        canvasElementManager.allElementsBounds;
+    if (rect == null) {
+      return;
+    }
+    //debugger();
+    rect = rect.inflateValue(margin);
+    final translateMatrix = Matrix4.identity();
+    //移动到元素中心
+    final center = rect.center;
+    final canvasBounds = canvasViewBox.canvasBounds;
+    final canvasCenter =
+        Offset(canvasBounds.width / 2, canvasBounds.height / 2);
+    final offset = canvasCenter - center;
+    translateMatrix.translate(offset.dx, offset.dy);
+
+    final sx = canvasBounds.width / rect.width;
+    final sy = canvasBounds.height / rect.height;
+
+    double scale = 1;
+    //debugger();
+    if (enableZoomOut &&
+        (rect.width > canvasBounds.width ||
+            rect.height > canvasBounds.height)) {
+      //元素比画布大, 此时画布需要缩小
+      scale = min(sx, sy);
+    } else if (enableZoomIn &&
+        (rect.width < canvasBounds.width ||
+            rect.height < canvasBounds.height)) {
+      //元素比画布小, 此时画布需要放大
+      scale = max(sx, sy);
+    }
+
+    final scaleMatrix = createScaleMatrix(sx: scale, sy: scale, anchor: center);
+    canvasViewBox.changeMatrix(translateMatrix * scaleMatrix, animate: animate);
+  }
+
   //endregion ---api---
 
   //region ---事件派发---
