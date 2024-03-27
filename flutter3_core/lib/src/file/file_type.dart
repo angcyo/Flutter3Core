@@ -112,22 +112,22 @@ Image? getFileIconWidget(
     key = pngAssets.coreFileIconVideo.keyName;
   } else if (mime?.isFontMimeType == true) {
     key = pngAssets.coreFileIconFont.keyName;
+  } else if (ext == '.log') {
+    key = pngAssets.coreFileIconLog.keyName;
+  } else if (ext == '.7z') {
+    key = pngAssets.coreFileIcon7z.keyName;
+  } else if (ext == '.rar') {
+    key = pngAssets.coreFileIconRar.keyName;
+  } else if (ext == '.xml') {
+    key = pngAssets.coreFileIconXml.keyName;
+  } else if (ext == '.apk') {
+    key = pngAssets.coreFileIconApk.keyName;
   } else if (mime?.isTextMimeType == true || ext == '.txt') {
     key = pngAssets.coreFileIconText.keyName;
   } else if (mime?.isAudioMimeType == true) {
     key = pngAssets.coreFileIconAudio.keyName;
   } else if (mime?.isZipMimeType == true || ext == '.zip') {
     key = pngAssets.coreFileIconZip.keyName;
-  } else if (ext == '.7z') {
-    key = pngAssets.coreFileIcon7z.keyName;
-  } else if (ext == '.rar') {
-    key = pngAssets.coreFileIconRar.keyName;
-  } else if (ext == '.log') {
-    key = pngAssets.coreFileIconLog.keyName;
-  } else if (ext == '.xml') {
-    key = pngAssets.coreFileIconXml.keyName;
-  } else if (ext == '.apk') {
-    key = pngAssets.coreFileIconApk.keyName;
   }
   return loadCoreAssetImageWidget(key, width: width, height: height);
 }

@@ -408,7 +408,9 @@ extension PathStringEx on String {
   }
 
   /// 获取文件扩展名, 包含.本身
-  String extension([int level = 1]) => p.extension(this, level);
+  /// 统一输出小写
+  /// [level] 扩展名的级别, 要获取多少个点后面的内容
+  String extension([int level = 1]) => p.extension(this, level).toLowerCase();
 
   /// [dirname]
   String folderPath() => dirname();
