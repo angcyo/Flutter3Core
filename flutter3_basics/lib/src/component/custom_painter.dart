@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -23,6 +23,7 @@ class CustomPaintWrap extends CustomPainter {
 }
 
 /// 快速创建[CustomPaint], 并指定绘制回调
+/// 使用[CustomPaint]小组件, 使用[CustomPainter]绘制回调
 CustomPaint paintWidget(
   PaintFn paint, {
   PaintFn? foregroundPaint,

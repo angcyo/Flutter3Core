@@ -8,6 +8,8 @@ part of '../flutter3_canvas.dart';
 const rasterizeElement = AnnotationMeta('栅格化元素, 栅格化时, 不应该绘制额外的干扰信息');
 
 /// 画布代理类, 核心类, 整个框架的入口
+/// [CanvasWidget]
+/// [CanvasRenderBox]
 class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 栅格化元素
   /// [element] 要栅格化的元素

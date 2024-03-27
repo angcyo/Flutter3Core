@@ -140,7 +140,8 @@ void printError(exception, [StackTrace? stack]) {
 ///
 /// [SingletonFlutterWindow].[FlutterView]
 /// [window.physicalSize]
-/// [window.devicePixelRatio]]
+/// [window.devicePixelRatio]
+/// [window.refreshRate]
 ui.FlutterView get flutterView =>
     WidgetsBinding.instance.renderView.flutterView;
 
@@ -182,6 +183,9 @@ double get screenHeight => platformMediaQueryData.size.height;
 
 /// 屏幕像素密度, 1 dp = xx px
 double get devicePixelRatio => platformMediaQueryData.devicePixelRatio;
+
+/// 屏幕刷新率
+double get refreshRate => flutterView.display.refreshRate;
 
 /// 单位英寸中的像素数, 1 in = xx px
 double get dpi => platformMediaQueryData.devicePixelRatio * 160;

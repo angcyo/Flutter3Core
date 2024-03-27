@@ -1172,6 +1172,18 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// [size]
+  Widget wh(double? width, double? height) {
+    if (width == null && height == null) {
+      return this;
+    }
+    return SizedBox(
+      width: width,
+      height: height,
+      child: this,
+    );
+  }
+
   /// 首选大小
   /// [PreferredSizeWidget]
   /// [PreferredSize]
@@ -1615,6 +1627,14 @@ extension RenderObjectEx on RenderObject {
       return box.constraints;
     }
     return parent?.findSliverConstraints();
+  }
+
+  /// 标记下一帧需要重绘
+  /// [markNeedsPaint]
+  void postMarkNeedsPaint() {
+    postFrameCallback((timeStamp) {
+      markNeedsPaint();
+    });
   }
 }
 

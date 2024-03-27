@@ -756,14 +756,47 @@ extension RectEx on Rect {
   }
 
   /// 将一个矩形内缩一定的大小, 返回一个新的矩形
+  /// [center] 是否居中缩放
   /// [deflate]
   /// [inflate]
-  ui.Rect deflateOffset(ui.Offset value) {
-    return Rect.fromLTRB(
-      left + value.dx,
-      top + value.dy,
-      right - value.dx,
-      bottom - value.dy,
+  /// [value] 支持[Offset]和[num]
+  ui.Rect deflateValue(dynamic value, [bool center = true]) {
+    final l, t, r, b;
+    if (value is Rect) {
+      l = value.left;
+      t = value.top;
+      r = value.right;
+      b = value.bottom;
+    } else if (value is Offset) {
+      l = value.dx;
+      t = value.dy;
+      r = value.dx;
+      b = value.dy;
+    } else if (value is num) {
+      l = value;
+      t = value;
+      r = value;
+      b = value;
+    } else {
+      l = 0;
+      t = 0;
+      r = 0;
+      b = 0;
+    }
+
+    if (center) {
+      return Rect.fromLTRB(
+        left + l,
+        top + t,
+        right - r,
+        bottom - b,
+      );
+    }
+    return Rect.fromLTWH(
+      left,
+      top,
+      width - l - r,
+      height - t - b,
     );
   }
 
@@ -814,13 +847,23 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
+  ///保持60帧的刷新率
+  ///[refreshRate]
+  double get rr => this / (refreshRate / 60.0);
+
   //region ---math---
 
   /// 角度
   double get jd => toDegrees;
 
+  /// [sanitizeDegrees]
+  double get jds => toDegrees.sanitizeDegrees;
+
   /// 弧度
   double get hd => toRadians;
+
+  /// [sanitizeRadians]
+  double get hds => toRadians.sanitizeRadians;
 
   /// 弧度转角度
   double get toDegrees => this * 180 / math.pi;
@@ -843,8 +886,11 @@ extension NumEx on num {
 
   /// 消除多余的角度和负数角度, 限制角度范围在[0~360]
   double get sanitizeDegrees {
+    if (this == 0) {
+      return 0;
+    }
     var degrees = this % 360;
-    if (degrees < 0) {
+    if (degrees <= 0) {
       degrees += 360;
     }
     return degrees.toDouble();
@@ -852,8 +898,11 @@ extension NumEx on num {
 
   /// 消除多余的弧度和负数弧度, 限制弧度范围在[0~2π]
   double get sanitizeRadians {
+    if (this == 0) {
+      return 0;
+    }
     var radians = this % (2 * math.pi);
-    if (radians < 0) {
+    if (radians <= 0) {
       radians += 2 * math.pi;
     }
     return radians.toDouble();
