@@ -504,7 +504,7 @@ extension Matrix3Ex on vector.Matrix3 {
   }
 }
 
-/// 创建一个翻转矩阵
+/// 在指定锚点[anchor],创建一个翻转矩阵
 Matrix4 createFlipMatrix({bool? flipX, bool? flipY, Offset? anchor}) {
   anchor ??= Offset.zero;
   return Matrix4.identity()
@@ -513,7 +513,7 @@ Matrix4 createFlipMatrix({bool? flipX, bool? flipY, Offset? anchor}) {
     ..translate(-anchor.dx, -anchor.dy, 0);
 }
 
-/// 创建一个缩放矩阵
+/// 在指定锚点[anchor],创建一个缩放矩阵
 Matrix4 createScaleMatrix({double? sx, double? sy, Offset? anchor}) {
   anchor ??= Offset.zero;
   final translation = vector.Vector3(anchor.dx, anchor.dy, 0);
@@ -524,7 +524,7 @@ Matrix4 createScaleMatrix({double? sx, double? sy, Offset? anchor}) {
     ..translate(-translation);
 }
 
-/// 创建一个旋转矩阵
+/// 在指定锚点[anchor],创建一个旋转矩阵
 /// [angle] 旋转的弧度
 Matrix4 createRotateMatrix(double? angle, {Offset? anchor}) {
   anchor ??= Offset.zero;

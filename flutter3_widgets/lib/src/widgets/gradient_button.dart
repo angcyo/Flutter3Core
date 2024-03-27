@@ -59,7 +59,7 @@ class GradientButton extends StatelessWidget {
     required this.onTap,
     required this.child,
     this.enable,
-    this.padding = const EdgeInsets.symmetric(vertical: kL, horizontal: kH),
+    this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
     this.radius = kDefaultBorderRadiusL,
     this.borderRadius,
@@ -70,7 +70,7 @@ class GradientButton extends StatelessWidget {
     this.onHighlightChanged,
     this.minWidth = 0,
     this.maxWidth = double.infinity,
-    this.minHeight = 0,
+    this.minHeight = kMinHeight,
     this.maxHeight = double.infinity,
   });
 

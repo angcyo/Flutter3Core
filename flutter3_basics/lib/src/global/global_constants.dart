@@ -18,6 +18,10 @@ const double kXx = 24;
 const double kXxh = 32;
 const double kXxxh = 48;
 
+/// 最小高度
+/// [kMinInteractiveHeight]
+const double kMinHeight = 28;
+
 /// [kMinInteractiveDimension] 最小交互高度
 const double kMinInteractiveHeight = 36;
 

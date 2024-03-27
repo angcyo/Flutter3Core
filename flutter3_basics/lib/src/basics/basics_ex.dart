@@ -760,9 +760,16 @@ extension RectEx on Rect {
   /// [deflate]
   /// [inflate]
   /// [value] 支持[Offset]和[num]
+  ///
+  /// [inflateValue]
   ui.Rect deflateValue(dynamic value, [bool center = true]) {
     final l, t, r, b;
     if (value is Rect) {
+      l = value.left;
+      t = value.top;
+      r = value.right;
+      b = value.bottom;
+    } else if (value is EdgeInsets) {
       l = value.left;
       t = value.top;
       r = value.right;
@@ -801,12 +808,49 @@ extension RectEx on Rect {
   }
 
   /// 将一个矩形向外扩一定的大小, 返回一个新的矩形
-  ui.Rect inflateOffset(ui.Offset value) {
-    return Rect.fromLTRB(
-      left - value.dx,
-      top - value.dy,
-      right + value.dx,
-      bottom + value.dy,
+  /// [deflateValue]
+  ui.Rect inflateValue(dynamic value, [bool center = true]) {
+    final l, t, r, b;
+    if (value is Rect) {
+      l = value.left;
+      t = value.top;
+      r = value.right;
+      b = value.bottom;
+    } else if (value is EdgeInsets) {
+      l = value.left;
+      t = value.top;
+      r = value.right;
+      b = value.bottom;
+    } else if (value is Offset) {
+      l = value.dx;
+      t = value.dy;
+      r = value.dx;
+      b = value.dy;
+    } else if (value is num) {
+      l = value;
+      t = value;
+      r = value;
+      b = value;
+    } else {
+      l = 0;
+      t = 0;
+      r = 0;
+      b = 0;
+    }
+
+    if (center) {
+      return Rect.fromLTRB(
+        left - l,
+        top - t,
+        right + r,
+        bottom + b,
+      );
+    }
+    return Rect.fromLTWH(
+      left - l,
+      top - t,
+      width + l + r,
+      height + t + b,
     );
   }
 }
