@@ -145,9 +145,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void showRect({
     Rect? rect,
     ElementPainter? elementPainter,
-    EdgeInsets? margin = const EdgeInsets.all(kXx),
+    EdgeInsets? margin = const EdgeInsets.all(kXxh),
     bool enableZoomOut = true,
-    bool enableZoomIn = true,
+    bool enableZoomIn = false,
     bool animate = true,
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
@@ -157,7 +157,6 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       return;
     }
     //debugger();
-    rect = rect.inflateValue(margin);
     final translateMatrix = Matrix4.identity();
     //移动到元素中心
     final center = rect.center;
@@ -167,10 +166,22 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     final offset = canvasCenter - center;
     translateMatrix.translate(offset.dx, offset.dy);
 
-    final sx = canvasBounds.width / rect.width;
-    final sy = canvasBounds.height / rect.height;
+    //在中心点开始缩放
+    double sx = canvasBounds.width / rect.width;
+    double sy = canvasBounds.height / rect.height;
 
-    double scale = 1;
+    if (margin != null) {
+      rect = rect.inflateValue(EdgeInsets.only(
+        left: margin.left / sx,
+        top: margin.top / sy,
+        right: margin.right / sx,
+        bottom: margin.bottom / sy,
+      ));
+      sx = canvasBounds.width / rect.width;
+      sy = canvasBounds.height / rect.height;
+    }
+
+    double? scale;
     //debugger();
     if (enableZoomOut &&
         (rect.width > canvasBounds.width ||
@@ -184,7 +195,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       scale = max(sx, sy);
     }
 
-    final scaleMatrix = createScaleMatrix(sx: scale, sy: scale, anchor: center);
+    final scaleMatrix = createScaleMatrix(
+        sx: scale ?? canvasViewBox.scaleX,
+        sy: scale ?? canvasViewBox.scaleY,
+        anchor: center);
     canvasViewBox.changeMatrix(translateMatrix * scaleMatrix, animate: animate);
   }
 
