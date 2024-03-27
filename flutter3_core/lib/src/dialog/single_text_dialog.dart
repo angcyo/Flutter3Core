@@ -24,6 +24,10 @@ class SingleTextDialog extends StatelessWidget {
 
     Widget result;
 
+    /*run(() => content ?? filePath?.file().readStringSync()).get((value, error) {
+      debugger();
+    });*/
+
     try {
       final body = content ?? filePath?.file().readStringSync();
       result = body?.text().paddingAll(kX) ??
