@@ -8,6 +8,7 @@ part of '../../flutter3_basics.dart';
 
 Size kDefaultLoadingSize = const Size(50, 50);
 
+/// 弱引用
 WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 
 /// 显示加载提示
@@ -88,17 +89,38 @@ void hideLoading() {
 }
 
 /// 包裹[showLoading].[hideLoading].[Future]
+/// [timeout] 超时时间
 Future wrapLoading<T>(
   Future<T?> future, {
+  Duration? timeout,
   VoidCallback? onStart,
-  VoidCallback? onEnd,
+  ValueCallback? onEnd,
 }) {
   if (onStart == null) {
     showLoading();
   } else {
     onStart.call();
   }
+  bool isTimeout = false;
+  bool isEnd = false;
+  if (timeout != null) {
+    //需要检查超时
+    postDelayCallback(() {
+      if (!isEnd) {
+        isTimeout = true;
+        hideLoading();
+        onEnd?.call(const RTimeoutException(message: 'wrapLoading timeout.'));
+      }
+    }, timeout);
+  }
   return future.get((value, error) {
+    if (isTimeout) {
+      assert(() {
+        l.w('忽略结果, 因为已经超时了.');
+        return true;
+      }());
+      return;
+    }
     if (onEnd == null) {
       hideLoading();
     } else {

@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -13,7 +13,7 @@ class RException implements Exception {
   /// 异常的消息
   final String? message;
 
-  RException({this.message, this.cause});
+  const RException({this.message, this.cause});
 
   @override
   String toString() {
@@ -35,4 +35,9 @@ class RError extends Error {
   String toString() {
     return message ?? cause ?? super.toString();
   }
+}
+
+/// 超时异常
+class RTimeoutException extends RException {
+  const RTimeoutException({super.message, super.cause});
 }
