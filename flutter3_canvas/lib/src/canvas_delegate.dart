@@ -74,8 +74,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 获取画布的单位
   IUnit get axisUnit => canvasPaintManager.axisManager.axisUnit;
 
+  /// 更新画布的单位
   set axisUnit(IUnit unit) {
     canvasPaintManager.axisManager.axisUnit = unit;
+    canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
+    refresh();
   }
 
   //endregion ---get/set---

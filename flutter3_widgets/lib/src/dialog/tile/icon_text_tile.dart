@@ -11,6 +11,8 @@ class IconTextTile extends StatelessWidget with TileMixin {
   /// 布局方向
   final Axis direction;
 
+  //---
+
   /// 直接指定icon小部件
   final Widget? iconWidget;
 
@@ -20,6 +22,8 @@ class IconTextTile extends StatelessWidget with TileMixin {
   /// 文本的内边距
   final EdgeInsets? iconPadding;
 
+  //---
+
   /// 直接指定text小部件
   final Widget? textWidget;
 
@@ -28,6 +32,11 @@ class IconTextTile extends StatelessWidget with TileMixin {
 
   /// 文本的内边距
   final EdgeInsets? textPadding;
+
+  //---
+
+  /// 右边的小部件, 只在[Axis.horizontal]时有效
+  final Widget? rightWidget;
 
   /// 所有小组件需要的着色
   final Color? tintColor;
@@ -51,6 +60,7 @@ class IconTextTile extends StatelessWidget with TileMixin {
     this.textPadding,
     this.tintColor,
     this.disableTintColor,
+    this.rightWidget,
     this.enable = true,
     this.direction = Axis.horizontal,
     this.onTap,
@@ -61,7 +71,7 @@ class IconTextTile extends StatelessWidget with TileMixin {
     final globalTheme = GlobalTheme.of(context);
     final disableTintColor = this.disableTintColor ?? globalTheme.disableColor;
     const gap = kX;
-    const padding = EdgeInsets.symmetric(vertical: gap, horizontal: gap);
+    const padding = EdgeInsets.symmetric(vertical: gap / 2, horizontal: gap);
     final iconWidget = buildIconWidget(
       context,
       this.iconWidget,
@@ -79,12 +89,17 @@ class IconTextTile extends StatelessWidget with TileMixin {
     if (direction == Axis.vertical) {
       result = [iconWidget, textWidget].column(gap: gap)!;
     } else {
-      result = [iconWidget, textWidget?.expanded()].row(gap: gap)!;
+      result = [
+        iconWidget,
+        textWidget?.expanded(enable: iconWidget != null || rightWidget != null),
+        rightWidget
+      ].row(gap: gap)!;
     }
 
     result = result
         .colorFiltered(color: enable ? tintColor : disableTintColor)
         .paddingInsets(padding)
+        .constrainedMin(minHeight: kMinItemInteractiveHeight)
         .ink(onTap: enable ? onTap : null)
         .material();
 

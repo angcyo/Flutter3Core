@@ -175,7 +175,8 @@ extension WidgetListEx on WidgetNullList {
   }) {
     WidgetList list = filterNull();
     WidgetList children = list;
-    if (gap != null || gapWidget != null) {
+    final length = list.length;
+    if (length > 1 && (gap != null || gapWidget != null)) {
       children = <Widget>[];
       for (var i = 0; i < length; i++) {
         children.add(list[i]);
@@ -219,7 +220,8 @@ extension WidgetListEx on WidgetNullList {
   }) {
     WidgetList list = filterNull();
     WidgetList children = list;
-    if (gap != null || gapWidget != null) {
+    final length = list.length;
+    if (length > 1 && (gap != null || gapWidget != null)) {
       children = <Widget>[];
       for (var i = 0; i < length; i++) {
         children.add(list[i]);
@@ -1184,6 +1186,23 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// [FittedBox]
+  Widget fittedBox({
+    BoxFit? fit = BoxFit.contain,
+    Alignment alignment = Alignment.center,
+    Clip clipBehavior = Clip.none,
+  }) {
+    if (fit == null) {
+      return this;
+    }
+    return FittedBox(
+      fit: fit,
+      alignment: alignment,
+      clipBehavior: clipBehavior,
+      child: this,
+    );
+  }
+
   /// 首选大小
   /// [PreferredSizeWidget]
   /// [PreferredSize]
@@ -1647,6 +1666,7 @@ extension ElementEx on Element {}
 /// 路由动画
 /// [RouteWidgetEx.toRoute] 路由动画
 /// [DialogPageRoute] 对话框路由, 动画
+/// [showDialog]
 enum TranslationType {
   /// [MaterialPageRoute]
   material,
@@ -1683,6 +1703,11 @@ enum TranslationType {
   final bool withTopToBottom;
 }
 
+class TranslationTypeImpl {
+  /// [TranslationType]
+  TranslationType get translationType => TranslationType.material;
+}
+
 extension RouteWidgetEx on Widget {
   /// [MaterialPageRoute]
   /// [CupertinoPageRoute]
@@ -1694,6 +1719,11 @@ extension RouteWidgetEx on Widget {
     bool allowSnapshotting = true,
     bool barrierDismissible = false,
   }) {
+    if (type == null) {
+      if (this is TranslationTypeImpl) {
+        type = (this as TranslationTypeImpl).translationType;
+      }
+    }
     dynamic targetRoute;
     switch (type) {
       case TranslationType.cupertino:

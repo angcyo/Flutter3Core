@@ -158,6 +158,12 @@ Future<T?> showDialogWidget<T>({
     ).context,
   );
 
+  if (type == null) {
+    if (widget is TranslationTypeImpl) {
+      type = (widget as TranslationTypeImpl).translationType;
+    }
+  }
+
   return Navigator.of(context, rootNavigator: useRootNavigator)
       .push<T>(DialogPageRoute<T>(
     context: context,
@@ -189,4 +195,28 @@ Future<T?> showDialogWidget<T>({
       return widget;
     },
   );*/
+}
+
+/// 对话框的一些基础方法
+mixin DialogMixin implements TranslationTypeImpl {
+  @override
+  TranslationType get translationType => TranslationType.translationFade;
+
+  /// 关闭一个对话框, 如果[close]为true
+  @callPoint
+  void closeDialogIf(BuildContext context, bool close) {
+    if (close) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  /// 构建一个底部弹出的对话框
+  @entryPoint
+  Widget buildBottomDialog(BuildContext context, WidgetList children) {
+    return children
+        .column()!
+        .container(color: Colors.white)
+        .matchParent(matchHeight: false)
+        .align(Alignment.bottomCenter);
+  }
 }

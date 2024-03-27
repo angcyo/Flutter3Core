@@ -45,4 +45,50 @@ mixin TileMixin {
         ));
     return widget?.paddingInsets(padding);
   }
+
+  /// 构建一个[Switch]开关小部件
+  /// [activeColor] 激活时圈圈的颜色
+  /// [activeTrackColor] 激活时轨道的颜色
+  Widget buildSwitchWidget(
+    BuildContext context,
+    bool value, {
+    ValueChanged<bool>? onChanged,
+    Color? activeColor,
+    Color? activeTrackColor,
+    Color? inactiveThumbColor,
+    Color? inactiveTrackColor,
+    Color? focusColor,
+    Color? hoverColor,
+    Color? splashColor,
+    Color? disabledColor,
+    MouseCursor? mouseCursor,
+    MaterialTapTargetSize? materialTapTargetSize =
+        MaterialTapTargetSize.shrinkWrap,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+    double? iconSize,
+    Widget? icon,
+    Widget? activeIcon,
+    Color? tintColor,
+    Color? disableTintColor,
+    EdgeInsets? padding,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    const height = 30.0;
+    return Switch(
+      value: value,
+      onChanged: onChanged ??
+          (value) {
+            l.d('开关->$value');
+          },
+      activeColor: activeColor,
+      activeTrackColor: activeTrackColor ?? globalTheme.accentColor,
+      inactiveThumbColor: inactiveThumbColor,
+      inactiveTrackColor: inactiveTrackColor,
+      focusColor: focusColor,
+      hoverColor: hoverColor,
+      mouseCursor: mouseCursor,
+      materialTapTargetSize: materialTapTargetSize,
+      dragStartBehavior: dragStartBehavior,
+    ).fittedBox().wh(60 / 40 * height, height).paddingInsets(padding);
+  }
 }
