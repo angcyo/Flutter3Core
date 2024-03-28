@@ -65,13 +65,14 @@ mixin IHandleEventMixin {
   bool ignoreEventHandle = false;
 
   /// 开始派发事件, 一定会调用
-  void dispatchPointerEvent(PointerEvent event) {
+  @entryPoint
+  void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     if (event is PointerDownEvent) {
       if (firstDownEvent == null || _isFirstEventCancel) {
         isFirstEventHandled = false;
         _isFirstEventCancel = false;
         firstDownEvent = event;
-        dispatchFirstPointerEvent(event);
+        dispatchFirstPointerEvent(dispatch, event);
       }
     } else if (event is PointerMoveEvent) {
       if (event.pointer == firstDownEvent?.pointer) {
@@ -86,17 +87,20 @@ mixin IHandleEventMixin {
   }
 
   /// 询问, 是否要拦截事件, 如果返回true, 则[onPointerEvent]执行, 并中断继续派发事件
-  bool interceptPointerEvent(PointerEvent event) {
-    if (isFirstPointerEvent(event)) {
-      return onInterceptFirstPointerEvent(event);
+  @property
+  bool interceptPointerEvent(
+      PointerDispatchMixin dispatch, PointerEvent event) {
+    if (isFirstPointerEvent(dispatch, event)) {
+      return onInterceptFirstPointerEvent(dispatch, event);
     }
     return false;
   }
 
   /// 处理事件, 返回true表示事件被处理了, 否则继续派发事件
-  bool onPointerEvent(PointerEvent event) {
-    if (isFirstPointerEvent(event)) {
-      return onFirstPointerEvent(event);
+  @property
+  bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    if (isFirstPointerEvent(dispatch, event)) {
+      return onFirstPointerEvent(dispatch, event);
     }
     return false;
   }
@@ -104,18 +108,22 @@ mixin IHandleEventMixin {
   //---
 
   /// 只回调第一个点的事件
-  void dispatchFirstPointerEvent(PointerEvent event) {}
+  void dispatchFirstPointerEvent(
+      PointerDispatchMixin dispatch, PointerEvent event) {}
 
   /// 只回调第一个点的事件
-  bool onInterceptFirstPointerEvent(PointerEvent event) => false;
+  bool onInterceptFirstPointerEvent(
+          PointerDispatchMixin dispatch, PointerEvent event) =>
+      false;
 
   /// 只回调第一个点的事件
-  bool onFirstPointerEvent(PointerEvent event) => false;
+  bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) =>
+      false;
 
   //---
 
   /// 是否是第一个手指的事件
-  bool isFirstPointerEvent(PointerEvent event) =>
+  bool isFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) =>
       firstDownEvent?.pointer == event.pointer;
 
   /// 第一个手指, 移动的距离是否超过指定的阈值
@@ -141,6 +149,9 @@ mixin PointerDispatchMixin {
   /// 指定的手势, 是否要忽略处理
   Map<int, bool> ignorePointerMap = {};
 
+  /// 当前按下的手指数量
+  int get pointerCount => pointerMap.length;
+
   /// 派发事件, 入口点
   /// 返回事件是否被处理了
   @entryPoint
@@ -153,6 +164,7 @@ mixin PointerDispatchMixin {
     }
 
     if (!event.synthesized) {
+      //非合成的事件
       pointerMap[event.pointer] = event;
     }
     final clientList = handleEventClientList
@@ -161,22 +173,26 @@ mixin PointerDispatchMixin {
 
     //1:dispatchPointerEvent
     for (var element in clientList) {
-      element.dispatchPointerEvent(event);
+      element.dispatchPointerEvent(this, event);
     }
 
     //2:interceptPointerEvent
     bool handled = false;
-    if (interceptHandleTarget != null) {
-      if (!interceptHandleTarget!.ignoreEventHandle) {
-        handled = interceptHandleTarget!.onPointerEvent(event);
+    if (interceptHandleTarget != null &&
+        !interceptHandleTarget!.ignoreEventHandle) {
+      if (interceptHandleTarget!.ignoreEventHandle) {
+        //拦截器, 忽略了手势处理
+        handled = true;
+      } else {
+        handled = interceptHandleTarget!.onPointerEvent(this, event);
       }
     } else {
       for (var element in clientList) {
-        if (element.interceptPointerEvent(event)) {
+        if (element.interceptPointerEvent(this, event)) {
           //debugger();
           interceptHandleTarget = element;
           if (!element.ignoreEventHandle) {
-            handled = element.onPointerEvent(event);
+            handled = element.onPointerEvent(this, event);
             break;
           }
         }
@@ -186,7 +202,7 @@ mixin PointerDispatchMixin {
         final cancelEvent = createPointerCancelEvent(event);
         for (var element in clientList) {
           if (element != interceptHandleTarget) {
-            element.onPointerEvent(cancelEvent);
+            element.onPointerEvent(this, cancelEvent);
           }
         }
       }
@@ -194,7 +210,7 @@ mixin PointerDispatchMixin {
         //3:onPointerEvent
         for (var element in clientList) {
           if (!element.ignoreEventHandle) {
-            handled = element.onPointerEvent(event);
+            handled = element.onPointerEvent(this, event);
           }
           if (handled) break;
         }
@@ -248,10 +264,10 @@ PointerCancelEvent createPointerCancelEvent(PointerEvent event) {
 /// 点击/长按事件探测
 mixin TouchDetectorMixin {
   /// 点击事件
-  static const int TOUCH_TYPE_CLICK = 1;
+  static const int sTouchTypeClick = 1;
 
   /// 长按事件, 此时手势还未抬起
-  static const int TOUCH_TYPE_LONG_PRESS = 2;
+  static const int sTouchTypeLongPress = 2;
 
   /// 是否要检查长按事件
   bool checkLongPress = true;
@@ -299,7 +315,7 @@ mixin TouchDetectorMixin {
       //超出了移动范围
       return;
     }
-    onTouchDetectorPointerEvent(event, TOUCH_TYPE_CLICK);
+    onTouchDetectorPointerEvent(event, sTouchTypeClick);
   }
 
   /// 检查是否需要触发长按事件回调
@@ -310,7 +326,7 @@ mixin TouchDetectorMixin {
       //超出了移动范围
       return;
     }
-    onTouchDetectorPointerEvent(event, TOUCH_TYPE_LONG_PRESS);
+    onTouchDetectorPointerEvent(event, sTouchTypeLongPress);
     _clear(event);
   }
 

@@ -7,28 +7,28 @@ part of '../../../flutter3_canvas.dart';
 /// 元素控制
 class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 控制点: 删除
-  static const CONTROL_TYPE_DELETE = 1;
+  static const sControlTypeDelete = 1;
 
   /// 控制点: 旋转
-  static const CONTROL_TYPE_ROTATE = 2;
+  static const sControlTypeRotate = 2;
 
   /// 控制点: 缩放
-  static const CONTROL_TYPE_SCALE = 3;
+  static const sControlTypeScale = 3;
 
   /// 控制点: 锁定等比
-  static const CONTROL_TYPE_LOCK = 4;
+  static const sControlTypeLock = 4;
 
   /// 控制行为: 平移
-  static const CONTROL_TYPE_TRANSLATE = 5;
+  static const sControlTypeTranslate = 5;
 
   final CanvasElementControlManager canvasElementControlManager;
 
   /// 控制点的类型
-  /// [CONTROL_TYPE_DELETE]
-  /// [CONTROL_TYPE_ROTATE]
-  /// [CONTROL_TYPE_SCALE]
-  /// [CONTROL_TYPE_LOCK]
-  /// [CONTROL_TYPE_TRANSLATE]
+  /// [sControlTypeDelete]
+  /// [sControlTypeRotate]
+  /// [sControlTypeScale]
+  /// [sControlTypeLock]
+  /// [sControlTypeTranslate]
   final int controlType;
 
   /// 控制点的位置, 视图坐标系
@@ -72,10 +72,10 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   }
 
   @override
-  void dispatchPointerEvent(PointerEvent event) {
-    super.dispatchPointerEvent(event);
+  void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    super.dispatchPointerEvent(dispatch, event);
     if (isCanvasComponentEnable) {
-      if (isFirstPointerEvent(event)) {
+      if (isFirstPointerEvent(dispatch, event)) {
         if (event.isPointerDown) {
           isFirstHandle = true;
           isControlApply = false;
@@ -90,9 +90,10 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
       controlBounds?.contains(event.localPosition) ?? false;
 
   @override
-  bool interceptPointerEvent(PointerEvent event) {
+  bool interceptPointerEvent(
+      PointerDispatchMixin dispatch, PointerEvent event) {
     if (isCanvasComponentEnable) {
-      if (isFirstPointerEvent(event)) {
+      if (isFirstPointerEvent(dispatch, event)) {
         if (event.isPointerDown && controlBounds != null) {
           isPointerDownIn = isPointerInBounds(event);
           if (isPointerDownIn) {
@@ -102,7 +103,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
         }
       }
     }
-    return super.interceptPointerEvent(event);
+    return super.interceptPointerEvent(dispatch, event);
   }
 
   /// 第一个手势在当前控制点上按下时回调
@@ -112,17 +113,17 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   }
 
   @override
-  bool onPointerEvent(PointerEvent event) {
+  bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     if (isCanvasComponentEnable) {
-      if (isFirstPointerEvent(event)) {
-        return onFirstPointerEvent(event);
+      if (isFirstPointerEvent(dispatch, event)) {
+        return onFirstPointerEvent(dispatch, event);
       }
     }
-    return super.onPointerEvent(event);
+    return super.onPointerEvent(dispatch, event);
   }
 
   @override
-  bool onFirstPointerEvent(PointerEvent event) {
+  bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     if (isPointerDownIn) {
       if (event.isPointerUp && isPointerInBounds(event)) {
         onFirstPointerTap(event);
@@ -133,7 +134,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
         //canvasElementControlManager.canvasDelegate.refresh();
       }
     }
-    return super.onFirstPointerEvent(event);
+    return super.onFirstPointerEvent(dispatch, event);
   }
 
   /// 第一个手指的点击事件回调
@@ -143,13 +144,13 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 重写此方法, 更新控制点的位置
   @overridePoint
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    if (controlType == CONTROL_TYPE_DELETE) {
+    if (controlType == sControlTypeDelete) {
       controlBounds = getLTControlBounds(selectComponentProperty);
-    } else if (controlType == CONTROL_TYPE_ROTATE) {
+    } else if (controlType == sControlTypeRotate) {
       controlBounds = getRTControlBounds(selectComponentProperty);
-    } else if (controlType == CONTROL_TYPE_SCALE) {
+    } else if (controlType == sControlTypeScale) {
       controlBounds = getRBControlBounds(selectComponentProperty);
-    } else if (controlType == CONTROL_TYPE_LOCK) {
+    } else if (controlType == sControlTypeLock) {
       controlBounds = getLBControlBounds(selectComponentProperty);
     }
   }
@@ -321,9 +322,9 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
     _elementStateStack?.restore();
 
     controlType ??= this.controlType;
-    if (controlType == BaseControl.CONTROL_TYPE_ROTATE) {
+    if (controlType == BaseControl.sControlTypeRotate) {
       _targetElement?.rotateElement(matrix);
-    } else if (controlType == BaseControl.CONTROL_TYPE_TRANSLATE) {
+    } else if (controlType == BaseControl.sControlTypeTranslate) {
       _targetElement?.translateElement(matrix);
     } else {
       assert(() {
@@ -409,7 +410,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 /// 删除元素控制
 class DeleteControl extends BaseControl {
   DeleteControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_DELETE) {
+      : super(canvasElementControlManager, BaseControl.sControlTypeDelete) {
     loadControlPicture('canvas_delete_point.svg');
   }
 
@@ -422,12 +423,12 @@ class DeleteControl extends BaseControl {
 /// 旋转元素控制
 class RotateControl extends BaseControl {
   RotateControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_ROTATE) {
+      : super(canvasElementControlManager, BaseControl.sControlTypeRotate) {
     loadControlPicture('canvas_rotate_point.svg');
   }
 
   @override
-  bool onFirstPointerEvent(PointerEvent event) {
+  bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     //l.d('$event');
     //debugger();
     if (isPointerDownIn) {
@@ -461,7 +462,7 @@ class RotateControl extends BaseControl {
         endControlTarget();
       }
     }
-    super.onFirstPointerEvent(event);
+    super.onFirstPointerEvent(dispatch, event);
     return true;
   }
 }
@@ -469,7 +470,7 @@ class RotateControl extends BaseControl {
 /// 缩放元素控制
 class ScaleControl extends BaseControl {
   ScaleControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_SCALE) {
+      : super(canvasElementControlManager, BaseControl.sControlTypeScale) {
     loadControlPicture('canvas_scale_point.svg');
   }
 
@@ -492,7 +493,7 @@ class ScaleControl extends BaseControl {
   Rect? _downTargetElementBounds;
 
   @override
-  bool onFirstPointerEvent(PointerEvent event) {
+  bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     if (isPointerDownIn) {
       if (event.isPointerMove) {
         if (isFirstHandle) {
@@ -592,7 +593,7 @@ class ScaleControl extends BaseControl {
         endControlTarget();
       }
     }
-    super.onFirstPointerEvent(event);
+    super.onFirstPointerEvent(dispatch, event);
     return true;
   }
 }
@@ -618,7 +619,7 @@ class LockControl extends BaseControl {
   PictureInfo? _unlockPictureInfo;
 
   LockControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_LOCK) {
+      : super(canvasElementControlManager, BaseControl.sControlTypeLock) {
     loadControlPicture('canvas_lock_point.svg', (value) {
       _lockPictureInfo = value;
       if (isLock) {
@@ -644,12 +645,14 @@ class LockControl extends BaseControl {
 /// 平移元素控制
 class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
   TranslateControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.CONTROL_TYPE_TRANSLATE);
+      : super(canvasElementControlManager, BaseControl.sControlTypeTranslate);
 
   @override
-  bool interceptPointerEvent(PointerEvent event) {
+  bool interceptPointerEvent(
+      PointerDispatchMixin dispatch, PointerEvent event) {
+    //l.d('...2...${dispatch.pointerCount}');
     if (isCanvasComponentEnable) {
-      if (isFirstPointerEvent(event)) {
+      if (isFirstPointerEvent(dispatch, event)) {
         if (event.isPointerDown) {
           downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
           if (canvasElementControlManager.elementSelectComponent
@@ -678,7 +681,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         } else if (event.isPointerMove) {
           //debugger();
           if (isPointerDownIn) {
-            if (isFirstHandle) {
+            if (isFirstHandle && dispatch.pointerCount <= 1) {
               if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
                 //首次移动, 并且超过了阈值
                 isFirstHandle = false;
@@ -691,12 +694,12 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         }
       }
     }
-    return super.interceptPointerEvent(event);
+    return super.interceptPointerEvent(dispatch, event);
   }
 
   @override
-  bool onFirstPointerEvent(PointerEvent event) {
-    //l.d('$event');
+  bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    //l.d('...1...${dispatch.pointerCount}');
     //debugger();
     if (isPointerDownIn) {
       addDoubleTapDetectorPointerEvent(event);
@@ -709,13 +712,14 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
                 .updatePaintInfoType(PaintInfoType.location);
           }
         }
-        if (!isFirstHandle) {
+        //debugger();
+        if (!isFirstHandle && dispatch.pointerCount <= 1) {
           final moveScenePoint =
               canvasViewBox.toScenePoint(event.localPosition);
           final offset = moveScenePoint - downScenePoint;
           final matrix = Matrix4.identity()..translateTo(offset: offset);
           assert(() {
-            //l.d('平移元素: offset:$offset');
+            //l.d('平移元素[${dispatch.pointerCount}]: offset:$offset');
             return true;
           }());
           applyTargetMatrix(matrix);
@@ -725,7 +729,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         endControlTarget();
       }
     }
-    super.onFirstPointerEvent(event);
+    super.onFirstPointerEvent(dispatch, event);
     return true;
   }
 

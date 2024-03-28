@@ -231,10 +231,10 @@ class ElementPainter extends IPainter
   //---
 
   /// 当前选中的元素是否支持指定的控制点
-  /// [BaseControl.CONTROL_TYPE_DELETE]
-  /// [BaseControl.CONTROL_TYPE_ROTATE]
-  /// [BaseControl.CONTROL_TYPE_SCALE]
-  /// [BaseControl.CONTROL_TYPE_LOCK]
+  /// [BaseControl.sControlTypeDelete]
+  /// [BaseControl.sControlTypeRotate]
+  /// [BaseControl.sControlTypeScale]
+  /// [BaseControl.sControlTypeLock]
   bool isElementSupportControl(int type) {
     return true;
   }

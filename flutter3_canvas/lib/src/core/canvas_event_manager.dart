@@ -64,11 +64,11 @@ abstract class BaseCanvasViewBoxEventComponent
   BaseCanvasViewBoxEventComponent(this.canvasDelegate);
 
   @override
-  void dispatchPointerEvent(PointerEvent event) {
+  void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     if (!isCanvasComponentEnable) {
       return;
     }
-    super.dispatchPointerEvent(event);
+    super.dispatchPointerEvent(dispatch, event);
   }
 }
 
@@ -155,9 +155,9 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
   CanvasScaleComponent(super.canvasDelegate);
 
   @override
-  void dispatchPointerEvent(PointerEvent event) {
+  void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     addDoubleTapDetectorPointerEvent(event);
-    super.dispatchPointerEvent(event);
+    super.dispatchPointerEvent(dispatch, event);
   }
 
   @override

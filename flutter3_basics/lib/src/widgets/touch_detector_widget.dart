@@ -69,9 +69,9 @@ class _RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
   @override
   bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) {
     //debugger();
-    if (touchType == TouchDetectorMixin.TOUCH_TYPE_CLICK) {
+    if (touchType == TouchDetectorMixin.sTouchTypeClick) {
       onClick?.call(event);
-    } else if (touchType == TouchDetectorMixin.TOUCH_TYPE_LONG_PRESS) {
+    } else if (touchType == TouchDetectorMixin.sTouchTypeLongPress) {
       onLongPress?.call(event);
     }
     return super.onTouchDetectorPointerEvent(event, touchType);

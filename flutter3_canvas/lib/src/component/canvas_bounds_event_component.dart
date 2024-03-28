@@ -20,11 +20,11 @@ class CanvasBoundsEventComponent
   CanvasBoundsEventComponent();
 
   @override
-  bool onPointerEvent(PointerEvent event) {
+  bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     if (isCanvasComponentEnable) {
       addTouchDetectorPointerEvent(event);
     }
-    return super.onPointerEvent(event);
+    return super.onPointerEvent(dispatch, event);
   }
 
   @override

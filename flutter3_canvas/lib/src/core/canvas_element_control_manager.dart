@@ -87,7 +87,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// [paint]
   bool get isPointerDownElement =>
       _currentControlRef?.target?.controlType ==
-          BaseControl.CONTROL_TYPE_TRANSLATE &&
+          BaseControl.sControlTypeTranslate &&
       isControlElement;
 
   /// 是否正在控制元素中
@@ -415,14 +415,14 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
     final controlType = control?.controlType;
     if (state == ControlState.start) {
-      if (controlType == BaseControl.CONTROL_TYPE_ROTATE) {
+      if (controlType == BaseControl.sControlTypeRotate) {
         updatePaintInfoType(PaintInfoType.rotate);
-      } else if (controlType == BaseControl.CONTROL_TYPE_TRANSLATE) {
+      } else if (controlType == BaseControl.sControlTypeTranslate) {
         //按下时, 就显示元素的位置信息
         updatePaintInfoType(PaintInfoType.location);
       }
     } else {
-      if (controlType == BaseControl.CONTROL_TYPE_ROTATE) {
+      if (controlType == BaseControl.sControlTypeRotate) {
         //旋转结束之后
         if (enableResetElementAngle) {
           elementSelectComponent.updateChildPaintPropertyFromChildren(true);
@@ -686,9 +686,10 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   @override
-  bool interceptPointerEvent(PointerEvent event) {
+  bool interceptPointerEvent(
+      PointerDispatchMixin dispatch, PointerEvent event) {
     //debugger();
-    return super.interceptPointerEvent(event);
+    return super.interceptPointerEvent(dispatch, event);
   }
 
   @sceneCoordinate
@@ -698,9 +699,9 @@ class ElementSelectComponent extends ElementGroupPainter
   List<ElementPainter>? _downElementList;
 
   @override
-  bool onPointerEvent(PointerEvent event) {
+  bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     if (isCanvasComponentEnable) {
-      if (isFirstPointerEvent(event)) {
+      if (isFirstPointerEvent(dispatch, event)) {
         //debugger();
         final viewBox =
             canvasElementControlManager.canvasDelegate.canvasViewBox;
@@ -762,7 +763,7 @@ class ElementSelectComponent extends ElementGroupPainter
         }
       }
     }
-    return super.onPointerEvent(event);
+    return super.onPointerEvent(dispatch, event);
   }
 
   /// 没有进行画布的操作
