@@ -43,6 +43,9 @@ class IconStateWidget extends StatelessWidget {
 
   //---
 
+  /// 一直显示的背景装饰
+  final Decoration? decoration;
+
   /// 按下时的背景装饰
   final Decoration? pressedDecoration;
 
@@ -57,6 +60,7 @@ class IconStateWidget extends StatelessWidget {
     this.tooltip,
     this.tipAlignment = Alignment.topRight,
     this.padding = const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+    this.decoration,
     this.pressedDecoration,
     this.selectedDecoration,
     this.enable = true,
@@ -68,6 +72,7 @@ class IconStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StateDecorationWidget(
+      decoration: decoration,
       pressedDecoration: pressedDecoration,
       enablePressedDecoration: enable,
       selectedDecoration: selectedDecoration,

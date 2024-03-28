@@ -7,6 +7,34 @@ part of '../../flutter3_basics.dart';
 //region BoxDecoration
 
 /// [BoxDecoration] 装饰
+/// [PaintFn]
+class PaintDecoration extends Decoration {
+  final PaintFn? paint;
+
+  const PaintDecoration(this.paint);
+
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return PaintBoxPainter(paint, onChanged);
+  }
+}
+
+class PaintBoxPainter extends BoxPainter {
+  final PaintFn? paintFn;
+
+  PaintBoxPainter(this.paintFn, super.onChanged);
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    //super.paint(canvas, offset, configuration);
+    //debugger();
+    if (paintFn != null) {
+      canvas.withTranslate(offset.dx, offset.dy, () {
+        paintFn?.call(canvas, configuration.size ?? Size.zero);
+      });
+    }
+  }
+}
 
 /// 描边装饰
 /// [strokeColor] 描边颜色

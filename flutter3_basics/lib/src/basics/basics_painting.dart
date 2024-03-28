@@ -298,9 +298,9 @@ extension CanvasEx on Canvas {
 
   //region ---draw---
 
-  /// 在指定的矩形位置和大小绘制
-  /// 会自动平移到矩形位置, 并且缩放至矩形大小
-  /// [dst] 目标位置和大小. 包含了[dstPadding]
+  /// 将原本在[src]位置绘制的东西, 绘制到[dst]位置
+  /// 会自动平移到[dst]矩形位置, 并且缩放至[dst]矩形大小
+  /// [dst] 绘制到的目标位置和大小. 包含了[dstPadding]
   /// [dstPadding] 目标位置的内边距
   /// [src] 目标的大小和位置
   /// [colorFilter] 着色器. [tintColor]着色
@@ -312,7 +312,7 @@ extension CanvasEx on Canvas {
     Color? tintColor,
     ui.ColorFilter? colorFilter,
     BoxFit? fit,
-    Alignment alignment = Alignment.center,
+    Alignment? alignment = Alignment.center,
   }) {
     //debugger();
     colorFilter ??= tintColor?.toColorFilter();
@@ -324,10 +324,22 @@ extension CanvasEx on Canvas {
 
     if (fit != null) {
       final fitSize = applyBoxFit(fit, targetSize, dst.size);
-      final Rect destinationRect = alignment.inscribe(fitSize.destination, dst);
+      final Rect destinationRect =
+          alignment?.inscribe(fitSize.destination, dst) ??
+              ui.Rect.fromLTWH(
+                dst.left,
+                dst.top,
+                fitSize.destination.width,
+                fitSize.destination.height,
+              );
       dst = destinationRect;
       //debugger();
     }
+    /*else if (alignment != null) {
+      //debugger();
+      final Rect destinationRect = alignment.inscribe(dst.size, dst);
+      dst = destinationRect;
+    }*/
 
     final drawLeft = dst.left + (dstPadding?.left ?? 0);
     final drawTop = dst.top + (dstPadding?.top ?? 0);
