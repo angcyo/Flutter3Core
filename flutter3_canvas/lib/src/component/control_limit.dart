@@ -6,7 +6,10 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 控制限制器
 class ControlLimit {
+  /// 元素控制器
   final CanvasElementControlManager canvasElementControlManager;
+
+  //---
 
   ///限制元素最小的宽度
   @dp
@@ -15,6 +18,16 @@ class ControlLimit {
   /// 限制元素最小的高度
   @dp
   double? elementMinHeight = 1;
+
+  /// 限制元素最大的宽度
+  @dp
+  double? elementMaxWidth = 10000;
+
+  /// 限制元素最大的高度
+  @dp
+  double? elementMaxHeight = 10000;
+
+  //---
 
   ControlLimit(this.canvasElementControlManager);
 
@@ -35,25 +48,46 @@ class ControlLimit {
     final minWidth = elementMinWidth;
     final minHeight = elementMinHeight;
 
-    if (minWidth == null && minHeight == null) {
+    final maxWidth = elementMaxWidth;
+    final maxHeight = elementMaxHeight;
+
+    if (minWidth == null &&
+        minHeight == null &&
+        maxWidth == null &&
+        maxHeight == null) {
+      //没有限制
       return [sx, sy];
     }
 
+    //计算最小缩放比例
     final minSx =
         (minWidth == null || bounds.width == 0) ? sx : minWidth / bounds.width;
     final minSy = (minHeight == null || bounds.height == 0)
         ? sy
         : minHeight / bounds.height;
 
+    //计算最大缩放比例
+    final maxSx =
+        (maxWidth == null || bounds.width == 0) ? sx : maxWidth / bounds.width;
+    final maxSy = (maxHeight == null || bounds.height == 0)
+        ? sy
+        : maxHeight / bounds.height;
+
     if (isLockRatio) {
       //锁定比例
       if (sx < minSx || sy < minSy) {
+        //最小缩放比例
         final s = max(minSx, minSy);
+        return [s, s];
+      }
+      if (sx > maxSx || sy > maxSy) {
+        //最大缩放比例
+        final s = min(maxSx, maxSy);
         return [s, s];
       }
       return [sx, sy];
     } else {
-      return [max(sx, minSx), max(sy, minSy)];
+      return [clampDouble(sx, minSx, maxSx), clampDouble(sy, minSy, maxSy)];
     }
   }
 }
