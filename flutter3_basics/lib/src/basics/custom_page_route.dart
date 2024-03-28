@@ -285,6 +285,9 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
 ///缩放路由动画
 class ScalePageRoute<T> extends MaterialPageRoute<T>
     with SameRouteTransitionMixin<T> {
+  /// 通否同时激活透明渐隐动画
+  final bool fade;
+
   ScalePageRoute({
     required super.builder,
     super.settings,
@@ -292,6 +295,7 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
     super.fullscreenDialog,
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
+    this.fade = false,
   });
 
   @override
@@ -303,16 +307,17 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
   ) {
     //logAnimation("Scale", animation, secondaryAnimation);
     //顶部进入动画
-    var enter = Tween<double>(
+    final enter = Tween<double>(
       begin: 0,
       end: 1,
     ).chain(CurveTween(curve: Curves.easeOut)).animate(animation);
     //底部退出动画
-    var exit = Tween<double>(
+    final exit = Tween<double>(
       begin: 1,
       end: 0.8,
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
-    return ScaleTransition(
+
+    final scale = ScaleTransition(
       scale: enter,
       alignment: Alignment.center,
       child: ScaleTransition(
@@ -321,5 +326,11 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
         child: child,
       ),
     );
+
+    if (fade) {
+      return scale.fade(opacity: animation);
+    }
+
+    return scale;
   }
 }

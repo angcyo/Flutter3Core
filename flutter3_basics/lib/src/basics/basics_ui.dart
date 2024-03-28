@@ -186,7 +186,7 @@ extension WidgetListEx on WidgetNullList {
           if (gapWidget != null) {
             children.add(gapWidget);
           } else {
-            children.add(Empty.width(gap!));
+            children.add(Empty.height(gap!));
           }
         }
       }
@@ -1668,8 +1668,12 @@ extension ElementEx on Element {}
 //region 导航相关
 
 /// 路由动画
-/// [RouteWidgetEx.toRoute] 路由动画
 /// [DialogPageRoute] 对话框路由, 动画
+///
+/// [RouteWidgetEx.toRoute] 路由动画
+/// [DialogExtensionEx.showDialog] 对话框
+/// [showDialogWidget]
+///
 /// [showDialog]
 enum TranslationType {
   /// [MaterialPageRoute]
@@ -1686,6 +1690,9 @@ enum TranslationType {
 
   /// [ScalePageRoute]
   scale,
+
+  /// [ScalePageRoute]
+  scaleFade(withFade: true),
 
   /// [TranslationPageRoute]
   translation(withTranslation: true),
@@ -1761,7 +1768,9 @@ extension RouteWidgetEx on Widget {
         );
         break;
       case TranslationType.scale:
+      case TranslationType.scaleFade:
         targetRoute = ScalePageRoute(
+          fade: type?.withFade == true,
           builder: (context) => this,
           settings: settings,
           maintainState: maintainState,
@@ -1771,31 +1780,11 @@ extension RouteWidgetEx on Widget {
         );
         break;
       case TranslationType.translation:
-        targetRoute = TranslationPageRoute(
-          fade: false,
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
       case TranslationType.translationTopToBottom:
-        targetRoute = TranslationPageRoute(
-          fade: false,
-          topToBottom: true,
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
       case TranslationType.translationFade:
         targetRoute = TranslationPageRoute(
-          fade: true,
+          fade: type?.withFade == true,
+          topToBottom: type?.withTopToBottom == true,
           builder: (context) => this,
           settings: settings,
           maintainState: maintainState,

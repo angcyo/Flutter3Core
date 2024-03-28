@@ -268,4 +268,44 @@ extension WrapContentLayoutEx on Widget {
         minHeight: minHeight,
         child: this,
       );
+
+  /// [wrapContent]
+  /// [wrapContentWidth]
+  /// [wrapContentHeight]
+  WrapContentLayout wrapContentWidth({
+    bool tightChild = true,
+    bool wrapWidth = true,
+    bool wrapHeight = false,
+    AlignmentDirectional alignment = AlignmentDirectional.center,
+    double? minWidth,
+    double? minHeight,
+  }) =>
+      wrapContent(
+        tightChild: tightChild,
+        wrapWidth: wrapWidth,
+        wrapHeight: wrapHeight,
+        alignment: alignment,
+        minWidth: minWidth,
+        minHeight: minHeight,
+      );
+
+  /// [wrapContent]
+  /// [wrapContentWidth]
+  /// [wrapContentHeight]
+  WrapContentLayout wrapContentHeight({
+    bool tightChild = true,
+    bool wrapWidth = false,
+    bool wrapHeight = true,
+    AlignmentDirectional alignment = AlignmentDirectional.center,
+    double? minWidth,
+    double? minHeight,
+  }) =>
+      wrapContent(
+        tightChild: tightChild,
+        wrapWidth: wrapWidth,
+        wrapHeight: wrapHeight,
+        alignment: alignment,
+        minWidth: minWidth,
+        minHeight: minHeight,
+      );
 }

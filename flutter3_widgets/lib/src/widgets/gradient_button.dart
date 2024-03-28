@@ -18,6 +18,7 @@ class GradientButton extends StatelessWidget {
     this.padding,
     this.textStyle,
     this.radius = kDefaultBorderRadiusL,
+    this.decoration,
     this.borderRadius,
     this.textColor,
     this.splashColor,
@@ -40,6 +41,7 @@ class GradientButton extends StatelessWidget {
     this.padding = const EdgeInsets.symmetric(vertical: kS, horizontal: kM),
     this.textStyle,
     this.radius = kDefaultBorderRadiusL,
+    this.decoration,
     this.borderRadius,
     this.textColor,
     this.splashColor,
@@ -61,6 +63,7 @@ class GradientButton extends StatelessWidget {
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
+    this.decoration,
     this.radius = kDefaultBorderRadiusL,
     this.borderRadius,
     this.textColor,
@@ -71,6 +74,34 @@ class GradientButton extends StatelessWidget {
     this.minWidth = 0,
     this.maxWidth = double.infinity,
     this.minHeight = kMinHeight,
+    this.maxHeight = double.infinity,
+  });
+
+  const GradientButton.stroke({
+    super.key,
+    this.color,
+    this.colors,
+    required this.onTap,
+    required this.child,
+    this.enable,
+    this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
+    this.textStyle,
+    this.decoration = const BoxDecoration(
+      border: Border.fromBorderSide(
+        BorderSide(color: Colors.grey, width: 1),
+      ),
+      borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadiusL)),
+    ),
+    this.radius = kDefaultBorderRadiusL,
+    this.borderRadius,
+    this.textColor = const Color(0xff333333),
+    this.splashColor,
+    this.disabledColor,
+    this.disabledTextColor,
+    this.onHighlightChanged,
+    this.minWidth = 0,
+    this.maxWidth = double.infinity,
+    this.minHeight = kInteractiveHeight,
     this.maxHeight = double.infinity,
   });
 
@@ -120,6 +151,10 @@ class GradientButton extends StatelessWidget {
   /// [BoxConstraints.maxHeight]
   final double maxHeight;
 
+  /// 强制指定装饰
+  /// [BoxDecoration]
+  final Decoration? decoration;
+
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -132,22 +167,26 @@ class GradientButton extends StatelessWidget {
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
     bool disabled = enable == null ? onTap == null : !enable!;
     return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient:
-            disabled || colors.isEmpty ? null : LinearGradient(colors: colors),
-        color: disabled ? disabledColor ?? globalTheme.disableBgColor : color,
-        borderRadius: radius,
-      ),
+      decoration: decoration ??
+          BoxDecoration(
+            gradient: disabled || colors.isEmpty
+                ? null
+                : LinearGradient(colors: colors),
+            color:
+                disabled ? disabledColor ?? globalTheme.disableBgColor : color,
+            borderRadius: radius,
+          ),
       child: Material(
         type: MaterialType.transparency,
         borderRadius: radius,
         clipBehavior: Clip.hardEdge,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-              minWidth: minWidth,
-              minHeight: minHeight,
-              maxWidth: maxWidth,
-              maxHeight: maxHeight),
+            minWidth: minWidth,
+            minHeight: minHeight,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+          ),
           child: InkWell(
             splashColor: splashColor ?? colors.lastOrNull ?? color,
             highlightColor: Colors.transparent,
@@ -183,7 +222,7 @@ class GradientButton extends StatelessWidget {
 /// 阴影变化渐变按钮
 class ElevatedGradientButton extends StatefulWidget {
   const ElevatedGradientButton({
-    Key? key,
+    super.key,
     this.colors,
     this.onPressed,
     this.padding,
@@ -199,7 +238,7 @@ class ElevatedGradientButton extends StatefulWidget {
     this.maxWidth = double.infinity,
     this.minHeight = 36,
     this.maxHeight = double.infinity,
-  }) : super(key: key);
+  });
 
   // 渐变色数组
   final List<Color>? colors;

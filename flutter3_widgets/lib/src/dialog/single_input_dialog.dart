@@ -10,7 +10,7 @@ const kDefaultInputLength = 30;
 
 /// 简单的输入框对话框
 /// [showDialogWidget]
-class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
+class SingleInputDialog extends StatelessWidget with DialogMixin {
   /// 是否使用图标按钮
   final bool useIcon;
 
@@ -165,10 +165,7 @@ class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
       return Scaffold(
         backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: true,
-        body: dialogCenterContainer(
-          context: context,
-          child: bodyColumn,
-        ),
+        body: buildCenterDialog(context, bodyColumn),
       );
     }
     //底部全屏样式的对话框
@@ -194,10 +191,7 @@ class SingleInputDialog extends StatelessWidget with DialogConstraintMixin {
     return Scaffold(
       backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: true,
-      body: dialogBottomContainer(
-        context: context,
-        child: bodyColumn,
-      ),
+      body: buildBottomDialog(context, bodyColumn),
     );
   }
 }

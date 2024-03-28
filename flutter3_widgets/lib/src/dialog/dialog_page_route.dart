@@ -6,6 +6,7 @@ part of './dialog.dart';
 /// @date 2023/12/24
 ///
 /// 参考[DialogRoute]
+/// [RouteWidgetEx.toRoute]
 class DialogPageRoute<T> extends RawDialogRoute<T> {
   DialogPageRoute({
     required BuildContext context,
@@ -57,10 +58,13 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
                   .buildSameTransitions(
                       context, animation, secondaryAnimation, child);
             }
-            if (type == TranslationType.scale) {
-              return ScalePageRoute(builder: (content) => child)
-                  .buildSameTransitions(
-                      context, animation, secondaryAnimation, child);
+            if (type == TranslationType.scale ||
+                type == TranslationType.scaleFade) {
+              return ScalePageRoute(
+                builder: (content) => child,
+                fade: type?.withFade == true,
+              ).buildSameTransitions(
+                  context, animation, secondaryAnimation, child);
             }
             return buildMaterialDialogTransitions(
                 context, animation, secondaryAnimation, child);

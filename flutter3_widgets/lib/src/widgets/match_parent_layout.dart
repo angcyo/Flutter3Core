@@ -92,4 +92,30 @@ extension MatchParentLayoutEx on Widget {
         matchHeight: matchHeight,
         child: this,
       );
+
+  /// [matchParent]
+  /// [matchParentWidth]
+  /// [matchParentHeight]
+  MatchParentLayout matchParentWidth({
+    bool matchWidth = true,
+    bool matchHeight = false,
+    AlignmentDirectional alignment = AlignmentDirectional.center,
+  }) =>
+      matchParent(
+          matchWidth: matchWidth,
+          matchHeight: matchHeight,
+          alignment: alignment);
+
+  /// [matchParent]
+  /// [matchParentWidth]
+  /// [matchParentHeight]
+  MatchParentLayout matchParentHeight({
+    bool matchWidth = false,
+    bool matchHeight = true,
+    AlignmentDirectional alignment = AlignmentDirectional.center,
+  }) =>
+      matchParent(
+          matchWidth: matchWidth,
+          matchHeight: matchHeight,
+          alignment: alignment);
 }

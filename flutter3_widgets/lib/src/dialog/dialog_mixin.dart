@@ -10,11 +10,18 @@ const String kDialogCancel = '取消';
 const String kDialogConfirm = '确定';
 const String kDialogSave = '保存';
 
-/// 对话框的一下基础约束
-mixin DialogConstraintMixin {
+/// 对话框的一些基础方法,一些基础约束
+mixin DialogMixin implements TranslationTypeImpl {
+  @override
+  TranslationType get translationType => TranslationType.translationFade;
+
   /// 对话框外边距
   EdgeInsets get dialogMargin =>
       const EdgeInsets.symmetric(horizontal: 60, vertical: kToolbarHeight);
+
+  /// 对话框内容内边距
+  EdgeInsets get contentPadding =>
+      const EdgeInsets.symmetric(horizontal: kX, vertical: kX);
 
   /// 对话框的最大宽度/高度限制
   BoxConstraints get dialogConstraints => BoxConstraints(
@@ -25,12 +32,16 @@ mixin DialogConstraintMixin {
 
   /// 对话框的容器, 带圆角, 带margin
   /// [color] 背景颜色
+  /// [margin] 整体外边距
+  /// [padding] 内容内边距
   /// [fillDecoration]
   /// [strokeDecoration]
-  Widget dialogContainer({
-    required BuildContext context,
-    required Widget child,
+  @property
+  Widget buildDialogContainer(
+    BuildContext context,
+    Widget child, {
     EdgeInsets? margin,
+    EdgeInsets? padding,
     Color? color,
     Decoration? decoration,
     BoxConstraints? constraints,
@@ -49,82 +60,75 @@ mixin DialogConstraintMixin {
                 color: color ?? globalTheme.themeWhiteColor,
                 borderRadius: borderRadius,
               ),
-          child: child,
+          child: child.paddingInsets(padding ?? contentPadding),
         ),
       ).clip(borderRadius: borderRadius),
     );
   }
 
   /// 居中显示的对话框样式
+  /// [buildCenterDialog]
   @api
-  Widget dialogCenterContainer({
-    required BuildContext context,
-    required Widget child,
+  @entryPoint
+  Widget buildCenterDialog(
+    BuildContext context,
+    Widget child, {
     double radius = kDefaultBorderRadiusXX,
   }) {
     return Center(
-      child: dialogContainer(
-        context: context,
+      child: buildDialogContainer(
+        context,
+        child.matchParent(matchHeight: false),
         radius: radius,
-        child: child.matchParent(matchHeight: false),
       ).material(),
     );
   }
 
   /// 底部全屏显示的对话框样式
+  /// [child] 小部件
   @api
-  Widget dialogBottomContainer({
-    required BuildContext context,
-    required Widget child,
+  Widget buildBottomDialog(
+    BuildContext context,
+    Widget child, {
     double radius = kDefaultBorderRadiusXX,
   }) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: dialogContainer(
-        context: context,
+      child: buildDialogContainer(
+        context,
+        child.matchParent(matchHeight: false),
         margin: EdgeInsets.zero,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(radius),
           topRight: Radius.circular(radius),
         ),
-        child: child.matchParent(matchHeight: false),
       ) /*.material()*/,
     );
   }
 
-//region 辅助方法
+  /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
+  /// [children] 一组小部件
+  @api
+  @entryPoint
+  Widget buildBottomColumnDialog(BuildContext context, WidgetList children) {
+    return children
+        .column()!
+        .container(color: Colors.white)
+        .matchParent(matchHeight: false)
+        .align(Alignment.bottomCenter);
+  }
+
+  //region 辅助方法
+
+  /// 关闭一个对话框, 如果[close]为true
+  @callPoint
+  void closeDialogIf(BuildContext context, [bool close = true]) {
+    if (close) {
+      Navigator.of(context).pop();
+    }
+  }
 
 //endregion 辅助方法
-}
-
-extension DialogExtension on BuildContext {
-  /// 显示对话框
-  Future<T?> showDialog<T>(
-    Widget widget, {
-    bool barrierDismissible = true,
-    Color? barrierColor = Colors.black54,
-    String? barrierLabel,
-    bool useSafeArea = true,
-    bool useRootNavigator = true,
-    RouteSettings? routeSettings,
-    TraversalEdgeBehavior? traversalEdgeBehavior,
-    Offset? anchorPoint,
-    TranslationType? type,
-  }) {
-    return showDialogWidget<T>(
-      context: this,
-      widget: widget,
-      barrierDismissible: barrierDismissible,
-      barrierColor: barrierColor,
-      barrierLabel: barrierLabel,
-      useSafeArea: useSafeArea,
-      useRootNavigator: useRootNavigator,
-      routeSettings: routeSettings,
-      traversalEdgeBehavior: traversalEdgeBehavior,
-      anchorPoint: anchorPoint,
-      type: type,
-    );
-  }
 }
 
 /// 对话框的一些基础方法
@@ -136,10 +140,10 @@ extension DialogExtension on BuildContext {
 /// [DialogRoute]
 /// [DialogPageRoute]
 /// [showDialog]
-/// [DialogExtension.showDialog]
-Future<T?> showDialogWidget<T>({
-  required BuildContext context,
-  required Widget widget,
+/// [DialogExtension.showWidgetDialog]
+Future<T?> showDialogWidget<T>(
+  BuildContext context,
+  Widget widget, {
   bool barrierDismissible = true,
   Color? barrierColor = Colors.black54,
   String? barrierLabel,
@@ -150,6 +154,13 @@ Future<T?> showDialogWidget<T>({
   Offset? anchorPoint,
   TranslationType? type,
 }) {
+  if (!context.mounted) {
+    assert(() {
+      l.w('context is not mounted');
+      return true;
+    }());
+  }
+
   final CapturedThemes themes = InheritedTheme.capture(
     from: context,
     to: Navigator.of(
@@ -197,26 +208,32 @@ Future<T?> showDialogWidget<T>({
   );*/
 }
 
-/// 对话框的一些基础方法
-mixin DialogMixin implements TranslationTypeImpl {
-  @override
-  TranslationType get translationType => TranslationType.translationFade;
-
-  /// 关闭一个对话框, 如果[close]为true
-  @callPoint
-  void closeDialogIf(BuildContext context, bool close) {
-    if (close) {
-      Navigator.of(context).pop();
-    }
-  }
-
-  /// 构建一个底部弹出的对话框
-  @entryPoint
-  Widget buildBottomDialog(BuildContext context, WidgetList children) {
-    return children
-        .column()!
-        .container(color: Colors.white)
-        .matchParent(matchHeight: false)
-        .align(Alignment.bottomCenter);
+extension DialogExtension on BuildContext {
+  /// 显示对话框
+  Future<T?> showWidgetDialog<T>(
+    Widget widget, {
+    bool barrierDismissible = true,
+    Color? barrierColor = Colors.black54,
+    String? barrierLabel,
+    bool useSafeArea = true,
+    bool useRootNavigator = true,
+    RouteSettings? routeSettings,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
+    Offset? anchorPoint,
+    TranslationType? type,
+  }) {
+    return showDialogWidget<T>(
+      this,
+      widget,
+      barrierDismissible: barrierDismissible,
+      barrierColor: barrierColor,
+      barrierLabel: barrierLabel,
+      useSafeArea: useSafeArea,
+      useRootNavigator: useRootNavigator,
+      routeSettings: routeSettings,
+      traversalEdgeBehavior: traversalEdgeBehavior,
+      anchorPoint: anchorPoint,
+      type: type,
+    );
   }
 }

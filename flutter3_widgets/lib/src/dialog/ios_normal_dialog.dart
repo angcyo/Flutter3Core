@@ -7,7 +7,7 @@ part of './dialog.dart';
 ///
 /// ios 风格的对话框, 居中显示
 /// [showDialogWidget]
-class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
+class IosNormalDialog extends StatelessWidget with DialogMixin {
   /// 是否使用图标按钮
   final bool useIcon;
 
@@ -39,7 +39,7 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
 
     //标题 和 内容
     Widget? title = titleWidget ??
@@ -123,9 +123,6 @@ class IosNormalDialog extends StatelessWidget with DialogConstraintMixin {
       ],
     );
 
-    return dialogCenterContainer(
-      context: context,
-      child: bodyColumn,
-    );
+    return buildCenterDialog(context, bodyColumn);
   }
 }

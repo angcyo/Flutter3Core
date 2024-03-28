@@ -35,7 +35,7 @@ const double kTabHeight = 46;
 const double kTabItemHeight = 30;
 
 /// 设计最佳最小交互高度
-const double kInteractiveHeight = kMinInteractiveDimension;
+const double kInteractiveHeight = kMinItemInteractiveHeight;
 
 /// 默认的模糊半径
 const double kDefaultBlurRadius = 4.0;
