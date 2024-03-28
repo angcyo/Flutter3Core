@@ -53,6 +53,7 @@ mixin TileMixin {
     BuildContext context,
     bool value, {
     ValueChanged<bool>? onChanged,
+    double? height = 30.0,
     Color? activeColor,
     Color? activeTrackColor,
     Color? inactiveThumbColor,
@@ -73,8 +74,7 @@ mixin TileMixin {
     EdgeInsets? padding,
   }) {
     final globalTheme = GlobalTheme.of(context);
-    const height = 30.0;
-    return Switch(
+    Widget widget = Switch(
       value: value,
       onChanged: onChanged ??
           (value) {
@@ -89,6 +89,13 @@ mixin TileMixin {
       mouseCursor: mouseCursor,
       materialTapTargetSize: materialTapTargetSize,
       dragStartBehavior: dragStartBehavior,
-    ).fittedBox().wh(60 / 40 * height, height).paddingInsets(padding);
+    );
+
+    //使用[FittedBox]控制大小
+    if (height != null) {
+      widget = widget.fittedBox().wh(60 / 40 * height, height);
+    }
+
+    return widget.paddingInsets(padding);
   }
 }
