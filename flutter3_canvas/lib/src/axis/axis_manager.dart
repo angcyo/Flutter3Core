@@ -310,7 +310,7 @@ class AxisManager extends IPainter {
         // 绘制Label
         TextPainter(
             text: TextSpan(
-                text: axisUnit.format(axisData.sceneValue),
+                text: axisUnit.formatFromDp(axisData.sceneValue),
                 style: TextStyle(
                   color: paintManager.canvasDelegate.canvasStyle.axisLabelColor,
                   fontSize:
@@ -353,7 +353,7 @@ class AxisManager extends IPainter {
         canvas.withRotate(-90, () {
           TextPainter(
               text: TextSpan(
-                  text: axisUnit.format(axisData.sceneValue),
+                  text: axisUnit.formatFromDp(axisData.sceneValue),
                   style: TextStyle(
                     color:
                         paintManager.canvasDelegate.canvasStyle.axisLabelColor,
