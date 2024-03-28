@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 /// https://github.com/flutterchina/flukit
 /// Email:angcyo@126.com
@@ -6,9 +6,10 @@ part of flutter3_widgets;
 /// @date 2023/11/05
 ///
 
+/// [RenderBox.size]
 typedef AfterLayoutCallback = void Function(
   BuildContext parentContext,
-  RenderObject? childRenderObject,
+  RenderBox childRenderBox,
 );
 
 /// 在小部件布局完成之后第一时间触发回调
@@ -25,48 +26,61 @@ class AfterLayout extends SingleChildRenderObjectWidget {
   /// If, on the other hand, the one frame delay is the desired effect,
   /// for example because this is an animation,
   /// consider scheduling the frame in a post-frame callback using SchedulerBinding.addPostFrameCallback or using an AnimationController to trigger the animation.
-  final AfterLayoutCallback callback;
+  final AfterLayoutCallback? afterLayoutAction;
+  final AfterLayoutCallback? postAfterLayoutAction;
 
   const AfterLayout({
     super.key,
     super.child,
-    required this.callback,
+    this.afterLayoutAction,
+    this.postAfterLayoutAction,
   });
 
   @override
   AfterLayoutRenderObject createRenderObject(BuildContext context) =>
-      AfterLayoutRenderObject(callback, context);
+      AfterLayoutRenderObject(
+          afterLayoutAction: afterLayoutAction,
+          postAfterLayoutAction: postAfterLayoutAction,
+          context: context);
 
   @override
   void updateRenderObject(
     BuildContext context,
-    covariant AfterLayoutRenderObject renderObject,
+    AfterLayoutRenderObject renderObject,
   ) {
-    renderObject.callback = callback;
-    renderObject.context = context;
+    renderObject
+      ..afterLayoutAction = afterLayoutAction
+      ..postAfterLayoutAction = postAfterLayoutAction
+      ..context = context;
   }
 }
 
 class AfterLayoutRenderObject extends RenderProxyBox {
-  late AfterLayoutCallback callback;
-  late BuildContext context;
+  AfterLayoutCallback? afterLayoutAction;
+  AfterLayoutCallback? postAfterLayoutAction;
+  BuildContext context;
 
-  AfterLayoutRenderObject(this.callback, this.context);
+  AfterLayoutRenderObject({
+    this.afterLayoutAction,
+    this.postAfterLayoutAction,
+    required this.context,
+  });
 
   @override
   void layout(Constraints constraints, {bool parentUsesSize = false}) {
     //debugger();
     super.layout(constraints, parentUsesSize: parentUsesSize);
-    callback(context, child);
   }
 
   @override
   void performLayout() {
-    //debugger();
     super.performLayout();
-    /*WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      callback(context);
-    });*/
+    afterLayoutAction?.call(context, this);
+    if (postAfterLayoutAction != null) {
+      postFrameCallback((timeStamp) {
+        postAfterLayoutAction?.call(context, this);
+      });
+    }
   }
 }
 
