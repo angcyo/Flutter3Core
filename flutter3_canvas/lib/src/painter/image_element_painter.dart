@@ -29,14 +29,19 @@ class ImageElementPainter extends ElementPainter {
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
-    paintImage?.let((it) {
+    onPaintingImage(canvas, paintMeta);
+    super.onPaintingSelf(canvas, paintMeta);
+  }
+
+  @property
+  void onPaintingImage(Canvas canvas, PaintMeta paintMeta) {
+    paintImage?.let((image) {
       canvas.withMatrix(
         paintProperty?.operateMatrix,
         () {
-          canvas.drawImage(it, Offset.zero, paint);
+          canvas.drawImage(image, Offset.zero, paint);
         },
       );
     });
-    super.onPaintingSelf(canvas, paintMeta);
   }
 }
