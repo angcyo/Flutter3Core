@@ -6,16 +6,7 @@ part of '../../flutter3_canvas.dart';
 ///
 class ImageElementPainter extends ElementPainter {
   /// 当前绘制的图片
-  UiImage? _paintImage;
-
-  /// 当前绘制的图片
-  UiImage? get paintImage => _paintImage;
-
-  set paintImage(UiImage? image) {
-    _paintImage = image;
-    paintProperty?.width = image?.width.toDouble() ?? 0;
-    paintProperty?.height = image?.height.toDouble() ?? 0;
-  }
+  UiImage? paintImage;
 
   ImageElementPainter() {
     debug = false;
@@ -24,9 +15,16 @@ class ImageElementPainter extends ElementPainter {
   @property
   void initFromImage(UiImage? image) {
     paintImage = image;
-    paintProperty = PaintProperty()
-      ..width = image?.width.toDouble() ?? 0
-      ..height = image?.height.toDouble() ?? 0;
+    if (paintProperty == null) {
+      paintProperty = PaintProperty()
+        ..width = image?.width.toDouble() ?? 0
+        ..height = image?.height.toDouble() ?? 0;
+    } else {
+      paintProperty?.let((it) {
+        it.width = image?.width.toDouble() ?? 0;
+        it.height = image?.height.toDouble() ?? 0;
+      });
+    }
   }
 
   @override

@@ -1,4 +1,4 @@
-part of flutter3_vector;
+part of '../flutter3_vector.dart';
 
 ///
 /// Email:angcyo@126.com

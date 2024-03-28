@@ -22,7 +22,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       : null;
 
   /// 选中的元素, 如果是单元素, 则返回选中的元素, 否则返回[ElementSelectComponent]
+  /// 没有选中元素时, 返回null
   ElementPainter? get selectedElement {
+    if (!isSelectedElement) {
+      return null;
+    }
     final elementSelectComponent = canvasDelegate.canvasElementManager
         .canvasElementControlManager.elementSelectComponent;
     if (elementSelectComponent.children?.length == 1) {
@@ -127,10 +131,17 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @supportUndo
   @api
   void addElement(
-    ElementPainter element, {
+    ElementPainter? element, {
     bool selected = false,
     UndoType undoType = UndoType.normal,
   }) {
+    if (element == null) {
+      assert(() {
+        l.w('无效的操作');
+        return true;
+      }());
+      return;
+    }
     addElementList(element.ofList(), selected: selected, undoType: undoType);
   }
 
@@ -145,6 +156,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     UndoType undoType = UndoType.normal,
   }) {
     if (list == null || isNullOrEmpty(list)) {
+      assert(() {
+        l.w('无效的操作');
+        return true;
+      }());
       return;
     }
 
