@@ -7,8 +7,8 @@ part of '../flutter3_basics.dart';
 ///
 /// [ansicolor: ^2.0.2](https://pub.dev/packages/ansicolor) 控制台颜色设置
 /// ```
-/// '\x1B[48;5;${color}m'; //背景色 [0~255]
-/// '\x1B[38;5;${color}m'; //前景色
+/// '\x1B[48;5;${color}m'; //背景色 [0~255] 1:红色 21:蓝色 76:绿色 92:紫色 124:红色
+/// '\x1B[38;5;${color}m'; //前景色 [0~255]
 /// debugPrint('${_bg(229)}${_fg(0)}[flutter_animate] $message');
 /// ```
 ///
