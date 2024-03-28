@@ -14,6 +14,7 @@ typedef ItemTileWrapBuilder = Widget Function(
 );
 
 /// 标识当前的元素, 不是[Sliver]布局
+/// [RScrollView.ensureSliver]
 mixin NotSliverTile {}
 
 /// [RScrollView] 的子项

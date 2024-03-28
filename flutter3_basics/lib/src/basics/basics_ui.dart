@@ -18,9 +18,11 @@ void scheduleFrame() {
 /// [postCallback]
 /// [postDelayCallback]
 /// [delayCallback]
-void postFrameCallback(FrameCallback callback) {
+void postFrameCallback(FrameCallback callback,
+    [String debugLabel = 'postFrameCallback']) {
   WidgetsFlutterBinding.ensureInitialized();
-  WidgetsBinding.instance.addPostFrameCallback(callback);
+  WidgetsBinding.instance
+      .addPostFrameCallback(callback, debugLabel: debugLabel);
 }
 
 /// 如果正在布局阶段, 则立即安排一帧, 否则立即执行回调
@@ -28,7 +30,7 @@ void postFrameCallbackIfNeed(FrameCallback callback) {
   WidgetsFlutterBinding.ensureInitialized();
   var schedulerPhase = WidgetsBinding.instance.schedulerPhase;
   if (schedulerPhase == SchedulerPhase.persistentCallbacks) {
-    WidgetsBinding.instance.addPostFrameCallback(callback);
+    postFrameCallback(callback);
   } else {
     callback(Duration(milliseconds: nowTime()));
   }
