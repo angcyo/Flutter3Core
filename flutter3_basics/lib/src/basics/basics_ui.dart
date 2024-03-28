@@ -1068,9 +1068,11 @@ extension WidgetEx on Widget {
 
   /// `typedef PopInvokedCallback = void Function(bool didPop);`
   /// [willPop]
+  /// [canPop] 当前的路由是否可以弹出
+  /// [onPopInvoked] 当路由想要弹出时调用: didPop=true 路由已经弹出; didPop=false 路由没有弹出.
   Widget popScope([
+    bool canPop = false,
     PopInvokedCallback? onPopInvoked,
-    bool canPop = true,
   ]) {
     return PopScope(
       canPop: canPop,

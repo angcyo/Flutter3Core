@@ -4,7 +4,7 @@ part of '../../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/30
 ///
-/// 混入一个[RScrollView]的页面, 支持刷新/加载更多等基础功能的页面
+/// 混入一个[RScrollView]的页面, 支持`刷新/加载更多`等基础功能的页面
 /// [RScrollView]
 /// [AbsScrollPage]
 /// [RScrollPage]

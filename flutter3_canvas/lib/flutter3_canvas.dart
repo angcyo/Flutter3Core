@@ -2,7 +2,6 @@ library flutter3_canvas;
 
 import 'dart:developer';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -18,6 +17,7 @@ part 'src/canvas.dart';
 part 'src/canvas_delegate.dart';
 part 'src/canvas_listener.dart';
 part 'src/component/canvas_bounds_event_component.dart';
+part 'src/component/canvas_element_widget.dart';
 part 'src/component/component.dart';
 part 'src/component/control_limit.dart';
 part 'src/core/canvas_element_control_manager.dart';

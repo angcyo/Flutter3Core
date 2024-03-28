@@ -24,6 +24,13 @@ class ElementPainter extends IPainter
     }
   }
 
+  /// 获取元素[paintProperty]的边界
+  Rect? get elementsBounds {
+    return paintProperty?.getBounds(canvasDelegate?.canvasElementManager
+            .canvasElementControlManager.enableResetElementAngle ==
+        true);
+  }
+
   /// 更新当前元素的边界到指定位置
   /// 只修改[PaintProperty.left].[PaintProperty.top].[PaintProperty.scaleX].[PaintProperty.scaleY]
   @api

@@ -311,6 +311,8 @@ extension CanvasEx on Canvas {
     EdgeInsets? dstPadding,
     Color? tintColor,
     ui.ColorFilter? colorFilter,
+    BoxFit? fit,
+    Alignment alignment = Alignment.center,
   }) {
     //debugger();
     colorFilter ??= tintColor?.toColorFilter();
@@ -319,20 +321,30 @@ extension CanvasEx on Canvas {
       return;
     }
     final targetSize = src.size;
-    withSave(() {
+
+    if (fit != null) {
+      final fitSize = applyBoxFit(fit, targetSize, dst.size);
+      final Rect destinationRect = alignment.inscribe(fitSize.destination, dst);
+      dst = destinationRect;
       //debugger();
-      final drawLeft = dst.left + (dstPadding?.left ?? 0);
-      final drawTop = dst.top + (dstPadding?.top ?? 0);
-      final drawWidth = dst.width - (dstPadding?.horizontal ?? 0);
-      final drawHeight = dst.height - (dstPadding?.vertical ?? 0);
+    }
 
-      //平移到目标
-      translate(drawLeft - src.left, drawTop - src.top);
-      final sx = drawWidth / targetSize.width;
-      final sy = drawHeight / targetSize.height;
-      //缩放到目标大小
-      scale(sx, sy);
+    final drawLeft = dst.left + (dstPadding?.left ?? 0);
+    final drawTop = dst.top + (dstPadding?.top ?? 0);
+    final drawWidth = dst.width - (dstPadding?.horizontal ?? 0);
+    final drawHeight = dst.height - (dstPadding?.vertical ?? 0);
 
+    //平移到目标
+    final translateMatrix = Matrix4.identity()
+      ..translate(drawLeft - src.left, drawTop - src.top);
+
+    final sx = drawWidth / targetSize.width;
+    final sy = drawHeight / targetSize.height;
+    //缩放到目标大小
+    final scaleMatrix = Matrix4.identity()
+      ..scaleBy(sx: sx, sy: sy, anchor: src.topLeft);
+
+    withMatrix(translateMatrix * scaleMatrix, () {
       //着色
       if (colorFilter != null) {
         saveLayer(null, Paint()..colorFilter = colorFilter);
