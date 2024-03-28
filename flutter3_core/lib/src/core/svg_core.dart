@@ -28,11 +28,7 @@ SvgPicture loadAssetSvgWidget(
       width: width,
       height: height,
       fit: fit,
-      placeholderBuilder: placeholderBuilder ??
-          (context) => LoadingWrapWidget(
-                width: width,
-                height: height,
-              ),
+      placeholderBuilder: placeholderBuilder,
     );
 
 SvgPicture loadHttpSvgWidget(

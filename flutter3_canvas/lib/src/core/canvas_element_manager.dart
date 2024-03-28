@@ -127,12 +127,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 添加元素
   /// [element] 要添加的元素
-  /// [selected] 是否选中
+  /// [selected] 是否选中对应元素
+  /// [showRect] 是否显示元素的边界
   @supportUndo
   @api
   void addElement(
     ElementPainter? element, {
     bool selected = false,
+    bool showRect = false,
     UndoType undoType = UndoType.normal,
   }) {
     if (element == null) {
@@ -142,7 +144,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }());
       return;
     }
-    addElementList(element.ofList(), selected: selected, undoType: undoType);
+    addElementList(
+      element.ofList(),
+      selected: selected,
+      showRect: showRect,
+      undoType: undoType,
+    );
   }
 
   /// 添加一组元素
@@ -153,6 +160,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void addElementList(
     List<ElementPainter>? list, {
     bool selected = false,
+    bool showRect = false,
     UndoType undoType = UndoType.normal,
   }) {
     if (list == null || isNullOrEmpty(list)) {
@@ -173,6 +181,15 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (selected) {
       resetSelectElement(list);
+      if (showRect) {
+        canvasDelegate.showRect(
+            elementPainter: canvasElementControlManager.elementSelectComponent);
+      }
+    } else if (showRect) {
+      ElementGroupPainter painter = ElementGroupPainter();
+      painter.resetChildren(
+          list, canvasElementControlManager.enableResetElementAngle);
+      canvasDelegate.showRect(elementPainter: painter);
     }
 
     if (undoType == UndoType.normal) {

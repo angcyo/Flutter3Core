@@ -154,11 +154,32 @@ extension PathEx on Path {
     }
   }
 
-  /// 将路径平移到0,0的位置
-  Path moveToZero() {
+  /// 将路径平移到0,0的位置 并且指定缩放到的大小
+  /// [size].[width].[height] 指定的大小
+  @dp
+  Path moveToZero({
+    @dp Size? size,
+    @dp double? width,
+    @dp double? height,
+  }) {
     final bounds = getExactBounds();
-    return transformPath(
-        Matrix4.translationValues(-bounds.left, -bounds.top, 0));
+    final translate = Matrix4.identity();
+    translate.translate(-bounds.left, -bounds.top);
+
+    width ??= size?.width;
+    height ??= size?.height;
+
+    if (width == null && height == null) {
+      return transformPath(translate);
+    }
+
+    final scale = createScaleMatrix(
+      sx: (width ?? bounds.width) / bounds.width,
+      sy: (height ?? bounds.height) / bounds.height,
+      anchor: bounds.topLeft,
+    );
+
+    return transformPath(translate * scale);
   }
 }
 
