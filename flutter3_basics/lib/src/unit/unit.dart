@@ -200,7 +200,8 @@ class PixelUnit extends IUnit {
   double toUnit(num value) => value.toDouble();
 
   @override
-  double getAxisGap(int index, double scale) => 10;
+  double getAxisGap(int index, double scale) =>
+      baseAxisGap(index, scale, 20.toDpFromPx());
 }
 
 @dp
@@ -300,7 +301,8 @@ class PtUnit extends IUnit {
   double toUnit(num value) => value / dpi / INCHES_PER_PT;
 
   @override
-  double getAxisGap(int index, double scale) => 10;
+  double getAxisGap(int index, double scale) =>
+      baseAxisGap(index, scale, 5.toDpFromPx(this));
 }
 
 @inch
@@ -472,6 +474,8 @@ extension UnitNumEx on num {
     );
   }
 
+  //---
+
   /// 将指定单位[unit](默认是像素单位)的值[value]转换成毫米单位的值
   @mm
   double toMmFromPx([@unit IUnit unit = IUnit.px]) {
@@ -483,13 +487,29 @@ extension UnitNumEx on num {
     return IUnit.mm.toUnit(toPixel(unit));
   }
 
+  ///[toMmFrom]
+  ///[toDpFrom]
   @mm
+  double toMmFrom(@unit IUnit unit) {
+    return IUnit.mm.toUnit(toPixel(unit));
+  }
+
+  //---
+
+  @dp
   double toDpFromMm([@unit IUnit unit = IUnit.mm]) {
     return IUnit.dp.toUnit(toPixel(unit));
   }
 
-  @mm
+  @dp
   double toDpFromPx([@unit IUnit unit = IUnit.px]) {
+    return IUnit.dp.toUnit(toPixel(unit));
+  }
+
+  ///[toMmFrom]
+  ///[toDpFrom]
+  @dp
+  double toDpFrom(@unit IUnit unit) {
     return IUnit.dp.toUnit(toPixel(unit));
   }
 }

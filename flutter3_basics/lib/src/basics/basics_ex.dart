@@ -1034,7 +1034,7 @@ extension IntEx on int {
   bool have(int flag) => (this & flag) == flag;
 
   /// 添加一个标志位
-  int add(int flag) => this | flag;
+  int add(int flag, [bool add = true]) => add ? this | flag : remove(flag);
 
   /// 移除一个标志位
   int remove(int flag) => this & ~flag;

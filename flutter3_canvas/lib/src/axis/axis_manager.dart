@@ -6,10 +6,10 @@ part of '../../flutter3_canvas.dart';
 /// 坐标轴管理, 负责坐标轴/坐标网格的绘制以及计算
 class AxisManager extends IPainter {
   /// 绘制坐标轴
-  static const int drawAxis = 0X01;
+  static const int sDrawAxis = 0X01;
 
   /// 绘制坐标网格
-  static const int drawGrid = drawAxis << 1;
+  static const int sDrawGrid = sDrawAxis << 1;
 
   final CanvasPaintManager paintManager;
 
@@ -45,7 +45,7 @@ class AxisManager extends IPainter {
   IUnit axisUnit = IUnit.dp;
 
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
-  int drawType = drawAxis | drawGrid;
+  int drawType = sDrawAxis | sDrawGrid;
 
   /// 主刻度的画笔
   Paint primaryPaint = Paint()..style = PaintingStyle.stroke;
@@ -59,6 +59,17 @@ class AxisManager extends IPainter {
   /// 选中元素大小提示块绘制的画笔
   Paint elementBoundsPaint = Paint()..style = PaintingStyle.fill;
 
+  /// 是否绘制网格
+  bool get showGrid => drawType.have(sDrawGrid);
+
+  set showGrid(bool value) {
+    drawType = drawType.add(sDrawGrid, value);
+    paintManager.canvasDelegate.refresh();
+  }
+
+  /// 是否绘制坐标轴上的单位
+  bool get showAxisUnitSuffix => isDebug;
+
   AxisManager(this.paintManager);
 
   /// 调用此方法,更新坐标轴数据
@@ -68,7 +79,7 @@ class AxisManager extends IPainter {
     yData.clear();
 
     //debugger();
-    if (drawType.have(drawAxis) || drawType.have(drawGrid)) {
+    if (drawType.have(sDrawAxis) || drawType.have(sDrawGrid)) {
     } else {
       return;
     }
@@ -170,7 +181,7 @@ class AxisManager extends IPainter {
         paintManager.canvasDelegate.canvasStyle.axisNormalWidth;
 
     //绘制坐标刻度
-    if (drawType.have(drawAxis)) {
+    if (drawType.have(sDrawAxis)) {
       // x
       canvas.withClipRect(isDebug ? null : xAxisBounds, () {
         paintSelectElementWidthSize(canvas, paintMeta);
@@ -197,7 +208,7 @@ class AxisManager extends IPainter {
     }
 
     // 绘制坐标网格
-    if (drawType.have(drawGrid)) {
+    if (drawType.have(sDrawGrid)) {
       canvas.withClipRect(canvasBounds, () {
         for (var axisData in xData) {
           final paint = axisData.axisType.have(IUnit.axisTypePrimary)
@@ -310,7 +321,10 @@ class AxisManager extends IPainter {
         // 绘制Label
         TextPainter(
             text: TextSpan(
-                text: axisUnit.formatFromDp(axisData.sceneValue),
+                text: axisUnit.formatFromDp(
+                  axisData.sceneValue,
+                  showSuffix: showAxisUnitSuffix,
+                ),
                 style: TextStyle(
                   color: paintManager.canvasDelegate.canvasStyle.axisLabelColor,
                   fontSize:
@@ -353,7 +367,10 @@ class AxisManager extends IPainter {
         canvas.withRotate(-90, () {
           TextPainter(
               text: TextSpan(
-                  text: axisUnit.formatFromDp(axisData.sceneValue),
+                  text: axisUnit.formatFromDp(
+                    axisData.sceneValue,
+                    showSuffix: showAxisUnitSuffix,
+                  ),
                   style: TextStyle(
                     color:
                         paintManager.canvasDelegate.canvasStyle.axisLabelColor,
