@@ -124,6 +124,9 @@ abstract class IUnit {
 
   //region ---坐标轴---
 
+  /// 根据缩放比例, 计算坐标轴上的刻度间隔
+  /// [scale] 缩放比例
+  /// [baseGap] 1:1时的刻度间隔
   @dp
   double baseAxisGap(int index, double scale, @dp double baseGap) {
     if (scale >= 4) {
