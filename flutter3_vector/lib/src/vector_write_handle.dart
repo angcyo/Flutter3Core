@@ -7,30 +7,49 @@ part of '../flutter3_vector.dart';
 ///
 
 const _kSvgHeader = '<?xml version="1.0" encoding="UTF-8"?>'
-    '<!-- Created with LaserPecker Design Space (https://www.laserpecker.net/pages/software) -->';
+    '<!-- Created with LaserPecker Design Space (https://www.laserpecker.net/pages/software) -->\n';
 
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
 String _wrapSvgXml(Rect bounds, void Function(StringBuffer) action) {
   StringBuffer buffer = StringBuffer();
   buffer.write(_kSvgHeader);
   buffer.write('<svg xmlns="http://www.w3.org/2000/svg" ');
+  buffer.write('xmlns:acy="https://www.github.com/angcyo" ');
   buffer.write(
       'viewBox="${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}" ');
   buffer.write(
       'width="${bounds.width.toMmFromDp()}mm" height="${bounds.height.toMmFromDp()}mm" ');
-  buffer.write('by:author="angcyo" by:version="1">');
+  buffer.write('acy:author="angcyo" acy:version="1">');
   action(buffer);
   buffer.write('</svg>');
   return buffer.toString();
 }
 
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
-void _wrapSvgPath(StringBuffer? buffer, String? svgPath) {
+void _wrapSvgPath(
+  StringBuffer? buffer,
+  String? svgPath, {
+  bool fill = false,
+  Color fillColor = Colors.black,
+  bool stroke = true,
+  Color strokeColor = Colors.black,
+  @dp double strokeWidth = 1,
+}) {
   if (isNil(svgPath)) {
     return;
   }
-  buffer?.write(
-      '<path d="$svgPath" fill="none" fill-rule="evenodd" stroke="black" stroke-width="1" />');
+  buffer?.write('<path d="$svgPath" ');
+  if (fill) {
+    buffer?.write('fill="${fillColor.toHex(a: false)}" ');
+  } else {
+    buffer?.write('fill="none" ');
+  }
+  buffer?.write('fill-rule="evenodd" ');
+  if (stroke) {
+    buffer?.write('stroke="${strokeColor.toHex(a: false)}" ');
+    buffer?.write('stroke-width="$strokeWidth" ');
+  }
+  buffer?.write('/>');
 }
 
 mixin VectorWriteMixin {
