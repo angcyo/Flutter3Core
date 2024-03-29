@@ -22,6 +22,10 @@ part of '../flutter3_basics.dart';
 ///
 typedef LPrint = void Function(String log);
 
+consoleLog(dynamic msg, [int col = 92]) {
+  debugPrint('\x1B[38;5;${col}m$msg');
+}
+
 class L {
   /// 私有的命名构造函数, 外部无法调用
   L._();
