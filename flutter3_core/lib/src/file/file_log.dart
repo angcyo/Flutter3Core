@@ -27,6 +27,7 @@ extension LogEx on Object {
     bool append = false,
     bool limitLength = false,
     bool? wrapLog = false,
+    bool useCacheFolder = false,
   }) async {
     fileName ??= nowTimeFileName();
     return appendToFile(
@@ -34,6 +35,7 @@ extension LogEx on Object {
       folder: folder,
       append: append,
       limitLength: limitLength,
+      useCacheFolder: useCacheFolder,
       wrapLog: wrapLog,
     );
   }
@@ -49,9 +51,10 @@ extension LogEx on Object {
     String? folder,
     bool append = true,
     bool limitLength = true,
+    bool useCacheFolder = false,
     bool? wrapLog,
   }) async {
-    final filePath = await fileName.filePathOf(folder);
+    final filePath = await fileName.filePathOf(folder, useCacheFolder);
     FileMode mode = append ? FileMode.append : FileMode.write;
     if (append && limitLength && (filePath.length > kMaxLogLength)) {
       mode = FileMode.write;

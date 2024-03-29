@@ -457,8 +457,11 @@ extension PathStringEx on String {
   /// 获取一个对应平台的文件路径
   /// [this] 文件名
   /// [subFolder] 子文件夹, 不包含根目录
-  Future<String> filePathOf([String? subFolder]) async {
-    var folderPath = await fileFolderPath();
+  /// [useCacheFolder] 是否使用缓存文件夹
+  Future<String> filePathOf(
+      [String? subFolder, bool useCacheFolder = false]) async {
+    var folderPath =
+        useCacheFolder ? await cacheFolderPath() : await fileFolderPath();
     if (subFolder == null) {
       subFolder = folderPath;
     } else {
@@ -627,6 +630,7 @@ extension FilePathEx on String {
 
 /// 快速获取一个文件类型的文件夹路径
 /// [filePath]
+/// [cacheFolderPath]
 Future<String> fileFolderPath([
   String? part1,
   String? part2,
