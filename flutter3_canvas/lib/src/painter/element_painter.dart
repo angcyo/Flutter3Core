@@ -213,17 +213,20 @@ class ElementPainter extends IPainter
   }
 
   /// 判断当前元素是否与指定的点相交
+  /// [inflate] 未命中时, 是否膨胀
   /// [isVisibleInCanvasBox]
-  bool hitTest(
-      {@sceneCoordinate Offset? point,
-      @sceneCoordinate Rect? rect,
-      @sceneCoordinate Path? path}) {
+  bool hitTest({
+    @sceneCoordinate Offset? point,
+    @sceneCoordinate Rect? rect,
+    @sceneCoordinate Path? path,
+    bool inflate = true,
+  }) {
     if (point == null && rect == null && path == null) {
       return false;
     }
     path ??= Path()..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
     bool hit = _paintProperty?.paintPath.intersects(path) ?? false;
-    if (!hit) {
+    if (!hit && inflate) {
       //没有命中时, 膨胀一下, 再判断一次
       final bounds = _paintProperty?.paintPath.getExactBounds();
       if (bounds != null) {
