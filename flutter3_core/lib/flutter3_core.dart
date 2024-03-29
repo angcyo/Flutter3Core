@@ -2,7 +2,6 @@ library flutter3_core;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -56,11 +55,12 @@ String get currentDirPath => p.current;
 Future<void> initFlutter3Core() async {
   // 写入文件fn
   GlobalConfig.def.writeFileFn = (fileName, folder, content) async {
-    return "$content".appendToFile(
+    return (await "$content".appendToFile(
       fileName,
       folder: folder,
       limitLength: fileName.endsWith(kLogExtension),
-    );
+    ))
+        .path;
   };
 
   // 文件日志

@@ -396,15 +396,17 @@ extension ColorEx on Color {
   }
 
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
-  String toHex({bool leadingHashSign = true}) => '${leadingHashSign ? '#' : ''}'
-      '${alpha.toRadixString(16).padLeft(2, '0')}'
+  /// [a] 是否包含透明通道
+  String toHex({bool leadingHashSign = true, bool a = true}) =>
+      '${leadingHashSign ? '#' : ''}'
+      '${a ? alpha.toRadixString(16).padLeft(2, '0') : ""}'
       '${red.toRadixString(16).padLeft(2, '0')}'
       '${green.toRadixString(16).padLeft(2, '0')}'
       '${blue.toRadixString(16).padLeft(2, '0')}';
 
   /// 返回#ff00ff00
-  String toHexColor([bool leadingHashSign = true]) =>
-      toHex(leadingHashSign: leadingHashSign);
+  String toHexColor([bool leadingHashSign = true, bool a = true]) =>
+      toHex(leadingHashSign: leadingHashSign, a: a);
 
   /// 判断当前颜色是否是暗色
   bool get isDark =>
@@ -470,6 +472,9 @@ extension StringEx on String {
 
   /// 重复字符串多少次[repeat]
   String operator *(int repeat) => List.filled(repeat, this).join();
+
+  /// 接上一个字符
+  String connect([String? str]) => "$this${str ?? ""}";
 
   /// 字符串转换成int
   int toInt({int? radix}) => int.parse(this, radix: radix);
@@ -669,7 +674,7 @@ extension StringEx on String {
   /// 将`8000`转换成`8.0.0.0`
   String toVersionString() => split("").join(".");
 
-  //endregion 功能
+//endregion 功能
 }
 
 //endregion String 扩展

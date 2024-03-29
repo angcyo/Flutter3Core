@@ -79,6 +79,25 @@ extension ShareImageEx on UiImage {
   }
 }
 
+extension ShareFileEx on File {
+  /// 分享文件
+  Future<ShareResult> share({
+    String? subject,
+    String? text,
+    String? mimeType,
+    BuildContext? shareContext,
+    Rect? sharePositionOrigin,
+  }) async =>
+      path.shareFile(
+        otherFiles: null,
+        subject: subject,
+        text: text,
+        mimeType: mimeType ?? 'application/octet-stream',
+        shareContext: shareContext,
+        sharePositionOrigin: sharePositionOrigin,
+      );
+}
+
 extension ShareStringEx on String {
   /// 分享文本
   Future<void> share({
@@ -109,15 +128,20 @@ extension ShareStringEx on String {
   }
 
   /// 分享文件
+  /// [mimeType] 文件类型
   Future<ShareResult> shareFile({
     List<String>? otherFiles,
     String? subject,
     String? text,
+    String? mimeType,
     BuildContext? shareContext,
     Rect? sharePositionOrigin,
   }) async {
     return Share.shareXFiles(
-      [XFile(this), ...?otherFiles?.map((e) => XFile(e))],
+      [
+        XFile(this, mimeType: mimeType),
+        ...?otherFiles?.map((e) => XFile(e, mimeType: mimeType))
+      ],
       subject: subject,
       text: text,
       sharePositionOrigin:

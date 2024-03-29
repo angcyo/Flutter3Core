@@ -17,38 +17,65 @@ const kLogPathName = "log";
 
 extension LogEx on Object {
   /// 包裹一下日志信息
-  String wrapLog([String? prefix]) => "\n${prefix ?? nowTimeString()}\n$this\n";
+  String wrapLogString([String? prefix]) =>
+      "\n${prefix ?? nowTimeString()}\n$this\n";
+
+  /// 写入到文件, 返回对应的文件
+  Future<File> writeToFile({
+    String? fileName,
+    String? folder,
+    bool append = false,
+    bool limitLength = false,
+    bool? wrapLog = false,
+  }) async {
+    fileName ??= nowTimeFileName();
+    return appendToFile(
+      fileName,
+      folder: folder,
+      append: append,
+      limitLength: limitLength,
+      wrapLog: wrapLog,
+    );
+  }
 
   /// 写入内容到文件, 支持限制文件的长度
   /// [fileName] 日志文件名
   /// [folder] 上层文件夹
   /// [limitLength] 是否限制日志文件的最大长度
+  /// [wrapLog] 是否包裹一下日志信息, null:自动根据后缀[kLogExtension]判断
   /// @return 返回文件路径
-  Future<String> appendToFile(
+  Future<File> appendToFile(
     String fileName, {
     String? folder,
     bool append = true,
     bool limitLength = true,
+    bool? wrapLog,
   }) async {
     final filePath = await fileName.filePathOf(folder);
     FileMode mode = append ? FileMode.append : FileMode.write;
     if (append && limitLength && (filePath.length > kMaxLogLength)) {
       mode = FileMode.write;
     }
+    final file = filePath.file();
     if (this is UiImage) {
-      filePath.file().writeImage(this as UiImage?);
+      file.writeImage(this as UiImage?);
+    } else if (this is Uint8List) {
+      file.writeAsBytes(this as Uint8List, mode: mode);
     } else {
-      filePath.file().writeString(
-            fileName.endsWith(kLogExtension) ? wrapLog() : "$this",
-            mode: mode,
-          );
+      file.writeString(
+        (wrapLog == true ||
+                (wrapLog == null && fileName.endsWith(kLogExtension)))
+            ? wrapLogString()
+            : "$this",
+        mode: mode,
+      );
     }
-    return filePath;
+    return file;
   }
 
   /// 写入内容到日志文件
   /// @return 返回文件路径
-  Future<String> appendToLog({
+  Future<File> appendToLog({
     String fileName = kLogFileName,
     String? folder = kLogPathName,
     bool limitLength = true,

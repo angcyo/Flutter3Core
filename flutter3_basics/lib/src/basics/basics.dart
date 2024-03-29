@@ -19,6 +19,13 @@ String nowTimeString([String? newPattern = "yyyy-MM-dd HH:mm:ss.SSS"]) =>
     //DateTime.now().toIso8601String().replaceAll("T", " ");
     DateTime.now().format(newPattern);
 
+/// 格式化时间`2023-11-04_10-13-40-083` 的文件名
+/// [suffix] 文件名后缀
+/// [newPattern] 时间格式
+String nowTimeFileName(
+        [String? suffix, String? newPattern = "yyyy-MM-dd_HH-mm-ss-SSS"]) =>
+    nowTimeString(newPattern).connect(suffix);
+
 /// [min] ~ [max] 之间的随机数
 int nextInt(int max, {int min = 0}) => min + random.nextInt(max);
 
