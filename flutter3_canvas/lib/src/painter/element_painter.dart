@@ -145,6 +145,9 @@ class ElementPainter extends IPainter
 
   //region ---paint---
 
+  ///[onPaintingSelfBefore]
+  ///[onPaintingSelf]
+  @entryPoint
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     paintMeta.withPaintMatrix(canvas, () {
@@ -163,6 +166,7 @@ class ElementPainter extends IPainter
   }
 
   /// 重写此方法, 实现在画布内绘制自己
+  /// [painting]
   @overridePoint
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //paint.color = Colors.black;
@@ -174,7 +178,6 @@ class ElementPainter extends IPainter
               true) {
         //debugger();
         //绘制元素旋转的矩形边界
-        paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
         paintPropertyRect(canvas, paintMeta, paint);
 
         /*assert(() {
@@ -187,9 +190,16 @@ class ElementPainter extends IPainter
     }
   }
 
-  /// 绘制元素的旋转矩形
+  /// 绘制元素的旋转矩形, 用来提示元素的矩形+旋转信息
+  @property
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
+      final oldColor = paint.color;
+      final oldStyle = paint.style;
+
+      paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
+      paint.style = PaintingStyle.stroke;
+
       //debugger();
       final rect = it.paintScaleRect;
       /*final c1 = rect.center;
@@ -210,6 +220,9 @@ class ElementPainter extends IPainter
       canvas.drawRect(rect, paint);
 
       canvas.drawRect(it.paintBounds, paint);*/
+
+      paint.color = oldColor;
+      paint.style = oldStyle;
     });
   }
 

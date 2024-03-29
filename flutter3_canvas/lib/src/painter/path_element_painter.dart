@@ -34,12 +34,6 @@ class PathElementPainter extends ElementPainter {
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
-    //debugger();
-    if (paintMeta.host is CanvasDelegate) {
-      paint.color = Colors.black;
-      paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;
-      //debugger();
-    }
     paintPath?.let((it) =>
         canvas.drawPath(it.transformPath(paintProperty?.operateMatrix), paint));
     if (paintPath == null) {

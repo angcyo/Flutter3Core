@@ -42,6 +42,7 @@ class PaintMeta {
 /// 绘制接口
 abstract class IPainter with Diagnosticable {
   /// 绘制入口
+  @entryPoint
   void painting(Canvas canvas, PaintMeta paintMeta);
 }
 
