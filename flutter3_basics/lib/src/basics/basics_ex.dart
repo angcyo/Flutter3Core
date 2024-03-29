@@ -691,6 +691,9 @@ extension RectEx on Rect {
         height,
       );
 
+  /// 转换成[Path]
+  Path toPath() => Path()..addRect(this);
+
   /// 转换成圆角矩形
   /// [RRect]
   RRect toRRect(double radius) =>
@@ -1076,7 +1079,13 @@ extension DoubleEx on double {
       (this - other).abs() < epsilon;
 
   /// 判断浮点数是否是一个有效的数值
+  /// `0/0`:Nan
+  /// `0/1`:1
+  /// `1/0`:Infinity
   bool get isValid => !isNaN && !isInfinite;
+
+  /// 确保浮点数是一个有效的数
+  double ensureValid([double def = 0]) => isValid ? this : def;
 }
 
 //endregion Num 扩展

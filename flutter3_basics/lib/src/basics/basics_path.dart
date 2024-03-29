@@ -8,9 +8,16 @@ part of '../../flutter3_basics.dart';
 /// https://github.com/dnfield/flutter_path_drawing/blob/master/lib/src/dash_path.dart
 ///
 
-/// 路径采样误差
+/// 路径采样间隙, 每隔多少距离, 采样一次路径上的点
 @dp
 const double kPathAcceptableError = 0.025; //
+
+/// 矢量拟合公差
+/// 1.575dp = 0.25mm
+/// 0.1dp 精度可以
+/// 0.5dp 也还可以
+@mm
+const double kVectorTolerance = 0.02; //
 
 /// [Matrix4Ex.mapRect]
 extension PathEx on Path {
@@ -111,7 +118,7 @@ extension PathEx on Path {
       double angle,
       bool isClosed,
     ) action, [
-    @dp double step = kPathAcceptableError,
+    @dp double? step,
   ]) {
     final metrics = computeMetrics();
     int contourIndex = 0;
@@ -145,7 +152,7 @@ extension PathEx on Path {
         if (distance >= length) {
           break;
         }
-        distance += step;
+        distance += (step ?? kPathAcceptableError);
         if (distance > length) {
           distance = length; //处理最后一个点
         }
@@ -156,30 +163,17 @@ extension PathEx on Path {
 
   /// 将路径平移到0,0的位置 并且指定缩放到的大小
   /// [size].[width].[height] 指定的大小
+  /// [PathEx.moveToZero]
+  /// [ListPathEx.moveToZero]
   @dp
   Path moveToZero({
     @dp Size? size,
     @dp double? width,
     @dp double? height,
   }) {
-    final bounds = getExactBounds();
-    final translate = Matrix4.identity();
-    translate.translate(-bounds.left, -bounds.top);
-
-    width ??= size?.width;
-    height ??= size?.height;
-
-    if (width == null && height == null) {
-      return transformPath(translate);
-    }
-
-    final scale = createScaleMatrix(
-      sx: (width ?? bounds.width) / bounds.width,
-      sy: (height ?? bounds.height) / bounds.height,
-      anchor: bounds.topLeft,
-    );
-
-    return transformPath(translate * scale);
+    return ofList<Path>()
+        .moveToZero(size: size, width: width, height: height)
+        .first;
   }
 }
 
@@ -199,11 +193,40 @@ extension ListPathEx on List<Path> {
   }
 
   /// 将所有路径平移到0,0的位置
-  List<Path> moveToZero() {
+  /// [PathEx.moveToZero]
+  /// [ListPathEx.moveToZero]
+  List<Path> moveToZero({
+    @dp Size? size,
+    @dp double? width,
+    @dp double? height,
+  }) {
     final bounds = getExactPathBounds();
-    final matrix = Matrix4.translationValues(-bounds.left, -bounds.top, 0);
+    final translate = Matrix4.identity();
+    translate.translate(-bounds.left, -bounds.top);
+
+    width ??= size?.width.ensureValid();
+    height ??= size?.height.ensureValid();
+
+    if (width == null && height == null) {
+      return map((path) {
+        return path.transformPath(translate);
+      }).toList();
+    }
+
+    final boundsWidth = bounds.width.ensureValid();
+    final boundsHeight = bounds.height.ensureValid();
+
+    width ??= boundsWidth;
+    height ??= boundsHeight;
+
+    final scale = createScaleMatrix(
+      sx: boundsWidth == 0 ? 1 : width / boundsWidth,
+      sy: boundsHeight == 0 ? 1 : height / boundsHeight,
+      anchor: bounds.topLeft,
+    );
+
     return map((path) {
-      return path.transformPath(matrix);
+      return path.transformPath(translate * scale);
     }).toList();
   }
 }

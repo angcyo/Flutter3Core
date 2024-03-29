@@ -1,17 +1,10 @@
-part of flutter3_vector;
+part of '../flutter3_vector.dart';
 
 ///
 /// Email:angcyo@126.com
 /// @author angcyo
 /// @date 2024/02/29
 ///
-
-/// 公差
-/// 1.575 = 0.25mm
-/// 0.1 精度可以
-/// 0.5 也还可以
-@dp
-const double kVectorTolerance = 0.5; //
 
 mixin VectorWriteMixin {
   /// 当前点与上一个点之间的关系, 起点
@@ -31,7 +24,7 @@ mixin VectorWriteMixin {
   /// 值越小, 曲线误差越小, 返回的数据量越多;
   @configProperty
   @dp
-  double vectorTolerance = kVectorTolerance;
+  double vectorTolerance = kVectorTolerance.toDpFromMm();
 
   /// 圆心之间的距离小于这个值时, 认为是一个圆
   @dp
@@ -289,6 +282,9 @@ class VectorPoint {
 
 /// 用来输出成svg的path路径数据, 或者svg xml文档
 class SvgWriteHandle with VectorWriteMixin {
+  /// 是否是闭合路径, 影响z的输出
+  bool isPathClose = false;
+
   @override
   void onWritePoint(VectorPoint point) {
     initStringBuffer();
@@ -306,7 +302,9 @@ class SvgWriteHandle with VectorWriteMixin {
 
   @override
   void onContourEnd() {
-    stringBuffer?.write('z');
+    if (isPathClose) {
+      stringBuffer?.write('z');
+    }
   }
 }
 
@@ -384,14 +382,22 @@ class GCodeWriteHandle with VectorWriteMixin {
 
 extension VectorPathEx on Path {
   /// 转换成gcode字符串数据
-  String? toGCodeString() {
+  /// [toSvgPathString]
+  String? toGCodeString({
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
     final handle = GCodeWriteHandle();
     handle.enableVectorArc = false;
+    handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
     handle.initStringBuffer().write('G90\nG21\n');
     //handle.vectorTolerance = 10;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      /*l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
-          'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');*/
+      assert(() {
+        l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
+            'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
+        return true;
+      }());
       handle.appendPoint(
         posIndex,
         ratio,
@@ -399,18 +405,27 @@ extension VectorPathEx on Path {
         position,
         angle,
       );
-    }, kPathAcceptableError);
+    }, pathStep);
     return handle.getVectorString();
   }
 
   /// 转换成svg路径字符串数据
-  String? toSvgPathString() {
+  /// [pathStep] 路径采样步长, 默认[kPathAcceptableError]
+  /// [tolerance] 公差, 默认[kVectorTolerance]
+  String? toSvgPathString({
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
     final handle = SvgWriteHandle();
     handle.enableVectorArc = false;
-    //handle.vectorTolerance = 10;
+    handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
-          'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
+      assert(() {
+        l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
+            'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
+        return true;
+      }());
+      handle.isPathClose = isClose;
       handle.appendPoint(
         posIndex,
         ratio,
@@ -418,17 +433,24 @@ extension VectorPathEx on Path {
         position,
         angle,
       );
-    }, 0.3 /*kPathAcceptableError*/);
+    }, pathStep);
     return handle.getVectorString();
   }
 
-  String? toPathPointJsonString() {
+  ///[toSvgPathString]
+  String? toPathPointJsonString({
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
     final handle = JsonWriteHandle();
     handle.enableVectorArc = false;
-    //handle.vectorTolerance = 0.02;
+    handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
-          'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
+      assert(() {
+        l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
+            'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
+        return true;
+      }());
       handle.appendPoint(
         posIndex,
         ratio,
@@ -436,7 +458,7 @@ extension VectorPathEx on Path {
         position,
         angle,
       );
-    }, 0.02 /*kPathAcceptableError*/);
+    }, pathStep);
     return handle.getVectorString();
   }
 }
