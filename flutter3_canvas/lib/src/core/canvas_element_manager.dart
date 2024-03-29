@@ -16,7 +16,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //---
 
-  /// 选择元素的组件
+  /// [ElementSelectComponent]
+  ElementSelectComponent get selectComponent =>
+      canvasElementControlManager.elementSelectComponent;
+
+  /// 选择元素的组件, 未选中元素时, 返回null
   ElementSelectComponent? get elementSelectComponent => isSelectedElement
       ? canvasElementControlManager.elementSelectComponent
       : null;
