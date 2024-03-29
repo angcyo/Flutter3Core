@@ -556,12 +556,13 @@ extension VectorPathEx on Path {
 
   /// 转换成gcode字符串数据
   /// [toSvgPathString]
+  /// [VectorListPathEx.toGCodeString]
   String? toGCodeString({
     @dp double? pathStep,
     @mm double? tolerance,
   }) {
     final handle = GCodeWriteHandle();
-    handle.initStringBuffer().write('G90\nG21\n');
+    handle.initStringBuffer().write('G90\nG21\nM8\nG1F12000\n');
     return toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
   }
 
@@ -671,7 +672,7 @@ extension VectorListPathEx on List<Path> {
     @mm double? tolerance,
   }) {
     final buffer = StringBuffer();
-    buffer.write('G90\nG21\n');
+    buffer.write('G90\nG21\nM8\nG1F12000\n');
     final handle = GCodeWriteHandle();
     for (final path in this) {
       handle.stringBuffer = StringBuffer();
