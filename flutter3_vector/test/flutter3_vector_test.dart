@@ -12,11 +12,12 @@ void main() {
   //print(1.toDpFromMm());
   //print(0.25.toDpFromMm());
 
-  //testPath();
+  WidgetsFlutterBinding.ensureInitialized();
+  testPath();
+
   //testCircle();
 
-  WidgetsFlutterBinding.ensureInitialized();
-  testLine();
+  //testLine();
   assert(true);
 }
 
@@ -27,12 +28,17 @@ void testPath() {
   final arcPath = Path()
     ..addArc(const Rect.fromLTWH(0, 0, 100, 20), 0.toRadians, -360.toRadians);
 
-  final testPath = arcPath;
-  print(testPath.toSvgPathString());
+  final rectPath = Path()..addRect(const Rect.fromLTWH(0, 0, 100, 100));
+
+  final testPath = rectPath;
+  consoleLog(testPath.toSvgPathString());
   print(lineSeparator);
-  print(testPath.toGCodeString());
+  consoleLog(testPath.toGCodeString());
   print(lineSeparator);
-  //print(testPath.toPathPointJsonString());
+  consoleLog(testPath.toPathPointJsonString());
+
+  print(lineSeparator);
+  consoleLog(testPath.toPointList());
 }
 
 void testCircle() {

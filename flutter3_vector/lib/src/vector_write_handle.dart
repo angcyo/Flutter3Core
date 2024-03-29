@@ -54,16 +54,19 @@ void _wrapSvgPath(
 
 mixin VectorWriteMixin {
   /// 当前点与上一个点之间的关系, 起点
-  static const int pointTypeStart = 0;
+  static const int sPointTypeStart = 0;
 
   /// 当前点和上一个点在一条直线上
-  static const int pointTypeLine = 1;
+  static const int sPointTypeLine = 1;
 
   /// 当前点和上一个点在一条圆弧上
-  static const int pointTypeArc = 2;
+  static const int sPointTypeArc = 2;
 
   /// flag: 标识位, 表示当前的点和上一个点是同一类型的点
-  static const int pointTypeSame = 0x10000;
+  static const int sPointTypeSame = 0x10000;
+
+  /// 保留的小数点位数
+  int digits = 6;
 
   /// 矢量公差, 2点之间的凸起或凹陷小于这个值时, 认为是一条直线
   /// 值越大曲线误差越大, 返回的数据量越少;
@@ -87,7 +90,14 @@ mixin VectorWriteMixin {
 
   /// 关键点位收集, 点位数据只能用来拟合直线, 不能拟合曲线
   @output
-  List<List<Offset>>? contourPointList;
+  List<List<Point>>? get contourPointList => pointWriteHandle?.pointList;
+
+  /// 配置此项后才会收集点位数据[contourPointList]
+  PointWriteHandle? pointWriteHandle;
+
+  /// [transformPoint]
+  @configProperty
+  Offset Function(Offset point)? transformPointAction;
 
   ///追加一个点位信息, 拟合成直线或曲线
   ///[posIndex] 当前点的索引, 在轮廓上的第几个点
@@ -106,7 +116,7 @@ mixin VectorWriteMixin {
     if (_pointList.isEmpty || _lastContourIndex != contourIndex) {
       //第一个点 or 新的轮廓开始
       handleAndClearPointList();
-      newPoint.type = pointTypeStart;
+      newPoint.type = sPointTypeStart;
       _lastContourIndex = contourIndex;
       _pointList.add(newPoint);
       onContourStart();
@@ -115,7 +125,7 @@ mixin VectorWriteMixin {
       return;
     }
     _lastContourIndex = contourIndex;
-    newPoint.type = pointTypeLine;
+    newPoint.type = sPointTypeLine;
     if (_pointList.length == 1) {
       //之前只有1个点
       _pointList.add(newPoint);
@@ -138,7 +148,7 @@ mixin VectorWriteMixin {
         }
       } else if (isPointInCircle(
           beforePoint.circleCenter!, newPoint, startPoint, beforePoint)) {
-        newPoint.type = pointTypeArc;
+        newPoint.type = sPointTypeArc;
         newPoint.sweepFlag = (angle == null || angle > 0) ? 0 : 1;
 
         /*if (newPoint.angle != null &&
@@ -183,7 +193,7 @@ mixin VectorWriteMixin {
           _pointList.add(newPoint);
         }
       } else {
-        if (!beforePoint.type.have(pointTypeArc) &&
+        if (!beforePoint.type.have(sPointTypeArc) &&
             isPointInLine(newPoint, startPoint)) {
           _pointList.removeLastIfNotEmpty();
           _pointList.add(newPoint);
@@ -218,22 +228,32 @@ mixin VectorWriteMixin {
 
   /// 一个轮廓的开始
   @overridePoint
-  void onContourStart() {}
+  @mustCallSuper
+  void onContourStart() {
+    pointWriteHandle?.onContourStart();
+  }
 
   /// 一个轮廓的结束
   @overridePoint
-  void onContourEnd() {}
+  @mustCallSuper
+  void onContourEnd() {
+    pointWriteHandle?.onContourEnd();
+  }
 
   /// 需要处理的点位
   /// 有可能是一个新的点
   /// 有可能是line
   /// 有可能是arc
   @overridePoint
-  void onWritePoint(VectorPoint point) {}
+  @mustCallSuper
+  void onWritePoint(VectorPoint point) {
+    pointWriteHandle?.onWritePoint(point);
+  }
 
   /// 写入一个点位时可以用来转换坐标
   @overridePoint
-  Offset transformPoint(Offset point) => point;
+  Offset transformPoint(Offset point) =>
+      transformPointAction?.call(point) ?? point;
 
   /// 输出矢量字符串, 比如svg path数据, 或者 svg xml文档, 或者 gcode 文本字符串
   @api
@@ -320,10 +340,29 @@ class VectorPoint {
   VectorPoint({
     required this.position,
     this.angle,
-    this.type = VectorWriteMixin.pointTypeStart,
+    this.type = VectorWriteMixin.sPointTypeStart,
     this.circleStart,
     this.circleCenter,
   });
+
+  /// copy
+  VectorPoint copyWith({
+    Offset? position,
+    double? angle,
+    int? type,
+    Offset? circleStart,
+    Offset? circleCenter,
+    int? largeArcFlag,
+    int? sweepFlag,
+  }) {
+    return VectorPoint(
+      position: position ?? this.position,
+      angle: angle ?? this.angle,
+      type: type ?? this.type,
+      circleStart: circleStart ?? this.circleStart,
+      circleCenter: circleCenter ?? this.circleCenter,
+    );
+  }
 }
 
 /// 用来输出成svg的path路径数据, 或者svg xml文档
@@ -335,32 +374,77 @@ class SvgWriteHandle with VectorWriteMixin {
   void onWritePoint(VectorPoint point) {
     initStringBuffer();
     final position = transformPoint(point.position);
-    if (point.type == VectorWriteMixin.pointTypeStart) {
-      stringBuffer?.write('M${position.dx},${position.dy}');
-    } else if (point.type.have(VectorWriteMixin.pointTypeLine)) {
-      stringBuffer?.write(' L${position.dx},${position.dy}');
-    } else if (point.type.have(VectorWriteMixin.pointTypeArc)) {
-      final c = distance(position, point.circleCenter!);
-      stringBuffer?.write(
-          ' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} ${position.dx},${position.dy}');
+    var x = position.dx.toDigits(digits: digits);
+    var y = position.dy.toDigits(digits: digits);
+    if (point.type == VectorWriteMixin.sPointTypeStart) {
+      stringBuffer?.write('M$x,$y');
+    } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
+      stringBuffer?.write(' L$x,$y');
+    } else if (point.type.have(VectorWriteMixin.sPointTypeArc)) {
+      final c =
+          distance(position, point.circleCenter!).toDigits(digits: digits);
+      stringBuffer
+          ?.write(' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} $x,$y');
     }
+    super.onWritePoint(point.copyWith(position: position));
   }
 
   @override
   void onContourEnd() {
+    super.onContourEnd();
     if (isPathClose) {
       stringBuffer?.write('z');
     }
   }
 }
 
-/// 输出json字符串
+/// 输出二维点位数组
+class PointWriteHandle with VectorWriteMixin {
+  List<List<Point>> pointResultBuilder = [];
+  List<Point>? pointBuilder;
+
+  /// 获取点位数据
+  List<List<Point>> get pointList => pointResultBuilder;
+
+  @override
+  void onContourStart() {
+    super.onContourStart();
+    pointBuilder = [];
+  }
+
+  @override
+  void onWritePoint(VectorPoint point) {
+    final position = transformPoint(point.position);
+    if (pointBuilder != null) {
+      var x = position.dx;
+      var y = position.dy;
+      var a = point.angle;
+      pointBuilder?.add(Point(x, y, a));
+    }
+    super.onWritePoint(point.copyWith(position: position));
+  }
+
+  @override
+  void onContourEnd() {
+    super.onContourEnd();
+    if (pointBuilder != null) {
+      pointResultBuilder.add(pointBuilder!);
+      pointBuilder = null;
+    }
+  }
+
+  @override
+  String? getVectorString() => pointResultBuilder.toJsonString(null);
+}
+
+/// 输出json字符串, 二维数组
 class JsonWriteHandle with VectorWriteMixin {
   List<List<Map<String, dynamic>>> jsonResultBuilder = [];
   List<Map<String, dynamic>>? jsonBuilder;
 
   @override
   void onContourStart() {
+    super.onContourStart();
     jsonBuilder = [];
   }
 
@@ -368,16 +452,21 @@ class JsonWriteHandle with VectorWriteMixin {
   void onWritePoint(VectorPoint point) {
     final position = transformPoint(point.position);
     if (jsonBuilder != null) {
+      var x = position.dx.toDigits(digits: digits);
+      var y = position.dy.toDigits(digits: digits);
+      var a = point.angle?.toDigits(digits: digits);
       jsonBuilder!.add({
-        "x": position.dx,
-        "y": position.dy,
-        "angle": point.angle,
+        "x": x,
+        "y": y,
+        "a": a, //弧度
       });
     }
+    super.onWritePoint(point.copyWith(position: position));
   }
 
   @override
   void onContourEnd() {
+    super.onContourEnd();
     if (jsonBuilder != null) {
       jsonResultBuilder.add(jsonBuilder!);
       jsonBuilder = null;
@@ -385,19 +474,33 @@ class JsonWriteHandle with VectorWriteMixin {
   }
 
   @override
-  String? getVectorString() => jsonResultBuilder.toJsonString();
+  String? getVectorString() => jsonResultBuilder.toJsonString(null);
 }
 
 /// 用来输出成gcode文本字符串
 class GCodeWriteHandle with VectorWriteMixin {
+  /// 默认GCode使用毫米单位, 入参的数据需要时dp单位
+  /// [IUnit.mm]
+  IUnit? unit = IUnit.mm;
+
+  @mm
+  @override
+  Offset transformPoint(@dp Offset point) {
+    final x = unit?.toUnitFromDp(point.dx) ?? point.dx;
+    final y = unit?.toUnitFromDp(point.dy) ?? point.dy;
+    return Offset(x, y);
+  }
+
   @override
   void onContourStart() {
+    super.onContourStart();
     initStringBuffer();
     stringBuffer?.writeln('M03S255');
   }
 
   @override
   void onContourEnd() {
+    super.onContourEnd();
     stringBuffer?.writeln('M05S0');
   }
 
@@ -405,11 +508,13 @@ class GCodeWriteHandle with VectorWriteMixin {
   void onWritePoint(VectorPoint point) {
     initStringBuffer();
     final position = transformPoint(point.position);
-    if (point.type == VectorWriteMixin.pointTypeStart) {
-      stringBuffer?.writeln('G0X${position.dx}Y${position.dy}');
-    } else if (point.type.have(VectorWriteMixin.pointTypeLine)) {
-      stringBuffer?.writeln('G1X${position.dx}Y${position.dy}');
-    } else if (point.type.have(VectorWriteMixin.pointTypeArc)) {
+    var x = position.dx.toDigits(digits: digits);
+    var y = position.dy.toDigits(digits: digits);
+    if (point.type == VectorWriteMixin.sPointTypeStart) {
+      stringBuffer?.writeln('G0X${x}Y$y');
+    } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
+      stringBuffer?.writeln('G1X${x}Y$y');
+    } else if (point.type.have(VectorWriteMixin.sPointTypeArc)) {
       if (point.sweepFlag == 1) {
         //顺时针
         stringBuffer?.write("G3");
@@ -420,13 +525,35 @@ class GCodeWriteHandle with VectorWriteMixin {
       final ij = transformPoint(Offset(
           point.circleCenter!.dx - point.circleStart!.dx,
           point.circleCenter!.dy - point.circleStart!.dy));
-      stringBuffer?.write('X${position.dx}Y${position.dy}');
-      stringBuffer?.writeln('I${ij.dx}J${ij.dy}');
+      stringBuffer?.write('X${x}Y$y');
+      stringBuffer?.writeln(
+          'I${ij.dx.toDigits(digits: digits)}J${ij.dy.toDigits(digits: digits)}');
     }
+    super.onWritePoint(point.copyWith(position: position));
   }
 }
 
 extension VectorPathEx on Path {
+  /// 转换成矢量字符串数据
+  String? toVectorString(
+    VectorWriteMixin handle, {
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
+    handle.enableVectorArc = false;
+    handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
+    eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
+      handle.appendPoint(
+        posIndex,
+        ratio,
+        contourIndex,
+        position,
+        angle,
+      );
+    }, pathStep);
+    return handle.getVectorString();
+  }
+
   /// 转换成gcode字符串数据
   /// [toSvgPathString]
   String? toGCodeString({
@@ -434,54 +561,20 @@ extension VectorPathEx on Path {
     @mm double? tolerance,
   }) {
     final handle = GCodeWriteHandle();
-    handle.enableVectorArc = false;
-    handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
     handle.initStringBuffer().write('G90\nG21\n');
-    //handle.vectorTolerance = 10;
-    eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      /*assert(() {
-        l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
-            'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
-        return true;
-      }());*/
-      handle.appendPoint(
-        posIndex,
-        ratio,
-        contourIndex,
-        position,
-        angle,
-      );
-    }, pathStep);
-    return handle.getVectorString();
+    return toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
   }
 
   /// 转换成svg路径字符串数据
   /// [pathStep] 路径采样步长, 默认[kPathAcceptableError]
   /// [tolerance] 公差, 默认[kVectorTolerance]
+  /// `M0,0 L100,0 L100,100 L0,100 L0,0z`
   String? toSvgPathString({
     @dp double? pathStep,
     @mm double? tolerance,
   }) {
     final handle = SvgWriteHandle();
-    handle.enableVectorArc = false;
-    handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
-    eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      /*assert(() {
-        l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
-            'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
-        return true;
-      }());*/
-      //debugger();
-      handle.isPathClose = isClose;
-      handle.appendPoint(
-        posIndex,
-        ratio,
-        contourIndex,
-        position,
-        angle,
-      );
-    }, pathStep);
-    return handle.getVectorString();
+    return toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
   }
 
   /// 输出svg xml文件格式
@@ -500,29 +593,34 @@ extension VectorPathEx on Path {
     });
   }
 
-  ///[toSvgPathString]
+  ///[toSvgPathString], `a`是弧度
+  ///```
+  /// [[{"x":"0","y":"0","a":"0"},
+  /// {"x":"100","y":"0","a":"0"},
+  /// {"x":"100","y":"100","a":"-1.570796"},
+  /// {"x":"0","y":"100","a":"-3.141593"},
+  /// {"x":"0","y":"0","a":"1.570796"}]]
+  ///```
   String? toPathPointJsonString({
     @dp double? pathStep,
     @mm double? tolerance,
   }) {
     final handle = JsonWriteHandle();
-    handle.enableVectorArc = false;
-    handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
-    eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      /*assert(() {
-        l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
-            'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
-        return true;
-      }());*/
-      handle.appendPoint(
-        posIndex,
-        ratio,
-        contourIndex,
-        position,
-        angle,
-      );
-    }, pathStep);
-    return handle.getVectorString();
+    return toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
+  }
+
+  /// ```
+  /// [[Point{x:0.0, y:0.0 a:-0.0}, Point{x:100.0, y:0.0 a:-0.0},
+  /// Point{x:100.0, y:100.0 a:-1.5707963267948966}, Point{x:0.0, y:100.0 a:-3.141592653589793},
+  /// Point{x:0.0, y:0.0 a:1.5707963267948966}]]
+  /// ```
+  List<List<Point>> toPointList({
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
+    final handle = PointWriteHandle();
+    toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
+    return handle.pointList;
   }
 }
 
@@ -564,5 +662,25 @@ extension VectorListPathEx on List<Path> {
         }
       }
     });
+  }
+
+  /// 转换成gcode字符串数据
+  /// [VectorPathEx.toGCodeString]
+  String? toGCodeString({
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
+    final buffer = StringBuffer();
+    buffer.write('G90\nG21\n');
+    final handle = GCodeWriteHandle();
+    for (final path in this) {
+      handle.stringBuffer = StringBuffer();
+      final gcode =
+          path.toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
+      if (!isNil(gcode)) {
+        buffer.write(gcode);
+      }
+    }
+    return buffer.toString();
   }
 }
