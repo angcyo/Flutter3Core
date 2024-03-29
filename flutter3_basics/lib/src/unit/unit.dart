@@ -512,6 +512,26 @@ extension UnitNumEx on num {
   double toDpFrom(@unit IUnit unit) {
     return IUnit.dp.toUnit(toPixel(unit));
   }
+
+  //---
+
+  /// 将mm单位的值, 转换成指定单位[unit]的值
+  @unit
+  double toUnitFromMm(@unit IUnit? unit) {
+    if (unit == null || unit is MmUnit) {
+      return this + 0.0;
+    }
+    return unit.toUnit(toPixel(IUnit.mm));
+  }
+
+  /// 将指定单位[unit]的值, 转换成指定mm单位的值
+  @mm
+  double toMmFromUnit(@unit IUnit? unit) {
+    if (unit == null || unit is MmUnit) {
+      return this + 0.0;
+    }
+    return IUnit.mm.toUnit(toPixel(unit));
+  }
 }
 
 /// 单位转换扩展
