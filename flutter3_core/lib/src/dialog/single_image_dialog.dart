@@ -23,8 +23,12 @@ class SingleImageDialog extends StatelessWidget {
     final globalConfig = GlobalConfig.of(context);
     final Future<UiImage?>? body =
         content != null ? Future(() => content) : filePath?.toImageFromFile();
-    return body!
-        .toWidget((value) => value!.toImageWidget())
+    return body!.toWidget((image) => image!.toImageWidget().stackOf(isDebug
+            ? "${image.width}*${image.height}"
+                .text(textColor: Colors.white)
+                .paddingAll(kH)
+                .position(left: 0, top: 0)
+            : null))
         /*.scroll()*/
         /*.container(
           color: globalConfig.globalTheme.whiteBgColor,

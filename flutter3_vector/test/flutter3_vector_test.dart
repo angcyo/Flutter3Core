@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 
@@ -13,8 +12,12 @@ void main() {
   //print(1.toDpFromMm());
   //print(0.25.toDpFromMm());
 
-  testPath();
+  //testPath();
   //testCircle();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  testLine();
+  assert(true);
 }
 
 void testPath() {
@@ -38,4 +41,12 @@ void testCircle() {
   final c = Offset(50, 50);
   final cc = centerOfCircle(a, b, c);
   print(cc);
+}
+
+void testLine() {
+  Path path = Path()
+    ..moveTo(10, 10)
+    ..lineTo(100, 100);
+  path = path.moveToZero(width: 50);
+  print(path.toSvgPathString());
 }

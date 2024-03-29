@@ -392,7 +392,7 @@ class CheckButton extends StatelessWidget {
       mainAxisSize: mainAxisSize,
       mainAxisAlignment: MainAxisAlignment.start, //全部靠左布局
       crossAxisAlignment: crossAxisAlignment, //全部顶部对齐
-    )!;
+    );
   }
 }
 
@@ -493,6 +493,6 @@ class RadioButton extends StatelessWidget {
       mainAxisSize: mainAxisSize,
       mainAxisAlignment: MainAxisAlignment.start, //全部靠左布局
       crossAxisAlignment: crossAxisAlignment, //全部顶部对齐
-    )!;
+    );
   }
 }

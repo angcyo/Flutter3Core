@@ -161,7 +161,7 @@ extension PathEx on Path {
     }
   }
 
-  /// 将路径平移到0,0的位置 并且指定缩放到的大小
+  /// 将路径平移到0,0的位置 并且指定缩放到的大小, 返回新路径
   /// [size].[width].[height] 指定的大小
   /// [PathEx.moveToZero]
   /// [ListPathEx.moveToZero]
@@ -178,18 +178,34 @@ extension PathEx on Path {
 }
 
 extension ListPathEx on List<Path> {
+  /// 变换路径, 返回新的路径
+  List<Path> transformPath([Matrix4? matrix4]) {
+    if (matrix4 == null) {
+      return map((path) {
+        return ui.Path.from(path);
+      }).toList();
+    }
+    return map((path) {
+      return path.transform(matrix4.storage);
+    }).toList();
+  }
+
   /// 获取包含所有路径的边界
   @dp
   Rect getExactPathBounds([
     bool exact = true,
     double pathAcceptableError = kPathAcceptableError,
   ]) {
-    Rect rect = Rect.zero;
+    Rect? rect;
     for (final path in this) {
-      rect =
-          rect.expandToInclude(path.getExactBounds(exact, pathAcceptableError));
+      final bounds = path.getExactBounds(exact, pathAcceptableError);
+      if (rect == null) {
+        rect = bounds;
+      } else {
+        rect = rect.expandToInclude(bounds);
+      }
     }
-    return rect;
+    return rect ?? Rect.zero;
   }
 
   /// 将所有路径平移到0,0的位置
@@ -200,6 +216,7 @@ extension ListPathEx on List<Path> {
     @dp double? width,
     @dp double? height,
   }) {
+    //debugger();
     final bounds = getExactPathBounds();
     final translate = Matrix4.identity();
     translate.translate(-bounds.left, -bounds.top);
@@ -208,9 +225,7 @@ extension ListPathEx on List<Path> {
     height ??= size?.height.ensureValid();
 
     if (width == null && height == null) {
-      return map((path) {
-        return path.transformPath(translate);
-      }).toList();
+      return transformPath(translate);
     }
 
     final boundsWidth = bounds.width.ensureValid();
@@ -225,8 +240,6 @@ extension ListPathEx on List<Path> {
       anchor: bounds.topLeft,
     );
 
-    return map((path) {
-      return path.transformPath(translate * scale);
-    }).toList();
+    return transformPath(translate * scale);
   }
 }

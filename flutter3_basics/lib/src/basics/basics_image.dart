@@ -15,18 +15,18 @@ class ImageMeta {
   final Uint8List? bytes;
 
   /// 图片的像素数据
-  /// [ui.ImageByteFormat.rawRgba]
+  /// [UiImageByteFormat.rawRgba]
   final Uint8List? pixels;
 
   /// 图片像素的格式
-  final ui.ImageByteFormat pixelsFormat;
+  final UiImageByteFormat pixelsFormat;
 
   int get width => image.width;
 
   int get height => image.height;
 
   ImageMeta(this.image, this.bytes, this.pixels,
-      {this.pixelsFormat = ui.ImageByteFormat.rawRgba});
+      {this.pixelsFormat = UiImageByteFormat.rawRgba});
 }
 
 ///[MemoryImage]
@@ -117,7 +117,7 @@ extension ByteDataEx on ByteData {
   /// 转换成base64字符串图片, 带协议头
   /// [ImageStringEx.toImageFromBase64]
   String toBase64Image([
-    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+    UiImageByteFormat format = UiImageByteFormat.png,
   ]) =>
       bytes.toBase64Image(format);
 }
@@ -176,40 +176,40 @@ extension Uint8ListImageEx on Uint8List {
   /// 转换成base64字符串图片, 带协议头
   /// [ImageStringEx.toImageFromBase64]
   String toBase64Image([
-    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+    UiImageByteFormat format = UiImageByteFormat.png,
   ]) =>
-      'data:image/${format == ui.ImageByteFormat.png ? "png" : "jpeg"};base64,${base64Encode(this)}';
+      'data:image/${format == UiImageByteFormat.png ? "png" : "jpeg"};base64,${base64Encode(this)}';
 }
 
 extension ImageEx on ui.Image {
   /// 将图片转换成base64字符串图片, 带协议头
-  Future<String?> toBase64([
-    ui.ImageByteFormat format = ui.ImageByteFormat.png,
-  ]) async {
+  Future<String?> toBase64(
+      [UiImageByteFormat format = UiImageByteFormat.png]) async {
     final bytes = await toBytes(format);
     return bytes?.toBase64Image(format);
   }
 
-  /// 获取图片的字节数据
+  /// 获取图片的字节数据(非像素数据)
   /// [ImageByteFormat.rawRgba]
   /// [ImageByteFormat.png]
-  Future<Uint8List?> toBytes([
-    ui.ImageByteFormat format = ui.ImageByteFormat.png,
-  ]) async {
+  /// [toPixels]
+  Future<Uint8List?> toBytes(
+      [UiImageByteFormat format = UiImageByteFormat.png]) async {
     final ByteData? byteData = await toByteData(format: format);
     return byteData?.buffer.asUint8List();
   }
 
   /// 获取图片的颜色数据
   /// [Uint8ListImageEx.toImageFromPixels]
+  /// [toBytes]
   Future<Uint8List?> toPixels(
-          [ui.ImageByteFormat format = ui.ImageByteFormat.rawRgba]) =>
+          [UiImageByteFormat format = UiImageByteFormat.rawRgba]) =>
       toBytes(format);
 
   /// 保存图片到文件
   Future<File?> saveToFile(
     File? file, {
-    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+    UiImageByteFormat format = UiImageByteFormat.png,
   }) async {
     final Uint8List? bytes = await toBytes(format);
     if (bytes == null) {
@@ -251,7 +251,7 @@ extension ImageStringEx on String {
 
   /// [toImageFromFile]
   Future<ImageMeta> toImageMetaFromFile(
-      [ui.ImageByteFormat pixelsFormat = ui.ImageByteFormat.rawRgba]) async {
+      [UiImageByteFormat pixelsFormat = UiImageByteFormat.rawRgba]) async {
     final Uint8List bytes = await File(this).readAsBytes();
     final uiImage = await decodeImageFromList(bytes);
     final pixels = await uiImage.toPixels(pixelsFormat);
@@ -341,7 +341,7 @@ extension WidgetImageEx on Widget {
 
 extension ContextImageEx on BuildContext {
   /// [RenderObjectImageEx.captureImage]
-  Future<ui.Image?> captureImage() {
+  Future<ui.Image?> captureImage({double pixelRatio = 1.0}) {
     RenderObject? renderObject = findRenderObject();
     while (renderObject != null && !renderObject.isRepaintBoundary) {
       renderObject = renderObject.parent;
@@ -349,7 +349,7 @@ extension ContextImageEx on BuildContext {
     if (renderObject == null) {
       return Future.value(null);
     }
-    return renderObject.captureImage();
+    return renderObject.captureImage(pixelRatio: pixelRatio);
   }
 }
 
@@ -371,17 +371,26 @@ extension ElementImageEx on Element {
 extension RenderObjectImageEx on RenderObject {
   /// 获取元素的截图
   /// https://pub.dev/packages/image_gallery_saver
-  Future<ui.Image?> captureImage() async {
+  Future<ui.Image?> captureImage({double pixelRatio = 1.0}) async {
     //assert(!debugNeedsPaint);
-    final OffsetLayer? layer = this.layer as OffsetLayer?;
-    ui.Image? result =
-        await layer?.toImage(paintBounds, pixelRatio: devicePixelRatio);
-    if (result == null && this is RenderRepaintBoundary) {
-      final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
-      final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
-      return boundary.toImage(pixelRatio: devicePixelRatio);
+    try {
+      final OffsetLayer? layer = this.layer as OffsetLayer?;
+      //这里的[paintBounds]就是屏幕大小, 所以[pixelRatio]应该为1
+      //但是如果使用[size]那么[pixelRatio]应该为[devicePixelRatio]
+      ui.Image? result =
+          await layer?.toImage(paintBounds, pixelRatio: pixelRatio);
+      if (result == null && this is RenderRepaintBoundary) {
+        final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
+        final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
+        //因为[RenderRepaintBoundary]里面用的是[size]
+        //所以这里的[pixelRatio]应该为[devicePixelRatio]
+        return boundary.toImage(pixelRatio: devicePixelRatio);
+      }
+      return result;
+    } catch (e) {
+      l.e(e);
     }
-    return result;
+    return null;
   }
 }
 

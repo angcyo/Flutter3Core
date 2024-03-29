@@ -393,11 +393,11 @@ extension VectorPathEx on Path {
     handle.initStringBuffer().write('G90\nG21\n');
     //handle.vectorTolerance = 10;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      assert(() {
+      /*assert(() {
         l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
             'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
         return true;
-      }());
+      }());*/
       handle.appendPoint(
         posIndex,
         ratio,
@@ -420,11 +420,12 @@ extension VectorPathEx on Path {
     handle.enableVectorArc = false;
     handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      assert(() {
+      /*assert(() {
         l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
             'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
         return true;
-      }());
+      }());*/
+      //debugger();
       handle.isPathClose = isClose;
       handle.appendPoint(
         posIndex,
@@ -446,11 +447,11 @@ extension VectorPathEx on Path {
     handle.enableVectorArc = false;
     handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      assert(() {
+      /*assert(() {
         l.d('$isClose posIndex:$posIndex ratio:${ratio.toDigits()} contourIndex:$contourIndex '
             'position:$position angle:${angle.toDigits()} ${angle.toDegrees}°');
         return true;
-      }());
+      }());*/
       handle.appendPoint(
         posIndex,
         ratio,
@@ -460,5 +461,26 @@ extension VectorPathEx on Path {
       );
     }, pathStep);
     return handle.getVectorString();
+  }
+}
+
+extension VectorListPathEx on List<Path> {
+  /// [VectorPathEx.toSvgPathString]
+  String? toSvgPathString({
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
+    if (isNil(this)) {
+      return null;
+    }
+    final buffer = StringBuffer();
+    for (final path in this) {
+      final svgPath =
+          path.toSvgPathString(pathStep: pathStep, tolerance: tolerance);
+      if (!isNil(svgPath)) {
+        buffer.write(svgPath);
+      }
+    }
+    return buffer.toString();
   }
 }

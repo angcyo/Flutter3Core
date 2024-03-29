@@ -148,8 +148,18 @@ class ElementPainter extends IPainter
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     paintMeta.withPaintMatrix(canvas, () {
+      onPaintingSelfBefore(canvas, paintMeta);
       onPaintingSelf(canvas, paintMeta);
     });
+  }
+
+  /// [onPaintingSelf]绘制之前调用, 用来重新设置画笔样式等
+  @property
+  void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
+    paint
+      ..style = PaintingStyle.stroke
+      ..color = Colors.black
+      ..strokeWidth = 1.toDpFromPx();
   }
 
   /// 重写此方法, 实现在画布内绘制自己
@@ -409,7 +419,74 @@ class ElementPainter extends IPainter
     return null;
   }
 
-//endregion ---canvas---
+  //endregion ---canvas---
+
+  //region ---output---
+
+  /// 元素操作后对应的图片数据
+  /// [ImageEx.toBase64]
+  UiImage? get elementOutputImage {
+    final bounds = elementsBounds;
+    if (bounds == null) {
+      return null;
+    }
+    final image = drawImageSync(bounds.size, (canvas) {
+      canvas.drawInRect(Offset.zero & bounds.size, bounds, () {
+        painting(canvas, PaintMeta(host: rasterizeElement));
+      });
+    });
+    /*assert(() {
+      image.toBase64().get((value, error) {
+        final base64 = value;
+        debugger();
+      });
+      return true;
+    }());*/
+    return image;
+  }
+
+  /// 获取元素的输出[Path]
+  /// [VectorPathEx.toSvgPathString]
+  Path? get elementOutputPath {
+    if (this is PathElementPainter) {
+      return (this as PathElementPainter).operatePath;
+    }
+    return null;
+  }
+
+  /// 获取元素的所有输出[Path]
+  List<Path> get elementOutputPathList {
+    final result = <Path>[];
+    if (this is ElementGroupPainter) {
+      (this as ElementGroupPainter).children?.forEach((element) {
+        result.addAll(element.elementOutputPathList);
+      });
+    } else if (this is PathElementPainter) {
+      (this as PathElementPainter).operatePath?.let((it) => result.add(it));
+    }
+    return result;
+  }
+
+  /// 元素操作后对应的路径数据
+  /// [getElementOutputPath]
+  /// [getElementOutputPathList]
+  Path? getElementOutputPath(Path? inputPath) {
+    if (inputPath == null) {
+      return null;
+    }
+    return inputPath.transformPath(paintProperty?.operateMatrix);
+  }
+
+  /// [getElementOutputPath]
+  /// [getElementOutputPathList]
+  List<Path>? getElementOutputPathList(List<Path>? inputPathList) {
+    if (isNil(inputPathList)) {
+      return null;
+    }
+    return inputPathList?.transformPath(paintProperty?.operateMatrix);
+  }
+
+  //endregion ---output---
 
   @override
   String toStringShort() =>

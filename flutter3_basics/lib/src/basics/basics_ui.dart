@@ -1351,7 +1351,7 @@ extension WidgetEx on Widget {
       );
 
   /// 将[this]和[other] 使用[Column]包裹
-  Widget? columnOf(
+  Widget columnOf(
     Widget? other, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize,
@@ -1360,20 +1360,22 @@ extension WidgetEx on Widget {
     VerticalDirection? verticalDirection,
     TextBaseline? textBaseline,
   }) =>
-      [
-        this,
-        if (other != null) other,
-      ].column(
-        mainAxisAlignment: mainAxisAlignment,
-        mainAxisSize: mainAxisSize,
-        crossAxisAlignment: crossAxisAlignment,
-        textDirection: textDirection,
-        verticalDirection: verticalDirection,
-        textBaseline: textBaseline,
-      );
+      other == null
+          ? this
+          : [
+              this,
+              other,
+            ].column(
+              mainAxisAlignment: mainAxisAlignment,
+              mainAxisSize: mainAxisSize,
+              crossAxisAlignment: crossAxisAlignment,
+              textDirection: textDirection,
+              verticalDirection: verticalDirection,
+              textBaseline: textBaseline,
+            )!;
 
   /// 将[this]和[other] 使用[Row]包裹
-  Widget? rowOf(
+  Widget rowOf(
     Widget? other, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize,
@@ -1382,35 +1384,39 @@ extension WidgetEx on Widget {
     VerticalDirection? verticalDirection,
     TextBaseline? textBaseline,
   }) =>
-      [
-        this,
-        if (other != null) other,
-      ].row(
-        mainAxisAlignment: mainAxisAlignment,
-        mainAxisSize: mainAxisSize,
-        crossAxisAlignment: crossAxisAlignment,
-        textDirection: textDirection,
-        verticalDirection: verticalDirection,
-        textBaseline: textBaseline,
-      );
+      other == null
+          ? this
+          : [
+              this,
+              other,
+            ].row(
+              mainAxisAlignment: mainAxisAlignment,
+              mainAxisSize: mainAxisSize,
+              crossAxisAlignment: crossAxisAlignment,
+              textDirection: textDirection,
+              verticalDirection: verticalDirection,
+              textBaseline: textBaseline,
+            )!;
 
   /// 将[this]和[other] 使用[Stack]包裹
-  Widget? stackOf(
+  Widget stackOf(
     Widget? other, {
     AlignmentGeometry alignment = AlignmentDirectional.center,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
     Clip clipBehavior = Clip.hardEdge,
   }) =>
-      [
-        this,
-        if (other != null) other,
-      ].stack(
-        alignment: alignment,
-        textDirection: textDirection,
-        fit: fit,
-        clipBehavior: clipBehavior,
-      );
+      other == null
+          ? this
+          : [
+              this,
+              other,
+            ].stack(
+              alignment: alignment,
+              textDirection: textDirection,
+              fit: fit,
+              clipBehavior: clipBehavior,
+            )!;
 
   /// 简单的滚动小组件[SingleChildScrollView]
   /// [WidgetListEx.scroll]

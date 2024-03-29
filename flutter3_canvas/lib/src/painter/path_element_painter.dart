@@ -5,16 +5,21 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/22
 /// 矢量路径绘制
 class PathElementPainter extends ElementPainter {
-  /// 当前绘制的路径
+  /// 当前绘制的路径, 请主动调用
+  /// [PathEx.moveToZero]
   @dp
   Path? paintPath;
+
+  /// 获取操作后的图片
+  @dp
+  Path? get operatePath => getElementOutputPath(paintPath);
 
   PathElementPainter();
 
   @property
   void initFromPath(Path? path) {
-    paintPath = path;
-    final bounds = path?.getExactBounds() ?? Rect.zero;
+    paintPath = path?.moveToZero();
+    final bounds = paintPath?.getExactBounds() ?? Rect.zero;
     if (paintProperty == null) {
       paintProperty = PaintProperty()
         ..width = bounds.width
@@ -29,6 +34,7 @@ class PathElementPainter extends ElementPainter {
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
+    //debugger();
     if (paintMeta.host is CanvasDelegate) {
       paint.color = Colors.black;
       paint.strokeWidth = 1.toDpFromPx() / paintMeta.canvasScale;

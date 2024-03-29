@@ -64,9 +64,11 @@ Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
 }
 
 /// 使用[Canvas]绘制图片
-ui.Image drawImageSync(Size size, CanvasAction callback) {
+/// [double.round] 四舍五入
+/// [double.ceil] 向上取整
+ui.Image drawImageSync(@dp Size size, CanvasAction callback) {
   final ui.Picture picture = drawPicture(size, callback);
-  return picture.toImageSync(size.width.ceil(), size.height.ceil());
+  return picture.toImageSync(size.width.round(), size.height.round());
 }
 
 extension StringPaintEx on String {

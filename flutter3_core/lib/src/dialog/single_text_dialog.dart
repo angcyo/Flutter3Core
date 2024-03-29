@@ -30,7 +30,7 @@ class SingleTextDialog extends StatelessWidget {
 
     try {
       final body = content ?? filePath?.file().readStringSync();
-      result = body?.text().paddingAll(kX) ??
+      result = body?.text(selectable: true).paddingAll(kX) ??
           globalConfig.emptyPlaceholderBuilder.call(context, null);
     } catch (e) {
       result = globalConfig.errorPlaceholderBuilder.call(context, e);

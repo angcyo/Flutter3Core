@@ -8,6 +8,9 @@ class ImageElementPainter extends ElementPainter {
   /// 当前绘制的图片
   UiImage? paintImage;
 
+  /// 获取操作后的图片
+  UiImage? get operateImage => elementOutputImage;
+
   ImageElementPainter() {
     debug = false;
   }

@@ -86,7 +86,7 @@ class IconStateWidget extends StatelessWidget {
               color: enable ? color : disableColor, blendMode: BlendMode.srcIn)
           //.click(onTap, enable)
           .stackOf(tip?.align(tipAlignment),
-              alignment: AlignmentDirectional.center)!
+              alignment: AlignmentDirectional.center)
           .onTouchDetector(onTap: onTap, enableClick: enable),
     ).tooltip(tooltip);
   }

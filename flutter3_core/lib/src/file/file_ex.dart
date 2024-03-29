@@ -11,13 +11,15 @@ part of '../../flutter3_core.dart';
 Future<UiImage?> saveScreenCapture([
   String? filePath,
   BuildContext? context,
+  double pixelRatio = 1.0,
 ]) async {
   final path =
       (filePath ?? await cacheFilePath("ScreenCapture${nowTime()}.png"));
-  var image = await (context ?? GlobalConfig.def.globalContext)?.captureImage();
+  var image = await (context ?? GlobalConfig.def.globalContext)
+      ?.captureImage(pixelRatio: pixelRatio);
   image?.saveToFile(path.file());
   assert(() {
-    l.d('屏幕截图保存至->$path');
+    l.d('屏幕截图保存至[${image?.width}*${image?.height}:$pixelRatio]->$path');
     return true;
   }());
   return image;

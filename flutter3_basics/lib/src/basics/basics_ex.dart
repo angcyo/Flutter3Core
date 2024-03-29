@@ -127,7 +127,10 @@ extension ObjectEx on Object {
   /// https://pub.dev/packages/substring_highlight
   /// https://pub.dev/packages/highlightable
   /// https://pub.dev/packages/search_highlight_text
-  Text text({
+  ///
+  /// [selectable] 是否可以选择文本
+  /// [SelectableText]
+  Widget text({
     TextStyle? style,
     double? fontSize,
     Color? textColor,
@@ -144,6 +147,7 @@ extension ObjectEx on Object {
     String wordDelimiters = ' .,;?!<>[]~`@#\$%^&*()+-=|\/_',
     // default is to match substrings (hence the package name!)
     bool words = false,
+    bool selectable = false,
   }) {
     //使用正则匹配高亮文本
     if (!isNullOrEmpty(highlight) || !isNullOrEmpty(highlightList)) {
@@ -242,6 +246,16 @@ extension ObjectEx on Object {
         }
       }
 
+      if (selectable) {
+        return SelectableText.rich(
+          TextSpan(children: children, style: highlightTextStyle),
+          style: style,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          /*softWrap: softWrap,
+          overflow: overflow,*/
+        );
+      }
       return Text.rich(
         TextSpan(children: children, style: highlightTextStyle),
         style: style,
@@ -249,6 +263,24 @@ extension ObjectEx on Object {
         maxLines: maxLines,
         softWrap: softWrap,
         overflow: overflow,
+      );
+    }
+
+    if (selectable) {
+      return SelectableText(
+        "$this",
+        style: style ??
+            (fontSize == null && textColor == null && fontWeight == null
+                ? null
+                : TextStyle(
+                    fontSize: fontSize,
+                    color: textColor,
+                    fontWeight: fontWeight,
+                  )),
+        textAlign: textAlign,
+        maxLines: maxLines,
+        /*softWrap: softWrap,
+        overflow: overflow,*/
       );
     }
 
@@ -260,7 +292,8 @@ extension ObjectEx on Object {
               : TextStyle(
                   fontSize: fontSize,
                   color: textColor,
-                  fontWeight: fontWeight)),
+                  fontWeight: fontWeight,
+                )),
       textAlign: textAlign,
       maxLines: maxLines,
       softWrap: softWrap,
@@ -636,7 +669,7 @@ extension StringEx on String {
   /// 将`8000`转换成`8.0.0.0`
   String toVersionString() => split("").join(".");
 
-//endregion 功能
+  //endregion 功能
 }
 
 //endregion String 扩展
