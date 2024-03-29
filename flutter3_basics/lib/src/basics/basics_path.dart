@@ -132,10 +132,11 @@ extension PathEx on Path {
         final tangent = metric.getTangentForOffset(distance);
         if (tangent != null) {
           final position = tangent.position;
-          final angle = tangent.angle;
+          double angle = tangent.angle;
           final ratio = distance / length;
           if (angle == 0) {
             //水平方向
+            angle = 0;//清除`-0.0`的情况
           } else if (angle > 0) {
             //切线指向Y轴下方
           } else {
