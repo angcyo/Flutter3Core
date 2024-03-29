@@ -30,10 +30,12 @@ extension PathEx on Path {
   /// 获取精度更高的路径边界
   /// [exact] 是否获取精确计算的边界
   /// [pathAcceptableError] 路径采样误差
+  /// [PathEx.getExactBounds]
+  /// [ListPathEx.getExactBounds]
   @dp
   Rect getExactBounds([
     bool exact = true,
-    double pathAcceptableError = kPathAcceptableError,
+    double? pathAcceptableError,
   ]) {
     if (!exact) {
       return getBounds();
@@ -191,10 +193,12 @@ extension ListPathEx on List<Path> {
   }
 
   /// 获取包含所有路径的边界
+  /// [PathEx.getExactBounds]
+  /// [ListPathEx.getExactBounds]
   @dp
-  Rect getExactPathBounds([
+  Rect getExactBounds([
     bool exact = true,
-    double pathAcceptableError = kPathAcceptableError,
+    double? pathAcceptableError,
   ]) {
     Rect? rect;
     for (final path in this) {
@@ -217,7 +221,7 @@ extension ListPathEx on List<Path> {
     @dp double? height,
   }) {
     //debugger();
-    final bounds = getExactPathBounds();
+    final bounds = getExactBounds();
     final translate = Matrix4.identity();
     translate.translate(-bounds.left, -bounds.top);
 

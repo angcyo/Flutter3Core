@@ -6,6 +6,33 @@ part of '../flutter3_vector.dart';
 /// @date 2024/02/29
 ///
 
+const _kSvgHeader = '<?xml version="1.0" encoding="UTF-8"?>'
+    '<!-- Created with LaserPecker Design Space (https://www.laserpecker.net/pages/software) -->';
+
+/// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
+String _wrapSvgXml(Rect bounds, void Function(StringBuffer) action) {
+  StringBuffer buffer = StringBuffer();
+  buffer.write(_kSvgHeader);
+  buffer.write('<svg xmlns="http://www.w3.org/2000/svg" ');
+  buffer.write(
+      'viewBox="${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}" ');
+  buffer.write(
+      'width="${bounds.width.toMmFromDp()}mm" height="${bounds.height.toMmFromDp()}mm" ');
+  buffer.write('by:author="angcyo" by:version="1">');
+  action(buffer);
+  buffer.write('</svg>');
+  return buffer.toString();
+}
+
+/// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+void _wrapSvgPath(StringBuffer? buffer, String? svgPath) {
+  if (isNil(svgPath)) {
+    return;
+  }
+  buffer?.write(
+      '<path d="$svgPath" fill="none" fill-rule="evenodd" stroke="black" stroke-width="1" />');
+}
+
 mixin VectorWriteMixin {
   /// 当前点与上一个点之间的关系, 起点
   static const int pointTypeStart = 0;
@@ -438,6 +465,22 @@ extension VectorPathEx on Path {
     return handle.getVectorString();
   }
 
+  /// 输出svg xml文件格式
+  /// [toSvgPathString]
+  String? toSvgXmlString({
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
+    final svgPath = toSvgPathString(pathStep: pathStep, tolerance: tolerance);
+    if (isNil(svgPath)) {
+      return null;
+    }
+    final bounds = getExactBounds(true, pathStep);
+    return _wrapSvgXml(bounds, (buffer) {
+      _wrapSvgPath(buffer, svgPath);
+    });
+  }
+
   ///[toSvgPathString]
   String? toPathPointJsonString({
     @dp double? pathStep,
@@ -482,5 +525,25 @@ extension VectorListPathEx on List<Path> {
       }
     }
     return buffer.toString();
+  }
+
+  /// [VectorPathEx.toSvgXmlString]
+  String? toSvgXmlString({
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
+    if (isNil(this)) {
+      return null;
+    }
+    final bounds = getExactBounds(true, pathStep);
+    return _wrapSvgXml(bounds, (buffer) {
+      for (final path in this) {
+        final svgPath =
+            path.toSvgPathString(pathStep: pathStep, tolerance: tolerance);
+        if (!isNil(svgPath)) {
+          _wrapSvgPath(buffer, svgPath);
+        }
+      }
+    });
   }
 }
