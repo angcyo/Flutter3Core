@@ -76,9 +76,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 更新画布的单位
   set axisUnit(IUnit unit) {
+    final old = axisUnit;
     canvasPaintManager.axisManager.axisUnit = unit;
-    canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
-    refresh();
+    dispatchCanvasUnitChanged(old, unit);
   }
 
   //endregion ---get/set---
@@ -219,6 +219,15 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         .dispatch(delegateContext);
     canvasListeners.clone().forEach((element) {
       element.onCanvasViewBoxChangedAction?.call(canvasViewBox, isCompleted);
+    });
+    refresh();
+  }
+
+  /// 当[AxisManager.axisUnit]坐标系的单位发生变化时触发
+  void dispatchCanvasUnitChanged(IUnit from, IUnit to) {
+    canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
+    canvasListeners.clone().forEach((element) {
+      element.onCanvasUnitChangedAction?.call(from, to);
     });
     refresh();
   }

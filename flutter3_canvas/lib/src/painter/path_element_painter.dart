@@ -42,6 +42,12 @@ class PathElementPainter extends ElementPainter {
     }
     paintPath?.let((it) =>
         canvas.drawPath(it.transformPath(paintProperty?.operateMatrix), paint));
+    if (paintPath == null) {
+      assert(() {
+        l.w('no data painting.');
+        return true;
+      }());
+    }
     super.onPaintingSelf(canvas, paintMeta);
   }
 }

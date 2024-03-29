@@ -394,9 +394,11 @@ class ElementPainter extends IPainter
   //---
 
   /// 保存当前元素的状态
+  /// 使用[ElementStateStack.restore]恢复状态
   ElementStateStack createStateStack() => ElementStateStack()..saveFrom(this);
 
   /// 当元素的状态恢复后
+  /// [ElementStateStack.restore]
   void onRestoreStateStack(ElementStateStack stateStack) {}
 
   //---
@@ -1050,6 +1052,9 @@ class PaintProperty with EquatableMixin {
 
 /// 元素状态栈, 用来撤销和重做
 class ElementStateStack {
+  /// 操作的元素
+  ElementPainter? element;
+
   /// 元素的属性保存
   final Map<ElementPainter, PaintProperty?> propertyMap = {};
 
@@ -1057,6 +1062,7 @@ class ElementStateStack {
   @callPoint
   @mustCallSuper
   void saveFrom(ElementPainter element) {
+    this.element = element;
     propertyMap[element] = element.paintProperty?.clone();
     if (element is ElementGroupPainter) {
       element.children?.forEach((element) {
