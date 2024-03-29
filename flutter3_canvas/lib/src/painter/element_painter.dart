@@ -213,6 +213,7 @@ class ElementPainter extends IPainter
   }
 
   /// 判断当前元素是否与指定的点相交
+  /// [isVisibleInCanvasBox]
   bool hitTest(
       {@sceneCoordinate Offset? point,
       @sceneCoordinate Rect? rect,
@@ -221,10 +222,20 @@ class ElementPainter extends IPainter
       return false;
     }
     path ??= Path()..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
-    return _paintProperty?.paintPath.intersects(path) ?? false;
+    bool hit = _paintProperty?.paintPath.intersects(path) ?? false;
+    if (!hit) {
+      //没有命中时, 膨胀一下, 再判断一次
+      final bounds = _paintProperty?.paintPath.getExactBounds();
+      if (bounds != null) {
+        //debugger();
+        hit = bounds.inflateValue(10).toPath().intersects(path);
+      }
+    }
+    return hit;
   }
 
   /// 当前元素在画布中是否可见, 不可见的元素不会在画布中绘制
+  /// [hitTest]
   bool isVisibleInCanvasBox(CanvasViewBox viewBox) =>
       isVisible && hitTest(rect: viewBox.canvasVisibleBounds);
 
