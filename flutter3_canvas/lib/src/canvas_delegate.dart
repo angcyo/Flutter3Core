@@ -15,10 +15,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [element] 要栅格化的元素
   /// [elementBounds] 偷换一下元素的边界, 用来栅格化(线条栅格化的情况)
   /// [extend] 扩展的边距. 默认会在元素的边界上, 扩展1个dp的边距
+  /// [rasterizeElementList]
   static Future<UiImage?> rasterizeElement(
     ElementPainter? element, {
     Rect? elementBounds,
-    EdgeInsets? extend = const EdgeInsets.all(1),
+    EdgeInsets? extend,
   }) async {
     /*assert(() {
       extend = EdgeInsets.zero;
@@ -52,6 +53,19 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     /*final base64 = await result.toBase64();
     debugger();*/
     return result;
+  }
+
+  ///[rasterizeElement]
+  static Future<UiImage?> rasterizeElementList(
+    List<ElementPainter>? elements, {
+    EdgeInsets? extend,
+  }) async {
+    if (isNil(elements)) {
+      return null;
+    }
+    final group = ElementGroupPainter();
+    group.resetChildren(elements, true);
+    return rasterizeElement(group, extend: extend);
   }
 
   //region ---入口点---

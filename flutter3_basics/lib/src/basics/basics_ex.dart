@@ -65,7 +65,12 @@ extension DynamicEx on dynamic {
   dynamic fromJson() => toString().fromJson();
 
   /// 请在具体的类型上实现[toJson]方法, 否则会抛异常
+  /// 此方法通常返回的是Map<String, dynamic>类型
   dynamic toJson() => this.toJson();
+
+  /// 直接转成json字符串
+  /// [toJsonString]
+  String toJsonString() => (this as Object).toJsonString(null);
 
   /// [runtimeType]
   /// [toString]

@@ -5,15 +5,19 @@ part of '../flutter3_app.dart';
 /// @since 2023/11/28
 ///
 
+/// 包信息
 /// https://pub.dev/packages/package_info_plus
-/// ...
+/// ```
 /// //Be sure to add this line if `PackageInfo.fromPlatform()` is called before runApp()
 /// WidgetsFlutterBinding.ensureInitialized();
-/// ...
+/// ```
+///
+/// ```
 /// String appName = packageInfo.appName;
 /// String packageName = packageInfo.packageName;
-/// String version = packageInfo.version;
-/// String buildNumber = packageInfo.buildNumber;
+/// String version = packageInfo.version;            //versionName
+/// String buildNumber = packageInfo.buildNumber;    //versionCode
+/// ```
 Future<PackageInfo> get packageInfo async => await PackageInfo.fromPlatform();
 
 /// https://pub.dev/packages/device_info_plus

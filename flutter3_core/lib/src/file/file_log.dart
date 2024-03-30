@@ -21,7 +21,9 @@ extension LogEx on Object {
       "\n${prefix ?? nowTimeString()}\n$this\n";
 
   /// 写入到文件, 返回对应的文件
+  /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象
   Future<File> writeToFile({
+    File? file,
     String? fileName,
     String? folder,
     bool append = false,
@@ -31,7 +33,8 @@ extension LogEx on Object {
   }) async {
     fileName ??= nowTimeFileName();
     return appendToFile(
-      fileName,
+      file: file,
+      fileName: fileName,
       folder: folder,
       append: append,
       limitLength: limitLength,
@@ -46,26 +49,29 @@ extension LogEx on Object {
   /// [limitLength] 是否限制日志文件的最大长度
   /// [wrapLog] 是否包裹一下日志信息, null:自动根据后缀[kLogExtension]判断
   /// @return 返回文件路径
-  Future<File> appendToFile(
-    String fileName, {
+  Future<File> appendToFile({
+    File? file,
+    String? fileName,
     String? folder,
     bool append = true,
     bool limitLength = true,
     bool useCacheFolder = false,
     bool? wrapLog,
   }) async {
-    final filePath = await fileName.filePathOf(folder, useCacheFolder);
+    fileName ??= "Unknown";
+    final filePath =
+        file?.path ?? await fileName.filePathOf(folder, useCacheFolder);
     FileMode mode = append ? FileMode.append : FileMode.write;
     if (append && limitLength && (filePath.length > kMaxLogLength)) {
       mode = FileMode.write;
     }
-    final file = filePath.file();
+    final fileObj = filePath.file();
     if (this is UiImage) {
-      file.writeImage(this as UiImage?);
+      fileObj.writeImage(this as UiImage?);
     } else if (this is Uint8List) {
-      file.writeAsBytes(this as Uint8List, mode: mode);
+      fileObj.writeAsBytes(this as Uint8List, mode: mode);
     } else {
-      file.writeString(
+      fileObj.writeString(
         (wrapLog == true ||
                 (wrapLog == null && fileName.endsWith(kLogExtension)))
             ? wrapLogString()
@@ -73,7 +79,7 @@ extension LogEx on Object {
         mode: mode,
       );
     }
-    return file;
+    return fileObj;
   }
 
   /// 写入内容到日志文件
@@ -83,7 +89,8 @@ extension LogEx on Object {
     String? folder = kLogPathName,
     bool limitLength = true,
   }) async {
-    return appendToFile(fileName, folder: folder, limitLength: limitLength);
+    return appendToFile(
+        fileName: fileName, folder: folder, limitLength: limitLength);
   }
 
   /// 写入内容到日志文件, 同步方法
@@ -92,7 +99,8 @@ extension LogEx on Object {
     String? folder = kLogPathName,
     bool limitLength = true,
   }) {
-    unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));
+    unawaited(appendToFile(
+        fileName: fileName, folder: folder, limitLength: limitLength));
   }
 
   /// 写入内容到日志文件, 同步方法
@@ -101,7 +109,8 @@ extension LogEx on Object {
     String? folder = kLogPathName,
     bool limitLength = true,
   }) {
-    unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));
+    unawaited(appendToFile(
+        fileName: fileName, folder: folder, limitLength: limitLength));
   }
 
   /// 写入内容到日志文件, 同步方法
@@ -110,6 +119,7 @@ extension LogEx on Object {
     String? folder = kLogPathName,
     bool limitLength = true,
   }) {
-    unawaited(appendToFile(fileName, folder: folder, limitLength: limitLength));
+    unawaited(appendToFile(
+        fileName: fileName, folder: folder, limitLength: limitLength));
   }
 }

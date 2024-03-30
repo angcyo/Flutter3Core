@@ -56,7 +56,7 @@ Future<void> initFlutter3Core() async {
   // 写入文件fn
   GlobalConfig.def.writeFileFn = (fileName, folder, content) async {
     return (await "$content".appendToFile(
-      fileName,
+      fileName: fileName,
       folder: folder,
       limitLength: fileName.endsWith(kLogExtension),
     ))

@@ -115,6 +115,7 @@ Future<Directory> cacheDirectory() async {
 
 extension FileEx on File {
   /// 文件大小
+  /// [fileSize]
   int fileSizeSync() {
     if (existsSync()) {
       return lengthSync();
@@ -123,6 +124,7 @@ extension FileEx on File {
   }
 
   /// 文件大小
+  /// [fileSizeSync]
   Future<int> fileSize() async {
     if (await exists()) {
       return length();
@@ -461,14 +463,14 @@ extension PathStringEx on String {
   Future<String> filePathOf(
       [String? subFolder, bool useCacheFolder = false]) async {
     var folderPath =
-        useCacheFolder ? await cacheFolderPath() : await fileFolderPath();
+        useCacheFolder ? (await cacheFolder()).path : (await fileFolder()).path;
     if (subFolder == null) {
       subFolder = folderPath;
     } else {
       subFolder = p.join(folderPath, subFolder);
     }
     subFolder.ensureDirectory();
-    var filePath = p.join(subFolder, this);
+    final filePath = p.join(subFolder, this);
     return filePath;
   }
 
@@ -518,29 +520,36 @@ extension PathStringEx on String {
 /// 文件扩展操作
 extension FilePathEx on String {
   /// 确保文件夹存在, 如果不存在, 则创建
-  void ensureDirectory() {
+  Directory ensureDirectory() {
     final dir = Directory(this);
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }
+    return dir;
   }
 
   /// 确保文件的文件夹目录存在, 如果不存在, 则创建
-  void ensureParentDirectory() {
-    parentPath.ensureDirectory();
+  Directory ensureParentDirectory() {
+    return parentPath.ensureDirectory();
   }
 
   /// 转换成文件夹对象
   Directory get folder => Directory(this);
 
-  /// 转换成文件对象
+  /// 获取一个自身路径对应的文件对象
   /// 在web环境下, 会抛出异常
   /// `The argument type 'File/*1*/' can't be assigned to the parameter type 'File/*2*/'.`
-  /// [name] 文件名, 如果指定了文件名, 则返回当前目录下的文件
-  File file([String? name]) {
+  /// [fileName] 文件名, 如果指定了文件名, 则自身就是文件夹路径,并返回当前目录下的文件
+  /// [parentPath] 父路径, 如果指定了父路径, 则自身就是文件名,并返回父路径下的文件
+  File file({
+    String? fileName,
+    String? parentPath,
+  }) {
     String path = this;
-    if (name != null) {
-      path = p.join(this, name);
+    if (fileName != null) {
+      path = p.join(this, fileName);
+    } else if (parentPath != null) {
+      path = p.join(parentPath, this);
     }
     return isLocalUrl ? File.fromUri(path.toUri()!) : File(path);
   }
@@ -628,10 +637,10 @@ extension FilePathEx on String {
   }
 }
 
-/// 快速获取一个文件类型的文件夹路径
+/// 快速获取一个文件类型的文件夹路径, 会自动创建文件夹
 /// [filePath]
-/// [cacheFolderPath]
-Future<String> fileFolderPath([
+/// [cacheFolder]
+Future<Directory> fileFolder([
   String? part1,
   String? part2,
   String? part3,
@@ -669,11 +678,11 @@ Future<String> fileFolderPath([
       part15,
     );
   }
-  return folder..ensureDirectory();
+  return folder.ensureDirectory();
 }
 
-/// 快速获取一个文件路径
-/// [fileFolderPath]
+/// 快速获取一个文件路径, 会自动创建文件夹
+/// [fileFolder]
 Future<String> filePath(
   String fileName, [
   String? part1,
@@ -692,14 +701,14 @@ Future<String> filePath(
   String? part14,
   String? part15,
 ]) async {
-  var folder = await fileFolderPath(part1, part2, part3, part4, part5, part6,
-      part7, part8, part9, part10, part11, part12, part13, part14, part15);
-  return p.join(folder, fileName);
+  var folder = await fileFolder(part1, part2, part3, part4, part5, part6, part7,
+      part8, part9, part10, part11, part12, part13, part14, part15);
+  return p.join(folder.path, fileName);
 }
 
-/// 快速获取一个缓存文件路径
+/// 快速获取一个缓存文件路径, 会自动创建文件夹
 /// [cacheFilePath]
-Future<String> cacheFolderPath([
+Future<Directory> cacheFolder([
   String? part1,
   String? part2,
   String? part3,
@@ -737,11 +746,11 @@ Future<String> cacheFolderPath([
       part15,
     );
   }
-  return folder..ensureDirectory();
+  return folder.ensureDirectory();
 }
 
-/// 快速获取一个缓存文件路径
-/// [cacheFolderPath]
+/// 快速获取一个缓存文件路径, 会自动创建文件夹
+/// [cacheFolder]
 Future<String> cacheFilePath(
   String fileName, [
   String? part1,
@@ -760,7 +769,7 @@ Future<String> cacheFilePath(
   String? part14,
   String? part15,
 ]) async {
-  var folder = await cacheFolderPath(part1, part2, part3, part4, part5, part6,
+  var folder = await cacheFolder(part1, part2, part3, part4, part5, part6,
       part7, part8, part9, part10, part11, part12, part13, part14, part15);
-  return p.join(folder, fileName);
+  return p.join(folder.path, fileName);
 }

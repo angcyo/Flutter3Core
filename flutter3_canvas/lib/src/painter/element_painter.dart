@@ -7,6 +7,12 @@ part of '../../flutter3_canvas.dart';
 /// 绘制元素数据
 class ElementPainter extends IPainter
     with DiagnosticableTreeMixin, DiagnosticsMixin {
+  /// 元素的唯一标识
+  String? elementUuid = uuid();
+
+  /// 元素的名称
+  String? elementName;
+
   //region ---PaintProperty---
 
   /// 元素绘制的属性信息
@@ -25,6 +31,7 @@ class ElementPainter extends IPainter
   }
 
   /// 获取元素[paintProperty]的边界
+  @dp
   Rect? get elementsBounds {
     return paintProperty?.getBounds(canvasDelegate?.canvasElementManager
             .canvasElementControlManager.enableResetElementAngle ==
