@@ -1,5 +1,6 @@
 library flutter3_pub;
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';

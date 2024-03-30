@@ -1,4 +1,4 @@
-part of flutter3_pub;
+part of '../../flutter3_pub.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -32,6 +32,22 @@ extension ZipEx on String {
     return true;
   }
 
+  /// 写入数据到zip文件
+  /// [ZipFileEncoder.addDirectory]
+  /// [ZipFileEncoder.addFile]
+  /// [ZipFileEncoder.addArchiveFile]
+  /// [ArchiveFile]
+  Future<bool> writeZipFile(
+    FutureOr Function(ZipFileEncoder zipEncoder) action, {
+    DateTime? modified,
+  }) async {
+    final encoder = ZipFileEncoder();
+    encoder.create(this, modified: modified ?? DateTime.now());
+    await action(encoder);
+    encoder.close();
+    return true;
+  }
+
   /// 解压文件到指定目录下
   /// [extractFileToDisk]
   /// [extractArchiveToDisk]
@@ -51,7 +67,7 @@ extension ZipListEx on List<String> {
     int? level = ZipFileEncoder.GZIP,
     DateTime? modified,
   }) async {
-    var encoder = ZipFileEncoder();
+    final encoder = ZipFileEncoder();
     encoder.create(outputPath, modified: modified ?? DateTime.now());
     await zipEncoder(encoder);
     encoder.close();
@@ -67,5 +83,42 @@ extension ZipListEx on List<String> {
         encoder.addFile(File(path));
       }
     }
+  }
+}
+
+extension ZipFileEncoderEx on ZipFileEncoder {
+  /// 写入[UiImage]
+  /// [Uint8List]
+  /// [InputStream]
+  /// [name] 名称
+  Future<void> writeImage(
+    UiImage? uiImage,
+    String name, {
+    bool compress = true,
+  }) async {
+    if (uiImage == null) {
+      return;
+    }
+    final bytes = await uiImage.toBytes();
+    if (isNil(bytes)) {
+      return;
+    }
+    addArchiveFile(compress
+        ? ArchiveFile(name, 0, bytes)
+        : ArchiveFile.noCompress(name, 0, bytes));
+  }
+
+  /// 写入字符串
+  /// [content] 字符内容
+  /// [name] 名称
+  Future<void> writeString(
+    String content,
+    String name, {
+    bool compress = true,
+  }) async {
+    addArchiveFile(compress
+        ? ArchiveFile.string(name, content)
+        : ArchiveFile.noCompress(name, 0, content));
+    return;
   }
 }

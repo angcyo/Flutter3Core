@@ -342,9 +342,63 @@ extension FileEx on File {
     }
     return null;
   }
+
+  /// PathNotFoundException: Cannot delete file, path = '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/2024-03-30_22-08-34-053.lp2' (OS Error: No such file or directory, errno = 2)
+  Future<FileSystemEntity?> deleteSafe({bool recursive = false}) async {
+    try {
+      return await delete(recursive: recursive);
+    } catch (e) {
+      assert(() {
+        l.w(e);
+        return true;
+      }());
+    }
+    return null;
+  }
+
+  /// [deleteSafe]
+  bool deleteSafeSync({bool recursive = false}) {
+    try {
+      deleteSync(recursive: recursive);
+      return true;
+    } catch (e) {
+      assert(() {
+        l.w(e);
+        return true;
+      }());
+    }
+    return false;
+  }
 }
 
 extension DirectoryEx on Directory {
+  /// PathNotFoundException: Cannot delete file, path = '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/2024-03-30_22-08-34-053.lp2' (OS Error: No such file or directory, errno = 2)
+  Future<FileSystemEntity?> deleteSafe({bool recursive = false}) async {
+    try {
+      return await delete(recursive: recursive);
+    } catch (e) {
+      assert(() {
+        l.w(e);
+        return true;
+      }());
+    }
+    return null;
+  }
+
+  /// [deleteSafe]
+  bool deleteSafeSync({bool recursive = false}) {
+    try {
+      deleteSync(recursive: recursive);
+      return true;
+    } catch (e) {
+      assert(() {
+        l.w(e);
+        return true;
+      }());
+    }
+    return false;
+  }
+
   /// 枚举所有文件, 并按照文件夹, 文件的顺序返回
   /// [sort] 是否排序
   /// [throwError] 是否抛出异常
