@@ -93,10 +93,10 @@ extension ZipFileEncoderEx on ZipFileEncoder {
   /// [name] 名称
   Future<void> writeImage(
     UiImage? uiImage,
-    String name, {
+    String? name, {
     bool compress = true,
   }) async {
-    if (uiImage == null) {
+    if (uiImage == null || name == null) {
       return;
     }
     final bytes = await uiImage.toBytes();
@@ -112,10 +112,13 @@ extension ZipFileEncoderEx on ZipFileEncoder {
   /// [content] 字符内容
   /// [name] 名称
   Future<void> writeString(
-    String content,
-    String name, {
+    String? content,
+    String? name, {
     bool compress = true,
   }) async {
+    if (content == null || name == null) {
+      return;
+    }
     addArchiveFile(compress
         ? ArchiveFile.string(name, content)
         : ArchiveFile.noCompress(name, 0, content));

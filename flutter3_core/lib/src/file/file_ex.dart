@@ -372,6 +372,15 @@ extension FileEx on File {
 }
 
 extension DirectoryEx on Directory {
+  /// 确保文件夹存在, 如果不存在, 则创建
+  Directory ensureDirectory() {
+    final dir = this;
+    if (!dir.existsSync()) {
+      dir.createSync(recursive: true);
+    }
+    return dir;
+  }
+
   /// PathNotFoundException: Cannot delete file, path = '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/2024-03-30_22-08-34-053.lp2' (OS Error: No such file or directory, errno = 2)
   Future<FileSystemEntity?> deleteSafe({bool recursive = false}) async {
     try {
@@ -574,13 +583,7 @@ extension PathStringEx on String {
 /// 文件扩展操作
 extension FilePathEx on String {
   /// 确保文件夹存在, 如果不存在, 则创建
-  Directory ensureDirectory() {
-    final dir = Directory(this);
-    if (!dir.existsSync()) {
-      dir.createSync(recursive: true);
-    }
-    return dir;
-  }
+  Directory ensureDirectory() => Directory(this).ensureDirectory();
 
   /// 确保文件的文件夹目录存在, 如果不存在, 则创建
   Directory ensureParentDirectory() {
