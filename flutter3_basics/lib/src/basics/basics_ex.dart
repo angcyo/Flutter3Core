@@ -395,6 +395,7 @@ extension ColorEx on Color {
     return Color(buffer.toString().toInt(radix: 16));
   }
 
+  /// 返回小写的十六进制字符串
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
   /// [a] 是否包含透明通道
   String toHex({bool leadingHashSign = true, bool a = true}) =>
@@ -1083,6 +1084,10 @@ extension IntEx on int {
   /// 转换成颜色
   /// [Color]
   Color toColor() => Color(this);
+
+  /// 转换成十六进制颜色
+  String toHexColor({bool leadingHashSign = true, bool a = true}) =>
+      toColor().toHexColor(leadingHashSign, a);
 
   /// 将13位毫秒时间, 拆成对应的
   /// 0:多少毫秒

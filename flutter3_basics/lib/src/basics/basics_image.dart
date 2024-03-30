@@ -153,6 +153,15 @@ extension Uint8ListImageEx on Uint8List {
               GlobalConfig.of(context).errorPlaceholderBuilder(context, error));
 
   /// [ui.Image]
+  /// [ui.Codec.getNextFrame]
+  /// [FlutterVectorGraphicsListener.onImage]
+  ///
+  /// ```
+  /// final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
+  /// final Codec codec = await descriptor.instantiateCodec();
+  /// final FrameInfo info = await codec.getNextFrame();
+  /// info.image;
+  /// ```
   Future<ui.Image> toImage() => decodeImageFromList(this);
 
   /// 将[PixelFormat.rgba8888]颜色格式的像素数据转换成图片

@@ -98,6 +98,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       ? elementSelectComponent.paintProperty?.getBounds(enableResetElementAngle)
       : null;
 
+  /// 是否绘制数值的单位
+  bool get showUnitSuffix =>
+      canvasDelegate.canvasPaintManager.axisManager.showAxisUnitSuffix;
+
   CanvasElementControlManager(this.canvasElementManager) {
     addHandleEventClient(elementSelectComponent);
     addHandleEventClient(deleteControl);
@@ -252,11 +256,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
       final withString = axisUnit.format(
         axisUnit.toUnit(size.width.toPixelFromDp()),
+        showSuffix: showUnitSuffix,
         removeZero: false,
         ensureInt: false,
       );
       final heightString = axisUnit.format(
         axisUnit.toUnit(size.height.toPixelFromDp()),
+        showSuffix: showUnitSuffix,
         removeZero: false,
         ensureInt: false,
       );
@@ -285,11 +291,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
       final xString = axisUnit.format(
         axisUnit.toUnit(location.dx.toPixelFromDp()),
+        showSuffix: showUnitSuffix,
         removeZero: false,
         ensureInt: false,
       );
       final yString = axisUnit.format(
         axisUnit.toUnit(location.dy.toPixelFromDp()),
+        showSuffix: showUnitSuffix,
         removeZero: false,
         ensureInt: false,
       );
