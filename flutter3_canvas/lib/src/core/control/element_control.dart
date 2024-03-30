@@ -7,19 +7,30 @@ part of '../../../flutter3_canvas.dart';
 /// 元素控制
 class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 控制点: 删除
+  /// [DeleteControl]
   static const sControlTypeDelete = 1;
 
   /// 控制点: 旋转
+  /// [RotateControl]
   static const sControlTypeRotate = 2;
 
   /// 控制点: 缩放
+  /// [ScaleControl]
   static const sControlTypeScale = 3;
 
   /// 控制点: 锁定等比
+  /// [LockControl]
   static const sControlTypeLock = 4;
 
   /// 控制行为: 平移
+  /// [TranslateControl]
   static const sControlTypeTranslate = 5;
+
+  /// 控制行为: 宽度调整
+  static const sControlTypeWidth = 6;
+
+  /// 控制行为: 高度调整
+  static const sControlTypeHeight = 7;
 
   final CanvasElementControlManager canvasElementControlManager;
 

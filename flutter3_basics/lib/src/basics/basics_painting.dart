@@ -46,21 +46,21 @@ ui.Picture drawPicture(@dp Size size, CanvasAction action) {
 
 /// 使用[Canvas]绘制图片
 /// [size] 绘制的大小, 像素单位
-/// [pixelRatio] 像素密度
+/// [pixelRatio] 像素密度[dpr]
 Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
     [double? pixelRatio]) {
-  final radio = pixelRatio ?? dpr;
+  final radio = pixelRatio ?? 1;
   final width = size.width * radio;
   final height = size.height * radio;
   final ui.Picture picture = drawPicture(size, callback);
   if (radio == 1) {
-    return picture.toImage(width.ceil(), height.ceil());
+    return picture.toImage(width.imageInt, height.imageInt);
   }
   final ui.Picture result = drawPicture(ui.Size(width, height), (canvas) {
     canvas.scale(radio, radio);
     canvas.drawPicture(picture);
   });
-  return result.toImage(width.ceil(), height.ceil());
+  return result.toImage(width.imageInt, height.imageInt);
 }
 
 /// 使用[Canvas]绘制图片
@@ -68,7 +68,7 @@ Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
 /// [double.ceil] 向上取整
 ui.Image drawImageSync(@dp Size size, CanvasAction callback) {
   final ui.Picture picture = drawPicture(size, callback);
-  return picture.toImageSync(size.width.round(), size.height.round());
+  return picture.toImageSync(size.width.imageInt, size.height.imageInt);
 }
 
 extension StringPaintEx on String {

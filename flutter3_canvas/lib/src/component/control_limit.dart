@@ -11,6 +11,18 @@ class ControlLimit {
 
   //---
 
+  @dp
+  double? minLeft = -10000;
+
+  @dp
+  double? maxLeft = 10000;
+
+  @dp
+  double? minTop = -10000;
+
+  @dp
+  double? maxTop = 10000;
+
   ///限制元素最小的宽度
   @dp
   double? elementMinWidth = 1;
@@ -31,11 +43,48 @@ class ControlLimit {
 
   ControlLimit(this.canvasElementControlManager);
 
+  /// 限制[bounds]的边界, 和最小的宽高
+  Rect limitBounds(Rect bounds) {
+    final minWidth = elementMinWidth;
+    final minHeight = elementMinHeight;
+
+    final maxWidth = elementMaxWidth;
+    final maxHeight = elementMaxHeight;
+
+    final newWidth = clamp(bounds.width, minWidth, maxWidth) as double;
+    final newHeight = clamp(bounds.height, minHeight, maxHeight) as double;
+
+    final newLeft = bounds.left;
+    final newTop = bounds.top;
+
+    return Rect.fromLTWH(newLeft, newTop, newWidth, newHeight);
+  }
+
+  /// 限制元素的平移范围
+  /// [CanvasElementControlManager.translateElement]
+  List<double> limitTranslate(
+    double dx,
+    double dy,
+    @dp Rect? bounds,
+  ) {
+    if (bounds == null) {
+      dx = clamp(dx, minLeft, maxLeft) as double;
+      dy = clamp(dy, minTop, maxTop) as double;
+      return [dx, dy];
+    }
+    double newLeft = bounds.left + dx;
+    double newTop = bounds.top + dy;
+    newLeft = clamp(newLeft, minLeft, maxLeft) as double;
+    newTop = clamp(newTop, minTop, maxTop) as double;
+    return [newLeft - bounds.left, newTop - bounds.top];
+  }
+
   /// 限制缩放, 输入需要进行的缩放比例, 输出最终的缩放比例
   /// [sx] x轴缩放比例
   /// [sy] y轴缩放比例
   /// [isLockRatio] 是否锁定比例
   /// [bounds] 元素现有的边界
+  /// [CanvasElementControlManager.scaleElement]
   List<double> limitScale(
     double sx,
     double sy,

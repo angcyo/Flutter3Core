@@ -504,7 +504,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     if (elementPainter == null) {
       return;
     }
-    final matrix = Matrix4.identity()..translateBy(dx: dx ?? 0, dy: dy ?? 0);
+    dx ??= 0;
+    dy ??= 0;
+    final limit = controlLimit.limitTranslate(dx, dy,
+        elementPainter.paintProperty?.getBounds(enableResetElementAngle));
+    dx = limit[0];
+    dy = limit[1];
+    final matrix = Matrix4.identity()..translateBy(dx: dx, dy: dy);
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
       elementPainter.translateElement(matrix);

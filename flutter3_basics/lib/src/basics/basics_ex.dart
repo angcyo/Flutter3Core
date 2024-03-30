@@ -1113,8 +1113,14 @@ extension IntEx on int {
 
 extension DoubleEx on double {
   /// 判断2个浮点数是否相等
+  /// [notEqualTo]
   bool equalTo(double other, [double epsilon = 1e-8]) =>
       (this - other).abs() < epsilon;
+
+  /// 判断2个浮点数是否不等于
+  /// [equalTo]
+  bool notEqualTo(double other, [double epsilon = 1e-8]) =>
+      (this - other).abs() >= epsilon;
 
   /// 判断浮点数是否是一个有效的数值
   /// `0/0`:Nan
@@ -1124,6 +1130,13 @@ extension DoubleEx on double {
 
   /// 确保浮点数是一个有效的数
   double ensureValid([double def = 0]) => isValid ? this : def;
+
+  /// 四舍五入
+  /// [double.round] 四舍五入
+  /// [double.ceil] 向上取整
+  /// [Picture.toImage]
+  /// [Picture.toImageSync]
+  int get imageInt => round();
 }
 
 //endregion Num 扩展

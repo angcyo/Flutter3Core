@@ -84,7 +84,8 @@ class _WaterMarkState extends State<WaterMark> {
     );
     final picture = recorder.endRecording();
     //将单元水印导为图片并缓存起来
-    final img = await picture.toImage(size.width.ceil(), size.height.ceil());
+    final img =
+        await picture.toImage(size.width.imageInt, size.height.imageInt);
     picture.dispose();
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     img.dispose();

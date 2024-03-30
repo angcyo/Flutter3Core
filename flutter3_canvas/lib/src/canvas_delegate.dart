@@ -5,7 +5,7 @@ part of '../flutter3_canvas.dart';
 /// @since 2024/02/02
 ///
 
-const rasterizeElement = AnnotationMeta('栅格化元素, 栅格化时, 不应该绘制额外的干扰信息');
+const rasterizeElementHost = AnnotationMeta('栅格化元素, 栅格化时, 不应该绘制额外的干扰信息');
 
 /// 画布代理类, 核心类, 整个框架的入口
 /// [CanvasWidget]
@@ -13,27 +13,39 @@ const rasterizeElement = AnnotationMeta('栅格化元素, 栅格化时, 不应�
 class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 栅格化元素
   /// [element] 要栅格化的元素
+  /// [elementBounds] 偷换一下元素的边界, 用来栅格化(线条栅格化的情况)
   /// [extend] 扩展的边距. 默认会在元素的边界上, 扩展1个dp的边距
   static Future<UiImage?> rasterizeElement(
     ElementPainter? element, {
+    Rect? elementBounds,
     EdgeInsets? extend = const EdgeInsets.all(1),
   }) async {
+    /*assert(() {
+      extend = EdgeInsets.zero;
+      return true;
+    }());
+    debugger();*/
     if (element == null) {
       return null;
     }
-    final bounds = element.paintProperty?.getBounds(true);
+    final bounds = elementBounds ?? element.paintProperty?.getBounds(true);
     if (bounds == null) {
       return null;
     }
+    //保证1个像素的大小
+    final width = max(1, bounds.width);
+    final height = max(1, bounds.height);
     final size = Size(
-      bounds.width + (extend?.horizontal ?? 0),
-      bounds.height + (extend?.vertical ?? 0),
+      width + (extend?.horizontal ?? 0),
+      height + (extend?.vertical ?? 0),
     );
+    final rect =
+        Rect.fromLTWH(bounds.left, bounds.top, size.width, size.height);
     final result = await drawImage(size, (canvas) {
-      canvas.drawInRect(size.toRect(), bounds, () {
+      canvas.drawInRect(size.toRect(), rect, () {
         element.painting(
           canvas,
-          PaintMeta(host: rasterizeElement),
+          PaintMeta(host: rasterizeElementHost),
         );
       }, dstPadding: extend);
     });

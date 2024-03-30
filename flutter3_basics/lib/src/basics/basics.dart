@@ -46,6 +46,20 @@ double nextDouble({double? min, double? max}) {
   }
 }
 
+/// 限制[x] 在 [min] ~ [max] 之间
+num clamp(num x, num? min, num? max) {
+  if (min != null && x < min) {
+    return min;
+  }
+  if (max != null && x > max) {
+    return max;
+  }
+  if (x.isNaN) {
+    return max ?? x;
+  }
+  return x;
+}
+
 /// 横向
 const kHorizontal = 0;
 

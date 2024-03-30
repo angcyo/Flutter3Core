@@ -42,18 +42,19 @@ class ElementPainter extends IPainter
       }());
       return;
     }
-    paintProperty?.let((it) {
-      final oldBounds = it.getBounds(true);
+    final property = paintProperty;
+    if (property != null) {
+      final oldBounds = property.getBounds(true);
       final sx = bounds.width / oldBounds.width;
       final sy = bounds.height / oldBounds.height;
       final scaleMatrix = Matrix4.identity()
         ..scaleBy(sx: sx, sy: sy, anchor: oldBounds.topLeft);
       final translate = Matrix4.identity()
         ..translate(bounds.left - oldBounds.left, bounds.top - oldBounds.top);
-      paintProperty = it.clone()
+      paintProperty = property.clone()
         ..applyScaleWithCenter(scaleMatrix)
         ..applyTranslate(translate);
-    });
+    }
   }
 
   /// 更新当前元素的实际宽高到指定大小
@@ -273,6 +274,16 @@ class ElementPainter extends IPainter
   /// [BaseControl.sControlTypeScale]
   /// [BaseControl.sControlTypeLock]
   bool isElementSupportControl(int type) {
+    if (type == BaseControl.sControlTypeLock) {
+      final bounds = elementsBounds;
+      if (bounds?.width == 0 || bounds?.height == 0) {
+        return false;
+      }
+    } else if (type == BaseControl.sControlTypeWidth) {
+      return (elementsBounds?.width ?? 0).notEqualTo(0);
+    } else if (type == BaseControl.sControlTypeHeight) {
+      return (elementsBounds?.height ?? 0).notEqualTo(0);
+    }
     return true;
   }
 
@@ -447,7 +458,7 @@ class ElementPainter extends IPainter
     }
     final image = drawImageSync(bounds.size, (canvas) {
       canvas.drawInRect(Offset.zero & bounds.size, bounds, () {
-        painting(canvas, PaintMeta(host: rasterizeElement));
+        painting(canvas, PaintMeta(host: rasterizeElementHost));
       });
     });
     /*assert(() {
