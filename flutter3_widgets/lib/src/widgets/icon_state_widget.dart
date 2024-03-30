@@ -16,11 +16,8 @@ class IconStateWidget extends StatelessWidget {
   /// 文本
   final Widget? text;
 
-  /// 提示信息
+  /// 提示信息, 请使用[Positioned]定位
   final Widget? tip;
-
-  /// 提示信息的位置
-  final AlignmentGeometry tipAlignment;
 
   //---
 
@@ -58,7 +55,6 @@ class IconStateWidget extends StatelessWidget {
     this.text,
     this.tip,
     this.tooltip,
-    this.tipAlignment = Alignment.topRight,
     this.padding = const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     this.decoration,
     this.pressedDecoration,
@@ -83,10 +79,14 @@ class IconStateWidget extends StatelessWidget {
           .column()!
           .paddingInsets(padding)
           .colorFiltered(
-              color: enable ? color : disableColor, blendMode: BlendMode.srcIn)
+            color: enable ? color : disableColor,
+            blendMode: BlendMode.srcIn,
+          )
           //.click(onTap, enable)
-          .stackOf(tip?.align(tipAlignment),
-              alignment: AlignmentDirectional.center)
+          .stackOf(
+            tip,
+            alignment: AlignmentDirectional.center,
+          )
           .onTouchDetector(onTap: onTap, enableClick: enable),
     ).tooltip(tooltip);
   }
