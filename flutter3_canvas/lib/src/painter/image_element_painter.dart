@@ -39,8 +39,15 @@ class ImageElementPainter extends ElementPainter {
   @property
   void onPaintingImage(Canvas canvas, PaintMeta paintMeta) {
     paintImage?.let((image) {
+      //debugger();
+      //将图片缩放至描述的大小
+      final scale = Matrix4.identity();
+      final sx = (paintProperty?.width ?? image.width) / image.width;
+      final sy = (paintProperty?.height ?? image.height) / image.height;
+      scale.scale(sx, sy);
+
       canvas.withMatrix(
-        paintProperty?.operateMatrix,
+        paintProperty?.operateMatrix.let((it) => it * scale),
         () {
           canvas.drawImage(image, Offset.zero, paint);
         },

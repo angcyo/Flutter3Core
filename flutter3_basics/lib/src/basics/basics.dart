@@ -402,7 +402,7 @@ Image? loadAssetImageWidget(
 /// [AssetBundleImageProvider]
 /// [AssetImage]
 /// [ExactAssetImage]
-AssetImage? loadAssetImage(
+AssetImage? loadAssetImageProvider(
   String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,
@@ -412,5 +412,15 @@ AssetImage? loadAssetImage(
         : AssetImage(
             key.ensurePackagePrefix(package, prefix),
           );
+
+/// [UiImage]
+Future<UiImage>? loadAssetImage(
+  String? key, {
+  String? prefix = kDefAssetsPngPrefix,
+  String? package,
+  ImageConfiguration configuration = const ImageConfiguration(),
+}) =>
+    loadAssetImageProvider(key, prefix: prefix, package: package)
+        ?.toImage(configuration);
 
 //endregion Asset
