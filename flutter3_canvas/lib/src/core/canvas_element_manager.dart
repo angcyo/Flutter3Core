@@ -105,6 +105,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 绘制元素
   /// [paintElements]
+  @property
   void paintElement(
       Canvas canvas, PaintMeta paintMeta, ElementPainter element) {
     final canvasViewBox = canvasDelegate.canvasViewBox;
@@ -112,7 +113,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       element.painting(canvas, paintMeta);
     } else {
       assert(() {
-        l.d('元素不可见,跳过绘制:$element');
+        //l.d('元素不可见,跳过绘制:$element');
         return true;
       }());
     }

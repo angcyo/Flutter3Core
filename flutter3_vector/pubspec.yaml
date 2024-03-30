@@ -29,6 +29,8 @@ dependencies:
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/path
   vector_graphics_compiler: ^1.1.11+1
+  # https://pub.dev/packages/vector_graphics_compiler
+  vector_graphics_codec: ^1.1.11+1
 
   # https://pub.dev/packages/svg_path_parser # flutter, string_scanner
   # https://github.com/masterashu/svg_path_parser

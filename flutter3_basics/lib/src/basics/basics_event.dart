@@ -363,7 +363,7 @@ mixin DoubleTapDetectorMixin {
     final point = event.localPosition;
     final nowTime = DateTime.now();
     if (event.isPointerDown) {
-      _isFirstTouch = nowTime - lastDownTime > doubleTapTime ||
+      _isFirstTouch = nowTime.difference(lastDownTime) > doubleTapTime ||
           (point.dx - lastDownPoint.dx).abs() > doubleTapThreshold ||
           (point.dy - lastDownPoint.dy).abs() > doubleTapThreshold;
 

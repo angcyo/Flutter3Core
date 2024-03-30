@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 
-void main() {
+void main() async {
   /*test('adds one to input values', () {
     final calculator = Calculator();
     expect(calculator.addOne(2), 3);
@@ -13,11 +15,12 @@ void main() {
   //print(0.25.toDpFromMm());
 
   WidgetsFlutterBinding.ensureInitialized();
-  testPath();
-
+  //testPath();
   //testCircle();
-
   //testLine();
+
+  await testSvg();
+
   assert(true);
 }
 
@@ -55,4 +58,18 @@ void testLine() {
     ..lineTo(100, 100);
   path = path.moveToZero(width: 50);
   print(path.toSvgPathString());
+}
+
+Future testSvg() async {
+  //当前目录
+  final svg1 = File('${Directory.current.path}/test/star_10_100.svg');
+  final svg2 = File('${Directory.current.path}/test/star_45_10_100.svg');
+  final svgImage = File('${Directory.current.path}/test/svg_image.svg');
+  consoleLog(Directory.current.path);
+
+  final svgString = svgImage.readAsStringSync();
+
+  //consoleLog(svgString);
+  final response = await decodeSvgString(svgString);
+  consoleLog(response);
 }

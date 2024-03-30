@@ -7,7 +7,6 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-import 'dart:ui';
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
@@ -42,6 +41,7 @@ export 'package:vector_math/vector_math_64.dart'
 
 export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
+export 'package:time/time.dart';
 
 //export 'package:leak_tracker/leak_tracker.dart';
 
@@ -61,6 +61,7 @@ part 'src/basics/custom_page_route.dart';
 part 'src/basics/matrix_ex.dart';
 part 'src/component/async_operation.dart';
 part 'src/component/custom_painter.dart';
+part 'src/component/fps.dart';
 part 'src/component/future_cancel.dart';
 part 'src/component/r_exception.dart';
 part 'src/component/request_page.dart';
@@ -80,11 +81,11 @@ part 'src/global/overlay/overlay_manage.dart';
 part 'src/global/overlay/overlay_notification.dart';
 part 'src/l.dart';
 part 'src/meta/meta.dart';
+part 'src/overlay/loading.dart';
 part 'src/overlay/loading_indicator.dart';
 part 'src/overlay/loading_overlay.dart';
 part 'src/overlay/route_will_pop_scope.dart';
 part 'src/overlay/stroke_loading.dart';
-part 'src/overlay/loading.dart';
 part 'src/unit/unit.dart';
 part 'src/utils/file_size.dart';
 part 'src/utils/frame_split.dart';

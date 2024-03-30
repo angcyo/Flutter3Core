@@ -69,7 +69,7 @@ Future<FilePickerResult?> pickFiles({
   assert(() {
     if (result != null) {
       result.files.forEachIndexed((index, element) {
-        l.d('选择文件[$index][${element.name}:${element.size.toFileSizeStr()}]->${element.path} bytes:${element.bytes?.length}');
+        l.d('选择文件[$index][${element.name}:${element.size.toFileSizeStr()}][${element.path?.mimeType(element.bytes)}]->${element.path} bytes:${element.bytes?.length}');
       });
     } else {
       l.d('取消选择文件');

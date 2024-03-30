@@ -72,7 +72,7 @@ extension PathEx on Path {
     final Path dest = Path();
     final count = dashArray.length;
     var index = 0;
-    for (final PathMetric metric in computeMetrics()) {
+    for (final ui.PathMetric metric in computeMetrics()) {
       double distance = metric.length;
       bool draw = true;
       while (distance < metric.length) {
@@ -136,7 +136,7 @@ extension PathEx on Path {
           final ratio = distance / length;
           if (angle == 0) {
             //水平方向
-            angle = 0;//清除`-0.0`的情况
+            angle = 0; //清除`-0.0`的情况
           } else if (angle > 0) {
             //切线指向Y轴下方
           } else {

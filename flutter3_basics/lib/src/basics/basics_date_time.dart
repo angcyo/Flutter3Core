@@ -21,7 +21,7 @@ extension DateTimeEx on DateTime {
   }
 
   /// [difference]
-  Duration operator -(DateTime other) => difference(other);
+  //Duration operator -(DateTime other) => difference(other);
 }
 
 extension TimeEx on int {

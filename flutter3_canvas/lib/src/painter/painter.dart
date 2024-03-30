@@ -49,13 +49,18 @@ abstract class IPainter with Diagnosticable {
 /// 绘制一些监视信息, 比如坐标轴的缩放比例
 class CanvasMonitorPainter extends IPainter {
   final CanvasDelegate canvasDelegate;
+  final Fps fps = Fps();
 
   CanvasMonitorPainter(this.canvasDelegate);
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
+    if (isDebug) {
+      fps.update();
+    }
     final viewBox = canvasDelegate.canvasViewBox;
-    final text = "${(viewBox.scaleX * 100).round()}%";
+    final text =
+        "${(viewBox.scaleX * 100).round()}%${isDebug ? " ${fps.fps}" : ""}";
     final drawAxis = canvasDelegate.canvasPaintManager.axisManager.drawType
         .have(AxisManager.sDrawAxis);
     final x = drawAxis
