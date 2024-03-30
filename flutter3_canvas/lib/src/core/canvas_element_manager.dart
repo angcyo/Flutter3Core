@@ -63,6 +63,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 绘制在[elements]之后的元素列表
   final List<ElementPainter> afterElements = [];
 
+  List<ElementPainter> get allSingleElements {
+    final result = <ElementPainter>[];
+    for (var element in elements) {
+      result.addAll(element.getSingleElementList());
+    }
+    return result;
+  }
+
   /// 获取所有元素[elements]的边界
   Rect? get allElementsBounds {
     final list = elements;
