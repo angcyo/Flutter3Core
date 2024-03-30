@@ -47,7 +47,7 @@ double nextDouble({double? min, double? max}) {
 }
 
 /// 限制[x] 在 [min] ~ [max] 之间
-num clamp(num x, num? min, num? max) {
+dynamic clamp(num x, num? min, num? max) {
   if (min != null && x < min) {
     return min;
   }

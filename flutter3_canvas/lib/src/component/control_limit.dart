@@ -51,8 +51,8 @@ class ControlLimit {
     final maxWidth = elementMaxWidth;
     final maxHeight = elementMaxHeight;
 
-    final newWidth = clamp(bounds.width, minWidth, maxWidth) as double;
-    final newHeight = clamp(bounds.height, minHeight, maxHeight) as double;
+    final newWidth = clamp(bounds.width, minWidth, maxWidth);
+    final newHeight = clamp(bounds.height, minHeight, maxHeight);
 
     final newLeft = bounds.left;
     final newTop = bounds.top;
@@ -68,14 +68,14 @@ class ControlLimit {
     @dp Rect? bounds,
   ) {
     if (bounds == null) {
-      dx = clamp(dx, minLeft, maxLeft) as double;
-      dy = clamp(dy, minTop, maxTop) as double;
+      dx = clamp(dx, minLeft, maxLeft);
+      dy = clamp(dy, minTop, maxTop);
       return [dx, dy];
     }
     double newLeft = bounds.left + dx;
     double newTop = bounds.top + dy;
-    newLeft = clamp(newLeft, minLeft, maxLeft) as double;
-    newTop = clamp(newTop, minTop, maxTop) as double;
+    newLeft = clamp(newLeft, minLeft, maxLeft);
+    newTop = clamp(newTop, minTop, maxTop);
     return [newLeft - bounds.left, newTop - bounds.top];
   }
 
