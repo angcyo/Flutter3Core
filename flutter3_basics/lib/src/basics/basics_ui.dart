@@ -594,6 +594,17 @@ extension WidgetEx on Widget {
 
   //region ---SafeArea---
 
+  /// 脚手架
+  Widget scaffold({
+    Color? backgroundColor = Colors.transparent,
+    bool resizeToAvoidBottomInset = true,
+  }) =>
+      Scaffold(
+        backgroundColor: backgroundColor,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        body: this,
+      );
+
   /// 将当前的小部件, 包裹在一个[SafeArea]中
   Widget safeArea({
     bool left = true,
@@ -650,7 +661,7 @@ extension WidgetEx on Widget {
   /// [topRadius] 如果配置了, 则只有顶部有圆角
   /// [bottomRadius] 如果配置了, 则只有底部有圆角
   Widget clipRadius({
-    double radius = kDefaultBorderRadiusXX,
+    double? radius = kDefaultBorderRadiusXX,
     double? topRadius,
     double? bottomRadius,
     BorderRadiusGeometry? borderRadius,
@@ -667,8 +678,11 @@ extension WidgetEx on Widget {
         bottomLeft: Radius.circular(bottomRadius ?? 0),
         bottomRight: Radius.circular(bottomRadius ?? 0),
       );
-    } else {
+    } else if (radius != null) {
       borderRadiusGeometry = BorderRadius.circular(radius);
+    }
+    if (borderRadiusGeometry == null) {
+      return this;
     }
     return clip(
       borderRadius: borderRadiusGeometry,
@@ -2073,5 +2087,19 @@ Widget linearGradientWidget(
     child: child,
   );
 }
+
+/// 从底部到顶部透明的渐变阴影
+Widget btt({double? height = 10}) => linearGradientWidget(
+      [Colors.transparent, Colors.black12],
+      height: height,
+      gradientDirection: Axis.vertical,
+    );
+
+/// 从顶部到底部透明的渐变阴影
+Widget ttb({double? height = 10}) => linearGradientWidget(
+      [Colors.black12, Colors.transparent],
+      height: height,
+      gradientDirection: Axis.vertical,
+    );
 
 //endregion 渐变相关

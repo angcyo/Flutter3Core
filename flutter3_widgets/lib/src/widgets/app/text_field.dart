@@ -58,8 +58,11 @@ class TextFieldConfig {
         obscureNode = ObscureNode(obscureText ?? false);
 }
 
-const kSuffixIconSize = 14.0;
-const kSuffixIconConstraintsSize = 30.0;
+/// 清除图标的大小
+const kSuffixIconSize = 18.0;
+
+/// 清除图标的约束
+const kSuffixIconConstraintsSize = 36.0;
 
 /// 用来控制密码输入控件, 密码的可见性
 class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier {
@@ -287,7 +290,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   /// 后缀图标
   Widget? _buildSuffixIcon() {
     if (_showSuffixIcon) {
-      var globalTheme = GlobalTheme.of(context);
+      final globalTheme = GlobalTheme.of(context);
       if (widget.config.obscureNode.obscureText) {
         //密码输入框
         return IconButton(
@@ -316,14 +319,19 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       } else {
         //普通文本输入框
         return IconButton(
-          color: globalTheme.icoGrayColor,
+          /*飞溅的颜色*/
+          color: globalTheme.icoNormalColor,
           iconSize: widget.suffixIconSize,
           constraints: widget.suffixIconConstraints,
           onPressed: () {
             widget.config.controller.clear();
             setState(() {});
           },
-          icon: const Icon(Icons.clear),
+          icon: Icon(
+            Icons.cancel_rounded,
+            /*图标的颜色*/
+            color: globalTheme.icoNormalColor,
+          ),
         );
       }
     }

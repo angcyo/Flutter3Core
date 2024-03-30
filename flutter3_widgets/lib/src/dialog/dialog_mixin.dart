@@ -108,12 +108,26 @@ mixin DialogMixin implements TranslationTypeImpl {
 
   /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
   /// [children] 一组小部件
+  /// [clipRadius] 整体圆角
+  /// [clipTopRadius] 顶部圆角
+  /// [clipBottomRadius] 底部圆角
   @api
   @entryPoint
-  Widget buildBottomColumnDialog(BuildContext context, WidgetList children) {
+  Widget buildBottomColumnDialog(
+    BuildContext context,
+    WidgetList children, {
+    double? clipRadius,
+    double? clipTopRadius,
+    double? clipBottomRadius,
+  }) {
     return children
         .column()!
         .container(color: Colors.white)
+        .clipRadius(
+          radius: clipRadius,
+          topRadius: clipTopRadius,
+          bottomRadius: clipBottomRadius,
+        )
         .matchParent(matchHeight: false)
         .align(Alignment.bottomCenter);
   }

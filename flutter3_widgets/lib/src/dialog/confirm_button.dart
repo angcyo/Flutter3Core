@@ -7,11 +7,11 @@ part of './dialog.dart';
 ///
 
 class ConfirmButton extends StatelessWidget {
-  /// 是否使用图标
-  final bool useIcon;
-
   /// 强制指定小部件
   final Widget? widget;
+
+  /// 是否使用图标, 否则使用[text]
+  final bool useIcon;
 
   /// 对应的文本
   final String? text;
@@ -29,7 +29,7 @@ class ConfirmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
     Widget? result = widget ??
         (useIcon
                 ? const Icon(
