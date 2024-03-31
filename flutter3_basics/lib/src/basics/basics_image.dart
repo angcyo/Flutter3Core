@@ -269,16 +269,8 @@ extension ImageStringEx on String {
 
   /// 从文件路径中读取图片
   /// [FileImage._loadAsync]
-  Future<ui.Image> toImageFromFile() async {
-    final Uint8List bytes = await File(this).readAsBytes();
-
-    /*final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromFilePath(this);
-    final ui.Codec codec = await PaintingBinding.instance.instantiateImageCodecWithSize(buffer);
-    final ui.FrameInfo frameInfo = await codec.getNextFrame();
-    return frameInfo.image;*/
-
-    return decodeImageFromList(bytes);
-  }
+  /// [FileEx.toImage]
+  Future<ui.Image> toImageFromFile() => File(this).toImage();
 
   /// 从网络路径中读取图片
   Future<ui.Image> toImageFromNetwork() async {

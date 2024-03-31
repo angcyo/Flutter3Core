@@ -5,6 +5,7 @@ part of '../../flutter3_core.dart';
 /// @date 2024/03/25
 ///
 /// 文件列表浏览界面, 返回选中的文件路径
+/// [_DebugFilePageState._handleResult]
 class DebugFilePage extends StatefulWidget {
   /// 初始化的路径, 不指定则使用默认的
   final String? initPath;

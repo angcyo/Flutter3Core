@@ -11,7 +11,9 @@ part of '../../flutter3_pub.dart';
 extension ZipEx on String {
   /// 读取zip文件
   /// [extractFileToDisk]
-  Future<bool> readZipFile(void Function(Archive archive) action) async {
+  /// [Archive.findFile]->[ArchiveFile]
+  /// [ArchiveFile.content] 内容
+  Future<bool> readZipFile(FutureOr Function(Archive archive) action) async {
     final input = InputFileStream(this);
     final archive = ZipDecoder().decodeBuffer(input);
     //archive.findFile(name); //查找指定文件
@@ -26,7 +28,7 @@ extension ZipEx on String {
       }
     }*/
 
-    action(archive);
+    await action(archive);
 
     input.close();
     return true;
@@ -123,5 +125,82 @@ extension ZipFileEncoderEx on ZipFileEncoder {
         ? ArchiveFile.string(name, content)
         : ArchiveFile.noCompress(name, 0, content));
     return;
+  }
+}
+
+extension ArchiveEx on Archive {
+  /// 读取文件内容
+  /// [ArchiveFile.content]
+  Future<Uint8List?> readContent(String? name) async {
+    if (name == null) {
+      return null;
+    }
+    final file = findFile(name);
+    if (file != null) {
+      return file.readContent();
+    }
+    return null;
+  }
+
+  /// 读取字符串
+  /// [ArchiveFile.content]
+  Future<String?> readString(String? name) async {
+    if (name == null) {
+      return null;
+    }
+    final file = findFile(name);
+    if (file != null) {
+      return file.readString();
+    }
+    return null;
+  }
+
+  /// 读取图片
+  /// [ArchiveFile.content]
+  Future<UiImage?> readImage(String? name) async {
+    if (name == null) {
+      return null;
+    }
+    final file = findFile(name);
+    if (file != null) {
+      return file.readImage();
+    }
+    return null;
+  }
+}
+
+extension ArchiveFileEx on ArchiveFile {
+  /// 读取文件内容
+  /// [ArchiveFile.content]
+  Future<Uint8List?> readContent() async {
+    if (content is Uint8List) {
+      return content as Uint8List;
+    } else if (content is InputStream) {
+      return (content as InputStream).toUint8List();
+    }
+    return null;
+  }
+
+  /// 读取字符串
+  /// [ArchiveFile.content]
+  Future<String?> readString() async {
+    if (content is String) {
+      return content as String;
+    }
+    final bytes = await readContent();
+    if (bytes != null) {
+      return String.fromCharCodes(bytes);
+    }
+    return null;
+  }
+
+  /// 读取图片
+  /// [ArchiveFile.content]
+  Future<UiImage?> readImage() async {
+    final bytes = await readContent();
+    if (bytes != null) {
+      return bytes.toImage();
+    }
+    return null;
   }
 }

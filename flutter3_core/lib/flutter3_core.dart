@@ -38,7 +38,7 @@ part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
-part 'src/file/file_ex.dart';
+part 'src/file/file_pub_ex.dart';
 part 'src/file/file_log.dart';
 part 'src/file/file_type.dart';
 part 'src/isar/hive/hive_ex.dart';

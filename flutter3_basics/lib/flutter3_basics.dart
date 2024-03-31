@@ -36,12 +36,12 @@ export 'package:hsluv/hsluv.dart';
 export 'package:matrix4_transform/matrix4_transform.dart';
 export 'package:meta/meta.dart';
 export 'package:nil/nil.dart';
+export 'package:time/time.dart';
 export 'package:vector_math/vector_math_64.dart'
     show Vector, Vector2, Vector3, Vector4, Quaternion, Matrix3, Matrix4;
 
 export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
-export 'package:time/time.dart';
 
 //export 'package:leak_tracker/leak_tracker.dart';
 
@@ -51,6 +51,7 @@ part 'src/basics/basics_date_time.dart';
 part 'src/basics/basics_decoration.dart';
 part 'src/basics/basics_event.dart';
 part 'src/basics/basics_ex.dart';
+part 'src/basics/basics_file.dart';
 part 'src/basics/basics_image.dart';
 part 'src/basics/basics_math.dart';
 part 'src/basics/basics_painting.dart';

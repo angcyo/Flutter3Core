@@ -144,4 +144,14 @@ extension CanvasIterableEx on Iterable<ElementPainter> {
         }
       });
   }
+
+  /// 获取所有单的[ElementPainter]
+  /// [ElementPainter.getSingleElementList]
+  List<ElementPainter> getAllSingleElement() {
+    final result = <ElementPainter>[];
+    for (var e in this) {
+      result.addAll(e.getSingleElementList());
+    }
+    return result;
+  }
 }

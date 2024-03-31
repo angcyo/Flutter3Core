@@ -323,7 +323,7 @@ extension FutureEx<T> on Future<T> {
           return null;
         }
       }, onError: (error, stackTrace) {
-        debugger();
+        //debugger();
         if (error is FutureCancelException) {
           assert(() {
             l.w('Future被取消:$error');
@@ -508,13 +508,20 @@ extension StringEx on String {
   /// [encode]
   /// [_defaultToEncodable]
   /// [jsonDecode]
+  /// 将`jsonObject`解析成`Map<String, dynamic>`类型
+  /// 将`jsonArray`解析成`List<dynamic>`类型
+  /// [fromJsonBeanList]
   dynamic fromJson() => json.decode(this);
 
-  T? fromJsonType<T>() => json.decode(this) as T?;
+  /// List<Bean> list = "[]".fromJsonBeanList<Bean>()`
+  /// [Iterable.map]
+  List<Bean>? fromJsonBeanList<Bean>(Bean Function(dynamic json) map) =>
+      json.decode(this).map<Bean>(map).toList();
 
+  /// 将`jsonArray`解析成`Iterable<dynamic>`类型
   Iterable? fromJsonIterable() => json.decode(this) as Iterable?;
 
-  /// `List<String> list = "".fromJsonList<String>()`
+  /// `List<String> list = "[]".fromJsonList<String>()`
   List<T>? fromJsonList<T>() => json.decode(this).cast<T>();
 
   /// [TextSpan]
