@@ -144,6 +144,8 @@ class ElementPainter extends IPainter
   Paint paint = Paint()
     ..style = PaintingStyle.stroke
     ..color = Colors.black
+    ..strokeJoin = StrokeJoin.round
+    ..strokeCap = StrokeCap.round
     ..strokeWidth = 1.toDpFromPx();
 
   /// 是否绘制调试信息
@@ -199,14 +201,17 @@ class ElementPainter extends IPainter
   }
 
   /// 绘制元素的旋转矩形, 用来提示元素的矩形+旋转信息
+  /// [onPaintingSelf]
   @property
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       final oldColor = paint.color;
       final oldStyle = paint.style;
+      final oldStrokeWidth = paint.strokeWidth;
 
       paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
       paint.style = PaintingStyle.stroke;
+      paint.strokeWidth = 1 / paintMeta.canvasScale;
 
       //debugger();
       final rect = it.paintScaleRect;
@@ -231,6 +236,7 @@ class ElementPainter extends IPainter
 
       paint.color = oldColor;
       paint.style = oldStyle;
+      paint.strokeWidth = oldStrokeWidth;
     });
   }
 
