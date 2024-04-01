@@ -10,6 +10,9 @@ part of '../../flutter3_widgets.dart';
 /// [AnimatedContainer] 动画容器
 /// [AnimatedCrossFade] 交叉淡入淡出动画容器
 class SizeAnimationWidget extends StatefulWidget {
+  /// 激活透明度动画
+  final bool enableOpacityAnimation;
+
   /// 激活宽度动画
   final bool enableWidthAnimation;
 
@@ -26,6 +29,7 @@ class SizeAnimationWidget extends StatefulWidget {
   const SizeAnimationWidget({
     super.key,
     required this.child,
+    this.enableOpacityAnimation = false,
     this.enableWidthAnimation = false,
     this.enableHeightAnimation = false,
     this.controller,
@@ -96,14 +100,17 @@ class _SizeAnimationWidgetState extends State<SizeAnimationWidget>
   Widget build(BuildContext context) {
     //l.d('value:${_controller.value}');
     return _SizeAnimation(
-        enableWidthAnimation: widget.enableWidthAnimation,
-        enableHeightAnimation: widget.enableHeightAnimation,
-        animateValue: _controller.value,
-        child: widget.child);
+      enableOpacityAnimation: widget.enableOpacityAnimation,
+      enableWidthAnimation: widget.enableWidthAnimation,
+      enableHeightAnimation: widget.enableHeightAnimation,
+      animateValue: _controller.value,
+      child: widget.child,
+    );
   }
 }
 
 class _SizeAnimation extends SingleChildRenderObjectWidget {
+  final bool enableOpacityAnimation;
   final bool enableWidthAnimation;
   final bool enableHeightAnimation;
   final double animateValue;
@@ -111,6 +118,7 @@ class _SizeAnimation extends SingleChildRenderObjectWidget {
   const _SizeAnimation({
     super.key,
     super.child,
+    this.enableOpacityAnimation = false,
     this.enableWidthAnimation = false,
     this.enableHeightAnimation = false,
     this.animateValue = 1,
@@ -119,6 +127,7 @@ class _SizeAnimation extends SingleChildRenderObjectWidget {
   @override
   RenderObject createRenderObject(BuildContext context) {
     return _RenderSizeAnimation(
+      enableOpacityAnimation: enableOpacityAnimation,
       enableWidthAnimation: enableWidthAnimation,
       enableHeightAnimation: enableHeightAnimation,
       animateValue: animateValue,
@@ -127,16 +136,31 @@ class _SizeAnimation extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, _RenderSizeAnimation renderObject) {
+    BuildContext context,
+    _RenderSizeAnimation renderObject,
+  ) {
+    //l.d('animateValue:${animateValue} ${enableOpacityAnimation}');
     renderObject
+      ..enableOpacityAnimation = enableOpacityAnimation
       ..enableWidthAnimation = enableWidthAnimation
       ..enableHeightAnimation = enableHeightAnimation
       ..animateValue = animateValue
       ..markNeedsLayout();
+    /*if (enableOpacityAnimation) {
+      renderObject.markNeedsCompositedLayerUpdate();
+      renderObject.markNeedsCompositingBitsUpdate();
+    }*/
   }
 }
 
+/// [RenderAnimatedOpacity]
+/// [RenderAnimatedOpacityMixin]
+/// [RenderObjectWithChildMixin]
+/// [SingleChildRenderObjectWidget]
 class _RenderSizeAnimation extends RenderProxyBox {
+  /// 是否激活不透明动画
+  bool enableOpacityAnimation;
+
   /// 是否激活对应的动画
   bool enableWidthAnimation;
   bool enableHeightAnimation;
@@ -145,6 +169,7 @@ class _RenderSizeAnimation extends RenderProxyBox {
   double animateValue;
 
   _RenderSizeAnimation({
+    this.enableOpacityAnimation = false,
     this.enableWidthAnimation = false,
     this.enableHeightAnimation = false,
     this.animateValue = 1,
@@ -165,6 +190,43 @@ class _RenderSizeAnimation extends RenderProxyBox {
       } else {
         this.size = size;
       }
+    }
+  }
+
+  @override
+  bool get isRepaintBoundary => child != null && enableOpacityAnimation;
+
+  /// 透明动画通过[OpacityLayer]图层实现, 并且需要[isRepaintBoundary]为true, 才会触发[updateCompositedLayer]方法回调
+  /// [markNeedsCompositedLayerUpdate]
+  /// [markNeedsCompositedLayerUpdate]
+  @override
+  OffsetLayer updateCompositedLayer(
+      {required covariant OffsetLayer? oldLayer}) {
+    //debugger();
+    if (enableOpacityAnimation) {
+      final OpacityLayer updatedLayer =
+          (oldLayer == null || oldLayer is! OpacityLayer)
+              ? OpacityLayer()
+              : oldLayer;
+      //不透明度表示为 0 到 255 之间的整数，其中 0 表示完全透明，255 表示完全不透明。
+      //debugger();
+      updatedLayer.alpha = (animateValue.clamp(0.0, 1.0) * 255).toInt();
+      //l.d('${updatedLayer.alpha}');
+      return updatedLayer;
+    } else {
+      return super.updateCompositedLayer(oldLayer: oldLayer);
+    }
+  }
+
+  @override
+  bool paintsChild(covariant RenderObject child) {
+    return !enableOpacityAnimation || animateValue > 0;
+  }
+
+  @override
+  void paint(PaintingContext context, ui.Offset offset) {
+    if (child != null && paintsChild(child!)) {
+      super.paint(context, offset);
     }
   }
 }
