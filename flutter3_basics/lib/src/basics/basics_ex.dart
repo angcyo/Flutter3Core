@@ -476,6 +476,9 @@ extension StringEx on String {
     return hash;
   }
 
+  /// 转换成[utf8]字节数组
+  Uint8List get bytes => utf8.encode(this);
+
   /// 重复字符串多少次[repeat]
   String operator *(int repeat) => List.filled(repeat, this).join();
 
@@ -562,11 +565,11 @@ extension StringEx on String {
 
   //region 加密
 
-  String sha1() => utf8.encode(this).sha1();
+  String sha1() => bytes.sha1();
 
-  String sha256() => utf8.encode(this).sha256();
+  String sha256() => bytes.sha256();
 
-  String md5() => utf8.encode(this).md5();
+  String md5() => bytes.md5();
 
   /// [Uri]
   String decodeUri() => Uri.decodeFull(this);
