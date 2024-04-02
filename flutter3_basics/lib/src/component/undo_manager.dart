@@ -137,10 +137,11 @@ enum UndoType {
 }
 
 /// 表示当前的操作支持撤销/重做
-class _SupportUndo {
+/// [Target]
+class _UndoAnnotation {
   final String des;
 
-  const _SupportUndo([this.des = "表示当前的操作支持撤销/重做"]);
+  const _UndoAnnotation([this.des = "表示当前的操作支持撤销/重做"]);
 }
 
-const supportUndo = _SupportUndo();
+const supportUndo = _UndoAnnotation();

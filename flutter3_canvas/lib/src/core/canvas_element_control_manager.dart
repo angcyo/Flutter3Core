@@ -800,10 +800,10 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   @override
-  void onSelfPaintPropertyChanged(
-      PaintProperty? old, PaintProperty? value, int propertyType) {
+  void dispatchSelfPaintPropertyChanged(
+      dynamic old, dynamic value, int propertyType) {
     canvasElementControlManager.updateControlBounds();
-    super.onSelfPaintPropertyChanged(old, value, propertyType);
+    super.dispatchSelfPaintPropertyChanged(old, value, propertyType);
   }
 
   @override

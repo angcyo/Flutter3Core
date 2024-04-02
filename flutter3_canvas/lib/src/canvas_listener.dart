@@ -24,8 +24,8 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasElementPropertyChanged]
   final void Function(
     ElementPainter elementPainter,
-    PaintProperty? from,
-    PaintProperty? to,
+    dynamic from,
+    dynamic to,
     int propertyType,
   )? onCanvasElementPropertyChangedAction;
 

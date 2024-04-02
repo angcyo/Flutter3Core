@@ -5,7 +5,7 @@ part of '../../flutter3_basics.dart';
 /// @since 2023/11/03
 ///
 /// 元数据/注解
-
+/// [Target]
 class AnnotationMeta {
   final String des;
 

@@ -341,7 +341,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }) {
     final result = <ElementPainter>[];
     for (var element in elements) {
-      if ((!checkLockOperate || !element.isLockOperate) &&
+      if ((!checkLockOperate || !element.paintState.isLockOperate) &&
           element.hitTest(point: point, rect: rect, path: path)) {
         result.add(element);
       }

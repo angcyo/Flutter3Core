@@ -7,11 +7,40 @@ part of '../../flutter3_canvas.dart';
 /// 绘制元素数据
 class ElementPainter extends IPainter
     with DiagnosticableTreeMixin, DiagnosticsMixin {
-  /// 元素的唯一标识
-  String? elementUuid = uuid();
+  //region ---属性--
 
-  /// 元素的名称
-  String? elementName;
+  /// 画笔
+  Paint paint = Paint()
+    ..style = PaintingStyle.stroke
+    ..color = Colors.black
+    ..strokeJoin = StrokeJoin.round
+    ..strokeCap = StrokeCap.round
+    ..strokeWidth = 1.toDpFromPx();
+
+  /// 是否绘制调试信息
+  bool debug = false;
+
+  /// 元素绘制的状态信息
+  PaintState _paintState = PaintState();
+
+  PaintState get paintState => _paintState;
+
+  set paintState(PaintState value) {
+    //debugger();
+    final old = _paintState;
+    _paintState = value;
+    if (old != value) {
+      dispatchSelfPaintPropertyChanged(old, value, PropertyType.state);
+    }
+  }
+
+  bool get isLockRatio => paintState.isLockRatio;
+
+  set isLockRatio(bool value) {
+    paintState.isLockRatio = value;
+  }
+
+  //endregion ---属性--
 
   //region ---PaintProperty---
 
@@ -26,7 +55,7 @@ class ElementPainter extends IPainter
     final old = _paintProperty;
     _paintProperty = value;
     if (old != value) {
-      onSelfPaintPropertyChanged(old, value, PropertyType.paint);
+      dispatchSelfPaintPropertyChanged(old, value, PropertyType.paint);
     }
   }
 
@@ -58,7 +87,7 @@ class ElementPainter extends IPainter
         ..scaleBy(sx: sx, sy: sy, anchor: oldBounds.topLeft);
       final translate = Matrix4.identity()
         ..translate(bounds.left - oldBounds.left, bounds.top - oldBounds.top);
-      paintProperty = property.clone()
+      paintProperty = property.copyWith()
         ..applyScaleWithCenter(scaleMatrix)
         ..applyTranslate(translate);
     }
@@ -98,60 +127,6 @@ class ElementPainter extends IPainter
   }
 
   //endregion ---PaintProperty---
-
-  //region ---属性--
-
-  /// 是否锁定了宽高比
-  bool _isLockRatio = true;
-
-  bool get isLockRatio => _isLockRatio;
-
-  set isLockRatio(bool value) {
-    //debugger();
-    if (_isLockRatio != value) {
-      _isLockRatio = value;
-      onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
-    }
-  }
-
-  /// 元素是否可见, 不可见的元素也不会绘制
-  bool _isVisible = true;
-
-  bool get isVisible => _isVisible;
-
-  set isVisible(bool value) {
-    //debugger();
-    if (_isVisible != value) {
-      _isVisible = value;
-      onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
-    }
-  }
-
-  /// 元素是否锁定了操作, 锁定后, 不可选中操作
-  bool _isLockOperate = false;
-
-  bool get isLockOperate => _isLockOperate;
-
-  set isLockOperate(bool value) {
-    //debugger();
-    if (_isLockOperate != value) {
-      _isLockOperate = value;
-      onSelfPaintPropertyChanged(null, paintProperty, PropertyType.state);
-    }
-  }
-
-  /// 画笔
-  Paint paint = Paint()
-    ..style = PaintingStyle.stroke
-    ..color = Colors.black
-    ..strokeJoin = StrokeJoin.round
-    ..strokeCap = StrokeCap.round
-    ..strokeWidth = 1.toDpFromPx();
-
-  /// 是否绘制调试信息
-  bool debug = false;
-
-  //endregion ---属性--
 
   //region ---paint---
 
@@ -277,7 +252,7 @@ class ElementPainter extends IPainter
   /// 当前元素在画布中是否可见, 不可见的元素不会在画布中绘制
   /// [hitTest]
   bool isVisibleInCanvasBox(CanvasViewBox viewBox) =>
-      isVisible && hitTest(rect: viewBox.canvasVisibleBounds);
+      paintState.isVisible && hitTest(rect: viewBox.canvasVisibleBounds);
 
   //---
 
@@ -300,12 +275,14 @@ class ElementPainter extends IPainter
     return true;
   }
 
-  /// 元素属性改变
+  /// 派发元素属性改变
   /// [old] 旧的属性
   /// [value] 新的属性
   /// [propertyType] 属性类型
-  void onSelfPaintPropertyChanged(
-      PaintProperty? old, PaintProperty? value, int propertyType) {
+  /// [PaintProperty]
+  /// [PaintState]
+  void dispatchSelfPaintPropertyChanged(
+      dynamic old, dynamic value, int propertyType) {
     canvasDelegate?.dispatchCanvasElementPropertyChanged(
         this, old, value, propertyType);
   }
@@ -318,7 +295,7 @@ class ElementPainter extends IPainter
   @api
   void translateElement(Matrix4 matrix) {
     paintProperty?.let((it) {
-      paintProperty = it.clone()..applyTranslate(matrix);
+      paintProperty = it.copyWith()..applyTranslate(matrix);
     });
   }
 
@@ -326,7 +303,7 @@ class ElementPainter extends IPainter
   @api
   void rotateElement(Matrix4 matrix) {
     paintProperty?.let((it) {
-      paintProperty = it.clone()..applyRotate(matrix);
+      paintProperty = it.copyWith()..applyRotate(matrix);
     });
   }
 
@@ -354,7 +331,7 @@ class ElementPainter extends IPainter
   @api
   void flipElement({bool? flipX, bool? flipY}) {
     paintProperty?.let((it) {
-      paintProperty = it.clone()..applyFlip(flipX: flipX, flipY: flipY);
+      paintProperty = it.copyWith()..applyFlip(flipX: flipX, flipY: flipY);
     });
   }
 
@@ -389,7 +366,7 @@ class ElementPainter extends IPainter
   void scaleElementWithCenter(Matrix4 matrix) {
     //debugger();
     paintProperty?.let((it) {
-      paintProperty = it.clone()..applyScaleWithCenter(matrix);
+      paintProperty = it.copyWith()..applyScaleWithCenter(matrix);
     });
   }
 
@@ -405,7 +382,7 @@ class ElementPainter extends IPainter
   }) {
     //debugger();
     paintProperty?.let((it) {
-      paintProperty = it.clone()
+      paintProperty = it.copyWith()
         ..applyScale(sxBy: sx, syBy: sy, sxTo: sxTo, syTo: syTo);
     });
   }
@@ -561,9 +538,13 @@ class ElementPainter extends IPainter
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty('paintProperty', paintProperty));
     properties.add(FlagProperty('isLockRatio',
-        value: isLockRatio, ifTrue: 'isLockRatio', ifFalse: 'notLockRatio'));
+        value: paintState.isLockRatio,
+        ifTrue: 'isLockRatio',
+        ifFalse: 'notLockRatio'));
     properties.add(FlagProperty('isVisible',
-        value: isVisible, ifTrue: 'isVisible', ifFalse: 'notVisible'));
+        value: paintState.isVisible,
+        ifTrue: 'isVisible',
+        ifFalse: 'notVisible'));
 
     final canvasViewBox = canvasDelegate?.canvasViewBox;
     if (canvasViewBox != null) {
@@ -594,7 +575,7 @@ class ElementGroupPainter extends ElementPainter {
     if (isNullOrEmpty(children)) {
       paintProperty = null;
     } else if (children!.length == 1 && !resetGroupAngle) {
-      paintProperty = children!.first.paintProperty?.clone();
+      paintProperty = children!.first.paintProperty?.copyWith();
     } else {
       PaintProperty parentProperty = PaintProperty();
       Rect? rect;
@@ -704,7 +685,7 @@ class ElementGroupPainter extends ElementPainter {
     anchor ??= paintProperty?.anchor ?? Offset.zero;
 
     //自身使用直接缩放
-    paintProperty = paintProperty?.clone()?..applyScale(sxBy: sx, syBy: sy);
+    paintProperty = paintProperty?.copyWith()?..applyScale(sxBy: sx, syBy: sy);
 
     //---children处理---
 
@@ -752,8 +733,54 @@ class ElementGroupPainter extends ElementPainter {
 //endregion ---apply--
 }
 
+/// 元素绘制时的一些状态存储信息
+/// [PropertyType.state]
+class PaintState with EquatableMixin {
+  /// 元素的唯一标识
+  String? elementUuid = uuid();
+
+  /// 元素的名称
+  String? elementName;
+
+  /// 是否锁定了宽高比
+  bool isLockRatio = true;
+
+  /// 元素是否可见, 不可见的元素也不会绘制
+  bool isVisible = true;
+
+  /// 元素是否锁定了操作, 锁定后, 不可选中操作
+  bool isLockOperate = false;
+
+  @override
+  String toString() {
+    return 'PaintState{elementUuid: $elementUuid, elementName: $elementName, '
+        'isLockRatio: $isLockRatio, isVisible: $isVisible, isLockOperate: $isLockOperate}';
+  }
+
+  @override
+  List<Object?> get props =>
+      [elementUuid, elementName, isLockRatio, isVisible, isLockOperate];
+
+  /// copyWith
+  PaintState copyWith({
+    String? elementUuid,
+    String? elementName,
+    bool? isLockRatio,
+    bool? isVisible,
+    bool? isLockOperate,
+  }) {
+    return PaintState()
+      ..elementUuid = elementUuid ?? this.elementUuid
+      ..elementName = elementName ?? this.elementName
+      ..isLockRatio = isLockRatio ?? this.isLockRatio
+      ..isVisible = isVisible ?? this.isVisible
+      ..isLockOperate = isLockOperate ?? this.isLockOperate;
+  }
+}
+
 /// 绘制属性, 包含坐标/缩放/旋转/倾斜等信息
 /// 先倾斜, 再缩放, 最后旋转
+/// [PropertyType.paint]
 class PaintProperty with EquatableMixin {
   //region ---基础属性---
 
@@ -1079,19 +1106,33 @@ class PaintProperty with EquatableMixin {
     flipY = qr[2] < 0;
   }
 
-  /// 克隆属性
-  PaintProperty clone() => PaintProperty()
-    ..left = left
-    ..top = top
-    ..width = width
-    ..height = height
-    ..scaleX = scaleX
-    ..scaleY = scaleY
-    ..skewX = skewX
-    ..skewY = skewY
-    ..angle = angle
-    ..flipX = flipX
-    ..flipY = flipY;
+  /// copyWith
+  PaintProperty copyWith({
+    double? left,
+    double? top,
+    double? width,
+    double? height,
+    double? scaleX,
+    double? scaleY,
+    double? skewX,
+    double? skewY,
+    double? angle,
+    bool? flipX,
+    bool? flipY,
+  }) {
+    return PaintProperty()
+      ..left = left ?? this.left
+      ..top = top ?? this.top
+      ..width = width ?? this.width
+      ..height = height ?? this.height
+      ..scaleX = scaleX ?? this.scaleX
+      ..scaleY = scaleY ?? this.scaleY
+      ..skewX = skewX ?? this.skewX
+      ..skewY = skewY ?? this.skewY
+      ..angle = angle ?? this.angle
+      ..flipX = flipX ?? this.flipX
+      ..flipY = flipY ?? this.flipY;
+  }
 
   @override
   String toString() {
@@ -1126,15 +1167,24 @@ class ElementStateStack {
   /// 元素的属性保存
   final Map<ElementPainter, PaintProperty?> propertyMap = {};
 
+  /// 元素的状态保存, 暂时不存储
+  @implementation
+  final Map<ElementPainter, PaintState?> stateMap = {};
+
   /// 保存信息
   @callPoint
   @mustCallSuper
   void saveFrom(ElementPainter element) {
     this.element = element;
-    propertyMap[element] = element.paintProperty?.clone();
+    _save(element);
+  }
+
+  void _save(ElementPainter element) {
+    propertyMap[element] = element.paintProperty?.copyWith();
+    //stateMap[element] = element.paintState.copyWith();
     if (element is ElementGroupPainter) {
       element.children?.forEach((element) {
-        saveFrom(element);
+        _save(element);
       });
     }
   }
@@ -1143,6 +1193,9 @@ class ElementStateStack {
   @callPoint
   @mustCallSuper
   void restore() {
+    /*stateMap.forEach((element, paintState) {
+      element.paintState = paintState ?? element.paintState;
+    });*/
     propertyMap.forEach((element, paintProperty) {
       element.paintProperty = paintProperty;
       element.onRestoreStateStack(this);
@@ -1151,14 +1204,19 @@ class ElementStateStack {
 }
 
 /// 属性类型, 支持组合
+/// [PaintProperty]
+/// [PaintState]
 abstract class PropertyType {
   /// 绘制的相关属性, 比如坐标/缩放/旋转/倾斜等信息
+  /// 支持回退的属性
+  @supportUndo
   static int paint = 0x01;
 
-  /// 元素的状态改变, 比如锁定/可见性等信息
+  /// 元素的状态改变, 比如锁定/可见性/uuid/名称等信息
   static int state = 0x02;
 
   /// 元素的数据改变, 比如内容等信息
+  @supportUndo
   static int data = 0x04;
 }
 

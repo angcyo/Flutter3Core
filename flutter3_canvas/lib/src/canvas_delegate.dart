@@ -235,6 +235,21 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //region ---事件派发---
 
+  /// each
+  void _eachCanvasListener(void Function(CanvasListener listener) action) {
+    try {
+      for (var client in canvasListeners) {
+        try {
+          action(client);
+        } catch (e) {
+          reportError(e);
+        }
+      }
+    } catch (e) {
+      reportError(e);
+    }
+  }
+
   /// 当[CanvasViewBox]视口发生变化时触发
   /// [CanvasViewBox.changeMatrix]
   void dispatchCanvasViewBoxChanged(
@@ -243,7 +258,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     CanvasViewBoxChangedNotification(canvasViewBox, isCompleted)
         .dispatch(delegateContext);
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasViewBoxChangedAction?.call(canvasViewBox, isCompleted);
     });
     refresh();
@@ -252,7 +267,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 当[AxisManager.axisUnit]坐标系的单位发生变化时触发
   void dispatchCanvasUnitChanged(IUnit from, IUnit to) {
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasUnitChangedAction?.call(from, to);
     });
     refresh();
@@ -261,7 +276,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 选择边界改变时触发
   /// [ElementSelectComponent.updateSelectBounds]
   void dispatchCanvasSelectBoundsChanged(Rect? bounds) {
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasSelectBoundsChangedAction?.call(bounds);
     });
     refresh();
@@ -273,8 +288,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [PropertyType.data]
   void dispatchCanvasElementPropertyChanged(
     ElementPainter elementPainter,
-    PaintProperty? from,
-    PaintProperty? to,
+    dynamic from,
+    dynamic to,
     int propertyType,
   ) {
     /*assert(() {
@@ -283,7 +298,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }());*/
     canvasElementManager.canvasElementControlManager
         .onSelfElementPropertyChanged(elementPainter, propertyType);
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasElementPropertyChangedAction
           ?.call(elementPainter, from, to, propertyType);
     });
@@ -297,7 +312,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     List<ElementPainter>? from,
     List<ElementPainter>? to,
   ) {
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasElementSelectChangedAction
           ?.call(selectComponent, from, to);
     });
@@ -314,7 +329,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     //debugger();
     canvasElementManager.canvasElementControlManager
         .onSelfElementListChanged(from, to, op, undoType);
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasElementListChangedAction?.call(from, to, op, undoType);
     });
     refresh();
@@ -322,7 +337,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 双击元素时回调
   void dispatchDoubleTapElement(ElementPainter elementPainter) {
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onDoubleTapElementAction?.call(elementPainter);
     });
   }
@@ -334,7 +349,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       //撤销操作时, 取消选中元素
       canvasElementManager.clearSelectedElement();
     }
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasUndoChangedAction?.call(undoManager);
     });
   }
@@ -344,14 +359,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [elements] 组合的子元素列表
   void dispatchCanvasGroupChanged(
       ElementGroupPainter group, List<ElementPainter> elements) {
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasGroupChangedAction?.call(group, elements);
     });
   }
 
   /// 拆组变化回调
   void dispatchCanvasUngroupChanged(ElementGroupPainter group) {
-    canvasListeners.clone().forEach((element) {
+    _eachCanvasListener((element) {
       element.onCanvasUngroupChangedAction?.call(group);
     });
   }
