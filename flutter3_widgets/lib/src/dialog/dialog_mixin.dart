@@ -167,12 +167,13 @@ Future<T?> showDialogWidget<T>(
   TraversalEdgeBehavior? traversalEdgeBehavior,
   Offset? anchorPoint,
   TranslationType? type,
-}) {
+}) async {
   if (!context.mounted) {
     assert(() {
       l.w('context is not mounted');
       return true;
     }());
+    return null;
   }
 
   final CapturedThemes themes = InheritedTheme.capture(
@@ -224,6 +225,7 @@ Future<T?> showDialogWidget<T>(
 
 extension DialogExtension on BuildContext {
   /// 显示对话框
+  /// [showDialogWidget]
   Future<T?> showWidgetDialog<T>(
     Widget widget, {
     bool barrierDismissible = true,
@@ -235,7 +237,14 @@ extension DialogExtension on BuildContext {
     TraversalEdgeBehavior? traversalEdgeBehavior,
     Offset? anchorPoint,
     TranslationType? type,
-  }) {
+  }) async {
+    if (!mounted) {
+      assert(() {
+        l.w('context is not mounted');
+        return true;
+      }());
+      return null;
+    }
     return showDialogWidget<T>(
       this,
       widget,

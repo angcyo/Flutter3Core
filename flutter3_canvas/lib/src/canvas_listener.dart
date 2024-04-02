@@ -6,6 +6,9 @@ part of '../flutter3_canvas.dart';
 ///
 /// 画布回调监听
 class CanvasListener {
+  /// [CanvasDelegate.dispatchCanvasPaint]
+  final void Function(CanvasDelegate delegate, int paintCount)? onCanvasPaint;
+
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]
   final void Function(
     CanvasViewBox canvasViewBox,
@@ -58,6 +61,7 @@ class CanvasListener {
   final void Function(ElementGroupPainter group)? onCanvasUngroupChangedAction;
 
   CanvasListener({
+    this.onCanvasPaint,
     this.onCanvasViewBoxChangedAction,
     this.onCanvasUnitChangedAction,
     this.onCanvasSelectBoundsChangedAction,

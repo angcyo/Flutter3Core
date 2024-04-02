@@ -7,26 +7,31 @@ part of '../../flutter3_basics.dart';
 
 class Fps {
   Duration? previous;
-  List<Duration> timings = [];
 
   late int framesToDisplay = 30;
 
-  /// 帧率
-  String get fps => timings.lastOrNull?.fps.toStringAsFixed(0) ?? "--";
+  /// 当前的帧数
+  int _fpsCount = 0;
+
+  /// 1秒内的帧率
+  String fps = "--";
 
   /// 请在一帧内触发此方法
   void update() {
+    _fpsCount++;
     Duration duration = nowTime().milliseconds;
     if (previous != null) {
-      timings.add(duration - previous!);
-      if (timings.length > framesToDisplay) {
-        timings = timings.sublist(timings.length - framesToDisplay - 1);
+      final time = duration - previous!;
+      final milliseconds = time.inMilliseconds;
+      if (milliseconds >= 1000) {
+        //debugger();
+        previous = duration;
+        final fps_ = _fpsCount * 1.0 / time.inMilliseconds * 1000;
+        fps = fps_.toStringAsFixed(0);
+        _fpsCount = 0;
       }
+    } else {
+      previous = duration;
     }
-    previous = duration;
   }
-}
-
-extension _FPS on Duration {
-  double get fps => (1000 / inMilliseconds);
 }

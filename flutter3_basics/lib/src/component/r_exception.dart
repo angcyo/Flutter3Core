@@ -41,3 +41,8 @@ class RError extends Error {
 class RTimeoutException extends RException {
   const RTimeoutException({super.message, super.cause});
 }
+
+/// 操作被取消的异常
+class RCancelException extends RException {
+  const RCancelException({super.message, super.cause});
+}

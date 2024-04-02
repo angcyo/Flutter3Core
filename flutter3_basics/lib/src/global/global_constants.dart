@@ -99,6 +99,9 @@ double doubleMinValue = -double.maxFinite;
 /// 只有返回值的回调
 typedef ResultCallback<T> = T Function();
 
+/// 返回值和一个参数的回调
+typedef ResultValueCallback<R, T> = R Function(T value);
+
 /// [Future] 返回值的回调
 typedef FutureResultCallback<R, T> = Future<R> Function(T value);
 

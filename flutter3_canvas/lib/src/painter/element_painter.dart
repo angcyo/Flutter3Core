@@ -240,10 +240,16 @@ class ElementPainter extends IPainter
     bool hit = _paintProperty?.paintPath.intersects(path) ?? false;
     if (!hit && inflate) {
       //没有命中时, 膨胀一下, 再判断一次
-      final bounds = _paintProperty?.paintPath.getExactBounds();
-      if (bounds != null) {
-        //debugger();
-        hit = bounds.inflateValue(10).toPath().intersects(path);
+      @dp
+      final elementBounds = elementsBounds;
+      if (elementBounds != null &&
+          elementBounds.width <= 10 &&
+          elementBounds.height <= 10) {
+        final bounds = _paintProperty?.paintPath.getExactBounds();
+        if (bounds != null) {
+          //debugger();
+          hit = bounds.inflateValue(10).toPath().intersects(path);
+        }
       }
     }
     return hit;
@@ -898,16 +904,11 @@ class PaintProperty with EquatableMixin {
 
   /// 元素全属性绘制路径, 用来判断是否相交
   /// 完全包裹的path路径
-  /// ```
-  /// Path().let((it) {
-  ///    //debugger();
-  ///    it.addRect(rect);
-  ///    return it.transformPath(operateMatrix);
-  /// });
-  /// ```
-  Path get paintPath => Path()
-    ..addRect(rect)
-    ..transformPath(operateMatrix);
+  Path get paintPath => Path().let((it) {
+        //debugger();
+        it.addRect(rect);
+        return it.transformPath(operateMatrix);
+      });
 
   //endregion ---get属性---
 

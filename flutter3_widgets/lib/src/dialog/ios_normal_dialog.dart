@@ -20,8 +20,12 @@ class IosNormalDialog extends StatelessWidget with DialogMixin {
   final String? confirm;
   final Widget? confirmWidget;
 
-  /// 确定按钮点击回调, 返回true, 表示拦截默认处理
+  /// 确定按钮点击回调,
+  /// 返回true, 表示拦截默认处理
   final FutureResultCallback<bool, bool>? onConfirmTap;
+
+  @override
+  EdgeInsets get contentPadding => EdgeInsets.zero;
 
   const IosNormalDialog({
     super.key,

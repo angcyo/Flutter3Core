@@ -286,13 +286,30 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 重置元素列表
   @api
   @supportUndo
-  void resetElementList(List<ElementPainter>? list,
-      {UndoType undoType = UndoType.normal}) {
+  void resetElementList(
+    List<ElementPainter>? list, {
+    bool selected = false,
+    bool showRect = false,
+    UndoType undoType = UndoType.normal,
+  }) {
     list ??= [];
     final old = elements.clone();
     final op = list.clone();
     _resetElementList(old, op);
     canvasDelegate.dispatchCanvasElementListChanged(old, op, op, undoType);
+
+    if (selected) {
+      resetSelectElement(list);
+      if (showRect) {
+        canvasDelegate.showRect(
+            elementPainter: canvasElementControlManager.elementSelectComponent);
+      }
+    } else if (showRect) {
+      ElementGroupPainter painter = ElementGroupPainter();
+      painter.resetChildren(
+          list, canvasElementControlManager.enableResetElementAngle);
+      canvasDelegate.showRect(elementPainter: painter);
+    }
 
     if (undoType == UndoType.normal) {
       final newList = op;

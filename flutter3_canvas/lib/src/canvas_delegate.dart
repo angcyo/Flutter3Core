@@ -78,6 +78,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void paint(PaintingContext context, Offset offset) {
     paintCount++;
     canvasPaintManager.paint(context, offset);
+    dispatchCanvasPaint(this, paintCount);
   }
 
   /// 手势输入的入口点
@@ -248,6 +249,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     } catch (e) {
       reportError(e);
     }
+  }
+
+  /// 派发画布重绘的次数
+  void dispatchCanvasPaint(CanvasDelegate delegate, int paintCount) {
+    _eachCanvasListener((element) {
+      element.onCanvasPaint?.call(delegate, paintCount);
+    });
   }
 
   /// 当[CanvasViewBox]视口发生变化时触发
