@@ -67,11 +67,11 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   final borderRadius = 4.0;
 
   late final decoration = fillDecoration(
-    fillColor: Colors.white,
+    color: Colors.white,
     borderRadius: borderRadius,
   );
   late final pressedDecoration = fillDecoration(
-    fillColor: Colors.black12,
+    color: Colors.black12,
     borderRadius: borderRadius,
   );
   late final keyboardNumberStyle = const TextStyle(
@@ -157,7 +157,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
         _createNumberButton("6", NumberKeyboardDialog.keyboardTypeNumber),
         StateDecorationWidget(
           decoration: fillDecoration(
-            fillColor: globalTheme.accentColor,
+            color: globalTheme.accentColor,
             borderRadius: borderRadius,
           ),
           pressedDecoration: pressedDecoration,

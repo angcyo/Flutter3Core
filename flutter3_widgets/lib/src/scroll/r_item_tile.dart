@@ -739,7 +739,7 @@ extension RItemTileExtension on Widget {
           (fillColor == null
               ? null
               : fillDecoration(
-                  fillColor: fillColor,
+                  color: fillColor,
                   borderRadius: borderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
@@ -770,7 +770,7 @@ extension RItemTileExtension on Widget {
       sliverPadding: sliverPadding,
       sliverDecoration: sliverDecoration ??
           fillDecoration(
-            fillColor: fillColor,
+            color: fillColor,
             borderRadius: borderRadius,
           ),
       sliverDecorationPosition: sliverDecorationPosition,

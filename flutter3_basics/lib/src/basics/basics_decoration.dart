@@ -37,11 +37,12 @@ class PaintBoxPainter extends BoxPainter {
 }
 
 /// 描边装饰
-/// [strokeColor] 描边颜色
+/// [color] 描边颜色
 /// [strokeWidth] 描边宽度
+/// [fillDecoration]
 BoxDecoration strokeDecoration({
+  Color? color,
   BuildContext? context,
-  Color? strokeColor,
   double strokeWidth = 1,
   double borderRadius = kDefaultBorderRadiusXX,
   BorderStyle style = BorderStyle.solid,
@@ -51,9 +52,9 @@ BoxDecoration strokeDecoration({
   BorderSide? start,
   BorderSide? end,
 }) {
-  final color = strokeColor ?? GlobalTheme.of(context).primaryColor;
+  final strokeColor = color ?? GlobalTheme.of(context).primaryColor;
   final BorderSide side = BorderSide(
-    color: color,
+    color: strokeColor,
     width: strokeWidth,
     style: style,
     strokeAlign: strokeAlign,
@@ -106,14 +107,15 @@ BoxDecoration lineDecoration({
 }
 
 /// 纯色填充装饰, 支持圆角
+/// [strokeDecoration]
 BoxDecoration fillDecoration({
   BuildContext? context,
-  Color? fillColor,
+  Color? color,
   double borderRadius = kDefaultBorderRadiusXX,
 }) {
-  final color = fillColor ?? GlobalTheme.of(context).primaryColor;
+  final fillColor = color ?? GlobalTheme.of(context).primaryColor;
   return BoxDecoration(
-    color: color,
+    color: fillColor,
     borderRadius: borderRadius > 0
         ? BorderRadius.all(
             Radius.circular(borderRadius),

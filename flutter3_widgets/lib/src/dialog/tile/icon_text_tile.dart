@@ -74,13 +74,13 @@ class IconTextTile extends StatelessWidget with TileMixin {
     const padding = EdgeInsets.symmetric(vertical: gap / 2, horizontal: gap);
     final iconWidget = buildIconWidget(
       context,
-      this.iconWidget,
+      iconWidget: this.iconWidget,
       icon: icon,
       padding: iconPadding,
     );
     final textWidget = buildTextWidget(
       context,
-      this.textWidget,
+      textWidget: this.textWidget,
       text: text,
       padding: textPadding,
     );

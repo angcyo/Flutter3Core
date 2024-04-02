@@ -21,14 +21,15 @@ class LayoutBoxConstraints extends BoxConstraints {
   final bool? matchParentHeight;
 
   const LayoutBoxConstraints({
-    super.minWidth,
-    super.maxWidth,
-    super.minHeight,
-    super.maxHeight,
     this.wrapContentWidth,
     this.wrapContentHeight,
     this.matchParentWidth,
     this.matchParentHeight,
+    //---
+    super.minWidth,
+    super.maxWidth,
+    super.minHeight,
+    super.maxHeight,
   });
 
   @override
@@ -66,6 +67,7 @@ class LayoutBoxConstraints extends BoxConstraints {
     Size childSize,
     EdgeInsets? padding,
   ) {
+    //debugger();
     if (parentConstraints.isTight) {
       return parentConstraints.constrain(childSize);
     }
@@ -76,8 +78,9 @@ class LayoutBoxConstraints extends BoxConstraints {
     final childWidth = childSize.width + paddingHorizontal;
     final childHeight = childSize.height + paddingVertical;
 
-    double width = parentConstraints.constrainWidth(childWidth);
-    double height = parentConstraints.constrainWidth(childHeight);
+    double width = parentConstraints.constrainWidth(constrainWidth(childWidth));
+    double height =
+        parentConstraints.constrainWidth(constrainHeight(childHeight));
 
     if (wrapContentWidth == true) {
       width = constrainWidth(childWidth);

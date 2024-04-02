@@ -8,8 +8,8 @@ part of '../../../flutter3_widgets.dart';
 mixin TileMixin {
   /// 构建图标小部件
   Widget? buildIconWidget(
-    BuildContext context,
-    Widget? iconWidget, {
+    BuildContext context, {
+    Widget? iconWidget,
     IconData? icon,
     double? iconSize,
     Color? iconColor,
@@ -31,8 +31,8 @@ mixin TileMixin {
 
   /// 构建文本小部件
   Widget? buildTextWidget(
-    BuildContext context,
-    Widget? textWidget, {
+    BuildContext context, {
+    Widget? textWidget,
     String? text,
     TextStyle? textStyle,
     bool themeStyle = true,
@@ -44,6 +44,40 @@ mixin TileMixin {
           style: textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
         ));
     return widget?.paddingInsets(padding);
+  }
+
+  /// 构建判断文本小部件, 支持选中状态提示
+  /// [isSelected] 是否选中
+  Widget? buildSegmentTextWidget(
+    BuildContext context, {
+    Widget? textWidget,
+    String? text,
+    TextStyle? textStyle,
+    TextStyle? selectedTextStyle,
+    bool isSelected = false,
+    bool themeStyle = true,
+    EdgeInsets? padding = const EdgeInsets.all(kL),
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    final normalTextStyle =
+        textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null);
+    final selectTextStyle = selectedTextStyle ??
+        textStyle?.copyWith(fontWeight: ui.FontWeight.bold) ??
+        (themeStyle
+            ? globalTheme.textBodyStyle.copyWith(fontWeight: ui.FontWeight.bold)
+            : null);
+
+    final widget = textWidget ??
+        (text?.text(
+          textAlign: ui.TextAlign.center,
+          style: isSelected ? selectTextStyle : normalTextStyle,
+        ));
+    return widget?.paddingInsets(padding).backgroundDecoration(isSelected
+        ? fillDecoration(
+            color: globalTheme.accentColor,
+            borderRadius: kDefaultBorderRadiusX,
+          )
+        : null);
   }
 
   /// 构建一个[Switch]开关小部件

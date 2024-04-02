@@ -311,32 +311,41 @@ class FlowLayoutRender extends RenderBox
 
     //debugger();
 
-    final double maxWidth;
+    double maxWidth;
     if (selfConstraints?.maxWidth != null &&
         selfConstraints?.maxWidth != double.infinity) {
       maxWidth = selfConstraints!.maxWidth;
     } else if (constraints.maxWidth != double.infinity) {
       maxWidth = constraints.maxWidth;
     } else {
-      maxWidth = double.infinity;
-      assert(() {
-        l.d('无法确定的maxWidth');
-        return true;
-      }());
+      final size = selfConstraints?.constrainSize(constraints,
+          const ui.Size(double.infinity, double.infinity), padding);
+      maxWidth = size?.width ?? double.infinity;
+      if (maxWidth == double.infinity) {
+        assert(() {
+          l.d('无法确定的maxWidth');
+          return true;
+        }());
+      }
     }
 
-    final double maxHeight;
+    //debugger();
+    double maxHeight;
     if (selfConstraints?.maxHeight != null &&
         selfConstraints?.maxHeight != double.infinity) {
       maxHeight = selfConstraints!.maxHeight;
     } else if (constraints.maxHeight != double.infinity) {
       maxHeight = constraints.maxHeight;
     } else {
-      maxHeight = double.infinity;
-      assert(() {
-        l.d('无法确定的maxHeight');
-        return true;
-      }());
+      final size = selfConstraints?.constrainSize(constraints,
+          const ui.Size(double.infinity, double.infinity), padding);
+      maxHeight = size?.height ?? double.infinity;
+      if (maxHeight == double.infinity) {
+        assert(() {
+          l.d('无法确定的maxHeight');
+          return true;
+        }());
+      }
     }
 
     //所有子元素
@@ -437,6 +446,16 @@ class FlowLayoutRender extends RenderBox
     double childUsedWidth = 0;
     double childUsedHeight = getAllLineHeight(childrenLineList);
 
+    //debugger();
+    Size childSize = Size(childUsedWidth, childUsedHeight);
+    size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
+        constraints.constrain(childSize);
+
+    //this
+    maxWidth = size.width;
+    maxHeight = size.height;
+
+    //debugger();
     double top = paddingTop;
     if (mainAxisAlignment == MainAxisAlignment.center) {
       top = (maxHeight - childUsedHeight) / 2 + paddingTop - paddingBottom;
@@ -499,10 +518,6 @@ class FlowLayoutRender extends RenderBox
     }
 
     //debugger();
-    Size childSize = Size(childUsedWidth, childUsedHeight);
-    size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
-        constraints.constrain(childSize);
-    //debugger();
   }
 
   /// 计算所有行的高度, 不包含[padding], 但是包含[childVerticalGap]
@@ -551,6 +566,44 @@ class FlowLayoutRender extends RenderBox
       return true;
     }());*/
     defaultPaint(context, offset);
+  }
+}
+
+extension FlowLayoutListEx on WidgetNullList {
+  /// [selfConstraints] 自身的约束条件, 不指定则使用父约束条件
+  /// [FlowLayout]
+  /// [FlowLayoutEx.flowLayoutData]
+  Widget? flowLayout({
+    LayoutBoxConstraints? selfConstraints,
+    EdgeInsets? padding,
+    double childGap = 0,
+    double? childHorizontalGap,
+    double? childVerticalGap,
+    BoxConstraints? childConstraints,
+    bool enableEqualWidth = false,
+    int? lineMaxChildCount,
+    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.center,
+    MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.start,
+    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
+  }) {
+    WidgetList list = filterNull();
+    if (isNil(list)) {
+      return null;
+    }
+    return FlowLayout(
+      padding: padding,
+      childGap: childGap,
+      childHorizontalGap: childHorizontalGap,
+      childVerticalGap: childVerticalGap,
+      selfConstraints: selfConstraints,
+      childConstraints: childConstraints,
+      enableEqualWidth: enableEqualWidth,
+      lineMaxChildCount: lineMaxChildCount,
+      mainAxisAlignment: mainAxisAlignment,
+      lineMainAxisAlignment: lineMainAxisAlignment,
+      crossAxisAlignment: crossAxisAlignment,
+      children: list,
+    );
   }
 }
 

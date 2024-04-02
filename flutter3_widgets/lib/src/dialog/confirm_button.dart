@@ -7,6 +7,9 @@ part of './dialog.dart';
 ///
 
 class ConfirmButton extends StatelessWidget {
+  /// 是否启用
+  final bool enable;
+
   /// 强制指定小部件
   final Widget? widget;
 
@@ -21,6 +24,7 @@ class ConfirmButton extends StatelessWidget {
 
   const ConfirmButton({
     super.key,
+    this.enable = true,
     this.useIcon = false,
     this.widget,
     this.text,
@@ -32,9 +36,9 @@ class ConfirmButton extends StatelessWidget {
     final globalTheme = GlobalTheme.of(context);
     Widget? result = widget ??
         (useIcon
-                ? const Icon(
+                ? Icon(
                     Icons.done,
-                    /*color: globalTheme.accentColor,*/
+                    color: enable ? null : globalTheme.disableColor,
                   )
                 : text?.text(
                     style: globalTheme.textLabelStyle
@@ -43,9 +47,15 @@ class ConfirmButton extends StatelessWidget {
                   ))
             ?.paddingAll(kX);
 
-    result = result?.ink(onTap: () {
-      onTap?.call();
-    }).material();
+    result = result
+        ?.ink(
+          onTap: enable
+              ? () {
+                  onTap?.call();
+                }
+              : null,
+        )
+        .material();
     return result!;
   }
 }

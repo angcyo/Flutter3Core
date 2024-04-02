@@ -252,3 +252,20 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
     _selectedForegroundPainter = null;
   }
 }
+
+extension StateDecorationWidgetEx on Widget {
+  /// 绘制背景
+  /// [StateDecorationWidget]
+  /// [Decoration]
+  /// [fillDecoration]
+  Widget backgroundDecoration(Decoration? decoration, {Key? key}) {
+    if (decoration == null) {
+      return this;
+    }
+    return StateDecorationWidget(
+      key: key,
+      decoration: decoration,
+      child: this,
+    );
+  }
+}

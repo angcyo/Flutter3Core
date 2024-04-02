@@ -45,7 +45,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
 
     final top = buildIconWidget(
       context,
-      iconWidget,
+      iconWidget: iconWidget,
       icon: icon,
       iconSize: iconSize,
       iconColor: iconColor,

@@ -15,6 +15,8 @@ mixin DialogMixin implements TranslationTypeImpl {
   @override
   TranslationType get translationType => TranslationType.translationFade;
 
+  //region ---对话框包裹---
+
   /// 对话框外边距
   EdgeInsets get dialogMargin =>
       const EdgeInsets.symmetric(horizontal: 60, vertical: kToolbarHeight);
@@ -131,6 +133,44 @@ mixin DialogMixin implements TranslationTypeImpl {
         .matchParent(matchHeight: false)
         .align(Alignment.bottomCenter);
   }
+
+  //endregion ---对话框包裹---
+
+  //region ---小部件---
+
+  Widget buildDialogIconTitle(
+    BuildContext context, {
+    String? title,
+    bool enableConfirm = true,
+    FutureOr Function()? onConfirm,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    return [
+      CancelButton(
+        useIcon: true,
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      title
+          ?.text(
+            style: globalTheme.textTitleStyle
+                .copyWith(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          )
+          .expanded(),
+      ConfirmButton(
+        useIcon: true,
+        enable: enableConfirm,
+        onTap: () {
+          onConfirm?.call();
+          Navigator.of(context).pop();
+        },
+      ),
+    ].row()!;
+  }
+
+  //endregion ---小部件---
 
   //region 辅助方法
 
