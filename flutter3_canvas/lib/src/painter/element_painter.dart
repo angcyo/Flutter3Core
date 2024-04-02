@@ -177,6 +177,8 @@ class ElementPainter extends IPainter
 
   /// 重写此方法, 实现在画布内绘制自己
   /// [painting]
+  /// [paintPropertyRect]
+  /// [paintPropertyBounds]
   @overridePoint
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //paint.color = Colors.black;
@@ -192,7 +194,6 @@ class ElementPainter extends IPainter
 
         /*assert(() {
           //绘制元素包裹的边界矩形
-          paint.color = Colors.red;
           paintPropertyBounds(canvas, paintMeta, paint);
           return true;
         }());*/
@@ -205,47 +206,46 @@ class ElementPainter extends IPainter
   @property
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
-      final oldColor = paint.color;
-      final oldStyle = paint.style;
-      final oldStrokeWidth = paint.strokeWidth;
+      paint.withSavePaint(() {
+        paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
+        paint.style = PaintingStyle.stroke;
+        paint.strokeWidth = 1 / paintMeta.canvasScale;
 
-      paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
-      paint.style = PaintingStyle.stroke;
-      paint.strokeWidth = 1 / paintMeta.canvasScale;
+        //debugger();
+        final rect = it.paintScaleRect;
+        /*final c1 = rect.center;
+       final c2 = it.paintRect.center;
+       final c3 = it.paintCenter;
+       debugger();
+       canvas.drawRect(it.scaleRect, paint);
+       canvas.drawRect(
+           Rect.fromLTWH(
+               it.left, it.top, it.scaleRect.width, it.scaleRect.height),
+           paint);
+       canvas.drawRect(rect, paint);*/
+        canvas.withRotateRadians(it.angle, () {
+          canvas.drawRect(rect, paint);
+        }, anchor: rect.center);
 
-      //debugger();
-      final rect = it.paintScaleRect;
-      /*final c1 = rect.center;
-      final c2 = it.paintRect.center;
-      final c3 = it.paintCenter;
-      debugger();
-      canvas.drawRect(it.scaleRect, paint);
-      canvas.drawRect(
-          Rect.fromLTWH(
-              it.left, it.top, it.scaleRect.width, it.scaleRect.height),
-          paint);
-      canvas.drawRect(rect, paint);*/
-      canvas.withRotateRadians(it.angle, () {
-        canvas.drawRect(rect, paint);
-      }, anchor: rect.center);
-
-      /*paint.color = Colors.redAccent;
+        /*paint.color = Colors.redAccent;
       canvas.drawRect(rect, paint);
 
       canvas.drawRect(it.paintBounds, paint);*/
-
-      paint.color = oldColor;
-      paint.style = oldStyle;
-      paint.strokeWidth = oldStrokeWidth;
+      });
     });
   }
 
-  /// 绘制元素的包裹框边界
+  /// 绘制元素的包裹框边界, 全属性后的包裹框
+  /// [onPaintingSelf]
+  @property
   void paintPropertyBounds(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       //debugger();
-      //canvas.drawPath(it.paintPath, paint);
-      canvas.drawRect(it.paintBounds, paint);
+      paint.withSavePaint(() {
+        paint.color = Colors.redAccent;
+        //canvas.drawPath(it.paintPath, paint);
+        canvas.drawRect(it.paintBounds, paint);
+      });
     });
   }
 
@@ -462,8 +462,11 @@ class ElementPainter extends IPainter
 
   //region ---output---
 
-  /// 元素操作后对应的图片数据
+  /// 元素操作后对应的图片数据, 支持所有元素, 包含组合元素
   /// [ImageEx.toBase64]
+  /// [ElementPainter]
+  /// [ElementGroupPainter]
+  @output
   UiImage? get elementOutputImage {
     final bounds = elementsBounds;
     if (bounds == null) {
@@ -484,8 +487,13 @@ class ElementPainter extends IPainter
     return image;
   }
 
+  /// 获取元素用于输出的边界[Path]
+  @output
+  Path? get elementOutputBoundsPath => paintProperty?.paintPath;
+
   /// 获取元素的输出[Path]
   /// [VectorPathEx.toSvgPathString]
+  @output
   Path? get elementOutputPath {
     if (this is PathElementPainter) {
       return (this as PathElementPainter).operatePath;
@@ -494,6 +502,7 @@ class ElementPainter extends IPainter
   }
 
   /// 获取元素的所有输出[Path]
+  @output
   List<Path> get elementOutputPathList {
     final result = <Path>[];
     if (this is ElementGroupPainter) {
@@ -840,16 +849,22 @@ class PaintProperty with EquatableMixin {
     return matrix.mapRect(rect);
   }
 
-  /// 全属性后的边界
+  /// 全属性后的边界, 是旋转后的[rect]的外边界
+  /// 更贴切的边界是[paintPath]的边界[PathEx.getExactBounds]
   Rect get paintBounds => operateMatrix.mapRect(rect);
 
   /// 元素全属性绘制路径, 用来判断是否相交
   /// 完全包裹的path路径
-  Path get paintPath => Path().let((it) {
-        //debugger();
-        it.addRect(rect);
-        return it.transformPath(operateMatrix);
-      });
+  /// ```
+  /// Path().let((it) {
+  ///    //debugger();
+  ///    it.addRect(rect);
+  ///    return it.transformPath(operateMatrix);
+  /// });
+  /// ```
+  Path get paintPath => Path()
+    ..addRect(rect)
+    ..transformPath(operateMatrix);
 
   //endregion ---get属性---
 

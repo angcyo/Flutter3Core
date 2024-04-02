@@ -428,3 +428,23 @@ extension CanvasEx on Canvas {
 
 //endregion ---draw---
 }
+
+extension PaintEx on Paint {
+  /// 保存所有画笔属性, 并操作完后恢复
+  void withSavePaint(VoidCallback callback) {
+    final oldColor = color;
+    final oldStyle = style;
+    final oldStrokeWidth = strokeWidth;
+    final oldStrokeCap = strokeCap;
+    final oldStrokeJoin = strokeJoin;
+    try {
+      callback();
+    } finally {
+      color = oldColor;
+      style = oldStyle;
+      strokeWidth = oldStrokeWidth;
+      strokeCap = oldStrokeCap;
+      strokeJoin = oldStrokeJoin;
+    }
+  }
+}
