@@ -191,14 +191,17 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     //移动到元素中心
     final center = rect.center;
     final canvasBounds = canvasViewBox.canvasBounds;
+    final canvasVisibleBounds = canvasViewBox.canvasVisibleBounds;
+    var canvasVisibleWidth = canvasVisibleBounds.width;
+    var canvasVisibleHeight = canvasVisibleBounds.height;
     final canvasCenter =
         Offset(canvasBounds.width / 2, canvasBounds.height / 2);
     final offset = canvasCenter - center;
     translateMatrix.translate(offset.dx, offset.dy);
 
     //在中心点开始缩放
-    double sx = canvasBounds.width / rect.width;
-    double sy = canvasBounds.height / rect.height;
+    double sx = canvasVisibleWidth / rect.width;
+    double sy = canvasVisibleHeight / rect.height;
 
     if (margin != null) {
       rect = rect.inflateValue(EdgeInsets.only(
@@ -214,13 +217,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     double? scale;
     //debugger();
     if (enableZoomOut &&
-        (rect.width > canvasBounds.width ||
-            rect.height > canvasBounds.height)) {
+        (rect.width > canvasVisibleWidth ||
+            rect.height > canvasVisibleHeight)) {
       //元素比画布大, 此时画布需要缩小
       scale = min(sx, sy);
     } else if (enableZoomIn &&
-        (rect.width < canvasBounds.width ||
-            rect.height < canvasBounds.height)) {
+        (rect.width < canvasVisibleWidth ||
+            rect.height < canvasVisibleHeight)) {
       //元素比画布小, 此时画布需要放大
       scale = max(sx, sy);
     }

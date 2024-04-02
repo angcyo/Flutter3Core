@@ -146,6 +146,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void addElement(
     ElementPainter? element, {
+    @dp Offset? offset,
     bool selected = false,
     bool showRect = false,
     UndoType undoType = UndoType.normal,
@@ -159,6 +160,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     addElementList(
       element.ofList(),
+      offset: offset,
       selected: selected,
       showRect: showRect,
       undoType: undoType,
@@ -168,10 +170,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 添加一组元素
   /// [list] 要添加的一组元素
   /// [selected] 添加完成后,是否选中
+  /// [showRect] 移动元素到画布中心
+  /// [offset] 所有元素的偏移量
   @supportUndo
   @api
   void addElementList(
     List<ElementPainter>? list, {
+    @dp Offset? offset,
     bool selected = false,
     bool showRect = false,
     UndoType undoType = UndoType.normal,
@@ -182,6 +187,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         return true;
       }());
       return;
+    }
+    if (offset != null) {
+      for (var element in list) {
+        element.translateElement(
+            Matrix4.identity()..translate(offset.dx, offset.dy));
+      }
     }
 
     final old = elements.clone();
@@ -443,7 +454,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //endregion ---select---
 
-  //region ---operate---
+  //region ---operate/api---
 
   /// 替换元素
   /// [oldElement] 需要被替换的旧元素
@@ -1036,7 +1047,68 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
   }
 
-  //endregion ---operate---
+  /// 复制元素
+  @api
+  @supportUndo
+  void copyElement(ElementPainter? element,
+      {@dp Offset? offset,
+      bool selected = true,
+      bool showRect = true,
+      UndoType undoType = UndoType.normal}) {
+    if (element == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    if (element is ElementSelectComponent) {
+      copyElementList(element.children,
+          offset: offset,
+          selected: selected,
+          showRect: showRect,
+          undoType: undoType);
+    } else {
+      copyElementList(element.ofList(),
+          offset: offset,
+          selected: selected,
+          showRect: showRect,
+          undoType: undoType);
+    }
+  }
+
+  /// 复制元素
+  @api
+  @supportUndo
+  void copyElementList(
+    List<ElementPainter>? elementList, {
+    @dp Offset? offset,
+    bool selected = true,
+    bool showRect = true,
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementList == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    final newElementList = <ElementPainter>[];
+    for (var element in elementList) {
+      final newElement = element.copyElement();
+      newElementList.add(newElement);
+    }
+    addElementList(
+      newElementList,
+      offset: offset,
+      selected: selected,
+      showRect: showRect,
+      undoType: undoType,
+    );
+  }
+
+  //endregion ---operate/api---
 
   @override
   String toStringShort() => buildString((builder) {

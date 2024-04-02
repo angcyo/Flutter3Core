@@ -34,10 +34,18 @@ class ElementPainter extends IPainter
     }
   }
 
+  //--get/set
+
   bool get isLockRatio => paintState.isLockRatio;
 
   set isLockRatio(bool value) {
     paintState.isLockRatio = value;
+  }
+
+  bool get isVisible => paintState.isVisible;
+
+  set isVisible(bool value) {
+    paintState.isVisible = value;
   }
 
   //endregion ---属性--
@@ -443,6 +451,24 @@ class ElementPainter extends IPainter
     return null;
   }
 
+  /// 复制元素
+  /// [parent] 父元素
+  /// [template] 模板元素
+  @api
+  ElementPainter copyElement({
+    ElementPainter? template,
+    ElementGroupPainter? parent,
+    bool resetUuid = true,
+  }) {
+    final newPainter = template ?? ElementPainter();
+    newPainter.paintState = paintState.copyWith();
+    newPainter.paintProperty = paintProperty?.copyWith();
+    if (resetUuid) {
+      newPainter.paintState.elementUuid = uuid();
+    }
+    return newPainter;
+  }
+
   //endregion ---api---
 
   //region ---output---
@@ -543,14 +569,8 @@ class ElementPainter extends IPainter
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty('paintProperty', paintProperty));
-    properties.add(FlagProperty('isLockRatio',
-        value: paintState.isLockRatio,
-        ifTrue: 'isLockRatio',
-        ifFalse: 'notLockRatio'));
-    properties.add(FlagProperty('isVisible',
-        value: paintState.isVisible,
-        ifTrue: 'isVisible',
-        ifFalse: 'notVisible'));
+    properties.add(DiagnosticsProperty('paintState', paintState));
+    properties.add(DiagnosticsProperty('debug', debug));
 
     final canvasViewBox = canvasDelegate?.canvasViewBox;
     if (canvasViewBox != null) {
@@ -650,6 +670,34 @@ class ElementGroupPainter extends ElementPainter {
       result.addAll(element.getGroupPainterList() ?? []);
     });
     return result;
+  }
+
+  @override
+  ElementPainter copyElement({
+    ElementPainter? template,
+    ElementGroupPainter? parent,
+    bool resetUuid = true,
+  }) {
+    final newPainter = ElementGroupPainter();
+    newPainter.paintState = paintState.copyWith();
+    newPainter.paintProperty = paintProperty?.copyWith();
+    if (resetUuid) {
+      newPainter.paintState.elementUuid = uuid();
+    }
+
+    final newChildren = <ElementPainter>[];
+    children?.forEach((element) {
+      newChildren.add(element.copyElement(
+        parent: newPainter,
+        resetUuid: resetUuid,
+      ));
+    });
+    newPainter.resetChildren(
+        newChildren,
+        canvasDelegate?.canvasElementManager.canvasElementControlManager
+                .enableResetElementAngle ??
+            true);
+    return newPainter;
   }
 
   //endregion ---core--
