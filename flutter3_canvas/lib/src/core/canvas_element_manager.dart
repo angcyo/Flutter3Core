@@ -537,7 +537,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 组合元素
   @api
   @supportUndo
-  void groupElement(List<ElementPainter>? elements) {
+  void groupElement(List<ElementPainter>? elements,
+      {UndoType undoType = UndoType.normal}) {
     if (elements == null || elements.length < 2) {
       assert(() {
         l.d('不满足组合条件');
@@ -556,8 +557,15 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         elements, canvasElementControlManager.enableResetElementAngle);
     newList.add(group);
 
+    for (var element in elements) {
+      element.onSelfGroupFrom(group);
+    }
+
+    //事件
+    canvasDelegate.dispatchCanvasGroupChanged(group, elements);
+
     //重置元素列表
-    resetElementList(newList);
+    resetElementList(newList, undoType: undoType);
 
     //选中组合元素
     resetSelectElement([group]);
@@ -588,6 +596,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final newList = elements.clone(true);
     newList.remove(group);
     newList.addAll(children);
+
+    for (var element in children) {
+      element.onSelfUngroupFrom(group);
+    }
+
+    //事件
+    canvasDelegate.dispatchCanvasUngroupChanged(group);
 
     //重置元素列表
     resetElementList(newList, undoType: undoType);

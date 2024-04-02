@@ -50,6 +50,13 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasUndoChanged]
   final void Function(CanvasUndoManager undoManager)? onCanvasUndoChangedAction;
 
+  /// [CanvasDelegate.dispatchCanvasGroupChanged]
+  final void Function(ElementGroupPainter group, List<ElementPainter> elements)?
+      onCanvasGroupChangedAction;
+
+  /// [CanvasDelegate.dispatchCanvasUngroupChanged]
+  final void Function(ElementGroupPainter group)? onCanvasUngroupChangedAction;
+
   CanvasListener({
     this.onCanvasViewBoxChangedAction,
     this.onCanvasUnitChangedAction,
@@ -59,5 +66,7 @@ class CanvasListener {
     this.onCanvasElementListChangedAction,
     this.onDoubleTapElementAction,
     this.onCanvasUndoChangedAction,
+    this.onCanvasGroupChangedAction,
+    this.onCanvasUngroupChangedAction,
   });
 }

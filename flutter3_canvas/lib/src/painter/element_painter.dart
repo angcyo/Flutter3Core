@@ -312,7 +312,7 @@ class ElementPainter extends IPainter
 
   //endregion ---paint---
 
-  //region ---apply--
+  //region ---apply paintProperty--
 
   /// 平移元素
   @api
@@ -410,7 +410,7 @@ class ElementPainter extends IPainter
     });
   }
 
-  //endregion ---apply--
+  //endregion ---apply paintProperty--
 
   //region ---canvas---
 
@@ -438,7 +438,9 @@ class ElementPainter extends IPainter
   /// [ElementStateStack.restore]
   void onRestoreStateStack(ElementStateStack stateStack) {}
 
-  //---
+  //endregion ---canvas---
+
+  //region ---api---
 
   /// 单签元素是否包含指定的元素
   @api
@@ -458,7 +460,7 @@ class ElementPainter extends IPainter
     return null;
   }
 
-  //endregion ---canvas---
+  //endregion ---api---
 
   //region ---output---
 
@@ -535,6 +537,20 @@ class ElementPainter extends IPainter
   }
 
   //endregion ---output---
+
+  //region ---callback---
+
+  /// 当前元素被组合到
+  /// [CanvasElementManager.groupElement]
+  @property
+  void onSelfGroupFrom(ElementGroupPainter group) {}
+
+  /// 当前元素被解组
+  /// [CanvasElementManager.ungroupElement]
+  @property
+  void onSelfUngroupFrom(ElementGroupPainter group) {}
+
+  //endregion ---callback---
 
   @override
   String toStringShort() =>

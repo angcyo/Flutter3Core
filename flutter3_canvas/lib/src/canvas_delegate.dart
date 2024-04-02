@@ -339,6 +339,23 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
+  /// 元素组合变化回调
+  /// [group] 产生的组合元素
+  /// [elements] 组合的子元素列表
+  void dispatchCanvasGroupChanged(
+      ElementGroupPainter group, List<ElementPainter> elements) {
+    canvasListeners.clone().forEach((element) {
+      element.onCanvasGroupChangedAction?.call(group, elements);
+    });
+  }
+
+  /// 拆组变化回调
+  void dispatchCanvasUngroupChanged(ElementGroupPainter group) {
+    canvasListeners.clone().forEach((element) {
+      element.onCanvasUngroupChangedAction?.call(group);
+    });
+  }
+
   //endregion ---事件派发---
 
   //region ---Ticker---
