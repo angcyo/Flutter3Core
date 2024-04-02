@@ -15,6 +15,15 @@ const kErrorFileName = "error.log";
 const kHttpFileName = "http.log";
 const kLogPathName = "log";
 
+/// 当前支持写入文件的数据类型
+/// [UiImage]
+/// [ByteData]/[TypedData]|[ByteData.buffer]->[ByteBuffer]|[ByteData.view]
+/// [ByteBuffer]|[ByteBuffer.asUint8List]->[Uint8List]|[ByteBuffer.asByteData]->[ByteData]
+/// [Uint8List]/[TypedData]|[Uint8List.buffer]->[ByteBuffer]
+/// [String]
+/// [LogEx.appendToFile]
+typedef FileDataType = Object;
+
 extension LogEx on Object {
   /// 包裹一下日志信息
   String wrapLogString([String? prefix]) =>
@@ -66,18 +75,56 @@ extension LogEx on Object {
       mode = FileMode.write;
     }
     final fileObj = filePath.file();
+
+    Future writeBytes(Uint8List? bytes) async {
+      if (bytes != null) {
+        await fileObj.writeAsBytes(bytes, mode: mode);
+      }
+    }
+
+    Future writeByteBuffer(ByteBuffer? byteBuffer) async {
+      if (byteBuffer != null) {
+        final list = byteBuffer.asUint8List();
+        await writeBytes(list);
+      }
+    }
+
+    Future writeByteData(ByteData? byteData) async {
+      if (byteData != null) {
+        final buffer = byteData.buffer;
+        await writeByteBuffer(buffer);
+      }
+    }
+
+    Future writeImage(UiImage? image) async {
+      final byteData = await image?.toByteData(format: UiImageByteFormat.png);
+      await writeByteData(byteData);
+    }
+
+    Future writeString(String? string) async {
+      if (string != null) {
+        await fileObj.writeString(
+          (wrapLog == true ||
+                  (wrapLog == null &&
+                      fileName?.endsWith(kLogExtension) == true))
+              ? wrapLogString()
+              : string,
+          mode: mode,
+        );
+      }
+    }
+
     if (this is UiImage) {
+      //图片不支持[FileMode.append]模式
       fileObj.writeImage(this as UiImage?);
     } else if (this is Uint8List) {
-      fileObj.writeAsBytes(this as Uint8List, mode: mode);
+      writeBytes(this as Uint8List);
+    } else if (this is ByteData) {
+      writeByteData(this as ByteData);
+    } else if (this is ByteBuffer) {
+      writeByteBuffer(this as ByteBuffer);
     } else {
-      fileObj.writeString(
-        (wrapLog == true ||
-                (wrapLog == null && fileName.endsWith(kLogExtension)))
-            ? wrapLogString()
-            : "$this",
-        mode: mode,
-      );
+      writeString("$this");
     }
     return fileObj;
   }
