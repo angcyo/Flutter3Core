@@ -1,4 +1,4 @@
-part of flutter3_http;
+part of '../../flutter3_http.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

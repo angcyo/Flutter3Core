@@ -37,6 +37,16 @@ dependencies:
   # https://pub.dev/packages/string_scanner
   svg_path_parser: ^1.1.2
 
+  # https://pub.dev/packages/string_scanner
+  # https://pub.dev/packages/source_span
+  string_scanner: ^1.2.0
+
+  # https://pub.dev/packages/xml
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/petitparser
+  xml: ^6.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

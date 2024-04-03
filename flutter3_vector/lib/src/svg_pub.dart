@@ -203,6 +203,7 @@ class SvgListener extends VectorGraphicsCodecListener {
     l.d('onSaveLayer $paintId');
   }
 
+  /// 这里的宽高, 只会返回`viewBox="0 0 1024 1024"`中的大小
   @override
   void onSize(double width, double height) {
     l.d('onSize $width $height');

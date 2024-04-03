@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
+import 'package:string_scanner/string_scanner.dart';
+import 'package:xml/xml.dart';
+import 'package:xml/xpath.dart';
 
 void main() async {
   /*test('adds one to input values', () {
@@ -19,7 +22,8 @@ void main() async {
   //testCircle();
   //testLine();
 
-  await testSvg();
+  //await testSvg();
+  //testStringScanner();
 
   assert(true);
 }
@@ -72,4 +76,35 @@ Future testSvg() async {
   //consoleLog(svgString);
   final response = await decodeSvgString(svgString);
   consoleLog(response);
+}
+
+void testStringScanner() {
+  final svgImage = File('${Directory.current.path}/test/svg_image.svg');
+  final svgString = svgImage.readAsStringSync();
+
+  final document = XmlDocument.parse(svgString);
+  consoleLog(document.findElements("svg").firstOrNull?.getAttribute("width"));
+  consoleLog(document.xpath("svg").firstOrNull?.getAttribute("width"));
+  consoleLog(document.xpath("svg").firstOrNull?.getAttribute("height2"));
+
+  final scanner = StringScanner(svgString);
+
+  // 扫描并提取字符串中的单词和数字
+  /*while (!scanner.isDone) {
+    if (scanner.scan(RegExp(r'\w+'))) {
+      print('Word: ${scanner.lastMatch?[0]}');
+    } else if (scanner.scan(RegExp(r'\d+'))) {
+      print('Number: ${scanner.lastMatch?[0]}');
+    } else {
+      //scanner.expect(' '); // 跳过空格
+      //scanner.expectDone();
+      consoleLog(String.fromCharCode(scanner.readChar()));
+    }
+  }*/
+
+  /*consoleLog(scanner.position);
+  consoleLog('1'.codeUnitAt(0));
+  consoleLog(scanner.scan('width='));
+  consoleLog(scanner.scanChar('1'.codeUnitAt(0)));
+  consoleLog(scanner.rest);*/
 }

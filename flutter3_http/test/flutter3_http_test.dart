@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter3_http/flutter3_http.dart';
+
 void main() async {
   //await testHttp();
-  await testWebSocket();
+  //await testWebSocket();
+  await testDio();
   print('test...end');
+  assert(true);
 }
 
 /// 使用dart进行简单的http请求测试
@@ -44,3 +49,18 @@ Future<void> testWebSocket() async {
 
 /*void test(String | List<int>  data){
 }*/
+
+Future testDio() async {
+  /*final bytes =
+      await "https://gitee.com/angcyo/file/raw/master/LaserPeckerPro/version.json"
+          .getBytes();
+  print(utf8.decode(bytes ?? []));*/
+
+  final imageBytes =
+      await "https://gitcode.net/angcyo/file/-/raw/master/res/code/all_in1.jpg".getBytes();
+
+  print(imageBytes?.toBase64Image());
+
+  //final response = await dio.get('/info');
+  //print(response.data);
+}
