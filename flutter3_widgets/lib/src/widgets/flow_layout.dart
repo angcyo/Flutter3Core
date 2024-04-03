@@ -446,12 +446,13 @@ class FlowLayoutRender extends RenderBox
 
     //debugger();
     Size childSize = Size(childUsedWidth, childUsedHeight);
-    size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
-        constraints.constrain(childSize);
+    Size expectSize =
+        selfConstraints?.constrainSize(constraints, childSize, padding) ??
+            constraints.constrain(childSize);
 
     //this
-    maxWidth = size.width;
-    maxHeight = size.height;
+    maxWidth = expectSize.width;
+    maxHeight = expectSize.height;
 
     //debugger();
     double top = paddingTop;
@@ -515,7 +516,11 @@ class FlowLayoutRender extends RenderBox
       }
     }
 
+    //重新计算一次size
     //debugger();
+    childSize = Size(childUsedWidth, childUsedHeight);
+    size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
+        constraints.constrain(childSize);
   }
 
   /// 计算所有行的高度, 不包含[padding], 但是包含[childVerticalGap]
