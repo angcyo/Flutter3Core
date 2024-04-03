@@ -68,10 +68,10 @@ dynamic clamp(num x, num? min, num? max) {
   return x;
 }
 
-/// 横向
+/// orientation: 横向
 const kHorizontal = 0;
 
-/// 纵向
+/// orientation: 纵向
 const kVertical = 1;
 
 /// 获取当前调用此方法的文件名
