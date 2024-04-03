@@ -47,6 +47,9 @@ class IconTextTile extends StatelessWidget with TileMixin {
   /// 是否激活
   final bool enable;
 
+  /// 是否激活点击
+  final bool enableTap;
+
   /// 点击事件
   final GestureTapCallback? onTap;
 
@@ -63,6 +66,7 @@ class IconTextTile extends StatelessWidget with TileMixin {
     this.rightWidget,
     this.enable = true,
     this.direction = Axis.horizontal,
+    this.enableTap = true,
     this.onTap,
   });
 
@@ -100,7 +104,7 @@ class IconTextTile extends StatelessWidget with TileMixin {
         .colorFiltered(color: enable ? tintColor : disableTintColor)
         .paddingInsets(padding)
         .constrainedMin(minHeight: kMinItemInteractiveHeight)
-        .ink(onTap: enable ? onTap : null)
+        .ink(onTap: enable && enableTap ? onTap : null)
         .material();
 
     return result;
