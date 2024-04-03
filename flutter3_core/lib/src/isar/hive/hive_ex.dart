@@ -1,4 +1,4 @@
-part of flutter3_core;
+part of '../../../flutter3_core.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -32,15 +32,18 @@ Map<String, dynamic> hiveAll([Box? box]) {
 extension HiveStringEx on String {
   /// 保存键值对, 当[value]不支持时, 会自动使用字符串存储
   /// `[HiveError]HiveError: Cannot write, unknown type: TextEditingValue. Did you forget to register an adapter?`
-  Future<void> hivePut(dynamic value, [bool notifyChanged = true]) {
+  Future<dynamic> hivePut(dynamic value, [bool notifyChanged = true]) {
     //debugger();
     if (notifyChanged) {
       notifyDebugValueChanged(value);
     }
     return _hiveBox.put(this, value).get((v, error) {
       if (value != null && error is HiveError) {
-        l.e("存储类型失败:[${value.runtimeType}]:$error, 自动转换为字符串存储");
-        return hivePut("$value");
+        assert(() {
+          l.e("存储类型失败:[${value.runtimeType}]:$error, 自动转换为字符串存储");
+          return true;
+        }());
+        return hivePut("$value", notifyChanged);
       }
       return v;
     });
@@ -54,6 +57,50 @@ extension HiveStringEx on String {
   /// 获取指定键的值
   T? hiveGet<T>([T? defaultValue]) =>
       _hiveBox.get(this, defaultValue: defaultValue);
+
+  /// 将一个值, 保存到指定键的json列表中
+  /// [sort] 是否排序, 开启排序后, 最后添加的数据在最前面
+  /// [removeDuplicate] 是否移除重复的数据
+  /// [maxCount] 最大保存数量, 超过数量后, 会删除最后的数据
+  Future<dynamic> hivePutList(
+    String value, {
+    bool sort = true,
+    bool removeDuplicate = true,
+    bool notifyChanged = true,
+    int? maxCount,
+  }) {
+    final list = hiveGetList();
+    if (removeDuplicate) {
+      list.remove(value);
+    }
+    if (maxCount != null && list.length + 1 > maxCount) {
+      //移除所有超出的数据
+      list.removeRange(maxCount - 1, list.length);
+    }
+    if (sort) {
+      list.insert(0, value);
+    } else {
+      list.add(value);
+    }
+    return hivePut(list.toJsonString(null), notifyChanged);
+  }
+
+  /// [hivePutList]
+  /// [hiveGetList]
+  Future<dynamic> hiveDeleteList(String value, {bool notifyChanged = true}) {
+    final list = hiveGetList();
+    list.remove(value);
+    return hivePut(list.toJsonString(null), notifyChanged);
+  }
+
+  /// 获取指定键的字符串列表值, 使用json解析
+  List<String> hiveGetList() {
+    final json = hiveGet<String>();
+    if (json == null || isNil(json)) {
+      return [];
+    }
+    return json.fromJsonList<String>() ?? [];
+  }
 }
 
 /// Flutter extensions for Hive.
@@ -93,16 +140,16 @@ mixin HiveHookMixin<T extends StatefulWidget> on State<T> {
   /// [key] 持久化存储的key值
   /// [ValueListenable]
   /// [TextEditingValue]
-  hookHiveKey(String key, ValueListenable notify) {
+  hookHiveKey(String key, ValueListenable notify, {bool notifyChanged = true}) {
     if (hiveHookMap.containsKey(notify)) {
       return;
     }
     hiveHookMap[notify] = () {
       final value = notify.value;
       if (value is TextEditingValue) {
-        key.hivePut(value.text);
+        key.hivePut(value.text, notifyChanged);
       } else {
-        key.hivePut(notify.value);
+        key.hivePut(notify.value, notifyChanged);
       }
     };
     notify.addListener(hiveHookMap[notify]!);

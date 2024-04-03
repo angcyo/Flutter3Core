@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../../flutter3_widgets.dart';
 
 /// 输入框小部件
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -13,6 +13,7 @@ class TextFieldConfig {
 
   /// 焦点模式
   /// [EditableTextState.requestKeyboard]
+  /// [FocusNode.requestFocus]
   final FocusNode focusNode;
 
   /// 密码输入控制
@@ -20,6 +21,9 @@ class TextFieldConfig {
 
   /// 输入的文本
   String get text => controller.text;
+
+  /// 调用此方法更新输入框的值
+  void Function(String value)? updateFieldValueFn;
 
   //region 可以覆盖TextField的属性, 优先级低
 
@@ -33,21 +37,30 @@ class TextFieldConfig {
 
   /// 键盘上的输入类型, 比如完成, 下一步等
   /// [SingleInputWidget.textInputAction]
+  /// [TextInputAction.done]
+  /// [TextInputAction.search]
   final TextInputAction? textInputAction;
 
   //endregion 可以覆盖TextField的属性, 优先级低
 
   /// 回调
+
+  /// [TextField.onChanged]
   final ValueChanged<String>? onChanged;
+
+  /// [TextField.onSubmitted]
   final ValueChanged<String>? onSubmitted;
+
+  /// [TextField.onEditingComplete]
   final VoidCallback? onEditingComplete;
 
   TextFieldConfig({
-    String? text,
+    String? text /*默认文本*/,
     TextEditingController? controller,
-    FocusNode? focusNode,
-    bool? obscureText,
+    FocusNode? focusNode /*请求焦点*/,
+    bool? obscureText /*是否是密码*/,
     this.textInputAction,
+    this.updateFieldValueFn,
     this.hintText,
     this.prefixIcon,
     this.onChanged,
@@ -324,8 +337,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           iconSize: widget.suffixIconSize,
           constraints: widget.suffixIconConstraints,
           onPressed: () {
-            widget.config.controller.clear();
-            setState(() {});
+            _updateFieldValue("");
           },
           icon: Icon(
             Icons.cancel_rounded,
@@ -336,6 +348,24 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       }
     }
     return null;
+  }
+
+  /// 更新输入框的值
+  void _updateFieldValue(String value) {
+    //debugger();
+    //clear 不会触发onChanged回调
+    //widget.config.controller.clear();
+    //setText 也不会触发onChanged回调
+    widget.config.controller.text = value;
+    _onSelfValueChanged(value);
+    //setState(() {});
+  }
+
+  /// 输入框的值改变
+  void _onSelfValueChanged(String value) {
+    widget.onChanged?.call(value);
+    widget.config.onChanged?.call(value);
+    _checkSuffixIcon();
   }
 
   /// 检查是否需要显示后缀图标
@@ -351,11 +381,13 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     if (widget.config.obscureNode.obscureText) {
       widget.config.obscureNode.addListener(_checkSuffixIcon);
     }
+    widget.config.updateFieldValueFn = _updateFieldValue;
     super.initState();
   }
 
   @override
   void dispose() {
+    widget.config.updateFieldValueFn = null;
     widget.config.focusNode.removeListener(_checkSuffixIcon);
     if (widget.config.obscureNode.obscureText) {
       widget.config.obscureNode.removeListener(_checkSuffixIcon);
@@ -452,9 +484,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           textInputAction:
               widget.textInputAction ?? widget.config.textInputAction,
           onChanged: (value) {
-            widget.onChanged?.call(value);
-            widget.config.onChanged?.call(value);
-            _checkSuffixIcon();
+            _onSelfValueChanged(value);
           },
           onSubmitted: (value) {
             widget.onSubmitted?.call(value);

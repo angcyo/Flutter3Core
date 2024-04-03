@@ -47,6 +47,7 @@ mixin TileMixin {
   }
 
   /// 构建判断文本小部件, 支持选中状态提示
+  /// [enable] 是否启用
   /// [isSelected] 是否选中
   Widget? buildSegmentTextWidget(
     BuildContext context, {
@@ -54,6 +55,7 @@ mixin TileMixin {
     String? text,
     TextStyle? textStyle,
     TextStyle? selectedTextStyle,
+    bool enable = true,
     bool isSelected = false,
     bool themeStyle = true,
     EdgeInsets? padding = const EdgeInsets.all(kL),
@@ -72,12 +74,17 @@ mixin TileMixin {
           textAlign: ui.TextAlign.center,
           style: isSelected ? selectTextStyle : normalTextStyle,
         ));
-    return widget?.paddingInsets(padding).backgroundDecoration(isSelected
+    return widget?.paddingInsets(padding).backgroundDecoration(!enable
         ? fillDecoration(
-            color: globalTheme.accentColor,
+            color: globalTheme.disableColor,
             borderRadius: kDefaultBorderRadiusX,
           )
-        : null);
+        : isSelected
+            ? fillDecoration(
+                color: globalTheme.accentColor,
+                borderRadius: kDefaultBorderRadiusX,
+              )
+            : null);
   }
 
   /// 构建一个[Switch]开关小部件
