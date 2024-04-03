@@ -31,12 +31,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     if (!isSelectedElement) {
       return null;
     }
-    final elementSelectComponent = canvasDelegate.canvasElementManager
-        .canvasElementControlManager.elementSelectComponent;
-    if (elementSelectComponent.children?.length == 1) {
-      return elementSelectComponent.children?.first;
-    }
-    return elementSelectComponent;
+    return elementSelectComponent?.selectedChildElement;
   }
 
   /// [canvasElementControlManager.isSelectedElement]
@@ -452,6 +447,16 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         .containsElement(element);
   }
 
+  /// 更新选择元素的边界, 通常在操作子元素绘制属性发生改变后调用
+  /// [ElementSelectComponent]
+  @api
+  void updateSelectComponentPaintProperty() {
+    canvasElementControlManager.elementSelectComponent
+        .updatePaintPropertyFromChildren(
+      canvasElementControlManager.enableResetElementAngle,
+    );
+  }
+
   //endregion ---select---
 
   //region ---operate/api---
@@ -712,9 +717,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasDelegate.canvasUndoManager.addUntoState(undoState, redoState);
     }
     //更新选择元素的边界
-    canvasElementControlManager.elementSelectComponent
-        .updatePaintPropertyFromChildren(
-            canvasElementControlManager.enableResetElementAngle);
+    updateSelectComponentPaintProperty();
   }
 
   /// 均分组内元素
@@ -869,9 +872,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
 
       //更新选择元素的边界
-      canvasElementControlManager.elementSelectComponent
-          .updatePaintPropertyFromChildren(
-              canvasElementControlManager.enableResetElementAngle);
+      updateSelectComponentPaintProperty();
     } else {
       //等宽高, 所有元素的大小, 参考左上的元素
 
@@ -928,9 +929,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
 
       //更新选择元素的边界
-      canvasElementControlManager.elementSelectComponent
-          .updatePaintPropertyFromChildren(
-              canvasElementControlManager.enableResetElementAngle);
+      updateSelectComponentPaintProperty();
     }
   }
 

@@ -1518,6 +1518,9 @@ extension WidgetEx on Widget {
 }
 
 extension StateEx on State {
+  /// [dart.js.context]
+  BuildContext get buildContext => context;
+
   /// 标记当前状态脏, 会在下一帧重建
   /// [Element.markNeedsBuild]
   /// [ContextEx.tryUpdateState]

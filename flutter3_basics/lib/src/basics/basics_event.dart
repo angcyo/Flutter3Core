@@ -356,33 +356,34 @@ mixin DoubleTapDetectorMixin {
   /// 上一次按下的位置
   Offset lastDownPoint = Offset.zero;
 
-  bool _isFirstTouch = true;
+  /// 双击检测时, 是否是第一次触摸
+  bool isDoubleFirstTouch = true;
 
   @entryPoint
   void addDoubleTapDetectorPointerEvent(PointerEvent event) {
     final point = event.localPosition;
     final nowTime = DateTime.now();
     if (event.isPointerDown) {
-      _isFirstTouch = nowTime.difference(lastDownTime) > doubleTapTime ||
+      isDoubleFirstTouch = nowTime.difference(lastDownTime) > doubleTapTime ||
           (point.dx - lastDownPoint.dx).abs() > doubleTapThreshold ||
           (point.dy - lastDownPoint.dy).abs() > doubleTapThreshold;
 
-      if (_isFirstTouch) {
+      if (isDoubleFirstTouch) {
         lastDownTime = DateTime.now();
         lastDownPoint = point;
       }
     } else if (event.isPointerUp) {
-      if (!_isFirstTouch) {
+      if (!isDoubleFirstTouch) {
         //debugger();
         if ((point.dx - lastDownPoint.dx).abs() < doubleTapThreshold &&
             (point.dy - lastDownPoint.dy).abs() < doubleTapThreshold) {
           //触发双击事件
           onDoubleTapDetectorPointerEvent(event);
         }
-        _isFirstTouch = true;
+        isDoubleFirstTouch = true;
       }
     } else if (event.isPointerCancel) {
-      _isFirstTouch = true;
+      isDoubleFirstTouch = true;
     }
   }
 

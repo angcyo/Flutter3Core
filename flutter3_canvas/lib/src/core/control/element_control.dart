@@ -662,6 +662,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
   bool interceptPointerEvent(
       PointerDispatchMixin dispatch, PointerEvent event) {
     //l.d('...2...${dispatch.pointerCount}');
+    //debugger();
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(dispatch, event)) {
         if (event.isPointerDown) {
@@ -674,6 +675,8 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
             isFirstHandle = true;
             canvasElementControlManager
                 .updatePaintInfoType(PaintInfoType.location);
+            //在元素上点击, 就需要拦截事件, 因为还有双击操作
+            return true;
           } else {
             final downElementList = canvasElementControlManager
                 .canvasElementManager
@@ -746,6 +749,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
 
   @override
   bool onDoubleTapDetectorPointerEvent(PointerEvent event) {
+    //debugger();
     _targetElement?.let((it) => canvasElementControlManager.canvasDelegate
         .dispatchDoubleTapElement(it));
     return true;

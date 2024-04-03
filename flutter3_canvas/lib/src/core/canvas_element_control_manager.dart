@@ -82,13 +82,15 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           ?.let((it) => it.length == 1 && it.first is ElementGroupPainter) ==
       true;
 
+  /// 是否正在移动元素, 也有可能在双击
+  bool get isTranslateElement =>
+      _currentControlRef?.target?.controlType ==
+      BaseControl.sControlTypeTranslate;
+
   /// 是否在元素上按下
   /// 按下时, 不绘制控制点
   /// [paint]
-  bool get isPointerDownElement =>
-      _currentControlRef?.target?.controlType ==
-          BaseControl.sControlTypeTranslate &&
-      isControlElement;
+  bool get isPointerDownElement => isTranslateElement && isControlElement;
 
   /// 是否正在控制元素中
   bool get isControlElement => _currentControlState == ControlState.start;
@@ -428,6 +430,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       } else if (controlType == BaseControl.sControlTypeTranslate) {
         //按下时, 就显示元素的位置信息
         updatePaintInfoType(PaintInfoType.location);
+        //关键双击缩放画布的检查
+        canvasDelegate
+            .canvasEventManager.canvasScaleComponent.isDoubleFirstTouch = true;
       }
     } else {
       if (controlType == BaseControl.sControlTypeRotate) {
@@ -635,6 +640,15 @@ class ElementSelectComponent extends ElementGroupPainter
 
   /// 是否选中了元素
   bool get isSelectedElement => !isNullOrEmpty(children);
+
+  /// 选中的元素, 如果是单元素, 则返回选中的元素, 否则返回[ElementSelectComponent]
+  /// [CanvasElementManager.selectedElement]
+  ElementPainter get selectedChildElement {
+    if (children?.length == 1) {
+      return children?.first ?? this;
+    }
+    return this;
+  }
 
   @override
   set paintProperty(PaintProperty? value) {

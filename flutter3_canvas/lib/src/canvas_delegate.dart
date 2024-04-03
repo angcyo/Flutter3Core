@@ -142,6 +142,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 获取调用刷新的次数
   int get refreshCount => repaint.value;
 
+  /// 当前是否请求过刷新
+  bool isRequestRefresh = false;
+
+  /// 是否有元素改变过
+  bool isElementChanged = false;
+
   //endregion ---core---
 
   //region ---api---
@@ -149,6 +155,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 刷新画布
   @api
   void refresh() {
+    isRequestRefresh = true;
     repaint.value++;
   }
 
@@ -303,6 +310,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     dynamic to,
     int propertyType,
   ) {
+    isElementChanged = true;
     /*assert(() {
       l.d('元素属性发生改变:$elementPainter $from->$to :$propertyType');
       return true;
