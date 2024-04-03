@@ -4,6 +4,7 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/03/22
 ///
+/// 图片元素绘制对象
 class ImageElementPainter extends ElementPainter {
   /// 当前绘制的图片
   UiImage? paintImage;

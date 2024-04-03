@@ -3,7 +3,8 @@ part of '../../flutter3_canvas.dart';
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/02/22
-/// 矢量路径绘制
+///
+/// 矢量路径绘制元素对象
 class PathElementPainter extends ElementPainter {
   /// 当前绘制的路径, 请主动调用
   /// [PathEx.moveToZero]

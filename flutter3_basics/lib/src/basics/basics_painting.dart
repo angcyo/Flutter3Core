@@ -73,7 +73,7 @@ ui.Image drawImageSync(@dp Size size, CanvasAction callback) {
 
 extension StringPaintEx on String {
   /// [TextSpanPaintEx.textSize]
-  Size textSize({double? fontSize, TextStyle? style}) => TextSpan(
+  Size textSize({@dp double? fontSize, TextStyle? style}) => TextSpan(
         text: this,
         style: style ?? TextStyle(fontSize: fontSize),
       ).textSize();
@@ -446,5 +446,26 @@ extension PaintEx on Paint {
       strokeCap = oldStrokeCap;
       strokeJoin = oldStrokeJoin;
     }
+  }
+
+  /// 从另一个画笔中复制属性
+  void setFrom(Paint other) {
+    isAntiAlias = other.isAntiAlias;
+
+    color = other.color;
+    style = other.style;
+    strokeWidth = other.strokeWidth;
+    strokeCap = other.strokeCap;
+    strokeJoin = other.strokeJoin;
+
+    shader = other.shader;
+    colorFilter = other.colorFilter;
+    filterQuality = other.filterQuality;
+    maskFilter = other.maskFilter;
+    filterQuality = other.filterQuality;
+    blendMode = other.blendMode;
+    imageFilter = other.imageFilter;
+    invertColors = other.invertColors;
+    strokeMiterLimit = other.strokeMiterLimit;
   }
 }
