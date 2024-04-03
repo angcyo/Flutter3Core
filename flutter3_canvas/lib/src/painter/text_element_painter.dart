@@ -5,22 +5,34 @@ part of '../../flutter3_canvas.dart';
 /// @author angcyo
 /// @date 2024/03/19
 ///
+/// 文本绘制元素对象
 class TextElementPainter extends ElementPainter {
-  String? text;
+  /// 当前绘制的文本对象
+  TextPainter? paintTextPainter;
+
+  /// 获取绘制文本的字符串
+  String? get text {
+    final span = paintTextPainter?.text;
+    if (span is TextSpan) {
+      return span.text;
+    }
+    return null;
+  }
 
   TextElementPainter() {
     debug = false;
   }
 
   void initFromText(String? text) {
-    this.text = text;
     final textPainter = createTextPainter(text);
     final size = textPainter.size;
     paintProperty = PaintProperty()
       ..width = size.width
       ..height = size.height;
+    paintTextPainter = textPainter;
   }
 
+  /// [TextPainter]
   TextPainter createTextPainter(String? text) => TextPainter(
         textAlign: TextAlign.right,
         text: TextSpan(
@@ -29,8 +41,11 @@ class TextElementPainter extends ElementPainter {
             /*color: paint.color,*/
             fontSize: 12,
             fontStyle: FontStyle.italic,
+            // 斜体
             fontWeight: FontWeight.normal,
+            // 粗体, 字宽
             decoration: TextDecoration.lineThrough,
+            // 下划线
             decorationColor: Colors.redAccent /*paint.color*/,
             foreground: Paint()
               /*..strokeWidth = 1*/
@@ -50,6 +65,18 @@ class TextElementPainter extends ElementPainter {
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
+    paintTextPainter?.let((painter) {
+      canvas.withMatrix(
+        paintProperty?.operateMatrix,
+        () {
+          painter.paint(canvas, Offset.zero);
+        },
+      );
+    });
+    super.onPaintingSelf(canvas, paintMeta);
+  }
+
+  void _testPaintingText(Canvas canvas, PaintMeta paintMeta) {
     //debugger();
     paint.color = Colors.black;
     text?.let((it) {
@@ -163,6 +190,5 @@ class TextElementPainter extends ElementPainter {
         },
       );
     });
-    super.onPaintingSelf(canvas, paintMeta);
   }
 }
