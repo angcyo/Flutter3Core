@@ -7,7 +7,7 @@ part of '../../flutter3_canvas.dart';
 /// 图片元素绘制对象
 class ImageElementPainter extends ElementPainter {
   /// 当前绘制的图片
-  UiImage? paintImage;
+  UiImage? painterImage;
 
   /// 获取操作后的图片
   UiImage? get operateImage => elementOutputImage;
@@ -18,7 +18,7 @@ class ImageElementPainter extends ElementPainter {
 
   @property
   void initFromImage(UiImage? image) {
-    paintImage = image;
+    painterImage = image;
     if (paintProperty == null) {
       paintProperty = PaintProperty()
         ..width = image?.width.toDouble() ?? 0
@@ -39,7 +39,7 @@ class ImageElementPainter extends ElementPainter {
 
   @property
   void onPaintingImage(Canvas canvas, PaintMeta paintMeta) {
-    paintImage?.let((image) {
+    painterImage?.let((image) {
       //debugger();
       //将图片缩放至描述的大小
       final scale = Matrix4.identity();

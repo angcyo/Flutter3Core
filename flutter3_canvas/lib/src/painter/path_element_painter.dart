@@ -9,18 +9,18 @@ class PathElementPainter extends ElementPainter {
   /// 当前绘制的路径, 请主动调用
   /// [PathEx.moveToZero]
   @dp
-  Path? paintPath;
+  Path? painterPath;
 
   /// 获取操作后的图片
   @dp
-  Path? get operatePath => getElementOutputPath(paintPath);
+  Path? get operatePath => getElementOutputPath(painterPath);
 
   PathElementPainter();
 
   @property
   void initFromPath(Path? path) {
-    paintPath = path?.moveToZero();
-    final bounds = paintPath?.getExactBounds() ?? Rect.zero;
+    painterPath = path?.moveToZero();
+    final bounds = painterPath?.getExactBounds() ?? Rect.zero;
     if (paintProperty == null) {
       paintProperty = PaintProperty()
         ..width = bounds.width
@@ -35,9 +35,9 @@ class PathElementPainter extends ElementPainter {
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
-    paintPath?.let((it) =>
+    painterPath?.let((it) =>
         canvas.drawPath(it.transformPath(paintProperty?.operateMatrix), paint));
-    if (paintPath == null) {
+    if (painterPath == null) {
       assert(() {
         l.w('no data painting.');
         return true;
