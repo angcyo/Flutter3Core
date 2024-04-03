@@ -183,7 +183,7 @@ class GlobalTheme {
       );
 
   TextStyle get textInfoStyle => const TextStyle(
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: FontWeight.w400,
         color: Color(0xff949496),
       );
