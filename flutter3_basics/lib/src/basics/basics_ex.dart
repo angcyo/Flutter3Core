@@ -1242,6 +1242,13 @@ extension ListEx<T> on List<T> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 
+  /// 添加一个元素, 如果为null则不添加
+  void addIfNotNull(T? element) {
+    if (element != null) {
+      add(element);
+    }
+  }
+
   /// 映射类型转换成[Type]的[List]
   /// [IterableEx.mapToList]
   /// [ListEx.mapToList]
