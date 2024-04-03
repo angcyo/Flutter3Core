@@ -428,11 +428,9 @@ class FlowLayoutRender extends RenderBox
         if (childSize.width > lineRemainWidth) {
           //换行
           newLine();
-          lineChildList.add(child);
-        } else {
-          lineRemainWidth -= childSize.width + excludeGap;
-          lineChildList.add(child);
         }
+        lineChildList.add(child);
+        lineRemainWidth -= childSize.width + excludeGap;
 
         if (lineChildList.length >= lineMaxChildCount_) {
           newLine();
