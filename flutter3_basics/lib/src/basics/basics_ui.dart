@@ -329,6 +329,11 @@ extension WidgetEx on Widget {
   /// [Hero]
   Widget hero(Object? tag) => tag == null ? this : Hero(tag: tag, child: this);
 
+  /// 将[BoxConstraints]约束转换成[SliverConstraints]约束
+  /// [SliverToBoxAdapter]
+  SliverToBoxAdapter toSliver([Key? key]) =>
+      SliverToBoxAdapter(key: key, child: this);
+
   /// 点击事件
   /// [enable] 是否启用点击事件
   /// [GestureDetector] 多个手势识别器, 才会有手势竞争
