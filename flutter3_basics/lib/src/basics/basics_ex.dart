@@ -43,6 +43,13 @@ String uuid([bool trim = true]) {
   return v4;
 }
 
+/// [UniqueKey]
+/// [868497392] 28位
+int get uniqueId => UniqueKey().hashCode;
+
+/// [4219854331] 32位
+int get microsecondsId => DateTime.now().microsecondsSinceEpoch & 0xFFFFFFFF;
+
 /// 行的分隔符
 /// [_newlineRegExp]
 /// [Platform.lineTerminator]

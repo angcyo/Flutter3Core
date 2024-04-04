@@ -1,8 +1,10 @@
 library flutter3_vector;
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';

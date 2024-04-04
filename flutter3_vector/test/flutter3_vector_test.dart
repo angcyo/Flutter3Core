@@ -22,7 +22,7 @@ void main() async {
   //testCircle();
   //testLine();
 
-  //await testSvg();
+  await testSvg();
   //testStringScanner();
 
   assert(true);
@@ -69,12 +69,21 @@ Future testSvg() async {
   final svg1 = File('${Directory.current.path}/test/star_10_100.svg');
   final svg2 = File('${Directory.current.path}/test/star_45_10_100.svg');
   final svgImage = File('${Directory.current.path}/test/svg_image.svg');
+  final xcsImage = File('./test/xcs_image.svg');
   consoleLog(Directory.current.path);
 
-  final svgString = svgImage.readAsStringSync();
+  final svgString = xcsImage.readAsStringSync();
 
   //consoleLog(svgString);
-  final response = await decodeSvgString(svgString);
+  final response = await decodeSvgString(
+    svgString,
+    listener: SvgListener()
+      ..onDrawElement = (element, data, paint, bounds) {
+        consoleLog('${element.runtimeType} $bounds $data');
+      },
+  );
+  //等待5秒
+  //await Future.delayed(const Duration(seconds: 5));
   consoleLog(response);
 }
 
