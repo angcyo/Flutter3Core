@@ -118,17 +118,25 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildBottomColumnDialog(
     BuildContext context,
     WidgetList children, {
+    bool enablePullBack = true,
+    bool showDragHandle = true,
     double? clipRadius,
     double? clipTopRadius,
     double? clipBottomRadius,
   }) {
-    return children
+    return [if (showDragHandle) buildDragHandle(), ...children]
         .column()!
         .container(color: Colors.white)
         .clipRadius(
           radius: clipRadius,
           topRadius: clipTopRadius,
           bottomRadius: clipBottomRadius,
+        )
+        .pullBack(
+          enablePullBack: enablePullBack,
+          onPullBack: (context) {
+            context.pop();
+          },
         )
         .matchParent(matchHeight: false)
         .align(Alignment.bottomCenter);

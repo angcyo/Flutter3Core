@@ -107,15 +107,19 @@ BoxDecoration lineDecoration({
 }
 
 /// 纯色填充装饰, 支持圆角
+/// [color] 填充颜色
+/// [gradient] 渐变颜色
 /// [strokeDecoration]
 BoxDecoration fillDecoration({
   BuildContext? context,
   Color? color,
+  Gradient? gradient,
   double borderRadius = kDefaultBorderRadiusXX,
 }) {
   final fillColor = color ?? GlobalTheme.of(context).primaryColor;
   return BoxDecoration(
     color: fillColor,
+    gradient: gradient,
     borderRadius: borderRadius > 0
         ? BorderRadius.all(
             Radius.circular(borderRadius),

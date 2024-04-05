@@ -16,8 +16,7 @@ class DebugFilePage extends StatefulWidget {
   State<DebugFilePage> createState() => _DebugFilePageState();
 }
 
-class _DebugFilePageState extends State<DebugFilePage>
-    with AbsScrollPage {
+class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
   final ScrollController _pathScrollController = ScrollController();
 
   /// 当前加载的路径

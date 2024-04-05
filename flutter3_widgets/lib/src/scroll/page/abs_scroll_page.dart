@@ -51,6 +51,8 @@ mixin AbsScrollPage {
       return (this as RScrollPage).pageRScrollView(children: children);
     }
     return RScrollView(
+      /*physics: null,
+      scrollBehavior: null,*/
       children: children ?? [],
     );
   }
