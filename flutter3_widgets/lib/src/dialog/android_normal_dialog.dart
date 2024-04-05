@@ -5,7 +5,7 @@ part of './dialog.dart';
 /// @author angcyo
 /// @date 2024/04/05
 ///
-
+/// Android 风格的普通对话框
 class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 是否使用图标按钮
   final bool useIcon;
