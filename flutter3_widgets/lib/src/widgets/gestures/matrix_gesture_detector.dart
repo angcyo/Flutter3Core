@@ -26,7 +26,7 @@ typedef MatrixGestureDetectorCallback = void Function(
 class MatrixGestureDetector extends StatefulWidget {
   /// [Matrix4] change notification callback
   ///
-  final MatrixGestureDetectorCallback onMatrixUpdate;
+  final MatrixGestureDetectorCallback? onMatrixUpdate;
 
   /// The [child] contained by this detector.
   ///
@@ -63,15 +63,15 @@ class MatrixGestureDetector extends StatefulWidget {
   final Alignment? focalPointAlignment;
 
   const MatrixGestureDetector({
-    Key? key,
-    required this.onMatrixUpdate,
     required this.child,
+    super.key,
+    this.onMatrixUpdate,
     this.shouldTranslate = true,
     this.shouldScale = true,
     this.shouldRotate = true,
     this.clipChild = true,
     this.focalPointAlignment,
-  }) : super(key: key);
+  });
 
   @override
   _MatrixGestureDetectorState createState() => _MatrixGestureDetectorState();
@@ -83,8 +83,12 @@ class MatrixGestureDetector extends StatefulWidget {
   /// If [matrix] is not null the result of the composing will be concatenated
   /// to that [matrix], otherwise the identity matrix will be used.
   ///
-  static Matrix4 compose(Matrix4? matrix, Matrix4? translationMatrix,
-      Matrix4? scaleMatrix, Matrix4? rotationMatrix) {
+  static Matrix4 compose(
+    Matrix4? matrix,
+    Matrix4? translationMatrix,
+    Matrix4? scaleMatrix,
+    Matrix4? rotationMatrix,
+  ) {
     matrix ??= Matrix4.identity();
     if (translationMatrix != null) matrix = translationMatrix * matrix;
     if (scaleMatrix != null) matrix = scaleMatrix * matrix;
@@ -134,12 +138,14 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
   );
 
   void onScaleStart(ScaleStartDetails details) {
+    //debugger();
     translationUpdater.value = details.focalPoint;
     rotationUpdater.value = double.nan;
     scaleUpdater.value = 1.0;
   }
 
   void onScaleUpdate(ScaleUpdateDetails details) {
+    //debugger();
     translationDeltaMatrix = Matrix4.identity();
     scaleDeltaMatrix = Matrix4.identity();
     rotationDeltaMatrix = Matrix4.identity();
@@ -182,8 +188,12 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
       }
     }
 
-    widget.onMatrixUpdate(
-        matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix);
+    widget.onMatrixUpdate?.call(
+      matrix,
+      translationDeltaMatrix,
+      scaleDeltaMatrix,
+      rotationDeltaMatrix,
+    );
   }
 
   Matrix4 _translate(Offset translation) {

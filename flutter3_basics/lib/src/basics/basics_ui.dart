@@ -317,6 +317,11 @@ extension WidgetListEx on WidgetNullList {
 }
 
 extension WidgetEx on Widget {
+  /// 为child添加一个key
+  /// [KeyedSubtree]
+  /// [repaintBoundary]
+  Widget childKeyed(Key? key) => KeyedSubtree(key: key, child: this);
+
   /// [Tooltip] 提示
   Widget tooltip(String? tip, {InlineSpan? richMessage}) => tip == null
       ? this
@@ -810,6 +815,9 @@ extension WidgetEx on Widget {
     );
   }
 
+  ///[Transform]
+  ///[PaintingContext.pushTransform]
+  ///[TransformLayer]
   Widget matrix(
     Matrix4 transform, {
     Offset? origin,
