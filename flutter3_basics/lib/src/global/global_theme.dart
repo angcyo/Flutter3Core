@@ -178,14 +178,14 @@ class GlobalTheme {
 
   TextStyle get textLabelStyle => const TextStyle(
         fontSize: 14,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.normal,
         color: Color(0xff333333),
       );
 
   TextStyle get textInfoStyle => const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w400,
-        color: Color(0xff949496),
+        color: Color(0xff666666),
       );
 
   //endregion 文本样式

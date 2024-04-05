@@ -41,8 +41,10 @@ class ConfirmButton extends StatelessWidget {
                     color: enable ? null : globalTheme.disableColor,
                   )
                 : text?.text(
-                    style: globalTheme.textLabelStyle
-                        .copyWith(color: globalTheme.accentColor),
+                    style: globalTheme.textLabelStyle.copyWith(
+                      color: globalTheme.accentColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ))
             ?.paddingAll(kX);

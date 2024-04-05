@@ -44,22 +44,28 @@ class IosNormalDialog extends StatelessWidget with DialogMixin {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    const gap = kX;
 
     //标题 和 内容
-    Widget? title = titleWidget ??
-        this
-            .title
-            ?.text(
-                style: globalTheme.textTitleStyle
-                    .copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center)
-            .paddingAll(kX);
     Widget? message = messageWidget ??
         this
             .message
             ?.text(
-                style: globalTheme.textInfoStyle, textAlign: TextAlign.center)
-            .paddingAll(kX);
+              style: globalTheme.textBodyStyle,
+              textAlign: TextAlign.center,
+            )
+            .paddingAll(gap);
+
+    Widget? title = titleWidget ??
+        this
+            .title
+            ?.text(
+              style: globalTheme.textTitleStyle.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            )
+            .padding(gap, gap, gap, message == null ? gap : 0);
 
     // 取消 和 确定
     Widget? cancel = (cancelWidget == null && this.cancel == null)
@@ -96,7 +102,6 @@ class IosNormalDialog extends StatelessWidget with DialogMixin {
         ? Line(
             axis: Axis.horizontal,
             color: globalTheme.lineDarkColor,
-            margin: const EdgeInsets.only(top: kL),
           )
         : null;
     Widget? vLine = (cancel != null && confirm != null)
@@ -127,6 +132,6 @@ class IosNormalDialog extends StatelessWidget with DialogMixin {
       ],
     );
 
-    return buildCenterDialog(context, bodyColumn);
+    return buildCenterDialog(context, bodyColumn, padding: EdgeInsets.zero);
   }
 }

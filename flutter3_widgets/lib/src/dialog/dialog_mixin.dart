@@ -75,11 +75,15 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildCenterDialog(
     BuildContext context,
     Widget child, {
+    EdgeInsets? margin,
+    EdgeInsets? padding,
     double radius = kDefaultBorderRadiusXX,
   }) {
     return Center(
       child: buildDialogContainer(
         context,
+        margin: margin,
+        padding: padding,
         child.matchParent(matchHeight: false),
         radius: radius,
       ).material(),
