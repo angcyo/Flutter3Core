@@ -36,6 +36,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// [color] 背景颜色
   /// [margin] 整体外边距
   /// [padding] 内容内边距
+  /// [blur] 是否使用模糊
   /// [fillDecoration]
   /// [strokeDecoration]
   @property
@@ -49,6 +50,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     BoxConstraints? constraints,
     BorderRadiusGeometry? borderRadius,
     double radius = kDefaultBorderRadiusXX,
+    bool blur = false,
   }) {
     var globalTheme = GlobalTheme.of(context);
     borderRadius ??= BorderRadius.circular(radius);
@@ -59,11 +61,12 @@ mixin DialogMixin implements TranslationTypeImpl {
         child: DecoratedBox(
           decoration: decoration ??
               BoxDecoration(
-                color: color ?? globalTheme.themeWhiteColor,
+                color: color ??
+                    globalTheme.themeWhiteColor.withOpacity(blur ? 0.85 : 1.0),
                 borderRadius: borderRadius,
               ),
           child: child.paddingInsets(padding ?? contentPadding),
-        ),
+        ).blur(sigma: blur ? kL : null),
       ).clip(borderRadius: borderRadius),
     );
   }
@@ -77,6 +80,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Widget child, {
     EdgeInsets? margin,
     EdgeInsets? padding,
+    bool blur = false,
     double radius = kDefaultBorderRadiusXX,
   }) {
     return Center(
@@ -86,6 +90,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         padding: padding,
         child.matchParent(matchHeight: false),
         radius: radius,
+        blur: blur,
       ).material(),
     );
   }

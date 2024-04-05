@@ -1,13 +1,12 @@
-part of './dialog.dart';
+part of '../dialog.dart';
 
 ///
 /// Email:angcyo@126.com
 /// @author angcyo
-/// @date 2023/12/24
+/// @date 2024/04/05
 ///
 
-class CancelButton extends StatelessWidget {
-
+class NeutralButton extends StatelessWidget {
   /// 强制指定小部件
   final Widget? widget;
 
@@ -20,7 +19,7 @@ class CancelButton extends StatelessWidget {
   /// 事件
   final GestureTapCallback? onTap;
 
-  const CancelButton({
+  const NeutralButton({
     super.key,
     this.useIcon = false,
     this.widget,
@@ -33,7 +32,7 @@ class CancelButton extends StatelessWidget {
     final globalTheme = GlobalTheme.of(context);
     Widget? result = widget ??
         (useIcon
-                ? const Icon(Icons.close)
+                ? const Icon(Icons.near_me)
                 : text?.text(
                     style: globalTheme.textLabelStyle,
                     textAlign: TextAlign.center,

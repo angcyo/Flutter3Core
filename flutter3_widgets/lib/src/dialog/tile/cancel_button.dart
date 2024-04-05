@@ -1,4 +1,4 @@
-part of './dialog.dart';
+part of '../dialog.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -6,9 +6,7 @@ part of './dialog.dart';
 /// @date 2023/12/24
 ///
 
-class ConfirmButton extends StatelessWidget {
-  /// 是否启用
-  final bool enable;
+class CancelButton extends StatelessWidget {
 
   /// 强制指定小部件
   final Widget? widget;
@@ -22,9 +20,8 @@ class ConfirmButton extends StatelessWidget {
   /// 事件
   final GestureTapCallback? onTap;
 
-  const ConfirmButton({
+  const CancelButton({
     super.key,
-    this.enable = true,
     this.useIcon = false,
     this.widget,
     this.text,
@@ -36,28 +33,16 @@ class ConfirmButton extends StatelessWidget {
     final globalTheme = GlobalTheme.of(context);
     Widget? result = widget ??
         (useIcon
-                ? Icon(
-                    Icons.done,
-                    color: enable ? null : globalTheme.disableColor,
-                  )
+                ? const Icon(Icons.close)
                 : text?.text(
-                    style: globalTheme.textLabelStyle.copyWith(
-                      color: globalTheme.accentColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: globalTheme.textLabelStyle,
                     textAlign: TextAlign.center,
                   ))
             ?.paddingAll(kX);
 
-    result = result
-        ?.ink(
-          onTap: enable
-              ? () {
-                  onTap?.call();
-                }
-              : null,
-        )
-        .material();
+    result = result?.ink(onTap: () {
+      onTap?.call();
+    }).material();
     return result!;
   }
 }

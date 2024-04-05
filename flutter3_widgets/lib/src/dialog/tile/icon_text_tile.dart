@@ -5,7 +5,7 @@ part of '../dialog.dart';
 /// @date 2024/03/21
 ///
 /// 左[icon],接着[text]的tile
-/// 或
+/// 或[direction]方向
 /// 上[icon],接着[text]的tile
 class IconTextTile extends StatelessWidget with TileMixin {
   /// 布局方向

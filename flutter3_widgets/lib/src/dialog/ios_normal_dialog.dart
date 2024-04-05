@@ -7,131 +7,74 @@ part of './dialog.dart';
 ///
 /// ios 风格的对话框, 居中显示
 /// [showDialogWidget]
-class IosNormalDialog extends StatelessWidget with DialogMixin {
-  /// 是否使用图标按钮
-  final bool useIcon;
-
-  final String? title;
-  final Widget? titleWidget;
-  final String? message;
-  final Widget? messageWidget;
-  final String? cancel;
-  final Widget? cancelWidget;
-  final String? confirm;
-  final Widget? confirmWidget;
-
-  /// 确定按钮点击回调,
-  /// 返回true, 表示拦截默认处理
-  final FutureResultCallback<bool, bool>? onConfirmTap;
-
-  @override
-  EdgeInsets get contentPadding => EdgeInsets.zero;
-
+class IosNormalDialog extends AndroidNormalDialog {
   const IosNormalDialog({
     super.key,
-    this.title,
-    this.titleWidget,
-    this.message,
-    this.messageWidget,
-    this.cancel = kDialogCancel,
-    this.cancelWidget,
-    this.confirm = kDialogConfirm,
-    this.confirmWidget,
-    this.onConfirmTap,
-    this.useIcon = false,
+    super.title,
+    super.titleWidget,
+    super.message,
+    super.messageWidget,
+    super.cancel = kDialogCancel,
+    super.cancelWidget,
+    super.confirm = kDialogConfirm,
+    super.confirmWidget,
+    super.neutral,
+    super.neutralWidget,
+    super.onConfirmTap,
+    super.useIcon = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    const gap = kX;
 
-    //标题 和 内容
-    Widget? message = messageWidget ??
-        this
-            .message
-            ?.text(
-              style: globalTheme.textBodyStyle,
-              textAlign: TextAlign.center,
-            )
-            .paddingAll(gap);
+    // 标题 / 内容
+    Widget? title = _buildTitle(context, textAlign: TextAlign.center);
+    Widget? message = _buildMessage(context, textAlign: TextAlign.center);
 
-    Widget? title = titleWidget ??
-        this
-            .title
-            ?.text(
-              style: globalTheme.textTitleStyle.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            )
-            .padding(gap, gap, gap, message == null ? gap : 0);
-
-    // 取消 和 确定
-    Widget? cancel = (cancelWidget == null && this.cancel == null)
-        ? null
-        : CancelButton(
-            widget: cancelWidget,
-            text: this.cancel,
-            useIcon: useIcon,
-            onTap: () {
-              Navigator.pop(context, false);
-            });
-
-    Widget? confirm = (confirmWidget == null && this.confirm == null)
-        ? null
-        : ConfirmButton(
-            widget: confirmWidget,
-            text: this.confirm,
-            useIcon: useIcon,
-            onTap: () async {
-              if (onConfirmTap == null) {
-                Navigator.pop(context, true);
-              } else {
-                var intercept = await onConfirmTap!(true) == true;
-                if (!intercept) {
-                  if (context.mounted) {
-                    Navigator.pop(context, true);
-                  }
-                }
-              }
-            });
+    // 取消 / 中立 / 确定
+    Widget? cancel = _buildCancelButton(context);
+    Widget? neutral = _buildNeutralButton(context);
+    Widget? confirm = _buildConfirmButton(context);
 
     //line
-    Widget? hLine = (cancel != null || confirm != null)
+    final Widget? hLine = (cancel != null || neutral != null || confirm != null)
         ? Line(
             axis: Axis.horizontal,
             color: globalTheme.lineDarkColor,
           )
         : null;
-    Widget? vLine = (cancel != null && confirm != null)
-        ? Line(
-            axis: Axis.vertical,
-            color: globalTheme.lineDarkColor,
-          )
-        : null;
-
-    var controlRow = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        if (cancel != null) cancel.expanded(),
-        if (vLine != null) vLine,
-        if (confirm != null) confirm.expanded(),
-      ],
+    final Widget vLine = Line(
+      axis: Axis.vertical,
+      color: globalTheme.lineDarkColor,
     );
 
-    var bodyColumn = Column(
+    final controlRow = [
+      if (cancel != null) cancel.expanded(),
+      if (neutral != null) neutral.expanded(),
+      if (confirm != null) confirm.expanded(),
+    ].row(
+      gapWidget: vLine,
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+    );
+
+    final bodyColumn = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
         if (title != null) title,
         if (message != null) message,
         if (hLine != null) hLine,
-        controlRow,
+        if (controlRow != null) controlRow,
       ],
     );
 
-    return buildCenterDialog(context, bodyColumn, padding: EdgeInsets.zero);
+    return buildCenterDialog(
+      context,
+      bodyColumn,
+      padding: EdgeInsets.zero,
+      blur: true,
+    );
   }
 }
