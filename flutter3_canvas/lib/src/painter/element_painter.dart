@@ -582,6 +582,14 @@ class ElementPainter extends IPainter
 
 /// 一组元素的绘制
 class ElementGroupPainter extends ElementPainter {
+  /// 创建一个组合元素, 如果元素数量大于1, 则创建一个组合元素, 否则返回第一个元素
+  static ElementPainter? createGroupIfNeed(List<ElementPainter>? elements) {
+    if (elements != null && elements.length > 1) {
+      return ElementGroupPainter()..resetChildren(elements, true);
+    }
+    return elements?.firstOrNull;
+  }
+
   /// 子元素列表
   List<ElementPainter>? children = [];
 

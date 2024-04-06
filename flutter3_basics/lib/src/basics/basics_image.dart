@@ -273,14 +273,13 @@ extension ImageStringEx on String {
   Future<ui.Image> toImageFromFile() => File(this).toImage();
 
   /// 从网络路径中读取图片
-  Future<ui.Image> toImageFromNetwork() async {
+  Future<ui.Image> toImageFromHttp() async {
     /*final Uint8List bytes = await http.get(Uri.parse(this)).then((value) => value.bodyBytes);
     return decodeImageFromList(bytes);*/
     final Completer<ui.Image> completer = Completer();
     final img = NetworkImage(this);
     img.resolve(const ImageConfiguration()).addListener(
-          ImageStreamListener((info, bool _) => completer.complete(info.image)),
-        );
+        ImageStreamListener((info, bool _) => completer.complete(info.image)));
     return completer.future;
   }
 }

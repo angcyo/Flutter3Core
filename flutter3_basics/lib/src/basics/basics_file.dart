@@ -29,6 +29,9 @@ extension FileStringEx on String {
   /// 当前文件是否存在
   Future<bool> isExists() async => File(this).exists();
 
+  ///[isExists]
+  bool isExistsSync() => File(this).existsSync();
+
   /// 是否是文件夹
   Future<bool> isDirectory() async => FileSystemEntity.isDirectory(this);
 
@@ -431,7 +434,6 @@ extension DirectoryEx on Directory {
     }
     return false;
   }
-
 }
 
 //endregion Directory 扩展

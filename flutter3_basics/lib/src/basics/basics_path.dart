@@ -247,4 +247,51 @@ extension ListPathEx on List<Path> {
 
     return transformPath(translate * scale);
   }
+
+  /// 将路径绘制到[UiImage]中
+  /// [ImageEx.toBase64]
+  Future<UiImage> toUiImage({
+    EdgeInsets padding = EdgeInsets.zero,
+    Color color = Colors.black,
+    double width = 1,
+  }) async =>
+      toUiImageSync(padding: padding, color: color, width: width);
+
+  /// [toUiImage]
+  /// [ImageEx.toBase64]
+  Future<String?> toUiImageBase64({
+    EdgeInsets padding = EdgeInsets.zero,
+    Color color = Colors.black,
+    double width = 1,
+  }) async {
+    final uiImage =
+        await toUiImage(padding: padding, color: color, width: width);
+    return uiImage.toBase64();
+  }
+
+  /// [toUiImage]
+  /// [UiImage]
+  UiImage toUiImageSync({
+    EdgeInsets padding = EdgeInsets.zero,
+    Color color = Colors.black,
+    double width = 1,
+  }) {
+    final bounds = getExactBounds();
+    final width = (bounds.width + padding.horizontal).ensureValid();
+    final height = (bounds.height + padding.vertical).ensureValid();
+
+    return drawImageSync(ui.Size(math.max(1, width), math.max(1, height)),
+        (canvas) {
+      final paint = Paint()
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..style = PaintingStyle.stroke
+        ..color = color
+        ..strokeWidth = width;
+      canvas.translate(-bounds.left + padding.left, -bounds.top + padding.top);
+      for (final path in this) {
+        canvas.drawPath(path, paint);
+      }
+    });
+  }
 }

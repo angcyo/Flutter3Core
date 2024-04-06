@@ -315,32 +315,38 @@ extension ObjectEx on Object {
 }
 
 extension FutureEx<T> on Future<T> {
-  /// [Future.then]
-  Future get([ValueErrorCallback? get, StackTrace? stack]) => then((value) {
-        try {
-          //debugger();
-          get?.call(value, null);
-          return value;
-        } catch (e) {
-          //debugger();
-          if (e is! RException) {
-            printError(e, stack);
-          }
-          get?.call(null, e);
-          return null;
-        }
-      }, onError: (error, stackTrace) {
+  /// 合并[Future.then]和[Future.catchError]方法
+  Future get([
+    ValueErrorCallback? get,
+    StackTrace? stack,
+  ]) {
+    stack ??= StackTrace.current;
+    return then((value) {
+      try {
         //debugger();
-        if (error is FutureCancelException) {
-          assert(() {
-            l.w('Future被取消:$error');
-            return true;
-          }());
-        } else {
-          printError(error, stackTrace);
-          get?.call(null, error);
+        get?.call(value, null);
+        return value;
+      } catch (e) {
+        //debugger();
+        if (e is! RException) {
+          printError(e, stack);
         }
-      });
+        get?.call(null, e);
+        return null;
+      }
+    }, onError: (error, stackTrace) {
+      //debugger();
+      if (error is FutureCancelException) {
+        assert(() {
+          l.w('Future被取消:$error');
+          return true;
+        }());
+      } else {
+        printError(error, stackTrace);
+        get?.call(null, error);
+      }
+    });
+  }
 
   /// 支持类型的[FutureEx.get]方法
   Future getValue([

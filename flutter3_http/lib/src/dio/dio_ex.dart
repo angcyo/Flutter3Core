@@ -72,7 +72,7 @@ extension DioStringEx on String {
   }
 
   /// 获取http字符串内容
-  Future<String?> getString({
+  Future<String?> httpGetString({
     BuildContext? context,
     Map<String, dynamic>? queryParameters,
     Options? options,
@@ -91,7 +91,7 @@ extension DioStringEx on String {
   }
 
   /// 获取http字节数据
-  Future<Uint8List?> getBytes({
+  Future<Uint8List?> httpGetBytes({
     BuildContext? context,
     Map<String, dynamic>? queryParameters,
     Options? options,
@@ -162,6 +162,7 @@ extension DioStringEx on String {
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   /// [savePath] 保存路径
+  /// [getSavePath] 异步获取保存路径
   /// https://pub.dev/packages/network_to_file_image
   Future<Response> download({
     String? savePath,
@@ -181,11 +182,14 @@ extension DioStringEx on String {
       this,
       saveTo,
       onReceiveProgress: (count, total) {
-        if (total > 0) {
-          l.d("下载进度:$count/$total ${count.toFileSizeStr()}/${total.toFileSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveTo]");
-        } else {
-          l.d("下载进度:$count ${count.toFileSizeStr()} \n[$this]->[$saveTo]");
-        }
+        assert(() {
+          if (total > 0) {
+            l.d("下载进度:$count/$total ${count.toFileSizeStr()}/${total.toFileSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveTo]");
+          } else {
+            l.d("下载进度:$count ${count.toFileSizeStr()} \n[$this]->[$saveTo]");
+          }
+          return true;
+        }());
         onReceiveProgress?.call(count, total);
       },
       lengthHeader: lengthHeader,

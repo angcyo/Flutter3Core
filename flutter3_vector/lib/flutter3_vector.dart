@@ -13,6 +13,7 @@ import 'package:svg_path_parser/svg_path_parser.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 export 'package:flutter_svg/svg.dart';
+export 'package:xml/xml.dart';
 
 part 'src/gcode.dart';
 part 'src/point.dart';
