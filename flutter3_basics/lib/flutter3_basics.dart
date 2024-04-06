@@ -43,6 +43,7 @@ export 'package:vector_math/vector_math_64.dart'
 
 export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
+export 'src/utils/hex.dart';
 
 //export 'package:leak_tracker/leak_tracker.dart';
 
@@ -89,6 +90,7 @@ part 'src/overlay/loading_overlay.dart';
 part 'src/overlay/route_will_pop_scope.dart';
 part 'src/overlay/stroke_loading.dart';
 part 'src/unit/unit.dart';
+part 'src/utils/bytes.dart';
 part 'src/utils/file_size.dart';
 part 'src/utils/frame_split.dart';
 part 'src/utils/l_time.dart';
