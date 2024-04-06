@@ -7,7 +7,6 @@ part of '../dialog.dart';
 ///
 
 class CancelButton extends StatelessWidget {
-
   /// 强制指定小部件
   final Widget? widget;
 
@@ -40,9 +39,14 @@ class CancelButton extends StatelessWidget {
                   ))
             ?.paddingAll(kX);
 
-    result = result?.ink(onTap: () {
-      onTap?.call();
-    }).material();
+    result = result
+        ?.ink(
+          shape: useIcon ? BoxShape.circle : BoxShape.rectangle,
+          onTap: () {
+            onTap?.call();
+          },
+        )
+        .material();
     return result!;
   }
 }

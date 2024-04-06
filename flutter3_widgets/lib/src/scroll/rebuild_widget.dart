@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -56,6 +56,7 @@ class RebuildWidgetState extends State<RebuildWidget> {
   }
 }
 
+/// 用来触发重构的信号, 不管值相同与否, 都会触发通知
 /// [ValueNotifier]
 class UpdateValueNotifier<T> extends ValueNotifier<T> {
   /// 附加的数据

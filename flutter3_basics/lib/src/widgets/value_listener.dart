@@ -5,6 +5,7 @@ part of '../../flutter3_basics.dart';
 /// @since 2023/11/24
 ///
 
+/// 通过给定的数据构建小部件
 typedef DataWidgetBuilder = Widget Function(BuildContext context, dynamic data);
 
 /// 监听[Listenable]并自动重建小部件

@@ -13,6 +13,8 @@ WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 
 /// 显示加载提示
 /// [showStrokeLoading]
+/// [postShow] 是否要延迟显示
+@api
 OverlayEntry? showLoading({
   BuildContext? context,
   WidgetBuilder? builder,
@@ -21,6 +23,7 @@ OverlayEntry? showLoading({
   Duration? duration,
   VoidCallback? onDismiss,
   double? progressValue,
+  bool postShow = true,
 }) {
   var currentLoadingEntry = _currentLoadingEntryRef?.target;
   if (currentLoadingEntry != null) {
@@ -49,12 +52,15 @@ OverlayEntry? showLoading({
         route: route,
         builder: builder ??= (context) {
           return GlobalConfig.of(context).loadingOverlayWidgetBuilder(
-              context, OverlayEntry, progressValue);
+            context,
+            OverlayEntry,
+            progressValue,
+          );
         });
   });
   _currentLoadingEntryRef = WeakReference(currentLoadingEntry);
 
-  postFrameCallback((duration) {
+  void insert() {
     try {
       if (currentLoadingEntry != null) {
         overlayState.insert(currentLoadingEntry);
@@ -65,12 +71,21 @@ OverlayEntry? showLoading({
         return true;
       }());
     }
-  });
+  }
+
+  if (postShow) {
+    postFrameCallback((duration) {
+      insert();
+    });
+  } else {
+    insert();
+  }
 
   return currentLoadingEntry;
 }
 
 /// 隐藏加载提示
+@api
 void hideLoading() {
   final currentLoadingEntry = _currentLoadingEntryRef?.target;
   if (currentLoadingEntry != null) {
@@ -89,20 +104,34 @@ void hideLoading() {
 }
 
 /// 包裹[showLoading].[hideLoading].[Future]
-/// [timeout] 超时时间
-Future wrapLoading<T>(
-  Future<T?> future, {
+/// [onStart] 自定义开始时的回调, 默认显示加载提示
+/// [delay] 延迟多久后显示加载提示
+/// [timeout] 超时多久后触发[onEnd]回调, 并阻止[Future]的返回值,
+Future wrapLoading(
+  Future future, {
+  Duration? delay,
   Duration? timeout,
   VoidCallback? onStart,
   ValueCallback? onEnd,
 }) {
+  bool isTimeout = false;
+  bool isEnd = false;
   if (onStart == null) {
-    showLoading();
+    if (delay != null) {
+      postDelayCallback(() {
+        //debugger();
+        l.w("delay end");
+        if (isEnd || isTimeout) {
+        } else {
+          showLoading(postShow: false);
+        }
+      }, delay);
+    } else {
+      showLoading();
+    }
   } else {
     onStart.call();
   }
-  bool isTimeout = false;
-  bool isEnd = false;
   if (timeout != null) {
     //需要检查超时
     postDelayCallback(() {
@@ -114,6 +143,8 @@ Future wrapLoading<T>(
     }, timeout);
   }
   return future.get((value, error) {
+    //debugger();
+    l.w("future end");
     if (isTimeout) {
       assert(() {
         l.w('忽略结果, 因为已经超时了.');
@@ -121,6 +152,7 @@ Future wrapLoading<T>(
       }());
       return;
     }
+    isEnd = true;
     if (onEnd == null) {
       hideLoading();
     } else {
@@ -131,6 +163,15 @@ Future wrapLoading<T>(
     }
     return value;
   });
+}
+
+/// 自动超时, 自动延时
+Future wrapLoadingTimeout(
+  Future future, {
+  Duration? delay = const Duration(seconds: 1),
+  Duration? timeout = const Duration(seconds: 30),
+}) {
+  return wrapLoading(future, delay: delay, timeout: timeout);
 }
 
 class _LoadingOverlay extends StatefulWidget {

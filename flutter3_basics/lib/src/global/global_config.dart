@@ -255,8 +255,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [showLoading]
   ProgressWidgetBuilder loadingOverlayWidgetBuilder =
       (context, data, progress) {
-    Widget loadingIndicator = GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, data, progress);
+    Widget loadingIndicator = GlobalConfig.of(context).loadingIndicatorBuilder(
+      context,
+      data,
+      progress,
+    );
     return Container(
       alignment: Alignment.center,
       child: SizedBox.fromSize(
@@ -315,10 +318,12 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     //debugger();
     return AppBar(
       title: title,
-      leading: leading ??
-          (context.isAppBarDismissal
-              ? appBarLeadingBuilder(context, state)
-              : null),
+      leading: leading is IgnoreWidget
+          ? null
+          : leading ??
+              (context.isAppBarDismissal
+                  ? appBarLeadingBuilder(context, state)
+                  : null),
       bottom: bottom,
       elevation: elevation,
       shadowColor: shadowColor ?? globalTheme.appBarShadowColor,

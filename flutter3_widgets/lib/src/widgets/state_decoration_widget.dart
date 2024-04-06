@@ -255,10 +255,16 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
 
 extension StateDecorationWidgetEx on Widget {
   /// 绘制背景
+  /// [fillColor] 使用纯色填充背景
   /// [StateDecorationWidget]
   /// [Decoration]
   /// [fillDecoration]
-  Widget backgroundDecoration(Decoration? decoration, {Key? key}) {
+  Widget backgroundDecoration(
+    Decoration? decoration, {
+    Key? key,
+    Color? fillColor,
+  }) {
+    decoration ??= fillColor == null ? null : BoxDecoration(color: fillColor);
     if (decoration == null) {
       return this;
     }

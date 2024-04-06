@@ -109,7 +109,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   void onDrawImage(int imageId, double x, double y, double width, double height,
       Float64List? transform) {
     assert(() {
-      l.d('onDrawImage $imageId $x $y $width $height $transform');
+      //l.d('onDrawImage $imageId $x $y $width $height $transform');
       return true;
     }());
 
@@ -128,7 +128,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onDrawPath(int pathId, int? paintId, int? patternId) {
     assert(() {
-      l.d('onDrawPath $pathId $paintId $patternId');
+      //l.d('onDrawPath $pathId $paintId $patternId');
       return true;
     }());
 
@@ -159,7 +159,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onDrawText(int textId, int? fillId, int? strokeId, int? patternId) {
     assert(() {
-      l.d('onDrawText $textId $fillId $strokeId $patternId');
+      //l.d('onDrawText $textId $fillId $strokeId $patternId');
       return true;
     }());
 
@@ -221,7 +221,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onDrawVertices(Float32List vertices, Uint16List? indices, int? paintId) {
     assert(() {
-      l.d('onDrawVertices $vertices $indices $paintId');
+      //l.d('onDrawVertices $vertices $indices $paintId');
       return true;
     }());
   }
@@ -230,7 +230,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   void onImage(int imageId, int format, Uint8List data,
       {VectorGraphicsErrorListener? onError}) async {
     assert(() {
-      l.d('onImage[$imageId] $format:${format.imageFormatTypeString} ${data.lengthInBytes.toFileSizeStr()}');
+      //l.d('onImage[$imageId] $format:${format.imageFormatTypeString} ${data.lengthInBytes.toFileSizeStr()}');
       return true;
     }());
     _images[imageId] = data;
@@ -240,7 +240,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   void onLinearGradient(double fromX, double fromY, double toX, double toY,
       Int32List colors, Float32List? offsets, int tileMode, int id) {
     assert(() {
-      l.d('onLinearGradient $fromX $fromY $toX $toY $colors $offsets $tileMode $id');
+      //l.d('onLinearGradient $fromX $fromY $toX $toY $colors $offsets $tileMode $id');
       return true;
     }());
   }
@@ -248,7 +248,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onMask() {
     assert(() {
-      l.d('onMask');
+      //l.d('onMask');
       return true;
     }());
   }
@@ -256,7 +256,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onClipPath(int pathId) {
     assert(() {
-      l.d('onClipPath $pathId');
+      //l.d('onClipPath $pathId');
       return true;
     }());
   }
@@ -280,7 +280,7 @@ class SvgListener extends VectorGraphicsCodecListener {
     if (blendMode != 0) {
       mode = BlendMode.values[blendMode];
     }
-    l.d('onPaintObject[$id] ${color.toHexColor()} $strokeCap $strokeJoin $blendMode:$mode $strokeMiterLimit $strokeWidth $paintStyle:${PaintingStyle.values[paintStyle]} $shaderId');
+    //l.d('onPaintObject[$id] ${color.toHexColor()} $strokeCap $strokeJoin $blendMode:$mode $strokeMiterLimit $strokeWidth $paintStyle:${PaintingStyle.values[paintStyle]} $shaderId');
 
     assert(_paints.length == id, 'Expect ID to be ${_paints.length}');
     final Paint paint = Paint()..color = Color(color);
@@ -314,7 +314,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onPathClose() {
     assert(() {
-      l.d('onPathClose');
+      //l.d('onPathClose');
       return true;
     }());
     _currentPath?.close();
@@ -325,7 +325,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   void onPathCubicTo(
       double x1, double y1, double x2, double y2, double x3, double y3) {
     assert(() {
-      l.d('onPathCubicTo $x1 $y1 $x2 $y2 $x3 $y3');
+      //l.d('onPathCubicTo $x1 $y1 $x2 $y2 $x3 $y3');
       return true;
     }());
     _currentPath?.cubicTo(x1, y1, x2, y2, x3, y3);
@@ -335,7 +335,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onPathFinished() {
     assert(() {
-      l.d('onPathFinished');
+      //l.d('onPathFinished');
       return true;
     }());
     _currentPath = null;
@@ -345,7 +345,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onPathLineTo(double x, double y) {
     assert(() {
-      l.d('onPathLineTo $x $y');
+      ////l.d('onPathLineTo $x $y');
       return true;
     }());
     _currentPath?.lineTo(x, y);
@@ -356,7 +356,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   void onPathMoveTo(double x, double y) {
     //debugger();
     assert(() {
-      l.d('onPathMoveTo $x $y');
+      //l.d('onPathMoveTo $x $y');
       return true;
     }());
     _currentPath?.moveTo(x, y);
@@ -368,7 +368,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onPathStart(int id, int fillType) {
     assert(() {
-      l.d('onPathStart[$id] $fillType:${PathFillType.values[fillType]}');
+      //l.d('onPathStart[$id] $fillType:${PathFillType.values[fillType]}');
       return true;
     }());
     final Path path = Path();
@@ -385,7 +385,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   void onPatternStart(int patternId, double x, double y, double width,
       double height, Float64List transform) {
     assert(() {
-      l.d('onPatternStart[$patternId] $x $y $width $height $transform');
+      //l.d('onPatternStart[$patternId] $x $y $width $height $transform');
       return true;
     }());
   }
@@ -403,7 +403,7 @@ class SvgListener extends VectorGraphicsCodecListener {
       int tileMode,
       int id) {
     assert(() {
-      l.d('onRadialGradient $centerX $centerY $radius $focalX $focalY $colors $offsets $transform $tileMode $id');
+      //l.d('onRadialGradient $centerX $centerY $radius $focalX $focalY $colors $offsets $transform $tileMode $id');
       return true;
     }());
   }
@@ -411,7 +411,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onRestoreLayer() {
     assert(() {
-      l.d('onRestoreLayer');
+      //l.d('onRestoreLayer');
       return true;
     }());
   }
@@ -419,7 +419,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onSaveLayer(int paintId) {
     assert(() {
-      l.d('onSaveLayer $paintId');
+      //l.d('onSaveLayer $paintId');
       return true;
     }());
   }
@@ -428,7 +428,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onSize(double width, double height) {
     assert(() {
-      l.d('onSize $width $height');
+      //l.d('onSize $width $height');
       return true;
     }());
     size = Size(width, height);
@@ -449,7 +449,7 @@ class SvgListener extends VectorGraphicsCodecListener {
       int id) {
     //debugger();
     assert(() {
-      l.d('onTextConfig[$id] $text $fontFamily $xAnchorMultiplier $fontWeight $fontSize $decoration $decorationStyle ${decorationColor.toHexColor()}');
+      //l.d('onTextConfig[$id] $text $fontFamily $xAnchorMultiplier $fontWeight $fontSize $decoration $decorationStyle ${decorationColor.toHexColor()}');
       return true;
     }());
 
@@ -480,7 +480,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   void onTextPosition(int textPositionId, double? x, double? y, double? dx,
       double? dy, bool reset, Float64List? transform) {
     assert(() {
-      l.d('onTextPosition[$textPositionId] $x $y $dx $dy $reset $transform');
+      //l.d('onTextPosition[$textPositionId] $x $y $dx $dy $reset $transform');
       return true;
     }());
     _textPositions.add(SvgTextPosition(x, y, dx, dy, reset, transform));
@@ -493,7 +493,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   @override
   void onUpdateTextPosition(int textPositionId) {
     assert(() {
-      l.d('onUpdateTextPosition $textPositionId');
+      //l.d('onUpdateTextPosition $textPositionId');
       return true;
     }());
     final SvgTextPosition position = _textPositions[textPositionId];

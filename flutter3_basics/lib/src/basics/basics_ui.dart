@@ -1303,8 +1303,8 @@ extension WidgetEx on Widget {
     Color? highlightColor,
     Color? splashColor,
   }) {
-    var isCircle = shape == BoxShape.circle;
-    var bRadius = borderRadius ??
+    final isCircle = shape == BoxShape.circle;
+    final bRadius = borderRadius ??
         (isCircle ? null : BorderRadius.all(Radius.circular(radius)));
     decoration ??= BoxDecoration(
       shape: shape,

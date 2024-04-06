@@ -51,6 +51,7 @@ class ConfirmButton extends StatelessWidget {
 
     result = result
         ?.ink(
+          shape: useIcon ? BoxShape.circle : BoxShape.rectangle,
           onTap: enable
               ? () {
                   onTap?.call();
