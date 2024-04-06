@@ -58,6 +58,8 @@ class RScrollController extends ScrollController {
 
   /// 加载数据的回调[onRefreshCallback].[onLoadMoreCallback]的结合体
   /// 通过[requestPage]判断是否是刷新
+  /// [_onRefreshStart]
+  /// [_onLoadMoreStart]
   VoidCallback? onLoadDataCallback;
 
   RScrollController();
@@ -250,6 +252,7 @@ class RScrollController extends ScrollController {
 
   /// 使用刷新布局包裹[child]
   /// [RefreshIndicator]
+  @configProperty
   late WidgetWrapBuilder wrapRefreshWidget = (context, child) {
     //debugger();
     if (adapterStateValue.value.isLoading) {
@@ -266,6 +269,7 @@ class RScrollController extends ScrollController {
 
   /// 情感图[Widget]
   /// 根据不同的状态, 构建不同的Widget
+  @configProperty
   late WidgetStateBuilder buildAdapterStateWidget =
       (context, widgetState, stateData) {
     return AdapterStateWidget(
@@ -283,6 +287,7 @@ class RScrollController extends ScrollController {
 
   /// 加载更多[Widget]
   /// 根据不同的状态, 构建不同的Widget
+  @configProperty
   late WidgetStateBuilder buildLoadMoreStateWidget =
       (context, widgetState, stateData) {
     _isEnableLoadMore = true;
@@ -301,6 +306,7 @@ class RScrollController extends ScrollController {
   };
 
   /// [RefreshIndicator]的刷新回调
+  @property
   Future<void> _onRefresh() async {
     //debugger();
     if (refreshStateValue.value != WidgetState.loading) {
@@ -312,6 +318,10 @@ class RScrollController extends ScrollController {
 
   /// 内部刷新处理开始处理
   /// 如果[_onRefreshStart]内部有异步方法
+  /// [updateAdapterState]
+  /// [buildAdapterStateWidget]
+  /// [_onRefresh]
+  @property
   void _onRefreshStart() {
     //debugger();
     loadMoreStateValue.value = WidgetState.none;
@@ -321,6 +331,8 @@ class RScrollController extends ScrollController {
   }
 
   /// 内部刷新处理开始处理
+  /// [updateLoadMoreState]
+  @property
   void _onLoadMoreStart() {
     requestPage.pageLoadMore();
     onLoadMoreCallback?.call();

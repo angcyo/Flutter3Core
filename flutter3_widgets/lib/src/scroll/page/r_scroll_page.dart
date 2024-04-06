@@ -97,6 +97,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 重写此方法, 加载数据
   /// 通过[RequestPage]实现页面分页
+  ///
+  /// [RScrollController.onLoadDataCallback]
   @overridePoint
   void onLoadData();
 
