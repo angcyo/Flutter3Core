@@ -82,14 +82,15 @@ extension MatchParentLayoutEx on Widget {
   /// [WrapContentLayoutEx.wrapContent]
   /// [MatchParentLayoutEx.matchParent]
   MatchParentLayout matchParent({
+    bool? match,
     bool matchWidth = true,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
   }) =>
       MatchParentLayout(
         alignment: alignment,
-        matchWidth: matchWidth,
-        matchHeight: matchHeight,
+        matchWidth: match ?? matchWidth,
+        matchHeight: match ?? matchHeight,
         child: this,
       );
 

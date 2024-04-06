@@ -168,7 +168,6 @@ class WrapContentBox extends RenderAligningShiftedBox {
   }
 
   void _setSize(Size childSize) {
-    //debugger();
     final double width, height;
     if (wrapWidth || constraints.maxWidth == double.infinity) {
       width = childSize.width;
@@ -249,10 +248,12 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
 extension WrapContentLayoutEx on Widget {
   /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
+  /// [wrapWidth]  自身的宽度是否和[child]的宽度一致
   /// [MatchParentLayoutEx.matchParent]
   /// [WrapContentLayoutEx.wrapContent]
   WrapContentLayout wrapContent({
     bool tightChild = true,
+    bool? wrap,
     bool wrapWidth = false,
     bool wrapHeight = false,
     AlignmentDirectional alignment = AlignmentDirectional.center,
@@ -261,8 +262,8 @@ extension WrapContentLayoutEx on Widget {
   }) =>
       WrapContentLayout(
         tightChild: tightChild,
-        wrapWidth: wrapWidth,
-        wrapHeight: wrapHeight,
+        wrapWidth: wrap ?? wrapWidth,
+        wrapHeight: wrap ?? wrapHeight,
         alignment: alignment,
         minWidth: minWidth,
         minHeight: minHeight,

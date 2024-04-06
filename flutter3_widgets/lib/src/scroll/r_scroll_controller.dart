@@ -16,6 +16,7 @@ class RScrollController extends ScrollController {
 
   /// 用来控制刷新完成
   /// [_onRefresh]
+  /// [finishRefresh]
   Completer<void> _refreshCompleter = Completer();
 
   /// 当前的刷新状态, 可以监听这个值的变化触发刷新
@@ -69,16 +70,28 @@ class RScrollController extends ScrollController {
         position.hasContentDimensions /*具有内容的尺寸信息*/ &&
         position.pixels >= position.maxScrollExtent /*到底了*/) {
       //滚动到底部了
-      if (_isEnableLoadMore) {
+      if (adapterStateValue.value != WidgetState.none) {
+        //debugger();
+        assert(() {
+          l.d("情感图状态不是[none], 忽略滚动监听.");
+          return true;
+        }());
+      } else if (_isEnableLoadMore) {
         //debugger();
         if (refreshStateValue.value == WidgetState.loading) {
-          l.d("正在刷新中...忽略加载更多处理.");
+          assert(() {
+            l.d("正在刷新中...忽略加载更多处理.");
+            return true;
+          }());
         } else if (loadMoreStateValue.value == WidgetState.loading) {
           //正在加载中...
           //l.d("正在加载中...忽略加载更多处理.");
         } else if (loadMoreStateValue.value == WidgetState.empty) {
           //没有更多数据了
-          l.d("没有更多数据了...忽略加载更多处理.");
+          assert(() {
+            l.d("没有更多数据了...忽略加载更多处理.");
+            return true;
+          }());
         } else {
           loadMoreKey.currentState?.updateWidgetState(WidgetState.loading);
           updateLoadMoreState(loadMoreKey.currentState, WidgetState.loading);
@@ -289,6 +302,7 @@ class RScrollController extends ScrollController {
 
   /// [RefreshIndicator]的刷新回调
   Future<void> _onRefresh() async {
+    //debugger();
     if (refreshStateValue.value != WidgetState.loading) {
       _onRefreshStart();
       refreshStateValue.value = WidgetState.loading;

@@ -33,11 +33,12 @@ OverlayEntry? showStrokeLoading({
 Offset alignChildOffset(
   AlignmentGeometry alignment,
   Size containsSize,
-  Size childSize, {
+  Size? childSize, {
   RenderBox? child,
 }) {
   var dx = 0.0;
   var dy = 0.0;
+  childSize ??= child?.size ?? Size.zero;
   switch (alignment) {
     case AlignmentDirectional.topStart:
     case AlignmentDirectional.centerStart:
@@ -91,6 +92,7 @@ Offset alignChildOffset(
       break;
   }
   final offset = Offset(dx, dy);
+  //debugger();
   if (child != null && child.parentData is BoxParentData) {
     final BoxParentData childParentData = child.parentData! as BoxParentData;
     childParentData.offset = offset;

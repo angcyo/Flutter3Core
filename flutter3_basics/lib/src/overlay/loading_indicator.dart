@@ -37,7 +37,8 @@ class LoadingIndicator extends StatelessWidget {
             ? kMinLoadingIndicatorDimension
             : kStrokeLoadingIndicatorDimension);
     final globalTheme = GlobalTheme.of(context);
-    return UnconstrainedBox(
+    return Align(
+      alignment: Alignment.center,
       child: SizedBox(
         width: width,
         height: height,

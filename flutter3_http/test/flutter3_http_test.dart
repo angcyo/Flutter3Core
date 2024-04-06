@@ -57,7 +57,7 @@ Future testDio() async {
   print(utf8.decode(bytes ?? []));*/
 
   final imageBytes =
-      await "https://gitcode.net/angcyo/file/-/raw/master/res/code/all_in1.jpg".httpGetBytes();
+      await "https://gitcode.net/angcyo/file/-/raw/master/res/code/all_in1.jpg".dioGetBytes();
 
   print(imageBytes?.toBase64Image());
 

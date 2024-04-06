@@ -30,7 +30,7 @@ extension HttpUriEx on Uri {
   }*/
 
   /// 获取http字节内容
-  Future<Uint8List?> getHttpBytes({Map<String, String>? headers}) async {
+  Future<Uint8List?> httpGetBytes({Map<String, String>? headers}) async {
     Uint8List? result;
     final HttpClient httpClient = HttpClient();
     //final Uri uri = Uri.base.resolve(url);
@@ -53,7 +53,7 @@ extension HttpUriEx on Uri {
   }
 
   ///获取http字符串内容
-  Future<String?> getHttpContent({
+  Future<String?> httpGetContent({
     Encoding defaultEncoding = utf8,
     Map<String, String>? headers,
   }) async {
@@ -97,17 +97,17 @@ extension HttpStringEx on String {
     return api;
   }
 
-  /// [HttpUriEx.getHttpContent]
-  Future<String?> getHttpContent({
+  /// [HttpUriEx.httpGetContent]
+  Future<String?> httpGetContent({
     Encoding defaultEncoding = utf8,
     Map<String, String>? headers,
   }) async =>
-      Uri.parse(this).getHttpContent(
+      Uri.parse(this).httpGetContent(
         defaultEncoding: defaultEncoding,
         headers: headers,
       );
 
-  /// [HttpUriEx.getHttpBytes]
-  Future<Uint8List?> getHttpBytes({Map<String, String>? headers}) async =>
-      Uri.parse(this).getHttpBytes(headers: headers);
+  /// [HttpUriEx.httpGetBytes]
+  Future<Uint8List?> httpGetBytes({Map<String, String>? headers}) async =>
+      Uri.parse(this).httpGetBytes(headers: headers);
 }

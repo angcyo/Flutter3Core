@@ -275,7 +275,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
             // SliverFillRemaining wrap
             final Widget child;
             if (tile.fillExpand) {
-              child = SizedBox.expand(child: tile);
+              //child = SizedBox.expand(child: tile);
+              child = SliverExpandWidget(child: tile);
             } else {
               child = tile;
             }
@@ -285,6 +286,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
                 _wrapSliverTile(
                   tile,
                   SliverFillRemaining(
+                    key: UniqueKey(),
                     hasScrollBody: tile.fillHasScrollBody,
                     fillOverscroll: tile.fillOverscroll,
                     child: child,

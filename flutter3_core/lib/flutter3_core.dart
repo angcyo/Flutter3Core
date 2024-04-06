@@ -1,7 +1,6 @@
 library flutter3_core;
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -39,8 +38,8 @@ part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
-part 'src/file/file_pub_ex.dart';
 part 'src/file/file_log.dart';
+part 'src/file/file_pub_ex.dart';
 part 'src/file/file_type.dart';
 part 'src/isar/hive/hive_ex.dart';
 part 'src/isar/isar_ex.dart';
@@ -53,6 +52,7 @@ part 'src/view_model/view_model_ex.dart';
 String get currentDirPath => p.current;
 
 /// 初始化Flutter3核心库
+@entryPoint
 Future<void> initFlutter3Core() async {
   // 写入文件fn
   GlobalConfig.def.writeFileFn = (fileName, folder, content) async {

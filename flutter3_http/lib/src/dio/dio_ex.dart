@@ -72,7 +72,8 @@ extension DioStringEx on String {
   }
 
   /// 获取http字符串内容
-  Future<String?> httpGetString({
+  /// [HttpStringEx.httpGetContent]
+  Future<String?> dioGetString({
     BuildContext? context,
     Map<String, dynamic>? queryParameters,
     Options? options,
@@ -91,7 +92,8 @@ extension DioStringEx on String {
   }
 
   /// 获取http字节数据
-  Future<Uint8List?> httpGetBytes({
+  /// [HttpStringEx.httpGetBytes]
+  Future<Uint8List?> dioGetBytes({
     BuildContext? context,
     Map<String, dynamic>? queryParameters,
     Options? options,

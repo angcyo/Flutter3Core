@@ -283,7 +283,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
             .padding(globalTheme.xh),
       );
     }
-    return result.wrapContent();
+    return result.align(Alignment.center).matchParent();
   }
 
   /// [WidgetState.error]状态
@@ -312,7 +312,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
             .padding(globalTheme.xh),
       );
     }
-    return result.wrapContent().click(() {
+    return result.align(Alignment.center).matchParent().click(() {
       //点击重试
       if (widget.requestChangeStateFn
               ?.call(context, _buildState, WidgetState.loading) ==
@@ -351,7 +351,8 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
       [dynamic data, double? progressValue]) {
     return GlobalConfig.of(context)
         .loadingIndicatorBuilder(context, data, progressValue)
-        .wrapContent(minHeight: kInteractiveHeight);
+        .wrapContent(minHeight: kInteractiveHeight)
+        .paddingAll(kH);
   }
 
   /// [WidgetState.empty]状态

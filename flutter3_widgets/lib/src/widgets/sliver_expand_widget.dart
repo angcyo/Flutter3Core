@@ -10,19 +10,43 @@ part of '../../flutter3_widgets.dart';
 /// 通过获取到[SliverConstraints]实现
 class SliverExpandWidget extends SingleChildRenderObjectWidget
     with NotSliverTile {
-  const SliverExpandWidget({super.key, super.child});
+  /// child在self中的对齐方式
+  final AlignmentDirectional alignment;
+
+  const SliverExpandWidget({
+    super.key,
+    super.child,
+    this.alignment = AlignmentDirectional.center,
+  });
 
   @override
-  RenderObject createRenderObject(BuildContext context) => _SliverExpandBox();
+  _SliverExpandBox createRenderObject(BuildContext context) => _SliverExpandBox(
+        alignment: alignment,
+      );
 
   @override
-  void updateRenderObject(
-      BuildContext context, covariant RenderObject renderObject) {
+  void updateRenderObject(BuildContext context, _SliverExpandBox renderObject) {
     super.updateRenderObject(context, renderObject);
+    renderObject
+      ..alignment = alignment
+      ..markNeedsLayout();
   }
 }
 
 class _SliverExpandBox extends RenderProxyBox {
+  AlignmentDirectional alignment;
+
+  _SliverExpandBox({
+    this.alignment = AlignmentDirectional.center,
+  });
+
+  @override
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! BoxParentData) {
+      child.parentData = BoxParentData();
+    }
+  }
+
   @override
   void performLayout() {
     //获取到约束
@@ -40,10 +64,15 @@ class _SliverExpandBox extends RenderProxyBox {
         expandSize = Size(sliverConstraints.remainingPaintExtent,
             sliverConstraints.crossAxisExtent);
       }
-      child?.layout(BoxConstraints(
-        maxWidth: expandSize.width,
-        maxHeight: expandSize.height,
-      ));
+      if (child != null) {
+        child!.layout(
+            BoxConstraints(
+              maxWidth: expandSize.width,
+              maxHeight: expandSize.height,
+            ),
+            parentUsesSize: true);
+        alignChildOffset(alignment, expandSize, null, child: child);
+      }
       size = expandSize;
     }
   }
