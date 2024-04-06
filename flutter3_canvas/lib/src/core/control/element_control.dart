@@ -333,7 +333,12 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
     _elementStateStack?.restore();
 
     controlType ??= this.controlType;
-    if (controlType == BaseControl.sControlTypeRotate) {
+    if (_targetElement == null) {
+      assert(() {
+        l.d('无目标控制元素[$controlType]');
+        return true;
+      }());
+    } else if (controlType == BaseControl.sControlTypeRotate) {
       _targetElement?.rotateElement(matrix);
     } else if (controlType == BaseControl.sControlTypeTranslate) {
       _targetElement?.translateElement(matrix);
@@ -665,19 +670,22 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
     //debugger();
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(dispatch, event)) {
+        final selectComponent =
+            canvasElementControlManager.elementSelectComponent;
         if (event.isPointerDown) {
           downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
-          if (canvasElementControlManager.elementSelectComponent
-              .hitTest(point: downScenePoint)) {
-            //需要拖动选中的元素
+          if (selectComponent.hitTest(point: downScenePoint)) {
+            //在选择器上按下, 则是需要拖动选中的元素
             //debugger();
             isPointerDownIn = true;
             isFirstHandle = true;
             canvasElementControlManager
                 .updatePaintInfoType(PaintInfoType.location);
             //在元素上点击, 就需要拦截事件, 因为还有双击操作
+            startControlTarget(selectComponent);
             return true;
           } else {
+            //在选择器外按下, 可能是需要拖动其他元素
             final downElementList = canvasElementControlManager
                 .canvasElementManager
                 .findElement(point: downScenePoint);
@@ -687,8 +695,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               isPointerDownIn = true;
               canvasElementControlManager.canvasElementManager
                   .resetSelectElement(downElement.ofList());
-              startControlTarget(
-                  canvasElementControlManager.elementSelectComponent);
+              startControlTarget(selectComponent);
               return true;
             }
           }
@@ -699,8 +706,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
                 //首次移动, 并且超过了阈值
                 isFirstHandle = false;
-                startControlTarget(
-                    canvasElementControlManager.elementSelectComponent);
+                startControlTarget(selectComponent);
                 return true;
               }
             }
