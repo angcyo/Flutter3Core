@@ -1301,6 +1301,14 @@ extension ListEx<T> on List<T> {
     return any((element) => list.contains(element));
   }
 
+  ///如果列表不为空时, 则删除第一个元素
+  T? removeFirstIfNotEmpty() {
+    if (isNotEmpty) {
+      return removeAt(0);
+    }
+    return null;
+  }
+
   ///如果列表不为空时, 则删除最后一个元素
   T? removeLastIfNotEmpty() {
     if (isNotEmpty) {

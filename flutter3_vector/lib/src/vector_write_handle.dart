@@ -6,6 +6,7 @@ part of '../flutter3_vector.dart';
 /// @date 2024/02/29
 ///
 
+/// svg xml头部
 const _kSvgHeader = '<?xml version="1.0" encoding="UTF-8"?>'
     '<!-- Created with LaserPecker Design Space (https://www.laserpecker.net/pages/software) -->\n';
 
@@ -52,6 +53,23 @@ void _wrapSvgPath(
   buffer?.write('/>');
 }
 
+/// gcode 默认头部
+const kGCodeHeader = 'G90\nG21\nM8\n';
+
+/// gcode 自动激光头
+const kGCodeAutoHeader = 'G90\nG21\nM8\nM4\n';
+
+/// gcode 默认尾部
+const kGCodeFooter = 'M2\n';
+
+/// 默认切割数据使用的宽度/直径
+@mm
+const sDefaultCutWidth = 0.3;
+
+/// 默认切割数据使用的步长
+@mm
+const sDefaultCutStep = 0.03;
+
 mixin VectorWriteMixin {
   /// 当前点与上一个点之间的关系, 起点
   static const int sPointTypeStart = 0;
@@ -75,6 +93,11 @@ mixin VectorWriteMixin {
   @dp
   double vectorTolerance = kVectorTolerance.toDpFromMm();
 
+  /// 存储的矢量步长, 用来枚举[Path]路径
+  /// [kPathAcceptableError]
+  @dp
+  double vectorStep = kPathAcceptableError;
+
   /// 圆心之间的距离小于这个值时, 认为是一个圆
   @dp
   double get circleTolerance => 1;
@@ -95,6 +118,9 @@ mixin VectorWriteMixin {
   /// 配置此项后才会收集点位数据[contourPointList]
   PointWriteHandle? pointWriteHandle;
 
+  /// 父类的写入句柄
+  VectorWriteMixin? parentWriteHandle;
+
   /// [transformPoint]
   @configProperty
   Offset Function(Offset point)? transformPointAction;
@@ -104,24 +130,33 @@ mixin VectorWriteMixin {
   ///[ratio] 枚举点位在轮廓上的进度比例[0~1]等于1时, 表示当前的轮廓结束
   ///[contourIndex] 当前点所在的轮廓索引, 不同轮廓上的点, 会被分开处理.
   ///[angle] 当前点的弧度
+  ///[data] 附加的点位额外数据, 用来自定义标识
   @entryPoint
   void appendPoint(
     int posIndex,
     double ratio,
     int contourIndex,
     Offset position,
-    double? angle,
-  ) {
+    double? angle, [
+    dynamic data,
+  ]) {
+    parentWriteHandle?.appendPoint(
+      posIndex,
+      ratio,
+      contourIndex,
+      position,
+      angle,
+    );
     final newPoint = VectorPoint(position: position, angle: angle);
     if (_pointList.isEmpty || _lastContourIndex != contourIndex) {
       //第一个点 or 新的轮廓开始
-      handleAndClearPointList();
+      handleAndClearPointList(data);
       newPoint.type = sPointTypeStart;
       _lastContourIndex = contourIndex;
       _pointList.add(newPoint);
       onContourStart();
-      onWritePoint(newPoint);
-      _checkEnd(ratio);
+      onWritePoint(newPoint, data);
+      _checkEnd(ratio, data);
       return;
     }
     _lastContourIndex = contourIndex;
@@ -129,7 +164,7 @@ mixin VectorWriteMixin {
     if (_pointList.length == 1) {
       //之前只有1个点
       _pointList.add(newPoint);
-      _checkEnd(ratio);
+      _checkEnd(ratio, data);
       return;
     }
     //---
@@ -167,7 +202,7 @@ mixin VectorWriteMixin {
           _pointList.removeLastIfNotEmpty();
           _pointList.add(newPoint);
         } else {
-          handleAndClearPointList();
+          handleAndClearPointList(data);
           _pointList.add(beforePoint);
           _pointList.add(newPoint);
         }*/
@@ -185,7 +220,7 @@ mixin VectorWriteMixin {
                     .abs() >=
                 pi) {
           //使用A拟合曲线时, 只能模拟小弧, 不成超过180°
-          handleAndClearPointList();
+          handleAndClearPointList(data);
           _pointList.add(beforePoint);
           _pointList.add(newPoint);
         } else {
@@ -198,7 +233,7 @@ mixin VectorWriteMixin {
           _pointList.removeLastIfNotEmpty();
           _pointList.add(newPoint);
         } else {
-          handleAndClearPointList();
+          handleAndClearPointList(data);
           _pointList.add(beforePoint);
           _pointList.add(newPoint);
         }
@@ -210,18 +245,18 @@ mixin VectorWriteMixin {
         _pointList.removeLastIfNotEmpty();
         _pointList.add(newPoint);
       } else {
-        handleAndClearPointList();
+        handleAndClearPointList(data);
         _pointList.add(newPoint);
       }
     }
-    _checkEnd(ratio);
+    _checkEnd(ratio, data);
   }
 
-  void _checkEnd(double ratio) {
+  void _checkEnd(double ratio, [dynamic data]) {
     //---end---
     if (ratio >= 1) {
       //轮廓结束
-      handleAndClearPointList();
+      handleAndClearPointList(data);
       onContourEnd();
     }
   }
@@ -244,10 +279,11 @@ mixin VectorWriteMixin {
   /// 有可能是一个新的点
   /// 有可能是line
   /// 有可能是arc
+  /// [VectorWriteMixin.appendPoint]
   @overridePoint
   @mustCallSuper
-  void onWritePoint(VectorPoint point) {
-    pointWriteHandle?.onWritePoint(point);
+  void onWritePoint(VectorPoint point, [dynamic data]) {
+    pointWriteHandle?.onWritePoint(point, data);
   }
 
   /// 写入一个点位时可以用来转换坐标
@@ -296,10 +332,10 @@ mixin VectorWriteMixin {
   List<VectorPoint> _pointList = [];
 
   /// 处理和重置点位[_pointList]列表
-  void handleAndClearPointList() {
+  void handleAndClearPointList([dynamic data]) {
     if (_pointList.isNotEmpty) {
       if (_pointList.length > 1) {
-        onWritePoint(_pointList.last);
+        onWritePoint(_pointList.last, data);
       }
     }
     _pointList = [];
@@ -371,7 +407,7 @@ class SvgWriteHandle with VectorWriteMixin {
   bool isPathClose = false;
 
   @override
-  void onWritePoint(VectorPoint point) {
+  void onWritePoint(VectorPoint point, [dynamic data]) {
     initStringBuffer();
     final position = transformPoint(point.position);
     var x = position.dx.toDigits(digits: digits);
@@ -386,7 +422,7 @@ class SvgWriteHandle with VectorWriteMixin {
       stringBuffer
           ?.write(' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} $x,$y');
     }
-    super.onWritePoint(point.copyWith(position: position));
+    super.onWritePoint(point.copyWith(position: position), data);
   }
 
   @override
@@ -413,7 +449,7 @@ class PointWriteHandle with VectorWriteMixin {
   }
 
   @override
-  void onWritePoint(VectorPoint point) {
+  void onWritePoint(VectorPoint point, [dynamic data]) {
     final position = transformPoint(point.position);
     if (pointBuilder != null) {
       var x = position.dx;
@@ -421,7 +457,7 @@ class PointWriteHandle with VectorWriteMixin {
       var a = point.angle;
       pointBuilder?.add(Point(x, y, a));
     }
-    super.onWritePoint(point.copyWith(position: position));
+    super.onWritePoint(point.copyWith(position: position), data);
   }
 
   @override
@@ -449,7 +485,7 @@ class JsonWriteHandle with VectorWriteMixin {
   }
 
   @override
-  void onWritePoint(VectorPoint point) {
+  void onWritePoint(VectorPoint point, [dynamic data]) {
     final position = transformPoint(point.position);
     if (jsonBuilder != null) {
       var x = position.dx.toDigits(digits: digits);
@@ -461,7 +497,7 @@ class JsonWriteHandle with VectorWriteMixin {
         "a": a, //弧度
       });
     }
-    super.onWritePoint(point.copyWith(position: position));
+    super.onWritePoint(point.copyWith(position: position), data);
   }
 
   @override
@@ -478,14 +514,53 @@ class JsonWriteHandle with VectorWriteMixin {
 }
 
 /// 用来输出成gcode文本字符串
+/// ```
+/// GCode文本的头尾, 需要自行添加
+/// handle.initStringBuffer().write('G90\nG21\nM8\nG1F12000\n');
+/// handle.initStringBuffer().write(M2\n');
+/// ```
 class GCodeWriteHandle with VectorWriteMixin {
   /// 默认GCode使用毫米单位, 入参的数据需要时dp单位
   /// [IUnit.mm]
   IUnit? unit = IUnit.mm;
 
+  //---
+
+  /// 是否是自动激光
+  bool isAutoLaser = false;
+
+  /// 功率 255
+  int? power;
+
+  ///速度, GCode里面是每分钟 12000/m
+  int? speed;
+
+  String get _powerString => power != null ? 'S$power' : '';
+
+  String get _speedString => speed != null ? 'F$speed' : '';
+
+  //---
+
+  /// 是否使用切割数据
+  bool useCutData = false;
+
+  /// 切割单次循环次数
+  int cutDataLoopCount = 1;
+
+  /// 切割数据的宽度
+  @mm
+  double cutDataWidth = sDefaultCutWidth;
+
+  /// 切割数据的枚举步长
+  @mm
+  double cutDataStep = sDefaultCutStep;
+
   @mm
   @override
   Offset transformPoint(@dp Offset point) {
+    if (transformPointAction != null) {
+      return transformPointAction?.call(point) ?? point;
+    }
     final x = unit?.toUnitFromDp(point.dx) ?? point.dx;
     final y = unit?.toUnitFromDp(point.dy) ?? point.dy;
     return Offset(x, y);
@@ -495,17 +570,35 @@ class GCodeWriteHandle with VectorWriteMixin {
   void onContourStart() {
     super.onContourStart();
     initStringBuffer();
-    stringBuffer?.writeln('M03S255');
+    if (!isAutoLaser) {
+      stringBuffer?.writeln('M03$_powerString$_speedString');
+    }
   }
+
+  /// 是否是轮廓的第一个点
+  bool _isContourFirst = true;
 
   @override
   void onContourEnd() {
     super.onContourEnd();
-    stringBuffer?.writeln('M05S0');
+    _isContourFirst = true;
+    if (!isAutoLaser) {
+      stringBuffer?.writeln('M05S0');
+    }
+  }
+
+  /// 自动激光在第一个G1指令后面写入功率和速度
+  void _writePowerSpeed() {
+    if (isAutoLaser && _isContourFirst) {
+      stringBuffer?.writeln('$_powerString$_speedString');
+      _isContourFirst = false;
+    } else {
+      stringBuffer?.write('\n');
+    }
   }
 
   @override
-  void onWritePoint(VectorPoint point) {
+  void onWritePoint(VectorPoint point, [dynamic data]) {
     initStringBuffer();
     final position = transformPoint(point.position);
     var x = position.dx.toDigits(digits: digits);
@@ -513,7 +606,24 @@ class GCodeWriteHandle with VectorWriteMixin {
     if (point.type == VectorWriteMixin.sPointTypeStart) {
       stringBuffer?.writeln('G0X${x}Y$y');
     } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
-      stringBuffer?.writeln('G1X${x}Y$y');
+      if (useCutData && data == null) {
+        // 通过data来判断是否需要使用切割数据
+        for (var i = 0; i < cutDataLoopCount; i++) {
+          //fillCutGCodeByZ(lastWriteX, lastWriteY, point.x, point.y)
+          final startPosition = _pointList.firstOrNull;
+          if (startPosition != null) {
+            _pointList.removeFirstIfNotEmpty();
+            _fillCutGCodeByCircle(startPosition.position, point.position);
+            if (i != cutDataLoopCount - 1) {
+              //多次循环数据的话, 需要移动到起点
+              stringBuffer?.writeln('G0X${x}Y$y');
+            }
+          }
+        }
+      } else {
+        stringBuffer?.write('G1X${x}Y$y');
+        _writePowerSpeed();
+      }
     } else if (point.type.have(VectorWriteMixin.sPointTypeArc)) {
       if (point.sweepFlag == 1) {
         //顺时针
@@ -528,8 +638,46 @@ class GCodeWriteHandle with VectorWriteMixin {
       stringBuffer?.write('X${x}Y$y');
       stringBuffer?.writeln(
           'I${ij.dx.toDigits(digits: digits)}J${ij.dy.toDigits(digits: digits)}');
+      _writePowerSpeed();
     }
-    super.onWritePoint(point.copyWith(position: position));
+    super.onWritePoint(point.copyWith(position: position), data);
+  }
+
+  /// 使用圆形切割数据填充一根线段
+  /// [startPosition] 开始的点,未[transformPoint]之前的原始位置
+  /// [endPosition] 结束的点, 未[transformPoint]之前的原始位置
+  ///
+  /// [VectorPathEx.toVectorString]
+  void _fillCutGCodeByCircle(@dp Offset startPosition, @dp Offset endPosition) {
+    //圆的直径
+    @dp
+    final diameter = cutDataWidth.toDpFromMm();
+    //圆心移动步长
+    @dp
+    final step = cutDataStep.toDpFromMm();
+
+    //直线
+    final linePath = Path();
+    linePath.moveTo(startPosition.dx, startPosition.dy);
+    linePath.lineTo(endPosition.dx, endPosition.dy);
+
+    /// 在指定的位置画一个圆
+    /// [center] 圆心坐标
+    void circleIn(@dp Offset center) {
+      final circlePath = Path();
+      circlePath.addOval(Rect.fromCircle(center: center, radius: diameter / 2));
+
+      circlePath.eachPathMetrics(
+          (posIndex, ratio, contourIndex, position, angle, isClose) {
+        appendPoint(
+            posIndex, ratio, contourIndex + 0xffff, position, angle, "cut");
+      }, vectorStep);
+    }
+
+    linePath.eachPathMetrics(
+        (posIndex, ratio, contourIndex, position, angle, isClose) {
+      circleIn(position);
+    }, step);
   }
 }
 
@@ -542,6 +690,7 @@ extension VectorPathEx on Path {
   }) {
     handle.enableVectorArc = false;
     handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
+    handle.vectorStep = pathStep ?? kPathAcceptableError;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
       handle.appendPoint(
         posIndex,
@@ -550,7 +699,7 @@ extension VectorPathEx on Path {
         position,
         angle,
       );
-    }, pathStep);
+    }, handle.vectorStep);
     return handle.getVectorString();
   }
 
@@ -560,10 +709,22 @@ extension VectorPathEx on Path {
   String? toGCodeString({
     @dp double? pathStep,
     @mm double? tolerance,
+    bool isAutoLaser = true,
+    int? power,
+    int? speed,
+    String? header = kGCodeAutoHeader,
+    String? footer = kGCodeFooter,
+    GCodeWriteHandle? handle,
   }) {
-    final handle = GCodeWriteHandle();
-    handle.initStringBuffer().write('G90\nG21\nM8\nG1F12000\n');
-    return toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
+    handle ??= GCodeWriteHandle();
+    handle
+      ..isAutoLaser = isAutoLaser
+      ..power = power
+      ..speed = speed;
+    handle.initStringBuffer().write(header);
+    toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
+    handle.initStringBuffer().write(footer);
+    return handle.getVectorString();
   }
 
   /// 转换成svg路径字符串数据
@@ -573,9 +734,14 @@ extension VectorPathEx on Path {
   String? toSvgPathString({
     @dp double? pathStep,
     @mm double? tolerance,
+    SvgWriteHandle? handle,
   }) {
-    final handle = SvgWriteHandle();
-    return toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
+    handle ??= SvgWriteHandle();
+    return toVectorString(
+      handle,
+      pathStep: pathStep,
+      tolerance: tolerance,
+    );
   }
 
   /// 输出svg xml文件格式
@@ -583,8 +749,13 @@ extension VectorPathEx on Path {
   String? toSvgXmlString({
     @dp double? pathStep,
     @mm double? tolerance,
+    SvgWriteHandle? handle,
   }) {
-    final svgPath = toSvgPathString(pathStep: pathStep, tolerance: tolerance);
+    final svgPath = toSvgPathString(
+      pathStep: pathStep,
+      tolerance: tolerance,
+      handle: handle,
+    );
     if (isNil(svgPath)) {
       return null;
     }
@@ -605,8 +776,9 @@ extension VectorPathEx on Path {
   String? toPathPointJsonString({
     @dp double? pathStep,
     @mm double? tolerance,
+    JsonWriteHandle? handle,
   }) {
-    final handle = JsonWriteHandle();
+    handle ??= JsonWriteHandle();
     return toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
   }
 
@@ -618,8 +790,9 @@ extension VectorPathEx on Path {
   List<List<Point>> toPointList({
     @dp double? pathStep,
     @mm double? tolerance,
+    PointWriteHandle? handle,
   }) {
-    final handle = PointWriteHandle();
+    handle ??= PointWriteHandle();
     toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
     return handle.pointList;
   }
@@ -630,14 +803,18 @@ extension VectorListPathEx on List<Path> {
   String? toSvgPathString({
     @dp double? pathStep,
     @mm double? tolerance,
+    SvgWriteHandle? handle,
   }) {
     if (isNil(this)) {
       return null;
     }
     final buffer = StringBuffer();
     for (final path in this) {
-      final svgPath =
-          path.toSvgPathString(pathStep: pathStep, tolerance: tolerance);
+      final svgPath = path.toSvgPathString(
+        pathStep: pathStep,
+        tolerance: tolerance,
+        handle: handle,
+      );
       if (!isNil(svgPath)) {
         buffer.write(svgPath);
       }
@@ -649,6 +826,7 @@ extension VectorListPathEx on List<Path> {
   String? toSvgXmlString({
     @dp double? pathStep,
     @mm double? tolerance,
+    SvgWriteHandle? handle,
   }) {
     if (isNil(this)) {
       return null;
@@ -656,8 +834,11 @@ extension VectorListPathEx on List<Path> {
     final bounds = getExactBounds(true, pathStep);
     return _wrapSvgXml(bounds, (buffer) {
       for (final path in this) {
-        final svgPath =
-            path.toSvgPathString(pathStep: pathStep, tolerance: tolerance);
+        final svgPath = path.toSvgPathString(
+          pathStep: pathStep,
+          tolerance: tolerance,
+          handle: handle,
+        );
         if (!isNil(svgPath)) {
           _wrapSvgPath(buffer, svgPath);
         }
@@ -670,18 +851,32 @@ extension VectorListPathEx on List<Path> {
   String? toGCodeString({
     @dp double? pathStep,
     @mm double? tolerance,
+    bool isAutoLaser = true,
+    int? power,
+    int? speed,
+    String? header = kGCodeAutoHeader,
+    String? footer = kGCodeFooter,
+    GCodeWriteHandle? handle,
   }) {
     final buffer = StringBuffer();
-    buffer.write('G90\nG21\nM8\nG1F12000\n');
-    final handle = GCodeWriteHandle();
+    handle ??= GCodeWriteHandle();
+    handle
+      ..isAutoLaser = isAutoLaser
+      ..power = power
+      ..speed = speed;
+    buffer.write(header);
     for (final path in this) {
       handle.stringBuffer = StringBuffer();
-      final gcode =
-          path.toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
+      final gcode = path.toVectorString(
+        handle,
+        pathStep: pathStep,
+        tolerance: tolerance,
+      );
       if (!isNil(gcode)) {
         buffer.write(gcode);
       }
     }
+    buffer.write(footer);
     return buffer.toString();
   }
 }
