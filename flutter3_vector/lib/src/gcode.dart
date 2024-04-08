@@ -78,6 +78,7 @@ class GCodeParser {
       return null;
     }
     gcodeText = gcode;
+    length = gcodeText.length;
     startParseGCode();
     /*final scanner = StringScanner(gcode);
     while (!scanner.isDone) {
@@ -91,7 +92,7 @@ class GCodeParser {
   @output
   Path? _result;
 
-  int get length => gcodeText.length;
+  int length = 0;
 
   //region---Path操作---
 
@@ -110,11 +111,15 @@ class GCodeParser {
     _result?.lineTo(x, y);
   }
 
+  /// [startAngle].[sweepAngle]角度
   void addArc(double left, double top, double right, double bottom,
       double startAngle, double sweepAngle) {
     initPath();
     _result?.addArc(
-        Rect.fromLTRB(left, top, right, bottom), startAngle, sweepAngle);
+      Rect.fromLTRB(left, top, right, bottom),
+      startAngle.hd,
+      sweepAngle.hd,
+    );
   }
 
   void closePath() {
@@ -258,7 +263,7 @@ class GCodeParser {
     if (gCmd == "G0" || gCmd == "G1") {
       //直线
       if (!readXY()) {
-        //有X Y指令
+        //没有有X Y指令
         return;
       }
 
@@ -341,9 +346,9 @@ class GCodeParser {
       double bottom = originY + radius;
 
       //中点启动之间的角度, 角度单位
-      double startAngle = atan2(startY - originY, startX - originX) * 180 / pi;
+      double startAngle = atan2(startY - originY, startX - originX).jd;
       //中点结束之间的角度
-      double endAngle = atan2(lastY - originY, lastX - originX) * 180 / pi;
+      double endAngle = atan2(lastY - originY, lastX - originX).jd;
 
       if (startAngle < 0) {
         startAngle = 360 + startAngle;
@@ -372,9 +377,9 @@ class GCodeParser {
       }
 
       //取圆上的点x坐标
-      double x = originX + radius * cos(endAngle * pi / 180);
+      double x = originX + radius * cos(endAngle.hd);
       //取圆上的点y坐标
-      double y = originY + radius * sin(endAngle * pi / 180);
+      double y = originY + radius * sin(endAngle.hd);
 
       lastX = x;
       lastY = y;
@@ -411,7 +416,6 @@ class GCodeParser {
   void readPreCmd() {
     int oldIndex = index;
     while (index < length) {
-      gcodeText[index];
       final c = gcodeText[index].toUpperCase();
       if (c == 'S') {
         //主轴转速

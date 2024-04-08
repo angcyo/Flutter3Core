@@ -11,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  test('test gcode', () async {
+  /*test('test gcode', () async {
     final size = 10.toDpFromMm();
     final rect = Rect.fromLTWH(size, size, size, size);
     final ovalPath = Path();
@@ -32,12 +32,12 @@ void main() async {
     GCodeWriteHandle handle = GCodeWriteHandle();
     handle.useCutData = false;
 
-    /* consoleLog(pathList.toGCodeString(
+    */ /* consoleLog(pathList.toGCodeString(
       handle: handle,
       header: kGCodeHeader,
       power: 255,
       speed: 12000,
-    ));*/
+    ));*/ /*
 
     final gcode = pathList.toGCodeString(
       handle: handle,
@@ -55,13 +55,39 @@ void main() async {
       power: 255,
       speed: 12000,
     ); //"G0X10Y10\n;start\nG1X20Y20\n";
-    /*final base64 = await gcodePath?.ofList<Path>().toUiImageBase64();
-    consoleLog(base64);*/
+    */ /*final base64 = await gcodePath?.ofList<Path>().toUiImageBase64();
+    consoleLog(base64);*/ /*
 
     consoleLog(gcode);
     consoleLog('new↓');
     consoleLog(resultGCode);
 
+    consoleLog('...');
+    return true;
+  });*/
+
+  test('test gcode parse', () {
+    const gcode = '''
+M05 S0
+G90
+G21
+G1 F1500
+G1  X-0.5292 Y2.1167
+G4 P0 
+M03 S255
+G4 P0
+G1 F300.000000
+G3 X-2.0416 Y-0.8433 I0.6945 J-2.2212
+G3 X0.8426 Y-2.3259 I2.2021 J0.7372
+G3 X2.3995 Y0.5286 I-0.6836 J2.2247
+G3 X-0.5292 Y2.1167 I-2.2357 J-0.6284
+G1  X-0.5292 Y2.1167
+''';
+
+    GCodeParser parser = GCodeParser();
+    final gcodePath = parser.parse(gcode);
+
+    consoleLog(gcodePath?.toGCodeString());
     consoleLog('...');
     return true;
   });
