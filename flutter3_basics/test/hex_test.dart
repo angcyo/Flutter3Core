@@ -10,6 +10,11 @@ import 'package:flutter_test/flutter_test.dart';
 ///
 
 void main() {
+  const str = "abc123ABC";
+  consoleLog(str.codeUnits);
+  consoleLog(String.fromCharCodes(str.codeUnits));
+  consoleLog(String.fromCharCode(97));
+
   test('test hex', () {
     final data = Uint8List.fromList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     final hex = data.toHex();
