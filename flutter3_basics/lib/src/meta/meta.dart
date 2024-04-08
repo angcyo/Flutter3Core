@@ -48,5 +48,6 @@ const output = AnnotationMeta('当前的数据用来输出');
 const property = AnnotationMeta('可以被操作的属性');
 const configProperty = AnnotationMeta('当前属性用来配置');
 const flagProperty = AnnotationMeta('标记属性, 不参与底层的逻辑运算');
+const initialize = AnnotationMeta('必要的初始化操作');
 
 //endregion---base

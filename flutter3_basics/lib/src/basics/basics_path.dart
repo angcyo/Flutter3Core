@@ -213,7 +213,7 @@ extension ListPathEx on List<Path> {
     return rect ?? Rect.zero;
   }
 
-  /// 将所有路径平移到0,0的位置
+  /// 将所有路径平移到0,0的位置, 并且可以指定需要缩放至的宽高大小
   /// [PathEx.moveToZero]
   /// [ListPathEx.moveToZero]
   List<Path> moveToZero({

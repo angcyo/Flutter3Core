@@ -6,6 +6,7 @@ part of '../../flutter3_basics.dart';
 ///
 
 /// 全局字符串缓存
+@globalInstance
 final GlobalStringCache globalString = GlobalStringCache._();
 
 class GlobalStringCache {

@@ -563,6 +563,8 @@ extension StringEx on String {
 
   //region 正则
 
+  RegExp toRegex() => RegExp(this);
+
   /// 当前的文本是否正则匹配通过
   /// ```dart
   /// var string = 'Dash is a bird';
@@ -572,15 +574,15 @@ extension StringEx on String {
   /// regExp = RegExp(r'dog');
   /// match = regExp.hasMatch(string); // false
   /// ```
-  bool isMatch(String regex) => RegExp(regex).hasMatch(this);
+  bool isMatch(String regex) => regex.toRegex().hasMatch(this);
 
   /// 获取匹配的字符串集合
   List<String> matchList(String regex) =>
-      RegExp(regex).allMatches(this).map((e) => e.group(0)!).toList();
+      regex.toRegex().allMatches(this).map((e) => e.group(0)!).toList();
 
   /// 使用正则替换字符串
   String replaceAll(String regex, String replace) =>
-      RegExp(regex).allMatches(this).fold(this, (previousValue, element) {
+      regex.toRegex().allMatches(this).fold(this, (previousValue, element) {
         return previousValue.replaceRange(element.start, element.end, replace);
       });
 
@@ -590,7 +592,28 @@ extension StringEx on String {
   /// [Match.end]
   /// [Match.groupCount]
   Iterable<RegExpMatch> allMatches(String regex, [int start = 0]) =>
-      RegExp(regex).allMatches(this, start);
+      regex.toRegex().allMatches(this, start);
+
+  /// 通过正则匹配, 判断字符串中是否包含指定的字符
+  /// [match] 是否是全匹配, 否则包含即可
+  bool have(String? text, [bool match = false]) {
+    if (text == null) {
+      return false;
+    }
+    if (this == text) {
+      return true;
+    }
+    try {
+      final regex = text.toRegex();
+      if (match) {
+        return regex.hasMatch(this);
+      } else {
+        return contains(regex);
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 
   //endregion 正则
 
