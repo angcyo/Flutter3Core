@@ -7,7 +7,6 @@ import 'dart:ui' as ui;
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter3_app/test_app.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -77,9 +76,6 @@ void runGlobalApp(Widget app) {
   };
 
   runZonedGuarded(() async {
-    if (isDebug) {
-      await testRunBefore();
-    }
     ensureInitialized();
 
     //网络请求基础信息拦截器
@@ -88,9 +84,6 @@ void runGlobalApp(Widget app) {
     "开始启动[main]:${ui.PlatformDispatcher.instance.defaultRouteName}"
         .writeToLog();
     await initFlutter3Core();
-    if (isDebug) {
-      await testRunAfter();
-    }
     AppLifecycleLog.install();
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
     l.i("启动完成:${lTime.time()}"..writeToLog());

@@ -120,7 +120,7 @@ Future wrapLoading(
     if (delay != null) {
       postDelayCallback(() {
         //debugger();
-        l.w("delay end");
+        //l.w("delay end");
         if (isEnd || isTimeout) {
         } else {
           showLoading(postShow: false);
@@ -144,7 +144,7 @@ Future wrapLoading(
   }
   return future.get((value, error) {
     //debugger();
-    l.w("future end");
+    //l.w("future end");
     if (isTimeout) {
       assert(() {
         l.w('忽略结果, 因为已经超时了.');
