@@ -40,12 +40,16 @@ class ElementPainter extends IPainter
 
   set isLockRatio(bool value) {
     paintState.isLockRatio = value;
+    dispatchSelfPaintPropertyChanged(
+        paintState, paintState, PropertyType.state);
   }
 
   bool get isVisible => paintState.isVisible;
 
   set isVisible(bool value) {
     paintState.isVisible = value;
+    dispatchSelfPaintPropertyChanged(
+        paintState, paintState, PropertyType.state);
   }
 
   //endregion ---属性--

@@ -464,6 +464,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 更新指定元素的锁定宽高比状态
   void updateElementLockState([ElementPainter? elementPainter]) {
+    //debugger();
     elementPainter ??= elementSelectComponent;
 
     final isLock = !elementPainter.isLockRatio;

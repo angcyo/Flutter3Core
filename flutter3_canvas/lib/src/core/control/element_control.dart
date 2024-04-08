@@ -178,11 +178,13 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
               ? canvasStyle.controlBgColor.withOpacity(0.6)
               : canvasStyle.controlBgColor,
       );
+      //debugger();
       canvas.drawPictureInRect(
         _pictureInfo?.picture,
         dst: rect.deflate(controlIcoPadding),
         pictureSize: _pictureInfo?.size,
         tintColor: Colors.white,
+        dstPadding: EdgeInsets.all(controlIcoPadding),
       );
     });
   }

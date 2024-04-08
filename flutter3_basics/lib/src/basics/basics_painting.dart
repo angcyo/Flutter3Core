@@ -480,13 +480,14 @@ extension CanvasEx on Canvas {
     Rect? dst,
     Color? tintColor,
     ui.ColorFilter? colorFilter,
+    EdgeInsets? dstPadding,
   }) {
     if (picture == null) {
       return;
     }
     drawInRect(dst, pictureSize?.toRect(), () {
       this.drawPicture(picture);
-    }, tintColor: tintColor, colorFilter: colorFilter);
+    }, tintColor: tintColor, colorFilter: colorFilter, dstPadding: dstPadding);
   }
 
   /// 绘制[ui.Image]
