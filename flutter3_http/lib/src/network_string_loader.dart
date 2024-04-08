@@ -26,6 +26,7 @@ class NetworkStringLoader extends StringLoader<Uint8List> {
   Future<Uint8List?> prepareMessage(BuildContext? context) async {
     final http.Client client = _httpClient ?? http.Client();
     return (await client.get(Uri.parse(url), headers: headers)).bodyBytes;
+    //return url.dioGetBytes(context: context);
   }
 
   @override

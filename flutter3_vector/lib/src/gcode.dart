@@ -727,7 +727,7 @@ class _GCodeWidgetState extends State<GCodeWidget> {
   Future _loadGCode(BuildContext context, StringLoader loader) {
     return loader.loadString(context).getValue((data, error) {
       if (error != null) {
-        _handleError(error, error.stackTrace);
+        _handleError(error, StackTrace.current);
         return null;
       }
       _error = null;
