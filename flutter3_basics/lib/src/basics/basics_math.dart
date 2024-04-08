@@ -87,6 +87,55 @@ Offset? centerOfCircle(Offset a, Offset b, Offset c) {
   return null;
 }
 
+/// 2个点和半径, 求圆心
+/// 会有2个圆心
+List<Offset> centerOfCircleRadius(Offset p1, Offset p2, double dRadius) {
+  double k = 0.0;
+  double kVertical = 0.0;
+  double midX = 0.0;
+  double midY = 0.0;
+  double a = 1.0;
+  double b = 1.0;
+  double c = 1.0;
+
+  Offset center1;
+  Offset center2;
+
+  double p1x = p1.dx;
+  double p1y = p1.dy;
+
+  double p2x = p2.dx;
+  double p2y = p2.dy;
+
+  k = (p2y - p1y) / (p2x - p1x); // 斜率
+  if (k == 0) {
+    center1 = Offset((p1x + p2x) / 2.0,
+        p1y + sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0));
+    center2 = Offset((p1x + p2x) / 2.0,
+        p1y - sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0));
+  } else {
+    kVertical = -1.0 / k;
+    midX = (p1x + p2x) / 2.0;
+    midY = (p1y + p2y) / 2.0;
+    a = 1.0 + kVertical * kVertical;
+    b = -2 * midX - kVertical * kVertical * (p1x + p2x);
+    c = midX * midX +
+        kVertical * kVertical * (p1x + p2x) * (p1x + p2x) / 4.0 -
+        (dRadius * dRadius -
+            ((midX - p1x) * (midX - p1x) + (midY - p1y) * (midY - p1y)));
+
+    final c1x = (-1.0 * b + sqrt(b * b - 4 * a * c)) / (2 * a);
+    final c2x = (-1.0 * b - sqrt(b * b - 4 * a * c)) / (2 * a);
+
+    final c1y = kVertical * (c1x - midX) + midY;
+    final c2y = kVertical * (c2x - midX) + midY;
+
+    center1 = Offset(c1x, c1y);
+    center2 = Offset(c2x, c2y);
+  }
+  return [center1, center2];
+}
+
 /*enum Direction {
   /// clockwise 顺时针
   CW, // must match enum in SkPath.h

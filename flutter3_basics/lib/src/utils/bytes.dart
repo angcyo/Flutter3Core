@@ -12,6 +12,11 @@ class BytesWriter {
 
   /// 写入一个字节
   void writeByte(int value) {
+    _bytes.add(value);
+  }
+
+  /// 写入一个无符号字节
+  void writeUByte(int value) {
     _bytes.add(value & 0xff);
   }
 

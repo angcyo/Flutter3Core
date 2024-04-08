@@ -9,6 +9,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:string_scanner/string_scanner.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 

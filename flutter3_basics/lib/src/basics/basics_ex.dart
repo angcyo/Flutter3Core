@@ -473,6 +473,11 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+  /// 获取单字符对应的ASCII码
+  /// [IntEx.ascii]
+  /// [StringEx.ascii]
+  int get ascii => codeUnitAt(0);
+
   /// 快速散列函数
   /// 针对 Dart 字符串优化的 64 位哈希算法 FNV-1a
   /// https://isar.dev/zh/recipes/string_ids.html#%E5%BF%AB%E9%80%9F%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0
@@ -1100,6 +1105,11 @@ extension NumEx on num {
 }
 
 extension IntEx on int {
+  /// ascii 码转成对应的字符
+  /// [IntEx.ascii]
+  /// [StringEx.ascii]
+  String get ascii => String.fromCharCode(this);
+
   /// 是否有指定的标志位
   bool have(int flag) => (this & flag) == flag;
 
