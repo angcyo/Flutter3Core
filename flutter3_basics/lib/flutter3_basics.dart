@@ -70,6 +70,7 @@ part 'src/component/future_cancel.dart';
 part 'src/component/r_exception.dart';
 part 'src/component/request_page.dart';
 part 'src/component/stack_list.dart';
+part 'src/component/string_cache.dart';
 part 'src/component/undo_manager.dart';
 part 'src/debug/debug.dart';
 part 'src/debug/debug_keys.dart';
@@ -101,6 +102,7 @@ part 'src/utils/string_utils.dart';
 part 'src/utils/text_span_builder.dart';
 part 'src/widgets/data_provider.dart';
 part 'src/widgets/empty.dart';
+part 'src/widgets/path_widget.dart';
 part 'src/widgets/touch_detector_widget.dart';
 part 'src/widgets/value_listener.dart';
 

@@ -673,6 +673,117 @@ class GCodeParser {
 //endregion---辅助方法---
 }
 
+/// [SvgPicture.network]
+/// [BytesLoader]
+class GCodeWidget extends StatefulWidget {
+  /// 字符串加载器
+  final StringLoader loader;
+
+  final BoxFit fit;
+
+  final Alignment alignment;
+
+  /// 占位符
+  final WidgetBuilder? placeholderBuilder;
+
+  /// 错误构建
+  final WidgetErrorBuilder? errorBuilder;
+
+  /// 指定宽高
+  final double? width;
+  final double? height;
+
+  /// 绘制的颜色
+  final Color color;
+
+  const GCodeWidget({
+    required this.loader,
+    super.key,
+    this.width,
+    this.height,
+    this.color = Colors.black,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.placeholderBuilder,
+    this.errorBuilder,
+  });
+
+  @override
+  State<GCodeWidget> createState() => _GCodeWidgetState();
+}
+
+class _GCodeWidgetState extends State<GCodeWidget> {
+  /// GCode数据
+  Path? _gcodePath;
+  Object? _error;
+  StackTrace? _stackTrace;
+
+  /// 加载GCode数据
+  @updateMark
+  Future _loadGCode(BuildContext context, StringLoader loader) {
+    return loader.loadString(context).getValue((data, error) {
+      if (error != null) {
+        _handleError(error, error.stackTrace);
+        return null;
+      }
+      _error = null;
+      _stackTrace = null;
+      _gcodePath = data?.toPathFromGCode();
+      updateState();
+      return _gcodePath;
+    });
+  }
+
+  @updateMark
+  void _handleError(Object error, StackTrace? stackTrace) {
+    setState(() {
+      _error = error;
+      _stackTrace = stackTrace;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    _loadGCode(context, widget.loader);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(covariant GCodeWidget oldWidget) {
+    if (oldWidget.loader != widget.loader) {
+      _loadGCode(context, widget.loader);
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget child;
+    if (_error != null && widget.errorBuilder != null) {
+      child = widget.errorBuilder!(
+        context,
+        _error!,
+        _stackTrace ?? StackTrace.empty,
+      );
+    } else if (_gcodePath != null) {
+      child = PathWidget(
+        path: _gcodePath,
+        style: PaintingStyle.stroke,
+        color: widget.color,
+        fit: widget.fit,
+        alignment: widget.alignment,
+      );
+    } else {
+      child = widget.placeholderBuilder?.call(context) ??
+          SizedBox(
+            width: widget.width,
+            height: widget.height,
+          );
+    }
+    return child;
+  }
+}
+
 extension GCodeStringEx on String {
   /// GCode数据转换成[Path]可绘制对象
   Path? toPathFromGCode() {

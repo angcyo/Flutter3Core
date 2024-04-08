@@ -307,8 +307,8 @@ extension CanvasEx on Canvas {
   /// [src] 目标的大小和位置
   /// [colorFilter] 着色器. [tintColor]着色
   void drawInRect(
-    Rect? dst,
-    Rect? src,
+    Rect? dst /*最终位置*/,
+    Rect? src /*原始位置*/,
     VoidCallback drawCallback, {
     EdgeInsets? dstPadding,
     Color? tintColor,
@@ -317,31 +317,34 @@ extension CanvasEx on Canvas {
     Alignment? alignment = Alignment.center,
   }) {
     //debugger();
-    colorFilter ??= tintColor?.toColorFilter();
     if (dst == null || src == null) {
       drawCallback();
       return;
     }
+    colorFilter ??= tintColor?.toColorFilter();
+
     final targetSize = src.size;
+    final Size fitTargetSize;
+
+    //debugger();
 
     if (fit != null) {
+      //获取fit作用后的大小
       final fitSize = applyBoxFit(fit, targetSize, dst.size);
-      final Rect destinationRect =
-          alignment?.inscribe(fitSize.destination, dst) ??
-              ui.Rect.fromLTWH(
-                dst.left,
-                dst.top,
-                fitSize.destination.width,
-                fitSize.destination.height,
-              );
-      dst = destinationRect;
+      fitTargetSize = fitSize.destination;
       //debugger();
+    } else {
+      fitTargetSize = targetSize;
     }
-    /*else if (alignment != null) {
-      //debugger();
-      final Rect destinationRect = alignment.inscribe(dst.size, dst);
+
+    if (alignment != null) {
+      //获取对齐后的矩形位置
+      final Rect destinationRect = alignment.inscribe(fitTargetSize, dst);
       dst = destinationRect;
-    }*/
+    } else {
+      dst = ui.Rect.fromLTWH(
+          dst.left, dst.top, fitTargetSize.width, fitTargetSize.height);
+    }
 
     final drawLeft = dst.left + (dstPadding?.left ?? 0);
     final drawTop = dst.top + (dstPadding?.top ?? 0);
@@ -366,6 +369,82 @@ extension CanvasEx on Canvas {
 
       //绘制
       drawCallback();
+    });
+  }
+
+  /// 缩放[Path]绘制到指定的目标内
+  /// [dst] 元素需要绘制的区域,也是元素最终要绘制到的位置, 会根据[fit].[alignment]自动调整
+  /// [drawInRect]
+  void drawPathIn(
+    Path? path,
+    Rect? pathBounds,
+    Rect? dst, {
+    Paint? paint,
+    EdgeInsets? dstPadding,
+    Color? tintColor,
+    ui.ColorFilter? colorFilter,
+    BoxFit? fit = BoxFit.contain,
+    Alignment? alignment = Alignment.center,
+  }) {
+    if (path == null) {
+      return;
+    }
+    paint ??= Paint()
+      ..color = Colors.black
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..style = ui.PaintingStyle.stroke;
+    if (dst == null) {
+      drawPath(path, paint);
+      return;
+    }
+    pathBounds ??= path.getExactBounds();
+
+    final targetSize = pathBounds.size;
+    final Size fitTargetSize;
+
+    //debugger();
+
+    if (fit != null) {
+      //获取fit作用后的大小
+      final fitSize = applyBoxFit(fit, targetSize, dst.size);
+      fitTargetSize = fitSize.destination;
+      //debugger();
+    } else {
+      fitTargetSize = targetSize;
+    }
+
+    if (alignment != null) {
+      //获取对齐后的矩形位置
+      final Rect destinationRect = alignment.inscribe(fitTargetSize, dst);
+      dst = destinationRect;
+    } else {
+      dst = ui.Rect.fromLTWH(
+          dst.left, dst.top, fitTargetSize.width, fitTargetSize.height);
+    }
+
+    final drawLeft = dst.left + (dstPadding?.left ?? 0);
+    final drawTop = dst.top + (dstPadding?.top ?? 0);
+    final drawWidth = dst.width - (dstPadding?.horizontal ?? 0);
+    final drawHeight = dst.height - (dstPadding?.vertical ?? 0);
+
+    //平移到目标
+    final translateMatrix = Matrix4.identity()
+      ..translate(drawLeft - pathBounds.left, drawTop - pathBounds.top);
+
+    final sx = drawWidth / targetSize.width;
+    final sy = drawHeight / targetSize.height;
+    //缩放到目标大小
+    final scaleMatrix = Matrix4.identity()
+      ..scaleBy(sx: sx, sy: sy, anchor: pathBounds.topLeft);
+
+    final targetPath = path.transformPath(translateMatrix * scaleMatrix);
+    withSave(() {
+      //着色
+      if (colorFilter != null) {
+        saveLayer(null, Paint()..colorFilter = colorFilter);
+      }
+      drawPath(targetPath, paint!);
     });
   }
 

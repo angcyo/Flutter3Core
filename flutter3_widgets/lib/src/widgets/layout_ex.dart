@@ -69,6 +69,7 @@ class LayoutBoxConstraints extends BoxConstraints {
   ) {
     //debugger();
     if (parentConstraints.isTight) {
+      //有一种满意的约束尺寸
       return parentConstraints.constrain(childSize);
     }
 

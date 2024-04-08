@@ -172,7 +172,8 @@ class ByteReader {
 
   /// 读取一个字符串
   String readString(int length) {
-    final result = utf8.decode(bytes.sublist(_index, _index + length));
+    final result = utf8.decode(bytes.sublist(_index, _index + length),
+        allowMalformed: true);
     _index += length;
     return result;
   }

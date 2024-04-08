@@ -56,6 +56,14 @@ int get microsecondsId => DateTime.now().microsecondsSinceEpoch & 0xFFFFFFFF;
 String get lineSeparator =>
     Platform.lineTerminator; //Platform.isWindows ? "\r\n" : "\n";
 
+/// [WidgetBuilder]
+/// [WidgetErrorBuilder]
+typedef WidgetErrorBuilder = Widget Function(
+  BuildContext context,
+  Object error,
+  StackTrace stackTrace,
+);
+
 //region Object 扩展
 
 /// 动态[dynamic]的扩展, 只是在编译的时候有代码提示,
@@ -495,7 +503,12 @@ extension StringEx on String {
   }
 
   /// 转换成[utf8]字节数组
+  /// [byteData]
   Uint8List get bytes => utf8.encode(this);
+
+  /// 转换成[utf8]字节数组
+  /// [bytes]
+  ByteData get byteData => ByteData.view(Uint8List.fromList(bytes).buffer);
 
   /// 重复字符串多少次[repeat]
   String operator *(int repeat) => List.filled(repeat, this).join();

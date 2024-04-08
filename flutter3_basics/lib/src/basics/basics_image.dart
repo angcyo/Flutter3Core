@@ -124,7 +124,8 @@ extension ByteDataEx on ByteData {
 
 extension Uint8ListImageEx on Uint8List {
   /// 转换成文本字符串
-  String toTextString() => utf8.decode(this);
+  String toTextString([bool allowMalformed = true]) =>
+      utf8.decode(this, allowMalformed: allowMalformed);
 
   /// [ByteDataEx.bytes]
   ByteData get byteData => buffer.asByteData();
