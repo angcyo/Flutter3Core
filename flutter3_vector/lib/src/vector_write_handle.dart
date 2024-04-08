@@ -54,13 +54,13 @@ void _wrapSvgPath(
 }
 
 /// gcode 默认头部
-const kGCodeHeader = 'G90\nG21\nM8\n';
+const kGCodeHeader = 'G21\nG90\nM8\nM5\nM3\n';
 
 /// gcode 自动激光头
-const kGCodeAutoHeader = 'G90\nG21\nM8\nM4\n';
+const kGCodeAutoHeader = 'G21\nG90\nM8\nM5\nM4\n';
 
 /// gcode 默认尾部
-const kGCodeFooter = 'M2\n';
+const kGCodeFooter = 'M5\nM9\nG1 S0\nM2\n';
 
 /// 默认切割数据使用的宽度/直径
 @mm
@@ -526,9 +526,6 @@ class GCodeWriteHandle with VectorWriteMixin {
 
   //---
 
-  /// 是否是自动激光
-  bool isAutoLaser = false;
-
   /// 功率 255
   int? power;
 
@@ -570,9 +567,6 @@ class GCodeWriteHandle with VectorWriteMixin {
   void onContourStart() {
     super.onContourStart();
     initStringBuffer();
-    if (!isAutoLaser) {
-      stringBuffer?.writeln('M03$_powerString$_speedString');
-    }
   }
 
   /// 是否是轮廓的第一个点
@@ -582,14 +576,11 @@ class GCodeWriteHandle with VectorWriteMixin {
   void onContourEnd() {
     super.onContourEnd();
     _isContourFirst = true;
-    if (!isAutoLaser) {
-      stringBuffer?.writeln('M05S0');
-    }
   }
 
   /// 自动激光在第一个G1指令后面写入功率和速度
   void _writePowerSpeed() {
-    if (isAutoLaser && _isContourFirst) {
+    if (_isContourFirst) {
       stringBuffer?.writeln('$_powerString$_speedString');
       _isContourFirst = false;
     } else {
@@ -709,7 +700,6 @@ extension VectorPathEx on Path {
   String? toGCodeString({
     @dp double? pathStep,
     @mm double? tolerance,
-    bool isAutoLaser = true,
     int? power,
     int? speed,
     String? header = kGCodeAutoHeader,
@@ -718,7 +708,6 @@ extension VectorPathEx on Path {
   }) {
     handle ??= GCodeWriteHandle();
     handle
-      ..isAutoLaser = isAutoLaser
       ..power = power
       ..speed = speed;
     handle.initStringBuffer().write(header);
@@ -851,7 +840,6 @@ extension VectorListPathEx on List<Path> {
   String? toGCodeString({
     @dp double? pathStep,
     @mm double? tolerance,
-    bool isAutoLaser = true,
     int? power,
     int? speed,
     String? header = kGCodeAutoHeader,
@@ -861,7 +849,6 @@ extension VectorListPathEx on List<Path> {
     final buffer = StringBuffer();
     handle ??= GCodeWriteHandle();
     handle
-      ..isAutoLaser = isAutoLaser
       ..power = power
       ..speed = speed;
     buffer.write(header);

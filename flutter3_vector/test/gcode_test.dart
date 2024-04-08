@@ -20,16 +20,20 @@ void main() async {
     final path2 = Path();
     path2.addRect(rect);
 
+    final linePath = Path();
+    linePath.moveTo(0, 0);
+    linePath.lineTo(size, size);
+
     final pathList = <Path>[];
-    //pathList.add(path);
+    pathList.add(path);
     pathList.add(path2);
+    pathList.add(linePath);
 
     GCodeWriteHandle handle = GCodeWriteHandle();
-    handle.useCutData = true;
+    handle.useCutData = false;
 
     consoleLog(pathList.toGCodeString(
       handle: handle,
-      isAutoLaser: false,
       header: kGCodeHeader,
       power: 255,
       speed: 12000,
