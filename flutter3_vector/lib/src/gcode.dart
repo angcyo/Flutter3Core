@@ -746,14 +746,18 @@ class _GCodeWidgetState extends State<GCodeWidget> {
     });
   }
 
+  /// [Element.inflateWidget]->[Element.mount]->[ComponentElement._firstBuild]->[didChangeDependencies]
   @override
   void didChangeDependencies() {
+    //debugger();
     _loadGCode(context, widget.loader);
     super.didChangeDependencies();
   }
 
+  /// [Element.updateChild]->[Element.update]->[didUpdateWidget]
   @override
   void didUpdateWidget(covariant GCodeWidget oldWidget) {
+    //debugger();
     if (oldWidget.loader != widget.loader) {
       _loadGCode(context, widget.loader);
     }
