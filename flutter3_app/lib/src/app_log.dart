@@ -1,4 +1,4 @@
-part of flutter3_app;
+part of '../flutter3_app.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -19,7 +19,7 @@ void clearTempShareLogPath() {
   tempShareLogPathList.clear();
 }
 
-/// 快速分享app日志压缩文件
+/// 快速分享app日志压缩文件, 分享日志
 Future shareAppLog([String? name]) async {
   final info = await packageInfo;
   final output = await cacheFilePath(name?.ensureSuffix(".zip") ??

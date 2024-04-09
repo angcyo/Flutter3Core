@@ -193,6 +193,18 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return Future.value(false);
   };
 
+  /// 注册一个全局的分享日志数据的方法
+  /// 将app日志打包之后分享
+  /// [shareDataFn]
+  /// [shareAppLog]
+  GlobalShareDataFn? shareAppLogFn = (context, data) {
+    assert(() {
+      l.w("企图分享App日志:$data");
+      return true;
+    }());
+    return Future.value(false);
+  };
+
   //region Widget
 
   /// 全局的图片占位小部件

@@ -37,6 +37,12 @@ void runGlobalApp(Widget app) {
 
   lTime.tick();
 
+  // 分享app日志
+  GlobalConfig.def.shareAppLogFn = (context, data) async {
+    await shareAppLog();
+    return true;
+  };
+
   // 分享数据
   GlobalConfig.def.shareDataFn = (context, data) async {
     try {

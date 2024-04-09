@@ -18,15 +18,21 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
 
   @override
   WidgetList? buildScrollBody(BuildContext context) {
+    final globalConfig = GlobalConfig.of(context);
     return [
       [
+        GradientButton.normal(
+            onTap: () {
+              globalConfig.shareAppLogFn?.call(context, runtimeType);
+            },
+            child: "分享App日志".text()),
         GradientButton.normal(
             onTap: () {
               context.pushWidget(const DebugFilePage()).get((value, error) {
                 l.i("返回结果:$value");
               });
             },
-            child: "文本管理".text()),
+            child: "App文件管理".text()),
         GradientButton.normal(
             onTap: () async {
               final path = await cacheFilePath("ScreenCapture${nowTime()}.png");
