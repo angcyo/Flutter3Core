@@ -21,6 +21,7 @@ export 'package:flutter3_widgets/flutter3_widgets.dart';
 export 'package:flutter_animate/flutter_animate.dart';
 export 'package:package_info_plus/package_info_plus.dart';
 export 'package:share_plus/share_plus.dart';
+export 'package:permission_handler/permission_handler.dart';
 
 part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';

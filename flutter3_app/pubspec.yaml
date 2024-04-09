@@ -63,11 +63,13 @@ dependencies:
   # https://github.com/gskinner/flutter_animate
   flutter_animate: ^4.5.0
 
+  # 权限处理插件
   # https://pub.dev/packages/permission_handler
   # https://github.com/baseflow/flutter-permission-handler
   # https://pub.dev/packages/meta
   permission_handler: ^11.3.1 #ANDROID IOS WEB WINDOWS
 
+  # 保存图片到相册
   # https://pub.dev/packages/image_gallery_saver
   # https://github.com/hui-z/image_gallery_saver
   image_gallery_saver: ^2.0.3 #ANDROID IOS

@@ -1261,6 +1261,10 @@ extension IterableEx<E> on Iterable<E> {
   List<R> filterNull<R>() =>
       where((element) => element != null).cast<R>().toList();
 
+  /// 所有的元素是否都满足条件
+  /// [every]
+  bool all(bool Function(E element) test) => every(test);
+
   /// 过滤到新的列表中
   /// [WhereIterable]
   /// [List]

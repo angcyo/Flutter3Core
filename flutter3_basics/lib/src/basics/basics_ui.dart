@@ -129,8 +129,8 @@ EdgeInsets? edgeInsets([double? v1, double? v2, double? v3, double? v4]) {
 
 extension WidgetListEx on WidgetNullList {
   /// 将当前的小部件集合, 包裹在一个[Wrap]中
-  /// [alignment] 主轴对齐方式
-  /// [crossAxisAlignment] 交叉轴对齐方式
+  /// [alignment] 主轴对齐方式, 集体靠左/靠右/居中
+  /// [crossAxisAlignment] 交叉轴对齐方式, 就是每一行的对齐方式
   Widget? wrap({
     double spacing = kH,
     double runSpacing = kH,

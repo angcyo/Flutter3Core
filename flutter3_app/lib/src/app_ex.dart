@@ -22,17 +22,23 @@ Future<PackageInfo> get packageInfo async => await PackageInfo.fromPlatform();
 
 /// https://pub.dev/packages/device_info_plus
 /// 获取对应平台的设备信息
-Future<BaseDeviceInfo> get deviceInfo async => Platform.isAndroid
+Future<BaseDeviceInfo> get deviceInfo async => isAndroid
     ? await DeviceInfoPlugin().androidInfo
-    : Platform.isIOS
+    : isIos
         ? await DeviceInfoPlugin().iosInfo
-        : Platform.isLinux
+        : isLinux
             ? await DeviceInfoPlugin().linuxInfo
-            : Platform.isMacOS
+            : isMacOs
                 ? await DeviceInfoPlugin().macOsInfo
-                : Platform.isWindows
+                : isWindows
                     ? await DeviceInfoPlugin().windowsInfo
                     : await DeviceInfoPlugin().webBrowserInfo;
+
+/// 获取Android平台的版本
+/// 非Android平台返回null
+Future<int?> get androidSdkInt async => isAndroid
+    ? ((await deviceInfo) as AndroidDeviceInfo?)?.version.sdkInt
+    : null;
 
 /// https://pub.dev/packages/share_plus
 /// `share_plus 需要 iPad 用户提供参数 sharePositionOrigin 。`
