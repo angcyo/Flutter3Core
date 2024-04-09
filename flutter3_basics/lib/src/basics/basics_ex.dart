@@ -619,10 +619,13 @@ extension StringEx on String {
 
   //region 加密
 
+  /// [StringEx]
   String sha1() => bytes.sha1();
 
+  /// [StringEx]
   String sha256() => bytes.sha256();
 
+  /// [StringEx]
   String md5() => bytes.md5();
 
   /// [Uri]
@@ -1236,10 +1239,13 @@ extension ListIntEx on List<int> {
     return utf8.decode(this, allowMalformed: allowMalformed);
   }
 
+  /// [ListIntEx]
   String sha1() => crypto.sha1.convert(this).toString();
 
+  /// [ListIntEx]
   String sha256() => crypto.sha256.convert(this).toString();
 
+  /// [ListIntEx]
   String md5() => crypto.md5.convert(this).toString();
 }
 
