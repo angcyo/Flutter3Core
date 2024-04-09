@@ -7,7 +7,8 @@ import 'package:flutter3_http/flutter3_http.dart';
 void main() async {
   //await testHttp();
   //await testWebSocket();
-  await testDio();
+  //await testDio();
+  await testSocket();
   print('test...end');
   assert(true);
 }
@@ -35,6 +36,16 @@ Future<void> testHttp() async {
   });*/
 }
 
+Future testSocket() async {
+  Socket.connect('192.168.2.209', 1111).get((value, error) {
+    consoleLog('1:$value $error');
+  });
+  Socket.connect('192.168.2.209', 1111).get((value, error) {
+    consoleLog('2:$value $error');
+  });
+  await Future.delayed(10.seconds);
+}
+
 /// 使用dart进行简单的websocket测试
 Future<void> testWebSocket() async {
   const url = "ws://echo.websocket.org";
@@ -57,7 +68,8 @@ Future testDio() async {
   print(utf8.decode(bytes ?? []));*/
 
   final imageBytes =
-      await "https://gitcode.net/angcyo/file/-/raw/master/res/code/all_in1.jpg".dioGetBytes();
+      await "https://gitcode.net/angcyo/file/-/raw/master/res/code/all_in1.jpg"
+          .dioGetBytes();
 
   print(imageBytes?.toBase64Image());
 
