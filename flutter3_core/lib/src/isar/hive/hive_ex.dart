@@ -5,6 +5,9 @@ part of '../../../flutter3_core.dart';
 /// @since 2023/11/17
 ///
 
+/// 分隔符
+const kHiveSplitChar = "|";
+
 /// 默认的盒子名称
 const kHiveBox = "HiveBox";
 const kHiveBoxPath = "hive";

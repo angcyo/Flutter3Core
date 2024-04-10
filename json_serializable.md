@@ -12,6 +12,7 @@ https://pub-web.flutter-io.cn/packages/json_serializable
 ```yaml
 dev_dependencies:
   json_serializable: ^6.7.1
+  build_runner: any
 ```
 
 可能还需要: `json_annotation: ^4.8.1`依赖
@@ -29,7 +30,7 @@ dependencies:
 # 2.配置
 
 当前的类不能是`part of`.
-需要在头部指定`part 'xxx.g.dart';`
+需要在头部指定`part 'xxx.g.dart';` 必须;
 
 在需要生成json序列化代码的类上添加注解`@JsonSerializable()`
 在需要序列化的字段上添加`@JsonKey()`注解, 非必需.

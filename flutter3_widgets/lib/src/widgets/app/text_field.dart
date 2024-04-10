@@ -372,6 +372,9 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     widget.onChanged?.call(value);
     widget.config.onChanged?.call(value);
     _checkSuffixIcon();
+
+    // 通知输入框的值改变了
+    value.notifyInputValueChanged();
   }
 
   /// 检查是否需要显示后缀图标

@@ -595,6 +595,10 @@ extension StringEx on String {
   /// [fromJsonBeanList]
   dynamic fromJson() => json.decode(this);
 
+  /// Bean bean = "".fromJsonBean<Bean>();
+  Bean fromJsonBean<Bean>(Bean Function(dynamic json) map) =>
+      map(json.decode(this));
+
   /// List<Bean> list = "[]".fromJsonBeanList<Bean>()`
   /// [Iterable.map]
   List<Bean>? fromJsonBeanList<Bean>(Bean Function(dynamic json) map) =>
