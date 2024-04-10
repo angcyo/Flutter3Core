@@ -9,8 +9,7 @@ https://pub.dev/ 上的一些开源库
 - [hooks_riverpod: ^2.4.6](https://pub.dev/packages/hooks_riverpod)
 
 - [jetpack: ^1.0.3](https://pub.dev/packages/jetpack) 一组抽象的实用程序，灵感来自 Android Jetpack
-- [provider: ^6.1.1](https://pub.dev/packages/provider) 对 InheritedWidget 组件的上层封装，使其更易用，更易复用。
-  🚀，用于帮助管理 flutter 应用程序中的状态。
+- [provider: ^6.1.1](https://pub.dev/packages/provider) 对 InheritedWidget 组件的上层封装，使其更易用，更易复用。 🚀，用于帮助管理 flutter 应用程序中的状态。
 - [nested: ^1.0.0](https://pub.dev/packages/nested) 一个小组件，用于简化深度嵌套小组件树的语法。
 
 ## ref
@@ -124,8 +123,7 @@ https://github.com/dnfield/vector_graphics
 - [vector_graphics: ^1.1.9+1](https://pub.dev/packages/vector_graphics)
 - [vector_graphics_codec: ^1.1.9+1](https://pub.dev/packages/vector_graphics_codec)
 - [vector_graphics_compiler: ^1.1.9+1](https://pub.dev/packages/vector_graphics_compiler) 此包将 SVG 文件解析为 vector_graphics 运行时可以呈现的格式。
-- [svg_path_parser: ^1.1.1](https://pub.dev/packages/svg_path_parser) 一个 Flutter/Dart 实用程序，用于将
-  SVG 路径解析为库中的 dart:ui 等效 Path 对象。
+- [svg_path_parser: ^1.1.1](https://pub.dev/packages/svg_path_parser) 一个 Flutter/Dart 实用程序，用于将 SVG 路径解析为库中的 dart:ui 等效 Path 对象。
 
 ## jovial_svg
 
@@ -238,139 +236,83 @@ https://flutter.cn/docs/ui/accessibility-and-internationalization/internationali
 https://github.com/fluttercommunity/plus_plugins
 
 - [logging: ^1.2.0](https://pub.dev/packages/logging) 日志消息处理程序, 并不输出日志。
-- [quiver: ^3.2.1](https://pub.dev/packages/quiver) Quiver 是一组 Dart 的实用程序库，它使许多 Dart
-  库的使用更轻松、更方便，或者添加了额外的功能。
-- [flutter_simple_treeview: ^3.0.2](https://pub.dev/packages/flutter_simple_treeview)
-  此小部件可视化了树形结构，其中节点可以是任何小部件。
+- [quiver: ^3.2.1](https://pub.dev/packages/quiver) Quiver 是一组 Dart 的实用程序库，它使许多 Dart 库的使用更轻松、更方便，或者添加了额外的功能。
+- [flutter_simple_treeview: ^3.0.2](https://pub.dev/packages/flutter_simple_treeview)此小部件可视化了树形结构，其中节点可以是任何小部件。
 - [file: ^7.0.0](https://pub.dev/packages/file) Dart 的通用文件系统抽象。
-- [json_serializable: ^6.7.1](https://pub.dev/packages/json_serializable) 为操作 JSON 提供 Dart
-  构建系统构建器。
+- [json_serializable: ^6.7.1](https://pub.dev/packages/json_serializable) 为操作 JSON 提供 Dart构建系统构建器。
 - [vector_math: ^2.1.4](https://pub.dev/packages/vector_math) 用于 2D 和 3D 应用程序的矢量数学库。
-- [matrix4_transform: ^3.0.0](https://pub.dev/packages/matrix4_transform) 此包是一个辅助数学类，可以轻松创建
-  Matrix4 转换。
+- [matrix4_transform: ^3.0.0](https://pub.dev/packages/matrix4_transform) 此包是一个辅助数学类，可以轻松创建 Matrix4 转换。
 - [get_it: ^7.6.4](https://pub.dev/packages/get_it)
 - [watch_it: ^1.1.0](https://pub.dev/packages/watch_it) 由 get_it 提供支持的简单状态管理解决方案。
-- [rxdart: ^0.27.7](https://pub.dev/packages/rxdart) RxDart 扩展了 Dart Streams 和 StreamController
-  的功能。
+- [rxdart: ^0.27.7](https://pub.dev/packages/rxdart) RxDart 扩展了 Dart Streams 和 StreamController 的功能。
 - [flutter_blurhash: ^0.7.0](https://pub.dev/packages/flutter_blurhash) 图像占位符的紧凑表示形式。模糊图片占位
-- [flutter_page_lifecycle: ^1.1.0](https://pub.dev/packages/flutter_page_lifecycle) Android 的
-  onResume/onPause 和 iOS 的 viewDidAppear/viewDidDisappear 用于 Flutter。
-- [flutter_lifecycle_aware: ^0.0.3](https://pub.dev/packages/flutter_lifecycle_aware)
-  flutter_lifecycle 借鉴原生平台 Android/iOS 的生命周期思想，实现了在 Flutter
-  上的一套生命周期系统。开发者可以在任何你需要的地方感知 StatefulWidget 的生命周期。
-- [lifecycle_aware_state: ^0.0.4](https://pub.dev/packages/lifecycle_aware_state) 生命周期回调，用于了解
-  flutter 项目中路由导航和状态生命周期中的不同事件
+- [flutter_page_lifecycle: ^1.1.0](https://pub.dev/packages/flutter_page_lifecycle) Android 的 onResume/onPause 和 iOS 的 viewDidAppear/viewDidDisappear 用于 Flutter。
+- [flutter_lifecycle_aware: ^0.0.3](https://pub.dev/packages/flutter_lifecycle_aware)flutter_lifecycle 借鉴原生平台 Android/iOS 的生命周期思想，实现了在 Flutter 上的一套生命周期系统。开发者可以在任何你需要的地方感知 StatefulWidget 的生命周期。
+- [lifecycle_aware_state: ^0.0.4](https://pub.dev/packages/lifecycle_aware_state) 生命周期回调，用于了解 flutter 项目中路由导航和状态生命周期中的不同事件
 - [lifecycle: ^0.8.0](https://pub.dev/packages/lifecycle) 对 Flutter widget 的生命周期支持。
-- [flutter_responsive: ^1.1.0](https://pub.dev/packages/flutter_responsive)
-  这个插件提供了一种简单而高效的方式来处理移动、桌面和 Web 中 Flutter
-  应用程序的响应式布局，允许你的布局适应和包装小部件（容器、行、列和 RichText）引用他的父元素的大小。
-- [apivideo_live_stream: ^1.1.3](https://pub.dev/packages/apivideo_live_stream) api.video
-  是产品构建者的视频基础设施。闪电般快速的视频
-  API，用于集成、扩展和管理应用中的点播和低延迟直播功能。 https://api.video/
-- [apivideo_player: ^1.2.0](https://pub.dev/packages/apivideo_player) api.video
-  是产品构建者的视频基础设施。闪电般快速的视频 API，用于集成、扩展和管理应用中的点播和低延迟直播功能。
-- [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 一个 Flutter
-  小部件，用于实现滑动删除列表项，支持左滑和右滑两种操作。 可滑动列表项的 Flutter 实现，具有可以关闭的方向滑动操作。
-- [flutter_staggered_grid_view: ^0.7.0](https://pub.dev/packages/flutter_staggered_grid_view)
-  提供颤振网格布局的集合。瀑布流
-- [value_layout_builder: ^0.3.1](https://pub.dev/packages/value_layout_builder)
-  布局过程中使用值来构建子项。这个小部件类似于 LayoutBuilder，但它允许您使用值来构建子项，而不是使用约束。
-- [overflow_view: ^0.3.1](https://pub.dev/packages/overflow_view)
-  如果没有足够的空间，则在一行中显示子项的小部件，末尾有一个溢出指示器。
-- [flutter_sticky_header: ^0.6.5](https://pub.dev/packages/flutter_sticky_header) 带有条子的粘性标头的
-  Flutter 实现。
-- [visual_effect: ^0.0.5](https://pub.dev/packages/visual_effect) VisualEffect API for Flutter
-  可以轻松地在小部件上添加绘画效果。
+- [flutter_responsive: ^1.1.0](https://pub.dev/packages/flutter_responsive)这个插件提供了一种简单而高效的方式来处理移动、桌面和 Web 中 Flutter 应用程序的响应式布局，允许你的布局适应和包装小部件（容器、行、列和 RichText）引用他的父元素的大小。
+- [apivideo_live_stream: ^1.1.3](https://pub.dev/packages/apivideo_live_stream) api.video 是产品构建者的视频基础设施。闪电般快速的视频 API，用于集成、扩展和管理应用中的点播和低延迟直播功能。 https://api.video/
+- [apivideo_player: ^1.2.0](https://pub.dev/packages/apivideo_player) api.video 是产品构建者的视频基础设施。闪电般快速的视频 API，用于集成、扩展和管理应用中的点播和低延迟直播功能。
+- [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 一个 Flutter 小部件，用于实现滑动删除列表项，支持左滑和右滑两种操作。 可滑动列表项的 Flutter 实现，具有可以关闭的方向滑动操作。
+- [flutter_staggered_grid_view: ^0.7.0](https://pub.dev/packages/flutter_staggered_grid_view)提供颤振网格布局的集合。瀑布流
+- [value_layout_builder: ^0.3.1](https://pub.dev/packages/value_layout_builder)布局过程中使用值来构建子项。这个小部件类似于 LayoutBuilder，但它允许您使用值来构建子项，而不是使用约束。
+- [overflow_view: ^0.3.1](https://pub.dev/packages/overflow_view)如果没有足够的空间，则在一行中显示子项的小部件，末尾有一个溢出指示器。
+- [flutter_sticky_header: ^0.6.5](https://pub.dev/packages/flutter_sticky_header) 带有条子的粘性标头的 Flutter 实现。
+- [visual_effect: ^0.0.5](https://pub.dev/packages/visual_effect) VisualEffect API for Flutter 可以轻松地在小部件上添加绘画效果。
 - [local_hero: ^0.2.0](https://pub.dev/packages/local_hero) 当英雄动画在同一路线内的位置发生变化时，隐式启动英雄动画的小部件。
 - [auto_size_text: ^3.0.0](https://pub.dev/packages/auto_size_text) Flutter 小部件，可自动调整文本大小以使其完全适合其边界。
-- [video_player: ^2.8.1](https://pub.dev/packages/video_player) 适用于 iOS、Android 和 Web 的 Flutter
-  插件，用于在 Widget 表面上播放视频。
+- [video_player: ^2.8.1](https://pub.dev/packages/video_player) 适用于 iOS、Android 和 Web 的 Flutter 插件，用于在 Widget 表面上播放视频。
 - [showcaseview: ^2.0.3](https://pub.dev/packages/showcaseview) Flutter 包允许你一步一步地展示/突出显示你的小部件。
 - [rich_readmore: ^1.1.1](https://pub.dev/packages/rich_readmore) 折叠和展开文本内容,支持span
-- [retrofit: ^4.0.3](https://pub.dev/packages/retrofit) retrofit.dart 是一个使用 source_gen 并受
-  Chopper 和 Retrofit 启发的类型转换 dio 客户端生成器。
-- [intl_phone_number_input: ^0.7.3+1](https://pub.dev/packages/intl_phone_number_input)  一个简单且可定制的
-  flutter 包，用于以国际/国际格式输入电话号码，使用 Google 的 libphonenumber
-- [markdown: ^7.1.1](https://pub.dev/packages/markdown) 用 Dart 编写的可移植 Markdown
-  库。它可以在客户端和服务器上将 Markdown 解析为 HTML。
-- [flutter_markdown: ^0.6.18+2](https://pub.dev/packages/flutter_markdown) Flutter 的 Markdown
-  渲染器。它支持原始格式，但不支持内联 HTML。
-- [markdown_widget: ^2.3.2+2](https://pub.dev/packages/markdown_widget)
-  支持TOC功能，可以通过Heading快速定位;支持代码高亮;支持夜间模式;
-- [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility)
-  对键盘可见性更改做出反应。
-- [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter
-  可滚动小部件提供了固定/可变行高的滚动到索引机制。
+- [retrofit: ^4.0.3](https://pub.dev/packages/retrofit) retrofit.dart 是一个使用 source_gen 并受 Chopper 和 Retrofit 启发的类型转换 dio 客户端生成器。
+- [intl_phone_number_input: ^0.7.3+1](https://pub.dev/packages/intl_phone_number_input)  一个简单且可定制的 flutter 包，用于以国际/国际格式输入电话号码，使用 Google 的 libphonenumber
+- [markdown: ^7.1.1](https://pub.dev/packages/markdown) 用 Dart 编写的可移植 Markdown 库。它可以在客户端和服务器上将 Markdown 解析为 HTML。
+- [flutter_markdown: ^0.6.18+2](https://pub.dev/packages/flutter_markdown) Flutter 的 Markdown 渲染器。它支持原始格式，但不支持内联 HTML。
+- [markdown_widget: ^2.3.2+2](https://pub.dev/packages/markdown_widget)支持TOC功能，可以通过Heading快速定位;支持代码高亮;支持夜间模式;
+- [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility)对键盘可见性更改做出反应。
+- [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter 可滚动小部件提供了固定/可变行高的滚动到索引机制。
 - [indexed_list_view: ^3.0.1](https://pub.dev/packages/indexed_list_view) 按索引跳转到任何项目。
-- [matrix_gesture_detector: ^0.1.0](https://pub.dev/packages/matrix_gesture_detector)
-  MatrixGestureDetector 检测平移、缩放和旋转手势，并将它们组合成 Matrix4 可由 Transform 小部件或低级
-  CustomPainter 代码使用的对象。
+- [matrix_gesture_detector: ^0.1.0](https://pub.dev/packages/matrix_gesture_detector)MatrixGestureDetector 检测平移、缩放和旋转手势，并将它们组合成 Matrix4 可由 Transform 小部件或低级 CustomPainter 代码使用的对象。
 - [matrix_gesture_detector_pro: ^1.0.0](https://pub.dev/packages/matrix_gesture_detector_pro) https://github.com/zhaolongs/matrix_gesture_detector_pro
 - [flutter_slidable: ^3.0.1](https://pub.dev/packages/flutter_slidable) 滑动删除列表项，支持左滑和右滑两种操作。
 - [connectivity_plus: ^5.0.2](https://pub.dev/packages/connectivity_plus) 监视网络连接状态（WiFi、移动数据、蜂窝）。
 - [highlight: ^0.7.0](https://pub.dev/packages/highlight) Dart 语法高亮库。
-- [flutter_highlight: ^0.7.0](https://pub.dev/packages/flutter_highlight) 语法高亮, 代码高亮小部件，支持
-  170+ 语言和 80+ 风格。
-- [substring_highlight: ^1.0.33](https://pub.dev/packages/substring_highlight) 在字符级别突出显示
-  Flutter 文本。
+- [flutter_highlight: ^0.7.0](https://pub.dev/packages/flutter_highlight) 语法高亮, 代码高亮小部件，支持 170+ 语言和 80+ 风格。
+- [substring_highlight: ^1.0.33](https://pub.dev/packages/substring_highlight) 在字符级别突出显示 Flutter 文本。
 - [highlightable: ^1.0.5](https://pub.dev/packages/highlightable) 一个文本小部件替代方案，它突出显示了定义的字符（来自模式/纯字符串）
-- [search_highlight_text: ^1.0.0+2](https://pub.dev/packages/search_highlight_text)
-  用于突出显示搜索结果中的文本，具有自定义突出显示 Color 和突出显示 TextStyle。
+- [search_highlight_text: ^1.0.0+2](https://pub.dev/packages/search_highlight_text)用于突出显示搜索结果中的文本，具有自定义突出显示 Color 和突出显示 TextStyle。
 - [particle_field: ^1.0.0](https://pub.dev/packages/particle_field) 用于向 UI 添加高性能的自定义粒子效果。
 - [rnd: ^0.2.0](https://pub.dev/packages/rnd) 一个 Dart 包，用于生成伪随机数。
 - [statsfl: ^2.3.0](https://pub.dev/packages/statsfl) 一个简单的 Flutter FPS 监视器，用于监视应用程序的帧速率。
-- [screen_recorder: ^0.2.0](https://pub.dev/packages/screen_recorder) 这是一个用于创建 Flutter
-  小部件记录的包。录音可以导出为 GIF。
-- [ffmpeg_kit_flutter: ^6.0.3](https://pub.dev/packages/ffmpeg_kit_flutter) 一个 Flutter 插件，用于在
-  Android 和 iOS 上使用 FFmpeg。
-- [flutter_video_compress: ^0.3.7+8](https://pub.dev/packages/flutter_video_compress) 一个 Flutter
-  插件，用于压缩视频文件。
+- [screen_recorder: ^0.2.0](https://pub.dev/packages/screen_recorder) 这是一个用于创建 Flutter 小部件记录的包。录音可以导出为 GIF。
+- [ffmpeg_kit_flutter: ^6.0.3](https://pub.dev/packages/ffmpeg_kit_flutter) 一个 Flutter 插件，用于在 Android 和 iOS 上使用 FFmpeg。
+- [flutter_video_compress: ^0.3.7+8](https://pub.dev/packages/flutter_video_compress) 一个 Flutter 插件，用于压缩视频文件。
 - [video_editor: ^3.0.0](https://pub.dev/packages/video_editor) 一个 Flutter 插件，用于编辑视频文件。
 - [video_trimmer: ^3.0.1](https://pub.dev/packages/video_trimmer) 一个 Flutter 插件，用于裁剪视频文件。
-- [video_compress: ^3.1.2](https://pub.dev/packages/video_compress)
-  通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
-- [flutter_swipe_detector: ^2.0.0](https://pub.dev/packages/flutter_swipe_detector) 一个 Flutter
-  小部件，用于检测向左、向右、向上和向下的滑动手势。
-- [flutterme_credit_card: ^1.0.2](https://pub.dev/packages/flutterme_credit_card) 这是 Flutterme
-  的信用卡可定制小部件和验证包。
+- [video_compress: ^3.1.2](https://pub.dev/packages/video_compress) 通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
+- [flutter_swipe_detector: ^2.0.0](https://pub.dev/packages/flutter_swipe_detector) 一个 Flutter 小部件，用于检测向左、向右、向上和向下的滑动手势。
+- [flutterme_credit_card: ^1.0.2](https://pub.dev/packages/flutterme_credit_card) 这是 Flutterme 的信用卡可定制小部件和验证包。
 - [new_image_crop: ^1.0.0+2](https://pub.dev/packages/new_image_crop) 用于裁剪图像。
-- [custom_flutter_painter: ^1.0.1](https://pub.dev/packages/custom_flutter_painter) 用于绘画的纯
-  Flutter 包。
-- [flutter_painter_v2: ^2.0.1](https://pub.dev/packages/flutter_painter_v2) 用于绘画的纯 Flutter
-  包。 https://github.com/omarhurani/flutter_painter
-- [dropdown_button2: ^2.3.9](https://pub.dev/packages/dropdown_button2) Flutter
-  的核心下拉按钮小部件，带有稳定的下拉菜单和许多其他选项，您可以根据需要进行自定义。
+- [custom_flutter_painter: ^1.0.1](https://pub.dev/packages/custom_flutter_painter) 用于绘画的纯 Flutter 包。
+- [flutter_painter_v2: ^2.0.1](https://pub.dev/packages/flutter_painter_v2) 用于绘画的纯 Flutter 包。 https://github.com/omarhurani/flutter_painter
+- [dropdown_button2: ^2.3.9](https://pub.dev/packages/dropdown_button2) Flutter 的核心下拉按钮小部件，带有稳定的下拉菜单和许多其他选项，您可以根据需要进行自定义。
 - [pdf: ^3.10.7](https://pub.dev/packages/pdf) 用于创建 PDF 的 Dart 包。
-- [pdfrx: ^0.3.1](https://pub.dev/packages/pdfrx) pdfrx 是建立在 pdfium 之上的 PDF 查看器实现。该插件目前支持
-  Android、iOS、Windows、macOS、Linux 和 Web。
-- [syncfusion_flutter_pdf: ^24.1.43](https://pub.dev/packages/syncfusion_flutter_pdf) Flutter PDF
-  是一个功能丰富且高性能的非 UI PDF 库，用 Dart 原生编写。它允许您向 Flutter 应用程序添加强大的 PDF
-  功能。
-- [syncfusion_flutter_pdfviewer: ^24.1.43](https://pub.dev/packages/syncfusion_flutter_pdfviewer)
-  Flutter PDF Viewer 插件可让您在 Android、iOS、Web、Windows 和 macOS 平台上无缝高效地查看 PDF
-  文档。它具有高度交互和可定制的功能，例如放大、虚拟双向滚动、页面导航、文本选择、文本搜索、页面布局选项、文档链接导航、书签导航、表单填写和使用文本标记注释进行审阅。
+- [pdfrx: ^0.3.1](https://pub.dev/packages/pdfrx) pdfrx 是建立在 pdfium 之上的 PDF 查看器实现。该插件目前支持 Android、iOS、Windows、macOS、Linux 和 Web。
+- [syncfusion_flutter_pdf: ^24.1.43](https://pub.dev/packages/syncfusion_flutter_pdf) Flutter PDF 是一个功能丰富且高性能的非 UI PDF 库，用 Dart 原生编写。它允许您向 Flutter 应用程序添加强大的 PDF 功能。
+- [syncfusion_flutter_pdfviewer: ^24.1.43](https://pub.dev/packages/syncfusion_flutter_pdfviewer)Flutter PDF Viewer 插件可让您在 Android、iOS、Web、Windows 和 macOS 平台上无缝高效地查看 PDF 文档。它具有高度交互和可定制的功能，例如放大、虚拟双向滚动、页面导航、文本选择、文本搜索、页面布局选项、文档链接导航、书签导航、表单填写和使用文本标记注释进行审阅。
 - [barcode: ^2.2.5](https://pub.dev/packages/barcode) Dart 的条码生成库，可以为任何后端生成通用绘图操作。
-- [barcode_widget: ^2.0.4](https://pub.dev/packages/barcode_widget) 生成条形码小部件。此小部件使用
-  pub：barcode 生成任何支持的条形码。
-- [pubspec_extract: ^2.0.5](https://pub.dev/packages/pubspec_extract) 提取 Dart pubspec.yaml
-  文件并在构建时生成 pubspec.dart。
+- [barcode_widget: ^2.0.4](https://pub.dev/packages/barcode_widget) 生成条形码小部件。此小部件使用 pub：barcode 生成任何支持的条形码。
+- [pubspec_extract: ^2.0.5](https://pub.dev/packages/pubspec_extract) 提取 Dart pubspec.yaml 文件并在构建时生成 pubspec.dart。
 - [lpinyin: ^2.0.3](https://pub.dev/packages/lpinyin) lpinyin是一个汉字转拼音的Dart Package.
-- [table_calendar: ^3.0.9](https://pub.dev/packages/table_calendar) 高度可定制、功能丰富的 Flutter
-  日历小部件。
+- [table_calendar: ^3.0.9](https://pub.dev/packages/table_calendar) 高度可定制、功能丰富的 Flutter 日历小部件。
 - [ninepatch_image: ^0.0.3](https://pub.dev/packages/ninepatch_image) Flutter 的可调整大小的位图（九块图像）.9图片
-- [flutter_popup: ^3.1.8](https://pub.dev/packages/flutter_popup) flutter_popup 包是一个方便的工具，使您能够在
-  Flutter 应用程序中显示一个简单且可自定义的弹出窗口。它提供了一个突出显示功能，可用于根据需要将用户的注意力引导到特定区域。
-- [azlistview: ^2.0.0](https://pub.dev/packages/azlistview) Flutter
-  城市列表、联系人列表，索引&悬停。基于scrollable_positioned_list.
-- [flutter_layout_grid: ^2.0.5](https://pub.dev/packages/flutter_layout_grid) 一个强大的 Flutter
-  网格布局系统，针对复杂的用户界面设计进行了优化。
-- [flutter_constraintlayout: ^1.7.0-stable](https://pub.dev/packages/flutter_constraintlayout)
-  一个超级强大的 Stack，使用约束构建极为灵活的布局，和 Android 下的 ConstraintLayout 和 iOS 下的
-  AutoLayout 类似。但代码实现却高效得多，它具有 O(n) 的布局时间复杂度，无需线性方程求解。
+- [flutter_popup: ^3.1.8](https://pub.dev/packages/flutter_popup) flutter_popup 包是一个方便的工具，使您能够在 Flutter 应用程序中显示一个简单且可自定义的弹出窗口。它提供了一个突出显示功能，可用于根据需要将用户的注意力引导到特定区域。
+- [azlistview: ^2.0.0](https://pub.dev/packages/azlistview) Flutter 城市列表、联系人列表，索引&悬停。基于scrollable_positioned_list.
+- [flutter_layout_grid: ^2.0.5](https://pub.dev/packages/flutter_layout_grid) 一个强大的 Flutter 网格布局系统，针对复杂的用户界面设计进行了优化。
+- [flutter_constraintlayout: ^1.7.0-stable](https://pub.dev/packages/flutter_constraintlayout)一个超级强大的 Stack，使用约束构建极为灵活的布局，和 Android 下的 ConstraintLayout 和 iOS 下的 AutoLayout 类似。但代码实现却高效得多，它具有 O(n) 的布局时间复杂度，无需线性方程求解。
 - [layout: ^1.0.5](https://pub.dev/packages/layout) 响应式布局的工具。
 - [flutter_wall_layout: ^2.1.1](https://pub.dev/packages/flutter_wall_layout) 用于在墙上布置小部件。
-- [network_to_file_image: ^6.0.0](https://pub.dev/packages/network_to_file_image)
-  从网络加载/下载图像并将其保存到本地文件系统中。
+- [network_to_file_image: ^6.0.0](https://pub.dev/packages/network_to_file_image)从网络加载/下载图像并将其保存到本地文件系统中。
 - [device_frame: ^1.1.0](https://pub.dev/packages/device_frame) 常见设备的模型。
 - [device_preview: ^1.1.0](https://pub.dev/packages/device_preview) 大致了解您的应用在其他设备上的外观和性能。
 - [badges: ^3.1.2](https://pub.dev/packages/badges) Flutter 的徽章小部件。
@@ -392,60 +334,36 @@ https://github.com/fluttercommunity/plus_plugins
 
 ## 平台特有
 
-- [camera: ^0.10.5+5](https://pub.dev/packages/camera) 适用于 iOS、Android 和 Web 的 Flutter
-  插件，允许访问设备摄像头。
-- [quick_actions: ^1.0.6](https://pub.dev/packages/quick_actions) 这个 Flutter
-  插件允许您管理应用程序的主屏幕快速操作并与之交互。
-- [awesome_notifications: ^0.8.2](https://pub.dev/packages/awesome_notifications) 在 Flutter
-  上使用自定义本地和推送通知吸引用户。获取实时事件，绝不会错过用户与 Awesome Notifications 的互动。
+- [keep_screen_on: ^3.0.0](https://pub.dev/packages/keep_screen_on) 该插件禁用自动屏幕关闭并防止屏幕关闭。
+- [camera: ^0.10.5+5](https://pub.dev/packages/camera) 适用于 iOS、Android 和 Web 的 Flutter 插件，允许访问设备摄像头。
+- [quick_actions: ^1.0.6](https://pub.dev/packages/quick_actions) 这个 Flutter 插件允许您管理应用程序的主屏幕快速操作并与之交互。
+- [awesome_notifications: ^0.8.2](https://pub.dev/packages/awesome_notifications) 在 Flutter 上使用自定义本地和推送通知吸引用户。获取实时事件，绝不会错过用户与 Awesome Notifications 的互动。
 - [intent: ^1.4.0](https://pub.dev/packages/intent) 一个简单的 flutter 插件来处理 Android Intents。
-- [android_intent_plus: ^4.0.3](https://pub.dev/packages/android_intent_plus) 该插件允许 Flutter
-  应用程序在平台为 Android 时启动任意意图。
+- [android_intent_plus: ^4.0.3](https://pub.dev/packages/android_intent_plus) 该插件允许 Flutter 应用程序在平台为 Android 时启动任意意图。
 - [device_info_plus: ^9.1.0](https://pub.dev/packages/device_info_plus) 从 Flutter 应用程序中获取当前设备信息。
-- [package_info_plus: ^4.2.0](https://pub.dev/packages/package_info_plus) 这个 Flutter 插件提供了一个
-  API，用于查询有关应用程序包的信息。
-- [share_plus: ^7.2.1](https://pub.dev/packages/share_plus) 一个 Flutter 插件，用于通过平台的共享对话框共享
-  Flutter 应用程序中的内容。
-- [flutter_downloader: ^1.11.4](https://pub.dev/packages/flutter_downloader) 用于创建和管理下载任务的插件。支持
-  iOS 和 Android。
-- [restart_app: ^1.2.1](https://pub.dev/packages/restart_app) 一个 Flutter 插件，可帮助您使用原生 API
-  通过单个函数调用重新启动整个 Flutter 应用。
-- [open_filex: ^4.3.4](https://pub.dev/packages/open_filex)
-  一个可以调用原生APP打开字符串导致颤动文件的插件，支持iOS（DocumentInteraction）/android（intent）/PC（ffi）/web（dart：html）
-- [location: ^5.0.3](https://pub.dev/packages/location) 这个 Flutter 插件处理在 Android 和 iOS
-  上获取位置。它还在位置更改时提供回调。
-- [video_compress: ^3.1.2](https://pub.dev/packages/video_compress)
-  通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
-- [mobile_scanner: ^3.5.2](https://pub.dev/packages/mobile_scanner) 基于 MLKit 的 Flutter 通用条码和二维码扫描仪。在
-  Android 上使用 CameraX，在 iOS 上使用 AVFoundation。
-- [barcode_scanner: ^3.6.2](https://pub.dev/packages/barcode_scanner) Scanbot Flutter
-  条码扫描器插件使您能够轻松实现适用于 iOS 和 Android 的 Scanbot 条码扫描器 SDK。
-- [flutter_barcode_scanner: ^2.0.0](https://pub.dev/packages/flutter_barcode_scanner) 一个用于
-  Flutter 应用程序的插件，可在 Android 和 iOS 上添加条形码扫描支持。
+- [package_info_plus: ^4.2.0](https://pub.dev/packages/package_info_plus) 这个 Flutter 插件提供了一个 API，用于查询有关应用程序包的信息。
+- [share_plus: ^7.2.1](https://pub.dev/packages/share_plus) 一个 Flutter 插件，用于通过平台的共享对话框共享 Flutter 应用程序中的内容。
+- [flutter_downloader: ^1.11.4](https://pub.dev/packages/flutter_downloader) 用于创建和管理下载任务的插件。支持 iOS 和 Android。
+- [restart_app: ^1.2.1](https://pub.dev/packages/restart_app) 一个 Flutter 插件，可帮助您使用原生 API 通过单个函数调用重新启动整个 Flutter 应用。
+- [open_filex: ^4.3.4](https://pub.dev/packages/open_filex)一个可以调用原生APP打开字符串导致颤动文件的插件，支持iOS（DocumentInteraction）/android（intent）/PC（ffi）/web（dart：html）
+- [location: ^5.0.3](https://pub.dev/packages/location) 这个 Flutter 插件处理在 Android 和 iOS 上获取位置。它还在位置更改时提供回调。
+- [video_compress: ^3.1.2](https://pub.dev/packages/video_compress)通过这个轻量级高效的库压缩视频、删除音频、处理缩略图并使您的视频与所有平台兼容。
+- [mobile_scanner: ^3.5.2](https://pub.dev/packages/mobile_scanner) 基于 MLKit 的 Flutter 通用条码和二维码扫描仪。在 Android 上使用 CameraX，在 iOS 上使用 AVFoundation。
+- [barcode_scanner: ^3.6.2](https://pub.dev/packages/barcode_scanner) Scanbot Flutter 条码扫描器插件使您能够轻松实现适用于 iOS 和 Android 的 Scanbot 条码扫描器 SDK。
+- [flutter_barcode_scanner: ^2.0.0](https://pub.dev/packages/flutter_barcode_scanner) 一个用于 Flutter 应用程序的插件，可在 Android 和 iOS 上添加条形码扫描支持。
 - [flutter_mrz_scanner: ^2.1.0](https://pub.dev/packages/flutter_mrz_scanner) 使用 iOS 和 Android 扫描身份证件（护照、身份证、签证）的 MRZ（机器可读区域）。被 QKMRZScanner 严重啃食。
 - [file_picker: ^6.1.1](https://pub.dev/packages/file_picker) 一个包，允许您使用本机文件资源管理器来选取单个或多个文件，并具有扩展筛选支持。
 - [file_selector: ^1.0.3](https://pub.dev/packages/file_selector) 一个 Flutter 插件，用于管理文件和与文件对话框的交互。
 - [excel: ^3.0.0](https://pub.dev/packages/excel) Excel 是一个 flutter 和 dart 库，用于读取、创建和更新 XLSX 文件的 excel 工作表
 - [uri_to_file: ^1.0.0](https://pub.dev/packages/uri_to_file) 一个 Flutter 插件，用于将支持的 uri 转换为文件。支持 Android 和 iOS。
-- [flutter_file_downloader: ^1.1.4](https://pub.dev/packages/flutter_file_downloader) 一个简单的
-  flutter 插件，可将所有文件类型下载到所有 android 设备的下载目录。当 android 10
-  问世时，隐私限制发生了很大的变化，并且没有足够的 flutter 相关信息，所以我想出了一个简单的 ANDROID
-  插件来下载任何文件类型到下载目录 此外，它还具有回调和进度侦听器，安装非常简单 注意：此插件不是为 iOS
-  构建的， 它根本不会影响它。
-- [app_settings: ^5.1.1](https://pub-web.flutter-io.cn/packages/app_settings) 一个 Flutter
-  插件，用于从应用程序打开 iOS 和 Android 手机设置。
-- [flutter_local_notifications: ^16.3.0](https://pub.dev/packages/flutter_local_notifications)
-  用于显示本地通知的跨平台插件。ANDROID IOS LINUX MACOS
+- [flutter_file_downloader: ^1.1.4](https://pub.dev/packages/flutter_file_downloader) 一个简单的 flutter 插件，可将所有文件类型下载到所有 android 设备的下载目录。当 android 10 问世时，隐私限制发生了很大的变化，并且没有足够的 flutter 相关信息，所以我想出了一个简单的 ANDROID 插件来下载任何文件类型到下载目录 此外，它还具有回调和进度侦听器，安装非常简单 注意：此插件不是为 iOS 构建的， 它根本不会影响它。
+- [app_settings: ^5.1.1](https://pub-web.flutter-io.cn/packages/app_settings) 一个 Flutter 插件，用于从应用程序打开 iOS 和 Android 手机设置。
+- [flutter_local_notifications: ^16.3.0](https://pub.dev/packages/flutter_local_notifications)用于显示本地通知的跨平台插件。ANDROID IOS LINUX MACOS
 - [flutter_app_badger: ^1.5.0](https://pub.dev/packages/flutter_app_badger) 在启动器中更改应用程序徽章的功能。
-- [flutter_app_icon_badge: ^2.0.0](https://pub.dev/packages/flutter_app_icon_badge) 更改应用图标上的徽章。
-  ANDROID IOS MACOS
-- [geolocator: ^10.1.0](https://pub.dev/packages/geolocator) 一个 Flutter
-  地理定位插件，它提供了对平台特定位置服务的轻松访问（FusedLocationProviderClient，或者如果不可用，Android
-  上的 LocationManager 和 iOS 上的 CLLocationManager）。
-- [geocoding: ^2.1.1](https://pub.dev/packages/geocoding) 一个 Flutter Geocoding
-  插件，提供简单的地理编码和反向地理编码功能。
-- [permission_handler: ^11.1.0](https://pub.dev/packages/permission_handler)
-  该插件提供了一个跨平台（iOS、Android）API 来请求权限并检查其状态。您还可以打开设备的应用设置，以便用户可以授予权限。https://github.com/baseflow/flutter-permission-handler
+- [flutter_app_icon_badge: ^2.0.0](https://pub.dev/packages/flutter_app_icon_badge) 更改应用图标上的徽章。 ANDROID IOS MACOS
+- [geolocator: ^10.1.0](https://pub.dev/packages/geolocator) 一个 Flutter 地理定位插件，它提供了对平台特定位置服务的轻松访问（FusedLocationProviderClient，或者如果不可用，Android 上的 LocationManager 和 iOS 上的 CLLocationManager）。
+- [geocoding: ^2.1.1](https://pub.dev/packages/geocoding) 一个 Flutter Geocoding 插件，提供简单的地理编码和反向地理编码功能。
+- [permission_handler: ^11.1.0](https://pub.dev/packages/permission_handler)该插件提供了一个跨平台（iOS、Android）API 来请求权限并检查其状态。您还可以打开设备的应用设置，以便用户可以授予权限。https://github.com/baseflow/flutter-permission-handler
 - [image_picker: ^1.0.7](https://pub.dev/packages/image_picker) 适用于 iOS 和 Android 的 Flutter 插件，用于从图像库中挑选图像，并使用相机拍摄新照片。
 - [image_gallery_saver: ^2.0.3](https://pub.dev/packages/image_gallery_saver) 我们使用插件 image_picker 从 Android 和 iOS 图像库中选择图像，但它无法将图像保存到图库中。这个插件可以提供这个功能。
 - [flutter_contacts: ^1.1.7+1](https://pub.dev/packages/flutter_contacts) Flutter 插件，用于读取、创建、更新、删除和观察 Android 和 iOS 上的原生联系人，具有群组支持、vCard 支持和联系人权限处理。
