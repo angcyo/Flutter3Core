@@ -537,6 +537,19 @@ extension StringEx on String {
     return hash;
   }
 
+  /// 分割文本, 并且去除空白字符
+  List<String> splitAndTrim(String separator,
+      {bool trim = true, bool removeEmpty = true}) {
+    final list = split(separator);
+    if (removeEmpty) {
+      return list
+          .map((e) => trim ? e.trim() : e)
+          .where((element) => element.isNotEmpty)
+          .toList();
+    }
+    return list.map((e) => trim ? e.trim() : e).toList();
+  }
+
   /// 转换成[utf8]字节数组
   /// [byteData]
   Uint8List get bytes => utf8.encode(this);

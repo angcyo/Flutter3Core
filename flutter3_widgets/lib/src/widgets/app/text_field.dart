@@ -7,6 +7,7 @@ part of '../../../flutter3_widgets.dart';
 /// icons图标, m3图标列表
 /// https://fonts.google.com/icons
 /// 输入框控制配置
+/// [SingleInputWidget]
 class TextFieldConfig {
   /// 输入控制, 用于获取输入内容
   final TextEditingController controller;
@@ -59,6 +60,7 @@ class TextFieldConfig {
     TextEditingController? controller,
     FocusNode? focusNode /*请求焦点*/,
     bool? obscureText /*是否是密码*/,
+    bool notifyDefaultTextChange = false /*是否要触发默认文本改变*/,
     this.textInputAction,
     this.updateFieldValueFn,
     this.hintText,
@@ -68,7 +70,11 @@ class TextFieldConfig {
     this.onEditingComplete,
   })  : controller = controller ?? TextEditingController(text: text),
         focusNode = focusNode ?? FocusNode(),
-        obscureNode = ObscureNode(obscureText ?? false);
+        obscureNode = ObscureNode(obscureText ?? false) {
+    if (notifyDefaultTextChange) {
+      onChanged?.call(this.controller.text);
+    }
+  }
 }
 
 /// 清除图标的大小
