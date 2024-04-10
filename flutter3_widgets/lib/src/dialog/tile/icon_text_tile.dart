@@ -104,7 +104,7 @@ class IconTextTile extends StatelessWidget with TileMixin {
         .colorFiltered(color: enable ? tintColor : disableTintColor)
         .paddingInsets(padding)
         .constrainedMin(minHeight: kMinItemInteractiveHeight)
-        .ink(onTap: enable && enableTap ? onTap : null)
+        .ink( enable && enableTap ? onTap : null)
         .material();
 
     return result;

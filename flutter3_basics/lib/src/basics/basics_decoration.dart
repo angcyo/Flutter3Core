@@ -114,17 +114,30 @@ BoxDecoration fillDecoration({
   BuildContext? context,
   Color? color,
   Gradient? gradient,
-  double borderRadius = kDefaultBorderRadiusXX,
+  BorderRadiusGeometry? radiusGeometry,
+  double? borderRadius = kDefaultBorderRadiusXX,
+  double? borderTopRadius,
+  double? borderBottomRadius,
 }) {
   final fillColor = color ?? GlobalTheme.of(context).primaryColor;
+
+  if (radiusGeometry == null) {
+    if (borderTopRadius != null || borderBottomRadius != null) {
+      radiusGeometry = BorderRadius.only(
+        topLeft: Radius.circular(borderTopRadius ?? 0),
+        topRight: Radius.circular(borderTopRadius ?? 0),
+        bottomLeft: Radius.circular(borderBottomRadius ?? 0),
+        bottomRight: Radius.circular(borderBottomRadius ?? 0),
+      );
+    } else if (borderRadius != null) {
+      radiusGeometry = BorderRadius.circular(borderRadius);
+    }
+  }
+
   return BoxDecoration(
     color: fillColor,
     gradient: gradient,
-    borderRadius: borderRadius > 0
-        ? BorderRadius.all(
-            Radius.circular(borderRadius),
-          )
-        : null,
+    borderRadius: radiusGeometry,
     //gradient:
   );
 }

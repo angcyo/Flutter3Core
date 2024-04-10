@@ -35,13 +35,31 @@ class PullBackWidget extends StatefulWidget {
   /// 是否可以下拉返回
   final Future<bool> Function()? canPullBackAction;
 
+  //---
+
+  /// 下拉返回的背景颜色, 可以不指定
+  final Color? barrierColor;
+
+  /// 下拉返回的内容组件, 是否要使用[SafeArea]
+  final bool useSafeArea;
+
+  /// 是否显示拖拽手柄
+  final bool showDragHandle;
+
+  /// 内容的装饰, 包含手柄的内容
+  final Decoration? contentDecoration;
+
   const PullBackWidget({
     super.key,
     required this.child,
+    this.barrierColor,
     this.pullBackController,
     this.onPullBack,
     this.onPullProgress,
     this.canPullBackAction,
+    this.showDragHandle = false,
+    this.useSafeArea = false,
+    this.contentDecoration,
   });
 
   @override
@@ -85,7 +103,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
           vsync: this,
         );
     _pullBackController.addListener(() {
-      //updateState();
+      if (widget.barrierColor != null) {
+        updateState();
+      }
       widget.onPullProgress?.call(_pullBackController.value);
     });
     //动画结束监听
@@ -93,7 +113,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
       //l.d('$status:${_pullBackController.value}');
       if (status == AnimationStatus.completed) {
         //l.d('completed:${_pullBackController.value}');
-        widget.onPullBack?.call(buildContext);
+        if (widget.onPullBack == null) {
+          buildContext.pop();
+        } else {
+          widget.onPullBack?.call(buildContext);
+        }
       } /*else if (status == AnimationStatus.dismissed) {
         l.d('dismissed:${_pullBackController.value}');
       } else if (status == AnimationStatus.forward) {
@@ -116,7 +140,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    Widget body = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onVerticalDragUpdate: (details) {
         _handleDragUpdate(details.delta.dy);
@@ -144,11 +168,41 @@ class _PullBackWidgetState extends State<PullBackWidget>
         child: AnimatedBuilder(
           animation: _pullBackAnimation,
           builder: (context, child) {
-            return widget.child.matrix(_pullBackTransform);
+            Widget content = widget.child;
+
+            if (widget.showDragHandle) {
+              content = [buildDragHandle(), content].column()!;
+            }
+
+            if (widget.contentDecoration != null) {
+              content = Container(
+                clipBehavior: ui.Clip.hardEdge,
+                decoration: widget.contentDecoration,
+                child: content,
+              );
+            }
+
+            return content.matrix(_pullBackTransform);
           },
         ),
       ),
     ).childKeyed(_childKey);
+
+    if (widget.useSafeArea) {
+      body = SafeArea(child: body);
+    }
+
+    if (widget.barrierColor == null) {
+      return body;
+    }
+
+    return body.backgroundDecoration(
+      fillDecoration(
+        borderRadius: 0,
+        color:
+            widget.barrierColor!.withOpacityRatio(1 - _pullBackAnimation.value),
+      ),
+    );
   }
 
   /// [primaryDelta] 手势每次移动的距离 >0:向下拉 <0:向上拉
@@ -280,8 +334,8 @@ class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
 /// 构建一个拖拽手柄
 Widget buildDragHandle({
   double width = 40,
-  double height = 5,
-  double padding = 4,
+  double height = kL,
+  double padding = kL,
 }) {
   return SizedBox(
     width: width,

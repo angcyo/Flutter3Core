@@ -326,11 +326,20 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 ///
 /// `Illegal argument in isolate message: object is unsendable`
 ///
+/// [Completer]
 Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
     compute(callback, message, debugLabel: "io-${nowTimeString()}");
 
 /// 在[Isolate]中运行, [callback]可以直接访问上下文的数据, 不需要send
 /// [SendPort.send]
+/// ```
+/// Invalid argument(s): Illegal argument in isolate message:
+/// object is unsendable - Library:'dart:async'
+/// Class: _AsyncCompleter@4048458
+/// (see restrictions listed at `SendPort.send()` documentation for more information)
+/// Isolate._spawnFunction (dart:isolate-patch/isolate_patch.dart:398:25)
+/// ```
+/// [Future.sync]
 Future<R> run<R>(ResultCallback<R> callback) {
   return Isolate.run(() => callback(), debugName: "run-${nowTimeString()}");
 }

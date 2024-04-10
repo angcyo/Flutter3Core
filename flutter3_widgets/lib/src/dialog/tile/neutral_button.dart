@@ -39,14 +39,12 @@ class NeutralButton extends StatelessWidget {
                   ))
             ?.paddingAll(kX);
 
-    result = result
-        ?.ink(
-          shape: useIcon ? BoxShape.circle : BoxShape.rectangle,
-          onTap: () {
-            onTap?.call();
-          },
-        )
-        .material();
+    result = result?.ink(
+      () {
+        onTap?.call();
+      },
+      shape: useIcon ? BoxShape.circle : BoxShape.rectangle,
+    ).material();
     return result!;
   }
 }

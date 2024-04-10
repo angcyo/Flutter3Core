@@ -109,6 +109,34 @@ extension ObjectEx on Object {
   /// [Object]的hash值
   String classHash() => "$runtimeType(${hash()})";
 
+  ld() {
+    assert(() {
+      l.d(this);
+      return true;
+    }());
+  }
+
+  li() {
+    assert(() {
+      l.i(this);
+      return true;
+    }());
+  }
+
+  lw() {
+    assert(() {
+      l.w(this);
+      return true;
+    }());
+  }
+
+  le() {
+    assert(() {
+      l.e(this);
+      return true;
+    }());
+  }
+
   /// 类型转换
   List<T> ofList<T>() => [this as T];
 
@@ -420,6 +448,13 @@ extension ColorEx on Color {
     buffer.write(hexString.replaceFirst('#', ''));
     return Color(buffer.toString().toInt(radix: 16));
   }
+
+  /// 在已有的透明值上进行再次透明
+  /// 使用一个增量透明比例创建一个新的颜色
+  /// [withOpacity]
+  /// [withAlpha]
+  Color withOpacityRatio(double opacity) =>
+      withAlpha((alpha * opacity).round());
 
   /// 返回小写的十六进制字符串
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
@@ -1310,6 +1345,28 @@ extension IterableEx<E> on Iterable<E> {
 extension ListEx<T> on List<T> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
+
+  /// [StatelessWidget]->[ScrollView]->[BoxScrollView]->[ListView]
+  ListView toListView(
+    Widget Function(BuildContext context, T element, int index) itemBuilder, {
+    Axis scrollDirection = Axis.vertical,
+    ScrollController? controller,
+    bool? primary,
+    ScrollPhysics? physics,
+    bool shrinkWrap = false,
+  }) {
+    return ListView.builder(
+      itemCount: length,
+      scrollDirection: scrollDirection,
+      controller: controller,
+      primary: primary,
+      physics: physics,
+      shrinkWrap: shrinkWrap,
+      itemBuilder: (context, index) {
+        return itemBuilder(context, this[index], index);
+      },
+    );
+  }
 
   /// 添加一个元素, 如果为null则不添加
   void addIfNotNull(T? element) {

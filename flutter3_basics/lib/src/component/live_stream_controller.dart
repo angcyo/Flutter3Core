@@ -45,9 +45,17 @@ class LiveStreamController<T> {
   }
 
   /// 监听流
-  void listen(Function(T) onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
-    onData(latestValue);
+  /// [allowBackward] 是否允许回溯, 是否发送最后一个值
+  void listen(
+    Function(T) onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+    bool allowBackward = true,
+  }) {
+    if (allowBackward) {
+      onData(latestValue);
+    }
     _controller.stream.listen(onData,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }

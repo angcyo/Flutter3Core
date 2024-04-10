@@ -126,11 +126,9 @@ class DebugFileTile extends StatelessWidget {
         .paddingAll(kH)
         .container(
             color: isSelected ? globalTheme.accentColor.withOpacity(0.3) : null)
-        .ink(
-      onTap: () {
-        onTap?.call(path);
-      },
-    );
+        .ink(() {
+      onTap?.call(path);
+    });
 
     result = result.longClick(() {
       //长按分享文件

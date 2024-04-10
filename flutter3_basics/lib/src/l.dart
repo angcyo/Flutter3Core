@@ -65,7 +65,7 @@ class L {
       bool? showLevel,
       bool? showTag}) {
     if (level >= verbose) {
-      _log(object,
+      return _log(object,
           level: level,
           tag: tag,
           showTime: showTime,
@@ -81,7 +81,7 @@ class L {
       bool? showLevel,
       bool? showTag}) {
     if (level >= verbose) {
-      _log(object,
+      return _log(object,
           level: level,
           tag: tag,
           showTime: showTime,
@@ -97,7 +97,7 @@ class L {
       bool? showLevel,
       bool? showTag}) {
     if (level >= debug) {
-      _log(object,
+      return _log(object,
           level: level,
           tag: tag,
           showTime: showTime,
@@ -113,7 +113,7 @@ class L {
       bool? showLevel,
       bool? showTag}) {
     if (level >= info) {
-      _log(object,
+      return _log(object,
           level: level,
           tag: tag,
           showTime: showTime,
@@ -129,7 +129,7 @@ class L {
       bool? showLevel,
       bool? showTag}) {
     if (level >= warn) {
-      _log(object,
+      return _log(object,
           level: level,
           tag: tag,
           showTime: showTime,
@@ -145,7 +145,7 @@ class L {
       bool? showLevel,
       bool? showTag}) {
     if (level >= error) {
-      _log(object,
+      return _log(object,
           level: level,
           tag: tag,
           showTime: showTime,
@@ -154,7 +154,7 @@ class L {
     }
   }
 
-  _log(Object? object,
+  String _log(Object? object,
       {int level = debug,
       String? tag,
       bool? showTime,
@@ -192,6 +192,7 @@ class L {
     if (level >= fileLogLevel) {
       filePrint?.call(log);
     }
+    return log;
   }
 
   _levelStr(int level) {

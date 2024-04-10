@@ -30,7 +30,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   final String? neutral;
   final Widget? neutralWidget;
 
-  /// 确定按钮点击回调,
+  /// 确定按钮点击回调, 参数始终为true
   /// 返回true, 表示拦截默认处理
   final FutureResultCallback<bool, bool>? onConfirmTap;
 

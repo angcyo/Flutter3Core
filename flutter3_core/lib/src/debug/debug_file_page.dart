@@ -41,7 +41,7 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
           Assets.svg.fileBrowseHome,
           width: 25,
           height: 25,
-        )?.paddingAll(kX).inkWellCircle(onTap: () {
+        )?.paddingAll(kX).inkWellCircle(() {
           _reload();
         }),
         currentLoadPath
@@ -50,7 +50,7 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
                 scrollDirection: Axis.horizontal,
                 controller: _pathScrollController)
             .padding(0, kX, kX, kX)
-            .ink(onTap: () {
+            .ink(() {
           _loadPath(currentLoadPath?.parentPath);
         }).expanded(),
         GradientButton.min(

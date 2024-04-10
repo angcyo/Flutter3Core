@@ -197,12 +197,13 @@ class FillButton extends StatelessWidget {
               child: text?.text() ?? child ?? const Empty(),
             ))
         .ink(
+          onTap,
+          borderRadius: radius,
+          decoration: BoxDecoration(
+            color: fillColor,
             borderRadius: radius,
-            decoration: BoxDecoration(
-              color: fillColor,
-              borderRadius: radius,
-            ),
-            onTap: onTap)
+          ),
+        )
         .material();
   }
 }
@@ -274,15 +275,16 @@ class StrokeButton extends StatelessWidget {
               child: text?.text() ?? child ?? const Empty(),
             ))
         .ink(
-            borderRadius: radius,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: borderColor,
-                width: borderWidth,
-              ),
-              borderRadius: radius,
+          onTap,
+          borderRadius: radius,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: borderColor,
+              width: borderWidth,
             ),
-            onTap: onTap)
+            borderRadius: radius,
+          ),
+        )
         .material();
     /*return OutlinedButton(
       onPressed: enabled

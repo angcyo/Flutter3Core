@@ -189,10 +189,12 @@ extension CanvasEx on Canvas {
     double? radians,
     double pivotX = 0,
     double pivotY = 0,
+    ui.Offset? anchor,
   }) {
     withRotateRadians(
       radians ??= degrees.toRadians,
       callback,
+      anchor: anchor,
       pivotX: pivotX,
       pivotY: pivotY,
     );

@@ -90,10 +90,6 @@ class SingleLabelInfoTile extends StatelessWidget {
         if (right != null) right,
         if (rightIco != null && rightIco is! IgnoreWidget) rightIco
       ].row()!.constrainedMin(minHeight: minHeight),
-    )
-        .ink(
-          onTap: onTap,
-        )
-        .material();
+    ).ink(onTap).material();
   }
 }

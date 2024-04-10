@@ -1290,8 +1290,8 @@ extension WidgetEx on Widget {
   /// [decoration] 强行指定装饰
   ///
   /// [material]
-  Widget ink({
-    GestureTapCallback? onTap,
+  Widget ink(
+    GestureTapCallback? onTap, {
     double radius = 0,
     Color? backgroundColor,
     EdgeInsetsGeometry? padding,
@@ -1317,10 +1317,10 @@ extension WidgetEx on Widget {
       width: width,
       height: height,
       child: inkWell(
+        onTap,
         borderRadius: bRadius,
         customBorder: isCircle ? const CircleBorder() : null,
         highlightShape: shape,
-        onTap: onTap,
         highlightColor: highlightColor,
         splashColor: splashColor,
       ),
@@ -1334,8 +1334,8 @@ extension WidgetEx on Widget {
   /// [InkWell]
   /// [InkResponse]
   /// [CircleBorder]
-  Widget inkWell({
-    GestureTapCallback? onTap,
+  Widget inkWell(
+    GestureTapCallback? onTap, {
     BorderRadius? borderRadius,
     Color? splashColor,
     Color? highlightColor,
@@ -1361,14 +1361,14 @@ extension WidgetEx on Widget {
   /// [ink]
   /// [inkWell]
   /// [InkWell]
-  Widget inkWellCircle({
-    GestureTapCallback? onTap,
+  Widget inkWellCircle(
+    GestureTapCallback? onTap, {
     Color? splashColor,
     Color? highlightColor,
     double? radius,
   }) =>
       inkWell(
-        onTap: onTap,
+        onTap,
         //borderRadius: BorderRadius.circular(999),
         customBorder: const CircleBorder(),
         splashColor: splashColor,
@@ -2033,14 +2033,19 @@ UiGradient radialGradientShader(
     );
 
 /// 扫描渐变 [Shader]
+/// 如果未指定[colorStops]时, 则[colors]的长度只能有2个
+/// 如果指定了[colorStops], 则长度必须与[colors]相同
+/// [_validateColorStops]
 UiGradient sweepGradientShader(
   List<Color> colors, {
   Rect? rect,
   Offset? center,
+  List<double>? colorStops,
 }) =>
     UiGradient.sweep(
       center ?? rect?.center ?? Offset.zero,
       colors,
+      colorStops,
     );
 
 /// [Gradient]

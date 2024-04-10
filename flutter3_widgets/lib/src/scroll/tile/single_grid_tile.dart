@@ -66,10 +66,6 @@ class SingleGridTile extends StatelessWidget with TileMixin {
         if (top != null) top,
         if (bottom != null) bottom,
       ].column()!.constrainedMin(minHeight: minHeight),
-    )
-        .ink(
-          onTap: onTap,
-        )
-        .material();
+    ).ink(onTap).material();
   }
 }
