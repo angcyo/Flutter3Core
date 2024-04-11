@@ -42,11 +42,13 @@ class GestureHitInterceptBox extends RenderProxyBox {
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     var hitBox = interceptHitBox;
     if (hitBox != null) {
+      //拦截命中, 并将事件传递给[hitBox]
       //debugger();
       final child = this.child;
       if (child != null &&
           child is GestureHitInterceptBoxTranslucentMixin &&
           child != hitBox) {
+        //事件被拦截后, 如果子节点是[GestureHitInterceptBoxTranslucentMixin]类型, 则继续传递命中
         //debugger();
         //super.hitTestChildren(result, position: position);
         if (child.size.contains(position)) {
