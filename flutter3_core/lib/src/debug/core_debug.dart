@@ -19,15 +19,17 @@ class DebugCommand {
   final String type;
   final String value;
 
-  DebugCommand(this.command,
-      this.key,
-      this.type,
-      this.value,);
+  DebugCommand(
+    this.command,
+    this.key,
+    this.type,
+    this.value,
+  );
 }
 
 class CoreDebug {
   static List<DebugCommandAction> debugCommandActionList =
-  <DebugCommandAction>[];
+      <DebugCommandAction>[];
 
   /// [HiveEx]
   /// [HiveStringEx]
@@ -76,7 +78,7 @@ class CoreDebug {
               case "cmd":
                 break;
               default:
-              //@key#int=value
+                //@key#int=value
                 switch (type) {
                   case "b":
                   case "bool":
@@ -132,7 +134,7 @@ class CoreDebug {
     }
 
     if (match) {
-      editText?._feedback()
+      //震动反馈
     }
   }
 }
