@@ -186,9 +186,9 @@ extension DioStringEx on String {
       onReceiveProgress: (count, total) {
         assert(() {
           if (total > 0) {
-            l.d("下载进度:$count/$total ${count.toFileSizeStr()}/${total.toFileSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveTo]");
+            l.d("下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveTo]");
           } else {
-            l.d("下载进度:$count ${count.toFileSizeStr()} \n[$this]->[$saveTo]");
+            l.d("下载进度:$count ${count.toSizeStr()} \n[$this]->[$saveTo]");
           }
           return true;
         }());

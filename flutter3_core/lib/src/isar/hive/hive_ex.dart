@@ -128,7 +128,7 @@ extension HiveEx on HiveInterface {
 
     _hiveBox = await Hive.openBox(kHiveBox);
     defHiveBoxFilePath = hiveBoxPath.join("${kHiveBox.toLowerCase()}.hive");
-    l.i("[$kHiveBox]HiveBox数据库路径:$defHiveBoxFilePath :${defHiveBoxFilePath.file().lengthSync().toFileSizeStr()}");
+    l.i("[$kHiveBox]HiveBox数据库路径:$defHiveBoxFilePath :${defHiveBoxFilePath.file().lengthSync().toSizeStr()}");
     //_hiveBox.add(value)
     //_hiveBox.get(key)
     //Hive.box

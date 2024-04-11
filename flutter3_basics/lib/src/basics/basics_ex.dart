@@ -1309,6 +1309,30 @@ extension ListIntEx on List<int> {
 /// [ListEx]
 /// [IterableEx]
 extension IterableEx<E> on Iterable<E> {
+  /// 最后一个元素的索引
+  int get lastIndex => length - 1;
+
+  /// 查找第一个
+  E? findFirst(bool Function(E element) test) {
+    for (var element in this) {
+      if (test(element)) {
+        return element;
+      }
+    }
+    return null;
+  }
+
+  /// 查找最后一个
+  E? findLast(bool Function(E element) test) {
+    for (var i = lastIndex; i >= 0; i--) {
+      var element = elementAt(i);
+      if (test(element)) {
+        return element;
+      }
+    }
+    return null;
+  }
+
   /// 过滤元素
   /// [test] 返回true, 则保留元素
   /// [WhereIterable]

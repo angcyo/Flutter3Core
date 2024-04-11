@@ -13,7 +13,13 @@ class RException implements Exception {
   /// 异常的消息
   final String? message;
 
-  const RException({this.message, this.cause});
+  final StackTrace? stackTrace;
+
+  RException({
+    this.message,
+    this.cause,
+    StackTrace? stackTrace,
+  }) : stackTrace = stackTrace ?? StackTrace.current;
 
   @override
   String toString() {
@@ -39,10 +45,15 @@ class RError extends Error {
 
 /// 超时异常
 class RTimeoutException extends RException {
-  const RTimeoutException({super.message, super.cause});
+  RTimeoutException({super.message, super.cause, super.stackTrace});
 }
 
 /// 操作被取消的异常
 class RCancelException extends RException {
-  const RCancelException({super.message, super.cause});
+  RCancelException({super.message, super.cause, super.stackTrace});
+}
+
+/// 无效的操作异常
+class RInvalidException extends RException {
+  RInvalidException({super.message, super.cause, super.stackTrace});
 }

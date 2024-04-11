@@ -59,7 +59,7 @@ class DebugFileTile extends StatelessWidget {
         ),
         Empty.width(kX),
         stat.size
-            .toFileSizeStr()
+            .toSizeStr()
             .text(
               style: globalConfig.globalTheme.textDesStyle,
             )
@@ -90,7 +90,7 @@ class DebugFileTile extends StatelessWidget {
     } else {
       final infoRow = [
         stat.size
-            .toFileSizeStr()
+            .toSizeStr()
             .text(
               style: globalConfig.globalTheme.textDesStyle,
             )

@@ -138,7 +138,7 @@ Future wrapLoading(
       if (!isEnd) {
         isTimeout = true;
         hideLoading();
-        onEnd?.call(const RTimeoutException(message: 'wrapLoading timeout.'));
+        onEnd?.call(RTimeoutException(message: 'wrapLoading timeout.'));
       }
     }, timeout);
   }

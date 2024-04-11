@@ -9,7 +9,7 @@ extension FileSizeEx on num {
   /// filesize(1024);                   // "1 KB"
   /// filesize(664365320);              // "633.59 MB"
   /// filesize(4324324232343);          // "3.93 TB"
-  String toFileSizeStr([int round = 2]) {
+  String toSizeStr([int round = 2]) {
     return filesize(this, round);
   }
 }

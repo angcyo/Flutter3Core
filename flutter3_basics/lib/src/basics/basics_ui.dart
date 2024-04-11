@@ -1387,6 +1387,8 @@ extension WidgetEx on Widget {
     TextDirection? textDirection,
     VerticalDirection? verticalDirection,
     TextBaseline? textBaseline,
+    double? gap,
+    Widget? gapWidget,
   }) =>
       other == null
           ? this
@@ -1400,6 +1402,8 @@ extension WidgetEx on Widget {
               textDirection: textDirection,
               verticalDirection: verticalDirection,
               textBaseline: textBaseline,
+              gap: gap,
+              gapWidget: gapWidget,
             )!;
 
   /// 将[this]和[other] 使用[Row]包裹
@@ -1411,6 +1415,8 @@ extension WidgetEx on Widget {
     TextDirection? textDirection,
     VerticalDirection? verticalDirection,
     TextBaseline? textBaseline,
+    double? gap,
+    Widget? gapWidget,
   }) =>
       other == null
           ? this
@@ -1424,6 +1430,8 @@ extension WidgetEx on Widget {
               textDirection: textDirection,
               verticalDirection: verticalDirection,
               textBaseline: textBaseline,
+              gap: gap,
+              gapWidget: gapWidget,
             )!;
 
   /// 将[this]和[other] 使用[Stack]包裹

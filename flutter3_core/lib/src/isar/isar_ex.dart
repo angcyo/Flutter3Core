@@ -58,5 +58,5 @@ Future<void> openIsar([
   //https://isar.dev/zh/recipes/data_migration.html
 
   defIsarFilePath = isarPath.join("$name.isar");
-  l.i("[$name]isar数据库路径:$defIsarFilePath :${defIsarFilePath.file().lengthSync().toFileSizeStr()}");
+  l.i("[$name]isar数据库路径:$defIsarFilePath :${defIsarFilePath.file().lengthSync().toSizeStr()}");
 }

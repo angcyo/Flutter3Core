@@ -106,7 +106,11 @@ typedef ResultValueCallback<R, T> = R Function(T value);
 typedef FutureResultCallback<R, T> = Future<R> Function(T value);
 
 /// 只有一个值回调
-typedef ValueCallback = dynamic Function([dynamic value]);
+typedef ValueCallback<T> = dynamic Function([T value]);
+
+/// [ValueCallback]
+/// [FutureOr]
+typedef FutureValueCallback<T> = FutureOr<T> Function([T value]);
 
 /// 回调一个值和一个错误
 typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);

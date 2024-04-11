@@ -98,6 +98,13 @@ class BytesWriter {
     writeBytes(value.toHexBytes(), length);
   }
 
+  /// 写入指定字节的长度数据
+  void writeFill(int length, [int fillValue = 0]) {
+    for (int i = 0; i < length; i++) {
+      writeByte(fillValue);
+    }
+  }
+
   /// 填充到指定长度, 比如将字节数据填充到64个字节
   /// [length]需要填充到的字节长度
   void fill(int length, [int fillValue = 0]) {

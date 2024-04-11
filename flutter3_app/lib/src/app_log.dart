@@ -20,7 +20,7 @@ Future shareAppLog([String? name]) async {
   }).ignore();
   assert(() {
     final log =
-        "压缩完成:$output :${(output.file().fileSizeSync()).toFileSizeStr()}";
+        "压缩完成:$output :${(output.file().fileSizeSync()).toSizeStr()}";
     l.i(log);
     return true;
   }());

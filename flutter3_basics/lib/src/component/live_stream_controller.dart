@@ -12,9 +12,13 @@ class LiveStreamController<T> {
   /// 最后一个错误, 在每次[add]时, 清空
   Object? latestError;
 
+  /// 是否自动清空最后一个值
+  bool autoClearValue = false;
+
   final StreamController<T> _controller = StreamController<T>.broadcast();
 
-  LiveStreamController(T initialValue) : latestValue = initialValue;
+  LiveStreamController(T initialValue, {this.autoClearValue = false})
+      : latestValue = initialValue;
 
   /// 流
   Stream<T> get stream {
@@ -32,13 +36,28 @@ class LiveStreamController<T> {
   Object? get error => latestError;
 
   /// 发送数据
+  @callPoint
   void add(T newValue) {
     latestError = null;
     latestValue = newValue;
     _controller.add(newValue);
+    if (autoClearValue) {
+      try {
+        dynamic clear;
+        latestError = null;
+        latestValue = clear;
+        _controller.add(clear);
+      } catch (e) {
+        assert(() {
+          l.e(e);
+          return true;
+        }());
+      }
+    }
   }
 
   /// 发送错误事件
+  @callPoint
   void addError(Object error) {
     latestError = error;
     _controller.addError(error);
@@ -46,21 +65,36 @@ class LiveStreamController<T> {
 
   /// 监听流
   /// [allowBackward] 是否允许回溯, 是否发送最后一个值
-  void listen(
+  /// [autoCancel] 当[onData]返回true时, 是否自动取消监听
+  @callPoint
+  StreamSubscription<T> listen(
     Function(T) onData, {
     Function? onError,
     void Function()? onDone,
     bool? cancelOnError,
     bool allowBackward = true,
+    bool autoCancel = false,
   }) {
-    if (allowBackward) {
+    if (!autoClearValue && allowBackward) {
       onData(latestValue);
     }
-    _controller.stream.listen(onData,
-        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    if (autoCancel) {
+      StreamSubscription<T>? subscription;
+      subscription = _controller.stream.listen((event) async {
+        final cancel = await onData(event);
+        if (cancel) {
+          subscription?.cancel();
+        }
+      }, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+      return subscription;
+    } else {
+      return _controller.stream.listen(onData,
+          onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    }
   }
 
   /// 关闭流, 关闭之后不能调用[add]方法
+  @callPoint
   Future<void> close() {
     return _controller.close();
   }
@@ -188,5 +222,31 @@ class _NewStreamWithInitialValueTransformer<T>
 extension _StreamNewStreamWithInitialValue<T> on Stream<T> {
   Stream<T> newStreamWithInitialValue(T initialValue) {
     return transform(_NewStreamWithInitialValueTransformer(initialValue));
+  }
+}
+
+mixin StreamSubscriptionMixin<T extends StatefulWidget> on State<T> {
+  final List<StreamSubscription> _streamSubscriptions = [];
+
+  hookStreamSubscription(StreamSubscription subscription) {
+    _streamSubscriptions.add(subscription);
+  }
+
+  @override
+  void dispose() {
+    for (var element in _streamSubscriptions) {
+      element.cancel();
+    }
+    _streamSubscriptions.clear();
+    super.dispose();
+  }
+}
+
+extension StreamSubscriptionEx<T> on StreamSubscription<T> {
+  /// 取消订阅
+  void cancelWhen(StreamSubscription? other) {
+    other?.onDone(() {
+      cancel();
+    });
   }
 }
