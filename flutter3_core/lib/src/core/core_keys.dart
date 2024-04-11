@@ -15,8 +15,14 @@ final class CoreKeys {
   set test(String? value) {
     "test".hivePut(value);
   }
+
+  /// 当前是否是调试标识
+  bool get isDebugFlag => "isDebugFlag".hiveGet<bool>(isDebug) ?? isDebug;
 }
 
 /// CoreKeys的实例
 @globalInstance
 final coreKeys = CoreKeys._();
+
+/// [CoreKeys.isDebugFlag]
+bool get isDebugFlag => coreKeys.isDebugFlag;
