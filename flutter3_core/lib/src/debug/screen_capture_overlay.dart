@@ -14,6 +14,7 @@ class ScreenCaptureOverlay {
     if (image == null) {
       toastInfo('截屏失败');
     } else {
+      addToShareLogPath(path);
       showOverlay((entry, state, context, progress) {
         return OpacityNotification(
           builder: (context) => _ScreenCaptureOverlayWidget(

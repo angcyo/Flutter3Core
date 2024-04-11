@@ -20,6 +20,29 @@ part of '../../flutter3_basics.dart';
   }
 }*/
 
+/// 临时需要分享的日志路径, 触发分享后清空
+final List<String> tempShareLogPathList = [];
+
+/// 需要分享的日志路径, 全局共享
+final List<String> globalShareLogPathList = [];
+
+/// 添加一个临时的日志分享路径
+/// [temp] 是否是临时的
+@callPoint
+void addToShareLogPath(String path, {bool temp = true}) {
+  if (temp) {
+    tempShareLogPathList.add(path);
+  } else {
+    globalShareLogPathList.add(path);
+  }
+}
+
+/// 清空临时的日志分享路径
+@callPoint
+void clearTempShareLogPath() {
+  tempShareLogPathList.clear();
+}
+
 /// [randomString]
 String randomText([int? length]) => randomString(length);
 
