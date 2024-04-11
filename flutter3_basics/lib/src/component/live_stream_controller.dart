@@ -4,7 +4,9 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/04/09
 ///
-/// 支持存储最后一个值的[StreamController]
+/// 支持存储最后一个值的[StreamController], 广播流
+/// 支持自动清理
+/// 支持错误状态存储
 class LiveStreamController<T> {
   /// 最后一个值
   T latestValue;
