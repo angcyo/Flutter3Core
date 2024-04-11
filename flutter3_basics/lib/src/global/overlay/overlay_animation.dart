@@ -7,7 +7,8 @@ part of '../../../flutter3_basics.dart';
 ///
 
 /// [OverlayEntry] 动画驱动小部件
-class _OverlayAnimated extends StatefulWidget {
+class OverlayAnimated extends StatefulWidget {
+  /// 自动销毁的时长
   /// The total duration of overlay display.
   /// [Duration.zero] means overlay display forever.
   final Duration duration;
@@ -25,7 +26,7 @@ class _OverlayAnimated extends StatefulWidget {
 
   final Key overlayKey;
 
-  const _OverlayAnimated({
+  const OverlayAnimated({
     required Key key,
     required this.animationDuration,
     required this.reverseAnimationDuration,
@@ -40,10 +41,10 @@ class _OverlayAnimated extends StatefulWidget {
         super(key: key);
 
   @override
-  _OverlayAnimatedState createState() => _OverlayAnimatedState();
+  OverlayAnimatedState createState() => OverlayAnimatedState();
 }
 
-class _OverlayAnimatedState extends State<_OverlayAnimated>
+class OverlayAnimatedState extends State<OverlayAnimated>
     with TickerProviderStateMixin {
   late AnimationController _controller;
 
@@ -53,7 +54,8 @@ class _OverlayAnimatedState extends State<_OverlayAnimated>
   bool _dismissed = false;
   final Completer _dismissedCompleter = Completer();
 
-  /// 使用动画的方式显示[OverlayEntry]
+  /// 使用动画的方式显示[OverlayEntry], 就是执行动画
+  /// [hide]
   void show() {
     _autoHideOperation?.cancel();
     _controller.forward(from: _controller.value);
@@ -61,7 +63,7 @@ class _OverlayAnimatedState extends State<_OverlayAnimated>
 
   /// 使用动画的方式隐藏[OverlayEntry]
   /// [immediately] True to dismiss notification immediately. 立即执行
-  ///
+  /// [show]
   Future hide({bool immediately = false}) async {
     if (!immediately &&
         !_controller.isDismissed &&
@@ -206,7 +208,7 @@ class BottomSlideNotification extends StatelessWidget {
   }
 }
 
-/// 透明滑动动画
+/// 透明渐变动画
 class OpacityNotification extends StatelessWidget {
   ///build notification content
   final WidgetBuilder builder;

@@ -7,10 +7,10 @@ part of '../flutter3_app.dart';
 ///
 
 /// 临时需要分享的日志路径, 触发分享后清空
-const List<String> _tempShareLogPathList = [];
+final List<String> _tempShareLogPathList = [];
 
 /// 需要分享的日志路径, 全局共享
-const List<String> _globalShareLogPathList = [];
+final List<String> _globalShareLogPathList = [];
 
 /// 添加一个临时的日志分享路径
 /// [temp] 是否是临时的

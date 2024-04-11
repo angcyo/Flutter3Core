@@ -115,7 +115,7 @@ class _SlideDismissible extends StatelessWidget {
 
   final DismissDirection direction;
 
-  final GlobalKey<_OverlayAnimatedState> overlayAnimatedStateKey;
+  final GlobalKey<OverlayAnimatedState> overlayAnimatedStateKey;
 
   const _SlideDismissible({
     Key? key,

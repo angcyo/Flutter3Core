@@ -7,16 +7,26 @@ part of '../../flutter3_basics.dart';
 ///
 
 /// The length of time the notification is fully displayed.
-Duration kNotificationDuration = const Duration(milliseconds: 2000);
+const Duration kNotificationDuration = Duration(milliseconds: 2000);
 
 /// Notification display or hidden animation duration.
-Duration kNotificationSlideDuration = const Duration(milliseconds: 300);
+const Duration kNotificationSlideDuration = Duration(milliseconds: 300);
 
 /// To build a widget with animated value.
 /// [progress] : the progress of overlay animation from 0 - 1
 ///
 typedef OverlayAnimatedWidgetBuilder = Widget Function(
-    BuildContext context, double progress);
+  BuildContext context,
+  double progress,
+);
+
+/// [OverlayAnimatedWidgetBuilder]
+typedef OverlayEntryAnimatedWidgetBuilder = Widget Function(
+  OverlayEntry entry,
+  OverlayAnimatedState state,
+  BuildContext context,
+  double progress,
+);
 
 /// 动画类型
 enum OverlayAnimate {
@@ -131,7 +141,7 @@ toastInfo(
 
 /// 显示一个简单的通知
 /// [showNotification]的简单封装
-showSimpleNotification(
+OverlayEntry? showSimpleNotification(
   Widget content, {
   /// 通知的背景颜色
   Color? background,
@@ -162,7 +172,7 @@ showSimpleNotification(
   /// See more [ListTile.contentPadding].
   EdgeInsetsGeometry? contentPadding,
 }) {
-  final stateKey = GlobalKey<_OverlayAnimatedState>();
+  final stateKey = GlobalKey<OverlayAnimatedState>();
   final dismissDirection = slideDismissDirection ?? DismissDirection.none;
 
   //判断背景颜色是否是亮色, 亮色用默认的文本图标颜色
@@ -195,26 +205,26 @@ showSimpleNotification(
       child: child,
     );
   }
-  showNotification((context) {
+  return showNotification((context) {
     return child;
   }, position: position, animate: animate);
 }
 
 /// 显示一个通知
 /// [showOverlay]的简单封装
-showNotification(
+OverlayEntry? showNotification(
   WidgetBuilder builder, {
-  Duration? duration,
+  Duration? duration = kNotificationDuration,
   Duration? animationDuration,
   Duration? reverseAnimationDuration,
   Key? key,
-  Key? overlayStateKey,
+  GlobalKey<OverlayAnimatedState>? overlayStateKey,
   OverlayPosition position = OverlayPosition.center,
   OverlayAnimate? animate,
   BuildContext? context,
 }) {
-  showOverlay(
-    (context, progress) {
+  return showOverlay(
+    (entry, state, context, progress) {
       Widget content;
       OverlayAnimate anim;
       if (animate == null) {
@@ -282,12 +292,12 @@ showNotification(
 /// [Navigator.of]
 /// [NavigatorState.overlay]
 OverlayEntry? showOverlay(
-  OverlayAnimatedWidgetBuilder builder, {
+  OverlayEntryAnimatedWidgetBuilder builder, {
   BuildContext? context,
   Curve? curve,
   Duration? duration,
   Key? key,
-  Key? overlayStateKey,
+  GlobalKey<OverlayAnimatedState>? overlayStateKey,
   Duration? animationDuration,
   Duration? reverseAnimationDuration,
 }) {
@@ -321,19 +331,22 @@ OverlayEntry? showOverlay(
     return null;
   }
   final overlayKey = key ?? UniqueKey();
-  final stateKey = overlayStateKey ?? GlobalKey<_OverlayAnimatedState>();
-  OverlayEntry entry = OverlayEntry(
+  final stateKey = overlayStateKey ?? GlobalKey<OverlayAnimatedState>();
+
+  OverlayEntry? entry;
+  entry = OverlayEntry(
     builder: (context) {
       return KeyedSubtree(
         key: key,
-        child: _OverlayAnimated(
+        child: OverlayAnimated(
           key: stateKey,
-          builder: builder,
+          builder: (context, progress) => builder(entry!,
+              stateKey.currentState as OverlayAnimatedState, context, progress),
           curve: curve,
           animationDuration: animationDuration ?? kNotificationSlideDuration,
           reverseAnimationDuration:
               reverseAnimationDuration ?? kNotificationSlideDuration,
-          duration: duration ?? kNotificationDuration,
+          duration: duration ?? Duration.zero,
           overlayKey: overlayKey,
         ),
       );

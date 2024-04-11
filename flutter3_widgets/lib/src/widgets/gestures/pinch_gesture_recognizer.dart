@@ -17,12 +17,20 @@ class PinchGestureWidget extends SingleChildRenderObjectWidget {
   /// 捏合手势触发的回调
   final ui.VoidCallback? onPinchAction;
 
+  /// 开启多指长按检测
+  final Duration? multiLongPressDuration;
+
+  /// 多指长按触发的回调
+  final ui.VoidCallback? onMultiLongPressDurationAction;
+
   const PinchGestureWidget({
     super.key,
     super.child,
     this.pinchPointer = 4,
     this.pinchThreshold = 100,
     this.onPinchAction,
+    this.multiLongPressDuration,
+    this.onMultiLongPressDurationAction,
   });
 
   @override
@@ -30,7 +38,8 @@ class PinchGestureWidget extends SingleChildRenderObjectWidget {
         pinchPointer,
         pinchThreshold,
         onPinchAction,
-      );
+        onMultiLongPressDurationAction,
+      )..multiLongPressDuration = multiLongPressDuration;
 
   @override
   void updateRenderObject(BuildContext context, PinchGestureBox renderObject) {
@@ -38,7 +47,9 @@ class PinchGestureWidget extends SingleChildRenderObjectWidget {
     renderObject
       ..pinchPointer = pinchPointer
       ..pinchThreshold = pinchThreshold
-      ..onPinchAction = onPinchAction;
+      ..onPinchAction = onPinchAction
+      ..multiLongPressDuration = multiLongPressDuration
+      ..onMultiLongPressDurationAction = onMultiLongPressDurationAction;
   }
 
   @override
@@ -66,7 +77,15 @@ class PinchGestureBox extends RenderProxyBox
   /// 捏合手势触发的回调
   ui.VoidCallback? onPinchAction;
 
-  PinchGestureBox(this.pinchPointer, this.pinchThreshold, this.onPinchAction);
+  /// 多指长按触发的回调
+  ui.VoidCallback? onMultiLongPressDurationAction;
+
+  PinchGestureBox(
+    this.pinchPointer,
+    this.pinchThreshold,
+    this.onPinchAction,
+    this.onMultiLongPressDurationAction,
+  );
 
   @override
   bool hitTestSelf(ui.Offset position) => true;
@@ -102,6 +121,11 @@ class PinchGestureBox extends RenderProxyBox
       }
     }
     return super.handleMultiPointerDetectorPointerEvent(event);
+  }
+
+  @override
+  void onSelfMultiLongPress() {
+    onMultiLongPressDurationAction?.call();
   }
 
   @override

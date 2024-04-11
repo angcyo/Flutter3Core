@@ -473,9 +473,20 @@ mixin MultiPointerDetectorMixin {
       pointerDownMap[event.pointer] = event;
       pointerMoveMap[event.pointer] = event;
       pointerMoveLastMap[event.pointer] = event;
+      startCheckMultiLongPress();
     } else if (event.isPointerMove) {
       //手势移动
       pointerMoveMap[event.pointer] = event;
+      if (isEnableMultiLongPress) {
+        if (isHaveMoveDeltaExceedX(isSameDirection: false) ||
+            isHaveMoveDeltaExceedY(isSameDirection: false)) {
+          //有手势移动, 取消长按检查
+          stopCheckMultiLongPress();
+        }
+      }
+    } else if (event.isPointerFinish) {
+      //有手势抬起, 取消长按检查
+      stopCheckMultiLongPress();
     }
     //2---
     if (handleMultiPointerDetectorPointerEvent(event)) {
@@ -496,15 +507,15 @@ mixin MultiPointerDetectorMixin {
     }
   }
 
+  /// 处理多指操作事件
+  @overridePoint
+  bool handleMultiPointerDetectorPointerEvent(PointerEvent event) => false;
+
   /// 重置数据
   void resetPointerMap(Map from, Map to) {
     from.clear();
     from.addAll(to);
   }
-
-  /// 处理多指操作事件
-  @overridePoint
-  bool handleMultiPointerDetectorPointerEvent(PointerEvent event) => false;
 
   /// 第一个手指移动的距离
   Offset firstMoveDownDelta() {
@@ -561,7 +572,11 @@ mixin MultiPointerDetectorMixin {
 
   /// 所有手指移动的距离是否大于指定的阈值, 并且是同方向的
   /// [isSameDirection] 是否是同方向
-  bool isAllMoveDeltaExceedX(double threshold, [bool isSameDirection = true]) {
+  /// [kTouchSlop]
+  bool isAllMoveDeltaExceedX({
+    double threshold = kTouchSlop,
+    bool isSameDirection = true,
+  }) {
     final offsetList = getPointerDeltaList(pointerMoveMap, pointerDownMap);
     if (offsetList.isNotEmpty) {
       int? direction;
@@ -584,7 +599,11 @@ mixin MultiPointerDetectorMixin {
     return false;
   }
 
-  bool isAllMoveDeltaExceedY(double threshold, [bool isSameDirection = true]) {
+  /// [kTouchSlop]
+  bool isAllMoveDeltaExceedY({
+    double threshold = kTouchSlop,
+    bool isSameDirection = true,
+  }) {
     final offsetList = getPointerDeltaList(pointerMoveMap, pointerDownMap);
     if (offsetList.isNotEmpty) {
       int? direction;
@@ -606,6 +625,98 @@ mixin MultiPointerDetectorMixin {
     }
     return false;
   }
+
+  /// 判断是否有手指的移动距离达到阈值
+  /// [isHaveMoveDeltaExceedX]
+  /// [isHaveMoveDeltaExceedY]
+  bool isHaveMoveDeltaExceedX({
+    double threshold = kTouchSlop,
+    bool isSameDirection = false,
+  }) {
+    final offsetList = getPointerDeltaList(pointerMoveMap, pointerDownMap);
+    if (offsetList.isNotEmpty) {
+      int? direction;
+      for (var offset in offsetList) {
+        if (offset.dx.abs() >= threshold) {
+          //y轴移动距离超过阈值
+          if (isSameDirection) {
+            //还需要判断同方向
+            int d = offset.dx > 0 ? 1 : -1;
+            direction ??= d;
+            if (direction != d) {
+              return false;
+            }
+          } else {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /// [isHaveMoveDeltaExceedX]
+  /// [isHaveMoveDeltaExceedY]
+  bool isHaveMoveDeltaExceedY({
+    double threshold = kTouchSlop,
+    bool isSameDirection = false,
+  }) {
+    final offsetList = getPointerDeltaList(pointerMoveMap, pointerDownMap);
+    if (offsetList.isNotEmpty) {
+      int? direction;
+      for (var offset in offsetList) {
+        if (offset.dy.abs() >= threshold) {
+          //y轴移动距离超过阈值
+          if (isSameDirection) {
+            //还需要判断同方向
+            int d = offset.dy > 0 ? 1 : -1;
+            direction ??= d;
+            if (direction != d) {
+              return false;
+            }
+          } else {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  // ---多指长按检测---
+
+  /// 多指长按检测时长, 同时也是开启此功能的标志
+  Duration? multiLongPressDuration;
+
+  Timer? _multiLongPressTimer;
+
+  /// 是否开启多指同时长按检测
+  bool get isEnableMultiLongPress => multiLongPressDuration != null;
+
+  /// 开始检查多指同时长按
+  /// [kTouchSlop]
+  void startCheckMultiLongPress() {
+    stopCheckMultiLongPress();
+    final duration = multiLongPressDuration;
+    if (duration == null) {
+      return;
+    }
+    final timer = Timer(duration, () {
+      stopCheckMultiLongPress();
+      onSelfMultiLongPress();
+    });
+    _multiLongPressTimer = timer;
+  }
+
+  /// 停止检查长按
+  void stopCheckMultiLongPress() {
+    _multiLongPressTimer?.cancel();
+    _multiLongPressTimer = null;
+  }
+
+  /// 多指同时长按事件触发
+  @overridePoint
+  void onSelfMultiLongPress() {}
 }
 
 /// fling 快速滑动探测
