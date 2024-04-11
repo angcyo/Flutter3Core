@@ -21,29 +21,23 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
     final globalConfig = GlobalConfig.of(context);
     return [
       [
-        GradientButton.normal(
-            onTap: () {
-              globalConfig.shareAppLogFn?.call(context, runtimeType);
-            },
-            child: "分享App日志".text()),
-        GradientButton.normal(
-            onTap: () {
-              context.pushWidget(const DebugFilePage()).get((value, error) {
-                l.i("返回结果:$value");
-              });
-            },
-            child: "App文件管理".text()),
-        GradientButton.normal(
-            onTap: () async {
-              final path = await cacheFilePath("ScreenCapture${nowTime()}.png");
-              final image = await saveScreenCapture(path);
-              if (image == null) {
-                toastInfo('截屏失败');
-              } else {
-                toastInfo('截屏成功:$path');
-              }
-            },
-            child: "截屏".text()),
+        GradientButton.normal(() {
+          globalConfig.shareAppLogFn?.call(context, runtimeType);
+        }, child: "分享App日志".text()),
+        GradientButton.normal(() {
+          context.pushWidget(const DebugFilePage()).get((value, error) {
+            l.i("返回结果:$value");
+          });
+        }, child: "App文件管理".text()),
+        GradientButton.normal(() async {
+          final path = await cacheFilePath("ScreenCapture${nowTime()}.png");
+          final image = await saveScreenCapture(path);
+          if (image == null) {
+            toastInfo('截屏失败');
+          } else {
+            toastInfo('截屏成功:$path');
+          }
+        }, child: "截屏".text()),
       ].wrap()!.paddingAll(kX),
     ];
   }

@@ -54,11 +54,11 @@ class GradientButton extends StatelessWidget {
     this.maxHeight = double.infinity,
   });
 
-  const GradientButton.normal({
+  const GradientButton.normal(
+    this.onTap, {
     super.key,
     this.color,
     this.colors,
-    required this.onTap,
     required this.child,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
