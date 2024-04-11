@@ -1000,9 +1000,10 @@ extension WidgetEx on Widget {
           : this;
 
   /// 着色, 可以实现线性着色效果, 高光效果
-  /// [ShaderMask]
+  /// [ShaderMask]->[ShaderMaskLayer]
   /// [ColorFiltered]
   /// [colorFiltered]
+  /// https://pub.dev/packages/shimmer
   Widget shaderMask(
     ui.Shader? shader, {
     BlendMode blendMode = BlendMode.modulate,

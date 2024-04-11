@@ -575,6 +575,11 @@ extension StringEx on String {
 
   double? toDoubleOrNull() => double.tryParse(this);
 
+  /// 字符串转换成布尔
+  bool toBool() => bool.parse(this, caseSensitive: false);
+
+  bool? toBoolOrNull() => bool.tryParse(this, caseSensitive: false);
+
   /// 字符`#ffaabbcc`转换成Color对象
   Color toColor() => ColorEx.fromHex(this);
 

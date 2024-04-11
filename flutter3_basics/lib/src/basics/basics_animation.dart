@@ -5,7 +5,7 @@ part of '../../flutter3_basics.dart';
 /// @since 2023/11/22
 ///
 /// 动画相关小部件
-/// [ShaderMask] 着色器,遮罩. 可以实现闪光灯效果
+/// [ShaderMask]->[ShaderMaskLayer]着色器,遮罩. 可以实现闪光灯效果 https://pub.dev/packages/shimmer
 /// - [WheelPicker]
 /// - [_WheelPickerState._centerColorShaderMaskWrapper]
 /// - [flutter_animate]

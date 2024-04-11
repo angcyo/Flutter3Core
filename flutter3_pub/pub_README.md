@@ -331,10 +331,13 @@ https://github.com/fluttercommunity/plus_plugins
 - [palette_generator: ^0.3.3+3](https://pub.dev/packages/palette_generator) 一个 Flutter 包，用于从图像中提取突出的颜色，通常用于查找用户界面的颜色。
 - [leak_tracker: ^10.0.4](https://pub.dev/packages/leak_tracker) 一个用于检测内存泄漏的 Flutter 插件。
 - [modal_bottom_sheet: ^3.0.0](https://pub.dev/packages/modal_bottom_sheet) 创建令人敬畏且功能强大的模态底板。
+- [shimmer: ^3.0.0](https://pub.dev/packages/shimmer) 一个 Flutter 包，用于创建闪烁效果。
 
 ## 平台特有
 
 - [keep_screen_on: ^3.0.0](https://pub.dev/packages/keep_screen_on) 该插件禁用自动屏幕关闭并防止屏幕关闭。
+- [vibration: ^1.8.4](https://pub.dev/packages/vibration) 一个 Flutter 插件，用于在 Android 和 iOS 上控制设备振动。
+- [haptic_feedback: ^0.4.2](https://pub.dev/packages/haptic_feedback) 一个 Flutter 插件，用于在 Android 和 iOS 上触发触觉反馈。
 - [camera: ^0.10.5+5](https://pub.dev/packages/camera) 适用于 iOS、Android 和 Web 的 Flutter 插件，允许访问设备摄像头。
 - [quick_actions: ^1.0.6](https://pub.dev/packages/quick_actions) 这个 Flutter 插件允许您管理应用程序的主屏幕快速操作并与之交互。
 - [awesome_notifications: ^0.8.2](https://pub.dev/packages/awesome_notifications) 在 Flutter 上使用自定义本地和推送通知吸引用户。获取实时事件，绝不会错过用户与 Awesome Notifications 的互动。
