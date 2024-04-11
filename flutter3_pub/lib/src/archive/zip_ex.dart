@@ -64,14 +64,19 @@ extension ZipEx on String {
 extension ZipListEx on List<String> {
   /// 压缩所有文件/文件夹到指定文件
   /// [ZipFileEncoder.zipDirectoryAsync]
+  /// [ZipFileEncoderEx.writeString]
   Future<void> zip(
     String outputPath, {
     int? level = ZipFileEncoder.GZIP,
     DateTime? modified,
+    FutureOr Function(ZipFileEncoder zipEncoder)? action,
   }) async {
     final encoder = ZipFileEncoder();
     encoder.create(outputPath, modified: modified ?? DateTime.now());
     await zipEncoder(encoder);
+    if (action != null) {
+      await action(encoder);
+    }
     encoder.close();
   }
 
