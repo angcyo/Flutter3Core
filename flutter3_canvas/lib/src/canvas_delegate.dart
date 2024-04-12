@@ -271,13 +271,20 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 当[CanvasViewBox]视口发生变化时触发
   /// [CanvasViewBox.changeMatrix]
   void dispatchCanvasViewBoxChanged(
-      CanvasViewBox canvasViewBox, bool isCompleted) {
+    CanvasViewBox canvasViewBox,
+    bool isInitialize,
+    bool isCompleted,
+  ) {
     canvasElementManager.canvasElementControlManager.updateControlBounds();
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     CanvasViewBoxChangedNotification(canvasViewBox, isCompleted)
         .dispatch(delegateContext);
     _eachCanvasListener((element) {
-      element.onCanvasViewBoxChangedAction?.call(canvasViewBox, isCompleted);
+      element.onCanvasViewBoxChangedAction?.call(
+        canvasViewBox,
+        isInitialize,
+        isCompleted,
+      );
     });
     refresh();
   }

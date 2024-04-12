@@ -76,25 +76,20 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   void updatePaintBounds(Size size, bool isInitialize) {
     paintBounds = Offset.zero & size;
 
-    if (isDebug) {
-      double deflate = 50;
-      canvasBounds = paintBounds.deflate(deflate);
-    } else {
-      var axisManager = canvasDelegate.canvasPaintManager.axisManager;
-      canvasBounds = Rect.fromLTRB(
-        paintBounds.left + axisManager.yAxisWidth,
-        paintBounds.top + axisManager.yAxisWidth,
-        paintBounds.right,
-        paintBounds.bottom,
-      );
-    }
+    final axisManager = canvasDelegate.canvasPaintManager.axisManager;
+    canvasBounds = Rect.fromLTRB(
+      paintBounds.left + axisManager.yAxisWidth,
+      paintBounds.top + axisManager.yAxisWidth,
+      paintBounds.right,
+      paintBounds.bottom,
+    );
 
     if (isInitialize) {
       postCallback(() {
-        canvasDelegate.dispatchCanvasViewBoxChanged(this, true);
+        canvasDelegate.dispatchCanvasViewBoxChanged(this, isInitialize, true);
       });
     } else {
-      canvasDelegate.dispatchCanvasViewBoxChanged(this, true);
+      canvasDelegate.dispatchCanvasViewBoxChanged(this, isInitialize, true);
     }
   }
 
@@ -194,12 +189,12 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
         final matrix = matrixTween.lerp(value);
         canvasMatrix.setFrom(matrix);
         completedAction?.call(isCompleted);
-        canvasDelegate.dispatchCanvasViewBoxChanged(this, isCompleted);
+        canvasDelegate.dispatchCanvasViewBoxChanged(this, false, isCompleted);
       });
     } else {
       canvasMatrix.setFrom(_checkMatrix(target));
       completedAction?.call(true);
-      canvasDelegate.dispatchCanvasViewBoxChanged(this, true);
+      canvasDelegate.dispatchCanvasViewBoxChanged(this, false, true);
     }
     //canvasMatrix.clone();
     //canvasMatrix.setFrom(arg)
