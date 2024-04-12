@@ -8,12 +8,14 @@ part of '../../flutter3_core.dart';
 /// 日志文件的最大大小字节
 const kMaxLogLength = 2 * 1024 * 1024; //2M
 /// 日志文件的扩展名
-const kLogExtension = ".log";
-const kLFileName = "l.log";
-const kLogFileName = "log.log";
-const kErrorFileName = "error.log";
-const kHttpFileName = "http.log";
-const kLogPathName = "log";
+const kLogExtension = ".log"; //日志文件后缀
+const kLFileName = "l.log"; //常规操作日志
+const kLogFileName = "log.log"; //特殊日志文件
+const kBleFileName = "ble.log"; //蓝牙机器操作日志
+const kErrorFileName = "error.log"; //错误日志
+const kHttpFileName = "http.log"; //网络请求日志
+const kPerfFileName = "perf.log"; //性能相关日志
+const kLogPathName = "log"; //日志文件夹
 
 /// 当前支持写入文件的数据类型
 /// [UiImage]
@@ -130,43 +132,72 @@ extension LogEx on Object {
   }
 
   /// 写入内容到日志文件
+  /// [level] 日志等级, 用于输出日志
   /// @return 返回文件路径
   Future<File> appendToLog({
     String fileName = kLogFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
+    int level = L.none,
+    int forward = 4,
   }) async {
+    //debugger();
+    l.log(this, level: level, forward: forward);
     return appendToFile(
-        fileName: fileName, folder: folder, limitLength: limitLength);
+      fileName: fileName,
+      folder: folder,
+      limitLength: limitLength,
+    );
   }
 
-  /// 写入内容到日志文件, 同步方法
+  /// 写入内容到日志文件
   void writeToLog({
     String fileName = kLogFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
+    int level = L.debug,
+    int forward = 5,
   }) {
-    unawaited(appendToFile(
-        fileName: fileName, folder: folder, limitLength: limitLength));
+    unawaited(appendToLog(
+      fileName: fileName,
+      folder: folder,
+      limitLength: limitLength,
+      level: level,
+      forward: forward,
+    ));
   }
 
-  /// 写入内容到日志文件, 同步方法
+  /// 写入内容到日志文件
   void writeToErrorLog({
     String fileName = kErrorFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
+    int level = L.error,
+    int forward = 5,
   }) {
-    unawaited(appendToFile(
-        fileName: fileName, folder: folder, limitLength: limitLength));
+    unawaited(appendToLog(
+      fileName: fileName,
+      folder: folder,
+      limitLength: limitLength,
+      level: level,
+      forward: forward,
+    ));
   }
 
-  /// 写入内容到日志文件, 同步方法
+  /// 写入内容到日志文件
   void writeToHttpLog({
     String fileName = kHttpFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
+    int level = L.none,
+    int forward = 5,
   }) {
-    unawaited(appendToFile(
-        fileName: fileName, folder: folder, limitLength: limitLength));
+    unawaited(appendToLog(
+      fileName: fileName,
+      folder: folder,
+      limitLength: limitLength,
+      level: level,
+      forward: forward,
+    ));
   }
 }

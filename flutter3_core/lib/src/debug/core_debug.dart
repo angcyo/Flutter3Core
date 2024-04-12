@@ -76,6 +76,14 @@ class CoreDebug {
             key = key.toLowerCase();
             switch (key) {
               case "cmd":
+                switch (type) {
+                  case "clear":
+                    //删除hawk的键
+                    //@cmd#clear=key
+                    valueString.hiveDelete();
+                    match = true;
+                    break;
+                }
                 break;
               default:
                 //@key#int=value

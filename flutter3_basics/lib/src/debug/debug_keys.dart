@@ -10,6 +10,7 @@ typedef DebugKeyChanged = void Function(String key, dynamic value);
 typedef DebugValueChanged = void Function(dynamic value);
 typedef DebugInputValueChanged = void Function(String value);
 
+/// [CoreDebug.parseHiveKeys]
 final class DebugKeys {
   /// 声明一个监听key/value变化的对象
   static final List<DebugKeyChanged> _debugKeyChangedList = [];

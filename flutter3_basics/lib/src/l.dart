@@ -38,16 +38,26 @@ class L {
   static L? _instance;
 
   /// 日志输出级别
-  static const int verbose = 0;
-  static const int debug = 1;
-  static const int info = 2;
-  static const int warn = 3;
-  static const int error = 4;
+  static const int none = 0;
+  static const int verbose = 1;
+  static const int debug = 2;
+  static const int info = 3;
+  static const int warn = 4;
+  static const int error = 5;
 
+  /// 是否显示日志时间
   static bool SHOW_TIME = true;
+
+  /// 日志时间格式
   static String TIME_PATTERN = "HH:mm:ss.SSS";
+
+  /// 是否显示日志等级字符串
   static bool SHOW_LEVEL = true;
+
+  /// 是否显示日志tag
   static bool SHOW_TAG = true;
+
+  /// tag
   static String TAG = 'angcyo';
 
   /// 日志输出函数
@@ -58,108 +68,148 @@ class L {
 
   /// 开始输出日志
   /// [object] 日志内容
-  log(Object? object,
-      {int level = debug,
-      String? tag,
-      bool? showTime,
-      bool? showLevel,
-      bool? showTag}) {
+  log(
+    Object? object, {
+    int level = debug,
+    String? tag,
+    bool? showTime,
+    bool? showLevel,
+    bool? showTag,
+    int forward = 3,
+  }) {
     if (level >= verbose) {
-      return _log(object,
-          level: level,
-          tag: tag,
-          showTime: showTime,
-          showLevel: showLevel,
-          showTag: showTag);
+      return _log(
+        object,
+        level: level,
+        tag: tag,
+        showTime: showTime,
+        showLevel: showLevel,
+        showTag: showTag,
+        forward: forward,
+      );
     }
   }
 
-  v(Object? object,
-      {int level = verbose,
-      String? tag,
-      bool? showTime,
-      bool? showLevel,
-      bool? showTag}) {
+  v(
+    Object? object, {
+    int level = verbose,
+    String? tag,
+    bool? showTime,
+    bool? showLevel,
+    bool? showTag,
+    int forward = 3,
+  }) {
     if (level >= verbose) {
-      return _log(object,
-          level: level,
-          tag: tag,
-          showTime: showTime,
-          showLevel: showLevel,
-          showTag: showTag);
+      return _log(
+        object,
+        level: level,
+        tag: tag,
+        showTime: showTime,
+        showLevel: showLevel,
+        showTag: showTag,
+        forward: forward,
+      );
     }
   }
 
-  d(Object? object,
-      {int level = debug,
-      String? tag,
-      bool? showTime,
-      bool? showLevel,
-      bool? showTag}) {
+  d(
+    Object? object, {
+    int level = debug,
+    String? tag,
+    bool? showTime,
+    bool? showLevel,
+    bool? showTag,
+    int forward = 3,
+  }) {
     if (level >= debug) {
-      return _log(object,
-          level: level,
-          tag: tag,
-          showTime: showTime,
-          showLevel: showLevel,
-          showTag: showTag);
+      return _log(
+        object,
+        level: level,
+        tag: tag,
+        showTime: showTime,
+        showLevel: showLevel,
+        showTag: showTag,
+        forward: forward,
+      );
     }
   }
 
-  i(Object? object,
-      {int level = info,
-      String? tag,
-      bool? showTime,
-      bool? showLevel,
-      bool? showTag}) {
+  i(
+    Object? object, {
+    int level = info,
+    String? tag,
+    bool? showTime,
+    bool? showLevel,
+    bool? showTag,
+    int forward = 3,
+  }) {
     if (level >= info) {
-      return _log(object,
-          level: level,
-          tag: tag,
-          showTime: showTime,
-          showLevel: showLevel,
-          showTag: showTag);
+      return _log(
+        object,
+        level: level,
+        tag: tag,
+        showTime: showTime,
+        showLevel: showLevel,
+        showTag: showTag,
+        forward: forward,
+      );
     }
   }
 
-  w(Object? object,
-      {int level = warn,
-      String? tag,
-      bool? showTime,
-      bool? showLevel,
-      bool? showTag}) {
+  w(
+    Object? object, {
+    int level = warn,
+    String? tag,
+    bool? showTime,
+    bool? showLevel,
+    bool? showTag,
+    int forward = 3,
+  }) {
     if (level >= warn) {
-      return _log(object,
-          level: level,
-          tag: tag,
-          showTime: showTime,
-          showLevel: showLevel,
-          showTag: showTag);
+      return _log(
+        object,
+        level: level,
+        tag: tag,
+        showTime: showTime,
+        showLevel: showLevel,
+        showTag: showTag,
+        forward: forward,
+      );
     }
   }
 
-  e(Object? object,
-      {int level = error,
-      String? tag,
-      bool? showTime,
-      bool? showLevel,
-      bool? showTag}) {
+  e(
+    Object? object, {
+    int level = error,
+    String? tag,
+    bool? showTime,
+    bool? showLevel,
+    bool? showTag,
+    int forward = 3,
+  }) {
     if (level >= error) {
-      return _log(object,
-          level: level,
-          tag: tag,
-          showTime: showTime,
-          showLevel: showLevel,
-          showTag: showTag);
+      return _log(
+        object,
+        level: level,
+        tag: tag,
+        showTime: showTime,
+        showLevel: showLevel,
+        showTag: showTag,
+        forward: forward,
+      );
     }
   }
 
-  String _log(Object? object,
-      {int level = debug,
-      String? tag,
-      bool? showTime,
-      bool? showLevel,
-      bool? showTag}) {
+  /// [forward] 向前追溯几个调用. 默认是3. 用来获取调用的文件,函数和行数
+  String _log(
+    Object? object, {
+    int level = debug,
+    String? tag,
+    bool? showTime,
+    bool? showLevel,
+    bool? showTag,
+    int forward = 3,
+  }) {
     final time = showTime ?? SHOW_TIME ? '${nowTimeString(TIME_PATTERN)} ' : '';
     final levelStr = showLevel ?? SHOW_LEVEL ? _levelStr(level) : '';
     final tagStr = showTag ?? SHOW_TAG ? '[${tag ?? TAG}] ' : '';
@@ -171,7 +221,7 @@ class L {
     final stackTrace = StackTrace.current.toString();
     final stackTraceList = stackTrace.split("\n");
     final lineStackTrace =
-        stackTraceList[math.min(3, stackTraceList.length) - 1];
+        stackTraceList[math.min(forward, stackTraceList.length) - 1];
     //获取当前的文件名称以及路径行号:列号
     final filePathStr = lineStackTrace.substring(
         lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));

@@ -37,7 +37,7 @@ Future<void> testHttp() async {
 }
 
 Future testSocket() async {
-  Socket.connect('192.168.2.209', 1111).get((value, error) {
+  Socket.connect('192.168.2.143', 1111).get((value, error) {
     consoleLog('1:$value $error');
   });
   Socket.connect('192.168.2.209', 1111).get((value, error) {

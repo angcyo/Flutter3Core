@@ -115,4 +115,7 @@ typedef FutureValueCallback<T> = FutureOr<T> Function([T value]);
 /// 回调一个值和一个错误
 typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
 
+/// 进度回调[0~1]
+typedef ProgressRatioCallback = dynamic Function(double progress);
+
 //endregion Fn

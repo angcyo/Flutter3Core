@@ -22,7 +22,7 @@ const kMinute = 60 * kSecond;
 const kSecond = 1000;
 
 /// [uuid]
-String get uuid_ => uuid();
+String get $uuid => uuid();
 
 /// ```
 /// // Generate a v1 (time-based) id
@@ -520,6 +520,9 @@ extension StringEx on String {
   /// [IntEx.ascii]
   /// [StringEx.ascii]
   int get ascii => codeUnitAt(0);
+
+  /// 判断当前字符串是否是ip字符串
+  bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
 
   /// 快速散列函数
   /// 针对 Dart 字符串优化的 64 位哈希算法 FNV-1a

@@ -123,9 +123,14 @@ class BytesWriter {
 class ByteReader {
   final List<int> bytes;
 
+  int get sumLength => bytes.length;
+
   ByteReader(this.bytes);
 
   int _index = 0;
+
+  /// 是否读取完毕
+  bool get isDone => _index >= sumLength;
 
   /// 读取一个字节
   int readByte() {
@@ -171,15 +176,18 @@ class ByteReader {
   }
 
   /// 读取一个其它字节数组
+  /// [length] 需要读取的字节长度
   List<int> readBytes(int length) {
-    final result = bytes.sublist(_index, _index + length);
+    final result = bytes.sublist(_index, math.min(_index + length, sumLength));
     _index += length;
     return result;
   }
 
-  /// 读取一个字符串
+  /// 读取指定字节长度的一个字符串
+  /// [length] 需要读取的字节长度
   String readString(int length) {
-    final result = utf8.decode(bytes.sublist(_index, _index + length),
+    final result = utf8.decode(
+        bytes.sublist(_index, math.min(_index + length, sumLength)),
         allowMalformed: true);
     _index += length;
     return result;
@@ -187,7 +195,8 @@ class ByteReader {
 
   /// 读取一个Hex字符串
   String readHex(int length) {
-    final result = bytes.sublist(_index, _index + length).toHex();
+    final result =
+        bytes.sublist(_index, math.min(_index + length, sumLength)).toHex();
     _index += length;
     return result;
   }
