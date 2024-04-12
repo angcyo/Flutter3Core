@@ -116,6 +116,8 @@ mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
 }
 
 /// 当[updateSignal]改变时, 自动触发重构
+/// [ValueNotifier]
+/// [UpdateValueNotifier]
 @dsl
 Widget rebuild(
   ValueNotifier updateSignal,
