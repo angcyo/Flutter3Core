@@ -219,10 +219,12 @@ extension DioFutureResponseEx<T> on Future<T> {
   ///
   /// (value as Iterable?)?.mapToList<ConnectDeviceBean>((e) => ConnectDeviceBean.fromJson(e))
   /// ```
+  /// [throwError] 遇到错误时, 是否抛出异常
   Future http(
     ValueErrorCallback? callback, {
     HttpResultHandle? resultHandle,
     bool? showErrorToast,
+    bool? throwError,
     String? codeKey,
     String? dataKey,
     String? messageKey,
@@ -237,10 +239,16 @@ extension DioFutureResponseEx<T> on Future<T> {
       //debugger();
       if (error != null) {
         callback?.call(response, resultHandle!.handleError(error));
+        if (throwError == true) {
+          throw error;
+        }
         return null;
       } else if (response == null) {
         var exception = RException(message: "response is null", cause: error);
         callback?.call(response, resultHandle!.handleError(exception));
+        if (throwError == true) {
+          throw exception;
+        }
         return null;
       } else {
         var data = resultHandle!.handleResponse(response);
@@ -250,6 +258,9 @@ extension DioFutureResponseEx<T> on Future<T> {
     }).catchError((error) {
       //debugger();
       callback?.call(null, resultHandle!.handleError(error));
+      if (throwError == true) {
+        throw error;
+      }
     });
   }
 }
