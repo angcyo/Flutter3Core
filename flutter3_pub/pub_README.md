@@ -379,3 +379,4 @@ https://github.com/fluttercommunity/plus_plugins
 - [media_kit: ^1.1.10+1](https://pub.dev/packages/media_kit) Flutter & Dart 的跨平台视频播放器和音频播放器。
 - [shared_preferences: ^2.2.2](https://pub.dev/packages/shared_preferences) 为简单数据包装特定于平台的持久性存储（iOS 和 macOS 上的 NSUserDefaults、Android 上的 SharedPreferences 等）。数据可能会异步持久化到磁盘，并且不能保证返回后写入会持久化到磁盘，因此此插件不得用于存储关键数据。
 - [file_preview: ^1.2.0](https://pub.dev/packages/file_preview) 使用file_preview可以像在使用Flutter weidget一样在andorid、ios页面中预览doc、docx、rtf、ppt、pptx、xls、xlsx、xlsm、csv、pdf、txt、epub、chm等文件。
+- [flutter_native_splash: ^2.4.0](https://pub.dev/packages/flutter_native_splash) 一个 Flutter 插件，用于自动生成 Android 和 iOS 的启动屏幕。
