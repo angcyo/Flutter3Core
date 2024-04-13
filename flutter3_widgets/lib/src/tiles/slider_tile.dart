@@ -28,6 +28,9 @@ class SliderTile extends StatefulWidget {
   /// 数值显示的最小宽度
   final double showValueMinWidth;
 
+  /// 小数位数
+  final int showValueDigits;
+
   //---slider---
 
   /// 是否显示值指示器
@@ -61,6 +64,7 @@ class SliderTile extends StatefulWidget {
     this.divisions,
     this.showValue = true,
     this.showValueMinWidth = 40,
+    this.showValueDigits = kDefaultDigits,
     this.padding = const EdgeInsets.symmetric(vertical: kL, horizontal: kX),
     this.value = 0,
     this.minValue = 0,
@@ -87,7 +91,7 @@ class _SliderTileState extends State<SliderTile> with TileMixin {
 
   @override
   Widget build(BuildContext context) {
-    final valueStr = _value.toDigits();
+    final valueStr = _value.toDigits(digits: widget.showValueDigits);
     return [
       widget.leadingWidget,
       SliderTheme(
