@@ -218,7 +218,7 @@ extension Uint8ListImageEx on Uint8List {
       'data:image/${format == UiImageByteFormat.png ? "png" : "jpeg"};base64,${base64Encode(this)}';
 }
 
-extension ImageEx on ui.Image {
+extension ImageEx on UiImage {
   /// 将图片转换成base64字符串图片, 带协议头
   Future<String?> toBase64(
       [UiImageByteFormat format = UiImageByteFormat.png]) async {
@@ -274,6 +274,33 @@ extension ImageEx on ui.Image {
           width: width,
           height: height,
           color: tintColor);
+
+  /// 将图片transform,得到一张新的图片
+  /// [transformSync]
+  Future<UiImage> transform(Matrix4 matrix) async {
+    final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
+    final newBounds = matrix.mapRect(bounds);
+    final image = await drawImage(newBounds.size, (canvas) {
+      final translate = Matrix4.identity()
+        ..translate(-newBounds.left, -newBounds.top);
+      canvas.transform((translate * matrix).storage);
+      canvas.drawImage(this, Offset.zero, Paint());
+    });
+    return image;
+  }
+
+  /// [transform]
+  UiImage transformSync(Matrix4 matrix) {
+    final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
+    final newBounds = matrix.mapRect(bounds);
+    final image = drawImageSync(newBounds.size, (canvas) {
+      final translate = Matrix4.identity()
+        ..translate(-newBounds.left, -newBounds.top);
+      canvas.transform((translate * matrix).storage);
+      canvas.drawImage(this, Offset.zero, Paint());
+    });
+    return image;
+  }
 }
 
 extension ImageStringEx on String {
