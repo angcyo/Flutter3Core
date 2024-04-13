@@ -1222,6 +1222,10 @@ class PaintProperty with EquatableMixin {
 
 /// 元素状态栈, 用来撤销和重做
 class ElementStateStack {
+  /// 是否保存了状态, 目前只有标识作用, 没有逻辑作用
+  @flagProperty
+  bool isSaveState = false;
+
   /// 操作的元素
   ElementPainter? element;
 
@@ -1236,16 +1240,18 @@ class ElementStateStack {
   @callPoint
   @mustCallSuper
   void saveFrom(ElementPainter element) {
+    isSaveState = true;
     this.element = element;
-    _save(element);
+    save(element);
   }
 
-  void _save(ElementPainter element) {
+  @overridePoint
+  void save(ElementPainter element) {
     propertyMap[element] = element.paintProperty?.copyWith();
     //stateMap[element] = element.paintState.copyWith();
     if (element is ElementGroupPainter) {
       element.children?.forEach((element) {
-        _save(element);
+        save(element);
       });
     }
   }
@@ -1271,14 +1277,14 @@ abstract class PropertyType {
   /// 绘制的相关属性, 比如坐标/缩放/旋转/倾斜等信息
   /// 支持回退的属性
   @supportUndo
-  static int paint = 0x01;
+  static const int paint = 0x01;
 
   /// 元素的状态改变, 比如锁定/可见性/uuid/名称等信息
-  static int state = 0x02;
+  static const int state = 0x02;
 
   /// 元素的数据改变, 比如内容等信息
   @supportUndo
-  static int data = 0x04;
+  static const int data = 0x04;
 }
 
 /// 诊断

@@ -21,5 +21,4 @@ part 'message_dialog.dart';
 part 'single_input_dialog.dart';
 part 'tile/cancel_button.dart';
 part 'tile/confirm_button.dart';
-part 'tile/icon_text_tile.dart';
 part 'tile/neutral_button.dart';

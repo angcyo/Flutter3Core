@@ -392,8 +392,10 @@ extension FutureEx<T> on Future<T> {
       this.get((value, error) {
         if (error != null) {
           get?.call(null, error);
+          return null;
         } else {
           get?.call(value, null);
+          return value;
         }
       }, stack);
 
@@ -448,6 +450,10 @@ extension ColorEx on Color {
     buffer.write(hexString.replaceFirst('#', ''));
     return Color(buffer.toString().toInt(radix: 16));
   }
+
+  /// 默认的[value]时argb
+  /// 这里返回rgba
+  int get rgbaValue => red << 24 | green << 16 | blue << 8 | alpha;
 
   /// 在已有的透明值上进行再次透明
   /// 使用一个增量透明比例创建一个新的颜色
@@ -1307,6 +1313,11 @@ extension ListIntEx on List<int> {
 
   /// [ListIntEx]
   String md5() => crypto.md5.convert(this).toString();
+
+  /// [ListIntEx]
+  /// [Uint8List]
+  /// `Uint8List implements List<int>, TypedData`
+  Uint8List get bytes => Uint8List.fromList(this);
 }
 
 /// [ListEx]

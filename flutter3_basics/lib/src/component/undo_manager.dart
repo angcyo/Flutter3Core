@@ -124,6 +124,7 @@ class UndoItem {
 
 /// 操作类型
 enum UndoType {
+  /// 无撤销/回调操作
   none,
 
   /// 普通操作, 才会被添加到回退栈

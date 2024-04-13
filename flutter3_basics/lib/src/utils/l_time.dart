@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// Debug 下用来打印耗时时间的工具类
@@ -11,7 +11,16 @@ part of flutter3_basics;
 /// [Timeline.finishSync]
 /// [Timeline.timeSync]
 /// [Stopwatch]
+/// ```
+/// final stopwatch = Stopwatch()..start();
+/// stopwatch.stop();
+/// stopwatch.elapsedMilliseconds
+/// ```
 ///
+/// ```
+/// lTime.tick();
+/// l.d(lTime.time());
+/// ```
 class LTime {
   LTime._();
 

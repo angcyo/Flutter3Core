@@ -17,7 +17,6 @@ import 'package:share_plus/share_plus.dart';
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:flutter3_core/flutter3_core.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
-export 'package:flutter3_widgets/flutter3_widgets.dart';
 export 'package:flutter_animate/flutter_animate.dart';
 export 'package:package_info_plus/package_info_plus.dart';
 export 'package:share_plus/share_plus.dart';

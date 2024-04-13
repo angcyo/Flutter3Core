@@ -16,7 +16,18 @@ class CanvasUndoManager extends UndoManager {
   }
 
   /// 添加一个可以撤销的操作
-  void addUntoState(ElementStateStack undoState, ElementStateStack redoState) {
+  @api
+  void addUntoState(
+    ElementStateStack? undoState,
+    ElementStateStack? redoState,
+  ) {
+    if (undoState == null || redoState == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
     add(UndoItem(() {
       undoState.restore();
     }, () {

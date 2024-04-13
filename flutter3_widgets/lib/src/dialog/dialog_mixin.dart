@@ -12,8 +12,12 @@ const String kDialogSave = '保存';
 
 /// 对话框的一些基础方法,一些基础约束
 mixin DialogMixin implements TranslationTypeImpl {
+  /// 对话框路径过度动画
   @override
   TranslationType get translationType => TranslationType.translationFade;
+
+  /// 弹出对话框时, 返回对话框的结果
+  dynamic get popDialogResult => null;
 
   //region ---对话框包裹---
 
@@ -144,7 +148,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         .pullBack(
           enablePullBack: enablePullBack,
           onPullBack: (context) {
-            context.pop();
+            closeDialogIf(context);
           },
         )
         .matchParent(matchHeight: false)
@@ -166,7 +170,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       CancelButton(
         useIcon: true,
         onTap: () {
-          Navigator.of(context).pop();
+          closeDialogIf(context);
         },
       ),
       title
@@ -181,7 +185,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         enable: enableConfirm,
         onTap: () {
           onConfirm?.call();
-          Navigator.of(context).pop();
+          closeDialogIf(context);
         },
       ),
     ].row()!;
@@ -195,7 +199,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   @callPoint
   void closeDialogIf(BuildContext context, [bool close = true]) {
     if (close) {
-      Navigator.of(context).pop();
+      context.pop(popDialogResult);
     }
   }
 

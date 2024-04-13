@@ -9,24 +9,51 @@ part of '../../flutter3_basics.dart';
 /// 图片元数据
 class ImageMeta {
   /// 图片对象
-  final ui.Image image;
+  final UiImage image;
 
   /// 图片的字节数据
   final Uint8List? bytes;
 
-  /// 图片的像素数据
+  /// 图片的像素数据, rgba格式 u8 u8 u8 u8 ... [r g b a ...]
   /// [UiImageByteFormat.rawRgba]
   final Uint8List? pixels;
 
-  /// 图片像素的格式
-  final UiImageByteFormat pixelsFormat;
+  /// 图片的字节格式
+  final UiImageByteFormat imageFormat;
+
+  /// 图片的颜色格式
+  final UiPixelFormat pixelsFormat;
+
+  //---
+
+  /// 图片字节数据的长度
+  int get length =>
+      bytes?.lengthInBytes ??
+      width *
+          height *
+          (imageFormat == UiImageByteFormat.rawExtendedRgba128 ? 16 : 4);
 
   int get width => image.width;
 
   int get height => image.height;
 
   ImageMeta(this.image, this.bytes, this.pixels,
-      {this.pixelsFormat = UiImageByteFormat.rawRgba});
+      {this.imageFormat = UiImageByteFormat.rawRgba,
+      this.pixelsFormat = UiPixelFormat.rgba8888});
+
+  /// [UiImage]转[ImageMeta]
+  static Future<ImageMeta> fromImage(UiImage image,
+      [UiImageByteFormat byteFormat = UiImageByteFormat.rawRgba]) async {
+    final pixels = await image.toPixels(byteFormat);
+    return ImageMeta(image, null, pixels, imageFormat: byteFormat);
+  }
+
+  /// [Uint8List]像素转[ImageMeta]
+  static Future<ImageMeta> fromPixel(Uint8List pixels, int width, int height,
+      [UiPixelFormat format = UiPixelFormat.rgba8888]) async {
+    final image = await pixels.toImageFromPixels(width, height);
+    return ImageMeta(image, null, pixels, pixelsFormat: format);
+  }
 }
 
 ///[MemoryImage]
@@ -265,7 +292,7 @@ extension ImageStringEx on String {
     final Uint8List bytes = await File(this).readAsBytes();
     final uiImage = await decodeImageFromList(bytes);
     final pixels = await uiImage.toPixels(pixelsFormat);
-    return ImageMeta(uiImage, bytes, pixels, pixelsFormat: pixelsFormat);
+    return ImageMeta(uiImage, bytes, pixels, imageFormat: pixelsFormat);
   }
 
   /// 从文件路径中读取图片

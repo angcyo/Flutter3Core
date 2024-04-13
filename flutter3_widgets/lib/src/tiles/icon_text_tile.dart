@@ -1,10 +1,10 @@
-part of '../dialog.dart';
+part of '../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/03/21
 ///
-/// 左[icon],接着[text]的tile
+/// 左[icon],接着[text]的tile,  右边/尾部[trailingWidget]
 /// 或[direction]方向
 /// 上[icon],接着[text]的tile
 class IconTextTile extends StatelessWidget with TileMixin {
@@ -35,8 +35,10 @@ class IconTextTile extends StatelessWidget with TileMixin {
 
   //---
 
-  /// 右边的小部件, 只在[Axis.horizontal]时有效
-  final Widget? rightWidget;
+  /// 右边/尾部的小部件, 只在[Axis.horizontal]时有效
+  /// [leading]  头部
+  /// [trailing] 尾部
+  final Widget? trailingWidget;
 
   /// 所有小组件需要的着色
   final Color? tintColor;
@@ -63,7 +65,7 @@ class IconTextTile extends StatelessWidget with TileMixin {
     this.textPadding,
     this.tintColor,
     this.disableTintColor,
-    this.rightWidget,
+    this.trailingWidget,
     this.enable = true,
     this.direction = Axis.horizontal,
     this.enableTap = true,
@@ -95,8 +97,9 @@ class IconTextTile extends StatelessWidget with TileMixin {
     } else {
       result = [
         iconWidget,
-        textWidget?.expanded(enable: iconWidget != null || rightWidget != null),
-        rightWidget
+        textWidget?.expanded(
+            enable: iconWidget != null || trailingWidget != null),
+        trailingWidget
       ].row(gap: gap)!;
     }
 
@@ -104,7 +107,7 @@ class IconTextTile extends StatelessWidget with TileMixin {
         .colorFiltered(color: enable ? tintColor : disableTintColor)
         .paddingInsets(padding)
         .constrainedMin(minHeight: kMinItemInteractiveHeight)
-        .ink( enable && enableTap ? onTap : null)
+        .ink(enable && enableTap ? onTap : null)
         .material();
 
     return result;
