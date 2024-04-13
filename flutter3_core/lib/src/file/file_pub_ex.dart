@@ -5,6 +5,16 @@ part of '../../flutter3_core.dart';
 /// @since 2023/11/17
 ///
 
+/// 屏幕截图
+Future<UiImage?> captureScreenImage([
+  BuildContext? context,
+  double pixelRatio = 1.0,
+]) async {
+  final image = await (context ?? GlobalConfig.def.globalContext)
+      ?.captureImage(pixelRatio: pixelRatio);
+  return image;
+}
+
 /// 保存屏幕截图
 /// [filePath] 需要保存到的文件路径
 /// [context] 截图来源, 默认是全屏
@@ -15,8 +25,7 @@ Future<UiImage?> saveScreenCapture([
 ]) async {
   final path =
       (filePath ?? await cacheFilePath("ScreenCapture${nowTime()}.png"));
-  var image = await (context ?? GlobalConfig.def.globalContext)
-      ?.captureImage(pixelRatio: pixelRatio);
+  final image = await captureScreenImage(context, pixelRatio);
   image?.saveToFile(path.file());
   assert(() {
     l.d('屏幕截图保存至[${image?.width}*${image?.height}:$pixelRatio]->$path');

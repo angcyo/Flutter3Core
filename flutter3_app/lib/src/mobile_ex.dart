@@ -5,7 +5,7 @@ part of '../flutter3_app.dart';
 /// @since 2024/01/15
 /// Android iOS 通用扩展
 
-extension ImageGalleryEx on ui.Image {
+extension ImageGalleryEx on UiImage {
   /// 保存图片到相册
   /// https://pub.dev/packages/image_gallery_saver
   /// https://juejin.cn/post/7249347871564300345
