@@ -42,16 +42,22 @@ class ImageMeta {
       this.pixelsFormat = UiPixelFormat.rgba8888});
 
   /// [UiImage]转[ImageMeta]
+  /// 此方法比较耗时: 292ms
   static Future<ImageMeta> fromImage(UiImage image,
       [UiImageByteFormat byteFormat = UiImageByteFormat.rawRgba]) async {
+    //lTime.tick();
     final pixels = await image.toPixels(byteFormat);
+    //l.d(lTime.time());
     return ImageMeta(image, null, pixels, imageFormat: byteFormat);
   }
 
   /// [Uint8List]像素转[ImageMeta]
+  /// 此方法相对好一点: 51ms
   static Future<ImageMeta> fromPixel(Uint8List pixels, int width, int height,
       [UiPixelFormat format = UiPixelFormat.rgba8888]) async {
+    //lTime.tick();
     final image = await pixels.toImageFromPixels(width, height);
+    //l.d(lTime.time());
     return ImageMeta(image, null, pixels, pixelsFormat: format);
   }
 }
