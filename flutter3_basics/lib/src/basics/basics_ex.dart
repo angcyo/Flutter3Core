@@ -1216,7 +1216,17 @@ extension IntEx on int {
   String get ascii => String.fromCharCode(this);
 
   /// 是否有指定的标志位
-  bool have(int flag) => (this & flag) == flag;
+  bool have(int flag) {
+    if (this == 0 && flag == 0) {
+      return true;
+    } else if (this == 0 || flag == 0) {
+      return false;
+    } else if ((this > 0 && flag < 0) || (this < 0 && flag > 0)) {
+      return false;
+    } else {
+      return (this & flag) == flag;
+    }
+  }
 
   /// 添加一个标志位
   int add(int flag, [bool add = true]) => add ? this | flag : remove(flag);
