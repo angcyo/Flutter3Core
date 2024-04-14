@@ -23,9 +23,9 @@ class RItemTile extends StatefulWidget {
   /// [rDecoration]
   const RItemTile({
     super.key,
+    this.sliverTransformType,
     this.child,
     this.childBuilder,
-    this.tileWrapBuilder,
     this.isSliverItem = false,
     this.part = false,
     this.hide = false,
@@ -102,8 +102,9 @@ class RItemTile extends StatefulWidget {
   /// 用来构建子部件的构建器
   final WidgetBuilder? childBuilder;
 
-  /// 用来包裹[RItemTile]的构建器
-  final ItemTileWrapBuilder? tileWrapBuilder;
+  /// [RItemTile]的类型, 决定用什么样的[Sliver]包裹[RItemTile]
+  /// 如果不指定类型, 会沿用上一个[RItemTile]的类型
+  final dynamic sliverTransformType;
 
   //endregion 基础
 
@@ -209,7 +210,7 @@ class RItemTile extends StatefulWidget {
   /// [SliverAppBar.titleTextStyle]
   final TextStyle? headerTitleTextStyle;
 
-  /// 是否启动悬浮头
+  /// 是否启动悬浮头, 可能需要配合[SliverMainAxisGroup]一起使用
   bool get isHeader => pinned || floating;
 
   //endregion SliverPersistentHeader / SliverAppBar
@@ -224,7 +225,7 @@ class RItemTile extends StatefulWidget {
   final List<String>? groups;
 
   /// 是否启动分组功能
-  bool get isGroup => groupExpanded != null;
+  bool get isSliverMainAxisGroup => groupExpanded != null;
 
   //endregion SliverMainAxisGroup
 
@@ -319,24 +320,16 @@ class RItemTile extends StatefulWidget {
   //endregion SliverGrid
 
   /// 构建子部件
+  /// [_RItemTileState.build]
   Widget buildChild(BuildContext context) {
     return child ??
         childBuilder?.call(context) ??
-        (isSliverItem
-            ? const SliverToBoxAdapter(child: Placeholder())
-            : const Placeholder());
+        (!isSliverItem
+            ? const SliverToBoxAdapter(child: Empty())
+            : const Empty());
   }
 
   //---
-
-  /// 是否需要重新包裹[SliverChild].[child]
-  Widget buildWrapChild(
-    BuildContext context,
-    List<Widget> list,
-    Widget child,
-  ) {
-    return tileWrapBuilder?.call(context, list, child, list.length) ?? child;
-  }
 
   Widget? _buildBottomWidget(BuildContext context) {
     return bottomLeading ??
@@ -351,150 +344,146 @@ class RItemTile extends StatefulWidget {
               ));
   }
 
+  /// [SliverListTransform]
   Widget buildListWrapChild(
     BuildContext context,
-    List<Widget> list,
+    WidgetIterable list,
     Widget child,
     int index,
   ) {
-    if (tileWrapBuilder == null) {
-      var first = list.firstOrNull;
-      var last = list.lastOrNull;
-      var length = list.length;
+    final first = list.firstOrNull;
+    final last = list.lastOrNull;
+    final length = list.length;
 
-      double left = 0.0;
-      double top = 0.0;
-      double right = 0.0;
-      double bottom = 0.0;
+    double left = 0.0;
+    double top = 0.0;
+    double right = 0.0;
+    double bottom = 0.0;
 
-      Widget? bWidget;
+    Widget? bWidget;
 
-      if (first is RItemTile) {
-        //底部需要堆叠的小部件
+    if (first is RItemTile) {
+      //底部需要堆叠的小部件
+      if (length == 1) {
+        //只有一个
+        left = first.firstPaddingLeft ?? first.lastPaddingLeft ?? left;
+        top = first.firstPaddingTop ?? first.lastPaddingTop ?? top;
+        right = first.firstPaddingRight ?? first.lastPaddingRight ?? right;
+        bottom = first.firstPaddingBottom ?? first.lastPaddingBottom ?? bottom;
+      } else if (index == 0) {
+        //第一个
+        left = first.firstPaddingLeft ?? left;
+        top = first.firstPaddingTop ?? top;
+        right = first.firstPaddingRight ?? right;
+        bottom = first.firstPaddingBottom ?? bottom;
+      }
+    }
+
+    if (length > 1 && index < length - 1) {
+      bWidget = _buildBottomWidget(context) ??
+          (first as RItemTile?)?._buildBottomWidget(context);
+    }
+
+    if (last is RItemTile && length > 1 && index == length - 1) {
+      //最后一个
+      left = last.lastPaddingLeft ?? left;
+      top = last.lastPaddingTop ?? top;
+      right = last.lastPaddingRight ?? right;
+      bottom = last.lastPaddingBottom ?? bottom;
+    }
+
+    Widget result = child;
+
+    // 有值
+    if (left != 0 || top != 0 || right != 0 || bottom != 0) {
+      result = child.paddingLTRB(left, top, right, bottom);
+    }
+
+    //stack
+    if (bWidget != null) {
+      result = Stack(
+        alignment: Alignment.bottomCenter,
+        children: [result, bWidget],
+      );
+    }
+
+    //clip
+    if (first is RItemTile) {
+      var decoration = first.sliverDecoration;
+      if (decoration is BoxDecoration) {
+        var borderRadius = decoration.borderRadius;
         if (length == 1) {
-          //只有一个
-          left = first.firstPaddingLeft ?? first.lastPaddingLeft ?? left;
-          top = first.firstPaddingTop ?? first.lastPaddingTop ?? top;
-          right = first.firstPaddingRight ?? first.lastPaddingRight ?? right;
-          bottom =
-              first.firstPaddingBottom ?? first.lastPaddingBottom ?? bottom;
-        } else if (index == 0) {
-          //第一个
-          left = first.firstPaddingLeft ?? left;
-          top = first.firstPaddingTop ?? top;
-          right = first.firstPaddingRight ?? right;
-          bottom = first.firstPaddingBottom ?? bottom;
-        }
-      }
-
-      if (length > 1 && index < length - 1) {
-        bWidget = _buildBottomWidget(context) ??
-            (first as RItemTile?)?._buildBottomWidget(context);
-      }
-
-      if (last is RItemTile && length > 1 && index == length - 1) {
-        //最后一个
-        left = last.lastPaddingLeft ?? left;
-        top = last.lastPaddingTop ?? top;
-        right = last.lastPaddingRight ?? right;
-        bottom = last.lastPaddingBottom ?? bottom;
-      }
-
-      Widget result = child;
-
-      // 有值
-      if (left != 0 || top != 0 || right != 0 || bottom != 0) {
-        result = child.paddingLTRB(left, top, right, bottom);
-      }
-
-      //stack
-      if (bWidget != null) {
-        result = Stack(
-          alignment: Alignment.bottomCenter,
-          children: [result, bWidget],
-        );
-      }
-
-      //clip
-      if (first is RItemTile) {
-        var decoration = first.sliverDecoration;
-        if (decoration is BoxDecoration) {
-          var borderRadius = decoration.borderRadius;
-          if (length == 1) {
-            result = result.clip(borderRadius: borderRadius);
-          } else if (borderRadius is BorderRadius) {
-            if (index == 0) {
-              result = result.clip(
-                  borderRadius: BorderRadius.only(
-                topLeft: borderRadius.topLeft,
-                topRight: borderRadius.topRight,
-              ));
-            } else if (index == length - 1) {
-              result = result.clip(
-                  borderRadius: BorderRadius.only(
-                bottomLeft: borderRadius.bottomLeft,
-                bottomRight: borderRadius.bottomRight,
-              ));
-            }
+          result = result.clip(borderRadius: borderRadius);
+        } else if (borderRadius is BorderRadius) {
+          if (index == 0) {
+            result = result.clip(
+                borderRadius: BorderRadius.only(
+              topLeft: borderRadius.topLeft,
+              topRight: borderRadius.topRight,
+            ));
+          } else if (index == length - 1) {
+            result = result.clip(
+                borderRadius: BorderRadius.only(
+              bottomLeft: borderRadius.bottomLeft,
+              bottomRight: borderRadius.bottomRight,
+            ));
           }
         }
       }
-
-      return result;
     }
-    return tileWrapBuilder?.call(context, list, child, index) ?? child;
+
+    return result;
   }
 
+  /// [SliverGridTransform]
   Widget buildGridWrapChild(
     BuildContext context,
-    List<Widget> list,
+    WidgetIterable list,
     Widget child,
     int index,
   ) {
-    if (tileWrapBuilder == null) {
-      var first = list.firstOrNull;
-      if (first is RItemTile) {
-        final isEdgeLeft = index % first.crossAxisCount == 0;
-        final isEdgeRight =
-            index % first.crossAxisCount == first.crossAxisCount - 1;
-        final isEdgeTop = index < first.crossAxisCount;
-        //总行数
-        final int totalRow = (list.length / first.crossAxisCount).ceil();
-        //最后一行索引
-        final int lastRowIndex = totalRow - 1;
-        //当前行数
-        final int currentRow = (index / first.crossAxisCount).floor();
-        final isEdgeBottom = currentRow == lastRowIndex;
-        final isEdge = isEdgeLeft || isEdgeRight || isEdgeTop || isEdgeBottom;
-        if (isEdge) {
-          //需要padding
-          final double left =
-              isEdgeLeft ? first.edgePaddingLeft ?? first.crossAxisSpacing : 0;
-          final double top =
-              isEdgeTop ? first.edgePaddingTop ?? first.mainAxisSpacing : 0;
-          final double right = isEdgeRight
-              ? first.edgePaddingRight ?? first.crossAxisSpacing
-              : 0;
-          final double bottom = isEdgeBottom
-              ? first.edgePaddingBottom ?? first.mainAxisSpacing
-              : 0;
+    final first = list.firstOrNull;
+    if (first is RItemTile) {
+      final isEdgeLeft = index % first.crossAxisCount == 0;
+      final isEdgeRight =
+          index % first.crossAxisCount == first.crossAxisCount - 1;
+      final isEdgeTop = index < first.crossAxisCount;
+      //总行数
+      final int totalRow = (list.length / first.crossAxisCount).ceil();
+      //最后一行索引
+      final int lastRowIndex = totalRow - 1;
+      //当前行数
+      final int currentRow = (index / first.crossAxisCount).floor();
+      final isEdgeBottom = currentRow == lastRowIndex;
+      final isEdge = isEdgeLeft || isEdgeRight || isEdgeTop || isEdgeBottom;
+      if (isEdge) {
+        //需要padding
+        final double left =
+            isEdgeLeft ? first.edgePaddingLeft ?? first.crossAxisSpacing : 0;
+        final double top =
+            isEdgeTop ? first.edgePaddingTop ?? first.mainAxisSpacing : 0;
+        final double right =
+            isEdgeRight ? first.edgePaddingRight ?? first.crossAxisSpacing : 0;
+        final double bottom =
+            isEdgeBottom ? first.edgePaddingBottom ?? first.mainAxisSpacing : 0;
 
-          // 有值
-          if (left != 0 || top != 0 || right != 0 || bottom != 0) {
-            return child.paddingLTRB(left, top, right, bottom);
-          }
+        // 有值
+        if (left != 0 || top != 0 || right != 0 || bottom != 0) {
+          return child.paddingLTRB(left, top, right, bottom);
         }
       }
     }
-    return tileWrapBuilder?.call(context, list, child, index) ?? child;
+    return child;
   }
 
   /// 当[anchor]隐藏时, 自己是否要隐藏
+  /// [ItemTileFilter]
   bool isHideFrom(Widget anchor) {
     return false;
   }
 
   /// 当前的元素, 是否属于指定的组
+  /// [ItemTileFilter]
   bool isInGroup(RItemTile? tile, [List<String>? groups]) {
     var thisGroups = this.groups;
     if (thisGroups == null) {
@@ -542,7 +531,7 @@ class RItemTile extends StatefulWidget {
         'sliverDecorationPosition', sliverDecorationPosition));
     properties.add(DiagnosticsProperty<bool>('groupExpanded', groupExpanded));
     properties.add(DiagnosticsProperty<List<String>?>('groups', groups));
-    properties.add(DiagnosticsProperty<bool>('isGroup', isGroup));
+    properties.add(DiagnosticsProperty<bool>('isGroup', isSliverMainAxisGroup));
   }
 }
 
@@ -573,11 +562,13 @@ extension RItemTileExtension on Widget {
     double? edgePaddingBottom,
     double? edgePaddingLeft,
     double? edgePaddingRight,
+    dynamic sliverTransformTyp = SliverGridTransform,
   }) {
     mainAxisSpacing ??= 0;
     crossAxisSpacing ??= mainAxisSpacing;
     return RItemTile(
       crossAxisCount: gridCount,
+      sliverTransformType: sliverTransformTyp,
       childAspectRatio: childAspectRatio,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
@@ -644,11 +635,13 @@ extension RItemTileExtension on Widget {
     bool? groupExpanded,
     UpdateValueNotifier? updateSignal,
     List<String>? groups = const [],
+    dynamic sliverTransformTyp,
   }) {
     return RItemTile(
       key: key,
       childBuilder: childBuilder,
       isSliverItem: isSliverItem,
+      sliverTransformType: sliverTransformTyp,
       hide: hide,
       part: part,
       bottomLineColor: bottomLineColor,
@@ -696,10 +689,12 @@ extension RItemTileExtension on Widget {
   RItemTile rFloated({
     bool pinned = true,
     bool floating = false,
+    dynamic sliverTransformTyp = SliverMainAxisGroup,
   }) {
     return RItemTile(
       pinned: pinned,
       floating: floating,
+      sliverTransformType: sliverTransformTyp,
       child: this,
     );
   }
@@ -722,6 +717,7 @@ extension RItemTileExtension on Widget {
     EdgeInsetsGeometry? sliverPadding,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    dynamic sliverTransformTyp = SliverMainAxisGroup,
   }) {
     return RItemTile(
       groups: groups,
@@ -743,6 +739,7 @@ extension RItemTileExtension on Widget {
                   borderRadius: borderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
+      sliverTransformType: sliverTransformTyp,
       child: this,
     );
   }

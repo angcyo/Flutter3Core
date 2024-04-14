@@ -1,22 +1,29 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// Email:angcyo@126.com
 /// @author angcyo
 /// @date 2023/12/23
 ///
-/// 过滤链
-class RFilterChain {
-  final List<RFilter> filterList;
 
-  const RFilterChain(this.filterList);
+/// 默认的过滤链
+const RTileFilterChain _defaultTileFilterChain =
+    RTileFilterChain([ItemTileFilter()]);
+
+/// [RItemTile]过滤链
+class RTileFilterChain {
+  final List<BaseTileFilter> filterList;
+
+  const RTileFilterChain(this.filterList);
 
   /// 执行过滤
+  /// 输入原始的[children]输出过滤后的[children]
+  @entryPoint
   WidgetList doFilter(WidgetList children) {
     WidgetList result = [];
     result.addAll(children);
     for (var filter in filterList) {
-      if (filter.doFilter(children, result)) {
+      if (filter.filterTile(children, result)) {
         break;
       }
     }
@@ -24,23 +31,22 @@ class RFilterChain {
   }
 }
 
-/// 默认的过滤链
-const RFilterChain _defaultFilterChain = RFilterChain([ItemTileFilter()]);
-
-abstract class RFilter {
-  const RFilter();
+/// 过滤的基类
+abstract class BaseTileFilter {
+  const BaseTileFilter();
 
   /// 过滤函数, 返回true, 表示中断过滤
-  bool doFilter(WidgetList origin, WidgetList result) {
+  @overridePoint
+  bool filterTile(WidgetList origin, WidgetList result) {
     return false;
   }
 }
 
-class ItemTileFilter extends RFilter {
+class ItemTileFilter extends BaseTileFilter {
   const ItemTileFilter();
 
   @override
-  bool doFilter(WidgetList origin, WidgetList result) {
+  bool filterTile(WidgetList origin, WidgetList result) {
     filterHide(origin, result);
     filterGroup(origin, result);
     return false;

@@ -22,7 +22,8 @@ class RScrollView extends StatefulWidget {
   const RScrollView({
     super.key,
     required this.children,
-    this.filterChain = _defaultFilterChain,
+    this.filterChain = _defaultTileFilterChain,
+    this.transformChain,
     this.controller,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
@@ -51,7 +52,14 @@ class RScrollView extends StatefulWidget {
   final List<Widget> children;
 
   /// [RItemTile] 的列表过滤器
-  final RFilterChain? filterChain;
+  /// 用来过滤[children]
+  /// [_defaultTileFilterChain]
+  final RTileFilterChain? filterChain;
+
+  /// [RItemTile] 的转换链
+  /// 用来转换[filterChain]过滤后的[children]
+  /// [_defaultTileTransformChain]
+  final RTileTransformChain? transformChain;
 
   /// 是否要显示滚动条
   /// [ScrollbarTheme]
@@ -178,392 +186,18 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     }
   }
 
-  /// 将普通的[Widget]解析成[SliverWidget]
+  /// 将普通的[Widget]解析/变换成[SliverWidget]
+  /// [RTileTransformChain]
+  /// [BaseTileTransform]
   List<Widget> _resolveItemTileList(
       BuildContext context, List<Widget> children) {
     //过滤
     children = widget.filterChain?.doFilter(children) ?? children;
-
-    final result = <Widget>[];
-
-    // 收集到的list tile, 使用[SliverList]包裹
-    final listWrap = <Widget>[];
-
-    // 收集到的grid tile, 使用[SliverGrid]包裹
-    final gridWrap = <Widget>[];
-
-    // 普通的sliver tile, 用来放到sliver group
-    final normalGroupWrap = <Widget>[];
-
-    //分组的头, 如果有
-    _GroupHeaderInfo? groupHeaderInfo;
-
-    // 清除收集到的list tile, 并添加到result中
-    clearAndAppendList() {
-      if (listWrap.isNotEmpty) {
-        final widget = _buildSliverList(context, groupHeaderInfo, listWrap);
-        if (widget != null) {
-          result.add(widget);
-          groupHeaderInfo = null;
-        }
-        listWrap.clear();
-      }
-    }
-
-    // 清除收集到的grid tile, 并添加到result中
-    clearAndAppendGrid() {
-      if (gridWrap.isNotEmpty) {
-        final widget = _buildSliverGrid(context, groupHeaderInfo, gridWrap);
-        if (widget != null) {
-          result.add(widget);
-          groupHeaderInfo = null;
-        }
-        gridWrap.clear();
-      }
-    }
-
-    // 检查是否要合并网格tile
-    checkAndAppendGrid(RItemTile element) {
-      if (gridWrap.isEmpty) {
-        //网格的第一个
-        gridWrap.add(element);
-      } else {
-        final first = gridWrap.first as RItemTile;
-        if (first.crossAxisCount == element.crossAxisCount) {
-          //合并
-          gridWrap.add(element);
-        } else {
-          //不合并, 新的网格
-          clearAndAppendGrid();
-          gridWrap.add(element);
-        }
-      }
-    }
-
-    // 不在list/grid中的sliver group中的item
-    clearNormalSliverGroupList() {
-      if (groupHeaderInfo != null) {
-        var sliverGroup = _wrapSliverGroup(groupHeaderInfo!, normalGroupWrap);
-        result.removeWhere((e) => normalGroupWrap.contains(e));
-        result.add(sliverGroup);
-      }
-      groupHeaderInfo = null;
-      normalGroupWrap.clear();
-    }
-
-    // 开始遍历, 组装
-    for (var tile in children) {
-      //debugger();
-      if (tile is RItemTile) {
-        if (tile.part) {
-          clearAndAppendList();
-          clearAndAppendGrid();
-          clearNormalSliverGroupList();
-        }
-        Widget sliverTile = tile;
-        //RItemTile
-        if (tile.isSliverItem ||
-            tile.isHeader ||
-            tile.fillRemaining ||
-            tile.isGroup) {
-          //简单的
-          if (groupHeaderInfo == null) {
-            clearAndAppendList();
-            clearAndAppendGrid();
-          }
-          if (tile.fillRemaining) {
-            // SliverFillRemaining wrap
-            final Widget child;
-            if (tile.fillExpand) {
-              //child = SizedBox.expand(child: tile);
-              child = SliverExpandWidget(child: tile);
-            } else {
-              child = tile;
-            }
-            sliverTile = tile.buildWrapChild(
-                context,
-                result,
-                _wrapSliverTile(
-                  tile,
-                  SliverFillRemaining(
-                    key: UniqueKey(),
-                    hasScrollBody: tile.fillHasScrollBody,
-                    fillOverscroll: tile.fillOverscroll,
-                    child: child,
-                  ),
-                ));
-          } else if (tile.isHeader) {
-            // SliverPersistentHeader wrap
-            if (tile.isGroup) {
-              sliverTile = _wrapHeader(tile);
-            } else {
-              sliverTile = tile.buildWrapChild(
-                  context,
-                  result,
-                  _wrapSliverTile(
-                    tile,
-                    _wrapHeader(tile),
-                  ));
-            }
-          } else {
-            sliverTile = tile.buildWrapChild(
-                context,
-                result,
-                _wrapSliverTile(
-                  tile,
-                  tile,
-                ));
-          }
-
-          if (tile.isGroup) {
-            clearNormalSliverGroupList();
-            groupHeaderInfo = _GroupHeaderInfo(sliverTile, tile);
-          } else {
-            if (groupHeaderInfo == null) {
-              result.add(sliverTile);
-            } else {
-              normalGroupWrap.add(sliverTile);
-            }
-          }
-        } else {
-          //复合的, 需要丢到List或Grid中
-          if (tile.crossAxisCount > 0) {
-            //网格tile
-            clearAndAppendList();
-            checkAndAppendGrid(tile);
-          } else {
-            //列表tile
-            clearAndAppendGrid();
-            listWrap.add(tile);
-          }
-        }
-      } else {
-        //普通的Widget
-        clearAndAppendList();
-        clearAndAppendGrid();
-        clearNormalSliverGroupList();
-        result.add(ensureSliver(tile));
-      }
-    }
-    clearAndAppendList();
-    clearAndAppendGrid();
-    clearNormalSliverGroupList();
-
+    final transform = widget.transformChain ?? _defaultTileTransformChain;
+    final result = transform.doTransform(context, children);
     //result
     return result;
   }
-
-  /// 确保是[Sliver]小部件
-  Widget ensureSliver(Widget tile) {
-    if (tile is! NotSliverTile && "$tile".toLowerCase().startsWith("sliver")) {
-      assert(() {
-        l.d('未使用[SliverToBoxAdapter]包裹的[Sliver]小部件:${tile.runtimeType}');
-        return true;
-      }());
-      return tile;
-    } else {
-      return SliverToBoxAdapter(
-        child: tile,
-      );
-    }
-  }
-
-  /// 悬浮头包裹
-  Widget _wrapHeader(RItemTile tile) {
-    if (tile.useSliverAppBar) {
-      var height = tile.headerFixedHeight ?? tile.headerMinHeight;
-      return SliverAppBar(
-        title: tile,
-        floating: tile.floating,
-        pinned: tile.pinned,
-        titleSpacing: 0,
-        toolbarHeight: height,
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        backgroundColor: tile.headerBackgroundColor,
-        foregroundColor: tile.headerForegroundColor,
-        expandedHeight: null,
-        collapsedHeight: null,
-        titleTextStyle: tile.headerTitleTextStyle,
-        primary: false,
-        snap: false,
-      );
-    }
-    if (tile.headerDelegate == null) {
-      return SliverPersistentHeader(
-        delegate: SingleSliverPersistentHeaderDelegate(
-          child: tile,
-          childBuilder: tile.headerChildBuilder,
-          headerFixedHeight: tile.headerFixedHeight,
-          headerMaxHeight: tile.headerMaxHeight,
-          headerMinHeight: tile.headerMinHeight,
-        ),
-        pinned: tile.pinned,
-        floating: tile.floating,
-      );
-    }
-    return SliverPersistentHeader(
-      delegate: tile.headerDelegate!,
-      pinned: tile.pinned,
-      floating: tile.floating,
-    );
-  }
-
-  //region 组装成list grid
-
-  /// 构建成[SliverList]
-  /// [SliverAnimatedList]
-  Widget? _buildSliverList(
-    BuildContext context,
-    _GroupHeaderInfo? groupHeaderInfo,
-    List<Widget> list,
-  ) {
-    if (list.isEmpty) {
-      return groupHeaderInfo == null
-          ? null
-          : _wrapSliverGroup(groupHeaderInfo, list);
-    }
-    RItemTile first = list.firstWhere(
-      (element) => element is RItemTile,
-      orElse: () => const RItemTile(),
-    ) as RItemTile;
-
-    List<Widget> newList = [];
-    list.forEachIndexed((index, element) {
-      if (element is RItemTile) {
-        newList.add(element.buildListWrapChild(context, list, element, index));
-      } else {
-        newList.add(element);
-      }
-    });
-    var sliverList = SliverList.list(
-      addAutomaticKeepAlives: first.addAutomaticKeepAlives,
-      addRepaintBoundaries: first.addRepaintBoundaries,
-      addSemanticIndexes: first.addSemanticIndexes,
-      children: newList,
-    );
-    return _wrapSliverTile(
-      first,
-      groupHeaderInfo == null
-          ? sliverList
-          : _wrapSliverGroup(groupHeaderInfo, [sliverList]),
-    );
-  }
-
-  /// 构建成[SliverGrid]
-  /// [SliverAnimatedGrid]
-  Widget? _buildSliverGrid(
-    BuildContext context,
-    _GroupHeaderInfo? groupHeaderInfo,
-    List<Widget> list,
-  ) {
-    if (list.isEmpty) {
-      return groupHeaderInfo == null
-          ? null
-          : _wrapSliverGroup(groupHeaderInfo, list);
-    }
-    RItemTile first = list.firstWhere(
-      (element) => element is RItemTile,
-      orElse: () => const RItemTile(),
-    ) as RItemTile;
-
-    List<Widget> newList = [];
-    list.forEachIndexed((index, element) {
-      if (element is RItemTile) {
-        newList.add(element.buildGridWrapChild(context, list, element, index));
-      } else {
-        newList.add(element);
-      }
-    });
-    var sliverGrid = SliverGrid.count(
-      crossAxisCount: first.crossAxisCount,
-      mainAxisSpacing: first.mainAxisSpacing,
-      crossAxisSpacing: first.crossAxisSpacing,
-      childAspectRatio: first.childAspectRatio,
-      children: newList,
-    );
-    return _wrapSliverTile(
-      first,
-      groupHeaderInfo == null
-          ? sliverGrid
-          : _wrapSliverGroup(groupHeaderInfo, [sliverGrid]),
-    );
-  }
-
-  //endregion 组装成list grid
-
-  //region 装饰tile
-
-  /// 判断tile是否需要padding和装饰
-  /// [sliverChild] 需要包装的child
-  /// [SliverPadding]
-  /// [DecoratedSliver]
-  /// [_wrapSliverPadding]
-  /// [_wrapSliverDecoration]
-  Widget _wrapSliverTile(
-    RItemTile tile,
-    Widget sliverChild,
-  ) =>
-      _wrapSliverPadding(
-          tile.sliverPadding,
-          _wrapSliverDecoration(
-            tile.sliverDecoration,
-            tile.sliverDecorationPosition,
-            sliverChild,
-          ));
-
-  /// 一组[sliverChild]
-  /// [SliverMainAxisGroup]
-  Widget _wrapSliverGroup(
-    _GroupHeaderInfo groupHeaderInfo,
-    WidgetList sliverChild,
-  ) {
-    //debugger();
-    return _wrapSliverTile(
-      groupHeaderInfo.headerTile,
-      SliverMainAxisGroup(slivers: [
-        groupHeaderInfo.headerWidget,
-        ...sliverChild,
-      ]),
-    );
-  }
-
-  /// 间隙填充当前的[sliverChild]
-  /// [SliverPadding]
-  Widget _wrapSliverPadding(
-    EdgeInsetsGeometry? sliverPadding,
-    Widget sliverChild,
-  ) {
-    if (sliverPadding == null) {
-      return sliverChild;
-    }
-
-    return SliverPadding(
-      padding: sliverPadding,
-      sliver: sliverChild,
-    );
-  }
-
-  /// 装饰当前的[sliverChild]
-  /// [DecoratedSliver]
-  Widget _wrapSliverDecoration(
-    Decoration? sliverDecoration,
-    DecorationPosition sliverDecorationPosition,
-    Widget sliverChild,
-  ) {
-    //debugger();
-    if (sliverDecoration == null) {
-      return sliverChild;
-    }
-
-    return DecoratedSliver(
-      decoration: sliverDecoration,
-      position: sliverDecorationPosition,
-      sliver: sliverChild,
-    );
-  }
-
-  //endregion 装饰tile
 
   @override
   void initState() {
@@ -583,7 +217,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     //SliverGrid.builder(gridDelegate: gridDelegate, itemBuilder: itemBuilder);
     //SliverList.builder(itemBuilder: itemBuilder);
     WidgetList slivers;
-    var controller = widget.controller;
+    final controller = widget.controller;
     if (controller == null ||
         controller.adapterStateValue.value == WidgetState.none) {
       //需要显示内容
@@ -629,17 +263,6 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     }
     return result;
   }
-}
-
-/// 分组头的信息
-class _GroupHeaderInfo {
-  Widget headerWidget;
-  RItemTile headerTile;
-
-  _GroupHeaderInfo(
-    this.headerWidget,
-    this.headerTile,
-  );
 }
 
 extension RScrollViewEx on WidgetList {

@@ -1336,6 +1336,9 @@ extension IterableEx<E> on Iterable<E> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 
+  /// 最后一个元素是否是指定的元素
+  bool isLastOf(E? e) => e != null && e == lastOrNull;
+
   /// 查找第一个
   E? findFirst(bool Function(E element) test) {
     for (var element in this) {

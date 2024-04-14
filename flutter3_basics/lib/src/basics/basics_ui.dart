@@ -59,7 +59,9 @@ extension FrameCallbackEx on int {
 //region 界面相关
 
 typedef WidgetList = List<Widget>;
+typedef WidgetIterable = Iterable<Widget>;
 typedef WidgetNullList = List<Widget?>;
+typedef WidgetNullIterable = Iterable<Widget?>;
 
 /// 通过[Builder]小部件, 获取当前元素的[BuildContext]
 /// 然后当前[BuildContext]更新只会影响其子元素, 父元素不会受到影响
