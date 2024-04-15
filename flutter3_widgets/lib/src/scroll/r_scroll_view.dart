@@ -22,8 +22,7 @@ class RScrollView extends StatefulWidget {
   const RScrollView({
     super.key,
     required this.children,
-    this.filterChain = _defaultTileFilterChain,
-    this.transformChain,
+    this.scrollConfig,
     this.controller,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
@@ -51,20 +50,13 @@ class RScrollView extends StatefulWidget {
   /// [RItemTile] 的列表核心的数据集合
   final List<Widget> children;
 
-  /// [RItemTile] 的列表过滤器
-  /// 用来过滤[children]
-  /// [_defaultTileFilterChain]
-  final RTileFilterChain? filterChain;
-
-  /// [RItemTile] 的转换链
-  /// 用来转换[filterChain]过滤后的[children]
-  /// [_defaultTileTransformChain]
-  final RTileTransformChain? transformChain;
-
   /// 是否要显示滚动条
   /// [ScrollbarTheme]
   /// [ScrollbarThemeData]
   final bool showScrollbar;
+
+  /// 控件配置
+  final RScrollConfig? scrollConfig;
 
   /// 滚动控制, 状态切换控制, 刷新/加载更多控制
   /// [ScrollController]
@@ -191,15 +183,22 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   /// [RTileTransformChain]
   /// [BaseTileTransform]
   ///
+  /// [RScrollConfig]
+  ///
   /// [_buildTileList]
   /// [build]
   WidgetList _transformTileList(BuildContext context, WidgetList children) {
     //过滤
-    children = widget.filterChain?.doFilter(children) ?? children;
-    final transformChain = widget.transformChain ?? _defaultTileTransformChain;
-    transformChain.reset();
-    final result = transformChain.doTransform(context, children);
-    //debugger();
+    final scrollConfig = widget.scrollConfig ?? defaultScrollConfig;
+    children = scrollConfig.filterChain?.doFilter(children) ?? children;
+    final transformChain = scrollConfig.transformChain;
+    final WidgetList result;
+    if (transformChain != null) {
+      transformChain.reset();
+      result = transformChain.doTransform(context, children);
+    } else {
+      result = children;
+    }
     return result;
   }
 

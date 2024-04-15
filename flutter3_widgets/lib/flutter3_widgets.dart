@@ -48,6 +48,7 @@ part 'src/scroll/page/r_scroll_page.dart';
 part 'src/scroll/page/r_status_scroll_page.dart';
 part 'src/scroll/r_item_tile.dart';
 part 'src/scroll/r_scroll_controller.dart';
+part 'src/scroll/r_scroll_config.dart';
 part 'src/scroll/r_scroll_view.dart';
 part 'src/scroll/r_tile_filter.dart';
 part 'src/scroll/r_tile_transform.dart';

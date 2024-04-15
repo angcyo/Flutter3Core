@@ -5,14 +5,6 @@ part of '../../flutter3_widgets.dart';
 /// @author angcyo
 /// @date 2024/04/14
 ///
-
-/// 默认的转换链
-RTileTransformChain _defaultTileTransformChain = RTileTransformChain([
-  SliverListTransform(),
-  SliverGridTransform(),
-  SliverMainAxisGroupTransform(),
-]);
-
 /// 确保是[Sliver]小部件
 Widget _ensureSliver(Widget tile) {
   bool isSliver = false;

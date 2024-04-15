@@ -5,11 +5,6 @@ part of '../../flutter3_widgets.dart';
 /// @author angcyo
 /// @date 2023/12/23
 ///
-
-/// 默认的过滤链
-const RTileFilterChain _defaultTileFilterChain =
-    RTileFilterChain([ItemTileFilter()]);
-
 /// [RItemTile]过滤链
 class RTileFilterChain {
   final List<BaseTileFilter> filterList;
