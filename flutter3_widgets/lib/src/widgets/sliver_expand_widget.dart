@@ -50,11 +50,17 @@ class _SliverExpandBox extends RenderProxyBox {
   @override
   void performLayout() {
     //获取到约束
-    final sliverConstraints = findSliverConstraints();
+    final constraints = this.constraints;
+    final constraintSize = constraints.biggest;
+    child!.layout(constraints, parentUsesSize: true);
+    alignChildOffset(alignment, constraintSize, null, child: child);
+    size = constraintSize;
+
+    /*final sliverConstraints = findSliverConstraints();
     if (sliverConstraints == null) {
       super.performLayout();
     } else {
-      final Size expandSize;
+      Size expandSize;
       if (sliverConstraints.axis == Axis.vertical) {
         //垂直滚动列表
         expandSize = Size(sliverConstraints.crossAxisExtent,
@@ -64,17 +70,27 @@ class _SliverExpandBox extends RenderProxyBox {
         expandSize = Size(sliverConstraints.remainingPaintExtent,
             sliverConstraints.crossAxisExtent);
       }
+
       if (child != null) {
-        child!.layout(
-            BoxConstraints(
-              maxWidth: expandSize.width,
-              maxHeight: expandSize.height,
-            ),
+        final maxWidth =
+            expandSize.width <= 0 ? double.infinity : expandSize.width;
+        final maxHeight =
+            expandSize.height <= 0 ? double.infinity : expandSize.height;
+
+        debugger();
+        child!.layout(constraints, parentUsesSize: true);
+
+        */ /*child!.layout(BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
             parentUsesSize: true);
+        final size = Size(max(expandSize.width, child!.size.width),
+            max(expandSize.height, child!.size.height));
+        debugger();
+        expandSize = size;*/ /*
         alignChildOffset(alignment, expandSize, null, child: child);
       }
-      size = expandSize;
-    }
+      //size = expandSize;
+      size = constraints.biggest;
+    }*/
   }
 }
 

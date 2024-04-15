@@ -149,14 +149,15 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   /// 构建[RItemTile]的列表
   /// [children] 入参
   /// [useFrameLoad]是否需要使用分帧加载
-  List<Widget> _buildItemTileList(
+  /// [build]
+  WidgetList _buildTileList(
     BuildContext context, {
-    List<Widget>? children,
+    WidgetList? children,
     bool? useFrameLoad,
   }) {
     children ??= widget.children;
 
-    final result = _resolveItemTileList(context, children);
+    final result = _transformTileList(context, children);
 
     //加载更多显示处理
     if (widget.enableLoadMore) {
@@ -174,7 +175,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
         }
       }
       if (loadMoreWidget != null) {
-        result.addAll(_resolveItemTileList(context, [loadMoreWidget]));
+        result.addAll(_transformTileList(context, [loadMoreWidget]));
       }
     }
 
@@ -189,13 +190,16 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   /// 将普通的[Widget]解析/变换成[SliverWidget]
   /// [RTileTransformChain]
   /// [BaseTileTransform]
-  List<Widget> _resolveItemTileList(
-      BuildContext context, List<Widget> children) {
+  ///
+  /// [_buildTileList]
+  /// [build]
+  WidgetList _transformTileList(BuildContext context, WidgetList children) {
     //过滤
     children = widget.filterChain?.doFilter(children) ?? children;
-    final transform = widget.transformChain ?? _defaultTileTransformChain;
-    final result = transform.doTransform(context, children);
-    //result
+    final transformChain = widget.transformChain ?? _defaultTileTransformChain;
+    transformChain.reset();
+    final result = transformChain.doTransform(context, children);
+    //debugger();
     return result;
   }
 
@@ -221,10 +225,10 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     if (controller == null ||
         controller.adapterStateValue.value == WidgetState.none) {
       //需要显示内容
-      slivers = _buildItemTileList(context);
+      slivers = _buildTileList(context);
     } else {
       //debugger();
-      slivers = _resolveItemTileList(context, [
+      slivers = _transformTileList(context, [
         controller
             .buildAdapterStateWidget(
               context,

@@ -210,7 +210,8 @@ class RItemTile extends StatefulWidget {
   /// [SliverAppBar.titleTextStyle]
   final TextStyle? headerTitleTextStyle;
 
-  /// 是否启动悬浮头, 可能需要配合[SliverMainAxisGroup]一起使用
+  /// 是否启动悬浮头, [SliverPersistentHeader]
+  /// 如果需要2个头之间能挤推, 则可能需要配合[SliverMainAxisGroup]一起使用
   bool get isHeader => pinned || floating;
 
   //endregion SliverPersistentHeader / SliverAppBar
@@ -514,6 +515,8 @@ class RItemTile extends StatefulWidget {
     properties.add(DiagnosticsProperty<bool>('part', part));
     properties.add(DiagnosticsProperty<bool>('hide', hide));
     properties.add(DiagnosticsProperty<Object>('tag', tag));
+    properties.add(DiagnosticsProperty<dynamic>(
+        'sliverTransformType', sliverTransformType));
     properties.add(DiagnosticsProperty<bool>('isSliverItem', isSliverItem));
     properties
         .add(DiagnosticsProperty<Color?>('bottomLineColor', bottomLineColor));
@@ -532,6 +535,52 @@ class RItemTile extends StatefulWidget {
     properties.add(DiagnosticsProperty<bool>('groupExpanded', groupExpanded));
     properties.add(DiagnosticsProperty<List<String>?>('groups', groups));
     properties.add(DiagnosticsProperty<bool>('isGroup', isSliverMainAxisGroup));
+    properties.add(DiagnosticsProperty<bool>('fillRemaining', fillRemaining));
+    properties
+        .add(DiagnosticsProperty<bool>('fillHasScrollBody', fillHasScrollBody));
+    properties.add(DiagnosticsProperty<bool>('fillOverscroll', fillOverscroll));
+    properties.add(DiagnosticsProperty<bool>('fillExpand', fillExpand));
+    properties.add(DiagnosticsProperty<bool>(
+        'addAutomaticKeepAlives', addAutomaticKeepAlives));
+    properties.add(DiagnosticsProperty<bool>(
+        'addRepaintBoundaries', addRepaintBoundaries));
+    properties.add(
+        DiagnosticsProperty<bool>('addSemanticIndexes', addSemanticIndexes));
+    properties.add(DiagnosticsProperty<int>('crossAxisCount', crossAxisCount));
+    properties
+        .add(DiagnosticsProperty<double>('mainAxisSpacing', mainAxisSpacing));
+    properties
+        .add(DiagnosticsProperty<double>('crossAxisSpacing', crossAxisSpacing));
+    properties
+        .add(DiagnosticsProperty<double>('childAspectRatio', childAspectRatio));
+    properties
+        .add(DiagnosticsProperty<double?>('edgePaddingLeft', edgePaddingLeft));
+    properties
+        .add(DiagnosticsProperty<double?>('edgePaddingTop', edgePaddingTop));
+    properties.add(
+        DiagnosticsProperty<double?>('edgePaddingRight', edgePaddingRight));
+    properties.add(
+        DiagnosticsProperty<double?>('edgePaddingBottom', edgePaddingBottom));
+    properties.add(DiagnosticsProperty<SliverPersistentHeaderWidgetBuilder?>(
+        'headerChildBuilder', headerChildBuilder));
+    properties.add(
+        DiagnosticsProperty<double?>('headerFixedHeight', headerFixedHeight));
+    properties
+        .add(DiagnosticsProperty<double>('headerMaxHeight', headerMaxHeight));
+    properties
+        .add(DiagnosticsProperty<double>('headerMinHeight', headerMinHeight));
+    properties.add(DiagnosticsProperty<SliverPersistentHeaderDelegate?>(
+        'headerDelegate', headerDelegate));
+    properties.add(DiagnosticsProperty<bool>('pinned', pinned));
+    properties.add(DiagnosticsProperty<bool>('floating', floating));
+    properties
+        .add(DiagnosticsProperty<bool>('useSliverAppBar', useSliverAppBar));
+    properties.add(DiagnosticsProperty<Color?>(
+        'headerBackgroundColor', headerBackgroundColor));
+    properties.add(DiagnosticsProperty<Color?>(
+        'headerForegroundColor', headerForegroundColor));
+    properties.add(DiagnosticsProperty<TextStyle?>(
+        'headerTitleTextStyle', headerTitleTextStyle));
   }
 }
 
@@ -562,7 +611,7 @@ extension RItemTileExtension on Widget {
     double? edgePaddingBottom,
     double? edgePaddingLeft,
     double? edgePaddingRight,
-    dynamic sliverTransformTyp = SliverGridTransform,
+    dynamic sliverTransformTyp = SliverGrid,
   }) {
     mainAxisSpacing ??= 0;
     crossAxisSpacing ??= mainAxisSpacing;

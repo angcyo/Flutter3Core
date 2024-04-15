@@ -7,8 +7,11 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// 默认的转换链
-RTileTransformChain _defaultTileTransformChain =
-    RTileTransformChain([SliverGridTransform()]);
+RTileTransformChain _defaultTileTransformChain = RTileTransformChain([
+  SliverListTransform(),
+  SliverGridTransform(),
+  SliverMainAxisGroupTransform(),
+]);
 
 /// 确保是[Sliver]小部件
 Widget _ensureSliver(Widget tile) {
@@ -72,7 +75,9 @@ class RTileTransformChain with TileTransformMixin {
             continue;
           }
           final support = transform.isSupportTransform(context, tile);
+          //debugger();
           if (support) {
+            //debugger();
             lastTransform = transform;
             handle =
                 transform.transformTile(context, children, result, tile, i);
@@ -83,17 +88,27 @@ class RTileTransformChain with TileTransformMixin {
 
       // end
       if (!handle) {
+        //debugger();
         lastTransform?.endTransformIfNeed(context, children, result);
         lastTransform = null;
+        Widget child = tile;
         if (tile is RItemTile) {
-          result.add(buildTileWidget(context, tile, tile));
-        } else {
-          result.add(_ensureSliver(tile));
+          child = buildTileWidget(context, tile, tile);
         }
+        result.add(_ensureSliver(child));
       }
     }
+    //debugger();
     lastTransform?.endTransformIfNeed(context, children, result);
     return result;
+  }
+
+  /// 重置
+  @entryPoint
+  void reset() {
+    for (var element in transformList) {
+      element.reset();
+    }
   }
 }
 
@@ -105,13 +120,10 @@ mixin TileTransformMixin {
   /// [buildTileListWidget]
   Widget buildTileWidget(BuildContext context, Widget? tile, Widget child) {
     if (tile is RItemTile) {
-      return buildSliverFillRemaining(
-            context,
-            tile,
-            buildHeaderTile(context, tile, wrapSliverTile(tile, child)) ??
-                wrapSliverTile(tile, child),
-          ) ??
-          wrapSliverTile(tile, child);
+      Widget result = wrapSliverPaddingDecorationTile(tile, child);
+      result = wrapHeaderTile(context, tile, result);
+      result = wrapSliverFillRemaining(context, tile, result);
+      return result;
     }
     return child;
   }
@@ -174,7 +186,10 @@ mixin TileTransformMixin {
 
   /// 使用[SliverFillRemaining]包裹, 如果需要的话
   Widget? buildSliverFillRemaining(
-      BuildContext context, Widget? tile, Widget child) {
+    BuildContext context,
+    Widget? tile,
+    Widget child,
+  ) {
     if (tile is RItemTile) {
       if (tile.fillRemaining) {
         if (tile.fillExpand) {
@@ -197,13 +212,31 @@ mixin TileTransformMixin {
 
   //region ---tile处理---
 
+  /// [buildSliverFillRemaining]
+  Widget wrapSliverFillRemaining(
+          BuildContext context, RItemTile? tile, Widget sliverChild) =>
+      tile?.fillRemaining == true
+          ? buildSliverFillRemaining(context, tile, sliverChild) ?? sliverChild
+          : sliverChild;
+
+  /// [buildHeaderTile]
+  Widget wrapHeaderTile(
+          BuildContext context, RItemTile? tile, Widget sliverChild) =>
+      tile?.isHeader == true
+          ? buildHeaderTile(context, tile, sliverChild) ?? sliverChild
+          : sliverChild;
+
+  //endregion ---tile处理---
+
+  //region ---Sliver装饰---
+
   /// 判断tile是否需要padding和装饰
   /// [sliverChild] 需要包装的sliverChild, 必须是sliver小部件
   /// [SliverPadding]
   /// [DecoratedSliver]
   /// [wrapSliverPadding]
   /// [wrapSliverDecoration]
-  Widget wrapSliverTile(
+  Widget wrapSliverPaddingDecorationTile(
     RItemTile? tile,
     Widget sliverChild,
   ) =>
@@ -217,10 +250,6 @@ mixin TileTransformMixin {
                 sliverChild,
               ),
             );
-
-  //endregion ---tile处理---
-
-  //region ---Sliver装饰---
 
   /// 装饰当前的[sliverChild]
   /// [DecoratedSliver]
@@ -269,6 +298,18 @@ abstract class BaseTileTransform with TileTransformMixin {
 
   /// 构造函数
   BaseTileTransform();
+
+  /// 未指定变换类型的[tile]是否可以被处理
+  @property
+  bool isSupportDefaultTile(RItemTile tile) {
+    if (tile.sliverTransformType != null) {
+      return false;
+    }
+    if (tile.fillRemaining) {
+      return false;
+    }
+    return tileList.isNotEmpty;
+  }
 
   /// 询问是否支持[tile]的变换/转换
   /// 返回true, 表示支持, 则之后的[tile]将会交给self处理
@@ -382,7 +423,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     WidgetList sliverChild,
   ) {
     //debugger();
-    return wrapSliverTile(
+    return wrapSliverPaddingDecorationTile(
       headerTile,
       SliverMainAxisGroup(slivers: [
         if (headerWidget != null) headerWidget,
@@ -399,8 +440,7 @@ class SliverListTransform extends BaseTileTransform {
   @override
   bool isSupportTransform(BuildContext context, Widget tile) =>
       tile is RItemTile &&
-      (tile.sliverTransformType == SliverList ||
-          (tile.sliverTransformType == null && tileList.isNotEmpty));
+      (tile.sliverTransformType == SliverList || isSupportDefaultTile(tile));
 
   @override
   void endTransformIfNeed(
@@ -458,7 +498,7 @@ class SliverListTransform extends BaseTileTransform {
         newList.add(tile);
       }
     });
-    return wrapSliverTile(
+    return wrapSliverPaddingDecorationTile(
         first,
         SliverList.list(
           addAutomaticKeepAlives: first.addAutomaticKeepAlives,
@@ -476,8 +516,8 @@ class SliverGridTransform extends BaseTileTransform {
   @override
   bool isSupportTransform(BuildContext context, Widget tile) =>
       tile is RItemTile &&
-      (tile.sliverTransformType == SliverGrid ||
-          (tile.sliverTransformType == null && tileList.isNotEmpty));
+      tile.sliverTransformType == SliverGrid &&
+      tile.crossAxisCount > 0;
 
   @override
   void endTransformIfNeed(
@@ -518,6 +558,7 @@ class SliverGridTransform extends BaseTileTransform {
         //crossAxisCount不相同
         endTransformIfNeed(context, origin, result);
       }
+      //debugger();
       tileList.add(tile);
       return true;
     }
@@ -549,7 +590,7 @@ class SliverGridTransform extends BaseTileTransform {
         newList.add(tile);
       }
     });
-    return wrapSliverTile(
+    return wrapSliverPaddingDecorationTile(
         first,
         SliverGrid.count(
           crossAxisCount: first.crossAxisCount,

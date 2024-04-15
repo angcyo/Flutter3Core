@@ -1545,11 +1545,14 @@ extension StateEx on State {
   /// [dart.js.context]
   BuildContext get buildContext => context;
 
+  /// 元素是否还在树中
+  bool get isMounted => buildContext.mounted;
+
   /// 标记当前状态脏, 会在下一帧重建
   /// [Element.markNeedsBuild]
   /// [ContextEx.tryUpdateState]
   void updateState() {
-    if (mounted) {
+    if (isMounted) {
       setState(() {});
     }
   }
