@@ -9,6 +9,10 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasPaint]
   final void Function(CanvasDelegate delegate, int paintCount)? onCanvasPaint;
 
+  /// [CanvasDelegate.dispatchCanvasIdle]
+  final void Function(CanvasDelegate delegate, Duration lastRefreshTime)?
+      onCanvasIdle;
+
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]
   final void Function(
     CanvasViewBox canvasViewBox,
@@ -63,6 +67,7 @@ class CanvasListener {
 
   CanvasListener({
     this.onCanvasPaint,
+    this.onCanvasIdle,
     this.onCanvasViewBoxChangedAction,
     this.onCanvasUnitChangedAction,
     this.onCanvasSelectBoundsChangedAction,

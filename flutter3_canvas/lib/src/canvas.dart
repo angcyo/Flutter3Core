@@ -91,12 +91,14 @@ class CanvasRenderBox extends RenderBox {
   void attach(PipelineOwner owner) {
     super.attach(owner);
     canvasDelegate.repaint.addListener(_repaintListener);
+    canvasDelegate.attach();
   }
 
   @override
   void detach() {
     super.detach();
     canvasDelegate.repaint.removeListener(_repaintListener);
+    canvasDelegate.detach();
   }
 
   /// 重绘

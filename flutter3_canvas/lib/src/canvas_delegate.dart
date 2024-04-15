@@ -94,6 +94,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasPaintManager.onUpdatePaintBounds();
   }
 
+  /// [RenderObject.attach]
+  @entryPoint
+  void attach() {}
+
+  /// [RenderObject.detach]
+  @entryPoint
+  void detach() {
+    _cancelIdleTimer();
+  }
+
   //endregion ---入口点---
 
   //region ---get/set---
@@ -145,18 +155,42 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 当前是否请求过刷新
   bool isRequestRefresh = false;
 
-  /// 是否有元素改变过
+  /// 上一次请求刷新的时间, 毫秒
+  Duration lastRequestRefreshTime = Duration.zero;
+
+  /// 空闲超时时长, 画布无操作多久之后, 触发空闲回调
+  Duration idleTimeout = 10.seconds;
+
+  /// 是否有元素属性发生过改变
+  bool isElementPropertyChanged = false;
+
+  /// 是否有元素数量发生过改变
   bool isElementChanged = false;
 
   //endregion ---core---
 
   //region ---api---
 
-  /// 刷新画布
+  /// 请求刷新画布
   @api
   void refresh() {
+    final time = lastRequestRefreshTime;
     isRequestRefresh = true;
+    lastRequestRefreshTime = nowDuration();
     repaint.value++;
+
+    _cancelIdleTimer();
+    _idleTimer = postDelayCallback(() {
+      _idleTimer = null;
+      dispatchCanvasIdle(this, time);
+    }, idleTimeout);
+  }
+
+  Timer? _idleTimer;
+
+  void _cancelIdleTimer() {
+    _idleTimer?.cancel();
+    _idleTimer = null;
   }
 
   /// 添加画布监听
@@ -268,6 +302,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
+  /// 派发画布空闲时的回调, 当没有请求[refresh]方法时触发
+  void dispatchCanvasIdle(CanvasDelegate delegate, Duration lastRefreshTime) {
+    _eachCanvasListener((element) {
+      element.onCanvasIdle?.call(delegate, lastRefreshTime);
+    });
+  }
+
   /// 当[CanvasViewBox]视口发生变化时触发
   /// [CanvasViewBox.changeMatrix]
   void dispatchCanvasViewBoxChanged(
@@ -317,7 +358,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     dynamic to,
     int propertyType,
   ) {
-    isElementChanged = true;
+    isElementPropertyChanged = true;
     /*assert(() {
       l.d('元素属性发生改变:$elementPainter $from->$to :$propertyType');
       return true;
@@ -353,6 +394,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     UndoType undoType,
   ) {
     //debugger();
+    isElementChanged = true;
     canvasElementManager.canvasElementControlManager
         .onSelfElementListChanged(from, to, op, undoType);
     _eachCanvasListener((element) {
