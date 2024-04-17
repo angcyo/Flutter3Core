@@ -66,6 +66,7 @@ part 'src/basics/matrix_ex.dart';
 part 'src/component/async_operation.dart';
 part 'src/component/custom_painter.dart';
 part 'src/component/fps.dart';
+part 'src/component/version_matcher.dart';
 part 'src/component/future_cancel.dart';
 part 'src/component/live_stream_controller.dart';
 part 'src/component/mutex_key.dart';
