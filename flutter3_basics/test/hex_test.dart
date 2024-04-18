@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 ///
 
 void main() {
-  const str = "abc123ABC";
+  /*const str = "abc123ABC";
   consoleLog(str.codeUnits);
   consoleLog(String.fromCharCodes(str.codeUnits));
   consoleLog(String.fromCharCode(97));
@@ -37,5 +37,11 @@ void main() {
     });
     consoleLog(bytes.toHex().fillHexSpace());
     consoleLog(bytes.crc16().toHex(4));
+  });*/
+
+  test('test hex', () {
+    consoleLog('7e2b7dfc'.toInt(radix: 16));
+    consoleLog('00000001'.toInt(radix: 16));
+    consoleLog('...');
   });
 }

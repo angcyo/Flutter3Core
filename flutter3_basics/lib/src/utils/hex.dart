@@ -10,6 +10,8 @@ library hex;
 import "dart:convert";
 import "dart:typed_data";
 
+import "package:flutter3_basics/flutter3_basics.dart";
+
 const String _ALPHABET = "0123456789abcdef";
 
 /// An instance of the default implementation of the [HexCodec].
@@ -78,8 +80,11 @@ class HexDecoder extends Converter<String, List<int>> {
 //---
 
 extension HexStringEx on String {
+  /// 将16禁止字符串转换为整数
+  int toHexInt({int radix = 16}) => toIntOrNull(radix: radix) ?? 0;
+
   /// Convert a hexadecimal string to a byte array.
-  /// 将十六进制字符串转换为字节数组。
+  /// 将十六进制字符串转换为字节数组数据。
   List<int> toHexBytes() => HEX.decoder.convert(this);
 
   /// Convert a hexadecimal string to a byte buffer.
