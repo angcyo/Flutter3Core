@@ -29,7 +29,7 @@ typedef FileDataType = Object;
 extension LogEx on Object {
   /// 包裹一下日志信息
   String wrapLogString([String? prefix]) =>
-      "\n${prefix ?? nowTimeString()}\n$this\n";
+      "${prefix ?? nowTimeString()} $this\n";
 
   /// 写入到文件, 返回对应的文件
   /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象
