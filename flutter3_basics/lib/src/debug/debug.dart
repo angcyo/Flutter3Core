@@ -48,7 +48,7 @@ String randomText([int? length]) => randomString(length);
 
 /// 获取随机中文英文字符串
 String randomString([int? length]) {
-  length ??= nextInt(1000, min: 1);
+  length ??= nextInt(1000, 1);
 
   String getRandomChar() {
     var base =
@@ -93,9 +93,9 @@ String randomImagePlaceholderUrl([String? text]) {
 /// https://pub.dev/packages/random_color
 Color randomColor({int min = 120, int max = 200}) => Color.fromARGB(
       255,
-      nextInt(max, min: min),
-      nextInt(max, min: min),
-      nextInt(max, min: min),
+      nextInt(max, min),
+      nextInt(max, min),
+      nextInt(max, min),
     );
 
 /// 获取一个随机的[StateLogWidget]
@@ -123,7 +123,7 @@ Widget randomWidget({
   Color? textColor = Colors.white,
 }) {
   final max = platformMediaQueryData.size.width;
-  final h = height ?? nextDouble(min: kMinInteractiveDimension, max: max);
+  final h = height ?? nextDouble(kMinInteractiveDimension, max);
   //保留2位小数点
   fontSize = double.parse(fontSize.toStringAsFixed(2));
   final bgColor = randomColor();
@@ -145,7 +145,7 @@ Widget randomWidget({
 /// 获取一个随机的文本[Widget]
 Widget randomTextWidget({int? length, TextAlign? textAlign, String? text}) {
   return Text(
-    text ?? randomString(length ?? nextInt(10, min: 1)),
+    text ?? randomString(length ?? nextInt(10, 1)),
     textAlign: textAlign ?? TextAlign.center,
   );
 }
