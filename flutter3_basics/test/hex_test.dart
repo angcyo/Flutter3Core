@@ -39,9 +39,18 @@ void main() {
     consoleLog(bytes.crc16().toHex(4));
   });*/
 
-  test('test hex', () {
+  /*test('test hex', () {
     consoleLog('7e2b7dfc'.toInt(radix: 16));
     consoleLog('00000001'.toInt(radix: 16));
+    consoleLog('...');
+  });*/
+
+  test('test', () {
+    //定义一个字节数组
+    final data = Uint8List.fromList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    final hex = data.toHex();
+    consoleLog('${data.length}');
+    consoleLog('${hex.length}');
     consoleLog('...');
   });
 }
