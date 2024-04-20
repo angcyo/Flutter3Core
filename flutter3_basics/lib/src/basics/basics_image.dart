@@ -250,6 +250,18 @@ extension ImageEx on UiImage {
       toBytes(format);
 
   /// 保存图片到文件
+  /// [saveToFile]
+  Future<File?> saveToFilePath(
+    String? filePath, {
+    UiImageByteFormat format = UiImageByteFormat.png,
+  }) async {
+    if (isNil(filePath)) {
+      return null;
+    }
+    return saveToFile(File(filePath!), format: format);
+  }
+
+  /// 保存图片到文件
   Future<File?> saveToFile(
     File? file, {
     UiImageByteFormat format = UiImageByteFormat.png,
