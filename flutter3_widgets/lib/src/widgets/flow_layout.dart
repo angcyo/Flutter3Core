@@ -26,8 +26,8 @@ class FlowLayout extends MultiChildRenderObjectWidget {
   /// [FlowLayoutRender.childConstraints]
   final BoxConstraints? childConstraints;
 
-  /// [FlowLayoutRender.enableEqualWidth]
-  final bool enableEqualWidth;
+  /// [FlowLayoutRender.equalWidthRange]
+  final String? equalWidthRange;
 
   /// [FlowLayoutRender.lineMaxChildCount]
   final int? lineMaxChildCount;
@@ -50,7 +50,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
     this.childVerticalGap,
     this.selfConstraints,
     this.childConstraints,
-    this.enableEqualWidth = false,
+    this.equalWidthRange,
     this.lineMaxChildCount,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.lineMainAxisAlignment = MainAxisAlignment.start,
@@ -65,7 +65,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
         childVerticalGap: childVerticalGap,
         selfConstraints: selfConstraints,
         childConstraints: childConstraints,
-        enableEqualWidth: enableEqualWidth,
+        equalWidthRange: equalWidthRange,
         lineMaxChildCount: lineMaxChildCount,
         mainAxisAlignment: mainAxisAlignment,
         lineMainAxisAlignment: lineMainAxisAlignment,
@@ -81,7 +81,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
       ..childVerticalGap = childVerticalGap
       ..selfConstraints = selfConstraints
       ..childConstraints = childConstraints
-      ..enableEqualWidth = enableEqualWidth
+      ..equalWidthRange = equalWidthRange
       ..lineMaxChildCount = lineMaxChildCount
       ..mainAxisAlignment = mainAxisAlignment
       ..lineMainAxisAlignment = lineMainAxisAlignment
@@ -111,6 +111,7 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
   BoxConstraints? constraints;
 
   /// 宽度占用权重
+  /// `boxWidth * weight`
   double? weight;
 
   /// 当前这一行在计算[weight]时, 需要排除多个[child]的gap
@@ -241,7 +242,9 @@ class FlowLayoutRender extends RenderBox
   final BoxConstraints defChildConstraints = const BoxConstraints();
 
   /// 是否激活元素等宽, 间接设置[FlowLayoutParentData.weight]
-  bool enableEqualWidth;
+  /// 等宽的[children]数量范围[x~xx], 满足条件才开启等宽
+  /// [VersionMatcher]
+  String? equalWidthRange;
 
   /// 每行最多的子元素数量, 用来配合[enableEqualWidth]计算[FlowLayoutParentData.weight]
   int? lineMaxChildCount;
@@ -261,6 +264,9 @@ class FlowLayoutRender extends RenderBox
   /// [CrossAxisAlignment.center] 对齐容器的中心
   CrossAxisAlignment crossAxisAlignment;
 
+  /// 是否等宽
+  bool get isEqualWidth => getChildCount().matchVersion(equalWidthRange);
+
   FlowLayoutRender({
     this.padding,
     this.childHorizontalGap,
@@ -268,7 +274,7 @@ class FlowLayoutRender extends RenderBox
     this.childGap = 0,
     this.selfConstraints,
     this.childConstraints,
-    this.enableEqualWidth = false,
+    this.equalWidthRange,
     this.lineMaxChildCount,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.lineMainAxisAlignment = MainAxisAlignment.start,
@@ -299,18 +305,21 @@ class FlowLayoutRender extends RenderBox
   @override
   void performLayout() {
     final BoxConstraints constraints = this.constraints;
+    //debugger();
+    measureChild();
+    layoutChild();
+
     final paddingHorizontal = (padding?.horizontal ?? 0);
     final paddingVertical = (padding?.vertical ?? 0);
-    final paddingTop = padding?.top ?? 0;
-    final paddingBottom = padding?.bottom ?? 0;
-    final paddingLeft = padding?.left ?? 0;
-    final paddingRight = padding?.right ?? 0;
 
-    final horizontalGap = childHorizontalGap ?? childGap;
-    final verticalGap = childVerticalGap ?? childGap;
+    final childSize = Size(_childUsedWidth, _childUsedHeight);
+    size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
+        constraints.constrain(
+            childSize + UiOffset(paddingHorizontal, paddingVertical));
+  }
 
-    //debugger();
-
+  /// 最大的参考宽度, weight属性的参考值
+  double get refMaxWidth {
     double maxWidth;
     if (selfConstraints?.maxWidth != null &&
         selfConstraints?.maxWidth != double.infinity) {
@@ -318,18 +327,21 @@ class FlowLayoutRender extends RenderBox
     } else if (constraints.maxWidth != double.infinity) {
       maxWidth = constraints.maxWidth;
     } else {
-      final size = selfConstraints?.constrainSize(constraints,
-          const ui.Size(double.infinity, double.infinity), padding);
+      final size = selfConstraints?.constrainSize(
+          constraints, const UiSize(double.infinity, double.infinity), padding);
       maxWidth = size?.width ?? double.infinity;
       if (maxWidth == double.infinity) {
         assert(() {
-          l.d('无法确定的maxWidth');
+          l.v('无法确定的maxWidth,[weight]属性失效,只能左对齐,并且无法根据宽度换行');
           return true;
         }());
       }
     }
+    return maxWidth;
+  }
 
-    //debugger();
+  /// 最大的参考高度, 用来垂直对齐参考
+  double get refMaxHeight {
     double maxHeight;
     if (selfConstraints?.maxHeight != null &&
         selfConstraints?.maxHeight != double.infinity) {
@@ -342,65 +354,43 @@ class FlowLayoutRender extends RenderBox
       maxHeight = size?.height ?? double.infinity;
       if (maxHeight == double.infinity) {
         assert(() {
-          l.d('无法确定的maxHeight');
+          l.v('无法确定的maxHeight, 只能顶部对齐');
           return true;
         }());
       }
     }
+    return maxHeight;
+  }
 
-    //所有子元素
-    final allChildren = getChildren();
-    //堆叠的资源
-    final stackChildren = <RenderBox>[];
-    //存储每一行的child list
-    final childrenLineList = <List<RenderBox>>[];
-
-    // 一行中的child
-    var lineChildList = <RenderBox>[];
-
+  /// 1: 测量所有的child大小
+  /// 需要支持[equalWidthRange]属性
+  void measureChild() {
+    final children = getChildren();
     //一行最大应该布局多少个child
-    final lineMaxChildCount_ =
-        min(lineMaxChildCount ?? allChildren.length, allChildren.length);
+    final lineMaxChildCount =
+        min(this.lineMaxChildCount ?? children.length, children.length);
 
-    // 一行中剩余的宽度空间
-    double lineRemainWidth = 0;
-    int lineChildIndex = 0;
+    //最大宽度, weight属性的参考值
+    final maxWidth = refMaxWidth;
 
-    void newLine() {
-      if (lineChildList.isNotEmpty) {
-        childrenLineList.add(lineChildList);
-        lineChildList = [];
-      }
-      lineRemainWidth = maxWidth - paddingHorizontal;
-      lineChildIndex = 0;
-    }
+    final paddingHorizontal = (padding?.horizontal ?? 0);
+    final horizontalGap = childHorizontalGap ?? childGap;
 
-    newLine(); //init
-
-    //开始测量child大小
-    allChildren.forEachIndexed((index, child) {
-      //debugger();
+    for (var child in children) {
       final FlowLayoutParentData childParentData =
           child.parentData! as FlowLayoutParentData;
-
-      double? weight = childParentData.weight;
-      if (enableEqualWidth && childParentData.constraints == null) {
-        weight ??= 1.0 / lineMaxChildCount_;
-      }
-
-      BoxConstraints childConstraints = childParentData.constraints ??
+      var childConstraints = childParentData.constraints ??
           this.childConstraints ??
           defChildConstraints;
 
-      /*if (childParentData.stack) {
-        debugger();
-      }*/
+      //权重
+      double? weight = childParentData.weight ??
+          (isEqualWidth ? 1.0 / lineMaxChildCount : null);
 
-      if (weight != null) {
+      if (maxWidth != double.infinity && weight != null) {
         //需要使用权重约束
-        //debugger();
-        final gap = (childHorizontalGap ?? childGap) *
-            (lineMaxChildCount_ - 1 - childParentData.excludeGapCount);
+        final gap = horizontalGap *
+            (lineMaxChildCount - 1 - childParentData.excludeGapCount);
         final boxValidWidth = maxWidth - paddingHorizontal - gap;
         final width = boxValidWidth * weight;
         childConstraints = BoxConstraints(
@@ -409,13 +399,60 @@ class FlowLayoutRender extends RenderBox
           minHeight: childConstraints.minHeight,
           maxHeight: childConstraints.maxHeight,
         );
+      } else {
+        //默认约束
       }
+      ChildLayoutHelper.layoutChild(child, childConstraints);
+    }
+  }
 
-      //debugger();
+  double _childUsedWidth = 0;
+  double _childUsedHeight = 0;
 
-      //child 大小
-      final childSize = ChildLayoutHelper.layoutChild(child, childConstraints);
+  /// 2: 布局所有的child位置, 包裹stack的child
+  /// 先将child规则, 按照一行一行的规则, 分组 / stack的child不参与分组
+  /// 然后按照分组的规则, 依次布局child的位置
+  void layoutChild() {
+    final children = getChildren();
+    //堆叠的child
+    final stackChildren = <RenderBox>[];
+    //存储每一行的child list
+    final childrenLineList = <List<RenderBox>>[];
+    // 一行中的child
+    var lineChildList = <RenderBox>[];
 
+    //一行最大应该布局多少个child
+    final lineMaxChildCount =
+        min(this.lineMaxChildCount ?? children.length, children.length);
+
+    // 一行中剩余的宽度空间
+    double lineRemainWidth = 0;
+    int lineChildIndex = 0;
+
+    final maxWidth = refMaxWidth;
+    final paddingHorizontal = (padding?.horizontal ?? 0);
+    final horizontalGap = childHorizontalGap ?? childGap;
+    final verticalGap = childVerticalGap ?? childGap;
+
+    void newLine() {
+      if (lineChildList.isNotEmpty) {
+        childrenLineList.add(lineChildList);
+        lineChildList = [];
+      }
+      if (maxWidth == double.infinity) {
+        lineRemainWidth = double.infinity;
+      } else {
+        lineRemainWidth = maxWidth - paddingHorizontal;
+      }
+      lineChildIndex = 0;
+    }
+
+    newLine(); //init
+
+    //归类/分行分组
+    for (var child in children) {
+      final FlowLayoutParentData childParentData =
+          child.parentData! as FlowLayoutParentData;
       if (childParentData.stack) {
         // 堆叠child, 不占用原有的布局空间
         stackChildren.add(child);
@@ -424,55 +461,58 @@ class FlowLayoutRender extends RenderBox
         final excludeGap = lineChildIndex > 0 ? horizontalGap : 0;
         lineChildIndex++;
 
+        final childSize = child.size;
         //debugger();
-        if (childSize.width > lineRemainWidth) {
-          //换行
-          newLine();
+        if (lineRemainWidth != double.infinity) {
+          if (childSize.width > lineRemainWidth) {
+            //换行
+            newLine();
+          }
+          lineRemainWidth -= childSize.width + excludeGap;
         }
         lineChildList.add(child);
-        lineRemainWidth -= childSize.width + excludeGap;
 
-        if (lineChildList.length >= lineMaxChildCount_) {
+        if (lineChildList.length >= lineMaxChildCount) {
           newLine();
         }
       }
-    });
-    newLine();
-    //debugger();
+    }
+
+    newLine(); //最后一行
 
     //开始布局
-    double childUsedWidth = 0;
-    double childUsedHeight = getAllLineHeight(childrenLineList);
+    double maxHeight = refMaxHeight;
+    _childUsedWidth = 0;
+    _childUsedHeight = getAllLineHeight(childrenLineList);
 
-    //debugger();
-    Size childSize = Size(childUsedWidth, childUsedHeight);
-    Size expectSize =
-        selfConstraints?.constrainSize(constraints, childSize, padding) ??
-            constraints.constrain(childSize);
-
-    //this
-    maxWidth = expectSize.width;
-    maxHeight = expectSize.height;
-
-    //debugger();
+    final paddingTop = padding?.top ?? 0;
+    final paddingBottom = padding?.bottom ?? 0;
+    final paddingLeft = padding?.left ?? 0;
+    final paddingRight = padding?.right ?? 0;
     double top = paddingTop;
-    if (mainAxisAlignment == MainAxisAlignment.center) {
-      top = (maxHeight - childUsedHeight) / 2 + paddingTop - paddingBottom;
-    } else if (mainAxisAlignment == MainAxisAlignment.end) {
-      top = maxHeight - childUsedHeight - paddingBottom;
+    if (maxHeight != double.infinity) {
+      //获取child总行的高度
+
+      if (mainAxisAlignment == MainAxisAlignment.center) {
+        top = (maxHeight - _childUsedHeight) / 2 + paddingTop - paddingBottom;
+      } else if (mainAxisAlignment == MainAxisAlignment.end) {
+        top = maxHeight - _childUsedHeight - paddingBottom;
+      }
     }
     double left = paddingLeft;
-
     childrenLineList.forEachIndexed((index, lineChildList) {
       //debugger();
       double lineMaxWidth = getLineUsedWidth(lineChildList);
       double lineMaxHeight = getLineUsedHeight(lineChildList);
       double lineUsedHeight = 0;
       double lineLeft = left;
-      if (crossAxisAlignment == CrossAxisAlignment.center) {
-        lineLeft = (maxWidth - lineMaxWidth) / 2 + paddingLeft - paddingRight;
-      } else if (crossAxisAlignment == CrossAxisAlignment.end) {
-        lineLeft = maxWidth - lineMaxWidth - paddingRight;
+
+      if (maxWidth != double.infinity) {
+        if (crossAxisAlignment == CrossAxisAlignment.center) {
+          lineLeft = (maxWidth - lineMaxWidth) / 2 + paddingLeft - paddingRight;
+        } else if (crossAxisAlignment == CrossAxisAlignment.end) {
+          lineLeft = maxWidth - lineMaxWidth - paddingRight;
+        }
       }
 
       lineChildList.forEachIndexed((index, child) {
@@ -495,7 +535,7 @@ class FlowLayoutRender extends RenderBox
       });
 
       top += lineUsedHeight + verticalGap;
-      childUsedWidth = max(childUsedWidth, lineMaxWidth);
+      _childUsedWidth = max(_childUsedWidth, lineMaxWidth);
     });
 
     // 堆叠的child在此布局
@@ -515,12 +555,6 @@ class FlowLayoutRender extends RenderBox
         stackChildParentData.offset = Offset(lineLeft, lineTop);
       }
     }
-
-    //重新计算一次size
-    //debugger();
-    childSize = Size(childUsedWidth, childUsedHeight);
-    size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
-        constraints.constrain(childSize);
   }
 
   /// 计算所有行的高度, 不包含[padding], 但是包含[childVerticalGap]
@@ -583,7 +617,7 @@ extension FlowLayoutListEx on WidgetNullList {
     double? childHorizontalGap,
     double? childVerticalGap,
     BoxConstraints? childConstraints,
-    bool enableEqualWidth = false,
+    String? equalWidthRange,
     int? lineMaxChildCount,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.center,
     MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.start,
@@ -600,7 +634,7 @@ extension FlowLayoutListEx on WidgetNullList {
       childVerticalGap: childVerticalGap,
       selfConstraints: selfConstraints,
       childConstraints: childConstraints,
-      enableEqualWidth: enableEqualWidth,
+      equalWidthRange: equalWidthRange,
       lineMaxChildCount: lineMaxChildCount,
       mainAxisAlignment: mainAxisAlignment,
       lineMainAxisAlignment: lineMainAxisAlignment,

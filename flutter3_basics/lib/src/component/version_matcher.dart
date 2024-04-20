@@ -116,7 +116,18 @@ class VersionRange {
 
 extension VersionIntExt on int {
   /// 当前的版本是否配置指定的规则
-  bool matchVersion(String? config) {
-    return VersionMatcher.matches(this, config);
+  bool matchVersion(
+    String? config, {
+    /*未配置[config]规则时返回*/
+    bool defOrNull = false,
+    /*[config]规则为空时*/
+    bool defOrEmpty = true,
+  }) {
+    return VersionMatcher.matches(
+      this,
+      config,
+      defOrNull: defOrNull,
+      defOrEmpty: defOrEmpty,
+    );
   }
 }

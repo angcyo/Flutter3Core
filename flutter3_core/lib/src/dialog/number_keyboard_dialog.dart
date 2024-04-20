@@ -5,7 +5,19 @@ part of '../../flutter3_core.dart';
 /// @author angcyo
 /// @date 2024/03/18
 ///
-
+/// ```
+/// final value = await showDialogWidget(
+///   context,
+///   NumberKeyboardDialog(
+///     number: number,
+///     minValue: minNumber,
+///     maxValue: maxNumber,
+///     hintText: hintTooltip ?? tooltip,
+///   ),
+///   type: TranslationType.translation,
+///   barrierDismissible: false,
+/// );
+/// ```
 /// 输入回调
 typedef NumberInputCallback = void Function(num? value);
 
@@ -134,7 +146,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       ),
       childConstraints: BoxConstraints(minHeight: height),
       childGap: gap,
-      enableEqualWidth: true,
+      equalWidthRange: "",
       lineMaxChildCount: 4,
       padding: EdgeInsets.all(gap),
       children: [

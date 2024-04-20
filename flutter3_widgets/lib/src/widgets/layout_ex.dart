@@ -122,6 +122,20 @@ class LayoutBoxConstraints extends BoxConstraints {
 mixin LayoutMixin<ChildType extends RenderObject,
         ParentDataType extends ContainerParentDataMixin<ChildType>>
     on ContainerRenderObjectMixin<ChildType, ParentDataType> {
+  /// 获取所有子节点的数量
+  @protected
+  int getChildCount() {
+    int count = 0;
+    ChildType? child = firstChild;
+    while (child != null) {
+      count += 1;
+      final ParentDataType childParentData =
+          child.parentData! as ParentDataType;
+      child = childParentData.nextSibling;
+    }
+    return count;
+  }
+
   /// 获取所有的子节点
   /// [RenderBoxContainerDefaultsMixin.getChildrenAsList]
   @protected

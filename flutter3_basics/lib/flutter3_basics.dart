@@ -114,6 +114,7 @@ typedef Action = VoidCallback;
 typedef VoidAction = Action;
 typedef UiImage = ui.Image;
 typedef UiColor = ui.Color;
+typedef UiOffset = ui.Offset;
 typedef UiSize = ui.Size;
 typedef UiRect = ui.Rect;
 typedef UiTextStyle = ui.TextStyle;
