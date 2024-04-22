@@ -17,6 +17,26 @@ mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   bool _isPopSameRoute = true;
 
   @override
+  ui.Color? get barrierColor => super.barrierColor;
+
+  @override
+  Curve get barrierCurve => super.barrierCurve;
+
+  @override
+  bool get barrierDismissible => super.barrierDismissible;
+
+  @override
+  String? get barrierLabel => super.barrierLabel;
+
+  @override
+  bool get impliesAppBarDismissal => super.impliesAppBarDismissal;
+
+  @override
+  Widget buildModalBarrier() {
+    return super.buildModalBarrier();
+  }
+
+  @override
   void didAdd() {
     debugger();
     super.didAdd();
