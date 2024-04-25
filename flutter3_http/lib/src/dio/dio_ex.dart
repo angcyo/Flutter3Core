@@ -178,8 +178,8 @@ extension DioStringEx on String {
     Object? data,
     Options? options,
   }) async {
-    var dio = RDio.get(context: context).dio;
-    var saveTo = savePath ?? (await getSavePath);
+    final dio = RDio.get(context: context).dio;
+    final saveTo = savePath ?? (await getSavePath);
     final response = dio.download(
       this,
       saveTo,
@@ -230,34 +230,37 @@ extension DioFutureResponseEx<T> on Future<T> {
     String? messageKey,
   }) async {
     //debugger();
-    resultHandle ??= HttpResultHandle();
-    resultHandle.codeKey = codeKey ?? resultHandle.codeKey;
-    resultHandle.dataKey = dataKey ?? resultHandle.dataKey;
-    resultHandle.messageKey = messageKey ?? resultHandle.messageKey;
-    resultHandle.showErrorToast = showErrorToast ?? resultHandle.showErrorToast;
+    final handle = resultHandle ?? HttpResultHandle();
+    handle.codeKey = codeKey ?? handle.codeKey;
+    handle.dataKey = dataKey ?? handle.dataKey;
+    handle.messageKey = messageKey ?? handle.messageKey;
+    handle.showErrorToast = showErrorToast ?? handle.showErrorToast;
     return get((response, error) {
       //debugger();
       if (error != null) {
-        callback?.call(response, resultHandle!.handleError(error));
+        final err = handle.handleError(error);
+        callback?.call(response, err);
         if (throwError == true) {
           throw error;
         }
         return null;
       } else if (response == null) {
-        var exception = RException(message: "response is null", cause: error);
-        callback?.call(response, resultHandle!.handleError(exception));
+        final exception = RException(message: "response is null", cause: error);
+        final err = handle.handleError(exception);
+        callback?.call(response, err);
         if (throwError == true) {
           throw exception;
         }
         return null;
       } else {
-        var data = resultHandle!.handleResponse(response);
+        final data = handle.handleResponse(response);
         callback?.call(data, null);
         return data;
       }
     }).catchError((error) {
       //debugger();
-      callback?.call(null, resultHandle!.handleError(error));
+      final err = handle.handleError(error);
+      callback?.call(null, err);
       if (throwError == true) {
         throw error;
       }
