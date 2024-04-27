@@ -220,6 +220,10 @@ class FlowLayoutRender extends RenderBox
   /// 自身的内间隙
   EdgeInsets? padding;
 
+  get paddingHorizontal => (padding?.horizontal ?? 0);
+
+  get paddingVertical => (padding?.vertical ?? 0);
+
   /// 子元素之间的间隙, 如果[childHorizontalGap]和[childVerticalGap]都不指定, 则使用[childGap]
   /// [childHorizontalGap]
   /// [childVerticalGap]
@@ -309,9 +313,6 @@ class FlowLayoutRender extends RenderBox
     measureChild();
     layoutChild();
 
-    final paddingHorizontal = (padding?.horizontal ?? 0);
-    final paddingVertical = (padding?.vertical ?? 0);
-
     final childSize = Size(_childUsedWidth, _childUsedHeight);
     size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
         constraints.constrain(
@@ -321,11 +322,14 @@ class FlowLayoutRender extends RenderBox
   /// 最大的参考宽度, weight属性的参考值
   double get refMaxWidth {
     double maxWidth;
+    var constraints = this.constraints;
     if (selfConstraints?.maxWidth != null &&
         selfConstraints?.maxWidth != double.infinity) {
       maxWidth = selfConstraints!.maxWidth;
     } else if (constraints.maxWidth != double.infinity) {
       maxWidth = constraints.maxWidth;
+    } else if (_childUsedWidth > 0) {
+      maxWidth = _childUsedWidth + paddingHorizontal;
     } else {
       final size = selfConstraints?.constrainSize(
           constraints, const UiSize(double.infinity, double.infinity), padding);
@@ -343,11 +347,14 @@ class FlowLayoutRender extends RenderBox
   /// 最大的参考高度, 用来垂直对齐参考
   double get refMaxHeight {
     double maxHeight;
+    var constraints = this.constraints;
     if (selfConstraints?.maxHeight != null &&
         selfConstraints?.maxHeight != double.infinity) {
       maxHeight = selfConstraints!.maxHeight;
     } else if (constraints.maxHeight != double.infinity) {
       maxHeight = constraints.maxHeight;
+    } else if (_childUsedHeight > 0) {
+      maxHeight = _childUsedHeight + paddingVertical;
     } else {
       final size = selfConstraints?.constrainSize(constraints,
           const ui.Size(double.infinity, double.infinity), padding);
@@ -481,25 +488,28 @@ class FlowLayoutRender extends RenderBox
     newLine(); //最后一行
 
     //开始布局
+    var childUsedWidth = 0.0;
+    final childUsedHeight = getAllLineHeight(childrenLineList);
+    _childUsedHeight = childUsedHeight;
+
     double maxHeight = refMaxHeight;
-    _childUsedWidth = 0;
-    _childUsedHeight = getAllLineHeight(childrenLineList);
 
     final paddingTop = padding?.top ?? 0;
     final paddingBottom = padding?.bottom ?? 0;
     final paddingLeft = padding?.left ?? 0;
     final paddingRight = padding?.right ?? 0;
     double top = paddingTop;
+
     if (maxHeight != double.infinity) {
       //获取child总行的高度
-
       if (mainAxisAlignment == MainAxisAlignment.center) {
-        top = (maxHeight - _childUsedHeight) / 2 + paddingTop - paddingBottom;
+        top = (maxHeight - childUsedHeight) / 2 + paddingTop - paddingBottom;
       } else if (mainAxisAlignment == MainAxisAlignment.end) {
-        top = maxHeight - _childUsedHeight - paddingBottom;
+        top = maxHeight - childUsedHeight - paddingBottom;
       }
     }
     double left = paddingLeft;
+    //遍历一行一行
     childrenLineList.forEachIndexed((index, lineChildList) {
       //debugger();
       double lineMaxWidth = getLineUsedWidth(lineChildList);
@@ -515,6 +525,7 @@ class FlowLayoutRender extends RenderBox
         }
       }
 
+      //遍历一行中的所有child
       lineChildList.forEachIndexed((index, child) {
         final FlowLayoutParentData childParentData =
             child.parentData! as FlowLayoutParentData;
@@ -535,8 +546,9 @@ class FlowLayoutRender extends RenderBox
       });
 
       top += lineUsedHeight + verticalGap;
-      _childUsedWidth = max(_childUsedWidth, lineMaxWidth);
+      childUsedWidth = max(childUsedWidth, lineMaxWidth);
     });
+    _childUsedWidth = childUsedWidth;
 
     // 堆叠的child在此布局
     for (var stackChild in stackChildren) {
@@ -599,7 +611,7 @@ class FlowLayoutRender extends RenderBox
     /*assert(() {
       context.canvas.drawRect(
           ui.Rect.fromLTWH(offset.dx, offset.dy, size.width, size.height),
-          Paint()..color = Colors.white30);
+          Paint()..color = Colors.purpleAccent);
       return true;
     }());*/
     defaultPaint(context, offset);
