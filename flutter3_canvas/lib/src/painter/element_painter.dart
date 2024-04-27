@@ -182,6 +182,7 @@ class ElementPainter extends IPainter
         /*assert(() {
           //绘制元素包裹的边界矩形
           paintPropertyBounds(canvas, paintMeta, paint);
+          paintPropertyPaintPath(canvas, paintMeta, paint);
           return true;
         }());*/
       }
@@ -194,8 +195,11 @@ class ElementPainter extends IPainter
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       paint.withSavePaint(() {
+        //边框的颜色
         paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
+        //样式
         paint.style = PaintingStyle.stroke;
+        //抵消画布缩放带来的宽度变细/变粗
         paint.strokeWidth = 1 / paintMeta.canvasScale;
 
         //debugger();
@@ -232,6 +236,19 @@ class ElementPainter extends IPainter
         paint.color = Colors.redAccent;
         //canvas.drawPath(it.paintPath, paint);
         canvas.drawRect(it.paintBounds, paint);
+      });
+    });
+  }
+
+  /// [paintPropertyBounds]
+  /// [onPaintingSelf]
+  @property
+  void paintPropertyPaintPath(Canvas canvas, PaintMeta paintMeta, Paint paint) {
+    paintProperty?.let((it) {
+      //debugger();
+      paint.withSavePaint(() {
+        paint.color = Colors.purpleAccent;
+        canvas.drawPath(it.paintPath, paint);
       });
     });
   }
