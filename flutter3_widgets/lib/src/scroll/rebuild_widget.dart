@@ -10,7 +10,7 @@ part of '../../flutter3_widgets.dart';
 class RebuildWidget extends StatefulWidget {
   /// 用来触发重构的信号
   final ValueNotifier updateSignal;
-  final DataWidgetBuilder builder;
+  final DynamicDataWidgetBuilder builder;
 
   const RebuildWidget({
     super.key,
@@ -58,6 +58,7 @@ class RebuildWidgetState extends State<RebuildWidget> {
 
 /// 用来触发重构的信号, 不管值相同与否, 都会触发通知
 /// [ValueNotifier]
+@updateSignalMark
 class UpdateValueNotifier<T> extends ValueNotifier<T> {
   /// 附加的额外数据
   /// [ValueNotifier.value] 才是真正的值
@@ -72,7 +73,17 @@ class UpdateValueNotifier<T> extends ValueNotifier<T> {
     return data;
   }
 
-  /// 更新值
+  /// 获取数据
+  @override
+  T get value => super.value;
+
+  /// 调用此方法, 当[value]不变时, 不会触发通知
+  @override
+  set value(T newValue) {
+    super.value = newValue;
+  }
+
+  /// 更新值, 不管值相同与否, 都会触发通知
   @api
   void updateValue([dynamic newValue]) {
     newValue ??= value;
@@ -85,7 +96,13 @@ class UpdateValueNotifier<T> extends ValueNotifier<T> {
 }
 
 /// [UpdateValueNotifier]的快速构建方法
-get nullValueUpdateSignal => UpdateValueNotifier<dynamic>(null);
+@updateSignalMark
+UpdateValueNotifier<dynamic> get nullValueUpdateSignal =>
+    UpdateValueNotifier<dynamic>(null);
+
+/// [UpdateValueNotifier]的快速构建方法
+@updateSignalMark
+UpdateValueNotifier<T?> updateSignal<T>() => UpdateValueNotifier<T?>(null);
 
 mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
   /// 用来触发重构的信号
@@ -124,8 +141,8 @@ mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
 /// [UpdateValueNotifier]
 @dsl
 Widget rebuild(
-  ValueNotifier updateSignal,
-  DataWidgetBuilder builder,
+  @updateSignalMark ValueNotifier updateSignal,
+  DynamicDataWidgetBuilder builder,
 ) {
   return RebuildWidget(
     updateSignal: updateSignal,

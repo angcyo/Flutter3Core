@@ -185,20 +185,33 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
   @override
   void performLayout() {
+    //debugger();
     if (child == null) {
       size = constraints.smallest;
     } else {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
-      final p = parent;
-      final parentConstraints = p?.constraints;
+      final parent = this.parent;
+      final parentConstraints = parent?.constraints;
       double parentMaxWidth = double.infinity;
       double parentMaxHeight = double.infinity;
-      if (p is RenderBox && p.hasSize) {
+
+      if (tightChild) {
         if (constraints.maxWidth == double.infinity) {
-          parentMaxWidth = p.size.width;
+          parentMaxWidth = double.infinity;
+        } else {
+          parentMaxWidth = constraints.maxWidth;
         }
         if (constraints.maxHeight == double.infinity) {
-          parentMaxHeight = p.size.height;
+          parentMaxHeight = double.infinity;
+        } else {
+          parentMaxHeight = constraints.maxHeight;
+        }
+      } else if (parent is RenderBox && parent.hasSize) {
+        if (constraints.maxWidth == double.infinity) {
+          parentMaxWidth = parent.size.width;
+        }
+        if (constraints.maxHeight == double.infinity) {
+          parentMaxHeight = parent.size.height;
         }
       } else if (parentConstraints is BoxConstraints) {
         parentMaxWidth = parentConstraints.maxWidth;
@@ -248,12 +261,13 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
 extension WrapContentLayoutEx on Widget {
   /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
+  /// [wrapBoth] 同时设置2个值
   /// [wrapWidth]  自身的宽度是否和[child]的宽度一致
   /// [MatchParentLayoutEx.matchParent]
   /// [WrapContentLayoutEx.wrapContent]
   WrapContentLayout wrapContent({
     bool tightChild = true,
-    bool? wrap,
+    bool? wrapBoth,
     bool wrapWidth = false,
     bool wrapHeight = false,
     AlignmentDirectional alignment = AlignmentDirectional.center,
@@ -262,8 +276,8 @@ extension WrapContentLayoutEx on Widget {
   }) =>
       WrapContentLayout(
         tightChild: tightChild,
-        wrapWidth: wrap ?? wrapWidth,
-        wrapHeight: wrap ?? wrapHeight,
+        wrapWidth: wrapBoth ?? wrapWidth,
+        wrapHeight: wrapBoth ?? wrapHeight,
         alignment: alignment,
         minWidth: minWidth,
         minHeight: minHeight,

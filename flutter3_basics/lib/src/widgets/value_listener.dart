@@ -6,12 +6,16 @@ part of '../../flutter3_basics.dart';
 ///
 
 /// 通过给定的数据构建小部件
-typedef DataWidgetBuilder = Widget Function(BuildContext context, dynamic data);
+typedef DynamicDataWidgetBuilder = Widget Function(
+    BuildContext context, dynamic data);
+
+/// [DynamicDataWidgetBuilder]
+typedef DataWidgetBuilder<T> = Widget Function(BuildContext context, T? data);
 
 /// 监听[Listenable]并自动重建小部件
 class ValueListener<T extends Listenable> extends StatefulWidget {
   final List<T>? listenableList;
-  final DataWidgetBuilder builder;
+  final DynamicDataWidgetBuilder builder;
 
   const ValueListener({
     super.key,
@@ -71,7 +75,7 @@ extension ValueListenerEx on Listenable {
       );
 
   /// 监听[Listenable]并自动重建小部件, 并把[value]回调出来
-  Widget listenerValue(DataWidgetBuilder builder) => ValueListener(
+  Widget listenerValue(DynamicDataWidgetBuilder builder) => ValueListener(
         listenableList: [this],
         builder: (context, value) => builder(context, value),
       );
@@ -85,7 +89,7 @@ extension ValueListListenerEx on List<Listenable> {
       );
 
   /// 监听[Listenable]并自动重建小部件, 并把[value]回调出来
-  Widget listenerValue(DataWidgetBuilder builder) => ValueListener(
+  Widget listenerValue(DynamicDataWidgetBuilder builder) => ValueListener(
         listenableList: this,
         builder: (context, value) => builder(context, value),
       );

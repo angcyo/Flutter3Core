@@ -79,18 +79,19 @@ class MatchParentBox extends WrapContentBox {
 }
 
 extension MatchParentLayoutEx on Widget {
+  /// [matchBoth] 同时设置2个值
   /// [WrapContentLayoutEx.wrapContent]
   /// [MatchParentLayoutEx.matchParent]
   MatchParentLayout matchParent({
-    bool? match,
+    bool? matchBoth,
     bool matchWidth = true,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
   }) =>
       MatchParentLayout(
         alignment: alignment,
-        matchWidth: match ?? matchWidth,
-        matchHeight: match ?? matchHeight,
+        matchWidth: matchBoth ?? matchWidth,
+        matchHeight: matchBoth ?? matchHeight,
         child: this,
       );
 

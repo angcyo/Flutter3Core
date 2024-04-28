@@ -879,7 +879,10 @@ extension WidgetEx on Widget {
   /// [shadowBlurRadius] 阴影模糊半径
   /// [shadowOffset] 阴影偏移
   /// [shadowSpreadRadius] 阴影扩散半径
-  Widget circleShadow({
+  ///
+  /// [shadowCircle]
+  /// [shadowRadius]
+  Widget shadowCircle({
     bool clipContent = true,
     Color? decorationColor = Colors.white,
     Color shadowColor = Colors.black12,
@@ -928,13 +931,16 @@ extension WidgetEx on Widget {
   /// 圆角矩形阴影包裹
   /// [radius] 圆角
   /// [clipContent] 是否裁剪内容
-  Widget radiusShadow({
+  ///
+  /// [shadowCircle]
+  /// [shadowRadius]
+  Widget shadowRadius({
     bool clipContent = true,
     Color? decorationColor = Colors.white,
     Color shadowColor = Colors.black12,
     Offset shadowOffset = Offset.zero,
     double blurRadius = kDefaultBlurRadius,
-    double? radius,
+    double? radius = kDefaultBorderRadiusXXX,
     BorderRadiusGeometry? borderRadius,
     Color? color,
     AlignmentGeometry? alignment = Alignment.center,
@@ -948,8 +954,7 @@ extension WidgetEx on Widget {
     double? width,
     double? height,
   }) {
-    borderRadius ??=
-        BorderRadius.all(Radius.circular(radius ?? kDefaultBorderRadiusXXX));
+    borderRadius ??= BorderRadius.all(Radius.circular(radius ?? 0));
     return (clipContent ? clip(borderRadius: borderRadius) : this).container(
       alignment: alignment,
       padding: padding,
