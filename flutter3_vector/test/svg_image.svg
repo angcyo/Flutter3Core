@@ -1,0 +1,14 @@
+<svg t="1712147305272" class="icon" viewBox="0 0 1024 1024" version="1.1"
+    xmlns="http://www.w3.org/2000/svg" p-id="4437" width="200mm" height="200">
+    <path d="M10 10L100 100" p-id="4438"></path>
+
+
+    <text x="0" y="0">test</text>
+    <text x="10" y="30" class="small">
+        You are
+        <tspan>not</tspan>
+        a banana!
+    </text>
+
+    <image href="firefox.jpg" x="0" y="0" height="50px" width="50px" />
+</svg>
