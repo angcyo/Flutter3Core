@@ -33,6 +33,7 @@ extension LogEx on Object {
 
   /// 写入到文件, 返回对应的文件
   /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象
+  /// [FileDataType] 支持的数据类型
   Future<File> writeToFile({
     File? file,
     String? fileName,
@@ -59,7 +60,8 @@ extension LogEx on Object {
   /// [folder] 上层文件夹
   /// [limitLength] 是否限制日志文件的最大长度
   /// [wrapLog] 是否包裹一下日志信息, null:自动根据后缀[kLogExtension]判断
-  /// @return 返回文件路径
+  /// [FileDataType] 支持的数据类型
+  /// @return 返回文件对象
   Future<File> appendToFile({
     File? file,
     String? fileName,
@@ -98,6 +100,7 @@ extension LogEx on Object {
       }
     }
 
+    //Flutter3Core/flutter3_basics/lib/src/basics/basics_file.dart:206
     Future writeImage(UiImage? image) async {
       final byteData = await image?.toByteData(format: UiImageByteFormat.png);
       await writeByteData(byteData);
