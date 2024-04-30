@@ -1303,6 +1303,9 @@ extension DoubleEx on double {
 
 /// [Uint8List]
 extension ListIntEx on List<int> {
+  /// [length]
+  int size() => length;
+
   /// [Uint8List]转换成字符串
   /// [String.fromCharCodes]
   String toStr([Utf8Codec codec = utf8, bool allowMalformed = true]) {

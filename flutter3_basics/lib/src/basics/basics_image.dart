@@ -332,12 +332,21 @@ extension ImageStringEx on String {
   }
 
   /// [toImageFromFile]
-  Future<ImageMeta> toImageMetaFromFile(
-      [UiImageByteFormat pixelsFormat = UiImageByteFormat.rawRgba]) async {
+  Future<ImageMeta> toImageMetaFromFile({
+    UiImageByteFormat pixelsFormat = UiImageByteFormat.rawRgba,
+    bool toPixels = false,
+  }) async {
     final Uint8List bytes = await File(this).readAsBytes();
     final uiImage = await decodeImageFromList(bytes);
-    final pixels = await uiImage.toPixels(pixelsFormat);
-    return ImageMeta(uiImage, bytes, pixels, imageFormat: pixelsFormat);
+    final pixels = toPixels ? await uiImage.toPixels(pixelsFormat) : null;
+    //final pngBytes = toBytes ? await uiImage.toBytes(bytesFormat) : null;
+    return ImageMeta(
+      uiImage,
+      bytes,
+      pixels,
+      imageFormat: pixelsFormat,
+      pixelsFormat: UiPixelFormat.rgba8888,
+    );
   }
 
   /// 从文件路径中读取图片
