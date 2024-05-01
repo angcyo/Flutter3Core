@@ -6,8 +6,6 @@ part of '../flutter3_vector.dart';
 /// @date 2023/11/19
 ///
 
-const kDefAssetsSvgPrefix = 'assets/svg/';
-
 extension SvgImageFormatTypesEx on int {
   /// [ImageFormatTypes.values]
   String get imageFormatTypeString =>

@@ -52,13 +52,25 @@ class ImageMeta {
   }
 
   /// [Uint8List]像素转[ImageMeta]
-  /// 此方法相对好一点: 51ms
+  /// 此方法相对好一点: 51ms, 就是内存消耗大
+  /// 解码图片[3.60 MB]耗时:147ms
   static Future<ImageMeta> fromPixel(Uint8List pixels, int width, int height,
-      [UiPixelFormat format = UiPixelFormat.rgba8888]) async {
+      [UiPixelFormat pixelsFormat = UiPixelFormat.rgba8888]) async {
     //lTime.tick();
     final image = await pixels.toImageFromPixels(width, height);
     //l.d(lTime.time());
-    return ImageMeta(image, null, pixels, pixelsFormat: format);
+    return ImageMeta(image, null, pixels, pixelsFormat: pixelsFormat);
+  }
+
+  /// [Uint8List]字节转[ImageMeta]
+  /// 解码图片[3.60 MB]耗时:429ms
+  /// 相较于[fromPixel]内存占用小, 但是因为需要编解码, 所以耗时长
+  static Future<ImageMeta> fromByts(Uint8List bytes,
+      [UiImageByteFormat imageFormat = UiImageByteFormat.rawRgba]) async {
+    lTime.tick();
+    final image = await bytes.toImage();
+    l.d(lTime.time());
+    return ImageMeta(image, bytes, null, imageFormat: imageFormat);
   }
 }
 

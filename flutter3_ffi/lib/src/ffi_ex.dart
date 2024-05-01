@@ -9,8 +9,10 @@ part of '../flutter3_ffi.dart';
 extension FfiListIntEx on List<int> {
   /// 转成[Vec_uint8_t], 并自动释放内存
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {
+    final watch = Stopwatch()..start();
     final bytes = this;
     //创建一个指针, 用来ffi传递
+    //分配内存: 55ms
     final ffi.Pointer<ffi.Uint8> bytesPtr =
         calloc.allocate<ffi.Uint8>(bytes.length);
     final Uint8List nativeBytes = bytesPtr.asTypedList(bytes.length);
@@ -23,7 +25,18 @@ extension FfiListIntEx on List<int> {
     ptr.ref.cap = bytes.length;
 
     try {
-      return action(ptr);
+      watch.stop();
+      if (kDebugMode) {
+        print('分配内存: ${watch.elapsedMilliseconds}ms');
+      }
+      final watch2 = Stopwatch()..start();
+      //执行耗时: 4688ms
+      final result = action(ptr);
+      watch2.stop();
+      if (kDebugMode) {
+        print('执行耗时: ${watch2.elapsedMilliseconds}ms');
+      }
+      return result;
     } catch (e) {
       if (kDebugMode) {
         print(e);

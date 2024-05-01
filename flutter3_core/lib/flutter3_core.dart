@@ -90,7 +90,7 @@ Future<void> initFlutter3Core() async {
 /// [Image].[StatefulWidget]
 SvgPicture? loadCoreAssetSvgPicture(
   String? key, {
-  String? prefix = 'assets/svg/',
+  String? prefix = kDefAssetsSvgPrefix,
   String? package = 'flutter3_core',
   BoxFit? fit,
   double? width,
@@ -111,7 +111,7 @@ SvgPicture? loadCoreAssetSvgPicture(
 /// [Image].[StatefulWidget]
 Image? loadCoreAssetImageWidget(
   String? key, {
-  String? prefix = 'assets/png/',
+  String? prefix = kDefAssetsPngPrefix,
   String? package = 'flutter3_core',
   BoxFit? fit,
   double? width,

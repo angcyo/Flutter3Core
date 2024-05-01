@@ -33,6 +33,7 @@ export 'package:clock/clock.dart';
 export 'package:collection/collection.dart';
 export 'package:equatable/equatable.dart';
 export 'package:fixnum/fixnum.dart';
+export 'package:flutter_isolate/flutter_isolate.dart';
 export 'package:flutter_localizations/flutter_localizations.dart';
 export 'package:hsluv/hsluv.dart';
 export 'package:matrix4_transform/matrix4_transform.dart';

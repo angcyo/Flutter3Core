@@ -71,9 +71,11 @@ dynamic clamp(num x, num? min, num? max) {
 }
 
 /// orientation: 横向
+@flagProperty
 const kHorizontal = 0;
 
 /// orientation: 纵向
+@flagProperty
 const kVertical = 1;
 
 /// 获取当前调用此方法的文件名
@@ -315,6 +317,12 @@ int rgbToGray(int r, int g, int b) {
 
 //region 性能
 
+/// 定义一个常量, 当图片像素字节数据大于这个值时, 建议使用[flutterCompute]
+const kIsolateComputePixelsSize = 1024 * 1024 * 10;
+
+/// 定义一个常量, 当图片字节数据大于这个值时, 建议使用[flutterCompute]
+const kIsolateComputeBytesSize = 1024 * 1024 * 1;
+
 /// 并发
 /// https://dart.cn/guides/language/concurrency
 ///
@@ -361,11 +369,24 @@ Future<R> scheduleTask<R>(ResultCallback<R> callback,
     SchedulerBinding.instance.scheduleTask(() => callback(), priority,
         debugLabel: "scheduleTask-${nowTimeString()}");
 
+/// 使用[Completer]返回一个[Future]
+/// 这种方式, 只能返回一个[Future], 对性能上没有提升.
+/// 想要不阻塞ui, 还是需要使用`isolate`, 但是使用`isolate`会有数据传输上的性能消耗.
+/// [futureDelay]
+/// [flutterCompute]
+Future<R> future<R>(FutureOr<R> Function() callback) async {
+  final completer = Completer<R>();
+  completer.complete(callback());
+  return completer.future;
+}
+
 //endregion 性能
 
 //region Asset
 
+/// 默认的资源路径前缀
 const kDefAssetsPngPrefix = 'assets/png/';
+const kDefAssetsSvgPrefix = 'assets/svg/';
 
 /// 读取资产中的文本内容
 /// ```
