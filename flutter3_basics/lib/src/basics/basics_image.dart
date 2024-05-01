@@ -67,9 +67,9 @@ class ImageMeta {
   /// 相较于[fromPixel]内存占用小, 但是因为需要编解码, 所以耗时长
   static Future<ImageMeta> fromByts(Uint8List bytes,
       [UiImageByteFormat imageFormat = UiImageByteFormat.rawRgba]) async {
-    lTime.tick();
+    //lTime.tick();
     final image = await bytes.toImage();
-    l.d(lTime.time());
+    //l.d(lTime.time());
     return ImageMeta(image, bytes, null, imageFormat: imageFormat);
   }
 }
