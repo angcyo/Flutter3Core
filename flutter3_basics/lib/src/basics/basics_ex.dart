@@ -1481,6 +1481,26 @@ extension ListEx<T> on List<T> {
     return this[index];
   }
 
+  /// [List]
+  /// [getByName]
+  /// [getByNameOrNull]
+  T getByName(String? name, T def) {
+    if (name == null || name.isEmpty) {
+      return def;
+    }
+    return findFirst((element) =>
+            element is Enum ? element.name == name : "$element" == name) ??
+        def;
+  }
+
+  /// [List]
+  /// [getByName]
+  /// [getByNameOrNull]
+  T? getByNameOrNull(String? name) {
+    return findFirst((element) =>
+        element is Enum ? element.name == name : "$element" == name);
+  }
+
   /// 判断2个List是否至少有一个相同的元素
   /// 交叉的数据
   bool hasSameElement(List? list) {
