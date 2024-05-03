@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -11,63 +12,46 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  /*test('test gcode', () async {
-    final size = 10.toDpFromMm();
-    final rect = Rect.fromLTWH(size, size, size, size);
-    final ovalPath = Path();
-    ovalPath.addOval(rect);
+  //await File("./test.log").writeAsString("angcyo");
+  //outputFile("test.log").writeAsString("angcyo", mode: FileMode.write);
 
-    final rectPath = Path();
-    rectPath.addRect(rect);
+  lTime.tick();
+  //testOutputCutGCode();
+  testOutputPoint();
 
-    final linePath = Path();
-    linePath.moveTo(0, 0);
-    linePath.lineTo(size, size);
+  print("...end:${lTime.time()}");
+}
 
-    final pathList = <Path>[];
-    pathList.add(ovalPath);
-    //pathList.add(rectPath);
-    //pathList.add(linePath);
+File outputFile(String fileName) {
+  final path = "${Directory.current.path}/test/output/$fileName";
+  path.ensureParentDirectory();
+  return File(path);
+}
 
-    GCodeWriteHandle handle = GCodeWriteHandle();
-    handle.useCutData = false;
+/// 获取路径列表
+List<Path> getPathList() {
+  final size = 10.toDpFromMm();
+  final rect = Rect.fromLTWH(size, size, size, size);
+  final ovalPath = Path();
+  ovalPath.addOval(rect);
 
-    */ /* consoleLog(pathList.toGCodeString(
-      handle: handle,
-      header: kGCodeHeader,
-      power: 255,
-      speed: 12000,
-    ));*/ /*
+  final rectPath = Path();
+  rectPath.addRect(rect);
 
-    final gcode = pathList.toGCodeString(
-      handle: handle,
-      header: kGCodeHeader,
-      power: 255,
-      speed: 12000,
-    ); //"G0X10Y10\n;start\nG1X20Y20\n";
-    GCodeParser parser = GCodeParser();
-    final gcodePath = parser.parse(gcode);
+  final linePath = Path();
+  linePath.moveTo(0, 0);
+  linePath.lineTo(size, size);
 
-    handle.stringBuffer = StringBuffer();
-    final resultGCode = gcodePath?.toGCodeString(
-      handle: handle,
-      header: kGCodeHeader,
-      power: 255,
-      speed: 12000,
-    ); //"G0X10Y10\n;start\nG1X20Y20\n";
-    */ /*final base64 = await gcodePath?.ofList<Path>().toUiImageBase64();
-    consoleLog(base64);*/ /*
+  final pathList = <Path>[];
+  // pathList.add(ovalPath);
+  pathList.add(rectPath);
+  //pathList.add(linePath);
 
-    consoleLog(gcode);
-    consoleLog('new↓');
-    consoleLog(resultGCode);
+  return pathList;
+}
 
-    consoleLog('...');
-    return true;
-  });*/
-
-  test('test gcode parse', () {
-    const gcode = '''
+String getGCodeString() {
+  const gcode = '''
 M05 S0
 G90
 G21
@@ -83,12 +67,89 @@ G3 X2.3995 Y0.5286 I-0.6836 J2.2247
 G3 X-0.5292 Y2.1167 I-2.2357 J-0.6284
 G1  X-0.5292 Y2.1167
 ''';
+  return gcode;
+}
 
-    GCodeParser parser = GCodeParser();
-    final gcodePath = parser.parse(gcode);
+@testPoint
+void testOutputGCode() async {
+  final pathList = getPathList();
 
-    consoleLog(gcodePath?.toGCodeString());
-    consoleLog('...');
-    return true;
-  });
+  GCodeWriteHandle handle = GCodeWriteHandle();
+  handle.useCutData = false;
+
+  consoleLog(pathList.toGCodeString(
+    handle: handle,
+    header: kGCodeHeader,
+    power: 255,
+    speed: 12000,
+  ));
+
+  final gcode = pathList.toGCodeString(
+    handle: handle,
+    header: kGCodeHeader,
+    power: 255,
+    speed: 12000,
+  ); //"G0X10Y10\n;start\nG1X20Y20\n";
+  GCodeParser parser = GCodeParser();
+  final gcodePath = parser.parse(gcode);
+
+  handle.stringBuffer = StringBuffer();
+  final resultGCode = gcodePath?.toGCodeString(
+    handle: handle,
+    header: kGCodeHeader,
+    power: 255,
+    speed: 12000,
+  );
+
+  //"G0X10Y10\n;start\nG1X20Y20\n";
+  final base64 = await gcodePath?.ofList<Path>().toUiImageBase64();
+  consoleLog(base64);
+
+  consoleLog(gcode);
+  consoleLog('new↓');
+  consoleLog(resultGCode);
+
+  consoleLog('...');
+}
+
+@testPoint
+void testOutputCutGCode() {
+  final pathList = getPathList();
+  GCodeWriteHandle handle = GCodeWriteHandle();
+  handle.useCutData = true;
+  handle.cutDataLoopCount = 1;
+  final gcode = pathList.toGCodeString(
+    handle: handle,
+    power: 255,
+    speed: 12000,
+  );
+  outputFile("gcode_cut.nc").writeString(gcode!);
+}
+
+@testPoint
+void testParseGCode() {
+  final gcode = getGCodeString();
+
+  GCodeParser parser = GCodeParser();
+  final gcodePath = parser.parse(gcode);
+
+  consoleLog(gcodePath?.toGCodeString());
+  consoleLog('...');
+}
+
+@testPoint
+void testOutputPoint() {
+  final pathList = getPathList();
+  PointWriteHandle handle = PointWriteHandle();
+  final pointList = pathList.toPointList(handle: handle, unit: null, digits: 0);
+  final file = outputFile("point_list.log");
+  file.writeAsStringSync(""); //清空文件
+  for (final point in pointList ?? []) {
+    //N段折现
+    for (final p in point) {
+      //N个点
+      file.writeAsStringSync(p.toShortString(), mode: FileMode.append);
+    }
+    file.writeAsStringSync("\n", mode: FileMode.append);
+  }
 }

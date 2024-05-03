@@ -25,6 +25,11 @@ final class Point {
     };
   }
 
+  /// 短字符串
+  String toShortString() {
+    return '($x, $y)';
+  }
+
   @override
   String toString() {
     return 'Point{x:$x, y:$y a:$a}';

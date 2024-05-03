@@ -111,13 +111,6 @@ mixin VectorWriteMixin {
   @output
   StringBuffer? stringBuffer;
 
-  /// 关键点位收集, 点位数据只能用来拟合直线, 不能拟合曲线
-  @output
-  List<List<Point>>? get contourPointList => pointWriteHandle?.pointList;
-
-  /// 配置此项后才会收集点位数据[contourPointList]
-  PointWriteHandle? pointWriteHandle;
-
   /// 父类的写入句柄
   VectorWriteMixin? parentWriteHandle;
 
@@ -265,14 +258,14 @@ mixin VectorWriteMixin {
   @overridePoint
   @mustCallSuper
   void onContourStart() {
-    pointWriteHandle?.onContourStart();
+    parentWriteHandle?.onContourStart();
   }
 
   /// 一个轮廓的结束
   @overridePoint
   @mustCallSuper
   void onContourEnd() {
-    pointWriteHandle?.onContourEnd();
+    parentWriteHandle?.onContourEnd();
   }
 
   /// 需要处理的点位
@@ -283,7 +276,7 @@ mixin VectorWriteMixin {
   @overridePoint
   @mustCallSuper
   void onWritePoint(VectorPoint point, [dynamic data]) {
-    pointWriteHandle?.onWritePoint(point, data);
+    parentWriteHandle?.onWritePoint(point, data);
   }
 
   /// 写入一个点位时可以用来转换坐标
@@ -436,26 +429,62 @@ class SvgWriteHandle with VectorWriteMixin {
 
 /// 输出二维点位数组
 class PointWriteHandle with VectorWriteMixin {
-  List<List<Point>> pointResultBuilder = [];
-  List<Point>? pointBuilder;
+  /// [IUnit.mm]
+  /// [GCodeWriteHandle.unit]
+  IUnit? unit = IUnit.mm;
 
-  /// 获取点位数据
+  /// 保留的小数点位数, 精度.
+  /// 比如算出来的值: 5.123 保留2位小数, 则输出: 512.3 -> 512
+  @override
+  int digits = 2;
+
+  /// [transformPoint] 之后, 点位还需要偏移的值
+  double offsetX = 0;
+  double offsetY = 0;
+
+  //region ---数据收集---
+
+  /// 收集
+  List<List<Point>> pointResultBuilder = [];
+
+  /// 一段点位收集
+  List<Point>? pointContourBuilder;
+
+  /// 获取返回的点位数据
+  /// [pointResultBuilder]
   List<List<Point>> get pointList => pointResultBuilder;
+
+  //endregion ---数据收集---
+
+  @override
+  Offset transformPoint(Offset point) {
+    if (transformPointAction != null) {
+      return transformPointAction?.call(point) ?? point;
+    }
+    final x = unit?.toUnitFromDp(point.dx) ?? point.dx;
+    final y = unit?.toUnitFromDp(point.dy) ?? point.dy;
+    return Offset(x, y);
+  }
 
   @override
   void onContourStart() {
     super.onContourStart();
-    pointBuilder = [];
+    pointContourBuilder = [];
   }
 
   @override
   void onWritePoint(VectorPoint point, [dynamic data]) {
     final position = transformPoint(point.position);
-    if (pointBuilder != null) {
-      var x = position.dx;
-      var y = position.dy;
-      var a = point.angle;
-      pointBuilder?.add(Point(x, y, a));
+    if (pointContourBuilder != null) {
+      var x = position.dx + offsetX;
+      var y = position.dy + offsetY;
+      final a = point.angle;
+      if (digits > 0) {
+        final num = pow(10, digits);
+        x = (x * num).toInt().toDouble();
+        y = (y * num).toInt().toDouble();
+      }
+      pointContourBuilder?.add(Point(x, y, a));
     }
     super.onWritePoint(point.copyWith(position: position), data);
   }
@@ -463,9 +492,9 @@ class PointWriteHandle with VectorWriteMixin {
   @override
   void onContourEnd() {
     super.onContourEnd();
-    if (pointBuilder != null) {
-      pointResultBuilder.add(pointBuilder!);
-      pointBuilder = null;
+    if (pointContourBuilder != null) {
+      pointResultBuilder.add(pointContourBuilder!);
+      pointContourBuilder = null;
     }
   }
 
@@ -520,11 +549,15 @@ class JsonWriteHandle with VectorWriteMixin {
 /// handle.initStringBuffer().write(M2\n');
 /// ```
 class GCodeWriteHandle with VectorWriteMixin {
+  //region ---数值转换---
+
   /// 默认GCode使用毫米单位, 入参的数据需要时dp单位
   /// [IUnit.mm]
   IUnit? unit = IUnit.mm;
 
-  //---
+  //endregion ---数值转换---
+
+  //region ---GCode数据参数---
 
   /// 功率 255
   int? power;
@@ -536,7 +569,9 @@ class GCodeWriteHandle with VectorWriteMixin {
 
   String get _speedString => speed != null ? 'F$speed' : '';
 
-  //---
+  //endregion ---GCode数据参数---
+
+  //region ---切割数据相关---
 
   /// 是否使用切割数据
   bool useCutData = false;
@@ -551,6 +586,8 @@ class GCodeWriteHandle with VectorWriteMixin {
   /// 切割数据的枚举步长
   @mm
   double cutDataStep = sDefaultCutStep;
+
+  //endregion ---切割数据相关---
 
   @mm
   @override
@@ -599,11 +636,11 @@ class GCodeWriteHandle with VectorWriteMixin {
     } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
       if (useCutData && data == null) {
         // 通过data来判断是否需要使用切割数据
-        for (var i = 0; i < cutDataLoopCount; i++) {
-          //fillCutGCodeByZ(lastWriteX, lastWriteY, point.x, point.y)
-          final startPosition = _pointList.firstOrNull;
-          if (startPosition != null) {
-            _pointList.removeFirstIfNotEmpty();
+        final startPosition = _pointList.firstOrNull;
+        _pointList.removeFirstIfNotEmpty();
+        if (startPosition != null) {
+          for (var i = 0; i < cutDataLoopCount; i++) {
+            //fillCutGCodeByZ(lastWriteX, lastWriteY, point.x, point.y)
             _fillCutGCodeByCircle(startPosition.position, point.position);
             if (i != cutDataLoopCount - 1) {
               //多次循环数据的话, 需要移动到起点
@@ -673,8 +710,8 @@ class GCodeWriteHandle with VectorWriteMixin {
 }
 
 extension VectorPathEx on Path {
-  /// 转换成矢量字符串数据
-  String? toVectorString(
+  /// 处理矢量路径
+  void handleVectorPath(
     VectorWriteMixin handle, {
     @dp double? pathStep,
     @mm double? tolerance,
@@ -691,6 +728,15 @@ extension VectorPathEx on Path {
         angle,
       );
     }, handle.vectorStep);
+  }
+
+  /// 转换成矢量字符串数据
+  String? toVectorString(
+    VectorWriteMixin handle, {
+    @dp double? pathStep,
+    @mm double? tolerance,
+  }) {
+    handleVectorPath(handle, pathStep: pathStep, tolerance: tolerance);
     return handle.getVectorString();
   }
 
@@ -846,6 +892,9 @@ extension VectorListPathEx on List<Path> {
     String? footer = kGCodeFooter,
     GCodeWriteHandle? handle,
   }) {
+    if (isNil(this)) {
+      return null;
+    }
     final buffer = StringBuffer();
     handle ??= GCodeWriteHandle();
     handle
@@ -865,5 +914,37 @@ extension VectorListPathEx on List<Path> {
     }
     buffer.write(footer);
     return buffer.toString();
+  }
+
+  /// 转换成gcode字符串数据
+  /// [VectorPathEx.toGCodeString]
+  List<List<Point>>? toPointList({
+    @dp double? pathStep,
+    @mm double? tolerance,
+    IUnit? unit = IUnit.mm,
+    int digits = 2,
+    PointWriteHandle? handle,
+  }) {
+    if (isNil(this)) {
+      return null;
+    }
+    final result = <List<Point>>[];
+    handle ??= PointWriteHandle();
+    handle
+      ..unit = unit
+      ..digits = digits;
+    for (final path in this) {
+      handle.pointResultBuilder = []; //reset
+      path.handleVectorPath(
+        handle,
+        pathStep: pathStep,
+        tolerance: tolerance,
+      );
+      final pointList = handle.pointList;
+      if (!isNil(pointList)) {
+        result.addAll(pointList);
+      }
+    }
+    return result;
   }
 }
