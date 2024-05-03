@@ -124,6 +124,9 @@ mixin VectorWriteMixin {
   ///[contourIndex] 当前点所在的轮廓索引, 不同轮廓上的点, 会被分开处理.
   ///[angle] 当前点的弧度
   ///[data] 附加的点位额外数据, 用来自定义标识
+  ///
+  /// [onContourStart]->[onWritePoint]->[onContourEnd]
+  /// [onWritePoint] 用来处理当前的点位
   @entryPoint
   void appendPoint(
     int posIndex,
@@ -257,16 +260,12 @@ mixin VectorWriteMixin {
   /// 一个轮廓的开始
   @overridePoint
   @mustCallSuper
-  void onContourStart() {
-    parentWriteHandle?.onContourStart();
-  }
+  void onContourStart() {}
 
   /// 一个轮廓的结束
   @overridePoint
   @mustCallSuper
-  void onContourEnd() {
-    parentWriteHandle?.onContourEnd();
-  }
+  void onContourEnd() {}
 
   /// 需要处理的点位
   /// 有可能是一个新的点
@@ -275,9 +274,7 @@ mixin VectorWriteMixin {
   /// [VectorWriteMixin.appendPoint]
   @overridePoint
   @mustCallSuper
-  void onWritePoint(VectorPoint point, [dynamic data]) {
-    parentWriteHandle?.onWritePoint(point, data);
-  }
+  void onWritePoint(VectorPoint point, [dynamic data]) {}
 
   /// 写入一个点位时可以用来转换坐标
   @overridePoint
@@ -415,7 +412,7 @@ class SvgWriteHandle with VectorWriteMixin {
       stringBuffer
           ?.write(' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} $x,$y');
     }
-    super.onWritePoint(point.copyWith(position: position), data);
+    super.onWritePoint(point, data);
   }
 
   @override
@@ -486,7 +483,7 @@ class PointWriteHandle with VectorWriteMixin {
       }
       pointContourBuilder?.add(Point(x, y, a));
     }
-    super.onWritePoint(point.copyWith(position: position), data);
+    super.onWritePoint(point, data);
   }
 
   @override
@@ -526,7 +523,7 @@ class JsonWriteHandle with VectorWriteMixin {
         "a": a, //弧度
       });
     }
-    super.onWritePoint(point.copyWith(position: position), data);
+    super.onWritePoint(point, data);
   }
 
   @override
@@ -668,7 +665,7 @@ class GCodeWriteHandle with VectorWriteMixin {
           'I${ij.dx.toDigits(digits: digits)}J${ij.dy.toDigits(digits: digits)}');
       _writePowerSpeed();
     }
-    super.onWritePoint(point.copyWith(position: position), data);
+    super.onWritePoint(point, data);
   }
 
   /// 使用圆形切割数据填充一根线段

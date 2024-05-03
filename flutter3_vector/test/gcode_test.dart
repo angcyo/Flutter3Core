@@ -16,8 +16,9 @@ void main() async {
   //outputFile("test.log").writeAsString("angcyo", mode: FileMode.write);
 
   lTime.tick();
-  //testOutputCutGCode();
-  testOutputPoint();
+  //testOutputGCode();
+  testOutputCutGCode();
+  //testOutputPoint();
 
   print("...end:${lTime.time()}");
 }
@@ -30,7 +31,7 @@ File outputFile(String fileName) {
 
 /// 获取路径列表
 List<Path> getPathList() {
-  final size = 10.toDpFromMm();
+  final size = 10.0/*10.toDpFromMm()*/;
   final rect = Rect.fromLTWH(size, size, size, size);
   final ovalPath = Path();
   ovalPath.addOval(rect);
@@ -116,14 +117,35 @@ void testOutputGCode() async {
 void testOutputCutGCode() {
   final pathList = getPathList();
   GCodeWriteHandle handle = GCodeWriteHandle();
+
   handle.useCutData = true;
   handle.cutDataLoopCount = 1;
+
+  PointWriteHandle pointHandle = PointWriteHandle();
+  pointHandle.unit = handle.unit;
+  pointHandle.digits = 0;
+  handle.parentWriteHandle = pointHandle;
+
+  //--
   final gcode = pathList.toGCodeString(
     handle: handle,
     power: 255,
     speed: 12000,
   );
   outputFile("gcode_cut.nc").writeString(gcode!);
+
+  //--
+  final pointList = pointHandle.pointList;
+  final file = outputFile("gcode_point_list.log");
+  file.writeAsStringSync(""); //清空文件
+  for (final point in pointList ?? []) {
+    //N段折现
+    for (final p in point) {
+      //N个点
+      file.writeAsStringSync(p.toShortString(), mode: FileMode.append);
+    }
+    file.writeAsStringSync("\n", mode: FileMode.append);
+  }
 }
 
 @testPoint
