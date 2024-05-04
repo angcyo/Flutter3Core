@@ -31,18 +31,22 @@ Future<PictureInfo> loadAssetSvgPicture(
   String? prefix = kDefAssetsSvgPrefix,
   String? package,
   BuildContext? context,
-  bool clipViewBox = true,
   AssetBundle? bundle,
   SvgTheme? theme,
+  bool clipViewBox = true,
+  VectorGraphicsErrorListener? onError,
 }) =>
     vg.loadPicture(
-        SvgAssetLoader(
-          key.ensurePackagePrefix(package, prefix),
-          packageName: package,
-          assetBundle: bundle,
-          theme: theme,
-        ),
-        context);
+      SvgAssetLoader(
+        key.ensurePackagePrefix(package, prefix),
+        packageName: package,
+        assetBundle: bundle,
+        theme: theme,
+      ),
+      context,
+      clipViewbox: clipViewBox,
+      onError: onError,
+    );
 
 extension SvgStringEx on String {
   /// 将svg中的path路径字符串转换成[Path]对象
@@ -61,6 +65,43 @@ extension SvgStringEx on String {
   ///
   Path toUiPath([bool failSilently = false]) =>
       parseSvgPath(this, failSilently: failSilently);
+
+  /// 将svg xml字符串转换成[PictureInfo]对象
+  Future<PictureInfo> toStringSvgPicture({
+    BuildContext? context,
+    SvgTheme? theme,
+    ColorMapper? colorMapper,
+    bool clipViewBox = true,
+    VectorGraphicsErrorListener? onError,
+  }) =>
+      vg.loadPicture(
+        SvgStringLoader(
+          this,
+          theme: theme,
+          colorMapper: colorMapper,
+        ),
+        context,
+        clipViewbox: clipViewBox,
+        onError: onError,
+      );
+
+  /// 将svg xml字符串转换成[UiImage]对象
+  Future<UiImage> toSvgPictureImage({
+    BuildContext? context,
+    SvgTheme? theme,
+    ColorMapper? colorMapper,
+    bool clipViewBox = true,
+    VectorGraphicsErrorListener? onError,
+  }) async =>
+      (await toStringSvgPicture(
+        context: context,
+        theme: theme,
+        colorMapper: colorMapper,
+        clipViewBox: clipViewBox,
+        onError: onError,
+      ))
+          .let((it) => it.picture
+              .toImage(it.size.width.toInt(), it.size.height.toInt()));
 }
 
 //endregion svg
