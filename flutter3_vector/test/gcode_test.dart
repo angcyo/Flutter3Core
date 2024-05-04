@@ -31,7 +31,7 @@ File outputFile(String fileName) {
 
 /// 获取路径列表
 List<Path> getPathList() {
-  final size = 10.0/*10.toDpFromMm()*/;
+  final size = 10.0 /*10.toDpFromMm()*/;
   final rect = Rect.fromLTWH(size, size, size, size);
   final ovalPath = Path();
   ovalPath.addOval(rect);
@@ -117,6 +117,7 @@ void testOutputGCode() async {
 void testOutputCutGCode() {
   final pathList = getPathList();
   GCodeWriteHandle handle = GCodeWriteHandle();
+  handle.unit = null;
 
   handle.useCutData = true;
   handle.cutDataLoopCount = 1;
@@ -142,7 +143,7 @@ void testOutputCutGCode() {
     //N段折现
     for (final p in point) {
       //N个点
-      file.writeAsStringSync(p.toShortString(), mode: FileMode.append);
+      file.writeAsStringSync("${p.x},${p.y} ", mode: FileMode.append);
     }
     file.writeAsStringSync("\n", mode: FileMode.append);
   }
@@ -170,7 +171,7 @@ void testOutputPoint() {
     //N段折现
     for (final p in point) {
       //N个点
-      file.writeAsStringSync(p.toShortString(), mode: FileMode.append);
+      file.writeAsStringSync("${p.x},${p.y} ", mode: FileMode.append);
     }
     file.writeAsStringSync("\n", mode: FileMode.append);
   }

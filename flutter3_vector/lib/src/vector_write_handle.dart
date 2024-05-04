@@ -472,16 +472,19 @@ class PointWriteHandle with VectorWriteMixin {
   @override
   void onWritePoint(VectorPoint point, [dynamic data]) {
     final position = transformPoint(point.position);
-    if (pointContourBuilder != null) {
-      var x = position.dx + offsetX;
-      var y = position.dy + offsetY;
-      final a = point.angle;
-      if (digits > 0) {
-        final num = pow(10, digits);
-        x = (x * num).toInt().toDouble();
-        y = (y * num).toInt().toDouble();
+    if (point.type == VectorWriteMixin.sPointTypeStart ||
+        point.type == VectorWriteMixin.sPointTypeLine) {
+      if (pointContourBuilder != null) {
+        var x = position.dx + offsetX;
+        var y = position.dy + offsetY;
+        final a = point.angle;
+        if (digits > 0) {
+          final num = pow(10, digits);
+          x = (x * num).toInt().toDouble();
+          y = (y * num).toInt().toDouble();
+        }
+        pointContourBuilder?.add(Point(x, y, a));
       }
-      pointContourBuilder?.add(Point(x, y, a));
     }
     super.onWritePoint(point, data);
   }
@@ -632,7 +635,7 @@ class GCodeWriteHandle with VectorWriteMixin {
       stringBuffer?.writeln('G0X${x}Y$y');
     } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
       if (useCutData && data == null) {
-        // 通过data来判断是否需要使用切割数据
+        // 通过data来判断是否需要使用切割数据, 防止切割数据死循环
         final startPosition = _pointList.firstOrNull;
         _pointList.removeFirstIfNotEmpty();
         if (startPosition != null) {
