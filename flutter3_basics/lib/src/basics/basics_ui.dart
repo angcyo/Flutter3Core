@@ -1667,6 +1667,7 @@ extension RenderObjectEx on RenderObject {
   /// 获取[RenderObject]的全局绘制位置和坐标大小
   /// [ancestor] 祖先节点, 如果为null, 则为根节点
   /// [RenderBox.localToGlobal]
+  /// [RenderObjectEx.getGlobalLocation]
   Rect? getGlobalBounds([
     RenderObject? ancestor,
     Offset point = Offset.zero,
@@ -1679,7 +1680,7 @@ extension RenderObjectEx on RenderObject {
     return null;
   }
 
-  /// 获取[RenderObject]的位置
+  /// 获取[RenderObject]的位置信息
   /// [ancestor] 祖先节点, 如果为null, 则为根节点
   /// [RenderBox.localToGlobal]
   /// ```
