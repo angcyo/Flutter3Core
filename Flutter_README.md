@@ -4,10 +4,14 @@
 /// 条件导出: 如果有`dart.library.html`包, 则导入`_http_web.dart`, 否则导入`_http_io.dart`
 export '_http_io.dart' if (dart.library.html) '_http_web.dart';
 
+/// 2:
+export 'dart:io' if (dart.library.html) 'web.dart';
+
 /// 条件导入:
-import 'factory_stub.dart'
-if (dart.library.io) 'gl_canvas_io.dart'
-if (dart.library.html) 'gl_canvas_web.dart';
+import 'factory_stub.dart' if (dart.library.io) 'gl_canvas_io.dart' if (dart.library.html) 'gl_canvas_web.dart';
+
+/// 2:
+import 'dio/dio_for_native.dart' if (dart.library.html) 'dio/dio_for_browser.dart';
 ```
 
 直接打包`apk`体积大约`17MB`, 加入一些基础库之后`apk`体积大约`24.5MB`
