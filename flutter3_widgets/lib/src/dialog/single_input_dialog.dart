@@ -11,7 +11,7 @@ const kDefaultInputLength = 30;
 /// 简单的输入框对话框
 /// [showDialogWidget]
 class SingleInputDialog extends StatelessWidget with DialogMixin {
-  /// 是否使用图标按钮
+  /// 是否使用图标按钮, 控制按钮
   final bool useIcon;
 
   final String? title;
@@ -42,6 +42,9 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
   /// 最大长度
   final int? maxLength;
 
+  @override
+  EdgeInsets get contentPadding => EdgeInsets.zero;
+
   SingleInputDialog({
     super.key,
     this.title,
@@ -62,7 +65,7 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
 
     //标题 和 内容
     Widget? title = titleWidget ??
@@ -140,7 +143,7 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
     //result
     if (alignment == Alignment.center) {
       //居中样式的对话框
-      var controlRow = Row(
+      final controlRow = Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -150,7 +153,7 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
         ],
       );
 
-      var bodyColumn = Column(
+      final bodyColumn = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -168,8 +171,9 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
         body: buildCenterDialog(context, bodyColumn),
       );
     }
+
     //底部全屏样式的对话框
-    var topRow = Row(
+    final topRow = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -178,7 +182,7 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
         if (save != null) save,
       ],
     );
-    var bodyColumn = Column(
+    final bodyColumn = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,

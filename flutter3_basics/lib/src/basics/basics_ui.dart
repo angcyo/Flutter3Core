@@ -1598,6 +1598,15 @@ extension ContextEx on BuildContext {
   /// [Locale.scriptCode] Hans
   Locale get locale => Localizations.localeOf(this);
 
+  /// 如果仅是想获取[MediaQueryData]而不想监听变化, 则使用此方法. 否则使用[MediaQuery.of]
+  /// 通过[MediaQuery.of]方法获取到的[MediaQueryData]会通知监听变化
+  /// [dependOnInheritedWidgetOfExactType]
+  /// [getInheritedWidgetOfExactType]
+  /// [platformMediaQueryData]
+  /// [MediaQuery.of]
+  MediaQueryData get mediaQueryData =>
+      getInheritedWidgetOfExactType<MediaQuery>()!.data;
+
   /// 分发一个通知, 可以通过[NotificationListener]小部件接收通知
   /// [dispatchNotification]
   void postNotification(Notification notification) =>

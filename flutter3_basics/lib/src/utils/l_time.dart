@@ -41,10 +41,10 @@ class LTime {
     if (startTime == null) {
       return "--";
     }
-    DateTime start = DateTime.fromMillisecondsSinceEpoch(startTime);
-    DateTime end = DateTime.fromMillisecondsSinceEpoch(endTime ?? nowTime());
-    Duration diff = end.difference(start);
-    var times = diff.inMilliseconds.toPartTimes();
+    final start = DateTime.fromMillisecondsSinceEpoch(startTime);
+    final end = DateTime.fromMillisecondsSinceEpoch(endTime ?? nowTime());
+    final diff = end.difference(start);
+    final times = diff.inMilliseconds.toPartTimes();
     final ms = times[0];
     final s = times[1];
     final m = times[2];
@@ -67,7 +67,7 @@ class LTime {
         builder.write("$ms${unit[0]}");
       }
     });
-    return "$d天 $h时 $m分 $s秒 $ms毫秒";
+    //return "$d天 $h时 $m分 $s秒 $ms毫秒";
   }
 
   /// 记录时间

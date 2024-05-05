@@ -12,6 +12,10 @@ class TextFieldConfig {
   /// 输入控制, 用于获取输入内容
   final TextEditingController controller;
 
+  /// 是否自动获取焦点
+  /// [TextField.autofocus]
+  final bool? autofocus;
+
   /// 焦点模式
   /// [EditableTextState.requestKeyboard]
   /// [FocusNode.requestFocus]
@@ -61,6 +65,7 @@ class TextFieldConfig {
     FocusNode? focusNode /*请求焦点*/,
     bool? obscureText /*是否是密码*/,
     bool notifyDefaultTextChange = false /*是否要触发默认文本改变*/,
+    this.autofocus,
     this.textInputAction,
     this.updateFieldValueFn,
     this.hintText,
@@ -158,6 +163,7 @@ class SingleInputWidget extends StatefulWidget {
   final String? labelText;
 
   /// 输入框内的提示文字, 占位提示文本
+  /// [InputDecoration.hintText]
   final String? hintText;
 
   /// 前缀小部件
@@ -486,6 +492,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         //选中文本的颜色
         //mouseCursor: SystemMouseCursors.text,//鼠标的样式
         child: TextField(
+          autofocus:
+              widget.config.autofocus ?? widget.config.focusNode.hasFocus,
           focusNode: widget.config.focusNode,
           decoration: decoration,
           controller: widget.config.controller,
