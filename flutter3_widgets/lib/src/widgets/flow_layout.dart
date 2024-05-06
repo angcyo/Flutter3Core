@@ -321,13 +321,20 @@ class FlowLayoutRender extends RenderBox
 
   /// 最大的参考宽度, weight属性的参考值
   double get refMaxWidth {
+    //debugger();
     double maxWidth;
-    var constraints = this.constraints;
-    if (selfConstraints?.maxWidth != null &&
+    final constraints = this.constraints;
+    if (constraints.hasTightWidth) {
+      maxWidth = constraints.maxWidth;
+    } else if (selfConstraints?.maxWidth != null &&
         selfConstraints?.maxWidth != double.infinity) {
       maxWidth = selfConstraints!.maxWidth;
     } else if (constraints.maxWidth != double.infinity) {
-      maxWidth = constraints.maxWidth;
+      if (selfConstraints?.matchParentWidth == true) {
+        maxWidth = constraints.maxWidth;
+      } else {
+        maxWidth = _childUsedWidth + paddingHorizontal;
+      }
     } else if (_childUsedWidth > 0) {
       maxWidth = _childUsedWidth + paddingHorizontal;
     } else {
@@ -346,13 +353,20 @@ class FlowLayoutRender extends RenderBox
 
   /// 最大的参考高度, 用来垂直对齐参考
   double get refMaxHeight {
+    //debugger();
     double maxHeight;
-    var constraints = this.constraints;
-    if (selfConstraints?.maxHeight != null &&
+    final constraints = this.constraints;
+    if (constraints.hasTightWidth) {
+      maxHeight = constraints.maxHeight;
+    } else if (selfConstraints?.maxHeight != null &&
         selfConstraints?.maxHeight != double.infinity) {
       maxHeight = selfConstraints!.maxHeight;
     } else if (constraints.maxHeight != double.infinity) {
-      maxHeight = constraints.maxHeight;
+      if (selfConstraints?.matchParentHeight == true) {
+        maxHeight = constraints.maxHeight;
+      } else {
+        maxHeight = _childUsedHeight + paddingVertical;
+      }
     } else if (_childUsedHeight > 0) {
       maxHeight = _childUsedHeight + paddingVertical;
     } else {
@@ -398,7 +412,7 @@ class FlowLayoutRender extends RenderBox
         //需要使用权重约束
         final gap = horizontalGap *
             (lineMaxChildCount - 1 - childParentData.excludeGapCount);
-        final boxValidWidth = maxWidth - paddingHorizontal - gap;
+        final boxValidWidth = maxWidth - paddingHorizontal - gap - 0.5; //防止浮点误差
         final width = boxValidWidth * weight;
         childConstraints = BoxConstraints(
           minWidth: width,

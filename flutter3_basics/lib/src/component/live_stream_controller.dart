@@ -58,6 +58,12 @@ class LiveStreamController<T> {
     }
   }
 
+  /// 使用最后一次的[value]进行通知
+  @callPoint
+  void notify() {
+    add(latestValue);
+  }
+
   /// 发送错误事件
   @callPoint
   void addError(Object error) {
@@ -70,7 +76,7 @@ class LiveStreamController<T> {
   /// [autoCancel] 当[onData]返回true时, 是否自动取消监听
   @callPoint
   StreamSubscription<T> listen(
-    Function(T) onData, {
+    Function(T data) onData, {
     Function? onError,
     void Function()? onDone,
     bool? cancelOnError,

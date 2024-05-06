@@ -74,6 +74,34 @@ BoxDecoration strokeDecoration({
   );
 }
 
+/// 线条装饰
+BoxBorder strokeBorder({
+  Color? color,
+  BuildContext? context,
+  double strokeWidth = 1,
+  double borderRadius = kDefaultBorderRadiusXX,
+  BorderStyle style = BorderStyle.solid,
+  double strokeAlign = BorderSide.strokeAlignInside,
+  BorderSide? top,
+  BorderSide? bottom,
+  BorderSide? left,
+  BorderSide? right,
+}) {
+  final strokeColor = color ?? GlobalTheme.of(context).primaryColor;
+  final BorderSide side = BorderSide(
+    color: strokeColor,
+    width: strokeWidth,
+    style: style,
+    strokeAlign: strokeAlign,
+  );
+  return Border(
+    top: top ?? side,
+    bottom: bottom ?? side,
+    left: left ?? side,
+    right: right ?? side,
+  );
+}
+
 /// 四条边都是线条的装饰器
 BoxDecoration lineDecoration({
   BuildContext? context,
@@ -110,6 +138,7 @@ BoxDecoration lineDecoration({
 /// [color] 填充颜色
 /// [gradient] 渐变颜色
 /// [strokeDecoration]
+/// [border] 边框
 BoxDecoration fillDecoration({
   BuildContext? context,
   Color? color,
@@ -118,6 +147,7 @@ BoxDecoration fillDecoration({
   double? borderRadius = kDefaultBorderRadiusXX,
   double? borderTopRadius,
   double? borderBottomRadius,
+  BoxBorder? border,
 }) {
   final fillColor = color ?? GlobalTheme.of(context).primaryColor;
 
@@ -138,6 +168,7 @@ BoxDecoration fillDecoration({
     color: fillColor,
     gradient: gradient,
     borderRadius: radiusGeometry,
+    border: border,
     //gradient:
   );
 }

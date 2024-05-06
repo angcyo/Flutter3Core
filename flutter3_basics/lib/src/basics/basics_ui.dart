@@ -168,11 +168,11 @@ extension WidgetListEx on WidgetNullList {
   /// [crossAxisAlignment] 交叉轴上的对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
   Widget? column({
-    MainAxisAlignment? mainAxisAlignment,
-    MainAxisSize? mainAxisSize,
-    CrossAxisAlignment? crossAxisAlignment,
+    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
+    MainAxisSize? mainAxisSize, //MainAxisSize.min
+    CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.center
     TextDirection? textDirection,
-    VerticalDirection? verticalDirection,
+    VerticalDirection? verticalDirection, //VerticalDirection.down
     TextBaseline? textBaseline,
     double? gap,
     Widget? gapWidget,
@@ -213,11 +213,11 @@ extension WidgetListEx on WidgetNullList {
   /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
   Widget? row({
-    MainAxisAlignment? mainAxisAlignment,
-    MainAxisSize? mainAxisSize,
-    CrossAxisAlignment? crossAxisAlignment,
+    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
+    MainAxisSize? mainAxisSize, //MainAxisSize.max
+    CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.center
     TextDirection? textDirection,
-    VerticalDirection? verticalDirection,
+    VerticalDirection? verticalDirection, //VerticalDirection.down
     TextBaseline? textBaseline,
     double? gap,
     Widget? gapWidget,

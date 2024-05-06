@@ -5,6 +5,14 @@ part of '../../flutter3_widgets.dart';
 /// @since 2023/12/15
 ///
 
+/// 默认的竖线
+Line get kVerticalLine =>
+    Line(thickness: 1, color: "#ececec".toColor(), axis: Axis.vertical);
+
+/// 默认的横线
+Line get kHorizontalLine =>
+    Line(thickness: 1, color: "#ececec".toColor(), axis: Axis.horizontal);
+
 class Line extends LeafRenderObjectWidget {
   /// 是否强制指定线条的大小
   final double? lineSize;

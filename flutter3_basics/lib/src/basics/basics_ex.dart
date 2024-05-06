@@ -1414,6 +1414,17 @@ extension IterableEx<E> on Iterable<E> {
     bool growable = false,
   ]) =>
       toList(growable: growable);
+
+  /// 将当前的列表和新的列表进行合并, 去除重复的元素, 添加新的元素, 返回新的列表
+  List<E> merge(Iterable<E> elements) {
+    final result = toList(growable: true);
+    for (var element in elements) {
+      if (!result.contains(element)) {
+        result.add(element);
+      }
+    }
+    return result;
+  }
 }
 
 /// [ListEx]

@@ -22,7 +22,7 @@ Future<PackageInfo> get packageInfo async => await PackageInfo.fromPlatform();
 
 /// https://pub.dev/packages/device_info_plus
 /// 获取对应平台的设备信息
-Future<BaseDeviceInfo> get deviceInfo async => isAndroid
+Future<BaseDeviceInfo> get platformDeviceInfo async => isAndroid
     ? await DeviceInfoPlugin().androidInfo
     : isIos
         ? await DeviceInfoPlugin().iosInfo
@@ -37,7 +37,7 @@ Future<BaseDeviceInfo> get deviceInfo async => isAndroid
 /// 获取Android平台的版本
 /// 非Android平台返回null
 Future<int?> get androidSdkInt async => isAndroid
-    ? ((await deviceInfo) as AndroidDeviceInfo?)?.version.sdkInt
+    ? ((await platformDeviceInfo) as AndroidDeviceInfo?)?.version.sdkInt
     : null;
 
 /// https://pub.dev/packages/share_plus

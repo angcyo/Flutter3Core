@@ -111,13 +111,8 @@ class _PullBackWidgetState extends State<PullBackWidget>
     //动画结束监听
     _pullBackController.addStatusListener((status) {
       //l.d('$status:${_pullBackController.value}');
-      if (status == AnimationStatus.completed) {
-        //l.d('completed:${_pullBackController.value}');
-        if (widget.onPullBack == null) {
-          buildContext.pop();
-        } else {
-          widget.onPullBack?.call(buildContext);
-        }
+      if (_isDragEnd && status == AnimationStatus.completed) {
+        _pullBack();
       } /*else if (status == AnimationStatus.dismissed) {
         l.d('dismissed:${_pullBackController.value}');
       } else if (status == AnimationStatus.forward) {
@@ -130,6 +125,17 @@ class _PullBackWidgetState extends State<PullBackWidget>
     _pullBackAnimation = _pullBackController.drive(
       CurveTween(curve: _pullBackCurve),
     );
+  }
+
+  /// 处理下拉返回的回调逻辑
+  void _pullBack() {
+    //debugger();
+    //l.d('completed:${_pullBackController.value}');
+    if (widget.onPullBack == null) {
+      buildContext.pop();
+    } else {
+      widget.onPullBack?.call(buildContext);
+    }
   }
 
   @override
@@ -205,8 +211,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
     );
   }
 
+  bool _isDragEnd = false;
+
   /// [primaryDelta] 手势每次移动的距离 >0:向下拉 <0:向上拉
   void _handleDragUpdate(double primaryDelta) async {
+    _isDragEnd = false;
     final progress = primaryDelta / (_childHeight ?? primaryDelta);
     //l.d('progress:$progress [$primaryDelta/$_childHeight]');
     _pullBackController.value += progress;
@@ -215,8 +224,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   /// [velocity] 手势结束时的速度 >0:快速向下拉 <0:快速向上拉
   bool _handleDragEnd(ScrollMetrics? position, double velocity) {
+    //debugger();
     //l.d('velocity:$velocity value:${_pullBackController.value}');
-
+    _isDragEnd = true;
     if (position != null) {
       //在滚动列表中
       if (position.pixels > 0) {
@@ -238,7 +248,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
   void _tryPullBack() async {
     //debugger();
     if (await _handleCanPullBack()) {
-      _pullBackController.forward();
+      if (_pullBackController.isCompleted) {
+        _pullBack();
+      } else {
+        _pullBackController.forward();
+      }
     } else {
       _pullBackController.reverse();
     }

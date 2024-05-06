@@ -68,11 +68,6 @@ class LayoutBoxConstraints extends BoxConstraints {
     EdgeInsets? padding,
   ) {
     //debugger();
-    if (parentConstraints.isTight) {
-      //有一种满意的约束尺寸
-      return parentConstraints.constrain(childSize);
-    }
-
     final paddingHorizontal = padding?.horizontal ?? 0;
     final paddingVertical = padding?.vertical ?? 0;
 
@@ -81,7 +76,7 @@ class LayoutBoxConstraints extends BoxConstraints {
 
     double width = parentConstraints.constrainWidth(constrainWidth(childWidth));
     double height =
-        parentConstraints.constrainWidth(constrainHeight(childHeight));
+        parentConstraints.constrainHeight(constrainHeight(childHeight));
 
     if (wrapContentWidth == true) {
       width = constrainWidth(childWidth);
@@ -113,6 +108,15 @@ class LayoutBoxConstraints extends BoxConstraints {
           return true;
         }());
       }
+    }
+
+    if (parentConstraints.hasTightWidth) {
+      //有一种满意的宽度约束尺寸
+      width = parentConstraints.maxWidth;
+    }
+    if (parentConstraints.hasTightHeight) {
+      //有一种满意的高度约束尺寸
+      height = parentConstraints.maxHeight;
     }
 
     return Size(width, height);

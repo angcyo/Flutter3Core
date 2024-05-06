@@ -89,6 +89,7 @@ part 'src/global/global_theme.dart';
 part 'src/global/overlay/overlay_animation.dart';
 part 'src/global/overlay/overlay_manage.dart';
 part 'src/global/overlay/overlay_notification.dart';
+part 'src/overlay/rotate_animated.dart';
 part 'src/l.dart';
 part 'src/meta/meta.dart';
 part 'src/overlay/loading.dart';

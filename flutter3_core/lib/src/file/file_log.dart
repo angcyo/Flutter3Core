@@ -10,6 +10,7 @@ const kMaxLogLength = 2 * 1024 * 1024; //2M
 /// 日志文件的扩展名
 const kLogExtension = ".log"; //日志文件后缀
 const kLFileName = "l.log"; //常规操作日志
+const kOperateFileName = "operate.log"; //特殊操作日志
 const kLogFileName = "log.log"; //特殊日志文件
 const kBleFileName = "ble.log"; //蓝牙机器操作日志
 const kErrorFileName = "error.log"; //错误日志
@@ -143,6 +144,7 @@ extension LogEx on Object {
     bool limitLength = true,
     int level = L.none,
     int forward = 4,
+    bool append = true,
   }) async {
     //debugger();
     l.log(this, level: level, forward: forward);
@@ -150,6 +152,7 @@ extension LogEx on Object {
       fileName: fileName,
       folder: folder,
       limitLength: limitLength,
+      append: append,
     );
   }
 
@@ -160,6 +163,7 @@ extension LogEx on Object {
     bool limitLength = true,
     int level = L.debug,
     int forward = 5,
+    bool append = true,
   }) {
     unawaited(appendToLog(
       fileName: fileName,
@@ -167,6 +171,7 @@ extension LogEx on Object {
       limitLength: limitLength,
       level: level,
       forward: forward,
+      append: append,
     ));
   }
 

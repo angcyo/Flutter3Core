@@ -93,16 +93,27 @@ class UpdateValueNotifier<T> extends ValueNotifier<T> {
       value = newValue;
     }
   }
+
+  /// 直接通知改变回调
+  @api
+  void notify() {
+    notifyListeners();
+  }
+}
+
+/// 换个名字
+class UpdateSignalNotifier<T> extends UpdateValueNotifier<T> {
+  UpdateSignalNotifier(super.value, [super.data]);
 }
 
 /// [UpdateValueNotifier]的快速构建方法
 @updateSignalMark
 UpdateValueNotifier<dynamic> get nullValueUpdateSignal =>
-    UpdateValueNotifier<dynamic>(null);
+    UpdateSignalNotifier<dynamic>(null);
 
 /// [UpdateValueNotifier]的快速构建方法
 @updateSignalMark
-UpdateValueNotifier<T?> updateSignal<T>() => UpdateValueNotifier<T?>(null);
+UpdateValueNotifier<T?> updateSignal<T>() => UpdateSignalNotifier<T?>(null);
 
 mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
   /// 用来触发重构的信号
