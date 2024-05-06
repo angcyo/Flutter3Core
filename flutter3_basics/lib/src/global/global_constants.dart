@@ -78,6 +78,7 @@ const kPaddingX = EdgeInsets.symmetric(horizontal: kX, vertical: kL);
 /// ```
 /// [RenderView.paint]
 /// [debugAddPaintCallback]
+/// [isDebugFlag]
 const bool isDebug = kDebugMode;
 
 /// 随机数生成器

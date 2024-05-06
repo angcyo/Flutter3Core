@@ -555,6 +555,9 @@ class GCodeWriteHandle with VectorWriteMixin {
   /// [IUnit.mm]
   IUnit? unit = IUnit.mm;
 
+  @override
+  int get digits => super.digits;
+
   //endregion ---数值转换---
 
   //region ---GCode数据参数---
