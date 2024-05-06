@@ -24,8 +24,8 @@ class RotateAnimated extends StatefulWidget {
   final Widget child;
 
   const RotateAnimated(
-    this.rotateState,
     this.child, {
+    this.rotateState = RotateState.rotate,
     super.key,
     this.angleStep = 3,
   });
