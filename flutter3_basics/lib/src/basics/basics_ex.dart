@@ -1363,7 +1363,7 @@ extension IterableEx<E> on Iterable<E> {
     return null;
   }
 
-  /// 过滤元素
+  /// 过滤元素, 返回满足条件的新列表
   /// [test] 返回true, 则保留元素
   /// [WhereIterable]
   List<E> filter(bool Function(E element) test) => where(test).toList();

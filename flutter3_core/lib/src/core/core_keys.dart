@@ -26,4 +26,5 @@ final coreKeys = CoreKeys._();
 
 /// [isDebug]
 /// [CoreKeys.isDebugFlag]
-bool get isDebugFlag => coreKeys.isDebugFlag;
+bool get isDebugFlag =>
+    GlobalConfig.def.isDebugFlagFn?.call() ?? coreKeys.isDebugFlag;

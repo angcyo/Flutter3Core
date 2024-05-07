@@ -76,10 +76,10 @@ extension LogEx on Object {
     final filePath =
         file?.path ?? await fileName.filePathOf(folder, useCacheFolder);
     FileMode mode = append ? FileMode.append : FileMode.write;
-    if (append && limitLength && (filePath.length > kMaxLogLength)) {
+    final fileObj = filePath.file();
+    if (append && limitLength && (fileObj.lengthSync() > kMaxLogLength)) {
       mode = FileMode.write;
     }
-    final fileObj = filePath.file();
 
     Future writeBytes(Uint8List? bytes) async {
       if (bytes != null) {

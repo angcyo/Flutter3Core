@@ -108,6 +108,23 @@ class LiveStreamController<T> {
   }
 }
 
+/// 用来调试
+class DebugLiveStreamController<T> extends LiveStreamController<T> {
+  DebugLiveStreamController(super.initialValue, {super.autoClearValue});
+
+  @override
+  void add(T newValue) {
+    debugger();
+    super.add(newValue);
+  }
+
+  @override
+  void addError(Object error) {
+    debugger();
+    super.addError(error);
+  }
+}
+
 // Helper for 'newStreamWithInitialValue' method for streams.
 class _NewStreamWithInitialValueTransformer<T>
     extends StreamTransformerBase<T, T> {

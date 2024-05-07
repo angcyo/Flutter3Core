@@ -67,6 +67,7 @@ class L {
   int fileLogLevel = info;
 
   /// 开始输出日志
+  /// [forward] 向前追溯几个调用.
   /// [object] 日志内容
   log(
     Object? object, {

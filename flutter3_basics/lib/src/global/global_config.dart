@@ -130,10 +130,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   static GlobalConfig? _def;
 
   /// 全局app临时全局配置
-  static GlobalConfig? app;
+  static GlobalConfig? appDef;
 
   /// 获取全局配置
-  static GlobalConfig get def => app ?? (_def ??= GlobalConfig());
+  static GlobalConfig get def => appDef ?? (_def ??= GlobalConfig());
 
   /// 获取全局配置
   /// 使用[GlobalConfigScope]可以覆盖[GlobalConfig]
@@ -162,6 +162,14 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 获取当前程序中的所有路由
   static List<ModalRoute> allModalRouteList() =>
       GlobalConfig.def.findModalRouteList();
+
+  /// 获取当前配置下, 是否是debug模式
+  /// 返回null, 表示不确定
+  /// [isDebug]
+  /// [isDebugFlag]
+  ResultCallback<bool?>? isDebugFlagFn = () {
+    return null;
+  };
 
   /// 注册一个全局的打开url方法, 一般是跳转到web页面
   /// 打开url

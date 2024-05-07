@@ -60,6 +60,7 @@ extension RenderObjectMixinEx on RenderObject {
       } catch (e) {
         assert(() {
           l.e(e);
+          //printError(e);
           return true;
         }());
         return null;
