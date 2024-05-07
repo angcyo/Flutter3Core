@@ -1215,6 +1215,11 @@ extension IntEx on int {
   /// [StringEx.ascii]
   String get ascii => String.fromCharCode(this);
 
+  /// [FileSizeEx.toSizeStr]
+  String toSizeStr([int round = 2]) {
+    return filesize(this, round);
+  }
+
   /// 是否有指定的标志位
   bool have(int flag) {
     if (this == 0 && flag == 0) {

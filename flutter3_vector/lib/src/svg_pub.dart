@@ -269,7 +269,7 @@ class SvgListener extends VectorGraphicsCodecListener {
   void onImage(int imageId, int format, Uint8List data,
       {VectorGraphicsErrorListener? onError}) async {
     assert(() {
-      //l.d('onImage[$imageId] $format:${format.imageFormatTypeString} ${data.lengthInBytes.toFileSizeStr()}');
+      //l.d('onImage[$imageId] $format:${format.imageFormatTypeString} ${data.lengthInBytes.toSizeStr()}');
       return true;
     }());
     _images[imageId] = data;
