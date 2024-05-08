@@ -380,6 +380,14 @@ Future<R> future<R>(FutureOr<R> Function() callback) async {
   return completer.future;
 }
 
+/// 等待一个异步的请求结果
+/// [future]
+Future<R> asyncFuture<R>(void Function(Completer<R> completer) callback) {
+  final completer = Completer<R>();
+  callback(completer);
+  return completer.future;
+}
+
 //endregion 性能
 
 //region Asset

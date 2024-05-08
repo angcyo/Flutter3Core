@@ -51,6 +51,15 @@ void main() {
     final hex = data.toHex();
     consoleLog('${data.length}');
     consoleLog('${hex.length}');
-    consoleLog('...');
+    consoleLog('${200.toHex()}');
+    consoleLog('${200.toHex(4)}');
+    consoleLog('...end');
+  });
+
+  test('test string', () {
+    const text = "AABB";
+    consoleLog(text.substring(0)); //[)
+    consoleLog(text.substring(2));
+    consoleLog('...end');
   });
 }

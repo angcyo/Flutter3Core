@@ -107,6 +107,7 @@ extension HexStringEx on String {
 extension HexIntEx on int {
   /// Convert a integer to a byte array.
   /// 将整数转换为字节数组。
+  /// [length] 要输出多少个字节的数据 AA:1个字节 AABB:2个字节
   Uint8List toBytes([int? length]) {
     length ??= (bitLength / 8).ceil();
     final buffer = Uint8List(length);
@@ -118,6 +119,8 @@ extension HexIntEx on int {
 
   /// Convert a integer to a hexadecimal string.
   /// 将整数转换为十六进制字符串。
+  /// 1->01
+  /// 200->C8
   String toHex([int? length]) => HEX.encoder.convert(toBytes(length));
 }
 
