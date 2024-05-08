@@ -116,7 +116,12 @@ typedef FutureValueCallback<T> = FutureOr<T> Function([T value]);
 /// 回调一个值和一个错误
 typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
 
+/// 进度回调
+/// [count] 已发送的数据量
+/// [total] 总数据量
+typedef ProgressAction = void Function(int count, int total);
+
 /// 进度回调[0~1]
-typedef ProgressRatioCallback = dynamic Function(double progress);
+typedef ProgressRatioCallback = void Function(double progress);
 
 //endregion Fn

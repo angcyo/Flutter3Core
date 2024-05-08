@@ -34,6 +34,7 @@ class FutureCancelToken {
 }
 
 /// [Future]被取消时, 传递的异常信息
+/// [StackTrace.current]
 class FutureCancelException implements Exception {
   final Object? reason;
   final StackTrace? stackTrace;
