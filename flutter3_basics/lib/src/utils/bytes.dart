@@ -80,7 +80,11 @@ class BytesWriter {
 
   /// 写入一个其它字节数组
   /// [length] 需要写入的字节长度, 默认为[bytes]的长度
-  void writeBytes(List<int> bytes, [int? length]) {
+  /// [writeFill]
+  void writeBytes(List<int>? bytes, [int? length]) {
+    if (bytes == null || bytes.isEmpty) {
+      return;
+    }
     if (length == null) {
       _bytes.addAll(bytes);
     } else {
@@ -94,8 +98,8 @@ class BytesWriter {
   }
 
   /// 写入一个Hex字符串
-  void writeHex(String value, [int? length]) {
-    writeBytes(value.toHexBytes(), length);
+  void writeHex(String? value, [int? length]) {
+    writeBytes(value?.toHexBytes(), length);
   }
 
   /// 写入指定字节的长度数据
@@ -123,9 +127,12 @@ class BytesWriter {
 class ByteReader {
   final List<int> bytes;
 
-  int get sumLength => bytes.length;
+  int get sumLength => bytes.length - excludeLength;
 
-  ByteReader(this.bytes);
+  /// 排除多少个字节
+  int excludeLength = 0;
+
+  ByteReader(this.bytes, {this.excludeLength = 0});
 
   int _index = 0;
 
@@ -133,27 +140,27 @@ class ByteReader {
   bool get isDone => _index >= sumLength;
 
   /// 读取一个字节
-  int readByte() {
+  int readByte([int overflow = -1]) {
+    if (isDone) {
+      return overflow;
+    }
     return bytes[_index++];
   }
 
   /// 读取一个32位的整数, 4个字节
-  int readInt([Endian endian = Endian.big]) {
-    if (endian == Endian.big) {
-      return (bytes[_index++] << 24) |
-          (bytes[_index++] << 16) |
-          (bytes[_index++] << 8) |
-          bytes[_index++];
-    } else {
-      return bytes[_index++] |
-          (bytes[_index++] << 8) |
-          (bytes[_index++] << 16) |
-          (bytes[_index++] << 24);
+  /// [length] 需要读取的字节长度
+  int readInt([int length = 4, int overflow = -1, Endian endian = Endian.big]) {
+    if (isDone) {
+      return overflow;
     }
+    return readBytes(length)?.toInt(length, endian) ?? overflow;
   }
 
   /// 读取一个64位的整数, 8个字节
-  int readLong([Endian endian = Endian.big]) {
+  int readLong([int overflow = -1, Endian endian = Endian.big]) {
+    if (isDone) {
+      return overflow;
+    }
     if (endian == Endian.big) {
       return (bytes[_index++] << 56) |
           (bytes[_index++] << 48) |
@@ -177,7 +184,10 @@ class ByteReader {
 
   /// 读取一个其它字节数组
   /// [length] 需要读取的字节长度
-  List<int> readBytes(int length) {
+  List<int>? readBytes(int length, [List<int>? overflow]) {
+    if (isDone) {
+      return overflow;
+    }
     final result = bytes.sublist(_index, math.min(_index + length, sumLength));
     _index += length;
     return result;
@@ -185,7 +195,10 @@ class ByteReader {
 
   /// 读取指定字节长度的一个字符串
   /// [length] 需要读取的字节长度
-  String readString(int length) {
+  String? readString(int length, [String? overflow]) {
+    if (isDone) {
+      return overflow;
+    }
     final result = utf8.decode(
         bytes.sublist(_index, math.min(_index + length, sumLength)),
         allowMalformed: true);
@@ -193,8 +206,25 @@ class ByteReader {
     return result;
   }
 
+  /// 循环读取, 直到满足条件时退出
+  /// [predicate] 返回true, 停止读取
+  List<int> readLoop(bool Function(List<int> bytes, int byte) predicate) {
+    final result = <int>[];
+    while (!isDone) {
+      final byte = readByte();
+      result.add(byte);
+      if (predicate(result, byte)) {
+        break;
+      }
+    }
+    return result;
+  }
+
   /// 读取一个Hex字符串
-  String readHex(int length) {
+  String? readHex(int length, [String? overflow]) {
+    if (isDone) {
+      return overflow;
+    }
     final result =
         bytes.sublist(_index, math.min(_index + length, sumLength)).toHex();
     _index += length;
@@ -203,6 +233,9 @@ class ByteReader {
 
   /// 读取剩余的字节
   List<int> readRemaining() {
+    if (isDone) {
+      return [];
+    }
     final result = bytes.sublist(_index);
     _index = bytes.length;
     return result;
@@ -224,7 +257,7 @@ List<int> bytesWriter(void Function(BytesWriter writer) action) {
 
 /// [ByteReader]
 @dsl
-void bytesReader(List<int> bytes, void Function(ByteReader writer) action) {
+T bytesReader<T>(List<int> bytes, T Function(ByteReader reader) action) {
   final reader = ByteReader(bytes);
-  action(reader);
+  return action(reader);
 }

@@ -232,7 +232,7 @@ extension FileEx on File {
     String contents, {
     FileMode mode = FileMode.write,
     Encoding encoding = utf8,
-    bool flush = false,
+    bool flush = true,
   }) async {
     try {
       parent.path.ensureDirectory();

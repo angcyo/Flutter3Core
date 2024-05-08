@@ -77,7 +77,7 @@ extension LogEx on Object {
         file?.path ?? await fileName.filePathOf(folder, useCacheFolder);
     FileMode mode = append ? FileMode.append : FileMode.write;
     final fileObj = filePath.file();
-    if (append && limitLength && (fileObj.lengthSync() > kMaxLogLength)) {
+    if (append && limitLength && (fileObj.fileSizeSync() > kMaxLogLength)) {
       mode = FileMode.write;
     }
 
@@ -145,7 +145,7 @@ extension LogEx on Object {
     int level = L.none,
     int forward = 4,
     bool append = true,
-  }) async {
+  }) {
     //debugger();
     l.log(this, level: level, forward: forward);
     return appendToFile(
@@ -157,7 +157,7 @@ extension LogEx on Object {
   }
 
   /// 写入内容到日志文件
-  void writeToLog({
+  Future<File> writeToLog({
     String fileName = kLogFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
@@ -165,47 +165,47 @@ extension LogEx on Object {
     int forward = 5,
     bool append = true,
   }) {
-    unawaited(appendToLog(
+    return appendToLog(
       fileName: fileName,
       folder: folder,
       limitLength: limitLength,
       level: level,
       forward: forward,
       append: append,
-    ));
+    );
   }
 
   /// 写入内容到日志文件
-  void writeToErrorLog({
+  Future<File> writeToErrorLog({
     String fileName = kErrorFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
     int level = L.error,
     int forward = 5,
   }) {
-    unawaited(appendToLog(
+    return appendToLog(
       fileName: fileName,
       folder: folder,
       limitLength: limitLength,
       level: level,
       forward: forward,
-    ));
+    );
   }
 
   /// 写入内容到日志文件
-  void writeToHttpLog({
+  Future<File> writeToHttpLog({
     String fileName = kHttpFileName,
     String? folder = kLogPathName,
     bool limitLength = true,
     int level = L.none,
     int forward = 5,
   }) {
-    unawaited(appendToLog(
+    return appendToLog(
       fileName: fileName,
       folder: folder,
       limitLength: limitLength,
       level: level,
       forward: forward,
-    ));
+    );
   }
 }

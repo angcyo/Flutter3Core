@@ -45,14 +45,22 @@ void main() {
     consoleLog('...');
   });*/
 
-  test('test', () {
+  test('test bytes', () {
     //定义一个字节数组
     final data = Uint8List.fromList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     final hex = data.toHex();
-    consoleLog('${data.length}');
+    consoleLog(data);
+    consoleLog(hex);
+
+    /*consoleLog('${data.length}');
     consoleLog('${hex.length}');
     consoleLog('${200.toHex()}');
-    consoleLog('${200.toHex(4)}');
+    consoleLog('${200.toHex(4)}');*/
+
+    final data2 = 65535.toBytes(4);
+    consoleLog(data2);
+    consoleLog(data2.toInt(4));
+
     consoleLog('...end');
   });
 
@@ -60,6 +68,8 @@ void main() {
     const text = "AABB";
     consoleLog(text.substring(0)); //[)
     consoleLog(text.substring(2));
+    consoleLog('${1 / 2}');
+    consoleLog('${1 ~/ 2}');
     consoleLog('...end');
   });
 }

@@ -48,7 +48,10 @@ String uuid([bool trim = true]) {
 int get uniqueId => UniqueKey().hashCode;
 
 /// [4219854331] 32位
-int get microsecondsId => DateTime.now().microsecondsSinceEpoch & 0xFFFFFFFF;
+int get microsecondsId =>
+    DateTime
+        .now()
+        .microsecondsSinceEpoch & 0xFFFFFFFF;
 
 /// 行的分隔符
 /// [_newlineRegExp]
@@ -59,10 +62,10 @@ String get lineSeparator =>
 /// [WidgetBuilder]
 /// [WidgetErrorBuilder]
 typedef WidgetErrorBuilder = Widget Function(
-  BuildContext context,
-  Object error,
-  StackTrace stackTrace,
-);
+    BuildContext context,
+    Object error,
+    StackTrace stackTrace,
+    );
 
 //region Object 扩展
 
@@ -220,8 +223,9 @@ extension ObjectEx on Object {
       int idx = 0; // walks text (string that is searched)
       while (idx < textLC.length) {
         // print('=== idx=$idx');
-        nonHighlightAdd(int end) => children.add(TextSpan(
-            text: text.substring(start, end), style: highlightTextStyle));
+        nonHighlightAdd(int end) =>
+            children.add(TextSpan(
+                text: text.substring(start, end), style: highlightTextStyle));
 
         // find index of term that's closest to current idx position
         int iNearest = -1;
@@ -230,14 +234,14 @@ extension ObjectEx on Object {
           // print('*** i=$i');
           int at;
           if ((at = textLC.indexOf(termListLC[i], idx)) >= 0) //MAGIC//CORE
-          {
+              {
             // print('idx=$idx i=$i at=$at => FOUND: ${termListLC[i]}');
 
             if (words) {
               if (at > 0 &&
                   !wordDelimiters.contains(
                       textLC[at - 1])) // is preceding character a delimiter?
-              {
+                  {
                 // print('disqualify preceding: idx=$idx i=$i');
                 continue; // preceding character isn't delimiter so disqualify
               }
@@ -245,8 +249,8 @@ extension ObjectEx on Object {
               int followingIdx = at + termListLC[i].length;
               if (followingIdx < textLC.length &&
                   !wordDelimiters.contains(textLC[
-                      followingIdx])) // is character following the search term a delimiter?
-              {
+                  followingIdx])) // is character following the search term a delimiter?
+                  {
                 // print('disqualify following: idx=$idx i=$i');
                 continue; // following character isn't delimiter so disqualify
               }
@@ -321,10 +325,10 @@ extension ObjectEx on Object {
             (fontSize == null && textColor == null && fontWeight == null
                 ? null
                 : TextStyle(
-                    fontSize: fontSize,
-                    color: textColor,
-                    fontWeight: fontWeight,
-                  )),
+              fontSize: fontSize,
+              color: textColor,
+              fontWeight: fontWeight,
+            )),
         textAlign: textAlign,
         maxLines: maxLines,
         /*softWrap: softWrap,
@@ -338,10 +342,10 @@ extension ObjectEx on Object {
           (fontSize == null && textColor == null && fontWeight == null
               ? null
               : TextStyle(
-                  fontSize: fontSize,
-                  color: textColor,
-                  fontWeight: fontWeight,
-                )),
+            fontSize: fontSize,
+            color: textColor,
+            fontWeight: fontWeight,
+          )),
       textAlign: textAlign,
       maxLines: maxLines,
       softWrap: softWrap,
@@ -407,8 +411,7 @@ extension FutureEx<T> on Future<T> {
   }
 
   /// [FutureBuilder]
-  Widget toWidget(
-    Widget Function(T? value) builder, {
+  Widget toWidget(Widget Function(T? value) builder, {
     Widget Function(Object? error)? errorBuilder,
     Widget Function()? loadingBuilder,
     Widget Function()? emptyBuilder,
@@ -467,10 +470,10 @@ extension ColorEx on Color {
   /// [a] 是否包含透明通道
   String toHex({bool leadingHashSign = true, bool a = true}) =>
       '${leadingHashSign ? '#' : ''}'
-      '${a ? alpha.toRadixString(16).padLeft(2, '0') : ""}'
-      '${red.toRadixString(16).padLeft(2, '0')}'
-      '${green.toRadixString(16).padLeft(2, '0')}'
-      '${blue.toRadixString(16).padLeft(2, '0')}';
+          '${a ? alpha.toRadixString(16).padLeft(2, '0') : ""}'
+          '${red.toRadixString(16).padLeft(2, '0')}'
+          '${green.toRadixString(16).padLeft(2, '0')}'
+          '${blue.toRadixString(16).padLeft(2, '0')}';
 
   /// 返回#ff00ff00
   String toHexColor([bool leadingHashSign = true, bool a = true]) =>
@@ -504,7 +507,12 @@ extension ColorEx on Color {
   /// 获取当前颜色的强调色,
   /// 值越小, 越弱调, 越暗, 黑色, min:0
   /// 值越大, 越强调, 越亮, 白色, max:100
-  Color tone(int tone) => CorePalette.of(value).primary.get(tone).toColor();
+  Color tone(int tone) =>
+      CorePalette
+          .of(value)
+          .primary
+          .get(tone)
+          .toColor();
 }
 
 //endregion Color 扩展
@@ -565,7 +573,10 @@ extension StringEx on String {
 
   /// 转换成[utf8]字节数组
   /// [bytes]
-  ByteData get byteData => ByteData.view(Uint8List.fromList(bytes).buffer);
+  ByteData get byteData =>
+      ByteData.view(Uint8List
+          .fromList(bytes)
+          .buffer);
 
   /// 重复字符串多少次[repeat]
   String operator *(int repeat) => List.filled(repeat, this).join();
@@ -743,8 +754,7 @@ extension StringEx on String {
   /// `packages/flutter3_canvas/assets/svg/canvas_lock_point.svg`
   String ensurePackagePrefix(String? package, String? prefix) {
     var before = "";
-    if (package == null || package.isEmpty) {
-    } else {
+    if (package == null || package.isEmpty) {} else {
       before = "packages/$package/";
     }
     if (prefix == null || prefix.isEmpty) {
@@ -828,7 +838,8 @@ extension OffsetEx on Offset {
 extension RectEx on Rect {
   /// [toString]
   String get log =>
-      "Rect(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${right.toStringAsFixed(1)}, ${bottom.toStringAsFixed(1)})";
+      "Rect(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${right
+          .toStringAsFixed(1)}, ${bottom.toStringAsFixed(1)})";
 
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
@@ -843,14 +854,16 @@ extension RectEx on Rect {
 
   Offset get lb => Offset(left, bottom);
 
-  Rect operator -(Offset offset) => Rect.fromLTWH(
+  Rect operator -(Offset offset) =>
+      Rect.fromLTWH(
         left - offset.dx,
         top - offset.dy,
         width,
         height,
       );
 
-  Rect operator +(Offset offset) => Rect.fromLTWH(
+  Rect operator +(Offset offset) =>
+      Rect.fromLTWH(
         left + offset.dx,
         top + offset.dy,
         width,
@@ -861,7 +874,8 @@ extension RectEx on Rect {
   Rect offsetToZero() => Rect.fromLTWH(0, 0, width, height);
 
   /// 偏移矩形
-  Rect offset(Offset offset) => Rect.fromLTWH(
+  Rect offset(Offset offset) =>
+      Rect.fromLTWH(
         left + offset.dx,
         top + offset.dy,
         width,
@@ -869,7 +883,9 @@ extension RectEx on Rect {
       );
 
   /// 转换成[Path]
-  Path toPath() => Path()..addRect(this);
+  Path toPath() =>
+      Path()
+        ..addRect(this);
 
   /// 转换成圆角矩形
   /// [RRect]
@@ -1306,6 +1322,9 @@ extension DoubleEx on double {
 
 //region List 扩展
 
+/// [ListIntEx]
+/// [ListEx]
+/// [IterableEx]
 /// [Uint8List]
 extension ListIntEx on List<int> {
   /// [length]
@@ -1336,6 +1355,26 @@ extension ListIntEx on List<int> {
   /// [Uint8List]
   /// `Uint8List implements List<int>, TypedData`
   Uint8List get bytes => Uint8List.fromList(this);
+
+  /// 将字节数组转成对应的整型数字
+  /// [length] 需要用几个字节来转换
+  /// [endian] 大小端, 默认大端: 低位在前, 高位在后. 读取的时候先读取来的在高位
+  int toInt([int length = 4, Endian endian = Endian.big]) {
+    length = clamp(length, 0, size());
+    if (endian == Endian.big) {
+      var value = 0;
+      for (var i = 0; i < length; i++) {
+        value += (this[i] & 0xff) << (8 * (length - i - 1));
+      }
+      return value;
+    } else {
+      var value = 0;
+      for (var i = 0; i < length; i++) {
+        value += (this[i] & 0xff) << (8 * i);
+      }
+      return value;
+    }
+  }
 }
 
 /// [ListEx]
@@ -1401,8 +1440,7 @@ extension IterableEx<E> on Iterable<E> {
   /// [MappedIterable]
   /// [IterableEx.mapToList]
   /// [ListEx.mapToList]
-  List<Type> mapToList<Type>(
-    Type Function(dynamic e) toElement, {
+  List<Type> mapToList<Type>(Type Function(dynamic e) toElement, {
     bool growable = false,
   }) {
     return map<Type>((e) {
@@ -1440,13 +1478,13 @@ extension ListEx<T> on List<T> {
 
   /// [StatelessWidget]->[ScrollView]->[BoxScrollView]->[ListView]
   ListView toListView(
-    Widget Function(BuildContext context, T element, int index) itemBuilder, {
-    Axis scrollDirection = Axis.vertical,
-    ScrollController? controller,
-    bool? primary,
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-  }) {
+      Widget Function(BuildContext context, T element, int index) itemBuilder, {
+        Axis scrollDirection = Axis.vertical,
+        ScrollController? controller,
+        bool? primary,
+        ScrollPhysics? physics,
+        bool shrinkWrap = false,
+      }) {
     return ListView.builder(
       itemCount: length,
       scrollDirection: scrollDirection,
@@ -1470,8 +1508,7 @@ extension ListEx<T> on List<T> {
   /// 映射类型转换成[Type]的[List]
   /// [IterableEx.mapToList]
   /// [ListEx.mapToList]
-  List<Type> mapToList<Type>(
-    Type Function(dynamic e) toElement, {
+  List<Type> mapToList<Type>(Type Function(dynamic e) toElement, {
     bool growable = false,
   }) {
     return map<Type>((e) {
@@ -1505,7 +1542,7 @@ extension ListEx<T> on List<T> {
       return def;
     }
     return findFirst((element) =>
-            element is Enum ? element.name == name : "$element" == name) ??
+    element is Enum ? element.name == name : "$element" == name) ??
         def;
   }
 
@@ -1514,7 +1551,7 @@ extension ListEx<T> on List<T> {
   /// [getByNameOrNull]
   T? getByNameOrNull(String? name) {
     return findFirst((element) =>
-        element is Enum ? element.name == name : "$element" == name);
+    element is Enum ? element.name == name : "$element" == name);
   }
 
   /// 判断2个List是否至少有一个相同的元素
@@ -1560,6 +1597,20 @@ extension ListEx<T> on List<T> {
     }
     return result;
   }
+
+  /// 切片, 保证索引不越界
+  /// [sublist] 系统的切片方法
+  List<T> subList(int start, [int? end]) {
+    start = clamp(start, 0, length);
+    if (end == null) {
+      return sublist(start);
+    }
+    end = clamp(end, start, length);
+    return sublist(start, end);
+  }
+
+  /// [subList]
+  List<T> subListCount(int start, int count) => subList(start, start + count);
 }
 
 //endregion List 扩展

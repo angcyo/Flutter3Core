@@ -79,12 +79,12 @@ class LTime {
   }
 
   /// 获取与最近一次时间匹配的时间间隔(ms)
-  String time() {
-    var lastTime = stack.popOrNull();
-    if (lastTime == null) {
+  String time([int? startTime]) {
+    startTime ??= stack.popOrNull();
+    if (startTime == null) {
       return "0ms";
     }
-    return diffTime(lastTime);
+    return diffTime(startTime);
   }
 }
 

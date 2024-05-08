@@ -90,7 +90,8 @@ class LiveStreamController<T> {
       StreamSubscription<T>? subscription;
       subscription = _controller.stream.listen((event) async {
         final cancel = await onData(event);
-        if (cancel) {
+        if (cancel is bool && cancel) {
+          //debugger();
           subscription?.cancel();
         }
       }, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
