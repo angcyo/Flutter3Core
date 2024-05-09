@@ -638,6 +638,10 @@ extension StringEx on String {
     return split('').join(char);
   }
 
+  /// [File.readAsLines]
+  /// [split]
+  List<String> lines([Pattern pattern = '\n']) => split(pattern);
+
   //region 正则
 
   RegExp toRegex() => RegExp(this);
@@ -1331,13 +1335,13 @@ extension ListIntEx on List<int> {
 
   /// [Uint8List]转换成字符串
   /// [String.fromCharCodes]
-  String toStr([Utf8Codec codec = utf8, bool allowMalformed = true]) {
+  String toStr([Encoding codec = utf8, bool allowMalformed = true]) {
     return utf8.decode(this, allowMalformed: allowMalformed);
     //return String.fromCharCodes(this);
   }
 
   /// [toStr]
-  String decode([Utf8Codec codec = utf8, bool allowMalformed = true]) {
+  String decode([Encoding codec = utf8, bool allowMalformed = true]) {
     return utf8.decode(this, allowMalformed: allowMalformed);
   }
 

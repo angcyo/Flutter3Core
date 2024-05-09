@@ -392,6 +392,60 @@ extension FileEx on File {
     }
     return false;
   }
+
+  /// 读取文件最后的几个字节
+  Future<Uint8List> readLastBytes(int count) async {
+    final file = this;
+    final length = await file.length();
+    if (length <= count) {
+      return file.readAsBytes();
+    }
+    final buffer = await file.open();
+    await buffer.setPosition(length - count);
+    final bytes = buffer.read(count);
+    await buffer.close();
+    return bytes;
+  }
+
+  Uint8List readLastBytesSync(int count) {
+    final file = this;
+    final length = file.lengthSync();
+    if (length <= count) {
+      return file.readAsBytesSync();
+    }
+    final buffer = file.openSync();
+    buffer.setPositionSync(length - count);
+    final bytes = buffer.readSync(count);
+    buffer.closeSync();
+    return bytes;
+  }
+
+  /// [readLastBytes]
+  Future<String> readLastString(int count, {Encoding encoding = utf8}) async {
+    final file = this;
+    final length = await file.length();
+    if (length <= count) {
+      return file.readAsString(encoding: encoding);
+    }
+    final buffer = await file.open();
+    await buffer.setPosition(length - count);
+    final bytes = await buffer.read(count);
+    await buffer.close();
+    return bytes.toStr(encoding);
+  }
+
+  String readLastStringSync(int count, {Encoding encoding = utf8}) {
+    final file = this;
+    final length = file.lengthSync();
+    if (length <= count) {
+      return file.readAsStringSync(encoding: encoding);
+    }
+    final buffer = file.openSync();
+    buffer.setPositionSync(length - count);
+    final bytes = buffer.readSync(count);
+    buffer.closeSync();
+    return bytes.toStr(encoding);
+  }
 }
 
 //endregion File 扩展
