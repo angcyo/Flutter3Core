@@ -109,6 +109,9 @@ extension HexIntEx on int {
   /// 将整数转换为字节数组。
   /// [length] 要输出多少个字节的数据 AA:1个字节 AABB:2个字节
   Uint8List toBytes([int? length]) {
+    if (this == 0) {
+      return Uint8List(1);
+    }
     length ??= (bitLength / 8).ceil();
     final buffer = Uint8List(length);
     for (int i = 0; i < length; i++) {
