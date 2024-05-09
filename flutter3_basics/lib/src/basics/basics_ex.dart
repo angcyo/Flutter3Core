@@ -1231,6 +1231,10 @@ extension IntEx on int {
     return filesize(this, round);
   }
 
+  /// 从整型数中取第[bit]位的数
+  /// [bit] 从右往左, 第几位, 1开始
+  int bit(int bit) => (this >> (min(bit, 1) - 1)) & 0x1;
+
   /// 是否有指定的标志位
   bool have(int flag) {
     if (this == 0 && flag == 0) {
