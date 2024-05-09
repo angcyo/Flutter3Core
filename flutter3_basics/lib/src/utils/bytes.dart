@@ -206,6 +206,28 @@ class ByteReader {
     return result;
   }
 
+  /// 循环读取连续的字符串
+  /// [maxSize] 需要读取的最大字节数
+  List<String> readStringList([int? maxSize, Encoding codec = utf8]) {
+    final result = <String>[];
+    var count = 0;
+    while (!isDone) {
+      final bytes = readLoop((bytes, byte) {
+        return byte.uint == 0;
+      });
+      if (bytes.isEmpty) {
+        break;
+      }
+      result.add(bytes.toStr(codec));
+      count += bytes.size();
+      if (maxSize != null && count >= maxSize) {
+        //超出范围
+        break;
+      }
+    }
+    return result;
+  }
+
   /// 循环读取, 直到满足条件时退出
   /// [predicate] 返回true, 停止读取
   List<int> readLoop(bool Function(List<int> bytes, int byte) predicate) {
@@ -236,8 +258,9 @@ class ByteReader {
     if (isDone) {
       return [];
     }
-    final result = bytes.sublist(_index);
-    _index = bytes.length;
+    final end = sumLength;
+    final result = bytes.sublist(_index, end);
+    _index = end;
     return result;
   }
 

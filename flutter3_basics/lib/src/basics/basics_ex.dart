@@ -528,6 +528,22 @@ extension StringEx on String {
   /// [StringEx.ascii]
   int get ascii => codeUnitAt(0);
 
+  /// 将ascii对应的int值解析出来
+  /// 7e2b7dfc->2116779516
+  /// [StringEx.toAsciiInt]
+  /// [IntEx.toAsciiString]
+  int toAsciiInt() {
+    var result = 0;
+    final length = this.length * 4;
+    forEachIndex((index, char) {
+      //7e2b7dfc
+      final hex = char.toString();
+      final int = hex.toHexInt();
+      result = result | (int << (length - (index + 1) * 4));
+    });
+    return result;
+  }
+
   /// 判断当前字符串是否是ip字符串
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
 
@@ -1229,6 +1245,27 @@ extension IntEx on int {
   /// [IntEx.ascii]
   /// [StringEx.ascii]
   String get ascii => String.fromCharCode(this);
+
+  /// 获取对应的无符号的整型
+  int get uint => this & 0xFFFFFFFF;
+
+  /// 2116779516 -> 7E2B7DFC
+  /// 将一个int用ascii字符表示出来
+  /// [this] 输入的值
+  /// [length] 需要输出多少个ascii字符, 4位一个ascii字符
+  /// [StringEx.toAsciiInt]
+  /// [IntEx.toAsciiString]
+  String toAsciiString([int length = 32 ~/ 4]) {
+    final list = <String>[];
+    for (var i = 0; i < length; i++) {
+      //每4位取一次值
+      int char = (this >>> (i * 4)) & 0xF;
+      //再转成十六进制, 这样就可以限定值为[0~F]
+      final hex = char.toHex();
+      list.add(hex.substring(1));
+    }
+    return list.reversed.join("");
+  }
 
   /// [FileSizeEx.toSizeStr]
   String toSizeStr([int round = 2]) {

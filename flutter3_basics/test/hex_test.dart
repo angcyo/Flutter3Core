@@ -72,4 +72,11 @@ void main() {
     consoleLog('${1 ~/ 2}');
     consoleLog('...end');
   });
+
+  test('test ascii string', () {
+    const int = 2116779516;
+    const str = "7E2B7DFC";
+    consoleLog(int.toAsciiString());
+    consoleLog(str.toAsciiInt());
+  });
 }
