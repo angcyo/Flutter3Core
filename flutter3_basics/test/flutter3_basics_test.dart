@@ -16,22 +16,24 @@ void main() {
   });*/
 
   const maxInt = 0xFFFFFFFF;
-  consoleLog('${maxInt}');
-  consoleLog('${maxInt.toRadixString(2)}');
-  consoleLog('${maxInt.toRadixString(4)}');
-  consoleLog('${maxInt.toRadixString(6)}');
-  consoleLog('${maxInt.toRadixString(8)}');
-  consoleLog('${maxInt.toRadixString(16)}');
-  consoleLog('${maxInt.toRadixString(2).length}');
-  consoleLog('${UniqueKey().hashCode}');
-  consoleLog('${UniqueKey().hashCode.toRadixString(2).length}');
+  test('test 1', () {
+    consoleLog('${maxInt}');
+    consoleLog('${maxInt.toRadixString(2)}');
+    consoleLog('${maxInt.toRadixString(4)}');
+    consoleLog('${maxInt.toRadixString(6)}');
+    consoleLog('${maxInt.toRadixString(8)}');
+    consoleLog('${maxInt.toRadixString(16)}');
+    consoleLog('${maxInt.toRadixString(2).length}');
+    consoleLog('${UniqueKey().hashCode}');
+    consoleLog('${UniqueKey().hashCode.toRadixString(2).length}');
 
-  consoleLog(DateTime.now().millisecondsSinceEpoch);
-  consoleLog(DateTime.now().millisecondsSinceEpoch.toRadixString(2).length);
-  consoleLog(DateTime.now().microsecondsSinceEpoch);
-  consoleLog(DateTime.now().microsecondsSinceEpoch.toRadixString(2).length);
+    consoleLog(DateTime.now().millisecondsSinceEpoch);
+    consoleLog(DateTime.now().millisecondsSinceEpoch.toRadixString(2).length);
+    consoleLog(DateTime.now().microsecondsSinceEpoch);
+    consoleLog(DateTime.now().microsecondsSinceEpoch.toRadixString(2).length);
+  });
 
-  test("test", () {
+  test("test 2", () {
     const idGen = TimeIdGen();
     final list = <int>[];
     for (int i = 0; i < maxInt; i++) {
@@ -42,6 +44,15 @@ void main() {
         list.add(id);
       }
     }
+  });
+
+  test('test 3', () {
+    final bytes = [0, 1, 2];
+    //bytes.removeRange(0, 100); //RangeError (end): Invalid value: Not in inclusive range 0..3: 100
+    //consoleLog(bytes);
+    bytes.removeRange(0, bytes.length-1);
+    consoleLog(bytes);
+    consoleLog("...end");
   });
 }
 
