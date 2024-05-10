@@ -19,8 +19,8 @@ export 'package:flutter3_core/flutter3_core.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
 export 'package:flutter_animate/flutter_animate.dart';
 export 'package:package_info_plus/package_info_plus.dart';
-export 'package:share_plus/share_plus.dart';
 export 'package:permission_handler/permission_handler.dart';
+export 'package:share_plus/share_plus.dart';
 
 part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';
@@ -97,5 +97,6 @@ void runGlobalApp(Widget app) {
     l.e("未捕捉的异常:↓"..writeToErrorLog());
     l.e(error..writeToErrorLog());
     l.e(stack.toString()..writeToErrorLog());
+    printError(error, stack);
   });
 }

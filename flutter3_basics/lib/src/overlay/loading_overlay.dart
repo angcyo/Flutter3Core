@@ -14,6 +14,8 @@ WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 /// 显示加载提示
 /// [showStrokeLoading]
 /// [postShow] 是否要延迟显示
+/// [wrapLoading]
+/// [wrapLoadingTimeout]
 @api
 OverlayEntry? showLoading({
   BuildContext? context,
@@ -107,6 +109,8 @@ void hideLoading() {
 /// [onStart] 自定义开始时的回调, 默认显示加载提示
 /// [delay] 延迟多久后显示加载提示
 /// [timeout] 超时多久后触发[onEnd]回调, 并阻止[Future]的返回值,
+/// [wrapLoading]
+/// [wrapLoadingTimeout]
 Future wrapLoading(
   Future future, {
   Duration? delay,
