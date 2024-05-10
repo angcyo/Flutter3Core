@@ -118,7 +118,7 @@ typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
 
 /// 进度回调
 /// [count] 已发送的数据量
-/// [total] 总数据量
+/// [total] 总数据量, 有可能为0
 typedef ProgressAction = void Function(int count, int total);
 
 /// 进度回调[0~1]
