@@ -126,6 +126,8 @@ class LayoutBoxConstraints extends BoxConstraints {
 mixin LayoutMixin<ChildType extends RenderObject,
         ParentDataType extends ContainerParentDataMixin<ChildType>>
     on ContainerRenderObjectMixin<ChildType, ParentDataType> {
+  //---
+
   /// 获取所有子节点的数量
   @protected
   int getChildCount() {
@@ -178,5 +180,131 @@ mixin LayoutMixin<ChildType extends RenderObject,
       child = parentData.nextSibling;
       index++;
     }
+  }
+
+  //---
+
+  /// 获取所有子节点的宽度
+  double getAllLinearChildWidth(List<ChildType> children) {
+    double width = 0;
+    for (final child in children) {
+      if (child is RenderBox) {
+        width += child.size.width;
+      }
+    }
+    return width;
+  }
+
+  /// 获取所有子节点的高度
+  double getAllLinearChildHeight(List<ChildType> children) {
+    double height = 0;
+    for (final child in children) {
+      if (child is RenderBox) {
+        height += child.size.height;
+      }
+    }
+    return height;
+  }
+
+  /// 使用wrap的方式, 测量子节点
+  (double childMaxWidth, double childMaxHeight) measureWrapChildren(
+      List<ChildType> children) {
+    double childMaxWidth = 0;
+    double childMaxHeight = 0;
+    for (final child in children) {
+      child.layout(
+        const BoxConstraints(
+          minWidth: 0,
+          maxWidth: double.infinity,
+          minHeight: 0,
+          maxHeight: double.infinity,
+        ),
+        parentUsesSize: true,
+      );
+      //debugger();
+      if (child is RenderBox) {
+        final childSize = child.size;
+        childMaxWidth = max(childMaxWidth, childSize.width);
+        childMaxHeight = max(childMaxHeight, childSize.height);
+      }
+    }
+    return (childMaxWidth, childMaxHeight);
+  }
+
+  /// 使用wrap的方式, 布局子节点
+  /// [offset] 起点偏移量, 不根据[axis]计算
+  /// [axisOffset] 起点偏移量, 会根据[axis]自动取值
+  void layoutLinearChildren(
+    List<ChildType> children,
+    Axis axis, {
+    Offset offset = Offset.zero,
+    Offset axisOffset = Offset.zero,
+  }) {
+    double offsetX = offset.dx;
+    double offsetY = offset.dy;
+    if (axis == Axis.horizontal) {
+      offsetX += axisOffset.dx;
+    } else {
+      offsetY += axisOffset.dy;
+    }
+    for (final child in children) {
+      final parentData = child.parentData;
+      if (parentData is BoxParentData) {
+        parentData.offset = Offset(offsetX, offsetY);
+        if (child is RenderBox) {
+          if (axis == Axis.horizontal) {
+            offsetX += child.size.width;
+          } else {
+            offsetY += child.size.height;
+          }
+        }
+      }
+    }
+  }
+
+  /// 绘制子节点
+  void paintLayoutChildren(
+    List<ChildType> children,
+    PaintingContext context,
+    ui.Offset offset, {
+    Offset paintOffset = Offset.zero,
+  }) {
+    for (final child in children) {
+      final parentData = child.parentData;
+      if (parentData is BoxParentData) {
+        context.paintChild(child, parentData.offset + offset + paintOffset);
+      }
+    }
+  }
+
+  /// [defaultHitTestChildren]
+  bool hitLayoutChildren(
+    BoxHitTestResult result, {
+    required Offset position,
+    Offset paintOffset = Offset.zero,
+  }) {
+    ChildType? child = lastChild;
+    while (child != null) {
+      final parentData = child.parentData;
+      if (child is RenderBox && parentData is BoxParentData) {
+        final offset = parentData.offset + paintOffset;
+        final bool isHit = result.addWithPaintOffset(
+          offset: offset,
+          position: position,
+          hitTest: (BoxHitTestResult result, Offset transformed) {
+            //debugger();
+            assert(transformed == position - offset);
+            return (child! as RenderBox).hitTest(result, position: transformed);
+          },
+        );
+        if (isHit) {
+          return true;
+        }
+      }
+      if (parentData is ParentDataType) {
+        child = parentData.previousSibling;
+      }
+    }
+    return false;
   }
 }

@@ -87,3 +87,4 @@ part 'src/widgets/sliver_expand_widget.dart';
 part 'src/widgets/state_decoration_widget.dart';
 part 'src/widgets/test_constraints_layout.dart';
 part 'src/widgets/wrap_content_layout.dart';
+part 'src/widgets/tab_layout.dart';
