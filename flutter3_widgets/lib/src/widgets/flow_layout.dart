@@ -330,7 +330,9 @@ class FlowLayoutRender extends RenderBox
         selfConstraints?.maxWidth != double.infinity) {
       maxWidth = selfConstraints!.maxWidth;
     } else if (constraints.maxWidth != double.infinity) {
-      if (selfConstraints?.matchParentWidth == true) {
+      if (selfConstraints?.matchParentWidth == true ||
+          selfConstraints?.wrapContentWidth != true ||
+          _childUsedWidth <= 0) {
         maxWidth = constraints.maxWidth;
       } else {
         maxWidth = _childUsedWidth + paddingHorizontal;
@@ -414,6 +416,9 @@ class FlowLayoutRender extends RenderBox
             (lineMaxChildCount - 1 - childParentData.excludeGapCount);
         final boxValidWidth = maxWidth - paddingHorizontal - gap - 0.5; //防止浮点误差
         final width = boxValidWidth * weight;
+        if (width < 0) {
+          debugger();
+        }
         childConstraints = BoxConstraints(
           minWidth: width,
           maxWidth: width,
@@ -423,6 +428,7 @@ class FlowLayoutRender extends RenderBox
       } else {
         //默认约束
       }
+      //debugger();
       ChildLayoutHelper.layoutChild(child, childConstraints);
     }
   }
