@@ -416,9 +416,12 @@ class FlowLayoutRender extends RenderBox
             (lineMaxChildCount - 1 - childParentData.excludeGapCount);
         final boxValidWidth = maxWidth - paddingHorizontal - gap - 0.5; //防止浮点误差
         final width = boxValidWidth * weight;
-        if (width < 0) {
-          debugger();
-        }
+        assert(() {
+          if (width < 0) {
+            debugger();
+          }
+          return true;
+        }());
         childConstraints = BoxConstraints(
           minWidth: width,
           maxWidth: width,
