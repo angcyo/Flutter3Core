@@ -1673,6 +1673,25 @@ extension RenderObjectEx on RenderObject {
     return null;
   }
 
+  /// 获取[RenderObject]的在父节点中的位置
+  Offset? getOffsetInParentOrNull() {
+    final parentData = this.parentData;
+    if (parentData is BoxParentData) {
+      return parentData.offset;
+    }
+    return null;
+  }
+
+  /// 获取[RenderObject]的在父节点中的位置
+  Rect? getBoundsInParentOrNull() {
+    final offset = getOffsetInParentOrNull();
+    final size = getSizeOrNull();
+    if (offset != null && size != null) {
+      return offset & size;
+    }
+    return null;
+  }
+
   /// 获取[RenderObject]的全局绘制位置和坐标大小
   /// [ancestor] 祖先节点, 如果为null, 则为根节点
   /// [RenderBox.localToGlobal]

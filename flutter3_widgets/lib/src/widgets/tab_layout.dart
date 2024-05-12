@@ -4,74 +4,82 @@ part of '../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/11
 ///
-/// [SingleChildScrollView]
-class TabLayout extends StatefulWidget {
-  /// 子元素
-  final List<Widget> children;
+/// [TabLayout]的指示器控制器
+class TabLayoutController extends TabController {
+  final ScrollContainerController? scrollController;
 
-  /// 滚动方向
-  final Axis scrollDirection;
+  TabLayoutController({
+    required super.vsync,
 
-  /// 反向滚动
-  final bool reverse;
+    /// 初始位置
+    super.initialIndex = 0,
 
-  final EdgeInsetsGeometry? padding;
-  final ScrollController? controller;
-  final bool? primary;
-  final ScrollPhysics? physics;
-  final DragStartBehavior dragStartBehavior;
-  final Clip clipBehavior;
-  final String? restorationId;
-  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+    ///[kTabScrollDuration]
+    super.animationDuration,
 
-  const TabLayout({
-    super.key,
-    required this.children,
-    this.scrollDirection = Axis.horizontal,
-    this.reverse = false,
-    this.padding,
-    this.primary,
-    this.physics,
-    this.controller,
-    this.dragStartBehavior = DragStartBehavior.start,
-    this.clipBehavior = Clip.hardEdge,
-    this.restorationId,
-    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    /// 没啥用
+    /// 如果在[TabBarView]中使用, 就需要指定此值
+    /// 如果在[TabLayoutPageViewWrap]中使用, 则不需要
+    super.length = intMax32Value,
+
+    /// 用来实现滚动居中
+    this.scrollController,
   });
+
+  /// 选择tab的位置
+  @api
+  void selectedItem(
+    int index, {
+    bool animate = true,
+    Duration? duration,
+    Curve curve = Curves.ease,
+  }) {
+    scrollController?.scrollToIndex(
+      index,
+      animate: animate,
+      duration: duration,
+      curve: curve,
+    );
+    animateTo(
+      index,
+      duration: animate ? duration : Duration.zero,
+      curve: curve,
+    );
+  }
+}
+
+/// [SingleChildScrollView]
+class TabLayout extends ScrollContainerWidget {
+  /// [TabLayoutController]
+  final TabLayoutController? tabLayoutController;
+
+  final double gap;
+
+  TabLayout({
+    super.key,
+    required super.children,
+    ScrollController? scrollController,
+    this.tabLayoutController,
+    this.gap = 0,
+    super.scrollDirection = Axis.horizontal,
+    super.reverse = false,
+    super.padding,
+    super.primary,
+    super.physics,
+    super.dragStartBehavior = DragStartBehavior.start,
+    super.clipBehavior = Clip.hardEdge,
+    super.restorationId,
+    super.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    super.crossAxisAlignment = CrossAxisAlignment.center,
+  }) : super(
+            scrollController:
+                scrollController ?? tabLayoutController?.scrollController);
 
   @override
   State<TabLayout> createState() => _TabLayoutState();
 }
 
-class _TabLayoutState extends State<TabLayout> with ChildScrollMixin {
-  @override
-  Axis get scrollDirection => widget.scrollDirection;
-
-  @override
-  bool get reverse => widget.reverse;
-
-  @override
-  bool? get primary => widget.primary;
-
-  @override
-  ScrollViewKeyboardDismissBehavior get keyboardDismissBehavior =>
-      widget.keyboardDismissBehavior;
-
-  @override
-  ScrollController? get controller => widget.controller;
-
-  @override
-  DragStartBehavior get dragStartBehavior => widget.dragStartBehavior;
-
-  @override
-  ScrollPhysics? get physics => widget.physics;
-
-  @override
-  ui.Clip get clipBehavior => widget.clipBehavior;
-
-  @override
-  String? get restorationId => widget.restorationId;
-
+class _TabLayoutState extends ScrollContainerState<TabLayout> {
   @override
   Widget build(BuildContext context) {
     return buildScrollContainer(
@@ -81,94 +89,27 @@ class _TabLayoutState extends State<TabLayout> with ChildScrollMixin {
               axisDirection: _getDirection(context),
               padding: widget.padding,
               clipBehavior: widget.clipBehavior,
+              scrollController: widget.scrollController,
+              crossAxisAlignment: widget.crossAxisAlignment,
+              tabController: widget.tabLayoutController,
+              gap: widget.gap,
               children: widget.children,
             ));
   }
-}
 
-/// 滚动child的混合
-/// [SingleChildScrollView]
-mixin ChildScrollMixin {
-  /// [PrimaryScrollController.scrollDirection]
-  Axis scrollDirection = Axis.vertical;
-  bool reverse = false;
-  bool? primary;
-
-  //---
-
-  ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
-      ScrollViewKeyboardDismissBehavior.manual;
-
-  //---
-
-  /// [Scrollable.controller]
-  ScrollController? controller;
-
-  /// [Scrollable.dragStartBehavior]
-  DragStartBehavior dragStartBehavior = DragStartBehavior.start;
-
-  /// [Scrollable.physics]
-  ScrollPhysics? physics;
-
-  /// [Scrollable.clipBehavior]
-  Clip clipBehavior = Clip.hardEdge;
-
-  /// [Scrollable.restorationId]
-  String? restorationId;
-
-  AxisDirection _getDirection(BuildContext context) {
-    return getAxisDirectionFromAxisReverseAndDirectionality(
-      context,
-      scrollDirection,
-      reverse,
-    );
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
-  /// 构建滚动容器
-  @callPoint
-  Widget buildScrollContainer(
-    BuildContext context,
-    ViewportBuilder viewportBuilder,
-  ) {
-    final AxisDirection axisDirection = _getDirection(context);
-    //debugger();
-    final bool effectivePrimary = primary ??
-        controller == null &&
-            PrimaryScrollController.shouldInherit(context, scrollDirection);
+  @override
+  void didUpdateWidget(covariant TabLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
 
-    final ScrollController? scrollController = effectivePrimary
-        ? PrimaryScrollController.maybeOf(context)
-        : controller;
-
-    //滚动容器
-    Widget scrollable = Scrollable(
-      dragStartBehavior: dragStartBehavior,
-      axisDirection: axisDirection,
-      controller: scrollController,
-      physics: physics,
-      restorationId: restorationId,
-      clipBehavior: clipBehavior,
-      viewportBuilder: viewportBuilder,
-    );
-
-    if (keyboardDismissBehavior == ScrollViewKeyboardDismissBehavior.onDrag) {
-      scrollable = NotificationListener<ScrollUpdateNotification>(
-        child: scrollable,
-        onNotification: (ScrollUpdateNotification notification) {
-          final FocusScopeNode focusNode = FocusScope.of(context);
-          if (notification.dragDetails != null && focusNode.hasFocus) {
-            focusNode.unfocus();
-          }
-          return false;
-        },
-      );
-    }
-
-    return effectivePrimary && scrollController != null
-        // Further descendant ScrollViews will not inherit the same
-        // PrimaryScrollController
-        ? PrimaryScrollController.none(child: scrollable)
-        : scrollable;
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 
@@ -181,7 +122,11 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
     this.axisDirection = AxisDirection.left,
     this.crossAxisDirection,
     this.padding,
+    this.scrollController,
+    this.tabController,
+    this.gap = 0,
     this.clipBehavior = Clip.hardEdge,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
   });
 
   /// 确定原点位置
@@ -193,9 +138,12 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
   final ViewportOffset offset;
 
   /// The amount of space by which to inset the child.
-  final EdgeInsetsGeometry? padding;
-
+  final EdgeInsets? padding;
   final Clip clipBehavior;
+  final ScrollController? scrollController;
+  final CrossAxisAlignment crossAxisAlignment;
+  final TabLayoutController? tabController;
+  final double gap;
 
   @override
   TabLayoutRender createRenderObject(BuildContext context) {
@@ -205,6 +153,11 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       crossAxisDirection: crossAxisDirection ??
           Viewport.getDefaultCrossAxisDirection(context, axisDirection),
       offset: offset,
+      scrollController: scrollController ?? tabController?.scrollController,
+      crossAxisAlignment: crossAxisAlignment,
+      tabController: tabController,
+      padding: padding,
+      gap: gap,
     );
   }
 
@@ -215,99 +168,45 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       ..clipBehavior = clipBehavior
       ..crossAxisDirection = crossAxisDirection ??
           Viewport.getDefaultCrossAxisDirection(context, axisDirection)
-      ..offset = offset;
+      ..offset = offset
+      ..scrollController = scrollController ?? tabController?.scrollController
+      ..tabController = tabController
+      ..padding = padding
+      ..gap = gap
+      ..crossAxisAlignment = crossAxisAlignment;
   }
+
+  @override
+  TabLayoutElement createElement() {
+    return TabLayoutElement(this);
+  }
+}
+
+/// [_SingleChildViewportElement]
+/// [_ViewportElement]
+class TabLayoutElement extends MultiChildRenderObjectElement
+    with NotifiableElementMixin, ViewportElementMixin {
+  TabLayoutElement(TabLayoutViewport super.widget);
 }
 
 /// [SingleChildScrollView]
 /// [_RenderSingleChildViewport]
-class TabLayoutRender extends RenderBox
-    with
-        ContainerRenderObjectMixin<RenderBox, TabLayoutParentData>,
-        RenderBoxContainerDefaultsMixin<RenderBox, TabLayoutParentData>,
-        DebugOverflowIndicatorMixin,
-        LayoutMixin {
+class TabLayoutRender extends ScrollContainerRenderBox {
+  /// [TabLayoutController]
+  /// 指示器控制
+  TabLayoutController? tabController;
+
   TabLayoutRender({
-    AxisDirection axisDirection = AxisDirection.right,
-    required AxisDirection crossAxisDirection,
-    required ViewportOffset offset,
-    Clip clipBehavior = Clip.hardEdge,
-  })  : _axisDirection = axisDirection,
-        _crossAxisDirection = crossAxisDirection,
-        _clipBehavior = clipBehavior,
-        _offset = offset;
-
-  /// [RenderViewportBase.axisDirection]
-  AxisDirection get crossAxisDirection => _crossAxisDirection;
-  AxisDirection _crossAxisDirection;
-
-  set crossAxisDirection(AxisDirection value) {
-    if (value == _crossAxisDirection) {
-      return;
-    }
-    _crossAxisDirection = value;
-    markNeedsLayout();
-  }
-
-  /// [AxisDirection.right] 从左边开始往右边布局
-  /// [AxisDirection.left] 从右边开始往左边布局
-  /// [AxisDirection.down] 从上边开始往下边布局
-  /// [AxisDirection.up] 从下边开始往上边布局
-  ///
-  /// [RenderViewportBase.axisDirection]
-  AxisDirection get axisDirection => _axisDirection;
-  AxisDirection _axisDirection;
-
-  set axisDirection(AxisDirection value) {
-    if (value == _axisDirection) {
-      return;
-    }
-    _axisDirection = value;
-    markNeedsLayout();
-  }
-
-  Axis get axis => axisDirectionToAxis(axisDirection);
-
-  /// [RenderViewportBase.offset]
-  ViewportOffset get offset => _offset;
-  ViewportOffset _offset;
-
-  set offset(ViewportOffset value) {
-    if (value == _offset) {
-      return;
-    }
-    if (attached) {
-      _offset.removeListener(_hasScrolled);
-    }
-    _offset = value;
-    if (attached) {
-      _offset.addListener(_hasScrolled);
-    }
-    // We need to go through layout even if the new offset has the same pixels
-    // value as the old offset so that we will apply our viewport and content
-    // dimensions.
-    markNeedsLayout();
-  }
-
-  Clip get clipBehavior => _clipBehavior;
-  Clip _clipBehavior = Clip.none;
-
-  set clipBehavior(Clip value) {
-    if (value != _clipBehavior) {
-      _clipBehavior = value;
-      markNeedsPaint();
-      markNeedsSemanticsUpdate();
-    }
-  }
-
-  void _hasScrolled() {
-    assert(() {
-      l.d('offset:${offset.pixels}');
-      return true;
-    }());
-    markNeedsPaint();
-    markNeedsSemanticsUpdate();
-  }
+    super.axisDirection = AxisDirection.right,
+    required super.crossAxisDirection,
+    required super.offset,
+    super.clipBehavior = Clip.hardEdge,
+    super.scrollController,
+    super.crossAxisAlignment = CrossAxisAlignment.center,
+    super.padding,
+    super.gap = 0,
+    this.tabController,
+  });
 
   @override
   void setupParentData(covariant RenderObject child) {
@@ -316,164 +215,590 @@ class TabLayoutRender extends RenderBox
     }
   }
 
+  /// 指示器需要绘制改变
+  void _tabChanged() {
+    //debugger();
+    assert(() {
+      //offset + index =  _animationController!.value;
+      //l.d('index:${tabController?.index} offset:${tabController?.offset} animateValue:${tabController?.animation?.value}');
+      return true;
+    }());
+    markNeedsLayout();
+    markNeedsPaint();
+    markNeedsSemanticsUpdate();
+  }
+
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
-    _offset.addListener(_hasScrolled);
+    tabController?.addListener(_tabChanged);
+    tabController?.animation?.addListener(_tabChanged);
   }
 
   @override
   void detach() {
-    _offset.removeListener(_hasScrolled);
+    tabController?.removeListener(_tabChanged);
+    tabController?.animation?.removeListener(_tabChanged);
     super.detach();
   }
 
+  /// 获取滚动的子节点
   @override
-  bool get isRepaintBoundary => true;
+  List<RenderBox> getScrollChildren() => getIndicatorChildren(null);
 
-  double get _viewportExtent {
-    assert(hasSize);
-    switch (axis) {
-      case Axis.horizontal:
-        return size.width;
-      case Axis.vertical:
-        return size.height;
-    }
-  }
-
-  double get _minScrollExtent {
-    assert(hasSize);
-    return 0.0;
-  }
-
-  double get _maxScrollExtent {
-    assert(hasSize);
-    if (childCount <= 0) {
-      return 0.0;
-    }
-    switch (axis) {
-      case Axis.horizontal:
-        return max(0.0, getAllLinearChildWidth(getChildren()) - size.width);
-      case Axis.vertical:
-        return max(0.0, getAllLinearChildHeight(getChildren()) - size.height);
-    }
+  /// 获取指定类型的子节点
+  List<RenderBox> getIndicatorChildren(TabItemType? itemType) {
+    return tabController == null
+        ? []
+        : getChildren().where((element) {
+            final parentData = element.parentData;
+            return parentData is TabLayoutParentData &&
+                parentData.itemType == itemType;
+          }).toList();
   }
 
   @override
   void performLayout() {
-    final BoxConstraints constraints = this.constraints;
-    double width = 0;
-    double height = 0;
-    final children = getChildren();
-    final (childMaxWidth, childMaxHeight) = measureWrapChildren(children);
-    if (constraints.hasTightWidth) {
-      width = constraints.maxWidth;
-    } else {
-      width = childMaxWidth;
-    }
-    if (constraints.hasTightHeight) {
-      height = constraints.maxHeight;
-    } else {
-      height = childMaxHeight;
-    }
-    layoutLinearChildren(children, axis);
     //debugger();
-    size = constraints.constrain(Size(width, height));
-    //size = Size(width * 3, height);
+    super.performLayout();
+    _relayoutDecoration();
+    _relayoutIndicator();
+  }
 
-    //scroll
-    if (offset.hasPixels) {
-      if (offset.pixels > _maxScrollExtent) {
-        offset.correctBy(_maxScrollExtent - offset.pixels);
-      } else if (offset.pixels < _minScrollExtent) {
-        offset.correctBy(_minScrollExtent - offset.pixels);
+  /// 重新布局指示器
+  void _relayoutIndicator() {
+    final children = getIndicatorChildren(TabItemType.indicator);
+    final controller = tabController;
+    if (controller != null) {
+      int startIndex = controller.index;
+      int endIndex = startIndex;
+
+      //动画进度 [-1~1]
+      double progress = controller.offset;
+
+      if (controller.indexIsChanging) {
+        //这种情况可能是, 直接滚动到指定位置
+        startIndex = controller.previousIndex;
+        endIndex = controller.index;
+        final animateProgress =
+            (controller.offset / (endIndex - startIndex)).ensureValid(0);
+        progress = 1 - animateProgress.abs();
+      } else {
+        //这种情况可能是, 在pageView中手势滚动
+        if (controller.offset >= 0) {
+          //向右滚动
+          endIndex = startIndex + controller.offset.ceil();
+        } else {
+          //向左滚动
+          endIndex = startIndex + controller.offset.floor();
+          progress = progress.abs();
+        }
+      }
+
+      final startChild = getScrollChildAt(startIndex);
+      final endChild = getScrollChildAt(endIndex);
+      assert(() {
+        //l.d('from:$startIndex to:$endIndex animateProgress:$progress');
+        return true;
+      }());
+
+      final startRect = startChild?.getBoundsInParentOrNull() ?? Rect.zero;
+      final endRect = endChild?.getBoundsInParentOrNull() ?? Rect.zero;
+      assert(() {
+        //l.i('startRect:$startRect endRect:$endRect :$progress');
+        return true;
+      }());
+
+      //debugger();
+
+      for (final child in children) {
+        final parentData = child.parentData as TabLayoutParentData;
+        //measure
+        final width =
+            startRect.width + (endRect.width - startRect.width) * progress;
+        final height =
+            startRect.height + (endRect.height - startRect.height) * progress;
+        child.layout(
+          BoxConstraints.tightFor(
+            width: width + parentData.paddingHorizontal,
+            height: height + parentData.paddingVertical,
+          ),
+          parentUsesSize: true,
+        );
+        //layout
+        final offset = startRect.lt + (endRect.lt - startRect.lt) * progress;
+        //debugger();
+        parentData.offset = offset -
+            Offset(parentData.paddingHorizontal / 2,
+                parentData.paddingVertical / 2);
+
+        //滚动到居中位置
+        final scrollController = this.scrollController;
+        if (scrollController is ScrollContainerController) {
+          if (axis == Axis.horizontal) {
+            scrollController.scrollTo(
+              parentData.offset.dx + child.size.width / 2,
+              center: true,
+              animate: false,
+            );
+          } else {
+            scrollController.scrollTo(
+              parentData.offset.dy + child.size.height / 2,
+              center: true,
+              animate: false,
+            );
+          }
+        }
       }
     }
-
-    offset.applyViewportDimension(_viewportExtent);
-    offset.applyContentDimensions(_minScrollExtent, _maxScrollExtent);
   }
 
-  Offset get _paintOffset => _paintOffsetForPosition(offset.pixels);
-
-  Offset _paintOffsetForPosition(double position) {
-    switch (axisDirection) {
-      case AxisDirection.up:
-        return Offset(0.0,
-            position - getAllLinearChildHeight(getChildren()) + size.height);
-      case AxisDirection.down:
-        return Offset(0.0, -position);
-      case AxisDirection.left:
-        return Offset(
-            position - getAllLinearChildWidth(getChildren()) + size.width, 0.0);
-      case AxisDirection.right:
-        return Offset(-position, 0.0);
+  /// 重新布局装饰
+  void _relayoutDecoration() {
+    //--
+    final bgDecorationChildren = getIndicatorChildren(TabItemType.bgDecoration);
+    for (final child in bgDecorationChildren) {
+      final parentData = child.parentData as TabLayoutParentData;
+      child.layout(
+        parentData.getItemConstraints(size),
+        parentUsesSize: true,
+      );
+      //parentData.offset = Offset.zero;
     }
-  }
 
-  bool _shouldClipAtPaintOffset(Offset paintOffset) {
-    switch (clipBehavior) {
-      case Clip.none:
-        return false;
-      case Clip.hardEdge:
-      case Clip.antiAlias:
-      case Clip.antiAliasWithSaveLayer:
-        return paintOffset.dx < 0 ||
-            paintOffset.dy < 0 ||
-            paintOffset.dx + getAllLinearChildWidth(getChildren()) >
-                size.width ||
-            paintOffset.dy + getAllLinearChildHeight(getChildren()) >
-                size.height;
+    //--
+    final scrollDecorationChildren =
+        getIndicatorChildren(TabItemType.scrollDecoration);
+    for (final child in scrollDecorationChildren) {
+      final parentData = child.parentData as TabLayoutParentData;
+
+      final extendHorizontal =
+          axis == Axis.horizontal ? paddingHorizontal : 0.0;
+      final extendVertical = axis == Axis.vertical ? paddingVertical : 0.0;
+      final extend = Offset(extendHorizontal, extendVertical);
+      child.layout(
+        parentData.getItemConstraints(_scrollChildSize + extend),
+        parentUsesSize: true,
+      );
+      //parentData.offset = Offset.zero;
     }
   }
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
-    final Offset paintOffset = _paintOffset;
-
-    void paintContents(PaintingContext context, Offset offset) {
-      paintLayoutChildren(getChildren(), context, offset,
-          paintOffset: paintOffset);
+    // 绘制指定类型的子节点
+    void paintChildren(List<RenderBox> children, TabItemPaintType paintType) {
+      for (final child in children) {
+        final parentData = child.parentData;
+        if (parentData is TabLayoutParentData) {
+          if (parentData.itemPaintType == paintType) {
+            context.paintChild(child, offset + parentData.offset);
+          }
+        }
+      }
     }
 
-    if (_shouldClipAtPaintOffset(paintOffset)) {
-      _clipRectLayer.layer = context.pushClipRect(
-        needsCompositing,
-        offset,
-        Offset.zero & size,
-        paintContents,
-        clipBehavior: clipBehavior,
-        oldLayer: _clipRectLayer.layer,
+    //--
+    final bgDecorationChildren = getIndicatorChildren(TabItemType.bgDecoration);
+    paintChildren(bgDecorationChildren, TabItemPaintType.background);
+    super.paint(context, offset);
+    //--
+    paintChildren(bgDecorationChildren, TabItemPaintType.foreground);
+  }
+
+  @override
+  void paintScrollContents(PaintingContext context, ui.Offset offset) {
+    //debugger();
+    //_relayoutIndicator();
+    final Offset paintOffset = _paintOffset;
+
+    // 绘制指定类型的子节点
+    void paintChildren(List<RenderBox> children, TabItemPaintType paintType) {
+      for (final child in children) {
+        final parentData = child.parentData;
+        if (parentData is TabLayoutParentData) {
+          if (parentData.itemPaintType == paintType) {
+            context.paintChild(child, offset + parentData.offset + paintOffset);
+          }
+        }
+      }
+    }
+
+    //---
+    final scrollDecorationChildren =
+        getIndicatorChildren(TabItemType.scrollDecoration);
+    final indicatorChildren = getIndicatorChildren(TabItemType.indicator);
+
+    paintChildren(scrollDecorationChildren, TabItemPaintType.background);
+    paintChildren(indicatorChildren, TabItemPaintType.background);
+    super.paintScrollContents(context, offset);
+    //---
+    paintChildren(indicatorChildren, TabItemPaintType.foreground);
+    paintChildren(scrollDecorationChildren, TabItemPaintType.foreground);
+  }
+}
+
+enum TabItemType {
+  /// 指示器
+  indicator,
+
+  /// 滚动装饰器, 作用于整个[TabLayout], 受滚动影响
+  scrollDecoration,
+
+  /// 背景装饰器, 作用于整个[TabLayout], 不受滚动影响
+  bgDecoration,
+}
+
+enum TabItemPaintType {
+  /// 指示器绘制在背景
+  background,
+
+  /// 指示器绘制在前景
+  foreground,
+}
+
+class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
+  final TabItemType? itemType;
+  final TabItemPaintType itemPaintType;
+  final EdgeInsets? padding;
+  final AlignmentGeometry alignment;
+
+  const TabLayoutData({
+    super.key,
+    required super.child,
+    this.itemType,
+    this.itemPaintType = TabItemPaintType.background,
+    this.padding,
+    this.alignment = Alignment.center,
+  });
+
+  @override
+  void applyParentData(RenderObject renderObject) {
+    if (renderObject.parentData is! TabLayoutParentData) {
+      renderObject.parentData = TabLayoutParentData();
+    }
+    final parentData = renderObject.parentData;
+    if (parentData is TabLayoutParentData) {
+      parentData
+        ..padding = padding
+        ..itemType = itemType
+        ..alignment = alignment
+        ..itemPaintType = itemPaintType;
+    }
+  }
+
+  @override
+  Type get debugTypicalAncestorWidgetClass => TabLayout;
+}
+
+class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {
+  /// 当前widget的类型
+  TabItemType? itemType;
+
+  /// 指示器绘制类型
+  TabItemPaintType itemPaintType = TabItemPaintType.background;
+
+  /// 当前指定[itemType]的约束
+  BoxConstraints? itemConstraints;
+
+  /// 当前指定[itemType]的对齐方式
+  /// 只有当[itemType]不为null时, 才会生效
+  AlignmentGeometry alignment = Alignment.center;
+
+  /// 指示器的需要额外填充的大小
+  EdgeInsets? padding;
+
+  double get paddingHorizontal => (padding?.horizontal ?? 0);
+
+  double get paddingVertical => (padding?.vertical ?? 0);
+
+  /// 获取当前的约束
+  BoxConstraints getItemConstraints(Size parentSize) {
+    final itemConstraints = this.itemConstraints;
+    double minWidth = parentSize.width;
+    double maxWidth = minWidth;
+    double minHeight = parentSize.height;
+    double maxHeight = minHeight;
+    if (itemConstraints != null) {
+      return itemConstraints.constraintsWithParent(
+        parentSize,
+        padding: padding,
       );
-    } else {
-      _clipRectLayer.layer = null;
-      paintContents(context, offset);
     }
-  }
-
-  final LayerHandle<ClipRectLayer> _clipRectLayer =
-      LayerHandle<ClipRectLayer>();
-
-  @override
-  void dispose() {
-    _clipRectLayer.layer = null;
-    super.dispose();
-  }
-
-  @override
-  void applyPaintTransform(RenderBox child, Matrix4 transform) {
-    final Offset paintOffset = _paintOffset;
-    transform.translate(paintOffset.dx, paintOffset.dy);
-  }
-
-  @override
-  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
-    return hitLayoutChildren(
-      result,
-      position: position,
-      paintOffset: _paintOffset,
+    return BoxConstraints(
+      minWidth: minWidth,
+      maxWidth: maxWidth,
+      minHeight: minHeight,
+      maxHeight: maxHeight,
     );
   }
 }
 
-class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {}
+extension TabLayoutEx on Widget {
+  /// [TabLayoutData]
+  Widget tabLayoutItemData({
+    TabItemType? itemType,
+    TabItemPaintType itemPaintType = TabItemPaintType.background,
+    EdgeInsets? padding,
+    AlignmentGeometry alignment = Alignment.center,
+  }) =>
+      TabLayoutData(
+        itemType: itemType,
+        itemPaintType: itemPaintType,
+        padding: padding,
+        alignment: alignment,
+        child: this,
+      );
+}
+
+//region ---TabLayoutPageViewWrap---
+
+/// [TabBarView]
+class TabLayoutPageViewWrap extends StatefulWidget {
+  const TabLayoutPageViewWrap({
+    super.key,
+    required this.children,
+    this.controller,
+    this.physics,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.viewportFraction = 1.0,
+    this.clipBehavior = Clip.hardEdge,
+  });
+
+  final TabController? controller;
+
+  final List<Widget> children;
+  final ScrollPhysics? physics;
+
+  final DragStartBehavior dragStartBehavior;
+  final double viewportFraction;
+  final Clip clipBehavior;
+
+  @override
+  State<TabLayoutPageViewWrap> createState() => _TabLayoutPageViewWrapState();
+}
+
+class _TabLayoutPageViewWrapState extends State<TabLayoutPageViewWrap> {
+  TabController? _tabController;
+  PageController? _pageController;
+  late List<Widget> _childrenWithKey;
+  int? _currentIndex;
+  int _warpUnderwayCount = 0;
+  int _scrollUnderwayCount = 0;
+
+  // If the TabBarView is rebuilt with a new tab controller, the caller should
+  // dispose the old one. In that case the old controller's animation will be
+  // null and should not be accessed.
+  bool get _controllerIsValid => _tabController?.animation != null;
+
+  void _updateTabController() {
+    final TabController? newController =
+        widget.controller ?? DefaultTabController.maybeOf(context);
+    assert(() {
+      if (newController == null) {
+        throw FlutterError(
+          'No TabController for ${widget.runtimeType}.\n'
+          'When creating a ${widget.runtimeType}, you must either provide an explicit '
+          'TabController using the "controller" property, or you must ensure that there '
+          'is a DefaultTabController above the ${widget.runtimeType}.\n'
+          'In this case, there was neither an explicit controller nor a default controller.',
+        );
+      }
+      return true;
+    }());
+
+    if (newController == _tabController) {
+      return;
+    }
+
+    if (_controllerIsValid) {
+      _tabController!.animation!
+          .removeListener(_handleTabControllerAnimationTick);
+    }
+    _tabController = newController;
+    if (_tabController != null) {
+      _tabController!.animation!.addListener(_handleTabControllerAnimationTick);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _updateChildren();
+  }
+
+  void _updateChildren() {
+    _childrenWithKey = KeyedSubtree.ensureUniqueKeysForList(widget.children);
+  }
+
+  void _handleTabControllerAnimationTick() {
+    if (_scrollUnderwayCount > 0 || !_tabController!.indexIsChanging) {
+      return;
+    } // This widget is driving the controller's animation.
+    //debugger();
+    if (_tabController!.index != _currentIndex) {
+      _currentIndex = _tabController!.index;
+      _warpToCurrentIndex();
+    }
+  }
+
+  void _warpToCurrentIndex() {
+    if (!mounted || _pageController!.page == _currentIndex!.toDouble()) {
+      return;
+    }
+
+    final bool adjacentDestination =
+        (_currentIndex! - _tabController!.previousIndex).abs() == 1;
+    if (adjacentDestination) {
+      _warpToAdjacentTab(_tabController!.animationDuration);
+    } else {
+      _warpToNonAdjacentTab(_tabController!.animationDuration);
+    }
+  }
+
+  Future<void> _warpToAdjacentTab(Duration duration) async {
+    if (duration == Duration.zero) {
+      _jumpToPage(_currentIndex!);
+    } else {
+      await _animateToPage(_currentIndex!,
+          duration: duration, curve: Curves.ease);
+    }
+    if (mounted) {
+      setState(() {
+        _updateChildren();
+      });
+    }
+    return Future<void>.value();
+  }
+
+  Future<void> _warpToNonAdjacentTab(Duration duration) async {
+    final int previousIndex = _tabController!.previousIndex;
+    assert((_currentIndex! - previousIndex).abs() > 1);
+
+    // initialPage defines which page is shown when starting the animation.
+    // This page is adjacent to the destination page.
+    final int initialPage = _currentIndex! > previousIndex
+        ? _currentIndex! - 1
+        : _currentIndex! + 1;
+
+    setState(() {
+      // Needed for `RenderSliverMultiBoxAdaptor.move` and kept alive children.
+      // For motivation, see https://github.com/flutter/flutter/pull/29188 and
+      // https://github.com/flutter/flutter/issues/27010#issuecomment-486475152.
+      _childrenWithKey = List<Widget>.of(_childrenWithKey, growable: false);
+      final Widget temp = _childrenWithKey[initialPage];
+      _childrenWithKey[initialPage] = _childrenWithKey[previousIndex];
+      _childrenWithKey[previousIndex] = temp;
+    });
+
+    // Make a first jump to the adjacent page.
+    _jumpToPage(initialPage);
+
+    // Jump or animate to the destination page.
+    if (duration == Duration.zero) {
+      _jumpToPage(_currentIndex!);
+    } else {
+      await _animateToPage(_currentIndex!,
+          duration: duration, curve: Curves.ease);
+    }
+
+    if (mounted) {
+      setState(() {
+        _updateChildren();
+      });
+    }
+  }
+
+  void _syncControllerOffset() {
+    _tabController!.offset =
+        clampDouble(_pageController!.page! - _tabController!.index, -1.0, 1.0);
+  }
+
+  void _jumpToPage(int page) {
+    _warpUnderwayCount += 1;
+    _pageController!.jumpToPage(page);
+    _warpUnderwayCount -= 1;
+  }
+
+  Future<void> _animateToPage(
+    int page, {
+    required Duration duration,
+    required Curve curve,
+  }) async {
+    _warpUnderwayCount += 1;
+    await _pageController!
+        .animateToPage(page, duration: duration, curve: curve);
+    _warpUnderwayCount -= 1;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateTabController();
+    _currentIndex = _tabController!.index;
+    if (_pageController == null) {
+      _pageController = PageController(
+        initialPage: _currentIndex!,
+        viewportFraction: widget.viewportFraction,
+      );
+    } else {
+      _pageController!.jumpToPage(_currentIndex!);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: _handleScrollNotification,
+      child: PageView(
+        dragStartBehavior: widget.dragStartBehavior,
+        clipBehavior: widget.clipBehavior,
+        controller: _pageController,
+        physics: widget.physics == null
+            ? const PageScrollPhysics().applyTo(const ClampingScrollPhysics())
+            : const PageScrollPhysics().applyTo(widget.physics),
+        children: _childrenWithKey,
+      ),
+    );
+  }
+
+  // Called when the PageView scrolls
+  bool _handleScrollNotification(ScrollNotification notification) {
+    //l.d('notification: $notification');
+    if (_warpUnderwayCount > 0 || _scrollUnderwayCount > 0) {
+      return false;
+    }
+
+    if (notification.depth != 0) {
+      return false;
+    }
+
+    if (!_controllerIsValid) {
+      return false;
+    }
+    //debugger();
+
+    _scrollUnderwayCount += 1;
+    final double page = _pageController!.page!;
+    if (notification is ScrollUpdateNotification &&
+        !_tabController!.indexIsChanging) {
+      final bool pageChanged = (page - _tabController!.index).abs() > 1.0;
+      if (pageChanged) {
+        _tabController!.index = page.round();
+        _currentIndex = _tabController!.index;
+      }
+      _syncControllerOffset();
+    } else if (notification is ScrollEndNotification) {
+      _tabController!.index = page.round();
+      _currentIndex = _tabController!.index;
+      if (!_tabController!.indexIsChanging) {
+        _syncControllerOffset();
+      }
+    }
+    _scrollUnderwayCount -= 1;
+
+    return false;
+  }
+}
+
+//endregion ---TabLayoutPageViewWrap---

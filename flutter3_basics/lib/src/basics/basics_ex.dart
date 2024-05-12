@@ -854,6 +854,9 @@ extension StringEx on String {
 extension OffsetEx on Offset {
   String get log =>
       "Offset(${dx.toStringAsFixed(1)}, ${dy.toStringAsFixed(1)})";
+
+  /// [Offset]的绝对值
+  Offset abs() => Offset(dx.abs(), dy.abs());
 }
 
 extension RectEx on Rect {

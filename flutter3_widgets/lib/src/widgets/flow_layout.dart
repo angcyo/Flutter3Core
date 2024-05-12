@@ -220,9 +220,9 @@ class FlowLayoutRender extends RenderBox
   /// 自身的内间隙
   EdgeInsets? padding;
 
-  get paddingHorizontal => (padding?.horizontal ?? 0);
+  double get paddingHorizontal => (padding?.horizontal ?? 0);
 
-  get paddingVertical => (padding?.vertical ?? 0);
+  double get paddingVertical => (padding?.vertical ?? 0);
 
   /// 子元素之间的间隙, 如果[childHorizontalGap]和[childVerticalGap]都不指定, 则使用[childGap]
   /// [childHorizontalGap]

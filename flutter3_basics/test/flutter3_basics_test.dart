@@ -10,10 +10,21 @@ void main() {
     expect(calculator.addOne(0), 1);
   });*/
 
-  /*test("test basics", () {
+  test("test basics", () {
     String hex = "#2febff";
-    print(hex.toColor());
-  });*/
+    consoleLog(hex.toColor());
+
+    consoleLog('${0.1.round()}');
+    consoleLog('${-0.1.round()}');
+
+    consoleLog('${0.1.ceil()}');
+    consoleLog('${-0.1.ceil()}');
+
+    consoleLog(intMaxValue);
+    consoleLog(intMinValue);
+    consoleLog(doubleMaxValue);
+    consoleLog(doubleMinValue);
+  });
 
   const maxInt = 0xFFFFFFFF;
   test('test 1', () {
@@ -50,7 +61,7 @@ void main() {
     final bytes = [0, 1, 2];
     //bytes.removeRange(0, 100); //RangeError (end): Invalid value: Not in inclusive range 0..3: 100
     //consoleLog(bytes);
-    bytes.removeRange(0, bytes.length-1);
+    bytes.removeRange(0, bytes.length - 1);
     consoleLog(bytes);
     consoleLog("...end");
   });

@@ -7,6 +7,7 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// 布局约束
+/// [alignChildOffset]
 class LayoutBoxConstraints extends BoxConstraints {
   /// 自身的宽度是否包裹内容
   final bool? wrapContentWidth;
@@ -185,39 +186,52 @@ mixin LayoutMixin<ChildType extends RenderObject,
   //---
 
   /// 获取所有子节点的宽度
-  double getAllLinearChildWidth(List<ChildType> children) {
+  double getAllLinearChildWidth(
+    List<ChildType> children, {
+    double gap = 0,
+  }) {
     double width = 0;
     for (final child in children) {
       if (child is RenderBox) {
         width += child.size.width;
       }
     }
+    width += gap * (children.length - 1);
     return width;
   }
 
   /// 获取所有子节点的高度
-  double getAllLinearChildHeight(List<ChildType> children) {
+  double getAllLinearChildHeight(
+    List<ChildType> children, {
+    double gap = 0,
+  }) {
     double height = 0;
     for (final child in children) {
       if (child is RenderBox) {
         height += child.size.height;
       }
     }
+    height += gap * (children.length - 1);
     return height;
   }
 
   /// 使用wrap的方式, 测量子节点
+  /// [childWidth] 指定子节点的宽度
+  /// [childHeight] 指定子节点的高度
   (double childMaxWidth, double childMaxHeight) measureWrapChildren(
-      List<ChildType> children) {
+    List<ChildType> children, {
+    double? childWidth,
+    double? childHeight,
+  }) {
     double childMaxWidth = 0;
     double childMaxHeight = 0;
     for (final child in children) {
       child.layout(
-        const BoxConstraints(
-          minWidth: 0,
-          maxWidth: double.infinity,
-          minHeight: 0,
-          maxHeight: double.infinity,
+        BoxConstraints(
+          minWidth: childWidth ?? 0.0,
+          maxWidth: childWidth ?? double.infinity,
+          minHeight: childHeight ?? 0,
+          maxHeight: childHeight ?? double.infinity,
         ),
         parentUsesSize: true,
       );
@@ -232,30 +246,80 @@ mixin LayoutMixin<ChildType extends RenderObject,
   }
 
   /// 使用wrap的方式, 布局子节点
+  /// [axis] 布局方向
   /// [offset] 起点偏移量, 不根据[axis]计算
   /// [axisOffset] 起点偏移量, 会根据[axis]自动取值
+  /// [crossAxisAlignment] 交叉轴对齐方式, 在指定了[parentSize]后有效
+  ///
+  /// [parentSize] 父布局的大小, 此大小应该是包含了[parentPadding]的
+  /// [parentPadding] 父布局的内边距
+  /// [gap] 子节点之间的间隙
+  ///
+  /// [layoutStackChildren]
   void layoutLinearChildren(
     List<ChildType> children,
     Axis axis, {
     Offset offset = Offset.zero,
     Offset axisOffset = Offset.zero,
+    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
+    Size? parentSize,
+    EdgeInsets? parentPadding,
+    double gap = 0,
   }) {
+    double parentPaddingLeft = parentPadding?.left ?? 0;
+    double parentPaddingTop = parentPadding?.top ?? 0;
+    double parentPaddingRight = parentPadding?.right ?? 0;
+    double parentPaddingBottom = parentPadding?.bottom ?? 0;
+    //有效的父布局大小
+    double parentValidWidth =
+        (parentSize?.width ?? 0) - parentPaddingLeft - parentPaddingRight;
+    double parentValidHeight =
+        (parentSize?.height ?? 0) - parentPaddingTop - parentPaddingBottom;
+
     double offsetX = offset.dx;
     double offsetY = offset.dy;
     if (axis == Axis.horizontal) {
-      offsetX += axisOffset.dx;
+      offsetX += axisOffset.dx + parentPaddingLeft;
     } else {
-      offsetY += axisOffset.dy;
+      offsetY += axisOffset.dy + parentPaddingTop;
     }
+
+    //debugger();
     for (final child in children) {
       final parentData = child.parentData;
+      double alignOffsetX = 0;
+      double alignOffsetY = 0;
       if (parentData is BoxParentData) {
-        parentData.offset = Offset(offsetX, offsetY);
+        if (parentSize != null && child is RenderBox) {
+          if (axis == Axis.horizontal) {
+            //水平布局, 上下的对齐方式
+            if (crossAxisAlignment == CrossAxisAlignment.center) {
+              alignOffsetY = parentPaddingTop +
+                  (parentValidHeight - child.size.height) / 2;
+            } else if (crossAxisAlignment == CrossAxisAlignment.end) {
+              alignOffsetY =
+                  parentValidHeight - child.size.height - parentPaddingBottom;
+            }
+          } else {
+            //垂直布局, 左右的对齐方式
+            if (crossAxisAlignment == CrossAxisAlignment.center) {
+              alignOffsetX =
+                  parentPaddingLeft + (parentValidWidth - child.size.width) / 2;
+            } else if (crossAxisAlignment == CrossAxisAlignment.end) {
+              alignOffsetX =
+                  parentValidWidth - child.size.width - parentPaddingRight;
+            }
+          }
+        }
+        //offset
+        parentData.offset =
+            Offset(offsetX + alignOffsetX, offsetY + alignOffsetY);
+        //end
         if (child is RenderBox) {
           if (axis == Axis.horizontal) {
-            offsetX += child.size.width;
+            offsetX += child.size.width + gap;
           } else {
-            offsetY += child.size.height;
+            offsetY += child.size.height + gap;
           }
         }
       }
@@ -279,12 +343,12 @@ mixin LayoutMixin<ChildType extends RenderObject,
 
   /// [defaultHitTestChildren]
   bool hitLayoutChildren(
+    List<ChildType> children,
     BoxHitTestResult result, {
     required Offset position,
     Offset paintOffset = Offset.zero,
   }) {
-    ChildType? child = lastChild;
-    while (child != null) {
+    for (final child in children) {
       final parentData = child.parentData;
       if (child is RenderBox && parentData is BoxParentData) {
         final offset = parentData.offset + paintOffset;
@@ -294,17 +358,104 @@ mixin LayoutMixin<ChildType extends RenderObject,
           hitTest: (BoxHitTestResult result, Offset transformed) {
             //debugger();
             assert(transformed == position - offset);
-            return (child! as RenderBox).hitTest(result, position: transformed);
+            return (child as RenderBox).hitTest(result, position: transformed);
           },
         );
         if (isHit) {
           return true;
         }
       }
-      if (parentData is ParentDataType) {
-        child = parentData.previousSibling;
-      }
     }
     return false;
+  }
+
+  //---
+
+  /// 使用stack的方式, 布局子节点
+  /// [layoutLinearChildren]
+  void layoutStackChildren(
+    List<ChildType> children, {
+    ChildType? anchorChild,
+    Offset? anchorOffset,
+  }) {
+    if (anchorOffset == null) {
+      if (anchorChild != null) {
+        if (anchorChild is RenderBox) {
+          final anchorParentData = anchorChild.parentData;
+          if (anchorParentData is BoxParentData) {
+            anchorOffset = anchorParentData.offset;
+          }
+        }
+      }
+    }
+    //--
+    if (anchorOffset != null) {
+      for (final child in children) {
+        final parentData = child.parentData;
+        if (parentData is BoxParentData) {
+          parentData.offset = anchorOffset;
+        }
+      }
+    }
+  }
+}
+
+/// [alignChildOffset]
+extension BoxConstraintsEx on BoxConstraints {
+  /// 是否是包裹内容的约束
+  bool get isWrapContentWidth => minWidth == 0 && maxWidth == double.infinity;
+
+  bool get isWrapContentHeight =>
+      minHeight == 0 && maxHeight == double.infinity;
+
+  /// 是否是撑满容器的约束
+  bool get isMatchParentWidth => minWidth == double.infinity;
+
+  bool get isMatchParentHeight => minHeight == double.infinity;
+
+  /// 是否是固定大小的约束
+  /// [hasTightWidth]
+  bool get isFixedWidth => minWidth >= maxWidth;
+
+  /// [hasTightHeight]
+  bool get isFixedHeight => minHeight >= maxHeight;
+
+  /// 获取当前的约束
+  BoxConstraints constraintsWithParent(
+    Size parentSize, {
+    EdgeInsetsGeometry? padding,
+  }) {
+    final itemConstraints = this;
+    double minWidth = parentSize.width;
+    double maxWidth = minWidth;
+    double minHeight = parentSize.height;
+    double maxHeight = minHeight;
+
+    final paddingHorizontal = padding?.horizontal ?? 0;
+    final paddingVertical = padding?.vertical ?? 0;
+
+    if (itemConstraints.isFixedWidth) {
+      //指定了宽度
+      minWidth = itemConstraints.maxWidth + paddingHorizontal;
+      maxWidth = minWidth;
+    } else if (itemConstraints.isWrapContentWidth) {
+      //自适应宽度
+      minWidth = itemConstraints.minWidth + paddingHorizontal;
+    }
+
+    if (itemConstraints.isFixedHeight) {
+      //指定了高度
+      minHeight = itemConstraints.maxHeight + paddingVertical;
+      maxHeight = minHeight;
+    } else if (itemConstraints.isWrapContentHeight) {
+      //自适应高度
+      minHeight = itemConstraints.minHeight + paddingVertical;
+    }
+    return BoxConstraints(
+      minWidth: minWidth,
+      maxWidth: maxWidth,
+      minHeight: minHeight,
+      maxHeight: maxHeight,
+    );
   }
 }

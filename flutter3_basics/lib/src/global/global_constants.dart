@@ -86,12 +86,28 @@ final random = math.Random();
 
 /// 最小值/最大值
 /// [double.maxFinite]
+/// [9223372036854775807]
+/// [intMax32Value]
+/// [intMax64Value]
 int intMaxValue = double.maxFinite.toInt();
+
+/// [-9223372036854775807]
 int intMinValue = -double.maxFinite.toInt();
 
 /// 最小值/最大值
+/// [1.7976931348623157e+308]
 double doubleMaxValue = double.maxFinite;
+
+///[-1.7976931348623157e+308]
 double doubleMinValue = -double.maxFinite;
+
+/// 32位整数最大值/最小值
+const int intMax32Value = 2147483647;
+const int intMin32Value = -2147483648;
+
+/// 64位整数最大值/最小值
+const int intMax64Value = 9223372036854775807;
+const int intMin64Value = -9223372036854775807;
 
 //endregion 全局常量
 
