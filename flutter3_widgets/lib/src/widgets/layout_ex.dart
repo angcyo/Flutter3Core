@@ -259,7 +259,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
     Axis axis, {
     Offset offset = Offset.zero,
     Offset axisOffset = Offset.zero,
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
+    CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.start,
     Size? parentSize,
     EdgeInsets? parentPadding,
     double gap = 0,
@@ -346,6 +346,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
     required Offset position,
     Offset paintOffset = Offset.zero,
   }) {
+    //debugger();
     for (final child in children) {
       final parentData = child.parentData;
       if (child is RenderBox && parentData is BoxParentData) {
@@ -360,6 +361,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
           },
         );
         if (isHit) {
+          //debugger();
           return true;
         }
       }

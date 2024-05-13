@@ -45,7 +45,8 @@ abstract class ScrollContainerWidget extends StatefulWidget {
 
   //---
 
-  final CrossAxisAlignment crossAxisAlignment;
+  /// [ScrollContainerRenderBox.crossAxisAlignment]
+  final CrossAxisAlignment? crossAxisAlignment;
 
   const ScrollContainerWidget({
     super.key,
@@ -159,7 +160,11 @@ abstract class ScrollContainerRenderBox<
   ScrollController? scrollController;
 
   /// 交叉轴上的布局对齐方式
-  CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start;
+  /// 如果设置了此时, 那child的大小测量就是wrap_content, 否则是match_parent
+  CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.start;
+
+  /// child测量参考是否是撑满父布局
+  bool get isChildMatchParent => crossAxisAlignment == null;
 
   /// 填充内容的距离
   EdgeInsets? padding;
@@ -375,10 +380,12 @@ abstract class ScrollContainerRenderBox<
     super.dispose();
   }
 
+  /// 水波纹绘制时, 会调用此方法
   @override
   void applyPaintTransform(RenderBox child, Matrix4 transform) {
     final Offset paintOffset = _paintOffset;
     transform.translate(paintOffset.dx, paintOffset.dy);
+    super.applyPaintTransform(child, transform);
   }
 
   @override
@@ -452,7 +459,7 @@ abstract class ScrollContainerRenderBox<
     double width = 0;
     double height = 0;
     final children = getScrollChildren();
-    final (childMaxWidth, childMaxHeight) = measureWrapChildren(children);
+    final (childMaxWidth, childMaxHeight) = measureChildren(children);
     if (constraints.hasTightWidth) {
       width = constraints.maxWidth;
     } else {
@@ -500,6 +507,31 @@ abstract class ScrollContainerRenderBox<
 
     offset.applyViewportDimension(_viewportExtent);
     offset.applyContentDimensions(_minScrollExtent, _maxScrollExtent);
+  }
+
+  /// 测量子节点的大小
+  /// 返回最大的尺寸
+  (double childMaxWidth, double childMaxHeight) measureChildren(
+      List<RenderBox> children) {
+    final BoxConstraints constraints = this.constraints;
+    //debugger();
+    double? childWidth;
+    double? childHeight;
+    if (isChildMatchParent &&
+        constraints.isFixedWidth &&
+        axis == Axis.vertical) {
+      childWidth = constraints.maxWidth;
+    }
+    if (isChildMatchParent &&
+        constraints.isFixedHeight &&
+        axis == Axis.horizontal) {
+      childHeight = constraints.maxHeight;
+    }
+    return measureWrapChildren(
+      children,
+      childWidth: childWidth,
+      childHeight: childHeight,
+    );
   }
 
   @override

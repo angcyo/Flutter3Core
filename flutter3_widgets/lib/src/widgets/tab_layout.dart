@@ -53,7 +53,15 @@ class TabLayout extends ScrollContainerWidget {
   /// [TabLayoutController]
   final TabLayoutController? tabLayoutController;
 
+  /// 子节点之间的间隙
   final double gap;
+
+  /// 当子元素的数量在这个范围时, 开启等宽
+  /// [min~max]
+  final String? autoEqualWidthRange;
+
+  /// 自动等宽, 当所有子节点的大小没有超过父节点时, 开启等宽
+  final bool autoEqualWidth;
 
   TabLayout({
     super.key,
@@ -61,6 +69,8 @@ class TabLayout extends ScrollContainerWidget {
     ScrollController? scrollController,
     this.tabLayoutController,
     this.gap = 0,
+    this.autoEqualWidthRange,
+    this.autoEqualWidth = false,
     super.scrollDirection = Axis.horizontal,
     super.reverse = false,
     super.padding,
@@ -93,6 +103,8 @@ class _TabLayoutState extends ScrollContainerState<TabLayout> {
               crossAxisAlignment: widget.crossAxisAlignment,
               tabController: widget.tabLayoutController,
               gap: widget.gap,
+              autoEqualWidth: widget.autoEqualWidth,
+              autoEqualWidthRange: widget.autoEqualWidthRange,
               children: widget.children,
             ));
   }
@@ -127,6 +139,8 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
     this.gap = 0,
     this.clipBehavior = Clip.hardEdge,
     this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.autoEqualWidthRange,
+    this.autoEqualWidth = false,
   });
 
   /// 确定原点位置
@@ -141,9 +155,16 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
   final EdgeInsets? padding;
   final Clip clipBehavior;
   final ScrollController? scrollController;
-  final CrossAxisAlignment crossAxisAlignment;
+  final CrossAxisAlignment? crossAxisAlignment;
   final TabLayoutController? tabController;
   final double gap;
+
+  /// 当子元素的数量在这个范围时, 开启等宽
+  /// [min~max]
+  final String? autoEqualWidthRange;
+
+  /// 自动等宽, 当所有子节点的大小没有超过父节点时, 开启等宽
+  final bool autoEqualWidth;
 
   @override
   TabLayoutRender createRenderObject(BuildContext context) {
@@ -158,6 +179,8 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       tabController: tabController,
       padding: padding,
       gap: gap,
+      autoEqualWidth: autoEqualWidth,
+      autoEqualWidthRange: autoEqualWidthRange,
     );
   }
 
@@ -173,6 +196,8 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       ..tabController = tabController
       ..padding = padding
       ..gap = gap
+      ..autoEqualWidth = autoEqualWidth
+      ..autoEqualWidthRange = autoEqualWidthRange
       ..crossAxisAlignment = crossAxisAlignment;
   }
 
@@ -196,6 +221,13 @@ class TabLayoutRender extends ScrollContainerRenderBox {
   /// 指示器控制
   TabLayoutController? tabController;
 
+  /// 当子元素的数量在这个范围时, 开启等宽
+  /// [min~max]
+  String? autoEqualWidthRange;
+
+  /// 自动等宽, 当所有子节点的大小没有超过父节点时, 开启等宽
+  bool autoEqualWidth;
+
   TabLayoutRender({
     super.axisDirection = AxisDirection.right,
     required super.crossAxisDirection,
@@ -206,6 +238,8 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     super.padding,
     super.gap = 0,
     this.tabController,
+    this.autoEqualWidthRange,
+    this.autoEqualWidth = false,
   });
 
   @override
@@ -263,6 +297,62 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     super.performLayout();
     _relayoutDecoration();
     _relayoutIndicator();
+  }
+
+  @override
+  (double, double) measureChildren(List<RenderBox> children) {
+    var (childMaxWidth, childMaxHeight) = super.measureChildren(children);
+
+    bool equalWidthOrHeight = false;
+    final parentWidth = constraints.maxWidth - paddingHorizontal;
+    final parentHeight = constraints.maxHeight - paddingVertical;
+
+    if (autoEqualWidthRange?.matchVersion(children.length) == true) {
+      equalWidthOrHeight = true;
+    } else if (autoEqualWidth) {
+      //所有的子节点, 都没有超过父节点的大小
+      if (axis == Axis.horizontal) {
+        final childWidth =
+            children.fold(0.0, (value, element) => value + element.size.width);
+        if (childWidth < parentWidth) {
+          equalWidthOrHeight = true;
+        }
+      } else {
+        final childHeight =
+            children.fold(0.0, (value, element) => value + element.size.height);
+        if (childHeight < parentHeight) {
+          equalWidthOrHeight = true;
+        }
+      }
+    }
+    //--
+    if (equalWidthOrHeight) {
+      //等宽or等高
+      final childCount = children.length;
+      if (childCount > 0) {
+        final BoxConstraints constraints = this.constraints;
+        double? childWidth;
+        double? childHeight;
+
+        if (axis == Axis.horizontal) {
+          childWidth = (parentWidth - gap * (childCount - 1)) / childCount;
+          if (isChildMatchParent && constraints.isFixedHeight) {
+            childHeight = constraints.maxHeight;
+          }
+        } else {
+          childHeight = (parentHeight - gap * (childCount - 1)) / childCount;
+          if (isChildMatchParent && constraints.isFixedWidth) {
+            childWidth = constraints.maxWidth;
+          }
+        }
+        return measureWrapChildren(
+          children,
+          childWidth: childWidth,
+          childHeight: childHeight,
+        );
+      }
+    }
+    return (childMaxWidth, childMaxHeight);
   }
 
   /// 重新布局指示器
