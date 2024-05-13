@@ -327,15 +327,19 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         endHeight += parentData.paddingVertical;
 
         if (parentData.itemConstraints?.isMatchParentWidth == true) {
-          startWidth = size.width;
-          endWidth = startWidth;
+          if (axis == Axis.vertical && parentData.alignmentParent == true) {
+            startWidth = size.width;
+            endWidth = startWidth;
+          }
         } else if (parentData.itemConstraints?.isFixedWidth == true) {
           startWidth = parentData.itemConstraints!.maxWidth;
           endWidth = startWidth;
         }
         if (parentData.itemConstraints?.isMatchParentHeight == true) {
-          startHeight = size.height;
-          endHeight = startHeight;
+          if (axis == Axis.horizontal && parentData.alignmentParent == true) {
+            startHeight = size.height;
+            endHeight = startHeight;
+          }
         } else if (parentData.itemConstraints?.isFixedHeight == true) {
           startHeight = parentData.itemConstraints!.maxHeight;
           endHeight = startHeight;
@@ -345,10 +349,50 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         Rect startAnchorBounds = startRect;
         Rect endAnchorBounds = endRect;
         if (parentData.alignmentParent == true) {
-          startAnchorBounds = Rect.fromLTRB(startRect.left, paddingTop,
-              startRect.right, size.height - paddingBottom);
-          endAnchorBounds = Rect.fromLTRB(endRect.left, paddingTop,
-              endRect.right, size.height - paddingBottom);
+          //debugger();
+          if (axis == Axis.horizontal) {
+            final offsetTop =
+                parentData.itemConstraints?.isMatchParentHeight == true
+                    ? 0.0
+                    : paddingTop;
+            final offsetBottom =
+                parentData.itemConstraints?.isMatchParentHeight == true
+                    ? 0.0
+                    : paddingBottom;
+            startAnchorBounds = Rect.fromLTRB(
+              startRect.left,
+              offsetTop,
+              startRect.right,
+              size.height - offsetBottom,
+            );
+            endAnchorBounds = Rect.fromLTRB(
+              endRect.left,
+              offsetTop,
+              endRect.right,
+              size.height - offsetBottom,
+            );
+          } else {
+            final offsetLeft =
+                parentData.itemConstraints?.isMatchParentWidth == true
+                    ? 0.0
+                    : paddingLeft;
+            final offsetRight =
+                parentData.itemConstraints?.isMatchParentWidth == true
+                    ? 0.0
+                    : paddingRight;
+            startAnchorBounds = Rect.fromLTRB(
+              offsetLeft,
+              startRect.top,
+              size.width - offsetRight,
+              startRect.bottom,
+            );
+            endAnchorBounds = Rect.fromLTRB(
+              offsetLeft,
+              endRect.top,
+              size.width - offsetRight,
+              endRect.bottom,
+            );
+          }
         }
 
         //计算当前的大小
