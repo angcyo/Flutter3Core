@@ -341,13 +341,14 @@ class TabLayoutRender extends ScrollContainerRenderBox {
           endHeight = startHeight;
         }
 
-        Rect startBounds = startRect;
-        Rect endBounds = endRect;
+        //对齐使用
+        Rect startAnchorBounds = startRect;
+        Rect endAnchorBounds = endRect;
         if (parentData.alignmentParent == true) {
-          startBounds = Rect.fromLTRB(startRect.left, paddingTop,
+          startAnchorBounds = Rect.fromLTRB(startRect.left, paddingTop,
               startRect.right, size.height - paddingBottom);
-          endBounds = Rect.fromLTRB(endRect.left, paddingTop, endRect.right,
-              size.height - paddingBottom);
+          endAnchorBounds = Rect.fromLTRB(endRect.left, paddingTop,
+              endRect.right, size.height - paddingBottom);
         }
 
         //计算当前的大小
@@ -355,11 +356,19 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         double height = startHeight + (endHeight - startHeight) * progress;
 
         //layout, 计算当前的位置
-        final startOffset = alignRectOffset(
-            parentData.alignment, startBounds, Size(width, height));
+        final startOffset = alignRectOffset(parentData.alignment,
+            startAnchorBounds, Size(startWidth, startHeight));
         final endOffset = alignRectOffset(
-            parentData.alignment, endBounds, Size(width, height));
+            parentData.alignment, endAnchorBounds, Size(endWidth, endHeight));
+        //指示器的2个位置
+        final startBounds = Rect.fromLTWH(
+            startOffset.dx, startOffset.dy, startWidth, startHeight);
+        final endBounds =
+            Rect.fromLTWH(endOffset.dx, endOffset.dy, endWidth, endHeight);
+
         Offset offset = startOffset + (endOffset - startOffset) * progress;
+
+        //debugger();
 
         if (parentData.enableIndicatorFlow &&
             (endIndex - startIndex).abs() <= parentData.indicatorFlowStep) {
@@ -589,6 +598,7 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
     }
     final parentData = renderObject.parentData;
     if (parentData is TabLayoutParentData) {
+      //debugger();
       parentData
         ..padding = padding
         ..itemType = itemType
@@ -597,6 +607,9 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
         ..alignmentParent = alignmentParent
         ..enableIndicatorFlow = enableIndicatorFlow
         ..itemPaintType = itemPaintType;
+      if (renderObject.parent is TabLayoutRender) {
+        renderObject.parent?.markNeedsLayout();
+      }
     }
   }
 

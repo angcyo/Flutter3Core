@@ -33,7 +33,8 @@ class CoreDebug {
 
   /// [HiveEx]
   /// [HiveStringEx]
-  static void parseHiveKeys(List<String?>? lines) {
+  static void parseHiveKeys(List<String?>? lines, [BuildContext? context]) {
+    context ??= GlobalConfig.def.globalContext;
     if (lines == null) {
       return;
     }
@@ -143,6 +144,9 @@ class CoreDebug {
 
     if (match) {
       //震动反馈
+      if (context != null) {
+        Feedback.forLongPress(context);
+      }
     }
   }
 }

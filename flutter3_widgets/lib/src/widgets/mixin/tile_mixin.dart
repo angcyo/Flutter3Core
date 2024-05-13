@@ -5,6 +5,38 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2024/03/21
 ///
 
+/// 提供一个文本字符串
+mixin ITextProvider {
+  String? get provideText;
+}
+
+/// 提供一个Widget
+mixin IWidgetProvider {
+  WidgetBuilder? get provideWidget;
+}
+
+String? textOf(dynamic data) {
+  if (data is String) {
+    return data;
+  } else if (data is ITextProvider) {
+    return data.provideText;
+  } else if (data != null) {
+    return "$data";
+  }
+  return null;
+}
+
+Widget? widgetOf(BuildContext context, dynamic data) {
+  if (data is Widget) {
+    return data;
+  } else if (data is IWidgetProvider) {
+    return data.provideWidget?.call(context);
+  }
+  return null;
+}
+
+//---
+
 mixin TileMixin {
   /// 构建图标小部件
   Widget? buildIconWidget(
@@ -30,19 +62,26 @@ mixin TileMixin {
   }
 
   /// 构建文本小部件
+  /// [GlobalTheme.textDesStyle]
+  /// [GlobalTheme.textBodyStyle]
+  /// [GlobalTheme.textLabelStyle]
   Widget? buildTextWidget(
     BuildContext context, {
     Widget? textWidget,
     String? text,
     TextStyle? textStyle,
     bool themeStyle = true,
+    EdgeInsets? textPadding,
     EdgeInsets? padding,
   }) {
     final globalTheme = GlobalTheme.of(context);
     final widget = textWidget ??
-        (text?.text(
-          style: textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
-        ));
+        (text
+            ?.text(
+              style:
+                  textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
+            )
+            .paddingInsets(textPadding));
     return widget?.paddingInsets(padding);
   }
 
