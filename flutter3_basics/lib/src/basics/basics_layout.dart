@@ -9,11 +9,12 @@ part of '../../flutter3_basics.dart';
 /// 对齐子元素, 通过修改[child!.parentData]这样的方式手势碰撞就会自动计算
 /// [AlignmentDirectional]
 /// [Alignment]
+/// 返回对应的偏移量
 Offset alignChildOffset(
   AlignmentGeometry alignment,
   Size containsSize,
   Size? childSize, {
-  RenderBox? child,
+  RenderBox? child, //可以不传
 }) {
   var dx = 0.0;
   var dy = 0.0;
@@ -77,4 +78,18 @@ Offset alignChildOffset(
     childParentData.offset = offset;
   }
   return offset;
+}
+
+/// 将一个大小, 在一个矩形内对齐,
+/// [alignment] 对齐方式
+/// [containsBounds] 容器
+/// [childSize] 子元素大小
+/// 返回对应的偏移量
+Offset alignRectOffset(
+  AlignmentGeometry alignment,
+  Rect containsBounds,
+  Size childSize,
+) {
+  final offset = alignChildOffset(alignment, containsBounds.size, childSize);
+  return containsBounds.topLeft + offset;
 }

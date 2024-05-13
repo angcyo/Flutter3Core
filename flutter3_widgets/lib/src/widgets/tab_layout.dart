@@ -295,6 +295,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         }
       }
 
+      //目标位置
       final startChild = getScrollChildAt(startIndex);
       final endChild = getScrollChildAt(endIndex);
       assert(() {
@@ -311,26 +312,129 @@ class TabLayoutRender extends ScrollContainerRenderBox {
 
       //debugger();
 
+      //开始测量/布局
       for (final child in children) {
         final parentData = child.parentData as TabLayoutParentData;
         //measure
-        final width =
-            startRect.width + (endRect.width - startRect.width) * progress;
-        final height =
-            startRect.height + (endRect.height - startRect.height) * progress;
+        double startWidth = startRect.width;
+        double startHeight = startRect.height;
+        double endWidth = endRect.width;
+        double endHeight = endRect.height;
+
+        startWidth += parentData.paddingHorizontal;
+        startHeight += parentData.paddingVertical;
+        endWidth += parentData.paddingHorizontal;
+        endHeight += parentData.paddingVertical;
+
+        if (parentData.itemConstraints?.isMatchParentWidth == true) {
+          startWidth = size.width;
+          endWidth = startWidth;
+        } else if (parentData.itemConstraints?.isFixedWidth == true) {
+          startWidth = parentData.itemConstraints!.maxWidth;
+          endWidth = startWidth;
+        }
+        if (parentData.itemConstraints?.isMatchParentHeight == true) {
+          startHeight = size.height;
+          endHeight = startHeight;
+        } else if (parentData.itemConstraints?.isFixedHeight == true) {
+          startHeight = parentData.itemConstraints!.maxHeight;
+          endHeight = startHeight;
+        }
+
+        Rect startBounds = startRect;
+        Rect endBounds = endRect;
+        if (parentData.alignmentParent == true) {
+          startBounds = Rect.fromLTRB(startRect.left, paddingTop,
+              startRect.right, size.height - paddingBottom);
+          endBounds = Rect.fromLTRB(endRect.left, paddingTop, endRect.right,
+              size.height - paddingBottom);
+        }
+
+        //计算当前的大小
+        double width = startWidth + (endWidth - startWidth) * progress;
+        double height = startHeight + (endHeight - startHeight) * progress;
+
+        //layout, 计算当前的位置
+        final startOffset = alignRectOffset(
+            parentData.alignment, startBounds, Size(width, height));
+        final endOffset = alignRectOffset(
+            parentData.alignment, endBounds, Size(width, height));
+        Offset offset = startOffset + (endOffset - startOffset) * progress;
+
+        if (parentData.enableIndicatorFlow &&
+            (endIndex - startIndex).abs() <= parentData.indicatorFlowStep) {
+          //流式变化, 前一半的进度, 放大到目标大小, 后一半的进度, 缩小到目标大小
+
+          final step = (endIndex - startIndex).abs();
+          if (endIndex >= startIndex) {
+            //往右/往下 流动
+            if (progress < step / 2) {
+              //前一半, 放大
+              final flowProgress = progress * 2;
+              if (axis == Axis.horizontal) {
+                offset = Offset(startBounds.left, offset.dy);
+                width = startWidth +
+                    (endBounds.right - startBounds.right) * flowProgress;
+              } else {
+                offset = Offset(offset.dx, startBounds.top);
+                height = startHeight +
+                    (endBounds.bottom - startBounds.bottom) * flowProgress;
+              }
+            } else {
+              //后一半, 缩小
+              final flowProgress = 1 - (progress - step / 2) * 2;
+              if (axis == Axis.horizontal) {
+                final leftDx =
+                    (endBounds.left - startBounds.left) * flowProgress;
+                offset = Offset(endBounds.left - leftDx, offset.dy);
+                width = endWidth + leftDx;
+              } else {
+                final topDx = (endBounds.top - startBounds.top) * flowProgress;
+                offset = Offset(offset.dx, endBounds.top - topDx);
+                height = endHeight + topDx;
+              }
+            }
+          } else {
+            //往左/往上 流动
+            if (progress < step / 2) {
+              //前一半, 放大
+              final flowProgress = progress * 2;
+              if (axis == Axis.horizontal) {
+                final leftDx =
+                    (startBounds.left - endBounds.left) * flowProgress;
+                offset = Offset(startBounds.left - leftDx, offset.dy);
+                width = startWidth + leftDx;
+              } else {
+                final topDx = (startBounds.top - endBounds.top) * flowProgress;
+                offset = Offset(offset.dx, startBounds.top - topDx);
+                height = startHeight + topDx;
+              }
+            } else {
+              //后一半, 缩小
+              final flowProgress = 1 - (progress - step / 2) * 2;
+              if (axis == Axis.horizontal) {
+                offset = Offset(endBounds.left, offset.dy);
+                width = endWidth +
+                    (startBounds.right - endBounds.right) * flowProgress;
+              } else {
+                offset = Offset(offset.dx, endBounds.top);
+                height = endHeight +
+                    (startBounds.bottom - endBounds.bottom) * flowProgress;
+              }
+            }
+          }
+        }
+
         child.layout(
           BoxConstraints.tightFor(
-            width: width + parentData.paddingHorizontal,
-            height: height + parentData.paddingVertical,
+            width: width,
+            height: height,
           ),
           parentUsesSize: true,
         );
-        //layout
-        final offset = startRect.lt + (endRect.lt - startRect.lt) * progress;
+
         //debugger();
-        parentData.offset = offset -
-            Offset(parentData.paddingHorizontal / 2,
-                parentData.paddingVertical / 2);
+        parentData.offset = offset;
 
         //滚动到居中位置
         final scrollController = this.scrollController;
@@ -462,13 +566,19 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
   final TabItemPaintType itemPaintType;
   final EdgeInsets? padding;
   final AlignmentGeometry alignment;
+  final LayoutBoxConstraints? itemConstraints;
+  final bool alignmentParent;
+  final bool enableIndicatorFlow;
 
   const TabLayoutData({
     super.key,
     required super.child,
     this.itemType,
+    this.itemConstraints,
     this.itemPaintType = TabItemPaintType.background,
     this.padding,
+    this.alignmentParent = true,
+    this.enableIndicatorFlow = false,
     this.alignment = Alignment.center,
   });
 
@@ -483,6 +593,9 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
         ..padding = padding
         ..itemType = itemType
         ..alignment = alignment
+        ..itemConstraints = itemConstraints
+        ..alignmentParent = alignmentParent
+        ..enableIndicatorFlow = enableIndicatorFlow
         ..itemPaintType = itemPaintType;
     }
   }
@@ -495,17 +608,27 @@ class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {
   /// 当前widget的类型
   TabItemType? itemType;
 
+  /// 是否启用流式变化, 指示器在流向下一个位置时, 先放大到最大, 然后缩小到最小
+  bool enableIndicatorFlow = false;
+
+  /// 2个位置之间的间隔item必须小于此值, [enableIndicatorFlow]才有效
+  int indicatorFlowStep = 1;
+
   /// 指示器绘制类型
   TabItemPaintType itemPaintType = TabItemPaintType.background;
 
   /// 当前指定[itemType]的约束
-  BoxConstraints? itemConstraints;
+  LayoutBoxConstraints? itemConstraints;
 
   /// 当前指定[itemType]的对齐方式
   /// 只有当[itemType]不为null时, 才会生效
   AlignmentGeometry alignment = Alignment.center;
 
+  /// 对齐参考父布局的大小, 否则参考自身的大小
+  bool alignmentParent = true;
+
   /// 指示器的需要额外填充的大小
+  /// 如果固定了宽高大小, 则此大小应该是包含了padding的大小
   EdgeInsets? padding;
 
   double get paddingHorizontal => (padding?.horizontal ?? 0);
@@ -541,12 +664,18 @@ extension TabLayoutEx on Widget {
     TabItemPaintType itemPaintType = TabItemPaintType.background,
     EdgeInsets? padding,
     AlignmentGeometry alignment = Alignment.center,
+    LayoutBoxConstraints? itemConstraints,
+    bool alignmentParent = true,
+    bool enableIndicatorFlow = false,
   }) =>
       TabLayoutData(
         itemType: itemType,
         itemPaintType: itemPaintType,
         padding: padding,
         alignment: alignment,
+        alignmentParent: alignmentParent,
+        enableIndicatorFlow: enableIndicatorFlow,
+        itemConstraints: itemConstraints,
         child: this,
       );
 }

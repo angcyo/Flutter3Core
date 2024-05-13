@@ -136,7 +136,7 @@ BoxDecoration lineDecoration({
 
 /// 纯色填充装饰, 支持圆角
 /// [color] 填充颜色
-/// [gradient] 渐变颜色
+/// [gradient] 渐变颜色.[linearGradient].[sweepGradientShader].[sweepGradientShader]
 /// [strokeDecoration]
 /// [border] 边框
 BoxDecoration fillDecoration({

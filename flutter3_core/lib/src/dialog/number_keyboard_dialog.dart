@@ -141,8 +141,8 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
 
     final keyboard = FlowLayout(
       selfConstraints: const LayoutBoxConstraints(
-        wrapContentWidth: true,
-        wrapContentHeight: true,
+        widthType: ConstraintsType.wrapContent,
+        heightType: ConstraintsType.wrapContent,
       ),
       childConstraints: BoxConstraints(minHeight: height),
       childGap: gap,

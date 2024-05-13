@@ -2097,18 +2097,63 @@ UiGradient sweepGradientShader(
     );
 
 /// [Gradient]
+/// [Gradient.createShader]通过此方法, 创建一个[Shader], 然后作用给[Paint.shader]
 /// [UiGradient]
-Gradient linearGradient(
+LinearGradient linearGradient(
   List<Color> colors, {
   AlignmentGeometry begin = Alignment.centerLeft,
   AlignmentGeometry end = Alignment.centerRight,
   TileMode tileMode = TileMode.clamp,
   GradientTransform? transform,
+  List<double>? stops,
 }) =>
     LinearGradient(
       colors: colors,
       begin: begin,
       end: end,
+      stops: stops,
+      tileMode: tileMode,
+      transform: transform,
+    );
+
+/// 径向渐变
+RadialGradient radialGradient(
+  List<Color> colors, {
+  AlignmentGeometry center = Alignment.center,
+  double radius = 0.5,
+  List<double>? stops,
+  TileMode tileMode = TileMode.clamp,
+  AlignmentGeometry? focal,
+  double focalRadius = 0.0,
+  GradientTransform? transform,
+}) =>
+    RadialGradient(
+      colors: colors,
+      radius: radius,
+      center: center,
+      stops: stops,
+      tileMode: tileMode,
+      focal: focal,
+      focalRadius: focalRadius,
+      transform: transform,
+    );
+
+/// 扫描渐变
+SweepGradient sweepGradient(
+  List<Color> colors, {
+  AlignmentGeometry center = Alignment.center,
+  double startAngle = 0.0,
+  double endAngle = math.pi * 2,
+  List<double>? stops,
+  TileMode tileMode = TileMode.clamp,
+  GradientTransform? transform,
+}) =>
+    SweepGradient(
+      colors: colors,
+      center: center,
+      startAngle: startAngle,
+      endAngle: endAngle,
+      stops: stops,
       tileMode: tileMode,
       transform: transform,
     );

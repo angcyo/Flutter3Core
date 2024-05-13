@@ -6,26 +6,28 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/03/18
 ///
 
+enum ConstraintsType {
+  /// 包裹内容
+  wrapContent,
+
+  /// 撑满父布局
+  matchParent,
+
+  /// 固定大小 此时[minWidth].[maxWidth]相等
+  /// 取[maxWidth]
+  fixedSize,
+}
+
 /// 布局约束
+/// [BoxConstraintsEx]
 /// [alignChildOffset]
 class LayoutBoxConstraints extends BoxConstraints {
-  /// 自身的宽度是否包裹内容
-  final bool? wrapContentWidth;
-
-  /// 自身的高度是否包裹内容
-  final bool? wrapContentHeight;
-
-  /// 自身的宽度是否占满父布局的有效宽度
-  final bool? matchParentWidth;
-
-  /// 自身的高度是否占满父布局的有效高度
-  final bool? matchParentHeight;
+  final ConstraintsType? widthType;
+  final ConstraintsType? heightType;
 
   const LayoutBoxConstraints({
-    this.wrapContentWidth,
-    this.wrapContentHeight,
-    this.matchParentWidth,
-    this.matchParentHeight,
+    this.widthType,
+    this.heightType,
     //---
     super.minWidth,
     super.maxWidth,
@@ -39,20 +41,16 @@ class LayoutBoxConstraints extends BoxConstraints {
     double? maxWidth,
     double? minHeight,
     double? maxHeight,
-    bool? wrapContentWidth,
-    bool? wrapContentHeight,
-    bool? matchParentWidth,
-    bool? matchParentHeight,
+    ConstraintsType? widthType,
+    ConstraintsType? heightType,
   }) {
     return LayoutBoxConstraints(
       minWidth: minWidth ?? this.minWidth,
       maxWidth: maxWidth ?? this.maxWidth,
       minHeight: minHeight ?? this.minHeight,
       maxHeight: maxHeight ?? this.maxHeight,
-      wrapContentWidth: wrapContentWidth ?? this.wrapContentWidth,
-      wrapContentHeight: wrapContentHeight ?? this.wrapContentHeight,
-      matchParentWidth: matchParentWidth ?? this.matchParentWidth,
-      matchParentHeight: matchParentHeight ?? this.matchParentHeight,
+      widthType: widthType ?? this.widthType,
+      heightType: heightType ?? this.heightType,
     );
   }
 
@@ -79,9 +77,9 @@ class LayoutBoxConstraints extends BoxConstraints {
     double height =
         parentConstraints.constrainHeight(constrainHeight(childHeight));
 
-    if (wrapContentWidth == true) {
+    if (widthType == ConstraintsType.wrapContent) {
       width = constrainWidth(childWidth);
-    } else if (matchParentWidth == true) {
+    } else if (widthType == ConstraintsType.matchParent) {
       if (parentConstraints.maxWidth != double.infinity) {
         width = parentConstraints.maxWidth;
       } else if (maxWidth != double.infinity) {
@@ -95,9 +93,9 @@ class LayoutBoxConstraints extends BoxConstraints {
       }
     }
 
-    if (wrapContentHeight == true) {
+    if (heightType == ConstraintsType.wrapContent) {
       height = constrainHeight(childHeight);
-    } else if (matchParentHeight == true) {
+    } else if (heightType == ConstraintsType.matchParent) {
       if (parentConstraints.maxHeight != double.infinity) {
         height = parentConstraints.maxHeight;
       } else if (maxHeight != double.infinity) {
@@ -400,25 +398,37 @@ mixin LayoutMixin<ChildType extends RenderObject,
   }
 }
 
+/// 兼容[LayoutBoxConstraints].[ConstraintsType]
 /// [alignChildOffset]
 extension BoxConstraintsEx on BoxConstraints {
   /// 是否是包裹内容的约束
-  bool get isWrapContentWidth => minWidth == 0 && maxWidth == double.infinity;
+  bool get isWrapContentWidth => this is LayoutBoxConstraints
+      ? (this as LayoutBoxConstraints).widthType == ConstraintsType.wrapContent
+      : minWidth == 0 && maxWidth == double.infinity;
 
-  bool get isWrapContentHeight =>
-      minHeight == 0 && maxHeight == double.infinity;
+  bool get isWrapContentHeight => this is LayoutBoxConstraints
+      ? (this as LayoutBoxConstraints).heightType == ConstraintsType.wrapContent
+      : minHeight == 0 && maxHeight == double.infinity;
 
   /// 是否是撑满容器的约束
-  bool get isMatchParentWidth => minWidth == double.infinity;
+  bool get isMatchParentWidth => this is LayoutBoxConstraints
+      ? (this as LayoutBoxConstraints).widthType == ConstraintsType.matchParent
+      : minWidth.isNaN && maxWidth == double.infinity;
 
-  bool get isMatchParentHeight => minHeight == double.infinity;
+  bool get isMatchParentHeight => this is LayoutBoxConstraints
+      ? (this as LayoutBoxConstraints).heightType == ConstraintsType.matchParent
+      : minHeight.isNaN && maxHeight == double.infinity;
 
   /// 是否是固定大小的约束
   /// [hasTightWidth]
-  bool get isFixedWidth => minWidth >= maxWidth;
+  bool get isFixedWidth => this is LayoutBoxConstraints
+      ? (this as LayoutBoxConstraints).widthType == ConstraintsType.fixedSize
+      : minWidth >= maxWidth;
 
   /// [hasTightHeight]
-  bool get isFixedHeight => minHeight >= maxHeight;
+  bool get isFixedHeight => this is LayoutBoxConstraints
+      ? (this as LayoutBoxConstraints).heightType == ConstraintsType.fixedSize
+      : minHeight >= maxHeight;
 
   /// 获取当前的约束
   BoxConstraints constraintsWithParent(
@@ -458,4 +468,47 @@ extension BoxConstraintsEx on BoxConstraints {
       maxHeight: maxHeight,
     );
   }
+}
+
+/// [BoxConstraintsEx.isWrapContentWidth]
+/// [BoxConstraintsEx.isWrapContentHeight]
+BoxConstraints wrapBoxConstraints({
+  double minWidth = 0,
+  double maxWidth = double.infinity,
+  double minHeight = 0,
+  double maxHeight = double.infinity,
+}) {
+  return BoxConstraints(
+    minWidth: minWidth,
+    maxWidth: maxWidth,
+    minHeight: minHeight,
+    maxHeight: maxHeight,
+  );
+}
+
+/// [BoxConstraintsEx.isMatchParentWidth]
+/// [BoxConstraintsEx.isMatchParentHeight]
+BoxConstraints matchBoxConstraints({
+  double minWidth = double.nan,
+  double maxWidth = double.infinity,
+  double minHeight = double.nan,
+  double maxHeight = double.infinity,
+}) {
+  return BoxConstraints(
+    minWidth: minWidth,
+    maxWidth: maxWidth,
+    minHeight: minHeight,
+    maxHeight: maxHeight,
+  );
+}
+
+/// [BoxConstraintsEx.isFixedWidth]
+/// [BoxConstraintsEx.isFixedHeight]
+BoxConstraints sizeBoxConstraints(double width, double height) {
+  return BoxConstraints(
+    minWidth: width,
+    maxWidth: width,
+    minHeight: height,
+    maxHeight: height,
+  );
 }
