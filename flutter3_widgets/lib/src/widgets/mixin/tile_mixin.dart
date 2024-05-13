@@ -37,6 +37,16 @@ Widget? widgetOf(BuildContext context, dynamic data) {
 
 //---
 
+/// label默认的填充
+const kLabelPadding = EdgeInsets.only(
+  left: kX,
+  right: kX,
+  top: kH,
+  bottom: kH,
+);
+
+//---
+
 mixin TileMixin {
   /// 构建图标小部件
   Widget? buildIconWidget(
