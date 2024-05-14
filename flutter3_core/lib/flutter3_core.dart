@@ -58,6 +58,8 @@ part 'src/view_model/view_model_ex.dart';
 String get currentDirPath => p.current;
 
 /// 初始化Flutter3核心库
+/// 会初始化Isar数据库
+/// [registerIsarCollection]
 @entryPoint
 Future<void> initFlutter3Core() async {
   // 写入文件fn
