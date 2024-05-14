@@ -145,22 +145,33 @@ BoxDecoration fillDecoration({
   Gradient? gradient,
   BorderRadiusGeometry? radiusGeometry,
   double? borderRadius = kDefaultBorderRadiusXX,
-  double? borderTopRadius,
-  double? borderBottomRadius,
+  double? onlyLeftRadius,
+  double? onlyRightRadius,
+  double? onlyTopRadius,
+  double? onlyBottomRadius,
   BoxBorder? border,
 }) {
   final fillColor = color ?? GlobalTheme.of(context).primaryColor;
 
   if (radiusGeometry == null) {
-    if (borderTopRadius != null || borderBottomRadius != null) {
+    if (onlyTopRadius != null || onlyBottomRadius != null) {
       radiusGeometry = BorderRadius.only(
-        topLeft: Radius.circular(borderTopRadius ?? 0),
-        topRight: Radius.circular(borderTopRadius ?? 0),
-        bottomLeft: Radius.circular(borderBottomRadius ?? 0),
-        bottomRight: Radius.circular(borderBottomRadius ?? 0),
+        topLeft: Radius.circular(onlyTopRadius ?? 0),
+        topRight: Radius.circular(onlyTopRadius ?? 0),
+        bottomLeft: Radius.circular(onlyBottomRadius ?? 0),
+        bottomRight: Radius.circular(onlyBottomRadius ?? 0),
       );
-    } else if (borderRadius != null) {
-      radiusGeometry = BorderRadius.circular(borderRadius);
+    } else if (onlyLeftRadius != null || onlyRightRadius != null) {
+      radiusGeometry = BorderRadius.only(
+        topLeft: Radius.circular(onlyLeftRadius ?? 0),
+        bottomLeft: Radius.circular(onlyLeftRadius ?? 0),
+        topRight: Radius.circular(onlyRightRadius ?? 0),
+        bottomRight: Radius.circular(onlyRightRadius ?? 0),
+      );
+    } else {
+      radiusGeometry = BorderRadius.all(
+        Radius.circular(borderRadius ?? 0),
+      );
     }
   }
 
