@@ -433,14 +433,21 @@ extension BoxConstraintsEx on BoxConstraints {
       : minHeight >= maxHeight;
 
   /// 获取当前的约束
+  /// [parentSize] 容器大小
+  /// [padding] 自身需要填充的内边距
+  /// [margin] 自身需要距离容器的外边距
   BoxConstraints constraintsWithParent(
     Size parentSize, {
     EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
   }) {
+    final marginHorizontal = margin?.horizontal ?? 0;
+    final marginVertical = margin?.vertical ?? 0;
+
     final itemConstraints = this;
-    double minWidth = parentSize.width;
+    double minWidth = parentSize.width - marginHorizontal;
     double maxWidth = minWidth;
-    double minHeight = parentSize.height;
+    double minHeight = parentSize.height - marginVertical;
     double maxHeight = minHeight;
 
     final paddingHorizontal = padding?.horizontal ?? 0;

@@ -7,6 +7,7 @@ import 'dart:ui' as ui;
 
 import 'package:badges/badges.dart' as badges;
 import 'package:expandable/expandable.dart';
+import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';

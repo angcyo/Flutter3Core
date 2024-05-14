@@ -138,7 +138,7 @@ BoxDecoration lineDecoration({
 /// [color] 填充颜色
 /// [gradient] 渐变颜色.[linearGradient].[sweepGradientShader].[sweepGradientShader]
 /// [strokeDecoration]
-/// [border] 边框
+/// [border] 边框.[strokeBorder]
 BoxDecoration fillDecoration({
   BuildContext? context,
   Color? color,
