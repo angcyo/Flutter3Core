@@ -113,7 +113,7 @@ class GlobalTheme {
 
   double get xxh => kXxh;
 
-  double get xxxh => kXxxh;
+  double get xxxh => kXxx;
 
   /// 无数据时的提示
   String? get noDataTip => "暂无数据";

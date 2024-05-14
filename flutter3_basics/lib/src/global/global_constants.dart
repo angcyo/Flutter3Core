@@ -16,7 +16,7 @@ const double kX = 12;
 const double kXh = 16;
 const double kXx = 24;
 const double kXxh = 32;
-const double kXxxh = 48;
+const double kXxx = 48;
 
 /// 最小高度
 /// [kMinInteractiveHeight]
