@@ -19,6 +19,7 @@ Offset alignChildOffset(
   var dx = 0.0;
   var dy = 0.0;
   childSize ??= child?.size ?? Size.zero;
+  //x
   switch (alignment) {
     case AlignmentDirectional.topStart:
     case AlignmentDirectional.centerStart:
@@ -45,6 +46,7 @@ Offset alignChildOffset(
       dx = containsSize.width - childSize.width;
       break;
   }
+  //y
   switch (alignment) {
     case AlignmentDirectional.topStart:
     case AlignmentDirectional.topCenter:

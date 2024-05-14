@@ -18,6 +18,99 @@ enum ConstraintsType {
   fixedSize,
 }
 
+mixin LayoutParentData on ParentData {
+  /// 外边距
+  EdgeInsets? layoutMargin;
+}
+
+/// [LayoutParentData]
+extension LayoutParentDataEx on ParentData {
+  double get layoutMarginHorizontal => (this is LayoutParentData)
+      ? (this as LayoutParentData).layoutMargin?.horizontal ?? 0
+      : 0;
+
+  double get layoutMarginVertical => (this is LayoutParentData)
+      ? (this as LayoutParentData).layoutMargin?.vertical ?? 0
+      : 0;
+
+  double get layoutMarginLeft => (this is LayoutParentData)
+      ? (this as LayoutParentData).layoutMargin?.left ?? 0
+      : 0;
+
+  double get layoutMarginTop => (this is LayoutParentData)
+      ? (this as LayoutParentData).layoutMargin?.top ?? 0
+      : 0;
+
+  double get layoutMarginRight => (this is LayoutParentData)
+      ? (this as LayoutParentData).layoutMargin?.right ?? 0
+      : 0;
+
+  double get layoutMarginBottom => (this is LayoutParentData)
+      ? (this as LayoutParentData).layoutMargin?.bottom ?? 0
+      : 0;
+
+  /// 使用[layoutMargin]对布局进行偏移
+  void layoutMarginOffset(AlignmentGeometry? alignment) {
+    if (alignment == null) {
+      return;
+    }
+    if (this is BoxParentData) {
+      final parentData = this as BoxParentData;
+      var dx = 0.0;
+      var dy = 0.0;
+      //x
+      switch (alignment) {
+        case AlignmentDirectional.topCenter:
+        case AlignmentDirectional.center:
+        case AlignmentDirectional.bottomCenter:
+          dx = layoutMarginLeft - layoutMarginRight;
+          break;
+        case AlignmentDirectional.topStart:
+        case AlignmentDirectional.centerStart:
+        case AlignmentDirectional.bottomStart:
+        case Alignment.topLeft:
+        case Alignment.centerLeft:
+        case Alignment.bottomLeft:
+          dx = layoutMarginLeft;
+          break;
+        case AlignmentDirectional.topEnd:
+        case AlignmentDirectional.centerEnd:
+        case AlignmentDirectional.bottomEnd:
+        case Alignment.topRight:
+        case Alignment.centerRight:
+        case Alignment.bottomRight:
+          dx = -layoutMarginRight;
+          break;
+      }
+      //y
+      switch (alignment) {
+        case AlignmentDirectional.centerStart:
+        case AlignmentDirectional.center:
+        case AlignmentDirectional.centerEnd:
+          dy = layoutMarginTop - layoutMarginBottom;
+          break;
+        case AlignmentDirectional.topStart:
+        case AlignmentDirectional.topCenter:
+        case AlignmentDirectional.topEnd:
+        case Alignment.topLeft:
+        case Alignment.topCenter:
+        case Alignment.topRight:
+          dy = layoutMarginTop;
+          break;
+        case AlignmentDirectional.bottomStart:
+        case AlignmentDirectional.bottomCenter:
+        case AlignmentDirectional.bottomEnd:
+        case Alignment.bottomLeft:
+        case Alignment.bottomCenter:
+        case Alignment.bottomRight:
+          dy = -layoutMarginBottom;
+          break;
+      }
+      parentData.offset += Offset(dx, dy);
+    }
+  }
+}
+
 /// 布局约束
 /// [BoxConstraintsEx]
 /// [alignChildOffset]
@@ -182,6 +275,19 @@ mixin LayoutMixin<ChildType extends RenderObject,
   }
 
   //---
+  /// 获取所有子节点的横向/纵向的间隙
+  /// [LayoutParentData]
+  double getAllChildMargin(List<ChildType> children, Axis axis) {
+    double result = 0;
+    for (final child in children) {
+      if (axis == Axis.horizontal) {
+        result += child.parentData?.layoutMarginHorizontal ?? 0;
+      } else {
+        result += child.parentData?.layoutMarginVertical ?? 0;
+      }
+    }
+    return result;
+  }
 
   /// 获取所有子节点的宽度
   double getAllLinearChildWidth(
@@ -310,14 +416,23 @@ mixin LayoutMixin<ChildType extends RenderObject,
           }
         }
         //offset
-        parentData.offset =
-            Offset(offsetX + alignOffsetX, offsetY + alignOffsetY);
+        final offset = Offset(
+          offsetX + alignOffsetX + parentData.layoutMarginLeft,
+          offsetY + alignOffsetY + parentData.layoutMarginTop,
+        );
+        parentData.offset = offset;
         //end
         if (child is RenderBox) {
           if (axis == Axis.horizontal) {
-            offsetX += child.size.width + gap;
+            offsetX = offset.dx +
+                child.size.width +
+                gap +
+                parentData.layoutMarginRight;
           } else {
-            offsetY += child.size.height + gap;
+            offsetY = offset.dy +
+                child.size.height +
+                gap +
+                parentData.layoutMarginBottom;
           }
         }
       }
