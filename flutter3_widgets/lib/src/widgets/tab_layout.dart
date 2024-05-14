@@ -297,6 +297,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     super.performLayout();
     _relayoutDecoration();
     _relayoutIndicator();
+    _relayoutStack();
   }
 
   @override
@@ -650,9 +651,83 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     }
   }
 
+  /// 重新布局堆叠
+  void _relayoutStack() {
+    final children = getChildren();
+    final stackChildren = getIndicatorChildren(TabItemType.stack);
+
+    // 获取stackChild之前的滚动内容child
+    RenderBox? getStackBeforeChild(RenderBox stackChild) {
+      RenderBox? result;
+      for (final child in children) {
+        final parentData = child.parentData as TabLayoutParentData;
+        if (parentData.itemType == null) {
+          result = child;
+        }
+        if (child == stackChild) {
+          break;
+        }
+      }
+      return result;
+    }
+
+    //--
+    for (final child in stackChildren) {
+      final parentData = child.parentData as TabLayoutParentData;
+
+      final anchorIndex = parentData.stackAnchorIndex;
+      RenderBox? anchorChild;
+      if (anchorIndex != null) {
+        anchorChild = children.getOrNull(anchorIndex);
+      } else {
+        anchorChild = getStackBeforeChild(child);
+      }
+      Rect? anchorRect = anchorChild?.getBoundsInParentOrNull();
+
+      //debugger();
+      BoxConstraints childConstraints = BoxConstraints(
+        maxWidth: parentData.alignmentParent
+            ? size.width
+            : anchorRect?.width ?? size.width,
+        maxHeight: parentData.alignmentParent
+            ? size.height
+            : anchorRect?.height ?? size.height,
+      );
+      if (parentData.itemConstraints != null) {
+        childConstraints = parentData.getItemConstraints(size);
+      }
+      child.layout(childConstraints, parentUsesSize: true);
+      //debugger();
+
+      //layout
+      if (anchorRect != null) {
+        if (parentData.alignmentParent) {
+          if (axis == Axis.horizontal) {
+            anchorRect = Rect.fromLTRB(
+                anchorRect.left, 0, anchorRect.right, size.height);
+          } else {
+            anchorRect =
+                Rect.fromLTRB(0, anchorRect.top, size.width, anchorRect.bottom);
+          }
+        }
+        final offset =
+            alignRectOffset(parentData.alignment, anchorRect, child.size);
+        //margin
+        Offset marginOffset = Offset(
+            parentData.marginLeft - parentData.marginRight,
+            parentData.marginTop - parentData.marginBottom);
+        parentData.offset = offset + marginOffset;
+      } else {
+        parentData.offset = Offset.zero;
+      }
+    }
+  }
+
   @override
   void paint(PaintingContext context, ui.Offset offset) {
     // 绘制指定类型的子节点
+    // 这里绘制的内容, 不支持滚动
+    // 需要支持滚动请使用[paintScrollContents]
     void paintChildren(List<RenderBox> children, TabItemPaintType paintType) {
       for (final child in children) {
         final parentData = child.parentData;
@@ -679,6 +754,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     final Offset paintOffset = _paintOffset;
 
     // 绘制指定类型的子节点
+    // 这里的绘制支持滚动
     void paintChildren(List<RenderBox> children, TabItemPaintType paintType) {
       for (final child in children) {
         final parentData = child.parentData;
@@ -694,25 +770,36 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     final scrollDecorationChildren =
         getIndicatorChildren(TabItemType.scrollDecoration);
     final indicatorChildren = getIndicatorChildren(TabItemType.indicator);
+    final stackChildren = getIndicatorChildren(TabItemType.stack);
 
     paintChildren(scrollDecorationChildren, TabItemPaintType.background);
     paintChildren(indicatorChildren, TabItemPaintType.background);
+    paintChildren(stackChildren, TabItemPaintType.background);
     super.paintScrollContents(context, offset);
     //---
     paintChildren(indicatorChildren, TabItemPaintType.foreground);
     paintChildren(scrollDecorationChildren, TabItemPaintType.foreground);
+    paintChildren(stackChildren, TabItemPaintType.foreground);
   }
 }
 
 enum TabItemType {
-  /// 指示器
+  /// 指示器,不占用布局空间
   indicator,
 
-  /// 滚动装饰器, 作用于整个[TabLayout], 受滚动影响
+  /// 滚动装饰器,不占用布局空间, 作用于整个[TabLayout], 受滚动影响
   scrollDecoration,
 
-  /// 背景装饰器, 作用于整个[TabLayout], 不受滚动影响
+  /// 背景装饰器,不占用布局空间,  作用于整个[TabLayout], 不受滚动影响
   bgDecoration,
+
+  /// 间隙类型,占用布局空间, 和[TabLayout.gap]一起作用
+  gap,
+
+  /// 堆叠类型,不占用布局空间,将元素和锚点child堆叠在一起
+  /// 可以用来实现new/消息提示等效果
+  /// 如果不指定锚点, 则默认使用元素之前的第一个child作为锚点
+  stack,
 }
 
 enum TabItemPaintType {
@@ -732,6 +819,7 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
   final bool alignmentParent;
   final bool enableIndicatorFlow;
   final EdgeInsets? margin;
+  final int? stackAnchorIndex;
 
   const TabLayoutData({
     super.key,
@@ -744,6 +832,7 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
     this.alignmentParent = true,
     this.enableIndicatorFlow = false,
     this.alignment = Alignment.center,
+    this.stackAnchorIndex,
   });
 
   @override
@@ -762,6 +851,7 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
         ..itemConstraints = itemConstraints
         ..alignmentParent = alignmentParent
         ..enableIndicatorFlow = enableIndicatorFlow
+        ..stackAnchorIndex = stackAnchorIndex
         ..itemPaintType = itemPaintType;
       if (renderObject.parent is TabLayoutRender) {
         renderObject.parent?.markNeedsLayout();
@@ -796,6 +886,8 @@ class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {
   /// 对齐参考父布局的大小, 否则参考自身的大小
   bool alignmentParent = true;
 
+  //--
+
   /// 指示器的需要额外填充的大小
   /// 如果固定了宽高大小, 则此大小应该是包含了padding的大小
   EdgeInsets? padding;
@@ -803,6 +895,8 @@ class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {
   double get paddingHorizontal => (padding?.horizontal ?? 0);
 
   double get paddingVertical => (padding?.vertical ?? 0);
+
+  //--
 
   /// 指示器布局后, 需要额外的偏移距离
   /// 如果是[ConstraintsType.matchParent]的测量方式, 则margin会影响大小
@@ -819,6 +913,12 @@ class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {
   double get marginRight => (margin?.right ?? 0);
 
   double get marginBottom => (margin?.bottom ?? 0);
+
+  //--
+
+  /// [TabItemType.stack]
+  /// 堆叠类型的锚点child索引
+  int? stackAnchorIndex;
 
   /// 获取当前的约束
   BoxConstraints getItemConstraints(Size parentSize) {
@@ -845,7 +945,9 @@ class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {
 
 extension TabLayoutEx on Widget {
   /// [TabLayoutData]
-  Widget tabLayoutItemData({
+  /// [tabItemData]
+  /// [tabStackItemData]
+  Widget tabItemData({
     TabItemType? itemType,
     TabItemPaintType itemPaintType = TabItemPaintType.background,
     EdgeInsets? padding,
@@ -854,8 +956,9 @@ extension TabLayoutEx on Widget {
     LayoutBoxConstraints? itemConstraints,
     ConstraintsType? widthConstraintsType,
     ConstraintsType? heightConstraintsType,
-    bool alignmentParent = true,
+    bool? alignmentParent,
     bool enableIndicatorFlow = false,
+    int? stackAnchorIndex,
   }) {
     if (itemConstraints == null) {
       if (widthConstraintsType != null || heightConstraintsType != null) {
@@ -871,9 +974,52 @@ extension TabLayoutEx on Widget {
       padding: padding,
       margin: margin,
       alignment: alignment,
-      alignmentParent: alignmentParent,
+      alignmentParent: alignmentParent ??
+          (itemConstraints?.isMatchParentWidth == true ||
+                  itemConstraints?.isMatchParentHeight == true) ||
+              (itemType != null && itemType != TabItemType.stack),
       enableIndicatorFlow: enableIndicatorFlow,
       itemConstraints: itemConstraints,
+      stackAnchorIndex: stackAnchorIndex,
+      child: this,
+    );
+  }
+
+  /// [TabLayoutData]
+  /// [tabItemData]
+  /// [tabStackItemData]
+  Widget tabStackItemData({
+    int? stackAnchorIndex,
+    EdgeInsets? padding,
+    EdgeInsets? margin = const EdgeInsets.only(top: kL, right: kL),
+    TabItemType? itemType = TabItemType.stack,
+    TabItemPaintType itemPaintType = TabItemPaintType.foreground,
+    AlignmentGeometry alignment = Alignment.topRight,
+    LayoutBoxConstraints? itemConstraints,
+    ConstraintsType? widthConstraintsType,
+    ConstraintsType? heightConstraintsType,
+    bool? alignmentParent = true,
+  }) {
+    if (itemConstraints == null) {
+      if (widthConstraintsType != null || heightConstraintsType != null) {
+        itemConstraints = LayoutBoxConstraints(
+          widthType: widthConstraintsType,
+          heightType: heightConstraintsType,
+        );
+      }
+    }
+    return TabLayoutData(
+      itemType: itemType,
+      itemPaintType: itemPaintType,
+      padding: padding,
+      margin: margin,
+      alignment: alignment,
+      alignmentParent: alignmentParent ??
+          (itemConstraints?.isMatchParentWidth == true ||
+                  itemConstraints?.isMatchParentHeight == true) ||
+              (itemType != null && itemType != TabItemType.stack),
+      itemConstraints: itemConstraints,
+      stackAnchorIndex: stackAnchorIndex,
       child: this,
     );
   }
