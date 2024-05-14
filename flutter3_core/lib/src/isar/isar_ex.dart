@@ -26,6 +26,7 @@ late Isar $isar;
 /// 默认的[$isar]文件路径
 String defIsarFilePath = "";
 
+/// [registerIsarCollection]
 const _collectionSchemaMap = {};
 
 /// 注册一个在[name]数据中的表[schema]
