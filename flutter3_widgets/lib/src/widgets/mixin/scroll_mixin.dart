@@ -459,6 +459,7 @@ abstract class ScrollContainerRenderBox<
     double width = 0;
     double height = 0;
     final children = getScrollChildren();
+    //debugger();
     final (childMaxWidth, childMaxHeight) = measureChildren(children);
     if (constraints.hasTightWidth) {
       width = constraints.maxWidth;
@@ -517,15 +518,15 @@ abstract class ScrollContainerRenderBox<
     //debugger();
     double? childWidth;
     double? childHeight;
-    if (isChildMatchParent &&
-        constraints.isFixedWidth &&
+    if ((isChildMatchParent || constraints.isFixedWidth) &&
         axis == Axis.vertical) {
-      childWidth = constraints.maxWidth;
+      childWidth = constraints.maxWidth
+          .ensureValid(constraints.minWidth + paddingHorizontal);
     }
-    if (isChildMatchParent &&
-        constraints.isFixedHeight &&
+    if ((isChildMatchParent || constraints.isFixedHeight) &&
         axis == Axis.horizontal) {
-      childHeight = constraints.maxHeight;
+      childHeight = constraints.maxHeight
+          .ensureValid(constraints.minHeight + paddingVertical);
     }
     return measureWrapChildren(
       children,

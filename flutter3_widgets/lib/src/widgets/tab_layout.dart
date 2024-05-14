@@ -302,11 +302,14 @@ class TabLayoutRender extends ScrollContainerRenderBox {
 
   @override
   (double, double) measureChildren(List<RenderBox> children) {
-    var (childMaxWidth, childMaxHeight) = super.measureChildren(children);
+    final BoxConstraints constraints = this.constraints;
+    final (childMaxWidth, childMaxHeight) = super.measureChildren(children);
 
     bool equalWidthOrHeight = false;
-    final parentWidth = constraints.maxWidth - paddingHorizontal;
-    final parentHeight = constraints.maxHeight - paddingVertical;
+    final parentWidth =
+        (constraints.maxWidth - paddingHorizontal).ensureValid(childMaxWidth);
+    final parentHeight =
+        (constraints.maxHeight - paddingVertical).ensureValid(childMaxHeight);
 
     if (autoEqualWidthRange?.matchVersion(children.length) == true) {
       equalWidthOrHeight = true;
@@ -331,19 +334,19 @@ class TabLayoutRender extends ScrollContainerRenderBox {
       //等宽or等高
       final childCount = children.length;
       if (childCount > 0) {
-        final BoxConstraints constraints = this.constraints;
         double? childWidth;
         double? childHeight;
+        //debugger();
 
         if (axis == Axis.horizontal) {
           childWidth = (parentWidth - gap * (childCount - 1)) / childCount;
-          if (isChildMatchParent && constraints.isFixedHeight) {
-            childHeight = constraints.maxHeight;
+          if (isChildMatchParent) {
+            childHeight = constraints.maxHeight.ensureValid(parentHeight);
           }
         } else {
           childHeight = (parentHeight - gap * (childCount - 1)) / childCount;
-          if (isChildMatchParent && constraints.isFixedWidth) {
-            childWidth = constraints.maxWidth;
+          if (isChildMatchParent) {
+            childWidth = constraints.maxWidth.ensureValid(parentWidth);
           }
         }
         return measureWrapChildren(
