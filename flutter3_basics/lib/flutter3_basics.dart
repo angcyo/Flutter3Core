@@ -77,6 +77,7 @@ part 'src/component/stack_list.dart';
 part 'src/component/string_cache.dart';
 part 'src/component/undo_manager.dart';
 part 'src/component/version_matcher.dart';
+part 'src/component/id_gen.dart';
 part 'src/debug/debug.dart';
 part 'src/debug/debug_keys.dart';
 part 'src/debug/navigator_observer_log.dart';
