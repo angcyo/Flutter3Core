@@ -405,7 +405,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
       //开始测量/布局
       for (final child in children) {
         final parentData = child.parentData as TabLayoutParentData;
-        //measure
+        //measure, 计算指示器的宽高
         double startWidth = startRect.width;
         double startHeight = startRect.height;
         double endWidth = endRect.width;
@@ -416,22 +416,40 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         endWidth += parentData.paddingHorizontal;
         endHeight += parentData.paddingVertical;
 
+        //margin
+        Offset marginOffset = Offset(
+            parentData.marginLeft - parentData.marginRight,
+            parentData.marginTop - parentData.marginBottom);
+        if (axis == Axis.horizontal) {
+          startWidth -= parentData.marginHorizontal;
+          endWidth -= parentData.marginHorizontal;
+        } else {
+          startHeight -= parentData.marginVertical;
+          endHeight -= parentData.marginVertical;
+        }
+
+        //--
         if (parentData.itemConstraints?.isMatchParentWidth == true) {
           if (axis == Axis.vertical && parentData.alignmentParent == true) {
-            startWidth = size.width;
+            startWidth =
+                size.width - paddingHorizontal - parentData.marginHorizontal;
             endWidth = startWidth;
           }
         } else if (parentData.itemConstraints?.isFixedWidth == true) {
-          startWidth = parentData.itemConstraints!.maxWidth;
+          startWidth =
+              parentData.itemConstraints!.maxWidth.ensureValid(startWidth);
           endWidth = startWidth;
         }
+        //--
         if (parentData.itemConstraints?.isMatchParentHeight == true) {
           if (axis == Axis.horizontal && parentData.alignmentParent == true) {
-            startHeight = size.height;
+            startHeight =
+                size.height - paddingVertical - parentData.marginVertical;
             endHeight = startHeight;
           }
         } else if (parentData.itemConstraints?.isFixedHeight == true) {
-          startHeight = parentData.itemConstraints!.maxHeight;
+          startHeight =
+              parentData.itemConstraints!.maxHeight.ensureValid(startHeight);
           endHeight = startHeight;
         }
 
@@ -568,6 +586,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
           }
         }
 
+        //debugger();
         child.layout(
           BoxConstraints.tightFor(
             width: width,
@@ -577,7 +596,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         );
 
         //debugger();
-        parentData.offset = offset;
+        parentData.offset = offset + marginOffset;
 
         //滚动到居中位置
         final scrollController = this.scrollController;
@@ -712,6 +731,7 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
   final LayoutBoxConstraints? itemConstraints;
   final bool alignmentParent;
   final bool enableIndicatorFlow;
+  final EdgeInsets? margin;
 
   const TabLayoutData({
     super.key,
@@ -720,6 +740,7 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
     this.itemConstraints,
     this.itemPaintType = TabItemPaintType.background,
     this.padding,
+    this.margin,
     this.alignmentParent = true,
     this.enableIndicatorFlow = false,
     this.alignment = Alignment.center,
@@ -735,6 +756,7 @@ class TabLayoutData extends ParentDataWidget<TabLayoutParentData> {
       //debugger();
       parentData
         ..padding = padding
+        ..margin = margin
         ..itemType = itemType
         ..alignment = alignment
         ..itemConstraints = itemConstraints
@@ -782,6 +804,22 @@ class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {
 
   double get paddingVertical => (padding?.vertical ?? 0);
 
+  /// 指示器布局后, 需要额外的偏移距离
+  /// 如果是[ConstraintsType.matchParent]的测量方式, 则margin会影响大小
+  EdgeInsets? margin;
+
+  double get marginHorizontal => (margin?.horizontal ?? 0);
+
+  double get marginVertical => (margin?.vertical ?? 0);
+
+  double get marginLeft => (margin?.left ?? 0);
+
+  double get marginTop => (margin?.top ?? 0);
+
+  double get marginRight => (margin?.right ?? 0);
+
+  double get marginBottom => (margin?.bottom ?? 0);
+
   /// 获取当前的约束
   BoxConstraints getItemConstraints(Size parentSize) {
     final itemConstraints = this.itemConstraints;
@@ -793,6 +831,7 @@ class TabLayoutParentData extends ContainerBoxParentData<RenderBox> {
       return itemConstraints.constraintsWithParent(
         parentSize,
         padding: padding,
+        margin: margin,
       );
     }
     return BoxConstraints(
@@ -810,21 +849,34 @@ extension TabLayoutEx on Widget {
     TabItemType? itemType,
     TabItemPaintType itemPaintType = TabItemPaintType.background,
     EdgeInsets? padding,
+    EdgeInsets? margin,
     AlignmentGeometry alignment = Alignment.center,
     LayoutBoxConstraints? itemConstraints,
+    ConstraintsType? widthConstraintsType,
+    ConstraintsType? heightConstraintsType,
     bool alignmentParent = true,
     bool enableIndicatorFlow = false,
-  }) =>
-      TabLayoutData(
-        itemType: itemType,
-        itemPaintType: itemPaintType,
-        padding: padding,
-        alignment: alignment,
-        alignmentParent: alignmentParent,
-        enableIndicatorFlow: enableIndicatorFlow,
-        itemConstraints: itemConstraints,
-        child: this,
-      );
+  }) {
+    if (itemConstraints == null) {
+      if (widthConstraintsType != null || heightConstraintsType != null) {
+        itemConstraints = LayoutBoxConstraints(
+          widthType: widthConstraintsType,
+          heightType: heightConstraintsType,
+        );
+      }
+    }
+    return TabLayoutData(
+      itemType: itemType,
+      itemPaintType: itemPaintType,
+      padding: padding,
+      margin: margin,
+      alignment: alignment,
+      alignmentParent: alignmentParent,
+      enableIndicatorFlow: enableIndicatorFlow,
+      itemConstraints: itemConstraints,
+      child: this,
+    );
+  }
 }
 
 //region ---TabLayoutPageViewWrap---
