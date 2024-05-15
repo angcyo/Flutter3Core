@@ -22,9 +22,9 @@ final class CoreKeys {
 
 /// CoreKeys的实例
 @globalInstance
-final coreKeys = CoreKeys._();
+final $coreKeys = CoreKeys._();
 
 /// [isDebug]
 /// [CoreKeys.isDebugFlag]
 bool get isDebugFlag =>
-    GlobalConfig.def.isDebugFlagFn?.call() ?? coreKeys.isDebugFlag;
+    GlobalConfig.def.isDebugFlagFn?.call() ?? $coreKeys.isDebugFlag;
