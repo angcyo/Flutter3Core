@@ -217,6 +217,14 @@ double get screenWidth => platformMediaQueryData.size.width;
 @dp
 double get screenHeight => platformMediaQueryData.size.height;
 
+/// 获取顶部安全区域
+@dp
+double get screenStatusBar => platformMediaQueryData.padding.top;
+
+/// 获取底部安全区域
+@dp
+double get screenBottomBar => platformMediaQueryData.padding.bottom;
+
 /// 屏幕像素密度, 1 dp = xx px
 double get devicePixelRatio => platformMediaQueryData.devicePixelRatio;
 

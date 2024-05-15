@@ -1659,3 +1659,12 @@ extension ListEx<T> on List<T> {
 }
 
 //endregion List 扩展
+
+extension AxisDirectionEx on AxisDirection {
+  /// 是否是水平方向
+  bool get isHorizontal =>
+      this == AxisDirection.left || this == AxisDirection.right;
+
+  /// 是否是垂直方向
+  bool get isVertical => this == AxisDirection.up || this == AxisDirection.down;
+}

@@ -30,6 +30,7 @@ export 'package:list_wheel_scroll_view_nls/list_wheel_scroll_view_nls.dart';
 export 'package:sliver_tools/sliver_tools.dart';
 
 export 'src/dialog/dialog.dart';
+export 'src/popup/popup.dart';
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';
 export 'src/pub/swiper/transformer_page_view/transformer_page_view.dart';

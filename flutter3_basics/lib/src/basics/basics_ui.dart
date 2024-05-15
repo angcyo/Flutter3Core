@@ -322,7 +322,8 @@ extension WidgetEx on Widget {
   /// 为child添加一个key
   /// [KeyedSubtree]
   /// [repaintBoundary]
-  Widget childKeyed(Key? key) => KeyedSubtree(key: key, child: this);
+  Widget childKeyed(Key? key) =>
+      key == null ? this : KeyedSubtree(key: key, child: this);
 
   /// [Tooltip] 提示
   Widget tooltip(String? tip, {InlineSpan? richMessage}) => tip == null
@@ -1698,7 +1699,7 @@ extension RenderObjectEx on RenderObject {
   /// [RenderObjectEx.getGlobalLocation]
   Rect? getGlobalBounds([
     RenderObject? ancestor,
-    Offset point = Offset.zero,
+    Offset? point,
   ]) {
     var offset = getGlobalLocation(ancestor, point);
     var size = getSizeOrNull();
@@ -1717,11 +1718,14 @@ extension RenderObjectEx on RenderObject {
   /// [RenderBox.globalToLocal]
   Offset? getGlobalLocation([
     RenderObject? ancestor,
-    Offset point = Offset.zero,
+    Offset? point,
   ]) {
     final box = this;
     if (box is RenderBox) {
-      final location = box.localToGlobal(point, ancestor: ancestor);
+      final location = box.localToGlobal(
+        point ?? box.paintBounds.topLeft,
+        ancestor: ancestor,
+      );
       return location;
     }
     return null;

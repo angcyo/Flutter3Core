@@ -14,6 +14,7 @@ class GradientButton extends StatelessWidget {
     this.colors,
     required this.onTap,
     required this.child,
+    this.onContextTap,
     this.enable,
     this.padding,
     this.textStyle,
@@ -36,6 +37,7 @@ class GradientButton extends StatelessWidget {
     this.color,
     this.colors,
     required this.onTap,
+    this.onContextTap,
     required this.child,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kS, horizontal: kM),
@@ -60,6 +62,7 @@ class GradientButton extends StatelessWidget {
     this.color,
     this.colors,
     required this.child,
+    this.onContextTap,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
@@ -82,6 +85,7 @@ class GradientButton extends StatelessWidget {
     this.color,
     this.colors,
     required this.onTap,
+    this.onContextTap,
     required this.child,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
@@ -137,6 +141,7 @@ class GradientButton extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   final GestureTapCallback? onTap;
+  final GestureContextTapCallback? onContextTap;
   final ValueChanged<bool>? onHighlightChanged;
 
   /// [BoxConstraints.minWidth]
@@ -165,7 +170,8 @@ class GradientButton extends StatelessWidget {
             : [color!, color!]);
     final radius = borderRadius ??
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
-    bool disabled = enable == null ? onTap == null : !enable!;
+    bool disabled =
+        enable == null ? (onTap == null && onContextTap == null) : !enable!;
     return DecoratedBox(
       decoration: decoration ??
           BoxDecoration(
@@ -191,7 +197,12 @@ class GradientButton extends StatelessWidget {
             splashColor: splashColor ?? colors.lastOrNull ?? color,
             highlightColor: Colors.transparent,
             onHighlightChanged: onHighlightChanged,
-            onTap: disabled ? null : onTap,
+            onTap: disabled
+                ? null
+                : () {
+                    onTap?.call();
+                    onContextTap?.call(context);
+                  },
             child: Padding(
               padding: padding ?? globalTheme.buttonPadding,
               child: DefaultTextStyle(
