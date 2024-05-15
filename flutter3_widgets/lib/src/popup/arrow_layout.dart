@@ -173,3 +173,196 @@ class _ArrowLayoutState extends State<ArrowLayout> {
     );
   }
 }
+
+//---
+
+/// 用来计算箭头的方向, 和偏移
+mixin ArrowDirectionMixin {
+  static const double _margin = 10;
+  static final Rect _viewportRect = Rect.fromLTWH(
+    _margin,
+    screenStatusBar + _margin,
+    screenWidth - _margin * 2,
+    screenHeight - screenStatusBar - screenBottomBar - _margin * 2,
+  );
+
+  double _maxHeight = _viewportRect.height;
+  double _arrowDirectionOffset = 0;
+  double _scaleAlignDx = 0.5;
+  double _scaleAlignDy = 0.5;
+  double? _bottom;
+  double? _top;
+  double? _left;
+  double? _right;
+
+  double arrowDirectionMinOffset = 15;
+
+  /// 指定箭头方向
+  AxisDirection? arrowDirection;
+
+  /// 获取元素的位置信息
+  /// 在路由中和在overlay中, 获取的位置信息不一样
+  Rect? getGlobalKeyChildRect(GlobalKey key) {
+    final currentContext = key.currentContext;
+    final renderBox = currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return null;
+    final offset = renderBox.localToGlobal(renderBox.paintBounds.topLeft);
+    //在路由中, offset返回为0
+    //在overlay中, offset返回非0
+    return offset & renderBox.paintBounds.size;
+  }
+
+  /// 设置箭头的方向
+  void applyAutoSetArrowDirection(bool autoArrowDirection, Rect anchorRect) {
+    if (autoArrowDirection && arrowDirection == null) {
+      //如果锚点在屏幕的上半部分, 则箭头指向下
+      if (anchorRect.center.dy < screenHeight / 2) {
+        arrowDirection = AxisDirection.up;
+      } else {
+        arrowDirection = AxisDirection.down;
+      }
+    }
+  }
+
+  // Calculate the position of the popover
+  void calculateChildOffset({required Rect anchorRect, Rect? childRect}) {
+    if (childRect == null) return;
+
+    // Calculate the vertical position of the popover
+    final topHeight = anchorRect.top - _viewportRect.top;
+    final bottomHeight = _viewportRect.bottom - anchorRect.bottom;
+    final maximum = max(topHeight, bottomHeight);
+    _maxHeight = childRect.height > maximum ? maximum : childRect.height;
+
+    //debugger();
+    if (arrowDirection == null) {
+      //未指定方向
+      if (_maxHeight > bottomHeight) {
+        // Above the target
+        _bottom = screenHeight - anchorRect.top;
+        arrowDirection ??= AxisDirection.down;
+        _scaleAlignDy = 1;
+      } else {
+        // Below the target
+        _top = anchorRect.bottom;
+        arrowDirection ??= AxisDirection.up;
+        _scaleAlignDy = 0;
+      }
+
+      // Calculate the vertical position of the popover
+      final left = anchorRect.center.dx - childRect.center.dx;
+      final right = left + childRect.width;
+      if (right > _viewportRect.right) {
+        // at right
+        _right = _margin;
+      } else {
+        // at left
+        _left = left < _margin ? _margin : left;
+      }
+    } else {
+      //指定了方向
+      if (arrowDirection! == AxisDirection.up ||
+          arrowDirection! == AxisDirection.down) {
+        final left = anchorRect.center.dx - childRect.center.dx;
+        final right = left + childRect.width;
+        if (right > _viewportRect.right) {
+          // at right
+          _right = _margin;
+        } else {
+          // at left
+          _left = left < _margin ? _margin : left;
+        }
+
+        if (arrowDirection! == AxisDirection.up) {
+          _top = anchorRect.bottom;
+          _scaleAlignDy = 0;
+        } else {
+          _bottom = screenHeight - anchorRect.top;
+          _scaleAlignDy = 1;
+        }
+      } else {
+        //debugger();
+        final top = anchorRect.center.dy - childRect.center.dy;
+        final bottom = top + childRect.height;
+        if (bottom > _viewportRect.bottom) {
+          // at bottom
+          _bottom = _margin;
+        } else {
+          // at top
+          _top = top < _margin ? _margin : top;
+        }
+
+        if (arrowDirection! == AxisDirection.left) {
+          _left = anchorRect.right;
+          _scaleAlignDx = 0;
+        } else {
+          _right = screenWidth - anchorRect.left;
+          _scaleAlignDx = 1;
+        }
+      }
+    }
+  }
+
+  // Calculate the horizontal position of the arrow
+  void calculateArrowOffset({
+    required Rect anchorRect,
+    Rect? arrowRect,
+    Rect? childRect,
+  }) {
+    //debugger();
+    if (childRect == null || arrowRect == null) return;
+
+    if (arrowDirection == null ||
+        arrowDirection == AxisDirection.down ||
+        arrowDirection == AxisDirection.up) {
+      //箭头需要水平偏移
+
+      // Calculate the distance from the left side of the screen based on the middle position of the target and the popover layer
+      var leftEdge = anchorRect.center.dx - childRect.center.dx;
+      final rightEdge = leftEdge + childRect.width;
+      leftEdge = leftEdge < _viewportRect.left ? _viewportRect.left : leftEdge;
+      // If it exceeds the screen, subtract the excess part
+      if (rightEdge > _viewportRect.right) {
+        leftEdge -= rightEdge - _viewportRect.right;
+      }
+
+      final center = anchorRect.center.dx - leftEdge - arrowRect.center.dx;
+      // Prevent the arrow from extending beyond the padding of the popover
+      if (center + arrowRect.center.dx >
+          childRect.width - arrowDirectionMinOffset) {
+        _arrowDirectionOffset = center - arrowDirectionMinOffset;
+      } else if (center < arrowDirectionMinOffset) {
+        _arrowDirectionOffset = arrowDirectionMinOffset;
+      } else {
+        _arrowDirectionOffset = center;
+      }
+      _scaleAlignDx =
+          (_arrowDirectionOffset + arrowRect.center.dx) / childRect.width;
+    } else {
+      //箭头需要垂直偏移
+      //debugger();
+
+      // Calculate the distance from the left side of the screen based on the middle position of the target and the popover layer
+      var topEdge = anchorRect.center.dy - childRect.center.dy;
+      final bottomEdge = topEdge + childRect.height;
+      topEdge = topEdge < _viewportRect.top ? _viewportRect.top : topEdge;
+      // If it exceeds the screen, subtract the excess part
+      if (bottomEdge > _viewportRect.bottom) {
+        topEdge -= bottomEdge - _viewportRect.bottom;
+      }
+
+      final center = anchorRect.center.dy - topEdge - arrowRect.center.dy;
+      // Prevent the arrow from extending beyond the padding of the popover
+      if (center + arrowRect.center.dy >
+          childRect.height - arrowDirectionMinOffset) {
+        _arrowDirectionOffset = center - arrowDirectionMinOffset;
+      } else if (center < arrowDirectionMinOffset) {
+        _arrowDirectionOffset = arrowDirectionMinOffset;
+      } else {
+        _arrowDirectionOffset = center;
+      }
+      _scaleAlignDy =
+          (_arrowDirectionOffset + arrowRect.center.dy) / childRect.height;
+    }
+  }
+}

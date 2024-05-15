@@ -254,14 +254,19 @@ extension _StreamNewStreamWithInitialValue<T> on Stream<T> {
 mixin StreamSubscriptionMixin<T extends StatefulWidget> on State<T> {
   final List<StreamSubscription> _streamSubscriptions = [];
 
-  hookStreamSubscription(StreamSubscription subscription) {
+  /// 在[dispose]时, 取消所有的[StreamSubscription]
+  void hookStreamSubscription(StreamSubscription subscription) {
     _streamSubscriptions.add(subscription);
   }
 
   @override
   void dispose() {
     for (var element in _streamSubscriptions) {
-      element.cancel();
+      try {
+        element.cancel();
+      } catch (e) {
+        printError(e);
+      }
     }
     _streamSubscriptions.clear();
     super.dispose();

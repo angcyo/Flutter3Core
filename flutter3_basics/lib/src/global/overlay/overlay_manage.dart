@@ -25,3 +25,25 @@ mixin OverlayManage<Entry extends OverlayEntry> on Diagnosticable {
     _overlayEntries.remove(key);
   }
 }
+
+mixin OverlayManageMixin<T extends StatefulWidget> on State<T> {
+  final List<OverlayEntry> _overlayEntryList = [];
+
+  /// 在[dispose]时, 移除所有的[OverlayEntry]
+  void hookOverlayEntry(OverlayEntry entry) {
+    _overlayEntryList.add(entry);
+  }
+
+  @override
+  void dispose() {
+    for (var entry in _overlayEntryList) {
+      try {
+        entry.remove();
+      } catch (e) {
+        printError(e);
+      }
+    }
+    _overlayEntryList.clear();
+    super.dispose();
+  }
+}
