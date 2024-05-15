@@ -21,6 +21,9 @@ class ArrowLayout extends StatefulWidget {
   /// 让箭头指向锚点中心位置
   final double arrowDirectionOffset;
 
+  /// 箭头相对于内容的偏移
+  final double arrowOffsetContent;
+
   /// 箭头的大小
   final Size arrowSize;
 
@@ -44,7 +47,10 @@ class ArrowLayout extends StatefulWidget {
   /// 背景颜色
   final Color? backgroundColor;
 
+  /// 内容的padding
   final EdgeInsets? padding;
+
+  /// 与锚点之间/屏幕之间的间距
   final EdgeInsets? margin;
 
   const ArrowLayout({
@@ -57,10 +63,11 @@ class ArrowLayout extends StatefulWidget {
     Size? arrowSize,
     this.arrowDirection = AxisDirection.down,
     this.arrowDirectionOffset = 0,
+    this.arrowOffsetContent = 2,
     this.wrapChild = true,
     this.backgroundColor = Colors.white,
     this.padding = const EdgeInsets.all(kH),
-    this.margin = const EdgeInsets.all(15),
+    this.margin = const EdgeInsets.all(kX),
   }) : arrowSize = arrowSize ??
             (arrowDirection == AxisDirection.up ||
                     arrowDirection == AxisDirection.down
@@ -81,25 +88,30 @@ class _ArrowLayoutState extends State<ArrowLayout> {
   Widget build(BuildContext context) {
     final arrowDirection = widget.arrowDirection;
     // 箭头相对于内容还需要的偏移
-    double arrowOffsetContent = 0;
-    switch (widget.arrowDirection) {
-      case AxisDirection.up:
-        arrowOffsetContent = (widget.margin?.top ?? widget.arrowSize.height) -
-            widget.arrowSize.height;
-        break;
-      case AxisDirection.down:
-        arrowOffsetContent =
-            (widget.margin?.bottom ?? widget.arrowSize.height) -
-                widget.arrowSize.height;
-        break;
-      case AxisDirection.left:
-        arrowOffsetContent = (widget.margin?.left ?? widget.arrowSize.width) -
-            widget.arrowSize.width;
-        break;
-      case AxisDirection.right:
-        arrowOffsetContent = (widget.margin?.right ?? widget.arrowSize.width) -
-            widget.arrowSize.width;
-        break;
+    double arrowOffsetContent = widget.arrowOffsetContent;
+    if (widget.wrapChild) {
+      switch (widget.arrowDirection) {
+        case AxisDirection.up:
+          arrowOffsetContent +=
+              (widget.margin?.top ?? widget.arrowSize.height) -
+                  widget.arrowSize.height;
+          break;
+        case AxisDirection.down:
+          arrowOffsetContent +=
+              (widget.margin?.bottom ?? widget.arrowSize.height) -
+                  widget.arrowSize.height;
+          break;
+        case AxisDirection.left:
+          arrowOffsetContent +=
+              (widget.margin?.left ?? widget.arrowSize.width) -
+                  widget.arrowSize.width;
+          break;
+        case AxisDirection.right:
+          arrowOffsetContent +=
+              (widget.margin?.right ?? widget.arrowSize.width) -
+                  widget.arrowSize.width;
+          break;
+      }
     }
 
     return Stack(
