@@ -44,6 +44,8 @@ class ArrowLayout extends StatefulWidget {
   /// 默认为true, 会自动添加一层[Container], 有阴影/背景等效果
   final bool wrapChild;
 
+  final double minWidth;
+
   /// 背景颜色
   final Color? backgroundColor;
 
@@ -65,6 +67,7 @@ class ArrowLayout extends StatefulWidget {
     this.arrowDirectionOffset = 0,
     this.arrowOffsetContent = 2,
     this.wrapChild = true,
+    this.minWidth = kMinHeight,
     this.backgroundColor = Colors.white,
     this.padding = const EdgeInsets.all(kH),
     this.margin = const EdgeInsets.all(kX),
@@ -125,7 +128,7 @@ class _ArrowLayoutState extends State<ArrowLayout> {
                       left: arrowDirection == AxisDirection.right ? 0 : null,
                       right: arrowDirection == AxisDirection.left ? 0 : null,
                     ),
-                    constraints: const BoxConstraints(minWidth: 50),
+                    constraints: BoxConstraints(minWidth: widget.minWidth),
                     decoration: BoxDecoration(
                       color: widget.backgroundColor,
                       borderRadius: BorderRadius.circular(10),

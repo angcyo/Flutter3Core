@@ -28,7 +28,6 @@ extension PopupEx on BuildContext {
     Color? barriersColor,
     AxisDirection? arrowDirection,
   }) async {
-    assert(anchorRect != null || anchorChild != null);
     anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds();
     anchorRect ??= findRenderObject()?.getGlobalBounds();
     return Navigator.of(this).push(

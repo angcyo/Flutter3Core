@@ -24,12 +24,25 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   /// 否则在不指定[arrowDirection]的情况下, 会根据剩余空间的大小, 自动设置箭头的方向
   final bool autoArrowDirection;
 
-  @override
-  double arrowDirectionMinOffset;
+  AxisDirection? _arrowDirection;
 
-  /// 指定箭头方向
   @override
-  AxisDirection? arrowDirection;
+  AxisDirection? get arrowDirection => _arrowDirection;
+
+  @override
+  set arrowDirection(AxisDirection? value) {
+    _arrowDirection = value;
+  }
+
+  double _arrowDirectionMinOffset = 15;
+
+  @override
+  double get arrowDirectionMinOffset => _arrowDirectionMinOffset;
+
+  @override
+  set arrowDirectionMinOffset(double value) {
+    _arrowDirectionMinOffset = value;
+  }
 
   ArrowPopupRoute({
     super.settings,
@@ -42,9 +55,10 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     required this.showArrow,
     this.autoArrowDirection = true,
     this.barriersColor,
-    this.arrowDirectionMinOffset = 15,
-    this.arrowDirection, //可以强制指定箭头方向
-  });
+    double arrowDirectionMinOffset = 15,
+    AxisDirection? arrowDirection, //可以强制指定箭头方向
+  })  : _arrowDirectionMinOffset = arrowDirectionMinOffset,
+        _arrowDirection = arrowDirection;
 
   @override
   Color? get barrierColor => barriersColor ?? Colors.black.withOpacity(0.1);

@@ -1067,6 +1067,15 @@ extension RectEx on Rect {
       height + t + b,
     );
   }
+
+  /// dp单位的坐标, 转换成mm单位的坐标
+  @mm
+  Rect toRectMM() => Rect.fromLTRB(
+        left.toMmFromDp(),
+        top.toMmFromDp(),
+        right.toMmFromDp(),
+        bottom.toMmFromDp(),
+      );
 }
 
 extension SizeEx on Size {
