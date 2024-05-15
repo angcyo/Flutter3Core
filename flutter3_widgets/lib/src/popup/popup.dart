@@ -59,6 +59,10 @@ extension PopupEx on BuildContext {
     bool enablePassEvent = true,
     ArrowPopupOverlayController? controller,
   }) {
+    if (controller != null && !controller.canResponse) {
+      //不能响应
+      return controller.overlayEntry!;
+    }
     assert(anchorRect != null || anchorChild != null);
     anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds();
     anchorRect ??= findRenderObject()?.getGlobalBounds();
