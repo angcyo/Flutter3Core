@@ -89,9 +89,9 @@ class ArrowPopupRoute extends PopupRoute<void> {
     if (autoArrowDirection && arrowDirection == null) {
       //如果锚点在屏幕的上半部分, 则箭头指向下
       if (anchorRect.center.dy < screenHeight / 2) {
-        arrowDirection = AxisDirection.down;
-      } else {
         arrowDirection = AxisDirection.up;
+      } else {
+        arrowDirection = AxisDirection.down;
       }
     }
   }
