@@ -222,7 +222,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     WidgetList slivers;
     final controller = widget.controller;
     if (controller == null ||
-        controller.adapterStateValue.value == WidgetState.none) {
+        controller.adapterStateValue.value == WidgetBuildState.none) {
       //需要显示内容
       slivers = _buildTileList(context);
     } else {

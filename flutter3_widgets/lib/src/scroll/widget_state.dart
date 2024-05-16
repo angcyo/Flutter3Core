@@ -9,7 +9,7 @@ part of '../../flutter3_widgets.dart';
 /// [WidgetBuilder]
 typedef WidgetStateBuilder = Widget Function(
   BuildContext context,
-  WidgetState widgetState,
+  WidgetBuildState widgetState,
   dynamic stateData,
 );
 
@@ -23,9 +23,9 @@ typedef WidgetWrapBuilder = Widget Function(BuildContext context, Widget child);
 /// 返回true表示拦截改变.
 /// 返回false表示允许改变, 并且会更新当前的状态
 typedef RequestChangeStateFn = bool Function(BuildContext context,
-    WidgetState oldWidgetState, WidgetState newWidgetState);
+    WidgetBuildState oldWidgetState, WidgetBuildState newWidgetState);
 
-enum WidgetState {
+enum WidgetBuildState {
   /// 预加载状态, 会显示加载界面, 但是不会触发加载回调
   preLoading,
 
@@ -50,10 +50,10 @@ enum WidgetState {
 
   /// 是否是加载状态
   bool get isLoading =>
-      this == WidgetState.preLoading || this == WidgetState.loading;
+      this == WidgetBuildState.preLoading || this == WidgetBuildState.loading;
 
   /// 是否是内容状态
-  bool get isNoneState => this == WidgetState.none;
+  bool get isNoneState => this == WidgetBuildState.none;
 }
 
 /*mixin WidgetStateMixin {
@@ -82,9 +82,9 @@ enum WidgetState {
   }
 }*/
 
-/// 为child提供一个初始化的[WidgetState]状态
+/// 为child提供一个初始化的[WidgetBuildState]状态
 class WidgetStateScope extends InheritedWidget {
-  final WidgetState? widgetState;
+  final WidgetBuildState? widgetState;
 
   const WidgetStateScope({
     super.key,
@@ -92,8 +92,8 @@ class WidgetStateScope extends InheritedWidget {
     required this.widgetState,
   });
 
-  /// 获取一个初始化的[WidgetState]状态
-  static WidgetState? of(BuildContext context) {
+  /// 获取一个初始化的[WidgetBuildState]状态
+  static WidgetBuildState? of(BuildContext context) {
     return context
         .getInheritedWidgetOfExactType<WidgetStateScope>()
         ?.widgetState;
@@ -105,11 +105,11 @@ class WidgetStateScope extends InheritedWidget {
 }
 
 extension WidgetStateEx on Widget {
-  /// 为[child]提供一个初始化的[WidgetState]状态
-  Widget widgetState({WidgetState? widgetState, bool? loading}) {
+  /// 为[child]提供一个初始化的[WidgetBuildState]状态
+  Widget widgetState({WidgetBuildState? widgetState, bool? loading}) {
     //debugger();
     if (widgetState == null && loading != null) {
-      widgetState = loading ? WidgetState.loading : WidgetState.preLoading;
+      widgetState = loading ? WidgetBuildState.loading : WidgetBuildState.preLoading;
     }
     return WidgetStateScope(
       widgetState: widgetState,
@@ -118,14 +118,14 @@ extension WidgetStateEx on Widget {
   }
 }
 
-/// [WidgetState]状态控制
+/// [WidgetBuildState]状态控制
 class WidgetStateWidget extends StatefulWidget {
   /// 当前的状态数据
   /// 不同状态下,携带的数据
   final dynamic stateData;
 
   /// 当前的状态
-  final WidgetState widgetState;
+  final WidgetBuildState widgetState;
 
   /// 无数据/无更多数据时, 显示的字符串
   final GenerateString? noDataStringGenerate;
@@ -141,13 +141,13 @@ class WidgetStateWidget extends StatefulWidget {
 
   //---
 
-  /// 细分的[WidgetState.loading]状态
+  /// 细分的[WidgetBuildState.loading]状态
   final WidgetStateBuilder? buildLoadingWidgetState;
 
-  /// 细分的[WidgetState.empty]状态
+  /// 细分的[WidgetBuildState.empty]状态
   final WidgetStateBuilder? buildEmptyWidgetStateWidget;
 
-  /// 细分的[WidgetState.error]状态
+  /// 细分的[WidgetBuildState.error]状态
   final WidgetStateBuilder? buildErrorWidgetStateWidget;
 
   const WidgetStateWidget({
@@ -170,11 +170,11 @@ class WidgetStateWidget extends StatefulWidget {
 class WidgetStateWidgetState extends State<WidgetStateWidget>
     with StateWidgetMixin {
   /// 更新后的状态
-  WidgetState? _updateState;
+  WidgetBuildState? _updateState;
 
-  WidgetState get _buildState => _updateState ?? widget.widgetState;
+  WidgetBuildState get _buildState => _updateState ?? widget.widgetState;
 
-  /// [WidgetState.loading]状态
+  /// [WidgetBuildState.loading]状态
   @override
   Widget _buildLoadingWidget(BuildContext context,
       [dynamic data, double? progressValue]) {
@@ -183,7 +183,7 @@ class WidgetStateWidgetState extends State<WidgetStateWidget>
         super._buildLoadingWidget(context, widget.stateData, progressValue);
   }
 
-  /// [WidgetState.empty]状态
+  /// [WidgetBuildState.empty]状态
   @override
   Widget _buildEmptyWidget(BuildContext context, [dynamic data]) {
     return (widget.buildEmptyWidgetStateWidget ?? widget.buildWidgetStateWidget)
@@ -191,7 +191,7 @@ class WidgetStateWidgetState extends State<WidgetStateWidget>
         super._buildEmptyWidget(context);
   }
 
-  /// [WidgetState.error]状态
+  /// [WidgetBuildState.error]状态
   @override
   Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
     return (widget.buildErrorWidgetStateWidget ?? widget.buildWidgetStateWidget)
@@ -210,7 +210,7 @@ class WidgetStateWidgetState extends State<WidgetStateWidget>
   }
 
   @callPoint
-  void updateWidgetState(WidgetState state) {
+  void updateWidgetState(WidgetBuildState state) {
     _updateState = state;
     updateState();
   }
@@ -233,7 +233,7 @@ class WidgetStateWidgetState extends State<WidgetStateWidget>
   }
 }
 
-/// 情感图[WidgetState]状态控制
+/// 情感图[WidgetBuildState]状态控制
 class AdapterStateWidget extends WidgetStateWidget {
   const AdapterStateWidget({
     super.key,
@@ -249,7 +249,7 @@ class AdapterStateWidget extends WidgetStateWidget {
 }
 
 class AdapterStateWidgetState extends WidgetStateWidgetState {
-  /// [WidgetState.loading]状态
+  /// [WidgetBuildState.loading]状态
   @override
   Widget _buildLoadingWidget(BuildContext context,
       [dynamic data, double? progressValue]) {
@@ -257,7 +257,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
         .loadingIndicatorBuilder(context, data, progressValue);
   }
 
-  /// [WidgetState.empty]状态
+  /// [WidgetBuildState.empty]状态
   /// @override
   @override
   Widget _buildEmptyWidget(BuildContext context, [dynamic data]) {
@@ -286,7 +286,7 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
     return result.align(Alignment.center).matchParent();
   }
 
-  /// [WidgetState.error]状态
+  /// [WidgetBuildState.error]状态
   @override
   Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
     final globalTheme = GlobalTheme.of(context);
@@ -315,16 +315,16 @@ class AdapterStateWidgetState extends WidgetStateWidgetState {
     return result.align(Alignment.center).matchParent().click(() {
       //点击重试
       if (widget.requestChangeStateFn
-              ?.call(context, _buildState, WidgetState.loading) ==
+              ?.call(context, _buildState, WidgetBuildState.loading) ==
           false) {
-        _updateState = WidgetState.loading;
+        _updateState = WidgetBuildState.loading;
         updateState();
       }
     });
   }
 }
 
-/// 加载更多[WidgetState]状态控制
+/// 加载更多[WidgetBuildState]状态控制
 class LoadMoreStateWidget extends WidgetStateWidget {
   const LoadMoreStateWidget({
     super.key,
@@ -345,7 +345,7 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
     return _buildLoadingWidget(context);
   }
 
-  /// [WidgetState.loading]状态
+  /// [WidgetBuildState.loading]状态
   @override
   Widget _buildLoadingWidget(BuildContext context,
       [dynamic data, double? progressValue]) {
@@ -355,7 +355,7 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
         .paddingAll(kH);
   }
 
-  /// [WidgetState.empty]状态
+  /// [WidgetBuildState.empty]状态
   /// @override
   @override
   Widget _buildEmptyWidget(BuildContext context, [dynamic data]) {
@@ -375,7 +375,7 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
         constraints: const BoxConstraints(minHeight: kInteractiveHeight));
   }
 
-  /// [WidgetState.error]状态
+  /// [WidgetBuildState.error]状态
   @override
   Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
     final globalTheme = GlobalTheme.of(context);
@@ -397,9 +397,9 @@ class LoadMoreStateWidgetState extends WidgetStateWidgetState {
         .click(() {
       //点击重试
       if (widget.requestChangeStateFn
-              ?.call(context, _buildState, WidgetState.loading) ==
+              ?.call(context, _buildState, WidgetBuildState.loading) ==
           false) {
-        _updateState = WidgetState.loading;
+        _updateState = WidgetBuildState.loading;
         updateState();
       }
     });
@@ -411,37 +411,37 @@ mixin StateWidgetMixin {
   /// 根据传入的状态, 构建对应的[Widget]
   /// [otherBuilder] 用来构建其他未处理状态的[Widget]
   ///
-  /// [WidgetState]
+  /// [WidgetBuildState]
   @entryPoint
   Widget? buildStateWidget(
-      BuildContext context, WidgetState state, dynamic stateData,
+      BuildContext context, WidgetBuildState state, dynamic stateData,
       [WidgetStateBuilder? otherBuilder]) {
     switch (state) {
-      case WidgetState.preLoading:
-      case WidgetState.loading:
+      case WidgetBuildState.preLoading:
+      case WidgetBuildState.loading:
         return _buildLoadingWidget(context);
-      case WidgetState.empty:
+      case WidgetBuildState.empty:
         return _buildEmptyWidget(context);
-      case WidgetState.error:
+      case WidgetBuildState.error:
         return _buildErrorWidget(context, stateData);
       default:
         return otherBuilder?.call(context, state, stateData);
     }
   }
 
-  /// [WidgetState.loading]状态
+  /// [WidgetBuildState.loading]状态
   Widget _buildLoadingWidget(BuildContext context,
       [dynamic data, double? progressValue]) {
     return GlobalConfig.of(context)
         .loadingIndicatorBuilder(context, data, progressValue);
   }
 
-  /// [WidgetState.empty]状态
+  /// [WidgetBuildState.empty]状态
   Widget _buildEmptyWidget(BuildContext context, [dynamic data]) {
     return GlobalConfig.of(context).emptyPlaceholderBuilder(context, data);
   }
 
-  /// [WidgetState.error]状态
+  /// [WidgetBuildState.error]状态
   Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
     return GlobalConfig.of(context).errorPlaceholderBuilder(context, error);
   }

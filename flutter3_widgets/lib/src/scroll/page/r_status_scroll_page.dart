@@ -112,7 +112,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
 
     if (statusInfo == null) {
       //切换到了一个空的状态时
-      updateAdapterState(WidgetState.empty);
+      updateAdapterState(WidgetBuildState.empty);
     } else {
       pageWidgetList = statusInfo.pageWidgetList;
       scrollController.requestPage = statusInfo.requestPage;
@@ -123,7 +123,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
       if (isNullOrEmpty(pageWidgetList) ||
           statusInfo.requestPage.isFirstPage && forceLoad) {
         //切换到一个没有数据, 或者第一页的状态时, 需要重新加载数据
-        if (!updateAdapterState(WidgetState.loading) /*情感图会触发刷新回调 */) {
+        if (!updateAdapterState(WidgetBuildState.loading) /*情感图会触发刷新回调 */) {
           //可能是相同情感图状态, 则需要手动触发加载数据
           onLoadStatusData(statusInfo.status);
         }
@@ -132,7 +132,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
         onLoadStatusData(statusInfo.status);
       } else {
         //直接显示内容
-        updateAdapterState(WidgetState.none);
+        updateAdapterState(WidgetBuildState.none);
       }
     }
   }
@@ -156,7 +156,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   void loadStatusEnd(dynamic statusList, dynamic stateData) {
     // 错误处理
     if (stateData is Exception) {
-      updateAdapterState(WidgetState.error, stateData);
+      updateAdapterState(WidgetBuildState.error, stateData);
       return;
     }
     //状态数据处理
@@ -190,5 +190,5 @@ class StatusInfo {
   WidgetList pageWidgetList = [];
 
   /// 当前状态的加载更多状态
-  WidgetState loadMoreWidgetState = WidgetState.none;
+  WidgetBuildState loadMoreWidgetState = WidgetBuildState.none;
 }

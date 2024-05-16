@@ -390,17 +390,19 @@ extension WidgetImageEx on Widget {
   }) async {
     var devicePixelRatio = platformMediaQueryData.devicePixelRatio;
     final repaintBoundary = RenderRepaintBoundary();
+    final view = ui.PlatformDispatcher.instance.implicitView ??
+        RendererBinding.instance.renderView.flutterView;
     final renderView = RenderView(
-      view: ui.PlatformDispatcher.instance.implicitView ??
-          RendererBinding.instance.renderView.flutterView,
+      view: view,
       child: RenderPositionedBox(
         alignment: Alignment.center,
         child: repaintBoundary,
       ),
-      configuration: ViewConfiguration(
+      configuration: ViewConfiguration.fromView(view),
+      /*configuration: ViewConfiguration(
         size: imageSize,
         devicePixelRatio: devicePixelRatio,
-      ),
+      ),*/
     );
 
     final pipelineOwner = PipelineOwner();

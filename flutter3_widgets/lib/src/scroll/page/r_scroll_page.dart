@@ -17,7 +17,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 默认的情感图状态, 同时也会触发对应的事件
   /// [initState]
-  WidgetState defWidgetState = WidgetState.loading;
+  WidgetBuildState defWidgetState = WidgetBuildState.loading;
 
   /// 当前界面的数据, 用来放到滚动体里面
   /// [pageRScrollView]
@@ -126,14 +126,14 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 首次加载, 如果需要请主动调用, 触发
   @callPoint
-  void firstLoad([WidgetState? state]) {
+  void firstLoad([WidgetBuildState? state]) {
     state ??= defWidgetState;
     //debugger();
     //当前的状态
     var currentState = scrollController.adapterStateValue.value;
     if (currentState.isNoneState) {
       //已经显示了内容
-    } else if (currentState == WidgetState.preLoading ||
+    } else if (currentState == WidgetBuildState.preLoading ||
         currentState != state) {
       scrollController.updateAdapterState(this, state);
     }
@@ -186,7 +186,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 更新情感图状态
   @api
   @updateMark
-  bool updateAdapterState(WidgetState widgetState, [dynamic stateData]) =>
+  bool updateAdapterState(WidgetBuildState widgetState, [dynamic stateData]) =>
       scrollController.updateAdapterState(this, widgetState, stateData);
 
   /// 重写此方法, 实现收尾插入自定义的小部件
