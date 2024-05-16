@@ -651,6 +651,10 @@ class ElementSelectComponent extends ElementGroupPainter
     return this;
   }
 
+  /// [resetSelectElement]
+  /// [resetChildren]
+  /// [CanvasElementManager.resetSelectElement]
+  /// [CanvasElementManager.clearSelectedElement]
   @override
   set paintProperty(PaintProperty? value) {
     /*if (super.paintProperty?.paintCenter != value?.paintCenter) {

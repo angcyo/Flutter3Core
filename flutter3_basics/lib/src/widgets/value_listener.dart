@@ -6,7 +6,7 @@ part of '../../flutter3_basics.dart';
 ///
 
 /// 通过给定的数据构建小部件
-typedef DynamicDataWidgetBuilder = Widget Function(
+typedef DynamicDataWidgetBuilder = Widget? Function(
     BuildContext context, dynamic data);
 
 /// [DynamicDataWidgetBuilder]
@@ -63,7 +63,7 @@ class _ValueListenerState extends State<ValueListener> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(context, widget.listenableList);
+    return widget.builder(context, widget.listenableList) ?? empty;
   }
 }
 

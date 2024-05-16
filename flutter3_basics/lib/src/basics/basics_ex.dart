@@ -362,11 +362,13 @@ extension FutureEx<T> on Future<T> {
         //debugger();
         get?.call(value, null); //这一层的错误会被捕获
         return value;
-      } catch (e) {
+      } catch (error) {
         //debugger();
-        if (e is! RException) {
-          printError(e, stack);
-        }
+        assert(() {
+          l.w('Future异常:$error↓');
+          printError(error, stack);
+          return true;
+        }());
         get?.call(null, e); //这一层的错误可以走正常的Future异常处理
         return null;
       }
@@ -379,7 +381,11 @@ extension FutureEx<T> on Future<T> {
           return true;
         }());
       } else {
-        printError(error, stackTrace);
+        assert(() {
+          l.w('Future异常:$error↓');
+          printError(error, stackTrace);
+          return true;
+        }());
         get?.call(null, error);
       }
     });
@@ -862,7 +868,11 @@ extension OffsetEx on Offset {
 extension RectEx on Rect {
   /// [toString]
   String get log =>
-      "Rect(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${right.toStringAsFixed(1)}, ${bottom.toStringAsFixed(1)})";
+      "Rect.LTRB(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${right.toStringAsFixed(1)}, ${bottom.toStringAsFixed(1)})";
+
+  /// [toString]
+  String get logSize =>
+      "Rect.LTWH(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${width.toStringAsFixed(1)}, ${height.toStringAsFixed(1)})";
 
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;

@@ -38,7 +38,7 @@ class RebuildWidgetState extends State<RebuildWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(context, widget.updateSignal.value);
+    return widget.builder(context, widget.updateSignal.value) ?? empty;
   }
 
   @override

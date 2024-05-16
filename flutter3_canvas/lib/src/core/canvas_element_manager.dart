@@ -427,8 +427,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     resetSelectElement(null);
   }
 
-  /// 获取所有选中的元素
-  /// [onlySingleElement] 是否只返回单元素列表, 拆开了[ElementGroupPainter]
+  /// 获取所有选中的元素, 默认包含[ElementGroupPainter]
+  /// [onlySingleElement] 是否只返回仅[ElementPainter]类型的元素列表, 拆开了[ElementGroupPainter]
+  ///
   @api
   List<ElementPainter>? getAllSelectedElement({
     bool onlySingleElement = false,
