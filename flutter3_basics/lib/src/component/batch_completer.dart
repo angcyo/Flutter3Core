@@ -5,8 +5,6 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/05/16
 ///
 
-typedef BatchResult<T> = (T? value, dynamic error);
-
 /// 批量完成器, 当收集到指定数量的结果时, 自动执行完成回调
 /// [Completer]
 class BatchCompleter<T> {
@@ -26,14 +24,14 @@ class BatchCompleter<T> {
 
   /// 添加一个结果
   @api
-  void addResult(T result, [dynamic error]) {
+  void addResult(String key, T result, [dynamic error]) {
     if (_completer.isCompleted) {
       assert(() {
         l.w('BatchCompleter is completed.');
         return true;
       }());
     } else {
-      _resultList.add((result, error));
+      _resultList.add(BatchResult(key, result, error));
       if (_resultList.length >= count) {
         _completer.complete(_resultList);
       }
@@ -42,17 +40,30 @@ class BatchCompleter<T> {
 
   /// 添加一个错误
   @api
-  void addError(dynamic error) {
+  void addError(String key, dynamic error) {
     if (_completer.isCompleted) {
       assert(() {
         l.w('BatchCompleter is completed.');
         return true;
       }());
     } else {
-      _resultList.add((null, error));
+      _resultList.add(BatchResult(key, null, error));
       if (_resultList.length >= count) {
         _completer.complete(_resultList);
       }
     }
   }
+}
+
+class BatchResult<T> {
+  const BatchResult(this.key, this.value, this.error);
+
+  /// [key] 唯一标识
+  final String key;
+
+  /// [value] 结果
+  final T? value;
+
+  /// [error] 错误
+  final dynamic error;
 }
