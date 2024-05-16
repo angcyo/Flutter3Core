@@ -1,0 +1,73 @@
+part of '../flutter3_canvas.dart';
+
+///
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
+/// @date 2024/05/16
+///
+
+/// 画布扩展方法
+extension CanvasElementIterableEx on Iterable<ElementPainter> {
+  /// 排序元素
+  /// [topLeft] 按照从上到下, 从左到右的顺序, 排序元素. 默认
+  /// [leftTop] 按照从左到右, 从上到下的顺序, 排序元素
+  List<ElementPainter> sortElement({
+    bool resetElementAngle = true,
+    bool? topLeft,
+    bool? leftTop,
+  }) {
+    return toList()
+      ..sort((a, b) {
+        final aBounds = a.paintProperty?.getBounds(resetElementAngle);
+        final bBounds = b.paintProperty?.getBounds(resetElementAngle);
+
+        final aTop = aBounds?.top ?? 0;
+        final bTop = bBounds?.top ?? 0;
+
+        final aLeft = aBounds?.left ?? 0;
+        final bLeft = bBounds?.left ?? 0;
+
+        if (leftTop == true) {
+          // 从左到右, 从上到下
+          if (aLeft == bLeft) {
+            return aTop.compareTo(bTop);
+          }
+          return aLeft.compareTo(bLeft);
+        } else {
+          // 从上到下, 从左到右
+          if (aTop == bTop) {
+            return aLeft.compareTo(bLeft);
+          }
+          return aTop.compareTo(bTop);
+        }
+      });
+  }
+
+  /// 获取所有单的[ElementPainter]
+  /// [ElementPainter.getSingleElementList]
+  List<ElementPainter> getAllSingleElement() {
+    final result = <ElementPainter>[];
+    for (var e in this) {
+      result.addAll(e.getSingleElementList());
+    }
+    return result;
+  }
+
+  /// [useElementBounds]当元素没有[Path]时, 是否使用元素的bounds代替
+  List<Path> getAllElementOutputPathList({
+    bool useElementBounds = false,
+  }) {
+    final elementList = getAllSingleElement();
+    final result = <Path>[];
+    for (final element in elementList) {
+      final pathList = element.elementOutputPathList;
+      if (pathList.isEmpty) {
+        if (useElementBounds) {
+          element.elementOutputBoundsPath?.let((it) => result.add(it));
+        }
+      } else {
+        result.addAll(pathList);
+      }
+    }
+    return result;
+  }
+}

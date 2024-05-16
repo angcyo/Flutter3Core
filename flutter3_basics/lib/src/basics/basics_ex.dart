@@ -1389,9 +1389,6 @@ extension DoubleEx on double {
 /// [IterableEx]
 /// [Uint8List]
 extension ListIntEx on List<int> {
-  /// [length]
-  int size() => length;
-
   /// [Uint8List]转换成字符串
   /// [String.fromCharCodes]
   String toStr([Encoding codec = utf8, bool allowMalformed = true]) {
@@ -1536,6 +1533,9 @@ extension IterableEx<E> on Iterable<E> {
 /// [ListEx]
 /// [IterableEx]
 extension ListEx<T> on List<T> {
+  /// [length]
+  int size() => length;
+
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 

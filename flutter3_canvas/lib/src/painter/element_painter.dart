@@ -523,9 +523,11 @@ class ElementPainter extends IPainter
   @output
   Path? get elementOutputBoundsPath => paintProperty?.paintPath;
 
-  /// 获取元素的输出[Path]
+  /// 获取元素的输出[Path], 当前仅支持[PathElementPainter]元素
+  /// 重写此方法以便支持更多类型的元素
   /// [VectorPathEx.toSvgPathString]
   @output
+  @overridePoint
   Path? get elementOutputPath {
     if (this is PathElementPainter) {
       return (this as PathElementPainter).operatePath;
@@ -533,7 +535,8 @@ class ElementPainter extends IPainter
     return null;
   }
 
-  /// 获取元素的所有输出[Path]
+  /// 获取元素的所有输出[Path], 支持[ElementGroupPainter]
+  /// 其他元素可能需要重写[elementOutputPath]方法
   @output
   List<Path> get elementOutputPathList {
     final result = <Path>[];
@@ -541,25 +544,26 @@ class ElementPainter extends IPainter
       (this as ElementGroupPainter).children?.forEach((element) {
         result.addAll(element.elementOutputPathList);
       });
-    } else if (this is PathElementPainter) {
-      (this as PathElementPainter).operatePath?.let((it) => result.add(it));
+    } else {
+      elementOutputPath?.let((it) => result.add(it));
     }
     return result;
   }
 
+  /// 输入一个0,0位置原始的路径[inputPath], 输出一个经过元素操作后的新路径
   /// 元素操作后对应的路径数据
-  /// [getElementOutputPath]
-  /// [getElementOutputPathList]
-  Path? getElementOutputPath(Path? inputPath) {
+  /// [transformElementOperatePath]
+  /// [transformElementOperatePathList]
+  Path? transformElementOperatePath(Path? inputPath) {
     if (inputPath == null) {
       return null;
     }
     return inputPath.transformPath(paintProperty?.operateMatrix);
   }
 
-  /// [getElementOutputPath]
-  /// [getElementOutputPathList]
-  List<Path>? getElementOutputPathList(List<Path>? inputPathList) {
+  /// [transformElementOperatePath]
+  /// [transformElementOperatePathList]
+  List<Path>? transformElementOperatePathList(List<Path>? inputPathList) {
     if (isNil(inputPathList)) {
       return null;
     }

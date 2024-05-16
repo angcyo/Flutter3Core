@@ -53,10 +53,10 @@ void _wrapSvgPath(
   buffer?.write('/>');
 }
 
-/// gcode 默认头部
+/// gcode 默认头部, 手动 manual
 const kGCodeHeader = 'G21\nG90\nM8\nM5\nM3\n';
 
-/// gcode 自动激光头
+/// gcode 自动激光头, 自动 auto
 const kGCodeAutoHeader = 'G21\nG90\nM8\nM5\nM4\n';
 
 /// gcode 默认尾部
@@ -889,8 +889,8 @@ extension VectorListPathEx on List<Path> {
   String? toGCodeString({
     @dp double? pathStep,
     @mm double? tolerance,
-    int? power,
-    int? speed,
+    int? power = 255,
+    int? speed = 12000,
     String? header = kGCodeAutoHeader,
     String? footer = kGCodeFooter,
     GCodeWriteHandle? handle,

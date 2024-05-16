@@ -13,7 +13,7 @@ class PathElementPainter extends ElementPainter {
 
   /// 获取操作后的图片
   @dp
-  Path? get operatePath => getElementOutputPath(painterPath);
+  Path? get operatePath => transformElementOperatePath(painterPath);
 
   PathElementPainter();
 

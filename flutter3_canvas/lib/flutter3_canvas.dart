@@ -16,6 +16,7 @@ import 'package:flutter3_widgets/flutter3_widgets.dart';
 
 part 'src/axis/axis_manager.dart';
 part 'src/canvas.dart';
+part 'src/canvas_ex.dart';
 part 'src/canvas_delegate.dart';
 part 'src/canvas_listener.dart';
 part 'src/component/canvas_bounds_event_component.dart';

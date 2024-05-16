@@ -10,14 +10,26 @@ part of '../../flutter3_basics.dart';
 class BytesWriter {
   final List<int> _bytes = [];
 
+  /// 限制写入的最大字节长度
+  final int? limitMaxLength;
+
+  BytesWriter({this.limitMaxLength});
+
+  /// 是否可以继续写入
+  bool _canWrite() => limitMaxLength == null || _bytes.length < limitMaxLength!;
+
   /// 写入一个字节
   void writeByte(int value) {
-    _bytes.add(value);
+    if (_canWrite()) {
+      _bytes.add(value);
+    }
   }
 
   /// 写入一个无符号字节
   void writeUByte(int value) {
-    _bytes.add(value & 0xff);
+    if (_canWrite()) {
+      _bytes.add(value & 0xff);
+    }
   }
 
   /// 写入一个32位的整数, 4个字节
@@ -26,10 +38,16 @@ class BytesWriter {
   void writeInt(int value, [int length = 4, Endian endian = Endian.big]) {
     if (endian == Endian.big) {
       for (int i = 0; i < length; i++) {
+        if (!_canWrite()) {
+          break;
+        }
         _bytes.add((value >> ((length - i - 1) * 8)) & 0xff);
       }
     } else {
       for (int i = 0; i < length; i++) {
+        if (!_canWrite()) {
+          break;
+        }
         _bytes.add((value >> (i * 8)) & 0xff);
       }
     }
@@ -50,10 +68,16 @@ class BytesWriter {
   void writeLong(int value, [int length = 8, Endian endian = Endian.big]) {
     if (endian == Endian.big) {
       for (int i = 0; i < length; i++) {
+        if (!_canWrite()) {
+          break;
+        }
         _bytes.add((value >> ((length - i - 1) * 8)) & 0xff);
       }
     } else {
       for (int i = 0; i < length; i++) {
+        if (!_canWrite()) {
+          break;
+        }
         _bytes.add((value >> (i * 8)) & 0xff);
       }
     }
@@ -85,10 +109,13 @@ class BytesWriter {
     if (bytes == null || bytes.isEmpty) {
       return;
     }
+    if (!_canWrite()) {
+      return;
+    }
     if (length == null) {
       _bytes.addAll(bytes);
     } else {
-      _bytes.addAll(bytes.sublist(0, length));
+      _bytes.addAll(bytes.sublist(0, min(length, bytes.size())));
     }
   }
 
@@ -110,16 +137,22 @@ class BytesWriter {
     }
   }
 
-  /// 填充到指定长度, 比如将字节数据填充到64个字节
+  /// 填充到多少个字节长度, 不包含当前[length], 比如将字节数据填充到64个字节
   /// [length]需要填充到的字节长度
-  void fill(int length, [int fillValue = 0]) {
+  void fillTo(int length, [int fillValue = 0]) {
     while (_bytes.length < length) {
       writeByte(fillValue);
     }
   }
 
+  /// 返回写入的字节数据
   @output
   List<int> toBytes() {
+    if (limitMaxLength != null) {
+      if (_bytes.length > limitMaxLength!) {
+        return _bytes.sublist(0, limitMaxLength!);
+      }
+    }
     return _bytes;
   }
 }
