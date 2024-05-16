@@ -5,8 +5,9 @@ part of '../../flutter3_core.dart';
 /// @since 2023/11/01
 ///
 
-/// [WidgetsBinding.addObserver]
+/// 只要创建了[AppLifecycleListener]对象, 就会自动调用[WidgetsBinding.addObserver]方法
 /// [WidgetsBindingObserver]
+/// [AppLifecycleLog]
 mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// [AppExitResponse.exit]
   /// [AppExitResponse.cancel]
@@ -112,6 +113,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/10/23
 ///
+/// 只要创建了[AppLifecycleListener]对象, 就会自动调用[WidgetsBinding.addObserver]方法
 /// [WidgetsBindingObserver]
 /// [WidgetsBinding.addObserver]
 /// [WidgetsBinding.removeObserver]
