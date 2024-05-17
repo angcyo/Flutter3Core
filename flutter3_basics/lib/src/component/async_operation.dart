@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// https://blog.csdn.net/weixin_41735943/article/details/119168792
