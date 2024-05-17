@@ -102,6 +102,12 @@ class LiveStreamController<T> {
     }
   }
 
+  /// 清空数据
+  void clear() {
+    dynamic clear;
+    add(clear);
+  }
+
   /// 关闭流, 关闭之后不能调用[add]方法
   @callPoint
   Future<void> close() {

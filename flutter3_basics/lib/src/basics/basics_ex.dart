@@ -206,7 +206,7 @@ extension ObjectEx on Object {
       final String textLC = caseSensitive ? text : text.toLowerCase();
 
       // corner case: if both term and terms array are passed then combine
-      final List<String> termList = [highlight ?? '', ...(highlightList ?? [])];
+      final List<String> termList = [highlight ?? '', ...?highlightList];
 
       // remove empty search terms ('') because they cause infinite loops
       final List<String> termListLC = termList
@@ -1675,6 +1675,36 @@ extension ListEx<T> on List<T> {
 
   /// [subList]
   List<T> subListCount(int start, int count) => subList(start, start + count);
+
+  /// 获取指定元素的下一个元素
+  T? nextOf(T element) {
+    var index = indexOf(element);
+    if (index == -1) {
+      return null;
+    }
+    index++;
+    if (index >= length) {
+      return null;
+    }
+    return this[index];
+  }
+
+  T? afterOf(T element) => nextOf(element);
+
+  /// 获取指定元素的上一个元素
+  T? previousOf(T element) {
+    var index = indexOf(element);
+    if (index == -1) {
+      return null;
+    }
+    index--;
+    if (index < 0) {
+      return null;
+    }
+    return this[index];
+  }
+
+  T? beforeOf(T element) => previousOf(element);
 }
 
 //endregion List 扩展
