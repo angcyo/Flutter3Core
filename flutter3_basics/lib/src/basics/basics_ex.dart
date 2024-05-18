@@ -1611,21 +1611,38 @@ extension ListEx<T> on List<T> {
   /// [List]
   /// [getByName]
   /// [getByNameOrNull]
-  T getByName(String? name, T def) {
+  T getByName(
+    String? name,
+    T def, {
+    bool ignoreCase = true,
+  }) {
     if (name == null || name.isEmpty) {
       return def;
     }
-    return findFirst((element) =>
-            element is Enum ? element.name == name : "$element" == name) ??
-        def;
+    return getByNameOrNull(name, ignoreCase: ignoreCase) ?? def;
   }
 
   /// [List]
+  /// [ignoreCase] 是否忽略大小写
   /// [getByName]
   /// [getByNameOrNull]
-  T? getByNameOrNull(String? name) {
-    return findFirst((element) =>
-        element is Enum ? element.name == name : "$element" == name);
+  T? getByNameOrNull(
+    String? name, {
+    bool ignoreCase = true,
+  }) {
+    return findFirst(
+      (element) {
+        if (element is Enum) {
+          return ignoreCase
+              ? element.name.toLowerCase() == name?.toLowerCase()
+              : element.name == name;
+        } else {
+          return ignoreCase
+              ? "$element".toLowerCase() == name?.toLowerCase()
+              : "$element" == name;
+        }
+      },
+    );
   }
 
   /// 判断2个List是否至少有一个相同的元素

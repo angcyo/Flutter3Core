@@ -380,6 +380,10 @@ Future<Directory> fileFolder([
 }
 
 /// 快速获取一个文件路径, 会自动创建文件夹
+/// ```
+/// /storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/2855283474
+/// File: '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/transfer/2855283474'
+/// ```
 /// [fileFolder]
 Future<String> filePath(
   String fileName, [
