@@ -398,11 +398,11 @@ extension WidgetImageEx on Widget {
         alignment: Alignment.center,
         child: repaintBoundary,
       ),
-      /*configuration: ViewConfiguration.fromView(view),*/ //flutter 3.22.0
-      configuration: ViewConfiguration(
+      configuration: ViewConfiguration.fromView(view), //flutter 3.22.0
+      /*configuration: ViewConfiguration(
         size: imageSize,
         devicePixelRatio: devicePixelRatio,
-      ), //flutter 3.19.6
+      ),*/ //flutter 3.19.6
     );
 
     final pipelineOwner = PipelineOwner();

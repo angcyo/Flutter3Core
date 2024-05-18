@@ -122,15 +122,15 @@ extension LogEx on Object {
 
     if (this is UiImage) {
       //图片不支持[FileMode.append]模式
-      fileObj.writeImage(this as UiImage?);
+      await fileObj.writeImage(this as UiImage?);
     } else if (this is Uint8List) {
-      writeBytes(this as Uint8List);
+      await writeBytes(this as Uint8List);
     } else if (this is ByteData) {
-      writeByteData(this as ByteData);
+      await writeByteData(this as ByteData);
     } else if (this is ByteBuffer) {
-      writeByteBuffer(this as ByteBuffer);
+      await writeByteBuffer(this as ByteBuffer);
     } else {
-      writeString("$this");
+      await writeString("$this");
     }
     return fileObj;
   }
