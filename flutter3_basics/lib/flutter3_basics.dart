@@ -118,6 +118,7 @@ part 'src/widgets/value_listener.dart';
 typedef Action = VoidCallback;
 typedef VoidAction = Action;
 typedef UiImage = ui.Image;
+typedef UiPath = ui.Path;
 typedef UiColor = ui.Color;
 typedef UiOffset = ui.Offset;
 typedef UiSize = ui.Size;

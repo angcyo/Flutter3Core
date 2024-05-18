@@ -714,6 +714,8 @@ class GCodeWriteHandle with VectorWriteMixin {
 
 extension VectorPathEx on Path {
   /// 处理矢量路径
+  /// [kVectorTolerance]
+  /// [kPathAcceptableError]
   void handleVectorPath(
     VectorWriteMixin handle, {
     @dp double? pathStep,
@@ -919,7 +921,7 @@ extension VectorListPathEx on List<Path> {
     return buffer.toString();
   }
 
-  /// 转换成gcode字符串数据
+  /// 转换成N段线段折点数据
   /// [VectorPathEx.toGCodeString]
   List<List<Point>>? toPointList({
     @dp double? pathStep,
