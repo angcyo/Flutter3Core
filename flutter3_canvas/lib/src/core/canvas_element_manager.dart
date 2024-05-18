@@ -49,13 +49,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   bool get isSelectedGroupPainter =>
       canvasElementControlManager.isSelectedGroupPainter;
 
-  /// 绘制在[elements]之前的元素列表
+  /// 绘制在[elements]之前的元素列表, 不参与控制操作
   final List<ElementPainter> beforeElements = [];
 
-  /// 元素列表, 正常操作区域的元素
+  /// 元素列表, 正常操作区域的元素, 参与控制操作
   final List<ElementPainter> elements = [];
 
-  /// 绘制在[elements]之后的元素列表
+  /// 绘制在[elements]之后的元素列表, 不参与控制操作
   final List<ElementPainter> afterElements = [];
 
   List<ElementPainter> get allSingleElements {
@@ -428,15 +428,40 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 获取所有选中的元素, 默认包含[ElementGroupPainter]
-  /// [onlySingleElement] 是否只返回仅[ElementPainter]类型的元素列表, 拆开了[ElementGroupPainter]
-  ///
+  /// [exportSingleElement] 是否只返回仅[ElementPainter]类型的元素列表, 拆开了[ElementGroupPainter]
+  /// [exportAllElementIfNoSelected] 如果没有选中元素, 是否返回所有元素
+  /// [getAllElement]
+  /// [getAllSelectedElement]
   @api
   List<ElementPainter>? getAllSelectedElement({
-    bool onlySingleElement = false,
+    bool exportSingleElement = false,
+    bool exportAllElementIfNoSelected = false,
   }) {
-    if (onlySingleElement) {
-      return canvasElementControlManager.elementSelectComponent
-          .getSingleElementList();
+    if (isSelectedElement) {
+      final selectComponent =
+          canvasElementControlManager.elementSelectComponent;
+      if (exportSingleElement) {
+        return selectComponent.getSingleElementList();
+      }
+      return selectComponent.children;
+    } else if (exportAllElementIfNoSelected) {
+      return getAllElement(exportSingleElement: exportSingleElement);
+    }
+    return null;
+  }
+
+  /// [getAllElement]
+  /// [getAllSelectedElement]
+  @api
+  List<ElementPainter>? getAllElement({
+    bool exportSingleElement = false,
+  }) {
+    if (exportSingleElement) {
+      final result = <ElementPainter>[];
+      for (final element in elements) {
+        result.addAll(element.getSingleElementList());
+      }
+      return result;
     }
     return canvasElementControlManager.elementSelectComponent.children;
   }

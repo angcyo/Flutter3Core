@@ -15,7 +15,7 @@ part of '../../flutter3_basics.dart';
 ///  }
 /// ```
 ///
-/// 互斥
+/// 互斥锁
 /// [Mutex]
 /// Create mutexes in a parallel-safe way,
 class MutexKeyFactory {

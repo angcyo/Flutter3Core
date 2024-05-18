@@ -24,14 +24,15 @@ class BatchCompleter<T> {
 
   /// 添加一个结果
   @api
-  void addResult(String key, T result, [dynamic error]) {
+  void addResult(String key, T result,
+      [dynamic error, StackTrace? stackTrace]) {
     if (_completer.isCompleted) {
       assert(() {
         l.w('BatchCompleter is completed.');
         return true;
       }());
     } else {
-      _resultList.add(BatchResult(key, result, error));
+      _resultList.add(BatchResult(key, result, error, stackTrace));
       if (_resultList.length >= count) {
         _completer.complete(_resultList);
       }
@@ -40,14 +41,15 @@ class BatchCompleter<T> {
 
   /// 添加一个错误
   @api
-  void addError(String key, dynamic error) {
+  void addError(String key, dynamic error, StackTrace? stackTrace) {
     if (_completer.isCompleted) {
       assert(() {
         l.w('BatchCompleter is completed.');
         return true;
       }());
     } else {
-      _resultList.add(BatchResult(key, null, error));
+      _resultList
+          .add(BatchResult(key, null, error, stackTrace ?? StackTrace.current));
       if (_resultList.length >= count) {
         _completer.complete(_resultList);
       }
@@ -56,7 +58,7 @@ class BatchCompleter<T> {
 }
 
 class BatchResult<T> {
-  const BatchResult(this.key, this.value, this.error);
+  const BatchResult(this.key, this.value, this.error, this.stackTrace);
 
   /// [key] 唯一标识
   final String key;
@@ -66,4 +68,7 @@ class BatchResult<T> {
 
   /// [error] 错误
   final dynamic error;
+
+  /// [stackTrace] 错误堆栈
+  final StackTrace? stackTrace;
 }

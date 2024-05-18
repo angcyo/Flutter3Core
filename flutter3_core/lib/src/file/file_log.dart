@@ -9,7 +9,7 @@ part of '../../flutter3_core.dart';
 const kMaxLogLength = 2 * 1024 * 1024; //2M
 /// 日志文件的扩展名
 const kLogExtension = ".log"; //日志文件后缀
-const kLFileName = "l.log"; //常规操作日志
+const kLFileName = "l.log"; //常规操作日志, l.x输出的日志, 会被写入到这个文件
 const kOperateFileName = "operate.log"; //特殊操作日志
 const kLogFileName = "log.log"; //特殊日志文件
 const kBleFileName = "ble.log"; //蓝牙机器操作日志

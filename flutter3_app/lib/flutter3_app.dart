@@ -23,10 +23,15 @@ export 'package:permission_handler/permission_handler.dart';
 export 'package:share_plus/share_plus.dart';
 
 part 'src/app_ex.dart';
+
 part 'src/app_info_interceptor.dart';
+
 part 'src/app_log.dart';
+
 part 'src/app_notifications.dart';
+
 part 'src/app_swiper_ex.dart';
+
 part 'src/mobile_ex.dart';
 
 @callPoint
@@ -94,9 +99,9 @@ void runGlobalApp(Widget app) {
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
     l.i("启动完成:${lTime.time()}"..writeToLog());
   }, (error, stack) {
-    l.e("未捕捉的异常:↓"..writeToErrorLog());
-    l.e(error..writeToErrorLog());
-    l.e(stack.toString()..writeToErrorLog());
+    "未捕捉的异常:↓".writeToErrorLog();
+    error.writeToErrorLog(level: L.none);
+    stack.toString().writeToErrorLog(level: L.none);
     printError(error, stack);
   });
 }

@@ -144,6 +144,8 @@ Future futureDelay(Duration duration) async => await Future.delayed(duration);
 /// 通过重写[FlutterError.onError]实现将错误信息写入文件
 ///
 /// [ErrorWidget.builder] 错误小部件构建器
+/// [reportError]
+/// [printError]
 void reportError(exception) {
   FlutterError.reportError(
     FlutterErrorDetails(
@@ -156,6 +158,8 @@ void reportError(exception) {
 /// 打印错误
 /// [FlutterError.presentError]
 /// [StackTrace.current]
+/// [reportError]
+/// [printError]
 void printError(exception, [StackTrace? stack]) {
   FlutterError.dumpErrorToConsole(
     exception is FlutterErrorDetails
@@ -376,25 +380,6 @@ Future<R> scheduleTask<R>(ResultCallback<R> callback,
         [Priority priority = Priority.animation]) =>
     SchedulerBinding.instance.scheduleTask(() => callback(), priority,
         debugLabel: "scheduleTask-${nowTimeString()}");
-
-/// 使用[Completer]返回一个[Future]
-/// 这种方式, 只能返回一个[Future], 对性能上没有提升.
-/// 想要不阻塞ui, 还是需要使用`isolate`, 但是使用`isolate`会有数据传输上的性能消耗.
-/// [futureDelay]
-/// [flutterCompute]
-Future<R> future<R>(FutureOr<R> Function() callback) async {
-  final completer = Completer<R>();
-  completer.complete(callback());
-  return completer.future;
-}
-
-/// 等待一个异步的请求结果
-/// [future]
-Future<R> asyncFuture<R>(void Function(Completer<R> completer) callback) {
-  final completer = Completer<R>();
-  callback(completer);
-  return completer.future;
-}
 
 //endregion 性能
 

@@ -372,7 +372,7 @@ extension FutureEx<T> on Future<T> {
         get?.call(null, e); //这一层的错误可以走正常的Future异常处理
         return null;
       }
-    }, onError: (error, stackTrace) {
+    }, onError: (error) {
       //此处无法捕获[get]中的异常
       //debugger();
       if (error is FutureCancelException) {
@@ -383,7 +383,7 @@ extension FutureEx<T> on Future<T> {
       } else {
         assert(() {
           l.w('Future异常:$error↓');
-          printError(error, stackTrace);
+          printError(error, stack);
           return true;
         }());
         get?.call(null, error);

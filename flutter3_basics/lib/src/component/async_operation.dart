@@ -63,13 +63,45 @@ part of '../../flutter3_basics.dart';
 }*/
 
 /// 等待异步操作完成
+/// [future]
+/// [asyncFuture]
 Future<T> awaitFor<T>(Function(Function(T) action) doOperation) {
-  var completer = Completer<T>();
+  final completer = Completer<T>();
   try {
     doOperation((result) => completer.complete(result));
   } catch (e) {
     assert(() {
-      l.e("$e");
+      printError(e, StackTrace.current);
+      return true;
+    }());
+    completer.completeError(e, StackTrace.current);
+  }
+  return completer.future;
+}
+
+/// 使用[Completer]返回一个[Future]
+/// 这种方式, 只能返回一个[Future], 对性能上没有提升.
+/// 想要不阻塞ui, 还是需要使用`isolate`, 但是使用`isolate`会有数据传输上的性能消耗.
+/// [callback] 返回方法即返回
+/// [futureDelay]
+/// [flutterCompute]
+Future<R> future<R>(FutureOr<R> Function() callback) async {
+  final completer = Completer<R>();
+  completer.complete(callback());
+  return completer.future;
+}
+
+/// 等待一个异步的请求结果, 需要手动通过[completer]控制返回
+/// [Completer.completeError]
+/// [Completer.completeError]
+/// [future]
+Future<R> asyncFuture<R>(void Function(Completer<R> completer) callback) {
+  final completer = Completer<R>();
+  try {
+    callback(completer);
+  } catch (e) {
+    assert(() {
+      printError(e, StackTrace.current);
       return true;
     }());
     completer.completeError(e, StackTrace.current);
