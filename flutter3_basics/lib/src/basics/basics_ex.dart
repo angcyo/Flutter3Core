@@ -365,7 +365,7 @@ extension FutureEx<T> on Future<T> {
       } catch (error) {
         //debugger();
         assert(() {
-          l.w('Future异常:$error↓');
+          l.w('FutureGet异常:$error↓');
           printError(error, stack);
           return true;
         }());
@@ -1290,7 +1290,7 @@ extension IntEx on int {
   }
 
   /// [FileSizeEx.toSizeStr]
-  String toSizeStr([int round = 2]) {
+  String toSizeStr([int round = 2, String space = ""]) {
     return filesize(this, round);
   }
 
@@ -1349,6 +1349,16 @@ extension IntEx on int {
     list.add(hour);
     list.add(day);
     return list;
+  }
+
+  /// 将整型转换u8列表
+  /// [length] 需要输出的字节长度
+  List<int> toUint8List([int length = 4]) {
+    final list = <int>[];
+    for (var i = 0; i < length; i++) {
+      list.add((this >> (i * 8)) & 0xFF);
+    }
+    return list.reversed.toList();
   }
 }
 

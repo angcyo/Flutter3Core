@@ -10,13 +10,13 @@ extension FileSizeEx on num {
   /// filesize(664365320);              // "633.59 MB"
   /// filesize(4324324232343);          // "3.93 TB"
   /// [filesize]
-  String toSizeStr([int round = 2]) {
-    return filesize(this, round);
+  String toSizeStr([int round = 2, String space = ""]) {
+    return filesize(this, round, space);
   }
 }
 
 /// A method returns a human readable string representing a file _size
-String filesize(dynamic size, [int round = 2]) {
+String filesize(dynamic size, [int round = 2, String space = ""]) {
   /**
    * [size] can be passed as number or as string
    *
@@ -32,50 +32,50 @@ String filesize(dynamic size, [int round = 2]) {
   }
 
   if (_size < divider) {
-    return '$_size B';
+    return '$_size${space}B';
   }
 
   if (_size < divider * divider && _size % divider == 0) {
-    return '${(_size / divider).toStringAsFixed(0)} KB';
+    return '${(_size / divider).toStringAsFixed(0)}${space}KB';
   }
 
   if (_size < divider * divider) {
-    return '${(_size / divider).toStringAsFixed(round)} KB';
+    return '${(_size / divider).toStringAsFixed(round)}${space}KB';
   }
 
   if (_size < divider * divider * divider && _size % divider == 0) {
-    return '${(_size / (divider * divider)).toStringAsFixed(0)} MB';
+    return '${(_size / (divider * divider)).toStringAsFixed(0)}${space}MB';
   }
 
   if (_size < divider * divider * divider) {
-    return '${(_size / divider / divider).toStringAsFixed(round)} MB';
+    return '${(_size / divider / divider).toStringAsFixed(round)}${space}MB';
   }
 
   if (_size < divider * divider * divider * divider && _size % divider == 0) {
-    return '${(_size / (divider * divider * divider)).toStringAsFixed(0)} GB';
+    return '${(_size / (divider * divider * divider)).toStringAsFixed(0)}${space}GB';
   }
 
   if (_size < divider * divider * divider * divider) {
-    return '${(_size / divider / divider / divider).toStringAsFixed(round)} GB';
+    return '${(_size / divider / divider / divider).toStringAsFixed(round)}${space}GB';
   }
 
   if (_size < divider * divider * divider * divider * divider &&
       _size % divider == 0) {
     num r = _size / divider / divider / divider / divider;
-    return '${r.toStringAsFixed(0)} TB';
+    return '${r.toStringAsFixed(0)}${space}TB';
   }
 
   if (_size < divider * divider * divider * divider * divider) {
     num r = _size / divider / divider / divider / divider;
-    return '${r.toStringAsFixed(round)} TB';
+    return '${r.toStringAsFixed(round)}${space}TB';
   }
 
   if (_size < divider * divider * divider * divider * divider * divider &&
       _size % divider == 0) {
     num r = _size / divider / divider / divider / divider / divider;
-    return '${r.toStringAsFixed(0)} PB';
+    return '${r.toStringAsFixed(0)}${space}PB';
   } else {
     num r = _size / divider / divider / divider / divider / divider;
-    return '${r.toStringAsFixed(round)} PB';
+    return '${r.toStringAsFixed(round)}${space}PB';
   }
 }

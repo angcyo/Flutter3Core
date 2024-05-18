@@ -79,4 +79,11 @@ void main() {
     consoleLog(int.toAsciiString());
     consoleLog(str.toAsciiInt());
   });
+
+  test('test hex int', () {
+    const int = 65535;
+    final bytes = int.toUint8List(3);
+    consoleLog(bytes);
+    consoleLog(bytes.toInt(3));
+  });
 }

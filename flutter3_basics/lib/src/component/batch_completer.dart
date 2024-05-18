@@ -60,15 +60,20 @@ class BatchCompleter<T> {
 class BatchResult<T> {
   const BatchResult(this.key, this.value, this.error, this.stackTrace);
 
-  /// [key] 唯一标识
+  /// [key] 唯一标识, 请求对应的key, 通常是设备id
   final String key;
 
-  /// [value] 结果
+  /// [value] 请求结果
   final T? value;
 
-  /// [error] 错误
+  /// [error] 请求错误
   final dynamic error;
 
   /// [stackTrace] 错误堆栈
   final StackTrace? stackTrace;
+
+  @override
+  String toString() {
+    return 'BatchResult{key:$key, value:$value, error:$error, stackTrace:$stackTrace}';
+  }
 }

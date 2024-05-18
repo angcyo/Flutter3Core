@@ -137,12 +137,14 @@ extension HexBytesEx on List<int> {
   Uint8List toBuffer() => Uint8List.fromList(this);
 
   /// 计算字节数据的校验和
-  int checkSum() {
+  /// [length] 需要输出几个字节长度的校验和
+  int checkSum([int length = 4]) {
+    final count = this.length;
     int sum = 0;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < count; i++) {
       sum += this[i];
     }
-    return sum;
+    return sum.toUint8List(length).toInt(length);
   }
 
   /// 计算字节数据的CRC16查表校验和
