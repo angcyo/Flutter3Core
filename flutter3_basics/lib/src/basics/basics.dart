@@ -131,7 +131,9 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 }
 
 /// [delayCallback]
-Future futureDelay(Duration duration) async => await Future.delayed(duration);
+Future futureDelay<T>(Duration duration,
+        [FutureOr<T> Function()? computation]) async =>
+    Future.delayed(duration, computation);
 
 //error() => Future.error("asynchronous error");
 //SystemChrome.setPreferredOrientations //设置屏幕方向

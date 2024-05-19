@@ -406,6 +406,18 @@ extension FutureEx<T> on Future<T> {
         }
       }, stack);
 
+  /// 获取[Future]的错误信息, 有错误时, 才会触发[get]方法
+  Future getError([
+    dynamic Function(dynamic error)? get,
+    StackTrace? stack,
+  ]) =>
+      this.get((value, error) {
+        if (error != null) {
+          get?.call(error);
+        }
+        return value;
+      }, stack);
+
   /// 此方法并不能立即出发[Future]
   /// 不需要等待当前的[Future]执行完成, 但是会报告错误
   /// [ignore] 完成和错误都被忽略

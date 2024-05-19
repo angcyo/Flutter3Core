@@ -276,8 +276,9 @@ class ByteReader {
     return result;
   }
 
-  /// 读取一个Hex字符串
-  String? readHex(int length, [String? overflow]) {
+  /// 读取几个字节[length]并转换成Hex字符串
+  /// [overflow] 超范围时返回
+  String? readHex([int length = 1, String? overflow]) {
     if (isDone) {
       return overflow;
     }
