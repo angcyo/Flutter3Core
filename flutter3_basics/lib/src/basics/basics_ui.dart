@@ -436,6 +436,29 @@ extension WidgetEx on Widget {
         child: this,
       );
 
+  /// 当child的大小发生改变时, 自动触发动画
+  Widget animatedSize({
+    Key? key,
+    AlignmentGeometry alignment = Alignment.bottomCenter,
+    Curve curve = Curves.linear,
+    Duration? duration = kDefaultAnimationDuration,
+    Duration? reverseDuration,
+    Clip clipBehavior = Clip.hardEdge,
+    VoidCallback? onEnd,
+  }) =>
+      duration == null
+          ? this
+          : AnimatedSize(
+              key: key,
+              alignment: alignment,
+              curve: curve,
+              duration: duration,
+              reverseDuration: reverseDuration,
+              clipBehavior: clipBehavior,
+              onEnd: onEnd,
+              child: this,
+            );
+
   //region ---Padding---
 
   /// 将当前的小部件, 包裹在一个[Padding]中

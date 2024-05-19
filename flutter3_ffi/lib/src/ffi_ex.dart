@@ -63,6 +63,7 @@ extension FfiVecUint8Ex on Vec_uint8_t {
 
 extension FfiStringEx on String {
   /// [FfiListIntEx.withVecUint8]
+  /// [nullptr]
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {
     //转成字节, 这是必须的
     final bytes = utf8.encode(this);

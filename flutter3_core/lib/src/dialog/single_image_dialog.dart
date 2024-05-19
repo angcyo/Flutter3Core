@@ -12,10 +12,14 @@ class SingleImageDialog extends StatelessWidget {
   /// 强行指定图片内容
   final UiImage? content;
 
+  /// 是否模糊背景
+  final bool blur;
+
   const SingleImageDialog({
     super.key,
     this.filePath,
     this.content,
+    this.blur = true,
   });
 
   @override
@@ -23,12 +27,14 @@ class SingleImageDialog extends StatelessWidget {
     final globalConfig = GlobalConfig.of(context);
     final Future<UiImage?>? body =
         content != null ? Future(() => content) : filePath?.toImageFromFile();
-    return body!.toWidget((image) => image!.toImageWidget().stackOf(isDebug
-            ? "${image.width}*${image.height}"
-                .text(textColor: Colors.white)
-                .paddingAll(kH)
-                .position(left: 0, top: 0)
-            : null))
+    return body!
+            .toWidget((image) => image!.toImageWidget().stackOf(isDebug
+                ? "${image.width}*${image.height} (${(image.width * image.height * 4).toSizeStr()})${filePath == null ? '' : '\n$filePath'}"
+                    .text(textColor: Colors.white, fontSize: 8)
+                    .paddingAll(kH)
+                    .position(left: 0, top: 0)
+                : null))
+            .blur(sigma: blur ? kM : 0.0)
         /*.scroll()*/
         /*.container(
           color: globalConfig.globalTheme.whiteBgColor,

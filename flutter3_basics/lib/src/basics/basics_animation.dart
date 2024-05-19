@@ -17,6 +17,7 @@ part of '../../flutter3_basics.dart';
 /// [ImageFilter] 图片过滤器. 可以实现高斯模糊效果
 
 /// 默认的动画时长
+/// [kTabScrollDuration]
 const kDefaultAnimationDuration = Duration(milliseconds: 300);
 
 extension AnimationEx on Widget {
