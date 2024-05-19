@@ -139,6 +139,7 @@ mixin TileMixin {
   /// 构建一个[Switch]开关小部件
   /// [activeColor] 激活时圈圈的颜色
   /// [activeTrackColor] 激活时轨道的颜色
+  /// [Switch]小部件需要[Material]支持.
   Widget buildSwitchWidget(
     BuildContext context,
     bool value, {
@@ -168,7 +169,10 @@ mixin TileMixin {
       value: value,
       onChanged: onChanged ??
           (value) {
-            l.d('开关->$value');
+            assert(() {
+              l.d('开关切换->$value');
+              return true;
+            }());
           },
       activeColor: activeColor,
       activeTrackColor: activeTrackColor ?? globalTheme.accentColor,
