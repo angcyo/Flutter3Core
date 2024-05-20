@@ -75,8 +75,8 @@ Offset alignChildOffset(
   }
   final offset = Offset(dx, dy);
   //debugger();
-  if (child != null && child.parentData is BoxParentData) {
-    final BoxParentData childParentData = child.parentData! as BoxParentData;
+  final childParentData = child?.parentData;
+  if (childParentData is BoxParentData) {
     childParentData.offset = offset;
   }
   return offset;

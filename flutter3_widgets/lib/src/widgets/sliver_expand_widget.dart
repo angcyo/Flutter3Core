@@ -33,28 +33,47 @@ class SliverExpandWidget extends SingleChildRenderObjectWidget
   }
 }
 
-class _SliverExpandBox extends RenderProxyBox {
+/// [RenderProxyBox]
+/// [RenderShiftedBox]
+/// [RenderAligningShiftedBox]
+class _SliverExpandBox extends RenderShiftedBox {
   AlignmentDirectional alignment;
 
   _SliverExpandBox({
     this.alignment = AlignmentDirectional.center,
-  });
-
-  @override
-  void setupParentData(covariant RenderObject child) {
-    if (child.parentData is! BoxParentData) {
-      child.parentData = BoxParentData();
-    }
-  }
+  }) : super(null);
 
   @override
   void performLayout() {
     //获取到约束
     final constraints = this.constraints;
     final constraintSize = constraints.biggest;
-    child!.layout(constraints, parentUsesSize: true);
-    alignChildOffset(alignment, constraintSize, null, child: child);
-    size = constraintSize;
+    final parentConstraints = parent?.constraints;
+
+    double width = constraintSize.width;
+    double height = constraintSize.height;
+    if (width == double.infinity) {
+      if (parentConstraints is BoxConstraints) {
+        width = parentConstraints.maxWidth;
+      } else if (parentConstraints is SliverConstraints) {
+        width = parentConstraints.crossAxisExtent;
+      }
+    }
+    if (height == double.infinity) {
+      if (parentConstraints is BoxConstraints) {
+        height = parentConstraints.maxHeight;
+      } else if (parentConstraints is SliverConstraints) {
+        height = parentConstraints.viewportMainAxisExtent;
+      }
+    }
+    // debugger();
+    size = Size(width, height);
+
+    //child
+    if (child != null) {
+      child!.layout(constraints, parentUsesSize: true);
+      alignChildOffset(alignment, size, null, child: child);
+    }
 
     /*final sliverConstraints = findSliverConstraints();
     if (sliverConstraints == null) {
@@ -92,6 +111,18 @@ class _SliverExpandBox extends RenderProxyBox {
       size = constraints.biggest;
     }*/
   }
+
+/*@override
+  void paint(PaintingContext context, ui.Offset offset) {
+    assert(() {
+      context.canvas.drawRect(
+        offset & size,
+        Paint()..color = Colors.purpleAccent,
+      );
+      return true;
+    }());
+    super.paint(context, offset);
+  }*/
 }
 
 extension SliverExpandWidgetEx on Widget {
