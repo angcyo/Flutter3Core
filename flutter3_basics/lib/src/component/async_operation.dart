@@ -62,6 +62,60 @@ part of '../../flutter3_basics.dart';
   }
 }*/
 
+/// 所有的[Future]都等待第一个[Future]的结果
+mixin WaitFirstFutureMixin {
+  /// 第一个[Future]完成的[Completer]
+  final Map<String, Completer> _firstFutureCompleter = {};
+
+  /// 所有等待的[Future]
+  final Map<String, List<Completer>> _waitFirstFutureMap = {};
+
+  /// 等待第一个[Future]完成
+  /// [key] 唯一标识
+  /// [completer]
+  /// [doFirstOperation] 第一个[Future], 需要执行的操作
+  Future waitFirstFuture(
+    String key,
+    Completer completer,
+    FutureOr Function(Completer firstCompleter) doFirstOperation,
+  ) async {
+    final first = _firstFutureCompleter[key];
+    if (first == null) {
+      _firstFutureCompleter[key] = completer;
+      //开始执行
+      try {
+        doFirstOperation(completer);
+        final result = await completer.future;
+        //完成后
+        final waitList = _waitFirstFutureMap.remove(key);
+        if (waitList != null) {
+          for (var item in waitList) {
+            item.complete(result);
+          }
+        }
+      } catch (e) {
+        //失败
+        assert(() {
+          printError(e, StackTrace.current);
+          return true;
+        }());
+        final waitList = _waitFirstFutureMap.remove(key);
+        if (waitList != null) {
+          for (final item in waitList) {
+            item.completeError(e, StackTrace.current);
+          }
+        }
+      } finally {
+        _firstFutureCompleter.remove(key);
+        _waitFirstFutureMap.remove(key);
+      }
+    } else {
+      final waitList = _waitFirstFutureMap.putIfAbsent(key, () => []);
+      waitList.add(completer);
+    }
+  }
+}
+
 /// 等待异步操作完成
 /// [future]
 /// [asyncFuture]

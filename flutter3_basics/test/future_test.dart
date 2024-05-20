@@ -66,6 +66,18 @@ void main() async {
     consoleLog('...end test:${futureTest.index}');
   });
 
+  test('test future4', () async {
+    final futureTest = FutureTest4();
+
+    for (var i = 0; i < 5; i++) {
+      //future(() async =>  futureTest.test());
+      futureTest.test();
+    }
+    consoleLog('...test:${futureTest.index}');
+
+    await futureDelay(10.seconds);
+  });
+
   test('test future', () async {
     futureDelay(1.seconds, () {
       consoleLog('..1');
@@ -137,5 +149,37 @@ class FutureTest3 {
       });
       return completer.future;
     }
+  }
+}
+
+class FutureTest4 {
+  int index = 0;
+
+  /// 所有其他任务都要等待[create]的完成
+  List<Completer> wait = [];
+
+  /// 创建数据的任务
+  Completer? create;
+
+  Future test() async {
+    await asyncFuture((completer) async {
+      if (create == null) {
+        create = completer;
+        consoleLog('开始计算..${index++}');
+        await futureDelay(1.seconds, () {
+          consoleLog('计算完成...$index');
+          create?.complete();
+          create = null;
+          for (var element in wait) {
+            element.complete();
+          }
+          wait = [];
+        });
+      } else {
+        wait.add(completer);
+      }
+    });
+    //consoleLog('..${index++}');
+    consoleLog('...end:$index');
   }
 }
