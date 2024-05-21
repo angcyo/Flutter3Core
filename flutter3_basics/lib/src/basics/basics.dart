@@ -136,8 +136,6 @@ Future futureDelay<T>(Duration duration,
     Future.delayed(duration, computation);
 
 //error() => Future.error("asynchronous error");
-//SystemChrome.setPreferredOrientations //设置屏幕方向
-//SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark); //设置状态栏样式
 //debugger(message: "等待调试...");
 //String.fromEnvironment
 
