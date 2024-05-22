@@ -114,6 +114,7 @@ class VersionRange {
   }
 }
 
+/// [VersionStringEx]
 extension VersionIntEx on int {
   /// 当前的版本是否配置指定的规则
   bool matchVersion(
@@ -132,6 +133,7 @@ extension VersionIntEx on int {
   }
 }
 
+/// [VersionIntEx]
 extension VersionStringEx on String {
   /// 当前的版本范围是否配置指定的版本
   bool matchVersion(

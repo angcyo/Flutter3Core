@@ -5,7 +5,6 @@ part of '../../flutter3_core.dart';
 /// @date 2024/04/10
 ///
 /// 配置文件相关操作
-
 class ConfigFile {
   /// 配置文件在磁盘上的目录
   static Future<Directory> get configFolderFile => fileFolder('config');
@@ -27,13 +26,15 @@ class ConfigFile {
     final folder = await configFolderFile;
     final file = p.join(folder.path, key).file();
     if (file.existsSync()) {
-      //磁盘上的文件已经存在
+      //磁盘上的文件已经存在, 则直接读取
       result = await file.readAsString();
     } else {
+      //如果磁盘没有, 则降级读取assets中的文件
       result = await loadAssetString(key, prefix: prefix, package: package);
       forceFetch = true;
     }
 
+    //判断是否要从网络获取数据
     if (forceFetch && httpUrl != null) {
       //这里不等待网络数据的返回
       httpUrl.dioGetString().getValue((value, error) {
