@@ -63,8 +63,17 @@ extension SvgStringEx on String {
   /// [VectorGraphicsCodec]
   /// [decodeVectorGraphics] 解析svg格式文档字符
   ///
-  Path toUiPath([bool failSilently = false]) =>
-      parseSvgPath(this, failSilently: failSilently);
+  /// [isMmUnit] 是否要放大到mm单位的数值
+  ///
+  Path toUiPath({bool failSilently = false, bool isMmUnit = false}) {
+    final path = parseSvgPath(this, failSilently: failSilently);
+    if (isMmUnit) {
+      final scale = 1.toDpFromMm();
+      final scaleMatrix = Matrix4.identity()..scale(scale);
+      return path.transformPath(scaleMatrix);
+    }
+    return path;
+  }
 
   /// 将svg xml字符串转换成[PictureInfo]对象
   Future<PictureInfo> toStringSvgPicture({

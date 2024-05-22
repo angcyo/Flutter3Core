@@ -129,9 +129,71 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasElementControlManager.handleEvent(event, entry);
   }
 
+  /// 释放资源
+  @entryPoint
+  void release() {
+    for (final element in beforeElements) {
+      element.detachFromCanvasDelegate(canvasDelegate);
+    }
+    for (final element in elements) {
+      element.detachFromCanvasDelegate(canvasDelegate);
+    }
+    for (final element in afterElements) {
+      element.detachFromCanvasDelegate(canvasDelegate);
+    }
+  }
+
   //endregion ---entryPoint----
 
   //region ---element操作---
+
+  void addBeforeElement(ElementPainter? element) {
+    if (element == null) {
+      assert(() {
+        l.w('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    beforeElements.add(element);
+    element.attachToCanvasDelegate(canvasDelegate);
+  }
+
+  void addAfterElement(ElementPainter? element) {
+    if (element == null) {
+      assert(() {
+        l.w('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    afterElements.add(element);
+    element.attachToCanvasDelegate(canvasDelegate);
+  }
+
+  void removeBeforeElement(ElementPainter? element) {
+    if (element == null) {
+      assert(() {
+        l.w('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    beforeElements.remove(element);
+    element.detachFromCanvasDelegate(canvasDelegate);
+  }
+
+  void removeAfterElement(ElementPainter? element) {
+    if (element == null) {
+      assert(() {
+        l.w('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    afterElements.remove(element);
+    element.detachFromCanvasDelegate(canvasDelegate);
+  }
 
   /// 添加元素
   /// [element] 要添加的元素

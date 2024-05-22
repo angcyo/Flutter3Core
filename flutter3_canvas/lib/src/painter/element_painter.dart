@@ -71,6 +71,18 @@ class ElementPainter extends IPainter
     }
   }
 
+  /// 通过[Rect]设置元素的绘制属性
+  /// [paintProperty]
+  void setPaintPropertyFromRect(@dp Rect? rect) {
+    if (rect == null) {
+      paintProperty = null;
+    } else {
+      final property = PaintProperty();
+      property.initWith(rect: rect);
+      paintProperty = property;
+    }
+  }
+
   /// 获取元素[paintProperty]的边界
   @dp
   Rect? get elementsBounds {
@@ -431,13 +443,21 @@ class ElementPainter extends IPainter
   CanvasStyle? get canvasStyle => canvasDelegate?.canvasStyle;
 
   /// 附加到[CanvasDelegate]
+  @mustCallSuper
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
     this.canvasDelegate = canvasDelegate;
   }
 
   /// 从[CanvasDelegate]中移除
+  @mustCallSuper
   void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
     this.canvasDelegate = null;
+  }
+
+  /// 刷新画布
+  @mustCallSuper
+  void refresh() {
+    canvasDelegate?.refresh();
   }
 
   //---

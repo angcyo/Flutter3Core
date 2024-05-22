@@ -104,6 +104,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     _cancelIdleTimer();
   }
 
+  /// 释放所有资源, 主动调用
+  @entryPoint
+  void release(){
+    canvasElementManager.release();
+    canvasListeners.clear();
+  }
+
   //endregion ---入口点---
 
   //region ---get/set---
