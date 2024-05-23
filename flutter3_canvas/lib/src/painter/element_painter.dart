@@ -445,6 +445,10 @@ class ElementPainter extends IPainter
   /// 附加到[CanvasDelegate]
   @mustCallSuper
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
+    final old = this.canvasDelegate;
+    if (old != null && old != canvasDelegate) {
+      detachFromCanvasDelegate(old);
+    }
     this.canvasDelegate = canvasDelegate;
   }
 

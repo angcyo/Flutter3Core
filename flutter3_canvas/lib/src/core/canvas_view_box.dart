@@ -171,17 +171,23 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     return matrix;
   }
 
+  //--
   AnimationController? _lastAnimationController;
+  Completer<bool>? _changeMatrixCompleter;
 
   /// 改变画布矩阵, 支持动画
-  void changeMatrix(
+  Future<bool> changeMatrix(
     Matrix4 target, {
     bool animate = true,
     void Function(bool isCompleted)? completedAction,
-  }) {
+  }) async {
     _lastAnimationController?.dispose();
     _lastAnimationController = null;
     if (animate) {
+      if (_changeMatrixCompleter == null ||
+          _changeMatrixCompleter?.isCompleted == true) {
+        _changeMatrixCompleter = Completer();
+      }
       final matrixTween =
           Matrix4Tween(begin: canvasMatrix, end: _checkMatrix(target));
       _lastAnimationController =
@@ -190,7 +196,14 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
         canvasMatrix.setFrom(matrix);
         completedAction?.call(isCompleted);
         canvasDelegate.dispatchCanvasViewBoxChanged(this, false, isCompleted);
+        //--
+        if (_changeMatrixCompleter?.isCompleted == true) {
+        } else {
+          _changeMatrixCompleter?.complete(isCompleted);
+        }
+        _changeMatrixCompleter = null;
       });
+      return _changeMatrixCompleter!.future;
     } else {
       canvasMatrix.setFrom(_checkMatrix(target));
       completedAction?.call(true);
@@ -202,6 +215,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     //_checkMatrix();
     //canvasDelegate.dispatchCanvasViewBoxChanged(this);
     //Matrix4Tween(begin: begin!.matrix4, end: end!.matrix4).lerp(t)
+    return true;
   }
 
   /// 平移画布

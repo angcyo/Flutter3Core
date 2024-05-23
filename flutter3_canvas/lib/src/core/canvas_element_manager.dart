@@ -147,52 +147,56 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //region ---element操作---
 
-  void addBeforeElement(ElementPainter? element) {
+  bool addBeforeElement(ElementPainter? element) =>
+      _addElementIn(beforeElements, element);
+
+  bool addAfterElement(ElementPainter? element) =>
+      _addElementIn(afterElements, element);
+
+  bool removeBeforeElement(ElementPainter? element) =>
+      _removeElementFrom(beforeElements, element);
+
+  bool removeAfterElement(ElementPainter? element) =>
+      _removeElementFrom(afterElements, element);
+
+  /// 在指定容器中添加元素
+  /// 返回值表示操作是否成功
+  bool _addElementIn(List<ElementPainter> list, ElementPainter? element) {
     if (element == null) {
       assert(() {
         l.w('无效的操作');
         return true;
       }());
-      return;
+      return false;
     }
-    beforeElements.add(element);
-    element.attachToCanvasDelegate(canvasDelegate);
+    if (!list.contains(element)) {
+      list.add(element);
+      if (element.canvasDelegate != canvasDelegate) {
+        element.attachToCanvasDelegate(canvasDelegate);
+      }
+      return true;
+    }
+    return false;
   }
 
-  void addAfterElement(ElementPainter? element) {
+  /// 从指定容器中移除元素
+  /// 返回值表示操作是否成功
+  bool _removeElementFrom(List<ElementPainter> list, ElementPainter? element) {
     if (element == null) {
       assert(() {
         l.w('无效的操作');
         return true;
       }());
-      return;
+      return false;
     }
-    afterElements.add(element);
-    element.attachToCanvasDelegate(canvasDelegate);
-  }
-
-  void removeBeforeElement(ElementPainter? element) {
-    if (element == null) {
-      assert(() {
-        l.w('无效的操作');
-        return true;
-      }());
-      return;
+    if (list.contains(element)) {
+      list.remove(element);
+      if (element.canvasDelegate == canvasDelegate) {
+        element.detachFromCanvasDelegate(canvasDelegate);
+      }
+      return true;
     }
-    beforeElements.remove(element);
-    element.detachFromCanvasDelegate(canvasDelegate);
-  }
-
-  void removeAfterElement(ElementPainter? element) {
-    if (element == null) {
-      assert(() {
-        l.w('无效的操作');
-        return true;
-      }());
-      return;
-    }
-    afterElements.remove(element);
-    element.detachFromCanvasDelegate(canvasDelegate);
+    return false;
   }
 
   /// 添加元素
