@@ -15,17 +15,27 @@ mixin IWidgetProvider {
   WidgetBuilder? get provideWidget;
 }
 
+/// 在一个数据中, 提取文本
 String? textOf(dynamic data) {
   if (data is String) {
     return data;
   } else if (data is ITextProvider) {
     return data.provideText;
   } else if (data != null) {
-    return "$data";
+    try {
+      return data.text;
+    } catch (e) {
+      assert(() {
+        printError(e);
+        return true;
+      }());
+      return "$data";
+    }
   }
   return null;
 }
 
+/// 在一个数据中, 提取Widget
 Widget? widgetOf(BuildContext context, dynamic data) {
   if (data is Widget) {
     return data;
@@ -43,6 +53,14 @@ const kLabelPadding = EdgeInsets.only(
   right: kX,
   top: kH,
   bottom: kH,
+);
+
+const kLabelMinWidth = 80.0;
+
+/// label默认的约束
+const kLabelConstraints = BoxConstraints(
+  minWidth: kLabelMinWidth,
+  maxWidth: kLabelMinWidth,
 );
 
 //---
@@ -92,6 +110,29 @@ mixin TileMixin {
                   textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
             )
             .paddingInsets(textPadding));
+    return widget?.paddingInsets(padding);
+  }
+
+  /// [buildTextWidget]
+  Widget? buildLabelWidget(
+    BuildContext context, {
+    Widget? labelWidget,
+    String? label,
+    TextStyle? labelStyle,
+    bool themeStyle = true,
+    EdgeInsets? labelPadding = kLabelPadding,
+    EdgeInsets? padding,
+    BoxConstraints? constraints = kLabelConstraints,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    final widget = labelWidget ??
+        (label
+            ?.text(
+              style: labelStyle ??
+                  (themeStyle ? globalTheme.textLabelStyle : null),
+            )
+            .constrainedBox(constraints)
+            .paddingInsets(labelPadding));
     return widget?.paddingInsets(padding);
   }
 

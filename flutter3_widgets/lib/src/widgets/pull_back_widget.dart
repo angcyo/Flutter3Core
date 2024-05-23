@@ -49,6 +49,11 @@ class PullBackWidget extends StatefulWidget {
   /// 内容的装饰, 包含手柄的内容
   final Decoration? contentDecoration;
 
+  //---
+
+  /// 下拉返回, 还不支持横向返回
+  final Axis pullAxis = Axis.vertical;
+
   const PullBackWidget({
     super.key,
     required this.child,
@@ -223,9 +228,15 @@ class _PullBackWidgetState extends State<PullBackWidget>
   }
 
   /// [velocity] 手势结束时的速度 >0:快速向下拉 <0:快速向上拉
+  /// [position] 为null时, 表示在非scroll内容中拖拽
   bool _handleDragEnd(ScrollMetrics? position, double velocity) {
     //debugger();
     //l.d('velocity:$velocity value:${_pullBackController.value}');
+
+    if (position != null && position.axis != widget.pullAxis) {
+      return false;
+    }
+
     _isDragEnd = true;
     if (position != null) {
       //在滚动列表中
@@ -262,6 +273,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// [offset] 当前手势移动了多少距离
   /// 返回消耗后的距离
   double _handleConsumeUserOffset(ScrollMetrics position, double offset) {
+    //debugger();
+    if (position.axis != widget.pullAxis) {
+      return offset;
+    }
+
     //在列表顶部
     if (position.pixels <= 0) {
       //debugger();

@@ -203,7 +203,10 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
         }
         _changeMatrixCompleter = null;
       });
-      return _changeMatrixCompleter!.future;
+      if (_changeMatrixCompleter != null) {
+        return _changeMatrixCompleter!.future;
+      }
+      return true;
     } else {
       canvasMatrix.setFrom(_checkMatrix(target));
       completedAction?.call(true);

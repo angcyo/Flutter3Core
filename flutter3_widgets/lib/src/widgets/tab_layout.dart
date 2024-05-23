@@ -63,6 +63,9 @@ class TabLayout extends ScrollContainerWidget {
   /// 自动等宽, 当所有子节点的大小没有超过父节点时, 开启等宽
   final bool autoEqualWidth;
 
+  /// 背景装饰
+  final Decoration? bgDecoration;
+
   TabLayout({
     super.key,
     required super.children,
@@ -71,6 +74,7 @@ class TabLayout extends ScrollContainerWidget {
     this.gap = 0,
     this.autoEqualWidthRange,
     this.autoEqualWidth = false,
+    this.bgDecoration,
     super.scrollDirection = Axis.horizontal,
     super.reverse = false,
     super.padding,
@@ -106,6 +110,7 @@ class _TabLayoutState extends ScrollContainerState<TabLayout> {
               gap: widget.gap,
               autoEqualWidth: widget.autoEqualWidth,
               autoEqualWidthRange: widget.autoEqualWidthRange,
+              bgDecoration: widget.bgDecoration,
               children: widget.children,
             ));
   }
@@ -142,6 +147,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.autoEqualWidthRange,
     this.autoEqualWidth = false,
+    this.bgDecoration,
   });
 
   /// 确定原点位置
@@ -167,6 +173,9 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
   /// 自动等宽, 当所有子节点的大小没有超过父节点时, 开启等宽
   final bool autoEqualWidth;
 
+  /// 背景装饰
+  final Decoration? bgDecoration;
+
   @override
   TabLayoutRender createRenderObject(BuildContext context) {
     return TabLayoutRender(
@@ -180,6 +189,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       tabController: tabController,
       padding: padding,
       gap: gap,
+      bgDecoration: bgDecoration,
       autoEqualWidth: autoEqualWidth,
       autoEqualWidthRange: autoEqualWidthRange,
     );
@@ -197,6 +207,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       ..tabController = tabController
       ..padding = padding
       ..gap = gap
+      ..bgDecoration = bgDecoration
       ..autoEqualWidth = autoEqualWidth
       ..autoEqualWidthRange = autoEqualWidthRange
       ..crossAxisAlignment = crossAxisAlignment;
@@ -229,6 +240,9 @@ class TabLayoutRender extends ScrollContainerRenderBox {
   /// 自动等宽, 当所有子节点的大小没有超过父节点时, 开启等宽
   bool autoEqualWidth;
 
+  /// 背景装饰
+  Decoration? bgDecoration;
+
   TabLayoutRender({
     super.axisDirection = AxisDirection.right,
     required super.crossAxisDirection,
@@ -241,6 +255,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     this.tabController,
     this.autoEqualWidthRange,
     this.autoEqualWidth = false,
+    this.bgDecoration,
   });
 
   @override
@@ -275,6 +290,13 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     tabController?.removeListener(_tabChanged);
     tabController?.animation?.removeListener(_tabChanged);
     super.detach();
+  }
+
+  @override
+  void dispose() {
+    _bgPainter?.dispose();
+    _bgPainter = null;
+    super.dispose();
   }
 
   /// 获取滚动的子节点
@@ -839,8 +861,17 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     }
   }
 
+  ImageConfiguration configuration = ImageConfiguration.empty;
+  BoxPainter? _bgPainter;
+
   @override
   void paint(PaintingContext context, ui.Offset offset) {
+    final ImageConfiguration filledConfiguration =
+        configuration.copyWith(size: size);
+    _bgPainter ??= bgDecoration?.createBoxPainter(markNeedsPaint);
+    _bgPainter?.paint(context.canvas, offset, filledConfiguration);
+    setCanvasIsComplexHint(context, bgDecoration);
+
     // 绘制指定类型的子节点
     // 这里绘制的内容, 不支持滚动
     // 需要支持滚动请使用[paintScrollContents]

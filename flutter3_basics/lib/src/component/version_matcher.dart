@@ -137,11 +137,14 @@ extension VersionIntEx on int {
 extension VersionStringEx on String {
   /// 当前的版本范围是否配置指定的版本
   bool matchVersion(
-    int version, {
+    int? version, {
     /*未配置[config]规则时返回*/
     bool defOrNull = false,
     /*[config]规则为空时*/
     bool defOrEmpty = true,
   }) =>
-      version.matchVersion(this, defOrNull: defOrNull, defOrEmpty: defOrEmpty);
+      version == null
+          ? false
+          : version.matchVersion(this,
+              defOrNull: defOrNull, defOrEmpty: defOrEmpty);
 }

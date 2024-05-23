@@ -228,7 +228,6 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
   void detach() {
     clearPainters();
     super.detach();
-    markNeedsPaint();
   }
 
   @override
