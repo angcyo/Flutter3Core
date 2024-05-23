@@ -68,7 +68,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
   late PhotoViewScaleStateController photoScaleStateController;
 
   /// 上一次设置的状态栏样式
-  SystemUiOverlayStyle? lastStyle = SystemChrome.latestStyle;
+  SystemUiOverlayStyle? lastStyle;
 
   PhotoViewScaleStateController _buildScaleStateController() {
     return PhotoViewScaleStateController()
@@ -101,7 +101,9 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
     );*/
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
+    //lastStyle = SystemChrome.latestStyle;
+    //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     photoStateController = _buildPhotoStateController();
     photoScaleStateController = _buildScaleStateController();
