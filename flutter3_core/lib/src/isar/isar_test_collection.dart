@@ -46,3 +46,56 @@ class TestCollection {
   @ignore
   String? testIgnore;
 }
+
+/// 查询对象
+/// https://isar.dev/zh/crud.html#%E6%9F%A5%E8%AF%A2%E5%AF%B9%E8%B1%A1
+/// ```
+/// final allRecipes = await isar.recipes.where().findAll();
+///
+/// final favouires = await isar.recipes.filter()
+///   .isFavoriteEqualTo(true)
+///   .findAll();
+/// ```
+
+/// 插入对象
+/// https://isar.dev/zh/crud.html#%E6%8F%92%E5%85%A5%E5%AF%B9%E8%B1%A1
+/// ```
+/// final pancakes = Recipe()
+///   ..name = 'Pancakes'
+///   ..lastCooked = DateTime.now()
+///   ..isFavorite = true;
+///
+/// await isar.writeTxn(() async {
+///   await isar.recipes.put(pancakes);
+/// })
+/// ```
+
+/// 修改对象
+/// https://isar.dev/zh/crud.html#%E4%BF%AE%E6%94%B9%E5%AF%B9%E8%B1%A1
+/// ```
+/// await isar.writeTxn(() async {
+///   pancakes.isFavorite = false;
+///   await isar.recipes.put(recipe);
+/// });
+/// ```
+
+/// 删除对象
+/// https://isar.dev/zh/crud.html#%E5%88%A0%E9%99%A4%E5%AF%B9%E8%B1%A1
+/// ```
+/// await isar.writeTxn(() async {
+///   final success = await isar.recipes.delete(123);
+///   print('Recipe deleted: $success');
+/// });
+///
+/// await isar.writeTxn(() async {
+///   final count = await isar.recipes.deleteAll([1, 2, 3]);
+///   print('We deleted $count recipes');
+/// });
+/// 
+/// await isar.writeTxn(() async {
+///   final count = await isar.recipes.filter()
+///     .isFavoriteEqualTo(false)
+///     .deleteAll();
+///   print('We deleted $count recipes');
+/// });
+/// ```
