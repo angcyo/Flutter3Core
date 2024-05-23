@@ -1189,6 +1189,24 @@ extension WidgetEx on Widget {
     return constrainedBox(BoxConstraints.tight(size));
   }
 
+  /// 最小约束
+  Widget min({
+    double? minWidth = kInteractiveHeight,
+    double? minHeight = kInteractiveHeight,
+    EdgeInsetsGeometry? margin =
+        const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
+    EdgeInsetsGeometry? padding,
+    AlignmentGeometry alignment = Alignment.center,
+  }) {
+    return paddingInsets(margin)
+        .align(alignment)
+        .constrainedBox(BoxConstraints(
+          minWidth: minWidth ?? 0,
+          minHeight: minHeight ?? 0,
+        ))
+        .paddingInsets(padding);
+  }
+
   /// 约束最小宽高
   /// [constrainedBox]
   /// [ConstrainedBox]

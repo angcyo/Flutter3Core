@@ -473,6 +473,12 @@ abstract class ScrollContainerRenderBox<
     }
 
     //debugger();
+    if (constraints.maxWidth != double.infinity) {
+      width = max(width, constraints.maxWidth);
+    }
+    if (constraints.maxHeight != double.infinity) {
+      height = max(height, constraints.maxHeight);
+    }
     size = constraints.constrain(Size(width, height));
     //size = Size(width * 3, height);
 

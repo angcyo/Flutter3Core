@@ -23,8 +23,8 @@ class TabLayoutController extends TabController {
     super.length = intMax32Value,
 
     /// 用来实现滚动居中
-    this.scrollController,
-  });
+    ScrollContainerController? scrollController,
+  }) : scrollController = scrollController ?? ScrollContainerController();
 
   /// 选择tab的位置
   @api
@@ -51,7 +51,7 @@ class TabLayoutController extends TabController {
 /// [SingleChildScrollView]
 class TabLayout extends ScrollContainerWidget {
   /// [TabLayoutController]
-  final TabLayoutController? tabLayoutController;
+  final TabLayoutController tabLayoutController;
 
   /// 子节点之间的间隙
   final double gap;
@@ -67,7 +67,7 @@ class TabLayout extends ScrollContainerWidget {
     super.key,
     required super.children,
     ScrollController? scrollController,
-    this.tabLayoutController,
+    required this.tabLayoutController,
     this.gap = 0,
     this.autoEqualWidthRange,
     this.autoEqualWidth = false,
@@ -82,8 +82,9 @@ class TabLayout extends ScrollContainerWidget {
     super.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     super.crossAxisAlignment = CrossAxisAlignment.center,
   }) : super(
-            scrollController:
-                scrollController ?? tabLayoutController?.scrollController);
+          scrollController:
+              scrollController ?? tabLayoutController.scrollController,
+        );
 
   @override
   State<TabLayout> createState() => _TabLayoutState();
@@ -282,6 +283,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
 
   /// 获取指定类型的子节点
   List<RenderBox> getIndicatorChildren(TabItemType? itemType) {
+    assert(tabController != null);
     return tabController == null
         ? []
         : getChildren().where((element) {
