@@ -42,14 +42,15 @@ String get intlCurrentLocaleName {
 extension L10nStringEx on String {
   /// [intl.Intl.message]
   /// 使用指定的name,获取对应的文本资源
-  String intlMessage(
-          {String? defMessage,
-          String? desc = '',
-          Map<String, Object>? examples,
-          String? locale,
-          List<Object>? args,
-          String? meaning,
-          bool? skip}) =>
+  String intlMessage({
+    String? defMessage,
+    String? desc = '',
+    Map<String, Object>? examples,
+    String? locale,
+    List<Object>? args,
+    String? meaning,
+    bool? skip,
+  }) =>
       intl.Intl.message(
         defMessage ?? this,
         name: this,

@@ -1553,6 +1553,12 @@ extension IterableEx<E> on Iterable<E> {
     }
     return result;
   }
+
+  /// 带索引的[map]
+  Iterable<T> mapIndex<T>(T Function(E element, int index) toElement) {
+    var index = 0;
+    return map((e) => toElement(e, index++));
+  }
 }
 
 /// [ListEx]
