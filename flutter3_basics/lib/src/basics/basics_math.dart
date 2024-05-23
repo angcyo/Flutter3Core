@@ -110,9 +110,9 @@ List<Offset> centerOfCircleRadius(Offset p1, Offset p2, double dRadius) {
   k = (p2y - p1y) / (p2x - p1x); // 斜率
   if (k == 0) {
     center1 = Offset((p1x + p2x) / 2.0,
-        p1y + sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0));
+        p1y + math.sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0));
     center2 = Offset((p1x + p2x) / 2.0,
-        p1y - sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0));
+        p1y - math.sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0));
   } else {
     kVertical = -1.0 / k;
     midX = (p1x + p2x) / 2.0;
@@ -124,8 +124,8 @@ List<Offset> centerOfCircleRadius(Offset p1, Offset p2, double dRadius) {
         (dRadius * dRadius -
             ((midX - p1x) * (midX - p1x) + (midY - p1y) * (midY - p1y)));
 
-    final c1x = (-1.0 * b + sqrt(b * b - 4 * a * c)) / (2 * a);
-    final c2x = (-1.0 * b - sqrt(b * b - 4 * a * c)) / (2 * a);
+    final c1x = (-1.0 * b + math.sqrt(b * b - 4 * a * c)) / (2 * a);
+    final c2x = (-1.0 * b - math.sqrt(b * b - 4 * a * c)) / (2 * a);
 
     final c1y = kVertical * (c1x - midX) + midY;
     final c2y = kVertical * (c2x - midX) + midY;

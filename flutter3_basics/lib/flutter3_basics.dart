@@ -6,7 +6,6 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:math' as math;
-import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:crypto/crypto.dart' as crypto;
@@ -49,6 +48,7 @@ export 'src/utils/hex.dart';
 
 //export 'package:leak_tracker/leak_tracker.dart';
 
+part 'l10n/intl_ex.dart';
 part 'src/basics/basics.dart';
 part 'src/basics/system.dart';
 part 'src/basics/basics_animation.dart';

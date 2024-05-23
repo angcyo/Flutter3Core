@@ -1,13 +1,36 @@
 # flutter_intl
 
-[intl_utils: ^2.8.7]
+[intl: ^0.19.0] - 国际化, 一些api
+
+https://pub.dev/packages/intl
+https://pub-web.flutter-io.cn/packages/intl
+
+[intl_utils: ^2.8.7] - 根据配置,将arb生成代码
 
 https://pub.dev/packages/intl_utils
 https://pub-web.flutter-io.cn/packages/intl_utils
 
+实例参考:
+https://github.com/lizhuoyuan/flutter_intl_example
+
 # 1.配置
 
 ```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # https://pub.dev/packages/intl
+  # https://localizely.com/flutter-arb/
+  # https://github.com/localizely/flutter-intl-plugin-sample-app
+  # https://github.com/cfug/flutter.cn/tree/main/examples/internationalization/gen_l10n_example
+  # https://pub.dev/packages/clock
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/path
+  intl: any
+  clock: any
+
 # https://pub.dev/packages/intl
 # https://pub.dev/packages/intl_utils
 # https://localizely.com/flutter-arb/
@@ -27,5 +50,15 @@ flutter_intl:
 
 安装Idea`Flutter Intl`插件, 会自动执行命令.
 
-
 - arb文件说明: https://localizely.com/flutter-arb/
+
+# 注意
+
+多个模块同时使用时, 会出现其余模块无法切换语言的问题.
+
+主要是因为`intl_helpers.messageLookup`是全局共享导致的.
+
+解决方法, 将所有资源合并到一起.
+
+https://juejin.cn/post/7041125659308982302
+

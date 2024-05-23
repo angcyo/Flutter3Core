@@ -115,7 +115,7 @@ class BytesWriter {
     if (length == null) {
       _bytes.addAll(bytes);
     } else {
-      _bytes.addAll(bytes.sublist(0, min(length, bytes.size())));
+      _bytes.addAll(bytes.sublist(0, math.min(length, bytes.size())));
     }
   }
 
