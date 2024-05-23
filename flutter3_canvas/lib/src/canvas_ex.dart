@@ -71,3 +71,29 @@ extension CanvasElementIterableEx on Iterable<ElementPainter> {
     return result;
   }
 }
+
+/// 订阅扩展
+mixin StreamSubscriptionPainterMixin on ElementPainter {
+  final List<StreamSubscription> _streamPainterSubscriptions = [];
+
+  /// 在[detachFromCanvasDelegate]时, 取消所有的[StreamSubscription]
+  void hookPainterStreamSubscription(StreamSubscription subscription) {
+    _streamPainterSubscriptions.add(subscription);
+  }
+
+  @override
+  void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
+    try {
+      for (final element in _streamPainterSubscriptions) {
+        try {
+          element.cancel();
+        } catch (e) {
+          printError(e);
+        }
+      }
+    } finally {
+      _streamPainterSubscriptions.clear();
+    }
+    super.detachFromCanvasDelegate(canvasDelegate);
+  }
+}

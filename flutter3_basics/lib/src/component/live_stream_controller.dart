@@ -267,14 +267,17 @@ mixin StreamSubscriptionMixin<T extends StatefulWidget> on State<T> {
 
   @override
   void dispose() {
-    for (var element in _streamSubscriptions) {
-      try {
-        element.cancel();
-      } catch (e) {
-        printError(e);
+    try {
+      for (final element in _streamSubscriptions) {
+        try {
+          element.cancel();
+        } catch (e) {
+          printError(e);
+        }
       }
+    } finally {
+      _streamSubscriptions.clear();
     }
-    _streamSubscriptions.clear();
     super.dispose();
   }
 }
