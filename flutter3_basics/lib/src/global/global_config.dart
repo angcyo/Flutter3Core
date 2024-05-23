@@ -15,7 +15,7 @@ typedef GlobalOpenUrlFn = Future<bool> Function(
 
 /// 全局写入文件的回调方法, 返回文件路径
 typedef GlobalWriteFileFn = Future<String?> Function(
-    String fileName, String? folder, Object? content);
+    String fileName, String? folder, dynamic content);
 
 /// 全局分享[data]的回调方法, 返回成功or失败
 typedef GlobalShareDataFn = Future<bool> Function(
@@ -46,6 +46,10 @@ typedef AppBarBuilderFn = PreferredSizeWidget? Function(
   double? titleSpacing,
 });
 
+/// [AppBar]左边构建器函数
+typedef AppBarLeadingBuilderFn = Widget? Function(
+    BuildContext context, dynamic page);
+
 /// [GlobalConfig.allModalRouteList]
 ModalRoute? get lastModalRoute => GlobalConfig.allModalRouteList().lastOrNull;
 
@@ -63,7 +67,7 @@ Future<bool> openWebUrl(String? url, [BuildContext? context]) async {
     if (fn == null) {
       return false;
     }
-    return await fn.call(GlobalConfig.def.globalContext, url);
+    return await fn.call(GlobalConfig.def.globalTopContext, url);
   } else {
     return context.openWebUrl(url);
   }
@@ -109,8 +113,14 @@ class GlobalConfigScope extends InheritedWidget {
 }
 
 class GlobalConfig with Diagnosticable, OverlayManage {
-  /// 全局的上下文
-  BuildContext? globalContext;
+  /// 全局的上下文, 在[WidgetsApp]顶上
+  BuildContext? globalTopContext;
+
+  /// 全局的上下文, 在[WidgetsApp]下
+  BuildContext? globalAppContext;
+
+  ///
+  BuildContext? get globalContext => globalAppContext ?? globalTopContext;
 
   //region ThemeData
 
@@ -123,7 +133,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   //endregion ThemeData
 
   GlobalConfig({
-    this.globalContext,
+    this.globalTopContext,
+    this.globalAppContext,
   });
 
   /// 全局默认
@@ -148,7 +159,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   static GlobalConfig of(BuildContext? context, {bool depend = false}) {
     GlobalConfig? globalConfig;
     if (depend) {
-      globalConfig = (context ?? GlobalConfig.def.globalContext)
+      globalConfig = (context ?? GlobalConfig.def.globalTopContext)
           ?.dependOnInheritedWidgetOfExactType<GlobalConfigScope>()
           ?.getGlobalConfig;
     } else {
@@ -302,7 +313,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 用来创建自定义的[AppBar]左边的返回小部件
   /// [page] 用来识别界面, 做一些特殊处理
   /// @return null 使用系统默认的
-  Widget? Function(BuildContext context, Object? page) appBarLeadingBuilder = (
+  AppBarLeadingBuilderFn appBarLeadingBuilder = (
     context,
     state,
   ) {
@@ -375,14 +386,14 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 从上往下查找 [WidgetsApp]
   /// [Overlay.of]
   Element? findWidgetsAppElement() {
-    var element = globalContext?.findElementOfWidget<WidgetsApp>();
+    final element = globalTopContext?.findElementOfWidget<WidgetsApp>();
     return element;
   }
 
   /// 从上往下查找 [OverlayState]
   /// [Overlay.of]
   OverlayState? findOverlayState() {
-    var element = globalContext?.findElementOfWidget<Overlay>();
+    var element = globalTopContext?.findElementOfWidget<Overlay>();
     if (element is StatefulElement) {
       return element.state as OverlayState;
     }
@@ -392,7 +403,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 从上往下查找 [NavigatorState]
   /// [Navigator.of]
   NavigatorState? findNavigatorState() {
-    var element = globalContext?.findElementOfWidget<Navigator>();
+    var element = globalTopContext?.findElementOfWidget<Navigator>();
     if (element is StatefulElement) {
       return element.state as NavigatorState;
     }
@@ -403,19 +414,19 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   List<ModalRoute> findModalRouteList() {
     List<Element> routeElementList = [];
     List<ModalRoute> result = [];
-    globalContext?.eachVisitChildElements((element, depth, childIndex) {
+    globalTopContext?.eachVisitChildElements((element, depth, childIndex) {
       if ("$element".startsWith("_ModalScopeStatus(")) {
         routeElementList.add(element);
         return false;
       }
       return true;
     });
-    for (var element in routeElementList) {
+    for (final element in routeElementList) {
       //获取第一个子元素
       var isAdd = false;
       element.visitChildElements((element) {
         if (!isAdd) {
-          var route = ModalRoute.of(element);
+          final route = ModalRoute.of(element);
           route?.let<ModalRoute>((it) {
             isAdd = true;
             result.add(it);
@@ -423,6 +434,25 @@ class GlobalConfig with Diagnosticable, OverlayManage {
           });
         }
       });
+    }
+    return result;
+  }
+
+  /// 从上往下查找 [Localizations]
+  /// [Localizations.localeOf]
+  /// [Localizations.maybeLocaleOf]
+  Locale? findLocale() {
+    //final element = globalTopContext?.findElementOfWidget<Localizations>();
+    final element =
+        globalTopContext?.findElementOfWidget<Title>(); //通过title元素获取
+    Locale? result;
+    if (element is StatefulElement) {
+      //_LocalizationsState 无法访问, 通过子元素访问
+      element.visitChildElements((element) {
+        result = Localizations.maybeLocaleOf(element) ?? result;
+      });
+    } else if (element != null) {
+      result = Localizations.maybeLocaleOf(element) ?? result;
     }
     return result;
   }
@@ -439,6 +469,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 复制
   GlobalConfig copyWith({
+    BuildContext? globalTopContext,
     BuildContext? globalContext,
     ThemeData? themeData,
     GlobalTheme? globalTheme,
@@ -450,9 +481,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     WidgetArgumentBuilder? errorPlaceholderBuilder,
     ProgressWidgetBuilder? loadingOverlayWidgetBuilder,
     AppBarBuilderFn? appBarBuilder,
+    AppBarLeadingBuilderFn? appBarLeadingBuilder,
   }) {
     return GlobalConfig(
-      globalContext: globalContext ?? this.globalContext,
+      globalTopContext: globalTopContext ?? this.globalTopContext,
+      globalAppContext: globalContext ?? this.globalAppContext,
     )
       ..themeData = themeData ?? this.themeData
       ..globalTheme = globalTheme ?? this.globalTheme
@@ -467,6 +500,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
           errorPlaceholderBuilder ?? this.errorPlaceholderBuilder
       ..loadingOverlayWidgetBuilder =
           loadingOverlayWidgetBuilder ?? this.loadingOverlayWidgetBuilder
-      ..appBarBuilder = appBarBuilder ?? this.appBarBuilder;
+      ..appBarBuilder = appBarBuilder ?? this.appBarBuilder
+      ..appBarLeadingBuilder =
+          appBarLeadingBuilder ?? this.appBarLeadingBuilder;
   }
 }

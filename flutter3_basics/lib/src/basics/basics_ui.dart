@@ -1654,6 +1654,7 @@ extension ContextEx on BuildContext {
   /// still being updated at that point, so the children might not be constructed yet, or might be old
   /// children that are going to be replaced.
   /// ```
+  /// 此方法不能在build阶段调用
   eachVisitChildElements(
     ConditionalElementVisitorDepth visitor, {
     int depth = 0,

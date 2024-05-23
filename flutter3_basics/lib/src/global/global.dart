@@ -18,7 +18,7 @@ class GlobalApp extends StatefulWidget {
 
   /// 打印所有的祖先元素和子元素
   static logWidget([Duration? delay, BuildContext? context]) {
-    BuildContext? ctx = context ?? GlobalConfig.def.globalContext;
+    BuildContext? ctx = context ?? GlobalConfig.def.globalTopContext;
     if (ctx == null || delay != null) {
       delayCallback(() {
         logWidget(null, ctx);
@@ -78,7 +78,7 @@ class _GlobalAppState extends State<GlobalApp> {
   @override
   Widget build(BuildContext context) {
     GlobalConfig config = widget.globalConfig ?? GlobalConfig.def;
-    config.globalContext = context;
+    config.globalTopContext = context;
     //GlobalApp.logWidget(const Duration(milliseconds: 16));
     /*delayCallback(() {
       var list = GlobalConfig.def.findModalRouteList();

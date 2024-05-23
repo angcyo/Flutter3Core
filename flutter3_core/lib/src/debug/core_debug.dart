@@ -34,7 +34,7 @@ class CoreDebug {
   /// [HiveEx]
   /// [HiveStringEx]
   static void parseHiveKeys(List<String?>? lines, [BuildContext? context]) {
-    context ??= GlobalConfig.def.globalContext;
+    context ??= GlobalConfig.def.globalTopContext;
     if (lines == null) {
       return;
     }

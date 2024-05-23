@@ -303,7 +303,7 @@ OverlayEntry? showOverlay(
 }) {
   OverlayState? overlayState;
   if (context == null) {
-    GlobalConfig.def.globalContext
+    GlobalConfig.def.globalTopContext
         ?.eachVisitChildElements((element, depth, childIndex) {
       if (element.widget is Overlay) {
         overlayState = (element as StatefulElement?)?.state as OverlayState?;
@@ -322,7 +322,7 @@ OverlayEntry? showOverlay(
     }());
     return null;
   }
-  context ??= GlobalConfig.def.globalContext;
+  context ??= GlobalConfig.def.globalTopContext;
   if (context == null) {
     assert(() {
       debugPrint('context is null, dispose this call');

@@ -10,7 +10,7 @@ Future<UiImage?> captureScreenImage([
   BuildContext? context,
   double pixelRatio = 1.0,
 ]) async {
-  final image = await (context ?? GlobalConfig.def.globalContext)
+  final image = await (context ?? GlobalConfig.def.globalTopContext)
       ?.captureImage(pixelRatio: pixelRatio);
   return image;
 }
