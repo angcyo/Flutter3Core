@@ -166,6 +166,13 @@ class FadePageRoute<T> extends MaterialPageRoute<T>
       begin: 1,
       end: 0.8,
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
+    
+    if (!_enableSecondaryAnimation) {
+      return FadeTransition(
+        opacity: enter,
+        child: child,
+      );
+    }
     return FadeTransition(
       opacity: enter,
       child: FadeTransition(
@@ -315,6 +322,12 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
       end: const Offset(-1.0, 0),
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
 
+    if (!_enableSecondaryAnimation) {
+      return SlideTransition(
+        position: enter,
+        child: child,
+      );
+    }
     return SlideTransition(
       position: enter,
       child: SlideTransition(
@@ -363,15 +376,24 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
       end: 0.8,
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
 
-    final scale = ScaleTransition(
-      scale: enter,
-      alignment: Alignment.center,
-      child: ScaleTransition(
-        scale: exit,
+    final Widget scale;
+    if (!_enableSecondaryAnimation) {
+      scale = ScaleTransition(
+        scale: enter,
         alignment: Alignment.center,
         child: child,
-      ),
-    );
+      );
+    } else {
+      scale = ScaleTransition(
+        scale: enter,
+        alignment: Alignment.center,
+        child: ScaleTransition(
+          scale: exit,
+          alignment: Alignment.center,
+          child: child,
+        ),
+      );
+    }
 
     if (fade) {
       return scale.fade(opacity: animation);
