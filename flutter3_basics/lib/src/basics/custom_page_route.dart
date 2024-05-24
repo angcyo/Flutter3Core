@@ -166,7 +166,7 @@ class FadePageRoute<T> extends MaterialPageRoute<T>
       begin: 1,
       end: 0.8,
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
-    
+
     if (!_enableSecondaryAnimation) {
       return FadeTransition(
         opacity: enter,

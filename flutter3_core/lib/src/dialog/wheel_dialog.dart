@@ -54,7 +54,7 @@ class _WheelDialogState extends State<WheelDialog> with DialogMixin, TileMixin {
       valuesWidget: widget.valuesWidget,
     );
 
-    return buildBottomColumnDialog(
+    return buildBottomChildrenDialog(
         context,
         [
           CoreDialogTitle(

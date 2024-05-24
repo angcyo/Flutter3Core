@@ -121,3 +121,37 @@ class _SliderTileState extends State<SliderTile> with TileMixin {
     ].row(gap: widget.gap)!.paddingInsets(widget.padding).material();
   }
 }
+
+/// 上label     number(支持键盘输入)
+/// 下slider
+/// [SliderTile]
+class LabelNumberSliderTile extends StatefulWidget {
+  /// label
+  final String? label;
+  final Widget? labelWidget;
+
+  const LabelNumberSliderTile({
+    super.key,
+    this.label,
+    this.labelWidget,
+  });
+
+  @override
+  State<LabelNumberSliderTile> createState() => _LabelNumberSliderTileState();
+}
+
+class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
+    with TileMixin {
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+
+    final label = buildLabelWidget(
+      context,
+      label: widget.label,
+      labelWidget: widget.labelWidget,
+    );
+
+    return const Placeholder();
+  }
+}

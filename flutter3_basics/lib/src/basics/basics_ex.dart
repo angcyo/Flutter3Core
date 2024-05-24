@@ -1710,7 +1710,7 @@ extension ListEx<T> on List<T> {
     return result;
   }
 
-  /// 切片, 保证索引不越界
+  /// 切片, 保证索引不越界. [start~end)
   /// [sublist] 系统的切片方法
   List<T> subList(int start, [int? end]) {
     start = clamp(start, 0, length);

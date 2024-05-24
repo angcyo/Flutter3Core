@@ -123,22 +123,53 @@ mixin DialogMixin implements TranslationTypeImpl {
 
   /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
   /// [children] 一组小部件
+  /// [enablePullBack] 是否支持下拉关闭
+  /// [showDragHandle] 激活下拉关闭时, 是否显示拖拽句柄
+  /// [useScroll] 是否使用滚动容器
+  /// [scrollChildIndex] 使用滚动容器时, [children]索引>=此值的child才放大滚动容器中
+  /// [scrollMaxHeight] 滚动容器最大的高度, 如果小于1, 表示屏幕高度的百分比
   /// [clipRadius] 整体圆角
   /// [clipTopRadius] 顶部圆角
   /// [clipBottomRadius] 底部圆角
   @api
   @entryPoint
-  Widget buildBottomColumnDialog(
+  Widget buildBottomChildrenDialog(
     BuildContext context,
     WidgetList children, {
     bool enablePullBack = true,
     bool showDragHandle = true,
+    bool useScroll = false,
+    int scrollChildIndex = 1,
+    double? scrollMaxHeight = 0.8,
     double? clipRadius,
     double? clipTopRadius,
     double? clipBottomRadius,
   }) {
-    return [if (showDragHandle) buildDragHandle(), ...children]
-        .column()!
+    final Widget body;
+    if (useScroll) {
+      final fixedChildren = children.subList(0, scrollChildIndex);
+      final scrollChildren = children.subList(scrollChildIndex);
+
+      if (scrollMaxHeight != null && scrollMaxHeight < 1) {
+        scrollMaxHeight = screenHeight * scrollMaxHeight;
+      }
+
+      body = [
+        if (enablePullBack && showDragHandle) buildDragHandle(),
+        ...fixedChildren,
+        scrollChildren
+            .scroll(scrollDirection: Axis.vertical)
+            ?.expanded()
+            .constrainedMax(maxHeight: scrollMaxHeight),
+      ].column()!;
+    } else {
+      body = [
+        if (enablePullBack && showDragHandle) buildDragHandle(),
+        ...children
+      ].column()!;
+    }
+
+    return body
         .container(color: Colors.white)
         .clipRadius(
           radius: clipRadius,
