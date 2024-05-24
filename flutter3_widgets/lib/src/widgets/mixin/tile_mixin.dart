@@ -19,9 +19,11 @@ mixin IWidgetProvider {
 String? textOf(dynamic data) {
   if (data is String) {
     return data;
-  } else if (data is ITextProvider) {
+  }
+  if (data is ITextProvider) {
     return data.provideText;
-  } else if (data != null) {
+  }
+  if (data != null) {
     try {
       return data.text;
     } catch (e) {
@@ -36,11 +38,28 @@ String? textOf(dynamic data) {
 }
 
 /// 在一个数据中, 提取Widget
-Widget? widgetOf(BuildContext context, dynamic data) {
+/// [tryTextWidget] 是否尝试使用[Text]小部件
+Widget? widgetOf(
+  BuildContext context,
+  dynamic data, {
+  bool tryTextWidget = false,
+  TextStyle? textStyle,
+  TextAlign? textAlign,
+}) {
   if (data is Widget) {
     return data;
-  } else if (data is IWidgetProvider) {
+  }
+  if (data is IWidgetProvider && data.provideWidget != null) {
     return data.provideWidget?.call(context);
+  }
+  if (tryTextWidget) {
+    final text = textOf(data);
+    if (text != null) {
+      return text.text(
+        style: textStyle,
+        textAlign: textAlign,
+      );
+    }
   }
   return null;
 }

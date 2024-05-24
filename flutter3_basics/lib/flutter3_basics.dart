@@ -87,6 +87,7 @@ part 'src/debug/state_log.dart';
 part 'src/global/global.dart';
 part 'src/global/global_config.dart';
 part 'src/global/global_constants.dart';
+part 'src/global/global_typedef.dart';
 part 'src/global/global_overlays.dart';
 part 'src/global/global_theme.dart';
 part 'src/global/overlay/overlay_animation.dart';

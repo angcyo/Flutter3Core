@@ -14,6 +14,9 @@ class TabLayoutTile extends StatefulWidget {
   final List? values;
   final List<Widget>? children;
 
+  /// 索引改变回调
+  final IndexAction? onTabIndexChanged;
+
   const TabLayoutTile({
     super.key,
     this.label,
@@ -21,6 +24,7 @@ class TabLayoutTile extends StatefulWidget {
     this.initValue,
     this.values,
     this.children,
+    this.onTabIndexChanged,
   });
 
   @override
@@ -40,6 +44,12 @@ class _TabLayoutTileState extends State<TabLayoutTile>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    tabLayoutController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
@@ -53,7 +63,7 @@ class _TabLayoutTileState extends State<TabLayoutTile>
     WidgetList children;
     if (widget.children == null) {
       children = widget.values!.map((data) {
-        final widget = widgetOf(context, data);
+        final widget = widgetOf(context, data, tryTextWidget: false);
         return widget ?? textOf(data)!.text().min();
       }).toList();
     } else {
@@ -62,6 +72,7 @@ class _TabLayoutTileState extends State<TabLayoutTile>
     children = children
         .mapIndex((child, index) => child.click(() {
               tabLayoutController.selectedItem(index);
+              widget.onTabIndexChanged?.call(index);
             }))
         .toList();
     final content = TabLayout(
