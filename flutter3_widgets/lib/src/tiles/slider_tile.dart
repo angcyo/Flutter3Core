@@ -130,10 +130,20 @@ class LabelNumberSliderTile extends StatefulWidget {
   final String? label;
   final Widget? labelWidget;
 
+  /// value
+  final double value;
+  final double minValue;
+  final double maxValue;
+  final int? divisions;
+
   const LabelNumberSliderTile({
     super.key,
     this.label,
     this.labelWidget,
+    this.value = 0,
+    this.minValue = 0,
+    this.maxValue = 1,
+    this.divisions,
   });
 
   @override
@@ -142,6 +152,16 @@ class LabelNumberSliderTile extends StatefulWidget {
 
 class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     with TileMixin {
+  double _initialValue = 0;
+  double _currentValue = 0;
+
+  @override
+  void initState() {
+    _initialValue = widget.value;
+    _currentValue = _initialValue;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -152,6 +172,22 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       labelWidget: widget.labelWidget,
     );
 
-    return const Placeholder();
+    //
+    final top = [
+      label?.expanded(),
+    ].row()!;
+    final bottom = buildSliderWidget(
+      context,
+      _currentValue,
+      divisions: widget.divisions,
+      minValue: widget.minValue,
+      maxValue: widget.maxValue,
+      onChanged: (value) {
+        _currentValue = value;
+        updateState();
+      },
+    );
+
+    return [top, bottom].column()!.material();
   }
 }

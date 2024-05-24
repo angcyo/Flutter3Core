@@ -95,6 +95,8 @@ const kLabelConstraints = BoxConstraints(
 //---
 
 mixin TileMixin {
+  //region ---构建小部件---
+
   /// 构建图标小部件
   Widget? buildIconWidget(
     BuildContext context, {
@@ -206,6 +208,10 @@ mixin TileMixin {
             : null);
   }
 
+  //endregion ---构建小部件---
+
+  //region ---常用小部件---
+
   /// 构建一个[Switch]开关小部件
   /// [activeColor] 激活时圈圈的颜色
   /// [activeTrackColor] 激活时轨道的颜色
@@ -263,6 +269,84 @@ mixin TileMixin {
     return widget.paddingInsets(padding);
   }
 
+  /// 构建一个[Slider]滑块小部件
+  /// [value] 当前值[minValue~maxValue]
+  /// [minValue]
+  /// [maxValue]
+  /// [divisions] 滑块要分几段, 1段2个点(首尾)
+  /// [showValueIndicator] 在滑块上显示值的时机
+  ///
+  /// [trackHeight] 轨道的高度
+  /// [thumbColor] 浮子的颜色
+  /// [overlayColor] 触摸时浮子光晕的颜色
+  /// [activeTrackColor] 有值轨道的颜色
+  /// [activeTrackGradientColors] 有值轨道的渐变颜色
+  /// [inactiveTrackColor] 无值轨道的颜色(背景颜色)
+  /// [valueIndicatorColor] 气泡的颜色
+  ///
+  /// [Slider]小部件需要[Material]支持.
+  Widget buildSliderWidget(
+    BuildContext context,
+    double value, {
+    String? label,
+    double minValue = 0,
+    double maxValue = 1,
+    int digits = kDefaultDigits,
+    int? divisions,
+    ShowValueIndicator? showValueIndicator = ShowValueIndicator.always,
+    ValueChanged<double>? onChanged,
+    ValueChanged<double>? onChangeStart,
+    ValueChanged<double>? onChangeEnd,
+    Color? thumbColor,
+    Color? overlayColor,
+    Color? activeTrackColor,
+    List<Color>? activeTrackGradientColors,
+    Color? inactiveTrackColor,
+    Color? valueIndicatorColor,
+    double? trackHeight,
+    SliderTrackShape? trackShape,
+  }) {
+    if (trackShape == null) {
+      if (!isNil(activeTrackGradientColors)) {
+        trackShape = GradientSliderTrackShape(activeTrackGradientColors!);
+        activeTrackColor ??= activeTrackGradientColors.last;
+      }
+    }
+    return SliderTheme(
+      data: SliderThemeData(
+        showValueIndicator: showValueIndicator,
+        thumbColor: thumbColor,
+        activeTrackColor: activeTrackColor,
+        overlayColor: overlayColor,
+        valueIndicatorColor: valueIndicatorColor,
+        inactiveTrackColor: inactiveTrackColor,
+        trackShape: trackShape,
+        /*inactiveTrackColor: Colors.redAccent,*/
+        trackHeight: trackHeight,
+      ),
+      child: Slider(
+        value: value,
+        min: minValue,
+        max: maxValue,
+        divisions: divisions,
+        label: label ?? value.toDigits(digits: digits),
+        onChanged: onChanged ??
+            (value) {
+              assert(() {
+                l.d('滑块[$minValue~$maxValue]:$value');
+                return true;
+              }());
+            },
+        onChangeStart: onChangeStart,
+        onChangeEnd: onChangeEnd,
+      ),
+    );
+  }
+
+  //endregion ---常用小部件---
+
+  //region ---辅助小部件---
+
   /// 根据[values].[children]创建[WidgetList]
   WidgetList? buildChildrenFromValues(
     BuildContext context, {
@@ -280,4 +364,6 @@ mixin TileMixin {
     }
     return result;
   }
+
+//endregion ---辅助小部件---
 }
