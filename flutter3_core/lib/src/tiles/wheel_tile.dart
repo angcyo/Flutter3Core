@@ -5,7 +5,7 @@ part of '../../flutter3_core.dart';
 /// @date 2024/05/24
 ///
 /// [WheelDialog]
-class WheelTile extends StatefulWidget {
+class LabelWheelTile extends StatefulWidget {
   /// label
   final String? label;
   final Widget? labelWidget;
@@ -18,7 +18,7 @@ class WheelTile extends StatefulWidget {
   /// 索引改变回调
   final IndexCallback? onTabIndexChanged;
 
-  const WheelTile({
+  const LabelWheelTile({
     super.key,
     this.label,
     this.labelWidget,
@@ -29,10 +29,10 @@ class WheelTile extends StatefulWidget {
   });
 
   @override
-  State<WheelTile> createState() => _WheelTileState();
+  State<LabelWheelTile> createState() => _LabelWheelTileState();
 }
 
-class _WheelTileState extends State<WheelTile> with TileMixin {
+class _LabelWheelTileState extends State<LabelWheelTile> with TileMixin {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);

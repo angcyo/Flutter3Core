@@ -6,7 +6,7 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2024/05/23
 ///
 /// 可以滑动切换多个值的tile
-class TabLayoutTile extends StatefulWidget {
+class LabelTabLayoutTile extends StatefulWidget {
   /// label
   final String? label;
   final Widget? labelWidget;
@@ -19,7 +19,7 @@ class TabLayoutTile extends StatefulWidget {
   /// 索引改变回调
   final IndexCallback? onTabIndexChanged;
 
-  const TabLayoutTile({
+  const LabelTabLayoutTile({
     super.key,
     this.label,
     this.labelWidget,
@@ -30,10 +30,10 @@ class TabLayoutTile extends StatefulWidget {
   });
 
   @override
-  State<TabLayoutTile> createState() => _TabLayoutTileState();
+  State<LabelTabLayoutTile> createState() => _LabelTabLayoutTileState();
 }
 
-class _TabLayoutTileState extends State<TabLayoutTile>
+class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
     with SingleTickerProviderStateMixin, TileMixin {
   late TabLayoutController tabLayoutController = TabLayoutController(
     vsync: this,
