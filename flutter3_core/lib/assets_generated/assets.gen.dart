@@ -90,6 +90,15 @@ class $AssetsPngGen {
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
+  /// File path: assets/svg/core_back.svg
+  String get coreBack => 'assets/svg/core_back.svg';
+
+  /// File path: assets/svg/core_confirm.svg
+  String get coreConfirm => 'assets/svg/core_confirm.svg';
+
+  /// File path: assets/svg/core_next.svg
+  String get coreNext => 'assets/svg/core_next.svg';
+
   /// File path: assets/svg/file_browse_delete.svg
   String get fileBrowseDelete => 'assets/svg/file_browse_delete.svg';
 
@@ -110,6 +119,9 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<String> get values => [
+        coreBack,
+        coreConfirm,
+        coreNext,
         fileBrowseDelete,
         fileBrowseHome,
         fileBrowseOpen,

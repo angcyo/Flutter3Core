@@ -16,6 +16,10 @@ mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   /// 是否pop相同的路由
   bool _isPopSameRoute = true;
 
+  /// 是否启用二级动画
+  /// 在[PopupRoute].[RawDialogRoute]路由中, 建议关闭
+  bool _enableSecondaryAnimation = true;
+
   @override
   ui.Color? get barrierColor => super.barrierColor;
 
@@ -45,7 +49,7 @@ mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   /// 当前路由即将push
   @override
   TickerFuture didPush() {
-    //debugger();
+    debugger();
     return super.didPush();
   }
 
@@ -87,7 +91,7 @@ mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   /// 当前路由上的[nextRoute]路由即将pop
   @override
   void didPopNext(Route nextRoute) {
-    //debugger();
+    debugger();
     _isPopSameRoute = nextRoute.runtimeType == runtimeType;
     super.didPopNext(nextRoute);
   }
@@ -139,7 +143,10 @@ class FadePageRoute<T> extends MaterialPageRoute<T>
     super.fullscreenDialog,
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
-  });
+    bool enableSecondaryAnimation = true,
+  }) {
+    _enableSecondaryAnimation = enableSecondaryAnimation;
+  }
 
   @override
   Widget buildSameTransitions(
@@ -150,12 +157,12 @@ class FadePageRoute<T> extends MaterialPageRoute<T>
   ) {
     //logAnimation("Fade", animation, secondaryAnimation);
     //顶部进入动画
-    var enter = Tween<double>(
+    final enter = Tween<double>(
       begin: 0,
       end: 1,
     ).chain(CurveTween(curve: Curves.easeOut)).animate(animation);
     //底部退出动画
-    var exit = Tween<double>(
+    final exit = Tween<double>(
       begin: 1,
       end: 0.8,
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
@@ -187,7 +194,10 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
     super.fullscreenDialog,
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
-  });
+    bool enableSecondaryAnimation = true,
+  }) {
+    _enableSecondaryAnimation = enableSecondaryAnimation;
+  }
 
   @override
   Widget buildSameTransitions(
@@ -198,6 +208,7 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
   ) {
     //debugger();
     //logAnimation("Translation", animation, secondaryAnimation);
+    //l.d('child:$child');
 
     //进入动画
     final enter = Tween<Offset>(
@@ -210,13 +221,22 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
       end: topToBottom ? const Offset(0, -0.2) : const Offset(0, -0.2),
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
 
-    final slide = SlideTransition(
-      position: enter,
-      child: SlideTransition(
-        position: exit,
+    final Widget slide;
+    if (!_enableSecondaryAnimation) {
+      slide = SlideTransition(
+        position: enter,
         child: child,
-      ),
-    );
+      );
+    } else {
+      slide = SlideTransition(
+        position: enter,
+        child: SlideTransition(
+          position: exit,
+          child: child,
+        ),
+      );
+    }
+
     if (fade) {
       return slide.fade(opacity: animation);
     }
@@ -234,7 +254,10 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
     super.fullscreenDialog,
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
-  });
+    bool enableSecondaryAnimation = true,
+  }) {
+    _enableSecondaryAnimation = enableSecondaryAnimation;
+  }
 
   @override
   Widget buildPage(
@@ -316,7 +339,10 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
     this.fade = false,
-  });
+    bool enableSecondaryAnimation = true,
+  }) {
+    _enableSecondaryAnimation = enableSecondaryAnimation;
+  }
 
   @override
   Widget buildSameTransitions(

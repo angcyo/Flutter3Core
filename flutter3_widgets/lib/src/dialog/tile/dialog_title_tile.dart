@@ -8,9 +8,11 @@ part of '../dialog.dart';
 class DialogTitleTile extends StatelessWidget with TileMixin {
   ///
   final Widget? leading;
+  final Widget? trailing;
 
   ///
-  final Widget? trailing;
+  final bool enableLeading;
+  final bool enableTrailing;
 
   ///
   final String? title;
@@ -29,6 +31,8 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     this.subTitleWidget,
     this.leading,
     this.trailing,
+    this.enableLeading = true,
+    this.enableTrailing = true,
     this.titleTextStyle,
     this.subTitleTextStyle,
   });
@@ -38,7 +42,7 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTextWidget(
       context,
-      text: title,
+      text: title ?? "",
       textWidget: this.titleWidget,
       textStyle: titleTextStyle ??
           globalTheme.textTitleStyle.copyWith(fontWeight: FontWeight.bold),
@@ -55,9 +59,11 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     ].column(crossAxisAlignment: CrossAxisAlignment.center);
 
     return [
-      leading,
+      leading?.colorFiltered(
+          color: enableLeading ? null : globalTheme.disableColor),
       titleColumn?.expanded(),
-      trailing,
-    ].row()!.constrainedMin(minHeight: 56);
+      trailing?.colorFiltered(
+          color: enableTrailing ? null : globalTheme.disableColor),
+    ].row()!.constrainedMin(minHeight: kTitleHeight).columnOf(kHorizontalLine);
   }
 }

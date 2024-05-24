@@ -12,6 +12,7 @@ class InkButton extends StatelessWidget {
   final GestureTapCallback? onTap;
   final bool isCircleWell;
   final EdgeInsetsGeometry? padding;
+  final bool enable;
 
   const InkButton(
     this.child, {
@@ -19,20 +20,26 @@ class InkButton extends StatelessWidget {
     this.onTap,
     this.minWidth = kInteractiveHeight,
     this.minHeight = kInteractiveHeight,
+    this.enable = true,
     this.isCircleWell = true,
     this.padding = const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
   });
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     return child
+            ?.colorFiltered(color: enable ? null : globalTheme.disableColor)
             ?.min(minWidth: minWidth, minHeight: minHeight, margin: padding)
             .inkWell(
-          () {
-            onTap?.call();
-          },
-          customBorder: isCircleWell ? const CircleBorder() : null,
-        ).material() ??
+              enable
+                  ? () {
+                      onTap?.call();
+                    }
+                  : null,
+              customBorder: isCircleWell ? const CircleBorder() : null,
+            )
+            .material() ??
         empty;
   }
 }

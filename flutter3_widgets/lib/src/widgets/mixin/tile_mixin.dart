@@ -67,11 +67,21 @@ Widget? widgetOf(
 //---
 
 /// label默认的填充
+/// 左边显示的文本
 const kLabelPadding = EdgeInsets.only(
   left: kX,
   right: kX,
   top: kH,
   bottom: kH,
+);
+
+/// content默认的填充
+/// [kLabelPadding] 右边的内容
+const kContentPadding = EdgeInsets.only(
+  left: 0,
+  top: kM,
+  bottom: kM,
+  right: kX,
 );
 
 const kLabelMinWidth = 80.0;
@@ -251,5 +261,23 @@ mixin TileMixin {
     }
 
     return widget.paddingInsets(padding);
+  }
+
+  /// 根据[values].[children]创建[WidgetList]
+  WidgetList? buildChildrenFromValues(
+    BuildContext context, {
+    List? values,
+    List<Widget>? valuesWidget,
+  }) {
+    WidgetList? result;
+    if (valuesWidget == null) {
+      result = values?.map((data) {
+        final widget = widgetOf(context, data, tryTextWidget: false);
+        return widget ?? textOf(data)!.text().min();
+      }).toList();
+    } else {
+      result = valuesWidget;
+    }
+    return result;
   }
 }

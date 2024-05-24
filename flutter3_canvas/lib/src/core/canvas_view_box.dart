@@ -53,6 +53,9 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   @sceneCoordinate
   Rect get canvasVisibleBounds => toSceneRect(canvasBounds);
 
+  /// 是否初始化了
+  bool get isCanvasBoxInitialize => !canvasBounds.isEmpty;
+
   //endregion ---属性---
 
   //region ---限制---
@@ -176,11 +179,21 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   Completer<bool>? _changeMatrixCompleter;
 
   /// 改变画布矩阵, 支持动画
+  /// [awaitAnimate] 是否等待动画结束
   Future<bool> changeMatrix(
     Matrix4 target, {
     bool animate = true,
+    bool awaitAnimate = false,
     void Function(bool isCompleted)? completedAction,
   }) async {
+    if (awaitAnimate) {
+      if (_changeMatrixCompleter != null &&
+          _changeMatrixCompleter?.isCompleted != true) {
+        //等待上一次的动画结束
+        return false;
+      }
+    }
+
     _lastAnimationController?.dispose();
     _lastAnimationController = null;
     if (animate) {

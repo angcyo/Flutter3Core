@@ -35,6 +35,6 @@ typedef ProgressAction = void Function(int count, int total);
 typedef ProgressRatioCallback = void Function(double progress);
 
 /// 索引回调
-typedef IndexAction = void Function(int index);
+typedef IndexCallback = void Function(int index);
 
 //endregion Fn

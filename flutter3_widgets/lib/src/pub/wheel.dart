@@ -32,7 +32,7 @@ class Wheel extends StatelessWidget {
   final int initialIndex;
 
   /// 滚动回调
-  final void Function(int index)? onIndexChanged;
+  final IndexCallback? onIndexChanged;
 
   Wheel({
     super.key,
@@ -80,7 +80,10 @@ class Wheel extends StatelessWidget {
       style: wheelStyle,
       onIndexChanged: onIndexChanged ??
           (index) {
-            l.d("选中索引:$index");
+            assert(() {
+              l.d("Wheel选中索引:$index");
+              return true;
+            }());
           },
     );
   }

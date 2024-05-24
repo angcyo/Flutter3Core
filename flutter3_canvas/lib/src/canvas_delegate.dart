@@ -106,7 +106,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 释放所有资源, 主动调用
   @entryPoint
-  void release(){
+  void release() {
     canvasElementManager.release();
     canvasListeners.clear();
   }
@@ -219,6 +219,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   ///
   /// [enableZoomIn] 是否允许视口放大处理, 否则只有平移[rect]到视口中心的效果
   /// [enableZoomOut] 是否允许视口缩小处理, 否则只有平移[rect]到视口中心的效果
+  ///
+  /// [animate] 是否动画改变
+  /// [awaitAnimate] 是否等待动画结束
   @api
   void showRect({
     Rect? rect,
@@ -227,11 +230,27 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     bool enableZoomOut = true,
     bool enableZoomIn = false,
     bool animate = true,
+    bool awaitAnimate = false,
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
             .canvasElementControlManager.enableResetElementAngle) ??
         canvasElementManager.allElementsBounds;
     if (rect == null) {
+      return;
+    }
+    if (!canvasViewBox.isCanvasBoxInitialize) {
+      //画布还没有初始化完成
+      postCallback(() {
+        showRect(
+          rect: rect,
+          elementPainter: elementPainter,
+          margin: margin,
+          enableZoomOut: enableZoomOut,
+          enableZoomIn: enableZoomIn,
+          animate: animate,
+          awaitAnimate: awaitAnimate,
+        );
+      });
       return;
     }
     //debugger();
@@ -280,7 +299,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         sx: scale ?? canvasViewBox.scaleX,
         sy: scale ?? canvasViewBox.scaleY,
         anchor: center);
-    canvasViewBox.changeMatrix(translateMatrix * scaleMatrix, animate: animate);
+    canvasViewBox.changeMatrix(
+      translateMatrix * scaleMatrix,
+      animate: animate,
+      awaitAnimate: awaitAnimate,
+    );
   }
 
   //endregion ---api---

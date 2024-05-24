@@ -42,27 +42,33 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
               Animation<double> secondaryAnimation, Widget child) {
             if (type?.withTranslation == true) {
               return TranslationPageRoute(
-                      builder: (content) => child,
-                      topToBottom: type?.withTopToBottom == true,
-                      fade: type?.withFade == true)
-                  .buildSameTransitions(
-                      context, animation, secondaryAnimation, child);
+                builder: (content) => child,
+                topToBottom: type?.withTopToBottom == true,
+                fade: type?.withFade == true,
+                enableSecondaryAnimation: false,
+              ).buildSameTransitions(
+                  context, animation, secondaryAnimation, child);
             }
             if (type == TranslationType.fade) {
-              return FadePageRoute(builder: (content) => child)
-                  .buildSameTransitions(
-                      context, animation, secondaryAnimation, child);
+              return FadePageRoute(
+                builder: (content) => child,
+                enableSecondaryAnimation: false,
+              ).buildSameTransitions(
+                  context, animation, secondaryAnimation, child);
             }
             if (type == TranslationType.slide) {
-              return SlidePageRoute(builder: (content) => child)
-                  .buildSameTransitions(
-                      context, animation, secondaryAnimation, child);
+              return SlidePageRoute(
+                builder: (content) => child,
+                enableSecondaryAnimation: false,
+              ).buildSameTransitions(
+                  context, animation, secondaryAnimation, child);
             }
             if (type == TranslationType.scale ||
                 type == TranslationType.scaleFade) {
               return ScalePageRoute(
                 builder: (content) => child,
                 fade: type?.withFade == true,
+                enableSecondaryAnimation: false,
               ).buildSameTransitions(
                   context, animation, secondaryAnimation, child);
             }

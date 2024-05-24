@@ -7,15 +7,17 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 可以滑动切换多个值的tile
 class TabLayoutTile extends StatefulWidget {
+  /// label
   final String? label;
   final Widget? labelWidget;
 
+  /// content
   final dynamic initValue;
   final List? values;
-  final List<Widget>? children;
+  final List<Widget>? valuesWidget;
 
   /// 索引改变回调
-  final IndexAction? onTabIndexChanged;
+  final IndexCallback? onTabIndexChanged;
 
   const TabLayoutTile({
     super.key,
@@ -23,7 +25,7 @@ class TabLayoutTile extends StatefulWidget {
     this.labelWidget,
     this.initValue,
     this.values,
-    this.children,
+    this.valuesWidget,
     this.onTabIndexChanged,
   });
 
@@ -60,17 +62,12 @@ class _TabLayoutTileState extends State<TabLayoutTile>
     );
 
     //--
-    WidgetList children;
-    if (widget.children == null) {
-      children = widget.values!.map((data) {
-        final widget = widgetOf(context, data, tryTextWidget: false);
-        return widget ?? textOf(data)!.text().min();
-      }).toList();
-    } else {
-      children = widget.children!;
-    }
-    children = children
-        .mapIndex((child, index) => child.click(() {
+    WidgetList? children = buildChildrenFromValues(
+      context,
+      values: widget.values,
+      valuesWidget: widget.valuesWidget,
+    )
+        ?.mapIndex((child, index) => child.click(() {
               tabLayoutController.selectedItem(index);
               widget.onTabIndexChanged?.call(index);
             }))
@@ -80,14 +77,14 @@ class _TabLayoutTileState extends State<TabLayoutTile>
       padding: const EdgeInsets.symmetric(horizontal: kM, vertical: kM),
       bgDecoration: fillDecoration(color: globalTheme.itemWhiteBgColor),
       children: [
-        ...children,
+        ...?children,
         DecoratedBox(decoration: fillDecoration(color: globalTheme.accentColor))
             .tabItemData(
           itemType: TabItemType.indicator,
           itemPaintType: TabItemPaintType.background,
         )
       ],
-    ).paddingOnly(top: kM, bottom: kM, right: kX);
+    ).paddingInsets(kContentPadding);
     return [label, content.expanded()].row()!;
   }
 }

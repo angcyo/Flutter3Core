@@ -65,14 +65,15 @@ class TextElementPainter extends ElementPainter {
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
-    paintTextPainter?.let((painter) {
+    final painter = paintTextPainter;
+    if (painter != null) {
       canvas.withMatrix(
         paintProperty?.operateMatrix,
         () {
           painter.paint(canvas, Offset.zero);
         },
       );
-    });
+    }
     super.onPaintingSelf(canvas, paintMeta);
   }
 

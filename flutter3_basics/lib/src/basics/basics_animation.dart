@@ -20,7 +20,18 @@ part of '../../flutter3_basics.dart';
 /// [kTabScrollDuration]
 const kDefaultAnimationDuration = Duration(milliseconds: 300);
 
-extension AnimationEx on Widget {
+extension AnimationEx on Animation {
+  /// 动画是否开始了
+  bool get isStarted =>
+      status == AnimationStatus.forward || status == AnimationStatus.reverse;
+
+  /// 动画是否结束了
+  bool get isStopped =>
+      status == AnimationStatus.completed ||
+      status == AnimationStatus.dismissed;
+}
+
+extension AnimationWidgetEx on Widget {
   /// 透明度动画, 渐隐动画.
   /// [out] fade out or fade in
   Widget fade({

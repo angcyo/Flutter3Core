@@ -156,8 +156,8 @@ void logAnimation(
   Animation animation,
   Animation secondaryAnimation,
 ) {
-  l.d("[$prefix]enter:${animation.status}->${animation.value}");
-  l.v("[$prefix]exit:${secondaryAnimation.status}->${secondaryAnimation.value}");
+  l.d("[$prefix]first:${animation.status}->${animation.value}");
+  l.v("[$prefix]secondary:${secondaryAnimation.status}->${secondaryAnimation.value}");
 }
 
 mixin DiagnosticsMixin on DiagnosticableTreeMixin {
