@@ -30,7 +30,7 @@ class InkButton extends StatelessWidget {
     final globalTheme = GlobalTheme.of(context);
     return child
             ?.colorFiltered(color: enable ? null : globalTheme.disableColor)
-            ?.min(minWidth: minWidth, minHeight: minHeight, margin: padding)
+            .min(minWidth: minWidth, minHeight: minHeight, margin: padding)
             .inkWell(
               enable
                   ? () {

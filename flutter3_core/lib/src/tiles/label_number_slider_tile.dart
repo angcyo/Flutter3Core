@@ -71,7 +71,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       labelWidget: widget.labelWidget,
     );
     final numberStr = formatNumber(_currentValue, numType: widget._numType);
-    final number = buildNumberWidget(context, numberStr)?.click(() async {
+    final number = buildNumberWidget(context, numberStr, onTap: () async {
       final value = await context.showWidgetDialog(NumberKeyboardDialog(
         number: _currentValue,
         minValue: widget.minValue,

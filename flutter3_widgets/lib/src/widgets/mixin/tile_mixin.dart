@@ -380,6 +380,7 @@ mixin TileMixin {
     BuildContext context,
     String number, {
     Widget? numberWidget,
+    GestureTapCallback? onTap,
     EdgeInsetsGeometry? padding =
         const EdgeInsets.symmetric(horizontal: kH, vertical: kM),
     EdgeInsetsGeometry? margin,
@@ -387,13 +388,19 @@ mixin TileMixin {
   }) {
     final globalTheme = GlobalTheme.of(context);
     return Container(
-      decoration: fillDecoration(
+      /*decoration: fillDecoration(
         color: globalTheme.itemWhiteBgColor,
         borderRadius: kDefaultBorderRadiusL,
-      ),
+      ),*/
       constraints: constraints,
       padding: padding,
       child: (numberWidget ?? number.text()).center(),
+    ).ink(
+      () {
+        onTap?.call();
+      },
+      backgroundColor: globalTheme.itemWhiteBgColor,
+      radius: kDefaultBorderRadiusL,
     ).paddingInsets(margin);
   }
 
