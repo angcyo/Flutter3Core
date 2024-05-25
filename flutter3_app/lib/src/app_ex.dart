@@ -110,26 +110,12 @@ extension ShareFileEx on File {
 
 extension ShareStringEx on String {
   /// 分享文本
-  Future<void> share({
+  Future<ShareResult> share({
     String? subject,
     BuildContext? shareContext,
     Rect? sharePositionOrigin,
   }) async {
     return Share.share(
-      this,
-      subject: subject,
-      sharePositionOrigin:
-          sharePositionOrigin ?? shareContext?.findRenderObject()?.paintBounds,
-    );
-  }
-
-  /// 分享文本
-  Future<ShareResult> shareWithResult({
-    String? subject,
-    BuildContext? shareContext,
-    Rect? sharePositionOrigin,
-  }) async {
-    return Share.shareWithResult(
       this,
       subject: subject,
       sharePositionOrigin:

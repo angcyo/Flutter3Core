@@ -14,12 +14,12 @@ dependencies:
   flutter3_basics:
     path: ../flutter3_basics
   # https://pub.dev/packages/webview_flutter
-  webview_flutter: ^4.7.0
+  webview_flutter: ^4.8.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

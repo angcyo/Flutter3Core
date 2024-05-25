@@ -16,13 +16,13 @@ dependencies:
   # https://pub.dev/packages/http
   # https://pub.dev/packages/async
   # https://pub.dev/packages/http_parser
-  http: ^1.2.0
+  http: ^1.2.1
   # https://pub.dev/packages/dio
   # https://pub.dev/packages/async
   # https://pub.dev/packages/http_parser
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  dio: ^5.4.2
+  dio: ^5.4.3+1
   # https://pub.dev/packages/dio_http2_adapter
   # https://pub.dev/packages/http2
   # https://pub.dev/packages/dio
@@ -34,7 +34,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: any
   # https://pub.dev/packages/json_serializable
   # https://github.com/google/json_serializable.dart/tree/master/json_serializable
   # https://pub.dev/packages/analyzer
@@ -49,7 +49,7 @@ dev_dependencies:
   # https://pub.dev/packages/pubspec_parse
   # https://pub.dev/packages/source_gen
   # https://pub.dev/packages/source_helper
-  json_serializable: ^6.7.1
+  json_serializable: ^6.8.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

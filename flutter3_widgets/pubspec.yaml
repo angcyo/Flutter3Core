@@ -32,7 +32,7 @@ dependencies:
 
   # https://pub.dev/packages/flutter_slidable
   # https://github.com/letsar/flutter_slidable
-  flutter_slidable: ^3.0.1
+  flutter_slidable: ^3.1.0
 
   # https://pub.dev/packages/flutter_verification_code
   # https://github.com/awaik/flutter_verification_code
@@ -54,7 +54,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   # https://pub.dev/packages/flutter_lints # lints
-  flutter_lints: ^3.0.1
+  flutter_lints: any
   # https://pub.dev/packages/build_runner
   # https://pub.dev/packages/web_socket_channel # async, crypto, stream_channel, web
   # https://pub.dev/packages/stream_channel
@@ -73,7 +73,7 @@ flutter_gen:
 
 # The following section is specific to Flutter packages.
 flutter:
-  assets:
+  # assets:
     #- assets/png/
 # To add assets to your package, add an assets section, like this:
 # assets:

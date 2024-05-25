@@ -10,6 +10,7 @@ environment:
 
 # https://pub.dev/packages/isar
 isar_version: &isar_version ^3.1.0+1
+# https://pub.dev/packages/hive
 hive_version: &hive_version ^2.2.3
 
 dependencies:
@@ -35,11 +36,11 @@ dependencies:
 
   # https://pub.dev/packages/path_provider
   # https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider
-  path_provider: ^2.1.2
+  path_provider: ^2.1.3
 
   # https://pub.dev/packages/path
   # https://github.com/dart-lang/path
-  path: ^1.8.3
+  path: ^1.9.0
 
   # https://pub.dev/packages/mime
   # https://github.com/dart-lang/mime
@@ -104,7 +105,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: any
   isar_generator: *isar_version
   hive_generator: ^2.0.1
   build_runner: any

@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter3_basics:
+    path: ../flutter3_basics
   flutter3_core:
     path: ../flutter3_core
   flutter3_pub:
@@ -25,7 +27,7 @@ dependencies:
   # https://pub.dev/packages/package_info_plus_platform_interface
   # https://pub.dev/packages/web
   # https://pub.dev/packages/win32
-  package_info_plus: ^6.0.0
+  package_info_plus: ^8.0.0
 
   # https://pub.dev/packages/device_info_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/device_info_plus/device_info_plus
@@ -36,7 +38,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/win32
   # https://pub.dev/packages/win32_registry
-  device_info_plus: ^10.0.1
+  device_info_plus: ^10.1.0
 
   # https://pub.dev/packages/share_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/share_plus/share_plus
@@ -47,7 +49,7 @@ dependencies:
   # https://pub.dev/packages/file
   # https://pub.dev/packages/ffi
   # https://pub.dev/packages/win32
-  share_plus: ^8.0.3
+  share_plus: ^9.0.0
 
   # https://pub.dev/packages/flutter_local_notifications
   # https://github.com/MaikuB/flutter_local_notifications
@@ -57,7 +59,7 @@ dependencies:
   # https://pub.dev/packages/flutter_local_notifications_platform_interface
   # https://pub.dev/packages/timezone
   # ANDROID IOS LINUX MACOS
-  flutter_local_notifications: ^17.0.0
+  flutter_local_notifications: ^17.1.2
 
   # https://pub.dev/packages/flutter_animate
   # https://github.com/gskinner/flutter_animate
@@ -75,13 +77,13 @@ dependencies:
   image_gallery_saver: ^2.0.3 #ANDROID IOS
 
 dependency_overrides:
-  #cross_file: ^0.3.4+1
-  #web: ^0.5.1
+#cross_file: ^0.3.4+1
+#web: ^0.5.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

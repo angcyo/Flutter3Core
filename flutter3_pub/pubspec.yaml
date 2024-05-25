@@ -34,7 +34,7 @@ dependencies:
   # https://pub.dev/packages/markdown
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  flutter_markdown: ^0.6.21
+  flutter_markdown: ^0.7.1
   # https://pub.dev/packages/markdown
   # https://github.com/dart-lang/markdown
   # https://pub.dev/packages/args
@@ -50,7 +50,7 @@ dependencies:
   # https://pub.dev/packages/url_launcher_macos
   # https://pub.dev/packages/url_launcher_web
   # https://pub.dev/packages/url_launcher_windows
-  url_launcher: ^6.2.5
+  url_launcher: ^6.2.6
 
   # https://pub.dev/packages/file_picker
   # https://github.com/miguelpruivo/flutter_file_picker
@@ -58,18 +58,18 @@ dependencies:
   # https://pub.dev/packages/plugin_platform_interface
   # https://pub.dev/packages/path
   # https://pub.dev/packages/win32
-  file_picker: ^8.0.0+1
+  file_picker: ^8.0.3
 
   # https://pub.dev/packages/archive
   # https://github.com/brendan-duncan/archive
   # https://pub.dev/packages/crypto
   # https://pub.dev/packages/path
   # https://pub.dev/packages/pointycastle
-  archive: ^3.4.10
+  archive: ^3.6.0
 
   # https://pub.dev/packages/photo_view
   # https://github.com/bluefireteam/photo_view
-  photo_view: ^0.14.0
+  photo_view: ^0.15.0
 
   # https://pub.dev/packages/nine_grid_view
   # https://github.com/flutterchina/nine_grid_view
@@ -80,7 +80,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
