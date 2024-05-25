@@ -39,7 +39,7 @@ const isarSchema = collection;
 const isarEntity = collection;
 
 /// [registerIsarCollection]
-const _collectionSchemaMap = {};
+final Map<String, List<CollectionSchema<dynamic>>> _collectionSchemaMap = {};
 
 /// 注册一个在[name]数据中的表[schema]
 /// [name] 注册到那个数据库的名称, 默认是[kIsarName]
@@ -51,7 +51,10 @@ void registerIsarCollection(
 }) {
   //注册isar数据库
   name ??= kIsarName;
-  _collectionSchemaMap[name] = schema;
+  //list
+  final list = _collectionSchemaMap[name] ?? [];
+  list.add(schema);
+  _collectionSchemaMap[name] = list;
 }
 
 /// 打开一个isar数据库

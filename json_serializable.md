@@ -37,7 +37,7 @@ dependencies:
 
 # 3.生成代码
 
-运行命令`dart run build_runner build`生成代码.
+运行命令`dart run build_runner build` `flutter pub run build_runner build`生成代码.
 
 ```shell
 # flutter pub run build_runner build
@@ -45,6 +45,7 @@ echo $PUB_HOSTED_URL
 export PUB_HOSTED_URL=https://pub.flutter-io.cn
 echo $PUB_HOSTED_URL
 dart run build_runner build
+flutter pub run build_runner build
 ```
 
 # 4.Other

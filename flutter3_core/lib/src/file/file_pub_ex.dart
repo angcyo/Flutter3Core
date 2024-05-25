@@ -44,6 +44,7 @@ Future<UiImage?> saveScreenCapture([
 Future<Directory> fileDirectory() async {
   Directory? directory;
   try {
+    //debugger();
     if (defaultTargetPlatform == TargetPlatform.android) {
       // /storage/emulated/0/Android/data/com.angcyo.flutter3_abc/files
       try {

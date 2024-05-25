@@ -24,6 +24,7 @@ part 'isar_test_collection.g.dart';
 /// 创建表之后, 执行命令, 生成对应数据表代码
 /// ```
 /// dart run build_runner build
+/// flutter pub run build_runner build
 /// ```
 
 /// https://isar.dev/zh/schema.html

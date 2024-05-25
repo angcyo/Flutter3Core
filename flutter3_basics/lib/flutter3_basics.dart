@@ -117,8 +117,6 @@ part 'src/widgets/touch_detector_widget.dart';
 part 'src/widgets/value_listener.dart';
 
 /// 类型重定义
-typedef Action = VoidCallback;
-typedef VoidAction = Action;
 typedef UiImage = ui.Image;
 typedef UiPath = ui.Path;
 typedef UiColor = ui.Color;

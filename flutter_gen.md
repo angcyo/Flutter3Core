@@ -24,6 +24,7 @@ dev_dependencies:
 ```yaml
 # https://pub.dev/packages/flutter_gen#configuration-file
 # dart run build_runner build
+# flutter pub run build_runner build
 flutter_gen:
   output: lib/assets_generated/ # Optional (default: lib/gen/)
 ```
@@ -31,6 +32,7 @@ flutter_gen:
 # 2.执行命令, 生成对应的资源引用
 
 `dart run build_runner build`
+`flutter pub run build_runner build`
 
 # 3.配置
 

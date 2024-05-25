@@ -30,7 +30,11 @@ part 'src/app_swiper_ex.dart';
 part 'src/mobile_ex.dart';
 
 @callPoint
-void runGlobalApp(Widget app) {
+void runGlobalApp(
+  Widget app, {
+  FutureVoidAction? beforeAction,
+  FutureVoidAction? afterAction,
+}) {
   /*if (isDebug) {
     io(() => testTime());
   }*/
@@ -91,7 +95,11 @@ void runGlobalApp(Widget app) {
         .writeToLog();
     await initFlutter3Core();
     AppLifecycleLog.install();
+
+    await beforeAction?.call();
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
+    await afterAction?.call();
+
     l.i("启动完成:${lTime.time()}"..writeToLog());
   }, (error, stack) {
     "未捕捉的异常:↓".writeToErrorLog();

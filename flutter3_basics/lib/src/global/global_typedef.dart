@@ -7,6 +7,11 @@ part of '../../flutter3_basics.dart';
 
 //region Fn Callback
 
+typedef Action = VoidCallback;
+typedef VoidAction = Action;
+
+typedef FutureVoidAction = FutureOr Function();
+
 /// 只有返回值的回调
 typedef ResultCallback<T> = T Function();
 

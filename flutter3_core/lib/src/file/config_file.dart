@@ -25,13 +25,20 @@ class ConfigFile {
     String? result;
     final folder = await configFolderFile;
     final file = p.join(folder.path, key).file();
-    if (file.existsSync()) {
-      //磁盘上的文件已经存在, 则直接读取
-      result = await file.readAsString();
-    } else {
-      //如果磁盘没有, 则降级读取assets中的文件
-      result = await loadAssetString(key, prefix: prefix, package: package);
-      forceFetch = true;
+    try {
+      if (file.existsSync()) {
+        //磁盘上的文件已经存在, 则直接读取
+        result = await file.readAsString();
+      } else {
+        //如果磁盘没有, 则降级读取assets中的文件
+        forceFetch = true;
+        result = await loadAssetString(key, prefix: prefix, package: package);
+      }
+    } catch (e) {
+      assert(() {
+        l.w('读取失败[$key]:$e');
+        return true;
+      }());
     }
 
     //判断是否要从网络获取数据
