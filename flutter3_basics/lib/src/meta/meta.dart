@@ -6,6 +6,20 @@ part of '../../flutter3_basics.dart';
 ///
 /// 元数据/注解
 /// [Target]
+@Target({
+  TargetKind.field,
+  TargetKind.function,
+  TargetKind.getter,
+  TargetKind.method,
+  TargetKind.setter,
+  TargetKind.classType,
+  TargetKind.extension,
+  TargetKind.topLevelVariable,
+  TargetKind.parameter,
+  TargetKind.enumType,
+  TargetKind.extensionType,
+  TargetKind.library,
+})
 class AnnotationMeta {
   final String des;
 

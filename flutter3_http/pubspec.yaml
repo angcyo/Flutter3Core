@@ -29,7 +29,7 @@ dependencies:
   #dio_http2_adapter: ^2.3.2
   # https://pub.dev/packages/json_annotation
   # https://github.com/google/json_serializable.dart/tree/master/json_annotation
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:

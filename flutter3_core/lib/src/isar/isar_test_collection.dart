@@ -7,6 +7,20 @@ part 'isar_test_collection.g.dart';
 /// @author angcyo
 /// @date 2023/11/17
 ///
+/// 1:代码构建工具
+///
+/// ```
+/// dev_dependencies:
+///  isar_generator: *isar_version`
+/// ```
+///
+/// 2:必须包含part xxx
+/// ```
+/// part 'xxx.g.dart';
+///
+/// ```
+///
+/// 3:执行
 /// 创建表之后, 执行命令, 生成对应数据表代码
 /// ```
 /// dart run build_runner build

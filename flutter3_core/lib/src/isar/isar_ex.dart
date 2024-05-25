@@ -26,11 +26,25 @@ late Isar $isar;
 /// 默认的[$isar]文件路径
 String defIsarFilePath = "";
 
+/// 别名
+/// [Collection]
+const isarCollection = collection;
+
+/// 别名
+/// [Collection]
+const isarSchema = collection;
+
+/// 别名
+/// [Collection]
+const isarEntity = collection;
+
 /// [registerIsarCollection]
 const _collectionSchemaMap = {};
 
 /// 注册一个在[name]数据中的表[schema]
-/// [name] 默认是[kIsarName]
+/// [name] 注册到那个数据库的名称, 默认是[kIsarName]
+/// [xxxSchema]
+/// [TestCollectionSchema]
 void registerIsarCollection(
   CollectionSchema<dynamic> schema, {
   String? name,
