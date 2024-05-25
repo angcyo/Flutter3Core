@@ -60,9 +60,9 @@ class Wheel extends StatelessWidget {
       itemExtent: itemExtent,
       // Text height
       // 上下挤压系数
-      squeeze: 1.25,
+      squeeze: 1.4,
       // 直径比例, 值越小圆越小
-      diameterRatio: .8,
+      diameterRatio: 1.4,
       // 未选中的不透明度, 值越小越透明
       surroundingOpacity: .25,
       // 放大倍数
