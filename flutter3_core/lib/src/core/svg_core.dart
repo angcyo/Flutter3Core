@@ -15,6 +15,7 @@ SvgPicture loadAssetSvgWidget(
   Color? tintColor,
   String? prefix = kDefAssetsSvgPrefix,
   String? package,
+  double? size, //同时设置[width][height]
   double? width,
   double? height,
   BoxFit fit = BoxFit.contain,
@@ -25,8 +26,8 @@ SvgPicture loadAssetSvgWidget(
       key.ensurePackagePrefix(package, prefix),
       semanticsLabel: key,
       colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      width: width,
-      height: height,
+      width: size ?? width,
+      height: size ?? height,
       fit: fit,
       placeholderBuilder: placeholderBuilder,
     );

@@ -47,6 +47,7 @@ part 'src/dialog/single_text_dialog.dart';
 part 'src/dialog/wheel_dialog.dart';
 part 'src/tiles/wheel_tile.dart';
 part 'src/tiles/core_dialog_title.dart';
+part 'src/tiles/label_number_slider_tile.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/config_file.dart';
 part 'src/file/file_log.dart';

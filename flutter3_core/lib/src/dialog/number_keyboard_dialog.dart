@@ -22,6 +22,8 @@ part of '../../flutter3_core.dart';
 typedef NumberInputCallback = void Function(num? value);
 
 /// 数字键盘输入对话框
+/// 如果是小数, 返回小数
+/// 如果是整数, 返回整数
 class NumberKeyboardDialog extends StatefulWidget {
   /// 键盘类型: 数字
   static const String keyboardTypeNumber = "number";
@@ -46,6 +48,9 @@ class NumberKeyboardDialog extends StatefulWidget {
   /// 最小值
   final num? minValue;
 
+  /// [number]数字类型
+  final NumType? _numType;
+
   /// 浮点时, 最大的小数位个数
   final int maxDigits;
 
@@ -58,6 +63,11 @@ class NumberKeyboardDialog extends StatefulWidget {
   /// 是否可以返回
   final bool canPop;
 
+  //---
+
+  /// 是否支持负数, 不指定则通过[minValue]自动判断
+  final bool? supportNegative;
+
   const NumberKeyboardDialog({
     super.key,
     required this.number,
@@ -67,7 +77,9 @@ class NumberKeyboardDialog extends StatefulWidget {
     this.hintText,
     this.maxLength = 9,
     this.canPop = true,
-  });
+    this.supportNegative,
+    NumType? numType,
+  }) : _numType = numType ?? (number is int ? NumType.i : NumType.d);
 
   @override
   State<NumberKeyboardDialog> createState() => _NumberKeyboardDialogState();
@@ -106,11 +118,12 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   );
 
   /// 是否支持小数
-  bool get isSupportDecimal => widget.number == null || widget.number is double;
+  bool get isSupportDecimal => widget._numType == NumType.d;
 
   /// 是否支持负数
   bool get isSupportNegative =>
-      widget.minValue == null || (widget.minValue ?? 0) < 0;
+      widget.supportNegative ??
+      (widget.minValue == null || (widget.minValue ?? 0) < 0);
 
   /// 是否要显示收起键盘
   bool get isShowPackUp => !isSupportDecimal || !isSupportNegative;
@@ -124,15 +137,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   @override
   void initState() {
     super.initState();
-    if (isSupportDecimal) {
-      _numberText = widget.number?.toDigits(
-            digits: widget.maxDigits,
-            ensureInt: true,
-          ) ??
-          "";
-    } else {
-      _numberText = widget.number?.toString() ?? "";
-    }
+    _numberText = _formatValue(widget.number) ?? "";
   }
 
   @override
@@ -183,6 +188,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
               context.pop(_numberText.toIntOrNull());
             }
           } else {
+            Feedback.forLongPress(context);
             isClearAll = true;
             updateState();
           }
@@ -229,11 +235,12 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     // 获取范围对应的文本
     String? rangeText;
     if (widget.maxValue != null && widget.minValue != null) {
-      rangeText = "[${widget.minValue}~${widget.maxValue}]";
+      rangeText =
+          "[${_formatValue(widget.minValue)}~${_formatValue(widget.maxValue)}]";
     } else if (widget.maxValue != null) {
-      rangeText = "[~${widget.maxValue}]";
+      rangeText = "[~${_formatValue(widget.maxValue)}]";
     } else if (widget.minValue != null) {
-      rangeText = "[${widget.minValue}~]";
+      rangeText = "[${_formatValue(widget.minValue)}~]";
     }
     if (rangeText != null) {
       rangeText = "$prefixText$rangeText";
@@ -274,6 +281,14 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
         .willPop(() async {
       return widget.canPop;
     });
+  }
+
+  String? _formatValue(num? value) {
+    if (value == null) {
+      return null;
+    }
+    return formatNumber(value,
+        numType: widget._numType, digits: widget.maxDigits);
   }
 
   /// 创建占位按钮

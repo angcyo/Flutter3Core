@@ -85,11 +85,17 @@ const kContentPadding = EdgeInsets.only(
 );
 
 const kLabelMinWidth = 80.0;
+const kNumberMinWidth = 50.0;
 
 /// label默认的约束
 const kLabelConstraints = BoxConstraints(
   minWidth: kLabelMinWidth,
   maxWidth: kLabelMinWidth,
+);
+
+/// number默认的约束
+const kNumberConstraints = BoxConstraints(
+  minWidth: kNumberMinWidth,
 );
 
 //---
@@ -309,7 +315,10 @@ mixin TileMixin {
     if (trackShape == null) {
       if (!isNil(activeTrackGradientColors)) {
         trackShape = GradientSliderTrackShape(activeTrackGradientColors!);
-        activeTrackColor ??= activeTrackGradientColors.last;
+        final last = activeTrackGradientColors.last;
+        thumbColor ??= last;
+        valueIndicatorColor = thumbColor;
+        overlayColor ??= last.withOpacity(0.1);
       }
     }
     return SliderTheme(
@@ -320,6 +329,7 @@ mixin TileMixin {
         overlayColor: overlayColor,
         valueIndicatorColor: valueIndicatorColor,
         inactiveTrackColor: inactiveTrackColor,
+        //thumbShape: ,
         trackShape: trackShape,
         /*inactiveTrackColor: Colors.redAccent,*/
         trackHeight: trackHeight,
@@ -363,6 +373,28 @@ mixin TileMixin {
       result = valuesWidget;
     }
     return result;
+  }
+
+  ///
+  Widget? buildNumberWidget(
+    BuildContext context,
+    String number, {
+    Widget? numberWidget,
+    EdgeInsetsGeometry? padding =
+        const EdgeInsets.symmetric(horizontal: kH, vertical: kM),
+    EdgeInsetsGeometry? margin,
+    BoxConstraints? constraints = kNumberConstraints,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    return Container(
+      decoration: fillDecoration(
+        color: globalTheme.itemWhiteBgColor,
+        borderRadius: kDefaultBorderRadiusL,
+      ),
+      constraints: constraints,
+      padding: padding,
+      child: (numberWidget ?? number.text()).center(),
+    ).paddingInsets(margin);
   }
 
 //endregion ---辅助小部件---

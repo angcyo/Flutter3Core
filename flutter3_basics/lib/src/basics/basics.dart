@@ -9,6 +9,7 @@ part of '../../flutter3_basics.dart';
 
 /// Channel需要先初始化这个
 /// [WidgetsFlutterBinding.ensureInitialized]
+@initialize
 void ensureInitialized() => WidgetsFlutterBinding.ensureInitialized();
 
 /// 当前时间戳 `1699064019689` 13位

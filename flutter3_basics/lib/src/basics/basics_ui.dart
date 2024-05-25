@@ -2117,7 +2117,7 @@ UiGradient linearGradientShader(
       from ?? rect?.lt ?? Offset.zero,
       to ?? rect?.rt ?? Offset.zero,
       colors,
-      colorStops,
+      colorStops ?? [for (var i = 0; i < colors.size(); i++) i / colors.size()],
       tileMode,
       matrix4,
     );

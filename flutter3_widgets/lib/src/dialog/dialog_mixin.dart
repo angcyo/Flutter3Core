@@ -159,8 +159,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         ...fixedChildren,
         scrollChildren
             .scroll(scrollDirection: Axis.vertical)
-            ?.expanded()
-            .constrainedMax(maxHeight: scrollMaxHeight),
+            ?.constrainedMax(maxHeight: scrollMaxHeight),
       ].column()!;
     } else {
       body = [

@@ -37,4 +37,7 @@ typedef ProgressRatioCallback = void Function(double progress);
 /// 索引回调
 typedef IndexCallback = void Function(int index);
 
+/// [num]数字回调
+typedef NumCallback = void Function(num number);
+
 //endregion Fn

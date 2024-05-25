@@ -6,6 +6,22 @@ part of '../../flutter3_basics.dart';
 /// 数学相关函数
 /// [Matrix4Ex]
 
+/// 数字类型
+enum NumType {
+  /// 浮点
+  d,
+
+  /// 整型
+  i;
+
+  static NumType from(dynamic value) {
+    if (value is int) {
+      return NumType.i;
+    }
+    return NumType.d;
+  }
+}
+
 /// 求2点之间的距离, 返回值正负数
 double distance(Offset a, Offset b) {
   return math.sqrt(math.pow(a.dx - b.dx, 2) + math.pow(a.dy - b.dy, 2));
@@ -164,4 +180,20 @@ bool isClockwise(Offset startAnchor, Offset circleCenter, Offset target) {
 
   double crossProduct = v1.dx * v2.dy - v1.dy * v2.dx;
   return crossProduct > 0;
+}
+
+/// 格式化[number]数字成字符串
+String formatNumber(
+  num number, {
+  NumType? numType,
+  int digits = kDefaultDigits,
+  bool ensureInt = true,
+}) {
+  numType ??= NumType.from(number);
+  switch (numType) {
+    case NumType.i:
+      return "${number.toInt()}";
+    case NumType.d:
+      return number.toDigits(digits: digits, ensureInt: ensureInt);
+  }
 }
