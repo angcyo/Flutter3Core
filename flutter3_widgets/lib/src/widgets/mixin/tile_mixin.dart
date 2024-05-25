@@ -28,7 +28,7 @@ String? textOf(dynamic data) {
       return data.text;
     } catch (e) {
       assert(() {
-        printError(e);
+        l.w('当前类型:${data.runtimeType} 不支持[text]操作.');
         return true;
       }());
       return "$data";

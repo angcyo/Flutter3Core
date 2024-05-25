@@ -23,7 +23,7 @@ const double kXxx = 48;
 const double kMinHeight = 28;
 
 /// [kMinInteractiveDimension] 最小交互高度
-const double kMinInteractiveHeight = 36;
+const double kMinInteractiveHeight = 38;
 
 /// 最小item交互高度
 /// [kMinInteractiveHeight]
