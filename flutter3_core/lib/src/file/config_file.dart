@@ -12,19 +12,22 @@ class ConfigFile {
   /// 读取一个配置文件
   /// 如果文件在磁盘, 则从磁盘读取, 否则从assets中读取.
   /// 如果指定了http地址, 则从网络上下载文件到磁盘
+  /// [key] 通常是文件名
+  /// [subFolder] 子目录
   /// [httpUrl] 如果磁盘文件不存在, 则从网络上下载
   /// [forceFetch] 是否要强制拉取网络数据, 否则只在磁盘上没数据时才拉取
   static Future<String?> readConfigFile(
     String key, {
     String prefix = 'assets/',
     String? package,
+    String? subFolder,
     bool forceFetch = false,
     String? httpUrl,
     ValueCallback? onHttpAction,
   }) async {
     String? result;
     final folder = await configFolderFile;
-    final file = p.join(folder.path, key).file();
+    final file = p.join(folder.path, subFolder, key).file();
     try {
       if (file.existsSync()) {
         //磁盘上的文件已经存在, 则直接读取
