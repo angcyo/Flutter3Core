@@ -27,7 +27,10 @@ class ConfigFile {
   }) async {
     String? result;
     final folder = await configFolderFile;
-    final file = p.join(folder.path, subFolder, key).file();
+    final file = (subFolder == null
+            ? p.join(folder.path, key)
+            : p.join(folder.path, subFolder, key))
+        .file();
     try {
       if (file.existsSync()) {
         //磁盘上的文件已经存在, 则直接读取

@@ -75,6 +75,10 @@ extension LogEx on Object {
     fileName ??= "Unknown";
     final filePath =
         file?.path ?? await fileName.filePathOf(folder, useCacheFolder);
+
+    //确保父文件夹存在
+    filePath.ensureParentDirectory();
+
     FileMode mode = append ? FileMode.append : FileMode.write;
     final fileObj = filePath.file();
     if (append && limitLength && (fileObj.fileSizeSync() > kMaxLogLength)) {

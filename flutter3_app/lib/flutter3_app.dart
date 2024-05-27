@@ -80,8 +80,8 @@ void runGlobalApp(
 
   var oldOnError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails details) {
-    l.e("发生一个错误:↓"..writeToErrorLog());
-    l.e(details..writeToErrorLog());
+    "发生一个错误:↓".writeToErrorLog();
+    details.writeToErrorLog();
     oldOnError?.call(details);
   };
 
@@ -92,15 +92,16 @@ void runGlobalApp(
     rDio.addInterceptor(AppInfoInterceptor());
 
     "开始启动[main]:${ui.PlatformDispatcher.instance.defaultRouteName}"
-        .writeToLog();
+        .writeToLog(level: L.info);
     await initFlutter3Core();
     AppLifecycleLog.install();
 
     await beforeAction?.call();
+    await initIsar();
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
     await afterAction?.call();
 
-    l.i("启动完成:${lTime.time()}"..writeToLog());
+    "启动完成:${lTime.time()}".writeToLog(level: L.info);
   }, (error, stack) {
     "未捕捉的异常:↓".writeToErrorLog();
     error.writeToErrorLog(level: L.none);

@@ -41,7 +41,7 @@ const isarEntity = collection;
 /// [registerIsarCollection]
 final Map<String, List<CollectionSchema<dynamic>>> _collectionSchemaMap = {};
 
-/// 注册一个在[name]数据中的表[schema]
+/// 注册一个在[name]数据中的表[schema], 请在[openIsar]之前注册
 /// [name] 注册到那个数据库的名称, 默认是[kIsarName]
 /// [xxxSchema]
 /// [TestCollectionSchema]
@@ -121,4 +121,52 @@ Future<void> defaultIsarMigrate<T>({
   for (final schema in schemaList) {
   final collection = isar.getCollectionByNameInternal(schema.name);
   }*/
+}
+
+//---
+
+const isarHandle = AnnotationMeta("数据库操作");
+
+/// [QueryExecute]
+extension IsarQueryExecute<OBJ, R> on QueryBuilder<OBJ, R, QQueryOperations> {
+  /// Offset the query results by a static number.
+  QueryBuilder<OBJ, R, QAfterOffset> offsetQuery(int offset) {
+    return QueryBuilder.apply(this, (q) => q.copyWith(offset: offset));
+  }
+
+  /// 查找最后一个个数据
+  /// [QueryExecute.findFirstSync]
+  Future<R?> findLast() async {
+    final list = await findLastList(1);
+    return list?.firstOrNull;
+  }
+
+  /// 查找最后一个个数据
+  /// [QueryExecute.findFirstSync]
+  R? findLastSync() {
+    final list = findLastListSync(1);
+    return list?.firstOrNull;
+  }
+
+  /// 查找最后多少个数据
+  /// [QueryExecute.findFirstSync]
+  Future<List<R>?> findLastList([int count = 1]) async {
+    final allCount = await this.count();
+    if (allCount <= 0) {
+      return null;
+    }
+    count = min(count, allCount);
+    return offsetQuery(allCount - count).limit(count).findAll();
+  }
+
+  /// 查找最后多少个数据
+  /// [QueryExecute.findFirstSync]
+  List<R>? findLastListSync([int count = 1]) {
+    final allCount = countSync();
+    if (allCount <= 0) {
+      return null;
+    }
+    count = min(count, allCount);
+    return offsetQuery(allCount - count).limit(count).findAllSync();
+  }
 }

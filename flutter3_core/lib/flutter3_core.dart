@@ -1,7 +1,6 @@
 library flutter3_core;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -50,9 +49,6 @@ part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
 part 'src/dialog/wheel_dialog.dart';
-part 'src/tiles/wheel_tile.dart';
-part 'src/tiles/core_dialog_title.dart';
-part 'src/tiles/label_number_slider_tile.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/config_file.dart';
 part 'src/file/file_log.dart';
@@ -60,6 +56,9 @@ part 'src/file/file_pub_ex.dart';
 part 'src/file/file_type.dart';
 part 'src/isar/hive/hive_ex.dart';
 part 'src/isar/isar_ex.dart';
+part 'src/tiles/core_dialog_title.dart';
+part 'src/tiles/label_number_slider_tile.dart';
+part 'src/tiles/wheel_tile.dart';
 part 'src/view_model/mutable_live_data.dart';
 part 'src/view_model/view_model_ex.dart';
 
@@ -69,8 +68,6 @@ part 'src/view_model/view_model_ex.dart';
 String get currentDirPath => p.current;
 
 /// 初始化Flutter3核心库
-/// 会初始化Isar数据库
-/// [registerIsarCollection]
 @entryPoint
 Future<void> initFlutter3Core() async {
   // 写入文件fn
@@ -91,7 +88,12 @@ Future<void> initFlutter3Core() async {
       debugPrint('写入文件调用失败: $error');
     });
   };
+}
 
+/// 初始化Isar数据库, 初始化之前请先注册表结构
+/// [registerIsarCollection]
+@entryPoint
+Future<void> initIsar() async {
   //初始化isar数据库
   await openIsar();
 

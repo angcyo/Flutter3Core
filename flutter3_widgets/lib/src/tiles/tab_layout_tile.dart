@@ -52,6 +52,13 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
   }
 
   @override
+  void didUpdateWidget(covariant LabelTabLayoutTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //debugger();
+    tabLayoutController.index = widget.values?.indexOf(widget.initValue) ?? 0;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 

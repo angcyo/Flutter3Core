@@ -10,6 +10,7 @@ part of '../../flutter3_basics.dart';
 typedef Action = VoidCallback;
 typedef VoidAction = Action;
 
+/// [VoidAction]
 typedef FutureVoidAction = FutureOr Function();
 
 /// 只有返回值的回调
