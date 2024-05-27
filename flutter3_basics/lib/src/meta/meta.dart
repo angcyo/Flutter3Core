@@ -6,7 +6,7 @@ part of '../../flutter3_basics.dart';
 ///
 /// 元数据/注解
 /// [Target]
-@Target({
+/*@Target({
   TargetKind.field,
   TargetKind.function,
   TargetKind.getter,
@@ -19,7 +19,8 @@ part of '../../flutter3_basics.dart';
   TargetKind.enumType,
   TargetKind.extensionType,
   TargetKind.library,
-})
+  TargetKind.typedefType,
+})*/
 class AnnotationMeta {
   final String des;
 

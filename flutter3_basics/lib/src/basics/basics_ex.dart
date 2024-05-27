@@ -868,6 +868,24 @@ extension StringEx on String {
 //endregion 功能
 }
 
+extension StringBufferEx on StringBuffer {
+  /// 如果[StringBuffer]为空, 则追加指定的字符串, 否则不动
+  StringBuffer appendIfEmpty([String str = "\n"]) {
+    if (isEmpty) {
+      write(str);
+    }
+    return this;
+  }
+
+  /// 如果[StringBuffer]不为空, 则追加指定的字符串, 否则不动
+  StringBuffer appendIfNotEmpty([String str = "\n"]) {
+    if (isNotEmpty) {
+      write(str);
+    }
+    return this;
+  }
+}
+
 //endregion String 扩展
 
 //region Rect/Offset/Size 扩展
