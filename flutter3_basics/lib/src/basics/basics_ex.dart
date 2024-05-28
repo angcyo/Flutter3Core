@@ -803,7 +803,10 @@ extension StringEx on String {
       return '$before$this';
     }
     if (!startsWith(prefix)) {
-      return '$before$prefix$this';
+      if (prefix.endsWith('/')) {
+        return '$before$prefix$this';
+      }
+      return '$before$prefix/$this';
     }
     return '$before$this';
   }
