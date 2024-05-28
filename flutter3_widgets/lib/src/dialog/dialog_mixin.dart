@@ -135,7 +135,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   @entryPoint
   Widget buildBottomChildrenDialog(
     BuildContext context,
-    WidgetList children, {
+    WidgetNullList children, {
     bool enablePullBack = true,
     bool showDragHandle = true,
     bool useScroll = false,
@@ -146,6 +146,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     double? clipBottomRadius,
   }) {
     final Widget body;
+    children = children.filterNull();
     if (useScroll) {
       final fixedChildren = children.subList(0, scrollChildIndex);
       final scrollChildren = children.subList(scrollChildIndex);
