@@ -6,8 +6,14 @@ part of '../../flutter3_core.dart';
 ///
 /// 配置文件相关操作
 class ConfigFile {
+  ConfigFile._();
+
   /// 配置文件在磁盘上的目录
   static Future<Directory> get configFolderFile => fileFolder('config');
+
+  /// 当调用一次[readConfigFile]之后, 会缓存配置文件的目录
+  /// 以便之后可以使用同步方法读取文件内容
+  static String? _configFolderFilePath;
 
   /// 读取一个配置文件
   /// 如果文件在磁盘, 则从磁盘读取, 否则从assets中读取.
@@ -16,20 +22,24 @@ class ConfigFile {
   /// [subFolder] 子目录
   /// [httpUrl] 如果磁盘文件不存在, 则从网络上下载
   /// [forceFetch] 是否要强制拉取网络数据, 否则只在磁盘上没数据时才拉取
+  /// [forceAssetToFile] 是否要强制将Asset中的文件, 拷贝到磁盘
   static Future<String?> readConfigFile(
     String key, {
     String prefix = 'assets/',
     String? package,
     String? subFolder,
     bool forceFetch = false,
+    bool forceAssetToFile = false,
     String? httpUrl,
     ValueCallback? onHttpAction,
   }) async {
     String? result;
-    final folder = await configFolderFile;
+    final configFolder = await configFolderFile;
+    _configFolderFilePath = configFolder.path;
+    //目标配置文件对象
     final file = (subFolder == null
-            ? p.join(folder.path, key)
-            : p.join(folder.path, subFolder, key))
+            ? p.join(configFolder.path, key)
+            : p.join(configFolder.path, subFolder, key))
         .file();
     try {
       if (file.existsSync()) {
@@ -39,6 +49,9 @@ class ConfigFile {
         //如果磁盘没有, 则降级读取assets中的文件
         forceFetch = true;
         result = await loadAssetString(key, prefix: prefix, package: package);
+        if (forceAssetToFile) {
+          await result.writeToFile(file: file);
+        }
       }
     } catch (e) {
       assert(() {
@@ -58,6 +71,54 @@ class ConfigFile {
       });
     }
 
+    return result;
+  }
+
+  /// 读取配置文件内容
+  static Future<String?> readConfigFileString(
+    String key, {
+    String? subFolder,
+  }) async {
+    String? result;
+    final configFolder = await configFolderFile;
+    _configFolderFilePath = configFolder.path;
+    //目标配置文件对象
+    final file = (subFolder == null
+            ? p.join(configFolder.path, key)
+            : p.join(configFolder.path, subFolder, key))
+        .file();
+    try {
+      result = await file.readString();
+    } catch (e) {
+      assert(() {
+        l.w('读取文件失败[$file]:$e');
+        return true;
+      }());
+    }
+    return result;
+  }
+
+  /// 同步读取配置文件内容, 请确保调用过一次[readConfigFile]
+  /// [_configFolderFilePath]
+  static String? readConfigFileStringSync(
+    String key, {
+    String? subFolder,
+  }) {
+    String? result;
+    final configFolder = _configFolderFilePath ?? "";
+    //目标配置文件对象
+    final file = (subFolder == null
+            ? p.join(configFolder, key)
+            : p.join(configFolder, subFolder, key))
+        .file();
+    try {
+      result = file.readAsStringSync();
+    } catch (e) {
+      assert(() {
+        l.w('读取文件失败[$file]:$e');
+        return true;
+      }());
+    }
     return result;
   }
 }
