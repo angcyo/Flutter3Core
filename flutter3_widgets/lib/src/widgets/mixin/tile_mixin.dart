@@ -366,12 +366,18 @@ mixin TileMixin {
     BuildContext context, {
     List? values,
     List<Widget>? valuesWidget,
+    TransformDataWidgetBuilder? transformValueWidget,
   }) {
     WidgetList? result;
     if (valuesWidget == null) {
       result = values?.map((data) {
         final widget = widgetOf(context, data, tryTextWidget: false);
-        return widget ?? textOf(data)!.text().min();
+        if (widget != null) {
+          return transformValueWidget?.call(context, widget, data) ?? widget;
+        }
+        final textWidget = textOf(data)!.text();
+        return transformValueWidget?.call(context, textWidget, data) ??
+            textWidget.min();
       }).toList();
     } else {
       result = valuesWidget;

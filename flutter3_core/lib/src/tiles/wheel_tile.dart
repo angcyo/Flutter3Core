@@ -14,9 +14,13 @@ class LabelWheelTile extends StatefulWidget {
   final dynamic initValue;
   final List? values;
   final List<Widget>? valuesWidget;
+  final TransformDataWidgetBuilder? transformValueWidget;
 
   /// 索引改变回调
   final IndexCallback? onTabIndexChanged;
+
+  /// wheel
+  final bool enableWheelSelectedIndexColor;
 
   const LabelWheelTile({
     super.key,
@@ -25,7 +29,9 @@ class LabelWheelTile extends StatefulWidget {
     this.initValue,
     this.values,
     this.valuesWidget,
+    this.transformValueWidget,
     this.onTabIndexChanged,
+    this.enableWheelSelectedIndexColor = true,
   });
 
   @override
@@ -59,6 +65,8 @@ class _LabelWheelTileState extends State<LabelWheelTile> with TileMixin {
           initValue: widget.initValue,
           values: widget.values,
           valuesWidget: widget.valuesWidget,
+          transformValueWidget: widget.transformValueWidget,
+          enableWheelSelectedIndexColor: widget.enableWheelSelectedIndexColor,
         ));
         if (result != null) {
           if (result is int) {

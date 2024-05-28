@@ -34,6 +34,9 @@ class Wheel extends StatelessWidget {
   /// 滚动回调
   final IndexCallback? onIndexChanged;
 
+  /// 是否激活选中颜色
+  final bool enableSelectedIndexColor;
+
   Wheel({
     super.key,
     this.builder,
@@ -41,6 +44,7 @@ class Wheel extends StatelessWidget {
     this.size = 150,
     this.itemExtent = 30,
     this.looping = false,
+    this.enableSelectedIndexColor = true,
     this.initialIndex = 0,
     this.selectedIndexColor,
     this.onIndexChanged,
@@ -60,13 +64,13 @@ class Wheel extends StatelessWidget {
       itemExtent: itemExtent,
       // Text height
       // 上下挤压系数
-      squeeze: 1.4,
-      // 直径比例, 值越小圆越小
+      squeeze: 1.2,
+      // 直径比例, 值越小 圆越小
       diameterRatio: 1.4,
       // 未选中的不透明度, 值越小越透明
       surroundingOpacity: .25,
       // 放大倍数
-      magnification: 1.2,
+      magnification: 1.1,
     );
 
     return WheelPicker(
@@ -75,7 +79,9 @@ class Wheel extends StatelessWidget {
             return children![index];
           },
       controller: _controller,
-      selectedIndexColor: selectedIndexColor ?? globalTheme.accentColor,
+      selectedIndexColor: enableSelectedIndexColor
+          ? selectedIndexColor ?? globalTheme.accentColor
+          : null,
       looping: looping,
       style: wheelStyle,
       onIndexChanged: onIndexChanged ??

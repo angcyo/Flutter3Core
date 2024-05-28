@@ -14,6 +14,10 @@ class WheelDialog extends StatefulWidget with DialogMixin {
   final dynamic initValue;
   final List? values;
   final List<Widget>? valuesWidget;
+  final TransformDataWidgetBuilder? transformValueWidget;
+
+  /// wheel
+  final bool enableWheelSelectedIndexColor;
 
   @override
   TranslationType get translationType => TranslationType.translation;
@@ -25,6 +29,8 @@ class WheelDialog extends StatefulWidget with DialogMixin {
     this.initValue,
     this.values,
     this.valuesWidget,
+    this.transformValueWidget,
+    this.enableWheelSelectedIndexColor = true,
   });
 
   @override
@@ -52,6 +58,7 @@ class _WheelDialogState extends State<WheelDialog> with DialogMixin, TileMixin {
       context,
       values: widget.values,
       valuesWidget: widget.valuesWidget,
+      transformValueWidget: widget.transformValueWidget,
     );
 
     return buildBottomChildrenDialog(
@@ -78,6 +85,7 @@ class _WheelDialogState extends State<WheelDialog> with DialogMixin, TileMixin {
                 size: _wheelHeight,
                 itemExtent: _itemExtent,
                 initialIndex: _currentIndex,
+                enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
                 onIndexChanged: (index) {
                   _currentIndex = index;
                   updateState();
