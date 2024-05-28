@@ -171,3 +171,11 @@ mixin DiagnosticsMixin on DiagnosticableTreeMixin {
     return builder.properties;
   }
 }
+
+extension DebugStringEx on String {
+  /// 添加到分享路径
+  /// [addToShareLogPath]
+  void addToSharePath({bool temp = true}) {
+    addToShareLogPath(this, temp: temp);
+  }
+}
