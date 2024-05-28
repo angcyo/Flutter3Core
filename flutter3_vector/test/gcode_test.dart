@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -17,8 +18,12 @@ void main() async {
 
   lTime.tick();
   //testOutputGCode();
-  testOutputCutGCode();
+  //testOutputCutGCode();
   //testOutputPoint();
+
+  test('test gcode', () {
+    outputGCode();
+  });
 
   print("...end:${lTime.time()}");
 }
@@ -175,4 +180,43 @@ void testOutputPoint() {
     }
     file.writeAsStringSync("\n", mode: FileMode.append);
   }
+}
+
+@testPoint
+void outputGCode() {
+  const xCount = 10;
+  const yCount = 10;
+  @mm
+  const step = 0.8 * 10;
+
+  @mm
+  const cx = 80.0;
+  @mm
+  const cy = 80.0;
+
+  const left = cx - xCount * step / 2;
+  const top = cy - yCount * step / 2;
+  const right = cx + xCount * step / 2;
+  const bottom = cy + yCount * step / 2;
+
+  final buffer = StringBuffer();
+  buffer.write(kGCodeAutoHeader);
+
+  //一行一行
+  for (var y = 0; y <= yCount; y++) {
+    final t = top + y * step;
+    buffer.writeln("G0 X$left Y$t");
+    buffer.writeln("G1 X$right Y$t S255 F12000");
+  }
+
+  //一列一列
+  for (var x = 0; x <= xCount; x++) {
+    final l = left + x * step;
+    buffer.writeln("G0 X$l Y$top");
+    buffer.writeln("G1 X$l Y$bottom S255 F12000");
+  }
+
+  buffer.write(kGCodeFooter);
+
+  outputFile("gcode_auto.nc").writeString(buffer.toString());
 }
