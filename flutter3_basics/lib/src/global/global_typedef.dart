@@ -46,4 +46,12 @@ typedef IndexCallback = void Function(int index);
 /// [num]数字回调
 typedef NumCallback = void Function(num number);
 
+/// 转变一个[widget]
+typedef TransformWidgetBuilder = Widget Function(
+    BuildContext context, Widget widget);
+
+/// 转变一个[widget], 携带一个[data]参数
+typedef TransformDataWidgetBuilder = Widget Function(
+    BuildContext context, Widget widget, dynamic data);
+
 //endregion Fn
