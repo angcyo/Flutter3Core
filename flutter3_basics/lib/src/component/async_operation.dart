@@ -77,8 +77,10 @@ mixin WaitFirstFutureMixin {
   Future waitFirstFuture(
     String key,
     Completer completer,
-    FutureOr Function(Completer firstCompleter) doFirstOperation,
-  ) async {
+    FutureOr Function(Completer firstCompleter) doFirstOperation, {
+    StackTrace? stack,
+  }) async {
+    stack ??= StackTrace.current;
     final first = _firstFutureCompleter[key];
     if (first == null) {
       _firstFutureCompleter[key] = completer;
@@ -97,13 +99,13 @@ mixin WaitFirstFutureMixin {
         //失败
         assert(() {
           l.w('waitFirstFuture:$e');
-          printError(e, StackTrace.current);
+          printError(e, stack);
           return true;
         }());
         final waitList = _waitFirstFutureMap.remove(key);
         if (waitList != null) {
           for (final item in waitList) {
-            item.completeError(e, StackTrace.current);
+            item.completeError(e, stack);
           }
         }
       } finally {
@@ -120,16 +122,18 @@ mixin WaitFirstFutureMixin {
 /// 等待异步操作完成
 /// [future]
 /// [asyncFuture]
-Future<T> awaitFor<T>(Function(Function(T) action) doOperation) {
+Future<T> awaitFor<T>(Function(Function(T) action) doOperation,
+    {StackTrace? stack}) {
+  stack ??= StackTrace.current;
   final completer = Completer<T>();
   try {
     doOperation((result) => completer.complete(result));
   } catch (e) {
     assert(() {
-      printError(e, StackTrace.current);
+      printError(e, stack);
       return true;
     }());
-    completer.completeError(e, StackTrace.current);
+    completer.completeError(e, stack);
   }
   return completer.future;
 }
