@@ -965,6 +965,20 @@ extension RectEx on Rect {
       RRect.fromRectXY(this, radiusX, radiusY);
 
   /// [toRRect]
+  RRect toRRectFromCorners(
+          {Radius topLeft = Radius.zero,
+          Radius topRight = Radius.zero,
+          Radius bottomRight = Radius.zero,
+          Radius bottomLeft = Radius.zero}) =>
+      RRect.fromRectAndCorners(
+        this,
+        topLeft: topLeft,
+        topRight: topRight,
+        bottomRight: bottomRight,
+        bottomLeft: bottomLeft,
+      );
+
+  /// [toRRect]
   RRect toRRectTB({double topRadius = 0, double bottomRadius = 0}) =>
       RRect.fromLTRBAndCorners(
         left,

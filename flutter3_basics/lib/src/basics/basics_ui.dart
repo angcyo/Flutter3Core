@@ -459,6 +459,19 @@ extension WidgetEx on Widget {
               child: this,
             );
 
+  /// [AnimatedBuilder]
+  Widget animatedBuilder(Listenable? animation, [TransitionBuilder? builder]) =>
+      animation == null
+          ? this
+          : AnimatedBuilder(
+              animation: animation,
+              builder: builder ??
+                  (context, child) {
+                    return child ?? this;
+                  },
+              child: this,
+            );
+
   //region ---Padding---
 
   /// 将当前的小部件, 包裹在一个[Padding]中

@@ -101,6 +101,7 @@ part 'src/overlay/loading_overlay.dart';
 part 'src/overlay/rotate_animated.dart';
 part 'src/overlay/route_will_pop_scope.dart';
 part 'src/overlay/stroke_loading.dart';
+part 'src/overlay/progress_bar.dart';
 part 'src/unit/unit.dart';
 part 'src/utils/bytes.dart';
 part 'src/utils/file_size.dart';
