@@ -9,10 +9,12 @@ class CoreDialogTitle extends StatelessWidget {
   ///
   final Widget? leading;
   final bool enableLeading;
+  final bool showLeading;
 
   ///
   final Widget? trailing;
   final bool enableTrailing;
+  final bool showTrailing;
 
   ///
   final String? title;
@@ -35,7 +37,9 @@ class CoreDialogTitle extends StatelessWidget {
     this.leading,
     this.trailing,
     this.enableLeading = true,
+    this.showLeading = true,
     this.enableTrailing = true,
+    this.showTrailing = true,
     this.titleTextStyle,
     this.subTitleTextStyle,
     this.onPop,
@@ -43,23 +47,27 @@ class CoreDialogTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final leading = this.leading ??
-        InkButton(
-          loadCoreAssetSvgPicture(Assets.svg.coreBack),
-          enable: enableLeading,
-          onTap: () {
-            context.pop();
-          },
-        );
+    final leading = !showLeading
+        ? null
+        : this.leading ??
+            InkButton(
+              loadCoreAssetSvgPicture(Assets.svg.coreBack),
+              enable: enableLeading,
+              onTap: () {
+                context.pop();
+              },
+            );
 
-    final trailing = this.trailing ??
-        InkButton(
-          loadCoreAssetSvgPicture(Assets.svg.coreConfirm),
-          enable: enableTrailing,
-          onTap: () {
-            context.pop(onPop == null ? true : onPop?.call());
-          },
-        );
+    final trailing = !showTrailing
+        ? null
+        : this.trailing ??
+            InkButton(
+              loadCoreAssetSvgPicture(Assets.svg.coreConfirm),
+              enable: enableTrailing,
+              onTap: () {
+                context.pop(onPop == null ? true : onPop?.call());
+              },
+            );
 
     return DialogTitleTile(
       leading: leading,

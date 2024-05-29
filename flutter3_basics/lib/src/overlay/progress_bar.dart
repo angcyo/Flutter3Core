@@ -63,6 +63,7 @@ class _ProgressBarState extends State<ProgressBar>
   }
 
   void _startFlowAnimation() {
+    _flowController?.dispose();
     _flowController = AnimationController(
       duration: const Duration(milliseconds: 3000),
       vsync: this,

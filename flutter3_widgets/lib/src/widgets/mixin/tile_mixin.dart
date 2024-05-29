@@ -17,6 +17,9 @@ mixin IWidgetProvider {
 
 /// 在一个数据中, 提取文本
 String? textOf(dynamic data) {
+  if (data == null) {
+    return null;
+  }
   if (data is String) {
     return data;
   }
@@ -46,6 +49,9 @@ Widget? widgetOf(
   TextStyle? textStyle,
   TextAlign? textAlign,
 }) {
+  if (data == null) {
+    return null;
+  }
   if (data is Widget) {
     return data;
   }

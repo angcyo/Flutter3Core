@@ -96,6 +96,7 @@ mixin WaitFirstFutureMixin {
       } catch (e) {
         //失败
         assert(() {
+          l.w('waitFirstFuture:$e');
           printError(e, StackTrace.current);
           return true;
         }());
