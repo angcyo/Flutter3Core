@@ -29,7 +29,14 @@ final List<String> globalShareLogPathList = [];
 /// 添加一个临时的日志分享路径
 /// [temp] 是否是临时的
 @callPoint
-void addToShareLogPath(String path, {bool temp = true}) {
+void addToShareLogPath(String? path, {bool temp = true}) {
+  if (path == null) {
+    assert(() {
+      l.w("无效的操作");
+      return true;
+    }());
+    return;
+  }
   if (temp) {
     tempShareLogPathList.add(path);
   } else {

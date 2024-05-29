@@ -16,7 +16,7 @@ Widget _ensureSliver(Widget tile) {
   }
   if (tile is! NotSliverTile && "$tile".toLowerCase().startsWith("sliver")) {
     assert(() {
-      l.d('未使用[SliverToBoxAdapter]包裹的[Sliver]小部件:${tile.runtimeType}');
+      l.d('未使用[SliverToBoxAdapter]包裹的[Sliver]小部件[${tile.runtimeType}]');
       return true;
     }());
     return tile;

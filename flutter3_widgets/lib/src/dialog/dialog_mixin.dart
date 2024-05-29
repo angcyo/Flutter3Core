@@ -126,6 +126,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// [enablePullBack] 是否支持下拉关闭
   /// [showDragHandle] 激活下拉关闭时, 是否显示拖拽句柄
   /// [useScroll] 是否使用滚动容器
+  /// [animatedSize] 当[children]大小改变时, 是否使用动画大小
   /// [scrollChildIndex] 使用滚动容器时, [children]索引>=此值的child才放大滚动容器中
   /// [scrollMaxHeight] 滚动容器最大的高度, 如果小于1, 表示屏幕高度的百分比
   /// [clipRadius] 整体圆角
@@ -139,6 +140,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool enablePullBack = true,
     bool showDragHandle = true,
     bool useScroll = false,
+    bool animatedSize = false,
     int scrollChildIndex = 1,
     double? scrollMaxHeight = 0.8,
     double? clipRadius,
@@ -183,7 +185,9 @@ mixin DialogMixin implements TranslationTypeImpl {
           },
         )
         .matchParent(matchHeight: false)
-        .align(Alignment.bottomCenter);
+        .align(Alignment.bottomCenter)
+        .animatedSize(
+            duration: animatedSize ? kDefaultAnimationDuration : null);
   }
 
   //endregion ---对话框包裹---

@@ -62,7 +62,7 @@ Widget? widgetOf(
     }
   }
   assert(() {
-    l.w('当前类型:${data.runtimeType} 不支持[IWidgetProvider]操作.');
+    l.w('当前类型[${data.runtimeType}]不支持[IWidgetProvider]操作.');
     return true;
   }());
   return null;

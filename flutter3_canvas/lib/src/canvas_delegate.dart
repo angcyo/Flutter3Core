@@ -6,6 +6,7 @@ part of '../flutter3_canvas.dart';
 ///
 
 const rasterizeElementHost = AnnotationMeta('栅格化元素, 栅格化时, 不应该绘制额外的干扰信息');
+const elementOutputHost = AnnotationMeta('元素数据输出, 此时数据应该足够真实');
 
 /// 画布代理类, 核心类, 整个框架的入口
 /// [CanvasWidget]

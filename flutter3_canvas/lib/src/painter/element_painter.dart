@@ -530,7 +530,7 @@ class ElementPainter extends IPainter
     }
     final image = drawImageSync(bounds.size, (canvas) {
       canvas.drawInRect(Offset.zero & bounds.size, bounds, () {
-        painting(canvas, PaintMeta(host: rasterizeElementHost));
+        painting(canvas, PaintMeta(host: elementOutputHost));
       });
     });
     /*assert(() {
