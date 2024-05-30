@@ -1393,6 +1393,8 @@ extension IntEx on int {
   /// 2:多少分
   /// 3:多少小时
   /// 4:多少天
+  /// [IntEx.toPartTimes]
+  /// [TimeEx.toTimeAgo]
   List<int> toPartTimes() {
     var list = <int>[];
     var time = this;

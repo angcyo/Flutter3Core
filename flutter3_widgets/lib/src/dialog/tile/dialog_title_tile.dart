@@ -43,6 +43,7 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     final titleWidget = buildTextWidget(
       context,
       text: title ?? "",
+      textAlign: TextAlign.center,
       textWidget: this.titleWidget,
       textStyle: titleTextStyle ??
           globalTheme.textTitleStyle.copyWith(fontWeight: FontWeight.bold),

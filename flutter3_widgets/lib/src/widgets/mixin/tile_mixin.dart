@@ -31,7 +31,7 @@ String? textOf(dynamic data) {
       return data.text;
     } catch (e) {
       assert(() {
-        l.w('当前类型:${data.runtimeType} 不支持[.text]/[ITextProvider]操作.');
+        l.w('当前类型[${data.runtimeType}],不支持[.text]/[ITextProvider]操作.');
         return true;
       }());
       return "$data";
@@ -144,6 +144,7 @@ mixin TileMixin {
     BuildContext context, {
     Widget? textWidget,
     String? text,
+    TextAlign? textAlign,
     TextStyle? textStyle,
     bool themeStyle = true,
     EdgeInsets? textPadding,
@@ -153,6 +154,7 @@ mixin TileMixin {
     final widget = textWidget ??
         (text
             ?.text(
+              textAlign: textAlign,
               style:
                   textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
             )
