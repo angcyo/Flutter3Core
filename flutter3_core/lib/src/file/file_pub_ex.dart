@@ -170,6 +170,86 @@ extension DirectoryPubEx on Directory {
   }
 }
 
+extension FilePubEx on FileSystemEntity {
+  /// [FileStringPubEx.fileName]
+  String fileName([bool withoutExtension = false]) =>
+      path.fileName(withoutExtension);
+
+  /// 重命名文件
+  /// [newName] 新文件名
+  /// [overwrite] 是否覆盖同名文件
+  /// [throwError] 是否抛出异常
+  Future<bool> renameTo(
+    String newName, {
+    bool overwrite = false,
+    bool throwError = false,
+  }) async {
+    try {
+      final newPath = p.join(path.dirname(), newName);
+      if (newPath == path) {
+        return true;
+      }
+      if (overwrite) {
+        if (await newPath.isFile()) {
+          await newPath.delete();
+        }
+      }
+      await rename(newPath);
+      assert(() {
+        l.d('renameToSync->$path->$newPath');
+        return true;
+      }());
+      return true;
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      if (throwError) {
+        rethrow;
+      }
+    }
+    return false;
+  }
+
+  /// 重命名文件
+  /// [newName] 新文件名
+  /// [overwrite] 是否覆盖同名文件
+  /// [throwError] 是否抛出异常
+  bool renameToSync(
+    String newName, {
+    bool overwrite = false,
+    bool throwError = false,
+  }) {
+    try {
+      final newPath = p.join(path.dirname(), newName);
+      if (newPath == path) {
+        return true;
+      }
+      if (overwrite) {
+        if (newPath.isFileSync()) {
+          newPath.deleteSync();
+        }
+      }
+      renameSync(newPath);
+      assert(() {
+        l.d('renameToSync->$path->$newPath');
+        return true;
+      }());
+      return true;
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      if (throwError) {
+        rethrow;
+      }
+    }
+    return false;
+  }
+}
+
 /// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
 /// https://api.dart.dev/stable/3.2.0/dart-io/Process-class.html
 /// https://pub.dev/packages/uri_to_file

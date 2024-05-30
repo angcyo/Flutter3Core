@@ -733,6 +733,18 @@ extension StringEx on String {
     }
   }
 
+  /// 使用正则, 获取字符串中所有的正负浮点数
+  List<double> getFloatList() {
+    const regex = r"[-+]?\d?\.?\d+";
+    return allMatches(regex).map((e) => double.parse(e.group(0)!)).toList();
+  }
+
+  /// 使用正则, 获取字符串中所有的正负整数
+  List<int> getIntList() {
+    const regex = r"[-+]?[0-9]+";
+    return allMatches(regex).map((e) => int.parse(e.group(0)!)).toList();
+  }
+
   //endregion 正则
 
   //region 加密
