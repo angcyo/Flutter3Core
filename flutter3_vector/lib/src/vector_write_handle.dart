@@ -556,7 +556,7 @@ class GCodeWriteHandle with VectorWriteMixin {
   IUnit? unit = IUnit.mm;
 
   @override
-  int get digits => super.digits;
+  int get digits => 3;
 
   //endregion ---数值转换---
 
@@ -903,6 +903,7 @@ extension VectorListPathEx on List<Path> {
     final buffer = StringBuffer();
     handle ??= GCodeWriteHandle();
     handle
+      ..digits = 3
       ..power = power
       ..speed = speed;
     buffer.write(header);

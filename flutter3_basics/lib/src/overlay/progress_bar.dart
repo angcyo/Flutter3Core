@@ -17,7 +17,7 @@ class ProgressBar extends StatefulWidget {
   final bool enableProgressAnimate;
 
   /// 是否激活流动动画
-  final bool enableFlowProgress;
+  final bool enableFlowProgressAnimate;
 
   /// 进度颜色
   final Color? progressColor;
@@ -36,7 +36,7 @@ class ProgressBar extends StatefulWidget {
     this.radius,
     this.progress,
     this.enableProgressAnimate = true,
-    this.enableFlowProgress = true,
+    this.enableFlowProgressAnimate = true,
     this.progressColor,
     this.progressColorList,
     this.bgColor = Colors.black12,
@@ -71,7 +71,7 @@ class _ProgressBarState extends State<ProgressBar>
       lowerBound: 0,
       upperBound: widget.progress ?? 0,
     );
-    if (widget.enableFlowProgress) {
+    if (widget.enableFlowProgressAnimate) {
       _flowController?.repeat();
     }
   }
@@ -79,7 +79,7 @@ class _ProgressBarState extends State<ProgressBar>
   @override
   void didUpdateWidget(ProgressBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.enableFlowProgress) {
+    if (widget.enableFlowProgressAnimate) {
       _startFlowAnimation();
     } else {
       _flowController?.stop();
@@ -114,7 +114,7 @@ class _ProgressBarState extends State<ProgressBar>
           radius: widget.radius,
           progress:
               _controller.isAnimating ? _controller.value : widget.progress,
-          flowProgress: widget.enableFlowProgress
+          flowProgress: widget.enableFlowProgressAnimate
               ? math.min(_flowController?.value ?? 0, widget.progress ?? 0)
               : null,
           progressColor: widget.progressColor ?? globalTheme.accentColor,

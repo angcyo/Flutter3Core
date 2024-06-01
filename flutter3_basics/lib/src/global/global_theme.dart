@@ -49,6 +49,9 @@ class GlobalTheme {
   /// 白色背景颜色
   Color get whiteBgColor => const Color(0xfff8f8f8);
 
+  /// 黑色背景颜色
+  Color get blackBgColor => const Color(0xff333333);
+
   /// 容器白色背景颜色
   Color get itemWhiteBgColor => const Color(0xfff6f6f6);
 
