@@ -65,8 +65,9 @@ class _ProgressBarState extends State<ProgressBar>
   void _startFlowAnimation() {
     _flowController?.dispose();
     _flowController = AnimationController(
-      duration: const Duration(milliseconds: 3000),
+      duration: kDefaultSlowAnimationDuration,
       vsync: this,
+      value: _flowController?.value ?? 0,
       lowerBound: 0,
       upperBound: widget.progress ?? 0,
     );
@@ -87,7 +88,11 @@ class _ProgressBarState extends State<ProgressBar>
       final oldProgress = oldWidget.progress ?? 0;
       final newProgress = widget.progress ?? 0;
       if (oldProgress != newProgress) {
-        _controller.animateTo(newProgress);
+        //debugger();
+        _controller.animateTo(
+          newProgress,
+          duration: kDefaultAnimationDuration,
+        );
       }
     }
   }

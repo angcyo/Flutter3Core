@@ -20,6 +20,9 @@ part of '../../flutter3_basics.dart';
 /// [kTabScrollDuration]
 const kDefaultAnimationDuration = Duration(milliseconds: 300);
 
+/// 慢的动画时长
+const kDefaultSlowAnimationDuration = Duration(milliseconds: 3000);
+
 extension AnimationEx on Animation {
   /// 动画是否开始了
   bool get isStarted =>
