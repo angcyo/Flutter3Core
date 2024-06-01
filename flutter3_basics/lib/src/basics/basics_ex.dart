@@ -1802,6 +1802,32 @@ extension ListEx<T> on List<T> {
   }
 
   T? beforeOf(T element) => previousOf(element);
+
+  /// 每多少个数字, 分一段数据
+  /// [count] 每多少个数字, 分一段数据
+  List<List<T>> split(int count) {
+    if (count <= 0) {
+      return [];
+    }
+    var list = <List<T>>[];
+    for (var i = 0; i < length; i += count) {
+      list.add(subList(i, i + count));
+    }
+    return list;
+  }
+
+  /// 每多少个数字, 分一段数据
+  /// [count] 每多少个数据, 分一段数据, 返回多段数据
+  List<List<T>> splitByCount(int count) {
+    if (count <= 0) {
+      return [this];
+    }
+    final list = <List<T>>[];
+    for (var i = 0; i < length; i += count) {
+      list.add(subListCount(i, count));
+    }
+    return list;
+  }
 }
 
 //endregion List 扩展

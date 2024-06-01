@@ -22,7 +22,7 @@ const kLogPathName = "log"; //日志文件夹
 /// [UiImage]
 /// [ByteData]/[TypedData]|[ByteData.buffer]->[ByteBuffer]|[ByteData.view]
 /// [ByteBuffer]|[ByteBuffer.asUint8List]->[Uint8List]|[ByteBuffer.asByteData]->[ByteData]
-/// [Uint8List]/[TypedData]|[Uint8List.buffer]->[ByteBuffer]
+/// [List<int>]/[Uint8List]/[TypedData]|[Uint8List.buffer]->[ByteBuffer]
 /// [String]
 /// [LogEx.appendToFile]
 typedef FileDataType = Object;
@@ -85,7 +85,7 @@ extension LogEx on Object {
       mode = FileMode.write;
     }
 
-    Future writeBytes(Uint8List? bytes) async {
+    Future writeBytes(List<int>? bytes) async {
       if (bytes != null) {
         await fileObj.writeAsBytes(bytes, mode: mode);
       }
@@ -127,8 +127,8 @@ extension LogEx on Object {
     if (this is UiImage) {
       //图片不支持[FileMode.append]模式
       await fileObj.writeImage(this as UiImage?);
-    } else if (this is Uint8List) {
-      await writeBytes(this as Uint8List);
+    } else if (this is List<int>) {
+      await writeBytes(this as List<int>);
     } else if (this is ByteData) {
       await writeByteData(this as ByteData);
     } else if (this is ByteBuffer) {

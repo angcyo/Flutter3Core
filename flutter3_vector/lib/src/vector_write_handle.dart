@@ -924,6 +924,7 @@ extension VectorListPathEx on List<Path> {
 
   /// 转换成N段线段折点数据
   /// [VectorPathEx.toGCodeString]
+  @mm
   List<List<Point>>? toPointList({
     @dp double? pathStep,
     @mm double? tolerance,

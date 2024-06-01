@@ -356,7 +356,9 @@ class FlowLayoutRender extends RenderBox
         selfConstraints?.maxWidth != double.infinity) {
       maxWidth = selfConstraints!.maxWidth;
     } else if (constraints.maxWidth != double.infinity) {
-      if (selfConstraints?.widthType != null || _childUsedWidth <= 0) {
+      if (selfConstraints == null ||
+          selfConstraints?.widthType != null ||
+          _childUsedWidth <= 0) {
         maxWidth = constraints.maxWidth;
       } else {
         maxWidth = _childUsedWidth + paddingHorizontal;
@@ -388,7 +390,9 @@ class FlowLayoutRender extends RenderBox
         selfConstraints?.maxHeight != double.infinity) {
       maxHeight = selfConstraints!.maxHeight;
     } else if (constraints.maxHeight != double.infinity) {
-      if (selfConstraints?.heightType != null) {
+      if (selfConstraints == null ||
+          selfConstraints?.heightType != null ||
+          _childUsedHeight <= 0) {
         maxHeight = constraints.maxHeight;
       } else {
         maxHeight = _childUsedHeight + paddingVertical;
