@@ -41,6 +41,9 @@ class FlowLayout extends MultiChildRenderObjectWidget {
   /// [FlowLayoutRender.crossAxisAlignment]
   final CrossAxisAlignment crossAxisAlignment;
 
+  /// [FlowLayoutRender.matchLineHeight]
+  final bool? matchLineHeight;
+
   const FlowLayout({
     super.key,
     super.children,
@@ -55,6 +58,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.lineMainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.matchLineHeight,
   });
 
   @override
@@ -70,6 +74,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
         mainAxisAlignment: mainAxisAlignment,
         lineMainAxisAlignment: lineMainAxisAlignment,
         crossAxisAlignment: crossAxisAlignment,
+        matchLineHeight: matchLineHeight,
       );
 
   @override
@@ -86,6 +91,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
       ..mainAxisAlignment = mainAxisAlignment
       ..lineMainAxisAlignment = lineMainAxisAlignment
       ..crossAxisAlignment = crossAxisAlignment
+      ..matchLineHeight = matchLineHeight
       ..markNeedsLayout();
   }
 
@@ -117,6 +123,9 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
   /// 当前这一行在计算[weight]时, 需要排除多个[child]的gap
   int excludeGapCount;
 
+  /// 是否撑满当前的行高
+  bool? matchLineHeight;
+
   //---
 
   /// 是否堆叠在一起, 如果开启堆叠, 那么当前的child, 不会占据原有的布局空间
@@ -128,11 +137,13 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
     this.weight,
     this.excludeGapCount = 0,
     this.stack = false,
+    this.matchLineHeight,
   });
 
   @override
   String toString() {
-    return 'offset=$offset constraints:$constraints';
+    return 'weight:$weight excludeGapCount:$excludeGapCount stack:$stack matchLineHeight:$matchLineHeight '
+        'offset=$offset constraints:$constraints ';
   }
 }
 
@@ -152,12 +163,16 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
   /// [FlowLayoutParentData.stack]
   final bool stack;
 
+  /// [FlowLayoutParentData.matchLineHeight]
+  final bool? matchLineHeight;
+
   const FlowLayoutData({
     super.key,
     required super.child,
     this.weight,
     this.constraints,
     this.stack = false,
+    this.matchLineHeight,
     this.excludeGapCount = 0,
   });
 
@@ -189,6 +204,11 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
 
     if (parentData.stack != stack) {
       parentData.stack = stack;
+      needsLayout = true;
+    }
+
+    if (parentData.matchLineHeight != matchLineHeight) {
+      parentData.matchLineHeight = matchLineHeight;
       needsLayout = true;
     }
 
@@ -271,6 +291,11 @@ class FlowLayoutRender extends RenderBox
   /// 是否等宽
   bool get isEqualWidth => getChildCount().matchVersion(equalWidthRange);
 
+  /// 所有行, 是否都要撑满行高?
+  /// 单独控制请使用
+  /// [FlowLayoutParentData.matchLineHeight]
+  bool? matchLineHeight;
+
   FlowLayoutRender({
     this.padding,
     this.childHorizontalGap,
@@ -283,6 +308,7 @@ class FlowLayoutRender extends RenderBox
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.lineMainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.matchLineHeight,
   });
 
   /// [RenderObjectElement.attachRenderObject]
@@ -508,6 +534,30 @@ class FlowLayoutRender extends RenderBox
 
     newLine(); //最后一行
 
+    //matchLineHeight 功能适配
+    childrenLineList.forEachIndexed((index, lineChildList) {
+      final lineHeight = getLineUsedHeight(lineChildList);
+      for (final child in lineChildList) {
+        final childParentData = child.parentData! as FlowLayoutParentData;
+        final childMatchLineHeight =
+            childParentData.matchLineHeight ?? matchLineHeight;
+        if (childMatchLineHeight == true) {
+          final childSize = child.size;
+          final childHeight = childSize.height;
+          if (childHeight != lineHeight) {
+            //高度不一致, 重新测量
+            final childConstraints = BoxConstraints(
+              minWidth: childSize.width,
+              maxWidth: childSize.width,
+              minHeight: lineHeight,
+              maxHeight: lineHeight,
+            );
+            ChildLayoutHelper.layoutChild(child, childConstraints);
+          }
+        }
+      }
+    });
+
     //开始布局
     var childUsedWidth = 0.0;
     final childUsedHeight = getAllLineHeight(childrenLineList);
@@ -656,6 +706,7 @@ extension FlowLayoutListEx on WidgetNullList {
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.center,
     MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.start,
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
+    bool? matchLineHeight,
   }) {
     WidgetList list = filterNull();
     if (isNil(list)) {
@@ -673,6 +724,7 @@ extension FlowLayoutListEx on WidgetNullList {
       mainAxisAlignment: mainAxisAlignment,
       lineMainAxisAlignment: lineMainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
+      matchLineHeight: matchLineHeight,
       children: list,
     );
   }
@@ -685,12 +737,14 @@ extension FlowLayoutEx on Widget {
     double? weight,
     int excludeGapCount = 0,
     bool stack = false,
+    bool? matchLineHeight,
   }) =>
       FlowLayoutData(
         constraints: constraints,
         weight: weight,
         excludeGapCount: excludeGapCount,
         stack: stack,
+        matchLineHeight: matchLineHeight,
         child: this,
       );
 }
