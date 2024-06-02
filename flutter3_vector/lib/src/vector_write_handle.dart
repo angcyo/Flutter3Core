@@ -439,6 +439,9 @@ class PointWriteHandle with VectorWriteMixin {
   double offsetX = 0;
   double offsetY = 0;
 
+  /// 限制一段最多多少个点, 超过之后, 起一个新段
+  int? contourMaxPointCount;
+
   //region ---数据收集---
 
   /// 收集
@@ -474,7 +477,8 @@ class PointWriteHandle with VectorWriteMixin {
     final position = transformPoint(point.position);
     if (point.type == VectorWriteMixin.sPointTypeStart ||
         point.type == VectorWriteMixin.sPointTypeLine) {
-      if (pointContourBuilder != null) {
+      final pointBuilder = pointContourBuilder;
+      if (pointBuilder != null) {
         var x = position.dx + offsetX;
         var y = position.dy + offsetY;
         final a = point.angle;
@@ -483,7 +487,15 @@ class PointWriteHandle with VectorWriteMixin {
           x = (x * num).toInt().toDouble();
           y = (y * num).toInt().toDouble();
         }
-        pointContourBuilder?.add(Point(x, y, a));
+        final p = Point(x, y, a);
+        if (contourMaxPointCount != null &&
+            (pointBuilder.length + 1) >= contourMaxPointCount!) {
+          //超过最大点位数量, 这里要接上一个的点位
+          pointBuilder.add(p);
+          pointResultBuilder.add(pointBuilder);
+          pointContourBuilder = [];
+        }
+        pointContourBuilder?.add(p);
       }
     }
     super.onWritePoint(point, data);
@@ -555,6 +567,7 @@ class GCodeWriteHandle with VectorWriteMixin {
   /// [IUnit.mm]
   IUnit? unit = IUnit.mm;
 
+  /// 数值保留几位小数
   @override
   int get digits => 3;
 
@@ -632,8 +645,8 @@ class GCodeWriteHandle with VectorWriteMixin {
   void onWritePoint(VectorPoint point, [dynamic data]) {
     initStringBuffer();
     final position = transformPoint(point.position);
-    var x = position.dx.toDigits(digits: digits);
-    var y = position.dy.toDigits(digits: digits);
+    final x = position.dx.toDigits(digits: digits);
+    final y = position.dy.toDigits(digits: digits);
     if (point.type == VectorWriteMixin.sPointTypeStart) {
       stringBuffer?.writeln('G0X${x}Y$y');
     } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
@@ -923,6 +936,9 @@ extension VectorListPathEx on List<Path> {
   }
 
   /// 转换成N段线段折点数据
+  /// [digits] 精度
+  /// [unit] 输出数值的单位
+  /// [contourMaxPointCount] 限制一段最多多少个点, 超过之后, 起一个新段
   /// [VectorPathEx.toGCodeString]
   @mm
   List<List<Point>>? toPointList({
@@ -930,6 +946,7 @@ extension VectorListPathEx on List<Path> {
     @mm double? tolerance,
     IUnit? unit = IUnit.mm,
     int digits = 2,
+    int? contourMaxPointCount,
     PointWriteHandle? handle,
   }) {
     if (isNil(this)) {
@@ -939,6 +956,7 @@ extension VectorListPathEx on List<Path> {
     handle ??= PointWriteHandle();
     handle
       ..unit = unit
+      ..contourMaxPointCount = contourMaxPointCount
       ..digits = digits;
     for (final path in this) {
       handle.pointResultBuilder = []; //reset
