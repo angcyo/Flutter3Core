@@ -387,7 +387,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     ElementPainter elementPainter,
     dynamic from,
     dynamic to,
-    int propertyType,
+      PropertyType propertyType,
   ) {
     isElementPropertyChanged = true;
     /*assert(() {

@@ -34,7 +34,7 @@ class CanvasListener {
     ElementPainter elementPainter,
     dynamic from,
     dynamic to,
-    int propertyType,
+    PropertyType propertyType,
   )? onCanvasElementPropertyChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementSelectChanged]

@@ -329,10 +329,18 @@ class ElementPainter extends IPainter
   /// [PaintProperty]
   /// [PaintState]
   void dispatchSelfPaintPropertyChanged(
-      dynamic old, dynamic value, int propertyType) {
+      dynamic old, dynamic value, PropertyType propertyType) {
     canvasDelegate?.dispatchCanvasElementPropertyChanged(
         this, old, value, propertyType);
   }
+
+  /// 派发元素数据改变, 通常意味着这个元素要产生新的数据了
+  /// [rotateElement]
+  /// [translateElement]
+  /// [flipElement]
+  /// [scaleElementWithCenter]
+  /// [onlyScaleSelfElement]
+  void dispatchSelfElementRawChanged(ElementDataType elementDataType) {}
 
   //endregion ---paint---
 
@@ -344,6 +352,7 @@ class ElementPainter extends IPainter
     paintProperty?.let((it) {
       paintProperty = it.copyWith()..applyTranslate(matrix);
     });
+    dispatchSelfElementRawChanged(ElementDataType.size);
   }
 
   /// 旋转元素
@@ -352,6 +361,7 @@ class ElementPainter extends IPainter
     paintProperty?.let((it) {
       paintProperty = it.copyWith()..applyRotate(matrix);
     });
+    dispatchSelfElementRawChanged(ElementDataType.size);
   }
 
   /// 旋转元素
@@ -380,6 +390,7 @@ class ElementPainter extends IPainter
     paintProperty?.let((it) {
       paintProperty = it.copyWith()..applyFlip(flipX: flipX, flipY: flipY);
     });
+    dispatchSelfElementRawChanged(ElementDataType.size);
   }
 
   /// 使用缩放的方式翻转元素
@@ -415,6 +426,7 @@ class ElementPainter extends IPainter
     paintProperty?.let((it) {
       paintProperty = it.copyWith()..applyScaleWithCenter(matrix);
     });
+    dispatchSelfElementRawChanged(ElementDataType.size);
   }
 
   /// 直接作用缩放, 通常在外边框缩放时使用方法
@@ -432,6 +444,7 @@ class ElementPainter extends IPainter
       paintProperty = it.copyWith()
         ..applyScale(sxBy: sx, syBy: sy, sxTo: sxTo, syTo: syTo);
     });
+    dispatchSelfElementRawChanged(ElementDataType.size);
   }
 
   //endregion ---apply paintProperty--
@@ -1318,18 +1331,28 @@ class ElementStateStack {
 /// 属性类型, 支持组合
 /// [PaintProperty]
 /// [PaintState]
-abstract class PropertyType {
+enum PropertyType {
   /// 绘制的相关属性, 比如坐标/缩放/旋转/倾斜等信息
   /// 支持回退的属性
   @supportUndo
-  static const int paint = 0x01;
+  paint,
 
   /// 元素的状态改变, 比如锁定/可见性/uuid/名称等信息
-  static const int state = 0x02;
+  state,
 
   /// 元素的数据改变, 比如内容等信息
   @supportUndo
-  static const int data = 0x04;
+  data;
+}
+
+/// 元素真实数据内容改变
+/// 改变后, 通常意味着是一个新的数据
+enum ElementDataType {
+  /// 大小尺寸改变了
+  size,
+
+  /// 数据本身内容改变了
+  data,
 }
 
 /// 诊断

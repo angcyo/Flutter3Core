@@ -319,7 +319,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   @implementation
   void onSelfElementPropertyChanged(
     ElementPainter element,
-    int propertyType,
+    PropertyType propertyType,
   ) {
     if (enableResetElementAngle) {
       if (isControlElement) {}
@@ -820,7 +820,7 @@ class ElementSelectComponent extends ElementGroupPainter
 
   @override
   void dispatchSelfPaintPropertyChanged(
-      dynamic old, dynamic value, int propertyType) {
+      dynamic old, dynamic value, PropertyType propertyType) {
     canvasElementControlManager.updateControlBounds();
     super.dispatchSelfPaintPropertyChanged(old, value, propertyType);
   }
