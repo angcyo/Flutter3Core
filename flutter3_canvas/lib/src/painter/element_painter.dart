@@ -522,7 +522,7 @@ class ElementPainter extends IPainter
     newPainter.paintState = paintState.copyWith();
     newPainter.paintProperty = paintProperty?.copyWith();
     if (resetUuid) {
-      newPainter.paintState.elementUuid = uuid();
+      newPainter.paintState.elementUuid = $uuid;
     }
     return newPainter;
   }
@@ -752,7 +752,7 @@ class ElementGroupPainter extends ElementPainter {
     newPainter.paintState = paintState.copyWith();
     newPainter.paintProperty = paintProperty?.copyWith();
     if (resetUuid) {
-      newPainter.paintState.elementUuid = uuid();
+      newPainter.paintState.elementUuid = $uuid;
     }
 
     final newChildren = <ElementPainter>[];
@@ -861,7 +861,7 @@ class ElementGroupPainter extends ElementPainter {
 /// [PropertyType.state]
 class PaintState with EquatableMixin {
   /// 元素的唯一标识
-  String? elementUuid = uuid();
+  String? elementUuid = $uuid;
 
   /// 元素的名称
   String? elementName;

@@ -22,7 +22,10 @@ const kMinute = 60 * kSecond;
 const kSecond = 1000;
 
 /// [uuid]
-String get $uuid => uuid();
+String get $uuid {
+  //debugger();
+  return uuid();
+}
 
 /// ```
 /// // Generate a v1 (time-based) id

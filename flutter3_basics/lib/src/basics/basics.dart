@@ -33,7 +33,7 @@ String nowTimeFileName(
 
 /// uuid文件名
 /// [suffix] 文件名后缀, 例如`.png`
-String uuidFileName([String? suffix]) => uuid().connect(suffix);
+String uuidFileName([String? suffix]) => $uuid.connect(suffix);
 
 /// [min] ~ [max] 之间的随机数
 /// `Must be positive and <= 2^32`

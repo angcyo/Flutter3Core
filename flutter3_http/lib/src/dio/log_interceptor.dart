@@ -53,7 +53,7 @@ class LogFileInterceptor extends Interceptor {
 
   void _logRequest(RequestOptions options) {
     var hashCode = options.hashCode;
-    var id = uuid();
+    var id = $uuid;
 
     //添加请求头
     options.headers["log-uuid"] = id;

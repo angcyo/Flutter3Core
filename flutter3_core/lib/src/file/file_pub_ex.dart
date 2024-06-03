@@ -255,6 +255,10 @@ extension FilePubEx on FileSystemEntity {
 /// https://pub.dev/packages/uri_to_file
 /// 文件扩展操作
 extension FileStringPubEx on String {
+  int get fileSize => file().fileSizeSync();
+
+  String get fileSizeStr => fileSize.toSizeStr();
+
   /// 获取目录名称, 去掉了文件名的路径
   String dirname() => p.dirname(this);
 
