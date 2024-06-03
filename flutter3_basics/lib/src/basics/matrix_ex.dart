@@ -513,6 +513,14 @@ Matrix4 createFlipMatrix({bool? flipX, bool? flipY, Offset? anchor}) {
     ..translate(-anchor.dx, -anchor.dy, 0);
 }
 
+/// 创建一个平移矩阵
+Matrix4 createTranslateMatrix(
+    {double? tx, double? ty, double? tz, Offset? offset}) {
+  tx ??= offset?.dx;
+  ty ??= offset?.dy;
+  return Matrix4.identity()..translate(tx ?? 0.0, ty ?? 0.0, tz ?? 0.0);
+}
+
 /// 在指定锚点[anchor],创建一个缩放矩阵
 Matrix4 createScaleMatrix({double? sx, double? sy, Offset? anchor}) {
   anchor ??= Offset.zero;

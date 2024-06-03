@@ -63,12 +63,18 @@ extension SvgStringEx on String {
   /// [VectorGraphicsCodec]
   /// [decodeVectorGraphics] 解析svg格式文档字符
   ///
+  /// [scale] 缩放比例
   /// [isMmUnit] 是否要放大到mm单位的数值
   ///
-  Path toUiPath({bool failSilently = false, bool isMmUnit = false}) {
+  @dp
+  Path toUiPath({
+    bool failSilently = false,
+    double? scale,
+    bool isMmUnit = false,
+  }) {
     final path = parseSvgPath(this, failSilently: failSilently);
-    if (isMmUnit) {
-      final scale = 1.toDpFromMm();
+    scale ??= isMmUnit ? 1.toDpFromMm() : 1.0;
+    if (scale != 1.0) {
       final scaleMatrix = Matrix4.identity()..scale(scale);
       return path.transformPath(scaleMatrix);
     }
