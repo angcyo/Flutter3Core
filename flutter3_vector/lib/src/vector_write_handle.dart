@@ -435,7 +435,8 @@ class PointWriteHandle with VectorWriteMixin {
   @override
   int digits = 2;
 
-  /// [transformPoint] 之后, 点位还需要偏移的值
+  /// [transformPoint]之后 [digits]之前, 点位还需要偏移的值
+  /// 此数据同样会收到[unit]的影响
   double offsetX = 0;
   double offsetY = 0;
 
@@ -479,6 +480,9 @@ class PointWriteHandle with VectorWriteMixin {
         point.type == VectorWriteMixin.sPointTypeLine) {
       final pointBuilder = pointContourBuilder;
       if (pointBuilder != null) {
+        final offsetX = unit?.toUnitFromDp(this.offsetX) ?? this.offsetX;
+        final offsetY = unit?.toUnitFromDp(this.offsetY) ?? this.offsetY;
+
         var x = position.dx + offsetX;
         var y = position.dy + offsetY;
         final a = point.angle;
@@ -946,6 +950,8 @@ extension VectorListPathEx on List<Path> {
     @mm double? tolerance,
     IUnit? unit = IUnit.mm,
     int digits = 2,
+    @dp double offsetX = 0,
+    @dp double offsetY = 0,
     int? contourMaxPointCount,
     PointWriteHandle? handle,
   }) {
@@ -957,7 +963,9 @@ extension VectorListPathEx on List<Path> {
     handle
       ..unit = unit
       ..contourMaxPointCount = contourMaxPointCount
-      ..digits = digits;
+      ..digits = digits
+      ..offsetX = offsetX
+      ..offsetY = offsetY;
     for (final path in this) {
       handle.pointResultBuilder = []; //reset
       path.handleVectorPath(

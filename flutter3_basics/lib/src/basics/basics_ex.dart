@@ -1190,6 +1190,9 @@ extension NumEx on num {
   ///[refreshRate]
   double get rr => this / (refreshRate / 60.0);
 
+  /// 正负取反
+  get inverted => -this;
+
   //region ---math---
 
   /// 角度
@@ -1254,9 +1257,6 @@ extension NumEx on num {
   dynamic get sqrt => math.sqrt(this);
 
   //endregion ---math---
-
-  /// 正负取反
-  dynamic inverted() => -this;
 
   /// 保留小数点后几位
   /// [digits] 小数点后几位
