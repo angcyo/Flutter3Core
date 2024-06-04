@@ -11,6 +11,20 @@ void main() async {
   await runAllProjectFlutterPubGetCommand();
 }
 
+/// 执行所有工程的`flutter pub get`命令
+@testPoint
+Future runAllProjectFlutterPubGetCommand() async {
+  final result = <FileSystemEntity>[];
+  await getFlutterProjectList(
+      currentDirPath.parentPath.parentPath, 1, result, 3);
+  consoleLog('找到Flutter工程数量:${result.length}');
+  int index = 0;
+  for (var file in result) {
+    consoleLog('准备执行命令->${++index}/${result.length}');
+    await runFlutterPubGetCommand(file.path);
+  }
+}
+
 /// 递归获取指定目录下的所有Flutter工程目录
 /// [result] 返回的数据放在此处
 @api
@@ -32,19 +46,6 @@ Future getFlutterProjectList(
         await getFlutterProjectList(file.path, depth + 1, result, maxDepth);
       }
     }
-  }
-}
-
-/// 执行所有工程的`flutter pub get`命令
-@testPoint
-Future runAllProjectFlutterPubGetCommand() async {
-  final result = <FileSystemEntity>[];
-  await getFlutterProjectList(currentDirPath, 1, result, 3);
-  consoleLog('找到Flutter工程数量:${result.length}');
-  int index = 0;
-  for (var file in result) {
-    consoleLog('准备执行命令->${++index}/${result.length}');
-    await runFlutterPubGetCommand(file.path);
   }
 }
 
