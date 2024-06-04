@@ -515,9 +515,18 @@ extension UnitNumEx on num {
 
   //---
 
+  /// 将dp单位的值, 转换成指定单位[unit]的值
+  @unit
+  double toUnitFromDp(@dp IUnit? unit) {
+    if (unit == null || unit is DpUnit) {
+      return this + 0.0;
+    }
+    return unit.toUnit(toPixel(IUnit.dp));
+  }
+
   /// 将mm单位的值, 转换成指定单位[unit]的值
   @unit
-  double toUnitFromMm(@unit IUnit? unit) {
+  double toUnitFromMm(@mm IUnit? unit) {
     if (unit == null || unit is MmUnit) {
       return this + 0.0;
     }

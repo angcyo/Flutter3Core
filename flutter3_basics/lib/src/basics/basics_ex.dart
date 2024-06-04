@@ -919,11 +919,11 @@ extension OffsetEx on Offset {
 extension RectEx on Rect {
   /// [toString]
   String get log =>
-      "Rect.LTRB(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${right.toStringAsFixed(1)}, ${bottom.toStringAsFixed(1)})";
+      "Rect.LTRB(${left.toDigits(digits: 1)}, ${top.toDigits(digits: 1)}, ${right.toDigits(digits: 1)}, ${bottom.toDigits(digits: 1)})";
 
   /// [toString]
   String get logSize =>
-      "Rect.LTWH(${left.toStringAsFixed(1)}, ${top.toStringAsFixed(1)}, ${width.toStringAsFixed(1)}, ${height.toStringAsFixed(1)})";
+      "Rect.LTWH(${left.toDigits(digits: 1)}, ${top.toDigits(digits: 1)}, ${width.toDigits(digits: 1)}, ${height.toDigits(digits: 1)})";
 
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
@@ -1452,9 +1452,10 @@ extension DoubleEx on double {
   /// 四舍五入
   /// [double.round] 四舍五入
   /// [double.ceil] 向上取整
+  /// [double.floor] 向下取整
   /// [Picture.toImage]
   /// [Picture.toImageSync]
-  int get imageInt => round();
+  int get imageInt => toInt() /*floor()*/;
 }
 
 //endregion Num 扩展

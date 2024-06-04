@@ -27,14 +27,14 @@ extension FfiListIntEx on List<int> {
     try {
       watch.stop();
       if (kDebugMode) {
-        print('分配内存: ${watch.elapsedMilliseconds}ms');
+        debugPrint('分配内存: ${watch.elapsedMilliseconds}ms');
       }
       final watch2 = Stopwatch()..start();
       //执行耗时: 4688ms
       final result = action(ptr);
       watch2.stop();
       if (kDebugMode) {
-        print('执行耗时: ${watch2.elapsedMilliseconds}ms');
+        debugPrint('执行耗时: ${watch2.elapsedMilliseconds}ms');
       }
       return result;
     } catch (e) {
