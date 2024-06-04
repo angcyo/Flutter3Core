@@ -101,6 +101,11 @@ extension FileStringEx on String {
 //region File 扩展
 
 extension FileEx on File {
+  /// [UiImageProvider]
+  /// [ImageProviderEx.toImage]
+  FileImage toImageProvider([double scale = 1]) =>
+      FileImage(this, scale: scale);
+
   /// 文件大小
   /// [fileSize]
   int fileSizeSync() {

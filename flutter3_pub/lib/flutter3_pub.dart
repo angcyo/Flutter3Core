@@ -1,6 +1,7 @@
 library flutter3_pub;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
@@ -35,4 +36,5 @@ part 'src/image_pub.dart';
 part 'src/launcher_pub.dart';
 part 'src/photo/nine_grid_ex.dart';
 part 'src/photo/photo_ex.dart';
+part 'src/photo/single_photo_dialog.dart';
 part 'src/picker/file_picker_ex.dart';

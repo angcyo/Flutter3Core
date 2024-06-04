@@ -4,7 +4,9 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/03/26
 ///
-/// 简单的图片对话框
+/// 简单的图片对话框, 用于显示单张图片, 不支持放大缩小
+/// [SingleImageDialog]
+/// [SinglePhotoDialog]
 class SingleImageDialog extends StatelessWidget {
   /// 指定文件路径
   final String? filePath;

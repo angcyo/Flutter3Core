@@ -65,7 +65,7 @@ class ImageMeta {
   /// [Uint8List]字节转[ImageMeta]
   /// 解码图片[3.60 MB]耗时:429ms
   /// 相较于[fromPixel]内存占用小, 但是因为需要编解码, 所以耗时长
-  static Future<ImageMeta> fromByts(Uint8List bytes,
+  static Future<ImageMeta> fromBytes(Uint8List bytes,
       [UiImageByteFormat imageFormat = UiImageByteFormat.rawRgba]) async {
     //lTime.tick();
     final image = await bytes.toImage();
@@ -141,6 +141,59 @@ extension ImageMetaEx on ImageMeta {
           GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
     );
   }
+}
+
+/// 图片提供者
+/// [ImageProvider]
+class UiImageProvider extends ImageProvider<UiImageProvider> {
+  const UiImageProvider(this.image, {this.scale = 1.0});
+
+  final UiImage image;
+  final double scale;
+
+  @override
+  ImageStreamCompleter loadImage(
+    UiImageProvider key,
+    ImageDecoderCallback decode,
+  ) {
+    return MultiFrameImageStreamCompleter(
+      codec: _loadAsync(key),
+      scale: key.scale,
+    );
+  }
+
+  Future<ui.Codec> _loadAsync(UiImageProvider key) async {
+    assert(key == this);
+    //image转ByteData
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    final ui.ImmutableBuffer buffer =
+        await ui.ImmutableBuffer.fromUint8List(byteData!.bytes);
+    var codec =
+        await PaintingBinding.instance.instantiateImageCodecWithSize(buffer);
+    return codec;
+  }
+
+  @override
+  Future<UiImageProvider> obtainKey(ImageConfiguration configuration) {
+    return SynchronousFuture<UiImageProvider>(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) return false;
+    if (other is! UiImageProvider) {
+      return false;
+    }
+    final UiImageProvider typedOther = other;
+    return image == typedOther.image && scale == typedOther.scale;
+  }
+
+  @override
+  int get hashCode => Object.hash(image.hashCode, scale);
+
+  @override
+  String toString() =>
+      '$runtimeType(${describeIdentity(image)}, scale: $scale)';
 }
 
 extension ByteDataEx on ByteData {
@@ -237,6 +290,11 @@ extension Uint8ListImageEx on Uint8List {
 }
 
 extension ImageEx on UiImage {
+  /// [UiImageProvider]
+  /// [ImageProviderEx.toImage]
+  UiImageProvider toImageProvider([double scale = 1]) =>
+      UiImageProvider(this, scale: scale);
+
   /// 将图片转换成base64字符串图片, 带协议头
   Future<String?> toBase64(
       [UiImageByteFormat format = UiImageByteFormat.png]) async {
@@ -330,6 +388,18 @@ extension ImageEx on UiImage {
       canvas.drawImage(this, Offset.zero, Paint());
     });
     return image;
+  }
+
+  /// 缩放图片
+  /// [transformSync]
+  Future<UiImage> scale({double sx = 1, double sy = 1}) {
+    return transform(createScaleMatrix(sx: sx, sy: sy));
+  }
+
+  /// 缩放图片
+  /// [transformSync]
+  UiImage scaleSync({double sx = 1, double sy = 1}) {
+    return transformSync(createScaleMatrix(sx: sx, sy: sy));
   }
 }
 
