@@ -50,7 +50,6 @@ export 'src/utils/hex.dart';
 
 part 'l10n/intl_ex.dart';
 part 'src/basics/basics.dart';
-part 'src/basics/system.dart';
 part 'src/basics/basics_animation.dart';
 part 'src/basics/basics_date_time.dart';
 part 'src/basics/basics_decoration.dart';
@@ -66,6 +65,7 @@ part 'src/basics/basics_render.dart';
 part 'src/basics/basics_ui.dart';
 part 'src/basics/custom_page_route.dart';
 part 'src/basics/matrix_ex.dart';
+part 'src/basics/system.dart';
 part 'src/component/async_operation.dart';
 part 'src/component/batch_completer.dart';
 part 'src/component/custom_painter.dart';
@@ -87,9 +87,9 @@ part 'src/debug/state_log.dart';
 part 'src/global/global.dart';
 part 'src/global/global_config.dart';
 part 'src/global/global_constants.dart';
-part 'src/global/global_typedef.dart';
 part 'src/global/global_overlays.dart';
 part 'src/global/global_theme.dart';
+part 'src/global/global_typedef.dart';
 part 'src/global/overlay/overlay_animation.dart';
 part 'src/global/overlay/overlay_manage.dart';
 part 'src/global/overlay/overlay_notification.dart';
@@ -98,10 +98,10 @@ part 'src/meta/meta.dart';
 part 'src/overlay/loading.dart';
 part 'src/overlay/loading_indicator.dart';
 part 'src/overlay/loading_overlay.dart';
+part 'src/overlay/progress_bar.dart';
 part 'src/overlay/rotate_animated.dart';
 part 'src/overlay/route_will_pop_scope.dart';
 part 'src/overlay/stroke_loading.dart';
-part 'src/overlay/progress_bar.dart';
 part 'src/unit/unit.dart';
 part 'src/utils/bytes.dart';
 part 'src/utils/file_size.dart';
@@ -139,6 +139,12 @@ typedef GestureContextTapCallback = void Function(BuildContext contet);
 
 ///[isNullOrEmpty]
 bool isNil(dynamic value) => isNullOrEmpty(value);
+
+/// 这个数字的绝对值。
+int abs(int value) => value.abs();
+
+/// 浮点数的绝对值
+double fabs(double value) => value.abs();
 
 /// 判断[value]是否为空
 bool isNullOrEmpty(dynamic value) {
