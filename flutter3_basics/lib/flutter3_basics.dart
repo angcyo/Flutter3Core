@@ -130,6 +130,7 @@ typedef UiPixelFormat = ui.PixelFormat;
 typedef UiImageFilter = ui.ImageFilter;
 typedef UiColorFilter = ui.ColorFilter;
 typedef UiGradient = ui.Gradient;
+typedef UiPlatformDispatcher = ui.PlatformDispatcher;
 typedef AnimateAction = void Function(AnimationController controller);
 typedef NumFormat = String? Function(num? number);
 

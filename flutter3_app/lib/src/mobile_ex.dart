@@ -12,7 +12,7 @@ extension ImageGalleryEx on UiImage {
   FutureOr<dynamic> saveToGallery({
     String? albumName,
     String? fileName,
-    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+    UiImageByteFormat format = UiImageByteFormat.png,
   }) async {
     final bytes = await toBytes(format);
     if (bytes == null) {
