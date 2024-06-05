@@ -110,7 +110,7 @@ SvgPicture? loadCoreAssetSvgPicture(
   BoxFit? fit,
   double? width,
   double? height,
-  Color? color,
+  Color? tintColor,
   UiColorFilter? colorFilter,
 }) =>
     key == null
@@ -120,7 +120,7 @@ SvgPicture? loadCoreAssetSvgPicture(
             fit: fit ?? BoxFit.contain,
             width: width,
             height: height,
-            colorFilter: colorFilter ?? color?.toColorFilter(),
+            colorFilter: colorFilter ?? tintColor?.toColorFilter(),
           );
 
 /// [Image].[StatefulWidget]

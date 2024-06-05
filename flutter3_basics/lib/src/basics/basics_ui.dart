@@ -968,6 +968,7 @@ extension WidgetEx on Widget {
   /// 圆角矩形阴影包裹
   /// [radius] 圆角
   /// [clipContent] 是否裁剪内容
+  /// [decorationColor] 装饰的颜色, 通常是背景的颜色
   ///
   /// [shadowCircle]
   /// [shadowRadius]
@@ -1112,10 +1113,10 @@ extension WidgetEx on Widget {
     TextWidthBasis textWidthBasis = TextWidthBasis.parent,
     ui.TextHeightBehavior? textHeightBehavior,
   }) {
-    TextStyle def = GlobalConfig.def.themeData.primaryTextTheme.bodyMedium ??
-        const TextStyle();
+    style ??= GlobalConfig.def.globalThemeData?.primaryTextTheme.bodyMedium ??
+        GlobalConfig.def.globalTheme.textGeneralStyle;
     return DefaultTextStyle(
-      style: def,
+      style: style,
       textAlign: textAlign,
       softWrap: softWrap,
       overflow: overflow,
@@ -1628,6 +1629,17 @@ typedef ConditionalElementVisitorDepth = bool Function(
 /// [BuildContext.findRenderObject]
 /// [RenderObject.showOnScreen]
 extension ContextEx on BuildContext {
+  /// 系统当前的亮度模式
+  /// [Brightness]
+  bool get isSystemDark =>
+      platformMediaQueryData.platformBrightness == Brightness.dark;
+
+  /// 当前主题是否是暗黑模式
+  bool get isThemeDark {
+    final theme = GlobalConfig.def.globalThemeData ?? Theme.of(this);
+    return theme.brightness == Brightness.dark;
+  }
+
   /// 尝试更新状态, 如果可以
   /// [StateEx.updateState]
   void tryUpdateState() {

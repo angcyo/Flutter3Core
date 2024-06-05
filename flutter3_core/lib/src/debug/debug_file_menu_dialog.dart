@@ -27,7 +27,7 @@ class DebugFileMenuDialog extends StatelessWidget {
     final isFile = filePath?.isFileSync() ?? false;
     const size = 25.0;
     return [
-      buildDragHandle(),
+      buildDragHandle(context),
       if (isFile)
         IconTextTile(
           iconWidget: loadCoreAssetSvgPicture(Assets.svg.fileBrowseOpen,

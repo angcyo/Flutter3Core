@@ -125,7 +125,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   //region ThemeData
 
   /// 全局的主题样式
-  ThemeData themeData = ThemeData();
+  ThemeData? globalThemeData;
 
   /// 全局主题配置
   GlobalTheme globalTheme = GlobalTheme();
@@ -345,7 +345,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     //debugger();
     var globalConfig = GlobalConfig.of(context);
     var globalTheme = GlobalTheme.of(context);
-    elevation ??= globalConfig.themeData.appBarTheme.elevation;
+    elevation ??= globalConfig.globalThemeData?.appBarTheme.elevation;
     //debugger();
     return AppBar(
       title: title,
@@ -487,7 +487,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       globalTopContext: globalTopContext ?? this.globalTopContext,
       globalAppContext: globalContext ?? this.globalAppContext,
     )
-      ..themeData = themeData ?? this.themeData
+      ..globalThemeData = themeData ?? this.globalThemeData
       ..globalTheme = globalTheme ?? this.globalTheme
       ..openUrlFn = openUrlFn ?? this.openUrlFn
       ..shareDataFn = shareDataFn ?? this.shareDataFn

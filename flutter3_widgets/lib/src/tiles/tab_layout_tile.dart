@@ -73,6 +73,7 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
       context,
       values: widget.values,
       valuesWidget: widget.valuesWidget,
+      selectedIndex: tabLayoutController.index,
     )
         ?.mapIndex((child, index) => child.click(() {
               tabLayoutController.selectedItem(index);

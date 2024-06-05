@@ -21,15 +21,19 @@ class GlobalThemeScope extends InheritedWidget {
 }
 
 /// 全局颜色配置
+/// 亮色主题[ui.Brightness.light]
 class GlobalTheme {
   /// 颜色配置, 主要颜色
   Color get primaryColor => const Color(0xff2febff);
 
   /// 主题强调色
-  Color get accentColor => primaryColor;
+  Color get accentColor => const Color(0xff2febff);
 
   /// 暗一点的主题色
   Color get primaryColorDark => const Color(0xff0cabea);
+
+  /// 界面背景颜色
+  Color get surfaceBgColor => themeWhiteColor;
 
   /// 图标按下的颜色/选择的颜色等
   Color get icoSelectedColor => primaryColor;
@@ -42,6 +46,12 @@ class GlobalTheme {
 
   /// 灰度图标的颜色
   Color get icoGrayColor => const Color(0xff333333);
+
+  /// 白色, 不受暗色模式影响
+  Color get whiteColor => Colors.white;
+
+  /// 黑色, 不受暗色模式影响
+  Color get blackColor => Colors.black;
 
   /// 主题白色, 受暗色模式影响
   Color get themeWhiteColor => Colors.white;
@@ -139,6 +149,7 @@ class GlobalTheme {
         color: Color(0xff161B26),
       );
 
+  /// 常规文本颜色
   TextStyle get textGeneralStyle => const TextStyle(
         fontSize: 14,
         color: Color(0xff182334),
@@ -209,4 +220,57 @@ class GlobalTheme {
     }
     return result ?? GlobalConfig.of(context, depend: depend).globalTheme;
   }
+}
+
+/// 暗色主题[ui.Brightness.dark]
+class GlobalThemeDark extends GlobalTheme {
+  @override
+  Color get primaryColor => const Color(0xff212121);
+
+  @override
+  Color get primaryColorDark => const Color(0xff2a2a2a);
+
+  @override
+  Color get themeWhiteColor => primaryColor;
+
+  @override
+  Color get whiteBgColor => primaryColorDark;
+
+  @override
+  ui.Color get lineColor => const Color(0xff595450);
+
+  @override
+  ui.Color get lineDarkColor => const Color(0xff383839);
+
+  @override
+  ui.Color get itemWhiteBgColor => const Color(0xff1a1a1a);
+
+  @override
+  ui.Color get whiteSubBgColor => const Color(0xff303030);
+
+  @override
+  ui.Color get borderColor => const Color(0xff1a1a1a);
+
+  @override
+  ui.Color get disableColor => const Color(0xff333333);
+
+  @override
+  TextStyle get textGeneralStyle => super.textGeneralStyle.copyWith(
+        color: const Color(0xff6f6f6f),
+      );
+
+  @override
+  TextStyle get textTitleStyle => super.textTitleStyle.copyWith(
+        color: const Color(0xfffcfbfc),
+      );
+
+  @override
+  TextStyle get textBodyStyle => super.textBodyStyle.copyWith(
+        color: const Color(0xffa4a4a4),
+      );
+
+  @override
+  TextStyle get textLabelStyle => super.textLabelStyle.copyWith(
+        color: const Color(0xff787878),
+      );
 }

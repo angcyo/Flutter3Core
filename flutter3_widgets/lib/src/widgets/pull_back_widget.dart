@@ -182,7 +182,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
             Widget content = widget.child;
 
             if (widget.showDragHandle) {
-              content = [buildDragHandle(), content].column()!;
+              content = [buildDragHandle(context), content].column()!;
             }
 
             if (widget.contentDecoration != null) {
@@ -362,11 +362,13 @@ class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
 }
 
 /// 构建一个拖拽手柄
-Widget buildDragHandle({
+Widget buildDragHandle(
+  BuildContext context, {
   double width = 40,
   double height = kL,
   double padding = kL,
 }) {
+  final globalTheme = GlobalTheme.of(context);
   return SizedBox(
     width: width,
     height: height + padding + padding,
@@ -375,7 +377,10 @@ Widget buildDragHandle({
       height: height,
     )
         .backgroundDecoration(
-          fillDecoration(color: Colors.black12),
+          fillDecoration(
+              color: context.isThemeDark
+                  ? globalTheme.icoNormalColor
+                  : Colors.black12),
         )
         .align(Alignment.center),
   );

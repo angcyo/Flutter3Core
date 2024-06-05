@@ -57,9 +57,9 @@ class ToastWidget extends StatelessWidget {
     Widget result = child;
     final isLight = background?.isLight ?? false;
     final textColor = isLight
-        ? (GlobalConfig.def.themeData.textTheme.titleSmall?.color ??
+        ? (GlobalConfig.def.globalThemeData?.textTheme.titleSmall?.color ??
             Colors.black87)
-        : Colors.white;
+        : GlobalConfig.def.globalTheme.themeWhiteColor;
     //添加背景
     result = Container(
       color: background ?? "#333333".toColor().withOpacity(0.6),

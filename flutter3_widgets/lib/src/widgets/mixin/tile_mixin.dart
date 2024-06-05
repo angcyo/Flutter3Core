@@ -61,8 +61,9 @@ Widget? widgetOf(
   if (tryTextWidget) {
     final text = textOf(data);
     if (text != null) {
+      final globalTheme = GlobalTheme.of(context);
       return text.text(
-        style: textStyle,
+        style: textStyle ?? globalTheme.textGeneralStyle,
         textAlign: textAlign,
       );
     }
@@ -205,7 +206,9 @@ mixin TileMixin {
     final selectTextStyle = selectedTextStyle ??
         textStyle?.copyWith(fontWeight: ui.FontWeight.bold) ??
         (themeStyle
-            ? globalTheme.textBodyStyle.copyWith(fontWeight: ui.FontWeight.bold)
+            ? globalTheme.textBodyStyle.copyWith(
+                fontWeight: ui.FontWeight.bold,
+                color: context.isThemeDark ? globalTheme.blackColor : null)
             : null);
 
     final widget = textWidget ??
@@ -333,18 +336,22 @@ mixin TileMixin {
         overlayColor ??= last.withOpacity(0.1);
       }
     }
+    final globalTheme = GlobalTheme.of(context);
+    final darkAccentColor =
+        context.isThemeDark ? globalTheme.accentColor : null;
     return SliderTheme(
       data: SliderThemeData(
         showValueIndicator: showValueIndicator,
-        thumbColor: thumbColor,
-        activeTrackColor: activeTrackColor,
-        overlayColor: overlayColor,
-        valueIndicatorColor: valueIndicatorColor,
+        thumbColor: thumbColor ?? darkAccentColor,
+        activeTrackColor: activeTrackColor ?? darkAccentColor,
+        overlayColor: overlayColor ?? darkAccentColor?.withOpacity(0.1),
+        valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
         inactiveTrackColor: inactiveTrackColor,
         //thumbShape: ,
         trackShape: trackShape,
         /*inactiveTrackColor: Colors.redAccent,*/
         trackHeight: trackHeight,
+        /*valueIndicatorTextStyle: globalTheme.textBodyStyle,*/
       ),
       child: Slider(
         value: value,
@@ -370,20 +377,27 @@ mixin TileMixin {
   //region ---辅助小部件---
 
   /// 根据[values].[children]创建[WidgetList]
+  /// [selectedIndex] 选中的索引, 选中的颜色会不一样
   WidgetList? buildChildrenFromValues(
     BuildContext context, {
     List? values,
     List<Widget>? valuesWidget,
     TransformDataWidgetBuilder? transformValueWidget,
+    int? selectedIndex,
   }) {
     WidgetList? result;
     if (valuesWidget == null) {
-      result = values?.map((data) {
+      final globalTheme = GlobalTheme.of(context);
+      result = values?.mapIndex((data, index) {
         final widget = widgetOf(context, data, tryTextWidget: false);
         if (widget != null) {
           return transformValueWidget?.call(context, widget, data) ?? widget;
         }
-        final textWidget = textOf(data)!.text();
+        final textWidget = textOf(data)!.text(
+          style: globalTheme.textGeneralStyle.copyWith(
+            color: index == selectedIndex ? globalTheme.blackColor : null,
+          ),
+        );
         return transformValueWidget?.call(context, textWidget, data) ??
             textWidget.min();
       }).toList();

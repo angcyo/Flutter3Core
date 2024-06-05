@@ -22,20 +22,21 @@ extension PopupEx on BuildContext {
     Widget child, {
     Rect? anchorRect,
     BuildContext? anchorChild,
-    Color? backgroundColor = Colors.white,
-    Color arrowColor = Colors.white,
+    Color? backgroundColor,
+    Color? arrowColor,
     bool showArrow = true,
     Color? barriersColor,
     AxisDirection? arrowDirection,
   }) async {
     anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds();
     anchorRect ??= findRenderObject()?.getGlobalBounds();
+    final globalTheme = GlobalTheme.of(this);
     return Navigator.of(this).push(
       ArrowPopupRoute(
         child: child,
         anchorRect: anchorRect!,
-        backgroundColor: backgroundColor,
-        arrowColor: arrowColor,
+        backgroundColor: backgroundColor ?? globalTheme.surfaceBgColor,
+        arrowColor: arrowColor ?? globalTheme.surfaceBgColor,
         showArrow: showArrow,
         arrowDirection: arrowDirection,
         barriersColor: barriersColor,

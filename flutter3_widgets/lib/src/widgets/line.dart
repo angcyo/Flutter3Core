@@ -9,9 +9,21 @@ part of '../../flutter3_widgets.dart';
 Line get kVerticalLine =>
     Line(thickness: 1, color: "#ececec".toColor(), axis: Axis.vertical);
 
+Line get kVerticalLineDark =>
+    Line(thickness: 1, color: "#ff595450".toColor(), axis: Axis.vertical);
+
 /// 默认的横线
 Line get kHorizontalLine =>
     Line(thickness: 1, color: "#ececec".toColor(), axis: Axis.horizontal);
+
+Line get kHorizontalLineDark =>
+    Line(thickness: 1, color: "#ff595450".toColor(), axis: Axis.horizontal);
+
+Line verticalLine(BuildContext context) =>
+    context.isThemeDark ? kVerticalLineDark : kVerticalLine;
+
+Line horizontalLine(BuildContext context) =>
+    context.isThemeDark ? kHorizontalLineDark : kHorizontalLine;
 
 class Line extends LeafRenderObjectWidget {
   /// 是否强制指定线条的大小

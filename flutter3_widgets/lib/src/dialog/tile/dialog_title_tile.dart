@@ -65,6 +65,9 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
       titleColumn?.expanded(),
       trailing?.colorFiltered(
           color: enableTrailing ? null : globalTheme.disableColor),
-    ].row()!.constrainedMin(minHeight: kTitleHeight).columnOf(kHorizontalLine);
+    ]
+        .row()!
+        .constrainedMin(minHeight: kTitleHeight)
+        .columnOf(horizontalLine(context));
   }
 }

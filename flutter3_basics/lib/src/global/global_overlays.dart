@@ -193,7 +193,9 @@ OverlayEntry? showSimpleNotification(
     ),
   );
   child = Material(
-    color: background ?? GlobalConfig.def.themeData.colorScheme.secondary,
+    color: background ??
+        GlobalConfig.def.globalThemeData?.colorScheme.secondary ??
+        GlobalConfig.def.globalTheme.whiteBgColor,
     elevation: elevation,
     child: child,
   );

@@ -90,24 +90,13 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   final height = 40.0;
   final borderRadius = 4.0;
 
-  late final decoration = fillDecoration(
-    color: Colors.white,
-    borderRadius: borderRadius,
-  );
+  late final BoxDecoration decoration;
   late final pressedDecoration = fillDecoration(
     color: Colors.black12,
     borderRadius: borderRadius,
   );
-  late final keyboardNumberStyle = const TextStyle(
-    fontSize: 16,
-    color: Colors.black,
-    fontWeight: FontWeight.bold,
-  );
-  late final numberValueStyle = const TextStyle(
-    fontSize: 22,
-    color: Colors.black,
-    fontWeight: FontWeight.bold,
-  );
+  late final TextStyle keyboardNumberStyle;
+  late final TextStyle numberValueStyle;
   late final numberHintStyle = const TextStyle(
     fontSize: 20,
     color: Colors.grey,
@@ -138,6 +127,27 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   void initState() {
     super.initState();
     _numberText = _formatValue(widget.number) ?? "";
+    final globalTheme = GlobalTheme.of(context);
+    decoration = fillDecoration(
+      color: globalTheme.surfaceBgColor,
+      borderRadius: borderRadius,
+    );
+
+    keyboardNumberStyle = TextStyle(
+      fontSize: 16,
+      color: context.isThemeDark
+          ? globalTheme.textTitleStyle.color
+          : globalTheme.textGeneralStyle.color,
+      fontWeight: FontWeight.bold,
+    );
+
+    numberValueStyle = TextStyle(
+      fontSize: 22,
+      color: context.isThemeDark
+          ? globalTheme.textTitleStyle.color
+          : globalTheme.textGeneralStyle.color,
+      fontWeight: FontWeight.bold,
+    );
   }
 
   @override
@@ -165,6 +175,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
             Assets.svg.keyboardBackspace,
             package: 'flutter3_core',
             prefix: kDefAssetsSvgPrefix,
+            tintColor: context.isThemeDark ? keyboardNumberStyle.color : null,
           ).align(Alignment.center),
         ).click(() {
           _onSelfInput("", NumberKeyboardDialog.keyboardTypeBackspace);
@@ -222,6 +233,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
               Assets.svg.keyboardPackUp,
               package: 'flutter3_core',
               prefix: kDefAssetsSvgPrefix,
+              tintColor: context.isThemeDark ? keyboardNumberStyle.color : null,
             ).align(Alignment.center),
           ).click(() {
             //debugger();
@@ -265,14 +277,14 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       ]
           .row()
           ?.container(
-            color: Colors.white,
+            color: globalTheme.surfaceBgColor,
             padding: const EdgeInsets.symmetric(vertical: kX, horizontal: kX),
           )
           .click(() {
         isClearAll = !isClearAll;
         updateState();
       }),
-      keyboard.container(color: const Color(0xfff9f9f9)),
+      keyboard.container(color: globalTheme.whiteSubBgColor),
     ]
         .column(
       mainAxisAlignment: MainAxisAlignment.end,

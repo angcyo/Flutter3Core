@@ -158,7 +158,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       }
 
       body = [
-        if (enablePullBack && showDragHandle) buildDragHandle(),
+        if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...fixedChildren,
         scrollChildren
             .scroll(scrollDirection: Axis.vertical)
@@ -166,13 +166,14 @@ mixin DialogMixin implements TranslationTypeImpl {
       ].column()!;
     } else {
       body = [
-        if (enablePullBack && showDragHandle) buildDragHandle(),
+        if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...children
       ].column()!;
     }
 
+    final globalTheme = GlobalTheme.of(context);
     return body
-        .container(color: Colors.white)
+        .container(color: globalTheme.surfaceBgColor)
         .clipRadius(
           radius: clipRadius,
           topRadius: clipTopRadius,

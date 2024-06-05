@@ -47,11 +47,17 @@ class CoreDialogTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     final leading = !showLeading
         ? null
         : this.leading ??
             InkButton(
-              loadCoreAssetSvgPicture(Assets.svg.coreBack),
+              loadCoreAssetSvgPicture(
+                Assets.svg.coreBack,
+                tintColor: context.isThemeDark
+                    ? globalTheme.textTitleStyle.color
+                    : null,
+              ),
               enable: enableLeading,
               onTap: () {
                 context.pop();
@@ -62,7 +68,12 @@ class CoreDialogTitle extends StatelessWidget {
         ? null
         : this.trailing ??
             InkButton(
-              loadCoreAssetSvgPicture(Assets.svg.coreConfirm),
+              loadCoreAssetSvgPicture(
+                Assets.svg.coreConfirm,
+                tintColor: context.isThemeDark
+                    ? globalTheme.textTitleStyle.color
+                    : null,
+              ),
               enable: enableTrailing,
               onTap: () {
                 context.pop(onPop == null ? true : onPop?.call());
