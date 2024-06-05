@@ -43,7 +43,7 @@ class TokenInterceptor extends Interceptor {
     try {
       configToken?.call(options);
     } catch (e) {
-      l.w('配置token失败:[${options.uri}]↓');
+      l.w('配置token失败[${options.uri}]:$e↓');
       printError(e);
     }
   }
