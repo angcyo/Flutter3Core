@@ -204,6 +204,9 @@ Iterable<RenderView> get renderViews => WidgetsBinding.instance.renderViews;
 MediaQueryData get platformMediaQueryData =>
     MediaQueryData.fromView(flutterView);
 
+/// 平台事件调度程序单例。
+UiPlatformDispatcher get platformDispatcher => UiPlatformDispatcher.instance;
+
 /// 获取当前平台的亮度模式
 Brightness get platformBrightness => platformMediaQueryData.platformBrightness;
 

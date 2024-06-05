@@ -90,7 +90,7 @@ void runGlobalApp(
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
 
-    "开始启动[main]:${UiPlatformDispatcher.instance.defaultRouteName}"
+    "开始启动[main]:${platformDispatcher.defaultRouteName}"
         .writeToLog(level: L.info);
     await initFlutter3Core();
     AppLifecycleLog.install();
