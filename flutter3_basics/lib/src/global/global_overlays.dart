@@ -93,15 +93,16 @@ toastBlur({
     );
 
 /// 顶部全屏toast
+/// [showNotification]->[showOverlay]
 toastMessage(
   Widget msg, {
-  Color? background = Colors.white,
+  Color? background,
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
 }) {
   showNotification((context) {
     Widget child = ToastWidget(
-      background: background,
+      background: background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
       elevation: 10,
       child: msg,
     );
@@ -140,7 +141,7 @@ toastInfo(
 //---
 
 /// 显示一个简单的通知
-/// [showNotification]的简单封装
+/// [showNotification]->[showOverlay]的简单封装
 OverlayEntry? showSimpleNotification(
   Widget content, {
   /// 通知的背景颜色
