@@ -155,6 +155,12 @@ class GlobalTheme {
         color: Color(0xff182334),
       );
 
+  /// 大号常规文本颜色
+  TextStyle get textBigGeneralStyle => const TextStyle(
+        fontSize: 28,
+        color: Color(0xff182334),
+      );
+
   TextStyle get textTitleStyle => const TextStyle(
         fontSize: 17,
         color: Color(0xff333333),
