@@ -40,11 +40,14 @@ typedef ProgressAction = void Function(int count, int total);
 /// 进度回调[0~1]
 typedef ProgressRatioCallback = void Function(double progress);
 
-/// 索引回调
+/// 索引类型的回调
 typedef IndexCallback = void Function(int index);
 
-/// [num]数字回调
+/// [num]数字类型的回调
 typedef NumCallback = void Function(num number);
+
+/// [bool]类型的回调
+typedef BoolCallback = void Function(bool value);
 
 /// 转变一个[widget]
 typedef TransformWidgetBuilder = Widget Function(

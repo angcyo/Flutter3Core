@@ -1154,6 +1154,15 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 拦截pop, 并实现自定义的操作
+  Widget interceptPopResult(Action action) {
+    return popScope(false, (didPop) {
+      if (!didPop) {
+        action();
+      }
+    });
+  }
+
   /// 取消父组件对子组件的约束信息
   /// [UnconstrainedBox]
   Widget unconstrained({

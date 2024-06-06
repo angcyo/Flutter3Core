@@ -95,8 +95,8 @@ mixin DialogMixin implements TranslationTypeImpl {
         child.matchParent(matchHeight: false),
         radius: radius,
         blur: blur,
-      ).material(),
-    );
+      ),
+    ).material();
   }
 
   /// 底部全屏显示的对话框样式
@@ -117,8 +117,8 @@ mixin DialogMixin implements TranslationTypeImpl {
           topLeft: Radius.circular(radius),
           topRight: Radius.circular(radius),
         ),
-      ) /*.material()*/,
-    );
+      ),
+    ).material();
   }
 
   /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
@@ -187,8 +187,8 @@ mixin DialogMixin implements TranslationTypeImpl {
         )
         .matchParent(matchHeight: false)
         .align(Alignment.bottomCenter)
-        .animatedSize(
-            duration: animatedSize ? kDefaultAnimationDuration : null);
+        .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
+        .material();
   }
 
   //endregion ---对话框包裹---
