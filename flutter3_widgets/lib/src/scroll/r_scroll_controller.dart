@@ -96,7 +96,8 @@ class RScrollController extends ScrollController {
           }());
         } else {
           loadMoreKey.currentState?.updateWidgetState(WidgetBuildState.loading);
-          updateLoadMoreState(loadMoreKey.currentState, WidgetBuildState.loading);
+          updateLoadMoreState(
+              loadMoreKey.currentState, WidgetBuildState.loading);
         }
       }
     }
@@ -175,7 +176,7 @@ class RScrollController extends ScrollController {
   }
 
   /// 结束刷新, 在不指定[widgetState]状态的情况下.并自动根据[loadData].[stateData]切换至对应的状态
-  /// [state] 用来触发界面刷新
+  /// [updateState] 用来触发界面刷新
   /// [allData] 当前所有的数据, 用来识别是否为空数据
   /// [loadData] 当前加载的数据, 用来识别是否无更多数据
   /// [stateData] 当前状态的附加信息, 用来识别是否有错误
@@ -183,7 +184,7 @@ class RScrollController extends ScrollController {
   @callPoint
   @updateMark
   void finishRefresh(
-    State? state, [
+    State? updateState, [
     List? loadData,
     dynamic stateData,
     WidgetBuildState? widgetState,
@@ -204,9 +205,9 @@ class RScrollController extends ScrollController {
     }
     if (requestPage.isFirstPage) {
       //jumpTo(0); //回到顶部
-      updateAdapterState(state, toState, stateData);
+      updateAdapterState(updateState, toState, stateData);
     } else {
-      updateLoadMoreState(state, toState, stateData);
+      updateLoadMoreState(updateState, toState, stateData);
     }
   }
 
@@ -214,7 +215,8 @@ class RScrollController extends ScrollController {
   /// [buildAdapterStateWidget]
   /// @return true 表示状态更新成功
   @updateMark
-  bool updateAdapterState(State? state, WidgetBuildState widgetState, [stateData]) {
+  bool updateAdapterState(State? state, WidgetBuildState widgetState,
+      [stateData]) {
     //debugger();
     if (adapterStateValue.value != widgetState) {
       _widgetStateData = stateData;
@@ -234,7 +236,8 @@ class RScrollController extends ScrollController {
   /// 更新加载更多状态
   /// [buildLoadMoreStateWidget]
   @updateMark
-  bool updateLoadMoreState(State? state, WidgetBuildState widgetState, [stateData]) {
+  bool updateLoadMoreState(State? state, WidgetBuildState widgetState,
+      [stateData]) {
     //debugger();
     if (loadMoreStateValue.value != widgetState) {
       _widgetStateData = stateData;

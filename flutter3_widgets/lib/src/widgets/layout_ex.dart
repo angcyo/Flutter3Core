@@ -326,6 +326,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
     List<ChildType> children, {
     double? childWidth,
     double? childHeight,
+    BoxConstraints? parentConstraints,
   }) {
     double childMaxWidth = 0;
     double childMaxHeight = 0;
@@ -341,7 +342,34 @@ mixin LayoutMixin<ChildType extends RenderObject,
       );
       //debugger();
       if (child is RenderBox) {
-        final childSize = child.size;
+        Size childSize = child.size;
+
+        if (childSize.width == double.infinity ||
+            childSize.height == double.infinity) {
+          //重新测量
+          double maxWidth =
+              childWidth ?? parentConstraints?.maxWidth ?? double.infinity;
+          if (childSize.width == double.infinity) {
+            maxWidth = screenWidth;
+          }
+          double maxHeight =
+              childHeight ?? parentConstraints?.maxHeight ?? double.infinity;
+          if (childSize.height == double.infinity) {
+            maxHeight = screenHeight;
+          }
+          child.layout(
+            BoxConstraints(
+              minWidth: childWidth ?? 0.0,
+              maxWidth: maxWidth,
+              minHeight: childHeight ?? 0,
+              maxHeight: maxHeight,
+            ),
+            parentUsesSize: true,
+          );
+          childSize = child.size;
+          //debugger();
+        }
+
         childMaxWidth = max(childMaxWidth, childSize.width);
         childMaxHeight = max(childMaxHeight, childSize.height);
       }

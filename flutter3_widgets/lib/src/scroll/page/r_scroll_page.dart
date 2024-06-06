@@ -109,10 +109,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @callPoint
   @updateMark
   void loadDataEnd(
-    List? loadData, [
+    List? loadData, {
     dynamic stateData,
     bool handleData = true,
-  ]) {
+    State? updateState,
+  }) {
     if (handleData) {
       if (loadData is WidgetList) {
         if (scrollController.requestPage.isFirstPage) {
@@ -121,7 +122,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         pageWidgetList.addAll(loadData);
       }
     }
-    scrollController.finishRefresh(this, loadData, stateData);
+    scrollController.finishRefresh(updateState ?? this, loadData, stateData);
   }
 
   /// 首次加载, 如果需要请主动调用, 触发

@@ -35,6 +35,7 @@ typedef AppBarBuilderFn = PreferredSizeWidget? Function(
   Object? page, {
   Widget? leading,
   Widget? title,
+  List<Widget>? actions,
   PreferredSizeWidget? bottom,
   Color? backgroundColor,
   Color? foregroundColor,
@@ -332,6 +333,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     state, {
     leading,
     title,
+    actions,
     bottom,
     backgroundColor,
     foregroundColor,
@@ -346,6 +348,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     final globalConfig = GlobalConfig.of(context);
     final globalTheme = GlobalTheme.of(context);
     elevation ??= globalConfig.globalThemeData?.appBarTheme.elevation;
+    scrolledUnderElevation ??=
+        globalConfig.globalThemeData?.appBarTheme.scrolledUnderElevation;
     //debugger();
     return AppBar(
       title: title,
@@ -355,6 +359,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
               (context.isAppBarDismissal
                   ? appBarLeadingBuilder(context, state)
                   : null),
+      actions: actions,
       bottom: bottom,
       elevation: elevation,
       shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
@@ -470,8 +475,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 复制
   GlobalConfig copyWith({
     BuildContext? globalTopContext,
-    BuildContext? globalContext,
-    ThemeData? themeData,
+    BuildContext? globalAppContext,
+    ThemeData? globalThemeData,
     GlobalTheme? globalTheme,
     GlobalOpenUrlFn? openUrlFn,
     GlobalShareDataFn? shareDataFn,
@@ -485,9 +490,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   }) {
     return GlobalConfig(
       globalTopContext: globalTopContext ?? this.globalTopContext,
-      globalAppContext: globalContext ?? this.globalAppContext,
+      globalAppContext: globalAppContext ?? this.globalAppContext,
     )
-      ..globalThemeData = themeData ?? this.globalThemeData
+      ..globalThemeData = globalThemeData ?? this.globalThemeData
       ..globalTheme = globalTheme ?? this.globalTheme
       ..openUrlFn = openUrlFn ?? this.openUrlFn
       ..shareDataFn = shareDataFn ?? this.shareDataFn

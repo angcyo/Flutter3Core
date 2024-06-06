@@ -1267,9 +1267,12 @@ extension WidgetEx on Widget {
   /// 指定大小
   /// [SizedBox]
   Widget size({
+    double? size,
     double? width,
     double? height,
   }) {
+    width ??= size;
+    height ??= size;
     if (width == null && height == null) {
       return this;
     }
@@ -1356,6 +1359,7 @@ extension WidgetEx on Widget {
         child: this,
       );
 
+  /// 默认块状波纹效果
   /// 支持圆角波纹效果, 有的时候可能需要包裹在[Material]部件中才有预期效果
   /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
   /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
@@ -1365,6 +1369,7 @@ extension WidgetEx on Widget {
   /// [decoration] 强行指定装饰
   ///
   /// [material]
+  /// [inkWellCircle]
   Widget ink(
     GestureTapCallback? onTap, {
     double radius = 0,
@@ -1402,6 +1407,7 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 默认块状波纹效果
   /// 使用涟漪动画包裹, 无法控制背景颜色, 波纹会超出范围. [ink]
   /// https://api.flutter.dev/flutter/material/InkWell-class.html
   /// [splashColor] 涟漪颜色
@@ -1409,6 +1415,8 @@ extension WidgetEx on Widget {
   /// [InkWell]
   /// [InkResponse]
   /// [CircleBorder]
+  ///
+  /// [inkWellCircle]
   Widget inkWell(
     GestureTapCallback? onTap, {
     BorderRadius? borderRadius,

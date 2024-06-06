@@ -60,7 +60,19 @@ class RadarScanBox extends RenderBox {
 
   @override
   void performLayout() {
-    size = constraints.biggest;
+    final constraints = this.constraints;
+    if (constraints.isTight) {
+      size = constraints.biggest;
+    } else {
+      final width = constraints.maxWidth == double.infinity
+          ? screenWidth
+          : constraints.maxWidth;
+      final height = constraints.maxHeight == double.infinity
+          ? screenHeight
+          : constraints.maxHeight;
+      final s = min(width, height);
+      size = constraints.constrain(Size(s, s));
+    }
   }
 
   @override

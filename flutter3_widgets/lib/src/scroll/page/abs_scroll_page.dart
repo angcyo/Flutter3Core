@@ -83,29 +83,32 @@ mixin AbsScrollPage {
     ));
   }
 
+  /// 构建标题栏上的返回按钮
+  @property
+  Widget? buildLeading(BuildContext context) => null;
+
+  /// 构建标题栏上的动作按钮
+  @property
+  List<Widget>? buildActions(BuildContext context) => null;
+
   /// 获取标题栏高度
   @property
-  double? getAppBarElevation(BuildContext context) {
-    return null;
-  }
+  double? getAppBarElevation(BuildContext context) => null;
+
+  @property
+  double? getAppBarScrolledUnderElevation(BuildContext context) => null;
 
   /// 获取标题栏阴影颜色
   @property
-  Color? getAppBarShadowColor(BuildContext context) {
-    return null;
-  }
+  Color? getAppBarShadowColor(BuildContext context) => null;
 
   /// 获取标题栏前景色
   @property
-  Color? getAppBarForegroundColor(BuildContext context) {
-    return null;
-  }
+  Color? getAppBarForegroundColor(BuildContext context) => null;
 
   /// 获取标题栏背景色
   @property
-  Color? getAppBarBackgroundColor(BuildContext context) {
-    return null;
-  }
+  Color? getAppBarBackgroundColor(BuildContext context) => null;
 
   /// 构建渐变背景
   @property
@@ -125,9 +128,12 @@ mixin AbsScrollPage {
     return globalConfig.appBarBuilder(
       context,
       this,
+      leading: buildLeading(context),
       title: buildTitle(context),
+      actions: buildActions(context),
       bottom: buildAppBarBottom(context),
       elevation: getAppBarElevation(context),
+      scrolledUnderElevation: getAppBarScrolledUnderElevation(context),
       foregroundColor: getAppBarForegroundColor(context),
       backgroundColor: getAppBarBackgroundColor(context),
       //阴影高度
