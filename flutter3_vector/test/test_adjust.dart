@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,7 +14,8 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('test', () async {
     //await test1();
-    await test2();
+    //await test2();
+    await test2Rotate();
     return true;
   });
   consoleLog('...end2');
@@ -21,119 +23,126 @@ void main() {
 
 Future test2() async {
   //4个关键入参
-  double m_bucketx = 0.875; //失真x值 (0.875-1.0)  左上 右上 横向
-  double m_buckety = m_bucketx; //失真y值 (0.875-1.0)  纵向
-  double m_bucketx2 = m_bucketx; //失真x值 (0.875-1.0) 左下 右下 横向
-  double m_buckety2 = m_bucketx; //失真y值 (0.875-1.0) 纵向
+  const double xFactor = 0.9; //失真x值 (0.875-1.0)  左上 右上 横向
+  const double yFactor = xFactor; //失真y值 (0.875-1.0)  纵向
+  const double x2Factor = xFactor; //失真x值 (0.875-1.0) 左下 右下 横向
+  const double y2Factor = xFactor; //失真y值 (0.875-1.0) 纵向
 
   //
-  int xCount = 65;
-  int yCount = 65;
+  const double pXMin = -32768;
+  const double pXMax = 32767;
+  const double pXCenter = 0;
+  const double pYMin = -32768;
+  const double pYMax = 32767;
+  const double pYCenter = 0;
+  const double pXStep = 1024;
+  const double pYStep = 1024;
 
-  int xCenter = (xCount / 2.0).ceil();
-  int yCenter = (yCount / 2.0).ceil();
+  const double pi = 3.1415926535897932;
+  //焦距(mm)
+  const double scanHigh = 100;
+  //振镜最大偏角(度)
+  const double scanAngle = 20;
+  //振镜X,Y间距(mm);
+  const double scanDis = 5;
+
+  const int xCount = 65;
+  const int yCount = 65;
+
+  final int xCenter = (xCount / 2.0).ceil();
+  final int yCenter = (yCount / 2.0).ceil();
 
   //二维数组
-  List<List<double>> Xtable =
+  List<List<double>> xPointList =
       List.generate(xCount, (index) => List.generate(yCount, (index) => 0.0));
-  List<List<double>> Ytable =
+  List<List<double>> yPointList =
       List.generate(xCount, (index) => List.generate(yCount, (index) => 0.0));
 
   //分别初始化x/y坐标表
   for (var i = 0; i < xCount; i++) {
     for (var j = 0; j < yCount; j++) {
-      Xtable[i][j] = (-32768 + j * 1024);
-      Ytable[i][j] = (-32768 + i * 1024);
+      xPointList[i][j] = (pXMin + j * pXStep);
+      yPointList[i][j] = (pYMin + i * pYStep);
 
       //最后一列, x为最大值
-      if (j >= 64) Xtable[i][j] = 32767;
+      if (j >= xCount - 1) xPointList[i][j] = pXMax;
       //最后一行, y为最大值
-      if (i >= 64) Ytable[i][j] = 32767;
+      if (i >= yCount - 1) yPointList[i][j] = pYMax;
     }
   }
 
   //开始矫正
-  double PI = 3.1415926535897932;
-  //焦距(mm)
-  double m_ScanHigh = 100;
-  //振镜最大偏角(度)
-  double m_ScanAngle = 20;
-  //振镜X,Y旧距(nm);
-  double m_ScanDis = 5;
 
-  double Xmin, Xmax, Ymin, Ymax;
-  Xmin = -(m_ScanHigh + m_ScanDis) * tan(m_ScanAngle * PI / 180.0);
-  Ymin = -m_ScanHigh * tan(m_ScanAngle * PI / 180.0);
-  Xmax = (m_ScanHigh + m_ScanDis) * tan(m_ScanAngle * PI / 180.0);
-  Ymax = m_ScanHigh * tan(m_ScanAngle * PI / 180.0);
+  final xMin, xMax, yMin, yMax;
+  xMin = -(scanHigh + scanDis) * tan(scanAngle * pi / 180.0);
+  yMin = -scanHigh * tan(scanAngle * pi / 180.0);
+  xMax = (scanHigh + scanDis) * tan(scanAngle * pi / 180.0);
+  yMax = scanHigh * tan(scanAngle * pi / 180.0);
 
-  int TabYmax = 32767;
-  int TabYmin = -32768;
-  int TabXmax = 32767;
-  int TabXmin = -32768;
-  double iScanK = 65535.0 / (Ymax - Ymin); //单位是bits/mm
+  double scanKY = (pYMax - pYMin) / (yMax - yMin); //单位是bits/mm
+  double scanKX = scanKY; //强制=y, 否则结果不对
 
-  double angle = m_ScanAngle * PI / 180.0;
+  double angle = scanAngle * pi / 180.0;
 
   //临时x/y坐标表
   double y;
-  List<List<double>> CalCTFX =
+  List<List<double>> tempXPointList =
       List.generate(xCount, (index) => List.generate(yCount, (index) => 0.0));
-  List<List<double>> CalCTFY =
+  List<List<double>> tempYPointList =
       List.generate(xCount, (index) => List.generate(yCount, (index) => 0.0));
 
-  double A = 0, B = 0, TopX, TopY, Px, Py;
-  double oldy;
+  double A = 0, B = 0, topX, topY, pX, pY;
+  double oldY;
 
   //先矫正左半边
   for (var i = 0; i < xCenter; i++) {
-    oldy = Ytable[i][0] / iScanK;
+    oldY = yPointList[i][0] / scanKY;
 
-    if ((m_buckety != 1) && (oldy != 0)) {
-      TopX =
-          atan(Xmin / (sqrt(pow(m_ScanHigh, 2) + pow(oldy, 2)) + m_ScanDis)) *
-              (32767 / angle) /
-              iScanK;
-      TopY = atan(oldy / m_ScanHigh) * (32767 / angle) / iScanK;
-      Px = 0;
-      Py = m_buckety * 0.99 * TopY;
-      A = fabs(Py);
-      B = fabs(A * TopX / sqrt(TopY * TopY - A * A));
+    if ((yFactor != 1) && (oldY != 0)) {
+      topX = atan(xMin / (sqrt(pow(scanHigh, 2) + pow(oldY, 2)) + scanDis)) *
+          (pXMax / angle) /
+          scanKX;
+      topY = atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
+      pX = 0;
+      pY = yFactor * 0.99 * topY;
+      A = fabs(pY);
+      B = fabs(A * topX / sqrt(topY * topY - A * A));
     }
 
     //左半边, 一行一行
     for (var j = 0; j < yCount; j++) {
-      CalCTFX[i][j] = (Xtable[i][j] / iScanK);
-      CalCTFY[i][j] = (Ytable[i][j] / iScanK);
+      tempXPointList[i][j] = (xPointList[i][j] / scanKX);
+      tempYPointList[i][j] = (yPointList[i][j] / scanKY);
 
       if (j < yCenter) {
         //左上角
-        if (m_bucketx != 1) {
-          CalCTFX[i][j] = atan(CalCTFX[i][j] /
-                  (sqrt(pow(m_ScanHigh, 2) +
-                          pow(oldy, 2) * (1 - m_bucketx) * 32) +
-                      m_ScanDis)) *
-              (32767.0 / angle) /
-              iScanK;
-          CalCTFY[i][j] = atan(oldy / m_ScanHigh) * (32767.0 / angle) / iScanK;
+        if (xFactor != 1) {
+          tempXPointList[i][j] = atan(tempXPointList[i][j] /
+                  (sqrt(pow(scanHigh, 2) + pow(oldY, 2) * (1 - xFactor) * 32) +
+                      scanDis)) *
+              (pXMax / angle) /
+              scanKX;
+          tempYPointList[i][j] =
+              atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
         }
       } else {
         //左下角
-        if (m_bucketx2 != 1) {
-          CalCTFX[i][j] = atan(CalCTFX[i][j] /
-                  (sqrt(pow(m_ScanHigh, 2) +
-                          pow(oldy, 2) * (1 - m_bucketx2) * 32) +
-                      m_ScanDis)) *
-              (32767.0 / angle) /
-              iScanK;
-          CalCTFY[i][j] = atan(oldy / m_ScanHigh) * (32767.0 / angle) / iScanK;
+        if (x2Factor != 1) {
+          tempXPointList[i][j] = atan(tempXPointList[i][j] /
+                  (sqrt(pow(scanHigh, 2) + pow(oldY, 2) * (1 - x2Factor) * 32) +
+                      scanDis)) *
+              (pXMax / angle) /
+              scanKX;
+          tempYPointList[i][j] =
+              atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
         }
       }
 
-      if ((m_buckety != 1) && (oldy != 0)) {
-        CalCTFY[i][j] = A * sqrt(1 + pow(CalCTFX[i][j], 2) / pow(B, 2));
-        if (oldy < 0) {
-          CalCTFY[i][j] = -CalCTFY[i][j];
+      if ((yFactor != 1) && (oldY != 0)) {
+        tempYPointList[i][j] =
+            A * sqrt(1 + pow(tempXPointList[i][j], 2) / pow(B, 2));
+        if (oldY < 0) {
+          tempYPointList[i][j] = -tempYPointList[i][j];
         }
       }
     }
@@ -141,76 +150,365 @@ Future test2() async {
 
   //再矫正右半边
   for (var i = xCenter; i < xCount; i++) {
-    oldy = y = Ytable[i][0] / iScanK;
+    oldY = y = yPointList[i][0] / scanKY;
 
-    if ((m_buckety2 != 1) && (oldy != 0)) {
-      TopX =
-          atan(Xmin / (sqrt(pow(m_ScanHigh, 2) + pow(oldy, 2)) + m_ScanDis)) *
-              (32767 / angle) /
-              iScanK;
-      TopY = atan(oldy / m_ScanHigh) * (32767 / angle) / iScanK;
-      Px = 0;
-      Py = m_buckety2 * 0.99 * TopY;
-      A = fabs(Py);
-      B = fabs(A * TopX / sqrt(TopY * TopY - A * A));
+    if ((y2Factor != 1) && (oldY != 0)) {
+      topX = atan(xMin / (sqrt(pow(scanHigh, 2) + pow(oldY, 2)) + scanDis)) *
+          (pXMax / angle) /
+          scanKX;
+      topY = atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
+      pX = 0;
+      pY = y2Factor * 0.99 * topY;
+      A = fabs(pY);
+      B = fabs(A * topX / sqrt(topY * topY - A * A));
     }
 
     //右半边, 一行一行
     for (var j = 0; j < yCount; j++) {
-      CalCTFX[i][j] = (Xtable[i][j] / iScanK);
-      CalCTFY[i][j] = (Ytable[i][j] / iScanK);
+      tempXPointList[i][j] = (xPointList[i][j] / scanKY);
+      tempYPointList[i][j] = (yPointList[i][j] / scanKY);
 
       if (j < yCenter) {
         //右上角
-        if (m_bucketx != 1) {
-          CalCTFX[i][j] = atan(CalCTFX[i][j] /
-                  (sqrt(pow(m_ScanHigh, 2) +
-                          pow(oldy, 2) * (1 - m_bucketx) * 32) +
-                      m_ScanDis)) *
-              (32767.0 / angle) /
-              iScanK;
-          CalCTFY[i][j] = atan(oldy / m_ScanHigh) * (32767.0 / angle) / iScanK;
+        if (xFactor != 1) {
+          tempXPointList[i][j] = atan(tempXPointList[i][j] /
+                  (sqrt(pow(scanHigh, 2) + pow(oldY, 2) * (1 - xFactor) * 32) +
+                      scanDis)) *
+              (pXMax / angle) /
+              scanKY;
+          tempYPointList[i][j] =
+              atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
         }
       } else {
         //右下角
-        if (m_bucketx2 != 1) {
-          CalCTFX[i][j] = atan(CalCTFX[i][j] /
-                  (sqrt(pow(m_ScanHigh, 2) +
-                          pow(oldy, 2) * (1 - m_bucketx2) * 32) +
-                      m_ScanDis)) *
-              (32767.0 / angle) /
-              iScanK;
-          CalCTFY[i][j] = atan(oldy / m_ScanHigh) * (32767.0 / angle) / iScanK;
+        if (x2Factor != 1) {
+          tempXPointList[i][j] = atan(tempXPointList[i][j] /
+                  (sqrt(pow(scanHigh, 2) + pow(oldY, 2) * (1 - x2Factor) * 32) +
+                      scanDis)) *
+              (pXMax / angle) /
+              scanKX;
+          tempYPointList[i][j] =
+              atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
         }
       }
 
-      if ((m_buckety2 != 1) && (oldy != 0)) {
-        CalCTFY[i][j] = A * sqrt(1 + pow(CalCTFX[i][j], 2) / pow(B, 2));
-        if (oldy < 0) {
-          CalCTFY[i][j] = -CalCTFY[i][j];
+      if ((y2Factor != 1) && (oldY != 0)) {
+        tempYPointList[i][j] =
+            A * sqrt(1 + pow(tempXPointList[i][j], 2) / pow(B, 2));
+        if (oldY < 0) {
+          tempYPointList[i][j] = -tempYPointList[i][j];
         }
       }
-    }
-  }
-
-  //将矫正数据作用到原始点坐标中
-  for (var i = 0; i < xCount; i++) {
-    for (var j = 0; j < yCount; j++) {
-      Xtable[i][j] = max(-32768, min(32767, CalCTFX[j][i] * iScanK));
-      Ytable[i][j] = max(-32768, min(32767, CalCTFY[j][i] * iScanK));
     }
   }
 
   // log
-  StringBuffer buffer = StringBuffer();
+  const radius = 10.0;
+  const scale = 0.025;
+  const offsetWidth = 100.0; //宽度额外增加的量
+  const offsetHeight = 100.0; //高度额外增加的量
+  const offsetX = offsetWidth / 2; //宽度偏移后x绘制的偏移量
+  const offsetY = offsetHeight / 2; //高度偏移后y绘制的偏移量
+  final image = drawImageSync(
+      const Size((pXMax - pXMin) * scale + offsetWidth,
+          (pYMax - pYMin) * scale + offsetHeight), (canvas) async {
+    final paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.fill;
+    //debugger();
+    //--原始数据
+    for (var i = 0; i < xCount; i++) {
+      for (var j = 0; j < yCount; j++) {
+        canvas.drawCircle(
+          Offset((xPointList[i][j] - pXMin) * scale + offsetX,
+              (yPointList[i][j] - pYMin) * scale + offsetY),
+          radius,
+          paint,
+        );
+      }
+    }
+    //将矫正数据作用到原始点坐标中
+    for (var i = 0; i < xCount; i++) {
+      for (var j = 0; j < yCount; j++) {
+        xPointList[i][j] =
+            max(pXMin, min(pXMax, tempXPointList[j][i] * scanKX));
+        yPointList[i][j] =
+            max(pYMin, min(pYMax, tempYPointList[j][i] * scanKY));
+      }
+    }
+    //--矫正后的数据
+    paint.color = Colors.redAccent;
+    StringBuffer buffer = StringBuffer();
+    for (var i = 0; i < xCount; i++) {
+      for (var j = 0; j < yCount; j++) {
+        canvas.drawCircle(
+          Offset((xPointList[i][j] - pXMin) * scale + offsetX,
+              (yPointList[i][j] - pYMin) * scale + offsetY),
+          radius,
+          paint,
+        );
+
+        buffer.write("${xPointList[i][j].toInt()},${yPointList[i][j].toInt()}"
+            .padRight(15));
+      }
+      buffer.writeln();
+    }
+    await outputFile('point_list_$xFactor.log').writeString(buffer.toString());
+  });
+  await image.saveToFile(outputFile('point_list_$xFactor.png'));
+}
+
+Future test2Rotate() async {
+  //4个关键入参
+  const double xFactor = 0.9; //失真x值 (0.875-1.0)  左上 右上 横向
+  const double yFactor = xFactor; //失真y值 (0.875-1.0)  纵向
+  const double x2Factor = xFactor; //失真x值 (0.875-1.0) 左下 右下 横向
+  const double y2Factor = xFactor; //失真y值 (0.875-1.0) 纵向
+
+  //
+  const double pXMin = -32768;
+  const double pXMax = 32767;
+  const double pXCenter = 0;
+  const double pYMin = -32768;
+  const double pYMax = 32767;
+  const double pYCenter = 0;
+  const double pXStep = 1024;
+  const double pYStep = 1024;
+
+  const double pi = 3.1415926535897932;
+  //焦距(mm)
+  const double scanHigh = 100;
+  //振镜最大偏角(度)
+  const double scanAngle = 20;
+  //振镜X,Y间距(mm);
+  const double scanDis = 5;
+
+  const int xCount = 65;
+  const int yCount = 65;
+
+  final int xCenter = (xCount / 2.0).ceil();
+  final int yCenter = (yCount / 2.0).ceil();
+
+  //二维数组
+  List<List<double>> xPointList =
+      List.generate(xCount, (index) => List.generate(yCount, (index) => 0.0));
+  List<List<double>> yPointList =
+      List.generate(xCount, (index) => List.generate(yCount, (index) => 0.0));
+
+  //分别初始化x/y坐标表
   for (var i = 0; i < xCount; i++) {
     for (var j = 0; j < yCount; j++) {
-      buffer.write(
-          "${Xtable[i][j].toInt()},${Ytable[i][j].toInt()}".padRight(15));
+      xPointList[i][j] = (pXMin + j * pXStep);
+      yPointList[i][j] = (pYMin + i * pYStep);
+
+      //最后一列, x为最大值
+      if (j >= xCount - 1) xPointList[i][j] = pXMax;
+      //最后一行, y为最大值
+      if (i >= yCount - 1) yPointList[i][j] = pYMax;
     }
-    buffer.writeln();
   }
-  await outputFile('point_list_$m_bucketx.log').writeString(buffer.toString());
+
+  //开始矫正
+
+  final xMin, xMax, yMin, yMax;
+  xMin = -(scanHigh + scanDis) * tan(scanAngle * pi / 180.0);
+  xMax = (scanHigh + scanDis) * tan(scanAngle * pi / 180.0);
+
+  yMin = -scanHigh * tan(scanAngle * pi / 180.0);
+  yMax = scanHigh * tan(scanAngle * pi / 180.0);
+
+  double scanKY = (pYMax - pYMin) / (yMax - yMin); //单位是bits/mm
+  double scanKX = scanKY; //强制=y, 否则结果不对
+
+  /*double scanKX = (pXMax - pXMin) / (xMax - xMin); //单位是bits/mm
+  double scanKY = scanKX; //强制=x, 否则结果不对*/
+
+  double angle = scanAngle * pi / 180.0;
+
+  //临时x/y坐标表
+  double y;
+  List<List<double>> tempXPointList =
+      List.generate(xCount, (index) => List.generate(yCount, (index) => 0.0));
+  List<List<double>> tempYPointList =
+      List.generate(xCount, (index) => List.generate(yCount, (index) => 0.0));
+
+  double A = 0, B = 0, topX, topY, pX, pY;
+  double oldY;
+
+  //先矫正左半边
+  for (var i = 0; i < xCenter; i++) {
+    oldY = yPointList[i][0] / scanKY;
+
+    if ((yFactor != 1) && (oldY != 0)) {
+      topX = atan(xMin / (sqrt(pow(scanHigh, 2) + pow(oldY, 2)) + scanDis)) *
+          (pXMax / angle) /
+          scanKX;
+      topY = atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
+      pX = 0;
+      pY = yFactor * 0.99 * topY;
+      A = fabs(pY);
+      B = fabs(A * topX / sqrt(topY * topY - A * A));
+    }
+
+    //左半边, 一行一行
+    for (var j = 0; j < yCount; j++) {
+      tempXPointList[i][j] = (xPointList[i][j] / scanKX);
+      tempYPointList[i][j] = (yPointList[i][j] / scanKY);
+
+      if (j < yCenter) {
+        //左上角
+        if (xFactor != 1) {
+          tempXPointList[i][j] = atan(tempXPointList[i][j] /
+                  (sqrt(pow(scanHigh, 2) + pow(oldY, 2) * (1 - xFactor) * 32) +
+                      scanDis)) *
+              (pXMax / angle) /
+              scanKX;
+          tempYPointList[i][j] =
+              atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
+        }
+      } else {
+        //左下角
+        if (x2Factor != 1) {
+          tempXPointList[i][j] = atan(tempXPointList[i][j] /
+                  (sqrt(pow(scanHigh, 2) + pow(oldY, 2) * (1 - x2Factor) * 32) +
+                      scanDis)) *
+              (pXMax / angle) /
+              scanKX;
+          tempYPointList[i][j] =
+              atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
+        }
+      }
+
+      if ((yFactor != 1) && (oldY != 0)) {
+        tempYPointList[i][j] =
+            A * sqrt(1 + pow(tempXPointList[i][j], 2) / pow(B, 2));
+        if (oldY < 0) {
+          tempYPointList[i][j] = -tempYPointList[i][j];
+        }
+      }
+    }
+  }
+
+  //再矫正右半边
+  for (var i = xCenter; i < xCount; i++) {
+    oldY = y = yPointList[i][0] / scanKY;
+
+    if ((y2Factor != 1) && (oldY != 0)) {
+      topX = atan(xMin / (sqrt(pow(scanHigh, 2) + pow(oldY, 2)) + scanDis)) *
+          (pXMax / angle) /
+          scanKX;
+      topY = atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
+      pX = 0;
+      pY = y2Factor * 0.99 * topY;
+      A = fabs(pY);
+      B = fabs(A * topX / sqrt(topY * topY - A * A));
+    }
+
+    //右半边, 一行一行
+    for (var j = 0; j < yCount; j++) {
+      tempXPointList[i][j] = (xPointList[i][j] / scanKY);
+      tempYPointList[i][j] = (yPointList[i][j] / scanKY);
+
+      if (j < yCenter) {
+        //右上角
+        if (xFactor != 1) {
+          tempXPointList[i][j] = atan(tempXPointList[i][j] /
+                  (sqrt(pow(scanHigh, 2) + pow(oldY, 2) * (1 - xFactor) * 32) +
+                      scanDis)) *
+              (pXMax / angle) /
+              scanKY;
+          tempYPointList[i][j] =
+              atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
+        }
+      } else {
+        //右下角
+        if (x2Factor != 1) {
+          tempXPointList[i][j] = atan(tempXPointList[i][j] /
+                  (sqrt(pow(scanHigh, 2) + pow(oldY, 2) * (1 - x2Factor) * 32) +
+                      scanDis)) *
+              (pXMax / angle) /
+              scanKX;
+          tempYPointList[i][j] =
+              atan(oldY / scanHigh) * (pYMax / angle) / scanKY;
+        }
+      }
+
+      if ((y2Factor != 1) && (oldY != 0)) {
+        tempYPointList[i][j] =
+            A * sqrt(1 + pow(tempXPointList[i][j], 2) / pow(B, 2));
+        if (oldY < 0) {
+          tempYPointList[i][j] = -tempYPointList[i][j];
+        }
+      }
+    }
+  }
+
+  // log
+  const radius = 10.0;
+  const scale = 0.025;
+  const offsetWidth = 100.0; //宽度额外增加的量
+  const offsetHeight = 100.0; //高度额外增加的量
+  const offsetX = offsetWidth / 2; //宽度偏移后x绘制的偏移量
+  const offsetY = offsetHeight / 2; //高度偏移后y绘制的偏移量
+  final image = drawImageSync(
+      const Size((pXMax - pXMin) * scale + offsetWidth,
+          (pYMax - pYMin) * scale + offsetHeight), (canvas) async {
+    final paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.fill;
+    //debugger();
+    //--原始数据
+    for (var i = 0; i < xCount; i++) {
+      for (var j = 0; j < yCount; j++) {
+        canvas.drawCircle(
+          Offset((xPointList[i][j] - pXMin) * scale + offsetX,
+              (yPointList[i][j] - pYMin) * scale + offsetY),
+          radius,
+          paint,
+        );
+      }
+    }
+    //将矫正数据作用到原始点坐标中
+    for (var i = 0; i < xCount; i++) {
+      for (var j = 0; j < yCount; j++) {
+        xPointList[i][j] =
+            max(pXMin, min(pXMax, tempXPointList[j][i] * scanKX));
+        yPointList[i][j] =
+            max(pYMin, min(pYMax, tempYPointList[j][i] * scanKY));
+
+        //旋转的角度
+        final a = 90.hd;
+        const anchor = Offset(pXCenter, pYCenter);
+        final dx = xPointList[i][j] - anchor.dx;
+        final dy = yPointList[i][j] - anchor.dy;
+        final rotateX = anchor.dx + dx * cos(a) - dy * sin(a);
+        final rotateY = anchor.dy + dx * sin(a) + dy * cos(a);
+
+        xPointList[i][j] = rotateX;
+        yPointList[i][j] = rotateY;
+      }
+    }
+    //--矫正后的数据
+    paint.color = Colors.redAccent;
+    StringBuffer buffer = StringBuffer();
+    for (var i = 0; i < xCount; i++) {
+      for (var j = 0; j < yCount; j++) {
+        canvas.drawCircle(
+          Offset((xPointList[i][j] - pXMin) * scale + offsetX,
+              (yPointList[i][j] - pYMin) * scale + offsetY),
+          radius,
+          paint,
+        );
+
+        buffer.write("${xPointList[i][j].toInt()},${yPointList[i][j].toInt()}"
+            .padRight(15));
+      }
+      buffer.writeln();
+    }
+    await outputFile('point_list_rotate_$xFactor.log')
+        .writeString(buffer.toString());
+  });
+  await image.saveToFile(outputFile('point_list_rotate_$xFactor.png'));
 }
 
 Future test1() async {
