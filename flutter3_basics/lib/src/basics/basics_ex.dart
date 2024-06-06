@@ -317,17 +317,29 @@ extension ObjectEx on Object {
       );
     }
 
+    if (style != null) {
+      if (fontSize != null || textColor != null || fontWeight != null) {
+        style = style.copyWith(
+          fontSize: fontSize ?? style.fontSize,
+          color: textColor ?? style.color,
+          fontWeight: fontWeight ?? style.fontWeight,
+        );
+      }
+    }
+
+    final textStyle = style ??
+        (fontSize == null && textColor == null && fontWeight == null
+            ? null
+            : TextStyle(
+                fontSize: fontSize,
+                color: textColor,
+                fontWeight: fontWeight,
+              ));
+
     if (selectable) {
       return SelectableText(
         "$this",
-        style: style ??
-            (fontSize == null && textColor == null && fontWeight == null
-                ? null
-                : TextStyle(
-                    fontSize: fontSize,
-                    color: textColor,
-                    fontWeight: fontWeight,
-                  )),
+        style: textStyle,
         textAlign: textAlign,
         maxLines: maxLines,
         /*softWrap: softWrap,
@@ -337,14 +349,7 @@ extension ObjectEx on Object {
 
     return Text(
       "$this",
-      style: style ??
-          (fontSize == null && textColor == null && fontWeight == null
-              ? null
-              : TextStyle(
-                  fontSize: fontSize,
-                  color: textColor,
-                  fontWeight: fontWeight,
-                )),
+      style: textStyle,
       textAlign: textAlign,
       maxLines: maxLines,
       softWrap: softWrap,
