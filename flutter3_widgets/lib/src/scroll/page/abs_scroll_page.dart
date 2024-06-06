@@ -78,8 +78,9 @@ mixin AbsScrollPage {
   Widget? buildTitle(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
     return getTitle(context)?.text(
-        style: globalConfig.globalTheme.textTitleStyle
-            .copyWith(color: globalConfig.globalTheme.appBarForegroundColor));
+        style: globalConfig.globalTheme.textTitleStyle.copyWith(
+      color: globalConfig.globalTheme.appBarForegroundColor,
+    ));
   }
 
   /// 获取标题栏高度

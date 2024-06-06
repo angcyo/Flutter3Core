@@ -1553,6 +1553,25 @@ extension IterableEx<E> on Iterable<E> {
   List<R> filterNull<R>() =>
       where((element) => element != null).cast<R>().toList();
 
+  /// 过滤debug模式的数据
+  List<E> filterDebug() {
+    return where((element) {
+      if (element != null) {
+        try {
+          final debug = (element as dynamic).debug;
+          if (debug &&
+              (isDebug || GlobalConfig.def.isDebugFlagFn?.call() == true)) {
+            return true;
+          }
+          return false;
+        } catch (e) {
+          return true;
+        }
+      }
+      return true;
+    }).cast<E>().toList();
+  }
+
   /// 所有的元素是否都满足条件
   /// [every]
   bool all(bool Function(E element) test) => every(test);

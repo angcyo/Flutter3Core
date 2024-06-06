@@ -39,6 +39,8 @@ class Empty extends StatelessWidget {
   }
 }
 
+IgnoreWidget get ignoreWidget => const IgnoreWidget();
+
 /// 当识别此小部件时, 表示要丢弃
 class IgnoreWidget extends StatelessWidget {
   const IgnoreWidget({super.key});

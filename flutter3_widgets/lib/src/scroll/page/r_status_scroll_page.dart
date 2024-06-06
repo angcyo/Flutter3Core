@@ -18,7 +18,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
 
   /// 获取所有状态的数据
   List<T> getStatusDataList<T>() =>
-      statusInfoList.map((e) => e.status as T?).filterNull();
+      statusInfoList.map((e) => e.status as T).filterNull();
 
   /// 判断[status]是否是当前选中的状态
   bool isCurrentStatus(dynamic status) => currentStatusInfo?.status == status;

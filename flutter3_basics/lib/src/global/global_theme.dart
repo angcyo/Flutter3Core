@@ -233,26 +233,35 @@ class GlobalThemeDark extends GlobalTheme {
   @override
   Color get themeWhiteColor => primaryColor;
 
+  /// [AppBar]的前景颜色
+  @override
+  Color get appBarForegroundColor =>
+      textTitleStyle.color ?? const Color(0xfffcfbfc);
+
   @override
   Color get whiteBgColor => primaryColorDark;
 
   @override
-  ui.Color get lineColor => const Color(0xff595450);
+  Color get lineColor => const Color(0xff595450);
 
   @override
-  ui.Color get lineDarkColor => const Color(0xff383839);
+  Color get lineDarkColor => const Color(0xff383839);
 
   @override
-  ui.Color get itemWhiteBgColor => const Color(0xff1a1a1a);
+  Color get itemWhiteBgColor => const Color(0xff1a1a1a);
 
   @override
-  ui.Color get whiteSubBgColor => const Color(0xff303030);
+  Color get whiteSubBgColor => const Color(0xff303030);
 
   @override
-  ui.Color get borderColor => const Color(0xff1a1a1a);
+  Color get borderColor => const Color(0xff1a1a1a);
 
   @override
-  ui.Color get disableColor => const Color(0xff333333);
+  Color get disableColor => const Color(0xff333333);
+
+  /// 禁用时的背景颜色(偏黑色)
+  @override
+  Color get disableBgColor => const Color(0x40333333);
 
   @override
   TextStyle get textGeneralStyle => super.textGeneralStyle.copyWith(

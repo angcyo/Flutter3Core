@@ -343,8 +343,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     titleSpacing,
   }) {
     //debugger();
-    var globalConfig = GlobalConfig.of(context);
-    var globalTheme = GlobalTheme.of(context);
+    final globalConfig = GlobalConfig.of(context);
+    final globalTheme = GlobalTheme.of(context);
     elevation ??= globalConfig.globalThemeData?.appBarTheme.elevation;
     //debugger();
     return AppBar(
