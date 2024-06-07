@@ -14,43 +14,44 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// [AppExitResponse.values]
   @override
   Future<AppExitResponse> didRequestAppExit() {
-    'AppLifecycle didRequestAppExit'.writeToLog();
+    'AppLifecycle didRequestAppExit'.writeToLog(level: L.verbose);
     return super.didRequestAppExit();
   }
 
   @override
   void didChangeAccessibilityFeatures() {
-    'AppLifecycle didChangeAccessibilityFeatures'.writeToLog();
+    'AppLifecycle didChangeAccessibilityFeatures'.writeToLog(level: L.verbose);
     super.didChangeAccessibilityFeatures();
   }
 
   @override
   void didChangeLocales(List<Locale>? locales) {
-    'AppLifecycle didChangeLocales:$locales'.writeToLog();
+    'AppLifecycle didChangeLocales:$locales'.writeToLog(level: L.verbose);
     super.didChangeLocales(locales);
   }
 
   @override
   void didChangePlatformBrightness() {
-    'AppLifecycle didChangePlatformBrightness'.writeToLog();
+    'AppLifecycle didChangePlatformBrightness'.writeToLog(level: L.verbose);
     super.didChangePlatformBrightness();
   }
 
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
-    'AppLifecycle didPushRouteInformation:$routeInformation'.writeToLog();
+    'AppLifecycle didPushRouteInformation:$routeInformation'
+        .writeToLog(level: L.verbose);
     return super.didPushRouteInformation(routeInformation);
   }
 
   @override
   void dispose() {
-    'AppLifecycle dispose'.writeToLog();
+    'AppLifecycle dispose'.writeToLog(level: L.verbose);
     super.dispose();
   }
 
   @override
   void didChangeMetrics() {
-    'AppLifecycle didChangeMetrics'.writeToLog();
+    'AppLifecycle didChangeMetrics'.writeToLog(level: L.verbose);
     super.didChangeMetrics();
   }
 
@@ -78,32 +79,33 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// ```
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    'AppLifecycle didChangeAppLifecycleState:$state'.writeToLog();
+    'AppLifecycle didChangeAppLifecycleState:$state'
+        .writeToLog(level: L.verbose);
     super.didChangeAppLifecycleState(state);
   }
 
   /// 低内存回调
   @override
   void didHaveMemoryPressure() {
-    'AppLifecycle didHaveMemoryPressure'.writeToLog();
+    'AppLifecycle didHaveMemoryPressure'.writeToLog(level: L.verbose);
     super.didHaveMemoryPressure();
   }
 
   @override
   void didChangeTextScaleFactor() {
-    'AppLifecycle didChangeTextScaleFactor'.writeToLog();
+    'AppLifecycle didChangeTextScaleFactor'.writeToLog(level: L.verbose);
     super.didChangeTextScaleFactor();
   }
 
   @override
   Future<bool> didPushRoute(String route) {
-    'AppLifecycle didPushRoute:$route'.writeToLog();
+    'AppLifecycle didPushRoute:$route'.writeToLog(level: L.verbose);
     return super.didPushRoute(route);
   }
 
   @override
   Future<bool> didPopRoute() {
-    'AppLifecycle didPopRoute'.writeToLog();
+    'AppLifecycle didPopRoute'.writeToLog(level: L.verbose);
     return super.didPopRoute();
   }
 }
