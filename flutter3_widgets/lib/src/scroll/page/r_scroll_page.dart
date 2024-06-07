@@ -23,6 +23,16 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [pageRScrollView]
   WidgetList pageWidgetList = [];
 
+  /// 界面是否[build]了
+  bool _isPageBuild = false;
+
+  /// 当页面需要更新新, 使用哪个[State]对象
+  @configProperty
+  State? pageUpdateState;
+
+  /// 当前的[State]对象
+  State get _updateState => pageUpdateState ?? this;
+
   //region 生命周期
 
   @override
@@ -46,9 +56,12 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
+  /// [AbsScrollPage.buildBody]会调用[pageRScrollView]
   @override
   Widget build(BuildContext context) {
+    _isPageBuild = true;
     if (this is AbsScrollPage) {
+      //交给[AbsScrollPage]处理
       return (this as AbsScrollPage).buildScaffold(context);
     }
     return pageRScrollView();
@@ -109,11 +122,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @callPoint
   @updateMark
   void loadDataEnd(
-    List? loadData, {
+    List? loadData, [
     dynamic stateData,
     bool handleData = true,
-    State? updateState,
-  }) {
+  ]) {
     if (handleData) {
       if (loadData is WidgetList) {
         if (scrollController.requestPage.isFirstPage) {
@@ -122,7 +134,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         pageWidgetList.addAll(loadData);
       }
     }
-    scrollController.finishRefresh(updateState ?? this, loadData, stateData);
+    scrollController.finishRefresh(_updateState, loadData, stateData);
   }
 
   /// 首次加载, 如果需要请主动调用, 触发
@@ -136,7 +148,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       //已经显示了内容
     } else if (currentState == WidgetBuildState.preLoading ||
         currentState != state) {
-      scrollController.updateAdapterState(this, state);
+      scrollController.updateAdapterState(_updateState, state);
     }
   }
 
@@ -171,13 +183,21 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }
 
   /// 显示下拉刷新
+  /// [loadDataEnd]
   @api
   @updateMark
   void startRefresh() {
     scrollController.startRefresh();
   }
 
-  /// 显示状态刷新
+  /// 结束下拉刷新, 更多时候应该调用[loadDataEnd]
+  @api
+  @updateMark
+  void finishRefresh() {
+    scrollController.finishRefresh(null);
+  }
+
+  /// 显示情感图状态刷新
   @api
   @updateMark
   void startRefreshState() {
@@ -187,8 +207,20 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 更新情感图状态
   @api
   @updateMark
-  bool updateAdapterState(WidgetBuildState widgetState, [dynamic stateData]) =>
-      scrollController.updateAdapterState(this, widgetState, stateData);
+  bool updateAdapterState(WidgetBuildState widgetState, [dynamic stateData]) {
+    if (_isPageBuild) {
+      return scrollController.updateAdapterState(
+          _updateState, widgetState, stateData);
+    } else {
+      postFrameCallback((timeStamp) {
+        if (isMounted) {
+          scrollController.updateAdapterState(
+              _updateState, widgetState, stateData);
+        }
+      });
+      return false;
+    }
+  }
 
   /// 重写此方法, 实现收尾插入自定义的小部件
   @overridePoint
@@ -204,6 +236,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     bool? enableRefresh,
     bool? enableLoadMore,
   }) {
+    _isPageBuild = true;
     return RScrollView(
       controller: scrollController,
       enableRefresh: enableRefresh ?? this.enableRefresh,
@@ -231,7 +264,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @api
   void rebuildTile(
       bool Function(RItemTile tile, UpdateValueNotifier signal) test) {
-    for (var element in pageWidgetList) {
+    for (final element in pageWidgetList) {
       //debugger();
       if (element is RItemTile) {
         //element.updateTile();
@@ -244,7 +277,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
             }
           } catch (e) {
             //中断循环
-            printError(e);
+            assert(() {
+              printError(e);
+              return true;
+            }());
             break;
           }
         }

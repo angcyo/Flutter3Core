@@ -7,8 +7,8 @@ part of '../../../flutter3_widgets.dart';
 /// 快速创建一个具有[Scaffold]脚手架和[RScrollView]滚动的页面
 /// [RScrollView]
 /// [AbsScrollPage]
-/// [RScrollPage]
-/// [RStatusScrollPage]
+/// [RScrollPage] 刷新,加载更多
+/// [RStatusScrollPage] 状态切换
 ///
 /// [buildScaffold]
 mixin AbsScrollPage {
@@ -96,7 +96,7 @@ mixin AbsScrollPage {
   double? getAppBarElevation(BuildContext context) => null;
 
   @property
-  double? getAppBarScrolledUnderElevation(BuildContext context) => null;
+  double? getAppBarScrolledUnderElevation(BuildContext context) => 0;
 
   /// 获取标题栏阴影颜色
   @property

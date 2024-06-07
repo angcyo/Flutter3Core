@@ -40,13 +40,11 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   @private
   @override
   void loadDataEnd(
-    List? loadData, {
+    List? loadData, [
     dynamic stateData,
     bool handleData = true,
-    State? updateState,
-  }) {
-    super.loadDataEnd(loadData,
-        stateData: stateData, handleData: handleData, updateState: updateState);
+  ]) {
+    super.loadDataEnd(loadData, stateData, handleData);
   }
 
   //region 状态控制
@@ -73,7 +71,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
     if (statusInfo != null) {
       if (statusInfo == currentStatusInfo) {
         //状态一致, 走默认处理即可
-        loadDataEnd(loadData, stateData: stateData, handleData: handleData);
+        loadDataEnd(loadData, stateData, handleData);
         updateState(); //更新状态
       } else {
         //状态不一致, 比如切换到其他类型了.
