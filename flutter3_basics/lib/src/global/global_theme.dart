@@ -275,6 +275,12 @@ class GlobalThemeDark extends GlobalTheme {
       );
 
   @override
+  TextStyle get textBigGeneralStyle => const TextStyle(
+        fontSize: 28,
+        color: Color(0xff6f6f6f),
+      );
+
+  @override
   TextStyle get textTitleStyle => super.textTitleStyle.copyWith(
         color: const Color(0xfffcfbfc),
       );
