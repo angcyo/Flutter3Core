@@ -52,7 +52,7 @@ BoxDecoration strokeDecoration({
   BorderSide? start,
   BorderSide? end,
 }) {
-  final strokeColor = color ?? GlobalTheme.of(context).primaryColor;
+  final strokeColor = color ?? GlobalTheme.of(context).accentColor;
   final BorderSide side = BorderSide(
     color: strokeColor,
     width: strokeWidth,
@@ -87,7 +87,7 @@ BoxBorder strokeBorder({
   BorderSide? left,
   BorderSide? right,
 }) {
-  final strokeColor = color ?? GlobalTheme.of(context).primaryColor;
+  final strokeColor = color ?? GlobalTheme.of(context).accentColor;
   final BorderSide side = BorderSide(
     color: strokeColor,
     width: strokeWidth,
@@ -151,7 +151,7 @@ BoxDecoration fillDecoration({
   double? onlyBottomRadius,
   BoxBorder? border,
 }) {
-  final fillColor = color ?? GlobalTheme.of(context).primaryColor;
+  final fillColor = color ?? GlobalTheme.of(context).accentColor;
 
   if (radiusGeometry == null) {
     if (onlyTopRadius != null || onlyBottomRadius != null) {
@@ -195,7 +195,7 @@ BoxDecoration lineaGradientDecoration(
   AlignmentGeometry begin = Alignment.centerLeft,
   AlignmentGeometry end = Alignment.centerRight,
 }) {
-  final color = fillColor ?? GlobalTheme.of(context).primaryColor;
+  final color = fillColor ?? GlobalTheme.of(context).accentColor;
   return BoxDecoration(
     color: color,
     gradient: colors == null
