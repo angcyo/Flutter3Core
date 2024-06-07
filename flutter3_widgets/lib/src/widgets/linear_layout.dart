@@ -90,6 +90,14 @@ class LinearLayoutParentData extends ContainerBoxParentData<RenderBox> {
   LinearLayoutParentData();
 }
 
+extension LinearLayoutEx on Widget {
+  /// 线性布局
+  Widget? linearLayout({
+    Axis mainAxis = Axis.horizontal,
+  }) =>
+      [this].linearLayout(mainAxis: mainAxis);
+}
+
 extension LinearLayoutListEx on WidgetNullList {
   /// 线性布局
   Widget? linearLayout({

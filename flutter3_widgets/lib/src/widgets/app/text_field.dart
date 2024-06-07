@@ -80,6 +80,19 @@ class TextFieldConfig {
       onChanged?.call(this.controller.text);
     }
   }
+
+  /// 更新输入框的文本
+  @api
+  void updateText(String? text) {
+    //debugger();
+    if (updateFieldValueFn == null) {
+      assert(() {
+        l.w('无效的操作');
+        return true;
+      }());
+    }
+    updateFieldValueFn?.call(text ?? "");
+  }
 }
 
 /// 清除图标的大小
@@ -183,6 +196,10 @@ class SingleInputWidget extends StatefulWidget {
   final BoxConstraints? suffixIconConstraints;
   final BoxConstraints? prefixIconConstraints;
 
+  /// 后缀/前缀图标的构建器
+  final TransformChildWidgetBuilder? prefixIconBuilder;
+  final TransformChildWidgetBuilder? suffixIconBuilder;
+
   /// 是否折叠显示, true: 则输入框的高度和文本一致
   final bool? isCollapsed;
 
@@ -191,6 +208,14 @@ class SingleInputWidget extends StatefulWidget {
 
   /// [isDense] [isCollapsed] 也是可以通过[InputDecoration]来控制的
   /// [InputDecoration.contentPadding]
+  /// `EdgeInsets. fromLTRB(12, 4, 12, 4`
+  /// `EdgeInsets. fromLTRB(12, 8, 12, 8`
+  /// `EdgeInsets. fromLTRB(0, 4, 0, 4)`
+  /// `EdgeInsets. fromLTRB(0, 8, 0, 8)`
+  /// `EdgeInsets.fromLTRB(12, 24, 12, 16)`
+  ///
+  /// `EdgeInsets.fromLTRB(12, 12, 12, 12)` 默认
+  ///
   final EdgeInsetsGeometry? contentPadding;
 
   /// 键盘输入类型
@@ -272,16 +297,16 @@ class SingleInputWidget extends StatefulWidget {
     this.prefixIconSize = kSuffixIconSize,
     this.suffixIconSize = kSuffixIconSize,
     this.suffixIconConstraints = const BoxConstraints(
-      maxWidth: kSuffixIconConstraintsSize,
-      maxHeight: kSuffixIconConstraintsSize,
-      minHeight: kSuffixIconConstraintsSize,
       minWidth: kSuffixIconConstraintsSize,
+      minHeight: kSuffixIconConstraintsSize,
+      maxWidth: double.infinity,
+      maxHeight: double.infinity,
     ),
     this.prefixIconConstraints = const BoxConstraints(
-      maxWidth: kSuffixIconConstraintsSize,
-      maxHeight: kSuffixIconConstraintsSize,
-      minHeight: kSuffixIconConstraintsSize,
       minWidth: kSuffixIconConstraintsSize,
+      minHeight: kSuffixIconConstraintsSize,
+      maxWidth: double.infinity,
+      maxHeight: double.infinity,
     ),
     this.keyboardType,
     this.inputFormatters,
@@ -298,6 +323,8 @@ class SingleInputWidget extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.onEditingComplete,
+    this.prefixIconBuilder,
+    this.suffixIconBuilder,
   });
 
   @override
@@ -312,14 +339,24 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       widget.config.focusNode.hasFocus == true &&
       widget.config.controller.text.isNotEmpty;
 
+  /// 前缀图标
+  Widget? _buildPrefixIcon(BuildContext context) {
+    Widget? result = widget.prefixIcon ?? widget.config.prefixIcon;
+    if (widget.prefixIconBuilder != null) {
+      result = widget.prefixIconBuilder?.call(context, result);
+    }
+    return result;
+  }
+
   /// 后缀图标
-  Widget? _buildSuffixIcon() {
+  Widget? _buildSuffixIcon(BuildContext context) {
+    Widget? result;
     if (_showSuffixIcon) {
       final globalTheme = GlobalTheme.of(context);
       if (widget.config.obscureNode.obscureText) {
         //密码输入框
-        return IconButton(
-          color: globalTheme.icoGrayColor,
+        result = IconButton(
+          color: globalTheme.icoNormalColor,
           iconSize: widget.suffixIconSize,
           constraints: widget.suffixIconConstraints,
           //tapTargetSize: MaterialTapTargetSize.shrinkWrap, //收紧大小
@@ -343,7 +380,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         );
       } else {
         //普通文本输入框
-        return IconButton(
+        result = IconButton(
           /*飞溅的颜色*/
           color: globalTheme.icoNormalColor,
           iconSize: widget.suffixIconSize,
@@ -359,7 +396,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         );
       }
     }
-    return null;
+    if (widget.suffixIconBuilder != null) {
+      result = widget.suffixIconBuilder?.call(context, result);
+    }
+    return result;
   }
 
   /// 更新输入框的值
@@ -396,6 +436,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     if (widget.config.obscureNode.obscureText) {
       widget.config.obscureNode.addListener(_checkSuffixIcon);
     }
+    //debugger();
     widget.config.updateFieldValueFn = _updateFieldValue;
     super.initState();
   }
@@ -408,6 +449,21 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       widget.config.obscureNode.removeListener(_checkSuffixIcon);
     }
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant SingleInputWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    oldWidget.config.updateFieldValueFn = null;
+    widget.config.updateFieldValueFn = _updateFieldValue;
+
+    oldWidget.config.focusNode.removeListener(_checkSuffixIcon);
+    widget.config.focusNode.addListener(_checkSuffixIcon);
+
+    oldWidget.config.obscureNode.removeListener(_checkSuffixIcon);
+    if (widget.config.obscureNode.obscureText) {
+      widget.config.obscureNode.addListener(_checkSuffixIcon);
+    }
   }
 
   /// [MaterialTextSelectionControls.buildHandle]选中后的控制按钮构建
@@ -470,10 +526,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           //控制label的行为
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           suffix: widget.suffix,
-          suffixIcon: _buildSuffixIcon(),
+          suffixIcon: _buildSuffixIcon(context),
           suffixIconConstraints: widget.suffixIconConstraints,
           prefix: widget.prefix,
-          prefixIcon: widget.prefixIcon ?? widget.config.prefixIcon,
+          prefixIcon: _buildPrefixIcon(context),
           prefixIconConstraints: widget.prefixIconConstraints,
         );
 

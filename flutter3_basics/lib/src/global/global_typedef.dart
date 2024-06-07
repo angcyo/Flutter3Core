@@ -57,4 +57,12 @@ typedef TransformWidgetBuilder = Widget Function(
 typedef TransformDataWidgetBuilder = Widget Function(
     BuildContext context, Widget widget, dynamic data);
 
+/// [TransformWidgetBuilder] 的支持null版本
+typedef TransformChildWidgetBuilder = Widget? Function(
+    BuildContext context, Widget? child);
+
+/// [TransformDataWidgetBuilder] 的支持null版本
+typedef TransformChildDataWidgetBuilder = Widget? Function(
+    BuildContext context, Widget? child, dynamic data);
+
 //endregion Fn
