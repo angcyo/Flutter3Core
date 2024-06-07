@@ -9,6 +9,12 @@ class RadarScanWidget extends LeafRenderObjectWidget {
   /// 是否需要动画
   final bool isLoading;
 
+  /// 是否需要包裹大小, 否则会使用最大的边
+  final bool wrapSize;
+
+  /// 是否显示圆圈扫描线
+  final bool showScanLine;
+
   /// 雷达开始的半径
   final double radarRadius;
 
@@ -27,15 +33,21 @@ class RadarScanWidget extends LeafRenderObjectWidget {
   /// 雷达半径增长比例
   final double radarRadiusIncrease;
 
+  /// 扫描线的颜色渐变分布比例
+  final List<double> radarColorStops;
+
   const RadarScanWidget({
     super.key,
     this.isLoading = true,
+    this.showScanLine = true,
+    this.wrapSize = false,
     this.radarRadius = 40,
     this.radarWidth = 1,
     this.radarColor = Colors.purpleAccent,
     this.radarScanColor = Colors.purpleAccent,
     this.radarScanStep = -4,
     this.radarRadiusIncrease = 0.4,
+    this.radarColorStops = const [0, 0.3, 1],
   });
 
   @override
@@ -92,14 +104,20 @@ class RadarScanBox extends RenderBox {
     final bounds = offset & size;
 
     //最大半径
-    final maxR = max(bounds.width / 2, bounds.height / 2);
-    //当前的半径
-    double r = widget.radarRadius;
+    final maxR = widget.wrapSize
+        ? min(bounds.width / 2, bounds.height / 2)
+        : max(bounds.width / 2, bounds.height / 2);
+
+    double r = widget.showScanLine ? widget.radarRadius : maxR;
     double lastR = r;
-    while (r <= maxR) {
-      lastR = r;
-      canvas.drawCircle(bounds.center, r, paint);
-      r += r * widget.radarRadiusIncrease;
+
+    if (widget.showScanLine) {
+      //当前的半径
+      while (r <= maxR) {
+        lastR = r;
+        canvas.drawCircle(bounds.center, r, paint);
+        r += r * widget.radarRadiusIncrease;
+      }
     }
 
     //绘制扫描
@@ -114,7 +132,7 @@ class RadarScanBox extends RenderBox {
               widget.radarScanColor.withOpacityRatio(0.5),
               Colors.transparent,
             ],
-            colorStops: [0, 0.3, 1],
+            colorStops: widget.radarColorStops,
             center: bounds.center,
           );
           canvas.drawCircle(bounds.center, lastR, paint);

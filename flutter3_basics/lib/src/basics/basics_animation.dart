@@ -120,6 +120,8 @@ extension AnimationWidgetEx on Widget {
       reverseDuration: reverseDuration,
       transitionBuilder: transitionBuilder,
       layoutBuilder: layoutBuilder,
+      switchInCurve: switchInCurve,
+      switchOutCurve: switchOutCurve,
       child: this,
     );
   }
@@ -127,17 +129,37 @@ extension AnimationWidgetEx on Widget {
 
 /// 创建一个控制动画, 指定时间
 /// 在指定的时间内, 从[0~1]的动画变化回调
+/// [value] 初始值
+/// [lowerBound] 最小值
+/// [upperBound] 最大值
+/// [curve] 动画曲线
 /// [AnimationController.stop] 停止动画
 /// [AnimationController.dispose] 释放资源
 AnimationController animation(
   TickerProvider vsync,
   void Function(double value, bool isCompleted) listener, {
   Duration duration = kDefaultAnimationDuration,
+  double? value,
+  double lowerBound = 0.0,
+  double upperBound = 1.0,
+  Curve? curve,
+  Curve? reverseCurve,
 }) {
   final controller = AnimationController(
+    value: value,
+    lowerBound: lowerBound,
+    upperBound: upperBound,
     duration: duration,
     vsync: vsync,
   );
+
+  //动画曲线
+  final CurvedAnimation? animation = curve == null
+      ? null
+      : CurvedAnimation(
+          parent: controller, curve: curve, reverseCurve: reverseCurve);
+
+  //监听动画值变化
   controller
     ..addListener(() {
       assert(() {
@@ -145,7 +167,7 @@ AnimationController animation(
         //l.d('动画值改变: ${controller.value}');
         return true;
       }());
-      listener(controller.value, false);
+      listener(animation?.value ?? controller.value, false);
     })
     ..addStatusListener((status) {
       assert(() {
@@ -153,9 +175,11 @@ AnimationController animation(
         l.d('动画状态改变: $status');
         return true;
       }());
-      listener(controller.value, status == AnimationStatus.completed);
+      listener(animation?.value ?? controller.value,
+          status == AnimationStatus.completed);
     })
     ..forward();
+  //释放资源
   //controller.dispose();
   return controller;
 }
