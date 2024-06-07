@@ -313,8 +313,12 @@ class RScrollController extends ScrollController {
   Future<void> _onRefresh() async {
     //debugger();
     if (refreshStateValue.value != WidgetBuildState.loading) {
-      _onRefreshStart();
       refreshStateValue.value = WidgetBuildState.loading;
+      //这里要异步调用, 否则可能状态会被同步更改,
+      //而导致没有等到await, 就结束了.
+      delayCallback(() {
+        _onRefreshStart();
+      });
       await _refreshCompleter.future;
     }
   }

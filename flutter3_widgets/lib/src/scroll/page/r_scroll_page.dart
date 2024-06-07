@@ -119,6 +119,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [loadData] 当前加载到的数据, 非所有数据
   /// [stateData] 当前状态的附加信息, 用来识别是否有错误
   /// [handleData] 是否自动处理数据到[pageWidgetList]
+  ///
+  /// 重写[wrapScrollChildren]方法,实现额外的布局
   @callPoint
   @updateMark
   void loadDataEnd(
@@ -132,6 +134,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
           pageWidgetList.clear();
         }
         pageWidgetList.addAll(loadData);
+      } else {
+        assert(() {
+          l.w('无法处理的数据类型:${loadData.runtimeType}');
+          return true;
+        }());
       }
     }
     scrollController.finishRefresh(_updateState, loadData, stateData);
@@ -161,9 +168,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   //region 页面控制
 
   /// 是否启用下拉刷新
+  @configProperty
   bool get enableRefresh => true;
 
   /// 是否启用加载更多
+  @configProperty
   bool get enableLoadMore => true;
 
   /// 重置分页请求信息

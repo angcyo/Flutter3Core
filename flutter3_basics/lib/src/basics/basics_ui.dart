@@ -344,6 +344,13 @@ extension WidgetEx on Widget {
 
   /// 点击事件
   /// [enable] 是否启用点击事件
+  /// [behavior] 点击事件的命中测试行为
+  /// [HitTestBehavior.translucent] 后代和自己都可以命中
+  /// [HitTestBehavior.opaque] 只有自己可以命中
+  /// [HitTestBehavior.deferToChild] 只有后代可以命中
+  ///
+  /// [RenderPointerListener]->[RenderProxyBoxWithHitTestBehavior]
+  ///
   /// [GestureDetector] 多个手势识别器, 才会有手势竞争
   /// [Listener] 监听手势, 不会有手势竞争
   /// [GestureRecognizer] 手势识别器base
@@ -357,11 +364,16 @@ extension WidgetEx on Widget {
   /// [EagerGestureRecognizer] 急切手势识别器
   /// [RotateGestureRecognizer] 旋转手势识别
   /// [RenderProxyBoxWithHitTestBehavior]
-  Widget click(GestureTapCallback? onTap, [bool enable = true]) =>
+  Widget click(
+    GestureTapCallback? onTap, [
+    bool enable = true,
+    HitTestBehavior? behavior = HitTestBehavior.translucent,
+  ]) =>
       onTap == null || !enable
           ? this
           : GestureDetector(
               onTap: onTap,
+              behavior: behavior,
               child: this,
             );
 

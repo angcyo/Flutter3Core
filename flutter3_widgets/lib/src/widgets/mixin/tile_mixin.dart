@@ -86,6 +86,24 @@ const kLabelPadding = EdgeInsets.only(
   bottom: kH,
 );
 
+/// des默认的填充
+/// [label]下面显示的文本
+const kDesPadding = EdgeInsets.only(
+  left: kX,
+  right: kX,
+  top: 0,
+  bottom: 0,
+);
+
+/// tile默认的填充
+/// item整体
+const kTilePadding = EdgeInsets.only(
+  left: 0,
+  right: kX,
+  top: kL,
+  bottom: kL,
+);
+
 /// content默认的填充
 /// [kLabelPadding] 右边的内容
 const kContentPadding = EdgeInsets.only(
@@ -141,6 +159,10 @@ mixin TileMixin {
   /// [GlobalTheme.textDesStyle]
   /// [GlobalTheme.textBodyStyle]
   /// [GlobalTheme.textLabelStyle]
+  ///
+  /// [buildTextWidget]
+  /// [buildLabelWidget]
+  /// [buildDesWidget]
   Widget? buildTextWidget(
     BuildContext context, {
     Widget? textWidget,
@@ -164,6 +186,8 @@ mixin TileMixin {
   }
 
   /// [buildTextWidget]
+  /// [buildDesWidget]
+  /// [buildLabelWidget]
   Widget? buildLabelWidget(
     BuildContext context, {
     Widget? labelWidget,
@@ -183,6 +207,30 @@ mixin TileMixin {
             )
             .constrainedBox(constraints)
             .paddingInsets(labelPadding));
+    return widget?.paddingInsets(padding);
+  }
+
+  /// [buildTextWidget]
+  /// [buildDesWidget]
+  /// [buildLabelWidget]
+  Widget? buildDesWidget(
+    BuildContext context, {
+    Widget? desWidget,
+    String? des,
+    TextStyle? desStyle,
+    bool themeStyle = true,
+    EdgeInsets? desPadding = kDesPadding,
+    EdgeInsets? padding,
+    BoxConstraints? constraints,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    final widget = desWidget ??
+        (des
+            ?.text(
+              style: desStyle ?? (themeStyle ? globalTheme.textDesStyle : null),
+            )
+            .constrainedBox(constraints)
+            .paddingInsets(desPadding));
     return widget?.paddingInsets(padding);
   }
 
