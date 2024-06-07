@@ -36,6 +36,9 @@ class RadarScanWidget extends LeafRenderObjectWidget {
   /// 扫描线的颜色渐变分布比例
   final List<double> radarColorStops;
 
+  /// 绘制时的偏移
+  final Offset paintOffset;
+
   const RadarScanWidget({
     super.key,
     this.isLoading = true,
@@ -48,6 +51,7 @@ class RadarScanWidget extends LeafRenderObjectWidget {
     this.radarScanStep = -4,
     this.radarRadiusIncrease = 0.4,
     this.radarColorStops = const [0, 0.3, 1],
+    this.paintOffset = Offset.zero,
   });
 
   @override
@@ -102,6 +106,14 @@ class RadarScanBox extends RenderBox {
       ..strokeWidth = widget.radarWidth;
 
     final bounds = offset & size;
+    //debugger();
+    final offsetX =
+        bounds.width > bounds.height ? (bounds.width - bounds.height) / 2 : 0.0;
+    final offsetY =
+        bounds.height > bounds.width ? (bounds.height - bounds.width) / 2 : 0.0;
+    final alignOffset = Offset(offsetX, offsetY);
+    final center = bounds.center + alignOffset + widget.paintOffset;
+    //debugger();
 
     //最大半径
     final maxR = widget.wrapSize
@@ -115,7 +127,7 @@ class RadarScanBox extends RenderBox {
       //当前的半径
       while (r <= maxR) {
         lastR = r;
-        canvas.drawCircle(bounds.center, r, paint);
+        canvas.drawCircle(center, r, paint);
         r += r * widget.radarRadiusIncrease;
       }
     }
@@ -133,13 +145,13 @@ class RadarScanBox extends RenderBox {
               Colors.transparent,
             ],
             colorStops: widget.radarColorStops,
-            center: bounds.center,
+            center: center,
           );
-          canvas.drawCircle(bounds.center, lastR, paint);
+          canvas.drawCircle(center, lastR, paint);
         },
-        anchor: bounds.center,
+        anchor: center,
       );
-    }, anchor: bounds.center);
+    }, anchor: center);
 
     //动画
     if (widget.isLoading) {
