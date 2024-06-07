@@ -5,6 +5,8 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/05/13
 ///
 /// 开关tile
+/// [CheckboxTile]
+/// [SwitchTile]
 class SwitchTile extends StatelessWidget with TileMixin {
   /// 标签
   final String? label;

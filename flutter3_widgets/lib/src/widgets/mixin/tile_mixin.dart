@@ -233,6 +233,12 @@ mixin TileMixin {
 
   //region ---常用小部件---
 
+  /*Widget buildCheckBoxWidget(BuildContext context,){
+    final globalTheme = GlobalTheme.of(context);
+
+    return Checkbox();
+  }*/
+
   /// 构建一个[Switch]开关小部件
   /// [activeColor] 激活时圈圈的颜色
   /// [activeTrackColor] 激活时轨道的颜色

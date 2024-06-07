@@ -1472,6 +1472,9 @@ extension DoubleEx on double {
 /// [IterableEx]
 /// [Uint8List]
 extension ListIntEx on List<int> {
+  /// [toStr]
+  String get utf8Str => toStr();
+
   /// [Uint8List]转换成字符串
   /// [String.fromCharCodes]
   String toStr([Encoding codec = utf8, bool allowMalformed = true]) {

@@ -65,6 +65,7 @@ part 'src/tiles/single_grid_tile.dart';
 part 'src/tiles/single_label_info_tile.dart';
 part 'src/tiles/slider_tile.dart';
 part 'src/tiles/switch_tile.dart';
+part 'src/tiles/checkbox_tile.dart';
 part 'src/tiles/text_tile.dart';
 part 'src/tiles/tab_layout_tile.dart';
 part 'src/widgets/after_layout.dart';

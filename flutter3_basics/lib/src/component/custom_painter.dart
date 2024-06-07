@@ -22,6 +22,25 @@ class CustomPaintWrap extends CustomPainter {
       oldDelegate.paintIt != paintIt;
 }
 
+/// [paintWidget]
+/// [TrianglePainter]
+/// [OvalPainter]
+CustomPaint customPainter(
+  CustomPainter? painter, {
+  PaintFn? foregroundPaint,
+  Size size = Size.zero,
+  bool isComplex = false,
+  bool willChange = false,
+}) =>
+    CustomPaint(
+      painter: painter,
+      foregroundPainter:
+          foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
+      size: size,
+      isComplex: isComplex,
+      willChange: willChange,
+    );
+
 /// 快速创建[CustomPaint], 并指定绘制回调
 /// 使用[CustomPaint]小组件, 使用[CustomPainter]绘制回调
 CustomPaint paintWidget(
@@ -116,5 +135,36 @@ class TrianglePainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
+  }
+}
+
+///  绘制一个椭圆/圆形
+class OvalPainter extends CustomPainter {
+  /// 颜色
+  final Color color;
+
+  /// 线宽度
+  final double strokeWidth;
+
+  OvalPainter({
+    super.repaint,
+    this.color = Colors.green,
+    this.strokeWidth = 6,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    canvas.drawOval(rect, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
