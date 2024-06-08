@@ -1669,6 +1669,19 @@ extension ContextEx on BuildContext {
     return theme.brightness == Brightness.dark;
   }
 
+  /// 系统当前的语言环境
+  /// [platformLocale]
+  /// [platformLocales]
+  bool get isSystemZh {
+    return platformLocale.languageCode == 'zh';
+  }
+
+  /// 当前主题是否是中文语言
+  bool get isThemeZh {
+    Locale locale = this.locale;
+    return locale.languageCode == 'zh';
+  }
+
   /// 尝试更新状态, 如果可以
   /// [StateEx.updateState]
   void tryUpdateState() {

@@ -195,6 +195,8 @@ class RItemTile extends StatefulWidget {
 
   /// 决定是否使用[SliverAppBar]实现悬浮效果
   /// [SliverAppBar] 有2个间隙属性[SliverAppBar.titleSpacing]
+  /// https://api.flutter.dev/flutter/material/SliverAppBar-class.html
+  ///
   /// [NavigationToolbar]
   /// [NavigationToolbar.middleSpacing]
   /// [kMiddleSpacing]
