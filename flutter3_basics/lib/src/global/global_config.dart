@@ -64,11 +64,11 @@ NavigatorState? get navigatorState => GlobalConfig.def.findNavigatorState();
 @dsl
 Future<bool> openWebUrl(String? url, [BuildContext? context]) async {
   if (context == null) {
-    var fn = GlobalConfig.def.openUrlFn;
+    final fn = GlobalConfig.def.openUrlFn;
     if (fn == null) {
       return false;
     }
-    return await fn.call(GlobalConfig.def.globalTopContext, url);
+    return await fn.call(GlobalConfig.def.globalContext, url);
   } else {
     return context.openWebUrl(url);
   }

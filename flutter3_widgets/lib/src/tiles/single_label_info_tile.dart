@@ -10,14 +10,17 @@ class SingleLabelInfoTile extends StatelessWidget {
   /// 标签
   final String? label;
   final Widget? labelWidget;
+  final TextStyle? labelTextStyle;
 
   /// 标签下面的描述信息
   final String? des;
   final Widget? desWidget;
+  final TextStyle? desTextStyle;
 
   /// 信息
   final String? info;
   final Widget? infoWidget;
+  final TextStyle? infoTextStyle;
 
   /// 整体的内边距
   final EdgeInsetsGeometry? padding;
@@ -35,11 +38,14 @@ class SingleLabelInfoTile extends StatelessWidget {
     super.key,
     this.label,
     this.labelWidget,
+    this.labelTextStyle,
     this.des,
     this.desWidget,
+    this.desTextStyle,
     this.info,
-    this.padding,
     this.infoWidget,
+    this.infoTextStyle,
+    this.padding,
     this.infoIcon,
     this.onTap,
     this.minHeight = kMinInteractiveHeight,
@@ -49,10 +55,13 @@ class SingleLabelInfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
-    final left = labelWidget ?? label?.text(style: globalTheme.textLabelStyle);
-    final leftBottom = desWidget ?? des?.text(style: globalTheme.textDesStyle);
+    final left = labelWidget ??
+        label?.text(style: labelTextStyle ?? globalTheme.textLabelStyle);
+    final leftBottom =
+        desWidget ?? des?.text(style: desTextStyle ?? globalTheme.textDesStyle);
 
-    var right = infoWidget ?? info?.text(style: globalTheme.textInfoStyle);
+    var right = infoWidget ??
+        info?.text(style: infoTextStyle ?? globalTheme.textInfoStyle);
 
     final rightIco = infoIcon ??
         (onTap == null

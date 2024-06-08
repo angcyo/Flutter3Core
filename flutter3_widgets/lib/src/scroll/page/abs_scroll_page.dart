@@ -116,6 +116,7 @@ mixin AbsScrollPage {
     /*final globalTheme = GlobalTheme.of(context);
     return linearGradientWidget(
         listOf(globalTheme.themeWhiteColor));*/
+    /*return listOf(globalTheme.primaryColor, globalTheme.primaryColorDark),*/
     return null;
   }
 

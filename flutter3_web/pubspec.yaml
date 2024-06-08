@@ -13,6 +13,9 @@ dependencies:
     sdk: flutter
   flutter3_basics:
     path: ../flutter3_basics
+  flutter3_widgets:
+    path: ../flutter3_widgets
+
   # https://pub.dev/packages/webview_flutter
   webview_flutter: ^4.8.0
 

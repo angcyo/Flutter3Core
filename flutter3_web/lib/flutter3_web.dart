@@ -2,6 +2,7 @@ library flutter3_web;
 
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 export 'package:webview_flutter/webview_flutter.dart';

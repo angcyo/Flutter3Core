@@ -1682,6 +1682,12 @@ extension ContextEx on BuildContext {
     return locale.languageCode == 'zh';
   }
 
+  /// 如果是中文环境, 则返回中文字符串, 否则返回默认字符串
+  /// 同时如果中文字符串为null, 则也返回默认字符串
+  String? zhStrOrDef(String? zhStr, String? defStr) {
+    return isThemeZh ? (zhStr ?? defStr) : defStr;
+  }
+
   /// 尝试更新状态, 如果可以
   /// [StateEx.updateState]
   void tryUpdateState() {

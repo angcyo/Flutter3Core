@@ -160,7 +160,7 @@ Future wrapLoading(
     if (onEnd == null) {
       hideLoading();
     } else {
-      onEnd.call();
+      onEnd.call(null);
     }
     if (error != null) {
       throw error;

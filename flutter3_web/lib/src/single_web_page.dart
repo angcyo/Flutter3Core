@@ -1,13 +1,17 @@
-part of flutter3_web;
+part of '../flutter3_web.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/08
 ///
-
 /// 简单的浏览web网页
 class SingleWebPage extends StatefulWidget {
-  const SingleWebPage({super.key, this.url, this.html, this.baseUrl});
+  const SingleWebPage({
+    super.key,
+    this.url,
+    this.html,
+    this.baseUrl,
+  });
 
   /// 需要加载的网页地址
   final String? url;
@@ -20,7 +24,7 @@ class SingleWebPage extends StatefulWidget {
   State<SingleWebPage> createState() => _SingleWebPageState();
 }
 
-class _SingleWebPageState extends State<SingleWebPage> {
+class _SingleWebPageState extends State<SingleWebPage> with AbsScrollPage {
   /// 标题
   String? _title = "loading...";
 
@@ -91,7 +95,13 @@ class _SingleWebPageState extends State<SingleWebPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  String? getTitle(BuildContext context) => _title ?? "";
+
+  @override
+  Widget build(BuildContext context) => buildScaffold(context);
+
+  @override
+  Widget buildBody(BuildContext context, WidgetList? children) {
     List<Widget> children = [];
     if (_progress > 0 && _progress < 1) {
       children.add(LinearProgressIndicator(
@@ -99,11 +109,8 @@ class _SingleWebPageState extends State<SingleWebPage> {
       ));
     }
     children.add(WebViewWidget(controller: webViewController));
-    return Scaffold(
-      appBar: AppBar(title: Text(_title ?? "")),
-      body: Stack(
-        children: children,
-      ),
+    return Stack(
+      children: children,
     );
   }
 }
