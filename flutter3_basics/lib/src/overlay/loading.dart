@@ -13,7 +13,7 @@ OverlayEntry? showStrokeLoading({
   final size = kDefaultLoadingSize;
   return showLoading(
     context: context,
-    builder: (context) {
+    builder: (context, loadingInfo) {
       return const StrokeLoadingWidget(color: Colors.white)
           .container(
             color: Colors.black26,

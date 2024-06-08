@@ -7,6 +7,8 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// 用来触发重构的Widget, 配合[RItemTile], 实现[findTile].[updateTile]功能
+/// [ValueNotifier]
+/// [UpdateValueNotifier]
 class RebuildWidget extends StatefulWidget {
   /// 用来触发重构的信号
   final ValueNotifier updateSignal;

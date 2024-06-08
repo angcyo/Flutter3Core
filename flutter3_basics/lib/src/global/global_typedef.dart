@@ -49,6 +49,9 @@ typedef NumCallback = void Function(num number);
 /// [bool]类型的回调
 typedef BoolCallback = void Function(bool value);
 
+/// [Duration]类型的回调
+typedef DurationCallback = void Function(Duration value);
+
 /// 转变一个[widget]
 typedef TransformWidgetBuilder = Widget Function(
     BuildContext context, Widget widget);

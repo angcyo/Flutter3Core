@@ -124,6 +124,28 @@ Timer postDelayCallback(VoidCallback callback,
         [Duration duration = Duration.zero]) =>
     Timer(duration, callback);
 
+/// 使用[Timer]实现一个倒计时
+/// [period] tick的周期
+/// [Timer.periodic]
+/// [Timer.cancel]
+Timer countdownCallback(
+  Duration duration,
+  DurationCallback callback, {
+  Duration? period,
+  Duration? step,
+}) {
+  period ??= const Duration(seconds: 1);
+  step ??= const Duration(seconds: 1);
+  return Timer.periodic(period, (timer) {
+    callback(duration);
+    if (duration.inSeconds <= 0) {
+      timer.cancel();
+    } else {
+      duration -= step!;
+    }
+  });
+}
+
 /// 使用[Future]延迟执行[callback]
 /// 内部也是使用[Timer]实现的
 /// [Future.wait] 会等待所有的[Future]执行完毕

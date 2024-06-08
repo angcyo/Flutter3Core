@@ -19,7 +19,8 @@ WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 @api
 OverlayEntry? showLoading({
   BuildContext? context,
-  WidgetBuilder? builder,
+  LoadingValueNotifier? loadingInfoNotifier,
+  DataWidgetBuilder<LoadingInfo>? builder,
   bool barrierDismissible = false,
   Color? barrierColor,
   Duration? duration,
@@ -52,12 +53,23 @@ OverlayEntry? showLoading({
   currentLoadingEntry = OverlayEntry(builder: (context) {
     return _LoadingOverlay(
         route: route,
-        builder: builder ??= (context) {
-          return GlobalConfig.of(context).loadingOverlayWidgetBuilder(
+        loadingInfoNotifier: loadingInfoNotifier,
+        builder: builder ??= (context, loadingInfo) {
+          Widget result = GlobalConfig.of(context).loadingOverlayWidgetBuilder(
             context,
             OverlayEntry,
             progressValue,
           );
+          final message = loadingInfo?.message;
+          if (message != null) {
+            final globalTheme = GlobalTheme.of(context);
+            result = result
+                .stackOf(message.text(
+                    style: globalTheme.textPlaceStyle
+                        .copyWith(color: globalTheme.whiteColor)))
+                .material();
+          }
+          return result;
         });
   });
   _currentLoadingEntryRef = WeakReference(currentLoadingEntry);
@@ -106,9 +118,11 @@ void hideLoading() {
 }
 
 /// 包裹[showLoading].[hideLoading].[Future]
-/// [onStart] 自定义开始时的回调, 默认显示加载提示
+/// [future] 需要包裹的[Future], 等带这个[future]的返回结果
+/// [onStart] 自定义开始时的回调, 拦截默认显示加载提示
 /// [delay] 延迟多久后显示加载提示
 /// [timeout] 超时多久后触发[onEnd]回调, 并阻止[Future]的返回值,
+/// [showTime] 是否显示倒计时
 /// [wrapLoading]
 /// [wrapLoadingTimeout]
 Future wrapLoading(
@@ -117,30 +131,52 @@ Future wrapLoading(
   Duration? timeout,
   VoidCallback? onStart,
   ValueCallback? onEnd,
+  bool showTime = false,
 }) {
+  Timer? timer;
   bool isTimeout = false;
   bool isEnd = false;
+  LoadingValueNotifier? loadingInfoNotifier;
   if (onStart == null) {
+    if (timeout != null) {
+      loadingInfoNotifier =
+          LoadingValueNotifier(LoadingInfo(message: "${timeout.inSeconds}"));
+    }
     if (delay != null) {
       postDelayCallback(() {
         //debugger();
         //l.w("delay end");
         if (isEnd || isTimeout) {
         } else {
-          showLoading(postShow: false);
+          showLoading(
+            postShow: false,
+            loadingInfoNotifier: loadingInfoNotifier,
+          );
         }
       }, delay);
     } else {
-      showLoading();
+      showLoading(
+        loadingInfoNotifier: loadingInfoNotifier,
+      );
     }
   } else {
     onStart.call();
   }
+  //--
   if (timeout != null) {
+    if (showTime) {
+      //需要显示倒计时
+      timer = countdownCallback(timeout, (duration) {
+        loadingInfoNotifier?.value =
+            LoadingInfo(message: "${duration.inSeconds}");
+      });
+    }
+
     //需要检查超时
     postDelayCallback(() {
       if (!isEnd) {
         isTimeout = true;
+        timer?.cancel();
         hideLoading();
         onEnd?.call(RTimeoutException(message: 'wrapLoading timeout.'));
       }
@@ -157,6 +193,7 @@ Future wrapLoading(
       return;
     }
     isEnd = true;
+    timer?.cancel();
     if (onEnd == null) {
       hideLoading();
     } else {
@@ -170,12 +207,37 @@ Future wrapLoading(
 }
 
 /// 自动超时, 自动延时
+/// [wrapLoading]
 Future wrapLoadingTimeout(
   Future future, {
   Duration? delay = const Duration(seconds: 1),
   Duration? timeout = const Duration(seconds: 30),
+  bool showTime = false,
 }) {
-  return wrapLoading(future, delay: delay, timeout: timeout);
+  return wrapLoading(
+    future,
+    delay: delay,
+    timeout: timeout,
+    showTime: showTime,
+  );
+}
+
+/// 加载框支持的数据
+/// [_LoadingOverlay]
+class LoadingInfo {
+  /// 指定进度的值
+  /// [0~1]
+  double? progress;
+
+  /// 指定需要显示的消息
+  String? message;
+
+  LoadingInfo({this.progress, this.message});
+}
+
+/// 通知值改变的桥梁
+class LoadingValueNotifier extends ValueNotifier<LoadingInfo?> {
+  LoadingValueNotifier(super.value);
 }
 
 class _LoadingOverlay extends StatefulWidget {
@@ -183,17 +245,45 @@ class _LoadingOverlay extends StatefulWidget {
     super.key,
     required this.builder,
     this.route,
+    this.loadingInfoNotifier,
   });
 
   final ModalRoute<dynamic>? route;
-
-  final WidgetBuilder builder;
+  final DataWidgetBuilder<LoadingInfo> builder;
+  final LoadingValueNotifier? loadingInfoNotifier;
 
   @override
   State<_LoadingOverlay> createState() => _LoadingOverlayState();
 }
 
 class _LoadingOverlayState extends State<_LoadingOverlay> {
+  @override
+  void initState() {
+    widget.loadingInfoNotifier?.addListener(_rebuild);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    //debugger();
+    widget.loadingInfoNotifier?.removeListener(_rebuild);
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant _LoadingOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //debugger();
+    oldWidget.loadingInfoNotifier?.removeListener(_rebuild);
+    widget.loadingInfoNotifier?.removeListener(_rebuild);
+    widget.loadingInfoNotifier?.addListener(_rebuild);
+  }
+
+  void _rebuild() {
+    //debugger();
+    updateState();
+  }
+
   /// 拦截返回键
   Future<bool> _onWillPop() async {
     return false;
@@ -206,7 +296,7 @@ class _LoadingOverlayState extends State<_LoadingOverlay> {
       onWillPop: _onWillPop,
       child: AbsorbPointer(
         absorbing: true,
-        child: widget.builder(context),
+        child: widget.builder(context, widget.loadingInfoNotifier?.value),
       ), // 拦截手势
     );
   }
