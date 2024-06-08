@@ -106,13 +106,7 @@ class RadarScanBox extends RenderBox {
       ..strokeWidth = widget.radarWidth;
 
     final bounds = offset & size;
-    //debugger();
-    final offsetX =
-        bounds.width > bounds.height ? (bounds.width - bounds.height) / 2 : 0.0;
-    final offsetY =
-        bounds.height > bounds.width ? (bounds.height - bounds.width) / 2 : 0.0;
-    final alignOffset = Offset(offsetX, offsetY);
-    final center = bounds.center + alignOffset + widget.paintOffset;
+    final center = bounds.center + widget.paintOffset;
     //debugger();
 
     //最大半径
