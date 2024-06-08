@@ -136,12 +136,12 @@ Timer countdownCallback(
 }) {
   period ??= const Duration(seconds: 1);
   step ??= const Duration(seconds: 1);
+  callback(duration); //立即触发一次
   return Timer.periodic(period, (timer) {
+    duration -= step!;
     callback(duration);
     if (duration.inSeconds <= 0) {
       timer.cancel();
-    } else {
-      duration -= step!;
     }
   });
 }
