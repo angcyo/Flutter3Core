@@ -1877,6 +1877,96 @@ extension ListEx<T> on List<T> {
   }
 }
 
+/// 通过指定行列索引, 计算数组的索引
+int arrayIndex(int row, int column, int width) {
+  return row * width + column;
+}
+
+/// 用一维数组结构 存储二维数组数据
+extension ListIndexEx<T> on List<T> {
+  /// 获取二维数组的指定某一行的所有数据
+  /// [row] 二维数组的行, 从0开始
+  /// [width] 二维数组的宽度
+  List<T> getArrayLineAllData(int row, int width) {
+    final result = <T>[];
+    for (var column = 0; column < width; column++) {
+      final index = arrayIndex(row, column, width);
+      result.add(this[index]);
+    }
+    return result;
+  }
+
+  /// 获取二维数组的指定某一列的所有数据
+  /// [column] 二维数组的列, 从0开始
+  /// [height] 二维数组的高度
+  List<T> getArrayColumnAllData(int column, int width, int height) {
+    final result = <T>[];
+    for (var row = 0; row < height; row++) {
+      final index = arrayIndex(row, column, width);
+      result.add(this[index]);
+    }
+    return result;
+  }
+
+  /// 获取二维数组中指定开始行/列, 行数量/列数量的一部分数据
+  /// [startRow].[startColumn] 需要获取的开始行列,从0开始
+  /// [rowCount].[columnCount] 需要获取的行列数量
+  /// [width] 二维数组的宽度
+  List<T> getArrayPartData(
+    int startRow,
+    int startColumn,
+    int rowCount,
+    int columnCount,
+    int width,
+  ) {
+    final result = <T>[];
+    for (var row = startRow; row < startRow + rowCount; row++) {
+      for (var column = startColumn;
+          column < startColumn + columnCount;
+          column++) {
+        final index = arrayIndex(row, column, width);
+        result.add(this[index]);
+      }
+    }
+    return result;
+  }
+}
+
+/// 二维数组扩展
+extension ListListEx<T> on List<List<T>> {
+  /// 获取某一行的所有数据
+  List<T> getArrayLineAllData(int row) {
+    return this[row];
+  }
+
+  /// 获取某一列的所有数据
+  List<T> getArrayColumnAllData(int column) {
+    final result = <T>[];
+    for (var row = 0; row < length; row++) {
+      result.add(this[row][column]);
+    }
+    return result;
+  }
+
+  /// 获取二维数组中指定开始行/列, 行数量/列数量的一部分数据
+  List<T> getArrayPartData(
+    int startRow,
+    int startColumn,
+    int rowCount,
+    int columnCount,
+  ) {
+    final result = <T>[];
+    for (var row = startRow; row < startRow + rowCount; row++) {
+      for (var column = startColumn;
+          column < startColumn + columnCount;
+          column++) {
+        result.add(this[row][column]);
+      }
+    }
+    return result;
+  }
+}
+
 //endregion List 扩展
 
 extension AxisDirectionEx on AxisDirection {
