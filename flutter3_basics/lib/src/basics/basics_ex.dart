@@ -1639,6 +1639,22 @@ extension IterableEx<E> on Iterable<E> {
     var index = 0;
     return map((e) => toElement(e, index++));
   }
+
+  /// 平铺所有元素
+  /// 压扁所有元素
+  Iterable<E> flatten() {
+    Iterable<E> flattenInner(Iterable<E> list) sync* {
+      for (final value in list) {
+        if (value is Iterable<E>) {
+          yield* flattenInner(value);
+        } else {
+          yield value;
+        }
+      }
+    }
+
+    return flattenInner(this);
+  }
 }
 
 /// [ListEx]

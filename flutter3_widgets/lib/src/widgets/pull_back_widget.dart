@@ -137,9 +137,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
     //debugger();
     //l.d('completed:${_pullBackController.value}');
     if (widget.onPullBack == null) {
-      buildContext.pop();
-    } else {
-      widget.onPullBack?.call(buildContext);
+      buildContext?.pop();
+    } else if (buildContext != null) {
+      widget.onPullBack?.call(buildContext!);
     }
   }
 
