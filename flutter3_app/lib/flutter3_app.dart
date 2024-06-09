@@ -82,6 +82,7 @@ void runGlobalApp(
     "发生一个错误:↓".writeToErrorLog();
     details.writeToErrorLog();
     oldOnError?.call(details);
+    //FlutterError.dumpErrorToConsole(details);
   };
 
   runZonedGuarded(() async {
