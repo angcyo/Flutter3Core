@@ -10,11 +10,13 @@ class CoreDialogTitle extends StatelessWidget {
   final Widget? leading;
   final bool enableLeading;
   final bool showLeading;
+  final bool invisibleLeading;
 
   ///
   final Widget? trailing;
   final bool enableTrailing;
   final bool showTrailing;
+  final bool invisibleTrailing;
 
   ///
   final String? title;
@@ -38,8 +40,10 @@ class CoreDialogTitle extends StatelessWidget {
     this.trailing,
     this.enableLeading = true,
     this.showLeading = true,
+    this.invisibleLeading = false,
     this.enableTrailing = true,
     this.showTrailing = true,
+    this.invisibleTrailing = false,
     this.titleTextStyle,
     this.subTitleTextStyle,
     this.onPop,
@@ -81,8 +85,8 @@ class CoreDialogTitle extends StatelessWidget {
             );
 
     return DialogTitleTile(
-      leading: leading,
-      trailing: trailing,
+      leading: leading?.invisible(invisible: invisibleLeading),
+      trailing: trailing?.invisible(invisible: invisibleTrailing),
       title: title,
       titleWidget: titleWidget,
       titleTextStyle: titleTextStyle,

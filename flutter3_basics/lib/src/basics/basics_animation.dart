@@ -96,7 +96,7 @@ extension AnimationWidgetEx on Widget {
   /// 不透明动画, 不需要动画控制
   /// [AnimatedContainer]
   /// [AnimatedOpacity]
-  Widget opacity({required double opacity}) => AnimatedOpacity(
+  Widget animatedOpacity({required double opacity}) => AnimatedOpacity(
         opacity: opacity,
         duration: kDefaultAnimationDuration,
         child: this,

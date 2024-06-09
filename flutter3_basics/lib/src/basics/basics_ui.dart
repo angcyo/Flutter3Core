@@ -1574,12 +1574,12 @@ extension WidgetEx on Widget {
   /// [AnimatedContainer]
   /// [AnimatedOpacity]
   Widget visible({required bool visible, bool anim = false}) {
-    var result = Visibility(
+    Widget result = Visibility(
       visible: visible,
       child: this,
     );
     if (anim) {
-      return AnimatedOpacity(
+      result = AnimatedOpacity(
         opacity: visible ? 1 : 0,
         duration: kDefaultAnimationDuration,
         child: result,
@@ -1588,7 +1588,29 @@ extension WidgetEx on Widget {
     return result;
   }
 
-  //--theme---
+  /// 使一个[Widget]不可见, 但是仍然占据空间, 并且忽略手势
+  /// [invisible] 是否可见, 默认不可见
+  /// [replacement] 不占空间时需要替换的小部件
+  Widget invisible({
+    bool invisible = false,
+    bool maintainSize = true,
+    bool maintainState = true,
+    bool maintainAnimation = true,
+    bool maintainInteractivity = false,
+    Widget replacement = const SizedBox.shrink(),
+  }) {
+    return Visibility(
+      visible: !invisible,
+      maintainSize: maintainSize,
+      maintainState: maintainState,
+      maintainAnimation: maintainAnimation,
+      maintainInteractivity: maintainInteractivity,
+      replacement: replacement,
+      child: this,
+    );
+  }
+
+//--theme---
 
   /// [ButtonStyle]
   /// [FilledButton]
@@ -1645,8 +1667,16 @@ extension StateEx on State {
   /// [Element.markNeedsBuild]
   /// [ContextEx.tryUpdateState]
   void updateState() {
-    if (isMounted) {
-      setState(() {});
+    try {
+      if (isMounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      assert(() {
+        l.w('当前页面已被销毁, 无法更新');
+        printError(e);
+        return true;
+      }());
     }
   }
 }
