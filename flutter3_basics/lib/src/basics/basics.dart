@@ -387,8 +387,12 @@ const kIsolateComputeBytesSize = 1024 * 1024 * 1;
 Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
     compute(callback, message, debugLabel: "io-${nowTimeString()}");
 
-/// 在[Isolate]中运行, [callback]可以直接访问上下文的数据, 不需要send
+/// 在[Isolate]中运行, [callback]可以直接访问上下文的数据(能够send的数据), 不需要主动send
 /// [SendPort.send]
+/// https://www.youtube.com/watch?v=PPwJ75vqP_s&list=PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG&index=2
+/// ```
+/// final data = await run(() => jsonDecode(jsonString));
+/// ```
 /// ```
 /// Invalid argument(s): Illegal argument in isolate message:
 /// object is unsendable - Library:'dart:async'

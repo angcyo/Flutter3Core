@@ -1347,6 +1347,7 @@ extension WidgetEx on Widget {
 
   /// [Material]
   Widget material({
+    Key? key,
     ShapeBorder? shape,
     Color? color = Colors.transparent,
     Color? shadowColor,
@@ -1358,6 +1359,7 @@ extension WidgetEx on Widget {
     TextStyle? textStyle,
   }) =>
       Material(
+        key: key,
         borderOnForeground: true,
         color: color,
         shadowColor: shadowColor,
