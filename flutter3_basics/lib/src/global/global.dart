@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 /// 全局配置, 全局入口
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

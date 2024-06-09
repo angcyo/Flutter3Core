@@ -85,6 +85,8 @@ void runGlobalApp(
     //FlutterError.dumpErrorToConsole(details);
   };
 
+  //ErrorWidget.builder = ;
+
   runZonedGuarded(() async {
     ensureInitialized();
 
