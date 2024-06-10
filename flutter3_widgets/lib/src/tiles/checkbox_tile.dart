@@ -6,7 +6,7 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 复选框tile
 /// [CheckboxTile]
-/// [SwitchTile]
+/// [LabelSwitchTile]
 ///
 /// [CheckboxTheme].[CheckboxThemeData]
 class CheckboxTile extends StatefulWidget {

@@ -1,6 +1,7 @@
 library flutter3_core;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -58,6 +59,7 @@ part 'src/isar/hive/hive_ex.dart';
 part 'src/isar/isar_ex.dart';
 part 'src/tiles/core_dialog_title.dart';
 part 'src/tiles/label_number_slider_tile.dart';
+part 'src/tiles/label_number_tile.dart';
 part 'src/tiles/wheel_tile.dart';
 part 'src/view_model/mutable_live_data.dart';
 part 'src/view_model/view_model_ex.dart';

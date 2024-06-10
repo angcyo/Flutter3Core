@@ -26,7 +26,7 @@ Future<UiImage?> saveScreenCapture([
   final path =
       (filePath ?? await cacheFilePath("ScreenCapture${nowTime()}.png"));
   final image = await captureScreenImage(context, pixelRatio);
-  image?.saveToFile(path.file());
+  await image?.saveToFile(path.file());
   assert(() {
     l.d('屏幕截图保存至[${image?.width}*${image?.height}:$pixelRatio]->$path');
     return true;

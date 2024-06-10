@@ -6,6 +6,65 @@ part of '../../flutter3_core.dart';
 ///
 /// 调试界面, 包含很多调试相关的功能
 class DebugPage extends StatefulWidget {
+  /// 默认的调试动作
+  static final List<DebugAction> defDebugActions = [
+    DebugAction(
+      label: "分享App日志",
+      clickAction: (context) {
+        final globalConfig = GlobalConfig.of(context);
+        globalConfig.shareAppLogFn?.call(context, DebugAction);
+      },
+    ),
+    DebugAction(
+      label: "App文件管理",
+      clickAction: (context) {
+        context.pushWidget(const DebugFilePage()).get((value, error) {
+          l.i("返回结果:$value");
+        });
+      },
+    ),
+    DebugAction(
+      label: "截屏",
+      clickAction: (context) async {
+        final path = await cacheFilePath("ScreenCapture${nowTime()}.png");
+        final image = await saveScreenCapture(path);
+        if (image == null) {
+          toastInfo('截屏失败');
+        } else {
+          final globalConfig = GlobalConfig.of(context);
+          globalConfig.shareDataFn?.call(context, path.file());
+          toastInfo('截屏成功:$path');
+        }
+      },
+    ),
+  ];
+
+  /// 自定义的调试动作
+  static final List<DebugAction> debugActions = [];
+
+  /// 在[DebugPage]中注册一个调试动作, 可以是一个按钮, 也可以是一个属性编辑tile
+  static void addClickDebugAction(String label, ClickAction clickAction) {
+    debugActions.add(DebugAction(
+      label: label,
+      clickAction: clickAction,
+    ));
+  }
+
+  /// [debugActions]
+  static void addHiveDebugAction(
+    String label,
+    String des,
+    String hiveKey,
+    Type hiveType,
+  ) {
+    debugActions.add(DebugAction(
+      label: label,
+      des: des,
+      hiveKey: hiveKey,
+      hiveType: hiveType,
+    ));
+  }
+
   const DebugPage({super.key});
 
   @override
@@ -17,31 +76,118 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
   String? getTitle(BuildContext context) => "调试界面";
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   WidgetList? buildScrollBody(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
+
+    final defClickList =
+        DebugPage.defDebugActions.filter((item) => item.clickAction != null);
+    final defHiveList =
+        DebugPage.defDebugActions.filter((item) => item.hiveKey != null);
+
+    final clickList =
+        DebugPage.debugActions.filter((item) => item.clickAction != null);
+    final hiveList =
+        DebugPage.debugActions.filter((item) => item.hiveKey != null);
+
     return [
-      [
+      if (defClickList.isNotEmpty)
+        buildClickActionList(context, defClickList).wrap()!.paddingAll(kX),
+      if (clickList.isNotEmpty)
+        buildClickActionList(context, clickList).wrap()!.paddingAll(kX),
+      if (defHiveList.isNotEmpty) ...buildHiveActionList(context, defHiveList),
+      if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
+    ];
+  }
+
+  WidgetList buildClickActionList(
+    BuildContext context,
+    List<DebugAction> clickList,
+  ) {
+    return [
+      for (final action in clickList)
         GradientButton.normal(() {
-          globalConfig.shareAppLogFn?.call(context, runtimeType);
-        }, child: "分享App日志".text()),
-        GradientButton.normal(() {
-          context.pushWidget(const DebugFilePage()).get((value, error) {
-            l.i("返回结果:$value");
-          });
-        }, child: "App文件管理".text()),
-        GradientButton.normal(() async {
-          final path = await cacheFilePath("ScreenCapture${nowTime()}.png");
-          final image = await saveScreenCapture(path);
-          if (image == null) {
-            toastInfo('截屏失败');
-          } else {
-            toastInfo('截屏成功:$path');
-          }
-        }, child: "截屏".text()),
-      ].wrap()!.paddingAll(kX),
+          action.clickAction?.call(context);
+        }, child: action.label!.text()),
+    ];
+  }
+
+  WidgetList buildHiveActionList(
+    BuildContext context,
+    List<DebugAction> hiveList,
+  ) {
+    //debugger();
+    return [
+      for (final action in hiveList)
+        if (action.hiveType == String)
+          LabelSingleInputTile(
+              label: action.label,
+              hint: action.des,
+              value: action.hiveKey?.hiveGet<String>(),
+              onChanged: (value) {
+                action.hiveKey?.hivePut(value);
+              })
+        else if (action.hiveType == int)
+          LabelNumberTile(
+            label: action.label,
+            des: action.des,
+            value: action.hiveKey?.hiveGet<int>(0) ?? 0,
+            onChanged: (value) {
+              action.hiveKey?.hivePut(value);
+            },
+          )
+        else if (action.hiveType == double)
+          LabelNumberTile(
+            label: action.label,
+            des: action.des,
+            value: action.hiveKey?.hiveGet<double>(0.0) ?? 0.0,
+            onChanged: (value) {
+              action.hiveKey?.hivePut(value);
+            },
+          )
+        else if (action.hiveType == bool)
+          LabelSwitchTile(
+              label: action.label,
+              des: action.des,
+              value: action.hiveKey?.hiveGet<bool>(false) == true,
+              onChanged: (value) {
+                action.hiveKey?.hivePut(value);
+              })
+        else
+          "不支持的类型:${action.label}:[${action.hiveType}]".text(),
     ];
   }
 
   @override
   Widget build(BuildContext context) => buildScaffold(context);
+}
+
+/// 调试动作
+class DebugAction {
+  /// 标签
+  String? label;
+
+  /// 描述
+  String? des;
+
+  /// 普通的按钮点击事件
+  ClickAction? clickAction;
+
+  /// 自动修改hive属性
+  String? hiveKey;
+
+  /// [hiveKey]属性对应的类型
+  Type? hiveType;
+
+  DebugAction({
+    this.label,
+    this.des,
+    this.clickAction,
+    this.hiveKey,
+    this.hiveType,
+  });
 }

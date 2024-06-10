@@ -7,6 +7,7 @@ part of '../../flutter3_core.dart';
 /// 上label     number(支持键盘输入)
 /// 下slider
 /// [SliderTile]
+/// [LabelNumberTile]
 class LabelNumberSliderTile extends StatefulWidget {
   /// label
   final String? label;
@@ -14,8 +15,9 @@ class LabelNumberSliderTile extends StatefulWidget {
 
   /// value
   final num value;
-  final num minValue;
-  final num maxValue;
+  final num? minValue;
+  final num? maxValue;
+  final int maxDigits;
   final int? divisions;
   final NumType? _numType;
 
@@ -30,8 +32,9 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.label,
     this.labelWidget,
     this.value = 0.0,
-    this.minValue = 0.0,
-    this.maxValue = 1.0,
+    this.minValue,
+    this.maxValue,
+    this.maxDigits = 2,
     this.divisions,
     this.activeTrackGradientColors,
     this.onNumberChange,
@@ -76,6 +79,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
         number: _currentValue,
         minValue: widget.minValue,
         maxValue: widget.maxValue,
+        maxDigits: widget.maxDigits,
         numType: widget._numType,
       ));
       if (value != null) {
@@ -95,8 +99,8 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       _currentValue.toDouble(),
       label: numberStr,
       divisions: widget.divisions,
-      minValue: widget.minValue.toDouble(),
-      maxValue: widget.maxValue.toDouble(),
+      minValue: widget.minValue?.toDouble() ?? 0.0,
+      maxValue: widget.maxValue?.toDouble() ?? 1.0,
       activeTrackGradientColors: widget.activeTrackGradientColors,
       onChanged: (value) {
         _currentValue = value;

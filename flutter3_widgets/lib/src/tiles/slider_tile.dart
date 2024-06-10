@@ -5,6 +5,7 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/04/13
 ///
 /// 滑块tile
+/// [LabelNumberSliderTile]
 class SliderTile extends StatefulWidget {
   /// 左边/头部的小部件
   /// [leading]  头部

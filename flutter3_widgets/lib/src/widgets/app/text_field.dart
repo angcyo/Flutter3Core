@@ -167,8 +167,14 @@ class SingleInputWidget extends StatefulWidget {
   /// 焦点时的边框颜色, 默认是主题色
   final Color? focusBorderColor;
 
+  /// 禁用时的边框颜色
+  final Color? disableBorderColor;
+
   /// 圆角大小
   final double borderRadius;
+
+  /// 下划线装饰边框的圆角大小
+  final double underlineBorderRadius;
 
   final double gapPadding;
 
@@ -245,9 +251,12 @@ class SingleInputWidget extends StatefulWidget {
   /// 计数器的文本, 为""时, 会不显示计数器, 但是又可以限制输入的最大长度
   final String? counterText;
 
-  /// 输入框的装饰样式
+  /// 输入框的装饰样式, 设置之后, 下面的所有装饰相关的属性都无效
   /// [InputDecoration]
   final InputDecoration? decoration;
+
+  /// 是否使用下划线[InputBorder]
+  final bool useUnderlineInputBorder;
 
   /// [outlineInputBorder]
   /// [underlineInputBorder]
@@ -278,7 +287,9 @@ class SingleInputWidget extends StatefulWidget {
     this.fillColor,
     this.borderColor,
     this.focusBorderColor,
+    this.disableBorderColor,
     this.borderRadius = kDefaultBorderRadiusX,
+    this.underlineBorderRadius = 0,
     this.gapPadding = 0,
     this.borderWidth = 1,
     this.maxLines = 1,
@@ -314,8 +325,9 @@ class SingleInputWidget extends StatefulWidget {
     this.counterText,
     this.isCollapsed,
     this.isDense = true,
-    this.contentPadding,
+    this.contentPadding = kInputPadding,
     this.decoration,
+    this.useUnderlineInputBorder = false,
     this.border,
     this.focusedBorder,
     this.disabledBorder,
@@ -470,34 +482,63 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   @override
   Widget build(BuildContext context) {
     //圆角填充的输入装饰样式
-    var globalTheme = GlobalTheme.of(context);
-    var normalBorder = widget.border ??
-        OutlineInputBorder(
-          gapPadding: widget.gapPadding,
-          borderRadius: BorderRadius.circular(widget.borderRadius),
-          borderSide: widget.borderColor == Colors.transparent ||
-                  widget.borderWidth <= 0
-              ? BorderSide.none
-              : BorderSide(
-                  color: widget.borderColor ?? globalTheme.borderColor,
-                  width: widget.borderWidth,
-                ),
-        );
+    final globalTheme = GlobalTheme.of(context);
+    //normal正常状态
+    final normalBorderSide =
+        widget.borderColor == Colors.transparent || widget.borderWidth <= 0
+            ? BorderSide.none
+            : BorderSide(
+                color: widget.borderColor ?? globalTheme.borderColor,
+                width: widget.borderWidth,
+              );
+    final normalBorder = widget.border ??
+        (widget.useUnderlineInputBorder
+            ? UnderlineInputBorder(
+                borderSide: normalBorderSide,
+                borderRadius:
+                    BorderRadius.circular(widget.underlineBorderRadius))
+            : OutlineInputBorder(
+                gapPadding: widget.gapPadding,
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                borderSide: normalBorderSide));
 
-    var focusedBorder = widget.focusedBorder ??
-        OutlineInputBorder(
-          gapPadding: widget.gapPadding,
-          borderRadius: BorderRadius.circular(widget.borderRadius),
-          borderSide: widget.focusBorderColor == Colors.transparent ||
-                  widget.borderWidth <= 0
-              ? BorderSide.none
-              : BorderSide(
-                  color: widget.focusBorderColor ?? globalTheme.accentColor,
-                  width: widget.borderWidth,
-                ),
-        );
+    //focused聚焦状态
+    final focusedBorderSide =
+        widget.focusBorderColor == Colors.transparent || widget.borderWidth <= 0
+            ? BorderSide.none
+            : BorderSide(
+                color: widget.focusBorderColor ?? globalTheme.accentColor,
+                width: widget.borderWidth,
+              );
+    final focusedBorder = widget.focusedBorder ??
+        (widget.useUnderlineInputBorder
+            ? UnderlineInputBorder(
+                borderSide: focusedBorderSide,
+                borderRadius:
+                    BorderRadius.circular(widget.underlineBorderRadius))
+            : OutlineInputBorder(
+                gapPadding: widget.gapPadding,
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                borderSide: focusedBorderSide));
 
-    var disabledBorder = widget.disabledBorder ?? normalBorder;
+    //disabled禁用状态
+    final disableBorderSide = widget.disableBorderColor == Colors.transparent ||
+            widget.borderWidth <= 0
+        ? BorderSide.none
+        : BorderSide(
+            color: widget.disableBorderColor ?? globalTheme.disableColor,
+            width: widget.borderWidth,
+          );
+    final disabledBorder = widget.disabledBorder ??
+        (widget.useUnderlineInputBorder
+            ? UnderlineInputBorder(
+                borderSide: disableBorderSide,
+                borderRadius:
+                    BorderRadius.circular(widget.underlineBorderRadius))
+            : OutlineInputBorder(
+                gapPadding: widget.gapPadding,
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                borderSide: disableBorderSide));
 
     var decoration = widget.decoration ??
         InputDecoration(
@@ -509,7 +550,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           isDense: widget.isDense,
           isCollapsed: widget.isCollapsed,
           counterText: widget.counterText,
-          contentPadding: widget.contentPadding,
+          contentPadding: widget.contentPadding ??
+              (widget.useUnderlineInputBorder
+                  ? const EdgeInsets.all(12)
+                  : null),
           //contentPadding: const EdgeInsets.only(top: 60),
           //contentPadding: const EdgeInsets.all(0),
           //contentPadding: EdgeInsets.symmetric(horizontal: globalTheme.xh),

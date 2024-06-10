@@ -1,13 +1,15 @@
-part of '../../flutter3_widgets.dart';
+part of '../../flutter3_core.dart';
 
 ///
-/// @author <a href="mailto:angcyo@126.com">angcyo</a>
-/// @date 2024/05/13
+/// Email:angcyo@126.com
+/// @author angcyo
+/// @date 2024/06/10
 ///
-/// 开关tile
-/// [CheckboxTile]
-/// [LabelSwitchTile]
-class LabelSwitchTile extends StatefulWidget {
+/// 数字输入tile
+/// 上label     右number(支持键盘输入)
+/// 下des
+/// [LabelNumberSliderTile]
+class LabelNumberTile extends StatefulWidget {
   /// 标签
   final String? label;
   final EdgeInsets? labelPadding;
@@ -23,20 +25,25 @@ class LabelSwitchTile extends StatefulWidget {
 
   //--
 
-  /// 开关
-  final bool value;
+  /// 数值
+  /// value
+  final num value;
+  final num? minValue;
+  final num? maxValue;
+  final int maxDigits;
+  final NumType? _numType;
 
   /// 并不需要在此方法中更新界面
-  final ValueChanged<bool>? onChanged;
+  final ValueChanged<num>? onChanged;
 
   /// 在改变时, 需要进行的确认回调
   /// 返回false, 则不进行改变
-  final FutureValueCallback<bool>? onConfirmChange;
+  final FutureValueCallback<num>? onConfirmChange;
 
   /// tile的填充
   final EdgeInsets? tilePadding;
 
-  const LabelSwitchTile({
+  const LabelNumberTile({
     super.key,
     this.label,
     this.labelWidget,
@@ -45,29 +52,36 @@ class LabelSwitchTile extends StatefulWidget {
     this.des,
     this.desWidget,
     this.desPadding = kDesPadding,
-    this.value = false,
+    this.value = 0,
+    this.minValue,
+    this.maxValue,
+    this.maxDigits = 2,
     this.onChanged,
     this.onConfirmChange,
     this.tilePadding = kTilePadding,
-  });
+    NumType? numType,
+  }) : _numType = numType ?? (value is int ? NumType.i : NumType.d);
 
   @override
-  State<LabelSwitchTile> createState() => _LabelSwitchTileState();
+  State<LabelNumberTile> createState() => _LabelNumberTileState();
 }
 
-class _LabelSwitchTileState extends State<LabelSwitchTile> with TileMixin {
-  bool _initValue = false;
+class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
+  num _initialValue = 0;
+  num _currentValue = 0;
 
   @override
   void initState() {
+    _initialValue = widget.value;
+    _currentValue = _initialValue;
     super.initState();
-    _initValue = widget.value;
   }
 
   @override
-  void didUpdateWidget(covariant LabelSwitchTile oldWidget) {
+  void didUpdateWidget(covariant LabelNumberTile oldWidget) {
+    _initialValue = widget.value;
+    _currentValue = _initialValue;
     super.didUpdateWidget(oldWidget);
-    _initValue = widget.value;
   }
 
   @override
@@ -89,6 +103,21 @@ class _LabelSwitchTileState extends State<LabelSwitchTile> with TileMixin {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center);
     }
+
+    final numberStr = formatNumber(_currentValue, numType: widget._numType);
+    final number = buildNumberWidget(context, numberStr, onTap: () async {
+      final value = await context.showWidgetDialog(NumberKeyboardDialog(
+        number: _currentValue,
+        minValue: widget.minValue,
+        maxValue: widget.maxValue,
+        maxDigits: widget.maxDigits,
+        numType: widget._numType,
+      ));
+      if (value != null) {
+        _changeValue(value);
+      }
+    });
+
     return [
       [
         label,
@@ -99,30 +128,20 @@ class _LabelSwitchTileState extends State<LabelSwitchTile> with TileMixin {
           desPadding: widget.desPadding,
         )
       ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
-      buildSwitchWidget(
-        context,
-        _initValue,
-        onChanged: (value) {
-          _changeValue(value);
-        },
-      ),
+      number,
     ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
-        .paddingInsets(widget.tilePadding)
-        .click(() {
-      //debugger();
-      _changeValue(!_initValue);
-    });
+        .paddingInsets(widget.tilePadding);
   }
 
-  void _changeValue(bool toValue) async {
+  void _changeValue(num toValue) async {
     if (widget.onConfirmChange != null) {
       final result = await widget.onConfirmChange!(toValue);
       if (result != true) {
         return;
       }
     }
-    _initValue = toValue;
+    _currentValue = toValue;
     widget.onChanged?.call(toValue);
     updateState();
   }

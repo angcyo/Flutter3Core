@@ -67,6 +67,7 @@ part 'src/tiles/slider_tile.dart';
 part 'src/tiles/switch_tile.dart';
 part 'src/tiles/checkbox_tile.dart';
 part 'src/tiles/text_tile.dart';
+part 'src/tiles/input_tile.dart';
 part 'src/tiles/tab_layout_tile.dart';
 part 'src/widgets/after_layout.dart';
 part 'src/widgets/app/button.dart';

@@ -77,6 +77,14 @@ Widget? widgetOf(
 
 //---
 
+/// input输入框默认的填充
+const kInputPadding = EdgeInsets.only(
+  left: kH,
+  right: kH,
+  top: kX,
+  bottom: kX,
+);
+
 /// label默认的填充
 /// 左边显示的文本
 const kLabelPadding = EdgeInsets.only(

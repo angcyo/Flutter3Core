@@ -10,6 +10,11 @@ part of '../../flutter3_basics.dart';
 typedef Action = VoidCallback;
 typedef VoidAction = Action;
 
+/// [Action]
+/// [VoidAction]
+/// [VoidCallback]
+typedef ClickAction = void Function(BuildContext context);
+
 /// [VoidAction]
 typedef FutureVoidAction = FutureOr Function();
 
