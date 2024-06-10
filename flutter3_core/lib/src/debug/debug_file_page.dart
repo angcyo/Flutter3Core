@@ -41,6 +41,8 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
           Assets.svg.fileBrowseHome,
           width: 25,
           height: 25,
+          tintColor:
+              context.isThemeDark ? globalTheme.textTitleStyle.color : null,
         )?.paddingAll(kX).inkWellCircle(() {
           _reload();
         }),
