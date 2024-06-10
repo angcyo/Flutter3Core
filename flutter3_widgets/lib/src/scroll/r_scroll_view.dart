@@ -188,18 +188,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   /// [_buildTileList]
   /// [build]
   WidgetList _transformTileList(BuildContext context, WidgetList children) {
-    //过滤
     final scrollConfig = widget.scrollConfig ?? defaultScrollConfig;
-    children = scrollConfig.filterChain?.doFilter(children) ?? children;
-    final transformChain = scrollConfig.transformChain;
-    final WidgetList result;
-    if (transformChain != null) {
-      transformChain.reset();
-      result = transformChain.doTransform(context, children);
-    } else {
-      result = children;
-    }
-    return result;
+    return scrollConfig.filterAndTransformTileList(context, children);
   }
 
   @override

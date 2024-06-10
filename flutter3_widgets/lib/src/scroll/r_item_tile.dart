@@ -74,6 +74,9 @@ class RItemTile extends StatefulWidget {
     this.headerTitleTextStyle = const TextStyle(fontSize: 14),
     this.updateSignal,
     this.tag,
+    this.onTileReorder,
+    this.onTileReorderStart,
+    this.onTileReorderEnd,
   });
 
   //region rebuild
@@ -104,6 +107,11 @@ class RItemTile extends StatefulWidget {
 
   /// [RItemTile]的类型, 决定用什么样的[Sliver]包裹[RItemTile]
   /// 如果不指定类型, 会沿用上一个[RItemTile]的类型
+  /// [RScrollView]
+  /// [RScrollConfig.transformChain]
+  /// [RTileTransformChain]
+  ///
+  /// 需要实现[BaseTileTransform]自定义转换器
   final dynamic sliverTransformType;
 
   //endregion 基础
@@ -321,6 +329,19 @@ class RItemTile extends StatefulWidget {
   final double? edgePaddingBottom;
 
   //endregion SliverGrid
+
+  //region SliverReorderableList
+
+  /// 2.排序的回调
+  final ReorderCallback? onTileReorder;
+
+  /// 1.开始排序时的回调
+  final IndexCallback? onTileReorderStart;
+
+  /// 3.结束排序时的回调
+  final IndexCallback? onTileReorderEnd;
+
+  //endregion SliverReorderableList
 
   /// 构建子部件
   /// [_RItemTileState.build]
@@ -613,13 +634,13 @@ extension RItemTileExtension on Widget {
     double? edgePaddingBottom,
     double? edgePaddingLeft,
     double? edgePaddingRight,
-    dynamic sliverTransformTyp = SliverGrid,
+    dynamic sliverTransformType = SliverGrid,
   }) {
     mainAxisSpacing ??= 0;
     crossAxisSpacing ??= mainAxisSpacing;
     return RItemTile(
       crossAxisCount: gridCount,
-      sliverTransformType: sliverTransformTyp,
+      sliverTransformType: sliverTransformType,
       childAspectRatio: childAspectRatio,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
@@ -686,13 +707,13 @@ extension RItemTileExtension on Widget {
     bool? groupExpanded,
     UpdateValueNotifier? updateSignal,
     List<String>? groups = const [],
-    dynamic sliverTransformTyp,
+    dynamic sliverTransformType,
   }) {
     return RItemTile(
       key: key,
       childBuilder: childBuilder,
       isSliverItem: isSliverItem,
-      sliverTransformType: sliverTransformTyp,
+      sliverTransformType: sliverTransformType,
       hide: hide,
       part: part,
       bottomLineColor: bottomLineColor,
@@ -740,12 +761,12 @@ extension RItemTileExtension on Widget {
   RItemTile rFloated({
     bool pinned = true,
     bool floating = false,
-    dynamic sliverTransformTyp = SliverMainAxisGroup,
+    dynamic sliverTransformType = SliverMainAxisGroup,
   }) {
     return RItemTile(
       pinned: pinned,
       floating: floating,
-      sliverTransformType: sliverTransformTyp,
+      sliverTransformType: sliverTransformType,
       child: this,
     );
   }
@@ -768,7 +789,7 @@ extension RItemTileExtension on Widget {
     EdgeInsetsGeometry? sliverPadding,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
-    dynamic sliverTransformTyp = SliverMainAxisGroup,
+    dynamic sliverTransformType = SliverMainAxisGroup,
   }) {
     return RItemTile(
       groups: groups,
@@ -790,7 +811,7 @@ extension RItemTileExtension on Widget {
                   borderRadius: borderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
-      sliverTransformType: sliverTransformTyp,
+      sliverTransformType: sliverTransformType,
       child: this,
     );
   }
@@ -842,6 +863,27 @@ extension RItemTileExtension on Widget {
       fillHasScrollBody: fillHasScrollBody,
       fillOverscroll: fillOverscroll,
       fillExpand: fillExpand,
+      child: this,
+    );
+  }
+
+  /// 支持排序的item
+  /// 使用[ReorderableDragStartListener]包裹实现按下拖拽
+  /// 使用[ReorderableDelayedDragStartListener]包裹实现长按拖拽
+  /// [SliverReorderableList]
+  RItemTile rReorderable(
+    ReorderCallback onTileReorder, {
+    Key? key,
+    IndexCallback? onTileReorderStart,
+    IndexCallback? onTileReorderEnd,
+    dynamic sliverTransformType = SliverReorderableList,
+  }) {
+    return RItemTile(
+      key: key,
+      onTileReorder: onTileReorder,
+      onTileReorderStart: onTileReorderStart,
+      onTileReorderEnd: onTileReorderEnd,
+      sliverTransformType: sliverTransformType,
       child: this,
     );
   }
