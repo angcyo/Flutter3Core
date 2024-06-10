@@ -24,7 +24,7 @@ class BatchCompleter<T> {
 
   /// 添加一个结果
   @api
-  void addResult(String key, T result,
+  void addResult(String key, dynamic request, T response,
       [dynamic error, StackTrace? stackTrace]) {
     if (_completer.isCompleted) {
       assert(() {
@@ -32,7 +32,7 @@ class BatchCompleter<T> {
         return true;
       }());
     } else {
-      _resultList.add(BatchResult(key, result, error, stackTrace));
+      _resultList.add(BatchResult(key, request, response, error, stackTrace));
       if (_resultList.length >= count) {
         _completer.complete(_resultList);
       }
@@ -41,15 +41,25 @@ class BatchCompleter<T> {
 
   /// 添加一个错误
   @api
-  void addError(String key, dynamic error, StackTrace? stackTrace) {
+  void addError(
+    String key,
+    dynamic request,
+    dynamic error,
+    StackTrace? stackTrace,
+  ) {
     if (_completer.isCompleted) {
       assert(() {
         l.w('BatchCompleter is completed.');
         return true;
       }());
     } else {
-      _resultList
-          .add(BatchResult(key, null, error, stackTrace ?? StackTrace.current));
+      _resultList.add(BatchResult(
+        key,
+        request,
+        null,
+        error,
+        stackTrace ?? StackTrace.current,
+      ));
       if (_resultList.length >= count) {
         _completer.complete(_resultList);
       }
@@ -57,14 +67,25 @@ class BatchCompleter<T> {
   }
 }
 
+/// 批量请求和请求的返回结果
 class BatchResult<T> {
-  const BatchResult(this.key, this.value, this.error, this.stackTrace);
+  const BatchResult(
+    this.key,
+    this.request,
+    this.response,
+    this.error,
+    this.stackTrace,
+  );
 
   /// [key] 唯一标识, 请求对应的key, 通常是设备id
+  /// 用来标识请求的唯一性
   final String key;
 
-  /// [value] 请求结果
-  final T? value;
+  /// 请求
+  final dynamic request;
+
+  /// [request] 的请求结果
+  final T? response;
 
   /// [error] 请求错误
   final dynamic error;
@@ -74,6 +95,6 @@ class BatchResult<T> {
 
   @override
   String toString() {
-    return 'BatchResult{key:$key, value:$value, error:$error, stackTrace:$stackTrace}';
+    return 'BatchResult{key:$key, request:$request response:$response, error:$error, stackTrace:$stackTrace}';
   }
 }
