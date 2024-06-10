@@ -24,14 +24,19 @@ class DebugFileMenuDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
+    final globalTheme = GlobalTheme.of(context);
     final isFile = filePath?.isFileSync() ?? false;
     const size = 25.0;
     return [
       buildDragHandle(context),
       if (isFile)
         IconTextTile(
-          iconWidget: loadCoreAssetSvgPicture(Assets.svg.fileBrowseOpen,
-              width: size, height: size),
+          iconWidget: loadCoreAssetSvgPicture(
+            Assets.svg.fileBrowseOpen,
+            width: size,
+            height: size,
+            tintColor: context.isThemeDark ? globalTheme.icoNormalColor : null,
+          ),
           text: "打开文件",
           onTap: () {
             close(context);
@@ -48,8 +53,12 @@ class DebugFileMenuDialog extends StatelessWidget {
         ),
       if (isFile)
         IconTextTile(
-          iconWidget: loadCoreAssetSvgPicture(Assets.svg.fileBrowseShare,
-              width: size, height: size),
+          iconWidget: loadCoreAssetSvgPicture(
+            Assets.svg.fileBrowseShare,
+            width: size,
+            height: size,
+            tintColor: context.isThemeDark ? globalTheme.icoNormalColor : null,
+          ),
           text: "分享文件",
           onTap: () {
             globalConfig.shareDataFn?.call(context, filePath?.file());
@@ -57,9 +66,13 @@ class DebugFileMenuDialog extends StatelessWidget {
           },
         ),
       IconTextTile(
-        iconWidget: loadCoreAssetSvgPicture(Assets.svg.fileBrowseDelete,
-            width: size, height: size),
-        text: "删除文件/文件夹",
+        iconWidget: loadCoreAssetSvgPicture(
+          Assets.svg.fileBrowseDelete,
+          width: size,
+          height: size,
+          tintColor: context.isThemeDark ? globalTheme.icoNormalColor : null,
+        ),
+        text: isFile ? "删除文件" : "删除文件夹",
         onTap: () {
           filePath?.deleteSync();
           onDeleteAction?.call();
@@ -68,7 +81,7 @@ class DebugFileMenuDialog extends StatelessWidget {
       ),
     ]
         .column()!
-        .container(color: Colors.white)
+        .container(color: globalTheme.whiteBgColor)
         .pullBack()
         .matchParent(matchHeight: false)
         .align(Alignment.bottomCenter);

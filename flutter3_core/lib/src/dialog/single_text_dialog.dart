@@ -28,16 +28,24 @@ class SingleTextDialog extends StatelessWidget {
       debugger();
     });*/
 
+    String? body;
     try {
-      final body = content ?? filePath?.file().readStringSync();
-      result = body?.text(selectable: true).paddingAll(kX) ??
+      body = content ?? filePath?.file().readStringSync();
+      result = body?.text(selectable: true).paddingAll(kH) ??
           globalConfig.emptyPlaceholderBuilder.call(context, null);
     } catch (e) {
       result = globalConfig.errorPlaceholderBuilder.call(context, e);
     }
 
     return result
-        .scroll()
+        .scroll(physics: kDefaultScrollPhysics)
+        .position(all: 0)
+        .stackOf(isDebug
+            ? "${body?.length.toSizeStr()}${filePath == null ? '' : '\n$filePath'}"
+                .text(textColor: Colors.white, fontSize: 8)
+                .paddingSymmetric(horizontal: kH)
+                .position(left: 0, top: 0)
+            : null)
         .container(
           color: globalConfig.globalTheme.whiteBgColor,
         )

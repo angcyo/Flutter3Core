@@ -30,12 +30,15 @@ class SingleImageDialog extends StatelessWidget {
     final Future<UiImage?>? body =
         content != null ? Future(() => content) : filePath?.toImageFromFile();
     return body!
-            .toWidget((image) => image!.toImageWidget().stackOf(isDebug
-                ? "${image.width}*${image.height} (${(image.width * image.height * 4).toSizeStr()})${filePath == null ? '' : '\n$filePath'}"
-                    .text(textColor: Colors.white, fontSize: 8)
-                    .paddingAll(kH)
-                    .position(left: 0, top: 0)
-                : null))
+            .toWidget((image) => image!
+                .toImageWidget()
+                .position(all: 0)
+                .stackOf(isDebug
+                    ? "${image.width}*${image.height} (${(image.width * image.height * 4).toSizeStr()})${filePath == null ? '' : '\n$filePath'}"
+                        .text(textColor: Colors.white, fontSize: 8)
+                        .paddingSymmetric(horizontal: kH)
+                        .position(left: 0, top: 0)
+                    : null))
             .blur(sigma: blur ? kM : 0.0)
         /*.scroll()*/
         /*.container(

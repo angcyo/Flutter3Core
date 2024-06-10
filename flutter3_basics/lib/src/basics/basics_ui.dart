@@ -616,6 +616,7 @@ extension WidgetEx on Widget {
   /// [PositionedDirectional]
   /// [AnimatedPositioned]
   Widget position({
+    double? all,
     double? left,
     double? top,
     double? right,
@@ -624,10 +625,10 @@ extension WidgetEx on Widget {
     double? height,
   }) {
     return Positioned(
-      left: left,
-      top: top,
-      right: right,
-      bottom: bottom,
+      left: all ?? left,
+      top: all ?? top,
+      right: all ?? right,
+      bottom: all ?? bottom,
       width: width,
       height: height,
       child: this,
