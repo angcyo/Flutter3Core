@@ -871,7 +871,7 @@ extension RItemTileExtension on Widget {
   /// 使用[ReorderableDragStartListener]包裹实现按下拖拽
   /// 使用[ReorderableDelayedDragStartListener]包裹实现长按拖拽
   /// [SliverReorderableList]
-  RItemTile rReorderable(
+  RItemTile rReorder(
     ReorderCallback onTileReorder, {
     Key? key,
     IndexCallback? onTileReorderStart,
