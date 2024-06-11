@@ -1,14 +1,15 @@
-part of flutter3_app;
+part of '../flutter3_app.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/28
 ///
 /// App本地通知
-
+/// PLATFORM: ANDROID IOS LINUX MACOS
 /// 初始化通知
 /// [notifyIcon] 通知栏图标, Android中图标需要放在drawable目录下
 /// 默认图标名称`defaultIcon`
+///
 @callPoint
 void initPlatformNotification({
   required String notifyIcon,
