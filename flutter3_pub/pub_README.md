@@ -105,7 +105,34 @@ dev_dependencies:
 
 ## flutter_gen
 
-- [FontLoader] https://juejin.cn/post/6844904113168187405 加载自定义字体. `FontLoader#addFont` 目前仅支持 OpenType （OTF） 和 TrueType （TTF） 字体。 
+```dart
+// 构建 loader
+var fontLoader = FontLoader('FenPinYinTi2');
+// 获取字体 (Future<ByteData>) 装载到 loader
+fontLoader.addFont(fetchFontByteData());
+// 加载字体
+await fontLoader.load();
+
+// 这里 DefaultAssetBundle.of(context) 也可以替换成 rootBundle
+// 根据自身情况决定
+Future<ByteData> fetchFontByteData() => DefaultAssetBundle.of(context).load('fonts/FenPinYinTi2.ttf');
+```
+
+```dart
+// load font file
+Future loadFontFile() async {
+    var fontLoader = FontLoader('FenPinYinTi2');
+    fontLoader.addFont(fetchFontByteData());
+    await fontLoader.load().catchError((e) {
+      loge("loadFontFile erro: $e");
+    });
+    setState(() {});
+}
+
+Future<ByteData> fetchFontByteData() => DefaultAssetBundle.of(context).load('fonts/FenPinYinTi2.ttf');
+```
+
+- [FontLoader] https://juejin.cn/post/6844904113168187405 加载自定义字体. `FontLoader#addFont` 目前仅支持 OpenType （OTF） 和 TrueType （TTF） 字体。
 
 用于资产、字体、颜色等的 Flutter 代码生成器 — 摆脱所有基于字符串的 API。
 
