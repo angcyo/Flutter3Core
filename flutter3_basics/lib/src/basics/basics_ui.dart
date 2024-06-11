@@ -365,6 +365,8 @@ extension WidgetEx on Widget {
   /// [EagerGestureRecognizer] 急切手势识别器
   /// [RotateGestureRecognizer] 旋转手势识别
   /// [RenderProxyBoxWithHitTestBehavior]
+  /// [click]
+  /// [doubleClick]
   Widget click(
     GestureTapCallback? onTap, [
     bool enable = true,
@@ -380,6 +382,8 @@ extension WidgetEx on Widget {
 
   /// 双击事件
   /// [RenderProxyBoxWithHitTestBehavior]
+  /// [click]
+  /// [doubleClick]
   Widget doubleClick(
     GestureTapCallback? onDoubleTap, [
     bool enable = true,
