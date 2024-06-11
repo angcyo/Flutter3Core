@@ -8,6 +8,7 @@ part of '../../flutter3_pub.dart';
 /// [SingleImageDialog]
 /// [SinglePhotoDialog]
 class SinglePhotoDialog extends StatefulWidget {
+  /// [Hero] 动画属性
   final PhotoViewHeroAttributes? heroAttributes;
 
   /// 指定文件路径
@@ -65,7 +66,9 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       scaleStateController: photoScaleStateController,
       backgroundDecoration: fillDecoration(color: Colors.transparent),
       enableRotation: false,
-      heroAttributes: widget.heroAttributes,
+      heroAttributes: widget.heroAttributes ??
+          widget.content?.toPhotoViewHeroAttributes() ??
+          widget.filePath?.toPhotoViewHeroAttributes(),
     );
 
     if (isDebug) {

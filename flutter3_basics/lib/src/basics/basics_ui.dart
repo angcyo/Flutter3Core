@@ -335,6 +335,7 @@ extension WidgetEx on Widget {
         );
 
   /// [Hero]
+  /// hero动画不能在Dialog中使用
   Widget hero(Object? tag) => tag == null ? this : Hero(tag: tag, child: this);
 
   /// 将[BoxConstraints]约束转换成[SliverConstraints]约束
@@ -1347,6 +1348,8 @@ extension WidgetEx on Widget {
       );
 
   /// [Material]
+  /// [color] 背景颜色
+  /// [surfaceTintColor]
   Widget material({
     Key? key,
     ShapeBorder? shape,

@@ -221,6 +221,12 @@ extension PhotoViewOptionsEx on ImageProvider {
       );
 }
 
+extension PhotoObjectEx on Object {
+  /// [PhotoViewHeroAttributes]
+  PhotoViewHeroAttributes toPhotoViewHeroAttributes() =>
+      PhotoViewHeroAttributes(tag: this);
+}
+
 extension PhotoViewEx on BuildContext {
   /// 显示图片预览界面
   /// [imageProvider] 单张图片, 传递这一个值就行

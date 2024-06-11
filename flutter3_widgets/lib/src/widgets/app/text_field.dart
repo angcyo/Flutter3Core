@@ -632,3 +632,22 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     );
   }
 }
+
+extension TextFieldConfigEx on TextFieldConfig {
+  /// [TextFieldConfig] 输入框的一些核心配置
+  /// [SingleInputWidget] 输入框的小部件
+  Widget toTextField({
+    int? maxLength,
+    int? maxLines = 1,
+    int? minLines,
+    String? hintText,
+  }) {
+    return SingleInputWidget(
+      config: this,
+      maxLength: maxLength,
+      maxLines: maxLines,
+      minLines: minLines,
+      hintText: hintText,
+    );
+  }
+}
