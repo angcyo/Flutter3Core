@@ -54,14 +54,16 @@ class DebugPage extends StatefulWidget {
   static void addHiveDebugAction(
     String label,
     String des,
-    String hiveKey,
     Type hiveType,
+    String hiveKey,
+    dynamic defHiveValue,
   ) {
     debugActions.add(DebugAction(
       label: label,
       des: des,
       hiveKey: hiveKey,
       hiveType: hiveType,
+      defHiveValue: defHiveValue,
     ));
   }
 
@@ -127,7 +129,7 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
           LabelSingleInputTile(
               label: action.label,
               hint: action.des,
-              value: action.hiveKey?.hiveGet<String>(),
+              value: action.defHiveValue ?? action.hiveKey?.hiveGet<String>(),
               onChanged: (value) {
                 action.hiveKey?.hivePut(value);
               })
@@ -135,7 +137,7 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
           LabelNumberTile(
             label: action.label,
             des: action.des,
-            value: action.hiveKey?.hiveGet<int>(0) ?? 0,
+            value: action.defHiveValue ?? action.hiveKey?.hiveGet<int>(0) ?? 0,
             onChanged: (value) {
               action.hiveKey?.hivePut(value);
             },
@@ -144,7 +146,9 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
           LabelNumberTile(
             label: action.label,
             des: action.des,
-            value: action.hiveKey?.hiveGet<double>(0.0) ?? 0.0,
+            value: action.defHiveValue ??
+                action.hiveKey?.hiveGet<double>(0.0) ??
+                0.0,
             onChanged: (value) {
               action.hiveKey?.hivePut(value);
             },
@@ -153,7 +157,8 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
           LabelSwitchTile(
               label: action.label,
               des: action.des,
-              value: action.hiveKey?.hiveGet<bool>(false) == true,
+              value: action.defHiveValue ??
+                  action.hiveKey?.hiveGet<bool>(false) == true,
               onChanged: (value) {
                 action.hiveKey?.hivePut(value);
               })
@@ -177,11 +182,16 @@ class DebugAction {
   /// 普通的按钮点击事件
   ClickAction? clickAction;
 
+  //--
+
   /// 自动修改hive属性
   String? hiveKey;
 
   /// [hiveKey]属性对应的类型
   Type? hiveType;
+
+  /// [hiveKey]对应的默认值
+  dynamic defHiveValue;
 
   DebugAction({
     this.label,
@@ -189,5 +199,6 @@ class DebugAction {
     this.clickAction,
     this.hiveKey,
     this.hiveType,
+    this.defHiveValue,
   });
 }
