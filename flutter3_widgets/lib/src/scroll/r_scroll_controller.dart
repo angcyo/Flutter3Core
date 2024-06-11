@@ -38,7 +38,7 @@ class RScrollController extends ScrollController {
   RequestPage requestPage = RequestPage();
 
   /// 情感图状态拦截
-  WidgetStateIntercept widgetStateIntercept = WidgetStateIntercept();
+  WidgetBuildStateIntercept widgetStateIntercept = WidgetBuildStateIntercept();
 
   /// 状态对应的数据
   dynamic _widgetStateData;
@@ -192,7 +192,7 @@ class RScrollController extends ScrollController {
     //debugger();
     //stopScroll();
     WidgetBuildState toState = widgetState ??
-        widgetStateIntercept.interceptor(
+        widgetStateIntercept.interceptorWidgetBuildState(
           requestPage,
           loadData,
           stateData,
@@ -348,12 +348,12 @@ class RScrollController extends ScrollController {
 }
 
 /// 情感图状态拦截
-class WidgetStateIntercept {
+class WidgetBuildStateIntercept {
   /// 获取可能的[WidgetBuildState]
   /// [requestPage] 请求的分页信息
   /// [loadData] 当前页加载到的数据, 非所有数据
   /// [stateData] 当前状态的附加信息, 用来识别是否有错误
-  WidgetBuildState interceptor(
+  WidgetBuildState interceptorWidgetBuildState(
     RequestPage requestPage,
     List? loadData,
     dynamic stateData,

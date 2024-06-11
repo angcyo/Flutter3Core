@@ -5,7 +5,7 @@ part of '../dialog.dart';
 /// @author angcyo
 /// @date 2023/12/24
 ///
-
+/// 对话框上的确认按钮
 class ConfirmButton extends StatelessWidget {
   /// 是否启用
   final bool enable;

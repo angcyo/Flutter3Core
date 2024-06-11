@@ -5,7 +5,7 @@ part of '../dialog.dart';
 /// @author angcyo
 /// @date 2023/12/24
 ///
-
+/// 对话框上的取消按钮
 class CancelButton extends StatelessWidget {
   /// 强制指定小部件
   final Widget? widget;

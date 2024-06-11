@@ -84,7 +84,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
           }
         }
         statusInfo.loadMoreWidgetState =
-            scrollController.widgetStateIntercept.interceptor(
+            scrollController.widgetStateIntercept.interceptorWidgetBuildState(
           statusInfo.requestPage,
           loadData,
           stateData,
