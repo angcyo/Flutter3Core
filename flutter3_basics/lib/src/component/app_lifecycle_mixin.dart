@@ -5,6 +5,8 @@ part of '../../flutter3_basics.dart';
 /// @since 2024/06/07
 ///
 /// App生命周期混入
+/// [WidgetsBindingObserver]
+/// [AppLifecycleListener]
 mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
   AppLifecycleListener? _appLifecycleListener;
 
@@ -31,23 +33,35 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
   /// [onAppLifecycleShow]->[onAppLifecycleResume]
   @overridePoint
   void onAppLifecycleShow() {
-    l.d('onAppLifecycleShow');
+    assert(() {
+      l.d('onAppLifecycleShow');
+      return true;
+    }());
   }
 
   @overridePoint
   void onAppLifecycleResume() {
-    l.d('onAppLifecycleResume');
+    assert(() {
+      l.d('onAppLifecycleResume');
+      return true;
+    }());
   }
 
   /// [onAppLifecycleHide]->[onAppLifecyclePause]
   @overridePoint
   void onAppLifecycleHide() {
-    l.d('onAppLifecycleHide');
+    assert(() {
+      l.d('onAppLifecycleHide');
+      return true;
+    }());
   }
 
   @overridePoint
   void onAppLifecyclePause() {
-    l.d('onAppLifecyclePause');
+    assert(() {
+      l.d('onAppLifecyclePause');
+      return true;
+    }());
   }
 
   ///[AppLifecycleState]
