@@ -95,9 +95,10 @@ mixin AbsScrollPage {
   @property
   double? getAppBarElevation(BuildContext context) => null;
 
+  /// 获取标题栏滚动时的阴影高度
   @property
   double? getAppBarScrolledUnderElevation(BuildContext context) =>
-      getAppBarElevation(context) ?? 0;
+      getAppBarElevation(context);
 
   /// 获取标题栏阴影颜色
   @property
