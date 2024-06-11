@@ -360,6 +360,8 @@ https://github.com/fluttercommunity/plus_plugins
 - [leak_tracker: ^10.0.4](https://pub.dev/packages/leak_tracker) 一个用于检测内存泄漏的 Flutter 插件。
 - [modal_bottom_sheet: ^3.0.0](https://pub.dev/packages/modal_bottom_sheet) 创建令人敬畏且功能强大的模态底板。
 - [shimmer: ^3.0.0](https://pub.dev/packages/shimmer) 一个 Flutter 包，用于创建闪烁效果。
+- [flutter_rating_bar: ^4.0.1](https://pub.dev/packages/flutter_rating_bar)一个简单但完全可定制的颤振评级栏，其中还包括评级栏指示器，支持任何评级分数。
+- [flutter_inappwebview: ^6.0.0](https://pub.dev/packages/flutter_inappwebview)一个 Flutter 插件，允许您添加内联 Web 视图、使用无头 Web 视图以及打开应用内浏览器窗口。
 
 ## 平台特有
 
