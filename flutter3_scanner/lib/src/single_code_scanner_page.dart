@@ -5,6 +5,13 @@ part of '../flutter3_scanner.dart';
 /// @author angcyo
 /// @date 2024/06/11
 ///
+
+/// 扫描控制按钮的大小
+const kScannerControlButtonSize = 32.0;
+
+/// 扫描控制按钮的底部间距
+const kScannerControlButtonBottom = 26.0;
+
 /// 简单的二维码扫描界面
 class SingleCodeScannerPage extends StatefulWidget {
   /// 扫描的格式, 默认[BarcodeFormat.qrCode]
@@ -27,6 +34,9 @@ class SingleCodeScannerPage extends StatefulWidget {
   /// 扫码成功后,是否自动关闭页面
   final bool autoPop;
 
+  /// 是否显示切换摄像头按钮
+  final bool showSwitchCameraButton;
+
   /// 是否显示闪光灯按钮
   final bool showFlashlightButton;
 
@@ -43,6 +53,7 @@ class SingleCodeScannerPage extends StatefulWidget {
     this.showScanWindow = true,
     this.onCodeScannerCallback,
     this.autoPop = true,
+    this.showSwitchCameraButton = false,
     this.showFlashlightButton = true,
     this.showAnalyzeImageButton = true,
     this.doubleZoomFactor = 0.5,
@@ -230,9 +241,13 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
             }
             controller.setZoomScale(_zoomFactor);
           }),
+          if (widget.showSwitchCameraButton)
+            SwitchCameraButton(controller: controller)
+                .paddingOnly(left: kX, bottom: kScannerControlButtonBottom)
+                .align(Alignment.bottomLeft),
           if (widget.showFlashlightButton)
             ToggleFlashlightButton(controller: controller)
-                .paddingAll(kBottomNavigationBarHeight)
+                .paddingAll(kScannerControlButtonBottom)
                 .align(Alignment.bottomCenter),
           if (widget.showAnalyzeImageButton)
             AnalyzeImageFromGalleryButton(
@@ -241,7 +256,7 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
                 _handleStringResult(result);
               },
             )
-                .paddingOnly(right: kX, bottom: kBottomNavigationBarHeight)
+                .paddingOnly(right: kX, bottom: kScannerControlButtonBottom)
                 .align(Alignment.bottomRight),
         ],
       ),
@@ -455,7 +470,7 @@ class ToggleFlashlightButton extends StatelessWidget {
           case TorchState.auto:
             return IconButton(
               color: Colors.white,
-              iconSize: 32.0,
+              iconSize: kScannerControlButtonSize,
               icon: const Icon(Icons.flash_auto),
               onPressed: () async {
                 await controller.toggleTorch();
@@ -464,7 +479,7 @@ class ToggleFlashlightButton extends StatelessWidget {
           case TorchState.off:
             return IconButton(
               color: Colors.white,
-              iconSize: 32.0,
+              iconSize: kScannerControlButtonSize,
               icon: const Icon(Icons.flashlight_off),
               onPressed: () async {
                 await controller.toggleTorch();
@@ -473,16 +488,21 @@ class ToggleFlashlightButton extends StatelessWidget {
           case TorchState.on:
             return IconButton(
               color: Colors.white,
-              iconSize: 32.0,
+              iconSize: kScannerControlButtonSize,
               icon: const Icon(Icons.flashlight_on),
               onPressed: () async {
                 await controller.toggleTorch();
               },
             );
           case TorchState.unavailable:
-            return const Icon(
-              Icons.no_flash,
+            return const IconButton(
               color: Colors.grey,
+              iconSize: kScannerControlButtonSize,
+              icon: Icon(
+                Icons.no_flash,
+                color: Colors.grey,
+              ),
+              onPressed: null,
             );
         }
       },
@@ -508,7 +528,7 @@ class AnalyzeImageFromGalleryButton extends StatelessWidget {
     return IconButton(
       color: Colors.white,
       icon: const Icon(Icons.image),
-      iconSize: 32.0,
+      iconSize: kScannerControlButtonSize,
       onPressed: () async {
         final ImagePicker picker = ImagePicker();
 
@@ -558,7 +578,7 @@ class StartStopMobileScannerButton extends StatelessWidget {
           return IconButton(
             color: Colors.white,
             icon: const Icon(Icons.play_arrow),
-            iconSize: 32.0,
+            iconSize: kScannerControlButtonSize,
             onPressed: () async {
               await controller.start();
             },
@@ -568,7 +588,7 @@ class StartStopMobileScannerButton extends StatelessWidget {
         return IconButton(
           color: Colors.white,
           icon: const Icon(Icons.stop),
-          iconSize: 32.0,
+          iconSize: kScannerControlButtonSize,
           onPressed: () async {
             await controller.stop();
           },
@@ -609,7 +629,8 @@ class SwitchCameraButton extends StatelessWidget {
         }
 
         return IconButton(
-          iconSize: 32.0,
+          color: Colors.white,
+          iconSize: kScannerControlButtonSize,
           icon: icon,
           onPressed: () async {
             await controller.switchCamera();

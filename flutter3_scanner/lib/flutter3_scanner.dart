@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 export 'package:image_picker/image_picker.dart';
 
+part 'src/image_picker_ex.dart';
 part 'src/single_code_scanner_page.dart';
 
 ///
