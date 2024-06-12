@@ -30,6 +30,10 @@ typedef FutureResultCallback<R, T> = Future<R> Function(T value);
 /// 只有一个值回调
 typedef ValueCallback<T> = dynamic Function(T value);
 
+/// 两个值改变回调
+/// [ValueChanged]
+typedef DoubleValueChanged<T1, T2> = void Function(T1 value1, T2 value2);
+
 /// [ValueCallback]
 /// [FutureOr]
 typedef FutureValueCallback<T> = FutureOr<T?> Function(T value);

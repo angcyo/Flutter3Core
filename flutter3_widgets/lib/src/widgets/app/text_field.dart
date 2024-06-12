@@ -10,54 +10,60 @@ part of '../../../flutter3_widgets.dart';
 /// [SingleInputWidget]
 class TextFieldConfig {
   /// 输入控制, 用于获取输入内容
-  final TextEditingController controller;
+  TextEditingController controller;
 
   /// 是否自动获取焦点
   /// [TextField.autofocus]
-  final bool? autofocus;
+  bool? autofocus;
 
   /// 焦点模式
   /// [EditableTextState.requestKeyboard]
   /// [FocusNode.requestFocus]
-  final FocusNode focusNode;
+  FocusNode focusNode;
 
   /// 密码输入控制
-  final ObscureNode obscureNode;
+  ObscureNode obscureNode;
 
   /// 输入的文本
   String get text => controller.text;
 
   /// 调用此方法更新输入框的值
+  /// 此方法会在自动绑定[_SingleInputWidgetState._updateFieldValue]
+  @autoInjectMark
   void Function(String value)? updateFieldValueFn;
 
-  //region 可以覆盖TextField的属性, 优先级低
+  //region 覆盖TextField的属性, 优先级低
 
   /// 输入框内的提示文字, 占位提示文本
   /// [SingleInputWidget.hintText]
-  final String? hintText;
+  String? hintText;
 
   /// 前缀图标小部件
   /// [SingleInputWidget.prefixIcon]
-  final Widget? prefixIcon;
+  Widget? prefixIcon;
 
   /// 键盘上的输入类型, 比如完成, 下一步等
   /// [SingleInputWidget.textInputAction]
   /// [TextInputAction.done]
   /// [TextInputAction.search]
-  final TextInputAction? textInputAction;
+  TextInputAction? textInputAction;
 
-  //endregion 可以覆盖TextField的属性, 优先级低
+  /// 输入过滤
+  /// [SingleInputWidget.inputFormatters]
+  List<TextInputFormatter>? inputFormatters;
+
+  //endregion 覆盖TextField的属性, 优先级低
 
   /// 回调
 
   /// [TextField.onChanged]
-  final ValueChanged<String>? onChanged;
+  ValueChanged<String>? onChanged;
 
   /// [TextField.onSubmitted]
-  final ValueChanged<String>? onSubmitted;
+  ValueChanged<String>? onSubmitted;
 
   /// [TextField.onEditingComplete]
-  final VoidCallback? onEditingComplete;
+  VoidCallback? onEditingComplete;
 
   TextFieldConfig({
     String? text /*默认文本*/,
@@ -67,6 +73,7 @@ class TextFieldConfig {
     bool notifyDefaultTextChange = false /*是否要触发默认文本改变*/,
     this.autofocus,
     this.textInputAction,
+    this.inputFormatters,
     this.updateFieldValueFn,
     this.hintText,
     this.prefixIcon,
@@ -81,9 +88,17 @@ class TextFieldConfig {
     }
   }
 
-  /// 更新输入框的文本
+  ///[updateText]
   @api
-  void updateText(String? text) {
+  void updateThis({List<TextInputFormatter>? inputFormatters}) {
+    this.inputFormatters = inputFormatters;
+    updateText(text, inputFormatters: inputFormatters);
+  }
+
+  /// 更新输入框的文本
+  /// [inputFormatters] 限制输入的字符
+  @api
+  void updateText(String? text, {List<TextInputFormatter>? inputFormatters}) {
     //debugger();
     if (updateFieldValueFn == null) {
       assert(() {
@@ -91,7 +106,23 @@ class TextFieldConfig {
         return true;
       }());
     }
-    updateFieldValueFn?.call(text ?? "");
+    text ??= "";
+
+    //过滤
+    TextEditingValue oldValue = const TextEditingValue(text: "");
+    TextEditingValue value = TextEditingValue(text: text);
+    value = (inputFormatters ?? this.inputFormatters)?.fold<TextEditingValue>(
+          value,
+          (newValue, formatter) {
+            final resultValue = formatter.formatEditUpdate(oldValue, newValue);
+            oldValue = newValue;
+            return resultValue;
+          },
+        ) ??
+        value;
+
+    //update
+    updateFieldValueFn?.call(value.text);
   }
 }
 
@@ -228,7 +259,11 @@ class SingleInputWidget extends StatefulWidget {
   /// keyboardType = keyboardType ?? (maxLines == 1 ? TextInputType.text : TextInputType.multiline),
   final TextInputType? keyboardType;
 
-  /// 输入的文本格式化
+  /// 输入的文本格式化, 限制输入的字符
+  /// ```
+  /// FilteringTextInputFormatter.deny('\n');
+  /// FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
+  /// ```
   /// [FilteringTextInputFormatter.singleLineFormatter]
   /// [FilteringTextInputFormatter.digitsOnly]
   /// [FilteringTextInputFormatter]
@@ -622,7 +657,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
               !widget.config.obscureNode._showObscureText,
           obscuringCharacter: widget.config.obscureNode.obscuringCharacter,
           keyboardType: widget.keyboardType,
-          inputFormatters: widget.inputFormatters,
+          inputFormatters:
+              widget.config.inputFormatters ?? widget.inputFormatters,
           cursorColor: cursorColor,
           //selectionControls: ,
           //selectionHeightStyle: ,

@@ -1,6 +1,7 @@
 library flutter3_code;
 
 import 'package:barcode_image/barcode_image.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:image/image.dart' as img;
 
@@ -115,19 +116,125 @@ export 'package:image/image.dart';
 ///
 ///
 /// 二维码/条形码 图片生成
+/// [BarcodeType]
 /// https://pub.dev/packages/barcode
 /// https://pub.dev/packages/barcode#supported-barcodes
 extension CodeStringEx on String {
+  /// 将字符串转换成[Barcode]
+  Barcode? toBarcode({
+    BarcodeQRCorrectionLevel errorCorrectLevel = BarcodeQRCorrectionLevel.high,
+    Pdf417SecurityLevel securityLevel = Pdf417SecurityLevel.level2,
+    int minECCPercent = 35,
+  }) {
+    final lowerCase = toLowerCase();
+    if (lowerCase == BarcodeType.QrCode.name.toLowerCase() ||
+        lowerCase == "QR_CODE".toLowerCase()) {
+      return Barcode.qrCode(errorCorrectLevel: errorCorrectLevel);
+    }
+    if (lowerCase == BarcodeType.PDF417.name.toLowerCase() ||
+        lowerCase == "PDF_417".toLowerCase()) {
+      return Barcode.pdf417(securityLevel: securityLevel);
+    }
+    if (lowerCase == BarcodeType.DataMatrix.name.toLowerCase() ||
+        lowerCase == "DATA_MATRIX".toLowerCase()) {
+      return Barcode.dataMatrix();
+    }
+    if (lowerCase == BarcodeType.Aztec.name.toLowerCase() ||
+        lowerCase == "AZTEC".toLowerCase()) {
+      return Barcode.aztec(minECCPercent: minECCPercent);
+    }
+    //--
+    if (lowerCase == BarcodeType.Code39.name.toLowerCase() ||
+        lowerCase == "CODE_39".toLowerCase()) {
+      return Barcode.code39();
+    }
+    if (lowerCase == BarcodeType.Code93.name.toLowerCase() ||
+        lowerCase == "CODE_93".toLowerCase()) {
+      return Barcode.code93();
+    }
+    if (lowerCase == BarcodeType.Code128.name.toLowerCase() ||
+        lowerCase == "CODE_128".toLowerCase()) {
+      return Barcode.code128();
+    }
+    //--
+    if (lowerCase == BarcodeType.GS128.name.toLowerCase() ||
+        lowerCase == "GS1_128".toLowerCase()) {
+      return Barcode.gs128();
+    }
+    if (lowerCase == BarcodeType.CodeISBN.name.toLowerCase() ||
+        lowerCase == "ISBN".toLowerCase()) {
+      return Barcode.isbn();
+    }
+    if (lowerCase == BarcodeType.Telepen.name.toLowerCase() ||
+        lowerCase == "Telepen".toLowerCase()) {
+      return Barcode.telepen();
+    }
+    if (lowerCase == BarcodeType.Codabar.name.toLowerCase() ||
+        lowerCase == "Codabar".toLowerCase()) {
+      return Barcode.codabar();
+    }
+    if (lowerCase == BarcodeType.Rm4scc.name.toLowerCase() ||
+        lowerCase == "Rm4scc".toLowerCase()) {
+      return Barcode.rm4scc();
+    }
+    //--
+    if (lowerCase == BarcodeType.CodeEAN2.name.toLowerCase() ||
+        lowerCase == "EAN_2".toLowerCase()) {
+      return Barcode.ean2();
+    }
+    if (lowerCase == BarcodeType.CodeEAN5.name.toLowerCase() ||
+        lowerCase == "EAN_5".toLowerCase()) {
+      return Barcode.ean5();
+    }
+    if (lowerCase == BarcodeType.CodeEAN8.name.toLowerCase() ||
+        lowerCase == "EAN_8".toLowerCase()) {
+      return Barcode.ean8();
+    }
+    if (lowerCase == BarcodeType.CodeEAN13.name.toLowerCase() ||
+        lowerCase == "EAN_13".toLowerCase()) {
+      return Barcode.ean13();
+    }
+    //--
+    if (lowerCase == BarcodeType.Itf.name.toLowerCase() ||
+        lowerCase == "Itf".toLowerCase()) {
+      return Barcode.itf();
+    }
+    if (lowerCase == BarcodeType.CodeITF14.name.toLowerCase() ||
+        lowerCase == "CodeITF14".toLowerCase()) {
+      return Barcode.itf14();
+    }
+    if (lowerCase == BarcodeType.CodeITF16.name.toLowerCase() ||
+        lowerCase == "CodeITF16".toLowerCase()) {
+      return Barcode.itf16();
+    }
+    //--
+    if (lowerCase == BarcodeType.CodeUPCA.name.toLowerCase() ||
+        lowerCase == "UPC_A".toLowerCase()) {
+      return Barcode.upcA();
+    }
+    if (lowerCase == BarcodeType.CodeUPCE.name.toLowerCase() ||
+        lowerCase == "UPC_E".toLowerCase()) {
+      return Barcode.upcE();
+    }
+    return null;
+  }
+
+  ///
+  //bool is2DCode
+
   /// 将条码内容转换成图片对象
   /// [bgColor] 背景颜色, 默认透明
   /// [fgColor] 前景颜色, 默认黑色
-  Future<UiImage> toCodeImage(
+  Future<UiImage?> toCodeImage(
     int width,
     int height,
-    Barcode barcode, {
+    Barcode? barcode, {
     UiColor? bgColor,
     UiColor? fgColor,
   }) async {
+    if (barcode == null) {
+      return null;
+    }
     final image = img.Image(width: width, height: height, numChannels: 4);
     img.fill(
       image,
@@ -142,4 +249,45 @@ extension CodeStringEx on String {
     final bytes = img.encodePng(image);
     return bytes.toImage();
   }
+}
+
+/// 过滤条码能够输入的内容
+/// [def] 验证失败时的默认文本
+TextInputFormatter codeTextInputFormatter(Barcode code, [String? def]) {
+  return TextInputFormatter.withFunction((oldValue, newValue) {
+    try {
+      //debugger();
+      code.verify(newValue.text);
+      return newValue;
+    } catch (e) {
+      assert(() {
+        printError(e, StackTrace.current);
+        return true;
+      }());
+      return def != null ? TextEditingValue(text: def) : oldValue;
+    }
+  });
+}
+
+extension BarcodeEx on Barcode {
+  /// 1D Barcodes
+  bool get is1DBarcodes => !is2DBarcodes;
+
+  /// 2D Barcodes
+  bool get is2DBarcodes =>
+      name == 'Data Matrix' ||
+      name == 'PDF417' ||
+      name == 'QR-Code' ||
+      name == 'Aztec';
+}
+
+extension BarcodeIntEx on int {
+  /// [BarcodeQRCorrectionLevel]
+  BarcodeQRCorrectionLevel get errorCorrectLevel =>
+      BarcodeQRCorrectionLevel.values.getOrNull(this) ??
+      BarcodeQRCorrectionLevel.high;
+
+  /// [Pdf417SecurityLevel]
+  Pdf417SecurityLevel get securityLevel =>
+      Pdf417SecurityLevel.values.getOrNull(this) ?? Pdf417SecurityLevel.level2;
 }

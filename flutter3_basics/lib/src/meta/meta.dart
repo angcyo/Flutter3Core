@@ -66,5 +66,6 @@ const flagProperty = AnnotationMeta('标记属性, 不参与底层的逻辑运�
 const initialize = AnnotationMeta('必要的初始化操作');
 const streamMark = AnnotationMeta('当前操作会触发流的通知, 包含流的操作');
 const updateSignalMark = AnnotationMeta('一个更新信号通知,监听此通知实现界面更新');
+const autoInjectMark = AnnotationMeta('标识当前方法/属性会在框架内自动注入');
 
 //endregion---base
