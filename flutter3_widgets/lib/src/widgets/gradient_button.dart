@@ -141,6 +141,7 @@ class GradientButton extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   final GestureTapCallback? onTap;
+  /// 带[BuildContext]参数的点击事件
   final GestureContextTapCallback? onContextTap;
   final ValueChanged<bool>? onHighlightChanged;
 

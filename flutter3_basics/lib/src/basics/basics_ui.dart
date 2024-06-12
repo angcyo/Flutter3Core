@@ -1674,19 +1674,25 @@ extension StateEx on State {
   bool get isMounted => context.mounted;
 
   /// 标记当前状态脏, 会在下一帧重建
+  /// ```
+  /// setState() or markNeedsBuild() called when widget tree was locked.
+  /// ```
   /// [Element.markNeedsBuild]
   /// [ContextEx.tryUpdateState]
-  void updateState() {
+  bool updateState() {
     try {
       if (isMounted) {
         setState(() {});
+        return true;
       }
+      return false;
     } catch (e) {
       assert(() {
-        l.w('当前页面已被销毁, 无法更新');
+        l.w('当前页面可能已被销毁, 无法更新');
         printError(e);
         return true;
       }());
+      return false;
     }
   }
 }

@@ -245,12 +245,15 @@ mixin TileMixin {
   /// 构建判断文本小部件, 支持选中状态提示
   /// [enable] 是否启用
   /// [isSelected] 是否选中
+  /// [selectedTextStyle] 选中时的文本样式
+  /// [selectedColor] 选中时的背景颜色
   Widget? buildSegmentTextWidget(
     BuildContext context, {
     Widget? textWidget,
     String? text,
     TextStyle? textStyle,
     TextStyle? selectedTextStyle,
+    Color? selectedColor,
     bool enable = true,
     bool isSelected = false,
     bool themeStyle = true,
@@ -279,7 +282,7 @@ mixin TileMixin {
           )
         : isSelected
             ? fillDecoration(
-                color: globalTheme.accentColor,
+                color: selectedColor ?? globalTheme.accentColor,
                 borderRadius: kDefaultBorderRadiusX,
               )
             : null);

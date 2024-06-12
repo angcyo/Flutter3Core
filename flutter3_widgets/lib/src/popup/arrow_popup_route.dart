@@ -44,6 +44,12 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     _arrowDirectionMinOffset = value;
   }
 
+  /// 内容的padding
+  final EdgeInsets? padding;
+
+  /// 与锚点之间/屏幕之间的间距
+  final EdgeInsets? margin;
+
   ArrowPopupRoute({
     super.settings,
     super.filter,
@@ -55,6 +61,8 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     required this.showArrow,
     this.autoArrowDirection = true,
     this.barriersColor,
+    this.padding = const EdgeInsets.all(kH),
+    this.margin = const EdgeInsets.all(kX),
     double arrowDirectionMinOffset = 15,
     AxisDirection? arrowDirection, //可以强制指定箭头方向
   })  : _arrowDirectionMinOffset = arrowDirectionMinOffset,
@@ -117,6 +125,8 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
       backgroundColor: backgroundColor,
       arrowColor: arrowColor,
       showArrow: showArrow,
+      padding: padding,
+      margin: margin,
       child: child,
     );
     if (!animation.isCompleted) {

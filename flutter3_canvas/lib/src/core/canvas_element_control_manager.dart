@@ -476,6 +476,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 按比例缩放元素
+  /// [translateElement]
+  /// [scaleElement]
+  /// [rotateElement]
+  /// [flipElement]
+  /// [flipElementWithScale]
   @api
   @supportUndo
   void scaleElement(
@@ -507,6 +512,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 按照指定的量平移元素
+  /// [translateElement]
+  /// [scaleElement]
+  /// [rotateElement]
+  /// [flipElement]
+  /// [flipElementWithScale]
   @api
   @supportUndo
   void translateElement(
@@ -538,6 +548,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 旋转元素
   /// [angle] 旋转的角度, 单位: 弧度
+  /// [translateElement]
+  /// [scaleElement]
+  /// [rotateElement]
+  /// [flipElement]
+  /// [flipElementWithScale]
   @api
   @supportUndo
   void rotateElement(
@@ -564,10 +579,15 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-  /// 翻转元素
+  /// 翻转元素, 以选择框的中心进行翻转
   /// 这种方式翻转元素, 有可能会跑到边界外, 所以需要重新计算边界
   /// [flipX] 水平翻转
   /// [flipY] 垂直翻转
+  /// [translateElement]
+  /// [scaleElement]
+  /// [rotateElement]
+  /// [flipElement]
+  /// [flipElementWithScale]
   @api
   @supportUndo
   void flipElement(
@@ -592,9 +612,14 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-  /// 翻转元素
+  /// 翻转元素, 以元素自身的中心进行翻转
   /// [flipX] 水平翻转
   /// [flipY] 垂直翻转
+  /// [translateElement]
+  /// [scaleElement]
+  /// [rotateElement]
+  /// [flipElement]
+  /// [flipElementWithScale]
   @api
   @supportUndo
   void flipElementWithScale(

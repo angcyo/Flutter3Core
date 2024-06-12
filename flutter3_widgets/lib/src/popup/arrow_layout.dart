@@ -181,7 +181,7 @@ class _ArrowLayoutState extends State<ArrowLayout> {
 
 /// 用来计算箭头的方向, 和偏移
 mixin ArrowDirectionMixin {
-  static const double _margin = 10;
+  static const double _margin = 0;
   static final Rect _viewportRect = Rect.fromLTWH(
     _margin,
     screenStatusBar + _margin,

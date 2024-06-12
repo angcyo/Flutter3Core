@@ -27,6 +27,8 @@ extension PopupEx on BuildContext {
     bool showArrow = true,
     Color? barriersColor,
     AxisDirection? arrowDirection,
+    EdgeInsets? contentPadding = const EdgeInsets.all(kH),
+    EdgeInsets? contentMargin = const EdgeInsets.all(kX),
   }) async {
     anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds();
     anchorRect ??= findRenderObject()?.getGlobalBounds();
@@ -40,6 +42,8 @@ extension PopupEx on BuildContext {
         showArrow: showArrow,
         arrowDirection: arrowDirection,
         barriersColor: barriersColor,
+        padding: contentPadding,
+        margin: contentMargin,
       ),
     );
   }
