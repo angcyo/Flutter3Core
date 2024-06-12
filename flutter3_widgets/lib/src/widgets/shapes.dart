@@ -9,10 +9,10 @@ part of '../../flutter3_widgets.dart';
 /// [RoundedRectRangeSliderTrackShape]
 class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
   /// 渐变颜色
-  final List<Color> colors;
+  final List<Color>? colors;
   final List<double>? colorStops;
 
-  GradientSliderTrackShape(
+  const GradientSliderTrackShape(
     this.colors, {
     this.colorStops,
   });
@@ -160,6 +160,181 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
           ),
           secondaryTrackPaint,
         );
+      }
+    }
+  }
+}
+
+/// 中心滑块轨道Shape
+class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
+  /// 渐变颜色
+  final List<Color>? colors;
+  final List<double>? colorStops;
+
+  /// 额外的轨道高度
+  final double additionalActiveTrackHeight;
+
+  const CenteredRectangularSliderTrackShape({
+    this.colors,
+    this.colorStops,
+    this.additionalActiveTrackHeight = 0,
+  });
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset offset, {
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required TextDirection textDirection,
+    required Offset thumbCenter,
+    Offset? secondaryOffset,
+    bool isDiscrete = false,
+    bool isEnabled = false,
+  }) {
+    // If the slider track height is less than or equal to 0, then it makes no
+    // difference whether the track is painted or not, therefore the painting
+    // can be a no-op.
+    if (sliderTheme.trackHeight! <= 0) {
+      return;
+    }
+
+    // Assign the track segment paints, which are left: active, right: inactive,
+    // but reversed for right to left text.
+    final ColorTween activeTrackColorTween = ColorTween(
+        begin: sliderTheme.disabledActiveTrackColor,
+        end: sliderTheme.activeTrackColor);
+    final ColorTween inactiveTrackColorTween = ColorTween(
+        begin: sliderTheme.disabledInactiveTrackColor,
+        end: sliderTheme.inactiveTrackColor);
+    final Paint activePaint = Paint()
+      ..color = activeTrackColorTween.evaluate(enableAnimation)!;
+    final Paint inactivePaint = Paint()
+      ..color = inactiveTrackColorTween.evaluate(enableAnimation)!;
+
+    final Rect trackRect = getPreferredRect(
+      parentBox: parentBox,
+      offset: offset,
+      sliderTheme: sliderTheme,
+      isEnabled: isEnabled,
+      isDiscrete: isDiscrete,
+    );
+    final trackCenter = trackRect.center;
+    final Size thumbSize =
+        sliderTheme.thumbShape!.getPreferredSize(isEnabled, isDiscrete);
+    // final Rect leftTrackSegment = Rect.fromLTRB(
+    //     trackRect.left + trackRect.height / 2,
+    //     trackRect.top,
+    //     thumbCenter.dx - thumbSize.width / 2,
+    //     trackRect.bottom);
+    // if (!leftTrackSegment.isEmpty)
+    //   context.canvas.drawRect(leftTrackSegment, leftTrackPaint);
+    // final Rect rightTrackSegment = Rect.fromLTRB(
+    //     thumbCenter.dx + thumbSize.width / 2,
+    //     trackRect.top,
+    //     trackRect.right,
+    //     trackRect.bottom);
+    // if (!rightTrackSegment.isEmpty)
+    //   context.canvas.drawRect(rightTrackSegment, rightTrackPaint);
+
+    if (trackCenter.dx < thumbCenter.dx) {
+      final Rect leftTrackSegment = Rect.fromLTRB(
+          trackRect.left,
+          trackRect.top - (additionalActiveTrackHeight / 2),
+          min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
+          trackRect.bottom + (additionalActiveTrackHeight / 2));
+
+      if (!leftTrackSegment.isEmpty) {
+        context.canvas.drawRect(leftTrackSegment, inactivePaint);
+      }
+
+      final activeRect = Rect.fromLTRB(
+        trackCenter.dx,
+        trackRect.top - (additionalActiveTrackHeight / 2),
+        thumbCenter.dx,
+        trackRect.bottom + (additionalActiveTrackHeight / 2),
+      );
+      if (!activeRect.isEmpty) {
+        activePaint.shader = linearGradientShader(
+          colors,
+          colorStops: colorStops,
+          rect: Rect.fromLTRB(
+            activeRect.left,
+            activeRect.top,
+            trackRect.right,
+            trackRect.bottom,
+          ),
+        );
+        context.canvas.drawRect(activeRect, activePaint);
+      }
+
+      final Rect rightTrackSegment = Rect.fromLTRB(
+          thumbCenter.dx + thumbSize.width / 2,
+          trackRect.top - (additionalActiveTrackHeight / 2),
+          trackRect.right,
+          trackRect.bottom + (additionalActiveTrackHeight / 2));
+      if (!rightTrackSegment.isEmpty) {
+        context.canvas.drawRect(rightTrackSegment, inactivePaint);
+      }
+    } else if (trackCenter.dx > thumbCenter.dx) {
+      final Rect leftTrackSegment = Rect.fromLTRB(
+        trackRect.left,
+        trackRect.top - (additionalActiveTrackHeight / 2),
+        thumbCenter.dx + thumbSize.width / 2,
+        trackRect.bottom + (additionalActiveTrackHeight / 2),
+      );
+      if (!leftTrackSegment.isEmpty) {
+        context.canvas.drawRect(leftTrackSegment, inactivePaint);
+      }
+
+      final activeRect = Rect.fromLTRB(
+        thumbCenter.dx + thumbSize.width / 2,
+        trackRect.top - (additionalActiveTrackHeight / 2),
+        trackRect.center.dx,
+        trackRect.bottom + (additionalActiveTrackHeight / 2),
+      );
+      if (!activeRect.isEmpty) {
+        activePaint.shader = linearGradientShader(
+          colors?.reversed.toList(),
+          colorStops: colorStops?.reversed.toList(),
+          rect: Rect.fromLTRB(
+            trackRect.left,
+            trackRect.top,
+            activeRect.right,
+            activeRect.bottom,
+          ),
+        );
+        context.canvas.drawRect(activeRect, activePaint);
+      }
+
+      final Rect rightTrackSegment = Rect.fromLTRB(
+        max(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
+        trackRect.top - (additionalActiveTrackHeight / 2),
+        trackRect.right,
+        trackRect.bottom + (additionalActiveTrackHeight / 2),
+      );
+
+      if (!rightTrackSegment.isEmpty) {
+        context.canvas.drawRect(rightTrackSegment, inactivePaint);
+      }
+    } else {
+      final Rect leftTrackSegment = Rect.fromLTRB(
+          trackRect.left,
+          trackRect.top - (additionalActiveTrackHeight / 2),
+          min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
+          trackRect.bottom + (additionalActiveTrackHeight / 2));
+      if (!leftTrackSegment.isEmpty) {
+        context.canvas.drawRect(leftTrackSegment, inactivePaint);
+      }
+
+      final Rect rightTrackSegment = Rect.fromLTRB(
+          min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
+          trackRect.top - (additionalActiveTrackHeight / 2),
+          trackRect.right,
+          trackRect.bottom + (additionalActiveTrackHeight / 2));
+      if (!rightTrackSegment.isEmpty) {
+        context.canvas.drawRect(rightTrackSegment, inactivePaint);
       }
     }
   }

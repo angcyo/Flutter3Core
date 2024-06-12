@@ -2229,8 +2229,8 @@ extension NavigatorEx on BuildContext {
 
 /// 线性渐变 [Shader]
 /// [rect] 请指定渐变的范围, 否则可能没有渐变效果
-UiGradient linearGradientShader(
-  List<Color> colors, {
+UiGradient? linearGradientShader(
+  List<Color>? colors, {
   Rect? rect,
   Offset? from,
   Offset? to,
@@ -2238,14 +2238,17 @@ UiGradient linearGradientShader(
   TileMode tileMode = TileMode.clamp,
   Float64List? matrix4,
 }) =>
-    UiGradient.linear(
-      from ?? rect?.lt ?? Offset.zero,
-      to ?? rect?.rt ?? Offset.zero,
-      colors,
-      colorStops ?? [for (var i = 0; i < colors.size(); i++) i / colors.size()],
-      tileMode,
-      matrix4,
-    );
+    colors == null
+        ? null
+        : UiGradient.linear(
+            from ?? rect?.lt ?? Offset.zero,
+            to ?? rect?.rt ?? Offset.zero,
+            colors,
+            colorStops ??
+                [for (var i = 0; i < colors.size(); i++) i / colors.size()],
+            tileMode,
+            matrix4,
+          );
 
 /// 径向渐变 [Shader]
 UiGradient radialGradientShader(

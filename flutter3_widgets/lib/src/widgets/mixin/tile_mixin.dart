@@ -367,6 +367,8 @@ mixin TileMixin {
   /// [inactiveTrackColor] 无值轨道的颜色(背景颜色)
   /// [valueIndicatorColor] 气泡的颜色
   ///
+  /// [useCenteredTrackShape] 是否使用中心轨道形状 [CenteredRectangularSliderTrackShape]
+  ///
   /// [Slider]小部件需要[Material]支持.
   Widget buildSliderWidget(
     BuildContext context,
@@ -387,15 +389,25 @@ mixin TileMixin {
     Color? inactiveTrackColor,
     Color? valueIndicatorColor,
     double? trackHeight,
+    bool? useCenteredTrackShape,
     SliderTrackShape? trackShape,
   }) {
     if (trackShape == null) {
-      if (!isNil(activeTrackGradientColors)) {
-        trackShape = GradientSliderTrackShape(activeTrackGradientColors!);
-        final last = activeTrackGradientColors.last;
+      if (useCenteredTrackShape == true) {
+        trackShape = CenteredRectangularSliderTrackShape(
+            colors: activeTrackGradientColors);
+        final last = activeTrackGradientColors?.last;
         thumbColor ??= last;
         valueIndicatorColor = thumbColor;
-        overlayColor ??= last.withOpacity(0.1);
+        overlayColor ??= last?.withOpacity(0.1);
+      } else {
+        if (!isNil(activeTrackGradientColors)) {
+          trackShape = GradientSliderTrackShape(activeTrackGradientColors);
+          final last = activeTrackGradientColors?.last;
+          thumbColor ??= last;
+          valueIndicatorColor = thumbColor;
+          overlayColor ??= last?.withOpacity(0.1);
+        }
       }
     }
     final globalTheme = GlobalTheme.of(context);
