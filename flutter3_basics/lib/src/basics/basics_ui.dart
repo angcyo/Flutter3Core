@@ -1704,10 +1704,21 @@ extension ContextEx on BuildContext {
   bool get isSystemDark =>
       platformMediaQueryData.platformBrightness == Brightness.dark;
 
+  /// 系统当前的亮度模式
+  /// [Brightness]
+  bool get isSystemLight =>
+      platformMediaQueryData.platformBrightness == Brightness.light;
+
   /// 当前主题是否是暗黑模式
   bool get isThemeDark {
     final theme = GlobalConfig.def.globalThemeData ?? Theme.of(this);
     return theme.brightness == Brightness.dark;
+  }
+
+  /// 当前主题是否是亮色模式
+  bool get isThemeLight {
+    final theme = GlobalConfig.def.globalThemeData ?? Theme.of(this);
+    return theme.brightness == Brightness.light;
   }
 
   /// 系统当前的语言环境
