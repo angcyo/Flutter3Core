@@ -265,6 +265,52 @@ class ElementPainter extends IPainter
     });
   }
 
+  /// 在操作属性的矩阵下, 绘制一个[TextPainter]对象
+  @property
+  void paintItTextPainter(
+    Canvas canvas,
+    PaintMeta paintMeta,
+    TextPainter? textPainter,
+  ) {
+    final painter = textPainter;
+    if (painter != null) {
+      canvas.withMatrix(
+        paintProperty?.operateMatrix,
+        () {
+          painter.paint(canvas, Offset.zero);
+        },
+      );
+    }
+  }
+
+  /// 在操作属性的矩阵下, 绘制一个[UiImage]对象
+  /// [convertToMmSize] 是否将图片的大小(默认dp)转换成mm大小
+  @property
+  void paintItUiImage(
+    Canvas canvas,
+    PaintMeta paintMeta,
+    UiImage? image, {
+    bool convertToMmSize = false,
+  }) {
+    if (image != null) {
+      final scale = Matrix4.identity();
+      if (convertToMmSize) {
+        //因为图片的宽高是mm单位存档的, 所以需要转换成dp单位并绘制
+        final sx = image.width.toDpFromMm() / image.width;
+        final sy = image.height.toDpFromMm() / image.height;
+        scale.scale(sx, sy);
+      }
+      canvas.withMatrix(
+        paintProperty?.operateMatrix.let((it) => it * scale),
+        () {
+          canvas.drawImage(image, Offset.zero, paint);
+        },
+      );
+    }
+  }
+
+  //---
+
   /// 判断当前元素是否与指定的点相交
   /// [inflate] 未命中时, 是否膨胀
   /// [isVisibleInCanvasBox]
