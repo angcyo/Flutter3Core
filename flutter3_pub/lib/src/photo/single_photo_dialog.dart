@@ -108,7 +108,7 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       );
     }
 
-    return result;
+    return result.material();
   }
 
   Widget _buildLoading(BuildContext context, ImageChunkEvent? event) {

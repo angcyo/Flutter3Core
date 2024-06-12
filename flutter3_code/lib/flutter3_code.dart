@@ -6,7 +6,7 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:image/image.dart' as img;
 
 export 'package:barcode/barcode.dart';
-export 'package:image/image.dart';
+//export 'package:image/image.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

@@ -449,11 +449,21 @@ extension ImageStringEx on String {
 }
 
 extension WidgetImageEx on Widget {
-  /// 获取小部件的截图
+  /// 获取小部件的截图, 此方式可以获取没有显示的小部件的截图
+  /// 可以是直接创建的小部件.
   /// [widget] 需要获取截图的widget
   /// [imageSize] widget的size，推荐使用dp
   /// [wait] widget截屏延时，widget构建时如果有耗时操作，可以添加延时防止截屏时耗时操作尚未完成
   ///
+  /// ```
+  /// final image = await Text("test1234567890" * 30).captureImage();
+  /// final path = await cacheFilePath("test.png");
+  /// await image.saveToFilePath(path);
+  /// buildContext?.showWidgetDialog(SinglePhotoDialog(
+  ///   content: image,
+  /// ));
+  /// l.d(path);
+  /// ```
   Future<ui.Image> captureImage({
     Duration? wait,
     Size imageSize = Size.infinite,
@@ -462,6 +472,8 @@ extension WidgetImageEx on Widget {
     final repaintBoundary = RenderRepaintBoundary();
     final view = ui.PlatformDispatcher.instance.implicitView ??
         RendererBinding.instance.renderView.flutterView;
+
+    //渲染树根
     final renderView = RenderView(
       view: view,
       child: RenderPositionedBox(
@@ -475,30 +487,36 @@ extension WidgetImageEx on Widget {
       ),*/ //flutter 3.19.6
     );
 
-    final pipelineOwner = PipelineOwner();
-    final buildOwner = BuildOwner();
-
-    pipelineOwner.rootNode = renderView;
+    //管道
+    final pipelineOwner = PipelineOwner()..rootNode = renderView;
     renderView.prepareInitialFrame();
 
-    final RenderObjectToWidgetElement<RenderBox> rootElement =
-        RenderObjectToWidgetAdapter<RenderBox>(
-            container: repaintBoundary,
-            child: Directionality(
-              textDirection: TextDirection.ltr,
-              child: this,
-            )).attachToRenderTree(buildOwner);
+    //管道对象
+    final buildOwner = BuildOwner(focusManager: FocusManager());
 
+    //根元素
+    final rootElement = RenderObjectToWidgetAdapter<RenderBox>(
+        container: repaintBoundary,
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: this,
+        )).attachToRenderTree(buildOwner);
+
+    //end...
     if (wait != null) {
       await Future.delayed(wait);
     }
 
-    buildOwner.buildScope(rootElement);
-    buildOwner.finalizeTree();
+    //构建树
+    buildOwner
+      ..buildScope(rootElement)
+      ..finalizeTree();
 
-    pipelineOwner.flushLayout();
-    pipelineOwner.flushCompositingBits();
-    pipelineOwner.flushPaint();
+    //渲染树
+    pipelineOwner
+      ..flushLayout()
+      ..flushCompositingBits()
+      ..flushPaint();
 
     final image = await repaintBoundary.toImage(pixelRatio: devicePixelRatio);
     return image;
