@@ -727,6 +727,10 @@ class CharTextPainter {
   @autoInjectMark
   Offset alignOffset = Offset.zero;
 
+  /// 绘制矩阵, 通常用来实现文本的曲线绘制
+  @autoInjectMark
+  Matrix4? paintMatrix;
+
   double get charWidth => bounds.width;
 
   double get charHeight => bounds.height;
@@ -745,18 +749,98 @@ class CharTextPainter {
   /// 绘制
   @api
   void paint(Canvas canvas, Offset offset) {
-    assert(() {
-      canvas.drawRect(
-        bounds + offset + alignOffset,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..color = Colors.purpleAccent,
-      );
-      return true;
-    }());
-    /*canvas.save();
-    canvas.translate(bounds.left, bounds.top);*/
-    charPainter?.paint(canvas, offset + alignOffset + bounds.lt);
-    /*canvas.restore();*/
+    canvas.withMatrix(paintMatrix, () {
+      assert(() {
+        canvas.drawRect(
+          bounds + offset + alignOffset,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..color = Colors.purpleAccent,
+        );
+        return true;
+      }());
+      charPainter?.paint(canvas, offset + alignOffset + bounds.lt);
+    });
+  }
+}
+
+/// 曲线文本
+/// [SingleCharTextPainter]
+class SingleCurveCharTextPainter extends SingleCharTextPainter {
+  /// 曲线文本曲率[-360°~360°]; 0表示正常文本
+  double curvature = 0;
+
+  Offset curveCenter = Offset.zero;
+
+  /// 曲线的周长
+  double get _curvePerimeter {
+    final angle = curvature.abs() % 360;
+    return _size.width * angle / 360;
+  }
+
+  /// 曲线文本的理论参考的中心点, 这个参考点不准确, 仅用于计算矩阵
+  Offset get _curveRefCenter {
+    return Offset(_size.width / 2, _size.height + _curvePerimeter / 2);
+  }
+
+  /// 曲线的锚点角度, 一般是上90° 下-90°
+  double get _curveAnchorAngle => curvature > 0 ? -90 : 90;
+
+  /// 曲线开始的角度
+  double get _curveStartAngle {
+    final angle = curvature.abs() % 360;
+    return curvature > 0
+        ? _curveAnchorAngle - angle / 2
+        : _curveAnchorAngle + angle / 2;
+  }
+
+  /// 测量每个字符绕着曲线中心点需要进行的曲线变换
+  void _measureCharTextCurvature() {
+    final list = _charPainterList;
+    if (list == null) {
+      return;
+    }
+    curveCenter = _curveRefCenter;
+
+    final startAngle = _curveStartAngle;
+    final painterWidth = _size.width;
+
+    for (final line in list) {
+      for (final char in line) {
+        final bounds = char.bounds + char.alignOffset;
+        final charAngle =
+            startAngle + bounds.center.dx / painterWidth * curvature.abs();
+        final originAngle = angle(bounds.center, _curveRefCenter).jd;
+
+        //debugger();
+
+        final targetAngle = charAngle  + (180- originAngle);
+        l.d("${char.char} $startAngle:${charAngle}:${originAngle}:$targetAngle");
+
+        final matrix =
+            createRotateMatrix(targetAngle.hd, anchor: _curveRefCenter);
+        char.paintMatrix = matrix;
+
+        /*if (charPainter != null) {
+          final metrics = charPainter.computeLineMetrics();
+          if (metrics.isNotEmpty) {
+            final metric = metrics.first;
+            final offset = metric.baseline;
+            final angle = curvature;
+            final matrix = Matrix4.identity()
+              ..translate(offset.dx, offset.dy)
+              ..rotateZ(angle.hd)
+              ..translate(-offset.dx, -offset.dy);
+            char.paintMatrix = matrix;
+          }
+        }*/
+      }
+    }
+  }
+
+  @override
+  void initPainter() {
+    super.initPainter();
+    _measureCharTextCurvature();
   }
 }

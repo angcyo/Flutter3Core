@@ -36,7 +36,7 @@ Offset center(Offset a, Offset b) {
   return Offset((a.dx + b.dx) / 2, (a.dy + b.dy) / 2);
 }
 
-/// 求2点之间的角度, 弧度
+/// 求2点之间的角度,与水平面的夹角, 弧度
 double angle(Offset a, Offset b) {
   return math.atan2((b.dy - a.dy).abs(), (b.dx - a.dx).abs());
 }

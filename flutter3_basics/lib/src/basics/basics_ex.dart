@@ -1203,13 +1203,13 @@ extension NumEx on num {
 
   //region ---math---
 
-  /// 角度
+  /// 转角度
   double get jd => toDegrees;
 
   /// [sanitizeDegrees]
   double get jds => toDegrees.sanitizeDegrees;
 
-  /// 弧度
+  /// 转弧度
   double get hd => toRadians;
 
   /// [sanitizeRadians]
