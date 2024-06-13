@@ -523,17 +523,36 @@ class ElementPainter extends IPainter
     canvasDelegate?.refresh();
   }
 
-  //---
+  //endregion ---canvas---
+
+  //region ---创建/恢复回退栈---
 
   /// 保存当前元素的状态
   /// 使用[ElementStateStack.restore]恢复状态
   ElementStateStack createStateStack() => ElementStateStack()..saveFrom(this);
 
-  /// 当元素的状态恢复后
+  /// 保存元素的额外数据到回退栈中
+  /// [dataMap] 用来存储额外数据
+  /// [onSaveStateStackData]
+  /// [onRestoreStateStackData]
+  @mustCallSuper
+  void onSaveStateStackData(
+      ElementStateStack stateStack, Map<String, dynamic> dataMap) {}
+
+  /// 恢复元素的额外数据
+  /// [dataMap] 额外的数据, 用来恢复
+  /// [onSaveStateStackData]
+  /// [onRestoreStateStackData]
+  @mustCallSuper
+  void onRestoreStateStackData(
+      ElementStateStack stateStack, Map<String, dynamic> dataMap) {}
+
+  /// 当元素的状态恢复后, 收尾的回调
   /// [ElementStateStack.restore]
+  @mustCallSuper
   void onRestoreStateStack(ElementStateStack stateStack) {}
 
-  //endregion ---canvas---
+  //endregion ---创建回退栈---
 
   //region ---api---
 
@@ -1330,32 +1349,43 @@ class ElementStateStack {
   @flagProperty
   bool isSaveState = false;
 
-  /// 操作的元素
-  ElementPainter? element;
+  /// 操作的元素, 回退栈操作的顶层元素
+  ElementPainter? fromElement;
 
   /// 元素的属性保存
-  final Map<ElementPainter, PaintProperty?> propertyMap = {};
+  final Map<ElementPainter, PaintProperty?> elementPropertyMap = {};
+
+  /// 元素的扩展信息保存
+  final Map<ElementPainter, Map<String, dynamic>> elementDataMap = {};
 
   /// 元素的状态保存, 暂时不存储
   @implementation
-  final Map<ElementPainter, PaintState?> stateMap = {};
+  final Map<ElementPainter, PaintState?> elementStateMap = {};
 
   /// 保存信息
   @callPoint
   @mustCallSuper
   void saveFrom(ElementPainter element) {
     isSaveState = true;
-    this.element = element;
-    save(element);
+    fromElement = element;
+    saveElement(element);
   }
 
   @overridePoint
-  void save(ElementPainter element) {
-    propertyMap[element] = element.paintProperty?.copyWith();
+  void saveElement(ElementPainter element) {
+    //base
+    elementPropertyMap[element] = element.paintProperty?.copyWith();
     //stateMap[element] = element.paintState.copyWith();
+
+    //data
+    final dataMap = <String, dynamic>{};
+    element.onSaveStateStackData(this, dataMap);
+    elementDataMap[element] = dataMap;
+
+    //group child
     if (element is ElementGroupPainter) {
       element.children?.forEach((element) {
-        save(element);
+        saveElement(element);
       });
     }
   }
@@ -1367,8 +1397,17 @@ class ElementStateStack {
     /*stateMap.forEach((element, paintState) {
       element.paintState = paintState ?? element.paintState;
     });*/
-    propertyMap.forEach((element, paintProperty) {
+    elementPropertyMap.forEach((element, paintProperty) {
+      //base
       element.paintProperty = paintProperty;
+      //final paintState = elementStateMap[element];
+      //element.paintState = paintState;
+
+      //data
+      final dataMap = elementDataMap[element];
+      element.onRestoreStateStackData(this, dataMap ?? {});
+
+      //end
       element.onRestoreStateStack(this);
     });
   }
