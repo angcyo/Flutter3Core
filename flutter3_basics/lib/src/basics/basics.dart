@@ -71,11 +71,11 @@ dynamic clamp(num x, num? min, num? max) {
   return x;
 }
 
-/// orientation: 横向
+/// orientation: 横向 0
 @flagProperty
 const kHorizontal = 0;
 
-/// orientation: 纵向
+/// orientation: 纵向 1
 @flagProperty
 const kVertical = 1;
 

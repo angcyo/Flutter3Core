@@ -1338,6 +1338,12 @@ extension IntEx on int {
   /// [StringEx.ascii]
   String get ascii => String.fromCharCode(this);
 
+  /// [kHorizontal] 横向 0
+  bool get isHorizontal => this == kHorizontal;
+
+  /// [kVertical] 纵向 1
+  bool get isVertical => this == kVertical;
+
   /// 获取对应的无符号的整型
   int get uint => this & 0xFFFFFFFF;
 

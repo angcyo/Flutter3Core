@@ -40,6 +40,16 @@ String get intlCurrentLocaleName {
 }
 
 extension L10nStringEx on String {
+  /// 将包含bidi的字符转换成对应的方向
+  /// ```
+  /// 'نوشته پارسی اینجا گذارده شود.'
+  /// ```
+  String wrapBidi() {
+    //return intl.BidiFormatter.LTR(true).wrapWithUnicode(this);
+    final visual = bidi.logicalToVisual(this);
+    return String.fromCharCodes(visual);
+  }
+
   /// [intl.Intl.message]
   /// 使用指定的name,获取对应的文本资源
   String intlMessage({

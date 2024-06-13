@@ -120,9 +120,11 @@ class BytesWriter {
   }
 
   /// 写入一个字符串
-  void writeString(String value, [int? length]) {
+  void writeString(String value, [int? length, bool writeEnd = true]) {
     writeBytes(utf8.encode(value), length);
-    writeByte(0x00); //字符串结束符
+    if (writeEnd) {
+      writeByte(0x00); //字符串结束符
+    }
   }
 
   /// 写入一个Hex字符串
