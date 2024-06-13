@@ -449,9 +449,24 @@ extension ImageStringEx on String {
 }
 
 extension WidgetImageEx on Widget {
+  /// [captureImage]
+  Future<ui.Image> toBuildImage({
+    Duration? wait,
+    double? pixelRatio,
+    ViewConfiguration? configuration,
+    Size imageSize = Size.infinite,
+  }) =>
+      captureImage(
+        wait: wait,
+        pixelRatio: pixelRatio,
+        configuration: configuration,
+        imageSize: imageSize,
+      );
+
   /// 获取小部件的截图, 此方式可以获取没有显示的小部件的截图
   /// 可以是直接创建的小部件.
   /// [widget] 需要获取截图的widget
+  /// [pixelRatio] 像素比例, 1dp输出多少px
   /// [imageSize] widget的size，推荐使用dp
   /// [wait] widget截屏延时，widget构建时如果有耗时操作，可以添加延时防止截屏时耗时操作尚未完成
   ///
@@ -466,9 +481,11 @@ extension WidgetImageEx on Widget {
   /// ```
   Future<ui.Image> captureImage({
     Duration? wait,
+    double? pixelRatio,
+    ViewConfiguration? configuration,
     Size imageSize = Size.infinite,
   }) async {
-    var devicePixelRatio = platformMediaQueryData.devicePixelRatio;
+    pixelRatio ??= platformMediaQueryData.devicePixelRatio;
     final repaintBoundary = RenderRepaintBoundary();
     final view = ui.PlatformDispatcher.instance.implicitView ??
         RendererBinding.instance.renderView.flutterView;
@@ -480,10 +497,11 @@ extension WidgetImageEx on Widget {
         alignment: Alignment.center,
         child: repaintBoundary,
       ),
-      configuration: ViewConfiguration.fromView(view), //flutter 3.22.0
+      configuration:
+          configuration ?? ViewConfiguration.fromView(view), //flutter 3.22.0
       /*configuration: ViewConfiguration(
         size: imageSize,
-        devicePixelRatio: devicePixelRatio,
+        devicePixelRatio: pixelRatio,
       ),*/ //flutter 3.19.6
     );
 
@@ -518,7 +536,7 @@ extension WidgetImageEx on Widget {
       ..flushCompositingBits()
       ..flushPaint();
 
-    final image = await repaintBoundary.toImage(pixelRatio: devicePixelRatio);
+    final image = await repaintBoundary.toImage(pixelRatio: pixelRatio);
     return image;
   }
 }
