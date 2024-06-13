@@ -219,6 +219,17 @@ extension CodeStringEx on String {
     return null;
   }
 
+  /// 当前的字符串是否支持指定的条形码类型
+  bool isSupportBarcodeType(String? barcodeType) {
+    final barcode = barcodeType?.toBarcode();
+    try {
+      barcode!.verify(this);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   ///
   //bool is2DCode
 

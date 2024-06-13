@@ -123,6 +123,7 @@ const kContentPadding = EdgeInsets.only(
 
 const kLabelMinWidth = 80.0;
 const kNumberMinWidth = 50.0;
+const kNumberMinHeight = 26.0;
 
 /// label默认的约束
 const kLabelConstraints = BoxConstraints(
@@ -130,9 +131,10 @@ const kLabelConstraints = BoxConstraints(
   maxWidth: kLabelMinWidth,
 );
 
-/// number默认的约束
+/// number数字输入默认的约束
 const kNumberConstraints = BoxConstraints(
   minWidth: kNumberMinWidth,
+  minHeight: kNumberMinHeight,
 );
 
 //---
