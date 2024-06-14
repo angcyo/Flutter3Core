@@ -432,6 +432,7 @@ class SingleCharTextPainter with TextPainterMixin {
 
   //---
 
+  /// 计算出来的绘制对象的边界
   Rect _painterBounds = Rect.zero;
 
   @override
@@ -789,6 +790,10 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
   @output
   Offset curveCenter = Offset.zero;
 
+  /// 曲线的半径
+  @output
+  double curveRadius = 0;
+
   /// 曲线的周长
   double get _curvePerimeter {
     final angle = curvature.abs() % 360;
@@ -801,11 +806,13 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
   /// 曲线文本的理论参考的中心点, 这个参考点不准确, 仅用于计算矩阵
   Offset get _curveRefCenter {
     //半径
+    final bounds = _painterBounds;
     final radius = _curvePerimeter / (2 * pi);
+    curveRadius = radius;
     if (curvature >= 0) {
-      return Offset(_painterBounds.width / 2, _painterBounds.height + radius);
+      return Offset(bounds.width / 2, bounds.height + radius);
     }
-    return Offset(_painterBounds.width / 2, -radius);
+    return Offset(bounds.width / 2, -radius);
   }
 
   /// 曲线的锚点角度, 一般是上90° 下-90°
