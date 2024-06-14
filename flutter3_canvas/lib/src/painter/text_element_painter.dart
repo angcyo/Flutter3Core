@@ -190,7 +190,8 @@ class TextElementPainter extends ElementPainter {
 /// 文本绘制混入
 mixin TextPainterMixin {
   /// 当前绘制对象占用的大小
-  Size get painterSize => Size.zero;
+  /// 如果是曲线文本, left/top可能是负值
+  Rect get painterBounds => Rect.zero;
 
   /// 绘制文本
   @api
@@ -294,10 +295,10 @@ class NormalTextPainter with TextPainterMixin {
     initPainter();
   }
 
-  Size _size = Size.zero;
+  Rect _painterBounds = Rect.zero;
 
   @override
-  Size get painterSize => _size;
+  Rect get painterBounds => _painterBounds;
 
   TextPainter? _textPainter;
 
@@ -310,7 +311,7 @@ class NormalTextPainter with TextPainterMixin {
       fontSize: fontSize,
       strutHeight: lineSpacing != null ? (1 + lineSpacing! / fontSize) : null,
     );
-    _size = _textPainter!.size;
+    _painterBounds = Offset.zero & _textPainter!.size;
   }
 
   @override
@@ -431,10 +432,10 @@ class SingleCharTextPainter with TextPainterMixin {
 
   //---
 
-  Size _size = Size.zero;
+  Rect _painterBounds = Rect.zero;
 
   @override
-  Size get painterSize => _size;
+  Rect get painterBounds => _painterBounds;
 
   /// 斜体宽度补偿方案
   /// 是否使用整行补偿宽度的方案
@@ -480,18 +481,18 @@ class SingleCharTextPainter with TextPainterMixin {
   }
 
   /// 测量总体的大小
-  /// 最终缓存在[_size]中
+  /// 最终缓存在[_painterBounds]中
   void _measureCharTextPainterSize() {
     final list = _charPainterList;
     if (list == null) {
-      _size = Size.zero;
+      _painterBounds = Rect.zero;
     } else {
       double width = -2147483648;
       double height = -2147483648;
 
       double left = 2147483648;
-      double right = -2147483648;
       double top = 2147483648;
+      double right = -2147483648;
       double bottom = -2147483648;
 
       for (final line in list) {
@@ -538,7 +539,7 @@ class SingleCharTextPainter with TextPainterMixin {
           }
         }
       }
-      _size = Size(width, height);
+      _painterBounds = Offset.zero & Size(width, height);
       //debugger();
     }
   }
@@ -566,10 +567,10 @@ class SingleCharTextPainter with TextPainterMixin {
           }
 
           if (textAlign == TextAlign.center) {
-            dy = (painterSize.height - char.lineHeight) / 2;
+            dy = (painterBounds.height - char.lineHeight) / 2;
           } else if (textAlign == TextAlign.right ||
               textAlign == TextAlign.end) {
-            dy = painterSize.height - char.lineHeight;
+            dy = painterBounds.height - char.lineHeight;
           }
         } else {
           if (crossTextAlign == TextAlign.center) {
@@ -580,10 +581,10 @@ class SingleCharTextPainter with TextPainterMixin {
           }
 
           if (textAlign == TextAlign.center) {
-            dx = (painterSize.width - char.lineWidth) / 2;
+            dx = (painterBounds.width - char.lineWidth) / 2;
           } else if (textAlign == TextAlign.right ||
               textAlign == TextAlign.end) {
-            dx = painterSize.width - char.lineWidth;
+            dx = painterBounds.width - char.lineWidth;
             //debugger();
           }
         }
@@ -683,7 +684,7 @@ class SingleCharTextPainter with TextPainterMixin {
   void painterText(Canvas canvas) {
     assert(() {
       canvas.drawRect(
-        Offset.zero & painterSize,
+        painterBounds,
         Paint()
           ..style = PaintingStyle.stroke
           ..color = Colors.redAccent,
@@ -709,11 +710,12 @@ class CharTextPainter {
   /// 绘制的字符
   final String char;
 
-  /// 绘制的区域
-  final Rect bounds;
-
   /// 文本绘制对象
   final TextPainter? charPainter;
+
+  /// 绘制的区域, 不包含[alignOffset]
+  @autoInjectMark
+  Rect bounds = Rect.zero;
 
   /// 当前所在行的宽度, 用来实现对齐
   @autoInjectMark
@@ -730,6 +732,14 @@ class CharTextPainter {
   /// 绘制矩阵, 通常用来实现文本的曲线绘制
   @autoInjectMark
   Matrix4? paintMatrix;
+
+  /// [bounds]与[paintMatrix]的集合, 通常在曲线文本中使用
+  @autoInjectMark
+  Rect paintBounds = Rect.zero;
+
+  /// 是否是绘制在曲线上
+  @autoInjectMark
+  bool isInCurve = false;
 
   double get charWidth => bounds.width;
 
@@ -751,15 +761,20 @@ class CharTextPainter {
   void paint(Canvas canvas, Offset offset) {
     canvas.withMatrix(paintMatrix, () {
       assert(() {
+        final rect = isInCurve ? bounds : bounds + alignOffset;
         canvas.drawRect(
-          bounds + offset + alignOffset,
+          rect + offset,
           Paint()
             ..style = PaintingStyle.stroke
             ..color = Colors.purpleAccent,
         );
         return true;
       }());
-      charPainter?.paint(canvas, offset + alignOffset + bounds.lt);
+      if (isInCurve) {
+        charPainter?.paint(canvas, offset);
+      } else {
+        charPainter?.paint(canvas, offset + alignOffset + bounds.lt);
+      }
     });
   }
 }
@@ -770,72 +785,96 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
   /// 曲线文本曲率[-360°~360°]; 0表示正常文本
   double curvature = 0;
 
+  /// 曲线的中心点坐标
+  @output
   Offset curveCenter = Offset.zero;
 
   /// 曲线的周长
   double get _curvePerimeter {
     final angle = curvature.abs() % 360;
-    return _size.width * angle / 360;
+    if (angle == 0) {
+      return _painterBounds.width;
+    }
+    return _painterBounds.width / angle * 360;
   }
 
   /// 曲线文本的理论参考的中心点, 这个参考点不准确, 仅用于计算矩阵
   Offset get _curveRefCenter {
-    return Offset(_size.width / 2, _size.height + _curvePerimeter / 2);
+    //半径
+    final radius = _curvePerimeter / (2 * pi);
+    if (curvature >= 0) {
+      return Offset(_painterBounds.width / 2, _painterBounds.height + radius);
+    }
+    return Offset(_painterBounds.width / 2, -radius);
   }
 
   /// 曲线的锚点角度, 一般是上90° 下-90°
-  double get _curveAnchorAngle => curvature > 0 ? -90 : 90;
+  double get _curveAnchorAngle => curvature >= 0 ? -90 : 90;
 
   /// 曲线开始的角度
   double get _curveStartAngle {
-    final angle = curvature.abs() % 360;
-    return curvature > 0
-        ? _curveAnchorAngle - angle / 2
-        : _curveAnchorAngle + angle / 2;
+    final angle = curvature.abs().jdm;
+    //debugger();
+    return curvature >= 0
+        ? max(-270, _curveAnchorAngle - angle / 2)
+        : min(270, _curveAnchorAngle + angle / 2);
   }
 
   /// 测量每个字符绕着曲线中心点需要进行的曲线变换
   void _measureCharTextCurvature() {
     final list = _charPainterList;
-    if (list == null) {
+    if (list == null || curvature == 0 || isNil(list)) {
       return;
     }
     curveCenter = _curveRefCenter;
 
     final startAngle = _curveStartAngle;
-    final painterWidth = _size.width;
+    final painterWidth = _painterBounds.width;
 
+    //l.d("参考宽度:${_size.width} 曲线直径:$_curvePerimeter 曲线中心:$_curveRefCenter 开始角度:$startAngle");
+
+    double left = 2147483648;
+    double top = 2147483648;
+    double right = -2147483648;
+    double bottom = -2147483648;
     for (final line in list) {
       for (final char in line) {
+        char.isInCurve = true;
         final bounds = char.bounds + char.alignOffset;
         final charAngle =
-            startAngle + bounds.center.dx / painterWidth * curvature.abs();
-        final originAngle = angle(bounds.center, _curveRefCenter).jd;
-
+            startAngle + bounds.center.dx / painterWidth * curvature.jdm;
         //debugger();
 
-        final targetAngle = charAngle  + (180- originAngle);
-        l.d("${char.char} $startAngle:${charAngle}:${originAngle}:$targetAngle");
+        //曲线文本时, bounds就是字符的大小
+        //然后通过平移到锚点中心, 再旋转到目标位置
+        char.bounds = Rect.fromLTWH(0, 0, bounds.width, bounds.height);
 
-        final matrix =
-            createRotateMatrix(targetAngle.hd, anchor: _curveRefCenter);
+        //1: 先将元素移至锚点中心
+        final translateMatrix = Matrix4.identity()
+          ..translate(
+            _curveRefCenter.dx - bounds.width / 2,
+            bounds.top,
+          );
+
+        //2: 再旋转到目标位置
+        final rotateAngle = charAngle - _curveAnchorAngle;
+        final rotateMatrix = Matrix4.identity()
+          ..rotateBy(rotateAngle.hd, anchor: _curveRefCenter);
+
+        final Matrix4 matrix = rotateMatrix * translateMatrix;
+
+        char.paintBounds = matrix.mapRect(char.bounds);
         char.paintMatrix = matrix;
 
-        /*if (charPainter != null) {
-          final metrics = charPainter.computeLineMetrics();
-          if (metrics.isNotEmpty) {
-            final metric = metrics.first;
-            final offset = metric.baseline;
-            final angle = curvature;
-            final matrix = Matrix4.identity()
-              ..translate(offset.dx, offset.dy)
-              ..rotateZ(angle.hd)
-              ..translate(-offset.dx, -offset.dy);
-            char.paintMatrix = matrix;
-          }
-        }*/
+        //计算整体边界
+        left = min(left, char.paintBounds.left);
+        top = min(top, char.paintBounds.top);
+        right = max(right, char.paintBounds.right);
+        bottom = max(bottom, char.paintBounds.bottom);
+        //l.d("字符[${char.char}] 目标角度:$charAngle 旋转角度:$rotateAngle");
       }
     }
+    _painterBounds = Rect.fromLTRB(left, top, right, bottom);
   }
 
   @override
