@@ -36,7 +36,7 @@ typedef DoubleValueChanged<T1, T2> = void Function(T1 value1, T2 value2);
 
 /// [ValueCallback]
 /// [FutureOr]
-typedef FutureValueCallback<T> = FutureOr<T?> Function(T value);
+typedef FutureValueCallback<T> = FutureOr Function(T value);
 
 /// 回调一个值和一个错误
 typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);

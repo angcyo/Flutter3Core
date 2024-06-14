@@ -503,6 +503,7 @@ mixin TileMixin {
   }
 
   ///
+  /// [NumberKeyboardDialog]
   Widget? buildNumberWidget(
     BuildContext context,
     String number, {
@@ -514,6 +515,9 @@ mixin TileMixin {
     BoxConstraints? constraints = kNumberConstraints,
   }) {
     final globalTheme = GlobalTheme.of(context);
+    if (onTap == null) {
+      //默认的点击事件
+    }
     return Container(
       /*decoration: fillDecoration(
         color: globalTheme.itemWhiteBgColor,

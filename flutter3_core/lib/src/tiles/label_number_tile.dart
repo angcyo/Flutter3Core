@@ -131,13 +131,14 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
       number,
     ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
-        .paddingInsets(widget.tilePadding);
+        .paddingInsets(widget.tilePadding)
+        .material();
   }
 
   void _changeValue(num toValue) async {
     if (widget.onConfirmChange != null) {
       final result = await widget.onConfirmChange!(toValue);
-      if (result != true) {
+      if (result is bool && result != true) {
         return;
       }
     }
