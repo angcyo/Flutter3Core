@@ -270,14 +270,15 @@ class ElementPainter extends IPainter
   void paintItTextPainter(
     Canvas canvas,
     PaintMeta paintMeta,
-    TextPainter? textPainter,
+    BaseTextPainter? textPainter,
   ) {
     final painter = textPainter;
     if (painter != null) {
       canvas.withMatrix(
         paintProperty?.operateMatrix,
         () {
-          painter.paint(canvas, Offset.zero);
+          //painter.paint(canvas, Offset.zero);
+          painter.painterText(canvas, Offset.zero);
         },
       );
     }

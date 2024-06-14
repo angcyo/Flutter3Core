@@ -7,200 +7,129 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 文本绘制元素对象
 class TextElementPainter extends ElementPainter {
-  /// 当前绘制的文本对象
-  TextPainter? paintTextPainter;
-
-  /// 获取绘制文本的字符串
-  String? get text {
-    final span = paintTextPainter?.text;
-    if (span is TextSpan) {
-      return span.text;
-    }
-    return null;
-  }
+  /// 当前绘制文本的对象
+  BaseTextPainter? textPainter;
 
   TextElementPainter() {
     debug = false;
   }
 
-  void initFromText(String? text) {
-    final textPainter = createTextPainter(text);
-    final size = textPainter.size;
+  /// 使用一个文本初始化[textPainter]对象,
+  /// 并确认[TextElementPainter]元素的大小, 位置默认是0,0
+  @initialize
+  void initElementPainterFromText(String? text) {
+    textPainter = NormalTextPainter()
+      ..text = text
+      ..initPainter();
+    final size = textPainter?.painterBounds ?? Rect.zero;
     paintProperty = PaintProperty()
       ..width = size.width
       ..height = size.height;
-    paintTextPainter = textPainter;
+    //paintTextPainter = textPainter;
   }
-
-  /// [TextPainter]
-  TextPainter createTextPainter(String? text) => TextPainter(
-        textAlign: TextAlign.right,
-        locale: platformLocale,
-        text: TextSpan(
-          text: text,
-          style: TextStyle(
-            /*color: paint.color,*/
-            fontSize: 12,
-            // 斜体
-            fontStyle: FontStyle.italic,
-            // 粗体, 字宽
-            fontWeight: FontWeight.normal,
-            // 下划线
-            decoration: TextDecoration.lineThrough,
-            decorationColor: Colors.redAccent /*paint.color*/,
-            foreground: Paint()
-              /*..strokeWidth = 1*/
-              ..color = paint.color
-              ..style = PaintingStyle.stroke,
-            /*background: Paint()
-              ..color = Colors.redAccent
-              ..style = PaintingStyle.stroke,*/
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-        textHeightBehavior: TextHeightBehavior(
-            /*applyHeightToFirstAscent: false,
-          applyHeightToLastDescent: false,*/
-            ),
-      )..layout();
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
-    paintItTextPainter(canvas, paintMeta, paintTextPainter);
+    paintItTextPainter(canvas, paintMeta, textPainter);
     super.onPaintingSelf(canvas, paintMeta);
-  }
-
-  void _testPaintingText(Canvas canvas, PaintMeta paintMeta) {
-    //debugger();
-    paint.color = Colors.black;
-    text?.let((it) {
-      final textPainter = createTextPainter(text);
-      final size = textPainter.size;
-      final metrics = textPainter.computeLineMetrics();
-      final boxes = textPainter.getBoxesForSelection(
-        TextSelection(baseOffset: 0, extentOffset: it.length),
-      );
-      final textHeightBehavior = textPainter.textHeightBehavior;
-
-      //debugger();
-
-      final rect = Rect.fromLTWH(0, 0, 100, 100);
-
-      final matrix = Matrix4.identity()
-        ..postFlip(
-          flipX: true,
-          flipY: false,
-        );
-
-      final matrix2 = Matrix4.identity()
-        ..postFlip(
-          flipX: true,
-          flipY: false,
-          pivotX: 10,
-          pivotY: 10,
-        );
-
-      /*final matrix2 = Matrix4.identity()
-        ..translate(10.0, 10.0)  // 指定锚点为 (50, 50)
-        ..scale(-1.0, 1.0, 1.0)
-        ..translate(-10.0, -10.0);  // 将矩阵平移回原点*/
-
-      final r2 = matrix.mapRect(rect);
-      final r3 = matrix2.mapRect(rect);
-
-      //debugger();
-
-      final pp = paintProperty!;
-
-      final ppRect = Rect.fromLTWH(0, 0, pp.width, pp.height);
-      //final anchor = Offset.zero;
-      final anchor = ppRect.center;
-
-      final translation = Vector3(anchor.dx, anchor.dy, 0);
-
-      final flipMatrix = Matrix4.identity()
-        ..postFlip(
-          flipX: true,
-          flipY: false,
-          anchor: anchor,
-        );
-
-      final skewMatrix = Matrix4.identity()
-        /*..translate(translation)*/
-        ..postConcat(Matrix4.skew(45.hd, 0)) /*..translate(-translation)*/;
-      /*..skewBy(
-          kx: 45.hd,
-          ky: 0,
-          anchor: anchor,
-        );*/
-      final scaleMatrix = Matrix4.identity()
-        ..scaleBy(
-          sx: 2,
-          sy: 2,
-          anchor: anchor,
-        );
-
-      final rotateMatrix = Matrix4.identity()
-        ..rotateBy(
-          30.hd,
-          anchor: anchor,
-        );
-
-      final x = rotateMatrix.rotationX;
-      final y = rotateMatrix.rotationY;
-      final z = rotateMatrix.rotationZ;
-      final r = rotateMatrix.rotation;
-
-      //Quaternion.fromRotation(rotateMatrix.getRotation()).z;
-
-      //debugger();
-
-      final translateMatrix = Matrix4.identity()..translate(100.0, 100.0);
-
-      /*canvas.withMatrix(
-        translateMatrix   * rotateMatrix  *  scaleMatrix   *  skewMatrix
-        */ /*pp.paintFlipMatrix*/ /*
-        */ /*translateMatrix **/ /*
-        */ /*rotateMatrix * scaleMatrix */ /*
-        */ /** rotateMatrix*/ /* */ /* * flipMatrix * skewMatrix*/ /*,
-        () {
-          textPainter.paint(canvas, Offset.zero);
-        },
-      );*/
-
-      // 真实的缩放矩阵
-      final skewMatrix1 = Matrix4.skew(45.hd, 0);
-      final skewMatrix12 = Matrix4.identity()
-        ..translate(translation)
-        ..postConcat(skewMatrix)
-        ..translate(-translation);
-
-      //debugger();
-
-      canvas.withMatrix(
-        pp.operateMatrix,
-        () {
-          textPainter.paint(canvas, Offset.zero);
-        },
-      );
-    });
   }
 }
 
-/// 文本绘制混入
-mixin TextPainterMixin {
+/// 基础文本绘制
+class BaseTextPainter {
+  //region ---属性---
+
+  /// 需要绘制的文本
+  String? text;
+
+  /// 绘制方向
+  int orientation = kHorizontal;
+
+  /// 文本的颜色
+  Color textColor = Colors.black;
+
+  /// 文本的样式
+  PaintingStyle paintingStyle = PaintingStyle.fill;
+
+  /// 文本的字体大小
+  @dp
+  double fontSize = 14;
+
+  /// 字间距, 支持负数
+  @dp
+  double? letterSpacing;
+
+  /// 行间距, 支持负数
+  /// 普通文本绘制模式下间距使用[strutHeight]实现
+  @dp
+  double? lineSpacing;
+
+  /// 粗体
+  bool isBold = false;
+
+  /// 斜体, 宽度计算无法包含斜体值, 需要额外增加一点宽度
+  bool isItalic = false;
+
+  /// 下划线
+  bool isUnderline = false;
+
+  /// 删除线
+  bool isLineThrough = false;
+
+  /// 对齐方式, 在多行文本时, 会影响每行的对齐方式
+  TextAlign textAlign = TextAlign.start;
+
+  ///
+  TextDirection? textDirection = TextDirection.ltr; //文本方向
+
+  /// 行高倍数, 间接控制了行高
+  /// 优先于[lineSpacing] 属性
+  double? strutHeight;
+
+  /// 强制行高
+  bool forceStrutHeight = false;
+
+  //endregion ---属性---
+
+  Rect _painterBounds = Rect.zero;
+
   /// 当前绘制对象占用的大小
   /// 如果是曲线文本, left/top可能是负值
+  @output
   Rect get painterBounds => Rect.zero;
+
+  /// 必要的初始化方法
+  @initialize
+  void initPainter() {}
 
   /// 绘制文本, 相对于左上角0,0锚点绘制
   @api
   @overridePoint
-  void painterText(Canvas canvas) {}
+  void painterText(Canvas canvas, Offset offset) {}
+
+  /// 创建单字符的文本绘制对象
+  TextPainter _createTextPainter(String? text) {
+    return createTextPainter(
+      text: text,
+      textColor: textColor,
+      textAlign: textAlign,
+      paintingStyle: paintingStyle,
+      fontSize: fontSize,
+      letterSpacing: letterSpacing ?? 0,
+      isBold: isBold,
+      isItalic: isItalic,
+      isUnderline: isUnderline,
+      isLineThrough: isLineThrough,
+      textDirection: textDirection,
+      strutHeight: strutHeight ??
+          (lineSpacing != null ? (1 + lineSpacing! / fontSize) : null),
+      forceStrutHeight: forceStrutHeight,
+    );
+  }
 
   /// 通过给定的属性, 创建对应的[TextPainter]文本绘制对象
   /// [text]生成[InlineSpan]对象
-  TextPainter createTextPainter({
+  static TextPainter createTextPainter({
     String? text,
     InlineSpan? textSpan,
     Color textColor = Colors.black,
@@ -266,172 +195,64 @@ mixin TextPainterMixin {
 
 /// 普通文本绘制
 /// [TextPainter]
-class NormalTextPainter with TextPainterMixin {
-  /// 要绘制的文本
-  String? text;
-
-  /// 文本的颜色
-  Color textColor;
-
-  /// 文本的字体大小
-  @dp
-  double fontSize;
-
-  /// 字间距
-  @dp
-  double letterSpacing;
-
-  /// 行间距
-  @dp
-  double? lineSpacing;
-
-  NormalTextPainter({
-    this.text,
-    this.textColor = Colors.black,
-    this.fontSize = 14,
-    this.letterSpacing = 0,
-    this.lineSpacing,
-  }) {
-    initPainter();
-  }
-
-  Rect _painterBounds = Rect.zero;
+class NormalTextPainter extends BaseTextPainter {
+  NormalTextPainter();
 
   @override
   Rect get painterBounds => _painterBounds;
 
+  /// 普通文本使用[TextPainter]绘制
   TextPainter? _textPainter;
+
+  /// 垂直绘制时, 需要进行的旋转矩阵
+  @autoInjectMark
+  Matrix4? paintMatrix;
 
   /// 初始化文本绘制对象
   @initialize
+  @override
   void initPainter() {
-    _textPainter = createTextPainter(
-      text: text,
-      textColor: textColor,
-      fontSize: fontSize,
-      strutHeight: lineSpacing != null ? (1 + lineSpacing! / fontSize) : null,
-    );
+    _textPainter = _createTextPainter(text);
     _painterBounds = Offset.zero & _textPainter!.size;
+    if (orientation.isVertical) {
+      final rotateMatrix = Matrix4.identity()
+        ..rotateBy(90.hd, anchor: _painterBounds.center);
+      paintMatrix = rotateMatrix;
+      _painterBounds = rotateMatrix.mapRect(_painterBounds);
+    }
   }
 
   @override
-  void painterText(Canvas canvas) {
+  void painterText(Canvas canvas, Offset offset) {
+    assert(() {
+      canvas.drawRect(
+        offset & painterBounds.size /*painterBounds*/,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..color = Colors.redAccent,
+      );
+      return true;
+    }());
     if (_textPainter == null) {
       initPainter();
     }
     if (_textPainter != null) {
       final anchor = _painterBounds.lt;
-      canvas.withTranslate(-anchor.dx, -anchor.dy, () {
-        _textPainter?.paint(canvas, Offset.zero);
+      canvas.withTranslate(-anchor.dx + offset.dx, -anchor.dy + offset.dy, () {
+        canvas.withMatrix(paintMatrix, () {
+          _textPainter?.paint(canvas, Offset.zero);
+        });
       });
     }
-
-    /*const text = "aGg jEh \najPgFf中赢";
-    //const text = "a";
-    //const text = "چاچی";
-    final painter = createTextPainter(
-      text: text,
-      fontSize: 40,
-      isBold: false,
-      isItalic: true,
-      isUnderline: true,
-      isLineThrough: false,
-    );
-    final painter2 = createTextPainter(
-      text: text,
-      textAlign: TextAlign.end,
-      fontSize: 40,
-      isBold: false,
-      isItalic: true,
-      isUnderline: true,
-      isLineThrough: false,
-      strutHeight: 1.2,
-      forceStrutHeight: true,
-    );
-    _size = painter.size;
-
-    final boxList = painter.getBoxesForSelection(
-        const TextSelection(baseOffset: 0, extentOffset: text.length));
-    final metricsList = painter.computeLineMetrics();
-
-    */ /*text.forEach((str){
-      debugger();
-    });*/ /*
-
-    //debugger();
-
-    canvas.drawRect(
-      Offset.zero & painterSize,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..color = Colors.redAccent,
-    );
-    painter.paint(canvas, Offset.zero);
-
-    canvas.drawRect(
-      Offset(0, _size.height) & painter2.size,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..color = Colors.redAccent,
-    );
-    painter2.paint(canvas, Offset(0, _size.height));*/
   }
 }
 
 /// 单字符逐个绘制
 /// [TextPainter]
 /// [NormalTextPainter]
-class SingleCharTextPainter with TextPainterMixin {
-  /// 需要绘制的文本
-  String? text;
-
-  /// 绘制方向
-  int orientation = kHorizontal;
-
-  /// 文本的颜色
-  Color textColor = Colors.black;
-
-  /// 文本的样式
-  PaintingStyle paintingStyle = PaintingStyle.fill;
-
-  /// 文本的字体大小
-  @dp
-  double fontSize = 14;
-
-  /// 字间距, 支持负数
-  @dp
-  double letterSpacing = 0;
-
-  /// 行间距, 支持负数
-  @dp
-  double lineSpacing = 0;
-
-  /// 粗体
-  bool isBold = false;
-
-  /// 斜体, 宽度计算无法包含斜体值, 需要额外增加一点宽度
-  bool isItalic = false;
-
-  /// 下划线
-  bool isUnderline = false;
-
-  /// 删除线
-  bool isLineThrough = false;
-
-  /// 对齐方式, 在多行文本时, 会影响每行的对齐方式
-  TextAlign textAlign = TextAlign.start;
-
+class SingleCharTextPainter extends BaseTextPainter {
   /// 交叉轴上文本对齐的方式
   TextAlign crossTextAlign = TextAlign.center;
-
-  ///
-  TextDirection? textDirection = TextDirection.ltr; //文本方向
-
-  /// 行高倍数, 间接控制了行高
-  double? strutHeight;
-
-  /// 强制行高
-  bool forceStrutHeight = false;
 
   SingleCharTextPainter();
 
@@ -467,23 +288,6 @@ class SingleCharTextPainter with TextPainterMixin {
     }
     final list = text.split('\n');
     return list.map((e) => e.split('')).toList();
-  }
-
-  /// 创建单字符的文本绘制对象
-  TextPainter _createCharTextPainter(String char) {
-    return createTextPainter(
-      text: char,
-      textColor: textColor,
-      paintingStyle: paintingStyle,
-      fontSize: fontSize,
-      isBold: isBold,
-      isItalic: isItalic,
-      isUnderline: isUnderline,
-      isLineThrough: isLineThrough,
-      textDirection: textDirection,
-      strutHeight: strutHeight,
-      forceStrutHeight: forceStrutHeight,
-    );
   }
 
   /// 测量总体的大小
@@ -602,6 +406,7 @@ class SingleCharTextPainter with TextPainterMixin {
 
   /// 初始化文本绘制对象
   @initialize
+  @override
   void initPainter() {
     List<List<CharTextPainter>> charPainterList = [];
     final list = _splitText(text);
@@ -612,7 +417,7 @@ class SingleCharTextPainter with TextPainterMixin {
 
     //当出现空行时, 使用此对象的宽高占位
     const placeholderChar = "中";
-    final placeholderPainter = _createCharTextPainter(placeholderChar);
+    final placeholderPainter = _createTextPainter(placeholderChar);
     for (final line in list) {
       //每一行的开始
       List<CharTextPainter> lineCharPainterList = [];
@@ -645,7 +450,7 @@ class SingleCharTextPainter with TextPainterMixin {
         lineMaxHeight = charHeight;
       } else {
         for (final char in line) {
-          final charPainter = _createCharTextPainter(char);
+          final charPainter = _createTextPainter(char);
           //debugger();
           final charWidth = charPainter.width + italicCharWidth;
           final charHeight = charPainter.height;
@@ -663,9 +468,9 @@ class SingleCharTextPainter with TextPainterMixin {
 
           //下一个字符
           if (orientation.isVertical) {
-            top += letterSpacing + charHeight;
+            top += (letterSpacing ?? 0) + charHeight;
           } else {
-            left += letterSpacing + charWidth;
+            left += (letterSpacing ?? 0) + charWidth;
           }
         }
       }
@@ -675,9 +480,9 @@ class SingleCharTextPainter with TextPainterMixin {
 
       //下一行
       if (orientation.isVertical) {
-        left += lineSpacing + lineMaxWidth;
+        left += (lineSpacing ?? 0) + lineMaxWidth;
       } else {
-        top += lineSpacing + lineMaxHeight;
+        top += (lineSpacing ?? 0) + lineMaxHeight;
       }
     }
     _charPainterList = charPainterList;
@@ -687,10 +492,10 @@ class SingleCharTextPainter with TextPainterMixin {
   }
 
   @override
-  void painterText(Canvas canvas) {
+  void painterText(Canvas canvas, Offset offset) {
     assert(() {
       canvas.drawRect(
-        Offset.zero & painterBounds.size /*painterBounds*/,
+        offset & painterBounds.size /*painterBounds*/,
         Paint()
           ..style = PaintingStyle.stroke
           ..color = Colors.redAccent,
@@ -705,7 +510,7 @@ class SingleCharTextPainter with TextPainterMixin {
     }
 
     final anchor = _painterBounds.lt;
-    canvas.withTranslate(-anchor.dx, -anchor.dy, () {
+    canvas.withTranslate(-anchor.dx + offset.dx, -anchor.dy + offset.dy, () {
       for (final line in _charPainterList!) {
         for (final char in line) {
           char.paint(canvas, Offset.zero);

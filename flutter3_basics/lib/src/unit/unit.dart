@@ -41,10 +41,10 @@ const kInchFractionDigits = 3;
 double get dpr => devicePixelRatio;
 
 /// pt
-const double INCHES_PER_PT = (1.0 / 72);
+const double sInchesPerPT = (1.0 / 72);
 
 /// mm
-const double INCHES_PER_MM = (1.0 / 25.4);
+const double sInchesPerMM = (1.0 / 25.4);
 
 abstract class IUnit {
   /// 单位常量
@@ -262,10 +262,10 @@ class MmUnit extends IUnit {
   }
 
   @override
-  double toPx(num value) => value * dpi * INCHES_PER_MM;
+  double toPx(num value) => value * dpi * sInchesPerMM;
 
   @override
-  double toUnit(num value) => value / dpi / INCHES_PER_MM;
+  double toUnit(num value) => value / dpi / sInchesPerMM;
 
   @override
   double getAxisGap(int index, double scale) =>
@@ -295,10 +295,10 @@ class PtUnit extends IUnit {
   }
 
   @override
-  double toPx(num value) => value * dpi * INCHES_PER_PT;
+  double toPx(num value) => value * dpi * sInchesPerPT;
 
   @override
-  double toUnit(num value) => value / dpi / INCHES_PER_PT;
+  double toUnit(num value) => value / dpi / sInchesPerPT;
 
   @override
   double getAxisGap(int index, double scale) =>
