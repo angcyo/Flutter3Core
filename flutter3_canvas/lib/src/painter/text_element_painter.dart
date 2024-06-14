@@ -193,7 +193,7 @@ mixin TextPainterMixin {
   /// 如果是曲线文本, left/top可能是负值
   Rect get painterBounds => Rect.zero;
 
-  /// 绘制文本
+  /// 绘制文本, 相对于左上角0,0锚点绘制
   @api
   @overridePoint
   void painterText(Canvas canvas) {}
@@ -319,7 +319,12 @@ class NormalTextPainter with TextPainterMixin {
     if (_textPainter == null) {
       initPainter();
     }
-    _textPainter?.paint(canvas, Offset.zero);
+    if (_textPainter != null) {
+      final anchor = _painterBounds.lt;
+      canvas.withTranslate(-anchor.dx, -anchor.dy, () {
+        _textPainter?.paint(canvas, Offset.zero);
+      });
+    }
 
     /*const text = "aGg jEh \najPgFf中赢";
     //const text = "a";
@@ -685,7 +690,7 @@ class SingleCharTextPainter with TextPainterMixin {
   void painterText(Canvas canvas) {
     assert(() {
       canvas.drawRect(
-        painterBounds,
+        Offset.zero & painterBounds.size /*painterBounds*/,
         Paint()
           ..style = PaintingStyle.stroke
           ..color = Colors.redAccent,
@@ -698,11 +703,15 @@ class SingleCharTextPainter with TextPainterMixin {
     if (_charPainterList == null) {
       return;
     }
-    for (final line in _charPainterList!) {
-      for (final char in line) {
-        char.paint(canvas, Offset.zero);
+
+    final anchor = _painterBounds.lt;
+    canvas.withTranslate(-anchor.dx, -anchor.dy, () {
+      for (final line in _charPainterList!) {
+        for (final char in line) {
+          char.paint(canvas, Offset.zero);
+        }
       }
-    }
+    });
   }
 }
 
@@ -882,6 +891,9 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
       }
     }
     _painterBounds = Rect.fromLTRB(left, top, right, bottom);
+
+    //中心点移至锚点为0,0参考的曲线中心位置
+    curveCenter = curveCenter - _painterBounds.lt;
   }
 
   @override
