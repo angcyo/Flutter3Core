@@ -19,6 +19,31 @@ const double kPathAcceptableError = 0.025; //
 @mm
 const double kVectorTolerance = 0.02; //
 
+/// [Path]路径上每个点的信息
+/// [PathEx.eachPathMetrics]
+class PathPointInfo {
+  int posIndex;
+  double ratio;
+  int contourIndex;
+  Offset position;
+  double angle;
+  bool isClosed;
+
+  PathPointInfo({
+    this.posIndex = 0,
+    this.ratio = 0,
+    this.contourIndex = 0,
+    this.position = Offset.zero,
+    this.angle = 0,
+    this.isClosed = false,
+  });
+
+  @override
+  String toString() {
+    return "angle:$angle position:$position";
+  }
+}
+
 /// [Matrix4Ex.mapRect]
 extension PathEx on Path {
   /// 判断路径是否为空
@@ -96,6 +121,40 @@ extension PathEx on Path {
       return ui.Path.from(this);
     }
     return transform(matrix4.storage);
+  }
+
+  /// 获取[Path]路径上所有点的信息
+  /// 有些[Path]可能具有多段, 一段上具有多个点
+  /// [step] 步长
+  /// [eachPathMetrics]
+  /// [kPathAcceptableError]
+  List<List<PathPointInfo>> toPointInfoList([@dp double? step = 1]) {
+    List<List<PathPointInfo>> result = [];
+    //一段
+    List<PathPointInfo>? contour;
+    int? lastContourIndex;
+    eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
+      if (lastContourIndex != contourIndex) {
+        //新的一段
+        lastContourIndex = contourIndex;
+        if (contour != null) {
+          result.add(contour!);
+        }
+        contour = [];
+      }
+      contour?.add(PathPointInfo(
+        posIndex: posIndex,
+        ratio: ratio,
+        contourIndex: contourIndex,
+        position: position,
+        angle: angle,
+        isClosed: isClose,
+      ));
+    }, step);
+    if (contour != null) {
+      result.add(contour!);
+    }
+    return result;
   }
 
   /// 按照指定的步长, 获取路径上的点
