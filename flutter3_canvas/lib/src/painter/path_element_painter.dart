@@ -53,7 +53,7 @@ class PathElementPainter extends ElementPainter {
         canvas.drawPath(it.transformPath(paintProperty?.operateMatrix), paint));
     if (painterPath == null) {
       assert(() {
-        l.w('no data painting.');
+        l.w('[$runtimeType]no data painting.');
         return true;
       }());
     }
