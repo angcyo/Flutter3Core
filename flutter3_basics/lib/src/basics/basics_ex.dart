@@ -1203,6 +1203,26 @@ extension NumEx on num {
 
   //region ---math---
 
+  /// 限制角度在[-360°~360°]
+  double get jdm {
+    if (this == 0) {
+      return 0;
+    }
+    if (this > 0) {
+      final degrees = this % 360;
+      if (degrees <= 0) {
+        return degrees + 360;
+      }
+      return degrees.toDouble();
+    } else {
+      final degrees = this % 360;
+      if (degrees >= 0) {
+        return degrees - 360;
+      }
+      return degrees.toDouble();
+    }
+  }
+
   /// 转角度
   double get jd => toDegrees;
 

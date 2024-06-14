@@ -2233,6 +2233,35 @@ extension NavigatorEx on BuildContext {
 
 //region 渐变相关
 
+/// 获取渐变颜色指定进度对应的颜色值
+/// [progress] 进度[0~1]
+/// [colors] 颜色渐变的值
+/// [colorStops] 渐变颜色分段比例, 不指定默认平分
+Color getGradientColor(double progress, List<Color> colors,
+    {List<double>? colorStops}) {
+  //debugger();
+  colorStops ??= [
+    for (var i = 0; i < colors.size(); i++) i * (1 / (colors.size() - 1))
+  ];
+
+  //计算输出的颜色
+  Color color = colors.first;
+  for (int i = 0; i < colorStops.length; i++) {
+    if (progress <= colorStops[i]) {
+      final index = math.max(0, i - 1);
+      final startColor = colors[index];
+      final endColor = colors[math.min(index + 1, colors.length)];
+      final startProgress = colorStops[index];
+      final endProgress = colorStops[math.min(index + 1, colorStops.length)];
+
+      final t = (progress - startProgress) / (endProgress - startProgress);
+      color = Color.lerp(startColor, endColor, t)!;
+      break;
+    }
+  }
+  return color;
+}
+
 /// 线性渐变 [Shader]
 /// [rect] 请指定渐变的范围, 否则可能没有渐变效果
 UiGradient? linearGradientShader(
