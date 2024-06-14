@@ -52,6 +52,13 @@ extension PathEx on Path {
     return getBounds().isEmpty;
   }
 
+  /// 添加一个圆到路径中
+  /// [center] 圆心
+  /// [radius] 半径
+  void addCircle(Offset center, double radius) {
+    addOval(Rect.fromCircle(center: center, radius: radius));
+  }
+
   /// 获取精度更高的路径边界
   /// [exact] 是否获取精确计算的边界
   /// [pathAcceptableError] 路径采样误差
