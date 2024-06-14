@@ -170,8 +170,10 @@ extension PathEx on Path {
   /// [position] 当前点在路径上的位置, 关键数据
   /// [angle] 当前点在路径上的角度, 弧度单位, 关键数据
   /// [isClosed] 当前轮廓是否是闭合的
+  ///
+  /// [action] 返回true, 表示中断each
   void eachPathMetrics(
-    void Function(
+    dynamic Function(
       int posIndex,
       double ratio,
       int contourIndex,
@@ -183,6 +185,9 @@ extension PathEx on Path {
   ]) {
     final metrics = computeMetrics();
     int contourIndex = 0;
+
+    //是否中断
+    bool interrupt = false;
     for (final metric in metrics) {
       final length = metric.length;
       int posIndex = 0;
@@ -201,7 +206,7 @@ extension PathEx on Path {
           } else {
             //切线指向Y轴上方
           }
-          action(
+          final result = action(
             posIndex,
             ratio,
             contourIndex,
@@ -209,6 +214,10 @@ extension PathEx on Path {
             angle,
             metric.isClosed,
           );
+          if (result is bool && result) {
+            interrupt = true;
+            break;
+          }
         }
         posIndex++;
         if (distance >= length) {
@@ -220,6 +229,9 @@ extension PathEx on Path {
         }
       }
       contourIndex++;
+      if (interrupt) {
+        break;
+      }
     }
   }
 

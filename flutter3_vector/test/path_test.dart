@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter3_basics/flutter3_basics.dart';
@@ -13,23 +12,32 @@ void main() {
   ensureInitialized();
   test('test path1', () {
     const rect = Rect.fromLTWH(0, 0, 100, 100);
-    /*final path1 = Path()
-      ..addArc(rect, 180.hd, 180.hd);*/
-    final path1 = Path()..addRect(rect);
+    final path1 = Path()..addArc(rect, 180.hd, 180.hd);
+    /*final path1 = Path()..addRect(rect);*/
+
+    Offset? target;
+    const targetX = 30.0;
+    path1.eachPathMetrics(
+        (posIndex, ratio, contourIndex, position, angle, isClosed) {
+      if (position.dx >= targetX) {
+        target = position;
+        return true;
+      }
+    }, 1.0);
+    consoleLog('target:$target');
 
     /*final path2 = Path()
       ..moveTo(50, -1000)
       ..lineTo(50, 1000);*/
 
-    final path2 = Path()
-      ..addRect(Rect.fromLTWH(50, 0, 51, 100));
+    final path2 = Path()..addRect(Rect.fromLTWH(50, 0, 51, 100));
 
     final intersects = path1.intersects(path2);
 
     //op操作
     final opPath = Path.combine(PathOperation.intersect, path1, path2);
     final metrics = opPath.computeMetrics(forceClosed: true);
-    debugger();
+    //debugger();
     consoleLog(opPath.toPointInfoList());
 
     consoleLog('${[path1].toGCodeString()}');
@@ -51,7 +59,7 @@ void main() {
     // 求两个线的交集
     Path intersection = Path.combine(PathOperation.intersect, path1, path2);
     final isEmpty = intersection.isEmpty;
-    debugger();
+    //debugger();
 
     consoleLog('...end2');
     expect(true, true);
