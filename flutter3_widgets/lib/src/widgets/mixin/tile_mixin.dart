@@ -369,6 +369,8 @@ mixin TileMixin {
   /// [overlayColor] 触摸时浮子光晕的颜色
   /// [activeTrackColor] 有值轨道的颜色
   /// [activeTrackGradientColors] 有值轨道的渐变颜色
+  /// [activeTrackGradientColorStops] 有值轨道的渐变颜色的位置
+  /// [syncGradientColor] 浮子是否同步渐变颜色
   /// [inactiveTrackColor] 无值轨道的颜色(背景颜色)
   /// [valueIndicatorColor] 气泡的颜色
   ///
@@ -391,6 +393,8 @@ mixin TileMixin {
     Color? overlayColor,
     Color? activeTrackColor,
     List<Color>? activeTrackGradientColors,
+    List<double>? activeTrackGradientColorStops,
+    bool syncGradientColor = true,
     Color? inactiveTrackColor,
     Color? valueIndicatorColor,
     double? trackHeight,
@@ -398,20 +402,32 @@ mixin TileMixin {
     SliderTrackShape? trackShape,
   }) {
     if (trackShape == null) {
+      Color? gradientColor;
+      if (syncGradientColor && !isNil(activeTrackGradientColors)) {
+        final progress = (value - minValue) / (maxValue - minValue);
+        gradientColor = getGradientColor(progress, activeTrackGradientColors!,
+            colorStops: activeTrackGradientColorStops);
+      }
+
       if (useCenteredTrackShape == true) {
         trackShape = CenteredRectangularSliderTrackShape(
-            colors: activeTrackGradientColors);
-        final last = activeTrackGradientColors?.last;
-        thumbColor ??= last;
+          colors: activeTrackGradientColors,
+          colorStops: activeTrackGradientColorStops,
+        );
+        final color = gradientColor ?? activeTrackGradientColors?.last;
+        thumbColor ??= color;
         valueIndicatorColor = thumbColor;
-        overlayColor ??= last?.withOpacity(0.1);
+        overlayColor ??= color?.withOpacity(0.1);
       } else {
         if (!isNil(activeTrackGradientColors)) {
-          trackShape = GradientSliderTrackShape(activeTrackGradientColors);
-          final last = activeTrackGradientColors?.last;
-          thumbColor ??= last;
+          trackShape = GradientSliderTrackShape(
+            activeTrackGradientColors,
+            colorStops: activeTrackGradientColorStops,
+          );
+          final color = gradientColor ?? activeTrackGradientColors?.last;
+          thumbColor ??= color;
           valueIndicatorColor = thumbColor;
-          overlayColor ??= last?.withOpacity(0.1);
+          overlayColor ??= color?.withOpacity(0.1);
         }
       }
     }
