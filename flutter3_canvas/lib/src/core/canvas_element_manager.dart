@@ -147,15 +147,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //region ---element操作---
 
+  /// [afterElements]
+  /// [beforeElements]
   bool addBeforeElement(ElementPainter? element) =>
       _addElementIn(beforeElements, element);
 
+  /// [afterElements]
+  /// [beforeElements]
   bool addAfterElement(ElementPainter? element) =>
       _addElementIn(afterElements, element);
 
+  /// [afterElements]
+  /// [beforeElements]
   bool removeBeforeElement(ElementPainter? element) =>
       _removeElementFrom(beforeElements, element);
 
+  /// [afterElements]
+  /// [beforeElements]
   bool removeAfterElement(ElementPainter? element) =>
       _removeElementFrom(afterElements, element);
 
@@ -174,6 +182,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       if (element.canvasDelegate != canvasDelegate) {
         element.attachToCanvasDelegate(canvasDelegate);
       }
+      canvasDelegate.refresh();
       return true;
     }
     return false;
@@ -182,6 +191,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 从指定容器中移除元素
   /// 返回值表示操作是否成功
   bool _removeElementFrom(List<ElementPainter> list, ElementPainter? element) {
+    //debugger();
     if (element == null) {
       assert(() {
         l.w('无效的操作');
@@ -194,6 +204,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       if (element.canvasDelegate == canvasDelegate) {
         element.detachFromCanvasDelegate(canvasDelegate);
       }
+      canvasDelegate.refresh();
       return true;
     }
     return false;

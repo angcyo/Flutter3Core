@@ -9,6 +9,22 @@ class ElementPainter extends IPainter
     with DiagnosticableTreeMixin, DiagnosticsMixin {
   //region ---属性--
 
+  /// 是否绘制调试信息
+  bool debug = false;
+
+  /// 是否强制可见在画布中
+  /// [isVisibleInCanvasBox]
+  bool? forceVisibleInCanvasBox;
+
+  /// 画笔的一些属性, 会在[onPaintingSelfBefore]中每次赋值
+  PaintingStyle? paintStyle;
+  Color? paintColor;
+  double? paintStrokeWidth;
+
+  /// 是否抑制[CanvasViewBox]的缩放, 用来控制[paintStrokeWidth]不受画布的缩放而缩放
+  /// 画布缩放时[paintStrokeWidth]会反向缩放
+  bool? paintStrokeWidthSuppressCanvasScale;
+
   /// 画笔
   Paint paint = Paint()
     ..style = PaintingStyle.stroke
@@ -16,9 +32,6 @@ class ElementPainter extends IPainter
     ..strokeJoin = StrokeJoin.round
     ..strokeCap = StrokeCap.round
     ..strokeWidth = 1.toDpFromPx();
-
-  /// 是否绘制调试信息
-  bool debug = false;
 
   /// 元素绘制的状态信息
   PaintState _paintState = PaintState();
@@ -169,9 +182,15 @@ class ElementPainter extends IPainter
   @property
   void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
     paint
-      ..style = PaintingStyle.stroke
-      ..color = Colors.black
-      ..strokeWidth = 1.toDpFromPx();
+      ..style = paintStyle ?? PaintingStyle.stroke
+      ..color = paintColor ?? Colors.black
+      ..strokeWidth = paintStrokeWidth ?? 1.toDpFromPx();
+    //抑制画布缩放
+    if (paintStrokeWidthSuppressCanvasScale == true) {
+      if (paint.style == PaintingStyle.stroke) {
+        paint.strokeWidth = paint.strokeWidth / paintMeta.canvasScale;
+      }
+    }
   }
 
   /// 重写此方法, 实现在画布内绘制自己
@@ -346,7 +365,8 @@ class ElementPainter extends IPainter
   /// 当前元素在画布中是否可见, 不可见的元素不会在画布中绘制
   /// [hitTest]
   bool isVisibleInCanvasBox(CanvasViewBox viewBox) =>
-      paintState.isVisible && hitTest(rect: viewBox.canvasVisibleBounds);
+      forceVisibleInCanvasBox == true ||
+      (paintState.isVisible && hitTest(rect: viewBox.canvasVisibleBounds));
 
   //---
 
@@ -696,9 +716,13 @@ class ElementPainter extends IPainter
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
+
+    properties.add(DiagnosticsProperty('debug', debug));
+    properties.add(DiagnosticsProperty('debugLabel', debugLabel));
+    properties.add(DiagnosticsProperty('uuid', paintState.elementUuid));
+    properties.add(DiagnosticsProperty('elementName', paintState.elementName));
     properties.add(DiagnosticsProperty('paintProperty', paintProperty));
     properties.add(DiagnosticsProperty('paintState', paintState));
-    properties.add(DiagnosticsProperty('debug', debug));
 
     final canvasViewBox = canvasDelegate?.canvasViewBox;
     if (canvasViewBox != null) {

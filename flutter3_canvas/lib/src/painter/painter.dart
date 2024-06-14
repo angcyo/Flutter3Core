@@ -41,6 +41,9 @@ class PaintMeta {
 
 /// 绘制接口
 abstract class IPainter with Diagnosticable {
+  /// 调试时用得的标签
+  String? debugLabel;
+
   /// 绘制入口
   @entryPoint
   void painting(Canvas canvas, PaintMeta paintMeta);
