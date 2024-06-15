@@ -416,6 +416,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   }
 
   /// 从上往下查找所有[ModalRoute]
+  /// release之后,字符串是否会变化?
   List<ModalRoute> findModalRouteList() {
     List<Element> routeElementList = [];
     List<ModalRoute> result = [];

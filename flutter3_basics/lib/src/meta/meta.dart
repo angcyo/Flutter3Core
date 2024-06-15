@@ -57,6 +57,7 @@ const httpMask = AnnotationMeta('包含网络请求');
 const globalInstance = AnnotationMeta('描述当前对象是全局单例对象');
 const updateMark = AnnotationMeta('当前的方法会调用[setState]方法, 用来刷新界面');
 const private = AnnotationMeta('私有化的方法, 不建议外部调用');
+@experimental
 const implementation = AnnotationMeta('当前功能, 正在实现中...');
 const entryPoint = AnnotationMeta('当前类的关键入口点');
 const output = AnnotationMeta('当前的数据用来输出');

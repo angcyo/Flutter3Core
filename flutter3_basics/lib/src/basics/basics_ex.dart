@@ -1201,6 +1201,9 @@ extension NumEx on num {
   /// 正负取反
   get inverted => -this;
 
+  /// 2个数字是否同向, 同正或同负
+  bool isSameSign(num other) => this * other > 0;
+
   //region ---math---
 
   /// 限制角度在[-360°~360°]

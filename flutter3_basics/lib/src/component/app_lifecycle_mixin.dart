@@ -183,10 +183,16 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
 /// 导航监听混入
 /// [NavigatorObserverLogMixin]
 mixin NavigatorObserverMixin<T extends StatefulWidget> on State<T> {
+  /// 当前的[ModalRoute]
+  ModalRoute? currentModalRoute;
+
   @override
   void initState() {
     navigatorObserverDispatcher.add(this);
     super.initState();
+    postFrameCallback((_) {
+      currentModalRoute = ModalRoute.of(context);
+    });
   }
 
   @override

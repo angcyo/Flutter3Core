@@ -45,7 +45,7 @@ OverlayEntry? showLoading({
     return currentLoadingEntry;
   }
 
-  var route = context == null
+  final route = context == null
       ? GlobalConfig.def.findModalRouteList().lastOrNull
       : ModalRoute.of(context);
 
