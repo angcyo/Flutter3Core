@@ -149,15 +149,18 @@ class BaseTextPainter {
     UiLocale? locale,
     double? strutHeight, //行高倍数, 间接控制行间距
     bool forceStrutHeight = false, //强制行高
+    double? lineLeading = 0, //每行领头的距离倍数
   }) {
     locale ??= platformLocale;
     if (textSpan == null) {
       final style = TextStyle(
         fontSize: fontSize,
         locale: locale,
+        height: strutHeight,
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
         fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
         letterSpacing: letterSpacing,
+        /*leadingDistribution: ,*/
         decoration: TextDecoration.combine([
           if (isUnderline) TextDecoration.underline,
           if (isLineThrough) TextDecoration.lineThrough,
@@ -187,7 +190,7 @@ class BaseTextPainter {
               fontSize: fontSize,
               height: strutHeight,
               forceStrutHeight: forceStrutHeight,
-              leading: 0,
+              leading: lineLeading,
               leadingDistribution: TextLeadingDistribution.proportional,
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
               fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
