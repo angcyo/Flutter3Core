@@ -1184,7 +1184,7 @@ extension WidgetEx on Widget {
 
   /// 当当前的路由pop时回调
   Widget onPop(Action action) {
-    return popScope(false, (didPop) {
+    return popScope(true, (didPop) {
       if (didPop) {
         action();
       }

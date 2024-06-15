@@ -19,6 +19,7 @@ class TextElementPainter extends ElementPainter {
   @initialize
   void initElementPainterFromText(String? text) {
     textPainter = NormalTextPainter()
+      ..debugPaintBounds = debug
       ..text = text
       ..initPainter();
     final size = textPainter?.painterBounds ?? Rect.zero;
@@ -37,6 +38,9 @@ class TextElementPainter extends ElementPainter {
 
 /// 基础文本绘制
 class BaseTextPainter {
+  /// 调试模式下, 是否绘制文本的边界
+  bool debugPaintBounds = false;
+
   //region ---属性---
 
   /// 需要绘制的文本
@@ -225,12 +229,14 @@ class NormalTextPainter extends BaseTextPainter {
   @override
   void painterText(Canvas canvas, Offset offset) {
     assert(() {
-      canvas.drawRect(
-        offset & painterBounds.size /*painterBounds*/,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..color = Colors.redAccent,
-      );
+      if (debugPaintBounds) {
+        canvas.drawRect(
+          offset & painterBounds.size /*painterBounds*/,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..color = Colors.redAccent,
+        );
+      }
       return true;
     }());
     if (_textPainter == null) {
@@ -444,7 +450,7 @@ class SingleCharTextPainter extends BaseTextPainter {
               charHeight,
             ),
             null,
-          ),
+          )..debugPaintBounds = debugPaintBounds,
         );
         lineMaxWidth = charWidth;
         lineMaxHeight = charHeight;
@@ -463,7 +469,7 @@ class SingleCharTextPainter extends BaseTextPainter {
               char,
               Rect.fromLTWH(left, top, charWidth, charHeight),
               charPainter,
-            ),
+            )..debugPaintBounds = debugPaintBounds,
           );
 
           //下一个字符
@@ -494,12 +500,14 @@ class SingleCharTextPainter extends BaseTextPainter {
   @override
   void painterText(Canvas canvas, Offset offset) {
     assert(() {
-      canvas.drawRect(
-        offset & painterBounds.size /*painterBounds*/,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..color = Colors.redAccent,
-      );
+      if (debugPaintBounds) {
+        canvas.drawRect(
+          offset & painterBounds.size /*painterBounds*/,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..color = Colors.redAccent,
+        );
+      }
       return true;
     }());
     if (_charPainterList == null) {
@@ -522,6 +530,9 @@ class SingleCharTextPainter extends BaseTextPainter {
 
 /// 单字符逐个绘制
 class CharTextPainter {
+  /// 调试模式下, 是否绘制文本的边界
+  bool debugPaintBounds = false;
+
   /// 绘制的字符
   final String char;
 
@@ -576,13 +587,15 @@ class CharTextPainter {
   void paint(Canvas canvas, Offset offset) {
     canvas.withMatrix(paintMatrix, () {
       assert(() {
-        final rect = isInCurve ? bounds : bounds + alignOffset;
-        canvas.drawRect(
-          rect + offset,
-          Paint()
-            ..style = PaintingStyle.stroke
-            ..color = Colors.purpleAccent,
-        );
+        if (debugPaintBounds) {
+          final rect = isInCurve ? bounds : bounds + alignOffset;
+          canvas.drawRect(
+            rect + offset,
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..color = Colors.purpleAccent,
+          );
+        }
         return true;
       }());
       if (isInCurve) {
