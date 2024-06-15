@@ -186,6 +186,8 @@ extension ObjectEx on Object {
     double? fontSize,
     Color? textColor,
     FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    String? fontFamily,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -318,22 +320,33 @@ extension ObjectEx on Object {
     }
 
     if (style != null) {
-      if (fontSize != null || textColor != null || fontWeight != null) {
+      if (fontSize != null ||
+          textColor != null ||
+          fontWeight != null ||
+          fontFamily != null ||
+          fontStyle != null) {
         style = style.copyWith(
           fontSize: fontSize ?? style.fontSize,
           color: textColor ?? style.color,
           fontWeight: fontWeight ?? style.fontWeight,
+          fontStyle: fontStyle ?? style.fontStyle,
+          fontFamily: fontFamily,
         );
       }
     }
 
     final textStyle = style ??
-        (fontSize == null && textColor == null && fontWeight == null
+        (fontSize == null &&
+                textColor == null &&
+                fontWeight == null &&
+                fontStyle == null
             ? null
             : TextStyle(
                 fontSize: fontSize,
                 color: textColor,
                 fontWeight: fontWeight,
+                fontStyle: fontStyle,
+                fontFamily: fontFamily,
               ));
 
     if (selectable) {
