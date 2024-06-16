@@ -12,9 +12,53 @@ class FontsManager {
 
   FontsManager();
 
+  /*static FontWeight _extractFontWeightFromApiFilenamePart(String filenamePart) {
+    if (filenamePart.contains('Thin')) return FontWeight.w100;
+
+    // ExtraLight must be checked before Light because of the substring match.
+    if (filenamePart.contains('ExtraLight')) return FontWeight.w200;
+    if (filenamePart.contains('Light')) return FontWeight.w300;
+
+    if (filenamePart.contains('Medium')) return FontWeight.w500;
+
+    // SemiBold and ExtraBold must be checked before Bold because of the
+    // substring match.
+    if (filenamePart.contains('SemiBold')) return FontWeight.w600;
+    if (filenamePart.contains('ExtraBold')) return FontWeight.w800;
+    if (filenamePart.contains('Bold')) return FontWeight.w700;
+
+    if (filenamePart.contains('Black')) return FontWeight.w900;
+    return FontWeight.w400;
+  }
+
+  static FontStyle _extractFontStyleFromApiFilenamePart(String filenamePart) {
+    if (filenamePart.contains('Italic')) return FontStyle.italic;
+    return FontStyle.normal;
+  }*/
+
   /// 加载字体
   Future<bool> loadFontFamily(FontFamilyMeta fontFamilyMeta) async {
-    final key = fontFamilyMeta.uri;
+    bool result = fontFamilyMeta.variantList.isNotEmpty;
+    for (var variantMeta in fontFamilyMeta.variantList) {
+      result = result &&
+          await loadFontFamilyVariant(
+            variantMeta,
+            fontFamilyMeta.source,
+            savePath: fontFamilyMeta.savePath,
+            overwrite: fontFamilyMeta.overwrite,
+          );
+    }
+    return result;
+  }
+
+  /// 加载字体变种
+  Future<bool> loadFontFamilyVariant(
+    FontFamilyVariantMeta variantMeta,
+    FontFamilySource source, {
+    String? savePath,
+    bool? overwrite,
+  }) async {
+    final key = variantMeta.uri;
     final load = _uriLoadCache[key];
     if (load == true) {
       //已经加载成功过
@@ -24,7 +68,11 @@ class FontsManager {
       //还未加载
       _uriLoadCache[key] = false;
       try {
-        await fontFamilyMeta.load();
+        await variantMeta.load(
+          source,
+          savePath: savePath,
+          overwrite: overwrite,
+        );
         _uriLoadCache[key] = true;
         return true;
       } catch (e) {
@@ -39,33 +87,63 @@ class FontsManager {
   }
 
   /// 从文件夹中读取字体列表
+  /// [parseVariant] 是否解析变种
   /// [autoLoad] 是否自动加载
   /// [FontFamilyMeta]
-  Future<List<FontFamilyMeta>> loadFileFontFamilyList(String path,
-      {bool? autoLoad}) async {
+  Future<List<FontFamilyMeta>> loadFileFontFamilyList(
+    String path, {
+    bool parseVariant = false,
+    bool? autoLoad,
+  }) async {
     final list = <FontFamilyMeta>[];
     final files = await path.file().listFiles();
 
     if (files != null) {
       for (final file in files) {
         final uri = file.path;
-        final fontFamily = file.fileName(true);
-        final meta = FontFamilyMeta(
-          fontFamily: fontFamily,
-          uri: uri,
-          source: FontFamilySource.file,
-        );
-        list.add(meta);
+        final filename = file.fileName(false);
+
+        //debugger();
+
+        final variantMeta = parseVariant
+            ? FontFamilyVariantMeta.fromFilename(filename, filePath: uri)
+            : FontFamilyVariantMeta(
+                displayFontFamily: filename,
+                fontFamily: filename,
+                uri: uri,
+              );
 
         //
         if (autoLoad == true) {
-          loadFontFamily(meta);
+          loadFontFamilyVariant(
+            variantMeta,
+            FontFamilySource.file,
+            savePath: path,
+            overwrite: autoLoad,
+          );
+        }
+
+        //
+        final displayFontFamily = variantMeta.displayFontFamily;
+        final find =
+            list.findFirst((e) => e.displayFontFamily == displayFontFamily);
+        if (find == null) {
+          //第一次添加
+          final meta = FontFamilyMeta(
+            displayFontFamily: displayFontFamily,
+            source: FontFamilySource.file,
+          );
+          meta.variantList.add(variantMeta);
+          list.add(meta);
+        } else {
+          //新的变种
+          find.variantList.add(variantMeta);
         }
       }
     }
-
     return list;
   }
 }
 
+/// 字体管理
 final FontsManager $fontsManager = FontsManager();

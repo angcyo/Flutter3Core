@@ -43,7 +43,7 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
   @override
   Widget build(BuildContext context) {
     final textStyle = widget.fontFamilyMeta.textStyle();
-    final fontFamily = widget.fontFamilyMeta.fontFamily;
+    final fontFamily = widget.fontFamilyMeta.displayFontFamily;
 
     final left = [
       fontFamily.text(style: textStyle),

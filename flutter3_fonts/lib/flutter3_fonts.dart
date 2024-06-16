@@ -12,9 +12,9 @@ import 'package:http/http.dart' as http;
 export 'package:google_fonts/google_fonts.dart';
 
 part 'src/font_family_meta.dart';
+part 'src/font_family_tile.dart';
 part 'src/fonts_loader.dart';
 part 'src/fonts_manager.dart';
-part 'src/font_family_tile.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -48,17 +48,23 @@ class SystemChineseFont {
 
   /// Chinese font family fallback, for VIVO Origin OS 1.0
   static final vivoSystemFont = FontFamilyMeta(
-    fontFamily: systemFont,
-    uri: '/system/fonts/DroidSansFallbackMonster.ttf',
+    displayFontFamily: systemFont,
     source: FontFamilySource.file,
-  );
+  )..variantList.add(FontFamilyVariantMeta(
+      displayFontFamily: "DroidSansFallbackMonster",
+      fontFamily: "DroidSansFallbackMonster",
+      uri: '/system/fonts/DroidSansFallbackMonster.ttf',
+    ));
 
   /// Chinese font family fallback, for honor Magic UI 4.0
   static final honorSystemFont = FontFamilyMeta(
-    fontFamily: systemFont,
-    uri: '/system/fonts/DroidSansChinese.ttf',
+    displayFontFamily: systemFont,
     source: FontFamilySource.file,
-  );
+  )..variantList.add(FontFamilyVariantMeta(
+      displayFontFamily: "DroidSansChinese",
+      fontFamily: "DroidSansChinese",
+      uri: '/system/fonts/DroidSansChinese.ttf',
+    ));
 
   /// Chinese font family fallback, for most platforms
   static List<String> get fontFamilyFallback {
@@ -75,8 +81,7 @@ class SystemChineseFont {
             await vivoSystemFont.load();
           }
         }
-      }
-      ();
+      }();
       systemFontLoaded = true;
     }
 
@@ -98,13 +103,11 @@ class SystemChineseFont {
   static TextTheme textTheme(Brightness brightness) {
     switch (brightness) {
       case Brightness.dark:
-        return Typography
-            .material2021()
+        return Typography.material2021()
             .white
             .apply(fontFamilyFallback: fontFamilyFallback);
       case Brightness.light:
-        return Typography
-            .material2021()
+        return Typography.material2021()
             .black
             .apply(fontFamilyFallback: fontFamilyFallback);
     }
