@@ -101,6 +101,7 @@ class FontsManager {
     if (files != null) {
       for (final file in files) {
         final uri = file.path;
+        final fontFamily = file.fileName(true);
         final filename = file.fileName(false);
 
         //debugger();
@@ -108,8 +109,8 @@ class FontsManager {
         final variantMeta = parseVariant
             ? FontFamilyVariantMeta.fromFilename(filename, filePath: uri)
             : FontFamilyVariantMeta(
-                displayFontFamily: filename,
-                fontFamily: filename,
+                displayFontFamily: fontFamily,
+                fontFamily: fontFamily,
                 uri: uri,
               );
 

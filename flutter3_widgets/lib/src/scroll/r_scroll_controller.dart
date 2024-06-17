@@ -12,7 +12,7 @@ class RScrollController extends ScrollController {
   final GlobalKey<RefreshIndicatorState> scrollRefreshKey = GlobalKey();
 
   /// 用来控制加载更多的key
-  final GlobalKey<WidgetStateWidgetState> loadMoreKey = GlobalKey();
+  final GlobalKey<WidgetStateBuildWidgetState> loadMoreKey = GlobalKey();
 
   /// 用来控制刷新完成
   /// [_onRefresh]

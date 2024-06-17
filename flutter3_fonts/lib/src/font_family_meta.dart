@@ -42,10 +42,10 @@ class FontFamilyMeta {
         variantList.firstOrNull;
     //debugger();
     if (find != null) {
-      assert(() {
-        l.d('[$fontWeight]$fontStyle匹配到字体:${find.fontFamily}');
+      /*assert(() {
+        l.d('[${fontWeight}][${fontStyle}]匹配到字体:${find.fontFamily}');
         return true;
-      }());
+      }());*/
     }
     return TextStyle(
       fontFamily: find?.fontFamily ?? displayFontFamily,
