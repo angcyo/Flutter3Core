@@ -21,8 +21,9 @@ class LabelNumberSliderTile extends StatefulWidget {
   final int? divisions;
   final NumType? _numType;
 
-  ///
+  /// 活跃/不活跃的轨道渐变颜色
   final List<Color>? activeTrackGradientColors;
+  final List<Color>? inactiveTrackGradientColors;
 
   /// 回调
   final NumCallback? onNumberChange;
@@ -37,6 +38,7 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.maxDigits = 2,
     this.divisions,
     this.activeTrackGradientColors,
+    this.inactiveTrackGradientColors,
     this.onNumberChange,
     NumType? numType,
   }) : _numType = numType ?? (value is int ? NumType.i : NumType.d);
@@ -102,6 +104,10 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       minValue: widget.minValue?.toDouble() ?? 0.0,
       maxValue: widget.maxValue?.toDouble() ?? 1.0,
       activeTrackGradientColors: widget.activeTrackGradientColors,
+      activeTrackColor: widget.inactiveTrackGradientColors == null
+          ? null
+          : Colors.transparent,
+      inactiveTrackGradientColors: widget.inactiveTrackGradientColors,
       onChanged: (value) {
         _currentValue = value;
         updateState();

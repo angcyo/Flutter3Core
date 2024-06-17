@@ -8,13 +8,19 @@ part of '../../flutter3_widgets.dart';
 /// [RoundedRectSliderTrackShape]
 /// [RoundedRectRangeSliderTrackShape]
 class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
-  /// 渐变颜色
-  final List<Color>? colors;
-  final List<double>? colorStops;
+  /// 不活跃的渐变颜色, 通常背景
+  final List<Color>? inactiveColors;
+  final List<double>? inactiveColorStops;
 
-  const GradientSliderTrackShape(
-    this.colors, {
-    this.colorStops,
+  /// 活跃的渐变颜色, 通常是进度
+  final List<Color>? activeColors;
+  final List<double>? activeColorStops;
+
+  const GradientSliderTrackShape({
+    this.activeColors,
+    this.activeColorStops,
+    this.inactiveColors,
+    this.inactiveColorStops,
   });
 
   @override
@@ -75,9 +81,9 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
     );
 
     //--2024-5-24
-    activePaint.shader = linearGradientShader(
-      colors,
-      colorStops: colorStops,
+    leftTrackPaint.shader = linearGradientShader(
+      activeColors,
+      colorStops: activeColorStops,
       rect: trackRect,
     );
     //--
@@ -105,9 +111,35 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
       ),
       leftTrackPaint,
     );
-    context.canvas.drawRRect(
-      RRect.fromLTRBAndCorners(
-        thumbCenter.dx,
+
+    //--2024-6-17
+    if (isNil(inactiveColors)) {
+      //无渐变, 则走原来的绘制
+      context.canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTRB(
+            thumbCenter.dx,
+            (textDirection == TextDirection.rtl)
+                ? trackRect.top - (additionalActiveTrackHeight / 2)
+                : trackRect.top,
+            trackRect.right,
+            (textDirection == TextDirection.rtl)
+                ? trackRect.bottom + (additionalActiveTrackHeight / 2)
+                : trackRect.bottom,
+          ),
+          topRight: (textDirection == TextDirection.rtl)
+              ? activeTrackRadius
+              : trackRadius,
+          bottomRight: (textDirection == TextDirection.rtl)
+              ? activeTrackRadius
+              : trackRadius,
+        ),
+        rightTrackPaint,
+      );
+    } else {
+      //背景有渐变, 则走新的
+      final rightTrackRect = Rect.fromLTRB(
+        trackRect.left,
         (textDirection == TextDirection.rtl)
             ? trackRect.top - (additionalActiveTrackHeight / 2)
             : trackRect.top,
@@ -115,15 +147,31 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
         (textDirection == TextDirection.rtl)
             ? trackRect.bottom + (additionalActiveTrackHeight / 2)
             : trackRect.bottom,
-        topRight: (textDirection == TextDirection.rtl)
-            ? activeTrackRadius
-            : trackRadius,
-        bottomRight: (textDirection == TextDirection.rtl)
-            ? activeTrackRadius
-            : trackRadius,
-      ),
-      rightTrackPaint,
-    );
+      );
+      rightTrackPaint.shader = linearGradientShader(
+        inactiveColors,
+        colorStops: inactiveColorStops,
+        rect: rightTrackRect,
+      );
+      context.canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          rightTrackRect,
+          topLeft: (textDirection == TextDirection.rtl)
+              ? activeTrackRadius
+              : trackRadius,
+          topRight: (textDirection == TextDirection.rtl)
+              ? activeTrackRadius
+              : trackRadius,
+          bottomRight: (textDirection == TextDirection.rtl)
+              ? activeTrackRadius
+              : trackRadius,
+          bottomLeft: (textDirection == TextDirection.rtl)
+              ? activeTrackRadius
+              : trackRadius,
+        ),
+        rightTrackPaint,
+      );
+    }
 
     final bool showSecondaryTrack = (secondaryOffset != null) &&
         ((textDirection == TextDirection.ltr)
@@ -167,16 +215,22 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
 
 /// 中心滑块轨道Shape
 class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
-  /// 渐变颜色
-  final List<Color>? colors;
-  final List<double>? colorStops;
+  /// 不活跃的渐变颜色, 通常背景
+  final List<Color>? inactiveColors;
+  final List<double>? inactiveColorStops;
+
+  /// 活跃的渐变颜色, 通常是进度
+  final List<Color>? activeColors;
+  final List<double>? activeColorStops;
 
   /// 额外的轨道高度
   final double additionalActiveTrackHeight;
 
   const CenteredRectangularSliderTrackShape({
-    this.colors,
-    this.colorStops,
+    this.activeColors,
+    this.activeColorStops,
+    this.inactiveColors,
+    this.inactiveColorStops,
     this.additionalActiveTrackHeight = 0,
   });
 
@@ -246,6 +300,11 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
           trackRect.bottom + (additionalActiveTrackHeight / 2));
 
       if (!leftTrackSegment.isEmpty) {
+        inactivePaint.shader = linearGradientShader(
+          inactiveColors?.reversed.toList(),
+          colorStops: inactiveColorStops?.reversed.toList(),
+          rect: leftTrackSegment,
+        );
         context.canvas.drawRect(leftTrackSegment, inactivePaint);
       }
 
@@ -257,8 +316,8 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
       );
       if (!activeRect.isEmpty) {
         activePaint.shader = linearGradientShader(
-          colors,
-          colorStops: colorStops,
+          activeColors,
+          colorStops: activeColorStops,
           rect: Rect.fromLTRB(
             activeRect.left,
             activeRect.top,
@@ -275,6 +334,11 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
           trackRect.right,
           trackRect.bottom + (additionalActiveTrackHeight / 2));
       if (!rightTrackSegment.isEmpty) {
+        inactivePaint.shader = linearGradientShader(
+          inactiveColors,
+          colorStops: inactiveColorStops,
+          rect: rightTrackSegment,
+        );
         context.canvas.drawRect(rightTrackSegment, inactivePaint);
       }
     } else if (trackCenter.dx > thumbCenter.dx) {
@@ -296,8 +360,8 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
       );
       if (!activeRect.isEmpty) {
         activePaint.shader = linearGradientShader(
-          colors?.reversed.toList(),
-          colorStops: colorStops?.reversed.toList(),
+          activeColors?.reversed.toList(),
+          colorStops: activeColorStops?.reversed.toList(),
           rect: Rect.fromLTRB(
             trackRect.left,
             trackRect.top,

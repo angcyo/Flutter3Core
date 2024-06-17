@@ -400,6 +400,8 @@ mixin TileMixin {
     Color? thumbColor,
     Color? overlayColor,
     Color? activeTrackColor,
+    List<Color>? inactiveTrackGradientColors,
+    List<double>? inactiveTrackGradientColorStops,
     List<Color>? activeTrackGradientColors,
     List<double>? activeTrackGradientColorStops,
     bool syncGradientColor = true,
@@ -410,27 +412,38 @@ mixin TileMixin {
     SliderTrackShape? trackShape,
   }) {
     if (trackShape == null) {
+      //渐变进度在渐变颜色中的颜色值
       Color? gradientColor;
-      if (syncGradientColor && !isNil(activeTrackGradientColors)) {
+      if (syncGradientColor &&
+          (!isNil(activeTrackGradientColors) ||
+              !isNil(inactiveTrackGradientColors))) {
         final progress = (value - minValue) / (maxValue - minValue);
-        gradientColor = getGradientColor(progress, activeTrackGradientColors!,
-            colorStops: activeTrackGradientColorStops);
+        gradientColor = getGradientColor(
+            progress, activeTrackGradientColors ?? inactiveTrackGradientColors!,
+            colorStops: activeTrackGradientColorStops ??
+                inactiveTrackGradientColorStops);
       }
 
+      //居中双边shape
       if (useCenteredTrackShape == true) {
         trackShape = CenteredRectangularSliderTrackShape(
-          colors: activeTrackGradientColors,
-          colorStops: activeTrackGradientColorStops,
+          activeColors: activeTrackGradientColors,
+          activeColorStops: activeTrackGradientColorStops,
+          inactiveColors: inactiveTrackGradientColors,
+          inactiveColorStops: inactiveTrackGradientColorStops,
         );
         final color = gradientColor ?? activeTrackGradientColors?.last;
         thumbColor ??= color;
         valueIndicatorColor = thumbColor;
         overlayColor ??= color?.withOpacity(0.1);
       } else {
-        if (!isNil(activeTrackGradientColors)) {
+        if (!isNil(activeTrackGradientColors) ||
+            !isNil(inactiveTrackGradientColors)) {
           trackShape = GradientSliderTrackShape(
-            activeTrackGradientColors,
-            colorStops: activeTrackGradientColorStops,
+            activeColors: activeTrackGradientColors,
+            activeColorStops: activeTrackGradientColorStops,
+            inactiveColors: inactiveTrackGradientColors,
+            inactiveColorStops: inactiveTrackGradientColorStops,
           );
           final color = gradientColor ?? activeTrackGradientColors?.last;
           thumbColor ??= color;
