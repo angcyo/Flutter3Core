@@ -23,7 +23,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [pageRScrollView]
   WidgetList pageWidgetList = [];
 
-  /// 界面是否[build]了
+  /// 界面是否[build]了, 决定更新状态时是否要延迟
+  /// [updateAdapterState]
   bool _isPageBuild = false;
 
   /// 当页面需要更新新, 使用哪个[State]对象
