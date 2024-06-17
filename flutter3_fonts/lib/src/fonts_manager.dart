@@ -36,6 +36,65 @@ class FontsManager {
     return FontStyle.normal;
   }*/
 
+  /// 加载系统字体
+  final List<String> systemFontPath = [
+    "/system/fonts",
+    "/system/font",
+    "/data/fonts",
+    "/System/Library/Fonts",
+  ];
+
+  /// 系统字体的缓存
+  final List<FontFamilyMeta> _systemFontFamilyMetas = [];
+
+  /// 尝试直接加载系统字体
+  /// [fontFamily] 字体名称, 同时也是.ttf的文件名
+  Future<bool> tryLoadSystemFontFamily(String? fontFamily) async {
+    if (isNil(fontFamily)) {
+      return false;
+    }
+    for (final path in systemFontPath) {
+      final filePath = "$path/$fontFamily.ttf";
+      if (await filePath.file().exists()) {
+        final variantMeta = FontFamilyVariantMeta(
+          displayFontFamily: fontFamily!,
+          fontFamily: fontFamily,
+          uri: filePath,
+        );
+        return await loadFontFamilyVariant(
+          variantMeta,
+          FontFamilySource.file,
+        );
+      }
+    }
+    return false;
+  }
+
+  /// 加载系统字体
+  Future<List<FontFamilyMeta>> loadSystemFileFontFamilyList({
+    bool parseVariant = false,
+    bool? autoLoad = true,
+    bool? reload,
+    bool? waitLoad,
+  }) async {
+    if (reload == true) {
+      _systemFontFamilyMetas.clear();
+    }
+    if (_systemFontFamilyMetas.isNotEmpty) {
+      return _systemFontFamilyMetas;
+    }
+    for (final path in systemFontPath) {
+      final list = await loadFileFontFamilyList(
+        path,
+        parseVariant: parseVariant,
+        autoLoad: autoLoad,
+        waitLoad: waitLoad,
+      );
+      _systemFontFamilyMetas.addAll(list);
+    }
+    return _systemFontFamilyMetas;
+  }
+
   /// 加载字体
   Future<bool> loadFontFamily(FontFamilyMeta fontFamilyMeta) async {
     bool result = fontFamilyMeta.variantList.isNotEmpty;
@@ -62,7 +121,7 @@ class FontsManager {
     final load = _uriLoadCache[key];
     if (load == true) {
       //已经加载成功过
-      return false;
+      return true;
     }
     if (load == null) {
       //还未加载
@@ -94,6 +153,7 @@ class FontsManager {
     String path, {
     bool parseVariant = false,
     bool? autoLoad,
+    bool? waitLoad,
   }) async {
     final list = <FontFamilyMeta>[];
     final files = await path.file().listFiles();
@@ -116,12 +176,21 @@ class FontsManager {
 
         //
         if (autoLoad == true) {
-          loadFontFamilyVariant(
-            variantMeta,
-            FontFamilySource.file,
-            savePath: path,
-            overwrite: autoLoad,
-          );
+          if (waitLoad == true) {
+            await loadFontFamilyVariant(
+              variantMeta,
+              FontFamilySource.file,
+              savePath: path,
+              overwrite: autoLoad,
+            );
+          } else {
+            loadFontFamilyVariant(
+              variantMeta,
+              FontFamilySource.file,
+              savePath: path,
+              overwrite: autoLoad,
+            );
+          }
         }
 
         //

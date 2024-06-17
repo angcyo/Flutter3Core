@@ -46,6 +46,9 @@ class BaseTextPainter {
   /// 需要绘制的文本
   String? text;
 
+  /// 文本字体
+  String? fontFamily;
+
   /// 绘制方向
   int orientation = kHorizontal;
 
@@ -115,6 +118,7 @@ class BaseTextPainter {
   TextPainter _createTextPainter(String? text) {
     return createTextPainter(
       text: text,
+      fontFamily: fontFamily,
       textColor: textColor,
       textAlign: textAlign,
       paintingStyle: paintingStyle,
@@ -135,6 +139,7 @@ class BaseTextPainter {
   /// [text]生成[InlineSpan]对象
   static TextPainter createTextPainter({
     String? text,
+    String? fontFamily,
     InlineSpan? textSpan,
     Color textColor = Colors.black,
     PaintingStyle paintingStyle = PaintingStyle.fill,
@@ -157,6 +162,7 @@ class BaseTextPainter {
         fontSize: fontSize,
         locale: locale,
         height: strutHeight,
+        fontFamily: fontFamily,
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
         fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
         letterSpacing: letterSpacing,

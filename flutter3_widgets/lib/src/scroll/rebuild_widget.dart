@@ -116,7 +116,7 @@ UpdateValueNotifier<dynamic> get nullValueUpdateSignal =>
 
 /// [UpdateValueNotifier]的快速构建方法
 @updateSignalMark
-UpdateValueNotifier<T?> updateSignal<T>() => UpdateSignalNotifier<T?>(null);
+UpdateValueNotifier<T?> createUpdateSignal<T>() => UpdateSignalNotifier<T?>(null);
 
 mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
   /// 用来触发重构的信号

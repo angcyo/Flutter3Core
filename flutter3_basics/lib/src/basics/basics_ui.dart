@@ -1266,13 +1266,20 @@ extension WidgetEx on Widget {
   Widget constrainedMin({
     double? minWidth,
     double? minHeight,
+    double? maxWidth,
+    double? maxHeight,
   }) {
-    if (minWidth == null && minHeight == null) {
+    if (maxWidth == null &&
+        maxHeight == null &&
+        minWidth == null &&
+        minHeight == null) {
       return this;
     }
     return constrainedBox(BoxConstraints(
       minWidth: minWidth ?? 0,
       minHeight: minHeight ?? 0,
+      maxWidth: maxWidth ?? double.infinity,
+      maxHeight: maxHeight ?? double.infinity,
     ));
   }
 
@@ -1280,13 +1287,20 @@ extension WidgetEx on Widget {
   /// [constrainedBox]
   /// [ConstrainedBox]
   Widget constrainedMax({
+    double? minWidth,
+    double? minHeight,
     double? maxWidth,
     double? maxHeight,
   }) {
-    if (maxWidth == null && maxHeight == null) {
+    if (maxWidth == null &&
+        maxHeight == null &&
+        minWidth == null &&
+        minHeight == null) {
       return this;
     }
     return constrainedBox(BoxConstraints(
+      minWidth: minWidth ?? 0.0,
+      minHeight: minHeight ?? 0.0,
       maxWidth: maxWidth ?? double.infinity,
       maxHeight: maxHeight ?? double.infinity,
     ));

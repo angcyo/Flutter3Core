@@ -135,6 +135,7 @@ typedef UiColorFilter = ui.ColorFilter;
 typedef UiGradient = ui.Gradient;
 typedef UiPlatformDispatcher = ui.PlatformDispatcher;
 typedef UiLocale = ui.Locale;
+typedef UiPaintingStyle = ui.PaintingStyle;
 typedef AnimateAction = void Function(AnimationController controller);
 typedef NumFormat = String? Function(num? number);
 

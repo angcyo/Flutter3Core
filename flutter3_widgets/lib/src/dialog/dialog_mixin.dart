@@ -128,10 +128,12 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// [useScroll] 是否使用滚动容器
   /// [animatedSize] 当[children]大小改变时, 是否使用动画大小
   /// [scrollChildIndex] 使用滚动容器时, [children]索引>=此值的child才放大滚动容器中
-  /// [scrollMaxHeight] 滚动容器最大的高度, 如果小于1, 表示屏幕高度的百分比
+  /// [contentMinHeight] 滚动容器的最小的高度, 如果小于1, 表示屏幕高度的百分比
+  /// [contentMaxHeight] 滚动容器最大的高度, 如果小于1, 表示屏幕高度的百分比
   /// [clipRadius] 整体圆角
   /// [clipTopRadius] 顶部圆角
   /// [clipBottomRadius] 底部圆角
+  /// [stackWidget] 堆在内容上的小部件, 如果有
   @api
   @entryPoint
   Widget buildBottomChildrenDialog(
@@ -142,33 +144,64 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool useScroll = false,
     bool animatedSize = false,
     int scrollChildIndex = 1,
-    double? scrollMaxHeight = 0.8,
+    double? contentMinHeight,
+    double? contentMaxHeight = 0.8,
     double? clipRadius,
     double? clipTopRadius,
     double? clipBottomRadius,
+    Widget? stackWidget,
   }) {
-    final Widget body;
+    Widget body;
     children = children.filterNull();
+
+    //滚动内容的最小最大高度
+    if (contentMinHeight != null && contentMinHeight < 1) {
+      contentMinHeight = screenHeight * contentMinHeight;
+    }
+    if (contentMaxHeight != null && contentMaxHeight < 1) {
+      contentMaxHeight = screenHeight * contentMaxHeight;
+    }
+
     if (useScroll) {
       final fixedChildren = children.subList(0, scrollChildIndex);
       final scrollChildren = children.subList(scrollChildIndex);
 
-      if (scrollMaxHeight != null && scrollMaxHeight < 1) {
-        scrollMaxHeight = screenHeight * scrollMaxHeight;
+      Widget? scrollBody =
+          scrollChildren.scroll(scrollDirection: Axis.vertical);
+      //约束高度
+      scrollBody = scrollBody?.constrainedMax(
+        minHeight: contentMinHeight,
+        maxHeight: contentMaxHeight,
+      );
+
+      //堆叠小部件
+      if (stackWidget != null) {
+        scrollBody = scrollBody
+                ?.position(all: children.isEmpty ? null : 0)
+                .stackOf(stackWidget) ??
+            stackWidget.constrainedMax(
+              minHeight: contentMinHeight,
+              maxHeight: contentMaxHeight,
+            );
       }
 
       body = [
         if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...fixedChildren,
-        scrollChildren
-            .scroll(scrollDirection: Axis.vertical)
-            ?.constrainedMax(maxHeight: scrollMaxHeight),
+        scrollBody,
       ].column()!;
     } else {
       body = [
         if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...children
       ].column()!;
+
+      //堆叠小部件
+      if (stackWidget != null) {
+        body = body
+            .position(all: children.isEmpty ? null : 0)
+            .stackOf(stackWidget);
+      }
     }
 
     final globalTheme = GlobalTheme.of(context);
