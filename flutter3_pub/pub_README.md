@@ -411,3 +411,5 @@ https://github.com/fluttercommunity/plus_plugins
 - [file_preview: ^1.2.0](https://pub.dev/packages/file_preview) 使用file_preview可以像在使用Flutter weidget一样在andorid、ios页面中预览doc、docx、rtf、ppt、pptx、xls、xlsx、xlsm、csv、pdf、txt、epub、chm等文件。
 - [flutter_native_splash: ^2.4.0](https://pub.dev/packages/flutter_native_splash) 一个 Flutter 插件，用于自动生成 Android 和 iOS 的启动屏幕。
 - [home_widget: ^0.6.0](https://pub.dev/packages/home_widget)HomeWidget 是一个插件，可以更轻松地在 Android 和 iOS 上创建主屏幕小部件。 HomeWidget 不允许使用 Flutter 本身编写 Widget。它仍然需要使用本机代码编写小部件。然而，它提供了一个统一的接口来发送数据、检索数据和更新 Widgets
+- [receive_sharing_intent: ^1.8.0](https://pub.dev/packages/receive_sharing_intent) 一个 Flutter 插件，使 Flutter 应用程序能够从其他应用程序接收共享照片、视频、文本、URL 或任何其他文件类型。
+- [receive_sharing_intent_plus: ^1.0.1](https://pub.dev/packages/receive_sharing_intent_plus) Flutter 插件，可在您的应用程序中使用文本、照片和 URL 解锁无缝内容共享。
