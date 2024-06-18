@@ -6,6 +6,21 @@ part of '../../flutter3_core.dart';
 ///
 /// 调试界面, 包含很多调试相关的功能
 class DebugPage extends StatefulWidget {
+  /// debug
+  static void _toastWidgetInfo(dynamic widget) {
+    final text = stringBuilder((builder) {
+      try {
+        builder.appendLine(widget?.runtimeType);
+        builder.appendLine(widget);
+        builder.append(widget?.toStringShort());
+      } catch (e) {
+        //print(e);
+      }
+    });
+    l.d(text);
+    toastInfo(text);
+  }
+
   /// 默认的调试动作
   static final List<DebugAction> defDebugActions = [
     DebugAction(
@@ -30,11 +45,60 @@ class DebugPage extends StatefulWidget {
         final image = await saveScreenCapture(path);
         if (image == null) {
           toastInfo('截屏失败');
-        } else {
+        } else if (context.isMounted) {
           final globalConfig = GlobalConfig.of(context);
           globalConfig.shareDataFn?.call(context, path.file());
           toastInfo('截屏成功:$path');
         }
+      },
+    ),
+    DebugAction(
+      label: "logWidget",
+      clickAction: (context) {
+        toastInfo("${GlobalApp.logWidget()}");
+      },
+    ),
+    DebugAction(
+      label: "testWidgetMinify",
+      clickAction: (context) {
+        final w1 = SliverFillRemaining(
+          child: "test".text(),
+        );
+        final w2 = OverlayEntry(builder: (context) => "test".text());
+        final text =
+            "${w1.runtimeType}\n$w1\n${w1.toStringShort()}\n${w2.runtimeType}\n$w2";
+        l.d(text);
+        toastInfo(text);
+      },
+    ),
+    DebugAction(
+      label: "findWidgetsAppElement",
+      clickAction: (context) {
+        final element = GlobalConfig.def.findWidgetsAppElement();
+        _toastWidgetInfo(element);
+      },
+    ),
+    DebugAction(
+      label: "findOverlayState",
+      clickAction: (context) {
+        final element = GlobalConfig.def.findOverlayState();
+        _toastWidgetInfo(element);
+      },
+    ),
+    DebugAction(
+      label: "findNavigatorState",
+      clickAction: (context) {
+        final element = GlobalConfig.def.findNavigatorState();
+        _toastWidgetInfo(element);
+      },
+    ),
+    DebugAction(
+      label: "testModalRouteList",
+      clickAction: (context) {
+        final routeList = GlobalConfig.def.findModalRouteList();
+        final text = routeList.join("\n");
+        l.d(text);
+        toastInfo(text);
       },
     ),
   ];

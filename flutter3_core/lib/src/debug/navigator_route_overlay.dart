@@ -1,0 +1,156 @@
+part of '../../flutter3_core.dart';
+
+///
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
+/// @date 2024/06/18
+///
+/// 调试模式下, 用来显示导航的路由栈信息以及一些额外的调试信息
+class NavigatorRouteOverlay extends StatefulWidget {
+  /// 显示
+  /// No Overlay widget found.
+  /// Some widgets require an Overlay widget ancestor for correct operation.
+  /// The most common way to add an Overlay to an application is to include a MaterialApp, CupertinoApp or
+  /// Navigator widget in the runApp() call.
+  static void showNavigatorRouteOverlay(BuildContext context) {
+    postFrameCallback((_) {
+      showOverlay((entry, state, context, progress) {
+        return NavigatorRouteOverlay(entry);
+      }, context: context);
+    });
+  }
+
+  final OverlayEntry entry;
+
+  const NavigatorRouteOverlay(this.entry, {super.key});
+
+  @override
+  State<NavigatorRouteOverlay> createState() => _NavigatorRouteOverlayState();
+}
+
+enum _NavigatorRouteOverlayStateEnum {
+  /// 正常状态
+  normal,
+
+  /// 显示路由栈信息
+  routeStack,
+}
+
+class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
+  _NavigatorRouteOverlayStateEnum showState =
+      _NavigatorRouteOverlayStateEnum.normal;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget result;
+    if (showState == _NavigatorRouteOverlayStateEnum.routeStack) {
+      final globalTheme = GlobalTheme.of(context);
+      result = _buildRouteState(context)
+          .wrapTextStyle(
+              style: TextStyle(
+            fontSize: 8,
+            fontWeight: FontWeight.bold,
+            color: globalTheme.accentColor,
+            shadows: const <Shadow>[
+              Shadow(
+                offset: Offset(1, 1),
+                color: Colors.black,
+                blurRadius: 2,
+              ),
+            ],
+          ))
+          .paddingAll(kM)
+          .elevation(2.0);
+    } else {
+      result = _buildNormalState(context);
+    }
+    return result.material().doubleClick(() {
+      try {
+        widget.entry.remove();
+        widget.entry.dispose();
+      } catch (e) {
+        assert(() {
+          printError(e);
+          return true;
+        }());
+      }
+    }, onTap: () {
+      setState(() {
+        if (showState == _NavigatorRouteOverlayStateEnum.routeStack) {
+          _routeTextSpan = null;
+        }
+        showState = showState == _NavigatorRouteOverlayStateEnum.normal
+            ? _NavigatorRouteOverlayStateEnum.routeStack
+            : _NavigatorRouteOverlayStateEnum.normal;
+      });
+    }).align(Alignment.bottomLeft);
+  }
+
+  /// 正常状态, 显示小圆点
+  Widget _buildNormalState(BuildContext context) {
+    const size = 10.0;
+    const interactiveSize = 30.0;
+    final globalTheme = GlobalTheme.of(context);
+    return paintWidget((canvas, size) {
+      final radius = size.width / 2;
+      final center = size.center(Offset.zero);
+      canvas.drawCircle(
+          center,
+          radius,
+          Paint()
+            ..shader = radialGradientShader(
+                radius,
+                [
+                  globalTheme.primaryColorDark,
+                  globalTheme.primaryColor,
+                  /*Colors.transparent,*/
+                ],
+                center: center)
+            ..color = Colors.redAccent
+            ..style = PaintingStyle.fill);
+    }, size: const Size(size, size))
+        .align(Alignment.bottomLeft)
+        .size(size: interactiveSize);
+  }
+
+  Widget? _routeTextSpan;
+
+  /// 路由状态信息
+  Widget _buildRouteState(BuildContext context) {
+    if (_routeTextSpan == null) {
+      postFrameCallback((_) {
+        final routeList = GlobalConfig.def.findModalRouteList();
+        _routeTextSpan = textSpanBuilder((builder) {
+          bool isFirst = true;
+          for (final part in routeList) {
+            //debugger();
+            if (!isFirst) {
+              builder.newLine();
+            }
+            final route = part.$1;
+            final element = part.$2;
+
+            final name = route.settings.name;
+            String? widgetName = element?.widget.runtimeType.toString();
+            /*if (route is MaterialPageRoute) {
+              widgetName = "${route.builder(context).runtimeType}";
+            } else if (route is CupertinoPageRoute) {
+              widgetName = "${route.builder(context).runtimeType}";
+            } else {
+              final Animation<double> animation = ProxyAnimation();
+              widgetName =
+                  "${route.buildPage(context, animation, animation).runtimeType}";
+            }*/
+            builder.addTextStyle(widgetName);
+            if (name != null) {
+              builder.addTextStyle("($name)");
+            }
+            //
+            isFirst = false;
+          }
+        });
+        updateState();
+      });
+    }
+    return _routeTextSpan ?? "...".text();
+  }
+}

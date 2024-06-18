@@ -18,11 +18,17 @@ mixin OverlayManage<Entry extends OverlayEntry> on Diagnosticable {
   /// 添加[Entry]
   void addOverlayEntry(Entry entry, {required Key key}) {
     _overlayEntries[key] = entry;
+    entry.addListener(_checkRemove);
   }
 
   /// 移除[Entry]
   void removeOverlayEntry({required Key key}) {
     _overlayEntries.remove(key);
+  }
+
+  /// 检查[OverlayEntry]是否已被移除
+  void _checkRemove() {
+    _overlayEntries.removeWhere((key, value) => value.mounted == false);
   }
 }
 

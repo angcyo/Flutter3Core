@@ -6,6 +6,7 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/04/14
 ///
 /// 确保是[Sliver]小部件
+@minifyProguardFlag
 Widget _ensureSliver(Widget tile) {
   bool isSliver = false;
   if (tile is RItemTile) {
@@ -14,7 +15,16 @@ Widget _ensureSliver(Widget tile) {
   if (isSliver) {
     return tile;
   }
-  if (tile is! NotSliverTile && "$tile".toLowerCase().startsWith("sliver")) {
+  //l.w("处理[${tile.runtimeType}][$tile]:${tile.toStringShort()}");
+  //[SliverFillRemaining(child: Text, mode: [fillOverscroll])] SliverFillRemaining
+  //打包之后会变成
+  //[Instance of 'SliverFillRemaining'] Widget
+  if (tile is! NotSliverTile &&
+          tile.runtimeType.toString().toLowerCase().contains("sliver")
+      /*("$tile".toLowerCase().startsWith("sliver") ||
+              "$tile".toLowerCase().startsWith("instance of 'sliver")) ||
+      "$tile".toLowerCase().contains("sliver")*/
+      ) {
     assert(() {
       l.d('未使用[SliverToBoxAdapter]包裹的[Sliver]小部件[${tile.runtimeType}]');
       return true;

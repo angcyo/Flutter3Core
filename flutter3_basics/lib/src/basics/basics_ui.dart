@@ -28,7 +28,7 @@ void postFrameCallback(FrameCallback callback,
 /// 如果正在布局阶段, 则立即安排一帧, 否则立即执行回调
 void postFrameCallbackIfNeed(FrameCallback callback) {
   WidgetsFlutterBinding.ensureInitialized();
-  var schedulerPhase = WidgetsBinding.instance.schedulerPhase;
+  final schedulerPhase = WidgetsBinding.instance.schedulerPhase;
   if (schedulerPhase == SchedulerPhase.persistentCallbacks) {
     postFrameCallback(callback);
   } else {
@@ -385,14 +385,16 @@ extension WidgetEx on Widget {
   /// [click]
   /// [doubleClick]
   Widget doubleClick(
-    GestureTapCallback? onDoubleTap, [
+    GestureTapCallback? onDoubleTap, {
     bool enable = true,
-    HitTestBehavior? behavior = HitTestBehavior.opaque,
-  ]) =>
+    GestureTapCallback? onTap,
+    HitTestBehavior? behavior = HitTestBehavior.translucent,
+  }) =>
       onDoubleTap == null || !enable
           ? this
           : GestureDetector(
               onDoubleTap: onDoubleTap,
+              onTap: onTap,
               behavior: behavior,
               child: this,
             );
@@ -401,10 +403,10 @@ extension WidgetEx on Widget {
   /// [behavior] 手势的命中测试行为, 父子都需要手势, 但是不想冲突, 可以设置[HitTestBehavior.opaque]
   /// [RenderProxyBoxWithHitTestBehavior]
   Widget longClick(
-    GestureLongPressCallback? onLongPress, [
+    GestureLongPressCallback? onLongPress, {
     bool enable = true,
-    HitTestBehavior? behavior = HitTestBehavior.opaque,
-  ]) =>
+    HitTestBehavior? behavior = HitTestBehavior.translucent,
+  }) =>
       onLongPress == null || !enable
           ? this
           : GestureDetector(
@@ -1729,6 +1731,9 @@ typedef ConditionalElementVisitorDepth = bool Function(
 /// [BuildContext.findRenderObject]
 /// [RenderObject.showOnScreen]
 extension ContextEx on BuildContext {
+  /// 此上下文关联的Widget当前是否已安装在 Widget 树中
+  bool get isMounted => mounted;
+
   /// 系统当前的亮度模式
   /// [Brightness]
   bool get isSystemDark =>
@@ -1845,6 +1850,35 @@ extension ContextEx on BuildContext {
         element.eachVisitChildElements(visitor, depth: depth + 1);
       }
     });
+  }
+
+  /// 从上往下查找
+  /// 查找第一个非系统元素[Widget]的[Element]
+  Element? findFirstNotSystemElement() {
+    const systemWidgetList = [
+      Offstage,
+      PrimaryScrollController,
+      RepaintBoundary,
+      ListenableBuilder,
+      DualTransitionBuilder,
+      SnapshotWidget,
+      IgnorePointer,
+      Semantics,
+      Builder,
+      PageStorage,
+      Actions,
+    ];
+    Element? result;
+    eachVisitChildElements((element, depth, childIndex) {
+      final runtimeType = element.widget.runtimeType;
+      if (!"$runtimeType".startsWith("_") &&
+          !systemWidgetList.contains(runtimeType)) {
+        result = element;
+        return false;
+      }
+      return true;
+    });
+    return result;
   }
 
   /// 通过指定的[Widget]类型查找对应的[Element]

@@ -7,6 +7,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
@@ -46,6 +47,7 @@ part 'src/debug/core_debug.dart';
 part 'src/debug/debug_file_page.dart';
 part 'src/debug/debug_page.dart';
 part 'src/debug/screen_capture_overlay.dart';
+part 'src/debug/navigator_route_overlay.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';

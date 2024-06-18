@@ -28,6 +28,12 @@ part 'src/app_notifications.dart';
 part 'src/app_swiper_ex.dart';
 part 'src/mobile_ex.dart';
 
+///
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
+/// @since 2023/11/28
+///
+@entryPoint
+@initialize
 @callPoint
 void runGlobalApp(
   Widget app, {
@@ -80,7 +86,8 @@ void runGlobalApp(
   var oldOnError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails details) {
     "发生一个错误:↓".writeToErrorLog();
-    details.writeToErrorLog();
+    details.exceptionAsString().writeToErrorLog();
+    dumpErrorToString(details).writeToErrorLog();
     oldOnError?.call(details);
     //FlutterError.dumpErrorToConsole(details);
   };
@@ -110,4 +117,20 @@ void runGlobalApp(
     stack.toString().writeToErrorLog(level: L.none);
     printError(error, stack);
   });
+}
+
+/// 在具有[BuildContext]时, 进行首次初始化
+/// [MaterialApp.onGenerateTitle]中的[BuildContext]拿不到[Navigator].[Overlay]
+/// 推荐在[MaterialApp.home]中使用[Builder]小部件初始化
+@entryPoint
+@initialize
+Future initGlobalAppAtContext(BuildContext context) async {
+  //debugger();
+  if (GlobalConfig.def.globalAppContext == context) {
+    return;
+  }
+  GlobalConfig.def.globalAppContext = context;
+  if (isDebugFlag) {
+    NavigatorRouteOverlay.showNavigatorRouteOverlay(context);
+  }
 }

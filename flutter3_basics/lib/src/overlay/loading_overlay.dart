@@ -46,7 +46,7 @@ OverlayEntry? showLoading({
   }
 
   final route = context == null
-      ? GlobalConfig.def.findModalRouteList().lastOrNull
+      ? GlobalConfig.def.findModalRouteList().lastOrNull?.$1
       : ModalRoute.of(context);
 
   ///创建Entry

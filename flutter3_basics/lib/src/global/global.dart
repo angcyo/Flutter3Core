@@ -17,15 +17,24 @@ class GlobalApp extends StatefulWidget {
   final GlobalConfig? globalConfig;
 
   /// 打印所有的祖先元素和子元素
-  static logWidget([Duration? delay, BuildContext? context]) {
-    BuildContext? ctx = context ?? GlobalConfig.def.globalTopContext;
-    if (ctx == null || delay != null) {
-      delayCallback(() {
-        logWidget(null, ctx);
-      }, delay);
+  static bool logWidget([Duration? delay, BuildContext? context]) {
+    //debugger();
+    BuildContext? ctx = context ??
+        GlobalConfig.def.globalTopContext ??
+        GlobalConfig.def.globalAppContext;
+    if (ctx == null) {
+      if (delay != null) {
+        delayCallback(() {
+          logWidget(null, ctx);
+        }, delay);
+        return true;
+      } else {
+        return false;
+      }
     } else {
       _logWidget(ctx);
     }
+    return true;
   }
 
   static _logWidget(BuildContext context) {
@@ -64,6 +73,7 @@ class GlobalApp extends StatefulWidget {
   ///
   static logChildWidget(BuildContext context) {
     context.eachVisitChildElements((element, depth, childIndex) {
+      //debugger();
       l.w('[$depth:$childIndex]:[$element]');
       if (element is StatefulElement) {}
       return element.owner != null;

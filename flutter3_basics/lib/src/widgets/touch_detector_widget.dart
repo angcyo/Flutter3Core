@@ -79,6 +79,7 @@ class _RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
 }
 
 extension TouchDetectorWidgetEx on Widget {
+  /// 点击/长按事件识别
   /// [TouchDetectorWidget]扩展方法
   Widget onTouchDetector({
     GestureTapCallback? onTap,

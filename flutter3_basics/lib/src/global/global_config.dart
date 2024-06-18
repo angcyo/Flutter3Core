@@ -52,7 +52,8 @@ typedef AppBarLeadingBuilderFn = Widget? Function(
     BuildContext context, dynamic page);
 
 /// [GlobalConfig.allModalRouteList]
-ModalRoute? get lastModalRoute => GlobalConfig.allModalRouteList().lastOrNull;
+ModalRoute? get lastModalRoute =>
+    GlobalConfig.allModalRouteList().lastOrNull?.$1;
 
 /// [GlobalConfig.findOverlayState]
 OverlayState? get overlayState => GlobalConfig.def.findOverlayState();
@@ -172,7 +173,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   }
 
   /// 获取当前程序中的所有路由
-  static List<ModalRoute> allModalRouteList() =>
+  static List<(ModalRoute, Element?)> allModalRouteList() =>
       GlobalConfig.def.findModalRouteList();
 
   /// 获取当前配置下, 是否是debug模式
@@ -236,11 +237,13 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局的Loading指示器
   /// [OverlayEntry.type]
+  /// [OverlayEntry]
+  @minifyProguardFlag
   ProgressWidgetBuilder loadingIndicatorBuilder = (context, data, progress) {
     //debugger();
     return LoadingIndicator(
       progressValue: progress,
-      useSystemStyle: !"$data".toLowerCase().startsWith("overlay"),
+      useSystemStyle: !"$data".toLowerCase().contains("overlay"),
     );
   };
 
@@ -417,29 +420,54 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 从上往下查找所有[ModalRoute]
   /// release之后,字符串是否会变化?
-  List<ModalRoute> findModalRouteList() {
+  @minifyProguardFlag
+  List<(ModalRoute, Element?)> findModalRouteList() {
     List<Element> routeElementList = [];
-    List<ModalRoute> result = [];
+    List<(ModalRoute, Element?)> result = [];
     globalTopContext?.eachVisitChildElements((element, depth, childIndex) {
-      if ("$element".startsWith("_ModalScopeStatus(")) {
+      /*if (element.runtimeType == StatefulElement ||
+          element.runtimeType == StatelessElement ||
+          element.runtimeType == InheritedElement) {
+      } else {
+        l.d(element.runtimeType);
+      }*/
+      if (element.widget.runtimeType
+          .toString()
+          .toLowerCase()
+          .contains("ModalScopeStatus".toLowerCase())) {
         routeElementList.add(element);
         return false;
       }
+      /*if ("$element".startsWith("_ModalScopeStatus(") ||
+          "$element"
+              .toLowerCase()
+              .contains("_ModalScopeStatus(".toLowerCase())) {
+        routeElementList.add(element);
+        return false;
+      }*/
       return true;
     });
     for (final element in routeElementList) {
       //获取第一个子元素
       var isAdd = false;
+
+      ModalRoute? findRoute;
+
       element.visitChildElements((element) {
         if (!isAdd) {
           final route = ModalRoute.of(element);
-          route?.let<ModalRoute>((it) {
+          if (route != null) {
             isAdd = true;
-            result.add(it);
-            return it;
-          });
+            findRoute = route;
+            /*final firstElement = element.findFirstNotSystemElement();
+            result.add((route, firstElement));*/
+          }
         }
       });
+      if (findRoute != null) {
+        final firstElement = element.findFirstNotSystemElement();
+        result.add((findRoute!, firstElement));
+      }
     }
     return result;
   }

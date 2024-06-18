@@ -180,6 +180,7 @@ void reportError(exception) {
 
 /// 打印错误
 /// [FlutterError.presentError]
+/// [FlutterError.resetErrorCount]
 /// [StackTrace.current]
 /// [reportError]
 /// [printError]
@@ -193,6 +194,52 @@ void printError(exception, [StackTrace? stack]) {
           ),
     forceReport: true,
   );
+}
+
+/// [FlutterError.presentError]
+/// [FlutterError.dumpErrorToConsole]
+String dumpErrorToString(FlutterErrorDetails details) {
+  const maxFrames = 100;
+  final label = details.exception.toString();
+  final StackTrace stackTrace;
+  if (details.stack != null) {
+    stackTrace = FlutterError.demangleStackTrace(details.stack!);
+  } else {
+    stackTrace = StackTrace.current;
+  }
+  final stackString = stackToString(
+    stackTrace: stackTrace,
+    label: label,
+    maxFrames: maxFrames,
+  );
+  return stackString;
+}
+
+/// [debugPrintStack]
+String stackToString({StackTrace? stackTrace, String? label, int? maxFrames}) {
+  if (label != null) {
+    debugPrint(label);
+  }
+  if (stackTrace == null) {
+    stackTrace = StackTrace.current;
+  } else {
+    stackTrace = FlutterError.demangleStackTrace(stackTrace);
+  }
+  Iterable<String> lines = stackTrace.toString().trimRight().split('\n');
+  if (kIsWeb && lines.isNotEmpty) {
+    // Remove extra call to StackTrace.current for web platform.
+    // TODO(ferhat): remove when https://github.com/flutter/flutter/issues/37635
+    // is addressed.
+    lines = lines.skipWhile((String line) {
+      return line.contains('StackTrace.current') ||
+          line.contains('dart-sdk/lib/_internal') ||
+          line.contains('dart:sdk_internal');
+    });
+  }
+  if (maxFrames != null) {
+    lines = lines.take(maxFrames);
+  }
+  return FlutterError.defaultStackFilter(lines).join('\n');
 }
 
 /// [ui.window]

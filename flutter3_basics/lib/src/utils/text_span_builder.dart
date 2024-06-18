@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// https://guoshuyu.cn/home/wx/Flutter-TWHP.html
