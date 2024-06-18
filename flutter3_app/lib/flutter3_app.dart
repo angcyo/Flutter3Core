@@ -103,10 +103,11 @@ void runGlobalApp(
     "开始启动[main]:${platformDispatcher.defaultRouteName}"
         .writeToLog(level: L.info);
     await initFlutter3Core();
+    await initIsar();
     AppLifecycleLog.install();
 
+    //--
     await beforeAction?.call();
-    await initIsar();
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
     await afterAction?.call();
 

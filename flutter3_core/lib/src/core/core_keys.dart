@@ -9,6 +9,16 @@ part of '../../flutter3_core.dart';
 final class CoreKeys {
   CoreKeys._();
 
+  /// 未设备分配一个uuid
+  String get deviceUuid => "deviceUuid".hiveGet<String>(null) ?? $uuid;
+
+  /// 初始化设备uuid
+  void initDeviceUuid() {
+    if (!"deviceUuid".hiveHaveKey()) {
+      "deviceUuid".hivePut($uuid);
+    }
+  }
+
   /// 测试数据
   String? get test => "test".hiveGet<String>(null);
 

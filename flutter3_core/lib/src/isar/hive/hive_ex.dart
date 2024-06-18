@@ -55,6 +55,9 @@ extension HiveStringEx on String {
   /// 删除指定键
   Future<void> hiveDelete() => _hiveBox.delete(this);
 
+  /// 是否包含指定key
+  bool hiveHaveKey() => _hiveBox.containsKey(this);
+
   Stream<BoxEvent> hiveWatch() => _hiveBox.watch(key: this);
 
   /// 获取指定键的值
@@ -114,7 +117,7 @@ extension HiveEx on HiveInterface {
   ///
   /// You can provide a [subDir] where the boxes should be stored.
   /// [Hive.initFlutter]
-  Future<void> initFlutterEx([String? subDir]) async {
+  Future<void> initHive([String? subDir]) async {
     WidgetsFlutterBinding.ensureInitialized();
     if (kIsWeb) return;
     var appDir = await fileDirectory();
