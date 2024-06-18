@@ -343,17 +343,32 @@ class ElementPainter extends IPainter
     if (point == null && rect == null && path == null) {
       return false;
     }
+    final property = _paintProperty;
+    if (property == null) {
+      return false;
+    }
     path ??= Path()..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
-    bool hit = _paintProperty?.paintPath.intersects(path) ?? false;
+    bool hit = property.paintPath.intersects(path);
     if (!hit && inflate) {
       //没有命中时, 膨胀一下, 再判断一次
       @dp
       final elementBounds = elementsBounds;
-      if (elementBounds != null &&
-          elementBounds.width <= 10 &&
-          elementBounds.height <= 10) {
-        final bounds = _paintProperty?.paintPath.getExactBounds();
-        if (bounds != null) {
+      if (elementBounds != null) {
+        //元素被缩放到很小
+        final isLittleElement =
+            elementBounds.width <= 10 && elementBounds.height <= 10;
+
+        //元素是线条元素
+        final isLineElement = (property.width == 0 && property.height != 0) ||
+            (property.width != 0 && property.height == 0);
+
+        //绘制时是线条
+        final isPainterLine =
+            (elementBounds.width == 0 && elementBounds.height != 0) ||
+                (elementBounds.width != 0 && elementBounds.height == 0);
+
+        if (isLittleElement || isLineElement || isPainterLine) {
+          final bounds = property.paintPath.getExactBounds();
           //debugger();
           hit = bounds.inflateValue(10).toPath().intersects(path);
         }

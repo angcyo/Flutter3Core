@@ -804,6 +804,7 @@ extension VectorPathEx on Path {
   /// 输出svg xml文件格式
   /// [toSvgPathString]
   String? toSvgXmlString({
+    bool? exact,
     @dp double? pathStep,
     @mm double? tolerance,
     SvgWriteHandle? handle,
@@ -816,7 +817,7 @@ extension VectorPathEx on Path {
     if (isNil(svgPath)) {
       return null;
     }
-    final bounds = getExactBounds(true, pathStep);
+    final bounds = getExactBounds(exact, pathStep);
     return _wrapSvgXml(bounds, (buffer) {
       _wrapSvgPath(buffer, svgPath);
     });

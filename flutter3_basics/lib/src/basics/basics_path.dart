@@ -60,16 +60,16 @@ extension PathEx on Path {
   }
 
   /// 获取精度更高的路径边界
-  /// [exact] 是否获取精确计算的边界
+  /// [exact] 是否获取精确计算的边界, 会有性能损耗
   /// [pathAcceptableError] 路径采样误差
   /// [PathEx.getExactBounds]
   /// [ListPathEx.getExactBounds]
   @dp
   Rect getExactBounds([
-    bool exact = true,
+    bool? exact,
     double? pathAcceptableError,
   ]) {
-    if (!exact) {
+    if (exact != true) {
       return getBounds();
     }
     Rect? rect;
@@ -276,7 +276,7 @@ extension ListPathEx on List<Path> {
   /// [ListPathEx.getExactBounds]
   @dp
   Rect getExactBounds([
-    bool exact = true,
+    bool? exact,
     double? pathAcceptableError,
   ]) {
     Rect? rect;
