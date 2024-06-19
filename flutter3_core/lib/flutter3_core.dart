@@ -92,19 +92,25 @@ Future<void> initFlutter3Core() async {
   };
 }
 
-/// 初始化Isar数据库, 初始化之前请先注册表结构
-/// [registerIsarCollection]
+/// 初始化hive
+@initialize
 @entryPoint
-Future<void> initIsar() async {
-  //初始化isar数据库
-  await openIsar();
-
+Future<void> initHive() async {
   //初始化Hive数据库
   //Hive.registerAdapter(adapter)
   await Hive.initHive();
 
   //device uuid
   $coreKeys.initDeviceUuid();
+}
+
+/// 初始化Isar数据库, 初始化之前请先注册表结构
+/// [registerIsarCollection]
+@initialize
+@entryPoint
+Future<void> initIsar() async {
+  //初始化isar数据库
+  await openIsar();
 }
 
 /// [Image].[StatefulWidget]

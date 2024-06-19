@@ -13,6 +13,8 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'src/mode/app_setting_bean.dart';
+
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:flutter3_core/flutter3_core.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
@@ -20,6 +22,9 @@ export 'package:flutter_animate/flutter_animate.dart';
 export 'package:package_info_plus/package_info_plus.dart';
 export 'package:permission_handler/permission_handler.dart';
 export 'package:share_plus/share_plus.dart';
+
+export 'src/mode/app_setting_bean.dart';
+export 'src/mode/app_version_bean.dart';
 
 part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';
@@ -96,6 +101,8 @@ void runGlobalApp(
 
   runZonedGuarded(() async {
     ensureInitialized();
+    //key-value
+    await initHive();
 
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
@@ -103,13 +110,15 @@ void runGlobalApp(
     "开始启动[main]:${platformDispatcher.defaultRouteName}"
         .writeToLog(level: L.info);
     await initFlutter3Core();
-    await initIsar();
     AppLifecycleLog.install();
 
+    //debug info
     _initDebugLastInfo();
 
     //--
     await beforeAction?.call();
+    //open isar
+    await initIsar();
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
     await afterAction?.call();
 
@@ -161,3 +170,9 @@ Future initGlobalAppAtContext(BuildContext context) async {
     NavigatorRouteOverlay.showNavigatorRouteOverlay(context);
   }
 }
+
+/// [isDebug]
+/// [CoreKeys.isDebugFlag]
+bool get isDebugFlag =>
+    isDebugFlagDevice ||
+    (GlobalConfig.def.isDebugFlagFn?.call() ?? $coreKeys.isDebugFlag);

@@ -1867,6 +1867,13 @@ extension ContextEx on BuildContext {
       Builder,
       PageStorage,
       Actions,
+      FadeTransition,
+      ScaleTransition,
+      Transform,
+      DisplayFeatureSubScreen,
+      Padding,
+      MediaQuery,
+      SafeArea,
     ];
     Element? result;
     eachVisitChildElements((element, depth, childIndex) {
@@ -2164,7 +2171,7 @@ extension NavigatorEx on BuildContext {
   List<Page<dynamic>>? getRoutePages({
     bool rootNavigator = false,
   }) {
-    return navigatorOf(rootNavigator).widget.pages;
+    return navigatorOf(rootNavigator).getRoutePages();
   }
 
   //---push↓
@@ -2188,11 +2195,9 @@ extension NavigatorEx on BuildContext {
   }
 
   /// 推送一个路由, 并且移除之前的路由
-  Future<T?> pushReplacement<T extends Object?>(
-    Route<T> route, {
-    bool rootNavigator = false,
-  }) {
-    return navigatorOf(rootNavigator).pushReplacement(route);
+  Future<T?> pushReplacement<T extends Object?>(Route<T> route,
+      {bool rootNavigator = false, dynamic result}) {
+    return navigatorOf(rootNavigator).pushReplacement(route, result: result);
   }
 
   /// [pushReplacement]
@@ -2279,11 +2284,91 @@ extension NavigatorEx on BuildContext {
   /// 弹出所有非指定的路由
   /// [RoutePredicate]
   void popToRoot([
-    RoutePredicate? predicate,
     bool rootNavigator = false,
   ]) {
-    var root = ModalRoute.withName('/');
-    return navigatorOf(rootNavigator).popUntil(root);
+    return navigatorOf(rootNavigator).popToRoot();
+  }
+}
+
+extension NavigatorStateEx on NavigatorState {
+  /// 获取导航中的所有页面
+  List<Page<dynamic>>? getRoutePages() {
+    return widget.pages;
+  }
+
+  //---push↓
+
+  /// 支持路由动画
+  /// [push]
+  Future<T?> pushWidget<T extends Object?>(Widget page,
+      {TranslationType? type}) {
+    return push(page.toRoute(type: type));
+  }
+
+  /// [pushReplacement]
+  Future<T?> pushReplacementWidget<T extends Object?>(Widget page,
+      {TranslationType? type}) {
+    return pushReplacement(page.toRoute(type: type));
+  }
+
+  /// [pushAndRemoveUntil]
+  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(Widget page,
+      {TranslationType? type, RoutePredicate? predicate}) {
+    final root = ModalRoute.withName('/');
+    return pushAndRemoveUntil(
+      page.toRoute(type: type),
+      predicate ?? root,
+    );
+  }
+
+  /// [pushAndRemoveUntil]
+  Future<T?> pushAndRemoveToRoot<T extends Object?>(
+    Route<T> route, {
+    RoutePredicate? predicate,
+  }) {
+    final root = ModalRoute.withName('/');
+    return pushAndRemoveUntil(
+      route,
+      predicate ?? root,
+    );
+  }
+
+  //---pop↓
+
+  /// 是否可以弹出一个路由
+  bool canPop() => canPop();
+
+  /// 弹出一个路由
+  void pop<T extends Object?>([T? result]) {
+    pop(result);
+  }
+
+  /// 尝试弹出一个路由
+  Future<bool> maybePop<T extends Object?>([T? result]) {
+    return maybePop(result);
+  }
+
+  void popUntil<T extends Object?>(RoutePredicate predicate) {
+    popUntil(predicate);
+  }
+
+  Future<T?> popAndPushNamed<T extends Object?, TO extends Object?>(
+    String routeName, {
+    TO? result,
+    Object? arguments,
+  }) {
+    return popAndPushNamed(
+      routeName,
+      arguments: arguments,
+      result: result,
+    );
+  }
+
+  /// 弹出所有非指定的路由
+  /// [RoutePredicate]
+  void popToRoot([RoutePredicate? predicate]) {
+    final root = ModalRoute.withName('/');
+    return popUntil(predicate ?? root);
   }
 }
 

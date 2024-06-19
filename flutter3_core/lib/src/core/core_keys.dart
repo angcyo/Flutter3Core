@@ -19,6 +19,15 @@ final class CoreKeys {
     }
   }
 
+  /// 保存的值可以是true, false, 表示是否同意了隐私政策
+  /// 也可以保存具体的版本信息, 表示同意了某个版本的隐私政策
+  /// [Compliance]
+  String get complianceAgree => "complianceAgree".hiveGet<String>() ?? "";
+
+  set complianceAgree(String? value) {
+    "complianceAgree".hivePut(value);
+  }
+
   /// 测试数据
   String? get test => "test".hiveGet<String>(null);
 
@@ -33,8 +42,3 @@ final class CoreKeys {
 /// CoreKeys的实例
 @globalInstance
 final $coreKeys = CoreKeys._();
-
-/// [isDebug]
-/// [CoreKeys.isDebugFlag]
-bool get isDebugFlag =>
-    GlobalConfig.def.isDebugFlagFn?.call() ?? $coreKeys.isDebugFlag;

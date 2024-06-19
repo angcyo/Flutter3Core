@@ -49,7 +49,7 @@ mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   /// 当前路由即将push
   @override
   TickerFuture didPush() {
-    debugger();
+    //debugger();
     return super.didPush();
   }
 

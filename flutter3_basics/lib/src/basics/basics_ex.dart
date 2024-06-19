@@ -84,6 +84,7 @@ extension DynamicEx on dynamic {
 
   /// 请在具体的类型上实现[toJson]方法, 否则会抛异常
   /// 此方法通常返回的是Map<String, dynamic>类型
+  /// [json.decode(this)]
   dynamic toJson() => this.toJson();
 
   /// 直接转成json字符串
@@ -653,6 +654,9 @@ extension StringEx on String {
 
   /// "yyyy-MM-dd HH:mm:ss" 转换成时间
   DateTime toDateTime() => DateTime.parse(this);
+
+  /// 使用json解析字符串
+  dynamic jsonDecode() => json.decode(this);
 
   /// 从json字符串中解析出对应的数据类型
   /// [DynamicEx.fromJson]
@@ -2010,6 +2014,24 @@ extension ListListEx<T> on List<List<T>> {
 }
 
 //endregion List 扩展
+
+//region Map 扩展
+
+extension MapEx<K, V> on Map<K, V> {
+  /// 查找元素
+  ({K key, V value})? find(bool Function(K key, V value) test) {
+    ({K key, V value})? result;
+    forEach((key, value) {
+      if (test(key, value)) {
+        result = (key: key, value: value);
+        return;
+      }
+    });
+    return result;
+  }
+}
+
+//endregion Map 扩展
 
 extension AxisDirectionEx on AxisDirection {
   /// 是否是水平方向

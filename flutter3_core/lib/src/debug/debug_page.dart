@@ -101,6 +101,12 @@ class DebugPage extends StatefulWidget {
         toastInfo(text);
       },
     ),
+    DebugAction(
+      label: "exitApp",
+      clickAction: (context) {
+        exitApp();
+      },
+    ),
   ];
 
   /// 自定义的调试动作

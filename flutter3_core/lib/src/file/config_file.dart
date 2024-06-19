@@ -23,6 +23,9 @@ class ConfigFile {
   /// [httpUrl] 如果磁盘文件不存在, 则从网络上下载
   /// [forceFetch] 是否要强制拉取网络数据, 否则只在磁盘上没数据时才拉取
   /// [forceAssetToFile] 是否要强制将Asset中的文件, 拷贝到磁盘
+  /// [waitHttp] 是否要等待网络数据的返回
+  /// [onHttpAction] 网络数据返回后的回调
+  /// [onValueAction] 读取到数据后的回调
   static Future<String?> readConfigFile(
     String key, {
     String prefix = 'assets/',
@@ -30,8 +33,10 @@ class ConfigFile {
     String? subFolder,
     bool forceFetch = false,
     bool forceAssetToFile = false,
+    bool waitHttp = false,
     String? httpUrl,
     ValueCallback? onHttpAction,
+    ValueCallback? onValueAction,
   }) async {
     String? result;
     final configFolder = await configFolderFile;
@@ -59,18 +64,24 @@ class ConfigFile {
         return true;
       }());
     }
+    if (result != null) {
+      onValueAction?.call(result);
+    }
 
     //判断是否要从网络获取数据
     if (forceFetch && httpUrl != null) {
       //这里不等待网络数据的返回
-      httpUrl.dioGetString().getValue((value, error) {
+      final httpFuture = httpUrl.dioGetString().getValue((value, error) {
         if (!isNil(value)) {
           value!.writeToFile(file: file);
           onHttpAction?.call(value);
+          onValueAction?.call(value);
         }
       });
+      if (waitHttp) {
+        result = (await httpFuture) ?? result;
+      }
     }
-
     return result;
   }
 

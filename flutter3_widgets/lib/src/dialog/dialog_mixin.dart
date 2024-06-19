@@ -275,87 +275,17 @@ mixin DialogMixin implements TranslationTypeImpl {
 //endregion 辅助方法
 }
 
-/// 对话框的一些基础方法
-/// [barrierDismissible] 窗口外是否可以销毁对话框
-/// [barrierColor] 障碍的颜色, 默认是[Colors.black54]
-///
-/// [useSafeArea] 是否使用安全区域
-///
-/// [DialogRoute]
-/// [DialogPageRoute]
-/// [showDialog]
-/// [DialogExtension.showWidgetDialog]
-Future<T?> showDialogWidget<T>(
-  BuildContext context,
-  Widget widget, {
-  bool barrierDismissible = true,
-  Color? barrierColor = Colors.black54,
-  String? barrierLabel,
-  bool useSafeArea = true,
-  bool useRootNavigator = true,
-  RouteSettings? routeSettings,
-  TraversalEdgeBehavior? traversalEdgeBehavior,
-  Offset? anchorPoint,
-  TranslationType? type,
-}) async {
-  if (!context.mounted) {
-    assert(() {
-      l.w('context is not mounted');
-      return true;
-    }());
-    return null;
-  }
-
-  final CapturedThemes themes = InheritedTheme.capture(
-    from: context,
-    to: Navigator.of(
-      context,
-      rootNavigator: useRootNavigator,
-    ).context,
-  );
-
-  if (type == null) {
-    if (widget is TranslationTypeImpl) {
-      type = (widget as TranslationTypeImpl).translationType;
-    }
-  }
-
-  return Navigator.of(context, rootNavigator: useRootNavigator)
-      .push<T>(DialogPageRoute<T>(
-    context: context,
-    builder: (context) {
-      return widget;
-    },
-    barrierColor: barrierColor,
-    barrierDismissible: barrierDismissible,
-    barrierLabel: barrierLabel,
-    useSafeArea: useSafeArea,
-    settings: routeSettings,
-    themes: themes,
-    anchorPoint: anchorPoint,
-    traversalEdgeBehavior:
-        traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
-    type: type,
-  ));
-
-  /*return showDialog<T>(
-    context: context,
-    barrierDismissible: barrierDismissible,
-    barrierColor: barrierColor,
-    barrierLabel: barrierLabel,
-    useSafeArea: useSafeArea,
-    useRootNavigator: useRootNavigator,
-    routeSettings: routeSettings,
-    anchorPoint: anchorPoint,
-    builder: (context) {
-      return widget;
-    },
-  );*/
-}
-
 extension DialogExtension on BuildContext {
-  /// 显示对话框
-  /// [showDialogWidget]
+  /// 对话框的一些基础方法
+  /// [barrierDismissible] 窗口外是否可以销毁对话框
+  /// [barrierColor] 障碍的颜色, 默认是[Colors.black54]
+  ///
+  /// [useSafeArea] 是否使用安全区域
+  ///
+  /// [DialogRoute]
+  /// [DialogPageRoute]
+  /// [showDialog]
+  /// [DialogExtension.showWidgetDialog]
   Future<T?> showWidgetDialog<T>(
     Widget widget, {
     bool barrierDismissible = true,
@@ -375,7 +305,8 @@ extension DialogExtension on BuildContext {
       }());
       return null;
     }
-    return showDialogWidget<T>(
+    return Navigator.of(this, rootNavigator: useRootNavigator)
+        .showWidgetDialog<T>(
       this,
       widget,
       barrierDismissible: barrierDismissible,
@@ -388,5 +319,85 @@ extension DialogExtension on BuildContext {
       anchorPoint: anchorPoint,
       type: type,
     );
+  }
+}
+
+extension NavigatorStateDialogEx on NavigatorState {
+  //--dialog
+
+  /// 对话框的一些基础方法
+  /// [barrierDismissible] 窗口外是否可以销毁对话框
+  /// [barrierColor] 障碍的颜色, 默认是[Colors.black54]
+  ///
+  /// [useSafeArea] 是否使用安全区域
+  ///
+  /// [DialogRoute]
+  /// [DialogPageRoute]
+  /// [showDialog]
+  /// [DialogExtension.showWidgetDialog]
+  Future<T?> showWidgetDialog<T>(
+    BuildContext? context,
+    Widget widget, {
+    bool barrierDismissible = true,
+    Color? barrierColor = Colors.black54,
+    String? barrierLabel,
+    bool useSafeArea = true,
+    bool useRootNavigator = true,
+    RouteSettings? routeSettings,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
+    Offset? anchorPoint,
+    TranslationType? type,
+  }) async {
+    if (context == null || !context.mounted) {
+      assert(() {
+        l.w('context is null or not mounted');
+        return true;
+      }());
+      return null;
+    }
+    final CapturedThemes themes = InheritedTheme.capture(
+      from: context,
+      to: Navigator.of(
+        context,
+        rootNavigator: useRootNavigator,
+      ).context,
+    );
+
+    if (type == null) {
+      if (widget is TranslationTypeImpl) {
+        type = (widget as TranslationTypeImpl).translationType;
+      }
+    }
+
+    return push<T>(DialogPageRoute<T>(
+      context: context,
+      builder: (context) {
+        return widget;
+      },
+      barrierColor: barrierColor,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      useSafeArea: useSafeArea,
+      settings: routeSettings,
+      themes: themes,
+      anchorPoint: anchorPoint,
+      traversalEdgeBehavior:
+          traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
+      type: type,
+    ));
+
+    /*return showDialog<T>(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    barrierColor: barrierColor,
+    barrierLabel: barrierLabel,
+    useSafeArea: useSafeArea,
+    useRootNavigator: useRootNavigator,
+    routeSettings: routeSettings,
+    anchorPoint: anchorPoint,
+    builder: (context) {
+      return widget;
+    },
+  );*/
   }
 }

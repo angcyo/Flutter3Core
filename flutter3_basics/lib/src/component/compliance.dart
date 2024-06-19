@@ -81,6 +81,7 @@ class Compliance {
   /// 如果同意了, 则直接返回true
   /// 如果拒绝了, 返回false
   /// [action] 同意与否执行的操作
+  /// [checkIfNeed]
   @api
   Future<bool> wait([FutureBoolAction? action]) async {
     if (isAgree) {
