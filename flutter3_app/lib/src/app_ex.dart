@@ -18,7 +18,13 @@ part of '../flutter3_app.dart';
 /// String version = packageInfo.version;            //versionName
 /// String buildNumber = packageInfo.buildNumber;    //versionCode
 /// ```
-Future<PackageInfo> get packageInfo async => await PackageInfo.fromPlatform();
+Future<PackageInfo> get platformPackageInfo async => await PackageInfo.fromPlatform();
+
+/// app版本名称
+Future<String> get appVersionName async => (await platformPackageInfo).version;
+
+/// app版本号
+Future<String> get appVersionCode async => (await platformPackageInfo).buildNumber;
 
 /// https://pub.dev/packages/device_info_plus
 /// 获取对应平台的设备信息

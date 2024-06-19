@@ -106,17 +106,43 @@ void runGlobalApp(
     await initIsar();
     AppLifecycleLog.install();
 
+    _initDebugLastInfo();
+
     //--
     await beforeAction?.call();
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
     await afterAction?.call();
 
+    //--
     "启动完成:${lTime.time()}".writeToLog(level: L.info);
   }, (error, stack) {
     "未捕捉的异常:↓".writeToErrorLog();
     error.writeToErrorLog(level: L.none);
     stack.toString().writeToErrorLog(level: L.none);
     printError(error, stack);
+  });
+}
+
+/// [DebugPage]
+@initialize
+Future _initDebugLastInfo() async {
+  $compliance.wait((agree) async {
+    if (agree) {
+      final packageInfo = await platformPackageInfo;
+      final deviceInfo = await platformDeviceInfo;
+      final deviceInfoData = deviceInfo.data..remove("systemFeatures");
+      DebugPage.debugLastWidgetList.add(packageInfo.text(
+          textAlign: TextAlign.center,
+          style: GlobalConfig.def.globalTheme.textPlaceStyle));
+      DebugPage.debugLastWidgetList.add(deviceInfoData.text(
+          textAlign: TextAlign.center,
+          style: GlobalConfig.def.globalTheme.textPlaceStyle));
+
+      DebugPage.debugLastCopyString = stringBuilder((builder) {
+        builder.appendLine("$packageInfo");
+        builder.append("$deviceInfoData");
+      });
+    }
   });
 }
 

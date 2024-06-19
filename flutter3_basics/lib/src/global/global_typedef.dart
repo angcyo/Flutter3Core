@@ -18,6 +18,9 @@ typedef ClickAction = void Function(BuildContext context);
 /// [VoidAction]
 typedef FutureVoidAction = FutureOr Function();
 
+/// [BoolCallback]
+typedef FutureBoolAction = FutureOr Function(bool value);
+
 /// 只有返回值的回调
 typedef ResultCallback<T> = T Function();
 

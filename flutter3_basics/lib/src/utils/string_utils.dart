@@ -109,6 +109,15 @@ class StringBuilder {
     return this;
   }
 
+  StringBuilder newLineIfNotEmpty() {
+    if (stringBuffer.isNotEmpty) {
+      stringBuffer.writeln();
+    }
+    return this;
+  }
+
+  StringBuilder appendLineIfNotEmpty() => newLineIfNotEmpty();
+
   void appendAll(msg) {
     final list = msg.toString().split('\n');
     list.forEachIndexed((index, element) {

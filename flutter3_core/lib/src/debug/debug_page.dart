@@ -131,6 +131,26 @@ class DebugPage extends StatefulWidget {
     ));
   }
 
+  /// 显示在调试页面的底部的widget列表
+  static final WidgetNullList debugLastWidgetList = [];
+
+  /// 底部点击要复制的文本信息
+  static String? debugLastCopyString;
+
+  /// [debugLastCopyString]
+  static String get lastDebugCopyString => stringBuilder((builder) {
+        if (DebugPage.debugLastCopyString != null) {
+          builder.append(DebugPage.debugLastCopyString!);
+        }
+        builder.newLineIfNotEmpty();
+        builder.append(
+            "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()} ${dpr}");
+        builder.newLineIfNotEmpty();
+        builder.append($coreKeys.deviceUuid);
+      });
+
+  static Locale? _currentLocale;
+
   const DebugPage({super.key});
 
   @override
@@ -149,6 +169,11 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
   @override
   WidgetList? buildScrollBody(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
+    final globalTheme = GlobalTheme.of(context);
+
+    //当前语言
+    final currentLocale = Localizations.localeOf(context);
+    DebugPage._currentLocale = currentLocale;
 
     final defClickList =
         DebugPage.defDebugActions.filter((item) => item.clickAction != null);
@@ -167,7 +192,21 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
         buildClickActionList(context, clickList).wrap()!.paddingAll(kX),
       if (defHiveList.isNotEmpty) ...buildHiveActionList(context, defHiveList),
       if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
-    ];
+      [
+        ...DebugPage.debugLastWidgetList,
+        "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()} ${dpr}"
+            .text(style: globalTheme.textPlaceStyle),
+        $coreKeys.deviceUuid.text(style: globalTheme.textPlaceStyle),
+      ]
+          .column()
+          ?.matchParentWidth()
+          .click(() {
+            DebugPage.lastDebugCopyString.copy();
+            toastBlur(text: "已复制");
+          })
+          .align(Alignment.bottomCenter)
+          .rFill()
+    ].filterNull();
   }
 
   WidgetList buildClickActionList(

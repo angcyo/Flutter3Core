@@ -7,7 +7,7 @@ part of '../flutter3_app.dart';
 ///
 /// 快速分享app日志压缩文件, 分享日志
 Future shareAppLog([String? name]) async {
-  final info = await packageInfo;
+  final info = await platformPackageInfo;
   final output = await cacheFilePath(name?.ensureSuffix(".zip") ??
       "LOG_${info.buildNumber}_${info.version}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip");
   final list = <String>[];
