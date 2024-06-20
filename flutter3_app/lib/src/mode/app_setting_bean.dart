@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -33,7 +31,7 @@ class AppSettingBean {
         if (data is String) {
           final bean = AppSettingBean.fromJson(data.jsonDecode());
           _appSettingBean = bean;
-          debugger();
+          //debugger();
         }
       },
     );
