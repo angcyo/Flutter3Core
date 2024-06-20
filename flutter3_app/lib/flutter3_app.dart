@@ -1,13 +1,11 @@
 library flutter3_app;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_app/src/mode/app_version_bean.dart';
 import 'package:flutter3_core/flutter3_core.dart';
@@ -201,5 +199,6 @@ Widget loadAppSvgWidget(
 /// [isDebug]
 /// [CoreKeys.isDebugFlag]
 bool get isDebugFlag =>
+    isDebugFlavor ||
     isDebugFlagDevice ||
     (GlobalConfig.def.isDebugFlagFn?.call() ?? $coreKeys.isDebugFlag);

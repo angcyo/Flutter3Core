@@ -95,7 +95,7 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
     this.versionBean, {
     super.key,
     this.headerMarginTop = 22,
-    this.headerPaddingTop = 50,
+    this.headerPaddingTop = 60,
   });
 
   @override
@@ -199,7 +199,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
 
     //头部
     Widget header = [
-      loadAppSvgWidget(Assets.svg.appUpdateHeader).position(left: 0, right: 0),
+      loadAppSvgWidget(
+        Assets.svg.appUpdateHeader,
+        fit: BoxFit.fill,
+      ).position(left: 0, right: 0),
       widget.versionBean.versionTile
           ?.text(
             style: globalTheme.textBigGeneralStyle,

@@ -44,6 +44,9 @@ class AppSettingBean {
 
   AppSettingBean();
 
+  /// 每个单独设置信息
+  Map<String, AppSettingBean>? platformMap;
+
   //--
 
   /// 应用程序的包名
@@ -51,6 +54,9 @@ class AppSettingBean {
 
   /// 应用程序的风味, 不同风味的app, 可以有不同的配置
   String? appFlavor;
+
+  /// 应用程序的状态, 比如正在上架中, 已上架
+  String? appState;
 
   /// [appFlavor]
   List<String>? appFlavorUuidList;
@@ -71,15 +77,30 @@ enum AppFlavorEnum {
   pretest,
 
   /// 正式
-  release,
+  release
+}
 
-  /// 上架审核中...
+/// 应用程序的状态
+enum AppStateEnum {
+  /// 上架中
   review,
+
+  /// 内测状态
+  inside,
+
+  /// 测试状态
+  test,
+
+  /// 发布
+  publish
 }
 
 /// [AppSettingBean]
-AppSettingBean get $appSettingBean =>
-    AppSettingBean._appSettingBean ??= AppSettingBean();
+AppSettingBean get $appSettingBean {
+  AppSettingBean bean = AppSettingBean._appSettingBean ??= AppSettingBean();
+  bean = bean.platformMap?[platformName] ?? bean;
+  return bean;
+}
 
 /// 当前的设备id, 是否处于调试状态
 /// [CoreKeys.deviceUuid]
@@ -92,6 +113,12 @@ bool get isDebugFlagDevice {
     return true;
   }
   return bean.debugFlagUuidList!.contains($coreKeys.deviceUuid);
+}
+
+/// 是否是调试风味状态
+bool get isDebugFlavor {
+  final bean = $appSettingBean;
+  return bean.appFlavor != null && appFlavorEnum != AppFlavorEnum.release;
 }
 
 /// [AppSettingBean.packageName]
@@ -108,4 +135,14 @@ AppFlavorEnum get appFlavorEnum {
     return AppFlavorEnum.release;
   }
   return AppFlavorEnum.values.getByName(appFlavor, AppFlavorEnum.release);
+}
+
+/// [AppSettingBean.appState]
+AppStateEnum get appStateEnum {
+  final bean = $appSettingBean;
+  String? appState = bean.appState;
+  if (appState == null) {
+    return AppStateEnum.review;
+  }
+  return AppStateEnum.values.getByName(appState, AppStateEnum.review);
 }

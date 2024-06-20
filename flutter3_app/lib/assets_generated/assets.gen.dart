@@ -13,8 +13,11 @@ class $AssetsConfigGen {
   /// File path: assets/config/app_setting.json
   String get appSetting => 'assets/config/app_setting.json';
 
+  /// File path: assets/config/app_setting.tl.json
+  String get appSettingTl => 'assets/config/app_setting.tl.json';
+
   /// List of all assets
-  List<String> get values => [appSetting];
+  List<String> get values => [appSetting, appSettingTl];
 }
 
 class $AssetsSvgGen {

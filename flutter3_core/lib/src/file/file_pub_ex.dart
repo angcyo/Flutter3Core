@@ -265,8 +265,16 @@ extension FileStringPubEx on String {
   /// 获取文件名, 包含扩展名, 去掉路径
   /// [withoutExtension] 是否去掉扩展名
   /// [extension] 获取文件扩展名
-  String basename([bool withoutExtension = false]) =>
-      withoutExtension ? p.basenameWithoutExtension(this) : p.basename(this);
+  String basename([bool withoutExtension = false]) {
+    //?分割
+    String text = this;
+    if (contains('?')) {
+      text = split('?').first;
+    }
+    return withoutExtension
+        ? p.basenameWithoutExtension(text)
+        : p.basename(text);
+  }
 
   /// 获取扩展名
   /// [includeDot] 是否包含.本身
