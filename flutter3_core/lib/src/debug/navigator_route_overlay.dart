@@ -19,9 +19,20 @@ class NavigatorRouteOverlay extends StatefulWidget {
     });
   }
 
+  /// 圆圈的大小
+  final double size;
+
+  /// 交互的大小
+  final double interactiveSize;
+
   final OverlayEntry entry;
 
-  const NavigatorRouteOverlay(this.entry, {super.key});
+  const NavigatorRouteOverlay(
+    this.entry, {
+    super.key,
+    this.size = 12.0,
+    this.interactiveSize = 30.0,
+  });
 
   @override
   State<NavigatorRouteOverlay> createState() => _NavigatorRouteOverlayState();
@@ -87,8 +98,8 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
 
   /// 正常状态, 显示小圆点
   Widget _buildNormalState(BuildContext context) {
-    const size = 10.0;
-    const interactiveSize = 30.0;
+    final size = widget.size;
+    final interactiveSize = widget.size;
     final globalTheme = GlobalTheme.of(context);
     return paintWidget((canvas, size) {
       final radius = size.width / 2;
@@ -107,7 +118,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
                 center: center)
             ..color = Colors.redAccent
             ..style = PaintingStyle.fill);
-    }, size: const Size(size, size))
+    }, size: Size(size, size))
         .align(Alignment.bottomLeft)
         .size(size: interactiveSize);
   }
