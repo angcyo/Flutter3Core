@@ -51,6 +51,17 @@ extension FileStringEx on String {
     Directory(this).createSync(recursive: recursive);
   }
 
+  /// [listFiles]
+  /// [listFilesStream]
+  Stream<FileSystemEntity> listFilesStream({
+    bool recursive = false,
+    bool followLinks = true,
+  }) =>
+      Directory(this).list(
+        recursive: recursive,
+        followLinks: followLinks,
+      );
+
   /// 获取文件夹中的文件列表
   /// [recursive] 是否递归
   Future<List<FileSystemEntity>?> listFiles({
@@ -328,6 +339,20 @@ extension FileEx on File {
   String? md5() => readBytesSync()?.md5();
 
   String? sha1() => readBytesSync()?.sha1();
+
+  /// 如果是文件夹, 获取文件列表
+  Stream<FileSystemEntity> listFilesStream({
+    bool recursive = false,
+    bool followLinks = true,
+  }) {
+    if (path.isDirectorySync()) {
+      return path.listFilesStream(
+        recursive: recursive,
+        followLinks: followLinks,
+      );
+    }
+    return const Stream.empty();
+  }
 
   /// 如果是文件夹, 获取文件列表
   Future<List<FileSystemEntity>?> listFiles({

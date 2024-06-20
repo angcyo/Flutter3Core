@@ -154,65 +154,68 @@ class FontsManager {
     bool parseVariant = false,
     bool? autoLoad,
     bool? waitLoad,
-  }) async {
-    final list = <FontFamilyMeta>[];
-    final files = await path.file().listFiles();
+  }) =>
+      asyncFuture<List<FontFamilyMeta>>((completer) async {
+        final list = <FontFamilyMeta>[];
+        final filesStream = path.file().listFilesStream();
+        filesStream.listen((file) async {
+          final uri = file.path;
+          final fontFamily = file.fileName(true);
+          final filename = file.fileName(false);
 
-    if (files != null) {
-      for (final file in files) {
-        final uri = file.path;
-        final fontFamily = file.fileName(true);
-        final filename = file.fileName(false);
+          //debugger();
 
-        //debugger();
+          final variantMeta = parseVariant
+              ? FontFamilyVariantMeta.fromFilename(filename, filePath: uri)
+              : FontFamilyVariantMeta(
+                  displayFontFamily: fontFamily,
+                  fontFamily: fontFamily,
+                  uri: uri,
+                );
 
-        final variantMeta = parseVariant
-            ? FontFamilyVariantMeta.fromFilename(filename, filePath: uri)
-            : FontFamilyVariantMeta(
-                displayFontFamily: fontFamily,
-                fontFamily: fontFamily,
-                uri: uri,
+          //
+          if (autoLoad == true) {
+            if (waitLoad == true) {
+              await loadFontFamilyVariant(
+                variantMeta,
+                FontFamilySource.file,
+                savePath: path,
+                overwrite: autoLoad,
               );
-
-        //
-        if (autoLoad == true) {
-          if (waitLoad == true) {
-            await loadFontFamilyVariant(
-              variantMeta,
-              FontFamilySource.file,
-              savePath: path,
-              overwrite: autoLoad,
-            );
-          } else {
-            loadFontFamilyVariant(
-              variantMeta,
-              FontFamilySource.file,
-              savePath: path,
-              overwrite: autoLoad,
-            );
+            } else {
+              loadFontFamilyVariant(
+                variantMeta,
+                FontFamilySource.file,
+                savePath: path,
+                overwrite: autoLoad,
+              );
+            }
           }
-        }
 
-        //
-        final displayFontFamily = variantMeta.displayFontFamily;
-        final find =
-            list.findFirst((e) => e.displayFontFamily == displayFontFamily);
-        if (find == null) {
-          //第一次添加
-          final meta = FontFamilyMeta(
-            displayFontFamily: displayFontFamily,
-            source: FontFamilySource.file,
-          );
-          meta.variantList.add(variantMeta);
-          list.add(meta);
-        } else {
-          //新的变种
-          find.variantList.add(variantMeta);
-        }
-      }
-    }
-    return list;
-  }
+          //
+          final displayFontFamily = variantMeta.displayFontFamily;
+          final find =
+              list.findFirst((e) => e.displayFontFamily == displayFontFamily);
+          if (find == null) {
+            //第一次添加
+            final meta = FontFamilyMeta(
+              displayFontFamily: displayFontFamily,
+              source: FontFamilySource.file,
+            );
+            meta.variantList.add(variantMeta);
+            list.add(meta);
+          } else {
+            //新的变种
+            find.variantList.add(variantMeta);
+          }
+
+          //await futureDelay(1.seconds);
+        }, onDone: () {
+          completer.complete(list);
+        }, onError: (e, stack) {
+          completer.completeError(e, stack);
+        });
+      });
 }
 
 /// 字体管理
