@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter3_app/flutter3_app.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -31,7 +29,7 @@ class AppVersionBean {
       httpUrl: url,
       onHttpAction: (data) async {
         if (data is String) {
-          debugger();
+          //debugger();
           final bean = AppVersionBean.fromJson(data.jsonDecode());
           _appVersionBean = bean;
           AppUpdateDialog.checkUpdateAndShow(
