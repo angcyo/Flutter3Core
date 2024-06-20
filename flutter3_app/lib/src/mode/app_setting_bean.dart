@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -13,23 +15,28 @@ class AppSettingBean {
   static AppSettingBean? _appSettingBean;
 
   /// 从网络中获取[AppSettingBean]配置, 并且存储到本地
-  static void fetchConfig(
+  static Future fetchConfig(
     String url, {
     String name = "app_setting.json",
     String package = "flutter3_app",
+    String prefix = 'assets/config/',
   }) {
-    ConfigFile.readConfigFile(
+    return ConfigFile.readConfigFile(
       name,
       package: package,
+      prefix: prefix,
+      forceAssetToFile: isDebug,
       forceFetch: true,
-      waitHttp: true,
+      waitHttp: false,
       httpUrl: url,
-    ).get((data, error) {
-      if (data is String) {
-        final bean = AppSettingBean.fromJson(data.jsonDecode());
-        _appSettingBean = bean;
-      }
-    });
+      onValueAction: (data) {
+        if (data is String) {
+          final bean = AppSettingBean.fromJson(data.jsonDecode());
+          _appSettingBean = bean;
+          debugger();
+        }
+      },
+    );
   }
 
   factory AppSettingBean.fromJson(Map<String, dynamic> json) =>
@@ -40,6 +47,9 @@ class AppSettingBean {
   AppSettingBean();
 
   //--
+
+  /// 应用程序的包名
+  String? packageName;
 
   /// 应用程序的风味, 不同风味的app, 可以有不同的配置
   String? appFlavor;
@@ -85,6 +95,9 @@ bool get isDebugFlagDevice {
   }
   return bean.debugFlagUuidList!.contains($coreKeys.deviceUuid);
 }
+
+/// [AppSettingBean.packageName]
+String? get appPackageName => $appSettingBean.packageName;
 
 /// [AppSettingBean.appFlavor]
 /// [AppSettingBean.appFlavorUuidList]

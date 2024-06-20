@@ -34,6 +34,9 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 返回true, 表示拦截默认处理
   final FutureResultCallback<bool, bool>? onConfirmTap;
 
+  /// 是否拦截Pop
+  final bool interceptPop;
+
   @override
   EdgeInsets get contentPadding => EdgeInsets.zero;
 
@@ -56,6 +59,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.neutralWidget,
     this.onConfirmTap,
     this.useIcon = false,
+    this.interceptPop = false,
   });
 
   @override
@@ -97,7 +101,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
       bodyColumn,
       padding: EdgeInsets.zero,
       radius: kDefaultBorderRadiusL,
-    );
+    ).interceptPop(interceptPop);
   }
 
   /// 构建内容

@@ -1,13 +1,18 @@
 library flutter3_app;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter3_app/assets_generated/assets.gen.dart';
+import 'package:flutter3_app/src/mode/app_version_bean.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
+import 'package:flutter_install_app/flutter_install_app.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -32,6 +37,7 @@ part 'src/app_log.dart';
 part 'src/app_notifications.dart';
 part 'src/app_swiper_ex.dart';
 part 'src/mobile_ex.dart';
+part 'src/pages/app_update_dialog.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -170,6 +176,27 @@ Future initGlobalAppAtContext(BuildContext context) async {
     NavigatorRouteOverlay.showNavigatorRouteOverlay(context);
   }
 }
+
+/// [loadAssetSvgWidget]
+Widget loadAppSvgWidget(
+  String key, {
+  Color? tintColor,
+  UiColorFilter? colorFilter,
+  BoxFit fit = BoxFit.contain,
+  double? size,
+  double? width,
+  double? height,
+}) =>
+    loadAssetSvgWidget(
+      key,
+      package: "flutter3_app",
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+      size: size,
+      width: width,
+      height: height,
+      fit: fit,
+    );
 
 /// [isDebug]
 /// [CoreKeys.isDebugFlag]

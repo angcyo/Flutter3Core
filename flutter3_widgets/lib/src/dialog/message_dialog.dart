@@ -20,6 +20,8 @@ class MessageDialog extends AndroidNormalDialog {
     super.cancelWidget,
     super.neutral,
     super.neutralWidget,
+    super.useIcon = false,
+    super.interceptPop = false,
   });
 
   @override
@@ -61,6 +63,6 @@ class MessageDialog extends AndroidNormalDialog {
       bodyColumn,
       padding: EdgeInsets.zero,
       blur: true,
-    );
+    ).interceptPop(interceptPop);
   }
 }

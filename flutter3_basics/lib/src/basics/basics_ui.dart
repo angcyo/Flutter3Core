@@ -1174,7 +1174,13 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 拦截pop操作
+  Widget interceptPop([bool intercept = true]) {
+    return intercept ? popScope(false, (didPop) {}) : this;
+  }
+
   /// 拦截pop, 并实现自定义的操作
+  /// 如果[action]中不执行任何操作, 则窗口无法被back按键关闭
   /// [action] `navigatorOf(rootNavigator).pop(result);`
   Widget interceptPopResult(Action action) {
     return popScope(false, (didPop) {
@@ -1874,6 +1880,7 @@ extension ContextEx on BuildContext {
       Padding,
       MediaQuery,
       SafeArea,
+      DefaultTextStyle,
     ];
     Element? result;
     eachVisitChildElements((element, depth, childIndex) {
@@ -2416,7 +2423,7 @@ UiGradient? linearGradientShader(
   TileMode tileMode = TileMode.clamp,
   Float64List? matrix4,
 }) =>
-    colors == null
+    colors == null || colors.isEmpty
         ? null
         : UiGradient.linear(
             from ?? rect?.lt ?? Offset.zero,
@@ -2429,33 +2436,37 @@ UiGradient? linearGradientShader(
           );
 
 /// 径向渐变 [Shader]
-UiGradient radialGradientShader(
+UiGradient? radialGradientShader(
   double radius,
-  List<Color> colors, {
+  List<Color>? colors, {
   Rect? rect,
   Offset? center,
 }) =>
-    UiGradient.radial(
-      center ?? rect?.center ?? Offset.zero,
-      radius,
-      colors,
-    );
+    colors == null || colors.isEmpty
+        ? null
+        : UiGradient.radial(
+            center ?? rect?.center ?? Offset.zero,
+            radius,
+            colors,
+          );
 
 /// 扫描渐变 [Shader]
 /// 如果未指定[colorStops]时, 则[colors]的长度只能有2个
 /// 如果指定了[colorStops], 则长度必须与[colors]相同
 /// [_validateColorStops]
-UiGradient sweepGradientShader(
-  List<Color> colors, {
+UiGradient? sweepGradientShader(
+  List<Color>? colors, {
   Rect? rect,
   Offset? center,
   List<double>? colorStops,
 }) =>
-    UiGradient.sweep(
-      center ?? rect?.center ?? Offset.zero,
-      colors,
-      colorStops,
-    );
+    colors == null || colors.isEmpty
+        ? null
+        : UiGradient.sweep(
+            center ?? rect?.center ?? Offset.zero,
+            colors,
+            colorStops,
+          );
 
 /// [Gradient]
 /// [Gradient.createShader]通过此方法, 创建一个[Shader], 然后作用给[Paint.shader]

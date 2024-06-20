@@ -37,7 +37,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       maxHeight: max(screenWidth, screenHeight));
 
   /// 对话框的容器, 带圆角, 带margin
-  /// [color] 背景颜色
+  /// [decorationColor] 背景颜色
   /// [margin] 整体外边距
   /// [padding] 内容内边距
   /// [blur] 是否使用模糊
@@ -49,14 +49,14 @@ mixin DialogMixin implements TranslationTypeImpl {
     Widget child, {
     EdgeInsets? margin,
     EdgeInsets? padding,
-    Color? color,
+    Color? decorationColor,
     Decoration? decoration,
     BoxConstraints? constraints,
     BorderRadiusGeometry? borderRadius,
     double radius = kDefaultBorderRadiusXX,
     bool blur = false,
   }) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
     borderRadius ??= BorderRadius.circular(radius);
     return Padding(
       padding: margin ?? dialogMargin,
@@ -65,7 +65,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         child: DecoratedBox(
           decoration: decoration ??
               BoxDecoration(
-                color: color ??
+                color: decorationColor ??
                     globalTheme.themeWhiteColor.withOpacity(blur ? 0.85 : 1.0),
                 borderRadius: borderRadius,
               ),
@@ -84,6 +84,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Widget child, {
     EdgeInsets? margin,
     EdgeInsets? padding,
+    Color? decorationColor,
     bool blur = false,
     double radius = kDefaultBorderRadiusXX,
   }) {
@@ -94,6 +95,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         padding: padding,
         child.matchParent(matchHeight: false),
         radius: radius,
+        decorationColor: decorationColor,
         blur: blur,
       ),
     ).material();

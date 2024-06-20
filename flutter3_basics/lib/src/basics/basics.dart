@@ -398,6 +398,44 @@ int rgbToGray(int r, int g, int b) {
   return (r * 0.299 + g * 0.587 + b * 0.114).toInt().clamp(0, 255);
 }
 
+/// 平台的名称, 例如: Android, iOS, Windows, Linux, MacOS, Fuchsia
+/// 统一小写
+String get platformName {
+  if (isAndroid) {
+    return "Android".toLowerCase();
+  } else if (isIos) {
+    return "iOS".toLowerCase();
+  } else if (isMacOs) {
+    return "MacOS".toLowerCase();
+  } else if (isWindows) {
+    return "Windows".toLowerCase();
+  } else if (isLinux) {
+    return "Linux".toLowerCase();
+  } else if (isFuchsia) {
+    return "Fuchsia".toLowerCase();
+  } else {
+    return "Unknown".toLowerCase();
+  }
+}
+
+/// 下载状态
+enum DownloadState {
+  /// 正常状态
+  none,
+
+  /// 下载中
+  downloading,
+
+  /// 下载完成
+  downloaded,
+
+  /// 下载失败
+  downloadFailed,
+
+  /// 取消下载
+  downloadCanceled,
+}
+
 //endregion 基础
 
 //region 性能

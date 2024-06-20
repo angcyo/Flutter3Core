@@ -78,6 +78,9 @@ dependencies:
   # https://github.com/hui-z/image_gallery_saver
   image_gallery_saver: ^2.0.3 #ANDROID IOS
 
+  # https://pub.dev/packages/flutter_install_app
+  flutter_install_app: ^1.3.0 #ANDROID IOS
+
 dependency_overrides:
 #cross_file: ^0.3.4+1
 #web: ^0.5.1
@@ -87,7 +90,17 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: any
   build_runner: any
+  # https://pub.dev/packages/flutter_gen_runner
+  flutter_gen_runner: any
   json_serializable: any
+
+# https://pub.dev/packages/flutter_gen#configuration-file
+# dart run build_runner build
+# flutter pub run build_runner build
+flutter_gen:
+  output: lib/assets_generated/ # Optional (default: lib/gen/)
+  integrations:
+  #flutter_svg: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -96,6 +109,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/
+    - assets/config/
     - assets/svg/
 # To add assets to your package, add an assets section, like this:
 # assets:

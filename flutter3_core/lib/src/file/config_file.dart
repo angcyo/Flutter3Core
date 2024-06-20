@@ -47,7 +47,7 @@ class ConfigFile {
             : p.join(configFolder.path, subFolder, key))
         .file();
     try {
-      if (file.existsSync()) {
+      if (!forceAssetToFile && file.existsSync()) {
         //磁盘上的文件已经存在, 则直接读取
         result = await file.readAsString();
       } else {
@@ -65,7 +65,14 @@ class ConfigFile {
       }());
     }
     if (result != null) {
-      onValueAction?.call(result);
+      try {
+        onValueAction?.call(result);
+      } catch (e) {
+        assert(() {
+          printError(e);
+          return true;
+        }());
+      }
     }
 
     //判断是否要从网络获取数据
@@ -73,9 +80,16 @@ class ConfigFile {
       //这里不等待网络数据的返回
       final httpFuture = httpUrl.dioGetString().getValue((value, error) {
         if (!isNil(value)) {
-          value!.writeToFile(file: file);
-          onHttpAction?.call(value);
-          onValueAction?.call(value);
+          try {
+            value!.writeToFile(file: file);
+            onHttpAction?.call(value);
+            onValueAction?.call(value);
+          } catch (e) {
+            assert(() {
+              printError(e);
+              return true;
+            }());
+          }
         }
       });
       if (waitHttp) {

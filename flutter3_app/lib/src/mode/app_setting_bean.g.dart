@@ -8,6 +8,7 @@ part of 'app_setting_bean.dart';
 
 AppSettingBean _$AppSettingBeanFromJson(Map<String, dynamic> json) =>
     AppSettingBean()
+      ..packageName = json['packageName'] as String?
       ..appFlavor = json['appFlavor'] as String?
       ..appFlavorUuidList = (json['appFlavorUuidList'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -25,6 +26,7 @@ Map<String, dynamic> _$AppSettingBeanToJson(AppSettingBean instance) {
     }
   }
 
+  writeNotNull('packageName', instance.packageName);
   writeNotNull('appFlavor', instance.appFlavor);
   writeNotNull('appFlavorUuidList', instance.appFlavorUuidList);
   writeNotNull('debugFlagUuidList', instance.debugFlagUuidList);

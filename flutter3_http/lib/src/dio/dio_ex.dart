@@ -165,6 +165,9 @@ extension DioStringEx on String {
   /// [data] 请求体 [DioMixin._transformData]
   /// [savePath] 保存路径
   /// [getSavePath] 异步获取保存路径
+  /// [cancelToken] 取消请求的token
+  /// [deleteOnError] 是否在下载失败时, 删除文件
+  /// [overwrite] 是否覆盖已存在的文件
   /// https://pub.dev/packages/network_to_file_image
   Future<Response> download({
     String? savePath,
@@ -174,12 +177,19 @@ extension DioStringEx on String {
     Map<String, dynamic>? queryParameters,
     CancelToken? cancelToken,
     bool deleteOnError = true,
+    bool overwrite = false,
     String lengthHeader = Headers.contentLengthHeader,
     Object? data,
     Options? options,
   }) async {
     final dio = RDio.get(context: context).dio;
     final saveTo = savePath ?? (await getSavePath);
+    if (overwrite == false && saveTo?.isExistsSync() == true) {
+      //文件已经存在
+      final length = saveTo!.length;
+      onReceiveProgress?.call(length, length);
+      return Response(requestOptions: RequestOptions(path: this), data: saveTo);
+    }
     final response = dio.download(
       this,
       saveTo,

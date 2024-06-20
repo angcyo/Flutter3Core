@@ -1,4 +1,4 @@
-part of flutter3_pub;
+part of '../../flutter3_pub.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -22,14 +22,20 @@ extension MarkdownStringEx on String {
       selectable: selectable,
       useScrollView: useScrollView,
       onTapLink: (text, href, title) {
-        l.d("Link点击[$text]:$title:$href");
+        assert(() {
+          l.d("Link点击[$text]:$title:$href");
+          return true;
+        }());
         onLinkTap?.call(text, href, title);
         if (onLinkTap == null) {
           context.openWebUrl(href);
         }
       },
       onTapText: () {
-        l.d("onTapText");
+        assert(() {
+          l.d("onTapText");
+          return true;
+        }());
         onAnchorTap?.call();
         if (onAnchorTap == null) {}
       },

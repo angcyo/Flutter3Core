@@ -180,7 +180,6 @@ class ProgressBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    //debugger();
     final rect = Offset.zero & size;
     final paint = Paint()..style = PaintingStyle.fill;
 
@@ -188,6 +187,7 @@ class ProgressBarPainter extends CustomPainter {
     final rRect = rect.toRRect(radius);
 
     canvas.withClipRRect(rRect, () {
+      //debugger();
       //--bg
       if (bgColor != null) {
         paint.color = bgColor!;
