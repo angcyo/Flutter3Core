@@ -61,17 +61,22 @@ final class DebugKeys {
   }
 }
 
+/// 调试数据改变通知
 extension DebugKeysEx on String {
+  /// [HiveStringEx.hivePut]
   /// [notifyDebugKeyChanged]
   void notifyDebugValueChanged(dynamic value) {
     DebugKeys.notifyDebugKeyChanged(this, value);
   }
 
+  /// [_SingleInputWidgetState._onSelfValueChanged]
   /// [notifyDebugInputValueChanged]
   void notifyInputValueChanged() {
     DebugKeys.notifyDebugInputValueChanged(this);
   }
 }
+
+//--key value--
 
 /// 注册一个key变化监听回调
 void registerDebugKeyChanged(DebugKeyChanged debugKeyChanged) {
@@ -85,6 +90,8 @@ void unregisterDebugKeyChanged(DebugKeyChanged debugKeyChanged) {
   DebugKeys._debugKeyChangedList.remove(debugKeyChanged);
 }
 
+//--input value--
+
 /// 注册一个输入框值变化监听回调
 void registerDebugInputValueChanged(DebugInputValueChanged inputValueChanged) {
   if (!DebugKeys._debugInputValueChangedList.contains(inputValueChanged)) {
@@ -97,6 +104,8 @@ void unregisterDebugInputValueChanged(
     DebugInputValueChanged inputValueChanged) {
   DebugKeys._debugInputValueChangedList.remove(inputValueChanged);
 }
+
+//--指定key的value--
 
 /// 注册一个value变化监听回调
 void registerDebugValueChanged(
