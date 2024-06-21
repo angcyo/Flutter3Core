@@ -1,7 +1,8 @@
 name: flutter3_scanner
 description: "flutter3 mobile scanner project."
 version: 0.0.1
-homepage:
+homepage: https://github.com/angcyo/Flutter3Core
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
