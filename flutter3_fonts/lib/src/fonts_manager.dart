@@ -84,13 +84,20 @@ class FontsManager {
       return _systemFontFamilyMetas;
     }
     for (final path in systemFontPath) {
-      final list = await loadFileFontFamilyList(
-        path,
-        parseVariant: parseVariant,
-        autoLoad: autoLoad,
-        waitLoad: waitLoad,
-      );
-      _systemFontFamilyMetas.addAll(list);
+      try {
+        final list = await loadFileFontFamilyList(
+          path,
+          parseVariant: parseVariant,
+          autoLoad: autoLoad,
+          waitLoad: waitLoad,
+        );
+        _systemFontFamilyMetas.addAll(list);
+      } catch (e) {
+        assert(() {
+          printError(e);
+          return true;
+        }());
+      }
     }
     return _systemFontFamilyMetas;
   }
