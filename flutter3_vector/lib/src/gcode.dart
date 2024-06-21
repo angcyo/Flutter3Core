@@ -177,7 +177,7 @@ class GCodeParser {
     while (index < length) {
       readPreCmd();
       final c = gcodeText[index].toUpperCase();
-      //LOGD("开始解析1:%ld %c", index, c);
+      //l.d("开始解析1:%ld %c", index, c);
       if (c == 'G' || c == 'F' || c == 'M') {
         //读取到指令
         readCmd(c);
@@ -199,7 +199,7 @@ class GCodeParser {
       }
       index++;
     }
-    //LOGD("解析结束:%ld", index);
+    //l.d("解析结束:%ld", index);
   }
 
   /// 当读到有效指令之后
@@ -208,7 +208,7 @@ class GCodeParser {
     if (currentCmd == 'G') {
       //G指令
       String gCmd = "G${readNumberString()}";
-      //LOGD("解析到G指令[%ld]:%s", index, gCmd.c_str());
+      //l.d("解析到G指令[%ld]:%s", index, gCmd.c_str());
       if (gCmd == "G0" || gCmd == "G1" || gCmd == "G2" || gCmd == "G3") {
         //直线 //圆弧
         lastGCmd = gCmd;
@@ -236,7 +236,7 @@ class GCodeParser {
       //M指令
       int number = readNumberString().toIntOrNull() ?? 0;
       String mCmd = "M$number";
-      //LOGD("解析到m指令[%ld]:%s", index, mCmd.c_str());
+      //l.d("解析到m指令[%ld]:%s", index, mCmd.c_str());
       if (mCmd == "M3" || mCmd == "M03") {
         //主轴打开
         isCloseCnc = false;
@@ -274,10 +274,10 @@ class GCodeParser {
       if (isS0 || isCloseCnc || gCmd == "G0" || !isMoveTo) {
         moveTo(lastX, lastY);
         isMoveTo = true;
-        //LOGD("moveTo:x:%f y:%f", lastX, lastY);
+        //l.d("moveTo:x:%f y:%f", lastX, lastY);
       } else {
         lineTo(lastX, lastY);
-        //LOGD("lineTo:x:%f y:%f", lastX, lastY);
+        //l.d("lineTo:x:%f y:%f", lastX, lastY);
       }
     } else if (gCmd == "G2" || gCmd == "G3") {
       //圆弧
@@ -295,7 +295,7 @@ class GCodeParser {
       if (!isMoveTo) {
         moveTo(lastX, lastY);
         isMoveTo = true;
-        //LOGD("force moveTo:x:%f y:%f", lastX, lastY);
+        //l.d("force moveTo:x:%f y:%f", lastX, lastY);
         if (!isAutoCnc) {
           //不是自动激光, 则返回.
           return;
@@ -322,12 +322,12 @@ class GCodeParser {
             judgeCenter(centerList[0], centerList[1], p1, p2, gCmd == "G2");
         if (!center.dx.isValid || !center.dy.isValid) {
           //不是一个有效的数值
-          //LOGD("test:%f %f", center[0], center[1]);
+          //l.d("test:%f %f", center[0], center[1]);
           moveTo(lastX, lastY);
           isMoveTo = true;
           return;
         } else {
-          //LOGD("test2:%f %f", center[0], center[1]);
+          //l.d("test2:%f %f", center[0], center[1]);
           lastI = center.dx - startX;
           lastJ = center.dy - startY;
         }
@@ -387,15 +387,15 @@ class GCodeParser {
       if (isS0 || isCloseCnc) {
         moveTo(lastX, lastY);
         isMoveTo = true;
-        //LOGD("moveTo:x:%f y:%f", lastX, lastY);
+        //l.d("moveTo:x:%f y:%f", lastX, lastY);
       } else {
         //startAngle * 180 / M_PI 弧度转角度
         //角度转弧度,  弧度 = 角度 * M_PI / 180
         addArc(left, top, right, bottom, startAngle, sweepAngle);
-        //LOGD("arcTo: startAngle:%f sweepAngle:%f", startAngle, sweepAngle);
+        //l.d("arcTo: startAngle:%f sweepAngle:%f", startAngle, sweepAngle);
       }
 
-      //LOGD("last:x:%f y:%f", lastX, lastY);
+      //l.d("last:x:%f y:%f", lastX, lastY);
 
       //moveTo(lastX, lastY);
     }
@@ -421,7 +421,7 @@ class GCodeParser {
         //主轴转速
         final number = readNumberString().toIntOrNull() ?? 0;
         isS0 = number <= 0;
-        //LOGD("关闭主轴转速: %d", isS0);
+        //l.d("关闭主轴转速: %d", isS0);
         break;
       } else if (c == ';' || isBreakLine(c)) {
         break;
