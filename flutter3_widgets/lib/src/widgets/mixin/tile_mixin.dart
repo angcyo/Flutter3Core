@@ -551,7 +551,7 @@ mixin TileMixin {
       () {
         onTap?.call();
       },
-      backgroundColor: globalTheme.itemWhiteBgColor,
+      backgroundColor: globalTheme.whiteSubBgColor,
       radius: kDefaultBorderRadiusL,
     ).paddingInsets(margin);
   }

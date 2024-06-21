@@ -268,9 +268,9 @@ mixin DialogMixin implements TranslationTypeImpl {
 
   /// 关闭一个对话框, 如果[close]为true
   @callPoint
-  void closeDialogIf(BuildContext context, [bool close = true]) {
-    if (close) {
-      context.pop(popDialogResult);
+  void closeDialogIf(BuildContext? context, [bool close = true]) {
+    if (close && context?.isMounted == true) {
+      context?.pop(popDialogResult);
     }
   }
 
