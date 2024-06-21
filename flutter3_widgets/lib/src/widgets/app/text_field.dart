@@ -133,7 +133,7 @@ const kSuffixIconSize = 18.0;
 const kSuffixIconConstraintsSize = 36.0;
 
 /// 用来控制密码输入控件, 密码的可见性
-class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier {
+class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {
   /// 是否是密码输入框
   bool obscureText;
 

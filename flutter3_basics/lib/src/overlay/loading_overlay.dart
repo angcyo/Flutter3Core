@@ -236,7 +236,8 @@ class LoadingInfo {
 }
 
 /// 通知值改变的桥梁
-class LoadingValueNotifier extends ValueNotifier<LoadingInfo?> {
+class LoadingValueNotifier extends ValueNotifier<LoadingInfo?>
+    with NotifierMixin {
   LoadingValueNotifier(super.value);
 }
 

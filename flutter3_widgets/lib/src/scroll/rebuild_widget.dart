@@ -62,7 +62,7 @@ class RebuildWidgetState extends State<RebuildWidget> {
 /// 用来触发重构的信号, 不管值相同与否, 都会触发通知
 /// [ValueNotifier]
 @updateSignalMark
-class UpdateValueNotifier<T> extends ValueNotifier<T> {
+class UpdateValueNotifier<T> extends ValueNotifier<T> with NotifierMixin {
   /// 附加的额外数据
   /// [ValueNotifier.value] 才是真正的值
   dynamic data;
@@ -116,7 +116,8 @@ UpdateValueNotifier<dynamic> get nullValueUpdateSignal =>
 
 /// [UpdateValueNotifier]的快速构建方法
 @updateSignalMark
-UpdateValueNotifier<T?> createUpdateSignal<T>() => UpdateSignalNotifier<T?>(null);
+UpdateValueNotifier<T?> createUpdateSignal<T>() =>
+    UpdateSignalNotifier<T?>(null);
 
 mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
   /// 用来触发重构的信号

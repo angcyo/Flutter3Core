@@ -64,6 +64,8 @@ part 'src/basics/basics_event.dart';
 
 part 'src/basics/basics_ex.dart';
 
+part 'src/basics/basics_notifier.dart';
+
 part 'src/basics/basics_file.dart';
 
 part 'src/basics/basics_image.dart';
