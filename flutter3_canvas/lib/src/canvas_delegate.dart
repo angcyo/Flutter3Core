@@ -5,6 +5,7 @@ part of '../flutter3_canvas.dart';
 /// @since 2024/02/02
 ///
 
+/// [PaintMeta]
 const rasterizeElementHost = AnnotationMeta('栅格化元素, 栅格化时, 不应该绘制额外的干扰信息');
 const elementOutputHost = AnnotationMeta('元素数据输出, 此时数据应该足够真实');
 
@@ -170,10 +171,19 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   Duration idleTimeout = 10.seconds;
 
   /// 是否有元素属性发生过改变
+  /// [dispatchCanvasElementPropertyChanged]
+  @flagProperty
   bool isElementPropertyChanged = false;
 
   /// 是否有元素数量发生过改变
+  /// [dispatchCanvasElementListChanged]
+  @flagProperty
   bool isElementChanged = false;
+
+  /// 是否有元素改变标识, 通常同来实现自动保存工程的判断依据
+  /// [clearElementChangedFlag]
+  bool get hasElementChangedFlag =>
+      isElementChanged || isElementPropertyChanged;
 
   //endregion ---core---
 
@@ -199,6 +209,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void _cancelIdleTimer() {
     _idleTimer?.cancel();
     _idleTimer = null;
+  }
+
+  /// 清除元素改变标识
+  void clearElementChangedFlag() {
+    isElementChanged = false;
+    isElementPropertyChanged = false;
   }
 
   /// 添加画布监听
