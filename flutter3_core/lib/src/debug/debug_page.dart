@@ -102,6 +102,12 @@ class DebugPage extends StatefulWidget {
       },
     ),
     DebugAction(
+      label: "hive编辑",
+      clickAction: (context) {
+        context.pushWidget(const DebugHivePage());
+      },
+    ),
+    DebugAction(
       label: "exitApp",
       clickAction: (context) {
         exitApp();
@@ -310,4 +316,61 @@ class DebugAction {
     this.hiveType,
     this.defHiveValue,
   });
+}
+
+/// hive 编辑界面
+class DebugHivePage extends StatefulWidget {
+  const DebugHivePage({super.key});
+
+  @override
+  State<DebugHivePage> createState() => _DebugHivePageState();
+}
+
+class _DebugHivePageState extends State<DebugHivePage> with AbsScrollPage {
+  @override
+  String? getTitle(BuildContext context) => "key-value";
+
+  @override
+  WidgetList? buildScrollBody(BuildContext context) {
+    final map = hiveAll();
+    WidgetList list = [];
+    map.forEach((key, value) {
+      if (value is String) {
+        list.add(LabelSingleInputTile(
+            label: key,
+            value: value,
+            onChanged: (value) {
+              key.hivePut(value);
+            }));
+      } else if (value is int) {
+        list.add(LabelNumberTile(
+          label: key,
+          value: value,
+          onChanged: (value) {
+            key.hivePut(value);
+          },
+        ));
+      } else if (value is double) {
+        list.add(LabelNumberTile(
+          label: key,
+          value: value,
+          onChanged: (value) {
+            key.hivePut(value);
+          },
+        ));
+      } else if (value is bool) {
+        list.add(LabelSwitchTile(
+          label: key,
+          value: value,
+          onChanged: (value) {
+            key.hivePut(value);
+          },
+        ));
+      }
+    });
+    return list;
+  }
+
+  @override
+  Widget build(BuildContext context) => buildScaffold(context);
 }

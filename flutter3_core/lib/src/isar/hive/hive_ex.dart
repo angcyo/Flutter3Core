@@ -40,6 +40,9 @@ extension HiveStringEx on String {
     if (notifyChanged) {
       notifyDebugValueChanged(value);
     }
+    if (value == null) {
+      return hiveDelete();
+    }
     return _hiveBox.put(this, value).get((v, error) {
       if (value != null && error is HiveError) {
         assert(() {
