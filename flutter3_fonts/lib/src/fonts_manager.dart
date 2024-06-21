@@ -10,7 +10,13 @@ class FontsManager {
   /// 字体加载缓存, 指定的uri是否已经加载过
   final Map<String, bool> _uriLoadCache = {};
 
-  FontsManager();
+  FontsManager() {
+    if (customFontPathList.isEmpty) {
+      /*fileFolder("/").then((value) {
+        customFontPathList.add(value);
+      });*/
+    }
+  }
 
   /*static FontWeight _extractFontWeightFromApiFilenamePart(String filenamePart) {
     if (filenamePart.contains('Thin')) return FontWeight.w100;
@@ -36,38 +42,101 @@ class FontsManager {
     return FontStyle.normal;
   }*/
 
-  /// 加载系统字体
-  final List<String> systemFontPath = [
+  //region ---自定义字体---
+
+  /// 加载自定义字体的目录
+  final List<String> customFontPathList = [];
+
+  /// 自定义字体加载后的缓存
+  final List<FontFamilyMeta> _customFontFamilyMetaList = [];
+
+  /// 尝试直接加载自定义字体
+  /// [fontFamily] 字体名称, 同时也是.ttf的文件名
+  Future<bool> tryLoadCustomFontFamily(String? fontFamily) async {
+    return tryLoadFontFamilyIn(customFontPathList, fontFamily);
+  }
+
+  /// 加载自定义字体
+  Future<List<FontFamilyMeta>> loadCustomFileFontFamilyList({
+    bool parseVariant = false,
+    bool? autoLoad = true,
+    bool? reload,
+    bool? waitLoad,
+  }) async {
+    if (reload == true) {
+      _customFontFamilyMetaList.clear();
+    }
+    if (_customFontFamilyMetaList.isNotEmpty) {
+      return _customFontFamilyMetaList;
+    }
+    _customFontFamilyMetaList.addAll(await loadFileFontFamilyListIn(
+      customFontPathList,
+      parseVariant: parseVariant,
+      autoLoad: autoLoad,
+      reload: reload,
+      waitLoad: waitLoad,
+    ));
+    return _customFontFamilyMetaList;
+  }
+
+  /// 保存自定义字体
+  /// [fontFilePath] 原始的字体文件路径
+  /// [fontData] 字体数据
+  /// [fontFileName] 字体数据的文件名
+  Future<bool> saveCustomFontFamily({
+    String? fontFilePath,
+    Uint8List? fontData,
+    String? fontFileName,
+  }) async {
+    final savePath = customFontPathList.firstOrNull;
+    if (savePath == null) {
+      return false;
+    }
+
+    if (fontFilePath != null) {
+      final file = fontFilePath.file();
+      if (await file.exists()) {
+        //复制字体文件
+        final saveFile = "$savePath/${file.fileName()}";
+        await file.copy(saveFile);
+
+        //加载字体
+        final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
+        _customFontFamilyMetaList.add(fontMeta);
+        return true;
+      }
+    } else if (fontData != null && fontFileName != null) {
+      //保存字体文件
+      final saveFile = "$savePath/$fontFileName";
+      await saveFile.file().writeAsBytes(fontData);
+
+      //加载字体
+      final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
+      _customFontFamilyMetaList.add(fontMeta);
+      return true;
+    }
+    return false;
+  }
+
+  //endregion ---自定义字体---
+
+  //region ---系统字体---
+
+  /// 加载系统字体的目录
+  final List<String> systemFontPathList = [
     "/system/fonts",
     "/system/font",
     "/data/fonts",
     "/System/Library/Fonts",
   ];
 
-  /// 系统字体的缓存
-  final List<FontFamilyMeta> _systemFontFamilyMetas = [];
+  /// 系统字体加载后的缓存
+  final List<FontFamilyMeta> _systemFontFamilyMetaList = [];
 
   /// 尝试直接加载系统字体
   /// [fontFamily] 字体名称, 同时也是.ttf的文件名
   Future<bool> tryLoadSystemFontFamily(String? fontFamily) async {
-    if (isNil(fontFamily)) {
-      return false;
-    }
-    for (final path in systemFontPath) {
-      final filePath = "$path/$fontFamily.ttf";
-      if (await filePath.file().exists()) {
-        final variantMeta = FontFamilyVariantMeta(
-          displayFontFamily: fontFamily!,
-          fontFamily: fontFamily,
-          uri: filePath,
-        );
-        return await loadFontFamilyVariant(
-          variantMeta,
-          FontFamilySource.file,
-        );
-      }
-    }
-    return false;
+    return tryLoadFontFamilyIn(systemFontPathList, fontFamily);
   }
 
   /// 加载系统字体
@@ -78,20 +147,36 @@ class FontsManager {
     bool? waitLoad,
   }) async {
     if (reload == true) {
-      _systemFontFamilyMetas.clear();
+      _systemFontFamilyMetaList.clear();
     }
-    if (_systemFontFamilyMetas.isNotEmpty) {
-      return _systemFontFamilyMetas;
+    if (_systemFontFamilyMetaList.isNotEmpty) {
+      return _systemFontFamilyMetaList;
     }
-    for (final path in systemFontPath) {
+    _systemFontFamilyMetaList.addAll(await loadFileFontFamilyListIn(
+      systemFontPathList,
+      parseVariant: parseVariant,
+      autoLoad: autoLoad,
+      reload: reload,
+      waitLoad: waitLoad,
+    ));
+    return _systemFontFamilyMetaList;
+  }
+
+  //endregion ---系统字体---
+
+  /// 加载字体
+  /// [FontFamilyMeta]
+  Future<bool> loadFontFamily(FontFamilyMeta fontFamilyMeta) async {
+    bool result = fontFamilyMeta.variantList.isNotEmpty;
+    for (var variantMeta in fontFamilyMeta.variantList) {
       try {
-        final list = await loadFileFontFamilyList(
-          path,
-          parseVariant: parseVariant,
-          autoLoad: autoLoad,
-          waitLoad: waitLoad,
-        );
-        _systemFontFamilyMetas.addAll(list);
+        result = result &&
+            await loadFontFamilyVariant(
+              variantMeta,
+              fontFamilyMeta.source,
+              savePath: fontFamilyMeta.savePath,
+              overwrite: fontFamilyMeta.overwrite,
+            );
       } catch (e) {
         assert(() {
           printError(e);
@@ -99,25 +184,11 @@ class FontsManager {
         }());
       }
     }
-    return _systemFontFamilyMetas;
-  }
-
-  /// 加载字体
-  Future<bool> loadFontFamily(FontFamilyMeta fontFamilyMeta) async {
-    bool result = fontFamilyMeta.variantList.isNotEmpty;
-    for (var variantMeta in fontFamilyMeta.variantList) {
-      result = result &&
-          await loadFontFamilyVariant(
-            variantMeta,
-            fontFamilyMeta.source,
-            savePath: fontFamilyMeta.savePath,
-            overwrite: fontFamilyMeta.overwrite,
-          );
-    }
     return result;
   }
 
   /// 加载字体变种
+  /// [FontFamilyVariantMeta]
   Future<bool> loadFontFamilyVariant(
     FontFamilyVariantMeta variantMeta,
     FontFamilySource source, {
@@ -167,53 +238,20 @@ class FontsManager {
         final filesStream = path.file().listFilesStream();
         filesStream.listen((file) async {
           final uri = file.path;
-          final fontFamily = file.fileName(true);
-          final filename = file.fileName(false);
-
-          //debugger();
-
-          final variantMeta = parseVariant
-              ? FontFamilyVariantMeta.fromFilename(filename, filePath: uri)
-              : FontFamilyVariantMeta(
-                  displayFontFamily: fontFamily,
-                  fontFamily: fontFamily,
-                  uri: uri,
-                );
+          final meta = await loadFileFontFamily(uri,
+              parseVariant: parseVariant,
+              autoLoad: autoLoad,
+              waitLoad: waitLoad);
 
           //
-          if (autoLoad == true) {
-            if (waitLoad == true) {
-              await loadFontFamilyVariant(
-                variantMeta,
-                FontFamilySource.file,
-                savePath: path,
-                overwrite: autoLoad,
-              );
-            } else {
-              loadFontFamilyVariant(
-                variantMeta,
-                FontFamilySource.file,
-                savePath: path,
-                overwrite: autoLoad,
-              );
-            }
-          }
-
-          //
-          final displayFontFamily = variantMeta.displayFontFamily;
+          final displayFontFamily = meta.displayFontFamily;
           final find =
               list.findFirst((e) => e.displayFontFamily == displayFontFamily);
           if (find == null) {
-            //第一次添加
-            final meta = FontFamilyMeta(
-              displayFontFamily: displayFontFamily,
-              source: FontFamilySource.file,
-            );
-            meta.variantList.add(variantMeta);
             list.add(meta);
           } else {
             //新的变种
-            find.variantList.add(variantMeta);
+            find.variantList.addAll(meta.variantList);
           }
 
           //await futureDelay(1.seconds);
@@ -223,6 +261,118 @@ class FontsManager {
           completer.completeError(e, stack);
         });
       });
+
+  /// 从文件中加载字体
+  /// [parseVariant] 是否解析变种
+  /// [autoLoad] 是否自动加载
+  /// [FontFamilyMeta]
+  Future<FontFamilyMeta> loadFileFontFamily(
+    String filePath, {
+    bool parseVariant = false,
+    bool? autoLoad,
+    bool? waitLoad,
+  }) async {
+    final fontFamily = filePath.fileName(true);
+    final filename = filePath.fileName(false);
+
+    //debugger();
+
+    final variantMeta = parseVariant
+        ? FontFamilyVariantMeta.fromFilename(filename, filePath: filePath)
+        : FontFamilyVariantMeta(
+            displayFontFamily: fontFamily,
+            fontFamily: fontFamily,
+            uri: filePath,
+          );
+
+    //
+    if (autoLoad == true) {
+      if (waitLoad == true) {
+        await loadFontFamilyVariant(
+          variantMeta,
+          FontFamilySource.file,
+          savePath: filePath,
+          overwrite: autoLoad,
+        );
+      } else {
+        loadFontFamilyVariant(
+          variantMeta,
+          FontFamilySource.file,
+          savePath: filePath,
+          overwrite: autoLoad,
+        );
+      }
+    }
+
+    //
+    final displayFontFamily = variantMeta.displayFontFamily;
+    final meta = FontFamilyMeta(
+      displayFontFamily: displayFontFamily,
+      source: FontFamilySource.file,
+    );
+    return meta;
+  }
+
+  //--
+
+  /// 尝试在文件夹[pathList]中加载字体
+  /// [fontFamily] 字体名称, 同时也是.ttf的文件名
+  Future<bool> tryLoadFontFamilyIn(
+      List<String> pathList, String? fontFamily) async {
+    if (isNil(fontFamily)) {
+      return false;
+    }
+    for (final path in pathList) {
+      final filePath = "$path/$fontFamily.ttf";
+      try {
+        if (await filePath.file().exists()) {
+          final variantMeta = FontFamilyVariantMeta(
+            displayFontFamily: fontFamily!,
+            fontFamily: fontFamily,
+            uri: filePath,
+          );
+          return await loadFontFamilyVariant(
+            variantMeta,
+            FontFamilySource.file,
+          );
+        }
+      } catch (e) {
+        assert(() {
+          printError(e);
+          return true;
+        }());
+      }
+    }
+    return false;
+  }
+
+  /// 在文件夹中加载字体
+  Future<List<FontFamilyMeta>> loadFileFontFamilyListIn(
+    List<String> pathList, {
+    bool parseVariant = false,
+    bool? autoLoad = true,
+    bool? reload,
+    bool? waitLoad,
+  }) async {
+    final List<FontFamilyMeta> resultList = [];
+    for (final path in pathList) {
+      try {
+        final list = await loadFileFontFamilyList(
+          path,
+          parseVariant: parseVariant,
+          autoLoad: autoLoad,
+          waitLoad: waitLoad,
+        );
+        resultList.addAll(list);
+      } catch (e) {
+        assert(() {
+          printError(e);
+          return true;
+        }());
+      }
+    }
+    return resultList;
+  }
 }
 
 /// 字体管理
