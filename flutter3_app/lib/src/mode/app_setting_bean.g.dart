@@ -20,7 +20,12 @@ AppSettingBean _$AppSettingBeanFromJson(Map<String, dynamic> json) =>
           .toList()
       ..debugFlagUuidList = (json['debugFlagUuidList'] as List<dynamic>?)
           ?.map((e) => e as String)
-          .toList();
+          .toList()
+      ..buildTime = json['buildTime'] as String?
+      ..operatingSystem = json['operatingSystem'] as String?
+      ..operatingSystemVersion = json['operatingSystemVersion'] as String?
+      ..operatingSystemLocaleName = json['operatingSystemLocaleName'] as String?
+      ..operatingSystemUserName = json['operatingSystemUserName'] as String?;
 
 Map<String, dynamic> _$AppSettingBeanToJson(AppSettingBean instance) {
   final val = <String, dynamic>{};
@@ -37,5 +42,10 @@ Map<String, dynamic> _$AppSettingBeanToJson(AppSettingBean instance) {
   writeNotNull('appState', instance.appState);
   writeNotNull('appFlavorUuidList', instance.appFlavorUuidList);
   writeNotNull('debugFlagUuidList', instance.debugFlagUuidList);
+  writeNotNull('buildTime', instance.buildTime);
+  writeNotNull('operatingSystem', instance.operatingSystem);
+  writeNotNull('operatingSystemVersion', instance.operatingSystemVersion);
+  writeNotNull('operatingSystemLocaleName', instance.operatingSystemLocaleName);
+  writeNotNull('operatingSystemUserName', instance.operatingSystemUserName);
   return val;
 }

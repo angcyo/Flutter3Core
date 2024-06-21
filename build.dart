@@ -26,6 +26,32 @@ ArgParser buildParser() {
       abbr: 'f',
       valueHelp: "风味字符串",
       help: '替换[appFlavor]',
+    )
+    ..addOption(
+      'buildTime',
+      abbr: 'b',
+      valueHelp: "编译时间",
+      help: '替换[buildTime]',
+    )
+    ..addOption(
+      'operatingSystem',
+      valueHelp: "打包操作系统",
+      help: '替换[operatingSystem]',
+    )
+    ..addOption(
+      'operatingSystemVersion',
+      valueHelp: "打包操作系统版本",
+      help: '替换[operatingSystemVersion]',
+    )
+    ..addOption(
+      'operatingSystemLocaleName',
+      valueHelp: "打包操作系统语言",
+      help: '替换[operatingSystemLocaleName]',
+    )
+    ..addOption(
+      'operatingSystemUserName',
+      valueHelp: "打包操作系统用户",
+      help: '替换[operatingSystemUserName]',
     );
 }
 
@@ -35,6 +61,8 @@ void printUsage(ArgParser argParser) {
 }
 
 void main(List<String> arguments) {
+  //throw "test";
+
   final ArgParser argParser = buildParser();
   try {
     final ArgResults results = argParser.parse(arguments);
@@ -47,6 +75,16 @@ void main(List<String> arguments) {
 
     final packageName = results['packageName'];
     final appFlavor = results['appFlavor'];
+    final buildTime = results['buildTime'] ?? DateTime.now().toString();
+    final operatingSystem = results['operatingSystem'] ??
+        Platform.operatingSystem.replaceAll("\"", "\\\"");
+    final operatingSystemVersion = results['operatingSystemVersion'] ??
+        Platform.operatingSystemVersion.replaceAll("\"", "\\\"");
+    final operatingSystemLocaleName = results['operatingSystemLocaleName'] ??
+        Platform.localeName.replaceAll("\"", "\\\"");
+    final operatingSystemUserName = results['operatingSystemUserName'] ??
+        Platform.environment['USERNAME'] ??
+        Platform.environment['USER'];
 
     //模板文件
     final templateFile = File(
@@ -55,6 +93,7 @@ void main(List<String> arguments) {
     final targetFile = File(
         "${Directory.current.path}/Flutter3Core/flutter3_app/assets/config/app_setting.json");
 
+    //修改
     String text = templateFile.readAsStringSync();
     if (packageName != null) {
       text = text.replaceAll(r"${packageName}", packageName);
@@ -62,6 +101,27 @@ void main(List<String> arguments) {
     if (appFlavor != null) {
       text = text.replaceAll(r"${appFlavor}", appFlavor);
     }
+    //--build
+    if (buildTime != null) {
+      text = text.replaceAll(r"${buildTime}", buildTime);
+    }
+    if (operatingSystem != null) {
+      text = text.replaceAll(r"${operatingSystem}", operatingSystem);
+    }
+    if (operatingSystemVersion != null) {
+      text =
+          text.replaceAll(r"${operatingSystemVersion}", operatingSystemVersion);
+    }
+    if (operatingSystemLocaleName != null) {
+      text = text.replaceAll(
+          r"${operatingSystemLocaleName}", operatingSystemLocaleName);
+    }
+    if (operatingSystemUserName != null) {
+      text = text.replaceAll(
+          r"${operatingSystemUserName}", operatingSystemUserName);
+    }
+
+    //end
     //print(text);
     targetFile.writeAsStringSync(text);
     print('修改文本->${targetFile.path}');

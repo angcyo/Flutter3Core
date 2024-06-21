@@ -66,6 +66,24 @@ class AppSettingBean {
   /// 调试设备的uuid列表
   /// [CoreKeys.deviceUuid]
   List<String>? debugFlagUuidList;
+
+  //--build--
+
+  /// 编译时间
+  /// 2024-06-21 14:27:05.978594
+  String? buildTime;
+
+  /// windows
+  String? operatingSystem;
+
+  /// "Windows 10 Pro" 10.0 (Build 19045)
+  String? operatingSystemVersion;
+
+  /// zh-CN
+  String? operatingSystemLocaleName;
+
+  /// angcyo
+  String? operatingSystemUserName;
 }
 
 /// 应用程序的风味
