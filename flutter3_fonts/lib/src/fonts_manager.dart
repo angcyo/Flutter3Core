@@ -101,8 +101,10 @@ class FontsManager {
         await file.copy(saveFile);
 
         //加载字体
-        final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
-        _customFontFamilyMetaList.add(fontMeta);
+        if (_customFontFamilyMetaList.isNotEmpty) {
+          final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
+          _customFontFamilyMetaList.add(fontMeta);
+        }
         return true;
       }
     } else if (fontData != null && fontFileName != null) {
@@ -111,8 +113,10 @@ class FontsManager {
       await saveFile.file().writeAsBytes(fontData);
 
       //加载字体
-      final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
-      _customFontFamilyMetaList.add(fontMeta);
+      if (_customFontFamilyMetaList.isNotEmpty) {
+        final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
+        _customFontFamilyMetaList.add(fontMeta);
+      }
       return true;
     }
     return false;
