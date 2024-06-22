@@ -100,3 +100,4 @@ part 'src/widgets/tab_layout.dart';
 part 'src/widgets/test_constraints_layout.dart';
 part 'src/widgets/wrap_content_layout.dart';
 part 'src/widgets/animate_gradient_widget.dart';
+part 'src/widgets/image_render_widget.dart';
