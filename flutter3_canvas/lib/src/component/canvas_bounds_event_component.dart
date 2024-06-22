@@ -1,4 +1,4 @@
-part of flutter3_canvas;
+part of '../../flutter3_canvas.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -7,7 +7,7 @@ part of flutter3_canvas;
 /// 画布指定位置点击/长按事件处理组件
 
 typedef OnCanvasBoundsEventAction = bool Function(
-    PointerEvent event, int touchType);
+    PointerEvent event, TouchDetectorType touchType);
 
 class CanvasBoundsEventComponent
     with CanvasComponentMixin, IHandleEventMixin, TouchDetectorMixin {
@@ -28,7 +28,8 @@ class CanvasBoundsEventComponent
   }
 
   @override
-  bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) {
+  bool onTouchDetectorPointerEvent(
+      PointerEvent event, TouchDetectorType touchType) {
     //l.d('${event.localPosition} $touchType');
     bool handled = false;
     if (boundsEventAction.isNotEmpty) {

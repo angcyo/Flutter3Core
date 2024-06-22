@@ -104,6 +104,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @entryPoint
   void detach() {
     _cancelIdleTimer();
+    _ticker?.dispose();
+    _ticker = null;
   }
 
   /// 释放所有资源, 主动调用

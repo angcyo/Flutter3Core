@@ -19,28 +19,28 @@ class TouchDetectorWidget extends SingleChildRenderObjectWidget {
   });
 
   @override
-  RenderObject createRenderObject(BuildContext context) => _RenderTouchDetector(
+  RenderObject createRenderObject(BuildContext context) => RenderTouchDetector(
         onClick: onClick,
         onLongPress: onLongPress,
       );
 
   @override
   void updateRenderObject(
-      BuildContext context, _RenderTouchDetector renderObject) {
+      BuildContext context, RenderTouchDetector renderObject) {
     renderObject
       ..onClick = onClick
       ..onLongPress = onLongPress;
   }
 }
 
-class _RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
+class RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
   PointerAction? onClick;
   PointerAction? onLongPress;
 
   /// 是否启用事件检测
   bool get _enableTouchDetector => onClick != null || onLongPress != null;
 
-  _RenderTouchDetector({
+  RenderTouchDetector({
     RenderBox? child,
     this.onClick,
     this.onLongPress,
@@ -67,11 +67,12 @@ class _RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
   }
 
   @override
-  bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) {
+  bool onTouchDetectorPointerEvent(
+      PointerEvent event, TouchDetectorType touchType) {
     //debugger();
-    if (touchType == TouchDetectorMixin.sTouchTypeClick) {
+    if (touchType == TouchDetectorType.click) {
       onClick?.call(event);
-    } else if (touchType == TouchDetectorMixin.sTouchTypeLongPress) {
+    } else if (touchType == TouchDetectorType.longPress) {
       onLongPress?.call(event);
     }
     return super.onTouchDetectorPointerEvent(event, touchType);

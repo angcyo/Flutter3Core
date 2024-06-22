@@ -183,3 +183,20 @@ AnimationController animation(
   //controller.dispose();
   return controller;
 }
+
+/// 矩阵动画
+/// [Matrix4Tween]
+AnimationController matrixAnimation(
+  TickerProvider vsync,
+  Matrix4 begin,
+  Matrix4 end,
+  void Function(Matrix4 value, bool isCompleted) listener, {
+  Duration duration = kDefaultAnimationDuration,
+  Curve? curve,
+}) {
+  final matrixTween = Matrix4Tween(begin: begin, end: end);
+  return animation(vsync, (value, isCompleted) {
+    final matrix = matrixTween.lerp(value);
+    listener(matrix, isCompleted);
+  });
+}

@@ -98,3 +98,38 @@ Offset alignRectOffset(
   final offset = alignChildOffset(alignment, containsBounds.size, childSize);
   return containsBounds.topLeft + offset;
 }
+
+/// 将一个大小,按照[fit].[alignment]规则, 返回计算后的位置和大小
+/// [parentRect] 容器大小
+/// [childRect] 目标child大小
+Rect applyAlignRect(
+  Size parentSize,
+  Size childSize, {
+  BoxFit? fit,
+  Alignment? alignment = Alignment.center,
+}) {
+  final targetSize = childSize;
+  final Size fitTargetSize;
+
+  //fit
+  if (fit != null) {
+    //获取fit作用后的大小
+    final fitSize = applyBoxFit(fit, targetSize, parentSize);
+    fitTargetSize = fitSize.destination;
+    //debugger();
+  } else {
+    fitTargetSize = targetSize;
+  }
+
+  //alignment
+  if (alignment != null) {
+    //获取对齐后的矩形位置
+    final destinationRect =
+        alignment.inscribe(fitTargetSize, Offset.zero & parentSize);
+    return destinationRect;
+  } else {
+    final result =
+        Rect.fromLTWH(0, 0, fitTargetSize.width, fitTargetSize.height);
+    return result;
+  }
+}

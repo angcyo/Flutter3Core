@@ -261,14 +261,17 @@ PointerCancelEvent createPointerCancelEvent(PointerEvent event) {
   );
 }
 
-/// 点击/长按事件探测
-mixin TouchDetectorMixin {
+/// 手势探测到的类型
+enum TouchDetectorType {
   /// 点击事件
-  static const int sTouchTypeClick = 1;
+  click,
 
   /// 长按事件, 此时手势还未抬起
-  static const int sTouchTypeLongPress = 2;
+  longPress,
+}
 
+/// 点击/长按事件探测
+mixin TouchDetectorMixin {
   /// 是否要检查长按事件
   bool checkLongPress = true;
 
@@ -306,7 +309,9 @@ mixin TouchDetectorMixin {
 
   /// 处理点击事件
   @overridePoint
-  bool onTouchDetectorPointerEvent(PointerEvent event, int touchType) => false;
+  bool onTouchDetectorPointerEvent(
+          PointerEvent event, TouchDetectorType touchType) =>
+      false;
 
   void _checkClick(PointerEvent event) {
     final downEvent = _pointerDownMap[event.pointer];
@@ -315,7 +320,7 @@ mixin TouchDetectorMixin {
       //超出了移动范围
       return;
     }
-    onTouchDetectorPointerEvent(event, sTouchTypeClick);
+    onTouchDetectorPointerEvent(event, TouchDetectorType.click);
   }
 
   /// 检查是否需要触发长按事件回调
@@ -326,7 +331,7 @@ mixin TouchDetectorMixin {
       //超出了移动范围
       return;
     }
-    onTouchDetectorPointerEvent(event, sTouchTypeLongPress);
+    onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
     _clear(event);
   }
 

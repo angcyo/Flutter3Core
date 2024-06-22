@@ -341,7 +341,7 @@ extension CanvasEx on Canvas {
 
     if (alignment != null) {
       //获取对齐后的矩形位置
-      final Rect destinationRect = alignment.inscribe(fitTargetSize, dst);
+      final destinationRect = alignment.inscribe(fitTargetSize, dst);
       dst = destinationRect;
     } else {
       dst = ui.Rect.fromLTWH(
