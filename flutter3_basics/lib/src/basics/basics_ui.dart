@@ -2011,6 +2011,9 @@ extension ElementEx on Element {}
 ///
 /// [showDialog]
 enum TranslationType {
+  /// 无动画
+  none,
+
   /// [MaterialPageRoute]
   material,
 
@@ -2049,6 +2052,9 @@ enum TranslationType {
   final bool withTopToBottom;
 }
 
+/// 过渡动画类型
+/// [DialogMixin]
+/// `mixin DialogMixin implements TranslationTypeImpl`
 class TranslationTypeImpl {
   /// [TranslationType]
   TranslationType get translationType => TranslationType.material;
@@ -2072,6 +2078,16 @@ extension RouteWidgetEx on Widget {
     }
     dynamic targetRoute;
     switch (type) {
+      case TranslationType.none:
+        targetRoute = PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => this,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+        break;
       case TranslationType.cupertino:
         targetRoute = CupertinoPageRoute(
           builder: (context) => this,

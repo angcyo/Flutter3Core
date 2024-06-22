@@ -36,10 +36,14 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
           },
           barrierLabel: barrierLabel ??
               MaterialLocalizations.of(context).modalBarrierDismissLabel,
-          transitionDuration:
-              transitionDuration ?? const Duration(milliseconds: 150),
+          transitionDuration: type == TranslationType.none
+              ? Duration.zero
+              : (transitionDuration ?? const Duration(milliseconds: 200)),
           transitionBuilder: (BuildContext context, Animation<double> animation,
               Animation<double> secondaryAnimation, Widget child) {
+            if (type == TranslationType.none) {
+              return child;
+            }
             if (type?.withTranslation == true) {
               return TranslationPageRoute(
                 builder: (content) => child,
