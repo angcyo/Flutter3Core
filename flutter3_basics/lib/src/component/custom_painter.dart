@@ -7,6 +7,7 @@ part of '../../flutter3_basics.dart';
 
 /// [CustomPaint] widget
 /// [CustomPainter] 绘制回调
+/// [ProgressBarPainter]
 class CustomPaintWrap extends CustomPainter {
   final PaintFn? paintIt;
 
@@ -161,6 +162,76 @@ class OvalPainter extends CustomPainter {
 
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
     canvas.drawOval(rect, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+/// 透明棋盘小部件
+class PixelTransparentWidget extends StatelessWidget {
+  final Widget? child;
+
+  const PixelTransparentWidget({
+    super.key,
+    this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Color primary;
+    final Color secondary;
+
+    if (context.isThemeDark) {
+      primary = const Color.fromARGB(255, 17, 17, 17);
+      secondary = const Color.fromARGB(255, 36, 36, 37);
+    } else {
+      primary = const Color(-0x3d3d3e);
+      secondary = const Color(-0xc0c0d);
+    }
+
+    return CustomPaint(
+      painter: PixelTransparentPainter(primary: primary, secondary: secondary),
+      size: const Size(double.infinity, double.infinity),
+      child: child,
+    );
+  }
+}
+
+/// 绘制一个透明棋盘
+class PixelTransparentPainter extends CustomPainter {
+  final double cellSize;
+  final Color primary;
+  final Color secondary;
+
+  const PixelTransparentPainter({
+    this.cellSize = 20,
+    required this.primary,
+    required this.secondary,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final numCellsX = size.width / cellSize;
+    final numCellsY = size.height / cellSize;
+
+    for (int row = 0; row < numCellsY; row++) {
+      for (int col = 0; col < numCellsX; col++) {
+        final color = (row + col) % 2 == 0 ? primary : secondary;
+
+        final left = col * cellSize;
+        final top = row * cellSize;
+        final right = math.min(left + cellSize, size.width);
+        final bottom = math.min(top + cellSize, size.height);
+
+        canvas.drawRect(
+          Rect.fromLTRB(left, top, right, bottom),
+          Paint()..color = color,
+        );
+      }
+    }
   }
 
   @override
