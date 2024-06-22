@@ -172,11 +172,14 @@ class OvalPainter extends CustomPainter {
 
 /// 透明棋盘小部件
 class PixelTransparentWidget extends StatelessWidget {
+  final double cellSize;
+
   final Widget? child;
 
   const PixelTransparentWidget({
     super.key,
     this.child,
+    this.cellSize = 20,
   });
 
   @override
@@ -193,7 +196,11 @@ class PixelTransparentWidget extends StatelessWidget {
     }
 
     return CustomPaint(
-      painter: PixelTransparentPainter(primary: primary, secondary: secondary),
+      painter: PixelTransparentPainter(
+        primary: primary,
+        secondary: secondary,
+        cellSize: cellSize,
+      ),
       size: const Size(double.infinity, double.infinity),
       child: child,
     );

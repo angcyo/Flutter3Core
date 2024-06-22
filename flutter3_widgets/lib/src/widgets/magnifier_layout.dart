@@ -76,11 +76,10 @@ class MagnifierLayoutRender extends RenderProxyBox {
     super.paint(context, offset);
 
     if (child != null && touchPointer != null) {
-      final left = clamp(touchPointer!.dx - magnifierSize / 2, offset.dx,
-          size.width - magnifierSize);
-      final top = clamp(touchPointer!.dy - magnifierSize / 2, offset.dy,
-          size.height - magnifierSize);
-      final rect = Rect.fromLTWH(left, top, magnifierSize, magnifierSize);
+      final offsetLeft = clamp(touchPointer!.dx - magnifierSize / 2,
+          offset.dx + magnifierSize / 2, size.width - magnifierSize);
+      final offsetTop = clamp(touchPointer!.dy - magnifierSize / 2,
+          offset.dy + magnifierSize / 2, size.height - magnifierSize);
 
       final translate = Matrix4.identity();
       translate.translate(-touchPointer!.dx, -touchPointer!.dy);
@@ -88,14 +87,37 @@ class MagnifierLayoutRender extends RenderProxyBox {
       final scale = Matrix4.identity();
       scale.scale(magnifierFactor, magnifierFactor);
 
-      final clipPath = Path()..addOval(rect);
-      // context.canvas.withTranslate(0, 100, () {
-        // context.canvas.withClipPath(clipPath, () {
-        context.canvas.withMatrix(scale * translate, () {
-          super.paint(context, offset);
+      final clipPath = Path()
+        ..addOval(Rect.fromLTWH(
+          -magnifierSize / 2,
+          -magnifierSize / 2,
+          magnifierSize,
+          magnifierSize,
+        ));
+
+      final canvas = context.canvas;
+      canvas.withTranslate(offsetLeft, offsetTop, () {
+        canvas.withClipPath(clipPath, () {
+          canvas.withMatrix(scale * translate, () {
+            super.paint(context, offset);
+          });
         });
-        // });
-      // });
+        canvas.drawCircle(
+          Offset.zero,
+          magnifierFactor,
+          Paint()
+            ..color = Colors.white
+            ..style = PaintingStyle.stroke,
+        );
+        canvas.drawCircle(
+          Offset.zero,
+          magnifierSize / 2,
+          Paint()
+            ..color = Colors.white
+            ..style = PaintingStyle.stroke,
+        );
+        canvas.drawShadow(clipPath, Colors.black, 10, true);
+      });
     }
   }
 }

@@ -53,9 +53,21 @@ class ImageRenderObject extends RenderProxyBox {
     //l.d('${event.position} ${event.localPosition} ${event.delta}');
     if (event.isTouchEvent) {
       if (event.isPointerFinish) {
+        if (touchPointer != null) {
+          final imagePointer =
+              controller.operateMatrix.invertedMatrix().mapPoint(touchPointer!);
+          if (controller._imageRect.contains(imagePointer)) {
+            controller.onPointerUp?.call(imagePointer);
+          }
+        }
         touchPointer = null;
       } else {
         touchPointer = event.localPosition;
+        final imagePointer =
+            controller.operateMatrix.invertedMatrix().mapPoint(touchPointer!);
+        if (controller._imageRect.contains(imagePointer)) {
+          controller.onPointerUpdate?.call(imagePointer);
+        }
       }
       markNeedsPaint();
     }
@@ -71,7 +83,7 @@ class ImageRenderObject extends RenderProxyBox {
     final image = controller.image;
     if (image != null) {
       final canvas = context.canvas;
-      assert(() {
+      /*assert(() {
         canvas.drawRect(offset & size, Paint()..color = Colors.black26);
         canvas.drawRect(
             controller._imageOperateRect, Paint()..color = Colors.black26);
@@ -86,7 +98,7 @@ class ImageRenderObject extends RenderProxyBox {
           canvas.drawCircle(rawPointer, 10, Paint()..color = Colors.black26);
         }
         return true;
-      }());
+      }());*/
       canvas.withMatrix(
         controller.operateMatrix,
         () {
@@ -102,8 +114,14 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// 渲染的图片
   UiImage? image;
 
-  /// 边距
+  /// 内边距
   EdgeInsets padding = const EdgeInsets.all(30);
+
+  /// 在图片中手势移动的事件更新回调
+  OffsetCallback? onPointerUpdate;
+
+  /// 在图片中手势抬起的事件回调
+  OffsetCallback? onPointerUp;
 
   ImageRenderController();
 
