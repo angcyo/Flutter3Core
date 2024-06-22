@@ -367,6 +367,14 @@ extension WidgetEx on Widget {
   /// [RenderProxyBoxWithHitTestBehavior]
   /// [click]
   /// [doubleClick]
+  ///
+  /// 键盘监听
+  /// ```
+  /// ServicesBinding.instance.keyboard.addHandler(_onKeyEvent);
+  /// ```
+  ///
+  /// 鼠标监听
+  /// [Listener.onPointerSignal]
   Widget click(
     GestureTapCallback? onTap, [
     bool enable = true,
