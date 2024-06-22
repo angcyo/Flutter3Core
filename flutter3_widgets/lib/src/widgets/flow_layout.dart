@@ -427,7 +427,7 @@ class FlowLayoutRender extends RenderBox
     final paddingHorizontal = (padding?.horizontal ?? 0);
     final horizontalGap = childHorizontalGap ?? childGap;
 
-    for (var child in children) {
+    for (final child in children) {
       final FlowLayoutParentData childParentData =
           child.parentData! as FlowLayoutParentData;
       var childConstraints = childParentData.constraints ??

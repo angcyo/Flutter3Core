@@ -76,6 +76,7 @@ part 'src/widgets/app/tab.dart';
 part 'src/widgets/app/text_field.dart';
 part 'src/widgets/child_background_widget.dart';
 part 'src/widgets/flow_layout.dart';
+part 'src/widgets/frame_layout.dart';
 part 'src/widgets/linear_layout.dart';
 part 'src/widgets/gesture_hit_intercept.dart';
 part 'src/widgets/gestures/matrix_gesture_detector.dart';
