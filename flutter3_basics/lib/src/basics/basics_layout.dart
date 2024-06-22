@@ -89,7 +89,7 @@ Offset alignChildOffset(
 /// [alignment] 对齐方式
 /// [containsBounds] 容器
 /// [childSize] 子元素大小
-/// 返回对应的偏移量
+/// 返回对应的left/top偏移量
 Offset alignRectOffset(
   AlignmentGeometry alignment,
   Rect containsBounds,
