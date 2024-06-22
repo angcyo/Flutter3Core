@@ -830,7 +830,11 @@ extension StringEx on String {
   /// [prefix] 前缀, 比如`assets/images/` 或者`assets/svg/`
   /// 最终返回`packages/flutter3_basics/assets/images/xxx.xxx`
   /// `packages/flutter3_canvas/assets/svg/canvas_lock_point.svg`
-  String ensurePackagePrefix(String? package, String? prefix) {
+  String ensurePackagePrefix(String? package, [String? prefix]) {
+    if (startsWith("packages/")) {
+      //指定了包名根路径
+      return this;
+    }
     var before = "";
     if (package == null || package.isEmpty) {
     } else {
