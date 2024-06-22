@@ -77,14 +77,21 @@ class ImageRenderObject extends RenderProxyBox {
   void paint(PaintingContext context, ui.Offset offset) {
     controller._initIfNeed(this);
 
+    final canvas = context.canvas;
+
+    //bg
+    final rect = offset & size;
+    if (controller.renderBgColor != null) {
+      canvas.drawRect(rect, Paint()..color = controller.renderBgColor!);
+    }
+
+    //child
     super.paint(context, offset);
 
     //image
     final image = controller.image;
     if (image != null) {
-      final canvas = context.canvas;
       /*assert(() {
-        canvas.drawRect(offset & size, Paint()..color = Colors.black26);
         canvas.drawRect(
             controller._imageOperateRect, Paint()..color = Colors.black26);
         if (touchPointer != null) {
@@ -111,6 +118,9 @@ class ImageRenderObject extends RenderProxyBox {
 
 /// 控制器
 class ImageRenderController extends ChangeNotifier with NotifierMixin {
+  /// 渲染的背景颜色
+  Color? renderBgColor;
+
   /// 渲染的图片
   UiImage? image;
 
@@ -123,7 +133,10 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// 在图片中手势抬起的事件回调
   OffsetCallback? onPointerUp;
 
-  ImageRenderController();
+  ImageRenderController({
+    this.image,
+    this.renderBgColor,
+  });
 
   //region --控制操作--
 
@@ -150,6 +163,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// 用来刷新界面使用
   ImageRenderObject? _renderObject;
 
+  @autoInjectMark
   @initialize
   void _initIfNeed(ImageRenderObject renderObject) {
     _renderObject = renderObject;
