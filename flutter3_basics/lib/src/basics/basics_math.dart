@@ -183,16 +183,18 @@ bool isClockwise(Offset startAnchor, Offset circleCenter, Offset target) {
 }
 
 /// 格式化[number]数字成字符串
+/// [round] 是否四舍五入
 String formatNumber(
   num number, {
   NumType? numType,
   int digits = kDefaultDigits,
+  bool round = true,
   bool ensureInt = true,
 }) {
   numType ??= NumType.from(number);
   switch (numType) {
     case NumType.i:
-      return "${number.toInt()}";
+      return "${round ? number.round() : number.toInt()}";
     case NumType.d:
       return number.toDigits(digits: digits, ensureInt: ensureInt);
   }

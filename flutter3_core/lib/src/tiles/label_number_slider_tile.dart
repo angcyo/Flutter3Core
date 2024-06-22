@@ -113,7 +113,11 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
         updateState();
       },
       onChangeEnd: (value) {
-        widget.onNumberChange?.call(_currentValue);
+        num result = _currentValue;
+        if (widget._numType == NumType.i) {
+          result = _currentValue.round();
+        }
+        widget.onNumberChange?.call(result);
       },
     );
 

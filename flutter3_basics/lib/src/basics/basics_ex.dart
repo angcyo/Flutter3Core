@@ -1313,6 +1313,7 @@ extension NumEx on num {
   /// 保留小数点后几位
   /// [digits] 小数点后几位
   /// [removeZero] 是否移除小数点尾部后面的0
+  /// [round] 是否四舍五入
   /// [ensureInt] 如果是整数, 是否优先使用整数格式输出
   /// ```
   /// 8.10 -> 8.1   //removeZero
@@ -1322,13 +1323,14 @@ extension NumEx on num {
   String toDigits({
     int digits = kDefaultDigits,
     bool removeZero = true,
+    bool round = true,
     bool ensureInt = false,
   }) {
     if (ensureInt) {
       if (this is int) {
         return toString();
       } else {
-        var int = toInt();
+        final int = round ? this.round() : toInt();
         if (this == int) {
           return int.toString();
         }

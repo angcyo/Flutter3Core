@@ -299,8 +299,11 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     if (value == null) {
       return null;
     }
-    return formatNumber(value,
-        numType: widget._numType, digits: widget.maxDigits);
+    return formatNumber(
+      value,
+      numType: widget._numType,
+      digits: widget.maxDigits,
+    );
   }
 
   /// 创建占位按钮
