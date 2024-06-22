@@ -7,6 +7,9 @@ part of '../../flutter3_basics.dart';
 ///
 
 /// 对齐子元素, 通过修改[child!.parentData]这样的方式手势碰撞就会自动计算
+///
+/// [childSize].[child]二选一
+///
 /// [AlignmentDirectional]
 /// [Alignment]
 /// 返回对应的偏移量
