@@ -93,6 +93,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/core_back.svg
   String get coreBack => 'assets/svg/core_back.svg';
 
+  /// File path: assets/svg/core_close.svg
+  String get coreClose => 'assets/svg/core_close.svg';
+
   /// File path: assets/svg/core_confirm.svg
   String get coreConfirm => 'assets/svg/core_confirm.svg';
 
@@ -120,6 +123,7 @@ class $AssetsSvgGen {
   /// List of all assets
   List<String> get values => [
         coreBack,
+        coreClose,
         coreConfirm,
         coreNext,
         fileBrowseDelete,

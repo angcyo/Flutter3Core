@@ -4,7 +4,11 @@ part of '../dialog.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/23
 ///
-/// 对话框的标题tile
+/// 对话框的标题布局tile
+///  [leading]...[title]...[trailing]
+///  [line]
+///
+/// [CoreDialogTitle] 带控制
 class DialogTitleTile extends StatelessWidget with TileMixin {
   ///
   final Widget? leading;
@@ -23,6 +27,10 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
   final Widget? subTitleWidget;
   final TextStyle? subTitleTextStyle;
 
+  ///
+  final bool enableLine;
+  final Widget? line;
+
   const DialogTitleTile({
     super.key,
     this.title,
@@ -33,6 +41,8 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     this.trailing,
     this.enableLeading = true,
     this.enableTrailing = true,
+    this.line,
+    this.enableLine = true,
     this.titleTextStyle,
     this.subTitleTextStyle,
   });
@@ -68,6 +78,6 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     ]
         .row()!
         .constrainedMin(minHeight: kTitleHeight)
-        .columnOf(horizontalLine(context));
+        .columnOf(enableLine ? (line ?? horizontalLine(context)) : null);
   }
 }

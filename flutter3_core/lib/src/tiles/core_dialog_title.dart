@@ -5,18 +5,22 @@ part of '../../flutter3_core.dart';
 /// @date 2024/05/24
 ///
 /// 对话框标题
+///
+/// [DialogTitleTile] 布局
 class CoreDialogTitle extends StatelessWidget {
   ///
   final Widget? leading;
   final bool enableLeading;
   final bool showLeading;
   final bool invisibleLeading;
+  final String? leadingSvgIconKey;
 
   ///
   final Widget? trailing;
   final bool enableTrailing;
   final bool showTrailing;
   final bool invisibleTrailing;
+  final String? trailingSvgIconKey;
 
   ///
   final String? title;
@@ -30,6 +34,12 @@ class CoreDialogTitle extends StatelessWidget {
   /// 点击确认后的返回值
   final ResultCallback? onPop;
 
+  //--
+
+  /// 是否显示分割线
+  final bool enableLine;
+  final Widget? line;
+
   const CoreDialogTitle({
     super.key,
     this.title,
@@ -37,7 +47,9 @@ class CoreDialogTitle extends StatelessWidget {
     this.subTitle,
     this.subTitleWidget,
     this.leading,
+    this.leadingSvgIconKey,
     this.trailing,
+    this.trailingSvgIconKey,
     this.enableLeading = true,
     this.showLeading = true,
     this.invisibleLeading = false,
@@ -47,6 +59,8 @@ class CoreDialogTitle extends StatelessWidget {
     this.titleTextStyle,
     this.subTitleTextStyle,
     this.onPop,
+    this.enableLine = true,
+    this.line,
   });
 
   @override
@@ -57,7 +71,7 @@ class CoreDialogTitle extends StatelessWidget {
         : this.leading ??
             InkButton(
               loadCoreAssetSvgPicture(
-                Assets.svg.coreBack,
+                leadingSvgIconKey ?? Assets.svg.coreBack,
                 tintColor: context.isThemeDark
                     ? globalTheme.textTitleStyle.color
                     : null,
@@ -73,7 +87,7 @@ class CoreDialogTitle extends StatelessWidget {
         : this.trailing ??
             InkButton(
               loadCoreAssetSvgPicture(
-                Assets.svg.coreConfirm,
+                trailingSvgIconKey ?? Assets.svg.coreConfirm,
                 tintColor: context.isThemeDark
                     ? globalTheme.textTitleStyle.color
                     : null,
@@ -93,6 +107,8 @@ class CoreDialogTitle extends StatelessWidget {
       subTitle: subTitle,
       subTitleWidget: subTitleWidget,
       subTitleTextStyle: subTitleTextStyle,
+      enableLine: enableLine,
+      line: line,
     );
   }
 }
