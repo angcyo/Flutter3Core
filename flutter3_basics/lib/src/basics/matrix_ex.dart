@@ -451,6 +451,27 @@ extension Matrix4Ex on vector.Matrix4 {
     ];
   }
 
+  /// 保证相对于(0,0)位置的锚点保持不变
+  /// [anchorOriginMatrix] 锚点之前作用的矩阵
+  /// @return 返回包含平移的矩阵
+  Matrix4 keepAnchor(
+    Offset anchor, {
+    Matrix4? anchorOriginMatrix,
+  }) {
+    //debugger();
+    final Matrix4 beforeMatrix = anchorOriginMatrix ?? Matrix4.identity();
+
+    //锚点目标位置
+    final Offset beforeAnchor = beforeMatrix.mapPoint(anchor);
+
+    final Matrix4 afterMatrix = beforeMatrix * this;
+    final Offset afterAnchor = afterMatrix.mapPoint(anchor);
+
+    //当前矩阵需要平移的量
+    final offset = beforeAnchor - afterAnchor;
+    return offset.translateMatrix * this;
+  }
+
   /// 转换成3*3的矩阵
   /// ```
   /// /*getNormalMatrix()

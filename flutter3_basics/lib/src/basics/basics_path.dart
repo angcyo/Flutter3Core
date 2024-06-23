@@ -83,6 +83,16 @@ extension PathEx on Path {
     return rect ?? getBounds();
   }
 
+  /// 根据给定operation指定的方式组合两个路径
+  /// [Path.fillType]
+  /// [PathFillType]
+  /// [PathFillType.evenOdd]
+  Path op(Path other, PathOperation operation) => Path.combine(
+        operation,
+        this,
+        other,
+      );
+
   /// 是否包含指定点
   bool contains(Offset offset) => this.contains(offset);
 

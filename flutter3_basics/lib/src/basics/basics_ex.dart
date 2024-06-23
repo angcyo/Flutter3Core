@@ -940,6 +940,9 @@ extension OffsetEx on Offset {
 
   /// [Offset]的绝对值
   Offset abs() => Offset(dx.abs(), dy.abs());
+
+  /// 平移矩阵
+  Matrix4 get translateMatrix => Matrix4.identity()..translate(dx, dy);
 }
 
 extension RectEx on Rect {
@@ -1177,6 +1180,36 @@ extension RectEx on Rect {
         right.toMmFromDp(),
         bottom.toMmFromDp(),
       );
+
+  /// 作用一个矩阵, 并保持某个锚点在作用矩阵后不变
+  /// [applyMatrix] 本次需要作用的矩阵, 会叠加在[originMatrix]上
+  /// [originMatrix] 原始矩形作用的矩阵
+  /// [anchor] 需要保持不动的锚点, 在(0,0)原始矩形中的坐标
+  /// @return 返回保持[anchor]不变的矩形
+  Rect applyMatrix(
+    Matrix4 applyMatrix, {
+    Offset anchor = Offset.zero,
+    Matrix4? originMatrix,
+  }) {
+    //基础矩形
+    final rect = Rect.fromLTWH(0, 0, width, height);
+    final translateMatrix = Matrix4.identity()..translate(left, top);
+    final Matrix4 beforeMatrix;
+    if (originMatrix == null) {
+      beforeMatrix = translateMatrix;
+    } else {
+      beforeMatrix = translateMatrix * originMatrix;
+    }
+
+    //锚点矩阵后的位置, 用来标识固定的目标位置
+    final Offset beforeAnchor = beforeMatrix.mapPoint(anchor);
+
+    final Matrix4 afterMatrix = beforeMatrix * applyMatrix;
+    final Offset afterAnchor = afterMatrix.mapPoint(anchor);
+
+    final afterRect = afterMatrix.mapRect(rect);
+    return afterRect + (beforeAnchor - afterAnchor);
+  }
 }
 
 extension SizeEx on Size {
