@@ -530,8 +530,7 @@ class ScaleControl extends BaseControl {
         if (!isFirstHandle) {
           final moveScenePoint =
               canvasViewBox.toScenePoint(event.localPosition);
-          final _moveScenePointInvert =
-              reverseRotateScenePoint(moveScenePoint)!;
+          final moveScenePointInvert = reverseRotateScenePoint(moveScenePoint)!;
 
           //需要计算的缩放比例
           double sx = 1;
@@ -542,7 +541,7 @@ class ScaleControl extends BaseControl {
             if (_isLockRatio) {
               //等比缩放
               final oldC = distance(anchorInvert, _downScenePointInvert);
-              final newC = distance(anchorInvert, _moveScenePointInvert);
+              final newC = distance(anchorInvert, moveScenePointInvert);
 
               final scale = newC / oldC;
               sx = scale;
@@ -560,10 +559,10 @@ class ScaleControl extends BaseControl {
             } else {
               //自由缩放
               final oldWidth = anchorInvert.dx - _downScenePointInvert.dx;
-              final newWidth = anchorInvert.dx - _moveScenePointInvert.dx;
+              final newWidth = anchorInvert.dx - moveScenePointInvert.dx;
 
               final oldHeight = anchorInvert.dy - _downScenePointInvert.dy;
-              final newHeight = anchorInvert.dy - _moveScenePointInvert.dy;
+              final newHeight = anchorInvert.dy - moveScenePointInvert.dy;
 
               sx = newWidth / oldWidth;
               sy = newHeight / oldHeight;
