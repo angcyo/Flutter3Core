@@ -69,6 +69,9 @@ class ImageRenderObject extends RenderProxyBox {
           controller.onPointerUpdate?.call(imagePointer);
         }
       }
+      if (controller.renderCropOverlay) {
+        controller._handleCropEvent(event);
+      }
       markNeedsPaint();
     }
   }
@@ -215,7 +218,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
       baseMatrix = translate * scale;
     }
     if (renderCropOverlay) {
-      if (_cropBounds == null || isDebug) {
+      if (_cropBounds == null) {
         resetCropBounds();
       }
     }
@@ -245,7 +248,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// 剪切框的位置, 需要反向映射[operateMatrix]才能是在图片中的位置
   Rect? _cropBounds;
 
-  /// 重置剪切框的位置和大小
+  /// 重置剪切框的位置和大小, 通常在重置图片之后操作
   void resetCropBounds({bool refresh = false}) {
     if (_renderObject == null) {
       return;
@@ -253,6 +256,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
     final rect = _imageOperateRect;
     if (cropScale <= 0) {
+      //图片比例/任意比例
       _cropBounds = rect;
     } else {
       final width;
@@ -274,9 +278,108 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
     }
   }
 
+  /// 更新剪切框, 通常在操作剪切框缩放之后调用
+  void updateCropBounds(Rect rect, {bool refresh = true}) {
+    _cropBounds = rect;
+    _initCropCorner();
+    if (refresh) {
+      _renderObject?.markNeedsPaint();
+    }
+  }
+
+  /// 更新剪切框的比例
+  void updateCropScale(double scale, {bool refresh = true}) {
+    cropScale = scale;
+    resetCropBounds(refresh: refresh);
+  }
+
+  /// 更新剪切框的类型
+  void updateCropType(CropType type, {bool refresh = true}) {
+    cropType = type;
+    if (refresh) {
+      _renderObject?.markNeedsPaint();
+    }
+  }
+
+  /// 按下时的触角信息
+  CropCornerRect? _downCornerRect;
+
+  Offset? _downPosition;
+
+  /// 按下时的剪切框信息
+  Rect? _downCropRect;
+
+  /// 处理手势
+  @callPoint
+  void _handleCropEvent(PointerEvent event) {
+    if (event.isPointerDown) {
+      _downCornerRect = cropCornerList.findFirst((e) {
+        if (e.rect.inflate(10).contains(event.localPosition)) {
+          return true;
+        }
+        return false;
+      });
+      if (_downCornerRect != null) {
+        //在缩放触点上按下, 则进行缩放操作
+        _downPosition = event.localPosition;
+        _downCropRect = _cropBounds;
+      } else if (_cropBounds?.contains(event.localPosition) == true) {
+        //在剪切框内按下, 则进行平移操作
+        _downPosition = event.localPosition;
+        _downCropRect = _cropBounds;
+      }
+    } else if (event.isPointerMove) {
+      if (_downCornerRect != null) {
+        //debugger();
+        //开始计算缩放后的剪切框
+        final movePosition = event.localPosition;
+        double sx;
+        double sy;
+        if (cropScale == 0) {
+          //任意比例
+          sx = (movePosition.dx - _downCornerRect!.keepAnchor.dx) /
+              (_downPosition!.dx - _downCornerRect!.keepAnchor.dx);
+          sy = (movePosition.dy - _downCornerRect!.keepAnchor.dy) /
+              (_downPosition!.dy - _downCornerRect!.keepAnchor.dy);
+          if (_downCornerRect!.alignment == Alignment.centerLeft ||
+              _downCornerRect!.alignment == Alignment.centerRight) {
+            sy = 1;
+          } else if (_downCornerRect!.alignment == Alignment.topCenter ||
+              _downCornerRect!.alignment == Alignment.bottomCenter) {
+            sx = 1;
+          }
+        } else {
+          //等比
+          final oldC = distance(_downPosition!, _downCornerRect!.keepAnchor);
+          final newC = distance(movePosition, _downCornerRect!.keepAnchor);
+          sx = sy = newC / oldC;
+        }
+        //l.d('sx:$sx sy:$sy');
+        final scale = Matrix4.identity()..scale(sx, sy);
+        final rect = _downCropRect!.applyMatrix(scale,
+            anchor: _downCornerRect!.keepAnchor - _downCropRect!.lt);
+        updateCropBounds(rect, refresh: true);
+      } else if (_downPosition != null) {
+        //平移操作
+        final movePosition = event.localPosition;
+        final tx = movePosition.dx - _downPosition!.dx;
+        final ty = movePosition.dy - _downPosition!.dy;
+
+        final rect = _downCropRect! + Offset(tx, ty);
+        updateCropBounds(rect, refresh: true);
+      }
+    } else if (event.isPointerFinish) {
+      _downPosition = null;
+      _downCropRect = null;
+      _downCornerRect = null;
+    }
+  }
+
   /// 绘制裁剪覆盖层
+  @callPoint
   void _paintCropOverlay(Canvas canvas, UiOffset offset) {
     if (_renderObject != null && _cropBounds != null) {
+      l.d(_cropBounds);
       //绘制覆盖层
       final parentPath = Path()
         ..addRect(Rect.fromLTWH(
@@ -360,6 +463,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
       //
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.rb,
           Alignment.topLeft,
           Rect.fromLTWH(
             left - cropLineWidth,
@@ -368,6 +472,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cropLineSize,
           )));
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.rb,
           Alignment.topLeft,
           Rect.fromLTWH(
             left,
@@ -376,6 +481,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cropLineWidth,
           )));
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.bottomCenter,
           Alignment.topCenter,
           Rect.fromLTWH(
             cx - cropLineSize / 2,
@@ -386,6 +492,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
       //
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.bottomLeft,
           Alignment.topRight,
           Rect.fromLTWH(
             right - cropLineSize + cropLineWidth,
@@ -394,6 +501,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cropLineWidth,
           )));
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.bottomLeft,
           Alignment.topRight,
           Rect.fromLTWH(
             right,
@@ -402,6 +510,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cropLineSize,
           )));
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.centerLeft,
           Alignment.centerRight,
           Rect.fromLTWH(
             right,
@@ -412,14 +521,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
       //
       cropCornerList.add(CropCornerRect(
-          Alignment.topRight,
-          Rect.fromLTWH(
-            right - cropLineSize + cropLineWidth,
-            top - cropLineWidth,
-            cropLineSize,
-            cropLineWidth,
-          )));
-      cropCornerList.add(CropCornerRect(
+          _cropBounds!.lt,
           Alignment.bottomRight,
           Rect.fromLTWH(
             right,
@@ -428,6 +530,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cropLineSize,
           )));
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.lt,
           Alignment.bottomRight,
           Rect.fromLTWH(
             right - cropLineSize + cropLineWidth,
@@ -438,6 +541,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
       //
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.topCenter,
           Alignment.bottomCenter,
           Rect.fromLTWH(
             cx - cropLineSize / 2,
@@ -446,6 +550,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cropLineWidth,
           )));
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.rt,
           Alignment.bottomLeft,
           Rect.fromLTWH(
             left - cropLineWidth,
@@ -454,6 +559,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cropLineWidth,
           )));
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.rt,
           Alignment.bottomLeft,
           Rect.fromLTWH(
             left - cropLineWidth,
@@ -464,6 +570,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
       //
       cropCornerList.add(CropCornerRect(
+          _cropBounds!.centerRight,
           Alignment.centerLeft,
           Rect.fromLTWH(
             left - cropLineWidth,
@@ -483,8 +590,14 @@ enum CropType {
 }
 
 class CropCornerRect {
+  /// 操作当前锚点时,需要保持矩形上的什么位置不变
+  Offset keepAnchor;
+
+  /// 锚点的方向位置
   Alignment alignment;
+
+  /// 锚点的位置
   Rect rect;
 
-  CropCornerRect(this.alignment, this.rect);
+  CropCornerRect(this.keepAnchor, this.alignment, this.rect);
 }
