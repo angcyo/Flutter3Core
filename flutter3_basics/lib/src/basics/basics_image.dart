@@ -408,6 +408,8 @@ extension ImageEx on UiImage {
     return image;
   }
 
+  //--
+
   /// 缩放图片
   /// [transformSync]
   Future<UiImage> scale({double sx = 1, double sy = 1}) {
@@ -418,6 +420,40 @@ extension ImageEx on UiImage {
   /// [transformSync]
   UiImage scaleSync({double sx = 1, double sy = 1}) {
     return transformSync(createScaleMatrix(sx: sx, sy: sy));
+  }
+
+  //--
+
+  /// 裁剪图片
+  /// [clipRect] 剪切区域, 以及输出的图片大小
+  /// [clip] 需要裁剪的区域, 在图片中的1:1坐标系
+  /// [matrix] 图片绘制的矩阵
+  /// [transformSync]
+  Future<UiImage> crop(Rect clipRect, Path? clip, {Matrix4? matrix}) async {
+    final image = await drawImage(clipRect.size, (canvas) {
+      canvas.withTranslate(-clipRect.left, -clipRect.top, () {
+        canvas.withClipPath(clip, () {
+          canvas.withMatrix(matrix, () {
+            canvas.drawImage(this, Offset.zero, Paint());
+          });
+        });
+      });
+    });
+    return image;
+  }
+
+  /// [crop]
+  UiImage cropSync(Rect clipRect, Path? clip, {Matrix4? matrix}) {
+    final image = drawImageSync(clipRect.size, (canvas) {
+      canvas.withTranslate(-clipRect.left, -clipRect.top, () {
+        canvas.withClipPath(clip, () {
+          canvas.withMatrix(matrix, () {
+            canvas.drawImage(this, Offset.zero, Paint());
+          });
+        });
+      });
+    });
+    return image;
   }
 }
 
