@@ -24,7 +24,7 @@ class ImageRenderWidget extends SingleChildRenderObjectWidget {
 }
 
 /// 核心渲染对象
-class ImageRenderObject extends RenderProxyBox {
+class ImageRenderObject extends RenderProxyBox implements TickerProvider {
   ImageRenderController controller;
 
   ImageRenderObject(this.controller);
@@ -36,6 +36,8 @@ class ImageRenderObject extends RenderProxyBox {
 
   @override
   void detach() {
+    _ticker?.dispose();
+    _ticker = null;
     super.detach();
   }
 
@@ -121,6 +123,19 @@ class ImageRenderObject extends RenderProxyBox {
       }
     }
   }
+
+  //region ---Ticker---
+
+  Ticker? _ticker;
+
+  @override
+  Ticker createTicker(TickerCallback onTick) {
+    _ticker =
+        Ticker(onTick, debugLabel: 'created by ${describeIdentity(this)}');
+    return _ticker!;
+  }
+
+//endregion ---Ticker---
 }
 
 /// 控制器
@@ -227,8 +242,25 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// 基础矩阵
   Matrix4? baseMatrix;
 
+  /// 图片仅渲染时的矩阵
+  Matrix4 get renderMatrix {
+    final rotate = createRotateMatrix(
+      cropRotate.hd,
+      anchor: _imageRect.center,
+    );
+    final flip = createFlipMatrix(
+      flipX: cropFlipX,
+      flipY: cropFlipY,
+      anchor: _imageRect.center,
+    );
+    return rotate * flip;
+  }
+
   /// 操作后的矩阵, 包含了基础矩阵, 和操作属性的矩阵
-  Matrix4 get operateMatrix => baseMatrix ?? Matrix4.identity();
+  Matrix4 get operateMatrix {
+    final base = baseMatrix ?? Matrix4.identity();
+    return base * renderMatrix;
+  }
 
   //endregion --绘制操作--
 
@@ -245,10 +277,31 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   @configProperty
   double cropScale = -1;
 
+  /// 是否水平翻转
+  @configProperty
+  bool cropFlipX = false;
+
+  /// 是否垂直翻转
+  @configProperty
+  bool cropFlipY = false;
+
+  /// 旋转角度, 角度单位
+  @configProperty
+  double cropRotate = 0;
+
   /// 剪切框的位置, 需要反向映射[operateMatrix]才能是在图片中的位置
   Rect? _cropBounds;
 
+  /// 最小剪切矩形范围
+  Rect get _minCropBounds => Rect.fromLTWH(
+        _imageOperateRect.left,
+        _imageOperateRect.top,
+        cropLineSize * 2,
+        cropLineSize * 2,
+      );
+
   /// 重置剪切框的位置和大小, 通常在重置图片之后操作
+  @api
   void resetCropBounds({bool refresh = false}) {
     if (_renderObject == null) {
       return;
@@ -259,8 +312,8 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
       //图片比例/任意比例
       _cropBounds = rect;
     } else {
-      final width;
-      final height;
+      final double width;
+      final double height;
       if (rect.width <= rect.height) {
         width = rect.width;
         height = width / cropScale;
@@ -279,6 +332,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   }
 
   /// 更新剪切框, 通常在操作剪切框缩放之后调用
+  @api
   void updateCropBounds(Rect rect, {bool refresh = true}) {
     _cropBounds = rect;
     _initCropCorner();
@@ -288,17 +342,100 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   }
 
   /// 更新剪切框的比例
+  @api
   void updateCropScale(double scale, {bool refresh = true}) {
     cropScale = scale;
     resetCropBounds(refresh: refresh);
   }
 
   /// 更新剪切框的类型
+  @api
   void updateCropType(CropType type, {bool refresh = true}) {
     cropType = type;
     if (refresh) {
       _renderObject?.markNeedsPaint();
     }
+  }
+
+  /// 更新翻转属性
+  @api
+  void updateFlip({bool? flipX, bool? flipY, bool refresh = true}) {
+    cropFlipX = flipX ?? cropFlipX;
+    cropFlipY = flipY ?? cropFlipY;
+    if (refresh) {
+      _renderObject?.markNeedsPaint();
+    }
+  }
+
+  /// 切换翻转属性
+  @api
+  void toggleFlipX({bool refresh = true}) {
+    cropFlipX = !cropFlipX;
+    if (refresh) {
+      _renderObject?.markNeedsPaint();
+    }
+  }
+
+  /// 切换翻转属性
+  @api
+  void toggleFlipY({bool refresh = true}) {
+    cropFlipY = !cropFlipY;
+    if (refresh) {
+      _renderObject?.markNeedsPaint();
+    }
+  }
+
+  AnimationController? _lastAnimate;
+
+  /// 更新旋转角度
+  /// [rotate] 目标要旋转到的角度
+  @api
+  void updateRotate(
+    double rotate, {
+    bool refresh = true,
+    bool animate = true,
+  }) {
+    if (animate) {
+      if (_lastAnimate != null) {
+        assert(() {
+          l.d('动画正在进行..., 忽略操作');
+          return true;
+        }());
+        return;
+      }
+    }
+    final oldCropRotate = cropRotate;
+    final newCropRotate = rotate % 360;
+    cropRotate = newCropRotate;
+    resetCropBounds(refresh: refresh);
+    if ((refresh || animate) && _renderObject != null) {
+      if (animate) {
+        _lastAnimate = animation(_renderObject!, (value, isCompleted) {
+          cropRotate = oldCropRotate + (rotate - oldCropRotate) * value;
+          _renderObject?.markNeedsPaint();
+          if (isCompleted) {
+            _lastAnimate = null;
+          }
+        });
+      }
+      _renderObject?.markNeedsPaint();
+    }
+  }
+
+  /// 获取剪切的图片
+  Future<UiImage?> cropImage() async {
+    if (_cropBounds != null) {
+      final base = baseMatrix ?? Matrix4.identity();
+      final bounds = base.invertedMatrix().mapRect(_cropBounds!);
+      final cropPath = Path();
+      if (cropType == CropType.oval) {
+        cropPath.addOval(bounds);
+      } else {
+        cropPath.addRect(bounds);
+      }
+      return image?.crop(bounds, cropPath, matrix: renderMatrix);
+    }
+    return null;
   }
 
   /// 按下时的触角信息
@@ -335,7 +472,8 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
         final movePosition = event.localPosition;
         double sx;
         double sy;
-        if (cropScale == 0) {
+        final equalRatio = cropScale != 0;
+        if (!equalRatio) {
           //任意比例
           sx = (movePosition.dx - _downCornerRect!.keepAnchor.dx) /
               (_downPosition!.dx - _downCornerRect!.keepAnchor.dx);
@@ -355,17 +493,37 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
           sx = sy = newC / oldC;
         }
         //l.d('sx:$sx sy:$sy');
+        final pair = Limit.limitRectScale(
+          _downCropRect!,
+          sx,
+          sy,
+          equalRatio: equalRatio,
+          minRect: _minCropBounds,
+          maxRect: _imageOperateRect,
+        );
+        sx = pair.sx;
+        sy = pair.sy;
         final scale = Matrix4.identity()..scale(sx, sy);
-        final rect = _downCropRect!.applyMatrix(scale,
-            anchor: _downCornerRect!.keepAnchor - _downCropRect!.lt);
-        updateCropBounds(rect, refresh: true);
+        final rect = _downCropRect!.applyMatrix(
+          scale,
+          anchor: _downCornerRect!.keepAnchor - _downCropRect!.lt,
+          limitContainerRect: _imageOperateRect,
+        );
+        if (rect != _downCropRect!) {
+          updateCropBounds(rect, refresh: true);
+        }
       } else if (_downPosition != null) {
         //平移操作
         final movePosition = event.localPosition;
         final tx = movePosition.dx - _downPosition!.dx;
         final ty = movePosition.dy - _downPosition!.dy;
 
-        final rect = _downCropRect! + Offset(tx, ty);
+        final rect = Limit.limitRectTranslate(
+          _downCropRect!,
+          tx,
+          ty,
+          _imageOperateRect,
+        );
         updateCropBounds(rect, refresh: true);
       }
     } else if (event.isPointerFinish) {
@@ -379,10 +537,6 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   @callPoint
   void _paintCropOverlay(Canvas canvas, UiOffset offset) {
     if (_renderObject != null && _cropBounds != null) {
-      assert(() {
-        l.d(_cropBounds);
-        return true;
-      }());
       //绘制覆盖层
       final parentPath = Path()
         ..addRect(Rect.fromLTWH(
