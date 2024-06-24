@@ -73,13 +73,12 @@ extension FfiStringEx on String {
 
 extension FfiPixelsImageEx on PixelsImage {
   /// 转成图片
-  Future<ui.Image> toImage(int width, int height,
-      [ui.PixelFormat format = ui.PixelFormat.rgba8888]) {
+  Future<ui.Image> toImage([ui.PixelFormat format = ui.PixelFormat.rgba8888]) {
     final Completer<ui.Image> completer = Completer<ui.Image>();
     ui.decodeImageFromPixels(
       pixels.toBytes(),
-      width,
-      height,
+      w,
+      h,
       format,
       completer.complete,
     );
