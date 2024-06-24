@@ -40,6 +40,10 @@ class SingleImageDialog extends StatelessWidget {
                         .position(left: 0, top: 0)
                     : null))
             .blur(sigma: blur ? kM : 0.0)
+            .systemUiOverlay(
+              statusBarBrightness: Brightness.light,
+              statusBarIconBrightness: Brightness.light,
+            )
         /*.scroll()*/
         /*.container(
           color: globalConfig.globalTheme.whiteBgColor,

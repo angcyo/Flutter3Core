@@ -702,6 +702,39 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 系统ui覆盖
+  Widget systemUiOverlay({
+    BuildContext? context,
+    SystemUiOverlayStyle? style,
+    Color? statusBarColor,
+    Brightness? statusBarBrightness,
+    Brightness? statusBarIconBrightness,
+    bool? systemStatusBarContrastEnforced,
+    Color? systemNavigationBarColor,
+    Color? systemNavigationBarDividerColor,
+    Brightness? systemNavigationBarIconBrightness,
+    bool? systemNavigationBarContrastEnforced,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: style ??
+          SystemUiOverlayStyle(
+            systemNavigationBarColor: systemNavigationBarColor ??
+                globalTheme.systemNavigationBarColor,
+            systemNavigationBarDividerColor: systemNavigationBarDividerColor,
+            systemNavigationBarIconBrightness:
+                systemNavigationBarIconBrightness,
+            systemNavigationBarContrastEnforced:
+                systemNavigationBarContrastEnforced,
+            statusBarColor: statusBarColor ?? globalTheme.systemStatusBarColor,
+            statusBarBrightness: statusBarBrightness,
+            statusBarIconBrightness: statusBarIconBrightness,
+            systemStatusBarContrastEnforced: systemStatusBarContrastEnforced,
+          ),
+      child: this,
+    );
+  }
+
   //endregion ---SafeArea---
 
   /// 忽略小部件内的所有手势

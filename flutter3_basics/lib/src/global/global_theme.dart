@@ -32,6 +32,12 @@ class GlobalTheme {
   /// 暗一点的主题色
   Color get primaryColorDark => const Color(0xff0cabea);
 
+  /// 系统状态栏的颜色
+  Color get systemStatusBarColor => Colors.transparent;
+
+  /// 系统导航栏的颜色
+  Color get systemNavigationBarColor => accentColor;
+
   /// 界面背景颜色
   Color get surfaceBgColor => themeWhiteColor;
 

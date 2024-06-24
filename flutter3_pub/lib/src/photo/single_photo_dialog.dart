@@ -108,11 +108,17 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       );
     }
 
-    return result.material();
-    /*return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
-      child: result.material(),
-    );*/
+    /*return [
+      AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        title: "angcyo".text(),
+      ),
+      result,
+    ].stack()!.material();*/
+    return result.material().systemUiOverlay(
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.light,
+        );
   }
 
   Widget _buildLoading(BuildContext context, ImageChunkEvent? event) {

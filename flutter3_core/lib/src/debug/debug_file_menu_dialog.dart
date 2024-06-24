@@ -41,9 +41,11 @@ class DebugFileMenuDialog extends StatelessWidget {
           onTap: () {
             close(context);
             if (filePath?.mimeType()?.isImageMimeType == true) {
-              context.showWidgetDialog(SingleImageDialog(
-                filePath: filePath,
-              ));
+              context.showWidgetDialog(
+                  SingleImageDialog(
+                    filePath: filePath,
+                  ),
+                  useSafeArea: false);
             } else {
               context.showWidgetDialog(SingleTextDialog(
                 filePath: filePath,
