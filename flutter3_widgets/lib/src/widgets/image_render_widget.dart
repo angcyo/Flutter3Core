@@ -379,7 +379,10 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   @callPoint
   void _paintCropOverlay(Canvas canvas, UiOffset offset) {
     if (_renderObject != null && _cropBounds != null) {
-      l.d(_cropBounds);
+      assert(() {
+        l.d(_cropBounds);
+        return true;
+      }());
       //绘制覆盖层
       final parentPath = Path()
         ..addRect(Rect.fromLTWH(
