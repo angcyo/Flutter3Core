@@ -31,7 +31,13 @@ class CoreDialogTitle extends StatelessWidget {
   final Widget? subTitleWidget;
   final TextStyle? subTitleTextStyle;
 
+  /// 点击取消后的回调
+  final ClickAction? onLeadingTap;
+
   /// 点击确认后的返回值
+  final ClickAction? onTrailingTap;
+
+  /// 拦截返回值
   final ResultCallback? onPop;
 
   //--
@@ -58,6 +64,8 @@ class CoreDialogTitle extends StatelessWidget {
     this.invisibleTrailing = false,
     this.titleTextStyle,
     this.subTitleTextStyle,
+    this.onLeadingTap,
+    this.onTrailingTap,
     this.onPop,
     this.enableLine = true,
     this.line,
@@ -78,7 +86,11 @@ class CoreDialogTitle extends StatelessWidget {
               ),
               enable: enableLeading,
               onTap: () {
-                context.pop();
+                if (onLeadingTap == null) {
+                  context.pop();
+                } else {
+                  onLeadingTap?.call(context);
+                }
               },
             );
 
@@ -94,7 +106,11 @@ class CoreDialogTitle extends StatelessWidget {
               ),
               enable: enableTrailing,
               onTap: () {
-                context.pop(onPop == null ? true : onPop?.call());
+                if (onTrailingTap == null) {
+                  context.pop(onPop == null ? true : onPop?.call());
+                } else {
+                  onTrailingTap?.call(context);
+                }
               },
             );
 
