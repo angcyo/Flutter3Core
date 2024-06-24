@@ -1185,11 +1185,13 @@ extension RectEx on Rect {
   /// [applyMatrix] 本次需要作用的矩阵, 会叠加在[originMatrix]上
   /// [originMatrix] 原始矩形作用的矩阵
   /// [anchor] 需要保持不动的锚点, 在(0,0)原始矩形中的坐标
+  /// [limitContainerRect] 限制操作后的矩形在此矩形范围内, 不指定则不限制
   /// @return 返回保持[anchor]不变的矩形
   Rect applyMatrix(
     Matrix4 applyMatrix, {
     Offset anchor = Offset.zero,
     Matrix4? originMatrix,
+    Rect? limitContainerRect,
   }) {
     //基础矩形
     final rect = Rect.fromLTWH(0, 0, width, height);
@@ -1208,7 +1210,18 @@ extension RectEx on Rect {
     final Offset afterAnchor = afterMatrix.mapPoint(anchor);
 
     final afterRect = afterMatrix.mapRect(rect);
-    return afterRect + (beforeAnchor - afterAnchor);
+    final result = afterRect + (beforeAnchor - afterAnchor);
+
+    if (limitContainerRect != null) {
+      if (result.left < limitContainerRect.left ||
+          result.top < limitContainerRect.top ||
+          result.right > limitContainerRect.right ||
+          result.bottom > limitContainerRect.bottom) {
+        //超出边界, 则直接返回自身
+        return this;
+      }
+    }
+    return result;
   }
 }
 
