@@ -109,6 +109,10 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
     }
 
     return result.material();
+    /*return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: result.material(),
+    );*/
   }
 
   Widget _buildLoading(BuildContext context, ImageChunkEvent? event) {

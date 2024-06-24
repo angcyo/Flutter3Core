@@ -186,10 +186,12 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
       );
       result = [
         result,
-        material.Text(
-          "${currentIndex + 1}/${widget.photoItems.length}",
-          style: const TextStyle(color: Colors.white),
-        ).align(Alignment.bottomCenter).padding(kXh),
+        "${currentIndex + 1}/${widget.photoItems.length}"
+            .text(
+              style: const TextStyle(color: Colors.white),
+            )
+            .align(Alignment.bottomCenter)
+            .padding(kXh),
       ].stack()!;
     }
     if (widget.tapDismiss) {
