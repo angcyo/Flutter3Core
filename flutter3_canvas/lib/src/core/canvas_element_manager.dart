@@ -264,7 +264,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return;
     }
     if (offset != null) {
-      for (var element in list) {
+      for (final element in list) {
         element.translateElement(
             Matrix4.identity()..translate(offset.dx, offset.dy));
       }
@@ -272,7 +272,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     final old = elements.clone();
     elements.addAll(list);
-    for (var element in list) {
+    for (final element in list) {
       element.attachToCanvasDelegate(canvasDelegate);
     }
     canvasDelegate.dispatchCanvasElementListChanged(
@@ -298,7 +298,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           //debugger();
           elements.reset(old);
           canvasElementControlManager.onCanvasElementDeleted(list);
-          for (var element in list) {
+          for (final element in list) {
             element.detachFromCanvasDelegate(canvasDelegate);
           }
           canvasDelegate.dispatchCanvasElementListChanged(
@@ -307,7 +307,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         () {
           //debugger();
           elements.reset(newList);
-          for (var element in list) {
+          for (final element in list) {
             element.attachToCanvasDelegate(canvasDelegate);
           }
           canvasDelegate.dispatchCanvasElementListChanged(
@@ -337,7 +337,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final op = elements.removeAll(list);
     //删除选中的元素
     canvasElementControlManager.onCanvasElementDeleted(op);
-    for (var element in op) {
+    for (final element in op) {
       element.detachFromCanvasDelegate(canvasDelegate);
     }
     canvasDelegate.dispatchCanvasElementListChanged(
@@ -349,7 +349,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         () {
           //debugger();
           elements.reset(old);
-          for (var element in op) {
+          for (final element in op) {
             element.attachToCanvasDelegate(canvasDelegate);
           }
           canvasDelegate.dispatchCanvasElementListChanged(
@@ -359,7 +359,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           //debugger();
           elements.reset(newList);
           canvasElementControlManager.onCanvasElementDeleted(op);
-          for (var element in op) {
+          for (final element in op) {
             element.detachFromCanvasDelegate(canvasDelegate);
           }
           canvasDelegate.dispatchCanvasElementListChanged(
@@ -417,11 +417,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   void _resetElementList(List<ElementPainter> from, List<ElementPainter> to) {
-    for (var element in from) {
+    for (final element in from) {
       element.detachFromCanvasDelegate(canvasDelegate);
     }
     elements.reset(to);
-    for (var element in to) {
+    for (final element in to) {
       element.attachToCanvasDelegate(canvasDelegate);
     }
   }
@@ -443,7 +443,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool checkLockOperate = true,
   }) {
     final result = <ElementPainter>[];
-    for (var element in elements) {
+    for (final element in elements) {
       if ((!checkLockOperate || !element.paintState.isLockOperate) &&
           element.hitTest(point: point, rect: rect, path: path)) {
         result.add(element);
@@ -696,7 +696,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         elements, canvasElementControlManager.enableResetElementAngle);
     newList.add(group);
 
-    for (var element in elements) {
+    for (final element in elements) {
       element.onSelfGroupFrom(group);
     }
 
@@ -723,7 +723,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return;
     }
 
-    var children = group.children;
+    final children = group.children;
     if (children == null || children.isEmpty) {
       assert(() {
         l.d('不满足解组条件');
@@ -736,7 +736,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     newList.remove(group);
     newList.addAll(children);
 
-    for (var element in children) {
+    for (final element in children) {
       element.onSelfUngroupFrom(group);
     }
 
@@ -774,7 +774,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     final undoState = group.createStateStack();
-    for (var element in children) {
+    for (final element in children) {
       final elementBounds = element.paintProperty
           ?.getBounds(canvasElementControlManager.enableResetElementAngle);
       if (elementBounds != null) {
@@ -888,7 +888,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         final space = centerMiddleSpace / (children.length - 1);
 
         double position = 0.0;
-        for (var element in list) {
+        for (final element in list) {
           final bounds = element.paintProperty
               ?.getBounds(canvasElementControlManager.enableResetElementAngle);
           if (element == first) {
@@ -942,7 +942,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         final space = middleSpace / (children.length - 1);
 
         double position = 0.0;
-        for (var element in list) {
+        for (final element in list) {
           final bounds = element.paintProperty
               ?.getBounds(canvasElementControlManager.enableResetElementAngle);
           if (element == first) {
@@ -1002,7 +1002,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
 
       final undoState = group.createStateStack();
-      for (var element in children) {
+      for (final element in children) {
         if (element == anchorElement) {
           continue;
         }
@@ -1200,7 +1200,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return;
     }
     final newElementList = <ElementPainter>[];
-    for (var element in elementList) {
+    for (final element in elementList) {
       final newElement = element.copyElement();
       newElementList.add(newElement);
     }

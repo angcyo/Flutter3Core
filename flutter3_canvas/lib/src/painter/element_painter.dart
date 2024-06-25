@@ -644,7 +644,7 @@ class ElementPainter extends IPainter
     }
     final image = drawImageSync(bounds.size, (canvas) {
       canvas.drawInRect(Offset.zero & bounds.size, bounds, () {
-        painting(canvas, PaintMeta(host: elementOutputHost));
+        painting(canvas, const PaintMeta(host: elementOutputHost));
       });
     });
     /*assert(() {
