@@ -4,7 +4,7 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/03/12
 ///
-class CanvasUndoManager extends UndoManager {
+class CanvasUndoManager extends UndoActionManager {
   final CanvasDelegate canvasDelegate;
 
   CanvasUndoManager(this.canvasDelegate);
@@ -28,7 +28,7 @@ class CanvasUndoManager extends UndoManager {
       }());
       return;
     }
-    add(UndoItem(() {
+    add(UndoActionItem(() {
       undoState.restore();
     }, () {
       redoState.restore();

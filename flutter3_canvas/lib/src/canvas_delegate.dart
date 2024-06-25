@@ -73,6 +73,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---入口点---
 
   /// 上下文, 用来发送通知
+  /// [CanvasWidget.createRenderObject]
+  /// [CanvasWidget.updateRenderObject]
   BuildContext? delegateContext;
 
   /// 绘制的入口点
@@ -137,6 +139,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   CanvasStyle canvasStyle = CanvasStyle();
 
   /// 重绘通知, 监听此通知, 主动触发重绘
+  /// [CanvasRenderBox]
   ValueNotifier<int> repaint = ValueNotifier(0);
 
   /// 视口控制
@@ -154,7 +157,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 回退栈管理
   late CanvasUndoManager canvasUndoManager = CanvasUndoManager(this);
 
-  /// 画布事件监听
+  /// 画布回调监听
   Set<CanvasListener> canvasListeners = {};
 
   /// 重绘次数
@@ -199,15 +202,21 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     lastRequestRefreshTime = nowDuration();
     repaint.value++;
 
-    _cancelIdleTimer();
-    _idleTimer = postDelayCallback(() {
-      _idleTimer = null;
-      dispatchCanvasIdle(this, time);
-    }, idleTimeout);
+    _checkIdle(time);
   }
 
   Timer? _idleTimer;
 
+  /// 空闲检测
+  void _checkIdle(Duration lastRefreshTime) {
+    _cancelIdleTimer();
+    _idleTimer = postDelayCallback(() {
+      _idleTimer = null;
+      dispatchCanvasIdle(this, lastRefreshTime);
+    }, idleTimeout);
+  }
+
+  /// 取消空闲检测
   void _cancelIdleTimer() {
     _idleTimer?.cancel();
     _idleTimer = null;

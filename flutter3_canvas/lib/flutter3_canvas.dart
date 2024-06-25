@@ -18,7 +18,6 @@ part 'src/axis/axis_manager.dart';
 part 'src/canvas.dart';
 part 'src/canvas_ex.dart';
 part 'src/canvas_delegate.dart';
-part 'src/canvas_listener.dart';
 part 'src/component/canvas_bounds_event_component.dart';
 part 'src/component/canvas_element_widget.dart';
 part 'src/component/component.dart';

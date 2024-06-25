@@ -5,13 +5,13 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/03/12
 ///
 /// 回退栈管理
-class UndoManager {
-  final List<UndoItem> undoList = [];
-  final List<UndoItem> redoList = [];
+class UndoActionManager with Diagnosticable {
+  final List<UndoActionItem> undoList = [];
+  final List<UndoActionItem> redoList = [];
 
   /// 添加一个可以撤销的操作
   /// 每次添加一个撤销操作, 都会会清空重做列表
-  void add(UndoItem item) {
+  void add(UndoActionItem item) {
     undoList.add(item);
     redoList.clear();
 
@@ -61,13 +61,13 @@ class UndoManager {
 
   /// 添加一个可以撤销的操作, 并且立即执行
   @supportUndo
-  UndoItem? addRunRedo([
+  UndoActionItem? addRunRedo([
     Action? undo,
     Action? redo,
     bool runRedo = true,
     UndoType type = UndoType.normal,
   ]) {
-    final item = UndoItem(undo, redo);
+    final item = UndoActionItem(undo, redo);
     if (runRedo) {
       item.doRedo();
     }
@@ -98,15 +98,22 @@ class UndoManager {
     }
   }
 
-//endregion ---改变通知---
+  //endregion ---改变通知---
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty("可回退数量", undoList.size()));
+    properties.add(IntProperty("可恢复数量", redoList.size()));
+  }
 }
 
 @immutable
-class UndoItem {
+class UndoActionItem {
   final Action? undo;
   final Action? redo;
 
-  const UndoItem([this.undo, this.redo]);
+  const UndoActionItem([this.undo, this.redo]);
 
   /// 执行回退
   /// `throw UnimplementedError();`

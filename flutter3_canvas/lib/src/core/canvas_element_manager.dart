@@ -92,13 +92,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final canvasViewBox = canvasDelegate.canvasViewBox;
     canvas.withClipRect(canvasViewBox.canvasBounds, () {
       //---元素绘制
-      for (var element in beforeElements) {
+      for (final element in beforeElements) {
         paintElement(canvas, paintMeta, element);
       }
-      for (var element in elements) {
+      for (final element in elements) {
         paintElement(canvas, paintMeta, element);
       }
-      for (var element in afterElements) {
+      for (final element in afterElements) {
         paintElement(canvas, paintMeta, element);
       }
       //---控制绘制
@@ -110,7 +110,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [paintElements]
   @property
   void paintElement(
-      Canvas canvas, PaintMeta paintMeta, ElementPainter element) {
+    Canvas canvas,
+    PaintMeta paintMeta,
+    ElementPainter element,
+  ) {
     final canvasViewBox = canvasDelegate.canvasViewBox;
     if (element.isVisibleInCanvasBox(canvasViewBox)) {
       element.painting(canvas, paintMeta);
@@ -290,7 +293,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoItem(
+      canvasDelegate.canvasUndoManager.add(UndoActionItem(
         () {
           //debugger();
           elements.reset(old);
@@ -342,7 +345,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoItem(
+      canvasDelegate.canvasUndoManager.add(UndoActionItem(
         () {
           //debugger();
           elements.reset(old);
@@ -396,7 +399,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = op;
-      canvasDelegate.canvasUndoManager.add(UndoItem(
+      canvasDelegate.canvasUndoManager.add(UndoActionItem(
         () {
           //debugger();
           _resetElementList(newList, old);
@@ -636,7 +639,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoItem(
+      canvasDelegate.canvasUndoManager.add(UndoActionItem(
         () {
           //debugger();
           elements.reset(old);
@@ -1132,7 +1135,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoItem(
+      canvasDelegate.canvasUndoManager.add(UndoActionItem(
         () {
           //debugger();
           elements.reset(old);
