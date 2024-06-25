@@ -82,7 +82,19 @@ class PointEventHandler {
 abstract class GraffitiPainterHandler<T extends GraffitiPainter>
     extends PointEventHandler {
   /// 画笔的宽度
+  @property
   double painterWidth = 1;
+
+  /// 限制最小宽度
+  @configProperty
+  double minPainterWidth = 1;
+
+  /// 限制最大宽度
+  @configProperty
+  double maxPainterWidth = 30;
+
+  /// 是否可以设置笔的大小
+  bool canUpdatePainterWidth = true;
 
   T? painter;
 
@@ -140,6 +152,10 @@ class GraffitiPencilHandler extends GraffitiPainterHandler {
 /// 钢笔对象, 输出的数据是矢量, 粗细一致
 /// [Path]
 class GraffitiFountainPenHandler extends GraffitiPainterHandler {
+  GraffitiFountainPenHandler() {
+    canUpdatePainterWidth = false;
+  }
+
   @override
   GraffitiPainter? createPainter() => GraffitiFountainPenPainter();
 }
