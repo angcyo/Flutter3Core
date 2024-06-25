@@ -57,9 +57,9 @@ class LogFileInterceptor extends Interceptor {
 
     //添加请求头
     options.headers["log-uuid"] = id;
-    options.headers["request-time"] = nowTime(); //请求时间
+    options.headers["request-time"] = nowTimestamp(); //请求时间
 
-    uuidMap[hashCode] = (id, nowTime());
+    uuidMap[hashCode] = (id, nowTimestamp());
     var log = stringBuilder((builder) {
       builder.appendLine("-->$id");
       builder.appendLine("[${options.method}]${options.uri}");

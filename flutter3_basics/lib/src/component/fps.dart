@@ -19,7 +19,7 @@ class Fps {
   /// 请在一帧内触发此方法
   void update() {
     _fpsCount++;
-    Duration duration = nowTime().milliseconds;
+    Duration duration = nowTimestamp().milliseconds;
     if (previous != null) {
       final time = duration - previous!;
       final milliseconds = time.inMilliseconds;

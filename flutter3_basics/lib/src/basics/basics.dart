@@ -14,10 +14,10 @@ void ensureInitialized() => WidgetsFlutterBinding.ensureInitialized();
 
 /// 当前时间戳 `1699064019689` 13位
 /// [DateTime]
-int nowTime() => DateTime.now().millisecondsSinceEpoch;
+int nowTimestamp() => DateTime.now().millisecondsSinceEpoch;
 
 /// 当前的[Duration]
-Duration nowDuration() => Duration(milliseconds: nowTime());
+Duration nowDuration() => Duration(milliseconds: nowTimestamp());
 
 /// 格式化时间 `2023-11-04 10:13:40.083707`
 String nowTimeString([String? newPattern = "yyyy-MM-dd HH:mm:ss.SSS"]) =>

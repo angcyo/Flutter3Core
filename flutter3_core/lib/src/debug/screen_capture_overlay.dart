@@ -9,7 +9,7 @@ class ScreenCaptureOverlay {
   /// 显示
   @callPoint
   static Future showScreenCaptureOverlay() async {
-    final path = await cacheFilePath("ScreenCapture${nowTime()}.png");
+    final path = await cacheFilePath("ScreenCapture${nowTimestamp()}.png");
     final image = await saveScreenCapture(path);
     if (image == null) {
       toastInfo('截屏失败');

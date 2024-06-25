@@ -24,7 +24,7 @@ Future<UiImage?> saveScreenCapture([
   double pixelRatio = 1.0,
 ]) async {
   final path =
-      (filePath ?? await cacheFilePath("ScreenCapture${nowTime()}.png"));
+      (filePath ?? await cacheFilePath("ScreenCapture${nowTimestamp()}.png"));
   final image = await captureScreenImage(context, pixelRatio);
   await image?.saveToFile(path.file());
   assert(() {

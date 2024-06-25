@@ -32,7 +32,7 @@ void postFrameCallbackIfNeed(FrameCallback callback) {
   if (schedulerPhase == SchedulerPhase.persistentCallbacks) {
     postFrameCallback(callback);
   } else {
-    callback(Duration(milliseconds: nowTime()));
+    callback(Duration(milliseconds: nowTimestamp()));
   }
 }
 

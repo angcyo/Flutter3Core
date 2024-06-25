@@ -43,7 +43,7 @@ class LTime {
       return def;
     }
     final start = DateTime.fromMillisecondsSinceEpoch(startTime);
-    final end = DateTime.fromMillisecondsSinceEpoch(endTime ?? nowTime());
+    final end = DateTime.fromMillisecondsSinceEpoch(endTime ?? nowTimestamp());
     final diff = end.difference(start);
     return diff.inMilliseconds.toPatternTime(pattern: pattern, unit: unit);
   }
@@ -51,7 +51,7 @@ class LTime {
   /// 记录时间
   @callPoint
   int tick() {
-    var time = nowTime();
+    var time = nowTimestamp();
     stack.push(time);
     return time;
   }

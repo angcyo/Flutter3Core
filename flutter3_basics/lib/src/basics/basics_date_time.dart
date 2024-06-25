@@ -11,7 +11,7 @@ part of '../../flutter3_basics.dart';
 /// [NumberFormat]
 /// [DateFormat]
 /// [BidiFormatter]
-/// [nowTime]
+/// [nowTimestamp]
 /// [nowTimeString]
 extension DateTimeEx on DateTime {
   /// 格式化时间 `2023-11-04 10:13:40.083`
@@ -51,7 +51,7 @@ extension TimeEx on int {
       String beforeYesterday = "前天",
       String? timePattern = "yyyy-MM-dd HH:mm:ss"}) {
     //10秒之内, 显示刚刚
-    final now = nowTime();
+    final now = nowTimestamp();
     final diff = now - this;
     if (diff < 10 * kSecond) return just;
     //1分钟之内, 显示几秒前

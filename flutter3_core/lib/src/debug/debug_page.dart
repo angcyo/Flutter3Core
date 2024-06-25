@@ -41,7 +41,7 @@ class DebugPage extends StatefulWidget {
     DebugAction(
       label: "截屏",
       clickAction: (context) async {
-        final path = await cacheFilePath("ScreenCapture${nowTime()}.png");
+        final path = await cacheFilePath("ScreenCapture${nowTimestamp()}.png");
         final image = await saveScreenCapture(path);
         if (image == null) {
           toastInfo('截屏失败');

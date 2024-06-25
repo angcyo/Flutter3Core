@@ -8,7 +8,7 @@ part of '../../flutter3_basics.dart';
 
 mixin StateLogMixin<T extends StatefulWidget> on State<T> {
   @protected
-  late String logTag = "${nowTime()}";
+  late String logTag = "${nowTimestamp()}";
 
   @override
   void initState() {
