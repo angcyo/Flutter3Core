@@ -246,3 +246,34 @@ class PixelTransparentPainter extends CustomPainter {
     return false;
   }
 }
+
+/// 绘制一个指定大小的点
+class PointPainter extends CustomPainter {
+  /// 点的直径
+  final double width;
+
+  /// 颜色
+  final Color color;
+
+  const PointPainter(
+    this.width, {
+    this.color = Colors.black,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawCircle(
+      Offset(size.width / 2, size.height / 2),
+      width / 2,
+      Paint()
+        ..style = ui.PaintingStyle.fill
+        ..color = color
+        ..strokeWidth = width / 2,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
