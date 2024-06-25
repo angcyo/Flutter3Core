@@ -50,22 +50,8 @@ class GraffitiPainter extends IPainter
 }
 
 /// 铅笔数据绘制, 宽度一致
-class GraffitiPencilPainter extends GraffitiPainter {
-  final List<Offset> points = [];
-
+class GraffitiPencilPainter extends GraffitiFountainPenPainter {
   GraffitiPencilPainter();
-
-  @override
-  void painting(Canvas canvas, PaintMeta paintMeta) {
-    canvas.drawPoints(ui.PointMode.polygon, points, paint);
-  }
-
-  /// 添加一个数据
-  @override
-  @property
-  void addPointEventMeta(PointEventMeta point) {
-    points.add(point.position);
-  }
 }
 
 /// 橡皮擦数据绘制
@@ -144,12 +130,12 @@ class GraffitiBrushPenPainter extends GraffitiPainter
   final List<PointEventMeta> pointListCache = [];
   final List<PointEventMeta> points = [];
 
-  double mVelocityFilterWeight = 0.8;
-  double mMinWidth = 3;
-  double mMaxWidth = 20;
+  double velocityFilterWeight = 0.8;
+  double minWidth = 3;
+  double maxWidth = 20;
 
-  double mLastWidth = (3 + 20) / 2;
-  double mLastVelocity = 0;
+  double _lastWidth = (3 + 20) / 2;
+  double _lastVelocity = 0;
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
@@ -180,13 +166,13 @@ class GraffitiBrushPenPainter extends GraffitiPainter
 
       double velocity = endPoint.velocityFrom(startPoint);
 
-      velocity = mVelocityFilterWeight * velocity +
-          (1 - mVelocityFilterWeight) * mLastVelocity;
+      velocity = velocityFilterWeight * velocity +
+          (1 - velocityFilterWeight) * _lastVelocity;
       velocity = velocity.ensureValid();
 
       // The new width is a function of the velocity. Higher velocities
       // correspond to thinner strokes.
-      double startWidth = mLastWidth;
+      double startWidth = _lastWidth;
       double endWidth = strokeWidth(velocity);
 
       //--
@@ -240,8 +226,8 @@ class GraffitiBrushPenPainter extends GraffitiPainter
       paint.strokeWidth = originalWidth;
 
       //--
-      mLastVelocity = velocity;
-      mLastWidth = endWidth;
+      _lastVelocity = velocity;
+      _lastWidth = endWidth;
 
       //--
       pointListCache.removeFirstIfNotEmpty();
@@ -249,6 +235,11 @@ class GraffitiBrushPenPainter extends GraffitiPainter
   }
 
   double strokeWidth(double velocity) {
-    return max(mMaxWidth / (velocity + 1), mMinWidth);
+    return max(maxWidth / (velocity + 1), minWidth);
+  }
+
+  void updateMaxWidth(double width) {
+    maxWidth = width;
+    _lastWidth = (minWidth + maxWidth) / 2;
   }
 }

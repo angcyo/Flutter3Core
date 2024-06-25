@@ -81,6 +81,9 @@ class PointEventHandler {
 /// [GraffitiPainter]
 abstract class GraffitiPainterHandler<T extends GraffitiPainter>
     extends PointEventHandler {
+  /// 画笔的宽度
+  double painterWidth = 1;
+
   T? painter;
 
   @overridePoint
@@ -90,6 +93,7 @@ abstract class GraffitiPainterHandler<T extends GraffitiPainter>
   @overridePoint
   void onStartPointerEvent(PointEventMeta eventMeta) {
     painter = createPainter();
+    painter?.paint.strokeWidth = painterWidth;
     painter?.addPointEventMeta(eventMeta);
     eventManager?.graffitiDelegate.graffitiElementManager
         .addAfterElement(painter);
@@ -113,6 +117,10 @@ abstract class GraffitiPainterHandler<T extends GraffitiPainter>
 /// 橡皮擦对象
 /// [Path]
 class GraffitiEraserHandler extends GraffitiPainterHandler {
+  GraffitiEraserHandler() {
+    painterWidth = 10;
+  }
+
   @override
   GraffitiPainter? createPainter() => GraffitiEraserPainter();
 }
@@ -120,8 +128,13 @@ class GraffitiEraserHandler extends GraffitiPainterHandler {
 /// 铅笔对象
 /// [Path]
 class GraffitiPencilHandler extends GraffitiPainterHandler {
+  GraffitiPencilHandler() {
+    painterWidth = 10;
+  }
+
   @override
-  GraffitiPainter? createPainter() => GraffitiPencilPainter();
+  GraffitiPainter? createPainter() =>
+      GraffitiPencilPainter()..paint.strokeWidth = painterWidth;
 }
 
 /// 钢笔对象, 输出的数据是矢量, 粗细一致
@@ -134,6 +147,11 @@ class GraffitiFountainPenHandler extends GraffitiPainterHandler {
 /// 毛笔对象, 输出的数据是图片, 速度越快, 宽度越细
 /// [Path]
 class GraffitiBrushPenHandler extends GraffitiPainterHandler {
+  GraffitiBrushPenHandler() {
+    painterWidth = 10;
+  }
+
   @override
-  GraffitiPainter? createPainter() => GraffitiBrushPenPainter();
+  GraffitiPainter? createPainter() =>
+      GraffitiBrushPenPainter()..updateMaxWidth(painterWidth);
 }

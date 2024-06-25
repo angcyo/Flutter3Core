@@ -24,7 +24,7 @@ class GraffitiPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void paint(PaintingContext context, Offset offset) {
     final canvas = context.canvas;
     canvas.withOffset(offset, () {
-      assert(() {
+      /*assert(() {
         canvas.drawRect(
             paintBounds + offset,
             Paint()
@@ -32,7 +32,7 @@ class GraffitiPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
               ..style = UiPaintingStyle.stroke
               ..color = Colors.purpleAccent);
         return true;
-      }());
+      }());*/
       final paintMeta = PaintMeta(host: graffitiDelegate);
       //
       canvas.withClipRect(paintBounds + offset, () {
