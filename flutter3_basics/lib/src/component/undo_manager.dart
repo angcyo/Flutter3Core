@@ -21,7 +21,7 @@ class UndoActionManager with Diagnosticable {
   /// 回退
   void undo() {
     assert(() {
-      l.d('准备撤销:[${undoList.length}]');
+      l.d('准备撤销,共[${undoList.length}]');
       return true;
     }());
     if (undoList.isNotEmpty) {
@@ -36,7 +36,7 @@ class UndoActionManager with Diagnosticable {
   /// 重做
   void redo() {
     assert(() {
-      l.d('准备重做:[${redoList.length}]');
+      l.d('准备重做,共[${redoList.length}]');
       return true;
     }());
 

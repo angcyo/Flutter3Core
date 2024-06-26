@@ -78,7 +78,33 @@ extension SvgStringEx on String {
       final scaleMatrix = Matrix4.identity()..scale(scale);
       return path.transformPath(scaleMatrix);
     }
-    return path;
+    return path..fillType = PathFillType.evenOdd;
+  }
+
+  /// 将svg的xml文档转换成[Path]对象
+  /// [mergePath] 是否将多个[Path]合并到一个[Path]中?
+  Future<List<Path>> toUiPathFromXml({bool mergePath = false}) async {
+    List<Path> result = [];
+    await decodeSvgString(
+      this,
+      listener: SvgListener()
+        ..onDrawElement = (element, data, paint, bounds) {
+          //consoleLog('${element.runtimeType} $bounds $data');
+          if (element is Path) {
+            element.fillType = PathFillType.evenOdd;
+            final first = result.firstOrNull;
+            if (first == null) {
+              result.add(element);
+            } else if (mergePath) {
+              //合并到一个Path
+              first.addPath(element, Offset.zero);
+            } else {
+              result.add(element);
+            }
+          }
+        },
+    );
+    return result;
   }
 
   /// 将svg xml字符串转换成[PictureInfo]对象

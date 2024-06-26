@@ -796,6 +796,6 @@ extension GCodeStringEx on String {
   /// GCode数据转换成[Path]可绘制对象
   Path? toPathFromGCode() {
     GCodeParser parser = GCodeParser();
-    return parser.parse(this);
+    return parser.parse(this)?..fillType = PathFillType.evenOdd;
   }
 }

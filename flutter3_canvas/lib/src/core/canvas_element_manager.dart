@@ -334,7 +334,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return;
     }
     final old = elements.clone();
-    final op = elements.removeAll(list);
+    //final op = elements.removeAll(list);
+    final op = removeElementListFromTop(list)!;
+
     //删除选中的元素
     canvasElementControlManager.onCanvasElementDeleted(op);
     for (final element in op) {
@@ -567,6 +569,61 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //region ---operate/api---
 
+  /// 查找指定元素对应的父元素, 如果有
+  ElementGroupPainter? findElementGroupPainter(ElementPainter? element) =>
+      findElementGroupPainterInChildren(element, elements);
+
+  /// [findElementGroupPainter]
+  ElementGroupPainter? findElementGroupPainterInChildren(
+      ElementPainter? element, List<ElementPainter>? children) {
+    for (final e in children ?? []) {
+      if (e is ElementGroupPainter) {
+        if (e.children?.contains(element) == true) {
+          return e;
+        }
+        return findElementGroupPainterInChildren(element, e.children);
+      }
+    }
+    return null;
+  }
+
+  /// 查找指定元素对应的顶层元素
+  ElementPainter? findTopElementPainter(ElementPainter? element) {
+    for (final e in elements) {
+      if (e == element) {
+        return e;
+      }
+      if (e.getSingleElementList().contains(element)) {
+        return e;
+      }
+    }
+    return element;
+  }
+
+  /// 从[elements]顶层中, 移除指定的元素列表
+  /// 如果移除的是[ElementGroupPainter]内部的子元素, 那么顶层的[ElementGroupPainter]也会被移除
+  ///
+  /// 此方法不支持undo操作, 请使用[removeElementList]
+  @api
+  List<ElementPainter>? removeElementListFromTop(List<ElementPainter>? list) {
+    if (list == null || isNullOrEmpty(list)) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return null;
+    }
+    final removeList = <ElementPainter>[];
+    for (final element in list) {
+      final top = findTopElementPainter(element);
+      if (top != null) {
+        removeList.add(top);
+      }
+    }
+    //remove
+    return elements.removeAll(removeList);
+  }
+
   /// 替换元素, 一个元素替换一个元素
   /// [oldElement] 需要被替换的旧元素
   /// [newElement] 新元素
@@ -632,7 +689,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         ? elements.indexOf(oldFirstElement)
         : -1;
 
-    elements.removeAll(oldElementList ?? []);
+    //elements.removeAll(oldElementList ?? []);
+    removeElementListFromTop(oldElementList);
     if (index >= 0 && newElementList != null) {
       elements.insertAll(index, newElementList);
     } else {
@@ -711,10 +769,6 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         elements, canvasElementControlManager.enableResetElementAngle);
     newList.add(group);
 
-    for (final element in elements) {
-      element.onSelfGroupFrom(group);
-    }
-
     //事件
     canvasDelegate.dispatchCanvasGroupChanged(group, elements);
 
@@ -752,8 +806,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     newList.addAll(children);
 
     for (final element in children) {
-      element.onSelfUngroupFrom(group);
+      element.onSelfElementUnGroupFrom(group);
     }
+    //这里不能使用resetChildren, 应为回退栈的时候, 会无法还原子元素
+    //group.resetChildren(null, false);
 
     //事件
     canvasDelegate.dispatchCanvasUngroupChanged(group);

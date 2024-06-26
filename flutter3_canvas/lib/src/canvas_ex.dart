@@ -46,7 +46,7 @@ extension CanvasElementIterableEx on Iterable<ElementPainter> {
   /// [ElementPainter.getSingleElementList]
   List<ElementPainter> getAllSingleElement() {
     final result = <ElementPainter>[];
-    for (var e in this) {
+    for (final e in this) {
       result.addAll(e.getSingleElementList());
     }
     return result;
@@ -69,6 +69,12 @@ extension CanvasElementIterableEx on Iterable<ElementPainter> {
       }
     }
     return result;
+  }
+
+  /// 所有元素是否都是矢量元素
+  bool isAllPathElement() {
+    final elementList = getAllSingleElement();
+    return elementList.all((e) => e.isPathElement);
   }
 }
 

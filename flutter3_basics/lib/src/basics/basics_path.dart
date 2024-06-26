@@ -269,6 +269,20 @@ extension PathEx on Path {
 }
 
 extension ListPathEx on List<Path> {
+  /// [PathEx.op]
+  /// [operation] 如果为null, 则直接添加路径
+  Path op([PathOperation? operation]) {
+    Path result = firstOrNull ?? Path();
+    for (int i = 1; i < length; i++) {
+      if (operation == null) {
+        result.addPath(this[i], Offset.zero);
+      } else {
+        result = result.op(this[i], operation);
+      }
+    }
+    return result;
+  }
+
   /// 变换路径, 返回新的路径
   List<Path> transformPath([Matrix4? matrix4]) {
     if (matrix4 == null) {

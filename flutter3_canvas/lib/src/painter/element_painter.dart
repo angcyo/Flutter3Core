@@ -131,7 +131,8 @@ class ElementPainter extends IPainter
   }
 
   /// 更新当前元素的边界到指定位置
-  /// 只修改[PaintProperty.left].[PaintProperty.top].[PaintProperty.scaleX].[PaintProperty.scaleY]
+  /// 只修改[PaintProperty.left].[PaintProperty.top]
+  /// [PaintProperty.scaleX].[PaintProperty.scaleY]
   @api
   void updateBoundsTo(@sceneCoordinate @dp Rect? bounds) {
     if (bounds == null) {
@@ -153,6 +154,27 @@ class ElementPainter extends IPainter
       paintProperty = property.copyWith()
         ..applyScaleWithCenter(scaleMatrix)
         ..applyTranslate(translate);
+    }
+  }
+
+  /// 更新元素的中心点到指定的位置
+  /// 只修改[PaintProperty.left].[PaintProperty.top]
+  @api
+  void updateCenterTo(@sceneCoordinate @dp Offset? center) {
+    if (center == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    final property = paintProperty;
+    if (property != null) {
+      final oldBounds = property.getBounds(true);
+      final translate = Matrix4.identity()
+        ..translate(
+            center.dx - oldBounds.center.dx, center.dy - oldBounds.center.dy);
+      paintProperty = property.copyWith()..applyTranslate(translate);
     }
   }
 
@@ -190,6 +212,21 @@ class ElementPainter extends IPainter
   }
 
   //endregion ---PaintProperty---
+
+  //region ---Group---
+
+  /// 父元素
+  ElementGroupPainter? get parentGroupPainter =>
+      canvasDelegate?.canvasElementManager.findElementGroupPainter(this);
+
+  /// 当当前元素被组合到指定的父元素中时触发
+  /// [ElementGroupPainter.resetChildren]
+  void onSelfElementGroupTo(ElementGroupPainter parent) {}
+
+  /// 当前元素从父元素中移除时触发
+  void onSelfElementUnGroupFrom(ElementGroupPainter parent) {}
+
+  //endregion ---Group---
 
   //region ---paint---
 
@@ -687,8 +724,17 @@ class ElementPainter extends IPainter
   @output
   Path? get elementOutputBoundsPath => paintProperty?.paintPath;
 
+  /// 是否是路径元素
+  /// [elementOutputPathList]
+  @output
+  bool get isPathElement => elementOutputPathList.isNotEmpty;
+
   /// 获取元素的输出[Path], 当前仅支持[PathElementPainter]元素
   /// 重写此方法以便支持更多类型的元素
+  ///
+  /// 此属性的数据, 同时也是矢量布尔运算的数据.
+  /// 如果所有对象都具有此属性, 则说明可以进行布尔运算.
+  ///
   /// [VectorPathEx.toSvgPathString]
   @output
   @overridePoint
@@ -736,20 +782,6 @@ class ElementPainter extends IPainter
 
   //endregion ---output---
 
-  //region ---callback---
-
-  /// 当前元素被组合到
-  /// [CanvasElementManager.groupElement]
-  @property
-  void onSelfGroupFrom(ElementGroupPainter group) {}
-
-  /// 当前元素被解组
-  /// [CanvasElementManager.ungroupElement]
-  @property
-  void onSelfUngroupFrom(ElementGroupPainter group) {}
-
-  //endregion ---callback---
-
   @override
   String toStringShort() =>
       '${classHash()} 边界:${paintProperty?.getBounds(canvasDelegate?.canvasElementManager.canvasElementControlManager.enableResetElementAngle == true)}';
@@ -789,9 +821,28 @@ class ElementGroupPainter extends ElementPainter {
   //region ---core--
 
   /// 重置子元素
+  /// [CanvasElementManager.groupElement]
+  /// [CanvasElementManager.ungroupElement]
   @api
   void resetChildren(List<ElementPainter>? children, bool resetGroupAngle) {
+    //可能需要先解父元素
+    this.children?.forEach((element) {
+      if (children?.contains(element) != true) {
+        element.onSelfElementUnGroupFrom(this);
+      }
+    });
     this.children = children;
+    //重新追加父元素
+    children?.forEach((element) {
+      if (element.parentGroupPainter == this) {
+        //已经是子元素了
+      } else {
+        if (element.parentGroupPainter != null) {
+          element.onSelfElementUnGroupFrom(element.parentGroupPainter!);
+        }
+        element.onSelfElementGroupTo(this);
+      }
+    });
     updatePaintPropertyFromChildren(resetGroupAngle);
   }
 
