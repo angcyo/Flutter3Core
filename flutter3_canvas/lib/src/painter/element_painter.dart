@@ -43,7 +43,11 @@ class ElementPainter extends IPainter
     final old = _paintState;
     _paintState = value;
     if (old != value) {
-      dispatchSelfPaintPropertyChanged(old, value, PropertyType.state);
+      dispatchSelfPaintPropertyChanged(
+        old,
+        value,
+        PropertyType.state,
+      );
     }
   }
 
@@ -54,7 +58,10 @@ class ElementPainter extends IPainter
   set isLockRatio(bool value) {
     paintState.isLockRatio = value;
     dispatchSelfPaintPropertyChanged(
-        paintState, paintState, PropertyType.state);
+      paintState,
+      paintState,
+      PropertyType.state,
+    );
   }
 
   bool get isVisible => paintState.isVisible;
@@ -62,7 +69,26 @@ class ElementPainter extends IPainter
   set isVisible(bool value) {
     paintState.isVisible = value;
     dispatchSelfPaintPropertyChanged(
-        paintState, paintState, PropertyType.state);
+      paintState,
+      paintState,
+      PropertyType.state,
+    );
+  }
+
+  /// 更新元素的名称和uuid
+  /// [paintState]
+  void updatePainterName(
+    String? elementName, {
+    String? elementUuid,
+  }) {
+    //debugger();
+    paintState.elementName = elementName;
+    paintState.elementUuid = elementUuid ?? paintState.elementUuid;
+    dispatchSelfPaintPropertyChanged(
+      paintState,
+      paintState,
+      PropertyType.state,
+    );
   }
 
   //endregion ---属性--
@@ -1459,10 +1485,12 @@ class ElementStateStack {
 enum PropertyType {
   /// 绘制的相关属性, 比如坐标/缩放/旋转/倾斜等信息
   /// 支持回退的属性
+  /// 对应[PaintProperty]
   @supportUndo
   paint,
 
   /// 元素的状态改变, 比如锁定/可见性/uuid/名称等信息
+  /// 对应[PaintState]
   state,
 
   /// 元素的数据改变, 比如内容等信息
