@@ -567,14 +567,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //region ---operate/api---
 
-  /// 替换元素
+  /// 替换元素, 一个元素替换一个元素
   /// [oldElement] 需要被替换的旧元素
   /// [newElement] 新元素
   /// [keepIndex] 是否保持原来的索引位置
+  ///
+  /// [replaceElementList]
   @api
   @supportUndo
-  void replaceElement(ElementPainter? oldElement, ElementPainter? newElement,
-      {UndoType undoType = UndoType.normal, bool keepIndex = false}) {
+  void replaceElement(
+    ElementPainter? oldElement,
+    ElementPainter? newElement, {
+    UndoType undoType = UndoType.normal,
+    bool keepIndex = false,
+  }) {
     if (oldElement == null && newElement == null) {
       assert(() {
         l.d('无效的操作');
@@ -593,15 +599,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final List<ElementPainter> newElementList =
         newElement == null ? [] : [newElement];
 
-    replaceElementList(oldElementList, newElementList,
-        keepIndex: keepIndex, undoType: undoType);
+    replaceElementList(
+      oldElementList,
+      newElementList,
+      keepIndex: keepIndex,
+      undoType: undoType,
+    );
   }
 
+  /// 一组元素替换一组元素
   @api
   @supportUndo
-  void replaceElementList(List<ElementPainter>? oldElementList,
-      List<ElementPainter>? newElementList,
-      {UndoType undoType = UndoType.normal, bool keepIndex = false}) {
+  void replaceElementList(
+    List<ElementPainter>? oldElementList,
+    List<ElementPainter>? newElementList, {
+    UndoType undoType = UndoType.normal,
+    bool keepIndex = false,
+  }) {
     if (isNullOrEmpty(oldElementList) && isNullOrEmpty(newElementList)) {
       assert(() {
         l.d('无效的操作');
