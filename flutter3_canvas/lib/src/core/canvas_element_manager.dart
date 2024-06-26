@@ -608,6 +608,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 一组元素替换一组元素
+  /// [keepIndex] 只能记录第一个元素的位置
   @api
   @supportUndo
   void replaceElementList(
