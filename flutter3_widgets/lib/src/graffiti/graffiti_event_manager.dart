@@ -10,12 +10,21 @@ class GraffitiEventManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   GraffitiEventManager(this.graffitiDelegate);
 
+  /// 手势按下时的坐标点, 抬起释放
+  @viewCoordinate
+  Offset? currentTouchPointer;
+
   /// 手势点位处理, 通常是笔/笔刷
   PointEventHandler? pointEventHandler;
 
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     if (event.isTouchEvent) {
+      if (event.isPointerFinish) {
+        currentTouchPointer = null;
+      } else {
+        currentTouchPointer = event.localPosition;
+      }
       pointEventHandler?.handleEvent(event);
     }
   }
