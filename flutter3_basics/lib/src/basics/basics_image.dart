@@ -497,7 +497,13 @@ extension ImageStringEx on String {
     final Completer<ui.Image> completer = Completer();
     final img = NetworkImage(this);
     img.resolve(const ImageConfiguration()).addListener(
-        ImageStreamListener((info, bool _) => completer.complete(info.image)));
+          ImageStreamListener(
+            (info, bool _) => completer.complete(info.image),
+            onError: (exception, stackTrace) {
+              completer.completeError(exception, stackTrace);
+            },
+          ),
+        );
     return completer.future;
   }
 }

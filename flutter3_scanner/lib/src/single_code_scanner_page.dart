@@ -13,6 +13,8 @@ const kScannerControlButtonSize = 32.0;
 const kScannerControlButtonBottom = 26.0;
 
 /// 简单的二维码扫描界面
+/// 返回扫码结果, 可能包含多个
+/// [List<String>]
 class SingleCodeScannerPage extends StatefulWidget {
   /// 扫描的格式, 默认[BarcodeFormat.qrCode]
   final List<BarcodeFormat> scanFormats;

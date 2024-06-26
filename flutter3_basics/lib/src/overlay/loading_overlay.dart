@@ -139,8 +139,8 @@ Future wrapLoading(
   LoadingValueNotifier? loadingInfoNotifier;
   if (onStart == null) {
     if (timeout != null) {
-      loadingInfoNotifier =
-          LoadingValueNotifier(LoadingInfo(message: "${timeout.inSeconds}"));
+      loadingInfoNotifier = LoadingValueNotifier(
+          LoadingInfo(message: showTime ? "${timeout.inSeconds}" : null));
     }
     if (delay != null) {
       postDelayCallback(() {

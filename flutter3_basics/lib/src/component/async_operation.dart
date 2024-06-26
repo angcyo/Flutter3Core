@@ -167,3 +167,9 @@ Future<R> asyncFuture<R>(void Function(Completer<R> completer) callback) {
   }
   return completer.future;
 }
+
+/// 可以取消的[Future]操作
+/// [CancelableOperation.cancel]
+CancelableOperation<T> cancelFuture<T>(Future<T> result,
+        {FutureOr Function()? onCancel}) =>
+    CancelableOperation.fromFuture(result, onCancel: onCancel);
