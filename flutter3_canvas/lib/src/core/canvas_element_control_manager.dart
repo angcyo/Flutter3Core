@@ -70,7 +70,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   int get selectedElementCount => elementSelectComponent.children?.length ?? 0;
 
   /// 是否选中了一组元素
-  bool get isSelectedGroupElement =>
+  bool get isSelectedGroupElements =>
       elementSelectComponent.children?.let((it) =>
           it.length > 1 ||
           (it.length == 1 && it.first is ElementGroupPainter)) ==

@@ -41,9 +41,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   int get selectedElementCount =>
       canvasElementControlManager.selectedElementCount;
 
-  /// [canvasElementControlManager.isSelectedGroupElement]
-  bool get isSelectedGroupElement =>
-      canvasElementControlManager.isSelectedGroupElement;
+  /// [canvasElementControlManager.isSelectedGroupElements]
+  bool get isSelectedGroupElements =>
+      canvasElementControlManager.isSelectedGroupElements;
 
   /// [canvasElementControlManager.isSelectedGroupPainter]
   bool get isSelectedGroupPainter =>
