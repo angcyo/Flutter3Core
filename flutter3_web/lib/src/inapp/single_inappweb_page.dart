@@ -4,6 +4,9 @@ part of '../../flutter3_web.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/27
 ///
+/// https://pub.dev/packages/flutter_inappwebview
+/// https://inappwebview.dev/docs/intro
+///
 /// [SingleWebPage]
 /// [SingleInAppWebPage]
 /// [flutter_inappwebview]

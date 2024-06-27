@@ -671,6 +671,14 @@ extension WidgetEx on Widget {
 
   //region ---SafeArea---
 
+  /// 离屏渲染
+  Widget offstage([bool offstage = true]) => offstage
+      ? Offstage(
+          offstage: offstage,
+          child: this,
+        )
+      : this;
+
   /// 脚手架
   Widget scaffold({
     Color? backgroundColor = Colors.transparent,

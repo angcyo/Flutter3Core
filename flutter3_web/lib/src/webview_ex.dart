@@ -111,6 +111,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
       onWebViewCreated: (controller) {
         l.d("onWebViewCreated");
         inAppWebViewController = controller;
+        _handlePendingControllerCompleter(controller);
       },
       onLoadStart: (controller, url) {
         l.d('onLoadStart:$url');
@@ -213,6 +214,16 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         urlRequest: URLRequest(url: WebUri(url)));
   }
 
+  /// 加载指定html数据[data]
+  Future<void> loadWebviewHtml(String data) async {
+    return inAppWebViewController?.loadData(data: data);
+  }
+
+  /// 加载指定html文件数据[data]
+  Future<void> loadWebviewAssetFile(String assetFilePath) async {
+    return inAppWebViewController?.loadFile(assetFilePath: assetFilePath);
+  }
+
   /// 执行js,或者调用js中的方法
   /// [InAppWebViewController.evaluateJavascript]
   /// [InAppWebViewController.callAsyncJavaScript]
@@ -233,10 +244,12 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     String handlerName,
     JavaScriptHandlerCallback callback,
   ) {
-    inAppWebViewController?.addJavaScriptHandler(
-      handlerName: handlerName,
-      callback: callback,
-    );
+    waitWebviewController((controller) {
+      controller.addJavaScriptHandler(
+        handlerName: handlerName,
+        callback: callback,
+      );
+    });
   }
 
   //endregion ---api---
@@ -258,7 +271,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   /// 更新加载进度, 并承载着加载完成的处理
   void updateWebviewProgress(int progress) async {
     if (progress >= 100) {
-      _handlePendingCompleter(true);
+      _handlePendingPageCompleter(true);
     }
     if (webviewLoadProgress == progress) {
       return;
@@ -273,13 +286,57 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     updateState();
   }
 
-  /// 等待页面加载完成
-  final List<Completer> _pendingCompleterList = [];
+  //--
+
+  /// 等待控制器完成
+  /// [inAppWebViewController]
+  /// [InAppWebViewController]
+  final List<Completer> _pendingControllerCompleterList = [];
 
   /// 处理等待中的[Completer]
-  void _handlePendingCompleter(bool finish) {
+  void _handlePendingControllerCompleter(InAppWebViewController controller) {
     try {
-      for (final completer in _pendingCompleterList) {
+      for (final completer in _pendingControllerCompleterList) {
+        try {
+          completer.complete(controller);
+        } catch (e) {
+          assert(() {
+            printError(e);
+            return true;
+          }());
+        }
+      }
+    } catch (e) {
+      assert(() {
+        printError(e);
+        return true;
+      }());
+    } finally {
+      _pendingControllerCompleterList.clear();
+    }
+  }
+
+  @api
+  Future waitWebviewController(
+      [FutureOr Function(InAppWebViewController controller)? action]) async {
+    if (inAppWebViewController != null) {
+      return action?.call(inAppWebViewController!);
+    }
+    final completer = Completer<InAppWebViewController>();
+    _pendingControllerCompleterList.add(completer);
+    final result = await completer.future;
+    return action?.call(result);
+  }
+
+  //--
+
+  /// 等待页面加载完成
+  final List<Completer> _pendingPageCompleterList = [];
+
+  /// 处理等待中的[Completer]
+  void _handlePendingPageCompleter(bool finish) {
+    try {
+      for (final completer in _pendingPageCompleterList) {
         try {
           completer.complete(finish);
         } catch (e) {
@@ -295,7 +352,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         return true;
       }());
     } finally {
-      _pendingCompleterList.clear();
+      _pendingPageCompleterList.clear();
     }
   }
 
@@ -310,7 +367,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
       return action?.call(true);
     }
     final completer = Completer<bool>();
-    _pendingCompleterList.add(completer);
+    _pendingPageCompleterList.add(completer);
     final result = await completer.future;
     return action?.call(result == true);
   }
