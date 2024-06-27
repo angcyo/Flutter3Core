@@ -1,0 +1,90 @@
+part of '../../flutter3_basics.dart';
+
+///
+/// Email:angcyo@126.com
+/// @author angcyo
+/// @date 2024/06/27
+///
+/// 监听进度通知,并自动刷新进度状态的小部件
+class ProgressStateNotification extends Notification {
+  /// 当前的进度[0~1]
+  /// [-1]:不确定的进度
+  final double? progress;
+
+  /// 进度的颜色
+  final Color? color;
+
+  /// 进度的背景颜色
+  final Color? backgroundColor;
+
+  /// 进度条的高度
+  final double? height;
+
+  /// 是否有错误
+  final dynamic error;
+
+  const ProgressStateNotification({
+    this.progress,
+    this.color,
+    this.backgroundColor,
+    this.height,
+    this.error,
+  });
+}
+
+/// [ProgressStateNotification]
+class ProgressStateWidget extends StatefulWidget {
+  final Widget child;
+  final ProgressStateNotification? notification;
+
+  const ProgressStateWidget({
+    super.key,
+    required this.child,
+    this.notification,
+  });
+
+  @override
+  State<ProgressStateWidget> createState() => _ProgressStateWidgetState();
+}
+
+class _ProgressStateWidgetState extends State<ProgressStateWidget> {
+  ProgressStateNotification? _notification;
+
+  @override
+  void initState() {
+    _notification = widget.notification;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant ProgressStateWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final isError = _notification?.error != null;
+    final value = _notification?.progress;
+    final progress = LinearProgressIndicator(
+      value: isError ? 1 : (value == null || value == -1 ? null : value),
+      backgroundColor: _notification?.backgroundColor ?? Colors.transparent,
+      color: isError
+          ? globalTheme.errorColor
+          : (_notification?.color ?? globalTheme.accentColor),
+    );
+    return NotificationListener<ProgressStateNotification>(
+      onNotification: (notification) {
+        _notification = notification;
+        updateState();
+        return true;
+      },
+      child: widget.child.stackOf(
+        progress
+            .size(width: double.infinity, height: _notification?.height ?? 2)
+            .offstage(_notification == null || _notification?.progress == null),
+        alignment: Alignment.topCenter,
+      ),
+    );
+  }
+}
