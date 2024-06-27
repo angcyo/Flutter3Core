@@ -5,6 +5,10 @@ part of '../flutter3_web.dart';
 /// @since 2023/11/08
 ///
 /// 简单的浏览web网页
+/// [SingleWebPage]
+/// [SingleInAppWebPage]
+/// [webview_flutter]
+@Deprecated("请使用SingleInAppWebPage")
 class SingleWebPage extends StatefulWidget {
   const SingleWebPage({
     super.key,
@@ -30,25 +34,30 @@ class _SingleWebPageState extends State<SingleWebPage> with AbsScrollPage {
 
   /// 加载进度[0~1]
   double _progress = 0;
-  late WebViewController webViewController;
+
+  //late WebViewController webViewController;
 
   /// 更新标题
   _updateTitleIfNeed() {
-    webViewController.getTitle().then((value) {
+    /*webViewController.getTitle().then((value) {
       if (value != null && _title != value) {
         setState(() {
           _title = value;
         });
       }
-    });
+    });*/
   }
 
   @override
   void initState() {
     super.initState();
-    webViewController = WebViewController()
+    /*webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      //..setUserAgent(userAgent)
       ..setBackgroundColor(const Color(0x00000000))
+      //..addJavaScriptChannel(name, onMessageReceived: onMessageReceived)
+      //..removeJavaScriptChannel(javaScriptChannelName)
+      //..runJavaScriptReturningResult(javaScript)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (progress) {
@@ -91,7 +100,7 @@ class _SingleWebPageState extends State<SingleWebPage> with AbsScrollPage {
       } else {
         webViewController.loadRequest(url!.toUri("http")!);
       }
-    }
+    }*/
   }
 
   @override
@@ -108,7 +117,7 @@ class _SingleWebPageState extends State<SingleWebPage> with AbsScrollPage {
         value: _progress,
       ));
     }
-    children.add(WebViewWidget(controller: webViewController));
+    //children.add(WebViewWidget(controller: webViewController));
     return Stack(
       children: children,
     );

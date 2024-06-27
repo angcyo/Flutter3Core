@@ -83,16 +83,14 @@ class Compliance {
   /// [action] 同意与否执行的操作
   /// [checkIfNeed]
   @api
-  Future<bool> wait([FutureBoolAction? action]) async {
+  Future wait([FutureBoolAction? action]) async {
     if (isAgree) {
-      action?.call(isAgree);
-      return true;
+      return action?.call(isAgree);
     }
     final completer = Completer<bool>();
     _pendingCompleterList.add(completer);
-    final result = await completer.future;
-    action?.call(isAgree);
-    return result;
+    await completer.future;
+    return action?.call(isAgree);
   }
 }
 

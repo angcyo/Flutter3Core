@@ -15,9 +15,18 @@ dependencies:
     path: ../flutter3_basics
   flutter3_widgets:
     path: ../flutter3_widgets
+  flutter3_pub:
+    path: ../flutter3_pub
 
   # https://pub.dev/packages/webview_flutter
-  webview_flutter: ^4.8.0
+  # 与 `flutter_inappwebview` 有冲突
+  # androidx.webkit:webkit:1.8.0
+  # webview_flutter: ^4.8.0
+
+  # https://pub.dev/packages/flutter_inappwebview
+  # https://inappwebview.dev/docs/intro
+  # androidx.webkit:webkit:1.11.0
+  flutter_inappwebview: ^6.0.0
 
 dev_dependencies:
   flutter_test:

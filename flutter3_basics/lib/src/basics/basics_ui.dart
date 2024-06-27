@@ -684,6 +684,7 @@ extension WidgetEx on Widget {
 
   /// 将当前的小部件, 包裹在一个[SafeArea]中
   Widget safeArea({
+    bool useSafeArea = true,
     bool left = true,
     bool top = true,
     bool right = true,
@@ -691,15 +692,17 @@ extension WidgetEx on Widget {
     EdgeInsets minimum = EdgeInsets.zero,
     bool maintainBottomViewPadding = false,
   }) {
-    return SafeArea(
-      left: left,
-      top: top,
-      right: right,
-      bottom: bottom ?? maintainBottomViewPadding,
-      minimum: minimum,
-      maintainBottomViewPadding: maintainBottomViewPadding,
-      child: this,
-    );
+    return useSafeArea
+        ? SafeArea(
+            left: left,
+            top: top,
+            right: right,
+            bottom: bottom ?? maintainBottomViewPadding,
+            minimum: minimum,
+            maintainBottomViewPadding: maintainBottomViewPadding,
+            child: this,
+          )
+        : this;
   }
 
   /// 系统ui覆盖

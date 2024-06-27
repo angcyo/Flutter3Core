@@ -231,7 +231,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
       if (widget.versionBean.forceUpdate == true) {
         //强制更新, 不允许关闭
       } else {
-        context.pop();
+        buildContext?.pop();
       }
     });
   }
