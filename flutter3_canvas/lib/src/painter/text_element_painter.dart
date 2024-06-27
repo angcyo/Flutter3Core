@@ -37,7 +37,8 @@ class TextElementPainter extends ElementPainter {
 }
 
 /// 基础文本绘制
-class BaseTextPainter {
+/// [NormalTextPainter]
+abstract class BaseTextPainter {
   /// 调试模式下, 是否绘制文本的边界
   bool debugPaintBounds = false;
 
@@ -98,6 +99,7 @@ class BaseTextPainter {
 
   //endregion ---属性---
 
+  /// 计算出来的绘制对象的边界
   Rect _painterBounds = Rect.zero;
 
   /// 当前绘制对象占用的大小
@@ -112,10 +114,19 @@ class BaseTextPainter {
   /// 绘制文本, 相对于左上角0,0锚点绘制
   @api
   @overridePoint
-  void painterText(Canvas canvas, Offset offset) {}
+  void painterText(Canvas canvas, Offset offset);
+
+  /// 创建画笔
+  /// [Paint]
+  Paint createBasePaint() => Paint()
+    ..strokeCap = StrokeCap.round
+    ..strokeJoin = StrokeJoin.round
+    ..color = textColor
+    ..style = paintingStyle
+    ..strokeWidth = isBold ? 1 : 0;
 
   /// 创建单字符的文本绘制对象
-  TextPainter _createTextPainter(String? text) {
+  TextPainter createBaseTextPainter(String? text) {
     return createTextPainter(
       text: text,
       fontFamily: fontFamily,
@@ -225,7 +236,7 @@ class NormalTextPainter extends BaseTextPainter {
   @initialize
   @override
   void initPainter() {
-    _textPainter = _createTextPainter(text);
+    _textPainter = createBaseTextPainter(text);
     _painterBounds = Offset.zero & _textPainter!.size;
     if (orientation.isVertical) {
       final rotateMatrix = Matrix4.identity()
@@ -269,12 +280,19 @@ class SingleCharTextPainter extends BaseTextPainter {
   /// 交叉轴上文本对齐的方式
   TextAlign crossTextAlign = TextAlign.center;
 
+  /// 是否使用自定义的删除线/下划线样式
+  bool useCustomLineStyle = false;
+
+  /// 自定义样式时的线高
+  /// [useCustomLineStyle]
+  double customLineStyleHeight = 6;
+
+  /// 下划线底部的偏移距离
+  double underlineOffsetBottom = 4;
+
   SingleCharTextPainter();
 
   //---
-
-  /// 计算出来的绘制对象的边界
-  Rect _painterBounds = Rect.zero;
 
   @override
   Rect get painterBounds => _painterBounds;
@@ -419,6 +437,22 @@ class SingleCharTextPainter extends BaseTextPainter {
     }
   }
 
+  @override
+  TextPainter createBaseTextPainter(String? text) {
+    final oldIsUnderline = isUnderline;
+    final oldIsLineThrough = isLineThrough;
+
+    if (useCustomLineStyle) {
+      isUnderline = false;
+      isLineThrough = false;
+    }
+    final painter = super.createBaseTextPainter(text);
+
+    isUnderline = oldIsUnderline;
+    isLineThrough = oldIsLineThrough;
+    return painter;
+  }
+
   /// 初始化文本绘制对象
   @initialize
   @override
@@ -432,7 +466,7 @@ class SingleCharTextPainter extends BaseTextPainter {
 
     //当出现空行时, 使用此对象的宽高占位
     const placeholderChar = "中";
-    final placeholderPainter = _createTextPainter(placeholderChar);
+    final placeholderPainter = createBaseTextPainter(placeholderChar);
     for (final line in list) {
       //每一行的开始
       List<CharTextPainter> lineCharPainterList = [];
@@ -465,7 +499,7 @@ class SingleCharTextPainter extends BaseTextPainter {
         lineMaxHeight = charHeight;
       } else {
         for (final char in line) {
-          final charPainter = _createTextPainter(char);
+          final charPainter = createBaseTextPainter(char);
           //debugger();
           final charWidth = charPainter.width + italicCharWidth;
           final charHeight = charPainter.height;
@@ -534,6 +568,47 @@ class SingleCharTextPainter extends BaseTextPainter {
         }
       }
     });
+    if (useCustomLineStyle && !isNil(_charPainterList)) {
+      painterCustomLine(canvas, offset);
+    }
+  }
+
+  /// 绘制自定义的线样式
+  /// [painterText]
+  @overridePoint
+  void painterCustomLine(Canvas canvas, Offset offset) {
+    canvas.withTranslate(offset.dx, offset.dy, () {
+      final paint = createBasePaint();
+      double offsetLineTop = 0;
+      for (final line in _charPainterList!) {
+        if (isUnderline || isLineThrough) {
+          final first = line.firstOrNull;
+          final last = line.lastOrNull;
+          final left = first?.bounds.left;
+          final right = last?.bounds.right;
+          if (left != null && right != null) {
+            if (isUnderline) {
+              //绘制下划线
+              final top = offsetLineTop +
+                  first!.lineHeight -
+                  customLineStyleHeight -
+                  underlineOffsetBottom;
+              canvas.drawRect(
+                  Rect.fromLTWH(left, top, right, customLineStyleHeight),
+                  paint);
+            }
+            if (isLineThrough) {
+              //绘制删除线
+              final top = offsetLineTop + first!.lineHeight / 2;
+              canvas.drawRect(
+                  Rect.fromLTWH(left, top, right, customLineStyleHeight),
+                  paint);
+            }
+            offsetLineTop += first!.lineHeight;
+          }
+        }
+      }
+    });
   }
 }
 
@@ -573,18 +648,32 @@ class CharTextPainter {
   Rect paintBounds = Rect.zero;
 
   /// 是否是绘制在曲线上
+  /// 标识当前对象是在曲线文本上绘制
   @autoInjectMark
+  @flagProperty
   bool isInCurve = false;
+
+  /// 在曲线上左边线的角度
+  @autoInjectMark
+  @flagProperty
+  double? charCurveStartAngle;
+
+  /// 在曲线上右边线的角度
+  @autoInjectMark
+  @flagProperty
+  double? charCurveEndAngle;
 
   double get charWidth => bounds.width;
 
   double get charHeight => bounds.height;
 
   /// 下降的高度
+  @implementation
   double get charDescent {
     return charPainter?.computeLineMetrics().firstOrNull?.descent ?? 0;
   }
 
+  @implementation
   double get charUnscaledAscent {
     return charPainter?.computeLineMetrics().firstOrNull?.unscaledAscent ?? 0;
   }
@@ -630,6 +719,9 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
   @output
   double curveRadius = 0;
 
+  /// 是否是反向的曲线
+  bool get isReverseCurve => curvature < 0;
+
   /// 曲线的周长
   double get _curvePerimeter {
     final angle = curvature.abs() % 360;
@@ -645,22 +737,22 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
     final bounds = _painterBounds;
     final radius = _curvePerimeter / (2 * pi);
     curveRadius = radius;
-    if (curvature >= 0) {
-      return Offset(bounds.width / 2, bounds.height + radius);
+    if (isReverseCurve) {
+      return Offset(bounds.width / 2, -radius);
     }
-    return Offset(bounds.width / 2, -radius);
+    return Offset(bounds.width / 2, bounds.height + radius);
   }
 
   /// 曲线的锚点角度, 一般是上90° 下-90°
-  double get _curveAnchorAngle => curvature >= 0 ? -90 : 90;
+  double get _curveAnchorAngle => isReverseCurve ? 90 : -90;
 
   /// 曲线开始的角度
   double get _curveStartAngle {
     final angle = curvature.abs().jdm;
     //debugger();
-    return curvature >= 0
-        ? max(-270, _curveAnchorAngle - angle / 2)
-        : min(270, _curveAnchorAngle + angle / 2);
+    return isReverseCurve
+        ? min(270, _curveAnchorAngle + angle / 2)
+        : max(-270, _curveAnchorAngle - angle / 2);
   }
 
   /// 测量每个字符绕着曲线中心点需要进行的曲线变换
@@ -680,12 +772,20 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
     double top = 2147483648;
     double right = -2147483648;
     double bottom = -2147483648;
+
+    //1px对应的角度值
+    final factor = curvature.jdm / painterWidth;
     for (final line in list) {
       for (final char in line) {
         char.isInCurve = true;
         final bounds = char.bounds + char.alignOffset;
-        final charAngle =
-            startAngle + bounds.center.dx / painterWidth * curvature.jdm;
+        final charAngle = startAngle + bounds.center.dx * factor;
+
+        final offsetCx = bounds.width * 1 / 6;
+        char.charCurveStartAngle =
+            startAngle + (bounds.center.dx - offsetCx) * factor;
+        char.charCurveEndAngle =
+            startAngle + (bounds.center.dx + offsetCx) * factor;
         //debugger();
 
         //曲线文本时, bounds就是字符的大小
@@ -727,5 +827,50 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
   void initPainter() {
     super.initPainter();
     _measureCharTextCurvature();
+  }
+
+  @override
+  void painterCustomLine(Canvas canvas, Offset offset) {
+    //绘制曲线上的删除线/下划线
+    if (isUnderline || isLineThrough) {
+      canvas.withTranslate(offset.dx, offset.dy, () {
+        final paint = createBasePaint();
+        double offsetLineBottom = 0;
+        for (final line in (isReverseCurve
+            ? _charPainterList!
+            : _charPainterList!.reversed)) {
+          final first = line.firstOrNull;
+          final last = line.lastOrNull;
+
+          final firstAngle = first?.charCurveStartAngle;
+          final endAngle = last?.charCurveEndAngle;
+          if (firstAngle != null && endAngle != null) {
+            if (isUnderline) {
+              //绘制下划线
+              final path = Path()
+                ..addFanShaped(curveCenter,
+                    curveRadius + underlineOffsetBottom + offsetLineBottom,
+                    startAngle: firstAngle,
+                    sweepAngle: endAngle - firstAngle,
+                    size: customLineStyleHeight);
+              canvas.drawPath(path, paint);
+            }
+            if (isLineThrough) {
+              //绘制删除线
+              final path = Path()
+                ..addFanShaped(curveCenter,
+                    curveRadius + offsetLineBottom + first!.lineHeight / 2,
+                    startAngle: firstAngle,
+                    sweepAngle: endAngle - firstAngle,
+                    size: customLineStyleHeight);
+              canvas.drawPath(path, paint);
+            }
+
+            //offset
+            offsetLineBottom += first!.lineHeight;
+          }
+        }
+      });
+    }
   }
 }
