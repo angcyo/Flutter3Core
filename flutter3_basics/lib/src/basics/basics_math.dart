@@ -52,15 +52,15 @@ double angleBetween(Offset fp1, Offset fp2, Offset sp1, Offset sp2) {
 }
 
 /// 获取弧上指定角度的点坐标
-/// [angle] 弧度
-/// Gets the arc point by [angle] on an [oval].
+/// [radians] 弧度
+/// Gets the arc point by [radians] on an [oval].
 ///
 /// The algorithm is from https://blog.csdn.net/chenlu5201314/article/details/99678398
-Offset getArcPoint(Rect oval, double angle) {
+Offset getArcPoint(Rect oval, double radians) {
   final a = oval.width / 2;
   final b = oval.height / 2;
-  final yc = math.sin(angle);
-  final xc = math.cos(angle);
+  final yc = math.sin(radians);
+  final xc = math.cos(radians);
   final radio = (a * b) / math.sqrt(math.pow(yc * a, 2) + math.pow(xc * b, 2));
 
   return oval.center.translate(radio * xc, radio * yc);
@@ -69,10 +69,10 @@ Offset getArcPoint(Rect oval, double angle) {
 /// 获取圆上指定角度的点坐标
 /// [center] 圆心坐标
 /// [radius] 圆的半径
-/// [angle] 弧度
+/// [radians] 弧度
 /// https://blog.csdn.net/gongjianbo1992/article/details/107476030
-Offset getCirclePoint(Offset center, double radius, double angle) {
-  return center.translate(radius * math.cos(angle), radius * math.sin(angle));
+Offset getCirclePoint(Offset center, double radius, double radians) {
+  return center.translate(radius * math.cos(radians), radius * math.sin(radians));
 }
 
 /// 3个点求圆心

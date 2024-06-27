@@ -59,6 +59,53 @@ extension PathEx on Path {
     addOval(Rect.fromCircle(center: center, radius: radius));
   }
 
+  /// 添加一个扇形到路径中
+  /// [center] 中心点
+  /// [radius] 半径
+  /// [startAngle] 起始角度, 角度值
+  /// [sweepAngle] 扫描角度, 角度值
+  /// [size] 大小/高度
+  void addFanShaped(
+    Offset center,
+    double radius, {
+    required double startAngle,
+    required double sweepAngle,
+    double size = 4,
+  }) {
+    sweepAngle = sweepAngle.jdm;
+    final r = radius;
+    if (sweepAngle.abs() != 360) {
+      //扇形左上角坐标
+      final cx = center.x;
+      final cy = center.y;
+
+      final lt = getCirclePoint(center, r + size, startAngle.hd);
+      final rt =
+          getCirclePoint(center, r + size, startAngle.hd + sweepAngle.hd);
+      final lb = getCirclePoint(center, r, startAngle.hd);
+      final rb = getCirclePoint(center, r, startAngle.hd + sweepAngle.hd);
+
+      Rect ovalRect = Rect.fromLTRB(
+        cx - r - size,
+        cy - r - size,
+        cx + r + size,
+        cy + r + size,
+      );
+
+      moveTo(lt.x, lt.y);
+      arcTo(ovalRect, startAngle.hd, sweepAngle.hd, false);
+
+      lineTo(rb.x, rb.y);
+      ovalRect = Rect.fromLTRB(cx - r, cy - r, cx + r, cy + r);
+      arcTo(ovalRect, startAngle.hd + sweepAngle.hd, -sweepAngle.hd, false);
+      lineTo(lt.x, lt.y);
+    } else {
+      //360°, 就是圆
+      addCircle(center, r + size);
+      addCircle(center, r);
+    }
+  }
+
   /// 获取精度更高的路径边界
   /// [exact] 是否获取精确计算的边界, 会有性能损耗
   /// [pathAcceptableError] 路径采样误差

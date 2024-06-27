@@ -935,6 +935,10 @@ extension StringBufferEx on StringBuffer {
 //region Rect/Offset/Size 扩展
 
 extension OffsetEx on Offset {
+  double get x => dx;
+
+  double get y => dy;
+
   String get log =>
       "Offset(${dx.toStringAsFixed(1)}, ${dy.toStringAsFixed(1)})";
 
