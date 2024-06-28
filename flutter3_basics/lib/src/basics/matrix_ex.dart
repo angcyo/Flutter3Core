@@ -535,8 +535,13 @@ Matrix4 createFlipMatrix({bool? flipX, bool? flipY, Offset? anchor}) {
 }
 
 /// 创建一个平移矩阵
-Matrix4 createTranslateMatrix(
-    {double? tx, double? ty, double? tz, Offset? offset}) {
+/// [offset] 同时设置[tx].[ty]
+Matrix4 createTranslateMatrix({
+  double? tx,
+  double? ty,
+  double? tz,
+  Offset? offset,
+}) {
   tx ??= offset?.dx;
   ty ??= offset?.dy;
   return Matrix4.identity()..translate(tx ?? 0.0, ty ?? 0.0, tz ?? 0.0);
@@ -554,12 +559,12 @@ Matrix4 createScaleMatrix({double? sx, double? sy, Offset? anchor}) {
 }
 
 /// 在指定锚点[anchor],创建一个旋转矩阵
-/// [angle] 旋转的弧度
-Matrix4 createRotateMatrix(double? angle, {Offset? anchor}) {
+/// [radians] 旋转的弧度
+Matrix4 createRotateMatrix(double? radians, {Offset? anchor}) {
   anchor ??= Offset.zero;
   final translation = vector.Vector3(anchor.dx, anchor.dy, 0);
   return Matrix4.identity()
     ..translate(translation)
-    ..rotateZ(angle ?? 0)
+    ..rotateZ(radians ?? 0)
     ..translate(-translation);
 }

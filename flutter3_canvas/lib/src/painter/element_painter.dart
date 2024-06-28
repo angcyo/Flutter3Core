@@ -1284,6 +1284,20 @@ class PaintProperty with EquatableMixin {
     }
   }
 
+  /// 平移到指定位置, 将当前的锚点位置平移到新的位置
+  /// [anchorAlignment] 需要对齐的锚点
+  /// 如果要将中心点平移到指定位置, 可以使用[Alignment.center]
+  /// [applyTranslate]
+  @api
+  void translateTo(
+    Offset anchor, {
+    Alignment? anchorAlignment,
+  }) {
+    final oldAnchor = anchorAlignment?.withinRect(paintBounds) ?? this.anchor;
+    final offset = anchor - oldAnchor;
+    applyTranslate(createTranslateMatrix(offset: offset));
+  }
+
   /// 平移操作
   @api
   void applyTranslate(Matrix4 matrix) {
@@ -1291,6 +1305,27 @@ class PaintProperty with EquatableMixin {
     final targetAnchor = matrix.mapPoint(anchor);
     left = targetAnchor.dx;
     top = targetAnchor.dy;
+  }
+
+  /// 旋转到指定角度
+  /// [angle] 角度
+  /// [radians] 角度
+  /// [anchor] 旋转锚点, 不指定时, 默认使用[paintBounds]中心
+  /// [anchorAlignment] 锚点在[paintBounds]中的对齐位置
+  /// [applyRotate]
+  @api
+  void rotateTo({
+    double? angle,
+    double? radians,
+    Offset? anchor,
+    Alignment? anchorAlignment,
+  }) {
+    radians ??= angle?.hd;
+    if (radians == null) {
+      return;
+    }
+    anchor ??= anchorAlignment?.withinRect(paintBounds) ?? paintBounds.center;
+    applyRotate(createRotateMatrix(radians, anchor: anchor));
   }
 
   /// 旋转操作
