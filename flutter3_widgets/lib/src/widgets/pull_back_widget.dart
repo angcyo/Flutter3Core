@@ -23,7 +23,7 @@ class PullBackWidget extends StatefulWidget {
   /// 子部件
   final Widget child;
 
-  /// 下拉返回控制器
+  /// 下拉返回控制器, 动画到1就是关闭界面
   final AnimationController? pullBackController;
 
   /// 下拉返回触发的回调
@@ -223,7 +223,13 @@ class _PullBackWidgetState extends State<PullBackWidget>
     _isDragEnd = false;
     final progress = primaryDelta / (_childHeight ?? primaryDelta);
     //l.d('progress:$progress [$primaryDelta/$_childHeight]');
-    _pullBackController.value += progress;
+    _pullBackController.value += progress; //value [0~1]
+    //l.d("pull back:${_pullBackController.value}");
+    //
+    ProgressStateNotification(
+      tag: PullBackWidget,
+      progress: _pullBackController.value,
+    ).dispatch(buildContext);
     updateState();
   }
 

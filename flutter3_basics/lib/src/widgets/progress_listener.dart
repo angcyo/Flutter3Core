@@ -5,8 +5,13 @@ part of '../../flutter3_basics.dart';
 /// @author angcyo
 /// @date 2024/06/27
 ///
-/// 监听进度通知,并自动刷新进度状态的小部件
+/// 进度状态通知, 底层发送进度, 上层做出响应
+/// [PullBackWidget] 下拉进度
 class ProgressStateNotification extends Notification {
+  /// 通过[tag]视情况处理通知
+  /// [PullBackWidget] 路由下拉返回通知
+  final dynamic tag;
+
   /// 当前的进度[0~1]
   /// [-1]:不确定的进度
   final double? progress;
@@ -24,6 +29,7 @@ class ProgressStateNotification extends Notification {
   final dynamic error;
 
   const ProgressStateNotification({
+    this.tag,
     this.progress,
     this.color,
     this.backgroundColor,
@@ -32,6 +38,7 @@ class ProgressStateNotification extends Notification {
   });
 }
 
+/// 监听进度通知,并自动刷新进度状态的小部件
 /// [ProgressStateNotification]
 class ProgressStateWidget extends StatefulWidget {
   final Widget child;
