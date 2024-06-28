@@ -566,6 +566,16 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+  /// 反序字符串
+  String get reversed {
+    final range = Characters(this).iteratorAtEnd;
+    final buffer = StringBuffer();
+    while (range.moveBack()) {
+      buffer.write(range.current);
+    }
+    return buffer.toString();
+  }
+
   /// 获取单字符对应的ASCII码
   /// [IntEx.ascii]
   /// [StringEx.ascii]
@@ -596,6 +606,20 @@ extension StringEx on String {
 
   /// 判断当前字符串是否是ip字符串
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
+
+  /// 获取指定索引位置的字符串, 支持安全索引
+  /// [negative] 是否要支持-索引
+  String? getOrNull(int index, {bool negative = true}) {
+    if (negative) {
+      if (index < 0) {
+        index = length + index;
+      }
+    }
+    if (index >= 0 && index < length) {
+      return this[index];
+    }
+    return null;
+  }
 
   /// 快速散列函数
   /// 针对 Dart 字符串优化的 64 位哈希算法 FNV-1a

@@ -29,9 +29,13 @@ class ExcelHelper {
   ///         xxx
   ///         xxx
   /// ```
-  static Map<String, List<List<dynamic>>> readExcel(List<int> data) {
+  static Map<String, List<List<dynamic>>> readExcel({
+    List<int>? data,
+    String? filePath,
+  }) {
     final Map<String, List<List>> result = {};
-    final excel = Excel.decodeBytes(data);
+    final excel =
+        Excel.decodeBytes(data ?? (File(filePath!)).readAsBytesSync());
     excel.tables.forEach((key, sheet) {
       final sheetName = key;
       final List<List> sheetData = [];
