@@ -587,6 +587,13 @@ extension StringEx on String {
     return result;
   }
 
+  /// 使用base64加密当前的字符串
+  /// 'Dart is open source' -> `RGFydCBpcyBvcGVuIHNvdXJjZQ==`
+  String? get toBase64 => base64Encode(codeUnits);
+
+  /// 使用base64解密当前的字符串
+  String? get fromBase64 => base64Decode(this).utf8Str;
+
   /// 判断当前字符串是否是ip字符串
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
 
@@ -1635,7 +1642,7 @@ extension IterableEx<E> on Iterable<E> {
 
   /// 查找第一个
   E? findFirst(bool Function(E element) test) {
-    for (var element in this) {
+    for (final element in this) {
       if (test(element)) {
         return element;
       }

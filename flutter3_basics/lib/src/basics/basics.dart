@@ -504,6 +504,18 @@ Future<R> scheduleTask<R>(ResultCallback<R> callback,
 const kDefAssetsPngPrefix = 'assets/png/';
 const kDefAssetsSvgPrefix = 'assets/svg/';
 
+/// [loadAssetString]
+Future<Uint8List> loadAssetBytes(
+  String key, {
+  String prefix = 'assets/',
+  String? package,
+}) async {
+  return (await rootBundle.load(
+    key.ensurePackagePrefix(package, prefix),
+  ))
+      .bytes;
+}
+
 /// 读取资产中的文本内容
 /// ```
 /// await loadAssetString('config.json');
