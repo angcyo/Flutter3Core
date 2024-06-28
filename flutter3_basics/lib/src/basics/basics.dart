@@ -12,6 +12,9 @@ part of '../../flutter3_basics.dart';
 @initialize
 void ensureInitialized() => WidgetsFlutterBinding.ensureInitialized();
 
+/// [DateTime]
+DateTime nowDateTime() => DateTime.now();
+
 /// 当前时间戳 `1699064019689` 13位
 /// [DateTime]
 int nowTimestamp() => DateTime.now().millisecondsSinceEpoch;

@@ -566,6 +566,18 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+  /// 转换成[DateTime]
+  /// [pattern] 时间模板 'yyyy-MM-dd'
+  /// ```
+  /// "yyyy-MM-dd HH:mm:ss" 转换成时间
+  /// DateTime toDateTime() => DateTime.parse(this);
+  /// ```
+  DateTime toDateTime([String? pattern = "yyyy-MM-dd HH:mm:ss"]) {
+    // 解析日期字符串
+    intl.DateFormat inputFormat = intl.DateFormat(pattern);
+    return inputFormat.parse(this);
+  }
+
   /// 反序字符串
   String get reversed {
     final range = Characters(this).iteratorAtEnd;
@@ -682,9 +694,6 @@ extension StringEx on String {
 
   /// 字符`#ffaabbcc`转换成Color对象
   Color toColor() => ColorEx.fromHex(this);
-
-  /// "yyyy-MM-dd HH:mm:ss" 转换成时间
-  DateTime toDateTime() => DateTime.parse(this);
 
   /// 使用json解析字符串
   dynamic jsonDecode() => json.decode(this);
@@ -1840,6 +1849,14 @@ extension ListEx<T> on List<T> {
       var r = toElement(e);
       return r;
     }).toList(growable: growable);
+  }
+
+  /// [List]
+  int? indexOfOrNull(T? element, [int start = 0]) {
+    if (element == null) {
+      return null;
+    }
+    return indexOf(element, start);
   }
 
   /// [List]

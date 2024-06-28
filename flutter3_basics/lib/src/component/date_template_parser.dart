@@ -196,10 +196,34 @@ class StringTemplateParser {
 
 /// 日期/时间模板替换
 class DateTemplateParser extends StringTemplateParser {
-  final calendar = DateTime.now();
+  /// 当前时间
+  DateTime calendar = DateTime.now();
 
   /// 替换的资源, 国际化
+  /// ```
+  /// "year" -> _string(R.string.lib_year)
+  /// "month" -> _string(R.string.lib_month)
+  /// "day" -> _string(R.string.lib_day)
+  /// "hour" -> _string(R.string.lib_hour)
+  /// "minute" -> _string(R.string.lib_minute)
+  /// "second" -> _string(R.string.lib_second)
+  /// "millisecond" -> _string(R.string.lib_millisecond)
+  /// "am" -> _string(R.string.lib_am)
+  /// "pm" -> _string(R.string.lib_pm)
+  /// else -> null
   Map<String, String?>? replaceVariableMap;
+
+  /// 替换的资源, 国际化
+  /// 星期一到星期日
+  List<String> weekdayList = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+        "Sunday",
+  ];
 
   DateTemplateParser() {
     templateList.add("weekday");
@@ -210,38 +234,184 @@ class DateTemplateParser extends StringTemplateParser {
       return replaceVariableMap == null
           ? variable
           : replaceVariableMap?[variable];
-      /*switch (variable) {
-      "year" -> _string(R.string.lib_year)
-      "month" -> _string(R.string.lib_month)
-      "day" -> _string(R.string.lib_day)
-      "hour" -> _string(R.string.lib_hour)
-      "minute" -> _string(R.string.lib_minute)
-      "second" -> _string(R.string.lib_second)
-      "millisecond" -> _string(R.string.lib_millisecond)
-      "am" -> _string(R.string.lib_am)
-      "pm" -> _string(R.string.lib_pm)
-      else -> null
-      }*/
     };
 
     replaceTemplateAction = (template) {
       switch (template) {
+        //--
         case "yyyy":
         case "YYYY":
           return "${calendar.year}";
         case "yy":
         case "YY":
           return "${calendar.year}".substring(2);
+        //--
+        case "M":
+          return "${calendar.month}";
+        case "MM":
+          return "${calendar.month}".padLeft(2, '0');
+        //月份英文缩写
+        case "MMM":
+          return switch (calendar.month) {
+            DateTime.january => "Jan", //一月
+            DateTime.february => "Feb",
+            DateTime.march => "Mar",
+            DateTime.april => "Apr",
+            DateTime.may => "May",
+            DateTime.june => "Jun",
+            DateTime.july => "Jul",
+            DateTime.august => "Aug",
+            DateTime.september => "Sep",
+            DateTime.october => "Oct",
+            DateTime.november => "Nov",
+            DateTime.december => "Dec", //十二月
+            _ => "${calendar.month}",
+          };
+        //月份英文全称
+        case "MMMM":
+          return switch (calendar.month) {
+            DateTime.january => "January", //一月
+            DateTime.february => "February",
+            DateTime.march => "March",
+            DateTime.april => "April",
+            DateTime.may => "May",
+            DateTime.june => "June",
+            DateTime.july => "July",
+            DateTime.august => "August",
+            DateTime.september => "September",
+            DateTime.october => "October",
+            DateTime.november => "November",
+            DateTime.december => "December", //十二月
+            _ => "${calendar.month}",
+          };
+
+        //--
+        case "D":
+          return "${calendar.daysInMonth}";
+        case "DD":
+          return "${calendar.daysInMonth}".padLeft(2, '0');
+        //一周中的一天，星期天是 0
+        case "d":
+          return "${calendar.weekday}";
+        //最简写的星期几
+        case "dd":
+          return switch (calendar.weekday) {
+            DateTime.monday => "Mo", //星期一
+            DateTime.tuesday => "Tu",
+            DateTime.wednesday => "We",
+            DateTime.thursday => "Th",
+            DateTime.friday => "Fr",
+            DateTime.saturday => "Sa",
+            DateTime.sunday => "Su", //星期天
+            _ => "${calendar.weekday}",
+          };
+
+        //简写的星期几
+        case "ddd":
+          return switch (calendar.weekday) {
+            DateTime.monday => "Mon",
+            DateTime.tuesday => "Tue",
+            DateTime.wednesday => "Wed",
+            DateTime.thursday => "Thu",
+            DateTime.friday => "Fri",
+            DateTime.saturday => "Sat",
+            DateTime.sunday => "Sun",
+            _ => "${calendar.weekday}"
+          };
+
+        //星期几全称
+        case "dddd":
+          return switch (calendar.weekday) {
+            DateTime.monday => "Monday",
+            DateTime.tuesday => "Tuesday",
+            DateTime.wednesday => "Wednesday",
+            DateTime.thursday => "Thursday",
+            DateTime.friday => "Friday",
+            DateTime.saturday => "Saturday",
+            DateTime.sunday => "Sunday",
+            _ => "${calendar.weekday}",
+          };
+
+        // 星期几国际化
+        case "weekday":
+          return weekdayList.getOrNull(calendar.weekday - 1) ??
+              "${calendar.weekday}";
+
+        //--
+        //24小时制
+        case "H":
+          return "${calendar.hour}";
+        case "HH":
+          return "${calendar.hour}".padLeft(2, '0');
+        case "h":
+          return "${calendar.hour % 12}";
+        case "hh":
+          return "${calendar.hour % 12}".padLeft(2, '0');
+        case "m":
+          return "${calendar.minute}";
+        case "mm":
+          return "${calendar.minute}".padLeft(2, '0');
+        case "s":
+          return "${calendar.second}";
+        case "ss":
+          return "${calendar.second}".padLeft(2, '0');
+        case "S":
+          return "${calendar.millisecond}".substring(0, 1);
+        case "SS":
+          return "${calendar.millisecond}".padLeft(2, '0').substring(0, 2);
+        case "SSS":
+          return "${calendar.millisecond}".padLeft(3, '0');
+        //UTC 的偏移量，±HH:mm
+        case "Z":
+          final offset = calendar.timeZoneOffset;
+          final hours = offset.inHours;
+          final minutes = offset.inMinutes % 60;
+          return "${hours >= 0 ? '+' : '-'}${hours.abs().toString().padLeft(2, '0')}:${minutes.abs().toString().padLeft(2, '0')}";
+        //UTC 的偏移量，±HHmm
+        case "ZZ":
+          final offset = calendar.timeZoneOffset;
+          final hours = offset.inHours;
+          final minutes = offset.inMinutes % 60;
+          return "${hours >= 0 ? '+' : '-'}${hours.abs().toString().padLeft(2, '0')}${minutes.abs().toString().padLeft(2, '0')}";
+        //上午下午
+        case "A":
+          return calendar.hour < 12 ? "AM" : "PM";
+        case "a":
+          return calendar.hour < 12 ? "am" : "pm";
+
+        case "dayOfYear":
+          return "${calendar.dayOfYear}";
+
+        case "weekOfYear":
+          return "${calendar.weekOfYear}";
+
+        //--
         default:
           return template;
       }
     };
   }
+
+  /// 设置当前时间, 指定日期时间
+  /// [time] 指定13位时间戳
+  void setDate({
+    String? date,
+    String? datePattern,
+    int? time,
+  }) {
+    if (date != null) {
+      calendar = date.toDateTime(datePattern);
+    } else if (time != null) {
+      calendar = time.toDateTime();
+    }
+  }
 }
 
-extension NumberTemplateEx on String {
-  /// 解析数字模板
-  String parseNumberTemplate(String number) {
-    return NumberTemplateParser().parse(number, this);
+extension DateTemplateEx on String {
+  /// 解析时间模板
+  String parseDateTemplate([void Function(DateTemplateParser parser)? action]) {
+    final parser = DateTemplateParser();
+    action?.call(parser);
+    return parser.parse(this);
   }
 }

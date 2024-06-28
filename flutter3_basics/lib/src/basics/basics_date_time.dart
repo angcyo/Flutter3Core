@@ -22,6 +22,20 @@ extension DateTimeEx on DateTime {
 
   /// [difference]
 //Duration operator -(DateTime other) => difference(other);
+
+  int get dayOfYear {
+    final date = DateTime.now();
+    final start = DateTime(date.year, 1, 1);
+    return date.difference(start).inDays + 1;
+  }
+
+  /// 一年中的第几周
+  int get weekOfYear {
+    final date = DateTime.now();
+    final start = DateTime(date.year, 1, 1);
+    final days = date.difference(start).inDays;
+    return (days ~/ 7) + 1;
+  }
 }
 
 extension TimeEx on int {

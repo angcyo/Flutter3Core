@@ -72,7 +72,8 @@ Offset getArcPoint(Rect oval, double radians) {
 /// [radians] 弧度
 /// https://blog.csdn.net/gongjianbo1992/article/details/107476030
 Offset getCirclePoint(Offset center, double radius, double radians) {
-  return center.translate(radius * math.cos(radians), radius * math.sin(radians));
+  return center.translate(
+      radius * math.cos(radians), radius * math.sin(radians));
 }
 
 /// 3个点求圆心
@@ -151,6 +152,12 @@ List<Offset> centerOfCircleRadius(Offset p1, Offset p2, double dRadius) {
   }
   return [center1, center2];
 }
+
+/// 取2个数中的最大值
+T maxOf<T extends num>(T num1, T num2) => math.max(num1, num2);
+
+/// 取2个数中的最小值
+T minOf<T extends num>(T num1, T num2) => math.min(num1, num2);
 
 /*enum Direction {
   /// clockwise 顺时针
