@@ -868,19 +868,49 @@ extension RItemTileExtension on Widget {
   }
 
   /// 支持排序的item
+  /// [items] 列表数据, 如果指定了则自动更新数据
   /// 使用[ReorderableDragStartListener]包裹实现按下拖拽
   /// 使用[ReorderableDelayedDragStartListener]包裹实现长按拖拽
+  ///
+  /// ```
+  /// ListTile(
+  ///   trailing: ReorderableDragStartListener(
+  ///     index: items.indexOf(item),
+  ///     child: const Icon(Icons.drag_handle_outlined),
+  ///   ),
+  ///   title: Text(item),
+  /// ).material().rReorder(onReorder),
+  /// ```
+  ///
   /// [SliverReorderableList]
   RItemTile rReorder(
     ReorderCallback onTileReorder, {
     Key? key,
+    List? items,
     IndexCallback? onTileReorderStart,
     IndexCallback? onTileReorderEnd,
     dynamic sliverTransformType = SliverReorderableList,
   }) {
+    ReorderCallback reorderCallback = onTileReorder;
+    if (items != null) {
+      reorderCallback = (int oldIndex, int newIndex) {
+        assert(() {
+          l.d("拖拽排序,oldIndex:$oldIndex newIndex:$newIndex");
+          return true;
+        }());
+        if (oldIndex < newIndex) {
+          newIndex -= 1;
+        }
+        final item = items.removeAt(oldIndex);
+        items.insert(newIndex, item);
+
+        //回调出去, 并手动更新界面
+        onTileReorder(oldIndex, newIndex);
+      };
+    }
     return RItemTile(
       key: key,
-      onTileReorder: onTileReorder,
+      onTileReorder: reorderCallback,
       onTileReorderStart: onTileReorderStart,
       onTileReorderEnd: onTileReorderEnd,
       sliverTransformType: sliverTransformType,

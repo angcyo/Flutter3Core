@@ -35,10 +35,7 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
               Animation<double> secondaryAnimation) {
             final Widget pageChild = Builder(builder: builder);
             Widget dialog = themes?.wrap(pageChild) ?? pageChild;
-            if (useSafeArea) {
-              dialog = SafeArea(child: dialog);
-            }
-            return dialog;
+            return dialog.safeArea(useSafeArea: useSafeArea);
           },
           transitionBuilder: (BuildContext context, Animation<double> animation,
               Animation<double> secondaryAnimation, Widget child) {

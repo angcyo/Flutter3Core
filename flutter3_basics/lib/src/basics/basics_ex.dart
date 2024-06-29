@@ -191,7 +191,7 @@ extension ObjectEx on Object {
     String? fontFamily,
     TextAlign? textAlign,
     int? maxLines,
-    TextOverflow? overflow,
+    TextOverflow? overflow = TextOverflow.ellipsis,
     bool? softWrap,
     String? highlight,
     Color? highlightColor,
@@ -2050,6 +2050,10 @@ extension ListEx<T> on List<T> {
     }
     return buffer.toString();
   }
+
+  /// 复制列表, 浅拷贝
+  /// [Iterable.toList]
+  List<T> copy() => [...this];
 }
 
 /// 通过指定行列索引, 计算数组的索引

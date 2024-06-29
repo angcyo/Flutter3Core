@@ -184,10 +184,15 @@ mixin TileMixin {
   /// [isSelected] 是否选中
   /// [selectedTextStyle] 选中时的文本样式
   /// [selectedColor] 选中时的背景颜色
+  /// [textSelectedLeading] 选中时的前导小部件
+  /// [textSelectedTrailing] 选中时的后导小部件
   Widget? buildSegmentTextWidget(
     BuildContext context, {
     Widget? textWidget,
     String? text,
+    Widget? textSelectedLeading,
+    Widget? textSelectedTrailing,
+    double? textSelectedGap = kM,
     TextStyle? textStyle,
     TextStyle? selectedTextStyle,
     Color? selectedColor,
@@ -207,11 +212,19 @@ mixin TileMixin {
                 color: context.isThemeDark ? globalTheme.blackColor : null)
             : null);
 
-    final widget = textWidget ??
+    Widget? widget = textWidget ??
         (text?.text(
           textAlign: ui.TextAlign.center,
           style: isSelected ? selectTextStyle : normalTextStyle,
         ));
+    if (widget != null && isSelected) {
+      //选中了
+      if (textSelectedLeading != null || textSelectedTrailing != null) {
+        widget = [textSelectedLeading, widget, textSelectedTrailing]
+                .row(mainAxisSize: MainAxisSize.min, gap: textSelectedGap) ??
+            widget;
+      }
+    }
     return widget?.paddingInsets(padding).backgroundDecoration(!enable
         ? fillDecoration(
             color: globalTheme.disableColor,

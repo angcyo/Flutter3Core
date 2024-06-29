@@ -343,6 +343,40 @@ extension WidgetEx on Widget {
   SliverToBoxAdapter toSliver([Key? key]) =>
       SliverToBoxAdapter(key: key, child: this);
 
+  /// 监听手势
+  /// [Listener]
+  /// [click]
+  Widget listenerPointer({
+    bool enable = true,
+    Key? key,
+    PointerDownEventListener? onPointerDown,
+    PointerMoveEventListener? onPointerMove,
+    PointerUpEventListener? onPointerUp,
+    PointerHoverEventListener? onPointerHover,
+    PointerCancelEventListener? onPointerCancel,
+    PointerPanZoomStartEventListener? onPointerPanZoomStart,
+    PointerPanZoomUpdateEventListener? onPointerPanZoomUpdate,
+    PointerPanZoomEndEventListener? onPointerPanZoomEnd,
+    PointerSignalEventListener? onPointerSignal,
+    HitTestBehavior behavior = HitTestBehavior.translucent,
+  }) =>
+      enable
+          ? Listener(
+              key: key,
+              onPointerDown: onPointerDown,
+              onPointerMove: onPointerMove,
+              onPointerUp: onPointerUp,
+              onPointerHover: onPointerHover,
+              onPointerCancel: onPointerCancel,
+              onPointerPanZoomStart: onPointerPanZoomStart,
+              onPointerPanZoomUpdate: onPointerPanZoomUpdate,
+              onPointerPanZoomEnd: onPointerPanZoomEnd,
+              onPointerSignal: onPointerSignal,
+              behavior: behavior,
+              child: this,
+            )
+          : this;
+
   /// 点击事件
   /// [enable] 是否启用点击事件
   /// [behavior] 点击事件的命中测试行为
@@ -884,6 +918,7 @@ extension WidgetEx on Widget {
     DecorationImage? decorationImage,
     Gradient? gradient,
     List<BoxShadow>? boxShadow,
+    Key? key,
   }) {
     borderRadius ??= radius == null ? null : BorderRadius.circular(radius);
     decoration ??= borderRadius == null
@@ -910,6 +945,7 @@ extension WidgetEx on Widget {
             image: decorationImage,
           );
     return Container(
+      key: key,
       alignment: alignment,
       padding: padding,
       color: decoration == null ? color : null,
@@ -1478,6 +1514,7 @@ extension WidgetEx on Widget {
   /// [inkWellCircle]
   Widget ink(
     GestureTapCallback? onTap, {
+    bool enable = true,
     double radius = 0,
     Color? backgroundColor,
     EdgeInsetsGeometry? padding,
@@ -1489,6 +1526,10 @@ extension WidgetEx on Widget {
     Color? highlightColor,
     Color? splashColor,
   }) {
+    if (!enable) {
+      //禁用组件
+      return this;
+    }
     final isCircle = shape == BoxShape.circle;
     final bRadius = borderRadius ??
         (isCircle ? null : BorderRadius.all(Radius.circular(radius)));
@@ -1789,6 +1830,9 @@ typedef ConditionalElementVisitorDepth = bool Function(
 /// [BuildContext.findRenderObject]
 /// [RenderObject.showOnScreen]
 extension ContextEx on BuildContext {
+  /// 震动反馈
+  void longPressFeedback() => Feedback.forLongPress(this);
+
   /// 此上下文关联的Widget当前是否已安装在 Widget 树中
   bool get isMounted => mounted;
 
@@ -1927,22 +1971,28 @@ extension ContextEx on BuildContext {
       Actions,
       FadeTransition,
       ScaleTransition,
+      SlideTransition,
+      FractionalTranslation,
       Transform,
       DisplayFeatureSubScreen,
       Padding,
       MediaQuery,
       SafeArea,
       DefaultTextStyle,
+      NotificationListener,
+      "Notification",
     ];
     Element? result;
     eachVisitChildElements((element, depth, childIndex) {
       final runtimeType = element.widget.runtimeType;
-      if (!"$runtimeType".startsWith("_") &&
-          !systemWidgetList.contains(runtimeType)) {
-        result = element;
-        return false;
+      if ("$runtimeType".startsWith("_") ||
+          systemWidgetList.contains(runtimeType) ||
+          systemWidgetList.findFirst((e) => "$runtimeType".startsWith("$e")) !=
+              null) {
+        return true;
       }
-      return true;
+      result = element;
+      return false;
     });
     return result;
   }
@@ -2000,8 +2050,8 @@ extension RenderObjectEx on RenderObject {
     RenderObject? ancestor,
     Offset? point,
   ]) {
-    var offset = getGlobalLocation(ancestor, point);
-    var size = getSizeOrNull();
+    final offset = getGlobalLocation(ancestor, point);
+    final size = getSizeOrNull();
     if (offset != null && size != null) {
       return offset & size;
     }
@@ -2010,6 +2060,7 @@ extension RenderObjectEx on RenderObject {
 
   /// 获取[RenderObject]的位置信息
   /// [ancestor] 祖先节点, 如果为null, 则为根节点
+  /// [point] 参考点
   /// [RenderBox.localToGlobal]
   /// ```
   /// Scrollable.of(context).context.findRenderObject();
@@ -2049,6 +2100,24 @@ extension RenderObjectEx on RenderObject {
 }
 
 extension ElementEx on Element {}
+
+extension GlobalKeyEx on GlobalKey {
+  /// 对应的渲染对象
+  RenderObject? get renderObject => currentContext?.findRenderObject();
+
+  /// 获取当前渲染对象对应的全局位置
+  /// [ancestor] 祖先
+  Rect? getGlobalBounds([
+    RenderObject? ancestor,
+    Offset? point,
+  ]) {
+    final box = renderObject;
+    if (box != null) {
+      return box.getGlobalBounds(ancestor, point);
+    }
+    return null;
+  }
+}
 
 //endregion 界面相关
 

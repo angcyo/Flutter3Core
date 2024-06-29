@@ -41,8 +41,8 @@ class _CanvasElementRenderObject extends RenderBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     super.paint(context, offset);
-    final canvas = context.canvas;
     elementPainter?.let((painter) {
+      final canvas = context.canvas;
       painter.elementsBounds?.let((src) {
         final dst = offset & size;
         //canvas.drawRect(dst, Paint()..color = Colors.black12);
