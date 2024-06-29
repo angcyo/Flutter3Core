@@ -90,6 +90,7 @@ part 'src/component/version_matcher.dart';
 part 'src/component/painter.dart';
 part 'src/component/number_template_parser.dart';
 part 'src/component/date_template_parser.dart';
+part 'src/component/provider.dart';
 part 'src/debug/debug.dart';
 part 'src/debug/debug_keys.dart';
 part 'src/debug/navigator_observer_log.dart';

@@ -2025,6 +2025,31 @@ extension ListEx<T> on List<T> {
     }
     return list;
   }
+
+  /// [Iterable.join]
+  String connect([String? separator = "", String Function(T)? covertString]) {
+    Iterator<T> iterator = this.iterator;
+    if (!iterator.moveNext()) return "";
+    final first =
+        covertString?.call(iterator.current) ?? textOf(iterator.current)!;
+    if (!iterator.moveNext()) return first;
+    final buffer = StringBuffer(first);
+    // TODO(51681): Drop null check when de-supporting pre-2.12 code.
+    if (separator == null || separator.isEmpty) {
+      do {
+        buffer.write(
+            covertString?.call(iterator.current) ?? textOf(iterator.current)!);
+      } while (iterator.moveNext());
+    } else {
+      do {
+        buffer
+          ..write(separator)
+          ..write(covertString?.call(iterator.current) ??
+              textOf(iterator.current)!);
+      } while (iterator.moveNext());
+    }
+    return buffer.toString();
+  }
 }
 
 /// 通过指定行列索引, 计算数组的索引
