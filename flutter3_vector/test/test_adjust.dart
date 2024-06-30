@@ -23,7 +23,7 @@ void main() {
 
 Future test2() async {
   //4个关键入参
-  const double xFactor = 0.9; //失真x值 (0.875-1.0)  左上 右上 横向
+  const double xFactor = 0.9;     //失真x值 (0.875-1.0)  左上 右上 横向
   const double yFactor = xFactor; //失真y值 (0.875-1.0)  纵向
   const double x2Factor = xFactor; //失真x值 (0.875-1.0) 左下 右下 横向
   const double y2Factor = xFactor; //失真y值 (0.875-1.0) 纵向

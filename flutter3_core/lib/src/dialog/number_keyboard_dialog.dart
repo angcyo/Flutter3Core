@@ -21,22 +21,25 @@ part of '../../flutter3_core.dart';
 /// 输入回调
 typedef NumberInputCallback = void Function(num? value);
 
+/// 按键类型
+enum NumberKeyboardType {
+  /// 键盘类型: 数字
+  number,
+
+  /// 键盘类型: 退格
+  backspace,
+
+  /// 键盘类型: 小数点
+  decimal,
+
+  /// 键盘类型: 正负
+  positiveNegative,
+}
+
 /// 数字键盘输入对话框
 /// 如果是小数, 返回小数
 /// 如果是整数, 返回整数
 class NumberKeyboardDialog extends StatefulWidget {
-  /// 键盘类型: 数字
-  static const String keyboardTypeNumber = "number";
-
-  /// 键盘类型: 退格
-  static const String keyboardTypeBackspace = "backspace";
-
-  /// 键盘类型: 小数点
-  static const String keyboardTypeDecimal = "decimal";
-
-  /// 键盘类型: 正负
-  static const String keyboardTypePositiveNegative = "positive_negative";
-
   //---
 
   /// 当前的数字, 支持整型/浮点
@@ -165,9 +168,9 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       lineMaxChildCount: 4,
       padding: EdgeInsets.all(gap),
       children: [
-        _createNumberButton("1", NumberKeyboardDialog.keyboardTypeNumber),
-        _createNumberButton("2", NumberKeyboardDialog.keyboardTypeNumber),
-        _createNumberButton("3", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("1", NumberKeyboardType.number),
+        _createNumberButton("2", NumberKeyboardType.number),
+        _createNumberButton("3", NumberKeyboardType.number),
         StateDecorationWidget(
           decoration: decoration,
           pressedDecoration: pressedDecoration,
@@ -178,11 +181,11 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
             tintColor: context.isThemeDark ? keyboardNumberStyle.color : null,
           ).align(Alignment.center),
         ).click(() {
-          _onSelfInput("", NumberKeyboardDialog.keyboardTypeBackspace);
+          _onSelfInput("", NumberKeyboardType.backspace);
         }),
-        _createNumberButton("4", NumberKeyboardDialog.keyboardTypeNumber),
-        _createNumberButton("5", NumberKeyboardDialog.keyboardTypeNumber),
-        _createNumberButton("6", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("4", NumberKeyboardType.number),
+        _createNumberButton("5", NumberKeyboardType.number),
+        _createNumberButton("6", NumberKeyboardType.number),
         StateDecorationWidget(
           decoration: fillDecoration(
             color: globalTheme.accentColor,
@@ -211,20 +214,19 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
           ),
         ),
         _createEmptyButton(),
-        _createNumberButton("7", NumberKeyboardDialog.keyboardTypeNumber),
-        _createNumberButton("8", NumberKeyboardDialog.keyboardTypeNumber),
-        _createNumberButton("9", NumberKeyboardDialog.keyboardTypeNumber),
+        _createNumberButton("7", NumberKeyboardType.number),
+        _createNumberButton("8", NumberKeyboardType.number),
+        _createNumberButton("9", NumberKeyboardType.number),
         _createEmptyButton(),
         if (isSupportDecimal || isSupportNegative)
-          _createNumberButton("0", NumberKeyboardDialog.keyboardTypeNumber)
+          _createNumberButton("0", NumberKeyboardType.number)
         else
-          _createNumberButton("0", NumberKeyboardDialog.keyboardTypeNumber)
+          _createNumberButton("0", NumberKeyboardType.number)
               .flowLayoutData(weight: 1.0 / 4 * 2, excludeGapCount: 2),
         if (isSupportDecimal)
-          _createNumberButton(".", NumberKeyboardDialog.keyboardTypeDecimal),
+          _createNumberButton(".", NumberKeyboardType.decimal),
         if (isSupportNegative)
-          _createNumberButton(
-              "±", NumberKeyboardDialog.keyboardTypePositiveNegative),
+          _createNumberButton("±", NumberKeyboardType.backspace),
         if (isShowPackUp)
           StateDecorationWidget(
             decoration: decoration,
@@ -312,7 +314,8 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   }
 
   /// 创建数字按钮
-  Widget _createNumberButton(String text, String type, [TextStyle? textStyle]) {
+  Widget _createNumberButton(String text, NumberKeyboardType type,
+      [TextStyle? textStyle]) {
     return StateDecorationWidget(
       decoration: decoration,
       pressedDecoration: pressedDecoration,
@@ -343,23 +346,28 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   }
 
   /// 键盘输入了一个值
-  void _onSelfInput(String value, String type) {
+  void _onSelfInput(String value, NumberKeyboardType type) {
+    //debugger();
     if (isClearAll || _numberText.toIntOrNull() == 0) {
-      _numberText = "";
+      if (type == NumberKeyboardType.decimal) {
+        _numberText = "0";
+      } else {
+        _numberText = "";
+      }
       isClearAll = false;
     }
 
-    if (type == NumberKeyboardDialog.keyboardTypeBackspace) {
+    if (type == NumberKeyboardType.backspace) {
       if (_numberText.isNotEmpty) {
         _numberText = _numberText.substring(0, _numberText.length - 1);
       }
-    } else if (type == NumberKeyboardDialog.keyboardTypePositiveNegative) {
+    } else if (type == NumberKeyboardType.backspace) {
       if (_numberText.startsWith("-")) {
         _numberText = _numberText.substring(1);
       } else {
         _numberText = "-$_numberText";
       }
-    } else if (type == NumberKeyboardDialog.keyboardTypeDecimal) {
+    } else if (type == NumberKeyboardType.decimal) {
       if (isSupportDecimal && !_numberText.contains(".")) {
         _numberText += value;
       }
