@@ -4,6 +4,7 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/24
 ///
+/// 左[label]      右[initValue].[wheel]
 /// [WheelDialog]
 class LabelWheelTile extends StatefulWidget {
   /// label
@@ -15,6 +16,9 @@ class LabelWheelTile extends StatefulWidget {
   final List? values;
   final List<Widget>? valuesWidget;
   final TransformDataWidgetBuilder? transformValueWidget;
+
+  /// 宽度
+  final double? valueWidth;
 
   /// 索引改变回调
   final IndexCallback? onTabIndexChanged;
@@ -28,6 +32,7 @@ class LabelWheelTile extends StatefulWidget {
     this.labelWidget,
     this.initValue,
     this.values,
+    this.valueWidth,
     this.valuesWidget,
     this.transformValueWidget,
     this.onTabIndexChanged,
@@ -52,7 +57,10 @@ class _LabelWheelTileState extends State<LabelWheelTile> with TileMixin {
     final content = Container(
       padding: const EdgeInsets.symmetric(horizontal: kM, vertical: kX),
       alignment: Alignment.centerLeft,
-      constraints: const BoxConstraints(minHeight: kMinInteractiveHeight),
+      constraints: BoxConstraints(
+          minWidth: widget.valueWidth ?? 0,
+          maxWidth: widget.valueWidth ?? double.infinity,
+          minHeight: kMinInteractiveHeight),
       child: [
         (widgetOf(context, widget.initValue, tryTextWidget: true) ?? empty)
             .expanded(),
@@ -83,6 +91,8 @@ class _LabelWheelTileState extends State<LabelWheelTile> with TileMixin {
       radius: kDefaultBorderRadiusXX,
     ).paddingInsets(kContentPadding);
 
-    return [label, content.expanded()].row()!.material();
+    return [label, content.align(Alignment.centerRight).expanded()]
+        .row()!
+        .material();
   }
 }

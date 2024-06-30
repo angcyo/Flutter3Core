@@ -157,7 +157,7 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   @override
   final TextInputType? inputKeyboardType;
 
-  ///
+  /// 输入框的宽度
   final double? inputWidth;
 
   const SingleLabelInputTile({
