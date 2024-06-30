@@ -6,8 +6,8 @@ part of '../../flutter3_core.dart';
 /// @date 2024/06/10
 ///
 /// 数字输入tile
-/// 上label     右number(支持键盘输入)
-/// 下des
+/// 上[label]     右[number].[value].(支持键盘输入)
+/// 下[des]
 /// [LabelNumberSliderTile]
 class LabelNumberTile extends StatefulWidget {
   /// 标签
@@ -145,5 +145,124 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
     _currentValue = toValue;
     widget.onChanged?.call(toValue);
     updateState();
+  }
+}
+
+/// 步长/增量数字输入小部件
+/// 左[label] 右[-].[number].[+]增量输入
+class SingleIncrementNumberWidget extends StatefulWidget
+    with LabelMixin, NumberMixin {
+  /// 标签/LabelMixin
+  @override
+  final String? label;
+  @override
+  final Widget? labelWidget;
+  @override
+  final TextStyle? labelTextStyle;
+  @override
+  final EdgeInsets? labelPadding;
+  @override
+  final BoxConstraints? labelConstraints;
+
+  /// 数字/NumberMixin
+  @override
+  final int numberMaxDigits;
+  @override
+  final num? numberMaxValue;
+  @override
+  final num? numberMinValue;
+  @override
+  final num numberValue;
+  @override
+  final NumType? numberValueType;
+  @override
+  final ValueChanged<num>? onNumberValueChanged;
+  @override
+  final FutureValueCallback<num>? onNumberValueConfirmChange;
+
+  //--
+
+  final double numberMinWidth;
+
+  const SingleIncrementNumberWidget({
+    super.key,
+    //LabelMixin
+    this.label,
+    this.labelWidget,
+    this.labelTextStyle,
+    this.labelPadding = kLabelPadding,
+    this.labelConstraints = kLabelConstraints,
+    //NumberMixin
+    this.numberValue = 0,
+    this.numberMinValue,
+    this.numberMaxValue,
+    this.numberMaxDigits = 2,
+    this.numberValueType,
+    this.onNumberValueChanged,
+    this.onNumberValueConfirmChange,
+    //
+    this.numberMinWidth = 88,
+  });
+
+  @override
+  State<SingleIncrementNumberWidget> createState() =>
+      _SingleIncrementNumberWidgetState();
+}
+
+class _SingleIncrementNumberWidgetState
+    extends State<SingleIncrementNumberWidget> with NumberStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    //label
+    Widget? label = widget.buildLabelWidgetMixin(context);
+
+    //num
+    Widget? numberLayout = [
+      buildIncrementStepWidget(
+        context,
+        step: -1,
+        stepText: "-",
+        enable: greaterThan(currentNumberValue, widget.numberMinValue, false),
+      ),
+      currentNumberValueText
+          .text(
+            textAlign: TextAlign.center,
+            style: globalTheme.textGeneralStyle,
+          )
+          .constrainedMin(minWidth: widget.numberMinWidth)
+          .click(() async {
+        final value = await context.showWidgetDialog(NumberKeyboardDialog(
+          number: currentNumberValue,
+          minValue: widget.numberMinValue,
+          maxValue: widget.numberMaxValue,
+          maxDigits: widget.numberMaxDigits,
+          numType: widget.numberValueTypeMixin,
+        ));
+        if (value != null) {
+          onNumberValueChanged(value);
+        }
+      }),
+      buildIncrementStepWidget(
+        context,
+        step: 1,
+        stepText: "+",
+        enable: lessThan(currentNumberValue, widget.numberMaxValue, false),
+      ),
+    ].row();
+
+    return [
+      label,
+      numberLayout
+          ?.container(
+            color: globalTheme.itemWhiteBgColor,
+            padding: const EdgeInsets.all(kM),
+            radius: kDefaultBorderRadiusX,
+          )
+          .wrapContentWidth()
+          .paddingSymmetric(horizontal: kX, vertical: kL)
+          .align(Alignment.centerRight)
+          .expanded()
+    ].row()!;
   }
 }

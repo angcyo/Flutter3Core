@@ -11,17 +11,27 @@ class TouchDetectorWidget extends SingleChildRenderObjectWidget {
   final PointerAction? onClick;
   final PointerAction? onLongPress;
 
+  /// 手势事件, 未处理
+  final PointerAction? onPointerEvent;
+
+  /// 是否激活长按循环事件通知
+  final bool enableLoopLongPress;
+
   const TouchDetectorWidget({
     super.key,
     super.child,
     this.onClick,
     this.onLongPress,
+    this.onPointerEvent,
+    this.enableLoopLongPress = false,
   });
 
   @override
   RenderObject createRenderObject(BuildContext context) => RenderTouchDetector(
         onClick: onClick,
         onLongPress: onLongPress,
+        onPointerEvent: onPointerEvent,
+        enableLoopLongPress: enableLoopLongPress,
       );
 
   @override
@@ -29,6 +39,8 @@ class TouchDetectorWidget extends SingleChildRenderObjectWidget {
       BuildContext context, RenderTouchDetector renderObject) {
     renderObject
       ..onClick = onClick
+      ..onPointerEvent = onPointerEvent
+      ..enableLoopLongPress = enableLoopLongPress
       ..onLongPress = onLongPress;
   }
 }
@@ -37,6 +49,12 @@ class RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
   PointerAction? onClick;
   PointerAction? onLongPress;
 
+  /// 手势事件, 未处理
+  PointerAction? onPointerEvent;
+
+  @override
+  bool enableLoopLongPress = false;
+
   /// 是否启用事件检测
   bool get _enableTouchDetector => onClick != null || onLongPress != null;
 
@@ -44,6 +62,8 @@ class RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
     RenderBox? child,
     this.onClick,
     this.onLongPress,
+    this.onPointerEvent,
+    this.enableLoopLongPress = false,
   }) : super(child);
 
   @override
@@ -64,11 +84,14 @@ class RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
     if (_enableTouchDetector) {
       addTouchDetectorPointerEvent(event);
     }
+    onPointerEvent?.call(event);
   }
 
   @override
   bool onTouchDetectorPointerEvent(
-      PointerEvent event, TouchDetectorType touchType) {
+    PointerEvent event,
+    TouchDetectorType touchType,
+  ) {
     //debugger();
     if (touchType == TouchDetectorType.click) {
       onClick?.call(event);
@@ -88,6 +111,7 @@ extension TouchDetectorWidgetEx on Widget {
     PointerAction? onLongPress,
     bool enableClick = true,
     bool enableLongPress = false,
+    bool enableLoopLongPress = false,
   }) {
     if (!enableClick && !enableLongPress) {
       return this;
@@ -102,6 +126,7 @@ extension TouchDetectorWidgetEx on Widget {
     return TouchDetectorWidget(
       onClick: enableClick ? onClick : null,
       onLongPress: enableLongPress ? onLongPress : null,
+      enableLoopLongPress: enableLoopLongPress,
       child: this,
     );
   }

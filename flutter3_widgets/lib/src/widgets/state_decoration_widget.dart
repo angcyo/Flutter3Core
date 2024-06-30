@@ -253,6 +253,23 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
 }
 
 extension StateDecorationWidgetEx on Widget {
+  /// 状态装饰
+  /// [StateDecorationWidget]
+  Widget stateDecoration(
+    Decoration? decoration, {
+    Decoration? pressedDecoration,
+    Decoration? selectedDecoration,
+    bool enablePressedDecoration = true,
+  }) {
+    return StateDecorationWidget(
+      decoration: decoration,
+      pressedDecoration: pressedDecoration,
+      selectedDecoration: selectedDecoration,
+      enablePressedDecoration: enablePressedDecoration,
+      child: this,
+    );
+  }
+
   /// 绘制背景
   /// [fillColor] 使用纯色填充背景
   /// [StateDecorationWidget]

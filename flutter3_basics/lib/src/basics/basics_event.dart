@@ -275,6 +275,16 @@ mixin TouchDetectorMixin {
   /// 是否要检查长按事件
   bool checkLongPress = true;
 
+  /// 是否激活长按保持回调
+  /// 激活后, 每隔[loopLongPressDelay]毫秒触发一个长按
+  bool enableLoopLongPress = false;
+
+  /// [enableLoopLongPress]
+  double loopLongPressDelay = 60;
+
+  /// 长按循环触发器
+  Timer? loopLongPressTimer;
+
   /// 超过此值的点视为无效
   @dp
   double touchDetectorSlop = kTouchSlop;
@@ -293,6 +303,8 @@ mixin TouchDetectorMixin {
   void addTouchDetectorPointerEvent(PointerEvent event) {
     final pointer = event.pointer;
     if (event.isPointerDown) {
+      loopLongPressTimer?.cancel();
+      loopLongPressTimer = null;
       _pointerDownMap[pointer] = event;
       if (checkLongPress) {
         _pointerLongMap[pointer] = Timer(touchLongPressTimeout, () {
@@ -303,6 +315,8 @@ mixin TouchDetectorMixin {
       _checkClick(event);
     }
     if (event.isPointerFinish) {
+      loopLongPressTimer?.cancel();
+      loopLongPressTimer = null;
       _clear(event);
     }
   }
@@ -332,6 +346,14 @@ mixin TouchDetectorMixin {
       return;
     }
     onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
+    if (enableLoopLongPress) {
+      loopLongPressTimer?.cancel();
+      loopLongPressTimer = null;
+      loopLongPressTimer =
+          Timer.periodic(loopLongPressDelay.milliseconds, (timer) {
+        onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
+      });
+    }
     _clear(event);
   }
 

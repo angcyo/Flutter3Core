@@ -9,7 +9,7 @@ part of '../../flutter3_widgets.dart';
 /// 上[label]
 /// 下input hint(des)
 class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
-  /// 标签
+  /// 标签/LabelMixin
   @override
   final String? label;
   @override
@@ -26,7 +26,7 @@ class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
 
   //--input
 
-  /// 输入框
+  /// 输入框/InputMixin
   /// 提示
   @override
   final String? inputHint;
@@ -122,7 +122,7 @@ class _LabelSingleInputTileState extends State<LabelSingleInputTile>
 
 /// 左[label] 右[input] 的输入tile
 class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
-  /// 标签
+  /// 标签/LabelMixin
   @override
   final String? label;
   @override
@@ -134,7 +134,7 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   @override
   final BoxConstraints? labelConstraints;
 
-  /// 输入框
+  /// 输入框/InputMixin
   /// 提示
   @override
   final String? inputHint;
@@ -157,15 +157,18 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   @override
   final TextInputType? inputKeyboardType;
 
+  ///
+  final double? inputWidth;
+
   const SingleLabelInputTile({
     super.key,
-    //--
+    //LabelMixin
     this.label,
     this.labelWidget,
     this.labelTextStyle,
     this.labelPadding = kLabelPadding,
     this.labelConstraints = kLabelConstraints,
-    //--
+    //InputMixin
     this.inputHint,
     this.inputText,
     this.onInputTextChanged,
@@ -182,6 +185,7 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
     ),
     this.inputKeyboardType,
     //--
+    this.inputWidth,
   });
 
   @override
@@ -220,8 +224,13 @@ class _SingleLabelInputTileState extends State<SingleLabelInputTile>
           .container(
             color: globalTheme.itemWhiteBgColor,
             radius: kDefaultBorderRadiusX,
+            constraints: BoxConstraints(
+              minWidth: widget.inputWidth ?? 0,
+              maxWidth: widget.inputWidth ?? double.infinity,
+            ),
           )
           .paddingSymmetric(horizontal: kX, vertical: kL)
+          .align(Alignment.centerRight)
           .expanded(),
     ].row()!;
   }

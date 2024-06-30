@@ -159,6 +159,22 @@ T maxOf<T extends num>(T num1, T num2) => math.max(num1, num2);
 /// 取2个数中的最小值
 T minOf<T extends num>(T num1, T num2) => math.min(num1, num2);
 
+/// [value] 是否 <= [num]
+bool lessThan(num value, num? num, [bool than = true]) {
+  if (num == null) {
+    return true;
+  }
+  return than ? value <= num : value < num;
+}
+
+/// [value] 是否 >= [num]
+bool greaterThan(num value, num? num, [bool than = true]) {
+  if (num == null) {
+    return true;
+  }
+  return than ? value >= num : value > num;
+}
+
 /*enum Direction {
   /// clockwise 顺时针
   CW, // must match enum in SkPath.h
