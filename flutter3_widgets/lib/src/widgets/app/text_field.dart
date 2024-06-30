@@ -49,8 +49,17 @@ class TextFieldConfig {
   TextInputAction? textInputAction;
 
   /// 输入过滤
+  /// [FilteringTextInputFormatter.singleLineFormatter]
+  /// [FilteringTextInputFormatter.digitsOnly]
+  /// [FilteringTextInputFormatter.allow]
+  /// [FilteringTextInputFormatter]
+  /// [LengthLimitingTextInputFormatter]
   /// [SingleInputWidget.inputFormatters]
   List<TextInputFormatter>? inputFormatters;
+
+  /// 用来构建输入长度等信息的回调
+  /// [TextField.buildCounter]
+  InputCounterWidgetBuilder? inputBuildCounter;
 
   //endregion 覆盖TextField的属性, 优先级低
 
@@ -131,6 +140,22 @@ const kSuffixIconSize = 18.0;
 
 /// 清除图标的约束
 const kSuffixIconConstraintsSize = 36.0;
+
+/// 后缀图标的约束
+const kSuffixIconConstraints = BoxConstraints(
+  minWidth: kSuffixIconConstraintsSize,
+  minHeight: kSuffixIconConstraintsSize,
+  maxWidth: double.infinity,
+  maxHeight: double.infinity,
+);
+
+/// 前缀图标的约束
+const kPrefixIconConstraints = BoxConstraints(
+  minWidth: kSuffixIconConstraintsSize,
+  minHeight: kSuffixIconConstraintsSize,
+  maxWidth: double.infinity,
+  maxHeight: double.infinity,
+);
 
 /// 用来控制密码输入控件, 密码的可见性
 class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {
@@ -233,6 +258,10 @@ class SingleInputWidget extends StatefulWidget {
   final BoxConstraints? suffixIconConstraints;
   final BoxConstraints? prefixIconConstraints;
 
+  /// 后缀/前缀图标的padding
+  final EdgeInsetsGeometry? suffixIconPadding;
+  final EdgeInsetsGeometry? prefixIconPadding;
+
   /// 后缀/前缀图标的构建器
   final TransformChildWidgetBuilder? prefixIconBuilder;
   final TransformChildWidgetBuilder? suffixIconBuilder;
@@ -266,6 +295,7 @@ class SingleInputWidget extends StatefulWidget {
   /// ```
   /// [FilteringTextInputFormatter.singleLineFormatter]
   /// [FilteringTextInputFormatter.digitsOnly]
+  /// [FilteringTextInputFormatter.allow]
   /// [FilteringTextInputFormatter]
   /// [LengthLimitingTextInputFormatter]
   final List<TextInputFormatter>? inputFormatters;
@@ -291,7 +321,7 @@ class SingleInputWidget extends StatefulWidget {
   final InputDecoration? decoration;
 
   /// 是否使用下划线[InputBorder]
-  final bool useUnderlineInputBorder;
+  final InputBorderType inputBorderType;
 
   /// [outlineInputBorder]
   /// [underlineInputBorder]
@@ -316,6 +346,10 @@ class SingleInputWidget extends StatefulWidget {
   final ValueChanged<String>? onSubmitted;
   final VoidCallback? onEditingComplete;
 
+  /// 用来构建输入长度等信息的回调
+  /// [TextField.buildCounter]
+  final InputCounterWidgetBuilder? inputBuildCounter;
+
   const SingleInputWidget({
     super.key,
     required this.config,
@@ -327,8 +361,12 @@ class SingleInputWidget extends StatefulWidget {
     this.underlineBorderRadius = 0,
     this.gapPadding = 0,
     this.borderWidth = 1,
-    this.maxLines = 1,
     this.minLines,
+    this.maxLines = 1,
+    this.maxLength,
+    this.inputBuildCounter,
+    this.keyboardType,
+    this.inputFormatters,
     this.enabled = true,
     this.autoShowSuffixIcon = true,
     this.textStyle,
@@ -342,27 +380,16 @@ class SingleInputWidget extends StatefulWidget {
     this.prefixIcon,
     this.prefixIconSize = kSuffixIconSize,
     this.suffixIconSize = kSuffixIconSize,
-    this.suffixIconConstraints = const BoxConstraints(
-      minWidth: kSuffixIconConstraintsSize,
-      minHeight: kSuffixIconConstraintsSize,
-      maxWidth: double.infinity,
-      maxHeight: double.infinity,
-    ),
-    this.prefixIconConstraints = const BoxConstraints(
-      minWidth: kSuffixIconConstraintsSize,
-      minHeight: kSuffixIconConstraintsSize,
-      maxWidth: double.infinity,
-      maxHeight: double.infinity,
-    ),
-    this.keyboardType,
-    this.inputFormatters,
-    this.maxLength,
+    this.suffixIconConstraints = kSuffixIconConstraints,
+    this.prefixIconConstraints = kPrefixIconConstraints,
+    this.suffixIconPadding,
+    this.prefixIconPadding,
     this.counterText,
     this.isCollapsed,
     this.isDense = true,
     this.contentPadding = kInputPadding,
     this.decoration,
-    this.useUnderlineInputBorder = false,
+    this.inputBorderType = InputBorderType.outline,
     this.border,
     this.focusedBorder,
     this.disabledBorder,
@@ -404,7 +431,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         //密码输入框
         result = IconButton(
           color: globalTheme.icoNormalColor,
-          iconSize: widget.suffixIconSize,
+          padding: widget.suffixIconPadding,
           constraints: widget.suffixIconConstraints,
           //tapTargetSize: MaterialTapTargetSize.shrinkWrap, //收紧大小
           //最小视觉密度
@@ -420,6 +447,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
             setState(() {});
           },
           icon: Icon(
+            size: widget.suffixIconSize,
             widget.config.obscureNode.showObscureText
                 ? Icons.visibility
                 : Icons.visibility_off,
@@ -430,12 +458,13 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         result = IconButton(
           /*飞溅的颜色*/
           color: globalTheme.icoNormalColor,
-          iconSize: widget.suffixIconSize,
+          padding: widget.suffixIconPadding,
           constraints: widget.suffixIconConstraints,
           onPressed: () {
             _updateFieldValue("");
           },
           icon: Icon(
+            size: widget.suffixIconSize,
             Icons.cancel_rounded,
             /*图标的颜色*/
             color: globalTheme.icoNormalColor,
@@ -527,15 +556,17 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
                 width: widget.borderWidth,
               );
     final normalBorder = widget.border ??
-        (widget.useUnderlineInputBorder
-            ? UnderlineInputBorder(
-                borderSide: normalBorderSide,
-                borderRadius:
-                    BorderRadius.circular(widget.underlineBorderRadius))
-            : OutlineInputBorder(
-                gapPadding: widget.gapPadding,
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: normalBorderSide));
+        switch (widget.inputBorderType) {
+          InputBorderType.outline => OutlineInputBorder(
+              gapPadding: widget.gapPadding,
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              borderSide: normalBorderSide),
+          InputBorderType.underline => UnderlineInputBorder(
+              borderSide: normalBorderSide,
+              borderRadius:
+                  BorderRadius.circular(widget.underlineBorderRadius)),
+          _ => InputBorder.none,
+        };
 
     //focused聚焦状态
     final focusedBorderSide =
@@ -546,15 +577,17 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
                 width: widget.borderWidth,
               );
     final focusedBorder = widget.focusedBorder ??
-        (widget.useUnderlineInputBorder
-            ? UnderlineInputBorder(
-                borderSide: focusedBorderSide,
-                borderRadius:
-                    BorderRadius.circular(widget.underlineBorderRadius))
-            : OutlineInputBorder(
-                gapPadding: widget.gapPadding,
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: focusedBorderSide));
+        switch (widget.inputBorderType) {
+          InputBorderType.outline => OutlineInputBorder(
+              gapPadding: widget.gapPadding,
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              borderSide: focusedBorderSide),
+          InputBorderType.underline => UnderlineInputBorder(
+              borderSide: focusedBorderSide,
+              borderRadius:
+                  BorderRadius.circular(widget.underlineBorderRadius)),
+          _ => InputBorder.none,
+        };
 
     //disabled禁用状态
     final disableBorderSide = widget.disableBorderColor == Colors.transparent ||
@@ -565,17 +598,19 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
             width: widget.borderWidth,
           );
     final disabledBorder = widget.disabledBorder ??
-        (widget.useUnderlineInputBorder
-            ? UnderlineInputBorder(
-                borderSide: disableBorderSide,
-                borderRadius:
-                    BorderRadius.circular(widget.underlineBorderRadius))
-            : OutlineInputBorder(
-                gapPadding: widget.gapPadding,
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: disableBorderSide));
+        switch (widget.inputBorderType) {
+          InputBorderType.outline => OutlineInputBorder(
+              gapPadding: widget.gapPadding,
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              borderSide: disableBorderSide),
+          InputBorderType.underline => UnderlineInputBorder(
+              borderSide: disableBorderSide,
+              borderRadius:
+                  BorderRadius.circular(widget.underlineBorderRadius)),
+          _ => InputBorder.none,
+        };
 
-    var decoration = widget.decoration ??
+    final decoration = widget.decoration ??
         InputDecoration(
           filled: widget.fillColor != null ||
               (!widget.enabled && widget.disabledFillColor != null),
@@ -586,9 +621,11 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           isCollapsed: widget.isCollapsed,
           counterText: widget.counterText,
           contentPadding: widget.contentPadding ??
-              (widget.useUnderlineInputBorder
-                  ? const EdgeInsets.all(12)
-                  : null),
+              switch (widget.inputBorderType) {
+                InputBorderType.outline => null,
+                InputBorderType.underline => const EdgeInsets.all(12),
+                _ => const EdgeInsets.all(4),
+              },
           //contentPadding: const EdgeInsets.only(top: 60),
           //contentPadding: const EdgeInsets.all(0),
           //contentPadding: EdgeInsets.symmetric(horizontal: globalTheme.xh),
@@ -652,13 +689,16 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           maxLines: widget.maxLines,
           minLines: widget.minLines,
           maxLength: widget.maxLength,
+          /*maxLengthEnforcement: MaxLengthEnforcement.truncateAfterCompositionEnds,*/
+          buildCounter:
+              widget.inputBuildCounter ?? widget.config.inputBuildCounter,
           //scrollPadding: EdgeInsets.zero,
           obscureText: widget.config.obscureNode.obscureText &&
               !widget.config.obscureNode._showObscureText,
           obscuringCharacter: widget.config.obscureNode.obscuringCharacter,
           keyboardType: widget.keyboardType,
           inputFormatters:
-              widget.config.inputFormatters ?? widget.inputFormatters,
+              widget.inputFormatters ?? widget.config.inputFormatters,
           cursorColor: cursorColor,
           //selectionControls: ,
           //selectionHeightStyle: ,

@@ -243,9 +243,9 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
         if (action.hiveType == String)
           LabelSingleInputTile(
               label: action.label,
-              hint: action.des,
-              value: action.defHiveValue ?? action.hiveKey?.hiveGet<String>(),
-              onChanged: (value) {
+              inputHint: action.des,
+              inputText: action.defHiveValue ?? action.hiveKey?.hiveGet<String>(),
+              onInputTextChanged: (value) {
                 action.hiveKey?.hivePut(value);
               })
         else if (action.hiveType == int)
@@ -338,8 +338,8 @@ class _DebugHivePageState extends State<DebugHivePage> with AbsScrollPage {
       if (value is String) {
         list.add(LabelSingleInputTile(
             label: key,
-            value: value,
-            onChanged: (value) {
+            inputText: value,
+            onInputTextChanged: (value) {
               key.hivePut(value);
             }));
       } else if (value is int) {

@@ -200,6 +200,8 @@ mixin TileMixin {
     bool isSelected = false,
     bool themeStyle = true,
     EdgeInsets? padding = const EdgeInsets.all(kL),
+    bool disableTap = false,
+    GestureTapCallback? onTap,
   }) {
     final globalTheme = GlobalTheme.of(context);
     final normalTextStyle =
@@ -225,17 +227,20 @@ mixin TileMixin {
             widget;
       }
     }
-    return widget?.paddingInsets(padding).backgroundDecoration(!enable
-        ? fillDecoration(
-            color: globalTheme.disableColor,
-            borderRadius: kDefaultBorderRadiusX,
-          )
-        : isSelected
+    return widget
+        ?.paddingInsets(padding)
+        .backgroundDecoration(!enable
             ? fillDecoration(
-                color: selectedColor ?? globalTheme.accentColor,
+                color: globalTheme.disableColor,
                 borderRadius: kDefaultBorderRadiusX,
               )
-            : null);
+            : isSelected
+                ? fillDecoration(
+                    color: selectedColor ?? globalTheme.accentColor,
+                    borderRadius: kDefaultBorderRadiusX,
+                  )
+                : null)
+        .click(onTap, enable && !isSelected && !disableTap);
   }
 
   //endregion ---构建小部件---
