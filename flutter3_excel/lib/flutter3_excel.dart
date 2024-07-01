@@ -3,6 +3,7 @@ library flutter3_excel;
 import 'dart:io';
 
 import 'package:excel_dart/excel_dart.dart';
+import 'package:flutter3_basics/flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -34,6 +35,9 @@ class ExcelHelper {
     String? filePath,
   }) {
     final Map<String, List<List>> result = {};
+    if (isNil(filePath)) {
+      return result;
+    }
     final excel =
         Excel.decodeBytes(data ?? (File(filePath!)).readAsBytesSync());
     excel.tables.forEach((key, sheet) {

@@ -29,6 +29,9 @@ class LabelWheelTile extends StatefulWidget {
   /// wheel
   final bool enableWheelSelectedIndexColor;
 
+  /// 拦截点击事件
+  final GestureTapCallback? onContainerTap;
+
   /// [WheelDialog.title]对话框的标题, 默认[label]
   final String? wheelTitle;
 
@@ -44,6 +47,7 @@ class LabelWheelTile extends StatefulWidget {
     this.onValueChanged,
     this.onValueIndexChanged,
     this.enableWheelSelectedIndexColor = true,
+    this.onContainerTap,
     this.wheelTitle,
   });
 
@@ -79,33 +83,38 @@ class _LabelWheelTileState extends State<LabelWheelTile>
             .expanded(),
         loadCoreAssetSvgPicture(Assets.svg.coreNext)
       ].row()!,
-    ).ink(
-      () async {
-        final resultIndex = await context.showWidgetDialog(WheelDialog(
-          title: widget.wheelTitle ?? widget.label,
-          initValue: currentValueMixin,
-          values: widget.values,
-          valuesWidget: widget.valuesWidget,
-          transformValueWidget: widget.transformValueWidget,
-          enableWheelSelectedIndexColor: widget.enableWheelSelectedIndexColor,
-        ));
-        if (resultIndex is int) {
-          currentValueMixin =
-              widget.values?.getOrNull(resultIndex) ?? currentValueMixin;
-          widget.onValueIndexChanged?.call(resultIndex);
-          widget.onValueChanged?.call(widget.values?.getOrNull(resultIndex) ??
-              widget.valuesWidget?.getOrNull(resultIndex));
-          updateState();
-        } else {
-          assert(() {
-            l.w('无效的wheel返回值类型[$resultIndex]');
-            return true;
-          }());
-        }
-      },
-      backgroundColor: globalTheme.itemWhiteBgColor,
-      radius: kDefaultBorderRadiusXX,
-    ).paddingInsets(kContentPadding);
+    )
+        .ink(
+          widget.onContainerTap ??
+              () async {
+                final resultIndex = await context.showWidgetDialog(WheelDialog(
+                  title: widget.wheelTitle ?? widget.label,
+                  initValue: currentValueMixin,
+                  values: widget.values,
+                  valuesWidget: widget.valuesWidget,
+                  transformValueWidget: widget.transformValueWidget,
+                  enableWheelSelectedIndexColor:
+                      widget.enableWheelSelectedIndexColor,
+                ));
+                if (resultIndex is int) {
+                  currentValueMixin = widget.values?.getOrNull(resultIndex) ??
+                      currentValueMixin;
+                  widget.onValueIndexChanged?.call(resultIndex);
+                  widget.onValueChanged?.call(
+                      widget.values?.getOrNull(resultIndex) ??
+                          widget.valuesWidget?.getOrNull(resultIndex));
+                  updateState();
+                } else {
+                  assert(() {
+                    l.w('无效的wheel返回值类型[$resultIndex]');
+                    return true;
+                  }());
+                }
+              },
+          backgroundColor: globalTheme.itemWhiteBgColor,
+          radius: kDefaultBorderRadiusXX,
+        )
+        .paddingInsets(kContentPadding);
 
     return [label, content.align(Alignment.centerRight).expanded()]
         .row()!
@@ -136,6 +145,9 @@ class LabelWheelDateTimeTile extends StatefulWidget {
 
   ///wheel
 
+  /// 拦截点击事件
+  final GestureTapCallback? onContainerTap;
+
   /// [WheelDateTimeDialog.title]对话框的标题, 默认[label]
   final String? wheelTitle;
 
@@ -152,6 +164,7 @@ class LabelWheelDateTimeTile extends StatefulWidget {
     this.dateTimePattern = "yyyy-MM-dd",
     this.wheelDateTimeType = sDateWheelType,
     //wheel
+    this.onContainerTap,
     this.wheelTitle,
   });
 
@@ -182,25 +195,28 @@ class _LabelWheelDateTimeTileState extends State<LabelWheelDateTimeTile>
                   empty)
               .expanded(),
           loadCoreAssetSvgPicture(Assets.svg.coreNext)
-        ].row()!, onTap: () async {
-      final resultDateTime = await context.showWidgetDialog(WheelDateTimeDialog(
-        title: widget.wheelTitle ?? widget.label,
-        initDateTime: currentValueMixin,
-        minDateTime: widget.minDateTime,
-        maxDateTime: widget.maxDateTime,
-        dateTimeType: widget.wheelDateTimeType,
-      ));
-      if (resultDateTime is DateTime) {
-        currentValueMixin = resultDateTime;
-        widget.onDateTimeValueChanged?.call(resultDateTime);
-        updateState();
-      } else {
-        assert(() {
-          l.w('无效的wheel返回值类型[$resultDateTime]');
-          return true;
-        }());
-      }
-    });
+        ].row()!,
+        onTap: widget.onContainerTap ??
+            () async {
+              final resultDateTime =
+                  await context.showWidgetDialog(WheelDateTimeDialog(
+                title: widget.wheelTitle ?? widget.label,
+                initDateTime: currentValueMixin,
+                minDateTime: widget.minDateTime,
+                maxDateTime: widget.maxDateTime,
+                dateTimeType: widget.wheelDateTimeType,
+              ));
+              if (resultDateTime is DateTime) {
+                currentValueMixin = resultDateTime;
+                widget.onDateTimeValueChanged?.call(resultDateTime);
+                updateState();
+              } else {
+                assert(() {
+                  l.w('无效的wheel返回值类型[$resultDateTime]');
+                  return true;
+                }());
+              }
+            });
 
     return [label, content.align(Alignment.centerRight).expanded()]
         .row()!
