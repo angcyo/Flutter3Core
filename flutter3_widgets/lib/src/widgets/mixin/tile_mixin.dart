@@ -501,5 +501,35 @@ mixin TileMixin {
     ).paddingInsets(margin);
   }
 
+  /// 构建一个用于点击操作的容器, 带圆角背景
+  Widget buildClickContainerWidget(
+    BuildContext context,
+    Widget? child, {
+    GestureTapCallback? onTap,
+    EdgeInsetsGeometry? contentMargin = kContentPadding,
+    EdgeInsetsGeometry? contentPadding =
+        const EdgeInsets.symmetric(horizontal: kH, vertical: kX),
+    AlignmentGeometry? contentAlignment = Alignment.centerLeft,
+    BoxConstraints? contentConstraints = const BoxConstraints(
+      minHeight: kMinInteractiveHeight,
+    ),
+    double radius = kDefaultBorderRadiusXX,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    final result = Container(
+      padding: contentPadding,
+      alignment: contentAlignment,
+      constraints: contentConstraints,
+      child: child,
+    )
+        .ink(
+          onTap,
+          backgroundColor: globalTheme.itemWhiteBgColor,
+          radius: radius,
+        )
+        .paddingInsets(contentMargin);
+    return result;
+  }
+
 //endregion ---辅助小部件---
 }

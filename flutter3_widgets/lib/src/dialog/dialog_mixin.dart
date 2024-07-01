@@ -196,7 +196,10 @@ mixin DialogMixin implements TranslationTypeImpl {
       body = [
         if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...children
-      ].column()!;
+      ].column()!.constrainedMax(
+            minHeight: contentMinHeight,
+            maxHeight: contentMaxHeight,
+          );
 
       //堆叠小部件
       if (stackWidget != null) {

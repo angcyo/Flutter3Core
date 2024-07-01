@@ -19,19 +19,24 @@ mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
 
   @override
   void initState() {
-    initialValueMixin = getInitialValueMixin();
-    currentValueMixin = initialValueMixin;
+    updateInitialValueMixin();
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant oldWidget) {
-    initialValueMixin = getInitialValueMixin();
-    currentValueMixin = initialValueMixin;
+    updateInitialValueMixin();
     super.didUpdateWidget(oldWidget);
   }
 
   /// 重写此方法, 初始化[initialValueMixin].[currentValueMixin]
+  @overridePoint
+  void updateInitialValueMixin() {
+    initialValueMixin = getInitialValueMixin();
+    currentValueMixin = initialValueMixin;
+  }
+
+  /// 重写此方法, 获取初始化的[initialValueMixin].值
   @initialize
   V getInitialValueMixin();
 }

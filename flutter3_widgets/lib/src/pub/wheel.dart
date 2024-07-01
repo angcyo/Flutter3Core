@@ -72,11 +72,10 @@ class Wheel extends StatelessWidget {
       // 放大倍数
       magnification: 1.1,
     );
-
     return WheelPicker(
       builder: builder ??
           (context, index) {
-            return children![index];
+            return children?.getOrNull(index) ?? empty;
           },
       controller: _controller,
       selectedIndexColor: enableSelectedIndexColor

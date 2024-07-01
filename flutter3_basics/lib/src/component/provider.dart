@@ -25,8 +25,8 @@ String? textOf(dynamic data, [BuildContext? context]) {
   if (data == null) {
     return null;
   }
-  if (data is String) {
-    return data;
+  if (data is String || data is bool || data is num || data is Iterable) {
+    return "$data";
   }
   if (data is ITextProvider) {
     if (context != null) {

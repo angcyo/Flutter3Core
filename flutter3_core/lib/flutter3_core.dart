@@ -1,7 +1,6 @@
 library flutter3_core;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -41,28 +40,51 @@ export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
 
 part 'src/core/core_keys.dart';
+
 part 'src/core/svg_core.dart';
+
 part 'src/debug/core_debug.dart';
+
 part 'src/debug/debug_file_page.dart';
+
 part 'src/debug/debug_page.dart';
+
 part 'src/debug/navigator_route_overlay.dart';
+
 part 'src/debug/screen_capture_overlay.dart';
+
 part 'src/dialog/number_keyboard_dialog.dart';
+
 part 'src/dialog/single_image_dialog.dart';
+
 part 'src/dialog/single_text_dialog.dart';
+
 part 'src/dialog/wheel_dialog.dart';
+
 part 'src/file/app_lifecycle_log.dart';
+
 part 'src/file/config_file.dart';
+
 part 'src/file/file_log.dart';
+
 part 'src/file/file_pub_ex.dart';
+
 part 'src/file/file_type.dart';
+
 part 'src/isar/hive/hive_ex.dart';
+
 part 'src/isar/isar_ex.dart';
+
 part 'src/tiles/core_dialog_title.dart';
+
 part 'src/tiles/label_number_slider_tile.dart';
+
 part 'src/tiles/label_number_tile.dart';
+
 part 'src/tiles/wheel_tile.dart';
+
 part 'src/view_model/mutable_live_data.dart';
+
 part 'src/view_model/view_model_ex.dart';
 
 /// 获取当前的工作目录
@@ -120,6 +142,7 @@ SvgPicture? loadCoreAssetSvgPicture(
   String? prefix = kDefAssetsSvgPrefix,
   String? package = 'flutter3_core',
   BoxFit? fit,
+  double? size,
   double? width,
   double? height,
   Color? tintColor,
@@ -130,10 +153,29 @@ SvgPicture? loadCoreAssetSvgPicture(
         : SvgPicture.asset(
             key.ensurePackagePrefix(package, prefix),
             fit: fit ?? BoxFit.contain,
-            width: width,
-            height: height,
+            width: size ?? width,
+            height: size ?? height,
             colorFilter: colorFilter ?? tintColor?.toColorFilter(),
           );
+
+/// 下一步svg图标
+SvgPicture coreNextSvgPicture({
+  BoxFit? fit,
+  double? size,
+  double? width,
+  double? height,
+  Color? tintColor,
+  UiColorFilter? colorFilter,
+}) =>
+    loadCoreAssetSvgPicture(
+      Assets.svg.coreNext,
+      fit: fit,
+      size: size,
+      width: width,
+      height: height,
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+    )!;
 
 /// [Image].[StatefulWidget]
 Image? loadCoreAssetImageWidget(
@@ -141,6 +183,7 @@ Image? loadCoreAssetImageWidget(
   String? prefix = kDefAssetsPngPrefix,
   String? package = 'flutter3_core',
   BoxFit? fit,
+  double? size,
   double? width,
   double? height,
   Color? color,
@@ -151,8 +194,8 @@ Image? loadCoreAssetImageWidget(
         : Image.asset(
             key.ensurePackagePrefix(package, prefix),
             fit: fit,
-            width: width,
-            height: height,
+            width: size ?? width,
+            height: size ?? height,
             color: color,
             colorBlendMode: colorBlendMode,
           );

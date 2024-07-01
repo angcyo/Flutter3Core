@@ -1866,7 +1866,11 @@ extension ListEx<T> on List<T> {
     if (element == null) {
       return null;
     }
-    return indexOf(element, start);
+    final index = indexOf(element, start);
+    if (index < 0) {
+      return null;
+    }
+    return index;
   }
 
   /// [List]

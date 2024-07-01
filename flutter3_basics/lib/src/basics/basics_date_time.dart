@@ -21,7 +21,11 @@ extension DateTimeEx on DateTime {
   }
 
   /// [difference]
-//Duration operator -(DateTime other) => difference(other);
+  //Duration operator -(DateTime other) => difference(other);
+
+  /// 当前的13位毫秒时间戳
+  /// [nowTimestamp]
+  int get timestamp => millisecondsSinceEpoch;
 
   int get dayOfYear {
     final date = DateTime.now();

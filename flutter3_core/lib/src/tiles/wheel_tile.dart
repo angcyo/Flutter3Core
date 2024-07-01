@@ -17,7 +17,7 @@ class LabelWheelTile extends StatefulWidget {
   final List<Widget>? valuesWidget;
   final TransformDataWidgetBuilder? transformValueWidget;
 
-  /// 宽度
+  /// 显示[initValue]小部件的宽度
   final double? valueWidth;
 
   /// [values]改变回调, 如果有
@@ -28,6 +28,9 @@ class LabelWheelTile extends StatefulWidget {
 
   /// wheel
   final bool enableWheelSelectedIndexColor;
+
+  /// [WheelDialog.title]对话框的标题, 默认[label]
+  final String? wheelTitle;
 
   const LabelWheelTile({
     super.key,
@@ -41,30 +44,17 @@ class LabelWheelTile extends StatefulWidget {
     this.onValueChanged,
     this.onValueIndexChanged,
     this.enableWheelSelectedIndexColor = true,
+    this.wheelTitle,
   });
 
   @override
   State<LabelWheelTile> createState() => _LabelWheelTileState();
 }
 
-class _LabelWheelTileState extends State<LabelWheelTile> with TileMixin {
-  dynamic _initialValue;
-
-  dynamic _currentValue;
-
+class _LabelWheelTileState extends State<LabelWheelTile>
+    with TileMixin, ValueChangeMixin<LabelWheelTile, dynamic> {
   @override
-  void initState() {
-    _initialValue = widget.initValue;
-    _currentValue = _initialValue;
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant LabelWheelTile oldWidget) {
-    _initialValue = widget.initValue;
-    _currentValue = _initialValue;
-    super.didUpdateWidget(oldWidget);
-  }
+  getInitialValueMixin() => widget.initValue;
 
   @override
   Widget build(BuildContext context) {
@@ -85,39 +75,126 @@ class _LabelWheelTileState extends State<LabelWheelTile> with TileMixin {
         minHeight: kMinInteractiveHeight,
       ),
       child: [
-        (widgetOf(context, _currentValue, tryTextWidget: true) ?? empty)
+        (widgetOf(context, currentValueMixin, tryTextWidget: true) ?? empty)
             .expanded(),
         loadCoreAssetSvgPicture(Assets.svg.coreNext)
       ].row()!,
     ).ink(
       () async {
         final resultIndex = await context.showWidgetDialog(WheelDialog(
-          title: widget.label,
-          initValue: _currentValue,
+          title: widget.wheelTitle ?? widget.label,
+          initValue: currentValueMixin,
           values: widget.values,
           valuesWidget: widget.valuesWidget,
           transformValueWidget: widget.transformValueWidget,
           enableWheelSelectedIndexColor: widget.enableWheelSelectedIndexColor,
         ));
-        if (resultIndex != null) {
-          if (resultIndex is int) {
-            _currentValue =
-                widget.values?.getOrNull(resultIndex) ?? _currentValue;
-            widget.onValueIndexChanged?.call(resultIndex);
-            widget.onValueChanged?.call(widget.values?.getOrNull(resultIndex) ??
-                widget.valuesWidget?.getOrNull(resultIndex));
-            updateState();
-          } else {
-            assert(() {
-              l.w('无效的wheel返回值类型');
-              return true;
-            }());
-          }
+        if (resultIndex is int) {
+          currentValueMixin =
+              widget.values?.getOrNull(resultIndex) ?? currentValueMixin;
+          widget.onValueIndexChanged?.call(resultIndex);
+          widget.onValueChanged?.call(widget.values?.getOrNull(resultIndex) ??
+              widget.valuesWidget?.getOrNull(resultIndex));
+          updateState();
+        } else {
+          assert(() {
+            l.w('无效的wheel返回值类型[$resultIndex]');
+            return true;
+          }());
         }
       },
       backgroundColor: globalTheme.itemWhiteBgColor,
       radius: kDefaultBorderRadiusXX,
     ).paddingInsets(kContentPadding);
+
+    return [label, content.align(Alignment.centerRight).expanded()]
+        .row()!
+        .material();
+  }
+}
+
+/// 左[label]      右[dateTime].[wheel]
+/// [WheelDateTimeDialog]
+class LabelWheelDateTimeTile extends StatefulWidget {
+  /// label
+  final String? label;
+  final Widget? labelWidget;
+
+  /// dateTime
+  /// 日期格式, 默认"yyyy-MM-dd"
+  final String? dateTimePattern;
+  final DateTime initDateTime;
+  final DateTime? minDateTime;
+  final DateTime? maxDateTime;
+
+  /// [values]改变回调, 如果有
+  final ValueCallback<DateTime>? onDateTimeValueChanged;
+
+  ///wheel
+
+  /// [WheelDateTimeDialog.title]对话框的标题, 默认[label]
+  final String? wheelTitle;
+
+  const LabelWheelDateTimeTile({
+    super.key,
+    //title
+    this.label,
+    this.labelWidget,
+    //dateTime
+    required this.initDateTime,
+    this.minDateTime,
+    this.maxDateTime,
+    this.dateTimePattern = "yyyy-MM-dd",
+    this.onDateTimeValueChanged,
+    //wheel
+    this.wheelTitle,
+  });
+
+  @override
+  State<LabelWheelDateTimeTile> createState() => _LabelWheelDateTimeTileState();
+}
+
+class _LabelWheelDateTimeTileState extends State<LabelWheelDateTimeTile>
+    with TileMixin, ValueChangeMixin<LabelWheelDateTimeTile, DateTime> {
+  @override
+  DateTime getInitialValueMixin() => widget.initDateTime;
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+
+    final label = buildLabelWidget(
+      context,
+      label: widget.label,
+      labelWidget: widget.labelWidget,
+    );
+
+    final content = buildClickContainerWidget(
+        context,
+        [
+          (widgetOf(context, currentValueMixin.format(widget.dateTimePattern),
+                      tryTextWidget: true) ??
+                  empty)
+              .expanded(),
+          loadCoreAssetSvgPicture(Assets.svg.coreNext)
+        ].row()!, onTap: () async {
+      final resultDateTime = await context.showWidgetDialog(WheelDateTimeDialog(
+        title: widget.wheelTitle ?? widget.label,
+        initDateTime: currentValueMixin,
+        minDateTime: widget.minDateTime,
+        maxDateTime: widget.maxDateTime,
+      ));
+      if (resultDateTime is DateTime) {
+        currentValueMixin = resultDateTime;
+        widget.onDateTimeValueChanged?.call(resultDateTime);
+        updateState();
+      } else {
+        assert(() {
+          l.w('无效的wheel返回值类型[$resultDateTime]');
+          return true;
+        }());
+      }
+    });
 
     return [label, content.align(Alignment.centerRight).expanded()]
         .row()!
