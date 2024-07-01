@@ -4,7 +4,7 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/24
 ///
-/// pop返回选中的索引
+/// @return pop 返回选中的索引
 class WheelDialog extends StatefulWidget with DialogMixin {
   /// title
   final String? title;
@@ -37,17 +37,16 @@ class WheelDialog extends StatefulWidget with DialogMixin {
   State<WheelDialog> createState() => _WheelDialogState();
 }
 
-class _WheelDialogState extends State<WheelDialog> with DialogMixin, TileMixin {
-  int _initialIndex = 0;
-  int _currentIndex = 0;
+class _WheelDialogState extends State<WheelDialog>
+    with DialogMixin, TileMixin, ValueChangeMixin<WheelDialog, int> {
   final _itemExtent = kMinItemInteractiveHeight;
   final _wheelHeight = 200.0;
 
   @override
-  void initState() {
-    _initialIndex = widget.values?.indexOf(widget.initValue) ?? 0;
-    _currentIndex = max(_initialIndex, 0);
-    super.initState();
+  int getInitialValueMixin() {
+    int index = widget.values?.indexOf(widget.initValue) ?? 0;
+    index = max(index, 0);
+    return index;
   }
 
   @override
@@ -67,9 +66,9 @@ class _WheelDialogState extends State<WheelDialog> with DialogMixin, TileMixin {
           CoreDialogTitle(
             title: widget.title,
             titleWidget: widget.titleWidget,
-            enableTrailing: _currentIndex != _initialIndex,
+            enableTrailing: currentValueMixin != initialValueMixin,
             onPop: () {
-              return _currentIndex;
+              return currentValueMixin;
             },
           ),
           Stack(
@@ -84,10 +83,10 @@ class _WheelDialogState extends State<WheelDialog> with DialogMixin, TileMixin {
                 looping: false,
                 size: _wheelHeight,
                 itemExtent: _itemExtent,
-                initialIndex: _currentIndex,
+                initialIndex: currentValueMixin,
                 enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
                 onIndexChanged: (index) {
-                  _currentIndex = index;
+                  currentValueMixin = index;
                   updateState();
                 },
                 children: [...?children, if (children == null) empty],

@@ -27,11 +27,11 @@ class LabelSwitchTile extends StatefulWidget {
   final bool value;
 
   /// 并不需要在此方法中更新界面
-  final ValueChanged<bool>? onChanged;
+  final ValueChanged<bool>? onValueChanged;
 
   /// 在改变时, 需要进行的确认回调
   /// 返回false, 则不进行改变
-  final FutureValueCallback<bool>? onConfirmChange;
+  final FutureValueCallback<bool>? onValueConfirmChange;
 
   /// tile的填充
   final EdgeInsets? tilePadding;
@@ -46,8 +46,8 @@ class LabelSwitchTile extends StatefulWidget {
     this.desWidget,
     this.desPadding = kDesPadding,
     this.value = false,
-    this.onChanged,
-    this.onConfirmChange,
+    this.onValueChanged,
+    this.onValueConfirmChange,
     this.tilePadding = kTilePadding,
   });
 
@@ -55,20 +55,10 @@ class LabelSwitchTile extends StatefulWidget {
   State<LabelSwitchTile> createState() => _LabelSwitchTileState();
 }
 
-class _LabelSwitchTileState extends State<LabelSwitchTile> with TileMixin {
-  bool _initValue = false;
-
+class _LabelSwitchTileState extends State<LabelSwitchTile>
+    with TileMixin, ValueChangeMixin<LabelSwitchTile, bool> {
   @override
-  void initState() {
-    super.initState();
-    _initValue = widget.value;
-  }
-
-  @override
-  void didUpdateWidget(covariant LabelSwitchTile oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _initValue = widget.value;
-  }
+  bool getInitialValueMixin() => widget.value;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +91,7 @@ class _LabelSwitchTileState extends State<LabelSwitchTile> with TileMixin {
       ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
       buildSwitchWidget(
         context,
-        _initValue,
+        currentValueMixin,
         onChanged: (value) {
           _changeValue(value);
         },
@@ -111,19 +101,19 @@ class _LabelSwitchTileState extends State<LabelSwitchTile> with TileMixin {
         .paddingInsets(widget.tilePadding)
         .click(() {
       //debugger();
-      _changeValue(!_initValue);
+      _changeValue(!currentValueMixin);
     });
   }
 
   void _changeValue(bool toValue) async {
-    if (widget.onConfirmChange != null) {
-      final result = await widget.onConfirmChange!(toValue);
+    if (widget.onValueConfirmChange != null) {
+      final result = await widget.onValueConfirmChange!(toValue);
       if (result != true) {
         return;
       }
     }
-    _initValue = toValue;
-    widget.onChanged?.call(toValue);
+    currentValueMixin = toValue;
+    widget.onValueChanged?.call(toValue);
     updateState();
   }
 }

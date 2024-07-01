@@ -20,8 +20,11 @@ class LabelWheelTile extends StatefulWidget {
   /// 宽度
   final double? valueWidth;
 
+  /// [values]改变回调, 如果有
+  final ValueCallback? onValueChanged;
+
   /// 索引改变回调
-  final IndexCallback? onTabIndexChanged;
+  final IndexCallback? onValueIndexChanged;
 
   /// wheel
   final bool enableWheelSelectedIndexColor;
@@ -35,7 +38,8 @@ class LabelWheelTile extends StatefulWidget {
     this.valueWidth,
     this.valuesWidget,
     this.transformValueWidget,
-    this.onTabIndexChanged,
+    this.onValueChanged,
+    this.onValueIndexChanged,
     this.enableWheelSelectedIndexColor = true,
   });
 
@@ -44,6 +48,24 @@ class LabelWheelTile extends StatefulWidget {
 }
 
 class _LabelWheelTileState extends State<LabelWheelTile> with TileMixin {
+  dynamic _initialValue;
+
+  dynamic _currentValue;
+
+  @override
+  void initState() {
+    _initialValue = widget.initValue;
+    _currentValue = _initialValue;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant LabelWheelTile oldWidget) {
+    _initialValue = widget.initValue;
+    _currentValue = _initialValue;
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -55,30 +77,36 @@ class _LabelWheelTileState extends State<LabelWheelTile> with TileMixin {
     );
 
     final content = Container(
-      padding: const EdgeInsets.symmetric(horizontal: kM, vertical: kX),
+      padding: const EdgeInsets.symmetric(horizontal: kH, vertical: kX),
       alignment: Alignment.centerLeft,
       constraints: BoxConstraints(
-          minWidth: widget.valueWidth ?? 0,
-          maxWidth: widget.valueWidth ?? double.infinity,
-          minHeight: kMinInteractiveHeight),
+        minWidth: widget.valueWidth ?? 0,
+        maxWidth: widget.valueWidth ?? double.infinity,
+        minHeight: kMinInteractiveHeight,
+      ),
       child: [
-        (widgetOf(context, widget.initValue, tryTextWidget: true) ?? empty)
+        (widgetOf(context, _currentValue, tryTextWidget: true) ?? empty)
             .expanded(),
         loadCoreAssetSvgPicture(Assets.svg.coreNext)
       ].row()!,
     ).ink(
       () async {
-        final result = await context.showWidgetDialog(WheelDialog(
+        final resultIndex = await context.showWidgetDialog(WheelDialog(
           title: widget.label,
-          initValue: widget.initValue,
+          initValue: _currentValue,
           values: widget.values,
           valuesWidget: widget.valuesWidget,
           transformValueWidget: widget.transformValueWidget,
           enableWheelSelectedIndexColor: widget.enableWheelSelectedIndexColor,
         ));
-        if (result != null) {
-          if (result is int) {
-            widget.onTabIndexChanged?.call(result);
+        if (resultIndex != null) {
+          if (resultIndex is int) {
+            _currentValue =
+                widget.values?.getOrNull(resultIndex) ?? _currentValue;
+            widget.onValueIndexChanged?.call(resultIndex);
+            widget.onValueChanged?.call(widget.values?.getOrNull(resultIndex) ??
+                widget.valuesWidget?.getOrNull(resultIndex));
+            updateState();
           } else {
             assert(() {
               l.w('无效的wheel返回值类型');

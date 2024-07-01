@@ -15,6 +15,9 @@ typedef VoidAction = Action;
 /// [VoidCallback]
 typedef ClickAction = void Function(BuildContext context);
 
+/// 国际化文本构建器
+typedef IntlTextBuilder = String Function(BuildContext context);
+
 /// [VoidAction]
 typedef FutureVoidAction = FutureOr Function();
 

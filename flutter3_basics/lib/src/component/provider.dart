@@ -7,16 +7,21 @@ part of '../../flutter3_basics.dart';
 ///
 /// 提供一个文本字符串
 mixin ITextProvider {
-  String? get provideText;
+  /// 获取一个文本
+  String? get provideText => null;
+
+  /// 获取一个国际化的文本
+  IntlTextBuilder? get provideIntlText =>
+      provideText == null ? null : (_) => provideText!;
 }
 
 /// 提供一个Widget
 mixin IWidgetProvider {
-  WidgetBuilder? get provideWidget;
+  WidgetBuilder? get provideWidget => null;
 }
 
 /// 在一个数据中, 提取文本
-String? textOf(dynamic data) {
+String? textOf(dynamic data, [BuildContext? context]) {
   if (data == null) {
     return null;
   }
@@ -24,6 +29,9 @@ String? textOf(dynamic data) {
     return data;
   }
   if (data is ITextProvider) {
+    if (context != null) {
+      return data.provideIntlText?.call(context);
+    }
     return data.provideText;
   }
   if (data != null) {
@@ -42,13 +50,12 @@ String? textOf(dynamic data) {
 
 /// 在一个数据中, 提取Widget
 /// [tryTextWidget] 是否尝试使用[Text]小部件
-Widget? widgetOf(
-  BuildContext context,
-  dynamic data, {
-  bool tryTextWidget = false,
-  TextStyle? textStyle,
-  TextAlign? textAlign,
-}) {
+Widget? widgetOf(BuildContext context,
+    dynamic data, {
+      bool tryTextWidget = false,
+      TextStyle? textStyle,
+      TextAlign? textAlign,
+    }) {
   if (data == null) {
     return null;
   }
@@ -59,7 +66,7 @@ Widget? widgetOf(
     return data.provideWidget?.call(context);
   }
   if (tryTextWidget) {
-    final text = textOf(data);
+    final text = textOf(data, context);
     if (text != null) {
       final globalTheme = GlobalTheme.of(context);
       return text.text(
