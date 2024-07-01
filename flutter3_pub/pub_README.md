@@ -188,6 +188,10 @@ https://github.com/googlefonts/noto-emoji
 - [overlay_support: ^2.1.0](https://pub.dev/packages/overlay_support) 提供程序支持 overlay ，使构建
   Toast 和应用内通知变得容易。
 - [debug_overlay: ^0.2.10](https://pub.dev/packages/debug_overlay) 🐛 通过应用的中央叠加层查看调试信息和更改设置。
+- [showcaseview: ^3.0.0](https://pub.dev/packages/showcaseview) Flutter 包允许您逐步展示/突出显示您的小部件。
+- [flutter_intro: ^3.2.3](https://pub.dev/packages/flutter_intro) 为您的 Flutter 项目提供新功能介绍和分步用户指南的更好方法。
+- [el_tooltip: ^2.0.0](https://pub.dev/packages/el_tooltip) 智能定位工具提示。
+- [popover: ^0.3.0+1](https://pub.dev/packages/popover) Popover for Flutter Flutter 的弹出窗口
 
 ## flutter_neumorphic
 
