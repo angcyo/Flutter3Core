@@ -121,11 +121,15 @@ class LabelWheelDateTimeTile extends StatefulWidget {
   final Widget? labelWidget;
 
   /// dateTime
-  /// 日期格式, 默认"yyyy-MM-dd"
-  final String? dateTimePattern;
   final DateTime initDateTime;
   final DateTime? minDateTime;
   final DateTime? maxDateTime;
+
+  /// 日期格式, 默认 yyyy-MM-dd HH:mm:ss
+  final String? dateTimePattern;
+
+  /// 日期/时间的类型
+  final List wheelDateTimeType;
 
   /// [values]改变回调, 如果有
   final ValueCallback<DateTime>? onDateTimeValueChanged;
@@ -144,8 +148,9 @@ class LabelWheelDateTimeTile extends StatefulWidget {
     required this.initDateTime,
     this.minDateTime,
     this.maxDateTime,
-    this.dateTimePattern = "yyyy-MM-dd",
     this.onDateTimeValueChanged,
+    this.dateTimePattern = "yyyy-MM-dd",
+    this.wheelDateTimeType = sDateWheelType,
     //wheel
     this.wheelTitle,
   });
@@ -183,6 +188,7 @@ class _LabelWheelDateTimeTileState extends State<LabelWheelDateTimeTile>
         initDateTime: currentValueMixin,
         minDateTime: widget.minDateTime,
         maxDateTime: widget.maxDateTime,
+        dateTimeType: widget.wheelDateTimeType,
       ));
       if (resultDateTime is DateTime) {
         currentValueMixin = resultDateTime;

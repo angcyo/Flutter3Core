@@ -216,13 +216,13 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
                       (_, __) => buildDayWheel(context).expanded()),
                 if (widget.dateTimeType.getOrNull(3) != null)
                   rebuild(_hourUpdateNotifier,
-                      (_, __) => buildDayWheel(context).expanded()),
+                      (_, __) => buildHourWheel(context).expanded()),
                 if (widget.dateTimeType.getOrNull(4) != null)
                   rebuild(_minuteUpdateNotifier,
-                      (_, __) => buildDayWheel(context).expanded()),
+                      (_, __) => buildMinuteWheel(context).expanded()),
                 if (widget.dateTimeType.getOrNull(5) != null)
                   rebuild(_secondUpdateNotifier,
-                      (_, __) => buildDayWheel(context).expanded()),
+                      (_, __) => buildSecondWheel(context).expanded()),
               ].row(mainAxisSize: MainAxisSize.max)!,
             ],
           ),
