@@ -99,7 +99,7 @@ class StringTemplateParser {
 
   int getNextStringIndex(String text, String str) {
     var resultIndex = -1;
-    for (var i = 0; i < text.length; i++) {
+    for (var i = index; i < text.length; i++) {
       final endIndex = i + str.length;
       if (endIndex > text.length) {
         break;
@@ -287,9 +287,9 @@ class DateTemplateParser extends StringTemplateParser {
 
         //--
         case "D":
-          return "${calendar.daysInMonth}";
+          return "${calendar.day}";
         case "DD":
-          return "${calendar.daysInMonth}".padLeft(2, '0');
+          return "${calendar.day}".padLeft(2, '0');
         //一周中的一天，星期天是 0
         case "d":
           return "${calendar.weekday}";
