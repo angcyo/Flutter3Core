@@ -1871,6 +1871,7 @@ extension ContextEx on BuildContext {
     return locale.languageCode == 'zh';
   }
 
+  /// 中英文字符选择
   /// 如果是中文环境, 则返回中文字符串, 否则返回默认字符串
   /// 同时如果中文字符串为null, 则也返回默认字符串
   String? zhStrOrDef(String? zhStr, String? defStr) {
