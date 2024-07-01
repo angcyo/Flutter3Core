@@ -394,9 +394,9 @@ extension FutureEx<T> on Future<T> {
         get?.call(null, error); //这一层的错误可以走正常的Future异常处理
         return null;
       }
-    }, onError: (error) {
+    }, onError: (error, errorStack) {
       //此处无法捕获[get]中的异常
-      //debugger();
+      debugger();
       if (error is FutureCancelException) {
         assert(() {
           l.w('Future被取消:$error');
@@ -405,7 +405,7 @@ extension FutureEx<T> on Future<T> {
       } else {
         assert(() {
           l.w('Future异常:$error↓');
-          printError(error, stack);
+          printError(error, errorStack ?? stack);
           return true;
         }());
         get?.call(null, error);
@@ -1830,6 +1830,16 @@ extension ListEx<T> on List<T> {
     );
   }
 
+  /// 替换指定的元素
+  void replace(T? element, T? newElement) {
+    if (element != null && newElement != null) {
+      var index = indexOf(element);
+      if (index >= 0) {
+        this[index] = newElement;
+      }
+    }
+  }
+
   /// 添加一个元素, 如果为null则不添加
   void addIfNotNull(T? element) {
     if (element != null) {
@@ -2037,15 +2047,17 @@ extension ListEx<T> on List<T> {
     // TODO(51681): Drop null check when de-supporting pre-2.12 code.
     if (separator == null || separator.isEmpty) {
       do {
-        buffer.write(
-            covertString?.call(iterator.current) ?? textOf(iterator.current)!);
+        buffer.write(covertString?.call(iterator.current) ??
+            textOf(iterator.current) ??
+            iterator.current.toString());
       } while (iterator.moveNext());
     } else {
       do {
         buffer
           ..write(separator)
           ..write(covertString?.call(iterator.current) ??
-              textOf(iterator.current)!);
+              textOf(iterator.current) ??
+              iterator.current.toString());
       } while (iterator.moveNext());
     }
     return buffer.toString();
@@ -2054,6 +2066,18 @@ extension ListEx<T> on List<T> {
   /// 复制列表, 浅拷贝
   /// [Iterable.toList]
   List<T> copy() => [...this];
+
+  /// 使用Json的方式, 进行深拷贝
+  /// 不转换时, 返回的是[List<Map>].
+  ///
+  /// ```
+  ///  List<Bean>? fromJsonBeanList<Bean>(Bean Function(dynamic json) map) =>
+  ///  json.decode(this).map<Bean>(map).toList();
+  /// ```
+  /// [StringEx.fromJsonBeanList]
+  List<Bean> copyWithJson<Bean>(Bean Function(dynamic json) map) {
+    return jsonDecode(jsonEncode(this)).map<Bean>(map).toList();
+  }
 }
 
 /// 通过指定行列索引, 计算数组的索引

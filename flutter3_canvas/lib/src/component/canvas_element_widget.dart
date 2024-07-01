@@ -43,12 +43,13 @@ class _CanvasElementRenderObject extends RenderBox {
     super.paint(context, offset);
     elementPainter?.let((painter) {
       final canvas = context.canvas;
+      //debugger();
       painter.elementsBounds?.let((src) {
         final dst = offset & size;
         //canvas.drawRect(dst, Paint()..color = Colors.black12);
         //debugger();
         canvas.drawInRect(dst, src, () {
-          painter.painting(canvas, PaintMeta());
+          painter.painting(canvas, const PaintMeta());
         }, fit: BoxFit.contain, dstPadding: padding);
       });
 

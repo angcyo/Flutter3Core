@@ -30,7 +30,7 @@ String? textOf(dynamic data, [BuildContext? context]) {
   }
   if (data is ITextProvider) {
     if (context != null) {
-      return data.provideIntlText?.call(context);
+      return data.provideIntlText?.call(context) ?? data.provideText;
     }
     return data.provideText;
   }
@@ -42,7 +42,7 @@ String? textOf(dynamic data, [BuildContext? context]) {
         l.w('当前类型[${data.runtimeType}],不支持[.text]/[ITextProvider]操作.');
         return true;
       }());
-      return "$data";
+      return data.toString();
     }
   }
   return null;
@@ -50,12 +50,13 @@ String? textOf(dynamic data, [BuildContext? context]) {
 
 /// 在一个数据中, 提取Widget
 /// [tryTextWidget] 是否尝试使用[Text]小部件
-Widget? widgetOf(BuildContext context,
-    dynamic data, {
-      bool tryTextWidget = false,
-      TextStyle? textStyle,
-      TextAlign? textAlign,
-    }) {
+Widget? widgetOf(
+  BuildContext context,
+  dynamic data, {
+  bool tryTextWidget = false,
+  TextStyle? textStyle,
+  TextAlign? textAlign,
+}) {
   if (data == null) {
     return null;
   }
