@@ -130,6 +130,30 @@ EdgeInsets? edgeInsets([double? v1, double? v2, double? v3, double? v4]) {
 }
 
 extension WidgetListEx on WidgetNullList {
+  /// 过滤空数据和填充间隙
+  WidgetList filterAndFillGap({
+    double? gap,
+    Widget? gapWidget,
+  }) {
+    WidgetList list = filterNull();
+    WidgetList children = list;
+    final length = list.length;
+    if (length > 1 && (gap != null || gapWidget != null)) {
+      children = <Widget>[];
+      for (var i = 0; i < length; i++) {
+        children.add(list[i]);
+        if (i < length - 1) {
+          if (gapWidget != null) {
+            children.add(gapWidget);
+          } else {
+            children.add(Empty(size: Size(gap!, gap)));
+          }
+        }
+      }
+    }
+    return children;
+  }
+
   /// 将当前的小部件集合, 包裹在一个[Wrap]中
   /// [alignment] 主轴对齐方式, 集体靠左/靠右/居中
   /// [crossAxisAlignment] 交叉轴对齐方式, 就是每一行的对齐方式
@@ -177,22 +201,7 @@ extension WidgetListEx on WidgetNullList {
     double? gap,
     Widget? gapWidget,
   }) {
-    WidgetList list = filterNull();
-    WidgetList children = list;
-    final length = list.length;
-    if (length > 1 && (gap != null || gapWidget != null)) {
-      children = <Widget>[];
-      for (var i = 0; i < length; i++) {
-        children.add(list[i]);
-        if (i < length - 1) {
-          if (gapWidget != null) {
-            children.add(gapWidget);
-          } else {
-            children.add(Empty.height(gap!));
-          }
-        }
-      }
-    }
+    WidgetList children = filterAndFillGap(gap: gap, gapWidget: gapWidget);
     if (isNullOrEmpty(children)) {
       return null;
     }
@@ -222,22 +231,7 @@ extension WidgetListEx on WidgetNullList {
     double? gap,
     Widget? gapWidget,
   }) {
-    WidgetList list = filterNull();
-    WidgetList children = list;
-    final length = list.length;
-    if (length > 1 && (gap != null || gapWidget != null)) {
-      children = <Widget>[];
-      for (var i = 0; i < length; i++) {
-        children.add(list[i]);
-        if (i < length - 1) {
-          if (gapWidget != null) {
-            children.add(gapWidget);
-          } else {
-            children.add(Empty.width(gap!));
-          }
-        }
-      }
-    }
+    WidgetList children = filterAndFillGap(gap: gap, gapWidget: gapWidget);
     if (isNullOrEmpty(children)) {
       return null;
     }
