@@ -55,7 +55,8 @@ class _WheelDialogState extends State<WheelDialog>
 
     WidgetList? children = buildChildrenFromValues(
       context,
-      values: widget.values,
+      values: widget.values ??
+          (widget.valuesWidget == null ? [widget.initValue] : null),
       valuesWidget: widget.valuesWidget,
       transformValueWidget: widget.transformValueWidget,
     );
