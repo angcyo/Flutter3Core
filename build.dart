@@ -6,60 +6,6 @@ import 'package:args/args.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/20
 ///
-
-ArgParser buildParser() {
-  return ArgParser()
-    ..addFlag(
-      'help',
-      abbr: 'h',
-      negatable: false,
-      help: 'Print this usage information.',
-    )
-    ..addOption(
-      'packageName',
-      abbr: 'p',
-      valueHelp: "包名字符串",
-      help: '替换[packageName]',
-    )
-    ..addOption(
-      'appFlavor',
-      abbr: 'f',
-      valueHelp: "风味字符串",
-      help: '替换[appFlavor]',
-    )
-    ..addOption(
-      'buildTime',
-      abbr: 'b',
-      valueHelp: "编译时间",
-      help: '替换[buildTime]',
-    )
-    ..addOption(
-      'operatingSystem',
-      valueHelp: "打包操作系统",
-      help: '替换[operatingSystem]',
-    )
-    ..addOption(
-      'operatingSystemVersion',
-      valueHelp: "打包操作系统版本",
-      help: '替换[operatingSystemVersion]',
-    )
-    ..addOption(
-      'operatingSystemLocaleName',
-      valueHelp: "打包操作系统语言",
-      help: '替换[operatingSystemLocaleName]',
-    )
-    ..addOption(
-      'operatingSystemUserName',
-      valueHelp: "打包操作系统用户",
-      help: '替换[operatingSystemUserName]',
-    );
-}
-
-void printUsage(ArgParser argParser) {
-  print('Usage: dart build.dart <flags> [arguments]');
-  print(argParser.usage);
-}
-
 void main(List<String> arguments) {
   //throw "test";
 
@@ -134,4 +80,59 @@ void main(List<String> arguments) {
     print('');
     printUsage(argParser);
   }
+}
+
+/// 命令参数说明解析
+ArgParser buildParser() {
+  return ArgParser()
+    ..addFlag(
+      'help',
+      abbr: 'h',
+      negatable: false,
+      help: 'Print this usage information.',
+    )
+    ..addOption(
+      'packageName',
+      abbr: 'p',
+      valueHelp: "包名字符串",
+      help: '替换[packageName]',
+    )
+    ..addOption(
+      'appFlavor',
+      abbr: 'f',
+      valueHelp: "风味字符串",
+      help: '替换[appFlavor]',
+    )
+    ..addOption(
+      'buildTime',
+      abbr: 'b',
+      valueHelp: "编译时间",
+      help: '替换[buildTime]',
+    )
+    ..addOption(
+      'operatingSystem',
+      valueHelp: "打包操作系统",
+      help: '替换[operatingSystem]',
+    )
+    ..addOption(
+      'operatingSystemVersion',
+      valueHelp: "打包操作系统版本",
+      help: '替换[operatingSystemVersion]',
+    )
+    ..addOption(
+      'operatingSystemLocaleName',
+      valueHelp: "打包操作系统语言",
+      help: '替换[operatingSystemLocaleName]',
+    )
+    ..addOption(
+      'operatingSystemUserName',
+      valueHelp: "打包操作系统用户",
+      help: '替换[operatingSystemUserName]',
+    );
+}
+
+/// 打印命令参数说明
+void printUsage(ArgParser argParser) {
+  print('Usage: dart build.dart <flags> [arguments]');
+  print(argParser.usage);
 }
