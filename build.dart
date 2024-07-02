@@ -6,6 +6,7 @@ import 'package:args/args.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/20
 ///
+/// 构建信息写入 `Flutter3Core/flutter3_app/assets/config/app_setting.json`
 void main(List<String> arguments) {
   //throw "test";
 
