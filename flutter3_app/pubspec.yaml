@@ -83,6 +83,11 @@ dependencies:
   # https://pub.dev/packages/flutter_install_app
   flutter_install_app: ^1.3.0 #ANDROID IOS
 
+  # https://pub.dev/packages/receive_sharing_intent_plus
+  receive_sharing_intent_plus: ^1.0.1
+  # https://pub.dev/packages/uri_to_file
+  uri_to_file: ^1.0.0
+
 dependency_overrides:
 #cross_file: ^0.3.4+1
 #web: ^0.5.1

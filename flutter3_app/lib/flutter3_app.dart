@@ -1,6 +1,7 @@
 library flutter3_app;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -14,7 +15,9 @@ import 'package:flutter_install_app/flutter_install_app.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uri_to_file/uri_to_file.dart' as uri_to_file;
 
 import 'src/mode/app_setting_bean.dart';
 
@@ -36,6 +39,7 @@ part 'src/app_notifications.dart';
 part 'src/app_swiper_ex.dart';
 part 'src/mobile_ex.dart';
 part 'src/pages/app_update_dialog.dart';
+part 'src/receive/receive_intent.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
