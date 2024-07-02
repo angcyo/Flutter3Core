@@ -111,7 +111,7 @@ class TextFieldConfig {
     //debugger();
     if (updateFieldValueFn == null) {
       assert(() {
-        l.w('无效的操作');
+        l.w('无效更新TextEditingValue[$text]');
         return true;
       }());
     }
