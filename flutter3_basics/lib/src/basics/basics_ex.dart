@@ -521,10 +521,12 @@ extension ColorEx on Color {
       toHex(leadingHashSign: leadingHashSign, a: a);
 
   /// 判断当前颜色是否是暗色
+  /// [Color.computeLuminance]
   bool get isDark =>
       ThemeData.estimateBrightnessForColor(this) == Brightness.dark;
 
   /// 判断当前颜色是否是亮色
+  /// [Color.computeLuminance]
   bool get isLight =>
       ThemeData.estimateBrightnessForColor(this) == Brightness.light;
 
