@@ -192,7 +192,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
             borderRadius: borderRadius,
           ),
           pressedDecoration: pressedDecoration,
-          child: "完成".text(style: keyboardNumberStyle).align(Alignment.center),
+          child: LibRes.of(context).libFinish.text(style: keyboardNumberStyle).align(Alignment.center),
         ).click(() {
           //debugger();
           if (_checkInputValue(_numberText)) {

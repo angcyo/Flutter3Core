@@ -21,14 +21,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 取消按钮
   final String? cancel;
   final Widget? cancelWidget;
+  final bool? showCancel;
 
   /// 确定按钮
   final String? confirm;
   final Widget? confirmWidget;
+  final bool? showConfirm;
 
   ///中立按钮
   final String? neutral;
   final Widget? neutralWidget;
+  final bool? showNeutral;
 
   /// 确定按钮点击回调, 参数始终为true
   /// 返回true, 表示拦截默认处理
@@ -51,12 +54,15 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.titleWidget,
     this.message,
     this.messageWidget,
-    this.cancel = kDialogCancel,
+    this.cancel,
+    this.showCancel = true,
     this.cancelWidget,
-    this.confirm = kDialogConfirm,
+    this.confirm,
     this.confirmWidget,
+    this.showConfirm = true,
     this.neutral,
     this.neutralWidget,
+    this.showNeutral,
     this.onConfirmTap,
     this.useIcon = false,
     this.interceptPop = false,
@@ -139,11 +145,14 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 构建取消按钮
   Widget? _buildCancelButton(BuildContext context) {
+    if (showCancel == false) {
+      return null;
+    }
     return (cancelWidget == null && cancel == null)
         ? null
         : CancelButton(
             widget: cancelWidget,
-            text: cancel,
+            text: cancel ?? LibRes.of(context).libCancel,
             useIcon: useIcon,
             onTap: () {
               Navigator.pop(context, false);
@@ -152,6 +161,9 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 构建中立按钮
   Widget? _buildNeutralButton(BuildContext context) {
+    if (showNeutral == false) {
+      return null;
+    }
     return (neutralWidget == null && neutral == null)
         ? null
         : NeutralButton(
@@ -165,11 +177,14 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 构建确定按钮
   Widget? _buildConfirmButton(BuildContext context) {
+    if (showConfirm == false) {
+      return null;
+    }
     return (confirmWidget == null && confirm == null)
         ? null
         : ConfirmButton(
             widget: confirmWidget,
-            text: confirm,
+            text: confirm ?? LibRes.of(context).libConfirm,
             useIcon: useIcon,
             onTap: () async {
               if (onConfirmTap == null) {

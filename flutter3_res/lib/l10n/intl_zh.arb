@@ -1,0 +1,42 @@
+{
+  "@@locale": "zh",
+  "testOnlyZhKey": "只有中文[zh]翻译资源",
+  "@testOnlyZhKey": {
+    "description": "当前key[testOnlyZhKey]只有中文[zh]资源"
+  },
+  "testResKey": "testResKey翻译资源",
+  "@testResKey": {
+    "description": "当前key[testResKey]都有"
+  },
+  "libAdapterNoData": "暂无数据",
+  "@libAdapterNoData": {
+    "description": "列表加载暂无数据"
+  },
+  "libAdapterNoMoreData": "~已经到底啦~",
+  "@libAdapterNoMoreData": {
+    "description": "列表无更多数据加载"
+  },
+  "libAdapterLoadMoreError": "加载失败, 点击重试",
+  "@libAdapterLoadMoreError": {
+    "description": "列表加载更多数据失败"
+  },
+  "libRefresh": "刷新",
+  "libFinish": "完成",
+  "libBack": "返回",
+  "libAdd": "添加",
+  "libEdit": "编辑",
+  "libConfirm": "确定",
+  "libCancel": "取消",
+  "libContinue": "继续",
+  "libChoose": "请选择",
+  "libWarn": "警告",
+  "libTips": "提示",
+  "libDelete": "删除",
+  "libNext": "下一步",
+  "libOpen": "打开",
+  "libShare": "分享",
+  "libWaitTip": "请稍等...",
+  "libValidRangeTip": "有效范围",
+  "libKnown": "我知道了",
+  "libSave": "保存"
+}

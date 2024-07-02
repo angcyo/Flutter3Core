@@ -19,8 +19,10 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
 
   final String? cancel;
   final Widget? cancelWidget;
+  final bool? showCancel;
   final String? save;
   final Widget? saveWidget;
+  final bool? showSave;
 
   /// 对话框的位置, 居中还是底部全屏
   /// [Alignment.center]
@@ -50,10 +52,12 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
     this.title,
     this.hintText,
     this.titleWidget,
-    this.cancel = kDialogCancel,
+    this.cancel,
     this.cancelWidget,
-    this.save = kDialogSave,
+    this.showCancel = true,
+    this.save,
     this.saveWidget,
+    this.showSave = true,
     this.onSaveTap,
     this.alignment = Alignment.center,
     this.maxLines = 1,
@@ -94,21 +98,26 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
     );
 
     // 取消 和 保存
-    Widget? cancel = (cancelWidget == null && this.cancel == null)
+    final cancelText = showCancel == true
+        ? this.cancel ?? LibRes.of(context).libCancel
+        : this.cancel;
+    Widget? cancel = (cancelWidget == null && cancelText == null)
         ? null
         : CancelButton(
             widget: cancelWidget,
-            text: this.cancel,
+            text: cancelText,
             useIcon: useIcon,
             onTap: () {
               Navigator.pop(context, false);
             });
 
-    Widget? save = (saveWidget == null && this.save == null)
+    final saveText =
+        showSave == true ? this.save ?? LibRes.of(context).libSave : this.save;
+    Widget? save = (saveWidget == null && saveText == null)
         ? null
         : ConfirmButton(
             widget: saveWidget,
-            text: this.save,
+            text: saveText,
             useIcon: useIcon,
             onTap: () async {
               var result = _inputConfig.text;

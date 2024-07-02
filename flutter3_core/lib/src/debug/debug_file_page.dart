@@ -119,7 +119,8 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
             .sliverExpand(),
       if (_fileList?.isEmpty == true)
         globalConfig
-            .emptyPlaceholderBuilder(context, "暂无数据")
+            .emptyPlaceholderBuilder(
+                context, LibRes.of(context).libAdapterNoData)
             .align(Alignment.center)
             .sliverExpand(),
       if (_fileList != null)

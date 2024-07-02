@@ -16,6 +16,8 @@ hive_version: &hive_version ^2.2.3
 dependencies:
   flutter:
     sdk: flutter
+  flutter3_res:
+    path: ../flutter3_res
   flutter3_basics:
     path: ../flutter3_basics
   flutter3_widgets:

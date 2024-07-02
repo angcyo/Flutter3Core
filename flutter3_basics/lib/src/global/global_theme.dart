@@ -137,15 +137,6 @@ class GlobalTheme {
 
   double get xxxh => kXxx;
 
-  /// 无数据时的提示
-  String? get noDataTip => "暂无数据";
-
-  /// 没有更多数据时的提示
-  String? get noMoreDataTip => "~已经到底啦~";
-
-  /// 数据加载失败的提示
-  String? get loadDataErrorTip => "加载失败, 点击重试";
-
   /// 按钮内边距
   EdgeInsets get buttonPadding =>
       EdgeInsets.symmetric(horizontal: x, vertical: h);

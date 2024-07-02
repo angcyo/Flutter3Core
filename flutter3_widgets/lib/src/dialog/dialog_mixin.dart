@@ -5,11 +5,6 @@ part of './dialog.dart';
 /// @since 2023/12/15
 ///
 ///
-
-const String kDialogCancel = '取消';
-const String kDialogConfirm = '确定';
-const String kDialogSave = '保存';
-
 /// 对话框的一些基础方法,一些基础约束
 mixin DialogMixin implements TranslationTypeImpl {
   /// 对话框路径过度动画

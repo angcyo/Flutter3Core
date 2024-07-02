@@ -1,0 +1,42 @@
+{
+  "@@locale": "en",
+  "testOnlyEnKey": "Only[en]res",
+  "@testOnlyEnKey": {
+    "description": "当前key[testOnlyEnKey]只有[en]资源"
+  },
+  "testResKey": "testResKey Translation resources",
+  "@testResKey": {
+    "description": "当前key[testResKey]都有"
+  },
+  "libAdapterNoData": "No data",
+  "@libAdapterNoData": {
+    "description": "列表加载暂无数据"
+  },
+  "libAdapterNoMoreData": "~It's the end~",
+  "@libAdapterNoMoreData": {
+    "description": "列表无更多数据加载"
+  },
+  "libAdapterLoadMoreError": "Load failed, click retry",
+  "@libAdapterLoadMoreError": {
+    "description": "列表加载更多数据失败"
+  },
+  "libRefresh": "Refresh",
+  "libFinish": "Finish",
+  "libBack": "Back",
+  "libAdd": "Add",
+  "libEdit": "Edit",
+  "libConfirm": "Confirm",
+  "libCancel": "Cancel",
+  "libContinue": "Continue",
+  "libChoose": "Please choose",
+  "libWarn": "Warning",
+  "libTips": "Tips",
+  "libDelete": "Delete",
+  "libNext": "Next",
+  "libOpen": "Open",
+  "libShare": "Share",
+  "libWaitTip": "Please wait...",
+  "libValidRangeTip": "Valid range",
+  "libKnown": "Ok",
+  "libSave": "Save"
+}

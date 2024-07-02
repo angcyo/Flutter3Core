@@ -37,7 +37,7 @@ dependencies:
 # flutter pub run intl_utils:generate
 flutter_intl:
   enabled: true
-  class_name: LPS
+  class_name: LibRes
   main_locale: zh
   arb_dir: lib/l10n
   output_dir: lib/l10n/generated
@@ -51,6 +51,16 @@ flutter_intl:
 安装Idea`Flutter Intl`插件, 会自动执行命令.
 
 - arb文件说明: https://localizely.com/flutter-arb/
+
+# 3.初始化`delegate`
+
+```dart
+MaterialApp(
+  localizationsDelegates: const [
+    LibRes.delegate, //必须
+  ],
+);
+```
 
 # 注意
 

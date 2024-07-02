@@ -8,7 +8,7 @@ import 'dart:isolate';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:bidi/bidi.dart' as bidi;
+import 'package:intl/intl.dart' as intl;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -20,7 +20,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:hsluv/hsluvcolor.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:meta/meta_meta.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -47,10 +46,10 @@ export 'package:vector_math/vector_math_64.dart'
 export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
 export 'src/utils/hex.dart';
+export 'package:flutter3_res/flutter3_res.dart';
 
 //export 'package:leak_tracker/leak_tracker.dart';
 
-part 'l10n/intl_ex.dart';
 part 'src/basics/basics.dart';
 part 'src/basics/basics_animation.dart';
 part 'src/basics/basics_date_time.dart';

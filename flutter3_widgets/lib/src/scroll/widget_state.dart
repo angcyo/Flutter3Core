@@ -109,7 +109,8 @@ extension WidgetStateEx on Widget {
   Widget widgetState({WidgetBuildState? widgetState, bool? loading}) {
     //debugger();
     if (widgetState == null && loading != null) {
-      widgetState = loading ? WidgetBuildState.loading : WidgetBuildState.preLoading;
+      widgetState =
+          loading ? WidgetBuildState.loading : WidgetBuildState.preLoading;
     }
     return WidgetStateScope(
       widgetState: widgetState,
@@ -272,7 +273,7 @@ class AdapterStateWidgetState extends WidgetStateBuildWidgetState {
 
     final stateData = widget.stateData ??
         widget.noDataStringGenerate?.call(context) ??
-        globalTheme.noDataTip;
+        LibRes.of(context).libAdapterNoData;
     if (stateData != null) {
       result = result.columnOf(
         "$stateData"
@@ -300,7 +301,7 @@ class AdapterStateWidgetState extends WidgetStateBuildWidgetState {
 
     final stateData = widget.stateData ??
         widget.loadErrorStringGenerate?.call(context) ??
-        globalTheme.loadDataErrorTip;
+        LibRes.of(context).libAdapterLoadMoreError;
 
     if (stateData != null) {
       result = result.columnOf(
@@ -359,10 +360,10 @@ class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
   /// @override
   @override
   Widget defBuildEmptyWidget(BuildContext context, [dynamic data]) {
-    var globalTheme = GlobalTheme.of(context);
-    var stateData = widget.stateData ??
+    final globalTheme = GlobalTheme.of(context);
+    final stateData = widget.stateData ??
         widget.noDataStringGenerate?.call(context) ??
-        globalTheme.noMoreDataTip;
+        LibRes.of(context).libAdapterNoMoreData;
 
     Widget result = "$stateData"
         .text(
@@ -381,7 +382,7 @@ class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
     final globalTheme = GlobalTheme.of(context);
     final stateData = widget.stateData ??
         widget.loadErrorStringGenerate?.call(context) ??
-        globalTheme.loadDataErrorTip;
+        LibRes.of(context).libAdapterLoadMoreError;
 
     Widget result = "$stateData"
         .text(

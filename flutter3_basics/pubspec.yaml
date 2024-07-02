@@ -29,6 +29,8 @@ dependencies:
   # https://pub.dev/packages/path
   intl: any
   clock: any
+  flutter3_res:
+    path: ../flutter3_res
 
   # https://pub.dev/packages/collection
   # https://github.com/dart-lang/collection
@@ -100,15 +102,12 @@ dependencies:
   # `flutterCompute`
   flutter_isolate: ^2.0.4
 
-  # https://pub.dev/packages/bidi
-  bidi: ^2.0.10
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
   # https://pub.dev/packages/flutter_gen
-  flutter_gen: ^5.5.0+1
+  flutter_gen: ^5.6.0
   # https://pub.dev/packages/build_runner
   # https://pub.dev/packages/web_socket_channel # async, crypto, stream_channel, web
   # https://pub.dev/packages/stream_channel
