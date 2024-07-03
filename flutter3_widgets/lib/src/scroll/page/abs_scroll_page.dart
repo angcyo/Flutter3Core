@@ -33,7 +33,10 @@ mixin AbsScrollPage {
     return Scaffold(
       appBar: buildAppBar(context),
       backgroundColor: getBackgroundColor(context),
-      body: buildBody(context, children),
+      body: this is RebuildBodyMixin
+          ? rebuild((this as RebuildBodyMixin).bodyUpdateSignal,
+              (context, value) => buildBody(context, children))
+          : buildBody(context, children),
     );
   }
 
@@ -160,4 +163,16 @@ mixin AbsScrollPage {
   }
 
 //endregion AppBar
+}
+
+/// 更新body混入, 配合[AbsScrollPage]使用
+mixin RebuildBodyMixin {
+  /// [buildBody]更新的信号
+  final UpdateSignalNotifier bodyUpdateSignal = UpdateSignalNotifier(null);
+
+  /// 重建[buildBody]
+  @updateMark
+  void updateBody() {
+    bodyUpdateSignal.notify();
+  }
 }
