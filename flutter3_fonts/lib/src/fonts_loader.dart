@@ -17,6 +17,21 @@ class FontsLoader {
   FontsLoader._();
 
   /// 加载assets中的字体
+  static Future<bool> loadFont(Uint8List bytes, {String? fontFamily}) async {
+    try {
+      await loadFontFromList(bytes, fontFamily: fontFamily);
+      return true;
+    } catch (e) {
+      assert(() {
+        debugPrint("Font load error!!!");
+        debugPrint(e.toString());
+        return true;
+      }());
+      return false;
+    }
+  }
+
+  /// 加载assets中的字体
   /// [fontFamily] 字体名称
   /// [uri] 字体资产key
   /// 返回是否加载成功
