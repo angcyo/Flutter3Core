@@ -20,6 +20,7 @@ part 'dialog_page_route.dart';
 part 'ios_normal_dialog.dart';
 part 'message_dialog.dart';
 part 'single_input_dialog.dart';
+part 'actions_dialog.dart';
 part 'tile/ink_button.dart';
 part 'tile/cancel_button.dart';
 part 'tile/confirm_button.dart';
