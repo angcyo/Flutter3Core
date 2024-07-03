@@ -20,12 +20,11 @@ class SliverExpandWidget extends SingleChildRenderObjectWidget
   });
 
   @override
-  _SliverExpandBox createRenderObject(BuildContext context) => _SliverExpandBox(
-        alignment: alignment,
-      );
+  SliverExpandBox createRenderObject(BuildContext context) =>
+      SliverExpandBox(alignment: alignment);
 
   @override
-  void updateRenderObject(BuildContext context, _SliverExpandBox renderObject) {
+  void updateRenderObject(BuildContext context, SliverExpandBox renderObject) {
     super.updateRenderObject(context, renderObject);
     renderObject
       ..alignment = alignment
@@ -36,10 +35,10 @@ class SliverExpandWidget extends SingleChildRenderObjectWidget
 /// [RenderProxyBox]
 /// [RenderShiftedBox]
 /// [RenderAligningShiftedBox]
-class _SliverExpandBox extends RenderShiftedBox {
+class SliverExpandBox extends RenderShiftedBox {
   AlignmentDirectional alignment;
 
-  _SliverExpandBox({
+  SliverExpandBox({
     this.alignment = AlignmentDirectional.center,
   }) : super(null);
 
