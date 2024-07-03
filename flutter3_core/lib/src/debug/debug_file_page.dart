@@ -59,7 +59,7 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
             onTap: _handleResult,
             enable: _selectPath != null,
             padding: const EdgeInsets.symmetric(horizontal: kX, vertical: kL),
-            child: "确定".text()),
+            child: LibRes.of(context).libConfirm.text()),
         Empty.width(kX),
       ].row()!.safeArea(),
     );
