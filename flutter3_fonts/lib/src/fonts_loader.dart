@@ -17,10 +17,13 @@ class FontsLoader {
   FontsLoader._();
 
   /// 加载assets中的字体
-  static Future<bool> loadFont(Uint8List bytes, {String? fontFamily}) async {
+  static Future<bool> loadFont(Uint8List? bytes, {String? fontFamily}) async {
     try {
-      await loadFontFromList(bytes, fontFamily: fontFamily);
-      return true;
+      if (bytes != null) {
+        await loadFontFromList(bytes, fontFamily: fontFamily);
+        return true;
+      }
+      return false;
     } catch (e) {
       assert(() {
         debugPrint("Font load error!!!");

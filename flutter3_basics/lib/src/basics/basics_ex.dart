@@ -449,28 +449,28 @@ extension FutureEx<T> on Future<T> {
 
   /// [FutureBuilder]
   Widget toWidget(
-    Widget Function(T? value) builder, {
-    Widget Function(Object? error)? errorBuilder,
-    Widget Function()? loadingBuilder,
-    Widget Function()? emptyBuilder,
+    Widget Function(BuildContext context, T? value) builder, {
+    Widget Function(BuildContext context, Object? error)? errorBuilder,
+    Widget Function(BuildContext context)? loadingBuilder,
+    Widget Function(BuildContext context)? emptyBuilder,
   }) {
     return FutureBuilder<T>(
       future: this,
       builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
         if (snapshot.hasError) {
-          return errorBuilder?.call(snapshot.error) ??
+          return errorBuilder?.call(context, snapshot.error) ??
               GlobalConfig.of(context)
                   .errorPlaceholderBuilder(context, snapshot.error);
         }
         if (snapshot.hasData) {
           if (snapshot.data == null) {
-            return emptyBuilder?.call() ??
+            return emptyBuilder?.call(context) ??
                 GlobalConfig.of(context).emptyPlaceholderBuilder(context, null);
           } else {
-            return builder.call(snapshot.data);
+            return builder.call(context, snapshot.data);
           }
         }
-        return loadingBuilder?.call() ??
+        return loadingBuilder?.call(context) ??
             GlobalConfig.of(context)
                 .loadingIndicatorBuilder(context, this, null);
       },

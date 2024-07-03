@@ -30,7 +30,7 @@ class SingleImageDialog extends StatelessWidget {
     final Future<UiImage?>? body =
         content != null ? Future(() => content) : filePath?.toImageFromFile();
     return body!
-            .toWidget((image) => image!
+            .toWidget((context, image) => image!
                 .toImageWidget()
                 .position(all: 0)
                 .stackOf(isDebug

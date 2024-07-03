@@ -25,6 +25,6 @@ extension VectorStringEx on String {
   bool get isGCodeContent =>
       have("(G90)|(G91)\\s*(G20)|(G21)") || have("(G20)|(G21)\\s*(G90)|(G91)");
 
-  /// 是否是GCode内容
+  /// 是否是svg内容
   bool get isSvgContent => have("</svg>");
 }
