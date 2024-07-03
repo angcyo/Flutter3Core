@@ -6,6 +6,11 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// [Completer]
+///
+/// - [wrapRefreshWidget]        :实现自定义的刷新小部件
+/// - [buildAdapterStateWidget]  :实现自定义的情感图
+/// - [buildLoadMoreStateWidget] :实现自定义的加载更多
+///
 class RScrollController extends ScrollController {
   /// 用来控制刷新的key
   /// [RefreshIndicatorState]
@@ -348,6 +353,7 @@ class RScrollController extends ScrollController {
 }
 
 /// 情感图状态拦截
+/// 可以继承[extends]也可以[implements]
 class WidgetBuildStateIntercept {
   /// 获取可能的[WidgetBuildState]
   /// [requestPage] 请求的分页信息

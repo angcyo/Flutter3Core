@@ -12,6 +12,14 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// [buildScaffold]
 mixin AbsScrollPage {
+  /// 直接写一个[build]方法, 也可以继承[State.build]方法
+  /// @override
+  @overridePoint
+  @initialize
+  Widget build(BuildContext context) {
+    return buildScaffold(context);
+  }
+
   //region Page
 
   /// 构建脚手架[Scaffold]
@@ -85,11 +93,11 @@ mixin AbsScrollPage {
 
   /// 构建标题栏上的返回按钮
   @property
-  Widget? buildLeading(BuildContext context) => null;
+  Widget? buildAppBarLeading(BuildContext context) => null;
 
   /// 构建标题栏上的动作按钮
   @property
-  List<Widget>? buildActions(BuildContext context) => null;
+  List<Widget>? buildAppBarActions(BuildContext context) => null;
 
   /// 获取标题栏高度
   @property
@@ -131,9 +139,9 @@ mixin AbsScrollPage {
     return globalConfig.appBarBuilder(
       context,
       this,
-      leading: buildLeading(context),
+      leading: buildAppBarLeading(context),
       title: buildTitle(context),
-      actions: buildActions(context),
+      actions: buildAppBarActions(context),
       bottom: buildAppBarBottom(context),
       elevation: getAppBarElevation(context),
       scrolledUnderElevation: getAppBarScrolledUnderElevation(context),
