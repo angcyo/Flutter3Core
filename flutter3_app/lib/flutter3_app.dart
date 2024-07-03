@@ -1,7 +1,6 @@
 library flutter3_app;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -143,7 +142,7 @@ void runGlobalApp(
 /// [DebugPage]
 @initialize
 Future _initDebugLastInfo() async {
-  $compliance.wait((agree) async {
+  $compliance.wait((context, agree) async {
     if (agree) {
       final packageInfo = await platformPackageInfo;
       final deviceInfo = await platformDeviceInfo;

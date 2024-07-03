@@ -22,31 +22,31 @@ class Compliance {
 
   /// 同意隐私政策
   @api
-  void agree() {
+  void agree(BuildContext? context) {
     _isAgree = true;
-    _handlePendingCompleter(_isAgree);
+    _handlePendingCompleter(context, _isAgree);
   }
 
   /// 拒绝隐私政策
   @api
-  void reject() {
+  void reject(BuildContext? context) {
     _isAgree = false;
-    _handlePendingCompleter(_isAgree);
+    _handlePendingCompleter(context, _isAgree);
   }
 
   /// 检查隐私政策, 如果需要的话
   /// 自动处理[action]的返回值
   @api
-  Future checkIfNeed(FutureVoidAction action) async {
+  Future checkIfNeed(BuildContext? context, FutureVoidAction action) async {
     if (_isAgree) {
       return;
     }
     final result = await action();
     if (result is bool) {
       if (result) {
-        agree();
+        agree(context);
       } else {
-        reject();
+        reject(context);
       }
     }
   }
@@ -55,11 +55,11 @@ class Compliance {
   final List<Completer> _pendingCompleterList = [];
 
   /// 处理等待中的[Completer]
-  void _handlePendingCompleter(bool agree) {
+  void _handlePendingCompleter(BuildContext? context, bool agree) {
     try {
       for (final completer in _pendingCompleterList) {
         try {
-          completer.complete(agree);
+          completer.complete(context);
         } catch (e) {
           assert(() {
             printError(e);
@@ -83,16 +83,19 @@ class Compliance {
   /// [action] 同意与否执行的操作
   /// [checkIfNeed]
   @api
-  Future wait([FutureBoolAction? action]) async {
+  Future wait([ComplianceAction? action]) async {
     if (isAgree) {
-      return action?.call(isAgree);
+      return action?.call(null, isAgree);
     }
-    final completer = Completer<bool>();
+    final completer = Completer<BuildContext?>();
     _pendingCompleterList.add(completer);
-    await completer.future;
-    return action?.call(isAgree);
+    final context = await completer.future;
+    return action?.call(context, isAgree);
   }
 }
+
+/// 合规返回回调
+typedef ComplianceAction = FutureOr Function(BuildContext? context, bool value);
 
 /// 隐私合规管理
 final Compliance $compliance = Compliance._instance;
