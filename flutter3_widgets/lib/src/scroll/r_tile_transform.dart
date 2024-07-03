@@ -5,6 +5,23 @@ part of '../../flutter3_widgets.dart';
 /// @author angcyo
 /// @date 2024/04/14
 ///
+/// 是否是[Sliver]小部件
+bool isSliverWidget(Widget tile) {
+  const systemSliverWidgetList = [
+    SliverToBoxAdapter,
+    SliverList,
+    SliverGrid,
+    SliverFixedExtentList,
+    SliverPrototypeExtentList,
+    SliverFillViewport,
+    SliverFillRemaining,
+    SliverAnimatedGrid,
+    SliverAnimatedList,
+    SliverPadding,
+  ];
+  return systemSliverWidgetList.contains(tile.runtimeType);
+}
+
 /// 确保是[Sliver]小部件
 @minifyProguardFlag
 Widget _ensureSliver(Widget tile) {
@@ -19,7 +36,9 @@ Widget _ensureSliver(Widget tile) {
   //[SliverFillRemaining(child: Text, mode: [fillOverscroll])] SliverFillRemaining
   //打包之后会变成
   //[Instance of 'SliverFillRemaining'] Widget
-  if (tile is! NotSliverTile &&
+  if (isSliverWidget(tile)) {
+    return tile;
+  } else if (tile is! NotSliverTile &&
           tile.runtimeType.toString().toLowerCase().contains("sliver")
       /*("$tile".toLowerCase().startsWith("sliver") ||
               "$tile".toLowerCase().startsWith("instance of 'sliver")) ||
