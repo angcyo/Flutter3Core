@@ -39,6 +39,7 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
     }());
   }
 
+  /// [onAppLifecycleShow]
   @overridePoint
   void onAppLifecycleResume() {
     assert(() {
@@ -56,6 +57,7 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
     }());
   }
 
+  /// [onAppLifecycleHide]
   @overridePoint
   void onAppLifecyclePause() {
     assert(() {

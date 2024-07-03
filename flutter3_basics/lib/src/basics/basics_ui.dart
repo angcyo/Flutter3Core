@@ -442,11 +442,13 @@ extension WidgetEx on Widget {
     GestureLongPressCallback? onLongPress, {
     bool enable = true,
     HitTestBehavior? behavior = HitTestBehavior.translucent,
+    GestureTapCallback? onTap,
   }) =>
       onLongPress == null || !enable
           ? this
           : GestureDetector(
               onLongPress: onLongPress,
+              onTap: onTap,
               behavior: behavior,
               child: this,
             );
@@ -1565,6 +1567,7 @@ extension WidgetEx on Widget {
     double? height,
     Color? highlightColor,
     Color? splashColor,
+    GestureLongPressCallback? onLongPress,
   }) {
     if (!enable) {
       //禁用组件
@@ -1585,6 +1588,7 @@ extension WidgetEx on Widget {
       height: height,
       child: inkWell(
         onTap,
+        onLongPress: onLongPress,
         borderRadius: bRadius,
         customBorder: isCircle ? const CircleBorder() : null,
         highlightShape: shape,
@@ -1612,9 +1616,11 @@ extension WidgetEx on Widget {
     BoxShape highlightShape = BoxShape.rectangle,
     double? radius,
     ShapeBorder? customBorder,
+    GestureLongPressCallback? onLongPress,
   }) {
     return InkResponse(
       onTap: onTap,
+      onLongPress: onLongPress,
       radius: radius,
       splashColor: splashColor,
       highlightColor: highlightColor,
