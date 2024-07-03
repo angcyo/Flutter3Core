@@ -31,7 +31,7 @@ class NavigatorRouteOverlay extends StatefulWidget {
     this.entry, {
     super.key,
     this.size = 12.0,
-    this.interactiveSize = 30.0,
+    this.interactiveSize = 40.0,
   });
 
   @override
@@ -85,6 +85,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
         }());
       }
     }, onTap: () {
+      context.longPressFeedback();
       setState(() {
         if (showState == _NavigatorRouteOverlayStateEnum.routeStack) {
           _routeTextSpan = null;

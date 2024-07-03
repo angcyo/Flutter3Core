@@ -742,6 +742,7 @@ extension WidgetEx on Widget {
   }
 
   /// 系统ui覆盖
+  /// 状态栏/导航栏样式覆盖, 支持自动恢复
   Widget systemUiOverlay({
     BuildContext? context,
     SystemUiOverlayStyle? style,
@@ -1495,6 +1496,51 @@ extension WidgetEx on Widget {
         child: this,
       );
 
+  /// 有大小, 有圆形波纹, 有提示
+  Widget icon(
+    GestureTapCallback? onTap, {
+    bool enable = true,
+    bool? enableFeedback,
+    String? tooltip,
+    Color? color,
+    Color? disabledColor,
+    Color? highlightColor,
+    Color? splashColor,
+    Color? hoverColor,
+    Color? focusColor,
+    double? iconSize,
+    double? splashRadius,
+    AlignmentGeometry? alignment,
+    EdgeInsetsGeometry? padding,
+    VisualDensity? visualDensity,
+    BoxConstraints? constraints,
+    ButtonStyle? style,
+    bool? isSelected,
+    Widget? selectedIcon,
+  }) {
+    return IconButton(
+      onPressed: enable ? onTap : null,
+      icon: this,
+      tooltip: tooltip,
+      enableFeedback: enableFeedback,
+      color: color,
+      disabledColor: disabledColor,
+      highlightColor: highlightColor,
+      splashColor: splashColor,
+      hoverColor: hoverColor,
+      focusColor: focusColor,
+      iconSize: iconSize,
+      splashRadius: splashRadius,
+      alignment: alignment,
+      padding: padding,
+      visualDensity: visualDensity,
+      constraints: constraints,
+      style: style,
+      isSelected: isSelected,
+      selectedIcon: selectedIcon,
+    );
+  }
+
   /// 默认块状波纹效果
   /// 支持圆角波纹效果, 有的时候可能需要包裹在[Material]部件中才有预期效果
   /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
@@ -1976,6 +2022,34 @@ extension ContextEx on BuildContext {
       DefaultTextStyle,
       NotificationListener,
       "Notification",
+      Stack,
+      Positioned,
+      Size,
+      Align,
+      Center,
+      ColoredBox,
+      BoxConstraints,
+      ConstrainedBox,
+      UnconstrainedBox,
+      LimitedBox,
+      SizedBox,
+      AspectRatio,
+      IntrinsicWidth,
+      IntrinsicHeight,
+      Material,
+      Card,
+      Ink,
+      InkWell,
+      InkResponse,
+      RawMaterialButton,
+      ButtonStyleButton,
+      TextButton,
+      ElevatedButton,
+      OutlinedButton,
+      Text,
+      ClipPath,
+      CustomPaint,
+      AnimatedDefaultTextStyle,
     ];
     Element? result;
     eachVisitChildElements((element, depth, childIndex) {
