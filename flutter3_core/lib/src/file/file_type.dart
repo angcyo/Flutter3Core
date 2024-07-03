@@ -13,9 +13,51 @@ extension FileTypeEx on Uint8List {
       lookupMimeType(path, headerBytes: this)?.isImageMimeType == true;
 }
 
+/// 文件类型
+class CoreFileType {
+  /// 对应的判断路径url
+  final String url;
+
+  //--
+
+  /// 包含.的扩展名
+  final String ext;
+
+  /// [MimeEx]
+  final String? mimeType;
+
+  CoreFileType(this.url)
+      : ext = url.extension(),
+        mimeType = url.mimeType();
+
+  //--
+
+  bool get isImage => mimeType?.isImageMimeType == true;
+
+  bool get isVideo => mimeType?.isVideoMimeType == true;
+
+  bool get isAudio => mimeType?.isAudioMimeType == true;
+
+  bool get isSvg => mimeType?.isSvgMimeType == true || ext.isSvgFile;
+
+  bool get isGCode => ext.isGCodeFile == true;
+
+  bool get isText =>
+      mimeType?.isTextMimeType == true ||
+      ext.endsWith(".log") ||
+      ext.endsWith(".html");
+
+  bool get isFont => mimeType?.isFontMimeType == true;
+
+  bool get isXlsx => ext.endsWith(".xlsx");
+}
+
 /// [defaultExtensionMap]
 /// [MimeTypeResolver]
 extension MimeEx on String {
+  /// [CoreFileType]对象
+  CoreFileType get fileType => CoreFileType(this);
+
   /// 是否是图片类型, svg也属性图片类型
   /// ```
   /// 'svg': 'image/svg+xml',
@@ -45,6 +87,11 @@ extension MimeEx on String {
 
   /// 'txt': 'text/plain',
   bool get isTextMimeType => toLowerCase().startsWith('text/');
+
+  bool get isGCodeFile => toLowerCase().let((it) =>
+      it.endsWith(".gcode") || it.endsWith(".gc") || it.endsWith(".nc"));
+
+  bool get isSvgFile => toLowerCase().endsWith(".svg");
 
   /// 获取文件的Mime类型
   /// ```
@@ -93,6 +140,8 @@ extension MimeEx on String {
 /// [def] 未知类型时的默认图标
 /// [extMap] 自定义扩展名对应的图标
 ///
+/// `class Image extends StatefulWidget`
+///
 Image? getFileIconWidget(
   String? fileName, {
   double? width,
@@ -104,7 +153,7 @@ Image? getFileIconWidget(
   }
   final mime = fileName?.mimeType();
 
-  var pngAssets = Assets.png;
+  const pngAssets = Assets.png;
   String key = pngAssets.coreFileIconUnknown.keyName;
   if (mime?.isImageMimeType == true) {
     key = pngAssets.coreFileIconPicture.keyName;
