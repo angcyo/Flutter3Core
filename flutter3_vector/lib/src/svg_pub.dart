@@ -66,6 +66,8 @@ extension SvgStringEx on String {
   /// [scale] 缩放比例
   /// [isMmUnit] 是否要放大到mm单位的数值
   ///
+  /// [GCodeStringEx.toUiPathFromGCode]
+  ///
   @dp
   Path toUiPath({
     bool failSilently = false,
@@ -248,7 +250,7 @@ class SvgListener extends VectorGraphicsCodecListener {
     final double dy = _textPositionY;
     double paragraphWidth = 0;
 
-    void _draw(int paintId) {
+    void draw(int paintId) {
       final Paint paint = _paints[paintId];
       if (patternId != null) {
         //paint.shader = _patterns[patternId]!.shader;
@@ -290,10 +292,10 @@ class SvgListener extends VectorGraphicsCodecListener {
     }
 
     if (fillId != null) {
-      _draw(fillId);
+      draw(fillId);
     }
     if (strokeId != null) {
-      _draw(strokeId);
+      draw(strokeId);
     }
     _accumulatedTextPositionX = dx + paragraphWidth;
   }

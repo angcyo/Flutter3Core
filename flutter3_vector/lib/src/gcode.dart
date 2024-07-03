@@ -732,7 +732,7 @@ class _GCodeWidgetState extends State<GCodeWidget> {
       }
       _error = null;
       _stackTrace = null;
-      _gcodePath = data?.toPathFromGCode();
+      _gcodePath = data?.toUiPathFromGCode();
       updateState();
       return _gcodePath;
     });
@@ -794,7 +794,8 @@ class _GCodeWidgetState extends State<GCodeWidget> {
 
 extension GCodeStringEx on String {
   /// GCode数据转换成[Path]可绘制对象
-  Path? toPathFromGCode() {
+  /// [SvgStringEx.toUiPath]
+  Path? toUiPathFromGCode() {
     GCodeParser parser = GCodeParser();
     return parser.parse(this)?..fillType = PathFillType.evenOdd;
   }
