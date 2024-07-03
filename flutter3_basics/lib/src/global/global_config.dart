@@ -139,6 +139,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     this.globalAppContext,
   });
 
+  GlobalConfig._() {
+    l.w('不正常的初始化[GlobalConfig]');
+  }
+
   /// 全局默认
   static GlobalConfig? _def;
 
@@ -146,7 +150,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   static GlobalConfig? appDef;
 
   /// 获取全局配置
-  static GlobalConfig get def => appDef ?? (_def ??= GlobalConfig());
+  static GlobalConfig get def => appDef ?? (_def ??= GlobalConfig._());
 
   /// 获取全局配置
   /// 使用[GlobalConfigScope]可以覆盖[GlobalConfig]
@@ -398,6 +402,15 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return element;
   }
 
+  /// 获取一个浮窗[OverlayState]状态
+  OverlayState? getOverlayState([BuildContext? context]) {
+    context ??= globalAppContext;
+    if (context != null) {
+      return Overlay.of(context);
+    }
+    return findOverlayState();
+  }
+
   /// 从上往下查找 [OverlayState]
   /// [Overlay.of]
   OverlayState? findOverlayState() {
@@ -406,6 +419,15 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       return element.state as OverlayState;
     }
     return null;
+  }
+
+  /// 获取一个导航[NavigatorState]状态
+  NavigatorState? getNavigatorState([BuildContext? context]) {
+    context ??= globalAppContext;
+    if (context != null) {
+      return Navigator.of(context);
+    }
+    return findNavigatorState();
   }
 
   /// 从上往下查找 [NavigatorState]
@@ -470,6 +492,15 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       }
     }
     return result;
+  }
+
+  /// 获取一个[Locale]
+  Locale? getLocale([BuildContext? context]) {
+    context ??= globalAppContext;
+    if (context != null) {
+      return Localizations.maybeLocaleOf(context) ?? findLocale();
+    }
+    return findLocale();
   }
 
   /// 从上往下查找 [Localizations]
