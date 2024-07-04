@@ -21,6 +21,7 @@ mixin IWidgetProvider {
 }
 
 /// 在一个数据中, 提取文本
+/// [ITextProvider]
 String? textOf(dynamic data, [BuildContext? context]) {
   if (data == null) {
     return null;
@@ -33,6 +34,15 @@ String? textOf(dynamic data, [BuildContext? context]) {
       return data.provideIntlText?.call(context) ?? data.provideText;
     }
     return data.provideText;
+  } else {
+    try {
+      return data.provideText;
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
   }
   if (data != null) {
     try {
@@ -65,7 +75,17 @@ Widget? widgetOf(
   }
   if (data is IWidgetProvider && data.provideWidget != null) {
     return data.provideWidget?.call(context);
+  } else {
+    try {
+      return data.provideWidget?.call(context);
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
   }
+
   if (tryTextWidget) {
     final text = textOf(data, context);
     if (text != null) {
