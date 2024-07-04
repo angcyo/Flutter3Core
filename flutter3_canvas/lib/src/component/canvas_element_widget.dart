@@ -6,37 +6,44 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 用来预览[ElementPainter]的小部件
 class CanvasElementWidget extends LeafRenderObjectWidget {
-  final EdgeInsets? padding;
-
   final ElementPainter? elementPainter;
+  final EdgeInsets? padding;
+  final BoxFit? fit;
 
   const CanvasElementWidget(
     this.elementPainter, {
     super.key,
     this.padding = const EdgeInsets.all(kL),
+    this.fit = BoxFit.contain,
   });
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      _CanvasElementRenderObject(elementPainter, padding);
+      CanvasElementRenderObject(elementPainter, padding, fit);
 
   @override
   void updateRenderObject(
     BuildContext context,
-    _CanvasElementRenderObject renderObject,
+    CanvasElementRenderObject renderObject,
   ) {
     renderObject
       ..elementPainter = elementPainter
       ..padding = padding
+      ..fit = fit
       ..markNeedsPaint();
   }
 }
 
-class _CanvasElementRenderObject extends RenderBox {
+class CanvasElementRenderObject extends RenderBox {
   ElementPainter? elementPainter;
   EdgeInsets? padding;
+  BoxFit? fit;
 
-  _CanvasElementRenderObject(this.elementPainter, this.padding);
+  CanvasElementRenderObject(
+    this.elementPainter,
+    this.padding,
+    this.fit,
+  );
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -48,9 +55,15 @@ class _CanvasElementRenderObject extends RenderBox {
         final dst = offset & size;
         //canvas.drawRect(dst, Paint()..color = Colors.black12);
         //debugger();
-        canvas.drawInRect(dst, src, () {
-          painter.painting(canvas, const PaintMeta());
-        }, fit: BoxFit.contain, dstPadding: padding);
+        canvas.drawInRect(
+          dst,
+          src,
+          () {
+            painter.painting(canvas, const PaintMeta());
+          },
+          fit: fit,
+          dstPadding: padding,
+        );
       });
 
       //context.canvas.drawRect(offset & size, Paint());

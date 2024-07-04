@@ -2046,9 +2046,9 @@ extension ListEx<T> on List<T> {
   }
 
   /// [Iterable.join]
-  String connect([String? separator = "", String Function(T)? covertString]) {
+  String? connect([String? separator = "", String Function(T)? covertString]) {
     Iterator<T> iterator = this.iterator;
-    if (!iterator.moveNext()) return "";
+    if (!iterator.moveNext()) return null;
     final first =
         covertString?.call(iterator.current) ?? textOf(iterator.current)!;
     if (!iterator.moveNext()) return first;

@@ -17,12 +17,17 @@ class TextElementPainter extends ElementPainter {
   /// 使用一个文本初始化[textPainter]对象,
   /// 并确认[TextElementPainter]元素的大小, 位置默认是0,0
   @initialize
-  void initElementPainterFromText(String? text) {
-    textPainter = NormalTextPainter()
+  void initElementFromText(
+    String? text, {
+    void Function(BaseTextPainter textPainter)? onInitTextPainter,
+  }) {
+    final textPainter = NormalTextPainter()
       ..debugPaintBounds = debug
-      ..text = text
-      ..initPainter();
-    final size = textPainter?.painterBounds ?? Rect.zero;
+      ..text = text;
+    onInitTextPainter?.call(textPainter);
+    textPainter.initPainter();
+    this.textPainter = textPainter;
+    final size = textPainter.painterBounds;
     paintProperty = PaintProperty()
       ..width = size.width
       ..height = size.height;
