@@ -19,6 +19,7 @@ part 'src/gcode.dart';
 part 'src/point.dart';
 part 'src/svg_pub.dart';
 part 'src/vector_write_handle.dart';
+part 'src/svg_builder.dart';
 
 extension VectorStringEx on String {
   /// 是否是GCode内容

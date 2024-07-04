@@ -5,26 +5,12 @@ part of '../flutter3_vector.dart';
 /// @author angcyo
 /// @date 2024/02/29
 ///
-
-/// svg xml头部
-const _kSvgHeader = '<?xml version="1.0" encoding="UTF-8"?>'
-    '<!-- Created with LaserPecker Design Space (https://www.laserpecker.net/pages/software) -->\n';
-
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
-String _wrapSvgXml(Rect bounds, void Function(StringBuffer) action) {
-  StringBuffer buffer = StringBuffer();
-  buffer.write(_kSvgHeader);
-  buffer.write('<svg xmlns="http://www.w3.org/2000/svg" ');
-  buffer.write('xmlns:acy="https://www.github.com/angcyo" ');
-  buffer.write(
-      'viewBox="${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}" ');
-  buffer.write(
-      'width="${bounds.width.toMmFromDp()}mm" height="${bounds.height.toMmFromDp()}mm" ');
-  buffer.write('acy:author="angcyo" acy:version="1">');
-  action(buffer);
-  buffer.write('</svg>');
-  return buffer.toString();
-}
+String _wrapSvgXml(@dp Rect bounds, void Function(StringBuffer) action) =>
+    svgBuilderSync((builder) {
+      builder.writeViewBox(bounds);
+      action(builder.buffer);
+    });
 
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
 void _wrapSvgPath(
