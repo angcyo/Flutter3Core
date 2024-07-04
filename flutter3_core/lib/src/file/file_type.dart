@@ -50,6 +50,9 @@ class CoreFileType {
   bool get isFont => mimeType?.isFontMimeType == true;
 
   bool get isXlsx => ext.endsWith(".xlsx");
+
+  /// 判断后缀是否是指定的后缀
+  bool isExt(String other) => ext.endsWith(other.toLowerCase());
 }
 
 /// [defaultExtensionMap]
