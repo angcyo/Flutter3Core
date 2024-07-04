@@ -1632,12 +1632,15 @@ extension ListIntEx on List<int> {
   }
 
   /// [ListIntEx]
+  /// hex 40位
   String sha1() => crypto.sha1.convert(this).toString();
 
   /// [ListIntEx]
+  /// hex 64位
   String sha256() => crypto.sha256.convert(this).toString();
 
   /// [ListIntEx]
+  /// hex 32位
   String md5() => crypto.md5.convert(this).toString();
 
   /// [ListIntEx]

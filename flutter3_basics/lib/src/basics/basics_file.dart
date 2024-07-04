@@ -335,10 +335,15 @@ extension FileEx on File {
     return null;
   }
 
-  /// 文件的md5值
-  String? md5() => readBytesSync()?.md5();
+  /// 文件的md5值, 共hex 32位
+  String? md5Sync() => readBytesSync()?.md5();
 
-  String? sha1() => readBytesSync()?.sha1();
+  Future<String?> md5() async => (await readBytes())?.md5();
+
+  /// 文件的sha1值, 共hex 40位
+  String? sha1Sync() => readBytesSync()?.sha1();
+
+  Future<String?> sha1() async => (await readBytes())?.sha1();
 
   /// 如果是文件夹, 获取文件列表
   Stream<FileSystemEntity> listFilesStream({

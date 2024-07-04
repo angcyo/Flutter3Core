@@ -64,7 +64,7 @@ extension ZipEx on String {
 extension ZipListEx on List<String> {
   /// 压缩所有文件/文件夹到指定文件
   /// [ZipFileEncoder.zipDirectoryAsync]
-  /// [ZipFileEncoderEx.writeString]
+  /// [ZipFileEncoderEx.writeStringSync]
   Future<void> zip(
     String outputPath, {
     int? level = ZipFileEncoder.GZIP,
@@ -94,6 +94,36 @@ extension ZipListEx on List<String> {
 }
 
 extension ZipFileEncoderEx on ZipFileEncoder {
+  /// 写入[Uint8List]
+  /// [InputStream]
+  /// [name] 名称
+  /// [compress] 是否压缩
+  void writeBytesSync(
+    Uint8List? bytes,
+    String? name, {
+    bool compress = true,
+  }) {
+    if (bytes == null || name == null) {
+      return;
+    }
+    if (isNil(bytes)) {
+      return;
+    }
+    addArchiveFile(compress
+        ? ArchiveFile(name, 0, bytes)
+        : ArchiveFile.noCompress(name, 0, bytes));
+  }
+
+  /// [writeBytesSync]
+  Future writeBytes(
+    Uint8List? bytes,
+    String? name, {
+    bool compress = true,
+  }) async =>
+      () async {
+        return writeBytesSync(bytes, name, compress: compress);
+      }();
+
   /// 写入[UiImage]
   /// [Uint8List]
   /// [InputStream]
@@ -107,36 +137,44 @@ extension ZipFileEncoderEx on ZipFileEncoder {
       return;
     }
     final bytes = await uiImage.toBytes();
-    if (isNil(bytes)) {
-      return;
-    }
-    addArchiveFile(compress
-        ? ArchiveFile(name, 0, bytes)
-        : ArchiveFile.noCompress(name, 0, bytes));
+    writeBytesSync(bytes, name, compress: compress);
   }
 
   /// 写入字符串
   /// [content] 字符内容
   /// [name] 名称
-  Future<void> writeString(
+  void writeStringSync(
     String? content,
     String? name, {
     bool compress = true,
-  }) async {
+  }) {
     if (content == null || name == null) {
       return;
     }
     addArchiveFile(compress
         ? ArchiveFile.string(name, content)
         : ArchiveFile.noCompress(name, 0, content));
-    return;
   }
+
+  /// [writeStringSync]
+  Future writeString(
+    String? content,
+    String? name, {
+    bool compress = true,
+  }) async =>
+      () async {
+        return writeStringSync(content, name, compress: compress);
+      }();
 }
 
 extension ArchiveEx on Archive {
+
+  /// [readContent]
+  Uint8List? readBytes(String? name) => readContent(name);
+
   /// 读取文件内容
   /// [ArchiveFile.content]
-  Future<Uint8List?> readContent(String? name) async {
+  Uint8List? readContent(String? name) {
     if (name == null) {
       return null;
     }
@@ -149,7 +187,7 @@ extension ArchiveEx on Archive {
 
   /// 读取字符串
   /// [ArchiveFile.content]
-  Future<String?> readString(String? name) async {
+  String? readString(String? name) {
     if (name == null) {
       return null;
     }
@@ -175,9 +213,12 @@ extension ArchiveEx on Archive {
 }
 
 extension ArchiveFileEx on ArchiveFile {
+  /// [readContent]
+  Uint8List? readBytes() => readContent();
+
   /// 读取文件内容
   /// [ArchiveFile.content]
-  Future<Uint8List?> readContent() async {
+  Uint8List? readContent() {
     if (content is Uint8List) {
       return content as Uint8List;
     } else if (content is InputStream) {
@@ -188,11 +229,11 @@ extension ArchiveFileEx on ArchiveFile {
 
   /// 读取字符串
   /// [ArchiveFile.content]
-  Future<String?> readString() async {
+  String? readString() {
     if (content is String) {
       return content as String;
     }
-    final bytes = await readContent();
+    final bytes = readContent();
     if (bytes != null) {
       return String.fromCharCodes(bytes);
     }
@@ -202,7 +243,7 @@ extension ArchiveFileEx on ArchiveFile {
   /// 读取图片
   /// [ArchiveFile.content]
   Future<UiImage?> readImage() async {
-    final bytes = await readContent();
+    final bytes = readContent();
     if (bytes != null) {
       return bytes.toImage();
     }

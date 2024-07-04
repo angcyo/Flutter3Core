@@ -37,6 +37,7 @@ extension LogEx on Object {
   /// [FileDataType] 支持的数据类型
   Future<File> writeToFile({
     File? file,
+    String? filePath,
     String? fileName,
     String? folder,
     bool append = false,
@@ -47,6 +48,7 @@ extension LogEx on Object {
     fileName ??= nowTimeFileName();
     return appendToFile(
       file: file,
+      filePath: filePath,
       fileName: fileName,
       folder: folder,
       append: append,
@@ -57,7 +59,9 @@ extension LogEx on Object {
   }
 
   /// 写入内容到文件, 支持限制文件的长度
-  /// [fileName] 日志文件名
+  /// [filePath] 直接指定文件路径, 优先级1
+  /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象, 优先级2
+  /// [fileName] 日志文件名 , 优先级3
   /// [folder] 上层文件夹
   /// [limitLength] 是否限制日志文件的最大长度
   /// [wrapLog] 是否包裹一下日志信息, null:自动根据后缀[kLogExtension]判断
@@ -65,6 +69,7 @@ extension LogEx on Object {
   /// @return 返回文件对象
   Future<File> appendToFile({
     File? file,
+    String? filePath,
     String? fileName,
     String? folder,
     bool append = true,
@@ -73,7 +78,7 @@ extension LogEx on Object {
     bool? wrapLog,
   }) async {
     fileName ??= "Unknown";
-    final filePath =
+    filePath ??=
         file?.path ?? await fileName.filePathOf(folder, useCacheFolder);
 
     //确保父文件夹存在

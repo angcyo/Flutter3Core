@@ -113,7 +113,7 @@ class DebugFileTile extends StatelessWidget {
               style: globalConfig.globalTheme.textBodyStyle,
             ),
             infoRow,
-            file.md5()?.toUpperCase().text(
+            file.md5Sync()?.toUpperCase().text(
                   style: globalConfig.globalTheme.textDesStyle,
                 ),
           ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
