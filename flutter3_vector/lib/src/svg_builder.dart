@@ -46,6 +46,38 @@ class SvgBuilder {
     buffer.write(r'</svg>');
   }
 
+  /// 写入[rect]元素
+  ///
+  /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element/rect
+  ///
+  void writeRect({
+    double? x,
+    double? y,
+    required double width,
+    required double height,
+    double? rx,
+    double? ry,
+    Matrix4? transform,
+  }) {
+    buffer.write('<rect ');
+    if (x != null) {
+      buffer.write('x="$x" ');
+    }
+    if (y != null) {
+      buffer.write('y="$y" ');
+    }
+    buffer.write('width="$width" ');
+    buffer.write('height="$height" ');
+    if (rx != null) {
+      buffer.write('rx="$rx" ');
+    }
+    if (ry != null) {
+      buffer.write('ry="$ry" ');
+    }
+    writeTransform(transform: transform);
+    buffer.write(' />');
+  }
+
   /// [writeSvgPath]
   void writeUiPath(
     UiPath? path, {
@@ -54,6 +86,7 @@ class SvgBuilder {
     bool stroke = true,
     Color strokeColor = Colors.black,
     @dp double strokeWidth = 1,
+    Matrix4? transform,
   }) {
     if (path != null) {
       writeSvgPath(
@@ -64,6 +97,7 @@ class SvgBuilder {
         stroke: stroke,
         strokeColor: strokeColor,
         strokeWidth: strokeWidth,
+        transform: transform,
       );
     }
   }
@@ -83,21 +117,20 @@ class SvgBuilder {
     bool stroke = true,
     Color strokeColor = Colors.black,
     @dp double strokeWidth = 1,
+    Matrix4? transform,
   }) {
     if (isNil(svgPath)) {
       return;
     }
     buffer.write('<path d="$svgPath" ');
-    if (fill) {
-      buffer.write('fill="${fillColor.toHex(a: false)}" ');
-    } else {
-      buffer.write('fill="none" ');
-    }
-    buffer.write('fill-rule="$fillRule" ');
-    if (stroke) {
-      buffer.write('stroke="${strokeColor.toHex(a: false)}" ');
-      buffer.write('stroke-width="$strokeWidth" ');
-    }
+    writeStyle(
+      fill: fill,
+      fillColor: fillColor,
+      stroke: stroke,
+      strokeColor: strokeColor,
+      strokeWidth: strokeWidth,
+    );
+    writeTransform(transform: transform);
     buffer.write('/>');
   }
 
@@ -125,6 +158,7 @@ class SvgBuilder {
     UiImage? image, {
     num? x,
     num? y,
+    Matrix4? transform,
   }) async {
     if (image != null) {
       writeBase64Image(
@@ -133,6 +167,7 @@ class SvgBuilder {
         image.height,
         x: x,
         y: y,
+        transform: transform,
       );
     }
   }
@@ -144,6 +179,7 @@ class SvgBuilder {
     num height, {
     num? x,
     num? y,
+    Matrix4? transform,
   }) async {
     if (!isNil(base64Image)) {
       buffer.write(
@@ -154,6 +190,7 @@ class SvgBuilder {
       if (y != null) {
         buffer.write('y="$y" ');
       }
+      writeTransform(transform: transform);
       buffer.write('/>');
     }
   }
@@ -171,6 +208,7 @@ class SvgBuilder {
     num? fontSize,
     Color? color,
     String? fontFamily,
+    Matrix4? transform,
   }) {
     if (!isNil(text)) {
       buffer.write('<text ');
@@ -189,10 +227,127 @@ class SvgBuilder {
       if (fontFamily != null) {
         buffer.write('font-family="$fontFamily" ');
       }
+      writeTransform(transform: transform);
       buffer.write('>');
       buffer.write(text);
       buffer.write('</text>');
     }
+  }
+
+  //--
+
+  /// 写入样式属性
+  void writeStyle({
+    String fillRule = 'evenodd',
+    bool fill = false,
+    Color fillColor = Colors.black,
+    bool stroke = true,
+    Color strokeColor = Colors.black,
+    @dp double strokeWidth = 1,
+  }) {
+    if (fill) {
+      buffer.write('fill="${fillColor.toHex(a: false)}" ');
+    } else {
+      buffer.write('fill="none" ');
+    }
+    buffer.write('fill-rule="$fillRule" ');
+    if (stroke) {
+      buffer.write('stroke="${strokeColor.toHex(a: false)}" ');
+      buffer.write('stroke-width="$strokeWidth" ');
+    }
+  }
+
+  /// 写入[transform]属性
+  ///
+  /// ```
+  /// <svg
+  ///   viewBox="-40 0 150 100"
+  ///   xmlns="http://www.w3.org/2000/svg"
+  ///   xmlns:xlink="http://www.w3.org/1999/xlink">
+  ///   <g
+  ///     fill="grey"
+  ///     transform="rotate(-10 50 100)
+  ///                translate(-36 45.5)
+  ///                skewX(40)
+  ///                scale(1 0.5)">
+  ///     <path
+  ///       id="heart"
+  ///       d="M 10,30 A 20,20 0,0,1 50,30 A 20,20 0,0,1 90,30 Q 90,60 50,90 Q 10,60 10,30 z" />
+  ///   </g>
+  ///
+  ///   <use href="#heart" fill="none" stroke="red" />
+  /// </svg>
+  /// ```
+  ///
+  /// ```
+  /// <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  ///   <rect x="10" y="10" width="30" height="20" fill="green" />
+  ///
+  ///   <!--
+  ///   在下面的示例中，我们应用矩阵：
+  ///   [a c e]    [3 -1 30]
+  ///   [b d f] => [1  3 40]
+  ///   [0 0 1]    [0  0  1]
+  ///
+  ///   矩形变换如下：
+  ///
+  ///   左上角：oldX=10 oldY=10
+  ///   newX = a * oldX + c * oldY + e = 3 * 10 - 1 * 10 + 30 = 50
+  ///   newY = b * oldX + d * oldY + f = 1 * 10 + 3 * 10 + 40 = 80
+  ///
+  ///   右上角：oldX=40 oldY=10
+  ///   newX = a * oldX + c * oldY + e = 3 * 40 - 1 * 10 + 30 = 140
+  ///   newY = b * oldX + d * oldY + f = 1 * 40 + 3 * 10 + 40 = 110
+  ///
+  ///   左下角：oldX=10 oldY=30
+  ///   newX = a * oldX + c * oldY + e = 3 * 10 - 1 * 30 + 30 = 30
+  ///   newY = b * oldX + d * oldY + f = 1 * 10 + 3 * 30 + 40 = 140
+  ///
+  ///   右下角：oldX=40 oldY=30
+  ///   newX = a * oldX + c * oldY + e = 3 * 40 - 1 * 30 + 30 = 120
+  ///   newY = b * oldX + d * oldY + f = 1 * 40 + 3 * 30 + 40 = 170
+  ///   -->
+  ///   <rect
+  ///     x="10"
+  ///     y="10"
+  ///     width="30"
+  ///     height="20"
+  ///     fill="red"
+  ///     transform="matrix(3 1 -1 3 30 40)" />
+  /// </svg>
+  /// ```
+  ///
+  /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/transform
+  ///
+  void writeTransform({
+    Matrix4? transform,
+    double? tx, //距离
+    double? ty,
+    double? sx, //倍数
+    double? sy,
+    double? kx, // 弧度
+    double? ky,
+  }) {
+    if (transform == null &&
+        tx == null &&
+        ty == null &&
+        sx == null &&
+        sy == null &&
+        kx == null &&
+        ky == null) {
+      return;
+    }
+
+    buffer.write('transform="');
+    //buffer.write(transform.toMatrixString());
+    tx ??= transform?.translateX;
+    ty ??= transform?.translateY;
+    sx ??= transform?.scaleX;
+    sy ??= transform?.scaleY;
+    kx ??= transform?.skewX;
+    ky ??= transform?.skewY;
+    buffer.write("matrix($sx $kx $tx $ky $sy $ty 0 0 1)");
+    buffer.write('" ');
   }
 
   //--
