@@ -22,10 +22,11 @@ class SvgBuilder {
   int digits = 15;
 
   /// 写入[viewBox]属性
+  /// [useMmBounds] 是否使用mm单位
   ///
   /// viewBox 属性允许指定一个给定的一组图形伸展以适应特定的容器元素。
   ///
-  /// viewBox 属性的值是一个包含 4 个参数的列表 min-x, min-y, width and height，以空格或者逗号分隔开，在用户空间中指定一个矩形区域映射到给定的元素，查看属性preserveAspectRatio。
+  /// viewBox 属性的值是一个包含 4 个参数的列表 `min-x`, `min-y`, `width` and `height`，以空格或者逗号分隔开，在用户空间中指定一个矩形区域映射到给定的元素，查看属性preserveAspectRatio。
   ///
   /// 不允许宽度和高度为负值，0 则禁用元素的呈现。
   /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
@@ -33,15 +34,22 @@ class SvgBuilder {
   /// mac/windows上 1mm->3.7777px
   /// 1mm = 1/25.4 * 96 px ≈ 3.779527559 px
   ///
-  void writeViewBox(@dp Rect bounds) {
+  void writeViewBox(@dp Rect bounds, {bool? useMmBounds}) {
     buffer.write(svgHeader);
     buffer.write('<svg xmlns="http://www.w3.org/2000/svg" ');
     buffer.write('xmlns:xlink="http://www.w3.org/1999/xlink" ');
     buffer.write('xmlns:acy="https://www.github.com/angcyo" ');
+    if (useMmBounds == true) {
+      buffer.write(
+          'viewBox="${formatValue(bounds.left.toMmFromDp())} ${formatValue(bounds.top.toMmFromDp())} ${formatValue(bounds.width.toMmFromDp())} ${formatValue(bounds.height.toMmFromDp())}" ');
+    } else {
+      buffer.write(
+          'viewBox="${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}" ');
+    }
     buffer.write(
-        'viewBox="${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}" ');
+        'left="${formatValue(bounds.left.toMmFromDp())}mm" top="${formatValue(bounds.top.toMmFromDp())}mm" ');
     buffer.write(
-        'width="${bounds.width.toMmFromDp()}mm" height="${bounds.height.toMmFromDp()}mm" ');
+        'width="${formatValue(bounds.width.toMmFromDp())}mm" height="${formatValue(bounds.height.toMmFromDp())}mm" ');
     buffer.write('acy:author="angcyo" acy:version="1">');
   }
 
@@ -73,16 +81,16 @@ class SvgBuilder {
   }) {
     buffer.write('<line ');
     if (x1 != null) {
-      buffer.write('x1="$x1" ');
+      buffer.write('x1="${formatValue(x1)}" ');
     }
     if (y1 != null) {
-      buffer.write('y1="$y1" ');
+      buffer.write('y1="${formatValue(y1)}" ');
     }
     if (x2 != null) {
-      buffer.write('x2="$x2" ');
+      buffer.write('x2="${formatValue(x2)}" ');
     }
     if (y2 != null) {
-      buffer.write('y2="$y2" ');
+      buffer.write('y2="${formatValue(y2)}" ');
     }
     writeId(id: id, name: name);
     writeStyle(
@@ -116,16 +124,16 @@ class SvgBuilder {
   }) {
     buffer.write('<ellipse ');
     if (cx != null) {
-      buffer.write('cx="$cx" ');
+      buffer.write('cx="${formatValue(cx)}" ');
     }
     if (cy != null) {
-      buffer.write('cy="$cy" ');
+      buffer.write('cy="${formatValue(cy)}" ');
     }
     if (rx != null) {
-      buffer.write('rx="$rx" ');
+      buffer.write('rx="${formatValue(rx)}" ');
     }
     if (ry != null) {
-      buffer.write('ry="$ry" ');
+      buffer.write('ry="${formatValue(ry)}" ');
     }
     writeId(id: id, name: name);
     writeStyle(
@@ -143,12 +151,12 @@ class SvgBuilder {
   /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element/rect
   ///
   void writeRect({
-    double? x,
-    double? y,
-    required double width,
-    required double height,
-    double? rx,
-    double? ry,
+    dynamic x,
+    dynamic y,
+    required dynamic width,
+    required dynamic height,
+    dynamic rx,
+    dynamic ry,
     Matrix4? transform,
     String fillRule = 'evenodd',
     bool? fill,
@@ -161,18 +169,18 @@ class SvgBuilder {
   }) {
     buffer.write('<rect ');
     if (x != null) {
-      buffer.write('x="$x" ');
+      buffer.write('x="${formatValue(x)}" ');
     }
     if (y != null) {
-      buffer.write('y="$y" ');
+      buffer.write('y="${formatValue(y)}" ');
     }
-    buffer.write('width="$width" ');
-    buffer.write('height="$height" ');
+    buffer.write('width="${formatValue(width)}" ');
+    buffer.write('height="${formatValue(height)}" ');
     if (rx != null) {
-      buffer.write('rx="$rx" ');
+      buffer.write('rx="${formatValue(rx)}" ');
     }
     if (ry != null) {
-      buffer.write('ry="$ry" ');
+      buffer.write('ry="${formatValue(ry)}" ');
     }
     writeId(id: id, name: name);
     writeStyle(
@@ -272,10 +280,10 @@ class SvgBuilder {
   ///
   Future writeImage(
     UiImage? image, {
-    String? x,
-    String? y,
-    String? width,
-    String? height,
+    dynamic x,
+    dynamic y,
+    dynamic width,
+    dynamic height,
     Matrix4? transform,
     String? id,
     String? name,
@@ -283,8 +291,8 @@ class SvgBuilder {
     if (image != null) {
       writeBase64Image(
         await image.toBase64(),
-        width ?? formatNum(image.width) ?? "0",
-        height ?? formatNum(image.height) ?? "0",
+        width ?? formatValue(image.width) ?? "0",
+        height ?? formatValue(image.height) ?? "0",
         x: x,
         y: y,
         transform: transform,
@@ -298,10 +306,10 @@ class SvgBuilder {
   /// [x].[y].[width].[height] 支持mm单位, 所以需要字符串
   void writeBase64Image(
     String? base64Image,
-    String width,
-    String height, {
-    String? x,
-    String? y,
+    dynamic width,
+    dynamic height, {
+    dynamic x,
+    dynamic y,
     Matrix4? transform,
     String? id,
     String? name,
@@ -310,10 +318,10 @@ class SvgBuilder {
       buffer.write(
           '<image width="$width" height="$height" xlink:href="$base64Image" ');
       if (x != null) {
-        buffer.write('x="$x"');
+        buffer.write('x="${formatValue(x)}" ');
       }
       if (y != null) {
-        buffer.write('y="$y" ');
+        buffer.write('y="${formatValue(y)}" ');
       }
       writeId(id: id, name: name);
       writeTransform(transform: transform);
@@ -327,8 +335,9 @@ class SvgBuilder {
   ///
   /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element/text
   ///
-  void writeText(
-    String? text, {
+  void writeText({
+    String? text,
+    void Function(SvgBuilder subBuilder)? textSpanAction,
     dynamic x,
     dynamic y,
     dynamic fontSize,
@@ -338,16 +347,74 @@ class SvgBuilder {
     String? id,
     String? name,
   }) {
+    if (isNil(text) && textSpanAction == null) {
+      return;
+    }
+    buffer.write('<text ');
+    if (x != null) {
+      buffer.write('x="${formatValue(x)}" ');
+    }
+    if (y != null) {
+      buffer.write('y="${formatValue(y)}" ');
+    }
+    if (fontSize != null) {
+      buffer.write('font-size="${formatValue(fontSize)}" ');
+    }
+    if (color != null) {
+      buffer.write('fill="${color.toHex(a: false)}" ');
+    }
+    if (fontFamily != null) {
+      buffer.write('font-family="$fontFamily" ');
+    }
+    writeId(id: id, name: name);
+    writeTransform(transform: transform);
+    buffer.write('>');
+    if (text != null) {
+      buffer.write(text);
+    }
+    if (textSpanAction != null) {
+      final subBuilder = SvgBuilder();
+      subBuilder.digits = digits;
+      textSpanAction(subBuilder);
+      buffer.write(subBuilder.build());
+    }
+    buffer.write('</text>');
+  }
+
+  /// 写入[tspan]元素
+  ///
+  /// 在 <text>元素中，利用内含的tspan元素，可以调整文本和字体的属性以及当前文本的位置、绝对或相对坐标值。
+  ///
+  /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element/tspan
+  void writeTSpan(
+    String? text, {
+    dynamic x,
+    dynamic y,
+    dynamic dx,
+    dynamic dy,
+    dynamic fontSize,
+    Color? color,
+    String? fontFamily,
+    Matrix4? transform,
+    String? id,
+    String? name,
+  }) {
     if (!isNil(text)) {
-      buffer.write('<text ');
+      buffer.write('<tspan ');
       if (x != null) {
-        buffer.write('x="$x" ');
+        buffer.write('x="${formatValue(x)}" ');
       }
       if (y != null) {
-        buffer.write('y="$y" ');
+        buffer.write('y="${formatValue(y)}" ');
+      }
+      if (dx != null) {
+        buffer.write('dx="${formatValue(dx)}" ');
+      }
+      if (dy != null) {
+        buffer.write('dy="${formatValue(dy)}" ');
       }
       if (fontSize != null) {
-        buffer.write('font-size="$fontSize" ');
+        buffer.write('font-size="${formatValue(fontSize)}" ');
       }
       if (color != null) {
         buffer.write('fill="${color.toHex(a: false)}" ');
@@ -359,7 +426,7 @@ class SvgBuilder {
       writeTransform(transform: transform);
       buffer.write('>');
       buffer.write(text);
-      buffer.write('</text>');
+      buffer.write('</tspan>');
     }
   }
 
@@ -567,14 +634,15 @@ class SvgBuilder {
     kx ??= transform?.skewX;
     ky ??= transform?.skewY;
     buffer.write(
-        "matrix(${formatNum(sx)} ${formatNum(ky)} ${formatNum(kx)} ${formatNum(sy)} ${formatNum(tx)} ${formatNum(ty)})");
+        "matrix(${formatValue(sx)} ${formatValue(ky)} ${formatValue(kx)} ${formatValue(sy)} ${formatValue(tx)} ${formatValue(ty)})");
     buffer.write('" ');
   }
 
   //endregion --属性--
 
   /// 格式化数字
-  String? formatNum(num? num) => num?.toDigits(digits: digits);
+  String? formatValue(dynamic value) =>
+      value is num ? value.toDigits(digits: digits) : value.toString();
 
   String build() => buffer.toString();
 }

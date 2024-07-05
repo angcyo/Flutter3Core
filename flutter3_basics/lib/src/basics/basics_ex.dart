@@ -396,13 +396,18 @@ extension FutureEx<T> on Future<T> {
       }
     }, onError: (error, errorStack) {
       //此处无法捕获[get]中的异常
-      debugger();
-      if (error is FutureCancelException) {
+      if (error is RCancelException) {
+        assert(() {
+          l.w('操作被取消:$error');
+          return true;
+        }());
+      } else if (error is FutureCancelException) {
         assert(() {
           l.w('Future被取消:$error');
           return true;
         }());
       } else {
+        debugger();
         assert(() {
           l.w('Future异常:$error↓');
           printError(error, errorStack ?? stack);

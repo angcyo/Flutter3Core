@@ -112,6 +112,10 @@ abstract class BaseTextPainter {
   @output
   Rect get painterBounds => Rect.zero;
 
+  /// 包含了基线, 行高, 宽度
+  @output
+  UiLineMetrics? get lineMetrics => null;
+
   /// 必要的初始化方法
   @initialize
   void initPainter() {}
@@ -230,6 +234,10 @@ class NormalTextPainter extends BaseTextPainter {
   @override
   Rect get painterBounds => _painterBounds;
 
+  @override
+  UiLineMetrics? get lineMetrics =>
+      _textPainter?.computeLineMetrics().firstOrNull;
+
   /// 普通文本使用[TextPainter]绘制
   TextPainter? _textPainter;
 
@@ -242,7 +250,6 @@ class NormalTextPainter extends BaseTextPainter {
   @override
   void initPainter() {
     _textPainter = createBaseTextPainter(text);
-    _textPainter?.a
     _painterBounds = Offset.zero & _textPainter!.size;
     if (orientation.isVertical) {
       final rotateMatrix = Matrix4.identity()
@@ -303,6 +310,12 @@ class SingleCharTextPainter extends BaseTextPainter {
   @override
   Rect get painterBounds => _painterBounds;
 
+  @override
+  UiLineMetrics? get lineMetrics =>
+      charPainterList?.firstOrNull?.firstOrNull?.charPainter
+          ?.computeLineMetrics()
+          .firstOrNull;
+
   /// 斜体宽度补偿方案
   /// 是否使用整行补偿宽度的方案
   bool italicWidthWithLine = true;
@@ -318,7 +331,15 @@ class SingleCharTextPainter extends BaseTextPainter {
       isItalic && italicWidthWithLine ? fontSize * 0.2 : 0;
 
   /// 文本绘制对象, 每个字符一个对象
-  List<List<CharTextPainter>>? _charPainterList;
+  List<List<CharTextPainter>>? charPainterList;
+
+/*  void test() {
+    final list = charPainterList;
+    final painter = list?.firstOrNull?.firstOrNull?.charPainter;
+    final charDescent = list?.firstOrNull?.firstOrNull?.charDescent;
+    final a = painter?.computeLineMetrics();
+    debugger();
+  }*/
 
   /// 将字符串按照换行符分解成一行行一个个的单字符
   List<List<String>> _splitText(String? text) {
@@ -332,7 +353,7 @@ class SingleCharTextPainter extends BaseTextPainter {
   /// 测量总体的大小
   /// 最终缓存在[_painterBounds]中
   void _measureCharTextPainterSize() {
-    final list = _charPainterList;
+    final list = charPainterList;
     if (list == null) {
       _painterBounds = Rect.zero;
     } else {
@@ -398,7 +419,7 @@ class SingleCharTextPainter extends BaseTextPainter {
   /// [textAlign]
   /// [crossTextAlign]
   void _measureCharTextPainterOffset() {
-    final list = _charPainterList;
+    final list = charPainterList;
     if (list == null) {
       return;
     }
@@ -540,7 +561,7 @@ class SingleCharTextPainter extends BaseTextPainter {
         top += (lineSpacing ?? 0) + lineMaxHeight;
       }
     }
-    _charPainterList = charPainterList;
+    this.charPainterList = charPainterList;
     _measureCharTextPainterSize();
     _measureCharTextPainterOffset();
     //debugger();
@@ -559,22 +580,22 @@ class SingleCharTextPainter extends BaseTextPainter {
       }
       return true;
     }());
-    if (_charPainterList == null) {
+    if (charPainterList == null) {
       initPainter();
     }
-    if (_charPainterList == null) {
+    if (charPainterList == null) {
       return;
     }
 
     final anchor = _painterBounds.lt;
     canvas.withTranslate(-anchor.dx + offset.dx, -anchor.dy + offset.dy, () {
-      for (final line in _charPainterList!) {
+      for (final line in charPainterList!) {
         for (final char in line) {
           char.paint(canvas, Offset.zero);
         }
       }
     });
-    if (useCustomLineStyle && !isNil(_charPainterList)) {
+    if (useCustomLineStyle && !isNil(charPainterList)) {
       painterCustomLine(canvas, offset);
     }
   }
@@ -586,7 +607,7 @@ class SingleCharTextPainter extends BaseTextPainter {
     canvas.withTranslate(offset.dx, offset.dy, () {
       final paint = createBasePaint();
       double offsetLineTop = 0;
-      for (final line in _charPainterList!) {
+      for (final line in charPainterList!) {
         if (isUnderline || isLineThrough) {
           final first = line.firstOrNull;
           final last = line.lastOrNull;
@@ -763,7 +784,7 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
 
   /// 测量每个字符绕着曲线中心点需要进行的曲线变换
   void _measureCharTextCurvature() {
-    final list = _charPainterList;
+    final list = charPainterList;
     if (list == null || curvature == 0 || isNil(list)) {
       return;
     }
@@ -843,8 +864,8 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
         final paint = createBasePaint();
         double offsetLineBottom = 0;
         for (final line in (isReverseCurve
-            ? _charPainterList!
-            : _charPainterList!.reversed)) {
+            ? charPainterList!
+            : charPainterList!.reversed)) {
           final first = line.firstOrNull;
           final last = line.lastOrNull;
 

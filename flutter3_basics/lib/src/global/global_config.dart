@@ -140,7 +140,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   });
 
   GlobalConfig._() {
-    l.w('不正常的初始化[GlobalConfig]');
+    l.w('初始化[GlobalConfig]');
   }
 
   /// 全局默认
