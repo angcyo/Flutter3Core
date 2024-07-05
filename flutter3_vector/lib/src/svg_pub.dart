@@ -90,7 +90,7 @@ extension SvgStringEx on String {
     await decodeSvgString(
       this,
       listener: SvgListener()
-        ..onDrawElement = (element, data, paint, bounds) {
+        ..onDrawElement = (element, data, paint, bounds, matrix) {
           //consoleLog('${element.runtimeType} $bounds $data');
           if (element is Path) {
             element.fillType = PathFillType.evenOdd;
@@ -167,8 +167,13 @@ class SvgListener extends VectorGraphicsCodecListener {
   /// 图片数据: [Uint8List] 图片, 绘制图片不需要paint对象. 有[bounds]
   ///
   /// [bounds] 绘制的区域, 如果有. [Path]数据可能需要手动计算边界
-  void Function(dynamic element, String? data, Paint? paint, Rect? bounds)?
-      onDrawElement;
+  void Function(
+    dynamic element,
+    String? data,
+    Paint? paint,
+    Rect? bounds,
+    Matrix4? matrix,
+  )? onDrawElement;
 
   /// 存储所有的paint对象
   final List<Paint> _paints = <Paint>[];
@@ -188,8 +193,16 @@ class SvgListener extends VectorGraphicsCodecListener {
 
   /// [onImage]
   @override
-  void onDrawImage(int imageId, double x, double y, double width, double height,
-      Float64List? transform) {
+  void onDrawImage(
+    int imageId,
+    double x, //图片绘制的偏移
+    double y,
+    double width, //图片的宽高
+    double height,
+    Float64List? transform,
+  ) {
+    //debugger();
+
     assert(() {
       //l.d('onDrawImage $imageId $x $y $width $height $transform');
       return true;
@@ -198,12 +211,18 @@ class SvgListener extends VectorGraphicsCodecListener {
     final Uint8List image = _images[imageId]!;
     Rect bounds = Rect.fromLTWH(x, y, width, height);
 
-    if (transform != null) {
+    /*if (transform != null) {
       final matrix4 = Matrix4.fromFloat64List(transform);
       bounds = matrix4.mapRect(bounds);
-    }
+    }*/
     //image
-    onDrawElement?.call(image, null, null, bounds);
+    onDrawElement?.call(
+      image,
+      null,
+      null,
+      bounds,
+      transform == null ? null : Matrix4.fromFloat64List(transform),
+    );
   }
 
   /// [onPaintObject].[onPathStart].[onPathMoveTo].[onPathLineTo].[onPathFinished].[onDrawPath]
@@ -233,6 +252,7 @@ class SvgListener extends VectorGraphicsCodecListener {
       path,
       pathString.toString(),
       paint ?? _emptyPaint,
+      null,
       null,
     );
   }
@@ -281,14 +301,22 @@ class SvgListener extends VectorGraphicsCodecListener {
         dx - paragraph.maxIntrinsicWidth * textConfig.xAnchorMultiplier,
         dy - paragraph.alphabeticBaseline,
       );
-      if (_textTransform != null) {
+      /*if (_textTransform != null) {
         final matrix4 = Matrix4.fromFloat64List(_textTransform!);
         offset = matrix4.mapPoint(offset);
-      }
+      }*/
       Rect bounds = offset & Size(paragraph.width, paragraph.height);
 
       //text
-      onDrawElement?.call(textConfig, null, paint, bounds);
+      onDrawElement?.call(
+        textConfig,
+        null,
+        paint,
+        bounds,
+        _textTransform == null
+            ? null
+            : Matrix4.fromFloat64List(_textTransform!),
+      );
     }
 
     if (fillId != null) {
@@ -309,8 +337,12 @@ class SvgListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onImage(int imageId, int format, Uint8List data,
-      {VectorGraphicsErrorListener? onError}) async {
+  void onImage(
+    int imageId,
+    int format,
+    Uint8List data, {
+    VectorGraphicsErrorListener? onError,
+  }) async {
     assert(() {
       //l.d('onImage[$imageId] $format:${format.imageFormatTypeString} ${data.lengthInBytes.toSizeStr()}');
       return true;
@@ -319,8 +351,16 @@ class SvgListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onLinearGradient(double fromX, double fromY, double toX, double toY,
-      Int32List colors, Float32List? offsets, int tileMode, int id) {
+  void onLinearGradient(
+    double fromX,
+    double fromY,
+    double toX,
+    double toY,
+    Int32List colors,
+    Float32List? offsets,
+    int tileMode,
+    int id,
+  ) {
     assert(() {
       //l.d('onLinearGradient $fromX $fromY $toX $toY $colors $offsets $tileMode $id');
       return true;
@@ -405,7 +445,13 @@ class SvgListener extends VectorGraphicsCodecListener {
 
   @override
   void onPathCubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double x3,
+    double y3,
+  ) {
     assert(() {
       //l.d('onPathCubicTo $x1 $y1 $x2 $y2 $x3 $y3');
       return true;
@@ -464,8 +510,14 @@ class SvgListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onPatternStart(int patternId, double x, double y, double width,
-      double height, Float64List transform) {
+  void onPatternStart(
+    int patternId,
+    double x,
+    double y,
+    double width,
+    double height,
+    Float64List transform,
+  ) {
     assert(() {
       //l.d('onPatternStart[$patternId] $x $y $width $height $transform');
       return true;
@@ -559,8 +611,15 @@ class SvgListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onTextPosition(int textPositionId, double? x, double? y, double? dx,
-      double? dy, bool reset, Float64List? transform) {
+  void onTextPosition(
+    int textPositionId,
+    double? x,
+    double? y,
+    double? dx,
+    double? dy,
+    bool reset,
+    Float64List? transform,
+  ) {
     assert(() {
       //l.d('onTextPosition[$textPositionId] $x $y $dx $dy $reset $transform');
       return true;

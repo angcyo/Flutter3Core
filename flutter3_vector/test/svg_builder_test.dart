@@ -14,7 +14,37 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   test('test', () async {
     final svg = await svgBuilder((builder) async {
-      final face = outputFile('face.png');
+      builder.writeViewBox(Offset.zero & const Size(200.0, 200.0));
+      builder.writeRect(width: 20, height: 10, transform: Matrix4.identity());
+      builder.writeRect(
+        width: 20,
+        height: 10,
+        rx: 2,
+        ry: 2,
+        strokeColor: Colors.purpleAccent,
+        /*transform: Matrix4.identity()..rotateZ(45.hd),*/
+        transform: Matrix4.identity()..scale(2.0, 1.0),
+      );
+      builder.writeRect(
+        width: 20,
+        height: 10,
+        rx: 2,
+        ry: 2,
+        strokeColor: Colors.redAccent,
+        /*transform: Matrix4.identity()..rotateZ(45.hd),*/
+        transform: Matrix4.identity()..scale(1.0, 2.0),
+      );
+      builder.writeRect(
+        width: 20,
+        height: 10,
+        rx: 2,
+        ry: 2,
+        strokeColor: Colors.blue,
+        /*transform: Matrix4.identity()..rotateZ(45.hd),*/
+        transform: Matrix4.identity()..rotateZ(45.hd),
+      );
+
+      /*final face = outputFile('face.jpg');
       final image = await face.toImage();
       builder.writeViewBox(
           Offset.zero & Size(image.width.toDouble(), image.height.toDouble()));
@@ -24,7 +54,7 @@ void main() {
         y: 14,
         fontSize: 14,
         color: Colors.purple,
-      );
+      );*/
     });
     await outputFile('output_face.svg').writeAsString(svg);
     consoleLog('...');

@@ -6,7 +6,17 @@ part of '../flutter3_canvas.dart';
 ///
 
 /// 画布扩展方法
+/// `on List<ElementPainter>`
 extension CanvasElementIterableEx on Iterable<ElementPainter> {
+  /// 获取所有元素的边界
+  Rect? get getAllElementBounds {
+    if (isNil(this)) {
+      return Rect.zero;
+    }
+    final group = ElementGroupPainter.createGroupIfNeed(toList());
+    return group?.elementsBounds;
+  }
+
   /// 排序元素
   /// [topLeft] 按照从上到下, 从左到右的顺序, 排序元素. 默认
   /// [leftTop] 按照从左到右, 从上到下的顺序, 排序元素

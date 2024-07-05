@@ -500,6 +500,30 @@ class ElementPainter extends IPainter
     dispatchSelfElementRawChanged(ElementDataType.size);
   }
 
+  /// 平移元素, 将元素平移到指定位置[x].[y]
+  @api
+  void translateElementTo({
+    double? x,
+    double? y,
+  }) {
+    if (x == null && y == 0) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    paintProperty?.let((it) {
+      final bounds = it.paintBounds;
+      x ??= bounds.left;
+      y ??= bounds.top;
+      translateElement(createTranslateMatrix(
+        tx: x! - bounds.left,
+        ty: y! - bounds.top,
+      ));
+    });
+  }
+
   /// 旋转元素
   @api
   void rotateElement(Matrix4 matrix) {

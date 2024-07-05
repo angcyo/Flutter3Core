@@ -242,6 +242,7 @@ class NormalTextPainter extends BaseTextPainter {
   @override
   void initPainter() {
     _textPainter = createBaseTextPainter(text);
+    _textPainter?.a
     _painterBounds = Offset.zero & _textPainter!.size;
     if (orientation.isVertical) {
       final rotateMatrix = Matrix4.identity()
