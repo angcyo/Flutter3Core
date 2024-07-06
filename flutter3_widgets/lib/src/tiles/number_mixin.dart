@@ -95,6 +95,7 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
     double? longStep,
     bool enable = true,
   }) {
+    //debugger();
     final globalTheme = GlobalTheme.of(context);
     return stepText
             ?.text(
@@ -121,13 +122,16 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
             )
             .onTouchDetector(
               onClick: (_) {
+                //debugger();
                 final toValue = currentNumberValue + step;
                 onNumberValueChanged(toValue);
               },
               onLongPress: (_) {
+                debugger();
                 final toValue = currentNumberValue + (longStep ?? step * 10);
                 onNumberValueChanged(toValue);
               },
+              enableClick: enable,
               enableLongPress: enable,
               enableLoopLongPress: enable,
             )

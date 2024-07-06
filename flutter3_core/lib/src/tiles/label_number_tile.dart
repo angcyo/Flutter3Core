@@ -218,12 +218,15 @@ class _SingleIncrementNumberWidgetState
     Widget? label = widget.buildLabelWidgetMixin(context);
 
     //num
+    //debugger();
     Widget? numberLayout = [
       buildIncrementStepWidget(
         context,
         step: -1,
         stepText: "-",
-        enable: greaterThan(currentNumberValue, widget.numberMinValue, false),
+        enable: greaterThan(currentNumberValue, widget.numberMinValue,
+                than: false) &&
+            lessThan(widget.numberMinValue, widget.numberMaxValue, than: false),
       ),
       currentNumberValueText
           .text(
@@ -247,7 +250,10 @@ class _SingleIncrementNumberWidgetState
         context,
         step: 1,
         stepText: "+",
-        enable: lessThan(currentNumberValue, widget.numberMaxValue, false),
+        enable:
+            lessThan(currentNumberValue, widget.numberMaxValue, than: false) &&
+                greaterThan(widget.numberMaxValue, widget.numberMinValue,
+                    than: false),
       ),
     ].row();
 

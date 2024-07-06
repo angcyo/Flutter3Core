@@ -160,17 +160,17 @@ T maxOf<T extends num>(T num1, T num2) => math.max(num1, num2);
 T minOf<T extends num>(T num1, T num2) => math.min(num1, num2);
 
 /// [value] 是否 <= [num]
-bool lessThan(num value, num? num, [bool than = true]) {
-  if (num == null) {
-    return true;
+bool lessThan(num? value, num? num, {bool than = true, bool def = true}) {
+  if (value == null || num == null) {
+    return def;
   }
   return than ? value <= num : value < num;
 }
 
 /// [value] 是否 >= [num]
-bool greaterThan(num value, num? num, [bool than = true]) {
-  if (num == null) {
-    return true;
+bool greaterThan(num? value, num? num, {bool than = true, bool def = true}) {
+  if (value == null || num == null) {
+    return def;
   }
   return than ? value >= num : value > num;
 }

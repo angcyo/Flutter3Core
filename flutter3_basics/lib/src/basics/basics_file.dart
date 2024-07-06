@@ -526,3 +526,25 @@ extension DirectoryEx on Directory {
 }
 
 //endregion Directory 扩展
+
+extension FileListEx on List<FileSystemEntity> {
+  /// 是否包含指定文件
+  /// [file] 支持[String].[FileSystemEntity]
+  bool containsFile(dynamic file) {
+    return firstWhereOrNull((element) {
+          final filePath =
+              file is FileSystemEntity ? file.path : file?.toString();
+          return element.path == filePath;
+        }) !=
+        null;
+  }
+
+  /// 移除指定文件
+  /// [file] 支持[String].[FileSystemEntity]
+  void removeFile(dynamic file) {
+    removeWhere((element) {
+      final filePath = file is FileSystemEntity ? file.path : file?.toString();
+      return element.path == filePath;
+    });
+  }
+}

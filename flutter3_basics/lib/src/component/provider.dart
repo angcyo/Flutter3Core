@@ -23,6 +23,7 @@ mixin IWidgetProvider {
 /// 在一个数据中, 提取文本
 /// [ITextProvider]
 String? textOf(dynamic data, [BuildContext? context]) {
+  //debugger();
   if (data == null) {
     return null;
   }
@@ -79,10 +80,10 @@ Widget? widgetOf(
     try {
       return data.provideWidget?.call(context);
     } catch (e, s) {
-      assert(() {
+      /*assert(() {
         printError(e, s);
         return true;
-      }());
+      }());*/
     }
   }
 

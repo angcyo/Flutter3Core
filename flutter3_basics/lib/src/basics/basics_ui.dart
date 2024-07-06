@@ -2303,10 +2303,10 @@ extension RouteWidgetEx on Widget {
           return child.getWidgetTranslationType(depth: depth - 1);
         }
       } catch (e, s) {
-        assert(() {
+        /*assert(() {
           printError(e, s);
           return true;
-        }());
+        }());*/
       }
     }
     return null;

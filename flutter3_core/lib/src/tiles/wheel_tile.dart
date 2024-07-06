@@ -87,15 +87,20 @@ class _LabelWheelTileState extends State<LabelWheelTile>
         .ink(
           widget.onContainerTap ??
               () async {
-                final resultIndex = await context.showWidgetDialog(WheelDialog(
-                  title: widget.wheelTitle ?? widget.label,
-                  initValue: currentValueMixin,
-                  values: widget.values,
-                  valuesWidget: widget.valuesWidget,
-                  transformValueWidget: widget.transformValueWidget,
-                  enableWheelSelectedIndexColor:
-                      widget.enableWheelSelectedIndexColor,
-                ));
+                if (isNil(widget.values) && isNil(widget.valuesWidget)) {
+                  return;
+                }
+                final resultIndex = await context.showWidgetDialog(
+                  WheelDialog(
+                    title: widget.wheelTitle ?? widget.label,
+                    initValue: currentValueMixin,
+                    values: widget.values,
+                    valuesWidget: widget.valuesWidget,
+                    transformValueWidget: widget.transformValueWidget,
+                    enableWheelSelectedIndexColor:
+                        widget.enableWheelSelectedIndexColor,
+                  ),
+                );
                 if (resultIndex is int) {
                   currentValueMixin = widget.values?.getOrNull(resultIndex) ??
                       currentValueMixin;
