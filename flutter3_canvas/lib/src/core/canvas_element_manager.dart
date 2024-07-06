@@ -317,6 +317,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
   }
 
+  /// 删除所有元素
+  @supportUndo
+  @api
+  void removeAllElement({UndoType undoType = UndoType.normal}) {
+    removeElementList(elements.clone(), undoType: undoType);
+  }
+
   /// 删除元素
   @supportUndo
   @api
@@ -457,6 +464,17 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   //endregion ---element操作---
 
   //region ---select---
+
+  /// 选中所有元素
+  @api
+  void selectAllElement({
+    bool showRect = true,
+  }) {
+    resetSelectElement(elements);
+    if (showRect) {
+      canvasDelegate.showRect();
+    }
+  }
 
   /// 添加一个选中的元素
   @api

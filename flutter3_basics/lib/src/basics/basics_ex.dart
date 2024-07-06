@@ -1043,6 +1043,18 @@ extension RectEx on Rect {
         height,
       );
 
+  /// 将当前矩形相对于[container]的位置, 转换成全局坐标的位置
+  Rect toGlobalLocationIn(RenderObject? container) {
+    if (container == null) {
+      return this;
+    }
+    final offset = container.getGlobalLocation();
+    if (offset == null) {
+      return this;
+    }
+    return this + offset;
+  }
+
   /// 转换成[Path]
   Path toPath() => Path()..addRect(this);
 
