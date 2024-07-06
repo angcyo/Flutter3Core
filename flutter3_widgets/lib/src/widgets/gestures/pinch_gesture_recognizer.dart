@@ -125,11 +125,15 @@ class PinchGestureBox extends RenderProxyBox
 
   @override
   void onSelfMultiLongPress() {
-    onMultiLongPressDurationAction?.call();
+    if (pointerCount == pinchPointer) {
+      onMultiLongPressDurationAction?.call();
+    }
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty("pinchPointer", pinchPointer));
+    properties.add(DiagnosticsProperty("pinchThreshold", pinchThreshold));
   }
 }
