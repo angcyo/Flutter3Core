@@ -10,6 +10,8 @@ part of './dialog.dart';
 /// [DisplayFeatureSubScreen]
 /// [DisplayFeatureSubScreen.anchorPoint]
 class DialogPageRoute<T> extends RawDialogRoute<T> {
+  final IgnorePointerType? barrierIgnorePointerType;
+
   DialogPageRoute({
     required BuildContext context,
     required WidgetBuilder builder,
@@ -25,57 +27,36 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
     //---新增的参数---
     Duration? transitionDuration,
     TranslationType? type,
+    //2024-7-6
+    this.barrierIgnorePointerType,
   }) : super(
           barrierLabel: barrierLabel ??
               MaterialLocalizations.of(context).modalBarrierDismissLabel,
           transitionDuration: type == TranslationType.none
               ? Duration.zero
               : (transitionDuration ?? const Duration(milliseconds: 200)),
-          pageBuilder: (BuildContext buildContext, Animation<double> animation,
-              Animation<double> secondaryAnimation) {
+          pageBuilder: (
+            BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) {
             final Widget pageChild = Builder(builder: builder);
             Widget dialog = themes?.wrap(pageChild) ?? pageChild;
             return dialog.safeArea(useSafeArea: useSafeArea);
           },
-          transitionBuilder: (BuildContext context, Animation<double> animation,
-              Animation<double> secondaryAnimation, Widget child) {
-            if (type == TranslationType.none) {
-              return child;
-            }
-            if (type?.withTranslation == true) {
-              return TranslationPageRoute(
-                builder: (content) => child,
-                topToBottom: type?.withTopToBottom == true,
-                fade: type?.withFade == true,
-                enableSecondaryAnimation: false,
-              ).buildSameTransitions(
-                  context, animation, secondaryAnimation, child);
-            }
-            if (type == TranslationType.fade) {
-              return FadePageRoute(
-                builder: (content) => child,
-                enableSecondaryAnimation: false,
-              ).buildSameTransitions(
-                  context, animation, secondaryAnimation, child);
-            }
-            if (type == TranslationType.slide) {
-              return SlidePageRoute(
-                builder: (content) => child,
-                enableSecondaryAnimation: false,
-              ).buildSameTransitions(
-                  context, animation, secondaryAnimation, child);
-            }
-            if (type == TranslationType.scale ||
-                type == TranslationType.scaleFade) {
-              return ScalePageRoute(
-                builder: (content) => child,
-                fade: type?.withFade == true,
-                enableSecondaryAnimation: false,
-              ).buildSameTransitions(
-                  context, animation, secondaryAnimation, child);
-            }
-            return buildMaterialDialogTransitions(
-                context, animation, secondaryAnimation, child);
+          transitionBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) {
+            return buildDialogTransitions(
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+              type,
+            );
           },
         ) {
     _initialBarrierColor = barrierColor;
@@ -111,11 +92,15 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
   @override
   Widget buildModalBarrier() {
     return (useBarrierColorAnimate && controller == null)
-        ? super.buildModalBarrier()
+        ? super
+            .buildModalBarrier()
+            .ignoreSelfPointer(ignoreType: barrierIgnorePointerType)
         : AnimatedBuilder(
             animation: controller!,
             builder: (context, child) {
-              return super.buildModalBarrier();
+              return super
+                  .buildModalBarrier()
+                  .ignoreSelfPointer(ignoreType: barrierIgnorePointerType);
             });
   }
 
@@ -176,6 +161,120 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
       child,
     );
   }
+
+  @override
+  Iterable<OverlayEntry> createOverlayEntries() {
+    return super.createOverlayEntries();
+  }
+}
+
+/// 忽略非点击事件的对话框, 这样就可以穿透到下层路由
+/// [DialogPageRoute]
+/// [IgnorePointerType]
+/*class DialogPageIgnoreRoute<T> extends PopupRoute<T> {
+  final bool useSafeArea;
+  final WidgetBuilder builder;
+  final CapturedThemes? themes;
+
+  //---新增的参数---
+  final TranslationType? type;
+
+  DialogPageIgnoreRoute({
+    required BuildContext context,
+    required this.builder,
+    this.useSafeArea = true,
+    this.themes,
+    this.type,
+    bool barrierDismissible = true,
+    Color? barrierColor = Colors.black54, //const Color(0x80000000)
+    String? barrierLabel,
+    Duration transitionDuration = const Duration(milliseconds: 200),
+    super.settings,
+    super.filter,
+    super.traversalEdgeBehavior,
+  })  : _barrierDismissible = barrierDismissible,
+        _barrierLabel = barrierLabel,
+        _barrierColor = barrierColor,
+        _transitionDuration = transitionDuration;
+
+  @override
+  bool get barrierDismissible => _barrierDismissible;
+  final bool _barrierDismissible;
+
+  @override
+  String? get barrierLabel => _barrierLabel;
+  final String? _barrierLabel;
+
+  @override
+  Color? get barrierColor => _barrierColor;
+  final Color? _barrierColor;
+
+  @override
+  Duration get transitionDuration => _transitionDuration;
+  final Duration _transitionDuration;
+
+  /// 界面就是通过这个方法构建并显示在界面上的
+  @override
+  Iterable<OverlayEntry> createOverlayEntries() {
+    return super.createOverlayEntries();
+  }
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    final Widget pageChild = Builder(builder: builder);
+    Widget dialog = themes?.wrap(pageChild) ?? pageChild;
+    return dialog.safeArea(useSafeArea: useSafeArea);
+  }
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return buildDialogTransitions(
+        context, animation, secondaryAnimation, child, type);
+  }
+}*/
+
+/// 构建对话框的过渡动画
+Widget buildDialogTransitions(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+  TranslationType? type,
+) {
+  if (type == TranslationType.none) {
+    return child;
+  }
+  if (type?.withTranslation == true) {
+    return TranslationPageRoute(
+      builder: (content) => child,
+      topToBottom: type?.withTopToBottom == true,
+      fade: type?.withFade == true,
+      enableSecondaryAnimation: false,
+    ).buildSameTransitions(context, animation, secondaryAnimation, child);
+  }
+  if (type == TranslationType.fade) {
+    return FadePageRoute(
+      builder: (content) => child,
+      enableSecondaryAnimation: false,
+    ).buildSameTransitions(context, animation, secondaryAnimation, child);
+  }
+  if (type == TranslationType.slide) {
+    return SlidePageRoute(
+      builder: (content) => child,
+      enableSecondaryAnimation: false,
+    ).buildSameTransitions(context, animation, secondaryAnimation, child);
+  }
+  if (type == TranslationType.scale || type == TranslationType.scaleFade) {
+    return ScalePageRoute(
+      builder: (content) => child,
+      fade: type?.withFade == true,
+      enableSecondaryAnimation: false,
+    ).buildSameTransitions(context, animation, secondaryAnimation, child);
+  }
+  return buildMaterialDialogTransitions(
+      context, animation, secondaryAnimation, child);
 }
 
 /// 系统默认的动画

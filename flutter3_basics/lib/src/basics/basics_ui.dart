@@ -478,14 +478,14 @@ extension WidgetEx on Widget {
   /// 监听一个通知
   /// [ContextEx.postNotification]
   /// [Notification]
-  Widget listenerNotification<T extends Notification>({
+  /*Widget listenerNotification<T extends Notification>({
     required NotificationListenerCallback<T> onNotification,
     bool? Function(T)? shouldNotify,
   }) =>
       NotificationListener<T>(
         onNotification: onNotification,
         child: this,
-      );
+      );*/
 
   /// 为[child]小部件提供一个数据
   Widget dataProvider([Object? data]) => DataProviderScope(
@@ -780,11 +780,38 @@ extension WidgetEx on Widget {
   //endregion ---SafeArea---
 
   /// 忽略小部件内的所有手势
+  /// [IgnorePointer]
   Widget ignorePointer({bool ignoring = true}) {
     return IgnorePointer(
       ignoring: ignoring,
       child: this,
     );
+  }
+
+  /// 忽略小部件内的所有手势
+  /// [IgnoreSelfPointer]
+  Widget ignoreSelfPointer({
+    IgnorePointerType? ignoreType = IgnorePointerType.self,
+  }) {
+    return ignoreType == null
+        ? this
+        : IgnoreSelfPointer(
+            ignoreType: ignoreType,
+            child: this,
+          );
+  }
+
+  /// 支持监听动画改变
+  /// [IgnoreSelfPointer]
+  Widget ignoreSelfPointerListener({
+    IgnorePointerType? ignoreType = IgnorePointerType.self,
+  }) {
+    return ignoreType == null
+        ? this
+        : IgnoreSelfPointerListener(
+            this,
+            ignoreType: ignoreType,
+          );
   }
 
   /// 消耗小部件内的所有手势
@@ -2257,6 +2284,34 @@ class TranslationTypeImpl {
 }
 
 extension RouteWidgetEx on Widget {
+  /// 获取[Widget]的指定的过渡动画类型
+  TranslationType? getWidgetTranslationType({int depth = 3}) {
+    if (depth <= 0) {
+      return null;
+    }
+    if (this is TranslationTypeImpl) {
+      return (this as TranslationTypeImpl).translationType;
+    } else if (this is SingleChildRenderObjectWidget) {
+      final child = (this as SingleChildRenderObjectWidget).child;
+      if (child != null) {
+        return child.getWidgetTranslationType(depth: depth - 1);
+      }
+    } else {
+      try {
+        final child = (this as dynamic).child;
+        if (child is Widget) {
+          return child.getWidgetTranslationType(depth: depth - 1);
+        }
+      } catch (e, s) {
+        assert(() {
+          printError(e, s);
+          return true;
+        }());
+      }
+    }
+    return null;
+  }
+
   /// [MaterialPageRoute]
   /// [CupertinoPageRoute]
   Route<T> toRoute<T>({
@@ -2267,11 +2322,7 @@ extension RouteWidgetEx on Widget {
     bool allowSnapshotting = true,
     bool barrierDismissible = false,
   }) {
-    if (type == null) {
-      if (this is TranslationTypeImpl) {
-        type = (this as TranslationTypeImpl).translationType;
-      }
-    }
+    type ??= getWidgetTranslationType();
     dynamic targetRoute;
     switch (type) {
       case TranslationType.none:

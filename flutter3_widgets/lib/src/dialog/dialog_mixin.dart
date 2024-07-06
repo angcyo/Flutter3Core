@@ -297,6 +297,7 @@ extension DialogExtension on BuildContext {
     TraversalEdgeBehavior? traversalEdgeBehavior,
     Offset? anchorPoint,
     TranslationType? type,
+    IgnorePointerType? barrierIgnorePointerType,
   }) async {
     if (!mounted) {
       assert(() {
@@ -318,6 +319,7 @@ extension DialogExtension on BuildContext {
       traversalEdgeBehavior: traversalEdgeBehavior,
       anchorPoint: anchorPoint,
       type: type,
+      barrierIgnorePointerType: barrierIgnorePointerType,
     );
   }
 }
@@ -348,6 +350,7 @@ extension NavigatorStateDialogEx on NavigatorState {
     TraversalEdgeBehavior? traversalEdgeBehavior,
     Offset? anchorPoint,
     TranslationType? type,
+    IgnorePointerType? barrierIgnorePointerType,
   }) async {
     if (context == null || !context.mounted) {
       assert(() {
@@ -364,11 +367,7 @@ extension NavigatorStateDialogEx on NavigatorState {
       ).context,
     );
 
-    if (type == null) {
-      if (widget is TranslationTypeImpl) {
-        type = (widget as TranslationTypeImpl).translationType;
-      }
-    }
+    type ??= widget.getWidgetTranslationType();
 
     return push<T>(DialogPageRoute<T>(
       context: context,
@@ -386,6 +385,7 @@ extension NavigatorStateDialogEx on NavigatorState {
       traversalEdgeBehavior:
           traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
       type: type,
+      barrierIgnorePointerType: barrierIgnorePointerType,
     ));
 
     /*return showDialog<T>(
