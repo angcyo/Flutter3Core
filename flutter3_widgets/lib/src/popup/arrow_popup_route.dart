@@ -24,10 +24,11 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   /// 否则在不指定[arrowDirection]的情况下, 会根据剩余空间的大小, 自动设置箭头的方向
   final bool autoArrowDirection;
 
-  AxisDirection? _arrowDirection;
+  final IgnorePointerType? barrierIgnorePointerType;
 
   @override
   AxisDirection? get arrowDirection => _arrowDirection;
+  AxisDirection? _arrowDirection;
 
   @override
   set arrowDirection(AxisDirection? value) {
@@ -65,6 +66,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     this.margin = const EdgeInsets.all(kX),
     double arrowDirectionMinOffset = 15,
     AxisDirection? arrowDirection, //可以强制指定箭头方向
+    this.barrierIgnorePointerType, //障碍手势穿透
   })  : _arrowDirectionMinOffset = arrowDirectionMinOffset,
         _arrowDirection = arrowDirection;
 
@@ -96,6 +98,18 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
       super.offstage = false;
     });
     return super.didPush();
+  }
+
+  @override
+  Iterable<OverlayEntry> createOverlayEntries() {
+    return super.createOverlayEntries();
+  }
+
+  @override
+  Widget buildModalBarrier() {
+    return super
+        .buildModalBarrier()
+        .ignoreSelfPointer(ignoreType: barrierIgnorePointerType);
   }
 
   @override

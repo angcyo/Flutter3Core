@@ -29,6 +29,7 @@ extension PopupEx on BuildContext {
     AxisDirection? arrowDirection,
     EdgeInsets? contentPadding = const EdgeInsets.all(kH),
     EdgeInsets? contentMargin = const EdgeInsets.all(kX),
+    IgnorePointerType? barrierIgnorePointerType,
   }) async {
     anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds();
     anchorRect ??= findRenderObject()?.getGlobalBounds();
@@ -44,6 +45,7 @@ extension PopupEx on BuildContext {
         barriersColor: barriersColor,
         padding: contentPadding,
         margin: contentMargin,
+        barrierIgnorePointerType: barrierIgnorePointerType,
       ),
     );
   }
