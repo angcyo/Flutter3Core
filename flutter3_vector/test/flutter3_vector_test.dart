@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:string_scanner/string_scanner.dart';
-import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
 void main() async {
@@ -78,7 +77,7 @@ Future testSvg() async {
   final response = await decodeSvgString(
     svgString,
     listener: SvgListener()
-      ..onDrawElement = (element, data, paint, bounds) {
+      ..onDrawElement = (element, data, paint, bounds, matrix) {
         consoleLog('${element.runtimeType} $bounds $data');
       },
   );

@@ -130,10 +130,14 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
   String? get outputSvgPath {
     StringBuffer pathBuffer = StringBuffer();
     for (final element in graffitiElementManager.elements) {
-      if (element is GraffitiFountainPenPainter) {
-        element.pathBuffer?.let((it) {
+      //debugger();
+      if (element.supportVectorOutput == true) {
+        element.outputPathString?.let((it) {
           pathBuffer.write(it.toString());
         });
+        /*element.outputPath?.let((it) {
+          pathBuffer.write(it.toString());
+        });*/
       } else {
         return null;
       }

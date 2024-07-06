@@ -46,18 +46,35 @@ class GraffitiPainter extends IPainter
     graffitiDelegate?.refresh();
   }
 
-//endregion ---canvas---
+  //endregion ---canvas---
+
+  //region ---output---
+
+  /// 是否支持矢量数据输出
+  bool supportVectorOutput = false;
+
+  /// 输出的矢量数据
+  @output
+  Path? outputPath;
+
+  @output
+  String? outputPathString;
+
+//endregion ---output---
 }
 
 /// 铅笔数据绘制, 宽度一致
 class GraffitiPencilPainter extends GraffitiFountainPenPainter {
-  GraffitiPencilPainter();
+  GraffitiPencilPainter() {
+    supportVectorOutput = false;
+  }
 }
 
 /// 橡皮擦数据绘制
 class GraffitiEraserPainter extends GraffitiPencilPainter {
   GraffitiEraserPainter() {
     paint.blendMode = BlendMode.clear;
+    supportVectorOutput = false;
   }
 }
 
@@ -76,7 +93,11 @@ class GraffitiFountainPenPainter extends GraffitiPainter
     paint
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
+    supportVectorOutput = true;
   }
+
+  @override
+  String? get outputPathString => pathBuffer?.toString();
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
