@@ -27,26 +27,22 @@ class RItemTile extends StatefulWidget {
     this.child,
     this.childBuilder,
     this.isSliverItem = false,
+    this.updateSignal,
+    this.tag,
+    //
     this.part = false,
     this.hide = false,
+    //Divider
     this.bottomLineColor,
     this.bottomLineHeight,
     this.bottomLineMargin,
     this.bottomLeading,
+    //SliverPadding
     this.sliverPadding,
+    //DecoratedSliver
     this.sliverDecoration,
     this.sliverDecorationPosition = DecorationPosition.background,
-    this.edgePaddingLeft,
-    this.edgePaddingTop,
-    this.edgePaddingRight,
-    this.edgePaddingBottom,
-    this.addAutomaticKeepAlives = true,
-    this.addRepaintBoundaries = true,
-    this.addSemanticIndexes = true,
-    this.crossAxisCount = 0,
-    this.mainAxisSpacing = 0,
-    this.crossAxisSpacing = 0,
-    this.childAspectRatio = 1.0,
+    //SliverPersistentHeader / SliverAppBar
     this.headerChildBuilder,
     this.headerFixedHeight = kMinInteractiveDimension,
     this.headerMaxHeight = kMinInteractiveDimension,
@@ -54,10 +50,14 @@ class RItemTile extends StatefulWidget {
     this.headerDelegate,
     this.pinned = false,
     this.floating = false,
-    this.fillRemaining = false,
-    this.fillHasScrollBody = false,
-    this.fillOverscroll = false,
-    this.fillExpand = false,
+    this.useSliverAppBar = false,
+    this.headerBackgroundColor,
+    this.headerForegroundColor,
+    this.headerTitleTextStyle = const TextStyle(fontSize: 14),
+    //SliverList
+    this.addAutomaticKeepAlives = true,
+    this.addRepaintBoundaries = true,
+    this.addSemanticIndexes = true,
     this.firstPaddingLeft,
     this.firstPaddingTop,
     this.firstPaddingRight,
@@ -66,17 +66,29 @@ class RItemTile extends StatefulWidget {
     this.lastPaddingTop,
     this.lastPaddingRight,
     this.lastPaddingBottom,
+    //SliverGrid
+    this.crossAxisCount = 0,
+    this.mainAxisSpacing = 0,
+    this.crossAxisSpacing = 0,
+    this.childAspectRatio = 1.0,
+    this.edgePaddingLeft,
+    this.edgePaddingTop,
+    this.edgePaddingRight,
+    this.edgePaddingBottom,
+    //SliverFillRemaining
+    this.fillRemaining = false,
+    this.fillHasScrollBody = false,
+    this.fillOverscroll = false,
+    this.fillExpand = false,
+    //SliverMainAxisGroup
     this.groups,
     this.groupExpanded,
-    this.useSliverAppBar = false,
-    this.headerBackgroundColor,
-    this.headerForegroundColor,
-    this.headerTitleTextStyle = const TextStyle(fontSize: 14),
-    this.updateSignal,
-    this.tag,
+    //SliverReorderableList
     this.onTileReorder,
     this.onTileReorderStart,
     this.onTileReorderEnd,
+    this.onTileReorderProxyDecorator,
+    //
   });
 
   //region rebuild
@@ -116,7 +128,17 @@ class RItemTile extends StatefulWidget {
 
   //endregion 基础
 
-  //region style 下划线
+  //region 普通布局
+
+  /// 决定是否直接塞到[CustomScrollView.slivers]中, 要不然就会放到[SliverList]中
+
+  /// 是否是[Sliver]布局
+  /// 需要使用[SliverToBoxAdapter]包裹
+  final bool isSliverItem;
+
+  //endregion 普通布局
+
+  //region Divider style 下划线
 
   /// 底部分割线的颜色
   final Color? bottomLineColor;
@@ -153,16 +175,6 @@ class RItemTile extends StatefulWidget {
   final DecorationPosition sliverDecorationPosition;
 
   //endregion DecoratedSliver
-
-  //region 普通布局
-
-  /// 决定是否直接塞到[CustomScrollView.slivers]中, 要不然就会放到[SliverList]中
-
-  /// 是否是[Sliver]布局
-  /// 需要使用[SliverToBoxAdapter]包裹
-  final bool isSliverItem;
-
-  //endregion 普通布局
 
   //region SliverPersistentHeader / SliverAppBar 悬浮头部
 
@@ -340,6 +352,9 @@ class RItemTile extends StatefulWidget {
 
   /// 3.结束排序时的回调
   final IndexCallback? onTileReorderEnd;
+
+  /// 用来装饰拖拽的小部件, 可以修改拖拽时显示的小部件
+  final ReorderItemProxyDecorator? onTileReorderProxyDecorator;
 
   //endregion SliverReorderableList
 

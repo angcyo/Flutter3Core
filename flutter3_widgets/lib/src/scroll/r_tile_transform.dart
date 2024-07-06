@@ -732,6 +732,7 @@ class SliverReorderableListTransform extends BaseTileTransform {
               },
           onReorderStart: first.onTileReorderStart,
           onReorderEnd: first.onTileReorderEnd,
+          proxyDecorator: first.onTileReorderProxyDecorator,
           itemCount: newList.length,
           itemBuilder: (context, index) {
             return newList[index].childKeyed(ValueKey(index));
