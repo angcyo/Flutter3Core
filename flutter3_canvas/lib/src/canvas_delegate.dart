@@ -351,14 +351,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 派发画布重绘的次数
   void dispatchCanvasPaint(CanvasDelegate delegate, int paintCount) {
     _eachCanvasListener((element) {
-      element.onCanvasPaint?.call(delegate, paintCount);
+      element.onCanvasPaintAction?.call(delegate, paintCount);
     });
   }
 
   /// 派发画布空闲时的回调, 当没有请求[refresh]方法时触发
   void dispatchCanvasIdle(CanvasDelegate delegate, Duration lastRefreshTime) {
     _eachCanvasListener((element) {
-      element.onCanvasIdle?.call(delegate, lastRefreshTime);
+      element.onCanvasIdleAction?.call(delegate, lastRefreshTime);
     });
   }
 

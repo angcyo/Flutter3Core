@@ -110,11 +110,11 @@ class CanvasRenderBox extends RenderBox {
 /// 画布回调监听
 class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasPaint]
-  final void Function(CanvasDelegate delegate, int paintCount)? onCanvasPaint;
+  final void Function(CanvasDelegate delegate, int paintCount)? onCanvasPaintAction;
 
   /// [CanvasDelegate.dispatchCanvasIdle]
   final void Function(CanvasDelegate delegate, Duration lastRefreshTime)?
-      onCanvasIdle;
+      onCanvasIdleAction;
 
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]
   final void Function(
@@ -169,8 +169,8 @@ class CanvasListener {
   final void Function(ElementGroupPainter group)? onCanvasUngroupChangedAction;
 
   CanvasListener({
-    this.onCanvasPaint,
-    this.onCanvasIdle,
+    this.onCanvasPaintAction,
+    this.onCanvasIdleAction,
     this.onCanvasViewBoxChangedAction,
     this.onCanvasUnitChangedAction,
     this.onCanvasSelectBoundsChangedAction,
