@@ -27,8 +27,14 @@ double distance(Offset a, Offset b) {
   return math.sqrt(math.pow(a.dx - b.dx, 2) + math.pow(a.dy - b.dy, 2));
 }
 
+/// c边的长度
 double c(double x1, double y1, double x2, double y2) {
   return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2));
+}
+
+/// 对角线的长度, c边的长度
+double cl(double x, double y) {
+  return math.sqrt(math.pow(x, 2) + math.pow(y, 2));
 }
 
 /// 获取2个点之间的中心点

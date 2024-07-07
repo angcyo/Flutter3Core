@@ -300,6 +300,10 @@ double get screenWidth => platformMediaQueryData.size.width;
 @dp
 double get screenHeight => platformMediaQueryData.size.height;
 
+/// 对角线长度
+@dp
+double get screenDiagonalLength => cl(screenWidth, screenHeight);
+
 /// 获取顶部安全区域
 @dp
 double get screenStatusBar => platformMediaQueryData.padding.top;
@@ -307,6 +311,10 @@ double get screenStatusBar => platformMediaQueryData.padding.top;
 /// 获取底部安全区域
 @dp
 double get screenBottomBar => platformMediaQueryData.padding.bottom;
+
+/// 底部导航的高度
+@dp
+double get screenNavigationBar => (deviceHeightPixel - screenHeightPixel) / dpr;
 
 /// 屏幕像素密度, 1 dp = xx px
 double get devicePixelRatio => platformMediaQueryData.devicePixelRatio;
@@ -322,19 +330,32 @@ double get dpi => platformMediaQueryData.devicePixelRatio * 160;
 double get screenWidthPixel =>
     platformMediaQueryData.size.width * platformMediaQueryData.devicePixelRatio;
 
-/// 屏幕高度 [screenHeight]
+/// 屏幕高度 [screenHeight], 此高度不包含导航栏的高度
 @pixel
 double get screenHeightPixel =>
     platformMediaQueryData.size.height *
     platformMediaQueryData.devicePixelRatio;
 
+/// 对角线长度
+@pixel
+double get screenDiagonalLengthPixel => cl(screenWidthPixel, screenHeightPixel);
+
 /// 设备的宽度 [screenWidth]
 @pixel
 double get deviceWidthPixel => flutterView.display.size.width;
 
+@dp
+double get deviceWidth => deviceWidthPixel / dpr;
+
 /// 设备的高度 [screenHeight], 包含导航栏的高度
 @pixel
 double get deviceHeightPixel => flutterView.display.size.height;
+
+@dp
+double get deviceHeight => deviceHeightPixel / dpr;
+
+/// 设备对角线的英寸大小 >=7 视为平板, 7.07 大约 10英寸
+double get deviceInch => cl(deviceWidthPixel, deviceHeightPixel) / dpi;
 
 /// 延迟随机发生器
 /// [delay] 延迟多久触发一次[generate]

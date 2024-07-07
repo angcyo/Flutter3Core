@@ -513,6 +513,16 @@ extension UnitNumEx on num {
     return IUnit.dp.toUnit(toPixel(unit));
   }
 
+  @inch
+  double toInchFromDp([@unit IUnit unit = IUnit.dp]) {
+    return IUnit.inch.toUnit(toPixel(unit));
+  }
+
+  @inch
+  double toInchFromPixel() {
+    return IUnit.inch.toUnit(this);
+  }
+
   //---
 
   /// 将dp单位的值, 转换成指定单位[unit]的值

@@ -37,7 +37,13 @@ final class CoreKeys {
 
   /// 当前是否是调试标识
   bool get isDebugFlag => "isDebugFlag".hiveGet<bool>(isDebug) ?? isDebug;
+
+  /// 平板尺寸阈值
+  double? get tabletInchThreshold => "tabletInchThreshold".hiveGet<double>();
 }
+
+/// 是否是平板
+bool get isTabletDevice => deviceInch >= ($coreKeys.tabletInchThreshold ?? 7);
 
 /// CoreKeys的实例
 @globalInstance
