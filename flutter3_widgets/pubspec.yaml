@@ -42,7 +42,7 @@ dependencies:
 
   # https://pub.dev/packages/wheel_picker
   # https://github.com/stavgafny/wheel_picker
-  wheel_picker: ^0.0.4
+  wheel_picker: ^0.0.5
 
   # https://pub.dev/packages/list_wheel_scroll_view_nls
   # https://github.com/JoDeveloper/list_wheel_scroll_view_nls
@@ -51,6 +51,9 @@ dependencies:
   # https://pub.dev/packages/badges
   # https://github.com/yako-dev/flutter_badges
   badges: ^3.1.2
+
+  # https://pub.dev/packages/flutter_constraintlayout
+  flutter_constraintlayout: ^1.7.0-stable
 
 dev_dependencies:
   flutter_test:

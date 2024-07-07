@@ -31,6 +31,7 @@ export 'package:flutter_slidable/flutter_slidable.dart';
 export 'package:lifecycle/lifecycle.dart';
 export 'package:list_wheel_scroll_view_nls/list_wheel_scroll_view_nls.dart';
 export 'package:sliver_tools/sliver_tools.dart';
+export 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
 
 export 'src/dialog/dialog.dart';
 export 'src/popup/popup.dart';
