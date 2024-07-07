@@ -586,6 +586,7 @@ Image? loadAssetImageWidget(
   String? prefix = kDefAssetsPngPrefix,
   String? package,
   BoxFit? fit,
+  double? size,
   double? width,
   double? height,
   Color? color,
@@ -596,8 +597,8 @@ Image? loadAssetImageWidget(
         : Image.asset(
             key.ensurePackagePrefix(package, prefix),
             fit: fit,
-            width: width,
-            height: height,
+            width: size ?? width,
+            height: size ?? height,
             color: color,
             colorBlendMode: colorBlendMode,
           );
