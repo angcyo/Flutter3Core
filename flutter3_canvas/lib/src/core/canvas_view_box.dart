@@ -82,7 +82,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     final axisManager = canvasDelegate.canvasPaintManager.axisManager;
     canvasBounds = Rect.fromLTRB(
       paintBounds.left + axisManager.yAxisWidth,
-      paintBounds.top + axisManager.yAxisWidth,
+      paintBounds.top + axisManager.xAxisHeight,
       paintBounds.right,
       paintBounds.bottom,
     );
@@ -93,6 +93,37 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       });
     } else {
       canvasDelegate.dispatchCanvasViewBoxChanged(this, isInitialize, true);
+    }
+  }
+
+  /// 限制画布绘制区域[canvasBounds]
+  /// 请在[onCanvasViewBoxChangedAction]回调中使用此方法
+  /// [updatePaintBounds]
+  void updateCanvasBounds({
+    @dp @viewCoordinate double? width,
+    @dp @viewCoordinate double? height,
+  }) {
+    if (isCanvasBoxInitialize) {
+      final axisManager = canvasDelegate.canvasPaintManager.axisManager;
+      final bounds = Rect.fromLTRB(
+        paintBounds.left + axisManager.yAxisWidth,
+        paintBounds.top + axisManager.xAxisHeight,
+        paintBounds.right,
+        paintBounds.bottom,
+      );
+      Size childSize = Size(width ?? paintBounds.width - axisManager.yAxisWidth,
+          height ?? paintBounds.height - axisManager.xAxisHeight);
+      final offset = alignRectOffset(Alignment.center, bounds, childSize);
+      canvasBounds = Rect.fromLTRB(
+        maxOf(bounds.left, offset.dx),
+        maxOf(bounds.top, offset.dy),
+        minOf(bounds.right, offset.dx + childSize.width),
+        minOf(bounds.bottom, offset.dy + childSize.height),
+      );
+    } else {
+      postCallback(() {
+        updateCanvasBounds(width: width, height: height);
+      });
     }
   }
 
