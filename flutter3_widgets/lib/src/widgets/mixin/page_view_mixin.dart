@@ -85,6 +85,7 @@ mixin PageViewMixin<T extends StatefulWidget>
         ),
       );
 
+  /// 页面改变回调
   void onSelfPageViewChanged(int index) {
     assert(() {
       l.d('onSelfPageViewChanged:$index');
