@@ -98,6 +98,7 @@ part 'src/widgets/match_parent_layout.dart';
 part 'src/widgets/mixin/layout_mixin.dart';
 part 'src/widgets/mixin/scroll_mixin.dart';
 part 'src/widgets/mixin/tile_mixin.dart';
+part 'src/widgets/mixin/page_view_mixin.dart';
 part 'src/widgets/pull_back_widget.dart';
 part 'src/widgets/radar_scan_widget.dart';
 part 'src/widgets/size_animation_widget.dart';
