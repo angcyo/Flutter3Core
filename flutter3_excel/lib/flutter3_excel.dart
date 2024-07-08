@@ -38,22 +38,29 @@ class ExcelHelper {
     if (isNil(filePath)) {
       return result;
     }
-    final excel =
-        Excel.decodeBytes(data ?? (File(filePath!)).readAsBytesSync());
-    excel.tables.forEach((key, sheet) {
-      final sheetName = key;
-      final List<List> sheetData = [];
-      //debugger();
-      for (final row in sheet.rows) {
-        //每一行的数据集, 存储是各个列
-        final List<dynamic> rowData = [];
-        for (final data in row) {
-          rowData.add(data?.value);
+    try {
+      final excel =
+          Excel.decodeBytes(data ?? (File(filePath!)).readAsBytesSync());
+      excel.tables.forEach((key, sheet) {
+        final sheetName = key;
+        final List<List> sheetData = [];
+        //debugger();
+        for (final row in sheet.rows) {
+          //每一行的数据集, 存储是各个列
+          final List<dynamic> rowData = [];
+          for (final data in row) {
+            rowData.add(data?.value);
+          }
+          sheetData.add(rowData);
         }
-        sheetData.add(rowData);
-      }
-      result[sheetName] = sheetData;
-    });
+        result[sheetName] = sheetData;
+      });
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
     return result;
   }
 

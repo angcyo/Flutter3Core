@@ -51,6 +51,7 @@ class SliverExpandBox extends RenderShiftedBox {
 
     double width = constraintSize.width;
     double height = constraintSize.height;
+    //debugger();
     if (width == double.infinity) {
       if (parentConstraints is BoxConstraints) {
         width = parentConstraints.maxWidth;
@@ -70,7 +71,9 @@ class SliverExpandBox extends RenderShiftedBox {
 
     //child
     if (child != null) {
-      child!.layout(constraints, parentUsesSize: true);
+      //debugger();
+      //child!.layout(constraints, parentUsesSize: true);
+      child!.layout(BoxConstraints.loose(size), parentUsesSize: true);
       alignChildOffset(alignment, size, null, child: child);
     }
 

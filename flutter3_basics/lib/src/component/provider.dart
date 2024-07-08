@@ -39,10 +39,10 @@ String? textOf(dynamic data, [BuildContext? context]) {
     try {
       return data.provideText;
     } catch (e, s) {
-      assert(() {
+      /*assert(() {
         printError(e, s);
         return true;
-      }());
+      }());*/
     }
   }
   if (data != null) {
