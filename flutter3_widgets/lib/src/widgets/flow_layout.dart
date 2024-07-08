@@ -626,7 +626,7 @@ class FlowLayoutRender extends RenderBox
     _childUsedWidth = childUsedWidth;
 
     // 堆叠的child在此布局
-    for (var stackChild in stackChildren) {
+    for (final stackChild in stackChildren) {
       //child 位置
       final stackChildParentData =
           stackChild.parentData! as FlowLayoutParentData;

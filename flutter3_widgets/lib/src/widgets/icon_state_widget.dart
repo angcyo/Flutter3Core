@@ -76,8 +76,8 @@ class IconStateWidget extends StatelessWidget {
         icon,
         text,
       ]
-          .column()!
-          .paddingInsets(padding)
+          .column()
+          ?.paddingInsets(padding)
           .colorFiltered(
             color: enable ? color : disableColor,
             blendMode: BlendMode.srcIn,
