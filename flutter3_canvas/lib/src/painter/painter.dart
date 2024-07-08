@@ -13,6 +13,7 @@ class CanvasMonitorPainter extends IPainter {
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
+    //debugger();
     if (isDebug) {
       fps.update();
     }
@@ -38,5 +39,14 @@ class CanvasMonitorPainter extends IPainter {
       canvas,
       Offset(x + 2, viewBox.paintBounds.bottom - painter.height),
     );
+    /*assert(() {
+      canvas.drawRect(
+          viewBox.paintBounds,
+          Paint()
+            ..strokeWidth = 2
+            ..style = PaintingStyle.stroke
+            ..color = Colors.redAccent);
+      return true;
+    }());*/
   }
 }
