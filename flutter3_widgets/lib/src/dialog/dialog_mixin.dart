@@ -164,7 +164,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       final scrollChildren = children.subList(scrollChildIndex);
 
       Widget? scrollBody =
-          scrollChildren.scroll(scrollDirection: Axis.vertical);
+          scrollChildren.scroll(axis: Axis.vertical);
       //约束高度
       scrollBody = scrollBody?.constrainedMax(
         minHeight: contentMinHeight,

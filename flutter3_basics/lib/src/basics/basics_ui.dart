@@ -270,7 +270,7 @@ extension WidgetListEx on WidgetNullList {
   /// [scroll]
   /// [WidgetEx.scroll]
   Widget? scroll({
-    Axis scrollDirection = Axis.horizontal,
+    Axis axis = Axis.horizontal,
     ScrollPhysics? physics,
     ScrollController? controller,
     EdgeInsetsGeometry? padding,
@@ -283,7 +283,7 @@ extension WidgetListEx on WidgetNullList {
       return null;
     }
     Widget body;
-    if (scrollDirection == Axis.vertical) {
+    if (axis == Axis.vertical) {
       body = list.column(
         mainAxisSize: MainAxisSize.min,
         gap: gap,
@@ -297,7 +297,7 @@ extension WidgetListEx on WidgetNullList {
       )!;
     }
     return body.scroll(
-      scrollDirection: scrollDirection,
+      scrollDirection: axis,
       physics: physics,
       controller: controller,
       padding: padding,
@@ -1346,19 +1346,36 @@ extension WidgetEx on Widget {
   }
 
   /// 约束大小
+  /// [enableRatio] 是否激活百分比
   /// [constrainedBox]
   Widget constrained({
     double minWidth = 0.0,
     double maxWidth = double.infinity,
     double minHeight = 0.0,
     double maxHeight = double.infinity,
-  }) =>
-      constrainedBox(BoxConstraints(
-        minWidth: minWidth,
-        maxWidth: maxWidth,
-        minHeight: minHeight,
-        maxHeight: maxHeight,
-      ));
+    bool enableRatio = true,
+  }) {
+    if (enableRatio) {
+      if (minWidth > 0 && minWidth < 1) {
+        minWidth = screenHeight * minWidth;
+      }
+      if (maxWidth > 0 && maxWidth < 1) {
+        maxWidth = screenHeight * maxWidth;
+      }
+      if (minHeight > 0 && minHeight < 1) {
+        minHeight = screenHeight * minHeight;
+      }
+      if (maxHeight > 0 && maxHeight < 1) {
+        maxHeight = screenHeight * maxHeight;
+      }
+    }
+    return constrainedBox(BoxConstraints(
+      minWidth: minWidth,
+      maxWidth: maxWidth,
+      minHeight: minHeight,
+      maxHeight: maxHeight,
+    ));
+  }
 
   /// 固定大小约束
   /// [constrainedBox]
