@@ -76,6 +76,7 @@ class _SizeAnimationWidgetState extends State<SizeAnimationWidget>
   }
 
   void _handleAnimationChange() {
+    //debugger();
     setState(() {});
   }
 
@@ -165,29 +166,59 @@ class _RenderSizeAnimation extends RenderProxyBox {
   bool enableWidthAnimation;
   bool enableHeightAnimation;
 
+  /// 是否使用平移
+  bool useTranslation;
+
   /// 动画当前的值[0~1]
   double animateValue;
+
+  /// 缓存原始大小
+  Size _rawSize = Size.zero;
 
   _RenderSizeAnimation({
     this.enableOpacityAnimation = false,
     this.enableWidthAnimation = false,
     this.enableHeightAnimation = false,
+    this.useTranslation = true,
     this.animateValue = 1,
   });
+
+  @override
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! BoxParentData) {
+      child.parentData = BoxParentData();
+    }
+  }
 
   @override
   void performLayout() {
     final child = this.child;
     if (child == null) {
-      size = constraints.biggest;
+      _rawSize = constraints.biggest;
+      size = _rawSize;
     } else {
       child.layout(constraints, parentUsesSize: true);
       final size = child.size;
       if (enableWidthAnimation || enableHeightAnimation) {
-        this.size = ui.Size(
-            enableWidthAnimation ? size.width * animateValue : size.width,
-            enableHeightAnimation ? size.height * animateValue : size.height);
+        //debugger();
+        _rawSize = size;
+        this.size = Size(
+          enableWidthAnimation ? size.width * animateValue : size.width,
+          enableHeightAnimation ? size.height * animateValue : size.height,
+        );
+        if (useTranslation) {
+          final offsetDx =
+              enableWidthAnimation ? -size.width * (1 - animateValue) : 0.0;
+          final offsetDy =
+              enableHeightAnimation ? -size.height * (1 - animateValue) : 0.0;
+          child.setBoxOffset(dx: offsetDx, dy: offsetDy);
+        }
+        /*assert(() {
+          l.d('size:${this.size} $animateValue');
+          return true;
+        }());*/
       } else {
+        _rawSize = size;
         this.size = size;
       }
     }
@@ -195,6 +226,9 @@ class _RenderSizeAnimation extends RenderProxyBox {
 
   @override
   bool get isRepaintBoundary => child != null && enableOpacityAnimation;
+
+  /*@override
+  bool get needsCompositing => true;*/
 
   /// 透明动画通过[OpacityLayer]图层实现, 并且需要[isRepaintBoundary]为true, 才会触发[updateCompositedLayer]方法回调
   /// [markNeedsCompositedLayerUpdate]
@@ -225,8 +259,20 @@ class _RenderSizeAnimation extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
-    if (child != null && paintsChild(child!)) {
-      super.paint(context, offset);
+    if (child != null &&
+        !child!.size.isEmpty &&
+        paintsChild(child!) &&
+        !size.isEmpty) {
+      if ((enableWidthAnimation || enableHeightAnimation) && useTranslation) {
+        //l.d('clip:${offset & size}');
+        context.pushClipRect(needsCompositing, offset, Offset.zero & size,
+            (context, offset) {
+          super.paint(context, child!.getBoxOffset() + offset);
+        });
+      } else {
+        super.paint(context, child!.getBoxOffset() + offset);
+      }
     }
+    //debugDrawBoxBounds(context, offset);
   }
 }

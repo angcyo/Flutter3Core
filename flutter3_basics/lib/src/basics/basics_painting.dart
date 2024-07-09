@@ -132,7 +132,14 @@ extension CanvasEx on Canvas {
     try {
       callback();
     } finally {
-      restoreToCount(saveCount);
+      try {
+        restoreToCount(saveCount);
+      } catch (e, s) {
+        assert(() {
+          printError(e, s);
+          return true;
+        }());
+      }
     }
   }
 
@@ -265,6 +272,9 @@ extension CanvasEx on Canvas {
     }
   }
 
+  /// 此方法只能clip当前[Layer]的canvas
+  /// 此时需要使用[PaintingContext.pushClipRect]
+  /// [ClipRectLayer]
   void withClipRect(Rect? rect, VoidCallback callback) {
     if (rect == null || rect.isEmpty) {
       callback();

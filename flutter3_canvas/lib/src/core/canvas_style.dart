@@ -40,17 +40,21 @@ class CanvasStyle {
   /// 元素信息绘制的文字颜色
   Color paintInfoTextColor = const Color(0xffffffff);
 
+  //endregion ---basics---
+
+  //region ---config---
+
   /// 当指定了内容边界时, 是否绘制对应的提示框
   /// [CanvasViewBox.sceneContentBounds]
   bool paintContentBounds = true;
 
-  //endregion ---basics---
+  //endregion ---config---
 
   //region ---axis---
 
-  Color axisPrimaryColor = const Color(0xff888888); //const Color(0xFFB2B2B2);
-  Color axisSecondaryColor = const Color(0xffd0d0d0); //const Color(0xFFD7D7D7);
-  Color axisNormalColor = const Color(0xffd0d0d0); //const Color(0xFFD7D7D7);
+  Color axisPrimaryColor = const Color(0xffA5A5A5); //const Color(0xFFB2B2B2);
+  Color axisSecondaryColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
+  Color axisNormalColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
 
   @dp
   double axisPrimaryWidth = 1.toDpFromPx();
@@ -66,6 +70,14 @@ class CanvasStyle {
   /// 标签刻度数值的字体大小
   @dp
   double axisLabelFontSize = 8;
+
+  /// x横坐标轴的高度
+  @dp
+  double xAxisHeight = 20;
+
+  /// y纵坐标轴的宽度
+  @dp
+  double yAxisWidth = 20;
 
 //endregion ---axis---
 }

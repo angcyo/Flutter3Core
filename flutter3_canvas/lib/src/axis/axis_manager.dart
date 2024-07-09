@@ -31,11 +31,11 @@ class AxisManager extends IPainter {
 
   /// x横坐标轴的高度
   @dp
-  double xAxisHeight = 20;
+  double get xAxisHeight => paintManager.canvasDelegate.canvasStyle.xAxisHeight;
 
   /// y纵坐标轴的宽度
   @dp
-  double yAxisWidth = 20;
+  double get yAxisWidth => paintManager.canvasDelegate.canvasStyle.yAxisWidth;
 
   /// 绘制label时, 额外需要的偏移量
   @dp

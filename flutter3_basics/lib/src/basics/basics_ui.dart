@@ -271,10 +271,11 @@ extension WidgetListEx on WidgetNullList {
   /// [WidgetEx.scroll]
   Widget? scroll({
     Axis axis = Axis.horizontal,
-    ScrollPhysics? physics,
+    ScrollPhysics? physics = kScrollPhysics,
     ScrollController? controller,
     EdgeInsetsGeometry? padding,
     bool? primary,
+    MainAxisSize? mainAxisSize, //MainAxisSize.min
     double? gap,
     Widget? gapWidget,
   }) {
@@ -285,13 +286,13 @@ extension WidgetListEx on WidgetNullList {
     Widget body;
     if (axis == Axis.vertical) {
       body = list.column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: mainAxisSize ?? MainAxisSize.min,
         gap: gap,
         gapWidget: gapWidget,
       )!;
     } else {
       body = list.row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: mainAxisSize ?? MainAxisSize.min,
         gap: gap,
         gapWidget: gapWidget,
       )!;
@@ -2220,6 +2221,32 @@ extension RenderObjectEx on RenderObject {
       markNeedsPaint();
     });
   }
+
+  /// 获取盒子的位置
+  /// [RenderBoxContainerDefaultsMixin.defaultPaint]
+  /// [RenderBoxContainerDefaultsMixin.defaultHitTestChildren]
+  Offset getBoxOffset() {
+    final pd = parentData;
+    if (pd is BoxParentData) {
+      return pd.offset;
+    }
+    return Offset.zero;
+  }
+
+  /// 设置盒子的位置
+  /// [BoxParentData]
+  void setBoxOffset({
+    Offset? offset,
+    double? dx,
+    double? dy,
+  }) {
+    final pd = parentData;
+    if (pd is BoxParentData) {
+      dx ??= offset?.dx ?? 0;
+      dy ??= offset?.dy ?? 0;
+      pd.offset = Offset(dx, dy);
+    }
+  }
 }
 
 extension ElementEx on Element {}
@@ -2870,6 +2897,20 @@ Widget ttb({double? height = 10}) => linearGradientWidget(
       [Colors.black12, Colors.transparent],
       height: height,
       gradientDirection: Axis.vertical,
+    );
+
+/// 从左到右透明的渐变阴影
+Widget ltr({double? width = 10}) => linearGradientWidget(
+      [Colors.black12, Colors.transparent],
+      width: width,
+      gradientDirection: Axis.horizontal,
+    );
+
+/// 从右到到透明的渐变阴影
+Widget rtl({double? width = 10}) => linearGradientWidget(
+      [Colors.transparent, Colors.black12],
+      width: width,
+      gradientDirection: Axis.horizontal,
     );
 
 //endregion 渐变相关

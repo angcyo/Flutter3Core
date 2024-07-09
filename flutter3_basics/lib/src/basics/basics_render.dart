@@ -123,6 +123,10 @@ extension RenderObjectMixinEx on RenderObject {
 }
 
 extension RenderBoxEx on RenderBox {
+  /// [debugDrawBoxBounds]
+  void debugPaintBoxBounds(PaintingContext context, Offset offset) =>
+      debugDrawBoxBounds(context, offset);
+
   /// 绘制盒子的边界
   void debugDrawBoxBounds(PaintingContext context, Offset offset) {
     assert(() {

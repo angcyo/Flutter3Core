@@ -29,7 +29,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       minWidth: 0,
       maxWidth: min(screenWidth, screenHeight),
       minHeight: 0,
-      maxHeight: max(screenWidth, screenHeight));
+      maxHeight: min(screenWidth, screenHeight));
 
   /// 对话框的容器, 带圆角, 带margin
   /// [decorationColor] 背景颜色

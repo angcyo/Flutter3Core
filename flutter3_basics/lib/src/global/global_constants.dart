@@ -65,6 +65,11 @@ const double kStateImageSize = 160.0;
 const kPaddingH = EdgeInsets.symmetric(horizontal: kH, vertical: kM);
 const kPaddingX = EdgeInsets.symmetric(horizontal: kX, vertical: kL);
 
+/// 默认的滚动物理特性/滚动行为
+const kScrollPhysics = AlwaysScrollableScrollPhysics(
+  parent: BouncingScrollPhysics(),
+);
+
 /// 是否是debug模式
 /// 性能优化: https://juejin.cn/post/7066954522655981581
 /// 性能检查视图: https://docs.flutter.dev/tools/devtools/inspector
