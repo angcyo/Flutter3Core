@@ -4,13 +4,23 @@ part of '../../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/08
 ///
+/// [PageView]
+///
+/// https://api.flutter.dev/flutter/widgets/PageView-class.html
+///
 mixin PageViewMixin<T extends StatefulWidget>
     on State<T>, TickerProviderStateMixin<T> {
   /// [PageView]页面控制器, 用来切换页面
   PageController? get pageViewController;
 
   /// 用来配合[TabBar]实现指示器的滚动效果
-  TabController? get tabController;
+  TabController? get tabController {
+    if (this is TabLayoutMixin) {
+      //自动挂载
+      return (this as TabLayoutMixin).tabLayoutController;
+    }
+    return null;
+  }
 
   @override
   void initState() {

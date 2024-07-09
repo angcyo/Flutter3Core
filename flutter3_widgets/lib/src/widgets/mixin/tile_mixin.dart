@@ -29,6 +29,13 @@ const kLabelPadding = EdgeInsets.only(
   bottom: kH,
 );
 
+const kLabelPaddingInline = EdgeInsets.only(
+  left: kX,
+  right: kX,
+  top: kH,
+  bottom: 0,
+);
+
 /// des默认的填充
 /// [label]下面显示的文本
 const kDesPadding = EdgeInsets.only(
@@ -469,7 +476,7 @@ mixin TileMixin {
       if (syncGradientColor &&
           (!isNil(activeTrackGradientColors) ||
               !isNil(inactiveTrackGradientColors))) {
-        final progress = 0.5 *//*(value - minValue) / (maxValue - minValue)*//*;
+        final progress = 0.5 */ /*(value - minValue) / (maxValue - minValue)*/ /*;
         gradientColor = getGradientColor(
             progress, activeTrackGradientColors ?? inactiveTrackGradientColors!,
             colorStops: activeTrackGradientColorStops ??
