@@ -91,6 +91,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void paintElements(Canvas canvas, PaintMeta paintMeta) {
     final canvasViewBox = canvasDelegate.canvasViewBox;
     canvas.withClipRect(canvasViewBox.canvasBounds, () {
+      //---场景内容提示绘制
+      canvasViewBox.sceneContentBounds?.let((it) {
+        paintMeta.withPaintMatrix(canvas, () {
+          canvas.drawRect(it, Paint()..color = Colors.redAccent);
+        });
+      });
       //---元素绘制
       for (final element in beforeElements) {
         paintElement(canvas, paintMeta, element);
