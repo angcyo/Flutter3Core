@@ -39,7 +39,7 @@ enum NumberKeyboardType {
 /// 数字键盘输入对话框
 /// 如果是小数, 返回小数
 /// 如果是整数, 返回整数
-class NumberKeyboardDialog extends StatefulWidget {
+class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
   //---
 
   /// 当前的数字, 支持整型/浮点
@@ -192,7 +192,10 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
             borderRadius: borderRadius,
           ),
           pressedDecoration: pressedDecoration,
-          child: LibRes.of(context).libFinish.text(style: keyboardNumberStyle).align(Alignment.center),
+          child: LibRes.of(context)
+              .libFinish
+              .text(style: keyboardNumberStyle)
+              .align(Alignment.center),
         ).click(() {
           //debugger();
           if (_checkInputValue(_numberText)) {

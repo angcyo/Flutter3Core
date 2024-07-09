@@ -145,14 +145,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 构建取消按钮
   Widget? _buildCancelButton(BuildContext context) {
+    String? cancelText = cancel;
     if (showCancel == false) {
       return null;
+    } else if (showCancel == true) {
+      cancelText ??= LibRes.of(context).libCancel;
     }
-    return (cancelWidget == null && cancel == null)
+    return (cancelWidget == null && cancelText == null)
         ? null
         : CancelButton(
             widget: cancelWidget,
-            text: cancel ?? LibRes.of(context).libCancel,
+            text: cancelText,
             useIcon: useIcon,
             onTap: () {
               Navigator.pop(context, false);
@@ -161,14 +164,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 构建中立按钮
   Widget? _buildNeutralButton(BuildContext context) {
+    String? neutralText = neutral;
     if (showNeutral == false) {
       return null;
+    } else if (showNeutral == true) {
+      //neutralText ??= LibRes.of(context).libNeutral;
     }
-    return (neutralWidget == null && neutral == null)
+    return (neutralWidget == null && neutralText == null)
         ? null
         : NeutralButton(
             widget: neutralWidget,
-            text: neutral,
+            text: neutralText,
             useIcon: useIcon,
             onTap: () {
               Navigator.pop(context, null);
@@ -177,14 +183,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 构建确定按钮
   Widget? _buildConfirmButton(BuildContext context) {
+    String? confirmText = confirm;
     if (showConfirm == false) {
       return null;
+    } else if (showConfirm == true) {
+      confirmText ??= LibRes.of(context).libConfirm;
     }
-    return (confirmWidget == null && confirm == null)
+    return (confirmWidget == null && confirmText == null)
         ? null
         : ConfirmButton(
             widget: confirmWidget,
-            text: confirm ?? LibRes.of(context).libConfirm,
+            text: confirmText,
             useIcon: useIcon,
             onTap: () async {
               if (onConfirmTap == null) {

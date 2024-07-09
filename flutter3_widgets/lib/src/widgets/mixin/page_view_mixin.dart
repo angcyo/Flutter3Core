@@ -42,7 +42,9 @@ mixin PageViewMixin<T extends StatefulWidget>
   @overridePoint
   WidgetList buildPageChildren(BuildContext context) => [];
 
-  /// 构建[PageView]
+  /// 构建[PageView], 当切换界面后[children]并不会重新获取, 所以需要手动处理界面数据
+  /// - [KeepAliveWrapper]
+  /// - [KeepAliveWrapperExtension.keepAlive]
   @callPoint
   Widget buildPageView(
     BuildContext context, {
@@ -66,21 +68,27 @@ mixin PageViewMixin<T extends StatefulWidget>
               }());
             } else {
               final tabIndex = tabController.index;
+              final pageIndex = page.round();
               if (notification is ScrollUpdateNotification &&
                   !tabController.indexIsChanging) {
                 final bool pageChanged = (page - tabIndex).abs() > 1.0;
                 if (pageChanged) {
-                  tabController.index = page.round();
+                  tabController.index = pageIndex;
+                  //l.d("update index:${tabController.index}");
                 }
                 //指示器偏移
                 tabController.offset = clampDouble(page - tabIndex, -1.0, 1.0);
+                //l.d("update offset:${tabController.offset}");
               } else if (notification is ScrollEndNotification) {
-                tabController.index = page.round();
-                if (!tabController.indexIsChanging) {
+                //l.d("end index:${tabController.index}->$pageIndex");
+                tabController.index = pageIndex;
+                tabController.offset = 0;
+                /*if (!tabController.indexIsChanging) {
                   //指示器偏移
                   tabController.offset =
                       clampDouble(page - tabIndex, -1.0, 1.0);
-                }
+                  l.d("end offset:${tabController.offset}");
+                }*/
               }
               return true;
             }

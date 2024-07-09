@@ -102,6 +102,12 @@ class UpdateValueNotifier<T> extends ValueNotifier<T> with NotifierMixin {
   void notify() {
     notifyListeners();
   }
+
+  /// 销毁
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }
 
 /// 换个名字

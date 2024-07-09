@@ -49,7 +49,13 @@ mixin TabLayoutMixin {
       if (autoClick) {
         children = children
             .mapIndex((child, index) => child.click(() {
-                  tabLayoutController.selectedItem(index);
+                  if (this is PageViewMixin) {
+                    tabLayoutController.selectedItem(index,
+                        pageController:
+                            (this as PageViewMixin).pageViewController);
+                  } else {
+                    tabLayoutController.selectedItem(index);
+                  }
                 }))
             .toList();
       }

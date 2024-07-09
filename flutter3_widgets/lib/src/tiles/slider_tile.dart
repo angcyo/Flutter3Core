@@ -202,6 +202,13 @@ class _RangeSliderTileState extends State<RangeSliderTile> with TileMixin {
   }
 
   @override
+  void didUpdateWidget(covariant RangeSliderTile oldWidget) {
+    _startValue = widget.startValue;
+    _endValue = widget.endValue;
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     //
     final top = LeftCenterRightLayout(
@@ -211,10 +218,11 @@ class _RangeSliderTileState extends State<RangeSliderTile> with TileMixin {
     //
     final startValueStr = _startValue.toDigits(digits: widget.showValueDigits);
     final endValueStr = _endValue.toDigits(digits: widget.showValueDigits);
+    //debugger();
     final bottom = buildRangeSliderWidget(
       context,
-      widget.startValue,
-      widget.endValue,
+      _startValue,
+      _endValue,
       minValue: widget.minValue,
       maxValue: widget.maxValue,
       divisions: widget.divisions,
