@@ -127,7 +127,7 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
                 onNumberValueChanged(toValue);
               },
               onLongPress: (_) {
-                debugger();
+                //debugger();
                 final toValue = currentNumberValue + (longStep ?? step * 10);
                 onNumberValueChanged(toValue);
               },

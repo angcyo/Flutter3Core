@@ -181,6 +181,18 @@ bool greaterThan(num? value, num? num, {bool than = true, bool def = true}) {
   return than ? value >= num : value > num;
 }
 
+/// 获取一个值在首尾值中平分的值
+/// [left] 左边的值
+/// [right] 右边的值
+/// [index] 当前第几段数据, 从0开始
+/// [count] 总共的段数
+/// [lerpDuration]
+/// [lerpDouble]
+double lerpNum(num left, num right, int index, int count) {
+  final step = (right - left) / math.max(1, (count - 1));
+  return left + step * index;
+}
+
 /*enum Direction {
   /// clockwise 顺时针
   CW, // must match enum in SkPath.h

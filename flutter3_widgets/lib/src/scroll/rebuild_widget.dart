@@ -170,3 +170,11 @@ Widget rebuild(
     builder: builder,
   );
 }
+
+/// 简单的[rebuild]
+@dsl
+Widget rebuildSingle(
+  @updateSignalMark ValueNotifier updateSignal,
+  Widget Function() action,
+) =>
+    rebuild(updateSignal, (context, value) => action());
