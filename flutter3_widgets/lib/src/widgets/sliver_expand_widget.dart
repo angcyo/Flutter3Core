@@ -71,14 +71,16 @@ class SliverExpandBox extends RenderShiftedBox {
     //debugger();
     if (width == double.infinity) {
       if (parentConstraints is BoxConstraints) {
-        width = parentConstraints.maxWidth;
+        width =
+            parentConstraints.maxWidth.ensureValid(parentConstraints.maxHeight);
       } else if (parentConstraints is SliverConstraints) {
         width = parentConstraints.crossAxisExtent;
       }
     }
     if (height == double.infinity) {
       if (parentConstraints is BoxConstraints) {
-        height = parentConstraints.maxHeight;
+        height =
+            parentConstraints.maxHeight.ensureValid(parentConstraints.maxWidth);
       } else if (parentConstraints is SliverConstraints) {
         height = parentConstraints.viewportMainAxisExtent;
       }
