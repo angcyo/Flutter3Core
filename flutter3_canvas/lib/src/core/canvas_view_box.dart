@@ -136,13 +136,21 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 限制画布内容绘制区域, 背景只会在此区域绘制
   void updateCanvasContentBounds(
-    @dp @sceneCoordinate Rect? contentBounds,
-  ) {
+    @dp @sceneCoordinate Rect? contentBounds, {
+    bool? showRect,
+  }) {
     if (isCanvasBoxInitialize) {
+      showRect ??= sceneContentBounds == null;
       sceneContentBounds = contentBounds;
+      if (showRect && contentBounds != null) {
+        canvasDelegate.showRect(rect: contentBounds);
+      }
     } else {
       postCallback(() {
-        updateCanvasContentBounds(contentBounds);
+        updateCanvasContentBounds(
+          contentBounds,
+          showRect: showRect,
+        );
       });
     }
   }

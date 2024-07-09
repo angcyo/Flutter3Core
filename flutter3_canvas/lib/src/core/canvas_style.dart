@@ -40,6 +40,10 @@ class CanvasStyle {
   /// 元素信息绘制的文字颜色
   Color paintInfoTextColor = const Color(0xffffffff);
 
+  /// 当指定了内容边界时, 是否绘制对应的提示框
+  /// [CanvasViewBox.sceneContentBounds]
+  bool paintContentBounds = true;
+
   //endregion ---basics---
 
   //region ---axis---

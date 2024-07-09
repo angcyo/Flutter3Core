@@ -93,9 +93,17 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvas.withClipRect(canvasViewBox.canvasBounds, () {
       //---场景内容提示绘制
       canvasViewBox.sceneContentBounds?.let((it) {
-        paintMeta.withPaintMatrix(canvas, () {
-          canvas.drawRect(it, Paint()..color = Colors.redAccent);
-        });
+        final canvasStyle = canvasDelegate.canvasStyle;
+        if (canvasStyle.paintContentBounds) {
+          paintMeta.withPaintMatrix(canvas, () {
+            canvas.drawRect(
+              it,
+              Paint()
+                ..style = PaintingStyle.stroke
+                ..color = canvasStyle.axisPrimaryColor,
+            );
+          });
+        }
       });
       //---元素绘制
       for (final element in beforeElements) {

@@ -164,21 +164,19 @@ class AxisManager extends IPainter {
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
-    final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
-    final canvasBounds = paintManager.canvasDelegate.canvasViewBox.canvasBounds;
+    final canvasViewBox = paintManager.canvasDelegate.canvasViewBox;
+    final canvasStyle = paintManager.canvasDelegate.canvasStyle;
 
-    primaryPaint.color =
-        paintManager.canvasDelegate.canvasStyle.axisPrimaryColor;
-    secondaryPaint.color =
-        paintManager.canvasDelegate.canvasStyle.axisSecondaryColor;
-    normalPaint.color = paintManager.canvasDelegate.canvasStyle.axisNormalColor;
+    final paintBounds = canvasViewBox.paintBounds;
+    final canvasBounds = canvasViewBox.canvasBounds;
 
-    primaryPaint.strokeWidth =
-        paintManager.canvasDelegate.canvasStyle.axisPrimaryWidth;
-    secondaryPaint.strokeWidth =
-        paintManager.canvasDelegate.canvasStyle.axisSecondaryWidth;
-    normalPaint.strokeWidth =
-        paintManager.canvasDelegate.canvasStyle.axisNormalWidth;
+    primaryPaint.color = canvasStyle.axisPrimaryColor;
+    secondaryPaint.color = canvasStyle.axisSecondaryColor;
+    normalPaint.color = canvasStyle.axisNormalColor;
+
+    primaryPaint.strokeWidth = canvasStyle.axisPrimaryWidth;
+    secondaryPaint.strokeWidth = canvasStyle.axisSecondaryWidth;
+    normalPaint.strokeWidth = canvasStyle.axisNormalWidth;
 
     //绘制坐标刻度
     if (drawType.have(sDrawAxis)) {
@@ -209,28 +207,34 @@ class AxisManager extends IPainter {
 
     // 绘制坐标网格
     if (drawType.have(sDrawGrid)) {
-      canvas.withClipRect(canvasBounds, () {
-        for (var axisData in xData) {
-          final paint = axisData.axisType.have(IUnit.axisTypePrimary)
-              ? primaryPaint
-              : axisData.axisType.have(IUnit.axisTypeSecondary)
-                  ? secondaryPaint
-                  : normalPaint;
-
-          canvas.drawLine(Offset(axisData.viewValue, paintBounds.top),
-              Offset(axisData.viewValue, paintBounds.bottom), paint);
+      canvas.withClipRect(canvasBounds, () /*画布区域裁剪*/ {
+        Rect? contentBounds = canvasViewBox.sceneContentBounds;
+        if (contentBounds != null) {
+          contentBounds = canvasViewBox.toViewRect(contentBounds);
         }
+        canvas.withClipRect(contentBounds, () /*内容区域裁剪*/ {
+          for (final axisData in xData) {
+            final paint = axisData.axisType.have(IUnit.axisTypePrimary)
+                ? primaryPaint
+                : axisData.axisType.have(IUnit.axisTypeSecondary)
+                    ? secondaryPaint
+                    : normalPaint;
 
-        for (var axisData in yData) {
-          final paint = axisData.axisType.have(IUnit.axisTypePrimary)
-              ? primaryPaint
-              : axisData.axisType.have(IUnit.axisTypeSecondary)
-                  ? secondaryPaint
-                  : normalPaint;
+            canvas.drawLine(Offset(axisData.viewValue, paintBounds.top),
+                Offset(axisData.viewValue, paintBounds.bottom), paint);
+          }
 
-          canvas.drawLine(Offset(paintBounds.left, axisData.viewValue),
-              Offset(paintBounds.right, axisData.viewValue), paint);
-        }
+          for (final axisData in yData) {
+            final paint = axisData.axisType.have(IUnit.axisTypePrimary)
+                ? primaryPaint
+                : axisData.axisType.have(IUnit.axisTypeSecondary)
+                    ? secondaryPaint
+                    : normalPaint;
+
+            canvas.drawLine(Offset(paintBounds.left, axisData.viewValue),
+                Offset(paintBounds.right, axisData.viewValue), paint);
+          }
+        });
       });
     }
   }
