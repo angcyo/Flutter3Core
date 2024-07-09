@@ -10,24 +10,35 @@ part of '../../flutter3_widgets.dart';
 /// 通过获取到[SliverConstraints]实现
 class SliverExpandWidget extends SingleChildRenderObjectWidget
     with NotSliverTile {
-  /// child在self中的对齐方式
+  /// [child]在[self]中的对齐方式
   final AlignmentDirectional alignment;
+
+  /// 需要排除的宽高
+  final double excludeWidth;
+  final double excludeHeight;
 
   const SliverExpandWidget({
     super.key,
     super.child,
     this.alignment = AlignmentDirectional.center,
+    this.excludeWidth = 0,
+    this.excludeHeight = 0,
   });
 
   @override
-  SliverExpandBox createRenderObject(BuildContext context) =>
-      SliverExpandBox(alignment: alignment);
+  SliverExpandBox createRenderObject(BuildContext context) => SliverExpandBox(
+        alignment: alignment,
+        excludeWidth: excludeWidth,
+        excludeHeight: excludeHeight,
+      );
 
   @override
   void updateRenderObject(BuildContext context, SliverExpandBox renderObject) {
     super.updateRenderObject(context, renderObject);
     renderObject
       ..alignment = alignment
+      ..excludeWidth = excludeWidth
+      ..excludeHeight = excludeHeight
       ..markNeedsLayout();
   }
 }
@@ -38,8 +49,14 @@ class SliverExpandWidget extends SingleChildRenderObjectWidget
 class SliverExpandBox extends RenderShiftedBox {
   AlignmentDirectional alignment;
 
+  /// 需要排除的宽高
+  double excludeWidth;
+  double excludeHeight;
+
   SliverExpandBox({
     this.alignment = AlignmentDirectional.center,
+    this.excludeWidth = 0,
+    this.excludeHeight = 0,
   }) : super(null);
 
   @override
@@ -67,7 +84,7 @@ class SliverExpandBox extends RenderShiftedBox {
       }
     }
     // debugger();
-    size = Size(width, height);
+    size = Size(width - excludeWidth, height - excludeHeight);
 
     //child
     if (child != null) {
@@ -129,7 +146,16 @@ class SliverExpandBox extends RenderShiftedBox {
 
 extension SliverExpandWidgetEx on Widget {
   /// [SliverExpandWidget]扩展方法
-  Widget sliverExpand() {
-    return SliverExpandWidget(child: this);
+  Widget sliverExpand({
+    AlignmentDirectional alignment = AlignmentDirectional.center,
+    double excludeWidth = 0,
+    double excludeHeight = 0,
+  }) {
+    return SliverExpandWidget(
+      alignment: alignment,
+      excludeWidth: excludeWidth,
+      excludeHeight: excludeHeight,
+      child: this,
+    );
   }
 }
