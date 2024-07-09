@@ -48,6 +48,11 @@ abstract class ScrollContainerWidget extends StatefulWidget {
   /// [ScrollContainerRenderBox.crossAxisAlignment]
   final CrossAxisAlignment? crossAxisAlignment;
 
+  //---
+
+  /// 自身约束
+  final LayoutBoxConstraints? selfConstraints;
+
   const ScrollContainerWidget({
     super.key,
     required this.children,
@@ -62,6 +67,7 @@ abstract class ScrollContainerWidget extends StatefulWidget {
     this.restorationId,
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.selfConstraints,
   });
 }
 
@@ -150,6 +156,7 @@ abstract class ScrollContainerRenderBox<
     this.padding,
     this.gap = 0,
     this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.selfConstraints,
   })  : _axisDirection = axisDirection,
         _crossAxisDirection = crossAxisDirection,
         _clipBehavior = clipBehavior,
@@ -162,6 +169,9 @@ abstract class ScrollContainerRenderBox<
   /// 交叉轴上的布局对齐方式
   /// 如果设置了此时, 那child的大小测量就是wrap_content, 否则是match_parent
   CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.start;
+
+  /// 自身的约束
+  LayoutBoxConstraints? selfConstraints;
 
   /// child测量参考是否是撑满父布局
   bool get isChildMatchParent => crossAxisAlignment == null;
@@ -303,20 +313,14 @@ abstract class ScrollContainerRenderBox<
     switch (axis) {
       case Axis.horizontal:
         return max(
-            0.0,
-            getAllLinearChildWidth(getScrollChildren(), gap: gap) +
-                paddingHorizontal -
-                size.width);
+            0.0, _scrollChildSize.width + paddingHorizontal - size.width);
       case Axis.vertical:
         return max(
-            0.0,
-            getAllLinearChildHeight(getScrollChildren(), gap: gap) +
-                paddingVertical -
-                size.height);
+            0.0, _scrollChildSize.height + paddingVertical - size.height);
     }
   }
 
-  /// 可以滚动的子节点宽高
+  /// 可以滚动的所有子节点宽高, 不包含[padding]的高度
   Size get _scrollChildSize {
     switch (axis) {
       case Axis.horizontal:
@@ -461,6 +465,21 @@ abstract class ScrollContainerRenderBox<
     final children = getScrollChildren();
     //debugger();
     final (childMaxWidth, childMaxHeight) = measureChildren(children);
+
+    double? childFixedWidth;
+    if (selfConstraints?.widthType == ConstraintsType.wrapContent) {
+      childFixedWidth = childMaxWidth;
+    } else if (selfConstraints?.widthType == ConstraintsType.fixedSize) {
+      childFixedWidth = selfConstraints?.maxWidth;
+    }
+
+    double? childFixedHeight;
+    if (selfConstraints?.heightType == ConstraintsType.wrapContent) {
+      childFixedHeight = childMaxHeight;
+    } else if (selfConstraints?.heightType == ConstraintsType.fixedSize) {
+      childFixedHeight = selfConstraints?.maxHeight;
+    }
+
     if (constraints.hasTightWidth) {
       width = constraints.maxWidth;
     } else {
@@ -479,6 +498,15 @@ abstract class ScrollContainerRenderBox<
     if (constraints.maxHeight != double.infinity) {
       height = max(height, constraints.maxHeight);
     }
+
+    //--
+    if (childFixedWidth != null) {
+      width = min(width, childFixedWidth);
+    }
+    if (childFixedHeight != null) {
+      height = min(height, childFixedHeight);
+    }
+    //debugger();
     size = constraints.constrain(Size(width, height));
     //size = Size(width * 3, height);
 
@@ -592,18 +620,22 @@ class ScrollContainerController extends ScrollController {
 
   /// 滚动容器的大小
   /// [ScrollContainerRenderBox.performLayout]中赋值
+  @autoInjectMark
   Size scrollContainerLayoutSize = Size.zero;
 
   /// 滚动容器的滚动方向
   /// [ScrollContainerRenderBox.performLayout]中赋值
+  @autoInjectMark
   Axis scrollContainerScrollDirection = Axis.horizontal;
 
   /// 滚动容器的滚动内容子布局大小和位置
   /// [ScrollContainerRenderBox.performLayout]中赋值
+  @autoInjectMark
   List<Rect> scrollContainerChildrenBounds = [];
 
   /// 滚动容器的最大滚动范围
   /// [ScrollContainerRenderBox.performLayout]中赋值
+  @autoInjectMark
   double maxScrollExtent = 0;
 
   ScrollContainerController({

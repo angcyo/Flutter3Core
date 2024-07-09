@@ -24,11 +24,16 @@ mixin PageViewMixin<T extends StatefulWidget>
     super.dispose();
   }
 
+  //region --PageView--
+
   /// 构建子页面
   /// [buildPageView]->[buildPageChildren]
+  @callPoint
+  @overridePoint
   WidgetList buildPageChildren(BuildContext context) => [];
 
   /// 构建[PageView]
+  @callPoint
   Widget buildPageView(
     BuildContext context, {
     List<Widget>? children,
@@ -86,10 +91,37 @@ mixin PageViewMixin<T extends StatefulWidget>
       );
 
   /// 页面改变回调
+  @overridePoint
   void onSelfPageViewChanged(int index) {
     assert(() {
       l.d('onSelfPageViewChanged:$index');
       return true;
     }());
   }
+
+  /// 切换页面
+  @api
+  void switchPageMixin(
+    int index, {
+    bool? animate,
+    Duration? duration,
+    Curve curve = Curves.ease,
+  }) {
+    final pageController = pageViewController;
+    if (pageController != null) {
+      final page = pageController.page;
+      if (animate == true || (page != null && (page - index).abs() <= 1)) {
+        //自动动画
+        pageController.animateToPage(
+          index,
+          duration: duration ?? kTabScrollDuration,
+          curve: curve,
+        );
+      } else {
+        pageController.jumpToPage(index);
+      }
+    }
+  }
+
+//endregion --PageView--
 }
