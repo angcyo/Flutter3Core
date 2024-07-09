@@ -147,6 +147,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     double? clipTopRadius,
     double? clipBottomRadius,
     Widget? stackWidget,
+    bool fullScreen = false, //是否全屏
   }) {
     Widget body;
     children = children.filterNull();
@@ -163,8 +164,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       final fixedChildren = children.subList(0, scrollChildIndex);
       final scrollChildren = children.subList(scrollChildIndex);
 
-      Widget? scrollBody =
-          scrollChildren.scroll(axis: Axis.vertical);
+      Widget? scrollBody = scrollChildren.scroll(axis: Axis.vertical);
       //约束高度
       scrollBody = scrollBody?.constrainedMax(
         minHeight: contentMinHeight,
@@ -218,7 +218,7 @@ mixin DialogMixin implements TranslationTypeImpl {
             closeDialogIf(context);
           },
         )
-        .matchParent(matchHeight: false)
+        .matchParent(matchHeight: fullScreen)
         .align(Alignment.bottomCenter)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .material();

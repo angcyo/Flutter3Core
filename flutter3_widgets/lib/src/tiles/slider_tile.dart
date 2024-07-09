@@ -5,6 +5,7 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/04/13
 ///
 /// 滑块tile
+/// [leading]...[slider]...[trailing]
 /// [LabelNumberSliderTile]
 class SliderTile extends StatefulWidget {
   /// 左边/头部的小部件
@@ -120,5 +121,118 @@ class _SliderTileState extends State<SliderTile> with TileMixin {
             .constrainedMin(minWidth: widget.showValueMinWidth),
       widget.trailingWidget,
     ].row(gap: widget.gap)!.paddingInsets(widget.padding).material();
+  }
+}
+
+/// 双向滑块tile
+/// [start]...[end]
+/// [RangeSlider]
+///
+class RangeSliderTile extends StatefulWidget {
+  /// 开始值的提示小部件
+  final Widget? startWidget;
+  final EdgeInsetsGeometry? startPadding;
+
+  /// 结束值的提示小部件
+  final Widget? endWidget;
+  final EdgeInsetsGeometry? endPadding;
+
+  /// 小数位数
+  final int showValueDigits;
+
+  //---RangeSlider---
+
+  /// 是否显示值指示器
+  final ShowValueIndicator showValueIndicator;
+
+  /// 滑块的当前的值
+  final double startValue;
+  final double endValue;
+
+  /// 滑块的最小值
+  final double minValue;
+
+  /// 滑块的最大值
+  final double maxValue;
+
+  /// 滑块的分割线
+  final int? divisions;
+
+  /// 滑块值改变回调
+  final ValueChanged<RangeValues>? onChanged;
+
+  /// 滑块值改变开始回调
+  final ValueChanged<RangeValues>? onChangeStart;
+
+  /// 滑块值改变结束回调
+  final ValueChanged<RangeValues>? onChangeEnd;
+
+  const RangeSliderTile({
+    super.key,
+    this.startWidget,
+    this.endWidget,
+    this.showValueDigits = kDefaultDigits,
+    this.startPadding = kLabelPaddingInline,
+    this.endPadding = kLabelPaddingInline,
+    //--
+    this.divisions,
+    this.showValueIndicator = ShowValueIndicator.always,
+    this.startValue = 0,
+    this.endValue = 1,
+    this.minValue = 0,
+    this.maxValue = 1,
+    this.onChanged,
+    this.onChangeStart,
+    this.onChangeEnd,
+  });
+
+  @override
+  State<RangeSliderTile> createState() => _RangeSliderTileState();
+}
+
+class _RangeSliderTileState extends State<RangeSliderTile> with TileMixin {
+  double _startValue = 0;
+  double _endValue = 0;
+
+  @override
+  void initState() {
+    _startValue = widget.startValue;
+    _endValue = widget.endValue;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //
+    final top = LeftCenterRightLayout(
+      left: widget.startWidget?.paddingInsets(widget.startPadding),
+      right: widget.endWidget?.paddingInsets(widget.endPadding),
+    );
+    //
+    final startValueStr = _startValue.toDigits(digits: widget.showValueDigits);
+    final endValueStr = _endValue.toDigits(digits: widget.showValueDigits);
+    final bottom = buildRangeSliderWidget(
+      context,
+      widget.startValue,
+      widget.endValue,
+      minValue: widget.minValue,
+      maxValue: widget.maxValue,
+      divisions: widget.divisions,
+      startLabel: startValueStr,
+      endLabel: endValueStr,
+      showValueIndicator: widget.showValueIndicator,
+      onChanged: (value) {
+        _startValue = value.start;
+        _endValue = value.end;
+        widget.onChanged?.call(value);
+        updateState();
+      },
+      onChangeStart: widget.onChangeStart,
+      onChangeEnd: widget.onChangeEnd,
+    );
+    return [
+      top,
+      bottom,
+    ].column()!;
   }
 }

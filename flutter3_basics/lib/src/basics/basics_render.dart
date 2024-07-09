@@ -121,3 +121,19 @@ extension RenderObjectMixinEx on RenderObject {
     return renderSize;
   }
 }
+
+extension RenderBoxEx on RenderBox {
+  /// 绘制盒子的边界
+  void debugDrawBoxBounds(PaintingContext context, Offset offset) {
+    assert(() {
+      context.canvas.drawRect(
+        offset & size,
+        Paint()
+          ..color = Colors.purpleAccent
+          ..strokeWidth = 1
+          ..style = ui.PaintingStyle.stroke,
+      );
+      return true;
+    }());
+  }
+}
