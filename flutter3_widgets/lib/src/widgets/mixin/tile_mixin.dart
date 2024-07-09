@@ -330,6 +330,7 @@ mixin TileMixin {
   /// [useCenteredTrackShape] 是否使用中心轨道形状 [CenteredRectangularSliderTrackShape]
   ///
   /// [Slider]小部件需要[Material]支持.
+  /// [RangeSlider]双向滑块
   Widget buildSliderWidget(
     BuildContext context,
     double value, {
@@ -424,6 +425,114 @@ mixin TileMixin {
             (value) {
               assert(() {
                 l.d('滑块[$minValue~$maxValue]:$value');
+                return true;
+              }());
+            },
+        onChangeStart: onChangeStart,
+        onChangeEnd: onChangeEnd,
+      ),
+    );
+  }
+
+  /// [RangeSlider]双向滑块, 双向范围滑块
+  Widget buildRangeSliderWidget(
+    BuildContext context,
+    double startValue,
+    double endValue, {
+    String? startLabel,
+    String? endLabel,
+    double minValue = 0,
+    double maxValue = 1,
+    int digits = kDefaultDigits,
+    int? divisions,
+    ShowValueIndicator? showValueIndicator = ShowValueIndicator.always,
+    ValueChanged<RangeValues>? onChanged,
+    ValueChanged<RangeValues>? onChangeStart,
+    ValueChanged<RangeValues>? onChangeEnd,
+    Color? thumbColor,
+    Color? overlayColor,
+    Color? activeTrackColor,
+    List<Color>? inactiveTrackGradientColors,
+    List<double>? inactiveTrackGradientColorStops,
+    List<Color>? activeTrackGradientColors,
+    List<double>? activeTrackGradientColorStops,
+    bool syncGradientColor = true,
+    Color? inactiveTrackColor,
+    Color? valueIndicatorColor,
+    double? trackHeight,
+    bool? useCenteredTrackShape,
+    RangeSliderTrackShape? rangeTrackShape,
+  }) {
+    /*if (rangeTrackShape == null) {
+      //渐变进度在渐变颜色中的颜色值
+      Color? gradientColor;
+      if (syncGradientColor &&
+          (!isNil(activeTrackGradientColors) ||
+              !isNil(inactiveTrackGradientColors))) {
+        final progress = 0.5 *//*(value - minValue) / (maxValue - minValue)*//*;
+        gradientColor = getGradientColor(
+            progress, activeTrackGradientColors ?? inactiveTrackGradientColors!,
+            colorStops: activeTrackGradientColorStops ??
+                inactiveTrackGradientColorStops);
+      }
+
+      //居中双边shape
+      if (useCenteredTrackShape == true) {
+        rangeTrackShape = CenteredRectangularSliderTrackShape(
+          activeColors: activeTrackGradientColors,
+          activeColorStops: activeTrackGradientColorStops,
+          inactiveColors: inactiveTrackGradientColors,
+          inactiveColorStops: inactiveTrackGradientColorStops,
+        );
+        final color = gradientColor ?? activeTrackGradientColors?.last;
+        thumbColor ??= color;
+        valueIndicatorColor = thumbColor;
+        overlayColor ??= color?.withOpacity(0.1);
+      } else {
+        if (!isNil(activeTrackGradientColors) ||
+            !isNil(inactiveTrackGradientColors)) {
+          rangeTrackShape = GradientSliderTrackShape(
+            activeColors: activeTrackGradientColors,
+            activeColorStops: activeTrackGradientColorStops,
+            inactiveColors: inactiveTrackGradientColors,
+            inactiveColorStops: inactiveTrackGradientColorStops,
+          );
+          final color = gradientColor ?? activeTrackGradientColors?.last;
+          thumbColor ??= color;
+          valueIndicatorColor = thumbColor;
+          overlayColor ??= color?.withOpacity(0.1);
+        }
+      }
+    }*/
+    final globalTheme = GlobalTheme.of(context);
+    final darkAccentColor =
+        context.isThemeDark ? globalTheme.accentColor : null;
+    return SliderTheme(
+      data: SliderThemeData(
+        showValueIndicator: showValueIndicator,
+        thumbColor: thumbColor ?? darkAccentColor,
+        activeTrackColor: activeTrackColor ?? darkAccentColor,
+        overlayColor: overlayColor ?? darkAccentColor?.withOpacity(0.1),
+        valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
+        inactiveTrackColor: inactiveTrackColor,
+        //rangeThumbShape: ,
+        rangeTrackShape: rangeTrackShape,
+        /*rangeValueIndicatorShape: rangeValueIndicatorShape,*/
+        /*inactiveTrackColor: Colors.redAccent,*/
+        trackHeight: trackHeight,
+        /*valueIndicatorTextStyle: globalTheme.textBodyStyle,*/
+      ),
+      child: RangeSlider(
+        values: RangeValues(startValue, endValue),
+        min: minValue,
+        max: maxValue,
+        divisions: divisions,
+        labels: RangeLabels(startLabel ?? startValue.toDigits(digits: digits),
+            endLabel ?? endValue.toDigits(digits: digits)),
+        onChanged: onChanged ??
+            (values) {
+              assert(() {
+                l.d('滑块[$minValue~$maxValue]:(${values.start}, ${values.end})');
                 return true;
               }());
             },
