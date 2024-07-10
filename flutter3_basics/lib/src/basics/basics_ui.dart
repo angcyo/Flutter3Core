@@ -1973,6 +1973,11 @@ extension ContextEx on BuildContext {
     return isThemeZh ? (zhStr ?? defStr) : defStr;
   }
 
+  /// 根据中英环境自动选择数据
+  T? zhOrDef<T>(T? zh, T? def) {
+    return isThemeZh ? (zh ?? def) : def;
+  }
+
   /// 尝试更新状态, 如果可以
   /// [StateEx.updateState]
   void tryUpdateState() {
