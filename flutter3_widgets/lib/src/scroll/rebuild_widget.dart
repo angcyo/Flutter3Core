@@ -103,6 +103,9 @@ class UpdateValueNotifier<T> extends ValueNotifier<T> with NotifierMixin {
     notifyListeners();
   }
 
+  @api
+  void update() => notify();
+
   /// 销毁
   @override
   void dispose() {
@@ -117,12 +120,12 @@ class UpdateSignalNotifier<T> extends UpdateValueNotifier<T> {
 
 /// [UpdateValueNotifier]的快速构建方法
 @updateSignalMark
-UpdateValueNotifier<dynamic> get nullValueUpdateSignal =>
+UpdateSignalNotifier<dynamic> get nullValueUpdateSignal =>
     UpdateSignalNotifier<dynamic>(null);
 
 /// [UpdateValueNotifier]的快速构建方法
 @updateSignalMark
-UpdateValueNotifier<T?> createUpdateSignal<T>() =>
+UpdateSignalNotifier<T?> createUpdateSignal<T>() =>
     UpdateSignalNotifier<T?>(null);
 
 mixin RebuildStateEx<T extends StatefulWidget> on State<T> {

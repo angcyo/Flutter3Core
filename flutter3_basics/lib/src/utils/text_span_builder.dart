@@ -16,6 +16,14 @@ class TextSpanBuilder {
     return this;
   }
 
+  /// 换行
+  TextSpanBuilder newLineIfNotEmpty() {
+    if (!isNil(_textSpans)) {
+      _textSpans.add(TextSpan(text: lineSeparator));
+    }
+    return this;
+  }
+
   /// 简单的添加一个文本样式的字符串
   /// [addTextSpan]
   /// [addTextSpans]

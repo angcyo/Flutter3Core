@@ -562,8 +562,8 @@ extension ColorEx on Color {
 
 //region String 扩展
 
-typedef StringEachCallback = void Function(String element);
-typedef StringIndexEachCallback = void Function(int index, String element);
+typedef StringEachCallback = dynamic Function(String element);
+typedef StringIndexEachCallback = dynamic Function(int index, String element);
 
 /// 获取剪切板的文本
 /// [StringEx.copy]
@@ -625,6 +625,9 @@ extension StringEx on String {
 
   /// 判断当前字符串是否是ip字符串
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
+
+  /// 判断当前字符是否是数字
+  bool get isNumber => isMatch(r'^\d+$');
 
   /// 获取指定索引位置的字符串, 支持安全索引
   /// [negative] 是否要支持-索引
@@ -702,7 +705,7 @@ extension StringEx on String {
   /// 字符`#ffaabbcc`转换成Color对象
   Color toColor() => ColorEx.fromHex(this);
 
-  /// 使用json解析字符串
+  /// 使用json解析字符串, 返回[Map], [List]数据结构
   dynamic jsonDecode() => json.decode(this);
 
   /// 从json字符串中解析出对应的数据类型
@@ -914,23 +917,40 @@ extension StringEx on String {
   //region 遍历
 
   /// 遍历字符串, 不带索引
+  /// [callback] 返回true, 中断遍历
   forEach(StringEachCallback callback) {
     for (var i = 0; i < length; i++) {
-      callback(this[i]);
+      final result = callback(this[i]);
+      if (result is bool) {
+        if (result) {
+          break;
+        }
+      }
     }
   }
 
   /// 遍历字符串, 带索引
+  /// [callback] 返回true, 中断遍历
   forEachIndex(StringIndexEachCallback callback) {
     for (var i = 0; i < length; i++) {
-      callback(i, this[i]);
+      final result = callback(i, this[i]);
+      if (result is bool) {
+        if (result) {
+          break;
+        }
+      }
     }
   }
 
   /// 遍历字符串, 不带索引
   forEachByChars(StringEachCallback callback) {
-    for (var element in characters) {
-      callback(element);
+    for (final element in characters) {
+      final result = callback(element);
+      if (result is bool) {
+        if (result) {
+          break;
+        }
+      }
     }
   }
 

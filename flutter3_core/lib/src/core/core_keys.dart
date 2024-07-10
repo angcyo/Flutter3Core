@@ -9,8 +9,15 @@ part of '../../flutter3_core.dart';
 final class CoreKeys {
   CoreKeys._();
 
-  /// 未设备分配一个uuid
-  String get deviceUuid => "deviceUuid".hiveGet<String>(null) ?? $uuid;
+  /// 为设备分配一个uuid
+  String get deviceUuid {
+    const key = "deviceUuid";
+    String? id = key.hiveGet<String>(null);
+    if (isNil(id)) {
+      initDeviceUuid();
+    }
+    return key.hiveGet<String>(null) ?? $uuid;
+  }
 
   /// 初始化设备uuid
   void initDeviceUuid() {
@@ -48,3 +55,6 @@ bool get isTabletDevice => deviceInch >= ($coreKeys.tabletInchThreshold ?? 7);
 /// CoreKeys的实例
 @globalInstance
 final $coreKeys = CoreKeys._();
+
+/// 设备uuid
+String get $deviceUuid => $coreKeys.deviceUuid;

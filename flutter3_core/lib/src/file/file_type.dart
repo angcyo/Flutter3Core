@@ -122,6 +122,12 @@ extension MimeEx on String {
     return startsWith('http://') || startsWith('https://');
   }
 
+  /// 不检查大小写
+  bool get isHttpUrlNoCase {
+    final lc = toLowerCase();
+    return lc.startsWith('http://') || lc.startsWith('https://');
+  }
+
   ///判断当前是否是本地文件地址
   bool get isLocalUrl {
     return startsWith('file://');
