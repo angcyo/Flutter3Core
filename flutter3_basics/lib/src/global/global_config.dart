@@ -134,6 +134,17 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   //endregion ThemeData
 
+  //region tablet平板适配
+
+  /// 是否开启平板的适配?
+  @implementation
+  bool enableTabletAdaptive = false;
+
+  /// 是否处于平板模式?
+  bool isAdaptiveTablet = false;
+
+  //endregion tablet平板适配
+
   GlobalConfig({
     this.globalTopContext,
     this.globalAppContext,

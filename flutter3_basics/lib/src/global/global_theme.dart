@@ -141,6 +141,13 @@ class GlobalTheme {
   EdgeInsets get buttonPadding =>
       EdgeInsets.symmetric(horizontal: x, vertical: h);
 
+  /// 平板模式下, 对话框的约束
+  BoxConstraints get tabletDialogConstraints => BoxConstraints(
+      minWidth: 0,
+      maxWidth: math.min(screenWidth, screenHeight),
+      minHeight: 0,
+      maxHeight: double.infinity);
+
   //region 文本样式
 
   /// [_kDefaultFontSize] 14

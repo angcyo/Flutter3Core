@@ -1,4 +1,4 @@
-part of '../../flutter3_widgets.dart';
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -21,6 +21,7 @@ class TestConstraintsBox extends RenderProxyBox {
   void performLayout() {
     final constraints = this.constraints;
     final child = this.child;
+    //debugger();
 
     if (child != null) {
       child.layout(constraints, parentUsesSize: true);
@@ -29,6 +30,6 @@ class TestConstraintsBox extends RenderProxyBox {
       size = constraints.smallest;
     }
 
-    debugger();
+    //debugger();
   }
 }

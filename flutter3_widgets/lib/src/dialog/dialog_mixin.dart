@@ -221,7 +221,8 @@ mixin DialogMixin implements TranslationTypeImpl {
         .matchParent(matchHeight: fullScreen)
         .align(Alignment.bottomCenter)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
-        .material();
+        .material()
+        .adaptiveTablet(context);
   }
 
   //endregion ---对话框包裹---

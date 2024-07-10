@@ -1883,6 +1883,20 @@ extension WidgetEx on Widget {
         data: theme ?? TextButtonThemeData(style: style),
         child: this,
       );
+
+  /// 平板适配
+  Widget adaptiveTablet([BuildContext? context]) {
+    //debugger();
+    final globalConfig = GlobalConfig.of(context);
+    if (globalConfig.isAdaptiveTablet) {
+      //平板模式
+      final globalTheme = GlobalTheme.of(context);
+      return constrainedBox(globalTheme.tabletDialogConstraints)
+          .align(Alignment.bottomCenter);
+      //return size(size: 200);
+    }
+    return this;
+  }
 }
 
 /// [State]

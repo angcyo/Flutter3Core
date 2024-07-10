@@ -131,6 +131,7 @@ part 'src/widgets/touch_detector_widget.dart';
 part 'src/widgets/value_listener.dart';
 part 'src/widgets/progress_listener.dart';
 part 'src/widgets/ignore_self_pointer.dart';
+part 'src/widgets/test_constraints_layout.dart';
 
 /// 类型重定义
 typedef UiImage = ui.Image;
