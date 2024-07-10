@@ -27,6 +27,9 @@ class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
   //--input
 
   /// 输入框/InputMixin
+  @override
+  final TextFieldConfig? inputFieldConfig;
+
   /// 提示
   @override
   final String? inputHint;
@@ -76,6 +79,7 @@ class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
     this.labelConstraints,
     this.labelActions,
     //--
+    this.inputFieldConfig,
     this.inputHint,
     this.inputText,
     this.onInputTextChanged,
@@ -135,6 +139,8 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   final BoxConstraints? labelConstraints;
 
   /// 输入框/InputMixin
+  @override
+  final TextFieldConfig? inputFieldConfig;
   /// 提示
   @override
   final String? inputHint;
@@ -169,6 +175,7 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
     this.labelPadding = kLabelPadding,
     this.labelConstraints = kLabelConstraints,
     //InputMixin
+    this.inputFieldConfig,
     this.inputHint,
     this.inputText,
     this.onInputTextChanged,

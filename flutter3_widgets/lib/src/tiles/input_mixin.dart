@@ -29,6 +29,9 @@ InputCounterWidgetBuilder get noneInputBuildCounter => (context,
 /// [InputStateMixin]
 /// [kInputPadding]
 mixin InputMixin {
+  /// 指定输入配置
+  TextFieldConfig? get inputFieldConfig;
+
   /// 输入提示
   String? get inputHint;
 
@@ -102,7 +105,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
     BoxConstraints? suffixIconConstraints = kSuffixIconConstraints,
   }) {
     Widget input = SingleInputWidget(
-      config: inputMixinConfig,
+      config: inputMixin.inputFieldConfig ?? inputMixinConfig,
       maxLines: inputMixin.inputMaxLines,
       maxLength: inputMixin.inputMaxLength,
       keyboardType: inputMixin.inputKeyboardType,
