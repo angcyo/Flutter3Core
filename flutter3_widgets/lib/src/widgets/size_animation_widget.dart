@@ -19,6 +19,9 @@ class SizeAnimationWidget extends StatefulWidget {
   /// 激活高度动画
   final bool enableHeightAnimation;
 
+  /// 是否使用平移
+  final bool useTranslation;
+
   final Widget child;
 
   final AnimateAction? onComplete;
@@ -32,6 +35,7 @@ class SizeAnimationWidget extends StatefulWidget {
     this.enableOpacityAnimation = false,
     this.enableWidthAnimation = false,
     this.enableHeightAnimation = false,
+    this.useTranslation = false,
     this.controller,
     this.onComplete,
   });
@@ -104,6 +108,7 @@ class _SizeAnimationWidgetState extends State<SizeAnimationWidget>
       enableOpacityAnimation: widget.enableOpacityAnimation,
       enableWidthAnimation: widget.enableWidthAnimation,
       enableHeightAnimation: widget.enableHeightAnimation,
+      useTranslation: widget.useTranslation,
       animateValue: _controller.value,
       child: widget.child,
     );
@@ -114,6 +119,7 @@ class _SizeAnimation extends SingleChildRenderObjectWidget {
   final bool enableOpacityAnimation;
   final bool enableWidthAnimation;
   final bool enableHeightAnimation;
+  final bool useTranslation;
   final double animateValue;
 
   const _SizeAnimation({
@@ -122,6 +128,7 @@ class _SizeAnimation extends SingleChildRenderObjectWidget {
     this.enableOpacityAnimation = false,
     this.enableWidthAnimation = false,
     this.enableHeightAnimation = false,
+    this.useTranslation = false,
     this.animateValue = 1,
   });
 
@@ -131,6 +138,7 @@ class _SizeAnimation extends SingleChildRenderObjectWidget {
       enableOpacityAnimation: enableOpacityAnimation,
       enableWidthAnimation: enableWidthAnimation,
       enableHeightAnimation: enableHeightAnimation,
+      useTranslation: useTranslation,
       animateValue: animateValue,
     );
   }
@@ -145,6 +153,7 @@ class _SizeAnimation extends SingleChildRenderObjectWidget {
       ..enableOpacityAnimation = enableOpacityAnimation
       ..enableWidthAnimation = enableWidthAnimation
       ..enableHeightAnimation = enableHeightAnimation
+      ..useTranslation = useTranslation
       ..animateValue = animateValue
       ..markNeedsLayout();
     /*if (enableOpacityAnimation) {
@@ -179,7 +188,7 @@ class _RenderSizeAnimation extends RenderProxyBox {
     this.enableOpacityAnimation = false,
     this.enableWidthAnimation = false,
     this.enableHeightAnimation = false,
-    this.useTranslation = true,
+    this.useTranslation = false,
     this.animateValue = 1,
   });
 
@@ -210,7 +219,7 @@ class _RenderSizeAnimation extends RenderProxyBox {
           final offsetDx =
               enableWidthAnimation ? -size.width * (1 - animateValue) : 0.0;
           final offsetDy =
-              enableHeightAnimation ? -size.height * (1 - animateValue) : 0.0;
+              enableHeightAnimation ? size.height * (1 - animateValue) : 0.0;
           child.setBoxOffset(dx: offsetDx, dy: offsetDy);
         }
         /*assert(() {
