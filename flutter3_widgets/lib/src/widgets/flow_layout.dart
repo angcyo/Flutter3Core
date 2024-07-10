@@ -508,7 +508,7 @@ class FlowLayoutRender extends RenderBox
     newLine(); //init
 
     //归类/分行分组
-    for (var child in children) {
+    for (final child in children) {
       final FlowLayoutParentData childParentData =
           child.parentData! as FlowLayoutParentData;
       if (childParentData.stack) {
@@ -522,7 +522,7 @@ class FlowLayoutRender extends RenderBox
         final childSize = child.size;
         //debugger();
         if (lineRemainWidth != double.infinity) {
-          if (childSize.width > lineRemainWidth) {
+          if ((childSize.width + excludeGap) > lineRemainWidth) {
             //换行
             newLine();
           }
