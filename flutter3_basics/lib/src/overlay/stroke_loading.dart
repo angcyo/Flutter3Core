@@ -20,12 +20,16 @@ class StrokeLoadingWidget extends LeafRenderObjectWidget {
   /// [0.0-1.0]
   final double? progress;
 
+  /// 是否暂停动画
+  final bool pause;
+
   const StrokeLoadingWidget({
     super.key,
     this.color = Colors.black12,
     this.lineWidth = 4,
     this.contentSize = const Size(kMinInteractiveHeight, kMinInteractiveHeight),
     this.progress,
+    this.pause = false,
   });
 
   @override
@@ -34,6 +38,7 @@ class StrokeLoadingWidget extends LeafRenderObjectWidget {
         ..lineColor = color
         ..lineWidth = lineWidth
         ..contentSize = contentSize
+        ..pause = pause
         ..progress = progress;
 
   @override
@@ -45,6 +50,7 @@ class StrokeLoadingWidget extends LeafRenderObjectWidget {
       ..lineColor = color
       ..lineWidth = lineWidth
       ..contentSize = contentSize
+      ..pause = pause
       ..progress = progress
       ..markNeedsPaint();
   }
@@ -73,6 +79,9 @@ class StrokeLoadingRenderObject extends RenderBox {
 
   /// 开始的角度
   double _startAngle = 0;
+
+  /// 是否暂停动画
+  bool pause = false;
 
   StrokeLoadingRenderObject();
 
@@ -108,7 +117,9 @@ class StrokeLoadingRenderObject extends RenderBox {
     canvas.drawArc(rect, 0, 360.hd, false, paint);
 
     //progress
-    _startAngle += rotateAngleStep.rr;
+    if (!pause) {
+      _startAngle += rotateAngleStep.rr;
+    }
     _startAngle = _startAngle.sanitizeDegrees;
 
     rect = rect.deflateValue(lineWidth + lineWidth / 2);
@@ -119,6 +130,9 @@ class StrokeLoadingRenderObject extends RenderBox {
       canvas.drawArc(
           rect, _startAngle.hds, (360 * progress!).hds, false, paint);
     }
-    postMarkNeedsPaint();
+
+    if (!pause) {
+      postMarkNeedsPaint();
+    }
   }
 }

@@ -130,6 +130,22 @@ class ProgressStateInfo {
     this.error,
   });
 
+  /// 是否需要开始
+  bool get needStart =>
+      state == ProgressStateType.normal || state == ProgressStateType.error;
+
   /// 是否开始了
   bool get isStarted => state.index >= ProgressStateType.start.index;
+
+  /// 是否有进度了
+  bool get isLoading => state == ProgressStateType.loading;
+
+  /// 是否完成了
+  bool get isFinish => state == ProgressStateType.finish;
+
+  /// 是否有错误
+  bool get isError => state == ProgressStateType.error;
+
+  /// 是否结束, 包含完成/错误
+  bool get isEnd => isFinish || isError;
 }
