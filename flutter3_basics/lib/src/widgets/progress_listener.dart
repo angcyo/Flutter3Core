@@ -95,3 +95,41 @@ class _ProgressStateWidgetState extends State<ProgressStateWidget> {
     );
   }
 }
+
+enum ProgressStateType {
+  /// 正常
+  normal,
+
+  /// 开始了
+  start,
+
+  /// 加载中
+  loading,
+
+  /// 完成 complete
+  finish,
+
+  /// 错误
+  error,
+}
+
+/// 进度状态信息
+class ProgressStateInfo {
+  /// 状态
+  ProgressStateType state = ProgressStateType.normal;
+
+  /// 进度状态时的进度值[0~1]
+  double progress = 0;
+
+  /// 错误状态时的错误信息
+  dynamic error;
+
+  ProgressStateInfo({
+    this.state = ProgressStateType.normal,
+    this.progress = 0,
+    this.error,
+  });
+
+  /// 是否开始了
+  bool get isStarted => state.index >= ProgressStateType.start.index;
+}

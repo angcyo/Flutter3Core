@@ -96,6 +96,7 @@ part 'src/widgets/layout_ex.dart';
 part 'src/widgets/line.dart';
 part 'src/widgets/shapes.dart';
 part 'src/widgets/match_parent_layout.dart';
+part 'src/widgets/future_or_builder.dart';
 part 'src/widgets/mixin/layout_mixin.dart';
 part 'src/widgets/mixin/scroll_mixin.dart';
 part 'src/widgets/mixin/tile_mixin.dart';

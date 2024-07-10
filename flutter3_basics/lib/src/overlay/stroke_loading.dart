@@ -29,8 +29,8 @@ class StrokeLoadingWidget extends LeafRenderObjectWidget {
   });
 
   @override
-  _StrokeLoadingRenderObject createRenderObject(BuildContext context) =>
-      _StrokeLoadingRenderObject()
+  StrokeLoadingRenderObject createRenderObject(BuildContext context) =>
+      StrokeLoadingRenderObject()
         ..lineColor = color
         ..lineWidth = lineWidth
         ..contentSize = contentSize
@@ -39,7 +39,7 @@ class StrokeLoadingWidget extends LeafRenderObjectWidget {
   @override
   void updateRenderObject(
     BuildContext context,
-    _StrokeLoadingRenderObject renderObject,
+    StrokeLoadingRenderObject renderObject,
   ) {
     renderObject
       ..lineColor = color
@@ -50,7 +50,7 @@ class StrokeLoadingWidget extends LeafRenderObjectWidget {
   }
 }
 
-class _StrokeLoadingRenderObject extends RenderBox {
+class StrokeLoadingRenderObject extends RenderBox {
   /// 线的颜色
   Color lineColor = Colors.black12;
 
@@ -74,12 +74,17 @@ class _StrokeLoadingRenderObject extends RenderBox {
   /// 开始的角度
   double _startAngle = 0;
 
-  _StrokeLoadingRenderObject();
+  StrokeLoadingRenderObject();
 
   @override
   void performLayout() {
     //size = constraints.constrainDimensions(screenWidth, screenHeight);
-    size = constraints.biggest;
+    //debugger();
+    final biggest = constraints.biggest;
+    size = biggest.ensureValid(
+        width: minOf(biggest.width, biggest.height),
+        height: minOf(biggest.width, biggest.height));
+    //debugger();
   }
 
   @override

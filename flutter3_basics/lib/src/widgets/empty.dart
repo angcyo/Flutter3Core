@@ -33,9 +33,7 @@ class Empty extends StatelessWidget {
   Widget build(BuildContext context) {
     return size == null
         ? nil
-        : ConstrainedBox(
-            constraints: BoxConstraints.tight(size!),
-          );
+        : ConstrainedBox(constraints: BoxConstraints.tight(size!));
   }
 }
 

@@ -452,13 +452,18 @@ extension FutureEx<T> on Future<T> {
     unawaited(this);
   }
 
+  /// [initialData] 当初始化的值有值时, 不会则直接触发[builder]
   /// [FutureBuilder]
   Widget toWidget(
     Widget Function(BuildContext context, T? value) builder, {
-    Widget Function(BuildContext context, Object? error)? errorBuilder,
+    Widget Function(BuildContext context, dynamic error)? errorBuilder,
     Widget Function(BuildContext context)? loadingBuilder,
     Widget Function(BuildContext context)? emptyBuilder,
+    T? initialData,
   }) {
+    if (initialData != null) {
+      return Builder(builder: (context) => builder.call(context, initialData));
+    }
     return FutureBuilder<T>(
       future: this,
       builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
@@ -1310,6 +1315,11 @@ extension RectEx on Rect {
 
 extension SizeEx on Size {
   Rect toRect([Offset? offset]) => (offset ?? Offset.zero) & this;
+
+  /// 确保是一个有效的[Size]
+  Size ensureValid({double? width, double? height}) => Size(
+      this.width.ensureValid(width ?? this.width),
+      this.height.ensureValid(height ?? this.height));
 }
 
 //endregion Rect/Offset/Size 扩展

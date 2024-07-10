@@ -7,6 +7,11 @@ part of '../../flutter3_basics.dart';
 
 //region 帧相关
 
+/// 当前是否处于调度阶段
+bool get isSchedulerPhase =>
+    WidgetsBinding.instance.schedulerPhase ==
+    SchedulerPhase.persistentCallbacks;
+
 /// 立即安排一帧
 void scheduleFrame() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +33,7 @@ void postFrameCallback(FrameCallback callback,
 /// 如果正在布局阶段, 则立即安排一帧, 否则立即执行回调
 void postFrameCallbackIfNeed(FrameCallback callback) {
   WidgetsFlutterBinding.ensureInitialized();
-  final schedulerPhase = WidgetsBinding.instance.schedulerPhase;
-  if (schedulerPhase == SchedulerPhase.persistentCallbacks) {
+  if (isSchedulerPhase) {
     postFrameCallback(callback);
   } else {
     callback(Duration(milliseconds: nowTimestamp()));
@@ -1916,13 +1920,15 @@ extension StateEx on State {
   bool updateState() {
     try {
       if (isMounted) {
-        setState(() {});
+        postFrameCallbackIfNeed((_) {
+          setState(() {});
+        });
         return true;
       }
       return false;
     } catch (e) {
       assert(() {
-        l.w('当前页面可能已被销毁, 无法更新');
+        l.w('当前页面可能已被销毁, 无法更新[${SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks}]');
         printError(e);
         return true;
       }());
