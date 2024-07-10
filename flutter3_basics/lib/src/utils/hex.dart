@@ -15,7 +15,7 @@ import "package:flutter3_basics/flutter3_basics.dart";
 const String _ALPHABET = "0123456789abcdef";
 
 /// An instance of the default implementation of the [HexCodec].
-const HEX = HexCodec();
+const _HEX = HexCodec();
 
 /// A codec for encoding and decoding byte arrays to and from
 /// hexadecimal strings.
@@ -85,7 +85,7 @@ extension HexStringEx on String {
 
   /// Convert a hexadecimal string to a byte array.
   /// 将十六进制字符串转换为字节数组数据。
-  List<int> toHexBytes() => HEX.decoder.convert(this);
+  List<int> toHexBytes() => _HEX.decoder.convert(this);
 
   /// Convert a hexadecimal string to a byte buffer.
   /// 将十六进制字符串转换为字节缓冲区。
@@ -124,13 +124,13 @@ extension HexIntEx on int {
   /// 将整数转换为十六进制字符串。
   /// 1->01
   /// 200->C8
-  String toHex([int? length]) => HEX.encoder.convert(toBytes(length));
+  String toHex([int? length]) => _HEX.encoder.convert(toBytes(length));
 }
 
 extension HexBytesEx on List<int> {
   /// Convert a byte array to a hexadecimal string.
   /// 将字节数组转换为十六进制字符串。
-  String toHex() => HEX.encoder.convert(this);
+  String toHex() => _HEX.encoder.convert(this);
 
   /// Convert a byte array to a byte buffer.
   /// 将字节数组转换为字节缓冲区。
@@ -151,7 +151,7 @@ extension HexBytesEx on List<int> {
   int crc16() {
     int crc = 0;
     for (int i = 0; i < length; i++) {
-      crc = (crc >> 8) ^ CRC16._table[(crc ^ this[i]) & 0xFF];
+      crc = (crc >> 8) ^ _CRC16._table[(crc ^ this[i]) & 0xFF];
     }
     return crc;
   }
@@ -160,7 +160,7 @@ extension HexBytesEx on List<int> {
 /// CRC16校验
 /// https://www.jianshu.com/p/bcc20a7fd478
 ///
-class CRC16 {
+abstract final class _CRC16 {
   /// 表
   static const List<int> _table = [
     0x0000,
