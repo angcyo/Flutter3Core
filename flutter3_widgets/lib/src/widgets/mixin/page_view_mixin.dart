@@ -50,6 +50,7 @@ mixin PageViewMixin<T extends StatefulWidget>
     BuildContext context, {
     List<Widget>? children,
     ScrollPhysics? physics,
+    Axis axis = Axis.horizontal,
     Clip clipBehavior = Clip.hardEdge,
     bool pageSnapping = true,
     bool padEnds = true,
@@ -103,6 +104,7 @@ mixin PageViewMixin<T extends StatefulWidget>
           pageSnapping: pageSnapping,
           padEnds: padEnds,
           physics: physics,
+          scrollDirection: axis,
           clipBehavior: clipBehavior,
           children: children ?? buildPageChildren(context),
         ),
