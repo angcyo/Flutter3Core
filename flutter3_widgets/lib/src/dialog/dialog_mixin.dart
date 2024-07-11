@@ -307,10 +307,9 @@ extension DialogExtension on BuildContext {
       }());
       return null;
     }
-    return Navigator.of(this, rootNavigator: useRootNavigator)
-        .showWidgetDialog<T>(
-      this,
+    return navigatorOf(useRootNavigator).showWidgetDialog<T>(
       widget,
+      context: this,
       barrierDismissible: barrierDismissible,
       barrierColor: barrierColor,
       barrierLabel: barrierLabel,
@@ -339,8 +338,8 @@ extension NavigatorStateDialogEx on NavigatorState {
   /// [showDialog]
   /// [DialogExtension.showWidgetDialog]
   Future<T?> showWidgetDialog<T>(
-    BuildContext? context,
     Widget widget, {
+    BuildContext? context,
     bool barrierDismissible = true,
     Color? barrierColor = Colors.black54,
     String? barrierLabel,
@@ -353,6 +352,7 @@ extension NavigatorStateDialogEx on NavigatorState {
     TranslationType? type,
     IgnorePointerType? barrierIgnorePointerType,
   }) async {
+    context ??= context?.buildContext ?? buildContext;
     if (context == null || !context.mounted) {
       assert(() {
         l.w('context is null or not mounted');

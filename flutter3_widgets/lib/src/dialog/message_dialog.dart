@@ -19,7 +19,7 @@ class MessageDialog extends AndroidNormalDialog {
     super.onConfirmTap,
     super.cancel,
     super.cancelWidget,
-    super.showCancel,
+    super.showCancel = false,
     super.neutral,
     super.neutralWidget,
     super.showNeutral,

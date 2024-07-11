@@ -62,9 +62,7 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
               ?.value ??
           versionBean;
       if (forbiddenBean.forbiddenReason != null) {
-        GlobalConfig.def.findNavigatorState()?.showWidgetDialog(
-            GlobalConfig.def.globalContext,
-            MessageDialog(
+        GlobalConfig.def.findNavigatorState()?.showWidgetDialog(MessageDialog(
               title: forbiddenBean.forbiddenTile,
               message: forbiddenBean.forbiddenReason,
               confirm: forbiddenBean.forceForbidden == true

@@ -191,7 +191,7 @@ extension ObjectEx on Object {
     String? fontFamily,
     TextAlign? textAlign,
     int? maxLines,
-    TextOverflow? overflow = TextOverflow.ellipsis,
+    TextOverflow? overflow,
     bool? softWrap,
     String? highlight,
     Color? highlightColor,
@@ -203,6 +203,9 @@ extension ObjectEx on Object {
     bool words = false,
     bool selectable = false,
   }) {
+    if (maxLines != null) {
+      overflow ??= TextOverflow.ellipsis;
+    }
     //使用正则匹配高亮文本
     if (!isNullOrEmpty(highlight) || !isNullOrEmpty(highlightList)) {
       highlightTextStyle ??=
