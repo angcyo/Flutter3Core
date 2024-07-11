@@ -8,8 +8,11 @@ part of './dialog.dart';
 /// 单行输入最大长度
 const kDefaultInputLength = 30;
 
-/// 简单的输入框对话框
+/// 简单的输入框对话框, 默认居中输入框
 /// [showDialogWidget]
+/// [SingleInputDialog]
+/// [SingleBottomInputDialog]
+/// @return 返回输入的字符串
 class SingleInputDialog extends StatelessWidget with DialogMixin {
   /// 是否使用图标按钮, 控制按钮
   final bool useIcon;
@@ -50,8 +53,8 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
   SingleInputDialog({
     super.key,
     this.title,
-    this.hintText,
     this.titleWidget,
+    this.hintText,
     this.cancel,
     this.cancelWidget,
     this.showCancel = true,

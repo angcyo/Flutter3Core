@@ -71,14 +71,14 @@ class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
 
   const LabelSingleInputTile({
     super.key,
-    //--
+    //--label
     this.label,
     this.labelWidget,
     this.labelTextStyle,
     this.labelPadding = kLabelPadding,
     this.labelConstraints,
     this.labelActions,
-    //--
+    //--input
     this.inputFieldConfig,
     this.inputHint,
     this.inputText,

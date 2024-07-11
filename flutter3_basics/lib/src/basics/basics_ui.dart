@@ -411,6 +411,7 @@ extension WidgetEx on Widget {
   Widget click(
     GestureTapCallback? onTap, [
     bool enable = true,
+    GestureLongPressCallback? onLongPress,
     HitTestBehavior? behavior = HitTestBehavior.translucent,
   ]) =>
       onTap == null || !enable
@@ -418,6 +419,7 @@ extension WidgetEx on Widget {
           : GestureDetector(
               onTap: onTap,
               behavior: behavior,
+              onLongPress: onLongPress,
               child: this,
             );
 

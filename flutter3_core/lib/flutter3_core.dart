@@ -1,7 +1,6 @@
 library flutter3_core;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -9,6 +8,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_core/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/src/debug/debug_file_tiles.dart';
@@ -41,51 +41,29 @@ export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
 
 part 'src/core/core_keys.dart';
-
 part 'src/core/svg_core.dart';
-
 part 'src/debug/core_debug.dart';
-
 part 'src/debug/debug_file_page.dart';
-
 part 'src/debug/debug_page.dart';
-
 part 'src/debug/navigator_route_overlay.dart';
-
 part 'src/debug/screen_capture_overlay.dart';
-
 part 'src/dialog/number_keyboard_dialog.dart';
-
 part 'src/dialog/single_image_dialog.dart';
-
 part 'src/dialog/single_text_dialog.dart';
-
 part 'src/dialog/wheel_dialog.dart';
-
+part 'src/dialog/single_bottom_input_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
-
 part 'src/file/config_file.dart';
-
 part 'src/file/file_log.dart';
-
 part 'src/file/file_pub_ex.dart';
-
 part 'src/file/file_type.dart';
-
 part 'src/isar/hive/hive_ex.dart';
-
 part 'src/isar/isar_ex.dart';
-
 part 'src/tiles/core_dialog_title.dart';
-
 part 'src/tiles/label_number_slider_tile.dart';
-
 part 'src/tiles/label_number_tile.dart';
-
 part 'src/tiles/wheel_tile.dart';
-
 part 'src/view_model/mutable_live_data.dart';
-
 part 'src/view_model/view_model_ex.dart';
 
 /// 获取当前的工作目录

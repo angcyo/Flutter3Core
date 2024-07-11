@@ -89,6 +89,16 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
     },
   );
 
+  /// [TextFieldConfig]
+  TextFieldConfig get _inputMixinConfig =>
+      inputMixin.inputFieldConfig ?? inputMixinConfig;
+
+  /// 文本是否发生了改变
+  bool get isInputChanged => initialInputText != currentInputText;
+
+  /// 当前的文本是否为空
+  bool get isInputEmpty => isNil(currentInputText);
+
   /// 构建对应的小部件
   @callPoint
   Widget buildInputWidgetMixin(
@@ -105,7 +115,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
     BoxConstraints? suffixIconConstraints = kSuffixIconConstraints,
   }) {
     Widget input = SingleInputWidget(
-      config: inputMixin.inputFieldConfig ?? inputMixinConfig,
+      config: _inputMixinConfig,
       maxLines: inputMixin.inputMaxLines,
       maxLength: inputMixin.inputMaxLength,
       keyboardType: inputMixin.inputKeyboardType,
@@ -144,7 +154,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   void initState() {
     initialInputText = inputMixin.inputText;
     currentInputText = initialInputText;
-    inputMixinConfig.updateText(currentInputText);
+    _inputMixinConfig.updateText(currentInputText);
     super.initState();
   }
 
@@ -152,7 +162,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   void didUpdateWidget(covariant T oldWidget) {
     initialInputText = inputMixin.inputText;
     currentInputText = initialInputText;
-    inputMixinConfig.updateText(currentInputText);
+    _inputMixinConfig.updateText(currentInputText);
     super.didUpdateWidget(oldWidget);
   }
 }

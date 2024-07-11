@@ -131,6 +131,9 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// [clipTopRadius] 顶部圆角
   /// [clipBottomRadius] 底部圆角
   /// [stackWidget] 堆在内容上的小部件, 如果有
+  ///
+  /// 如果需要弹出键盘, 可能需要使用[Scaffold]
+  ///
   @api
   @entryPoint
   Widget buildBottomChildrenDialog(
