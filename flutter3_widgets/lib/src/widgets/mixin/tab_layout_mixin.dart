@@ -17,7 +17,7 @@ mixin TabLayoutMixin {
 
   /// 构建指示器
   @overridePoint
-  Widget buildTabLayoutIndicator(BuildContext context) {
+  Widget? buildTabLayoutIndicator(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     return DecoratedBox(
       decoration: fillDecoration(
@@ -68,12 +68,25 @@ mixin TabLayoutMixin {
       bgDecoration: bgDecoration,
       contentBgDecoration: contentBgDecoration,
       padding: padding,
+      onIndexChanged: onSelfTabIndexChanged,
       children: children == null
           ? buildTabLayoutChildren(context)
           : [
               ...children,
               buildTabLayoutIndicator(context),
-            ],
+            ].filterNull(),
     );
+  }
+
+  /// 指定的索引是否是tab选中的
+  bool isTabIndexSelected(int index) => tabLayoutController.index == index;
+
+  /// tab索引改变回调
+  @overridePoint
+  void onSelfTabIndexChanged(int from, int to) {
+    assert(() {
+      l.d('onSelfTabIndexChanged:$from->$to');
+      return true;
+    }());
   }
 }

@@ -9,6 +9,9 @@ class TabLayoutController extends TabController {
   /// 用来实现将容器滚动到居中位置
   final ScrollContainerController? scrollController;
 
+  /// 监听索引变化
+  final void Function(int from, int to)? onIndexChanged;
+
   TabLayoutController({
     // 动画更新信号
     required super.vsync,
@@ -26,13 +29,17 @@ class TabLayoutController extends TabController {
 
     /// 用来实现将容器滚动到居中位置
     ScrollContainerController? scrollController,
+
+    /// 监听索引变化
+    this.onIndexChanged,
   }) : scrollController = scrollController ?? ScrollContainerController();
 
   /// 选择tab的位置
   /// [pageController] [PageView]页面控制
   /// [kTabScrollDuration]
   @api
-  void selectedItem(int index, {
+  void selectedItem(
+    int index, {
     bool? animate,
     Duration? duration,
     Curve curve = Curves.ease,
@@ -87,6 +94,9 @@ class TabLayout extends ScrollContainerWidget {
   /// 内容背景装饰, 内容的宽度不足时, 就和[bgDecoration]有区别了
   final Decoration? contentBgDecoration;
 
+  /// 监听索引变化
+  final void Function(int from, int to)? onIndexChanged;
+
   TabLayout({
     super.key,
     required super.children,
@@ -108,22 +118,52 @@ class TabLayout extends ScrollContainerWidget {
     super.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     super.crossAxisAlignment = CrossAxisAlignment.center,
     super.selfConstraints,
+    this.onIndexChanged,
   }) : super(
-    scrollController:
-    scrollController ?? tabLayoutController.scrollController,
-  );
+          scrollController:
+              scrollController ?? tabLayoutController.scrollController,
+        );
 
   @override
   State<TabLayout> createState() => _TabLayoutState();
 }
 
 class _TabLayoutState extends ScrollContainerState<TabLayout> {
+  /// 初始化的索引
+  int _initialIndex = 0;
+
+  @override
+  void initState() {
+    _initialIndex = widget.tabLayoutController.index;
+    widget.tabLayoutController.addListener(_handleTabLayoutChanged);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.tabLayoutController.removeListener(_handleTabLayoutChanged);
+    super.dispose();
+  }
+
+  void _handleTabLayoutChanged() {
+    final to = widget.tabLayoutController.index;
+    if (to != _initialIndex) {
+      final from = _initialIndex;
+      _initialIndex = to;
+      /*assert(() {
+        l.d('tab:$from -> $to');
+        return true;
+      }());*/
+      widget.tabLayoutController.onIndexChanged?.call(from, to);
+      widget.onIndexChanged?.call(from, to);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return buildScrollContainer(
         context,
-            (context, position) =>
-            TabLayoutViewport(
+        (context, position) => TabLayoutViewport(
               offset: position,
               axisDirection: _getDirection(context),
               padding: widget.padding,
@@ -149,11 +189,9 @@ class _TabLayoutState extends ScrollContainerState<TabLayout> {
   @override
   void didUpdateWidget(covariant TabLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    oldWidget.tabLayoutController.removeListener(_handleTabLayoutChanged);
+    widget.tabLayoutController.removeListener(_handleTabLayoutChanged);
+    widget.tabLayoutController.addListener(_handleTabLayoutChanged);
   }
 }
 
@@ -350,10 +388,10 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     return tabController == null
         ? []
         : getChildren().where((element) {
-      final parentData = element.parentData;
-      return parentData is TabLayoutParentData &&
-          parentData.itemType == itemType;
-    }).toList();
+            final parentData = element.parentData;
+            return parentData is TabLayoutParentData &&
+                parentData.itemType == itemType;
+          }).toList();
   }
 
   /// [measureChildren]
@@ -370,16 +408,17 @@ class TabLayoutRender extends ScrollContainerRenderBox {
   /// 测量一个子节点的大小
   /// [maxRefWidth] 最大的参考宽度
   /// [maxRefHeight] 最大的参考高度
-  void _measureChild(RenderBox child, {
+  void _measureChild(
+    RenderBox child, {
     double? maxRefWidth,
     double? maxRefHeight,
   }) {
     final parentData = child.parentData as TabLayoutParentData;
 
     final maxWidth =
-    parentData.alignmentParent ? size.width : maxRefWidth ?? size.width;
+        parentData.alignmentParent ? size.width : maxRefWidth ?? size.width;
     final maxHeight =
-    parentData.alignmentParent ? size.height : maxRefHeight ?? size.height;
+        parentData.alignmentParent ? size.height : maxRefHeight ?? size.height;
 
     BoxConstraints childConstraints = BoxConstraints(
       maxWidth: maxWidth - parentData.layoutMarginHorizontal,
@@ -406,7 +445,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         }
       }
       final offset =
-      alignRectOffset(parentData.alignment, anchorRect, child.size);
+          alignRectOffset(parentData.alignment, anchorRect, child.size);
       //margin
       Offset marginOffset = Offset(
           parentData.marginLeft - parentData.marginRight,
@@ -425,9 +464,9 @@ class TabLayoutRender extends ScrollContainerRenderBox {
 
     bool equalWidthOrHeight = false;
     final parentWidth =
-    (constraints.maxWidth - paddingHorizontal).ensureValid(childMaxWidth);
+        (constraints.maxWidth - paddingHorizontal).ensureValid(childMaxWidth);
     final parentHeight =
-    (constraints.maxHeight - paddingVertical).ensureValid(childMaxHeight);
+        (constraints.maxHeight - paddingVertical).ensureValid(childMaxHeight);
 
     if (autoEqualWidthRange?.matchVersion(children.length) == true) {
       equalWidthOrHeight = true;
@@ -436,8 +475,8 @@ class TabLayoutRender extends ScrollContainerRenderBox {
       if (axis == Axis.horizontal) {
         final childWidth = children.fold(
             0.0,
-                (value, element) =>
-            value +
+            (value, element) =>
+                value +
                 element.size.width +
                 (element.parentData?.layoutMarginHorizontal ?? 0.0));
         if (childWidth < parentWidth) {
@@ -446,8 +485,8 @@ class TabLayoutRender extends ScrollContainerRenderBox {
       } else {
         final childHeight = children.fold(
             0.0,
-                (value, element) =>
-            value +
+            (value, element) =>
+                value +
                 element.size.height +
                 (element.parentData?.layoutMarginVertical ?? 0.0));
         if (childHeight < parentHeight) {
@@ -505,7 +544,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         startIndex = controller.previousIndex;
         endIndex = controller.index;
         final animateProgress =
-        (controller.offset / (endIndex - startIndex)).ensureValid(0);
+            (controller.offset / (endIndex - startIndex)).ensureValid(0);
         progress = 1 - animateProgress.abs();
       } else {
         //这种情况可能是, 在pageView中手势滚动
@@ -594,13 +633,13 @@ class TabLayoutRender extends ScrollContainerRenderBox {
           //debugger();
           if (axis == Axis.horizontal) {
             final offsetTop =
-            parentData.itemConstraints?.isMatchParentHeight == true
-                ? 0.0
-                : paddingTop;
+                parentData.itemConstraints?.isMatchParentHeight == true
+                    ? 0.0
+                    : paddingTop;
             final offsetBottom =
-            parentData.itemConstraints?.isMatchParentHeight == true
-                ? 0.0
-                : paddingBottom;
+                parentData.itemConstraints?.isMatchParentHeight == true
+                    ? 0.0
+                    : paddingBottom;
             startAnchorBounds = Rect.fromLTRB(
               startRect.left,
               offsetTop,
@@ -615,13 +654,13 @@ class TabLayoutRender extends ScrollContainerRenderBox {
             );
           } else {
             final offsetLeft =
-            parentData.itemConstraints?.isMatchParentWidth == true
-                ? 0.0
-                : paddingLeft;
+                parentData.itemConstraints?.isMatchParentWidth == true
+                    ? 0.0
+                    : paddingLeft;
             final offsetRight =
-            parentData.itemConstraints?.isMatchParentWidth == true
-                ? 0.0
-                : paddingRight;
+                parentData.itemConstraints?.isMatchParentWidth == true
+                    ? 0.0
+                    : paddingRight;
             startAnchorBounds = Rect.fromLTRB(
               offsetLeft,
               startRect.top,
@@ -650,7 +689,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         final startBounds = Rect.fromLTWH(
             startOffset.dx, startOffset.dy, startWidth, startHeight);
         final endBounds =
-        Rect.fromLTWH(endOffset.dx, endOffset.dy, endWidth, endHeight);
+            Rect.fromLTWH(endOffset.dx, endOffset.dy, endWidth, endHeight);
 
         Offset offset = startOffset + (endOffset - startOffset) * progress;
 
@@ -768,12 +807,12 @@ class TabLayoutRender extends ScrollContainerRenderBox {
 
     //--
     final scrollDecorationChildren =
-    getIndicatorChildren(TabItemType.scrollDecoration);
+        getIndicatorChildren(TabItemType.scrollDecoration);
     for (final child in scrollDecorationChildren) {
       final parentData = child.parentData as TabLayoutParentData;
 
       final extendHorizontal =
-      axis == Axis.horizontal ? paddingHorizontal : 0.0;
+          axis == Axis.horizontal ? paddingHorizontal : 0.0;
       final extendVertical = axis == Axis.vertical ? paddingVertical : 0.0;
       final extend = Offset(extendHorizontal, extendVertical);
       child.layout(
@@ -866,7 +905,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
       }
       Rect? anchorRect = anchorChild?.getBoundsInParentOrNull();
       Rect? afterAnchorRect =
-      getScrollChildAfterChild(child)?.getBoundsInParentOrNull();
+          getScrollChildAfterChild(child)?.getBoundsInParentOrNull();
 
       _measureChild(
         child,
@@ -908,10 +947,10 @@ class TabLayoutRender extends ScrollContainerRenderBox {
   @override
   void paint(PaintingContext context, ui.Offset offset) {
     final ImageConfiguration filledConfiguration =
-    configuration.copyWith(size: size);
+        configuration.copyWith(size: size);
 
     final ImageConfiguration contentFilledConfiguration =
-    configuration.copyWith(
+        configuration.copyWith(
       size: Size(
         min(size.width, _scrollChildSize.width + paddingHorizontal),
         min(size.height, _scrollChildSize.height + paddingVertical),
@@ -971,7 +1010,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
 
     //---
     final scrollDecorationChildren =
-    getIndicatorChildren(TabItemType.scrollDecoration);
+        getIndicatorChildren(TabItemType.scrollDecoration);
     final indicatorChildren = getIndicatorChildren(TabItemType.indicator);
     final gapChildren = getIndicatorChildren(TabItemType.gap);
     final stackChildren = getIndicatorChildren(TabItemType.stack);
@@ -1191,7 +1230,7 @@ extension TabLayoutEx on Widget {
       alignment: alignment,
       alignmentParent: alignmentParent ??
           (itemConstraints?.isMatchParentWidth == true ||
-              itemConstraints?.isMatchParentHeight == true) ||
+                  itemConstraints?.isMatchParentHeight == true) ||
               (itemType != null && itemType != TabItemType.stack),
       enableIndicatorFlow: enableIndicatorFlow,
       itemConstraints: itemConstraints,
@@ -1231,7 +1270,7 @@ extension TabLayoutEx on Widget {
       alignment: alignment,
       alignmentParent: alignmentParent ??
           (itemConstraints?.isMatchParentWidth == true ||
-              itemConstraints?.isMatchParentHeight == true) ||
+                  itemConstraints?.isMatchParentHeight == true) ||
               (itemType != null && itemType != TabItemType.stack),
       itemConstraints: itemConstraints,
       anchorIndex: anchorIndex,
@@ -1287,11 +1326,10 @@ class _TabLayoutPageViewWrapState extends State<TabLayoutPageViewWrap> {
       if (newController == null) {
         throw FlutterError(
           'No TabController for ${widget.runtimeType}.\n'
-              'When creating a ${widget
-              .runtimeType}, you must either provide an explicit '
-              'TabController using the "controller" property, or you must ensure that there '
-              'is a DefaultTabController above the ${widget.runtimeType}.\n'
-              'In this case, there was neither an explicit controller nor a default controller.',
+          'When creating a ${widget.runtimeType}, you must either provide an explicit '
+          'TabController using the "controller" property, or you must ensure that there '
+          'is a DefaultTabController above the ${widget.runtimeType}.\n'
+          'In this case, there was neither an explicit controller nor a default controller.',
         );
       }
       return true;
@@ -1410,7 +1448,8 @@ class _TabLayoutPageViewWrapState extends State<TabLayoutPageViewWrap> {
     _warpUnderwayCount -= 1;
   }
 
-  Future<void> _animateToPage(int page, {
+  Future<void> _animateToPage(
+    int page, {
     required Duration duration,
     required Curve curve,
   }) async {
