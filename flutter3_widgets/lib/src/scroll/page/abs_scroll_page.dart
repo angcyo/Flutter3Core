@@ -28,11 +28,14 @@ mixin AbsScrollPage {
   Widget buildScaffold(
     BuildContext context, {
     WidgetList? children,
+    bool? resizeToAvoidBottomInset,
   }) {
     //debugger();
     return Scaffold(
       appBar: buildAppBar(context),
       backgroundColor: getBackgroundColor(context),
+      resizeToAvoidBottomInset:
+          resizeToAvoidBottomInset ?? getResizeToAvoidBottomInset(context),
       body: this is RebuildBodyMixin
           ? rebuild((this as RebuildBodyMixin).bodyUpdateSignal,
               (context, value) => buildBody(context, children))
@@ -47,6 +50,9 @@ mixin AbsScrollPage {
     //final globalConfig = GlobalConfig.of(context);
     return globalTheme.whiteBgColor;
   }
+
+  /// 默认不适配底部键盘
+  bool getResizeToAvoidBottomInset(BuildContext context) => false;
 
   //endregion Page
 
