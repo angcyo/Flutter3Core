@@ -119,7 +119,16 @@ class BytesWriter {
     }
   }
 
+  /// 写入一个文本
+  /// [writeText]
+  /// [writeString]
+  void writeText(String value, [int? length]) {
+    writeBytes(utf8.encode(value), length);
+  }
+
   /// 写入一个字符串
+  /// [writeText]
+  /// [writeString]
   void writeString(String value, [int? length, bool writeEnd = true]) {
     writeBytes(utf8.encode(value), length);
     if (writeEnd) {
@@ -240,6 +249,23 @@ class ByteReader {
         allowMalformed: true);
     _index += length;
     return result;
+  }
+
+  /// 读取字符串, 直到遇到结束符0x00
+  String? readStringEnd([String? overflow, Encoding codec = utf8]) {
+    if (isDone) {
+      return overflow;
+    }
+    while (!isDone) {
+      final bytes = readLoop((bytes, byte) {
+        return byte.uint == 0;
+      });
+      if (bytes.isEmpty) {
+        break;
+      }
+      return bytes.toStr(codec);
+    }
+    return overflow;
   }
 
   /// 循环读取连续的字符串

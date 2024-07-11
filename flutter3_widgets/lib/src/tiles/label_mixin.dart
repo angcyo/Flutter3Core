@@ -8,15 +8,15 @@ part of '../../../flutter3_widgets.dart';
 /// [kLabelPadding]
 mixin LabelMixin {
   /// 标签
-  String? get label;
+  String? get label => null;
 
-  Widget? get labelWidget;
+  Widget? get labelWidget => null;
 
-  TextStyle? get labelTextStyle;
+  TextStyle? get labelTextStyle => null;
 
-  EdgeInsets? get labelPadding;
+  EdgeInsets? get labelPadding => null;
 
-  BoxConstraints? get labelConstraints;
+  BoxConstraints? get labelConstraints => null;
 
   /// 构建对应的小部件
   /// [buildLabelWidget]

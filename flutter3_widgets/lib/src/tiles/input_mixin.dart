@@ -30,40 +30,40 @@ InputCounterWidgetBuilder get noneInputBuildCounter => (context,
 /// [kInputPadding]
 mixin InputMixin {
   /// 指定输入配置
-  TextFieldConfig? get inputFieldConfig;
+  TextFieldConfig? get inputFieldConfig => null;
 
   /// 输入提示
-  String? get inputHint;
+  String? get inputHint => null;
 
   /// 默认输入的文本
-  String? get inputText;
+  String? get inputText => null;
 
   /// [kInputPadding]
-  EdgeInsets? get inputPadding;
+  EdgeInsets? get inputPadding => null;
 
   /// 并不需要在此方法中更新界面
-  ValueChanged<String>? get onInputTextChanged;
+  ValueChanged<String>? get onInputTextChanged => null;
 
   /// 在改变时, 需要进行的确认回调
   /// 返回false, 则不进行改变
-  FutureValueCallback<String>? get onInputTextConfirmChange;
+  FutureValueCallback<String>? get onInputTextConfirmChange => null;
 
   /// 下划线的输入框样式
-  InputBorderType get inputBorderType;
+  InputBorderType get inputBorderType => InputBorderType.underline;
 
   /// 输入的最大行数
-  int? get inputMaxLines;
+  int? get inputMaxLines => null;
 
   /// 输入的最大字符长度
-  int? get inputMaxLength;
+  int? get inputMaxLength => null;
 
   /// 输入限制字符
   /// [SingleInputWidget.inputFormatters]
-  List<TextInputFormatter>? get inputFormatters;
+  List<TextInputFormatter>? get inputFormatters => null;
 
   /// 键盘输入的类型
   /// [SingleInputWidget.keyboardType]
-  TextInputType? get inputKeyboardType;
+  TextInputType? get inputKeyboardType => null;
 }
 
 /// 输入状态的混入
@@ -85,7 +85,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
     onChanged: (value) {
       //FocusScope.of(context).requestFocus(_passwordFocusNode);
       //debugger();
-      onInputTextChanged(value);
+      onSelfInputTextChanged(value);
     },
   );
 
@@ -138,7 +138,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// 输入框的值改变回调
-  void onInputTextChanged(String toValue) async {
+  void onSelfInputTextChanged(String toValue) async {
     if (inputMixin.onInputTextConfirmChange != null) {
       final result = await inputMixin.onInputTextConfirmChange!(toValue);
       if (result != true) {
