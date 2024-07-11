@@ -6,6 +6,9 @@ part of './dialog.dart';
 /// @date 2024/04/05
 ///
 /// Android 风格的普通对话框
+/// 点击[confirm], 返回true
+/// 点击[cancel], 返回false
+/// 点击[neutral], 返回null
 class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 是否使用图标按钮
   final bool useIcon;

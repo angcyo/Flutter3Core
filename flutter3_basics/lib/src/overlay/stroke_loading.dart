@@ -125,10 +125,20 @@ class StrokeLoadingRenderObject extends RenderBox {
     rect = rect.deflateValue(lineWidth + lineWidth / 2);
     if (progress == null) {
       canvas.drawArc(
-          rect, _startAngle.hds, indeterminateSweepAngle.hds, false, paint);
+        rect,
+        _startAngle.hds,
+        indeterminateSweepAngle.hds,
+        false,
+        paint,
+      );
     } else {
       canvas.drawArc(
-          rect, _startAngle.hds, (360 * progress!).hds, false, paint);
+        rect,
+        _startAngle.hds,
+        (360 * progress!).hds,
+        false,
+        paint,
+      );
     }
 
     if (!pause) {

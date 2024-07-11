@@ -1948,6 +1948,9 @@ extension ContextEx on BuildContext {
   /// 震动反馈
   void longPressFeedback() => Feedback.forLongPress(this);
 
+  /// [BuildContext]
+  BuildContext? get buildContext => isMounted ? this : null;
+
   /// 此上下文关联的Widget当前是否已安装在 Widget 树中
   bool get isMounted => mounted;
 
