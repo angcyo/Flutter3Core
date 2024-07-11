@@ -36,6 +36,7 @@ SvgPicture loadHttpSvgWidget(
   String url, {
   Color? tintColor,
   BoxFit fit = BoxFit.contain,
+  double? size,
   double? width,
   double? height,
   UiColorFilter? colorFilter,
@@ -46,12 +47,12 @@ SvgPicture loadHttpSvgWidget(
       semanticsLabel: url,
       fit: fit,
       colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      width: width,
-      height: height,
+      width: size ?? width,
+      height: size ?? height,
       placeholderBuilder: placeholderBuilder ??
           (context) => LoadingWrapWidget(
-                width: width,
-                height: height,
+                width: size ?? width,
+                height: size ?? height,
               ),
     );
 
@@ -59,6 +60,7 @@ SvgPicture loadFileSvgWidget(
   String path, {
   Color? tintColor,
   BoxFit fit = BoxFit.contain,
+  double? size,
   double? width,
   double? height,
   UiColorFilter? colorFilter,
@@ -69,12 +71,12 @@ SvgPicture loadFileSvgWidget(
       semanticsLabel: path,
       fit: fit,
       colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      width: width,
-      height: height,
+      width: size ?? width,
+      height: size ?? height,
       placeholderBuilder: placeholderBuilder ??
           (context) => LoadingWrapWidget(
-                width: width,
-                height: height,
+                width: size ?? width,
+                height: size ?? height,
               ),
     );
 
@@ -82,6 +84,7 @@ SvgPicture loadStringSvgWidget(
   String string, {
   Color? tintColor,
   BoxFit fit = BoxFit.contain,
+  double? size,
   double? width,
   double? height,
   UiColorFilter? colorFilter,
@@ -92,12 +95,12 @@ SvgPicture loadStringSvgWidget(
       semanticsLabel: string,
       fit: fit,
       colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      width: width,
-      height: height,
+      width: size ?? width,
+      height: size ?? height,
       placeholderBuilder: placeholderBuilder ??
           (context) => LoadingWrapWidget(
-                width: width,
-                height: height,
+                width: size ?? width,
+                height: size ?? height,
               ),
     );
 

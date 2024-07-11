@@ -55,11 +55,14 @@ extension ImagePubEx on String {
           : toAssetImageProvider()) as ImageProvider;
 
   /// 根据类型, 自动转换成对应的图片小部件
+  /// 支持http/file
+  /// 支持svg/image
   /// [toImageProvider]
   Widget toImageWidget({
     BoxFit? fit = BoxFit.cover,
     bool usePlaceholder = false,
     PlaceholderWidgetBuilder? placeholder,
+    double? size,
     double? width,
     double? height,
     int? memCacheWidth,
@@ -79,6 +82,7 @@ extension ImagePubEx on String {
             this,
             tintColor: tintColor,
             fit: fit,
+            size: size,
             width: width,
             height: height,
           );
@@ -87,6 +91,7 @@ extension ImagePubEx on String {
             this,
             tintColor: tintColor,
             fit: fit,
+            size: size,
             width: width,
             height: height,
           );
@@ -95,6 +100,7 @@ extension ImagePubEx on String {
             this,
             tintColor: tintColor,
             fit: fit,
+            size: size,
             width: width,
             height: height,
           );
@@ -108,8 +114,8 @@ extension ImagePubEx on String {
             placeholder: placeholder,
             memCacheWidth: memCacheWidth,
             memCacheHeight: memCacheHeight,
-            width: width,
-            height: height,
+            width: size ?? width,
+            height: size ?? height,
             tintColor: tintColor,
           );
         } else if (isFilePath) {
@@ -118,8 +124,8 @@ extension ImagePubEx on String {
             fit: fit,
             cacheWidth: memCacheWidth,
             cacheHeight: memCacheHeight,
-            width: width,
-            height: height,
+            width: size ?? width,
+            height: size ?? height,
             color: tintColor,
             errorBuilder: (context, error, stackTrace) =>
                 GlobalConfig.of(context)
@@ -131,8 +137,8 @@ extension ImagePubEx on String {
             fit: fit,
             cacheWidth: memCacheWidth,
             cacheHeight: memCacheHeight,
-            width: width,
-            height: height,
+            width: size ?? width,
+            height: size ?? height,
             color: tintColor,
             errorBuilder: (context, error, stackTrace) =>
                 GlobalConfig.of(context)

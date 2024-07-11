@@ -79,6 +79,27 @@ extension HttpUriEx on Uri {
 }
 
 extension HttpStringEx on String {
+  /// this = host
+  /// host/path
+  String connectUrl(String? path) {
+    if (path == null || isNil(path)) {
+      return this;
+    }
+    String result = this;
+    //移除末尾的/
+    if (result.endsWith('/')) {
+      result = result.substring(0, result.length - 1);
+    }
+    if (path.startsWith('/')) {
+      //移除开头的/
+      path = path.substring(1);
+    }
+    if (path.isNotEmpty) {
+      result = '$result/$path';
+    }
+    return result;
+  }
+
   /// 拼接接口
   String toApi(String api) {
     if (api.startsWith('http://') || api.startsWith('https://')) {

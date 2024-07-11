@@ -502,7 +502,7 @@ Future<String> filePath(
   return p.join(folder.path, fileName);
 }
 
-/// 快速获取一个缓存文件路径, 会自动创建文件夹
+/// 快速获取一个缓存文件路径, 会自动创建文件夹.
 /// [cacheFilePath]
 Future<Directory> cacheFolder([
   String? part1,
@@ -545,7 +545,7 @@ Future<Directory> cacheFolder([
   return folder.ensureDirectory();
 }
 
-/// 快速获取一个缓存文件路径, 会自动创建文件夹
+/// 快速获取一个缓存文件路径, 会自动创建文件夹.
 /// [cacheFolder]
 Future<String> cacheFilePath(
   String fileName, [
