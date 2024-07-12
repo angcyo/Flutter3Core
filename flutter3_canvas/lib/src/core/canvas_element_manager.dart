@@ -21,9 +21,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasElementControlManager.elementSelectComponent;
 
   /// 选择元素的组件, 未选中元素时, 返回null
-  ElementSelectComponent? get elementSelectComponent => isSelectedElement
-      ? canvasElementControlManager.elementSelectComponent
-      : null;
+  ElementSelectComponent? get elementSelectComponent =>
+      isSelectedElement ? selectComponent : null;
 
   /// 选中的元素, 如果是单元素, 则返回选中的元素, 否则返回[ElementSelectComponent]
   /// 没有选中元素时, 返回null
@@ -295,8 +294,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     if (selected) {
       resetSelectElement(list);
       if (showRect) {
-        canvasDelegate.showRect(
-            elementPainter: canvasElementControlManager.elementSelectComponent);
+        canvasDelegate.showRect(elementPainter: selectComponent);
       }
     } else if (showRect) {
       ElementGroupPainter painter = ElementGroupPainter();
@@ -410,8 +408,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     if (selected) {
       resetSelectElement(list);
       if (showRect) {
-        canvasDelegate.showRect(
-            elementPainter: canvasElementControlManager.elementSelectComponent);
+        canvasDelegate.showRect(elementPainter: selectComponent);
       }
     } else if (showRect) {
       ElementGroupPainter painter = ElementGroupPainter();
@@ -493,52 +490,55 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 添加一个选中的元素
   @api
   void addSelectElement(ElementPainter element) {
-    final list =
-        canvasElementControlManager.elementSelectComponent.children ?? [];
+    final list = selectComponent.children ?? [];
     list.add(element);
-    canvasElementControlManager.elementSelectComponent.resetSelectElement(list);
+    selectComponent.resetSelectElement(list);
   }
 
   /// 添加一组选中的元素
   @api
   void addSelectElementList(List<ElementPainter> elements) {
-    final list =
-        canvasElementControlManager.elementSelectComponent.children ?? [];
+    final list = selectComponent.children ?? [];
     list.addAll(elements);
-    canvasElementControlManager.elementSelectComponent.resetSelectElement(list);
+    selectComponent.resetSelectElement(list);
   }
 
   /// 移除一个选中的元素
   @api
   void removeSelectElement(ElementPainter element) {
-    final list =
-        canvasElementControlManager.elementSelectComponent.children ?? [];
+    final list = selectComponent.children ?? [];
     if (list.remove(element)) {
-      canvasElementControlManager.elementSelectComponent
-          .resetSelectElement(list);
+      selectComponent.resetSelectElement(list);
     }
   }
 
   /// 移除一组选中的元素
   @api
   void removeSelectElementList(List<ElementPainter> elements) {
-    final list =
-        canvasElementControlManager.elementSelectComponent.children ?? [];
+    final list = selectComponent.children ?? [];
     list.removeAll(elements);
-    canvasElementControlManager.elementSelectComponent.resetSelectElement(list);
+    selectComponent.resetSelectElement(list);
   }
 
   /// 重置选中的元素
   @api
   void resetSelectElement(List<ElementPainter>? elements) {
-    canvasElementControlManager.elementSelectComponent
-        .resetSelectElement(elements);
+    selectComponent.resetSelectElement(elements);
   }
 
   /// 清空选中的元素
   @api
   void clearSelectedElement() {
     resetSelectElement(null);
+  }
+
+  /// 如果操作的元素被选中, 则清空所有选中的元素
+  @api
+  void clearSelectedElementIf(ElementPainter? element) {
+    if (element != null &&
+        selectComponent.children?.contains(element) == true) {
+      clearSelectedElement();
+    }
   }
 
   /// 获取所有选中的元素, 默认包含[ElementGroupPainter]
@@ -552,8 +552,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool exportAllElementIfNoSelected = false,
   }) {
     if (isSelectedElement) {
-      final selectComponent =
-          canvasElementControlManager.elementSelectComponent;
+      final selectComponent = this.selectComponent;
       if (exportSingleElement) {
         return selectComponent.getSingleElementList();
       }
@@ -577,22 +576,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
       return result;
     }
-    return canvasElementControlManager.elementSelectComponent.children;
+    return selectComponent.children;
   }
 
   /// 是否选中了元素
   @api
   bool isElementSelected(ElementPainter? element) {
-    return canvasElementControlManager.elementSelectComponent
-        .containsElement(element);
+    return selectComponent.containsElement(element);
   }
 
   /// 更新选择元素的边界, 通常在操作子元素绘制属性发生改变后调用
   /// [ElementSelectComponent]
   @api
   void updateSelectComponentPaintProperty() {
-    canvasElementControlManager.elementSelectComponent
-        .updatePaintPropertyFromChildren(
+    selectComponent.updatePaintPropertyFromChildren(
       canvasElementControlManager.enableResetElementAngle,
     );
   }

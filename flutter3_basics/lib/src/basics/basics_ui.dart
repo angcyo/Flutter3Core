@@ -2172,6 +2172,8 @@ extension RenderObjectEx on RenderObject {
     if (box is RenderBox) {
       if (box.hasSize) {
         return box.size;
+      } else {
+        return box.getDryLayout(const BoxConstraints());
       }
     }
     return null;
@@ -2277,6 +2279,15 @@ extension RenderObjectEx on RenderObject {
       pd.offset = Offset(dx, dy);
     }
   }
+
+  /// 父布局的约束
+/*BoxConstraints? get parentBoxConstraints {
+    final parentConstraints = parent?.constraints;
+    if (parentConstraints is BoxConstraints) {
+      return parentConstraints;
+    }
+    return parent?.parentBoxConstraints;
+  }*/
 }
 
 extension ElementEx on Element {}

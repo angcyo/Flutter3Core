@@ -81,19 +81,12 @@ class RenderLeftCenterRightLayout extends RenderBox
 
     //
     Size centerSize = Size.zero;
-    Offset centerOffset = thisSize.center(Offset.zero);
     if (center != null) {
       centerSize =
           ChildLayoutHelper.layoutChild(center, const BoxConstraints());
       childMaxWidth = max(childMaxWidth, centerSize.width);
       childMaxHeight = max(childMaxHeight, centerSize.height);
-      if (!centerSize.isEmpty) {
-        centerOffset = Offset(
-          thisSize.width / 2 - centerSize.width / 2,
-          thisSize.height / 2 - centerSize.height / 2,
-        );
-        (center.parentData as BoxParentData).offset = centerOffset;
-      }
+      _offsetCenter(thisSize);
     }
     //
     final childConstraints = BoxConstraints(
@@ -105,65 +98,115 @@ class RenderLeftCenterRightLayout extends RenderBox
       ChildLayoutHelper.layoutChild(left, childConstraints);
       childMaxWidth = max(childMaxWidth, left.size.width);
       childMaxHeight = max(childMaxHeight, left.size.height);
-      if (!left.size.isEmpty) {
-        if (axis == Axis.horizontal) {
-          (left.parentData as BoxParentData).offset = Offset(
-            0,
-            thisSize.height.ensureValid(left.size.height) / 2 -
-                left.size.height / 2,
-          );
-        } else {
-          (left.parentData as BoxParentData).offset = Offset(
-            thisSize.width.ensureValid(left.size.width) / 2 -
-                left.size.width / 2,
-            0,
-          );
-        }
-      }
+      _offsetLeft(thisSize);
     }
     //
     if (right != null) {
       ChildLayoutHelper.layoutChild(right, childConstraints);
       childMaxWidth = max(childMaxWidth, right.size.width);
       childMaxHeight = max(childMaxHeight, right.size.height);
-      if (!right.size.isEmpty) {
-        if (axis == Axis.horizontal) {
-          (right.parentData as BoxParentData).offset = Offset(
-            thisSize.width - right.size.width,
-            thisSize.height.ensureValid(right.size.height) / 2 -
-                right.size.height / 2,
-          );
-        } else {
-          (right.parentData as BoxParentData).offset = Offset(
-            thisSize.width.ensureValid(right.size.width) / 2 -
-                right.size.width / 2,
-            thisSize.height - right.size.height,
-          );
-        }
-      }
+      _offsetRight(thisSize);
     }
     //debugger();
+    bool reOffset = false; //是否需要重新偏移child
     if (thisSize.width == double.infinity) {
       if (axis == Axis.horizontal) {
+        reOffset = reOffset || !thisSize.height.isValid;
         thisSize = Size(
-          children.fold(0, (value, child) => value + child.size.width),
-          thisSize.height,
+          constraints.constrainWidth(
+              children.fold(0, (value, child) => value + child.size.width)),
+          thisSize.height.ensureValid(childMaxHeight),
         );
       } else {
+        reOffset = reOffset || !thisSize.width.isValid;
         thisSize = Size(
-          thisSize.width,
-          children.fold(0, (value, child) => value + child.size.height),
+          thisSize.width.ensureValid(childMaxWidth),
+          constraints.constrainHeight(
+              children.fold(0, (value, child) => value + child.size.height)),
         );
       }
     }
     if (thisSize.height == double.infinity) {
       if (axis == Axis.horizontal) {
-        thisSize = Size(thisSize.width, childMaxHeight);
+        reOffset = reOffset || !thisSize.width.isValid;
+        thisSize = Size(
+            constraints
+                .constrainWidth(thisSize.width.ensureValid(childMaxWidth)),
+            childMaxHeight);
       } else {
-        thisSize = Size(childMaxWidth, thisSize.height);
+        reOffset = reOffset || !thisSize.height.isValid;
+        thisSize = Size(
+            childMaxWidth,
+            constraints
+                .constrainHeight(thisSize.height.ensureValid(childMaxHeight)));
       }
     }
+    //重新偏移
+    if (reOffset) {
+      _offsetLeft(thisSize);
+      _offsetCenter(thisSize);
+      _offsetRight(thisSize);
+    }
+    //debugger();
     size = thisSize;
+  }
+
+  void _offsetLeft(Size thisSize) {
+    final child = getChildren().getOrNull(0);
+    if (child != null && !child.size.isEmpty) {
+      if (axis == Axis.horizontal) {
+        child.setBoxOffset(
+          offset: Offset(
+            0,
+            thisSize.height.ensureValid(child.size.height) / 2 -
+                child.size.height / 2,
+          ),
+        );
+      } else {
+        child.setBoxOffset(
+          offset: Offset(
+            thisSize.width.ensureValid(child.size.width) / 2 -
+                child.size.width / 2,
+            0,
+          ),
+        );
+      }
+    }
+  }
+
+  void _offsetCenter(Size thisSize) {
+    final child = getChildren().getOrNull(1);
+    if (child != null) {
+      final childSize = child.size;
+      final offset = Offset(
+        thisSize.width / 2 - childSize.width / 2,
+        thisSize.height / 2 - childSize.height / 2,
+      );
+      child.setBoxOffset(offset: offset);
+    }
+  }
+
+  void _offsetRight(Size thisSize) {
+    final child = getChildren().getOrNull(2);
+    if (child != null && !child.size.isEmpty) {
+      if (axis == Axis.horizontal) {
+        child.setBoxOffset(
+          offset: Offset(
+            thisSize.width - child.size.width,
+            thisSize.height.ensureValid(child.size.height) / 2 -
+                child.size.height / 2,
+          ),
+        );
+      } else {
+        child.setBoxOffset(
+          offset: Offset(
+            thisSize.width.ensureValid(child.size.width) / 2 -
+                child.size.width / 2,
+            thisSize.height - child.size.height,
+          ),
+        );
+      }
+    }
   }
 
   @override

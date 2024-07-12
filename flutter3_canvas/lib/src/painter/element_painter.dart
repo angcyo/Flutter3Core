@@ -67,12 +67,37 @@ class ElementPainter extends IPainter
   bool get isVisible => paintState.isVisible;
 
   set isVisible(bool value) {
-    paintState.isVisible = value;
-    dispatchSelfPaintPropertyChanged(
-      paintState,
-      paintState,
-      PropertyType.state,
-    );
+    final old = paintState.isVisible;
+    if (old != value) {
+      paintState.isVisible = value;
+      dispatchSelfPaintPropertyChanged(
+        paintState,
+        paintState,
+        PropertyType.state,
+      );
+      if (!value) {
+        //不可见元素操作
+        canvasDelegate?.canvasElementManager.clearSelectedElementIf(this);
+      }
+    }
+  }
+
+  bool get isLockOperate => paintState.isLockOperate;
+
+  set isLockOperate(bool value) {
+    final old = paintState.isLockOperate;
+    if (old != value) {
+      paintState.isLockOperate = value;
+      dispatchSelfPaintPropertyChanged(
+        paintState,
+        paintState,
+        PropertyType.state,
+      );
+      if (value) {
+        //锁定元素操作
+        canvasDelegate?.canvasElementManager.clearSelectedElementIf(this);
+      }
+    }
   }
 
   /// 更新元素的名称和uuid
@@ -474,9 +499,16 @@ class ElementPainter extends IPainter
   /// [PaintProperty]
   /// [PaintState]
   void dispatchSelfPaintPropertyChanged(
-      dynamic old, dynamic value, PropertyType propertyType) {
+    dynamic old,
+    dynamic value,
+    PropertyType propertyType,
+  ) {
     canvasDelegate?.dispatchCanvasElementPropertyChanged(
-        this, old, value, propertyType);
+      this,
+      old,
+      value,
+      propertyType,
+    );
   }
 
   /// 派发元素数据改变, 通常意味着这个元素要产生新的数据了

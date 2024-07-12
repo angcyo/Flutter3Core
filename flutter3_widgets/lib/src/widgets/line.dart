@@ -199,7 +199,7 @@ class LineRender extends RenderBox {
   Size? _findSiblingSize() {
     Size? result;
     if (parent != null) {
-      for (var child in parent!.childrenList) {
+      for (final child in parent!.childrenList) {
         if (child == this) {
           continue;
         }

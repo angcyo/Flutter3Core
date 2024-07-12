@@ -66,12 +66,19 @@ class MatchParentBox extends WrapContentBox {
     } else {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
       final innerConstraints = BoxConstraints(
-        minWidth: matchWidth ? constraints.maxWidth : constraints.minWidth,
-        minHeight: matchHeight ? constraints.maxHeight : constraints.minHeight,
+        minWidth: matchWidth
+            ? constraints.maxWidth.ensureValid(0)
+            : constraints.minWidth,
+        minHeight: matchHeight
+            ? constraints.maxHeight.ensureValid(0)
+            : constraints.minHeight,
         maxWidth: constraints.maxWidth,
         maxHeight: constraints.maxHeight,
       );
+      //final parentConstraints = parent?.constraints;
+      //debugger();
       child!.layout(innerConstraints, parentUsesSize: true);
+      //debugger();
       size = constraints.constrain(child!.size);
       _alignChild();
     }
