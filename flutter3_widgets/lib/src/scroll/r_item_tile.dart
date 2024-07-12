@@ -883,7 +883,10 @@ extension RItemTileExtension on Widget {
   }
 
   /// 支持排序的item
-  /// [items] 列表数据, 如果指定了则自动更新数据
+  /// [items] 列表数据, 如果指定了则自动更新数据. 且列表必须是可以改变的.
+  ///
+  /// `Unsupported operation: Cannot remove from a fixed-length list`
+  ///
   /// 使用[ReorderableDragStartListener]包裹实现按下拖拽
   /// 使用[ReorderableDelayedDragStartListener]包裹实现长按拖拽
   ///
@@ -908,6 +911,7 @@ extension RItemTileExtension on Widget {
   }) {
     ReorderCallback reorderCallback = onTileReorder;
     if (items != null) {
+      //自动排序处理
       reorderCallback = (int oldIndex, int newIndex) {
         assert(() {
           l.d("拖拽排序,oldIndex:$oldIndex newIndex:$newIndex");

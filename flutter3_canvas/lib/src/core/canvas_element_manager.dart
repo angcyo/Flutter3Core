@@ -115,7 +115,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       for (final element in afterElements) {
         paintElement(canvas, paintMeta, element);
       }
-      //---控制绘制
+      //---控制绘制, 在元素最上层绘制, 所以可以实现选中元素在顶层绘制
       canvasElementControlManager.paint(canvas, paintMeta);
     });
   }
@@ -1250,6 +1250,38 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           elements.reset(newList);
           canvasDelegate.dispatchCanvasElementListChanged(
               old, newList, elementList, UndoType.redo);
+        },
+      ));
+    }
+  }
+
+  /// 简单的更新重置所有元素, 适用于外界已经排好序之后, 触发更新
+  @api
+  @supportUndo
+  void singleUpdateElementList(
+    List<ElementPainter>? elementList, {
+    UndoType undoType = UndoType.normal,
+  }) {
+    final old = elements.clone();
+    final op = elementList ?? [];
+    elements.reset(op);
+    canvasDelegate.dispatchCanvasElementListChanged(
+        old, elements, op, undoType);
+    //undo
+    if (undoType == UndoType.normal) {
+      final newList = elements.clone();
+      canvasDelegate.canvasUndoManager.add(UndoActionItem(
+        () {
+          //debugger();
+          elements.reset(old);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              newList, old, op, UndoType.undo);
+        },
+        () {
+          //debugger();
+          elements.reset(newList);
+          canvasDelegate.dispatchCanvasElementListChanged(
+              old, newList, op, UndoType.redo);
         },
       ));
     }

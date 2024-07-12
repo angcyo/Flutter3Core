@@ -695,6 +695,7 @@ class ElementSelectComponent extends ElementGroupPainter
   ElementSelectComponent(this.canvasElementControlManager) {
     attachToCanvasDelegate(
         canvasElementControlManager.canvasElementManager.canvasDelegate);
+    paintChildren = false;
   }
 
   @override
@@ -831,11 +832,13 @@ class ElementSelectComponent extends ElementGroupPainter
           !it.canvasScaleComponent.isFirstEventHandled &&
           !it.canvasFlingComponent.isFirstEventHandled);
 
+  ///
   @override
   ElementStateStack createStateStack() {
     return super.createStateStack();
   }
 
+  ///
   @override
   void onRestoreStateStack(ElementStateStack stateStack) {
     super.onRestoreStateStack(stateStack);
@@ -850,6 +853,7 @@ class ElementSelectComponent extends ElementGroupPainter
     super.dispatchSelfPaintPropertyChanged(old, value, propertyType);
   }
 
+  ///
   @override
   void resetChildren(List<ElementPainter>? children, bool resetGroupAngle) {
     super.resetChildren(children, resetGroupAngle);
@@ -864,6 +868,7 @@ class ElementSelectComponent extends ElementGroupPainter
     return result;
   }
 
+  ///
   @override
   void updatePaintPropertyFromChildren(bool resetGroupAngle) {
     super.updatePaintPropertyFromChildren(resetGroupAngle);

@@ -842,6 +842,14 @@ class ElementGroupPainter extends ElementPainter {
   /// 子元素列表
   List<ElementPainter>? children = [];
 
+  /// 是否绘制子元素, 在[ElementSelectComponent]组件中, 可以关闭子元素绘制.
+  /// 如果要实现选中元素在顶层绘制, 那就不能设置为false
+  bool paintChildren = true;
+
+  ElementGroupPainter() {
+    paintState.elementName = 'Group';
+  }
+
   //region ---core--
 
   /// 重置子元素
@@ -900,10 +908,12 @@ class ElementGroupPainter extends ElementPainter {
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
-    children?.forEach((element) {
-      //debugger();
-      element.painting(canvas, paintMeta);
-    });
+    if (paintChildren) {
+      children?.forEach((element) {
+        //debugger();
+        element.painting(canvas, paintMeta);
+      });
+    }
     super.painting(canvas, paintMeta);
   }
 
