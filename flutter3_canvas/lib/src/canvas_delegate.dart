@@ -255,7 +255,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     bool animate = true,
     bool awaitAnimate = false,
   }) {
-    rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
+    rect ??= canvasViewBox.sceneContentBounds ??
+        elementPainter?.paintProperty?.getBounds(canvasElementManager
             .canvasElementControlManager.enableResetElementAngle) ??
         canvasElementManager.allElementsBounds;
     if (rect == null) {
