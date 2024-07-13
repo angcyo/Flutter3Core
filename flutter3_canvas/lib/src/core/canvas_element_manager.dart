@@ -476,6 +476,18 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //region ---select---
 
+  /// 选中指定元素
+  @api
+  void selectElement(
+    ElementPainter? element, {
+    bool showRect = true,
+  }) {
+    resetSelectElement(element == null ? [] : [element]);
+    if (showRect) {
+      canvasDelegate.showRect(elementPainter: element);
+    }
+  }
+
   /// 选中所有元素
   @api
   void selectAllElement({
@@ -483,7 +495,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }) {
     resetSelectElement(elements);
     if (showRect) {
-      canvasDelegate.showRect();
+      canvasDelegate.showRect(rect: elements.allElementBounds);
     }
   }
 

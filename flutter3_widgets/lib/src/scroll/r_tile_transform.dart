@@ -183,17 +183,17 @@ mixin TileTransformMixin {
         var height = tile.headerFixedHeight ?? tile.headerMinHeight;
         return SliverAppBar(
           title: child,
-          floating: tile.floating,
-          pinned: tile.pinned,
+          floating: tile.headerFloating,
+          pinned: tile.headerPinned,
           titleSpacing: 0,
           toolbarHeight: height,
           centerTitle: false,
           automaticallyImplyLeading: false,
-          backgroundColor: tile.headerBackgroundColor,
-          foregroundColor: tile.headerForegroundColor,
+          backgroundColor: tile.headerBarBackgroundColor,
+          foregroundColor: tile.headerBarForegroundColor,
           expandedHeight: null,
           collapsedHeight: null,
-          titleTextStyle: tile.headerTitleTextStyle,
+          titleTextStyle: tile.headerBarTitleTextStyle,
           primary: false,
           snap: false,
         );
@@ -207,14 +207,14 @@ mixin TileTransformMixin {
             headerMaxHeight: tile.headerMaxHeight,
             headerMinHeight: tile.headerMinHeight,
           ),
-          pinned: tile.pinned,
-          floating: tile.floating,
+          pinned: tile.headerPinned,
+          floating: tile.headerFloating,
         );
       }
       return SliverPersistentHeader(
         delegate: tile.headerDelegate!,
-        pinned: tile.pinned,
-        floating: tile.floating,
+        pinned: tile.headerPinned,
+        floating: tile.headerFloating,
       );
     }
     return null;

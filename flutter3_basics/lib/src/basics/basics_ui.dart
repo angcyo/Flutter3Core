@@ -1736,7 +1736,7 @@ extension WidgetEx on Widget {
   Widget columnOf(
     Widget? other, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
-    MainAxisSize? mainAxisSize,
+    MainAxisSize? mainAxisSize, //MainAxisSize.min
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
     TextDirection? textDirection,
     VerticalDirection? verticalDirection,

@@ -9,7 +9,7 @@ part of '../flutter3_canvas.dart';
 /// `on List<ElementPainter>`
 extension CanvasElementIterableEx on Iterable<ElementPainter> {
   /// 获取所有元素的边界
-  Rect? get getAllElementBounds {
+  Rect? get allElementBounds {
     if (isNil(this)) {
       return Rect.zero;
     }

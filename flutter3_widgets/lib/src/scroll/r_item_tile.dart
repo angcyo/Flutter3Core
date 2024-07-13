@@ -43,17 +43,17 @@ class RItemTile extends StatefulWidget {
     this.sliverDecoration,
     this.sliverDecorationPosition = DecorationPosition.background,
     //SliverPersistentHeader / SliverAppBar
+    this.headerPinned = false,
+    this.headerFloating = false,
+    this.useSliverAppBar = false,
     this.headerChildBuilder,
     this.headerFixedHeight = kMinInteractiveDimension,
     this.headerMaxHeight = kMinInteractiveDimension,
     this.headerMinHeight = kMinInteractiveDimension,
     this.headerDelegate,
-    this.pinned = false,
-    this.floating = false,
-    this.useSliverAppBar = false,
-    this.headerBackgroundColor,
-    this.headerForegroundColor,
-    this.headerTitleTextStyle = const TextStyle(fontSize: 14),
+    this.headerBarBackgroundColor,
+    this.headerBarForegroundColor,
+    this.headerBarTitleTextStyle = const TextStyle(fontSize: 14),
     //SliverList
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
@@ -197,7 +197,7 @@ class RItemTile extends StatefulWidget {
 
   //---
 
-  /// [SliverAppBar] 也可以实现[pinned].[floating]的效果.
+  /// [SliverAppBar] 也可以实现[headerPinned].[headerFloating]的效果.
   /// 使用[SliverMainAxisGroup]包裹,就可以实现Stick效果. 悬浮头部效果.
 
   /// [SliverPersistentHeader.delegate]
@@ -206,12 +206,12 @@ class RItemTile extends StatefulWidget {
   /// 是否固定在顶部, 支持多个悬浮在顶部
   /// 开启后, 当滚动到元素时, 会固定在顶部.
   /// [SliverPersistentHeader.pinned]
-  final bool pinned;
+  final bool headerPinned;
 
   /// 是否浮动在顶部, 支持多个
   /// 开启后, 元素不可见时, 向下滚动, 会先将元素滚动出来显示
   /// [SliverPersistentHeader.floating]
-  final bool floating;
+  final bool headerFloating;
 
   /// 决定是否使用[SliverAppBar]实现悬浮效果
   /// [SliverAppBar] 有2个间隙属性[SliverAppBar.titleSpacing]
@@ -224,17 +224,18 @@ class RItemTile extends StatefulWidget {
   final bool useSliverAppBar;
 
   /// [SliverAppBar.backgroundColor]
-  final Color? headerBackgroundColor;
+  final Color? headerBarBackgroundColor;
 
   /// [SliverAppBar.foregroundColor]
-  final Color? headerForegroundColor;
+  final Color? headerBarForegroundColor;
 
   /// [SliverAppBar.titleTextStyle]
-  final TextStyle? headerTitleTextStyle;
+  final TextStyle? headerBarTitleTextStyle;
 
   /// 是否启动悬浮头, [SliverPersistentHeader]
   /// 如果需要2个头之间能挤推, 则可能需要配合[SliverMainAxisGroup]一起使用
-  bool get isHeader => pinned || floating;
+  /// [TileTransformMixin.buildHeaderTile]
+  bool get isHeader => headerPinned || headerFloating;
 
   //endregion SliverPersistentHeader / SliverAppBar
 
@@ -609,16 +610,16 @@ class RItemTile extends StatefulWidget {
         .add(DiagnosticsProperty<double>('headerMinHeight', headerMinHeight));
     properties.add(DiagnosticsProperty<SliverPersistentHeaderDelegate?>(
         'headerDelegate', headerDelegate));
-    properties.add(DiagnosticsProperty<bool>('pinned', pinned));
-    properties.add(DiagnosticsProperty<bool>('floating', floating));
+    properties.add(DiagnosticsProperty<bool>('pinned', headerPinned));
+    properties.add(DiagnosticsProperty<bool>('floating', headerFloating));
     properties
         .add(DiagnosticsProperty<bool>('useSliverAppBar', useSliverAppBar));
     properties.add(DiagnosticsProperty<Color?>(
-        'headerBackgroundColor', headerBackgroundColor));
+        'headerBackgroundColor', headerBarBackgroundColor));
     properties.add(DiagnosticsProperty<Color?>(
-        'headerForegroundColor', headerForegroundColor));
+        'headerForegroundColor', headerBarForegroundColor));
     properties.add(DiagnosticsProperty<TextStyle?>(
-        'headerTitleTextStyle', headerTitleTextStyle));
+        'headerTitleTextStyle', headerBarTitleTextStyle));
   }
 }
 
@@ -747,8 +748,8 @@ extension RItemTileExtension on Widget {
       headerMaxHeight: headerMaxHeight,
       headerMinHeight: headerMinHeight,
       headerDelegate: headerDelegate,
-      pinned: pinned,
-      floating: floating,
+      headerPinned: pinned,
+      headerFloating: floating,
       fillRemaining: fillRemaining,
       fillHasScrollBody: fillHasScrollBody,
       fillOverscroll: fillOverscroll,
@@ -773,14 +774,34 @@ extension RItemTileExtension on Widget {
   }
 
   /// 悬浮头
+  /// [TileTransformMixin.buildHeaderTile]
   RItemTile rFloated({
     bool pinned = true,
     bool floating = false,
+    bool useSliverAppBar = false,
+    SliverPersistentHeaderWidgetBuilder? headerChildBuilder,
+    double? headerFixedHeight,
+    double? headerMaxHeight,
+    double? headerMinHeight,
+    SliverPersistentHeaderDelegate? headerDelegate,
+    Color? headerBarBackgroundColor,
+    Color? headerBarForegroundColor,
+    TextStyle? headerBarTitleTextStyle = const TextStyle(fontSize: 14),
     dynamic sliverTransformType = SliverMainAxisGroup,
   }) {
     return RItemTile(
-      pinned: pinned,
-      floating: floating,
+      headerPinned: pinned,
+      headerFloating: floating,
+      headerChildBuilder: headerChildBuilder,
+      headerFixedHeight: headerFixedHeight,
+      headerMaxHeight:
+          headerMaxHeight ?? headerFixedHeight ?? kMinInteractiveDimension,
+      headerMinHeight: headerMinHeight ?? headerFixedHeight ?? 0,
+      headerDelegate: headerDelegate,
+      headerBarBackgroundColor: headerBarBackgroundColor,
+      headerBarForegroundColor: headerBarForegroundColor,
+      headerBarTitleTextStyle: headerBarTitleTextStyle,
+      useSliverAppBar: useSliverAppBar,
       sliverTransformType: sliverTransformType,
       child: this,
     );
@@ -812,11 +833,11 @@ extension RItemTileExtension on Widget {
       headerMaxHeight: headerHeight,
       headerMinHeight: headerHeight,
       groupExpanded: groupExpanded,
-      pinned: pinned,
-      floating: floating,
+      headerPinned: pinned,
+      headerFloating: floating,
       useSliverAppBar: useSliverAppBar,
-      headerBackgroundColor: headerBackgroundColor,
-      headerForegroundColor: headerForegroundColor,
+      headerBarBackgroundColor: headerBackgroundColor,
+      headerBarForegroundColor: headerForegroundColor,
       sliverPadding: sliverPadding,
       sliverDecoration: sliverDecoration ??
           (fillColor == null

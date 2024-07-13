@@ -262,9 +262,11 @@ extension RScrollViewEx on WidgetList {
   /// [RScrollView]
   Widget rScroll({
     RScrollController? controller,
+    Axis axis = Axis.vertical,
   }) {
     return RScrollView(
       controller: controller,
+      scrollDirection: axis,
       children: this,
     );
   }
