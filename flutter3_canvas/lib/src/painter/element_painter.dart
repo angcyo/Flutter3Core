@@ -173,12 +173,41 @@ class ElementPainter extends IPainter
       final sx = bounds.width / oldBounds.width;
       final sy = bounds.height / oldBounds.height;
       final scaleMatrix = Matrix4.identity()
-        ..scaleBy(sx: sx, sy: sy, anchor: oldBounds.topLeft);
+        ..scaleBy(
+          sx: sx,
+          sy: sy,
+          anchor: oldBounds.topLeft,
+        );
       final translate = Matrix4.identity()
         ..translate(bounds.left - oldBounds.left, bounds.top - oldBounds.top);
       paintProperty = property.copyWith()
         ..applyScaleWithCenter(scaleMatrix)
         ..applyTranslate(translate);
+    }
+  }
+
+  /// 更新元素的可视大小到指定的大小
+  @api
+  void updateSizeTo(@sceneCoordinate @dp Size? size) {
+    if (size == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    final property = paintProperty;
+    if (property != null) {
+      final oldBounds = property.getBounds(true);
+      final sx = size.width / oldBounds.width;
+      final sy = size.height / oldBounds.height;
+      final scaleMatrix = Matrix4.identity()
+        ..scaleBy(
+          sx: sx,
+          sy: sy,
+          anchor: oldBounds.topLeft,
+        );
+      paintProperty = property.copyWith()..applyScaleWithCenter(scaleMatrix);
     }
   }
 
