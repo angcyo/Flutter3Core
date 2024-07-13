@@ -75,7 +75,7 @@ class GlobalTheme {
   Color get whiteSubBgColor => const Color(0xffececec);
 
   /// 禁用时的背景颜色(偏白色)
-  Color get disableBgColor => const Color(0xffECECEC);
+  Color get disableBgColor => const Color(0xffE2E2E2);
 
   /// 文本禁用时的颜色(偏白色)
   Color get disableTextColor => const Color(0xffd8d8d8);

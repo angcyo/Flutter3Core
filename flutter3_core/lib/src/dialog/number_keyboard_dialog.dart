@@ -159,7 +159,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
 
     final keyboard = FlowLayout(
       selfConstraints: const LayoutBoxConstraints(
-        widthType: ConstraintsType.wrapContent,
+        widthType: ConstraintsType.matchParent,
         heightType: ConstraintsType.wrapContent,
       ),
       childConstraints: BoxConstraints(minHeight: height),
@@ -292,9 +292,10 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       keyboard.container(color: globalTheme.whiteSubBgColor),
     ]
         .column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.end,
-    )!
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+        )!
+        .adaptiveTablet(context)
         .willPop(() async {
       return widget.canPop;
     });
