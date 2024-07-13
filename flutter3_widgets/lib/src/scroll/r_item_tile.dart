@@ -773,7 +773,7 @@ extension RItemTileExtension on Widget {
     );
   }
 
-  /// 悬浮头
+  /// 悬浮头, 使用此特性时, 建议指定child的大小, 并且设置成和[headerFixedHeight]一致
   /// [TileTransformMixin.buildHeaderTile]
   RItemTile rFloated({
     bool pinned = true,
