@@ -105,6 +105,12 @@ mixin IHandleEventMixin {
     return false;
   }
 
+  /// 当执行了回调[onPointerEvent]后, [ignoreEventHandle]被设为[true]时回调
+  /// [ignoreEventHandle]
+  @property
+  void onIgnorePointerEvent(
+      PointerDispatchMixin dispatch, PointerEvent event) {}
+
   //---
 
   /// 只回调第一个点的事件
@@ -136,6 +142,12 @@ mixin IHandleEventMixin {
 }
 
 /// 指针事件派发
+///
+/// [handleDispatchEvent]->将事件派发给[IHandleEventMixin]
+///                      1:[IHandleEventMixin.dispatchPointerEvent]
+///                      2:[IHandleEventMixin.interceptPointerEvent]
+///                      3:[IHandleEventMixin.onPointerEvent]
+///
 mixin PointerDispatchMixin {
   /// 事件处理客户端列表
   Set<IHandleEventMixin> handleEventClientList = {};
@@ -172,7 +184,7 @@ mixin PointerDispatchMixin {
         .clone();
 
     //1:dispatchPointerEvent
-    for (var element in clientList) {
+    for (final element in clientList) {
       element.dispatchPointerEvent(this, event);
     }
 
@@ -187,7 +199,7 @@ mixin PointerDispatchMixin {
         handled = interceptHandleTarget!.onPointerEvent(this, event);
       }
     } else {
-      for (var element in clientList) {
+      for (final element in clientList) {
         if (element.interceptPointerEvent(this, event)) {
           //debugger();
           interceptHandleTarget = element;
@@ -208,9 +220,13 @@ mixin PointerDispatchMixin {
       }
       if (interceptHandleTarget == null || !handled) {
         //3:onPointerEvent
-        for (var element in clientList) {
+        for (final element in clientList) {
           if (!element.ignoreEventHandle) {
             handled = element.onPointerEvent(this, event);
+            if (element.ignoreEventHandle) {
+              //此时忽略了, 则其他接收器发送取消事件
+              element.onIgnorePointerEvent(this, event);
+            }
           }
           if (handled) break;
         }
@@ -494,16 +510,20 @@ mixin MultiPointerDetectorMixin {
 
   @entryPoint
   void addMultiPointerDetectorPointerEvent(PointerEvent event) {
+    if (!event.isTouchEvent) {
+      return;
+    }
     //1---
+    var pointer = event.pointer;
     if (event.isPointerDown) {
       //手势按下
-      pointerDownMap[event.pointer] = event;
-      pointerMoveMap[event.pointer] = event;
-      pointerMoveLastMap[event.pointer] = event;
+      pointerDownMap[pointer] = event;
+      pointerMoveMap[pointer] = event;
+      pointerMoveLastMap[pointer] = event;
       startCheckMultiLongPress();
     } else if (event.isPointerMove) {
       //手势移动
-      pointerMoveMap[event.pointer] = event;
+      pointerMoveMap[pointer] = event;
       if (isEnableMultiLongPress) {
         if (isHaveMoveDeltaExceedX(isSameDirection: false) ||
             isHaveMoveDeltaExceedY(isSameDirection: false)) {
@@ -522,12 +542,10 @@ mixin MultiPointerDetectorMixin {
 
       resetPointerMap(pointerDownMap, pointerMoveMap);
     }
-    pointerMoveLastMap[event.pointer] = event;
+    pointerMoveLastMap[pointer] = event;
     //3---
     if (event.isPointerFinish) {
-      pointerDownMap.remove(event.pointer);
-      pointerMoveMap.remove(event.pointer);
-      pointerMoveLastMap.remove(event.pointer);
+      removePointer(event);
     }
     if (isHandledMultiPointerDetectorEvent && pointerDownMap.isEmpty) {
       isHandledMultiPointerDetectorEvent = false;
@@ -708,6 +726,23 @@ mixin MultiPointerDetectorMixin {
       }
     }
     return false;
+  }
+
+  //--
+
+  /// 移除指针缓存
+  void removePointer(PointerEvent event) {
+    final pointer = event.pointer;
+    pointerDownMap.remove(pointer);
+    pointerMoveMap.remove(pointer);
+    pointerMoveLastMap.remove(pointer);
+  }
+
+  /// 移除所有指针缓存
+  void removeAllPointer() {
+    pointerDownMap.clear();
+    pointerMoveMap.clear();
+    pointerMoveLastMap.clear();
   }
 
   // ---多指长按检测---

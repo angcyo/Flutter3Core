@@ -773,9 +773,17 @@ class ElementSelectComponent extends ElementGroupPainter
                   _downScenePoint.dx, _downScenePoint.dy),
               false);
         } else if (event.isPointerMove) {
-          final scenePoint = viewBox.toScenePoint(event.localPosition);
-          updateSelectBounds(
-              Rect.fromPoints(_downScenePoint, scenePoint), false);
+          //debugger();
+          //l.d('pointerMove pointerCount:$pointerCount');
+          if (pointerCount == 1) {
+            final scenePoint = viewBox.toScenePoint(event.localPosition);
+            updateSelectBounds(
+                Rect.fromPoints(_downScenePoint, scenePoint), false);
+          } else {
+            //多指时移动, 取消选域
+            ignoreEventHandle = true;
+            updateSelectBounds(null, false);
+          }
           //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
           //选择结束
@@ -823,6 +831,11 @@ class ElementSelectComponent extends ElementGroupPainter
       }
     }
     return super.onPointerEvent(dispatch, event);
+  }
+
+  @override
+  void onIgnorePointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    removeAllPointer();
   }
 
   /// 没有进行画布的操作
