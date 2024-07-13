@@ -1379,10 +1379,10 @@ enum CanvasAlignType {
   /// 居中对齐
   center,
 
-  ///在水平方向上对齐
+  ///在水平方向上居中对齐
   horizontalCenter,
 
-  ///在垂直方向上对齐
+  ///在垂直方向上居中对齐
   verticalCenter,
 }
 

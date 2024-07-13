@@ -689,6 +689,7 @@ class FlowLayoutRender extends RenderBox
           Paint()..color = Colors.purpleAccent);
       return true;
     }());*/
+    //debugDrawBoxBounds(context, offset);
     defaultPaint(context, offset);
   }
 }
@@ -700,6 +701,8 @@ extension FlowLayoutListEx on WidgetNullList {
   /// [FlowLayoutEx.flowLayoutData]
   Widget? flowLayout({
     LayoutBoxConstraints? selfConstraints,
+    ConstraintsType? selfWidthType,
+    ConstraintsType? selfHeightType,
     EdgeInsets? padding,
     double childGap = 0,
     double? childHorizontalGap,
@@ -708,13 +711,21 @@ extension FlowLayoutListEx on WidgetNullList {
     String? equalWidthRange,
     int? lineMaxChildCount,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.center,
-    MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.start,
+    MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.center,
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
     bool? matchLineHeight,
   }) {
     WidgetList list = filterNull();
     if (isNil(list)) {
       return null;
+    }
+    if (selfConstraints == null) {
+      if (selfWidthType != null || selfHeightType != null) {
+        selfConstraints = LayoutBoxConstraints(
+          widthType: selfWidthType,
+          heightType: selfHeightType,
+        );
+      }
     }
     return FlowLayout(
       padding: padding,
