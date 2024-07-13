@@ -754,8 +754,32 @@ extension WidgetEx on Widget {
         : this;
   }
 
+  /// 状态栏亮色模式
+  /// 背景白色, 状态栏图标为黑色
+  Widget lightStatusBar() => systemUiOverlay(
+        style: const SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+      );
+
+  /// 状态栏暗色模式
+  /// 背景黑色, 状态栏图标为白色
+  Widget darkStatusBar() => systemUiOverlay(
+        style: const SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
+      );
+
   /// 系统ui覆盖
   /// 状态栏/导航栏样式覆盖, 支持自动恢复
+  /// [SystemUiOverlayStyle.dark]
+  /// [SystemUiOverlayStyle.light]
+  ///
+  /// ```
+  /// .systemUiOverlay(statusBarColor: Colors.redAccent) //设置状态栏的颜色
+  /// ```
   Widget systemUiOverlay({
     BuildContext? context,
     SystemUiOverlayStyle? style,
