@@ -2350,6 +2350,9 @@ enum TranslationType {
   /// 无动画
   none,
 
+  /// 默认动画
+  def,
+
   /// [MaterialPageRoute]
   material,
 
