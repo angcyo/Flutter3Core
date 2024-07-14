@@ -36,7 +36,8 @@ Map<String, dynamic> _$AppSettingBeanToJson(AppSettingBean instance) {
     }
   }
 
-  writeNotNull('platformMap', instance.platformMap);
+  writeNotNull('platformMap',
+      instance.platformMap?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('packageName', instance.packageName);
   writeNotNull('appFlavor', instance.appFlavor);
   writeNotNull('appState', instance.appState);

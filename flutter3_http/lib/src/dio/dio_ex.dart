@@ -188,7 +188,8 @@ extension DioStringEx on String {
       //文件已经存在
       final length = saveFilePath!.length;
       onReceiveProgress?.call(length, length);
-      return Response(requestOptions: RequestOptions(path: this), data: saveFilePath);
+      return Response(
+          requestOptions: RequestOptions(path: this), data: saveFilePath);
     }
     final response = dio.download(
       this,
@@ -196,6 +197,7 @@ extension DioStringEx on String {
       onReceiveProgress: (count, total) {
         assert(() {
           if (total > 0) {
+            // 日志限流
             l.d("下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveFilePath]");
           } else {
             l.d("下载进度:$count ${count.toSizeStr()} \n[$this]->[$saveFilePath]");

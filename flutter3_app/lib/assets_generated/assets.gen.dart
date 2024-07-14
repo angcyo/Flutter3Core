@@ -7,27 +7,18 @@
 // ignore_for_file: type=lint
 // ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
 
-class $AssetsConfigGen {
-  const $AssetsConfigGen();
-
-  /// File path: assets/config/app_setting.json
-  String get appSetting => 'assets/config/app_setting.json';
-
-  /// File path: assets/config/app_setting.tl.json
-  String get appSettingTl => 'assets/config/app_setting.tl.json';
-
-  /// List of all assets
-  List<String> get values => [appSetting, appSettingTl];
-}
-
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
   /// File path: assets/svg/app_update_header.svg
-  String get appUpdateHeader => 'assets/svg/app_update_header.svg';
+  String get appUpdateHeader =>
+      'packages/flutter3_app/assets/svg/app_update_header.svg';
 
   /// File path: assets/svg/flutter_dash.svg
-  String get flutterDash => 'assets/svg/flutter_dash.svg';
+  String get flutterDash => 'packages/flutter3_app/assets/svg/flutter_dash.svg';
+
+  /// Directory path: assets/svg
+  String get path => 'assets/svg';
 
   /// List of all assets
   List<String> get values => [appUpdateHeader, flutterDash];
@@ -36,6 +27,7 @@ class $AssetsSvgGen {
 class Assets {
   Assets._();
 
-  static const $AssetsConfigGen config = $AssetsConfigGen();
+  static const String package = 'flutter3_app';
+
   static const $AssetsSvgGen svg = $AssetsSvgGen();
 }

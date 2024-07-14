@@ -427,7 +427,7 @@ int rgbToGray(int r, int g, int b) {
 
 /// 平台的名称, 例如: Android, iOS, Windows, Linux, MacOS, Fuchsia
 /// 统一小写
-String get platformName {
+String get $platformName {
   if (isAndroid) {
     return "Android".toLowerCase();
   } else if (isIos) {
@@ -537,10 +537,18 @@ Future<Uint8List> loadAssetBytes(
   String prefix = 'assets/',
   String? package,
 }) async {
-  return (await rootBundle.load(
-    key.ensurePackagePrefix(package, prefix),
-  ))
+  return (await rootBundle.load(key.ensurePackagePrefix(package, prefix)))
       .bytes;
+}
+
+/// 判断指定的[key]是否存在
+Future<bool> isAssetKeyExists(String? key) async {
+  try {
+    await rootBundle.load(key!);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 /// 读取资产中的文本内容

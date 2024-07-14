@@ -8,16 +8,17 @@ part 'app_setting_bean.g.dart';
 /// @date 2024/06/19
 ///
 /// 应用程序设置信息
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable(includeIfNull: false, explicitToJson: true)
 class AppSettingBean {
   static AppSettingBean? _appSettingBean;
 
   /// 从网络中获取[AppSettingBean]配置, 并且存储到本地
-  static Future fetchConfig(
+  /// [Asset]资源需要放到app包中
+  static Future fetchAppConfig(
     String url, {
     String name = "app_setting.json",
-    String package = "flutter3_app",
     String prefix = 'assets/config/',
+    String? package, //flutter3_app
   }) {
     return ConfigFile.readConfigFile(
       name,
@@ -84,6 +85,9 @@ class AppSettingBean {
 
   /// angcyo
   String? operatingSystemUserName;
+
+  @override
+  String toString() => toJson().toString();
 }
 
 /// 应用程序的风味
@@ -116,7 +120,7 @@ enum AppStateEnum {
 /// [AppSettingBean]
 AppSettingBean get $appSettingBean {
   AppSettingBean bean = AppSettingBean._appSettingBean ??= AppSettingBean();
-  bean = bean.platformMap?[platformName] ?? bean;
+  bean = bean.platformMap?[$platformName] ?? bean;
   return bean;
 }
 
@@ -136,15 +140,15 @@ bool get isDebugFlagDevice {
 /// 是否是调试风味状态
 bool get isDebugFlavor {
   final bean = $appSettingBean;
-  return bean.appFlavor != null && appFlavorEnum != AppFlavorEnum.release;
+  return bean.appFlavor != null && $appFlavorEnum != AppFlavorEnum.release;
 }
 
 /// [AppSettingBean.packageName]
-String? get appPackageName => $appSettingBean.packageName;
+String? get $appPackageName => $appSettingBean.packageName;
 
 /// [AppSettingBean.appFlavor]
 /// [AppSettingBean.appFlavorUuidList]
-AppFlavorEnum get appFlavorEnum {
+AppFlavorEnum get $appFlavorEnum {
   final bean = $appSettingBean;
   String? appFlavor =
       bean.appFlavorUuidList?.findFirst((e) => e == $coreKeys.deviceUuid) ??
@@ -156,7 +160,7 @@ AppFlavorEnum get appFlavorEnum {
 }
 
 /// [AppSettingBean.appState]
-AppStateEnum get appStateEnum {
+AppStateEnum get $appStateEnum {
   final bean = $appSettingBean;
   String? appState = bean.appState;
   if (appState == null) {

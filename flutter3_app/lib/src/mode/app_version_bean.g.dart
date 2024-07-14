@@ -49,7 +49,8 @@ Map<String, dynamic> _$AppVersionBeanToJson(AppVersionBean instance) {
     }
   }
 
-  writeNotNull('platformMap', instance.platformMap);
+  writeNotNull('platformMap',
+      instance.platformMap?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('debug', instance.debug);
   writeNotNull('versionTile', instance.versionTile);
   writeNotNull('versionName', instance.versionName);
@@ -61,9 +62,12 @@ Map<String, dynamic> _$AppVersionBeanToJson(AppVersionBean instance) {
   writeNotNull('outLink', instance.outLink);
   writeNotNull('jumpToMarket', instance.jumpToMarket);
   writeNotNull('versionDate', instance.versionDate);
-  writeNotNull('versionUuidMap', instance.versionUuidMap);
-  writeNotNull('packageNameMap', instance.packageNameMap);
-  writeNotNull('forbiddenVersionMap', instance.forbiddenVersionMap);
+  writeNotNull('versionUuidMap',
+      instance.versionUuidMap?.map((k, e) => MapEntry(k, e.toJson())));
+  writeNotNull('packageNameMap',
+      instance.packageNameMap?.map((k, e) => MapEntry(k, e.toJson())));
+  writeNotNull('forbiddenVersionMap',
+      instance.forbiddenVersionMap?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('forbiddenTile', instance.forbiddenTile);
   writeNotNull('forbiddenReason', instance.forbiddenReason);
   writeNotNull('forceForbidden', instance.forceForbidden);

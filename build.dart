@@ -6,7 +6,9 @@ import 'package:args/args.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/20
 ///
-/// 构建信息写入 `Flutter3Core/flutter3_app/assets/config/app_setting.json`
+/// 构建信息写入
+/// - `Flutter3Core/flutter3_app/assets/config/app_setting.json`
+/// - `assets/config/app_setting.json`
 void main(List<String> arguments) {
   //throw "test";
 
@@ -33,12 +35,16 @@ void main(List<String> arguments) {
         Platform.environment['USERNAME'] ??
         Platform.environment['USER'];
 
+    const templatePath = "Flutter3Core/flutter3_app/assets/template";
+    const targetPath = "assets/config";
+
     //模板文件
-    final templateFile = File(
-        "${Directory.current.path}/Flutter3Core/flutter3_app/assets/config/app_setting.tl.json");
+    final templateFile =
+        File("${Directory.current.path}/$templatePath/app_setting.tl.json");
     //目标文件
-    final targetFile = File(
-        "${Directory.current.path}/Flutter3Core/flutter3_app/assets/config/app_setting.json");
+    final targetFile =
+        File("${Directory.current.path}/$targetPath/app_setting.json");
+    targetFile.parent.createSync();
 
     //修改
     String text = templateFile.readAsStringSync();

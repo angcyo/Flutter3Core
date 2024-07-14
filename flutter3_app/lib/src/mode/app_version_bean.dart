@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter3_app/flutter3_app.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,7 +10,14 @@ part 'app_version_bean.g.dart';
 /// @date 2024/06/19
 ///
 /// 应用程序版本信息
-@JsonSerializable(includeIfNull: false)
+///
+/// 1. 先获取对应平台的版本信息[AppVersionBean.platformMap]
+/// 2. 通过包名获取对应的设备版本信息[AppVersionBean.packageNameMap]
+/// 3. 通过uuid获取对应的设备版本信息[AppVersionBean.versionUuidMap]
+///
+/// [AppUpdateDialog.checkUpdateAndShow]
+/// [AppUpdateDialog]
+@JsonSerializable(includeIfNull: false, explicitToJson: true)
 class AppVersionBean {
   static AppVersionBean? _appVersionBean;
 
@@ -32,6 +41,7 @@ class AppVersionBean {
           //debugger();
           final bean = AppVersionBean.fromJson(data.jsonDecode());
           _appVersionBean = bean;
+          //debugger();
           AppUpdateDialog.checkUpdateAndShow(
             GlobalConfig.def.globalContext,
             bean,
@@ -48,8 +58,19 @@ class AppVersionBean {
 
   AppVersionBean();
 
-  /// 每个单独设置信息
+  /// 每个平台单独设置信息, 小写字母
+  /// [$platformName]
   Map<String, AppVersionBean>? platformMap;
+
+  /// 每个包名单独的版本信息
+  /// [AppSettingBean.packageName]
+  Map<String, AppVersionBean>? packageNameMap;
+
+  /// 每个设备单独的版本信息
+  /// [CoreKeys.deviceUuid]
+  Map<String, AppVersionBean>? versionUuidMap;
+
+  //--
 
   /// 是否仅用于调试?
   bool? debug;
@@ -86,14 +107,6 @@ class AppVersionBean {
 
   /// 版本时间
   String? versionDate;
-
-  /// 每个设备单独的版本信息
-  /// [CoreKeys.deviceUuid]
-  Map<String, AppVersionBean>? versionUuidMap;
-
-  /// 每个包名单独的版本信息
-  /// [AppSettingBean.packageName]
-  Map<String, AppVersionBean>? packageNameMap;
 
   //--
 

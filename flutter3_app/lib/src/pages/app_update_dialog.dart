@@ -36,23 +36,24 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
       return;
     }
 
-    //平台检查
-    final AppVersionBean platformBean = bean.platformMap?[platformName] ?? bean;
-    final AppVersionBean versionBean;
-    final packageName = appPackageName;
+    //1: 平台检查, 获取对应平台的版本信息
+    final AppVersionBean platformBean =
+        bean.platformMap?[$platformName] ?? bean;
 
-    //区分package
-    if (packageName == null) {
-      versionBean =
-          platformBean.versionUuidMap?[$coreKeys.deviceUuid] ?? platformBean;
-    } else {
-      final packageBean = platformBean.packageNameMap?[packageName];
-      versionBean =
-          packageBean?.versionUuidMap?[$coreKeys.deviceUuid] ?? platformBean;
-    }
+    //2: 区分package, 获取对应报名的版本信息
+    final AppVersionBean packageBean =
+        platformBean.packageNameMap?[$appPackageName] ?? platformBean;
+
+    //3: 获取指定设备的版本信息
+    final AppVersionBean deviceBean =
+        packageBean.versionUuidMap?[$coreKeys.deviceUuid] ?? packageBean;
+
+    //end
+    final AppVersionBean versionBean = deviceBean;
 
     //check
     final localVersionCode = (await appVersionCode).toIntOrNull() ?? 0;
+    //debugger();
     if (versionBean.debug != true ||
         (versionBean.debug == true && isDebugFlag)) {
       //forbidden检查
@@ -198,9 +199,9 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
 
     //头部
     Widget header = [
-      loadAppSvgWidget(
-        Assets.svg.appUpdateHeader,
-        fit: BoxFit.fill,
+      AppPackageAssetsSvgWidget(
+        resKey: Assets.svg.appUpdateHeader,
+        libPackage: Assets.package,
       ).position(left: 0, right: 0),
       widget.versionBean.versionTile
           ?.text(

@@ -144,22 +144,28 @@ class DebugPage extends StatefulWidget {
   }
 
   /// 显示在调试页面的底部的widget列表
-  static final WidgetNullList debugLastWidgetList = [];
+  /// [_initDebugLastInfo]
+  static final List<WidgetBuilder> debugLastWidgetBuilderList = [];
 
   /// 底部点击要复制的文本信息
-  static String? debugLastCopyString;
+  /// [_initDebugLastInfo]
+  static List<String Function(BuildContext context)>
+      debugLastCopyStringBuilderList = [];
 
   /// [debugLastCopyString]
-  static String get lastDebugCopyString => stringBuilder((builder) {
-        if (DebugPage.debugLastCopyString != null) {
-          builder.append(DebugPage.debugLastCopyString!);
-        }
-        builder.newLineIfNotEmpty();
-        builder.append(
-            "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()} ${dpr}");
-        builder.newLineIfNotEmpty();
-        builder.append($coreKeys.deviceUuid);
-      });
+  static String Function(BuildContext context) get lastDebugCopyStringBuilder =>
+      (context) {
+        return stringBuilder((builder) {
+          for (final b in debugLastCopyStringBuilderList) {
+            builder.append(b(context));
+          }
+          builder.newLineIfNotEmpty();
+          builder.append(
+              "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()} $dpr");
+          builder.newLineIfNotEmpty();
+          builder.append($coreKeys.deviceUuid);
+        });
+      };
 
   static Locale? _currentLocale;
 
@@ -205,15 +211,19 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
       if (defHiveList.isNotEmpty) ...buildHiveActionList(context, defHiveList),
       if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
       [
-        ...DebugPage.debugLastWidgetList,
-        "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()} ${dpr}"
+        for (final builder in DebugPage.debugLastWidgetBuilderList)
+          builder(context),
+        "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr"
             .text(style: globalTheme.textPlaceStyle),
-        $coreKeys.deviceUuid.text(style: globalTheme.textPlaceStyle),
+        $coreKeys.deviceUuid.text(
+          style: globalTheme.textPlaceStyle
+              .copyWith(color: globalTheme.accentColor),
+        ),
       ]
           .column()
           ?.matchParentWidth()
           .click(() {
-            DebugPage.lastDebugCopyString.copy();
+            DebugPage.lastDebugCopyStringBuilder(context).copy();
             toastBlur(text: "已复制");
           })
           .align(Alignment.bottomCenter)
@@ -244,7 +254,8 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
           LabelSingleInputTile(
               label: action.label,
               inputHint: action.des,
-              inputText: action.defHiveValue ?? action.hiveKey?.hiveGet<String>(),
+              inputText:
+                  action.defHiveValue ?? action.hiveKey?.hiveGet<String>(),
               onInputTextChanged: (value) {
                 action.hiveKey?.hivePut(value);
               })

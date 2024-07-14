@@ -1,6 +1,7 @@
 library flutter3_app;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -147,17 +148,24 @@ Future _initDebugLastInfo() async {
       final packageInfo = await platformPackageInfo;
       final deviceInfo = await platformDeviceInfo;
       final deviceInfoData = deviceInfo.data..remove("systemFeatures");
-      DebugPage.debugLastWidgetList.add(packageInfo.text(
-          textAlign: TextAlign.center,
-          style: GlobalConfig.def.globalTheme.textPlaceStyle));
-      DebugPage.debugLastWidgetList.add(deviceInfoData.text(
-          textAlign: TextAlign.center,
-          style: GlobalConfig.def.globalTheme.textPlaceStyle));
 
-      DebugPage.debugLastCopyString = stringBuilder((builder) {
-        builder.appendLine("$packageInfo");
-        builder.append("$deviceInfoData");
-      });
+      //widget
+      final textStyle = GlobalConfig.def.globalTheme.textPlaceStyle;
+      DebugPage.debugLastWidgetBuilderList.add((_) =>
+          packageInfo.text(textAlign: TextAlign.center, style: textStyle));
+      DebugPage.debugLastWidgetBuilderList.add((_) =>
+          deviceInfoData.text(textAlign: TextAlign.center, style: textStyle));
+      DebugPage.debugLastWidgetBuilderList.add((_) => $appSettingBean
+          .toString()
+          .text(textAlign: TextAlign.center, style: textStyle));
+
+      //string
+      DebugPage.debugLastCopyStringBuilderList
+          .add((_) => stringBuilder((builder) {
+                builder.appendLine("$packageInfo");
+                builder.append("$deviceInfoData");
+                builder.append($appSettingBean.toString());
+              }));
     }
   });
 }
