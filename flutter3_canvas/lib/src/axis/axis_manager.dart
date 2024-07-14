@@ -67,9 +67,6 @@ class AxisManager extends IPainter {
     paintManager.canvasDelegate.refresh();
   }
 
-  /// 是否绘制坐标轴上的单位
-  bool get showAxisUnitSuffix => isDebug;
-
   AxisManager(this.paintManager);
 
   /// 调用此方法,更新坐标轴数据
@@ -299,6 +296,7 @@ class AxisManager extends IPainter {
 
   /// 绘制x轴刻度
   void paintXAxis(Canvas canvas) {
+    final canvasStyle = paintManager.canvasDelegate.canvasStyle;
     final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
     for (var axisData in xData) {
       // 绘制坐标轴, 竖线
@@ -327,7 +325,9 @@ class AxisManager extends IPainter {
             text: TextSpan(
                 text: axisUnit.formatFromDp(
                   axisData.sceneValue,
-                  showSuffix: showAxisUnitSuffix,
+                  showSuffix: canvasStyle.showAxisUnitSuffix ||
+                      (canvasStyle.showOriginAxisUnitSuffix &&
+                          axisData.sceneValue == 0),
                 ),
                 style: TextStyle(
                   color: paintManager.canvasDelegate.canvasStyle.axisLabelColor,
@@ -343,6 +343,7 @@ class AxisManager extends IPainter {
   }
 
   void paintYAxis(Canvas canvas) {
+    final canvasStyle = paintManager.canvasDelegate.canvasStyle;
     final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
     for (var axisData in yData) {
       // 绘制坐标轴, 横线
@@ -373,7 +374,9 @@ class AxisManager extends IPainter {
               text: TextSpan(
                   text: axisUnit.formatFromDp(
                     axisData.sceneValue,
-                    showSuffix: showAxisUnitSuffix,
+                    showSuffix: canvasStyle.showAxisUnitSuffix ||
+                        (canvasStyle.showOriginAxisUnitSuffix &&
+                            axisData.sceneValue == 0),
                   ),
                   style: TextStyle(
                     color:

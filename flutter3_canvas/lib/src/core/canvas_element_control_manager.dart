@@ -101,8 +101,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       : null;
 
   /// 是否绘制数值的单位
-  bool get showUnitSuffix =>
-      canvasDelegate.canvasPaintManager.axisManager.showAxisUnitSuffix;
+  bool get showUnitSuffix => canvasDelegate.canvasStyle.showAxisUnitSuffix;
 
   CanvasElementControlManager(this.canvasElementManager) {
     addHandleEventClient(elementSelectComponent);

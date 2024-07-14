@@ -79,5 +79,11 @@ class CanvasStyle {
   @dp
   double yAxisWidth = 20;
 
+  /// 是否绘制坐标轴上的单位
+  bool showAxisUnitSuffix = false;
+
+  /// 是否仅在绘制原点时, 绘制单位
+  bool showOriginAxisUnitSuffix = true;
+
 //endregion ---axis---
 }
