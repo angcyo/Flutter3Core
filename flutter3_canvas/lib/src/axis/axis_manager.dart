@@ -42,7 +42,7 @@ class AxisManager extends IPainter {
   double axisLabelOffset = 1;
 
   /// 坐标系的单位
-  IUnit axisUnit = IUnit.dp;
+  IUnit axisUnit = IUnit.mm;
 
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
   int drawType = sDrawAxis | sDrawGrid;
