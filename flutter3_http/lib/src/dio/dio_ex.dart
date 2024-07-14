@@ -181,6 +181,7 @@ extension DioStringEx on String {
     String lengthHeader = Headers.contentLengthHeader,
     Object? data,
     Options? options,
+    bool debugLog = false, //debug模式下, 是否打印日志
   }) async {
     final dio = RDio.get(context: context).dio;
     final saveFilePath = savePath ?? (await getSavePath);
@@ -196,11 +197,13 @@ extension DioStringEx on String {
       saveFilePath,
       onReceiveProgress: (count, total) {
         assert(() {
-          if (total > 0) {
-            // 日志限流
-            l.d("下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveFilePath]");
-          } else {
-            l.d("下载进度:$count ${count.toSizeStr()} \n[$this]->[$saveFilePath]");
+          if (debugLog) {
+            if (total > 0) {
+              // 日志限流
+              l.d("下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveFilePath]");
+            } else {
+              l.d("下载进度:$count ${count.toSizeStr()} \n[$this]->[$saveFilePath]");
+            }
           }
           return true;
         }());
