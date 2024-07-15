@@ -2263,3 +2263,15 @@ extension AxisDirectionEx on AxisDirection {
   /// 是否是垂直方向
   bool get isVertical => this == AxisDirection.up || this == AxisDirection.down;
 }
+
+extension StreamBytesEx on Stream<List<int>> {
+  /// 转换成List<int>
+  Future<List<int>> toBytes() async {
+    final bytes = <int>[];
+    await for (final data in this) {
+      bytes.addAll(data);
+    }
+    //return reduce((value, element) => [...value,...element]);
+    return bytes;
+  }
+}

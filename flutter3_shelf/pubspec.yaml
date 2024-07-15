@@ -1,0 +1,130 @@
+name: flutter3_shelf
+description: "A Shelf Flutter project."
+version: 0.0.1
+homepage: https://github.com/angcyo/Flutter3Core
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter3_basics:
+    path: ../flutter3_basics
+  flutter3_core:
+    path: ../flutter3_core
+
+  # https://pub.dev/packages/shelf
+  # https://pub.dev/packages/async
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/http_parser
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/stack_trace
+  # https://pub.dev/packages/stream_channel
+  shelf: ^1.4.2
+
+  # https://pub.dev/packages/shelf_static
+  # https://pub.dev/packages/convert
+  # https://pub.dev/packages/http_parser
+  # https://pub.dev/packages/mime
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/shelf
+  shelf_static: ^1.1.2
+  #shelf_flutter_asset: ^0.0.4
+
+  # https://pub.dev/packages/shelf_router
+  # https://pub.dev/packages/http_methods
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/shelf
+  shelf_router: ^1.1.4
+
+  # https://pub.dev/packages/shelf_multipart
+  # https://pub.dev/packages/http_parser
+  # https://pub.dev/packages/mime
+  # https://pub.dev/packages/shelf
+  # https://pub.dev/packages/string_scanner
+  shelf_multipart: ^1.0.0
+
+  # https://pub.dev/packages/shelf_web_socket
+  # https://pub.dev/packages/shelf
+  # https://pub.dev/packages/stream_channel
+  # https://pub.dev/packages/web_socket_channel
+  shelf_web_socket: ^2.0.0
+
+  # https://pub.dev/packages/stream_channel
+  # https://pub.dev/packages/async
+  stream_channel: ^2.1.2
+
+  # https://pub.dev/packages/web_socket_channel
+  # https://pub.dev/packages/async
+  # https://pub.dev/packages/crypto
+  # https://pub.dev/packages/stream_channel
+  # https://pub.dev/packages/web
+  # https://pub.dev/packages/web_socket
+  web_socket_channel: ^3.0.0
+
+  # https://pub.dev/packages/web_socket
+  # https://pub.dev/packages/web
+  web_socket: ^0.1.5
+
+  # https://pub.dev/packages/web
+  web: ^0.5.1
+
+  # https://pub.dev/packages/network_info_plus
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/ffi,
+  # https://pub.dev/packages/flutter
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/nm
+  network_info_plus: ^5.0.3
+
+dependency_overrides:
+  collection: ^1.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+  # https://pub.dev/packages/shelf_router_generator
+  shelf_router_generator: ^1.1.0
+  # https://pub.dev/packages/build_runner
+  build_runner: any
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+# To add assets to your package, add an assets section, like this:
+# assets:
+#   - images/a_dot_burr.jpeg
+#   - images/a_dot_ham.jpeg
+#
+# For details regarding assets in packages, see
+# https://flutter.dev/assets-and-images/#from-packages
+#
+# An image asset can refer to one or more resolution-specific "variants", see
+# https://flutter.dev/assets-and-images/#resolution-aware
+
+# To add custom fonts to your package, add a fonts section here,
+# in this "flutter" section. Each entry in this list should have a
+# "family" key with the font family name, and a "fonts" key with a
+# list giving the asset and other descriptors for the font. For
+# example:
+# fonts:
+#   - family: Schyler
+#     fonts:
+#       - asset: fonts/Schyler-Regular.ttf
+#       - asset: fonts/Schyler-Italic.ttf
+#         style: italic
+#   - family: Trajan Pro
+#     fonts:
+#       - asset: fonts/TrajanPro.ttf
+#       - asset: fonts/TrajanPro_Bold.ttf
+#         weight: 700
+#
+# For details regarding fonts in packages, see
+# https://flutter.dev/custom-fonts/#from-packages

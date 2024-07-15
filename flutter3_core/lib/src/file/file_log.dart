@@ -22,7 +22,7 @@ const kLogPathName = "log"; //日志文件夹
 /// [UiImage]
 /// [ByteData]/[TypedData]|[ByteData.buffer]->[ByteBuffer]|[ByteData.view]
 /// [ByteBuffer]|[ByteBuffer.asUint8List]->[Uint8List]|[ByteBuffer.asByteData]->[ByteData]
-/// [List<int>]/[Uint8List]/[TypedData]|[Uint8List.buffer]->[ByteBuffer]
+/// [Stream<List<int>>]/[List<int>]/[Uint8List]/[TypedData]|[Uint8List.buffer]->[ByteBuffer]
 /// [String]
 /// [LogEx.appendToFile]
 typedef FileDataType = Object;
@@ -96,6 +96,14 @@ extension LogEx on Object {
       }
     }
 
+    Future writeStream(Stream<List<int>>? stream) async {
+      if (stream != null) {
+        await stream.listen((event) async {
+          await fileObj.writeAsBytes(event, mode: mode);
+        }, cancelOnError: true).asFuture();
+      }
+    }
+
     Future writeByteBuffer(ByteBuffer? byteBuffer) async {
       if (byteBuffer != null) {
         final list = byteBuffer.asUint8List();
@@ -138,6 +146,9 @@ extension LogEx on Object {
       await writeByteData(this as ByteData);
     } else if (this is ByteBuffer) {
       await writeByteBuffer(this as ByteBuffer);
+    } else if (this is Stream<List<int>>) {
+      //debugger();
+      await writeStream(this as Stream<List<int>>);
     } else {
       await writeString("$this");
     }
