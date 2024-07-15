@@ -1,6 +1,6 @@
 library flutter3_shelf;
 
-import 'dart:developer';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter3_core/flutter3_core.dart';
@@ -20,6 +20,24 @@ export 'package:shelf_router/shelf_router.dart';
 /// @since 2024-7-15
 ///
 class Flutter3Shelf {
+  /// 响应html
+  static String getResponseHtml(String body) => '''
+        <!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>接收文件</title>
+  <!--移动端适配-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="centered-content">
+  <p>$body</p>
+</div>
+</body>
+</html>
+        ''';
+
   /// 端口, 如果端口被占用, 会自动++
   int port;
 
@@ -42,6 +60,8 @@ class Flutter3Shelf {
     this.port = 9200,
   });
 
+  /// [handler]需要时[shelf.Handler]类型
+  /// [shelf.Request]
   void get(String route, Function handler) => _router.get(route, handler);
 
   /// ```
@@ -66,19 +86,22 @@ class Flutter3Shelf {
 
   /// 上传文件
   /// [savePath] 文件保存的路径, 默认是缓存路径
-  /// [onSaveFile] 当有文件上传后, 保存到本地时回调
+  /// [onSaveFile] 当有文件上传后, 保存到本地时回调.返回值直接返回给客户端
   void upload({
     String route = "/upload",
     String? savePath,
-    void Function(String filePath)? onSaveFile,
+    dynamic Function(String filePath)? onSaveFile,
   }) {
     _router.post(route, (shelf.Request request) async {
       if (request.isMultipartForm) {
         // Read all form-data parameters into a single map:
         int count = 0;
+        int bytesCount = 0;
+        dynamic result;
         await for (final formData in request.multipartFormData) {
-          count++;
           final bytes = await formData.part.readBytes();
+          count++;
+          bytesCount += bytes.length;
           //formData.name
           final fileName = formData.filename ?? "unknown.file";
           //debugger();
@@ -86,9 +109,20 @@ class Flutter3Shelf {
               ? await cacheFilePath(fileName, "upload")
               : "$savePath/$fileName";
           await bytes.writeToFile(filePath: saveFilePath);
-          onSaveFile?.call(saveFilePath);
+          result = onSaveFile?.call(saveFilePath);
         }
-        return shelf.Response.ok("$count");
+        //debugger();
+        final msg = count <= 1
+            ? "文件上传成功, 总字节数:$bytesCount!"
+            : "文件上传成功($count个文件, 总字节数:$bytesCount)!";
+        if (request.mimeType == "text/html" ||
+            request.headers["accept"]?.contains("text/html") == true) {
+          return result != null
+              ? shelf.Response.ok("$result")
+              : responseOk(Flutter3Shelf.getResponseHtml(msg));
+        } else {
+          return shelf.Response.ok("${result ?? msg}");
+        }
       }
       return shelf.Response(500,
           body:
@@ -199,4 +233,38 @@ class Flutter3Shelf {
 
     return app;
   }*/
+}
+
+/// 响应成功, 文本类型
+shelf.Response responseOk(
+  Object? body, {
+  Map<String, /* String | List<String> */ Object>? headers = const {
+    HttpHeaders.contentTypeHeader: 'text/html'
+  },
+  Encoding? encoding = utf8,
+  Map<String, Object>? context,
+}) =>
+    shelf.Response.ok(
+      body,
+      headers: headers,
+      encoding: encoding,
+      context: context,
+    );
+
+/// 响应成功, 文件类型
+shelf.Response responseOkFile({
+  String? filePath,
+  Stream<List<int>>? fileStream,
+  Map<String, /* String | List<String> */ Object>? headers = const {
+    HttpHeaders.contentTypeHeader: 'application/octet-stream'
+  },
+  Encoding? encoding = utf8,
+  Map<String, Object>? context,
+}) {
+  return shelf.Response.ok(
+    fileStream ?? File(filePath!).openRead(),
+    headers: headers,
+    encoding: encoding,
+    context: context,
+  );
 }

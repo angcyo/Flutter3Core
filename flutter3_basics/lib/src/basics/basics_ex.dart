@@ -1702,6 +1702,9 @@ extension ListIntEx on List<int> {
   /// `Uint8List implements List<int>, TypedData`
   Uint8List get bytes => Uint8List.fromList(this);
 
+  /// 将字节数组转成对应的流
+  Stream<List<int>> get stream => Stream.fromIterable([this]);
+
   /// 将字节数组转成对应的整型数字
   /// [length] 需要用几个字节来转换
   /// [endian] 大小端, 默认大端: 低位在前, 高位在后. 读取的时候先读取来的在高位
