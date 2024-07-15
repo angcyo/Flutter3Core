@@ -230,12 +230,29 @@ extension CodeStringEx on String {
     }
   }
 
-  ///
+  /// 字符串转换成二维码
+  Future<UiImage?> toQrCodeImage({
+    int size = 200,
+    Barcode? barcode,
+    UiColor? bgColor,
+    UiColor? fgColor,
+  }) =>
+      toCodeImage(
+        size,
+        size,
+        Barcode.qrCode(
+          errorCorrectLevel: BarcodeQRCorrectionLevel.high,
+        ),
+        bgColor: bgColor,
+        fgColor: fgColor,
+      );
+
   //bool is2DCode
 
   /// 将条码内容转换成图片对象
   /// [bgColor] 背景颜色, 默认透明
   /// [fgColor] 前景颜色, 默认黑色
+  /// [Barcode.qrCode]
   Future<UiImage?> toCodeImage(
     int width,
     int height,

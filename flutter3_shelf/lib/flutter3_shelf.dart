@@ -1,5 +1,6 @@
 library flutter3_shelf;
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter3_core/flutter3_core.dart';
@@ -96,22 +97,66 @@ class Flutter3Shelf {
   }
 
   /// 启动服务
-  Future<HttpServer> start() async {
+  /// [retryCount] 端口被占用时, 重试次数
+  /// [checkNetwork] 是否检查网络, 默认检查, 无ip时, 报错
+  Future<HttpServer> start({
+    bool checkNetwork = true,
+    int retryCount = 5,
+  }) async {
+    //debugger();
     final handler = const shelf.Pipeline()
         .addMiddleware(shelf.logRequests())
         .addHandler(_router.call);
-    while (true) {
+    int count = 0;
+    while (count <= retryCount) {
       try {
         //debugger();
         final ip = await NetworkInfo().getWifiIP();
+        if (checkNetwork && ip == null) {
+          throw "无网络, 请检查网络连接!";
+        }
         host = ip ?? host;
-        _httpServer = await shelf_io.serve(handler, host, port);
-        address = "http://$host:$port";
+        //debugger();
+        _httpServer =
+            await shelf_io.serve(handler, host, port).get((value, error) {
+          //debugger();
+          if (error != null) {
+            throw error;
+          }
+          return value;
+        }, null, true);
+        /*_httpServer?.handleError((e) {
+          l.w('服务关闭:$e');
+        });
+        _httpServer?.listen((data) {
+          debugger();
+        }, onError: (e) {
+          debugger();
+        });*/
+        //debugger();
+        if (port == 80) {
+          address = "http://$host";
+        } else if (port == 443) {
+          address = "https://$host";
+        } else {
+          address = "http://$host:$port";
+        }
         l.d(address);
         break;
       } catch (e) {
-        port++;
+        //debugger();
+        //if (e is SocketException) debugger();
+        if (e is! String) {
+          port++;
+          count++;
+        } else {
+          rethrow;
+        }
       }
+    }
+    //debugger();
+    if (_httpServer == null) {
+      throw "启动失败, 请稍后重试!";
     }
     return _httpServer!;
   }

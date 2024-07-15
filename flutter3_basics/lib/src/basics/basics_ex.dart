@@ -377,10 +377,8 @@ extension ObjectEx on Object {
 
 extension FutureEx<T> on Future<T> {
   /// 合并[Future.then]和[Future.catchError]方法
-  Future get([
-    ValueErrorCallback? get,
-    StackTrace? stack,
-  ]) {
+  /// [throwError] [get]中遇到的错误是否重新抛出?
+  Future get([ValueErrorCallback? get, StackTrace? stack, bool? throwError]) {
     stack ??= StackTrace.current;
     return then((value) {
       try {
@@ -394,6 +392,9 @@ extension FutureEx<T> on Future<T> {
           printError(error, stack);
           return true;
         }());
+        if (throwError == true) {
+          throw error;
+        }
         get?.call(null, error); //这一层的错误可以走正常的Future异常处理
         return null;
       }
@@ -410,12 +411,15 @@ extension FutureEx<T> on Future<T> {
           return true;
         }());
       } else {
-        debugger();
+        //debugger();
         assert(() {
           l.w('Future异常:$error↓');
           printError(error, errorStack ?? stack);
           return true;
         }());
+        if (throwError == true) {
+          throw error;
+        }
         get?.call(null, error);
       }
     });
