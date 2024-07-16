@@ -39,13 +39,27 @@ void main(List<String> arguments) async {
                 ? "ios"
                 : null;
         if (buildType != null) {
+          final versionMap = await _getVersionDes(folder);
           final tokenText = await _getCOSToken(apiKey, buildType,
-              buildUpdateDescription: await _getVersionDes(folder));
+              buildUpdateDescription: versionMap?["versionDes"]);
+
           final tokenJson = jsonDecode(tokenText);
           final succeed = await _uploadAppFile(tokenJson["data"], file);
           if (succeed) {
             await _writeUploadRecord(folder, file);
-            await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
+            final url =
+                await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
+            if (url != null) {
+              await _sendFeishuWebhook(
+                yaml["feishu_webhook"],
+                versionMap?["versionName"] == null
+                    ? null
+                    : "新版本发布 V${versionMap?["versionName"]}",
+                versionMap?["versionDes"],
+                linkUrl: url,
+                changeLogUrl: yaml["change_log_url"],
+              );
+            }
           }
         } else {
           print("不支持的文件->$filePath");
@@ -105,12 +119,12 @@ Future _writeUploadRecord(String folder, File file) async {
   await uploadRecordFile.writeAsString(record);
 }
 
-/// 在指定文件夹下, 读取版本更新描述内容
-Future<String?> _getVersionDes(String folder) async {
+/// 在指定文件夹下, 读取版本更新数据
+Future<Map<String, dynamic>?> _getVersionDes(String folder) async {
   try {
     final file = File("$folder/version.json");
     final text = file.readAsStringSync();
-    return jsonDecode(text)?["versionDes"];
+    return jsonDecode(text);
   } catch (e) {
     return null;
   }
@@ -181,6 +195,7 @@ Future<bool> _uploadAppFile(dynamic tokenData, File file) async {
 
 /// 检查应用是否发布
 /// 如果返回 code = 1246 ，可间隔 3s ~ 5s 重新调用 URL 进行检测，直到返回成功或失败。
+/// @return url下载页
 Future _checkAppIsPublish(String apiKey, String buildKey) async {
   const api = "$apiBase/buildInfo";
   //get请求
@@ -193,14 +208,17 @@ Future _checkAppIsPublish(String apiKey, String buildKey) async {
     final data = jsonDecode(response.body)?["data"];
     final buildShortcutUrl = data?["buildShortcutUrl"];
     if (buildShortcutUrl != null) {
-      print("\n应用发布成功->$host/$buildShortcutUrl\n${data["buildQRCodeURL"]}");
+      final url = "$host/$buildShortcutUrl";
+      print("\n应用发布成功->$url\n${data["buildQRCodeURL"]}");
+      return url;
     } else {
       //延迟3秒, 继续查询
       print('请稍等...');
       await Future.delayed(const Duration(seconds: 3));
-      await _checkAppIsPublish(apiKey, buildKey);
+      return await _checkAppIsPublish(apiKey, buildKey);
     }
   }
+  return null;
 }
 
 extension MapEx<K, V> on Map<K, V> {
@@ -216,4 +234,51 @@ extension MapEx<K, V> on Map<K, V> {
     keys.forEach(map.remove);
     return map as Map<K, V>;
   }
+}
+
+/// 发送飞书webhook消息
+/// https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot
+Future _sendFeishuWebhook(
+  String webhook,
+  String? title,
+  String? text, {
+  String? linkUrl,
+  String? changeLogUrl,
+  bool atAll = true,
+}) async {
+  //post请求
+  final postBody = {
+    "msg_type": "post",
+    "content": {
+      "post": {
+        "zh_cn": {
+          "title": title,
+          "content": [
+            [
+              if (text != null) ...[
+                {"tag": "text", "text": text},
+                {"tag": "text", "text": "\n"},
+              ],
+              if (linkUrl != null) ...[
+                {"tag": "text", "text": "\n"},
+                {"tag": "a", "text": "点击查看", "href": linkUrl}
+              ],
+              if (changeLogUrl != null) ...[
+                {"tag": "text", "text": "\n"},
+                {"tag": "a", "text": "更新记录", "href": changeLogUrl}
+              ],
+              if (atAll) ...[
+                {"tag": "text", "text": "\n"},
+                {"tag": "at", "user_id": "all"}
+              ],
+            ]
+          ]
+        }
+      }
+    },
+  };
+  final response = await http.post(Uri.parse(webhook),
+      body: jsonEncode(postBody),
+      headers: {"Content-Type": "application/json"});
+  print(response.body);
 }
