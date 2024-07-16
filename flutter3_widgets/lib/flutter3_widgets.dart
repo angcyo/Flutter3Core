@@ -114,6 +114,7 @@ part 'src/widgets/image_render_widget.dart';
 part 'src/widgets/magnifier_layout.dart';
 part 'src/widgets/constraintlayout.dart';
 part 'src/widgets/left_center_right_layout.dart';
+part 'src/widgets/left_priority_layout.dart';
 part 'src/graffiti/graffiti.dart';
 part 'src/graffiti/graffiti_delegate.dart';
 part 'src/graffiti/graffiti_event_manager.dart';
