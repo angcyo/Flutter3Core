@@ -21,13 +21,12 @@ export 'package:shelf_router/shelf_router.dart';
 ///
 class Flutter3Shelf {
   /// 响应html
-  static String getResponseHtml(String body) => '''
-        <!DOCTYPE html>
+  static String getResponseHtml(String tile, String body) => '''
+<!DOCTYPE html>
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>接收文件</title>
-  <!--移动端适配-->
+  <title>$tile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -37,6 +36,94 @@ class Flutter3Shelf {
 </body>
 </html>
         ''';
+
+  static String getResponseSucceedHtml(String tile, String body) => '''
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>$tile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .centered-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="centered-content">
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
+     width="100" height="100">
+    <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#67EBB2"
+          opacity=".15"
+    ></path>
+    <path d="M512 814.545455a302.545455 302.545455 0 0 1-213.934545-516.48 302.545455 302.545455 0 1 1 427.86909 427.86909A300.555636 300.555636 0 0 1 512 814.545455z m-124.148364-328.052364a36.072727 36.072727 0 0 0-25.6 61.486545l92.997819 93.730909a29.917091 29.917091 0 0 0 42.46109 0l165.853091-166.74909a29.928727 29.928727 0 0 0-40.226909-44.218182l-127.418182 104.808727a29.905455 29.905455 0 0 1-38.597818-0.488727l-45.905454-39.761455a36.002909 36.002909 0 0 0-23.563637-8.808727z"
+          fill="#20D76D"></path>
+</svg>
+<p>$body</p>
+</div>
+</body>
+</html>
+  ''';
+
+  static String getReceiveSucceedHtml(String tile, String body, String again) =>
+      '''
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>$tile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .centered-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100%;
+        }
+        .btn {
+            color: #20D76D;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="centered-content">
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
+     width="100" height="100">
+    <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#67EBB2"
+          opacity=".15"
+    ></path>
+    <path d="M512 814.545455a302.545455 302.545455 0 0 1-213.934545-516.48 302.545455 302.545455 0 1 1 427.86909 427.86909A300.555636 300.555636 0 0 1 512 814.545455z m-124.148364-328.052364a36.072727 36.072727 0 0 0-25.6 61.486545l92.997819 93.730909a29.917091 29.917091 0 0 0 42.46109 0l165.853091-166.74909a29.928727 29.928727 0 0 0-40.226909-44.218182l-127.418182 104.808727a29.905455 29.905455 0 0 1-38.597818-0.488727l-45.905454-39.761455a36.002909 36.002909 0 0 0-23.563637-8.808727z"
+          fill="#20D76D"></path>
+</svg>
+<p>$body</p>
+<p class="btn">$again</p>
+</div>
+<script>
+    document.querySelector('.btn').addEventListener('click', function () {
+        window.location.href = '/';
+    });
+</script>
+</body>
+</html>
+  ''';
 
   /// 端口, 如果端口被占用, 会自动++
   int port;
@@ -113,13 +200,14 @@ class Flutter3Shelf {
         }
         //debugger();
         final msg = count <= 1
-            ? "文件上传成功, 总字节数:$bytesCount!"
-            : "文件上传成功($count个文件, 总字节数:$bytesCount)!";
+            ? "文件上传成功:${bytesCount.toSizeStr()}"
+            : "文件上传成功($count个文件, 总字节数:${bytesCount.toSizeStr()})";
         if (request.mimeType == "text/html" ||
             request.headers["accept"]?.contains("text/html") == true) {
           return result != null
               ? shelf.Response.ok("$result")
-              : responseOk(Flutter3Shelf.getResponseHtml(msg));
+              : responseOk(Flutter3Shelf.getReceiveSucceedHtml(
+                  "接收文件", isDebug ? msg : "上传成功", "重新传输"));
         } else {
           return shelf.Response.ok("${result ?? msg}");
         }
