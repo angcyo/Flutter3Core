@@ -205,7 +205,7 @@ class Flutter3Shelf {
         if (request.mimeType == "text/html" ||
             request.headers["accept"]?.contains("text/html") == true) {
           return result != null
-              ? shelf.Response.ok("$result")
+              ? responseOk(Flutter3Shelf.getResponseHtml("接收文件", "$result"))
               : responseOk(Flutter3Shelf.getReceiveSucceedHtml(
                   "接收文件", isDebug ? msg : "上传成功", "重新传输"));
         } else {
