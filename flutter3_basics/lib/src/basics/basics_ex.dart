@@ -459,6 +459,15 @@ extension FutureEx<T> on Future<T> {
     unawaited(this);
   }
 
+  /// 忽略[Future]的错误
+  Future ignoreError() async {
+    try {
+      await this;
+    } catch (e) {
+      // 忽略错误
+    }
+  }
+
   /// [initialData] 当初始化的值有值时, 不会则直接触发[builder]
   /// [FutureBuilder]
   Widget toWidget(
@@ -2257,6 +2266,26 @@ extension MapEx<K, V> on Map<K, V> {
       }
     });
     return result;
+  }
+
+  /// 如果value为null, 则移除这个key
+  void removeIfNull(K key) {
+    if (this[key] == null) {
+      remove(key);
+    }
+  }
+
+  /// 遍历移除所有value为null的key
+  Map<K, V> removeAllNull([bool copy = false]) {
+    final map = copy ? Map.from(this) : this;
+    final keys = <K>[];
+    map.forEach((key, value) {
+      if (value == null) {
+        keys.add(key);
+      }
+    });
+    keys.forEach(map.remove);
+    return map as Map<K, V>;
   }
 }
 

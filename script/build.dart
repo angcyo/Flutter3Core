@@ -38,12 +38,13 @@ void main(List<String> arguments) {
     const templatePath = "Flutter3Core/flutter3_app/assets/template";
     const targetPath = "assets/config";
 
+    final currentPath = Directory.current.path;
+    print('工作路径->$currentPath');
+
     //模板文件
-    final templateFile =
-        File("${Directory.current.path}/$templatePath/app_setting.tl.json");
+    final templateFile = File("$currentPath/$templatePath/app_setting.tl.json");
     //目标文件
-    final targetFile =
-        File("${Directory.current.path}/$targetPath/app_setting.json");
+    final targetFile = File("$currentPath/$targetPath/app_setting.json");
     targetFile.parent.createSync();
 
     //修改
