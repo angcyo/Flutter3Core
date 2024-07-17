@@ -155,7 +155,7 @@ abstract final class ShelfHtml {
 
     // 当连接关闭时触发
     socket.onclose = function (event) {
-        appendContent('WebSocket 连接已关闭');
+        appendContent('WebSocket 连接已关闭!');
     };
 
     // 追加内容到 content
