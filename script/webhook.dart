@@ -88,7 +88,7 @@ Future _sendFeishuPost(
               ],
               if (linkUrl != null) ...[
                 {"tag": "text", "text": "\n"},
-                {"tag": "a", "text": "点击查看", "href": linkUrl}
+                {"tag": "a", "text": "点击查看/下载", "href": linkUrl}
               ],
               if (changeLogUrl != null) ...[
                 {"tag": "text", "text": "\n"},

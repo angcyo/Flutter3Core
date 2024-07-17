@@ -50,6 +50,7 @@ void main(List<String> arguments) async {
             final url =
                 await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
             if (url != null) {
+              //飞书webhook通知
               await _sendFeishuWebhook(
                 yaml["feishu_webhook"],
                 versionMap?["versionName"] == null
@@ -84,7 +85,8 @@ Future<List<File>> _getFileList(String folder) async {
       if (file is File) {
         final fileName = p.basename(file.path);
         if (fileName.endsWith(".apk") || fileName.endsWith(".ipa")) {
-          final record = "$fileName/${file.lastModifiedSync()}";
+          final record =
+              "$fileName/${file.lastModifiedSync().millisecondsSinceEpoch}";
           if (recordText.contains(record)) {
             print("跳过上传->$fileName");
             continue;
@@ -115,8 +117,9 @@ Future _writeUploadRecord(String folder, File file) async {
     uploadRecordFile.createSync();
   }
   final fileName = p.basename(file.path);
-  final record = "$fileName/${file.lastModifiedSync()}";
-  await uploadRecordFile.writeAsString(record);
+  final record =
+      "$fileName/${file.lastModifiedSync().millisecondsSinceEpoch}\n";
+  await uploadRecordFile.writeAsString(record, mode: FileMode.append);
 }
 
 /// 在指定文件夹下, 读取版本更新数据
@@ -261,7 +264,7 @@ Future _sendFeishuWebhook(
               ],
               if (linkUrl != null) ...[
                 {"tag": "text", "text": "\n"},
-                {"tag": "a", "text": "点击查看", "href": linkUrl}
+                {"tag": "a", "text": "点击查看/下载", "href": linkUrl}
               ],
               if (changeLogUrl != null) ...[
                 {"tag": "text", "text": "\n"},
