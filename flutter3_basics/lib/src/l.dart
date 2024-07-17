@@ -63,6 +63,10 @@ class L {
   /// 日志输出函数
   LPrint? filePrint;
 
+  /// 额外的输出函数
+  /// [printLog]
+  List<LPrint> printList = [];
+
   /// 文件日志输出级别>=info
   int fileLogLevel = info;
 
@@ -227,7 +231,7 @@ class L {
     final filePathStr = lineStackTrace.substring(
         lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
 
-    var log = '$time[$filePathStr] $tagStr$levelStr->$msgType$msg';
+    final log = '$time[$filePathStr] $tagStr$levelStr->$msgType$msg';
 
     if ((isDebug && level >= verbose) || level > debug) {
       //print(StackTrace.fromString("...test"));
@@ -237,11 +241,21 @@ class L {
       //print("(package:flutter3_widgets/src/child_background_widget.dart:29:7)");
       //print("child_background_widget.dart:29:7");
       debugPrint(log);
+
+      //额外的输出
+      printLog(log);
     }
 
     //输出到文件
-    if (level >= fileLogLevel) {
-      filePrint?.call(log);
+    if (filePrint != null && level >= fileLogLevel) {
+      try {
+        filePrint?.call(log);
+      } catch (e, s) {
+        assert(() {
+          printError(e, s);
+          return true;
+        }());
+      }
     }
     return log;
   }
@@ -260,6 +274,22 @@ class L {
         return 'E';
       default:
         return 'D';
+    }
+  }
+
+  /// 输出到额外的输出函数
+  /// [printList]
+  @api
+  void printLog(String log) {
+    for (final print in printList) {
+      try {
+        print(log);
+      } catch (e, s) {
+        assert(() {
+          printError(e, s);
+          return true;
+        }());
+      }
     }
   }
 }

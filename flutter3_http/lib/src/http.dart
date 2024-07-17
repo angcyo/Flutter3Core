@@ -16,7 +16,7 @@ class Http {
 }
 
 /// api host, 不需要/结尾
-String? get host => Http.getBaseUrl?.call() ?? Http.baseUrl;
+String? get $host => Http.getBaseUrl?.call() ?? Http.baseUrl;
 
 extension HttpUriEx on Uri {
   /// 获取uri对应的查询参数
