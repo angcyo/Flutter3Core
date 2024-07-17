@@ -2982,3 +2982,28 @@ Widget rtl({double? width = 10}) => linearGradientWidget(
     );
 
 //endregion 渐变相关
+
+extension TextStyleEx on TextStyle {
+  /// 给[TextStyle]添加阴影
+  TextStyle shadow({
+    Color? color = Colors.black,
+    double blurRadius = 2,
+    Offset offset = const Offset(2.0, 2.0),
+    List<Shadow>? shadows,
+  }) {
+    if (color == null && isNil(shadows)) {
+      return this;
+    }
+    return copyWith(
+      shadows: [
+        if (color != null)
+          BoxShadow(
+            color: color,
+            blurRadius: blurRadius,
+            offset: offset,
+          ),
+        ...?shadows,
+      ],
+    );
+  }
+}
