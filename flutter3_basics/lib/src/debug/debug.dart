@@ -167,6 +167,17 @@ void logAnimation(
   l.v("[$prefix]secondary:${secondaryAnimation.status}->${secondaryAnimation.value}");
 }
 
+/// 调试图片
+void debugImage(UiImage? image, [String? debugLabel]) {
+  assert(() {
+    () async {
+      final base64 = await image?.toBase64();
+      debugger();
+    }();
+    return true;
+  }());
+}
+
 mixin DiagnosticsMixin on DiagnosticableTreeMixin {
   /// [DiagnosticsNode]
   /// [DiagnosticableTreeNode]
