@@ -366,6 +366,9 @@ https://github.com/fluttercommunity/plus_plugins
 - [shimmer: ^3.0.0](https://pub.dev/packages/shimmer) 一个 Flutter 包，用于创建闪烁效果。
 - [flutter_rating_bar: ^4.0.1](https://pub.dev/packages/flutter_rating_bar)一个简单但完全可定制的颤振评级栏，其中还包括评级栏指示器，支持任何评级分数。
 - [flutter_inappwebview: ^6.0.0](https://pub.dev/packages/flutter_inappwebview)一个 Flutter 插件，允许您添加内联 Web 视图、使用无头 Web 视图以及打开应用内浏览器窗口。
+- [stack_trace: ^1.11.1](https://pub.dev/packages/stack_trace) 该库提供了解析、检查和操作底层 Dart 实现生成的堆栈跟踪的能力。它还提供了以比本机 StackTrace 实现更可读的格式生成堆栈跟踪的字符串表示形式的函数。
+- [grpc: ^4.0.0](https://pub.dev/packages/grpc) gRPC 的 Dart 实现：一个高性能、开源、通用的 RPC 框架，将移动和 HTTP/2 放在首位。
+- [json_rpc_2: ^3.0.2](https://pub.dev/packages/json_rpc_2) 实现 JSON-RPC 2.0 规范的库。
 
 ## 平台特有
 
