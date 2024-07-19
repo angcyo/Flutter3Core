@@ -369,6 +369,8 @@ https://github.com/fluttercommunity/plus_plugins
 - [stack_trace: ^1.11.1](https://pub.dev/packages/stack_trace) 该库提供了解析、检查和操作底层 Dart 实现生成的堆栈跟踪的能力。它还提供了以比本机 StackTrace 实现更可读的格式生成堆栈跟踪的字符串表示形式的函数。
 - [grpc: ^4.0.0](https://pub.dev/packages/grpc) gRPC 的 Dart 实现：一个高性能、开源、通用的 RPC 框架，将移动和 HTTP/2 放在首位。
 - [json_rpc_2: ^3.0.2](https://pub.dev/packages/json_rpc_2) 实现 JSON-RPC 2.0 规范的库。
+- [udp: ^5.0.3](https://pub.dev/packages/udp) Dart 的轻量级 UDP 库。
+- [cronet_http: ^1.3.2](https://pub.dev/packages/cronet_http) 一个 Android Flutter 插件，提供对 Cronet HTTP 客户端的访问。
 
 ## 平台特有
 
