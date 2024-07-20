@@ -20,10 +20,11 @@ void main(List<String> arguments) async {
   //---
   //_sendFeishuText(webhook, "text");
 
-  await _sendLP5xVersion();
+  await _sendLP5xVersion(
+      versionDes: "更新内容: \n新流程的`异常状态`提示\n资源`自动连接蓝牙`->`自动连接设备`");
 }
 
-Future _sendLP5xVersion() async {
+Future _sendLP5xVersion({String? versionDes}) async {
   final currentPath = Directory.current.path;
   final yamlFile = File("$currentPath/script.yaml");
   final yaml = loadYaml(yamlFile.readAsStringSync());
@@ -34,7 +35,7 @@ Future _sendLP5xVersion() async {
     versionMap?["versionName"] == null
         ? null
         : "新版本发布 V${versionMap?["versionName"]}",
-    versionMap?["versionDes"],
+    versionDes ?? versionMap?["versionDes"],
     linkUrl: "https://www.pgyer.com/PNbc",
     changeLogUrl:
         "https://gitee.com/angcyo/file/raw/master/LaserPeckerPro/change.json",
