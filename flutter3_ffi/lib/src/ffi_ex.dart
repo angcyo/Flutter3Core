@@ -7,15 +7,34 @@ part of '../flutter3_ffi.dart';
 ///
 /// ffi扩展
 extension FfiListIntEx on List<int> {
+  /// 转成[Vec_uint8_t]
+  ffi.Pointer<Vec_uint8_t> toVecUint8() {
+    final bytes = this;
+    //创建一个指针, 用来ffi传递
+    final ffi.Pointer<ffi.Uint8> bytesPtr =
+        calloc.allocate<ffi.Uint8>(bytes.length);
+    final Uint8List nativeBytes = bytesPtr.asTypedList(bytes.length);
+    nativeBytes.setAll(0, bytes);
+
+    //ffi传递的结构体
+    final ptr = calloc<Vec_uint8_t>();
+    ptr.ref.ptr = bytesPtr;
+    ptr.ref.len = bytes.length;
+    ptr.ref.cap = bytes.length;
+    return ptr;
+  }
+
   /// 转成[Vec_uint8_t], 并自动释放内存
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {
-    final watch = Stopwatch()
-      ..start();
+    Stopwatch? watch;
+    if (kDebugMode) {
+      watch = Stopwatch()..start();
+    }
     final bytes = this;
     //创建一个指针, 用来ffi传递
     //分配内存: 55ms
     final ffi.Pointer<ffi.Uint8> bytesPtr =
-    calloc.allocate<ffi.Uint8>(bytes.length);
+        calloc.allocate<ffi.Uint8>(bytes.length);
     final Uint8List nativeBytes = bytesPtr.asTypedList(bytes.length);
     nativeBytes.setAll(0, bytes);
 
@@ -26,17 +45,19 @@ extension FfiListIntEx on List<int> {
     ptr.ref.cap = bytes.length;
 
     try {
-      watch.stop();
+      watch?.stop();
       if (kDebugMode) {
-        debugPrint('分配内存: ${watch.elapsedMilliseconds}ms');
+        debugPrint('分配内存: ${watch?.elapsedMilliseconds}ms');
       }
-      final watch2 = Stopwatch()
-        ..start();
+      Stopwatch? watch2;
+      if (kDebugMode) {
+        watch2 = Stopwatch()..start();
+      }
       //执行耗时: 4688ms
       final result = action(ptr);
-      watch2.stop();
+      watch2?.stop();
       if (kDebugMode) {
-        debugPrint('执行耗时: ${watch2.elapsedMilliseconds}ms');
+        debugPrint('执行耗时: ${watch2?.elapsedMilliseconds}ms');
       }
       return result;
     } catch (e) {
@@ -91,4 +112,42 @@ extension FfiPixelsImageEx on PixelsImage {
   /// 转成图片
   Future<ui.Image> toImage([ui.PixelFormat format = ui.PixelFormat.rgba8888]) =>
       pixels.toImageFromPixels(w, h, format);
+}
+
+/// 批量创建[Vec_uint8_t]指针
+R? ffiPtrList<R>(
+  R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
+  List<dynamic> args,
+) {
+  final ptrList = <ffi.Pointer<Vec_uint8_t>>[];
+  for (var i = 0; i < args.length; i++) {
+    final arg = args[i];
+    if (arg is String) {
+      ptrList.add(utf8.encode(arg).toVecUint8());
+    } else if (arg is List<int>) {
+      ptrList.add(arg.toVecUint8());
+    } else if (arg is ffi.Pointer<Vec_uint8_t>) {
+      ptrList.add(arg);
+    }
+  }
+  try {
+    return action(ptrList);
+  } catch (e, s) {
+    assert(() {
+      FlutterError.dumpErrorToConsole(
+        FlutterErrorDetails(
+          exception: e,
+          stack: StackTrace.current,
+        ),
+        forceReport: true,
+      );
+      return true;
+    }());
+  } finally {
+    for (final element in ptrList) {
+      calloc.free(element.ref.ptr);
+      calloc.free(element);
+    }
+  }
+  return null;
 }
