@@ -422,7 +422,8 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 /// 根据rgb的值, 计算出灰度值
 int rgbToGray(int r, int g, int b) {
   //(r + g + b) ~/ 3
-  return (r * 0.299 + g * 0.587 + b * 0.114).toInt().clamp(0, 255);
+  //return (r * 0.299 + g * 0.587 + b * 0.114).toInt().clamp(0, 255);
+  return (r * 0.34 + g * 0.5 + b * 0.16).toInt().clamp(0, 255);
 }
 
 /// 平台的名称, 例如: Android, iOS, Windows, Linux, MacOS, Fuchsia
