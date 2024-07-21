@@ -229,7 +229,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
         if (isSupportDecimal)
           _createNumberButton(".", NumberKeyboardType.decimal),
         if (isSupportNegative)
-          _createNumberButton("±", NumberKeyboardType.backspace),
+          _createNumberButton("±", NumberKeyboardType.positiveNegative),
         if (isShowPackUp)
           StateDecorationWidget(
             decoration: decoration,
@@ -365,7 +365,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       if (_numberText.isNotEmpty) {
         _numberText = _numberText.substring(0, _numberText.length - 1);
       }
-    } else if (type == NumberKeyboardType.backspace) {
+    } else if (type == NumberKeyboardType.positiveNegative) {
       if (_numberText.startsWith("-")) {
         _numberText = _numberText.substring(1);
       } else {
