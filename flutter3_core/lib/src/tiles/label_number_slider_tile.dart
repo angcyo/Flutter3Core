@@ -4,8 +4,9 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024-5-25
 ///
-/// 上label     number(支持键盘输入)
-/// 下slider
+/// 上[label]     右[value].[number](支持键盘输入)
+/// 下[Slider]
+///
 /// [SliderTile]
 /// [LabelNumberTile]
 class LabelNumberSliderTile extends StatefulWidget {

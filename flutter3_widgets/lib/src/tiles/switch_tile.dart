@@ -5,6 +5,9 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/05/13
 ///
 /// 开关tile
+/// [label].[actions]     ...[Switch]
+/// [des]                 ...
+///
 /// [CheckboxTile]
 /// [LabelSwitchTile]
 class LabelSwitchTile extends StatefulWidget {
@@ -33,6 +36,11 @@ class LabelSwitchTile extends StatefulWidget {
   /// 返回false, 则不进行改变
   final FutureValueCallback<bool>? onValueConfirmChange;
 
+  /// [Switch]的高度
+  final double switchHeight;
+
+  //
+
   /// tile的填充
   final EdgeInsets? tilePadding;
 
@@ -48,6 +56,7 @@ class LabelSwitchTile extends StatefulWidget {
     this.value = false,
     this.onValueChanged,
     this.onValueConfirmChange,
+    this.switchHeight = kMinHeight,
     this.tilePadding = kTilePadding,
   });
 
@@ -92,6 +101,7 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
       buildSwitchWidget(
         context,
         currentValueMixin,
+        height: widget.switchHeight,
         onChanged: (value) {
           _changeValue(value);
         },
