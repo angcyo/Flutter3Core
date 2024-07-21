@@ -264,7 +264,7 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
             label: action.label,
             des: action.des,
             value: action.defHiveValue ?? action.hiveKey?.hiveGet<int>(0) ?? 0,
-            onChanged: (value) {
+            onValueChanged: (value) {
               action.hiveKey?.hivePut(value);
             },
           )
@@ -275,7 +275,7 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
             value: action.defHiveValue ??
                 action.hiveKey?.hiveGet<double>(0.0) ??
                 0.0,
-            onChanged: (value) {
+            onValueChanged: (value) {
               action.hiveKey?.hivePut(value);
             },
           )
@@ -357,7 +357,7 @@ class _DebugHivePageState extends State<DebugHivePage> with AbsScrollPage {
         list.add(LabelNumberTile(
           label: key,
           value: value,
-          onChanged: (value) {
+          onValueChanged: (value) {
             key.hivePut(value);
           },
         ));
@@ -365,7 +365,7 @@ class _DebugHivePageState extends State<DebugHivePage> with AbsScrollPage {
         list.add(LabelNumberTile(
           label: key,
           value: value,
-          onChanged: (value) {
+          onValueChanged: (value) {
             key.hivePut(value);
           },
         ));

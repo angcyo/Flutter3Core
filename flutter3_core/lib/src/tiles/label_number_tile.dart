@@ -34,7 +34,7 @@ class LabelNumberTile extends StatefulWidget {
   final NumType? _numType;
 
   /// 并不需要在此方法中更新界面
-  final ValueChanged<num>? onChanged;
+  final ValueChanged<num>? onValueChanged;
 
   /// 在改变时, 需要进行的确认回调
   /// 返回false, 则不进行改变
@@ -56,7 +56,7 @@ class LabelNumberTile extends StatefulWidget {
     this.minValue,
     this.maxValue,
     this.maxDigits = 2,
-    this.onChanged,
+    this.onValueChanged,
     this.onConfirmChange,
     this.tilePadding = kTilePadding,
     NumType? numType,
@@ -143,7 +143,7 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
       }
     }
     _currentValue = toValue;
-    widget.onChanged?.call(toValue);
+    widget.onValueChanged?.call(toValue);
     updateState();
   }
 }
