@@ -77,6 +77,7 @@ extension FfiVecUint8Ex on Vec_uint8_t {
   Uint8List toBytes() {
     final result = ptr;
     final reversedBytes = result.asTypedList(len);
+    //calloc.free(result);
     return reversedBytes;
   }
 
@@ -96,6 +97,146 @@ extension FfiVecUint8Ex on Vec_uint8_t {
 
   /// 转成字符串
   String toStr() => utf8.decode(toBytes());
+}
+
+extension FfiListDoubleEx on List<double> {
+  /// 转成[Vec_double_t]
+  ffi.Pointer<Vec_double_t> toVecDouble() {
+    final bytes = this;
+    //创建一个指针, 用来ffi传递
+    final ffi.Pointer<ffi.Double> bytesPtr =
+        calloc.allocate<ffi.Double>(bytes.length);
+    final Float64List nativeBytes = bytesPtr.asTypedList(bytes.length);
+    nativeBytes.setAll(0, bytes);
+    //ffi传递的结构体
+    final ptr = calloc<Vec_double_t>();
+    ptr.ref.ptr = bytesPtr;
+    ptr.ref.len = bytes.length;
+    ptr.ref.cap = bytes.length;
+    return ptr;
+  }
+
+  /// 自动释放内存
+  R? withVecDouble<R>(R? Function(ffi.Pointer<Vec_double_t> ptr) action) {
+    final ptr = toVecDouble();
+    try {
+      return action(ptr);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    } finally {
+      calloc.free(ptr.ref.ptr);
+      calloc.free(ptr);
+    }
+  }
+}
+
+extension FfiVecDoubleEx on Vec_double_t {
+  /// 转成列表[Float64List]
+  Float64List toDoubleList() {
+    final result = ptr;
+    final reversedBytes = result.asTypedList(len);
+    //calloc.free(result);
+    return reversedBytes;
+  }
+}
+
+/// 二维数据列表扩展
+extension FfiListListDoubleEx on List<List<double>> {
+  /// 转成[Vec_Vec_double_t]
+  ffi.Pointer<Vec_Vec_double_t> toVecVecDouble() {
+    final bytes = this;
+    //创建一个指针, 用来ffi传递
+    final ffi.Pointer<Vec_double_t> bytesPtr =
+        calloc.allocate<Vec_double_t>(bytes.length);
+
+    for (var i = 0; i < bytes.length; i++) {
+      final list = bytes[i];
+      //list.toVecDouble()
+      final ref = list.toVecDouble().ref;
+      bytesPtr[i] = ref;
+      //bytesPtr.elementAt(i);
+      //bytesPtr += ref;
+    }
+
+    //ffi传递的结构体
+    final ptr = calloc<Vec_Vec_double_t>();
+    ptr.ref.ptr = bytesPtr;
+    ptr.ref.len = bytes.length;
+    ptr.ref.cap = bytes.length;
+    return ptr;
+
+    /*final bytes = this;
+
+    int refLen = 0;
+    int refMxLen = 0;
+    final refList = <Vec_double>[];
+    for (var i = 0; i < bytes.length; i++) {
+      final list = bytes[i];
+      final ref = list.toVecDouble().ref;
+      refList.add(ref);
+      refLen += ref.len;
+      refMxLen = ref.len > refMxLen ? ref.len : refMxLen;
+    }
+    refLen = refMxLen * bytes.length;
+
+    debugger();
+
+    //创建一个指针, 用来ffi传递
+    final ffi.Pointer<Vec_double_t> bytesPtr =
+        calloc.allocate<Vec_double_t>(refMxLen);
+    for (var i = 0; i < refList.length; i++) {
+      final ref = refList[i];
+      bytesPtr[i] = ref;
+    }
+
+    debugger();
+
+    //ffi传递的结构体
+    final ptr = calloc<Vec_Vec_double_t>();
+    ptr.ref.ptr = bytesPtr;
+    ptr.ref.len = refLen;
+    ptr.ref.cap = refLen;
+
+    debugger();
+    return ptr;*/
+  }
+
+  /// 自动释放内存
+  R? withVecVecDouble<R>(
+      R? Function(ffi.Pointer<Vec_Vec_double_t> ptr) action) {
+    final ptr = toVecVecDouble();
+    try {
+      return action(ptr);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    } finally {
+      //calloc.free(ptr);
+    }
+  }
+}
+
+extension FfiVecVecDoubleEx on Vec_Vec_double_t {
+  /// 类型反转
+  List<Float64List> toDoubleListList() {
+    final result = <Float64List>[];
+    for (var i = 0; i < len; i++) {
+      //debugger();
+      final sub = ptr[i];
+      result.add(sub.toDoubleList());
+
+      /*final list = sub.ptr.asTypedList(sub.len);
+      result.add(list);*/
+      //final list = ptr.ref.ptr[i];
+      //result.add(list.toDoubleList());
+    }
+    return result;
+  }
 }
 
 extension FfiStringEx on String {
