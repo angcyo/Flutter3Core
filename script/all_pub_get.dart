@@ -24,7 +24,7 @@ void main() async {
     colorLog('准备执行命令[${++index}/${flutterProjectList.length}]->${item.path}');
     await runFlutterPubGetCommand(item.path);
   }
-  colorLog('执行结束!');
+  colorLog('执行结束[${flutterProjectList.length}]!');
 }
 
 /// 查找所有Flutter项目所在的目录
