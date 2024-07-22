@@ -53,8 +53,12 @@ Future findFlutterProjectList(
 
 /// 执行命令
 Future runFlutterPubGetCommand(String dir) async {
-  final result =
-      Process.runSync("flutter", ["pub", "get"], workingDirectory: dir);
+  final result = Process.runSync(
+    "flutter",
+    ["pub", "get"],
+    runInShell: true,
+    workingDirectory: dir,
+  );
   colorLog(result.stdout, 250); //输出标准输出
 }
 

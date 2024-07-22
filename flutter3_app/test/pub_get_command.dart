@@ -58,6 +58,7 @@ Future runFlutterPubGetCommand(String dir) async {
     ['pub', 'get'],
     throwOnError: true,
     echoOutput: true,
+    runInShell: true,
     processWorkingDir: dir,
   );
   return pr.exitCode == 0;
