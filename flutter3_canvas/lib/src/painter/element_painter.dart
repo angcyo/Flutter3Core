@@ -969,7 +969,7 @@ class ElementGroupPainter extends ElementPainter {
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
-    if (paintChildren || paintMeta.host == rasterizeElementHost) {
+    if (paintChildren || paintMeta.paintChildren) {
       children?.forEach((element) {
         //debugger();
         element.painting(canvas, paintMeta);

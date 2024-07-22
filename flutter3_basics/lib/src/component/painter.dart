@@ -12,6 +12,11 @@ class PaintMeta {
   @flagProperty
   final dynamic host;
 
+  /// 默认情况下[ElementSelectComponent]并不会绘制[ElementGroupPainter.children]
+  /// 可以通过此属性, 强制绘制[ElementGroupPainter.children]
+  @flagProperty
+  final bool? groupPaintChildren;
+
   /// 坐标系原点偏移
   /// [CanvasViewBox.originMatrix]
   final Matrix4? originMatrix;
@@ -26,10 +31,16 @@ class PaintMeta {
     this.host,
     this.originMatrix,
     this.canvasMatrix,
+    this.groupPaintChildren,
   });
 
   /// 获取画布缩放的系数
   double get canvasScale => canvasMatrix?.scaleX ?? 1.0;
+
+  /// [groupPaintChildren]
+  bool get paintChildren => groupPaintChildren == null
+      ? (host == rasterizeElementHost || host == elementOutputHost)
+      : groupPaintChildren!;
 
   /// 组合[originMatrix] 和 [canvasMatrix]
   @api
