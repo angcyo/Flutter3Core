@@ -950,15 +950,24 @@ extension VectorPathEx on Path {
     double? factor = 1.toDpFromMm();
 
     final radius = diameter / 2;
-    final i = (radius / factor).toDigits(digits: digits);
-    final j = i;
+    /*final i = (radius / factor).toDigits(digits: digits);
+    final j = i;*/
 
     buffer.writeIf(header ?? "");
     eachPathMetrics(
         (posIndex, ratio, contourIndex, position, radians, isClose) {
+      final matrix = createRotateMatrix(radians, anchor: position);
+      Offset startOffset = Offset(position.dx - radius, position.dy - radius);
+      startOffset = matrix.mapPoint(startOffset);
+
       //使用圆形数据切割
-      final x = ((position.dx - radius) / factor).toDigits(digits: digits);
-      final y = ((position.dy - radius) / factor).toDigits(digits: digits);
+      final x = (startOffset.dx / factor).toDigits(digits: digits);
+      final y = (startOffset.dy / factor).toDigits(digits: digits);
+
+      final i =
+          ((position.dx - startOffset.dx) / factor).toDigits(digits: digits);
+      final j =
+          ((position.dy - startOffset.dy) / factor).toDigits(digits: digits);
 
       buffer.writelnIf(toolOff);
       buffer.writelnIf('G0X${x}Y$y');
