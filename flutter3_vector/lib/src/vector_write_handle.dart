@@ -5,6 +5,24 @@ part of '../flutter3_vector.dart';
 /// @author angcyo
 /// @date 2024/02/29
 ///
+
+/// gcode 默认头部, 手动 manual
+const kGCodeHeader = 'G21\nG90\nM8\nM5\nM3\n';
+
+/// gcode 自动激光头, 自动 auto
+const kGCodeAutoHeader = 'G21\nG90\nM8\nM5\nM4\n';
+
+/// gcode 默认尾部
+const kGCodeFooter = 'M5\nM9\nG1S0\nM2\n';
+
+/// 默认切割数据使用的宽度/直径
+@mm
+const sDefaultCutWidth = 0.3;
+
+/// 默认切割数据使用的步长
+@mm
+const sDefaultCutStep = 0.03;
+
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
 String _wrapSvgXml(@dp Rect bounds, void Function(StringBuffer) action) =>
     svgBuilderSync((builder) {
@@ -38,23 +56,6 @@ void _wrapSvgPath(
   }
   buffer?.write('/>');
 }
-
-/// gcode 默认头部, 手动 manual
-const kGCodeHeader = 'G21\nG90\nM8\nM5\nM3\n';
-
-/// gcode 自动激光头, 自动 auto
-const kGCodeAutoHeader = 'G21\nG90\nM8\nM5\nM4\n';
-
-/// gcode 默认尾部
-const kGCodeFooter = 'M5\nM9\nG1 S0\nM2\n';
-
-/// 默认切割数据使用的宽度/直径
-@mm
-const sDefaultCutWidth = 0.3;
-
-/// 默认切割数据使用的步长
-@mm
-const sDefaultCutStep = 0.03;
 
 mixin VectorWriteMixin {
   /// 当前点与上一个点之间的关系, 起点
@@ -551,6 +552,43 @@ class JsonWriteHandle with VectorWriteMixin {
 /// handle.initStringBuffer().write(M2\n');
 /// ```
 class GCodeWriteHandle with VectorWriteMixin {
+  /// GCode 功率速度字符串
+  /// [kGCodeHeader]
+  /// [kGCodeAutoHeader]
+  /// [kGCodeFooter]
+  static String gcodePowerSpeedString(
+    int? power,
+    int? speed, {
+    bool newLine = true,
+  }) {
+    final powerString = power != null ? 'S$power' : '';
+    final speedString = speed != null ? 'F$speed' : '';
+    return 'G1$powerString$speedString${newLine ? "\n" : ""}';
+  }
+
+  /// GCode 头部
+  static String gcodeHeader(
+    int? power,
+    int? speed, {
+    bool auto = false,
+  }) {
+    final pw = gcodePowerSpeedString(
+      power ?? 255,
+      speed ?? 12000,
+    );
+    return (auto ? kGCodeAutoHeader : kGCodeHeader) + pw;
+  }
+
+  /// GCode 尾部
+  static String gcodeFooter([bool auto = false]) => kGCodeFooter;
+
+  /// 打开主轴
+  static String? gcodeToolOn([bool auto = false, int? power]) =>
+      auto ? null : "M03S${power ?? 255}";
+
+  /// 关闭主轴
+  static String? gcodeToolOff([bool auto = false]) => auto ? null : "M05S0";
+
   //region ---数值转换---
 
   /// 默认GCode使用毫米单位, 入参的数据需要时dp单位
@@ -565,15 +603,13 @@ class GCodeWriteHandle with VectorWriteMixin {
 
   //region ---GCode数据参数---
 
-  /// 功率 255
-  int? power;
+  /// G1指令, 开激光之前的操作
+  /// 通常是`M03 S255`, 会自动写入换行符
+  String? toolOn;
 
-  ///速度, GCode里面是每分钟 12000/m
-  int? speed;
-
-  String get _powerString => power != null ? 'S$power' : '';
-
-  String get _speedString => speed != null ? 'F$speed' : '';
+  /// G0指令, 关激光之前的操作
+  /// 通常是`M05 S0`, 会自动写入换行符
+  String? toolOff;
 
   //endregion ---GCode数据参数---
 
@@ -621,10 +657,24 @@ class GCodeWriteHandle with VectorWriteMixin {
     _isContourFirst = true;
   }
 
+  /// 打开激光
+  void _writeToolOn() {
+    if (!isNil(toolOn) && _isContourFirst) {
+      stringBuffer?.writeln(toolOn);
+    }
+  }
+
+  /// 关闭激光
+  void _writeToolOff() {
+    if (!isNil(toolOff)) {
+      stringBuffer?.writeln(toolOff);
+    }
+  }
+
   /// 自动激光在第一个G1指令后面写入功率和速度
   void _writePowerSpeed() {
     if (_isContourFirst) {
-      stringBuffer?.writeln('$_powerString$_speedString');
+      //stringBuffer?.writeln('$_powerString$_speedString');
       _isContourFirst = false;
     } else {
       stringBuffer?.write('\n');
@@ -638,6 +688,7 @@ class GCodeWriteHandle with VectorWriteMixin {
     final x = position.dx.toDigits(digits: digits);
     final y = position.dy.toDigits(digits: digits);
     if (point.type == VectorWriteMixin.sPointTypeStart) {
+      _writeToolOff();
       stringBuffer?.writeln('G0X${x}Y$y');
     } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
       if (useCutData && data == null) {
@@ -655,10 +706,12 @@ class GCodeWriteHandle with VectorWriteMixin {
           }
         }
       } else {
+        _writeToolOn();
         stringBuffer?.write('G1X${x}Y$y');
         _writePowerSpeed();
       }
     } else if (point.type.have(VectorWriteMixin.sPointTypeArc)) {
+      _writeToolOn();
       if (point.sweepFlag == 1) {
         //顺时针
         stringBuffer?.write("G3");
@@ -754,19 +807,37 @@ extension VectorPathEx on Path {
   String? toGCodeString({
     @dp double? pathStep,
     @mm double? tolerance,
+    //--
+    String? header,
+    String? footer,
+    String? toolOn,
+    String? toolOff,
+    //--用来生成上述的[header]/[footer]/[toolOn]/[toolOff]
     int? power,
     int? speed,
-    String? header = kGCodeAutoHeader,
-    String? footer = kGCodeFooter,
+    bool? autoLaser, //必须指定才会自动生成
     GCodeWriteHandle? handle,
+    int digits = 3,
   }) {
+    header ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
+        : null;
+    footer ??=
+        autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
+    toolOn ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeToolOn(autoLaser, speed)
+        : null;
+    toolOff ??=
+        autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
+
     handle ??= GCodeWriteHandle();
     handle
-      ..power = power
-      ..speed = speed;
-    handle.initStringBuffer().write(header);
+      ..digits = digits
+      ..toolOn = toolOn
+      ..toolOff = toolOff;
+    handle.initStringBuffer().write(header ?? "");
     toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
-    handle.initStringBuffer().write(footer);
+    handle.initStringBuffer().write(footer ?? "");
     return handle.getVectorString();
   }
 
@@ -895,22 +966,39 @@ extension VectorListPathEx on List<Path> {
   String? toGCodeString({
     @dp double? pathStep,
     @mm double? tolerance,
-    int? power = 255,
-    int? speed = 12000,
-    String? header = kGCodeAutoHeader,
-    String? footer = kGCodeFooter,
+    //--
+    String? header,
+    String? footer,
+    String? toolOn,
+    String? toolOff,
+    //--用来生成上述的[header]/[footer]/[toolOn]/[toolOff]
+    int? power,
+    int? speed,
+    bool? autoLaser, //必须指定才会自动生成
     GCodeWriteHandle? handle,
+    int digits = 3,
   }) {
     if (isNil(this)) {
       return null;
     }
+    header ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
+        : null;
+    footer ??=
+        autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
+    toolOn ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeToolOn(autoLaser, speed)
+        : null;
+    toolOff ??=
+        autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
+
     final buffer = StringBuffer();
     handle ??= GCodeWriteHandle();
     handle
-      ..digits = 3
-      ..power = power
-      ..speed = speed;
-    buffer.write(header);
+      ..digits = digits
+      ..toolOn = toolOn
+      ..toolOff = toolOff;
+    buffer.write(header ?? "");
     for (final path in this) {
       handle.stringBuffer = StringBuffer();
       final gcode = path.toVectorString(
@@ -922,7 +1010,7 @@ extension VectorListPathEx on List<Path> {
         buffer.write(gcode);
       }
     }
-    buffer.write(footer);
+    buffer.write(footer ?? "");
     return buffer.toString();
   }
 
