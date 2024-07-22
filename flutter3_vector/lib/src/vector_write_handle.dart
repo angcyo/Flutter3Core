@@ -911,6 +911,92 @@ extension VectorPathEx on Path {
     toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
     return handle.pointList;
   }
+
+  /// 将path转换为切割GCode数据
+  /// [toCutPathList]
+  String toCutGCodeString({
+    @mm double cutDataStep = sDefaultCutStep,
+    @mm double cutDataWidth = sDefaultCutWidth,
+    String? header,
+    String? footer,
+    String? toolOn,
+    String? toolOff,
+    //--用来生成上述的[header]/[footer]/[toolOn]/[toolOff]
+    int? power,
+    int? speed,
+    bool? autoLaser, //必须指定才会自动生成
+    int digits = 3,
+  }) {
+    final buffer = StringBuffer();
+    //圆的直径
+    @dp
+    final diameter = cutDataWidth.toDpFromMm();
+    //圆心移动步长
+    @dp
+    final step = cutDataStep.toDpFromMm();
+
+    header ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
+        : null;
+    footer ??=
+        autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
+    toolOn ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeToolOn(autoLaser, speed)
+        : null;
+    toolOff ??=
+        autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
+
+    //mm单位缩放因子
+    double? factor = 1.toDpFromMm();
+
+    final radius = diameter / 2;
+    final i = (radius / factor).toDigits(digits: digits);
+    final j = i;
+
+    buffer.writeIf(header ?? "");
+    eachPathMetrics(
+        (posIndex, ratio, contourIndex, position, radians, isClose) {
+      //使用圆形数据切割
+      final x = ((position.dx - radius) / factor).toDigits(digits: digits);
+      final y = ((position.dy - radius) / factor).toDigits(digits: digits);
+
+      buffer.writelnIf(toolOff);
+      buffer.writelnIf('G0X${x}Y$y');
+      buffer.writelnIf(toolOn);
+      buffer.writelnIf("G2X${x}Y${y}I${i}J$j");
+    }, step);
+    buffer.writeIf(footer ?? "");
+    return buffer.toString();
+  }
+
+  /// 将path转换为切割路径集合
+  /// [cutDataWidth] 切割的宽度
+  /// [cutDataStep] 切割的步长
+  /// [kVectorTolerance]
+  /// [kPathAcceptableError]
+  List<Path> toCutPathList({
+    @mm double cutDataStep = sDefaultCutStep,
+    @mm double cutDataWidth = sDefaultCutWidth,
+  }) {
+    final result = <Path>[];
+    //圆的直径
+    @dp
+    final diameter = cutDataWidth.toDpFromMm();
+    //圆心移动步长
+    @dp
+    final step = cutDataStep.toDpFromMm();
+
+    eachPathMetrics(
+        (posIndex, ratio, contourIndex, position, radians, isClose) {
+      //使用圆形数据切割
+      final circlePath = Path();
+      circlePath
+          .addOval(Rect.fromCircle(center: position, radius: diameter / 2));
+      /*circlePath.transformPath(createRotateMatrix(radians, anchor: position));*/
+      result.add(circlePath);
+    }, step);
+    return result;
+  }
 }
 
 extension VectorListPathEx on List<Path> {
@@ -1054,5 +1140,68 @@ extension VectorListPathEx on List<Path> {
       }
     }
     return result;
+  }
+
+  /// [VectorPathEx.toCutPathList]
+  List<Path> toCutPathList({
+    @mm double cutDataStep = sDefaultCutStep,
+    @mm double cutDataWidth = sDefaultCutWidth,
+  }) {
+    final result = <Path>[];
+    for (final path in this) {
+      final cutPathList = path.toCutPathList(
+        cutDataStep: cutDataStep,
+        cutDataWidth: cutDataWidth,
+      );
+      if (!isNil(cutPathList)) {
+        result.addAll(cutPathList);
+      }
+    }
+    return result;
+  }
+
+  /// [VectorPathEx.toCutGCodeString]
+  String toCutGCodeString({
+    @mm double cutDataStep = sDefaultCutStep,
+    @mm double cutDataWidth = sDefaultCutWidth,
+    String? header,
+    String? footer,
+    String? toolOn,
+    String? toolOff,
+    //--用来生成上述的[header]/[footer]/[toolOn]/[toolOff]
+    int? power,
+    int? speed,
+    bool? autoLaser, //必须指定才会自动生成
+    int digits = 3,
+  }) {
+    if (isNil(this)) return "";
+    final buffer = StringBuffer();
+
+    header ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
+        : null;
+    footer ??=
+        autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
+    toolOn ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeToolOn(autoLaser, speed)
+        : null;
+    toolOff ??=
+        autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
+
+    buffer.writeIf(header ?? "");
+    for (final path in this) {
+      final gcode = path.toCutGCodeString(
+        cutDataStep: cutDataStep,
+        cutDataWidth: cutDataWidth,
+        digits: digits,
+        toolOn: toolOn,
+        toolOff: toolOff,
+      );
+      if (!isNil(gcode)) {
+        buffer.writeIf(gcode);
+      }
+    }
+    buffer.writeIf(footer ?? "");
+    return buffer.toString();
   }
 }

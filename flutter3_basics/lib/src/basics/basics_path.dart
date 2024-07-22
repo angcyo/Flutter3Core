@@ -232,7 +232,7 @@ extension PathEx on Path {
   /// [ratio] 当前路径段上,点长度与路径段总长度的比例, [0-1]
   /// [contourIndex] 路径段的索引, 0开始. 一个路径中,可能包含多个路径段. 每次[moveTo],就是一个新的路径段
   /// [position] 当前点在路径上的位置, 关键数据
-  /// [angle] 当前点在路径上的角度, 弧度单位, 关键数据
+  /// [radians] 当前点在路径上的角度, 弧度单位, 关键数据
   /// [isClosed] 当前轮廓是否是闭合的
   ///
   /// [action] 返回true, 表示中断each

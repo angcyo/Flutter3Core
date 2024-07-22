@@ -1016,6 +1016,22 @@ extension StringBufferEx on StringBuffer {
     }
     return this;
   }
+
+  /// 数据不为空时, 才写入数据
+  StringBuffer writeIf(Object? object) {
+    if (object != null) {
+      write(object);
+    }
+    return this;
+  }
+
+  /// 数据不为空时, 才写入数据
+  StringBuffer writelnIf(Object? object) {
+    if (object != null) {
+      writeln(object);
+    }
+    return this;
+  }
 }
 
 //endregion String 扩展
