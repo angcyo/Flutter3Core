@@ -188,8 +188,22 @@ class WebSocketClientMessage {
 }
 
 class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
+  /// udp需要广播的额外数据
+  static List<FutureOr<Map<String, dynamic>> Function()>
+      udpBroadcastDataMapActionList = [];
+
   /// 获取日志的网页地址
   String get logHtml => "http://$host:$port/ws";
+
+  /// udp广播端口
+  /// 用来广播[logHtml]
+  int udpBroadcastPort = 9299;
+
+  /// udp广播间隔时长
+  Duration udpBroadcastDuration = const Duration(seconds: 1);
+
+  /// 唯一标识符
+  String uuid = $uuid;
 
   DebugLogWebSocketServer({
     super.port = 9200,
@@ -241,6 +255,44 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
     l.printList.add((log) {
       send(log);
     });
+  }
+
+  Timer? _broadcastTimer;
+
+  /// 开始udp广播
+  void _startUdpBroadcast() async {
+    if (_broadcastTimer != null) {
+      return;
+    }
+    //循环发送udp广播
+    _broadcastTimer = Timer.periodic(udpBroadcastDuration, (timer) async {
+      if (_httpServer == null) {
+        timer.cancel();
+        _broadcastTimer = null;
+      } else {
+        final map = {};
+        for (final action in udpBroadcastDataMapActionList) {
+          map.addAll(await action());
+        }
+        sendUdpBroadcast(udpBroadcastPort,
+            text: {
+              "uuid": uuid,
+              "deviceUuid": $deviceUuid,
+              "platformName": $platformName,
+              "logHtml": logHtml,
+              ...map,
+            }.toJsonString());
+      }
+    });
+  }
+
+  @override
+  Future<HttpServer> start({
+    bool checkNetwork = true,
+    int retryCount = 5,
+  }) async {
+    _startUdpBroadcast();
+    return super.start(checkNetwork: checkNetwork, retryCount: retryCount);
   }
 }
 

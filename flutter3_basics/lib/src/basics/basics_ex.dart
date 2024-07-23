@@ -1705,6 +1705,12 @@ extension ListIntEx on List<int> {
     //return String.fromCharCodes(this);
   }
 
+  /// [utf8Str]
+  /// [UTF-16]格式
+  String get charCodes => String.fromCharCodes(this);
+
+  String toCharCodesStr() => charCodes;
+
   /// [toStr]
   String decode([Encoding codec = utf8, bool allowMalformed = true]) {
     return utf8.decode(this, allowMalformed: allowMalformed);

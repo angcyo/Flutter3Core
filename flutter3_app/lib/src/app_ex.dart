@@ -18,13 +18,15 @@ part of '../flutter3_app.dart';
 /// String version = packageInfo.version;            //versionName
 /// String buildNumber = packageInfo.buildNumber;    //versionCode
 /// ```
-Future<PackageInfo> get platformPackageInfo async => await PackageInfo.fromPlatform();
+Future<PackageInfo> get platformPackageInfo async =>
+    await PackageInfo.fromPlatform();
 
 /// app版本名称
 Future<String> get appVersionName async => (await platformPackageInfo).version;
 
 /// app版本号
-Future<String> get appVersionCode async => (await platformPackageInfo).buildNumber;
+Future<String> get appVersionCode async =>
+    (await platformPackageInfo).buildNumber;
 
 /// https://pub.dev/packages/device_info_plus
 /// 获取对应平台的设备信息
@@ -45,6 +47,22 @@ Future<BaseDeviceInfo> get platformDeviceInfo async => isAndroid
 Future<int?> get androidSdkInt async => isAndroid
     ? ((await platformDeviceInfo) as AndroidDeviceInfo?)?.version.sdkInt
     : null;
+
+/// 手机型号
+Future<String?> get platformDeviceModel async => isAndroid
+    //product: T33_7863_U254_V11_FHD_1095_Natv
+    //supportedAbis: [arm64-v8a, armeabi-v7a, armeabi]
+    ? ((await platformDeviceInfo) as AndroidDeviceInfo?)?.model
+    : isIos
+        ? ((await platformDeviceInfo) as IosDeviceInfo?)?.model
+        : isLinux
+            ? ((await platformDeviceInfo) as LinuxDeviceInfo?)?.prettyName
+            : isMacOs
+                ? ((await platformDeviceInfo) as MacOsDeviceInfo?)?.model
+                : isWindows
+                    ? ((await platformDeviceInfo) as WindowsDeviceInfo?)
+                        ?.productName
+                    : null;
 
 /// https://pub.dev/packages/share_plus
 /// `share_plus 需要 iPad 用户提供参数 sharePositionOrigin 。`

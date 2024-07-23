@@ -63,11 +63,11 @@ dependencies:
   # https://pub.dev/packages/stream_channel
   # https://pub.dev/packages/web
   # https://pub.dev/packages/web_socket
-  web_socket_channel: ^3.0.0
+  web_socket_channel: ^3.0.1
 
   # https://pub.dev/packages/web_socket
   # https://pub.dev/packages/web
-  web_socket: ^0.1.5
+  web_socket: ^0.1.6
 
   # https://pub.dev/packages/web
   web: ^0.5.1
@@ -79,6 +79,9 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
   network_info_plus: ^5.0.3
+
+  # https://pub.dev/packages/udp
+  udp: ^5.0.3
 
 dependency_overrides:
   collection: ^1.19.0
