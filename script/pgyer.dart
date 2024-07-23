@@ -27,8 +27,13 @@ void main(List<String> arguments) async {
   final apiKey = yaml["pgyer_api_key"];
 
   for (final folder in yaml["pgyer_path"]) {
-    print('开始上传文件夹->$folder');
     final fileList = await _getFileList(folder);
+    if (fileList.isEmpty) {
+      continue;
+    }
+    print('开始上传文件夹->$folder');
+    final length = fileList.length;
+    var index = 0;
     for (final file in fileList) {
       final filePath = file.path;
       print('开始上传文件->$filePath');
@@ -49,8 +54,8 @@ void main(List<String> arguments) async {
             await _writeUploadRecord(folder, file);
             final url =
                 await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
-            if (url != null) {
-              //飞书webhook通知
+            if (index == length - 1 && url != null) {
+              //只在最后一个文件上传成功之后, 进行飞书webhook通知
               await _sendFeishuWebhook(
                 yaml["feishu_webhook"],
                 versionMap?["versionName"] == null
@@ -68,6 +73,7 @@ void main(List<String> arguments) async {
       } catch (e) {
         print(e);
       }
+      index++;
     }
   }
 
