@@ -28,8 +28,18 @@ part 'flutter3_shelf_web_socket.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024-7-15
 ///
+
+/// 获取上次获取到的wifi ip地址
+/// 需要先调用[networkWifiIp]
+String? $lastWifiIpCache;
+
 /// 获取网络wifi ip地址
-Future<String?>? get networkWifiIp => NetworkInfo().getWifiIP();
+Future<String?> get networkWifiIp async {
+  $lastWifiIpCache = await NetworkInfo().getWifiIP();
+  return $lastWifiIpCache;
+}
+
+final _defaultMimeTypeResolver = MimeTypeResolver();
 
 extension ShelfRequestEx on shelf.Request {
   /// 是否是html请求, 这样返回值也是html
@@ -72,15 +82,22 @@ shelf.Response responseOkHtml(
 shelf.Response responseOkFile({
   String? filePath,
   Stream<List<int>>? fileStream,
-  Map<String, /* String | List<String> */ Object>? headers = const {
-    HttpHeaders.contentTypeHeader: 'application/octet-stream'
-  },
+  Map<String, /* String | List<String> */ Object>? headers,
   Encoding? encoding = utf8,
   Map<String, Object>? context,
 }) {
+  final file = File(filePath!);
   return responseOk(
-    fileStream ?? File(filePath!).openRead(),
-    headers: headers,
+    fileStream ?? file.openRead(),
+    headers: headers ??
+        {
+          HttpHeaders.contentDisposition:
+              'attachment; filename="${file.fileName()}"',
+          HttpHeaders.contentLengthHeader: file.lengthSync().toString(),
+          HttpHeaders.contentTypeHeader:
+              _defaultMimeTypeResolver.lookup(file.path) ??
+                  'application/octet-stream'
+        },
     encoding: encoding,
     context: context,
   );

@@ -145,11 +145,11 @@ class DebugPage extends StatefulWidget {
 
   /// 显示在调试页面的底部的widget列表
   /// [_initDebugLastInfo]
-  static final List<WidgetBuilder> debugLastWidgetBuilderList = [];
+  static final List<WidgetNullBuilder> debugLastWidgetBuilderList = [];
 
   /// 底部点击要复制的文本信息
   /// [_initDebugLastInfo]
-  static List<String Function(BuildContext context)>
+  static List<String? Function(BuildContext context)>
       debugLastCopyStringBuilderList = [];
 
   /// [debugLastCopyString]
@@ -205,9 +205,9 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
 
     return [
       if (defClickList.isNotEmpty)
-        buildClickActionList(context, defClickList).wrap()!.paddingAll(kX),
+        buildClickActionList(context, defClickList).wrap()!.paddingSym(),
       if (clickList.isNotEmpty)
-        buildClickActionList(context, clickList).wrap()!.paddingAll(kX),
+        buildClickActionList(context, clickList).wrap()!.paddingSym(),
       if (defHiveList.isNotEmpty) ...buildHiveActionList(context, defHiveList),
       if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
       [

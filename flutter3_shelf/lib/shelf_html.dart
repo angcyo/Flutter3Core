@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:flutter3_core/flutter3_core.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/17
@@ -218,6 +222,55 @@ abstract final class ShelfHtml {
         return contentWrap.scrollTop + contentWrap.clientHeight >= content.scrollHeight - 60;
     }
 </script>
+</body>
+</html>
+  ''';
+
+  /// 文件浏览头部html
+  static String getFilesHeaderHtml(String tile, String parent) => '''
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>$tile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style> * {word-wrap: break-word; padding: 4px} a {line-height: 30px;}</style>
+</head>
+<body>
+<h1>$parent</h1>
+  ''';
+
+  /// 文件浏览列表html
+  static Future<String> getFilesListHtml(String root, String folder) async {
+    final buffer = StringBuffer();
+    final folderFile = File(folder);
+    if (folder.isExistsSync()) {
+      if (await folderFile.isDirectory()) {
+        //根目录
+        buffer.write("<a href='/files?path='>.</a><br>");
+        if (root != folder) {
+          //上一级目录
+          final targetPath = folder.parentPath.replaceAll(root, '');
+          buffer.write("<a href='/files?path=$targetPath'>..</a><br>");
+        }
+        await for (final entity in folderFile.listFilesStream()) {
+          final folderName = entity.fileName();
+          final targetPath = entity.path.replaceAll(root, '');
+          //debugger();
+          buffer.write("<a href='/files?path=$targetPath'>$folderName</a><br>");
+        }
+      } else {
+        buffer.write("<p>即将下载文件:$folder<p>");
+      }
+    } else {
+      buffer.write("<p>访问的路径不存在:$folder<p>");
+    }
+
+    return buffer.toString();
+  }
+
+  /// 文件浏览尾部html
+  static String getFilesFooterHtml() => '''
 </body>
 </html>
   ''';

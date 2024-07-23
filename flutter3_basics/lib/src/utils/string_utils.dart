@@ -44,7 +44,9 @@ class StringBuilder {
     Object? object8,
     Object? object9,
   ]) {
-    stringBuffer.write(object);
+    if (object != null) {
+      stringBuffer.write(object);
+    }
     if (object2 != null) {
       stringBuffer.write(object2);
     }
@@ -79,7 +81,9 @@ class StringBuilder {
     Object? object8,
     Object? object9,
   ]) {
-    stringBuffer.writeln(object);
+    if (object != null) {
+      stringBuffer.writeln(object);
+    }
     if (object2 != null) {
       stringBuffer.writeln(object2);
     }

@@ -86,4 +86,7 @@ typedef TransformChildWidgetBuilder = Widget? Function(
 typedef TransformChildDataWidgetBuilder = Widget? Function(
     BuildContext context, Widget? child, dynamic data);
 
+/// 支持返回null的[WidgetBuilder]
+typedef WidgetNullBuilder = Widget? Function(BuildContext context);
+
 //endregion Fn

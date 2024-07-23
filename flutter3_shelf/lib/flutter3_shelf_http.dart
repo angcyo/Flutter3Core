@@ -33,7 +33,12 @@ class Flutter3ShelfHttp {
   Flutter3ShelfHttp({
     this.port = 9200,
     this.scheme = "http",
-  });
+  }) {
+    /*get("/favicon.ico", (shelf.Request request) async {
+      final logo = await loadAssetBytes(Assets.png.flutter.keyName);
+      return responseOkFile(fileStream: logo.stream);
+    });*/
+  }
 
   /// [handler]需要时[shelf.Handler]类型
   /// [shelf.Request]
@@ -59,7 +64,7 @@ class Flutter3ShelfHttp {
   void options(String route, Function handler) =>
       _router.options(route, handler);
 
-  /// 上传文件
+  /// 上传文件的接口
   /// [savePath] 文件保存的路径, 默认是缓存路径
   /// [onSaveFile] 当有文件上传后, 保存到本地时回调.返回值直接返回给客户端
   void upload({

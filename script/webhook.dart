@@ -20,8 +20,7 @@ void main(List<String> arguments) async {
   //---
   //_sendFeishuText(webhook, "text");
 
-  await _sendLP5xVersion(
-      versionDes: "更新内容: \n新流程的`异常状态`提示\n资源`自动连接蓝牙`->`自动连接设备`");
+  await _sendLP5xVersion();
 }
 
 Future _sendLP5xVersion({String? versionDes}) async {

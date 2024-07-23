@@ -27,10 +27,12 @@ extension FileStringEx on String {
   String get parentPath => FileSystemEntity.parentOf(this);
 
   /// 当前文件是否存在
-  Future<bool> isExists() async => File(this).exists();
+  Future<bool> isExists() async =>
+      await File(this).exists() || await Directory(this).exists();
 
   ///[isExists]
-  bool isExistsSync() => File(this).existsSync();
+  bool isExistsSync() =>
+      File(this).existsSync() || Directory(this).existsSync();
 
   /// 是否是文件夹
   Future<bool> isDirectory() async => FileSystemEntity.isDirectory(this);
@@ -481,6 +483,9 @@ extension FileEx on File {
     buffer.closeSync();
     return bytes.toStr(encoding);
   }
+
+  /// 判断当前文件是否是文件夹
+  Future<bool> isDirectory() async => FileSystemEntity.isDirectory(path);
 }
 
 //endregion File 扩展

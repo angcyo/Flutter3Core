@@ -28,9 +28,9 @@ class Flutter3ShelfWebSocketServer extends Flutter3ShelfHttp {
 
   @override
   shelf.Handler createHandler() {
-    //
+    //http请求处理
     final httpHandler = super.createHandler();
-    //
+    //WebSocket请求处理
     final webHandler = webSocketHandler((IOWebSocketChannel webSocket) {
       //debugger();
       //webSocket.sink.close();
@@ -195,6 +195,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
     super.port = 9200,
     super.scheme = 'ws',
   }) {
+    //进入ws页面
     get(
       '/ws',
       (shelf.Request request) {
@@ -205,6 +206,38 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
         return responseOk(text);
       },
     );
+    //进入文件浏览页面
+    get(
+      '/files',
+      (shelf.Request request) async {
+        final path = request.requestedUri.queryParameters["path"];
+        final buffer = StringBuffer();
+        //根目录
+        final filePathDir = await fileFolder();
+        final rootPath = filePathDir.parent.path;
+        //debugger();
+        //需要请求的路径
+        String? targetPath;
+        if (isNil(path) || path == ".") {
+          // 请求根目录
+          targetPath = rootPath;
+        } else if (path == "..") {
+          // 请求上级
+          targetPath = filePathDir.parent.path;
+        } else {
+          // 请求子目录
+          targetPath = rootPath.connectUrl(path);
+        }
+        if (await targetPath.isFile()) {
+          return responseOkFile(filePath: targetPath);
+        } else {
+          buffer.write(ShelfHtml.getFilesHeaderHtml("文件浏览", targetPath));
+          buffer.write(await ShelfHtml.getFilesListHtml(rootPath, targetPath));
+          buffer.write(ShelfHtml.getFilesFooterHtml());
+          return responseOkHtml(buffer.toString());
+        }
+      },
+    );
     l.printList.add((log) {
       send(log);
     });
@@ -212,5 +245,6 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
 }
 
 /// 调试日志数据输出服务
+/// 以及文件浏览接口
 final DebugLogWebSocketServer $debugLogWebSocketServer =
     DebugLogWebSocketServer()..start(checkNetwork: false, retryCount: 100);
