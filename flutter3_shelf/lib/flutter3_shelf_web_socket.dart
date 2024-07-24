@@ -250,7 +250,10 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
     get(
       '/ws',
       (shelf.Request request) {
-        final text = ShelfHtml.getWebSocketHtml('WebSocket', address ?? "");
+        final text = ShelfHtml.getWebSocketHtml(
+          'WebSocket',
+          "${getServerAddress(scheme: "ws")}/_ws_server_",
+        );
         if (request.isAcceptHtml) {
           return responseOkHtml(text);
         }

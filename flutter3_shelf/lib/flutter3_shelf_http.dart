@@ -124,6 +124,20 @@ class Flutter3ShelfHttp {
     });
   }
 
+  /// 获取服务器地址
+  String getServerAddress({String? scheme, String? host, int? port}) {
+    scheme ??= this.scheme;
+    host ??= this.host;
+    port ??= this.port;
+    if (port == 80) {
+      return "$scheme://$host";
+    } else if (port == 443) {
+      return "${scheme}s://$host";
+    } else {
+      return "$scheme://$host:$port";
+    }
+  }
+
   //---
 
   /// 创建处理程序
@@ -170,13 +184,7 @@ class Flutter3ShelfHttp {
           debugger();
         });*/
         //debugger();
-        if (port == 80) {
-          address = "$scheme://$host";
-        } else if (port == 443) {
-          address = "${scheme}s://$host";
-        } else {
-          address = "$scheme://$host:$port";
-        }
+        address = getServerAddress();
         l.d(address);
         break;
       } catch (e) {
