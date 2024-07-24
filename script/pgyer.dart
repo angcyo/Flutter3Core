@@ -18,15 +18,17 @@ const apiBase = "https://www.pgyer.com/apiv2/app";
 void main(List<String> arguments) async {
   final currentPath = Directory.current.path;
   print('工作路径->$currentPath');
-  final yamlFile = File("$currentPath/script.yaml");
-  print('配置文件路径->${yamlFile.path}');
 
+  final localYamlFile = File("$currentPath/local.script.yaml");
+  final yamlFile = File("$currentPath/script.yaml");
+
+  final localYaml = loadYaml(localYamlFile.readAsStringSync());
   final yaml = loadYaml(yamlFile.readAsStringSync());
   //print(yaml);
 
-  final apiKey = yaml["pgyer_api_key"];
+  final apiKey = localYaml["pgyer_api_key"] ?? yaml["pgyer_api_key"];
 
-  for (final folder in yaml["pgyer_path"]) {
+  for (final folder in (localYaml["pgyer_path"] ?? yaml["pgyer_path"])) {
     final fileList = await _getFileList(folder);
     if (fileList.isEmpty) {
       continue;
@@ -57,13 +59,14 @@ void main(List<String> arguments) async {
             if (index == length - 1 && url != null) {
               //只在最后一个文件上传成功之后, 进行飞书webhook通知
               await _sendFeishuWebhook(
-                yaml["feishu_webhook"],
+                localYaml["feishu_webhook"] ?? yaml["feishu_webhook"],
                 versionMap?["versionName"] == null
                     ? null
                     : "新版本发布 V${versionMap?["versionName"]}",
                 versionMap?["versionDes"],
                 linkUrl: url,
-                changeLogUrl: yaml["change_log_url"],
+                changeLogUrl:
+                    localYaml["change_log_url"] ?? yaml["change_log_url"],
               );
             }
           }

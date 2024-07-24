@@ -25,12 +25,17 @@ void main(List<String> arguments) async {
 
 Future _sendLP5xVersion({String? versionDes}) async {
   final currentPath = Directory.current.path;
+
+  final localYamlFile = File("$currentPath/local.script.yaml");
   final yamlFile = File("$currentPath/script.yaml");
+
+  final localYaml = loadYaml(localYamlFile.readAsStringSync());
   final yaml = loadYaml(yamlFile.readAsStringSync());
+
   final versionMap =
       await _getVersionDes("E:/AndroidProjects/LaserPeckerRNPro/android/.apk");
   _sendFeishuPost(
-    yaml["feishu_webhook_lp5"],
+    localYaml["feishu_webhook_lp5"] ?? yaml["feishu_webhook_lp5"],
     versionMap?["versionName"] == null
         ? null
         : "新版本发布 V${versionMap?["versionName"]}",
