@@ -192,8 +192,34 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
   static List<FutureOr<Map<String, dynamic>> Function()>
       udpBroadcastDataMapActionList = [];
 
-  /// 获取日志的网页地址
-  String get logHtml => "http://$host:$port/ws";
+  /// 默认的调试日志服务器地址, 启动后才会自动赋值
+  static String? debugLogServerAddress;
+
+  /// udp广播收到的客户端uuid映射列表
+  static Map<String, dynamic> udpBroadcastClientMap = {};
+
+  /// 处理收到的udp广播数据,
+  /// [udpBroadcastClientMap]
+  static void handleUdpBroadcastClient(String body) {
+    try {
+      final map = body.jsonDecode();
+      if (map["_type"] == "debugLogBroadcast") {
+        final uuid = map["uuid"];
+        if (map["_command"] == "start") {
+          udpBroadcastClientMap[uuid] = map;
+        } else if (map["_command"] == "stop") {
+          udpBroadcastClientMap.remove(uuid);
+        }
+      }
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
+  }
+
+  //--
 
   /// udp广播端口
   /// 用来广播[logHtml]
@@ -207,8 +233,19 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
 
   DebugLogWebSocketServer({
     super.port = 9200,
-    super.scheme = 'ws',
+    super.scheme = 'http',
   }) {
+    //进入首页页面
+    get(
+      '/',
+      (shelf.Request request) {
+        final text = ShelfHtml.getDebugLogIndexHtml();
+        if (request.isAcceptHtml) {
+          return responseOkHtml(text);
+        }
+        return responseOk(text);
+      },
+    );
     //进入ws页面
     get(
       '/ws',
@@ -252,6 +289,25 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
         }
       },
     );
+    //进入udp client 客户端列表页面
+    get(
+      '/list',
+      (shelf.Request request) {
+        //debugger();
+        final buffer = StringBuffer();
+        final values = udpBroadcastClientMap.values;
+        buffer.write(ShelfHtml.getUdpClientListHeaderHtml(
+            "UDP客户端列表", "UDP客户端列表[${values.length}]"));
+        for (final value in values) {
+          buffer.write(ShelfHtml.getUdpClientListItemHtml(
+            value,
+            value["address"] == address,
+          ));
+        }
+        buffer.write(ShelfHtml.getUdpClientListFooterHtml());
+        return responseOkHtml(buffer.toString());
+      },
+    );
     l.printList.add((log) {
       send(log);
     });
@@ -274,12 +330,17 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
         for (final action in udpBroadcastDataMapActionList) {
           map.addAll(await action());
         }
+        //广播自身的服务信息
         sendUdpBroadcast(udpBroadcastPort,
             text: {
               "uuid": uuid,
+              "_type": "debugLogBroadcast",
+              "_command": "start",
+              "startTime": startTime.toTimeString(),
               "deviceUuid": $deviceUuid,
               "platformName": $platformName,
-              "logHtml": logHtml,
+              "address": address,
+              "logHtml": address,
               ...map,
             }.toJsonString());
       }
@@ -292,7 +353,25 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
     int retryCount = 5,
   }) async {
     _startUdpBroadcast();
-    return super.start(checkNetwork: checkNetwork, retryCount: retryCount);
+    final server =
+        await super.start(checkNetwork: checkNetwork, retryCount: retryCount);
+    debugLogServerAddress = address;
+    return server;
+  }
+
+  @override
+  void stop() {
+    //发送一个停止udp广播
+    sendUdpBroadcast(udpBroadcastPort,
+        text: {
+          "uuid": uuid,
+          "_type": "debugLogBroadcast",
+          "_command": "stop",
+        }.toJsonString());
+    debugLogServerAddress = null;
+    _broadcastTimer?.cancel();
+    _broadcastTimer = null;
+    super.stop();
   }
 }
 

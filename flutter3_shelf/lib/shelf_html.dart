@@ -226,6 +226,8 @@ abstract final class ShelfHtml {
 </html>
   ''';
 
+  //--
+
   /// 文件浏览头部html
   static String getFilesHeaderHtml(String tile, String parent) => '''
 <!DOCTYPE html>
@@ -274,4 +276,167 @@ abstract final class ShelfHtml {
 </body>
 </html>
   ''';
+
+//--
+
+  static String getUdpClientListHeaderHtml(String tile, String h1) => '''
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>$tile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            word-wrap: break-word;
+            padding: 0;
+            margin: 0;
+        }
+        
+        * span {
+          line-height: 24px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .card {
+            background-color: #f9f9f9;
+            border: 1px solid #f9f9f9;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            box-shadow: 0 0 5px #ccc;
+            transition: box-shadow 0.3s;
+        }
+
+        .card:hover {
+            border: 1px solid #0aa6ec;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        
+       .self-card {
+            border: 1px solid #c702fd;
+        }
+
+    </style>
+</head>
+<body style="padding: 10px;">
+<h1>$h1
+    <input type="checkbox" id="refresh_check" checked>
+    <label for="refresh_check" style="font-size: 16px">自动刷新</label>
+</h1>
+<div style="display: flex; flex-wrap: wrap;">
+  ''';
+
+  static String getUdpClientListItemHtml(Map map, bool isSelf) => '''
+  <a target="_blank" href="${map["address"]}">
+      <div class="card ${isSelf ? "self-card" : ""}">
+          <p>
+            <strong style="margin-right: 4px">平台:</strong>
+            <span>${map["platformName"]}</span>
+            <span style="margin-left: 4px">${map["packageName"]}</span>
+            <span>${map["appVersionName"]}</span>
+            <span>(${map["appVersionCode"]})</span>
+          </p>
+          <p><strong style="margin-right: 4px">设备id:</strong><span>${map["deviceUuid"]}</span></p>
+          <p><strong style="margin-right: 4px">设备型号:</strong>   
+            <span>${map["brand"]}</span>
+            <span>${map["model"]}</span>
+            <span>/</span>
+            <span>${map["display"]}</span>
+          </p>
+          <p>
+            <strong style="margin-right: 4px">上线时间:</strong>
+            <span>${map["startTime"]}</span>
+          </p>
+      </div>
+  </a>
+  ''';
+
+  static String getUdpClientListFooterHtml({int refresh = 5000}) => '''
+<script>
+setInterval(() => {
+        if (document.getElementById('refresh_check').checked) {
+            location.reload();
+        }
+    }, $refresh);
+</script>
+</div>
+</body>
+</html>
+  ''';
+
+  //--
+
+  static String getDebugLogIndexHtml() => '''
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            word-wrap: break-word;
+            padding: 0;
+            margin: 0;
+        }
+
+        * span {
+            line-height: 30px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .card {
+            background-color: #f9f9f9;
+            border: 1px solid #f9f9f9;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            box-shadow: 0 0 5px #ccc;
+            transition: box-shadow 0.3s;
+        }
+
+        .card:hover {
+            border: 1px solid #0aa6ec;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+    </style>
+</head>
+<body style="padding: 10px;">
+<h1>首页</h1>
+<!--复选框-->
+<div style="display: flex; flex-wrap: wrap;">
+    <a href="/ws">
+        <div class="card">
+            <p><strong>WebSocket 日志服务</strong></p>
+            <p><span>实时查看设备调试信息</span></p>
+        </div>
+    </a>
+    <a href="/files">
+        <div class="card">
+            <p><strong>Http 文件服务</strong></p>
+            <p><span>浏览查看设备文件信息</span></p>
+        </div>
+    </a>
+    <a href="/list">
+        <div class="card">
+            <p><strong>UDP 客户端服务</strong></p>
+            <p><span>浏览查看广播的设备终端信息</span></p>
+        </div>
+    </a>
+</div>
+</body>
+</html>
+''';
 }

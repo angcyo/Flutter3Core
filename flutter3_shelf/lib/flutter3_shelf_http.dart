@@ -28,7 +28,16 @@ class Flutter3ShelfHttp {
   final _router = Router();
 
   /// http核心服务服务
+  @autoInjectMark
   HttpServer? _httpServer;
+
+  /// 开始时间, 13位时间戳
+  int startTime = -1;
+
+  /// 停止时间, 13位时间戳
+  int stopTime = -1;
+
+  //--
 
   Flutter3ShelfHttp({
     this.port = 9200,
@@ -151,6 +160,7 @@ class Flutter3ShelfHttp {
           }
           return value;
         }, null, true);
+        startTime = nowTimestamp();
         /*_httpServer?.handleError((e) {
           l.w('服务关闭:$e');
         });
@@ -192,6 +202,8 @@ class Flutter3ShelfHttp {
   void stop() {
     try {
       _httpServer?.close();
+      startTime = 0;
+      stopTime = nowTimestamp();
     } catch (e, s) {
       assert(() {
         printError(e, s);
