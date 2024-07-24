@@ -457,6 +457,26 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     refresh();
   }
 
+  /// 元素列表添加元素通知
+  void dispatchCanvasElementListAddChanged(
+    List<ElementPainter> list,
+    List<ElementPainter> op,
+  ) {
+    _eachCanvasListener((element) {
+      element.onCanvasElementListAddChanged?.call(list, op);
+    });
+  }
+
+  /// 元素列表移除元素通知
+  void dispatchCanvasElementListRemoveChanged(
+    List<ElementPainter> list,
+    List<ElementPainter> op,
+  ) {
+    _eachCanvasListener((element) {
+      element.onCanvasElementListRemoveChanged?.call(list, op);
+    });
+  }
+
   /// 双击元素时回调
   void dispatchDoubleTapElement(ElementPainter elementPainter) {
     _eachCanvasListener((element) {

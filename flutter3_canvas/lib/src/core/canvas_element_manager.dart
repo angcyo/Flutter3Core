@@ -198,6 +198,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       if (element.canvasDelegate != canvasDelegate) {
         element.attachToCanvasDelegate(canvasDelegate);
       }
+      canvasDelegate.dispatchCanvasElementListAddChanged(list, [element]);
       canvasDelegate.refresh();
       return true;
     }
@@ -220,6 +221,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       if (element.canvasDelegate == canvasDelegate) {
         element.detachFromCanvasDelegate(canvasDelegate);
       }
+      canvasDelegate.dispatchCanvasElementListAddChanged(list, [element]);
       canvasDelegate.refresh();
       return true;
     }
@@ -290,6 +292,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     canvasDelegate.dispatchCanvasElementListChanged(
         old, elements, list, undoType);
+    canvasDelegate.dispatchCanvasElementListAddChanged(elements, list);
 
     if (selected) {
       resetSelectElement(list);
@@ -363,6 +366,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     canvasDelegate.dispatchCanvasElementListChanged(
         old, elements, op, undoType);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, op);
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();

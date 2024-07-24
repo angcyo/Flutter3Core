@@ -110,7 +110,8 @@ class CanvasRenderBox extends RenderBox {
 /// 画布回调监听
 class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasPaint]
-  final void Function(CanvasDelegate delegate, int paintCount)? onCanvasPaintAction;
+  final void Function(CanvasDelegate delegate, int paintCount)?
+      onCanvasPaintAction;
 
   /// [CanvasDelegate.dispatchCanvasIdle]
   final void Function(CanvasDelegate delegate, Duration lastRefreshTime)?
@@ -155,6 +156,18 @@ class CanvasListener {
     UndoType undoType,
   )? onCanvasElementListChangedAction;
 
+  /// [CanvasDelegate.dispatchCanvasElementListAddChanged]
+  final void Function(
+    List<ElementPainter> list,
+    List<ElementPainter> op,
+  )? onCanvasElementListAddChanged;
+
+  /// [CanvasDelegate.dispatchCanvasElementListRemoveChanged]
+  final void Function(
+    List<ElementPainter> list,
+    List<ElementPainter> op,
+  )? onCanvasElementListRemoveChanged;
+
   /// [CanvasDelegate.dispatchDoubleTapElement]
   final void Function(ElementPainter elementPainter)? onDoubleTapElementAction;
 
@@ -177,6 +190,8 @@ class CanvasListener {
     this.onCanvasElementPropertyChangedAction,
     this.onCanvasElementSelectChangedAction,
     this.onCanvasElementListChangedAction,
+    this.onCanvasElementListAddChanged,
+    this.onCanvasElementListRemoveChanged,
     this.onDoubleTapElementAction,
     this.onCanvasUndoChangedAction,
     this.onCanvasGroupChangedAction,
