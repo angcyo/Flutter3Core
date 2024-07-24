@@ -544,6 +544,7 @@ Future<R> run<R>(ResultCallback<R> callback) {
 }
 
 /// 安排一个轻量的任务
+/// [scheduleTask]
 /// [scheduleMicrotask]
 Future<R> scheduleTask<R>(ResultCallback<R> callback,
         [Priority priority = Priority.animation]) =>

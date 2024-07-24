@@ -13,6 +13,8 @@ bool get isSchedulerPhase =>
     SchedulerPhase.persistentCallbacks;
 
 /// 立即安排一帧
+/// [scheduleTask]
+/// [scheduleMicrotask]
 void scheduleFrame() {
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsBinding.instance.platformDispatcher.scheduleFrame();
