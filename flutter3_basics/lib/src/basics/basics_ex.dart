@@ -2019,6 +2019,22 @@ extension ListEx<T> on List<T> {
     );
   }
 
+  /// [getByNameOrNull]
+  T? getByValueOrNull(
+    dynamic value, {
+    bool ignoreCase = true,
+  }) {
+    return findFirst(
+      (dynamic element) {
+        try {
+          return element?.value == value;
+        } catch (e) {
+          return false;
+        }
+      },
+    );
+  }
+
   /// 判断2个List是否至少有一个相同的元素
   /// 交叉的数据
   bool hasSameElement(List? list) {
