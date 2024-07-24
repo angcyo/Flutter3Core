@@ -85,7 +85,7 @@ mixin TabLayoutMixin {
   @overridePoint
   void onSelfTabIndexChanged(int from, int to) {
     assert(() {
-      l.d('onSelfTabIndexChanged:$from->$to');
+      l.v('onSelfTabIndexChanged:$from->$to');
       return true;
     }());
   }

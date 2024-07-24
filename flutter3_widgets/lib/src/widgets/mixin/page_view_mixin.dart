@@ -114,7 +114,7 @@ mixin PageViewMixin<T extends StatefulWidget>
   @overridePoint
   void onSelfPageViewChanged(int index) {
     assert(() {
-      l.d('onSelfPageViewChanged:$index');
+      l.v('onSelfPageViewChanged:$index');
       return true;
     }());
   }
