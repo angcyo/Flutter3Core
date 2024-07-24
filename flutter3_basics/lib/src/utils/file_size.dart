@@ -11,7 +11,7 @@ extension FileSizeEx on num {
   /// filesize(4324324232343);          // "3.93 TB"
   /// [filesize]
   String toSizeStr([int round = 2, String space = ""]) {
-    return filesize(this, round, space);
+    return filesize(ceil(), round, space);
   }
 }
 

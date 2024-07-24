@@ -672,9 +672,13 @@ class GCodeWriteHandle with VectorWriteMixin {
   }
 
   /// 自动激光在第一个G1指令后面写入功率和速度
+  /// [GCodeWriteHandle.gcodeHeader] P/S参数放到头里面设置
   void _writePowerSpeed() {
     if (_isContourFirst) {
+      //废弃, 不在每个G1指令后面追加P/S参数
+      //放到[gcodeHeader]
       //stringBuffer?.writeln('$_powerString$_speedString');
+      stringBuffer?.write('\n');
       _isContourFirst = false;
     } else {
       stringBuffer?.write('\n');
