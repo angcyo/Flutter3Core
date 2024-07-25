@@ -1390,6 +1390,31 @@ extension NumEx on num {
   ///[refreshRate]
   double get rr => this / (refreshRate / 60.0);
 
+  /// 将一个值[this].[value].[0~1]按照60帧的刷新率在一定时间[timestamp]内变化
+  /// [value] 这个当前的值
+  /// [timestamp] 多少毫秒变化到1, 用来计算step
+  /// [reverse] 是否反向变化, 反向用-step
+  /// @return ([0~1], 是否反向)
+  (double progress, bool reverse) rrt(int timestamp, bool reverse) {
+    num value = this;
+    double result = value.toDouble();
+    double step = (1000.0 / timestamp) / refreshRate;
+    //debugger();
+    if (reverse) {
+      result -= step.rr;
+    } else {
+      result += step.rr;
+    }
+    if (result > 1.0) {
+      result = 1.0;
+      reverse = true;
+    } else if (result < 0) {
+      result = 0.0;
+      reverse = false;
+    }
+    return (result, reverse);
+  }
+
   /// 正负取反
   get inverted => -this;
 
