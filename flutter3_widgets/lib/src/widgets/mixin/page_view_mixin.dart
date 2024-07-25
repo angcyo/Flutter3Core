@@ -82,8 +82,8 @@ mixin PageViewMixin<T extends StatefulWidget>
                 //l.d("update offset:${tabController.offset}");
               } else if (notification is ScrollEndNotification) {
                 //l.d("end index:${tabController.index}->$pageIndex");
-                tabController.index = pageIndex;
                 tabController.offset = 0;
+                tabController.index = pageIndex;
                 /*if (!tabController.indexIsChanging) {
                   //指示器偏移
                   tabController.offset =

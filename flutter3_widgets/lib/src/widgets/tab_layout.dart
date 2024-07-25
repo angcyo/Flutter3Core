@@ -352,9 +352,11 @@ class TabLayoutRender extends ScrollContainerRenderBox {
       //l.d('index:${tabController?.index} offset:${tabController?.offset} animateValue:${tabController?.animation?.value}');
       return true;
     }());
-    markNeedsLayout();
-    markNeedsPaint();
-    markNeedsSemanticsUpdate();
+    postFrameCallbackIfNeed((_) {
+      markNeedsLayout();
+      markNeedsPaint();
+      markNeedsSemanticsUpdate();
+    });
   }
 
   @override
