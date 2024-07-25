@@ -143,6 +143,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [handleData] 是否自动处理数据到[pageWidgetList]
   ///
   /// 重写[wrapScrollChildren]方法,实现额外的布局
+  ///
+  /// [updateLoadDataWidget] 简单刷新整体界面
   @callPoint
   @updateMark
   void loadDataEnd(
@@ -179,6 +181,20 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         currentState != state) {
       scrollController.updateAdapterState(_updateState, state);
     }
+  }
+
+  /// 在已经[loadDataEnd]过后, 此时需要刷新简单的静态界面时调用此方法
+  /// 调用此方法不会触发[onLoadData]回调
+  /// 不调用此方法, 直接调用[State.setState]无法更新在[onLoadData]回调中创建的小部件
+  ///
+  /// [loadDataEnd]
+  @callPoint
+  void updateLoadDataWidget(WidgetList widgetList) {
+    if (scrollController.requestPage.isFirstPage) {
+      pageWidgetList.clear();
+    }
+    pageWidgetList.addAll(widgetList);
+    _updateState.updateState();
   }
 
   /// 分页请求参数
@@ -260,6 +276,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 包裹内容
   /// [RScrollView]
   /// [build]
+  /// [RScrollPage.build]->[RScrollPage.pageRScrollView]
   /// [AbsScrollPage.buildBody]
   @callPoint
   RScrollView pageRScrollView({
