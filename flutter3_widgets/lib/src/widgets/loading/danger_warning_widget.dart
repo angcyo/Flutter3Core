@@ -7,7 +7,7 @@ part of '../../../flutter3_widgets.dart';
 /// 全屏警报动画提示小部件
 class DangerWarningWidget extends SingleChildRenderObjectWidget {
   /// 警报的颜色
-  final Color color;
+  final Color? color;
 
   /// 警报的宽度
   final double width;
@@ -15,7 +15,7 @@ class DangerWarningWidget extends SingleChildRenderObjectWidget {
   const DangerWarningWidget({
     super.key,
     super.child,
-    this.color = Colors.red,
+    this.color,
     this.width = 20,
   });
 
@@ -35,7 +35,7 @@ class DangerWarningWidget extends SingleChildRenderObjectWidget {
 
 class _DangerWarningRender extends RenderProxyBox {
   /// 警报的颜色
-  Color color;
+  Color? color;
 
   /// 警报的宽度
   double width;
@@ -45,7 +45,7 @@ class _DangerWarningRender extends RenderProxyBox {
   bool _reverse = false;
 
   _DangerWarningRender({
-    this.color = Colors.red,
+    this.color,
     this.width = 20,
   });
 
@@ -62,6 +62,7 @@ class _DangerWarningRender extends RenderProxyBox {
     _reverse = pair.$2;
     final w = width * _progress;
 
+    final color = this.color ?? Colors.red.shade400.withOpacity(0.75);
     final colors = [color, color.withOpacity(0.3), Colors.transparent];
 
     final paint = Paint()
