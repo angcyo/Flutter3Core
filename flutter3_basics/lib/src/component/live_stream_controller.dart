@@ -17,6 +17,9 @@ class LiveStreamController<T> {
   /// 是否自动清空最后一个值
   bool autoClearValue = false;
 
+  /// 如果上一次是null, 这一次也是null, 是否还要通知?
+  bool ignoreLastNullNotify = true;
+
   final StreamController<T> _controller = StreamController<T>.broadcast();
 
   LiveStreamController(T initialValue, {this.autoClearValue = false})
@@ -41,6 +44,9 @@ class LiveStreamController<T> {
   @callPoint
   void add(T newValue) {
     latestError = null;
+    if (ignoreLastNullNotify && latestValue == null && newValue == null) {
+      return;
+    }
     latestValue = newValue;
     _controller.add(newValue);
     if (autoClearValue) {
