@@ -81,7 +81,7 @@ class BatchResult<T> {
   /// 用来标识请求的唯一性
   final String key;
 
-  /// 请求
+  /// 请求, 也有可能是请求列表
   final dynamic request;
 
   /// [request] 的请求结果
