@@ -185,7 +185,7 @@ class Flutter3ShelfHttp {
         });*/
         //debugger();
         address = getServerAddress();
-        l.d(address);
+        l.d("[${toRuntimeString()}]服务启动->$address");
         break;
       } catch (e) {
         //debugger();
