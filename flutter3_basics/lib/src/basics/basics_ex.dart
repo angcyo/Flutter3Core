@@ -1616,6 +1616,9 @@ extension IntEx on int {
   /// [bit] 从右往左, 第几位, 1开始
   int bit(int bit) => (this >> (math.max(bit, 1) - 1)) & 0x1;
 
+  /// 当前字节数, 能表示的最大无符号整数
+  int get maxUnsignedInt => (1 << 8 * this) - 1;
+
   /// 是否有指定的标志位
   bool have(int flag) {
     if (this == 0 && flag == 0) {
