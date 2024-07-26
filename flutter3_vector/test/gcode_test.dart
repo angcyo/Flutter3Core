@@ -169,7 +169,7 @@ void testParseGCode() {
 void testOutputPoint() {
   final pathList = getPathList();
   PointWriteHandle handle = PointWriteHandle();
-  final pointList = pathList.toPointList(handle: handle, unit: null, digits: 0);
+  final pointList = pathList.toPointList(handle: handle, unit: null, precision: 0);
   final file = outputFile("point_list.log");
   file.writeAsStringSync(""); //清空文件
   for (final point in pointList ?? []) {

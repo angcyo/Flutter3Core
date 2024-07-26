@@ -1114,7 +1114,7 @@ extension VectorListPathEx on List<Path> {
   }
 
   /// 转换成N段线段折点数据
-  /// [digits] 精度
+  /// [precision] 精度, 会将数值乘以10E2存储
   /// [unit] 输出数值的单位
   /// [contourMaxPointCount] 限制一段最多多少个点, 超过之后, 起一个新段
   /// [VectorPathEx.toGCodeString]
@@ -1123,7 +1123,7 @@ extension VectorListPathEx on List<Path> {
     @dp double? pathStep,
     @mm double? tolerance,
     IUnit? unit = IUnit.mm,
-    int digits = 2,
+    int precision = 2,
     @dp double offsetX = 0,
     @dp double offsetY = 0,
     int? contourMaxPointCount,
@@ -1137,7 +1137,7 @@ extension VectorListPathEx on List<Path> {
     handle
       ..unit = unit
       ..contourMaxPointCount = contourMaxPointCount
-      ..digits = digits
+      ..digits = precision
       ..offsetX = offsetX
       ..offsetY = offsetY;
     for (final path in this) {
