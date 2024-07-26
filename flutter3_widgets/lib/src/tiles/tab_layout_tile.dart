@@ -55,7 +55,14 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
   void didUpdateWidget(covariant LabelTabLayoutTile oldWidget) {
     super.didUpdateWidget(oldWidget);
     //debugger();
-    tabLayoutController.index = widget.values?.indexOf(widget.initValue) ?? 0;
+    final index = widget.values?.indexOf(widget.initValue) ?? -1;
+    if (index == -1) {
+      assert(() {
+        l.w('不在列表内的元素[${widget.initValue}]');
+        return true;
+      }());
+    }
+    tabLayoutController.index = index.clamp(0, widget.values?.lastIndex ?? 0);
   }
 
   @override
