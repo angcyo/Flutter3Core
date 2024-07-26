@@ -1820,6 +1820,10 @@ extension IterableEx<E> on Iterable<E> {
   /// [WhereIterable]
   List<E> filter(bool Function(E element) test) => where(test).toList();
 
+  /// [filter]顺便转换类型
+  List<R> filterCast<R>(bool Function(E element) test) =>
+      where(test).cast<R>().toList();
+
   /// 过滤掉null
   List<R> filterNull<R>() =>
       where((element) => element != null).cast<R>().toList();
