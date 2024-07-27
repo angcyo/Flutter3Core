@@ -302,6 +302,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [markdown_widget: ^2.3.2+2](https://pub.dev/packages/markdown_widget)支持TOC功能，可以通过Heading快速定位;支持代码高亮;支持夜间模式;
 - [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility)对键盘可见性更改做出反应。
 - [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter 可滚动小部件提供了固定/可变行高的滚动到索引机制。
+- [scrollview_observer: ^1.21.0](https://pub.dev/packages/scrollview_observer) 这是一个可用于监听滚动视图中正在显示的子部件的组件库。
 - [indexed_list_view: ^3.0.1](https://pub.dev/packages/indexed_list_view) 按索引跳转到任何项目。
 - [matrix_gesture_detector: ^0.1.0](https://pub.dev/packages/matrix_gesture_detector)MatrixGestureDetector 检测平移、缩放和旋转手势，并将它们组合成 Matrix4 可由 Transform 小部件或低级 CustomPainter 代码使用的对象。
 - [matrix_gesture_detector_pro: ^1.0.0](https://pub.dev/packages/matrix_gesture_detector_pro) https://github.com/zhaolongs/matrix_gesture_detector_pro
