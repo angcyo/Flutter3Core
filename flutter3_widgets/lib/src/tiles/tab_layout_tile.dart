@@ -19,6 +19,9 @@ class LabelTabLayoutTile extends StatefulWidget {
   /// 索引改变回调
   final IndexCallback? onTabIndexChanged;
 
+  /// [label].[values]布局方向
+  final Axis axis;
+
   const LabelTabLayoutTile({
     super.key,
     this.label,
@@ -27,6 +30,7 @@ class LabelTabLayoutTile extends StatefulWidget {
     this.values,
     this.valuesWidget,
     this.onTabIndexChanged,
+    this.axis = Axis.horizontal,
   });
 
   @override
@@ -82,10 +86,12 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
       valuesWidget: widget.valuesWidget,
       selectedIndex: tabLayoutController.index,
     )
-        ?.mapIndex((child, index) => child.click(() {
-              tabLayoutController.selectedItem(index);
-              widget.onTabIndexChanged?.call(index);
-            }))
+        ?.mapIndex(
+          (child, index) => child.click(() {
+            tabLayoutController.selectedItem(index);
+            widget.onTabIndexChanged?.call(index);
+          }),
+        )
         .toList();
     final content = TabLayout(
       tabLayoutController: tabLayoutController,
@@ -99,7 +105,13 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
           itemPaintType: TabItemPaintType.background,
         )
       ],
-    ).paddingInsets(kContentPadding);
-    return [label, content.expanded()].row()!;
+    ).paddingInsets(
+      widget.axis == Axis.vertical
+          ? kContentPadding.copyWith(left: kX)
+          : kContentPadding,
+    );
+    return widget.axis == Axis.vertical
+        ? [label?.align(Alignment.centerLeft), content].column()!
+        : [label, content.expanded()].row()!;
   }
 }
