@@ -1075,6 +1075,9 @@ extension RectEx on Rect {
 
   Offset get lb => Offset(left, bottom);
 
+  /// 中心点对应的1dp矩形
+  Rect get centerRect => center & const Size(1.0, 1.0);
+
   Rect operator -(Offset offset) => Rect.fromLTWH(
         left - offset.dx,
         top - offset.dy,
