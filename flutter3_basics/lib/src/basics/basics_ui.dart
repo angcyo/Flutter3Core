@@ -1549,7 +1549,7 @@ extension WidgetEx on Widget {
         child: this,
       );
 
-  /// [Material]
+  /// [Material]组件会影响[ModalRoute.barrierDismissible]属性
   /// [color] 背景颜色
   /// [surfaceTintColor]
   Widget material({

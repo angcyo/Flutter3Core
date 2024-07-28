@@ -64,7 +64,7 @@ mixin DialogMixin implements TranslationTypeImpl {
                     globalTheme.themeWhiteColor.withOpacity(blur ? 0.85 : 1.0),
                 borderRadius: borderRadius,
               ),
-          child: child.paddingInsets(padding ?? contentPadding),
+          child: child.paddingInsets(padding ?? contentPadding).material(),
         ).blur(sigma: blur ? kL : null),
       ).clip(borderRadius: borderRadius),
     );
@@ -93,7 +93,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         decorationColor: decorationColor,
         blur: blur,
       ),
-    ).material();
+    );
   }
 
   /// 底部全屏显示的对话框样式
@@ -115,7 +115,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           topRight: Radius.circular(radius),
         ),
       ),
-    ).material();
+    );
   }
 
   /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
@@ -209,6 +209,7 @@ mixin DialogMixin implements TranslationTypeImpl {
 
     final globalTheme = GlobalTheme.of(context);
     return body
+        .material()
         .container(color: globalTheme.surfaceBgColor)
         .clipRadius(
           radius: clipRadius,
@@ -224,7 +225,6 @@ mixin DialogMixin implements TranslationTypeImpl {
         .matchParent(matchHeight: fullScreen)
         .align(Alignment.bottomCenter)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
-        .material()
         .adaptiveTablet(context);
   }
 

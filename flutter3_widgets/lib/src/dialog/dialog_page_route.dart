@@ -101,7 +101,8 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
               return super
                   .buildModalBarrier()
                   .ignoreSelfPointer(ignoreType: barrierIgnorePointerType);
-            });
+            },
+          );
   }
 
   /// 2:再构建界面
