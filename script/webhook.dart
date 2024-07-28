@@ -26,7 +26,7 @@ void main(List<String> arguments) async {
 Future _sendLP5xVersion({String? versionDes}) async {
   final currentPath = Directory.current.path;
 
-  final localYamlFile = File("$currentPath/local.script.yaml");
+  final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");
 
   final localYaml = loadYaml(localYamlFile.readAsStringSync());

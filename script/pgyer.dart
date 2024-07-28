@@ -19,7 +19,7 @@ void main(List<String> arguments) async {
   final currentPath = Directory.current.path;
   print('工作路径->$currentPath');
 
-  final localYamlFile = File("$currentPath/local.script.yaml");
+  final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");
 
   final localYaml = loadYaml(localYamlFile.readAsStringSync());
