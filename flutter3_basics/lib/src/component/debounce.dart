@@ -68,3 +68,79 @@ class Debounce {
     _timer?.cancel();
   }
 }
+
+/// https://pub.dev/packages/dev_prokit
+extension DebounceFunction on Function {
+  /// No parameter button debouncing,
+  /// Default parameter 200 milliseconds.
+  ///
+  /// Example :
+  /// ```
+  /// GestureDetector(
+  ///   onTap:(){
+  ///     print('Other events!');
+  ///   }.debounce();
+  /// )
+  /// ```
+  Function() debounce([int millisecond = 200]) {
+    Timer? debounceTimer;
+    return () {
+      if (debounceTimer?.isActive ?? false) debounceTimer?.cancel();
+      debounceTimer = Timer(Duration(milliseconds: millisecond), () {
+        this.call();
+        debounceTimer = null;
+      });
+    };
+  }
+
+  /// Button debounce event with one event parameter,
+  /// Default parameter 200 milliseconds.
+  ///
+  /// Example :
+  /// ```
+  /// GestureDetector(
+  ///   onTapUp: (details) {
+  ///     print('one param');
+  ///   }.debounceParam(),
+  ///   child: Text('Debounce'),
+  /// )
+  /// ```
+  Function(T) debounceParam<T>([int millisecond = 200]) {
+    Timer? debounceTimer;
+    return (t) {
+      if (debounceTimer?.isActive ?? false) debounceTimer?.cancel();
+      debounceTimer = Timer(Duration(milliseconds: millisecond), () {
+        this.call(t);
+        debounceTimer = null;
+      });
+    };
+  }
+
+  /// Button debounce event with two event parameter,
+  /// Default parameter 200 milliseconds.
+  ///
+  /// Example :
+  /// ```
+  /// // Define :
+  /// class MethodWidget extends StatelessWidget {
+  ///   const MethodWidget({super.key, this.itemMethod});
+  ///   final Function(String, int)? itemMethod;
+  /// }
+  /// // Use :
+  /// MethodWidget(
+  ///   itemMethod:(name,index) {
+  ///     print('$name-$index');
+  ///   }.debounceParam2(),
+  /// )
+  /// ```
+  Function(T, K) debounceParam2<T, K>([int millisecond = 200]) {
+    Timer? debounceTimer;
+    return (t, k) {
+      if (debounceTimer?.isActive ?? false) debounceTimer?.cancel();
+      debounceTimer = Timer(Duration(milliseconds: millisecond), () {
+        this.call(t, k);
+        debounceTimer = null;
+      });
+    };
+  }
+}

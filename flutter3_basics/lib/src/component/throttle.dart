@@ -35,3 +35,75 @@ class Throttle {
     _timer?.cancel();
   }
 }
+
+/// https://pub.dev/packages/dev_prokit
+extension ThrottleFunction on Function {
+  /// Throttling for calling events without parameters,
+  /// The default parameter is 200 milliseconds.
+  ///
+  /// Example :
+  /// ```
+  /// GestureDetector(
+  ///   onTap: () {
+  ///     print('throttle');
+  ///   }.throttle(),
+  /// )
+  /// ```
+  Function() throttle([int millisecond = 200]) {
+    late bool isPass = true;
+    return () {
+      if (!isPass) return;
+      isPass = false;
+      this.call();
+      Timer(Duration(milliseconds: millisecond), () => isPass = true);
+    };
+  }
+
+  /// Throttle calling event with one argument,
+  /// The default parameter is 200 milliseconds.
+  ///
+  /// Example :
+  /// ```
+  /// GestureDetector(
+  ///   onTapDown: (details) {
+  ///     print('throttle');
+  ///   }.throttleParam(),
+  /// ),
+  /// ```
+  Function(T) throttleParam<T>([int millisecond = 200]) {
+    late bool isPass = true;
+    return (t) {
+      if (!isPass) return;
+      isPass = false;
+      this.call(t);
+      Timer(Duration(milliseconds: millisecond), () => isPass = true);
+    };
+  }
+
+  /// Throttle calling event with two arguments,
+  /// The default parameter is 200 milliseconds.
+  ///
+  /// Example :
+  /// ```
+  /// // Define :
+  /// class MethodWidget extends StatelessWidget {
+  ///   const MethodWidget({super.key, this.itemMethod});
+  ///   final Function(String, int)? itemMethod;
+  /// }
+  /// // Use :
+  /// MethodWidget(
+  ///   itemMethod:(name,index) {
+  ///     print('$name-$index');
+  ///   }.throttleParam2(),
+  /// )
+  /// ```
+  Function(T, K) throttleParam2<T, K>([int millisecond = 200]) {
+    late bool isPass = true;
+    return (t, k) {
+      if (!isPass) return;
+      isPass = false;
+      this.call(t, k);
+      Timer(Duration(milliseconds: millisecond), () => isPass = true);
+    };
+  }
+}
