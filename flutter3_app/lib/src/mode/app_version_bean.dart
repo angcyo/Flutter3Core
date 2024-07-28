@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter3_app/flutter3_app.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -58,6 +56,8 @@ class AppVersionBean {
 
   AppVersionBean();
 
+  //region --精确平台/包名/指定设备--
+
   /// 每个平台单独设置信息, 小写字母
   /// [$platformName]
   Map<String, AppVersionBean>? platformMap;
@@ -70,10 +70,22 @@ class AppVersionBean {
   /// [CoreKeys.deviceUuid]
   Map<String, AppVersionBean>? versionUuidMap;
 
-  //--
+  //endregion --精确平台/包名/指定设备--
+
+  //region --过滤--
+
+  /// 指定那些设备能更新
+  List<String>? allowVersionUuidList;
+
+  /// 指定那些设备不能更新
+  List<String>? denyVersionUuidList;
 
   /// 是否仅用于调试?
   bool? debug;
+
+  //endregion --过滤--
+
+  //region --核心信息--
 
   /// 抬头
   String? versionTile;
@@ -108,7 +120,9 @@ class AppVersionBean {
   /// 版本时间
   String? versionDate;
 
-  //--
+  //endregion --核心信息--
+
+  //region --权限信息--
 
   /// 版本号段对应的 forbidden 信息
   /// [VersionMatcher]
@@ -116,4 +130,6 @@ class AppVersionBean {
   String? forbiddenTile;
   String? forbiddenReason;
   bool? forceForbidden;
+
+//endregion --权限信息--
 }

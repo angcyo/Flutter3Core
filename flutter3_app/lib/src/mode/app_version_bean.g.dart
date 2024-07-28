@@ -12,7 +12,21 @@ AppVersionBean _$AppVersionBeanFromJson(Map<String, dynamic> json) =>
         (k, e) =>
             MapEntry(k, AppVersionBean.fromJson(e as Map<String, dynamic>)),
       )
+      ..packageNameMap = (json['packageNameMap'] as Map<String, dynamic>?)?.map(
+        (k, e) =>
+            MapEntry(k, AppVersionBean.fromJson(e as Map<String, dynamic>)),
+      )
+      ..versionUuidMap = (json['versionUuidMap'] as Map<String, dynamic>?)?.map(
+        (k, e) =>
+            MapEntry(k, AppVersionBean.fromJson(e as Map<String, dynamic>)),
+      )
       ..debug = json['debug'] as bool?
+      ..allowVersionUuidList = (json['allowVersionUuidList'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..denyVersionUuidList = (json['denyVersionUuidList'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
       ..versionTile = json['versionTile'] as String?
       ..versionName = json['versionName'] as String?
       ..versionCode = (json['versionCode'] as num?)?.toInt()
@@ -23,14 +37,6 @@ AppVersionBean _$AppVersionBeanFromJson(Map<String, dynamic> json) =>
       ..outLink = json['outLink'] as bool?
       ..jumpToMarket = json['jumpToMarket'] as bool?
       ..versionDate = json['versionDate'] as String?
-      ..versionUuidMap = (json['versionUuidMap'] as Map<String, dynamic>?)?.map(
-        (k, e) =>
-            MapEntry(k, AppVersionBean.fromJson(e as Map<String, dynamic>)),
-      )
-      ..packageNameMap = (json['packageNameMap'] as Map<String, dynamic>?)?.map(
-        (k, e) =>
-            MapEntry(k, AppVersionBean.fromJson(e as Map<String, dynamic>)),
-      )
       ..forbiddenVersionMap =
           (json['forbiddenVersionMap'] as Map<String, dynamic>?)?.map(
         (k, e) =>
@@ -51,7 +57,13 @@ Map<String, dynamic> _$AppVersionBeanToJson(AppVersionBean instance) {
 
   writeNotNull('platformMap',
       instance.platformMap?.map((k, e) => MapEntry(k, e.toJson())));
+  writeNotNull('packageNameMap',
+      instance.packageNameMap?.map((k, e) => MapEntry(k, e.toJson())));
+  writeNotNull('versionUuidMap',
+      instance.versionUuidMap?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('debug', instance.debug);
+  writeNotNull('allowVersionUuidList', instance.allowVersionUuidList);
+  writeNotNull('denyVersionUuidList', instance.denyVersionUuidList);
   writeNotNull('versionTile', instance.versionTile);
   writeNotNull('versionName', instance.versionName);
   writeNotNull('versionCode', instance.versionCode);
@@ -62,10 +74,6 @@ Map<String, dynamic> _$AppVersionBeanToJson(AppVersionBean instance) {
   writeNotNull('outLink', instance.outLink);
   writeNotNull('jumpToMarket', instance.jumpToMarket);
   writeNotNull('versionDate', instance.versionDate);
-  writeNotNull('versionUuidMap',
-      instance.versionUuidMap?.map((k, e) => MapEntry(k, e.toJson())));
-  writeNotNull('packageNameMap',
-      instance.packageNameMap?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('forbiddenVersionMap',
       instance.forbiddenVersionMap?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('forbiddenTile', instance.forbiddenTile);

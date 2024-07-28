@@ -22,6 +22,7 @@ part of '../../flutter3_app.dart';
 class AppUpdateDialog extends StatefulWidget with DialogMixin {
   /// 检查更新并且显示
   /// [forceShow] 是否强制显示更新, 不检查版本号
+  /// 在[AppVersionBean.fetchConfig]中触发
   @api
   static void checkUpdateAndShow(
     BuildContext? context,
@@ -35,6 +36,8 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
       }());
       return;
     }
+    final navigator = context.navigatorOf();
+    final libRes = LibRes.of(context);
 
     //1: 平台检查, 获取对应平台的版本信息
     final AppVersionBean platformBean =
@@ -45,11 +48,33 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
         platformBean.packageNameMap?[$appPackageName] ?? platformBean;
 
     //3: 获取指定设备的版本信息
+    final deviceUuid = $coreKeys.deviceUuid;
     final AppVersionBean deviceBean =
-        packageBean.versionUuidMap?[$coreKeys.deviceUuid] ?? packageBean;
+        packageBean.versionUuidMap?[deviceUuid] ?? packageBean;
 
     //end
     final AppVersionBean versionBean = deviceBean;
+    bool ignoreDeviceUpdate = false; //是否要忽略当前设备的更新
+
+    final allowVersionUuidList = versionBean.allowVersionUuidList;
+    if (allowVersionUuidList != null) {
+      if (allowVersionUuidList.size() > 0) {
+        if (!allowVersionUuidList.contains(deviceUuid)) {
+          //当前设备不在白名单中
+          ignoreDeviceUpdate = true;
+        }
+      }
+    }
+
+    if (!ignoreDeviceUpdate) {
+      final denyVersionUuidList = versionBean.denyVersionUuidList;
+      if (denyVersionUuidList != null) {
+        if (denyVersionUuidList.contains(deviceUuid)) {
+          //当前设备在黑名单中
+          ignoreDeviceUpdate = true;
+        }
+      }
+    }
 
     //check
     final localVersionCode = (await appVersionCode).toIntOrNull() ?? 0;
@@ -63,21 +88,23 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
               ?.value ??
           versionBean;
       if (forbiddenBean.forbiddenReason != null) {
-        GlobalConfig.def.findNavigatorState()?.showWidgetDialog(MessageDialog(
-              title: forbiddenBean.forbiddenTile,
-              message: forbiddenBean.forbiddenReason,
-              confirm: forbiddenBean.forceForbidden == true
-                  ? null
-                  : LibRes.of(context).libConfirm,
-              interceptPop: forbiddenBean.forceForbidden == true,
-            ));
+        (GlobalConfig.def.findNavigatorState() ?? navigator)
+            .showWidgetDialog(MessageDialog(
+          title: forbiddenBean.forbiddenTile,
+          message: forbiddenBean.forbiddenReason,
+          confirm:
+              forbiddenBean.forceForbidden == true ? null : libRes.libConfirm,
+          interceptPop: forbiddenBean.forceForbidden == true,
+        ));
       }
 
       //更新检查
-      final versionCode = versionBean.versionCode ?? 0;
-      if (forceShow == true || versionCode > localVersionCode) {
-        //需要更新
-        context.showWidgetDialog(AppUpdateDialog(versionBean));
+      if (!ignoreDeviceUpdate) {
+        final versionCode = versionBean.versionCode ?? 0;
+        if (forceShow == true || versionCode > localVersionCode) {
+          //需要更新
+          navigator.showWidgetDialog(AppUpdateDialog(versionBean));
+        }
       }
     }
   }
