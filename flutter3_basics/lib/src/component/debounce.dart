@@ -69,6 +69,24 @@ class Debounce {
   }
 }
 
+/// 抖动处理, 防止多次调用, 只执行最后一次
+extension DebounceEx on dynamic {
+  static final Map<int, Timer> _debounceMap = {};
+
+  ///抖动
+  void debounce(VoidCallback callback, [int millisecond = 200, int? key]) {
+    //debugger();
+    key ??= hashCode;
+    Timer? timer = _debounceMap[key];
+    if (timer?.isActive ?? false) timer?.cancel();
+    timer = Timer(Duration(milliseconds: millisecond), () {
+      callback.call();
+      _debounceMap.remove(key);
+    });
+    _debounceMap[key] = timer;
+  }
+}
+
 /// https://pub.dev/packages/dev_prokit
 extension DebounceFunction on Function {
   /// No parameter button debouncing,

@@ -36,6 +36,25 @@ class Throttle {
   }
 }
 
+/// 每隔多少毫秒, 并执行一次, 首次执行不限流
+extension ThrottleEx on dynamic {
+  static final Map<int, Timer> _throttleMap = {};
+
+  /// 限流, 短时间内的连续事件忽略
+  void throttle(VoidCallback callback, [int millisecond = 200, int? key]) {
+    //debugger();
+    key ??= hashCode;
+    Timer? timer = _throttleMap[key];
+    if (timer == null) {
+      callback.call();
+      timer = Timer(Duration(milliseconds: millisecond), () {
+        _throttleMap.remove(key);
+      });
+      _throttleMap[key] = timer;
+    }
+  }
+}
+
 /// https://pub.dev/packages/dev_prokit
 extension ThrottleFunction on Function {
   /// Throttling for calling events without parameters,
