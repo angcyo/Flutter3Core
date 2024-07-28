@@ -68,7 +68,9 @@ class ToastWidget extends StatelessWidget {
       color: background ?? "#333333".toColor().withOpacity(0.6),
       padding: contentPadding,
       child: result,
-    ).blur(sigma: bgBlurSigma);
+    )
+        .constrainedMax(maxWidth: math.min(screenWidth, screenHeight))
+        .blur(sigma: bgBlurSigma);
     //添加圆角
     result = ClipRRect(
       borderRadius: BorderRadius.circular(kDefaultBorderRadiusXX),

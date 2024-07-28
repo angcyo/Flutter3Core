@@ -1917,14 +1917,17 @@ extension WidgetEx on Widget {
       );
 
   /// 平板适配
-  Widget adaptiveTablet([BuildContext? context]) {
+  Widget adaptiveTablet([
+    BuildContext? context,
+    AlignmentGeometry alignment = Alignment.bottomCenter,
+  ]) {
     //debugger();
     final globalConfig = GlobalConfig.of(context);
     if (globalConfig.isAdaptiveTablet) {
       //平板模式
       final globalTheme = GlobalTheme.of(context);
       return constrainedBox(globalTheme.tabletDialogConstraints)
-          .align(Alignment.bottomCenter);
+          .align(alignment);
       //return size(size: 200);
     }
     return this;
