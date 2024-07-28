@@ -65,7 +65,7 @@ class _AppPackageAssetsSvgWidgetState extends State<AppPackageAssetsSvgWidget> {
   @override
   void didUpdateWidget(covariant AppPackageAssetsSvgWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _checkOrLoadResKey(true);
+    _checkOrLoadResKey();
   }
 
   @override
@@ -85,7 +85,7 @@ class _AppPackageAssetsSvgWidgetState extends State<AppPackageAssetsSvgWidget> {
   }
 
   /// 检查[widget.appKey]是否存在, 如果不存在, 则使用[widget.libKey]
-  Future _checkOrLoadResKey([bool update = false]) async {
+  Future _checkOrLoadResKey([bool update = true]) async {
     //debugger();
 
     final libPackagePath =
