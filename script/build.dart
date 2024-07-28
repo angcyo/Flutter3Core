@@ -42,7 +42,7 @@ void main(List<String> arguments) {
     const targetPath = "assets/config";
 
     final currentPath = Directory.current.path;
-    print('工作路径->$currentPath');
+    print('构建脚本工作路径->$currentPath');
 
     //模板文件
     final templateFile = File("$currentPath/$templatePath/app_setting.tl.json");
@@ -81,7 +81,7 @@ void main(List<String> arguments) {
     //end
     //print(text);
     targetFile.writeAsStringSync(text);
-    print('修改文本->${targetFile.path}');
+    print('构建信息修改->${targetFile.path}');
 
     //成功退出
     //exit(0);

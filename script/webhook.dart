@@ -20,9 +20,11 @@ void main(List<String> arguments) async {
   //---
   //_sendFeishuText(webhook, "text");
 
-  await _sendLP5xVersion();
+  await _sendFeishuVersion();
+  //await _sendLP5xVersion();
 }
 
+/// LP版本发布通知
 Future _sendLP5xVersion({String? versionDes}) async {
   final currentPath = Directory.current.path;
 
@@ -44,6 +46,37 @@ Future _sendLP5xVersion({String? versionDes}) async {
     changeLogUrl:
         "https://gitee.com/angcyo/file/raw/master/LaserPeckerPro/change.json",
   );
+}
+
+/// 飞书版本通知
+Future _sendFeishuVersion({
+  String? versionDes,
+  String? linkUrl,
+  String? changeLogUrl,
+}) async {
+  final currentPath = Directory.current.path;
+
+  final localYamlFile = File("$currentPath/script.local.yaml");
+  final yamlFile = File("$currentPath/script.yaml");
+
+  final localYaml = loadYaml(localYamlFile.readAsStringSync());
+  final yaml = loadYaml(yamlFile.readAsStringSync());
+
+  for (final folder in (localYaml["pgyer_path"] ?? yaml["pgyer_path"])) {
+    final versionMap = await _getVersionDes(folder);
+    _sendFeishuPost(
+      localYaml["feishu_webhook"] ?? yaml["feishu_webhook"],
+      versionMap?["versionName"] == null
+          ? null
+          : "新版本发布 V${versionMap?["versionName"]}",
+      versionDes ?? versionMap?["versionDes"],
+      linkUrl: linkUrl ??
+          versionMap?["downloadUrl"] ??
+          versionMap?["versionUrl"] ??
+          versionMap?["url"],
+      changeLogUrl: changeLogUrl ?? versionMap?[" changeLogUrl"],
+    );
+  }
 }
 
 //---

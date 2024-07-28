@@ -27,6 +27,9 @@ void main(List<String> arguments) async {
   //print(yaml);
 
   final apiKey = localYaml["pgyer_api_key"] ?? yaml["pgyer_api_key"];
+  if (apiKey == null) {
+    throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置蒲公英[pgyer_api_key]";
+  }
 
   for (final folder in (localYaml["pgyer_path"] ?? yaml["pgyer_path"])) {
     final fileList = await _getFileList(folder);
@@ -73,7 +76,8 @@ void main(List<String> arguments) async {
         } else {
           print("不支持的文件->$filePath");
         }
-      } catch (e) {
+      } catch (e, s) {
+        print(s.toString());
         print(e);
       }
       index++;
