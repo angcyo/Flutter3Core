@@ -35,10 +35,18 @@ void main() async {
 
   await amendAppBuildInfo(packageName: appPackageName, flavorFlag: flavorFlag);
 
+  //开始计时
+  final watch = Stopwatch()..start();
   if (appBuildBundle == true) {
+    colorLog('开始打包aab...');
     await buildBundle(flavor: flavor);
+    colorLog(
+        '打包aab完成,耗时:${watch.elapsedMilliseconds ~/ 1000}s${watch.elapsedMilliseconds % 1000}ms');
   } else {
+    colorLog('开始打包apk...');
     await buildApk(flavor: flavor);
+    colorLog(
+        '打包apk完成,耗时:${watch.elapsedMilliseconds ~/ 1000}s${watch.elapsedMilliseconds % 1000}ms');
   }
 }
 
