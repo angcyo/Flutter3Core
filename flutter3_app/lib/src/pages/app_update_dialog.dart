@@ -92,8 +92,8 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
             .showWidgetDialog(MessageDialog(
           title: forbiddenBean.forbiddenTile,
           message: forbiddenBean.forbiddenReason,
-          confirm:
-              forbiddenBean.forceForbidden == true ? null : libRes.libConfirm,
+          confirm: libRes.libConfirm,
+          showConfirm: forbiddenBean.forceForbidden != true,
           interceptPop: forbiddenBean.forceForbidden == true,
         ));
       }
