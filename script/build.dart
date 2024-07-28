@@ -6,6 +6,9 @@ import 'package:args/args.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/20
 ///
+/// 模板
+/// - `Flutter3Core/flutter3_app/assets/template/app_setting.tl.json`
+///
 /// 构建信息写入
 /// - `Flutter3Core/flutter3_app/assets/config/app_setting.json`
 /// - `assets/config/app_setting.json`
