@@ -156,6 +156,8 @@ extension DirectoryPubEx on Directory {
         }
         return a.path.fileName().compareTo(b.path.fileName());
       });
+      //debugger();
+      //list.sortFileList(folderFront: false, modifiedTimeDesc: true );
       return list;
     } catch (e) {
       assert(() {

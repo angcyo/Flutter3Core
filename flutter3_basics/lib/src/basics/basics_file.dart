@@ -113,6 +113,32 @@ extension FileStringEx on String {
 
 //region File 扩展
 
+extension FileSystemEntityEx on FileSystemEntity {
+  Future<DateTime?> get lastModified {
+    if (this is File) {
+      return (this as File).lastModified();
+    }
+    return Future.value(null);
+  }
+
+  DateTime? get lastModifiedSync {
+    if (this is File) {
+      return (this as File).lastModifiedSync();
+    }
+    return null;
+  }
+
+  /// 是否是文件夹
+  Future<bool> isDirectory() async => FileSystemEntity.isDirectory(path);
+
+  bool isDirectorySync() => FileSystemEntity.isDirectorySync(path);
+
+  /// 是否是文件
+  Future<bool> isFile() async => FileSystemEntity.isFile(path);
+
+  bool isFileSync() => FileSystemEntity.isFileSync(path);
+}
+
 extension FileEx on File {
   /// [UiImageProvider]
   /// [ImageProviderEx.toImage]
@@ -551,5 +577,46 @@ extension FileListEx on List<FileSystemEntity> {
       final filePath = file is FileSystemEntity ? file.path : file?.toString();
       return element.path == filePath;
     });
+  }
+
+  /// 排序文件列表 asc:升序 desc:降序
+  /// [folderFront] 文件夹放在前面
+  /// [modifiedTimeDesc] 按照修改时间降序, 二选一
+  /// [filenameDesc] 按照文件名降序, 二选一
+  List<FileSystemEntity> sortFileList({
+    bool? folderFront = true,
+    bool? filenameDesc,
+    bool? modifiedTimeDesc,
+  }) {
+    //-1 0 1 , 从小到大
+    sort((a, b) {
+      //debugger();
+      if (folderFront != null) {
+        //文件夹需要前后排序
+        if (a.isDirectorySync() && b.isFileSync()) {
+          return folderFront == true ? -1 : 1;
+        } else if (a.isFileSync() && b.isDirectorySync()) {
+          return folderFront == true ? 1 : -1;
+        }
+      }
+      if (filenameDesc != null) {
+        final r = a.path.compareTo(b.path);
+        if (filenameDesc == true) {
+          //文件名降序
+          return -r;
+        }
+        return r;
+      } else if (modifiedTimeDesc != null) {
+        final r = a.lastModifiedSync
+                ?.compareTo(b.lastModifiedSync ?? DateTime.now()) ??
+            0;
+        if (modifiedTimeDesc == true) {
+          //修改时间降序
+          return -r;
+        }
+      }
+      return 0;
+    });
+    return this;
   }
 }

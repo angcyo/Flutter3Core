@@ -236,7 +236,7 @@ abstract final class ShelfHtml {
     <meta charset="UTF-8">
     <title>$tile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style> * {word-wrap: break-word; padding: 4px} a {line-height: 30px;}</style>
+    <style> * {word-wrap: break-word; padding: 4px} a {line-height: 30px;} .time {color: #d3d3d3;font-size: 12px;}</style>
 </head>
 <body>
 <h1>$parent</h1>
@@ -255,11 +255,15 @@ abstract final class ShelfHtml {
           final targetPath = folder.parentPath.replaceAll(root, '');
           buffer.write("<a href='/files?path=$targetPath'>..</a><br>");
         }
-        await for (final entity in folderFile.listFilesStream()) {
+        for (final entity in folderFile
+                .listFilesSync()
+                ?.sortFileList(modifiedTimeDesc: true) ??
+            <FileSystemEntity>[]) {
           final folderName = entity.fileName();
           final targetPath = entity.path.replaceAll(root, '');
           //debugger();
-          buffer.write("<a href='/files?path=$targetPath'>$folderName</a><br>");
+          buffer.write(
+              "<a href='/files?path=$targetPath'>$folderName</a><span class='time'>${entity.lastModifiedSync}</span><br>");
         }
       } else {
         buffer.write("<p>即将下载文件:$folder<p>");

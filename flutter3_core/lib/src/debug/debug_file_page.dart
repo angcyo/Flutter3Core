@@ -76,6 +76,12 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
     _reload();
   }
 
+  @override
+  void reassemble() {
+    super.reassemble();
+    _loadPath(currentLoadPath ?? widget.initPath);
+  }
+
   /// 重新加载
   void _reload() {
     if (widget.initPath == null) {
