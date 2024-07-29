@@ -31,6 +31,68 @@ class CoreDebug {
   static List<DebugCommandAction> debugCommandActionList =
       <DebugCommandAction>[];
 
+  /// 解析 @key#type=value 格式
+  static (String? key, String? type, dynamic value) parseHiveKey(String line) {
+    final keyIndex = line.indexOf("@");
+    final typeIndex = line.indexOf("#");
+    final valueIndex = line.indexOf("=");
+
+    //result
+    String? resultKey, resultType;
+    dynamic resultValue;
+
+    if (keyIndex != -1 && typeIndex != -1 && valueIndex != -1) {
+      //@key#int=value
+      String key = line.substring(keyIndex + 1, typeIndex);
+      final type = line.substring(typeIndex + 1, valueIndex);
+      final valueString = line.substring(valueIndex + 1, line.length);
+
+      //---
+
+      if (key.isNotEmpty) {
+        key = key.toLowerCase();
+        resultKey = key;
+        switch (key) {
+          default:
+            //@key#int=value
+            switch (type) {
+              case "b":
+              case "bool":
+              case "boolean":
+                resultType = "b";
+                final value = valueString.toBoolOrNull();
+                resultValue = value;
+                break;
+              case "int":
+              case "i":
+              case "long":
+              case "l":
+                resultType = "i";
+                final value = valueString.toIntOrNull();
+                resultValue = value;
+                break;
+              case "float":
+              case "f":
+              case "double":
+              case "d":
+                resultType = "d";
+                final value = valueString.toDoubleOrNull();
+                resultValue = value;
+                break;
+              case "string":
+              case "s":
+                resultType = "s";
+                resultValue = valueString;
+                break;
+            }
+            break;
+        }
+      }
+    }
+
+    return (resultKey, resultType, resultValue);
+  }
+
   /// [HiveEx]
   /// [HiveStringEx]
   static void parseHiveKeys(List<String?>? lines, [BuildContext? context]) {

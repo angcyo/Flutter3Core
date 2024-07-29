@@ -104,7 +104,7 @@ class DebugPage extends StatefulWidget {
     DebugAction(
       label: "hive编辑",
       clickAction: (context) {
-        context.pushWidget(const DebugHivePage());
+        context.pushWidget(const DebugHiveEditPage());
       },
     ),
     DebugAction(
@@ -330,16 +330,44 @@ class DebugAction {
 }
 
 /// hive 编辑界面
-class DebugHivePage extends StatefulWidget {
-  const DebugHivePage({super.key});
+/// [CoreDebug.parseHiveKeys]
+class DebugHiveEditPage extends StatefulWidget {
+  const DebugHiveEditPage({super.key});
 
   @override
-  State<DebugHivePage> createState() => _DebugHivePageState();
+  State<DebugHiveEditPage> createState() => _DebugHiveEditPageState();
 }
 
-class _DebugHivePageState extends State<DebugHivePage> with AbsScrollPage {
+class _DebugHiveEditPageState extends State<DebugHiveEditPage>
+    with AbsScrollPage {
   @override
-  String? getTitle(BuildContext context) => "key-value";
+  String? getTitle(BuildContext context) => "hive key-value";
+
+  @override
+  List<Widget>? buildAppBarActions(BuildContext context) {
+    const Widget add = Icon(Icons.add);
+    return [
+      add.icon(() {
+        context.showWidgetDialog(SingleInputDialog(
+          title: "请输入",
+          hintText: "格式: @key#type=value",
+          alignment: Alignment.bottomCenter,
+          useIcon: true,
+          onSaveTap: (text) async {
+            final (key, type, value) = CoreDebug.parseHiveKey(text);
+            if (isNil(key) || isNil(type)) {
+              toastInfo("格式错误");
+              return true;
+            } else {
+              key?.hivePut(value);
+              updateState();
+              return false;
+            }
+          },
+        ));
+      })
+    ];
+  }
 
   @override
   WidgetList? buildScrollBody(BuildContext context) {
