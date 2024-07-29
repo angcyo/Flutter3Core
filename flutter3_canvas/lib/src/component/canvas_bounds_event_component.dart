@@ -33,12 +33,12 @@ class CanvasBoundsEventComponent
     //l.d('${event.localPosition} $touchType');
     bool handled = false;
     if (boundsEventAction.isNotEmpty) {
-      for (var action in boundsEventAction.clone()) {
+      for (final action in boundsEventAction.clone()) {
         handled = action(event, touchType) || handled;
       }
     }
     if (boundsEventActionMap.isNotEmpty) {
-      for (var entry in boundsEventActionMap.entries) {
+      for (final entry in boundsEventActionMap.entries) {
         if (entry.key.contains(event.localPosition)) {
           handled = entry.value(event, touchType) || handled;
         }
