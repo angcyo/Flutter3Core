@@ -143,6 +143,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 绘制管理
   late CanvasPaintManager canvasPaintManager = CanvasPaintManager(this);
 
+  /// 画布跟随
+  late CanvasFollowManager canvasFollowManager = CanvasFollowManager(this);
+
   /// 事件管理
   late CanvasEventManager canvasEventManager = CanvasEventManager(this);
 
@@ -249,11 +252,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void showRect({
     @sceneCoordinate Rect? rect,
     ElementPainter? elementPainter,
-    EdgeInsets? margin = const EdgeInsets.all(kXxh),
-    bool enableZoomOut = true,
-    bool enableZoomIn = false,
-    bool animate = true,
-    bool awaitAnimate = false,
+    EdgeInsets? margin,
+    bool? enableZoomOut,
+    bool? enableZoomIn,
+    bool? animate,
+    bool? awaitAnimate,
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
             .canvasElementControlManager.enableResetElementAngle) /*1*/ ??
@@ -262,69 +265,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     if (rect == null) {
       return;
     }
-    if (!canvasViewBox.isCanvasBoxInitialize) {
-      //画布还没有初始化完成
-      postCallback(() {
-        showRect(
-          rect: rect,
-          elementPainter: elementPainter,
-          margin: margin,
-          enableZoomOut: enableZoomOut,
-          enableZoomIn: enableZoomIn,
-          animate: animate,
-          awaitAnimate: awaitAnimate,
-        );
-      });
-      return;
-    }
-    //debugger();
-    final translateMatrix = Matrix4.identity();
-    //移动到元素中心
-    final center = rect.center;
-    final canvasBounds = canvasViewBox.canvasBounds;
-    final canvasVisibleBounds = canvasViewBox.canvasVisibleBounds;
-    var canvasVisibleWidth = canvasVisibleBounds.width;
-    var canvasVisibleHeight = canvasVisibleBounds.height;
-    final canvasCenter =
-        Offset(canvasBounds.width / 2, canvasBounds.height / 2);
-    final offset = canvasCenter - center;
-    translateMatrix.translate(offset.dx, offset.dy);
-
-    //在中心点开始缩放
-    double sx = canvasVisibleWidth / rect.width;
-    double sy = canvasVisibleHeight / rect.height;
-
-    if (margin != null) {
-      rect = rect.inflateValue(EdgeInsets.only(
-        left: margin.left / sx,
-        top: margin.top / sy,
-        right: margin.right / sx,
-        bottom: margin.bottom / sy,
-      ));
-      sx = canvasBounds.width / rect.width;
-      sy = canvasBounds.height / rect.height;
-    }
-
-    double? scale;
-    //debugger();
-    if (enableZoomOut &&
-        (rect.width > canvasVisibleWidth ||
-            rect.height > canvasVisibleHeight)) {
-      //元素比画布大, 此时画布需要缩小
-      scale = min(sx, sy);
-    } else if (enableZoomIn &&
-        (rect.width < canvasVisibleWidth ||
-            rect.height < canvasVisibleHeight)) {
-      //元素比画布小, 此时画布需要放大
-      scale = max(sx, sy);
-    }
-
-    final scaleMatrix = createScaleMatrix(
-        sx: scale ?? canvasViewBox.scaleX,
-        sy: scale ?? canvasViewBox.scaleY,
-        anchor: center);
-    canvasViewBox.changeMatrix(
-      translateMatrix * scaleMatrix,
+    canvasFollowManager.followRect(
+      rect,
+      margin: margin,
+      enableZoomOut: enableZoomOut,
+      enableZoomIn: enableZoomIn,
       animate: animate,
       awaitAnimate: awaitAnimate,
     );

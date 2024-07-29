@@ -1251,7 +1251,7 @@ extension RectEx on Rect {
   /// 将一个矩形向外扩一定的大小, 返回一个新的矩形
   /// [deflateValue]
   ui.Rect inflateValue(dynamic value, [bool center = true]) {
-    final l, t, r, b;
+    final num l, t, r, b;
     if (value is Rect) {
       l = value.left;
       t = value.top;

@@ -35,6 +35,9 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   /// 额外需要绘制的路径信息
   final List<PainterPathInfo> painterPathList = [];
 
+  /// 额外画布内容绘制
+  final List<IPainter> painterList = [];
+
   CanvasContentManager(this.paintManager);
 
   /// 画笔
@@ -85,6 +88,11 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
             canvas.drawPath(pathInfo.path, _paint);
           }
 
+          //额外绘制内容
+          for (final painter in painterList) {
+            painter.painting(canvas, paintMeta);
+          }
+
           //边界边框
           if (canvasStyle.paintSceneContentBounds == true) {
             canvas.drawRect(
@@ -102,21 +110,30 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   //--
 
   /// 限制画布内容绘制区域, 背景只会在此区域绘制
+  /// [onUpdateAction] 更新成功的回调
   void updateCanvasSceneContentBounds(
     @dp @sceneCoordinate Rect? contentBounds, {
     bool? showRect,
+    bool? animate,
+    VoidCallback? onUpdateAction,
   }) {
     if (canvasDelegate.canvasViewBox.isCanvasBoxInitialize) {
       showRect ??= sceneContentBounds == null;
       sceneContentBounds = contentBounds;
       if (showRect && contentBounds != null) {
-        canvasDelegate.showRect(rect: contentBounds);
+        canvasDelegate.showRect(
+          rect: contentBounds,
+          animate: animate,
+        );
       }
+      onUpdateAction?.call();
     } else {
       scheduleMicrotask(() {
         updateCanvasSceneContentBounds(
           contentBounds,
           showRect: showRect,
+          animate: animate,
+          onUpdateAction: onUpdateAction,
         );
       });
     }
