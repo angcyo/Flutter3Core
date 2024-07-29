@@ -25,6 +25,7 @@ void scheduleFrame() {
 /// [postCallback]
 /// [postDelayCallback]
 /// [delayCallback]
+/// [scheduleMicrotask]
 void postFrameCallback(FrameCallback callback,
     [String debugLabel = 'postFrameCallback']) {
   WidgetsFlutterBinding.ensureInitialized();
