@@ -38,7 +38,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   CanvasContentManager(this.paintManager);
 
   /// 画笔
-  Paint _paint = Paint()
+  final Paint _paint = Paint()
     ..style = PaintingStyle.stroke
     ..color = Colors.black
     ..strokeJoin = StrokeJoin.round
@@ -50,49 +50,51 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     if (!isCanvasComponentEnable) {
       return;
     }
-    //整体画布背景颜色绘制
-    if (canvasStyle.canvasBgColor != null) {
-      canvas.drawRect(
-        canvasDelegate.canvasViewBox.canvasBounds,
-        Paint()
-          ..style = PaintingStyle.fill
-          ..color = canvasStyle.canvasBgColor!,
-      );
-    }
-    //场景内容提示绘制
-    sceneContentBounds?.let((it) {
-      final canvasStyle = canvasDelegate.canvasStyle;
-      //场景背景绘制
+    canvas.withClipRect(canvasDelegate.canvasViewBox.canvasBounds, () {
+      //整体画布背景颜色绘制
+      if (canvasStyle.canvasBgColor != null) {
+        canvas.drawRect(
+          canvasDelegate.canvasViewBox.canvasBounds,
+          Paint()
+            ..style = PaintingStyle.fill
+            ..color = canvasStyle.canvasBgColor!,
+        );
+      }
+      //场景内容提示绘制
+      sceneContentBounds?.let((it) {
+        final canvasStyle = canvasDelegate.canvasStyle;
+        //场景背景绘制
 
-      paintMeta.withPaintMatrix(canvas, () {
-        //场景内容背景
-        if (canvasStyle.sceneContentBgColor != null) {
-          canvas.drawRect(
-            it,
-            Paint()
-              ..style = PaintingStyle.fill
-              ..color = canvasStyle.sceneContentBgColor!,
-          );
-        }
+        paintMeta.withPaintMatrix(canvas, () {
+          //场景内容背景
+          if (canvasStyle.sceneContentBgColor != null) {
+            canvas.drawRect(
+              it,
+              Paint()
+                ..style = PaintingStyle.fill
+                ..color = canvasStyle.sceneContentBgColor!,
+            );
+          }
 
-        //额外绘制的路径信息
-        for (final pathInfo in painterPathList) {
-          _paint.strokeWidth = pathInfo.strokeWidth / paintMeta.canvasScale;
-          _paint.color = pathInfo.color;
-          _paint.style =
-              pathInfo.fill ? PaintingStyle.fill : PaintingStyle.stroke;
-          canvas.drawPath(pathInfo.path, _paint);
-        }
+          //额外绘制的路径信息
+          for (final pathInfo in painterPathList) {
+            _paint.strokeWidth = pathInfo.strokeWidth / paintMeta.canvasScale;
+            _paint.color = pathInfo.color;
+            _paint.style =
+                pathInfo.fill ? PaintingStyle.fill : PaintingStyle.stroke;
+            canvas.drawPath(pathInfo.path, _paint);
+          }
 
-        //边界边框
-        if (canvasStyle.paintSceneContentBounds == true) {
-          canvas.drawRect(
-            it,
-            Paint()
-              ..style = PaintingStyle.stroke
-              ..color = canvasStyle.axisPrimaryColor,
-          );
-        }
+          //边界边框
+          if (canvasStyle.paintSceneContentBounds == true) {
+            canvas.drawRect(
+              it,
+              Paint()
+                ..style = PaintingStyle.stroke
+                ..color = canvasStyle.axisPrimaryColor,
+            );
+          }
+        });
       });
     });
   }
