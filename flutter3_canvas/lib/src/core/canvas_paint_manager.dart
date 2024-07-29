@@ -8,16 +8,20 @@ part of '../../flutter3_canvas.dart';
 class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   final CanvasDelegate canvasDelegate;
 
-  /// 坐标系
-  late AxisManager axisManager = AxisManager(this);
+  /// 坐标系管理
+  late CanvasAxisManager axisManager = CanvasAxisManager(this);
 
-  /// 监视信息
+  /// 画布内容管理, 可见背景, 背景颜色等
+  late CanvasContentManager contentManager = CanvasContentManager(this);
+
+  /// 监视信息, 比如缩放比例, fps帧率等
   late CanvasMonitorPainter monitorPainter =
       CanvasMonitorPainter(canvasDelegate);
 
   CanvasPaintManager(this.canvasDelegate);
 
-  /// 绘制边界大小更新后触发
+  /// 绘制边界大小更新后触发, 用来定位坐标系的绘制位置
+  /// [CanvasDelegate.layout]
   @entryPoint
   void onUpdatePaintBounds() {
     final paintBounds = canvasDelegate.canvasViewBox.paintBounds;
@@ -33,6 +37,7 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void paint(PaintingContext context, Offset offset) {
     final canvas = context.canvas;
     canvas.withOffset(offset, () {
+      //开始绘制流程
       if (isDebug) {
         /*canvas.drawRect(canvasDelegate.canvasViewBox.canvasBounds,
             Paint()..color = Colors.blue);*/
@@ -44,11 +49,13 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         canvasMatrix: viewBox.canvasMatrix,
       );
 
-      //
+      //1: 绘制背景画布内容
+      contentManager.painting(canvas, paintMeta);
+      //2: 绘制坐标系
       axisManager.painting(canvas, paintMeta);
-      //
+      //3: 绘制元素/以及控制点
       canvasDelegate.canvasElementManager.paintElements(canvas, paintMeta);
-      //
+      //4: 绘制监视信息
       monitorPainter.painting(canvas, paintMeta);
     });
     /*canvas.drawRect(canvasDelegate.canvasViewBox.canvasBounds + offset,

@@ -30,11 +30,6 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   double originX = 0;
   double originY = 0;
 
-  /// 只显示场景内的部分区域
-  @dp
-  @sceneCoordinate
-  Rect? sceneContentBounds;
-
   /// 获取绘图原点相对于视图左上角的偏移
   @viewCoordinate
   Offset get originOffset =>
@@ -130,27 +125,6 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     } else {
       postCallback(() {
         updateCanvasBounds(width: width, height: height);
-      });
-    }
-  }
-
-  /// 限制画布内容绘制区域, 背景只会在此区域绘制
-  void updateCanvasContentBounds(
-    @dp @sceneCoordinate Rect? contentBounds, {
-    bool? showRect,
-  }) {
-    if (isCanvasBoxInitialize) {
-      showRect ??= sceneContentBounds == null;
-      sceneContentBounds = contentBounds;
-      if (showRect && contentBounds != null) {
-        canvasDelegate.showRect(rect: contentBounds);
-      }
-    } else {
-      postCallback(() {
-        updateCanvasContentBounds(
-          contentBounds,
-          showRect: showRect,
-        );
       });
     }
   }

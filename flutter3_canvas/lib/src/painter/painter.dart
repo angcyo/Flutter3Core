@@ -21,7 +21,7 @@ class CanvasMonitorPainter extends IPainter {
     final text =
         "${(viewBox.scaleX * 100).round()}%${isDebug ? " ${fps.fps}" : ""}";
     final drawAxis = canvasDelegate.canvasPaintManager.axisManager.drawType
-        .have(AxisManager.sDrawAxis);
+        .have(CanvasAxisManager.sDrawAxis);
     final x = drawAxis
         ? canvasDelegate.canvasPaintManager.axisManager.yAxisWidth
         : 0.0;

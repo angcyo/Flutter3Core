@@ -4,7 +4,7 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/02/02
 /// 坐标轴管理, 负责坐标轴/坐标网格的绘制以及计算
-class AxisManager extends IPainter {
+class CanvasAxisManager extends IPainter {
   /// 绘制坐标轴
   static const int sDrawAxis = 0X01;
 
@@ -12,6 +12,10 @@ class AxisManager extends IPainter {
   static const int sDrawGrid = sDrawAxis << 1;
 
   final CanvasPaintManager paintManager;
+
+  CanvasDelegate get canvasDelegate => paintManager.canvasDelegate;
+
+  CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
   /// x横坐标轴的数据
   List<AxisData> xData = [];
@@ -31,11 +35,11 @@ class AxisManager extends IPainter {
 
   /// x横坐标轴的高度
   @dp
-  double get xAxisHeight => paintManager.canvasDelegate.canvasStyle.xAxisHeight;
+  double get xAxisHeight => canvasStyle.xAxisHeight;
 
   /// y纵坐标轴的宽度
   @dp
-  double get yAxisWidth => paintManager.canvasDelegate.canvasStyle.yAxisWidth;
+  double get yAxisWidth => canvasStyle.yAxisWidth;
 
   /// 绘制label时, 额外需要的偏移量
   @dp
@@ -67,7 +71,7 @@ class AxisManager extends IPainter {
     paintManager.canvasDelegate.refresh();
   }
 
-  AxisManager(this.paintManager);
+  CanvasAxisManager(this.paintManager);
 
   /// 调用此方法,更新坐标轴数据
   @entryPoint
@@ -205,7 +209,8 @@ class AxisManager extends IPainter {
     // 绘制坐标网格
     if (drawType.have(sDrawGrid)) {
       canvas.withClipRect(canvasBounds, () /*画布区域裁剪*/ {
-        Rect? contentBounds = canvasViewBox.sceneContentBounds;
+        Rect? contentBounds =
+            canvasDelegate.canvasPaintManager.contentManager.sceneContentBounds;
         if (contentBounds != null) {
           contentBounds = canvasViewBox.toViewRect(contentBounds);
         }

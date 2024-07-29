@@ -247,7 +247,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [awaitAnimate] 是否等待动画结束
   @api
   void showRect({
-    Rect? rect,
+    @sceneCoordinate Rect? rect,
     ElementPainter? elementPainter,
     EdgeInsets? margin = const EdgeInsets.all(kXxh),
     bool enableZoomOut = true,
@@ -257,7 +257,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
             .canvasElementControlManager.enableResetElementAngle) /*1*/ ??
-        canvasViewBox.sceneContentBounds /*2*/ ??
+        canvasPaintManager.contentManager.showCanvasContentRect /*2*/ ??
         canvasElementManager.allElementsBounds /*3*/;
     if (rect == null) {
       return;
@@ -384,7 +384,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     refresh();
   }
 
-  /// 当[AxisManager.axisUnit]坐标系的单位发生变化时触发
+  /// 当[CanvasAxisManager.axisUnit]坐标系的单位发生变化时触发
   void dispatchCanvasUnitChanged(IUnit from, IUnit to) {
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
     _eachCanvasListener((element) {

@@ -14,7 +14,6 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 
-part 'src/axis/axis_manager.dart';
 part 'src/canvas.dart';
 part 'src/canvas_ex.dart';
 part 'src/canvas_delegate.dart';
@@ -30,6 +29,8 @@ part 'src/core/canvas_style.dart';
 part 'src/core/canvas_undo_manager.dart';
 part 'src/core/canvas_view_box.dart';
 part 'src/core/control/element_control.dart';
+part 'src/core/canvas_axis_manager.dart';
+part 'src/core/canvas_content_manager.dart';
 part 'src/event/canvas_event.dart';
 part 'src/event/canvas_notify.dart';
 part 'src/painter/element_painter.dart';
