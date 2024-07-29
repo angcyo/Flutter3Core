@@ -8,7 +8,9 @@ part of './dialog.dart';
 /// 单行输入最大长度
 const kDefaultInputLength = 30;
 
-/// 简单的输入框对话框, 默认居中输入框
+/// 简单的输入框对话框, 默认居中输入框.
+/// [SingleInputDialog.alignment] 显示位置
+///
 /// [showDialogWidget]
 /// [SingleInputDialog]
 /// [SingleBottomInputDialog]

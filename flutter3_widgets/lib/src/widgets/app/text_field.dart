@@ -111,7 +111,7 @@ class TextFieldConfig {
     //debugger();
     if (updateFieldValueFn == null) {
       assert(() {
-        l.w('无效更新TextEditingValue[$text]');
+        l.w('无效更新TextEditingValue[$text],小部件可能还未[mounted]');
         return true;
       }());
     }
