@@ -118,17 +118,25 @@ class ProgressStateInfo {
   /// 状态
   ProgressStateType state = ProgressStateType.normal;
 
-  /// 进度状态时的进度值[0~1]
+  /// 进度状态时的进度值[0~1], -1:不确定的进度
   double progress = 0;
 
   /// 错误状态时的错误信息
   dynamic error;
 
+  /// 额外携带的数据信息
+  dynamic data;
+
+  /// 标签
+  String tag;
+
   ProgressStateInfo({
     this.state = ProgressStateType.normal,
-    this.progress = 0,
+    this.progress = -1,
     this.error,
-  });
+    this.data,
+    String? tag,
+  }) : tag = tag ?? $uuid;
 
   bool get isNone =>
       state == ProgressStateType.normal ||
@@ -139,7 +147,11 @@ class ProgressStateInfo {
   bool get needStart =>
       state == ProgressStateType.normal || state == ProgressStateType.error;
 
-  /// 是否开始了
+  /// 是否开始进行中
+  bool get isStart =>
+      state == ProgressStateType.start || state == ProgressStateType.loading;
+
+  /// 是否开始过了
   bool get isStarted =>
       state.index >= ProgressStateType.start.index &&
       state != ProgressStateType.error;
@@ -155,4 +167,9 @@ class ProgressStateInfo {
 
   /// 是否结束, 包含完成/错误
   bool get isEnd => isFinish || isError;
+
+  @override
+  String toString() {
+    return 'ProgressStateInfo{state: $state, progress: $progress, error: $error, data: $data, tag: $tag}';
+  }
 }
