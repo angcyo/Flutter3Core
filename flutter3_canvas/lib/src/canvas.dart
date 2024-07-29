@@ -4,7 +4,7 @@ part of '../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/02/01
 ///
-/// 画布小部件
+/// 画布小部件代理核心类
 class CanvasWidget extends LeafRenderObjectWidget {
   final CanvasDelegate canvasDelegate;
 
@@ -38,7 +38,9 @@ class CanvasWidget extends LeafRenderObjectWidget {
   }
 }
 
-/// 画布渲染
+/// 画布渲染核心类
+/// 负责画布的绘制入口
+/// 负责画布的手势入口
 class CanvasRenderBox extends RenderBox {
   BuildContext context;
   CanvasDelegate canvasDelegate;
