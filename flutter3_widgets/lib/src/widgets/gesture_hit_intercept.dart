@@ -23,7 +23,7 @@ class GestureHitInterceptBox extends RenderProxyBox {
   /// 是否忽略其他盒子的命中, 前提是设置了[interceptHitBox]
   bool? ignoreOtherBoxHit;
 
-  /// 需要拦截命中的盒子
+  /// 需要拦截命中的盒子, 如果此box需要拦截事件, 则事件不会传给其他child
   RenderBox? interceptHitBox;
 
   /// [GestureBinding.hitTestInView] -> [RenderView.hitTest] -> [RenderView.hitTestChildren]
