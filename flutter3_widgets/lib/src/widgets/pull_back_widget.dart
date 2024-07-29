@@ -329,7 +329,10 @@ class _PullBackScrollBehavior extends MaterialScrollBehavior {
 /// [BouncingScrollPhysics]
 /// [ClampingScrollPhysics]
 class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
+  /// 消耗手势移动距离量的回调, 返回还剩多少距离需要滚动
   final ScrollUserOffsetAction? consumeUserOffsetAction;
+
+  /// 滚动到底后的默认加速度回调
   final ScrollDragEndAction? dragEndAction;
 
   const PullBackScrollPhysics({
