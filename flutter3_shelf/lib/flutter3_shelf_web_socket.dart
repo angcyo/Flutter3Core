@@ -311,6 +311,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
         return responseOkHtml(buffer.toString());
       },
     );
+    //转发控制台日志输出
     l.printList.add((log) {
       send(log);
     });
