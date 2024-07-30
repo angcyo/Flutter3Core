@@ -270,6 +270,17 @@ extension StateDecorationWidgetEx on Widget {
     );
   }
 
+  /// [backgroundDecoration]
+  Widget backgroundColor(
+    Color? fillColor, {
+    Key? key,
+  }) =>
+      backgroundDecoration(
+        null,
+        key: key,
+        fillColor: fillColor,
+      );
+
   /// 绘制背景
   /// [fillColor] 使用纯色填充背景
   /// [StateDecorationWidget]

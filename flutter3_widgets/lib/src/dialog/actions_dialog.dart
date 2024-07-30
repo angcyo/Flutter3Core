@@ -5,6 +5,11 @@ part of './dialog.dart';
 /// @date 2024/07/03
 ///
 /// 提供一些动作的对话框
+/// [item]
+/// [item]
+/// [item]
+///
+/// [BottomMenuItemsDialog]
 class ActionsDialog extends StatelessWidget with DialogMixin {
   /// 动作列表
   final WidgetNullList actions;

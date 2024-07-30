@@ -139,6 +139,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildBottomChildrenDialog(
     BuildContext context,
     WidgetNullList children, {
+    Color? bgColor /*背景颜色*/,
     bool enablePullBack = true,
     bool showDragHandle = true,
     bool useScroll = false,
@@ -209,8 +210,7 @@ mixin DialogMixin implements TranslationTypeImpl {
 
     final globalTheme = GlobalTheme.of(context);
     return body
-        .material()
-        .container(color: globalTheme.surfaceBgColor)
+        .material(color: bgColor ?? globalTheme.surfaceBgColor)
         .clipRadius(
           radius: clipRadius,
           topRadius: clipTopRadius,

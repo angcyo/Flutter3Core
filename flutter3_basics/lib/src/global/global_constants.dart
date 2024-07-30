@@ -22,7 +22,8 @@ const double kXxx = 48;
 /// [kMinInteractiveHeight]
 const double kMinHeight = 28;
 
-/// [kMinInteractiveDimension] 最小交互高度
+/// 最小交互高度
+/// [kMinInteractiveDimension] 系统48
 const double kMinInteractiveHeight = 38;
 
 /// 最小item交互高度

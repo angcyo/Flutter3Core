@@ -877,6 +877,8 @@ extension WidgetEx on Widget {
   /// 圆角
   /// [topRadius] 如果配置了, 则只有顶部有圆角
   /// [bottomRadius] 如果配置了, 则只有底部有圆角
+  ///
+  /// [clipRadius]无效果的时候, 可能需要在包裹一层[material]
   Widget clipRadius({
     double? radius = kDefaultBorderRadiusXX,
     double? topRadius,
