@@ -165,6 +165,7 @@ mixin PointerDispatchMixin {
   int get pointerCount => pointerMap.length;
 
   /// 派发事件, 入口点
+  /// 事件分发到[handleEventClientList]客户端中
   /// 返回事件是否被处理了
   @entryPoint
   bool handleDispatchEvent(PointerEvent event) {

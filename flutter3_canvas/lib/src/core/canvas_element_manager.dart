@@ -10,12 +10,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   final CanvasDelegate canvasDelegate;
 
-  /// 元素控制管理
+  /// 元素控制管理, 核心成员
   late CanvasElementControlManager canvasElementControlManager =
       CanvasElementControlManager(this);
 
-  //---
+  //---get---
 
+  /// 选择框绘制, 选中元素操作, 按下选择元素
   /// [ElementSelectComponent]
   ElementSelectComponent get selectComponent =>
       canvasElementControlManager.elementSelectComponent;
@@ -48,6 +49,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   bool get isSelectedGroupPainter =>
       canvasElementControlManager.isSelectedGroupPainter;
 
+  //--核心元素列表--
+
   /// 绘制在[elements]之前的元素列表, 不参与控制操作
   /// [paintElements]
   final List<ElementPainter> beforeElements = [];
@@ -59,6 +62,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 绘制在[elements]之后的元素列表, 不参与控制操作
   /// [paintElements]
   final List<ElementPainter> afterElements = [];
+
+  //--元素get--
 
   List<ElementPainter> get allSingleElements {
     final result = <ElementPainter>[];
@@ -87,7 +92,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //region ---entryPoint----
 
-  /// 绘制元素入口
+  /// [canvas] 处理掉基础的[offset]的canvas
+  /// 绘制元素入口, 裁剪了[CanvasViewBox.canvasBounds]区域
   /// [CanvasPaintManager.paint]
   @entryPoint
   void paintElements(Canvas canvas, PaintMeta paintMeta) {
@@ -129,7 +135,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 事件处理入口
-  /// [CanvasEventManager.handleEvent]
+  /// 由[CanvasEventManager.handleEvent]驱动
   @entryPoint
   void handleElementEvent(PointerEvent event, BoxHitTestEntry entry) {
     canvasElementControlManager.handleEvent(event, entry);

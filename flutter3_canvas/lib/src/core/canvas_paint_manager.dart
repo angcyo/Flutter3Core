@@ -33,6 +33,8 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         paintBounds.left + axisManager.yAxisWidth, paintBounds.bottom);
   }
 
+  /// [canvas] 最原始的canvas, 未经过加工处理
+  /// 由[CanvasDelegate.paint]驱动
   @entryPoint
   void paint(PaintingContext context, Offset offset) {
     final canvas = context.canvas;

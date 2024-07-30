@@ -33,12 +33,13 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     addHandleEventClient(canvasBoundsEventComponent);
   }
 
+  /// [event] 最原始的事件参数, 未经过加工处理
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
     handleDispatchEvent(event);
 
-    //
+    //元素操作事件
     canvasDelegate.canvasElementManager.handleElementEvent(event, entry);
 
     assert(() {

@@ -65,7 +65,12 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   double controlIcoPadding = 4;
 
   /// 控制点的图片信息, 用来绘制控制点图标
+  /// [paintControl]->[paintControlWith]
   PictureInfo? _pictureInfo;
+
+  /// 控制点接管绘制对象
+  IControlPainter? controlPainter;
+  ControlPainterFn? controlPainterFn;
 
   //---
 
@@ -79,7 +84,14 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   @entryPoint
   void paintControl(Canvas canvas, PaintMeta paintMeta) {
-    paintControlWith(canvas, paintMeta);
+    if (controlPainter != null || controlPainterFn != null) {
+      controlBounds?.let((rect) {
+        controlPainter?.painting(canvas, rect);
+        controlPainterFn?.call(canvas, rect);
+      });
+    } else {
+      paintControlWith(canvas, paintMeta);
+    }
   }
 
   @override
@@ -762,6 +774,24 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
     return true;
   }
 }
+
+/// 控制点绘制接口
+/// [Canvas]
+abstract class IControlPainter with Diagnosticable {
+  /// 调试时用得的标签
+  String? debugLabel;
+
+  /// 绘制入口
+  @entryPoint
+  void painting(
+    Canvas canvas,
+    @viewCoordinate Rect bounds,
+  );
+}
+
+/// [IControlPainter]
+typedef ControlPainterFn = void Function(
+    Canvas canvas, @viewCoordinate Rect bounds);
 
 /// 控制状态
 enum ControlState {

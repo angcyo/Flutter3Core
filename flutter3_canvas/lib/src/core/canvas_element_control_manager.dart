@@ -24,6 +24,8 @@ enum PaintInfoType {
 }
 
 /// 元素控制操作管理
+///
+/// [CanvasElementManager] 的成员
 class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   final CanvasElementManager canvasElementManager;
 
@@ -112,6 +114,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     addHandleEventClient(translateControl);
   }
 
+  /// [canvas] 处理掉基础的[offset]的canvas, clip [CanvasViewBox.canvasBounds]后的canvas
+  /// 由[CanvasElementManager.paintElements]驱动
+  /// 只能在[CanvasViewBox.canvasBounds]范围内可见
   @entryPoint
   void paint(Canvas canvas, PaintMeta paintMeta) {
     //---选择框绘制
@@ -131,20 +136,24 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       }
       //绘制控制点
       if (enableElementControl && !isPointerDownElement) {
-        if (elementSelectComponent
-            .isElementSupportControl(deleteControl.controlType)) {
+        if (deleteControl.isCanvasComponentEnable &&
+            elementSelectComponent
+                .isElementSupportControl(deleteControl.controlType)) {
           deleteControl.paintControl(canvas, paintMeta);
         }
-        if (elementSelectComponent
-            .isElementSupportControl(rotateControl.controlType)) {
+        if (rotateControl.isCanvasComponentEnable &&
+            elementSelectComponent
+                .isElementSupportControl(rotateControl.controlType)) {
           rotateControl.paintControl(canvas, paintMeta);
         }
-        if (elementSelectComponent
-            .isElementSupportControl(scaleControl.controlType)) {
+        if (scaleControl.isCanvasComponentEnable &&
+            elementSelectComponent
+                .isElementSupportControl(scaleControl.controlType)) {
           scaleControl.paintControl(canvas, paintMeta);
         }
-        if (elementSelectComponent
-            .isElementSupportControl(lockControl.controlType)) {
+        if (lockControl.isCanvasComponentEnable &&
+            elementSelectComponent
+                .isElementSupportControl(lockControl.controlType)) {
           lockControl.paintControl(canvas, paintMeta);
         }
       }
@@ -152,8 +161,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 事件处理入口
-  /// [CanvasEventManager.handleEvent]
-  /// [CanvasElementManager.handleElementEvent]
+  /// [CanvasEventManager.handleEvent]事件总入口
+  /// 由[CanvasElementManager.handleElementEvent]驱动
+  ///
+  /// [event] 最原始的事件参数, 未经过加工处理
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
@@ -647,7 +658,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 //endregion ---api---
 }
 
-/// 选择元素组件, 滑动选择元素
+/// 选择元素组件, 滑动选择元素, 按下选择元素
+/// 支持[ElementGroupPainter]所有属性
+///
+/// [CanvasElementControlManager] 的成员
 class ElementSelectComponent extends ElementGroupPainter
     with
         CanvasComponentMixin,
