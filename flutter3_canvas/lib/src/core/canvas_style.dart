@@ -11,7 +11,7 @@ class CanvasStyle {
   @dp
   double canvasRadiusSize = 8;
 
-  /// 画布强调颜色
+  /// 画布强调颜色, 同时也是选择框的颜色
   Color canvasAccentColor = const Color(0xff00e3ff);
 
   /// 控制点的背景颜色
