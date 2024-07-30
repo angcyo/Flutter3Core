@@ -44,8 +44,9 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
           BottomMenuItemTile(
             [LibRes.of(context).libCancel.text()],
             onTap: () {
-              context.pop();
+              //no op
             },
+            closeAfterTap: true,
           ).clipRadius(radius: clipRadius)
       ],
       showDragHandle: false,

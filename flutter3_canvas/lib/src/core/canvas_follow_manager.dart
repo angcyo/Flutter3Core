@@ -44,8 +44,8 @@ class CanvasFollowManager with CanvasComponentMixin {
     bool? awaitAnimate,
   }) {
     //debugger();
-    final sceneBounds =
-        canvasDelegate.canvasPaintManager.contentManager.canvasContentFollowRect;
+    final sceneBounds = canvasDelegate
+        .canvasPaintManager.contentManager.canvasContentFollowRect;
     if (sceneBounds == null) {
       if (restoreDef == true) {
         animate ??= this.animate;
@@ -68,8 +68,8 @@ class CanvasFollowManager with CanvasComponentMixin {
     @sceneCoordinate Rect? rect, {
     EdgeInsets? margin,
     Alignment? alignment,
-    bool? enableZoomOut,
-    bool? enableZoomIn,
+    bool? enableZoomOut /*是否允许视口缩小处理*/,
+    bool? enableZoomIn /*是否允许视口放大处理*/,
     bool? animate,
     bool? awaitAnimate,
   }) {
@@ -203,7 +203,7 @@ class CanvasFollowManager with CanvasComponentMixin {
   void testFollow() {
     alignment = Alignment.center;
     enableZoomIn = true;
-    followRect(
-        canvasDelegate.canvasPaintManager.contentManager.canvasContentFollowRect);
+    followRect(canvasDelegate
+        .canvasPaintManager.contentManager.canvasContentFollowRect);
   }
 }

@@ -189,7 +189,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
             bounds: bounds,
           );
       if (showRect && bounds != null) {
-        canvasDelegate.showRect(
+        canvasDelegate.followRect(
           rect: bounds,
           animate: animate,
         );
@@ -216,7 +216,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     bool? enableZoomIn,
   }) {
     canvasContentFollowRect?.let((it) {
-      canvasDelegate.showRect(
+      canvasDelegate.followRect(
         rect: it,
         animate: animate,
         enableZoomOut: enableZoomOut,

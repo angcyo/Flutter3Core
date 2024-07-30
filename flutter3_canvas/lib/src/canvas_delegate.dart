@@ -249,7 +249,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [animate] 是否动画改变
   /// [awaitAnimate] 是否等待动画结束
   @api
-  void showRect({
+  void followRect({
     @sceneCoordinate Rect? rect,
     ElementPainter? elementPainter,
     EdgeInsets? margin,
@@ -258,11 +258,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     bool? animate,
     bool? awaitAnimate,
   }) {
-    rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
-            .canvasElementControlManager.enableResetElementAngle) /*1*/ ??
-        canvasPaintManager.contentManager.canvasContentFollowRect /*2*/ ??
-        canvasElementManager.allElementsBounds /*3*/;
+    if (elementPainter != null) {
+      followPainter(elementPainter: elementPainter);
+      return;
+    }
+    rect ??= canvasPaintManager.contentManager.canvasContentFollowRect ??
+        canvasElementManager.allElementsBounds;
     if (rect == null) {
+      //followPainter(rect: canvasElementManager.allElementsBounds);
       return;
     }
     canvasFollowManager.followRect(
@@ -272,6 +275,28 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       enableZoomIn: enableZoomIn,
       animate: animate,
       awaitAnimate: awaitAnimate,
+    );
+  }
+
+  /// 跟随一个元素, 自动居中处理
+  @api
+  void followPainter({
+    @sceneCoordinate Rect? rect,
+    ElementPainter? elementPainter,
+  }) {
+    rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
+        .canvasElementControlManager.enableResetElementAngle);
+    if (rect == null) {
+      return;
+    }
+    canvasFollowManager.followRect(
+      rect,
+      margin: const EdgeInsets.all(kXxh),
+      enableZoomOut: true,
+      enableZoomIn: false,
+      alignment: Alignment.center,
+      animate: true,
+      awaitAnimate: false,
     );
   }
 

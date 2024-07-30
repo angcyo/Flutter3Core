@@ -221,14 +221,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 添加元素
   /// [element] 要添加的元素
   /// [selected] 是否选中对应元素
-  /// [showRect] 是否显示元素的边界
+  /// [followPainter] 是否显示元素的边界
   @supportUndo
   @api
   void addElement(
     ElementPainter? element, {
     @dp Offset? offset,
     bool selected = false,
-    bool showRect = false,
+    bool followPainter = false,
     UndoType undoType = UndoType.normal,
   }) {
     if (element == null) {
@@ -242,7 +242,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       element.ofList(),
       offset: offset,
       selected: selected,
-      showRect: showRect,
+      followPainter: followPainter,
       undoType: undoType,
     );
   }
@@ -250,7 +250,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 添加一组元素
   /// [list] 要添加的一组元素
   /// [selected] 添加完成后,是否选中
-  /// [showRect] 移动元素到画布中心
+  /// [followPainter] 移动元素到画布中心
   /// [offset] 所有元素的偏移量
   @supportUndo
   @api
@@ -258,7 +258,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     List<ElementPainter>? list, {
     @dp Offset? offset,
     bool selected = false,
-    bool showRect = false,
+    bool followPainter = false,
     UndoType undoType = UndoType.normal,
   }) {
     if (list == null || isNullOrEmpty(list)) {
@@ -286,14 +286,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (selected) {
       resetSelectElement(list);
-      if (showRect) {
-        canvasDelegate.showRect(elementPainter: selectComponent);
+      if (followPainter) {
+        canvasDelegate.followPainter(elementPainter: selectComponent);
       }
-    } else if (showRect) {
+    } else if (followPainter) {
       ElementGroupPainter painter = ElementGroupPainter();
       painter.resetChildren(
           list, canvasElementControlManager.enableResetElementAngle);
-      canvasDelegate.showRect(elementPainter: painter);
+      canvasDelegate.followPainter(elementPainter: painter);
     }
 
     if (undoType == UndoType.normal) {
@@ -402,13 +402,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     if (selected) {
       resetSelectElement(list);
       if (showRect) {
-        canvasDelegate.showRect(elementPainter: selectComponent);
+        canvasDelegate.followPainter(elementPainter: selectComponent);
       }
     } else if (showRect) {
       ElementGroupPainter painter = ElementGroupPainter();
       painter.resetChildren(
           list, canvasElementControlManager.enableResetElementAngle);
-      canvasDelegate.showRect(elementPainter: painter);
+      canvasDelegate.followPainter(elementPainter: painter);
     }
 
     if (undoType == UndoType.normal) {
@@ -478,7 +478,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }) {
     resetSelectElement(element == null ? [] : [element]);
     if (showRect) {
-      canvasDelegate.showRect(elementPainter: element);
+      canvasDelegate.followPainter(elementPainter: element);
     }
   }
 
@@ -489,7 +489,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }) {
     resetSelectElement(elements);
     if (showRect) {
-      canvasDelegate.showRect(rect: elements.allElementBounds);
+      canvasDelegate.followRect(rect: elements.allElementBounds);
     }
   }
 
@@ -1346,7 +1346,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       newElementList,
       offset: offset,
       selected: selected,
-      showRect: showRect,
+      followPainter: showRect,
       undoType: undoType,
     );
   }
