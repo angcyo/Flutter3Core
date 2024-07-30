@@ -69,5 +69,5 @@ const streamMark = AnnotationMeta('当前操作会触发流的通知, 包含流�
 const updateSignalMark = AnnotationMeta('一个更新信号通知,监听此通知实现界面更新');
 const autoInjectMark = AnnotationMeta('标识当前方法/属性会在框架内自动注入');
 const minifyProguardFlag = AnnotationMeta('标识当前的代码需要注意混淆后是否正常运行');
-
+const notify = AnnotationMeta('标识这只是一个通知,需要具体手动实现逻辑');
 //endregion---base
