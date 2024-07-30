@@ -17,7 +17,7 @@ const apiBase = "https://www.pgyer.com/apiv2/app";
 
 void main(List<String> arguments) async {
   final currentPath = Directory.current.path;
-  print('工作路径->$currentPath');
+  colorLog('工作路径->$currentPath');
 
   final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");
@@ -36,12 +36,12 @@ void main(List<String> arguments) async {
     if (fileList.isEmpty) {
       continue;
     }
-    print('开始上传文件夹->$folder');
+    colorLog('开始上传文件夹->$folder');
     final length = fileList.length;
     var index = 0;
     for (final file in fileList) {
       final filePath = file.path;
-      print('开始上传文件->$filePath');
+      colorLog('开始上传文件->$filePath');
       try {
         final buildType = filePath.endsWith(".apk")
             ? "android"
@@ -74,11 +74,11 @@ void main(List<String> arguments) async {
             }
           }
         } else {
-          print("不支持的文件->$filePath");
+          colorLog("不支持的文件->$filePath");
         }
       } catch (e, s) {
-        print(s.toString());
-        print(e);
+        colorLog(s.toString());
+        colorLog(e);
       }
       index++;
     }
@@ -101,7 +101,7 @@ Future<List<File>> _getFileList(String folder) async {
           final record =
               "$fileName/${file.lastModifiedSync().millisecondsSinceEpoch}";
           if (recordText.contains(record)) {
-            print("跳过上传->$fileName");
+            colorLog("跳过上传->$fileName");
             continue;
           }
           result.add(file);
@@ -204,7 +204,7 @@ Future<bool> _uploadAppFile(dynamic tokenData, File file) async {
 
   print(responseBody);
   if (response.statusCode == 204) {
-    print("上传成功->${file.path}");
+    colorLog("上传成功->${file.path}");
   }
   return response.statusCode == 204;
 }
@@ -225,11 +225,11 @@ Future _checkAppIsPublish(String apiKey, String buildKey) async {
     final buildShortcutUrl = data?["buildShortcutUrl"];
     if (buildShortcutUrl != null) {
       final url = "$host/$buildShortcutUrl";
-      print("\n应用发布成功->$url\n${data["buildQRCodeURL"]}");
+      colorLog("\n应用发布成功->$url\n${data["buildQRCodeURL"]}");
       return url;
     } else {
       //延迟3秒, 继续查询
-      print('请稍等...');
+      colorLog('请稍等...');
       await Future.delayed(const Duration(seconds: 3));
       return await _checkAppIsPublish(apiKey, buildKey);
     }
@@ -297,4 +297,8 @@ Future _sendFeishuWebhook(
       body: jsonEncode(postBody),
       headers: {"Content-Type": "application/json"});
   print(response.body);
+}
+
+void colorLog(dynamic msg, [int col = 92]) {
+  print('\x1B[38;5;${col}m$msg');
 }
