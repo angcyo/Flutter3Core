@@ -95,7 +95,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// [RenderObject.attach]
   @entryPoint
-  void attach() {}
+  void attach() {
+    //no op
+  }
 
   /// [RenderObject.detach]
   @entryPoint

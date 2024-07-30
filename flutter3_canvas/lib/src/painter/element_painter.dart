@@ -149,6 +149,7 @@ class ElementPainter extends IPainter
 
   /// 获取元素[paintProperty]的边界
   @dp
+  @sceneCoordinate
   Rect? get elementsBounds {
     return paintProperty?.getBounds(canvasDelegate?.canvasElementManager
             .canvasElementControlManager.enableResetElementAngle ==
@@ -503,19 +504,16 @@ class ElementPainter extends IPainter
   //---
 
   /// 当前选中的元素是否支持指定的控制点
-  /// [BaseControl.sControlTypeDelete]
-  /// [BaseControl.sControlTypeRotate]
-  /// [BaseControl.sControlTypeScale]
-  /// [BaseControl.sControlTypeLock]
-  bool isElementSupportControl(int type) {
-    if (type == BaseControl.sControlTypeLock) {
+  /// [ControlTypeEnum]
+  bool isElementSupportControl(ControlTypeEnum type) {
+    if (type == ControlTypeEnum.lock) {
       final bounds = elementsBounds;
       if (bounds?.width == 0 || bounds?.height == 0) {
         return false;
       }
-    } else if (type == BaseControl.sControlTypeWidth) {
+    } else if (type == ControlTypeEnum.width) {
       return (elementsBounds?.width ?? 0).notEqualTo(0);
-    } else if (type == BaseControl.sControlTypeHeight) {
+    } else if (type == ControlTypeEnum.height) {
       return (elementsBounds?.height ?? 0).notEqualTo(0);
     }
     return true;
@@ -1295,6 +1293,7 @@ class PaintProperty with EquatableMixin {
 
   /// 全属性后的边界, 是旋转后的[rect]的外边界
   /// 更贴切的边界是[paintPath]的边界[PathEx.getExactBounds]
+  @sceneCoordinate
   Rect get paintBounds => operateMatrix.mapRect(rect);
 
   /// 元素全属性绘制路径, 用来判断是否相交
@@ -1311,6 +1310,7 @@ class PaintProperty with EquatableMixin {
 
   /// 获取元素的边界
   /// [resetElementAngle] 是否要获取重置角度后的元素边界
+  @sceneCoordinate
   Rect getBounds(bool resetElementAngle) {
     return resetElementAngle ? paintBounds : paintScaleRotateBounds;
   }

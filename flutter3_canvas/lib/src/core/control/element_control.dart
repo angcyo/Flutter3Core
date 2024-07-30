@@ -4,43 +4,46 @@ part of '../../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/03/05
 ///
-/// 元素控制
-class BaseControl with CanvasComponentMixin, IHandleEventMixin {
+
+/// 控制点枚举类型
+enum ControlTypeEnum {
   /// 控制点: 删除
   /// [DeleteControl]
-  static const sControlTypeDelete = 1;
+  delete,
 
   /// 控制点: 旋转
   /// [RotateControl]
-  static const sControlTypeRotate = 2;
+  rotate,
 
   /// 控制点: 缩放
   /// [ScaleControl]
-  static const sControlTypeScale = 3;
+  scale,
 
   /// 控制点: 锁定等比
   /// [LockControl]
-  static const sControlTypeLock = 4;
+  lock,
 
   /// 控制行为: 平移
   /// [TranslateControl]
-  static const sControlTypeTranslate = 5;
+  translate,
 
   /// 控制行为: 宽度调整
-  static const sControlTypeWidth = 6;
+  width,
 
   /// 控制行为: 高度调整
-  static const sControlTypeHeight = 7;
+  height,
 
+  /// 控制行为: 显示菜单
+  menu,
+}
+
+/// 选中元素的控制点
+class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
 
   /// 控制点的类型
-  /// [sControlTypeDelete]
-  /// [sControlTypeRotate]
-  /// [sControlTypeScale]
-  /// [sControlTypeLock]
-  /// [sControlTypeTranslate]
-  final int controlType;
+  /// [ControlTypeEnum]
+  final ControlTypeEnum controlType;
 
   /// 控制点的位置, 视图坐标系
   @viewCoordinate
@@ -86,8 +89,8 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   void paintControl(Canvas canvas, PaintMeta paintMeta) {
     if (controlPainter != null || controlPainterFn != null) {
       controlBounds?.let((rect) {
-        controlPainter?.painting(canvas, rect);
-        controlPainterFn?.call(canvas, rect);
+        controlPainter?.painting(canvas, rect, isPointerDownIn);
+        controlPainterFn?.call(canvas, rect, isPointerDownIn);
       });
     } else {
       paintControlWith(canvas, paintMeta);
@@ -167,13 +170,13 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 重写此方法, 更新控制点的位置
   @overridePoint
   void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    if (controlType == sControlTypeDelete) {
+    if (controlType == ControlTypeEnum.delete) {
       controlBounds = getLTControlBounds(selectComponentProperty);
-    } else if (controlType == sControlTypeRotate) {
+    } else if (controlType == ControlTypeEnum.rotate) {
       controlBounds = getRTControlBounds(selectComponentProperty);
-    } else if (controlType == sControlTypeScale) {
+    } else if (controlType == ControlTypeEnum.scale) {
       controlBounds = getRBControlBounds(selectComponentProperty);
-    } else if (controlType == sControlTypeLock) {
+    } else if (controlType == ControlTypeEnum.lock) {
       controlBounds = getLBControlBounds(selectComponentProperty);
     }
   }
@@ -342,7 +345,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 从按下的位置状态开始, 作用矩阵[matrix]
   /// [PaintProperty.applyScaleWithAnchor]
   @callPoint
-  void applyTargetMatrix(Matrix4 matrix, [int? controlType]) {
+  void applyTargetMatrix(Matrix4 matrix, [ControlTypeEnum? controlType]) {
     isControlApply = true;
     _elementStateStack?.restore();
 
@@ -352,9 +355,9 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
         l.d('无目标控制元素[$controlType]');
         return true;
       }());
-    } else if (controlType == BaseControl.sControlTypeRotate) {
+    } else if (controlType == ControlTypeEnum.rotate) {
       _targetElement?.rotateElement(matrix);
-    } else if (controlType == BaseControl.sControlTypeTranslate) {
+    } else if (controlType == ControlTypeEnum.translate) {
       _targetElement?.translateElement(matrix);
     } else {
       assert(() {
@@ -440,7 +443,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 /// 删除元素控制
 class DeleteControl extends BaseControl {
   DeleteControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.sControlTypeDelete) {
+      : super(canvasElementControlManager, ControlTypeEnum.delete) {
     loadControlPicture('canvas_delete_point.svg');
   }
 
@@ -453,7 +456,7 @@ class DeleteControl extends BaseControl {
 /// 旋转元素控制
 class RotateControl extends BaseControl {
   RotateControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.sControlTypeRotate) {
+      : super(canvasElementControlManager, ControlTypeEnum.rotate) {
     loadControlPicture('canvas_rotate_point.svg');
   }
 
@@ -500,7 +503,7 @@ class RotateControl extends BaseControl {
 /// 缩放元素控制
 class ScaleControl extends BaseControl {
   ScaleControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.sControlTypeScale) {
+      : super(canvasElementControlManager, ControlTypeEnum.scale) {
     loadControlPicture('canvas_scale_point.svg');
   }
 
@@ -648,7 +651,7 @@ class LockControl extends BaseControl {
   PictureInfo? _unlockPictureInfo;
 
   LockControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.sControlTypeLock) {
+      : super(canvasElementControlManager, ControlTypeEnum.lock) {
     loadControlPicture('canvas_lock_point.svg', (value) {
       _lockPictureInfo = value;
       if (isLock) {
@@ -674,7 +677,7 @@ class LockControl extends BaseControl {
 /// 平移元素控制
 class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
   TranslateControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, BaseControl.sControlTypeTranslate);
+      : super(canvasElementControlManager, ControlTypeEnum.translate);
 
   @override
   bool interceptPointerEvent(
@@ -783,15 +786,12 @@ abstract class IControlPainter with Diagnosticable {
 
   /// 绘制入口
   @entryPoint
-  void painting(
-    Canvas canvas,
-    @viewCoordinate Rect bounds,
-  );
+  void painting(Canvas canvas, @viewCoordinate Rect bounds, bool downIn);
 }
 
 /// [IControlPainter]
 typedef ControlPainterFn = void Function(
-    Canvas canvas, @viewCoordinate Rect bounds);
+    Canvas canvas, @viewCoordinate Rect bounds, bool downIn);
 
 /// 控制状态
 enum ControlState {

@@ -112,7 +112,17 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
       //---控制绘制, 在元素最上层绘制, 所以可以实现选中元素在顶层绘制
       canvasElementControlManager.paint(canvas, paintMeta);
+      //---绘制菜单
+      if (!canvasElementControlManager.isPointerDownElement /*未在移动元素*/ &&
+          canvasElementControlManager
+              .elementMenuControl.isCanvasComponentEnable /*组件激活*/ &&
+          selectComponent
+              .isElementSupportControl(ControlTypeEnum.menu) /*支持菜单操作*/) {
+        canvasElementControlManager.elementMenuControl
+            .paintMenu(canvas, paintMeta);
+      }
     });
+    //在此处绘制可以在坐标轴上
   }
 
   /// 绘制元素
@@ -135,6 +145,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 事件处理入口
+  /// [event] 最原始的事件参数, 未经过加工处理
   /// 由[CanvasEventManager.handleEvent]驱动
   @entryPoint
   void handleElementEvent(PointerEvent event, BoxHitTestEntry entry) {

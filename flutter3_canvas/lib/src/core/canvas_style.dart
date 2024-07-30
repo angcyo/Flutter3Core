@@ -100,5 +100,31 @@ class CanvasStyle {
   /// 是否仅在绘制原点时, 绘制单位
   bool showOriginAxisUnitSuffix = true;
 
-//endregion ---axis---
+  //endregion ---axis---
+
+  //region ---menu---
+
+  /// 菜单的圆角大小
+  @dp
+  double menuRadius = kDefaultBorderRadiusX;
+
+  /// 菜单整体的内边距
+  EdgeInsets? menuPadding;
+
+  /// 菜单的外边距
+  EdgeInsets? menuMargin;
+
+  /// 菜单的背景颜色
+  Color menuBgColor = const Color(0xff0c0c06);
+
+  /// 菜单的分割线颜色
+  Color menuLineColor = const Color(0xff333333);
+
+  /// 菜单三角的大小
+  @dp
+  double menuTriangleWidth = 10;
+  @dp
+  double menuTriangleHeight = 6;
+
+//endregion ---menu---
 }

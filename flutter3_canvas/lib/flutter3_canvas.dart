@@ -28,7 +28,6 @@ part 'src/core/canvas_paint_manager.dart';
 part 'src/core/canvas_style.dart';
 part 'src/core/canvas_undo_manager.dart';
 part 'src/core/canvas_view_box.dart';
-part 'src/core/control/element_control.dart';
 part 'src/core/canvas_axis_manager.dart';
 part 'src/core/canvas_content_manager.dart';
 part 'src/core/canvas_follow_manager.dart';
@@ -39,6 +38,8 @@ part 'src/painter/image_element_painter.dart';
 part 'src/painter/painter.dart';
 part 'src/painter/path_element_painter.dart';
 part 'src/painter/text_element_painter.dart';
+part 'src/core/control/element_control.dart';
+part 'src/core/control/element_menu.dart';
 
 Widget canvasSvgWidget(
   String key, {

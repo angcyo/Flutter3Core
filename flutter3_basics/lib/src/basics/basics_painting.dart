@@ -113,6 +113,20 @@ extension TextSpanPaintEx on InlineSpan {
 extension CanvasEx on Canvas {
   //region ---with---
 
+  /// 使用一个颜色着色
+  void withColor(
+    VoidCallback callback, {
+    Color? tintColor,
+    ui.ColorFilter? colorFilter,
+  }) {
+    colorFilter ??= tintColor?.toColorFilter();
+    if (colorFilter == null) {
+      callback();
+    } else {
+      withSaveLayer(callback, Paint()..colorFilter = colorFilter);
+    }
+  }
+
   /// 入栈出栈, 保证绘制的状态不会影响到其他的绘制
   /// 一些简单的变换操作可以使用此方法
   void withSave(VoidCallback callback) {

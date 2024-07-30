@@ -51,6 +51,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 控制限制器
   late ControlLimit controlLimit = ControlLimit(this);
 
+  //--control--
+
   /// 选择元素操作的组件
   late ElementSelectComponent elementSelectComponent =
       ElementSelectComponent(this);
@@ -69,6 +71,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 平移控制
   late TranslateControl translateControl = TranslateControl(this);
+
+  /// 元素菜单
+  late ElementMenuControl elementMenuControl = ElementMenuControl(this);
+
+  //--get--
 
   CanvasDelegate get canvasDelegate => canvasElementManager.canvasDelegate;
 
@@ -93,8 +100,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 是否正在移动元素, 也有可能在双击
   bool get isTranslateElement =>
-      _currentControlRef?.target?.controlType ==
-      BaseControl.sControlTypeTranslate;
+      _currentControlRef?.target?.controlType == ControlTypeEnum.translate;
 
   /// 是否在元素上按下
   /// 按下时, 不绘制控制点
@@ -168,6 +174,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           lockControl.paintControl(canvas, paintMeta);
         }
       }
+      //绘制菜单, 这里绘制的菜单无法再坐标轴上
+      /*if (elementMenu.isCanvasComponentEnable &&
+          elementSelectComponent
+              .isElementSupportControl(ControlTypeEnum.menu)) {
+        elementMenu.paintMenu(canvas, paintMeta);
+      }*/
     }
   }
 
@@ -180,11 +192,16 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
     if (enableElementControl) {
+      bool ignoreHandle = false;
+      if (elementMenuControl.isCanvasComponentEnable &&
+          elementMenuControl.handleMenuEvent(event, entry)) {
+        ignoreHandle = true;
+      }
       if (event.isPointerDown) {
-        ignoreHandlePointer(
-            event,
-            !canvasDelegate.canvasViewBox.canvasBounds
-                .contains(event.localPosition));
+        final isInCanvas = canvasDelegate.canvasViewBox.canvasBounds
+            .contains(event.localPosition);
+        //不在画布内的事件, 忽略处理
+        ignoreHandlePointer(event, !isInCanvas || ignoreHandle);
       }
       //在画布内点击才响应
       handleDispatchEvent(event);
@@ -403,10 +420,14 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 需要更新lock状态
   /// [ElementSelectComponent.resetSelectElement]
   @property
-  void onSelfSelectElementChanged() {
+  void onSelfSelectElementChanged(List<ElementPainter>? children) {
     updateControlBounds();
     lockControl.isLock = elementSelectComponent.isLockRatio;
     canvasDelegate.refresh();
+    if (elementMenuControl.isCanvasComponentEnable) {
+      elementMenuControl.onCanvasSelectElementChanged(
+          elementSelectComponent, children);
+    }
   }
 
   /// 更新控制点的位置
@@ -424,6 +445,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       rotateControl.controlBounds = null;
       scaleControl.controlBounds = null;
       lockControl.controlBounds = null;
+    }
+    if (elementMenuControl.isCanvasComponentEnable) {
+      elementMenuControl.updateMenuLayoutBounds(elementSelectComponent);
     }
   }
 
@@ -459,9 +483,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
     final controlType = control?.controlType;
     if (state == ControlState.start) {
-      if (controlType == BaseControl.sControlTypeRotate) {
+      if (controlType == ControlTypeEnum.rotate) {
         updatePaintInfoType(PaintInfoType.rotate);
-      } else if (controlType == BaseControl.sControlTypeTranslate) {
+      } else if (controlType == ControlTypeEnum.translate) {
         //按下时, 就显示元素的位置信息
         updatePaintInfoType(PaintInfoType.location);
         //关键双击缩放画布的检查
@@ -469,7 +493,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
             .canvasEventManager.canvasScaleComponent.isDoubleFirstTouch = true;
       }
     } else {
-      if (controlType == BaseControl.sControlTypeRotate) {
+      if (controlType == ControlTypeEnum.rotate) {
         //旋转结束之后
         if (enableResetElementAngle) {
           elementSelectComponent.updateChildPaintPropertyFromChildren(true);
@@ -976,7 +1000,7 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   @override
-  bool isElementSupportControl(int type) {
+  bool isElementSupportControl(ControlTypeEnum type) {
     if (children?.length == 1) {
       final first = children!.first;
       return first.isElementSupportControl(type);
@@ -1027,7 +1051,7 @@ class ElementSelectComponent extends ElementGroupPainter
           null,
           canvasElementControlManager.enableResetElementAngle,
         );
-        canvasElementControlManager.onSelfSelectElementChanged();
+        canvasElementControlManager.onSelfSelectElementChanged(null);
         canvasElementControlManager.canvasDelegate
             .dispatchCanvasElementSelectChanged(this, old, children);
       }
@@ -1040,7 +1064,7 @@ class ElementSelectComponent extends ElementGroupPainter
         elements,
         canvasElementControlManager.enableResetElementAngle,
       );
-      canvasElementControlManager.onSelfSelectElementChanged();
+      canvasElementControlManager.onSelfSelectElementChanged(elements);
       canvasElementControlManager.canvasDelegate
           .dispatchCanvasElementSelectChanged(this, old, children);
     }
