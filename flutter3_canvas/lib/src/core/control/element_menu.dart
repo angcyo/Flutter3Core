@@ -30,6 +30,10 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
           ElementMenuControl menuControl, List<ElementPainter>? children)?
       onCreateElementMenuAction;
 
+  /// 菜单的偏移量
+  @dp
+  double offset = kS;
+
   //--
 
   /// 菜单列表
@@ -212,7 +216,8 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
 
     //开始布局的位置
     double left = max(menuMargin.left, center.dx - allWidth / 2);
-    double top = viewBounds.top - canvasStyle.menuTriangleHeight - maxHeight;
+    double top =
+        viewBounds.top - canvasStyle.menuTriangleHeight - maxHeight - offset;
 
     //菜单整体的边界
     _menuBounds = Rect.fromLTWH(left, top, allWidth, maxHeight);
