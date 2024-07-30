@@ -17,6 +17,8 @@ class CanvasStyle {
   /// 控制点的背景颜色
   Color controlBgColor = const Color(0xff333333);
 
+  //--paintInfo--
+
   /// 元素信息绘制的字体大小
   @dp
   double paintInfoTextFontSize = 8;
@@ -39,6 +41,12 @@ class CanvasStyle {
 
   /// 元素信息绘制的文字颜色
   Color paintInfoTextColor = const Color(0xffffffff);
+
+  /// 元素信息绘制是否显示单位后缀
+  bool paintInfoShowUnitSuffix = false;
+
+  /// 绘制信息是否单行格式
+  bool paintInfoSingleLine = false;
 
   //endregion ---basics---
 

@@ -38,8 +38,15 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 是否激活点击元素外, 取消选中元素
   bool enableOutsideCancelSelectElement = true;
 
-  /// 绘制元素的信息
+  /// 绘制选中元素的信息
+  /// [paint]
   PaintInfoType paintInfoType = PaintInfoType.none;
+
+  /// 绘制[paintInfoType]的方向, 目前仅支持上下绘制
+  /// [AxisDirection.up].
+  /// [AxisDirection.down]
+  /// [paint]
+  AxisDirection paintInfoDirection = AxisDirection.up;
 
   /// 控制限制器
   late ControlLimit controlLimit = ControlLimit(this);
@@ -103,7 +110,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       : null;
 
   /// 是否绘制数值的单位
-  bool get showUnitSuffix => canvasDelegate.canvasStyle.showAxisUnitSuffix;
+  bool get showUnitSuffix => canvasDelegate.canvasStyle.paintInfoShowUnitSuffix;
+
+  /// 绘制信息是否单行格式
+  bool get paintInfoSingleLine =>
+      canvasDelegate.canvasStyle.paintInfoSingleLine;
 
   CanvasElementControlManager(this.canvasElementManager) {
     addHandleEventClient(elementSelectComponent);
@@ -234,13 +245,22 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     final boundsWidth = textPainter.width + paintInfoTextPadding.horizontal;
     final boundsHeight = textPainter.height + paintInfoTextPadding.vertical;
 
-    final textBounds = Rect.fromLTWH(
-        elementBounds.center.dx - boundsWidth / 2,
-        elementBounds.top -
-            canvasDelegate.canvasStyle.paintInfoOffset -
-            boundsHeight,
-        boundsWidth,
-        boundsHeight);
+    final textBounds = switch (paintInfoDirection) {
+      AxisDirection.down => Rect.fromLTWH(
+          elementBounds.center.dx - boundsWidth / 2,
+          elementBounds.bottom + canvasDelegate.canvasStyle.paintInfoOffset,
+          boundsWidth,
+          boundsHeight,
+        ),
+      _ => Rect.fromLTWH(
+          elementBounds.center.dx - boundsWidth / 2,
+          elementBounds.top -
+              canvasDelegate.canvasStyle.paintInfoOffset -
+              boundsHeight,
+          boundsWidth,
+          boundsHeight,
+        ),
+    };
 
     canvas.withRotateRadians(angle, () {
       canvas.drawRRect(
@@ -268,7 +288,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
       final withString = axisUnit.format(
         axisUnit.toUnit(size.width.toPixelFromDp()),
-        showSuffix: showUnitSuffix,
+        showSuffix: paintInfoSingleLine ? false : showUnitSuffix,
         removeZero: false,
         ensureInt: false,
       );
@@ -278,7 +298,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         removeZero: false,
         ensureInt: false,
       );
-      final text = 'w:$withString\nh:$heightString';
+      final text = paintInfoSingleLine
+          ? 'w:$withString * h:$heightString'
+          : 'w:$withString\nh:$heightString';
       _paintControlInfo(canvas, paintMeta, paintProperty, text);
     });
   }
@@ -303,7 +325,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
       final xString = axisUnit.format(
         axisUnit.toUnit(location.dx.toPixelFromDp()),
-        showSuffix: showUnitSuffix,
+        showSuffix: paintInfoSingleLine ? false : showUnitSuffix,
         removeZero: false,
         ensureInt: false,
       );
@@ -313,7 +335,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         removeZero: false,
         ensureInt: false,
       );
-      final text = 'x:$xString\ny:$yString';
+      final text = paintInfoSingleLine
+          ? 'x:$xString  y:$yString'
+          : 'x:$xString\ny:$yString';
       _paintControlInfo(canvas, paintMeta, paintProperty, text);
     });
   }
