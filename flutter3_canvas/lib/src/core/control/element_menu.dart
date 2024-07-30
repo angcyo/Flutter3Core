@@ -34,12 +34,28 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
   @dp
   double offset = kS;
 
+  /// 是否忽略菜单的绘制和手势
+  /// [needHandleElementMenu]
+  bool ignoreMenuHandle = false;
+
   //--
 
   /// 菜单列表
   final List<ElementMenu> elementMenuList = [];
 
   //region --core--
+
+  /// 是否需要处理元素菜单
+  /// 绘制;
+  /// 手势;
+  bool needHandleElementMenu() =>
+      !canvasElementControlManager.isPointerDownElement /*未在移动元素*/ &&
+      canvasElementControlManager
+          .elementMenuControl.isCanvasComponentEnable /*组件激活*/ &&
+      canvasElementControlManager.isSelectedElement /*选中了元素*/ &&
+      canvasElementControlManager.elementSelectComponent
+          .isElementSupportControl(ControlTypeEnum.menu) /*支持菜单操作*/ &&
+      !ignoreMenuHandle;
 
   /// [CanvasElementControlManager.paint]驱动, 无法绘制在坐标轴上
   /// [CanvasElementManager.paintElements]驱动, 可以绘制在坐标轴上
@@ -87,8 +103,8 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
       });
       //绘制三角形
       canvas.withTranslate(
-        menuBounds.center.dx - canvasStyle.menuTriangleWidth / 2,
-        menuBounds.bottom,
+        _triangleAnchor.dx - canvasStyle.menuTriangleWidth / 2,
+        _triangleAnchor.dy,
         () {
           _paintTriangle(canvas);
         },
@@ -189,6 +205,10 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
   @viewCoordinate
   Rect? _menuBounds;
 
+  /// 三角形的中心锚点位置
+  @viewCoordinate
+  Offset _triangleAnchor = Offset.zero;
+
   /// 执行菜单布局
   /// [bounds] 选中的元素边界
   void _performMenuLayout(@sceneCoordinate Rect bounds) {
@@ -197,6 +217,8 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
       return;
     }
 
+    @viewCoordinate
+    final paintBounds = canvasViewBox.paintBounds;
     @viewCoordinate
     final viewBounds = canvasViewBox.toViewRect(bounds);
     final center = viewBounds.center;
@@ -215,12 +237,31 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
     maxHeight += menuPadding.vertical;
 
     //开始布局的位置
-    double left = max(menuMargin.left, center.dx - allWidth / 2);
+    //debugger();
+    double left = clamp(
+      center.dx - allWidth / 2,
+      menuMargin.left + canvasStyle.yAxisWidth,
+      paintBounds.right - allWidth,
+    );
     double top =
         viewBounds.top - canvasStyle.menuTriangleHeight - maxHeight - offset;
 
     //菜单整体的边界
     _menuBounds = Rect.fromLTWH(left, top, allWidth, maxHeight);
+
+    //三角形锚点
+    _triangleAnchor = Offset(
+      clamp(
+        center.dx,
+        _menuBounds!.left +
+            canvasStyle.menuTriangleWidth / 2 +
+            canvasStyle.menuRadius,
+        paintBounds.right -
+            canvasStyle.menuTriangleWidth / 2 -
+            canvasStyle.menuRadius,
+      ),
+      _menuBounds!.bottom,
+    );
 
     //菜单项的边界
     for (final menu in elementMenuList) {

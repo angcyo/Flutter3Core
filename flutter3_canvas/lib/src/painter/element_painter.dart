@@ -53,6 +53,7 @@ class ElementPainter extends IPainter
 
   //--get/set
 
+  /// 是否锁定了宽高比
   bool get isLockRatio => paintState.isLockRatio;
 
   set isLockRatio(bool value) {
@@ -64,6 +65,7 @@ class ElementPainter extends IPainter
     );
   }
 
+  /// 元素是否可见, 不可见的元素也不会绘制
   bool get isVisible => paintState.isVisible;
 
   set isVisible(bool value) {
@@ -82,6 +84,7 @@ class ElementPainter extends IPainter
     }
   }
 
+  /// 元素是否锁定了操作, 锁定后, 不可选中操作
   bool get isLockOperate => paintState.isLockOperate;
 
   set isLockOperate(bool value) {

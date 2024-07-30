@@ -113,11 +113,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       //---控制绘制, 在元素最上层绘制, 所以可以实现选中元素在顶层绘制
       canvasElementControlManager.paint(canvas, paintMeta);
       //---绘制菜单
-      if (!canvasElementControlManager.isPointerDownElement /*未在移动元素*/ &&
-          canvasElementControlManager
-              .elementMenuControl.isCanvasComponentEnable /*组件激活*/ &&
-          selectComponent
-              .isElementSupportControl(ControlTypeEnum.menu) /*支持菜单操作*/) {
+      if (canvasElementControlManager.elementMenuControl
+          .needHandleElementMenu()) {
         canvasElementControlManager.elementMenuControl
             .paintMenu(canvas, paintMeta);
       }
@@ -239,8 +236,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [element] 要添加的元素
   /// [selected] 是否选中对应元素
   /// [followPainter] 是否显示元素的边界
-  @supportUndo
   @api
+  @supportUndo
   void addElement(
     ElementPainter? element, {
     @dp Offset? offset,
@@ -269,8 +266,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [selected] 添加完成后,是否选中
   /// [followPainter] 移动元素到画布中心
   /// [offset] 所有元素的偏移量
-  @supportUndo
   @api
+  @supportUndo
   void addElementList(
     List<ElementPainter>? list, {
     @dp Offset? offset,
@@ -340,23 +337,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 删除所有元素
-  @supportUndo
   @api
+  @supportUndo
   void removeAllElement({UndoType undoType = UndoType.normal}) {
     removeElementList(elements.clone(), undoType: undoType);
   }
 
   /// 删除元素
-  @supportUndo
   @api
+  @supportUndo
   void removeElement(ElementPainter element,
       {UndoType undoType = UndoType.normal}) {
     removeElementList(element.ofList(), undoType: undoType);
   }
 
   /// 删除一组元素
-  @supportUndo
   @api
+  @supportUndo
   void removeElementList(List<ElementPainter>? list,
       {UndoType undoType = UndoType.normal}) {
     if (list == null || isNullOrEmpty(list)) {
@@ -458,8 +455,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 清空元素
-  @supportUndo
   @api
+  @supportUndo
   void clearElements([UndoType undoType = UndoType.normal]) {
     removeElementList(elements.clone(), undoType: undoType);
   }
@@ -1366,6 +1363,46 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       followPainter: showRect,
       undoType: undoType,
     );
+  }
+
+  /// 锁定操作指定的元素
+  @api
+  @supportUndo
+  void lockOperateElementList(
+    List<ElementPainter>? elementList, [
+    bool lock = true,
+    UndoType undoType = UndoType.normal,
+  ]) {
+    final list = elementList?.clone() ?? <ElementPainter>[];
+    canvasDelegate.canvasUndoManager.addRunRedo(() {
+      for (final painter in list) {
+        painter.isLockOperate = !lock;
+      }
+    }, () {
+      for (final painter in list) {
+        painter.isLockOperate = lock;
+      }
+    }, true, undoType);
+  }
+
+  /// 不可见指定的元素
+  @api
+  @supportUndo
+  void visibleElementList(
+    List<ElementPainter>? elementList, [
+    bool visible = true,
+    UndoType undoType = UndoType.normal,
+  ]) {
+    final list = elementList?.clone() ?? <ElementPainter>[];
+    canvasDelegate.canvasUndoManager.addRunRedo(() {
+      for (final painter in list) {
+        painter.isVisible = !visible;
+      }
+    }, () {
+      for (final painter in list) {
+        painter.isVisible = visible;
+      }
+    }, true, undoType);
   }
 
   //endregion ---operate/api---

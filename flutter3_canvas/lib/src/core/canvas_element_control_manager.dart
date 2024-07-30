@@ -193,7 +193,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     //debugger();
     if (enableElementControl) {
       bool ignoreHandle = false;
-      if (elementMenuControl.isCanvasComponentEnable &&
+      if (elementMenuControl.needHandleElementMenu() &&
           elementMenuControl.handleMenuEvent(event, entry)) {
         ignoreHandle = true;
       }
@@ -453,12 +453,64 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 移除选中的所有元素, 并且清空选择
   @api
+  @supportUndo
   void removeSelectedElement() {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
       //elementSelectComponent.resetChildren(null, enableResetElementAngle);
       elementSelectComponent.resetSelectElement(null);
       canvasDelegate.canvasElementManager.removeElementList(list);
+    }
+  }
+
+  /// 复制选中的所有元素
+  @api
+  @supportUndo
+  void copySelectedElement({
+    @dp Offset? offset,
+    bool selected = true,
+    bool showRect = true,
+  }) {
+    if (isSelectedElement) {
+      final list = elementSelectComponent.children;
+      canvasDelegate.canvasElementManager.copyElementList(
+        list,
+        offset: offset,
+        selected: selected,
+        showRect: showRect,
+      );
+    }
+  }
+
+  /// 锁定操作选中的所有元素
+  @api
+  @supportUndo
+  void lockOperateSelectedElement([
+    bool lock = true,
+    UndoType undoType = UndoType.normal,
+  ]) {
+    if (isSelectedElement) {
+      canvasDelegate.canvasElementManager.lockOperateElementList(
+        elementSelectComponent.children,
+        lock,
+        undoType,
+      );
+    }
+  }
+
+  /// 不可见选中的所有元素
+  @api
+  @supportUndo
+  void visibleSelectedElement([
+    bool visible = true,
+    UndoType undoType = UndoType.normal,
+  ]) {
+    if (isSelectedElement) {
+      canvasDelegate.canvasElementManager.visibleElementList(
+        elementSelectComponent.children,
+        visible,
+        undoType,
+      );
     }
   }
 

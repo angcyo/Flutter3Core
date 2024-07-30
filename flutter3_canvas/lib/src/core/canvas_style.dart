@@ -112,7 +112,7 @@ class CanvasStyle {
   EdgeInsets? menuPadding;
 
   /// 菜单的外边距
-  EdgeInsets? menuMargin;
+  EdgeInsets? menuMargin = const EdgeInsets.all(kH);
 
   /// 菜单的背景颜色
   Color menuBgColor = const Color(0xff0c0c06);
