@@ -11,26 +11,39 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
   CanvasDelegate get canvasDelegate => paintManager.canvasDelegate;
 
+  CanvasViewBox get canvasViewBox => canvasDelegate.canvasViewBox;
+
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
   /// 限制内容场景的区域, 网格线只会在此区域内绘制
+  ///
+  /// 警示所有元素必须在此区域内
+  ///
+  /// [CanvasAxisManager.painting]
+  /// [clipCanvasContent]
   @dp
   @sceneCoordinate
-  Rect? sceneContentBounds;
+  ContentBoundsInfo? sceneContentBoundsInfo;
 
-  /// 画布跟随时需要采用的矩形坐标
-  /// [sceneContentBounds]
+  /// 画布显示内容区域时, 要使用的跟随矩形信息,
+  /// 不指定则会降级使用[sceneContentBoundsInfo]
   @dp
   @sceneCoordinate
-  @flagProperty
-  Rect? canvasShowSceneContentRect;
+  ContentBoundsInfo? sceneFollowRectInfo;
 
   /// 画布跟随时的显示区域, 同时也是元素分配位置的参考
   @dp
   @sceneCoordinate
-  Rect? get showCanvasContentRect => isCanvasComponentEnable
-      ? (canvasShowSceneContentRect ?? sceneContentBounds)
+  Rect? get canvasContentFollowRect => isCanvasComponentEnable
+      ? (sceneFollowRectInfo?.bounds ?? sceneContentBoundsInfo?.bounds)
       : null;
+
+  /// 场景内最佳区域范围, 应该在[sceneContentBoundsInfo]区域内
+  /// 提示所有元素应该在此区域内
+  @dp
+  @sceneCoordinate
+  @flagProperty
+  ContentBoundsInfo? sceneBestBoundsInfo;
 
   /// 额外需要绘制的路径信息
   final List<PainterPathInfo> painterPathList = [];
@@ -64,19 +77,17 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         );
       }
       //场景内容提示绘制
-      sceneContentBounds?.let((it) {
+      sceneContentBoundsInfo?.let((info) {
         final canvasStyle = canvasDelegate.canvasStyle;
         //场景背景绘制
 
         paintMeta.withPaintMatrix(canvas, () {
           //场景内容背景
           if (canvasStyle.sceneContentBgColor != null) {
-            canvas.drawRect(
-              it,
-              Paint()
-                ..style = PaintingStyle.fill
-                ..color = canvasStyle.sceneContentBgColor!,
-            );
+            final paint = Paint()
+              ..style = PaintingStyle.fill
+              ..color = canvasStyle.sceneContentBgColor!;
+            _drawBoundsInfo(canvas, paint, info);
           }
 
           //额外绘制的路径信息
@@ -95,11 +106,12 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
           //边界边框
           if (canvasStyle.paintSceneContentBounds == true) {
-            canvas.drawRect(
-              it,
+            _drawBoundsInfo(
+              canvas,
               Paint()
                 ..style = PaintingStyle.stroke
                 ..color = canvasStyle.axisPrimaryColor,
+              info,
             );
           }
         });
@@ -107,22 +119,78 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     });
   }
 
+  /// 裁剪画布内容区域, 目前只裁剪了网格和内容背景, 元素不裁剪
+  /// [CanvasAxisManager.painting]
+  void clipCanvasContent(Canvas canvas, VoidAction action) {
+    //debugger();
+    final boundsInfo = sceneContentBoundsInfo;
+    if (boundsInfo == null) {
+      action();
+    } else {
+      if (boundsInfo.path != null) {
+        canvas.withClipPath(
+          canvasViewBox.toViewPath(boundsInfo.path!),
+          () {
+            action();
+          },
+        );
+      } else if (boundsInfo.bounds != null) {
+        canvas.withClipRect(
+          canvasViewBox.toViewRect(boundsInfo.bounds!),
+          () {
+            action();
+          },
+        );
+      } else {
+        action();
+      }
+    }
+  }
+
+  //--
+
+  void _drawBoundsInfo(
+    Canvas canvas,
+    Paint paint,
+    ContentBoundsInfo boundsInfo,
+  ) {
+    if (boundsInfo.path != null) {
+      canvas.drawPath(boundsInfo.path!, paint);
+    } else if (boundsInfo.bounds != null) {
+      canvas.drawRect(boundsInfo.bounds!, paint);
+    }
+  }
+
   //--
 
   /// 限制画布内容绘制区域, 背景只会在此区域绘制
   /// [onUpdateAction] 更新成功的回调
-  void updateCanvasSceneContentBounds(
-    @dp @sceneCoordinate Rect? contentBounds, {
+  void updateCanvasSceneContentBounds({
+    @dp @sceneCoordinate ContentBoundsInfo? boundsInfo,
+    @dp @sceneCoordinate Path? path,
+    @dp @sceneCoordinate Rect? bounds,
     bool? showRect,
     bool? animate,
     VoidCallback? onUpdateAction,
   }) {
+    if (boundsInfo == null && path == null && bounds == null) {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
+      return;
+    }
+
     if (canvasDelegate.canvasViewBox.isCanvasBoxInitialize) {
-      showRect ??= sceneContentBounds == null;
-      sceneContentBounds = contentBounds;
-      if (showRect && contentBounds != null) {
+      showRect ??= sceneContentBoundsInfo == null;
+      sceneContentBoundsInfo = boundsInfo ??
+          ContentBoundsInfo(
+            path: path,
+            bounds: bounds,
+          );
+      if (showRect && bounds != null) {
         canvasDelegate.showRect(
-          rect: contentBounds,
+          rect: bounds,
           animate: animate,
         );
       }
@@ -130,7 +198,9 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     } else {
       scheduleMicrotask(() {
         updateCanvasSceneContentBounds(
-          contentBounds,
+          boundsInfo: boundsInfo,
+          path: path,
+          bounds: bounds,
           showRect: showRect,
           animate: animate,
           onUpdateAction: onUpdateAction,
@@ -140,11 +210,31 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   }
 
   /// 触发画布跟随
-  void showCanvasSceneContentBounds() {
-    showCanvasContentRect?.let((it) {
-      canvasDelegate.showRect(rect: it);
+  void showCanvasSceneContentBounds({
+    bool? animate,
+    bool? enableZoomOut,
+    bool? enableZoomIn,
+  }) {
+    canvasContentFollowRect?.let((it) {
+      canvasDelegate.showRect(
+        rect: it,
+        animate: animate,
+        enableZoomOut: enableZoomOut,
+        enableZoomIn: enableZoomIn,
+      );
     });
   }
+}
+
+/// 路径边界信息
+class ContentBoundsInfo {
+  /// 关键路径
+  final Path? path;
+
+  /// [path]路径的边界
+  final Rect? bounds;
+
+  ContentBoundsInfo({this.path, this.bounds});
 }
 
 /// 需要绘制的路径信息

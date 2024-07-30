@@ -260,7 +260,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
             .canvasElementControlManager.enableResetElementAngle) /*1*/ ??
-        canvasPaintManager.contentManager.showCanvasContentRect /*2*/ ??
+        canvasPaintManager.contentManager.canvasContentFollowRect /*2*/ ??
         canvasElementManager.allElementsBounds /*3*/;
     if (rect == null) {
       return;
@@ -459,6 +459,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   //endregion ---事件派发---
+
+  //region ---辅助---
+
+  /// 暗色主题时, 返回[dark], 否则返回[light]
+  T darkOr<T>(T light, T dark) =>
+      delegateContext?.isThemeDark == true ? dark : light;
+
+  //endregion ---辅助---
 
   //region ---Ticker---
 

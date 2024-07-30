@@ -45,10 +45,10 @@ class CanvasStyle {
   //region ---config---
 
   /// 当指定了内容边界时, 是否绘制对应的提示框
-  /// [CanvasContentManager.sceneContentBounds]
+  /// [CanvasContentManager.sceneContentBoundsInfo]
   bool? paintSceneContentBounds;
 
-  /// [CanvasContentManager.sceneContentBounds] 场景的背景颜色
+  /// [CanvasContentManager.sceneContentBoundsInfo] 场景的背景颜色
   Color? sceneContentBgColor;
 
   /// [CanvasContentManager] 内容背景颜色, 指定了就会绘制
@@ -59,7 +59,7 @@ class CanvasStyle {
 
   //region ---axis---
 
-  Color axisPrimaryColor = const Color(0xffA5A5A5); //const Color(0xFFB2B2B2);
+  Color axisPrimaryColor = const Color(0xffbcbcbc); //const Color(0xFFB2B2B2);
   Color axisSecondaryColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
   Color axisNormalColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
 

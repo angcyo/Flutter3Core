@@ -45,7 +45,7 @@ class CanvasFollowManager with CanvasComponentMixin {
   }) {
     //debugger();
     final sceneBounds =
-        canvasDelegate.canvasPaintManager.contentManager.showCanvasContentRect;
+        canvasDelegate.canvasPaintManager.contentManager.canvasContentFollowRect;
     if (sceneBounds == null) {
       if (restoreDef == true) {
         animate ??= this.animate;
@@ -204,6 +204,6 @@ class CanvasFollowManager with CanvasComponentMixin {
     alignment = Alignment.center;
     enableZoomIn = true;
     followRect(
-        canvasDelegate.canvasPaintManager.contentManager.showCanvasContentRect);
+        canvasDelegate.canvasPaintManager.contentManager.canvasContentFollowRect);
   }
 }

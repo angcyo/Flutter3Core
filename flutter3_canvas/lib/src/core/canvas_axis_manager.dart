@@ -209,12 +209,8 @@ class CanvasAxisManager extends IPainter {
     // 绘制坐标网格
     if (drawType.have(sDrawGrid)) {
       canvas.withClipRect(canvasBounds, () /*画布区域裁剪*/ {
-        Rect? contentBounds =
-            canvasDelegate.canvasPaintManager.contentManager.sceneContentBounds;
-        if (contentBounds != null) {
-          contentBounds = canvasViewBox.toViewRect(contentBounds);
-        }
-        canvas.withClipRect(contentBounds, () /*内容区域裁剪*/ {
+        canvasDelegate.canvasPaintManager.contentManager
+            .clipCanvasContent(canvas, () /*内容区域裁剪*/ {
           for (final axisData in xData) {
             final paint = axisData.axisType.have(IUnit.axisTypePrimary)
                 ? primaryPaint
