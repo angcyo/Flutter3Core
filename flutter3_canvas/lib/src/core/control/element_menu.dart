@@ -241,7 +241,7 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
     double left = clamp(
       center.dx - allWidth / 2,
       menuMargin.left + canvasStyle.yAxisWidth,
-      paintBounds.right - allWidth,
+      paintBounds.right - allWidth - menuMargin.right,
     );
     double top =
         viewBounds.top - canvasStyle.menuTriangleHeight - maxHeight - offset;
@@ -256,7 +256,7 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
         _menuBounds!.left +
             canvasStyle.menuTriangleWidth / 2 +
             canvasStyle.menuRadius,
-        paintBounds.right -
+        _menuBounds!.right -
             canvasStyle.menuTriangleWidth / 2 -
             canvasStyle.menuRadius,
       ),
