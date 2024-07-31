@@ -67,7 +67,7 @@ class PullBackWidget extends StatefulWidget {
     this.pullBackController,
     this.onPullBack,
     this.onPullProgress,
-    this.pullKeepProgress = 0.3,
+    this.pullKeepProgress,
     this.canPullBackAction,
     this.showDragHandle = false,
     this.useSafeArea = false,
@@ -80,9 +80,12 @@ class PullBackWidget extends StatefulWidget {
 
 class _PullBackWidgetState extends State<PullBackWidget>
     with SingleTickerProviderStateMixin {
+  /// 下拉进度值
+  double get _pullBackValue => _pullBackAnimation.value;
+
   /// 下拉的效果矩阵
-  Matrix4 get _pullBackTransform => Matrix4.identity()
-    ..translate(0.0, _pullBackController.value * (_childHeight ?? 0));
+  Matrix4 get _pullBackTransform =>
+      Matrix4.identity()..translate(0.0, _pullBackValue * (_childHeight ?? 0));
 
   /// [0~1] 0:未开始下拉 1:完全下拉到底部
   late final AnimationController _pullBackController;
@@ -106,6 +109,10 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// 快速下拉速度阈值, 快速下拉速度超过这个阈值, 就会关闭
   final double closeFlingVelocity = 500.0;
 
+  /// 用来实现[Widget.pullKeepProgress]属性
+  final _PullBackKeepProgressAnimation _keepProgressAnimation =
+      _PullBackKeepProgressAnimation();
+
   @override
   void initState() {
     super.initState();
@@ -118,35 +125,41 @@ class _PullBackWidgetState extends State<PullBackWidget>
       if (widget.barrierColor != null) {
         updateState();
       }
-      widget.onPullProgress?.call(_pullBackController.value);
+      widget.onPullProgress?.call(_pullBackValue);
     });
     //动画结束监听
     _pullBackController.addStatusListener((status) {
-      //l.d('$status:${_pullBackController.value}');
+      //l.d('$status:${_pullBackValue}');
       if (_isDragEnd && status == AnimationStatus.completed) {
         _pullBack();
       } /*else if (status == AnimationStatus.dismissed) {
-        l.d('dismissed:${_pullBackController.value}');
+        l.d('dismissed:${_pullBackValue}');
       } else if (status == AnimationStatus.forward) {
-        l.d('forward:${_pullBackController.value}');
+        l.d('forward:${_pullBackValue}');
       } else if (status == AnimationStatus.reverse) {
-        l.d('reverse:${_pullBackController.value}');
+        l.d('reverse:${_pullBackValue}');
       }*/
     });
 
-    _pullBackAnimation = _pullBackController.drive(
-      CurveTween(curve: _pullBackCurve),
-    );
+    _keepProgressAnimation.pullKeepProgress = widget.pullKeepProgress;
+    _keepProgressAnimation.parent = CurveTween(curve: _pullBackCurve);
+    _pullBackAnimation = _pullBackController.drive(_keepProgressAnimation);
   }
 
   /// 处理下拉返回的回调逻辑
   void _pullBack() {
     //debugger();
-    //l.d('completed:${_pullBackController.value}');
+    //l.d('completed:${_pullBackValue}');
     if (widget.onPullBack == null) {
-      buildContext?.pop();
+      if (widget.pullKeepProgress == null) {
+        buildContext?.pop();
+      }
     } else if (buildContext != null) {
       widget.onPullBack?.call(buildContext!);
+    }
+    if (widget.pullKeepProgress != null) {
+      //需要保持姿势...
+      _pullBackController.value = widget.pullKeepProgress!;
     }
   }
 
@@ -158,6 +171,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   @override
   Widget build(BuildContext context) {
+    _keepProgressAnimation.enable = _pullBackController.isStarted;
     Widget body = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onVerticalDragUpdate: (details) {
@@ -200,6 +214,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
               );
             }
 
+            //debugger();
+            assert(() {
+              l.v('build:$_pullBackValue ${_pullBackController.status} ${_pullBackController.isStarted}');
+              return true;
+            }());
             return content.matrix(_pullBackTransform);
           },
         ),
@@ -217,8 +236,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
     return body.backgroundDecoration(
       fillDecoration(
         borderRadius: 0,
-        color:
-            widget.barrierColor!.withOpacityRatio(1 - _pullBackAnimation.value),
+        color: widget.barrierColor!.withOpacityRatio(1 - _pullBackValue),
       ),
     );
   }
@@ -231,7 +249,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
     final progress = primaryDelta / (_childHeight ?? primaryDelta);
     //l.d('progress:$progress [$primaryDelta/$_childHeight]');
     _pullBackController.value += progress; //value [0~1]
-    //l.d("pull back:${_pullBackController.value}");
+    //l.d("pull back:${_pullBackValue}");
     //
     ProgressStateNotification(
       tag: PullBackWidget,
@@ -244,7 +262,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// [position] 为null时, 表示在非scroll内容中拖拽
   bool _handleDragEnd(ScrollMetrics? position, double velocity) {
     //debugger();
-    //l.d('velocity:$velocity value:${_pullBackController.value}');
+    //l.d('velocity:$velocity value:${_pullBackValue}');
 
     if (position != null && position.axis != widget.pullAxis) {
       return false;
@@ -263,6 +281,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
       //toastInfo('close:${velocity}');
       _tryPullBack();
     } else {
+      _keepProgressAnimation.direction = AnimationDirection.reverse;
       _pullBackController.reverse();
     }
     return true;
@@ -275,9 +294,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
       if (_pullBackController.isCompleted) {
         _pullBack();
       } else {
+        _keepProgressAnimation.direction = AnimationDirection.forward;
         _pullBackController.forward();
       }
     } else {
+      _keepProgressAnimation.direction = AnimationDirection.reverse;
       _pullBackController.reverse();
     }
   }
@@ -314,6 +335,52 @@ class _PullBackWidgetState extends State<PullBackWidget>
       return await widget.canPullBackAction!();
     }
     return true;
+  }
+}
+
+class _PullBackKeepProgressAnimation extends Animatable<double> {
+  /// 需要保持的进度, 不为空时生效
+  /// 动画最终需要停留在的进度
+  /// [lowerBound~upperBound]
+  double? pullKeepProgress;
+
+  /// 是否激活
+  bool enable = false;
+
+  /// 动画的方向, 用来怎么判断夹紧[pullKeepProgress]
+  /// [AnimationDirection.forward] 前进值从 0~1
+  /// [AnimationDirection.reverse] 前进值从 1~0
+  AnimationDirection direction = AnimationDirection.forward;
+
+  //--
+
+  /// [AnimationController.lowerBound]
+  /// 头, 前
+  double lowerBound = 0.0;
+
+  /// [AnimationController.upperBound]
+  /// 尾, 后
+  double upperBound = 1.0;
+
+  Animatable<double>? parent;
+
+  @override
+  double transform(double t) {
+    t = parent?.transform(t) ?? t;
+    final keepProgress = pullKeepProgress;
+    //debugger();
+    if (enable && keepProgress != null) {
+      if (direction == AnimationDirection.forward) {
+        t = min(t, keepProgress);
+      } else {
+        t = max(t, keepProgress);
+      }
+    }
+    assert(() {
+      l.v("keepProgress[$enable]->$direction...$pullKeepProgress....$t");
+      return true;
+    }());
+    return t;
   }
 }
 
@@ -407,9 +474,10 @@ extension PullBackWidgetExtension on Widget {
   /// [ModalBottomSheetRoute.showDragHandle]
   /// [buildDragHandle]
   Widget pullBack({
-    bool enablePullBack = true,
     Key? key,
+    bool enablePullBack = true,
     AnimationController? pullBackController,
+    double? pullKeepProgress,
     void Function(BuildContext context)? onPullBack,
     void Function(double progress)? onPullProgress,
     Future<bool> Function()? canPullBackAction,
@@ -419,6 +487,7 @@ extension PullBackWidgetExtension on Widget {
     }
     return PullBackWidget(
       key: key,
+      pullKeepProgress: pullKeepProgress,
       pullBackController: pullBackController,
       onPullBack: onPullBack ??
           (context) {

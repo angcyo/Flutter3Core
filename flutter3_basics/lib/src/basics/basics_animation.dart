@@ -28,9 +28,11 @@ const kDefaultSlowAnimationDuration = Duration(milliseconds: 3000);
 /// [_AnimationDirection]
 enum AnimationDirection {
   /// The animation is running from beginning to end.
+  /// 从头到尾
   forward,
 
   /// The animation is running backwards, from end to beginning.
+  /// 从后到前
   reverse,
 }
 

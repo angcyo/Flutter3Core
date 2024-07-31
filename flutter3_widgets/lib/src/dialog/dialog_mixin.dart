@@ -142,6 +142,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Color? bgColor /*背景颜色*/,
     bool enablePullBack = true,
     bool showDragHandle = true,
+    double? pullKeepProgress,
     void Function(BuildContext context)? onPullBack,
     bool useScroll = false,
     bool animatedSize = false,
@@ -219,9 +220,12 @@ mixin DialogMixin implements TranslationTypeImpl {
         )
         .pullBack(
           enablePullBack: enablePullBack,
+          pullKeepProgress: pullKeepProgress,
           onPullBack: onPullBack ??
               (context) {
-                closeDialogIf(context);
+                if (pullKeepProgress == null) {
+                  closeDialogIf(context);
+                }
               },
         )
         .matchParent(matchHeight: fullScreen)

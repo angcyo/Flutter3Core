@@ -534,7 +534,7 @@ extension DirectoryEx on Directory {
       return await delete(recursive: recursive);
     } catch (e) {
       assert(() {
-        l.w(e);
+        l.w("无法删除文件夹->$e");
         return true;
       }());
     }
