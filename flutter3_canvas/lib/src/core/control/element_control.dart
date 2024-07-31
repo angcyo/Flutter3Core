@@ -38,6 +38,7 @@ enum ControlTypeEnum {
 }
 
 /// 选中元素的控制点
+/// 由[CanvasElementControlManager]管理所有控制点
 class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
 
