@@ -173,6 +173,20 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchDoubleTapElement]
   final void Function(ElementPainter elementPainter)? onDoubleTapElementAction;
 
+  /// [CanvasDelegate.dispatchTranslateElement]
+  final void Function(ElementPainter? targetElement, bool isFirstTranslate)?
+      onTranslateElementAction;
+
+  /// [CanvasDelegate.dispatchPointerDown]
+  final void Function(@viewCoordinate Offset position)? onPointerDownAction;
+
+  /// [CanvasDelegate.dispatchControlStateChanged]
+  final void Function({
+    required BaseControl control,
+    ElementPainter? controlElement,
+    required ControlState state,
+  })? onControlStateChangedAction;
+
   /// [CanvasDelegate.dispatchCanvasUndoChanged]
   final void Function(CanvasUndoManager undoManager)? onCanvasUndoChangedAction;
 
@@ -195,8 +209,11 @@ class CanvasListener {
     this.onCanvasElementListAddChanged,
     this.onCanvasElementListRemoveChanged,
     this.onDoubleTapElementAction,
+    this.onTranslateElementAction,
+    this.onPointerDownAction,
     this.onCanvasUndoChangedAction,
     this.onCanvasGroupChangedAction,
     this.onCanvasUngroupChangedAction,
+    this.onControlStateChangedAction,
   });
 }

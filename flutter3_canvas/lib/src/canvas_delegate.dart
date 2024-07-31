@@ -456,6 +456,38 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
+  /// 移动元素时回调
+  /// [targetElement] 移动的目标元素
+  /// [isFirstTranslate] 是否是首次移动
+  void dispatchTranslateElement(
+      ElementPainter? targetElement, bool isFirstTranslate) {
+    _eachCanvasListener((element) {
+      element.onTranslateElementAction?.call(targetElement, isFirstTranslate);
+    });
+  }
+
+  /// 手势按下时回调
+  void dispatchPointerDown(@viewCoordinate Offset position) {
+    _eachCanvasListener((element) {
+      element.onPointerDownAction?.call(position);
+    });
+  }
+
+  /// 控制点[BaseControl]控制状态改变时回调
+  void dispatchControlStateChanged({
+    required BaseControl control,
+    ElementPainter? controlElement,
+    required ControlState state,
+  }) {
+    _eachCanvasListener((element) {
+      element.onControlStateChangedAction?.call(
+        control: control,
+        controlElement: controlElement,
+        state: state,
+      );
+    });
+  }
+
   /// 回退栈发生改变时回调
   void dispatchCanvasUndoChanged(
       CanvasUndoManager undoManager, UndoType fromType) {

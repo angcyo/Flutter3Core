@@ -42,6 +42,9 @@ enum ControlTypeEnum {
 class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
 
+  CanvasDelegate get canvasDelegate =>
+      canvasElementControlManager.canvasDelegate;
+
   /// 控制点的类型
   /// [ControlTypeEnum]
   final ControlTypeEnum controlType;
@@ -690,9 +693,10 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         final selectComponent =
             canvasElementControlManager.elementSelectComponent;
         if (event.isPointerDown) {
+          _isFirstTranslate = true;
           downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
           if (selectComponent.hitTest(point: downScenePoint)) {
-            //在选择器上按下, 则是需要拖动选中的元素
+            //
             //debugger();
             isPointerDownIn = true;
             isFirstHandle = true;
@@ -734,6 +738,9 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
     return super.interceptPointerEvent(dispatch, event);
   }
 
+  /// 是否是首次移动元素
+  bool _isFirstTranslate = false;
+
   @override
   bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     //l.d('...1...${dispatch.pointerCount}');
@@ -760,10 +767,14 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
             return true;
           }());
           applyTargetMatrix(matrix);
+          canvasDelegate.dispatchTranslateElement(
+              _targetElement, _isFirstTranslate);
+          _isFirstTranslate = false;
           //debugger();
         }
       } else if (event.isPointerFinish) {
         endControlTarget();
+        _isFirstTranslate = false;
       }
     }
     super.onFirstPointerEvent(dispatch, event);

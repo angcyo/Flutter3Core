@@ -191,6 +191,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
+    final localPosition = event.localPosition;
     if (enableElementControl) {
       bool ignoreHandle = false;
       if (elementMenuControl.needHandleElementMenu() &&
@@ -198,26 +199,33 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         ignoreHandle = true;
       }
       if (event.isPointerDown) {
-        final isInCanvas = canvasDelegate.canvasViewBox.canvasBounds
-            .contains(event.localPosition);
+        final isInCanvas =
+            canvasDelegate.canvasViewBox.canvasBounds.contains(localPosition);
         //不在画布内的事件, 忽略处理
         ignoreHandlePointer(event, !isInCanvas || ignoreHandle);
       }
       //在画布内点击才响应
       handleDispatchEvent(event);
     }
+    if (event.isTouchEvent && event.isPointerDown) {
+      //手势按下通知
+      canvasDelegate.dispatchPointerDown(localPosition);
+    }
   }
 
   /// 当有元素被删除时, 调用
   /// 同时需要检查被删除的元素是否是选中的元素, 如果是, 则需要更新选择框
   @flagProperty
-  void onCanvasElementDeleted(List<ElementPainter> elements) {
+  void onCanvasElementDeleted(
+    List<ElementPainter> elements,
+    ElementSelectType selectType,
+  ) {
     final list = elementSelectComponent.children?.clone(true);
     if (list != null) {
       final op = list.removeAll(elements);
       if (op.isNotEmpty) {
         //有选中的元素被删除了
-        elementSelectComponent.resetSelectElement(list);
+        elementSelectComponent.resetSelectElement(list, selectType);
       }
     }
   }
@@ -525,15 +533,15 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// [BaseControl.endControlTarget]
   @property
   void onSelfControlStateChanged({
-    BaseControl? control,
+    required BaseControl control,
     ElementPainter? controlElement,
     required ControlState state,
   }) {
-    _currentControlRef = control?.toWeakRef();
+    _currentControlRef = control.toWeakRef();
     _currentControlElementRef = controlElement?.toWeakRef();
     _currentControlState = state;
 
-    final controlType = control?.controlType;
+    final controlType = control.controlType;
     if (state == ControlState.start) {
       if (controlType == ControlTypeEnum.rotate) {
         updatePaintInfoType(PaintInfoType.rotate);
@@ -554,6 +562,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       }
       resetPaintInfoType();
     }
+    canvasDelegate.dispatchControlStateChanged(
+      control: control,
+      controlElement: controlElement,
+      state: state,
+    );
     canvasDelegate.refresh();
   }
 
@@ -882,16 +895,19 @@ class ElementSelectComponent extends ElementGroupPainter
           _downElementList = canvasElementControlManager.canvasElementManager
               .findElement(point: _downScenePoint);
           updateSelectBounds(
-              Rect.fromLTRB(_downScenePoint.dx, _downScenePoint.dy,
-                  _downScenePoint.dx, _downScenePoint.dy),
-              false);
+            Rect.fromLTRB(_downScenePoint.dx, _downScenePoint.dy,
+                _downScenePoint.dx, _downScenePoint.dy),
+            false,
+          );
         } else if (event.isPointerMove) {
           //debugger();
           //l.d('pointerMove pointerCount:$pointerCount');
           if (pointerCount == 1) {
             final scenePoint = viewBox.toScenePoint(event.localPosition);
             updateSelectBounds(
-                Rect.fromPoints(_downScenePoint, scenePoint), false);
+              Rect.fromPoints(_downScenePoint, scenePoint),
+              false,
+            );
           } else {
             //多指时移动, 取消选域
             ignoreEventHandle = true;
