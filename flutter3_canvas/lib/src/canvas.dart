@@ -148,6 +148,7 @@ class CanvasListener {
     ElementSelectComponent selectComponent,
     List<ElementPainter>? from,
     List<ElementPainter>? to,
+    ElementSelectType selectType,
   )? onCanvasElementSelectChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementListChanged]
@@ -174,7 +175,8 @@ class CanvasListener {
   final void Function(ElementPainter elementPainter)? onDoubleTapElementAction;
 
   /// [CanvasDelegate.dispatchTranslateElement]
-  final void Function(ElementPainter? targetElement, bool isFirstTranslate)?
+  final void Function(
+          ElementPainter? targetElement, bool isFirstTranslate, bool isEnd)?
       onTranslateElementAction;
 
   /// [CanvasDelegate.dispatchPointerDown]

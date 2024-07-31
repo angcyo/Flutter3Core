@@ -394,6 +394,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     List<ElementPainter> to,
     List<ElementPainter> op,
     UndoType undoType,
+    ElementSelectType selectType,
   ) {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
@@ -402,7 +403,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         if (to.length > from.length) {
           //有元素被添加了
           if (undoType == UndoType.redo) {
-            elementSelectComponent.resetSelectElement(null);
+            elementSelectComponent.resetSelectElement(null, selectType);
           }
         } else {
           //选中了的元素, 但是被删除了
@@ -415,8 +416,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
           if (removeList.isNotEmpty) {
             //有选中的元素被删除了
-            elementSelectComponent
-                .resetSelectElement(list.clone(true).removeAll(removeList));
+            elementSelectComponent.resetSelectElement(
+                list.clone(true).removeAll(removeList), selectType);
           }
         }
       }
@@ -462,11 +463,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 移除选中的所有元素, 并且清空选择
   @api
   @supportUndo
-  void removeSelectedElement() {
+  void removeSelectedElement({
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
       //elementSelectComponent.resetChildren(null, enableResetElementAngle);
-      elementSelectComponent.resetSelectElement(null);
+      elementSelectComponent.resetSelectElement(null, selectType);
       canvasDelegate.canvasElementManager.removeElementList(list);
     }
   }
@@ -936,12 +939,13 @@ class ElementSelectComponent extends ElementGroupPainter
               if (canvasElementControlManager
                   .enableOutsideCancelSelectElement) {
                 //点击元素外, 取消选择
-                resetSelectElement(null);
+                resetSelectElement(null, ElementSelectType.pointer);
               }
             } else {
               //点击选中元素
               updateSelectBounds(null, false);
-              resetSelectElement(_downElementList?.lastOrNull?.ofList());
+              resetSelectElement(_downElementList?.lastOrNull?.ofList(),
+                  ElementSelectType.pointer);
             }
           }
           _downElementList = null;
@@ -1090,7 +1094,8 @@ class ElementSelectComponent extends ElementGroupPainter
   void updateSelectBounds(Rect? bounds, bool select) {
     if (select) {
       //需要选择元素
-      resetSelectElement(_getSelectBoundsElementList(bounds));
+      resetSelectElement(
+          _getSelectBoundsElementList(bounds), ElementSelectType.pointer);
       canvasElementControlManager.updatePaintInfoType(PaintInfoType.size);
     }
     selectBounds = bounds;
@@ -1105,7 +1110,10 @@ class ElementSelectComponent extends ElementGroupPainter
   /// [CanvasElementManager.removeSelectElementList]
   /// [CanvasElementManager.resetSelectElement]
   @api
-  void resetSelectElement(List<ElementPainter>? elements) {
+  void resetSelectElement(
+    List<ElementPainter>? elements,
+    ElementSelectType selectType,
+  ) {
     //debugger();
     List<ElementPainter>? old = children;
     if (isNullOrEmpty(elements)) {
@@ -1120,8 +1128,12 @@ class ElementSelectComponent extends ElementGroupPainter
           canvasElementControlManager.enableResetElementAngle,
         );
         canvasElementControlManager.onSelfSelectElementChanged(null);
-        canvasElementControlManager.canvasDelegate
-            .dispatchCanvasElementSelectChanged(this, old, children);
+        canvasDelegate?.dispatchCanvasElementSelectChanged(
+          this,
+          old,
+          children,
+          selectType,
+        );
       }
     } else {
       assert(() {
@@ -1133,8 +1145,24 @@ class ElementSelectComponent extends ElementGroupPainter
         canvasElementControlManager.enableResetElementAngle,
       );
       canvasElementControlManager.onSelfSelectElementChanged(elements);
-      canvasElementControlManager.canvasDelegate
-          .dispatchCanvasElementSelectChanged(this, old, children);
+      canvasDelegate?.dispatchCanvasElementSelectChanged(
+        this,
+        old,
+        children,
+        selectType,
+      );
     }
   }
+}
+
+/// 选择元素的类型
+enum ElementSelectType {
+  /// 忽略本地选中元素
+  ignore,
+
+  /// 通过指针选中元素
+  pointer,
+
+  /// 通过代码选中元素
+  code,
 }

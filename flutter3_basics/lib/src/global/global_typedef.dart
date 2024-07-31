@@ -89,4 +89,14 @@ typedef TransformChildDataWidgetBuilder = Widget? Function(
 /// 支持返回null的[WidgetBuilder]
 typedef WidgetNullBuilder = Widget? Function(BuildContext context);
 
+/// [RoutePageBuilder]
+/// [ModalRoute.buildTransitions]
+/// [RouteTransitionsBuilder]
+///
+/// [child] 用来传递不需要重新build的[Widget].
+/// 此方法里面只rebuild动画处理相关的[Widget].
+///
+typedef TransitionsBuilder = Widget Function(
+    BuildContext context, Animation<double> animation, Widget? child);
+
 //endregion Fn

@@ -38,6 +38,7 @@ class PullBackWidget extends StatefulWidget {
   //---
 
   /// 下拉返回的背景颜色, 可以不指定
+  /// 指定后, 背景会有颜色, 跟随下拉进度
   final Color? barrierColor;
 
   /// 下拉返回的内容组件, 是否要使用[SafeArea]
@@ -51,7 +52,12 @@ class PullBackWidget extends StatefulWidget {
 
   //---
 
-  /// 下拉返回, 还不支持横向返回
+  /// 下拉返回时, 是否保持到一定的进度, 并不直接关闭页面?
+  /// 而是停留在此进度上
+  /// [0~1]
+  final double? pullKeepProgress;
+
+  /// 拉的方向, 默认下拉返回, 还不支持横向拉
   final Axis pullAxis = Axis.vertical;
 
   const PullBackWidget({
@@ -61,6 +67,7 @@ class PullBackWidget extends StatefulWidget {
     this.pullBackController,
     this.onPullBack,
     this.onPullProgress,
+    this.pullKeepProgress = 0.3,
     this.canPullBackAction,
     this.showDragHandle = false,
     this.useSafeArea = false,
@@ -373,8 +380,8 @@ class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
 /// 构建一个拖拽手柄
 Widget buildDragHandle(
   BuildContext context, {
-  double width = 40,
-  double height = kL,
+  double width = 50,
+  double height = kM,
   double padding = kL,
 }) {
   final globalTheme = GlobalTheme.of(context);

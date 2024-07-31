@@ -274,6 +274,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selected = false,
     bool followPainter = false,
     UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (list == null || isNullOrEmpty(list)) {
       assert(() {
@@ -316,7 +317,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         () {
           //debugger();
           elements.reset(old);
-          canvasElementControlManager.onCanvasElementDeleted(list);
+          canvasElementControlManager.onCanvasElementDeleted(list, selectType);
           for (final element in list) {
             element.detachFromCanvasDelegate(canvasDelegate);
           }
@@ -354,8 +355,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 删除一组元素
   @api
   @supportUndo
-  void removeElementList(List<ElementPainter>? list,
-      {UndoType undoType = UndoType.normal}) {
+  void removeElementList(
+    List<ElementPainter>? list, {
+    UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     if (list == null || isNullOrEmpty(list)) {
       return;
     }
@@ -364,7 +368,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final op = removeElementListFromTop(list)!;
 
     //删除选中的元素
-    canvasElementControlManager.onCanvasElementDeleted(op);
+    canvasElementControlManager.onCanvasElementDeleted(op, selectType);
     for (final element in op) {
       element.detachFromCanvasDelegate(canvasDelegate);
     }
@@ -387,7 +391,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         () {
           //debugger();
           elements.reset(newList);
-          canvasElementControlManager.onCanvasElementDeleted(op);
+          canvasElementControlManager.onCanvasElementDeleted(op, selectType);
           for (final element in op) {
             element.detachFromCanvasDelegate(canvasDelegate);
           }
@@ -509,41 +513,56 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 添加一个选中的元素
   @api
-  void addSelectElement(ElementPainter element) {
+  void addSelectElement(
+    ElementPainter element, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     final list = selectComponent.children ?? [];
     list.add(element);
-    selectComponent.resetSelectElement(list);
+    selectComponent.resetSelectElement(list, selectType);
   }
 
   /// 添加一组选中的元素
   @api
-  void addSelectElementList(List<ElementPainter> elements) {
+  void addSelectElementList(
+    List<ElementPainter> elements, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     final list = selectComponent.children ?? [];
     list.addAll(elements);
-    selectComponent.resetSelectElement(list);
+    selectComponent.resetSelectElement(list, selectType);
   }
 
   /// 移除一个选中的元素
   @api
-  void removeSelectElement(ElementPainter element) {
+  void removeSelectElement(
+    ElementPainter element, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     final list = selectComponent.children ?? [];
     if (list.remove(element)) {
-      selectComponent.resetSelectElement(list);
+      selectComponent.resetSelectElement(list, selectType);
     }
   }
 
   /// 移除一组选中的元素
   @api
-  void removeSelectElementList(List<ElementPainter> elements) {
+  void removeSelectElementList(
+    List<ElementPainter> elements, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     final list = selectComponent.children ?? [];
     list.removeAll(elements);
-    selectComponent.resetSelectElement(list);
+    selectComponent.resetSelectElement(list, selectType);
   }
 
   /// 重置选中的元素
   @api
-  void resetSelectElement(List<ElementPainter>? elements) {
-    selectComponent.resetSelectElement(elements);
+  void resetSelectElement(
+    List<ElementPainter>? elements, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    selectComponent.resetSelectElement(elements, selectType);
   }
 
   /// 清空选中的元素

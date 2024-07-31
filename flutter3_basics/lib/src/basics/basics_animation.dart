@@ -23,6 +23,17 @@ const kDefaultAnimationDuration = Duration(milliseconds: 300);
 /// 慢的动画时长
 const kDefaultSlowAnimationDuration = Duration(milliseconds: 3000);
 
+/// 动画方向
+/// The direction in which an animation is running.
+/// [_AnimationDirection]
+enum AnimationDirection {
+  /// The animation is running from beginning to end.
+  forward,
+
+  /// The animation is running backwards, from end to beginning.
+  reverse,
+}
+
 extension AnimationEx on Animation {
   /// 动画是否开始了
   bool get isStarted =>

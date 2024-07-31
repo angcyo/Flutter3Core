@@ -152,11 +152,12 @@ class OverlayAnimatedState extends State<OverlayAnimated>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) {
-          return widget.builder(
-              context, widget.curve.transform(_controller.value));
-        });
+      animation: _controller,
+      builder: (context, _) {
+        return widget.builder(
+            context, widget.curve.transform(_controller.value));
+      },
+    );
   }
 }
 

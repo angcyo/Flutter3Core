@@ -309,7 +309,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// each
   void _eachCanvasListener(void Function(CanvasListener listener) action) {
     try {
-      for (var client in canvasListeners) {
+      for (final client in canvasListeners) {
         try {
           action(client);
         } catch (e) {
@@ -404,10 +404,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     ElementSelectComponent selectComponent,
     List<ElementPainter>? from,
     List<ElementPainter>? to,
+    ElementSelectType selectType,
   ) {
     _eachCanvasListener((element) {
       element.onCanvasElementSelectChangedAction
-          ?.call(selectComponent, from, to);
+          ?.call(selectComponent, from, to, selectType);
     });
     refresh();
   }
@@ -417,12 +418,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     List<ElementPainter> from,
     List<ElementPainter> to,
     List<ElementPainter> op,
-    UndoType undoType,
-  ) {
+    UndoType undoType, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     //debugger();
     isElementChanged = true;
     canvasElementManager.canvasElementControlManager
-        .onSelfElementListChanged(from, to, op, undoType);
+        .onSelfElementListChanged(from, to, op, undoType, selectType);
     _eachCanvasListener((element) {
       element.onCanvasElementListChangedAction?.call(from, to, op, undoType);
     });
@@ -459,10 +461,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 移动元素时回调
   /// [targetElement] 移动的目标元素
   /// [isFirstTranslate] 是否是首次移动
+  /// [isEnd] 是否移动结束
   void dispatchTranslateElement(
-      ElementPainter? targetElement, bool isFirstTranslate) {
+      ElementPainter? targetElement, bool isFirstTranslate, bool isEnd) {
     _eachCanvasListener((element) {
-      element.onTranslateElementAction?.call(targetElement, isFirstTranslate);
+      element.onTranslateElementAction
+          ?.call(targetElement, isFirstTranslate, isEnd);
     });
   }
 

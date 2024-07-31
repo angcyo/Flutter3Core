@@ -768,12 +768,18 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
           }());
           applyTargetMatrix(matrix);
           canvasDelegate.dispatchTranslateElement(
-              _targetElement, _isFirstTranslate);
+              _targetElement, _isFirstTranslate, false);
           _isFirstTranslate = false;
           //debugger();
         }
       } else if (event.isPointerFinish) {
         endControlTarget();
+        //debugger();
+        if (!_isFirstTranslate) {
+          //移动过
+          canvasDelegate.dispatchTranslateElement(
+              _targetElement, _isFirstTranslate, true);
+        }
         _isFirstTranslate = false;
       }
     }
