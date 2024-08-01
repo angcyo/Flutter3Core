@@ -52,13 +52,18 @@ class PullBackWidget extends StatefulWidget {
 
   //---
 
-  /// 下拉返回时, 是否保持到一定的进度, 并不直接关闭页面?
-  /// 而是停留在此进度上
+  /// 下拉最大的边界
   /// [0~1]
-  final double? pullKeepProgress;
+  final double? pullMaxBound;
 
   /// 拉的方向, 默认下拉返回, 还不支持横向拉
   final Axis pullAxis = Axis.vertical;
+
+  /// 手势命中行为
+  /// [HitTestBehavior.translucent] 后代和自己都可以命中
+  /// [HitTestBehavior.opaque] 只有自己可以命中
+  /// [HitTestBehavior.deferToChild] 只有后代可以命中
+  final HitTestBehavior? behavior;
 
   const PullBackWidget({
     super.key,
@@ -67,11 +72,12 @@ class PullBackWidget extends StatefulWidget {
     this.pullBackController,
     this.onPullBack,
     this.onPullProgress,
-    this.pullKeepProgress,
+    this.pullMaxBound,
     this.canPullBackAction,
     this.showDragHandle = false,
     this.useSafeArea = false,
     this.contentDecoration,
+    this.behavior = HitTestBehavior.deferToChild,
   });
 
   @override
@@ -81,7 +87,7 @@ class PullBackWidget extends StatefulWidget {
 class _PullBackWidgetState extends State<PullBackWidget>
     with SingleTickerProviderStateMixin {
   /// 下拉进度值
-  double get _pullBackValue => _pullBackAnimation.value;
+  double get _pullBackValue => _pullBackController.value;
 
   /// 下拉的效果矩阵
   Matrix4 get _pullBackTransform =>
@@ -89,6 +95,8 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   /// [0~1] 0:未开始下拉 1:完全下拉到底部
   late final AnimationController _pullBackController;
+
+  /// [_pullBackCurve]属性生效的对象
   late final Animation<double> _pullBackAnimation;
 
   /// 加速曲线
@@ -109,17 +117,15 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// 快速下拉速度阈值, 快速下拉速度超过这个阈值, 就会关闭
   final double closeFlingVelocity = 500.0;
 
-  /// 用来实现[Widget.pullKeepProgress]属性
-  final _PullBackKeepProgressAnimation _keepProgressAnimation =
-      _PullBackKeepProgressAnimation();
-
   @override
   void initState() {
     super.initState();
+    //debugger();
     _pullBackController = widget.pullBackController ??
         AnimationController(
           duration: kDefaultAnimationDuration,
           vsync: this,
+          upperBound: widget.pullMaxBound ?? 1.0,
         );
     _pullBackController.addListener(() {
       if (widget.barrierColor != null) {
@@ -141,39 +147,28 @@ class _PullBackWidgetState extends State<PullBackWidget>
       }*/
     });
 
-    _keepProgressAnimation.pullKeepProgress = widget.pullKeepProgress;
-    _keepProgressAnimation.parent = CurveTween(curve: _pullBackCurve);
-    _pullBackAnimation = _pullBackController.drive(_keepProgressAnimation);
-  }
-
-  /// 处理下拉返回的回调逻辑
-  void _pullBack() {
-    //debugger();
-    //l.d('completed:${_pullBackValue}');
-    if (widget.onPullBack == null) {
-      if (widget.pullKeepProgress == null) {
-        buildContext?.pop();
-      }
-    } else if (buildContext != null) {
-      widget.onPullBack?.call(buildContext!);
-    }
-    if (widget.pullKeepProgress != null) {
-      //需要保持姿势...
-      _pullBackController.value = widget.pullKeepProgress!;
-    }
+    _pullBackAnimation =
+        _pullBackController.drive(CurveTween(curve: _pullBackCurve));
   }
 
   @override
   void dispose() {
+    //debugger();
     _pullBackController.dispose();
     super.dispose();
   }
 
+  ///
+  @override
+  void didUpdateWidget(covariant PullBackWidget oldWidget) {
+    //debugger();
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
-    _keepProgressAnimation.enable = _pullBackController.isStarted;
     Widget body = GestureDetector(
-      behavior: HitTestBehavior.opaque,
+      behavior: widget.behavior /*HitTestBehavior.opaque*/,
       onVerticalDragUpdate: (details) {
         _handleDragUpdate(details.delta.dy);
       },
@@ -215,10 +210,10 @@ class _PullBackWidgetState extends State<PullBackWidget>
             }
 
             //debugger();
-            assert(() {
+            /*assert(() {
               l.v('build:$_pullBackValue ${_pullBackController.status} ${_pullBackController.isStarted}');
               return true;
-            }());
+            }());*/
             return content.matrix(_pullBackTransform);
           },
         ),
@@ -276,12 +271,14 @@ class _PullBackWidgetState extends State<PullBackWidget>
       }
     }
 
-    if (velocity > closeFlingVelocity ||
+    if (velocity.abs() > closeFlingVelocity.abs() && velocity < 0) {
+      //快速上拉
+      _pullBackController.reverse();
+    } else if (velocity > closeFlingVelocity ||
         _pullBackController.value > closePullThreshold) {
       //toastInfo('close:${velocity}');
       _tryPullBack();
     } else {
-      _keepProgressAnimation.direction = AnimationDirection.reverse;
       _pullBackController.reverse();
     }
     return true;
@@ -294,12 +291,23 @@ class _PullBackWidgetState extends State<PullBackWidget>
       if (_pullBackController.isCompleted) {
         _pullBack();
       } else {
-        _keepProgressAnimation.direction = AnimationDirection.forward;
         _pullBackController.forward();
       }
     } else {
-      _keepProgressAnimation.direction = AnimationDirection.reverse;
       _pullBackController.reverse();
+    }
+  }
+
+  /// 处理下拉返回的回调逻辑
+  void _pullBack() {
+    //debugger();
+    //l.d('completed:${_pullBackValue}');
+    if (widget.onPullBack == null) {
+      if (widget.pullMaxBound == null) {
+        buildContext?.pop();
+      }
+    } else if (buildContext != null) {
+      widget.onPullBack?.call(buildContext!);
     }
   }
 
@@ -338,7 +346,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
   }
 }
 
-class _PullBackKeepProgressAnimation extends Animatable<double> {
+/*class _PullBackKeepProgressAnimation extends Animatable<double> {
   /// 需要保持的进度, 不为空时生效
   /// 动画最终需要停留在的进度
   /// [lowerBound~upperBound]
@@ -382,7 +390,7 @@ class _PullBackKeepProgressAnimation extends Animatable<double> {
     }());
     return t;
   }
-}
+}*/
 
 /// 不指定` physics: null,` `scrollBehavior: null,`时, 系统就会走
 /// [ScrollConfiguration]
@@ -477,7 +485,7 @@ extension PullBackWidgetExtension on Widget {
     Key? key,
     bool enablePullBack = true,
     AnimationController? pullBackController,
-    double? pullKeepProgress,
+    double? pullMaxBound,
     void Function(BuildContext context)? onPullBack,
     void Function(double progress)? onPullProgress,
     Future<bool> Function()? canPullBackAction,
@@ -487,7 +495,7 @@ extension PullBackWidgetExtension on Widget {
     }
     return PullBackWidget(
       key: key,
-      pullKeepProgress: pullKeepProgress,
+      pullMaxBound: pullMaxBound,
       pullBackController: pullBackController,
       onPullBack: onPullBack ??
           (context) {
