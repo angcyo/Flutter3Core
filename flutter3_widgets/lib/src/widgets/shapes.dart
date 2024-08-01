@@ -415,6 +415,9 @@ class StrokeSliderThumbShape extends RoundSliderThumbShape {
   /// 填充颜色
   final Color? fillColor;
 
+  /// 是否绘制slider的数值
+  final bool paintValue;
+
   const StrokeSliderThumbShape({
     super.enabledThumbRadius,
     super.disabledThumbRadius,
@@ -422,6 +425,7 @@ class StrokeSliderThumbShape extends RoundSliderThumbShape {
     super.pressedElevation,
     this.strokeWidth = 2,
     this.fillColor,
+    this.paintValue = true,
     this.strokeColor = const Color(0xff333333),
   });
 
@@ -472,6 +476,20 @@ class StrokeSliderThumbShape extends RoundSliderThumbShape {
         ..style = PaintingStyle.stroke
         ..color = strokeColor!;
       canvas.drawCircle(center, radius, paint);
+    }
+    if (paintValue) {
+      canvas.withColor(() {
+        labelPainter.paint(
+          canvas,
+          center -
+              labelPainter.size.center(Offset.zero) *
+                  (textDirection == TextDirection.ltr ? 1 : -1) +
+              ui.Offset(
+                0,
+                radius + labelPainter.size.height / 2,
+              ),
+        );
+      }, tintColor: strokeColor);
     }
   }
 }

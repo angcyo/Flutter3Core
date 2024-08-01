@@ -129,7 +129,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     final top = [
       label?.expanded(),
       number?.paddingOnly(right: kX),
-    ].row()!;
+    ].row();
     final bottom = buildSliderWidget(
       context,
       _currentValue.toDouble(),
@@ -160,7 +160,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
         widget.onValueChanged?.call(result);
       },
     );
-
+ 
     return [top, bottom].column()!.material();
   }
 }
