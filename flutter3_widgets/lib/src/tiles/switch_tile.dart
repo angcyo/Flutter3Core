@@ -39,6 +39,12 @@ class LabelSwitchTile extends StatefulWidget {
   /// [Switch]的高度
   final double switchHeight;
 
+  /// [Switch]未激活时圆圈的颜色
+  final Color? switchInactiveThumbColor;
+
+  /// [Switch]的轮廓颜色
+  final WidgetStateProperty<Color?>? trackOutlineColor;
+
   //
 
   /// tile的填充
@@ -46,6 +52,7 @@ class LabelSwitchTile extends StatefulWidget {
 
   const LabelSwitchTile({
     super.key,
+    //--
     this.label,
     this.labelWidget,
     this.labelPadding = kLabelPadding,
@@ -53,10 +60,14 @@ class LabelSwitchTile extends StatefulWidget {
     this.des,
     this.desWidget,
     this.desPadding = kDesPadding,
+    //--
     this.value = false,
     this.onValueChanged,
     this.onValueConfirmChange,
     this.switchHeight = kMinHeight,
+    this.switchInactiveThumbColor,
+    this.trackOutlineColor,
+    //--
     this.tilePadding = kTilePadding,
   });
 
@@ -102,6 +113,8 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
         context,
         currentValueMixin,
         height: widget.switchHeight,
+        inactiveThumbColor: widget.switchInactiveThumbColor,
+        trackOutlineColor: widget.trackOutlineColor,
         onChanged: (value) {
           _changeValue(value);
         },

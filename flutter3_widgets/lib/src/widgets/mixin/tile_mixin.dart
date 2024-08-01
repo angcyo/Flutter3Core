@@ -274,8 +274,18 @@ mixin TileMixin {
 
   /// 构建一个[Switch]开关小部件
   /// [activeColor] 激活时圈圈的颜色
+  /// [inactiveThumbColor] 未激活时圈圈的颜色
   /// [activeTrackColor] 激活时轨道的颜色
+  ///
+  /// [trackOutlineColor] 轨道外轮廓颜色
+  /// [WidgetStatePropertyColorMap]
+  /// [WidgetStatePropertyAll]
+  ///
   /// [Switch]小部件需要[Material]支持.
+  ///
+  /// [SwitchTheme]
+  /// [SwitchThemeData]
+  ///
   Widget buildSwitchWidget(
     BuildContext context,
     bool value, {
@@ -285,6 +295,7 @@ mixin TileMixin {
     Color? activeTrackColor,
     Color? inactiveThumbColor,
     Color? inactiveTrackColor,
+    WidgetStateProperty<Color?>? trackOutlineColor,
     Color? focusColor,
     Color? hoverColor,
     Color? splashColor,
@@ -314,6 +325,7 @@ mixin TileMixin {
       activeTrackColor: activeTrackColor ?? globalTheme.accentColor,
       inactiveThumbColor: inactiveThumbColor,
       inactiveTrackColor: inactiveTrackColor,
+      trackOutlineColor: trackOutlineColor,
       focusColor: focusColor,
       hoverColor: hoverColor,
       mouseCursor: mouseCursor,
