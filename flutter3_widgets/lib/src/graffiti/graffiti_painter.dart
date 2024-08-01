@@ -150,6 +150,7 @@ class GraffitiBrushPenPainter extends GraffitiPainter
     with CurvePointEventMixin {
   final List<PointEventMeta> pointListCache = [];
   final List<PointEventMeta> points = [];
+  final List<Offset> pointsTail = [];
 
   double velocityFilterWeight = 0.8;
   double minWidth = 3;
@@ -158,15 +159,91 @@ class GraffitiBrushPenPainter extends GraffitiPainter
   double _lastWidth = (3 + 20) / 2;
   double _lastVelocity = 0;
 
+  /// 是否使用尾部粗细算法
+  bool brushTailArithmetic = false;
+
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
-    assert(() {
+    /*assert(() {
       paint.strokeWidth = 10;
       return true;
-    }());
-    for (final point in points) {
-      paint.strokeWidth = point.width ?? paint.strokeWidth;
-      canvas.drawPoints(ui.PointMode.points, [point.position], paint);
+    }());*/
+    if (brushTailArithmetic) {
+      _paintBrushTail(canvas, pointsTail);
+    } else {
+      for (final point in points) {
+        paint.strokeWidth = point.width ?? paint.strokeWidth;
+        canvas.drawPoints(ui.PointMode.points, [point.position], paint);
+      }
+    }
+  }
+
+  /// 尾部粗细算法效果
+  void _paintBrushTail(Canvas canvas, List<Offset> points) {
+    double originalWidth = maxWidth;
+    if (points.isNotEmpty) {
+      // 绘制椭圆
+      final Rect rect = Rect.fromCenter(
+          center: Offset(points[0].dx, points[0].dy),
+          width: originalWidth - 1,
+          height: originalWidth + 2);
+
+      paint.strokeWidth = 0;
+      paint.style = PaintingStyle.fill;
+      canvas.drawOval(rect, paint);
+
+      //
+      Path path = Path();
+      path.moveTo(points[0].dx, points[0].dy);
+
+      for (int i = 1; i < points.length - 1; i++) {
+        var mid = Offset(
+          (points[i].dx + points[i + 1].dx) / 2,
+          (points[i].dy + points[i + 1].dy) / 2,
+        );
+        path.quadraticBezierTo(
+          points[i].dx,
+          points[i].dy,
+          mid.dx,
+          mid.dy,
+        );
+      }
+      path.lineTo(points.last.dx, points.last.dy);
+
+      //--
+      paint.strokeWidth = originalWidth;
+      paint.style = PaintingStyle.stroke;
+      ui.PathMetrics metrics = path.computeMetrics();
+      for (ui.PathMetric metric in metrics) {
+        double segmentLength = metric.length;
+
+        // 不超过60的时候，从segmentLength - 2开始逐渐变细
+        double startPosition =
+            segmentLength - min(segmentLength - 2, 60); // 从长度减去60的位置开始逐渐变细
+        Path startPath = Path();
+        startPath.addPath(metric.extractPath(0, startPosition), Offset.zero);
+        canvas.drawPath(startPath, paint);
+
+        for (double i = startPosition; i < segmentLength; i += 1.0) {
+          // 计算 segmentLength - 60开始的宽度递减
+          double width = originalWidth -
+              ((i - startPosition) / (segmentLength - startPosition)) *
+                  (originalWidth - minWidth);
+          width = width.clamp(minWidth, originalWidth);
+          final ui.Tangent? tangent = metric.getTangentForOffset(i);
+
+          if (tangent != null) {
+            paint.strokeWidth = width;
+
+            /// 绘制一个点
+            final Path segmentPath = Path()
+              ..moveTo(tangent.position.dx, tangent.position.dy)
+              ..lineTo(tangent.position.dx, tangent.position.dy);
+
+            canvas.drawPath(segmentPath, paint);
+          }
+        }
+      }
     }
   }
 
@@ -174,6 +251,11 @@ class GraffitiBrushPenPainter extends GraffitiPainter
   @override
   @property
   void addPointEventMeta(PointEventMeta point) {
+    if (brushTailArithmetic) {
+      pointsTail.add(point.position);
+      return;
+    }
+
     pointListCache.add(point);
     if (pointListCache.size() == 1) {
       // To reduce the initial lag make it work with 3 mPoints
@@ -194,7 +276,7 @@ class GraffitiBrushPenPainter extends GraffitiPainter
       // The new width is a function of the velocity. Higher velocities
       // correspond to thinner strokes.
       double startWidth = _lastWidth;
-      double endWidth = strokeWidth(velocity);
+      double endWidth = velocityStrokeWidth(velocity);
 
       //--
       double originalWidth = paint.strokeWidth;
@@ -255,7 +337,7 @@ class GraffitiBrushPenPainter extends GraffitiPainter
     }
   }
 
-  double strokeWidth(double velocity) {
+  double velocityStrokeWidth(double velocity) {
     return max(maxWidth / (velocity + 1), minWidth);
   }
 
