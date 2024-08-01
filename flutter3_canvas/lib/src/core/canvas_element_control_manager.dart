@@ -38,11 +38,17 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 是否激活点击元素外, 取消选中元素
   bool enableOutsideCancelSelectElement = true;
 
-  /// 绘制选中元素的信息
-  /// [paint]
-  PaintInfoType paintInfoType = PaintInfoType.none;
+  /// 是否要绘制[PaintInfoType]信息
+  bool paintPainterInfo = true;
 
-  /// 绘制[paintInfoType]的方向, 目前仅支持上下绘制
+  /// 绘制选中元素的信息, 比如大小/位置/旋转角度
+  /// [paint]
+  /// [_paintControlLocationInfo]
+  /// [_paintControlSizeInfo]
+  /// [_paintControlRotateInfo]
+  PaintInfoType _paintInfoType = PaintInfoType.none;
+
+  /// 绘制[_paintInfoType]的方向, 目前仅支持上下绘制
   /// [AxisDirection.up].
   /// [AxisDirection.down]
   /// [paint]
@@ -140,19 +146,21 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     elementSelectComponent.painting(canvas, paintMeta);
     //---控制点绘制
     if (isSelectedElement) {
-      //绘制元素的控制信息
-      if (paintInfoType == PaintInfoType.size) {
-        _paintControlSizeInfo(
-            canvas, paintMeta, elementSelectComponent.paintProperty);
-      } else if (paintInfoType == PaintInfoType.rotate) {
-        _paintControlRotateInfo(
-            canvas, paintMeta, elementSelectComponent.paintProperty);
-      } else if (paintInfoType == PaintInfoType.location) {
-        _paintControlLocationInfo(
-            canvas, paintMeta, elementSelectComponent.paintProperty);
+      if (paintPainterInfo) {
+        //绘制元素的控制信息
+        if (_paintInfoType == PaintInfoType.size) {
+          _paintControlSizeInfo(
+              canvas, paintMeta, elementSelectComponent.paintProperty);
+        } else if (_paintInfoType == PaintInfoType.rotate) {
+          _paintControlRotateInfo(
+              canvas, paintMeta, elementSelectComponent.paintProperty);
+        } else if (_paintInfoType == PaintInfoType.location) {
+          _paintControlLocationInfo(
+              canvas, paintMeta, elementSelectComponent.paintProperty);
+        }
       }
-      //绘制控制点
       if (enableElementControl && !isPointerDownElement) {
+        //绘制控制点
         if (deleteControl.isCanvasComponentEnable &&
             elementSelectComponent
                 .isElementSupportControl(deleteControl.controlType)) {
@@ -576,7 +584,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 更新绘制元素的信息
   @flagProperty
   void updatePaintInfoType(PaintInfoType type) {
-    paintInfoType = type;
+    _paintInfoType = type;
     canvasDelegate.refresh();
   }
 
