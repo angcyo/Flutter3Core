@@ -56,6 +56,9 @@ class OverlayManagerController {
   /// 子页集合
   final List<OverlayEntryInfo> _subOverlayEntries = [];
 
+  /// 动画队列, 需要执行移除动画的对象放这里
+  final List<OverlayEntryInfo> _animatePendingOverlayEntries = [];
+
   /// 所有的[OverlayEntry], 用于界面显示
   List<OverlayEntry> get overlayEntries => [
         if (_homeEntry != null) _homeEntry!.entry,
@@ -91,6 +94,7 @@ class OverlayManagerController {
 
   /// 更新id对应的界面
   /// [StateEx.updateState]
+  @api
   void updateEntryById(String? id) {
     findEntryInfoById(id)?.entryKey?.currentState?.updateState();
   }
@@ -122,6 +126,7 @@ class OverlayManagerController {
   ///
   /// [TranslationType] 动画类型
   /// [OverlayAnimateBuilder]
+  @api
   void showWidget(
     Widget widget, {
     TranslationType? type,
@@ -158,7 +163,8 @@ class OverlayManagerController {
               // 完全显示
             } else if (status == AnimationStatus.dismissed) {
               // 完全隐藏
-              final find = _subOverlayEntries.findFirst((e) => e.id == id);
+              final find =
+                  _animatePendingOverlayEntries.findFirst((e) => e.id == id);
               if (find != null) {
                 dismissOverlayInfo(find);
               }
@@ -173,19 +179,27 @@ class OverlayManagerController {
   }
 
   /// 移除一个[OverlayEntry]
+  /// [anim] 是否执行动画, 默认自动选择
+  @api
   void removeOverlay({
     OverlayEntry? entry,
     String? tag,
     String? id,
+    bool? anim,
   }) {
     final find = _subOverlayEntries
         .findLast((e) => e.entry == entry || e.tag == tag || e.id == id);
     if (find != null) {
-      dismissOverlayInfo(find);
+      if (anim == false) {
+        dismissOverlayInfo(find);
+      } else {
+        removeOverlayInfo(find);
+      }
     }
   }
 
   /// 隐藏最后一个[OverlayEntry]
+  @api
   void removeLastOverlay() {
     final last = _subOverlayEntries.lastOrNull;
     if (last != null) {
@@ -193,9 +207,22 @@ class OverlayManagerController {
     }
   }
 
+  /// 移除所有
+  @api
+  void removeAllOverlay() {
+    for (final e in _subOverlayEntries) {
+      removeOverlayInfo(e);
+    }
+  }
+
+  //--
+
   /// 移除一个[OverlayEntryInfo], 有动画执行动画, 没动画直接解雇
   /// [dismissOverlayInfo]
+  @api
   void removeOverlayInfo(OverlayEntryInfo entry) {
+    _subOverlayEntries.remove(entry); //提前移除, 防止动画时间内快速显示时已存在
+    _animatePendingOverlayEntries.add(entry);
     if (entry.entryKey?.currentState == null) {
       dismissOverlayInfo(entry);
     } else {
@@ -203,17 +230,11 @@ class OverlayManagerController {
     }
   }
 
-  /// 移除所有
-  void removeAllOverlay() {
-    for (final e in _subOverlayEntries) {
-      removeOverlayInfo(e);
-    }
-  }
-
-  /// 直接解雇一个[OverlayEntryInfo]
+  /// 直接解雇一个[OverlayEntryInfo], 无动画
+  @callPoint
   void dismissOverlayInfo(OverlayEntryInfo entry) {
     entry.entry.remove();
-    _subOverlayEntries.remove(entry);
+    _animatePendingOverlayEntries.remove(entry);
   }
 
 //--
@@ -331,7 +352,7 @@ class OverlayAnimateBuilderState extends State<OverlayAnimateBuilder>
           child,
         );
       },
-    ).offstage(offstage);
+    ).offstage(offstage, true);
   }
 
   @override
