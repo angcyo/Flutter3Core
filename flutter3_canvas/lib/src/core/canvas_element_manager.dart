@@ -27,6 +27,15 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 选中的元素, 如果是单元素, 则返回选中的元素, 否则返回[ElementSelectComponent]
   /// 没有选中元素时, 返回null
+  ///
+  /// 可以通过此对象来判断选中的是什么元素类型
+  /// ```
+  /// final isNone = selectedElement == null;
+  /// final isText = selectedElement is TextElementPainter;
+  /// final isImage = selectedElement is ImageElementPainter;
+  /// final isGroup = selectedElement is ElementSelectComponent;
+  /// ```
+  ///
   ElementPainter? get selectedElement {
     if (!isSelectedElement) {
       return null;

@@ -162,6 +162,8 @@ extension WidgetListEx on WidgetNullList {
   }
 
   /// 将当前的小部件集合, 包裹在一个[Wrap]中
+  /// [spacing] 元素之间的间隙
+  /// [runSpacing] 换行后的间隙
   /// [alignment] 主轴对齐方式, 集体靠左/靠右/居中
   /// [crossAxisAlignment] 交叉轴对齐方式, 就是每一行的对齐方式
   Widget? wrap({
