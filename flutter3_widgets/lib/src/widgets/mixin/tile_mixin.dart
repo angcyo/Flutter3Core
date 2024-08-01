@@ -190,7 +190,10 @@ mixin TileMixin {
   /// [enable] 是否启用
   /// [isSelected] 是否选中
   /// [selectedTextStyle] 选中时的文本样式
-  /// [selectedColor] 选中时的背景颜色
+  /// [selectedTextColor] 选中时的文本颜色, 不指定[selectedTextStyle]时生效
+  /// [selectedTextBold] 选中时的文本是否加粗
+  /// [selectedBgColor] 选中时的背景颜色
+  /// [selectedBorderRadius] 选中时的背景圆角大小
   /// [textSelectedLeading] 选中时的前导小部件
   /// [textSelectedTrailing] 选中时的后导小部件
   Widget? buildSegmentTextWidget(
@@ -202,23 +205,31 @@ mixin TileMixin {
     double? textSelectedGap = kM,
     TextStyle? textStyle,
     TextStyle? selectedTextStyle,
-    Color? selectedColor,
+    Color? selectedTextColor,
+    bool selectedTextBold = true,
+    Color? selectedBgColor,
+    double? selectedBorderRadius = kDefaultBorderRadiusXX,
     bool enable = true,
     bool isSelected = false,
     bool themeStyle = true,
     EdgeInsets? padding = const EdgeInsets.all(kL),
     bool disableTap = false,
+    bool selectedDisableTap = true /*选中后是否禁止点击*/,
     GestureTapCallback? onTap,
   }) {
     final globalTheme = GlobalTheme.of(context);
     final normalTextStyle =
         textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null);
     final selectTextStyle = selectedTextStyle ??
-        textStyle?.copyWith(fontWeight: ui.FontWeight.bold) ??
+        textStyle?.copyWith(
+            fontWeight: selectedTextBold ? ui.FontWeight.bold : null,
+            color: selectedTextColor) ??
         (themeStyle
             ? globalTheme.textBodyStyle.copyWith(
-                fontWeight: ui.FontWeight.bold,
-                color: context.isThemeDark ? globalTheme.blackColor : null)
+                fontWeight: selectedTextBold ? ui.FontWeight.bold : null,
+                color: context.isThemeDark
+                    ? globalTheme.blackColor
+                    : selectedTextColor)
             : null);
 
     Widget? widget = textWidget ??
@@ -243,11 +254,12 @@ mixin TileMixin {
               )
             : isSelected
                 ? fillDecoration(
-                    color: selectedColor ?? globalTheme.accentColor,
-                    borderRadius: kDefaultBorderRadiusX,
+                    color: selectedBgColor ?? globalTheme.accentColor,
+                    borderRadius: selectedBorderRadius,
                   )
                 : null)
-        .click(onTap, enable && !isSelected && !disableTap);
+        .click(onTap,
+            enable && !disableTap && (selectedDisableTap ? !isSelected : true));
   }
 
   //endregion ---构建小部件---
