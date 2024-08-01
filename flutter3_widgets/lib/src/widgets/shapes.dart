@@ -213,7 +213,7 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
   }
 }
 
-/// 中心滑块轨道Shape
+/// 中心点向左右滑动的滑块轨道Shape
 class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
   /// 不活跃的渐变颜色, 通常背景
   final List<Color>? inactiveColors;
@@ -400,6 +400,78 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
       if (!rightTrackSegment.isEmpty) {
         context.canvas.drawRect(rightTrackSegment, inactivePaint);
       }
+    }
+  }
+}
+
+/// 描边+填充的浮子shape
+class StrokeSliderThumbShape extends RoundSliderThumbShape {
+  /// 描边宽度
+  final double strokeWidth;
+
+  /// 描边颜色
+  final Color? strokeColor;
+
+  /// 填充颜色
+  final Color? fillColor;
+
+  const StrokeSliderThumbShape({
+    super.enabledThumbRadius,
+    super.disabledThumbRadius,
+    super.elevation,
+    super.pressedElevation,
+    this.strokeWidth = 2,
+    this.fillColor,
+    this.strokeColor = const Color(0xff333333),
+  });
+
+  double get _disabledThumbRadius => disabledThumbRadius ?? enabledThumbRadius;
+
+  @override
+  void paint(PaintingContext context, ui.Offset center,
+      {required Animation<double> activationAnimation,
+      required Animation<double> enableAnimation,
+      required bool isDiscrete,
+      required TextPainter labelPainter,
+      required RenderBox parentBox,
+      required SliderThemeData sliderTheme,
+      required ui.TextDirection textDirection,
+      required double value,
+      required double textScaleFactor,
+      required ui.Size sizeWithOverflow}) {
+    super.paint(
+      context,
+      center,
+      activationAnimation: activationAnimation,
+      enableAnimation: enableAnimation,
+      isDiscrete: isDiscrete,
+      labelPainter: labelPainter,
+      parentBox: parentBox,
+      sliderTheme: sliderTheme,
+      textDirection: textDirection,
+      value: value,
+      textScaleFactor: textScaleFactor,
+      sizeWithOverflow: sizeWithOverflow,
+    );
+
+    final Canvas canvas = context.canvas;
+    final Tween<double> radiusTween = Tween<double>(
+      begin: _disabledThumbRadius,
+      end: enabledThumbRadius,
+    );
+    final double radius = radiusTween.evaluate(enableAnimation);
+    final paint = Paint()..strokeWidth = strokeWidth;
+    if (fillColor != null) {
+      paint
+        ..style = PaintingStyle.fill
+        ..color = fillColor!;
+      canvas.drawCircle(center, radius, paint);
+    }
+    if (strokeColor != null) {
+      paint
+        ..style = PaintingStyle.stroke
+        ..color = strokeColor!;
+      canvas.drawCircle(center, radius, paint);
     }
   }
 }

@@ -360,6 +360,11 @@ mixin TileMixin {
   ///
   /// [useCenteredTrackShape] 是否使用中心轨道形状 [CenteredRectangularSliderTrackShape]
   ///
+  /// [trackShape]轨道的shape, 默认[RoundedRectSliderTrackShape]
+  /// [thumbShape]浮子的shape, 默认[RoundSliderThumbShape]
+  ///
+  /// [SliderTheme]->[SliderThemeData]
+  ///
   /// [Slider]小部件需要[Material]支持.
   /// [RangeSlider]双向滑块
   Widget buildSliderWidget(
@@ -386,7 +391,8 @@ mixin TileMixin {
     Color? valueIndicatorColor,
     double? trackHeight,
     bool? useCenteredTrackShape,
-    SliderTrackShape? trackShape,
+    SliderTrackShape? trackShape /*轨道的shape*/,
+    SliderComponentShape? thumbShape /*浮子的shape*/,
   }) {
     if (trackShape == null) {
       //渐变进度在渐变颜色中的颜色值
@@ -411,7 +417,7 @@ mixin TileMixin {
         );
         final color = gradientColor ?? activeTrackGradientColors?.last;
         thumbColor ??= color;
-        valueIndicatorColor = thumbColor;
+        valueIndicatorColor ??= thumbColor;
         overlayColor ??= color?.withOpacity(0.1);
       } else {
         if (!isNil(activeTrackGradientColors) ||
@@ -424,7 +430,7 @@ mixin TileMixin {
           );
           final color = gradientColor ?? activeTrackGradientColors?.last;
           thumbColor ??= color;
-          valueIndicatorColor = thumbColor;
+          valueIndicatorColor ??= thumbColor;
           overlayColor ??= color?.withOpacity(0.1);
         }
       }
@@ -440,7 +446,7 @@ mixin TileMixin {
         overlayColor: overlayColor ?? darkAccentColor?.withOpacity(0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
         inactiveTrackColor: inactiveTrackColor,
-        //thumbShape: ,
+        thumbShape: thumbShape,
         trackShape: trackShape,
         /*inactiveTrackColor: Colors.redAccent,*/
         trackHeight: trackHeight,
