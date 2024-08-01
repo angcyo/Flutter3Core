@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -104,6 +104,7 @@ abstract class IUnit {
     int fractionDigits,
     bool removeZero,
     bool ensureInt,
+    String space = " ",
   });
 
   String formatFromDp(
@@ -174,7 +175,7 @@ abstract class IUnit {
 @pixel
 class PixelUnit extends IUnit {
   @override
-  String get suffix => " px";
+  String get suffix => "px";
 
   const PixelUnit();
 
@@ -185,12 +186,13 @@ class PixelUnit extends IUnit {
     bool removeZero = true,
     bool ensureInt = false,
     int fractionDigits = kFractionDigits,
+    String space = " ",
   }) {
     return "${value.toDigits(
       digits: fractionDigits,
       removeZero: removeZero,
       ensureInt: ensureInt,
-    )}${showSuffix ? suffix : ''}";
+    )}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -207,7 +209,7 @@ class PixelUnit extends IUnit {
 @dp
 class DpUnit extends IUnit {
   @override
-  String get suffix => " dp";
+  String get suffix => "dp";
 
   const DpUnit();
 
@@ -218,12 +220,13 @@ class DpUnit extends IUnit {
     bool removeZero = true,
     bool ensureInt = false,
     int fractionDigits = kFractionDigits,
+    String space = " ",
   }) {
     return "${value.toDigits(
       digits: fractionDigits,
       removeZero: removeZero,
       ensureInt: ensureInt,
-    )}${showSuffix ? suffix : ''}";
+    )}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -242,7 +245,7 @@ class DpUnit extends IUnit {
 @mm
 class MmUnit extends IUnit {
   @override
-  String get suffix => " mm";
+  String get suffix => "mm";
 
   const MmUnit();
 
@@ -253,12 +256,13 @@ class MmUnit extends IUnit {
     bool removeZero = true,
     bool ensureInt = false,
     int fractionDigits = kFractionDigits,
+    String space = " ",
   }) {
     return "${value.toDigits(
       digits: fractionDigits,
       removeZero: removeZero,
       ensureInt: ensureInt,
-    )}${showSuffix ? suffix : ''}";
+    )}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -275,7 +279,7 @@ class MmUnit extends IUnit {
 @pt
 class PtUnit extends IUnit {
   @override
-  String get suffix => " pt";
+  String get suffix => "pt";
 
   const PtUnit();
 
@@ -286,12 +290,13 @@ class PtUnit extends IUnit {
     bool removeZero = true,
     bool ensureInt = false,
     int fractionDigits = kFractionDigits,
+    String space = " ",
   }) {
     return "${value.toDigits(
       digits: fractionDigits,
       removeZero: removeZero,
       ensureInt: ensureInt,
-    )}${showSuffix ? suffix : ''}";
+    )}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -308,7 +313,7 @@ class PtUnit extends IUnit {
 @inch
 class InchUnit extends IUnit {
   @override
-  String get suffix => " in";
+  String get suffix => "in";
 
   const InchUnit();
 
@@ -319,12 +324,13 @@ class InchUnit extends IUnit {
     bool removeZero = true,
     bool ensureInt = false,
     int fractionDigits = kInchFractionDigits,
+    String space = " ",
   }) {
     return "${value.toDigits(
       digits: fractionDigits,
       removeZero: removeZero,
       ensureInt: ensureInt,
-    )}${showSuffix ? suffix : ''}";
+    )}${showSuffix ? space + suffix : ''}";
   }
 
   @override
