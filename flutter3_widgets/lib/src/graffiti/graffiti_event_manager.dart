@@ -46,18 +46,44 @@ class GraffitiEventManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
 /// 手势点位处理
 class PointEventHandler {
+  @autoInjectMark
   GraffitiEventManager? eventManager;
+
+  /// 判断是否移动了的阈值
+  @dp
+  double moveThreshold = 3;
+
+  /// 移动节流, 多少毫秒内的手势移动事件忽略
+  /// ms
+  int moveThrottle = 5;
+
+  /// 最后一次的手势坐标点
+  Offset? _lastPosition;
+
+  /// 最后一次手势时间戳
+  int _lastTimestamp = 0;
 
   /// 手势入口点
   @entryPoint
   @overridePoint
   void handleEvent(PointerEvent event) {
-    final eventMeta = PointEventMeta(event.localPosition, nowTimestamp());
+    final localPosition = event.localPosition;
+    final eventMeta = PointEventMeta(localPosition, nowTimestamp());
     if (event.isPointerDown) {
       onStartPointerEvent(eventMeta);
+      _lastPosition = localPosition;
     } else if (event.isPointerMove) {
-      onPointerEventMove(eventMeta);
+      if (_lastPosition == null ||
+          (localPosition - _lastPosition!).distance > moveThreshold) {
+        final timestamp = nowTimestamp();
+        if (timestamp - _lastTimestamp > moveThrottle) {
+          onPointerEventMove(eventMeta);
+          _lastTimestamp = timestamp;
+          _lastPosition = localPosition;
+        }
+      }
     } else if (event.isPointerFinish) {
+      onPointerEventMove(eventMeta);
       onFinishPointerEvent(eventMeta);
     }
     eventManager?.graffitiDelegate.refresh();
@@ -77,10 +103,12 @@ class PointEventHandler {
 
   //--
 
+  @autoInjectMark
   void attachFromManager(GraffitiEventManager manager) {
     eventManager = manager;
   }
 
+  @autoInjectMark
   void detachFromManager(GraffitiEventManager manager) {
     eventManager = null;
   }
@@ -174,6 +202,7 @@ class GraffitiFountainPenHandler extends GraffitiPainterHandler {
 class GraffitiBrushPenHandler extends GraffitiPainterHandler {
   GraffitiBrushPenHandler() {
     painterWidth = 10;
+    moveThrottle = 35;
   }
 
   @override
