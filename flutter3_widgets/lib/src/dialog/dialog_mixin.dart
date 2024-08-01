@@ -139,24 +139,33 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildBottomChildrenDialog(
     BuildContext context,
     WidgetNullList children, {
-    Color? bgColor /*背景颜色*/,
+    Color? bgColor /*背景颜色, 不指定默认[globalTheme.surfaceBgColor]*/,
     bool enablePullBack = true,
     bool showDragHandle = true,
-    double? pullKeepProgress,
+    double? pullMaxBound,
     void Function(BuildContext context)? onPullBack,
     bool useScroll = false,
     bool animatedSize = false,
     int scrollChildIndex = 1,
+    double? height /*固定高度*/,
     double? contentMinHeight,
     double? contentMaxHeight = 0.8,
+    //--clip--↓
     double? clipRadius,
     double? clipTopRadius,
     double? clipBottomRadius,
     Widget? stackWidget,
-    bool fullScreen = false, //是否全屏
+    bool fullScreen = false /*是否全屏*/,
+    //--shadow--↓
+    bool showTopShadow = false /*是否显示顶部阴影*/,
   }) {
     Widget body;
     children = children.filterNull();
+
+    if (height != null) {
+      contentMinHeight = null;
+      contentMaxHeight = null;
+    }
 
     //滚动内容的最小最大高度
     if (contentMinHeight != null && contentMinHeight < 1) {
@@ -212,18 +221,25 @@ mixin DialogMixin implements TranslationTypeImpl {
 
     final globalTheme = GlobalTheme.of(context);
     return body
+        .size(height: height)
         .material(color: bgColor ?? globalTheme.surfaceBgColor)
         .clipRadius(
           radius: clipRadius,
           topRadius: clipTopRadius,
           bottomRadius: clipBottomRadius,
         )
+        .shadowDecorated(
+          shadowColor: showTopShadow ? Colors.black12 : null,
+          radius: 8,
+          decorationColor: Colors.transparent,
+          shadowOffset: const Offset(0, -4),
+        )
         .pullBack(
           enablePullBack: enablePullBack,
-          pullKeepProgress: pullKeepProgress,
+          pullMaxBound: pullMaxBound,
           onPullBack: onPullBack ??
               (context) {
-                if (pullKeepProgress == null) {
+                if (pullMaxBound == null) {
                   closeDialogIf(context);
                 }
               },
