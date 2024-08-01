@@ -4,7 +4,7 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/22
 ///
-/// 限流处理, 用于控制函数的调用频率
+/// 限流/节流处理, 用于控制函数的调用频率
 /// [Throttle]
 /// [Debounce]
 class Throttle {
