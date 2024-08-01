@@ -1092,13 +1092,14 @@ extension WidgetEx on Widget {
   ///
   /// [shadowCircle]
   /// [shadowRadius]
+  /// [shadowDecorated]
   Widget shadowCircle({
+    Color shadowColor = Colors.black12,
+    Offset shadowOffset = Offset.zero,
+    double shadowBlurRadius = kDefaultBlurRadius,
     bool clipContent = true,
     Color? decorationColor = Colors.white,
-    Color shadowColor = Colors.black12,
-    double shadowBlurRadius = kDefaultBlurRadius,
     double shadowSpreadRadius = kS,
-    Offset shadowOffset = Offset.zero,
     Color? color,
     AlignmentGeometry? alignment = Alignment.center,
     EdgeInsetsGeometry? padding,
@@ -1145,6 +1146,7 @@ extension WidgetEx on Widget {
   ///
   /// [shadowCircle]
   /// [shadowRadius]
+  /// [shadowDecorated]
   Widget shadowRadius({
     bool clipContent = true,
     Color? decorationColor = Colors.white,
@@ -1190,6 +1192,43 @@ extension WidgetEx on Widget {
           ),
         ],
       ),
+    );
+  }
+
+  /// 阴影装饰
+  /// [BoxDecoration]
+  /// [shadowCircle]
+  /// [shadowRadius]
+  /// [shadowDecorated]
+  Widget shadowDecorated({
+    Offset shadowOffset = Offset.zero,
+    Color? shadowColor = Colors.black12,
+    double? radius = kDefaultBorderRadiusXXX,
+    double shadowBlurRadius = kDefaultBlurRadius,
+    double shadowSpreadRadius = kS,
+    BoxShape shape = BoxShape.rectangle,
+    BorderRadiusGeometry? borderRadius,
+    Color? decorationColor = Colors.white,
+  }) {
+    if (shadowColor == null) {
+      return this;
+    }
+    borderRadius ??= BorderRadius.all(Radius.circular(radius ?? 0));
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        shape: shape,
+        borderRadius: borderRadius,
+        color: decorationColor,
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor,
+            offset: shadowOffset,
+            blurRadius: shadowBlurRadius,
+            spreadRadius: shadowSpreadRadius,
+          ),
+        ],
+      ),
+      child: this,
     );
   }
 
