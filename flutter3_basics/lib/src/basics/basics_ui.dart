@@ -716,12 +716,13 @@ extension WidgetEx on Widget {
   //region ---SafeArea---
 
   /// 离屏渲染
-  Widget offstage([bool offstage = true]) => offstage
-      ? Offstage(
-          offstage: offstage,
-          child: this,
-        )
-      : this;
+  Widget offstage([bool offstage = true, bool always = false]) =>
+      (offstage || always)
+          ? Offstage(
+              offstage: offstage,
+              child: this,
+            )
+          : this;
 
   /// 脚手架
   Widget scaffold({
