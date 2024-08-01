@@ -115,6 +115,10 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
   /// 手势按下的菜单
   ElementMenu? _touchMenu;
 
+  /// 按下的位置
+  @viewCoordinate
+  Offset? _touchPosition;
+
   /// [CanvasElementManager.handleElementEvent]->
   /// [CanvasElementControlManager.handleEvent]驱动, 可以拦截底部控制点的事件
   /// @return true 拦截事件
@@ -123,6 +127,8 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
     if (event.isTouchEvent) {
       bool handled = false;
       if (event.isPointerDown) {
+        final localPosition = event.localPosition;
+        _touchPosition = localPosition;
         for (final menu in elementMenuList) {
           if (menu._menuBounds?.contains(event.localPosition) == true) {
             _touchMenu = menu;
@@ -131,7 +137,12 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
           }
         }
       } else if (event.isPointerUp) {
-        _touchMenu?.onTap?.call();
+        if (!event.isMoveExceed(_touchPosition)) {
+          _touchMenu?.onTap?.call();
+          if (_touchMenu != null) {
+            canvasDelegate.dispatchTapMenu(_touchMenu!);
+          }
+        }
       }
       handled = _touchMenu != null;
       if (event.isPointerFinish) {
@@ -277,6 +288,10 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
 
 /// [ElementMenuControl]中的菜单项
 class ElementMenu {
+  /// 菜单的标签标签
+  @flagProperty
+  final String? tag;
+
   /// 菜单大小
   @viewCoordinate
   final Size size;
@@ -305,6 +320,7 @@ class ElementMenu {
   Rect? _menuBounds;
 
   ElementMenu({
+    this.tag,
     this.size = const Size(30, 30),
     this.padding = const EdgeInsets.all(kS),
     this.pictureInfo,
@@ -316,6 +332,7 @@ class ElementMenu {
 
   ElementMenu.fromSvg(
     String key, {
+    this.tag,
     this.size = const Size(30, 30),
     this.padding = const EdgeInsets.all(kS),
     this.pictureTintColor = Colors.white,
