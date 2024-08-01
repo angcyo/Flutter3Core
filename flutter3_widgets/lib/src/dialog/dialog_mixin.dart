@@ -179,7 +179,10 @@ mixin DialogMixin implements TranslationTypeImpl {
       final fixedChildren = children.subList(0, scrollChildIndex);
       final scrollChildren = children.subList(scrollChildIndex);
 
-      Widget? scrollBody = scrollChildren.scroll(axis: Axis.vertical);
+      Widget? scrollBody = scrollChildren.scroll(
+        axis: Axis.vertical,
+        physics: enablePullBack ? null : kScrollPhysics,
+      );
       //约束高度
       scrollBody = scrollBody?.constrainedMax(
         minHeight: contentMinHeight,
@@ -200,7 +203,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       body = [
         if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...fixedChildren,
-        scrollBody,
+        scrollBody?.expanded(enable: height != null /*固定高度时, 滚动布局需要撑满底部*/),
       ].column()!;
     } else {
       body = [

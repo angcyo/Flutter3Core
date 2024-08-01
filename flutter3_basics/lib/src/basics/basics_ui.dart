@@ -276,6 +276,10 @@ extension WidgetListEx on WidgetNullList {
   }
 
   /// [SingleChildScrollView]
+  ///
+  /// [physics] 滚动行为, 如果需要下拉返回功能, 这里就需要设置为null.
+  /// 系统会通过[ScrollConfiguration]自动获取到[PullBackScrollPhysics]
+  ///
   /// [scroll]
   /// [WidgetEx.scroll]
   Widget? scroll({

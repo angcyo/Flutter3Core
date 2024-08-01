@@ -255,6 +255,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   /// [velocity] 手势结束时的速度 >0:快速向下拉 <0:快速向上拉
   /// [position] 为null时, 表示在非scroll内容中拖拽
+  /// 在滚动列表中 velocity>0:快速向上拉 <0:快速向下拉, 正好相反.
   bool _handleDragEnd(ScrollMetrics? position, double velocity) {
     //debugger();
     //l.d('velocity:$velocity value:${_pullBackValue}');
@@ -265,7 +266,8 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
     _isDragEnd = true;
     if (position != null) {
-      //在滚动列表中
+      velocity = -velocity;
+      //在滚动列表中触发的回调
       if (position.pixels > 0) {
         return false;
       }
@@ -403,6 +405,7 @@ class _PullBackScrollBehavior extends MaterialScrollBehavior {
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
+    //debugger();
     return _physics ?? super.getScrollPhysics(context);
   }
 }
@@ -418,14 +421,16 @@ class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
   final ScrollDragEndAction? dragEndAction;
 
   const PullBackScrollPhysics({
-    super.parent =
-        const BouncingScrollPhysics(parent: RangeMaintainingScrollPhysics()),
+    super.parent = const BouncingScrollPhysics(
+      parent: RangeMaintainingScrollPhysics(),
+    ),
     this.consumeUserOffsetAction,
     this.dragEndAction,
   });
 
   @override
   PullBackScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    //debugger();
     return PullBackScrollPhysics(
       parent: buildParent(ancestor),
       consumeUserOffsetAction: consumeUserOffsetAction,
@@ -435,6 +440,7 @@ class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
 
   @override
   double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    //debugger();
     offset = consumeUserOffsetAction?.call(position, offset) ?? offset;
     if (offset == 0.0) {
       return 0;
@@ -444,7 +450,10 @@ class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
 
   @override
   Simulation? createBallisticSimulation(
-      ScrollMetrics position, double velocity) {
+    ScrollMetrics position,
+    double velocity,
+  ) {
+    //debugger();
     if (dragEndAction?.call(position, velocity) == true) {
       return null;
     }
