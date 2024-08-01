@@ -140,7 +140,7 @@ class CanvasListener {
     ElementPainter elementPainter,
     dynamic from,
     dynamic to,
-    PropertyType propertyType,
+    PainterPropertyType propertyType,
   )? onCanvasElementPropertyChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementSelectChanged]
@@ -182,6 +182,9 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchPointerDown]
   final void Function(@viewCoordinate Offset position)? onPointerDownAction;
 
+  /// [CanvasDelegate.dispatchTapMenu]
+  final void Function(ElementMenu menu)? onTapMenuAction;
+
   /// [CanvasDelegate.dispatchControlStateChanged]
   final void Function({
     required BaseControl control,
@@ -213,6 +216,7 @@ class CanvasListener {
     this.onDoubleTapElementAction,
     this.onTranslateElementAction,
     this.onPointerDownAction,
+    this.onTapMenuAction,
     this.onCanvasUndoChangedAction,
     this.onCanvasGroupChangedAction,
     this.onCanvasUngroupChangedAction,

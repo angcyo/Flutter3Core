@@ -375,14 +375,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 元素属性发生改变时触发
-  /// [PropertyType.paint]
-  /// [PropertyType.state]
-  /// [PropertyType.data]
+  /// [PainterPropertyType.paint]
+  /// [PainterPropertyType.state]
+  /// [PainterPropertyType.data]
   void dispatchCanvasElementPropertyChanged(
     ElementPainter elementPainter,
     dynamic from,
     dynamic to,
-    PropertyType propertyType,
+    PainterPropertyType propertyType,
   ) {
     isElementPropertyChanged = true;
     /*assert(() {
@@ -474,6 +474,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void dispatchPointerDown(@viewCoordinate Offset position) {
     _eachCanvasListener((element) {
       element.onPointerDownAction?.call(position);
+    });
+  }
+
+  /// 点击指定菜单时回调
+  void dispatchTapMenu(ElementMenu menu) {
+    _eachCanvasListener((element) {
+      element.onTapMenuAction?.call(menu);
     });
   }
 

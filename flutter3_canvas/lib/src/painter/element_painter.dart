@@ -46,7 +46,7 @@ class ElementPainter extends IPainter
       dispatchSelfPaintPropertyChanged(
         old,
         value,
-        PropertyType.state,
+        PainterPropertyType.state,
       );
     }
   }
@@ -61,7 +61,7 @@ class ElementPainter extends IPainter
     dispatchSelfPaintPropertyChanged(
       paintState,
       paintState,
-      PropertyType.state,
+      PainterPropertyType.state,
     );
   }
 
@@ -75,7 +75,7 @@ class ElementPainter extends IPainter
       dispatchSelfPaintPropertyChanged(
         paintState,
         paintState,
-        PropertyType.state,
+        PainterPropertyType.state,
       );
       if (!value) {
         //不可见元素操作
@@ -94,7 +94,7 @@ class ElementPainter extends IPainter
       dispatchSelfPaintPropertyChanged(
         paintState,
         paintState,
-        PropertyType.state,
+        PainterPropertyType.state,
       );
       if (value) {
         //锁定元素操作
@@ -115,7 +115,7 @@ class ElementPainter extends IPainter
     dispatchSelfPaintPropertyChanged(
       paintState,
       paintState,
-      PropertyType.state,
+      PainterPropertyType.state,
     );
   }
 
@@ -134,7 +134,7 @@ class ElementPainter extends IPainter
     final old = _paintProperty;
     _paintProperty = value;
     if (old != value) {
-      dispatchSelfPaintPropertyChanged(old, value, PropertyType.paint);
+      dispatchSelfPaintPropertyChanged(old, value, PainterPropertyType.paint);
     }
   }
 
@@ -531,7 +531,7 @@ class ElementPainter extends IPainter
   void dispatchSelfPaintPropertyChanged(
     dynamic old,
     dynamic value,
-    PropertyType propertyType,
+    PainterPropertyType propertyType,
   ) {
     canvasDelegate?.dispatchCanvasElementPropertyChanged(
       this,
@@ -1136,7 +1136,7 @@ class ElementGroupPainter extends ElementPainter {
 }
 
 /// 元素绘制时的一些状态存储信息
-/// [PropertyType.state]
+/// [PainterPropertyType.state]
 class PaintState with EquatableMixin {
   /// 元素的唯一标识
   String? elementUuid = $uuid;
@@ -1182,7 +1182,7 @@ class PaintState with EquatableMixin {
 
 /// 绘制属性, 包含坐标/缩放/旋转/倾斜等信息
 /// 先倾斜, 再缩放, 最后旋转
-/// [PropertyType.paint]
+/// [PainterPropertyType.paint]
 class PaintProperty with EquatableMixin {
   //region ---基础属性---
 
@@ -1666,7 +1666,7 @@ class ElementStateStack {
 /// 属性类型, 支持组合
 /// [PaintProperty]
 /// [PaintState]
-enum PropertyType {
+enum PainterPropertyType {
   /// 绘制的相关属性, 比如坐标/缩放/旋转/倾斜等信息
   /// 支持回退的属性
   /// 对应[PaintProperty]
