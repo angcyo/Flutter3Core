@@ -52,7 +52,8 @@ class PullBackWidget extends StatefulWidget {
 
   //---
 
-  /// 下拉最大的边界
+  /// 下拉最大的边界,
+  /// 如果这个值>1, 则表示底部需要保留的高度
   /// [0~1]
   final double? pullMaxBound;
 
@@ -85,19 +86,19 @@ class PullBackWidget extends StatefulWidget {
 }
 
 class _PullBackWidgetState extends State<PullBackWidget>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   /// 下拉进度值
-  double get _pullBackValue => _pullBackController.value;
+  double get _pullBackValue => _pullBackController?.value ?? 0;
 
   /// 下拉的效果矩阵
   Matrix4 get _pullBackTransform =>
       Matrix4.identity()..translate(0.0, _pullBackValue * (_childHeight ?? 0));
 
   /// [0~1] 0:未开始下拉 1:完全下拉到底部
-  late final AnimationController _pullBackController;
+  AnimationController? _pullBackController;
 
   /// [_pullBackCurve]属性生效的对象
-  late final Animation<double> _pullBackAnimation;
+  Animation<double>? _pullBackAnimation;
 
   /// 加速曲线
   late final Curve _pullBackCurve = Curves.easeOut;
@@ -120,21 +121,64 @@ class _PullBackWidgetState extends State<PullBackWidget>
   @override
   void initState() {
     super.initState();
+    _handlePullMaxBound();
+  }
+
+  @override
+  void dispose() {
     //debugger();
-    _pullBackController = widget.pullBackController ??
+    _pullBackController?.dispose();
+    super.dispose();
+  }
+
+  ///
+  @override
+  void didUpdateWidget(covariant PullBackWidget oldWidget) {
+    //debugger();
+    super.didUpdateWidget(oldWidget);
+    if (widget.pullMaxBound != null) {
+      _handlePullMaxBound();
+      updateState();
+    }
+  }
+
+  void _handlePullMaxBound() {
+    _pullBackController?.stop();
+    _pullBackController?.dispose();
+    _pullBackController = null;
+    final pullMaxBound = widget.pullMaxBound;
+    if (pullMaxBound == null) {
+      _initController(1.0);
+    } else if (pullMaxBound > 1) {
+      scheduleMicrotask(() {
+        final height = _childHeight;
+        if (height != null) {
+          _initController((height - pullMaxBound) / height);
+        } else {
+          _initController(1.0);
+        }
+        updateState();
+      });
+    } else {
+      _initController(pullMaxBound);
+    }
+  }
+
+  void _initController(double upperBound) {
+    final controller = widget.pullBackController ??
         AnimationController(
           duration: kDefaultAnimationDuration,
           vsync: this,
-          upperBound: widget.pullMaxBound ?? 1.0,
+          upperBound: upperBound,
         );
-    _pullBackController.addListener(() {
+    controller.addListener(() {
       if (widget.barrierColor != null) {
         updateState();
       }
       widget.onPullProgress?.call(_pullBackValue);
     });
     //动画结束监听
-    _pullBackController.addStatusListener((status) {
+    controller.addStatusListener((status) {
       //l.d('$status:${_pullBackValue}');
       if (_isDragEnd && status == AnimationStatus.completed) {
         _pullBack();
@@ -147,22 +191,8 @@ class _PullBackWidgetState extends State<PullBackWidget>
       }*/
     });
 
-    _pullBackAnimation =
-        _pullBackController.drive(CurveTween(curve: _pullBackCurve));
-  }
-
-  @override
-  void dispose() {
-    //debugger();
-    _pullBackController.dispose();
-    super.dispose();
-  }
-
-  ///
-  @override
-  void didUpdateWidget(covariant PullBackWidget oldWidget) {
-    //debugger();
-    super.didUpdateWidget(oldWidget);
+    _pullBackAnimation = controller.drive(CurveTween(curve: _pullBackCurve));
+    _pullBackController = controller;
   }
 
   @override
@@ -192,31 +222,33 @@ class _PullBackWidgetState extends State<PullBackWidget>
             dragEndAction: _handleDragEnd,
           ),
         ),
-        child: AnimatedBuilder(
-          animation: _pullBackAnimation,
-          builder: (context, child) {
-            Widget content = widget.child;
+        child: _pullBackAnimation == null
+            ? widget.child
+            : AnimatedBuilder(
+                animation: _pullBackAnimation!,
+                builder: (context, child) {
+                  Widget content = widget.child;
 
-            if (widget.showDragHandle) {
-              content = [buildDragHandle(context), content].column()!;
-            }
+                  if (widget.showDragHandle) {
+                    content = [buildDragHandle(context), content].column()!;
+                  }
 
-            if (widget.contentDecoration != null) {
-              content = Container(
-                clipBehavior: ui.Clip.hardEdge,
-                decoration: widget.contentDecoration,
-                child: content,
-              );
-            }
+                  if (widget.contentDecoration != null) {
+                    content = Container(
+                      clipBehavior: ui.Clip.hardEdge,
+                      decoration: widget.contentDecoration,
+                      child: content,
+                    );
+                  }
 
-            //debugger();
-            /*assert(() {
+                  //debugger();
+                  /*assert(() {
               l.v('build:$_pullBackValue ${_pullBackController.status} ${_pullBackController.isStarted}');
               return true;
             }());*/
-            return content.matrix(_pullBackTransform);
-          },
-        ),
+                  return content.matrix(_pullBackTransform);
+                },
+              ),
       ),
     ).childKeyed(_childKey);
 
@@ -243,12 +275,12 @@ class _PullBackWidgetState extends State<PullBackWidget>
     _isDragEnd = false;
     final progress = primaryDelta / (_childHeight ?? primaryDelta);
     //l.d('progress:$progress [$primaryDelta/$_childHeight]');
-    _pullBackController.value += progress; //value [0~1]
+    _pullBackController?.value += progress; //value [0~1]
     //l.d("pull back:${_pullBackValue}");
     //
     ProgressStateNotification(
       tag: PullBackWidget,
-      progress: _pullBackController.value,
+      progress: _pullBackController?.value,
     ).dispatch(buildContext);
     updateState();
   }
@@ -275,13 +307,13 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
     if (velocity.abs() > closeFlingVelocity.abs() && velocity < 0) {
       //快速上拉
-      _pullBackController.reverse();
+      _pullBackController?.reverse();
     } else if (velocity > closeFlingVelocity ||
-        _pullBackController.value > closePullThreshold) {
+        _pullBackValue > closePullThreshold) {
       //toastInfo('close:${velocity}');
       _tryPullBack();
     } else {
-      _pullBackController.reverse();
+      _pullBackController?.reverse();
     }
     return true;
   }
@@ -290,13 +322,13 @@ class _PullBackWidgetState extends State<PullBackWidget>
   void _tryPullBack() async {
     //debugger();
     if (await _handleCanPullBack()) {
-      if (_pullBackController.isCompleted) {
+      if (_pullBackController?.isCompleted == true) {
         _pullBack();
       } else {
-        _pullBackController.forward();
+        _pullBackController?.forward();
       }
     } else {
-      _pullBackController.reverse();
+      _pullBackController?.reverse();
     }
   }
 
@@ -331,7 +363,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
         return 0;
       } else {
         //上拉
-        if (_pullBackController.value != 0) {
+        if (_pullBackValue != 0) {
           _handleDragUpdate(offset);
           return 0;
         }
