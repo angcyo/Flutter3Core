@@ -21,7 +21,11 @@ class LabelUnitValueTile extends StatelessWidget with LabelMixin, TileMixin {
   //--unit
   @dp
   final double? value;
+
+  /// 直接显示[value]的文本, 而不通过[unit]转换
+  final String? valueText;
   final IUnit? unit;
+  final bool showUnit;
 
   //--
 
@@ -37,7 +41,9 @@ class LabelUnitValueTile extends StatelessWidget with LabelMixin, TileMixin {
     this.labelConstraints,
     //--
     this.value,
+    this.valueText,
     this.unit,
+    this.showUnit = true,
     //--
     this.gap = 2,
   });
@@ -54,18 +60,20 @@ class LabelUnitValueTile extends StatelessWidget with LabelMixin, TileMixin {
     //value
     Widget? value = buildTextWidget(
       context,
-      text: this.value == null
+      text: (valueText == null && this.value == null)
           ? null
-          : unit?.formatFromDp(this.value ?? 0, showSuffix: false),
+          : valueText ?? unit?.formatFromDp(this.value ?? 0, showSuffix: false),
     );
     //unit
-    Widget? suffix = buildLabelWidget(
-      context,
-      label: unit?.suffix,
-      labelStyle: labelStyle,
-      labelPadding: labelPadding,
-      constraints: null,
-    );
+    Widget? suffix = showUnit
+        ? buildLabelWidget(
+            context,
+            label: unit?.suffix,
+            labelStyle: labelStyle,
+            labelPadding: labelPadding,
+            constraints: null,
+          )
+        : null;
     return [
       label,
       value?.expanded(),

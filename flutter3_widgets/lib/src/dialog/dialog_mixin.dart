@@ -152,12 +152,12 @@ mixin DialogMixin implements TranslationTypeImpl {
     double? contentMaxHeight = 0.8,
     //--clip--↓
     double? clipRadius,
-    double? clipTopRadius,
+    double? clipTopRadius = kDefaultBorderRadiusXXX,
     double? clipBottomRadius,
     Widget? stackWidget,
     bool fullScreen = false /*是否全屏*/,
     //--shadow--↓
-    bool showTopShadow = false /*是否显示顶部阴影*/,
+    bool showTopShadow = true /*是否显示顶部阴影*/,
   }) {
     Widget body;
     children = children.filterNull();
@@ -232,8 +232,8 @@ mixin DialogMixin implements TranslationTypeImpl {
           bottomRadius: clipBottomRadius,
         )
         .shadowDecorated(
-          shadowColor: showTopShadow ? Colors.black12 : null,
-          radius: 8,
+          shadowColor: showTopShadow ? const Color(0x06000000) : null,
+          radius: clipTopRadius == null ? 8 : clipTopRadius / 2,
           decorationColor: Colors.transparent,
           shadowOffset: const Offset(0, -4),
         )

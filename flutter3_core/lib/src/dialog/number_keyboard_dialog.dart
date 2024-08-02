@@ -34,6 +34,9 @@ enum NumberKeyboardType {
 
   /// 键盘类型: 正负
   positiveNegative,
+
+  /// 键盘类型: 完成输入
+  finish,
 }
 
 /// 数字键盘输入对话框
@@ -89,23 +92,19 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
 }
 
 class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
-  final gap = 6.0;
-  final height = 40.0;
+  final NumberKeyboardInputController _controller =
+      NumberKeyboardInputController();
+
   final borderRadius = 4.0;
 
-  late final BoxDecoration decoration;
-  late final pressedDecoration = fillDecoration(
-    color: Colors.black12,
-    borderRadius: borderRadius,
+  late final rangeHintStyle = const TextStyle(
+    fontSize: 14,
+    color: Colors.grey,
   );
-  late final TextStyle keyboardNumberStyle;
+
   late final TextStyle numberValueStyle;
   late final numberHintStyle = const TextStyle(
     fontSize: 20,
-    color: Colors.grey,
-  );
-  late final rangeHintStyle = const TextStyle(
-    fontSize: 14,
     color: Colors.grey,
   );
 
@@ -120,30 +119,18 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   /// 是否要显示收起键盘
   bool get isShowPackUp => !isSupportDecimal || !isSupportNegative;
 
-  /// 当前输入的文本
-  String _numberText = "";
-
-  /// 是否清空所有
-  bool isClearAll = true;
-
   @override
   void initState() {
     super.initState();
-    _numberText = _formatValue(widget.number) ?? "";
     final globalTheme = GlobalTheme.of(context);
-    decoration = fillDecoration(
-      color: globalTheme.surfaceBgColor,
-      borderRadius: borderRadius,
-    );
-
-    keyboardNumberStyle = TextStyle(
-      fontSize: 16,
-      color: context.isThemeDark
-          ? globalTheme.textTitleStyle.color
-          : globalTheme.textGeneralStyle.color,
-      fontWeight: FontWeight.bold,
-    );
-
+    _controller
+      ..isClearAll = true
+      ..numType = widget._numType
+      ..maxDigits = widget.maxDigits
+      ..minValue = widget.minValue
+      ..maxValue = widget.maxValue
+      ..maxLength = widget.maxLength
+      ..initInputValue(widget.number);
     numberValueStyle = TextStyle(
       fontSize: 22,
       color: context.isThemeDark
@@ -157,16 +144,175 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
+    final keyboard = NumberKeyboardLayout(
+      showDecimal: isSupportDecimal,
+      showNegative: isSupportDecimal,
+      onKeyboardInput: (keyboard, type) {
+        if (type == NumberKeyboardType.finish) {
+          _onSelfFinishInput();
+        } else {
+          _onSelfInput(keyboard, type);
+        }
+      },
+    );
+
+    //前缀
+    String? prefixText = '有效范围';
+    // 获取范围对应的文本
+    String? rangeText;
+    if (widget.maxValue != null && widget.minValue != null) {
+      rangeText =
+          "[${_formatValue(widget.minValue)}~${_formatValue(widget.maxValue)}]";
+    } else if (widget.maxValue != null) {
+      rangeText = "[~${_formatValue(widget.maxValue)}]";
+    } else if (widget.minValue != null) {
+      rangeText = "[${_formatValue(widget.minValue)}~]";
+    }
+    if (rangeText != null) {
+      rangeText = "$prefixText$rangeText";
+    }
+
+    return [
+      //渐变阴影
+      linearGradientWidget(
+        [Colors.transparent, Colors.black12],
+        height: 10,
+        gradientDirection: Axis.vertical,
+      ),
+      [
+        [
+          if (isNullOrEmpty(_controller.numberText))
+            widget.hintText?.text(style: numberHintStyle),
+          _controller.numberText.text(style: numberValueStyle).container(
+              color: _controller.isClearAll ? globalTheme.accentColor : null),
+        ].stack()?.expanded(),
+        rangeText?.text(style: rangeHintStyle),
+      ]
+          .row()
+          ?.container(
+            color: globalTheme.surfaceBgColor,
+            padding: const EdgeInsets.symmetric(vertical: kX, horizontal: kX),
+          )
+          .click(() {
+        _controller.isClearAll = !_controller.isClearAll;
+        updateState();
+      }),
+      keyboard.backgroundColor(globalTheme.whiteSubBgColor),
+    ]
+        .column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+        )!
+        .adaptiveTablet(context)
+        .willPop(() async {
+      return widget.canPop;
+    }).material();
+  }
+
+  String? _formatValue(num? value) {
+    return _controller.formatValue(value);
+  }
+
+  /// 完成输入时调用
+  void _onSelfFinishInput() {
+    //debugger();
+    _controller.onKeyboardInputFinish(context);
+    updateState();
+  }
+
+  /// 键盘输入了一个值
+  void _onSelfInput(String value, NumberKeyboardType type) {
+    _controller.onKeyboardInput(value, type);
+    updateState();
+  }
+}
+
+/// 按键布局
+class NumberKeyboardLayout extends StatefulWidget {
+  /// 显示小数按键
+  final bool showDecimal;
+
+  /// 显示正负按键
+  final bool showNegative;
+
+  /// 每个按键的高度
+  final double itemHeight;
+
+  /// 每个按键之间的间隙
+  final double itemGap;
+
+  /// 每个按键的圆角
+  final double itemBorderRadius;
+
+  /// 键盘输入回调
+  final void Function(String keyboard, NumberKeyboardType type)?
+      onKeyboardInput;
+
+  const NumberKeyboardLayout({
+    super.key,
+    this.showDecimal = true,
+    this.showNegative = true,
+    this.itemHeight = 40,
+    this.itemGap = 6,
+    this.itemBorderRadius = 4,
+    this.onKeyboardInput,
+  });
+
+  @override
+  State<NumberKeyboardLayout> createState() => _NumberKeyboardLayoutState();
+}
+
+class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
+  late final BoxDecoration decoration;
+  late final pressedDecoration = fillDecoration(
+    color: Colors.black12,
+    borderRadius: widget.itemBorderRadius,
+  );
+
+  late final TextStyle keyboardNumberStyle;
+
+  //--
+
+  /// 是否支持小数
+  bool get isSupportDecimal => widget.showDecimal;
+
+  /// 是否支持负数
+  bool get isSupportNegative => widget.showNegative;
+
+  /// 是否要显示收起键盘
+  bool get isShowPackUp => !isSupportDecimal || !isSupportNegative;
+
+  @override
+  void initState() {
+    super.initState();
+    final globalTheme = GlobalTheme.of(context);
+    decoration = fillDecoration(
+      color: globalTheme.surfaceBgColor,
+      borderRadius: widget.itemBorderRadius,
+    );
+
+    keyboardNumberStyle = TextStyle(
+      fontSize: 16,
+      color: context.isThemeDark
+          ? globalTheme.textTitleStyle.color
+          : globalTheme.textGeneralStyle.color,
+      fontWeight: FontWeight.bold,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     final keyboard = FlowLayout(
       selfConstraints: const LayoutBoxConstraints(
         widthType: ConstraintsType.matchParent,
         heightType: ConstraintsType.wrapContent,
       ),
-      childConstraints: BoxConstraints(minHeight: height),
-      childGap: gap,
+      childConstraints: BoxConstraints(minHeight: widget.itemHeight),
+      childGap: widget.itemGap,
       equalWidthRange: "",
       lineMaxChildCount: 4,
-      padding: EdgeInsets.all(gap),
+      padding: EdgeInsets.all(widget.itemGap),
       children: [
         _createNumberButton("1", NumberKeyboardType.number),
         _createNumberButton("2", NumberKeyboardType.number),
@@ -189,7 +335,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
         StateDecorationWidget(
           decoration: fillDecoration(
             color: globalTheme.accentColor,
-            borderRadius: borderRadius,
+            borderRadius: widget.itemBorderRadius,
           ),
           pressedDecoration: pressedDecoration,
           child: LibRes.of(context)
@@ -197,23 +343,12 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
               .text(style: keyboardNumberStyle)
               .align(Alignment.center),
         ).click(() {
-          //debugger();
-          if (_checkInputValue(_numberText)) {
-            if (isSupportDecimal) {
-              context.pop(_numberText.toDoubleOrNull());
-            } else {
-              context.pop(_numberText.toIntOrNull());
-            }
-          } else {
-            Feedback.forLongPress(context);
-            isClearAll = true;
-            updateState();
-          }
+          _onSelfInput("", NumberKeyboardType.finish);
         }).flowLayoutData(
           stack: true,
           weight: 1.0 / 4,
           constraints: BoxConstraints(
-            minHeight: height * 3 + gap * 2,
+            minHeight: widget.itemHeight * 3 + widget.itemGap * 2,
           ),
         ),
         _createEmptyButton(),
@@ -246,75 +381,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
           }),
       ],
     );
-
-    //前缀
-    String? prefixText = '有效范围';
-    // 获取范围对应的文本
-    String? rangeText;
-    if (widget.maxValue != null && widget.minValue != null) {
-      rangeText =
-          "[${_formatValue(widget.minValue)}~${_formatValue(widget.maxValue)}]";
-    } else if (widget.maxValue != null) {
-      rangeText = "[~${_formatValue(widget.maxValue)}]";
-    } else if (widget.minValue != null) {
-      rangeText = "[${_formatValue(widget.minValue)}~]";
-    }
-    if (rangeText != null) {
-      rangeText = "$prefixText$rangeText";
-    }
-
-    return [
-      //渐变阴影
-      linearGradientWidget(
-        [Colors.transparent, Colors.black12],
-        height: 10,
-        gradientDirection: Axis.vertical,
-      ),
-      [
-        [
-          if (isNullOrEmpty(_numberText))
-            widget.hintText?.text(style: numberHintStyle),
-          _numberText
-              .text(style: numberValueStyle)
-              .container(color: isClearAll ? globalTheme.accentColor : null),
-        ].stack()?.expanded(),
-        rangeText?.text(style: rangeHintStyle),
-      ]
-          .row()
-          ?.container(
-            color: globalTheme.surfaceBgColor,
-            padding: const EdgeInsets.symmetric(vertical: kX, horizontal: kX),
-          )
-          .click(() {
-        isClearAll = !isClearAll;
-        updateState();
-      }),
-      keyboard.container(color: globalTheme.whiteSubBgColor),
-    ]
-        .column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-        )!
-        .adaptiveTablet(context)
-        .willPop(() async {
-      return widget.canPop;
-    });
-  }
-
-  String? _formatValue(num? value) {
-    if (value == null) {
-      return null;
-    }
-    return formatNumber(
-      value,
-      numType: widget._numType,
-      digits: widget.maxDigits,
-    );
-  }
-
-  /// 创建占位按钮
-  Widget _createEmptyButton() {
-    return "".text(style: keyboardNumberStyle).ignorePointer();
+    return keyboard;
   }
 
   /// 创建数字按钮
@@ -331,8 +398,66 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     });
   }
 
+  /// 创建占位按钮
+  Widget _createEmptyButton() {
+    return "".text(style: keyboardNumberStyle).ignorePointer();
+  }
+
+  /// 键盘输入了一个值
+  void _onSelfInput(String value, NumberKeyboardType type) {
+    widget.onKeyboardInput?.call(value, type);
+  }
+}
+
+/// 键盘输入控制器
+class NumberKeyboardInputController {
+  /// 输入的数字类型
+  NumType? numType;
+
+  /// 小数时, 保留后几位
+  int maxDigits = 2;
+
+  /// 最大长度
+  int maxLength = 9;
+
+  /// 最大值
+  num? maxValue;
+
+  /// 最小值
+  num? minValue;
+
+  //--
+
+  /// 当前输入的文本
+  String numberText = "";
+
+  /// 是否清空所有
+  bool isClearAll = false;
+
+  /// 是否支持小数
+  bool get isSupportDecimal => numType == NumType.d;
+
+  /// 初始化当前输入的值
+  void initInputValue(num? value) {
+    numberText = formatValue(value) ?? "";
+  }
+
+  //--
+
+  /// 格式化[value]成字符串
+  String? formatValue(num? value) {
+    if (value == null) {
+      return null;
+    }
+    return formatNumber(
+      value,
+      numType: numType,
+      digits: maxDigits,
+    );
+  }
+
   /// 检查输入的值是否有效
-  bool _checkInputValue(String value) {
+  bool checkInputValue(String value) {
     if (value.isEmpty) {
       return true;
     }
@@ -340,54 +465,78 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     if (number == null) {
       return false;
     }
-    if (widget.maxValue != null && number > widget.maxValue!) {
+    if (maxValue != null && number > maxValue!) {
       return false;
     }
-    if (widget.minValue != null && number < widget.minValue!) {
+    if (minValue != null && number < minValue!) {
       return false;
     }
     return true;
   }
 
-  /// 键盘输入了一个值
-  void _onSelfInput(String value, NumberKeyboardType type) {
+  /// 完成输入时调用
+  /// @return 验证没问题后, 返回输入的键盘值
+  @callPoint
+  num? onKeyboardInputFinish(BuildContext? context) {
     //debugger();
-    if (isClearAll || _numberText.toIntOrNull() == 0) {
-      if (type == NumberKeyboardType.decimal) {
-        _numberText = "0";
+    if (checkInputValue(numberText)) {
+      if (isSupportDecimal) {
+        final result = numberText.toDoubleOrNull();
+        context?.pop(result);
+        return result;
       } else {
-        _numberText = "";
+        final result = numberText.toIntOrNull();
+        context?.pop(result);
+        return result;
+      }
+    } else {
+      if (context != null) {
+        Feedback.forLongPress(context);
+      }
+      isClearAll = true;
+    }
+    return null;
+  }
+
+  /// 键盘输入了一个值
+  @callPoint
+  void onKeyboardInput(String value, NumberKeyboardType type) {
+    //debugger();
+    if (isClearAll || numberText.toIntOrNull() == 0) {
+      if (type == NumberKeyboardType.decimal) {
+        numberText = "0";
+      } else {
+        numberText = "";
       }
       isClearAll = false;
     }
 
     if (type == NumberKeyboardType.backspace) {
-      if (_numberText.isNotEmpty) {
-        _numberText = _numberText.substring(0, _numberText.length - 1);
+      if (numberText.isNotEmpty) {
+        numberText = numberText.substring(0, numberText.length - 1);
       }
     } else if (type == NumberKeyboardType.positiveNegative) {
-      if (_numberText.startsWith("-")) {
-        _numberText = _numberText.substring(1);
+      if (numberText.startsWith("-")) {
+        numberText = numberText.substring(1);
       } else {
-        _numberText = "-$_numberText";
+        numberText = "-$numberText";
       }
     } else if (type == NumberKeyboardType.decimal) {
-      if (isSupportDecimal && !_numberText.contains(".")) {
-        _numberText += value;
+      if (isSupportDecimal && !numberText.contains(".")) {
+        numberText += value;
       }
     } else {
       //检查小数点后面的位数是否超过了限制
-      if (isSupportDecimal && _numberText.contains(".")) {
-        var split = _numberText.split(".");
-        if (split.length > 1 && split[1].length >= widget.maxDigits) {
+      if (isSupportDecimal && numberText.contains(".")) {
+        var split = numberText.split(".");
+        if (split.length > 1 && split[1].length >= maxDigits) {
           return;
         }
       }
 
-      if (_numberText.length < widget.maxLength) {
-        _numberText += value;
+      if (numberText.length < maxLength) {
+        numberText += value;
       }
     }
-    setState(() {});
   }
 }

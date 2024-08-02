@@ -590,6 +590,15 @@ extension UnitNumEx on num {
     }
     return IUnit.mm.toUnit(toPixel(unit));
   }
+
+  /// 将指定单位[unit]的值, 转换成指定dp单位的值
+  @mm
+  double toDpFromUnit(@unit IUnit? unit) {
+    if (unit == null || unit is DpUnit) {
+      return this + 0.0;
+    }
+    return IUnit.dp.toUnit(toPixel(unit));
+  }
 }
 
 /// 单位转换扩展
