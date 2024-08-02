@@ -250,6 +250,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   ///
   /// [animate] 是否动画改变
   /// [awaitAnimate] 是否等待动画结束
+  /// [restoreDefault] 当没有rect时, 是否恢复默认的100%
   @api
   void followRect({
     @sceneCoordinate Rect? rect,
@@ -259,6 +260,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     bool? enableZoomIn,
     bool? animate,
     bool? awaitAnimate,
+    bool? restoreDefault,
   }) {
     if (elementPainter != null) {
       followPainter(elementPainter: elementPainter);
@@ -277,6 +279,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       enableZoomIn: enableZoomIn,
       animate: animate,
       awaitAnimate: awaitAnimate,
+      restoreDefault: restoreDefault,
     );
   }
 

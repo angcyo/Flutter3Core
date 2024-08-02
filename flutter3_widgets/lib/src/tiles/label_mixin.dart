@@ -25,8 +25,14 @@ mixin LabelMixin {
     BuildContext context, {
     bool themeStyle = true,
     EdgeInsets? padding,
+    String? label,
+    Widget? labelWidget,
+    TextStyle? labelTextStyle,
   }) {
     final globalTheme = GlobalTheme.of(context);
+    label ??= this.label;
+    labelWidget ??= this.labelWidget;
+    labelTextStyle ??= this.labelTextStyle;
     final widget = labelWidget ??
         (label
             ?.text(

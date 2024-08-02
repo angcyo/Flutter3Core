@@ -6,6 +6,9 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 画布内容控制, 背景控制
 /// 以及一些内容控制方面的配置信息
+///
+/// [CanvasPaintManager]的成员
+///
 class CanvasContentManager extends IPainter with CanvasComponentMixin {
   final CanvasPaintManager paintManager;
 
@@ -14,6 +17,8 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   CanvasViewBox get canvasViewBox => canvasDelegate.canvasViewBox;
 
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
+
+  //--
 
   /// 限制内容场景的区域, 网格线只会在此区域内绘制
   ///
@@ -25,8 +30,19 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   @sceneCoordinate
   ContentBoundsInfo? sceneContentBoundsInfo;
 
+  /// 场景内最佳区域范围, 应该在[sceneContentBoundsInfo]区域内
+  /// 提示所有元素应该在此区域内
+  @dp
+  @sceneCoordinate
+  @flagProperty
+  ContentBoundsInfo? sceneBestBoundsInfo;
+
+  //--
+
   /// 画布显示内容区域时, 要使用的跟随矩形信息,
   /// 不指定则会降级使用[sceneContentBoundsInfo]
+  ///
+  /// 通常这个位置也是推荐元素居中位置
   @dp
   @sceneCoordinate
   ContentBoundsInfo? sceneFollowRectInfo;
@@ -38,12 +54,23 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
       ? (sceneFollowRectInfo?.bounds ?? sceneContentBoundsInfo?.bounds)
       : null;
 
-  /// 场景内最佳区域范围, 应该在[sceneContentBoundsInfo]区域内
-  /// 提示所有元素应该在此区域内
+  /// 画布最佳的元素中心点位置
   @dp
   @sceneCoordinate
-  @flagProperty
-  ContentBoundsInfo? sceneBestBoundsInfo;
+  Offset? get canvasCenter =>
+      _canvasCenter ??
+      sceneFollowRectInfo?.bounds?.center ??
+      sceneBestBoundsInfo?.bounds?.center;
+
+  set canvasCenter(Offset? value) {
+    _canvasCenter = value;
+  }
+
+  @dp
+  @sceneCoordinate
+  Offset? _canvasCenter;
+
+  //--
 
   /// 额外需要绘制的路径信息
   final List<PainterPathInfo> painterPathList = [];

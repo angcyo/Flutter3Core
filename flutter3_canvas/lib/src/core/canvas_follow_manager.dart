@@ -72,11 +72,9 @@ class CanvasFollowManager with CanvasComponentMixin {
     bool? enableZoomIn /*是否允许视口放大处理*/,
     bool? animate,
     bool? awaitAnimate,
+    bool? restoreDefault /*当没有rect时, 是否恢复默认的100%*/,
   }) {
     //debugger();
-    if (rect == null) {
-      return;
-    }
     if (!canvasViewBox.isCanvasBoxInitialize) {
       //画布还没有初始化完成
       scheduleMicrotask(() {
@@ -88,6 +86,7 @@ class CanvasFollowManager with CanvasComponentMixin {
           enableZoomIn: enableZoomIn,
           animate: animate,
           awaitAnimate: awaitAnimate,
+          restoreDefault: restoreDefault,
         );
       });
       return;
@@ -99,6 +98,18 @@ class CanvasFollowManager with CanvasComponentMixin {
     enableZoomIn ??= this.enableZoomIn;
     animate ??= this.animate;
     awaitAnimate ??= this.awaitAnimate;
+
+    //default
+    if (rect == null) {
+      if (restoreDefault == true) {
+        canvasViewBox.changeMatrix(
+          Matrix4.identity(),
+          animate: animate,
+          awaitAnimate: awaitAnimate,
+        );
+      }
+      return;
+    }
 
     @viewCoordinate
     final canvasBounds = canvasViewBox.canvasBounds;

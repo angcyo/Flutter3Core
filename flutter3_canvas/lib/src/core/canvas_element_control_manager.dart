@@ -655,8 +655,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   @supportUndo
   void translateElement(
     ElementPainter? elementPainter, {
-    double? dx,
-    double? dy,
+    @dp double? dx,
+    @dp double? dy,
     UndoType undoType = UndoType.normal,
   }) {
     if (elementPainter == null) {
@@ -678,6 +678,43 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     } else {
       elementPainter.translateElement(matrix);
     }
+  }
+
+  /// 移动元素到画布的中心位置
+  /// [CanvasContentManager.canvasCenter]
+  @api
+  @supportUndo
+  void translateElementCenter(
+    ElementPainter? elementPainter, {
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null) {
+      return;
+    }
+    final canvasCenter =
+        canvasDelegate.canvasPaintManager.contentManager.canvasCenter;
+    if (canvasCenter == null) {
+      assert(() {
+        l.w('无法确定画布中心,操作被忽略');
+        return true;
+      }());
+      return;
+    }
+    final bounds = elementPainter.elementsBounds;
+    if (bounds == null) {
+      assert(() {
+        l.w('无法确定元素位置,操作被忽略');
+        return true;
+      }());
+      return;
+    }
+    final center = canvasCenter - bounds.center;
+    translateElement(
+      elementPainter,
+      dx: center.dx,
+      dy: center.dy,
+      undoType: undoType,
+    );
   }
 
   /// 旋转元素
@@ -715,8 +752,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 翻转元素, 以选择框的中心进行翻转
   /// 这种方式翻转元素, 有可能会跑到边界外, 所以需要重新计算边界
-  /// [flipX] 水平翻转
-  /// [flipY] 垂直翻转
+  /// [flipX] 触发水平翻转, 自动互斥处理
+  /// [flipY] 触发垂直翻转, 自动互斥处理
   /// [translateElement]
   /// [scaleElement]
   /// [rotateElement]
@@ -746,9 +783,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-  /// 翻转元素, 以元素自身的中心进行翻转
-  /// [flipX] 水平翻转
-  /// [flipY] 垂直翻转
+  /// 翻转元素, 以元素自身的中心进行翻转, 这种方式的翻转不会改变包裹框元素
+  /// [flipX] 触发水平翻转, 自动互斥处理
+  /// [flipY] 触发垂直翻转, 自动互斥处理
   /// [translateElement]
   /// [scaleElement]
   /// [rotateElement]
@@ -776,6 +813,24 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     } else {
       elementPainter.flipElementWithScale(
           flipX: flipX, flipY: flipY, anchor: anchor);
+    }
+  }
+
+  /// 水平翻转选中的元素
+  @api
+  @supportUndo
+  void flipHorizontalSelectedElement() {
+    if (isSelectedElement) {
+      flipElementWithScale(elementSelectComponent, flipX: true, flipY: false);
+    }
+  }
+
+  /// 垂直翻转选中的元素
+  @api
+  @supportUndo
+  void flipVerticalSelectedElement() {
+    if (isSelectedElement) {
+      flipElementWithScale(elementSelectComponent, flipX: false, flipY: true);
     }
   }
 

@@ -29,6 +29,14 @@ const kLabelPadding = EdgeInsets.only(
   bottom: kH,
 );
 
+/// [kLabelPadding]的小号
+const kLabelPaddingMin = EdgeInsets.only(
+  left: kH,
+  right: kH,
+  top: kH,
+  bottom: kH,
+);
+
 const kLabelPaddingInline = EdgeInsets.only(
   left: kX,
   right: kX,

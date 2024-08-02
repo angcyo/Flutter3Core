@@ -76,6 +76,9 @@ abstract class IUnit {
   /// 单位后缀
   String get suffix;
 
+  /// 单位对应的小数点位数, 小数点后几位
+  int get digits => kFractionDigits;
+
   /// 将当前单位的值[value]转换成[px]单位的值
   @pixel
   double toPx(@unit num value);
@@ -95,26 +98,47 @@ abstract class IUnit {
     return toUnit(value.toPixelFromDp());
   }
 
+  @unit
+  double toUnitFromMm(@mm num value) {
+    return toUnit(value.toPixelFromMm());
+  }
+
   /// 格式化当前单位数值的输出
   /// [showSuffix] 是否显示单位后缀
   /// [fractionDigits] 小数点位数
   String format(
     @unit num value, {
     bool showSuffix,
-    int fractionDigits,
+    int? fractionDigits,
     bool removeZero,
     bool ensureInt,
     String space = " ",
   });
 
+  /// 使用当前单位格式化一个dp值到当前的单位值
   String formatFromDp(
     @dp num value, {
     bool showSuffix = true,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
     bool removeZero = true,
     bool ensureInt = true,
   }) {
     return format(toUnitFromDp(value),
+        showSuffix: showSuffix,
+        fractionDigits: fractionDigits,
+        removeZero: removeZero,
+        ensureInt: ensureInt);
+  }
+
+  /// 使用当前单位格式化一个mm值到当前的单位值
+  String formatFromMm(
+    @mm num value, {
+    bool showSuffix = true,
+    int? fractionDigits,
+    bool removeZero = true,
+    bool ensureInt = true,
+  }) {
+    return format(toUnitFromMm(value),
         showSuffix: showSuffix,
         fractionDigits: fractionDigits,
         removeZero: removeZero,
@@ -185,11 +209,11 @@ class PixelUnit extends IUnit {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
     String space = " ",
   }) {
     return "${value.toDigits(
-      digits: fractionDigits,
+      digits: fractionDigits ?? digits,
       removeZero: removeZero,
       ensureInt: ensureInt,
     )}${showSuffix ? space + suffix : ''}";
@@ -219,11 +243,11 @@ class DpUnit extends IUnit {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
     String space = " ",
   }) {
     return "${value.toDigits(
-      digits: fractionDigits,
+      digits: fractionDigits ?? digits,
       removeZero: removeZero,
       ensureInt: ensureInt,
     )}${showSuffix ? space + suffix : ''}";
@@ -255,11 +279,11 @@ class MmUnit extends IUnit {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
     String space = " ",
   }) {
     return "${value.toDigits(
-      digits: fractionDigits,
+      digits: fractionDigits ?? digits,
       removeZero: removeZero,
       ensureInt: ensureInt,
     )}${showSuffix ? space + suffix : ''}";
@@ -289,11 +313,11 @@ class PtUnit extends IUnit {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
     String space = " ",
   }) {
     return "${value.toDigits(
-      digits: fractionDigits,
+      digits: fractionDigits ?? digits,
       removeZero: removeZero,
       ensureInt: ensureInt,
     )}${showSuffix ? space + suffix : ''}";
@@ -315,6 +339,9 @@ class InchUnit extends IUnit {
   @override
   String get suffix => "in";
 
+  @override
+  int get digits => kInchFractionDigits;
+
   const InchUnit();
 
   @override
@@ -323,11 +350,11 @@ class InchUnit extends IUnit {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kInchFractionDigits,
+    int? fractionDigits,
     String space = " ",
   }) {
     return "${value.toDigits(
-      digits: fractionDigits,
+      digits: fractionDigits ?? digits,
       removeZero: removeZero,
       ensureInt: ensureInt,
     )}${showSuffix ? space + suffix : ''}";
@@ -337,7 +364,7 @@ class InchUnit extends IUnit {
   String formatFromDp(
     num value, {
     bool showSuffix = true,
-    int fractionDigits = kInchFractionDigits,
+    int? fractionDigits,
     bool removeZero = true,
     bool ensureInt = true,
   }) {
@@ -402,12 +429,18 @@ extension UnitNumEx on num {
     return unit.toPx(this);
   }
 
+  ///[toPixel]
+  @pixel
+  double toPixelFromMm([@unit IUnit unit = IUnit.mm]) {
+    return unit.toPx(this);
+  }
+
   /// 格式化成对应单位描述的值
   String formatUnitValue({
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
     @unit required IUnit unit,
   }) {
     return unit.format(
@@ -424,7 +457,7 @@ extension UnitNumEx on num {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
   }) {
     return formatUnitValue(
       showSuffix: showSuffix,
@@ -439,7 +472,7 @@ extension UnitNumEx on num {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
   }) {
     return formatUnitValue(
       showSuffix: showSuffix,
@@ -454,7 +487,7 @@ extension UnitNumEx on num {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kFractionDigits,
+    int? fractionDigits,
   }) {
     return formatUnitValue(
       showSuffix: showSuffix,
@@ -469,7 +502,7 @@ extension UnitNumEx on num {
     bool showSuffix = true,
     bool removeZero = true,
     bool ensureInt = false,
-    int fractionDigits = kInchFractionDigits,
+    int? fractionDigits,
   }) {
     return formatUnitValue(
       showSuffix: showSuffix,

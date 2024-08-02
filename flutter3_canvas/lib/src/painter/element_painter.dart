@@ -616,6 +616,7 @@ class ElementPainter extends IPainter
   /// 这种方式翻转元素, 有可能会跑到边界外, 所以需要重新计算边界
   /// [flipX] 是否要水平翻转
   /// [flipY] 是否要垂直翻转
+  /// [CanvasElementControlManager.flipElement]
   @api
   void flipElement({bool? flipX, bool? flipY}) {
     paintProperty?.let((it) {
@@ -626,6 +627,7 @@ class ElementPainter extends IPainter
 
   /// 使用缩放的方式翻转元素
   /// 这种方法的翻转不会跑到边界外
+  /// [CanvasElementControlManager.flipElementWithScale]
   @api
   void flipElementWithScale({bool? flipX, bool? flipY, Offset? anchor}) {
     final scaleMatrix = Matrix4.identity()
@@ -1313,6 +1315,7 @@ class PaintProperty with EquatableMixin {
 
   /// 获取元素的边界
   /// [resetElementAngle] 是否要获取重置角度后的元素边界
+  /// [ElementPainter.elementsBounds]
   @sceneCoordinate
   Rect getBounds(bool resetElementAngle) {
     return resetElementAngle ? paintBounds : paintScaleRotateBounds;
