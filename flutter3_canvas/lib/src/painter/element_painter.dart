@@ -1129,6 +1129,8 @@ class ElementGroupPainter extends ElementPainter {
     });
   }
 
+  /// 群组旋转元素
+  /// 最终调用[rotateElement]
   @override
   void rotateBy(double angle, {Offset? anchor}) {
     super.rotateBy(angle, anchor: anchor);

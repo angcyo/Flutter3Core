@@ -146,7 +146,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
 
     final keyboard = NumberKeyboardLayout(
       showDecimal: isSupportDecimal,
-      showNegative: isSupportDecimal,
+      showNegative: isSupportNegative,
       onKeyboardInput: (keyboard, type) {
         if (type == NumberKeyboardType.finish) {
           _onSelfFinishInput();
