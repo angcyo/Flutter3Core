@@ -609,6 +609,61 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
+  /// 更新元素的大小
+  /// [width].[height]需要更新到的目标大小
+  /// [scaleElement]
+  @api
+  @supportUndo
+  void updateElementSize(
+    ElementPainter? elementPainter, {
+    @dp double? width,
+    @dp double? height,
+    Offset? anchor,
+    bool? isLockRatio,
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null) {
+      return;
+    }
+    if (width == null && height == null) {
+      return;
+    }
+    final bounds =
+        elementPainter.paintProperty?.getBounds(enableResetElementAngle);
+    if (bounds == null) {
+      assert(() {
+        l.w('无法确定元素位置,操作被忽略');
+        return true;
+      }());
+      return;
+    }
+    isLockRatio ??= elementPainter.isLockRatio;
+    double sx = 1;
+    double sy = 1;
+    if (!isLockRatio) {
+      //自由比例
+      sx = width == null ? 1.0 : width / bounds.width;
+      sy = height == null ? 1.0 : height / bounds.height;
+    } else {
+      //锁定比例
+      if (width != null) {
+        sx = width / bounds.width;
+        sy = sx;
+      } else {
+        sy = height == null ? 1.0 : height / bounds.height;
+        sx = sy;
+      }
+    }
+    scaleElement(
+      elementPainter,
+      sx: sx,
+      sy: sy,
+      anchor: anchor,
+      isLockRatio: isLockRatio,
+      undoType: undoType,
+    );
+  }
+
   /// 按比例缩放元素
   /// [translateElement]
   /// [scaleElement]
@@ -622,7 +677,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     double? sx,
     double? sy,
     Offset? anchor,
-    bool isLockRatio = false,
+    bool? isLockRatio,
     UndoType undoType = UndoType.normal,
   }) {
     if (elementPainter == null) {
@@ -630,6 +685,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
     sx ??= 1;
     sy ??= 1;
+    isLockRatio ??= elementPainter.isLockRatio;
     final limit = controlLimit.limitScale(sx, sy, isLockRatio,
         elementPainter.paintProperty?.getBounds(enableResetElementAngle));
     sx = limit[0];
