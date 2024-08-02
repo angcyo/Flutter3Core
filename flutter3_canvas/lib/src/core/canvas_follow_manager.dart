@@ -74,7 +74,6 @@ class CanvasFollowManager with CanvasComponentMixin {
     bool? awaitAnimate,
     bool? restoreDefault /*当没有rect时, 是否恢复默认的100%*/,
   }) {
-    //debugger();
     if (!canvasViewBox.isCanvasBoxInitialize) {
       //画布还没有初始化完成
       scheduleMicrotask(() {
@@ -91,6 +90,8 @@ class CanvasFollowManager with CanvasComponentMixin {
       });
       return;
     }
+
+    //debugger();
 
     alignment ??= this.alignment;
     margin ??= this.margin;

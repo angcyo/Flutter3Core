@@ -288,6 +288,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void followPainter({
     @sceneCoordinate Rect? rect,
     ElementPainter? elementPainter,
+    Alignment? alignment,
+    EdgeInsets? margin,
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
         .canvasElementControlManager.enableResetElementAngle);
@@ -296,10 +298,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }
     canvasFollowManager.followRect(
       rect,
-      margin: const EdgeInsets.all(kXxh),
       enableZoomOut: true,
       enableZoomIn: false,
-      alignment: Alignment.center,
+      alignment: alignment,
+      margin: margin,
       animate: true,
       awaitAnimate: false,
     );
