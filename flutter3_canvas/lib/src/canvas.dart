@@ -202,6 +202,9 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasUngroupChanged]
   final void Function(ElementGroupPainter group)? onCanvasUngroupChangedAction;
 
+  /// [CanvasDelegate.dispatchCanvasContentChanged]
+  final void Function()? onCanvasContentChangedAction;
+
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
@@ -221,5 +224,6 @@ class CanvasListener {
     this.onCanvasGroupChangedAction,
     this.onCanvasUngroupChangedAction,
     this.onControlStateChangedAction,
+    this.onCanvasContentChangedAction,
   });
 }

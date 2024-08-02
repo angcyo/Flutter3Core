@@ -55,6 +55,9 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
       : null;
 
   /// 画布最佳的元素中心点位置
+  ///
+  /// 当画布内容改变时, 请主动调用
+  /// [CanvasDelegate.dispatchCanvasContentChanged]派发事件
   @dp
   @sceneCoordinate
   Offset? get canvasCenter =>

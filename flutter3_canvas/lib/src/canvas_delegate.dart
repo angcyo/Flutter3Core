@@ -531,6 +531,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
+  /// [CanvasContentManager.canvasCenter]画布内容改变通知
+  void dispatchCanvasContentChanged() {
+    _eachCanvasListener((element) {
+      element.onCanvasContentChangedAction?.call();
+    });
+  }
+
   //endregion ---事件派发---
 
   //region ---辅助---
