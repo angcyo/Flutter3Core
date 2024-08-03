@@ -50,6 +50,9 @@ class GlobalTheme {
   /// 图标正常的颜色
   Color get icoNormalColor => const Color(0xff6f6f6f);
 
+  /// 图标禁用的颜色
+  Color get icoDisableColor => const Color(0xff949496);
+
   /// 灰度图标的颜色
   Color get icoGrayColor => const Color(0xff333333);
 

@@ -594,6 +594,12 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+  /// 截取字符串, 超过[length]的部分, 会用[ellipsis]代替
+  String ellipsis(int? length, [String ellipsis = "..."]) =>
+      (length != null && length < this.length)
+          ? "${substring(0, length)}$ellipsis"
+          : this;
+
   /// 转换成[DateTime]
   /// [pattern] 时间模板 'yyyy-MM-dd'
   /// ```
