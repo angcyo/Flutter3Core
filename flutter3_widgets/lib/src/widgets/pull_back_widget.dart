@@ -136,7 +136,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
   void didUpdateWidget(covariant PullBackWidget oldWidget) {
     //debugger();
     super.didUpdateWidget(oldWidget);
-    if (widget.pullMaxBound != null) {
+    if (widget.pullMaxBound != oldWidget.pullMaxBound) {
       _handlePullMaxBound();
       updateState();
     }

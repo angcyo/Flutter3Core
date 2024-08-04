@@ -116,8 +116,8 @@ class OverlayManagerController {
 
   /// 显示一个[OverlayEntryInfo]
   void showOverlayInfo(OverlayEntryInfo entry) {
-    overlayKey.currentState?.insert(entry.entry);
     _subOverlayEntries.add(entry);
+    overlayKey.currentState?.insert(entry.entry);
   }
 
   /// 显示一个[widget], 最终还是[OverlayEntry]
