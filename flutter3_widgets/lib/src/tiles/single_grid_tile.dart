@@ -14,6 +14,9 @@ class SingleGridTile extends StatelessWidget with TileMixin {
   final Color? iconColor;
   final Widget? iconWidget;
 
+  /// 图标右上角的提示小部件
+  final Widget? iconTipWidget;
+
   /// 图标的装饰
   final Decoration? iconDecoration;
 
@@ -61,6 +64,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     this.iconDecorationSize = 48,
     this.iconFillDecorationColor,
     this.iconFillDecoration,
+    this.iconTipWidget,
     //--
     this.minHeight,
     this.label,
@@ -98,7 +102,17 @@ class SingleGridTile extends StatelessWidget with TileMixin {
           .size(size: iconDecorationSize)
           .backgroundDecoration(decoration);
     }
+    if (iconTipWidget != null) {
+      top = top?.stackOf(
+        iconTipWidget!.position(
+          right: -10,
+          top: -10,
+        ),
+        clipBehavior: Clip.none,
+      );
+    }
 
+    //--
     final bottom = (labelWidget ??
             label
                 ?.ellipsis(labelMaxLength)
