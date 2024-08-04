@@ -99,6 +99,10 @@ extension DynamicEx on dynamic {
 
 final int __int64MaxValue = double.maxFinite.toInt();
 
+extension ObjectNullEx on Object? {
+  bool get isNil => this == null || isNullOrEmpty(this);
+}
+
 extension ObjectEx on Object {
   /// 弱引用
   WeakReference<T> toWeakRef<T extends Object>() => WeakReference<T>(this as T);

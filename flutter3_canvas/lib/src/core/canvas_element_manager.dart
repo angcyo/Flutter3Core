@@ -253,6 +253,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selected = false,
     bool followPainter = false,
     UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (element == null) {
       assert(() {
@@ -267,6 +268,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       selected: selected,
       followPainter: followPainter,
       undoType: undoType,
+      selectType: selectType,
     );
   }
 
@@ -305,11 +307,16 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       element.attachToCanvasDelegate(canvasDelegate);
     }
     canvasDelegate.dispatchCanvasElementListChanged(
-        old, elements, list, undoType);
+      old,
+      elements,
+      list,
+      undoType,
+      selectType: selectType,
+    );
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, list);
 
     if (selected) {
-      resetSelectElement(list);
+      resetSelectElement(list, selectType: selectType);
       if (followPainter) {
         canvasDelegate.followPainter(elementPainter: selectComponent);
       }
@@ -331,7 +338,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
             element.detachFromCanvasDelegate(canvasDelegate);
           }
           canvasDelegate.dispatchCanvasElementListChanged(
-              newList, old, list, UndoType.undo);
+            newList,
+            old,
+            list,
+            UndoType.undo,
+            selectType: selectType,
+          );
         },
         () {
           //debugger();
@@ -340,7 +352,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
             element.attachToCanvasDelegate(canvasDelegate);
           }
           canvasDelegate.dispatchCanvasElementListChanged(
-              old, newList, list, UndoType.redo);
+            old,
+            newList,
+            list,
+            UndoType.redo,
+            selectType: selectType,
+          );
         },
       ));
     }

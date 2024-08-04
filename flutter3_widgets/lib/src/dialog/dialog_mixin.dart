@@ -295,10 +295,12 @@ mixin DialogMixin implements TranslationTypeImpl {
 
   /// 关闭一个对话框, 如果[close]为true
   @callPoint
-  void closeDialogIf(BuildContext? context, [bool close = true]) {
+  Future<bool> closeDialogIf(BuildContext? context, [bool close = true]) async {
     if (close && context?.isMounted == true) {
-      context?.pop(popDialogResult);
+      //context?.pop(popDialogResult);
+      return await context?.maybePop(popDialogResult) ?? false;
     }
+    return false;
   }
 
 //endregion 辅助方法

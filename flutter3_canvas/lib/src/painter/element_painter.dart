@@ -215,6 +215,29 @@ class ElementPainter extends IPainter
     }
   }
 
+  /// 更新元素的左上角到指定的位置
+  /// 只修改[PaintProperty.left].[PaintProperty.top]
+  @api
+  void updateLocationTo(@sceneCoordinate @dp Offset? location) {
+    if (location == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    final property = paintProperty;
+    if (property != null) {
+      final oldBounds = property.getBounds(true);
+      final translate = Matrix4.identity()
+        ..translate(
+          location.dx - oldBounds.lt.dx,
+          location.dy - oldBounds.lt.dy,
+        );
+      paintProperty = property.copyWith()..applyTranslate(translate);
+    }
+  }
+
   /// 更新元素的中心点到指定的位置
   /// 只修改[PaintProperty.left].[PaintProperty.top]
   @api
@@ -231,7 +254,9 @@ class ElementPainter extends IPainter
       final oldBounds = property.getBounds(true);
       final translate = Matrix4.identity()
         ..translate(
-            center.dx - oldBounds.center.dx, center.dy - oldBounds.center.dy);
+          center.dx - oldBounds.center.dx,
+          center.dy - oldBounds.center.dy,
+        );
       paintProperty = property.copyWith()..applyTranslate(translate);
     }
   }
@@ -554,6 +579,9 @@ class ElementPainter extends IPainter
   //region ---apply paintProperty--
 
   /// 平移元素
+  /// [translateElement]
+  /// [translateElementBy]
+  /// [translateElementTo]
   @api
   void translateElement(Matrix4 matrix) {
     paintProperty?.let((it) {
@@ -562,7 +590,32 @@ class ElementPainter extends IPainter
     dispatchSelfElementRawChanged(ElementDataType.size);
   }
 
+  /// 平移元素, 将元素平移一定的距离[tx].[ty]
+  /// [translateElement]
+  /// [translateElementBy]
+  /// [translateElementTo]
+  @api
+  void translateElementBy({
+    double? tx,
+    double? ty,
+    Offset? offset,
+  }) {
+    tx ??= offset?.dx;
+    ty ??= offset?.dy;
+    if (tx == null && ty == 0) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    translateElement(createTranslateMatrix(tx: tx ?? 0.0, ty: ty ?? 0.0));
+  }
+
   /// 平移元素, 将元素平移到指定位置[x].[y]
+  /// [translateElement]
+  /// [translateElementBy]
+  /// [translateElementTo]
   @api
   void translateElementTo({
     double? x,

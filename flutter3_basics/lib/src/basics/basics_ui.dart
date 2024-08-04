@@ -1408,8 +1408,10 @@ extension WidgetEx on Widget {
     return intercept ? popScope(false, (didPop) {}) : this;
   }
 
-  /// 拦截pop, 并实现自定义的操作
-  /// 如果[action]中不执行任何操作, 则窗口无法被back按键关闭
+  /// 拦截[maybePop]操作, 并实现自定义的操作
+  /// 但是无法拦截[pop]操作
+  /// 如果[action]中不执行任何操作, 则窗口无法被back按键关闭.
+  /// 请在[action]中执行[pop]操作.才能关闭界面.
   /// [action] `navigatorOf(rootNavigator).pop(result);`
   Widget interceptPopResult(Action action) {
     return popScope(false, (didPop) {

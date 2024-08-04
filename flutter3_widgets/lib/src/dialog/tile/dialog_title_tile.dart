@@ -6,7 +6,7 @@ part of '../dialog.dart';
 ///
 /// 对话框的标题布局tile
 ///  [leading]...[title]...[trailing]
-///  [line]
+///  [bottomLine]
 ///
 /// [CoreDialogTitle] 带控制
 class DialogTitleTile extends StatelessWidget with TileMixin {
@@ -28,8 +28,15 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
   final TextStyle? subTitleTextStyle;
 
   ///
-  final bool enableLine;
-  final Widget? line;
+  final bool enableTopLine;
+  final Widget? topLine;
+
+  ///
+  final bool enableBottomLine;
+  final Widget? bottomLine;
+
+  /// 填充内边距
+  final EdgeInsetsGeometry? padding;
 
   const DialogTitleTile({
     super.key,
@@ -41,10 +48,13 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     this.trailing,
     this.enableLeading = true,
     this.enableTrailing = true,
-    this.line,
-    this.enableLine = true,
+    this.bottomLine,
+    this.enableBottomLine = true,
+    this.enableTopLine = false,
+    this.topLine,
     this.titleTextStyle,
     this.subTitleTextStyle,
+    this.padding,
   });
 
   @override
@@ -69,15 +79,20 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
       subTitleWidget,
     ].column(crossAxisAlignment: CrossAxisAlignment.center);
 
-    return [
+    final body = [
       leading?.colorFiltered(
           color: enableLeading ? null : globalTheme.disableColor),
       titleColumn?.expanded(),
       trailing?.colorFiltered(
           color: enableTrailing ? null : globalTheme.disableColor),
-    ]
-        .row()!
-        .constrainedMin(minHeight: kTitleHeight)
-        .columnOf(enableLine ? (line ?? horizontalLine(context)) : null);
+    ].row()!.constrainedMin(minHeight: kTitleHeight).paddingInsets(padding);
+    if (enableTopLine != true && enableBottomLine != true) {
+      return body;
+    }
+    return [
+      if (enableTopLine) topLine ?? horizontalLine(context),
+      body,
+      if (enableBottomLine) bottomLine ?? horizontalLine(context),
+    ].column()!;
   }
 }

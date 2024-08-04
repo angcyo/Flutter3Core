@@ -13,6 +13,7 @@ class InkButton extends StatelessWidget {
   final bool isCircleWell;
   final EdgeInsetsGeometry? padding;
   final bool enable;
+  final Color? splashColor;
 
   const InkButton(
     this.child, {
@@ -22,6 +23,7 @@ class InkButton extends StatelessWidget {
     this.minHeight = kInteractiveHeight,
     this.enable = true,
     this.isCircleWell = true,
+    this.splashColor,
     this.padding = const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
   });
 
@@ -38,6 +40,7 @@ class InkButton extends StatelessWidget {
                     }
                   : null,
               customBorder: isCircleWell ? const CircleBorder() : null,
+              splashColor: splashColor,
             )
             .material() ??
         empty;
