@@ -10,8 +10,8 @@ class CanvasUndoManager extends UndoActionManager {
   CanvasUndoManager(this.canvasDelegate);
 
   @override
-  void notifyChange(UndoType fromType) {
-    super.notifyChange(fromType);
+  void notifyChanged(UndoType fromType) {
+    super.notifyChanged(fromType);
     canvasDelegate.dispatchCanvasUndoChanged(this, fromType);
   }
 

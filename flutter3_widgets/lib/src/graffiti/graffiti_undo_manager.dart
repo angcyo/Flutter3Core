@@ -11,8 +11,8 @@ class GraffitiUndoManager extends UndoActionManager {
   GraffitiUndoManager(this.graffitiDelegate);
 
   @override
-  void notifyChange(UndoType fromType) {
-    super.notifyChange(fromType);
+  void notifyChanged(UndoType fromType) {
+    super.notifyChanged(fromType);
     graffitiDelegate.dispatchGraffitiUndoChanged(this, fromType);
   }
 }

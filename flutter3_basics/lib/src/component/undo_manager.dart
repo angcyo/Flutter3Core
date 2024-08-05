@@ -5,9 +5,13 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/03/12
 ///
 /// 回退栈管理
+/// [UndoActionWidget]
 class UndoActionManager with Diagnosticable {
   final List<UndoActionItem> undoList = [];
   final List<UndoActionItem> redoList = [];
+
+  /// 是否操作过, 回退列表不为空, 则表示操作过
+  bool get isChanged => undoList.isNotEmpty;
 
   /// 添加一个可以撤销的操作
   /// 每次添加一个撤销操作, 都会会清空重做列表
@@ -15,7 +19,7 @@ class UndoActionManager with Diagnosticable {
     undoList.add(item);
     redoList.clear();
 
-    notifyChange(UndoType.normal);
+    notifyChanged(UndoType.normal);
   }
 
   /// 回退
@@ -29,7 +33,7 @@ class UndoActionManager with Diagnosticable {
       item.doUndo();
       redoList.add(item);
 
-      notifyChange(UndoType.undo);
+      notifyChanged(UndoType.undo);
     }
   }
 
@@ -45,7 +49,7 @@ class UndoActionManager with Diagnosticable {
       item.doRedo();
       undoList.add(item);
 
-      notifyChange(UndoType.redo);
+      notifyChanged(UndoType.redo);
     }
   }
 
@@ -92,8 +96,8 @@ class UndoActionManager with Diagnosticable {
     _changeListeners.remove(listener);
   }
 
-  void notifyChange(UndoType fromType) {
-    for (var listener in _changeListeners) {
+  void notifyChanged(UndoType fromType) {
+    for (final listener in _changeListeners) {
       listener();
     }
   }
@@ -153,3 +157,102 @@ class _UndoAnnotation {
 }
 
 const supportUndo = _UndoAnnotation();
+
+/// 撤销回退小部件
+/// [UndoActionManager]
+class UndoActionWidget extends StatefulWidget {
+  final UndoActionManager undoActionManager;
+  final Widget? undoWidget;
+  final Widget? redoWidget;
+
+  const UndoActionWidget(
+    this.undoActionManager, {
+    super.key,
+    this.undoWidget,
+    this.redoWidget,
+  });
+
+  @override
+  State<UndoActionWidget> createState() => _UndoActionWidgetState();
+}
+
+class _UndoActionWidgetState extends State<UndoActionWidget> {
+  UndoActionManager get undoManager => widget.undoActionManager;
+
+  @override
+  void initState() {
+    widget.undoActionManager.addChangeListener(_handleUndoActionChange);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.undoActionManager.removeChangeListener(_handleUndoActionChange);
+    super.dispose();
+  }
+
+  ///
+  @override
+  void didUpdateWidget(covariant UndoActionWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+
+    //撤销
+    final canUndo = undoManager.canUndo();
+    Widget undo = IconButton(
+        onPressed: canUndo
+            ? () {
+                undoManager.undo();
+              }
+            : null,
+        icon: widget.undoWidget ?? const Icon(Icons.undo));
+    if (isDebug) {
+      undo = undo.stackOf(
+        Text(
+          "${undoManager.undoList.length}",
+          style: const TextStyle(fontSize: 9),
+        ),
+        alignment: AlignmentDirectional.center,
+      );
+    }
+    if (!canUndo) {
+      undo = undo.colorFiltered(color: globalTheme.icoDisableColor);
+    }
+
+    //重做
+    final canRedo = undoManager.canRedo();
+    Widget redo = IconButton(
+        onPressed: canRedo
+            ? () {
+                undoManager.redo();
+              }
+            : null,
+        icon: widget.redoWidget ?? const Icon(Icons.redo));
+    if (isDebug) {
+      redo = redo.stackOf(
+        Text(
+          "${undoManager.redoList.length}",
+          style: const TextStyle(fontSize: 9),
+        ),
+        alignment: AlignmentDirectional.center,
+      );
+    }
+    if (!canRedo) {
+      redo = redo.colorFiltered(color: globalTheme.icoDisableColor);
+    }
+
+    return [
+          undo,
+          redo,
+        ].row(mainAxisSize: MainAxisSize.min) ??
+        empty;
+  }
+
+  void _handleUndoActionChange() {
+    updateState();
+  }
+}
