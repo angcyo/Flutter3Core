@@ -217,7 +217,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
     if (event.isTouchEvent && event.isPointerDown) {
       //手势按下通知
-      canvasDelegate.dispatchPointerDown(localPosition);
+      canvasDelegate.dispatchPointerDown(
+        localPosition,
+        elementMenuControl._touchMenu,
+        translateControl._downElementList,
+        translateControl._isDownSelectComponent,
+      );
     }
   }
 
@@ -1003,10 +1008,13 @@ class ElementSelectComponent extends ElementGroupPainter
   Offset _downScenePoint = Offset.zero;
 
   /// 按下时, 选中的元素列表
+  /// [TranslateControl._downElementList]
+  /// [ElementSelectComponent._downElementList]
   List<ElementPainter>? _downElementList;
 
   @override
   bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    //debugger();
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(dispatch, event)) {
         //debugger();

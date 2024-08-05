@@ -418,6 +418,19 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     refresh();
   }
 
+  /// 按下时, 有多个元素需要被选中.
+  /// 默认按下选中回调只会回调最上层的元素, 可以通过此方法弹出选择其他元素的对话框
+  void dispatchCanvasSelectElementList(
+    ElementSelectComponent selectComponent,
+    List<ElementPainter>? list,
+    ElementSelectType selectType,
+  ) {
+    _eachCanvasListener((element) {
+      element.onCanvasSelectElementListAction
+          ?.call(selectComponent, list, selectType);
+    });
+  }
+
   /// 元素列表发生改变
   void dispatchCanvasElementListChanged(
     List<ElementPainter> from,
@@ -476,9 +489,19 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 手势按下时回调
-  void dispatchPointerDown(@viewCoordinate Offset position) {
+  /// [position] 按下时的坐标
+  /// [downMenu] 是否有菜单在手势下面
+  /// [downElementList] 按下时, 有哪些元素在手势下面
+  /// [isRepeat] 是否是重复按下, 在选择器上重复按下
+  void dispatchPointerDown(
+    @viewCoordinate Offset position,
+    ElementMenu? downMenu,
+    List<ElementPainter>? downElementList,
+    bool isRepeat,
+  ) {
     _eachCanvasListener((element) {
-      element.onPointerDownAction?.call(position);
+      element.onPointerDownAction
+          ?.call(position, downMenu, downElementList, isRepeat);
     });
   }
 

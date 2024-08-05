@@ -683,6 +683,23 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
   TranslateControl(CanvasElementControlManager canvasElementControlManager)
       : super(canvasElementControlManager, ControlTypeEnum.translate);
 
+  /// 是否在选择器上重复按下?
+  bool _isDownSelectComponent = false;
+
+  /// 按下时, 选中的元素列表
+  /// [TranslateControl._downElementList]
+  /// [ElementSelectComponent._downElementList]
+  List<ElementPainter>? _downElementList;
+
+  @override
+  void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    super.dispatchPointerEvent(dispatch, event);
+    if (event.isPointerDown || event.isPointerCancel) {
+      _isDownSelectComponent = false;
+      _downElementList = null;
+    }
+  }
+
   @override
   bool interceptPointerEvent(
       PointerDispatchMixin dispatch, PointerEvent event) {
@@ -695,11 +712,17 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         if (event.isPointerDown) {
           _isFirstTranslate = true;
           downScenePoint = canvasViewBox.toScenePoint(event.localPosition);
+
+          final downElementList = canvasElementControlManager
+              .canvasElementManager
+              .findElement(point: downScenePoint);
+          _downElementList = downElementList;
+
           if (selectComponent.hitTest(point: downScenePoint)) {
-            //
-            //debugger();
+            //在选择器上按下
             isPointerDownIn = true;
             isFirstHandle = true;
+            _isDownSelectComponent = true;
             canvasElementControlManager
                 .updatePaintInfoType(PaintInfoType.location);
             //在元素上点击, 就需要拦截事件, 因为还有双击操作
@@ -707,10 +730,8 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
             return true;
           } else {
             //在选择器外按下, 可能是需要拖动其他元素
-            final downElementList = canvasElementControlManager
-                .canvasElementManager
-                .findElement(point: downScenePoint);
             final downElement = downElementList.lastOrNull;
+            _isDownSelectComponent = false;
             if (downElement != null) {
               //按在指定的元素上
               isPointerDownIn = true;
@@ -781,6 +802,14 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               _targetElement, _isFirstTranslate, true);
         }
         _isFirstTranslate = false;
+        if (isFirstHandle && (_downElementList?.size() ?? 0) > 1) {
+          //多个元素被选中的回调
+          canvasDelegate.dispatchCanvasSelectElementList(
+            canvasElementControlManager.elementSelectComponent,
+            _downElementList!,
+            ElementSelectType.pointer,
+          );
+        }
       }
     }
     super.onFirstPointerEvent(dispatch, event);

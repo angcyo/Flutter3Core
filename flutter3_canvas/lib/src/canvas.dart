@@ -112,12 +112,16 @@ class CanvasRenderBox extends RenderBox {
 /// 画布回调监听
 class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasPaint]
-  final void Function(CanvasDelegate delegate, int paintCount)?
-      onCanvasPaintAction;
+  final void Function(
+    CanvasDelegate delegate,
+    int paintCount,
+  )? onCanvasPaintAction;
 
   /// [CanvasDelegate.dispatchCanvasIdle]
-  final void Function(CanvasDelegate delegate, Duration lastRefreshTime)?
-      onCanvasIdleAction;
+  final void Function(
+    CanvasDelegate delegate,
+    Duration lastRefreshTime,
+  )? onCanvasIdleAction;
 
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]
   final void Function(
@@ -151,6 +155,13 @@ class CanvasListener {
     ElementSelectType selectType,
   )? onCanvasElementSelectChangedAction;
 
+  /// [CanvasDelegate.dispatchCanvasSelectElementList]
+  final void Function(
+    ElementSelectComponent selectComponent,
+    List<ElementPainter>? list,
+    ElementSelectType selectType,
+  )? onCanvasSelectElementListAction;
+
   /// [CanvasDelegate.dispatchCanvasElementListChanged]
   final void Function(
     List<ElementPainter> from,
@@ -176,11 +187,18 @@ class CanvasListener {
 
   /// [CanvasDelegate.dispatchTranslateElement]
   final void Function(
-          ElementPainter? targetElement, bool isFirstTranslate, bool isEnd)?
-      onTranslateElementAction;
+    ElementPainter? targetElement,
+    bool isFirstTranslate,
+    bool isEnd,
+  )? onTranslateElementAction;
 
   /// [CanvasDelegate.dispatchPointerDown]
-  final void Function(@viewCoordinate Offset position)? onPointerDownAction;
+  final void Function(
+    @viewCoordinate Offset position,
+    ElementMenu? downMenu,
+    List<ElementPainter>? downElementList,
+    bool isRepeat,
+  )? onPointerDownAction;
 
   /// [CanvasDelegate.dispatchTapMenu]
   final void Function(ElementMenu menu)? onTapMenuAction;
@@ -196,8 +214,10 @@ class CanvasListener {
   final void Function(CanvasUndoManager undoManager)? onCanvasUndoChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasGroupChanged]
-  final void Function(ElementGroupPainter group, List<ElementPainter> elements)?
-      onCanvasGroupChangedAction;
+  final void Function(
+    ElementGroupPainter group,
+    List<ElementPainter> elements,
+  )? onCanvasGroupChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasUngroupChanged]
   final void Function(ElementGroupPainter group)? onCanvasUngroupChangedAction;
@@ -213,6 +233,7 @@ class CanvasListener {
     this.onCanvasSelectBoundsChangedAction,
     this.onCanvasElementPropertyChangedAction,
     this.onCanvasElementSelectChangedAction,
+    this.onCanvasSelectElementListAction,
     this.onCanvasElementListChangedAction,
     this.onCanvasElementListAddChanged,
     this.onCanvasElementListRemoveChanged,
