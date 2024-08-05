@@ -121,7 +121,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
   @override
   void initState() {
     super.initState();
-    _handlePullMaxBound();
+    _handlePullMaxBound(false);
   }
 
   @override
@@ -136,31 +136,51 @@ class _PullBackWidgetState extends State<PullBackWidget>
   void didUpdateWidget(covariant PullBackWidget oldWidget) {
     //debugger();
     super.didUpdateWidget(oldWidget);
-    if (widget.pullMaxBound != oldWidget.pullMaxBound) {
-      _handlePullMaxBound();
-      updateState();
-    }
+    _handlePullMaxBound(widget.pullMaxBound == oldWidget.pullMaxBound);
+    updateState();
   }
 
-  void _handlePullMaxBound() {
+  void _handlePullMaxBound(bool restoreControllerValue) {
+    final oldValue = _pullBackController?.value;
     _pullBackController?.stop();
     _pullBackController?.dispose();
     _pullBackController = null;
     final pullMaxBound = widget.pullMaxBound;
     if (pullMaxBound == null) {
       _initController(1.0);
+      if (restoreControllerValue && oldValue != null) {
+        _pullBackController?.value = oldValue;
+      }
     } else if (pullMaxBound > 1) {
+      final oldChildHeight = _childHeight;
+      if (_childHeight != null) {
+        final height = _childHeight!;
+        _initController((_childHeight! - pullMaxBound) / height);
+        if (restoreControllerValue && oldValue != null) {
+          _pullBackController?.value = oldValue;
+        }
+      }
       scheduleMicrotask(() {
         final height = _childHeight;
-        if (height != null) {
-          _initController((height - pullMaxBound) / height);
+        if (height != null && height == oldChildHeight) {
+          //高度无变化
         } else {
-          _initController(1.0);
+          if (height != null) {
+            _initController((height - pullMaxBound) / height);
+          } else {
+            _initController(1.0);
+          }
+          if (restoreControllerValue && oldValue != null) {
+            _pullBackController?.value = oldValue;
+          }
+          updateState();
         }
-        updateState();
       });
     } else {
       _initController(pullMaxBound);
+      if (restoreControllerValue && oldValue != null) {
+        _pullBackController?.value = oldValue;
+      }
     }
   }
 
