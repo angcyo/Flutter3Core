@@ -183,10 +183,14 @@ class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
   //region --menu--
 
   /// 当选中的元素改变时触发, 此时可以更新菜单
+  /// [anchorPainter] 菜单要显示的锚点元素, 通常是[ElementSelectComponent]
+  /// [children] 选中的子元素集合
   /// [CanvasElementControlManager.onSelfSelectElementChanged]驱动
   @callPoint
   void onCanvasSelectElementChanged(
-      ElementPainter anchorPainter, List<ElementPainter>? children) {
+    ElementPainter anchorPainter,
+    List<ElementPainter>? children,
+  ) {
     if (onCreateElementMenuAction != null) {
       _menuBounds = null;
       elementMenuList.reset(onCreateElementMenuAction!(this, children));
