@@ -51,6 +51,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
       ],
       showDragHandle: false,
       bgColor: Colors.transparent,
+      clipTopRadius: null,
     ).paddingAll(kX);
   }
 }
