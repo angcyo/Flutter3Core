@@ -100,6 +100,10 @@ mixin AbsScrollPage {
     ));
   }
 
+  /// 是否是居中标题
+  @property
+  bool? isCenterTitle(BuildContext context) => null;
+
   /// 构建标题栏上的返回按钮
   @property
   Widget? buildAppBarLeading(BuildContext context) => null;
@@ -142,20 +146,31 @@ mixin AbsScrollPage {
   /// 构建顶部导航[AppBar]
   /// [AppBarBuilderFn]
   @property
-  PreferredSizeWidget? buildAppBar(BuildContext context) {
+  PreferredSizeWidget? buildAppBar(
+    BuildContext context, {
+    Widget? title,
+    Color? backgroundColor,
+    Color? foregroundColor,
+    double? elevation,
+    bool? centerTitle,
+    bool? automaticallyImplyLeading,
+  }) {
     final globalConfig = GlobalConfig.of(context);
     //debugger();
     return globalConfig.appBarBuilder(
       context,
       this,
       leading: buildAppBarLeading(context),
-      title: buildTitle(context),
+      automaticallyImplyLeading: automaticallyImplyLeading,
+      title: title ?? buildTitle(context),
+      centerTitle: centerTitle ?? isCenterTitle(context),
       actions: buildAppBarActions(context),
       bottom: buildAppBarBottom(context),
-      elevation: getAppBarElevation(context),
-      scrolledUnderElevation: getAppBarScrolledUnderElevation(context),
-      foregroundColor: getAppBarForegroundColor(context),
-      backgroundColor: getAppBarBackgroundColor(context),
+      elevation: elevation ?? getAppBarElevation(context),
+      scrolledUnderElevation:
+          getAppBarScrolledUnderElevation(context) ?? elevation,
+      foregroundColor: foregroundColor ?? getAppBarForegroundColor(context),
+      backgroundColor: backgroundColor ?? getAppBarBackgroundColor(context),
       //阴影高度
       shadowColor: getAppBarShadowColor(context),
       flexibleSpace: buildAppBarFlexibleSpace(context), //渐变背景

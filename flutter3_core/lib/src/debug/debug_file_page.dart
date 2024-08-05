@@ -32,7 +32,15 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
   dynamic _error;
 
   @override
-  PreferredSizeWidget? buildAppBar(BuildContext context) {
+  PreferredSizeWidget? buildAppBar(
+    BuildContext context, {
+    Widget? title,
+    Color? backgroundColor,
+    Color? foregroundColor,
+    double? elevation,
+    bool? centerTitle,
+    bool? automaticallyImplyLeading,
+  }) {
     final globalTheme = GlobalTheme.of(context);
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),

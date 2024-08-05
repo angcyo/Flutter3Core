@@ -34,6 +34,7 @@ typedef AppBarBuilderFn = PreferredSizeWidget? Function(
   BuildContext context,
   Object? page, {
   Widget? leading,
+  bool? automaticallyImplyLeading,
   Widget? title,
   List<Widget>? actions,
   PreferredSizeWidget? bottom,
@@ -350,6 +351,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     context,
     state, {
     leading,
+    automaticallyImplyLeading,
     title,
     actions,
     bottom,
@@ -371,6 +373,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     //debugger();
     return AppBar(
       title: title,
+      automaticallyImplyLeading: automaticallyImplyLeading ?? true,
       leading: leading is IgnoreWidget
           ? null
           : leading ??
