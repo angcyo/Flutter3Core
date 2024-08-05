@@ -639,29 +639,64 @@ class ElementPainter extends IPainter
     });
   }
 
-  /// 旋转元素
+  /// 旋转元素, [ElementGroupPainter]]需要重写处理
   @api
+  @overridePoint
   void rotateElement(Matrix4 matrix) {
     paintProperty?.let((it) {
       paintProperty = it.copyWith()..applyRotate(matrix);
+      dispatchSelfElementRawChanged(ElementDataType.size);
     });
-    dispatchSelfElementRawChanged(ElementDataType.size);
   }
 
-  /// 旋转元素
-  /// [angle] 弧度
+  /// 旋转元素, [ElementGroupPainter]需要重写处理
+  @api
+  @overridePoint
+  void rotateElementTo(
+    double radians, {
+    Offset? anchor,
+  }) {
+    paintProperty?.let((it) {
+      paintProperty = it.copyWith()
+        ..rotateTo(
+          radians: radians,
+          anchor: anchor,
+        );
+      dispatchSelfElementRawChanged(ElementDataType.size);
+    });
+  }
+
+  /// 旋转元素, 以元素中心点为锚点
+  /// [radians] 弧度
   /// [anchor] 旋转锚点, 不指定时, 以元素中心点为锚点
   /// [applyMatrixWithAnchor]
+  /// [rotateElement]
   @api
+  @indirectProperty
   void rotateBy(
-    double angle, {
+    double radians, {
     Offset? anchor,
   }) {
     paintProperty?.let((it) {
       //debugger();
       anchor ??= it.paintCenter;
-      final matrix = Matrix4.identity()..rotateBy(angle, anchor: anchor);
+      final matrix = Matrix4.identity()..rotateBy(radians, anchor: anchor);
       rotateElement(matrix);
+    });
+  }
+
+  /// 旋转元素到指定角度, 以元素中心点为锚点
+  /// [radians] 弧度
+  @api
+  @indirectProperty
+  void rotateTo(
+    double radians, {
+    Offset? anchor,
+  }) {
+    paintProperty?.let((it) {
+      //debugger();
+      anchor ??= it.paintCenter;
+      rotateElementTo(radians, anchor: anchor);
     });
   }
 
@@ -1123,6 +1158,18 @@ class ElementGroupPainter extends ElementPainter {
     });
   }
 
+  /// 不推荐在[ElementSelectComponent]对象上使用此方法
+  /// 推荐使用[rotateElement]
+  @override
+  void rotateElementTo(double radians, {Offset? anchor}) {
+    final childRadians = radians - (paintProperty?.angle ?? 0);
+    super.rotateElementTo(radians, anchor: anchor);
+    children?.forEach((element) {
+      final matrix = Matrix4.identity()..rotateBy(childRadians, anchor: anchor);
+      element.rotateElement(matrix);
+    });
+  }
+
   @override
   void flipElement({bool? flipX, bool? flipY}) {
     super.flipElement(flipX: flipX, flipY: flipY);
@@ -1465,7 +1512,7 @@ class PaintProperty with EquatableMixin {
 
   /// 旋转到指定角度
   /// [angle] 角度
-  /// [radians] 角度
+  /// [radians] 弧度
   /// [anchor] 旋转锚点, 不指定时, 默认使用[paintBounds]中心
   /// [anchorAlignment] 锚点在[paintBounds]中的对齐位置
   /// [applyRotate]
@@ -1480,8 +1527,9 @@ class PaintProperty with EquatableMixin {
     if (radians == null) {
       return;
     }
+    //debugger();
     anchor ??= anchorAlignment?.withinRect(paintBounds) ?? paintBounds.center;
-    applyRotate(createRotateMatrix(radians, anchor: anchor));
+    applyRotate(createRotateMatrix(radians - this.angle, anchor: anchor));
   }
 
   /// 旋转操作
