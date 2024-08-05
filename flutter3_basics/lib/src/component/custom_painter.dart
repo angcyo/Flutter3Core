@@ -171,12 +171,12 @@ class OvalPainter extends CustomPainter {
 }
 
 /// 透明棋盘小部件
-class PixelTransparentWidget extends StatelessWidget {
+class TransparentPixelWidget extends StatelessWidget {
   final double cellSize;
 
   final Widget? child;
 
-  const PixelTransparentWidget({
+  const TransparentPixelWidget({
     super.key,
     this.child,
     this.cellSize = 20,
