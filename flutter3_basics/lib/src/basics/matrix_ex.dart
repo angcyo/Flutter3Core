@@ -390,7 +390,17 @@ extension Matrix4Ex on vector.Matrix4 {
 
   /// 反转矩阵, 返回新的矩阵
   /// [invertMatrix]
-  Matrix4 invertedMatrix() => Matrix4.inverted(this);
+  Matrix4 invertedMatrix() {
+    try {
+      return Matrix4.inverted(this);
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+      return this;
+    }
+  }
 
   /// [Matrix4Tween]
   /// [Matrix4.compose]

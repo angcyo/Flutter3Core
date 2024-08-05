@@ -29,11 +29,13 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
 
   ImageRenderObject(this.controller);
 
+  ///
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
   }
 
+  ///
   @override
   void detach() {
     _ticker?.dispose();
@@ -78,8 +80,19 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
     }
   }
 
+  /// 开启绘制边界后 [paint.offset]就会变为0
+  /// 但是放大镜组件就无法paint child了
+  @override
+  bool get isRepaintBoundary => false;
+
   @override
   void paint(PaintingContext context, ui.Offset offset) {
+    if (offset != Offset.zero) {
+      assert(() {
+        l.w("请使用[RepaintBoundary]包裹[ImageRenderWidget],否则手势计算不准确.");
+        return true;
+      }());
+    }
     controller._initIfNeed(this);
 
     final canvas = context.canvas;
@@ -111,6 +124,7 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
         }
         return true;
       }());*/
+      //debugger();
       canvas.withMatrix(
         controller.operateMatrix,
         () {
@@ -122,6 +136,7 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
         controller._paintCropOverlay(canvas, offset);
       }
     }
+    //debugPaintBoxBounds(context, offset);
   }
 
   //region ---Ticker---
@@ -218,6 +233,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   @autoInjectMark
   @initialize
   void _initIfNeed(ImageRenderObject renderObject) {
+    //debugger();
     _renderObject = renderObject;
     if (baseMatrix == null) {
       final Size size = (renderObject.size -
@@ -240,6 +256,8 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   }
 
   /// 基础矩阵
+  /// [_initIfNeed]
+  @autoInjectMark
   Matrix4? baseMatrix;
 
   /// 图片仅渲染时的矩阵
