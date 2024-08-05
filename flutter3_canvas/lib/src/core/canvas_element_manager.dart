@@ -1352,11 +1352,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 复制元素
   @api
   @supportUndo
-  void copyElement(ElementPainter? element,
-      {@dp Offset? offset,
-      bool selected = true,
-      bool showRect = true,
-      UndoType undoType = UndoType.normal}) {
+  void copyElement(
+    ElementPainter? element, {
+    @dp Offset? offset,
+    bool selected = true,
+    bool followPainter = true,
+    UndoType undoType = UndoType.normal,
+  }) {
     if (element == null) {
       assert(() {
         l.d('无效的操作');
@@ -1368,13 +1370,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       copyElementList(element.children,
           offset: offset,
           selected: selected,
-          showRect: showRect,
+          followPainter: followPainter,
           undoType: undoType);
     } else {
       copyElementList(element.ofList(),
           offset: offset,
           selected: selected,
-          showRect: showRect,
+          followPainter: followPainter,
           undoType: undoType);
     }
   }
@@ -1386,7 +1388,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     List<ElementPainter>? elementList, {
     @dp Offset? offset,
     bool selected = true,
-    bool showRect = true,
+    bool followPainter = true,
     UndoType undoType = UndoType.normal,
   }) {
     if (elementList == null) {
@@ -1405,7 +1407,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       newElementList,
       offset: offset,
       selected: selected,
-      followPainter: showRect,
+      followPainter: followPainter,
       undoType: undoType,
     );
   }

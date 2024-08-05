@@ -493,7 +493,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void copySelectedElement({
     @dp Offset? offset,
     bool selected = true,
-    bool showRect = true,
+    bool followPainter = true,
   }) {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
@@ -501,7 +501,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         list,
         offset: offset,
         selected: selected,
-        showRect: showRect,
+        followPainter: followPainter,
       );
     }
   }
@@ -779,7 +779,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 旋转元素
-  /// [angle] 旋转的角度, 单位: 弧度
+  /// [radians] 旋转的角度, 单位: 弧度
   /// [translateElement]
   /// [scaleElement]
   /// [rotateElement]
@@ -789,21 +789,49 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   @supportUndo
   void rotateElement(
     ElementPainter? elementPainter,
-    double? angle, {
+    double? radians, {
     Offset? anchor,
     UndoType undoType = UndoType.normal,
   }) {
-    if (elementPainter == null || angle == null) {
+    if (elementPainter == null || radians == null) {
       return;
     }
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
-      elementPainter.rotateBy(angle, anchor: anchor);
+      elementPainter.rotateBy(radians, anchor: anchor);
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager
           .addUntoState(undoStateStack, redoStateStack);
     } else {
-      elementPainter.rotateBy(angle, anchor: anchor);
+      elementPainter.rotateBy(radians, anchor: anchor);
+    }
+    if (enableResetElementAngle) {
+      elementSelectComponent.updateChildPaintPropertyFromChildren(true);
+      elementSelectComponent.updatePaintPropertyFromChildren(true);
+    }
+  }
+
+  /// 旋转元素到指定角度
+  /// [radians] 旋转的角度, 单位: 弧度
+  @api
+  @supportUndo
+  void rotateElementTo(
+    ElementPainter? elementPainter,
+    double? radians, {
+    Offset? anchor,
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null || radians == null) {
+      return;
+    }
+    if (undoType == UndoType.normal) {
+      final undoStateStack = elementPainter.createStateStack();
+      elementPainter.rotateTo(radians, anchor: anchor);
+      final redoStateStack = elementPainter.createStateStack();
+      canvasDelegate.canvasUndoManager
+          .addUntoState(undoStateStack, redoStateStack);
+    } else {
+      elementPainter.rotateTo(radians, anchor: anchor);
     }
     if (enableResetElementAngle) {
       elementSelectComponent.updateChildPaintPropertyFromChildren(true);
