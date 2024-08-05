@@ -380,6 +380,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 元素属性发生改变时触发
+  /// [propertyType] 标识当前的属性变化的类型
+  /// [fromUndoType] 标识当前的操作是否是来自回退栈/撤销/重做
   /// [PainterPropertyType.paint]
   /// [PainterPropertyType.state]
   /// [PainterPropertyType.data]
@@ -388,6 +390,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     dynamic from,
     dynamic to,
     PainterPropertyType propertyType,
+    UndoType? fromUndoType,
   ) {
     isElementPropertyChanged = true;
     /*assert(() {
@@ -395,10 +398,19 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       return true;
     }());*/
     canvasElementManager.canvasElementControlManager
-        .onSelfElementPropertyChanged(elementPainter, propertyType);
+        .onSelfElementPropertyChanged(
+      elementPainter,
+      propertyType,
+      fromUndoType,
+    );
     _eachCanvasListener((element) {
-      element.onCanvasElementPropertyChangedAction
-          ?.call(elementPainter, from, to, propertyType);
+      element.onCanvasElementPropertyChangedAction?.call(
+        elementPainter,
+        from,
+        to,
+        propertyType,
+        fromUndoType,
+      );
     });
     refresh();
   }

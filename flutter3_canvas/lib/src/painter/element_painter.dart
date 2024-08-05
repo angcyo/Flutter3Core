@@ -47,6 +47,7 @@ class ElementPainter extends IPainter
         old,
         value,
         PainterPropertyType.state,
+        null,
       );
     }
   }
@@ -62,6 +63,7 @@ class ElementPainter extends IPainter
       paintState,
       paintState,
       PainterPropertyType.state,
+      null,
     );
   }
 
@@ -76,6 +78,7 @@ class ElementPainter extends IPainter
         paintState,
         paintState,
         PainterPropertyType.state,
+        null,
       );
       if (!value) {
         //不可见元素操作
@@ -95,6 +98,7 @@ class ElementPainter extends IPainter
         paintState,
         paintState,
         PainterPropertyType.state,
+        null,
       );
       if (value) {
         //锁定元素操作
@@ -116,6 +120,7 @@ class ElementPainter extends IPainter
       paintState,
       paintState,
       PainterPropertyType.state,
+      null,
     );
   }
 
@@ -134,7 +139,8 @@ class ElementPainter extends IPainter
     final old = _paintProperty;
     _paintProperty = value;
     if (old != value) {
-      dispatchSelfPaintPropertyChanged(old, value, PainterPropertyType.paint);
+      dispatchSelfPaintPropertyChanged(
+          old, value, PainterPropertyType.paint, null);
     }
   }
 
@@ -557,12 +563,15 @@ class ElementPainter extends IPainter
     dynamic old,
     dynamic value,
     PainterPropertyType propertyType,
+    UndoType? fromUndoType,
   ) {
+    //debugger();
     canvasDelegate?.dispatchCanvasElementPropertyChanged(
       this,
       old,
       value,
       propertyType,
+      fromUndoType,
     );
   }
 

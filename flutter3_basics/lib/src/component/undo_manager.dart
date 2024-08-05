@@ -145,7 +145,10 @@ enum UndoType {
   undo,
 
   /// 重做操作
-  redo,
+  redo;
+
+  /// 是否是撤销/重做操作
+  bool get isUndoRedo => this == UndoType.undo || this == UndoType.redo;
 }
 
 /// 表示当前的操作支持撤销/重做

@@ -145,6 +145,7 @@ class CanvasListener {
     dynamic from,
     dynamic to,
     PainterPropertyType propertyType,
+    UndoType? fromUndoType,
   )? onCanvasElementPropertyChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementSelectChanged]

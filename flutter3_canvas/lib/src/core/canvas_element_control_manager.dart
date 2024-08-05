@@ -392,9 +392,21 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void onSelfElementPropertyChanged(
     ElementPainter element,
     PainterPropertyType propertyType,
+    UndoType? fromUndoType,
   ) {
     if (enableResetElementAngle) {
       if (isControlElement) {}
+    }
+    if (isSelectedElement) {
+      if (fromUndoType?.isUndoRedo == true &&
+          elementSelectComponent.children?.contains(element) == true) {
+        //当选中的元素被重做/撤销了, 则需要更新选择组件的属性
+        scheduleMicrotask(() {
+          elementSelectComponent
+              .updatePaintPropertyFromChildren(enableResetElementAngle);
+        });
+        //debugger();
+      }
     }
   }
 
@@ -1149,9 +1161,18 @@ class ElementSelectComponent extends ElementGroupPainter
 
   @override
   void dispatchSelfPaintPropertyChanged(
-      dynamic old, dynamic value, PainterPropertyType propertyType) {
+    dynamic old,
+    dynamic value,
+    PainterPropertyType propertyType,
+    UndoType? fromUndoType,
+  ) {
     canvasElementControlManager.updateControlBounds();
-    super.dispatchSelfPaintPropertyChanged(old, value, propertyType);
+    super.dispatchSelfPaintPropertyChanged(
+      old,
+      value,
+      propertyType,
+      fromUndoType,
+    );
   }
 
   ///
@@ -1169,13 +1190,14 @@ class ElementSelectComponent extends ElementGroupPainter
     return result;
   }
 
-  ///
+  /// 使用子元素的属性, 更新自身的绘制属性.
   @override
   void updatePaintPropertyFromChildren(bool resetGroupAngle) {
+    //debugger();
     super.updatePaintPropertyFromChildren(resetGroupAngle);
   }
 
-  /// 仅更新子元素的绘制属性, 不更新自身的
+  /// 仅更新子元素的绘制属性, 不更新自身的绘制属性
   /// [updatePaintPropertyFromChildren]
   /// [updateChildPaintPropertyFromChildren]
   @property
