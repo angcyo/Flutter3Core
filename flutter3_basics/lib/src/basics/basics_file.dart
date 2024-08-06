@@ -137,6 +137,22 @@ extension FileSystemEntityEx on FileSystemEntity {
   Future<bool> isFile() async => FileSystemEntity.isFile(path);
 
   bool isFileSync() => FileSystemEntity.isFileSync(path);
+
+  /// 文件对象
+  File? get file {
+    if (this is File) {
+      return this as File;
+    }
+    return null;
+  }
+
+  /// 文件夹对象
+  Directory? get directory {
+    if (this is Directory) {
+      return this as Directory;
+    }
+    return null;
+  }
 }
 
 extension FileEx on File {
@@ -553,6 +569,30 @@ extension DirectoryEx on Directory {
       }());
     }
     return false;
+  }
+
+  /// 复制文件夹的方法
+  /// [destination] 目标文件夹
+  /// [File.copy]
+  Future<bool> copyDirectory(Directory destination) async {
+    // 如果目标文件夹不存在，则创建它
+    if (!(await destination.exists())) {
+      await destination.create(recursive: true);
+    }
+
+    // 遍历源文件夹中的文件和子文件夹
+    await for (final entity in list()) {
+      if (entity is File) {
+        // 复制文件
+        await entity
+            .copy('${destination.path}/${entity.uri.pathSegments.last}');
+      } else if (entity is Directory) {
+        // 递归复制子文件夹
+        await entity.copyDirectory(
+            Directory('${destination.path}/${entity.uri.pathSegments.last}'));
+      }
+    }
+    return true;
   }
 }
 

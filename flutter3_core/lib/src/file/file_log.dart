@@ -25,6 +25,8 @@ const kLogPathName = "log"; //日志文件夹
 /// [Stream<List<int>>]/[List<int>]/[Uint8List]/[TypedData]|[Uint8List.buffer]->[ByteBuffer]
 /// [String]
 /// [LogEx.appendToFile]
+/// [FileSystemEntity].[File].[Directory].
+///
 typedef FileDataType = Object;
 
 extension LogEx on Object {
@@ -62,7 +64,7 @@ extension LogEx on Object {
   /// [filePath] 直接指定文件路径, 优先级1
   /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象, 优先级2
   /// [fileName] 日志文件名 , 优先级3
-  /// [folder] 上层文件夹
+  /// [folder] 上层文件夹, 文件夹复制时, 请使用此变量
   /// [limitLength] 是否限制日志文件的最大长度
   /// [wrapLog] 是否包裹一下日志信息, null:自动根据后缀[kLogExtension]判断
   /// [FileDataType] 支持的数据类型
@@ -149,6 +151,15 @@ extension LogEx on Object {
     } else if (this is Stream<List<int>>) {
       //debugger();
       await writeStream(this as Stream<List<int>>);
+    } else if (this is File) {
+      //debugger();
+      //文件复制
+      await (this as File).copy(filePath);
+    } else if (this is Directory) {
+      //debugger();
+      //文件夹复制
+      await (this as Directory)
+          .copyDirectory(Directory(folder ?? fileObj.parent.path));
     } else {
       await writeString("$this");
     }
