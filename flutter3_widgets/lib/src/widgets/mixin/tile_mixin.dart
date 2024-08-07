@@ -635,6 +635,7 @@ mixin TileMixin {
     EdgeInsetsGeometry? padding =
         const EdgeInsets.symmetric(horizontal: kH, vertical: kM),
     EdgeInsetsGeometry? margin,
+    Color? backgroundColor,
     BoxConstraints? constraints = kNumberConstraints,
   }) {
     final globalTheme = GlobalTheme.of(context);
@@ -653,7 +654,7 @@ mixin TileMixin {
       () {
         onTap?.call();
       },
-      backgroundColor: globalTheme.whiteSubBgColor,
+      backgroundColor: backgroundColor ?? globalTheme.itemWhiteBgColor,
       radius: kDefaultBorderRadiusL,
     ).paddingInsets(margin);
   }

@@ -464,18 +464,26 @@ abstract class ScrollContainerRenderBox<
     double height = 0;
     final children = getScrollChildren();
     //debugger();
-    final (childMaxWidth, childMaxHeight) = measureChildren(children);
+    var (childMaxWidth, childMaxHeight) = measureChildren(children);
+
+    if (axis == Axis.horizontal) {
+      childMaxWidth = getAllLinearChildWidth(children, gap: gap);
+    } else {
+      childMaxHeight = getAllLinearChildHeight(children, gap: gap);
+    }
 
     double? childFixedWidth;
-    if (selfConstraints?.widthType == ConstraintsType.wrapContent) {
-      childFixedWidth = childMaxWidth;
+    if (selfConstraints?.widthType == null ||
+        selfConstraints?.widthType == ConstraintsType.wrapContent) {
+      childFixedWidth = childMaxWidth + paddingHorizontal;
     } else if (selfConstraints?.widthType == ConstraintsType.fixedSize) {
       childFixedWidth = selfConstraints?.maxWidth;
     }
 
     double? childFixedHeight;
-    if (selfConstraints?.heightType == ConstraintsType.wrapContent) {
-      childFixedHeight = childMaxHeight;
+    if (selfConstraints?.heightType == null ||
+        selfConstraints?.heightType == ConstraintsType.wrapContent) {
+      childFixedHeight = childMaxHeight + paddingVertical;
     } else if (selfConstraints?.heightType == ConstraintsType.fixedSize) {
       childFixedHeight = selfConstraints?.maxHeight;
     }

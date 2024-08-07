@@ -63,7 +63,7 @@ class TabLayoutController extends TabController {
         //自动动画
         pageController.animateToPage(
           index,
-          duration: duration ?? kTabScrollDuration,
+          duration: duration,
           curve: curve,
         );
       } else {

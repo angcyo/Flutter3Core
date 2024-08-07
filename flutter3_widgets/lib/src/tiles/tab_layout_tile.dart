@@ -22,6 +22,20 @@ class LabelTabLayoutTile extends StatefulWidget {
   /// [label].[values]布局方向
   final Axis axis;
 
+  //--
+
+  /// [TabLayout] 是否完全展开
+  final bool isExpanded;
+
+  /// 指示器的颜色, 默认时主题[GlobalTheme.accentColor]
+  final Color? indicatorColor;
+
+  /// 背景的颜色, 默认时主题[GlobalTheme.itemWhiteBgColor]
+  final Color? backgroundColor;
+
+  /// 圆角大小
+  final double? borderRadius;
+
   const LabelTabLayoutTile({
     super.key,
     this.label,
@@ -31,6 +45,10 @@ class LabelTabLayoutTile extends StatefulWidget {
     this.valuesWidget,
     this.onTabIndexChanged,
     this.axis = Axis.horizontal,
+    this.isExpanded = true,
+    this.backgroundColor,
+    this.indicatorColor,
+    this.borderRadius = kDefaultBorderRadiusXX,
   });
 
   @override
@@ -96,11 +114,19 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
     final content = TabLayout(
       tabLayoutController: tabLayoutController,
       padding: const EdgeInsets.symmetric(horizontal: kM, vertical: kM),
-      bgDecoration: fillDecoration(color: globalTheme.itemWhiteBgColor),
+      bgDecoration: fillDecoration(
+        color: widget.backgroundColor ?? globalTheme.itemWhiteBgColor,
+        borderRadius: widget.borderRadius,
+      ),
+      /*selfConstraints:
+          LayoutBoxConstraints(widthType: ConstraintsType.wrapContent),*/
       children: [
         ...?children,
-        DecoratedBox(decoration: fillDecoration(color: globalTheme.accentColor))
-            .tabItemData(
+        DecoratedBox(
+            decoration: fillDecoration(
+          color: widget.indicatorColor ?? globalTheme.accentColor,
+          borderRadius: widget.borderRadius,
+        )).tabItemData(
           itemType: TabItemType.indicator,
           itemPaintType: TabItemPaintType.background,
         )
@@ -112,6 +138,11 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
     );
     return widget.axis == Axis.vertical
         ? [label?.align(Alignment.centerLeft), content].column()!
-        : [label, content.expanded()].row()!;
+        : [
+            label,
+            widget.isExpanded
+                ? content.expanded()
+                : content.align(Alignment.centerRight).expanded(),
+          ].row()!;
   }
 }

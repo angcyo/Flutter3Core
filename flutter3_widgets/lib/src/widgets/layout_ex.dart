@@ -289,7 +289,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
     return result;
   }
 
-  /// 获取所有子节点的宽度
+  /// 获取所有子节点的宽度, 包含间隙
   double getAllLinearChildWidth(
     List<ChildType> children, {
     double gap = 0,
@@ -304,7 +304,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
     return width;
   }
 
-  /// 获取所有子节点的高度
+  /// 获取所有子节点的高度, 包含间隙
   double getAllLinearChildHeight(
     List<ChildType> children, {
     double gap = 0,
