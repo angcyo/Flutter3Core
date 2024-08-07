@@ -2653,18 +2653,29 @@ extension NavigatorEx on BuildContext {
   Future<T?> push<T extends Object?>(
     Route<T> route, {
     bool rootNavigator = false,
+    bool popTop = false,
   }) {
-    return navigatorOf(rootNavigator).push(route);
+    final navigator = navigatorOf(rootNavigator);
+    if (popTop) {
+      navigator.pop();
+    }
+    return navigator.push(route);
   }
 
   /// 支持路由动画
+  /// [popTop] 是否弹出之前的顶层
   /// [push]
   Future<T?> pushWidget<T extends Object?>(
     Widget page, {
     TranslationType? type,
     bool rootNavigator = false,
+    bool popTop = false,
   }) {
-    return push(page.toRoute(type: type), rootNavigator: rootNavigator);
+    return push(
+      page.toRoute(type: type),
+      rootNavigator: rootNavigator,
+      popTop: popTop,
+    );
   }
 
   /// 推送一个路由, 并且移除之前的路由

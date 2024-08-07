@@ -6,7 +6,10 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 滑块tile
 /// [leading]...[slider]...[trailing]
+/// [SliderTile]
+/// [LabelNumberTile]
 /// [LabelNumberSliderTile]
+/// [LabelRangeNumberSliderTile]
 class SliderTile extends StatefulWidget {
   /// 左边/头部的小部件
   /// [leading]  头部

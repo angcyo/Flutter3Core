@@ -1403,6 +1403,24 @@ extension NumEx on num {
   ///[refreshRate]
   double get rr => this / (refreshRate / 60.0);
 
+  /// [num]->[double]
+  double toNumDouble({
+    bool? round,
+    bool? ceil,
+    bool? floor,
+  }) {
+    if (this is double) {
+      return this as double;
+    }
+    if (ceil == true) {
+      return ceilToDouble();
+    }
+    if (floor == true) {
+      return floorToDouble();
+    }
+    return roundToDouble();
+  }
+
   /// 将一个值[this].[value].[0~1]按照60帧的刷新率在一定时间[timestamp]内变化
   /// [value] 这个当前的值
   /// [timestamp] 多少毫秒变化到1, 用来计算step

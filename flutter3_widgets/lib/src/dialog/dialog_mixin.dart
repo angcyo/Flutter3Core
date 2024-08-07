@@ -9,7 +9,14 @@ part of './dialog.dart';
 mixin DialogMixin implements TranslationTypeImpl {
   /// 对话框路径过度动画
   @override
-  TranslationType get translationType => TranslationType.translationFade;
+  TranslationType get translationType {
+    final type = runtimeType.toString();
+    //debugger();
+    if (type.endsWith("Page")) {
+      return TranslationType.translation;
+    }
+    return TranslationType.translationFade;
+  }
 
   /// 弹出对话框时, 返回对话框的结果
   dynamic get popDialogResult => null;

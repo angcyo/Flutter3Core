@@ -29,17 +29,21 @@ mixin AbsScrollPage {
     BuildContext context, {
     WidgetList? children,
     bool? resizeToAvoidBottomInset,
+    Color? backgroundColor,
+    PreferredSizeWidget? appBar,
+    Widget? body,
   }) {
     //debugger();
     return Scaffold(
-      appBar: buildAppBar(context),
-      backgroundColor: getBackgroundColor(context),
+      appBar: appBar ?? buildAppBar(context),
+      backgroundColor: backgroundColor ?? getBackgroundColor(context),
       resizeToAvoidBottomInset:
           resizeToAvoidBottomInset ?? getResizeToAvoidBottomInset(context),
-      body: this is RebuildBodyMixin
-          ? rebuild((this as RebuildBodyMixin).bodyUpdateSignal,
-              (context, value) => buildBody(context, children))
-          : buildBody(context, children),
+      body: body ??
+          (this is RebuildBodyMixin
+              ? rebuild((this as RebuildBodyMixin).bodyUpdateSignal,
+                  (context, value) => buildBody(context, children))
+              : buildBody(context, children)),
     );
   }
 
@@ -154,17 +158,25 @@ mixin AbsScrollPage {
     double? elevation,
     bool? centerTitle,
     bool? automaticallyImplyLeading,
+    Widget? leading,
+    Widget? trailing,
+    List<Widget>? actions,
   }) {
     final globalConfig = GlobalConfig.of(context);
     //debugger();
+    if (actions == null) {
+      if (trailing != null) {
+        actions = [trailing];
+      }
+    }
     return globalConfig.appBarBuilder(
       context,
       this,
-      leading: buildAppBarLeading(context),
+      leading: leading ?? buildAppBarLeading(context),
       automaticallyImplyLeading: automaticallyImplyLeading,
       title: title ?? buildTitle(context),
       centerTitle: centerTitle ?? isCenterTitle(context),
-      actions: buildAppBarActions(context),
+      actions: actions ?? buildAppBarActions(context),
       bottom: buildAppBarBottom(context),
       elevation: elevation ?? getAppBarElevation(context),
       scrolledUnderElevation:

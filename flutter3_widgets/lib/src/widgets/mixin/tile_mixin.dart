@@ -401,6 +401,7 @@ mixin TileMixin {
     bool? useCenteredTrackShape,
     SliderTrackShape? trackShape /*轨道的shape*/,
     SliderComponentShape? thumbShape /*浮子的shape*/,
+    TextStyle? valueIndicatorTextStyle /*指示器中的文本样式*/,
   }) {
     if (trackShape == null) {
       //渐变进度在渐变颜色中的颜色值
@@ -458,7 +459,7 @@ mixin TileMixin {
         trackShape: trackShape,
         /*inactiveTrackColor: Colors.redAccent,*/
         trackHeight: trackHeight,
-        /*valueIndicatorTextStyle: globalTheme.textBodyStyle,*/
+        valueIndicatorTextStyle: valueIndicatorTextStyle,
       ),
       child: Slider(
         value: value,
@@ -506,7 +507,9 @@ mixin TileMixin {
     Color? valueIndicatorColor,
     double? trackHeight,
     bool? useCenteredTrackShape,
-    RangeSliderTrackShape? rangeTrackShape,
+    RangeSliderTrackShape? trackShape /*轨道shape*/,
+    RangeSliderThumbShape? thumbShape /*浮子shape*/,
+    TextStyle? valueIndicatorTextStyle /*指示器中的文本样式*/,
   }) {
     /*if (rangeTrackShape == null) {
       //渐变进度在渐变颜色中的颜色值
@@ -560,12 +563,12 @@ mixin TileMixin {
         overlayColor: overlayColor ?? darkAccentColor?.withOpacity(0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
         inactiveTrackColor: inactiveTrackColor,
-        //rangeThumbShape: ,
-        rangeTrackShape: rangeTrackShape,
+        rangeTrackShape: trackShape,
+        rangeThumbShape: thumbShape,
         /*rangeValueIndicatorShape: rangeValueIndicatorShape,*/
         /*inactiveTrackColor: Colors.redAccent,*/
         trackHeight: trackHeight,
-        /*valueIndicatorTextStyle: globalTheme.textBodyStyle,*/
+        valueIndicatorTextStyle: valueIndicatorTextStyle,
       ),
       child: RangeSlider(
         values: RangeValues(startValue, endValue),

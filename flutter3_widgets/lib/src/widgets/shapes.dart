@@ -405,6 +405,9 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
 }
 
 /// 描边+填充的浮子shape
+/// [SliderComponentShape]->[RoundSliderThumbShape]
+/// [RangeSliderTrackShape]->[RoundRangeSliderThumbShape]
+/// [SliderThemeData]
 class StrokeSliderThumbShape extends RoundSliderThumbShape {
   /// 描边宽度
   final double strokeWidth;
@@ -490,6 +493,81 @@ class StrokeSliderThumbShape extends RoundSliderThumbShape {
               ),
         );
       }, tintColor: strokeColor);
+    }
+  }
+}
+
+/// 描边+填充的浮子shape, 范围滑块没有label的绘制
+/// [SliderComponentShape]->[RoundSliderThumbShape]
+/// [RangeSliderTrackShape]->[RoundRangeSliderThumbShape]
+/// [SliderThemeData]
+class StrokeRangeSliderThumbShape extends RoundRangeSliderThumbShape {
+  /// 描边宽度
+  final double strokeWidth;
+
+  /// 描边颜色
+  final Color? strokeColor;
+
+  /// 填充颜色
+  final Color? fillColor;
+
+  /// 是否绘制slider的数值
+  @implementation
+  final bool paintValue;
+
+  const StrokeRangeSliderThumbShape({
+    super.enabledThumbRadius,
+    super.disabledThumbRadius,
+    super.elevation,
+    super.pressedElevation,
+    this.strokeWidth = 2,
+    this.fillColor,
+    this.paintValue = true,
+    this.strokeColor = const Color(0xff333333),
+  });
+
+  double get _disabledThumbRadius => disabledThumbRadius ?? enabledThumbRadius;
+
+  @override
+  void paint(PaintingContext context, ui.Offset center,
+      {required Animation<double> activationAnimation,
+      required Animation<double> enableAnimation,
+      bool isDiscrete = false,
+      bool isEnabled = false,
+      bool? isOnTop,
+      required SliderThemeData sliderTheme,
+      ui.TextDirection? textDirection,
+      Thumb? thumb,
+      bool? isPressed}) {
+    super.paint(context, center,
+        activationAnimation: activationAnimation,
+        enableAnimation: enableAnimation,
+        isDiscrete: isDiscrete,
+        isEnabled: isEnabled,
+        isOnTop: isOnTop,
+        sliderTheme: sliderTheme,
+        textDirection: textDirection,
+        thumb: thumb,
+        isPressed: isPressed);
+
+    final Canvas canvas = context.canvas;
+    final Tween<double> radiusTween = Tween<double>(
+      begin: _disabledThumbRadius,
+      end: enabledThumbRadius,
+    );
+    final double radius = radiusTween.evaluate(enableAnimation);
+    final paint = Paint()..strokeWidth = strokeWidth;
+    if (fillColor != null) {
+      paint
+        ..style = PaintingStyle.fill
+        ..color = fillColor!;
+      canvas.drawCircle(center, radius, paint);
+    }
+    if (strokeColor != null) {
+      paint
+        ..style = PaintingStyle.stroke
+        ..color = strokeColor!;
+      canvas.drawCircle(center, radius, paint);
     }
   }
 }

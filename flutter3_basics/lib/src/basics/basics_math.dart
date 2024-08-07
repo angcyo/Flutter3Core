@@ -240,3 +240,18 @@ String formatNumber(
       return number.toDigits(digits: digits, ensureInt: ensureInt);
   }
 }
+
+num formatDoubleNumber(
+  double number,
+  NumType? numType, {
+  bool round = true,
+}) {
+  switch (numType) {
+    case NumType.i:
+      return round ? number.round() : number.toInt();
+    case NumType.d:
+      return number.toNumDouble();
+    case null:
+      return number;
+  }
+}
