@@ -1544,11 +1544,14 @@ class PaintProperty with EquatableMixin {
   /// 旋转操作
   @api
   void applyRotate(Matrix4 matrix) {
-    //debugger();
-
     // 锚点也需要翻转
     applyTranslate(matrix);
-    angle = (angle + matrix.rotation).sanitizeRadians;
+    angle = angle + matrix.rotation;
+    /*if (angle < -pi) {
+      angle = angle + pi;
+    } else if (angle > pi) {
+      angle = angle - pi;
+    }*/
   }
 
   /// 翻转操作, 互斥操作. 表示是否要在现有的基础上再次翻转
