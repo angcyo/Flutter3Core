@@ -16,7 +16,7 @@ dependencies:
   # https://pub.dev/packages/http
   # https://pub.dev/packages/async
   # https://pub.dev/packages/http_parser
-  http: ^1.2.1
+  http: ^1.2.2
   # https://pub.dev/packages/dio
   # https://pub.dev/packages/async
   # https://pub.dev/packages/http_parser

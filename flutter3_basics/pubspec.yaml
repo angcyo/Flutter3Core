@@ -59,7 +59,7 @@ dependencies:
   # https://pub.dev/packages/sprintf
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/fixnum
-  uuid: ^4.4.0
+  uuid: ^4.4.2
   # https://pub.dev/packages/crypto
   crypto: ^3.0.3
   # https://pub.dev/packages/fixnum
