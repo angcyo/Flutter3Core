@@ -304,8 +304,9 @@ mixin DialogMixin implements TranslationTypeImpl {
   @callPoint
   Future<bool> closeDialogIf(BuildContext? context, [bool close = true]) async {
     if (close && context?.isMounted == true) {
-      //context?.pop(popDialogResult);
-      return await context?.maybePop(popDialogResult) ?? false;
+      context?.pop(popDialogResult);
+      return true;
+      //return await context?.maybePop(popDialogResult) ?? false;
     }
     return false;
   }
