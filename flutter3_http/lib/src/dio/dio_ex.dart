@@ -61,7 +61,7 @@ extension DioStringEx on String {
     ProgressCallback? onReceiveProgress,
   }) async {
     final response = await RDio.get(context: context).dio.get<T>(
-          this,
+          transformUrl(),
           queryParameters: queryParameters,
           options: options,
           cancelToken: cancelToken,
@@ -81,7 +81,7 @@ extension DioStringEx on String {
     ProgressCallback? onReceiveProgress,
   }) async {
     final response = await RDio.get(context: context).dio.get<String>(
-          this,
+          transformUrl(),
           queryParameters: queryParameters,
           options: (options ?? Options())..responseType = ResponseType.plain,
           cancelToken: cancelToken,
@@ -101,7 +101,7 @@ extension DioStringEx on String {
     ProgressCallback? onReceiveProgress,
   }) async {
     final response = await RDio.get(context: context).dio.get(
-          this,
+          transformUrl(),
           queryParameters: queryParameters,
           options: (options ?? Options())..responseType = ResponseType.bytes,
           cancelToken: cancelToken,
@@ -124,7 +124,7 @@ extension DioStringEx on String {
     ProgressCallback? onReceiveProgress,
   }) async {
     final response = await RDio.get(context: context).dio.post<T>(
-          this,
+          transformUrl(),
           data: data,
           queryParameters: queryParameters,
           options: options,
@@ -148,7 +148,7 @@ extension DioStringEx on String {
     ProgressCallback? onReceiveProgress,
   }) async {
     final response = await RDio.get(context: context).dio.put<T>(
-          this,
+          transformUrl(),
           data: data,
           queryParameters: queryParameters,
           options: options,
@@ -193,7 +193,7 @@ extension DioStringEx on String {
           requestOptions: RequestOptions(path: this), data: saveFilePath);
     }
     final response = dio.download(
-      this,
+      transformUrl(),
       saveFilePath,
       onReceiveProgress: (count, total) {
         assert(() {

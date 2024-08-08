@@ -1,7 +1,6 @@
 library flutter3_canvas;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math';
 import 'dart:ui';
 
@@ -15,22 +14,24 @@ import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 
 part 'src/canvas.dart';
-part 'src/canvas_ex.dart';
 part 'src/canvas_delegate.dart';
+part 'src/canvas_ex.dart';
 part 'src/component/canvas_bounds_event_component.dart';
 part 'src/component/canvas_element_widget.dart';
 part 'src/component/component.dart';
 part 'src/component/control_limit.dart';
+part 'src/core/canvas_axis_manager.dart';
+part 'src/core/canvas_content_manager.dart';
 part 'src/core/canvas_element_control_manager.dart';
 part 'src/core/canvas_element_manager.dart';
 part 'src/core/canvas_event_manager.dart';
+part 'src/core/canvas_follow_manager.dart';
 part 'src/core/canvas_paint_manager.dart';
 part 'src/core/canvas_style.dart';
 part 'src/core/canvas_undo_manager.dart';
 part 'src/core/canvas_view_box.dart';
-part 'src/core/canvas_axis_manager.dart';
-part 'src/core/canvas_content_manager.dart';
-part 'src/core/canvas_follow_manager.dart';
+part 'src/core/control/element_control.dart';
+part 'src/core/control/element_menu.dart';
 part 'src/event/canvas_event.dart';
 part 'src/event/canvas_notify.dart';
 part 'src/painter/element_painter.dart';
@@ -38,8 +39,6 @@ part 'src/painter/image_element_painter.dart';
 part 'src/painter/painter.dart';
 part 'src/painter/path_element_painter.dart';
 part 'src/painter/text_element_painter.dart';
-part 'src/core/control/element_control.dart';
-part 'src/core/control/element_menu.dart';
 
 Widget canvasSvgWidget(
   String key, {
@@ -51,7 +50,7 @@ Widget canvasSvgWidget(
   double? width,
   double? height,
 }) =>
-    SvgPicture.asset(key.ensurePackagePrefix(package, prefix),
+    SvgPicture.asset(key.ensurePackagePrefix(package, prefix).transformKey(),
         semanticsLabel: key,
         colorFilter: colorFilter ?? tintColor?.toColorFilter(),
         width: width,

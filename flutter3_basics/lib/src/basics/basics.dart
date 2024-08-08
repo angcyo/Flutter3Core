@@ -601,14 +601,15 @@ Future<Uint8List> loadAssetBytes(
   String prefix = 'assets/',
   String? package,
 }) async {
-  return (await rootBundle.load(key.ensurePackagePrefix(package, prefix)))
+  return (await rootBundle
+          .load(key.ensurePackagePrefix(package, prefix).transformKey()))
       .bytes;
 }
 
 /// 判断指定的[key]是否存在
 Future<bool> isAssetKeyExists(String? key) async {
   try {
-    await rootBundle.load(key!);
+    await rootBundle.load(key!.transformKey());
     return true;
   } catch (e) {
     return false;
@@ -639,7 +640,7 @@ Future<String> loadAssetString(
   String? package,
 }) async {
   return await rootBundle.loadString(
-    key.ensurePackagePrefix(package, prefix),
+    key.ensurePackagePrefix(package, prefix).transformKey(),
   );
 }
 
@@ -667,7 +668,7 @@ Image? loadAssetImageWidget(
     key == null
         ? null
         : Image.asset(
-            key.ensurePackagePrefix(package, prefix),
+            key.ensurePackagePrefix(package, prefix).transformKey(),
             fit: fit,
             width: size ?? width,
             height: size ?? height,
@@ -687,7 +688,7 @@ AssetImage? loadAssetImageProvider(
     key == null
         ? null
         : AssetImage(
-            key.ensurePackagePrefix(package, prefix),
+            key.ensurePackagePrefix(package, prefix).transformKey(),
           );
 
 /// [UiImage]

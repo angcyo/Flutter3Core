@@ -1,7 +1,6 @@
 library flutter3_core;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -49,10 +48,10 @@ part 'src/debug/debug_page.dart';
 part 'src/debug/navigator_route_overlay.dart';
 part 'src/debug/screen_capture_overlay.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
+part 'src/dialog/single_bottom_input_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
 part 'src/dialog/wheel_dialog.dart';
-part 'src/dialog/single_bottom_input_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/config_file.dart';
 part 'src/file/file_log.dart';
@@ -131,7 +130,7 @@ SvgPicture? loadCoreAssetSvgPicture(
     key == null
         ? null
         : SvgPicture.asset(
-            key.ensurePackagePrefix(package, prefix),
+            key.ensurePackagePrefix(package, prefix).transformKey(),
             fit: fit ?? BoxFit.contain,
             width: size ?? width,
             height: size ?? height,
@@ -172,7 +171,7 @@ Image? loadCoreAssetImageWidget(
     key == null
         ? null
         : Image.asset(
-            key.ensurePackagePrefix(package, prefix),
+            key.ensurePackagePrefix(package, prefix).transformKey(),
             fit: fit,
             width: size ?? width,
             height: size ?? height,

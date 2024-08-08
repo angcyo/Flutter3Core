@@ -38,7 +38,7 @@ Future<PictureInfo> loadAssetSvgPicture(
 }) =>
     vg.loadPicture(
       SvgAssetLoader(
-        key.ensurePackagePrefix(package, prefix),
+        key.ensurePackagePrefix(package, prefix).transformKey(),
         packageName: package,
         assetBundle: bundle,
         theme: theme,

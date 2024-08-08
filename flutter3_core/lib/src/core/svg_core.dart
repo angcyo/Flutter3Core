@@ -92,7 +92,10 @@ class _AppPackageAssetsSvgWidgetState extends State<AppPackageAssetsSvgWidget> {
         isNil(widget.libPackage) ? "" : "packages/${widget.libPackage}/";
 
     final appKey = widget.appKey ??
-        widget.resKey?.replaceAll(libPackagePath, "").ensurePackagePrefix();
+        widget.resKey
+            ?.replaceAll(libPackagePath, "")
+            .ensurePackagePrefix()
+            .transformKey();
     final libKey =
         widget.libKey ?? widget.resKey?.ensurePackagePrefix(widget.libPackage);
 
@@ -137,7 +140,7 @@ SvgPicture loadAssetSvgWidget(
   WidgetBuilder? placeholderBuilder,
 }) =>
     SvgPicture.asset(
-      key.ensurePackagePrefix(package, prefix),
+      key.ensurePackagePrefix(package, prefix).transformKey(),
       semanticsLabel: key,
       colorFilter: colorFilter ?? tintColor?.toColorFilter(),
       width: size ?? width,
