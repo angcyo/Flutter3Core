@@ -36,8 +36,9 @@ mixin AbsScrollPage {
     Widget? body,
   }) {
     //debugger();
+    final useSliverAppBar = this.useSliverAppBar(context) == true;
     return Scaffold(
-      appBar: appBar ?? buildAppBar(context),
+      appBar: useSliverAppBar ? null : (appBar ?? buildAppBar(context)),
       backgroundColor: backgroundColor ?? getBackgroundColor(context),
       resizeToAvoidBottomInset:
           resizeToAvoidBottomInset ?? getResizeToAvoidBottomInset(context),
@@ -70,6 +71,11 @@ mixin AbsScrollPage {
   @property
   Widget buildBody(BuildContext context, WidgetList? children) {
     children ??= buildScrollBody(context);
+    final useSliverAppBar = this.useSliverAppBar(context) == true;
+    if (useSliverAppBar) {
+      children = [buildAppBar(context, useSliverAppBar: true), ...?children]
+          .filterNull();
+    }
     if (this is RScrollPage) {
       return (this as RScrollPage).pageRScrollView(children: children);
     }
@@ -109,6 +115,10 @@ mixin AbsScrollPage {
   /// 是否是居中标题
   @property
   bool? isCenterTitle(BuildContext context) => null;
+
+  /// 是否使用[SliverAppBar]
+  @property
+  bool? useSliverAppBar(BuildContext context) => null;
 
   /// 构建标题栏上的返回按钮
   @property
@@ -176,7 +186,7 @@ mixin AbsScrollPage {
     return globalConfig.appBarBuilder(
       context,
       this,
-      useSliverAppBar: useSliverAppBar,
+      useSliverAppBar: useSliverAppBar ?? this.useSliverAppBar(context),
       leading: leading ?? buildAppBarLeading(context),
       automaticallyImplyLeading: automaticallyImplyLeading,
       title: title ?? buildTitle(context),

@@ -399,6 +399,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
                 : null),
         centerTitle: centerTitle,
         titleSpacing: titleSpacing,
+        floating: true,
+        pinned: false,
       );
     }
 

@@ -323,7 +323,43 @@ class PreferredSizeSliverAppBar extends StatefulWidget
 class _PreferredSizeSliverAppBarState extends State<PreferredSizeSliverAppBar> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return SliverAppBar(
+      leading: widget.leading,
+      automaticallyImplyLeading: widget.automaticallyImplyLeading,
+      title: widget.title,
+      actions: widget.actions,
+      flexibleSpace: widget.flexibleSpace,
+      bottom: widget.bottom,
+      elevation: widget.elevation,
+      scrolledUnderElevation: widget.scrolledUnderElevation,
+      shadowColor: widget.shadowColor,
+      surfaceTintColor: widget.surfaceTintColor,
+      forceElevated: widget.forceElevated,
+      backgroundColor: widget.backgroundColor,
+      foregroundColor: widget.foregroundColor,
+      iconTheme: widget.iconTheme,
+      actionsIconTheme: widget.actionsIconTheme,
+      primary: widget.primary,
+      centerTitle: widget.centerTitle,
+      excludeHeaderSemantics: widget.excludeHeaderSemantics,
+      titleSpacing: widget.titleSpacing,
+      collapsedHeight: widget.collapsedHeight,
+      expandedHeight: widget.expandedHeight,
+      floating: widget.floating,
+      pinned: widget.pinned,
+      snap: widget.snap,
+      stretch: widget.stretch,
+      stretchTriggerOffset: widget.stretchTriggerOffset,
+      onStretchTrigger: widget.onStretchTrigger,
+      shape: widget.shape,
+      toolbarHeight: widget.toolbarHeight,
+      leadingWidth: widget.leadingWidth,
+      toolbarTextStyle: widget.toolbarTextStyle,
+      titleTextStyle: widget.titleTextStyle,
+      systemOverlayStyle: widget.systemOverlayStyle,
+      forceMaterialTransparency: widget.forceMaterialTransparency,
+      clipBehavior: widget.clipBehavior,
+    );
   }
 }
 
