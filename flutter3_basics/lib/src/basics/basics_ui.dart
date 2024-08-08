@@ -806,7 +806,7 @@ extension WidgetEx on Widget {
   }
 
   /// 状态栏亮色模式
-  /// 背景白色, 状态栏图标为黑色
+  /// 背景白色, 状态栏图标/文本为黑色
   Widget lightStatusBar() => systemUiOverlay(
         style: const SystemUiOverlayStyle(
           statusBarIconBrightness: Brightness.dark,
@@ -815,7 +815,7 @@ extension WidgetEx on Widget {
       );
 
   /// 状态栏暗色模式
-  /// 背景黑色, 状态栏图标为白色
+  /// 背景黑色, 状态栏图标/文本为白色
   Widget darkStatusBar() => systemUiOverlay(
         style: const SystemUiOverlayStyle(
           statusBarIconBrightness: Brightness.light,
@@ -2752,7 +2752,7 @@ extension NavigatorEx on BuildContext {
   ]) =>
       navigatorOf(rootNavigator).canPop();
 
-  /// 弹出一个路由
+  /// 弹出一个路由, 不能被[PopScope]拦截
   void pop<T extends Object?>([
     T? result,
     bool rootNavigator = false,
@@ -2760,7 +2760,7 @@ extension NavigatorEx on BuildContext {
     navigatorOf(rootNavigator).pop(result);
   }
 
-  /// 尝试弹出一个路由
+  /// 尝试弹出一个路由, 可以被[PopScope]拦截
   Future<bool> maybePop<T extends Object?>([
     T? result,
     bool rootNavigator = false,

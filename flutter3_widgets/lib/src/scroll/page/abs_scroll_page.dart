@@ -10,6 +10,8 @@ part of '../../../flutter3_widgets.dart';
 /// [RScrollPage] 刷新,加载更多
 /// [RStatusScrollPage] 状态切换
 ///
+/// [RebuildBodyMixin]
+///
 /// [buildScaffold]
 mixin AbsScrollPage {
   /// 直接写一个[build]方法, 也可以继承[State.build]方法
