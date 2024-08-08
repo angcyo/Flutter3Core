@@ -32,6 +32,7 @@ bool isSliverWidget(Widget tile) {
     PinnedHeaderSliver,
     SliverPinnedHeader,
     SliverResizingHeader,
+    PreferredSizeSliverAppBar,
   ];
   return systemSliverWidgetList.contains(tile.runtimeType);
 }

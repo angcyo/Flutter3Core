@@ -63,6 +63,7 @@ class AppVersionBean {
   Map<String, AppVersionBean>? platformMap;
 
   /// 每个包名单独的版本信息
+  /// [$appPackageName]
   /// [AppSettingBean.packageName]
   Map<String, AppVersionBean>? packageNameMap;
 

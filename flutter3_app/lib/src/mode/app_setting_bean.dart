@@ -45,7 +45,7 @@ class AppSettingBean {
 
   AppSettingBean();
 
-  /// 每个单独设置信息
+  /// 每个平台单独设置信息
   Map<String, AppSettingBean>? platformMap;
 
   //--
@@ -54,12 +54,14 @@ class AppSettingBean {
   String? packageName;
 
   /// 应用程序的风味, 不同风味的app, 可以有不同的配置
+  /// [AppFlavorEnum]
   String? appFlavor;
 
   /// 应用程序的状态, 比如正在上架中, 已上架
+  /// [AppStateEnum]
   String? appState;
 
-  /// [appFlavor]
+  /// 那些设备需要使用此[appFlavor]
   List<String>? appFlavorUuidList;
 
   //--
@@ -119,7 +121,7 @@ enum AppStateEnum {
 
 /// [AppSettingBean]
 AppSettingBean get $appSettingBean {
-  AppSettingBean bean = AppSettingBean._appSettingBean ??= AppSettingBean();
+  AppSettingBean bean = AppSettingBean._appSettingBean ?? AppSettingBean();
   bean = bean.platformMap?[$platformName] ?? bean;
   return bean;
 }
@@ -150,9 +152,10 @@ String? get $appPackageName => $appSettingBean.packageName;
 /// [AppSettingBean.appFlavorUuidList]
 AppFlavorEnum get $appFlavorEnum {
   final bean = $appSettingBean;
-  String? appFlavor =
-      bean.appFlavorUuidList?.findFirst((e) => e == $coreKeys.deviceUuid) ??
-          bean.appFlavor;
+  String? appFlavor;
+  if (bean.appFlavorUuidList?.contains($coreKeys.deviceUuid) == true) {
+    appFlavor = bean.appFlavor;
+  }
   if (appFlavor == null) {
     return AppFlavorEnum.release;
   }
