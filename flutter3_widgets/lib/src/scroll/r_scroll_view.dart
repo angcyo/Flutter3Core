@@ -17,7 +17,9 @@ const kDefaultScrollPhysics = AlwaysScrollableScrollPhysics(
 /// [SliverPersistentHeader] 可以在顶部固定,可以实现悬浮效果. [SliverFillRemaining]可以填充剩余空间
 /// [SliverList] - [SliverGrid]
 /// [RItemTile] 的容器
-/// [RScrollController]
+/// [RScrollController] 滚动控制
+/// [RScrollConfig] 滚动配置, 默认是[defaultScrollConfig]
+/// [RScrollView._transformTileList] 处理[RItemTile]
 class RScrollView extends StatefulWidget {
   const RScrollView({
     super.key,

@@ -2041,7 +2041,7 @@ extension StateEx on State {
       return false;
     } catch (e) {
       assert(() {
-        l.w('当前页面可能已被销毁, 无法更新[${SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks}]');
+        l.w('当前页面可能已被销毁, 无法更新, 是否正在调度渲染[${SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks}]');
         printError(e);
         return true;
       }());

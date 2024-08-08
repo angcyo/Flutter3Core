@@ -543,11 +543,20 @@ class SliverListTransform extends BaseTileTransform {
     });
     return wrapSliverPaddingDecorationTile(
         first,
-        SliverList.list(
+        /*SliverList.list(
+        addAutomaticKeepAlives: first.addAutomaticKeepAlives,
+        addRepaintBoundaries: first.addRepaintBoundaries,
+        addSemanticIndexes: first.addSemanticIndexes,
+        children: newList,
+      ),*/
+        SliverList.builder(
           addAutomaticKeepAlives: first.addAutomaticKeepAlives,
           addRepaintBoundaries: first.addRepaintBoundaries,
           addSemanticIndexes: first.addSemanticIndexes,
-          children: newList,
+          itemCount: newList.length,
+          itemBuilder: (context, index) {
+            return newList.getOrNull(index);
+          },
         ));
   }
 }
@@ -636,12 +645,24 @@ class SliverGridTransform extends BaseTileTransform {
     });
     return wrapSliverPaddingDecorationTile(
         first,
-        SliverGrid.count(
-          crossAxisCount: first.crossAxisCount,
-          mainAxisSpacing: first.mainAxisSpacing,
-          crossAxisSpacing: first.crossAxisSpacing,
-          childAspectRatio: first.childAspectRatio,
-          children: newList,
+        /*SliverGrid.count(
+        crossAxisCount: first.crossAxisCount,
+        mainAxisSpacing: first.mainAxisSpacing,
+        crossAxisSpacing: first.crossAxisSpacing,
+        childAspectRatio: first.childAspectRatio,
+        children: newList,
+      ),*/
+        SliverGrid.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: first.crossAxisCount,
+            mainAxisSpacing: first.mainAxisSpacing,
+            crossAxisSpacing: first.crossAxisSpacing,
+            childAspectRatio: first.childAspectRatio,
+          ),
+          itemCount: newList.length,
+          itemBuilder: (context, index) {
+            return newList.getOrNull(index);
+          },
         ));
   }
 }

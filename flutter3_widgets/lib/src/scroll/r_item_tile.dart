@@ -631,25 +631,82 @@ class _RItemTileState extends State<RItemTile> {
 }
 
 extension RItemTileExtension on Widget {
+  /// 列表item
+  /// [RItemTile.buildListWrapChild]
+  ///
+  /// [SliverList.builder]
+  RItemTile rListTile({
+    bool addAutomaticKeepAlives = true,
+    bool addRepaintBoundaries = true,
+    bool addSemanticIndexes = true,
+    double? firstPaddingLeft,
+    double? firstPaddingTop,
+    double? firstPaddingRight,
+    double? firstPaddingBottom,
+    double? lastPaddingLeft,
+    double? lastPaddingTop,
+    double? lastPaddingRight,
+    double? lastPaddingBottom,
+    //--
+    bool hide = false,
+    bool part = false,
+    UpdateValueNotifier? updateSignal,
+    bool enablePadding = false,
+    EdgeInsetsGeometry? sliverPadding,
+    dynamic sliverTransformType = SliverList,
+  }) {
+    return RItemTile(
+      addAutomaticKeepAlives: addAutomaticKeepAlives,
+      addRepaintBoundaries: addRepaintBoundaries,
+      addSemanticIndexes: addSemanticIndexes,
+      firstPaddingLeft: firstPaddingLeft,
+      firstPaddingTop: firstPaddingTop,
+      firstPaddingRight: firstPaddingRight,
+      firstPaddingBottom: firstPaddingBottom,
+      lastPaddingLeft: lastPaddingLeft,
+      lastPaddingTop: lastPaddingTop,
+      lastPaddingRight: lastPaddingRight,
+      lastPaddingBottom: lastPaddingBottom,
+      sliverPadding: sliverPadding ??
+          (enablePadding
+              ? EdgeInsets.only(
+                  left: firstPaddingLeft ?? lastPaddingLeft ?? 0.0,
+                  top: firstPaddingTop ?? 0.0,
+                  right: firstPaddingRight ?? lastPaddingRight ?? 0.0,
+                  bottom: lastPaddingBottom ?? 0.0,
+                )
+              : null),
+      hide: hide,
+      part: part,
+      updateSignal: updateSignal,
+      sliverTransformType: sliverTransformType,
+      child: this,
+    );
+  }
+
   /// 网格item
   /// [gridCount] 网格的列数
   /// [childAspectRatio] child宽高比, <1时,高度高; >1时,宽度高;
   /// [mainAxisSpacing] 主轴间隙, 如果方向是垂直的, 则是行间隙, 如果方向是水平的, 则是列间隙
   /// [crossAxisSpacing] 交叉轴间隙
   /// [RItemTile.buildGridWrapChild]
+  ///
+  /// [SliverGrid.builder]
   RItemTile rGridTile(
     int gridCount, {
     double childAspectRatio = 1,
     double? mainAxisSpacing,
     double? crossAxisSpacing,
-    bool enablePadding = false,
-    EdgeInsetsGeometry? sliverPadding,
-    bool hide = false,
-    UpdateValueNotifier? updateSignal,
     double? edgePaddingTop,
     double? edgePaddingBottom,
     double? edgePaddingLeft,
     double? edgePaddingRight,
+    //--
+    bool hide = false,
+    bool part = false,
+    UpdateValueNotifier? updateSignal,
+    bool enablePadding = false,
+    EdgeInsetsGeometry? sliverPadding,
     dynamic sliverTransformType = SliverGrid,
   }) {
     mainAxisSpacing ??= 0;
@@ -672,13 +729,18 @@ extension RItemTileExtension on Widget {
                 )
               : null),
       hide: hide,
+      part: part,
       updateSignal: updateSignal,
       child: this,
     );
   }
 
   /// [RItemTile]的快捷构造方法
+  /// 默认情况下没有任务约束的[RItemTile]会被[SliverToBoxAdapter]包裹, 这样就没有懒加载
+  /// 推荐使用[rListTile].[rGridTile]
   /// [RItemTile.buildListWrapChild]
+  ///
+  /// [SliverToBoxAdapter]
   RItemTile rItemTile({
     Key? key,
     Widget? child,
@@ -720,7 +782,7 @@ extension RItemTileExtension on Widget {
     double? edgePaddingTop,
     double? edgePaddingRight,
     double? edgePaddingBottom,
-    bool? groupExpanded,
+    bool? groupExpanded /*如果是组, 是否展开当前组*/,
     UpdateValueNotifier? updateSignal,
     List<String>? groups = const [],
     dynamic sliverTransformType,
@@ -811,6 +873,8 @@ extension RItemTileExtension on Widget {
   /// [groupExpanded] 启动分组的关键
   /// [headerHeight] 头部固定的高度
   /// [useSliverAppBar] 是否使用[SliverAppBar]实现[pinned]功能
+  ///
+  /// [SliverMainAxisGroup]
   RItemTile rGroup({
     bool? groupExpanded = true,
     bool pinned = true,

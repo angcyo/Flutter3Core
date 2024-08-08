@@ -7,6 +7,8 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// 滚动配置, 比如过滤器/转换器等
+/// [RTileFilterChain]
+/// [RTileTransformChain]
 class RScrollConfig {
   /// [RItemTile] 的列表过滤器
   /// 用来过滤[children]
