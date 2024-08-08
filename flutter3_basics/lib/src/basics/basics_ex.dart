@@ -1307,12 +1307,21 @@ extension RectEx on Rect {
 
   /// dp单位的坐标, 转换成mm单位的坐标
   @mm
-  Rect toRectMM() => Rect.fromLTRB(
+  Rect toRectMm() => Rect.fromLTRB(
         left.toMmFromDp(),
         top.toMmFromDp(),
         right.toMmFromDp(),
         bottom.toMmFromDp(),
       );
+
+  /// mm单位的坐标, 转换成dp单位的坐标
+  @dp
+  Rect toRectDp() => Rect.fromLTRB(
+    left.toDpFromMm(),
+    top.toDpFromMm(),
+    right.toDpFromMm(),
+    bottom.toDpFromMm(),
+  );
 
   /// 作用一个矩阵, 并保持某个锚点在作用矩阵后不变
   /// [applyMatrix] 本次需要作用的矩阵, 会叠加在[originMatrix]上

@@ -194,12 +194,14 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   //--
 
   /// 限制画布内容绘制区域, 背景只会在此区域绘制
+  /// [boundsInfo] 边界信息
+  /// [path].[bounds]->[boundsInfo]
   /// [onUpdateAction] 更新成功的回调
   void updateCanvasSceneContentBounds({
     @dp @sceneCoordinate ContentBoundsInfo? boundsInfo,
-    @dp @sceneCoordinate Path? path,
-    @dp @sceneCoordinate Rect? bounds,
-    bool? showRect,
+    @dp @sceneCoordinate @indirectProperty Path? path,
+    @dp @sceneCoordinate @indirectProperty Rect? bounds,
+    bool? followRect,
     bool? animate,
     VoidCallback? onUpdateAction,
   }) {
@@ -212,13 +214,13 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     }
 
     if (canvasDelegate.canvasViewBox.isCanvasBoxInitialize) {
-      showRect ??= sceneContentBoundsInfo == null;
+      followRect ??= sceneContentBoundsInfo == null;
       sceneContentBoundsInfo = boundsInfo ??
           ContentBoundsInfo(
             path: path,
             bounds: bounds,
           );
-      if (showRect && bounds != null) {
+      if (followRect && bounds != null) {
         canvasDelegate.followRect(
           rect: bounds,
           animate: animate,
@@ -231,7 +233,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
           boundsInfo: boundsInfo,
           path: path,
           bounds: bounds,
-          showRect: showRect,
+          followRect: followRect,
           animate: animate,
           onUpdateAction: onUpdateAction,
         );
