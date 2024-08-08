@@ -629,12 +629,13 @@ mixin TileMixin {
   /// [NumberKeyboardDialog]
   Widget? buildNumberWidget(
     BuildContext context,
-    String number, {
+    dynamic number, {
     Widget? numberWidget,
     GestureTapCallback? onTap,
     EdgeInsetsGeometry? padding =
         const EdgeInsets.symmetric(horizontal: kH, vertical: kM),
     EdgeInsetsGeometry? margin,
+    Decoration? decoration,
     Color? backgroundColor,
     BoxConstraints? constraints = kNumberConstraints,
   }) {
@@ -643,13 +644,14 @@ mixin TileMixin {
       //默认的点击事件
     }
     return Container(
-      /*decoration: fillDecoration(
-        color: globalTheme.itemWhiteBgColor,
+      /*fillDecoration(
+        color: globalTheme.whiteSubBgColor,
         borderRadius: kDefaultBorderRadiusL,
-      ),*/
+      )*/
+      decoration: decoration,
       constraints: constraints,
       padding: padding,
-      child: (numberWidget ?? number.text()).center(),
+      child: (numberWidget ?? "$number".text()).center(),
     ).ink(
       () {
         onTap?.call();
