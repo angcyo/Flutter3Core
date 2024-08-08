@@ -11,35 +11,45 @@ part of '../../flutter3_basics.dart';
 /// ```
 /// final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
 /// ```
+/// [NavigatorObserverDispatcher]
+/// [NavigatorObserverMixin]
 mixin NavigatorObserverLogMixin on NavigatorObserver {
+  /// 弹出路由[route]
+  /// [previousRoute] 之前的路由
+  /// [MaterialPageRoute]
+  /// [RouteSettings]
   @override
   void didPop(Route route, Route? previousRoute) {
-    l.v('Navigator didPop↓\npop->$route\nold->$previousRoute');
+    l.v('[${classHash()}]Navigator didPop↓\npop->$route\nold->$previousRoute');
   }
 
+  /// 推入新路由[route]
+  /// [previousRoute] 之前的路由
+  /// [MaterialPageRoute]
+  /// [RouteSettings]
   @override
   void didPush(Route route, Route? previousRoute) {
-    l.v('Navigator didPush↓\nold->$previousRoute\npush->$route');
+    l.v('[${classHash()}]Navigator didPush↓\nold->$previousRoute\npush->$route');
   }
 
   @override
   void didRemove(Route route, Route? previousRoute) {
-    l.v('Navigator didRemove↓\n$route\n$previousRoute');
+    l.v('[${classHash()}]Navigator didRemove↓\n$route\n$previousRoute');
   }
 
   @override
   void didReplace({Route? newRoute, Route? oldRoute}) {
-    l.v('Navigator didReplace:$newRoute $oldRoute');
+    l.v('[${classHash()}]Navigator didReplace:$newRoute $oldRoute');
   }
 
   @override
   void didStartUserGesture(Route route, Route? previousRoute) {
-    l.v('Navigator didStartUserGesture↓\n$route\n$previousRoute');
+    l.v('[${classHash()}]Navigator didStartUserGesture↓\n$route\n$previousRoute');
   }
 
   @override
   void didStopUserGesture() {
-    l.v('Navigator didStopUserGesture');
+    l.v('[${classHash()}]Navigator didStopUserGesture');
   }
 }
 

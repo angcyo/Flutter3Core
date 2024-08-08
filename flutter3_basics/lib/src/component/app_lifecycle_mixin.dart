@@ -7,6 +7,8 @@ part of '../../flutter3_basics.dart';
 /// App生命周期混入
 /// [WidgetsBindingObserver]
 /// [AppLifecycleListener]
+/// [AppLifecycleMixin]
+/// [NavigatorObserverMixin]
 mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
   AppLifecycleListener? _appLifecycleListener;
 
@@ -76,6 +78,9 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
 //---
 
 /// 路由导航监听
+/// [NavigatorObserverDispatcher]
+/// [NavigatorObserverMixin]
+/// [AppLifecycleMixin]
 final NavigatorObserverDispatcher navigatorObserverDispatcher =
     NavigatorObserverDispatcher();
 
@@ -183,6 +188,8 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
 }
 
 /// 导航监听混入
+/// [NavigatorObserverDispatcher]
+/// [NavigatorObserverMixin]
 /// [NavigatorObserverLogMixin]
 mixin NavigatorObserverMixin<T extends StatefulWidget> on State<T> {
   /// 当前的[ModalRoute]
