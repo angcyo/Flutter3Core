@@ -33,6 +33,7 @@ typedef ProgressWidgetBuilder = Widget Function(
 typedef AppBarBuilderFn = PreferredSizeWidget? Function(
   BuildContext context,
   Object? page, {
+  bool? useSliverAppBar,
   Widget? leading,
   bool? automaticallyImplyLeading,
   Widget? title,
@@ -350,6 +351,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   late AppBarBuilderFn appBarBuilder = (
     context,
     state, {
+    useSliverAppBar,
     leading,
     automaticallyImplyLeading,
     title,
@@ -371,6 +373,35 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     scrolledUnderElevation ??=
         globalConfig.globalThemeData?.appBarTheme.scrolledUnderElevation;
     //debugger();
+    if (useSliverAppBar == true) {
+      return PreferredSizeSliverAppBar(
+        title: title,
+        automaticallyImplyLeading: automaticallyImplyLeading ?? true,
+        leading: leading is IgnoreWidget
+            ? null
+            : leading ??
+                (context.isAppBarDismissal
+                    ? appBarLeadingBuilder(context, state)
+                    : null),
+        actions: actions,
+        bottom: bottom,
+        elevation: elevation,
+        shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
+        backgroundColor: backgroundColor ?? globalTheme.appBarBackgroundColor,
+        foregroundColor: foregroundColor ?? globalTheme.appBarForegroundColor,
+        scrolledUnderElevation: scrolledUnderElevation ?? elevation,
+        flexibleSpace: flexibleSpace ??
+            (backgroundColor == null
+                ? ((globalTheme.appBarGradientBackgroundColorList == null
+                    ? null
+                    : linearGradientWidget(
+                        globalTheme.appBarGradientBackgroundColorList!)))
+                : null),
+        centerTitle: centerTitle,
+        titleSpacing: titleSpacing,
+      );
+    }
+
     return AppBar(
       title: title,
       automaticallyImplyLeading: automaticallyImplyLeading ?? true,

@@ -130,6 +130,7 @@ part 'src/widgets/empty.dart';
 part 'src/widgets/path_widget.dart';
 part 'src/widgets/touch_detector_widget.dart';
 part 'src/widgets/value_listener.dart';
+part 'src/widgets/preferred_size_sliver_app_bar.dart';
 part 'src/widgets/progress_listener.dart';
 part 'src/widgets/ignore_self_pointer.dart';
 part 'src/widgets/test_constraints_layout.dart';

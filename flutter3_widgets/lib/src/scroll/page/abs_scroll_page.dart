@@ -138,6 +138,7 @@ mixin AbsScrollPage {
   Color? getAppBarBackgroundColor(BuildContext context) => null;
 
   /// 构建渐变背景
+  /// [FlexibleSpaceBar]
   @property
   Widget? buildAppBarFlexibleSpace(BuildContext context) {
     /*final globalTheme = GlobalTheme.of(context);
@@ -152,6 +153,7 @@ mixin AbsScrollPage {
   @property
   PreferredSizeWidget? buildAppBar(
     BuildContext context, {
+    bool? useSliverAppBar,
     Widget? title,
     Color? backgroundColor,
     Color? foregroundColor,
@@ -172,6 +174,7 @@ mixin AbsScrollPage {
     return globalConfig.appBarBuilder(
       context,
       this,
+      useSliverAppBar: useSliverAppBar,
       leading: leading ?? buildAppBarLeading(context),
       automaticallyImplyLeading: automaticallyImplyLeading,
       title: title ?? buildTitle(context),

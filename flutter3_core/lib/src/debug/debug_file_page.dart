@@ -34,6 +34,7 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
   @override
   PreferredSizeWidget? buildAppBar(
     BuildContext context, {
+    bool? useSliverAppBar,
     Widget? title,
     Color? backgroundColor,
     Color? foregroundColor,
