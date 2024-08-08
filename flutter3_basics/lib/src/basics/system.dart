@@ -16,32 +16,32 @@ part of '../../flutter3_basics.dart';
 ///
 /// [DeviceOrientation.landscapeRight] // 横屏模式，向右旋转
 /// [DeviceOrientation.landscapeLeft] // 横屏模式 向左旋转
-void setScreenOrientation([DeviceOrientation? orientation]) {
-  SystemChrome.setPreferredOrientations(
-      orientation == null ? [] : [orientation]);
-}
+Future<void> setScreenOrientation([DeviceOrientation? orientation]) =>
+    SystemChrome.setPreferredOrientations(
+        orientation == null ? [] : [orientation]);
 
-void setScreenOrientations([List<DeviceOrientation>? orientations]) {
+Future<void> setScreenOrientations([List<DeviceOrientation>? orientations]) =>
   SystemChrome.setPreferredOrientations(orientations ?? []);
-}
 
 /// 设置横屏
-void setScreenLandscape(
-    [List<DeviceOrientation> orientations = const [
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight
-    ]]) {
+Future<void> setScreenLandscape([List<DeviceOrientation> orientations = const [
+  DeviceOrientation.landscapeLeft,
+  DeviceOrientation.landscapeRight
+]]) =>
   setScreenOrientations(orientations);
-}
+
 
 /// 设置竖屏
-void setScreenPortrait(
-    [List<DeviceOrientation> orientations = const [
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown
-    ]]) {
+Future<void> setScreenPortrait([List<DeviceOrientation> orientations = const [
+  DeviceOrientation.portraitUp,
+  DeviceOrientation.portraitDown
+]]) =>
   setScreenOrientations(orientations);
-}
+
+
+/// 设置ui模式
+/// [SystemChrome.setEnabledSystemUIMode]
+/// void
 
 //设置状态栏样式
 //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);

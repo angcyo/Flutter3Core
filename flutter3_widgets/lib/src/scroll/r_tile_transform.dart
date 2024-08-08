@@ -8,6 +8,7 @@ part of '../../flutter3_widgets.dart';
 /// 是否是[Sliver]小部件
 bool isSliverWidget(Widget tile) {
   const systemSliverWidgetList = [
+    SliverSafeArea,
     SliverAppBar,
     SliverToBoxAdapter,
     SliverPersistentHeader,

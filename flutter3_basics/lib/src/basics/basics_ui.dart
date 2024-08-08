@@ -775,6 +775,7 @@ extension WidgetEx on Widget {
   /// 将当前的小部件, 包裹在一个[SafeArea]中
   Widget safeArea({
     bool useSafeArea = true,
+    bool useSliverSafeArea = false,
     bool left = true,
     bool top = true,
     bool right = true,
@@ -783,15 +784,24 @@ extension WidgetEx on Widget {
     bool maintainBottomViewPadding = false,
   }) {
     return useSafeArea
-        ? SafeArea(
-            left: left,
-            top: top,
-            right: right,
-            bottom: bottom ?? maintainBottomViewPadding,
-            minimum: minimum,
-            maintainBottomViewPadding: maintainBottomViewPadding,
-            child: this,
-          )
+        ? (useSliverSafeArea
+            ? SliverSafeArea(
+                left: left,
+                top: top,
+                right: right,
+                bottom: bottom ?? maintainBottomViewPadding,
+                minimum: minimum,
+                sliver: this,
+              )
+            : SafeArea(
+                left: left,
+                top: top,
+                right: right,
+                bottom: bottom ?? maintainBottomViewPadding,
+                minimum: minimum,
+                maintainBottomViewPadding: maintainBottomViewPadding,
+                child: this,
+              ))
         : this;
   }
 
