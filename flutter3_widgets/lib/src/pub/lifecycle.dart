@@ -15,6 +15,8 @@ part of '../../flutter3_widgets.dart';
 /// ```
 final NavigatorObserver lifecycleNavigatorObserver = defaultLifecycleObserver;
 
+/// 每次都创建新的[LifecycleObserver]对象
+/// [lifecycleNavigatorObserver] 单例
 NavigatorObserver get lifecycleNavigatorObserverGet => LifecycleObserver();
 
 /// https://pub.dev/packages/lifecycle
@@ -53,4 +55,40 @@ extension WidgetLifecycleEx on Widget {
         onLifecycleEvent: onLifecycleEvent,
         child: this,
       );
+}
+
+/// 生命周期状态基类
+/// https://github.com/chenenyu/lifecycle
+/// https://github.com/zhaolongs/flutter_life_state
+abstract class BaseLifecycleState<T extends StatefulWidget> extends State<T>
+    with LifecycleAware, LifecycleMixin {
+  int _lifecycleVisibleCount = 0;
+
+  @override
+  void onLifecycleEvent(LifecycleEvent event) {
+    if (event == LifecycleEvent.visible) {
+      buildContext?.let((it) {
+        if (_lifecycleVisibleCount++ == 0) {
+          onLifecycleFirstVisible(it);
+        }
+        onLifecycleVisible(it);
+      });
+    } else if (event == LifecycleEvent.invisible) {
+      buildContext?.let((it) {
+        onLifecycleInvisible(it);
+      });
+    }
+  }
+
+  /// 页面首次可见的回调
+  @overridePoint
+  void onLifecycleFirstVisible(BuildContext context) {}
+
+  /// 页面可见的回调
+  @overridePoint
+  void onLifecycleVisible(BuildContext context) {}
+
+  /// 页面不可见的回调
+  @overridePoint
+  void onLifecycleInvisible(BuildContext context) {}
 }
