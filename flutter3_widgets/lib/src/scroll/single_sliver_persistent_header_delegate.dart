@@ -1,10 +1,11 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/03
 ///
 
+/// [SliverPersistentHeaderDelegate]
 typedef SliverPersistentHeaderWidgetBuilder = Widget Function(
   BuildContext context,
   double shrinkOffset,
@@ -96,14 +97,17 @@ class SingleSliverPersistentHeaderDelegate
   @override
   TickerProvider? get vsync => vSync;
 
+  ///
   @override
   FloatingHeaderSnapConfiguration? get snapConfiguration =>
       super.snapConfiguration;
 
+  ///
   @override
   OverScrollHeaderStretchConfiguration? get stretchConfiguration =>
       super.stretchConfiguration;
 
+  ///
   @override
   PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
       super.showOnScreenConfiguration;

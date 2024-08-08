@@ -1011,6 +1011,8 @@ extension WidgetEx on Widget {
     Clip clipBehavior = Clip.none,
     double? width,
     double? height,
+    double? minWidth,
+    double? minHeight,
     Color? borderColor,
     double borderWidth = 1,
     BoxShape shape = BoxShape.rectangle,
@@ -1046,6 +1048,17 @@ extension WidgetEx on Widget {
                 : Border.all(color: borderColor, width: borderWidth),
             image: decorationImage,
           );
+    if (constraints == null) {
+      if (minWidth != null || minHeight != null) {
+        constraints = BoxConstraints(
+          minWidth: minWidth ?? 0,
+          minHeight: minHeight ?? 0,
+        );
+        //需要清空width/height
+        width = null;
+        height = null;
+      }
+    }
     return Container(
       key: key,
       alignment: alignment,
@@ -2041,7 +2054,7 @@ extension StateEx on State {
       return false;
     } catch (e) {
       assert(() {
-        l.w('当前页面可能已被销毁, 无法更新, 是否正在调度渲染[${SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks}]');
+        l.w('当前页面可能已被销毁, 无法更新! 当前是否正在调度渲染[${SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks}].');
         printError(e);
         return true;
       }());

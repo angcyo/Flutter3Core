@@ -8,7 +8,9 @@ part of '../../flutter3_widgets.dart';
 /// 是否是[Sliver]小部件
 bool isSliverWidget(Widget tile) {
   const systemSliverWidgetList = [
+    SliverAppBar,
     SliverToBoxAdapter,
+    SliverPersistentHeader,
     SliverList,
     SliverGrid,
     SliverFixedExtentList,
@@ -18,6 +20,17 @@ bool isSliverWidget(Widget tile) {
     SliverAnimatedGrid,
     SliverAnimatedList,
     SliverPadding,
+    SliverAnimatedPaintExtent,
+    SliverAnimatedSwitcher,
+    SliverAnimatedSwitcher,
+    SliverStack,
+    SliverFadeTransition,
+    SliverClip,
+    SliverCrossAxisConstrained,
+    SliverPositioned,
+    PinnedHeaderSliver,
+    SliverPinnedHeader,
+    SliverResizingHeader,
   ];
   return systemSliverWidgetList.contains(tile.runtimeType);
 }
