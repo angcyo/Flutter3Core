@@ -74,10 +74,10 @@ class AppVersionBean {
 
   //region --过滤--
 
-  /// 指定那些设备能更新
+  /// 指定那些设备uuid能更新
   List<String>? allowVersionUuidList;
 
-  /// 指定那些设备不能更新
+  /// 指定那些设备uuid不能更新
   List<String>? denyVersionUuidList;
 
   /// 是否仅用于调试?
