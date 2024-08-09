@@ -24,8 +24,12 @@ abstract class UriTransform {
 
   /// 请求[url]移花接木
   static String transformUrl(String url) {
+    String oldUrl = url;
     for (final action in _urlTransformAction) {
       url = action(url);
+    }
+    if (oldUrl != url) {
+      l.w("UriTransform(url移花接木):$oldUrl->$url");
     }
     return url;
   }
@@ -43,8 +47,12 @@ abstract class UriTransform {
 
   /// 请求[key]偷梁换柱
   static String transformKey(String key) {
+    String oldKey = key;
     for (final action in _keyTransformAction) {
       key = action(key);
+    }
+    if (oldKey != key) {
+      l.w("UriTransform(key偷梁换柱):$oldKey->$key");
     }
     return key;
   }
