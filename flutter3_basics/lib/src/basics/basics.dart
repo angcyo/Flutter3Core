@@ -300,6 +300,9 @@ double get screenWidth => platformMediaQueryData.size.width;
 @dp
 double get screenHeight => platformMediaQueryData.size.height;
 
+/// 是否是横屏
+bool get isLandscape => screenWidth > screenHeight;
+
 /// 对角线长度
 @dp
 double get screenDiagonalLength => cl(screenWidth, screenHeight);
