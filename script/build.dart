@@ -25,8 +25,10 @@ void main(List<String> arguments) {
       return;
     }
 
-    final packageName = results['packageName'];
-    final appFlavor = results['appFlavor'];
+    //信息
+    final packageName = results['packageName'] ?? "";
+    final appFlavor = results['appFlavor'] ?? "";
+    final appState = results['appState'] ?? "";
     final buildTime = results['buildTime'] ?? DateTime.now().toString();
     final operatingSystem = results['operatingSystem'] ??
         Platform.operatingSystem.replaceAll("\"", "\\\"");
@@ -37,6 +39,8 @@ void main(List<String> arguments) {
     final operatingSystemUserName = results['operatingSystemUserName'] ??
         Platform.environment['USERNAME'] ??
         Platform.environment['USER'];
+
+    //handle
 
     const templatePath = "Flutter3Core/flutter3_app/assets/template";
     const targetPath = "assets/config";
@@ -52,11 +56,17 @@ void main(List<String> arguments) {
 
     //修改
     String text = templateFile.readAsStringSync();
+    /*final json = jsonDecode(text);
+    text = jsonEncode(json);*/
+
     if (packageName != null) {
       text = text.replaceAll(r"${packageName}", packageName);
     }
     if (appFlavor != null) {
       text = text.replaceAll(r"${appFlavor}", appFlavor);
+    }
+    if (appState != null) {
+      text = text.replaceAll(r"${appState}", appState);
     }
     //--build
     if (buildTime != null) {
@@ -113,6 +123,12 @@ ArgParser buildParser() {
       abbr: 'f',
       valueHelp: "风味字符串",
       help: '替换[appFlavor]',
+    )
+    ..addOption(
+      'appState',
+      abbr: 's',
+      valueHelp: "状态字符串",
+      help: '替换[appState]',
     )
     ..addOption(
       'buildTime',

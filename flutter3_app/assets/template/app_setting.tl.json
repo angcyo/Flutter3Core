@@ -1,6 +1,7 @@
 {
   "packageName": "${packageName}",
   "appFlavor": "${appFlavor}",
+  "appState": "${appState}",
   "buildTime": "${buildTime}",
   "operatingSystem": "${operatingSystem}",
   "operatingSystemVersion": "${operatingSystemVersion}",
