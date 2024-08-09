@@ -60,6 +60,7 @@ class GlobalTheme {
   Color get whiteColor => Colors.white;
 
   /// 黑色, 不受暗色模式影响
+  /// [blackBgColor]
   Color get blackColor => Colors.black;
 
   /// 主题白色, 受暗色模式影响

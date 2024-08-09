@@ -123,13 +123,19 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
       children: [
         ...?children,
         DecoratedBox(
-            decoration: fillDecoration(
+                decoration: fillDecoration(
           color: widget.indicatorColor ?? globalTheme.accentColor,
           borderRadius: widget.borderRadius,
-        )).tabItemData(
-          itemType: TabItemType.indicator,
-          itemPaintType: TabItemPaintType.background,
-        )
+        ))
+            .shadowDecorated(
+              radius: widget.borderRadius,
+              shadowBlurRadius: 6,
+              shadowSpreadRadius: 1,
+            )
+            .tabItemData(
+              itemType: TabItemType.indicator /*指示器*/,
+              itemPaintType: TabItemPaintType.background,
+            )
       ],
     ).paddingInsets(
       widget.axis == Axis.vertical
