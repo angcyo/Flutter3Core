@@ -649,11 +649,16 @@ class ElementPainter extends IPainter
   }
 
   /// 旋转元素, [ElementGroupPainter]]需要重写处理
+  /// [refTargetRadians] 参考的需要旋转到的目标角度, 用来决定存储值时的正负数 单位: 弧度
   @api
   @overridePoint
-  void rotateElement(Matrix4 matrix) {
+  void rotateElement(
+    Matrix4 matrix, {
+    double? refTargetRadians,
+  }) {
     paintProperty?.let((it) {
-      paintProperty = it.copyWith()..applyRotate(matrix);
+      paintProperty = it.copyWith()
+        ..applyRotate(matrix, refTargetRadians: refTargetRadians);
       dispatchSelfElementRawChanged(ElementDataType.size);
     });
   }
@@ -677,6 +682,7 @@ class ElementPainter extends IPainter
 
   /// 旋转元素, 以元素中心点为锚点
   /// [radians] 弧度
+  /// [refTargetRadians] 参考的需要旋转到的目标角度, 用来决定存储值时的正负数 单位: 弧度
   /// [anchor] 旋转锚点, 不指定时, 以元素中心点为锚点
   /// [applyMatrixWithAnchor]
   /// [rotateElement]
@@ -685,12 +691,13 @@ class ElementPainter extends IPainter
   void rotateBy(
     double radians, {
     Offset? anchor,
+    double? refTargetRadians,
   }) {
     paintProperty?.let((it) {
       //debugger();
       anchor ??= it.paintCenter;
       final matrix = Matrix4.identity()..rotateBy(radians, anchor: anchor);
-      rotateElement(matrix);
+      rotateElement(matrix, refTargetRadians: refTargetRadians);
     });
   }
 
@@ -1160,10 +1167,13 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
-  void rotateElement(Matrix4 matrix) {
-    super.rotateElement(matrix);
+  void rotateElement(
+    Matrix4 matrix, {
+    double? refTargetRadians,
+  }) {
+    super.rotateElement(matrix, refTargetRadians: refTargetRadians);
     children?.forEach((element) {
-      element.rotateElement(matrix);
+      element.rotateElement(matrix, refTargetRadians: refTargetRadians);
     });
   }
 
@@ -1241,8 +1251,16 @@ class ElementGroupPainter extends ElementPainter {
   /// 群组旋转元素
   /// 最终调用[rotateElement]
   @override
-  void rotateBy(double angle, {Offset? anchor}) {
-    super.rotateBy(angle, anchor: anchor);
+  void rotateBy(
+    double angle, {
+    Offset? anchor,
+    double? refTargetRadians,
+  }) {
+    super.rotateBy(
+      angle,
+      anchor: anchor,
+      refTargetRadians: refTargetRadians,
+    );
   }
 
 //endregion ---apply--
@@ -1542,11 +1560,25 @@ class PaintProperty with EquatableMixin {
   }
 
   /// 旋转操作
+  /// [refTargetRadians] 参考的需要旋转到的目标角度, 用来决定存储值时的正负数 单位: 弧度
   @api
-  void applyRotate(Matrix4 matrix) {
+  void applyRotate(
+    Matrix4 matrix, {
+    double? refTargetRadians,
+  }) {
+    //debugger();
     // 锚点也需要翻转
     applyTranslate(matrix);
     angle = angle + matrix.rotation;
+    angle = angle.sanitizeRadians;
+    if (refTargetRadians != null) {
+      if (refTargetRadians < 0 && angle > 0) {
+        angle -= 2 * pi;
+      } else if (refTargetRadians > 0 && angle < 0) {
+        angle += 2 * pi;
+      }
+    }
+    //debugger();
     /*if (angle < -pi) {
       angle = angle + pi;
     } else if (angle > pi) {

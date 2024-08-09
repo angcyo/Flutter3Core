@@ -792,6 +792,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 旋转元素
   /// [radians] 旋转的角度, 单位: 弧度
+  /// [refTargetRadians] 参考的需要旋转到的目标角度, 用来决定存储值时的正负数 单位: 弧度
   /// [translateElement]
   /// [scaleElement]
   /// [rotateElement]
@@ -803,6 +804,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     ElementPainter? elementPainter,
     double? radians, {
     Offset? anchor,
+    double? refTargetRadians,
     UndoType undoType = UndoType.normal,
   }) {
     if (elementPainter == null || radians == null) {
@@ -810,12 +812,14 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
-      elementPainter.rotateBy(radians, anchor: anchor);
+      elementPainter.rotateBy(radians,
+          anchor: anchor, refTargetRadians: refTargetRadians);
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager
           .addUntoState(undoStateStack, redoStateStack);
     } else {
-      elementPainter.rotateBy(radians, anchor: anchor);
+      elementPainter.rotateBy(radians,
+          anchor: anchor, refTargetRadians: refTargetRadians);
     }
     if (enableResetElementAngle) {
       elementSelectComponent.updateChildPaintPropertyFromChildren(true);
