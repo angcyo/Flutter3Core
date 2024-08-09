@@ -306,14 +306,27 @@ OverlayEntry? showOverlay(
 }) {
   OverlayState? overlayState;
   if (context == null) {
-    GlobalConfig.def.globalTopContext
-        ?.eachVisitChildElements((element, depth, childIndex) {
-      if (element.widget is Overlay) {
-        overlayState = (element as StatefulElement?)?.state as OverlayState?;
-        return false;
+    if (GlobalConfig.def.globalAppContext != null) {
+      overlayState = Overlay.of(GlobalConfig.def.globalAppContext!);
+    }
+    if (overlayState == null) {
+      if (isSchedulerPhase) {
+        assert(() {
+          debugPrint('界面正在调度中,请稍后重试.');
+          return true;
+        }());
+      } else {
+        GlobalConfig.def.globalTopContext
+            ?.eachVisitChildElements((element, depth, childIndex) {
+          if (element.widget is Overlay) {
+            overlayState =
+                (element as StatefulElement?)?.state as OverlayState?;
+            return false;
+          }
+          return true;
+        });
       }
-      return true;
-    });
+    }
     //Overlay
   } else {
     overlayState = Overlay.of(context);

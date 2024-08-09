@@ -320,6 +320,7 @@ extension DialogExtension on BuildContext {
   /// [barrierColor] 障碍的颜色, 默认是[Colors.black54]
   ///
   /// [useSafeArea] 是否使用安全区域
+  /// [popLast] pop弹出最后一个路由
   ///
   /// [DialogRoute]
   /// [DialogPageRoute]
@@ -337,6 +338,7 @@ extension DialogExtension on BuildContext {
     Offset? anchorPoint,
     TranslationType? type,
     IgnorePointerType? barrierIgnorePointerType,
+    bool popLast = false,
   }) async {
     if (!mounted) {
       assert(() {
@@ -345,7 +347,11 @@ extension DialogExtension on BuildContext {
       }());
       return null;
     }
-    return navigatorOf(useRootNavigator).showWidgetDialog<T>(
+    final navigator = navigatorOf(useRootNavigator);
+    if (popLast) {
+      navigator.pop();
+    }
+    return navigator.showWidgetDialog<T>(
       widget,
       context: this,
       barrierDismissible: barrierDismissible,
