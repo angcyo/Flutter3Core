@@ -2509,6 +2509,10 @@ class TranslationTypeImpl {
   TranslationType get translationType => TranslationType.material;
 }
 
+/// [DialogMixin]
+/// [TranslationTypeImpl]
+mixin TranslationTypeMixin implements TranslationTypeImpl {}
+
 extension RouteWidgetEx on Widget {
   /// 获取[Widget]的指定的过渡动画类型
   TranslationType? getWidgetTranslationType({int depth = 3}) {
