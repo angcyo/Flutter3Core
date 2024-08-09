@@ -1317,11 +1317,11 @@ extension RectEx on Rect {
   /// mm单位的坐标, 转换成dp单位的坐标
   @dp
   Rect toRectDp() => Rect.fromLTRB(
-    left.toDpFromMm(),
-    top.toDpFromMm(),
-    right.toDpFromMm(),
-    bottom.toDpFromMm(),
-  );
+        left.toDpFromMm(),
+        top.toDpFromMm(),
+        right.toDpFromMm(),
+        bottom.toDpFromMm(),
+      );
 
   /// 作用一个矩阵, 并保持某个锚点在作用矩阵后不变
   /// [applyMatrix] 本次需要作用的矩阵, 会叠加在[originMatrix]上
@@ -1480,6 +1480,26 @@ extension NumEx on num {
         return degrees - 360;
       }
       return degrees.toDouble();
+    }
+  }
+
+  /// 限制弧度在[-π~π]
+  double get hdm {
+    if (this == 0) {
+      return 0;
+    }
+    if (this > 0) {
+      final radians = this % (2 * math.pi);
+      if (radians <= 0) {
+        return radians + 2 * math.pi;
+      }
+      return radians.toDouble();
+    } else {
+      final radians = this % (2 * math.pi);
+      if (radians >= 0) {
+        return radians - 2 * math.pi;
+      }
+      return radians.toDouble();
     }
   }
 

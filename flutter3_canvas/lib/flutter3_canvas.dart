@@ -1,6 +1,7 @@
 library flutter3_canvas;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 import 'dart:ui';
 
