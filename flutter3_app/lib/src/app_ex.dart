@@ -20,12 +20,18 @@ part of '../flutter3_app.dart';
 /// ```
 Future<PackageInfo> get platformPackageInfo async {
   final packageInfo = await PackageInfo.fromPlatform();
-  $platformPackageInfoCache = packageInfo;
+  _platformPackageInfoCache = packageInfo;
   return packageInfo;
 }
 
 /// [platformPackageInfo]的缓存数据
-PackageInfo? $platformPackageInfoCache;
+/// 请使用[platformPackageInfo]先获取一次数据, 缓存才有效
+PackageInfo? get $platformPackageInfoCache {
+  platformPackageInfo.ignore();
+  return _platformPackageInfoCache;
+}
+
+PackageInfo? _platformPackageInfoCache;
 
 /// app版本名称
 Future<String> get appVersionName async => (await platformPackageInfo).version;
