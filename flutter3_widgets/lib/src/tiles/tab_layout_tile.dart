@@ -145,7 +145,10 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
                 : kContentPadding,
           );
     return widget.axis == Axis.vertical
-        ? [label?.align(Alignment.centerLeft), content].column()!
+        ? [
+            label?.align(Alignment.centerLeft),
+            content.matchParentWidth(),
+          ].column()!
         : [
             label,
             widget.isExpanded
