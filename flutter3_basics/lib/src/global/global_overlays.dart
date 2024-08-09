@@ -370,6 +370,8 @@ OverlayEntry? showOverlay(
   );
 
   GlobalConfig.of(context).addOverlayEntry(entry, key: overlayKey);
-  overlayState?.insert(entry);
+  postFrameCallbackIfNeed((_) {
+    overlayState?.insert(entry!);
+  });
   return entry;
 }

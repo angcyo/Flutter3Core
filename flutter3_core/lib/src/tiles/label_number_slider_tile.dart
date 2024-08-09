@@ -300,7 +300,7 @@ class _LabelRangeNumberSliderTileState extends State<LabelRangeNumberSliderTile>
             final value = await context.showWidgetDialog(NumberKeyboardDialog(
               number: _currentStartValue,
               minValue: widget.minValue,
-              maxValue: _currentEndValue - 1,
+              maxValue: _currentEndValue,
               maxDigits: widget.maxDigits,
               numType: widget._numType,
             ));
@@ -321,7 +321,7 @@ class _LabelRangeNumberSliderTileState extends State<LabelRangeNumberSliderTile>
         ? buildNumberWidget(context, endNumberStr, onTap: () async {
             final value = await context.showWidgetDialog(NumberKeyboardDialog(
               number: _currentEndValue,
-              minValue: _currentStartValue + 1,
+              minValue: _currentStartValue,
               maxValue: widget.maxValue,
               maxDigits: widget.maxDigits,
               numType: widget._numType,

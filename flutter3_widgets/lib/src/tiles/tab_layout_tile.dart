@@ -111,37 +111,39 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
           }),
         )
         .toList();
-    final content = TabLayout(
-      tabLayoutController: tabLayoutController,
-      padding: const EdgeInsets.symmetric(horizontal: kM, vertical: kM),
-      bgDecoration: fillDecoration(
-        color: widget.backgroundColor ?? globalTheme.itemWhiteBgColor,
-        borderRadius: widget.borderRadius,
-      ),
-      /*selfConstraints:
+    final content = isNil(children)
+        ? empty
+        : TabLayout(
+            tabLayoutController: tabLayoutController,
+            padding: const EdgeInsets.symmetric(horizontal: kM, vertical: kM),
+            bgDecoration: fillDecoration(
+              color: widget.backgroundColor ?? globalTheme.itemWhiteBgColor,
+              borderRadius: widget.borderRadius,
+            ),
+            /*selfConstraints:
           LayoutBoxConstraints(widthType: ConstraintsType.wrapContent),*/
-      children: [
-        ...?children,
-        DecoratedBox(
-                decoration: fillDecoration(
-          color: widget.indicatorColor ?? globalTheme.accentColor,
-          borderRadius: widget.borderRadius,
-        ))
-            .shadowDecorated(
-              radius: widget.borderRadius,
-              shadowBlurRadius: 6,
-              shadowSpreadRadius: 1,
-            )
-            .tabItemData(
-              itemType: TabItemType.indicator /*指示器*/,
-              itemPaintType: TabItemPaintType.background,
-            )
-      ],
-    ).paddingInsets(
-      widget.axis == Axis.vertical
-          ? kContentPadding.copyWith(left: kX)
-          : kContentPadding,
-    );
+            children: [
+              ...?children,
+              DecoratedBox(
+                      decoration: fillDecoration(
+                color: widget.indicatorColor ?? globalTheme.accentColor,
+                borderRadius: widget.borderRadius,
+              ))
+                  .shadowDecorated(
+                    radius: widget.borderRadius,
+                    shadowBlurRadius: 6,
+                    shadowSpreadRadius: 1,
+                  )
+                  .tabItemData(
+                    itemType: TabItemType.indicator /*指示器*/,
+                    itemPaintType: TabItemPaintType.background,
+                  )
+            ],
+          ).paddingInsets(
+            widget.axis == Axis.vertical
+                ? kContentPadding.copyWith(left: kX)
+                : kContentPadding,
+          );
     return widget.axis == Axis.vertical
         ? [label?.align(Alignment.centerLeft), content].column()!
         : [
