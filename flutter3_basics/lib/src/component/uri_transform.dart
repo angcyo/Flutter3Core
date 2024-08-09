@@ -13,8 +13,9 @@ abstract class UriTransform {
   /// 用于转换[AssetBundle]加载资源的key
   static final List<TransformAction> _keyTransformAction = [];
 
-  static void addUrlTransformAction(TransformAction action) {
+  static TransformAction addUrlTransformAction(TransformAction action) {
     _urlTransformAction.add(action);
+    return action;
   }
 
   static void removeUrlTransformAction(TransformAction action) {
@@ -31,8 +32,9 @@ abstract class UriTransform {
 
   //--
 
-  static void addKeyTransformAction(TransformAction action) {
+  static TransformAction addKeyTransformAction(TransformAction action) {
     _keyTransformAction.add(action);
+    return action;
   }
 
   static void removeKeyTransformAction(TransformAction action) {
@@ -61,25 +63,21 @@ extension UriTransformEx on String {
 
   /// 直接将[this]->[newUrl]
   TransformAction transformUrlTo(String newUrl) {
-    final TransformAction action = (url) {
+    return UriTransform.addUrlTransformAction((url) {
       if (this == url) {
         return newUrl;
       }
       return url;
-    };
-    UriTransform.addUrlTransformAction(action);
-    return action;
+    });
   }
 
   /// 直接将[this]->[newKey]
   TransformAction transformKeyTo(String newKey) {
-    final TransformAction action = (key) {
+    return UriTransform.addKeyTransformAction((key) {
       if (this == key) {
         return newKey;
       }
       return key;
-    };
-    UriTransform.addKeyTransformAction(action);
-    return action;
+    });
   }
 }
