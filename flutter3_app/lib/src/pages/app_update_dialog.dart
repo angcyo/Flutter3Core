@@ -45,7 +45,7 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
 
     //2: 区分package, 获取对应报名的版本信息
     final AppVersionBean packageBean =
-        platformBean.packageNameMap?[$appPackageName] ?? platformBean;
+        platformBean.packageNameMap?[$appSettingPackageName] ?? platformBean;
 
     //3: 获取指定设备的版本信息
     final deviceUuid = $coreKeys.deviceUuid;

@@ -50,7 +50,9 @@ class AppSettingBean {
 
   //--
 
-  /// 应用程序的包名
+  /// 应用程序设置的包名
+  /// 并非真正的包名
+  /// 真正的包名需要通过[platformPackageInfo]获取
   String? packageName;
 
   /// 应用程序的风味, 不同风味的app, 可以有不同的配置
@@ -145,8 +147,13 @@ bool get isDebugFlavor {
   return bean.appFlavor != null && $appFlavorEnum != AppFlavorEnum.release;
 }
 
+/// 配置的app包名
 /// [AppSettingBean.packageName]
-String? get $appPackageName => $appSettingBean.packageName;
+///
+/// 真正的app包名
+/// [platformPackageInfo]
+/// [appPlatformPackageName]
+String? get $appSettingPackageName => $appSettingBean.packageName;
 
 /// [AppSettingBean.appFlavor]
 /// [AppSettingBean.appFlavorUuidList]
