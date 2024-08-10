@@ -110,15 +110,27 @@ Future runCommand(
   List<String> arguments, {
   String? dir,
 }) async {
-  final result = Process.runSync(
+  /*final result = Process.runSync(
     executable,
     arguments,
     runInShell: true,
     workingDirectory: dir ?? Directory.current.path,
   );
-  colorLog(result.stdout, 250); //输出标准输出
+  colorLog(result.stdout, 250); //输出标准输出*/
+  final process = await Process.start(
+    executable,
+    arguments,
+    runInShell: true,
+    workingDirectory: dir ?? Directory.current.path,
+  );
+  await process.stdout.forEach((data) {
+    colorLog(systemEncoding.decode(data), 250);
+  });
+  await process.stderr.forEach((data) {
+    colorLog(systemEncoding.decode(data), 196);
+  });
 }
 
-void colorLog(dynamic msg, [int col = 92]) {
+void colorLog(dynamic msg, [int col = 93]) {
   print('\x1B[38;5;${col}m$msg');
 }

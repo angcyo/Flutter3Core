@@ -12,6 +12,21 @@ part of '../flutter3_basics.dart';
 /// debugPrint('${_bg(229)}${_fg(0)}[flutter_animate] $message');
 /// ```
 ///
+/// - 0 黑色
+/// - 1 9 196 红色
+/// - 52 88 89 90 暗红色
+/// - 91 92 93 暗紫色
+/// - 2 淡绿色
+/// - 3 淡橙色
+/// - 4 6 淡蓝色
+/// - 7 8 暗白色
+/// - 231 亮白色
+/// - 232 黑色 ~ 255 白色
+/// - 15 白色
+/// - 10 亮绿色
+/// - 11 亮橙色
+/// - 12 亮蓝色
+///
 /// [console_bars: ^1.2.0](https://pub.dev/packages/console_bars) 控制台进度条
 /// [progressbar2: ^0.3.1](https://pub.dev/packages/progressbar2) Dart 控制台应用程序的进度条。
 /// ```
@@ -23,15 +38,15 @@ part of '../flutter3_basics.dart';
 typedef LPrint = void Function(String log);
 
 /// [consoleFgColorLog]
-void consoleLog(dynamic msg, [int col = 92]) => consoleFgColorLog(msg, col);
+void consoleLog(dynamic msg, [int col = 93]) => consoleFgColorLog(msg, col);
 
 /// 控制台前景颜色日志输出
-void consoleFgColorLog(dynamic msg, [int col = 92]) {
+void consoleFgColorLog(dynamic msg, [int col = 93]) {
   debugPrint('\x1B[38;5;${col}m$msg');
 }
 
 /// 控制台背景颜色日志输出
-void consoleBgColorLog(dynamic msg, [int col = 92]) {
+void consoleBgColorLog(dynamic msg, [int col = 93]) {
   debugPrint('\x1B[48;5;${col}m$msg');
 }
 

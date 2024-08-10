@@ -75,6 +75,6 @@ String randomString(int length) {
   }).join();
 }
 
-void colorLog(dynamic msg, [int col = 92]) {
+void colorLog(dynamic msg, [int col = 93]) {
   print('\x1B[38;5;${col}m$msg');
 }
