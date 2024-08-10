@@ -1,7 +1,6 @@
 library flutter3_app;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -181,7 +180,15 @@ Future initGlobalAppAtContext(BuildContext context) async {
     return;
   }
   GlobalConfig.def.globalAppContext = context;
-  if (isDebugFlag) {
+  //调试信息
+  checkOrShowNavigatorRouteOverlay(context);
+}
+
+/// [NavigatorRouteOverlay]
+@entryPoint
+void checkOrShowNavigatorRouteOverlay([BuildContext? context]) {
+  context ??= GlobalConfig.def.globalAppContext;
+  if (context != null && isDebugFlag) {
     NavigatorRouteOverlay.showNavigatorRouteOverlay(context);
   }
 }

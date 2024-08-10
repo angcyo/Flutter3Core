@@ -6,12 +6,19 @@ part of '../../flutter3_core.dart';
 ///
 /// 调试模式下, 用来显示导航的路由栈信息以及一些额外的调试信息
 class NavigatorRouteOverlay extends StatefulWidget {
+  /// 是否显示了视图
+  static bool _isShowNavigatorRouteOverlay = false;
+
   /// 显示
   /// No Overlay widget found.
   /// Some widgets require an Overlay widget ancestor for correct operation.
   /// The most common way to add an Overlay to an application is to include a MaterialApp, CupertinoApp or
   /// Navigator widget in the runApp() call.
   static void showNavigatorRouteOverlay(BuildContext context) {
+    if (_isShowNavigatorRouteOverlay) {
+      return;
+    }
+    _isShowNavigatorRouteOverlay = true;
     postFrameCallback((_) {
       showOverlay((entry, state, context, progress) {
         return NavigatorRouteOverlay(entry);
@@ -47,8 +54,15 @@ enum _NavigatorRouteOverlayStateEnum {
 }
 
 class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
+  /// 当前显示状态
   _NavigatorRouteOverlayStateEnum showState =
       _NavigatorRouteOverlayStateEnum.normal;
+
+  @override
+  void dispose() {
+    NavigatorRouteOverlay._isShowNavigatorRouteOverlay = false;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -160,7 +160,8 @@ String? get $appSettingPackageName => $appSettingBean.packageName;
 AppFlavorEnum get $appFlavorEnum {
   final bean = $appSettingBean;
   String? appFlavor;
-  if (bean.appFlavorUuidList?.contains($coreKeys.deviceUuid) == true) {
+  if (bean.appFlavorUuidList == null ||
+      bean.appFlavorUuidList?.contains($coreKeys.deviceUuid) == true) {
     appFlavor = bean.appFlavor;
   }
   if (appFlavor == null) {
