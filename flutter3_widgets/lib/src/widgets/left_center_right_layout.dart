@@ -148,6 +148,11 @@ class RenderLeftCenterRightLayout extends RenderBox
       _offsetRight(thisSize);
     }
     //debugger();
+    /*debugger(
+        when: (left?.size.width ?? 0) +
+                (center?.size.width ?? 0) +
+                (right?.size.width ?? 0) >
+            thisSize.width);*/
     size = thisSize;
   }
 
@@ -211,6 +216,7 @@ class RenderLeftCenterRightLayout extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    //debugger();
     defaultPaint(context, offset);
   }
 }
