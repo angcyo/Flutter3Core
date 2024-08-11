@@ -23,15 +23,15 @@ const double kXxx = 48;
 const double kMinHeight = 28;
 
 /// 最小交互高度
-/// [kMinInteractiveDimension] 系统48
+/// 系统[kMinInteractiveDimension] - 48
 const double kMinInteractiveHeight = 38;
 
 /// 最小item交互高度
 /// [kMinInteractiveHeight]
 const double kMinItemInteractiveHeight = 40;
 
-/// [kToolbarHeight] - 56
-/// [kInteractiveHeight] - 40
+/// 系统[kToolbarHeight] - 56
+/// 系统[kInteractiveHeight] - 40
 const double kTabHeight = 46;
 const double kTabItemHeight = 30;
 const double kTitleHeight = 56;
