@@ -61,10 +61,19 @@ const double kMaxBorderRadius = 45.0;
 /// 情感图的默认的最大大小
 const double kStateImageSize = 160.0;
 
+//--
+
 /// [EdgeInsets.zero]
 /// [kTabLabelPadding]
 const kPaddingH = EdgeInsets.symmetric(horizontal: kH, vertical: kM);
 const kPaddingX = EdgeInsets.symmetric(horizontal: kX, vertical: kL);
+const kXSymInsets = kPaddingX;
+const kHSymInsets = kPaddingH;
+
+const kXInsets = EdgeInsets.all(kX);
+const kHInsets = EdgeInsets.all(kH);
+
+//--
 
 /// 默认的滚动物理特性/滚动行为
 const kScrollPhysics = AlwaysScrollableScrollPhysics(

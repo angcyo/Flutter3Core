@@ -6,6 +6,7 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// [iconDecoration.[icon]]
 /// [label]
+///
 /// 上图标[icon], 下文字[label]的tile
 class SingleGridTile extends StatelessWidget with TileMixin {
   /// 图标
@@ -39,6 +40,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
   //--
 
   /// 整体的内边距
+  @defInjectMark
   final EdgeInsetsGeometry? padding;
 
   /// 外边距
@@ -118,6 +120,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
                 ?.ellipsis(labelMaxLength)
                 .text(
                     style: globalTheme.textBodyStyle,
+                    textAlign: ui.TextAlign.center,
                     softWrap: false,
                     overflow: TextOverflow.ellipsis)
                 .paddingAll(kM))
@@ -130,6 +133,6 @@ class SingleGridTile extends StatelessWidget with TileMixin {
         if (top != null) top,
         if (bottom != null) bottom,
       ].column()!.constrainedMin(minHeight: minHeight),
-    ).ink(onTap, enable: enable).material().paddingInsets(margin);
+    ).inkWellCircle(onTap, enable: enable).material().paddingInsets(margin);
   }
 }

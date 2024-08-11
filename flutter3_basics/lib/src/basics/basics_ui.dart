@@ -1129,16 +1129,20 @@ extension WidgetEx on Widget {
   Widget card({
     Color? color,
     Color? shadowColor,
+    Color? surfaceTintColor,
     double? elevation,
     ShapeBorder? shape,
     EdgeInsetsGeometry? margin,
     Clip? clipBehavior = Clip.antiAlias,
+    bool borderOnForeground = true,
   }) =>
       Card(
         color: color,
         shadowColor: shadowColor,
+        surfaceTintColor: surfaceTintColor,
         elevation: elevation,
         shape: shape,
+        borderOnForeground: borderOnForeground,
         margin: margin,
         clipBehavior: clipBehavior,
         child: this,
@@ -1803,7 +1807,12 @@ extension WidgetEx on Widget {
     double? radius /*飞溅的半径*/,
     ShapeBorder? customBorder,
     GestureLongPressCallback? onLongPress,
+    bool enable = true,
   }) {
+    if (!enable) {
+      //禁用组件
+      return this;
+    }
     return InkResponse(
       onTap: onTap,
       onLongPress: onLongPress,
@@ -1828,16 +1837,19 @@ extension WidgetEx on Widget {
     Color? splashColor,
     Color? highlightColor,
     double? radius,
+    bool enable = true,
   }) =>
-      inkWell(
-        onTap,
-        //borderRadius: BorderRadius.circular(999),
-        customBorder: const CircleBorder(),
-        splashColor: splashColor,
-        highlightColor: highlightColor,
-        highlightShape: BoxShape.rectangle,
-        radius: radius,
-      );
+      !enable
+          ? this
+          : inkWell(
+              onTap,
+              //borderRadius: BorderRadius.circular(999),
+              customBorder: const CircleBorder(),
+              splashColor: splashColor,
+              highlightColor: highlightColor,
+              highlightShape: BoxShape.rectangle,
+              radius: radius,
+            );
 
   /// 将[this]和[other] 使用[Column]包裹
   Widget columnOf(
