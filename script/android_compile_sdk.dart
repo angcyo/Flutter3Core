@@ -79,7 +79,6 @@ void main() async {
   } else {
     colorLog("未找到子模块的依赖信息, 请检查[${dependenciesFile.path}]文件.");
   }
-  //image_gallery_saver
 }
 
 /// 核心修改方法
