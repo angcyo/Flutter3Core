@@ -181,3 +181,16 @@ Widget rebuildSingle(
   Widget Function() action,
 ) =>
     rebuild(updateSignal, (context, value) => action());
+
+extension RebuildFunctionEx on Function {
+  /// 更新
+  /// ```
+  /// (){}.rebuild(signal);
+  /// ```
+  Widget rebuild(
+    @updateSignalMark ValueNotifier updateSignal, {
+    bool enable = true,
+  }) {
+    return enable ? rebuildSingle(updateSignal, () => this()) : this();
+  }
+}

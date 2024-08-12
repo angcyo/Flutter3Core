@@ -32,22 +32,33 @@ extension WidgetLifecycleEx on Widget {
 
   /// 为[PageView]提供生命周期支持
   /// Wrap PageView
+  /// child 需要使用[ChildPageLifecycleWrapper]包裹
   /// [PageView]
   /// [PageViewLifecycleWrapper]
   /// [pageChildLifecycle]
-  Widget pageLifecycle([OnLifecycleEvent? onLifecycleEvent]) =>
-      PageViewLifecycleWrapper(
-        onLifecycleEvent: onLifecycleEvent,
-        child: this,
-      );
+  Widget pageLifecycle([
+    bool enable = true,
+    OnLifecycleEvent? onLifecycleEvent,
+  ]) =>
+      enable
+          ? PageViewLifecycleWrapper(
+              onLifecycleEvent: onLifecycleEvent,
+              child: this,
+            )
+          : this;
 
-  /// 将page的child界面包裹起来, 提供生命周期支持
+  /// 将[PageView]的child界面使用[ChildPageLifecycleWrapper]包裹起来,
+  /// 使得对应的[child]可以接收到[LifecycleAware]生命周期回调
+  /// [PageView]需要使用[PageViewLifecycleWrapper]包裹
   /// [ChildPageLifecycleWrapper]
   /// [LifecycleWrapper]
+  ///
+  /// [ScrollViewItemLifecycleWrapper]
+  ///
   Widget pageChildLifecycle({
     required int index,
     OnLifecycleEvent? onLifecycleEvent,
-    bool wantKeepAlive = true,
+    bool? wantKeepAlive = true,
   }) =>
       ChildPageLifecycleWrapper(
         index: index,

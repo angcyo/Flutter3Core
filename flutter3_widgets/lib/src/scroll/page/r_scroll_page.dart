@@ -5,12 +5,24 @@ part of '../../../flutter3_widgets.dart';
 /// @since 2023/12/30
 ///
 /// 混入一个[RScrollView]的页面, 支持`刷新/加载更多`等基础功能的页面
+///
+/// 重写[onLoadData]方法, 加载数据之后调用[loadDataEnd]
+/// ```
+/// @override
+/// FutureOr onLoadData() {
+///   loadDataEnd([], e);
+/// }
+/// ```
+///
 /// [RScrollView]
 /// [AbsScrollPage]
 /// [RScrollPage]
 /// [RStatusScrollPage]
 mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 刷新/加载更多/滚动控制
+  /// [RScrollController.widgetStateIntercept]情感图状态切换拦截
+  /// [RScrollController.buildAdapterStateWidget] 自定义情感图状态
+  /// [RScrollController.buildLoadMoreStateWidget] 自定义加载更多状态
   /// [RequestPage]
   late final RScrollController scrollController = RScrollController()
     ..onLoadDataCallback = onSelfLoadDataWrap;
@@ -118,7 +130,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 加载数据入口
   /// [RScrollController.onLoadDataCallback]
-  void onSelfLoadDataWrap() async {
+  Future onSelfLoadDataWrap() async {
     try {
       await onLoadData();
     } catch (e) {

@@ -8,6 +8,10 @@ part of '../flutter3_fonts.dart';
 /// 字体预览
 /// [FontFamilyMeta]
 /// [GoogleFonts]
+///
+/// [字体名]           [trailingWidget]尾部
+/// [预览文本-可选]
+///
 class FontFamilyTile extends StatefulWidget {
   /// 字体描述元数据
   final FontFamilyMeta fontFamilyMeta;

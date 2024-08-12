@@ -72,6 +72,7 @@ const kHSymInsets = kPaddingH;
 
 const kXInsets = EdgeInsets.all(kX);
 const kHInsets = EdgeInsets.all(kH);
+const kSInsets = EdgeInsets.symmetric(horizontal: kS, vertical: kS);
 
 //--
 

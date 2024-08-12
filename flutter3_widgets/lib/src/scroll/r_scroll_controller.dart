@@ -42,7 +42,7 @@ class RScrollController extends ScrollController {
   /// 请求的分页信息
   RequestPage requestPage = RequestPage();
 
-  /// 情感图状态拦截
+  /// 情感图状态切换拦截
   WidgetBuildStateIntercept widgetStateIntercept = WidgetBuildStateIntercept();
 
   /// 状态对应的数据
@@ -275,7 +275,7 @@ class RScrollController extends ScrollController {
     );
   };
 
-  /// 情感图[Widget]
+  /// 情感图[Widget], 可以自定义
   /// 根据不同的状态, 构建不同的Widget
   @configProperty
   late WidgetStateBuilder buildAdapterStateWidget =
@@ -293,7 +293,7 @@ class RScrollController extends ScrollController {
     );
   };
 
-  /// 加载更多[Widget]
+  /// 加载更多[Widget], 可以自定义
   /// 根据不同的状态, 构建不同的Widget
   @configProperty
   late WidgetStateBuilder buildLoadMoreStateWidget =
@@ -352,7 +352,7 @@ class RScrollController extends ScrollController {
   }
 }
 
-/// 情感图状态拦截
+/// 情感图状态切换拦截
 /// 可以继承[extends]也可以[implements]
 class WidgetBuildStateIntercept {
   /// 获取可能的[WidgetBuildState]

@@ -128,6 +128,14 @@ class LayoutBoxConstraints extends BoxConstraints {
     super.maxHeight,
   });
 
+  /// 固定大小约束
+  const LayoutBoxConstraints.fixedSize({
+    this.widthType = ConstraintsType.fixedSize,
+    this.heightType = ConstraintsType.fixedSize,
+    super.maxWidth,
+    super.maxHeight,
+  });
+
   @override
   BoxConstraints copyWith({
     double? minWidth,

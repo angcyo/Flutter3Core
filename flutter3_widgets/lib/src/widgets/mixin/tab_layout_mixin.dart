@@ -5,9 +5,35 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2024/07/09
 ///
 /// [TabLayout]
-mixin TabLayoutMixin {
+/// 直接调用[buildTabLayout]
+///
+/// [PageViewMixin]
+/// [TabLayoutMixin]
+///
+mixin TabLayoutMixin<T extends StatefulWidget>
+    on State<T>, TickerProviderStateMixin<T> {
+  /// [tabLayoutController]
+  late final TabLayoutController _tabLayoutControllerMixin =
+      TabLayoutController(vsync: this);
+
   /// [TabLayout] tab控制
-  TabLayoutController get tabLayoutController;
+  TabLayoutController get tabLayoutController => _tabLayoutControllerMixin;
+
+  /// tab选中之后的更新信号
+  final UpdateSignalNotifier _tabSelectedUpdateSignal =
+      UpdateSignalNotifier(null);
+
+  @override
+  void dispose() {
+    _tabLayoutControllerMixin.dispose();
+    if (tabLayoutController != _tabLayoutControllerMixin) {
+      tabLayoutController.dispose();
+    }
+    _tabSelectedUpdateSignal.dispose();
+    super.dispose();
+  }
+
+  //region --TabLayout--
 
   /// 构建子页面, 重写此方法需要手动处理指示器[buildTabLayoutIndicator]
   /// [buildTabLayout]->[buildTabLayoutChildren]
@@ -44,38 +70,53 @@ mixin TabLayoutMixin {
     Decoration? contentBgDecoration,
     EdgeInsets? padding,
     bool autoClick = true,
+    Widget? indicator /*指示器*/,
+    TextStyle? selectedTextStyle /*选中之后的文本样式*/,
+    TextStyle? normalTextStyle /*正常的文本样式*/,
   }) {
-    if (children != null) {
-      if (autoClick) {
-        children = children
-            .mapIndex((child, index) => child.click(() {
-                  if (this is PageViewMixin) {
-                    tabLayoutController.selectedItem(index,
-                        pageController:
-                            (this as PageViewMixin).pageViewController);
-                  } else {
-                    tabLayoutController.selectedItem(index);
-                  }
-                }))
-            .toList();
+    return () {
+      List<Widget>? body = children;
+      if (body != null) {
+        if (selectedTextStyle != null) {
+          body = body
+              .mapIndex((child, index) => child.textStyle(
+                  isTabIndexSelected(index)
+                      ? selectedTextStyle
+                      : normalTextStyle))
+              .toList();
+        }
+
+        if (autoClick) {
+          body = body
+              .mapIndex((child, index) => child.click(() {
+                    if (this is PageViewMixin) {
+                      tabLayoutController.selectedItem(index,
+                          pageController:
+                              (this as PageViewMixin).pageViewController);
+                    } else {
+                      tabLayoutController.selectedItem(index);
+                    }
+                  }))
+              .toList();
+        }
       }
-    }
-    return TabLayout(
-      tabLayoutController: tabLayoutController,
-      gap: gap,
-      autoEqualWidth: autoEqualWidth,
-      autoEqualWidthRange: autoEqualWidthRange,
-      bgDecoration: bgDecoration,
-      contentBgDecoration: contentBgDecoration,
-      padding: padding,
-      onIndexChanged: onSelfTabIndexChanged,
-      children: children == null
-          ? buildTabLayoutChildren(context)
-          : [
-              ...children,
-              buildTabLayoutIndicator(context),
-            ].filterNull(),
-    );
+      return TabLayout(
+        tabLayoutController: tabLayoutController,
+        gap: gap,
+        autoEqualWidth: autoEqualWidth,
+        autoEqualWidthRange: autoEqualWidthRange,
+        bgDecoration: bgDecoration,
+        contentBgDecoration: contentBgDecoration,
+        padding: padding,
+        onIndexChanged: onSelfTabIndexChanged,
+        children: body == null
+            ? buildTabLayoutChildren(context)
+            : [
+                ...?body,
+                indicator ?? buildTabLayoutIndicator(context),
+              ].filterNull(),
+      );
+    }.rebuild(_tabSelectedUpdateSignal, enable: selectedTextStyle != null);
   }
 
   /// 指定的索引是否是tab选中的
@@ -84,9 +125,12 @@ mixin TabLayoutMixin {
   /// tab索引改变回调
   @overridePoint
   void onSelfTabIndexChanged(int from, int to) {
+    _tabSelectedUpdateSignal.updateValue(to);
     assert(() {
       l.v('onSelfTabIndexChanged:$from->$to');
       return true;
     }());
   }
+
+//endregion --TabLayout--
 }

@@ -20,12 +20,18 @@ class SingleLabelInfoTile extends StatelessWidget {
   /// 信息
   final String? info;
   final Widget? infoWidget;
+
+  /// [GlobalTheme.textGeneralStyle]
+  @defInjectMark
   final TextStyle? infoTextStyle;
 
   /// 整体的内边距
+  @defInjectMark
   final EdgeInsetsGeometry? padding;
 
   /// 信息右边的箭头
+  /// 如果设置了[onTap], 自动会注入`右箭头图标`
+  @defInjectMark
   final Widget? infoIcon;
 
   /// 最小高度
@@ -60,8 +66,8 @@ class SingleLabelInfoTile extends StatelessWidget {
     final leftBottom =
         desWidget ?? des?.text(style: desTextStyle ?? globalTheme.textDesStyle);
 
-    var right = infoWidget ??
-        info?.text(style: infoTextStyle ?? globalTheme.textInfoStyle);
+    final infoTextStyle = this.infoTextStyle ?? globalTheme.textGeneralStyle;
+    var right = infoWidget ?? info?.text(style: infoTextStyle);
 
     final rightIco = infoIcon ??
         (onTap == null
@@ -69,7 +75,7 @@ class SingleLabelInfoTile extends StatelessWidget {
             : Icon(
                 Icons.arrow_forward_ios /*Icons.navigate_next_sharp*/,
                 size: 14.0,
-                color: globalTheme.textInfoStyle.color,
+                color: infoTextStyle.color,
               ));
 
     final columnList = [
@@ -98,7 +104,7 @@ class SingleLabelInfoTile extends StatelessWidget {
         if (column != null) column,
         if (right != null) right,
         if (rightIco != null && rightIco is! IgnoreWidget) rightIco
-      ].row()!.constrainedMin(minHeight: minHeight),
+      ].row(gap: kM)!.constrainedMin(minHeight: minHeight),
     ).ink(onTap).material();
   }
 }

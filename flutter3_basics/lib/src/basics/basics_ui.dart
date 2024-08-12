@@ -1403,6 +1403,10 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// [DefaultTextStyle]
+  Widget textStyle(TextStyle? style) =>
+      style == null ? this : wrapTextStyle(style: style);
+
   /// 拦截路由的弹出, 返回键.
   /// [PopScope]
   /// [WillPopScope.onWillPop]
