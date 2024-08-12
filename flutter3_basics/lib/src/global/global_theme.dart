@@ -72,7 +72,7 @@ class GlobalTheme {
   /// 黑色背景颜色
   Color get blackBgColor => const Color(0xff333333);
 
-  /// 容器白色背景颜色
+  /// 容器白色背景颜色 #f6f6f6
   Color get itemWhiteBgColor => const Color(0xfff6f6f6);
 
   /// 白色背景上的白色按钮背景颜色

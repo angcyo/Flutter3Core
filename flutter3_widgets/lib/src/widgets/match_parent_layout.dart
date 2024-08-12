@@ -18,12 +18,15 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
   /// 是否撑满高度
   final bool matchHeight;
 
+  final String? debugLabel;
+
   const MatchParentLayout({
     super.key,
     super.child,
     this.matchWidth = true,
     this.matchHeight = true,
     this.alignment = AlignmentDirectional.center,
+    this.debugLabel,
   });
 
   @override
@@ -31,6 +34,7 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
         alignment: alignment,
         matchHeight: matchHeight,
         matchWidth: matchWidth,
+        debugLabel: debugLabel,
         textDirection: Directionality.of(context),
       );
 
@@ -40,6 +44,7 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
       ..alignment = alignment
       ..matchWidth = matchWidth
       ..matchHeight = matchHeight
+      ..debugLabel = debugLabel
       ..markNeedsLayout();
   }
 }
@@ -52,25 +57,37 @@ class MatchParentBox extends WrapContentBox {
   /// 是否撑满高度
   bool matchHeight;
 
+  String? debugLabel;
+
   MatchParentBox({
     super.alignment,
     super.textDirection,
     this.matchWidth = true,
     this.matchHeight = true,
+    this.debugLabel,
   });
 
   @override
   void performLayout() {
+    //debugger(when: debugLabel != null);
+    BoxConstraints constraints = this.constraints;
+    BoxConstraints? parentConstraints = parentBoxConstraints;
+    if (constraints.isUnconstrained) {
+      constraints = parentConstraints ?? constraints;
+    }
     if (child == null) {
       size = constraints.smallest;
     } else {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
       final innerConstraints = BoxConstraints(
         minWidth: matchWidth
-            ? constraints.maxWidth.ensureValid(0)
+            ? constraints.maxWidth
+                .ensureValid(constraints.minWidth.ensureValid(0))
             : constraints.minWidth,
         minHeight: matchHeight
-            ? constraints.maxHeight.ensureValid(0)
+            ? constraints.maxHeight.ensureValid(constraints.minHeight
+                .ensureValid(0)
+                .maxOf(parentConstraints?.minHeight ?? 0))
             : constraints.minHeight,
         maxWidth: constraints.maxWidth,
         maxHeight: constraints.maxHeight,
@@ -78,7 +95,7 @@ class MatchParentBox extends WrapContentBox {
       //final parentConstraints = parent?.constraints;
       //debugger();
       child!.layout(innerConstraints, parentUsesSize: true);
-      //debugger();
+      //debugger(when: debugLabel != null);
       size = constraints.constrain(child!.size);
       _alignChild();
     }
@@ -94,11 +111,13 @@ extension MatchParentLayoutEx on Widget {
     bool matchWidth = true,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
+    String? debugLabel,
   }) =>
       MatchParentLayout(
         alignment: alignment,
         matchWidth: matchBoth ?? matchWidth,
         matchHeight: matchBoth ?? matchHeight,
+        debugLabel: debugLabel,
         child: this,
       );
 

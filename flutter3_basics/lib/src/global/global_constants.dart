@@ -75,6 +75,14 @@ const kHInsets = EdgeInsets.all(kH);
 
 //--
 
+/// 阴影的颜色
+const Color kShadowColor = Color(0x0D000000);
+
+/// 阴影的偏移量
+const Offset kShadowOffset = Offset(1, 4);
+
+//--
+
 /// 默认的滚动物理特性/滚动行为
 const kScrollPhysics = AlwaysScrollableScrollPhysics(
   parent: BouncingScrollPhysics(),

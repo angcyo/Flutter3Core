@@ -240,7 +240,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           bottomRadius: clipBottomRadius,
         )
         .shadowDecorated(
-          shadowColor: showTopShadow ? const Color(0x06000000) : null,
+          shadowColor: showTopShadow ? kShadowColor : null,
           radius: clipTopRadius == null ? 8 : clipTopRadius / 2,
           decorationColor: Colors.transparent,
           shadowOffset: const Offset(0, -4),

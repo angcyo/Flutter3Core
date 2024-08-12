@@ -1637,6 +1637,9 @@ extension NumEx on num {
 }
 
 extension IntEx on int {
+  /// 取2个数的最大值
+  int maxOf(int other) => math.max(this, other);
+
   /// ascii 码转成对应的字符
   /// [IntEx.ascii]
   /// [StringEx.ascii]
@@ -1748,6 +1751,9 @@ extension IntEx on int {
 }
 
 extension DoubleEx on double {
+  /// 取2个数的最大值
+  double maxOf(double other) => math.max(this, other);
+
   /// 判断2个浮点数是否相等
   /// [notEqualTo]
   bool equalTo(double other, [double epsilon = 1e-8]) =>

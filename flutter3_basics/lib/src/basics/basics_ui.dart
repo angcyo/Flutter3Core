@@ -1158,12 +1158,12 @@ extension WidgetEx on Widget {
   /// [shadowRadius]
   /// [shadowDecorated]
   Widget shadowCircle({
-    Color shadowColor = Colors.black12,
+    Color shadowColor = kShadowColor,
     Offset shadowOffset = Offset.zero,
     double shadowBlurRadius = kDefaultBlurRadius,
+    double shadowSpreadRadius = kS,
     bool clipContent = true,
     Color? decorationColor = Colors.white,
-    double shadowSpreadRadius = kS,
     Color? color,
     AlignmentGeometry? alignment = Alignment.center,
     EdgeInsetsGeometry? padding,
@@ -1214,7 +1214,7 @@ extension WidgetEx on Widget {
   Widget shadowRadius({
     bool clipContent = true,
     Color? decorationColor = Colors.white,
-    Color shadowColor = Colors.black12,
+    Color shadowColor = kShadowColor,
     Offset shadowOffset = Offset.zero,
     double blurRadius = kDefaultBlurRadius,
     double? radius = kDefaultBorderRadiusXXX,
@@ -1266,7 +1266,7 @@ extension WidgetEx on Widget {
   /// [shadowDecorated]
   Widget shadowDecorated({
     Offset shadowOffset = Offset.zero,
-    Color? shadowColor = Colors.black12,
+    Color? shadowColor = kShadowColor,
     double? radius = kDefaultBorderRadiusXXX,
     double shadowBlurRadius = kDefaultBlurRadius,
     double shadowSpreadRadius = kS,
@@ -1572,8 +1572,8 @@ extension WidgetEx on Widget {
   Widget constrainedMax({
     double? minWidth,
     double? minHeight,
-    double? maxWidth,
-    double? maxHeight,
+    double? maxWidth = double.infinity,
+    double? maxHeight = double.infinity,
   }) {
     if (maxWidth == null &&
         maxHeight == null &&
@@ -2427,13 +2427,13 @@ extension RenderObjectEx on RenderObject {
   }
 
   /// 父布局的约束
-/*BoxConstraints? get parentBoxConstraints {
+  BoxConstraints? get parentBoxConstraints {
     final parentConstraints = parent?.constraints;
     if (parentConstraints is BoxConstraints) {
       return parentConstraints;
     }
     return parent?.parentBoxConstraints;
-  }*/
+  }
 }
 
 extension ElementEx on Element {}

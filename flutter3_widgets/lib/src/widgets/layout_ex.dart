@@ -575,6 +575,13 @@ extension BoxConstraintsEx on BoxConstraints {
       ? (this as LayoutBoxConstraints).heightType == ConstraintsType.fixedSize
       : minHeight >= maxHeight;
 
+  /// 是否无拘无束
+  bool get isUnconstrained =>
+      minWidth == 0 &&
+      maxWidth == double.infinity &&
+      minHeight == 0 &&
+      maxHeight == double.infinity;
+
   /// 获取当前的约束
   /// [parentSize] 容器大小
   /// [padding] 自身需要填充的内边距

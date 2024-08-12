@@ -25,6 +25,24 @@ Line verticalLine(BuildContext context) =>
 Line horizontalLine(BuildContext context) =>
     context.isThemeDark ? kHorizontalLineDark : kHorizontalLine;
 
+/// 线
+Widget line(
+  BuildContext context, {
+  Axis axis = Axis.vertical,
+  double thickness = 1,
+  double lineSize = 24,
+  Color? color,
+}) {
+  final globalTheme = GlobalTheme.of(context);
+  //color ??= context.isThemeDark ? const Color(0xff595450) : const Color(0xffececec);
+  color ??=
+      context.isThemeDark ? globalTheme.lineDarkColor : globalTheme.lineColor;
+  final w = axis == Axis.vertical ? thickness : lineSize;
+  final h = axis == Axis.vertical ? lineSize : thickness;
+  return DecoratedBox(decoration: fillDecoration(color: color))
+      .size(width: w, height: h);
+}
+
 class Line extends LeafRenderObjectWidget {
   /// 是否强制指定线条的大小
   final double? lineSize;
