@@ -149,6 +149,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Color? bgColor /*背景颜色, 不指定默认[globalTheme.surfaceBgColor]*/,
     bool enablePullBack = true,
     bool showDragHandle = true,
+    bool maybePop = false /*使用[maybePop]还是[pop]*/,
     double? pullMaxBound,
     void Function(BuildContext context)? onPullBack,
     bool useScroll = false,
@@ -250,7 +251,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           onPullBack: onPullBack ??
               (context) {
                 if (pullMaxBound == null) {
-                  closeDialogIf(context);
+                  closeDialogIf(context, true, maybePop);
                 }
               },
         )
@@ -302,11 +303,17 @@ mixin DialogMixin implements TranslationTypeImpl {
 
   /// 关闭一个对话框, 如果[close]为true
   @callPoint
-  Future<bool> closeDialogIf(BuildContext? context, [bool close = true]) async {
+  Future<bool> closeDialogIf(
+    BuildContext? context, [
+    bool close = true,
+    bool maybePop = false,
+  ]) async {
     if (close && context?.isMounted == true) {
+      if (maybePop) {
+        return await context?.maybePop(popDialogResult) ?? false;
+      }
       context?.pop(popDialogResult);
       return true;
-      //return await context?.maybePop(popDialogResult) ?? false;
     }
     return false;
   }

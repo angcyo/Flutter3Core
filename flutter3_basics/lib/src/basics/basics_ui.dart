@@ -1430,7 +1430,7 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// 拦截pop操作
+  /// 拦截[maybePop]操作
   Widget interceptPop([bool intercept = true]) {
     return intercept ? popScope(false, (didPop) {}) : this;
   }
@@ -1448,7 +1448,7 @@ extension WidgetEx on Widget {
     });
   }
 
-  /// 当当前的路由pop时回调
+  /// 当当前的路由[maybePop]时回调
   Widget onPop(Action action) {
     return popScope(true, (didPop) {
       if (didPop) {
