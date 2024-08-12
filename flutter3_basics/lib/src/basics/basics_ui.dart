@@ -763,10 +763,12 @@ extension WidgetEx on Widget {
 
   /// 脚手架
   Widget scaffold({
+    PreferredSizeWidget? appBar,
     Color? backgroundColor = Colors.transparent,
     bool resizeToAvoidBottomInset = true,
   }) =>
       Scaffold(
+        appBar: appBar,
         backgroundColor: backgroundColor,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         body: this,
