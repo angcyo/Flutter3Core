@@ -397,6 +397,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 更新指定[value]对应的tile
   /// [value] 可以是单个值, 也可以是多个值(列表)
   /// 如果是多个值, 则所有命中[RItemTile.updateSignal]值的tile, 都将收到更新信号通知
+  /// [rebuildTile]
   @api
   void updateTile(dynamic value) {
     rebuildTile((tile, signal) {
@@ -407,6 +408,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 更新所有tile
   /// [updateTile]
+  /// [rebuildTile]
   @api
   void updateAllTile() {
     rebuildTile((tile, signal) {
@@ -440,6 +442,51 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
           }
         }
       }
+    }
+  }
+
+  /// [deleteTile]
+  @api
+  void removeTile(dynamic value) {
+    deleteTile((tile, signal) {
+      return signal.value == value ||
+          (value is Iterable && value.contains(signal.value));
+    });
+  }
+
+  /// 在[pageWidgetList]中移除所有[RItemTile.updateSignal]满足条件的value
+  /// [updateTile]
+  ///
+  /// [pageWidgetList]
+  @api
+  void deleteTile(
+      bool Function(RItemTile tile, UpdateValueNotifier signal) test) {
+    WidgetList removeList = [];
+    for (final element in pageWidgetList) {
+      //debugger();
+      if (element is RItemTile) {
+        //element.updateTile();
+        final updateSignal = element.updateSignal;
+        if (updateSignal != null) {
+          try {
+            if (test(element, updateSignal)) {
+              //debugger();
+              removeList.add(element);
+            }
+          } catch (e) {
+            //中断循环
+            assert(() {
+              printError(e);
+              return true;
+            }());
+            break;
+          }
+        }
+      }
+    }
+    if (removeList.isNotEmpty) {
+      pageWidgetList.removeAll(removeList);
+      _updateState.updateState();
     }
   }
 
