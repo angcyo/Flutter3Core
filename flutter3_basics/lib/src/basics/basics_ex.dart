@@ -599,7 +599,8 @@ Future<String?> getClipboardText() async {
 
 extension StringEx on String {
   /// 截取字符串, 超过[length]的部分, 会用[ellipsis]代替
-  String ellipsis(int? length, [String ellipsis = "..."]) =>
+  /// 系统用的时[_kEllipsis]
+  String ellipsis(int? length, [String ellipsis = '\u2026']) =>
       (length != null && length < this.length)
           ? "${substring(0, length)}$ellipsis"
           : this;
