@@ -2044,12 +2044,12 @@ extension ListEx<T> on List<T> {
   /// [IterableEx.mapToList]
   /// [ListEx.mapToList]
   List<Type> mapToList<Type>(
-    Type Function(dynamic e) toElement, {
+    Type Function(T e) toElement, {
     bool growable = false,
   }) {
     return map<Type>((e) {
       //debugger();
-      var r = toElement(e);
+      final r = toElement(e);
       return r;
     }).toList(growable: growable);
   }

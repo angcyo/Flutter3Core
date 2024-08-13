@@ -169,11 +169,33 @@ mixin TileTransformMixin {
   /// 构建[RItemTile]描述的简单子部件
   /// [buildTileWidget]
   /// [buildTileListWidget]
-  Widget buildTileWidget(BuildContext context, Widget? tile, Widget child) {
+  Widget buildTileWidget(
+    BuildContext context,
+    Widget? tile,
+    Widget child, {
+    bool ignoreSliverPadding = false,
+    bool ignoreSliverDecoration = false,
+    bool ignoreSliverHeader = false,
+    bool ignoreSliverFillRemaining = false,
+  }) {
     if (tile is RItemTile) {
-      Widget result = wrapSliverPaddingDecorationTile(tile, child);
-      result = wrapHeaderTile(context, tile, result);
-      result = wrapSliverFillRemaining(context, tile, result);
+      Widget result = child;
+      if (!ignoreSliverDecoration) {
+        result = wrapSliverDecoration(
+          tile.sliverDecoration,
+          tile.sliverDecorationPosition,
+          result,
+        );
+      }
+      if (!ignoreSliverPadding) {
+        result = wrapSliverPadding(tile.sliverPadding, result);
+      }
+      if (!ignoreSliverHeader) {
+        result = wrapHeaderTile(context, tile, result);
+      }
+      if (!ignoreSliverFillRemaining) {
+        result = wrapSliverFillRemaining(context, tile, result);
+      }
       return result;
     }
     return child;
@@ -545,6 +567,8 @@ class SliverListTransform extends BaseTileTransform {
         newList.add(buildTileWidget(
           context,
           tile,
+          ignoreSliverDecoration: true,
+          ignoreSliverPadding: true,
           tile.buildListWrapChild(
             context,
             sliverChild,
@@ -643,10 +667,13 @@ class SliverGridTransform extends BaseTileTransform {
 
     WidgetList newList = [];
     sliverChild.forEachIndexed((index, tile) {
+      //debugger();
       if (tile is RItemTile) {
         newList.add(buildTileWidget(
           context,
           tile,
+          ignoreSliverDecoration: true,
+          ignoreSliverPadding: true,
           tile.buildGridWrapChild(
             context,
             sliverChild,
@@ -658,6 +685,7 @@ class SliverGridTransform extends BaseTileTransform {
         newList.add(tile);
       }
     });
+    //debugger();
     return wrapSliverPaddingDecorationTile(
         first,
         /*SliverGrid.count(
@@ -740,6 +768,8 @@ class SliverReorderableListTransform extends BaseTileTransform {
         newList.add(buildTileWidget(
           context,
           tile,
+          ignoreSliverDecoration: true,
+          ignoreSliverPadding: true,
           tile.buildListWrapChild(
             context,
             sliverChild,

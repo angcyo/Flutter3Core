@@ -199,6 +199,7 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
           padding: widget.padding,
           margin: widget.margin,
           decoration: decoration,
+          alignment: Alignment.center,
         )
         .click(
             widget.onTap ??

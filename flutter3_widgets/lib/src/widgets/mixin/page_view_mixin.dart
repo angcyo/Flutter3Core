@@ -69,10 +69,11 @@ mixin PageViewMixin<T extends StatefulWidget>
     bool padEnds = true,
     bool keepAlive = false,
     bool useLifecycle = false,
+    bool useChildLifecycle = false,
   }) {
     WidgetList body = children ?? buildPageChildren(context);
 
-    if (useLifecycle) {
+    if (useChildLifecycle) {
       body = body.mapIndex((e, index) {
         return e.pageChildLifecycle(
           index: index,

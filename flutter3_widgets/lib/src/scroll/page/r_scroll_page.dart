@@ -19,6 +19,19 @@ part of '../../../flutter3_widgets.dart';
 /// [RScrollPage]
 /// [RStatusScrollPage]
 mixin RScrollPage<T extends StatefulWidget> on State<T> {
+  /// 保存最后一次[rebuildByBean]方法创建的更新信号,
+  /// 然后在[RItemTileExtension]中消耗此对象
+  static WeakReference<UpdateValueNotifier>? _lastRebuildBeanSignal;
+
+  static UpdateValueNotifier? consumeRebuildBeanSignal() {
+    if (_lastRebuildBeanSignal?.target != null) {
+      var signal = _lastRebuildBeanSignal?.target;
+      _lastRebuildBeanSignal = null;
+      return signal;
+    }
+    return null;
+  }
+
   /// 刷新/加载更多/滚动控制
   /// [RScrollController.widgetStateIntercept]情感图状态切换拦截
   /// [RScrollController.buildAdapterStateWidget] 自定义情感图状态
@@ -27,9 +40,24 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   late final RScrollController scrollController = RScrollController()
     ..onLoadDataCallback = onSelfLoadDataWrap;
 
+  /// 首次加载[initState]时, 需要触发的情感图状态
   /// 默认的情感图状态, 同时也会触发对应的事件
   /// [initState]
-  WidgetBuildState defWidgetState = WidgetBuildState.loading;
+  /// 也可以使用[WidgetStateScope]指定情感图状态
+  WidgetBuildState? defWidgetState;
+
+  /// 首次加载[initState]时, 需要触发的情感图状态
+  /// 当未指定[defWidgetState]时, 自动根据页面类型识别
+  WidgetBuildState get firstWidgetState {
+    if (defWidgetState != null) {
+      return defWidgetState!;
+    }
+    if (this is BasePageChildLifecycleState) {
+      //如果是在[PageView]里面, 则使用预加载
+      return WidgetBuildState.preLoading;
+    }
+    return WidgetBuildState.loading;
+  }
 
   /// 当前界面的数据, 用来放到滚动体里面
   /// [pageRScrollView]
@@ -56,8 +84,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       if (mounted) {
         defWidgetState = WidgetStateScope.of(context) ?? defWidgetState;
       }
-      if (defWidgetState.isLoading) {
-        firstLoad();
+      if (firstWidgetState.isLoading) {
+        firstState();
       }
     });
     super.initState();
@@ -150,13 +178,18 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   FutureOr onLoadData();
 
   /// 调用此方法, 加载数据完成, 并自动处理情感图/加载更多状态控制
-  /// [loadData] 当前加载到的数据, 非所有数据
+  /// [loadData] 当前加载到的数据, 非所有数据. 当前只支持[WidgetList]类型
   /// [stateData] 当前状态的附加信息, 用来识别是否有错误
   /// [handleData] 是否自动处理数据到[pageWidgetList]
   ///
   /// 重写[wrapScrollChildren]方法,实现额外的布局
   ///
   /// [updateLoadDataWidget] 简单刷新整体界面
+  ///
+  /// ```
+  /// values?.mapToList<Widget>((e)=>Widget());
+  /// ```
+  ///
   @callPoint
   @updateMark
   void loadDataEnd(
@@ -180,13 +213,26 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     scrollController.finishRefresh(_updateState, loadData, stateData);
   }
 
-  /// 首次加载, 如果需要请主动调用, 触发
+  /// 首次状态加载
+  /// [initState]
   @callPoint
-  void firstLoad([WidgetBuildState? state]) {
-    state ??= defWidgetState;
+  void firstState([WidgetBuildState? state]) {
+    state ??= firstWidgetState;
     //debugger();
     //当前的状态
-    var currentState = scrollController.adapterStateValue.value;
+    final currentState = scrollController.adapterStateValue.value;
+    if (currentState != state) {
+      scrollController.updateAdapterState(_updateState, state);
+    }
+  }
+
+  /// 首次触发[WidgetBuildState.loading]加载状态, 如果需要请主动调用触发事件
+  @callPoint
+  void firstLoad([WidgetBuildState? state]) {
+    state ??= WidgetBuildState.loading;
+    //debugger();
+    //当前的状态
+    final currentState = scrollController.adapterStateValue.value;
     if (currentState.isNoneState) {
       //已经显示了内容
     } else if (currentState == WidgetBuildState.preLoading ||
@@ -309,8 +355,25 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   //region 页面更新
 
+  /// 使用[bean]自动创建一个带[RItemTile.updateSignal]更新信号的[Widget]
+  /// 将生成的信号存储在[RScrollPage._lastRebuildBeanSignal]中,
+  /// 然后在[RItemTileExtension]中消耗此信号对象
+  @api
+  Widget rebuildByBean<Bean>(
+    Bean bean,
+    DataWidgetBuilder<Bean> builder,
+  ) {
+    final updateSignal = UpdateSignalNotifier(bean);
+    RScrollPage._lastRebuildBeanSignal = WeakReference(updateSignal);
+    return rebuild(updateSignal, (context, value) {
+      //debugger();
+      return builder(context, value);
+    });
+  }
+
   /// 更新指定[value]对应的tile
   /// [value] 可以是单个值, 也可以是多个值(列表)
+  /// 如果是多个值, 则所有命中[RItemTile.updateSignal]值的tile, 都将收到更新信号通知
   @api
   void updateTile(dynamic value) {
     rebuildTile((tile, signal) {
@@ -319,7 +382,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     });
   }
 
-  /// 更新指定的tile
+  /// 更新满足条件的tile, 前提是需要配置[RItemTile.updateSignal]更新信号
   /// [test] 测试是否需要更新, 返回true, 表示需要rebuild
   @api
   void rebuildTile(

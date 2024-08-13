@@ -57,6 +57,7 @@ class FontsManager {
   }
 
   /// 加载自定义字体
+  /// 注意, 此方法会返回缓存数据, 所以对数据操作将影响后续的使用
   Future<List<FontFamilyMeta>> loadCustomFileFontFamilyList({
     bool parseVariant = false,
     bool? autoLoad = true,
@@ -144,6 +145,7 @@ class FontsManager {
   }
 
   /// 加载系统字体
+  /// 注意, 此方法会返回缓存数据, 所以对数据操作将影响后续的使用
   Future<List<FontFamilyMeta>> loadSystemFileFontFamilyList({
     bool parseVariant = false,
     bool? autoLoad = true,
@@ -172,7 +174,7 @@ class FontsManager {
   /// [FontFamilyMeta]
   Future<bool> loadFontFamily(FontFamilyMeta fontFamilyMeta) async {
     bool result = fontFamilyMeta.variantList.isNotEmpty;
-    for (var variantMeta in fontFamilyMeta.variantList) {
+    for (final variantMeta in fontFamilyMeta.variantList) {
       try {
         result = result &&
             await loadFontFamilyVariant(
@@ -195,10 +197,14 @@ class FontsManager {
   /// [FontFamilyVariantMeta]
   Future<bool> loadFontFamilyVariant(
     FontFamilyVariantMeta variantMeta,
-    FontFamilySource source, {
+    FontFamilySource? source, {
     String? savePath,
     bool? overwrite,
   }) async {
+    if (source == null) {
+      return false;
+    }
+
     final key = variantMeta.uri;
     final load = _uriLoadCache[key];
     if (load == true) {
@@ -260,7 +266,9 @@ class FontsManager {
 
           //await futureDelay(1.seconds);
         }, onDone: () {
-          completer.complete(list);
+          if (!completer.isCompleted) {
+            completer.complete(list);
+          }
         }, onError: (e, stack) {
           completer.completeError(e, stack);
         });

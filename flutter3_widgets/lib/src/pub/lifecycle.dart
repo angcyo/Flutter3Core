@@ -139,7 +139,7 @@ abstract class BasePageChildLifecycleWidget extends StatefulWidget {
   const BasePageChildLifecycleWidget({
     super.key,
     required this.pageIndex,
-    this.wantKeepAlive,
+    this.wantKeepAlive = true,
     this.onLifecycleEvent,
   });
 }

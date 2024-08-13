@@ -96,6 +96,9 @@ class RItemTile extends StatefulWidget {
   /// 用来触发重构的信号, 需要主动监听这个值的变化, 然后触发重构
   /// 这里的属性, 只是为了触发重构信号, 无功能实现
   /// [RebuildWidget]
+  /// [ValueNotifier]
+  /// [UpdateValueNotifier]
+  /// [UpdateSignalNotifier]
   final UpdateValueNotifier? updateSignal;
 
   //endregion rebuild
@@ -678,7 +681,7 @@ extension RItemTileExtension on Widget {
               : null),
       hide: hide,
       part: part,
-      updateSignal: updateSignal,
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       sliverTransformType: sliverTransformType,
       child: this,
     );
@@ -686,7 +689,7 @@ extension RItemTileExtension on Widget {
 
   /// 网格item
   /// [gridCount] 网格的列数
-  /// [childAspectRatio] child宽高比, <1时,高度高; >1时,宽度高;
+  /// [childAspectRatio] child宽高比(w/h), <1时,高度高; >1时,宽度高;
   /// [mainAxisSpacing] 主轴间隙, 如果方向是垂直的, 则是行间隙, 如果方向是水平的, 则是列间隙
   /// [crossAxisSpacing] 交叉轴间隙
   /// [RItemTile.buildGridWrapChild]
@@ -730,7 +733,7 @@ extension RItemTileExtension on Widget {
               : null),
       hide: hide,
       part: part,
-      updateSignal: updateSignal,
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       child: this,
     );
   }
@@ -830,7 +833,7 @@ extension RItemTileExtension on Widget {
       edgePaddingBottom: edgePaddingBottom,
       groupExpanded: groupExpanded,
       groups: groups,
-      updateSignal: updateSignal,
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       child: child ?? this,
     );
   }
@@ -849,6 +852,7 @@ extension RItemTileExtension on Widget {
     Color? headerBarBackgroundColor,
     Color? headerBarForegroundColor,
     TextStyle? headerBarTitleTextStyle = const TextStyle(fontSize: 14),
+    UpdateValueNotifier? updateSignal,
     dynamic sliverTransformType = SliverMainAxisGroup,
   }) {
     return RItemTile(
@@ -864,6 +868,7 @@ extension RItemTileExtension on Widget {
       headerBarForegroundColor: headerBarForegroundColor,
       headerBarTitleTextStyle: headerBarTitleTextStyle,
       useSliverAppBar: useSliverAppBar,
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       sliverTransformType: sliverTransformType,
       child: this,
     );
@@ -889,6 +894,7 @@ extension RItemTileExtension on Widget {
     EdgeInsetsGeometry? sliverPadding,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    UpdateValueNotifier? updateSignal,
     dynamic sliverTransformType = SliverMainAxisGroup,
   }) {
     return RItemTile(
@@ -911,6 +917,7 @@ extension RItemTileExtension on Widget {
                   borderRadius: borderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       sliverTransformType: sliverTransformType,
       child: this,
     );
@@ -933,6 +940,7 @@ extension RItemTileExtension on Widget {
     double? bottomLineHeight,
     EdgeInsets? bottomLineMargin,
     Widget? bottomLeading,
+    UpdateValueNotifier? updateSignal,
   }) {
     return RItemTile(
       part: part,
@@ -947,6 +955,7 @@ extension RItemTileExtension on Widget {
       bottomLineColor: bottomLineColor,
       bottomLineHeight: bottomLineHeight,
       bottomLineMargin: bottomLineMargin,
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       child: this,
     );
   }
@@ -957,12 +966,14 @@ extension RItemTileExtension on Widget {
     bool fillHasScrollBody = false,
     bool fillOverscroll = false,
     bool fillExpand = true,
+    UpdateValueNotifier? updateSignal,
   }) {
     return RItemTile(
       fillRemaining: fillRemaining,
       fillHasScrollBody: fillHasScrollBody,
       fillOverscroll: fillOverscroll,
       fillExpand: fillExpand,
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       child: this,
     );
   }

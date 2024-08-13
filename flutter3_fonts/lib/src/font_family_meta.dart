@@ -12,7 +12,9 @@ class FontFamilyMeta {
   String displayFontFamily;
 
   /// 字体来源
-  FontFamilySource source;
+  /// 不指定则没有来源. 则不加载字体,
+  /// 则使用默认[TextStyle]
+  FontFamilySource? source;
 
   /// http字体保存路径
   String? savePath;
@@ -26,7 +28,7 @@ class FontFamilyMeta {
 
   FontFamilyMeta({
     required this.displayFontFamily,
-    required this.source,
+    this.source,
     this.savePath,
     this.overwrite,
   });
@@ -46,6 +48,9 @@ class FontFamilyMeta {
         l.d('[${fontWeight}][${fontStyle}]匹配到字体:${find.fontFamily}');
         return true;
       }());*/
+    }
+    if (source == null) {
+      return const TextStyle();
     }
     return TextStyle(
       fontFamily: find?.fontFamily ?? displayFontFamily,
@@ -75,11 +80,14 @@ class FontFamilyMeta {
   /// /system/fonts/Roboto-ThinItalic.ttf
   /// ```
   Future<bool> load() async {
+    if (source == null) {
+      return false;
+    }
     bool result = variantList.isNotEmpty;
     for (final variant in variantList) {
       result = result &&
           await variant.load(
-            source,
+            source!,
             savePath: savePath,
             overwrite: overwrite,
           );
