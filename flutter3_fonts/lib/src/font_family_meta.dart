@@ -16,21 +16,22 @@ class FontFamilyMeta {
   /// 则使用默认[TextStyle]
   FontFamilySource? source;
 
-  /// http字体保存路径
+  /// http字体下载时保存路径
   String? savePath;
 
-  /// http文件是否覆盖
+  /// http文件下载时是否覆盖
   bool? overwrite;
 
   /// 当前字体支持的变种列表
   /// [displayFontFamily]-[fontWeight][fontStyle].[fileExtension]
-  List<FontFamilyVariantMeta> variantList = [];
+  List<FontFamilyVariantMeta> variantList;
 
   FontFamilyMeta({
     required this.displayFontFamily,
     this.source,
     this.savePath,
     this.overwrite,
+    this.variantList = const [],
   });
 
   /// 获取字体样式
@@ -269,8 +270,8 @@ class FontFamilyVariantMeta {
 
   @override
   String toString() {
-    return 'FontFamilyVariantMeta{fontFamily: $fontFamily, fileExtension: $fileExtension, '
-        'fontWeight: $fontWeightStr, fontStyle: $fontStyleStr}';
+    return 'FontFamilyVariantMeta{fontFamily: $fontFamily, displayFontFamily: $displayFontFamily, fileExtension: $fileExtension, '
+        'fontWeight: $fontWeightStr, fontStyle: $fontStyleStr, uri: $uri, fileExtension: $fileExtension}';
   }
 }
 

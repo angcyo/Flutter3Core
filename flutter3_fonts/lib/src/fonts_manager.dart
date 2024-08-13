@@ -64,6 +64,7 @@ class FontsManager {
     bool? reload,
     bool? waitLoad,
   }) async {
+    //debugger();
     if (reload == true) {
       _customFontFamilyMetaList.clear();
     }
@@ -122,6 +123,39 @@ class FontsManager {
       return true;
     }
     return false;
+  }
+
+  /// 删除自定义的字体, 并删除对应的文件
+  /// [_customFontFamilyMetaList]
+  Future<bool> deleteCustomFontFamily(
+      List<FontFamilyMeta> fontFamilyMetaList) async {
+    //删除成功的字体
+    List<FontFamilyMeta> removeFamilyMetaList = [];
+    dynamic error;
+    for (final fontFamilyMeta in fontFamilyMetaList) {
+      try {
+        for (final fontVariantMeta in fontFamilyMeta.variantList) {
+          if (await fontVariantMeta.uri.isExists()) {
+            await fontVariantMeta.uri.delete();
+            assert(() {
+              l.i('删除字体文件[${fontFamilyMeta.displayFontFamily}]->${fontVariantMeta.uri}');
+              return true;
+            }());
+          }
+        }
+        removeFamilyMetaList.add(fontFamilyMeta);
+      } catch (e, s) {
+        error ??= e;
+        assert(() {
+          printError(e, s);
+          return true;
+        }());
+      }
+    }
+    if (removeFamilyMetaList.isNotEmpty) {
+      _customFontFamilyMetaList.removeAll(removeFamilyMetaList);
+    }
+    return removeFamilyMetaList.isNotEmpty && error == null;
   }
 
   //endregion ---自定义字体---
@@ -194,7 +228,7 @@ class FontsManager {
     return result;
   }
 
-  /// 加载字体变种
+  /// 加载字体变种到内存中
   /// [FontFamilyVariantMeta]
   Future<bool> loadFontFamilyVariant(
     FontFamilyVariantMeta variantMeta,
@@ -322,6 +356,8 @@ class FontsManager {
     final meta = FontFamilyMeta(
       displayFontFamily: displayFontFamily,
       source: FontFamilySource.file,
+      /*savePath: filePath,*/
+      variantList: [variantMeta],
     );
     return meta;
   }
