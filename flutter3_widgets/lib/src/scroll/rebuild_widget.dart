@@ -133,7 +133,9 @@ mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
   late final List<Listenable> listenableList = [];
 
   /// 用来触发重构的信号
+  @api
   @callPoint
+  @autoDispose
   void hookRebuild(Listenable? value) {
     if (value == null) {
       return;
@@ -146,7 +148,7 @@ mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
 
   @override
   void dispose() {
-    for (var element in listenableList) {
+    for (final element in listenableList) {
       element.removeListener(requestRebuild);
     }
     listenableList.clear();

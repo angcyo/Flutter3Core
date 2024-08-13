@@ -100,6 +100,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 重新构建
   @override
   void reassemble() {
+    //debugger();
     onSelfLoadDataWrap();
     super.reassemble();
   }
@@ -351,6 +352,28 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     );
   }
 
+  //--
+
+  /// 注册一个情感图状态小部件
+  /// [AdapterStateWidget]
+  @api
+  void registerAdapterState(
+    WidgetBuildState widgetState,
+    WidgetStateBuilder builder,
+  ) {
+    scrollController.widgetStateBuilderMap[widgetState] = builder;
+  }
+
+  /// 注册一个加载更多状态小部件
+  /// [LoadMoreStateWidget]
+  @api
+  void registerLoadMoreState(
+    WidgetBuildState widgetState,
+    WidgetStateBuilder builder,
+  ) {
+    scrollController.loadMoreStateBuilderMap[widgetState] = builder;
+  }
+
   //endregion 页面控制
 
   //region 页面更新
@@ -379,6 +402,15 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     rebuildTile((tile, signal) {
       return signal.value == value ||
           (value is Iterable && value.contains(signal.value));
+    });
+  }
+
+  /// 更新所有tile
+  /// [updateTile]
+  @api
+  void updateAllTile() {
+    rebuildTile((tile, signal) {
+      return true;
     });
   }
 

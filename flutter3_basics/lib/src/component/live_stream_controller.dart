@@ -267,6 +267,8 @@ mixin StreamSubscriptionMixin<T extends StatefulWidget> on State<T> {
   final List<StreamSubscription> _streamSubscriptions = [];
 
   /// 在[dispose]时, 取消所有的[StreamSubscription]
+  @api
+  @autoDispose
   void hookStreamSubscription(StreamSubscription subscription) {
     _streamSubscriptions.add(subscription);
   }

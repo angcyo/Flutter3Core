@@ -260,6 +260,7 @@ class RScrollController extends ScrollController {
 
   /// 使用刷新布局包裹[child]
   /// [RefreshIndicator]
+  /// [RScrollView.build]驱动
   @configProperty
   late WidgetWrapBuilder wrapRefreshWidget = (context, child) {
     //debugger();
@@ -275,42 +276,56 @@ class RScrollController extends ScrollController {
     );
   };
 
+  /// 为指定的[WidgetBuildState]状态, 注册指定的[Widget]
+  /// [buildAdapterStateWidget]驱动
+  final Map<WidgetBuildState, WidgetStateBuilder?> widgetStateBuilderMap = {};
+
   /// 情感图[Widget], 可以自定义
   /// 根据不同的状态, 构建不同的Widget
+  /// [RScrollView.build]驱动
   @configProperty
   late WidgetStateBuilder buildAdapterStateWidget =
       (context, widgetState, stateData) {
-    return AdapterStateWidget(
-      widgetState: widgetState,
-      stateData: stateData,
-      requestChangeStateFn: (_, oldWidgetState, newWidgetState) {
-        adapterStateValue.value = newWidgetState;
-        if (newWidgetState == WidgetBuildState.loading) {
-          _onRefreshStart();
-        }
-        return false;
-      },
-    );
+    return widgetStateBuilderMap[widgetState]
+            ?.call(context, widgetState, stateData) ??
+        AdapterStateWidget(
+          widgetState: widgetState,
+          stateData: stateData,
+          requestChangeStateFn: (_, oldWidgetState, newWidgetState) {
+            adapterStateValue.value = newWidgetState;
+            if (newWidgetState == WidgetBuildState.loading) {
+              _onRefreshStart();
+            }
+            return false;
+          },
+        );
   };
+
+  /// 为加载更多指定的[WidgetBuildState]状态, 注册指定的[Widget]
+  /// [buildLoadMoreStateWidget]驱动
+  final Map<WidgetBuildState, WidgetStateBuilder?> loadMoreStateBuilderMap = {};
 
   /// 加载更多[Widget], 可以自定义
   /// 根据不同的状态, 构建不同的Widget
+  /// [_RScrollViewState._buildTileList]驱动
   @configProperty
   late WidgetStateBuilder buildLoadMoreStateWidget =
       (context, widgetState, stateData) {
     _isEnableLoadMore = true;
-    return LoadMoreStateWidget(
-      key: loadMoreKey,
-      widgetState: widgetState,
-      stateData: stateData,
-      requestChangeStateFn: (context, oldWidgetState, newWidgetState) {
-        loadMoreStateValue.value = newWidgetState;
-        if (newWidgetState == WidgetBuildState.loading) {
-          _onLoadMoreStart();
-        }
-        return false;
-      },
-    );
+    return loadMoreStateBuilderMap[widgetState]
+            ?.call(context, widgetState, stateData) ??
+        LoadMoreStateWidget(
+          key: loadMoreKey,
+          widgetState: widgetState,
+          stateData: stateData,
+          requestChangeStateFn: (context, oldWidgetState, newWidgetState) {
+            loadMoreStateValue.value = newWidgetState;
+            if (newWidgetState == WidgetBuildState.loading) {
+              _onLoadMoreStart();
+            }
+            return false;
+          },
+        );
   };
 
   /// [RefreshIndicator]的刷新回调

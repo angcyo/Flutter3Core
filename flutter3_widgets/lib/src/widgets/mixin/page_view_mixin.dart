@@ -98,28 +98,35 @@ mixin PageViewMixin<T extends StatefulWidget>
               return true;
             }());
           } else {
-            final tabIndex = tabController.index;
-            final pageIndex = page.round();
-            if (notification is ScrollUpdateNotification &&
-                !tabController.indexIsChanging) {
-              final bool pageChanged = (page - tabIndex).abs() > 1.0;
-              if (pageChanged) {
+            try {
+              final tabIndex = tabController.index;
+              final pageIndex = page.round();
+              if (notification is ScrollUpdateNotification &&
+                  !tabController.indexIsChanging) {
+                final bool pageChanged = (page - tabIndex).abs() > 1.0;
+                if (pageChanged) {
+                  tabController.index = pageIndex;
+                  //l.d("update index:${tabController.index}");
+                }
+                //指示器偏移
+                tabController.offset = clampDouble(page - tabIndex, -1.0, 1.0);
+                //l.d("update offset:${tabController.offset}");
+              } else if (notification is ScrollEndNotification) {
+                //l.d("end index:${tabController.index}->$pageIndex");
+                tabController.offset = 0;
                 tabController.index = pageIndex;
-                //l.d("update index:${tabController.index}");
+                /*if (!tabController.indexIsChanging) {
+                                //指示器偏移
+                                tabController.offset =
+                                    clampDouble(page - tabIndex, -1.0, 1.0);
+                                l.d("end offset:${tabController.offset}");
+                              }*/
               }
-              //指示器偏移
-              tabController.offset = clampDouble(page - tabIndex, -1.0, 1.0);
-              //l.d("update offset:${tabController.offset}");
-            } else if (notification is ScrollEndNotification) {
-              //l.d("end index:${tabController.index}->$pageIndex");
-              tabController.offset = 0;
-              tabController.index = pageIndex;
-              /*if (!tabController.indexIsChanging) {
-                  //指示器偏移
-                  tabController.offset =
-                      clampDouble(page - tabIndex, -1.0, 1.0);
-                  l.d("end offset:${tabController.offset}");
-                }*/
+            } catch (e, s) {
+              assert(() {
+                printError(e, s);
+                return true;
+              }());
             }
             return true;
           }

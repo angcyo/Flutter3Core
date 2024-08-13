@@ -80,7 +80,7 @@ class FontsManager {
     return _customFontFamilyMetaList;
   }
 
-  /// 保存自定义字体
+  /// 保存自定义字体, 自动添加到[_customFontFamilyMetaList]
   /// [fontFilePath] 原始的字体文件路径
   /// [fontData] 字体数据
   /// [fontFileName] 字体数据的文件名
@@ -88,6 +88,7 @@ class FontsManager {
     String? fontFilePath,
     Uint8List? fontData,
     String? fontFileName,
+    bool autoLoad = true,
   }) async {
     final savePath = customFontPathList.firstOrNull;
     if (savePath == null) {
@@ -102,7 +103,7 @@ class FontsManager {
         await file.copy(saveFile);
 
         //加载字体
-        if (_customFontFamilyMetaList.isNotEmpty) {
+        if (autoLoad && _customFontFamilyMetaList.isNotEmpty) {
           final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
           _customFontFamilyMetaList.add(fontMeta);
         }
@@ -114,7 +115,7 @@ class FontsManager {
       await saveFile.file().writeAsBytes(fontData);
 
       //加载字体
-      if (_customFontFamilyMetaList.isNotEmpty) {
+      if (autoLoad && _customFontFamilyMetaList.isNotEmpty) {
         final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
         _customFontFamilyMetaList.add(fontMeta);
       }

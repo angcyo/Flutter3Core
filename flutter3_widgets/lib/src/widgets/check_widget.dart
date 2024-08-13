@@ -135,7 +135,7 @@ class StrokeFillCheckWidget extends StatefulWidget {
     required this.child,
     this.checked = false,
     this.padding = kHSymInsets,
-    this.margin = kSInsets,
+    this.margin = kMInsets,
     this.checkedColor,
     this.borderRadius = kDefaultBorderRadiusX,
     //--
