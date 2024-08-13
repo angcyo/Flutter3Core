@@ -15,7 +15,8 @@ part of './dialog.dart';
 ///
 /// [ActionsDialog]
 class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
-  /// 菜单列表
+  /// 菜单列表,
+  /// [BottomMenuItemTile]
   final WidgetNullList items;
 
   /// 圆角
@@ -42,11 +43,11 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
         Empty.height(kX),
         if (showCancelItem)
           BottomMenuItemTile(
-            [LibRes.of(context).libCancel.text()],
             onTap: () {
               //no op
             },
             closeAfterTap: true,
+            child: LibRes.of(context).libCancel.text(),
           ).clipRadius(radius: clipRadius)
       ],
       showDragHandle: false,

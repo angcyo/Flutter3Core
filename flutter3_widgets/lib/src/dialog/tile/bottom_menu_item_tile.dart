@@ -8,7 +8,11 @@ part of '../dialog.dart';
 /// [BottomMenuItemsDialog]
 class BottomMenuItemTile extends StatelessWidget {
   /// children
-  final WidgetNullList children;
+  final WidgetNullList? children;
+
+  /// [children]
+  @indirectProperty
+  final Widget? child;
 
   /// 背景色, 不指定使用默认
   final Color? backgroundColor;
@@ -26,9 +30,10 @@ class BottomMenuItemTile extends StatelessWidget {
   /// 点击后, 关闭对话框
   final bool closeAfterTap;
 
-  const BottomMenuItemTile(
-    this.children, {
+  const BottomMenuItemTile({
     super.key,
+    this.children,
+    this.child,
     this.onTap,
     this.enable = true,
     this.closeAfterTap = true,
@@ -39,7 +44,7 @@ class BottomMenuItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    return children
+    return (children ?? [child])
         .row(gap: kH, mainAxisAlignment: MainAxisAlignment.center)!
         .colorFiltered(
             color: enable ? null : disableColor ?? globalTheme.disableColor)
