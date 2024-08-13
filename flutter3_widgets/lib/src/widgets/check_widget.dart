@@ -124,6 +124,9 @@ class StrokeFillCheckWidget extends StatefulWidget {
   /// 点击事件, 设置之后[onValueChanged]不会被默认回调
   final GestureTapCallback? onTap;
 
+  /// 长按事件
+  final GestureLongPressCallback? onLongPress;
+
   /// 不指定[onTap]时, 自动触发的值改变回调
   final ValueChanged<bool>? onValueChanged;
 
@@ -141,6 +144,7 @@ class StrokeFillCheckWidget extends StatefulWidget {
     //--
     this.enableTap = true,
     this.onTap,
+    this.onLongPress,
     this.onValueChanged,
   });
 
@@ -202,14 +206,15 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
           alignment: Alignment.center,
         )
         .click(
-            widget.onTap ??
-                () {
-                  setState(() {
-                    _currentValue = !_currentValue;
-                    widget.onValueChanged?.call(_currentValue);
-                  });
-                },
-            widget.enableTap);
-    ;
+          widget.onTap ??
+              () {
+                setState(() {
+                  _currentValue = !_currentValue;
+                  widget.onValueChanged?.call(_currentValue);
+                });
+              },
+          widget.enableTap,
+          widget.onLongPress,
+        );
   }
 }
