@@ -8,6 +8,7 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 重写[RStatusScrollPage.onLoadStatusList]方法, 加载分类列表数据
 /// 重写[RStatusScrollPage.onLoadStatusData]方法, 加载分类对应数据列表
+/// 调用[switchStatus]切换不同的状态数据
 ///
 /// [RScrollView]
 /// [AbsScrollPage]
@@ -43,8 +44,8 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
 
   @private
   @override
-  void loadDataEnd(
-    List? loadData, [
+  void loadDataEnd([
+    List? loadData,
     dynamic stateData,
     bool handleData = true,
   ]) {
@@ -65,12 +66,13 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
 
   @api
   @updateMark
-  void loadStatusDataEnd(
+  void loadStatusDataEnd([
     dynamic status,
-    List? loadData, [
+    List? loadData,
     dynamic stateData,
     bool handleData = true,
   ]) {
+    //debugger();
     StatusInfo? statusInfo =
         statusInfoList.firstWhereOrNull((element) => element.status == status);
     if (statusInfo != null) {
@@ -86,6 +88,11 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
               statusInfo.pageWidgetList.clear();
             }
             pageWidgetList.addAll(loadData);
+          } else if (loadData?.firstOrNull is Widget) {
+            if (statusInfo.requestPage.isFirstPage) {
+              statusInfo.pageWidgetList.clear();
+            }
+            pageWidgetList.addAll(loadData!.cast<Widget>());
           }
         }
         statusInfo.loadMoreWidgetState =
@@ -150,7 +157,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   /// [status] 支持[StatusInfo]类型, 和自定义类型
   /// [statusInfoList]
   @updateMark
-  void startLoadStatusData(dynamic status) {
+  void startLoadStatusData([dynamic status]) {
     StatusInfo? statusInfo = getStatusInfo(status);
     if (statusInfo != null) {
       onLoadStatusData(statusInfo.status);
@@ -162,7 +169,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   /// [loadDataEnd]
   @callPoint
   @updateMark
-  void loadStatusEnd(dynamic statusList, dynamic stateData) {
+  void loadStatusEnd([dynamic statusList, dynamic stateData]) {
     // 错误处理
     if (stateData is Exception) {
       updateAdapterState(WidgetBuildState.error, stateData);

@@ -133,6 +133,9 @@ class StrokeFillCheckWidget extends StatefulWidget {
   /// 是否激活点击
   final bool enableTap;
 
+  /// 是否使用波纹点击样式
+  final bool useInkWell;
+
   const StrokeFillCheckWidget({
     super.key,
     required this.child,
@@ -142,6 +145,7 @@ class StrokeFillCheckWidget extends StatefulWidget {
     this.checkedColor,
     this.borderRadius = kDefaultBorderRadiusX,
     //--
+    this.useInkWell = false,
     this.enableTap = true,
     this.onTap,
     this.onLongPress,
@@ -197,6 +201,26 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
               borderRadius: borderRadius,
             ),
           );
+
+    if (widget.useInkWell) {
+      //波纹点击效果
+      return widget.child
+          .container(padding: widget.padding, alignment: Alignment.center)
+          .ink(
+            widget.onTap ??
+                () {
+                  setState(() {
+                    _currentValue = !_currentValue;
+                    widget.onValueChanged?.call(_currentValue);
+                  });
+                },
+            radius: borderRadius,
+            decoration: decoration,
+            enable: widget.enableTap,
+            onLongPress: widget.onLongPress,
+          )
+          .paddingInsets(widget.margin);
+    }
 
     return widget.child
         .container(

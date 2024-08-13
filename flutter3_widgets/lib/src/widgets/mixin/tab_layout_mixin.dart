@@ -73,6 +73,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     Widget? indicator /*指示器*/,
     TextStyle? selectedTextStyle /*选中之后的文本样式*/,
     TextStyle? normalTextStyle /*正常的文本样式*/,
+    void Function(int from, int to)? onIndexChangedAction,
   }) {
     return () {
       List<Widget>? body = children;
@@ -108,7 +109,10 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         bgDecoration: bgDecoration,
         contentBgDecoration: contentBgDecoration,
         padding: padding,
-        onIndexChanged: onSelfTabIndexChanged,
+        onIndexChanged: (from, to) {
+          onSelfTabIndexChanged(from, to);
+          onIndexChangedAction?.call(from, to);
+        },
         children: body == null
             ? buildTabLayoutChildren(context)
             : [

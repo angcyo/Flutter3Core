@@ -6,6 +6,8 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 混入一个[RScrollView]的页面, 支持`刷新/加载更多`等基础功能的页面
 ///
+/// [build]->[buildScrollPage]->[pageRScrollView]
+///
 /// 重写[onLoadData]方法, 加载数据之后调用[loadDataEnd]
 /// ```
 /// @override
@@ -38,6 +40,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [RScrollController.buildLoadMoreStateWidget] 自定义加载更多状态
   /// [RequestPage]
   late final RScrollController scrollController = RScrollController()
+    ..isSupportScrollLoadDataCallback = isSelfSupportScrollLoadData
     ..onLoadDataCallback = onSelfLoadDataWrap;
 
   /// 首次加载[initState]时, 需要触发的情感图状态
@@ -121,7 +124,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// [AbsScrollPage.buildBody]会调用[pageRScrollView]
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => buildScrollPage(context);
+
+  @callPoint
+  Widget buildScrollPage(BuildContext context) {
     _isPageBuild = true;
     if (this is AbsScrollPage) {
       //交给[AbsScrollPage]处理
@@ -171,6 +177,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   //region 数据加载
 
+  /// 是否支持滚动到底加载更多
+  /// [RScrollController.isSupportScrollLoadData]
+  bool isSelfSupportScrollLoadData() => true;
+
   /// 加载数据入口
   /// [RScrollController.onLoadDataCallback]
   Future onSelfLoadDataWrap() async {
@@ -218,6 +228,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
           pageWidgetList.clear();
         }
         pageWidgetList.addAll(loadData);
+      } else if (loadData.firstOrNull is Widget) {
+        if (scrollController.requestPage.isFirstPage) {
+          pageWidgetList.clear();
+        }
+        pageWidgetList.addAll(loadData.cast<Widget>());
       } else {
         assert(() {
           l.w('无法处理的数据类型:${loadData.runtimeType}');

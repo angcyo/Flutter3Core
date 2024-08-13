@@ -67,6 +67,10 @@ class RScrollController extends ScrollController {
   /// [_onLoadMoreStart]
   VoidCallback? onLoadDataCallback;
 
+  /// 是否支持加载更多的触发
+  /// [_checkScrollPosition]->[isSupportScrollLoadData]
+  bool Function()? isSupportScrollLoadDataCallback;
+
   RScrollController();
 
   /// 检查滚动位置
@@ -99,10 +103,19 @@ class RScrollController extends ScrollController {
             l.d("没有更多数据了...忽略加载更多处理.");
             return true;
           }());
-        } else {
+        } else if (isSupportScrollLoadData()) {
+          assert(() {
+            l.d("滚动到底啦,触发加载更多...");
+            return true;
+          }());
           loadMoreKey.currentState?.updateWidgetState(WidgetBuildState.loading);
           updateLoadMoreState(
               loadMoreKey.currentState, WidgetBuildState.loading);
+        } else {
+          assert(() {
+            l.d("忽略滚动到底加载更多!");
+            return true;
+          }());
         }
       }
     }
@@ -131,6 +144,7 @@ class RScrollController extends ScrollController {
   }
 
   /// 滚动到顶部
+  @api
   void scrollToTop({bool anim = true}) {
     if (anim) {
       animateTo(
@@ -144,6 +158,7 @@ class RScrollController extends ScrollController {
   }
 
   /// 滚动到底部
+  @api
   void scrollToBottom({bool anim = true}) {
     if (anim) {
       animateTo(
@@ -157,8 +172,23 @@ class RScrollController extends ScrollController {
   }
 
   /// 停止滚动
+  @api
   void stopScroll() {
     position.didEndScroll();
+  }
+
+  /// 是否支持加载更多
+  @overridePoint
+  bool isSupportScrollLoadData() {
+    try {
+      return isSupportScrollLoadDataCallback?.call() ?? true;
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
+    return true;
   }
 
   //---

@@ -57,7 +57,7 @@ class TabLayoutController extends TabController {
       duration: (animate ?? true) ? duration : Duration.zero,
       curve: curve,
     );
-    if (pageController != null) {
+    if (pageController != null && pageController.hasClients) {
       final page = pageController.page;
       if (animate == true || (page != null && (page - index).abs() <= 1)) {
         //自动动画

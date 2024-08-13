@@ -90,7 +90,9 @@ mixin PageViewMixin<T extends StatefulWidget>
         //l.d(_pageController.page);
         final tabController = this.tabController;
         final pageViewController = this.pageViewController;
-        if (tabController != null && pageViewController != null) {
+        if (tabController != null &&
+            pageViewController != null &&
+            pageViewController.hasClients) {
           final page = pageViewController.page;
           if (page == null) {
             assert(() {
