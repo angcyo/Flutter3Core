@@ -47,6 +47,9 @@ class CoreDialogTitle extends StatelessWidget {
   final bool enableLine;
   final Widget? line;
 
+  ///
+  final EdgeInsetsGeometry? padding;
+
   const CoreDialogTitle({
     super.key,
     this.title,
@@ -70,6 +73,7 @@ class CoreDialogTitle extends StatelessWidget {
     this.onPop,
     this.enableLine = true,
     this.line,
+    this.padding,
   });
 
   @override
@@ -126,6 +130,7 @@ class CoreDialogTitle extends StatelessWidget {
       subTitleTextStyle: subTitleTextStyle,
       enableBottomLine: enableLine,
       bottomLine: line,
+      padding: padding,
     );
   }
 }
@@ -135,14 +140,14 @@ class CoreDialogTitle extends StatelessWidget {
 ///
 /// [DialogTitleTile] 布局
 class CoreDialogBottomTitle extends StatelessWidget {
-  ///
+  /// 领头的配置
   final Widget? leading;
   final bool enableLeading;
   final bool showLeading;
   final bool invisibleLeading;
   final String? leadingSvgIconKey;
 
-  ///
+  /// 尾部的配置
   final Widget? trailing;
   final bool enableTrailing;
   final bool showTrailing;
@@ -179,6 +184,9 @@ class CoreDialogBottomTitle extends StatelessWidget {
   final bool enableLine;
   final Widget? line;
 
+  ///
+  final EdgeInsetsGeometry? padding;
+
   const CoreDialogBottomTitle({
     super.key,
     this.title,
@@ -204,6 +212,7 @@ class CoreDialogBottomTitle extends StatelessWidget {
     this.line,
     this.showDecoration = true,
     this.decoration,
+    this.padding = const EdgeInsets.symmetric(horizontal: kX),
   });
 
   @override
@@ -283,7 +292,7 @@ class CoreDialogBottomTitle extends StatelessWidget {
       enableBottomLine: false,
       enableTopLine: enableLine,
       topLine: line,
-      padding: const EdgeInsets.symmetric(horizontal: kX),
+      padding: padding,
     );
   }
 }
