@@ -112,7 +112,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         children: body == null
             ? buildTabLayoutChildren(context)
             : [
-                ...?body,
+                ...body,
                 indicator ?? buildTabLayoutIndicator(context),
               ].filterNull(),
       );

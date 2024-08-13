@@ -5,6 +5,10 @@ part of '../../../flutter3_widgets.dart';
 /// @since 2023/12/30
 ///
 /// 混入一个带有状态切换的滚动页面, 比如不同的分类列表页面
+///
+/// 重写[RStatusScrollPage.onLoadStatusList]方法, 加载分类列表数据
+/// 重写[RStatusScrollPage.onLoadStatusData]方法, 加载分类对应数据列表
+///
 /// [RScrollView]
 /// [AbsScrollPage]
 /// [RScrollPage]
@@ -50,6 +54,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   //region 状态控制
 
   /// 加载状态列表
+  /// 加载结束之后, 请调用[loadStatusEnd]方法
   @overridePoint
   void onLoadStatusList();
 

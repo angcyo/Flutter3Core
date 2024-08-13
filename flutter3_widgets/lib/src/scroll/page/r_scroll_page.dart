@@ -63,6 +63,20 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [pageRScrollView]
   WidgetList pageWidgetList = [];
 
+  /// 获取所有[pageWidgetList].[RItemTile.UpdateValueNotifier]
+  List<T> getWidgetDataList<T>() {
+    final List<T> result = [];
+    pageWidgetList.map((e) {
+      if (e is RItemTile) {
+        final value = e.updateSignal?.value;
+        if (value != null) {
+          result.add(value);
+        }
+      }
+    });
+    return result;
+  }
+
   /// 界面是否[build]了, 决定更新状态时是否要延迟
   /// [updateAdapterState]
   bool _isPageBuild = false;
