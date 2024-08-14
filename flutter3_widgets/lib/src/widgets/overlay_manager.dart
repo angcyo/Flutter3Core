@@ -88,6 +88,9 @@ class OverlayManagerController {
 
   //--
 
+  /// 指定id的弹窗是否显示
+  bool isShowEntry({String? id}) => findEntryInfoById(id) != null;
+
   /// 使用id查找[OverlayEntryInfo]
   OverlayEntryInfo? findEntryInfoById(String? id) =>
       _subOverlayEntries.findFirst((e) => e.id == id);
@@ -132,6 +135,7 @@ class OverlayManagerController {
     TranslationType? type,
     String? id,
     String? tag,
+    bool offstage = false,
   }) {
     if (id != null) {
       if (findEntryInfoById(id) != null) {
@@ -147,7 +151,7 @@ class OverlayManagerController {
       entryOf(
         OverlayAnimateBuilder(
           key: animateKey,
-          child: widget,
+          offstage: offstage,
           builder: (BuildContext context, Animation<double> animation,
               Widget? child) {
             return buildDialogTransitions(
@@ -170,6 +174,7 @@ class OverlayManagerController {
               }
             }
           },
+          child: widget,
         ),
       ),
       id: id,
@@ -310,6 +315,11 @@ class OverlayAnimateBuilder extends StatefulWidget {
   /// The duration overlay hide animation.
   final Duration reverseAnimationDuration;
 
+  //--
+
+  /// 直接进入离屏显示状态
+  final bool offstage;
+
   const OverlayAnimateBuilder({
     super.key,
     required this.builder,
@@ -318,6 +328,7 @@ class OverlayAnimateBuilder extends StatefulWidget {
     this.curve = Curves.easeInOut,
     this.animationDuration = kDefaultAnimationDuration,
     this.reverseAnimationDuration = kDefaultAnimationDuration,
+    this.offstage = false,
   });
 
   @override
@@ -357,6 +368,7 @@ class OverlayAnimateBuilderState extends State<OverlayAnimateBuilder>
 
   @override
   void initState() {
+    _offstage = widget.offstage;
     _controller = AnimationController(
         vsync: this,
         duration: widget.animationDuration,
@@ -372,6 +384,12 @@ class OverlayAnimateBuilderState extends State<OverlayAnimateBuilder>
       widget.animationStatusAction?.call(status);
     });
     show();
+  }
+
+  @override
+  void didUpdateWidget(covariant OverlayAnimateBuilder oldWidget) {
+    _offstage = widget.offstage;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
