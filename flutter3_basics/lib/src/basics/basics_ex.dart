@@ -1889,6 +1889,12 @@ extension IterableEx<E> on Iterable<E> {
   /// [WhereIterable]
   List<E> filter(bool Function(E element) test) => where(test).toList();
 
+  /// 统计满足条件的元素数量
+  /// [fold]
+  int count(bool Function(E element) test) => fold(0, (int count, E element) {
+        return test(element) ? count + 1 : count;
+      });
+
   /// [filter]顺便转换类型
   List<R> filterCast<R>(bool Function(E element) test) =>
       where(test).cast<R>().toList();

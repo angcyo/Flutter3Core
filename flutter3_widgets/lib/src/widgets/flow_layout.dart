@@ -141,18 +141,22 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
   /// 堆叠元素的起始坐标, 默认就是在当前位置
   bool stack;
 
+  /// 在计算等宽时, 是否排除[weight]计算, 并且自身也不使用[weight]进行约束
+  bool excludeWeight;
+
   FlowLayoutParentData({
     this.constraints,
     this.weight,
     this.excludeGapCount = 0,
     this.stack = false,
+    this.excludeWeight = false,
     this.matchLineHeight,
   });
 
   @override
   String toString() {
     return 'weight:$weight excludeGapCount:$excludeGapCount stack:$stack matchLineHeight:$matchLineHeight '
-        'offset=$offset constraints:$constraints ';
+        'offset=$offset constraints:$constraints excludeWeight:$excludeWeight';
   }
 }
 
@@ -172,6 +176,9 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
   /// [FlowLayoutParentData.stack]
   final bool stack;
 
+  /// [FlowLayoutParentData.excludeWeight]
+  final bool excludeWeight;
+
   /// [FlowLayoutParentData.matchLineHeight]
   final bool? matchLineHeight;
 
@@ -181,6 +188,7 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
     this.weight,
     this.constraints,
     this.stack = false,
+    this.excludeWeight = false,
     this.matchLineHeight,
     this.excludeGapCount = 0,
   });
@@ -213,6 +221,11 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
 
     if (parentData.stack != stack) {
       parentData.stack = stack;
+      needsLayout = true;
+    }
+
+    if (parentData.excludeWeight != excludeWeight) {
+      parentData.excludeWeight = excludeWeight;
       needsLayout = true;
     }
 
@@ -430,33 +443,60 @@ class FlowLayoutRender extends RenderBox
   /// 需要支持[equalWidthRange]属性
   void measureChild() {
     final children = getChildren();
-    //一行最大应该布局多少个child
-    final childCount = min(
-        lineMaxChildCount ?? lineChildCount ?? children.length,
-        lineChildCount ?? children.length);
+    //参与weight的child
+    final weightChildren = <RenderBox>[];
+    //不参与weight的child
+    final noWeightChildren = <RenderBox>[];
 
-    //最大宽度, weight属性的参考值
-    final maxWidth = refMaxWidth;
+    for (final child in children) {
+      final childParentData = child.parentData! as FlowLayoutParentData;
+      if (childParentData.excludeWeight) {
+        noWeightChildren.add(child);
+      } else {
+        weightChildren.add(child);
+      }
+    }
 
     final paddingHorizontal = (padding?.horizontal ?? 0);
     final horizontalGap = childHorizontalGap ?? childGap;
 
-    for (final child in children) {
-      final FlowLayoutParentData childParentData =
-          child.parentData! as FlowLayoutParentData;
+    //先测量[noWeightChildren]
+    double noWeightWidth = horizontalGap *
+        (noWeightChildren.size() - (weightChildren.isEmpty ? 1 : 0)).maxOf(0);
+    for (final child in noWeightChildren) {
+      final childParentData = child.parentData! as FlowLayoutParentData;
+      final childConstraints = childParentData.constraints ??
+          this.childConstraints ??
+          defChildConstraints;
+      ChildLayoutHelper.layoutChild(child, childConstraints);
+      noWeightWidth += child.size.width;
+    }
+
+    //再测量[weightChildren]
+    final childCount = (lineChildCount ?? weightChildren.length);
+
+    //一行最大应该布局多少个child
+    final weightChildCount = min(lineMaxChildCount ?? childCount, childCount);
+
+    //最大宽度, weight属性的参考值
+    final maxWidth = refMaxWidth;
+
+    for (final child in weightChildren) {
+      final childParentData = child.parentData! as FlowLayoutParentData;
       var childConstraints = childParentData.constraints ??
           this.childConstraints ??
           defChildConstraints;
 
       //权重
-      double? weight =
-          childParentData.weight ?? (isEqualWidth ? 1.0 / childCount : null);
+      double? weight = childParentData.weight ??
+          (isEqualWidth ? 1.0 / weightChildCount : null);
 
       if (maxWidth != double.infinity && weight != null) {
         //需要使用权重约束
-        final gap =
-            horizontalGap * (childCount - 1 - childParentData.excludeGapCount);
-        final boxValidWidth = maxWidth - paddingHorizontal - gap - 0.5; //防止浮点误差
+        final gap = horizontalGap *
+            (weightChildCount - 1 - childParentData.excludeGapCount);
+        final boxValidWidth =
+            maxWidth - paddingHorizontal - gap - 0.5 - noWeightWidth; //防止浮点误差
         final width = boxValidWidth * weight;
         assert(() {
           if (width < 0) {
@@ -767,6 +807,7 @@ extension FlowLayoutEx on Widget {
     BoxConstraints? constraints,
     double? weight,
     int excludeGapCount = 0,
+    bool excludeWeight = false,
     bool stack = false,
     bool? matchLineHeight,
   }) =>
@@ -775,6 +816,7 @@ extension FlowLayoutEx on Widget {
         weight: weight,
         excludeGapCount: excludeGapCount,
         stack: stack,
+        excludeWeight: excludeWeight,
         matchLineHeight: matchLineHeight,
         child: this,
       );
