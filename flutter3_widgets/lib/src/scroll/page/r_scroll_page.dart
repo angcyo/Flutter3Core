@@ -84,12 +84,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [updateAdapterState]
   bool _isPageBuild = false;
 
-  /// 当页面需要更新新, 使用哪个[State]对象
-  @configProperty
-  State? pageUpdateState;
-
-  /// 当前的[State]对象
-  State get _updateState => pageUpdateState ?? this;
+  /// [pageRScrollView]->[RScrollView]的更新信号
+  final UpdateValueNotifier _scrollUpdateSignal = createUpdateSignal();
 
   //region 生命周期
 
@@ -126,6 +122,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @override
   Widget build(BuildContext context) => buildScrollPage(context);
 
+  /// [build]->[buildScrollPage]->[pageRScrollView]->[RScrollView]
   @callPoint
   Widget buildScrollPage(BuildContext context) {
     _isPageBuild = true;
@@ -240,7 +237,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         }());
       }
     }
-    scrollController.finishRefresh(_updateState, loadData, stateData);
+    scrollController.finishRefresh(loadData, stateData);
   }
 
   /// 首次状态加载
@@ -252,7 +249,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     //当前的状态
     final currentState = scrollController.adapterStateValue.value;
     if (currentState != state) {
-      scrollController.updateAdapterState(_updateState, state);
+      scrollController.updateAdapterState(state);
     }
   }
 
@@ -267,7 +264,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       //已经显示了内容
     } else if (currentState == WidgetBuildState.preLoading ||
         currentState != state) {
-      scrollController.updateAdapterState(_updateState, state);
+      scrollController.updateAdapterState(state);
     }
   }
 
@@ -282,7 +279,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       pageWidgetList.clear();
     }
     pageWidgetList.addAll(widgetList);
-    _updateState.updateState();
+    _scrollUpdateSignal.update();
   }
 
   /// 分页请求参数
@@ -336,7 +333,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @api
   @updateMark
   void startRefreshState() {
-    scrollController.startRefresh(state: this, useWidgetState: true);
+    scrollController.startRefresh(useWidgetState: true);
   }
 
   /// 更新情感图状态
@@ -344,13 +341,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @updateMark
   bool updateAdapterState(WidgetBuildState widgetState, [dynamic stateData]) {
     if (_isPageBuild) {
-      return scrollController.updateAdapterState(
-          _updateState, widgetState, stateData);
+      return scrollController.updateAdapterState(widgetState, stateData);
     } else {
       postFrameCallback((timeStamp) {
         if (isMounted) {
-          scrollController.updateAdapterState(
-              _updateState, widgetState, stateData);
+          scrollController.updateAdapterState(widgetState, stateData);
         }
       });
       return false;
@@ -364,21 +359,24 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 包裹内容
   /// [RScrollView]
   /// [build]
-  /// [RScrollPage.build]->[RScrollPage.pageRScrollView]
+  /// [build]->[buildScrollPage]->[pageRScrollView]->[RScrollView]
   /// [AbsScrollPage.buildBody]
   @callPoint
-  RScrollView pageRScrollView({
+  Widget pageRScrollView({
     WidgetList? children,
     bool? enableRefresh,
     bool? enableLoadMore,
   }) {
     _isPageBuild = true;
-    return RScrollView(
-      controller: scrollController,
-      enableRefresh: enableRefresh ?? this.enableRefresh,
-      enableLoadMore: enableLoadMore ?? this.enableLoadMore,
-      children: wrapScrollChildren(children ?? pageWidgetList),
-    );
+    return rebuild(_scrollUpdateSignal, (context, value) {
+      scrollController.scrollViewUpdateSignal = _scrollUpdateSignal;
+      return RScrollView(
+        controller: scrollController,
+        enableRefresh: enableRefresh ?? this.enableRefresh,
+        enableLoadMore: enableLoadMore ?? this.enableLoadMore,
+        children: wrapScrollChildren(children ?? pageWidgetList),
+      );
+    });
   }
 
   //--
@@ -515,7 +513,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     }
     if (removeList.isNotEmpty) {
       pageWidgetList.removeAll(removeList);
-      _updateState.updateState();
+      _scrollUpdateSignal.update();
     }
   }
 

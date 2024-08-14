@@ -19,6 +19,9 @@ class RScrollController extends ScrollController {
   /// 用来控制加载更多的key
   final GlobalKey<WidgetStateBuildWidgetState> loadMoreKey = GlobalKey();
 
+  /// 滚动视图更新信号, 调用更新信号, 更新滚动小部件重构更新
+  UpdateValueNotifier? scrollViewUpdateSignal;
+
   /// 用来控制刷新完成
   /// [_onRefresh]
   /// [finishRefresh]
@@ -109,8 +112,7 @@ class RScrollController extends ScrollController {
             return true;
           }());
           loadMoreKey.currentState?.updateWidgetState(WidgetBuildState.loading);
-          updateLoadMoreState(
-              loadMoreKey.currentState, WidgetBuildState.loading);
+          updateLoadMoreState(WidgetBuildState.loading);
         } else {
           assert(() {
             l.d("忽略滚动到底加载更多!");
@@ -199,12 +201,11 @@ class RScrollController extends ScrollController {
   @callPoint
   @updateMark
   void startRefresh({
-    State? state,
     bool useWidgetState = false,
     bool atTop = true,
   }) {
     if (useWidgetState) {
-      updateAdapterState(state, WidgetBuildState.loading, null);
+      updateAdapterState(WidgetBuildState.loading, null);
     } else {
       scrollRefreshKey.currentState?.show(atTop: atTop);
     }
@@ -218,8 +219,7 @@ class RScrollController extends ScrollController {
   /// [Exception]
   @callPoint
   @updateMark
-  void finishRefresh(
-    State? updateState, [
+  void finishRefresh([
     List? loadData,
     dynamic stateData,
     WidgetBuildState? widgetState,
@@ -240,9 +240,9 @@ class RScrollController extends ScrollController {
     }
     if (requestPage.isFirstPage) {
       //jumpTo(0); //回到顶部
-      updateAdapterState(updateState, toState, stateData);
+      updateAdapterState(toState, stateData);
     } else {
-      updateLoadMoreState(updateState, toState, stateData);
+      updateLoadMoreState(toState, stateData);
     }
   }
 
@@ -250,20 +250,19 @@ class RScrollController extends ScrollController {
   /// [buildAdapterStateWidget]
   /// @return true 表示状态更新成功
   @updateMark
-  bool updateAdapterState(State? state, WidgetBuildState widgetState,
-      [stateData]) {
+  bool updateAdapterState(WidgetBuildState widgetState, [stateData]) {
     //debugger();
     if (adapterStateValue.value != widgetState) {
       _widgetStateData = stateData;
       adapterStateValue.value = widgetState;
       // 提前调用, 防止[_onRefreshStart]内有异步方法阻塞导致没有更新界面
-      state?.updateState();
+      scrollViewUpdateSignal?.update();
       if (widgetState == WidgetBuildState.loading) {
         _onRefreshStart();
       }
       return true;
     } else {
-      state?.updateState();
+      scrollViewUpdateSignal?.update();
       return false;
     }
   }
@@ -271,13 +270,13 @@ class RScrollController extends ScrollController {
   /// 更新加载更多状态
   /// [buildLoadMoreStateWidget]
   @updateMark
-  bool updateLoadMoreState(State? state, WidgetBuildState widgetState,
-      [stateData]) {
+  bool updateLoadMoreState(WidgetBuildState widgetState, [stateData]) {
     //debugger();
     if (loadMoreStateValue.value != widgetState) {
       _widgetStateData = stateData;
       loadMoreStateValue.value = widgetState;
-      state?.updateState();
+      //scrollViewUpdateSignal?.update();
+      loadMoreKey.currentState?.updateState();
       if (widgetState == WidgetBuildState.loading) {
         _onLoadMoreStart();
       } else if (widgetState == WidgetBuildState.none) {
