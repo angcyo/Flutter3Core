@@ -819,7 +819,7 @@ extension VectorPathEx on Path {
     //--用来生成上述的[header]/[footer]/[toolOn]/[toolOff]
     int? power,
     int? speed,
-    bool? autoLaser, //必须指定才会自动生成
+    bool? autoLaser, //必须指定才会自动生成GCode参数
     GCodeWriteHandle? handle,
     int digits = 3,
   }) {
