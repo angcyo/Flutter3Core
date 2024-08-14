@@ -1835,18 +1835,21 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// [enable] 是否启用
+  /// [disableColor] 禁用时的颜色, 不指定不处理
   /// [ink]
   /// [inkWell]
   /// [InkWell]
   Widget inkWellCircle(
     GestureTapCallback? onTap, {
     Color? splashColor,
+    Color? disableColor,
     Color? highlightColor,
     double? radius,
     bool enable = true,
   }) =>
       !enable
-          ? this
+          ? colorFiltered(color: disableColor)
           : inkWell(
               onTap,
               //borderRadius: BorderRadius.circular(999),

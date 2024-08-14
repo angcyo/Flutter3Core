@@ -991,7 +991,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     updateSelectComponentPaintProperty();
   }
 
-  /// 均分组内元素
+  /// 均分组内元素, 默认均分规则每个元素之间的间隙保持相同
+  /// 可以设置[useCenterAverage], 使用中心点均匀分布, 元素中心点之间的距离保持等距
   /// [useCenterAverage] 是否使用中心点进行均分分布, 否则使用元素之间的等距进行均分分布
   @api
   @supportUndo
