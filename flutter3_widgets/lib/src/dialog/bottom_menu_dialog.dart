@@ -22,14 +22,22 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   /// 圆角
   final double? clipRadius;
 
+  //--
+
   /// 是否显示取消按钮
   final bool showCancelItem;
+
+  /// 指定取消按钮
+  /// [BottomMenuItemTile]
+  @defInjectMark
+  final Widget? cancelItem;
 
   const BottomMenuItemsDialog(
     this.items, {
     super.key,
     this.showCancelItem = true,
     this.clipRadius = kDefaultBorderRadiusXX,
+    this.cancelItem,
   });
 
   @override
@@ -42,13 +50,15 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
             ?.clipRadius(radius: clipRadius),
         Empty.height(kX),
         if (showCancelItem)
-          BottomMenuItemTile(
-            onTap: () {
-              //no op
-            },
-            closeAfterTap: true,
-            child: LibRes.of(context).libCancel.text(),
-          ).clipRadius(radius: clipRadius)
+          (cancelItem ??
+                  BottomMenuItemTile(
+                    onTap: () {
+                      //no op
+                    },
+                    closeAfterTap: true,
+                    child: LibRes.of(context).libCancel.text(),
+                  ))
+              .clipRadius(radius: clipRadius)
       ],
       showDragHandle: false,
       bgColor: Colors.transparent,

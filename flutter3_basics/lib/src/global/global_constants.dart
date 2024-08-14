@@ -83,6 +83,24 @@ const Color kShadowColor = Color(0x0D000000);
 /// 阴影的偏移量
 const Offset kShadowOffset = Offset(1, 4);
 
+/// 向上偏移的阴影
+const Offset kShadowOffsetTop = Offset(0, -4);
+
+/// [BoxShadow] 阴影
+const BoxShadow kBoxShadow = BoxShadow(
+    color: kShadowColor,
+    offset: kShadowOffset, //阴影y轴偏移量
+    blurRadius: kDefaultBlurRadius, //阴影模糊程度
+    spreadRadius: kS //阴影扩散程度
+    );
+
+/// [kBoxShadow]
+const BoxShadow kBoxShadowTop = BoxShadow(
+    color: kShadowColor,
+    offset: kShadowOffsetTop,
+    blurRadius: kDefaultBorderRadiusXX,
+    spreadRadius: kH);
+
 //--
 
 /// 默认的滚动物理特性/滚动行为

@@ -179,7 +179,7 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
-  /// 更新手势处理
+  /// 更新手势处理后的回调
   void dispatchPointEventHandlerChanged(
       PointEventHandler? from, PointEventHandler? to) {
     _eachGraffitiListener((element) {

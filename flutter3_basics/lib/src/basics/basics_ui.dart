@@ -1308,8 +1308,9 @@ extension WidgetEx on Widget {
     double? sigma = kM,
     UiImageFilter? filter,
     BlendMode blendMode = BlendMode.srcOver,
+    bool enable = true,
   }) =>
-      (sigma ?? 0) > 0 || filter != null
+      enable && ((sigma ?? 0) > 0 || filter != null)
           ? BackdropFilter(
               filter: filter ??
                   ui.ImageFilter.blur(
