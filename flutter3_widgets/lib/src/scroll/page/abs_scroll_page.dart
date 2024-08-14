@@ -5,6 +5,10 @@ part of '../../../flutter3_widgets.dart';
 /// @since 2023/12/21
 ///
 /// 快速创建一个具有[Scaffold]脚手架和[RScrollView]滚动的页面
+///
+/// 重写[getTitle]设置标题, 如果需要的话
+/// 一般情况下重写[buildScrollBody]构建滚动体, 即可
+///
 /// [RScrollView]
 /// [AbsScrollPage]
 /// [RScrollPage] 刷新,加载更多
@@ -12,7 +16,7 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// [RebuildBodyMixin]
 ///
-/// [buildScaffold]
+/// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
 mixin AbsScrollPage {
   /// 直接写一个[build]方法, 也可以继承[State.build]方法
   /// @override
@@ -66,7 +70,7 @@ mixin AbsScrollPage {
   //region Body
 
   /// 构建滚动内容
-  /// [buildScaffold]->[buildBody]->[buildScrollBody]
+  /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
   /// [RScrollPage.pageRScrollView]
   @property
   Widget buildBody(BuildContext context, WidgetList? children) {
@@ -108,7 +112,8 @@ mixin AbsScrollPage {
     final globalConfig = GlobalConfig.of(context);
     return getTitle(context)?.text(
         style: globalConfig.globalTheme.textTitleStyle.copyWith(
-      color: globalConfig.globalTheme.appBarForegroundColor,
+      color: getAppBarForegroundColor(context) ??
+          globalConfig.globalTheme.appBarForegroundColor,
     ));
   }
 
@@ -120,7 +125,8 @@ mixin AbsScrollPage {
   @property
   bool? useSliverAppBar(BuildContext context) => null;
 
-  /// 构建标题栏上的返回按钮
+  /// 构建标题栏上的返回按钮,
+  /// 重写之后, 需要手动处理页面的[pop]操作
   @property
   Widget? buildAppBarLeading(BuildContext context) => null;
 

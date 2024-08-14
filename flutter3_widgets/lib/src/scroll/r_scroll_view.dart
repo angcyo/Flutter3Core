@@ -140,10 +140,12 @@ class RScrollView extends StatefulWidget {
 }
 
 class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
+  /// 列表过滤转换入口点
   /// 构建[RItemTile]的列表
   /// [children] 入参
   /// [useFrameLoad]是否需要使用分帧加载
   /// [build]
+  @entryPoint
   WidgetList _buildTileList(
     BuildContext context, {
     WidgetList? children,
@@ -151,6 +153,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   }) {
     children ??= widget.children;
 
+    //debugger();
     final result = _transformTileList(context, children);
 
     //加载更多显示处理

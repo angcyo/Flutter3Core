@@ -118,13 +118,14 @@ class RTileTransformChain with TileTransformMixin {
           final support = transform.isSupportTransform(context, tile);
           //debugger();
           if (support) {
-            //debugger();
+            debugger();
             lastTransform = transform;
             handle =
                 transform.transformTile(context, children, result, tile, i);
             break;
           }
         }
+        //--
         if (lastTransform == null) {
           if (tile is RItemTile) {
             if (tile.sliverTransformType != null) {
@@ -345,7 +346,7 @@ mixin TileTransformMixin {
     return DecoratedSliver(
       decoration: decoration,
       position: decorationPosition,
-      sliver: sliverChild,
+      sliver: _ensureSliver(sliverChild),
     );
   }
 
@@ -361,7 +362,7 @@ mixin TileTransformMixin {
 
     return SliverPadding(
       padding: sliverPadding,
-      sliver: sliverChild,
+      sliver: _ensureSliver(sliverChild),
     );
   }
 

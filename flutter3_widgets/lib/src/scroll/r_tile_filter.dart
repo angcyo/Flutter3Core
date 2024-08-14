@@ -17,7 +17,7 @@ class RTileFilterChain {
   WidgetList doFilter(WidgetList children) {
     WidgetList result = [];
     result.addAll(children);
-    for (var filter in filterList) {
+    for (final filter in filterList) {
       if (filter.filterTile(children, result)) {
         break;
       }

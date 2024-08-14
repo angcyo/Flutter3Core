@@ -27,17 +27,21 @@ class RScrollConfig {
 
   /// 向过滤一遍[children], 然后转换一遍[children]得到新的[children]
   @api
+  @entryPoint
   WidgetList filterAndTransformTileList(
     BuildContext context,
     WidgetList children,
   ) {
-    //过滤
+    //debugger();
+    //过滤链
     children = filterChain?.doFilter(children) ?? children;
+    //转换链
     final transformChain = this.transformChain;
     final WidgetList result;
     if (transformChain != null) {
-      transformChain.reset();
+      transformChain.reset() /*重置转换器缓存*/;
       //转换
+      //debugger();
       result = transformChain.doTransform(context, children);
     } else {
       result = children;
@@ -47,6 +51,7 @@ class RScrollConfig {
 }
 
 /// 默认的滚动配置
+/// [_RScrollViewState._transformTileList]入口点
 RScrollConfig defaultScrollConfig = RScrollConfig(
   filterChain: _defaultTileFilterChain,
   transformChain: _defaultTileTransformChain,

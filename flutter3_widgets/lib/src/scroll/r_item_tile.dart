@@ -144,6 +144,7 @@ class RItemTile extends StatefulWidget {
   //region Divider style 下划线
 
   /// 底部分割线的颜色
+  /// [buildListWrapChild]->[_buildBottomWidget]
   final Color? bottomLineColor;
 
   /// 线的高度, 也就是厚度
@@ -374,6 +375,7 @@ class RItemTile extends StatefulWidget {
 
   //---
 
+  /// [buildListWrapChild]->[_buildBottomWidget]
   Widget? _buildBottomWidget(BuildContext context) {
     return bottomLeading ??
         (bottomLineColor == null
