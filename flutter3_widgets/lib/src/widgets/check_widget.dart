@@ -21,6 +21,8 @@ class HighlightCheckWidget extends StatefulWidget {
   @defInjectMark
   final Color? checkedColor;
 
+  final double? checkedBorderRadius;
+
   //--
   final Color? shadowColor;
 
@@ -43,6 +45,7 @@ class HighlightCheckWidget extends StatefulWidget {
     this.minHeight = kMinInteractiveHeight,
     this.margin = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.checkedColor,
+    this.checkedBorderRadius = kDefaultBorderRadiusXX,
     this.shadowColor = kShadowColor,
     this.enableTap = true,
     this.onTap,
@@ -83,6 +86,7 @@ class _HighlightCheckWidgetState extends State<HighlightCheckWidget> {
           decoration: fillDecoration(
             color: widget.checkedColor ?? globalTheme.accentColor,
             shadowColor: widget.shadowColor,
+            borderRadius: widget.checkedBorderRadius,
           ),
         ).matchParent(debugLabel: widget.runtimeType.toString()),
       widget.child,

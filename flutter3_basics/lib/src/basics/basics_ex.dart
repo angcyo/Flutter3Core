@@ -172,6 +172,7 @@ extension ObjectEx on Object {
   /// 使用[Text]包裹
   ///
   /// [style] 文本样式
+  /// [bold] 是否加粗[fontWeight]
   /// ...
   /// [highlight] 需要高亮的文本
   /// [highlightList] 需要高亮的文本列表
@@ -191,6 +192,7 @@ extension ObjectEx on Object {
     double? fontSize,
     Color? textColor,
     FontWeight? fontWeight,
+    bool bold = false /*加粗*/,
     FontStyle? fontStyle,
     String? fontFamily,
     TextAlign? textAlign,
@@ -209,6 +211,9 @@ extension ObjectEx on Object {
   }) {
     if (maxLines != null) {
       overflow ??= TextOverflow.ellipsis;
+    }
+    if (bold) {
+      fontWeight ??= FontWeight.bold;
     }
     //使用正则匹配高亮文本
     if (!isNullOrEmpty(highlight) || !isNullOrEmpty(highlightList)) {

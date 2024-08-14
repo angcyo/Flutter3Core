@@ -209,9 +209,11 @@ class SingleInputWidget extends StatefulWidget {
   final Color? cursorColor;
 
   /// 背景填充颜色
+  /// [decoration]属性
   final Color? fillColor;
 
   /// 禁用时的填充颜色
+  /// [decoration]属性
   final Color? disabledFillColor;
 
   /// 边框的宽度, 为0取消边框
@@ -307,7 +309,15 @@ class SingleInputWidget extends StatefulWidget {
   /// 限制输入的最大长度
   /// 等于[TextField.noMaxLength]时, 会显示字符计数器
   /// [_TextFieldState.needsCounter] 显示计数器的条件判断
+  /// 文本样式[InputDecorationTheme].[ThemeData.inputDecorationTheme]
+  /// [_m3CounterErrorStyle]
+  /// [_m2CounterErrorStyle]
+  /// 直接使用[inputBuildCounter]覆盖系统的方法也可以自定义
   final int? maxLength;
+
+  /// 用来构建输入长度等信息的回调
+  /// [TextField.buildCounter]
+  final InputCounterWidgetBuilder? inputBuildCounter;
 
   /// 最大行数
   final int? maxLines;
@@ -325,14 +335,17 @@ class SingleInputWidget extends StatefulWidget {
 
   /// [outlineInputBorder]
   /// [underlineInputBorder]
+  /// [InputBorder.none]
   final InputBorder? border;
 
   /// [outlineInputBorder]
   /// [underlineInputBorder]
+  /// [InputBorder.none]
   final InputBorder? focusedBorder;
 
   /// [outlineInputBorder]
   /// [underlineInputBorder]
+  /// [InputBorder.none]
   final InputBorder? disabledBorder;
 
   /// 键盘上的输入类型, 比如完成, 下一步等
@@ -345,10 +358,6 @@ class SingleInputWidget extends StatefulWidget {
   ///点击键盘的动作按钮时的回调
   final ValueChanged<String>? onSubmitted;
   final VoidCallback? onEditingComplete;
-
-  /// 用来构建输入长度等信息的回调
-  /// [TextField.buildCounter]
-  final InputCounterWidgetBuilder? inputBuildCounter;
 
   const SingleInputWidget({
     super.key,

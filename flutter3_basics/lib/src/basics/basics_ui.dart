@@ -761,7 +761,7 @@ extension WidgetEx on Widget {
             )
           : this;
 
-  /// 脚手架
+  /// 脚手架, 会消耗手势事件
   Widget scaffold({
     PreferredSizeWidget? appBar,
     Color? backgroundColor = Colors.transparent,
@@ -773,6 +773,24 @@ extension WidgetEx on Widget {
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         body: this,
       );
+
+  /// 移除MediaQuery的padding
+  Widget removePadding(
+    BuildContext context, {
+    bool removeAll = false,
+    bool removeTop = false,
+    bool removeBottom = false,
+    bool removeLeft = false,
+    bool removeRight = false,
+  }) {
+    final mediaData = MediaQuery.of(context).removePadding(
+      removeLeft: removeAll || removeLeft,
+      removeTop: removeAll || removeTop,
+      removeRight: removeAll || removeRight,
+      removeBottom: removeAll || removeBottom,
+    );
+    return MediaQuery(data: mediaData, child: this);
+  }
 
   /// 将当前的小部件, 包裹在一个[SafeArea]中
   Widget safeArea({
