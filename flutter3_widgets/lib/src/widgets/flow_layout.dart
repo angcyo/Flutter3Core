@@ -32,6 +32,9 @@ class FlowLayout extends MultiChildRenderObjectWidget {
   /// [FlowLayoutRender.lineMaxChildCount]
   final int? lineMaxChildCount;
 
+  /// [FlowLayoutRender.lineChildCount]
+  final int? lineChildCount;
+
   /// [FlowLayoutRender.mainAxisAlignment]
   final MainAxisAlignment mainAxisAlignment;
 
@@ -55,6 +58,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
     this.childConstraints,
     this.equalWidthRange,
     this.lineMaxChildCount,
+    this.lineChildCount,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.lineMainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
@@ -71,6 +75,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
         childConstraints: childConstraints,
         equalWidthRange: equalWidthRange,
         lineMaxChildCount: lineMaxChildCount,
+        lineChildCount: lineChildCount,
         mainAxisAlignment: mainAxisAlignment,
         lineMainAxisAlignment: lineMainAxisAlignment,
         crossAxisAlignment: crossAxisAlignment,
@@ -88,6 +93,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
       ..childConstraints = childConstraints
       ..equalWidthRange = equalWidthRange
       ..lineMaxChildCount = lineMaxChildCount
+      ..lineChildCount = lineChildCount
       ..mainAxisAlignment = mainAxisAlignment
       ..lineMainAxisAlignment = lineMainAxisAlignment
       ..crossAxisAlignment = crossAxisAlignment
@@ -100,6 +106,9 @@ class FlowLayout extends MultiChildRenderObjectWidget {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty<EdgeInsets>('padding', padding))
+      ..add(StringProperty('equalWidthRange', equalWidthRange))
+      ..add(IntProperty('lineMaxChildCount', lineMaxChildCount))
+      ..add(IntProperty('lineChildCount', lineChildCount))
       ..add(DoubleProperty('childGap', childGap))
       ..add(DoubleProperty('childHorizontalGap', childHorizontalGap))
       ..add(DoubleProperty('childVerticalGap', childVerticalGap))
@@ -273,6 +282,9 @@ class FlowLayoutRender extends RenderBox
   /// 每行最多的子元素数量, 用来配合[enableEqualWidth]计算[FlowLayoutParentData.weight]
   int? lineMaxChildCount;
 
+  /// 当等宽时, 一行指定有多少个子元素, 不指定则使用真实的child数量
+  int? lineChildCount;
+
   /// 主轴对齐方式, 也就是上/下对齐方式
   /// [MainAxisAlignment.start] 对齐容器的顶部
   /// [MainAxisAlignment.end] 对齐容器的底部
@@ -305,6 +317,7 @@ class FlowLayoutRender extends RenderBox
     this.childConstraints,
     this.equalWidthRange,
     this.lineMaxChildCount,
+    this.lineChildCount,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.lineMainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
@@ -418,8 +431,9 @@ class FlowLayoutRender extends RenderBox
   void measureChild() {
     final children = getChildren();
     //一行最大应该布局多少个child
-    final lineMaxChildCount =
-        min(this.lineMaxChildCount ?? children.length, children.length);
+    final childCount = min(
+        lineMaxChildCount ?? lineChildCount ?? children.length,
+        lineChildCount ?? children.length);
 
     //最大宽度, weight属性的参考值
     final maxWidth = refMaxWidth;
@@ -435,13 +449,13 @@ class FlowLayoutRender extends RenderBox
           defChildConstraints;
 
       //权重
-      double? weight = childParentData.weight ??
-          (isEqualWidth ? 1.0 / lineMaxChildCount : null);
+      double? weight =
+          childParentData.weight ?? (isEqualWidth ? 1.0 / childCount : null);
 
       if (maxWidth != double.infinity && weight != null) {
         //需要使用权重约束
-        final gap = horizontalGap *
-            (lineMaxChildCount - 1 - childParentData.excludeGapCount);
+        final gap =
+            horizontalGap * (childCount - 1 - childParentData.excludeGapCount);
         final boxValidWidth = maxWidth - paddingHorizontal - gap - 0.5; //防止浮点误差
         final width = boxValidWidth * weight;
         assert(() {
@@ -710,6 +724,7 @@ extension FlowLayoutListEx on WidgetNullList {
     BoxConstraints? childConstraints,
     String? equalWidthRange,
     int? lineMaxChildCount,
+    int? lineChildCount,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.center,
     MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.center,
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
@@ -736,6 +751,7 @@ extension FlowLayoutListEx on WidgetNullList {
       childConstraints: childConstraints,
       equalWidthRange: equalWidthRange,
       lineMaxChildCount: lineMaxChildCount,
+      lineChildCount: lineChildCount,
       mainAxisAlignment: mainAxisAlignment,
       lineMainAxisAlignment: lineMainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
