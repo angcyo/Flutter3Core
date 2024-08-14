@@ -1311,6 +1311,16 @@ extension RectEx on Rect {
     );
   }
 
+  /// 确保矩形具有最小的宽高大小
+  Rect ensureValid({double? minWidth = 1, double? minHeight = 1}) {
+    return Rect.fromLTWH(
+      left,
+      top,
+      math.max(width, minWidth ?? width),
+      math.max(height, minHeight ?? height),
+    );
+  }
+
   /// dp单位的坐标, 转换成mm单位的坐标
   @mm
   Rect toRectMm() => Rect.fromLTRB(

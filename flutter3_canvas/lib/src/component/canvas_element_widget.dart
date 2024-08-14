@@ -58,7 +58,7 @@ class CanvasElementRenderObject extends RenderBox {
         //debugger();
         canvas.drawInRect(
           dst,
-          src,
+          src.ensureValid(),
           () {
             painter.painting(canvas, const PaintMeta());
           },
