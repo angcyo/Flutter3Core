@@ -73,6 +73,8 @@ abstract class IUnit {
 
   //region ---基础---
 
+  String toString() => suffix;
+
   /// 单位后缀
   String get suffix;
 
@@ -337,7 +339,7 @@ class PtUnit extends IUnit {
 @inch
 class InchUnit extends IUnit {
   @override
-  String get suffix => "in";
+  String get suffix => "inch";
 
   @override
   int get digits => kInchFractionDigits;
