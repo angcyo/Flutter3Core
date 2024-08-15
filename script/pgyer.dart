@@ -12,7 +12,10 @@ import 'package:yaml/yaml.dart';
 /// 蒲公英上传脚本
 /// https://www.pgyer.com/doc/view/api#fastUploadApp
 
+/// 片蒲公英官网地址
 const host = "https://www.pgyer.com";
+
+/// 蒲公英接口地址
 const apiBase = "https://www.pgyer.com/apiv2/app";
 
 void main(List<String> arguments) async {
