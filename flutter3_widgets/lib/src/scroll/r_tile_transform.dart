@@ -87,6 +87,16 @@ class RTileTransformChain with TileTransformMixin {
   /// 执行转换
   @entryPoint
   WidgetList doTransform(BuildContext context, WidgetList children) {
+    return doTransformChildren(context, children, null);
+  }
+
+  /// 执行转换, 将输入的[children]转换成想要的[WidgetList]
+  @api
+  WidgetList doTransformChildren(
+    BuildContext context,
+    WidgetList children,
+    RItemTile? parentTile,
+  ) {
     WidgetList result = [];
 
     BaseTileTransform? lastTransform;
@@ -102,12 +112,20 @@ class RTileTransformChain with TileTransformMixin {
         //如果有上一个转换器
         final support = lastTransform.isSupportTransform(context, tile);
         if (support) {
+          //debugger();
           //支持当前的转换
-          handle =
-              lastTransform.transformTile(context, children, result, tile, i);
+          handle = _transformTile(
+            lastTransform,
+            context,
+            children,
+            result,
+            tile,
+            i,
+            parentTile,
+          );
         } else {
           //不支持当前的转换
-          lastTransform.endTransformIfNeed(context, children, result);
+          lastTransform.endTransformIfNeed(context, children, result, false);
           lastTransform = null;
         }
       }
@@ -124,17 +142,24 @@ class RTileTransformChain with TileTransformMixin {
           if (support) {
             //debugger();
             lastTransform = transform;
-            handle =
-                transform.transformTile(context, children, result, tile, i);
+            handle = _transformTile(
+              transform,
+              context,
+              children,
+              result,
+              tile,
+              i,
+              parentTile,
+            );
             break;
           }
         }
         //--
         if (lastTransform == null) {
           if (tile is RItemTile) {
-            if (tile.sliverTransformType != null) {
+            if (tile.sliverType != null) {
               assert(() {
-                l.w('未找到对应的转换器转换type:[${tile.sliverTransformType}]');
+                l.w('未找到对应的转换器转换type:[${tile.sliverType}]');
                 return true;
               }());
             }
@@ -145,7 +170,7 @@ class RTileTransformChain with TileTransformMixin {
       // 未找到转换器时, 则进行默认的转换处理
       if (!handle) {
         //debugger();
-        lastTransform?.endTransformIfNeed(context, children, result);
+        lastTransform?.endTransformIfNeed(context, children, result, false);
         lastTransform = null;
         Widget child = tile;
         if (tile is RItemTile) {
@@ -155,15 +180,62 @@ class RTileTransformChain with TileTransformMixin {
       }
     }
     //debugger();
-    lastTransform?.endTransformIfNeed(context, children, result);
+    lastTransform?.endTransformIfNeed(context, children, result, false);
     return result;
+  }
+
+  /// [doTransformChildren]
+  bool _transformTile(
+    BaseTileTransform transform,
+    BuildContext context,
+    WidgetList origin,
+    WidgetList result,
+    Widget tile,
+    int index,
+    RItemTile? parentTile,
+  ) {
+    final handle = transform.transformTile(
+      context,
+      origin,
+      result,
+      tile,
+      index,
+      parentTile,
+    );
+    if (tile is RItemTile) {
+      final childTiles = tile.childTiles;
+      if (childTiles != null) {
+        //处理[RItemTile.childTiles]
+        //debugger();
+        final childResult = doTransformChildren(context, childTiles, tile);
+        //debugger();
+        for (var j = 0; j < childResult.length; j++) {
+          final childTile = childResult[j];
+          final childHandle = transform.transformTile(
+            context,
+            childTiles,
+            childResult,
+            childTile,
+            j,
+            tile,
+          );
+          if (!childHandle) {
+            assert(() {
+              l.w("注意[childTile]未被[${tile.sliverType}]处理.");
+              return true;
+            }());
+          }
+        }
+      }
+    }
+    return handle;
   }
 
   /// 重置
   @entryPoint
   void reset() {
-    for (var element in transformList) {
-      element.reset();
+    for (final element in transformList) {
+      element.reset(false);
     }
   }
 }
@@ -390,6 +462,12 @@ mixin TileTransformMixin {
 /// 将一组变换好的小部件, 转换成另外一个小部件, 如果需要的话
 /// [BaseWrapTileTransform]
 abstract class BaseTileTransform with TileTransformMixin {
+  /// [RItemTile.childTiles]
+  RItemTile? parentTile;
+
+  /// 用来描述第一个元素的配置信息, 如果是[Group]组件, 则通常用来描述[Group]整体的样式
+  RItemTile? fistTile;
+
   /// 收集到的[RItemTile], 用来读取配置.
   /// 有可能是[RItemTile],也有可能是普通的[Widget]
   List<Widget> tileList = [];
@@ -400,7 +478,7 @@ abstract class BaseTileTransform with TileTransformMixin {
   /// 未指定变换类型的[tile]是否可以被处理
   @property
   bool isSupportDefaultTile(RItemTile tile) {
-    if (tile.sliverTransformType != null) {
+    if (tile.sliverType != null) {
       return false;
     }
     if (tile.fillRemaining) {
@@ -419,7 +497,8 @@ abstract class BaseTileTransform with TileTransformMixin {
   /// [origin] 原始的小部件列表
   /// [result] 输出转换后的小部件列表
   /// [tile] 当前的小部件, 在[origin]中的, 极大可能是[RItemTile]
-  /// [warpTile] 被[BaseWrapTileTransform]包裹后的小部件, 也有可能没有包裹
+  ///   [warpTile] 被[BaseWrapTileTransform]包裹后的小部件, 也有可能没有包裹
+  /// [parentTile] 父容器的tile. 指定了[RItemTile.childTiles]时有效
   /// 返回true, 表示处理了
   /// 返回false, 表示未处理
   @entryPoint
@@ -429,20 +508,28 @@ abstract class BaseTileTransform with TileTransformMixin {
     WidgetList result,
     Widget tile,
     int index,
+    RItemTile? parentTile,
   );
 
   /// 结束当前的变化, 如果需要处理的话
+  /// [fromPart] 是否是下一段
   @entryPoint
   void endTransformIfNeed(
     BuildContext context,
     WidgetList origin,
     WidgetList result,
+    bool fromPart,
   );
 
   /// 重置
+  /// [fromPart] 是否是下一段
   @property
-  void reset() {
+  void reset(bool fromPart) {
     tileList = [];
+    if (!fromPart) {
+      fistTile = null;
+      parentTile = null;
+    }
   }
 }
 
@@ -454,8 +541,8 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
   @override
   bool isSupportTransform(BuildContext context, Widget tile) =>
       tile is RItemTile &&
-      (tile.sliverTransformType == SliverMainAxisGroup ||
-          (tile.sliverTransformType == null &&
+      (tile.sliverType == SliverMainAxisGroup ||
+          (tile.sliverType == null &&
               (tileList.isNotEmpty || headerWidget != null)));
 
   @override
@@ -463,6 +550,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     BuildContext context,
     WidgetList origin,
     WidgetList result,
+    bool fromPart,
   ) {
     if (tileList.isNotEmpty || headerWidget != null) {
       result.add(buildTransformWrapWidget(
@@ -471,13 +559,13 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
         headerWidget,
         tileList,
       ));
-      reset();
+      reset(fromPart);
     }
   }
 
   @override
-  void reset() {
-    super.reset();
+  void reset(bool fromPart) {
+    super.reset(fromPart);
     headerTile = null;
     headerWidget = null;
   }
@@ -489,17 +577,24 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     WidgetList result,
     Widget tile,
     int index,
+    RItemTile? parentTile,
   ) {
+    this.parentTile = parentTile;
     if (tile is RItemTile) {
+      fistTile ??= tile;
+
       if (tile.part) {
         //强行使用分开标识
-        endTransformIfNeed(context, origin, result);
+        endTransformIfNeed(context, origin, result, true);
       }
-      if (tile.isHeader) {
+
+      if (tile.isNoChild) {
+        //no op
+      } else if (tile.isHeader) {
         //分组的头
         if (headerTile != null) {
           //之前已经有一个组了
-          endTransformIfNeed(context, origin, result);
+          endTransformIfNeed(context, origin, result, true);
         }
         headerTile = tile;
         headerWidget = buildTileWidget(
@@ -518,6 +613,9 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
           ignoreSliverDecoration: true,
         ));
       }
+      return true;
+    } else if (parentTile != null) {
+      tileList.add(tile);
       return true;
     }
     return false;
@@ -556,7 +654,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     });
 
     return wrapSliverPaddingDecorationTile(
-      headerTile,
+      headerTile ?? fistTile,
       SliverMainAxisGroup(slivers: [
         if (headerWidget != null) headerWidget,
         ...newList,
@@ -572,17 +670,18 @@ class SliverListTransform extends BaseTileTransform {
   @override
   bool isSupportTransform(BuildContext context, Widget tile) =>
       tile is RItemTile &&
-      (tile.sliverTransformType == SliverList || isSupportDefaultTile(tile));
+      (tile.sliverType == SliverList || isSupportDefaultTile(tile));
 
   @override
   void endTransformIfNeed(
     BuildContext context,
     WidgetList origin,
     WidgetList result,
+    bool fromPart,
   ) {
     if (tileList.isNotEmpty) {
       result.add(buildTransformWrapWidget(context, tileList));
-      reset();
+      reset(fromPart);
     }
   }
 
@@ -593,12 +692,17 @@ class SliverListTransform extends BaseTileTransform {
     WidgetList result,
     Widget tile,
     int index,
+    RItemTile? parentTile,
   ) {
+    this.parentTile = parentTile;
     if (tile is RItemTile) {
       if (tile.part) {
         //强行使用分开标识
-        endTransformIfNeed(context, origin, result);
+        endTransformIfNeed(context, origin, result, true);
       }
+      tileList.add(tile);
+      return true;
+    } else if (parentTile != null) {
       tileList.add(tile);
       return true;
     }
@@ -629,6 +733,7 @@ class SliverListTransform extends BaseTileTransform {
             sliverChild,
             tile,
             index,
+            firstAnchor: parentTile,
           ),
         ));
       } else {
@@ -662,7 +767,7 @@ class SliverGridTransform extends BaseTileTransform {
   @override
   bool isSupportTransform(BuildContext context, Widget tile) =>
       tile is RItemTile &&
-      tile.sliverTransformType == SliverGrid &&
+      tile.sliverType == SliverGrid &&
       tile.crossAxisCount > 0;
 
   @override
@@ -670,10 +775,11 @@ class SliverGridTransform extends BaseTileTransform {
     BuildContext context,
     WidgetList origin,
     WidgetList result,
+    bool fromPart,
   ) {
     if (tileList.isNotEmpty) {
       result.add(buildTransformWrapWidget(context, tileList));
-      reset();
+      reset(fromPart);
     }
   }
 
@@ -693,18 +799,23 @@ class SliverGridTransform extends BaseTileTransform {
     WidgetList result,
     Widget tile,
     int index,
+    RItemTile? parentTile,
   ) {
+    this.parentTile = parentTile;
     if (tile is RItemTile) {
       if (tile.part) {
         //强行使用分开标识
-        endTransformIfNeed(context, origin, result);
+        endTransformIfNeed(context, origin, result, true);
       }
       if (lastCrossAxisCount != null &&
           tile.crossAxisCount != lastCrossAxisCount) {
         //crossAxisCount不相同
-        endTransformIfNeed(context, origin, result);
+        endTransformIfNeed(context, origin, result, true);
       }
       //debugger();
+      tileList.add(tile);
+      return true;
+    } else if (parentTile != null) {
       tileList.add(tile);
       return true;
     }
@@ -736,6 +847,7 @@ class SliverGridTransform extends BaseTileTransform {
             sliverChild,
             tile,
             index,
+            firstAnchor: parentTile,
           ),
         ));
       } else {
@@ -774,18 +886,18 @@ class SliverReorderableListTransform extends BaseTileTransform {
   @override
   bool isSupportTransform(BuildContext context, Widget tile) =>
       tile is RItemTile &&
-      (tile.sliverTransformType == SliverReorderableList ||
-          isSupportDefaultTile(tile));
+      (tile.sliverType == SliverReorderableList || isSupportDefaultTile(tile));
 
   @override
   void endTransformIfNeed(
     BuildContext context,
     WidgetList origin,
     WidgetList result,
+    bool fromPart,
   ) {
     if (tileList.isNotEmpty) {
       result.add(buildTransformWrapWidget(context, tileList));
-      reset();
+      reset(fromPart);
     }
   }
 
@@ -796,12 +908,17 @@ class SliverReorderableListTransform extends BaseTileTransform {
     WidgetList result,
     Widget tile,
     int index,
+    RItemTile? parentTile,
   ) {
+    this.parentTile = parentTile;
     if (tile is RItemTile) {
       if (tile.part) {
         //强行使用分开标识
-        endTransformIfNeed(context, origin, result);
+        endTransformIfNeed(context, origin, result, true);
       }
+      tileList.add(tile);
+      return true;
+    } else if (parentTile != null) {
       tileList.add(tile);
       return true;
     }

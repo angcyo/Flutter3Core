@@ -23,12 +23,14 @@ class RItemTile extends StatefulWidget {
   /// [rDecoration]
   const RItemTile({
     super.key,
-    this.sliverTransformType,
+    this.sliverType,
     this.child,
     this.childBuilder,
     this.isSliverItem = false,
     this.updateSignal,
     this.tag,
+    //--
+    this.childTiles,
     //
     this.part = false,
     this.hide = false,
@@ -115,10 +117,16 @@ class RItemTile extends StatefulWidget {
   final bool hide;
 
   /// 强制指定子部件
+  /// [buildChild]
   final Widget? child;
 
   /// 用来构建子部件的构建器
   final WidgetBuilder? childBuilder;
+
+  /// 当使用[SliverMainAxisGroup].[SliverCrossAxisGroup]等一些Group组件时,
+  /// 这些组件又可以包裹[SliverList].[SliverGrid]等组件
+  /// [List<RItemTile>]
+  final List<Widget>? childTiles;
 
   /// [RItemTile]的类型, 决定用什么样的[Sliver]包裹[RItemTile]
   /// 如果不指定类型, 会沿用上一个[RItemTile]的类型
@@ -127,7 +135,12 @@ class RItemTile extends StatefulWidget {
   /// [RTileTransformChain]
   ///
   /// 需要实现[BaseTileTransform]自定义转换器
-  final dynamic sliverTransformType;
+  final dynamic sliverType;
+
+  /// 当前的RItemTIle是否不需要处理成[Widget], 只做描述配置
+  /// [childTiles]
+  bool get isNoChild =>
+      child == null && childBuilder == null && childTiles != null;
 
   //endregion 基础
 
@@ -488,9 +501,10 @@ class RItemTile extends StatefulWidget {
     BuildContext context,
     WidgetIterable list,
     Widget child,
-    int index,
-  ) {
-    final first = list.firstOrNull;
+    int index, {
+    Widget? firstAnchor,
+  }) {
+    final first = firstAnchor ?? list.firstOrNull;
     if (first is RItemTile) {
       final isEdgeLeft = index % first.crossAxisCount == 0;
       final isEdgeRight =
@@ -562,8 +576,7 @@ class RItemTile extends StatefulWidget {
     properties.add(DiagnosticsProperty<bool>('part', part));
     properties.add(DiagnosticsProperty<bool>('hide', hide));
     properties.add(DiagnosticsProperty<Object>('tag', tag));
-    properties.add(DiagnosticsProperty<dynamic>(
-        'sliverTransformType', sliverTransformType));
+    properties.add(DiagnosticsProperty<dynamic>('sliverType', sliverType));
     properties.add(DiagnosticsProperty<bool>('isSliverItem', isSliverItem));
     properties
         .add(DiagnosticsProperty<Color?>('bottomLineColor', bottomLineColor));
@@ -656,12 +669,17 @@ extension RItemTileExtension on Widget {
     double? lastPaddingRight,
     double? lastPaddingBottom,
     //--
+    Color? bottomLineColor,
+    double? bottomLineHeight,
+    EdgeInsets? bottomLineMargin,
+    Widget? bottomLeading,
+    //--
     bool hide = false,
     bool part = false,
     UpdateValueNotifier? updateSignal,
     bool enablePadding = false,
     EdgeInsetsGeometry? sliverPadding,
-    dynamic sliverTransformType = SliverList,
+    dynamic sliverType = SliverList,
   }) {
     return RItemTile(
       addAutomaticKeepAlives: addAutomaticKeepAlives,
@@ -675,6 +693,12 @@ extension RItemTileExtension on Widget {
       lastPaddingTop: lastPaddingTop,
       lastPaddingRight: lastPaddingRight,
       lastPaddingBottom: lastPaddingBottom,
+      //--
+      bottomLineColor: bottomLineColor,
+      bottomLineHeight: bottomLineHeight,
+      bottomLineMargin: bottomLineMargin,
+      bottomLeading: bottomLeading,
+      //--
       sliverPadding: sliverPadding ??
           (enablePadding
               ? EdgeInsets.only(
@@ -687,7 +711,7 @@ extension RItemTileExtension on Widget {
       hide: hide,
       part: part,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
-      sliverTransformType: sliverTransformType,
+      sliverType: sliverType,
       child: this,
     );
   }
@@ -715,13 +739,13 @@ extension RItemTileExtension on Widget {
     UpdateValueNotifier? updateSignal,
     bool enablePadding = false,
     EdgeInsetsGeometry? sliverPadding,
-    dynamic sliverTransformType = SliverGrid,
+    dynamic sliverType = SliverGrid,
   }) {
     mainAxisSpacing ??= 0;
     crossAxisSpacing ??= mainAxisSpacing;
     return RItemTile(
       crossAxisCount: gridCount,
-      sliverTransformType: sliverTransformType,
+      sliverType: sliverType,
       childAspectRatio: childAspectRatio,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
@@ -798,13 +822,13 @@ extension RItemTileExtension on Widget {
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
     UpdateValueNotifier? updateSignal,
     List<String>? groups = const [],
-    dynamic sliverTransformType,
+    dynamic sliverType,
   }) {
     return RItemTile(
       key: key,
       childBuilder: childBuilder,
       isSliverItem: isSliverItem,
-      sliverTransformType: sliverTransformType,
+      sliverType: sliverType,
       hide: hide,
       part: part,
       bottomLineColor: bottomLineColor,
@@ -872,7 +896,7 @@ extension RItemTileExtension on Widget {
     Color? headerBarForegroundColor,
     TextStyle? headerBarTitleTextStyle = const TextStyle(fontSize: 14),
     UpdateValueNotifier? updateSignal,
-    dynamic sliverTransformType = SliverMainAxisGroup,
+    dynamic sliverType = SliverMainAxisGroup,
   }) {
     return RItemTile(
       headerPinned: pinned,
@@ -888,7 +912,7 @@ extension RItemTileExtension on Widget {
       headerBarTitleTextStyle: headerBarTitleTextStyle,
       useSliverAppBar: useSliverAppBar,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
-      sliverTransformType: sliverTransformType,
+      sliverType: sliverType,
       child: this,
     );
   }
@@ -918,7 +942,7 @@ extension RItemTileExtension on Widget {
     EdgeInsets? bottomLineMargin,
     Widget? bottomLeading,
     UpdateValueNotifier? updateSignal,
-    dynamic sliverTransformType = SliverMainAxisGroup,
+    dynamic sliverType = SliverMainAxisGroup,
   }) {
     return RItemTile(
       groups: groups,
@@ -945,7 +969,7 @@ extension RItemTileExtension on Widget {
       bottomLineHeight: bottomLineHeight,
       bottomLineMargin: bottomLineMargin,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
-      sliverTransformType: sliverTransformType,
+      sliverType: sliverType,
       child: this,
     );
   }
@@ -1030,7 +1054,7 @@ extension RItemTileExtension on Widget {
     List? items,
     IndexCallback? onTileReorderStart,
     IndexCallback? onTileReorderEnd,
-    dynamic sliverTransformType = SliverReorderableList,
+    dynamic sliverType = SliverReorderableList,
   }) {
     ReorderCallback reorderCallback = onTileReorder;
     if (items != null) {
@@ -1055,8 +1079,57 @@ extension RItemTileExtension on Widget {
       onTileReorder: reorderCallback,
       onTileReorderStart: onTileReorderStart,
       onTileReorderEnd: onTileReorderEnd,
-      sliverTransformType: sliverTransformType,
+      sliverType: sliverType,
       child: this,
+    );
+  }
+}
+
+extension RItemTileListExtension on List<Widget> {
+  /// 一组[RItemTile]
+  Widget rItemTile({
+    Key? key,
+    //--
+    bool hide = false,
+    bool part = false,
+    //--
+    EdgeInsetsGeometry? sliverPadding,
+    Color? fillColor,
+    double borderRadius = kDefaultBorderRadiusXX,
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    //--
+    Color? bottomLineColor,
+    double? bottomLineHeight,
+    EdgeInsets? bottomLineMargin,
+    Widget? bottomLeading,
+    //--
+    UpdateValueNotifier? updateSignal,
+    dynamic sliverType,
+  }) {
+    return RItemTile(
+      key: key,
+      //--
+      hide: hide,
+      part: part,
+      //--
+      sliverPadding: sliverPadding,
+      sliverDecoration: sliverDecoration ??
+          fillDecoration(
+            color: fillColor,
+            borderRadius: borderRadius,
+          ),
+      sliverDecorationPosition: sliverDecorationPosition,
+      //--
+      bottomLineColor: bottomLineColor,
+      bottomLineHeight: bottomLineHeight,
+      bottomLineMargin: bottomLineMargin,
+      bottomLeading: bottomLeading,
+      //--
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
+      sliverType: sliverType,
+      childTiles: this,
+      child: null,
     );
   }
 }
