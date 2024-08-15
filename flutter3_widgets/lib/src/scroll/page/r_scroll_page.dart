@@ -25,6 +25,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 然后在[RItemTileExtension]中消耗此对象
   static WeakReference<UpdateValueNotifier>? _lastRebuildBeanSignal;
 
+  /// [rebuildByBean]
   static UpdateValueNotifier? consumeRebuildBeanSignal() {
     if (_lastRebuildBeanSignal?.target != null) {
       var signal = _lastRebuildBeanSignal?.target;

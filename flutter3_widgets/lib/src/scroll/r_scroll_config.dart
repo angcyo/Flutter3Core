@@ -44,6 +44,7 @@ class RScrollConfig {
       //debugger();
       result = transformChain.doTransform(context, children);
     } else {
+      //这里的[children]应该全是sliver, 否则会报错.
       result = children;
     }
     return result;

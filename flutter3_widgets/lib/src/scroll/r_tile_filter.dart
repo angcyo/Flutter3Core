@@ -40,6 +40,7 @@ abstract class BaseTileFilter {
 class ItemTileFilter extends BaseTileFilter {
   const ItemTileFilter();
 
+  @entryPoint
   @override
   bool filterTile(WidgetList origin, WidgetList result) {
     filterHide(origin, result);
@@ -47,10 +48,12 @@ class ItemTileFilter extends BaseTileFilter {
     return false;
   }
 
+  //--hide
+
   /// 过滤掉[hide]为true的[Widget]
   void filterHide(WidgetList origin, WidgetList result) {
-    var hideList = [];
-    for (var child in result) {
+    final hideList = [];
+    for (final child in result) {
       if (child is RItemTile) {
         if (child.hide) {
           hideList.add(child);
@@ -63,7 +66,7 @@ class ItemTileFilter extends BaseTileFilter {
 
   WidgetList getHideListFrom(WidgetList list, Widget hide) {
     WidgetList result = [];
-    for (var child in list) {
+    for (final child in list) {
       if (child is RItemTile) {
         if (child != hide) {
           if (child.isHideFrom(hide)) {
@@ -76,14 +79,16 @@ class ItemTileFilter extends BaseTileFilter {
     return result;
   }
 
+  //--group
+
   /// 过滤group收起的tile
   void filterGroup(WidgetList origin, WidgetList result) {
-    var hideList = [];
-    for (var child in result) {
+    final hideList = [];
+    for (final child in result) {
       if (child is RItemTile) {
         if (child.groupExpanded != null && child.groupExpanded == false) {
           //收起的group
-          for (var sub in result) {
+          for (final sub in result) {
             if (sub is RItemTile) {
               if (sub.isInGroup(child)) {
                 hideList.add(sub);

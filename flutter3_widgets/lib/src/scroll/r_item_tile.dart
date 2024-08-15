@@ -390,13 +390,16 @@ class RItemTile extends StatefulWidget {
   }
 
   /// [SliverListTransform]
+  /// [SliverMainAxisGroupTransform]
   Widget buildListWrapChild(
     BuildContext context,
     WidgetIterable list,
     Widget child,
-    int index,
-  ) {
-    final first = list.firstOrNull;
+    int index, {
+    Widget? firstAnchor,
+  }) {
+    //debugger();
+    final first = firstAnchor ?? list.firstOrNull;
     final last = list.lastOrNull;
     final length = list.length;
 
@@ -454,7 +457,7 @@ class RItemTile extends StatefulWidget {
 
     //clip
     if (first is RItemTile) {
-      var decoration = first.sliverDecoration;
+      final decoration = first.sliverDecoration;
       if (decoration is BoxDecoration) {
         var borderRadius = decoration.borderRadius;
         if (length == 1) {
@@ -788,6 +791,11 @@ extension RItemTileExtension on Widget {
     double? edgePaddingRight,
     double? edgePaddingBottom,
     bool? groupExpanded /*如果是组, 是否展开当前组*/,
+    EdgeInsetsGeometry? sliverPadding,
+    Color? fillColor,
+    double borderRadius = kDefaultBorderRadiusXX,
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition = DecorationPosition.background,
     UpdateValueNotifier? updateSignal,
     List<String>? groups = const [],
     dynamic sliverTransformType,
@@ -835,6 +843,15 @@ extension RItemTileExtension on Widget {
       edgePaddingBottom: edgePaddingBottom,
       groupExpanded: groupExpanded,
       groups: groups,
+      sliverPadding: sliverPadding,
+      sliverDecoration: sliverDecoration ??
+          (fillColor == null
+              ? null
+              : fillDecoration(
+                  color: fillColor,
+                  borderRadius: borderRadius,
+                )),
+      sliverDecorationPosition: sliverDecorationPosition,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       child: child ?? this,
     );
@@ -896,6 +913,10 @@ extension RItemTileExtension on Widget {
     EdgeInsetsGeometry? sliverPadding,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    Color? bottomLineColor,
+    double? bottomLineHeight,
+    EdgeInsets? bottomLineMargin,
+    Widget? bottomLeading,
     UpdateValueNotifier? updateSignal,
     dynamic sliverTransformType = SliverMainAxisGroup,
   }) {
@@ -919,6 +940,10 @@ extension RItemTileExtension on Widget {
                   borderRadius: borderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
+      bottomLeading: bottomLeading,
+      bottomLineColor: bottomLineColor,
+      bottomLineHeight: bottomLineHeight,
+      bottomLineMargin: bottomLineMargin,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       sliverTransformType: sliverTransformType,
       child: this,
