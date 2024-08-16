@@ -60,7 +60,7 @@ class Wheel extends StatelessWidget {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final wheelStyle = WheelPickerStyle(
-      size: size,
+      /*size: size,*/
       itemExtent: itemExtent,
       // Text height
       // 上下挤压系数

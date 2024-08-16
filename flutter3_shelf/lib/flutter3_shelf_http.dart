@@ -83,12 +83,12 @@ class Flutter3ShelfHttp {
     dynamic Function(String filePath)? onSaveFile,
   }) {
     _router.post(route, (shelf.Request request) async {
-      if (request.isMultipartForm) {
+      if (request.formData() case var form?) {
         // Read all form-data parameters into a single map:
         int count = 0;
         int bytesCount = 0;
         dynamic result;
-        await for (final formData in request.multipartFormData) {
+        await for (final formData in form.formData) {
           final bytes = await formData.part.readBytes();
           count++;
           bytesCount += bytes.length;

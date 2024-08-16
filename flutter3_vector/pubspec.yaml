@@ -43,6 +43,7 @@ dependencies:
 
   # https://pub.dev/packages/string_scanner
   # https://pub.dev/packages/source_span
+  # string_scanner is pinned to version 1.2.0 by flutter_test from the flutter SDK.
   string_scanner: ^1.2.0
 
   # https://pub.dev/packages/xml

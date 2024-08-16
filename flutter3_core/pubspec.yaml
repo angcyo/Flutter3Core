@@ -34,7 +34,8 @@ dependencies:
   # https://pub.dev/packages/web
   cross_file: ^0.3.4+2
   # https://pub.dev/packages/web
-  web: ^0.5.1
+  # mobile_scanner ^5.1.1 requires web ^0.5.1.
+  web: ^1.0.0
 
   # https://pub.dev/packages/path_provider
   # https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider

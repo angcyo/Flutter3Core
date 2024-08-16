@@ -23,6 +23,7 @@ dependencies:
   # https://pub.dev/packages/path
   # https://pub.dev/packages/stack_trace
   # https://pub.dev/packages/stream_channel
+  # http_parser 4.1.0 depends on collection ^1.19.0
   shelf: ^1.4.2
 
   # https://pub.dev/packages/shelf_static
@@ -45,7 +46,7 @@ dependencies:
   # https://pub.dev/packages/mime
   # https://pub.dev/packages/shelf
   # https://pub.dev/packages/string_scanner
-  shelf_multipart: ^1.0.0
+  shelf_multipart: ^2.0.0
 
   # https://pub.dev/packages/shelf_web_socket
   # https://pub.dev/packages/shelf
@@ -70,7 +71,8 @@ dependencies:
   web_socket: ^0.1.6
 
   # https://pub.dev/packages/web
-  web: ^0.5.1
+  # mobile_scanner ^5.1.1 requires web ^0.5.1.
+  web: ^1.0.0
 
   # https://pub.dev/packages/network_info_plus
   # https://pub.dev/packages/collection
@@ -78,7 +80,7 @@ dependencies:
   # https://pub.dev/packages/flutter
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
-  network_info_plus: ^5.0.3
+  network_info_plus: ^6.0.1
 
   # https://pub.dev/packages/udp
   udp: ^5.0.3
