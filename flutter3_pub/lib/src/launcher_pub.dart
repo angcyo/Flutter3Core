@@ -48,11 +48,19 @@ extension LauncherStringEx on String {
     WebViewConfiguration webViewConfiguration = const WebViewConfiguration(),
     String? webOnlyWindowName,
   }) async {
-    return Uri.parse(this).launch(
-      mode: mode,
-      webViewConfiguration: webViewConfiguration,
-      webOnlyWindowName: webOnlyWindowName,
-    );
+    try {
+      return await Uri.parse(this).launch(
+        mode: mode,
+        webViewConfiguration: webViewConfiguration,
+        webOnlyWindowName: webOnlyWindowName,
+      );
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+      return false;
+    }
   }
 
   /// [LauncherUriEx.canLaunch]

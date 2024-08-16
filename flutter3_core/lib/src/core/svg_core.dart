@@ -96,8 +96,8 @@ class _AppPackageAssetsSvgWidgetState extends State<AppPackageAssetsSvgWidget> {
             ?.replaceAll(libPackagePath, "")
             .ensurePackagePrefix()
             .transformKey();
-    final libKey =
-        widget.libKey ?? widget.resKey?.ensurePackagePrefix(widget.libPackage);
+    final libKey = widget.libKey ??
+        widget.resKey?.ensurePackagePrefix(widget.libPackage).transformKey();
 
     final old = loadResKey;
     if (isNil(appKey)) {
