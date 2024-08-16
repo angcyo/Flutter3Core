@@ -81,7 +81,11 @@ dependencies:
   image_gallery_saver: ^2.0.3 #ANDROID IOS
 
   # https://pub.dev/packages/flutter_install_app
-  flutter_install_app: ^1.3.0 #ANDROID IOS
+  # flutter_install_app: ^1.3.0 #ANDROID IOS
+
+  # https://pub.dev/packages/flutter_android_package_installer
+  # https://github.com/FlutterStudioIst/android_package_installer
+  flutter_android_package_installer: ^0.0.2+3
 
   # https://pub.dev/packages/receive_sharing_intent_plus
   receive_sharing_intent_plus: ^1.0.1

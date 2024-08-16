@@ -120,3 +120,33 @@ https://juejin.cn/post/7049563669562146846
 
 此对象才有`RenderObject createRenderObject(BuildContext context)`, 才能通过`RenderObject`绘制东西;
 
+# dependencies
+
+https://dart.dev/tools/pub/dependencies
+
+```yaml
+dependencies:
+  transmogrify: ^1.4.0
+```
+
+```yaml
+dependencies:
+  kittens:
+    git: https://github.com/munificent/kittens.git
+```
+
+```yaml
+dependencies:
+  kittens:
+    git:
+      url: git@github.com:munificent/kittens.git
+      ref: some-branch
+```
+
+```yaml
+dependencies:
+  kittens:
+    git:
+      url: git@github.com:munificent/cats.git
+      path: path/to/kittens
+```

@@ -330,6 +330,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
 
   /// iOS 平台无法安装APK
   void _startInstallApk() {
-    AppInstaller.installApk(_downloadFilePathCache);
+    //debugger();
+    AndroidPackageInstaller.installApk(apkFilePath: _downloadFilePathCache);
   }
 }
