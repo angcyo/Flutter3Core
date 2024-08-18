@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 
 ///
 /// Email:angcyo@126.com
@@ -39,7 +40,7 @@ Future findFlutterProjectList(
   }
   final folder = Directory(path);
   await for (final file in folder.list()) {
-    if (file is Directory) {
+    if (file is Directory && !p.basename(file.path).startsWith(".")) {
       final pubspec = File("${file.path}/pubspec.yaml");
       if (pubspec.existsSync()) {
         result.add(file);
