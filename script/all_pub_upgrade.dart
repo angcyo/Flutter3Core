@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 
 ///
@@ -39,12 +40,14 @@ Future findFlutterProjectList(
     return;
   }
   final folder = Directory(path);
+  if (!p.basename(folder.path).startsWith(".")) {
+    final pubspec = File("${folder.path}/pubspec.yaml");
+    if (pubspec.existsSync()) {
+      result.add(folder);
+    }
+  }
   await for (final file in folder.list()) {
     if (file is Directory && !p.basename(file.path).startsWith(".")) {
-      final pubspec = File("${file.path}/pubspec.yaml");
-      if (pubspec.existsSync()) {
-        result.add(file);
-      }
       if (depth < maxDepth) {
         await findFlutterProjectList(file.path, depth + 1, result, maxDepth);
       }
