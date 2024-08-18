@@ -16,7 +16,7 @@ void main() {
 String encodeAccKey(int day) {
   final timestamp =
       DateTime.now().add(Duration(days: day)).millisecondsSinceEpoch;
-  final nowtime = DateTime.now().millisecondsSinceEpoch;
+  final nowTime = DateTime.now().millisecondsSinceEpoch;
 
   //前13个字符
   final before = randomString(13);
@@ -30,10 +30,10 @@ String encodeAccKey(int day) {
   //将前6个字符移到到尾部
   base64 = base64.substring(6) + base64.substring(0, 6);
   colorLog("[$day]天[$timestamp]->$base64");
-  /*final nowtime = DateTime.now().millisecondsSinceEpoch;
-  colorLog(nowtime);
+  /*final nowTime = DateTime.now().millisecondsSinceEpoch;
+  colorLog(nowTime);
   colorLog(timestamp);
-  colorLog(timestamp - nowtime);
+  colorLog(timestamp - nowTime);
   colorLog(randomString(5));
   colorLog(randomString(1));
   colorLog(randomString(13));*/
@@ -49,14 +49,14 @@ void decodeAccKey(String key) {
   colorLog(decode);
   final timestampString = decode.substring(19, 19 + 13);
   colorLog(timestampString);
-  final nowtime = DateTime.now().millisecondsSinceEpoch;
+  final nowTime = DateTime.now().millisecondsSinceEpoch;
   final timestamp = int.parse(timestampString);
 
   final hours = const Duration(hours: 1).inMilliseconds;
-  if (nowtime > timestamp) {
-    colorLog('已过期:${(nowtime - timestamp) ~/ hours}h');
+  if (nowTime > timestamp) {
+    colorLog('已过期:${(nowTime - timestamp) ~/ hours}h');
   } else {
-    colorLog('还剩:${(timestamp - nowtime) ~/ hours}h');
+    colorLog('还剩:${(timestamp - nowTime) ~/ hours}h');
   }
 }
 
