@@ -198,14 +198,32 @@ mixin PointerDispatchMixin {
         handled = true;
       } else {
         handled = interceptHandleTarget!.onPointerEvent(this, event);
+        assert(() {
+          if (event.isPointerDown) {
+            l.v("手势(PointerDown)处理->${interceptHandleTarget.runtimeType} [$handled]");
+          }
+          return true;
+        }());
       }
     } else {
       for (final element in clientList) {
         if (element.interceptPointerEvent(this, event)) {
           //debugger();
           interceptHandleTarget = element;
+          assert(() {
+            if (event.isPointerDown) {
+              l.v("手势(PointerDown)被拦截->${interceptHandleTarget.runtimeType}");
+            }
+            return true;
+          }());
           if (!element.ignoreEventHandle) {
             handled = element.onPointerEvent(this, event);
+            assert(() {
+              if (event.isPointerDown) {
+                l.v("手势(PointerDown)处理->${interceptHandleTarget.runtimeType} [$handled]");
+              }
+              return true;
+            }());
             break;
           }
         }
@@ -224,6 +242,12 @@ mixin PointerDispatchMixin {
         for (final element in clientList) {
           if (!element.ignoreEventHandle) {
             handled = element.onPointerEvent(this, event);
+            assert(() {
+              if (event.isPointerDown) {
+                l.v("手势(PointerDown)分发轮询处理->${element.runtimeType} [$handled]");
+              }
+              return true;
+            }());
             if (element.ignoreEventHandle) {
               //此时忽略了, 则其他接收器发送取消事件
               element.onIgnorePointerEvent(this, event);
@@ -616,7 +640,18 @@ mixin MultiPointerDetectorMixin {
     return Offset.zero;
   }
 
-  /// 所有手指移动的距离是否大于指定的阈值, 并且是同方向的
+  /// 指定的手指, 移动的距离是否超过指定的阈值
+  /// [EventEx.isMoveExceed]
+  bool isPointerMoveExceed(int pointer, [double threshold = kTouchSlop]) {
+    final move = pointerMoveMap[pointer];
+    final down = pointerDownMap[pointer];
+    if (move != null && down != null) {
+      return (move.localPosition.dx - down.localPosition.dx).abs() > threshold;
+    }
+    return false;
+  }
+
+  /// 所有手指横向移动的距离是否大于指定的阈值, 并且是同方向的
   /// [isSameDirection] 是否是同方向
   /// [kTouchSlop]
   bool isAllMoveDeltaExceedX({
@@ -645,6 +680,7 @@ mixin MultiPointerDetectorMixin {
     return false;
   }
 
+  /// 所有手指纵向移动的距离是否大于指定的阈值, 并且是同方向的
   /// [kTouchSlop]
   bool isAllMoveDeltaExceedY({
     double threshold = kTouchSlop,
@@ -672,7 +708,7 @@ mixin MultiPointerDetectorMixin {
     return false;
   }
 
-  /// 判断是否有手指的移动距离达到阈值
+  /// 判断是否有手指在横向的移动距离达到阈值
   /// [isHaveMoveDeltaExceedX]
   /// [isHaveMoveDeltaExceedY]
   bool isHaveMoveDeltaExceedX({
@@ -701,6 +737,7 @@ mixin MultiPointerDetectorMixin {
     return false;
   }
 
+  /// 判断是否有手指在纵向的移动距离达到阈值
   /// [isHaveMoveDeltaExceedX]
   /// [isHaveMoveDeltaExceedY]
   bool isHaveMoveDeltaExceedY({

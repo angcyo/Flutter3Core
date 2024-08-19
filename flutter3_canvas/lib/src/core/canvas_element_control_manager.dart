@@ -114,7 +114,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   bool get isPointerDownElement => isTranslateElement && isControlElement;
 
   /// 是否正在控制元素中
-  bool get isControlElement => _currentControlState == ControlState.start;
+  bool get isControlElement =>
+      _currentControlState == ControlState.start ||
+      _currentControlState == ControlState.update;
 
   /// 获取选中元素的边界
   Rect? get selectBounds => isSelectedElement
@@ -136,6 +138,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     addHandleEventClient(lockControl);
     addHandleEventClient(translateControl);
   }
+
+  //region --paint/event--
 
   /// [canvas] 处理掉基础的[offset]的canvas, clip [CanvasViewBox.canvasBounds]后的canvas
   /// 由[CanvasElementManager.paintElements]驱动
@@ -226,21 +230,21 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-  /// 当有元素被删除时, 调用
-  /// 同时需要检查被删除的元素是否是选中的元素, 如果是, 则需要更新选择框
+  //endregion --paint/event--
+
+  //region --paint info--
+
+  /// 更新绘制元素的信息
   @flagProperty
-  void onCanvasElementDeleted(
-    List<ElementPainter> elements,
-    ElementSelectType selectType,
-  ) {
-    final list = elementSelectComponent.children?.clone(true);
-    if (list != null) {
-      final op = list.removeAll(elements);
-      if (op.isNotEmpty) {
-        //有选中的元素被删除了
-        elementSelectComponent.resetSelectElement(list, selectType);
-      }
-    }
+  void updatePaintInfoType(PaintInfoType type) {
+    _paintInfoType = type;
+    canvasDelegate.refresh();
+  }
+
+  /// 根据选中元素的状态, 重置绘制信息类型
+  @flagProperty
+  void resetPaintInfoType() {
+    updatePaintInfoType(PaintInfoType.size);
   }
 
   /// 绘制选中元素的控制信息
@@ -380,7 +384,85 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     });
   }
 
-  //---
+  //endregion --paint info--
+
+  //region --回调处理--
+
+  /// 如果当前控制的元素, 和指定的元素相同, 则更新控制目标
+  /// [ElementSelectComponent.dispatchPointerEvent] 多指选中
+  void updateControlTargetIf(ElementPainter painter) {
+    final control = _currentControlRef?.target;
+    if (control != null) {
+      if (_currentControlElementRef?.target == painter) {
+        control.updateControlTarget(painter);
+      }
+    }
+  }
+
+  WeakReference<BaseControl>? _currentControlRef;
+  WeakReference<ElementPainter>? _currentControlElementRef;
+  ControlState? _currentControlState;
+
+  /// 控制状态发生改变
+  /// [control] 控制器
+  /// [controlElement] 控制的元素
+  /// [BaseControl.startControlTarget]
+  /// [BaseControl.endControlTarget]
+  @property
+  void onSelfControlStateChanged({
+    required BaseControl control,
+    ElementPainter? controlElement,
+    required ControlState state,
+  }) {
+    _currentControlRef = control.toWeakRef();
+    _currentControlElementRef = controlElement?.toWeakRef();
+    _currentControlState = state;
+
+    final controlType = control.controlType;
+    if (state == ControlState.start) {
+      if (controlType == ControlTypeEnum.rotate) {
+        updatePaintInfoType(PaintInfoType.rotate);
+      } else if (controlType == ControlTypeEnum.translate) {
+        //按下时, 就显示元素的位置信息
+        updatePaintInfoType(PaintInfoType.location);
+        //关键双击缩放画布的检查
+        canvasDelegate
+            .canvasEventManager.canvasScaleComponent.isDoubleFirstTouch = true;
+      }
+    } else if (state == ControlState.end) {
+      if (controlType == ControlTypeEnum.rotate) {
+        //旋转结束之后
+        if (enableResetElementAngle) {
+          elementSelectComponent.updateChildPaintPropertyFromChildren(true);
+          elementSelectComponent.updatePaintPropertyFromChildren(true);
+        }
+      }
+      resetPaintInfoType();
+    }
+    canvasDelegate.dispatchControlStateChanged(
+      control: control,
+      controlElement: controlElement,
+      state: state,
+    );
+    canvasDelegate.refresh();
+  }
+
+  /// 当有元素被删除时, 调用
+  /// 同时需要检查被删除的元素是否是选中的元素, 如果是, 则需要更新选择框
+  @flagProperty
+  void onCanvasElementDeleted(
+    List<ElementPainter> elements,
+    ElementSelectType selectType,
+  ) {
+    final list = elementSelectComponent.children?.clone(true);
+    if (list != null) {
+      final op = list.removeAll(elements);
+      if (op.isNotEmpty) {
+        //有选中的元素被删除了
+        elementSelectComponent.resetSelectElement(list, selectType);
+      }
+    }
+  }
 
   /// 当有元素绘制属性发生变化时调用
   /// 此时可能需要检查是否需要清空旋转的角度
@@ -464,6 +546,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
+  //endregion --回调处理--
+
   /// 更新控制点的位置
   @property
   void updateControlBounds() {
@@ -484,6 +568,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       elementMenuControl.updateMenuLayoutBounds(elementSelectComponent);
     }
   }
+
+  //region --选中选择api--
 
   /// 移除选中的所有元素, 并且清空选择
   @api
@@ -549,69 +635,6 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       );
     }
   }
-
-  WeakReference<BaseControl>? _currentControlRef;
-  WeakReference<ElementPainter>? _currentControlElementRef;
-  ControlState? _currentControlState;
-
-  /// 控制状态发生改变
-  /// [control] 控制器
-  /// [controlElement] 控制的元素
-  /// [BaseControl.startControlTarget]
-  /// [BaseControl.endControlTarget]
-  @property
-  void onSelfControlStateChanged({
-    required BaseControl control,
-    ElementPainter? controlElement,
-    required ControlState state,
-  }) {
-    _currentControlRef = control.toWeakRef();
-    _currentControlElementRef = controlElement?.toWeakRef();
-    _currentControlState = state;
-
-    final controlType = control.controlType;
-    if (state == ControlState.start) {
-      if (controlType == ControlTypeEnum.rotate) {
-        updatePaintInfoType(PaintInfoType.rotate);
-      } else if (controlType == ControlTypeEnum.translate) {
-        //按下时, 就显示元素的位置信息
-        updatePaintInfoType(PaintInfoType.location);
-        //关键双击缩放画布的检查
-        canvasDelegate
-            .canvasEventManager.canvasScaleComponent.isDoubleFirstTouch = true;
-      }
-    } else {
-      if (controlType == ControlTypeEnum.rotate) {
-        //旋转结束之后
-        if (enableResetElementAngle) {
-          elementSelectComponent.updateChildPaintPropertyFromChildren(true);
-          elementSelectComponent.updatePaintPropertyFromChildren(true);
-        }
-      }
-      resetPaintInfoType();
-    }
-    canvasDelegate.dispatchControlStateChanged(
-      control: control,
-      controlElement: controlElement,
-      state: state,
-    );
-    canvasDelegate.refresh();
-  }
-
-  /// 更新绘制元素的信息
-  @flagProperty
-  void updatePaintInfoType(PaintInfoType type) {
-    _paintInfoType = type;
-    canvasDelegate.refresh();
-  }
-
-  /// 根据选中元素的状态, 重置绘制信息类型
-  @flagProperty
-  void resetPaintInfoType() {
-    updatePaintInfoType(PaintInfoType.size);
-  }
-
-  //region ---api---
 
   /// 更新指定元素的锁定宽高比状态
   void updateElementLockState([ElementPainter? elementPainter]) {
@@ -939,7 +962,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-//endregion ---api---
+//endregion --选中选择api--
 }
 
 /// 选择元素组件, 滑动选择元素, 按下选择元素
@@ -957,6 +980,9 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 画笔
   final Paint boundsPaint = Paint();
 
+  /// 是否激活多指多选元素操作
+  bool enableMultiSelect = true;
+
   /// 选择框的边界, 场景坐标系
   @sceneCoordinate
   Rect? selectBounds;
@@ -964,10 +990,13 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 是否选中了元素
   bool get isSelectedElement => !isNullOrEmpty(children);
 
+  /// 选中元素的数量
+  int get selectedElementCount => children?.length ?? 0;
+
   /// 选中的元素, 如果是单元素, 则返回选中的元素, 否则返回[ElementSelectComponent]
   /// [CanvasElementManager.selectedElement]
   ElementPainter get selectedChildElement {
-    if (children?.length == 1) {
+    if (selectedElementCount == 1) {
       return children?.first ?? this;
     }
     return this;
@@ -1039,6 +1068,42 @@ class ElementSelectComponent extends ElementGroupPainter
         paintBounds_();
       });
     });
+  }
+
+  /// 多指选择的手指id
+  int? _multiSelectPointerId;
+
+  @override
+  void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    if (enableMultiSelect && pointerCount > 0 && isSelectedElement) {
+      if (event.isPointerDown) {
+        _multiSelectPointerId = event.pointer;
+      } else if (event.isPointerUp) {
+        //抬手时, 判断是否要多指选择元素
+        if (_multiSelectPointerId != null) {
+          if (!isPointerMoveExceed(_multiSelectPointerId!) &&
+              _noCanvasEventHandle()) {
+            //手指未移动, 并且没有其他画布操作
+
+            final viewBox =
+                canvasElementControlManager.canvasDelegate.canvasViewBox;
+            final point = viewBox.toScenePoint(event.localPosition);
+            final elementList = canvasElementControlManager.canvasElementManager
+                .findElement(point: point, ignoreElements: children);
+            final last = elementList.lastOrNull;
+            if (last != null) {
+              //多指选中元素
+              addSelectElement(last, selectType: ElementSelectType.multiTouch);
+              canvasElementControlManager.updateControlTargetIf(this);
+            }
+          }
+        }
+      }
+    }
+    if (event.isPointerFinish) {
+      _multiSelectPointerId = null;
+    }
+    super.dispatchPointerEvent(dispatch, event);
   }
 
   @override
@@ -1284,6 +1349,28 @@ class ElementSelectComponent extends ElementGroupPainter
         .dispatchCanvasSelectBoundsChanged(bounds);
   }
 
+  /// 添加一个选中的元素
+  @api
+  void addSelectElement(
+    ElementPainter element, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    final list = children ?? [];
+    list.add(element);
+    resetSelectElement(list, selectType);
+  }
+
+  /// 添加一组选中的元素
+  @api
+  void addSelectElementList(
+    List<ElementPainter> elements, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    final list = children ?? [];
+    list.addAll(elements);
+    resetSelectElement(list, selectType);
+  }
+
   /// 重置选中的元素
   /// [CanvasElementManager.addSelectElement]
   /// [CanvasElementManager.addSelectElementList]
@@ -1343,6 +1430,9 @@ enum ElementSelectType {
 
   /// 通过指针选中元素
   pointer,
+
+  /// 通过多指触选中元素
+  multiTouch,
 
   /// 通过代码选中元素
   code,

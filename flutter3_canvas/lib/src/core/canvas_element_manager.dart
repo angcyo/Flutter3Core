@@ -493,15 +493,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 查找元素, 按照元素的先添加先返回的顺序
   /// [checkLockOperate] 是否检查锁定操作
+  /// [ignoreElements] 忽略的元素集合
   @api
   List<ElementPainter> findElement({
     @sceneCoordinate Offset? point,
     @sceneCoordinate Rect? rect,
     @sceneCoordinate Path? path,
     bool checkLockOperate = true,
+    List<ElementPainter>? ignoreElements,
   }) {
     final result = <ElementPainter>[];
     for (final element in elements) {
+      if (ignoreElements?.contains(element) == true) {
+        continue;
+      }
       if ((!checkLockOperate || !element.paintState.isLockOperate) &&
           element.hitTest(point: point, rect: rect, path: path)) {
         result.add(element);
@@ -543,9 +548,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     ElementPainter element, {
     ElementSelectType selectType = ElementSelectType.code,
   }) {
-    final list = selectComponent.children ?? [];
-    list.add(element);
-    selectComponent.resetSelectElement(list, selectType);
+    selectComponent.addSelectElement(element, selectType: selectType);
   }
 
   /// 添加一组选中的元素
@@ -554,9 +557,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     List<ElementPainter> elements, {
     ElementSelectType selectType = ElementSelectType.code,
   }) {
-    final list = selectComponent.children ?? [];
-    list.addAll(elements);
-    selectComponent.resetSelectElement(list, selectType);
+    selectComponent.addSelectElementList(elements, selectType: selectType);
   }
 
   /// 移除一个选中的元素

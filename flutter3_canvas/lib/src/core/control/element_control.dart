@@ -333,6 +333,18 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// 开始控制目标元素
   @callPoint
   void startControlTarget(ElementPainter? element) {
+    _setControlTarget(element, ControlState.start);
+  }
+
+  /// 更新控制的目标元素, 多指选择元素之后调用
+  @callPoint
+  void updateControlTarget(ElementPainter? element) {
+    _setControlTarget(element, ControlState.update);
+  }
+
+  /// 设置控制目标
+  void _setControlTarget(ElementPainter? element, ControlState state) {
+    _elementStateStack?.dispose();
     _downTargetElementCenter = element?.paintProperty?.paintCenter;
     _downTargetElementAnchor =
         element?.paintProperty?.let((it) => Offset(it.left, it.top));
@@ -340,9 +352,9 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
     _elementStateStack = element?.createStateStack();
 
     canvasElementControlManager.onSelfControlStateChanged(
-      state: ControlState.start,
+      state: state,
       control: this,
-      controlElement: _targetElement,
+      controlElement: element,
     );
   }
 
@@ -350,6 +362,7 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
   /// [PaintProperty.applyScaleWithAnchor]
   @callPoint
   void applyTargetMatrix(Matrix4 matrix, [ControlTypeEnum? controlType]) {
+    //debugger();
     isControlApply = true;
     _elementStateStack?.restore();
 
@@ -729,7 +742,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
             startControlTarget(selectComponent);
             return true;
           } else {
-            //在选择器外按下, 可能是需要拖动其他元素
+            //在选择器外按下, 可能是需要拖动手指下的元素
             final downElement = downElementList.lastOrNull;
             _isDownSelectComponent = false;
             if (downElement != null) {
@@ -803,7 +816,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         }
         _isFirstTranslate = false;
         if (isFirstHandle && (_downElementList?.size() ?? 0) > 1) {
-          //多个元素被选中的回调
+          //多个元素被选中的回调, 按下多个元素
           canvasDelegate.dispatchCanvasSelectElementList(
             canvasElementControlManager.elementSelectComponent,
             _downElementList!,
@@ -844,6 +857,9 @@ typedef ControlPainterFn = void Function(
 enum ControlState {
   /// 开始控制
   start,
+
+  /// 更新控制, 比如多指选择了更多的元素
+  update,
 
   /// 结束控制
   end,

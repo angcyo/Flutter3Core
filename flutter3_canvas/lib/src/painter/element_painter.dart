@@ -1811,6 +1811,16 @@ class ElementStateStack {
       element.onRestoreStateStack(this);
     });
   }
+
+  /// 释放资源
+  @api
+  @callPoint
+  void dispose() {
+    elementPropertyMap.clear();
+    elementDataMap.clear();
+    elementStateMap.clear();
+    fromElement = null;
+  }
 }
 
 /// 属性类型, 支持组合
