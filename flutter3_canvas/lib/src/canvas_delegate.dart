@@ -194,6 +194,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //region ---api---
 
+  /// 震动反馈
+  @api
+  void vibrate() {
+    delegateContext?.let((it) {
+      Feedback.forLongPress(it);
+    });
+  }
+
   /// 请求刷新画布
   @api
   void refresh() {

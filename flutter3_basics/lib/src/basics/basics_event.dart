@@ -53,6 +53,11 @@ mixin IHandleEventMixin {
   /// 第一个手指按下事件
   PointerEvent? firstDownEvent;
   PointerEvent? firstMoveEvent;
+  PointerEvent? _firstLastMoveEvent;
+
+  ///  第一个手指每次[PointerMoveEvent]事件的移动距离
+  Offset firstMoveOffset = Offset.zero;
+
   @flagProperty
   bool _isFirstEventCancel = false;
 
@@ -72,11 +77,15 @@ mixin IHandleEventMixin {
         isFirstEventHandled = false;
         _isFirstEventCancel = false;
         firstDownEvent = event;
+        _firstLastMoveEvent = event;
         dispatchFirstPointerEvent(dispatch, event);
       }
     } else if (event is PointerMoveEvent) {
       if (event.pointer == firstDownEvent?.pointer) {
+        firstMoveOffset =
+            event.localPosition - (_firstLastMoveEvent ?? event).localPosition;
         firstMoveEvent = event;
+        _firstLastMoveEvent = event;
       }
     } else if (event is PointerUpEvent || event is PointerCancelEvent) {
       //ignoreHandle = false; //请手动重置
@@ -212,7 +221,7 @@ mixin PointerDispatchMixin {
           interceptHandleTarget = element;
           assert(() {
             if (event.isPointerDown) {
-              l.v("手势(PointerDown)被拦截->${interceptHandleTarget.runtimeType}");
+              //l.v("手势(PointerDown)被拦截->${interceptHandleTarget.runtimeType}");
             }
             return true;
           }());
@@ -220,7 +229,7 @@ mixin PointerDispatchMixin {
             handled = element.onPointerEvent(this, event);
             assert(() {
               if (event.isPointerDown) {
-                l.v("手势(PointerDown)处理->${interceptHandleTarget.runtimeType} [$handled]");
+                //l.v("手势(PointerDown)处理->${interceptHandleTarget.runtimeType} [$handled]");
               }
               return true;
             }());
@@ -244,7 +253,7 @@ mixin PointerDispatchMixin {
             handled = element.onPointerEvent(this, event);
             assert(() {
               if (event.isPointerDown) {
-                l.v("手势(PointerDown)分发轮询处理->${element.runtimeType} [$handled]");
+                //l.v("手势(PointerDown)分发轮询处理->${element.runtimeType} [$handled]");
               }
               return true;
             }());

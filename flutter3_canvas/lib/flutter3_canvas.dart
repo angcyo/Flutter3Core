@@ -33,6 +33,7 @@ part 'src/core/canvas_undo_manager.dart';
 part 'src/core/canvas_view_box.dart';
 part 'src/core/control/element_control.dart';
 part 'src/core/control/element_menu.dart';
+part 'src/core/control/element_adsorb.dart';
 part 'src/event/canvas_event.dart';
 part 'src/event/canvas_notify.dart';
 part 'src/painter/element_painter.dart';

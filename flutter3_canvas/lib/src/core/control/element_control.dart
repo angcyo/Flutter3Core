@@ -37,13 +37,33 @@ enum ControlTypeEnum {
   menu,
 }
 
-/// 选中元素的控制点
-/// 由[CanvasElementControlManager]管理所有控制点
-class BaseControl with CanvasComponentMixin, IHandleEventMixin {
-  final CanvasElementControlManager canvasElementControlManager;
+/// [CanvasElementControlManager]
+mixin CanvasElementControlManagerMixin {
+  /// 画布元素控制器
+  CanvasElementControlManager get canvasElementControlManager;
 
   CanvasDelegate get canvasDelegate =>
       canvasElementControlManager.canvasDelegate;
+
+  CanvasElementManager get canvasElementManager =>
+      canvasDelegate.canvasElementManager;
+
+  CanvasViewBox get canvasViewBox => canvasDelegate.canvasViewBox;
+
+  CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
+
+  IUnit get axisUnit => canvasDelegate.axisUnit;
+}
+
+/// 选中元素的控制点
+/// 由[CanvasElementControlManager]管理所有控制点
+class BaseControl
+    with
+        CanvasComponentMixin,
+        IHandleEventMixin,
+        CanvasElementControlManagerMixin {
+  @override
+  final CanvasElementControlManager canvasElementControlManager;
 
   /// 控制点的类型
   /// [ControlTypeEnum]
@@ -77,15 +97,9 @@ class BaseControl with CanvasComponentMixin, IHandleEventMixin {
 
   /// 控制点接管绘制对象
   IControlPainter? controlPainter;
+
+  /// 控制点接管绘制方法
   ControlPainterFn? controlPainterFn;
-
-  //---
-
-  CanvasStyle get canvasStyle =>
-      canvasElementControlManager.canvasDelegate.canvasStyle;
-
-  CanvasViewBox get canvasViewBox =>
-      canvasElementControlManager.canvasDelegate.canvasViewBox;
 
   BaseControl(this.canvasElementControlManager, this.controlType);
 
@@ -782,8 +796,9 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
     if (isPointerDownIn) {
       addDoubleTapDetectorPointerEvent(event);
       if (event.isPointerMove) {
+        var localPosition = event.localPosition;
         if (isFirstHandle) {
-          if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
+          if (firstDownEvent?.isMoveExceed(localPosition) == true) {
             //首次移动, 并且超过了阈值
             isFirstHandle = false;
             canvasElementControlManager
@@ -792,9 +807,44 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         }
         //debugger();
         if (!isFirstHandle && dispatch.pointerCount <= 1) {
-          final moveScenePoint =
-              canvasViewBox.toScenePoint(event.localPosition);
-          final offset = moveScenePoint - downScenePoint;
+          final moveScenePoint = canvasViewBox.toScenePoint(localPosition);
+
+          @sceneCoordinate
+          Offset offset = moveScenePoint - downScenePoint;
+
+          final elementAdsorbControl = canvasDelegate.canvasElementManager
+              .canvasElementControlManager.elementAdsorbControl;
+          if (elementAdsorbControl.isCanvasComponentEnable) {
+            final xAdsorbValue =
+                elementAdsorbControl.findElementXAdsorbRefValue(
+              _targetElement,
+              localPosition,
+              offset.dx,
+              firstMoveOffset.dx,
+            );
+            final yAdsorbValue =
+                elementAdsorbControl.findElementYAdsorbRefValue(
+              _targetElement,
+              localPosition,
+              offset.dy,
+              firstMoveOffset.dy,
+            );
+
+            offset = Offset(xAdsorbValue?.adsorbValue ?? offset.dx,
+                yAdsorbValue?.adsorbValue ?? offset.dy);
+
+            /*double dx = offset.dx;
+            double dy = offset.dy;
+            if (xAdsorbValue != null) {
+              dx = xAdsorbValue.refValue - downScenePoint.dx;
+            }
+            if (yAdsorbValue != null) {
+              dy = yAdsorbValue.refValue - downScenePoint.dy;
+            }
+
+            offset = Offset(dx, dy);*/
+          }
+
           final matrix = Matrix4.identity()..translateTo(offset: offset);
           assert(() {
             //l.d('平移元素[${dispatch.pointerCount}]: offset:$offset');

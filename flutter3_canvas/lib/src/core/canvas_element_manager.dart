@@ -127,8 +127,15 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         canvasElementControlManager.elementMenuControl
             .paintMenu(canvas, paintMeta);
       }
+      //---绘制吸附提示线
+      if (canvasElementControlManager
+          .elementAdsorbControl.isCanvasComponentEnable) {
+        canvasElementControlManager.elementAdsorbControl
+            .paintAdsorb(canvas, paintMeta);
+      }
     });
-    //在此处绘制可以在坐标轴上
+    //在下面此处绘制可以在坐标轴上↓
+    //paint
   }
 
   /// 绘制元素

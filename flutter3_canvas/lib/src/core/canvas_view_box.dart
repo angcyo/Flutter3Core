@@ -153,8 +153,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 将视图坐标转换为场景内部坐标
   /// [isSceneOrigin] 表示[point]是否是相对于场景原点的坐标
-  @sceneCoordinate
   @api
+  @sceneCoordinate
   Offset toScenePoint(@viewCoordinate Offset point,
       {bool isSceneOrigin = false}) {
     return canvasMatrix
@@ -162,16 +162,16 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
         .mapPoint(isSceneOrigin ? point : offsetToSceneOriginPoint(point));
   }
 
-  @sceneCoordinate
   @api
+  @sceneCoordinate
   Rect toSceneRect(@viewCoordinate Rect rect, {bool isSceneOrigin = false}) {
     return canvasMatrix
         .invertedMatrix()
         .mapRect(isSceneOrigin ? rect : offsetToSceneOriginRect(rect));
   }
 
-  @sceneCoordinate
   @api
+  @sceneCoordinate
   Path toScenePath(@viewCoordinate Path path, {bool isSceneOrigin = false}) {
     return canvasMatrix
         .invertedMatrix()
@@ -195,20 +195,20 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 将场景内的坐标, 转换成视图坐标
-  @viewCoordinate
   @api
+  @viewCoordinate
   Offset toViewPoint(@sceneCoordinate Offset point) {
     return offsetToViewOriginPoint(canvasMatrix.mapPoint(point));
   }
 
-  @viewCoordinate
   @api
+  @viewCoordinate
   Rect toViewRect(@sceneCoordinate Rect rect) {
     return offsetToViewOriginRect(canvasMatrix.mapRect(rect));
   }
 
-  @viewCoordinate
   @api
+  @viewCoordinate
   Path toViewPath(@sceneCoordinate Path path) {
     return offsetToViewOriginPath(canvasMatrix.mapPath(path));
   }

@@ -1,0 +1,556 @@
+part of '../../../flutter3_canvas.dart';
+
+///
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
+/// @date 2024/08/20
+///
+/// 智能吸附控制
+class ElementAdsorbControl
+    with CanvasComponentMixin, CanvasElementControlManagerMixin {
+  /// 画布元素控制器
+  @override
+  final CanvasElementControlManager canvasElementControlManager;
+
+  ElementAdsorbControl(this.canvasElementControlManager);
+
+  //region --core--
+
+  /// [CanvasElementControlManager.paint]驱动, 无法绘制在坐标轴上
+  /// [CanvasElementManager.paintElements]驱动, 可以绘制在坐标轴上
+  @entryPoint
+  void paintAdsorb(Canvas canvas, PaintMeta paintMeta) {
+    final controlElementBounds = canvasElementControlManager
+        ._currentControlElementRef?.target?.elementsBounds;
+    if (controlElementBounds == null) {
+      return;
+    }
+    paintMeta.withPaintMatrix(canvas, () {
+      _paintXAdsorb(canvas, paintMeta, controlElementBounds);
+      _paintYAdsorb(canvas, paintMeta, controlElementBounds);
+    });
+  }
+
+  /// 绘制x轴的吸附线
+  void _paintXAdsorb(
+      Canvas canvas, PaintMeta paintMeta, Rect controlElementBounds) {
+    final xRefValue = _xAdsorbRefValue;
+    final refBounds = xRefValue?.refBounds;
+    if (xRefValue != null && refBounds != null) {
+      final x = xRefValue.refValue;
+
+      //上下坐标
+      double top, bottom;
+      if (refBounds.center.dy > controlElementBounds.center.dy) {
+        //参考元素在目标的下面
+        top = controlElementBounds.bottom;
+        bottom = refBounds.top;
+      } else {
+        //参考元素在目标的上面
+        top = refBounds.bottom;
+        bottom = controlElementBounds.top;
+      }
+
+      //距离
+      @dp
+      @sceneCoordinate
+      double c = bottom - top;
+
+      if (xRefValue.refType == RefValueType.center || c < 0) {
+        top = refBounds.center.dy;
+        bottom = controlElementBounds.center.dy;
+        c = (bottom - top).abs();
+      }
+
+      //绘制吸附线
+      canvas.drawLine(
+          Offset(x, top),
+          Offset(x, bottom),
+          Paint()
+            ..color = canvasStyle.adsorbLineColor
+            ..strokeWidth = 1 / paintMeta.canvasScale);
+      //绘制距离
+      canvas.drawText(
+        axisUnit.format(c.toUnitFromDp(axisUnit)),
+        textColor: canvasStyle.adsorbTextColor,
+        fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
+        getOffset: (painter) {
+          return Offset(
+            x + canvasStyle.adsorbTextOffset,
+            (top + bottom) / 2 - painter.size.height / 2,
+          );
+        },
+      );
+    }
+  }
+
+  /// 绘制y轴的吸附线
+  void _paintYAdsorb(
+      Canvas canvas, PaintMeta paintMeta, Rect controlElementBounds) {
+    final yRefValue = _yAdsorbRefValue;
+    final refBounds = yRefValue?.refBounds;
+    if (yRefValue != null && refBounds != null) {
+      final y = yRefValue.refValue;
+
+      //左右坐标
+      double left, right;
+      if (refBounds.center.dx > controlElementBounds.center.dx) {
+        //参考元素在目标的右边
+        left = controlElementBounds.right;
+        right = refBounds.left;
+      } else {
+        //参考元素在目标的左边
+        left = refBounds.right;
+        right = controlElementBounds.left;
+      }
+
+      //距离
+      @dp
+      @sceneCoordinate
+      double c = right - left;
+
+      if (yRefValue.refType == RefValueType.center || c < 0) {
+        left = refBounds.center.dx;
+        right = controlElementBounds.center.dx;
+        c = (right - left).abs();
+      }
+
+      //绘制吸附线
+      canvas.drawLine(
+          Offset(left, y),
+          Offset(right, y),
+          Paint()
+            ..color = canvasStyle.adsorbLineColor
+            ..strokeWidth = 1 / paintMeta.canvasScale);
+
+      //绘制距离
+      canvas.drawText(
+        axisUnit.format(c.toUnitFromDp(axisUnit)),
+        textColor: canvasStyle.adsorbTextColor,
+        fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
+        getOffset: (painter) {
+          return Offset(
+            (left + right) / 2 - painter.size.width / 2,
+            y - canvasStyle.adsorbTextOffset - painter.size.height,
+          );
+        },
+      );
+    }
+  }
+
+  /// [CanvasElementControlManager.onSelfControlStateChanged] 驱动
+  void initAdsorbRefValueList(
+      ElementPainter controlElement, ControlTypeEnum controlType) {
+    if (controlType == ControlTypeEnum.translate) {
+      _initTranslateRefValue(controlElement);
+      //debugger();
+    }
+  }
+
+  /// 释放资源
+  /// [CanvasElementControlManager.onSelfControlStateChanged] 驱动
+  void dispose(ControlTypeEnum controlType) {
+    //debugger();
+    _xAdsorbRefValue = null;
+    _yAdsorbRefValue = null;
+    _xRefValueList.clear();
+    _yRefValueList.clear();
+  }
+
+  /// 查找元素x轴上的吸附参考值
+  /// [element] 操作的元素
+  /// [localPosition] 当前手势的位置
+  /// [tx] 原本需要平移的x量
+  /// [mx] 当前手指移动的距离
+  /// [findXAdsorbRefValue]
+  AdsorbRefValue? findElementXAdsorbRefValue(
+    ElementPainter? element,
+    @dp @viewCoordinate Offset localPosition,
+    @dp @sceneCoordinate double tx,
+    @dp @viewCoordinate double mx,
+  ) {
+    final controlElementsBounds = _controlElementsBounds;
+    if (element == null || controlElementsBounds == null) {
+      return null;
+    }
+    if (isAdsorbXPosition(localPosition)) {
+      assert(() {
+        //l.v('吸附x轴->$_xAdsorbRefValue');
+        return true;
+      }());
+      return _xAdsorbRefValue;
+    }
+    if (mx > 0) {
+      //手指往右滑动
+      //l.v('手指往右滑动');
+      AdsorbRefValue? refValue =
+          findXAdsorbRefValue(controlElementsBounds.right + tx, localPosition);
+      if (refValue == null) {
+        //使用中心点继续查找
+        refValue = findXAdsorbRefValue(
+            controlElementsBounds.center.dx + tx, localPosition);
+        if (refValue != null) {
+          refValue.adsorbValue =
+              refValue.refValue - controlElementsBounds.center.dx;
+        }
+      } else {
+        refValue.adsorbValue = refValue.refValue - controlElementsBounds.right;
+      }
+      return refValue;
+    } else if (mx < 0) {
+      //l.v('手指往左滑动');
+      //手指往左滑动
+      AdsorbRefValue? refValue =
+          findXAdsorbRefValue(controlElementsBounds.left + tx, localPosition);
+      if (refValue == null) {
+        //使用中心点继续查找
+        refValue = findXAdsorbRefValue(
+            controlElementsBounds.center.dx + tx, localPosition);
+        if (refValue != null) {
+          refValue.adsorbValue =
+              refValue.refValue - controlElementsBounds.center.dx;
+        }
+      } else {
+        refValue.adsorbValue = refValue.refValue - controlElementsBounds.left;
+      }
+      return refValue;
+    }
+    return null;
+  }
+
+  /// 查找元素y轴上的吸附参考值
+  /// [element] 操作的元素
+  /// [localPosition] 当前手势的位置
+  /// [ty] 原本需要平移的y量
+  /// [my] 当前手指移动的距离
+  /// [findXAdsorbRefValue]
+  AdsorbRefValue? findElementYAdsorbRefValue(
+    ElementPainter? element,
+    @dp @viewCoordinate Offset localPosition,
+    @dp @sceneCoordinate double ty,
+    @dp @viewCoordinate double my,
+  ) {
+    final controlElementsBounds = _controlElementsBounds;
+    if (element == null || controlElementsBounds == null) {
+      return null;
+    }
+    if (isAdsorbYPosition(localPosition)) {
+      assert(() {
+        //l.v('吸附y轴->$_yAdsorbRefValue');
+        return true;
+      }());
+      return _yAdsorbRefValue;
+    }
+    if (my > 0) {
+      //手指往下滑动
+      //l.v('手指往下滑动');
+      AdsorbRefValue? refValue =
+          findYAdsorbRefValue(controlElementsBounds.bottom + ty, localPosition);
+      if (refValue == null) {
+        //使用中心点继续查找
+        refValue = findYAdsorbRefValue(
+            controlElementsBounds.center.dy + ty, localPosition);
+        if (refValue != null) {
+          refValue.adsorbValue =
+              refValue.refValue - controlElementsBounds.center.dy;
+        }
+      } else {
+        refValue.adsorbValue = refValue.refValue - controlElementsBounds.bottom;
+      }
+      return refValue;
+    } else if (my < 0) {
+      //l.v('手指往上滑动');
+      //手指往上滑动
+      AdsorbRefValue? refValue =
+          findYAdsorbRefValue(controlElementsBounds.top + ty, localPosition);
+      if (refValue == null) {
+        //使用中心点继续查找
+        refValue = findYAdsorbRefValue(
+            controlElementsBounds.center.dy + ty, localPosition);
+        if (refValue != null) {
+          refValue.adsorbValue =
+              refValue.refValue - controlElementsBounds.center.dy;
+        }
+      } else {
+        refValue.adsorbValue = refValue.refValue - controlElementsBounds.top;
+      }
+      return refValue;
+    }
+    return null;
+  }
+
+  /// 是否需要吸附x轴的位置
+  bool isAdsorbXPosition(@dp @viewCoordinate Offset localPosition) {
+    final adsorbLocalPosition = _xAdsorbRefValue?.localPosition;
+    if (adsorbLocalPosition != null) {
+      //吸附
+      final dx = (adsorbLocalPosition - localPosition).dx;
+      return dx.abs() < canvasStyle.adsorbEscapeThreshold;
+    }
+    return false;
+  }
+
+  /// 是否需要吸附y轴的位置
+  bool isAdsorbYPosition(@dp @viewCoordinate Offset localPosition) {
+    final adsorbLocalPosition = _yAdsorbRefValue?.localPosition;
+    if (adsorbLocalPosition != null) {
+      //吸附
+      final dy = (adsorbLocalPosition - localPosition).dy;
+      return dy.abs() < canvasStyle.adsorbEscapeThreshold;
+    }
+    return false;
+  }
+
+  /// 查找x轴的吸附参考值
+  /// [x] 当前的x
+  /// [localPosition] 当前手势的位置
+  AdsorbRefValue? findXAdsorbRefValue(
+    @dp @sceneCoordinate double x,
+    @dp @viewCoordinate Offset localPosition,
+  ) {
+    final xRefValue = _findMinRefValue(
+      _xRefValueList,
+      x,
+      minThreshold: canvasStyle.adsorbThreshold,
+      includeEqual: true,
+      includeLess: true,
+      includeGreater: true,
+    );
+    //l.v("吸附->$xRefValue");
+    final lastRefValue = _xAdsorbRefValue?.refValue;
+    _xAdsorbRefValue = xRefValue;
+    _xAdsorbRefValue?.localPosition = localPosition;
+    if (xRefValue != null) {
+      //震动
+      assert(() {
+        //l.v('找到x轴的吸附参考值->$xRefValue');
+        return true;
+      }());
+      if (lastRefValue == null && lastRefValue != xRefValue.refValue) {
+        canvasDelegate.vibrate();
+      }
+    }
+    return xRefValue;
+  }
+
+  /// 查找y轴的吸附参考值
+  /// [y] 当前的x
+  /// [localPosition] 当前手势的位置
+  AdsorbRefValue? findYAdsorbRefValue(
+    @dp @sceneCoordinate double y,
+    @dp @viewCoordinate Offset localPosition,
+  ) {
+    final yRefValue = _findMinRefValue(
+      _yRefValueList,
+      y,
+      minThreshold: canvasStyle.adsorbThreshold,
+      includeEqual: true,
+      includeLess: true,
+      includeGreater: true,
+    );
+    //l.v("吸附->$yRefValue");
+    final lastRefValue = _yAdsorbRefValue?.refValue;
+    _yAdsorbRefValue = yRefValue;
+    _yAdsorbRefValue?.localPosition = localPosition;
+    if (yRefValue != null) {
+      //震动
+      assert(() {
+        //l.v('找到x轴的吸附参考值->$yRefValue');
+        return true;
+      }());
+      if (lastRefValue == null && lastRefValue != yRefValue.refValue) {
+        canvasDelegate.vibrate();
+      }
+    }
+    return yRefValue;
+  }
+
+  //endregion --core--
+
+  //region --辅助--
+
+  /// 上一次x轴的吸附值
+  AdsorbRefValue? _xAdsorbRefValue;
+
+  /// 上一次y轴的吸附值
+  AdsorbRefValue? _yAdsorbRefValue;
+
+  /// x轴需要查找的参考值集合
+  final List<AdsorbRefValue> _xRefValueList = [];
+
+  /// y轴需要查找的参考值集合
+  final List<AdsorbRefValue> _yRefValueList = [];
+
+  /// 开始控制时元素边界
+  @dp
+  @sceneCoordinate
+  Rect? _controlElementsBounds;
+
+  /// 初始化移动时的参考值
+  void _initTranslateRefValue(ElementPainter controlElement) {
+    _xRefValueList.clear();
+    _yRefValueList.clear();
+    final exclude = [
+      if (controlElement is ElementSelectComponent) ...?controlElement.children,
+      if (controlElement is! ElementSelectComponent) controlElement
+    ];
+
+    final elementsBounds = controlElement.elementsBounds;
+    _controlElementsBounds = elementsBounds;
+
+    void adsorbRect(Rect bounds, {ElementPainter? element}) {
+      _xRefValueList.add(AdsorbRefValue(
+        refType: RefValueType.left,
+        refValue: bounds.left,
+        refElement: element,
+        refBounds: bounds,
+      ));
+      _xRefValueList.add(AdsorbRefValue(
+        refType: RefValueType.center,
+        refValue: bounds.center.dx,
+        refElement: element,
+        refBounds: bounds,
+      ));
+      _xRefValueList.add(AdsorbRefValue(
+        refType: RefValueType.right,
+        refValue: bounds.right,
+        refElement: element,
+        refBounds: bounds,
+      ));
+      //--
+      _yRefValueList.add(AdsorbRefValue(
+        refType: RefValueType.top,
+        refValue: bounds.top,
+        refElement: element,
+        refBounds: bounds,
+      ));
+      _yRefValueList.add(AdsorbRefValue(
+        refType: RefValueType.center,
+        refValue: bounds.center.dy,
+        refElement: element,
+        refBounds: bounds,
+      ));
+      _yRefValueList.add(AdsorbRefValue(
+        refType: RefValueType.bottom,
+        refValue: bounds.bottom,
+        refElement: element,
+        refBounds: bounds,
+      ));
+    }
+
+    for (final element in canvasElementManager.elements) {
+      if (exclude.contains(element)) {
+        continue;
+      }
+      element.elementsBounds?.let((it) {
+        adsorbRect(it, element: element);
+      });
+    }
+    canvasDelegate.canvasPaintManager.contentManager.canvasContentFollowRect
+        ?.let((it) {
+      adsorbRect(it);
+    });
+  }
+
+  /// 在[list]中, 查找于[value]距离最小的[AdsorbRefValue]值
+  /// [minThreshold] 找到的差值需要<=此值, 否则返回null
+  /// [includeEqual]是否包含等于[value]的参考值值
+  /// [includeLess]是否包含小于[value]的参考值值
+  /// [includeGreater]是否包含大于[value]的参考值值
+  AdsorbRefValue? _findMinRefValue(
+    List<AdsorbRefValue> list,
+    double value, {
+    double? minThreshold,
+    bool includeEqual = true,
+    bool includeLess = true,
+    bool includeGreater = true,
+  }) {
+    if (list.isEmpty) {
+      return null;
+    }
+    AdsorbRefValue? minRefValue;
+    double minDistance = 0;
+    for (final refValue in list) {
+      if (refValue.refValue == value) {
+        if (!includeEqual) {
+          continue;
+        }
+      } else if (refValue.refValue > value) {
+        if (!includeGreater) {
+          continue;
+        }
+      } else if (refValue.refValue < value) {
+        if (!includeLess) {
+          continue;
+        }
+      }
+      final distance = (refValue.refValue - value).abs();
+      if (minRefValue == null || distance < minDistance) {
+        minRefValue = refValue;
+        minDistance = distance;
+      }
+    }
+    if (minThreshold != null) {
+      if (minDistance > minThreshold) {
+        return null;
+      }
+    }
+    return minRefValue;
+  }
+
+//endregion --辅助--
+}
+
+/// 引用值的类型
+enum RefValueType {
+  none,
+  left,
+  top,
+  center,
+  right,
+  bottom,
+}
+
+/// 吸附参考值结构
+class AdsorbRefValue {
+  /// 引用值的类型
+  @implementation
+  final RefValueType refType;
+
+  /// 场景中的参考值, 这个值通常也是用来吸附的值
+  @dp
+  @sceneCoordinate
+  final double refValue;
+
+  /// 参考的元素, 如果有
+  final ElementPainter? refElement;
+
+  /// 参考的边界, 如果有. 用来计算到边界的距离.
+  @dp
+  @sceneCoordinate
+  final Rect? refBounds;
+
+  /// 吸附之后, 元素需要平移的差值, left到目标位置的值
+  /// 参考值与控制元素的距离, 可以直接使用
+  /// 这个值在平移时, 永远都是相对于left/top为锚点的差值
+  @dp
+  @output
+  @sceneCoordinate
+  double? adsorbValue;
+
+  /// 吸附之后, 记录的手势位置, 用来逃离吸附
+  @dp
+  @output
+  @viewCoordinate
+  Offset? localPosition;
+
+  AdsorbRefValue({
+    required this.refType,
+    required this.refValue,
+    this.refElement,
+    this.refBounds,
+  });
+
+  @override
+  String toString() =>
+      'AdsorbRefValue(refType: $refType, refValue: $refValue, refBounds: $refBounds, adsorbValue: $adsorbValue, refElement: $refElement)';
+}

@@ -126,5 +126,33 @@ class CanvasStyle {
   @dp
   double menuTriangleHeight = 6;
 
-//endregion ---menu---
+  //endregion ---menu---
+
+  //region ---adsorb---
+
+  /// 吸附提示线的颜色
+  Color adsorbLineColor = const Color(0xffff443d);
+
+  /// 吸附提示文字的颜色
+  Color adsorbTextColor = const Color(0xff333333);
+
+  /// 吸附提示文字的偏移距离
+  @dp
+  double adsorbTextOffset = 2;
+
+  /// 吸附提示文字的大小
+  @dp
+  double adsorbTextSize = 9;
+
+  /// 吸附阈值, 当距离目标的差值<=此值时, 触发吸附
+  @dp
+  @sceneCoordinate
+  double adsorbThreshold = 10;
+
+  /// 逃离吸附阈值, 当手指移动的距离>=此值时, 逃离吸附
+  @dp
+  @viewCoordinate
+  double adsorbEscapeThreshold = 10;
+
+//endregion ---adsorb---
 }

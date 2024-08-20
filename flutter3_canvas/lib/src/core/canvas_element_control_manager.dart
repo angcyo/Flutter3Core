@@ -81,6 +81,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 元素菜单
   late ElementMenuControl elementMenuControl = ElementMenuControl(this);
 
+  /// 元素智能吸附
+  late ElementAdsorbControl elementAdsorbControl = ElementAdsorbControl(this);
+
   //--get--
 
   CanvasDelegate get canvasDelegate => canvasElementManager.canvasDelegate;
@@ -399,8 +402,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
+  /// 当前控制点
   WeakReference<BaseControl>? _currentControlRef;
+
+  /// 当前控制点, 控制的元素
   WeakReference<ElementPainter>? _currentControlElementRef;
+
+  /// 当前控制点, 控制的状态
   ControlState? _currentControlState;
 
   /// 控制状态发生改变
@@ -414,10 +422,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     ElementPainter? controlElement,
     required ControlState state,
   }) {
+    //cache
     _currentControlRef = control.toWeakRef();
     _currentControlElementRef = controlElement?.toWeakRef();
     _currentControlState = state;
 
+    //更新绘制信息
     final controlType = control.controlType;
     if (state == ControlState.start) {
       if (controlType == ControlTypeEnum.rotate) {
@@ -425,7 +435,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       } else if (controlType == ControlTypeEnum.translate) {
         //按下时, 就显示元素的位置信息
         updatePaintInfoType(PaintInfoType.location);
-        //关键双击缩放画布的检查
+        //关闭双击缩放画布的检查
         canvasDelegate
             .canvasEventManager.canvasScaleComponent.isDoubleFirstTouch = true;
       }
@@ -439,6 +449,19 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       }
       resetPaintInfoType();
     }
+
+    //初始化智能吸附
+    if (elementAdsorbControl.isCanvasComponentEnable) {
+      if (controlElement != null &&
+          (state == ControlState.start || state == ControlState.update)) {
+        elementAdsorbControl.initAdsorbRefValueList(
+            controlElement, controlType);
+      } else if (state == ControlState.end) {
+        elementAdsorbControl.dispose(controlType);
+      }
+    }
+
+    //派发事件
     canvasDelegate.dispatchControlStateChanged(
       control: control,
       controlElement: controlElement,

@@ -6,16 +6,14 @@ part of '../../../flutter3_canvas.dart';
 ///
 /// 元素菜单, 显示在选中元素上方
 /// [CanvasElementControlManager]的成员
-class ElementMenuControl with CanvasComponentMixin, IHandleEventMixin {
+class ElementMenuControl
+    with
+        CanvasComponentMixin,
+        IHandleEventMixin,
+        CanvasElementControlManagerMixin {
   /// 画布元素控制器
+  @override
   final CanvasElementControlManager canvasElementControlManager;
-
-  CanvasDelegate get canvasDelegate =>
-      canvasElementControlManager.canvasDelegate;
-
-  CanvasViewBox get canvasViewBox => canvasDelegate.canvasViewBox;
-
-  CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
   ElementMenuControl(this.canvasElementControlManager);
 
