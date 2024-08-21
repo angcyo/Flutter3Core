@@ -45,7 +45,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     assert(() {
       if (event.isPointerUp) {
         final pivot = event.localPosition;
-        l.i('抬手点:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
+        l.d('抬手点:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
             '->${canvasDelegate.canvasViewBox.toScenePoint(pivot)}');
       }
       return true;

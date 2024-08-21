@@ -1411,7 +1411,7 @@ class ElementSelectComponent extends ElementGroupPainter
       //取消元素选择
       if (!isNullOrEmpty(children)) {
         assert(() {
-          l.i('取消之前选中的元素: $children');
+          l.d('取消之前选中的元素: $children');
           return true;
         }());
         resetChildren(
@@ -1428,7 +1428,7 @@ class ElementSelectComponent extends ElementGroupPainter
       }
     } else {
       assert(() {
-        l.i('选中新的元素: $elements');
+        l.d('选中新的元素: $elements');
         return true;
       }());
       resetChildren(
