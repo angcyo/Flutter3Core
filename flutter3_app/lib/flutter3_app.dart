@@ -1,7 +1,6 @@
 library flutter3_app;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -11,8 +10,8 @@ import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_app/src/mode/app_version_bean.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
@@ -45,14 +44,18 @@ part 'src/receive/receive_intent.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/28
 ///
+/// [beforeAction] 启动之前初始化, 请在此进行数据库表注册[registerIsarCollection]
+/// [afterAction] 启动之后初始化
+/// [zonedGuarded] 错误处理[runZonedGuarded]
 @entryPoint
 @initialize
 @callPoint
-void runGlobalApp(
+Future runGlobalApp(
   Widget app, {
   FutureVoidAction? beforeAction,
   FutureVoidAction? afterAction,
-}) {
+  bool zonedGuarded = true,
+}) async {
   /*if (isDebug) {
     io(() => testTime());
   }*/
@@ -107,7 +110,8 @@ void runGlobalApp(
 
   //ErrorWidget.builder = ;
 
-  runZonedGuarded(() async {
+  //runApp
+  Future realRun() async {
     ensureInitialized();
     //key-value
     await initHive();
@@ -132,7 +136,13 @@ void runGlobalApp(
 
     //--
     "启动完成:${lTime.time()}".writeToLog(level: L.info);
-  }, (error, stack) {
+  }
+
+  if (!zonedGuarded) {
+    return await realRun();
+  }
+
+  return runZonedGuarded(realRun, (error, stack) {
     "未捕捉的异常:↓".writeToErrorLog();
     error.writeToErrorLog(level: L.none);
     stack.toString().writeToErrorLog(level: L.none);
