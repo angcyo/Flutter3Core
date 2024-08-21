@@ -489,6 +489,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 从上往下查找所有[ModalRoute]
   /// release之后,字符串是否会变化?
+  /// [ContextEx.findFirstNotSystemElement]
   @minifyProguardFlag
   List<(ModalRoute, Element?)> findModalRouteList() {
     List<Element> routeElementList = [];
@@ -534,6 +535,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
         }
       });
       if (findRoute != null) {
+        //debugger();
         final firstElement = element.findFirstNotSystemElement();
         result.add((findRoute!, firstElement));
       }

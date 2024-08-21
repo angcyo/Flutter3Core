@@ -122,7 +122,12 @@ class TextSpanBuilder {
     TextWidthBasis? textWidthBasis,
     TextHeightBehavior? textHeightBehavior,
     Color? selectionColor,
+    StringBuffer? logBuffer,
   }) {
+    final textSpan = buildTextSpan();
+    if (logBuffer != null) {
+      logBuffer.writeln(textSpan.toPlainText());
+    }
     return Text.rich(
       buildTextSpan(),
       key: key,
@@ -170,6 +175,7 @@ Text textSpanBuilder(
   TextWidthBasis? textWidthBasis,
   TextHeightBehavior? textHeightBehavior,
   Color? selectionColor,
+  StringBuffer? logBuffer,
 }) {
   TextSpanBuilder textSpanBuilder = TextSpanBuilder();
   action(textSpanBuilder);
@@ -188,5 +194,6 @@ Text textSpanBuilder(
     textWidthBasis: textWidthBasis,
     textHeightBehavior: textHeightBehavior,
     selectionColor: selectionColor,
+    logBuffer: logBuffer,
   );
 }

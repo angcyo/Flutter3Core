@@ -5,6 +5,7 @@ part of '../../flutter3_core.dart';
 /// @date 2024/06/18
 ///
 /// 调试模式下, 用来显示导航的路由栈信息以及一些额外的调试信息
+/// [GlobalConfig.findModalRouteList]
 class NavigatorRouteOverlay extends StatefulWidget {
   /// 是否显示了视图
   static bool _isShowNavigatorRouteOverlay = false;
@@ -148,6 +149,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
     if (_routeTextSpan == null) {
       postFrameCallback((_) {
         final routeList = GlobalConfig.def.findModalRouteList();
+        StringBuffer logBuffer = StringBuffer();
         _routeTextSpan = textSpanBuilder((builder) {
           bool isFirst = true;
           for (final part in routeList) {
@@ -176,7 +178,11 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
             //
             isFirst = false;
           }
-        });
+        }, logBuffer: logBuffer);
+        assert(() {
+          l.i(logBuffer);
+          return true;
+        }());
         updateState();
       });
     }
