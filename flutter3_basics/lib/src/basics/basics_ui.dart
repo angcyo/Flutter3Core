@@ -8,9 +8,20 @@ part of '../../flutter3_basics.dart';
 //region 帧相关
 
 /// 当前是否处于调度阶段
-bool get isSchedulerPhase =>
-    WidgetsBinding.instance.schedulerPhase ==
-    SchedulerPhase.persistentCallbacks;
+/// [_LayoutBuilderElement._scheduleRebuild]
+bool get isSchedulerPhase {
+  /*final bool deferMarkNeedsLayout =
+      switch (SchedulerBinding.instance.schedulerPhase) {
+    SchedulerPhase.idle || SchedulerPhase.postFrameCallbacks => true,
+    SchedulerPhase.transientCallbacks ||
+    SchedulerPhase.midFrameMicrotasks ||
+    SchedulerPhase.persistentCallbacks =>
+      false,
+  };
+  return deferMarkNeedsLayout;*/
+  return WidgetsBinding.instance.schedulerPhase ==
+      SchedulerPhase.persistentCallbacks;
+}
 
 /// 立即安排一帧
 /// [scheduleTask]
