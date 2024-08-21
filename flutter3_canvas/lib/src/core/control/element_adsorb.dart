@@ -179,42 +179,32 @@ class ElementAdsorbControl
       }());
       return _xAdsorbRefValue;
     }
-    if (mx > 0) {
-      //手指往右滑动
-      //l.v('手指往右滑动');
-      AdsorbRefValue? refValue =
-          findXAdsorbRefValue(controlElementsBounds.right + tx, localPosition);
+
+    //先使用left为参照值查找
+    AdsorbRefValue? refValue =
+        findXAdsorbRefValue(controlElementsBounds.left + tx, localPosition);
+    if (refValue == null) {
+      //再使用center为参考值查找
+      refValue = findXAdsorbRefValue(
+          controlElementsBounds.center.dx + tx, localPosition);
       if (refValue == null) {
-        //使用中心点继续查找
+        //最后使用right为参考值查找
         refValue = findXAdsorbRefValue(
-            controlElementsBounds.center.dx + tx, localPosition);
-        if (refValue != null) {
+            controlElementsBounds.right + tx, localPosition);
+        if (refValue == null) {
+          //没有找到可以吸附的值
+        } else {
           refValue.adsorbValue =
-              refValue.refValue - controlElementsBounds.center.dx;
+              refValue.refValue - controlElementsBounds.right;
         }
       } else {
-        refValue.adsorbValue = refValue.refValue - controlElementsBounds.right;
+        refValue.adsorbValue =
+            refValue.refValue - controlElementsBounds.center.dx;
       }
-      return refValue;
-    } else if (mx < 0) {
-      //l.v('手指往左滑动');
-      //手指往左滑动
-      AdsorbRefValue? refValue =
-          findXAdsorbRefValue(controlElementsBounds.left + tx, localPosition);
-      if (refValue == null) {
-        //使用中心点继续查找
-        refValue = findXAdsorbRefValue(
-            controlElementsBounds.center.dx + tx, localPosition);
-        if (refValue != null) {
-          refValue.adsorbValue =
-              refValue.refValue - controlElementsBounds.center.dx;
-        }
-      } else {
-        refValue.adsorbValue = refValue.refValue - controlElementsBounds.left;
-      }
-      return refValue;
+    } else {
+      refValue.adsorbValue = refValue.refValue - controlElementsBounds.left;
     }
-    return null;
+    return refValue;
   }
 
   /// 查找元素y轴上的吸附参考值
@@ -240,42 +230,32 @@ class ElementAdsorbControl
       }());
       return _yAdsorbRefValue;
     }
-    if (my > 0) {
-      //手指往下滑动
-      //l.v('手指往下滑动');
-      AdsorbRefValue? refValue =
-          findYAdsorbRefValue(controlElementsBounds.bottom + ty, localPosition);
+
+    //先使用top为参照值查找
+    AdsorbRefValue? refValue =
+        findYAdsorbRefValue(controlElementsBounds.top + ty, localPosition);
+    if (refValue == null) {
+      //再使用center为参考值查找
+      refValue = findYAdsorbRefValue(
+          controlElementsBounds.center.dy + ty, localPosition);
       if (refValue == null) {
-        //使用中心点继续查找
+        //最后使用bottom为参考值查找
         refValue = findYAdsorbRefValue(
-            controlElementsBounds.center.dy + ty, localPosition);
-        if (refValue != null) {
+            controlElementsBounds.bottom + ty, localPosition);
+        if (refValue == null) {
+          //没有找到可以吸附的值
+        } else {
           refValue.adsorbValue =
-              refValue.refValue - controlElementsBounds.center.dy;
+              refValue.refValue - controlElementsBounds.bottom;
         }
       } else {
-        refValue.adsorbValue = refValue.refValue - controlElementsBounds.bottom;
+        refValue.adsorbValue =
+            refValue.refValue - controlElementsBounds.center.dy;
       }
-      return refValue;
-    } else if (my < 0) {
-      //l.v('手指往上滑动');
-      //手指往上滑动
-      AdsorbRefValue? refValue =
-          findYAdsorbRefValue(controlElementsBounds.top + ty, localPosition);
-      if (refValue == null) {
-        //使用中心点继续查找
-        refValue = findYAdsorbRefValue(
-            controlElementsBounds.center.dy + ty, localPosition);
-        if (refValue != null) {
-          refValue.adsorbValue =
-              refValue.refValue - controlElementsBounds.center.dy;
-        }
-      } else {
-        refValue.adsorbValue = refValue.refValue - controlElementsBounds.top;
-      }
-      return refValue;
+    } else {
+      refValue.adsorbValue = refValue.refValue - controlElementsBounds.top;
     }
-    return null;
+    return refValue;
   }
 
   /// 是否需要吸附x轴的位置
