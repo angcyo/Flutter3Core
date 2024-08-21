@@ -153,7 +153,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   });
 
   GlobalConfig._() {
-    l.w('初始化[GlobalConfig]');
+    l.i('初始化默认的[GlobalConfig]');
   }
 
   /// 全局默认
