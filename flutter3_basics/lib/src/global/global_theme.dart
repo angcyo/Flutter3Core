@@ -39,7 +39,8 @@ class GlobalTheme {
   Color get systemNavigationBarColor => accentColor;
 
   /// 界面背景颜色
-  Color get surfaceBgColor => themeWhiteColor;
+  /// [themeWhiteColor]
+  Color get surfaceBgColor => whiteBgColor;
 
   /// 图标按下的颜色/选择的颜色等
   Color get icoSelectedColor => primaryColor;

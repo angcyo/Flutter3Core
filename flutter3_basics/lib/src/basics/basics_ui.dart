@@ -774,16 +774,60 @@ extension WidgetEx on Widget {
 
   /// 脚手架, 会消耗手势事件
   Widget scaffold({
-    PreferredSizeWidget? appBar,
-    Color? backgroundColor = Colors.transparent,
+    BuildContext? context,
+    Color? backgroundColor,
     bool resizeToAvoidBottomInset = true,
-  }) =>
-      Scaffold(
+    //--
+    PreferredSizeWidget? appBar,
+    bool? useSliverAppBar,
+    Widget? title,
+    Color? foregroundColor,
+    double? elevation,
+    bool? centerTitle,
+    bool? automaticallyImplyLeading,
+    Widget? leading,
+    Widget? trailing,
+    PreferredSizeWidget? bottom,
+    List<Widget>? actions,
+    //--
+  }) {
+    if (context == null) {
+      return Scaffold(
         appBar: appBar,
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundColor ?? Colors.transparent,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         body: this,
       );
+    }
+    final globalConfig = GlobalConfig.of(context);
+    final globalTheme = globalConfig.globalTheme;
+    return Scaffold(
+      appBar: appBar ??
+          globalConfig.appBarBuilder(
+            context,
+            this,
+            useSliverAppBar: useSliverAppBar,
+            leading: leading,
+            automaticallyImplyLeading: automaticallyImplyLeading,
+            title: title,
+            centerTitle: centerTitle,
+            actions: actions,
+            bottom: bottom,
+            elevation: elevation,
+            scrolledUnderElevation: elevation,
+            foregroundColor:
+                foregroundColor ?? globalTheme.appBarForegroundColor,
+            backgroundColor:
+                backgroundColor ?? globalTheme.appBarBackgroundColor,
+            //阴影高度
+            shadowColor: globalTheme.appBarShadowColor,
+            flexibleSpace: null, //渐变背景
+          ),
+      backgroundColor: backgroundColor ?? globalTheme.surfaceBgColor,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      body: this,
+    );
+  }
 
   /// 移除MediaQuery的padding
   Widget removePadding(

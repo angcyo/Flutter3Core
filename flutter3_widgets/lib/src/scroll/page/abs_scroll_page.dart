@@ -59,7 +59,7 @@ mixin AbsScrollPage {
   Color? getBackgroundColor(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     //final globalConfig = GlobalConfig.of(context);
-    return globalTheme.whiteBgColor;
+    return globalTheme.surfaceBgColor;
   }
 
   /// 默认不适配底部键盘
@@ -180,6 +180,7 @@ mixin AbsScrollPage {
     bool? automaticallyImplyLeading,
     Widget? leading,
     Widget? trailing,
+    PreferredSizeWidget? bottom,
     List<Widget>? actions,
   }) {
     final globalConfig = GlobalConfig.of(context);
@@ -198,7 +199,7 @@ mixin AbsScrollPage {
       title: title ?? buildTitle(context),
       centerTitle: centerTitle ?? isCenterTitle(context),
       actions: actions ?? buildAppBarActions(context),
-      bottom: buildAppBarBottom(context),
+      bottom: bottom ?? buildAppBarBottom(context),
       elevation: elevation ?? getAppBarElevation(context),
       scrolledUnderElevation:
           getAppBarScrolledUnderElevation(context) ?? elevation,

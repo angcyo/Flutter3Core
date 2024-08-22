@@ -43,6 +43,7 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
     bool? automaticallyImplyLeading,
     Widget? leading,
     Widget? trailing,
+    PreferredSizeWidget? bottom,
     List<Widget>? actions,
   }) {
     final globalTheme = GlobalTheme.of(context);
