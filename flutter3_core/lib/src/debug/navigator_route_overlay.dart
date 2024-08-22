@@ -116,7 +116,8 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
             ],
           ))
           .paddingAll(kM)
-          .elevation(2.0);
+          .elevation(2.0)
+          .animatedSize();
     } else {
       result = _buildNormalState(context);
     }
@@ -151,26 +152,27 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
     final size = widget.size;
     final interactiveSize = widget.size;
     final globalTheme = GlobalTheme.of(context);
-    return paintWidget((canvas, size) {
-      final radius = size.width / 2;
-      final center = size.center(Offset.zero);
-      canvas.drawCircle(
-          center,
-          radius,
-          Paint()
-            ..shader = radialGradientShader(
-                radius,
-                [
-                  globalTheme.primaryColorDark,
-                  globalTheme.primaryColor,
-                  /*Colors.transparent,*/
-                ],
-                center: center)
-            ..color = Colors.redAccent
-            ..style = PaintingStyle.fill);
-    }, size: Size(size, size))
-        .align(Alignment.bottomLeft)
-        .size(size: interactiveSize);
+    return paintWidget(
+      (canvas, size) {
+        final radius = size.width / 2;
+        final center = size.center(Offset.zero);
+        canvas.drawCircle(
+            center,
+            radius,
+            Paint()
+              ..shader = radialGradientShader(
+                  radius,
+                  [
+                    globalTheme.primaryColorDark,
+                    globalTheme.primaryColor,
+                    /*Colors.transparent,*/
+                  ],
+                  center: center)
+              ..color = Colors.redAccent
+              ..style = PaintingStyle.fill);
+      },
+      size: Size(size, size),
+    ).align(Alignment.bottomLeft).size(size: interactiveSize);
   }
 
   Widget? _routeTextSpan;
@@ -217,6 +219,6 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
         updateState();
       });
     }
-    return (_routeTextSpan ?? "...".text()).animatedSize();
+    return _routeTextSpan ?? "...".text();
   }
 }
