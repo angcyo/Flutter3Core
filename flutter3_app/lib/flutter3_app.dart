@@ -55,6 +55,7 @@ Future runGlobalApp(
   FutureVoidAction? beforeAction,
   FutureVoidAction? afterAction,
   bool zonedGuarded = true,
+  void Function(Object error, StackTrace stack)? onZonedError,
 }) async {
   /*if (isDebug) {
     io(() => testTime());
@@ -147,6 +148,7 @@ Future runGlobalApp(
     error.writeToErrorLog(level: L.none);
     stack.toString().writeToErrorLog(level: L.none);
     printError(error, stack);
+    onZonedError?.call(error, stack);
   });
 }
 
