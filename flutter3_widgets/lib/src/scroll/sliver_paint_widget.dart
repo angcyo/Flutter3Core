@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -58,6 +58,37 @@ class SliverPaintRender extends RenderSliverSingleBoxAdapter {
     this.sliverPaintOrigin,
   );
 
+  /// --[SliverConstraints]--
+  /// [SliverConstraints.axisDirection].[SliverConstraints.axis] 布局的方向. [AxisDirection.down]新增元素放在底下
+  /// [SliverConstraints.growthDirection] 排序方向. [GrowthDirection.forward]
+  /// [SliverConstraints.crossAxisDirection] 交叉轴方向. [AxisDirection.right]
+  /// [SliverConstraints.userScrollDirection] 用户当前正在滚动的方向.
+  ///   - [ScrollDirection.reverse] 正常情况下:手指往上滑动产生的滚动
+  ///   - [ScrollDirection.forward] 正常情况下:手指往下滑动产生的滚动
+  ///   - [ScrollDirection.idle] 滚动停止
+  ///
+  /// [SliverConstraints.scrollOffset] 当前sliver的滚动偏移量, 并非容器的滚动偏移量
+  /// [SliverConstraints.precedingScrollExtent] 当前sliver前面的滚动偏移量, 通常会是前面所有sliver的高度之和
+  /// [SliverConstraints.remainingPaintExtent] 当前sliver剩余可绘制的空间高度, 到容器底部的高度.
+  ///
+  /// [SliverConstraints.crossAxisExtent] 容器的交叉轴的范围(宽度)
+  /// [SliverConstraints.viewportMainAxisExtent] 容器的可视区域范围(高度)
+  ///
+  /// [SliverConstraints.cacheOrigin] 缓存区开始的位置[0.0], 一般会等于-[SliverConstraints.scrollOffset]
+  /// [SliverConstraints.remainingCacheExtent] 剩余缓存区的范围
+  ///
+  /// --[SliverGeometry]--
+  /// [SliverGeometry.scrollExtent] 当前sliver可以滚动的高度, 那么滚动此sliver时会消耗这么多的滚动量
+  /// [SliverGeometry.layoutExtent] 当前sliver在布局中的占用高度
+  /// [SliverGeometry.cacheExtent] 在[SliverConstraints.remainingCacheExtent]中需要消耗的范围
+  ///
+  /// [SliverGeometry.paintExtent] 当前sliver的绘制高度, 视觉高度. 如果视觉高度为0时, 则不可见, 不会触发[paint]方法
+  /// [SliverGeometry.maxPaintExtent] 当前sliver最大绘制的高度必须>=[SliverGeometry.paintExtent]
+  /// [SliverGeometry.visible] 是否强制触发[paint]方法, 否则只有[SliverGeometry.paintExtent]>0时才绘制
+  /// [SliverGeometry.paintOrigin] 绘制偏移距离[0.0], 这个值正常情况应该是-[SliverConstraints.scrollOffset]
+  ///
+  /// [SliverGeometry.crossAxisExtent] 在[SliverCrossAxisGroup]中有效
+  ///
   @override
   void performLayout() {
     final SliverConstraints constraints = this.constraints;
@@ -71,7 +102,7 @@ class SliverPaintRender extends RenderSliverSingleBoxAdapter {
       // 绘制的坐标原点，相对于自身布局位置 //防止吸附在0的位置
       paintOrigin: sliverPaintOrigin ?? -constraints.scrollOffset,
       //这个为true, 才会触发paint
-      visible: true,
+      visible: painter != null ? true : null,
     );
   }
 
@@ -80,7 +111,7 @@ class SliverPaintRender extends RenderSliverSingleBoxAdapter {
     super.paint(context, offset);
     final SliverConstraints constraints = this.constraints;
     final SliverGeometry? geometry = this.geometry;
-    var size = Size(
+    final size = Size(
       constraints.crossAxisExtent,
       geometry?.paintExtent ?? 0,
     );
