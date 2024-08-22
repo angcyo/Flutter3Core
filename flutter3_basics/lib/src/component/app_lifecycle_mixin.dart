@@ -86,6 +86,8 @@ final NavigatorObserverDispatcher navigatorObserverDispatcher =
 
 /// 路由回调派发
 class NavigatorObserverDispatcher extends NavigatorObserver {
+  //region --观察者--
+
   final List<NavigatorObserverMixin> navigatorObserverList = [];
 
   void add(NavigatorObserverMixin observer) {
@@ -95,6 +97,10 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   void remove(NavigatorObserverMixin observer) {
     navigatorObserverList.remove(observer);
   }
+
+  //endregion --观察者--
+
+  //region --回调--
 
   @override
   void didPop(Route route, Route? previousRoute) {
@@ -185,6 +191,8 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
       }
     }
   }
+
+  //endregion --回调--
 }
 
 /// 导航监听混入

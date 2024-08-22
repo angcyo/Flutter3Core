@@ -38,10 +38,18 @@ class TextSpanBuilder {
 
   TextSpanBuilder addTextStyle(
     String? text, {
+    TextStyle? style,
     Color? color,
     double? fontSize,
+    double? letterSpacing,
   }) {
-    addText(text, style: TextStyle(color: color, fontSize: fontSize));
+    addText(text,
+        style: style ??
+            TextStyle(
+              color: color,
+              fontSize: fontSize,
+              letterSpacing: letterSpacing,
+            ));
     return this;
   }
 

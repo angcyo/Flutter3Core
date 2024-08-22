@@ -54,15 +54,46 @@ enum _NavigatorRouteOverlayStateEnum {
   routeStack,
 }
 
-class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
+class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
+    with NavigatorObserverMixin {
   /// 当前显示状态
   _NavigatorRouteOverlayStateEnum showState =
       _NavigatorRouteOverlayStateEnum.normal;
 
   @override
+  void reassemble() {
+    super.reassemble();
+    _updateIfNeed();
+  }
+
+  @override
+  void onRouteDidPush(Route route, Route? previousRoute) {
+    super.onRouteDidPush(route, previousRoute);
+    _updateIfNeed();
+  }
+
+  @override
+  void onRouteDidPop(Route route, Route? previousRoute) {
+    super.onRouteDidPop(route, previousRoute);
+    postDelayCallback(() {
+      //等待路由动画结束
+      _updateIfNeed();
+    }, 360.milliseconds);
+  }
+
+  @override
   void dispose() {
     NavigatorRouteOverlay._isShowNavigatorRouteOverlay = false;
     super.dispose();
+  }
+
+  /// 更新信息
+  void _updateIfNeed() {
+    //debugger();
+    if (showState == _NavigatorRouteOverlayStateEnum.routeStack) {
+      _routeTextSpan = null;
+      updateState();
+    }
   }
 
   @override
@@ -186,6 +217,6 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay> {
         updateState();
       });
     }
-    return _routeTextSpan ?? "...".text();
+    return (_routeTextSpan ?? "...".text()).animatedSize();
   }
 }
