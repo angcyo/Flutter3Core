@@ -141,6 +141,7 @@ part 'src/widgets/test_constraints_layout.dart';
 typedef UiImage = ui.Image;
 typedef UiPath = ui.Path;
 typedef UiColor = ui.Color;
+typedef UiBlendMode = ui.BlendMode;
 typedef UiOffset = ui.Offset;
 typedef UiSize = ui.Size;
 typedef UiRect = ui.Rect;
@@ -154,6 +155,7 @@ typedef UiPlatformDispatcher = ui.PlatformDispatcher;
 typedef UiLocale = ui.Locale;
 typedef UiPaintingStyle = ui.PaintingStyle;
 typedef UiLineMetrics = ui.LineMetrics;
+typedef UiAppExitResponse = ui.AppExitResponse;
 typedef AnimateAction = void Function(AnimationController controller);
 typedef NumFormat = String? Function(num? number);
 

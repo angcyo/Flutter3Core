@@ -15,7 +15,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// [AppExitResponse.cancel]
   /// [AppExitResponse.values]
   @override
-  Future<AppExitResponse> didRequestAppExit() {
+  Future<UiAppExitResponse> didRequestAppExit() {
     '[${classHash()}]AppLifecycle didRequestAppExit'
         .writeToLog(level: L.verbose);
     return super.didRequestAppExit();

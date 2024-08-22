@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +124,7 @@ SvgPicture? loadCoreAssetSvgPicture(
   double? size,
   double? width,
   double? height,
-  Color? tintColor,
+  UiColor? tintColor,
   UiColorFilter? colorFilter,
 }) =>
     key == null
@@ -144,7 +143,7 @@ SvgPicture coreNextSvgPicture({
   double? size,
   double? width,
   double? height,
-  Color? tintColor,
+  UiColor? tintColor,
   UiColorFilter? colorFilter,
 }) =>
     loadCoreAssetSvgPicture(
@@ -166,8 +165,8 @@ Image? loadCoreAssetImageWidget(
   double? size,
   double? width,
   double? height,
-  Color? color,
-  BlendMode? colorBlendMode,
+  UiColor? color,
+  UiBlendMode? colorBlendMode,
 }) =>
     key == null
         ? null
