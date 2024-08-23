@@ -1827,12 +1827,14 @@ extension WidgetEx on Widget {
   Widget ink(
     GestureTapCallback? onTap, {
     bool enable = true,
+    //--
     double radius = 0,
     Color? backgroundColor,
-    EdgeInsetsGeometry? padding,
-    Decoration? decoration,
-    BoxShape shape = BoxShape.rectangle,
     BorderRadius? borderRadius,
+    BoxShape shape = BoxShape.rectangle,
+    Decoration? decoration,
+    //--
+    EdgeInsetsGeometry? padding,
     double? width,
     double? height,
     Color? highlightColor,
