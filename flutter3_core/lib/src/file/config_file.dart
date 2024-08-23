@@ -59,10 +59,12 @@ class ConfigFile {
         }
       }
     } catch (e) {
-      assert(() {
-        l.w('读取失败[$key]:$e');
-        return true;
-      }());
+      if (httpUrl == null) {
+        assert(() {
+          l.w('读取失败[$key]:$e');
+          return true;
+        }());
+      }
     }
     if (result != null) {
       try {
