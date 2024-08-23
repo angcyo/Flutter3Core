@@ -475,25 +475,40 @@ extension CanvasEx on Canvas {
   }
 
   /// 绘制文本, 绘制出来的文本左上角对齐0,0位置
-  /// [getOffset] 获取文本的绘制位置的回调
+  /// [bounds].[alignment] 文本绘制在矩形框内的位置和对齐方式
+  /// [offset].[getOffset] 获取文本的绘制位置的回调
   void drawText(
     String? text, {
+    //--
+    TextStyle? textStyle,
     Color? textColor = Colors.black,
     double? fontSize = kDefaultFontSize,
+    //--
+    Rect? bounds,
+    Alignment alignment = Alignment.topLeft,
     ui.Offset offset = ui.Offset.zero,
     Offset? Function(TextPainter painter)? getOffset,
   }) {
     final painter = TextPainter(
         text: TextSpan(
           text: text,
-          style: TextStyle(
-            color: textColor,
-            fontSize: fontSize,
-          ),
+          style: textStyle ??
+              TextStyle(
+                color: textColor,
+                fontSize: fontSize,
+              ),
         ),
         textDirection: TextDirection.ltr)
       ..layout();
-    painter.paint(this, (getOffset?.call(painter) ?? ui.Offset.zero) + offset);
+    painter.paint(
+        this,
+        (getOffset?.call(painter) ??
+                (bounds == null
+                    ? ui.Offset.zero
+                    : alignment
+                        .inscribe(Size(painter.width, painter.height), bounds)
+                        .topLeft)) +
+            offset);
   }
 
   /// 绘制[picture]
