@@ -150,6 +150,7 @@ extension CanvasEx on Canvas {
         restoreToCount(saveCount);
       } catch (e, s) {
         assert(() {
+          l.v("withSaveLayer异常->$saveCount");
           printError(e, s);
           return true;
         }());

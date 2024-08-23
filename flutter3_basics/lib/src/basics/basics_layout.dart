@@ -133,3 +133,4 @@ Rect applyAlignRect(
     return result;
   }
 }
+

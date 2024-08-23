@@ -1108,8 +1108,10 @@ extension RectEx on Rect {
         height,
       );
 
-  /// 偏移到0,0的位置
   Rect offsetToZero() => Rect.fromLTWH(0, 0, width, height);
+
+  ///
+  Rect lerp(Rect target, double t) => Rect.lerp(this, target, t)!;
 
   /// 偏移矩形
   Rect offset(Offset offset) => Rect.fromLTWH(
