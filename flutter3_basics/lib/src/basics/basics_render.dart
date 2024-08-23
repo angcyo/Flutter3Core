@@ -21,28 +21,39 @@ part of '../../flutter3_basics.dart';
 /// --[RenderObjectWithChildMixin]--
 /// [RenderObjectWithChildMixin] 渲染一个[RenderObject]
 /// [RenderObjectWithChildMixin.child]
+///
+/// [RenderObjectElement.mount]->[RenderObjectElement.attachRenderObject]->
+/// [SingleChildRenderObjectElement.insertRenderObjectChild]->[RenderObjectWithChildMixin.child]
+///
 extension ContainerRenderObjectMixinEx<ChildType extends RenderObject,
         ParentDataType extends ContainerParentDataMixin<ChildType>>
     on ContainerRenderObjectMixin<ChildType, ParentDataType> {
   /// 可以使用`for in`语法遍历所有的子元素
   /// [ContainerRenderObjectMixin]
   /// [RenderBox]
-  Iterable<RenderObject> get childrenList sync* {
-    RenderObject? child = firstChild;
+  Iterable<ChildType> get childrenIterable sync* {
+    ChildType? child = firstChild;
     while (child != null) {
       yield child;
-      child = childAfter(child as ChildType);
+      child = childAfter(child);
     }
   }
 
+  /// [childrenIterable]
+  List<ChildType> get childrenList => childrenIterable.toList();
+
   /// 绘制时的遍历对象
-  Iterable<RenderObject> get childrenInPaintOrderList sync* {
-    RenderObject? child = lastChild;
+  Iterable<ChildType> get childrenInPaintOrderIterable sync* {
+    ChildType? child = lastChild;
     while (child != null) {
       yield child;
-      child = childBefore(child as ChildType);
+      child = childBefore(child);
     }
   }
+
+  /// [childrenInPaintOrderIterable]
+  List<RenderObject> get childrenInPaintOrderList =>
+      childrenInPaintOrderIterable.toList();
 }
 
 extension RenderObjectMixinEx on RenderObject {
