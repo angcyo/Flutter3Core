@@ -484,6 +484,9 @@ extension CanvasEx on Canvas {
     Color? textColor = Colors.black,
     double? fontSize = kDefaultFontSize,
     //--
+    TextAlign textAlign = TextAlign.start,
+
+    //--
     Rect? bounds,
     Alignment alignment = Alignment.topLeft,
     ui.Offset offset = ui.Offset.zero,
@@ -498,6 +501,7 @@ extension CanvasEx on Canvas {
                 fontSize: fontSize,
               ),
         ),
+        textAlign: textAlign,
         textDirection: TextDirection.ltr)
       ..layout();
     painter.paint(
