@@ -1,4 +1,4 @@
-part of '../../flutter3_widgets.dart';
+part of '../../../flutter3_widgets.dart';
 
 ///
 /// Email:angcyo@126.com

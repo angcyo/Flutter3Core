@@ -108,7 +108,7 @@ part 'src/widgets/mixin/tab_layout_mixin.dart';
 part 'src/widgets/pull_back_widget.dart';
 part 'src/widgets/radar_scan_widget.dart';
 part 'src/widgets/size_animation_widget.dart';
-part 'src/widgets/sliver_expand_widget.dart';
+part 'src/widgets/sliver/sliver_expand_widget.dart';
 part 'src/widgets/state_decoration_widget.dart';
 part 'src/widgets/tab_layout.dart';
 part 'src/widgets/wrap_content_layout.dart';
