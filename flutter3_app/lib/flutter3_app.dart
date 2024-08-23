@@ -102,9 +102,9 @@ Future runGlobalApp(
 
   var oldOnError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails details) {
-    "发生一个错误:↓".writeToErrorLog();
+    "发生一个错误↓".writeToErrorLog();
     details.exceptionAsString().writeToErrorLog();
-    dumpErrorToString(details).writeToErrorLog();
+    "错误详情↓\n${dumpErrorToString(details)}".writeToErrorLog();
     oldOnError?.call(details);
     //FlutterError.dumpErrorToConsole(details);
   };

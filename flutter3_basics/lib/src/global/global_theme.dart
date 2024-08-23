@@ -42,6 +42,9 @@ class GlobalTheme {
   /// [themeWhiteColor]
   Color get surfaceBgColor => whiteBgColor;
 
+  /// 对话框的背景颜色
+  Color get dialogSurfaceBgColor => themeWhiteColor;
+
   /// 图标按下的颜色/选择的颜色等
   Color get icoSelectedColor => primaryColor;
 

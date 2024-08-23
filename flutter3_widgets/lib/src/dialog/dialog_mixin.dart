@@ -233,7 +233,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     final globalTheme = GlobalTheme.of(context);
     return body
         .size(height: height)
-        .material(color: bgColor ?? globalTheme.surfaceBgColor)
+        .material(color: bgColor ?? globalTheme.dialogSurfaceBgColor)
         .clipRadius(
           radius: clipRadius,
           topRadius: clipTopRadius,

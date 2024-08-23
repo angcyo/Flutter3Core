@@ -1,10 +1,26 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/08
 ///
 
+/// --[ContainerRenderObjectMixin]--
+/// [ContainerRenderObjectMixin]  渲染一组[RenderObject]
+/// [ContainerRenderObjectMixin.childCount]
+/// [ContainerRenderObjectMixin._firstChild]
+/// [ContainerRenderObjectMixin._lastChild]
+/// [ContainerRenderObjectMixin.add]
+/// [ContainerRenderObjectMixin.insert]
+///
+/// [ContainerParentDataMixin]
+///
+/// [RenderObjectElement.mount]->[RenderObjectElement.attachRenderObject]->
+/// [MultiChildRenderObjectElement.insertRenderObjectChild]->[ContainerRenderObjectMixin.insert]
+///
+/// --[RenderObjectWithChildMixin]--
+/// [RenderObjectWithChildMixin] 渲染一个[RenderObject]
+/// [RenderObjectWithChildMixin.child]
 extension ContainerRenderObjectMixinEx<ChildType extends RenderObject,
         ParentDataType extends ContainerParentDataMixin<ChildType>>
     on ContainerRenderObjectMixin<ChildType, ParentDataType> {
@@ -123,7 +139,6 @@ extension RenderObjectMixinEx on RenderObject {
 }
 
 extension RenderBoxEx on RenderBox {
-
   /// 调试模式下, 绘制盒子的边界
   /// [debugDrawBoxBounds]
   void debugPaintBoxBounds(PaintingContext context, Offset offset) =>
