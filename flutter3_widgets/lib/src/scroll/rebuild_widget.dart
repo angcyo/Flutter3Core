@@ -12,12 +12,14 @@ part of '../../flutter3_widgets.dart';
 /// [ValueListenableBuilder]
 class RebuildWidget extends StatefulWidget {
   /// 用来触发重构的信号
-  final ValueNotifier updateSignal;
+  final ValueNotifier? updateSignal;
+  final List<ValueNotifier>? updateSignalList;
   final DynamicDataWidgetBuilder builder;
 
   const RebuildWidget({
     super.key,
-    required this.updateSignal,
+    this.updateSignal,
+    this.updateSignalList,
     required this.builder,
   });
 
@@ -28,29 +30,47 @@ class RebuildWidget extends StatefulWidget {
 class RebuildWidgetState extends State<RebuildWidget> {
   @override
   void initState() {
-    widget.updateSignal.addListener(_rebuild);
+    widget.updateSignal?.addListener(_rebuild);
+    widget.updateSignalList?.forEach((element) {
+      element.addListener(_rebuild);
+    });
     super.initState();
   }
 
   @override
   void dispose() {
     //debugger();
-    widget.updateSignal.removeListener(_rebuild);
+    widget.updateSignal?.removeListener(_rebuild);
+    widget.updateSignalList?.forEach((element) {
+      element.removeListener(_rebuild);
+    });
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(context, widget.updateSignal.value) ?? empty;
+    return widget.builder(
+            context,
+            widget.updateSignal?.value ??
+                widget.updateSignalList?.map((element) => element.value)) ??
+        empty;
   }
 
   @override
   void didUpdateWidget(covariant RebuildWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     //debugger();
-    oldWidget.updateSignal.removeListener(_rebuild);
-    widget.updateSignal.removeListener(_rebuild);
-    widget.updateSignal.addListener(_rebuild);
+    oldWidget.updateSignal?.removeListener(_rebuild);
+    widget.updateSignalList?.forEach((element) {
+      element.removeListener(_rebuild);
+    });
+
+    widget.updateSignal?.removeListener(_rebuild);
+    widget.updateSignal?.addListener(_rebuild);
+    widget.updateSignalList?.forEach((element) {
+      element.removeListener(_rebuild);
+      element.addListener(_rebuild);
+    });
   }
 
   void _rebuild() {
@@ -172,6 +192,18 @@ Widget rebuild(
 ) {
   return RebuildWidget(
     updateSignal: updateSignal,
+    builder: builder,
+  );
+}
+
+/// [Iterable<dynamic>]
+@dsl
+Widget rebuildList(
+  @updateSignalMark List<ValueNotifier> updateSignalList,
+  DynamicDataWidgetBuilder builder,
+) {
+  return RebuildWidget(
+    updateSignalList: updateSignalList,
     builder: builder,
   );
 }
