@@ -1658,6 +1658,8 @@ extension IntEx on int {
   /// 取2个数的最大值
   int maxOf(int other) => math.max(this, other);
 
+  int minOf(int other) => math.min(this, other);
+
   /// ascii 码转成对应的字符
   /// [IntEx.ascii]
   /// [StringEx.ascii]
@@ -1771,6 +1773,8 @@ extension IntEx on int {
 extension DoubleEx on double {
   /// 取2个数的最大值
   double maxOf(double other) => math.max(this, other);
+
+  double minOf(double other) => math.min(this, other);
 
   /// 判断2个浮点数是否相等
   /// [notEqualTo]

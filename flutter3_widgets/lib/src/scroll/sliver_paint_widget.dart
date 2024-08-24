@@ -67,6 +67,8 @@ class SliverPaintRender extends RenderSliverSingleBoxAdapter {
   ///   - [ScrollDirection.forward] 正常情况下:手指往下滑动产生的滚动
   ///   - [ScrollDirection.idle] 滚动停止
   ///
+  /// [SliverConstraints.overlap] 当前sliver之前置顶了的偏移像素
+  ///
   /// [SliverConstraints.scrollOffset] 当前sliver的滚动偏移量, 并非容器的滚动偏移量
   /// [SliverConstraints.precedingScrollExtent] 当前sliver前面的滚动偏移量, 通常会是前面所有sliver的高度之和
   /// [SliverConstraints.remainingPaintExtent] 当前sliver剩余可绘制的空间高度, 到容器底部的高度.
@@ -85,7 +87,7 @@ class SliverPaintRender extends RenderSliverSingleBoxAdapter {
   /// [SliverGeometry.paintExtent] 当前sliver的绘制高度, 视觉高度. 如果视觉高度为0时, 则不可见, 不会触发[paint]方法
   /// [SliverGeometry.maxPaintExtent] 当前sliver最大绘制的高度必须>=[SliverGeometry.paintExtent]
   /// [SliverGeometry.visible] 是否强制触发[paint]方法, 否则只有[SliverGeometry.paintExtent]>0时才绘制
-  /// [SliverGeometry.paintOrigin] 绘制偏移距离[0.0], 这个值正常情况应该是-[SliverConstraints.scrollOffset]
+  /// [SliverGeometry.paintOrigin] 绘制偏移距离[0.0], 这个值正常情况应该是[SliverConstraints.overlap]. -[SliverConstraints.scrollOffset]
   ///
   /// [SliverGeometry.crossAxisExtent] 在[SliverCrossAxisGroup]中有效
   ///

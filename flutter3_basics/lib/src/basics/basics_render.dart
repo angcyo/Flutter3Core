@@ -147,6 +147,22 @@ extension RenderObjectMixinEx on RenderObject {
     //layout(constraints, parentUsesSize: parentUsesSize);
     return renderSize;
   }
+
+  /// 裁剪图层
+  /// [PaintingContext.pushClipRect]
+  /// [ClipRectLayer]
+  void pushClipRectLayer(PaintingContext context, Offset offset, Rect clipRect,
+      PaintingContextCallback painter,
+      {Clip clipBehavior = Clip.hardEdge, ClipRectLayer? oldLayer}) {
+    layer = context.pushClipRect(
+      needsCompositing,
+      offset,
+      clipRect,
+      painter,
+      clipBehavior: clipBehavior,
+      oldLayer: oldLayer ?? layer as ClipRectLayer?,
+    );
+  }
 }
 
 extension RenderBoxEx on RenderBox {
