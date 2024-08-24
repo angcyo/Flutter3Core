@@ -11,18 +11,23 @@ class SliverScrollCoordinateLayoutWidget extends MultiChildRenderObjectWidget {
   /// 最大范围
   final double? maxExtent;
 
+  /// 协调布局进度回调
+  final CoordinateLayoutAction? onCoordinateLayoutAction;
+
   const SliverScrollCoordinateLayoutWidget({
     super.key,
     super.children /*RenderBox*/,
     this.minExtent = 0,
     this.maxExtent,
+    this.onCoordinateLayoutAction,
   });
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
       RenderSliverScrollCoordinateLayout()
         ..minExtent = minExtent
-        ..maxExtent = maxExtent;
+        ..maxExtent = maxExtent
+        ..onCoordinateLayoutAction = onCoordinateLayoutAction;
 
   @override
   void updateRenderObject(
@@ -32,6 +37,7 @@ class SliverScrollCoordinateLayoutWidget extends MultiChildRenderObjectWidget {
     renderObject
       ..minExtent = minExtent
       ..maxExtent = maxExtent
+      ..onCoordinateLayoutAction = onCoordinateLayoutAction
       ..markNeedsLayout();
   }
 }
@@ -47,6 +53,21 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
   /// 最大范围
   double? maxExtent;
 
+  /// 协调布局进度回调
+  CoordinateLayoutAction? onCoordinateLayoutAction;
+
+  /// [SliverConstraints.overlap]
+  Offset get constraintsOverlapOffset => constraints.axis == Axis.vertical
+      ? Offset(0, constraints.overlap)
+      : Offset(constraints.overlap, 0);
+
+  /// 子元素顶部重叠的偏移量
+  double _childOverlapTop = 0;
+
+  Offset get _childOverlapTopOffset => constraints.axis == Axis.vertical
+      ? Offset(0, _childOverlapTop)
+      : Offset(_childOverlapTop, 0);
+
   //region --布局--
 
   /// [RenderObject.isRepaintBoundary]
@@ -60,54 +81,89 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     }
   }
 
+  /// [RenderSliverPersistentHeader]
+  /// [RenderSliverPinnedPersistentHeader]
+  /// [SliverPaintRender.performLayout]
   @override
   void performLayout() {
     final constraints = this.constraints;
+    //debugger();
+    //l.v("constraints->$constraints");
+    _childOverlapTop = 0;
 
     double maxChildWidth = 0, maxChildHeight = 0;
     for (final child in childrenIterable) {
-      child.layout(_getChildBoxConstraints(child), parentUsesSize: true);
+      final parentData =
+          child.parentData as SliverScrollCoordinateLayoutParentData;
+      child.layout(_getChildBoxConstraints(child, this.maxExtent),
+          parentUsesSize: true);
+      //--
       final childSize = child.size;
       maxChildWidth = maxChildWidth.maxOf(childSize.width);
       maxChildHeight = maxChildHeight.maxOf(childSize.height);
+      _childOverlapTop =
+          (parentData.top ?? _childOverlapTop).minOf(_childOverlapTop);
       //debugger();
     }
-    maxExtent ??=
-        constraints.axis == Axis.vertical ? maxChildHeight : maxChildWidth;
 
-    //滚动进度
-    final scrollProgress = constraints.scrollOffset / (maxExtent! - minExtent);
+    double maxExtent = this.maxExtent ??
+        (constraints.axis == Axis.vertical ? maxChildHeight : maxChildWidth);
+
+    //处理滚动进度,重新布局
+    final scrollProgress = constraints.scrollOffset / (maxExtent - minExtent);
     for (final child in childrenIterable) {
+      //debugger();
       final parentData =
           child.parentData as SliverScrollCoordinateLayoutParentData;
       if (parentData.onCoordinateLayoutAction
               ?.call(constraints, parentData, scrollProgress) ==
           true) {
-        child.layout(_getChildBoxConstraints(child), parentUsesSize: true);
+        child.layout(_getChildBoxConstraints(child, maxExtent),
+            parentUsesSize: true);
+        //--
+        final childSize = child.size;
+        maxChildWidth = maxChildWidth.maxOf(childSize.width);
+        maxChildHeight = maxChildHeight.maxOf(childSize.height);
+        _childOverlapTop =
+            (parentData.top ?? _childOverlapTop).minOf(_childOverlapTop);
       }
     }
+    if (this.maxExtent == null) {
+      maxExtent =
+          constraints.axis == Axis.vertical ? maxChildHeight : maxChildWidth;
+    }
 
-    //--
-    final double childExtent = maxExtent! - minExtent;
+    //回调
+    onCoordinateLayoutAction?.call(constraints, maxExtent, scrollProgress);
+
+    //后处理
+    final double childExtent = maxExtent - minExtent;
 
     final double paintedChildSize =
-        calculatePaintOffset(constraints, from: 0.0, to: maxExtent!);
+        calculatePaintOffset(constraints, from: 0.0, to: maxExtent);
     final double cacheExtent =
-        calculateCacheOffset(constraints, from: 0.0, to: maxExtent!);
+        calculateCacheOffset(constraints, from: 0.0, to: maxExtent);
+
+    final paintExtent = paintedChildSize.maxOf(minExtent);
+    final hasVisualOverflow = childExtent > constraints.remainingPaintExtent ||
+        constraints.scrollOffset > 0.0;
+
+    // l.i("scrollProgress:$scrollProgress paintedChildSize:$paintedChildSize paintExtent:$paintExtent"
+    //     " scrollOffset:${constraints.scrollOffset} overlap:${constraints.overlap} hasVisualOverflow:$hasVisualOverflow ");
 
     geometry = SliverGeometry(
       scrollExtent: childExtent,
-      paintExtent: paintedChildSize.maxOf(minExtent),
+      paintExtent: paintExtent,
+      maxPaintExtent: cacheExtent.maxOf(paintExtent),
       cacheExtent: cacheExtent,
-      maxPaintExtent: cacheExtent,
       hitTestExtent: paintedChildSize,
-      hasVisualOverflow: childExtent > constraints.remainingPaintExtent ||
-          constraints.scrollOffset > 0.0,
+      hasVisualOverflow: hasVisualOverflow,
+      paintOrigin: constraints.overlap > 0 ? constraints.overlap : 0,
     );
   }
 
   /// [BoxConstraints]
-  BoxConstraints _getChildBoxConstraints(RenderBox child) {
+  BoxConstraints _getChildBoxConstraints(RenderBox child, double? maxExtent) {
     final parentData =
         child.parentData as SliverScrollCoordinateLayoutParentData;
     /*final childBoxConstraints = constraints.axis == Axis.vertical
@@ -123,18 +179,45 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
             minHeight: 0,
             maxHeight: constraints.crossAxisExtent,
           );*/
+
+    double? l = parentData.left;
+    double? r = parentData.right;
+    double? t = parentData.top;
+    double? b = parentData.bottom;
+
+    if (r != null) {
+      r = constraints.crossAxisExtent - r;
+    }
+
+    if (b != null) {
+      //与底部的距离
+      if (maxExtent != null) {
+        b = maxExtent - b;
+      }
+    }
+
+    //计算出宽高测量值
+    double? w, h;
+    if (l != null && r != null) {
+      w = r - l;
+    }
+    if (t != null && b != null) {
+      h = b - t;
+    }
+
+    //debugger();
     final childBoxConstraints = constraints.axis == Axis.vertical
         ? BoxConstraints(
-            minWidth: parentData.width ?? 0,
-            maxWidth: parentData.width ?? constraints.crossAxisExtent,
-            minHeight: parentData.height ?? 0,
-            maxHeight: parentData.height ?? maxExtent ?? double.infinity,
+            minWidth: w ?? parentData.width ?? 0,
+            maxWidth: w ?? parentData.width ?? constraints.crossAxisExtent,
+            minHeight: h ?? parentData.height ?? 0,
+            maxHeight: h ?? parentData.height ?? maxExtent ?? double.infinity,
           )
         : BoxConstraints(
-            minWidth: parentData.width ?? 0,
-            maxWidth: parentData.width ?? maxExtent ?? double.infinity,
-            minHeight: parentData.height ?? 0,
-            maxHeight: parentData.height ?? constraints.crossAxisExtent,
+            minWidth: w ?? parentData.width ?? 0,
+            maxWidth: w ?? parentData.width ?? maxExtent ?? double.infinity,
+            minHeight: h ?? parentData.height ?? 0,
+            maxHeight: h ?? parentData.height ?? constraints.crossAxisExtent,
           );
     return childBoxConstraints;
   }
@@ -143,26 +226,50 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
   void paint(PaintingContext context, Offset offset) {
     final canvas = context.canvas;
     final bounds = paintBounds + offset;
+    //l.d("paint->$offset bounds:$bounds overlap:${constraints.overlap} $_childOverlapTopOffset");
 
     /*canvas.drawRect(
-      bounds,
+      paintBounds.inflateValue(-constraints.overlap),
       Paint()
-        ..color = Colors.blueAccent,
+        ..shader = linearGradientShader([Colors.blueAccent, Colors.redAccent],
+            rect: paintBounds) */ /*..color = Colors.blueAccent*/ /*,
     );*/
 
+    final clipRect = Rect.fromLTRB(
+      paintBounds.left + _childOverlapTopOffset.dx,
+      paintBounds.top + _childOverlapTopOffset.dy,
+      bounds.right - constraintsOverlapOffset.dx,
+      bounds.bottom - constraintsOverlapOffset.dy,
+    );
+    //l.d("paint->clipRect:$clipRect $_childOverlapTopOffset $constraintsOverlapOffset");
     //canvas.save();
-    canvas.clipRect(bounds);
-    for (final child in childrenIterable) {
-      final childParentData =
-          child.parentData as SliverScrollCoordinateLayoutParentData;
-      context.paintChild(child,
-          offset + childParentData.getPaintOffset(paintBounds, child.size));
-    }
+    //canvas.clipRect(clipRect);
+
+    pushClipRectLayer(context, offset, clipRect, (context, offset) {
+      for (final child in childrenIterable) {
+        final childParentData =
+            child.parentData as SliverScrollCoordinateLayoutParentData;
+        //debugger();
+        context.paintChild(child,
+            offset + childParentData.getPaintOffset(paintBounds, child.size)
+            /*+ Offset(0, -constraints.overlap)*/
+            );
+      }
+    });
+
+    // for (final child in childrenIterable) {
+    //   final childParentData =
+    //       child.parentData as SliverScrollCoordinateLayoutParentData;
+    //   //debugger();
+    //   context.paintChild(child,
+    //       offset + childParentData.getPaintOffset(paintBounds, child.size)
+    //       /*+ Offset(0, -constraints.overlap)*/
+    //       );
+    // }
+    //canvas.restore();
 
     /*canvas.drawText(
-        "[$childCount] ${(constraints.scrollOffset / (maxExtent! - minExtent))
-            .toDigits()}\noffset:$offset scrollOffset:${constraints.scrollOffset
-            .toDigits()}",
+        "[$childCount] ${(constraints.scrollOffset / (maxExtent! - minExtent)).toDigits()}\noffset:$offset scrollOffset:${constraints.scrollOffset.toDigits()}",
         textAlign: TextAlign.center,
         bounds: bounds,
         alignment: Alignment.center);*/
@@ -180,6 +287,7 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
         child.parentData as SliverScrollCoordinateLayoutParentData;
     final paintOffset = childParentData.getPaintOffset(paintBounds, child.size);
     transform.translate(paintOffset.dx, paintOffset.dy);
+    applyPaintTransformForBoxChild(child, transform);
   }
 
   /// [hitTestChildren]驱动
@@ -202,6 +310,18 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     return paintOffset.dx;
   }
 
+  @override
+  bool hitTest(
+    SliverHitTestResult result, {
+    required double mainAxisPosition,
+    required double crossAxisPosition,
+  }) {
+    //debugger();
+    return super.hitTest(result,
+        mainAxisPosition: mainAxisPosition,
+        crossAxisPosition: crossAxisPosition);
+  }
+
   /// [hitTestBoxChild]
   @override
   bool hitTestChildren(
@@ -209,6 +329,7 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     required double mainAxisPosition,
     required double crossAxisPosition,
   }) {
+    //debugger();
     final boxResult = BoxHitTestResult.wrap(result);
     for (final child in childrenInPaintOrderIterable) {
       final hit = hitTestBoxChild(boxResult, child,
@@ -237,7 +358,7 @@ class SliverScrollCoordinateLayoutParentDataWidget
 
   /// 协调布局的回调
   /// @return 返回是否改变了, 如果返回true, 则会重新布局
-  final CoordinateLayoutAction? onCoordinateLayoutAction;
+  final CoordinateLayoutChildAction? onCoordinateLayoutAction;
 
   const SliverScrollCoordinateLayoutParentDataWidget({
     super.key,
@@ -280,6 +401,12 @@ class SliverScrollCoordinateLayoutParentDataWidget
 
 typedef CoordinateLayoutAction = bool Function(
   SliverConstraints constraints /*父容器的约束条件*/,
+  double maxExtent /*父容器的最大高度*/,
+  double scrollProgress /*当前滚动进度*/,
+);
+
+typedef CoordinateLayoutChildAction = bool Function(
+  SliverConstraints constraints /*父容器的约束条件*/,
   SliverScrollCoordinateLayoutParentData parentData /*布局数据*/,
   double scrollProgress /*当前滚动进度*/,
 );
@@ -300,7 +427,7 @@ class SliverScrollCoordinateLayoutParentData
 
   /// 协调布局的回调
   /// @return 返回是否改变了, 如果返回true, 则会重新布局
-  CoordinateLayoutAction? onCoordinateLayoutAction;
+  CoordinateLayoutChildAction? onCoordinateLayoutAction;
 
   /// 绘制的偏移坐标
   Offset getPaintOffset(Rect parentBounds, Size childSize) {
@@ -345,7 +472,7 @@ extension SliverScrollCoordinateLayoutEx on Widget {
     // 当前元素的大小
     double? width,
     double? height,
-    CoordinateLayoutAction? onCoordinateLayoutAction,
+    CoordinateLayoutChildAction? onCoordinateLayoutAction,
   }) =>
       SliverScrollCoordinateLayoutParentDataWidget(
         key: key,
