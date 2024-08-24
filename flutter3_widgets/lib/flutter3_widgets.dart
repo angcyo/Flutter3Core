@@ -122,6 +122,7 @@ part 'src/widgets/left_priority_layout.dart';
 part 'src/widgets/loading/danger_warning_widget.dart';
 part 'src/widgets/overlay_manager.dart';
 part 'src/widgets/check_widget.dart';
+part 'src/widgets/scroll_overlay_hint.dart';
 part 'src/graffiti/graffiti.dart';
 part 'src/graffiti/graffiti_delegate.dart';
 part 'src/graffiti/graffiti_event_manager.dart';
