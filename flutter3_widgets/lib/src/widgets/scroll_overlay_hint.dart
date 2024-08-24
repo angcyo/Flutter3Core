@@ -9,9 +9,29 @@ class ScrollOverlayHintWidget extends StatefulWidget {
   /// 滚动布局, 能够发送[ScrollNotification]通知的布局
   final Widget child;
 
+  final bool drawTop;
+
+  final bool drawBottom;
+
+  final bool drawLeft;
+
+  final bool drawRight;
+
+  /// 提示的大小
+  final double hintSize;
+
+  /// 渐变的颜色
+  final List<Color>? colors;
+
   const ScrollOverlayHintWidget({
     super.key,
     required this.child,
+    this.drawTop = true,
+    this.drawBottom = true,
+    this.drawLeft = true,
+    this.drawRight = true,
+    this.hintSize = 30,
+    this.colors = const [Colors.black26, Colors.transparent],
   });
 
   @override
@@ -26,6 +46,25 @@ class _ScrollOverlayHintWidgetState extends State<ScrollOverlayHintWidget> {
   bool drawRight = false;
 
   final UpdateSignalNotifier _signalNotifier = createUpdateSignal();
+
+  @override
+  void initState() {
+    drawTop = widget.drawTop;
+    drawBottom = widget.drawBottom;
+    drawLeft = widget.drawLeft;
+    drawRight = widget.drawRight;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant ScrollOverlayHintWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    drawTop = widget.drawTop;
+    drawBottom = widget.drawBottom;
+    drawLeft = widget.drawLeft;
+    drawRight = widget.drawRight;
+    _signalNotifier.update();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +97,8 @@ class _ScrollOverlayHintWidgetState extends State<ScrollOverlayHintWidget> {
           drawRight: drawRight,
           drawTop: drawTop,
           drawBottom: drawBottom,
+          hintSize: widget.hintSize,
+          colors: widget.colors,
           child: widget.child,
         );
       }),
