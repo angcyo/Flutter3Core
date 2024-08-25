@@ -21,6 +21,8 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   /// 当前的状态
   StatusInfo? currentStatusInfo;
 
+  //--
+
   /// 获取所有状态的数据
   List<T> getStatusDataList<T>() =>
       statusInfoList.map((e) => e.status as T).filterNull();
@@ -32,6 +34,8 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   StatusInfo? getStatusInfo(dynamic status) => status is StatusInfo
       ? status
       : statusInfoList.firstWhereOrNull((element) => element.status == status);
+
+  //--
 
   @override
   void onLoadData() {

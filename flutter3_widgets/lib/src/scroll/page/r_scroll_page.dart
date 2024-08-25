@@ -92,6 +92,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   @override
   void initState() {
+    if (defWidgetState != null) {
+      //默认状态
+      scrollController.adapterStateValue.value = defWidgetState!;
+    }
     //延迟一帧, 等待[WidgetStateScope]初始化
     postFrameCallback((timeStamp) {
       //debugger();
@@ -368,6 +372,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     bool? enableRefresh,
     bool? enableLoadMore,
   }) {
+    //debugger();
     _isPageBuild = true;
     return rebuild(_scrollUpdateSignal, (context, value) {
       scrollController.scrollViewUpdateSignal = _scrollUpdateSignal;
