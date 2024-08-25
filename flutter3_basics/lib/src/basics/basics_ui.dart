@@ -31,6 +31,28 @@ void scheduleFrame() {
   WidgetsBinding.instance.platformDispatcher.scheduleFrame();
 }
 
+/// 每一帧都会回调
+/// [WidgetsFlutterBinding.cancelFrameCallbackWithId]
+/// [Ticker.scheduleTick]
+/// [once] 是否只处理一次?
+/// @return id
+int scheduleFrameCallback(
+  FrameCallback callback, {
+  bool rescheduling = false,
+  bool once = false,
+}) {
+  WidgetsFlutterBinding.ensureInitialized();
+  int? cancelId;
+  final id = WidgetsBinding.instance.scheduleFrameCallback((timeStamp) {
+    if (once && cancelId != null) {
+      WidgetsBinding.instance.cancelFrameCallbackWithId(cancelId);
+    }
+    callback(timeStamp);
+  }, rescheduling: rescheduling);
+  cancelId = id;
+  return id;
+}
+
 /// 一帧后回调, 只会触发一次. 不会请求新的帧
 /// [postFrameCallback]
 /// [postCallback]
@@ -52,16 +74,6 @@ void postFrameCallbackIfNeed(FrameCallback callback) {
   } else {
     callback(Duration(milliseconds: nowTimestamp()));
   }
-}
-
-/// 每一帧都会回调
-/// [WidgetsFlutterBinding.cancelFrameCallbackWithId]
-/// [Ticker.scheduleTick]
-/// @return id
-int scheduleFrameCallback(FrameCallback callback, {bool rescheduling = false}) {
-  WidgetsFlutterBinding.ensureInitialized();
-  return WidgetsBinding.instance
-      .scheduleFrameCallback(callback, rescheduling: rescheduling);
 }
 
 extension FrameCallbackEx on int {
@@ -2161,7 +2173,7 @@ extension StateEx on State {
       return false;
     } catch (e) {
       assert(() {
-        l.w('当前页面可能已被销毁, 无法更新! 当前是否正在调度渲染[${SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks}].');
+        l.w('当前页面可能已被销毁, 无法更新! (渲染调度中[${SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks}])');
         printError(e);
         return true;
       }());
