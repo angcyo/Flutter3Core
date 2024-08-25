@@ -8,11 +8,6 @@ part of '../../flutter3_widgets.dart';
 /// 是否要显示底部的加载更多
 typedef ShowLoadMoreCallback = bool Function();
 
-/// 默认的滚动物理特性
-const kDefaultScrollPhysics = AlwaysScrollableScrollPhysics(
-  parent: BouncingScrollPhysics(),
-);
-
 /// 使用[CustomScrollView]快速组合界面
 /// [SliverPersistentHeader] 可以在顶部固定,可以实现悬浮效果. [SliverFillRemaining]可以填充剩余空间
 /// [SliverList] - [SliverGrid]
@@ -43,7 +38,7 @@ class RScrollView extends StatefulWidget {
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
-    this.physics = kDefaultScrollPhysics,
+    this.physics = kScrollPhysics,
     this.enableFrameLoad = false,
     this.frameSplitCount = 1,
     this.frameSplitDuration = const Duration(milliseconds: 16),
@@ -262,16 +257,20 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   }
 }
 
-extension RScrollViewEx on WidgetList {
+extension RScrollViewEx on WidgetNullList {
   /// [RScrollView]
   Widget rScroll({
     RScrollController? controller,
     Axis axis = Axis.vertical,
+    ScrollBehavior? scrollBehavior,
+    ScrollPhysics? physics = kScrollPhysics,
   }) {
     return RScrollView(
       controller: controller,
       scrollDirection: axis,
-      children: this,
+      scrollBehavior: scrollBehavior,
+      physics: physics,
+      children: filterNull(),
     );
   }
 }

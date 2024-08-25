@@ -66,7 +66,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 元素列表, 正常操作区域的元素, 参与控制操作
   /// [paintElements]
-  final List<ElementPainter> elements = [];
+  List<ElementPainter> elements = [];
 
   /// 绘制在[elements]之后的元素列表, 不参与控制操作
   /// [paintElements]

@@ -7,8 +7,9 @@ part of '../../flutter3_basics.dart';
 /// 回退栈管理
 /// [UndoActionWidget]
 class UndoActionManager with Diagnosticable {
-  final List<UndoActionItem> undoList = [];
-  final List<UndoActionItem> redoList = [];
+  /// 撤销栈
+  List<UndoActionItem> undoList = [];
+  List<UndoActionItem> redoList = [];
 
   /// 是否操作过, 回退列表不为空, 则表示操作过
   bool get isChanged => undoList.isNotEmpty;
@@ -145,7 +146,10 @@ enum UndoType {
   undo,
 
   /// 重做操作
-  redo;
+  redo,
+
+  /// 重置操作, 在切换画布时触发
+  reset;
 
   /// 是否是撤销/重做操作
   bool get isUndoRedo => this == UndoType.undo || this == UndoType.redo;

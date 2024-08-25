@@ -153,6 +153,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     double? pullMaxBound,
     void Function(BuildContext context)? onPullBack,
     bool useScroll = false,
+    bool useRScroll = false,
     bool animatedSize = false,
     int scrollChildIndex = 1,
     double? height /*固定高度*/,
@@ -183,14 +184,23 @@ mixin DialogMixin implements TranslationTypeImpl {
       contentMaxHeight = screenHeight * contentMaxHeight;
     }
 
+    if (useRScroll) {
+      useScroll = true;
+    }
+
     if (useScroll) {
       final fixedChildren = children.subList(0, scrollChildIndex);
       final scrollChildren = children.subList(scrollChildIndex);
 
-      Widget? scrollBody = scrollChildren.scroll(
-        axis: Axis.vertical,
-        physics: enablePullBack ? null : kScrollPhysics,
-      );
+      Widget? scrollBody = useRScroll
+          ? scrollChildren.rScroll(
+              axis: Axis.vertical,
+              physics: enablePullBack ? null : kScrollPhysics,
+            )
+          : scrollChildren.scroll(
+              axis: Axis.vertical,
+              physics: enablePullBack ? null : kScrollPhysics,
+            );
       //约束高度
       scrollBody = scrollBody?.constrainedMax(
         minHeight: contentMinHeight,

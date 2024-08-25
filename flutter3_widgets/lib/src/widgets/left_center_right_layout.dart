@@ -79,6 +79,8 @@ class RenderLeftCenterRightLayout extends RenderBox
     final center = children.getOrNull(1);
     final right = children.getOrNull(2);
 
+    //debugger();
+
     //
     Size centerSize = Size.zero;
     if (center != null) {
@@ -110,15 +112,14 @@ class RenderLeftCenterRightLayout extends RenderBox
     //debugger();
     bool reOffset = false; //是否需要重新偏移child
     if (thisSize.width == double.infinity) {
+      reOffset = true;
       if (axis == Axis.horizontal) {
-        reOffset = reOffset || !thisSize.height.isValid;
         thisSize = Size(
           constraints.constrainWidth(
               children.fold(0, (value, child) => value + child.size.width)),
           thisSize.height.ensureValid(childMaxHeight),
         );
       } else {
-        reOffset = reOffset || !thisSize.width.isValid;
         thisSize = Size(
           thisSize.width.ensureValid(childMaxWidth),
           constraints.constrainHeight(
@@ -127,14 +128,13 @@ class RenderLeftCenterRightLayout extends RenderBox
       }
     }
     if (thisSize.height == double.infinity) {
+      reOffset = true;
       if (axis == Axis.horizontal) {
-        reOffset = reOffset || !thisSize.width.isValid;
         thisSize = Size(
             constraints
                 .constrainWidth(thisSize.width.ensureValid(childMaxWidth)),
             childMaxHeight);
       } else {
-        reOffset = reOffset || !thisSize.height.isValid;
         thisSize = Size(
             childMaxWidth,
             constraints

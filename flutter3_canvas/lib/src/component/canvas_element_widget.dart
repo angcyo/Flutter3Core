@@ -18,6 +18,21 @@ class CanvasElementWidget extends LeafRenderObjectWidget {
     this.fit = BoxFit.contain,
   });
 
+  CanvasElementWidget.elementList(
+    List<ElementPainter> elements, {
+    super.key,
+    this.padding = const EdgeInsets.all(kL),
+    this.fit = BoxFit.contain,
+  }) : elementPainter = ElementGroupPainter.createGroupIfNeed(elements);
+
+  CanvasElementWidget.canvasState(
+    CanvasStateData canvasStateData, {
+    super.key,
+    this.padding = const EdgeInsets.all(kL),
+    this.fit = BoxFit.contain,
+  }) : elementPainter =
+            ElementGroupPainter.createGroupIfNeed(canvasStateData.elements);
+
   @override
   RenderObject createRenderObject(BuildContext context) =>
       CanvasElementRenderObject(elementPainter, padding, fit);

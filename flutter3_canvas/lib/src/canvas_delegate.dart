@@ -157,6 +157,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 回退栈管理
   late CanvasUndoManager canvasUndoManager = CanvasUndoManager(this);
 
+  /// 多画布管理
+  late CanvasMultiManager canvasMultiManager = CanvasMultiManager(this);
+
   /// 画布回调监听
   Set<CanvasListener> canvasListeners = {};
 
@@ -580,6 +583,31 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void dispatchCanvasContentChanged() {
     _eachCanvasListener((element) {
       element.onCanvasContentChangedAction?.call();
+    });
+  }
+
+  /// 多画布状态改变通知
+  /// [canvasStateData] 画布状态数据
+  /// [type] 新增画布/移除画布
+  void dispatchCanvasMultiStateChanged(
+      CanvasStateData canvasStateData, CanvasStateType type) {
+    _eachCanvasListener((element) {
+      element.onCanvasMultiStateChanged?.call(canvasStateData, type);
+    });
+  }
+
+  /// 画布列表改变通知
+  void dispatchCanvasMultiStateListChanged(List<CanvasStateData> to) {
+    _eachCanvasListener((element) {
+      element.onCanvasMultiStateListChanged?.call(to);
+    });
+  }
+
+  /// 选中的画布改变
+  void dispatchCanvasSelectedStateChanged(
+      CanvasStateData? from, CanvasStateData? to) {
+    _eachCanvasListener((element) {
+      element.onCanvasSelectedStateChanged?.call(from, to);
     });
   }
 

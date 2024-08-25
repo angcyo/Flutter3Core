@@ -38,7 +38,7 @@ class SingleTextDialog extends StatelessWidget {
     }
 
     return result
-        .scroll(physics: kDefaultScrollPhysics)
+        .scroll(physics: kScrollPhysics)
         .position(all: 0)
         .stackOf(isDebug
             ? "${body?.length.toSizeStr()}${filePath == null ? '' : '\n$filePath'}"
