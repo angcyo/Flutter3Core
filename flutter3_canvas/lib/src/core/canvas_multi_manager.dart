@@ -164,15 +164,24 @@ class CanvasStateData {
 
   CanvasStateData({
     String? name,
-    this.elements = const [],
-    this.undoList = const [],
-    this.redoList = const [],
+    List<ElementPainter>? elements,
+    List<UndoActionItem>? undoList,
+    List<UndoActionItem>? redoList,
   }) {
     _canvasStateCount++;
     if (name == null) {
       this.name = "画布 $_canvasStateCount";
     } else {
       this.name = name;
+    }
+    if (elements != null) {
+      this.elements = elements;
+    }
+    if (undoList != null) {
+      this.undoList = undoList;
+    }
+    if (redoList != null) {
+      this.redoList = redoList;
     }
   }
 }
