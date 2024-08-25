@@ -12,7 +12,7 @@ class TextFieldConfig {
   /// 输入控制, 用于获取输入内容
   TextEditingController controller;
 
-  /// 是否自动获取焦点
+  /// 是否自动获取焦点, 具有焦点就会自动显示键盘
   /// [TextField.autofocus]
   bool? autofocus;
 
@@ -359,6 +359,7 @@ class SingleInputWidget extends StatefulWidget {
   final ValueChanged<String>? onSubmitted;
   final VoidCallback? onEditingComplete;
 
+  /// [TextField]
   const SingleInputWidget({
     super.key,
     required this.config,

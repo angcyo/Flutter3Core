@@ -15,6 +15,8 @@ class SingleBottomInputDialog extends StatefulWidget
 
   final String? title;
   final Widget? titleWidget;
+
+  @defInjectMark
   final EdgeInsets? inputMargin;
 
   /// 是否可以输入空文本
@@ -34,7 +36,13 @@ class SingleBottomInputDialog extends StatefulWidget
   final String? inputText;
 
   @override
+  final bool? autofocus;
+
+  @override
   final EdgeInsets? inputPadding;
+
+  @override
+  final TextAlign inputTextAlign;
 
   /// 并不需要在此方法中更新界面
   @override
@@ -62,6 +70,13 @@ class SingleBottomInputDialog extends StatefulWidget
 
   //--
 
+  /// 是否显示标题
+  final bool showTitle;
+
+  /// 包裹输入框的回调
+  final WidgetNullList Function(BuildContext context, Widget input)?
+      wrapInputAction;
+
   const SingleBottomInputDialog({
     super.key,
     //--dialog
@@ -73,14 +88,45 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputFieldConfig,
     this.inputHint,
     this.inputText,
+    this.autofocus = true,
     this.onInputTextChanged,
     this.onInputTextConfirmChange,
     this.inputBorderType = InputBorderType.underline,
+    this.inputTextAlign = TextAlign.start,
     this.inputMaxLines = 1,
     this.inputMaxLength,
     this.inputFormatters,
     this.inputPadding = kInputPadding,
     this.inputKeyboardType,
+    //--
+    this.showTitle = true,
+    this.wrapInputAction,
+  });
+
+  const SingleBottomInputDialog.wrapInput(
+    this.wrapInputAction, {
+    super.key,
+    //--dialog
+    this.title,
+    this.titleWidget,
+    this.inputMargin = EdgeInsets.zero,
+    this.enableInputEmpty = false,
+    //--input
+    this.inputFieldConfig,
+    this.inputHint,
+    this.inputText,
+    this.autofocus = true,
+    this.onInputTextChanged,
+    this.onInputTextConfirmChange,
+    this.inputBorderType = InputBorderType.none,
+    this.inputTextAlign = TextAlign.start,
+    this.inputMaxLines = 1,
+    this.inputMaxLength,
+    this.inputFormatters,
+    this.inputPadding = kInputPadding,
+    this.inputKeyboardType,
+    //--
+    this.showTitle = true,
   });
 
   @override
@@ -99,16 +145,24 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
         .buildBottomChildrenDialog(
           context,
           [
-            CoreDialogTitle(
-              title: widget.title,
-              titleWidget: widget.titleWidget,
-              enableTrailing: widget.enableInputEmpty ||
-                  (!widget.enableInputEmpty && !isInputEmpty),
-              onTrailingTap: (context) {
-                buildContext?.pop(currentInputText);
-              },
-            ),
-            input.paddingInsets(widget.inputMargin ?? widget.contentPadding),
+            if (widget.showTitle)
+              CoreDialogTitle(
+                title: widget.title,
+                titleWidget: widget.titleWidget,
+                enableTrailing: isInputChanged &&
+                    (widget.enableInputEmpty ||
+                        (!widget.enableInputEmpty && !isInputEmpty)),
+                onTrailingTap: (context) {
+                  buildContext?.pop(currentInputText);
+                },
+              ),
+            if (widget.wrapInputAction == null)
+              input.paddingInsets(widget.inputMargin ?? widget.contentPadding),
+            if (widget.wrapInputAction != null)
+              ...widget.wrapInputAction!(
+                  context,
+                  input.paddingInsets(
+                      widget.inputMargin ?? widget.contentPadding)),
           ],
           clipTopRadius: kDefaultBorderRadiusXX,
         )

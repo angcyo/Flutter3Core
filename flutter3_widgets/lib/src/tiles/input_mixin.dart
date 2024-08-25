@@ -38,8 +38,14 @@ mixin InputMixin {
   /// 默认输入的文本
   String? get inputText => null;
 
+  /// 是否自动获取焦点
+  bool? get autofocus => false;
+
   /// [kInputPadding]
   EdgeInsets? get inputPadding => null;
+
+  /// 文本对齐方式
+  TextAlign get inputTextAlign => TextAlign.start;
 
   /// 并不需要在此方法中更新界面
   ValueChanged<String>? get onInputTextChanged => null;
@@ -81,6 +87,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   late final TextFieldConfig inputMixinConfig = TextFieldConfig(
     text: inputMixin.inputText,
     hintText: inputMixin.inputHint,
+    autofocus: inputMixin.autofocus,
     textInputAction: TextInputAction.done,
     onChanged: (value) {
       //FocusScope.of(context).requestFocus(_passwordFocusNode);
@@ -103,6 +110,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   @callPoint
   Widget buildInputWidgetMixin(
     BuildContext context, {
+    TextAlign? textAlign,
     InputBorder? border,
     InputBorder? focusedBorder,
     InputBorder? disabledBorder,
@@ -120,6 +128,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
       maxLength: inputMixin.inputMaxLength,
       keyboardType: inputMixin.inputKeyboardType,
       inputFormatters: inputMixin.inputFormatters,
+      textAlign: textAlign ?? inputMixin.inputTextAlign,
       border: border,
       focusedBorder: focusedBorder,
       disabledBorder: disabledBorder,
@@ -138,6 +147,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// 输入框的值改变回调
+  @overridePoint
   void onSelfInputTextChanged(String toValue) async {
     if (inputMixin.onInputTextConfirmChange != null) {
       final result = await inputMixin.onInputTextConfirmChange!(toValue);

@@ -83,15 +83,16 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 切换选中的画布
+  /// @return 操作是否成功
   @api
-  void selectCanvasState(
+  bool selectCanvasState(
     CanvasStateData? canvasStateData, {
     bool notifyBasics = true,
     bool notifySelected = true,
     UndoType undoType = UndoType.reset,
   }) {
     if (selectedCanvasState == canvasStateData) {
-      return;
+      return false;
     }
     final oldSelected = selectedCanvasState;
     selectedCanvasState = canvasStateData;
@@ -125,6 +126,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasDelegate.dispatchCanvasSelectedStateChanged(
           oldSelected, selectedCanvasState);
     }
+    return true;
   }
 }
 
