@@ -148,12 +148,16 @@ extension ZipFileEncoderEx on ZipFileEncoder {
     String? name, {
     bool compress = true,
   }) {
+    //debugger();
     if (content == null || name == null) {
       return;
     }
-    addArchiveFile(compress
-        ? ArchiveFile.string(name, content)
-        : ArchiveFile.noCompress(name, 0, content));
+    if (compress) {
+      addArchiveFile(ArchiveFile.string(name, content));
+    } else {
+      final bytes = content.bytes;
+      addArchiveFile(ArchiveFile.noCompress(name, bytes.size(), bytes));
+    }
   }
 
   /// [writeStringSync]
@@ -168,7 +172,6 @@ extension ZipFileEncoderEx on ZipFileEncoder {
 }
 
 extension ArchiveEx on Archive {
-
   /// [readContent]
   Uint8List? readBytes(String? name) => readContent(name);
 
@@ -235,7 +238,8 @@ extension ArchiveFileEx on ArchiveFile {
     }
     final bytes = readContent();
     if (bytes != null) {
-      return String.fromCharCodes(bytes);
+      return bytes.utf8Str;
+      //return String.fromCharCodes(bytes);
     }
     return null;
   }

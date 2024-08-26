@@ -27,6 +27,7 @@ export 'package:octo_image/octo_image.dart';
 export 'package:photo_view/photo_view.dart';
 export 'package:photo_view/photo_view_gallery.dart';
 export 'package:url_launcher/url_launcher.dart';
+export 'package:archive/archive_io.dart';
 
 part 'src/archive/zip_ex.dart';
 part 'src/http/html_pub.dart';

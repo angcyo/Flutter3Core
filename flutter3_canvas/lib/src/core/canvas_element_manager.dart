@@ -441,7 +441,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void resetElementList(
     List<ElementPainter>? list, {
     bool selected = false,
-    bool showRect = false,
+    bool followRect = false,
     UndoType undoType = UndoType.normal,
   }) {
     list ??= [];
@@ -452,10 +452,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (selected) {
       resetSelectElement(list);
-      if (showRect) {
+      if (followRect) {
         canvasDelegate.followPainter(elementPainter: selectComponent);
       }
-    } else if (showRect) {
+    } else if (followRect) {
       ElementGroupPainter painter = ElementGroupPainter();
       painter.resetChildren(
           list, canvasElementControlManager.enableResetElementAngle);
