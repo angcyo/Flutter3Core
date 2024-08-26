@@ -1067,6 +1067,7 @@ extension WidgetEx on Widget {
 
   /// 添加一个高度阴影
   /// [PhysicalModel]
+  /// [kBoxShadow]
   Widget elevation(double elevation, {Color? color, Color? shadowColor}) {
     return PhysicalModel(
       color: color ?? Colors.transparent,
