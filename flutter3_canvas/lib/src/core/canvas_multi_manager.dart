@@ -21,6 +21,11 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 当前选中的画布状态
   CanvasStateData? selectedCanvasState;
 
+  /// 是否是空画布
+  bool get isCanvasEmpty =>
+      canvasStateList.size() <= 1 &&
+      (selectedCanvasState?.elements.size() ?? 0) <= 0;
+
   /// 从画布中初始化数据, 此方法为了兼容测试使用
   @implementation
   void initFromCanvasDelegate() {
@@ -32,6 +37,85 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
             redoList: canvasDelegate.canvasUndoManager.redoList,
           ),
           selected: true);
+    }
+  }
+
+  /// 选中画布
+  @callPoint
+  void ensureSelectCanvasState({
+    bool notify = true,
+    //--
+    bool selectedElement = false,
+    bool followRect = false,
+  }) {
+    CanvasStateData? selectedCanvasState =
+        canvasStateList.findFirst((e) => e.isSelected) ??
+            canvasStateList.lastOrNull;
+    selectCanvasState(
+      selectedCanvasState,
+      notifyBasics: notify,
+      notifySelected: notify,
+      //--
+      selectedElement: selectedElement,
+      followRect: followRect,
+    );
+  }
+
+  //--
+
+  /// 重置画布列表
+  @api
+  void resetCanvasStateList(
+    List<CanvasStateData> stateList, {
+    bool notify = true,
+    bool? selectedCanvas,
+    //--
+    bool selectedElement = false,
+    bool followRect = false,
+  }) {
+    canvasStateList.reset(stateList);
+
+    if (notify) {
+      canvasDelegate.dispatchCanvasMultiStateListChanged(canvasStateList);
+    }
+
+    //选中第一个
+    if (selectedCanvas != false) {
+      ensureSelectCanvasState(
+        notify: notify,
+        selectedElement: selectedElement,
+        followRect: followRect,
+      );
+    }
+  }
+
+  /// 添加画布列表
+  /// [autoSelectedCanvas] 是否自动选择画布
+  @api
+  void addCanvasStateList(
+    List<CanvasStateData> stateList, {
+    bool notify = true,
+    bool autoSelectedCanvas = true,
+    //--
+    bool selectedElement = false,
+    bool followRect = false,
+  }) {
+    if (isCanvasEmpty) {
+      canvasStateList.reset(stateList);
+    } else {
+      canvasStateList.addAll(stateList);
+    }
+    if (notify) {
+      canvasDelegate.dispatchCanvasMultiStateListChanged(canvasStateList);
+    }
+    if (autoSelectedCanvas) {
+      if (isCanvasEmpty) {
+        ensureSelectCanvasState(
+          notify: notify,
+          selectedElement: selectedElement,
+          followRect: followRect,
+        );
+      }
     }
   }
 
@@ -90,12 +174,19 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool notifyBasics = true,
     bool notifySelected = true,
     UndoType undoType = UndoType.reset,
+    //--
+    bool selectedElement = false,
+    bool followRect = false,
   }) {
     if (selectedCanvasState == canvasStateData) {
       return false;
     }
+    for (final stateData in canvasStateList) {
+      stateData.isSelected = false;
+    }
     final oldSelected = selectedCanvasState;
     selectedCanvasState = canvasStateData;
+    selectedCanvasState?.isSelected = true;
 
     //取消选中元素
     canvasElementManager.clearSelectedElement();
@@ -126,6 +217,23 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasDelegate.dispatchCanvasSelectedStateChanged(
           oldSelected, selectedCanvasState);
     }
+
+    // 选中元素/跟随元素
+    if (selectedElement) {
+      canvasDelegate.canvasElementManager
+          .resetSelectElement(canvasElementManager.elements);
+      if (followRect) {
+        canvasDelegate.followPainter(
+            elementPainter: canvasElementManager.selectComponent);
+      }
+    } else if (followRect) {
+      ElementGroupPainter painter = ElementGroupPainter();
+      painter.resetChildren(
+          canvasElementManager.elements,
+          canvasDelegate.canvasElementManager.canvasElementControlManager
+              .enableResetElementAngle);
+      canvasDelegate.followPainter(elementPainter: painter);
+    }
     return true;
   }
 }
@@ -149,6 +257,9 @@ class CanvasStateData {
   /// 当前画布的名字
   String? name;
 
+  /// 是否选中画布
+  bool isSelected;
+
   //--
 
   /// 画布元素列表
@@ -165,12 +276,17 @@ class CanvasStateData {
   List<UndoActionItem> redoList = [];
 
   CanvasStateData({
+    String? id,
     String? name,
+    this.isSelected = false,
     List<ElementPainter>? elements,
     List<UndoActionItem>? undoList,
     List<UndoActionItem>? redoList,
   }) {
     _canvasStateCount++;
+    if (id != null) {
+      this.id = id;
+    }
     if (name == null) {
       this.name = "画布 $_canvasStateCount";
     } else {
