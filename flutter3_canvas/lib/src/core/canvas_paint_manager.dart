@@ -6,6 +6,68 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 绘制管理, 所有绘制相关的操作, 都在这里, 绘制的入口
 class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
+  /// 栅格化元素
+  /// [element] 要栅格化的元素
+  /// [elementBounds] 偷换一下元素的边界, 用来栅格化(线条栅格化的情况)
+  /// [extend] 扩展的边距. 默认会在元素的边界上, 扩展1个dp的边距
+  /// [rasterizeElementList]
+  static Future<UiImage?> rasterizeElement(
+    ElementPainter? element, {
+    Rect? elementBounds,
+    EdgeInsets? extend,
+  }) async {
+    /*assert(() {
+      extend = EdgeInsets.zero;
+      return true;
+    }());
+    debugger();*/
+    if (element == null) {
+      return null;
+    }
+    final bounds = elementBounds ?? element.paintProperty?.getBounds(true);
+    if (bounds == null) {
+      return null;
+    }
+    //保证1个像素的大小
+    final width = max(1, bounds.width);
+    final height = max(1, bounds.height);
+    final size = Size(
+      width + (extend?.horizontal ?? 0),
+      height + (extend?.vertical ?? 0),
+    );
+    final rect =
+        Rect.fromLTWH(bounds.left, bounds.top, size.width, size.height);
+    final result = await drawImage(size, (canvas) {
+      canvas.drawInRect(size.toRect(), rect, () {
+        element.painting(
+          canvas,
+          const PaintMeta(host: rasterizeElementHost),
+        );
+      }, dstPadding: extend);
+    });
+    /*final base64 = await result.toBase64();
+    debugger();*/
+    return result;
+  }
+
+  ///[rasterizeElement]
+  static Future<UiImage?> rasterizeElementList(
+    List<ElementPainter>? elements, {
+    Rect? elementBounds,
+    EdgeInsets? extend,
+  }) async {
+    if (isNil(elements)) {
+      return null;
+    }
+    final group = ElementGroupPainter();
+    group.resetChildren(elements, true);
+    return rasterizeElement(
+      group,
+      elementBounds: elementBounds,
+      extend: extend,
+    );
+  }
+
   final CanvasDelegate canvasDelegate;
 
   /// 坐标系管理

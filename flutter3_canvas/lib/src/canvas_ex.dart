@@ -88,6 +88,33 @@ extension CanvasElementIterableEx on Iterable<ElementPainter> {
   }
 }
 
+/// 元素扩展
+extension ElementPainterEx on ElementPainter {
+  /// [CanvasPaintManager.rasterizeElement]
+  Future<UiImage?> rasterizeElement({
+    Rect? elementBounds,
+    EdgeInsets? extend,
+  }) =>
+      CanvasPaintManager.rasterizeElement(
+        this,
+        elementBounds: elementBounds,
+        extend: extend,
+      );
+}
+
+extension ElementPainterListEx on List<ElementPainter> {
+  /// [CanvasPaintManager.rasterizeElementList]
+  Future<UiImage?> rasterizeElement({
+    Rect? elementBounds,
+    EdgeInsets? extend,
+  }) =>
+      CanvasPaintManager.rasterizeElementList(
+        this,
+        elementBounds: elementBounds,
+        extend: extend,
+      );
+}
+
 /// 订阅扩展
 mixin StreamSubscriptionPainterMixin on ElementPainter {
   final List<StreamSubscription> _streamPainterSubscriptions = [];
