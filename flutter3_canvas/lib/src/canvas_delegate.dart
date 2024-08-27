@@ -106,19 +106,24 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 画布回调监听
   final Set<CanvasListener> canvasListeners = {};
 
+  //--属性
+
   /// 重绘次数
+  @flagProperty
   int paintCount = 0;
 
   /// 获取调用刷新的次数
   int get refreshCount => repaint.value;
 
   /// 当前是否请求过刷新
+  @flagProperty
   bool isRequestRefresh = false;
 
   /// 上一次请求刷新的时间, 毫秒
   Duration lastRequestRefreshTime = Duration.zero;
 
   /// 空闲超时时长, 画布无操作多久之后, 触发空闲回调
+  /// [dispatchCanvasIdle]
   Duration idleTimeout = 10.seconds;
 
   /// 是否有元素属性发生过改变
@@ -133,6 +138,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 是否有元素改变标识, 通常同来实现自动保存工程的判断依据
   /// [clearElementChangedFlag]
+  @flagProperty
   bool get hasElementChangedFlag =>
       isElementChanged || isElementPropertyChanged;
 
