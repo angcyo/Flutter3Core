@@ -63,6 +63,9 @@ mixin InputMixin {
   /// 输入的最大字符长度
   int? get inputMaxLength => null;
 
+  /// 是否显示输入计数器
+  bool? get showInputCounter => null;
+
   /// 输入限制字符
   /// [SingleInputWidget.inputFormatters]
   List<TextInputFormatter>? get inputFormatters => null;
@@ -129,6 +132,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
       config: _inputMixinConfig,
       maxLines: inputMixin.inputMaxLines,
       maxLength: inputMixin.inputMaxLength,
+      showInputCounter: inputMixin.showInputCounter,
       keyboardType: inputMixin.inputKeyboardType,
       inputFormatters: inputMixin.inputFormatters,
       textAlign: textAlign ?? inputMixin.inputTextAlign,

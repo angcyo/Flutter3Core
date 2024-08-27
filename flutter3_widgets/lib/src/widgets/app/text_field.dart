@@ -317,7 +317,11 @@ class SingleInputWidget extends StatefulWidget {
 
   /// 用来构建输入长度等信息的回调
   /// [TextField.buildCounter]
+  /// [noneInputBuildCounter]
   final InputCounterWidgetBuilder? inputBuildCounter;
+
+  /// 是否显示[maxLength].[inputBuildCounter]
+  final bool? showInputCounter;
 
   /// 最大行数
   final int? maxLines;
@@ -375,6 +379,7 @@ class SingleInputWidget extends StatefulWidget {
     this.maxLines = 1,
     this.maxLength,
     this.inputBuildCounter,
+    this.showInputCounter,
     this.keyboardType,
     this.inputFormatters,
     this.enabled = true,
@@ -700,8 +705,9 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           minLines: widget.minLines,
           maxLength: widget.maxLength,
           /*maxLengthEnforcement: MaxLengthEnforcement.truncateAfterCompositionEnds,*/
-          buildCounter:
-              widget.inputBuildCounter ?? widget.config.inputBuildCounter,
+          buildCounter: widget.showInputCounter == false
+              ? noneInputBuildCounter
+              : widget.inputBuildCounter ?? widget.config.inputBuildCounter,
           //scrollPadding: EdgeInsets.zero,
           obscureText: widget.config.obscureNode.obscureText &&
               !widget.config.obscureNode._showObscureText,

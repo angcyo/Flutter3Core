@@ -67,6 +67,9 @@ class SingleBottomInputDialog extends StatefulWidget
   final int? inputMaxLength;
 
   @override
+  final bool? showInputCounter;
+
+  @override
   final List<TextInputFormatter>? inputFormatters;
   @override
   final TextInputType? inputKeyboardType;
@@ -99,6 +102,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputTextAlign = TextAlign.start,
     this.inputMaxLines = 1,
     this.inputMaxLength = kDefaultInputLength,
+    this.showInputCounter,
     this.inputFormatters,
     this.inputPadding = kInputPadding,
     this.inputKeyboardType,
@@ -127,6 +131,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputTextAlign = TextAlign.start,
     this.inputMaxLines = 1,
     this.inputMaxLength = kDefaultInputLength,
+    this.showInputCounter = false,
     this.inputFormatters,
     this.inputPadding = kInputPadding,
     this.inputKeyboardType,
