@@ -38,5 +38,7 @@
   "libWaitTip": "Please wait...",
   "libValidRangeTip": "Valid range",
   "libKnown": "Ok",
-  "libSave": "Save"
+  "libSave": "Save",
+  "libYes": "Yes",
+  "libNo": "No"
 }

@@ -37,6 +37,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "libFinish": MessageLookupByLibrary.simpleMessage("完成"),
         "libKnown": MessageLookupByLibrary.simpleMessage("我知道了"),
         "libNext": MessageLookupByLibrary.simpleMessage("下一步"),
+        "libNo": MessageLookupByLibrary.simpleMessage("否"),
         "libOpen": MessageLookupByLibrary.simpleMessage("打开"),
         "libRefresh": MessageLookupByLibrary.simpleMessage("刷新"),
         "libSave": MessageLookupByLibrary.simpleMessage("保存"),
@@ -45,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "libValidRangeTip": MessageLookupByLibrary.simpleMessage("有效范围"),
         "libWaitTip": MessageLookupByLibrary.simpleMessage("请稍等..."),
         "libWarn": MessageLookupByLibrary.simpleMessage("警告"),
+        "libYes": MessageLookupByLibrary.simpleMessage("是"),
         "testOnlyZhKey": MessageLookupByLibrary.simpleMessage("只有中文[zh]翻译资源"),
         "testResKey": MessageLookupByLibrary.simpleMessage("testResKey翻译资源")
       };

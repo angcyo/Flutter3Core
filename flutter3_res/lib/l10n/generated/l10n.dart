@@ -289,6 +289,26 @@ class LibRes {
       args: [],
     );
   }
+
+  /// `是`
+  String get libYes {
+    return Intl.message(
+      '是',
+      name: 'libYes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `否`
+  String get libNo {
+    return Intl.message(
+      '否',
+      name: 'libNo',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

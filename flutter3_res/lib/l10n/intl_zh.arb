@@ -38,5 +38,7 @@
   "libWaitTip": "请稍等...",
   "libValidRangeTip": "有效范围",
   "libKnown": "我知道了",
-  "libSave": "保存"
+  "libSave": "保存",
+  "libYes": "是",
+  "libNo": "否"
 }

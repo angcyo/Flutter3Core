@@ -38,6 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "libFinish": MessageLookupByLibrary.simpleMessage("Finish"),
         "libKnown": MessageLookupByLibrary.simpleMessage("Ok"),
         "libNext": MessageLookupByLibrary.simpleMessage("Next"),
+        "libNo": MessageLookupByLibrary.simpleMessage("No"),
         "libOpen": MessageLookupByLibrary.simpleMessage("Open"),
         "libRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
         "libSave": MessageLookupByLibrary.simpleMessage("Save"),
@@ -46,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "libValidRangeTip": MessageLookupByLibrary.simpleMessage("Valid range"),
         "libWaitTip": MessageLookupByLibrary.simpleMessage("Please wait..."),
         "libWarn": MessageLookupByLibrary.simpleMessage("Warning"),
+        "libYes": MessageLookupByLibrary.simpleMessage("Yes"),
         "testResKey": MessageLookupByLibrary.simpleMessage(
             "testResKey Translation resources")
       };
