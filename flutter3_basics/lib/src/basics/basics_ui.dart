@@ -53,6 +53,11 @@ int scheduleFrameCallback(
   return id;
 }
 
+/// [postFrameCallback]
+void postCallback(VoidCallback callback, [String debugLabel = 'postCallback']) {
+  postFrameCallback((_) => callback(), debugLabel);
+}
+
 /// 一帧后回调, 只会触发一次. 不会请求新的帧
 /// [postFrameCallback]
 /// [postCallback]

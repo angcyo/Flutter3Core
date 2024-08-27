@@ -520,6 +520,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     if (removeList.isNotEmpty) {
       pageWidgetList.removeAll(removeList);
       _scrollUpdateSignal.update();
+
+      if (pageWidgetList.isEmpty) {
+        //显示空页面
+        updateAdapterState(WidgetBuildState.empty);
+      }
     }
   }
 

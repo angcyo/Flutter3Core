@@ -120,7 +120,7 @@ String currentTraceFileName([bool? fileLineNumber]) {
 /// [postCallback]
 /// [postDelayCallback]
 /// [delayCallback]
-void postCallback(VoidCallback callback) {
+void postRun(VoidCallback callback) {
   Timer.run(callback);
 }
 
