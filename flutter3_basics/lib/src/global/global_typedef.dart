@@ -71,6 +71,9 @@ typedef DurationCallback = void Function(Duration value);
 /// [Offset]类型的回调
 typedef OffsetCallback = void Function(Offset offset);
 
+/// [String]类型的回调
+typedef StringCallback = void Function(String text);
+
 /// 转变一个[widget]
 typedef TransformWidgetBuilder = Widget Function(
     BuildContext context, Widget widget);

@@ -103,6 +103,9 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   /// 文本是否发生了改变
   bool get isInputChanged => initialInputText != currentInputText;
 
+  /// 文本是否是默认值
+  bool get isInputDefault => initialInputText == currentInputText;
+
   /// 当前的文本是否为空
   bool get isInputEmpty => isNil(currentInputText);
 

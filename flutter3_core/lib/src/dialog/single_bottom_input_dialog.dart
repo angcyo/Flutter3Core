@@ -22,6 +22,9 @@ class SingleBottomInputDialog extends StatefulWidget
   /// 是否可以输入空文本
   final bool enableInputEmpty;
 
+  /// 是否可以输入默认值
+  final bool enableInputDefault;
+
   //--input
 
   /// 输入框/InputMixin
@@ -84,6 +87,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.titleWidget,
     this.inputMargin = const EdgeInsets.only(bottom: kH),
     this.enableInputEmpty = false,
+    this.enableInputDefault = false,
     //--input
     this.inputFieldConfig,
     this.inputHint,
@@ -94,7 +98,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputBorderType = InputBorderType.underline,
     this.inputTextAlign = TextAlign.start,
     this.inputMaxLines = 1,
-    this.inputMaxLength,
+    this.inputMaxLength = kDefaultInputLength,
     this.inputFormatters,
     this.inputPadding = kInputPadding,
     this.inputKeyboardType,
@@ -111,6 +115,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.titleWidget,
     this.inputMargin = EdgeInsets.zero,
     this.enableInputEmpty = false,
+    this.enableInputDefault = false,
     //--input
     this.inputFieldConfig,
     this.inputHint,
@@ -121,7 +126,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputBorderType = InputBorderType.none,
     this.inputTextAlign = TextAlign.start,
     this.inputMaxLines = 1,
-    this.inputMaxLength,
+    this.inputMaxLength = kDefaultInputLength,
     this.inputFormatters,
     this.inputPadding = kInputPadding,
     this.inputKeyboardType,
@@ -141,6 +146,7 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
     //input
     Widget input = buildInputWidgetMixin(context);
 
+    //
     return widget
         .buildBottomChildrenDialog(
           context,
@@ -149,7 +155,8 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
               CoreDialogTitle(
                 title: widget.title,
                 titleWidget: widget.titleWidget,
-                enableTrailing: isInputChanged &&
+                enableTrailing: (isInputChanged ||
+                        (isInputDefault && widget.enableInputDefault)) &&
                     (widget.enableInputEmpty ||
                         (!widget.enableInputEmpty && !isInputEmpty)),
                 onTrailingTap: (context) {

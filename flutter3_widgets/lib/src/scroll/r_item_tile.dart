@@ -726,7 +726,7 @@ extension RItemTileExtension on Widget {
   /// [SliverGrid.builder]
   RItemTile rGridTile(
     int gridCount, {
-    double childAspectRatio = 1,
+    double childAspectRatio = 1 /*宽:高*/,
     double? mainAxisSpacing,
     double? crossAxisSpacing,
     double? edgePaddingTop,

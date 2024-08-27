@@ -1533,10 +1533,18 @@ extension WidgetEx on Widget {
   /// 如果[action]中不执行任何操作, 则窗口无法被back按键关闭.
   /// 请在[action]中执行[pop]操作.才能关闭界面.
   /// [action] `navigatorOf(rootNavigator).pop(result);`
-  Widget interceptPopResult(Action action) {
-    return popScope(false, (didPop) {
+  /// [action] 返回false, 则自动[pop]操作
+  Widget interceptPopResult(
+    FutureOr Function() action, {
+    BuildContext? context,
+    dynamic result,
+  }) {
+    return popScope(false, (didPop) async {
       if (!didPop) {
-        action();
+        final result = await action();
+        if (result is bool && !result) {
+          (context ?? GlobalConfig.def.globalContext)?.pop(result);
+        }
       }
     });
   }
@@ -3007,6 +3015,13 @@ extension NavigatorStateEx on NavigatorState {
   void popToRoot([RoutePredicate? predicate]) {
     final root = ModalRoute.withName('/');
     return popUntil(predicate ?? root);
+  }
+
+  /// [removeRoute]
+  /// [removeRouteBelow]
+  void testRoute() {
+    //removeRoute(route)
+    //removeRouteBelow(anchorRoute)
   }
 }
 

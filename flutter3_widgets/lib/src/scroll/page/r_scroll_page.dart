@@ -197,7 +197,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     }
   }
 
-  /// 重写此方法, 加载数据
+  /// 重写此方法, 加载数据, 自动处理异常状态
   /// 通过[RequestPage]实现页面分页
   ///
   /// [onSelfLoadDataWrap]

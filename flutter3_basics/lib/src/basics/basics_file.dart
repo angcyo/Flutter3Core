@@ -528,6 +528,36 @@ extension FileEx on File {
 
   /// 判断当前文件是否是文件夹
   Future<bool> isDirectory() async => FileSystemEntity.isDirectory(path);
+
+  /// 重命名文件
+  /// 有些平台上, 直接重命名会失败, 建议复制然后删除源文件
+  /// ```
+  /// FileSystemException: Cannot rename file to '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/projects/012734b6cb4a4022a64126480f51c3cb.lp2', path = '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/cache/92a68da582db4001806eabcaceb9ee59' (OS Error: Cross-device link, errno = 18)
+  /// ```
+  Future<bool> renameTo(String newPath) async {
+    try {
+      await rename(newPath);
+      return true;
+    } catch (e) {
+      //debugger();
+      await copy(newPath);
+      await delete();
+      return true;
+    }
+  }
+
+  /// [renameTo]
+  bool renameToSync(String newPath) {
+    try {
+      renameSync(newPath);
+      return true;
+    } catch (e) {
+      //debugger();
+      copySync(newPath);
+      deleteSync();
+      return true;
+    }
+  }
 }
 
 //endregion File 扩展

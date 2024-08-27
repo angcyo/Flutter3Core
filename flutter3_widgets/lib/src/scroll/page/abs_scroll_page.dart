@@ -11,7 +11,7 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// [RScrollView]
 /// [AbsScrollPage]
-/// [RScrollPage] 刷新,加载更多
+/// [RScrollPage] 刷新,加载更多. 在[buildBody]中兼容[RScrollPage].
 /// [RStatusScrollPage] 状态切换
 ///
 /// [RebuildBodyMixin]
@@ -112,6 +112,7 @@ mixin AbsScrollPage {
     final globalConfig = GlobalConfig.of(context);
     return getTitle(context)?.text(
         style: globalConfig.globalTheme.textTitleStyle.copyWith(
+      fontWeight: FontWeight.bold,
       color: getAppBarForegroundColor(context) ??
           globalConfig.globalTheme.appBarForegroundColor,
     ));

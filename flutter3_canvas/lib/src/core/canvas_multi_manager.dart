@@ -13,7 +13,10 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   CanvasElementManager get canvasElementManager =>
       canvasDelegate.canvasElementManager;
 
-  CanvasMultiManager(this.canvasDelegate);
+  CanvasMultiManager(this.canvasDelegate) {
+    //接管画布元素
+    initFromCanvasDelegate();
+  }
 
   /// 画布状态列表
   final List<CanvasStateData> canvasStateList = [];
@@ -28,7 +31,10 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 从画布中初始化数据, 此方法为了兼容测试使用
   @implementation
-  void initFromCanvasDelegate() {
+  void initFromCanvasDelegate({
+    bool notify = true,
+    bool selected = true,
+  }) {
     if (isNil(canvasStateList)) {
       addCanvasState(
           CanvasStateData(
@@ -36,7 +42,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
             undoList: canvasDelegate.canvasUndoManager.undoList,
             redoList: canvasDelegate.canvasUndoManager.redoList,
           ),
-          selected: true);
+          notify: notify,
+          selected: selected);
     }
   }
 
@@ -135,7 +142,11 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasDelegate.dispatchCanvasMultiStateListChanged(canvasStateList);
     }
     if (selected) {
-      selectCanvasState(canvasStateData);
+      selectCanvasState(
+        canvasStateData,
+        notifyBasics: notify,
+        notifySelected: notify,
+      );
     }
   }
 

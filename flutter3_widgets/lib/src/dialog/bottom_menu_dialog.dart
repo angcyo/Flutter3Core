@@ -14,6 +14,8 @@ part of './dialog.dart';
 /// [BottomMenuItemTile]
 ///
 /// [ActionsDialog]
+///
+/// @return 点击取消按钮时, 返回false, 其它情况自行返回
 class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   /// 菜单列表,
   /// [BottomMenuItemTile]
@@ -27,6 +29,10 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   /// 是否显示取消按钮
   final bool showCancelItem;
 
+  /// 取消按钮的文本
+  @defInjectMark
+  final String? cancelText;
+
   /// 指定取消按钮
   /// [BottomMenuItemTile]
   @defInjectMark
@@ -38,6 +44,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
     this.showCancelItem = true,
     this.clipRadius = kDefaultBorderRadiusXX,
     this.cancelItem,
+    this.cancelText,
   });
 
   @override
@@ -56,7 +63,8 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
                       //no op
                     },
                     closeAfterTap: true,
-                    child: LibRes.of(context).libCancel.text(),
+                    popResult: false,
+                    child: (cancelText ?? LibRes.of(context).libCancel).text(),
                   ))
               .clipRadius(radius: clipRadius)
       ],

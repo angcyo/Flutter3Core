@@ -150,6 +150,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //region ---api---
 
+  /// 画布是否为空
+  @api
+  bool get isCanvasEmpty => canvasMultiManager.isCanvasEmpty;
+
   /// 震动反馈
   @api
   void vibrate() {

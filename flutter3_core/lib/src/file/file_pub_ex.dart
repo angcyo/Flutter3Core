@@ -196,7 +196,7 @@ extension FilePubEx on FileSystemEntity {
           await newPath.delete();
         }
       }
-      await rename(newPath);
+      await path.rename(newPath);
       assert(() {
         l.d('renameToSync->$path->$newPath');
         return true;
@@ -233,7 +233,7 @@ extension FilePubEx on FileSystemEntity {
           newPath.deleteSync();
         }
       }
-      renameSync(newPath);
+      path.renameSync(newPath);
       assert(() {
         l.d('renameToSync->$path->$newPath');
         return true;
@@ -365,6 +365,11 @@ extension FileStringPubEx on String {
     );
   }
 
+  /// 重命名文件
+  Future<bool> rename(String newPath) async => file().renameTo(newPath);
+
+  bool renameSync(String newPath) => file().renameToSync(newPath);
+
   /// 获取一个自身路径对应的文件对象
   /// 在web环境下, 会抛出异常
   /// `The argument type 'File/*1*/' can't be assigned to the parameter type 'File/*2*/'.`
@@ -392,7 +397,7 @@ extension FileStringPubEx on String {
 
   /// 删除文件或文件夹
   /// [recursive] 如果是文件夹,是否递归删除
-  Future<bool> delete({bool recursive = false}) async {
+  Future<bool> delete({bool recursive = true}) async {
     try {
       if (isFileSync()) {
         await file().delete();
@@ -409,9 +414,10 @@ extension FileStringPubEx on String {
     return false;
   }
 
-  /// 同步删除
+  /// 同步删除文件/文件夹
+  /// [recursive] 如果是文件夹是否递归删除
   /// [delete]
-  bool deleteSync({bool recursive = false}) {
+  bool deleteSync({bool recursive = true}) {
     try {
       if (isFileSync()) {
         file().deleteSync();

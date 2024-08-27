@@ -25,10 +25,13 @@ class BottomMenuItemTile extends StatelessWidget {
   final Color? disableColor;
 
   /// 点击事件
-  final GestureTapCallback? onTap;
+  final FutureVoidAction? onTap;
 
   /// 点击后, 关闭对话框
   final bool closeAfterTap;
+
+  /// [closeAfterTap] 关闭对话框时的返回值
+  final dynamic popResult;
 
   const BottomMenuItemTile({
     super.key,
@@ -39,6 +42,7 @@ class BottomMenuItemTile extends StatelessWidget {
     this.closeAfterTap = true,
     this.backgroundColor,
     this.disableColor,
+    this.popResult,
   });
 
   @override
@@ -51,11 +55,11 @@ class BottomMenuItemTile extends StatelessWidget {
         .paddingAll(kX)
         .constrainedMin(minHeight: kMinInteractiveDimension)
         .ink(
-      () {
+      () async {
         if (closeAfterTap) {
-          context.pop();
+          context.pop(popResult);
         }
-        onTap?.call();
+        await onTap?.call();
       },
       enable: enable,
     ).material(color: backgroundColor ?? globalTheme.surfaceBgColor);

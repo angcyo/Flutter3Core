@@ -9,6 +9,43 @@ part of '../../flutter3_pub.dart';
 /// https://github.com/brendan-duncan/archive/blob/main/example/example.dart
 
 extension ZipEx on String {
+  /// 遍历压缩包中的文件
+  Future<bool> eachArchiveFile(
+      FutureOr Function(ArchiveFile archive) action) async {
+    final input = InputFileStream(this);
+    try {
+      final archive = ZipDecoder().decodeBuffer(input);
+      for (final file in archive.files) {
+        await action(file);
+      }
+    } finally {
+      input.close();
+    }
+    return true;
+  }
+
+  /// 修改指定压缩包中的文件
+  /// [action] 修改文件的回调, 返回null 则删除了文件
+  Future<bool> modifyArchiveFile(
+      Future<ArchiveFile?> Function(ArchiveFile archive) action) async {
+    final tempCacheFilePath = await cacheFilePath(uuidFileName());
+    final targetZipFilePath = this;
+    final result = await tempCacheFilePath.writeZipFile((zipEncoder) async {
+      await eachArchiveFile((file) async {
+        final newFile = await action(file);
+        if (newFile != null) {
+          //修改了文件
+          zipEncoder.addArchiveFile(newFile);
+        }
+      });
+    });
+    //修改之后, 删除目标文件
+    await targetZipFilePath.delete();
+    //重命名临时文件到目标文件
+    await tempCacheFilePath.rename(targetZipFilePath);
+    return result;
+  }
+
   /// 读取zip文件
   /// [extractFileToDisk]
   /// [Archive.findFile]->[ArchiveFile]
@@ -28,9 +65,11 @@ extension ZipEx on String {
       }
     }*/
 
-    await action(archive);
-
-    input.close();
+    try {
+      await action(archive);
+    } finally {
+      input.close();
+    }
     return true;
   }
 
@@ -44,9 +83,12 @@ extension ZipEx on String {
     DateTime? modified,
   }) async {
     final encoder = ZipFileEncoder();
-    encoder.create(this, modified: modified ?? DateTime.now());
-    await action(encoder);
-    encoder.close();
+    try {
+      encoder.create(this, modified: modified ?? DateTime.now());
+      await action(encoder);
+    } finally {
+      encoder.close();
+    }
     return true;
   }
 
@@ -110,8 +152,8 @@ extension ZipFileEncoderEx on ZipFileEncoder {
       return;
     }
     addArchiveFile(compress
-        ? ArchiveFile(name, 0, bytes)
-        : ArchiveFile.noCompress(name, 0, bytes));
+        ? ArchiveFile(name, 0, bytes) /*用0, 内部会自动使用length*/
+        : ArchiveFile.noCompress(name, bytes.length, bytes));
   }
 
   /// [writeBytesSync]
