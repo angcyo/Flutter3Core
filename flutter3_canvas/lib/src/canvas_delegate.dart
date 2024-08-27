@@ -106,6 +106,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 画布回调监听
   final Set<CanvasListener> canvasListeners = {};
 
+  /// 画布数据, 用来存储自定义的数据
+  @flagProperty
+  final Map<String, dynamic> dataMap = {};
+
   //--属性
 
   /// 重绘次数
