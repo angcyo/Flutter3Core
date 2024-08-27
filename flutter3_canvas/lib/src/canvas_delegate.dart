@@ -342,9 +342,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 元素属性发生改变时触发
   /// [propertyType] 标识当前的属性变化的类型
   /// [fromUndoType] 标识当前的操作是否是来自回退栈/撤销/重做
-  /// [PainterPropertyType.paint]
-  /// [PainterPropertyType.state]
+  /// [PainterPropertyType.paint] -> [ElementPainter.paintProperty]
+  /// [PainterPropertyType.state] -> [ElementPainter.paintState]
   /// [PainterPropertyType.data]
+  /// [PainterPropertyType.mode]
   void dispatchCanvasElementPropertyChanged(
     ElementPainter elementPainter,
     dynamic from,

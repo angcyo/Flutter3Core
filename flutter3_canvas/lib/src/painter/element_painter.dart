@@ -559,6 +559,8 @@ class ElementPainter extends IPainter
   /// [propertyType] 属性类型
   /// [PaintProperty]
   /// [PaintState]
+  /// [ElementPainter.paintState]
+  /// [ElementPainter.paintProperty]
   void dispatchSelfPaintPropertyChanged(
     dynamic old,
     dynamic value,
@@ -1830,16 +1832,21 @@ enum PainterPropertyType {
   /// 绘制的相关属性, 比如坐标/缩放/旋转/倾斜等信息
   /// 支持回退的属性
   /// 对应[PaintProperty]
+  /// [ElementPainter.paintProperty]
   @supportUndo
   paint,
 
   /// 元素的状态改变, 比如锁定/可见性/uuid/名称等信息
   /// 对应[PaintState]
+  /// [ElementPainter.paintState]
   state,
 
   /// 元素的数据改变, 比如内容等信息
   @supportUndo
-  data;
+  data,
+
+  /// 元素的数据模式改变, 图片变成了文本等
+  mode,
 }
 
 /// 元素真实数据内容改变

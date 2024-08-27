@@ -500,7 +500,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     UndoType? fromUndoType,
   ) {
     if (enableResetElementAngle) {
-      if (isControlElement) {}
+      if (isControlElement) {
+        //no op
+      }
     }
     if (isSelectedElement) {
       if (fromUndoType?.isUndoRedo == true &&
