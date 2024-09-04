@@ -20,8 +20,8 @@ void main(List<String> arguments) async {
   //---
   //_sendFeishuText(webhook, "text");
 
-  await _sendFeishuVersion();
-  //await _sendLP5xVersion();
+  //await _sendFeishuVersion();
+  await _sendLP5xVersion();
 }
 
 /// LP版本发布通知
