@@ -2834,12 +2834,13 @@ extension NavigatorEx on BuildContext {
   /// [push]
   Future<T?> pushWidget<T extends Object?>(
     Widget page, {
+    RouteSettings? settings,
     TranslationType? type,
     bool rootNavigator = false,
     bool popTop = false,
   }) {
     return push(
-      page.toRoute(type: type),
+      page.toRoute(type: type, settings: settings),
       rootNavigator: rootNavigator,
       popTop: popTop,
     );
@@ -2854,23 +2855,25 @@ extension NavigatorEx on BuildContext {
   /// [pushReplacement]
   Future<T?> pushReplacementWidget<T extends Object?>(
     Widget page, {
+    RouteSettings? settings,
     TranslationType? type,
     bool rootNavigator = false,
   }) {
-    return pushReplacement(page.toRoute(type: type),
+    return pushReplacement(page.toRoute(type: type, settings: settings),
         rootNavigator: rootNavigator);
   }
 
   /// [pushAndRemoveUntil]
   Future<T?> pushAndRemoveToRootWidget<T extends Object?>(
     Widget page, {
+    RouteSettings? settings,
     TranslationType? type,
     RoutePredicate? predicate,
     bool rootNavigator = false,
   }) {
     var root = ModalRoute.withName('/');
     return navigatorOf(rootNavigator).pushAndRemoveUntil(
-      page.toRoute(type: type),
+      page.toRoute(type: type, settings: settings),
       predicate ?? root,
     );
   }
@@ -2912,6 +2915,7 @@ extension NavigatorEx on BuildContext {
     return navigatorOf(rootNavigator).maybePop(result);
   }
 
+  /// [ModalRoute.withName('/login')]
   void popUntil<T extends Object?>(
     RoutePredicate predicate, [
     bool rootNavigator = false,
@@ -2951,23 +2955,33 @@ extension NavigatorStateEx on NavigatorState {
 
   /// 支持路由动画
   /// [push]
-  Future<T?> pushWidget<T extends Object?>(Widget page,
-      {TranslationType? type}) {
-    return push(page.toRoute(type: type));
+  Future<T?> pushWidget<T extends Object?>(
+    Widget page, {
+    TranslationType? type,
+    RouteSettings? settings,
+  }) {
+    return push(page.toRoute(type: type, settings: settings));
   }
 
   /// [pushReplacement]
-  Future<T?> pushReplacementWidget<T extends Object?>(Widget page,
-      {TranslationType? type}) {
-    return pushReplacement(page.toRoute(type: type));
+  Future<T?> pushReplacementWidget<T extends Object?>(
+    Widget page, {
+    TranslationType? type,
+    RouteSettings? settings,
+  }) {
+    return pushReplacement(page.toRoute(type: type, settings: settings));
   }
 
   /// [pushAndRemoveUntil]
-  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(Widget page,
-      {TranslationType? type, RoutePredicate? predicate}) {
+  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(
+    Widget page, {
+    TranslationType? type,
+    RoutePredicate? predicate,
+    RouteSettings? settings,
+  }) {
     final root = ModalRoute.withName('/');
     return pushAndRemoveUntil(
-      page.toRoute(type: type),
+      page.toRoute(type: type, settings: settings),
       predicate ?? root,
     );
   }
