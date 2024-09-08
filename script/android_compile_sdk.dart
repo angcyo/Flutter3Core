@@ -95,12 +95,12 @@ void amendAndroidCompileSdkVersion(String flutterPath, int compileSdk) {
       //修改compileSdkVersion
       final newContent = androidPathFileContent
           .replaceAllMapped(RegExp(r"compileSdkVersion\s+(\d+)"), (match) {
-        return "compileSdkVersion $compileSdk";
+        return "compileSdkVersion $compileSdk //${DateTime.now()}";
       });
       //修改compileSdk
       final newContent2 =
           newContent.replaceAllMapped(RegExp(r"compileSdk\s+(\d+)"), (match) {
-        return "compileSdk $compileSdk";
+        return "compileSdk $compileSdk //${DateTime.now()}";
       });
       //写入文件
       androidPathFile.writeAsStringSync(newContent2);
