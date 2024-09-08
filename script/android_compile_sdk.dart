@@ -37,7 +37,8 @@ void main() async {
   final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");
 
-  final localYaml = loadYaml(localYamlFile.readAsStringSync());
+  final localYaml = loadYaml(
+      localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
   final yaml = loadYaml(yamlFile.readAsStringSync());
 
   //Android sdk compile sdk version
