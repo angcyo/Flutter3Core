@@ -582,6 +582,11 @@ Future<R> run<R>(ResultCallback<R> callback) {
   return Isolate.run(() => callback(), debugName: "run-${nowTimeString()}");
 }
 
+/// 内存隔离, 不共享. 只能传递基础数据类型, 或者可以被`send`的对象
+/// [Isolate.run]
+/// [Isolate.spawn]
+Future<R> isolateRun<R>(ResultCallback<R> callback) => run(callback);
+
 /// 安排一个轻量的任务
 /// [scheduleTask]
 /// [scheduleMicrotask]
