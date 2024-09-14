@@ -9,7 +9,7 @@ typedef SwiperWidgetBuilder<T> = Widget Function(T element, int index);
 
 extension AppSwiperEx<T> on List<T> {
   ///[Swiper]
-  ///[paginationThreshold] 页码指示器的阈值, 当数量大于这个值时, 使用页面指示器
+  ///[paginationThreshold] 页码指示器的阈值, 当页面数量大于这个值时, 使用页面数量指示器. 否则使用样式指示器.
   ///[FractionPaginationBuilder]
   ///[DotSwiperPaginationBuilder]
   ///
