@@ -1715,7 +1715,7 @@ extension WidgetEx on Widget {
   }
 
   /// [size]
-  Widget wh(double? width, double? height) {
+  Widget wh([double? width, double? height]) {
     if (width == null && height == null) {
       return this;
     }

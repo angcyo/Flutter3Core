@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../flutter3_widgets.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -46,7 +46,7 @@ extension ExpandableEx on Widget {
     );
   }
 
-  /// 当前小部件展开[expanded]的小部件
+  /// 当前小部件展开为[expanded]指定的小部件
   Widget orExpanded({
     required Widget expanded,
     ExpandableController? controller,
@@ -56,6 +56,7 @@ extension ExpandableEx on Widget {
     bool scrollOnExpand = true,
     bool scrollOnCollapse = true,
   }) {
+    //theme ??= const ExpandableThemeData(alignment: Alignment.topCenter);
     Widget result = Expandable(
       collapsed: this,
       expanded: expanded,
