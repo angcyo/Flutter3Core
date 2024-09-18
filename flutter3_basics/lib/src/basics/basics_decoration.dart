@@ -231,10 +231,25 @@ BoxDecoration lineaGradientDecoration(
   );
 }
 
+/// 图片装饰
+/// [Decoration]->[BoxDecoration]
+BoxDecoration imageDecoration(
+  ImageProvider image, {
+  BoxFit fit = BoxFit.fill,
+}) {
+  return BoxDecoration(
+    image: DecorationImage(
+      image: image,
+      fit: fit,
+    ),
+  );
+}
+
 //endregion BoxDecoration
 
 //region InputDecoration
 
+/// [ShapeBorder]->[InputBorder]
 /// [InputBorder.none]
 /// [BorderSide.none]
 /// [InputDecoration]
