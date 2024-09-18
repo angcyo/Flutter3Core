@@ -10,6 +10,8 @@ part of '../../flutter3_core.dart';
 
 /// [ViewModel]
 abstract class BaseViewModel extends ViewModel {
+
+  ///
   @override
   void onDispose() {
     super.onDispose();
