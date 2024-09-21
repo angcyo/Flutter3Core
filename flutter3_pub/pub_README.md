@@ -77,6 +77,7 @@ Lottie 是一个适用于 Android 和 iOS 的移动库，它使用 Bodymovin 解
 动画，并在移动设备上原生渲染它们！
 
 - [lottie: ^2.7.0](https://pub.dev/packages/lottie)
+- [lottie: ^3.1.2](https://pub.dev/packages/lottie)
 
 ## objectbox
 
@@ -423,3 +424,4 @@ https://github.com/fluttercommunity/plus_plugins
 - [home_widget: ^0.6.0](https://pub.dev/packages/home_widget)HomeWidget 是一个插件，可以更轻松地在 Android 和 iOS 上创建主屏幕小部件。 HomeWidget 不允许使用 Flutter 本身编写 Widget。它仍然需要使用本机代码编写小部件。然而，它提供了一个统一的接口来发送数据、检索数据和更新 Widgets
 - [receive_sharing_intent: ^1.8.0](https://pub.dev/packages/receive_sharing_intent) 一个 Flutter 插件，使 Flutter 应用程序能够从其他应用程序接收共享照片、视频、文本、URL 或任何其他文件类型。
 - [receive_sharing_intent_plus: ^1.0.1](https://pub.dev/packages/receive_sharing_intent_plus) Flutter 插件，可在您的应用程序中使用文本、照片和 URL 解锁无缝内容共享。
+- [audioplayers: ^6.1.0](https://pub.dev/packages/audioplayers) 一个可同时播放多个音频文件的 Flutter 插件，适用于 Android、iOS、Linux、macOS、Windows 和 Web。
