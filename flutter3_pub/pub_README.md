@@ -193,6 +193,7 @@ https://github.com/googlefonts/noto-emoji
 - [flutter_intro: ^3.2.3](https://pub.dev/packages/flutter_intro) 为您的 Flutter 项目提供新功能介绍和分步用户指南的更好方法。
 - [el_tooltip: ^2.0.0](https://pub.dev/packages/el_tooltip) 智能定位工具提示。
 - [popover: ^0.3.0+1](https://pub.dev/packages/popover) Popover for Flutter Flutter 的弹出窗口
+- [bot_toast: ^4.1.3](https://pub.dev/packages/bot_toast) 一个真正意义上的flutter Toast库!
 
 ## flutter_neumorphic
 
@@ -247,6 +248,7 @@ https://guoshuyu.cn/home/wx/Z1.html
 - [animated_digit: ^3.2.3](https://pub.dev/packages/animated_digit) 滚动动画数字小部件，任何需要动画效果的数字，易于使用。
 - [flutter_animate: ^4.3.0](https://pub.dev/packages/flutter_animate) 一个高性能的库，可以简单地在 Flutter 中添加几乎任何类型的动画效果。
 - [animated_size_and_fade: ^3.0.1](https://pub.dev/packages/animated_size_and_fade) 在两个小部件之间执行淡入淡出和大小过渡。[AnimatedSize]+[AnimatedSwitcher]
+- [loading_animation_widget: ^1.2.1](https://pub.dev/packages/loading_animation_widget) 加载动画小部件
 
 ## 国际化
 
