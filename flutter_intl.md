@@ -55,7 +55,8 @@ flutter_intl:
 # 3.初始化`delegate`
 
 ```dart
-MaterialApp(
+
+final app = MaterialApp(
   localizationsDelegates: const [
     LibRes.delegate, //必须
   ],
@@ -72,3 +73,11 @@ MaterialApp(
 
 https://juejin.cn/post/7041125659308982302
 
+# 问题
+
+- pub.dev/analyzer-6.5.0/lib/src/summary2/macro_application.dart:1261:7: Error: The non-abstract
+  class '_StaticTypeImpl' is missing implementations for these members:StaticType.asInstanceOf
+
+```
+flutter pub global activate intl_utils
+```
