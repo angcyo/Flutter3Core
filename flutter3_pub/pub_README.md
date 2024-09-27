@@ -373,6 +373,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [json_rpc_2: ^3.0.2](https://pub.dev/packages/json_rpc_2) 实现 JSON-RPC 2.0 规范的库。
 - [udp: ^5.0.3](https://pub.dev/packages/udp) Dart 的轻量级 UDP 库。
 - [cronet_http: ^1.3.2](https://pub.dev/packages/cronet_http) 一个 Android Flutter 插件，提供对 Cronet HTTP 客户端的访问。
+- [encrypt: ^5.0.3](https://pub.dev/packages/encrypt) 一组基于 PointyCastle 的高级 API，用于双向加密。 具有 PKCS1 和 OAEP 编码的 RSA SHA256 with RSA
 
 ## 平台特有
 
