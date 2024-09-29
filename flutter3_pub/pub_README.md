@@ -152,6 +152,7 @@ https://github.com/dnfield/vector_graphics
 - [vector_graphics_codec: ^1.1.9+1](https://pub.dev/packages/vector_graphics_codec)
 - [vector_graphics_compiler: ^1.1.9+1](https://pub.dev/packages/vector_graphics_compiler) 此包将 SVG 文件解析为 vector_graphics 运行时可以呈现的格式。
 - [svg_path_parser: ^1.1.1](https://pub.dev/packages/svg_path_parser) 一个 Flutter/Dart 实用程序，用于将 SVG 路径解析为库中的 dart:ui 等效 Path 对象。
+- [animated_svg: ^2.1.0](https://pub.dev/packages/animated_svg) 用于显示可缩放矢量图形 1.1 文件并为其设置动画的Flutter包。该包仅用Dart语言编写。
 
 ## jovial_svg
 
