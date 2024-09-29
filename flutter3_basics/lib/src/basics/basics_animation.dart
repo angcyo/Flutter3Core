@@ -15,6 +15,22 @@ part of '../../flutter3_basics.dart';
 /// - [WidgetEx.colorFiltered]
 ///
 /// [ImageFilter] 图片过滤器. 可以实现高斯模糊效果
+///
+/// # [AnimationController].[Tween].[Animation]关系
+/// [AnimationController] 动画控制器, 可被监听
+/// [Animatable]->[Tween]/[CurveTween] 动画插值对象, 修改动画过程的值 [Animatable.animate]
+/// [Animation]->[CurvedAnimation]/[AnimationController] 动画对象, 可被监听, 动画过程中的值
+/// ```
+/// // 1.创建一个动画控制器AnimationController
+/// late final AnimationController controller = AnimationController(
+///   vsync: this,
+///   duration: widget.duration,
+///   reverseDuration: widget.duration,
+/// );
+///
+/// // 2. 创建一个动画插值对象Tween
+/// late final Animation<double> animation = Tween<double>(begin: 0, end: 360).animate(CurvedAnimation(parent: controller, curve: widget.curve));
+/// ```
 
 /// 默认的动画时长
 /// [kTabScrollDuration]
