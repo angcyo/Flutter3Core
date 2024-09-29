@@ -33,7 +33,9 @@ class HttpResultHandle {
       if (code >= 200 && code < 300) {
         //成功
         final data = response.data;
-        if (codeKey != null) {
+        if (data is! Map) {
+          return data;
+        } else if (codeKey != null) {
           //需要判断逻辑code码
           final dataCode = data[codeKey];
           if (dataCode is int && dataCode >= 200 && dataCode < 300) {
