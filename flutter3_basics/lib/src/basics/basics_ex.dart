@@ -660,8 +660,41 @@ extension StringEx on String {
   /// 使用base64解密当前的字符串
   String? get fromBase64 => base64Decode(this).utf8Str;
 
+  /// 判断当前字符串是否是http协议开头
+  bool get isHttpScheme {
+    final lowerCase = toLowerCase();
+    return lowerCase.startsWith('http://') || lowerCase.startsWith('https://');
+  }
+
   /// 判断当前字符串是否是ip字符串
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
+
+  /// 判断当前字符串
+  /// 如果是http协议, 则直接返回
+  /// 如果是ip, 则返回 http://ip:port
+  /// 如果是域名, 则返回 http://域名.local:port
+  String toLocal([int? port]) {
+    port ??= 80;
+    if (isHttpScheme /*isMatch(r'^https?://')*/) {
+      if (port == 80) {
+        return this;
+      } else {
+        return '$this:$port';
+      }
+    } else if (isIpStr) {
+      if (port == 80) {
+        return 'http://$this';
+      } else {
+        return 'http://$this:$port';
+      }
+    } else {
+      if (port == 80) {
+        return 'http://$this.local';
+      } else {
+        return 'http://$this.local:$port';
+      }
+    }
+  }
 
   /// 判断当前字符是否是数字
   bool get isNumber => isMatch(r'^\d+$');
@@ -743,6 +776,8 @@ extension StringEx on String {
   Color toColor() => ColorEx.fromHex(this);
 
   /// 使用json解析字符串, 返回[Map], [List]数据结构
+  ///
+  /// 支持带有注释和尾随逗号的 JSON https://pub.dev/packages/jsonc
   dynamic jsonDecode() => json.decode(this);
 
   /// 从json字符串中解析出对应的数据类型
