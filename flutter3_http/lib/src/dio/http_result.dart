@@ -4,17 +4,23 @@ part of '../../flutter3_http.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/02
 ///
-
-const kDefHttpErrorMessage = "network error";
-
 /// 用来解析网络请求返回的[Response]
 /// ```
 /// {"errMsg":"操作成功","code":200,"data":{"id":18434,"nickname":"8️⃣🅱️Q了","say":null}}
 /// ```
 class HttpResultHandle {
-  String codeKey = "code";
-  String dataKey = "data";
-  String messageKey = "errMsg";
+  static const kDefHttpErrorMessage = "network error";
+  static const kDefHttpDataCodeKey = "code";
+  static const kDefHttpDataDataKey = "data";
+  static const kDefHttpDataMessageKey = "errMsg";
+
+  /// json当中对应的资源key
+  String? codeKey = kDefHttpDataCodeKey;
+  String? dataKey = kDefHttpDataDataKey;
+  String? messageKey = kDefHttpDataMessageKey;
+
+  /// 默认的错误消息
+  String? defHttpErrorMessage = kDefHttpErrorMessage;
 
   /// 是否要显示错误提示
   bool showErrorToast = true;
@@ -23,22 +29,31 @@ class HttpResultHandle {
   late dynamic Function(dynamic response) handleResponse = (response) {
     //debugger();
     if (response is Response) {
-      var code = response.statusCode ?? 0;
+      final code = response.statusCode ?? 0;
       if (code >= 200 && code < 300) {
         //成功
-        var data = response.data;
-        var dataCode = data[codeKey];
-        if (dataCode is int && dataCode >= 200 && dataCode < 300) {
-          //成功
-          return data[dataKey];
+        final data = response.data;
+        if (codeKey != null) {
+          //需要判断逻辑code码
+          final dataCode = data[codeKey];
+          if (dataCode is int && dataCode >= 200 && dataCode < 300) {
+            //成功
+            return dataKey == null ? data : data[dataKey];
+          } else {
+            throw RException(
+                message: (messageKey == null ? null : data[messageKey]) ??
+                    defHttpErrorMessage);
+          }
         } else {
-          throw RException(message: data[messageKey] ?? kDefHttpErrorMessage);
+          return dataKey == null ? data : data[dataKey];
         }
       } else {
         throw RException(message: "[$code]${response.statusMessage}");
       }
+    } else {
+      //throw RException(message: "无法解析的数据类型");
+      return response;
     }
-    throw RException(message: "无法解析的数据类型");
   };
 
   /// 处理网络错误信息, 返回处理后的错误提示信息
@@ -46,13 +61,13 @@ class HttpResultHandle {
   /// [DioException]
   late dynamic Function(dynamic error) handleError = (error) {
     //debugger();
-    var tip = kDefHttpErrorMessage;
+    var tip = defHttpErrorMessage;
     if (error is DioException) {
       var errorMessage = error.response?.data[messageKey];
       if (error.type == DioExceptionType.connectionTimeout ||
           error.type == DioExceptionType.receiveTimeout ||
           error.type == DioExceptionType.sendTimeout) {
-        errorMessage ??= kDefHttpErrorMessage;
+        errorMessage ??= defHttpErrorMessage;
       }
       tip = errorMessage ?? error.message ?? tip;
     }
