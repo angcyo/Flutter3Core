@@ -66,7 +66,7 @@ Future<bool> isGitDir(Directory dir) async {
 Future printIps() async {
   print(InternetAddress.anyIPv4);
   print(InternetAddress.anyIPv6);
-  for (var interface in await NetworkInterface.list()) {
+  for (final interface in await NetworkInterface.list()) {
     print('== Interface: ${interface.name} ==');
     for (var addr in interface.addresses) {
       print(
