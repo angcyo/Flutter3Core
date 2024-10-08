@@ -6,30 +6,22 @@ import 'package:yaml/yaml.dart';
 ///
 /// Email:angcyo@126.com
 /// @author angcyo
-/// @date 2024/08/11
+/// @date 2024/10/08
 ///
-/// 新版本的flutter 3.24.0使用Android 34编译,
-/// 所有子库不使用sdk 34编译的话, 就会在打包的时候报错.
+/// 更新Gradle到7.5.0之后, 需要指定namespace属性, 不指定会报错.
 /// ```
-/// AAPT: error: resource android:attr/lStar not found.
+/// Namespace not specified.
 /// ```
 ///
 /// ```
 /// android {
-///     // Conditional for compatibility with AGP <4.2.
 ///     if (project.android.hasProperty("namespace")) {
-///         namespace 'com.rmawatson.flutterisolate'
-///     }
-///
-///     compileSdkVersion 34
-///
-///     defaultConfig {
-///         minSdkVersion 16
+///         namespace 'com.angcyo.xxx'
 ///     }
 /// }
 /// ```
 ///
-/// 此脚本用于在打包前, 修改子库的compileSdkVersion编译版本.
+/// 此脚本用于在`build.gradle`文件的`android{ ... }`中加入`namespace`属性.
 ///
 void main() async {
   final currentPath = Directory.current.path;
@@ -41,15 +33,6 @@ void main() async {
   final localYaml = loadYaml(
       localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
   final yaml = loadYaml(yamlFile.readAsStringSync());
-
-  //---
-
-  //Android sdk compile sdk version
-  int? compileSdk = yaml["androidCompileSdk"] ?? localYaml["androidCompileSdk"];
-  if (compileSdk == null) {
-    colorLog("请在[${yamlFile.path}]文件中指定[androidCompileSdk]属性.");
-    return;
-  }
 
   //---
 
@@ -75,9 +58,14 @@ void main() async {
       final path = dependency["path"];
       if (path != null) {
         if (names == null || names.contains(name)) {
-          colorLog(
-              "正在修改[${index + 1}/${androidDependencies.length}]->$path -> compileSdk:$compileSdk");
-          amendAndroidCompileSdkVersion(path, compileSdk);
+          final namespace = getPackageFromAndroidManifest(path);
+          if (namespace != null) {
+            colorLog(
+                "正在添加[${index + 1}/${androidDependencies.length}]->$path -> namespace:$namespace");
+            appendNamespace(path, namespace);
+          } else {
+            colorLog("未找到[package]信息, 请检查[${getAndroidManifestPath(path)}]文件.");
+          }
         }
       }
       index++;
@@ -88,30 +76,42 @@ void main() async {
 }
 
 /// 核心修改方法
-/// 修改子库flutter工程中android工程中`build.gradle`文件中的`compileSdkVersion`和`compileSdk`
+/// 添加flutter子库android工程中`build.gradle`文件加入`namespace`
 /// [flutterPath] flutter工程子库根路径
-/// [compileSdk] 修改后的编译版本
-void amendAndroidCompileSdkVersion(String flutterPath, int compileSdk) {
+void appendNamespace(String flutterPath, String namespace) {
   final androidPath = "$flutterPath/android";
   final androidPathFile = File("$androidPath/build.gradle");
   if (androidPathFile.existsSync()) {
     final androidPathFileContent = androidPathFile.readAsStringSync();
-    if (androidPathFileContent.contains("compileSdkVersion")) {
-      //修改compileSdkVersion
+    if (!androidPathFileContent.contains("namespace")) {
+      //修改 android {
       final newContent = androidPathFileContent
-          .replaceAllMapped(RegExp(r"compileSdkVersion\s+(\d+)"), (match) {
-        return "compileSdkVersion $compileSdk //by angcyo ${DateTime.now()}";
-      });
-      //修改compileSdk
-      final newContent2 =
-          newContent.replaceAllMapped(RegExp(r"compileSdk\s+(\d+)"), (match) {
-        return "compileSdk $compileSdk //by angcyo ${DateTime.now()}";
+          .replaceAllMapped(RegExp(r"android *{ *"), (match) {
+        return 'android { \n    if (project.android.hasProperty("namespace")) namespace "$namespace" //by angcyo ${DateTime.now()}\n';
       });
       //写入文件
-      androidPathFile.writeAsStringSync(newContent2);
+      androidPathFile.writeAsStringSync(newContent);
       colorLog("修改成功->$androidPathFile", 250);
+    } else {
+      colorLog("跳过已存在[namespace]信息 -> ${androidPathFile.path}");
     }
   }
+}
+
+/// 获取AndroidManifest.xml文件路径
+String getAndroidManifestPath(String flutterPath) {
+  return "$flutterPath/android/src/main/AndroidManifest.xml";
+}
+
+/// 从`AndroidManifest.xml`文件中获取`package`
+String? getPackageFromAndroidManifest(String flutterPath) {
+  final androidManifestFile = File(getAndroidManifestPath(flutterPath));
+  if (androidManifestFile.existsSync()) {
+    final content = androidManifestFile.readAsStringSync();
+    final package = RegExp(r'package=\"(.*?)\"').firstMatch(content)?.group(1);
+    return package;
+  }
+  return null;
 }
 
 void colorLog(dynamic msg, [int col = 93]) {

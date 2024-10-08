@@ -18,6 +18,6 @@ extension ImageGalleryEx on UiImage {
     if (bytes == null) {
       return null;
     }
-    return ImageGallerySaver.saveImage(bytes, name: fileName);
+    return ImageGallerySaverPlus.saveImage(bytes, name: fileName);
   }
 }

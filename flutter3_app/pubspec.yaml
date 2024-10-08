@@ -63,7 +63,7 @@ dependencies:
   # https://pub.dev/packages/flutter_local_notifications_platform_interface
   # https://pub.dev/packages/timezone
   # ANDROID IOS LINUX MACOS
-  flutter_local_notifications: ^17.2.2
+  flutter_local_notifications: ^17.2.3
 
   # https://pub.dev/packages/flutter_animate
   # https://github.com/gskinner/flutter_animate
@@ -78,7 +78,10 @@ dependencies:
   # 保存图片到相册
   # https://pub.dev/packages/image_gallery_saver
   # https://github.com/hui-z/image_gallery_saver
-  image_gallery_saver: ^2.0.3 #ANDROID IOS
+  #image_gallery_saver: ^2.0.3 #ANDROID IOS
+  # https://pub.dev/packages/image_gallery_saver_plus
+  # https://github.com/ArmanKT/image_gallery_saver_plus
+  image_gallery_saver_plus: ^3.0.5 #ANDROID IOS
 
   # https://pub.dev/packages/flutter_install_app
   # flutter_install_app: ^1.3.0 #ANDROID IOS
