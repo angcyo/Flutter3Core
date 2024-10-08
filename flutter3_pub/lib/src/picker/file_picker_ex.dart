@@ -36,6 +36,7 @@ Future<PlatformFile?> pickSingleImage({
 /// [allowMultiple] 是否允许多选
 /// [withData] 是否返回数据,而非文件. 在web端时需要.
 /// [withReadStream] 是否返回文件流
+/// [readSequential] 可以选择在 Web 上设置以在导入过程中保持导入文件顺序。
 Future<FilePickerResult?> pickFiles({
   FileType type = FileType.any,
   bool allowMultiple = false,
@@ -44,7 +45,7 @@ Future<FilePickerResult?> pickFiles({
   List<String>? allowedExtensions,
   Function(FilePickerStatus)? onFileLoading,
   bool allowCompression = true,
-  int compressionQuality = 30,
+  int? compressionQuality,
   bool withData = false,
   bool withReadStream = false,
   bool lockParentWindow = false,
@@ -55,7 +56,7 @@ Future<FilePickerResult?> pickFiles({
     initialDirectory: initialDirectory,
     type: type,
     allowedExtensions: allowedExtensions,
-    compressionQuality: compressionQuality,
+    compressionQuality: allowCompression ? (compressionQuality ?? 30) : 100,
     onFileLoading: onFileLoading,
     allowCompression: allowCompression,
     allowMultiple: allowMultiple,
