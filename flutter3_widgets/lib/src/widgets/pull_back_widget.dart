@@ -57,6 +57,9 @@ class PullBackWidget extends StatefulWidget {
   /// [0~1]
   final double? pullMaxBound;
 
+  /// 是否允许超出[pullMaxBound]后, 继续下拉
+  final bool enablePullMaxBoundOverScroll;
+
   /// 拉的方向, 默认下拉返回, 还不支持横向拉
   final Axis pullAxis = Axis.vertical;
 
@@ -74,6 +77,7 @@ class PullBackWidget extends StatefulWidget {
     this.onPullBack,
     this.onPullProgress,
     this.pullMaxBound,
+    this.enablePullMaxBoundOverScroll = true,
     this.canPullBackAction,
     this.showDragHandle = false,
     this.useSafeArea = false,
@@ -91,14 +95,19 @@ class _PullBackWidgetState extends State<PullBackWidget>
   double get _pullBackValue => _pullBackController?.value ?? 0;
 
   /// 下拉的效果矩阵
-  Matrix4 get _pullBackTransform =>
-      Matrix4.identity()..translate(0.0, _pullBackValue * (_childHeight ?? 0));
+  Matrix4 get _pullBackTransform => Matrix4.identity()
+    ..translate(
+        0.0, (_pullBackValue + _overPullBackValue) * (_childHeight ?? 0));
 
   /// [0~1] 0:未开始下拉 1:完全下拉到底部
   AnimationController? _pullBackController;
 
   /// [_pullBackCurve]属性生效的对象
   Animation<double>? _pullBackAnimation;
+
+  /// 到达[PullBackWidget.pullMaxBound]指定的值时, 额外pull的量
+  /// [0~1]
+  double _overPullBackValue = 0;
 
   /// 加速曲线
   late final Curve _pullBackCurve = Curves.easeOut;
@@ -215,14 +224,21 @@ class _PullBackWidgetState extends State<PullBackWidget>
     _pullBackController = controller;
   }
 
+  /// 当前拖拽手势是否结束
+  bool _isDragEnd = true;
+
   @override
   Widget build(BuildContext context) {
     Widget body = GestureDetector(
       behavior: widget.behavior /*HitTestBehavior.opaque*/,
+      onVerticalDragStart: (details) {
+        _isDragEnd = false;
+      },
       onVerticalDragUpdate: (details) {
         _handleDragUpdate(details.delta.dy);
       },
       onVerticalDragEnd: (details) {
+        _isDragEnd = true;
         _handleDragEnd(null, details.primaryVelocity ?? 0);
       },
       /*onPanEnd: (details) {
@@ -288,15 +304,25 @@ class _PullBackWidgetState extends State<PullBackWidget>
     );
   }
 
-  bool _isDragEnd = false;
-
   /// [primaryDelta] 手势每次移动的距离 >0:向下拉 <0:向上拉
   void _handleDragUpdate(double primaryDelta) async {
     _isDragEnd = false;
     final progress = primaryDelta / (_childHeight ?? primaryDelta);
     //l.d('progress:$progress [$primaryDelta/$_childHeight]');
     _pullBackController?.value += progress; //value [0~1]
-    //l.d("pull back:${_pullBackValue}");
+    if (widget.enablePullMaxBoundOverScroll &&
+        _childHeight != null &&
+        (widget.pullMaxBound ?? 0) > 1) {
+      if (_pullBackController != null &&
+          _pullBackController!.value >= _pullBackController!.upperBound) {
+        _overPullBackValue += progress;
+      } else {
+        _overPullBackValue = 0;
+      }
+    } else {
+      _overPullBackValue = 0;
+    }
+    l.d("pull back:$_pullBackValue progress:$progress pullMaxBound:${widget.pullMaxBound}");
     //
     ProgressStateNotification(
       tag: PullBackWidget,
@@ -311,6 +337,10 @@ class _PullBackWidgetState extends State<PullBackWidget>
   bool _handleDragEnd(ScrollMetrics? position, double velocity) {
     //debugger();
     //l.d('velocity:$velocity value:${_pullBackValue}');
+    if (widget.enablePullMaxBoundOverScroll) {
+      _overPullBackValue = 0;
+      updateState();
+    }
 
     if (position != null && position.axis != widget.pullAxis) {
       return false;
