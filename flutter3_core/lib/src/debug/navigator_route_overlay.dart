@@ -82,6 +82,18 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
   }
 
   @override
+  void onRouteDidRemove(Route route, Route? previousRoute) {
+    super.onRouteDidRemove(route, previousRoute);
+    _updateIfNeed();
+  }
+
+  @override
+  void onRouteDidReplace({Route? newRoute, Route? oldRoute}) {
+    super.onRouteDidReplace(newRoute: newRoute, oldRoute: oldRoute);
+    _updateIfNeed();
+  }
+
+  @override
   void dispose() {
     NavigatorRouteOverlay._isShowNavigatorRouteOverlay = false;
     super.dispose();
