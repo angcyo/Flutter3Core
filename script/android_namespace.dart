@@ -28,18 +28,19 @@ void main() async {
   print('脚本工作路径->$currentPath');
 
   //读取yaml配置信息
-  final localYamlFile = File("$currentPath/script.local.yaml");
-  final yamlFile = File("$currentPath/script.yaml");
+  final localYamlFile = File("$currentPath/script.local.yaml2");
+  final yamlFile = File("$currentPath/script.yaml2");
   final localYaml = loadYaml(
       localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
-  final yaml = loadYaml(yamlFile.readAsStringSync());
+  final yaml =
+      loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
 
   //---
 
   // 需要修改库的名字集合, 不指定全部
   // [YamlList]
   final names =
-      yaml["androidCompileSdkNames"] ?? localYaml["androidCompileSdkNames"];
+      yaml?["androidNamespaceNames"] ?? localYaml?["androidNamespaceNames"];
 
   //获取所有依赖的子库
   final dependenciesFile = File("$currentPath/.flutter-plugins-dependencies");

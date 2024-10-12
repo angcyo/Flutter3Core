@@ -40,12 +40,14 @@ void main() async {
   final yamlFile = File("$currentPath/script.yaml");
   final localYaml = loadYaml(
       localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
-  final yaml = loadYaml(yamlFile.readAsStringSync());
+  final yaml =
+      loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
 
   //---
 
   //Android sdk compile sdk version
-  int? compileSdk = yaml["androidCompileSdk"] ?? localYaml["androidCompileSdk"];
+  int? compileSdk =
+      yaml?["androidCompileSdk"] ?? localYaml?["androidCompileSdk"];
   if (compileSdk == null) {
     colorLog("请在[${yamlFile.path}]文件中指定[androidCompileSdk]属性.");
     return;
@@ -56,7 +58,7 @@ void main() async {
   // 需要修改库的名字集合, 不指定全部
   // [YamlList]
   final names =
-      yaml["androidCompileSdkNames"] ?? localYaml["androidCompileSdkNames"];
+      yaml?["androidCompileSdkNames"] ?? localYaml?["androidCompileSdkNames"];
 
   //获取所有依赖的子库
   final dependenciesFile = File("$currentPath/.flutter-plugins-dependencies");

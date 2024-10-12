@@ -17,29 +17,30 @@ void main() async {
 
   final localYaml = loadYaml(
       localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
-  final yaml = loadYaml(yamlFile.readAsStringSync());
+  final yaml =
+      loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
 
   //1:
   String? appPackageName =
-      yaml["appPackageName"] ?? localYaml["appPackageName"];
+      yaml?["appPackageName"] ?? localYaml?["appPackageName"];
 
   //2:
   // 需要构建的风味, flutter 官方的风味
-  String? flavor = yaml["appFlavor"] ?? localYaml["appFlavor"];
+  String? flavor = yaml?["appFlavor"] ?? localYaml?["appFlavor"];
   //json文件中的风味标识
-  String flavorFlag = yaml["appFlavorFlag"] ??
-      localYaml["appFlavorFlag"] ??
+  String flavorFlag = yaml?["appFlavorFlag"] ??
+      localYaml?["appFlavorFlag"] ??
       flavor ??
       "release";
 
   //3:
-  String? stateFlag = yaml["appStateFlag"] ?? localYaml["appStateFlag"];
+  String? stateFlag = yaml?["appStateFlag"] ?? localYaml?["appStateFlag"];
 
   //4:
   bool? appBuildApk =
-      yaml["appBuildAndroidApk"] ?? localYaml["appBuildAndroidApk"];
+      yaml?["appBuildAndroidApk"] ?? localYaml?["appBuildAndroidApk"];
   bool? appBuildBundle =
-      yaml["appBuildAndroidBundle"] ?? localYaml["appBuildAndroidBundle"];
+      yaml?["appBuildAndroidBundle"] ?? localYaml?["appBuildAndroidBundle"];
 
   //--
 

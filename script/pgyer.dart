@@ -27,15 +27,17 @@ void main(List<String> arguments) async {
 
   final localYaml = loadYaml(
       localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
-  final yaml = loadYaml(yamlFile.readAsStringSync());
+  final yaml =
+      loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
   //print(yaml);
 
-  final apiKey = localYaml["pgyer_api_key"] ?? yaml["pgyer_api_key"];
+  final apiKey = localYaml?["pgyer_api_key"] ?? yaml?["pgyer_api_key"];
   if (apiKey == null) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置蒲公英[pgyer_api_key]";
   }
 
-  for (final folder in (localYaml["pgyer_path"] ?? yaml["pgyer_path"])) {
+  for (final folder
+      in (localYaml?["pgyer_path"] ?? yaml?["pgyer_path"] ?? [])) {
     final fileList = await _getFileList(folder);
     if (fileList.isEmpty) {
       continue;
