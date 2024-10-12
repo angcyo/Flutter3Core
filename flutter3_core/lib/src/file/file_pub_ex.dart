@@ -282,7 +282,7 @@ extension FileStringPubEx on String {
   /// [includeDot] 是否包含.本身
   /// [extension] 获取文件扩展名
   String exName([bool includeDot = false]) {
-    var ex = extension();
+    final ex = extension();
     if (includeDot || !ex.startsWith(".")) {
       return ex;
     }
@@ -312,7 +312,7 @@ extension FileStringPubEx on String {
   /// [useCacheFolder] 是否使用缓存文件夹
   Future<String> filePathOf(
       [String? subFolder, bool useCacheFolder = false]) async {
-    var folderPath =
+    final folderPath =
         useCacheFolder ? (await cacheFolder()).path : (await fileFolder()).path;
     if (subFolder == null) {
       subFolder = folderPath;
@@ -326,7 +326,7 @@ extension FileStringPubEx on String {
 
   /// 通过[part1]...[part15]拼接路径
   /// ```
-  /// var context = p.Context(style: Style.windows);
+  /// final context = p.Context(style: Style.windows);
   /// context.join('directory', 'file.txt');
   /// ```
   /// https://pub.dev/packages/path
@@ -505,8 +505,8 @@ Future<String> filePath(
   String? part14,
   String? part15,
 ]) async {
-  var folder = await fileFolder(part1, part2, part3, part4, part5, part6, part7,
-      part8, part9, part10, part11, part12, part13, part14, part15);
+  final folder = await fileFolder(part1, part2, part3, part4, part5, part6,
+      part7, part8, part9, part10, part11, part12, part13, part14, part15);
   return p.join(folder.path, fileName);
 }
 
@@ -573,7 +573,7 @@ Future<String> cacheFilePath(
   String? part14,
   String? part15,
 ]) async {
-  var folder = await cacheFolder(part1, part2, part3, part4, part5, part6,
+  final folder = await cacheFolder(part1, part2, part3, part4, part5, part6,
       part7, part8, part9, part10, part11, part12, part13, part14, part15);
   return p.join(folder.path, fileName);
 }
