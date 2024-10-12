@@ -140,3 +140,11 @@ mixin StreamSubscriptionPainterMixin on ElementPainter {
     super.detachFromCanvasDelegate(canvasDelegate);
   }
 }
+
+/// 多画布扩展
+extension CanvasStateDataIterableEx on Iterable<CanvasStateData> {
+  /// 所有所有画布都没有元素
+  bool get isElementsEmpty {
+    return isEmpty || every((element) => element.isElementEmpty);
+  }
+}

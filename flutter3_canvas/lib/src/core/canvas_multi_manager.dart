@@ -257,7 +257,7 @@ enum CanvasStateType {
   remove,
 }
 
-/// 画布状态数据
+/// 画布状态数据, 用于支持多画布功能
 class CanvasStateData {
   /// 画布状态数量
   static var _canvasStateCount = 0;
@@ -286,6 +286,9 @@ class CanvasStateData {
   /// [UndoActionManager.redoList]
   List<UndoActionItem> redoList = [];
 
+  /// 当前的画布元素是否为空
+  bool get isElementEmpty => elements.isEmpty;
+
   CanvasStateData({
     String? id,
     String? name,
@@ -299,7 +302,7 @@ class CanvasStateData {
       this.id = id;
     }
     if (name == null) {
-      this.name = "画布 $_canvasStateCount";
+      this.name = "Canvas $_canvasStateCount";
     } else {
       this.name = name;
     }
