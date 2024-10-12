@@ -23,7 +23,7 @@ class RException implements Exception {
 
   @override
   String toString() {
-    return message ?? cause ?? super.toString();
+    return message ?? cause ?? "[${classHash()}]${super.toString()}";
   }
 }
 
