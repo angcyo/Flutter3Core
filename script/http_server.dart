@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 ///
@@ -9,7 +10,7 @@ void main() async {
   const serverPort = 8890;
   //'localhost'
   final server = await HttpServer.bind(InternetAddress.anyIPv4, serverPort);
-  print("http server started");
+  print("http server started->${Directory.current.path}");
 
   final interfaces = await NetworkInterface.list(
     includeLoopback: false,
@@ -27,6 +28,8 @@ void main() async {
   await for (final request in server) {
     print('request: ${request.uri}');
     try {
+      handleFormDataRequest(request);
+
       //读取请求体中的所有字节数据
       /*await request.listen((data) {
         //debugger();
@@ -34,16 +37,19 @@ void main() async {
       });*/
 
       //收集所有请求的字节数据
-      final data = await request.fold<List<int>>([], (previous, element) {
+      /*final data = await request.fold<List<int>>([], (previous, element) {
         return previous..addAll(element);
       });
       print('data: ${data.length}');
 
+      final resBody =
+          "请求体字节长度: ${data.length}\n是否有\\r:${data.lastIndexOf('\r'.codeUnitAt(0)) != -1}\n是否有\\n:${data.lastIndexOf('\n'.codeUnitAt(0)) != -1}\n是否有\\r\\n:${data.lastIndexOf('\r\n'.codeUnitAt(0)) != -1}";
+      print(resBody);
+
       request.response
         ..statusCode = HttpStatus.ok
-        ..write(
-            "请求体字节长度: ${data.length}\n是否有\\r:${data.lastIndexOf('\r'.codeUnitAt(0)) != -1}\n是否有\\n:${data.lastIndexOf('\n'.codeUnitAt(0)) != -1}\n是否有\\r\\n:${data.lastIndexOf('\r\n'.codeUnitAt(0)) != -1} ")
-        ..close();
+        ..write(resBody)
+        ..close();*/
 
       /*final boundary = request.headers.contentType?.parameters['boundary'];
       if (boundary == null) {
@@ -105,7 +111,115 @@ void main() async {
   print('...end');
 }
 
-Future<List<int>> consolidatedStreamToBytes(HttpRequest request) async {
+/// 处理form-data请求
+Future<void> handleFormDataRequest(HttpRequest request) async {
+  //debugger();
+  // 解析 multipart/form-data 数据
+  /*final boundary =
+      _getBoundary(request.headers.contentType?.parameters['boundary']);*/
+  final boundary = request.headers.contentType?.parameters['boundary'];
+
+  if (boundary != null) {
+    final data = await _parseMultipartFormData(request, boundary);
+
+    // 处理解析后的数据
+    print('Parsed Data: $data');
+
+    request.response
+      ..statusCode = HttpStatus.ok
+      ..write('Data received successfully.')
+      ..close();
+  } else {
+    request.response
+      ..statusCode = HttpStatus.badRequest
+      ..write('Invalid Content Type')
+      ..close();
+  }
+}
+
+String? _getBoundary(String? contentType) {
+  if (contentType != null) {
+    RegExp regExp = RegExp(r'boundary=(.+)$');
+    var match = regExp.firstMatch(contentType);
+    return match?.group(1)?.trim();
+  }
+  return null;
+}
+
+Future<Map<String, dynamic>> _parseMultipartFormData(
+    HttpRequest request, String boundary) async {
+  Map<String, dynamic> formData = {};
+  final List<int> bytes = await consolidateHttpClientResponseBytes(request);
+  final boundaryBytes = '--$boundary'.codeUnits;
+
+  int startIndex = 0;
+  while (true) {
+    startIndex = _findBoundaryIndex(bytes, startIndex, boundaryBytes);
+    if (startIndex == -1) break;
+
+    startIndex += boundaryBytes.length;
+    int endIndex = startIndex;
+
+    // 寻找下一个boundary
+    endIndex = _findBoundaryIndex(bytes, endIndex, boundaryBytes);
+    if (endIndex == -1) {
+      // 处理最后一个部分
+      endIndex = bytes.length;
+    }
+
+    // 解析表单内容
+    String part = String.fromCharCodes(bytes.sublist(startIndex, endIndex));
+    final lines = part.split('\r\n');
+
+    // 获取内容类型，字段名称和数据内容
+    String? fieldName;
+    String? fieldValue;
+
+    //debugger();
+    for (final line in lines) {
+      if (line.startsWith('Content-Disposition:')) {
+        // 找到字段名称
+        final match = RegExp(r'name="(.*?)"').firstMatch(line);
+        if (match != null) {
+          fieldName = match.group(1);
+        }
+      } else if (line.isNotEmpty && fieldName != null) {
+        // 获取字段值
+        fieldValue = line;
+      }
+    }
+
+    if (fieldName != null && fieldValue != null) {
+      formData[fieldName] = fieldValue;
+    }
+
+    startIndex = endIndex;
+  }
+
+  return formData;
+}
+
+int _findBoundaryIndex(List<int> bytes, int start, List<int> boundary) {
+  for (int i = start; i < bytes.length - boundary.length; i++) {
+    if (bytes.sublist(i, i + boundary.length).equals(boundary)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+extension ListEquals on List<int> {
+  bool equals(List<int> other) {
+    if (length != other.length) return false;
+    for (int i = 0; i < length; i++) {
+      if (this[i] != other[i]) return false;
+    }
+    return true;
+  }
+}
+
+Future<List<int>> consolidateHttpClientResponseBytes(
+    HttpRequest request) async {
   final bytes = <int>[];
   await for (final chunk in request) {
     bytes.addAll(chunk);
