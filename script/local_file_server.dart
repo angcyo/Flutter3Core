@@ -41,7 +41,8 @@ void main(List<String> arguments) async {
   //print(serverPort);
 
   // 创建 HttpServer 实例
-  final server = await HttpServer.bind('localhost', serverPort);
+  // 'localhost'
+  final server = await HttpServer.bind(InternetAddress.anyIPv4, serverPort);
   print('文件服务->$localServerPath');
   print("http://localhost:$serverPort/");
 

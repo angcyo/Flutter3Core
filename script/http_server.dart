@@ -7,7 +7,8 @@ import 'dart:io';
 void main() async {
   //监听http 8090端口
   const serverPort = 8890;
-  final server = await HttpServer.bind('localhost', serverPort);
+  //'localhost'
+  final server = await HttpServer.bind(InternetAddress.anyIPv4, serverPort);
   print("http server started");
 
   final interfaces = await NetworkInterface.list(
