@@ -2,9 +2,9 @@ library flutter3_app;
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_app/src/mode/app_version_bean.dart';
@@ -101,14 +101,13 @@ Future runGlobalApp(
     }
   };
 
-  var oldOnError = FlutterError.onError;
-  FlutterError.onError = (FlutterErrorDetails details) {
+  // FlutterError.onError
+  wrapFlutterOnError((FlutterErrorDetails details) {
     "发生一个错误↓".writeToErrorLog();
     details.exceptionAsString().writeToErrorLog();
     "错误详情↓\n${dumpErrorToString(details)}".writeToErrorLog();
-    oldOnError?.call(details);
     //FlutterError.dumpErrorToConsole(details);
-  };
+  });
 
   //ErrorWidget.builder = ;
 
@@ -151,6 +150,15 @@ Future runGlobalApp(
     printError(error, stack);
     onZonedError?.call(error, stack);
   });
+}
+
+/// 包裹[FlutterError.onError]处理, 保持旧逻辑不变
+void wrapFlutterOnError([FlutterExceptionHandler? onErrorHandler]) {
+  final oldOnError = FlutterError.onError;
+  FlutterError.onError = (FlutterErrorDetails details) {
+    oldOnError?.call(details);
+    onErrorHandler?.call(details);
+  };
 }
 
 /// [DebugPage]
