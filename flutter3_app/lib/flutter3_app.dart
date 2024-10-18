@@ -46,7 +46,8 @@ part 'src/receive/receive_intent.dart';
 ///
 /// [beforeAction] 启动之前初始化, 请在此进行数据库表注册[registerIsarCollection]
 /// [afterAction] 启动之后初始化
-/// [zonedGuarded] 错误处理[runZonedGuarded]
+/// [zonedGuarded] 决定是否使用[runZonedGuarded]进行区域异常捕获,
+/// [onZonedError] .[runZonedGuarded]中的异常回调
 @entryPoint
 @initialize
 @callPoint
