@@ -8,6 +8,15 @@
   "@testResKey": {
     "description": "当前key[testResKey]都有"
   },
+  "testPlaceholderKey": "占位资源{value}",
+  "@testPlaceholderKey": {
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "example": "值示例"
+      }
+    }
+  },
   "libAdapterNoData": "暂无数据",
   "@libAdapterNoData": {
     "description": "列表加载暂无数据"

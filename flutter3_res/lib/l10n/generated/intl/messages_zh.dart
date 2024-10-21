@@ -20,6 +20,8 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh';
 
+  static String m0(value) => "占位资源${value}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "libAdapterLoadMoreError":
@@ -48,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "libWarn": MessageLookupByLibrary.simpleMessage("警告"),
         "libYes": MessageLookupByLibrary.simpleMessage("是"),
         "testOnlyZhKey": MessageLookupByLibrary.simpleMessage("只有中文[zh]翻译资源"),
+        "testPlaceholderKey": m0,
         "testResKey": MessageLookupByLibrary.simpleMessage("testResKey翻译资源")
       };
 }

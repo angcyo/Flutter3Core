@@ -70,6 +70,16 @@ class LibRes {
     );
   }
 
+  /// `占位资源{value}`
+  String testPlaceholderKey(String value) {
+    return Intl.message(
+      '占位资源$value',
+      name: 'testPlaceholderKey',
+      desc: '',
+      args: [value],
+    );
+  }
+
   /// `暂无数据`
   String get libAdapterNoData {
     return Intl.message(
