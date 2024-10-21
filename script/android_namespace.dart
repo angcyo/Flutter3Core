@@ -28,8 +28,8 @@ void main() async {
   print('脚本工作路径->$currentPath');
 
   //读取yaml配置信息
-  final localYamlFile = File("$currentPath/script.local.yaml2");
-  final yamlFile = File("$currentPath/script.yaml2");
+  final localYamlFile = File("$currentPath/script.local.yaml");
+  final yamlFile = File("$currentPath/script.yaml");
   final localYaml = loadYaml(
       localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
   final yaml =
