@@ -15,6 +15,7 @@ part 'arrow_layout.dart';
 part 'arrow_popup_overlay.dart';
 part 'arrow_popup_route.dart';
 
+/// 弹窗路由扩展
 extension PopupEx on BuildContext {
   /// 使用路由的方式显示界面[ArrowPopupRoute], 手势不可以穿透, 支持系统的back按键
   /// 在指定的[anchorRect]位置, 显示[ArrowPopupRoute]的[Widget]
