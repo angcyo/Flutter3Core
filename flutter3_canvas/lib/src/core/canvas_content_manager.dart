@@ -354,7 +354,7 @@ class ContentPathPainterInfo {
     this.path,
     this.rect,
     this.strokeColor = Colors.blue,
-    this.fillColor = const Color(0xf5f5f5),
+    this.fillColor = const Color(0xfff5f5f5),
     this.fill = false,
     this.strokeWidth = 1,
     this.tag,
