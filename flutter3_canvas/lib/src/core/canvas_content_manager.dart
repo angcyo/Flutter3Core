@@ -29,9 +29,8 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   /// 画布跟随时的显示区域, 同时也是元素分配位置的参考
   @dp
   @sceneCoordinate
-  Rect? get canvasContentFollowRectInner => isCanvasComponentEnable
-      ? contentTemplate?.contentFollowRectInner
-      : null;
+  Rect? get canvasContentFollowRectInner =>
+      isCanvasComponentEnable ? contentTemplate?.contentFollowRectInner : null;
 
   /// 画布最佳的元素中心点位置
   ///
@@ -82,6 +81,11 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
             canvas,
             paintMeta.canvasScale,
             template.contentBackgroundInfo,
+          );
+          _drawPathPainterInfo(
+            canvas,
+            paintMeta.canvasScale,
+            template.contentOptimumInfo,
           );
 
           //额外绘制的路径信息
@@ -183,12 +187,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         ..color = info.strokeColor
         ..strokeWidth = info.strokeWidth / canvasScale;
 
-      if (info.path != null) {
-        canvas.drawPath(info.path!, paint);
-      }
-      if (info.rect != null) {
-        canvas.drawRect(info.rect!, paint);
-      }
+      draw();
     }
   }
 
@@ -252,20 +251,21 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     contentTemplate!.contentBackgroundInfo!
       ..fill = true
       ..strokeWidth = 0
-      ..fillColor = contentFillColor ?? Colors.white
       ..path = contentPath
       ..rect = contentRect;
+    contentTemplate!.contentBackgroundInfo?.fillColor =
+        contentFillColor ?? contentTemplate!.contentBackgroundInfo!.fillColor;
+
     //optimum
     if (optimumPath != null || optimumRect != null) {
-      contentTemplate!.contentForegroundInfo ??= ContentPathPainterInfo();
-      contentTemplate!.contentForegroundInfo!
+      contentTemplate!.contentOptimumInfo ??= ContentPathPainterInfo();
+      contentTemplate!.contentOptimumInfo!
         ..fill = true
         ..strokeWidth = 0
         ..path = optimumPath
         ..rect = optimumRect;
-      contentTemplate!.contentForegroundInfo?.fillColor =
-          optimumFillColor ??
-              contentTemplate!.contentForegroundInfo!.fillColor;
+      contentTemplate!.contentOptimumInfo?.fillColor =
+          optimumFillColor ?? contentTemplate!.contentOptimumInfo!.fillColor;
     }
     if (followRect == true) {
       followCanvasContentTemplate(animate: animate);
@@ -354,7 +354,7 @@ class ContentPathPainterInfo {
     this.path,
     this.rect,
     this.strokeColor = Colors.blue,
-    this.fillColor = Colors.white,
+    this.fillColor = const Color(0xf5f5f5),
     this.fill = false,
     this.strokeWidth = 1,
     this.tag,
