@@ -19,6 +19,9 @@ extension PopupEx on BuildContext {
   /// 使用路由的方式显示界面[ArrowPopupRoute], 手势不可以穿透, 支持系统的back按键
   /// 在指定的[anchorRect]位置, 显示[ArrowPopupRoute]的[Widget]
   /// [anchorRect].[anchorChild]必须指定一个
+  ///
+  /// [showArrow] 是否显示箭头
+  ///
   /// [ArrowPopupRoute]
   Future showArrowPopupRoute(
     Widget child, {
