@@ -77,9 +77,13 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   //endregion ---限制---
 
   /// 更新整个绘制区域大小, 顺便更新内容绘制区域
+  /// [fromInitialize] 来自初始化的调用
   @entryPoint
-  void updatePaintBounds(Size size, bool isInitialize) {
+  void updatePaintBounds(Size size, bool fromInitialize) {
+    final oldPaintBounds = paintBounds;
+    final isFirstInitialize = paintBounds == Rect.zero;
     paintBounds = Offset.zero & size;
+    final isPaintBoundsChanged = oldPaintBounds != paintBounds;
 
     final axisManager = canvasDelegate.canvasPaintManager.axisManager;
     canvasBounds = Rect.fromLTRB(
@@ -89,12 +93,21 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       paintBounds.bottom,
     );
 
-    if (isInitialize) {
-      postCallback(() {
-        canvasDelegate.dispatchCanvasViewBoxChanged(this, isInitialize, true);
+    if (isFirstInitialize) {
+      final contentTemplate =
+          canvasDelegate.canvasPaintManager.contentManager.contentTemplate;
+      final followRect = contentTemplate?.contentFollowRectInner;
+      if (followRect != null) {
+        canvasDelegate.followRect(rect: followRect, animate: false);
+      }
+    }
+
+    if (fromInitialize) {
+      scheduleMicrotask(() {
+        canvasDelegate.dispatchCanvasViewBoxChanged(this, fromInitialize, true);
       });
     } else {
-      canvasDelegate.dispatchCanvasViewBoxChanged(this, isInitialize, true);
+      canvasDelegate.dispatchCanvasViewBoxChanged(this, fromInitialize, true);
     }
   }
 

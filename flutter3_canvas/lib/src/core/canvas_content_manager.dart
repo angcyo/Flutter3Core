@@ -21,7 +21,8 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   //--
 
   /// 画布内容模版, 描述了内容大小, 最佳区域等信息
-  CanvasContentTemplate? canvasContentTemplate;
+  /// [updateFillStyleContentTemplate]
+  CanvasContentTemplate? contentTemplate;
 
   //--
 
@@ -29,7 +30,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   @dp
   @sceneCoordinate
   Rect? get canvasContentFollowRectInner => isCanvasComponentEnable
-      ? canvasContentTemplate?.contentFollowRectInner
+      ? contentTemplate?.contentFollowRectInner
       : null;
 
   /// 画布最佳的元素中心点位置
@@ -73,7 +74,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         );
       }
       //画布内容模版
-      canvasContentTemplate?.let((template) {
+      contentTemplate?.let((template) {
         //场景背景绘制
         paintMeta.withPaintMatrix(canvas, () {
           //场景内容背景
@@ -114,7 +115,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   @clipFlag
   void withCanvasContent(Canvas canvas, VoidAction action) {
     //debugger();
-    final boundsInfo = canvasContentTemplate?.contentBackgroundInfo;
+    final boundsInfo = contentTemplate?.contentBackgroundInfo;
     if (boundsInfo == null) {
       action();
     } else {
@@ -230,6 +231,47 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     }
   }
 
+  /// 更新填充样式的内容模版
+  void updateFillStyleContentTemplate({
+    @dp @sceneCoordinate Path? contentPath,
+    @dp @sceneCoordinate Rect? contentRect,
+    @dp @sceneCoordinate Rect? contentFollowRect,
+    Color? contentFillColor,
+    //--
+    @dp @sceneCoordinate Path? optimumPath,
+    @dp @sceneCoordinate Rect? optimumRect,
+    Color? optimumFillColor,
+    //--
+    bool followRect = true,
+    bool? animate,
+  }) {
+    contentTemplate ??= CanvasContentTemplate();
+    //content
+    contentTemplate!.contentFollowRect = contentFollowRect;
+    contentTemplate!.contentBackgroundInfo ??= ContentPathPainterInfo();
+    contentTemplate!.contentBackgroundInfo!
+      ..fill = true
+      ..strokeWidth = 0
+      ..fillColor = contentFillColor ?? Colors.white
+      ..path = contentPath
+      ..rect = contentRect;
+    //optimum
+    if (optimumPath != null || optimumRect != null) {
+      contentTemplate!.contentForegroundInfo ??= ContentPathPainterInfo();
+      contentTemplate!.contentForegroundInfo!
+        ..fill = true
+        ..strokeWidth = 0
+        ..path = optimumPath
+        ..rect = optimumRect;
+      contentTemplate!.contentForegroundInfo?.fillColor =
+          optimumFillColor ??
+              contentTemplate!.contentForegroundInfo!.fillColor;
+    }
+    if (followRect == true) {
+      followCanvasContentTemplate(animate: animate);
+    }
+  }
+
   /// 限制画布内容绘制区域, 背景只会在此区域绘制
   /// [boundsInfo] 边界信息
   /// [path].[bounds]->[boundsInfo]
@@ -283,30 +325,30 @@ class ContentPathPainterInfo {
   //--边界信息
 
   /// 要绘制的路径
-  final Path? path;
+  Path? path;
 
   /// 要绘制的矩形
-  final Rect? rect;
+  Rect? rect;
 
   //--绘制信息
 
   /// 绘制路径的描边颜色
-  final Color strokeColor;
+  Color strokeColor;
 
   /// 绘制路径的填充颜色
-  final Color fillColor;
+  Color fillColor;
 
   /// 是否填充
-  final bool fill;
+  bool fill;
 
   /// 线宽, <=0表示不绘制线框
-  final double strokeWidth;
+  double strokeWidth;
 
   //--标识信息
 
   /// 标签, 用来自定义的标识
   @configProperty
-  final String? tag;
+  String? tag;
 
   ContentPathPainterInfo({
     this.path,
