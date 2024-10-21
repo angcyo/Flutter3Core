@@ -236,7 +236,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }
     rect ??= canvasPaintManager.contentManager.canvasContentFollowRect ??
         canvasElementManager.allElementsBounds;
-    if (rect == null) {
+    if (rect == null || rect.isEmpty) {
       //followPainter(rect: canvasElementManager.allElementsBounds);
       return;
     }

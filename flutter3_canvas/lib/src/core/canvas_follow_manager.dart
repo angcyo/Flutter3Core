@@ -101,7 +101,7 @@ class CanvasFollowManager with CanvasComponentMixin {
     awaitAnimate ??= this.awaitAnimate;
 
     //default
-    if (rect == null) {
+    if (rect == null || rect.isEmpty) {
       if (restoreDefault == true) {
         canvasViewBox.changeMatrix(
           Matrix4.identity(),
@@ -119,8 +119,8 @@ class CanvasFollowManager with CanvasComponentMixin {
     final canvasVisibleWidth = canvasVisibleBounds.width;
     final canvasVisibleHeight = canvasVisibleBounds.height;
 
-    double sx = canvasVisibleWidth / rect.width;
-    double sy = canvasVisibleHeight / rect.height;
+    double sx = (canvasVisibleWidth / rect.width).ensureValid(1);
+    double sy = (canvasVisibleHeight / rect.height).ensureValid(1);
 
     //debugger();
 

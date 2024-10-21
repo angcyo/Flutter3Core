@@ -1113,6 +1113,12 @@ extension RectEx on Rect {
   String get logSize =>
       "Rect.LTWH(${left.toDigits(digits: 1)}, ${top.toDigits(digits: 1)}, ${width.toDigits(digits: 1)}, ${height.toDigits(digits: 1)})";
 
+  /// 是否是有效有效的值
+  /// `0/0`:Nan
+  /// `0/1`:1
+  /// `1/0`:Infinity
+  bool get isValid => !hasNaN && !isInfinite;
+
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
 

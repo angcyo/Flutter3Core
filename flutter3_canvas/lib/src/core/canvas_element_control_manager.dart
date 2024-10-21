@@ -1427,6 +1427,11 @@ class ElementSelectComponent extends ElementGroupPainter
           children,
           selectType,
         );
+      } else {
+        assert(() {
+          l.d('没有元素被选中');
+          return true;
+        }());
       }
     } else {
       assert(() {

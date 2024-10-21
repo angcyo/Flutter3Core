@@ -533,7 +533,9 @@ class ElementPainter extends IPainter
   /// [hitTest]
   bool isVisibleInCanvasBox(CanvasViewBox viewBox) =>
       forceVisibleInCanvasBox == true ||
-      (paintState.isVisible && hitTest(rect: viewBox.canvasVisibleBounds));
+      (viewBox.canvasVisibleBounds.isValid &&
+          paintState.isVisible &&
+          hitTest(rect: viewBox.canvasVisibleBounds));
 
   //---
 

@@ -151,6 +151,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
   /// 裁剪画布内容区域, 目前只裁剪了网格和内容背景, 元素不裁剪
   /// [CanvasAxisManager.painting]
+  @callPoint
   void clipCanvasContent(Canvas canvas, VoidAction action) {
     //debugger();
     final boundsInfo = sceneContentBoundsInfo;
