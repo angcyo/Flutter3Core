@@ -52,14 +52,7 @@ class CanvasStyle {
 
   //region ---config---
 
-  /// 当指定了内容边界时, 是否绘制对应的提示框
-  /// [CanvasContentManager.sceneContentBoundsInfo]
-  bool? paintSceneContentBounds;
-
-  /// [CanvasContentManager.sceneContentBoundsInfo] 场景的背景颜色
-  Color? sceneContentBgColor;
-
-  /// [CanvasContentManager] 内容背景颜色, 指定了就会绘制
+  /// [CanvasContentManager] 画布整体的背景颜色, 指定了就会绘制
   /// [CanvasViewBox.canvasBounds] 的背景颜色
   Color? canvasBgColor;
 

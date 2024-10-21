@@ -210,7 +210,7 @@ class CanvasAxisManager extends IPainter {
     if (drawType.have(sDrawGrid)) {
       canvas.withClipRect(canvasBounds, () /*画布区域裁剪*/ {
         canvasDelegate.canvasPaintManager.contentManager
-            .clipCanvasContent(canvas, () /*内容区域裁剪*/ {
+            .withCanvasContent(canvas, () /*内容区域裁剪*/ {
           for (final axisData in xData) {
             final paint = axisData.axisType.have(IUnit.axisTypePrimary)
                 ? primaryPaint

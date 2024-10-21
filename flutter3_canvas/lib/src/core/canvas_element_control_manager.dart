@@ -802,7 +802,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 移动元素到画布的中心位置
-  /// [CanvasContentManager.canvasCenter]
+  /// [CanvasContentManager.canvasCenterInner]
   @api
   @supportUndo
   void translateElementCenter(
@@ -813,7 +813,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       return;
     }
     final canvasCenter =
-        canvasDelegate.canvasPaintManager.contentManager.canvasCenter;
+        canvasDelegate.canvasPaintManager.contentManager.canvasCenterInner;
     if (canvasCenter == null) {
       assert(() {
         l.w('无法确定画布中心,操作被忽略');

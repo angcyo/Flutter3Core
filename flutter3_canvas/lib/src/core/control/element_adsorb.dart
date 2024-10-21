@@ -425,7 +425,7 @@ class ElementAdsorbControl
         adsorbRect(it, element: element);
       });
     }
-    canvasDelegate.canvasPaintManager.contentManager.canvasContentFollowRect
+    canvasDelegate.canvasPaintManager.contentManager.canvasContentFollowRectInner
         ?.let((it) {
       adsorbRect(it);
     });

@@ -22,6 +22,7 @@ part 'src/component/canvas_element_widget.dart';
 part 'src/component/component.dart';
 part 'src/component/control_limit.dart';
 part 'src/core/canvas_axis_manager.dart';
+part 'src/core/canvas_content_template.dart';
 part 'src/core/canvas_content_manager.dart';
 part 'src/core/canvas_element_control_manager.dart';
 part 'src/core/canvas_element_manager.dart';

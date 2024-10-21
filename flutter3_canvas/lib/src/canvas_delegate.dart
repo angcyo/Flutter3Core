@@ -234,7 +234,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       followPainter(elementPainter: elementPainter);
       return;
     }
-    rect ??= canvasPaintManager.contentManager.canvasContentFollowRect ??
+    rect ??= canvasPaintManager.contentManager.canvasContentFollowRectInner ??
         canvasElementManager.allElementsBounds;
     if (rect == null || rect.isEmpty) {
       //followPainter(rect: canvasElementManager.allElementsBounds);
@@ -537,7 +537,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
-  /// [CanvasContentManager.canvasCenter]画布内容改变通知
+  /// [CanvasContentManager.canvasCenterInner]画布内容改变通知
   void dispatchCanvasContentChanged() {
     _eachCanvasListener((element) {
       element.onCanvasContentChangedAction?.call();
