@@ -237,6 +237,14 @@ class CanvasListener {
   final void Function(CanvasStateData? from, CanvasStateData? to)?
       onCanvasSelectedStateChanged;
 
+  /// [CanvasDelegate.dispatchElementAttachToCanvasDelegate]
+  final void Function(CanvasDelegate delegate, ElementPainter painter)?
+      onElementAttachToCanvasDelegate;
+
+  /// [CanvasDelegate.dispatchElementAttachToCanvasDelegate]
+  final void Function(CanvasDelegate delegate, ElementPainter painter)?
+      onElementDetachToCanvasDelegate;
+
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
@@ -261,5 +269,7 @@ class CanvasListener {
     this.onCanvasMultiStateChanged,
     this.onCanvasMultiStateListChanged,
     this.onCanvasSelectedStateChanged,
+    this.onElementAttachToCanvasDelegate,
+    this.onElementDetachToCanvasDelegate,
   });
 }

@@ -168,15 +168,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 释放资源
   @entryPoint
   void release() {
-    for (final element in beforeElements) {
-      element.detachFromCanvasDelegate(canvasDelegate);
-    }
-    for (final element in elements) {
-      element.detachFromCanvasDelegate(canvasDelegate);
-    }
-    for (final element in afterElements) {
-      element.detachFromCanvasDelegate(canvasDelegate);
-    }
+    detachElementToCanvasDelegate(beforeElements);
+    detachElementToCanvasDelegate(elements);
+    detachElementToCanvasDelegate(afterElements);
   }
 
   //endregion ---entryPoint----
@@ -202,6 +196,24 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [beforeElements]
   bool removeAfterElement(ElementPainter? element) =>
       _removeElementFrom(afterElements, element);
+
+  /// [detachElementToCanvasDelegate]
+  void attachElementToCanvasDelegate(List<ElementPainter>? elements) {
+    for (final element in elements ?? []) {
+      if (element.canvasDelegate != canvasDelegate) {
+        element.attachToCanvasDelegate(canvasDelegate);
+      }
+    }
+  }
+
+  /// [attachElementToCanvasDelegate]
+  void detachElementToCanvasDelegate(List<ElementPainter>? elements) {
+    for (final element in elements ?? []) {
+      if (element.canvasDelegate == canvasDelegate) {
+        element.detachFromCanvasDelegate(canvasDelegate);
+      }
+    }
+  }
 
   /// 在指定容器中添加元素
   /// 返回值表示操作是否成功
@@ -310,9 +322,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     final old = elements.clone();
     elements.addAll(list);
-    for (final element in list) {
-      element.attachToCanvasDelegate(canvasDelegate);
-    }
+    attachElementToCanvasDelegate(list);
     canvasDelegate.dispatchCanvasElementListChanged(
       old,
       elements,
@@ -341,9 +351,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           //debugger();
           elements.reset(old);
           canvasElementControlManager.onCanvasElementDeleted(list, selectType);
-          for (final element in list) {
-            element.detachFromCanvasDelegate(canvasDelegate);
-          }
+          detachElementToCanvasDelegate(list);
           canvasDelegate.dispatchCanvasElementListChanged(
             newList,
             old,
@@ -355,9 +363,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         () {
           //debugger();
           elements.reset(newList);
-          for (final element in list) {
-            element.attachToCanvasDelegate(canvasDelegate);
-          }
+          attachElementToCanvasDelegate(list);
           canvasDelegate.dispatchCanvasElementListChanged(
             old,
             newList,
@@ -402,9 +408,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     //删除选中的元素
     canvasElementControlManager.onCanvasElementDeleted(op, selectType);
-    for (final element in op) {
-      element.detachFromCanvasDelegate(canvasDelegate);
-    }
+    detachElementToCanvasDelegate(op);
     canvasDelegate.dispatchCanvasElementListChanged(
         old, elements, op, undoType);
     canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, op);
@@ -415,9 +419,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         () {
           //debugger();
           elements.reset(old);
-          for (final element in op) {
-            element.attachToCanvasDelegate(canvasDelegate);
-          }
+          attachElementToCanvasDelegate(op);
           canvasDelegate.dispatchCanvasElementListChanged(
               newList, old, op, UndoType.undo);
         },
@@ -425,9 +427,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           //debugger();
           elements.reset(newList);
           canvasElementControlManager.onCanvasElementDeleted(op, selectType);
-          for (final element in op) {
-            element.detachFromCanvasDelegate(canvasDelegate);
-          }
+          detachElementToCanvasDelegate(op);
           canvasDelegate.dispatchCanvasElementListChanged(
               old, newList, op, UndoType.redo);
         },
@@ -482,13 +482,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   void _resetElementList(List<ElementPainter> from, List<ElementPainter> to) {
-    for (final element in from) {
-      element.detachFromCanvasDelegate(canvasDelegate);
-    }
+    detachElementToCanvasDelegate(from);
     elements.reset(to);
-    for (final element in to) {
-      element.attachToCanvasDelegate(canvasDelegate);
-    }
+    attachElementToCanvasDelegate(to);
   }
 
   /// 清空元素
@@ -801,12 +797,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
     }
 
-    oldElementList?.forEach((element) {
-      element.detachFromCanvasDelegate(canvasDelegate);
-    });
-    newElementList?.forEach((element) {
-      element.attachToCanvasDelegate(canvasDelegate);
-    });
+    detachElementToCanvasDelegate(oldElementList);
+    attachElementToCanvasDelegate(newElementList);
 
     final List<ElementPainter> op = newElementList ?? [];
     canvasDelegate.dispatchCanvasElementListChanged(
@@ -818,24 +810,16 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         () {
           //debugger();
           elements.reset(old);
-          newElementList?.forEach((element) {
-            element.detachFromCanvasDelegate(canvasDelegate);
-          });
-          oldElementList?.forEach((element) {
-            element.attachToCanvasDelegate(canvasDelegate);
-          });
+          detachElementToCanvasDelegate(newElementList);
+          attachElementToCanvasDelegate(oldElementList);
           canvasDelegate.dispatchCanvasElementListChanged(
               newList, old, op, UndoType.undo);
         },
         () {
           //debugger();
           elements.reset(newList);
-          oldElementList?.forEach((element) {
-            element.detachFromCanvasDelegate(canvasDelegate);
-          });
-          newElementList?.forEach((element) {
-            element.attachToCanvasDelegate(canvasDelegate);
-          });
+          detachElementToCanvasDelegate(oldElementList);
+          attachElementToCanvasDelegate(newElementList);
           canvasDelegate.dispatchCanvasElementListChanged(
               old, newList, op, UndoType.redo);
         },

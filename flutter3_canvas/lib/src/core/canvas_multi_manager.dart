@@ -204,7 +204,11 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     // 切换画布中的元素
     final oldElements = canvasElementManager.elements.clone();
-    canvasElementManager.elements = selectedCanvasState?.elements ?? [];
+    final newElements = selectedCanvasState?.elements ?? [];
+    canvasElementManager.elements = newElements;
+    canvasElementManager.detachElementToCanvasDelegate(oldElements);
+    canvasElementManager.attachElementToCanvasDelegate(newElements);
+
     // 切换回退栈
     canvasDelegate.canvasUndoManager.undoList =
         selectedCanvasState?.undoList ?? [];
@@ -214,10 +218,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     // 基础通知
     if (notifyBasics) {
       canvasDelegate.dispatchCanvasElementListChanged(
-          oldElements,
-          canvasElementManager.elements,
-          canvasElementManager.elements,
-          undoType);
+          oldElements, newElements, newElements, undoType);
       canvasDelegate.dispatchCanvasUndoChanged(
           canvasDelegate.canvasUndoManager, undoType);
       canvasDelegate.canvasUndoManager.notifyChanged(undoType);
@@ -231,8 +232,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     // 选中元素/跟随元素
     if (selectedElement) {
-      canvasDelegate.canvasElementManager
-          .resetSelectElement(canvasElementManager.elements);
+      canvasDelegate.canvasElementManager.resetSelectElement(newElements);
       if (followRect) {
         canvasDelegate.followPainter(
             elementPainter: canvasElementManager.selectComponent);
@@ -240,7 +240,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     } else if (followRect) {
       ElementGroupPainter painter = ElementGroupPainter();
       painter.resetChildren(
-          canvasElementManager.elements,
+          newElements,
           canvasDelegate.canvasElementManager.canvasElementControlManager
               .enableResetElementAngle);
       canvasDelegate.followPainter(elementPainter: painter);

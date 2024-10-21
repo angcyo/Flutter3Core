@@ -799,17 +799,25 @@ class ElementPainter extends IPainter
   /// 附加到[CanvasDelegate]
   @mustCallSuper
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
+    if (this.canvasDelegate == canvasDelegate) {
+      return;
+    }
+
     final old = this.canvasDelegate;
     if (old != null && old != canvasDelegate) {
       detachFromCanvasDelegate(old);
     }
     this.canvasDelegate = canvasDelegate;
+    canvasDelegate.dispatchElementAttachToCanvasDelegate(this);
   }
 
   /// 从[CanvasDelegate]中移除
   @mustCallSuper
   void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
-    this.canvasDelegate = null;
+    if (this.canvasDelegate == canvasDelegate) {
+      this.canvasDelegate = null;
+      canvasDelegate.dispatchElementDetachFromCanvasDelegate(this);
+    }
   }
 
   /// 刷新画布
@@ -1020,6 +1028,12 @@ class ElementGroupPainter extends ElementPainter {
 
   ElementGroupPainter() {
     paintState.elementName = 'Group';
+  }
+
+  /// 创建一个组合元素, 并且重置组合元素角度
+  ElementGroupPainter.from(List<ElementPainter>? children) {
+    ElementGroupPainter painter = ElementGroupPainter();
+    painter.resetChildren(children, true);
   }
 
   //region ---core--
