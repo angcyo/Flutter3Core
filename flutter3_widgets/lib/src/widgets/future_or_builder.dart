@@ -5,7 +5,7 @@ part of '../../flutter3_widgets.dart';
 /// @author angcyo
 /// @date 2024/07/10
 ///
-/// [FutureBuilder]
+/// 支持[FutureOr]类型的[FutureBuilder]
 class FutureOrBuilder extends StatefulWidget {
   /// 异步方法
   final FutureOr Function() futureOr;

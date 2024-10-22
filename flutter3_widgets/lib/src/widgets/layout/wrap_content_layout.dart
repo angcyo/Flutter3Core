@@ -1,4 +1,4 @@
-part of '../../flutter3_widgets.dart';
+part of '../../../flutter3_widgets.dart';
 
 ///
 /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高

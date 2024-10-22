@@ -1,4 +1,4 @@
-part of '../../flutter3_widgets.dart';
+part of '../../../flutter3_widgets.dart';
 
 /// https://github.com/flutterchina/flukit
 /// Email:angcyo@126.com

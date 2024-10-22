@@ -1,4 +1,4 @@
-part of '../../flutter3_widgets.dart';
+part of '../../../flutter3_widgets.dart';
 
 ///
 /// 用最大的约束约束child
