@@ -136,6 +136,7 @@ part 'src/widgets/preferred_size_sliver_app_bar.dart';
 part 'src/widgets/progress_listener.dart';
 part 'src/widgets/ignore_self_pointer.dart';
 part 'src/widgets/test_constraints_layout.dart';
+part 'src/widgets/any_widget.dart';
 
 /// 类型重定义
 typedef UiImage = ui.Image;
