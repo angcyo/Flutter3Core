@@ -200,6 +200,7 @@ class _DynamicContainerLayoutBuilderElement<
 
   @override
   void visitChildren(ElementVisitor visitor) {
+    //debugger();
     for (final Element child in _children) {
       if (!_forgottenChildren.contains(child)) {
         visitor(child);
@@ -409,8 +410,12 @@ class _DynamicContainerLayoutBuilderElement<
       }
       try {
         //debugger();
+        _children.remove(_child);
         _child = updateChild(_child, built,
             IndexedSlot<Element?>(_children.length, _children.lastOrNull));
+        if (_child != null) {
+          _children.add(_child!);
+        }
         /*if (built != null) {
           debugger();
             _child = updateChild(_child, built, null);
