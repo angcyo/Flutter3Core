@@ -74,4 +74,5 @@ const notify = AnnotationMeta('标识这只是一个通知,需要具体手动实
 const defInjectMark = AnnotationMeta('标识当前属性不指定时,也有注入默认值');
 const autoDispose = AnnotationMeta('标识当前操作会自动释放');
 const clipFlag = AnnotationMeta('Canvas Clip 操作, 消耗资源');
+const fromFramework = AnnotationMeta('表示当前代码来自框架');
 //endregion---base
