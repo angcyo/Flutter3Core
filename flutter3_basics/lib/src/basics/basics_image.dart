@@ -251,6 +251,7 @@ extension Uint8ListImageEx on Uint8List {
           errorBuilder: (context, error, stackTrace) =>
               GlobalConfig.of(context).errorPlaceholderBuilder(context, error));
 
+  /// 解码图片字节数据
   /// [ui.Image]
   /// [ui.Codec.getNextFrame]
   /// [FlutterVectorGraphicsListener.onImage]

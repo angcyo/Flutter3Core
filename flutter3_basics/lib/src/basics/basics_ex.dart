@@ -1895,6 +1895,14 @@ extension ListIntEx on List<int> {
   /// 将字节数组转成对应的流
   Stream<List<int>> get stream => Stream.fromIterable([this]);
 
+  /// [Uint8ListImageEx.toImage]
+  Future<ui.Image> toImage() => bytes.toImage();
+
+  /// [Uint8ListImageEx.toImageFromPixels]
+  Future<ui.Image> toImageFromPixels(int width, int height,
+          [ui.PixelFormat format = ui.PixelFormat.rgba8888]) =>
+      bytes.toImageFromPixels(width, height, format);
+
   /// 将字节数组转成对应的整型数字
   /// [length] 需要用几个字节来转换
   /// [endian] 大小端, 默认大端: 低位在前, 高位在后. 读取的时候先读取来的在高位
