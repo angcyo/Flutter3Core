@@ -17,13 +17,13 @@ enum RotateState {
 }
 
 /// 旋转动画小部件
-class RotateAnimated extends StatefulWidget {
+class RotateAnimation extends StatefulWidget {
   /// 旋转的角度步长, 角度
   final double angleStep;
   final RotateState rotateState;
   final Widget child;
 
-  const RotateAnimated(
+  const RotateAnimation(
     this.child, {
     this.rotateState = RotateState.rotate,
     super.key,
@@ -31,10 +31,10 @@ class RotateAnimated extends StatefulWidget {
   });
 
   @override
-  State<RotateAnimated> createState() => _RotateAnimatedState();
+  State<RotateAnimation> createState() => _RotateAnimationState();
 }
 
-class _RotateAnimatedState extends State<RotateAnimated> {
+class _RotateAnimationState extends State<RotateAnimation> {
   /// 当前旋转的角度, [0~360]
   double angle = 0;
 
