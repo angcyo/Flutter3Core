@@ -39,19 +39,34 @@ mixin TabLayoutMixin<T extends StatefulWidget>
 
   /// 构建子页面, 重写此方法需要手动处理指示器[buildTabLayoutIndicator]
   /// [buildTabLayout]->[buildTabLayoutChildren]
+  /// [index] 当前选中的索引
   @callPoint
   @overridePoint
-  WidgetList buildTabLayoutChildren(BuildContext context) => [];
+  WidgetList buildTabLayoutChildren(BuildContext context, int index) => [];
 
   /// 构建指示器
   @overridePoint
-  Widget? buildTabLayoutIndicator(BuildContext context) {
+  Widget? buildTabLayoutIndicator(BuildContext context) =>
+      buildGradientIndicator(context);
+
+  /// 构建一个渐变颜色的指示器
+  /// [fillDecoration]
+  @api
+  Widget? buildGradientIndicator(
+    BuildContext context, {
+    List<Color>? colors,
+    double? borderRadius = kDefaultBorderRadiusXX,
+  }) {
     final globalTheme = GlobalTheme.of(context);
     return DecoratedBox(
       decoration: fillDecoration(
         color: globalTheme.accentColor,
-        gradient: linearGradient(
-            [globalTheme.primaryColor, globalTheme.primaryColorDark]),
+        borderRadius: borderRadius,
+        gradient: linearGradient(colors ??
+            [
+              globalTheme.primaryColor,
+              globalTheme.primaryColorDark,
+            ]),
       ),
     ).tabItemData(
       itemType: TabItemType.indicator,
@@ -62,12 +77,15 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// 构建[TabLayout]
   /// [autoClick] 是否自动处理点击事件
   ///
-  /// [children]或者[buildTabLayoutChildren]
+  /// [children].[onBuildChildren]或者[buildTabLayoutChildren]构建内容
+  ///
+  /// [indicator]或者[buildTabLayoutIndicator]构建指示器
   ///
   @callPoint
   Widget buildTabLayout(
     BuildContext context, {
     List<Widget>? children,
+    List<Widget>? Function(BuildContext context, int index)? onBuildChildren,
     double gap = 0,
     String? autoEqualWidthRange,
     bool autoEqualWidth = false,
@@ -78,17 +96,34 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     Widget? indicator /*指示器*/,
     TextStyle? selectedTextStyle /*选中之后的文本样式*/,
     TextStyle? normalTextStyle /*正常的文本样式*/,
+    bool autoTextBold = false /*是否自动设置选中文本加粗*/,
+    bool autoTextAnimate = true /*是否使用文本样式变化动画*/,
     void Function(int from, int to)? onIndexChangedAction,
   }) {
     return () {
-      List<Widget>? body = children;
+      List<Widget>? body =
+          children ?? onBuildChildren?.call(context, tabLayoutController.index);
       if (body != null) {
+        if (autoTextBold) {
+          final globalTheme = GlobalTheme.of(context);
+          //--
+          selectedTextStyle ??= globalTheme.textGeneralStyle;
+          selectedTextStyle =
+              selectedTextStyle!.copyWith(fontWeight: FontWeight.bold);
+          //--
+          normalTextStyle ??= globalTheme.textGeneralStyle;
+          normalTextStyle =
+              normalTextStyle!.copyWith(fontWeight: FontWeight.normal);
+        }
+
         if (selectedTextStyle != null) {
           body = body
               .mapIndex((child, index) => child.textStyle(
-                  isTabIndexSelected(index)
-                      ? selectedTextStyle
-                      : normalTextStyle))
+                    isTabIndexSelected(index)
+                        ? selectedTextStyle
+                        : normalTextStyle,
+                    animate: autoTextAnimate,
+                  ))
               .toList();
         }
 
@@ -119,13 +154,16 @@ mixin TabLayoutMixin<T extends StatefulWidget>
           onIndexChangedAction?.call(from, to);
         },
         children: body == null
-            ? buildTabLayoutChildren(context)
+            ? buildTabLayoutChildren(context, tabLayoutController.index)
             : [
                 ...body,
                 indicator ?? buildTabLayoutIndicator(context),
               ].filterNull(),
       );
-    }.rebuild(_tabSelectedUpdateSignal, enable: selectedTextStyle != null);
+    }.rebuild(
+      _tabSelectedUpdateSignal,
+      enable: selectedTextStyle != null || autoTextBold || autoTextAnimate,
+    );
   }
 
   /// 指定的索引是否是tab选中的
