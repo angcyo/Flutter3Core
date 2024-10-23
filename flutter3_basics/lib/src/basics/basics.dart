@@ -44,7 +44,8 @@ String uuidFileName([String? suffix]) => $uuid.connect(suffix);
 /// [min] ~ [max] 之间的随机数
 /// `Must be positive and <= 2^32`
 /// `2 ^ 32`
-int nextInt(int max, [int min = 0]) => min + random.nextInt(max);
+int nextInt([int max = intMax32Value, int min = 0]) =>
+    min + random.nextInt(max);
 
 bool nextBool() => random.nextBool();
 
