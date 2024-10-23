@@ -5,6 +5,8 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/08/13
 ///
 /// [Listenable]
+/// [ListenableMixin]
+/// [StreamSubscriptionMixin]
 mixin ListenableMixin<T extends StatefulWidget> on State<T> {
   late final Map<Listenable, VoidCallback> _listenableMap = {};
 

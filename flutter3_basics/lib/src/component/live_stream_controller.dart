@@ -263,6 +263,8 @@ extension _StreamNewStreamWithInitialValue<T> on Stream<T> {
   }
 }
 
+/// [ListenableMixin]
+/// [StreamSubscriptionMixin]
 mixin StreamSubscriptionMixin<T extends StatefulWidget> on State<T> {
   final List<StreamSubscription> _streamSubscriptions = [];
 

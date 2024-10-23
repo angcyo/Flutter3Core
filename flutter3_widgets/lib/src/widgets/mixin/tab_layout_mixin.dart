@@ -7,6 +7,8 @@ part of '../../../flutter3_widgets.dart';
 /// [TabLayout]
 /// 直接调用[buildTabLayout]
 ///
+/// [onSelfTabIndexChanged]重写回调
+///
 /// [PageViewMixin]
 /// [TabLayoutMixin]
 ///
@@ -59,6 +61,9 @@ mixin TabLayoutMixin<T extends StatefulWidget>
 
   /// 构建[TabLayout]
   /// [autoClick] 是否自动处理点击事件
+  ///
+  /// [children]或者[buildTabLayoutChildren]
+  ///
   @callPoint
   Widget buildTabLayout(
     BuildContext context, {

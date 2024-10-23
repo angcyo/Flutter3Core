@@ -314,7 +314,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
   /// 自动等宽, 当所有子节点的大小没有超过父节点时, 开启等宽
   bool autoEqualWidth;
 
-  /// 背景装饰
+  /// 整体的背景装饰, 不包含滚动区域
   Decoration? bgDecoration;
 
   /// 内容背景装饰, 内容的宽度不足时, 就和[bgDecoration]有区别了
