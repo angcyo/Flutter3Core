@@ -277,7 +277,7 @@ extension CanvasEx on Canvas {
 
   /// 使用矩阵变换
   void withMatrix(Matrix4? matrix4, VoidCallback callback) {
-    if (matrix4 == null) {
+    if (matrix4 == null || matrix4.isIdentity()) {
       callback();
     } else {
       withSave(() {

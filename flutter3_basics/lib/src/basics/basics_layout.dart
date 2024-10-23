@@ -134,3 +134,20 @@ Rect applyAlignRect(
   }
 }
 
+/// 与[applyAlignRect]类似, 只不过返回值是[Matrix4]
+Matrix4 applyAlignMatrix(
+  Size parentSize,
+  Size childSize, {
+  BoxFit? fit = BoxFit.contain /*尽可能显示最大尺寸*/,
+  Alignment? alignment = Alignment.center,
+}) {
+  final rect = applyAlignRect(
+    parentSize,
+    childSize,
+    fit: fit,
+    alignment: alignment,
+  );
+  return Matrix4.identity()
+    ..translate(rect.left, rect.top)
+    ..scale(rect.width / childSize.width, rect.height / childSize.height);
+}
