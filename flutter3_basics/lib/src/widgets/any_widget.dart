@@ -161,9 +161,9 @@ Widget $any<Data>({
 }) =>
     AnyStatefulWidget(
       key: key,
-      child: child,
       initData: initData,
       onInit: onInit,
       onLayout: onLayout,
       onPaint: onPaint,
+      child: child,
     );
