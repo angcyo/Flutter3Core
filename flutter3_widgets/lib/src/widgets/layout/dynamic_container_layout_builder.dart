@@ -101,6 +101,9 @@ class _DynamicContainerLayoutBuilderElement<
   // repeatedly to remove children.
   final Set<Element> _forgottenChildren = HashSet<Element>();
 
+  /// 当前创建[_child]时的[Widget]
+  Widget? _childWidget;
+
   /// 当前动态创建的child
   Element? _child;
 
@@ -109,6 +112,16 @@ class _DynamicContainerLayoutBuilderElement<
 
   /// 是否是首次安装
   bool isFirstMount = true;
+
+  List<Widget> get _childrenWidget {
+    final BaseDynamicMultiConstrainedLayoutBuilder
+        multiChildRenderObjectWidget =
+        widget as BaseDynamicMultiConstrainedLayoutBuilder;
+    return [
+      ...multiChildRenderObjectWidget.children,
+      if (_childWidget != null) _childWidget!
+    ];
+  }
 
   @override
   BuildScope get buildScope => _buildScope;
@@ -241,13 +254,14 @@ class _DynamicContainerLayoutBuilderElement<
     return true;
   }
 
-  /// [update]->[updateChild]
+  /// [update]->[updateChild]->[updateChildren]
   @override
   Element? updateChild(Element? child, Widget? newWidget, Object? newSlot) {
     //debugger();
     return super.updateChild(child, newWidget, newSlot);
   }
 
+  /// 更新多个时调用, 更新多个里面又会调用更新单个[updateChild]
   /// [MultiChildRenderObjectElement.update]
   @override
   List<Element> updateChildren(
@@ -282,20 +296,13 @@ class _DynamicContainerLayoutBuilderElement<
   @override
   void mount(Element? parent, Object? newSlot) {
     super.mount(parent, newSlot);
-    final BaseDynamicMultiConstrainedLayoutBuilder
-        multiChildRenderObjectWidget =
-        widget as BaseDynamicMultiConstrainedLayoutBuilder;
-    final List<Element> children = [
-      ...List<Element>.filled(
-        multiChildRenderObjectWidget.children.length,
-        _NullElement.instance,
-      )
-    ];
+    final childrenWidget = _childrenWidget;
+    final List<Element> children =
+        List<Element>.filled(childrenWidget.length, _NullElement.instance);
     Element? previousChild;
     for (int i = 0; i < children.length; i += 1) {
       final Element newChild = inflateWidget(
-          multiChildRenderObjectWidget.children[i],
-          IndexedSlot<Element?>(i, previousChild));
+          childrenWidget[i], IndexedSlot<Element?>(i, previousChild));
       children[i] = newChild;
       previousChild = newChild;
     }
@@ -304,23 +311,24 @@ class _DynamicContainerLayoutBuilderElement<
     renderObject.updateCallback(_rebuildWithConstraints);
   }
 
+  /// [update]->[updateChild]->[updateChildren]
   @override
   void update(covariant BaseDynamicMultiConstrainedLayoutBuilder newWidget) {
     //debugger();
     super.update(newWidget);
-    final BaseDynamicMultiConstrainedLayoutBuilder
-        multiChildRenderObjectWidget =
-        widget as BaseDynamicMultiConstrainedLayoutBuilder;
+    final childrenWidget = _childrenWidget;
     assert(widget == newWidget);
-    assert(!debugChildrenHaveDuplicateKeys(
-        widget, multiChildRenderObjectWidget.children));
-    _children = [
-      ...updateChildren(
-        _children,
-        multiChildRenderObjectWidget.children,
-        forgottenChildren: _forgottenChildren,
-      )
-    ];
+    assert(!debugChildrenHaveDuplicateKeys(widget, childrenWidget));
+    _updateElement(childrenWidget);
+  }
+
+  /// 当有新的[Widget]动态添加或移除时, 更新[Element]
+  void _updateElement(List<Widget> childrenWidget) {
+    _children = updateChildren(
+      _children,
+      childrenWidget,
+      forgottenChildren: _forgottenChildren,
+    );
     _forgottenChildren.clear();
     renderObject._conditionCallback = _rebuildWithCondition;
     renderObject.updateCallback(_rebuildWithConstraints);
@@ -329,7 +337,9 @@ class _DynamicContainerLayoutBuilderElement<
   /// [Element.reassemble] 热加载时, 会触发此方法
   @override
   void markNeedsBuild() {
+    //debugger();
     super.markNeedsBuild();
+    //debugger();
     renderObject.markNeedsLayout();
     _needsBuild = true;
   }
@@ -391,6 +401,7 @@ class _DynamicContainerLayoutBuilderElement<
             as DynamicConstrainedLayoutBuilderMixin<ConstraintType, Condition>);
         built = dynamicWidget.builder?.call(this, constraints,
             isFirstMount ? dynamicWidget.initCondition : _condition);
+        _childWidget = built;
         if (isFirstMount) {
           _condition = dynamicWidget.initCondition;
         }
@@ -409,13 +420,14 @@ class _DynamicContainerLayoutBuilderElement<
         );
       }
       try {
+        _updateElement(_childrenWidget);
         //debugger();
-        _children.remove(_child);
-        _child = updateChild(_child, built,
-            IndexedSlot<Element?>(_children.length, _children.lastOrNull));
-        if (_child != null) {
+        //_children.remove(_child);
+        // _child = updateChild(_child, built,
+        //     IndexedSlot<Element?>(_children.length, _children.lastOrNull));
+        /*if (_child != null) {
           _children.add(_child!);
-        }
+        }*/
         /*if (built != null) {
           debugger();
             _child = updateChild(_child, built, null);
@@ -439,7 +451,7 @@ class _DynamicContainerLayoutBuilderElement<
             ],
           ),
         );
-        _child = updateChild(null, built, slot);
+        //_child = updateChild(null, built, slot);
       } finally {
         _needsBuild = false;
         _previousConstraints = constraints;
@@ -453,6 +465,8 @@ class _DynamicContainerLayoutBuilderElement<
     owner!.buildScope(this, callback);
   }
 }
+
+//--
 
 class _NullElement extends Element {
   _NullElement() : super(const _NullWidget());
