@@ -192,7 +192,7 @@ extension ObjectEx on Object {
     double? fontSize,
     Color? textColor,
     FontWeight? fontWeight,
-    bool bold = false /*加粗*/,
+    bool? bold /*加粗*/,
     FontStyle? fontStyle,
     String? fontFamily,
     TextAlign? textAlign,
@@ -212,7 +212,7 @@ extension ObjectEx on Object {
     if (maxLines != null) {
       overflow ??= TextOverflow.ellipsis;
     }
-    if (bold) {
+    if (bold == true) {
       fontWeight ??= FontWeight.bold;
     }
     //使用正则匹配高亮文本
@@ -2077,6 +2077,18 @@ extension ListEx<T> on List<T> {
 
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
+
+  /// 确保列表中, 至少有指定个数的元素, 不足时, 循环填充数据
+  List<T> ensureLength(int length, [T Function(int index)? create]) {
+    if (this.length >= length) {
+      return this;
+    }
+    final result = <T>[];
+    for (var i = 0; i < length; i++) {
+      result.add(create?.call(i) ?? this[i % this.length]);
+    }
+    return result;
+  }
 
   /// [StatelessWidget]->[ScrollView]->[BoxScrollView]->[ListView]
   ListView toListView(

@@ -1474,6 +1474,7 @@ extension WidgetEx on Widget {
 
   /// 文本样式包裹
   /// [DefaultTextStyle]
+  /// [AnimatedDefaultTextStyle]
   Widget wrapTextStyle({
     TextStyle? style,
     TextAlign? textAlign,
@@ -1482,9 +1483,23 @@ extension WidgetEx on Widget {
     int? maxLines,
     TextWidthBasis textWidthBasis = TextWidthBasis.parent,
     ui.TextHeightBehavior? textHeightBehavior,
+    bool animate = false,
   }) {
     style ??= GlobalConfig.def.globalThemeData?.primaryTextTheme.bodyMedium ??
         GlobalConfig.def.globalTheme.textGeneralStyle;
+    if (animate) {
+      return AnimatedDefaultTextStyle(
+        style: style,
+        textAlign: textAlign,
+        softWrap: softWrap,
+        overflow: overflow,
+        maxLines: maxLines,
+        textWidthBasis: textWidthBasis,
+        textHeightBehavior: textHeightBehavior,
+        duration: kDefaultAnimationDuration,
+        child: this,
+      );
+    }
     return DefaultTextStyle(
       style: style,
       textAlign: textAlign,
@@ -1498,8 +1513,16 @@ extension WidgetEx on Widget {
   }
 
   /// [DefaultTextStyle]
-  Widget textStyle(TextStyle? style) =>
-      style == null ? this : wrapTextStyle(style: style);
+  Widget textStyle(
+    TextStyle? style, {
+    bool animate = false,
+  }) =>
+      style == null
+          ? this
+          : wrapTextStyle(
+              style: style,
+              animate: animate,
+            );
 
   /// 拦截路由的弹出, 返回键.
   /// [PopScope]
@@ -3145,7 +3168,7 @@ LinearGradient linearGradient(
   List<double>? stops,
 }) =>
     LinearGradient(
-      colors: colors,
+      colors: colors.ensureLength(2),
       begin: begin,
       end: end,
       stops: stops,
@@ -3165,7 +3188,7 @@ RadialGradient radialGradient(
   GradientTransform? transform,
 }) =>
     RadialGradient(
-      colors: colors,
+      colors: colors.ensureLength(2),
       radius: radius,
       center: center,
       stops: stops,
@@ -3186,7 +3209,7 @@ SweepGradient sweepGradient(
   GradientTransform? transform,
 }) =>
     SweepGradient(
-      colors: colors,
+      colors: colors.ensureLength(2),
       center: center,
       startAngle: startAngle,
       endAngle: endAngle,
@@ -3211,9 +3234,6 @@ Widget linearGradientWidget(
   TileMode tileMode = TileMode.clamp,
   GradientTransform? transform,
 }) {
-  if (colors.length == 1) {
-    colors = [...colors, ...colors];
-  }
   if (gradientDirection == Axis.horizontal) {
     begin = Alignment.centerLeft;
     end = Alignment.centerRight;
@@ -3228,7 +3248,7 @@ Widget linearGradientWidget(
     constraints: constraints,
     decoration: BoxDecoration(
       gradient: linearGradient(
-        colors,
+        colors.ensureLength(2),
         begin: begin,
         end: end,
         tileMode: tileMode,
