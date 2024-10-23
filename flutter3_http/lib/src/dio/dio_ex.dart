@@ -119,6 +119,25 @@ extension DioStringEx on String {
     return Uint8List.fromList(response.data);
   }
 
+  /// 获取http对应的图片数据
+  /// [HttpStringEx.httpGetBytes]
+  Future<UiImage?> dioGetImage({
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+    BuildContext? context,
+  }) async {
+    final bytes = await dioGetBytes(
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
+      context: context,
+    );
+    return bytes?.toImage();
+  }
+
   /// post请求
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
