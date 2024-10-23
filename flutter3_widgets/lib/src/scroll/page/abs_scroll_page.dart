@@ -77,8 +77,10 @@ mixin AbsScrollPage {
     children ??= buildScrollBody(context);
     final useSliverAppBar = this.useSliverAppBar(context) == true;
     if (useSliverAppBar) {
-      children = [buildAppBar(context, useSliverAppBar: true), ...?children]
-          .filterNull();
+      children = [
+        buildAppBar(context, useSliverAppBar: true),
+        ...?children,
+      ].filterNull();
     }
     if (this is RScrollPage) {
       return (this as RScrollPage).pageRScrollView(children: children);
