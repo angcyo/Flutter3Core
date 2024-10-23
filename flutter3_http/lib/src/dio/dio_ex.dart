@@ -52,13 +52,21 @@ extension DioStringEx on String {
   /// get请求
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
+  ///
+  /// ```
+  /// GridOptionBean.fromJson(res.data);
+  /// ```
+  ///
+  /// [Response.data].[_Map<String, dynamic>]
+  /// @return [Response<dynamic>]
+  ///
   Future<Response<T>> get<T>({
-    BuildContext? context,
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
+    BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.get<T>(
           transformUrl(),
@@ -74,11 +82,11 @@ extension DioStringEx on String {
   /// 获取http字符串内容
   /// [HttpStringEx.httpGetContent]
   Future<String?> dioGetString({
-    BuildContext? context,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
+    BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.get<String>(
           transformUrl(),
@@ -94,11 +102,11 @@ extension DioStringEx on String {
   /// 获取http字节数据
   /// [HttpStringEx.httpGetBytes]
   Future<Uint8List?> dioGetBytes({
-    BuildContext? context,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
+    BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.get(
           transformUrl(),
@@ -115,13 +123,13 @@ extension DioStringEx on String {
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   Future<Response<T>> post<T>({
-    BuildContext? context,
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.post<T>(
           transformUrl(),
@@ -139,13 +147,13 @@ extension DioStringEx on String {
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   Future<Response<T>> put<T>({
-    BuildContext? context,
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.put<T>(
           transformUrl(),
@@ -282,3 +290,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     });
   }
 }
+
+/// [DioStringEx.get]
+/// [DioFutureResponseEx.http]
+extension ResponseEx<T> on Response<T> {}

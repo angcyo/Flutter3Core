@@ -402,7 +402,7 @@ extension FutureEx<T> on Future<T> {
           return true;
         }());
         if (throwError == true) {
-          throw error;
+          rethrow;
         }
         get?.call(null, error); //这一层的错误可以走正常的Future异常处理
         return null;
