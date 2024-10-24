@@ -36,6 +36,10 @@ void main(List<String> arguments) async {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置蒲公英[pgyer_api_key]";
   }
 
+  //是否要使用飞书的webhook通知
+  final useFeishuWebhook =
+      (localYaml["use_feishu_webhook"] ?? yaml["use_feishu_webhook"]) != false;
+
   for (final folder
       in (localYaml?["pgyer_path"] ?? yaml?["pgyer_path"] ?? [])) {
     final fileList = await _getFileList(folder);
@@ -65,7 +69,7 @@ void main(List<String> arguments) async {
             await _writeUploadRecord(folder, file);
             final url =
                 await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
-            if (index == length - 1 && url != null) {
+            if (useFeishuWebhook && index == length - 1 && url != null) {
               //只在最后一个文件上传成功之后, 进行飞书webhook通知
               await _sendFeishuWebhook(
                 localYaml["feishu_webhook"] ?? yaml["feishu_webhook"],
