@@ -1471,7 +1471,7 @@ extension NumEx on num {
   ///三星手机会出现24帧率
   ///[refreshRate]
   double get rr =>
-      refreshRate > 60.0 ? (this / (refreshRate / 60.0)) : this.toDouble();
+      refreshRate > 60.0 ? (this / (refreshRate / 60.0)) : toDouble();
 
   /// [num]->[double]
   double toNumDouble({
