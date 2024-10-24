@@ -22,7 +22,7 @@ class SingleBottomInputDialog extends StatefulWidget
   /// 是否可以输入空文本
   final bool enableInputEmpty;
 
-  /// 是否可以输入默认值
+  /// 是否可以输入默认值, 也就是默认值时, 右边的确认按钮也是可以点击的
   final bool enableInputDefault;
 
   //--input

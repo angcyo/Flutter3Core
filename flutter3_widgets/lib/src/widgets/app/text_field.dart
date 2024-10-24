@@ -74,6 +74,11 @@ class TextFieldConfig {
   /// [TextField.onEditingComplete]
   VoidCallback? onEditingComplete;
 
+  /// 焦点改变后的回调
+  /// [FocusNode]
+  /// 由[_SingleInputWidgetState._onFocusChanged]驱动
+  DoubleValueChanged<bool, String>? onFocusAction;
+
   TextFieldConfig({
     String? text /*默认文本*/,
     TextEditingController? controller,
@@ -89,6 +94,7 @@ class TextFieldConfig {
     this.onChanged,
     this.onSubmitted,
     this.onEditingComplete,
+    this.onFocusAction,
   })  : controller = controller ?? TextEditingController(text: text),
         focusNode = focusNode ?? FocusNode(),
         obscureNode = ObscureNode(obscureText ?? false) {
@@ -359,9 +365,15 @@ class SingleInputWidget extends StatefulWidget {
   /// https://blog.csdn.net/yuzhiqiang_1993/article/details/88204031
   final ValueChanged<String>? onChanged;
 
-  ///点击键盘的动作按钮时的回调
-  final ValueChanged<String>? onSubmitted;
-  final VoidCallback? onEditingComplete;
+  ///点击键盘的动作按钮时的回调, 通常是按回车之后回调
+  final VoidCallback? onEditingComplete /*无参数的回调*/;
+
+  /// [onEditingComplete]回调之后会马上触发[onSubmitted]回调
+  final ValueChanged<String>? onSubmitted /*有参数的回调*/;
+
+  /// 焦点改变后的回调
+  /// [FocusNode]
+  final ValueChanged<bool>? onFocusAction;
 
   /// [TextField]
   const SingleInputWidget({
@@ -412,6 +424,7 @@ class SingleInputWidget extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.onEditingComplete,
+    this.onFocusAction,
     this.prefixIconBuilder,
     this.suffixIconBuilder,
   });
@@ -514,6 +527,14 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     value.notifyInputValueChanged();
   }
 
+  /// 焦点改变后的回调
+  void _onFocusChanged() {
+    _checkSuffixIcon();
+    final hasFocus = widget.config.focusNode.hasFocus;
+    widget.onFocusAction?.call(hasFocus);
+    widget.config.onFocusAction?.call(hasFocus, widget.config.text);
+  }
+
   /// 检查是否需要显示后缀图标
   void _checkSuffixIcon() {
     if (widget.autoShowSuffixIcon) {
@@ -523,7 +544,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 
   @override
   void initState() {
-    widget.config.focusNode.addListener(_checkSuffixIcon);
+    widget.config.focusNode.addListener(_onFocusChanged);
     if (widget.config.obscureNode.obscureText) {
       widget.config.obscureNode.addListener(_checkSuffixIcon);
     }
@@ -535,7 +556,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   @override
   void dispose() {
     widget.config.updateFieldValueFn = null;
-    widget.config.focusNode.removeListener(_checkSuffixIcon);
+    widget.config.focusNode.removeListener(_onFocusChanged);
     if (widget.config.obscureNode.obscureText) {
       widget.config.obscureNode.removeListener(_checkSuffixIcon);
     }
@@ -548,8 +569,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     oldWidget.config.updateFieldValueFn = null;
     widget.config.updateFieldValueFn = _updateFieldValue;
 
-    oldWidget.config.focusNode.removeListener(_checkSuffixIcon);
-    widget.config.focusNode.addListener(_checkSuffixIcon);
+    oldWidget.config.focusNode.removeListener(_onFocusChanged);
+    widget.config.focusNode.addListener(_onFocusChanged);
 
     oldWidget.config.obscureNode.removeListener(_checkSuffixIcon);
     if (widget.config.obscureNode.obscureText) {

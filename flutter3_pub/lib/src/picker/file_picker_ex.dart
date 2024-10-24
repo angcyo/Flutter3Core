@@ -21,6 +21,18 @@ Future<PlatformFile?> pickSingleImage({
       .firstOrNull;
 }
 
+/// 选择单个文件, 选择多个文件请使用[pickFiles]
+Future<PlatformFile?> pickFile() async {
+  return (await pickFiles(
+    type: FileType.any,
+    allowCompression: false,
+    compressionQuality: 0,
+    allowMultiple: false,
+  ))
+      ?.files
+      .firstOrNull;
+}
+
 /// 选择文件, 使用系统自带的文件选择器
 /// 选择图片
 /// 选择视频

@@ -18,7 +18,9 @@ typedef ShowLoadMoreCallback = bool Function();
 class RScrollView extends StatefulWidget {
   const RScrollView({
     super.key,
-    required this.children,
+    this.children,
+    this.childrenBuilder,
+    this.updateSignal,
     this.scrollConfig,
     this.controller,
     this.scrollDirection = Axis.vertical,
@@ -44,8 +46,18 @@ class RScrollView extends StatefulWidget {
     this.frameSplitDuration = const Duration(milliseconds: 16),
   });
 
+  //--
+
+  /// 监听此值的变化, 用来重建[children]
+  final Listenable? updateSignal;
+
   /// [RItemTile] 的列表核心的数据集合
-  final List<Widget> children;
+  final List<Widget>? children;
+
+  /// 用来构建[children]
+  final ChildrenBuilder? childrenBuilder;
+
+  //--
 
   /// 是否要显示滚动条
   /// [ScrollbarTheme]
@@ -146,7 +158,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     WidgetList? children,
     bool? useFrameLoad,
   }) {
-    children ??= widget.children;
+    children ??= widget.children ?? widget.childrenBuilder?.call(context) ?? [];
 
     //debugger();
     final result = _transformTileList(context, children);
@@ -191,8 +203,14 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     return scrollConfig.filterAndTransformTileList(context, children);
   }
 
+  void _rebuild() {
+    //debugger();
+    updateState();
+  }
+
   @override
   void initState() {
+    widget.updateSignal?.addListener(_rebuild);
     enableFrameLoad = widget.enableFrameLoad;
     frameSplitCount = widget.frameSplitCount;
     frameSplitDuration = widget.frameSplitDuration;
@@ -200,8 +218,17 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
   }
 
   @override
+  void dispose() {
+    widget.updateSignal?.removeListener(_rebuild);
+    super.dispose();
+  }
+
+  @override
   void didUpdateWidget(covariant RScrollView oldWidget) {
     super.didUpdateWidget(oldWidget);
+    oldWidget.updateSignal?.removeListener(_rebuild);
+    widget.updateSignal?.removeListener(_rebuild);
+    widget.updateSignal?.addListener(_rebuild);
   }
 
   @override

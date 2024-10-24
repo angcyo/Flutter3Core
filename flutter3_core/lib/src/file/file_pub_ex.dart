@@ -310,8 +310,10 @@ extension FileStringPubEx on String {
   /// [this] 文件名
   /// [subFolder] 子文件夹, 不包含根目录
   /// [useCacheFolder] 是否使用缓存文件夹
-  Future<String> filePathOf(
-      [String? subFolder, bool useCacheFolder = false]) async {
+  Future<String> filePathOf([
+    String? subFolder,
+    bool useCacheFolder = false,
+  ]) async {
     final folderPath =
         useCacheFolder ? (await cacheFolder()).path : (await fileFolder()).path;
     if (subFolder == null) {

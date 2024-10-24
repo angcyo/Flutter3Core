@@ -80,7 +80,10 @@ class RebuildWidgetState extends State<RebuildWidget> {
 }
 
 /// 用来触发重构的信号, 不管值相同与否, 都会触发通知
-/// [ValueNotifier]
+/// [ValueNotifier]↓
+/// [UpdateValueNotifier]↓
+/// [UpdateSignalNotifier]↓
+///
 @updateSignalMark
 class UpdateValueNotifier<T> extends ValueNotifier<T> with NotifierMixin {
   /// 附加的额外数据
@@ -173,6 +176,11 @@ mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
     }
     listenableList.clear();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   /// 重构界面

@@ -12,6 +12,9 @@ Size kDefaultLoadingSize = const Size(50, 50);
 WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 
 /// 显示加载提示
+///
+/// [builder] 构建加载提示的Widget
+///
 /// [showStrokeLoading]
 /// [postShow] 是否要延迟显示
 /// [wrapLoading]
@@ -34,7 +37,7 @@ OverlayEntry? showLoading({
     currentLoadingEntry = null;
   }
 
-  var overlayState = context == null
+  final overlayState = context == null
       ? GlobalConfig.def.findOverlayState()
       : Overlay.of(context);
   if (overlayState == null) {
@@ -49,7 +52,7 @@ OverlayEntry? showLoading({
       ? GlobalConfig.def.findModalRouteList().lastOrNull?.$1
       : ModalRoute.of(context);
 
-  ///创建Entry
+  // 创建Entry
   currentLoadingEntry = OverlayEntry(builder: (context) {
     return _LoadingOverlay(
         route: route,

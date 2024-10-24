@@ -103,4 +103,11 @@ typedef WidgetNullBuilder = Widget? Function(BuildContext context);
 typedef TransitionsBuilder = Widget Function(
     BuildContext context, Animation<double> animation, Widget? child);
 
+/// [WidgetBuilder]
+typedef ChildrenBuilder = List<Widget>? Function(BuildContext context);
+
+/// [IndexedWidgetBuilder]
+typedef IndexChildrenBuilder = List<Widget>? Function(
+    BuildContext context, int index);
+
 //endregion Fn

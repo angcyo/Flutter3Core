@@ -66,7 +66,14 @@ class _RouteWillPopScopeState extends State<RouteWillPopScope> {
   @override
   void dispose() {
     if (widget.onWillPop != null) {
-      _route?.removeScopedWillPopCallback(widget.onWillPop!);
+      try {
+        _route?.removeScopedWillPopCallback(widget.onWillPop!);
+      } catch (e, s) {
+        assert(() {
+          printError(e, s);
+          return true;
+        }());
+      }
     }
     super.dispose();
   }

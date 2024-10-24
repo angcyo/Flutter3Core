@@ -10,10 +10,19 @@ part of '../../flutter3_basics.dart';
 /// https://api.dart.dev/stable/3.2.0/dart-io/Process-class.html
 /// https://pub.dev/packages/uri_to_file
 extension FileStringEx on String {
+  /// [File]
+  /// [Directory]
+  File toFile() => File(this);
+
   //region ---Path---
 
   /// 转换成文件夹对象
+  /// [File]
+  /// [Directory]
   Directory get folder => Directory(this);
+
+  /// [folder]
+  Directory toFolder() => Directory(this);
 
   /// 确保文件夹存在, 如果不存在, 则创建
   Directory ensureDirectory() => Directory(this).ensureDirectory();
@@ -156,6 +165,17 @@ extension FileSystemEntityEx on FileSystemEntity {
 }
 
 extension FileEx on File {
+  /// 有个path库的方法叫做[basename]
+  /// 获取路径对应的文件名, 包含扩展名
+  String get filename {
+    String text = path;
+    if (text.contains('?')) {
+      text = text.split('?').first;
+    }
+    //路径分隔符, Android:/
+    return text.split(Platform.pathSeparator).last;
+  }
+
   /// [UiImageProvider]
   /// [ImageProviderEx.toImage]
   FileImage toImageProvider([double scale = 1]) =>

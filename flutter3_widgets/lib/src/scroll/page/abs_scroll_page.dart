@@ -14,7 +14,7 @@ part of '../../../flutter3_widgets.dart';
 /// [RScrollPage] 刷新,加载更多. 在[buildBody]中兼容[RScrollPage].
 /// [RStatusScrollPage] 状态切换
 ///
-/// [RebuildBodyMixin]
+/// [RebuildBodyMixin].[buildScaffold]
 ///
 /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
 /// [buildAppBar]
@@ -70,26 +70,37 @@ mixin AbsScrollPage {
 
   //region Body
 
+  /// [buildBody]->[RScrollView]的[RScrollView.children]更新信号
+  /// [createUpdateSignal]
+  UpdateValueNotifier? get scrollChildrenUpdateSignal => null;
+
   /// 构建滚动内容
   /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
   /// [RScrollPage.pageRScrollView]
   @property
   Widget buildBody(BuildContext context, WidgetList? children) {
-    children ??= buildScrollBody(context);
-    final useSliverAppBar = this.useSliverAppBar(context) == true;
-    if (useSliverAppBar) {
-      children = [
-        buildAppBar(context, useSliverAppBar: true),
-        ...?children,
-      ].filterNull();
+    //构建子节点
+    WidgetList? buildChildren() {
+      WidgetList? result = children ?? buildScrollBody(context);
+      final useSliverAppBar = this.useSliverAppBar(context) == true;
+      if (useSliverAppBar) {
+        result = [
+          buildAppBar(context, useSliverAppBar: true),
+          ...?result,
+        ].filterNull();
+      }
+      return result;
     }
+
     if (this is RScrollPage) {
-      return (this as RScrollPage).pageRScrollView(children: children);
+      return (this as RScrollPage).pageRScrollView(children: buildChildren());
     }
     return RScrollView(
       /*physics: null,
       scrollBehavior: null,*/
-      children: children ?? [],
+      /*children: children,*/
+      updateSignal: scrollChildrenUpdateSignal,
+      childrenBuilder: (context) => buildChildren(),
     );
   }
 
@@ -97,6 +108,12 @@ mixin AbsScrollPage {
   @property
   WidgetList? buildScrollBody(BuildContext context) {
     return null;
+  }
+
+  /// [buildBody]->[RScrollView]重构子节点更新信号
+  @updateSignalMark
+  void updateScrollChildren() {
+    scrollChildrenUpdateSignal?.update();
   }
 
   //endregion Body
@@ -225,6 +242,7 @@ mixin AbsScrollPage {
 }
 
 /// 更新body混入, 配合[AbsScrollPage]使用
+/// [AbsScrollPage.buildScaffold]
 mixin RebuildBodyMixin {
   /// [buildBody]更新的信号
   final UpdateSignalNotifier bodyUpdateSignal = UpdateSignalNotifier(null);
@@ -232,6 +250,11 @@ mixin RebuildBodyMixin {
   /// 重建[buildBody]
   @updateMark
   void updateBody() {
+    rebuildBody();
+  }
+
+  @updateMark
+  void rebuildBody() {
     bodyUpdateSignal.notify();
   }
 }

@@ -47,7 +47,7 @@ extension DioMapEx on Map<String, dynamic> {
 }
 
 /// 请求的子路径需要以`/`开头
-/// https://github.com/cfug/dio/blob/main/dio/README-ZH.md
+/// Dio使用文档 https://github.com/cfug/dio/blob/main/dio/README-ZH.md
 extension DioStringEx on String {
   /// get请求
   /// [context] 用来获取dio
@@ -187,6 +187,46 @@ extension DioStringEx on String {
     return response;
   }
 
+  /// 使用post请求, 上传文件
+  /// [filePath] 单位件上传
+  /// [filePathList] 多文件上传
+  /// [formMap] 除了文件外, 额外的表单数据
+  /// https://github.com/FlutterStudioIst/dio/blob/main/dio/README-ZH.md#%E5%8F%91%E9%80%81-formdata
+  Future<Response<T>> upload<T>({
+    String? filePath,
+    List<String>? filePathList,
+    Map<String, dynamic>? formMap,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+    BuildContext? context,
+  }) async {
+    filePathList ??= [filePath!];
+    final formData = FormData.fromMap({
+      'name': 'flutter-dio',
+      'date': DateTime.now().toIso8601String(),
+      'files': [
+        for (var filePath in filePathList)
+          await MultipartFile.fromFile(
+            filePath,
+            filename: filePath.toFile().filename,
+          ),
+      ],
+      ...?formMap,
+    });
+    return post<T>(
+      data: formData,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+      context: context,
+    );
+  }
+
   /// 下载
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
@@ -196,6 +236,9 @@ extension DioStringEx on String {
   /// [deleteOnError] 是否在下载失败时, 删除文件
   /// [overwrite] 是否覆盖已存在的文件
   /// https://pub.dev/packages/network_to_file_image
+  ///
+  /// [Dio.download]
+  ///
   Future<Response> download({
     String? savePath,
     Future<String>? getSavePath,

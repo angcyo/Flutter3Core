@@ -6,7 +6,8 @@ part of '../../flutter3_basics.dart';
 ///
 
 /// 显示加载提示
-/// [showLoading]
+/// [showLoading] 加载提示core方法
+/// [hideLoading] 隐藏加载提示
 OverlayEntry? showStrokeLoading({
   BuildContext? context,
 }) {

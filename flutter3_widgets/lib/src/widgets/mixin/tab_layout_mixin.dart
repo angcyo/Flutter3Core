@@ -77,7 +77,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// 构建[TabLayout]
   /// [autoClick] 是否自动处理点击事件
   ///
-  /// [children].[onBuildChildren]或者[buildTabLayoutChildren]构建内容
+  /// [children].[childrenBuilder]或者[buildTabLayoutChildren]构建内容
   ///
   /// [indicator]或者[buildTabLayoutIndicator]构建指示器
   ///
@@ -85,7 +85,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   Widget buildTabLayout(
     BuildContext context, {
     List<Widget>? children,
-    List<Widget>? Function(BuildContext context, int index)? onBuildChildren,
+    IndexChildrenBuilder? childrenBuilder,
     double gap = 0,
     String? autoEqualWidthRange,
     bool autoEqualWidth = false,
@@ -102,7 +102,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   }) {
     return () {
       List<Widget>? body =
-          children ?? onBuildChildren?.call(context, tabLayoutController.index);
+          children ?? childrenBuilder?.call(context, tabLayoutController.index);
       if (body != null) {
         if (autoTextBold) {
           final globalTheme = GlobalTheme.of(context);
