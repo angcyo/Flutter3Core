@@ -5,6 +5,8 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/08/08
 ///
 /// 实现了[PreferredSizeWidget]的[SliverAppBar]
+///
+/// [PreferredSize]
 class PreferredSizeSliverAppBar extends StatefulWidget
     implements PreferredSizeWidget {
   PreferredSizeSliverAppBar({

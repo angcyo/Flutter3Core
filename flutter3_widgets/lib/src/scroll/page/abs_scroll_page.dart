@@ -17,6 +17,7 @@ part of '../../../flutter3_widgets.dart';
 /// [RebuildBodyMixin]
 ///
 /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
+/// [buildAppBar]
 mixin AbsScrollPage {
   /// 直接写一个[build]方法, 也可以继承[State.build]方法
   /// @override
