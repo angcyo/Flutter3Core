@@ -1,4 +1,4 @@
-part of flutter3_widgets;
+part of '../../../flutter3_widgets.dart';
 
 /// 按钮小部件
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

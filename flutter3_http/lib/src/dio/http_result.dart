@@ -25,6 +25,9 @@ class HttpResultHandle {
   /// 是否要显示错误提示
   bool showErrorToast = true;
 
+  /// 如果返回的是字符串类型, 是否需要使用json解码
+  bool needJsonDecode = true;
+
   /// 处理网络请求返回的数据
   late dynamic Function(dynamic response) handleResponse = (response) {
     //debugger();
@@ -32,7 +35,10 @@ class HttpResultHandle {
       final code = response.statusCode ?? 0;
       if (code >= 200 && code < 300) {
         //成功
-        final data = response.data;
+        dynamic data = response.data;
+        if (needJsonDecode && data is String) {
+          data = jsonDecode(data);
+        }
         if (data is! Map) {
           return data;
         } else if (codeKey != null) {
@@ -50,7 +56,11 @@ class HttpResultHandle {
           return dataKey == null ? data : data[dataKey];
         }
       } else {
-        throw RException(message: "[$code]${response.statusMessage}");
+        assert(() {
+          l.w("网络请求状态码[$code]");
+          return true;
+        }());
+        throw RException(message: "code[$code]${response.statusMessage ?? ""}");
       }
     } else {
       //throw RException(message: "无法解析的数据类型");

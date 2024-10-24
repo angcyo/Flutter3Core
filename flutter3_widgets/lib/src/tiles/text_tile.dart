@@ -14,13 +14,30 @@ class TextTile extends StatelessWidget {
   /// 内边距
   final EdgeInsetsGeometry? padding;
 
+  /// 简单的文本显示
   const TextTile({
+    super.key,
+    this.text,
+    this.textStyle = TextStyleType.body,
+    this.textWidget,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: kX,
+      vertical: kH,
+    ),
+  });
+
+  /// 副文本, 内边距更大
+  const TextTile.subText({
     super.key,
     this.text,
     this.textStyle = TextStyleType.des,
     this.textWidget,
     this.padding = const EdgeInsets.only(
-        left: kXh + kX, top: kL, right: kXh + kX, bottom: kL),
+      left: kXh + kX,
+      top: kL,
+      right: kXh + kX,
+      bottom: kL,
+    ),
   });
 
   @override

@@ -27,6 +27,11 @@ class TextFieldConfig {
   /// 输入的文本
   String get text => controller.text;
 
+  /// [updateText]
+  set text(String? text) {
+    updateText(text);
+  }
+
   /// 调用此方法更新输入框的值
   /// 此方法会在自动绑定[_SingleInputWidgetState._updateFieldValue]
   @autoInjectMark
