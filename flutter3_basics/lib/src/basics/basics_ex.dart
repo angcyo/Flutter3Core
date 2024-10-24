@@ -1890,6 +1890,11 @@ extension ListIntEx on List<int> {
   /// [ListIntEx]
   /// [Uint8List]
   /// `Uint8List implements List<int>, TypedData`
+  ///
+  /// [ByteDataEx].[ByteDataEx.bytes]
+  /// [ByteData].[ByteData.buffer]->[ByteBuffer]
+  /// [ByteBuffer].[ByteBuffer.asUint8List]->[List<int>]
+  ///
   Uint8List get bytes => Uint8List.fromList(this);
 
   /// 将字节数组转成对应的流
