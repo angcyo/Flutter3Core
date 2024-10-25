@@ -27,6 +27,25 @@ class CheckboxTile extends StatefulWidget {
   /// 是否要支持半选
   final bool tristate;
 
+  /// 是否是圆形
+  /// [RoundedRectangleBorder]
+  /// [CircleBorder]
+  final bool isCircleShape;
+
+  //--
+
+  /// 正常时的边框颜色
+  @defInjectMark
+  final Color? normalColor;
+
+  /// 正常时边框宽度
+  @defInjectMark
+  final double? normalWidth;
+
+  /// 激活时的颜色
+  @defInjectMark
+  final Color? activeColor;
+
   const CheckboxTile({
     super.key,
     this.text,
@@ -34,6 +53,10 @@ class CheckboxTile extends StatefulWidget {
     this.textPadding = kContentPadding,
     this.value = false,
     this.tristate = false,
+    this.isCircleShape = false,
+    this.normalColor,
+    this.normalWidth,
+    this.activeColor,
     this.onChanged,
   });
 
@@ -58,11 +81,29 @@ class _CheckboxTileState extends State<CheckboxTile> with TileMixin {
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     return [
       Checkbox(
         value: _initValue,
         tristate: widget.tristate,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        /*打勾时勾的颜色*/
+        /*checkColor: Colors.purpleAccent,*/
+        activeColor: widget.activeColor ?? globalTheme.accentColor,
+        shape: widget.isCircleShape
+            ? const CircleBorder()
+            : const RoundedRectangleBorder(),
+        side: WidgetStateBorderSide.resolveWith(
+          (states) {
+            if (states.isEmpty) {
+              return BorderSide(
+                width: widget.normalWidth ?? 1.0,
+                color: widget.normalColor ?? globalTheme.lineDarkColor,
+              );
+            }
+            return null;
+          },
+        ),
         onChanged: (value) {
           _initValue = value;
           widget.onChanged?.call(value);
