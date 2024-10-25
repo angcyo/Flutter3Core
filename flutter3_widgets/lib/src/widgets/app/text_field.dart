@@ -39,9 +39,18 @@ class TextFieldConfig {
 
   //region 覆盖TextField的属性, 优先级低
 
+  /// 浮动在输入框上方的提示文字
+  String? labelText;
+
+  /// [labelText]的回调版本
+  IntlTextBuilder? labelTextBuilder;
+
   /// 输入框内的提示文字, 占位提示文本
   /// [SingleInputWidget.hintText]
   String? hintText;
+
+  /// [hintText]的回调版本
+  IntlTextBuilder? hintTextBuilder;
 
   /// 前缀图标小部件
   /// [SingleInputWidget.prefixIcon]
@@ -94,7 +103,10 @@ class TextFieldConfig {
     this.textInputAction,
     this.inputFormatters,
     this.updateFieldValueFn,
+    this.labelText,
+    this.labelTextBuilder,
     this.hintText,
+    this.hintTextBuilder,
     this.prefixIcon,
     this.onChanged,
     this.onSubmitted,
@@ -247,12 +259,25 @@ class SingleInputWidget extends StatefulWidget {
 
   final double gapPadding;
 
+  /// [labelText]
+  final Widget? label;
+
   /// 浮动在输入框上方的提示文字
+  /// [TextFieldConfig.labelText]
   final String? labelText;
+
+  /// [labelText]的回调版本
+  /// [TextFieldConfig.labelTextBuilder]
+  final IntlTextBuilder? labelTextBuilder;
 
   /// 输入框内的提示文字, 占位提示文本
   /// [InputDecoration.hintText]
+  /// [TextFieldConfig.hintText]
   final String? hintText;
+
+  /// [hintText]的回调版本
+  /// [TextFieldConfig.hintTextBuilder]
+  final IntlTextBuilder? hintTextBuilder;
 
   /// 前缀小部件
   final Widget? prefix;
@@ -405,8 +430,11 @@ class SingleInputWidget extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.disabledFillColor,
     this.cursorColor,
+    this.label,
     this.labelText,
+    this.labelTextBuilder,
     this.hintText,
+    this.hintTextBuilder,
     this.suffix,
     this.prefix,
     this.prefixIcon,
@@ -673,9 +701,15 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           border: normalBorder,
           focusedBorder: focusedBorder,
           disabledBorder: disabledBorder,
-          label: null,
-          labelText: widget.labelText,
-          hintText: widget.hintText ?? widget.config.hintText,
+          label: widget.label,
+          labelText: widget.labelText ??
+              widget.labelTextBuilder?.call(context) ??
+              widget.config.labelText ??
+              widget.config.labelTextBuilder?.call(context),
+          hintText: widget.hintText ??
+              widget.hintTextBuilder?.call(context) ??
+              widget.config.hintText ??
+              widget.config.hintTextBuilder?.call(context),
           //floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelStyle: TextStyle(
             color: widget.focusBorderColor ?? globalTheme.accentColor,
