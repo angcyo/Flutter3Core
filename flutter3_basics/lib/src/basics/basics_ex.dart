@@ -1984,11 +1984,10 @@ extension IterableEx<E> on Iterable<E> {
       if (element != null) {
         try {
           final debug = (element as dynamic).debug;
-          if (debug &&
-              (isDebug || GlobalConfig.def.isDebugFlagFn?.call() == true)) {
-            return true;
+          if (debug) {
+            return isDebug || GlobalConfig.def.isDebugFlagFn?.call() == true;
           }
-          return false;
+          return true;
         } catch (e) {
           return true;
         }

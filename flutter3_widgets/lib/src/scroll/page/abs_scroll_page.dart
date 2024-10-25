@@ -105,6 +105,8 @@ mixin AbsScrollPage {
   }
 
   /// 如果没有指定[children]时, 则调用此方法构建滚动内容
+  /// [buildBody]
+  /// [scrollChildrenUpdateSignal]
   @property
   WidgetList? buildScrollBody(BuildContext context) {
     return null;

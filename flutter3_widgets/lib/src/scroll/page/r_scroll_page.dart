@@ -376,6 +376,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     _isPageBuild = true;
     return rebuild(_scrollUpdateSignal, (context, value) {
       scrollController.scrollViewUpdateSignal = _scrollUpdateSignal;
+      //debugger();
       return RScrollView(
         controller: scrollController,
         enableRefresh: enableRefresh ?? this.enablePageRefresh,

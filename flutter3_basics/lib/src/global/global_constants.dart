@@ -27,7 +27,7 @@ const double kMinHeight = 28;
 const double kMinInteractiveHeight = 38;
 
 /// 最小交互高度, 系统默认48
-const double kButtonHeight = kMinInteractiveDimension;
+const double kButtonHeight = 45;
 
 /// 最小item交互高度
 /// [kMinInteractiveHeight]
