@@ -79,6 +79,9 @@ class GlobalTheme {
   /// 容器白色背景颜色 #f6f6f6
   Color get itemWhiteBgColor => const Color(0xfff6f6f6);
 
+  /// 白色背景上的容器背景颜色 f9f9f9
+  Color get itemWhiteSubBgColor => const Color(0xfff9f9f9);
+
   /// 白色背景上的白色按钮背景颜色
   Color get whiteSubBgColor => const Color(0xffececec);
 
