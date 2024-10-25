@@ -613,8 +613,20 @@ extension WidgetEx on Widget {
   }
 
   /// 对称
-  Widget paddingSym({double vertical = kH, double horizontal = kX}) =>
-      paddingSymmetric(vertical: vertical, horizontal: horizontal);
+  Widget paddingSym({
+    double? vertical,
+    double? horizontal,
+    double left = kX,
+    double top = kH,
+    double right = kX,
+    double bottom = kH,
+  }) =>
+      paddingOnly(
+        left: horizontal ?? left,
+        top: vertical ?? top,
+        right: horizontal ?? right,
+        bottom: vertical ?? bottom,
+      );
 
   /// 对称
   Widget paddingSymmetric({double vertical = 0, double horizontal = 0}) =>
