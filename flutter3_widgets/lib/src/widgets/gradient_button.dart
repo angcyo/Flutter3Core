@@ -94,7 +94,7 @@ class GradientButton extends StatelessWidget {
       border: Border.fromBorderSide(
         BorderSide(color: Colors.grey, width: 1),
       ),
-      borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadiusL)),
+      borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadiusH)),
     ),
     this.radius = kDefaultBorderRadiusL,
     this.borderRadius,
@@ -141,6 +141,7 @@ class GradientButton extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   final GestureTapCallback? onTap;
+
   /// 带[BuildContext]参数的点击事件
   final GestureContextTapCallback? onContextTap;
   final ValueChanged<bool>? onHighlightChanged;

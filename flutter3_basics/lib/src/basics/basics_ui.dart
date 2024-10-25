@@ -629,9 +629,20 @@ extension WidgetEx on Widget {
       );
 
   /// 对称
-  Widget paddingSymmetric({double vertical = 0, double horizontal = 0}) =>
-      paddingInsets(
-          EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal));
+  Widget paddingSymmetric({
+    double? vertical,
+    double? horizontal,
+    double left = kX,
+    double top = kX,
+    double right = kX,
+    double bottom = kX,
+  }) =>
+      paddingOnly(
+        left: horizontal ?? left,
+        top: vertical ?? top,
+        right: horizontal ?? right,
+        bottom: vertical ?? bottom,
+      );
 
   Widget paddingOnly({
     double left = 0,
