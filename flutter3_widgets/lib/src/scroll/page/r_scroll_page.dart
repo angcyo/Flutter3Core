@@ -297,11 +297,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 是否启用下拉刷新
   @configProperty
-  bool get enableRefresh => true;
+  bool get enablePageRefresh => true;
 
   /// 是否启用加载更多
   @configProperty
-  bool get enableLoadMore => true;
+  bool get enablePageLoadMore => true;
 
   /// 重置分页请求信息
   @api
@@ -378,8 +378,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       scrollController.scrollViewUpdateSignal = _scrollUpdateSignal;
       return RScrollView(
         controller: scrollController,
-        enableRefresh: enableRefresh ?? this.enableRefresh,
-        enableLoadMore: enableLoadMore ?? this.enableLoadMore,
+        enableRefresh: enableRefresh ?? this.enablePageRefresh,
+        enableLoadMore: enableLoadMore ?? this.enablePageLoadMore,
         children: wrapScrollChildren(children ?? pageWidgetList),
       );
     });
