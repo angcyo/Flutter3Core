@@ -392,8 +392,8 @@ extension FutureEx<T> on Future<T> {
     return then((value) {
       try {
         //debugger();
-        get?.call(value, null); //这一层的错误会被捕获
-        return value;
+        final data = get?.call(value, null); //这一层的错误会被捕获
+        return data ?? value;
       } catch (error) {
         //debugger();
         assert(() {
@@ -670,9 +670,9 @@ extension StringEx on String {
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
 
   /// 判断当前字符串
-  /// 如果是http协议, 则直接返回
-  /// 如果是ip, 则返回 http://ip:port
-  /// 如果是域名, 则返回 http://域名.local:port
+  /// - 如果是http协议, 则直接返回
+  /// - 如果是ip, 则返回 http://ip:port
+  /// - 如果是域名, 则返回 http://域名.local:port
   String toLocal([int? port]) {
     port ??= 80;
     if (isHttpScheme /*isMatch(r'^https?://')*/) {

@@ -140,9 +140,10 @@ extension DioStringEx on String {
 
   /// post请求
   /// [context] 用来获取dio
-  /// [data] 请求体 [DioMixin._transformData]
+  /// [body] 请求体 [DioMixin._transformData]
+  ///   - 支持[FormData]
   Future<Response<T>> post<T>({
-    Object? data,
+    Object? body,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
@@ -152,7 +153,7 @@ extension DioStringEx on String {
   }) async {
     final response = await RDio.get(context: context).dio.post<T>(
           transformUrl(),
-          data: data,
+          data: body,
           queryParameters: queryParameters,
           options: options,
           cancelToken: cancelToken,
@@ -164,9 +165,9 @@ extension DioStringEx on String {
 
   /// put请求
   /// [context] 用来获取dio
-  /// [data] 请求体 [DioMixin._transformData]
+  /// [body] 请求体 [DioMixin._transformData]
   Future<Response<T>> put<T>({
-    Object? data,
+    Object? body,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
@@ -176,7 +177,7 @@ extension DioStringEx on String {
   }) async {
     final response = await RDio.get(context: context).dio.put<T>(
           transformUrl(),
-          data: data,
+          data: body,
           queryParameters: queryParameters,
           options: options,
           cancelToken: cancelToken,
@@ -217,7 +218,7 @@ extension DioStringEx on String {
       ...?formMap,
     });
     return post<T>(
-      data: formData,
+      body: formData,
       queryParameters: queryParameters,
       options: options,
       cancelToken: cancelToken,
@@ -313,6 +314,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     String? codeKey,
     String? dataKey,
     String? messageKey,
+    bool? useDataCodeStatus,
   }) async {
     //debugger();
     final handle = resultHandle ?? HttpResultHandle();
@@ -320,6 +322,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     handle.dataKey = dataKey ?? handle.dataKey;
     handle.messageKey = messageKey ?? handle.messageKey;
     handle.showErrorToast = showErrorToast ?? handle.showErrorToast;
+    handle.useDataCodeStatus = useDataCodeStatus ?? handle.useDataCodeStatus;
     return get((response, error) {
       //debugger();
       if (error != null) {

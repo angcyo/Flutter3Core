@@ -17,6 +17,11 @@ import 'package:path/path.dart' as path;
 /// lsof -n -P | grep :<port>
 /// ```
 ///
+/// # https://pub.dev/packages/dhttpd
+/// ```
+/// dhttpd: ^4.1.0
+/// ```
+///
 void main(List<String> arguments) async {
   //file:///Users/angcyo/project/Flutter/Flutter3Abc/Flutter3Core/script/local_file_server.dart
   /*print(Platform.script);*/

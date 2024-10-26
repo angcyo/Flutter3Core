@@ -8,10 +8,11 @@ part of '../../flutter3_widgets.dart';
 
 /// 渐变按钮
 class GradientButton extends StatelessWidget {
+  /// 主题渐变样式
   const GradientButton({
     super.key,
-    this.color,
-    this.colors,
+    this.color /*指定单一颜色, 无渐变*/,
+    this.colors /*指定渐变颜色*/,
     required this.onTap,
     required this.child,
     this.onContextTap,
@@ -32,6 +33,7 @@ class GradientButton extends StatelessWidget {
     this.maxHeight = double.infinity,
   });
 
+  /// 最小样式
   const GradientButton.min({
     super.key,
     this.color,
@@ -80,6 +82,7 @@ class GradientButton extends StatelessWidget {
     this.maxHeight = double.infinity,
   });
 
+  /// 描边按钮样式
   const GradientButton.stroke({
     super.key,
     this.color,
@@ -166,6 +169,10 @@ class GradientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     //确保colors数组不空
+    final tempSplashColor = splashColor ??
+        this.colors?.lastOrNull ??
+        /*color?.withOpacity(0.3) ??*/
+        Colors.black12;
     List<Color> colors = this.colors ??
         (color == null
             ? [globalTheme.primaryColor, globalTheme.primaryColorDark]
@@ -196,7 +203,7 @@ class GradientButton extends StatelessWidget {
             maxHeight: maxHeight,
           ),
           child: InkWell(
-            splashColor: splashColor ?? colors.lastOrNull ?? color,
+            splashColor: tempSplashColor,
             highlightColor: Colors.transparent,
             onHighlightChanged: onHighlightChanged,
             onTap: disabled
