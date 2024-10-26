@@ -123,3 +123,40 @@ class _CheckboxTileState extends State<CheckboxTile> with TileMixin {
     });
   }
 }
+
+/// 使用[Checkbox]实现的不具有点击事件的check样式小部件
+class CheckStyleWidget extends StatelessWidget {
+  /// 是否是圆形
+  /// [RoundedRectangleBorder]
+  /// [CircleBorder]
+  final bool isCircleShape;
+
+  /// 激活时的颜色
+  @defInjectMark
+  final Color? activeColor;
+  final Color? checkColor;
+
+  const CheckStyleWidget({
+    super.key,
+    this.isCircleShape = true,
+    this.activeColor,
+    this.checkColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    return Checkbox(
+      value: true,
+      /*打勾时勾的颜色*/
+      checkColor: checkColor,
+      activeColor: activeColor ?? globalTheme.accentColor,
+      shape:
+          isCircleShape ? const CircleBorder() : const RoundedRectangleBorder(),
+      /*visualDensity: const VisualDensity(horizontal: 4, vertical: 4),
+      materialTapTargetSize: MaterialTapTargetSize.padded,*/
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      onChanged: (value) {},
+    ).ignorePointer();
+  }
+}

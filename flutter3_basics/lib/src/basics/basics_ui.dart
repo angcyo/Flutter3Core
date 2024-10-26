@@ -2040,7 +2040,7 @@ extension WidgetEx on Widget {
   Widget rowOf(
     Widget? other, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
-    MainAxisSize? mainAxisSize,
+    MainAxisSize? mainAxisSize, //MainAxisSize.max
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
     TextDirection? textDirection,
     VerticalDirection? verticalDirection,

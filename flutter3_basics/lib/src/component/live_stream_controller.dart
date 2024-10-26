@@ -266,6 +266,8 @@ extension _StreamNewStreamWithInitialValue<T> on Stream<T> {
 /// [ListenableMixin]
 /// [StreamSubscriptionMixin]
 mixin StreamSubscriptionMixin<T extends StatefulWidget> on State<T> {
+
+  @autoDispose
   final List<StreamSubscription> _streamSubscriptions = [];
 
   /// 在[dispose]时, 取消所有的[StreamSubscription]

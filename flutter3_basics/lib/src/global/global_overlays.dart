@@ -54,7 +54,7 @@ enum OverlayPosition {
 }
 
 /// toast通知
-toast(
+OverlayEntry? toast(
   Widget msg, {
   /// 背景颜色
   Color? background,
@@ -67,60 +67,61 @@ toast(
 
   /// 显示的动画
   OverlayAnimate? animate,
-}) {
-  showNotification((context) {
-    return ToastWidget(
-      background: background,
-      bgBlurSigma: bgBlurSigma,
-      child: msg,
+}) =>
+    showNotification(
+      (context) {
+        return ToastWidget(
+          background: background,
+          bgBlurSigma: bgBlurSigma,
+          child: msg,
+        );
+      },
+      position: position,
+      animate: animate ?? OverlayAnimate.opacity,
     );
-  }, position: position, animate: animate ?? OverlayAnimate.opacity);
-}
 
 /// [msg] 显示小部件
 /// [text] 显示文本
 /// [toast]
-toastBlur({
+OverlayEntry? toastBlur({
   Widget? msg,
   dynamic text,
   double? bgBlurSigma = kM,
   OverlayPosition position = OverlayPosition.center,
 }) =>
     toast(
-      msg ?? "$text".text(),
+      msg ?? "${text ?? ""}".text(),
       bgBlurSigma: bgBlurSigma,
       position: position,
     );
 
 /// 顶部全屏toast
 /// [showNotification]->[showOverlay]
-toastMessage(
+OverlayEntry? toastMessage(
   Widget msg, {
   Color? background,
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
-}) {
-  showNotification((context) {
-    Widget child = ToastWidget(
-      background: background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
-      elevation: 10,
-      child: msg,
-    );
-    return child;
-  }, position: position, animate: animate ?? OverlayAnimate.opacity);
-}
+}) =>
+    showNotification((context) {
+      Widget child = ToastWidget(
+        background: background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
+        elevation: 10,
+        child: msg,
+      );
+      return child;
+    }, position: position, animate: animate ?? OverlayAnimate.opacity);
 
 /// [toastMessage]
-toastInfo(
+OverlayEntry? toastInfo(
   String? msg, {
   /// 图标
   IconData? icon,
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
 }) {
-  if (msg == null) return;
-
-  toastMessage(
+  if (msg == null) return null;
+  return toastMessage(
     Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

@@ -229,3 +229,76 @@ AnimationController matrixAnimation(
     listener(matrix, isCompleted);
   });
 }
+
+/// 动画控制混入
+/// [SingleTickerProviderStateMixin]
+/// [TickerProviderStateMixin]
+mixin AnimationMixin<T extends StatefulWidget> on State<T> {
+  /// 开始一个在指定时间内完成的动画
+  /// [curve] 动画曲线
+  /// [animation]
+  AnimationController startTimeAnimation(
+    void Function(double value, bool isCompleted) listener, {
+    Duration duration = kDefaultAnimationDuration,
+    double? value,
+    double lowerBound = 0.0,
+    double upperBound = 1.0,
+    Curve? curve,
+    TickerProvider? vsync,
+  }) {
+    final controller = animation(
+      vsync ?? this as TickerProvider /*必须*/,
+      listener,
+      duration: duration,
+      value: value,
+      lowerBound: lowerBound,
+      upperBound: upperBound,
+      curve: curve,
+    );
+    controller.addStatusListener((status) {
+      if (status.isDismissed || status.isCompleted) {
+        disposeAnimationController(controller);
+      }
+    });
+    hookAnimationController(controller);
+    return controller;
+  }
+
+  /// 动画控制器, 用来自动释放资源
+  @autoDispose
+  final List<AnimationController> _animationControllerList = [];
+
+  /// 在[dispose]时, 取消所有的[AnimationController]
+  @api
+  @autoDispose
+  void hookAnimationController(AnimationController controller) {
+    _animationControllerList.add(controller);
+  }
+
+  /// 释放指定的[AnimationController]
+  @api
+  void disposeAnimationController(AnimationController controller) {
+    try {
+      controller.dispose();
+    } catch (e) {
+      printError(e);
+    }
+    _animationControllerList.remove(controller);
+  }
+
+  @override
+  void dispose() {
+    try {
+      for (final element in _animationControllerList) {
+        try {
+          element.dispose();
+        } catch (e) {
+          printError(e);
+        }
+      }
+    } finally {
+      _animationControllerList.clear();
+    }
+    super.dispose();
+  }
+}
