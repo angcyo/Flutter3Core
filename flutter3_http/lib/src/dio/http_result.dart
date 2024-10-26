@@ -28,32 +28,43 @@ class HttpResultHandle {
   /// 如果返回的是字符串类型, 是否需要使用json解码
   bool needJsonDecode = true;
 
+  /// 使用数据code码来判断请求是否成功
+  /// [codeKey]
+  bool useDataCodeStatus = true;
+
   /// 处理网络请求返回的数据
   late dynamic Function(dynamic response) handleResponse = (response) {
     //debugger();
     if (response is Response) {
       final code = response.statusCode ?? 0;
       if (code >= 200 && code < 300) {
-        //成功
+        //http 状态成功
         dynamic data = response.data;
         if (needJsonDecode && data is String) {
           data = jsonDecode(data);
         }
         if (data is! Map) {
           return data;
-        } else if (codeKey != null) {
-          //需要判断逻辑code码
-          final dataCode = data[codeKey];
-          if (dataCode is int && dataCode >= 200 && dataCode < 300) {
-            //成功
-            return dataKey == null ? data : data[dataKey];
-          } else {
-            throw RException(
-                message: (messageKey == null ? null : data[messageKey]) ??
-                    defHttpErrorMessage);
-          }
         } else {
-          return dataKey == null ? data : data[dataKey];
+          if (useDataCodeStatus) {
+            //需要判断逻辑code码
+            if (codeKey != null) {
+              final dataCode = data[codeKey];
+              if (dataCode is int && dataCode >= 200 && dataCode < 300) {
+                //成功
+                return dataKey == null ? data : data[dataKey];
+              } else {
+                throw RException(
+                    message: (messageKey == null ? null : data[messageKey]) ??
+                        defHttpErrorMessage);
+              }
+            } else {
+              return dataKey == null ? data : data[dataKey];
+            }
+          } else {
+            //不需要判断逻辑code码, 则直接返回数据
+            return data;
+          }
         }
       } else {
         assert(() {
