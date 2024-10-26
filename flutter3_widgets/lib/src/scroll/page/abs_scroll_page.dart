@@ -72,11 +72,20 @@ mixin AbsScrollPage {
 
   /// [buildBody]->[RScrollView]的[RScrollView.children]更新信号
   /// [createUpdateSignal]
-  UpdateValueNotifier? get scrollChildrenUpdateSignal => null;
+  ///
+  /// [RebuildScrollChildrenMixin]
+  ///
+  UpdateValueNotifier? get pageScrollChildrenUpdateSignal =>
+      this is RebuildScrollChildrenMixin
+          ? (this as RebuildScrollChildrenMixin).scrollChildrenUpdateSignal
+          : null;
 
   /// 构建滚动内容
   /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
   /// [RScrollPage.pageRScrollView]
+  ///
+  /// [RebuildBodyMixin]
+  ///
   @property
   Widget buildBody(BuildContext context, WidgetList? children) {
     //构建子节点
@@ -99,23 +108,24 @@ mixin AbsScrollPage {
       /*physics: null,
       scrollBehavior: null,*/
       /*children: children,*/
-      updateSignal: scrollChildrenUpdateSignal,
+      updateSignal: pageScrollChildrenUpdateSignal,
       childrenBuilder: (context) => buildChildren(),
     );
   }
 
   /// 如果没有指定[children]时, 则调用此方法构建滚动内容
   /// [buildBody]
-  /// [scrollChildrenUpdateSignal]
+  /// [pageScrollChildrenUpdateSignal]
   @property
   WidgetList? buildScrollBody(BuildContext context) {
     return null;
   }
 
   /// [buildBody]->[RScrollView]重构子节点更新信号
+  /// 需要重写[pageScrollChildrenUpdateSignal]
   @updateSignalMark
-  void updateScrollChildren() {
-    scrollChildrenUpdateSignal?.update();
+  void updatePageScrollChildren() {
+    pageScrollChildrenUpdateSignal?.update();
   }
 
   //endregion Body
@@ -245,6 +255,9 @@ mixin AbsScrollPage {
 
 /// 更新body混入, 配合[AbsScrollPage]使用
 /// [AbsScrollPage.buildScaffold]
+///
+/// 使用[updateBody]方法更新body
+///
 mixin RebuildBodyMixin {
   /// [buildBody]更新的信号
   final UpdateSignalNotifier bodyUpdateSignal = UpdateSignalNotifier(null);
@@ -258,5 +271,27 @@ mixin RebuildBodyMixin {
   @updateMark
   void rebuildBody() {
     bodyUpdateSignal.notify();
+  }
+}
+
+/// 更新body混入, 配合[AbsScrollPage]使用
+/// [AbsScrollPage.buildScaffold]
+///
+/// 使用[updateScrollChildren]方法更新滚动体
+///
+mixin RebuildScrollChildrenMixin {
+  /// [buildBody]更新的信号
+  final UpdateSignalNotifier scrollChildrenUpdateSignal =
+      UpdateSignalNotifier(null);
+
+  /// 重建[RScrollView]的滚动体内容
+  @updateMark
+  void updateScrollChildren() {
+    rebuildScrollChildren();
+  }
+
+  @updateMark
+  void rebuildScrollChildren() {
+    scrollChildrenUpdateSignal.notify();
   }
 }
