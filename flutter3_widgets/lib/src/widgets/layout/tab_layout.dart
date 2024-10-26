@@ -94,6 +94,9 @@ class TabLayout extends ScrollContainerWidget {
   /// 内容背景装饰, 内容的宽度不足时, 就和[bgDecoration]有区别了
   final Decoration? contentBgDecoration;
 
+  /// 首次mount时, 是否需要通知索引改变?[onIndexChanged]
+  final bool firstIndexNotify;
+
   /// 监听索引变化
   final void Function(int from, int to)? onIndexChanged;
 
@@ -118,6 +121,7 @@ class TabLayout extends ScrollContainerWidget {
     super.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     super.crossAxisAlignment = CrossAxisAlignment.center,
     super.selfConstraints,
+    this.firstIndexNotify = false,
     this.onIndexChanged,
   }) : super(
           scrollController:
@@ -137,6 +141,9 @@ class _TabLayoutState extends ScrollContainerState<TabLayout> {
     _initialIndex = widget.tabLayoutController.index;
     widget.tabLayoutController.addListener(_handleTabLayoutChanged);
     super.initState();
+    if (widget.firstIndexNotify) {
+      widget.onIndexChanged?.call(-1, _initialIndex);
+    }
   }
 
   @override

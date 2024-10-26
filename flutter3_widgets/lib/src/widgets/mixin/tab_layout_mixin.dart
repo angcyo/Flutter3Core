@@ -98,6 +98,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     TextStyle? normalTextStyle /*正常的文本样式*/,
     bool autoTextBold = false /*是否自动设置选中文本加粗*/,
     bool autoTextAnimate = true /*是否使用文本样式变化动画*/,
+    bool firstIndexNotify = false /*首次mount时, 是否需要通知*/,
     void Function(int from, int to)? onIndexChangedAction,
   }) {
     return () {
@@ -149,6 +150,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         bgDecoration: bgDecoration,
         contentBgDecoration: contentBgDecoration,
         padding: padding,
+        firstIndexNotify: firstIndexNotify,
         onIndexChanged: (from, to) {
           onSelfTabIndexChanged(from, to);
           onIndexChangedAction?.call(from, to);
@@ -166,8 +168,11 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     );
   }
 
+  /// 当前选中的tab的索引
+  int get currentTabLayoutIndex => tabLayoutController.index;
+
   /// 指定的索引是否是tab选中的
-  bool isTabIndexSelected(int index) => tabLayoutController.index == index;
+  bool isTabIndexSelected(int index) => currentTabLayoutIndex == index;
 
   /// tab索引改变回调
   @overridePoint

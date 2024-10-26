@@ -125,6 +125,11 @@ mixin AbsScrollPage {
   /// 需要重写[pageScrollChildrenUpdateSignal]
   @updateSignalMark
   void updatePageScrollChildren() {
+    rebuildPageScrollChildren();
+  }
+
+  @updateSignalMark
+  void rebuildPageScrollChildren() {
     pageScrollChildrenUpdateSignal?.update();
   }
 
