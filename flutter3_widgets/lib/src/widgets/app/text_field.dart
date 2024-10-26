@@ -242,6 +242,12 @@ class SingleInputWidget extends StatefulWidget {
   /// 边框的宽度, 为0取消边框
   final double borderWidth;
 
+  /// 焦点时的边框宽度[borderWidth]
+  final double? focusBorderWidth;
+
+  /// 禁用时的边框宽度[borderWidth]
+  final double? disableBorderWidth;
+
   /// 正常情况下的边框颜色
   final Color? borderColor;
 
@@ -417,6 +423,67 @@ class SingleInputWidget extends StatefulWidget {
     this.underlineBorderRadius = 0,
     this.gapPadding = 0,
     this.borderWidth = 1,
+    this.focusBorderWidth,
+    this.disableBorderWidth,
+    this.minLines,
+    this.maxLines = 1,
+    this.maxLength,
+    this.inputBuildCounter,
+    this.showInputCounter,
+    this.keyboardType,
+    this.inputFormatters,
+    this.enabled = true,
+    this.autoShowSuffixIcon = true,
+    this.textStyle,
+    this.textAlign = TextAlign.start,
+    this.disabledFillColor,
+    this.cursorColor,
+    this.label,
+    this.labelText,
+    this.labelTextBuilder,
+    this.hintText,
+    this.hintTextBuilder,
+    this.suffix,
+    this.prefix,
+    this.prefixIcon,
+    this.prefixIconSize = kSuffixIconSize,
+    this.suffixIconSize = kSuffixIconSize,
+    this.suffixIconConstraints = kSuffixIconConstraints,
+    this.prefixIconConstraints = kPrefixIconConstraints,
+    this.suffixIconPadding,
+    this.prefixIconPadding,
+    this.counterText,
+    this.isCollapsed,
+    this.isDense = true,
+    this.contentPadding = kInputPadding,
+    this.decoration,
+    this.inputBorderType = InputBorderType.outline,
+    this.border,
+    this.focusedBorder,
+    this.disabledBorder,
+    this.textInputAction,
+    this.onChanged,
+    this.onSubmitted,
+    this.onEditingComplete,
+    this.onFocusAction,
+    this.prefixIconBuilder,
+    this.suffixIconBuilder,
+  });
+
+  /// 不带输入框的样式
+  const SingleInputWidget.decoration({
+    super.key,
+    required this.config,
+    this.fillColor = const Color(0xfff9f9f9) /*整体填充颜色*/,
+    this.borderColor = Colors.transparent /*去掉正常边框的颜色*/,
+    this.focusBorderColor /*焦点时的边框颜色*/,
+    this.disableBorderColor,
+    this.borderRadius = kDefaultBorderRadiusX /*圆角*/,
+    this.underlineBorderRadius = 0,
+    this.gapPadding = 0,
+    this.borderWidth = 1,
+    this.focusBorderWidth,
+    this.disableBorderWidth,
     this.minLines,
     this.maxLines = 1,
     this.maxLength,
@@ -638,13 +705,13 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         };
 
     //focused聚焦状态
-    final focusedBorderSide =
-        widget.focusBorderColor == Colors.transparent || widget.borderWidth <= 0
-            ? BorderSide.none
-            : BorderSide(
-                color: widget.focusBorderColor ?? globalTheme.accentColor,
-                width: widget.borderWidth,
-              );
+    final focusedBorderSide = widget.focusBorderColor == Colors.transparent ||
+            (widget.focusBorderWidth ?? widget.borderWidth) <= 0
+        ? BorderSide.none
+        : BorderSide(
+            color: widget.focusBorderColor ?? globalTheme.accentColor,
+            width: (widget.focusBorderWidth ?? widget.borderWidth),
+          );
     final focusedBorder = widget.focusedBorder ??
         switch (widget.inputBorderType) {
           InputBorderType.outline => OutlineInputBorder(
@@ -660,11 +727,11 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 
     //disabled禁用状态
     final disableBorderSide = widget.disableBorderColor == Colors.transparent ||
-            widget.borderWidth <= 0
+            (widget.disableBorderWidth ?? widget.borderWidth) <= 0
         ? BorderSide.none
         : BorderSide(
             color: widget.disableBorderColor ?? globalTheme.disableColor,
-            width: widget.borderWidth,
+            width: (widget.disableBorderWidth ?? widget.borderWidth),
           );
     final disabledBorder = widget.disabledBorder ??
         switch (widget.inputBorderType) {
