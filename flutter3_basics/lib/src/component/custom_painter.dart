@@ -277,3 +277,74 @@ class PointPainter extends CustomPainter {
     return false;
   }
 }
+
+/// 虚线连接线
+class DashLinkPainter extends CustomPainter {
+  /// 需要[长度, 间隙, 长度, 间隙]
+  final List<double> lineSizeList;
+
+  /// 线的厚度
+  final double thickness;
+
+  /// 颜色
+  final Color color;
+
+  /// 方向
+  final Axis axis;
+
+  const DashLinkPainter(
+    this.lineSizeList, {
+    this.thickness = 1,
+    this.color = Colors.grey,
+    this.axis = Axis.horizontal,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    //线的总长度
+    final lineLength = lineSizeList.reduce((value, element) => value + element);
+
+    if (axis == Axis.horizontal) {
+      //横向 虚线绘制
+      double left = (size.width - lineLength) / 2;
+      double top = size.height / 2;
+      lineSizeList.forEachIndexed((index, length) {
+        if (index % 2 != 0) {
+          //gap
+        } else {
+          canvas.drawLine(
+            Offset(left, top),
+            Offset(left + length, top),
+            Paint()
+              ..strokeWidth = thickness
+              ..color = color,
+          );
+        }
+        left += length;
+      });
+    } else {
+      //纵向 虚线绘制
+      double left = size.width / 2;
+      double top = (size.height - lineLength) / 2;
+      lineSizeList.forEachIndexed((index, length) {
+        if (index % 2 != 0) {
+          //gap
+        } else {
+          canvas.drawLine(
+            Offset(left, top),
+            Offset(left, top + length),
+            Paint()
+              ..strokeWidth = thickness
+              ..color = color,
+          );
+        }
+        top += length;
+      });
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
