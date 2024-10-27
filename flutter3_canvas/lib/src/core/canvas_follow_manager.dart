@@ -279,12 +279,18 @@ class CanvasFollowManager with CanvasComponentMixin {
     final canvasVisibleWidth = canvasVisibleBounds.width;
     final canvasVisibleHeight = canvasVisibleBounds.height;
 
+    //margin 属性
+    double marginLeft = margin?.left ?? 0,
+        marginTop = margin?.top ?? 0,
+        marginRight = margin?.right ?? 0,
+        marginBottom = margin?.bottom ?? 0;
+
     @viewCoordinate
     final fromRect = Rect.fromLTWH(
-        margin?.left ?? 0,
-        margin?.top ?? 0,
-        canvasBounds.width - (margin?.right ?? 0),
-        canvasBounds.height - (margin?.bottom ?? 0));
+        marginLeft,
+        marginTop,
+        canvasBounds.width - (marginLeft + marginRight),
+        canvasBounds.height - (marginTop + marginBottom));
     final toRect = rect;
 
     if (fit == BoxFit.none) {
@@ -323,7 +329,7 @@ class CanvasFollowManager with CanvasComponentMixin {
 
     //边距在此生效
     final translateMatrix = Matrix4.identity();
-    translateMatrix.translate(margin?.left ?? 0, margin?.top ?? 0);
+    translateMatrix.translate(marginLeft, marginTop);
 
     canvasViewBox.changeMatrix(
       translateMatrix * matrix,
