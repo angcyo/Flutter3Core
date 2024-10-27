@@ -38,8 +38,7 @@ class CheckboxTile extends StatefulWidget {
   @defInjectMark
   final Color? normalColor;
 
-  /// 正常时边框宽度
-  @defInjectMark
+  /// 正常时边框宽度, 当为null时, 则使用系统样式
   final double? normalWidth;
 
   /// 激活时的颜色
@@ -61,7 +60,7 @@ class CheckboxTile extends StatefulWidget {
     this.tristate = false,
     this.isCircleShape = false,
     this.normalColor,
-    this.normalWidth,
+    this.normalWidth = 1.0,
     this.activeColor,
     this.onChanged,
   });
@@ -99,17 +98,19 @@ class _CheckboxTileState extends State<CheckboxTile> with TileMixin {
         shape: widget.isCircleShape
             ? const CircleBorder()
             : const RoundedRectangleBorder(),
-        side: WidgetStateBorderSide.resolveWith(
-          (states) {
-            if (states.isEmpty) {
-              return BorderSide(
-                width: widget.normalWidth ?? 1.0,
-                color: widget.normalColor ?? globalTheme.lineDarkColor,
-              );
-            }
-            return null;
-          },
-        ),
+        side: widget.normalWidth != null
+            ? WidgetStateBorderSide.resolveWith(
+                (states) {
+                  if (states.isEmpty) {
+                    return BorderSide(
+                      width: widget.normalWidth ?? 1.0,
+                      color: widget.normalColor ?? globalTheme.lineDarkColor,
+                    );
+                  }
+                  return null;
+                },
+              )
+            : null,
         onChanged: (value) {
           _initValue = value;
           widget.onChanged?.call(value);
