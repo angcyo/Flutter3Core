@@ -747,28 +747,28 @@ extension WidgetEx on Widget {
     bool? alignBottom,
   }) {
     if (alignLeft == true) {
-      left = 0;
+      left ??= 0;
       if (match == true) {
-        top = 0;
-        bottom = 0;
+        top ??= 0;
+        bottom ??= 0;
       }
     } else if (alignTop == true) {
-      top = 0;
+      top ??= 0;
       if (match == true) {
-        left = 0;
-        right = 0;
+        left ??= 0;
+        right ??= 0;
       }
     } else if (alignRight == true) {
-      right = 0;
+      right ??= 0;
       if (match == true) {
-        top = 0;
-        bottom = 0;
+        top ??= 0;
+        bottom ??= 0;
       }
     } else if (alignBottom == true) {
-      bottom = 0;
+      bottom ??= 0;
       if (match == true) {
-        left = 0;
-        right = 0;
+        left ??= 0;
+        right ??= 0;
       }
     }
     return Positioned(

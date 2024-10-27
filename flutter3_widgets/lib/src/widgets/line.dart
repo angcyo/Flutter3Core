@@ -5,25 +5,65 @@ part of '../../flutter3_widgets.dart';
 /// @since 2023/12/15
 ///
 
+/// 常量线的颜色
+const Color kLineColor = Color(0xffececec);
+const Color kLineColorDark = Color(0xff595450);
+
 /// 默认的竖线
 Line get kVerticalLine =>
-    Line(thickness: 1, color: "#ececec".toColor(), axis: Axis.vertical);
+    const Line(thickness: 1, color: kLineColor, axis: Axis.vertical);
 
 Line get kVerticalLineDark =>
-    Line(thickness: 1, color: "#ff595450".toColor(), axis: Axis.vertical);
+    const Line(thickness: 1, color: kLineColorDark, axis: Axis.vertical);
 
 /// 默认的横线
 Line get kHorizontalLine =>
-    Line(thickness: 1, color: "#ececec".toColor(), axis: Axis.horizontal);
+    const Line(thickness: 1, color: kLineColor, axis: Axis.horizontal);
 
 Line get kHorizontalLineDark =>
-    Line(thickness: 1, color: "#ff595450".toColor(), axis: Axis.horizontal);
+    const Line(thickness: 1, color: kLineColorDark, axis: Axis.horizontal);
 
-Line verticalLine(BuildContext context) =>
-    context.isThemeDark ? kVerticalLineDark : kVerticalLine;
+Line verticalLine(
+  BuildContext context, {
+  double? indent,
+  double? endIndent,
+}) =>
+    context.isThemeDark
+        ? Line(
+            thickness: 1,
+            color: kLineColorDark,
+            axis: Axis.vertical,
+            indent: indent,
+            endIndent: endIndent ?? indent,
+          )
+        : Line(
+            thickness: 1,
+            color: kLineColor,
+            axis: Axis.vertical,
+            indent: indent,
+            endIndent: endIndent ?? indent,
+          );
 
-Line horizontalLine(BuildContext context) =>
-    context.isThemeDark ? kHorizontalLineDark : kHorizontalLine;
+Line horizontalLine(
+  BuildContext context, {
+  double? indent,
+  double? endIndent,
+}) =>
+    context.isThemeDark
+        ? Line(
+            thickness: 1,
+            color: kLineColorDark,
+            axis: Axis.horizontal,
+            indent: indent,
+            endIndent: endIndent ?? indent,
+          )
+        : Line(
+            thickness: 1,
+            color: kLineColor,
+            axis: Axis.horizontal,
+            indent: indent,
+            endIndent: endIndent ?? indent,
+          );
 
 /// 线
 Widget line(
