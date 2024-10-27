@@ -46,11 +46,17 @@ class CheckboxTile extends StatefulWidget {
   @defInjectMark
   final Color? activeColor;
 
+  //--
+
+  ///
+  final MainAxisSize? mainAxisSize;
+
   const CheckboxTile({
     super.key,
     this.text,
     this.textWidget,
     this.textPadding = kContentPadding,
+    this.mainAxisSize,
     this.value = false,
     this.tristate = false,
     this.isCircleShape = false,
@@ -115,8 +121,12 @@ class _CheckboxTileState extends State<CheckboxTile> with TileMixin {
         textWidget: widget.textWidget,
         text: widget.text,
         textPadding: widget.textPadding,
-      )?.expanded(),
-    ].row(crossAxisAlignment: CrossAxisAlignment.center)!.click(() {
+      )?.expanded(enable: widget.mainAxisSize != MainAxisSize.min),
+    ]
+        .row(
+            mainAxisSize: widget.mainAxisSize,
+            crossAxisAlignment: CrossAxisAlignment.center)!
+        .click(() {
       _initValue = !_initValue!;
       widget.onChanged?.call(_initValue);
       updateState();

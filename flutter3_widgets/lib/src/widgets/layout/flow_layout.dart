@@ -514,6 +514,16 @@ class FlowLayoutRender extends RenderBox
         //默认约束
       }
       //debugger();
+      if (childConstraints.maxWidth == double.infinity) {
+        if (constraints.maxWidth != double.infinity) {
+          childConstraints = BoxConstraints(
+            minWidth: childConstraints.minWidth,
+            maxWidth: constraints.maxWidth,
+            minHeight: childConstraints.minHeight,
+            maxHeight: childConstraints.maxHeight,
+          );
+        }
+      }
       ChildLayoutHelper.layoutChild(child, childConstraints);
     }
   }
