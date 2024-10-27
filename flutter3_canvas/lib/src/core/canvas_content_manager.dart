@@ -200,8 +200,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   void followCanvasContentTemplate({
     @dp @sceneCoordinate @indirectProperty Rect? rect,
     bool? animate,
-    bool? enableZoomOut,
-    bool? enableZoomIn,
+    BoxFit? fit,
     VoidCallback? onUpdateAction,
   }) {
     rect ??= canvasContentFollowRectInner;
@@ -216,8 +215,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
       canvasDelegate.followRect(
         rect: rect,
         animate: animate,
-        enableZoomOut: enableZoomOut,
-        enableZoomIn: enableZoomIn,
+        fit: fit,
       );
       onUpdateAction?.call();
     } else {
@@ -225,8 +223,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         followCanvasContentTemplate(
           rect: rect,
           animate: animate,
-          enableZoomOut: enableZoomOut,
-          enableZoomIn: enableZoomIn,
+          fit: fit,
           onUpdateAction: onUpdateAction,
         );
       });

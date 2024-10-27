@@ -108,14 +108,14 @@ extension Matrix4Ex on vector.Matrix4 {
 
   /// 平移指定的距离
   void translateBy({
-    ui.Offset? anchor,
+    ui.Offset? offset,
     double? dx,
     double? dy,
     double? dz,
   }) {
-    if (anchor != null) {
-      dx = anchor.dx;
-      dy = anchor.dy;
+    if (offset != null) {
+      dx = offset.dx;
+      dy = offset.dy;
     }
     translate(dx ?? 0.0, dy ?? 0.0, dz ?? 0.0);
   }

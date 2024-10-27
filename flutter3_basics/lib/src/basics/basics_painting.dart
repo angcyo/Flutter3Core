@@ -595,3 +595,70 @@ extension PaintEx on Paint {
     strokeMiterLimit = other.strokeMiterLimit;
   }
 }
+
+extension AlignmentEx on Alignment {
+  /// 根据对齐方式, 获取偏移量
+  /// [Alignment.inscribe]
+  /// [applyAlignMatrix]
+  /// [applyAlignRect]
+  /// [alignChildOffset]
+  Offset offset([EdgeInsets? insets]) {
+    var dx = 0.0;
+    var dy = 0.0;
+    //x
+    switch (this) {
+      case AlignmentDirectional.topStart:
+      case AlignmentDirectional.centerStart:
+      case AlignmentDirectional.bottomStart:
+      case Alignment.topLeft:
+      case Alignment.centerLeft:
+      case Alignment.bottomLeft:
+        dx = insets?.left ?? 0;
+        break;
+      case AlignmentDirectional.topCenter:
+      case AlignmentDirectional.center:
+      case AlignmentDirectional.bottomCenter:
+      case Alignment.topCenter:
+      case Alignment.center:
+      case Alignment.bottomCenter:
+        dx = 0;
+        break;
+      case AlignmentDirectional.topEnd:
+      case AlignmentDirectional.centerEnd:
+      case AlignmentDirectional.bottomEnd:
+      case Alignment.topRight:
+      case Alignment.centerRight:
+      case Alignment.bottomRight:
+        dx = -(insets?.right ?? 0);
+        break;
+    }
+    //y
+    switch (this) {
+      case AlignmentDirectional.topStart:
+      case AlignmentDirectional.topCenter:
+      case AlignmentDirectional.topEnd:
+      case Alignment.topLeft:
+      case Alignment.topCenter:
+      case Alignment.topRight:
+        dy = insets?.top ?? 0;
+        break;
+      case AlignmentDirectional.centerStart:
+      case AlignmentDirectional.center:
+      case AlignmentDirectional.centerEnd:
+      case Alignment.centerLeft:
+      case Alignment.center:
+      case Alignment.centerRight:
+        dy = 0;
+        break;
+      case AlignmentDirectional.bottomStart:
+      case AlignmentDirectional.bottomCenter:
+      case AlignmentDirectional.bottomEnd:
+      case Alignment.bottomLeft:
+      case Alignment.bottomCenter:
+      case Alignment.bottomRight:
+        dy = -(insets?.bottom ?? 0);
+        break;
+    }
+    return Offset(dx, dy);
+  }
+}

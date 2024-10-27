@@ -27,6 +27,9 @@ class DropdownButtonTile extends StatelessWidget with TileMixin {
   /// [DropdownMenuItem]
   final AlignmentGeometry itemAlignment;
 
+  ///
+  final MainAxisSize? mainAxisSize;
+
   const DropdownButtonTile({
     super.key,
     this.label,
@@ -39,6 +42,7 @@ class DropdownButtonTile extends StatelessWidget with TileMixin {
     this.iconSize = 24.0,
     this.alignment = AlignmentDirectional.center,
     this.itemAlignment = AlignmentDirectional.centerStart,
+    this.mainAxisSize,
   });
 
   @override
@@ -49,8 +53,7 @@ class DropdownButtonTile extends StatelessWidget with TileMixin {
         textWidget: labelWidget,
         text: label ?? "",
         textPadding: labelPadding,
-      )!
-          .expanded(),
+      )?.expanded(enable: mainAxisSize != MainAxisSize.min),
       DropdownButton(
           items: _buildDropdownMenuItems(context),
           value: dropdownValue,
@@ -75,7 +78,7 @@ class DropdownButtonTile extends StatelessWidget with TileMixin {
             updateState();*/
             onChanged?.call(value);
           }),
-    ].row()!;
+    ].row(mainAxisSize: mainAxisSize)!;
   }
 
   /// [DropdownMenuItem]

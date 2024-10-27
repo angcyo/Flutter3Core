@@ -224,8 +224,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     @sceneCoordinate Rect? rect,
     ElementPainter? elementPainter,
     EdgeInsets? margin,
-    bool? enableZoomOut,
-    bool? enableZoomIn,
+    BoxFit? fit,
     bool? animate,
     bool? awaitAnimate,
     bool? restoreDefault,
@@ -243,8 +242,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasFollowManager.followRect(
       rect,
       margin: margin,
-      enableZoomOut: enableZoomOut,
-      enableZoomIn: enableZoomIn,
+      fit: fit,
       animate: animate,
       awaitAnimate: awaitAnimate,
       restoreDefault: restoreDefault,
@@ -266,8 +264,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }
     canvasFollowManager.followRect(
       rect,
-      enableZoomOut: true,
-      enableZoomIn: false,
+      fit: BoxFit.scaleDown,
       alignment: alignment,
       margin: margin,
       animate: true,

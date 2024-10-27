@@ -19,8 +19,11 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   @autoInjectMark
   Rect paintBounds = Rect.zero;
 
-  /// 内容绘制的区域, 在[paintBounds]中
+  /// 内容绘制的区域, 在[paintBounds]中,
+  /// 有可能会偏移包含坐标系的大小
   /// [updatePaintBounds] 在此方法中会更新此值
+  ///
+  /// [originOffset]
   @dp
   @viewCoordinate
   @autoInjectMark

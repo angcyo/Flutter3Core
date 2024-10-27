@@ -6,6 +6,7 @@ part of '../../flutter3_canvas.dart';
 /// @date 2024/07/29
 ///
 /// 画布跟随管理, 跟随场景, 跟随元素, 跟随画布, 跟随指定的矩形等
+/// [CanvasDelegate]成员
 class CanvasFollowManager with CanvasComponentMixin {
   final CanvasDelegate canvasDelegate;
 
@@ -19,9 +20,11 @@ class CanvasFollowManager with CanvasComponentMixin {
   EdgeInsets? margin = const EdgeInsets.all(kXxh);
 
   /// [enableZoomOut] 是否允许视口缩小处理, 否则只有平移[rect]到视口中心的效果
+  @Deprecated("请使用[fit]")
   bool enableZoomOut = true;
 
   /// [enableZoomIn] 是否允许视口放大处理, 否则只有平移[rect]到视口中心的效果
+  @Deprecated("请使用[fit]")
   bool enableZoomIn = false;
 
   /// [animate] 是否动画改变
@@ -33,6 +36,10 @@ class CanvasFollowManager with CanvasComponentMixin {
   /// 对齐画布的位置
   /// [CanvasViewBox.canvasBounds]
   Alignment alignment = Alignment.center;
+
+  /// 缩放模式
+  /// [CanvasViewBox.canvasBounds]
+  BoxFit fit = BoxFit.contain;
 
   //endregion --配置属性--
 
@@ -64,7 +71,8 @@ class CanvasFollowManager with CanvasComponentMixin {
   /// 跟随矩形
   /// 所有函数参数, 都只是临时生效的参数, 长久生效请使用属性
   @api
-  void followRect(
+  @Deprecated("请使用[followRect]")
+  void followRectOld(
     @sceneCoordinate Rect? rect, {
     EdgeInsets? margin,
     Alignment? alignment,
@@ -77,7 +85,7 @@ class CanvasFollowManager with CanvasComponentMixin {
     if (!canvasViewBox.isCanvasBoxInitialize) {
       //画布还没有初始化完成
       scheduleMicrotask(() {
-        followRect(
+        followRectOld(
           rect,
           alignment: alignment,
           margin: margin,
@@ -209,12 +217,127 @@ class CanvasFollowManager with CanvasComponentMixin {
     );
   }
 
+  /// 跟随矩形
+  /// 所有函数参数, 都只是临时生效的参数, 长久生效请使用属性
+  /// [applyAlignRect]
+  /// [applyAlignMatrix]
+  ///
+  /// 特殊情况, 当[fit]为[BoxFit.none]时,
+  ///   如果当前缩放值, 已经能显示对应[rect], 则仅进行平移操作
+  ///   否则降级为默认的[CanvasFollowManager.fit]处理方式
+  ///
+  @api
+  void followRect(
+    @sceneCoordinate Rect? rect, {
+    EdgeInsets? margin,
+    Alignment? alignment,
+    BoxFit? fit,
+    bool? animate,
+    bool? awaitAnimate,
+    bool? restoreDefault /*当没有rect时, 是否恢复默认的100%*/,
+  }) {
+    if (!canvasViewBox.isCanvasBoxInitialize) {
+      //画布还没有初始化完成
+      scheduleMicrotask(() {
+        followRect(
+          rect,
+          alignment: alignment,
+          margin: margin,
+          fit: fit,
+          animate: animate,
+          awaitAnimate: awaitAnimate,
+          restoreDefault: restoreDefault,
+        );
+      });
+      return;
+    }
+
+    //debugger();
+
+    alignment ??= this.alignment;
+    fit ??= this.fit;
+    margin ??= this.margin;
+    animate ??= this.animate;
+    awaitAnimate ??= this.awaitAnimate;
+
+    //default
+    if (rect == null || rect.isEmpty) {
+      if (restoreDefault == true) {
+        canvasViewBox.changeMatrix(
+          Matrix4.identity(),
+          animate: animate,
+          awaitAnimate: awaitAnimate,
+        );
+      }
+      return;
+    }
+
+    @viewCoordinate
+    final canvasBounds = canvasViewBox.canvasBounds;
+    @sceneCoordinate
+    final canvasVisibleBounds = canvasViewBox.canvasVisibleBounds;
+    final canvasVisibleWidth = canvasVisibleBounds.width;
+    final canvasVisibleHeight = canvasVisibleBounds.height;
+
+    @viewCoordinate
+    final fromRect = Rect.fromLTWH(
+        margin?.left ?? 0,
+        margin?.top ?? 0,
+        canvasBounds.width - (margin?.right ?? 0),
+        canvasBounds.height - (margin?.bottom ?? 0));
+    final toRect = rect;
+
+    if (fit == BoxFit.none) {
+      //特殊处理
+      @viewCoordinate
+      final toRectView = canvasViewBox.toViewRect(toRect);
+      if (canvasVisibleWidth > toRectView.width &&
+          canvasVisibleHeight > toRectView.height) {
+        //已经足够显示了, 则仅进行平移
+        final targetRect = alignment.inscribe(
+          toRectView.size,
+          canvasBounds,
+        );
+        final marginOffset = alignment.offset(margin);
+        final translateMatrix = Matrix4.identity();
+        translateMatrix.translateTo(
+            offset: targetRect.center - toRectView.center + marginOffset);
+        //debugger();
+        canvasViewBox.changeMatrix(
+          translateMatrix * canvasViewBox.canvasMatrix,
+          animate: animate,
+          awaitAnimate: awaitAnimate,
+        );
+        return;
+      } else {
+        fit = this.fit;
+      }
+    }
+
+    final matrix = applyAlignMatrix(
+      fromRect.size,
+      toRect.size,
+      fit: fit,
+      alignment: alignment,
+    );
+
+    //边距在此生效
+    final translateMatrix = Matrix4.identity();
+    translateMatrix.translate(margin?.left ?? 0, margin?.top ?? 0);
+
+    canvasViewBox.changeMatrix(
+      translateMatrix * matrix,
+      animate: animate,
+      awaitAnimate: awaitAnimate,
+    );
+  }
+
   /// 测试
   @testPoint
   @implementation
   void testFollow() {
     alignment = Alignment.center;
-    enableZoomIn = true;
+    fit = BoxFit.contain;
     followRect(canvasDelegate
         .canvasPaintManager.contentManager.canvasContentFollowRectInner);
   }

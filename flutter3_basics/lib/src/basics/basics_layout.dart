@@ -12,6 +12,7 @@ part of '../../flutter3_basics.dart';
 ///
 /// [AlignmentDirectional]
 /// [Alignment]
+/// [AlignmentEx.offset]
 /// 返回对应的偏移量
 Offset alignChildOffset(
   AlignmentGeometry alignment,
@@ -124,12 +125,18 @@ Rect applyAlignRect(
   //alignment
   if (alignment != null) {
     //获取对齐后的矩形位置
-    final destinationRect =
-        alignment.inscribe(fitTargetSize, Offset.zero & parentSize);
+    final destinationRect = alignment.inscribe(
+      fitTargetSize,
+      Offset.zero & parentSize,
+    );
     return destinationRect;
   } else {
-    final result =
-        Rect.fromLTWH(0, 0, fitTargetSize.width, fitTargetSize.height);
+    final result = Rect.fromLTWH(
+      0,
+      0,
+      fitTargetSize.width,
+      fitTargetSize.height,
+    );
     return result;
   }
 }
