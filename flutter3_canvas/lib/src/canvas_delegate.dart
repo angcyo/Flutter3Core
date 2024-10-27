@@ -312,7 +312,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [CanvasViewBox.changeMatrix]
   void dispatchCanvasViewBoxChanged(
     CanvasViewBox canvasViewBox,
-    bool isInitialize,
+    bool fromInitialize,
     bool isCompleted,
   ) {
     canvasElementManager.canvasElementControlManager.updateControlBounds();
@@ -322,7 +322,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     _eachCanvasListener((element) {
       element.onCanvasViewBoxChangedAction?.call(
         canvasViewBox,
-        isInitialize,
+        fromInitialize,
         isCompleted,
       );
     });

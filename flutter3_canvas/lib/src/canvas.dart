@@ -126,7 +126,7 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]
   final void Function(
     CanvasViewBox canvasViewBox,
-    bool isInitialize,
+    bool fromInitialize,
     bool isCompleted,
   )? onCanvasViewBoxChangedAction;
 
