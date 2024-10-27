@@ -2247,6 +2247,11 @@ extension StateEx on State {
 typedef ConditionalElementVisitorDepth = bool Function(
     Element element, int depth, int childIndex);
 
+/// [ConditionalRenderObjectVisitorDepth] 返回false 可以停止遍历
+/// [depth] 从0开始的递归深度
+typedef ConditionalRenderObjectVisitorDepth = bool Function(
+    RenderObject renderObject, int depth, int childIndex);
+
 /// [BuildContext.findRenderObject]
 /// [RenderObject.showOnScreen]
 extension ContextEx on BuildContext {
@@ -2358,7 +2363,7 @@ extension ContextEx on BuildContext {
     return ScaffoldMessenger.of(this).showSnackBar(snackBar);
   }
 
-  /// 遍历所有的子元素
+  /// 遍历所有的子元素[Element]
   /// [visitor] 返回值表示是否继续遍历; true: 继续深度遍历; false: 停止深度遍历;
   /// ```
   /// The BuildContext.visitChildElements() method can't be called during build because the child list is
@@ -2366,6 +2371,7 @@ extension ContextEx on BuildContext {
   /// children that are going to be replaced.
   /// ```
   /// 此方法不能在build阶段调用
+  /// [RenderObjectEx.eachVisitChildRenderObject]
   eachVisitChildElements(
     ConditionalElementVisitorDepth visitor, {
     int depth = 0,
@@ -2607,6 +2613,23 @@ extension RenderObjectEx on RenderObject {
       return parentConstraints;
     }
     return parent?.parentBoxConstraints;
+  }
+
+  /// 遍历所有的子节点[RenderObject]
+  /// [visitor] 返回值表示是否继续遍历; true: 继续深度遍历; false: 停止深度遍历;
+  /// [ContextEx.eachVisitChildElements]
+  eachVisitChildRenderObject(
+    ConditionalRenderObjectVisitorDepth visitor, {
+    int depth = 0,
+  }) {
+    int childIndex = 0;
+    //此方法不能再build期间调用
+    visitChildren((renderObject) {
+      bool interrupt = !visitor(renderObject, depth, childIndex++);
+      if (!interrupt) {
+        renderObject.eachVisitChildRenderObject(visitor, depth: depth + 1);
+      }
+    });
   }
 }
 

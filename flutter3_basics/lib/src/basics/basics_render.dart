@@ -184,4 +184,18 @@ extension RenderBoxEx on RenderBox {
       return true;
     }());
   }
+
+  /// 获取内部[RenderBox]对应的方向, 如果有
+  /// [RenderFlex.direction]
+  Axis? findChildAxis() {
+    Axis? axis;
+    eachVisitChildRenderObject((child, _, __) {
+      if (child is RenderFlex) {
+        axis = child.direction;
+        return false;
+      }
+      return true;
+    });
+    return axis;
+  }
 }

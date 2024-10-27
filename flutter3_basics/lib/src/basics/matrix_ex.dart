@@ -381,6 +381,9 @@ extension Matrix4Ex on vector.Matrix4 {
     }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
   }
 
+  /// 当前矩阵是否可以逆变换
+  bool get canInvert => determinant() != 0;
+
   /// 反转当前的矩阵
   /// [invertedMatrix]
   Matrix4 invertMatrix() {
@@ -392,7 +395,7 @@ extension Matrix4Ex on vector.Matrix4 {
   /// [invertMatrix]
   Matrix4 invertedMatrix() {
     try {
-      return Matrix4.inverted(this);
+      return canInvert ? Matrix4.inverted(this) : this;
     } catch (e, s) {
       assert(() {
         printError(e, s);
