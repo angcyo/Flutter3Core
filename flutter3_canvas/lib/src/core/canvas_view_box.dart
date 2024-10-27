@@ -80,6 +80,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [fromInitialize] 来自初始化的调用
   @entryPoint
   void updatePaintBounds(Size size, bool fromInitialize) {
+    //debugger();
     final oldPaintBounds = paintBounds;
     final isFirstInitialize = paintBounds == Rect.zero;
     paintBounds = Offset.zero & size;
@@ -93,7 +94,10 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       paintBounds.bottom,
     );
 
-    if (isFirstInitialize) {
+    //contentTemplate
+    if (isFirstInitialize &&
+        canvasDelegate
+            .canvasPaintManager.contentManager.firstLayoutFollowTemplate) {
       final contentTemplate =
           canvasDelegate.canvasPaintManager.contentManager.contentTemplate;
       final followRect = contentTemplate?.contentFollowRectInner;
@@ -102,12 +106,34 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
     }
 
+    //viewBox
     if (fromInitialize) {
       scheduleMicrotask(() {
         canvasDelegate.dispatchCanvasViewBoxChanged(this, fromInitialize, true);
       });
     } else {
       canvasDelegate.dispatchCanvasViewBoxChanged(this, fromInitialize, true);
+    }
+
+    //paintBounds
+    if (isPaintBoundsChanged) {
+      if (fromInitialize) {
+        scheduleMicrotask(() {
+          canvasDelegate.dispatchCanvasViewBoxPaintBoundsChanged(
+            this,
+            oldPaintBounds,
+            paintBounds,
+            isFirstInitialize,
+          );
+        });
+      } else {
+        canvasDelegate.dispatchCanvasViewBoxPaintBoundsChanged(
+          this,
+          oldPaintBounds,
+          paintBounds,
+          isFirstInitialize,
+        );
+      }
     }
   }
 

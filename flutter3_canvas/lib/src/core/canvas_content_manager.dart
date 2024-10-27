@@ -18,6 +18,9 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
+  /// 首次布局时, 是否跟随模板
+  bool firstLayoutFollowTemplate = true;
+
   //--
 
   /// 画布内容模版, 描述了内容大小, 最佳区域等信息

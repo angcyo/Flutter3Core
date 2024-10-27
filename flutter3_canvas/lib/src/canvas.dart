@@ -123,6 +123,14 @@ class CanvasListener {
     Duration lastRefreshTime,
   )? onCanvasIdleAction;
 
+  /// [CanvasDelegate.dispatchCanvasViewBoxPaintBoundsChanged]
+  final void Function(
+    CanvasViewBox canvasViewBox,
+    Rect fromPaintBounds,
+    Rect toPaintBounds,
+    bool isFirstInitialize,
+  )? onCanvasViewBoxPaintBoundsChangedAction;
+
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]
   final void Function(
     CanvasViewBox canvasViewBox,
@@ -248,6 +256,7 @@ class CanvasListener {
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
+    this.onCanvasViewBoxPaintBoundsChangedAction,
     this.onCanvasViewBoxChangedAction,
     this.onCanvasUnitChangedAction,
     this.onCanvasSelectBoundsChangedAction,

@@ -308,6 +308,31 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
+  /// 当[CanvasViewBox]视口可绘制区域发生变化时触发
+  /// [CanvasViewBox.updatePaintBounds]
+  void dispatchCanvasViewBoxPaintBoundsChanged(
+    CanvasViewBox canvasViewBox,
+    Rect fromPaintBounds,
+    Rect toPaintBounds,
+    bool isFirstInitialize,
+  ) {
+    CanvasViewBoxPaintBoundsChangedNotification(
+      canvasViewBox,
+      fromPaintBounds,
+      toPaintBounds,
+      isFirstInitialize,
+    ).dispatch(delegateContext);
+    _eachCanvasListener((element) {
+      element.onCanvasViewBoxPaintBoundsChangedAction?.call(
+        canvasViewBox,
+        fromPaintBounds,
+        toPaintBounds,
+        isFirstInitialize,
+      );
+    });
+    refresh();
+  }
+
   /// 当[CanvasViewBox]视口发生变化时触发
   /// [CanvasViewBox.changeMatrix]
   void dispatchCanvasViewBoxChanged(
