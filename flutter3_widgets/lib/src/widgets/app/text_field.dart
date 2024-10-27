@@ -75,6 +75,9 @@ class TextFieldConfig {
   /// [TextField.buildCounter]
   InputCounterWidgetBuilder? inputBuildCounter;
 
+  /// [SingleInputWidget.keyboardType]
+  TextInputType? keyboardType;
+
   //endregion 覆盖TextField的属性, 优先级低
 
   /// 回调
@@ -102,6 +105,7 @@ class TextFieldConfig {
     this.autofocus,
     this.textInputAction,
     this.inputFormatters,
+    this.keyboardType,
     this.updateFieldValueFn,
     this.labelText,
     this.labelTextBuilder,
@@ -839,7 +843,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           obscureText: widget.config.obscureNode.obscureText &&
               !widget.config.obscureNode._showObscureText,
           obscuringCharacter: widget.config.obscureNode.obscuringCharacter,
-          keyboardType: widget.keyboardType,
+          keyboardType: widget.config.keyboardType ?? widget.keyboardType,
           inputFormatters:
               widget.inputFormatters ?? widget.config.inputFormatters,
           cursorColor: cursorColor,
