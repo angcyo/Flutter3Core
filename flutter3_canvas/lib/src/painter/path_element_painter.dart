@@ -44,6 +44,13 @@ class PathElementPainter extends ElementPainter {
         });
       }
     }
+    refresh();
+  }
+
+  ///
+  @override
+  void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
+    super.onPaintingSelfBefore(canvas, paintMeta);
   }
 
   @override

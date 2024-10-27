@@ -16,10 +16,14 @@ class ElementPainter extends IPainter
   /// [isVisibleInCanvasBox]
   bool? forceVisibleInCanvasBox;
 
+  //--画笔属性--
+
   /// 画笔的一些属性, 会在[onPaintingSelfBefore]中每次赋值
   PaintingStyle? paintStyle;
   Color? paintColor;
   double? paintStrokeWidth;
+
+  //--
 
   /// 是否抑制[CanvasViewBox]的缩放, 用来控制[paintStrokeWidth]不受画布的缩放而缩放
   /// 画布缩放时[paintStrokeWidth]会反向缩放
@@ -330,6 +334,7 @@ class ElementPainter extends IPainter
     });
   }
 
+  /// [painting]驱动
   /// [onPaintingSelf]绘制之前调用, 用来重新设置画笔样式等
   @property
   void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
@@ -346,7 +351,7 @@ class ElementPainter extends IPainter
   }
 
   /// 重写此方法, 实现在画布内绘制自己
-  /// [painting]
+  /// [painting]驱动
   /// [paintPropertyRect]
   /// [paintPropertyBounds]
   @overridePoint
