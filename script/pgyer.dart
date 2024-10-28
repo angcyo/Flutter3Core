@@ -38,8 +38,10 @@ void main(List<String> arguments) async {
 
   //是否要使用飞书的webhook通知
   final useFeishuWebhook =
-      (localYaml["use_feishu_webhook"] ?? yaml["use_feishu_webhook"]) != false;
+      localYaml["use_feishu_webhook"] ?? yaml["use_feishu_webhook"];
 
+  //上传成功的数量
+  int count = 0;
   for (final folder
       in (localYaml?["pgyer_path"] ?? yaml?["pgyer_path"] ?? [])) {
     final fileList = await _getFileList(folder);
@@ -66,10 +68,13 @@ void main(List<String> arguments) async {
           final tokenJson = jsonDecode(tokenText);
           final succeed = await _uploadAppFile(tokenJson["data"], file);
           if (succeed) {
+            count++;
             await _writeUploadRecord(folder, file);
             final url =
                 await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
-            if (useFeishuWebhook && index == length - 1 && url != null) {
+            if (useFeishuWebhook != false &&
+                index == length - 1 &&
+                url != null) {
               //只在最后一个文件上传成功之后, 进行飞书webhook通知
               await _sendFeishuWebhook(
                 localYaml["feishu_webhook"] ?? yaml["feishu_webhook"],
