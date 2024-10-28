@@ -32,6 +32,26 @@ class AnnotationMeta {
   }
 }
 
+/// 当前方法由谁负责调用
+class CallFrom {
+  const CallFrom([dynamic from = '当前方法由谁负责调用']);
+
+  @override
+  String toString() {
+    return 'CallFrom';
+  }
+}
+
+/// 当前方法由谁负责初始化调用
+class CallInitFrom {
+  const CallInitFrom([dynamic from = '当前方法由谁负责初始化调用']);
+
+  @override
+  String toString() {
+    return 'CallInitFrom';
+  }
+}
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');

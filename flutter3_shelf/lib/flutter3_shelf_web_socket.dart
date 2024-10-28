@@ -4,7 +4,7 @@ part of 'flutter3_shelf.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/17
 ///
-/// WebSocket 服务端
+/// WebSocket 服务端, 客户端请参考[Flutter3ShelfWebSocketClient]
 /// [webSocket] 是一个 [IOWebSocketChannel]
 /// [WebSocket]
 class Flutter3ShelfWebSocketServer extends Flutter3ShelfHttp {
