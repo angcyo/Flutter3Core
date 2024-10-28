@@ -80,7 +80,7 @@ dependencies:
   # https://pub.dev/packages/flutter
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
-  network_info_plus: ^6.0.1
+  network_info_plus: ^6.1.0
 
   # https://pub.dev/packages/udp
   udp: ^5.0.3
