@@ -80,21 +80,21 @@ extension DynamicEx on dynamic {
   /// [encode]
   /// [_defaultToEncodable]
   /// 从json字符串中解析出对应的数据类型
-  dynamic fromJson() => toString().fromJson();
+  dynamic fromJson() => throw UnimplementedError();
 
   /// 请在具体的类型上实现[toJson]方法, 否则会抛异常
   /// 此方法通常返回的是Map<String, dynamic>类型
   /// [json.decode(this)]
-  dynamic toJson() => this.toJson();
+  dynamic toJson() => throw UnimplementedError();
 
   /// 直接转成json字符串
   /// [toJsonString]
-  String toJsonString() => (this as Object).toJsonString(null);
+  String toJsonString() => throw UnimplementedError();
 
   /// [runtimeType]
   /// [toString]
   /// [classHash]
-  String toRuntimeString() => "[$runtimeType]${toString()}";
+  String toRuntimeString() => throw UnimplementedError();
 }
 
 final int __int64MaxValue = double.maxFinite.toInt();

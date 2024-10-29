@@ -42,6 +42,8 @@ class CallFrom {
   }
 }
 
+const callFrom = CallFrom();
+
 /// 当前方法由谁负责初始化调用
 class CallInitFrom {
   const CallInitFrom([dynamic from = '当前方法由谁负责初始化调用']);
@@ -51,6 +53,8 @@ class CallInitFrom {
     return 'CallInitFrom';
   }
 }
+
+const callInitFrom = CallInitFrom();
 
 //region---单位
 
