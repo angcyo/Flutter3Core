@@ -133,7 +133,7 @@ Future wrapLoading(
   Duration? delay,
   Duration? timeout,
   VoidCallback? onStart,
-  ValueCallback? onEnd,
+  ValueErrorCallback? onEnd,
   bool showTime = false,
 }) {
   Timer? timer;
@@ -181,7 +181,7 @@ Future wrapLoading(
         isTimeout = true;
         timer?.cancel();
         hideLoading();
-        onEnd?.call(RTimeoutException(message: 'wrapLoading timeout.'));
+        onEnd?.call(null, RTimeoutException(message: 'wrapLoading timeout.'));
       }
     }, timeout);
   }
@@ -197,12 +197,13 @@ Future wrapLoading(
     }
     isEnd = true;
     timer?.cancel();
+    hideLoading();
     if (onEnd == null) {
-      hideLoading();
+      //hideLoading();
     } else {
-      onEnd.call(null);
+      onEnd.call(value, error);
     }
-    if (error != null) {
+    if (onEnd == null && error != null) {
       throw error;
     }
     return value;
@@ -219,12 +220,14 @@ Future wrapLoadingTimeout(
   Duration? delay = const Duration(seconds: 1),
   Duration? timeout = const Duration(seconds: 30),
   bool showTime = false,
+  ValueErrorCallback? onEnd,
 }) {
   return wrapLoading(
     future,
     delay: delay,
     timeout: timeout,
     showTime: showTime,
+    onEnd: onEnd,
   );
 }
 
