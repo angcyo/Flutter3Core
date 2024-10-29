@@ -79,7 +79,7 @@ extension HttpUriEx on Uri {
 }
 
 extension HttpStringEx on String {
-  /// this = host
+  /// this == host
   /// 拼接`host/path`
   String connectUrl(String? path) {
     if (path == null || isNil(path)) {
@@ -100,23 +100,36 @@ extension HttpStringEx on String {
     return result;
   }
 
-  /// 拼接接口, 如果已经是http协议, 则直接返回, 否则拼接上[Http.getBaseUrl]
+  /// this == path
+  /// [api]服务器忌口地址, 不指定则默认是[Http.getBaseUrl]
   @callPoint
-  String toApi(String api) {
-    if (api.startsWith('http://') || api.startsWith('https://')) {
-      return api;
+  String toApi([String? api, bool? isHttps]) {
+    if (startsWith('http://') || startsWith('https://')) {
+      //this 已经是一个url, 则直接返回
+      return this;
     }
-    var base = Http.getBaseUrl?.call() ?? '';
+
+    //主机
+    api ??= Http.getBaseUrl?.call() ?? '';
+    if (api.startsWith('http://') || api.startsWith('https://')) {
+    } else {
+      api = isHttps == true ? "https://$api" : "http://$api";
+    }
+
+    //开始拼接
+    var base = api;
+    var path = this;
     if (base.isNotEmpty) {
       if (base.endsWith('/')) {
+        //base移除末尾的/
         base = base.substring(0, base.length - 1);
       }
-      if (api.startsWith('/')) {
-        api = api.substring(1);
+      if (path.startsWith('/')) {
+        path = path.substring(1);
       }
-      return '$base/$api';
+      return '$base/$path';
     }
-    return api;
+    return this;
   }
 
   /// [HttpUriEx.httpGetContent]
