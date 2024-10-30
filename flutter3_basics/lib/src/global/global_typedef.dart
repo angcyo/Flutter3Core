@@ -24,6 +24,9 @@ typedef FutureVoidAction = FutureOr Function();
 /// [BoolCallback]
 typedef FutureBoolAction = FutureOr Function(bool value);
 
+/// 回调一个错误, 没错误就是null
+typedef ErrorAction = void Function(dynamic error);
+
 /// 只有返回值的回调
 typedef ResultCallback<T> = T Function();
 
