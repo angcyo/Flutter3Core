@@ -6,6 +6,9 @@ part of '../../flutter3_http.dart';
 /// @date 2023/11/25
 ///
 
+/// [Response]
+typedef DioResponse<T> = Response<T>;
+
 class DioScope extends InheritedWidget {
   /// 获取一个上层提供的dio
   static RDio? of(BuildContext context, {bool depend = false}) {
@@ -51,17 +54,17 @@ extension DioMapEx on Map<String, dynamic> {
 extension DioStringEx on String {
   /// get请求
   /// [context] 用来获取dio
-  /// [data] 请求体 [DioMixin._transformData]
+  /// [body] 请求体 [DioMixin._transformData]
   ///
   /// ```
   /// GridOptionBean.fromJson(res.data);
   /// ```
   ///
-  /// [Response.data].[_Map<String, dynamic>]
+  /// [Response.data]数据类型通常是[_Map<String, dynamic>]
   /// @return [Response<dynamic>]
   ///
   Future<Response<T>> get<T>({
-    Object? data,
+    Object? body,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
@@ -70,6 +73,7 @@ extension DioStringEx on String {
   }) async {
     final response = await RDio.get(context: context).dio.get<T>(
           transformUrl(),
+          data: body,
           queryParameters: queryParameters,
           options: options,
           cancelToken: cancelToken,
@@ -142,6 +146,7 @@ extension DioStringEx on String {
   /// [context] 用来获取dio
   /// [body] 请求体 [DioMixin._transformData]
   ///   - 支持[FormData]
+  /// [Response.data]数据类型通常是[_Map<String, dynamic>]
   Future<Response<T>> post<T>({
     Object? body,
     Map<String, dynamic>? queryParameters,
