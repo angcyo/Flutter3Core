@@ -71,6 +71,9 @@ typedef WidgetErrorBuilder = Widget Function(
 
 /// 动态[dynamic]的扩展, 只是在编译的时候有代码提示,
 /// 最终还是要对应的类型上有方法才行, 否则会抛异常.
+/// ```
+/// throw UnimplementedError();
+/// ```
 extension DynamicEx on dynamic {
   /// [DynamicEx.fromJson]
   /// [ObjectEx.fromJson]
@@ -80,21 +83,21 @@ extension DynamicEx on dynamic {
   /// [encode]
   /// [_defaultToEncodable]
   /// 从json字符串中解析出对应的数据类型
-  dynamic fromJson() => throw UnimplementedError();
+  dynamic fromJson() => toString().fromJson();
 
   /// 请在具体的类型上实现[toJson]方法, 否则会抛异常
   /// 此方法通常返回的是Map<String, dynamic>类型
   /// [json.decode(this)]
-  dynamic toJson() => throw UnimplementedError();
+  dynamic toJson() => this.toJson();
 
   /// 直接转成json字符串
   /// [toJsonString]
-  String toJsonString() => throw UnimplementedError();
+  String toJsonString() => (this as Object).toJsonString(null);
 
   /// [runtimeType]
   /// [toString]
   /// [classHash]
-  String toRuntimeString() => throw UnimplementedError();
+  String toRuntimeString() => "[$runtimeType]${toString()}";
 }
 
 final int __int64MaxValue = double.maxFinite.toInt();
