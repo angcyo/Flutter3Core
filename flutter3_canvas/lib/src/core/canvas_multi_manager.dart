@@ -24,9 +24,12 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 当前选中的画布状态
   CanvasStateData? selectedCanvasState;
 
-  /// 是否是空画布
-  bool get isCanvasEmpty =>
-      canvasStateList.size() <= 1 &&
+  /// 所有画布是否都是
+  bool get isAllCanvasEmpty =>
+      canvasStateList.all((e) => e.isElementEmpty) && isCurrentCanvasEmpty;
+
+  /// 当前画布是否为空
+  bool get isCurrentCanvasEmpty =>
       (selectedCanvasState?.elements.size() ?? 0) <= 0;
 
   /// 从画布中初始化数据, 此方法为了兼容测试使用
@@ -107,7 +110,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selectedElement = false,
     bool followRect = false,
   }) {
-    if (isCanvasEmpty) {
+    if (isAllCanvasEmpty) {
       canvasStateList.reset(stateList);
     } else {
       canvasStateList.addAll(stateList);
@@ -116,7 +119,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasDelegate.dispatchCanvasMultiStateListChanged(canvasStateList);
     }
     if (autoSelectedCanvas) {
-      if (isCanvasEmpty) {
+      if (isAllCanvasEmpty) {
         ensureSelectCanvasState(
           notify: notify,
           selectedElement: selectedElement,
