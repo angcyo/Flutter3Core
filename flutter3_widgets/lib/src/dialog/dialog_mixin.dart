@@ -167,6 +167,10 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool fullScreen = false /*是否全屏*/,
     //--shadow--↓
     bool showTopShadow = true /*是否显示顶部阴影*/,
+    //--column--↓
+    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
+    //CrossAxisAlignment.center, 需要考虑拖动手柄的样式
+    CrossAxisAlignment? crossAxisAlignment,
   }) {
     Widget body;
     children = children.filterNull();
@@ -224,10 +228,16 @@ mixin DialogMixin implements TranslationTypeImpl {
         scrollBody?.expanded(enable: height != null /*固定高度时, 滚动布局需要撑满底部*/),
       ].column()!;
     } else {
+      //普通布局, 不使用滚动布局
       body = [
         if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...children
-      ].column()!.constrainedMax(
+      ]
+          .column(
+            mainAxisAlignment: mainAxisAlignment,
+            crossAxisAlignment: crossAxisAlignment,
+          )!
+          .constrainedMax(
             minHeight: contentMinHeight,
             maxHeight: contentMaxHeight,
           );
