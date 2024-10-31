@@ -173,6 +173,7 @@ extension ObjectEx on Object {
   ///
   /// [style] 文本样式
   /// [bold] 是否加粗[fontWeight]
+  /// [lineHeight].[TextStyle.height] 行高, 默认值`1.464`附近
   /// ...
   /// [highlight] 需要高亮的文本
   /// [highlightList] 需要高亮的文本列表
@@ -192,6 +193,7 @@ extension ObjectEx on Object {
     double? fontSize,
     Color? textColor,
     FontWeight? fontWeight,
+    double? lineHeight,
     bool? bold /*加粗*/,
     FontStyle? fontStyle,
     String? fontFamily,
@@ -333,26 +335,32 @@ extension ObjectEx on Object {
     }
 
     if (style != null) {
+      //如果style不为空, 则使用参数覆盖style
       if (fontSize != null ||
           textColor != null ||
           fontWeight != null ||
           fontFamily != null ||
-          fontStyle != null) {
+          fontStyle != null ||
+          lineHeight != null) {
         style = style.copyWith(
           fontSize: fontSize ?? style.fontSize,
           color: textColor ?? style.color,
           fontWeight: fontWeight ?? style.fontWeight,
           fontStyle: fontStyle ?? style.fontStyle,
-          fontFamily: fontFamily,
+          fontFamily: fontFamily ?? style.fontFamily,
+          height: lineHeight ?? style.height,
         );
       }
     }
 
+    //style参数为空, 则使用参数创建样式
     final textStyle = style ??
         (fontSize == null &&
                 textColor == null &&
                 fontWeight == null &&
-                fontStyle == null
+                fontFamily == null &&
+                fontStyle == null &&
+                lineHeight == null
             ? null
             : TextStyle(
                 fontSize: fontSize,
@@ -360,6 +368,7 @@ extension ObjectEx on Object {
                 fontWeight: fontWeight,
                 fontStyle: fontStyle,
                 fontFamily: fontFamily,
+                height: lineHeight,
               ));
 
     if (selectable) {
