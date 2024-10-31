@@ -29,7 +29,7 @@ class GradientButton extends StatelessWidget {
     this.onHighlightChanged,
     this.minWidth = 88,
     this.maxWidth = double.infinity,
-    this.minHeight = kInteractiveHeight,
+    this.minHeight = kButtonHeight,
     this.maxHeight = double.infinity,
   });
 
