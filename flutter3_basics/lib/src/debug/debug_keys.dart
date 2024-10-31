@@ -74,6 +74,16 @@ extension DebugKeysEx on String {
   void notifyInputValueChanged() {
     DebugKeys.notifyDebugInputValueChanged(this);
   }
+
+  /// 当前的key对应的value改变后通知
+  void onDebugValueChanged(DebugValueChanged debugValueChanged) {
+    registerDebugValueChanged(this, debugValueChanged);
+  }
+
+  /// 移除当前key对应的value变化监听
+  void removeDebugValueChanged(DebugValueChanged debugValueChanged) {
+    unregisterDebugValueChanged(this, debugValueChanged);
+  }
 }
 
 //--key value--

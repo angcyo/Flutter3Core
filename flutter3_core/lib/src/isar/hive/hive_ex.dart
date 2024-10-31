@@ -37,13 +37,14 @@ extension HiveStringEx on String {
   /// `[HiveError]HiveError: Cannot write, unknown type: TextEditingValue. Did you forget to register an adapter?`
   Future<dynamic> hivePut(dynamic value, [bool notifyChanged = true]) {
     //debugger();
-    if (notifyChanged) {
-      notifyDebugValueChanged(value);
-    }
     if (value == null) {
-      return hiveDelete();
+      final result = hiveDelete();
+      if (notifyChanged) {
+        notifyDebugValueChanged(value);
+      }
+      return result;
     }
-    return _hiveBox.put(this, value).get((v, error) {
+    final result = _hiveBox.put(this, value).get((v, error) {
       if (value != null && error is HiveError) {
         assert(() {
           l.e("存储类型失败:[${value.runtimeType}]:$error, 自动转换为字符串存储");
@@ -53,6 +54,10 @@ extension HiveStringEx on String {
       }
       return v;
     });
+    if (notifyChanged) {
+      notifyDebugValueChanged(value);
+    }
+    return result;
   }
 
   /// 删除指定键
@@ -109,6 +114,18 @@ extension HiveStringEx on String {
       return [];
     }
     return json.fromJsonList<String>() ?? [];
+  }
+
+  //--
+
+  /// 当前的key对应的value改变后通知
+  void onHiveValueChanged(DebugValueChanged debugValueChanged) {
+    onDebugValueChanged(debugValueChanged);
+  }
+
+  /// 移除当前key对应的value变化监听
+  void removeHiveValueChanged(DebugValueChanged debugValueChanged) {
+    removeDebugValueChanged(debugValueChanged);
   }
 }
 
