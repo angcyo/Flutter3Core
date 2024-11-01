@@ -8,14 +8,26 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 /// @author angcyo
 /// @date 2023/11/25
 ///
-
+/// ```
+/// 通过在url后面拼接`noLogPrint=true`可以关闭日志输出
+/// ```
+///
+/// [RequestOptions.extra]
+///
 /// [LogInterceptor]
 class LogFileInterceptor extends Interceptor {
+  /// 禁止打印日志
+  static const String kNoLogPrintKey = 'noLogPrint';
+
+  /// 禁止日志写入文件
+  static const String kNoLogFileKey = 'noLogFile';
   final Map<int, (String id, int startTime)> uuidMap = {};
   final bool toFile;
+  final bool toPrint;
 
   LogFileInterceptor({
     this.toFile = true,
+    this.toPrint = true,
   });
 
   @override
@@ -34,35 +46,60 @@ class LogFileInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    var hashCode = err.requestOptions.hashCode;
-    var value = uuidMap.remove(hashCode);
-    var log = stringBuilder((builder) {
+    final options = err.requestOptions;
+    final queryParameters = options.uri.queryParameters;
+    final noLogPrint = queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
+        options.extra[kNoLogPrintKey]?.toBoolOrNull() ??
+        !toPrint;
+    final noLogFile = queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
+        options.extra[kNoLogFileKey]?.toBoolOrNull() ??
+        !toFile;
+
+    final hashCode = options.hashCode;
+    final value = uuidMap.remove(hashCode);
+    final log = stringBuilder((builder) {
       if (value == null) {
-        builder.appendLine("<--${err.requestOptions.uri}");
+        builder.appendLine(
+            "<--${err.requestOptions.uri}(Dio异常[${err.response?.statusCode}])");
       } else {
-        builder.appendLine("<--${value.$1} ${LTime.diffTime(value.$2)}");
+        builder.appendLine(
+            "<--${value.$1} ${LTime.diffTime(value.$2)}(Dio异常[${err.response?.statusCode}])");
       }
       builder.appendLine("$err");
       if (err.response != null) {
         builder.append(_responseLog(err.response!));
       }
     });
-    _printLog(log);
+    _printLog(
+      log,
+      toFile: noLogFile == false,
+      toPrint: noLogPrint == false,
+    );
     super.onError(err, handler);
   }
 
   void _logRequest(RequestOptions options) {
-    var hashCode = options.hashCode;
-    var id = $uuid;
+    final hashCode = options.hashCode;
+    final id = $uuid;
+
+    //日志输出控制
+    final queryParameters = options.uri.queryParameters;
+    final noLogPrint = queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
+        options.extra[kNoLogPrintKey]?.toBoolOrNull() ??
+        !toPrint;
+    final noLogFile = queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
+        options.extra[kNoLogFileKey]?.toBoolOrNull() ??
+        !toFile;
 
     //添加请求头
     options.headers["log-uuid"] = id;
     options.headers["request-time"] = nowTimestamp(); //请求时间
 
     uuidMap[hashCode] = (id, nowTimestamp());
-    var log = stringBuilder((builder) {
+    final log = stringBuilder((builder) {
       builder.appendLine("-->$id");
       builder.appendLine("[${options.method}]${options.uri}");
+      builder.appendLine('options[${options.runtimeType}]↓');
       builder.append(
         'responseType:',
         options.responseType.toString(),
@@ -78,25 +115,43 @@ class LogFileInterceptor extends Interceptor {
       builder.append('receiveDataWhenStatusError:',
           options.receiveDataWhenStatusError, lineSeparator);
       builder.append('extra:', options.extra, lineSeparator);
-      builder.appendLine('headers↓');
+      builder.appendLine('headers[${options.headers.length}]↓');
       options.headers
           .forEach((key, v) => builder.append(' $key:', v, lineSeparator));
       if (options.data != null) {
+        //debugger();
         builder.appendLine('data(${options.data.runtimeType})↓');
         builder.appendAll(options.data);
       }
     });
-    _printLog(log);
+    _printLog(
+      log,
+      toFile: noLogFile == false,
+      toPrint: noLogPrint == false,
+    );
   }
 
   void _logResponse(Response response) {
-    var hashCode = response.requestOptions.hashCode;
-    var value = uuidMap.remove(hashCode);
-    var log = stringBuilder((builder) {
+    final options = response.requestOptions;
+    final queryParameters = options.uri.queryParameters;
+    final noLogPrint = queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
+        options.extra[kNoLogPrintKey]?.toBoolOrNull() ??
+        !toPrint;
+    final noLogFile = queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
+        options.extra[kNoLogFileKey]?.toBoolOrNull() ??
+        !toFile;
+
+    final hashCode = options.hashCode;
+    final value = uuidMap.remove(hashCode);
+    final log = stringBuilder((builder) {
       builder.appendLine("<--${value?.$1} ${LTime.diffTime(value?.$2)}");
       builder.append(_responseLog(response));
     });
-    _printLog(log);
+    _printLog(
+      log,
+      toFile: noLogFile == false,
+      toPrint: noLogPrint == false,
+    );
   }
 
   String _responseLog(Response response) {
@@ -115,11 +170,17 @@ class LogFileInterceptor extends Interceptor {
     return log;
   }
 
-  void _printLog(String log) {
+  void _printLog(
+    String log, {
+    bool? toFile,
+    bool? toPrint,
+  }) {
     //debugger();
-    if (toFile) {
+    if (toFile ?? this.toFile) {
       GlobalConfig.def.writeFileFn?.call('http.log', 'log', log);
     }
-    l.d(log);
+    if (toPrint ?? this.toPrint) {
+      l.d(log);
+    }
   }
 }
