@@ -2,6 +2,7 @@ library flutter3_app;
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -103,10 +104,18 @@ Future runGlobalApp(
 
   // FlutterError.onError
   wrapFlutterOnError((FlutterErrorDetails details) {
-    "发生一个错误↓".writeToErrorLog();
+    "Flutter发生一个错误↓".writeToErrorLog();
     details.exceptionAsString().writeToErrorLog();
     "错误详情↓\n${dumpErrorToString(details)}".writeToErrorLog();
     //FlutterError.dumpErrorToConsole(details);
+  });
+  // PlatformDispatcher.onError
+  wrapPlatformDispatcherOnError((error, stack) {
+    "Platform发生一个错误↓".writeToErrorLog();
+    final details = FlutterErrorDetails(exception: error, stack: stack);
+    details.exceptionAsString().writeToErrorLog();
+    "错误详情↓\n${dumpErrorToString(details)}".writeToErrorLog();
+    return false;
   });
 
   //ErrorWidget.builder = ;
@@ -158,6 +167,17 @@ void wrapFlutterOnError([FlutterExceptionHandler? onErrorHandler]) {
   FlutterError.onError = (FlutterErrorDetails details) {
     oldOnError?.call(details);
     onErrorHandler?.call(details);
+  };
+}
+
+/// 包裹[PlatformDispatcher.instance.onError]处理, 保持旧逻辑不变
+void wrapPlatformDispatcherOnError([ErrorCallback? onErrorCallback]) {
+  final oldOnError = PlatformDispatcher.instance.onError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    bool handle = false;
+    handle = oldOnError?.call(error, stack) ?? handle;
+    handle = onErrorCallback?.call(error, stack) ?? handle;
+    return handle;
   };
 }
 
