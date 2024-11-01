@@ -194,13 +194,17 @@ extension DioStringEx on String {
   }
 
   /// 使用post请求, 上传文件
+  /// [body] 完全自定义的上传数据, 此时[filePath].[filePathList].[formMap]失效
   /// [filePath] 单位件上传
   /// [filePathList] 多文件上传
   /// [formMap] 除了文件外, 额外的表单数据
   /// https://github.com/FlutterStudioIst/dio/blob/main/dio/README-ZH.md#%E5%8F%91%E9%80%81-formdata
   Future<Response<T>> upload<T>({
+    Object? body,
     String? filePath,
+    String filePathKey = 'file',
     List<String>? filePathList,
+    String filePathListKey = 'files',
     Map<String, dynamic>? formMap,
     Map<String, dynamic>? queryParameters,
     Options? options,
@@ -209,17 +213,24 @@ extension DioStringEx on String {
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
   }) async {
-    filePathList ??= [filePath!];
     final formData = FormData.fromMap({
-      'name': 'flutter-dio',
+      'name': 'flutter-dio-angcyo',
       'date': DateTime.now().toIso8601String(),
-      'files': [
-        for (var filePath in filePathList)
-          await MultipartFile.fromFile(
-            filePath,
-            filename: filePath.toFile().filename,
-          ),
-      ],
+      filePathKey: filePath == null
+          ? null
+          : await MultipartFile.fromFile(
+              filePath,
+              filename: filePath.toFile().filename,
+            ),
+      filePathListKey: filePathList == null
+          ? null
+          : [
+              for (final filePath in filePathList)
+                await MultipartFile.fromFile(
+                  filePath,
+                  filename: filePath.toFile().filename,
+                ),
+            ],
       ...?formMap,
     });
     return post<T>(
