@@ -317,6 +317,7 @@ extension ObjectEx on Object {
         }
       }
 
+      //高亮处理
       if (selectable) {
         return SelectableText.rich(
           TextSpan(children: children, style: highlightTextStyle),
@@ -337,6 +338,7 @@ extension ObjectEx on Object {
       );
     }
 
+    //普通文本处理
     if (style != null) {
       //如果style不为空, 则使用参数覆盖style
       if (fontSize != null ||
