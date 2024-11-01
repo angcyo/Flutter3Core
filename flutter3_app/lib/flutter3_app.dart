@@ -153,10 +153,13 @@ Future runGlobalApp(
   }
 
   return runZonedGuarded(realRun, (error, stack) {
-    "未捕捉的异常:↓".writeToErrorLog();
+    "Zoned未捕捉的异常:↓".writeToErrorLog();
     error.writeToErrorLog(level: L.none);
     stack.toString().writeToErrorLog(level: L.none);
-    printError(error, stack);
+    assert(() {
+      printError(error, stack);
+      return true;
+    }());
     onZonedError?.call(error, stack);
   });
 }
