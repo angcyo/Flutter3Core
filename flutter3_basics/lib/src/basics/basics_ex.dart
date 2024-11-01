@@ -189,7 +189,7 @@ extension ObjectEx on Object {
   /// https://pub.dev/packages/highlightable
   /// https://pub.dev/packages/search_highlight_text
   ///
-  /// [selectable] 是否可以选择文本
+  /// [selectable] 是否可以选择文本, 使用[SelectableText]小部件实现
   /// [SelectableText]
   Widget text({
     TextStyle? style,
