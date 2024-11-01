@@ -56,7 +56,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 当前场景可视的区域
   @sceneCoordinate
-  Rect get canvasVisibleBounds => toSceneRect(canvasBounds);
+  Rect get canvasSceneVisibleBounds => toSceneRect(canvasBounds);
 
   /// 是否初始化了
   bool get isCanvasBoxInitialize => !canvasBounds.isEmpty;

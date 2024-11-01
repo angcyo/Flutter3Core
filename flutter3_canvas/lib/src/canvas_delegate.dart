@@ -254,12 +254,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 跟随一个元素, 自动居中处理
+  /// [CanvasFollowManager.followRect]
   @api
   void followPainter({
     @sceneCoordinate Rect? rect,
     ElementPainter? elementPainter,
-    Alignment? alignment,
     EdgeInsets? margin,
+    BoxFit? fit = BoxFit.none,
+    Alignment? alignment = Alignment.center,
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
         .canvasElementControlManager.enableResetElementAngle);
@@ -268,9 +270,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }
     canvasFollowManager.followRect(
       rect,
-      fit: BoxFit.scaleDown,
-      alignment: alignment,
       margin: margin,
+      fit: fit,
+      alignment: alignment,
       animate: true,
       awaitAnimate: false,
     );

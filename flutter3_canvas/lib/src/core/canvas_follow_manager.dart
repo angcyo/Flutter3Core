@@ -123,9 +123,9 @@ class CanvasFollowManager with CanvasComponentMixin {
     @viewCoordinate
     final canvasBounds = canvasViewBox.canvasBounds;
     @sceneCoordinate
-    final canvasVisibleBounds = canvasViewBox.canvasVisibleBounds;
-    final canvasVisibleWidth = canvasVisibleBounds.width;
-    final canvasVisibleHeight = canvasVisibleBounds.height;
+    final canvasSceneVisibleBounds = canvasViewBox.canvasSceneVisibleBounds;
+    final canvasVisibleWidth = canvasSceneVisibleBounds.width;
+    final canvasVisibleHeight = canvasSceneVisibleBounds.height;
 
     double sx = (canvasVisibleWidth / rect.width).ensureValid(1);
     double sy = (canvasVisibleHeight / rect.height).ensureValid(1);
@@ -229,13 +229,14 @@ class CanvasFollowManager with CanvasComponentMixin {
   @api
   void followRect(
     @sceneCoordinate Rect? rect, {
-    EdgeInsets? margin,
+    @viewCoordinate EdgeInsets? margin,
     Alignment? alignment,
     BoxFit? fit,
     bool? animate,
     bool? awaitAnimate,
     bool? restoreDefault /*当没有rect时, 是否恢复默认的100%*/,
   }) {
+    //debugger();
     if (!canvasViewBox.isCanvasBoxInitialize) {
       //画布还没有初始化完成
       scheduleMicrotask(() {
@@ -252,8 +253,6 @@ class CanvasFollowManager with CanvasComponentMixin {
       return;
     }
 
-    //debugger();
-
     alignment ??= this.alignment;
     fit ??= this.fit;
     margin ??= this.margin;
@@ -261,13 +260,22 @@ class CanvasFollowManager with CanvasComponentMixin {
     awaitAnimate ??= this.awaitAnimate;
 
     //default
-    if (rect == null || rect.isEmpty) {
+    if (rect == null) {
       if (restoreDefault == true) {
-        canvasViewBox.changeMatrix(
-          Matrix4.identity(),
-          animate: animate,
-          awaitAnimate: awaitAnimate,
-        );
+        if (!canvasDelegate.canvasPaintManager.contentManager
+            .followCanvasContentTemplate()) {
+          //模板跟随失败后, 则恢复默认
+          canvasViewBox.changeMatrix(
+            Matrix4.identity(),
+            animate: animate,
+            awaitAnimate: awaitAnimate,
+          );
+        }
+      } else {
+        assert(() {
+          l.w('操作被忽略rect:$rect');
+          return true;
+        }());
       }
       return;
     }
@@ -275,11 +283,73 @@ class CanvasFollowManager with CanvasComponentMixin {
     @viewCoordinate
     final canvasBounds = canvasViewBox.canvasBounds;
     @sceneCoordinate
-    final canvasVisibleBounds = canvasViewBox.canvasVisibleBounds;
-    final canvasVisibleWidth = canvasVisibleBounds.width;
-    final canvasVisibleHeight = canvasVisibleBounds.height;
+    final canvasSceneVisibleBounds = canvasViewBox.canvasSceneVisibleBounds;
+    final canvasVisibleWidth = canvasSceneVisibleBounds.width;
+    final canvasVisibleHeight = canvasSceneVisibleBounds.height;
+
+    @sceneCoordinate
+    final toRect = rect;
+
+    if (fit == BoxFit.none) {
+      //特殊处理:
+      if (canvasVisibleWidth > toRect.width &&
+          canvasVisibleHeight > toRect.height) {
+        //缩放比例已经足够显示目标, 则仅进行平移
+        final sx = canvasViewBox.canvasMatrix.scaleX;
+        final sy = canvasViewBox.canvasMatrix.scaleY;
+
+        //目标最终显示在视图上的位置
+        @viewCoordinate
+        final targetViewLeft = toRect.left * sx;
+        final targetViewTop = toRect.top * sy;
+        final targetViewWidth = toRect.width * sx;
+        final targetViewHeight = toRect.height * sy;
+
+        //目标偏移到视图左上角需要进行的偏移
+        final targetViewOffset = Offset(targetViewLeft, targetViewTop);
+
+        //对齐之后的位置, 不包含偏移和自身的left/top
+        //这一步主要计算元素[alignment]相对于视图的偏移
+        @viewCoordinate
+        final targetViewAlignmentOffset = alignment
+            .inscribe(
+              Size(targetViewWidth, targetViewHeight),
+              Rect.fromLTWH(0, 0, canvasBounds.width, canvasBounds.height),
+            )
+            .lt;
+        //margin的偏移
+        @viewCoordinate
+        final marginOffset = alignment.offset(margin);
+
+        //debugger();
+
+        final translateOffset =
+            -targetViewOffset + targetViewAlignmentOffset + marginOffset;
+        final translateMatrix = Matrix4.identity();
+        //特殊处理: 内容顶部对齐时, follow统一排除顶部偏移
+        translateMatrix.translateTo(
+            x: translateOffset.dx,
+            y: /*this.alignment.y == -1 ? 0 :*/ translateOffset.dy);
+
+        final scaleMatrix = Matrix4.identity();
+        scaleMatrix.scale(sx, sy);
+
+        /*translateMatrix.translateTo(
+            offset: targetRect.center - toRect.center + marginOffset);*/
+        //debugger();
+        canvasViewBox.changeMatrix(
+          translateMatrix * scaleMatrix,
+          animate: animate,
+          awaitAnimate: awaitAnimate,
+        );
+        return;
+      } else {
+        fit = this.fit;
+      }
+    }
 
     //margin 属性
+    @viewCoordinate
     double marginLeft = margin?.left ?? 0,
         marginTop = margin?.top ?? 0,
         marginRight = margin?.right ?? 0,
@@ -291,34 +361,6 @@ class CanvasFollowManager with CanvasComponentMixin {
         marginTop,
         canvasBounds.width - (marginLeft + marginRight),
         canvasBounds.height - (marginTop + marginBottom));
-    final toRect = rect;
-
-    if (fit == BoxFit.none) {
-      //特殊处理
-      @viewCoordinate
-      final toRectView = canvasViewBox.toViewRect(toRect);
-      if (canvasVisibleWidth > toRectView.width &&
-          canvasVisibleHeight > toRectView.height) {
-        //已经足够显示了, 则仅进行平移
-        final targetRect = alignment.inscribe(
-          toRectView.size,
-          canvasBounds,
-        );
-        final marginOffset = alignment.offset(margin);
-        final translateMatrix = Matrix4.identity();
-        translateMatrix.translateTo(
-            offset: targetRect.center - toRectView.center + marginOffset);
-        //debugger();
-        canvasViewBox.changeMatrix(
-          translateMatrix * canvasViewBox.canvasMatrix,
-          animate: animate,
-          awaitAnimate: awaitAnimate,
-        );
-        return;
-      } else {
-        fit = this.fit;
-      }
-    }
 
     final matrix = applyAlignMatrix(
       fromRect.size,

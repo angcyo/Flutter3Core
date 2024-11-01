@@ -197,7 +197,8 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   //--
 
   /// 跟随画布模板限制的内容
-  void followCanvasContentTemplate({
+  /// @return true: 跟随成功; false: 跟随失败
+  bool followCanvasContentTemplate({
     @dp @sceneCoordinate @indirectProperty Rect? rect,
     bool? animate,
     BoxFit? fit,
@@ -209,7 +210,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         l.w("无效的操作");
         return true;
       }());
-      return;
+      return false;
     }
     if (canvasDelegate.canvasViewBox.isCanvasBoxInitialize) {
       canvasDelegate.followRect(
@@ -218,6 +219,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         fit: fit,
       );
       onUpdateAction?.call();
+      return true;
     } else {
       scheduleMicrotask(() {
         followCanvasContentTemplate(
@@ -227,6 +229,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
           onUpdateAction: onUpdateAction,
         );
       });
+      return true;
     }
   }
 

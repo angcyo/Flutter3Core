@@ -139,7 +139,7 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   @override
   String toStringShort() => '画布大小:${canvasDelegate.canvasViewBox.paintBounds} '
-      '可视区域:${canvasDelegate.canvasViewBox.canvasVisibleBounds} ';
+      '可视区域:${canvasDelegate.canvasViewBox.canvasSceneVisibleBounds} ';
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -148,6 +148,6 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     properties.add(
         DiagnosticsProperty('画布大小', canvasDelegate.canvasViewBox.paintBounds));
     properties.add(DiagnosticsProperty(
-        '可视区域', canvasDelegate.canvasViewBox.canvasVisibleBounds));
+        '可视区域', canvasDelegate.canvasViewBox.canvasSceneVisibleBounds));
   }
 }
