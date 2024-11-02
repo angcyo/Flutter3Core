@@ -95,6 +95,11 @@ dependencies:
   # https://pub.dev/packages/uri_to_file
   uri_to_file: ^1.0.0
 
+  # https://pub.dev/packages/flutter_move_task_back
+  # flutter_move_task_back: ^1.0.0 #ANDROID
+  flutter_move_task_back:
+    git: git@github.com:angcyo/flutter_move_task_back.git
+
 dependency_overrides:
 #cross_file: ^0.3.4+1
 #web: ^0.5.1
