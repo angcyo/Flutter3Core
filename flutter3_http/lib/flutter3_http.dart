@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'src/dio/log_interceptor.dart';
 
 export 'package:dio/dio.dart';
+export 'src/dio/log_interceptor.dart';
 
 part 'src/dio/dio_ex.dart';
 part 'src/dio/http_result.dart';
