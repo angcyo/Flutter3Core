@@ -94,17 +94,26 @@ class LiveStreamController<T> {
     }
     if (autoCancel) {
       StreamSubscription<T>? subscription;
-      subscription = _controller.stream.listen((event) async {
-        final cancel = await onData(event);
-        if (cancel is bool && cancel) {
-          //debugger();
-          subscription?.cancel();
-        }
-      }, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+      subscription = _controller.stream.listen(
+        (event) async {
+          final cancel = await onData(event);
+          if (cancel is bool && cancel) {
+            //debugger();
+            subscription?.cancel();
+          }
+        },
+        onError: onError,
+        onDone: onDone,
+        cancelOnError: cancelOnError,
+      );
       return subscription;
     } else {
-      return _controller.stream.listen(onData,
-          onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+      return _controller.stream.listen(
+        onData,
+        onError: onError,
+        onDone: onDone,
+        cancelOnError: cancelOnError,
+      );
     }
   }
 
@@ -266,7 +275,6 @@ extension _StreamNewStreamWithInitialValue<T> on Stream<T> {
 /// [ListenableMixin]
 /// [StreamSubscriptionMixin]
 mixin StreamSubscriptionMixin<T extends StatefulWidget> on State<T> {
-
   @autoDispose
   final List<StreamSubscription> _streamSubscriptions = [];
 
