@@ -189,6 +189,7 @@ extension LogEx on Object {
   }
 
   /// 写入内容到日志文件
+  /// [limitLength] 是否限制日志文件的最大长度
   Future<File> writeToLog({
     String fileName = kLogFileName,
     String? folder = kLogPathName,
