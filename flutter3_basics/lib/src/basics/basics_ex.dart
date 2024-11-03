@@ -410,13 +410,14 @@ extension FutureEx<T> on Future<T> {
         return data ?? value;
       } catch (error) {
         //debugger();
-        assert(() {
-          l.w('FutureGet异常:$error↓');
-          printError(error, stack);
-          return true;
-        }());
         if (throwError == true) {
           rethrow;
+        } else {
+          assert(() {
+            l.w('FutureGet异常:$error↓');
+            printError(error, stack);
+            return true;
+          }());
         }
         get?.call(null, error); //这一层的错误可以走正常的Future异常处理
         return null;
@@ -435,13 +436,14 @@ extension FutureEx<T> on Future<T> {
         }());
       } else {
         //debugger();
-        assert(() {
-          l.w('Future异常:$error↓');
-          printError(error, errorStack ?? stack);
-          return true;
-        }());
         if (throwError == true) {
           throw error;
+        } else {
+          assert(() {
+            l.w('Future异常:$error↓');
+            printError(error, errorStack ?? stack);
+            return true;
+          }());
         }
         get?.call(null, error);
       }

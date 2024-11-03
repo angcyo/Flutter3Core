@@ -13,7 +13,7 @@ class AppInfoInterceptor extends Interceptor {
   PackageInfo? _packageInfo;
 
   AppInfoInterceptor() {
-    platformPackageInfo.get((info, error) {
+    $platformPackageInfo.get((info, error) {
       _packageInfo = info;
     });
   }

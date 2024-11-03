@@ -18,37 +18,37 @@ part of '../flutter3_app.dart';
 /// String version = packageInfo.version;            //versionName
 /// String buildNumber = packageInfo.buildNumber;    //versionCode
 /// ```
-Future<PackageInfo> get platformPackageInfo async {
+Future<PackageInfo> get $platformPackageInfo async {
   final packageInfo = await PackageInfo.fromPlatform();
   _platformPackageInfoCache = packageInfo;
   return packageInfo;
 }
 
-/// [platformPackageInfo]的缓存数据
-/// 请使用[platformPackageInfo]先获取一次数据, 缓存才有效
+/// [$platformPackageInfo]的缓存数据
+/// 请使用[$platformPackageInfo]先获取一次数据, 缓存才有效
 PackageInfo? get $platformPackageInfoCache {
-  platformPackageInfo.ignore();
+  $platformPackageInfo.ignore();
   return _platformPackageInfoCache;
 }
 
 PackageInfo? _platformPackageInfoCache;
 
 /// app版本名称
-Future<String> get appVersionName async => (await platformPackageInfo).version;
+Future<String> get $appVersionName async => (await $platformPackageInfo).version;
 
 /// app版本号
-Future<String> get appVersionCode async =>
-    (await platformPackageInfo).buildNumber;
+Future<String> get $appVersionCode async =>
+    (await $platformPackageInfo).buildNumber;
 
 /// app平台的包名
-Future<String> get appPlatformPackageName async =>
-    (await platformPackageInfo).packageName;
+Future<String> get $appPlatformPackageName async =>
+    (await $platformPackageInfo).packageName;
 
 //--
 
 /// https://pub.dev/packages/device_info_plus
 /// 获取对应平台的设备信息
-Future<BaseDeviceInfo> get platformDeviceInfo async => isAndroid
+Future<BaseDeviceInfo> get $platformDeviceInfo async => isAndroid
     ? await DeviceInfoPlugin().androidInfo
     : isIos
         ? await DeviceInfoPlugin().iosInfo
@@ -62,23 +62,23 @@ Future<BaseDeviceInfo> get platformDeviceInfo async => isAndroid
 
 /// 获取Android平台的版本
 /// 非Android平台返回null
-Future<int?> get androidSdkInt async => isAndroid
-    ? ((await platformDeviceInfo) as AndroidDeviceInfo?)?.version.sdkInt
+Future<int?> get $androidSdkInt async => isAndroid
+    ? ((await $platformDeviceInfo) as AndroidDeviceInfo?)?.version.sdkInt
     : null;
 
 /// 手机型号
-Future<String?> get platformDeviceModel async => isAndroid
+Future<String?> get $platformDeviceModel async => isAndroid
     //product: T33_7863_U254_V11_FHD_1095_Natv
     //supportedAbis: [arm64-v8a, armeabi-v7a, armeabi]
-    ? ((await platformDeviceInfo) as AndroidDeviceInfo?)?.model
+    ? ((await $platformDeviceInfo) as AndroidDeviceInfo?)?.model
     : isIos
-        ? ((await platformDeviceInfo) as IosDeviceInfo?)?.model
+        ? ((await $platformDeviceInfo) as IosDeviceInfo?)?.model
         : isLinux
-            ? ((await platformDeviceInfo) as LinuxDeviceInfo?)?.prettyName
+            ? ((await $platformDeviceInfo) as LinuxDeviceInfo?)?.prettyName
             : isMacOs
-                ? ((await platformDeviceInfo) as MacOsDeviceInfo?)?.model
+                ? ((await $platformDeviceInfo) as MacOsDeviceInfo?)?.model
                 : isWindows
-                    ? ((await platformDeviceInfo) as WindowsDeviceInfo?)
+                    ? ((await $platformDeviceInfo) as WindowsDeviceInfo?)
                         ?.productName
                     : null;
 

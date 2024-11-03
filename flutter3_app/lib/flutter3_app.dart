@@ -191,8 +191,8 @@ void wrapPlatformDispatcherOnError([ErrorCallback? onErrorCallback]) {
 Future _initDebugLastInfo() async {
   $compliance.wait((context, agree) async {
     if (agree) {
-      final packageInfo = await platformPackageInfo;
-      final deviceInfo = await platformDeviceInfo;
+      final packageInfo = await $platformPackageInfo;
+      final deviceInfo = await $platformDeviceInfo;
       final deviceInfoData = deviceInfo.data..remove("systemFeatures");
 
       //widget

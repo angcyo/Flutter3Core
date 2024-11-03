@@ -77,7 +77,7 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
     }
 
     //check
-    final localVersionCode = (await appVersionCode).toIntOrNull() ?? 0;
+    final localVersionCode = (await $appVersionCode).toIntOrNull() ?? 0;
     //debugger();
     if (versionBean.debug != true ||
         (versionBean.debug == true && isDebugFlag)) {
