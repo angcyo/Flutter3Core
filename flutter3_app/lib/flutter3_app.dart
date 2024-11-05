@@ -16,6 +16,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_move_task_back/flutter_move_task_back.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uri_to_file/uri_to_file.dart' as uri_to_file;
@@ -42,6 +43,7 @@ part 'src/android_app.dart';
 part 'src/mobile_ex.dart';
 part 'src/pages/app_update_dialog.dart';
 part 'src/receive/receive_intent.dart';
+part 'src/platform/permissions.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
