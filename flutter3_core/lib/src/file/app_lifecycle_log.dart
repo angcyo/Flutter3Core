@@ -66,21 +66,22 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
     super.didChangeMetrics();
   }
 
-  /// 灭屏后/切换到后台
+  /// # 灭屏后/切换到后台/切换其他应用
   /// ```
   /// didChangeAppLifecycleState:AppLifecycleState.inactive
   /// didHaveMemoryPressure
   /// didChangeAppLifecycleState:AppLifecycleState.hidden
   /// didChangeAppLifecycleState:AppLifecycleState.paused
   /// ```
-  /// 亮屏后/切换到前台
+  ///
+  /// # 亮屏后/切换到前台/切换回来
   /// ```
   /// didChangeAppLifecycleState:AppLifecycleState.hidden
   /// didChangeAppLifecycleState:AppLifecycleState.inactive
   /// didChangeAppLifecycleState:AppLifecycleState.resumed
   /// ```
   ///
-  /// 按返回键
+  /// # 按返回键
   /// ```
   /// didPopRoute
   /// didChangeAppLifecycleState:AppLifecycleState.inactive

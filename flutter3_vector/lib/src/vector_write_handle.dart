@@ -584,10 +584,10 @@ class GCodeWriteHandle with VectorWriteMixin {
 
   /// 打开主轴
   static String? gcodeToolOn([bool auto = false, int? power]) =>
-      auto ? null : "M03S${power ?? 255}";
+      auto ? null : "M3S${power ?? 255}";
 
   /// 关闭主轴
-  static String? gcodeToolOff([bool auto = false]) => auto ? null : "M05S0";
+  static String? gcodeToolOff([bool auto = false]) => auto ? null : "M5S0";
 
   //region ---数值转换---
 
@@ -604,11 +604,11 @@ class GCodeWriteHandle with VectorWriteMixin {
   //region ---GCode数据参数---
 
   /// G1指令, 开激光之前的操作
-  /// 通常是`M03 S255`, 会自动写入换行符
+  /// 通常是`M3 S255`, 会自动写入换行符
   String? toolOn;
 
   /// G0指令, 关激光之前的操作
-  /// 通常是`M05 S0`, 会自动写入换行符
+  /// 通常是`M5 S0`, 会自动写入换行符
   String? toolOff;
 
   //endregion ---GCode数据参数---

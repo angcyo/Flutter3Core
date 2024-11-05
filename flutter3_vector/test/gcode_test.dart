@@ -58,13 +58,13 @@ List<Path> getPathList() {
 
 String getGCodeString() {
   const gcode = '''
-M05 S0
+M5 S0
 G90
 G21
 G1 F1500
 G1  X-0.5292 Y2.1167
 G4 P0 
-M03 S255
+M3 S255
 G4 P0
 G1 F300.000000
 G3 X-2.0416 Y-0.8433 I0.6945 J-2.2212

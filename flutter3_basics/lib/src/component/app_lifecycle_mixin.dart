@@ -71,7 +71,10 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
   ///[AppLifecycleState]
   @overridePoint
   void onAppLifecycleStateChange(AppLifecycleState state) {
-    //l.d('onAppLifecycleStateChange$state');
+    assert(() {
+      //l.d('onAppLifecycleStateChange$state');
+      return true;
+    }());
   }
 }
 
@@ -192,7 +195,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
     }
   }
 
-  //endregion --回调--
+//endregion --回调--
 }
 
 /// 导航监听混入
