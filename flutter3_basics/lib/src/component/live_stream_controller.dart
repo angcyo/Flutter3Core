@@ -82,7 +82,7 @@ class LiveStreamController<T> {
   /// [autoCancel] 当[onData]返回true时, 是否自动取消监听
   @callPoint
   StreamSubscription<T> listen(
-    Function(T data) onData, {
+    dynamic Function(T data) onData, {
     Function? onError,
     void Function()? onDone,
     bool? cancelOnError,

@@ -70,6 +70,20 @@ class Api {
 
 const api = Api();
 
+/// websocket接口调用
+class WS {
+  final String des;
+
+  const WS([this.des = 'websocket接口调用']);
+
+  @override
+  String toString() {
+    return 'Websocket';
+  }
+}
+
+const ws = WS();
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');
