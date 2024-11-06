@@ -56,6 +56,20 @@ class CallInitFrom {
 
 const callInitFrom = CallInitFrom();
 
+/// api接口调用
+class Api {
+  final String des;
+
+  const Api([this.des = 'api接口调用']);
+
+  @override
+  String toString() {
+    return 'Api';
+  }
+}
+
+const api = Api();
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');
@@ -76,7 +90,6 @@ const callPoint = AnnotationMeta('调用点');
 const overridePoint = AnnotationMeta('覆盖点');
 const testPoint = AnnotationMeta('测试点');
 const experimental = AnnotationMeta('测试功能, 不稳定');
-const api = AnnotationMeta('api');
 const httpMask = AnnotationMeta('包含网络请求');
 const globalInstance = AnnotationMeta('描述当前对象是全局单例对象');
 const updateMark = AnnotationMeta('当前的方法会调用[setState]方法, 用来刷新界面');
