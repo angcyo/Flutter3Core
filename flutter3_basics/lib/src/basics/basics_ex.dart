@@ -844,6 +844,9 @@ extension StringEx on String {
 
   //region 正则
 
+  /// 正则表达式
+  RegExp get regex => toRegex();
+
   RegExp toRegex() => RegExp(this);
 
   /// 当前的文本是否正则匹配通过
