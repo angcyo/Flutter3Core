@@ -83,8 +83,14 @@ class GradientButton extends StatelessWidget {
   });
 
   /// 描边按钮样式
-  const GradientButton.stroke({
+  GradientButton.stroke({
     super.key,
+    //--
+    Color strokeColor = Colors.grey,
+    double strokeWidth = 1.0,
+    this.radius = kDefaultBorderRadiusH,
+    this.borderRadius,
+    //--
     this.color,
     this.colors,
     required this.onTap,
@@ -93,14 +99,6 @@ class GradientButton extends StatelessWidget {
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
-    this.decoration = const BoxDecoration(
-      border: Border.fromBorderSide(
-        BorderSide(color: Colors.grey, width: 1),
-      ),
-      borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadiusH)),
-    ),
-    this.radius = kDefaultBorderRadiusL,
-    this.borderRadius,
     this.textColor = const Color(0xff333333),
     this.splashColor,
     this.disabledColor,
@@ -110,16 +108,22 @@ class GradientButton extends StatelessWidget {
     this.maxWidth = double.infinity,
     this.minHeight = kInteractiveHeight,
     this.maxHeight = double.infinity,
-  });
+  }) : decoration = BoxDecoration(
+          border: Border.fromBorderSide(
+            BorderSide(color: strokeColor, width: strokeWidth),
+          ),
+          borderRadius:
+              borderRadius ?? BorderRadius.all(Radius.circular(radius ?? 0)),
+        );
 
   /// 是否启用
   /// 为`null`时, 自动根据[onTap]判断
   final bool? enable;
 
-  /// 渐变色数组
+  /// 渐变色数组装饰
   final List<Color>? colors;
 
-  /// 单一颜色
+  /// 单一装饰颜色
   final Color? color;
   final Color? textColor;
   final Color? splashColor;

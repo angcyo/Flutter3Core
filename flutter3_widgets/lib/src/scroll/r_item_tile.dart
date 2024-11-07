@@ -573,74 +573,94 @@ class RItemTile extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<bool>('part', part));
-    properties.add(DiagnosticsProperty<bool>('hide', hide));
-    properties.add(DiagnosticsProperty<Object>('tag', tag));
-    properties.add(DiagnosticsProperty<dynamic>('sliverType', sliverType));
+
+    properties
+      ..add(DiagnosticsProperty<Object>('tag', tag))
+      ..add(DiagnosticsProperty<bool>('part', part))
+      ..add(DiagnosticsProperty<bool>('hide', hide))
+      ..add(DiagnosticsProperty('sliverType', sliverType));
+
     properties.add(DiagnosticsProperty<bool>('isSliverItem', isSliverItem));
-    properties
-        .add(DiagnosticsProperty<Color?>('bottomLineColor', bottomLineColor));
+
     properties.add(
-        DiagnosticsProperty<double?>('bottomLineHeight', bottomLineHeight));
-    properties.add(
-        DiagnosticsProperty<EdgeInsets?>('bottomLineMargin', bottomLineMargin));
+        DiagnosticsProperty<UpdateValueNotifier>('updateSignal', updateSignal));
+
     properties
-        .add(DiagnosticsProperty<Widget?>('bottomLeading', bottomLeading));
+      ..add(DiagnosticsProperty<Color?>('bottomLineColor', bottomLineColor))
+      ..add(DiagnosticsProperty<double?>('bottomLineHeight', bottomLineHeight))
+      ..add(DiagnosticsProperty<EdgeInsets?>(
+          'bottomLineMargin', bottomLineMargin))
+      ..add(DiagnosticsProperty<Widget?>('bottomLeading', bottomLeading));
+
     properties.add(DiagnosticsProperty<EdgeInsetsGeometry?>(
         'sliverPadding', sliverPadding));
-    properties.add(
-        DiagnosticsProperty<Decoration?>('sliverDecoration', sliverDecoration));
-    properties.add(DiagnosticsProperty<DecorationPosition>(
-        'sliverDecorationPosition', sliverDecorationPosition));
-    properties.add(DiagnosticsProperty<bool>('groupExpanded', groupExpanded));
-    properties.add(DiagnosticsProperty<List<String>?>('groups', groups));
-    properties.add(DiagnosticsProperty<bool>('isGroup', isSliverMainAxisGroup));
-    properties.add(DiagnosticsProperty<bool>('fillRemaining', fillRemaining));
+
     properties
-        .add(DiagnosticsProperty<bool>('fillHasScrollBody', fillHasScrollBody));
-    properties.add(DiagnosticsProperty<bool>('fillOverscroll', fillOverscroll));
-    properties.add(DiagnosticsProperty<bool>('fillExpand', fillExpand));
-    properties.add(DiagnosticsProperty<bool>(
-        'addAutomaticKeepAlives', addAutomaticKeepAlives));
-    properties.add(DiagnosticsProperty<bool>(
-        'addRepaintBoundaries', addRepaintBoundaries));
-    properties.add(
-        DiagnosticsProperty<bool>('addSemanticIndexes', addSemanticIndexes));
-    properties.add(DiagnosticsProperty<int>('crossAxisCount', crossAxisCount));
+      ..add(DiagnosticsProperty<Decoration?>(
+          'sliverDecoration', sliverDecoration))
+      ..add(DiagnosticsProperty<DecorationPosition>(
+          'sliverDecorationPosition', sliverDecorationPosition));
+
     properties
-        .add(DiagnosticsProperty<double>('mainAxisSpacing', mainAxisSpacing));
+      ..add(DiagnosticsProperty<SliverPersistentHeaderWidgetBuilder?>(
+          'headerChildBuilder', headerChildBuilder))
+      ..add(
+          DiagnosticsProperty<double?>('headerFixedHeight', headerFixedHeight))
+      ..add(DiagnosticsProperty<double>('headerMaxHeight', headerMaxHeight))
+      ..add(DiagnosticsProperty<double>('headerMinHeight', headerMinHeight))
+      ..add(DiagnosticsProperty<SliverPersistentHeaderDelegate?>(
+          'headerDelegate', headerDelegate))
+      ..add(DiagnosticsProperty<bool>('pinned', headerPinned))
+      ..add(DiagnosticsProperty<bool>('floating', headerFloating))
+      ..add(DiagnosticsProperty<bool>('useSliverAppBar', useSliverAppBar))
+      ..add(DiagnosticsProperty<Color?>(
+          'headerBackgroundColor', headerBarBackgroundColor))
+      ..add(DiagnosticsProperty<Color?>(
+          'headerForegroundColor', headerBarForegroundColor))
+      ..add(DiagnosticsProperty<TextStyle?>(
+          'headerTitleTextStyle', headerBarTitleTextStyle));
+
     properties
-        .add(DiagnosticsProperty<double>('crossAxisSpacing', crossAxisSpacing));
+      ..add(DiagnosticsProperty<bool>('groupExpanded', groupExpanded))
+      ..add(DiagnosticsProperty<List<String>?>('groups', groups))
+      ..add(DiagnosticsProperty<bool>(
+          'isSliverMainAxisGroup', isSliverMainAxisGroup));
+
     properties
-        .add(DiagnosticsProperty<double>('childAspectRatio', childAspectRatio));
+      ..add(DiagnosticsProperty<bool>('fillRemaining', fillRemaining))
+      ..add(DiagnosticsProperty<bool>('fillHasScrollBody', fillHasScrollBody))
+      ..add(DiagnosticsProperty<bool>('fillOverscroll', fillOverscroll))
+      ..add(DiagnosticsProperty<bool>('fillExpand', fillExpand));
+
     properties
-        .add(DiagnosticsProperty<double?>('edgePaddingLeft', edgePaddingLeft));
+      ..add(DiagnosticsProperty<bool>(
+          'addAutomaticKeepAlives', addAutomaticKeepAlives))
+      ..add(DiagnosticsProperty<bool>(
+          'addRepaintBoundaries', addRepaintBoundaries))
+      ..add(DiagnosticsProperty<bool>('addSemanticIndexes', addSemanticIndexes))
+      ..add(DiagnosticsProperty<double>('firstPaddingLeft', firstPaddingLeft))
+      ..add(DiagnosticsProperty<double>('firstPaddingTop', firstPaddingTop))
+      ..add(DiagnosticsProperty<double>('firstPaddingRight', firstPaddingRight))
+      ..add(
+          DiagnosticsProperty<double>('firstPaddingBottom', firstPaddingBottom))
+      ..add(DiagnosticsProperty<double>('lastPaddingLeft', lastPaddingLeft))
+      ..add(DiagnosticsProperty<double>('lastPaddingTop', lastPaddingTop))
+      ..add(DiagnosticsProperty<double>('lastPaddingRight', lastPaddingRight))
+      ..add(
+          DiagnosticsProperty<double>('lastPaddingBottom', lastPaddingBottom));
+
     properties
-        .add(DiagnosticsProperty<double?>('edgePaddingTop', edgePaddingTop));
-    properties.add(
-        DiagnosticsProperty<double?>('edgePaddingRight', edgePaddingRight));
-    properties.add(
-        DiagnosticsProperty<double?>('edgePaddingBottom', edgePaddingBottom));
-    properties.add(DiagnosticsProperty<SliverPersistentHeaderWidgetBuilder?>(
-        'headerChildBuilder', headerChildBuilder));
-    properties.add(
-        DiagnosticsProperty<double?>('headerFixedHeight', headerFixedHeight));
-    properties
-        .add(DiagnosticsProperty<double>('headerMaxHeight', headerMaxHeight));
-    properties
-        .add(DiagnosticsProperty<double>('headerMinHeight', headerMinHeight));
-    properties.add(DiagnosticsProperty<SliverPersistentHeaderDelegate?>(
-        'headerDelegate', headerDelegate));
-    properties.add(DiagnosticsProperty<bool>('pinned', headerPinned));
-    properties.add(DiagnosticsProperty<bool>('floating', headerFloating));
-    properties
-        .add(DiagnosticsProperty<bool>('useSliverAppBar', useSliverAppBar));
-    properties.add(DiagnosticsProperty<Color?>(
-        'headerBackgroundColor', headerBarBackgroundColor));
-    properties.add(DiagnosticsProperty<Color?>(
-        'headerForegroundColor', headerBarForegroundColor));
-    properties.add(DiagnosticsProperty<TextStyle?>(
-        'headerTitleTextStyle', headerBarTitleTextStyle));
+      ..add(DiagnosticsProperty<int>('crossAxisCount', crossAxisCount))
+      ..add(DiagnosticsProperty<double>('mainAxisSpacing', mainAxisSpacing))
+      ..add(DiagnosticsProperty<double>('crossAxisSpacing', crossAxisSpacing))
+      ..add(DiagnosticsProperty<double>('childAspectRatio', childAspectRatio))
+      ..add(DiagnosticsProperty<double?>('edgePaddingLeft', edgePaddingLeft))
+      ..add(DiagnosticsProperty<double?>('edgePaddingTop', edgePaddingTop))
+      ..add(DiagnosticsProperty<double?>('edgePaddingRight', edgePaddingRight))
+      ..add(
+          DiagnosticsProperty<double?>('edgePaddingBottom', edgePaddingBottom));
+
+    properties.add(DiagnosticsProperty<List<Widget>>('childTiles', childTiles));
   }
 }
 
@@ -657,6 +677,10 @@ extension RItemTileExtension on Widget {
   ///
   /// [SliverList.builder]
   RItemTile rListTile({
+    //--
+    Key? key,
+    Object? tag,
+    //--
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
@@ -669,6 +693,12 @@ extension RItemTileExtension on Widget {
     double? lastPaddingRight,
     double? lastPaddingBottom,
     //--
+    EdgeInsetsGeometry? sliverPadding,
+    Color? decorationFillColor,
+    double decorationBorderRadius = kDefaultBorderRadiusXX,
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    //--
     Color? bottomLineColor,
     double? bottomLineHeight,
     EdgeInsets? bottomLineMargin,
@@ -678,10 +708,13 @@ extension RItemTileExtension on Widget {
     bool part = false,
     UpdateValueNotifier? updateSignal,
     bool enablePadding = false,
-    EdgeInsetsGeometry? sliverPadding,
     dynamic sliverType = SliverList,
   }) {
     return RItemTile(
+      //--
+      key: key,
+      tag: tag,
+      //--
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       addRepaintBoundaries: addRepaintBoundaries,
       addSemanticIndexes: addSemanticIndexes,
@@ -699,6 +732,14 @@ extension RItemTileExtension on Widget {
       bottomLineMargin: bottomLineMargin,
       bottomLeading: bottomLeading,
       //--
+      sliverDecoration: sliverDecoration ??
+          (decorationFillColor != null
+              ? fillDecoration(
+                  color: decorationFillColor,
+                  borderRadius: decorationBorderRadius,
+                )
+              : null),
+      sliverDecorationPosition: sliverDecorationPosition,
       sliverPadding: sliverPadding ??
           (enablePadding
               ? EdgeInsets.only(
@@ -726,6 +767,10 @@ extension RItemTileExtension on Widget {
   /// [SliverGrid.builder]
   RItemTile rGridTile(
     int gridCount, {
+    //--
+    Key? key,
+    Object? tag,
+    //--
     double childAspectRatio = 1 /*宽:高*/,
     double? mainAxisSpacing,
     double? crossAxisSpacing,
@@ -744,6 +789,10 @@ extension RItemTileExtension on Widget {
     mainAxisSpacing ??= 0;
     crossAxisSpacing ??= mainAxisSpacing;
     return RItemTile(
+      //--
+      key: key,
+      tag: tag,
+      //--
       crossAxisCount: gridCount,
       sliverType: sliverType,
       childAspectRatio: childAspectRatio,
@@ -775,6 +824,7 @@ extension RItemTileExtension on Widget {
   /// [SliverToBoxAdapter]
   RItemTile rItemTile({
     Key? key,
+    Object? tag,
     Widget? child,
     WidgetBuilder? childBuilder,
     bool isSliverItem = false,
@@ -821,11 +871,12 @@ extension RItemTileExtension on Widget {
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
     UpdateValueNotifier? updateSignal,
-    List<String>? groups = const [],
+    List<String>? groups = const [] /*分组依据*/,
     dynamic sliverType,
   }) {
     return RItemTile(
       key: key,
+      tag: tag,
       childBuilder: childBuilder,
       isSliverItem: isSliverItem,
       sliverType: sliverType,
@@ -884,6 +935,10 @@ extension RItemTileExtension on Widget {
   /// 悬浮头, 使用此特性时, 建议指定child的大小, 并且设置成和[headerFixedHeight]一致
   /// [TileTransformMixin.buildHeaderTile]
   RItemTile rFloated({
+    //--
+    Key? key,
+    Object? tag,
+    //--
     bool pinned = true,
     bool floating = false,
     bool useSliverAppBar = false,
@@ -899,6 +954,10 @@ extension RItemTileExtension on Widget {
     dynamic sliverType = SliverMainAxisGroup,
   }) {
     return RItemTile(
+      //--
+      key: key,
+      tag: tag,
+      //--
       headerPinned: pinned,
       headerFloating: floating,
       headerChildBuilder: headerChildBuilder,
@@ -924,6 +983,10 @@ extension RItemTileExtension on Widget {
   ///
   /// [SliverMainAxisGroup]
   RItemTile rGroup({
+    //--
+    Key? key,
+    Object? tag,
+    //--
     bool? groupExpanded = true,
     bool pinned = true,
     bool floating = false,
@@ -945,6 +1008,10 @@ extension RItemTileExtension on Widget {
     dynamic sliverType = SliverMainAxisGroup,
   }) {
     return RItemTile(
+      //--
+      key: key,
+      tag: tag,
+      //--
       groups: groups,
       headerFixedHeight: headerHeight,
       headerMaxHeight: headerHeight,
@@ -974,32 +1041,47 @@ extension RItemTileExtension on Widget {
     );
   }
 
-  /// 装饰
-  /// [fillColor].[borderRadius] 简单替代[sliverDecoration]
+  /// 装饰sliver可以作用在单个tile, 也可以作用在group sliver上
+  /// [decorationFillColor].[decorationBorderRadius] 简单替代[sliverDecoration]
   /// [BoxDecoration]
   /// [rItemTile]
   /// [rDecoration]
   /// [DecoratedSliver]
+  ///
+  /// [TileTransformMixin.buildTileWidget]单个tile生效
+  /// [TileTransformMixin.wrapSliverPaddingDecorationTile]group生效
+  ///
   RItemTile rDecoration({
+    //--
+    Key? key,
+    Object? tag,
+    //--
     bool part = false,
-    Color? fillColor,
-    double borderRadius = kDefaultBorderRadiusXX,
+    Color? decorationFillColor,
+    double decorationBorderRadius = kDefaultBorderRadiusXX,
     EdgeInsetsGeometry? sliverPadding,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    //--
     Color? bottomLineColor,
     double? bottomLineHeight,
     EdgeInsets? bottomLineMargin,
     Widget? bottomLeading,
+    //--
     UpdateValueNotifier? updateSignal,
+    dynamic sliverType,
   }) {
     return RItemTile(
+      //--
+      key: key,
+      tag: tag,
+      //--
       part: part,
       sliverPadding: sliverPadding,
       sliverDecoration: sliverDecoration ??
           fillDecoration(
-            color: fillColor,
-            borderRadius: borderRadius,
+            color: decorationFillColor,
+            borderRadius: decorationBorderRadius,
           ),
       sliverDecorationPosition: sliverDecorationPosition,
       bottomLeading: bottomLeading,
@@ -1007,12 +1089,17 @@ extension RItemTileExtension on Widget {
       bottomLineHeight: bottomLineHeight,
       bottomLineMargin: bottomLineMargin,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
+      sliverType: sliverType,
       child: this,
     );
   }
 
   /// 填充底部剩余空间
   RItemTile rFill({
+    //--
+    Key? key,
+    Object? tag,
+    //--
     bool fillRemaining = true,
     bool fillHasScrollBody = false,
     bool fillOverscroll = false,
@@ -1020,6 +1107,10 @@ extension RItemTileExtension on Widget {
     UpdateValueNotifier? updateSignal,
   }) {
     return RItemTile(
+      //--
+      key: key,
+      tag: tag,
+      //--
       fillRemaining: fillRemaining,
       fillHasScrollBody: fillHasScrollBody,
       fillOverscroll: fillOverscroll,
@@ -1050,7 +1141,10 @@ extension RItemTileExtension on Widget {
   /// [SliverReorderableList]
   RItemTile rReorder(
     ReorderCallback onTileReorder, {
+    //--
     Key? key,
+    Object? tag,
+    //--
     List? items,
     IndexCallback? onTileReorderStart,
     IndexCallback? onTileReorderEnd,
@@ -1075,7 +1169,10 @@ extension RItemTileExtension on Widget {
       };
     }
     return RItemTile(
+      //--
       key: key,
+      tag: tag,
+      //--
       onTileReorder: reorderCallback,
       onTileReorderStart: onTileReorderStart,
       onTileReorderEnd: onTileReorderEnd,
@@ -1086,16 +1183,22 @@ extension RItemTileExtension on Widget {
 }
 
 extension RItemTileListExtension on List<Widget> {
-  /// 一组[RItemTile]
+  /// 一组[RItemTile], 可以将一组[RItemTile]组合成一个
+  /// [SliverCrossAxisGroup]
+  /// [SliverMainAxisGroup]
+  /// [SliverList]
+  /// [SliverGrid]
+  /// [isSliverWidget]
   Widget rItemTile({
     Key? key,
+    Object? tag,
     //--
     bool hide = false,
     bool part = false,
     //--
     EdgeInsetsGeometry? sliverPadding,
-    Color? fillColor,
-    double borderRadius = kDefaultBorderRadiusXX,
+    Color? decorationFillColor,
+    double decorationBorderRadius = kDefaultBorderRadiusXX,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
     //--
@@ -1109,16 +1212,19 @@ extension RItemTileListExtension on List<Widget> {
   }) {
     return RItemTile(
       key: key,
+      tag: tag,
       //--
       hide: hide,
       part: part,
       //--
       sliverPadding: sliverPadding,
       sliverDecoration: sliverDecoration ??
-          fillDecoration(
-            color: fillColor,
-            borderRadius: borderRadius,
-          ),
+          (decorationFillColor != null
+              ? fillDecoration(
+                  color: decorationFillColor,
+                  borderRadius: decorationBorderRadius,
+                )
+              : null),
       sliverDecorationPosition: sliverDecorationPosition,
       //--
       bottomLineColor: bottomLineColor,

@@ -176,7 +176,13 @@ class RTileTransformChain with TileTransformMixin {
         if (tile is RItemTile) {
           child = buildTileWidget(context, tile, tile);
         }
-        result.add(_ensureSliver(child));
+        if (parentTile == null) {
+          result.add(_ensureSliver(child));
+        } else {
+          //如果具有parent, 则不进行[SliverToBoxAdapter]包裹
+          //如果需要ensureSliver, 请在transform内部处理
+          result.add(child);
+        }
       }
     }
     //debugger();
@@ -462,11 +468,11 @@ mixin TileTransformMixin {
 /// 将一组变换好的小部件, 转换成另外一个小部件, 如果需要的话
 /// [BaseWrapTileTransform]
 abstract class BaseTileTransform with TileTransformMixin {
-  /// [RItemTile.childTiles]
+  /// 父[RItemTile],通常在指定了[RItemTile.childTiles]时, 会有值
   RItemTile? parentTile;
 
   /// 用来描述第一个元素的配置信息, 如果是[Group]组件, 则通常用来描述[Group]整体的样式
-  RItemTile? fistTile;
+  RItemTile? firstTile;
 
   /// 收集到的[RItemTile], 用来读取配置.
   /// 有可能是[RItemTile],也有可能是普通的[Widget]
@@ -527,7 +533,7 @@ abstract class BaseTileTransform with TileTransformMixin {
   void reset(bool fromPart) {
     tileList = [];
     if (!fromPart) {
-      fistTile = null;
+      firstTile = null;
       parentTile = null;
     }
   }
@@ -553,7 +559,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     bool fromPart,
   ) {
     if (tileList.isNotEmpty || headerWidget != null) {
-      result.add(buildTransformWrapWidget(
+      result.add(_buildTransformSliverMainAxisGroupWrap(
         context,
         headerTile,
         headerWidget,
@@ -581,7 +587,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
   ) {
     this.parentTile = parentTile;
     if (tile is RItemTile) {
-      fistTile ??= tile;
+      firstTile ??= tile;
 
       if (tile.part) {
         //强行使用分开标识
@@ -625,7 +631,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
   /// [SliverMainAxisGroup]
   /// [buildTileListWidget]
   /// [buildListWrapChild]
-  Widget buildTransformWrapWidget(
+  Widget _buildTransformSliverMainAxisGroupWrap(
     BuildContext context,
     RItemTile? headerTile,
     Widget? headerWidget,
@@ -654,7 +660,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     });
 
     return wrapSliverPaddingDecorationTile(
-      headerTile ?? fistTile,
+      headerTile ?? firstTile,
       SliverMainAxisGroup(slivers: [
         if (headerWidget != null) headerWidget,
         ...newList,
@@ -680,7 +686,7 @@ class SliverListTransform extends BaseTileTransform {
     bool fromPart,
   ) {
     if (tileList.isNotEmpty) {
-      result.add(buildTransformWrapWidget(context, tileList));
+      result.add(_buildTransformSliverListWrap(context, tileList));
       reset(fromPart);
     }
   }
@@ -696,11 +702,17 @@ class SliverListTransform extends BaseTileTransform {
   ) {
     this.parentTile = parentTile;
     if (tile is RItemTile) {
-      if (tile.part) {
-        //强行使用分开标识
+      //debugger(when: tile.tag == "debug");
+      if (tile.part || tile.childTiles != null) {
+        //强行使用分开标识/具有子元素
         endTransformIfNeed(context, origin, result, true);
       }
-      tileList.add(tile);
+      if (tile.childTiles == null) {
+        tileList.add(tile);
+      } else {
+        //自身是一个容器, 此时自身不进行处理
+        firstTile = tile;
+      }
       return true;
     } else if (parentTile != null) {
       tileList.add(tile);
@@ -711,16 +723,18 @@ class SliverListTransform extends BaseTileTransform {
 
   /// 构建成[SliverList]
   /// [SliverAnimatedList]
-  Widget buildTransformWrapWidget(
+  Widget _buildTransformSliverListWrap(
     BuildContext context,
     WidgetIterable sliverChild,
   ) {
-    RItemTile first = sliverChild.firstWhere(
-      (element) => element is RItemTile,
-      orElse: () => const RItemTile(),
-    ) as RItemTile;
+    RItemTile first = firstTile ??
+        sliverChild.firstWhere(
+          (element) => element is RItemTile,
+          orElse: () => const RItemTile(),
+        ) as RItemTile;
+    //debugger(when: first.tag == "debug");
 
-    List<Widget> newList = [];
+    final List<Widget> newList = [];
     sliverChild.forEachIndexed((index, tile) {
       if (tile is RItemTile) {
         newList.add(buildTileWidget(
@@ -778,7 +792,7 @@ class SliverGridTransform extends BaseTileTransform {
     bool fromPart,
   ) {
     if (tileList.isNotEmpty) {
-      result.add(buildTransformWrapWidget(context, tileList));
+      result.add(_buildTransformSliverGridWrap(context, tileList));
       reset(fromPart);
     }
   }
@@ -803,8 +817,8 @@ class SliverGridTransform extends BaseTileTransform {
   ) {
     this.parentTile = parentTile;
     if (tile is RItemTile) {
-      if (tile.part) {
-        //强行使用分开标识
+      if (tile.part || tile.childTiles != null) {
+        //强行使用分开标识/具有子元素
         endTransformIfNeed(context, origin, result, true);
       }
       if (lastCrossAxisCount != null &&
@@ -813,7 +827,12 @@ class SliverGridTransform extends BaseTileTransform {
         endTransformIfNeed(context, origin, result, true);
       }
       //debugger();
-      tileList.add(tile);
+      if (tile.childTiles == null) {
+        tileList.add(tile);
+      } else {
+        //自身是一个容器, 此时自身不进行处理
+        firstTile = tile;
+      }
       return true;
     } else if (parentTile != null) {
       tileList.add(tile);
@@ -824,14 +843,15 @@ class SliverGridTransform extends BaseTileTransform {
 
   /// 构建成[SliverGrid]
   /// [SliverAnimatedGrid]
-  Widget buildTransformWrapWidget(
+  Widget _buildTransformSliverGridWrap(
     BuildContext context,
     WidgetIterable sliverChild,
   ) {
-    RItemTile first = sliverChild.firstWhere(
-      (element) => element is RItemTile,
-      orElse: () => const RItemTile(),
-    ) as RItemTile;
+    RItemTile first = firstTile ??
+        sliverChild.firstWhere(
+          (element) => element is RItemTile,
+          orElse: () => const RItemTile(),
+        ) as RItemTile;
 
     WidgetList newList = [];
     sliverChild.forEachIndexed((index, tile) {
@@ -896,7 +916,7 @@ class SliverReorderableListTransform extends BaseTileTransform {
     bool fromPart,
   ) {
     if (tileList.isNotEmpty) {
-      result.add(buildTransformWrapWidget(context, tileList));
+      result.add(_buildTransformSliverReorderableListWrap(context, tileList));
       reset(fromPart);
     }
   }
@@ -912,11 +932,16 @@ class SliverReorderableListTransform extends BaseTileTransform {
   ) {
     this.parentTile = parentTile;
     if (tile is RItemTile) {
-      if (tile.part) {
-        //强行使用分开标识
+      if (tile.part || tile.childTiles != null) {
+        //强行使用分开标识/具有子元素
         endTransformIfNeed(context, origin, result, true);
       }
-      tileList.add(tile);
+      if (tile.childTiles == null) {
+        tileList.add(tile);
+      } else {
+        //自身是一个容器, 此时自身不进行处理
+        firstTile = tile;
+      }
       return true;
     } else if (parentTile != null) {
       tileList.add(tile);
@@ -927,14 +952,15 @@ class SliverReorderableListTransform extends BaseTileTransform {
 
   /// 构建成[SliverList]
   /// [SliverAnimatedList]
-  Widget buildTransformWrapWidget(
+  Widget _buildTransformSliverReorderableListWrap(
     BuildContext context,
     WidgetIterable sliverChild,
   ) {
-    RItemTile first = sliverChild.firstWhere(
-      (element) => element is RItemTile,
-      orElse: () => const RItemTile(),
-    ) as RItemTile;
+    RItemTile first = firstTile ??
+        sliverChild.firstWhere(
+          (element) => element is RItemTile,
+          orElse: () => const RItemTile(),
+        ) as RItemTile;
 
     List<Widget> newList = [];
     sliverChild.forEachIndexed((index, tile) {

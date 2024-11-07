@@ -415,6 +415,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 使用[bean]自动创建一个带[RItemTile.updateSignal]更新信号的[Widget]
   /// 将生成的信号存储在[RScrollPage._lastRebuildBeanSignal]中,
   /// 然后在[RItemTileExtension]中消耗此信号对象
+  /// 之后可以通过[updateTile]更新指定的小部件
   @api
   Widget rebuildByBean<Bean>(
     Bean bean,
