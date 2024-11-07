@@ -13,6 +13,7 @@ part of '../../flutter3_widgets.dart';
 class LabelSwitchTile extends StatefulWidget {
   /// 标签
   final String? label;
+  final TextStyle? labelTextStyle;
   final EdgeInsets? labelPadding;
   final Widget? labelWidget;
 
@@ -54,6 +55,7 @@ class LabelSwitchTile extends StatefulWidget {
     super.key,
     //--
     this.label,
+    this.labelTextStyle,
     this.labelWidget,
     this.labelPadding = kLabelPadding,
     this.labelActions,
@@ -87,6 +89,7 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
       context,
       labelWidget: widget.labelWidget,
       label: widget.label,
+      labelStyle: widget.labelTextStyle,
       labelPadding: widget.labelPadding,
       constraints: null,
     );
@@ -122,10 +125,10 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
     ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
         .paddingInsets(widget.tilePadding)
-        .click(() {
+        .ink(() {
       //debugger();
       _changeValue(!currentValueMixin);
-    });
+    }).material();
   }
 
   void _changeValue(bool toValue) async {
