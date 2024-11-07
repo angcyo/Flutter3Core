@@ -865,11 +865,13 @@ extension RItemTileExtension on Widget {
     double? edgePaddingRight,
     double? edgePaddingBottom,
     bool? groupExpanded /*如果是组, 是否展开当前组*/,
+    //--
     EdgeInsetsGeometry? sliverPadding,
-    Color? fillColor,
-    double borderRadius = kDefaultBorderRadiusXX,
+    Color? decorationFillColor,
+    double decorationBorderRadius = kDefaultBorderRadiusXX,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    //--
     UpdateValueNotifier? updateSignal,
     List<String>? groups = const [] /*分组依据*/,
     dynamic sliverType,
@@ -920,11 +922,11 @@ extension RItemTileExtension on Widget {
       groups: groups,
       sliverPadding: sliverPadding,
       sliverDecoration: sliverDecoration ??
-          (fillColor == null
+          (decorationFillColor == null
               ? null
               : fillDecoration(
-                  color: fillColor,
-                  borderRadius: borderRadius,
+                  color: decorationFillColor,
+                  borderRadius: decorationBorderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
@@ -995,11 +997,13 @@ extension RItemTileExtension on Widget {
     Color? headerForegroundColor,
     double headerHeight = kMinInteractiveHeight,
     List<String>? groups,
-    Color? fillColor,
-    double borderRadius = kDefaultBorderRadiusXX,
+    //--
+    Color? decorationFillColor,
+    double decorationBorderRadius = kDefaultBorderRadiusXX,
     EdgeInsetsGeometry? sliverPadding,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    //--
     Color? bottomLineColor,
     double? bottomLineHeight,
     EdgeInsets? bottomLineMargin,
@@ -1024,11 +1028,11 @@ extension RItemTileExtension on Widget {
       headerBarForegroundColor: headerForegroundColor,
       sliverPadding: sliverPadding,
       sliverDecoration: sliverDecoration ??
-          (fillColor == null
+          (decorationFillColor == null
               ? null
               : fillDecoration(
-                  color: fillColor,
-                  borderRadius: borderRadius,
+                  color: decorationFillColor,
+                  borderRadius: decorationBorderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
       bottomLeading: bottomLeading,
@@ -1079,10 +1083,12 @@ extension RItemTileExtension on Widget {
       part: part,
       sliverPadding: sliverPadding,
       sliverDecoration: sliverDecoration ??
-          fillDecoration(
-            color: decorationFillColor,
-            borderRadius: decorationBorderRadius,
-          ),
+          (decorationFillColor == null
+              ? null
+              : fillDecoration(
+                  color: decorationFillColor,
+                  borderRadius: decorationBorderRadius,
+                )),
       sliverDecorationPosition: sliverDecorationPosition,
       bottomLeading: bottomLeading,
       bottomLineColor: bottomLineColor,

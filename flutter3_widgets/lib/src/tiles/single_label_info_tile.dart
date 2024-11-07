@@ -5,7 +5,7 @@ part of '../../../flutter3_widgets.dart';
 /// @since 2023/12/13
 ///
 ///
-/// 左[label] 右[info] 的信息展示tile
+/// 左[label]/下[des]  右[info]. 右[endWidget]的信息展示tile
 class SingleLabelInfoTile extends StatelessWidget {
   /// 标签
   final String? label;
@@ -16,6 +16,9 @@ class SingleLabelInfoTile extends StatelessWidget {
   final String? des;
   final Widget? desWidget;
   final TextStyle? desTextStyle;
+
+  /// [des]与[label]之间的间隙
+  final double desGap;
 
   /// 信息
   final String? info;
@@ -32,7 +35,7 @@ class SingleLabelInfoTile extends StatelessWidget {
   /// 信息右边的箭头
   /// 如果设置了[onTap], 自动会注入`右箭头图标`
   @defInjectMark
-  final Widget? infoIcon;
+  final Widget? endWidget;
 
   /// 最小高度
   final double? minHeight;
@@ -45,6 +48,7 @@ class SingleLabelInfoTile extends StatelessWidget {
     this.label,
     this.labelWidget,
     this.labelTextStyle,
+    this.desGap = kL,
     this.des,
     this.desWidget,
     this.desTextStyle,
@@ -52,7 +56,7 @@ class SingleLabelInfoTile extends StatelessWidget {
     this.infoWidget,
     this.infoTextStyle,
     this.padding,
-    this.infoIcon,
+    this.endWidget,
     this.onTap,
     this.minHeight = kMinInteractiveHeight,
   });
@@ -61,15 +65,15 @@ class SingleLabelInfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
-    final left = labelWidget ??
+    final labelWidget = this.labelWidget ??
         label?.text(style: labelTextStyle ?? globalTheme.textLabelStyle);
-    final leftBottom =
-        desWidget ?? des?.text(style: desTextStyle ?? globalTheme.textDesStyle);
+    final desWidget = this.desWidget ??
+        des?.text(style: desTextStyle ?? globalTheme.textDesStyle);
 
     final infoTextStyle = this.infoTextStyle ?? globalTheme.textGeneralStyle;
-    var right = infoWidget ?? info?.text(style: infoTextStyle);
+    var infoWidget = this.infoWidget ?? info?.text(style: infoTextStyle);
 
-    final rightIco = infoIcon ??
+    final endWidget = this.endWidget ??
         (onTap == null
             ? null
             : Icon(
@@ -79,23 +83,23 @@ class SingleLabelInfoTile extends StatelessWidget {
               ));
 
     final columnList = [
-      if (left != null) left,
-      if (leftBottom != null) leftBottom,
+      if (labelWidget != null) labelWidget,
+      if (desWidget != null) desWidget,
     ];
-
     Widget? column;
     if (columnList.isNotEmpty) {
       column = columnList.column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
+        gap: desGap,
       );
     }
 
-    right = right?.align(Alignment.centerRight);
-    if (right == null) {
+    infoWidget = infoWidget?.align(Alignment.centerRight);
+    if (infoWidget == null) {
       column = column?.expanded();
     } else {
-      right = right.expanded();
+      infoWidget = infoWidget.expanded();
     }
 
     return Padding(
@@ -103,8 +107,8 @@ class SingleLabelInfoTile extends StatelessWidget {
           padding ?? const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
       child: [
         if (column != null) column,
-        if (right != null) right,
-        if (rightIco != null && rightIco is! IgnoreWidget) rightIco
+        if (infoWidget != null) infoWidget,
+        if (endWidget != null && endWidget is! IgnoreWidget) endWidget
       ].row(gap: kM)!.constrainedMin(minHeight: minHeight),
     ).ink(onTap).material();
   }

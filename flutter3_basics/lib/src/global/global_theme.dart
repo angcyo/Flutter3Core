@@ -217,7 +217,7 @@ class GlobalTheme {
         color: Color(0xffb0b0b0),
       );
 
-  TextStyle get textLabelStyle => const TextStyle(
+  TextStyle get  textLabelStyle => const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
         color: Color(0xff333333),

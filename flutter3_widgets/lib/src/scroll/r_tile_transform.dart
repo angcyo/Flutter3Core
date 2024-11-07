@@ -706,6 +706,7 @@ class SliverListTransform extends BaseTileTransform {
       if (tile.part || tile.childTiles != null) {
         //强行使用分开标识/具有子元素
         endTransformIfNeed(context, origin, result, true);
+        firstTile = null;
       }
       if (tile.childTiles == null) {
         tileList.add(tile);
@@ -747,7 +748,7 @@ class SliverListTransform extends BaseTileTransform {
             sliverChild,
             tile,
             index,
-            firstAnchor: parentTile,
+            firstAnchor: firstTile ?? parentTile,
           ),
         ));
       } else {
@@ -820,11 +821,13 @@ class SliverGridTransform extends BaseTileTransform {
       if (tile.part || tile.childTiles != null) {
         //强行使用分开标识/具有子元素
         endTransformIfNeed(context, origin, result, true);
+        firstTile = null;
       }
       if (lastCrossAxisCount != null &&
           tile.crossAxisCount != lastCrossAxisCount) {
         //crossAxisCount不相同
         endTransformIfNeed(context, origin, result, true);
+        firstTile = null;
       }
       //debugger();
       if (tile.childTiles == null) {
@@ -935,6 +938,7 @@ class SliverReorderableListTransform extends BaseTileTransform {
       if (tile.part || tile.childTiles != null) {
         //强行使用分开标识/具有子元素
         endTransformIfNeed(context, origin, result, true);
+        firstTile = null;
       }
       if (tile.childTiles == null) {
         tileList.add(tile);
@@ -975,6 +979,7 @@ class SliverReorderableListTransform extends BaseTileTransform {
             sliverChild,
             tile,
             index,
+            firstAnchor: firstTile ?? parentTile,
           ),
         ));
       } else {
