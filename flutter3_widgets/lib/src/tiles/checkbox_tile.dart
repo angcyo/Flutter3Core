@@ -12,6 +12,7 @@ part of '../../flutter3_widgets.dart';
 class CheckboxTile extends StatefulWidget {
   /// 文本描述信息
   final String? text;
+  final TextStyle? textStyle;
   final EdgeInsets? textPadding;
   final Widget? textWidget;
 
@@ -47,12 +48,15 @@ class CheckboxTile extends StatefulWidget {
 
   //--
 
-  ///
+  /// [MainAxisSize.min]
+  /// [MainAxisSize.max]
+  @defInjectMark
   final MainAxisSize? mainAxisSize;
 
   const CheckboxTile({
     super.key,
     this.text,
+    this.textStyle,
     this.textWidget,
     this.textPadding = kContentPadding,
     this.mainAxisSize,
@@ -121,6 +125,7 @@ class _CheckboxTileState extends State<CheckboxTile> with TileMixin {
         context,
         textWidget: widget.textWidget,
         text: widget.text,
+        textStyle: widget.textStyle,
         textPadding: widget.textPadding,
       )?.expanded(enable: widget.mainAxisSize != MainAxisSize.min),
     ]

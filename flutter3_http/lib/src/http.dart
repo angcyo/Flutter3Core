@@ -103,8 +103,11 @@ extension HttpStringEx on String {
   /// this == path
   /// [api]服务器忌口地址, 不指定则默认是[Http.getBaseUrl]
   @callPoint
-  String toApi(
-      [String? api, bool? isSecureProtocol, String protocol = "http"]) {
+  String toApi([
+    String? api,
+    bool? isSecureProtocol,
+    String protocol = "http",
+  ]) {
     if (startsWith('$protocol://') || startsWith('${protocol}s://')) {
       //this 已经是一个url, 则直接返回
       return this;
