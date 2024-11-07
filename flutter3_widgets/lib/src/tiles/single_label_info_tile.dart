@@ -86,8 +86,9 @@ class SingleLabelInfoTile extends StatelessWidget {
     Widget? column;
     if (columnList.isNotEmpty) {
       column = columnList.column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start);
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+      );
     }
 
     right = right?.align(Alignment.centerRight);

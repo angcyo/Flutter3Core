@@ -421,7 +421,7 @@ class RItemTile extends StatefulWidget {
     double right = 0.0;
     double bottom = 0.0;
 
-    Widget? bWidget;
+    Widget? bottomWidget;
 
     if (first is RItemTile) {
       //底部需要堆叠的小部件
@@ -441,7 +441,7 @@ class RItemTile extends StatefulWidget {
     }
 
     if (length > 1 && index < length - 1) {
-      bWidget = _buildBottomWidget(context) ??
+      bottomWidget = _buildBottomWidget(context) ??
           (first as RItemTile?)?._buildBottomWidget(context);
     }
 
@@ -461,10 +461,10 @@ class RItemTile extends StatefulWidget {
     }
 
     //stack
-    if (bWidget != null) {
+    if (bottomWidget != null) {
       result = Stack(
         alignment: Alignment.bottomCenter,
-        children: [result, bWidget],
+        children: [result, bottomWidget],
       );
     }
 
@@ -1189,6 +1189,14 @@ extension RItemTileListExtension on List<Widget> {
   /// [SliverList]
   /// [SliverGrid]
   /// [isSliverWidget]
+  ///
+  /// ```
+  /// [
+  ///   xxx,
+  ///   xxx,
+  /// ].rItemTile(sliverType: SliverList,);
+  /// ```
+  ///
   Widget rItemTile({
     Key? key,
     Object? tag,

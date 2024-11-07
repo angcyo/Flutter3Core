@@ -28,8 +28,11 @@ class CustomPaintWrap extends CustomPainter {
 /// [OvalPainter]
 CustomPaint customPainter(
   CustomPainter? painter, {
+  Size? size,
+  double? s,
+  double? width,
+  double? height,
   PaintFn? foregroundPaint,
-  Size size = Size.zero,
   bool isComplex = false,
   bool willChange = false,
 }) =>
@@ -37,7 +40,7 @@ CustomPaint customPainter(
       painter: painter,
       foregroundPainter:
           foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
-      size: size,
+      size: size ?? Size(s ?? width ?? 0, s ?? height ?? 0),
       isComplex: isComplex,
       willChange: willChange,
     );
@@ -345,6 +348,65 @@ class DashLinkPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+/// 圆点+阴影的绘制
+class CirclePointPainter extends CustomPainter {
+  /// 圆的半径
+  final double radius;
+
+  /// 圆的颜色, 同时决定了阴影的颜色
+  final Color color;
+
+  /// 扩展半径
+  final double extendRadius;
+
+  /// 扩展圆的颜色
+  final Color extendColor;
+
+  /// 阴影偏移
+  final Offset offset;
+
+  const CirclePointPainter({
+    this.radius = 8,
+    this.extendRadius = 2,
+    this.offset = const Offset(0, 1.24),
+    this.color = Colors.green,
+    this.extendColor = Colors.white,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final s = math.min(size.width, size.height);
+    final br = math.min(s, radius + extendRadius);
+    final sr = math.min(s, br - extendRadius);
+    final bounds = Offset.zero & size;
+    //绘制模糊阴影
+    canvas.drawCircle(
+      bounds.center + offset,
+      br,
+      Paint()
+        ..color = color.withOpacity(0.4)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+    );
+    //绘制白色圆内容
+    canvas.drawCircle(
+      bounds.center,
+      br,
+      Paint()..color = extendColor,
+    );
+    //绘制绿色圆内容
+    canvas.drawCircle(
+      bounds.center,
+      sr,
+      Paint()..color = color,
+    );
+  }
+
+  @override
+  bool shouldRepaint(CirclePointPainter oldDelegate) {
     return false;
   }
 }
