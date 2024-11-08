@@ -27,7 +27,8 @@ late Isar $isar;
 String defIsarFilePath = "";
 
 /// 别名
-/// [Collection]
+/// 所有[Collection], 都需要使用[registerIsarCollection]注册
+/// `xxxCollectionSchema`
 const isarCollection = collection;
 
 /// 别名
