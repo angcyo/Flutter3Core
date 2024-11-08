@@ -692,18 +692,21 @@ extension StringEx on String {
   String toLocal([int? port]) {
     port ??= 80;
     if (isHttpScheme /*isMatch(r'^https?://')*/) {
+      //已经是http开头
       if (port == 80) {
         return this;
       } else {
         return '$this:$port';
       }
     } else if (isIpStr) {
+      //ip
       if (port == 80) {
         return 'http://$this';
       } else {
         return 'http://$this:$port';
       }
     } else {
+      //域名
       if (port == 80) {
         return 'http://$this.local';
       } else {
