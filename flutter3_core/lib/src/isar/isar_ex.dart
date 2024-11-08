@@ -9,6 +9,32 @@ part of '../../flutter3_core.dart';
 /// https://isar.dev/zh/
 /// 专门为 Flutter 打造的超高速跨平台数据库
 ///
+/// # 查
+/// ```
+/// final laserOptionCollection = $isar.collections
+///    .filter()
+///    .dataModeEqualTo(dataMode)
+///    .and()
+///    .dpiEqualTo(dpi)
+///    .and()
+///    .laserOptionTypeEqualTo(LaserOptionType.element.name)
+///    .findLastSync();
+/// //--
+/// $isar.collections.where().findAllSync();
+/// ```
+///
+/// # 增
+/// ```
+/// final collection = Collection();
+/// $isar.writeTxnSync(() {
+///   $isar.collections.putSync(collection);
+///   $isar.collections.putAllSync([collection]);
+///   //--
+///   $isar.collections.deleteSync(id);
+///   $isar.collections.deleteAllSync([id]);
+///   //--
+/// });
+/// ```
 
 /// 路径名称
 const kIsarPath = "isar";
