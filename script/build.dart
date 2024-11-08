@@ -12,6 +12,7 @@ import 'package:args/args.dart';
 /// 构建信息写入
 /// - `Flutter3Core/flutter3_app/assets/config/app_setting.json`
 /// - `assets/config/app_setting.json`
+@Deprecated("请使用[build_config.dart]")
 void main(List<String> arguments) {
   //throw "test";
 
@@ -46,7 +47,7 @@ void main(List<String> arguments) {
     const targetPath = "assets/config";
 
     final currentPath = Directory.current.path;
-    print('构建脚本工作路径->$currentPath');
+    print('[build]工作路径->$currentPath');
 
     //模板文件
     final templateFile = File("$currentPath/$templatePath/app_setting.tl.json");

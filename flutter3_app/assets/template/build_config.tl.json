@@ -1,0 +1,10 @@
+{
+  "buildPackageName": "${packageName}",
+  "buildFlavor": "${appFlavor}",
+  "buildType": "${buildType}",
+  "buildTime": "${buildTime}",
+  "buildOperatingSystem": "${operatingSystem}",
+  "buildOperatingSystemVersion": "${operatingSystemVersion}",
+  "buildOperatingSystemLocaleName": "${operatingSystemLocaleName}",
+  "buildOperatingSystemUserName": "${operatingSystemUserName}"
+}

@@ -33,7 +33,7 @@ import 'package:yaml/yaml.dart';
 ///
 void main() async {
   final currentPath = Directory.current.path;
-  print('脚本工作路径->$currentPath');
+  print('[android_compile_sdk]工作路径->$currentPath');
 
   //读取yaml配置信息
   final localYamlFile = File("$currentPath/script.local.yaml");

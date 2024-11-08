@@ -14,6 +14,7 @@ class AppSettingBean {
 
   /// 从网络中获取[AppSettingBean]配置, 并且存储到本地
   /// [Asset]资源需要放到app包中
+  /// 应用程序初始化成功后初始化...
   static Future fetchAppConfig(
     String url, {
     String name = "app_setting.json",
@@ -45,26 +46,14 @@ class AppSettingBean {
 
   AppSettingBean();
 
-  /// 每个平台单独设置信息
+  /// 每个平台单独设置信息, 平台名统一小写
   Map<String, AppSettingBean>? platformMap;
 
   //--
 
-  /// 应用程序设置的包名
-  /// 并非真正的包名
-  /// 真正的包名需要通过[platformPackageInfo]获取
-  String? packageName;
-
-  /// 应用程序的风味, 不同风味的app, 可以有不同的配置
-  /// [AppFlavorEnum]
-  String? appFlavor;
-
   /// 应用程序的状态, 比如正在上架中, 已上架
   /// [AppStateEnum]
   String? appState;
-
-  /// 那些设备需要使用此[appFlavor]
-  List<String>? appFlavorUuidList;
 
   //--
 
@@ -72,38 +61,8 @@ class AppSettingBean {
   /// [CoreKeys.deviceUuid]
   List<String>? debugFlagUuidList;
 
-  //--build--
-
-  /// 编译时间
-  /// 2024-06-21 14:27:05.978594
-  String? buildTime;
-
-  /// windows
-  String? operatingSystem;
-
-  /// "Windows 10 Pro" 10.0 (Build 19045)
-  String? operatingSystemVersion;
-
-  /// zh-CN
-  String? operatingSystemLocaleName;
-
-  /// angcyo
-  String? operatingSystemUserName;
-
   @override
   String toString() => toJson().toString();
-}
-
-/// 应用程序的风味
-enum AppFlavorEnum {
-  /// 调试
-  debug,
-
-  /// 预发
-  pretest,
-
-  /// 正式
-  release
 }
 
 /// 应用程序的状态
@@ -138,36 +97,7 @@ bool get isDebugFlagDevice {
   if (bean.debugFlagUuidList!.isEmpty) {
     return true;
   }
-  return bean.debugFlagUuidList!.contains($coreKeys.deviceUuid);
-}
-
-/// 是否是调试风味状态
-bool get isDebugFlavor {
-  final bean = $appSettingBean;
-  return bean.appFlavor != null && $appFlavorEnum != AppFlavorEnum.release;
-}
-
-/// 配置的app包名
-/// [AppSettingBean.packageName]
-///
-/// 真正的app包名
-/// [platformPackageInfo]
-/// [appPlatformPackageName]
-String? get $appSettingPackageName => $appSettingBean.packageName;
-
-/// [AppSettingBean.appFlavor]
-/// [AppSettingBean.appFlavorUuidList]
-AppFlavorEnum get $appFlavorEnum {
-  final bean = $appSettingBean;
-  String? appFlavor;
-  if (bean.appFlavorUuidList == null ||
-      bean.appFlavorUuidList?.contains($coreKeys.deviceUuid) == true) {
-    appFlavor = bean.appFlavor;
-  }
-  if (appFlavor == null) {
-    return AppFlavorEnum.release;
-  }
-  return AppFlavorEnum.values.getByName(appFlavor, AppFlavorEnum.release);
+  return bean.debugFlagUuidList!.contains($deviceUuid);
 }
 
 /// [AppSettingBean.appState]

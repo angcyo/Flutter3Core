@@ -20,7 +20,7 @@ const apiBase = "https://www.pgyer.com/apiv2/app";
 
 void main(List<String> arguments) async {
   final currentPath = Directory.current.path;
-  colorLog('工作路径->$currentPath');
+  colorLog('[pgyer]工作路径->$currentPath');
 
   final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");

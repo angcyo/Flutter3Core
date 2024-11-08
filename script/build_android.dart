@@ -10,7 +10,7 @@ import 'package:yaml/yaml.dart';
 /// 构建Android Apk
 void main() async {
   final currentPath = Directory.current.path;
-  print('打包脚本工作路径->$currentPath');
+  print('[build_android]工作路径->$currentPath');
 
   final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");

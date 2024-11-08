@@ -20,13 +20,13 @@ AppVersionBean _$AppVersionBeanFromJson(Map<String, dynamic> json) =>
         (k, e) =>
             MapEntry(k, AppVersionBean.fromJson(e as Map<String, dynamic>)),
       )
-      ..debug = json['debug'] as bool?
       ..allowVersionUuidList = (json['allowVersionUuidList'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList()
       ..denyVersionUuidList = (json['denyVersionUuidList'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList()
+      ..debug = json['debug'] as bool?
       ..versionTile = json['versionTile'] as String?
       ..versionName = json['versionName'] as String?
       ..versionCode = (json['versionCode'] as num?)?.toInt()
@@ -61,9 +61,9 @@ Map<String, dynamic> _$AppVersionBeanToJson(AppVersionBean instance) {
       instance.packageNameMap?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('versionUuidMap',
       instance.versionUuidMap?.map((k, e) => MapEntry(k, e.toJson())));
-  writeNotNull('debug', instance.debug);
   writeNotNull('allowVersionUuidList', instance.allowVersionUuidList);
   writeNotNull('denyVersionUuidList', instance.denyVersionUuidList);
+  writeNotNull('debug', instance.debug);
   writeNotNull('versionTile', instance.versionTile);
   writeNotNull('versionName', instance.versionName);
   writeNotNull('versionCode', instance.versionCode);

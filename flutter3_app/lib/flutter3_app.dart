@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_app/src/mode/app_version_bean.dart';
+import 'package:flutter3_app/src/mode/build_config.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
@@ -33,6 +34,7 @@ export 'package:share_plus/share_plus.dart';
 
 export 'src/mode/app_setting_bean.dart';
 export 'src/mode/app_version_bean.dart';
+export 'src/mode/build_config.dart';
 
 part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';
@@ -127,6 +129,8 @@ Future runGlobalApp(
   //runApp
   Future realRun() async {
     ensureInitialized();
+    //--
+    BuildConfig.intBuildConfig();
     //key-value
     await initHive();
 
@@ -266,6 +270,6 @@ Widget loadAppSvgWidget(
 /// [isDebug]
 /// [CoreKeys.isDebugFlag]
 bool get isDebugFlag =>
-    isDebugFlavor ||
+    isDebugType ||
     isDebugFlagDevice ||
     (GlobalConfig.def.isDebugFlagFn?.call() ?? $coreKeys.isDebugFlag);

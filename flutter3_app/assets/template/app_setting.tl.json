@@ -1,10 +1,3 @@
 {
-  "packageName": "${packageName}",
-  "appFlavor": "${appFlavor}",
-  "appState": "${appState}",
-  "buildTime": "${buildTime}",
-  "operatingSystem": "${operatingSystem}",
-  "operatingSystemVersion": "${operatingSystemVersion}",
-  "operatingSystemLocaleName": "${operatingSystemLocaleName}",
-  "operatingSystemUserName": "${operatingSystemUserName}"
+  "appState": "${appState}"
 }

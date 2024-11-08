@@ -20,6 +20,7 @@ class AppVersionBean {
   static AppVersionBean? _appVersionBean;
 
   /// 从网络中获取[AppVersionBean]配置, 并且存储到本地
+  /// 应用程序初始化成功后初始化...
   static Future fetchConfig(
     String url, {
     String name = "app_version.json",
@@ -63,7 +64,7 @@ class AppVersionBean {
   Map<String, AppVersionBean>? platformMap;
 
   /// 每个包名单独的版本信息
-  /// [$appSettingPackageName]
+  /// [$buildPackageName]
   /// [AppSettingBean.packageName]
   Map<String, AppVersionBean>? packageNameMap;
 
@@ -132,5 +133,28 @@ class AppVersionBean {
   String? forbiddenReason;
   bool? forceForbidden;
 
-//endregion --权限信息--
+  //endregion --权限信息--
+
+  @override
+  String toString() => toJson().toString();
+}
+
+/// [AppVersionBean]
+AppVersionBean? get $appVersionBean {
+  AppVersionBean? bean = AppVersionBean._appVersionBean;
+
+  //1: 平台检查, 获取对应平台的版本信息
+  bean = bean?.platformMap?[$platformName] ?? bean;
+  if (bean == null) {
+    return null;
+  }
+
+  //2: 区分package, 获取对应报名的版本信息
+  bean = bean.packageNameMap?[$buildPackageName] ?? bean;
+
+  //3: 获取指定设备的版本信息
+  final deviceUuid = $coreKeys.deviceUuid;
+  bean = bean.versionUuidMap?[deviceUuid] ?? bean;
+
+  return bean;
 }
