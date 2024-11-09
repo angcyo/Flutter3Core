@@ -62,5 +62,5 @@ class CanvasContentTemplate {
       contentBackgroundInfo?.rect ??
       contentOptimumInfo?.rect;
 
-//endregion ---get---
+  //endregion ---get---
 }

@@ -176,18 +176,18 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     }
 
     //填充
-    if (info.fill) {
+    if (info.fill && info.fillColor != null) {
       paint
         ..style = PaintingStyle.fill
-        ..color = info.fillColor;
+        ..color = info.fillColor!;
       draw();
     }
 
     //描边
-    if (info.strokeWidth > 0) {
+    if (info.strokeWidth > 0 && info.strokeColor != null) {
       paint
         ..style = PaintingStyle.stroke
-        ..color = info.strokeColor
+        ..color = info.strokeColor!
         ..strokeWidth = info.strokeWidth / canvasScale;
 
       draw();
@@ -234,6 +234,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   }
 
   /// 更新填充样式的内容模版
+  @api
   void updateFillStyleContentTemplate({
     @dp @sceneCoordinate Path? contentPath,
     @dp @sceneCoordinate Rect? contentRect,
@@ -247,6 +248,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     bool followRect = true,
     bool? animate,
   }) {
+    //debugger();
     contentTemplate ??= CanvasContentTemplate();
     //content
     contentTemplate!.contentFollowRect = contentFollowRect;
@@ -271,6 +273,19 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
           optimumFillColor ?? contentTemplate!.contentOptimumInfo!.fillColor;
     }
     if (followRect == true) {
+      followCanvasContentTemplate(animate: animate);
+    }
+  }
+
+  /// 直接更新画布模板数据
+  @api
+  void updateCanvasContentTemplate(
+    CanvasContentTemplate? template, {
+    bool followRect = true,
+    bool? animate,
+  }) {
+    contentTemplate = template;
+    if (template != null && followRect == true) {
       followCanvasContentTemplate(animate: animate);
     }
   }
@@ -327,19 +342,22 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 class ContentPathPainterInfo {
   //--边界信息
 
-  /// 要绘制的路径
+  /// 要绘制的路径, 有值时, 就绘制
   Path? path;
 
-  /// 要绘制的矩形
+  /// [path]的边界缓存
+  Rect? pathBoundsCache;
+
+  /// 要绘制的矩形, 有值时, 就绘制
   Rect? rect;
 
   //--绘制信息
 
-  /// 绘制路径的描边颜色
-  Color strokeColor;
+  /// 绘制路径的描边颜色, 不指定, 不绘制
+  Color? strokeColor;
 
-  /// 绘制路径的填充颜色
-  Color fillColor;
+  /// 绘制路径的填充颜色, 不指定, 不绘制
+  Color? fillColor;
 
   /// 是否填充
   bool fill;
@@ -355,6 +373,7 @@ class ContentPathPainterInfo {
 
   ContentPathPainterInfo({
     this.path,
+    this.pathBoundsCache,
     this.rect,
     this.strokeColor = Colors.blue,
     this.fillColor = const Color(0xfff5f5f5),
