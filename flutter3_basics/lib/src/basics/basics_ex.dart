@@ -173,7 +173,8 @@ extension ObjectEx on Object {
   dynamic fromJson() => toString().fromJson();
 
   /// 使用[Text]包裹
-  ///
+  /// [textSpan] 富文本.[InlineSpan]->[TextSpan]
+  /// ...
   /// [style] 文本样式
   /// [bold] 是否加粗[fontWeight]
   /// [lineHeight].[TextStyle.height] 行高, 默认值`1.464`附近
@@ -192,6 +193,9 @@ extension ObjectEx on Object {
   /// [selectable] 是否可以选择文本, 使用[SelectableText]小部件实现
   /// [SelectableText]
   Widget text({
+    //--
+    TextSpan? textSpan,
+    //--
     TextStyle? style,
     double? fontSize,
     Color? textColor,
@@ -377,6 +381,15 @@ extension ObjectEx on Object {
               ));
 
     if (selectable) {
+      //SelectableText
+      if (textSpan != null) {
+        return SelectableText.rich(
+          textSpan,
+          style: textStyle,
+          textAlign: textAlign,
+          maxLines: maxLines,
+        );
+      }
       return SelectableText(
         "$this",
         style: textStyle,
@@ -387,6 +400,17 @@ extension ObjectEx on Object {
       );
     }
 
+    //text
+    if (textSpan != null) {
+      return Text.rich(
+        textSpan,
+        style: textStyle,
+        textAlign: textAlign,
+        maxLines: maxLines,
+        softWrap: softWrap,
+        overflow: overflow,
+      );
+    }
     return Text(
       "$this",
       style: textStyle,

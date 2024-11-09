@@ -137,22 +137,73 @@ mixin AbsScrollPage {
 
   //region AppBar
 
+  /// 标题更新信号
+  UpdateValueNotifier? get pageTitleUpdateSignal =>
+      this is RebuildPageTitleMixin
+          ? (this as RebuildPageTitleMixin).titleUpdateSignal
+          : null;
+
   /// 获取页面标题
   @property
   String? getTitle(BuildContext context) {
     return runtimeType.toString();
   }
 
-  /// 构建标题栏
+  /// 获取标题文本的对齐方式
   @property
+  TextAlign? getTitleTextAlign(BuildContext context) => ui.TextAlign.center;
+
+  /// 获取页面标题, 支持富文本
+  /// [TextSpan]
+  @property
+  TextSpan? getTitleTextSpan(BuildContext context) => null;
+
+  /// 构建标题栏
+  /// [buildAppBar]
+  @property
+  @CallFrom("buildAppBar")
   Widget? buildTitle(BuildContext context) {
-    final globalConfig = GlobalConfig.of(context);
-    return getTitle(context)?.text(
-        style: globalConfig.globalTheme.textTitleStyle.copyWith(
-      fontWeight: FontWeight.bold,
-      color: getAppBarForegroundColor(context) ??
-          globalConfig.globalTheme.appBarForegroundColor,
-    ));
+    //--
+    Widget? buildTitleInner() {
+      final globalConfig = GlobalConfig.of(context);
+      final textStyle = globalConfig.globalTheme.textTitleStyle.copyWith(
+        fontWeight: FontWeight.bold,
+        color: getAppBarForegroundColor(context) ??
+            globalConfig.globalTheme.appBarForegroundColor,
+      );
+      final titleTextSpan = getTitleTextSpan(context);
+      final titleWidget = titleTextSpan != null
+          ? "".text(
+              textSpan: titleTextSpan,
+              style: textStyle,
+              textAlign: getTitleTextAlign(context),
+            )
+          : getTitle(context)?.text(
+              style: textStyle,
+              textAlign: getTitleTextAlign(context),
+            );
+      return titleWidget;
+    }
+
+    //--
+    final signal = pageTitleUpdateSignal;
+    if (signal == null) {
+      return buildTitleInner();
+    } else {
+      return rebuild(signal, (context, value) => buildTitleInner());
+    }
+  }
+
+  /// [buildBody]->[RScrollView]重构子节点更新信号
+  /// 需要重写[pageScrollChildrenUpdateSignal]
+  @updateSignalMark
+  void updatePageTitle() {
+    rebuildPageTitle();
+  }
+
+  @updateSignalMark
+  void rebuildPageTitle() {
+    pageTitleUpdateSignal?.update();
   }
 
   /// 是否是居中标题
@@ -298,5 +349,21 @@ mixin RebuildScrollChildrenMixin {
   @updateMark
   void rebuildScrollChildren() {
     scrollChildrenUpdateSignal.notify();
+  }
+}
+
+mixin RebuildPageTitleMixin {
+  /// 标题更新的信号
+  final UpdateSignalNotifier titleUpdateSignal = UpdateSignalNotifier(null);
+
+  /// 重建[RScrollView]的滚动体内容
+  @updateMark
+  void updateTitle() {
+    rebuildTitle();
+  }
+
+  @updateMark
+  void rebuildTitle() {
+    titleUpdateSignal.notify();
   }
 }
