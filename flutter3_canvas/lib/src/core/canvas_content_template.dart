@@ -6,6 +6,14 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 画布内容显示模版
 class CanvasContentTemplate {
+  /// 标签, 用来自定义的标识
+  @configProperty
+  String? tag;
+
+  /// 自定义的模板数据
+  @configProperty
+  Object? data;
+
   //region ---内容边界---
 
   /// 限制内容场景的区域, 网格线只会在此区域内绘制
