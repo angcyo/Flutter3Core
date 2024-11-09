@@ -86,6 +86,20 @@ mixin AbsScrollPage {
   ///
   /// [RebuildBodyMixin]
   ///
+  /// # 底部按钮示例
+  /// ```
+  /// @override
+  /// Widget buildBody(BuildContext context, WidgetList? children) {
+  ///   return [
+  ///     super.buildBody(context, children).expanded(),
+  ///     GradientButton(
+  ///       onTap: () {},
+  ///       child: "xx".text(),
+  ///     ).matchParentWidth().paddingAll(kX),
+  ///   ].column()!;
+  /// }
+  /// ```
+  ///
   @property
   Widget buildBody(BuildContext context, WidgetList? children) {
     //构建子节点

@@ -82,6 +82,31 @@ class GradientButton extends StatelessWidget {
     this.maxHeight = double.infinity,
   });
 
+  /// 黑色填充按钮样式
+  const GradientButton.black(
+    this.onTap, {
+    super.key,
+    this.color = const Color(0xff333333),
+    this.colors,
+    this.splashColor = const Color(0x20ffffff),
+    required this.child,
+    this.onContextTap,
+    this.enable,
+    this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
+    this.textStyle,
+    this.decoration,
+    this.radius = kDefaultBorderRadiusX,
+    this.borderRadius,
+    this.textColor,
+    this.disabledColor,
+    this.disabledTextColor,
+    this.onHighlightChanged,
+    this.minWidth = 0,
+    this.maxWidth = double.infinity,
+    this.minHeight = kButtonHeight,
+    this.maxHeight = double.infinity,
+  });
+
   /// 描边按钮样式
   GradientButton.stroke({
     super.key,
