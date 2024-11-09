@@ -69,6 +69,7 @@ part 'src/basics/custom_page_route.dart';
 part 'src/basics/matrix_ex.dart';
 part 'src/basics/system.dart';
 part 'src/basics/basics_state_property.dart';
+part 'src/component/hook.dart';
 part 'src/component/app_lifecycle_mixin.dart';
 part 'src/component/async_operation.dart';
 part 'src/component/batch_completer.dart';
