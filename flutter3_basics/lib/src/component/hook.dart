@@ -22,11 +22,30 @@ mixin HookMixin<T extends StatefulWidget> on State<T> {
   @autoDispose
   late final Map<Listenable, VoidCallback> _hookAnyListenableMap = {};
 
+  /// 资源
+  /// hive key 改变通知
+  @autoDispose
+  late final Map<String, DebugValueChanged> _hookAnyKeyMap = {};
+
+  //--
+
   /// 在[dispose]时, 释放所有hook的资源
   @api
   @autoDispose
   void hookAny(dynamic any) {
     _hookAnyList.add(any);
+  }
+
+  /// 在[dispose]时, 释放所有hook的资源
+  @api
+  @autoDispose
+  void hookAnyKey(String key, VoidCallback action) {
+    debugValueChanged(value) {
+      action();
+    }
+
+    key.onDebugValueChanged(debugValueChanged);
+    _hookAnyKeyMap[key] = debugValueChanged;
   }
 
   /// [hookAny]
@@ -79,6 +98,7 @@ mixin HookMixin<T extends StatefulWidget> on State<T> {
   void dispose() {
     disposeAny();
     disposeAnyListenable();
+    disposeAnyKey();
     super.dispose();
   }
 
@@ -134,6 +154,27 @@ mixin HookMixin<T extends StatefulWidget> on State<T> {
       }
     } finally {
       _hookAnyListenableMap.clear();
+    }
+  }
+
+  /// 释放
+  void disposeAnyKey() {
+    try {
+      for (final key in _hookAnyKeyMap.keys) {
+        try {
+          final value = _hookAnyKeyMap[key];
+          if (value is DebugValueChanged) {
+            key.removeDebugValueChanged(value);
+          }
+        } catch (e) {
+          assert(() {
+            l.e(e);
+            return true;
+          }());
+        }
+      }
+    } finally {
+      _hookAnyKeyMap.clear();
     }
   }
 }
