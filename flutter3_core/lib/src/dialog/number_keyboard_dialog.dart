@@ -266,7 +266,7 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
   late final BoxDecoration decoration;
   late final pressedDecoration = fillDecoration(
     color: Colors.black12,
-    borderRadius: widget.itemBorderRadius,
+    radius: widget.itemBorderRadius,
   );
 
   late final TextStyle keyboardNumberStyle;
@@ -288,7 +288,7 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
     final globalTheme = GlobalTheme.of(context);
     decoration = fillDecoration(
       color: globalTheme.surfaceBgColor,
-      borderRadius: widget.itemBorderRadius,
+      radius: widget.itemBorderRadius,
     );
 
     keyboardNumberStyle = TextStyle(
@@ -335,7 +335,7 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
         StateDecorationWidget(
           decoration: fillDecoration(
             color: globalTheme.accentColor,
-            borderRadius: widget.itemBorderRadius,
+            radius: widget.itemBorderRadius,
           ),
           pressedDecoration: pressedDecoration,
           child: LibRes.of(context)

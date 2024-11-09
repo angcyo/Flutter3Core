@@ -86,7 +86,7 @@ class _HighlightCheckWidgetState extends State<HighlightCheckWidget> {
           decoration: fillDecoration(
             color: widget.checkedColor ?? globalTheme.accentColor,
             shadowColor: widget.shadowColor,
-            borderRadius: widget.checkedBorderRadius,
+            radius: widget.checkedBorderRadius,
           ),
         ).matchParent(debugLabel: widget.runtimeType.toString()),
       widget.child,
@@ -191,7 +191,7 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
     final decoration = _currentValue
         ? fillDecoration(
             color: checkedColor.withOpacity(0.3),
-            borderRadius: borderRadius,
+            radius: borderRadius,
             border: strokeBorder(
               color: checkedColor,
               borderRadius: borderRadius,
@@ -199,7 +199,7 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
           )
         : fillDecoration(
             color: globalTheme.itemWhiteBgColor,
-            borderRadius: borderRadius,
+            radius: borderRadius,
             border: strokeBorder(
               color: globalTheme.itemWhiteBgColor,
               borderRadius: borderRadius,

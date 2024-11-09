@@ -78,7 +78,7 @@ class _WheelDialogState extends State<WheelDialog>
               DecoratedBox(
                   decoration: fillDecoration(
                 color: Colors.black12,
-                borderRadius: 0,
+                radius: 0,
               )).wh(double.infinity, _wheelItemExtent),
               Wheel(
                 looping: false,
@@ -204,7 +204,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
               DecoratedBox(
                   decoration: fillDecoration(
                 color: Colors.black12,
-                borderRadius: 0,
+                radius: 0,
               )).wh(double.infinity, _wheelItemExtent),
               [
                 if (widget.dateTimeType.getOrNull(0) != null)

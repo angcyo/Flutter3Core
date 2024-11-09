@@ -369,7 +369,7 @@ class CirclePointPainter extends CustomPainter {
   /// 阴影偏移
   final Offset offset;
 
-  const CirclePointPainter({
+  const  CirclePointPainter({
     this.radius = 8,
     this.extendRadius = 2,
     this.offset = const Offset(0, 1.24),

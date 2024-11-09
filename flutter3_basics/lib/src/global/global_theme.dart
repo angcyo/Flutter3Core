@@ -109,6 +109,15 @@ class GlobalTheme {
   /// 边框的颜色
   Color get borderColor => const Color(0xff6f6f6f);
 
+  /// 信息提示颜色
+  Color get infoColor => const Color(0xff4b7efe);
+
+  /// 成功提示颜色
+  Color get successColor => const Color(0xff2fca54);
+
+  /// 警告提示颜色
+  Color get warningColor => const Color(0xfffebf00);
+
   /// 错误提示颜色
   Color get errorColor => const Color(0xffFF443D);
 
@@ -217,7 +226,7 @@ class GlobalTheme {
         color: Color(0xffb0b0b0),
       );
 
-  TextStyle get  textLabelStyle => const TextStyle(
+  TextStyle get textLabelStyle => const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
         color: Color(0xff333333),

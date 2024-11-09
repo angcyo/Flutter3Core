@@ -274,7 +274,7 @@ class CoreDialogBottomTitle extends StatelessWidget {
       final decoration = this.decoration ??
           fillDecoration(
             color: fillDecorationColor,
-            borderRadius: kDefaultBorderRadiusX,
+            radius: kDefaultBorderRadiusX,
           );
       leading = leading?.backgroundDecoration(decoration);
       trailing = trailing?.backgroundDecoration(decoration);

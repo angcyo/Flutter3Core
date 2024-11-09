@@ -61,7 +61,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     return DecoratedBox(
       decoration: fillDecoration(
         color: globalTheme.accentColor,
-        borderRadius: borderRadius,
+        radius: borderRadius,
         gradient: linearGradient(colors ??
             [
               globalTheme.primaryColor,

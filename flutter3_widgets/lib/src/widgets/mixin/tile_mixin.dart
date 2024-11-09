@@ -258,12 +258,12 @@ mixin TileMixin {
         .backgroundDecoration(!enable
             ? fillDecoration(
                 color: globalTheme.disableColor,
-                borderRadius: kDefaultBorderRadiusX,
+                radius: kDefaultBorderRadiusX,
               )
             : isSelected
                 ? fillDecoration(
                     color: selectedBgColor ?? globalTheme.accentColor,
-                    borderRadius: selectedBorderRadius,
+                    radius: selectedBorderRadius,
                   )
                 : null)
         .click(onTap,

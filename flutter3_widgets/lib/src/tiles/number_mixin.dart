@@ -108,15 +108,15 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
               enable
                   ? fillDecoration(
                       color: globalTheme.whiteColor,
-                      borderRadius: kDefaultBorderRadiusL,
+                      radius: kDefaultBorderRadiusL,
                     )
                   : fillDecoration(
                       color: globalTheme.whiteColor.withOpacity(0.9),
-                      borderRadius: kDefaultBorderRadiusL,
+                      radius: kDefaultBorderRadiusL,
                     ),
               pressedDecoration: fillDecoration(
                 color: Colors.black12,
-                borderRadius: kDefaultBorderRadiusL,
+                radius: kDefaultBorderRadiusL,
               ),
               enablePressedDecoration: enable,
             )

@@ -8,7 +8,8 @@ part of '../../../flutter3_widgets.dart';
 class TextTile extends StatelessWidget {
   /// 文本
   final String? text;
-  final TextStyleType? textStyle;
+  final TextStyle? textStyle;
+  final TextStyleType? textStyleType;
   final Widget? textWidget;
 
   /// 内边距
@@ -18,7 +19,8 @@ class TextTile extends StatelessWidget {
   const TextTile({
     super.key,
     this.text,
-    this.textStyle = TextStyleType.body,
+    this.textStyle,
+    this.textStyleType = TextStyleType.body,
     this.textWidget,
     this.padding = const EdgeInsets.symmetric(
       horizontal: kX,
@@ -30,7 +32,8 @@ class TextTile extends StatelessWidget {
   const TextTile.subText({
     super.key,
     this.text,
-    this.textStyle = TextStyleType.des,
+    this.textStyle,
+    this.textStyleType = TextStyleType.des,
     this.textWidget,
     this.padding = const EdgeInsets.only(
       left: kXh + kX,
@@ -45,21 +48,22 @@ class TextTile extends StatelessWidget {
     final globalTheme = GlobalTheme.of(context);
     var result = textWidget ??
         Text(text ?? "",
-            style: textStyle == TextStyleType.title
-                ? globalTheme.textTitleStyle
-                : textStyle == TextStyleType.subTitle
-                    ? globalTheme.textSubTitleStyle
-                    : textStyle == TextStyleType.des
-                        ? globalTheme.textDesStyle
-                        : textStyle == TextStyleType.body
-                            ? globalTheme.textBodyStyle
-                            : textStyle == TextStyleType.sub
-                                ? globalTheme.textSubStyle
-                                : textStyle == TextStyleType.label
-                                    ? globalTheme.textLabelStyle
-                                    : textStyle == TextStyleType.info
-                                        ? globalTheme.textInfoStyle
-                                        : null);
+            style: textStyle ??
+                (textStyleType == TextStyleType.title
+                    ? globalTheme.textTitleStyle
+                    : textStyleType == TextStyleType.subTitle
+                        ? globalTheme.textSubTitleStyle
+                        : textStyleType == TextStyleType.des
+                            ? globalTheme.textDesStyle
+                            : textStyleType == TextStyleType.body
+                                ? globalTheme.textBodyStyle
+                                : textStyleType == TextStyleType.sub
+                                    ? globalTheme.textSubStyle
+                                    : textStyleType == TextStyleType.label
+                                        ? globalTheme.textLabelStyle
+                                        : textStyleType == TextStyleType.info
+                                            ? globalTheme.textInfoStyle
+                                            : null));
     if (padding != null) {
       result = Padding(
         padding: padding!,

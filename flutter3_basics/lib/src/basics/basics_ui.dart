@@ -612,7 +612,7 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// 对称
+  /// 对称, 左右大一点, 上下小一点
   Widget paddingSym({
     double? vertical,
     double? horizontal,
@@ -628,7 +628,7 @@ extension WidgetEx on Widget {
         bottom: vertical ?? bottom,
       );
 
-  /// 对称
+  /// 对称, 左右上下一样大
   Widget paddingSymmetric({
     double? vertical,
     double? horizontal,

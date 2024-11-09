@@ -298,7 +298,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
     return body.backgroundDecoration(
       fillDecoration(
-        borderRadius: 0,
+        radius: 0,
         color: widget.barrierColor!.withOpacityRatio(1 - _pullBackValue),
       ),
     );

@@ -736,7 +736,7 @@ extension RItemTileExtension on Widget {
           (decorationFillColor != null
               ? fillDecoration(
                   color: decorationFillColor,
-                  borderRadius: decorationBorderRadius,
+                  radius: decorationBorderRadius,
                 )
               : null),
       sliverDecorationPosition: sliverDecorationPosition,
@@ -926,7 +926,7 @@ extension RItemTileExtension on Widget {
               ? null
               : fillDecoration(
                   color: decorationFillColor,
-                  borderRadius: decorationBorderRadius,
+                  radius: decorationBorderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
@@ -1032,7 +1032,7 @@ extension RItemTileExtension on Widget {
               ? null
               : fillDecoration(
                   color: decorationFillColor,
-                  borderRadius: decorationBorderRadius,
+                  radius: decorationBorderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
       bottomLeading: bottomLeading,
@@ -1087,7 +1087,7 @@ extension RItemTileExtension on Widget {
               ? null
               : fillDecoration(
                   color: decorationFillColor,
-                  borderRadius: decorationBorderRadius,
+                  radius: decorationBorderRadius,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
       bottomLeading: bottomLeading,
@@ -1236,7 +1236,7 @@ extension RItemTileListExtension on List<Widget> {
           (decorationFillColor != null
               ? fillDecoration(
                   color: decorationFillColor,
-                  borderRadius: decorationBorderRadius,
+                  radius: decorationBorderRadius,
                 )
               : null),
       sliverDecorationPosition: sliverDecorationPosition,

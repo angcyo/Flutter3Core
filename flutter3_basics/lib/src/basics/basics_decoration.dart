@@ -143,8 +143,8 @@ BoxDecoration fillDecoration({
   BuildContext? context,
   Color? color,
   Gradient? gradient,
-  BorderRadiusGeometry? radiusGeometry,
-  double? borderRadius = kDefaultBorderRadiusXX,
+  BorderRadiusGeometry? borderRadius,
+  double? radius = kDefaultBorderRadiusXX,
   double? onlyLeftRadius,
   double? onlyRightRadius,
   double? onlyTopRadius,
@@ -159,24 +159,24 @@ BoxDecoration fillDecoration({
 }) {
   final fillColor = color ?? GlobalTheme.of(context).accentColor;
 
-  if (radiusGeometry == null) {
+  if (borderRadius == null) {
     if (onlyTopRadius != null || onlyBottomRadius != null) {
-      radiusGeometry = BorderRadius.only(
+      borderRadius = BorderRadius.only(
         topLeft: Radius.circular(onlyTopRadius ?? 0),
         topRight: Radius.circular(onlyTopRadius ?? 0),
         bottomLeft: Radius.circular(onlyBottomRadius ?? 0),
         bottomRight: Radius.circular(onlyBottomRadius ?? 0),
       );
     } else if (onlyLeftRadius != null || onlyRightRadius != null) {
-      radiusGeometry = BorderRadius.only(
+      borderRadius = BorderRadius.only(
         topLeft: Radius.circular(onlyLeftRadius ?? 0),
         bottomLeft: Radius.circular(onlyLeftRadius ?? 0),
         topRight: Radius.circular(onlyRightRadius ?? 0),
         bottomRight: Radius.circular(onlyRightRadius ?? 0),
       );
     } else {
-      radiusGeometry = BorderRadius.all(
-        Radius.circular(borderRadius ?? 0),
+      borderRadius = BorderRadius.all(
+        Radius.circular(radius ?? 0),
       );
     }
   }
@@ -184,7 +184,7 @@ BoxDecoration fillDecoration({
   return BoxDecoration(
       color: fillColor,
       gradient: gradient,
-      borderRadius: radiusGeometry,
+      borderRadius: borderRadius,
       border: border,
       boxShadow: boxShadow ??
           (shadowColor == null

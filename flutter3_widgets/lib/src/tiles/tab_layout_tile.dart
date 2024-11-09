@@ -118,7 +118,7 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
             padding: const EdgeInsets.symmetric(horizontal: kM, vertical: kM),
             bgDecoration: fillDecoration(
               color: widget.backgroundColor ?? globalTheme.itemWhiteBgColor,
-              borderRadius: widget.borderRadius,
+              radius: widget.borderRadius,
             ),
             /*selfConstraints:
           LayoutBoxConstraints(widthType: ConstraintsType.wrapContent),*/
@@ -127,7 +127,7 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
               DecoratedBox(
                       decoration: fillDecoration(
                 color: widget.indicatorColor ?? globalTheme.accentColor,
-                borderRadius: widget.borderRadius,
+                radius: widget.borderRadius,
               ))
                   .shadowDecorated(
                     radius: widget.borderRadius,

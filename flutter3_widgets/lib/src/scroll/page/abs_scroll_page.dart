@@ -130,6 +130,12 @@ mixin AbsScrollPage {
 
   @updateSignalMark
   void rebuildPageScrollChildren() {
+    assert(() {
+      if (pageScrollChildrenUpdateSignal == null) {
+        l.w("请使用[RebuildScrollChildrenMixin]安装");
+      }
+      return true;
+    }());
     pageScrollChildrenUpdateSignal?.update();
   }
 
@@ -203,6 +209,12 @@ mixin AbsScrollPage {
 
   @updateSignalMark
   void rebuildPageTitle() {
+    assert(() {
+      if (pageTitleUpdateSignal == null) {
+        l.w("请使用[RebuildPageTitleMixin]安装");
+      }
+      return true;
+    }());
     pageTitleUpdateSignal?.update();
   }
 
