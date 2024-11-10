@@ -75,7 +75,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //region ---core---
 
-  /// 画布样式
+  /// 画布样式/配置参数等信息
   final CanvasStyle canvasStyle = CanvasStyle();
 
   /// 重绘通知, 监听此通知, 主动触发重绘
@@ -83,24 +83,38 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   final ValueNotifier<int> repaint = ValueNotifier(0);
 
   /// 视口控制
+  /// 包含视口原点位置
+  /// 包含视口缩放/平移的信息
+  /// 提供视口/世界坐标转换
   late CanvasViewBox canvasViewBox = CanvasViewBox(this);
 
-  /// 绘制管理
+  /// 绘制管理, 画布的背景, 坐标系, 监视器绘制
+  /// 同时也是[canvasElementManager]的绘制入口
+  /// 包含
+  ///  - [CanvasAxisManager]
+  ///  - [CanvasContentManager]
+  ///  - [CanvasMonitorPainter]
   late CanvasPaintManager canvasPaintManager = CanvasPaintManager(this);
 
-  /// 画布跟随
+  CanvasContentManager get canvasContentManager =>
+      canvasPaintManager.contentManager;
+
+  /// 元素管理, 包含画布上所有的元素
+  /// 并且元素控制器也在此管理器中
+  /// - [CanvasElementControlManager]
+  late CanvasElementManager canvasElementManager = CanvasElementManager(this);
+
+  /// 画布跟随, 用来将画布视口[canvasViewBox]移动显示到目标位置
   late CanvasFollowManager canvasFollowManager = CanvasFollowManager(this);
 
-  /// 事件管理
+  /// 事件管理, 画布事件操作, 元素控制事件入口
   late CanvasEventManager canvasEventManager = CanvasEventManager(this);
-
-  /// 元素管理
-  late CanvasElementManager canvasElementManager = CanvasElementManager(this);
 
   /// 回退栈管理
   late CanvasUndoManager canvasUndoManager = CanvasUndoManager(this);
 
-  /// 多画布管理
+  /// 多画布管理, 用来管理/切换[canvasElementManager]中的元素
+  /// 同时还控制[canvasUndoManager]的回退栈
   late CanvasMultiManager canvasMultiManager = CanvasMultiManager(this);
 
   /// 画布回调监听
