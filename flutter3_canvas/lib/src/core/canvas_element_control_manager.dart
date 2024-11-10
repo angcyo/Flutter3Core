@@ -567,7 +567,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     canvasDelegate.refresh();
     if (elementMenuControl.isCanvasComponentEnable) {
       elementMenuControl.onCanvasSelectElementChanged(
-          elementSelectComponent, children);
+        elementSelectComponent,
+        children,
+      );
     }
   }
 

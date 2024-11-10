@@ -47,6 +47,7 @@ class ElementMenuControl
   /// 是否需要处理元素菜单
   /// 绘制;
   /// 手势;
+  @entryPoint
   bool needHandleElementMenu() =>
       !canvasElementControlManager.isPointerDownElement /*未在移动元素*/ &&
       canvasElementControlManager
@@ -206,8 +207,11 @@ class ElementMenuControl
   }
 
   /// 更新菜单位置
+  /// [ElementSelectComponent]
   /// [CanvasElementControlManager.updateControlBounds]驱动
   @callPoint
+  @CallFrom(
+      "CanvasElementControlManager.updateControlBounds;onCanvasSelectElementChanged")
   void updateMenuLayoutBounds(ElementPainter anchorPainter) {
     final bounds = anchorPainter.elementsBounds;
     if (bounds != null) {
@@ -215,7 +219,7 @@ class ElementMenuControl
     }
   }
 
-  /// 菜单的整体边界
+  /// 菜单的整体边界位置
   @viewCoordinate
   Rect? _menuBounds;
 
@@ -223,8 +227,13 @@ class ElementMenuControl
   @viewCoordinate
   Offset _triangleAnchor = Offset.zero;
 
-  /// 执行菜单布局
+  /// 执行菜单布局,
+  /// 计算菜单整体的位置[_menuBounds],
+  /// 以及每个子菜单的位置[ElementMenu._menuBounds],
+  /// 以及三角形中心的锚点位置[_triangleAnchor]
   /// [bounds] 选中的元素边界
+  /// [updateMenuLayoutBounds]
+  @CallFrom("updateMenuLayoutBounds")
   void _performMenuLayout(@sceneCoordinate Rect bounds) {
     if (elementMenuList.isEmpty) {
       _menuBounds = null;
