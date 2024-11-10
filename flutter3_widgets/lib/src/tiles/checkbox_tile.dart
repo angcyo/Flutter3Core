@@ -33,6 +33,9 @@ class CheckboxTile extends StatefulWidget {
   /// [CircleBorder]
   final bool isCircleShape;
 
+  /// 视觉密度
+  final VisualDensity? visualDensity;
+
   //--
 
   /// 正常时的边框颜色
@@ -49,7 +52,7 @@ class CheckboxTile extends StatefulWidget {
   //--
 
   /// [MainAxisSize.min]
-  /// [MainAxisSize.max]
+  /// [MainAxisSize.max] 默认
   @defInjectMark
   final MainAxisSize? mainAxisSize;
 
@@ -63,6 +66,7 @@ class CheckboxTile extends StatefulWidget {
     this.value = false,
     this.tristate = false,
     this.isCircleShape = false,
+    this.visualDensity = VisualDensity.compact,
     this.normalColor,
     this.normalWidth = 1.0,
     this.activeColor,
@@ -96,6 +100,7 @@ class _CheckboxTileState extends State<CheckboxTile> with TileMixin {
         value: _initValue,
         tristate: widget.tristate,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: widget.visualDensity,
         /*打勾时勾的颜色*/
         /*checkColor: Colors.purpleAccent,*/
         activeColor: widget.activeColor ?? globalTheme.accentColor,

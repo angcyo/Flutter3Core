@@ -684,10 +684,12 @@ extension RItemTileExtension on Widget {
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
+    double? firstPadding,
     double? firstPaddingLeft,
     double? firstPaddingTop,
     double? firstPaddingRight,
     double? firstPaddingBottom,
+    double? lastPadding,
     double? lastPaddingLeft,
     double? lastPaddingTop,
     double? lastPaddingRight,
@@ -718,14 +720,14 @@ extension RItemTileExtension on Widget {
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       addRepaintBoundaries: addRepaintBoundaries,
       addSemanticIndexes: addSemanticIndexes,
-      firstPaddingLeft: firstPaddingLeft,
-      firstPaddingTop: firstPaddingTop,
-      firstPaddingRight: firstPaddingRight,
-      firstPaddingBottom: firstPaddingBottom,
-      lastPaddingLeft: lastPaddingLeft,
-      lastPaddingTop: lastPaddingTop,
-      lastPaddingRight: lastPaddingRight,
-      lastPaddingBottom: lastPaddingBottom,
+      firstPaddingLeft: firstPadding ?? firstPaddingLeft,
+      firstPaddingTop: firstPadding ?? firstPaddingTop,
+      firstPaddingRight: firstPadding ?? firstPaddingRight,
+      firstPaddingBottom: firstPadding ?? firstPaddingBottom,
+      lastPaddingLeft: lastPadding ?? lastPaddingLeft,
+      lastPaddingTop: lastPadding ?? lastPaddingTop,
+      lastPaddingRight: lastPadding ?? lastPaddingRight,
+      lastPaddingBottom: lastPadding ?? lastPaddingBottom,
       //--
       bottomLineColor: bottomLineColor,
       bottomLineHeight: bottomLineHeight,
@@ -743,10 +745,18 @@ extension RItemTileExtension on Widget {
       sliverPadding: sliverPadding ??
           (enablePadding
               ? EdgeInsets.only(
-                  left: firstPaddingLeft ?? lastPaddingLeft ?? 0.0,
-                  top: firstPaddingTop ?? 0.0,
-                  right: firstPaddingRight ?? lastPaddingRight ?? 0.0,
-                  bottom: lastPaddingBottom ?? 0.0,
+                  left: firstPadding ??
+                      firstPaddingLeft ??
+                      lastPadding ??
+                      lastPaddingLeft ??
+                      0.0,
+                  top: firstPadding ?? firstPaddingTop ?? 0.0,
+                  right: firstPadding ??
+                      firstPaddingRight ??
+                      lastPadding ??
+                      lastPaddingRight ??
+                      0.0,
+                  bottom: lastPadding ?? lastPaddingBottom ?? 0.0,
                 )
               : null),
       hide: hide,
@@ -774,6 +784,7 @@ extension RItemTileExtension on Widget {
     double childAspectRatio = 1 /*宽:高*/,
     double? mainAxisSpacing,
     double? crossAxisSpacing,
+    double? edgePadding,
     double? edgePaddingTop,
     double? edgePaddingBottom,
     double? edgePaddingLeft,
@@ -798,10 +809,10 @@ extension RItemTileExtension on Widget {
       childAspectRatio: childAspectRatio,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
-      edgePaddingTop: edgePaddingTop,
-      edgePaddingBottom: edgePaddingBottom,
-      edgePaddingLeft: edgePaddingLeft,
-      edgePaddingRight: edgePaddingRight,
+      edgePaddingLeft: edgePadding ?? edgePaddingLeft,
+      edgePaddingTop: edgePadding ?? edgePaddingTop,
+      edgePaddingRight: edgePadding ?? edgePaddingRight,
+      edgePaddingBottom: edgePadding ?? edgePaddingBottom,
       sliverPadding: sliverPadding ??
           (enablePadding
               ? EdgeInsets.symmetric(
