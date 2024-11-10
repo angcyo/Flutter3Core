@@ -17,9 +17,18 @@ class CanvasMonitorPainter extends IPainter {
     if (isDebug) {
       fps.update();
     }
+    //--
     final viewBox = canvasDelegate.canvasViewBox;
-    final text =
-        "${(viewBox.scaleX * 100).round()}%${isDebug ? " ${fps.fps}" : ""}";
+    final text = stringBuilder((builder) {
+      builder.addText("${(viewBox.scaleX * 100).round()}%");
+      if (isDebug) {
+        builder.addText(' ${fps.fps}');
+        builder.addText(
+            ' (${viewBox.translateX.toDigits()}, ${viewBox.translateY.toDigits()})');
+      }
+    });
+
+    //--
     final drawAxis = canvasDelegate.canvasPaintManager.axisManager.drawType
         .have(CanvasAxisManager.sDrawAxis);
     final x = drawAxis
