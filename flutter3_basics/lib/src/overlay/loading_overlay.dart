@@ -14,6 +14,7 @@ WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 /// 显示加载提示
 ///
 /// [builder] 构建加载提示的Widget
+/// [progressValue] 进度值[0~1]
 ///
 /// [showStrokeLoading]
 /// [postShow] 是否要延迟显示
@@ -58,10 +59,11 @@ OverlayEntry? showLoading({
         route: route,
         loadingInfoNotifier: loadingInfoNotifier,
         builder: builder ??= (context, loadingInfo) {
+          //动态构建小部件
           Widget result = GlobalConfig.of(context).loadingOverlayWidgetBuilder(
             context,
             OverlayEntry,
-            progressValue,
+            loadingInfo?.progress ?? progressValue,
           );
           final message = loadingInfo?.message;
           if (message != null) {
@@ -143,7 +145,8 @@ Future wrapLoading(
   if (onStart == null) {
     if (timeout != null) {
       loadingInfoNotifier = LoadingValueNotifier(
-          LoadingInfo(message: showTime ? "${timeout.inSeconds}" : null));
+        LoadingInfo(message: showTime ? "${timeout.inSeconds}" : null),
+      );
     }
     if (delay != null) {
       postDelayCallback(() {
@@ -241,7 +244,15 @@ class LoadingInfo {
   /// 指定需要显示的消息
   String? message;
 
-  LoadingInfo({this.progress, this.message});
+  /// 自定义构建器, 不指定则使用[_LoadingOverlay.builder]
+  @defInjectMark
+  WidgetBuilder? builder;
+
+  LoadingInfo({
+    this.progress,
+    this.message,
+    this.builder,
+  });
 }
 
 /// 通知值改变的桥梁
@@ -306,7 +317,8 @@ class _LoadingOverlayState extends State<_LoadingOverlay> {
       onWillPop: _onWillPop,
       child: AbsorbPointer(
         absorbing: true,
-        child: widget.builder(context, widget.loadingInfoNotifier?.value),
+        child: widget.loadingInfoNotifier?.value?.builder?.call(context) ??
+            widget.builder(context, widget.loadingInfoNotifier?.value),
       ), // 拦截手势
     );
   }

@@ -307,7 +307,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [showLoading]
   ProgressWidgetBuilder loadingOverlayWidgetBuilder =
       (context, data, progress) {
-    Widget loadingIndicator = GlobalConfig.of(context).loadingIndicatorBuilder(
+    final loadingIndicator = GlobalConfig.of(context).loadingIndicatorBuilder(
       context,
       data,
       progress,

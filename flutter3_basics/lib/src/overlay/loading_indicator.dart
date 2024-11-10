@@ -48,7 +48,10 @@ class LoadingIndicator extends StatelessWidget {
                 color: globalTheme.accentColor,
                 strokeWidth: 2,
               )
-            : const StrokeLoadingWidget(color: Colors.white),
+            : StrokeLoadingWidget(
+                progress: progressValue,
+                color: Colors.white,
+              ),
       ),
     ).repaintBoundary();
   }
