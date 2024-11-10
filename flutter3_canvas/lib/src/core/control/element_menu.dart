@@ -139,7 +139,7 @@ class ElementMenuControl
         if (!event.isMoveExceed(_touchPosition)) {
           _touchMenu?.onTap?.call();
           if (_touchMenu != null) {
-            canvasDelegate.dispatchTapMenu(_touchMenu!);
+            canvasDelegate.dispatchElementTapMenu(_touchMenu!);
           }
         }
       }

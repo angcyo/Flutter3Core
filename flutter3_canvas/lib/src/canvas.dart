@@ -209,8 +209,8 @@ class CanvasListener {
     bool isRepeat,
   )? onPointerDownAction;
 
-  /// [CanvasDelegate.dispatchTapMenu]
-  final void Function(ElementMenu menu)? onTapMenuAction;
+  /// [CanvasDelegate.dispatchElementTapMenu]
+  final void Function(ElementMenu menu)? onElementTapMenuAction;
 
   /// [CanvasDelegate.dispatchControlStateChanged]
   final void Function({
@@ -269,7 +269,7 @@ class CanvasListener {
     this.onDoubleTapElementAction,
     this.onTranslateElementAction,
     this.onPointerDownAction,
-    this.onTapMenuAction,
+    this.onElementTapMenuAction,
     this.onCanvasUndoChangedAction,
     this.onCanvasGroupChangedAction,
     this.onCanvasUngroupChangedAction,

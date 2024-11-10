@@ -528,10 +528,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
-  /// 点击指定菜单时回调
-  void dispatchTapMenu(ElementMenu menu) {
+  /// 点击指定菜单时回调, 和[ElementMenu.onTap]同步回调
+  void dispatchElementTapMenu(ElementMenu menu) {
     _eachCanvasListener((element) {
-      element.onTapMenuAction?.call(menu);
+      element.onElementTapMenuAction?.call(menu);
     });
   }
 
