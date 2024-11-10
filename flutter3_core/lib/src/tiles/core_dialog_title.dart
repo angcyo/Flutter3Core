@@ -7,7 +7,9 @@ part of '../../flutter3_core.dart';
 /// 对话框标题
 /// [back.icon]..[title]..[confirm.icon]
 ///
-/// [DialogTitleTile] 布局
+/// 内部使用[DialogTitleTile] 布局
+/// [CoreDialogTitle] 布局1
+/// [CoreDialogBottomTitle] 布局2
 class CoreDialogTitle extends StatelessWidget {
   ///
   final Widget? leading;
@@ -138,7 +140,9 @@ class CoreDialogTitle extends StatelessWidget {
 /// 对话框显示在底部的标题
 /// Decoration[close.icon]..[title]..Decoration[confirm.icon]
 ///
-/// [DialogTitleTile] 布局
+/// 内部使用[DialogTitleTile] 布局
+/// [CoreDialogTitle] 布局1
+/// [CoreDialogBottomTitle] 布局2
 class CoreDialogBottomTitle extends StatelessWidget {
   /// 领头的配置
   final Widget? leading;

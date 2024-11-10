@@ -138,6 +138,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// [clipTopRadius] 顶部圆角
   /// [clipBottomRadius] 底部圆角
   /// [stackWidget] 堆在内容上的小部件, 如果有
+  /// [bottomWidget] 放在底部的小部件, 如果有
   ///
   /// 如果需要弹出键盘, 可能需要使用[Scaffold]包裹返回的小部件
   ///
@@ -171,6 +172,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
     //CrossAxisAlignment.center, 需要考虑拖动手柄的样式
     CrossAxisAlignment? crossAxisAlignment,
+    Widget? bottomWidget /*放在底部的小部件*/,
   }) {
     Widget body;
     children = children.filterNull();
@@ -226,12 +228,14 @@ mixin DialogMixin implements TranslationTypeImpl {
         if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...fixedChildren,
         scrollBody?.expanded(enable: height != null /*固定高度时, 滚动布局需要撑满底部*/),
+        bottomWidget,
       ].column()!;
     } else {
       //普通布局, 不使用滚动布局
       body = [
         if (enablePullBack && showDragHandle) buildDragHandle(context),
-        ...children
+        ...children,
+        bottomWidget,
       ]
           .column(
             mainAxisAlignment: mainAxisAlignment,
