@@ -29,6 +29,8 @@ class ToastWidget extends StatefulWidget {
   final Widget? child;
 
   /// 背景颜色
+  /// `#333333`
+  @defInjectMark
   final Color? background;
 
   /// 背景模糊的伽马值
