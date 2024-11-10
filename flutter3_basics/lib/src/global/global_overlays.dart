@@ -70,6 +70,13 @@ OverlayEntry? toast(
 
   /// 动态toast数据监听
   LoadingValueNotifier? loadingInfoNotifier,
+
+  /// 整体的内边距, 距离屏幕的内边距
+  EdgeInsetsGeometry? margin = const EdgeInsets.all(kXh),
+
+  /// 内容内边距
+  EdgeInsetsGeometry? padding =
+      const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
 }) =>
     showNotification(
       (context) {
@@ -77,6 +84,8 @@ OverlayEntry? toast(
           background: background,
           bgBlurSigma: bgBlurSigma,
           loadingInfoNotifier: loadingInfoNotifier,
+          padding: padding,
+          margin: margin,
           child: msg,
         );
       },
@@ -96,7 +105,7 @@ OverlayEntry? toastBlur({
   LoadingValueNotifier? loadingInfoNotifier,
 }) =>
     toast(
-      msg ?? text?.toString()?.text(),
+      msg ?? text?.toString().text(),
       bgBlurSigma: bgBlurSigma,
       position: position,
       loadingInfoNotifier: loadingInfoNotifier,

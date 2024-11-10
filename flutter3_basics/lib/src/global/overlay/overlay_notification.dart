@@ -38,10 +38,10 @@ class ToastWidget extends StatefulWidget {
   final double? elevation;
 
   /// 整体的内边距, 距离屏幕的内边距
-  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
 
   /// 内容内边距
-  final EdgeInsetsGeometry? contentPadding;
+  final EdgeInsetsGeometry? padding;
 
   /// 动态构建停止
   final LoadingValueNotifier? loadingInfoNotifier;
@@ -52,8 +52,8 @@ class ToastWidget extends StatefulWidget {
     this.background,
     this.bgBlurSigma,
     this.elevation,
-    this.contentPadding = const EdgeInsets.all(kXh),
-    this.padding = const EdgeInsets.all(kXh),
+    this.padding = const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
+    this.margin = const EdgeInsets.all(kXh),
     this.loadingInfoNotifier,
   });
 
@@ -85,7 +85,7 @@ class _ToastWidgetState extends State<ToastWidget> {
     //debugger();
     result = Container(
       color: widget.background ?? "#333333".toColor().withOpacity(0.6),
-      padding: widget.contentPadding,
+      padding: widget.padding,
       child: result,
     )
         .constrainedMax(maxWidth: math.min(screenWidth, screenHeight))
@@ -102,7 +102,7 @@ class _ToastWidgetState extends State<ToastWidget> {
     }
     //添加屏幕内边距
     result = Padding(
-      padding: widget.padding ?? EdgeInsets.zero,
+      padding: widget.margin ?? EdgeInsets.zero,
       child: result,
     );
     //添加主题样式
