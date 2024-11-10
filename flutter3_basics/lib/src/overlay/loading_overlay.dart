@@ -256,6 +256,7 @@ class LoadingInfo {
 }
 
 /// 通知值改变的桥梁
+/// [ValueListenableBuilder]
 class LoadingValueNotifier extends ValueNotifier<LoadingInfo?>
     with NotifierMixin {
   LoadingValueNotifier(super.value);
@@ -312,14 +313,20 @@ class _LoadingOverlayState extends State<_LoadingOverlay> {
 
   @override
   Widget build(BuildContext context) {
+    final loadingInfoNotifier = widget.loadingInfoNotifier;
+    Widget result = loadingInfoNotifier == null
+        ? widget.builder(context, widget.loadingInfoNotifier?.value)
+        : ValueListenableBuilder(
+            valueListenable: loadingInfoNotifier,
+            builder: (context, value, child) {
+              return value?.builder?.call(context) ?? child ?? empty;
+            },
+            child: widget.builder(context, widget.loadingInfoNotifier?.value),
+          );
     return RouteWillPopScope(
       route: widget.route,
       onWillPop: _onWillPop,
-      child: AbsorbPointer(
-        absorbing: true,
-        child: widget.loadingInfoNotifier?.value?.builder?.call(context) ??
-            widget.builder(context, widget.loadingInfoNotifier?.value),
-      ), // 拦截手势
+      child: AbsorbPointer(absorbing: true, child: result), // 拦截手势
     );
   }
 }

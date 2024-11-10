@@ -24,8 +24,9 @@ part of '../../../flutter3_basics.dart';
   }
 }*/
 
-class ToastWidget extends StatelessWidget {
-  final Widget child;
+class ToastWidget extends StatefulWidget {
+  /// 小部件
+  final Widget? child;
 
   /// 背景颜色
   final Color? background;
@@ -42,20 +43,38 @@ class ToastWidget extends StatelessWidget {
   /// 内容内边距
   final EdgeInsetsGeometry? contentPadding;
 
+  /// 动态构建停止
+  final LoadingValueNotifier? loadingInfoNotifier;
+
   const ToastWidget({
     super.key,
-    required this.child,
+    this.child,
     this.background,
     this.bgBlurSigma,
     this.elevation,
     this.contentPadding = const EdgeInsets.all(kXh),
     this.padding = const EdgeInsets.all(kXh),
+    this.loadingInfoNotifier,
   });
 
   @override
+  State<ToastWidget> createState() => _ToastWidgetState();
+}
+
+class _ToastWidgetState extends State<ToastWidget> {
+  @override
   Widget build(BuildContext context) {
-    Widget result = child;
-    final isLight = background?.isLight ?? false;
+    final loadingInfoNotifier = widget.loadingInfoNotifier;
+    Widget result = loadingInfoNotifier == null
+        ? widget.child ?? empty
+        : ValueListenableBuilder(
+            valueListenable: loadingInfoNotifier,
+            builder: (context, value, child) {
+              return value?.builder?.call(context) ?? child ?? empty;
+            },
+            child: widget.child,
+          );
+    final isLight = widget.background?.isLight ?? false;
     final textColor = isLight
         ? (GlobalConfig.def.globalThemeData?.textTheme.titleSmall?.color ??
             Colors.black87)
@@ -65,25 +84,25 @@ class ToastWidget extends StatelessWidget {
     //添加背景
     //debugger();
     result = Container(
-      color: background ?? "#333333".toColor().withOpacity(0.6),
-      padding: contentPadding,
+      color: widget.background ?? "#333333".toColor().withOpacity(0.6),
+      padding: widget.contentPadding,
       child: result,
     )
         .constrainedMax(maxWidth: math.min(screenWidth, screenHeight))
-        .blur(sigma: bgBlurSigma);
+        .blur(sigma: widget.bgBlurSigma);
     //添加圆角
     result = ClipRRect(
       borderRadius: BorderRadius.circular(kDefaultBorderRadiusXX),
       child: result,
     );
-    if (elevation != null) {
+    if (widget.elevation != null) {
       result = result.elevation(
-        elevation!,
+        widget.elevation!,
       );
     }
     //添加屏幕内边距
     result = Padding(
-      padding: padding ?? EdgeInsets.zero,
+      padding: widget.padding ?? EdgeInsets.zero,
       child: result,
     );
     //添加主题样式

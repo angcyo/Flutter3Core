@@ -55,7 +55,7 @@ enum OverlayPosition {
 
 /// toast通知
 OverlayEntry? toast(
-  Widget msg, {
+  Widget? msg, {
   /// 背景颜色
   Color? background,
 
@@ -67,17 +67,22 @@ OverlayEntry? toast(
 
   /// 显示的动画
   OverlayAnimate? animate,
+
+  /// 动态toast数据监听
+  LoadingValueNotifier? loadingInfoNotifier,
 }) =>
     showNotification(
       (context) {
         return ToastWidget(
           background: background,
           bgBlurSigma: bgBlurSigma,
+          loadingInfoNotifier: loadingInfoNotifier,
           child: msg,
         );
       },
       position: position,
       animate: animate ?? OverlayAnimate.opacity,
+      loadingInfoNotifier: loadingInfoNotifier,
     );
 
 /// [msg] 显示小部件
@@ -88,11 +93,13 @@ OverlayEntry? toastBlur({
   dynamic text,
   double? bgBlurSigma = kM,
   OverlayPosition position = OverlayPosition.center,
+  LoadingValueNotifier? loadingInfoNotifier,
 }) =>
     toast(
       msg ?? "${text ?? ""}".text(),
       bgBlurSigma: bgBlurSigma,
       position: position,
+      loadingInfoNotifier: loadingInfoNotifier,
     );
 
 /// 顶部全屏toast
@@ -226,6 +233,7 @@ OverlayEntry? showNotification(
   OverlayPosition position = OverlayPosition.center,
   OverlayAnimate? animate,
   BuildContext? context,
+  LoadingValueNotifier? loadingInfoNotifier,
 }) {
   return showOverlay(
     (entry, state, context, progress) {
@@ -284,6 +292,7 @@ OverlayEntry? showNotification(
     overlayStateKey: overlayStateKey,
     context: context,
     curve: animate == OverlayAnimate.scale ? Curves.easeOutBack : null,
+    loadingInfoNotifier: loadingInfoNotifier,
   );
 }
 
@@ -304,6 +313,7 @@ OverlayEntry? showOverlay(
   GlobalKey<OverlayAnimatedState>? overlayStateKey,
   Duration? animationDuration,
   Duration? reverseAnimationDuration,
+  LoadingValueNotifier? loadingInfoNotifier,
 }) {
   OverlayState? overlayState;
   if (context == null) {
@@ -357,14 +367,19 @@ OverlayEntry? showOverlay(
         key: key,
         child: OverlayAnimated(
           key: stateKey,
-          builder: (context, progress) => builder(entry!,
-              stateKey.currentState as OverlayAnimatedState, context, progress),
+          builder: (context, progress) => builder(
+            entry!,
+            stateKey.currentState as OverlayAnimatedState,
+            context,
+            progress,
+          ),
           curve: curve,
           animationDuration: animationDuration ?? kNotificationSlideDuration,
           reverseAnimationDuration:
               reverseAnimationDuration ?? kNotificationSlideDuration,
           duration: duration ?? Duration.zero,
           overlayKey: overlayKey,
+          loadingInfoNotifier: loadingInfoNotifier,
         ),
       );
     },

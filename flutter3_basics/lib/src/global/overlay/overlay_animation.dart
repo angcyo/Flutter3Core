@@ -26,6 +26,10 @@ class OverlayAnimated extends StatefulWidget {
 
   final Key overlayKey;
 
+  /// 动态构建, 这里只监听值的改变, 并且重置隐藏动画的执行
+  /// 布局的构建在别的层处理
+  final LoadingValueNotifier? loadingInfoNotifier;
+
   const OverlayAnimated({
     required Key key,
     required this.animationDuration,
@@ -34,6 +38,7 @@ class OverlayAnimated extends StatefulWidget {
     required this.builder,
     required this.duration,
     required this.overlayKey,
+    this.loadingInfoNotifier,
   })  : curve = curve ?? Curves.easeInOut,
         assert(animationDuration >= Duration.zero),
         assert(reverseAnimationDuration >= Duration.zero),
@@ -119,6 +124,7 @@ class OverlayAnimatedState extends State<OverlayAnimated>
 
   @override
   void initState() {
+    widget.loadingInfoNotifier?.addListener(_resetAnimate);
     _controller = AnimationController(
         vsync: this,
         duration: widget.animationDuration,
@@ -144,9 +150,31 @@ class OverlayAnimatedState extends State<OverlayAnimated>
 
   @override
   void dispose() {
+    widget.loadingInfoNotifier?.removeListener(_resetAnimate);
     _controller.dispose();
     _autoHideOperation?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(OverlayAnimated oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //debugger();
+    oldWidget.loadingInfoNotifier?.removeListener(_resetAnimate);
+    widget.loadingInfoNotifier?.removeListener(_resetAnimate);
+    widget.loadingInfoNotifier?.addListener(_resetAnimate);
+  }
+
+  /// 重置隐藏动画的时长, 并且重置动画
+  void _resetAnimate() {
+    if (_autoHideOperation != null) {
+      _autoHideOperation?.cancel();
+      _autoHideOperation =
+          CancelableOperation.fromFuture(Future.delayed(widget.duration))
+            ..value.whenComplete(() {
+              hide();
+            });
+    }
   }
 
   @override
@@ -155,7 +183,9 @@ class OverlayAnimatedState extends State<OverlayAnimated>
       animation: _controller,
       builder: (context, _) {
         return widget.builder(
-            context, widget.curve.transform(_controller.value));
+          context,
+          widget.curve.transform(_controller.value),
+        );
       },
     );
   }
