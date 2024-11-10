@@ -41,11 +41,37 @@ class CanvasFollowManager with CanvasComponentMixin {
   /// [CanvasViewBox.canvasBounds]
   BoxFit fit = BoxFit.contain;
 
+  /// 当设置过画布内容模版时, 所有的[followRect]操作是否都将平移量
+  /// 设置为内容模板的位置?
+  /// [CanvasContentManager.canvasContentFollowRectInner]
+  @implementation
+  bool? enableFollowContentTranslate;
+
+  /// [enableFollowContentTranslate]
+  @implementation
+  bool get enableFollowContentTranslateInner {
+    if (enableFollowContentTranslate != null) {
+      return enableFollowContentTranslate!;
+    }
+    final contentRect =
+        canvasDelegate.canvasContentManager.canvasContentFollowRectInner;
+    if (contentRect == null) {
+      return false;
+    }
+    if (alignment == Alignment.topCenter ||
+        alignment == Alignment.topLeft ||
+        alignment == Alignment.topRight) {
+      return true;
+    }
+    return false;
+  }
+
   //endregion --配置属性--
 
-  /// 跟随场景内容
+  /// 跟随画布内容模版
   /// [restoreDef] 当未指定场景内容时, 是否恢复默认的1:1视图?
-  void followSceneContent({
+  /// [CanvasContentManager.followCanvasContentTemplate]
+  void followCanvasContent({
     bool? restoreDef,
     bool? animate,
     bool? awaitAnimate,
@@ -337,8 +363,32 @@ class CanvasFollowManager with CanvasComponentMixin {
         /*translateMatrix.translateTo(
             offset: targetRect.center - toRect.center + marginOffset);*/
         //debugger();
+
+        final Matrix4 matrix = translateMatrix * scaleMatrix;
+        /*if (enableFollowContentTranslateInner) {
+          //debugger();
+          final contentRect =
+              canvasDelegate.canvasContentManager.canvasContentFollowRectInner;
+          if (contentRect != null) {
+            final originAlignment = this.alignment;
+            if (originAlignment == Alignment.topCenter ||
+                originAlignment == Alignment.topRight) {
+              matrix.setTranslationRaw(
+                matrix.translateX,
+                contentRect.top,
+                matrix.translateZ,
+              );
+            } else if (originAlignment == Alignment.topLeft) {
+              matrix.setTranslationRaw(
+                contentRect.left,
+                contentRect.top,
+                matrix.translateZ,
+              );
+            }
+          }
+        }*/
         canvasViewBox.changeMatrix(
-          translateMatrix * scaleMatrix,
+          matrix,
           animate: animate,
           awaitAnimate: awaitAnimate,
         );

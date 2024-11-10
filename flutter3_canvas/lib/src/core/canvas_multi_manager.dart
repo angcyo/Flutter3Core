@@ -56,7 +56,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool notify = true,
     //--
     bool selectedElement = false,
-    bool followRect = false,
+    bool followPainter = false,
+    bool followContent = false,
   }) {
     CanvasStateData? selectedCanvasState =
         canvasStateList.findFirst((e) => e.isSelected) ??
@@ -67,7 +68,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       notifySelected: notify,
       //--
       selectedElement: selectedElement,
-      followRect: followRect,
+      followPainter: followPainter,
+      followContent: followContent,
     );
   }
 
@@ -81,7 +83,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool? selectedCanvas,
     //--
     bool selectedElement = false,
-    bool followRect = false,
+    bool followPainter = false,
   }) {
     canvasStateList.reset(stateList);
 
@@ -94,7 +96,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       ensureSelectCanvasState(
         notify: notify,
         selectedElement: selectedElement,
-        followRect: followRect,
+        followPainter: followPainter,
       );
     }
   }
@@ -108,7 +110,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool autoSelectedCanvas = true,
     //--
     bool selectedElement = false,
-    bool followRect = false,
+    bool followPainter = false,
+    bool followContent = false,
   }) {
     if (isAllCanvasEmpty) {
       canvasStateList.reset(stateList);
@@ -123,7 +126,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         ensureSelectCanvasState(
           notify: notify,
           selectedElement: selectedElement,
-          followRect: followRect,
+          followPainter: followPainter,
+          followContent: followContent,
         );
       }
     }
@@ -190,7 +194,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     UndoType undoType = UndoType.reset,
     //--
     bool selectedElement = false,
-    bool followRect = false,
+    bool followPainter = false,
+    bool followContent = false,
   }) {
     if (selectedCanvasState == canvasStateData) {
       return false;
@@ -236,17 +241,31 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     // 选中元素/跟随元素
     if (selectedElement) {
       canvasDelegate.canvasElementManager.resetSelectElement(newElements);
-      if (followRect) {
+      if (followContent) {
+        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
+          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
+          followPainter = false;
+        }
+      }
+      if (followPainter) {
         canvasDelegate.followPainter(
             elementPainter: canvasElementManager.selectComponent);
       }
-    } else if (followRect) {
-      ElementGroupPainter painter = ElementGroupPainter();
-      painter.resetChildren(
-          newElements,
-          canvasDelegate.canvasElementManager.canvasElementControlManager
-              .enableResetElementAngle);
-      canvasDelegate.followPainter(elementPainter: painter);
+    } else {
+      if (followContent) {
+        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
+          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
+          followPainter = false;
+        }
+      }
+      if (followPainter) {
+        ElementGroupPainter painter = ElementGroupPainter();
+        painter.resetChildren(
+            newElements,
+            canvasDelegate.canvasElementManager.canvasElementControlManager
+                .enableResetElementAngle);
+        canvasDelegate.followPainter(elementPainter: painter);
+      }
     }
     return true;
   }

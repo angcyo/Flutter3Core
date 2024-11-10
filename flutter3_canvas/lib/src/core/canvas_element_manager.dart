@@ -264,6 +264,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [element] 要添加的元素
   /// [selected] 是否选中对应元素
   /// [followPainter] 是否显示元素的边界
+  /// [followContent] 是否显示画布内容的边界(优先)
   @api
   @supportUndo
   void addElement(
@@ -271,6 +272,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     @dp Offset? offset,
     bool selected = false,
     bool followPainter = false,
+    bool followContent = false,
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
@@ -286,6 +288,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       offset: offset,
       selected: selected,
       followPainter: followPainter,
+      followContent: followContent,
       undoType: undoType,
       selectType: selectType,
     );
@@ -294,8 +297,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 添加一组元素
   /// [list] 要添加的一组元素
   /// [selected] 添加完成后,是否选中
-  /// [followPainter] 移动元素到画布中心
   /// [offset] 所有元素的偏移量
+  /// [followPainter] 移动元素到画布中心
+  /// [followContent] 是否显示画布内容的边界(优先)
   @api
   @supportUndo
   void addElementList(
@@ -303,6 +307,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     @dp Offset? offset,
     bool selected = false,
     bool followPainter = false,
+    bool followContent = false,
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
@@ -334,14 +339,28 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (selected) {
       resetSelectElement(list, selectType: selectType);
+      if (followContent) {
+        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
+          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
+          followPainter = false;
+        }
+      }
       if (followPainter) {
         canvasDelegate.followPainter(elementPainter: selectComponent);
       }
-    } else if (followPainter) {
-      ElementGroupPainter painter = ElementGroupPainter();
-      painter.resetChildren(
-          list, canvasElementControlManager.enableResetElementAngle);
-      canvasDelegate.followPainter(elementPainter: painter);
+    } else {
+      if (followContent) {
+        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
+          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
+          followPainter = false;
+        }
+      }
+      if (followPainter) {
+        ElementGroupPainter painter = ElementGroupPainter();
+        painter.resetChildren(
+            list, canvasElementControlManager.enableResetElementAngle);
+        canvasDelegate.followPainter(elementPainter: painter);
+      }
     }
 
     if (undoType == UndoType.normal) {

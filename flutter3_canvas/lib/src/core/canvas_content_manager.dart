@@ -198,6 +198,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
   /// 跟随画布模板限制的内容
   /// @return true: 跟随成功; false: 跟随失败
+  /// [CanvasFollowManager.followCanvasContent]
   bool followCanvasContentTemplate({
     @dp @sceneCoordinate @indirectProperty Rect? rect,
     bool? animate,
