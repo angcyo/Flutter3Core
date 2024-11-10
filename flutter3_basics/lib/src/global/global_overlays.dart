@@ -96,7 +96,7 @@ OverlayEntry? toastBlur({
   LoadingValueNotifier? loadingInfoNotifier,
 }) =>
     toast(
-      msg ?? "${text ?? ""}".text(),
+      msg ?? text?.toString()?.text(),
       bgBlurSigma: bgBlurSigma,
       position: position,
       loadingInfoNotifier: loadingInfoNotifier,
