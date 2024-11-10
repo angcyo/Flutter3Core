@@ -24,9 +24,10 @@ class ElementMenuControl
   EdgeInsets get menuMargin => canvasStyle.menuMargin ?? EdgeInsets.zero;
 
   /// 创建元素菜单的回调
-  List<ElementMenu> Function(
-          ElementMenuControl menuControl, List<ElementPainter>? children)?
-      onCreateElementMenuAction;
+  List<ElementMenu>? Function(
+    ElementMenuControl menuControl,
+    List<ElementPainter>? children,
+  )? onCreateElementMenuAction;
 
   /// 菜单的偏移量
   @dp

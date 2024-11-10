@@ -480,7 +480,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     final list = elementSelectComponent.children?.clone(true);
     if (list != null) {
       final op = list.removeAll(elements);
-      if (op.isNotEmpty) {
+      if (op != null && op.isNotEmpty) {
         //有选中的元素被删除了
         elementSelectComponent.resetSelectElement(list, selectType);
       }

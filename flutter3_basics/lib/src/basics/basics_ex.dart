@@ -2301,13 +2301,18 @@ extension ListEx<T> on List<T> {
   }
 
   /// 重置列表的元素
-  void reset(Iterable<T> elements) {
+  void reset(Iterable<T>? elements) {
     clear();
-    addAll(elements);
+    if (elements != null) {
+      addAll(elements);
+    }
   }
 
   /// 移除所有元素, 并返回移除的元素
-  List<T> removeAll(Iterable<T> elements) {
+  List<T>? removeAll(Iterable<T>? elements) {
+    if (elements == null || elements.isEmpty) {
+      return null;
+    }
     final result = <T>[];
     for (var element in elements) {
       if (contains(element)) {

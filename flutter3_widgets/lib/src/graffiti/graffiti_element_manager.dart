@@ -200,7 +200,7 @@ class GraffitiElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return;
     }
     final old = elements.clone();
-    final op = elements.removeAll(list);
+    final op = elements.removeAll(list) ?? [];
 
     for (final element in op) {
       element.detachFromGraffitiDelegate(graffitiDelegate);
