@@ -20,7 +20,7 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
   final bool wrapHeight;
 
   /// 对齐方式
-  final AlignmentDirectional alignment;
+  final AlignmentGeometry alignment;
 
   /// 指定最小的宽度, 不指定则使用[child]的宽度
   /// [BoxConstraints.minWidth]
@@ -168,6 +168,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
   }
 
   void _setSize(Size childSize) {
+    //debugger();
     final double width, height;
     if (wrapWidth || constraints.maxWidth == double.infinity) {
       width = childSize.width;
@@ -179,7 +180,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
     } else {
       height = constraints.maxWidth;
     }
-    size = Size(width, height);
+    size = constraints.constrain(Size(width, height));
     _alignChild();
   }
 
@@ -270,7 +271,7 @@ extension WrapContentLayoutEx on Widget {
     bool? wrapBoth,
     bool wrapWidth = false,
     bool wrapHeight = false,
-    AlignmentDirectional alignment = AlignmentDirectional.center,
+    AlignmentGeometry alignment = AlignmentDirectional.center,
     double? minWidth,
     double? minHeight,
   }) =>
@@ -291,7 +292,7 @@ extension WrapContentLayoutEx on Widget {
     bool tightChild = true,
     bool wrapWidth = true,
     bool wrapHeight = false,
-    AlignmentDirectional alignment = AlignmentDirectional.center,
+    AlignmentGeometry alignment = AlignmentDirectional.center,
     double? minWidth,
     double? minHeight,
   }) =>
