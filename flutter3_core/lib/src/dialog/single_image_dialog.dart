@@ -36,6 +36,8 @@ class SingleImageDialog extends StatelessWidget {
                 .stackOf(isDebug
                     ? "${image.width}*${image.height} (${(image.width * image.height * 4).toSizeStr()})${filePath == null ? '' : '\n$filePath'}"
                         .text(textColor: Colors.white, fontSize: 8)
+                        .padding(4, 2)
+                        .shadowDecorated(decorationColor: Colors.black26)
                         .paddingSymmetric(horizontal: kH)
                         .position(left: 0, top: 0)
                     : null))

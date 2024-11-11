@@ -304,6 +304,10 @@ class SvgBuilder {
 
   /// [writeImage]
   /// [x].[y].[width].[height] 支持mm单位, 所以需要字符串
+  ///
+  /// > SVG 2 之前的规范定义了xlink:href属性，现在该属性已被href属性废弃。如果您需要支持早期的浏览器版本，
+  /// > 除了href属性之外，还可以使用已弃用的xlink:href属性作为后备，例如 <use href="some-id" xlink:href="some-id" x="5" y="5" /> 。
+  /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
   void writeBase64Image(
     String? base64Image,
     dynamic width,
@@ -315,8 +319,12 @@ class SvgBuilder {
     String? name,
   }) async {
     if (!isNil(base64Image)) {
-      buffer.write(
-          '<image width="$width" height="$height" xlink:href="$base64Image" ');
+      //SVG 2 之前的规范定义了xlink:href属性，现在该属性已被href属性废弃。如果您需要支持早期的浏览器版本，除了href属性之外，
+      // 还可以使用已弃用的xlink:href属性作为后备，例如 <use href="some-id" xlink:href="some-id" x="5" y="5" /> 。
+      /*buffer.write(
+          '<image width="$width" height="$height" xlink:href="$base64Image" ');*/
+      buffer
+          .write('<image width="$width" height="$height" href="$base64Image" ');
       if (x != null) {
         buffer.write('x="${formatValue(x)}" ');
       }
@@ -465,9 +473,9 @@ class SvgBuilder {
   Future writeGroup(
     FutureOr Function(SvgBuilder subBuilder) action, {
     String? fillRule,
-    bool fill = false,
+    bool? fill,
     Color? fillColor,
-    bool stroke = true,
+    bool? stroke,
     Color? strokeColor,
     @dp double? strokeWidth,
     String? id,
@@ -482,12 +490,12 @@ class SvgBuilder {
       strokeColor: strokeColor,
       strokeWidth: strokeWidth,
     );
+    buffer.write('>');
     final subBuilder = SvgBuilder();
     subBuilder.digits = digits;
     await action(subBuilder);
-    subBuilder.writeEnd();
     buffer.write(subBuilder.build());
-    buffer.write('>');
+    buffer.write(r'</g>');
   }
 
   //endregion --元素--
@@ -518,7 +526,8 @@ class SvgBuilder {
     @dp double? strokeWidth,
   }) {
     if (fill == true) {
-      buffer.write('fill="${(fillColor ?? Colors.black).toHex(includeAlpha: false)}" ');
+      buffer.write(
+          'fill="${(fillColor ?? Colors.black).toHex(includeAlpha: false)}" ');
     } else if (fill == false) {
       buffer.write('fill="none" ');
     }
@@ -526,11 +535,13 @@ class SvgBuilder {
       buffer.write('fill-rule="$fillRule" ');
     }
     if (stroke == true) {
-      buffer
-          .write('stroke="${(strokeColor ?? Colors.black).toHex(includeAlpha: false)}" ');
+      buffer.write(
+          'stroke="${(strokeColor ?? Colors.black).toHex(includeAlpha: false)}" ');
       if (strokeWidth != null) {
         buffer.write('stroke-width="$strokeWidth" ');
       }
+    } else {
+      buffer.write('stroke-width="0" ');
     }
   }
 
@@ -607,12 +618,14 @@ class SvgBuilder {
   /// https://developer.mozilla.org/zh-CN/docs/Web/CSS/transform-function/matrix
   ///
   void writeTransform({
+    //--
     Matrix4? transform,
+    //--
     double? tx, //距离
     double? ty,
     double? sx, //倍数
     double? sy,
-    double? kx, // 弧度
+    double? kx, //弧度
     double? ky,
   }) {
     if (transform == null &&
@@ -627,12 +640,12 @@ class SvgBuilder {
 
     buffer.write('transform="');
     //buffer.write(transform.toMatrixString());
-    tx ??= transform?.translateX;
-    ty ??= transform?.translateY;
-    sx ??= transform?.scaleX;
-    sy ??= transform?.scaleY;
-    kx ??= transform?.skewX;
-    ky ??= transform?.skewY;
+    tx ??= transform?.translateX ?? 0;
+    ty ??= transform?.translateY ?? 0;
+    sx ??= transform?.scaleX ?? 1;
+    sy ??= transform?.scaleY ?? 1;
+    kx ??= transform?.skewX ?? 0;
+    ky ??= transform?.skewY ?? 0;
     buffer.write(
         "matrix(${formatValue(sx)} ${formatValue(ky)} ${formatValue(kx)} ${formatValue(sy)} ${formatValue(tx)} ${formatValue(ty)})");
     buffer.write('" ');
