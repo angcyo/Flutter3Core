@@ -45,13 +45,13 @@ void _wrapSvgPath(
   }
   buffer?.write('<path d="$svgPath" ');
   if (fill) {
-    buffer?.write('fill="${fillColor.toHex(a: false)}" ');
+    buffer?.write('fill="${fillColor.toHex(includeAlpha: false)}" ');
   } else {
     buffer?.write('fill="none" ');
   }
   buffer?.write('fill-rule="evenodd" ');
   if (stroke) {
-    buffer?.write('stroke="${strokeColor.toHex(a: false)}" ');
+    buffer?.write('stroke="${strokeColor.toHex(includeAlpha: false)}" ');
     buffer?.write('stroke-width="$strokeWidth" ');
   }
   buffer?.write('/>');

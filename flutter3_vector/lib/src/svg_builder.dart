@@ -361,7 +361,7 @@ class SvgBuilder {
       buffer.write('font-size="${formatValue(fontSize)}" ');
     }
     if (color != null) {
-      buffer.write('fill="${color.toHex(a: false)}" ');
+      buffer.write('fill="${color.toHex(includeAlpha: false)}" ');
     }
     if (fontFamily != null) {
       buffer.write('font-family="$fontFamily" ');
@@ -417,7 +417,7 @@ class SvgBuilder {
         buffer.write('font-size="${formatValue(fontSize)}" ');
       }
       if (color != null) {
-        buffer.write('fill="${color.toHex(a: false)}" ');
+        buffer.write('fill="${color.toHex(includeAlpha: false)}" ');
       }
       if (fontFamily != null) {
         buffer.write('font-family="$fontFamily" ');
@@ -518,7 +518,7 @@ class SvgBuilder {
     @dp double? strokeWidth,
   }) {
     if (fill == true) {
-      buffer.write('fill="${(fillColor ?? Colors.black).toHex(a: false)}" ');
+      buffer.write('fill="${(fillColor ?? Colors.black).toHex(includeAlpha: false)}" ');
     } else if (fill == false) {
       buffer.write('fill="none" ');
     }
@@ -527,7 +527,7 @@ class SvgBuilder {
     }
     if (stroke == true) {
       buffer
-          .write('stroke="${(strokeColor ?? Colors.black).toHex(a: false)}" ');
+          .write('stroke="${(strokeColor ?? Colors.black).toHex(includeAlpha: false)}" ');
       if (strokeWidth != null) {
         buffer.write('stroke-width="$strokeWidth" ');
       }

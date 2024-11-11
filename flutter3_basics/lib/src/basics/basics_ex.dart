@@ -583,17 +583,20 @@ extension ColorEx on Color {
 
   /// 返回小写的十六进制字符串
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
-  /// [a] 是否包含透明通道
-  String toHex({bool leadingHashSign = true, bool a = true}) =>
+  /// [leadingHashSign] 是否包含#
+  /// [includeAlpha] 是否包含透明通道
+  /// [toHexColor]
+  String toHex({bool leadingHashSign = true, bool includeAlpha = true}) =>
       '${leadingHashSign ? '#' : ''}'
-      '${a ? alpha.toRadixString(16).padLeft(2, '0') : ""}'
+      '${includeAlpha ? alpha.toRadixString(16).padLeft(2, '0') : ""}'
       '${red.toRadixString(16).padLeft(2, '0')}'
       '${green.toRadixString(16).padLeft(2, '0')}'
       '${blue.toRadixString(16).padLeft(2, '0')}';
 
   /// 返回#ff00ff00
-  String toHexColor([bool leadingHashSign = true, bool a = true]) =>
-      toHex(leadingHashSign: leadingHashSign, a: a);
+  /// [toHex]
+  String toHexColor([bool leadingHashSign = true, bool includeAlpha = true]) =>
+      toHex(leadingHashSign: leadingHashSign, includeAlpha: includeAlpha);
 
   /// 判断当前颜色是否是暗色
   /// [Color.computeLuminance]
