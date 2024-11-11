@@ -208,10 +208,13 @@ class SvgBuilder {
     Matrix4? transform,
     String? id,
     String? name,
+    //--
+    @dp double? pathStep,
+    @mm double? tolerance,
   }) {
     if (path != null) {
       writeSvgPath(
-        path.toSvgPathString(),
+        path.toSvgPathString(pathStep: pathStep, tolerance: tolerance),
         fillRule: path.fillType == PathFillType.evenOdd ? 'evenodd' : 'nonzero',
         fill: fill,
         fillColor: fillColor,
