@@ -34,8 +34,23 @@ class TextElementPainter extends ElementPainter {
     //paintTextPainter = textPainter;
   }
 
+  /// 绘制前, 更新文本颜色
+  @override
+  void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
+    super.onPaintingSelfBefore(canvas, paintMeta);
+    onSelfUpdateTextPainter();
+  }
+
+  /// 绘制前, 更新文本颜色
+  /// [onPaintingSelfBefore]
+  @overridePoint
+  void onSelfUpdateTextPainter() {
+    textPainter?.updateTextColor(paint.color);
+  }
+
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
+    //debugger();
     paintItTextPainter(canvas, paintMeta, textPainter);
     super.onPaintingSelf(canvas, paintMeta);
   }
@@ -125,6 +140,14 @@ abstract class BaseTextPainter {
   @overridePoint
   void painterText(Canvas canvas, Offset offset);
 
+  /// 动态更新文本颜色
+  @api
+  @overridePoint
+  void updateTextColor(Color textColor) {
+    //debugger();
+    this.textColor = textColor;
+  }
+
   /// 创建画笔
   /// [Paint]
   Paint createBasePaint() => Paint()
@@ -153,6 +176,20 @@ abstract class BaseTextPainter {
           (lineSpacing != null ? (1 + lineSpacing! / fontSize) : null),
       forceStrutHeight: forceStrutHeight,
     );
+  }
+
+  /// 更新[TextPainter]对应的文本颜色
+  /// [createTextPainter]
+  static void updateTextPainterColor(TextPainter? painter, Color textColor) {
+    final text = painter?.text;
+    if (text != null) {
+      final old = text.style?.foreground?.color;
+      if (old != textColor) {
+        text.style?.foreground?.color = textColor;
+        painter?.markNeedsLayout();
+        painter?.layout();
+      }
+    }
   }
 
   /// 通过给定的属性, 创建对应的[TextPainter]文本绘制对象
@@ -244,6 +281,12 @@ class NormalTextPainter extends BaseTextPainter {
   /// 垂直绘制时, 需要进行的旋转矩阵
   @autoInjectMark
   Matrix4? paintMatrix;
+
+  @override
+  void updateTextColor(Color textColor) {
+    super.updateTextColor(textColor);
+    BaseTextPainter.updateTextPainterColor(_textPainter, textColor);
+  }
 
   /// 初始化文本绘制对象
   @initialize
@@ -478,6 +521,18 @@ class SingleCharTextPainter extends BaseTextPainter {
     isUnderline = oldIsUnderline;
     isLineThrough = oldIsLineThrough;
     return painter;
+  }
+
+  @override
+  void updateTextColor(Color textColor) {
+    super.updateTextColor(textColor);
+    //debugger();
+    charPainterList?.forEach((line) {
+      for (final char in line) {
+        //debugger();
+        BaseTextPainter.updateTextPainterColor(char.charPainter, textColor);
+      }
+    });
   }
 
   /// 初始化文本绘制对象
@@ -723,6 +778,7 @@ class CharTextPainter {
         }
         return true;
       }());
+      //debugger();
       if (isInCurve) {
         charPainter?.paint(canvas, offset);
       } else {

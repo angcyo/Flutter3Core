@@ -454,6 +454,7 @@ class ElementPainter extends IPainter
         paintProperty?.operateMatrix,
         () {
           //painter.paint(canvas, Offset.zero);
+          //debugger();
           painter.painterText(canvas, Offset.zero);
         },
       );
