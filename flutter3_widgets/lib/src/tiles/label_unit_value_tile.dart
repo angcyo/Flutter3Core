@@ -27,6 +27,9 @@ class LabelUnitValueTile extends StatelessWidget with LabelMixin, TileMixin {
   final IUnit? unit;
   final bool showUnit;
 
+  /// [valueText]的背景色
+  final Color? valueTextBgColor;
+
   //--
 
   final double gap;
@@ -44,6 +47,7 @@ class LabelUnitValueTile extends StatelessWidget with LabelMixin, TileMixin {
     this.valueText,
     this.unit,
     this.showUnit = true,
+    this.valueTextBgColor,
     //--
     this.gap = 2,
   });
@@ -58,12 +62,16 @@ class LabelUnitValueTile extends StatelessWidget with LabelMixin, TileMixin {
       labelTextStyle: labelStyle,
     );
     //value
-    Widget? value = buildTextWidget(
-      context,
-      text: (valueText == null && this.value == null)
-          ? null
-          : valueText ?? unit?.formatFromDp(this.value ?? 0, showSuffix: false),
-    );
+    Widget? value = buildTextWidget(context,
+        text: (valueText == null && this.value == null)
+            ? null
+            : valueText ??
+                unit?.formatFromDp(this.value ?? 0, showSuffix: false),
+        textStyle: valueTextBgColor == null
+            ? null
+            : TextStyle(
+                background: Paint()..color = valueTextBgColor!,
+              ));
     //unit
     Widget? suffix = showUnit
         ? buildLabelWidget(

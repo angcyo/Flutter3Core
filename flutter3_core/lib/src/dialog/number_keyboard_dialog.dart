@@ -124,7 +124,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     super.initState();
     final globalTheme = GlobalTheme.of(context);
     _controller
-      ..isClearAll = true
+      ..isFirstClearAll = true
       ..numType = widget._numType
       ..maxDigits = widget.maxDigits
       ..minValue = widget.minValue
@@ -184,7 +184,8 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
           if (isNullOrEmpty(_controller.numberText))
             widget.hintText?.text(style: numberHintStyle),
           _controller.numberText.text(style: numberValueStyle).container(
-              color: _controller.isClearAll ? globalTheme.accentColor : null),
+              color:
+                  _controller.isFirstClearAll ? globalTheme.accentColor : null),
         ].stack()?.expanded(),
         rangeText?.text(style: rangeHintStyle),
       ]
@@ -194,7 +195,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
             padding: const EdgeInsets.symmetric(vertical: kX, horizontal: kX),
           )
           .click(() {
-        _controller.isClearAll = !_controller.isClearAll;
+        _controller.isFirstClearAll = !_controller.isFirstClearAll;
         updateState();
       }),
       keyboard.backgroundColor(globalTheme.whiteSubBgColor),
@@ -431,8 +432,8 @@ class NumberKeyboardInputController {
   /// 当前输入的文本
   String numberText = "";
 
-  /// 是否清空所有
-  bool isClearAll = false;
+  /// 首次输入, 是否要清空所有.
+  bool isFirstClearAll = false;
 
   /// 是否支持小数
   bool get isSupportDecimal => numType == NumType.d;
@@ -493,7 +494,7 @@ class NumberKeyboardInputController {
       if (context != null) {
         Feedback.forLongPress(context);
       }
-      isClearAll = true;
+      isFirstClearAll = true;
     }
     return null;
   }
@@ -502,13 +503,13 @@ class NumberKeyboardInputController {
   @callPoint
   void onKeyboardInput(String value, NumberKeyboardType type) {
     //debugger();
-    if (isClearAll || numberText.toIntOrNull() == 0) {
+    if (isFirstClearAll || numberText.toIntOrNull() == 0) {
       if (type == NumberKeyboardType.decimal) {
         numberText = "0";
       } else {
         numberText = "";
       }
-      isClearAll = false;
+      isFirstClearAll = false;
     }
 
     if (type == NumberKeyboardType.backspace) {
