@@ -54,6 +54,9 @@ abstract class IUnit {
   static const pt = PtUnit();
   static const inch = InchUnit();
 
+  /// PC端mm单位
+  static const pcmm = PcMmUnit();
+
   /// 正常的刻度
   static const axisTypeNormal = 0x1;
 
@@ -300,6 +303,44 @@ class MmUnit extends IUnit {
   @override
   double getAxisGap(int index, double scale) =>
       baseAxisGap(index, scale, 1.toDpFromMm());
+}
+
+/// 以 Windows 下的 96 dpi 来计算
+/// mm = px * 96 / 25.4
+/// mm = px * 3.78
+/// 基本上 1毫米 约等于 3.78像素
+@mm
+class PcMmUnit extends IUnit {
+  @override
+  String get suffix => "mm";
+
+  const PcMmUnit();
+
+  @override
+  String format(
+    num value, {
+    bool showSuffix = true,
+    bool removeZero = true,
+    bool ensureInt = false,
+    int? fractionDigits,
+    String space = " ",
+  }) {
+    return "${value.toDigits(
+      digits: fractionDigits ?? digits,
+      removeZero: removeZero,
+      ensureInt: ensureInt,
+    )}${showSuffix ? space + suffix : ''}";
+  }
+
+  @override
+  double toPx(num value) => value * 96 * sInchesPerMM;
+
+  @override
+  double toUnit(num value) => value / 96 / sInchesPerMM;
+
+  @override
+  double getAxisGap(int index, double scale) =>
+      baseAxisGap(index, scale, 1.toDpFromMm(IUnit.pcmm));
 }
 
 @pt

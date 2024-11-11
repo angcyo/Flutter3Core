@@ -413,14 +413,26 @@ extension ImageEx on UiImage {
 
   /// 缩放图片
   /// [transformSync]
-  Future<UiImage> scale({double sx = 1, double sy = 1}) {
-    return transform(createScaleMatrix(sx: sx, sy: sy));
+  Future<UiImage> scale({
+    //--
+    double? scale,
+    double sx = 1,
+    double sy = 1,
+    //--
+    Matrix4? scaleMatrix,
+  }) {
+    return transform(
+        scaleMatrix ?? createScaleMatrix(sx: scale ?? sx, sy: scale ?? sy));
   }
 
   /// 缩放图片
   /// [transformSync]
-  UiImage scaleSync({double sx = 1, double sy = 1}) {
-    return transformSync(createScaleMatrix(sx: sx, sy: sy));
+  UiImage scaleSync({
+    double sx = 1,
+    double sy = 1,
+    Matrix4? scaleMatrix,
+  }) {
+    return transformSync(scaleMatrix ?? createScaleMatrix(sx: sx, sy: sy));
   }
 
   //--

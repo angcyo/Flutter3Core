@@ -6,7 +6,7 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 图片元素绘制对象
 class ImageElementPainter extends ElementPainter {
-  /// 当前绘制的图片
+  /// 当前绘制的图片, 此图片有可能进行了滤镜处理
   UiImage? painterImage;
 
   /// 获取操作后的图片

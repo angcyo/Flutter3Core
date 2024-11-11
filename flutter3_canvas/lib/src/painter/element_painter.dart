@@ -1417,6 +1417,9 @@ class PaintProperty with EquatableMixin {
   }
 
   /// 所有属性的矩阵
+  /// final m' = m1 * m2;
+  ///  - m1 中的缩放值, 会影响 m2 中的平移值
+  ///  - m2 中的缩放值, 不会影响 m1 中的平移值
   Matrix4 get operateMatrix =>
       translateMatrix * rotateMatrix * scaleMatrix * flipMatrix * skewMatrix;
 

@@ -34,23 +34,26 @@ class SvgBuilder {
   /// mac/windows上 1mm->3.7777px
   /// 1mm = 1/25.4 * 96 px ≈ 3.779527559 px
   ///
-  void writeViewBox(@dp Rect bounds, {bool? useMmBounds}) {
+  void writeViewBox(@dp Rect bounds, {IUnit? unit}) {
     buffer.write(svgHeader);
     buffer.write('<svg xmlns="http://www.w3.org/2000/svg" ');
     buffer.write('xmlns:xlink="http://www.w3.org/1999/xlink" ');
     buffer.write('xmlns:acy="https://www.github.com/angcyo" ');
-    if (useMmBounds == true) {
-      buffer.write(
-          'viewBox="${formatValue(bounds.left.toMmFromDp())} ${formatValue(bounds.top.toMmFromDp())} ${formatValue(bounds.width.toMmFromDp())} ${formatValue(bounds.height.toMmFromDp())}" ');
-    } else {
-      buffer.write(
-          'viewBox="${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}" ');
-    }
+
+    //--
     buffer.write(
-        'left="${formatValue(bounds.left.toMmFromDp())}mm" top="${formatValue(bounds.top.toMmFromDp())}mm" ');
+        'viewBox="${formatValue(bounds.left.toUnitFromDp(unit))} ${formatValue(bounds.top.toUnitFromDp(unit))} '
+        '${formatValue(bounds.width.toUnitFromDp(unit))} ${formatValue(bounds.height.toUnitFromDp(unit))}" ');
+
+    //--
+    buffer.write(
+        'x="${formatValue(bounds.left.toMmFromDp())}mm" y="${formatValue(bounds.top.toMmFromDp())}mm" ');
     buffer.write(
         'width="${formatValue(bounds.width.toMmFromDp())}mm" height="${formatValue(bounds.height.toMmFromDp())}mm" ');
-    buffer.write('acy:author="angcyo" acy:version="1">');
+
+    //--
+    buffer.write(
+        'acy:author="angcyo" acy:version="1" acy:build="${nowTimeString()}">');
   }
 
   /// 结束
@@ -260,6 +263,8 @@ class SvgBuilder {
   /// 写入[image]图片元素
   /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element/image
   ///
+  /// 所有坐标系, 默认都是以[viewBox]为参考
+  ///
   /// ## 属性
   /// - x：图像水平方向上到原点的距离。
   /// - y：图像竖直方向上到原点的距离。
@@ -277,24 +282,32 @@ class SvgBuilder {
   /// </svg>
   /// """
   /// ```
+  /// [scaleImage] 图片放大倍数, 1.0: 不放大; 10: 放大10倍;
+  /// 在使用[scaleImage]属性时, [image]必须要是[transform]后的图片, 否则具有缩放属性,宽高会对不上
   ///
   Future writeImage(
     UiImage? image, {
-    dynamic x,
-    dynamic y,
-    dynamic width,
-    dynamic height,
     Matrix4? transform,
     String? id,
     String? name,
+    double? scaleImage,
   }) async {
     if (image != null) {
+      if (scaleImage != null) {
+        //debugger();
+        //需要缩放图片
+        final scaleMatrix = createScaleMatrix(sx: scaleImage, sy: scaleImage);
+        image = await image.scale(scaleMatrix: scaleMatrix);
+
+        //矩阵反向缩放
+        final scaleInvertMatrix =
+            createScaleMatrix(sx: 1 / scaleImage, sy: 1 / scaleImage);
+        transform ??= Matrix4.identity();
+        transform = transform * scaleInvertMatrix;
+      }
+      final base64 = await image.toBase64();
       writeBase64Image(
-        await image.toBase64(),
-        width ?? formatValue(image.width) ?? "0",
-        height ?? formatValue(image.height) ?? "0",
-        x: x,
-        y: y,
+        base64,
         transform: transform,
         id: id,
         name: name,
@@ -303,17 +316,19 @@ class SvgBuilder {
   }
 
   /// [writeImage]
-  /// [x].[y].[width].[height] 支持mm单位, 所以需要字符串
+  /// [x].[y].[width].[height] 支持mm单位, 所以需要字符串. 可以不指定.
+  /// [x].[y] 不指定时, 则使用[transform]中的`tx/ty`值
+  /// [transform] 会影响[x].[y].[width].[height]的数值
   ///
   /// > SVG 2 之前的规范定义了xlink:href属性，现在该属性已被href属性废弃。如果您需要支持早期的浏览器版本，
   /// > 除了href属性之外，还可以使用已弃用的xlink:href属性作为后备，例如 <use href="some-id" xlink:href="some-id" x="5" y="5" /> 。
   /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
   void writeBase64Image(
-    String? base64Image,
-    dynamic width,
-    dynamic height, {
+    String? base64Image, {
     dynamic x,
     dynamic y,
+    dynamic width,
+    dynamic height,
     Matrix4? transform,
     String? id,
     String? name,
@@ -323,8 +338,15 @@ class SvgBuilder {
       // 还可以使用已弃用的xlink:href属性作为后备，例如 <use href="some-id" xlink:href="some-id" x="5" y="5" /> 。
       /*buffer.write(
           '<image width="$width" height="$height" xlink:href="$base64Image" ');*/
-      buffer
-          .write('<image width="$width" height="$height" href="$base64Image" ');
+      buffer.write('<image href="$base64Image" ');
+      //--
+      if (width != null) {
+        buffer.write('width="${formatValue(width)}" ');
+      }
+      if (height != null) {
+        buffer.write('height="${formatValue(height)}" ');
+      }
+      //--
       if (x != null) {
         buffer.write('x="${formatValue(x)}" ');
       }
