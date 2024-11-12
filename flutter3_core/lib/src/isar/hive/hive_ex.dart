@@ -23,13 +23,17 @@ String hiveBoxPath = "";
 String defHiveBoxFilePath = "";
 
 /// 获取所有
-Map<String, dynamic> hiveAll([Box? box]) {
-  box ??= _hiveBox;
-  Map<String, dynamic> map = {};
-  for (var key in box.keys) {
-    map[key] = box.get(key);
+Map<String, dynamic>? hiveAll([Box? box]) {
+  try {
+    box ??= _hiveBox;
+    Map<String, dynamic> map = {};
+    for (var key in box.keys) {
+      map[key] = box.get(key);
+    }
+    return map;
+  } catch (e) {
+    return null;
   }
-  return map;
 }
 
 extension HiveStringEx on String {

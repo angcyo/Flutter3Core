@@ -123,7 +123,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 全局的上下文, 在[WidgetsApp]下
   BuildContext? globalAppContext;
 
-  ///
+  /// 全局的上下文[globalAppContext]->[globalTopContext]
   BuildContext? get globalContext => globalAppContext ?? globalTopContext;
 
   //region ThemeData

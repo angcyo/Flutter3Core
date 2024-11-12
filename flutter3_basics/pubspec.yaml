@@ -44,6 +44,7 @@ dependencies:
   # https://github.com/dart-lang/async
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/meta
+  # async is pinned to version 2.11.0 by flutter_test from the flutter SDK.
   async: ^2.11.0
 
   # https://pub.dev/packages/material_color_utilities
@@ -59,11 +60,11 @@ dependencies:
   # https://pub.dev/packages/sprintf
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/fixnum
-  uuid: ^4.4.2
+  uuid: ^4.5.1
   # https://pub.dev/packages/crypto
-  crypto: ^3.0.3
+  crypto: ^3.0.6
   # https://pub.dev/packages/fixnum
-  fixnum: ^1.1.0
+  fixnum: ^1.1.1
 
   # https://pub.dev/packages/nil
   nil: ^1.1.1
@@ -77,7 +78,7 @@ dependencies:
 
   # https://pub.dev/packages/matrix4_transform
   # https://github.com/marcglasberg/matrix4_transform
-  matrix4_transform: ^3.0.1
+  matrix4_transform: ^4.0.1
 
   # https://pub.dev/packages/dartx
   # https://github.com/simc/dartx
@@ -100,14 +101,14 @@ dependencies:
   # https://pub.dev/packages/flutter_isolate
   # https://pub.dev/packages/uuid
   # `flutterCompute`
-  flutter_isolate: ^2.0.4
+  flutter_isolate: ^2.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   # https://pub.dev/packages/flutter_gen
-  flutter_gen: ^5.6.0
+  flutter_gen: ^5.8.0
   # https://pub.dev/packages/build_runner
   # https://pub.dev/packages/web_socket_channel # async, crypto, stream_channel, web
   # https://pub.dev/packages/stream_channel

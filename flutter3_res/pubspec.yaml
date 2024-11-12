@@ -24,7 +24,7 @@ dependencies:
   clock: any
 
   # https://pub.dev/packages/bidi
-  bidi: ^2.0.10
+  bidi: ^2.0.12
 
 dev_dependencies:
   flutter_test:

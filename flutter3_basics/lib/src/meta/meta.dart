@@ -84,6 +84,18 @@ class WS {
 
 const ws = WS();
 
+/// 警告
+class Warn {
+  final String des;
+
+  const Warn([this.des = '警告']);
+
+  @override
+  String toString() {
+    return 'Warn';
+  }
+}
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');

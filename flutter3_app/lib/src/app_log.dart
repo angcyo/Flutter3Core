@@ -16,7 +16,7 @@ Future shareAppLog([String? name]) async {
   list.addAll(tempShareLogPathList);
   list.addAll(globalShareLogPathList);
   list.zip(output, action: (encoder) {
-    encoder.writeStringSync(hiveAll().toJsonString(), 'hive.json');
+    encoder.writeStringSync(hiveAll()?.toJsonString(), 'hive.json');
   }).ignore();
   assert(() {
     final log =

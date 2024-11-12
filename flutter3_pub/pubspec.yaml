@@ -34,7 +34,7 @@ dependencies:
   # https://pub.dev/packages/markdown
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  flutter_markdown: ^0.7.3+1
+  flutter_markdown: ^0.7.4+1
   # https://pub.dev/packages/markdown
   # https://github.com/dart-lang/markdown
   # https://pub.dev/packages/args
@@ -50,7 +50,7 @@ dependencies:
   # https://pub.dev/packages/url_launcher_macos
   # https://pub.dev/packages/url_launcher_web
   # https://pub.dev/packages/url_launcher_windows
-  url_launcher: ^6.3.0
+  url_launcher: ^6.3.1
 
   # https://pub.dev/packages/file_picker
   # https://github.com/miguelpruivo/flutter_file_picker
@@ -58,7 +58,7 @@ dependencies:
   # https://pub.dev/packages/plugin_platform_interface
   # https://pub.dev/packages/path
   # https://pub.dev/packages/win32
-  file_picker: ^8.1.1
+  file_picker: ^8.1.4
 
   # https://pub.dev/packages/archive
   # https://github.com/brendan-duncan/archive

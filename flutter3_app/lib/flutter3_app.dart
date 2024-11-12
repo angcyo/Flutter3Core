@@ -36,16 +36,16 @@ export 'src/mode/app_setting_bean.dart';
 export 'src/mode/app_version_bean.dart';
 export 'src/mode/build_config.dart';
 
+part 'src/android_app.dart';
 part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';
 part 'src/app_log.dart';
 part 'src/app_notifications.dart';
 part 'src/app_swiper_ex.dart';
-part 'src/android_app.dart';
 part 'src/mobile_ex.dart';
 part 'src/pages/app_update_dialog.dart';
-part 'src/receive/receive_intent.dart';
 part 'src/platform/permissions.dart';
+part 'src/receive/receive_intent.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -110,14 +110,14 @@ Future runGlobalApp(
 
   // FlutterError.onError
   wrapFlutterOnError((FlutterErrorDetails details) {
-    "Flutter发生一个错误↓".writeToErrorLog();
+    "Flutter发生一个错误[${details.exception.runtimeType}]↓".writeToErrorLog();
     details.exceptionAsString().writeToErrorLog();
     "错误详情↓\n${dumpErrorToString(details)}".writeToErrorLog();
     //FlutterError.dumpErrorToConsole(details);
   });
   // PlatformDispatcher.onError
   wrapPlatformDispatcherOnError((error, stack) {
-    "Platform发生一个错误↓".writeToErrorLog();
+    "Platform发生一个错误[${error.runtimeType}]↓".writeToErrorLog();
     final details = FlutterErrorDetails(exception: error, stack: stack);
     details.exceptionAsString().writeToErrorLog();
     "错误详情↓\n${dumpErrorToString(details)}".writeToErrorLog();
@@ -145,11 +145,13 @@ Future runGlobalApp(
     //debug info
     _initDebugLastInfo();
 
-    //--
+    //--before
     await beforeAction?.call();
     //open isar
     await initIsar();
+    //app
     runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
+    //--after
     await afterAction?.call();
 
     //--
@@ -161,7 +163,7 @@ Future runGlobalApp(
   }
 
   return runZonedGuarded(realRun, (error, stack) {
-    "Zoned未捕捉的异常:↓".writeToErrorLog();
+    "Zoned未捕捉的异常[${error.runtimeType}]:↓".writeToErrorLog();
     error.writeToErrorLog(level: L.none);
     stack.toString().writeToErrorLog(level: L.none);
     assert(() {

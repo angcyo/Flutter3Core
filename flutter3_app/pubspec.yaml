@@ -31,7 +31,7 @@ dependencies:
   # https://pub.dev/packages/package_info_plus_platform_interface
   # https://pub.dev/packages/web
   # https://pub.dev/packages/win32
-  package_info_plus: ^8.0.2
+  package_info_plus: ^8.1.1
 
   # https://pub.dev/packages/device_info_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/device_info_plus/device_info_plus
@@ -42,7 +42,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/win32
   # https://pub.dev/packages/win32_registry
-  device_info_plus: ^10.1.2
+  device_info_plus: ^11.1.1
 
   # https://pub.dev/packages/share_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/share_plus/share_plus
@@ -53,7 +53,7 @@ dependencies:
   # https://pub.dev/packages/file
   # https://pub.dev/packages/ffi
   # https://pub.dev/packages/win32
-  share_plus: ^10.0.2
+  share_plus: ^10.1.2
 
   # https://pub.dev/packages/flutter_local_notifications
   # https://github.com/MaikuB/flutter_local_notifications
@@ -63,7 +63,7 @@ dependencies:
   # https://pub.dev/packages/flutter_local_notifications_platform_interface
   # https://pub.dev/packages/timezone
   # ANDROID IOS LINUX MACOS
-  flutter_local_notifications: ^17.2.3
+  flutter_local_notifications: ^18.0.1
 
   # https://pub.dev/packages/flutter_animate
   # https://github.com/gskinner/flutter_animate

@@ -70,19 +70,19 @@ class L {
   static const int error = 5;
 
   /// 是否显示日志时间
-  static bool SHOW_TIME = true;
+  static bool kShowTime = true;
 
   /// 日志时间格式
-  static String TIME_PATTERN = "HH:mm:ss.SSS";
+  static String kTimePattern = "HH:mm:ss.SSS";
 
   /// 是否显示日志等级字符串
-  static bool SHOW_LEVEL = true;
+  static bool kShowLevel = true;
 
   /// 是否显示日志tag
-  static bool SHOW_TAG = true;
+  static bool kShowTag = true;
 
   /// tag
-  static String TAG = 'angcyo';
+  static String kTag = 'angcyo';
 
   /// 日志输出函数
   LPrint? filePrint;
@@ -239,9 +239,9 @@ class L {
     bool? showTag,
     int forward = 3,
   }) {
-    final time = showTime ?? SHOW_TIME ? '${nowTimeString(TIME_PATTERN)} ' : '';
-    final levelStr = showLevel ?? SHOW_LEVEL ? _levelStr(level) : '';
-    final tagStr = showTag ?? SHOW_TAG ? '[${tag ?? TAG}] ' : '';
+    final time = showTime ?? kShowTime ? '${nowTimeString(kTimePattern)} ' : '';
+    final levelStr = showLevel ?? kShowLevel ? _levelStr(level) : '';
+    final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}] ' : '';
     final msgType =
         object?.runtimeType == null ? '' : '[${object?.runtimeType}]';
     final msg = object?.toString() ?? 'null';
@@ -266,7 +266,7 @@ class L {
       //print("child_background_widget.dart:29:7");
       debugPrint(log);
 
-      //额外的输出
+      //外部输出
       printLog(log);
     }
 

@@ -32,7 +32,7 @@ dependencies:
   # https://pub.dev/packages/mime
   # https://pub.dev/packages/path
   # https://pub.dev/packages/shelf
-  shelf_static: ^1.1.2
+  shelf_static: ^1.1.3
   #shelf_flutter_asset: ^0.0.4
 
   # https://pub.dev/packages/shelf_router
@@ -72,7 +72,7 @@ dependencies:
 
   # https://pub.dev/packages/web
   # mobile_scanner ^5.1.1 requires web ^0.5.1.
-  web: ^1.0.0
+  web: any #in flutter3_core
 
   # https://pub.dev/packages/network_info_plus
   # https://pub.dev/packages/collection
@@ -81,13 +81,14 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
   # 需要对应的权限
-  network_info_plus: ^6.1.0
+  network_info_plus: ^6.1.1
 
   # https://pub.dev/packages/udp
   udp: ^5.0.3
 
 dependency_overrides:
-  collection: ^1.19.0 # flutter3_shelf
+  #in flutter3_shelf
+  collection: ^1.19.0
 
 dev_dependencies:
   flutter_test:

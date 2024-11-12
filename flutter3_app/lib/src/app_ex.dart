@@ -18,6 +18,10 @@ part of '../flutter3_app.dart';
 /// String version = packageInfo.version;            //versionName
 /// String buildNumber = packageInfo.buildNumber;    //versionCode
 /// ```
+/// # 在Release模式下运行会报错
+/// ```
+/// Unhandled Exception: MissingPluginException(No implementation found for method getAll on channel dev.fluttercommunity.plus/package_info)
+/// ```
 Future<PackageInfo> get $platformPackageInfo async {
   final packageInfo = await PackageInfo.fromPlatform();
   _platformPackageInfoCache = packageInfo;
@@ -34,7 +38,8 @@ PackageInfo? get $platformPackageInfoCache {
 PackageInfo? _platformPackageInfoCache;
 
 /// app版本名称
-Future<String> get $appVersionName async => (await $platformPackageInfo).version;
+Future<String> get $appVersionName async =>
+    (await $platformPackageInfo).version;
 
 /// app版本号
 Future<String> get $appVersionCode async =>
@@ -48,17 +53,29 @@ Future<String> get $appPlatformPackageName async =>
 
 /// https://pub.dev/packages/device_info_plus
 /// 获取对应平台的设备信息
-Future<BaseDeviceInfo> get $platformDeviceInfo async => isAndroid
-    ? await DeviceInfoPlugin().androidInfo
-    : isIos
-        ? await DeviceInfoPlugin().iosInfo
-        : isLinux
-            ? await DeviceInfoPlugin().linuxInfo
-            : isMacOs
-                ? await DeviceInfoPlugin().macOsInfo
-                : isWindows
-                    ? await DeviceInfoPlugin().windowsInfo
-                    : await DeviceInfoPlugin().webBrowserInfo;
+Future<BaseDeviceInfo> get $platformDeviceInfo async {
+  final deviceInfo = isAndroid
+      ? await DeviceInfoPlugin().androidInfo
+      : isIos
+          ? await DeviceInfoPlugin().iosInfo
+          : isLinux
+              ? await DeviceInfoPlugin().linuxInfo
+              : isMacOs
+                  ? await DeviceInfoPlugin().macOsInfo
+                  : isWindows
+                      ? await DeviceInfoPlugin().windowsInfo
+                      : await DeviceInfoPlugin().webBrowserInfo;
+  _platformDeviceInfoCache = deviceInfo;
+  return deviceInfo;
+}
+
+/// 缓存
+BaseDeviceInfo? get $platformDeviceInfoCache {
+  $platformDeviceInfo.ignore();
+  return _platformDeviceInfoCache;
+}
+
+BaseDeviceInfo? _platformDeviceInfoCache;
 
 /// 获取Android平台的版本
 /// 非Android平台返回null

@@ -17,7 +17,7 @@ dependencies:
   # https://pub.dev/packages/mobile_scanner
   # 基于 MLKit 的 Flutter 通用扫描仪。在 Android 上使用 CameraX，在 iOS 上使用 AVFoundation。
   # mobile_scanner ^5.1.1 requires web ^0.5.1.
-  mobile_scanner: ^5.2.1
+  mobile_scanner: ^6.0.2
 #  mobile_scanner:
 #    git:
 #      url: git@github.com:FlutterStudioIst/mobile_scanner.git

@@ -19,7 +19,7 @@ dependencies:
   # https://github.com/kevmoo/qr.dart
   # https://pub.dev/packages/meta
   # https://kevmoo.github.io/qr.dart/
-  qr: ^3.0.1
+  qr: ^3.0.2
 
   # https://pub.dev/packages/barcode
   # Dart 的条形码生成库，可以为任何后端生成通用绘图操作。
@@ -40,7 +40,7 @@ dependencies:
   # https://pub.dev/packages/archive
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/xml
-  image: ^4.2.0
+  image: ^4.3.0
 
 dev_dependencies:
   flutter_test:

@@ -373,7 +373,7 @@ class _DebugHiveEditPageState extends State<DebugHiveEditPage>
   WidgetList? buildScrollBody(BuildContext context) {
     final map = hiveAll();
     WidgetList list = [];
-    map.forEach((key, value) {
+    map?.forEach((key, value) {
       if (value is String) {
         list.add(LabelSingleInputTile(
             label: key,

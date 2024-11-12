@@ -19,7 +19,7 @@ dependencies:
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/vector_graphics_compiler
-  flutter_svg: ^2.0.10+1
+  flutter_svg: ^2.0.14
   # https://pub.dev/packages/vector_graphics_compiler
   # https://github.com/dnfield/vector_graphics
   # https://pub.dev/packages/args
@@ -28,13 +28,13 @@ dependencies:
   # https://pub.dev/packages/xml # collection, meta, petitparser
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/path
-  vector_graphics_compiler: ^1.1.11+1
+  vector_graphics_compiler: ^1.1.15
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/http
   # https://pub.dev/packages/vector_graphics_codec
-  vector_graphics: ^1.1.11+1
+  vector_graphics: ^1.1.14
   # https://pub.dev/packages/vector_graphics_codec
-  vector_graphics_codec: ^1.1.11+1
+  vector_graphics_codec: ^1.1.12
 
   # https://pub.dev/packages/svg_path_parser # flutter, string_scanner
   # https://github.com/masterashu/svg_path_parser
