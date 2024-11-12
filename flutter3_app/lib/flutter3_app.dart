@@ -164,8 +164,8 @@ Future runGlobalApp(
 
   return runZonedGuarded(realRun, (error, stack) {
     "Zoned未捕捉的异常[${error.runtimeType}]:↓".writeToErrorLog();
-    error.writeToErrorLog(level: L.none);
-    stack.toString().writeToErrorLog(level: L.none);
+    error.writeToErrorLog();
+    stack.toString().writeToErrorLog();
     assert(() {
       printError(error, stack);
       return true;
