@@ -104,6 +104,7 @@ class SvgBuilder {
       strokeWidth: strokeWidth,
     );
     writeTransform(transform: transform);
+    buffer.write(' />');
   }
 
   /// 写入[oval]元素
@@ -147,6 +148,7 @@ class SvgBuilder {
       strokeWidth: strokeWidth,
     );
     writeTransform(transform: transform);
+    buffer.write(' />');
   }
 
   /// 写入[rect]元素
