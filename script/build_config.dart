@@ -25,6 +25,8 @@ void main(List<String> arguments) {
   if (buildConfig == null) {
     colorLog(
         "未找到自定义的[build_config]]配置:请在项目根目录中的[script.yaml]文件中加入[build_config]配置信息.");
+  } else if (buildConfig is! Map) {
+    colorErrorLog("不支持的[build_config]数据类:请使用[Map]类型");
   }
   final json = {
     "buildTime": DateTime.now().toString(),
@@ -35,6 +37,37 @@ void main(List<String> arguments) {
         Platform.environment['USERNAME'] ?? Platform.environment['USER'],
     if (buildConfig is Map) ...buildConfig,
   };
+  //2:
+  Map? androidJson;
+  final buildConfigAndroid =
+      yaml?["build_config_android"] ?? localYaml?["build_config_android"];
+  if (buildConfigAndroid is Map) {
+    androidJson = {
+      ...json,
+      ...buildConfigAndroid,
+    };
+  } else if (buildConfigAndroid != null && buildConfigAndroid is! Map) {
+    colorErrorLog("不支持的[build_config_android]数据类:请使用[Map]类型");
+  }
+  //3:
+  Map? iosJson;
+  final buildConfigIos =
+      yaml?["build_config_ios"] ?? localYaml?["build_config_ios"];
+  if (buildConfigIos is Map) {
+    iosJson = {
+      ...json,
+      ...buildConfigIos,
+    };
+  } else if (buildConfigIos != null && buildConfigIos is! Map) {
+    colorErrorLog("不支持的[build_config_ios]数据类:请使用[Map]类型");
+  }
+
+  if (androidJson != null || iosJson != null) {
+    json["platformMap"] = {
+      if (androidJson != null) "android": androidJson,
+      if (iosJson != null) "ios": iosJson,
+    };
+  }
 
   //目标文件
   const outputPath = "assets/config";
