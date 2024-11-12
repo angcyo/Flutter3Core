@@ -323,7 +323,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
       _overPullBackValue = 0;
     }
     assert(() {
-      l.v("pull back:$_pullBackValue progress:$progress pullMaxBound:${widget.pullMaxBound}");
+      //l.v("pull back:$_pullBackValue progress:$progress pullMaxBound:${widget.pullMaxBound}");
       return true;
     }());
     //
