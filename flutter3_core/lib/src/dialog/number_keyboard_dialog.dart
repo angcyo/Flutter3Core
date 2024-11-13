@@ -74,6 +74,11 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
   /// 是否支持负数, 不指定则通过[minValue]自动判断
   final bool? supportNegative;
 
+  //--
+
+  /// 输入完成回调
+  final NumNullCallback? onNumberResult;
+
   const NumberKeyboardDialog({
     super.key,
     required this.number,
@@ -84,6 +89,7 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
     this.maxLength = 9,
     this.canPop = true,
     this.supportNegative,
+    this.onNumberResult,
     NumType? numType,
   }) : _numType = numType ?? (number is int ? NumType.i : NumType.d);
 
@@ -217,7 +223,8 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   /// 完成输入时调用
   void _onSelfFinishInput() {
     //debugger();
-    _controller.onKeyboardInputFinish(context);
+    final result = _controller.onKeyboardInputFinish(context);
+    widget.onNumberResult?.call(result);
     updateState();
   }
 

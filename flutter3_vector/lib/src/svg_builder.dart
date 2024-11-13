@@ -290,25 +290,33 @@ class SvgBuilder {
   /// [scaleImage] 图片放大倍数, 1.0: 不放大; 10: 放大10倍;
   /// 在使用[scaleImage]属性时, [image]必须要是[transform]后的图片, 否则具有缩放属性,宽高会对不上
   ///
+  /// [invertScaleImageMatrtix] 是否反转缩放图片的矩阵, 通常在正常情况下都是需要的
+  /// 默认[scaleImage]有值时, 就会反转
+  /// 在生成雕刻数据时, 建议不反转, 因为雕刻数据在转成GCode时, 算法会处理
+  ///
   Future writeImage(
     UiImage? image, {
     Matrix4? transform,
     String? id,
     String? name,
     double? scaleImage,
+    bool? invertScaleImageMatrtix,
   }) async {
     if (image != null) {
-      if (scaleImage != null) {
+      if (scaleImage != null && scaleImage != 1) {
         //debugger();
         //需要缩放图片
         final scaleMatrix = createScaleMatrix(sx: scaleImage, sy: scaleImage);
         image = await image.scale(scaleMatrix: scaleMatrix);
 
         //矩阵反向缩放
-        final scaleInvertMatrix =
-            createScaleMatrix(sx: 1 / scaleImage, sy: 1 / scaleImage);
-        transform ??= Matrix4.identity();
-        transform = transform * scaleInvertMatrix;
+        invertScaleImageMatrtix ??= true;
+        if (invertScaleImageMatrtix == true) {
+          final scaleInvertMatrix =
+              createScaleMatrix(sx: 1 / scaleImage, sy: 1 / scaleImage);
+          transform ??= Matrix4.identity();
+          transform = transform * scaleInvertMatrix;
+        }
       }
       final base64 = await image.toBase64();
       writeBase64Image(
