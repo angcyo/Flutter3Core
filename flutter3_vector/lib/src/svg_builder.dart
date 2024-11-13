@@ -22,7 +22,8 @@ class SvgBuilder {
   int digits = 15;
 
   /// 写入[viewBox]属性
-  /// [useMmBounds] 是否使用mm单位
+  /// [writeUnitTransform] 是否将[boundsUnit]缩放比例写入`transform`
+  /// 通常在生成雕刻数据时, 才需要使用此属性
   ///
   /// viewBox 属性允许指定一个给定的一组图形伸展以适应特定的容器元素。
   ///
@@ -34,22 +35,42 @@ class SvgBuilder {
   /// mac/windows上 1mm->3.7777px
   /// 1mm = 1/25.4 * 96 px ≈ 3.779527559 px
   ///
-  void writeViewBox(@dp Rect bounds, {IUnit? unit}) {
+  void writeViewBox(
+    @dp Rect? bounds, {
+    IUnit? boundsUnit = IUnit.mm,
+    bool writeUnitTransform = false,
+  }) {
     buffer.write(svgHeader);
     buffer.write('<svg xmlns="http://www.w3.org/2000/svg" ');
     buffer.write('xmlns:xlink="http://www.w3.org/1999/xlink" ');
     buffer.write('xmlns:acy="https://www.github.com/angcyo" ');
 
     //--
-    buffer.write(
+    /*buffer.write(
         'viewBox="${formatValue(bounds.left.toUnitFromDp(unit))} ${formatValue(bounds.top.toUnitFromDp(unit))} '
-        '${formatValue(bounds.width.toUnitFromDp(unit))} ${formatValue(bounds.height.toUnitFromDp(unit))}" ');
+        '${formatValue(bounds.width.toUnitFromDp(unit))} ${formatValue(bounds.height.toUnitFromDp(unit))}" ');*/
+
+    if (bounds != null) {
+      buffer.write(
+          'viewBox="${formatValue(bounds.left)} ${formatValue(bounds.top)} '
+          '${formatValue(bounds.width)} ${formatValue(bounds.height)}" ');
+    }
 
     //--
-    buffer.write(
-        'x="${formatValue(bounds.left.toMmFromDp())}mm" y="${formatValue(bounds.top.toMmFromDp())}mm" ');
-    buffer.write(
-        'width="${formatValue(bounds.width.toMmFromDp())}mm" height="${formatValue(bounds.height.toMmFromDp())}mm" ');
+    if (boundsUnit != null) {
+      if (bounds != null) {
+        buffer.write(
+            'x="${formatValue(bounds.left.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
+            'y="${formatValue(bounds.top.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
+        buffer.write(
+            'width="${formatValue(bounds.width.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
+            'height="${formatValue(bounds.height.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
+      }
+      if (writeUnitTransform) {
+        final scalye = 1.toUnitFromDp(boundsUnit);
+        writeTransform(sx: scalye, sy: scalye);
+      }
+    }
 
     //--
     buffer.write(

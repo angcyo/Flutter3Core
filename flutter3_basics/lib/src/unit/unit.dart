@@ -76,6 +76,7 @@ abstract class IUnit {
 
   //region ---基础---
 
+  @override
   String toString() => suffix;
 
   /// 单位后缀
