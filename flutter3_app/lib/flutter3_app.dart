@@ -205,20 +205,26 @@ Future _initDebugLastInfo() async {
 
       //widget
       final textStyle = GlobalConfig.def.globalTheme.textPlaceStyle;
+      //--app包的信息
       DebugPage.debugLastWidgetBuilderList.add((_) =>
           packageInfo.text(textAlign: TextAlign.center, style: textStyle));
+      //--平台设备信息
       DebugPage.debugLastWidgetBuilderList.add((_) =>
           deviceInfoData.text(textAlign: TextAlign.center, style: textStyle));
-      DebugPage.debugLastWidgetBuilderList.add((_) => $appSettingBean
-          .toString()
+      //--build信息
+      DebugPage.debugLastWidgetBuilderList.add((_) => $buildConfig
+          ?.toString()
           .text(textAlign: TextAlign.center, style: textStyle));
 
       //string
       DebugPage.debugLastCopyStringBuilderList
           .add((_) => stringBuilder((builder) {
+                //debugger();
                 builder.appendLine("$packageInfo");
                 builder.append("$deviceInfoData");
-                builder.append($appSettingBean.toString());
+                if ($buildConfig != null) {
+                  builder.append($buildConfig?.toString());
+                }
               }));
     }
   });
