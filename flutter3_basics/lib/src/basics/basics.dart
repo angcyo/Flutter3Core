@@ -601,18 +601,27 @@ Future<R> scheduleTask<R>(ResultCallback<R> callback,
 //region Asset
 
 /// 默认的资源路径前缀
+const kDefAssetsPrefix = 'assets/';
 const kDefAssetsPngPrefix = 'assets/png/';
 const kDefAssetsSvgPrefix = 'assets/svg/';
 
 /// [loadAssetString]
-Future<Uint8List> loadAssetBytes(
+Future<ByteData> loadAssetByteData(
   String key, {
-  String prefix = 'assets/',
+  String prefix = kDefAssetsPrefix,
   String? package,
 }) async {
   return (await rootBundle
-          .load(key.ensurePackagePrefix(package, prefix).transformKey()))
-      .bytes;
+      .load(key.ensurePackagePrefix(package, prefix).transformKey()));
+}
+
+/// [loadAssetString]
+Future<Uint8List> loadAssetBytes(
+  String key, {
+  String prefix = kDefAssetsPrefix,
+  String? package,
+}) async {
+  return (await loadAssetByteData(key, prefix: prefix, package: package)).bytes;
 }
 
 /// 判断指定的[key]是否存在
@@ -643,9 +652,11 @@ Future<bool> isAssetKeyExists(String? key) async {
 /// // This returns a List<String> with all your images
 /// final imageAssetsList = assetManifest.listAssets().where((string) => string.startsWith("assets/images/")).toList()
 /// ```
+/// [loadAssetImage]
+/// [loadAssetString]
 Future<String> loadAssetString(
   String key, {
-  String prefix = 'assets/',
+  String prefix = kDefAssetsPrefix,
   String? package,
 }) async {
   return await rootBundle.loadString(
@@ -701,7 +712,10 @@ AssetImage? loadAssetImageProvider(
           );
 
 /// [UiImage]
-Future<UiImage>? loadAssetImage(
+/// [loadAssetString]
+/// [loadAssetImage]
+/// [loadAssetImageByProvider]
+Future<UiImage>? loadAssetImageByProvider(
   String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,
@@ -709,5 +723,25 @@ Future<UiImage>? loadAssetImage(
 }) =>
     loadAssetImageProvider(key, prefix: prefix, package: package)
         ?.toImage(configuration);
+
+/// [loadAssetString]
+/// [loadAssetImage]
+/// [loadAssetImageByProvider]
+/// [decodeImageFromList]
+Future<UiImage> loadAssetImage(
+  String key, {
+  String prefix = kDefAssetsPngPrefix,
+  String? package,
+}) async {
+  // 读取图片数据
+  ByteData data =
+      await loadAssetByteData(key, prefix: prefix, package: package);
+  Uint8List bytes = data.buffer.asUint8List();
+  // 解码图片
+  /*ui.Codec codec = await ui.instantiateImageCodec(bytes);
+  ui.FrameInfo frameInfo = await codec.getNextFrame();
+  return frameInfo.image;*/
+  return decodeImageFromList(bytes);
+}
 
 //endregion Asset
