@@ -337,7 +337,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void translateBy(double tx, double ty, {bool anim = true}) {
     assert(() {
-      l.v('平移画布by: tx:$tx ty:$ty');
+      //l.v('平移画布by: tx:$tx ty:$ty');
       return true;
     }());
     changeMatrix(canvasMatrix.clone()..translateBy(dx: tx, dy: ty),
@@ -386,7 +386,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
         pivotY: pivot?.dy ?? 0,
       );
     assert(() {
-      l.v('缩放画布by: sx:$sx sy:$sy pivot:$pivot anim:$anim');
+      //l.v('缩放画布by: sx:$sx sy:$sy pivot:$pivot anim:$anim');
       return true;
     }());
     changeMatrix(matrix, animate: anim);
