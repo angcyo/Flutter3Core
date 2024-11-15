@@ -13,7 +13,7 @@ class LoadingIndicator extends StatelessWidget {
   final Size? size;
 
   /// 当前进度的值, 如果有. [0.0-1.0]
-  /// 指定表示明确的进度, 未指定表示不明确的进度.
+  /// 指定表示明确的进度, null未指定表示不明确的进度.
   final double? progressValue;
 
   /// 是否使用系统样式

@@ -225,7 +225,11 @@ extension FileEx on File {
     return null;
   }
 
-  /// 读取文件内容
+  /// 读取文件内容, 系统的[readAsString]当文件不存在时, 会抛出异常
+  /// ```
+  /// PathNotFoundException: Cannot open file, path = '/storage/emulated/0/Android/data/com.xxx.xxx/cache/resource.json'
+  /// (OS Error: No such file or directory, errno = 2)
+  /// ```
   /// [loadAssetString]
   Future<String?> readString({Encoding encoding = utf8}) async {
     try {
