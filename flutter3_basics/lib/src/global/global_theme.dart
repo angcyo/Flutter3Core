@@ -22,6 +22,10 @@ class GlobalThemeScope extends InheritedWidget {
 
 /// 全局颜色配置
 /// 亮色主题[ui.Brightness.light]
+///
+/// 默认flutter主题颜色↓
+/// [_colorSchemeDarkM3]
+/// [_colorSchemeLightM3]
 class GlobalTheme {
   /// 颜色配置, 主要颜色
   Color get primaryColor => const Color(0xff2febff);
