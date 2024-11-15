@@ -53,7 +53,7 @@ class LabelNumberSliderTile extends StatefulWidget {
   /// 自定义的浮子
   final SliderComponentShape? thumbShape;
 
-  /// 回调
+  /// 回调, 改变后的回调. 拖动过程中不回调
   final NumCallback? onValueChanged;
 
   const LabelNumberSliderTile({
@@ -178,7 +178,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
   }
 }
 
-/// 带范围值的滑块, 2个值
+/// 范围滑块. 带范围值的滑块, 2个值.
 /// 上[label]     右[startValue].[number](支持键盘输入) [endValue].[number](支持键盘输入)
 /// 下[Slider]
 /// [SliderTile]

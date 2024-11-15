@@ -884,8 +884,8 @@ class ElementPainter extends IPainter
   }
 
   /// 复制元素
-  /// [parent] 父元素
-  /// [template] 模板元素
+  /// [template] 模板元素, 用来创建新元素, 默认是[ElementPainter]
+  /// [parent] 父元素, 如果有
   @api
   ElementPainter copyElement({
     ElementPainter? template,
