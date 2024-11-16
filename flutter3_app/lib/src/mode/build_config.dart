@@ -16,8 +16,8 @@ class BuildConfig {
   /// [Asset]需要放到app包中
   /// 启动程序时初始化
   static Future<BuildConfig?> intBuildConfig({
-    String name = "config/build_config.json",
-    String prefix = 'assets/',
+    String name = "$kConfigPathName/build_config.json",
+    String prefix = kDefAssetsPrefix,
     String? package, //flutter3_app
   }) async {
     try {

@@ -18,7 +18,7 @@ class AppSettingBean {
   static Future fetchAppConfig(
     String url, {
     String name = "app_setting.json",
-    String prefix = 'assets/config/',
+    String prefix = 'assets/$kConfigPathName/',
     String? package, //flutter3_app
   }) {
     return ConfigFile.readConfigFile(

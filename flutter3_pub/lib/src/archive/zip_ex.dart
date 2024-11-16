@@ -109,23 +109,27 @@ extension ZipListEx on List<String> {
   /// [ZipFileEncoderEx.writeStringSync]
   Future<void> zip(
     String outputPath, {
-    int? level = ZipFileEncoder.GZIP,
     DateTime? modified,
     FutureOr Function(ZipFileEncoder zipEncoder)? action,
   }) async {
     final encoder = ZipFileEncoder();
-    encoder.create(outputPath, modified: modified ?? DateTime.now());
-    await zipEncoder(encoder);
-    if (action != null) {
-      await action(encoder);
+    try {
+      encoder.create(outputPath, modified: modified ?? DateTime.now());
+      await zipEncoder(encoder);
+      if (action != null) {
+        await action(encoder);
+      }
+    } catch (e) {
+      l.e(e);
+    } finally {
+      encoder.close();
     }
-    encoder.close();
   }
 
   /// 入参不一样的压缩扩展方法
   /// [zip]
   Future<void> zipEncoder(ZipFileEncoder encoder) async {
-    for (var path in this) {
+    for (final path in this) {
       if (path.isDirectorySync()) {
         encoder.addDirectory(Directory(path));
       } else {
@@ -185,10 +189,11 @@ extension ZipFileEncoderEx on ZipFileEncoder {
   /// 写入字符串
   /// [content] 字符内容
   /// [name] 名称
+  /// [compress] 是否要将[content]使用[utf8.encode]变成[Uint8List]
   void writeStringSync(
     String? content,
     String? name, {
-    bool compress = true,
+    bool compress = false,
   }) {
     //debugger();
     if (content == null || name == null) {
@@ -197,7 +202,7 @@ extension ZipFileEncoderEx on ZipFileEncoder {
     if (compress) {
       addArchiveFile(ArchiveFile.string(name, content));
     } else {
-      final bytes = content.bytes;
+      final bytes = content.bytes; //[utf8.encode]
       addArchiveFile(ArchiveFile.noCompress(name, bytes.size(), bytes));
     }
   }
@@ -206,7 +211,7 @@ extension ZipFileEncoderEx on ZipFileEncoder {
   Future writeString(
     String? content,
     String? name, {
-    bool compress = true,
+    bool compress = false,
   }) async =>
       () async {
         return writeStringSync(content, name, compress: compress);

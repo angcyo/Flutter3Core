@@ -1,6 +1,7 @@
 library flutter3_app;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -37,14 +38,23 @@ export 'src/mode/app_version_bean.dart';
 export 'src/mode/build_config.dart';
 
 part 'src/android_app.dart';
+
 part 'src/app_ex.dart';
+
 part 'src/app_info_interceptor.dart';
+
 part 'src/app_log.dart';
+
 part 'src/app_notifications.dart';
+
 part 'src/app_swiper_ex.dart';
+
 part 'src/mobile_ex.dart';
+
 part 'src/pages/app_update_dialog.dart';
+
 part 'src/platform/permissions.dart';
+
 part 'src/receive/receive_intent.dart';
 
 ///
@@ -216,14 +226,14 @@ Future _initDebugLastInfo() async {
           ?.toString()
           .text(textAlign: TextAlign.center, style: textStyle));
 
-      //string
+      //string-copy
       DebugPage.debugLastCopyStringBuilderList
           .add((_) => stringBuilder((builder) {
                 //debugger();
                 builder.appendLine("$packageInfo");
-                builder.append("$deviceInfoData");
+                builder.appendLine("$deviceInfoData");
                 if ($buildConfig != null) {
-                  builder.append($buildConfig?.toString());
+                  builder.appendLine($buildConfig?.toString());
                 }
               }));
     }

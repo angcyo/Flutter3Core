@@ -67,12 +67,14 @@ class _RouteWillPopScopeState extends State<RouteWillPopScope> {
   void dispose() {
     if (widget.onWillPop != null) {
       try {
+        //Tried to remove a willPop callback from a route that is not currently in the tree.
         _route?.removeScopedWillPopCallback(widget.onWillPop!);
       } catch (e, s) {
-        assert(() {
+        /*assert(() {
           printError(e, s);
           return true;
-        }());
+        }());*/
+        //no op
       }
     }
     super.dispose();

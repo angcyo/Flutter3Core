@@ -149,23 +149,23 @@ class DebugPage extends StatefulWidget {
 
   /// 底部点击要复制的文本信息
   /// [_initDebugLastInfo]
-  static List<String? Function(BuildContext context)>
+  static List<String? Function(BuildContext? context)>
       debugLastCopyStringBuilderList = [];
 
   /// [debugLastCopyString]
-  static String Function(BuildContext context) get lastDebugCopyStringBuilder =>
-      (context) {
-        return stringBuilder((builder) {
-          for (final b in debugLastCopyStringBuilderList) {
-            builder.append(b(context));
-          }
-          builder.newLineIfNotEmpty();
-          builder.append(
-              "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()} $dpr");
-          builder.newLineIfNotEmpty();
-          builder.append($coreKeys.deviceUuid);
-        });
-      };
+  static String? Function(BuildContext? context)
+      get lastDebugCopyStringBuilder => (context) {
+            return stringBuilder((builder) {
+              for (final b in debugLastCopyStringBuilderList) {
+                builder.append(b(context));
+              }
+              builder.newLineIfNotEmpty();
+              builder.append(
+                  "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()} $dpr");
+              builder.newLineIfNotEmpty();
+              builder.append($coreKeys.deviceUuid);
+            });
+          };
 
   static Locale? _currentLocale;
 
@@ -223,7 +223,7 @@ class _DebugPageState extends State<DebugPage> with AbsScrollPage {
           .column()
           ?.matchParentWidth()
           .click(() {
-            DebugPage.lastDebugCopyStringBuilder(context).copy();
+            DebugPage.lastDebugCopyStringBuilder(context)?.copy();
             toastBlur(text: "已复制");
           })
           .align(Alignment.bottomCenter)

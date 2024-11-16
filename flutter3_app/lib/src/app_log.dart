@@ -9,18 +9,30 @@ part of '../flutter3_app.dart';
 Future shareAppLog([String? name]) async {
   final info = await $platformPackageInfo;
   final output = await cacheFilePath(name?.ensureSuffix(".zip") ??
-      "LOG_${info.buildNumber}_${info.version}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip");
+      "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip");
   final list = <String>[];
+  //--
   final logFolderPath = (await fileFolder(kLogPathName)).path;
+  final configFolderPath = (await fileFolder(kConfigPathName)).path;
   list.add(logFolderPath);
+  list.add(configFolderPath);
+  //--
   list.addAll(tempShareLogPathList);
   list.addAll(globalShareLogPathList);
+  //--
   list.zip(output, action: (encoder) {
-    encoder.writeStringSync(hiveAll()?.toJsonString(), 'hive.json');
+    final hiveJson = hiveAll()?.toJsonString();
+    if (hiveJson != null && hiveJson.isNotEmpty) {
+      encoder.writeStringSync(hiveJson, 'hive.json');
+    }
+    final lastInfo =
+        DebugPage.lastDebugCopyStringBuilder(GlobalConfig.def.globalContext);
+    if (lastInfo != null && lastInfo.isNotEmpty) {
+      encoder.writeStringSync(lastInfo, 'last_debug_info.log');
+    }
   }).ignore();
   assert(() {
-    final log =
-        "压缩完成:$output :${(output.file().fileSizeSync()).toSizeStr()}";
+    final log = "压缩完成:$output :${(output.file().fileSizeSync()).toSizeStr()}";
     l.i(log);
     return true;
   }());

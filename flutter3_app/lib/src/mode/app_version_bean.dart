@@ -25,7 +25,7 @@ class AppVersionBean {
     String url, {
     String name = "app_version.json",
     String package = "flutter3_app",
-    String prefix = 'assets/config/',
+    String prefix = 'assets/$kConfigPathName/',
   }) {
     return ConfigFile.readConfigFile(
       name,

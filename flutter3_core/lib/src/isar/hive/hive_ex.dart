@@ -27,7 +27,7 @@ Map<String, dynamic>? hiveAll([Box? box]) {
   try {
     box ??= _hiveBox;
     Map<String, dynamic> map = {};
-    for (var key in box.keys) {
+    for (final key in box.keys) {
       map[key] = box.get(key);
     }
     return map;

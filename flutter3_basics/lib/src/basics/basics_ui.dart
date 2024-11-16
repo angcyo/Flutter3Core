@@ -1841,6 +1841,7 @@ extension WidgetEx on Widget {
       );
 
   /// 有大小, 有圆形波纹, 有提示
+  /// [highlightColor] 按下时, 高亮的波纹颜色
   Widget icon(
     GestureTapCallback? onTap, {
     bool enable = true,

@@ -17,7 +17,9 @@ const kWebSocketFileName = "websocket.log"; //websocket接收的日志
 const kErrorFileName = "error.log"; //错误日志
 const kHttpFileName = "http.log"; //网络请求日志
 const kPerfFileName = "perf.log"; //性能相关日志
+/// 路径
 const kLogPathName = "log"; //日志文件夹
+const kConfigPathName = "config"; //配置文件夹
 
 /// 当前支持写入文件的数据类型
 /// [UiImage]
