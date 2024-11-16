@@ -43,14 +43,15 @@ class _ScreenCaptureOverlayWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
     final globalTheme = GlobalTheme.of(context);
-    const size = 100.0;
+    const width = 80.0;
+    const height = 100.0;
     return Stack(
       children: [
         Align(
-          alignment: FractionalOffset.bottomLeft,
+          alignment: FractionalOffset.centerLeft,
           child: Container(
-            width: size,
-            height: size,
+            width: width,
+            height: height,
             color: Colors.black26,
             child: [
               image?.toImageWidget(),
@@ -65,8 +66,8 @@ class _ScreenCaptureOverlayWidget extends StatelessWidget {
             state.hide();
             globalConfig.shareAppLogFn?.call(context, runtimeType);
           }),
-        ).position(bottom: 300),
+        ),
       ],
-    ).material();
+    ).material().safeArea();
   }
 }
