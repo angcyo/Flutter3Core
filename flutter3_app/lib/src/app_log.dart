@@ -6,9 +6,10 @@ part of '../flutter3_app.dart';
 /// @date 2023/12/03
 ///
 /// 快速分享app日志压缩文件, 分享日志
-Future shareAppLog([String? name]) async {
+/// [logName] 指定日志的名称, 不指定使用默认
+Future shareAppLog([String? logName]) async {
   final info = await $platformPackageInfo;
-  final output = await cacheFilePath(name?.ensureSuffix(".zip") ??
+  final output = await cacheFilePath(logName?.ensureSuffix(".zip") ??
       "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip");
   final list = <String>[];
   //--

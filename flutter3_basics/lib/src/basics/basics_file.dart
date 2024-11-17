@@ -35,13 +35,16 @@ extension FileStringEx on String {
   /// 父路径
   String get parentPath => FileSystemEntity.parentOf(this);
 
-  /// 当前文件是否存在
+  /// 当前文件/文件夹是否存在
   Future<bool> isExists() async =>
       await File(this).exists() || await Directory(this).exists();
 
   ///[isExists]
   bool isExistsSync() =>
       File(this).existsSync() || Directory(this).existsSync();
+
+  /// 文件是否存在
+  bool isFileExistsSync() => File(this).existsSync();
 
   /// 是否是文件夹
   Future<bool> isDirectory() async => FileSystemEntity.isDirectory(this);

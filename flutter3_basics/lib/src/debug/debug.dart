@@ -21,18 +21,20 @@ part of '../../flutter3_basics.dart';
 }*/
 
 /// 临时需要分享的日志路径, 触发分享后清空
-final List<String> tempShareLogPathList = [];
+/// 支持文件/文件夹类型
+final Set<String> tempShareLogPathList = {};
 
-/// 需要分享的日志路径, 全局共享
-final List<String> globalShareLogPathList = [];
+/// 需要分享的日志路径, 全局共享, 分享后不清空
+/// 支持文件/文件夹类型
+final Set<String> globalShareLogPathList = {};
 
-/// 添加一个临时的日志分享路径
+/// 添加一个临时的日志分享路径/文件
 /// [temp] 是否是临时的
 @callPoint
 void addToShareLogPath(String? path, {bool temp = true}) {
   if (path == null) {
     assert(() {
-      l.w("无效的操作");
+      l.w("无效的操作[addToShareLogPath]");
       return true;
     }());
     return;

@@ -132,7 +132,7 @@ extension ZipListEx on List<String> {
     for (final path in this) {
       if (path.isDirectorySync()) {
         encoder.addDirectory(Directory(path));
-      } else {
+      } else if (path.isExistsSync()) {
         encoder.addFile(File(path));
       }
     }
