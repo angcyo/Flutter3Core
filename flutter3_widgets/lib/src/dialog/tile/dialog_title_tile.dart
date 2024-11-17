@@ -20,6 +20,7 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
 
   ///
   final String? title;
+  final TextSpan? titleSpan;
   final Widget? titleWidget;
   final TextStyle? titleTextStyle;
 
@@ -41,6 +42,7 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
   const DialogTitleTile({
     super.key,
     this.title,
+    this.titleSpan,
     this.titleWidget,
     this.subTitle,
     this.subTitleWidget,
@@ -63,6 +65,7 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     final titleWidget = buildTextWidget(
       context,
       text: title ?? "",
+      textSpan: titleSpan,
       textAlign: TextAlign.center,
       textWidget: this.titleWidget,
       textStyle: titleTextStyle ??

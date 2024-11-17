@@ -12,7 +12,8 @@ enum NumType {
   d,
 
   /// 整型
-  i;
+  i,
+  ;
 
   static NumType from(dynamic value) {
     if (value is int) {

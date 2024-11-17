@@ -2198,7 +2198,7 @@ extension WidgetEx on Widget {
   ]) {
     //debugger();
     final globalConfig = GlobalConfig.of(context);
-    if (globalConfig.isAdaptiveTablet) {
+    if (globalConfig.isInTabletModel) {
       //平板模式
       final globalTheme = GlobalTheme.of(context);
       return constrainedBox(globalTheme.tabletDialogConstraints)

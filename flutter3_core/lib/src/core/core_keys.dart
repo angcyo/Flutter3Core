@@ -49,9 +49,6 @@ final class CoreKeys {
   double? get tabletInchThreshold => "tabletInchThreshold".hiveGet<double>();
 }
 
-/// 是否是平板
-bool get isTabletDevice => deviceInch >= ($coreKeys.tabletInchThreshold ?? 7);
-
 /// CoreKeys的实例
 @globalInstance
 final $coreKeys = CoreKeys._();

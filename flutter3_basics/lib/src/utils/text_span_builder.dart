@@ -158,6 +158,11 @@ class TextSpanBuilder {
 
 /// 构建[InlineSpan]
 @dsl
+TextSpan spanBuilder(void Function(TextSpanBuilder builder) action) =>
+    inlineSpanBuilder(action);
+
+/// 构建[InlineSpan]
+@dsl
 TextSpan inlineSpanBuilder(void Function(TextSpanBuilder builder) action) {
   TextSpanBuilder textSpanBuilder = TextSpanBuilder();
   action(textSpanBuilder);

@@ -361,6 +361,10 @@ double get deviceHeight => deviceHeightPixel / dpr;
 /// 设备对角线的英寸大小 >=7 视为平板, 7.07 大约 10英寸
 double get deviceInch => cl(deviceWidthPixel, deviceHeightPixel) / dpi;
 
+/// 是否是平板, 根据屏幕对角线尺寸判断
+/// [GlobalConfig.isAdaptiveTablet]
+bool get isTabletDevice => deviceInch >= 7;
+
 /// 延迟随机发生器
 /// [delay] 延迟多久触发一次[generate]
 /// [count] 总共要出发几次[generate]

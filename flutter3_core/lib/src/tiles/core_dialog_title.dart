@@ -27,6 +27,7 @@ class CoreDialogTitle extends StatelessWidget {
 
   ///
   final String? title;
+  final TextSpan? titleSpan;
   final Widget? titleWidget;
   final TextStyle? titleTextStyle;
 
@@ -55,6 +56,7 @@ class CoreDialogTitle extends StatelessWidget {
   const CoreDialogTitle({
     super.key,
     this.title,
+    this.titleSpan,
     this.titleWidget,
     this.subTitle,
     this.subTitleWidget,
@@ -125,6 +127,7 @@ class CoreDialogTitle extends StatelessWidget {
       leading: leading?.invisible(invisible: invisibleLeading),
       trailing: trailing?.invisible(invisible: invisibleTrailing),
       title: title,
+      titleSpan: titleSpan,
       titleWidget: titleWidget,
       titleTextStyle: titleTextStyle,
       subTitle: subTitle,

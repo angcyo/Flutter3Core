@@ -127,6 +127,7 @@ mixin TileMixin {
     BuildContext context, {
     Widget? textWidget,
     String? text,
+    TextSpan? textSpan,
     TextAlign? textAlign,
     TextStyle? textStyle,
     bool themeStyle = true,
@@ -135,8 +136,10 @@ mixin TileMixin {
   }) {
     final globalTheme = GlobalTheme.of(context);
     final widget = textWidget ??
-        (text
+        ((textSpan != null ? "" : text)
             ?.text(
+              textSpan: textSpan,
+              //--
               textAlign: textAlign,
               style:
                   textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),

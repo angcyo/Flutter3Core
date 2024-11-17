@@ -138,12 +138,18 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   //region tablet平板适配
 
-  /// 是否开启平板的适配?
-  @implementation
-  bool enableTabletAdaptive = false;
+  /// 是否处于平板模式, 开启平板适配, 并且是平板设备
+  bool get isInTabletModel {
+    return isAdaptiveTablet && (isTabletDevice || forceTabletDevice);
+  }
 
-  /// 是否处于平板模式?
+  /// 是否需要适配平板设备
+  /// [isTabletDevice]
   bool isAdaptiveTablet = false;
+
+  /// 是否强制标识为平板设备
+  /// [isTabletDevice]
+  bool forceTabletDevice = false;
 
   //endregion tablet平板适配
 
