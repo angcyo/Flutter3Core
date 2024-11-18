@@ -120,6 +120,7 @@ Future<Directory> cacheDirectory() async {
     }());
     //l.e(e);
   }
+  //Directory: '/data/user/0/com.angcyo.lp.image.ffi.lp_image_handle_ffi_example/code_cache'
   return directory ?? Directory.systemTemp;
 }
 

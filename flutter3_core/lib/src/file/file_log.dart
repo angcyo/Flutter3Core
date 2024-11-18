@@ -42,10 +42,13 @@ extension LogEx on Object {
   /// [FileDataType] 支持的数据类型
   Future<File> writeToFile({
     File? file,
+    //--
     String? filePath,
     String? fileName,
     String? folder,
+    //--
     bool append = false,
+    bool overwrite = true,
     bool limitLength = false,
     bool? wrapLog = false,
     bool useCacheFolder = false,
@@ -57,6 +60,7 @@ extension LogEx on Object {
       fileName: fileName,
       folder: folder,
       append: append,
+      overwrite: overwrite,
       limitLength: limitLength,
       useCacheFolder: useCacheFolder,
       wrapLog: wrapLog,
@@ -68,16 +72,21 @@ extension LogEx on Object {
   /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象, 优先级2
   /// [fileName] 日志文件名 , 优先级3
   /// [folder] 上层文件夹, 文件夹复制时, 请使用此变量
+  /// [append] 是否追加写入文件数据
+  /// [overwrite] 文件已存在是否覆写文件
   /// [limitLength] 是否限制日志文件的最大长度
   /// [wrapLog] 是否包裹一下日志信息, null:自动根据后缀[kLogExtension]判断
   /// [FileDataType] 支持的数据类型
   /// @return 返回文件对象
   Future<File> appendToFile({
     File? file,
+    //--
     String? filePath,
     String? fileName,
     String? folder,
+    //--
     bool append = true,
+    bool overwrite = true,
     bool limitLength = true,
     bool useCacheFolder = false,
     bool? wrapLog,
@@ -91,16 +100,24 @@ extension LogEx on Object {
 
     FileMode mode = append ? FileMode.append : FileMode.write;
     final fileObj = filePath.file();
+    if (await fileObj.exists()) {
+      if (!overwrite && !append) {
+        //文件已存在, 并且不覆盖/不追加
+        return fileObj;
+      }
+    }
     if (append && limitLength && (fileObj.fileSizeSync() > kMaxLogLength)) {
       mode = FileMode.write;
     }
 
+    // List<int>
     Future writeBytes(List<int>? bytes) async {
       if (bytes != null) {
         await fileObj.writeAsBytes(bytes, mode: mode);
       }
     }
 
+    // Stream<List<int>>
     Future writeStream(Stream<List<int>>? stream) async {
       if (stream != null) {
         await stream.listen((event) async {
@@ -109,6 +126,7 @@ extension LogEx on Object {
       }
     }
 
+    // ByteBuffer
     Future writeByteBuffer(ByteBuffer? byteBuffer) async {
       if (byteBuffer != null) {
         final list = byteBuffer.asUint8List();
@@ -116,6 +134,7 @@ extension LogEx on Object {
       }
     }
 
+    // ByteData
     Future writeByteData(ByteData? byteData) async {
       if (byteData != null) {
         final buffer = byteData.buffer;
@@ -129,6 +148,7 @@ extension LogEx on Object {
       await writeByteData(byteData);
     }
 
+    // String
     Future writeString(String? string) async {
       if (string != null) {
         await fileObj.writeString(
