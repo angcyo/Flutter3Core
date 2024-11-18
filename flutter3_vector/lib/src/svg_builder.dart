@@ -11,15 +11,35 @@ part of '../flutter3_vector.dart';
 /// - SVG 属性参考 https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute
 class SvgBuilder {
   /// svg xml头部
-  String svgHeader = '<?xml version="1.0" encoding="UTF-8"?>'
-      '\n<!-- Created with LaserPecker Design Space (https://www.laserpecker.net/pages/software) -->\n';
+  @configProperty
+  String svgHeader = '<?xml version="1.0" encoding="UTF-8"?>';
+
+  /// [svgHeader]头部下的注释描述字符串
+  @configProperty
+  String? svgHeaderAnnotation =
+      '\n<!-- Created with angcyo (https://www.github.com/angcyo) -->\n';
+
+  /// 额外放在svg中根节点的属性
+  @configProperty
+  Map<String, dynamic>? attributes;
+
+  /// 浮点小数点位数
+  @configProperty
+  int digits = 15;
+
+  @configProperty
+  int version = 1;
+
+  @configProperty
+  String author = "angcyo";
+
+  //--
 
   /// 数据输出
   @output
   StringBuffer buffer = StringBuffer();
 
-  /// 浮点小数点位数
-  int digits = 15;
+  bool _isEnd = true;
 
   /// 写入[viewBox]属性
   /// [writeUnitTransform] 是否将[boundsUnit]缩放比例写入`transform`
@@ -41,6 +61,13 @@ class SvgBuilder {
     bool writeUnitTransform = false,
   }) {
     buffer.write(svgHeader);
+    svgHeaderAnnotation?.let((it) {
+      if (it.contains("<!")) {
+        buffer.write(it);
+      } else {
+        buffer.write('<!--$it-->');
+      }
+    });
     buffer.write('<svg xmlns="http://www.w3.org/2000/svg" ');
     buffer.write('xmlns:xlink="http://www.w3.org/1999/xlink" ');
     buffer.write('xmlns:acy="https://www.github.com/angcyo" ');
@@ -67,19 +94,32 @@ class SvgBuilder {
             'height="${formatValue(bounds.height.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
       }
       if (writeUnitTransform) {
-        final scalye = 1.toUnitFromDp(boundsUnit);
-        writeTransform(sx: scalye, sy: scalye);
+        final scale = 1.toUnitFromDp(boundsUnit);
+        writeTransform(sx: scale, sy: scale);
       }
     }
 
     //--
     buffer.write(
-        'acy:author="angcyo" acy:version="1" acy:build="${nowTimeString()}">');
+        'acy:author="$author" acy:version="$version" acy:build="${nowTimeString()}" ');
+    //
+    attributes?.forEach((key, value) {
+      if (key.contains(":")) {
+        buffer.write('$key="$value" ');
+      } else {
+        buffer.write('acy:$key="$value" ');
+      }
+    });
+    //
+    buffer.write('>');
+    _isEnd = false;
   }
 
   /// 结束
   void writeEnd() {
-    buffer.write(r'</svg>');
+    if (!_isEnd) {
+      buffer.write(r'</svg>');
+    }
   }
 
   //region --元素--
@@ -311,7 +351,7 @@ class SvgBuilder {
   /// [scaleImage] 图片放大倍数, 1.0: 不放大; 10: 放大10倍;
   /// 在使用[scaleImage]属性时, [image]必须要是[transform]后的图片, 否则具有缩放属性,宽高会对不上
   ///
-  /// [invertScaleImageMatrtix] 是否反转缩放图片的矩阵, 通常在正常情况下都是需要的
+  /// [invertScaleImageMatrix] 是否反转缩放图片的矩阵, 通常在正常情况下都是需要的
   /// 默认[scaleImage]有值时, 就会反转
   /// 在生成雕刻数据时, 建议不反转, 因为雕刻数据在转成GCode时, 算法会处理
   ///
@@ -321,7 +361,7 @@ class SvgBuilder {
     String? id,
     String? name,
     double? scaleImage,
-    bool? invertScaleImageMatrtix,
+    bool? invertScaleImageMatrix,
   }) async {
     if (image != null) {
       if (scaleImage != null && scaleImage != 1) {
@@ -331,8 +371,8 @@ class SvgBuilder {
         image = await image.scale(scaleMatrix: scaleMatrix);
 
         //矩阵反向缩放
-        invertScaleImageMatrtix ??= true;
-        if (invertScaleImageMatrtix == true) {
+        invertScaleImageMatrix ??= true;
+        if (invertScaleImageMatrix == true) {
           final scaleInvertMatrix =
               createScaleMatrix(sx: 1 / scaleImage, sy: 1 / scaleImage);
           transform ??= Matrix4.identity();
@@ -713,14 +753,17 @@ class SvgBuilder {
   String? formatValue(dynamic value) =>
       value is num ? value.toDigits(digits: digits) : value.toString();
 
-  String build() => buffer.toString();
+  @output
+  String build() {
+    writeEnd();
+    return buffer.toString();
+  }
 }
 
 @dsl
 String svgBuilderSync(void Function(SvgBuilder builder) action) {
   final builder = SvgBuilder();
   action(builder);
-  builder.writeEnd();
   return builder.build();
 }
 
@@ -728,6 +771,5 @@ String svgBuilderSync(void Function(SvgBuilder builder) action) {
 Future<String> svgBuilder(FutureOr Function(SvgBuilder builder) action) async {
   final builder = SvgBuilder();
   await action(builder);
-  builder.writeEnd();
   return builder.build();
 }
