@@ -158,7 +158,7 @@ abstract class BaseTextPainter {
     strokeWidth = textStrokeWidth ?? strokeWidth;
   }
 
-  /// 创建画笔
+  /// 创建基础画笔, 用来绘制装饰线
   /// [Paint]
   Paint createBasePaint() => Paint()
     ..strokeCap = StrokeCap.round
