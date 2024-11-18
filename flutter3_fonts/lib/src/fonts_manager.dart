@@ -19,13 +19,20 @@ class FontsManager {
   }
 
   /// 所有默认字体对应的本地文件路径
-  static List<String> getFontFamilyLocalPathList(
-      List<FontFamilyMeta> metaList) {
+  /// [filterDisplayFontFamilyList] 需要过滤的字体名称列表, 不指定则返回所有
+  static List<String> getFontFamilyLocalPathList(List<FontFamilyMeta> metaList,
+      {List<String>? filterDisplayFontFamilyList}) {
     final result = <String>[];
     for (final meta in metaList) {
       for (final variant in meta.variantList) {
         if (variant.localPath != null) {
-          result.add(variant.localPath!);
+          if (filterDisplayFontFamilyList == null ||
+              filterDisplayFontFamilyList.isEmpty) {
+            result.add(variant.localPath!);
+          } else if (filterDisplayFontFamilyList
+              .contains(variant.displayFontFamily)) {
+            result.add(variant.localPath!);
+          }
         }
       }
     }
@@ -55,6 +62,19 @@ class FontsManager {
     if (filenamePart.contains('Italic')) return FontStyle.italic;
     return FontStyle.normal;
   }*/
+
+  /// 根据字体名称, 获取字体对应的本地文件路径
+  List<String> getFontFamilyLocalPathListByFamily(String? displayFontFamily) {
+    if (displayFontFamily == null) {
+      return [];
+    }
+    return [
+      ...getFontFamilyLocalPathList(_customFontFamilyMetaList,
+          filterDisplayFontFamilyList: [displayFontFamily]),
+      ...getFontFamilyLocalPathList(_systemFontFamilyMetaList,
+          filterDisplayFontFamilyList: [displayFontFamily]),
+    ];
+  }
 
   //region ---默认字体---
 
