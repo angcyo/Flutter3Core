@@ -6,33 +6,72 @@ part of '../flutter3_fonts.dart';
 /// @date 2024/06/15
 ///
 /// 字体描述元数据
-class FontFamilyMeta {
+class FontFamilyMeta with EquatableMixin {
   /// 字体名称, 不包含字宽和字体的样式
   /// 用来显示的字体名称
   String displayFontFamily;
 
+  /// 当前字体支持的变种列表, 每一种变种都会对应一个字体文件
+  /// [displayFontFamily]-[fontWeight][fontStyle].[fileExtension]
+  List<FontFamilyVariantMeta> variantList;
+
+  //--
+
   /// 字体来源
   /// 不指定则没有来源. 则不加载字体,
   /// 则使用默认[TextStyle]
+  @configProperty
   FontFamilySource? source;
 
   /// http字体下载时保存路径
+  /// assets字体导出时保存路径
+  @configProperty
   String? savePath;
 
   /// http文件下载时是否覆盖
+  /// assets字体导出时是否覆盖
+  @configProperty
   bool? overwrite;
 
-  /// 当前字体支持的变种列表
-  /// [displayFontFamily]-[fontWeight][fontStyle].[fileExtension]
-  List<FontFamilyVariantMeta> variantList;
+  //--
+
+  /// 如果是assets资源字体, 是否要将其导出到缓存目录
+  @configProperty
+  bool? exportAssetsFont;
 
   FontFamilyMeta({
     required this.displayFontFamily,
     this.source,
     this.savePath,
     this.overwrite,
+    this.exportAssetsFont,
     this.variantList = const [],
   });
+
+  /// 使用一个单一的变体, 创建字体描述元数据
+  FontFamilyMeta.fromVariant({
+    required String displayFontFamily,
+    required String fontFamily,
+    required String uri,
+    //--
+    FontFamilySource? source,
+    String? savePath,
+    bool? overwrite,
+    bool? exportAssetsFont,
+  }) : this(
+          displayFontFamily: displayFontFamily,
+          source: source,
+          variantList: [
+            FontFamilyVariantMeta(
+              displayFontFamily: displayFontFamily,
+              fontFamily: fontFamily,
+              uri: uri,
+            )
+          ],
+          savePath: savePath,
+          overwrite: overwrite,
+          exportAssetsFont: exportAssetsFont,
+        );
 
   /// 获取字体样式
   TextStyle textStyle({
@@ -60,7 +99,7 @@ class FontFamilyMeta {
     );
   }
 
-  /// 加载字体
+  /// 加载字体/加载变种字体资源
   /// ```
   /// /system/fonts/Miui-Bold.ttf
   /// /system/fonts/Miui-Light.ttf
@@ -95,6 +134,9 @@ class FontFamilyMeta {
     }
     return result;
   }
+
+  @override
+  List<Object?> get props => [displayFontFamily, variantList];
 }
 
 /// 字体来源
@@ -107,28 +149,42 @@ enum FontFamilySource { asset, file, http }
 /// [Medium]字体粗细
 /// [Italic]字体样式
 /// [.ttf]扩展名
-class FontFamilyVariantMeta {
+class FontFamilyVariantMeta with EquatableMixin {
   /// 用来显示的字体名称
+  @configProperty
   String displayFontFamily;
 
   /// 这里的字体名称, 包含了[fontWeightStr]和[fontStyleStr]
+  @configProperty
   String fontFamily;
 
   /// 当前字体变种的资源路径
+  @configProperty
   String uri;
 
   /// 扩展名, 如果有
+  @output
   String? fileExtension;
 
   /// 支持的字体粗细
+  @output
   String? fontWeightStr;
 
+  @output
   FontWeight fontWeight = FontWeight.normal;
 
   /// 支持的字体样式
+  @output
   String? fontStyleStr;
 
+  @output
   FontStyle fontStyle = FontStyle.normal;
+
+  //--
+
+  /// 变体字体对应的本地文件路径, 如果有
+  @output
+  String? localPath;
 
   /// 匹配最接近的变体
   static FontFamilyVariantMeta? closestMatch(
@@ -198,7 +254,8 @@ class FontFamilyVariantMeta {
     String? filePath,
   })  : displayFontFamily = filename,
         fontFamily = filename,
-        uri = filePath ?? filename {
+        uri = filePath ?? filename,
+        localPath = filePath {
     //debugger();
     final filenameParts = filename.split('.');
     fontFamily = filenameParts.first;
@@ -242,10 +299,12 @@ class FontFamilyVariantMeta {
     }
   }
 
+  /// 真正的加载字体数据到内存中
   Future<bool> load(
     FontFamilySource source, {
     String? savePath,
     bool? overwrite,
+    bool? exportAssetsFont,
   }) async {
     bool result = false;
     assert(() {
@@ -254,16 +313,31 @@ class FontFamilyVariantMeta {
     }());
     switch (source) {
       case FontFamilySource.asset:
-        result = await FontsLoader.loadAssetFont(fontFamily, uri);
+        final pair = await FontsLoader.loadAssetFont(fontFamily, uri);
+        result = pair.$1;
+        final byteData = pair.$2;
+        if (exportAssetsFont == true && byteData != null) {
+          final filePath = "${savePath ?? ''}/${uri.fileName()}";
+          await byteData.writeToFile(
+              filePath: filePath, overwrite: overwrite == true);
+          localPath = filePath;
+          //
+        }
+      //localPath = uri;
       case FontFamilySource.file:
         result = await FontsLoader.loadFileFont(fontFamily, uri);
+        localPath = uri;
       case FontFamilySource.http:
-        result = await FontsLoader.loadHttpFont(
+        final pair = await FontsLoader.loadHttpFont(
           fontFamily,
           uri,
           savePath: savePath,
           overwrite: overwrite,
         );
+        result = pair.$1;
+        if (pair.$1) {
+          localPath = pair.$2;
+        }
     }
     return result;
   }
@@ -273,6 +347,13 @@ class FontFamilyVariantMeta {
     return 'FontFamilyVariantMeta{fontFamily: $fontFamily, displayFontFamily: $displayFontFamily, fileExtension: $fileExtension, '
         'fontWeight: $fontWeightStr, fontStyle: $fontStyleStr, uri: $uri, fileExtension: $fileExtension}';
   }
+
+  @override
+  List<Object?> get props => [
+        displayFontFamily,
+        fontFamily,
+        uri,
+      ];
 }
 
 /// 字体样式列表

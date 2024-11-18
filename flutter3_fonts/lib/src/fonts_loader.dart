@@ -38,23 +38,23 @@ class FontsLoader {
   /// [fontFamily] 字体名称
   /// [uri] 字体资产key
   /// 返回是否加载成功
-  static Future<bool> loadAssetFont(
+  static Future<(bool, ByteData?)> loadAssetFont(
     String fontFamily,
     String uri,
   ) async {
     try {
       final loader = FontLoader(fontFamily);
-      final fontData = rootBundle.load(uri);
-      loader.addFont(fontData);
+      final fontData = await rootBundle.load(uri);
+      loader.addFont(Future.value(fontData));
       await loader.load();
-      return true;
+      return (true, fontData);
     } catch (e) {
       assert(() {
         debugPrint("Font asset error!!!");
         debugPrint(e.toString());
         return true;
       }());
-      return false;
+      return (false, null);
     }
   }
 
@@ -83,22 +83,22 @@ class FontsLoader {
   /// 加载网络中的字体
   /// [fontFamily] 字体名称
   /// [uri] 字体网络地址
-  static Future<bool> loadHttpFont(
+  /// [savePath] 保存的路径
+  /// @return 返回是否成功和本地文件路径
+  static Future<(bool, String?)> loadHttpFont(
     String fontFamily,
     String uri, {
     String? savePath,
     bool? overwrite,
   }) async {
     try {
-      await loadFontFromList(
-        await downloadFile(
-          uri,
-          savePath: savePath,
-          overwrite: overwrite ?? false,
-        ),
-        fontFamily: fontFamily,
+      final pair = await downloadFile(
+        uri,
+        savePath: savePath,
+        overwrite: overwrite ?? false,
       );
-      return true;
+      await loadFontFromList(pair.$1, fontFamily: fontFamily);
+      return (true, pair.$2);
     } catch (e, s) {
       assert(() {
         debugPrint("Font download failed!!!");
@@ -106,7 +106,7 @@ class FontsLoader {
         debugPrint(s.toString());
         return true;
       }());
-      return false;
+      return (false, null);
     }
   }
 
@@ -116,7 +116,8 @@ class FontsLoader {
   /// [url] 网络地址
   /// [savePath] 保存路径, 文件名是网络地址的最后一部分
   /// [overwrite] 是否覆盖原有的文件
-  static Future<Uint8List> downloadFile(
+  /// @return 返回数据字节和本地文件路径
+  static Future<(Uint8List, String)> downloadFile(
     String url, {
     String? savePath,
     bool overwrite = false,
@@ -129,12 +130,12 @@ class FontsLoader {
     final file = File('$dir/$filename');
 
     if (await file.exists() && !overwrite) {
-      return await file.readAsBytes();
+      return (await file.readAsBytes(), file.path);
     }
 
     final bytes = await downloadBytes(uri);
     file.writeAsBytes(bytes);
-    return bytes;
+    return (bytes, file.path);
   }
 
   /// 下载文件到指定的文件路径

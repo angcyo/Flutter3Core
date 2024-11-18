@@ -18,6 +18,20 @@ class FontsManager {
     }
   }
 
+  /// 所有默认字体对应的本地文件路径
+  static List<String> getFontFamilyLocalPathList(
+      List<FontFamilyMeta> metaList) {
+    final result = <String>[];
+    for (final meta in metaList) {
+      for (final variant in meta.variantList) {
+        if (variant.localPath != null) {
+          result.add(variant.localPath!);
+        }
+      }
+    }
+    return result;
+  }
+
   /*static FontWeight _extractFontWeightFromApiFilenamePart(String filenamePart) {
     if (filenamePart.contains('Thin')) return FontWeight.w100;
 
@@ -41,6 +55,29 @@ class FontsManager {
     if (filenamePart.contains('Italic')) return FontStyle.italic;
     return FontStyle.normal;
   }*/
+
+  //region ---默认字体---
+
+  /// 默认字体加载后的缓存
+  final List<FontFamilyMeta> _defaultFontFamilyMetaList = [];
+
+  /// 所有默认字体对应的本地文件路径
+  List<String> get defaultFontLocalPathList =>
+      getFontFamilyLocalPathList(_defaultFontFamilyMetaList);
+
+  /// 加载默认字体
+  Future<bool> loadDefaultFont(FontFamilyMeta fontMeta) async {
+    if (_defaultFontFamilyMetaList.contains(fontMeta)) {
+      return true;
+    }
+    final result = await loadFontFamily(fontMeta);
+    if (result) {
+      _defaultFontFamilyMetaList.add(fontMeta);
+    }
+    return result;
+  }
+
+  //endregion ---默认字体---
 
   //region ---自定义字体---
 
@@ -217,6 +254,7 @@ class FontsManager {
               fontFamilyMeta.source,
               savePath: fontFamilyMeta.savePath,
               overwrite: fontFamilyMeta.overwrite,
+              exportAssetsFont: fontFamilyMeta.exportAssetsFont,
             );
       } catch (e) {
         assert(() {
@@ -235,6 +273,7 @@ class FontsManager {
     FontFamilySource? source, {
     String? savePath,
     bool? overwrite,
+    bool? exportAssetsFont,
   }) async {
     if (source == null) {
       return false;
@@ -254,6 +293,7 @@ class FontsManager {
           source,
           savePath: savePath,
           overwrite: overwrite,
+          exportAssetsFont: exportAssetsFont,
         );
         _uriLoadCache[key] = true;
         return true;
