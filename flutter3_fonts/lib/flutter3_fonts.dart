@@ -1,6 +1,5 @@
 library flutter3_fonts;
 
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -20,6 +19,25 @@ part 'src/fonts_manager.dart';
 /// Email:angcyo@126.com
 /// @author angcyo
 /// @date 2024/06/15
+///
+/// flutter默认字体,
+/// 在[ThemeData]中决定并初始化,
+/// ```
+/// // TYPOGRAPHY & ICONOGRAPHY
+/// typography ??= useMaterial3
+///   ? Typography.material2021(platform: platform, colorScheme: colorScheme)
+///   : Typography.material2014(platform: platform);
+/// ```
+/// [Typography.material2021]
+/// [Typography._withPlatform]
+///
+/// 最终:
+/// - iOS 'CupertinoSystemDisplay'
+/// [Typography.blackCupertino]
+/// [Typography.whiteCupertino]
+/// - Android 'Roboto'
+/// [Typography.blackMountainView]
+/// [Typography.whiteMountainView]
 ///
 class SystemChineseFont {
   const SystemChineseFont._();
