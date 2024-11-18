@@ -64,6 +64,7 @@ typedef IndexCallback = void Function(int index);
 /// [num]数字类型的回调
 typedef NumCallback = void Function(num number);
 typedef NumNullCallback = void Function(num? number);
+typedef ContextNumNullCallback = void Function(BuildContext? context, num? number);
 typedef RangeNumCallback = void Function(num startValue, num endValue);
 
 /// [bool]类型的回调

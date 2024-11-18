@@ -76,6 +76,9 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
 
   //--
 
+  /// 拦截输入完成的默认处理
+  final ContextNumNullCallback? onNumberInputFinishIntercept;
+
   /// 输入完成回调
   final NumNullCallback? onNumberResult;
 
@@ -89,6 +92,7 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
     this.maxLength = 9,
     this.canPop = true,
     this.supportNegative,
+    this.onNumberInputFinishIntercept,
     this.onNumberResult,
     NumType? numType,
   }) : _numType = numType ?? (number is int ? NumType.i : NumType.d);
@@ -136,6 +140,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       ..minValue = widget.minValue
       ..maxValue = widget.maxValue
       ..maxLength = widget.maxLength
+      ..onNumberInputFinishIntercept = widget.onNumberInputFinishIntercept
       ..initInputValue(widget.number);
     numberValueStyle = TextStyle(
       fontSize: 22,
@@ -144,6 +149,18 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
           : globalTheme.textGeneralStyle.color,
       fontWeight: FontWeight.bold,
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant NumberKeyboardDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _controller
+      ..numType = widget._numType
+      ..maxDigits = widget.maxDigits
+      ..minValue = widget.minValue
+      ..maxValue = widget.maxValue
+      ..maxLength = widget.maxLength
+      ..onNumberInputFinishIntercept = widget.onNumberInputFinishIntercept;
   }
 
   @override
@@ -445,6 +462,11 @@ class NumberKeyboardInputController {
   /// 是否支持小数
   bool get isSupportDecimal => numType == NumType.d;
 
+  //--
+
+  /// 拦截输入完成事件
+  ContextNumNullCallback? onNumberInputFinishIntercept;
+
   /// 初始化当前输入的值
   void initInputValue(num? value) {
     numberText = formatValue(value) ?? "";
@@ -485,16 +507,26 @@ class NumberKeyboardInputController {
   /// 完成输入时调用
   /// @return 验证没问题后, 返回输入的键盘值
   @callPoint
-  num? onKeyboardInputFinish(BuildContext? context) {
+  num? onKeyboardInputFinish(
+    BuildContext? context,
+  ) {
     //debugger();
     if (checkInputValue(numberText)) {
       if (isSupportDecimal) {
         final result = numberText.toDoubleOrNull();
-        context?.pop(result);
+        if (onNumberInputFinishIntercept == null) {
+          context?.pop(result);
+        } else {
+          onNumberInputFinishIntercept?.call(context, result);
+        }
         return result;
       } else {
         final result = numberText.toIntOrNull();
-        context?.pop(result);
+        if (onNumberInputFinishIntercept == null) {
+          context?.pop(result);
+        } else {
+          onNumberInputFinishIntercept?.call(context, result);
+        }
         return result;
       }
     } else {
