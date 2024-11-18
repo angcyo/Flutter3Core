@@ -45,7 +45,7 @@ class TextElementPainter extends ElementPainter {
   /// [onPaintingSelfBefore]
   @overridePoint
   void onSelfUpdateTextPainter() {
-    textPainter?.updateTextColor(textColor: paint.color);
+    textPainter?.updateTextProperty(textColor: paint.color);
   }
 
   @override
@@ -147,7 +147,7 @@ abstract class BaseTextPainter {
   /// 动态更新文本颜色
   @api
   @overridePoint
-  void updateTextColor({
+  void updateTextProperty({
     Color? textColor,
     PaintingStyle? textStyle,
     double? textStrokeWidth,
@@ -191,7 +191,7 @@ abstract class BaseTextPainter {
 
   /// 更新[TextPainter]对应的文本颜色
   /// [createTextPainter]
-  static void updateTextPainter(
+  static void updateTextPainterProperty(
     TextPainter? painter, {
     Color? textColor,
     PaintingStyle? textStyle,
@@ -324,17 +324,17 @@ class NormalTextPainter extends BaseTextPainter {
   Matrix4? paintMatrix;
 
   @override
-  void updateTextColor({
+  void updateTextProperty({
     Color? textColor,
     PaintingStyle? textStyle,
     double? textStrokeWidth,
   }) {
-    super.updateTextColor(
+    super.updateTextProperty(
       textColor: textColor,
       textStyle: textStyle,
       textStrokeWidth: textStrokeWidth,
     );
-    BaseTextPainter.updateTextPainter(
+    BaseTextPainter.updateTextPainterProperty(
       _textPainter,
       textColor: textColor,
       textStrokeWidth: textStrokeWidth,
@@ -578,12 +578,12 @@ class SingleCharTextPainter extends BaseTextPainter {
   }
 
   @override
-  void updateTextColor({
+  void updateTextProperty({
     Color? textColor,
     PaintingStyle? textStyle,
     double? textStrokeWidth,
   }) {
-    super.updateTextColor(
+    super.updateTextProperty(
       textColor: textColor,
       textStyle: textStyle,
       textStrokeWidth: textStrokeWidth,
@@ -592,7 +592,7 @@ class SingleCharTextPainter extends BaseTextPainter {
     charPainterList?.forEach((line) {
       for (final char in line) {
         //debugger();
-        BaseTextPainter.updateTextPainter(
+        BaseTextPainter.updateTextPainterProperty(
           char.charPainter,
           textColor: textColor,
           textStrokeWidth: textStrokeWidth,
