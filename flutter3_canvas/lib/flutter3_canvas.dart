@@ -43,6 +43,8 @@ part 'src/painter/image_element_painter.dart';
 part 'src/painter/painter.dart';
 part 'src/painter/path_element_painter.dart';
 part 'src/painter/text_element_painter.dart';
+part 'src/painter/base_text_painter.dart';
+part 'src/painter/base_char_painter.dart';
 part 'src/tests/tests_canvas_follow.dart';
 
 Widget canvasSvgWidget(

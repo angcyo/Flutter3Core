@@ -385,6 +385,32 @@ extension ListPathEx on List<Path> {
     final boundsWidth = bounds.width.ensureValid();
     final boundsHeight = bounds.height.ensureValid();
 
+    if (width == null && height != null) {
+      //用高度等比缩放
+      final sy = boundsHeight == 0.0 ? 1.0 : height / boundsHeight;
+      final sx = sy;
+      //debugger();
+      final scale = createScaleMatrix(
+        sx: sx,
+        sy: sy,
+        anchor: bounds.topLeft,
+      );
+
+      return transformPath(translate * scale);
+    } else if (width != null && height == null) {
+      //用宽度等比缩放
+      final sx = boundsWidth == 0.0 ? 1.0 : width / boundsWidth;
+      final sy = sx;
+
+      final scale = createScaleMatrix(
+        sx: sx,
+        sy: sy,
+        anchor: bounds.topLeft,
+      );
+
+      return transformPath(translate * scale);
+    }
+
     width ??= boundsWidth;
     height ??= boundsHeight;
 
