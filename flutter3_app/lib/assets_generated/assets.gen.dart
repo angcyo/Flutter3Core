@@ -14,14 +14,11 @@ class $AssetsSvgGen {
   String get appUpdateHeader =>
       'packages/flutter3_app/assets/svg/app_update_header.svg';
 
-  /// File path: assets/svg/flutter_dash.svg
-  String get flutterDash => 'packages/flutter3_app/assets/svg/flutter_dash.svg';
-
   /// Directory path: assets/svg
   String get path => 'assets/svg';
 
   /// List of all assets
-  List<String> get values => [appUpdateHeader, flutterDash];
+  List<String> get values => [appUpdateHeader];
 }
 
 class Assets {
