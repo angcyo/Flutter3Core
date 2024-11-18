@@ -30,6 +30,9 @@ Future<PackageInfo> get $platformPackageInfo async {
 
 /// [$platformPackageInfo]的缓存数据
 /// 请使用[$platformPackageInfo]先获取一次数据, 缓存才有效
+/// [PackageInfo.version]
+/// [PackageInfo.buildNumber]
+/// [PackageInfo.packageName]
 PackageInfo? get $platformPackageInfoCache {
   $platformPackageInfo.ignore();
   return _platformPackageInfoCache;
