@@ -45,7 +45,7 @@ class TextElementPainter extends ElementPainter {
   /// [onPaintingSelfBefore]
   @overridePoint
   void onSelfUpdateTextPainter() {
-    textPainter?.updateTextColor(paint.color);
+    textPainter?.updateTextColor(textColor: paint.color);
   }
 
   @override
@@ -78,6 +78,10 @@ abstract class BaseTextPainter {
 
   /// 文本的样式
   PaintingStyle paintingStyle = PaintingStyle.fill;
+
+  @dp
+  @implementation
+  double strokeWidth = 1;
 
   /// 文本的字体大小
   @dp
@@ -143,9 +147,15 @@ abstract class BaseTextPainter {
   /// 动态更新文本颜色
   @api
   @overridePoint
-  void updateTextColor(Color textColor) {
+  void updateTextColor({
+    Color? textColor,
+    PaintingStyle? textStyle,
+    double? textStrokeWidth,
+  }) {
     //debugger();
-    this.textColor = textColor;
+    this.textColor = textColor ?? this.textColor;
+    paintingStyle = textStyle ?? paintingStyle;
+    strokeWidth = textStrokeWidth ?? strokeWidth;
   }
 
   /// 创建画笔
@@ -165,6 +175,7 @@ abstract class BaseTextPainter {
       textColor: textColor,
       textAlign: textAlign,
       paintingStyle: paintingStyle,
+      strokeWidth: strokeWidth,
       fontSize: fontSize,
       letterSpacing: letterSpacing ?? 0,
       isBold: isBold,
@@ -180,14 +191,42 @@ abstract class BaseTextPainter {
 
   /// 更新[TextPainter]对应的文本颜色
   /// [createTextPainter]
-  static void updateTextPainterColor(TextPainter? painter, Color textColor) {
+  static void updateTextPainter(
+    TextPainter? painter, {
+    Color? textColor,
+    PaintingStyle? textStyle,
+    double? textStrokeWidth,
+  }) {
     final text = painter?.text;
     if (text != null) {
-      final old = text.style?.foreground?.color;
-      if (old != textColor) {
-        text.style?.foreground?.color = textColor;
-        painter?.markNeedsLayout();
-        painter?.layout();
+      final paint = text.style?.foreground;
+      if (paint != null) {
+        bool isSet = false;
+
+        //--
+        final oldTextColor = paint.color;
+        if (oldTextColor != textColor) {
+          paint.color = textColor ?? oldTextColor;
+          isSet = true;
+        }
+
+        final oldStyle = paint.style;
+        if (oldStyle != textStyle) {
+          paint.style = textStyle ?? oldStyle;
+          isSet = true;
+        }
+
+        final oldStrokeWidth = paint.strokeWidth;
+        if (oldStrokeWidth != textStrokeWidth) {
+          paint.strokeWidth = textStrokeWidth ?? oldStrokeWidth;
+          isSet = true;
+        }
+
+        //--
+        if (isSet) {
+          painter?.markNeedsLayout();
+          painter?.layout();
+        }
       }
     }
   }
@@ -200,6 +239,7 @@ abstract class BaseTextPainter {
     InlineSpan? textSpan,
     Color textColor = Colors.black,
     PaintingStyle paintingStyle = PaintingStyle.fill,
+    @dp double strokeWidth = 0,
     @dp double? fontSize = 14,
     @dp double? letterSpacing = 0, //字间距, 支持负数
     bool isBold = false, //粗体
@@ -234,6 +274,7 @@ abstract class BaseTextPainter {
         /*decorationThickness: 1,*/
         foreground: Paint()
           ..color = textColor
+          ..strokeWidth = strokeWidth
           /*..strokeCap = StrokeCap.round
           ..strokeJoin = StrokeJoin.round*/
           ..style = paintingStyle,
@@ -263,7 +304,7 @@ abstract class BaseTextPainter {
   }
 }
 
-/// 普通文本绘制
+/// 普通文本绘制, 整体一起绘制, 否则单字符绘制
 /// [TextPainter]
 class NormalTextPainter extends BaseTextPainter {
   NormalTextPainter();
@@ -283,9 +324,22 @@ class NormalTextPainter extends BaseTextPainter {
   Matrix4? paintMatrix;
 
   @override
-  void updateTextColor(Color textColor) {
-    super.updateTextColor(textColor);
-    BaseTextPainter.updateTextPainterColor(_textPainter, textColor);
+  void updateTextColor({
+    Color? textColor,
+    PaintingStyle? textStyle,
+    double? textStrokeWidth,
+  }) {
+    super.updateTextColor(
+      textColor: textColor,
+      textStyle: textStyle,
+      textStrokeWidth: textStrokeWidth,
+    );
+    BaseTextPainter.updateTextPainter(
+      _textPainter,
+      textColor: textColor,
+      textStrokeWidth: textStrokeWidth,
+      textStyle: textStyle,
+    );
   }
 
   /// 初始化文本绘制对象
@@ -524,13 +578,26 @@ class SingleCharTextPainter extends BaseTextPainter {
   }
 
   @override
-  void updateTextColor(Color textColor) {
-    super.updateTextColor(textColor);
+  void updateTextColor({
+    Color? textColor,
+    PaintingStyle? textStyle,
+    double? textStrokeWidth,
+  }) {
+    super.updateTextColor(
+      textColor: textColor,
+      textStyle: textStyle,
+      textStrokeWidth: textStrokeWidth,
+    );
     //debugger();
     charPainterList?.forEach((line) {
       for (final char in line) {
         //debugger();
-        BaseTextPainter.updateTextPainterColor(char.charPainter, textColor);
+        BaseTextPainter.updateTextPainter(
+          char.charPainter,
+          textColor: textColor,
+          textStrokeWidth: textStrokeWidth,
+          textStyle: textStyle,
+        );
       }
     });
   }
