@@ -540,14 +540,18 @@ class SvgBuilder {
   ///
   void writeGroupSync(
     void Function(SvgBuilder subBuilder) action, {
+    //--
     String? fillRule,
     bool fill = false,
     Color? fillColor,
     bool stroke = true,
     Color? strokeColor,
     @dp double? strokeWidth,
+    //--
     String? id,
     String? name,
+    //--
+    Matrix4? transform,
   }) {
     buffer.write('<g ');
     writeId(id: id, name: name);
@@ -558,24 +562,29 @@ class SvgBuilder {
       strokeColor: strokeColor,
       strokeWidth: strokeWidth,
     );
+    writeTransform(transform: transform);
+    buffer.write('>');
     final subBuilder = SvgBuilder();
     subBuilder.digits = digits;
     action(subBuilder);
-    subBuilder.writeEnd();
     buffer.write(subBuilder.build());
-    buffer.write('>');
+    buffer.write(r'</g>');
   }
 
   Future writeGroup(
     FutureOr Function(SvgBuilder subBuilder) action, {
+    //--
     String? fillRule,
     bool? fill,
     Color? fillColor,
     bool? stroke,
     Color? strokeColor,
     @dp double? strokeWidth,
+    //--
     String? id,
     String? name,
+    //--
+    Matrix4? transform,
   }) async {
     buffer.write('<g ');
     writeId(id: id, name: name);
@@ -586,6 +595,7 @@ class SvgBuilder {
       strokeColor: strokeColor,
       strokeWidth: strokeWidth,
     );
+    writeTransform(transform: transform);
     buffer.write('>');
     final subBuilder = SvgBuilder();
     subBuilder.digits = digits;
@@ -621,15 +631,18 @@ class SvgBuilder {
     Color? strokeColor,
     @dp double? strokeWidth,
   }) {
+    //--
     if (fill == true) {
       buffer.write(
           'fill="${(fillColor ?? Colors.black).toHex(includeAlpha: false)}" ');
+
+      if (fillRule != null) {
+        buffer.write('fill-rule="$fillRule" ');
+      }
     } else if (fill == false) {
       buffer.write('fill="none" ');
     }
-    if (fillRule != null) {
-      buffer.write('fill-rule="$fillRule" ');
-    }
+    //--
     if (stroke == true) {
       buffer.write(
           'stroke="${(strokeColor ?? Colors.black).toHex(includeAlpha: false)}" ');
