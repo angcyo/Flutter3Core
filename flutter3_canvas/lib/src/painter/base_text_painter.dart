@@ -59,7 +59,12 @@ abstract class BaseTextPainter {
   bool isLineThrough = false;
 
   /// 对齐方式, 在多行文本时, 会影响每行的对齐方式
+  /// [TextAlign.justify] 矢量文本的极限对齐
   TextAlign textAlign = TextAlign.start;
+
+  /// 交叉轴上文本对齐的方式
+  /// [TextAlign.justify] 矢量文本的极限对齐
+  TextAlign crossTextAlign = TextAlign.center;
 
   ///
   TextDirection? textDirection = TextDirection.ltr; //文本方向
@@ -99,7 +104,7 @@ abstract class BaseTextPainter {
   @entryPoint
   void initPainter() {
     if (useVectorText) {
-      scaleVectorTextPathToFontSize();
+      scaleVectorCharPathToFontSize();
     }
   }
 
@@ -111,11 +116,60 @@ abstract class BaseTextPainter {
 
   //--
 
-  /// 缩放所有适量路径, 以便适应字体大小
-  void scaleVectorTextPathToFontSize() {
-    vectorTextPathMap?.forEach((key, path) {
-      vectorTextPathMap?[key] = path?.moveToZero(height: fontSize);
-    });
+  /// 缩放所有矢量文本路径, 以便适应字体大小
+  /// 字体库中用的pt单位, 所以需要缩放到指定的dp字体大小值
+  void scaleVectorCharPathToFontSize() {
+    final pathMap = vectorTextPathMap;
+    if (pathMap != null) {
+      final scale = fontSize / (1160 + 288);
+
+      //final scale = 1.toUnitFromDp(IUnit.pt);
+      //final scale = 1 / fontSize / 1.toDpFromUnit(IUnit.pt);
+      //final scale = 1 / fontSize / 1.toUnitFromDp(IUnit.pt);
+      final scaleMatrix = createScaleMatrix(sx: scale, sy: scale);
+      //debugger();
+      pathMap.forEach((key, path) {
+        if (path != null) {
+          //final bounds = path.getExactBounds();
+          //final translate = createTranslateMatrix(ty: bounds.height * 0.1);
+          //final scale = createScaleMatrix(sx: 0.1, sy: 0.1);
+          //vectorTextPathMap?[key] = path.transformPath(translate * scale);
+          //pathMap[key] = path.moveToZero(scale: scale);
+          pathMap[key] = path.transformPath(scaleMatrix);
+        }
+      });
+    }
+  }
+
+  /// 移动矢量文本路径, 以便对齐行内基线
+  /// [crossTextAlign] 和这个属性有冲突
+  @implementation
+  void translateVectorCharPathToBaseline(
+      List<List<BaseCharPainter>>? charPainterList) {
+    final list = charPainterList;
+    if (list != null) {
+      for (final line in list) {
+        for (final char in line) {
+          if (char is CharPathPainter) {
+            final charPath = vectorTextPathMap?[char.char];
+            if (charPath != null) {
+              //final scale = createScaleMatrix(sx: 0.1, sy: 0.1);
+              //vectorTextPathMap?[char.char] = charPath.transformPath(scale);
+              //char.charPath = charPath.transformPath(scale);
+              final bounds = char.charPathBounds;
+              final translate = createTranslateMatrix(
+                tx: -bounds.left,
+                //ty: char.lineHeight - char.lineDescender /* - bounds.bottom*/,
+                ty: -bounds.top,
+              );
+              //debugger();
+              //char.charPath = charPath.transformPath(translate);
+              //char.charPathBounds = char.charPath.getBounds(); //需要重新赋值吗?
+            }
+          }
+        }
+      }
+    }
   }
 
   /// 动态更新文本颜色
@@ -363,9 +417,6 @@ class NormalTextPainter extends BaseTextPainter {
 /// [TextPainter]
 /// [NormalTextPainter]
 class SingleCharTextPainter extends BaseTextPainter {
-  /// 交叉轴上文本对齐的方式
-  TextAlign crossTextAlign = TextAlign.center;
-
   /// 是否使用自定义的删除线/下划线样式
   bool useCustomLineStyle = false;
 
@@ -393,13 +444,15 @@ class SingleCharTextPainter extends BaseTextPainter {
 
   /// 斜体补偿的单字符宽度
   /// 方案1: 每个字符都补偿
-  double get italicCharWidth =>
-      isItalic && !italicWidthWithLine ? fontSize * 0.2 : 0;
+  double get italicCharWidth => useVectorText
+      ? 0
+      : (isItalic && !italicWidthWithLine ? fontSize * 0.2 : 0);
 
   /// 斜体补偿的整个行的宽度
   /// 方案2: 只在整行中补偿一次
-  double get italicLineWidth =>
-      isItalic && italicWidthWithLine ? fontSize * 0.2 : 0;
+  double get italicLineWidth => useVectorText
+      ? 0
+      : (isItalic && italicWidthWithLine ? fontSize * 0.2 : 0);
 
   /// 文本绘制对象, 每个字符一个对象
   List<List<BaseCharPainter>>? charPainterList;
@@ -423,7 +476,7 @@ class SingleCharTextPainter extends BaseTextPainter {
 
   /// 测量总体的大小
   /// 最终缓存在[_painterBounds]中
-  void _measureCharTextPainterSize() {
+  void _measureCharPainterSize() {
     final list = charPainterList;
     if (list == null) {
       _painterBounds = Rect.zero;
@@ -442,6 +495,8 @@ class SingleCharTextPainter extends BaseTextPainter {
 
         double lineWidth = -2147483648;
         double lineHeight = -2147483648;
+        double lineAscender = 0;
+        double lineDescender = 0;
 
         if (orientation.isVertical) {
           height = max(height, last.bottom - first.top);
@@ -452,6 +507,8 @@ class SingleCharTextPainter extends BaseTextPainter {
 
             lineWidth = max(lineWidth, char.bounds.width + italicLineWidth);
             lineHeight = last.bottom - first.top;
+            lineAscender = min(char.ascender, lineAscender);
+            lineDescender = max(char.descender, lineDescender);
           }
           width = right - left + italicLineWidth;
 
@@ -459,8 +516,11 @@ class SingleCharTextPainter extends BaseTextPainter {
           for (final char in line) {
             char.lineWidth = lineWidth;
             char.lineHeight = lineHeight;
+            char.lineAscender = lineAscender;
+            char.lineDescender = lineDescender;
           }
         } else {
+          //横向
           width = max(width, last.right - first.left + italicLineWidth);
 
           double lineHeight = -2147483648;
@@ -470,6 +530,9 @@ class SingleCharTextPainter extends BaseTextPainter {
 
             lineWidth = last.right - first.left + italicLineWidth;
             lineHeight = max(lineHeight, char.bounds.height);
+            lineAscender = min(char.ascender, lineAscender);
+            lineDescender = max(char.descender, lineDescender);
+            //debugger();
           }
           height = bottom - top;
 
@@ -477,6 +540,8 @@ class SingleCharTextPainter extends BaseTextPainter {
           for (final char in line) {
             char.lineWidth = lineWidth;
             char.lineHeight = lineHeight;
+            char.lineAscender = lineAscender;
+            char.lineDescender = lineDescender;
           }
         }
       }
@@ -489,7 +554,7 @@ class SingleCharTextPainter extends BaseTextPainter {
   /// [orientation]
   /// [textAlign]
   /// [crossTextAlign]
-  void _measureCharTextPainterOffset() {
+  void _measureCharPainterOffset() {
     final list = charPainterList;
     if (list == null) {
       return;
@@ -500,6 +565,7 @@ class SingleCharTextPainter extends BaseTextPainter {
         double dy = 0;
 
         if (orientation.isVertical) {
+          //纵向
           if (crossTextAlign == TextAlign.center) {
             dx = (char.lineWidth - char.charWidth) / 2;
           } else if (crossTextAlign == TextAlign.right ||
@@ -510,15 +576,24 @@ class SingleCharTextPainter extends BaseTextPainter {
           if (textAlign == TextAlign.center) {
             dy = (painterBounds.height - char.lineHeight) / 2;
           } else if (textAlign == TextAlign.right ||
-              textAlign == TextAlign.end) {
+              textAlign == TextAlign.end ||
+              textAlign == TextAlign.justify) {
             dy = painterBounds.height - char.lineHeight;
+            if (crossTextAlign == TextAlign.justify) {
+              dy -= char.lineDescender - char.descender;
+            }
           }
         } else {
+          //横向
           if (crossTextAlign == TextAlign.center) {
             dy = (char.lineHeight - char.charHeight) / 2;
           } else if (crossTextAlign == TextAlign.right ||
-              crossTextAlign == TextAlign.end) {
+              crossTextAlign == TextAlign.end ||
+              crossTextAlign == TextAlign.justify) {
             dy = char.lineHeight - char.charHeight;
+            if (crossTextAlign == TextAlign.justify) {
+              dy -= char.lineDescender - char.descender;
+            }
           }
 
           if (textAlign == TextAlign.center) {
@@ -592,6 +667,7 @@ class SingleCharTextPainter extends BaseTextPainter {
 
     //矢量文本画笔
     final vectorPaint = useVectorText ? createBasePaint() : null;
+    vectorPaint?.strokeWidth = 0; //矢量文本画笔宽度恒为0
 
     //当出现空行时, 使用此对象的宽高占位
     const placeholderChar = "中";
@@ -610,6 +686,7 @@ class SingleCharTextPainter extends BaseTextPainter {
       double lineMaxHeight = 0;
 
       if (line.isEmpty) {
+        //空行
         final charWidth = placeholderPainter.width + italicCharWidth;
         final charHeight = placeholderPainter.height;
         lineCharPainterList.add(
@@ -627,28 +704,50 @@ class SingleCharTextPainter extends BaseTextPainter {
         lineMaxWidth = charWidth;
         lineMaxHeight = charHeight;
       } else {
+        //有效数据行
         for (final char in line) {
           double charWidth = 0;
           double charHeight = 0;
 
           if (useVectorText) {
-            final charPath = vectorTextPathMap?[char];
-            if (charPath != null) {
-              @dp
-              final bounds = charPath.getBounds();
-              charWidth = bounds.width;
-              charHeight = bounds.height;
+            //矢量文本
+            if (char == " ") {
+              //空字符
+              charWidth = fontSize / 4 + italicCharWidth;
+              charHeight = fontSize / 4;
 
               lineCharPainterList.add(
                 CharPathPainter(
                   char,
-                  charPath,
+                  kEmptyPath,
+                  Rect.zero,
                   vectorPaint,
+                  kEmptyPath,
                   Rect.fromLTWH(left, top, charWidth, charHeight),
                 )..debugPaintBounds = debugPaintBounds,
               );
+            } else {
+              final charPath = vectorTextPathMap?[char];
+              if (charPath != null) {
+                @dp
+                final charPathBounds = charPath.getBounds();
+                charWidth = charPathBounds.width;
+                charHeight = charPathBounds.height;
+
+                lineCharPainterList.add(
+                  CharPathPainter(
+                    char,
+                    charPath,
+                    charPathBounds,
+                    vectorPaint,
+                    charPath.moveToZero(),
+                    Rect.fromLTWH(left, top, charWidth, charHeight),
+                  )..debugPaintBounds = debugPaintBounds,
+                );
+              }
             }
           } else {
+            //普通文本
             final charPainter = createBaseTextPainter(char);
             //debugger();
             charWidth = charPainter.width + italicCharWidth;
@@ -686,8 +785,9 @@ class SingleCharTextPainter extends BaseTextPainter {
       }
     }
     this.charPainterList = charPainterList;
-    _measureCharTextPainterSize();
-    _measureCharTextPainterOffset();
+    _measureCharPainterSize();
+    _measureCharPainterOffset();
+    //translateVectorCharPathToBaseline(charPainterList);
     //debugger();
   }
 
@@ -719,7 +819,7 @@ class SingleCharTextPainter extends BaseTextPainter {
         }
       }
     });
-    if (useCustomLineStyle && !isNil(charPainterList)) {
+    if (!useVectorText && useCustomLineStyle && !isNil(charPainterList)) {
       painterCustomLine(canvas, offset);
     }
   }

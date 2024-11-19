@@ -27,6 +27,16 @@ abstract class BaseCharPainter {
   @autoInjectMark
   double lineHeight = 0;
 
+  /// 当前行, 最大的上升高度, 负值
+  /// 矢量文本时有用
+  @autoInjectMark
+  double lineAscender = 0;
+
+  /// 当前行, 最大的下降高度, 正值
+  /// 矢量文本时有用
+  @autoInjectMark
+  double lineDescender = 0;
+
   //--paint--
 
   /// 绘制矩阵, 通常用来实现文本的曲线绘制
@@ -65,12 +75,11 @@ abstract class BaseCharPainter {
 
   double get charHeight => bounds.height;
 
-  /// 下降的高度
-  @implementation
-  double get charDescent => 0;
+  /// 上升距离, 负值
+  double get ascender => 0;
 
-  @implementation
-  double get charUnscaledAscent => 0;
+  /// 下降距离, 正值
+  double get descender => 0;
 
   //--core--
 
@@ -163,10 +172,31 @@ class CharPathPainter extends BaseCharPainter {
   /// 字符对应的矢量数据, 直接绘制, 请在赋值之前做好变换操作
   final Path charPath;
 
+  /// [charPath]对应的边界
+  final Rect charPathBounds;
+
   /// 绘制画笔
   final Paint? charPaint;
 
-  CharPathPainter(this.char, this.charPath, this.charPaint, Rect bounds) {
+  /// 用于绘制的[charPath], 在某种程度上会等于[charPath].moveToZero后的结果
+  final Path drawPath;
+
+  /// 上升距离, 负值
+  @override
+  double get ascender => charPathBounds.top;
+
+  /// 下降距离, 正值
+  @override
+  double get descender => charPathBounds.bottom;
+
+  CharPathPainter(
+    this.char,
+    this.charPath,
+    this.charPathBounds,
+    this.charPaint,
+    this.drawPath,
+    Rect bounds,
+  ) {
     this.bounds = bounds;
   }
 
@@ -175,12 +205,12 @@ class CharPathPainter extends BaseCharPainter {
   void onPaintSelf(Canvas canvas, Offset offset) {
     //debugger();
     final paint = charPaint;
-    if (paint != null) {
+    if (paint != null && drawPath != kEmptyPath) {
       if (isInCurve) {
-        canvas.drawPath(charPath, paint);
+        canvas.drawPath(drawPath, paint);
       } else {
         canvas.drawPath(
-            charPath.shift(offset + alignOffset + bounds.lt), paint);
+            drawPath.shift(offset + alignOffset + bounds.lt), paint);
       }
     }
   }
