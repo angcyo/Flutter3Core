@@ -228,36 +228,47 @@ abstract class BaseTextPainter {
   }) {
     final text = painter?.text;
     if (text != null) {
-      final paint = text.style?.foreground;
-      if (paint != null) {
-        bool isSet = false;
-
-        //--
-        final oldTextColor = paint.color;
-        if (oldTextColor != textColor) {
-          paint.color = textColor ?? oldTextColor;
-          isSet = true;
-        }
-
-        final oldStyle = paint.style;
-        if (oldStyle != textStyle) {
-          paint.style = textStyle ?? oldStyle;
-          isSet = true;
-        }
-
-        final oldStrokeWidth = paint.strokeWidth;
-        if (oldStrokeWidth != textStrokeWidth) {
-          paint.strokeWidth = textStrokeWidth ?? oldStrokeWidth;
-          isSet = true;
-        }
-
-        //--
-        if (isSet) {
-          painter?.markNeedsLayout();
-          painter?.layout();
-        }
+      if (updatePaintProperty(
+        text.style?.foreground,
+        textColor: textColor,
+        textStyle: textStyle,
+        textStrokeWidth: textStrokeWidth,
+      )) {
+        painter?.markNeedsLayout();
+        painter?.layout();
       }
     }
+  }
+
+  /// 返回是否更新过属性
+  static bool updatePaintProperty(
+    Paint? paint, {
+    Color? textColor,
+    PaintingStyle? textStyle,
+    double? textStrokeWidth,
+  }) {
+    bool isSet = false;
+    if (paint != null) {
+      //--
+      final oldTextColor = paint.color;
+      if (oldTextColor != textColor) {
+        paint.color = textColor ?? oldTextColor;
+        isSet = true;
+      }
+
+      final oldStyle = paint.style;
+      if (oldStyle != textStyle) {
+        paint.style = textStyle ?? oldStyle;
+        isSet = true;
+      }
+
+      final oldStrokeWidth = paint.strokeWidth;
+      if (oldStrokeWidth != textStrokeWidth) {
+        paint.strokeWidth = textStrokeWidth ?? oldStrokeWidth;
+        isSet = true;
+      }
+    }
+    return isSet;
   }
 
   /// 通过给定的属性, 创建对应的[TextPainter]文本绘制对象
@@ -644,6 +655,13 @@ class SingleCharTextPainter extends BaseTextPainter {
         if (char is CharTextPainter) {
           BaseTextPainter.updateTextPainterProperty(
             char.charPainter,
+            textColor: textColor,
+            textStrokeWidth: textStrokeWidth,
+            textStyle: textStyle,
+          );
+        } else if (char is CharPathPainter) {
+          BaseTextPainter.updatePaintProperty(
+            char.charPaint,
             textColor: textColor,
             textStrokeWidth: textStrokeWidth,
             textStyle: textStyle,

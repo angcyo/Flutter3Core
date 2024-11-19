@@ -939,7 +939,7 @@ class ElementPainter extends IPainter
   @output
   bool get isPathElement => elementOutputPathList.isNotEmpty;
 
-  /// 获取元素的输出[Path], 当前仅支持[PathElementPainter]元素
+  /// 获取元素的transform后输出[Path], 当前仅支持[PathElementPainter]元素
   /// 重写此方法以便支持更多类型的元素
   ///
   /// 此属性的数据, 同时也是矢量布尔运算的数据.
@@ -955,7 +955,7 @@ class ElementPainter extends IPainter
     return null;
   }
 
-  /// 获取元素的所有输出[Path], 支持[ElementGroupPainter]
+  /// 获取元素的transform后所有输出[Path], 支持[ElementGroupPainter]
   /// 其他元素可能需要重写[elementOutputPath]方法
   @output
   List<Path> get elementOutputPathList {
@@ -1416,8 +1416,8 @@ class PaintProperty with EquatableMixin {
       ..translate(center.dx - width / 2, center.dy - height / 2, 0);
   }
 
-  /// 所有属性的矩阵
-  /// final m' = m1 * m2;
+  /// 所有属性的矩阵, 矩阵的乘法, 前乘, 后乘.
+  /// final m' = m1 * m2; //前面的矩阵会影响后面矩阵的值.
   ///  - m1 中的缩放值, 会影响 m2 中的平移值
   ///  - m2 中的缩放值, 不会影响 m1 中的平移值
   Matrix4 get operateMatrix =>

@@ -128,13 +128,13 @@ class CharTextPainter extends BaseCharPainter {
   /// 下降的高度
   @implementation
   @override
-  double get charDescent {
+  double get ascender {
     return charPainter?.computeLineMetrics().firstOrNull?.descent ?? 0;
   }
 
   @implementation
   @override
-  double get charUnscaledAscent {
+  double get descender {
     return charPainter?.computeLineMetrics().firstOrNull?.unscaledAscent ?? 0;
   }
 
@@ -188,6 +188,20 @@ class CharPathPainter extends BaseCharPainter {
   /// 下降距离, 正值
   @override
   double get descender => charPathBounds.bottom;
+
+  /// 结合[paintMatrix]后, 输出的[Path],
+  /// 可以用来输出存档和输出雕刻数据
+  @output
+  Path? get outputPath {
+    if (drawPath == kEmptyPath || drawPath.isEmpty) {
+      return null;
+    }
+    Path result = drawPath.transformPath(paintMatrix);
+    if (isInCurve) {
+      return result;
+    }
+    return result.shift(alignOffset + bounds.lt);
+  }
 
   CharPathPainter(
     this.char,
