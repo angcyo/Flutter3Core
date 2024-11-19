@@ -44,6 +44,9 @@ class PathPointInfo {
   }
 }
 
+/// 定义一个空路径
+Path kEmptyPath = Path();
+
 /// [Matrix4Ex.mapRect]
 extension PathEx on Path {
   /// 判断路径是否为空
@@ -303,15 +306,88 @@ extension PathEx on Path {
   /// [size].[width].[height] 指定的大小
   /// [PathEx.moveToZero]
   /// [ListPathEx.moveToZero]
+  /// @return 返回新的路径
   @dp
   Path moveToZero({
+    //--
     @dp Size? size,
     @dp double? width,
     @dp double? height,
+    //--
+    double? scale,
+    double? sx,
+    double? sy,
   }) {
     return ofList<Path>()
-        .moveToZero(size: size, width: width, height: height)
+        .moveToZero(
+          size: size,
+          width: width,
+          height: height,
+          scale: scale,
+          sx: sx,
+          sy: sy,
+        )
         .first;
+  }
+
+  /// 将路径缩放到指定大小
+  /// [anchor] 缩放的锚点
+  @dp
+  Path scaleToSize({
+    @dp Size? size,
+    @dp double? width,
+    @dp double? height,
+    Offset? scaleAnchor = Offset.zero,
+  }) {
+    //debugger();
+    final bounds = getExactBounds();
+
+    width ??= size?.width.ensureValid();
+    height ??= size?.height.ensureValid();
+
+    if (width == null && height == null) {
+      return this;
+    }
+
+    final boundsWidth = bounds.width.ensureValid();
+    final boundsHeight = bounds.height.ensureValid();
+
+    if (width == null && height != null) {
+      //用高度等比缩放
+      final sy = boundsHeight == 0.0 ? 1.0 : height / boundsHeight;
+      final sx = sy;
+      //debugger();
+      final scale = createScaleMatrix(
+        sx: sx,
+        sy: sy,
+        anchor: scaleAnchor ?? bounds.lt,
+      );
+
+      return transformPath(scale);
+    } else if (width != null && height == null) {
+      //用宽度等比缩放
+      final sx = boundsWidth == 0.0 ? 1.0 : width / boundsWidth;
+      final sy = sx;
+
+      final scale = createScaleMatrix(
+        sx: sx,
+        sy: sy,
+        anchor: scaleAnchor ?? bounds.lt,
+      );
+
+      return transformPath(scale);
+    }
+
+    width ??= boundsWidth;
+    height ??= boundsHeight;
+
+    final scale = createScaleMatrix(
+      sx: boundsWidth == 0 ? 1 : width / boundsWidth,
+      sy: boundsHeight == 0 ? 1 : height / boundsHeight,
+      anchor: scaleAnchor ?? bounds.lt,
+    );
+
+    return transformPath(scale);
   }
 }
 
@@ -369,6 +445,12 @@ extension ListPathEx on List<Path> {
     @dp Size? size,
     @dp double? width,
     @dp double? height,
+    //--
+    double? scale,
+    double? sx,
+    double? sy,
+    //--
+    Offset? scaleAnchor = Offset.zero,
   }) {
     //debugger();
     final bounds = getExactBounds();
@@ -378,49 +460,30 @@ extension ListPathEx on List<Path> {
     width ??= size?.width.ensureValid();
     height ??= size?.height.ensureValid();
 
-    if (width == null && height == null) {
-      return transformPath(translate);
-    }
-
     final boundsWidth = bounds.width.ensureValid();
     final boundsHeight = bounds.height.ensureValid();
 
     if (width == null && height != null) {
       //用高度等比缩放
-      final sy = boundsHeight == 0.0 ? 1.0 : height / boundsHeight;
-      final sx = sy;
+      sy ??= scale ?? (boundsHeight == 0.0 ? 1.0 : height / boundsHeight);
+      sx ??= scale ?? sy;
       //debugger();
-      final scale = createScaleMatrix(
-        sx: sx,
-        sy: sy,
-        anchor: bounds.topLeft,
-      );
-
-      return transformPath(translate * scale);
     } else if (width != null && height == null) {
       //用宽度等比缩放
-      final sx = boundsWidth == 0.0 ? 1.0 : width / boundsWidth;
-      final sy = sx;
-
-      final scale = createScaleMatrix(
-        sx: sx,
-        sy: sy,
-        anchor: bounds.topLeft,
-      );
-
-      return transformPath(translate * scale);
+      sx ??= scale ?? (boundsWidth == 0.0 ? 1.0 : width / boundsWidth);
+      sy ??= scale ?? sx;
     }
 
     width ??= boundsWidth;
     height ??= boundsHeight;
 
-    final scale = createScaleMatrix(
-      sx: boundsWidth == 0 ? 1 : width / boundsWidth,
-      sy: boundsHeight == 0 ? 1 : height / boundsHeight,
-      anchor: bounds.topLeft,
+    final scaleMatrix = createScaleMatrix(
+      sx: sx ?? scale ?? (boundsWidth == 0 ? 1 : width / boundsWidth),
+      sy: sy ?? scale ?? (boundsHeight == 0 ? 1 : height / boundsHeight),
+      anchor: scaleAnchor ?? bounds.topLeft,
     );
 
-    return transformPath(translate * scale);
+    return transformPath(translate * scaleMatrix);
   }
 
   /// 将路径绘制到[UiImage]中
