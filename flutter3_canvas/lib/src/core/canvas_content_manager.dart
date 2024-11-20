@@ -27,6 +27,14 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   /// [updateFillStyleContentTemplate]
   CanvasContentTemplate? contentTemplate;
 
+  /// 画布内容区域[contentTemplate]
+  @dp
+  @sceneCoordinate
+  Rect? get canvasContentBounds =>
+      contentTemplate?.contentBackgroundInfo?.rect ??
+      contentTemplate?.contentBackgroundInfo?.pathBoundsCache ??
+      contentTemplate?.contentBackgroundInfo?.path?.getExactBounds();
+
   //--
 
   /// 画布跟随时的显示区域, 同时也是元素分配位置的参考

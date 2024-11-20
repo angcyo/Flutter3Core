@@ -19,6 +19,7 @@ class CanvasContentTemplate {
   /// 限制内容场景的区域, 网格线只会在此区域内绘制
   ///
   /// 警示所有元素必须在此区域内
+  /// [CanvasContentManager.withCanvasContent]
   ///
   /// [CanvasAxisManager.painting]
   /// [withCanvasContent]
