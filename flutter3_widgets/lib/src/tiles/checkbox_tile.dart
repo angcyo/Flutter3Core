@@ -21,7 +21,11 @@ class CheckboxTile extends StatefulWidget {
   final bool? value;
 
   /// 并不需要在此方法中更新界面
+  /// null: 半选
   final ValueChanged<bool?>? onChanged;
+
+  /// 选中之后是否能点击
+  final bool enableCheckedTap;
 
   //--
 
@@ -49,6 +53,10 @@ class CheckboxTile extends StatefulWidget {
   @defInjectMark
   final Color? activeColor;
 
+  /// 打勾时勾的颜色
+  /// [CheckboxThemeData.checkColor]
+  final Color? checkColor;
+
   //--
 
   /// [MainAxisSize.min]
@@ -66,10 +74,12 @@ class CheckboxTile extends StatefulWidget {
     this.value = false,
     this.tristate = false,
     this.isCircleShape = false,
+    this.enableCheckedTap = true,
     this.visualDensity = VisualDensity.compact,
     this.normalColor,
     this.normalWidth = 1.0,
     this.activeColor,
+    this.checkColor,
     this.onChanged,
   });
 
@@ -102,7 +112,7 @@ class _CheckboxTileState extends State<CheckboxTile> with TileMixin {
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: widget.visualDensity,
         /*打勾时勾的颜色*/
-        /*checkColor: Colors.purpleAccent,*/
+        checkColor: widget.checkColor,
         activeColor: widget.activeColor ?? globalTheme.accentColor,
         shape: widget.isCircleShape
             ? const CircleBorder()
@@ -141,7 +151,7 @@ class _CheckboxTileState extends State<CheckboxTile> with TileMixin {
       _initValue = !_initValue!;
       widget.onChanged?.call(_initValue);
       updateState();
-    });
+    }).ignorePointer(!widget.enableCheckedTap && _initValue == true);
   }
 }
 
