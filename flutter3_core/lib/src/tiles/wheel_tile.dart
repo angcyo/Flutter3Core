@@ -4,6 +4,155 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/24
 ///
+/// 滚动输入小部件, 没有其它装饰
+/// [leftWidget]..[value]..[rightWidget]
+///
+/// [WheelDialog]
+/// [LabelWheelTile]
+/// [LabelWheelDateTimeTile]
+class WheelTile extends StatefulWidget {
+  /// 是否激活
+  final bool enable;
+
+  /// 默认显示的数据
+  final dynamic value;
+
+  /// 将[value]转成对应的小部件, 不指定会使用文本小部件进行显示
+  @defInjectMark
+  final WidgetNullBuilder? onValueBuilder;
+
+  //--
+
+  /// [value]小部件的对齐方式
+  final AlignmentGeometry valueAlignment;
+
+  /// 在[value]最左边的小部件
+  final Widget? leftWidget;
+
+  /// 在[value]最右边的小部件
+  /// 如果[wheelValues]有值时, 会自动设置一个默认的图标提示小部件
+  final Widget? rightWidget;
+
+  //--
+
+  /// 内边距
+  final EdgeInsetsGeometry? padding;
+
+  /// 外边距
+  final EdgeInsetsGeometry? margin;
+
+  //--
+
+  /// [WheelDialog]的标题
+  final String? wheelTitle;
+
+  /// 滚轮选择的数据
+  final List? wheelValues;
+
+  /// 数值索引回调
+  /// 并不需要在此方法中更新界面
+  final IndexCallback? onWheelIndexInput;
+
+  //--
+
+  /// 装饰的圆角大小
+  final double decorationRadius;
+
+  /// 按下时的颜色
+  final Color? pressedColor;
+
+  const WheelTile({
+    super.key,
+    this.enable = true,
+    this.value,
+    this.valueAlignment = Alignment.center,
+    this.leftWidget,
+    this.rightWidget,
+    this.onValueBuilder,
+    this.wheelTitle,
+    this.wheelValues,
+    this.onWheelIndexInput,
+    this.padding = const EdgeInsets.symmetric(vertical: kL, horizontal: kH),
+    this.margin,
+    this.decorationRadius = kH,
+    this.pressedColor = Colors.black12,
+  });
+
+  @override
+  State<WheelTile> createState() => _WheelTileState();
+}
+
+class _WheelTileState extends State<WheelTile> {
+  dynamic _initValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _initValue = widget.value;
+  }
+
+  @override
+  void didUpdateWidget(covariant WheelTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _initValue = widget.value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final radius = widget.decorationRadius;
+
+    final valueWidget = (widget.onValueBuilder?.call(_initValue) ??
+            widgetOf(context, _initValue) ??
+            _initValue?.toString().text())
+        ?.align(widget.valueAlignment);
+
+    final rightWidget = widget.rightWidget ??
+        (!isNil(widget.wheelValues)
+            ? Icon(
+                Icons.arrow_forward_ios,
+                size: 18.0,
+                color: widget.enable
+                    ? globalTheme.icoNormalColor
+                    : globalTheme.icoDisableColor,
+              ).rotate(90.hd).paddingAll(4)
+            : null);
+
+    return StateDecorationWidget(
+      decoration: fillDecoration(
+        color: widget.enable
+            ? globalTheme.whiteSubBgColor
+            : globalTheme.disableBgColor,
+        radius: radius,
+      ),
+      pressedDecoration: fillDecoration(
+        color: widget.pressedColor,
+        radius: radius,
+      ),
+      enablePressedDecoration: widget.enable && _initValue != null,
+      child: [
+        widget.leftWidget,
+        valueWidget?.expanded(),
+        rightWidget,
+      ].row()?.paddingInsets(widget.padding),
+    ).click(() async {
+      if (!isNil(widget.wheelValues)) {
+        final index = await context.showWidgetDialog(
+          WheelDialog(
+            title: widget.wheelTitle ?? "请选择",
+            initValue: _initValue,
+            values: widget.wheelValues,
+          ),
+        );
+        _initValue = widget.wheelValues?[index];
+        updateState();
+        widget.onWheelIndexInput?.call(index);
+      }
+    }, widget.enable && !isNil(widget.wheelValues)).paddingInsets(
+        widget.margin);
+  }
+}
+
 /// 左[label]      右[initValue].[wheel]
 /// [WheelDialog]
 class LabelWheelTile extends StatefulWidget {
