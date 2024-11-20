@@ -21,6 +21,8 @@ part of '../../flutter3_core.dart';
 ///    .findLastSync();
 /// //--
 /// $isar.collections.where().findAllSync();
+/// $isar.collections.where().offset(20).limit(10).findAllSync();
+/// $isar.collections.where().sortByModelDesc().findAllSync();
 /// ```
 ///
 /// # 增
@@ -34,7 +36,8 @@ part of '../../flutter3_core.dart';
 ///   $isar.collections.deleteAllSync([id]);
 ///   //--
 /// });
-/// ```
+///
+///
 
 /// 路径名称
 const kIsarPath = "isar";
