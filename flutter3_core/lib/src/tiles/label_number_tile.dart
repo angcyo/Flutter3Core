@@ -12,6 +12,7 @@ part of '../../flutter3_core.dart';
 class LabelNumberTile extends StatefulWidget {
   /// 标签
   final String? label;
+  final TextStyle? labelTextStyle;
   final EdgeInsets? labelPadding;
   final Widget? labelWidget;
 
@@ -46,6 +47,7 @@ class LabelNumberTile extends StatefulWidget {
   const LabelNumberTile({
     super.key,
     this.label,
+    this.labelTextStyle,
     this.labelWidget,
     this.labelPadding = kLabelPadding,
     this.labelActions,
@@ -91,6 +93,7 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
       context,
       labelWidget: widget.labelWidget,
       label: widget.label,
+      labelStyle: widget.labelTextStyle,
       labelPadding: widget.labelPadding,
       constraints: null,
     );

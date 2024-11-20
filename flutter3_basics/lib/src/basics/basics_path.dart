@@ -17,7 +17,7 @@ const double kPathAcceptableError = 0.025; //
 /// 0.1dp 精度可以
 /// 0.5dp 也还可以
 @mm
-const double kVectorTolerance = 0.02; //
+const double kVectorTolerance = 0.01; //
 
 /// [Path]路径上每个点的信息
 /// [PathEx.eachPathMetrics]
