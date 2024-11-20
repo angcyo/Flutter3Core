@@ -4,6 +4,7 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/08/01
 ///
+/// 小部件状态颜色映射
 /// [WidgetState] 状态
 /// [WidgetStateProperty]
 /// [WidgetStatePropertyAll]
@@ -19,7 +20,7 @@ class WidgetStatePropertyColorMap extends WidgetStateProperty<Color> {
   @override
   Color resolve(Set<WidgetState> states) {
     assert(() {
-      l.v('小部件状态:$states');
+      l.v('[${classHash()}]小部件状态:$states');
       return true;
     }());
     Color? result;
