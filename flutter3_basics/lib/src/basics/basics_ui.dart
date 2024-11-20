@@ -982,7 +982,7 @@ extension WidgetEx on Widget {
 
   /// 忽略小部件内的所有手势
   /// [IgnorePointer]
-  Widget ignorePointer({bool ignoring = true}) {
+  Widget ignorePointer([bool ignoring = true]) {
     return IgnorePointer(
       ignoring: ignoring,
       child: this,
