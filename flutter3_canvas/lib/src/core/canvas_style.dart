@@ -5,6 +5,43 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/20
 /// 画布样式
 class CanvasStyle {
+  /// 绘制坐标轴
+  static const int sDrawAxis = 0X01;
+
+  /// 绘制坐标网格
+  static const int sDrawGrid = sDrawAxis << 1;
+
+  //region ---core---
+
+  /// 是否绘制网格
+  bool get showGrid => drawType.have(sDrawGrid);
+
+  set showGrid(bool value) {
+    drawType = drawType.add(sDrawGrid, value);
+  }
+
+  /// 是否绘制坐标系
+  bool get showAxis => drawType.have(sDrawAxis);
+
+  set showAxis(bool value) {
+    drawType = drawType.add(sDrawAxis, value);
+  }
+
+  /// 绘制label时, 额外需要的偏移量
+  @dp
+  double axisLabelOffset = 1;
+
+  /// 坐标系的单位
+  IUnit axisUnit = IUnit.mm;
+
+  /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
+  int drawType = sDrawAxis | sDrawGrid;
+
+  /// 是否激活智能吸附
+  bool enableElementAdsorb = true;
+
+  //endregion ---core---
+
   //region ---basics---
 
   /// 圆角大小

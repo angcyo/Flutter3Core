@@ -86,13 +86,18 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [CanvasDelegate.layout]
   @entryPoint
   void onUpdatePaintBounds() {
-    final paintBounds = canvasDelegate.canvasViewBox.paintBounds;
-    final xAxisLeft = paintBounds.left + axisManager.yAxisWidth;
-    final yAxisTop = paintBounds.top + axisManager.xAxisHeight;
-    axisManager.xAxisBounds = Rect.fromLTRB(xAxisLeft, paintBounds.top,
-        paintBounds.right, paintBounds.top + axisManager.xAxisHeight);
-    axisManager.yAxisBounds = Rect.fromLTRB(paintBounds.left, yAxisTop,
-        paintBounds.left + axisManager.yAxisWidth, paintBounds.bottom);
+    if (canvasDelegate.canvasStyle.showAxis) {
+      final paintBounds = canvasDelegate.canvasViewBox.paintBounds;
+      final xAxisLeft = paintBounds.left + axisManager.yAxisWidth;
+      final yAxisTop = paintBounds.top + axisManager.xAxisHeight;
+      axisManager.xAxisBounds = Rect.fromLTRB(xAxisLeft, paintBounds.top,
+          paintBounds.right, paintBounds.top + axisManager.xAxisHeight);
+      axisManager.yAxisBounds = Rect.fromLTRB(paintBounds.left, yAxisTop,
+          paintBounds.left + axisManager.yAxisWidth, paintBounds.bottom);
+    } else {
+      axisManager.xAxisBounds = Rect.zero;
+      axisManager.yAxisBounds = Rect.zero;
+    }
   }
 
   /// [canvas] 最原始的canvas, 未经过加工处理

@@ -30,7 +30,7 @@ class CanvasMonitorPainter extends IPainter {
 
     //--
     final drawAxis = canvasDelegate.canvasPaintManager.axisManager.drawType
-        .have(CanvasAxisManager.sDrawAxis);
+        .have(CanvasStyle.sDrawAxis);
     final x = drawAxis
         ? canvasDelegate.canvasPaintManager.axisManager.yAxisWidth
         : 0.0;

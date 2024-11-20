@@ -11,6 +11,16 @@ class ElementAdsorbControl
   @override
   final CanvasElementControlManager canvasElementControlManager;
 
+  @override
+  bool get isCanvasComponentEnable => canvasElementControlManager
+      .canvasDelegate.canvasStyle.enableElementAdsorb;
+
+  @override
+  set isCanvasComponentEnable(bool componentEnable) {
+    canvasElementControlManager.canvasDelegate.canvasStyle.enableElementAdsorb =
+        componentEnable;
+  }
+
   ElementAdsorbControl(this.canvasElementControlManager);
 
   //region --core--
@@ -425,7 +435,8 @@ class ElementAdsorbControl
         adsorbRect(it, element: element);
       });
     }
-    canvasDelegate.canvasPaintManager.contentManager.canvasContentFollowRectInner
+    canvasDelegate
+        .canvasPaintManager.contentManager.canvasContentFollowRectInner
         ?.let((it) {
       adsorbRect(it);
     });

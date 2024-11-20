@@ -29,9 +29,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasEventManager.handleEvent(event, entry);
   }
 
+  /// 布局的大小
+  /// [layout]
+  Size? _layoutSize;
+
   /// 布局完成后的入口点
   @entryPoint
   void layout(Size size) {
+    _layoutSize = size;
     canvasViewBox.updatePaintBounds(size, true);
     canvasPaintManager.onUpdatePaintBounds();
   }
@@ -67,7 +72,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 更新画布的单位
   set axisUnit(IUnit unit) {
     final old = axisUnit;
-    canvasPaintManager.axisManager.axisUnit = unit;
+    canvasStyle.axisUnit = unit;
     dispatchCanvasUnitChanged(old, unit);
   }
 
@@ -178,6 +183,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     delegateContext?.let((it) {
       Feedback.forLongPress(it);
     });
+  }
+
+  /// 请求重新布局, 在隐藏标尺之后, 需要重新布局
+  @api
+  void relayout() {
+    final size = _layoutSize;
+    if (size != null) {
+      layout(size);
+      refresh();
+    }
   }
 
   /// 请求刷新画布

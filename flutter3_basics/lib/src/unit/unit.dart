@@ -381,7 +381,7 @@ class PtUnit extends IUnit {
 @inch
 class InchUnit extends IUnit {
   @override
-  String get suffix => "inch";
+  String get suffix => "in";
 
   @override
   int get digits => kInchFractionDigits;

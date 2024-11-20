@@ -5,12 +5,6 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/02
 /// 坐标轴管理, 负责坐标轴/坐标网格的绘制以及计算
 class CanvasAxisManager extends IPainter {
-  /// 绘制坐标轴
-  static const int sDrawAxis = 0X01;
-
-  /// 绘制坐标网格
-  static const int sDrawGrid = sDrawAxis << 1;
-
   final CanvasPaintManager paintManager;
 
   CanvasDelegate get canvasDelegate => paintManager.canvasDelegate;
@@ -33,23 +27,7 @@ class CanvasAxisManager extends IPainter {
   @dp
   Rect yAxisBounds = Rect.zero;
 
-  /// x横坐标轴的高度
-  @dp
-  double get xAxisHeight => canvasStyle.xAxisHeight;
-
-  /// y纵坐标轴的宽度
-  @dp
-  double get yAxisWidth => canvasStyle.yAxisWidth;
-
-  /// 绘制label时, 额外需要的偏移量
-  @dp
-  double axisLabelOffset = 1;
-
-  /// 坐标系的单位
-  IUnit axisUnit = IUnit.mm;
-
-  /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
-  int drawType = sDrawAxis | sDrawGrid;
+  //--
 
   /// 主刻度的画笔
   Paint primaryPaint = Paint()..style = PaintingStyle.stroke;
@@ -63,13 +41,22 @@ class CanvasAxisManager extends IPainter {
   /// 选中元素大小提示块绘制的画笔
   Paint elementBoundsPaint = Paint()..style = PaintingStyle.fill;
 
-  /// 是否绘制网格
-  bool get showGrid => drawType.have(sDrawGrid);
+  //--
 
-  set showGrid(bool value) {
-    drawType = drawType.add(sDrawGrid, value);
-    paintManager.canvasDelegate.refresh();
-  }
+  /// x横坐标轴的高度
+  @dp
+  double get xAxisHeight => canvasStyle.showAxis ? canvasStyle.xAxisHeight : 0;
+
+  /// y纵坐标轴的宽度
+  @dp
+  double get yAxisWidth => canvasStyle.showAxis ? canvasStyle.yAxisWidth : 0;
+
+  IUnit get axisUnit => canvasStyle.axisUnit;
+
+  int get drawType => canvasStyle.drawType;
+
+  @dp
+  double get axisLabelOffset => canvasStyle.axisLabelOffset;
 
   CanvasAxisManager(this.paintManager);
 
@@ -80,7 +67,8 @@ class CanvasAxisManager extends IPainter {
     yData.clear();
 
     //debugger();
-    if (drawType.have(sDrawAxis) || drawType.have(sDrawGrid)) {
+    if (drawType.have(CanvasStyle.sDrawAxis) ||
+        drawType.have(CanvasStyle.sDrawGrid)) {
     } else {
       return;
     }
@@ -180,7 +168,7 @@ class CanvasAxisManager extends IPainter {
     normalPaint.strokeWidth = canvasStyle.axisNormalWidth;
 
     //绘制坐标刻度
-    if (drawType.have(sDrawAxis)) {
+    if (drawType.have(CanvasStyle.sDrawAxis)) {
       // x
       canvas.withClipRect(isDebug ? null : xAxisBounds, () {
         paintSelectElementWidthSize(canvas, paintMeta);
@@ -207,7 +195,7 @@ class CanvasAxisManager extends IPainter {
     }
 
     // 绘制坐标网格
-    if (drawType.have(sDrawGrid)) {
+    if (drawType.have(CanvasStyle.sDrawGrid)) {
       canvas.withClipRect(canvasBounds, () /*画布区域裁剪*/ {
         canvasDelegate.canvasPaintManager.contentManager
             .withCanvasContent(canvas, () /*内容区域裁剪*/ {

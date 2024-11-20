@@ -90,9 +90,10 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     final isPaintBoundsChanged = oldPaintBounds != paintBounds;
 
     final axisManager = canvasDelegate.canvasPaintManager.axisManager;
+    final showAxis = canvasDelegate.canvasStyle.showAxis;
     canvasBounds = Rect.fromLTRB(
-      paintBounds.left + axisManager.yAxisWidth,
-      paintBounds.top + axisManager.xAxisHeight,
+      paintBounds.left + (showAxis ? axisManager.yAxisWidth : 0),
+      paintBounds.top + (showAxis ? axisManager.xAxisHeight : 0),
       paintBounds.right,
       paintBounds.bottom,
     );
