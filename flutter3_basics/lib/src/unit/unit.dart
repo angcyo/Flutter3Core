@@ -37,7 +37,7 @@ const kFractionDigits = 2;
 const kInchFractionDigits = 3;
 
 /// dp
-@dp
+@Dp()
 double get dpr => devicePixelRatio;
 
 /// pt
@@ -100,7 +100,7 @@ abstract class IUnit {
   }
 
   @unit
-  double toUnitFromDp(@dp num value) {
+  double toUnitFromDp(@Dp() num value) {
     return toUnit(value.toPixelFromDp());
   }
 
@@ -123,7 +123,7 @@ abstract class IUnit {
 
   /// 使用当前单位格式化一个dp值到当前的单位值
   String formatFromDp(
-    @dp num value, {
+    @Dp() num value, {
     bool showSuffix = true,
     int? fractionDigits,
     bool removeZero = true,
@@ -158,8 +158,8 @@ abstract class IUnit {
   /// 根据缩放比例, 计算坐标轴上的刻度间隔
   /// [scale] 缩放比例
   /// [baseGap] 1:1时的刻度间隔
-  @dp
-  double baseAxisGap(int index, double scale, @dp double baseGap) {
+  @Dp()
+  double baseAxisGap(int index, double scale, @Dp() double baseGap) {
     if (scale >= 4) {
       //放大4倍后
       return baseGap / 2;
@@ -176,7 +176,7 @@ abstract class IUnit {
   }
 
   /// 在坐标轴上, 每隔多少个dp距离单位, 显示一个刻度
-  @dp
+  @Dp()
   double getAxisGap(int index, double scale);
 
   /// 获取坐标轴的类型
@@ -236,7 +236,7 @@ class PixelUnit extends IUnit {
       baseAxisGap(index, scale, 20.toDpFromPx());
 }
 
-@dp
+@Dp()
 class DpUnit extends IUnit {
   @override
   String get suffix => "dp";
@@ -579,19 +579,19 @@ extension UnitNumEx on num {
 
   //---
 
-  @dp
+  @Dp()
   double toDpFromMm([@unit IUnit unit = IUnit.mm]) {
     return IUnit.dp.toUnit(toPixel(unit));
   }
 
-  @dp
+  @Dp()
   double toDpFromPx([@unit IUnit unit = IUnit.px]) {
     return IUnit.dp.toUnit(toPixel(unit));
   }
 
   ///[toMmFrom]
   ///[toDpFrom]
-  @dp
+  @Dp()
   double toDpFrom(@unit IUnit unit) {
     return IUnit.dp.toUnit(toPixel(unit));
   }
@@ -610,7 +610,7 @@ extension UnitNumEx on num {
 
   /// 将dp单位的值, 转换成指定单位[unit]的值
   @unit
-  double toUnitFromDp(@dp IUnit? unit) {
+  double toUnitFromDp(@Dp() IUnit? unit) {
     if (unit == null || unit is DpUnit) {
       return this + 0.0;
     }

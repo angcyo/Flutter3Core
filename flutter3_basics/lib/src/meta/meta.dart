@@ -96,13 +96,26 @@ class Warn {
   }
 }
 
+/// 警告
+class Dp {
+  final String des;
+
+  const Dp([this.des = 'Dp单位']);
+
+  @override
+  String toString() {
+    return 'Dp';
+  }
+}
+
+const dp = Dp();
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');
-const pixel = AnnotationMeta('像素单位');
-const dp = AnnotationMeta('Dp单位');
-const mm = AnnotationMeta('Mm单位');
-const pt = AnnotationMeta('磅单位');
+const pixel = AnnotationMeta('pixel像素单位');
+const mm = AnnotationMeta('Mm毫米单位');
+const pt = AnnotationMeta('pt磅单位');
 const inch = AnnotationMeta('in英寸单位');
 
 //endregion---单位
