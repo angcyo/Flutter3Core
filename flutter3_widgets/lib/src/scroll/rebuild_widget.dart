@@ -190,6 +190,32 @@ mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
   }
 }
 
+//--
+
+extension RebuildEx<T> on ValueNotifier<T> {
+  /// [rebuild]
+  Widget build(DynamicDataWidgetBuilder builder) => rebuild(this, builder);
+
+  /// [rebuild]
+  Widget buildFn(Widget Function() builder) =>
+      rebuild(this, (_, __) => builder());
+}
+
+extension RebuildFunctionEx on Function {
+  /// 更新
+  /// ```
+  /// (){}.rebuild(signal);
+  /// ```
+  Widget rebuild(
+    @updateSignalMark ValueNotifier updateSignal, {
+    bool enable = true,
+  }) {
+    return enable ? rebuildSingle(updateSignal, () => this()) : this();
+  }
+}
+
+//--
+
 /// 当[updateSignal]改变时, 自动触发重构
 /// [ValueNotifier]
 /// [UpdateValueNotifier]
@@ -224,15 +250,4 @@ Widget rebuildSingle(
 ) =>
     rebuild(updateSignal, (context, value) => action());
 
-extension RebuildFunctionEx on Function {
-  /// 更新
-  /// ```
-  /// (){}.rebuild(signal);
-  /// ```
-  Widget rebuild(
-    @updateSignalMark ValueNotifier updateSignal, {
-    bool enable = true,
-  }) {
-    return enable ? rebuildSingle(updateSignal, () => this()) : this();
-  }
-}
+//--
