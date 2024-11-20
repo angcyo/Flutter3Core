@@ -197,7 +197,7 @@ extension RebuildEx<T> on ValueNotifier<T> {
   Widget build(DynamicDataWidgetBuilder builder) => rebuild(this, builder);
 
   /// [rebuild]
-  Widget buildFn(Widget Function() builder) =>
+  Widget buildFn(Widget? Function() builder) =>
       rebuild(this, (_, __) => builder());
 }
 

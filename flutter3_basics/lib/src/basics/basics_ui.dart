@@ -645,16 +645,18 @@ extension WidgetEx on Widget {
       );
 
   Widget paddingOnly({
+    double? vertical,
+    double? horizontal,
     double left = 0,
     double top = 0,
     double right = 0,
     double bottom = 0,
   }) =>
       paddingInsets(EdgeInsets.only(
-        left: left,
-        top: top,
-        right: right,
-        bottom: bottom,
+        left: horizontal ?? left,
+        top: vertical ?? top,
+        right: horizontal ?? right,
+        bottom: vertical ?? bottom,
       ));
 
 /*Widget paddingFromWindowPadding() {
