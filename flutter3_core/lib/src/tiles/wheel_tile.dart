@@ -189,12 +189,24 @@ class LabelWheelTile extends StatefulWidget {
   /// [WheelDialog.title]对话框的标题, 默认[label]
   final String? wheelTitle;
 
+  //--
+
+  /// 在[initValue]最左边的小部件
+  final Widget? leftWidget;
+
+  /// 在[initValue]最右边的小部件
+  /// 如果[wheelValues]有值时, 会自动设置一个默认的图标提示小部件
+  @defInjectMark
+  final Widget? rightWidget;
+
   const LabelWheelTile({
     super.key,
     this.label,
     this.labelTextStyle,
     this.labelWidget,
     this.initValue,
+    this.leftWidget,
+    this.rightWidget,
     this.values,
     this.valueWidth,
     this.valuesWidget,
@@ -227,6 +239,11 @@ class _LabelWheelTileState extends State<LabelWheelTile>
       labelWidget: widget.labelWidget,
     );
 
+    final rightWidget = widget.rightWidget ??
+        (!isNil(widget.values)
+            ? loadCoreAssetSvgPicture(Assets.svg.coreNext)
+            : null);
+
     final content = Container(
       padding: const EdgeInsets.symmetric(horizontal: kH, vertical: kX),
       alignment: Alignment.centerLeft,
@@ -236,9 +253,10 @@ class _LabelWheelTileState extends State<LabelWheelTile>
         minHeight: kMinInteractiveHeight,
       ),
       child: [
+        widget.leftWidget,
         (widgetOf(context, currentValueMixin, tryTextWidget: true) ?? empty)
             .expanded(),
-        loadCoreAssetSvgPicture(Assets.svg.coreNext)
+        rightWidget,
       ].row()!,
     )
         .ink(
@@ -277,7 +295,10 @@ class _LabelWheelTileState extends State<LabelWheelTile>
           backgroundColor: globalTheme.itemWhiteBgColor,
           radius: kDefaultBorderRadiusXX,
         )
-        .paddingInsets(kContentPadding);
+        .paddingInsets(kContentPadding)
+        .ignorePointer(
+          isNil(widget.values),
+        );
 
     return [label, content.align(Alignment.centerRight).expanded()]
         .row()!
