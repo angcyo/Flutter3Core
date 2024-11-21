@@ -30,6 +30,10 @@ mixin HookMixin<T extends StatefulWidget> on State<T> {
   //--
 
   /// 在[dispose]时, 释放所有hook的资源
+  /// - [StreamSubscription]
+  /// - [AnimationController]
+  /// - cancel
+  /// - dispose
   @api
   @autoDispose
   void hookAny(dynamic any) {
@@ -37,6 +41,8 @@ mixin HookMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// 在[dispose]时, 释放所有hook的资源
+  /// [key] - [DebugKeysEx]
+  /// [action] - [DebugValueChanged]
   @api
   @autoDispose
   void hookAnyKey(String key, VoidCallback action) {
