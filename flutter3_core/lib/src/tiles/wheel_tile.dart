@@ -112,11 +112,11 @@ class _WheelTileState extends State<WheelTile> {
         (!isNil(widget.wheelValues)
             ? Icon(
                 Icons.arrow_forward_ios,
-                size: 18.0,
+                size: 16.0,
                 color: widget.enable
                     ? globalTheme.icoNormalColor
                     : globalTheme.icoDisableColor,
-              ).rotate(90.hd).paddingAll(4)
+              ) /*.rotate(90.hd)*/ .paddingAll(4)
             : null);
 
     return StateDecorationWidget(
@@ -159,6 +159,7 @@ class _WheelTileState extends State<WheelTile> {
 class LabelWheelTile extends StatefulWidget {
   /// label
   final String? label;
+  final TextStyle? labelTextStyle;
   final Widget? labelWidget;
 
   /// content
@@ -179,6 +180,9 @@ class LabelWheelTile extends StatefulWidget {
   /// wheel
   final bool enableWheelSelectedIndexColor;
 
+  /// wheel 选中项的颜色
+  final Color? wheelSelectedIndexColor;
+
   /// 拦截点击事件
   final GestureTapCallback? onContainerTap;
 
@@ -188,6 +192,7 @@ class LabelWheelTile extends StatefulWidget {
   const LabelWheelTile({
     super.key,
     this.label,
+    this.labelTextStyle,
     this.labelWidget,
     this.initValue,
     this.values,
@@ -197,6 +202,7 @@ class LabelWheelTile extends StatefulWidget {
     this.onValueChanged,
     this.onValueIndexChanged,
     this.enableWheelSelectedIndexColor = true,
+    this.wheelSelectedIndexColor,
     this.onContainerTap,
     this.wheelTitle,
   });
@@ -217,6 +223,7 @@ class _LabelWheelTileState extends State<LabelWheelTile>
     final label = buildLabelWidget(
       context,
       label: widget.label,
+      labelStyle: widget.labelTextStyle,
       labelWidget: widget.labelWidget,
     );
 
@@ -247,6 +254,7 @@ class _LabelWheelTileState extends State<LabelWheelTile>
                     values: widget.values,
                     valuesWidget: widget.valuesWidget,
                     transformValueWidget: widget.transformValueWidget,
+                    wheelSelectedIndexColor: widget.wheelSelectedIndexColor,
                     enableWheelSelectedIndexColor:
                         widget.enableWheelSelectedIndexColor,
                   ),

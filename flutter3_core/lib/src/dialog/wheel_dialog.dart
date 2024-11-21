@@ -19,6 +19,9 @@ class WheelDialog extends StatefulWidget with DialogMixin {
   /// wheel
   final bool enableWheelSelectedIndexColor;
 
+  /// wheel 选中项的颜色
+  final Color? wheelSelectedIndexColor;
+
   @override
   TranslationType get translationType => TranslationType.translation;
 
@@ -31,6 +34,7 @@ class WheelDialog extends StatefulWidget with DialogMixin {
     this.valuesWidget,
     this.transformValueWidget,
     this.enableWheelSelectedIndexColor = true,
+    this.wheelSelectedIndexColor,
   });
 
   @override
@@ -86,6 +90,7 @@ class _WheelDialogState extends State<WheelDialog>
                 itemExtent: _wheelItemExtent,
                 initialIndex: currentValueMixin,
                 enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
+                selectedIndexColor: widget.wheelSelectedIndexColor,
                 onIndexChanged: (index) {
                   currentValueMixin = index;
                   updateState();
