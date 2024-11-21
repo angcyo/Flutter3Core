@@ -19,6 +19,10 @@ typedef ScrollDragEndAction = bool Function(
 /// 下拉返回的小部件
 /// 支持滚动和非滚动子组件
 /// [ScrollConfiguration]
+///
+/// 对话框路由使用[DialogPageRoute]障碍颜色也能支持进度变化
+/// 通过监听[ProgressStateNotification]实现
+///
 class PullBackWidget extends StatefulWidget {
   /// 子部件
   final Widget child;
@@ -125,7 +129,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
   final double closePullThreshold = 0.3;
 
   /// 快速下拉速度阈值, 快速下拉速度超过这个阈值, 就会关闭
-  final double closeFlingVelocity = 500.0;
+  final double closeFlingVelocity = 1000.0;
 
   @override
   void initState() {
@@ -204,11 +208,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
       if (widget.barrierColor != null) {
         updateState();
       }
-      widget.onPullProgress?.call(_pullBackValue);
+      _notifyProgressChanged();
     });
     //动画结束监听
     controller.addStatusListener((status) {
-      //l.d('$status:${_pullBackValue}');
+      //l.d('$status:$_pullBackValue');
       if (_isDragEnd && status == AnimationStatus.completed) {
         _pullBack();
       } /*else if (status == AnimationStatus.dismissed) {
@@ -327,11 +331,17 @@ class _PullBackWidgetState extends State<PullBackWidget>
       return true;
     }());
     //
+    _notifyProgressChanged();
+    updateState();
+  }
+
+  /// 通知进度改变
+  void _notifyProgressChanged() {
+    widget.onPullProgress?.call(_pullBackValue);
     ProgressStateNotification(
       tag: PullBackWidget,
-      progress: _pullBackController?.value,
+      progress: _pullBackValue,
     ).dispatch(buildContext);
-    updateState();
   }
 
   /// [velocity] 手势结束时的速度 >0:快速向下拉 <0:快速向上拉
@@ -339,7 +349,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// 在滚动列表中 velocity>0:快速向上拉 <0:快速向下拉, 正好相反.
   bool _handleDragEnd(ScrollMetrics? position, double velocity) {
     //debugger();
-    //l.d('velocity:$velocity value:${_pullBackValue}');
+    //velocity:-926.796055846446 value:0.0 axis:Axis.vertical pixels:-57.73985209657339
+    //l.d('velocity:$velocity value:$_pullBackValue axis:${position?.axis} pixels:${position?.pixels} position:$position ');
+    //position:ScrollPositionWithSingleContext#ce1ca(offset: -52.4, range: 0.0..285.5, viewport: 382.5, ScrollableState, AlwaysScrollableScrollPhysics -> PullBackScrollPhysics -> BouncingScrollPhysics -> RangeMaintainingScrollPhysics, BallisticScrollActivity#76b81(AnimationController#5ee79(▶ -52.446; for BallisticScrollActivity)), ScrollDirection.forward)
     if (widget.enablePullMaxBoundOverScroll) {
       _overPullBackValue = 0;
       updateState();
@@ -403,6 +415,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// 返回消耗后的距离
   double _handleConsumeUserOffset(ScrollMetrics position, double offset) {
     //debugger();
+    //l.d('_handleConsumeUserOffset: offset:$offset value:$_pullBackValue axis:${position.axis} pixels:${position.pixels} position:$position ');
     if (position.axis != widget.pullAxis) {
       return offset;
     }
@@ -506,9 +519,11 @@ class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
   final ScrollDragEndAction? dragEndAction;
 
   const PullBackScrollPhysics({
-    super.parent = const BouncingScrollPhysics(
+    super.parent =
+        const ClampingScrollPhysics() /*const BouncingScrollPhysics(
       parent: RangeMaintainingScrollPhysics(),
-    ),
+    )*/
+    ,
     this.consumeUserOffsetAction,
     this.dragEndAction,
   });
