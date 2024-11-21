@@ -20,9 +20,12 @@ class BottomMenuItemTile extends StatelessWidget {
   /// 是否可用
   final bool enable;
 
+  /// 激活时的过滤颜色
+  final Color? filterColor;
+
   /// 禁用时的背景色, 不指定使用默认
   /// 可用, 则使用原色
-  final Color? disableColor;
+  final Color? disableFilterColor;
 
   /// 点击事件
   final FutureVoidAction? onTap;
@@ -41,7 +44,8 @@ class BottomMenuItemTile extends StatelessWidget {
     this.enable = true,
     this.closeAfterTap = true,
     this.backgroundColor,
-    this.disableColor,
+    this.filterColor,
+    this.disableFilterColor,
     this.popResult,
   });
 
@@ -51,7 +55,11 @@ class BottomMenuItemTile extends StatelessWidget {
     return (children ?? [child])
         .row(gap: kH, mainAxisAlignment: MainAxisAlignment.center)!
         .colorFiltered(
-            color: enable ? null : disableColor ?? globalTheme.disableColor)
+            color: enable
+                ? filterColor
+                : (disableFilterColor ??
+                    filterColor ??
+                    globalTheme.disableColor))
         .paddingAll(kX)
         .constrainedMin(minHeight: kMinInteractiveDimension)
         .ink(

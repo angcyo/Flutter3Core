@@ -151,4 +151,5 @@ const defInjectMark = AnnotationMeta('标识当前属性不指定时,也有注�
 const autoDispose = AnnotationMeta('标识当前操作会自动释放');
 const clipFlag = AnnotationMeta('Canvas Clip 操作, 消耗资源');
 const fromFramework = AnnotationMeta('表示当前代码来自框架');
+const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 //endregion---base

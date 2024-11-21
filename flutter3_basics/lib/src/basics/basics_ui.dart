@@ -1484,6 +1484,21 @@ extension WidgetEx on Widget {
               child: this,
             );
 
+  /// 在暗色模式下才会过滤颜色
+  Widget darkColorFiltered({
+    BuildContext? context,
+    ColorFilter? colorFilter,
+    Color? color,
+    BlendMode blendMode = BlendMode.srcIn,
+  }) =>
+      colorFiltered(
+        colorFilter: colorFilter,
+        color: (context ?? GlobalConfig.def.globalContext)?.isThemeDark == true
+            ? (color ?? GlobalTheme.of(context).icoNormalColor)
+            : null,
+        blendMode: blendMode,
+      );
+
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
   /// [WidgetListEx.repaintBoundary]
@@ -2301,6 +2316,9 @@ extension ContextEx on BuildContext {
     Locale locale = this.locale;
     return locale.languageCode == 'zh';
   }
+
+  /// 如果当前是暗色主题, 则返回[value]否则返回null
+  T? darkOr<T>(T? value) => isThemeDark ? value : null;
 
   /// 中英文字符选择
   /// 如果是中文环境, 则返回中文字符串, 否则返回默认字符串

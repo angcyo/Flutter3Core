@@ -53,7 +53,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
       context,
       [
         items
-            .column(gapWidget: kHorizontalLine)
+            .column(gapWidget: horizontalLine(context))
             ?.clipRadius(radius: clipRadius),
         Empty.height(kX),
         if (showCancelItem)

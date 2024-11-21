@@ -4,66 +4,31 @@ part of '../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/15
 ///
-
-/// 常量线的颜色
-const Color kLineColor = Color(0xffececec);
-const Color kLineColorDark = Color(0xff595450);
-
-/// 默认的竖线
-Line get kVerticalLine =>
-    const Line(thickness: 1, color: kLineColor, axis: Axis.vertical);
-
-Line get kVerticalLineDark =>
-    const Line(thickness: 1, color: kLineColorDark, axis: Axis.vertical);
-
-/// 默认的横线
-Line get kHorizontalLine =>
-    const Line(thickness: 1, color: kLineColor, axis: Axis.horizontal);
-
-Line get kHorizontalLineDark =>
-    const Line(thickness: 1, color: kLineColorDark, axis: Axis.horizontal);
-
 Line verticalLine(
   BuildContext context, {
   double? indent,
   double? endIndent,
 }) =>
-    context.isThemeDark
-        ? Line(
-            thickness: 1,
-            color: kLineColorDark,
-            axis: Axis.vertical,
-            indent: indent,
-            endIndent: endIndent ?? indent,
-          )
-        : Line(
-            thickness: 1,
-            color: kLineColor,
-            axis: Axis.vertical,
-            indent: indent,
-            endIndent: endIndent ?? indent,
-          );
+    Line(
+      thickness: 1,
+      color: GlobalTheme.of(context).lineColor,
+      axis: Axis.vertical,
+      indent: indent,
+      endIndent: endIndent ?? indent,
+    );
 
 Line horizontalLine(
   BuildContext context, {
   double? indent,
   double? endIndent,
 }) =>
-    context.isThemeDark
-        ? Line(
-            thickness: 1,
-            color: kLineColorDark,
-            axis: Axis.horizontal,
-            indent: indent,
-            endIndent: endIndent ?? indent,
-          )
-        : Line(
-            thickness: 1,
-            color: kLineColor,
-            axis: Axis.horizontal,
-            indent: indent,
-            endIndent: endIndent ?? indent,
-          );
+    Line(
+      thickness: 1,
+      color: GlobalTheme.of(context).lineColor,
+      axis: Axis.horizontal,
+      indent: indent,
+      endIndent: endIndent ?? indent,
+    );
 
 /// 线
 Widget line(

@@ -10,16 +10,21 @@ part of '../../flutter3_basics.dart';
 /// [AppLifecycleMixin]
 /// [NavigatorObserverMixin]
 mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
-  AppLifecycleListener? _appLifecycleListener;
+  MyAppLifecycleListener? _appLifecycleListener;
 
   @override
   void initState() {
-    _appLifecycleListener = AppLifecycleListener(
+    _appLifecycleListener = MyAppLifecycleListener(
       onShow: onAppLifecycleShow,
       onResume: onAppLifecycleResume,
       onHide: onAppLifecycleHide,
       onPause: onAppLifecyclePause,
       onStateChange: onAppLifecycleStateChange,
+      //--
+      onChangeMetrics: onAppChangeMetrics,
+      onChangePlatformBrightness: onAppChangePlatformBrightness,
+      onChangeTextScaleFactor: onAppChangeTextScaleFactor,
+      onHaveMemoryPressure: onAppHaveMemoryPressure,
     );
     super.initState();
   }
@@ -75,6 +80,84 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
       //l.d('onAppLifecycleStateChange$state');
       return true;
     }());
+  }
+
+  //--
+
+  @overridePoint
+  void onAppHaveMemoryPressure() {}
+
+  @overridePoint
+  void onAppChangePlatformBrightness() {}
+
+  @overridePoint
+  void onAppChangeTextScaleFactor() {}
+
+  @overridePoint
+  void onAppChangeMetrics() {}
+}
+
+class MyAppLifecycleListener extends AppLifecycleListener {
+  final VoidCallback? onChangeMetrics;
+  final VoidCallback? onChangePlatformBrightness;
+  final VoidCallback? onChangeTextScaleFactor;
+  final VoidCallback? onHaveMemoryPressure;
+
+  MyAppLifecycleListener({
+    WidgetsBinding? binding,
+    super.onResume,
+    super.onInactive,
+    super.onHide,
+    super.onShow,
+    super.onPause,
+    super.onRestart,
+    super.onDetach,
+    super.onExitRequested,
+    super.onStateChange,
+    this.onChangeMetrics,
+    this.onChangePlatformBrightness,
+    this.onChangeTextScaleFactor,
+    this.onHaveMemoryPressure,
+  });
+
+  @override
+  void handleCommitBackGesture() {}
+
+  @override
+  void didChangeAccessibilityFeatures() {}
+
+  @override
+  void handleCancelBackGesture() {}
+
+  @override
+  void didChangeViewFocus(ui.ViewFocusEvent event) {}
+
+  @override
+  void didChangeLocales(List<Locale>? locales) {}
+
+  //--
+
+  @override
+  void didHaveMemoryPressure() {
+    l.w("系统内存不足...");
+    onHaveMemoryPressure?.call();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    onChangePlatformBrightness?.call();
+  }
+
+  @override
+  void didChangeTextScaleFactor() {
+    onChangeTextScaleFactor?.call();
+  }
+
+  ///屏幕旋转/尺寸改变后
+  ///系统窗口改变回调 如键盘弹出 屏幕旋转等
+  @override
+  void didChangeMetrics() {
+    onChangeMetrics?.call();
   }
 }
 

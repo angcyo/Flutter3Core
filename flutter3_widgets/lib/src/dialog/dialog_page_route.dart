@@ -128,7 +128,14 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
                 if (controller?.value != null) {
                   //更新界面
                   //[notifyListeners]
-                  controller?.value = controller!.value;
+                  try {
+                    controller?.value = controller!.value;
+                  } catch (e) {
+                    assert(() {
+                      l.w(e);
+                      return true;
+                    }());
+                  }
                 }
                 return true;
               }

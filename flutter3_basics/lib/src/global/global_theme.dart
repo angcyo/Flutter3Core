@@ -72,7 +72,8 @@ class GlobalTheme {
   Color get blackColor => Colors.black;
 
   /// 主题黑色, 受暗色模式影响
-  Color get themeBlackColor => Colors.black;
+  /// [Colors.black]
+  Color get themeBlackColor => const Color(0xff333333);
 
   /// 主题白色, 受暗色模式影响
   Color get themeWhiteColor => Colors.white;
@@ -264,8 +265,9 @@ class GlobalTheme {
 
 /// 暗色主题[ui.Brightness.dark]
 class GlobalThemeDark extends GlobalTheme {
+  /// 0xff212121
   @override
-  Color get primaryColor => const Color(0xff212121);
+  Color get primaryColor => const Color(0xff333333);
 
   @override
   Color get primaryColorDark => const Color(0xff2a2a2a);
@@ -291,17 +293,26 @@ class GlobalThemeDark extends GlobalTheme {
   Color get itemWhiteBgColor => const Color(0xff1a1a1a);
 
   @override
+  Color get themeBlackColor => const Color(0xff212121);
+
+  @override
   Color get whiteSubBgColor => const Color(0xff303030);
 
   @override
   Color get borderColor => const Color(0xff1a1a1a);
 
   @override
-  Color get disableColor => const Color(0xff333333);
+  Color get disableColor => const Color(0xffb0b0b0);
 
   /// 禁用时的背景颜色(偏黑色)
   @override
   Color get disableBgColor => const Color(0x40333333);
+
+  @override
+  Color get icoNormalColor => const Color(0xfff6f6f6);
+
+  @override
+  Color get icoDisableColor => super.icoDisableColor;
 
   @override
   TextStyle get textGeneralStyle => super.textGeneralStyle.copyWith(
@@ -322,6 +333,11 @@ class GlobalThemeDark extends GlobalTheme {
   @override
   TextStyle get textBodyStyle => super.textBodyStyle.copyWith(
         color: const Color(0xffa4a4a4),
+      );
+
+  @override
+  TextStyle get textDesStyle => super.textDesStyle.copyWith(
+        color: const Color(0xff6f6f6f),
       );
 
   @override
