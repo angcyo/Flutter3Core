@@ -51,7 +51,7 @@ extension L10nStringEx on String {
   }
 
   /// [intl.Intl.message]
-  /// 使用指定的name,获取对应的文本资源
+  /// 使用指定的key name[this],获取对应的国际化文本资源
   String intlMessage({
     String? defMessage,
     String? desc = '',
