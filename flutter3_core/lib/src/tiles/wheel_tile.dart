@@ -31,6 +31,7 @@ class WheelTile extends StatefulWidget {
 
   /// 在[value]最右边的小部件
   /// 如果[wheelValues]有值时, 会自动设置一个默认的图标提示小部件
+  @defInjectMark
   final Widget? rightWidget;
 
   //--
