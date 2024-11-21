@@ -412,19 +412,17 @@ class CanvasFollowManager with CanvasComponentMixin {
         canvasBounds.width - (marginLeft + marginRight),
         canvasBounds.height - (marginTop + marginBottom));
 
-    final matrix = applyAlignMatrix(
-      fromRect.size,
-      toRect.size,
-      fit: fit,
-      alignment: alignment,
-    );
+    final alignMatrix = applyAlignMatrix(fromRect.size, toRect.size,
+        fit: fit,
+        alignment: alignment,
+        anchorOffset: Offset(toRect.left, toRect.top));
 
     //边距在此生效
     final translateMatrix = Matrix4.identity();
-    translateMatrix.translate(marginLeft, marginTop);
+    translateMatrix.translate(-toRect.left, -toRect.top);
 
     canvasViewBox.changeMatrix(
-      translateMatrix * matrix,
+      translateMatrix * alignMatrix,
       animate: animate,
       awaitAnimate: awaitAnimate,
     );

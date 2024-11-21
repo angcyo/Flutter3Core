@@ -142,11 +142,14 @@ Rect applyAlignRect(
 }
 
 /// 与[applyAlignRect]类似, 只不过返回值是[Matrix4]
+/// [anchorOffset]. [alignment]对齐后缩放的锚点偏移量, 可以不指定
 Matrix4 applyAlignMatrix(
   Size parentSize,
   Size childSize, {
   BoxFit? fit = BoxFit.contain /*尽可能显示最大尺寸*/,
   Alignment? alignment = Alignment.center,
+  //--
+  Offset? anchorOffset,
 }) {
   final rect = applyAlignRect(
     parentSize,
@@ -155,6 +158,11 @@ Matrix4 applyAlignMatrix(
     alignment: alignment,
   );
   return Matrix4.identity()
-    ..translate(rect.left, rect.top)
-    ..scale(rect.width / childSize.width, rect.height / childSize.height);
+    ..scaleBy(
+        sx: rect.width / childSize.width,
+        sy: rect.height / childSize.height,
+        anchor: Offset(
+          rect.left + (anchorOffset?.dx ?? 0),
+          rect.top + (anchorOffset?.dy ?? 0),
+        ));
 }
