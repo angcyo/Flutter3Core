@@ -37,8 +37,10 @@ class CanvasMonitorPainter extends IPainter {
     final painter = TextPainter(
         text: TextSpan(
             text: text,
-            style: const TextStyle(
-              color: Colors.black,
+            style: TextStyle(
+              color: GlobalTheme.of(canvasDelegate.delegateContext)
+                  .textBodyStyle
+                  .color,
               fontSize: 9,
             )),
         textDirection: TextDirection.ltr)
