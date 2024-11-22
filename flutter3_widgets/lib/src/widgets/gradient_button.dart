@@ -111,7 +111,7 @@ class GradientButton extends StatelessWidget {
   GradientButton.stroke({
     super.key,
     //--
-    Color strokeColor = Colors.grey,
+    Color? strokeColor,
     double strokeWidth = 1.0,
     this.radius = kDefaultBorderRadiusH,
     this.borderRadius,
@@ -135,7 +135,7 @@ class GradientButton extends StatelessWidget {
     this.maxHeight = double.infinity,
   }) : decoration = BoxDecoration(
           border: Border.fromBorderSide(
-            BorderSide(color: strokeColor, width: strokeWidth),
+            BorderSide(color: strokeColor ?? Colors.grey, width: strokeWidth),
           ),
           borderRadius:
               borderRadius ?? BorderRadius.all(Radius.circular(radius ?? 0)),
