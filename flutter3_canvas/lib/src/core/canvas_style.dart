@@ -97,7 +97,9 @@ class CanvasStyle {
 
   //region ---axis---
 
+  ///dark #b0b0b0
   Color axisPrimaryColor = const Color(0xffbcbcbc); //const Color(0xFFB2B2B2);
+  ///dark #6f6f6f
   Color axisSecondaryColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
   Color axisNormalColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
 

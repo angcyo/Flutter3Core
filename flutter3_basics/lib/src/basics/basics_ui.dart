@@ -1476,8 +1476,9 @@ extension WidgetEx on Widget {
     ColorFilter? colorFilter,
     Color? color = Colors.grey,
     BlendMode blendMode = BlendMode.srcIn,
+    bool enable = true,
   }) =>
-      (colorFilter == null && color == null)
+      (!enable || (colorFilter == null && color == null))
           ? this
           : ColorFiltered(
               colorFilter: colorFilter ?? ColorFilter.mode(color!, blendMode),
@@ -1490,6 +1491,7 @@ extension WidgetEx on Widget {
     ColorFilter? colorFilter,
     Color? color,
     BlendMode blendMode = BlendMode.srcIn,
+    bool enable = true,
   }) =>
       colorFiltered(
         colorFilter: colorFilter,
@@ -1497,6 +1499,7 @@ extension WidgetEx on Widget {
             ? (color ?? GlobalTheme.of(context).icoNormalColor)
             : null,
         blendMode: blendMode,
+        enable: enable,
       );
 
   /// 绘制边界
@@ -2317,8 +2320,8 @@ extension ContextEx on BuildContext {
     return locale.languageCode == 'zh';
   }
 
-  /// 如果当前是暗色主题, 则返回[value]否则返回null
-  T? darkOr<T>(T? value) => isThemeDark ? value : null;
+  /// 如果当前是暗色主题, 则返回[dark]否则返回[light]
+  T? darkOr<T>([T? dark, T? light]) => isThemeDark ? dark : light;
 
   /// 中英文字符选择
   /// 如果是中文环境, 则返回中文字符串, 否则返回默认字符串

@@ -93,7 +93,8 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     Decoration? decoration = iconDecoration;
     if (iconFillDecoration == true) {
       decoration ??= fillDecoration(
-        color: iconFillDecorationColor ?? globalTheme.itemWhiteBgColor,
+        color: iconFillDecorationColor ??
+            (enable ? globalTheme.itemWhiteBgColor : globalTheme.disableColor),
         radius: kDefaultBorderRadiusX,
       );
     }
