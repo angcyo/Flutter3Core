@@ -208,6 +208,11 @@ class _UndoActionWidgetState extends State<UndoActionWidget> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
+    final enableColor =
+        context.darkOr(globalTheme.icoNormalColor, globalTheme.icoNormalColor);
+    final disableColor =
+        context.darkOr(globalTheme.disableColor, globalTheme.icoDisableColor);
+
     //撤销
     final canUndo = undoManager.canUndo();
     Widget undo = IconButton(
@@ -226,8 +231,10 @@ class _UndoActionWidgetState extends State<UndoActionWidget> {
         alignment: AlignmentDirectional.center,
       );
     }
-    if (!canUndo) {
-      undo = undo.colorFiltered(color: globalTheme.icoDisableColor);
+    if (canUndo) {
+      undo = undo.colorFiltered(color: enableColor);
+    } else {
+      undo = undo.colorFiltered(color: disableColor);
     }
 
     //重做
@@ -248,8 +255,11 @@ class _UndoActionWidgetState extends State<UndoActionWidget> {
         alignment: AlignmentDirectional.center,
       );
     }
-    if (!canRedo) {
-      redo = redo.colorFiltered(color: globalTheme.icoDisableColor);
+
+    if (canRedo) {
+      redo = redo.colorFiltered(color: enableColor);
+    } else {
+      redo = redo.colorFiltered(color: disableColor);
     }
 
     return [
