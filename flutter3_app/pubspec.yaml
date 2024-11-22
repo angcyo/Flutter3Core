@@ -67,7 +67,7 @@ dependencies:
 
   # https://pub.dev/packages/flutter_animate
   # https://github.com/gskinner/flutter_animate
-  flutter_animate: ^4.5.0
+  flutter_animate: ^4.5.1
 
   # 权限处理插件
   # https://pub.dev/packages/permission_handler

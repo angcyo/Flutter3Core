@@ -49,7 +49,7 @@ dev_dependencies:
   # https://pub.dev/packages/pubspec_parse
   # https://pub.dev/packages/source_gen
   # https://pub.dev/packages/source_helper
-  json_serializable: ^6.8.0
+  json_serializable: ^6.9.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -45,7 +45,7 @@ dependencies:
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/meta
   # async is pinned to version 2.11.0 by flutter_test from the flutter SDK.
-  async: ^2.11.0
+  async: ^2.12.0
 
   # https://pub.dev/packages/material_color_utilities
   # https://pub.dev/packages/dynamic_color
@@ -90,13 +90,13 @@ dependencies:
   # https://pub.dev/packages/time
   dartx: ^1.2.0
   # https://pub.dev/packages/clock
-  time: ^2.1.4
+  time: ^2.1.5
 
   # https://pub.dev/packages/equatable
   # https://github.com/felangel/equatable
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/meta
-  equatable: ^2.0.5
+  equatable: ^2.0.7
 
   # https://pub.dev/packages/flutter_isolate
   # https://pub.dev/packages/uuid
