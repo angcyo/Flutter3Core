@@ -145,7 +145,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
               path,
               Paint()
                 ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
-                ..color = canvasStyle.axisPrimaryColor
+                ..color = canvasStyle.axisSecondaryColor
                 ..style = PaintingStyle.stroke);
         }
       } else if (boundsInfo.rect != null) {
@@ -158,7 +158,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
               rect,
               Paint()
                 ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
-                ..color = canvasStyle.axisPrimaryColor
+                ..color = canvasStyle.axisSecondaryColor
                 ..style = PaintingStyle.stroke);
         }
       } else {
