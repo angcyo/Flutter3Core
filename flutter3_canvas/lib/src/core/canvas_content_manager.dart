@@ -306,6 +306,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     bool followRect = true,
     bool? animate,
   }) {
+    //debugger();
     contentTemplate = template;
     if (template != null && followRect == true) {
       followCanvasContentTemplate(animate: animate);

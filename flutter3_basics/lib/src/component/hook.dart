@@ -13,7 +13,7 @@ part of '../../flutter3_basics.dart';
 /// [ListenableMixin]
 /// [StreamSubscriptionMixin]
 /// [AnimationMixin]
-mixin HookMixin<T extends StatefulWidget> on State<T> {
+mixin HookMixin {
   /// 资源
   @autoDispose
   late final List<dynamic> _hookAnyList = [];
@@ -27,7 +27,7 @@ mixin HookMixin<T extends StatefulWidget> on State<T> {
   @autoDispose
   late final Map<String, DebugValueChanged> _hookAnyKeyMap = {};
 
-  //--
+  //region --hook--
 
   /// 在[dispose]时, 释放所有hook的资源
   /// - [StreamSubscription]
@@ -100,12 +100,16 @@ mixin HookMixin<T extends StatefulWidget> on State<T> {
     value.addListener(valueAction);
   }
 
-  @override
-  void dispose() {
+  //endregion --hook--
+
+  //region --dispose--
+
+  /// 释放所有hook的资源
+  @callPoint
+  void disposeHook() {
     disposeAny();
     disposeAnyListenable();
     disposeAnyKey();
-    super.dispose();
   }
 
   /// 释放
@@ -182,5 +186,15 @@ mixin HookMixin<T extends StatefulWidget> on State<T> {
     } finally {
       _hookAnyKeyMap.clear();
     }
+  }
+
+//endregion --dispose--
+}
+
+mixin HookStateMixin<T extends StatefulWidget> on State<T>, HookMixin {
+  @override
+  void dispose() {
+    disposeHook();
+    super.dispose();
   }
 }

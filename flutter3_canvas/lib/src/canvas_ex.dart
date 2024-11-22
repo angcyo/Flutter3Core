@@ -116,27 +116,10 @@ extension ElementPainterListEx on List<ElementPainter> {
 }
 
 /// 订阅扩展
-mixin StreamSubscriptionPainterMixin on ElementPainter {
-  final List<StreamSubscription> _streamPainterSubscriptions = [];
-
-  /// 在[detachFromCanvasDelegate]时, 取消所有的[StreamSubscription]
-  void hookPainterStreamSubscription(StreamSubscription subscription) {
-    _streamPainterSubscriptions.add(subscription);
-  }
-
+mixin HookPainterMixin on ElementPainter, HookMixin {
   @override
   void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
-    try {
-      for (final element in _streamPainterSubscriptions) {
-        try {
-          element.cancel();
-        } catch (e) {
-          printError(e);
-        }
-      }
-    } finally {
-      _streamPainterSubscriptions.clear();
-    }
+    disposeHook();
     super.detachFromCanvasDelegate(canvasDelegate);
   }
 }
