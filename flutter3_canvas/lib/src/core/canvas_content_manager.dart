@@ -68,6 +68,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   CanvasContentManager(this.paintManager);
 
   /// [CanvasPaintManager.paint] 驱动
+  /// [withCanvasContent]
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     if (!isCanvasComponentEnable) {
@@ -135,19 +136,31 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
       action();
     } else {
       if (boundsInfo.path != null) {
-        canvas.withClipPath(
-          canvasViewBox.toViewPath(boundsInfo.path!),
-          () {
-            action();
-          },
-        );
+        final path = canvasViewBox.toViewPath(boundsInfo.path!);
+        canvas.withClipPath(path, () {
+          action();
+        });
+        if (canvasStyle.paintContentTemplateStroke) {
+          canvas.drawPath(
+              path,
+              Paint()
+                ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
+                ..color = canvasStyle.axisPrimaryColor
+                ..style = PaintingStyle.stroke);
+        }
       } else if (boundsInfo.rect != null) {
-        canvas.withClipRect(
-          canvasViewBox.toViewRect(boundsInfo.rect!),
-          () {
-            action();
-          },
-        );
+        final rect = canvasViewBox.toViewRect(boundsInfo.rect!);
+        canvas.withClipRect(rect, () {
+          action();
+        });
+        if (canvasStyle.paintContentTemplateStroke) {
+          canvas.drawRect(
+              rect,
+              Paint()
+                ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
+                ..color = canvasStyle.axisPrimaryColor
+                ..style = PaintingStyle.stroke);
+        }
       } else {
         action();
       }

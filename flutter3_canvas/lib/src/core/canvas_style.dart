@@ -93,6 +93,13 @@ class CanvasStyle {
   /// [CanvasViewBox.canvasBounds] 的背景颜色
   Color? canvasBgColor;
 
+  /// 当设置了[CanvasContentManager.contentTemplate]内容模版时,
+  /// 是否要在内容模版的边界上绘制一层描边
+  bool paintContentTemplateStroke = true;
+
+  /// [paintContentTemplateStroke]开启后, 绘制的宽度
+  double contentTemplateStrokeWidth = 1;
+
   //endregion ---config---
 
   //region ---axis---
