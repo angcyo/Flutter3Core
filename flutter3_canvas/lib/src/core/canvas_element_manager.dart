@@ -82,7 +82,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     return result;
   }
 
-  /// 获取所有元素[elements]的边界
+  /// 获取包裹所有元素[elements]的边界
   Rect? get allElementsBounds {
     final list = elements;
     if (isNullOrEmpty(list)) {
