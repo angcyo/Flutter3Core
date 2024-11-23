@@ -625,3 +625,20 @@ class GlobalConfig with Diagnosticable, OverlayManage {
           appBarLeadingBuilder ?? this.appBarLeadingBuilder;
   }
 }
+
+//--
+
+/// [PlaceholderBuildContext]
+BuildContext $placeholderContext = PlaceholderBuildContext();
+
+/// 占位符上下文
+class PlaceholderBuildContext extends BuildContext {
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    //no op
+    assert(() {
+      l.w("${classHash()} noSuchMethod: ${invocation.memberName}");
+      return true;
+    }());
+  }
+}
