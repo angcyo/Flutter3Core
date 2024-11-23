@@ -194,9 +194,11 @@ class ElementPainter extends IPainter
         );
       final translate = Matrix4.identity()
         ..translate(bounds.left - oldBounds.left, bounds.top - oldBounds.top);
-      paintProperty = property.copyWith()
+      /*paintProperty = property.copyWith()
         ..applyScaleWithCenter(scaleMatrix)
-        ..applyTranslate(translate);
+        ..applyTranslate(translate);*/
+      scaleElementWithCenter(scaleMatrix);
+      translateElement(translate);
     }
   }
 
@@ -221,7 +223,8 @@ class ElementPainter extends IPainter
           sy: sy,
           anchor: oldBounds.topLeft,
         );
-      paintProperty = property.copyWith()..applyScaleWithCenter(scaleMatrix);
+      /*paintProperty = property.copyWith()..applyScaleWithCenter(scaleMatrix);*/
+      scaleElementWithCenter(scaleMatrix);
     }
   }
 
@@ -244,7 +247,8 @@ class ElementPainter extends IPainter
           location.dx - oldBounds.lt.dx,
           location.dy - oldBounds.lt.dy,
         );
-      paintProperty = property.copyWith()..applyTranslate(translate);
+      //paintProperty = property.copyWith()..applyTranslate(translate);
+      translateElement(translate);
     }
   }
 
