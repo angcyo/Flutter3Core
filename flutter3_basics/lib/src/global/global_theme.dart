@@ -106,10 +106,10 @@ class GlobalTheme {
   Color get linkColor => const Color(0xff0a84ff);
 
   /// 线的颜色 #F6F6F6
-  Color get lineColor => const Color(0xffECECEC);
+  Color get lineColor => const Color(0xffececec);
 
   /// 线的颜色 (更暗一点)
-  Color get lineDarkColor => const Color(0xffD8D8D8);
+  Color get lineDarkColor => const Color(0xff595450);
 
   /// 边框的颜色
   Color get borderColor => const Color(0xff6f6f6f);

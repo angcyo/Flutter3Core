@@ -4,27 +4,31 @@ part of '../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/15
 ///
+/// 竖线
 Line verticalLine(
   BuildContext context, {
+  Color? color,
   double? indent,
   double? endIndent,
 }) =>
     Line(
       thickness: 1,
-      color: GlobalTheme.of(context).lineColor,
+      color: color ?? GlobalTheme.of(context).lineColor,
       axis: Axis.vertical,
       indent: indent,
       endIndent: endIndent ?? indent,
     );
 
+/// 横线
 Line horizontalLine(
   BuildContext context, {
+  Color? color,
   double? indent,
   double? endIndent,
 }) =>
     Line(
       thickness: 1,
-      color: GlobalTheme.of(context).lineColor,
+      color: color ?? GlobalTheme.of(context).lineColor,
       axis: Axis.horizontal,
       indent: indent,
       endIndent: endIndent ?? indent,
