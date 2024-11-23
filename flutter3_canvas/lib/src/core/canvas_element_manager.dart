@@ -332,6 +332,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       old,
       elements,
       list,
+      ElementChangeType.add,
       undoType,
       selectType: selectType,
     );
@@ -375,6 +376,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
             newList,
             old,
             list,
+            ElementChangeType.update,
             UndoType.undo,
             selectType: selectType,
           );
@@ -387,6 +389,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
             old,
             newList,
             list,
+            ElementChangeType.update,
             UndoType.redo,
             selectType: selectType,
           );
@@ -429,7 +432,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasElementControlManager.onCanvasElementDeleted(op, selectType);
     detachElementToCanvasDelegate(op);
     canvasDelegate.dispatchCanvasElementListChanged(
-        old, elements, op, undoType);
+      old,
+      elements,
+      op,
+      ElementChangeType.remove,
+      undoType,
+    );
     canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, op);
 
     if (undoType == UndoType.normal) {
@@ -440,7 +448,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           elements.reset(old);
           attachElementToCanvasDelegate(op);
           canvasDelegate.dispatchCanvasElementListChanged(
-              newList, old, op, UndoType.undo);
+            newList,
+            old,
+            op,
+            ElementChangeType.update,
+            UndoType.undo,
+          );
         },
         () {
           //debugger();
@@ -448,7 +461,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           canvasElementControlManager.onCanvasElementDeleted(op, selectType);
           detachElementToCanvasDelegate(op);
           canvasDelegate.dispatchCanvasElementListChanged(
-              old, newList, op, UndoType.redo);
+            old,
+            newList,
+            op,
+            ElementChangeType.update,
+            UndoType.redo,
+          );
         },
       ));
     }
@@ -467,7 +485,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final old = elements.clone();
     final op = list.clone();
     _resetElementList(old, op);
-    canvasDelegate.dispatchCanvasElementListChanged(old, op, op, undoType);
+
+    canvasDelegate.dispatchCanvasElementListChanged(
+      old,
+      op,
+      op,
+      ElementChangeType.update,
+      undoType,
+    );
 
     if (selected) {
       resetSelectElement(list);
@@ -488,13 +513,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           //debugger();
           _resetElementList(newList, old);
           canvasDelegate.dispatchCanvasElementListChanged(
-              newList, old, op, UndoType.undo);
+            newList,
+            old,
+            op,
+            ElementChangeType.update,
+            UndoType.undo,
+          );
         },
         () {
           //debugger();
           _resetElementList(old, newList);
           canvasDelegate.dispatchCanvasElementListChanged(
-              old, newList, op, UndoType.redo);
+            old,
+            newList,
+            op,
+            ElementChangeType.update,
+            UndoType.redo,
+          );
         },
       ));
     }
@@ -821,7 +856,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     final List<ElementPainter> op = newElementList ?? [];
     canvasDelegate.dispatchCanvasElementListChanged(
-        old, elements, op, undoType);
+      old,
+      elements,
+      op,
+      ElementChangeType.replace,
+      undoType,
+    );
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -832,7 +872,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           detachElementToCanvasDelegate(newElementList);
           attachElementToCanvasDelegate(oldElementList);
           canvasDelegate.dispatchCanvasElementListChanged(
-              newList, old, op, UndoType.undo);
+            newList,
+            old,
+            op,
+            ElementChangeType.update,
+            UndoType.undo,
+          );
         },
         () {
           //debugger();
@@ -840,7 +885,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           detachElementToCanvasDelegate(oldElementList);
           attachElementToCanvasDelegate(newElementList);
           canvasDelegate.dispatchCanvasElementListChanged(
-              old, newList, op, UndoType.redo);
+            old,
+            newList,
+            op,
+            ElementChangeType.update,
+            UndoType.redo,
+          );
         },
       ));
     }
@@ -1308,7 +1358,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     canvasDelegate.dispatchCanvasElementListChanged(
-        old, elements, elementList, undoType);
+      old,
+      elements,
+      elementList,
+      ElementChangeType.arrange,
+      undoType,
+    );
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -1317,13 +1372,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           //debugger();
           elements.reset(old);
           canvasDelegate.dispatchCanvasElementListChanged(
-              newList, old, elementList, UndoType.undo);
+            newList,
+            old,
+            elementList,
+            ElementChangeType.update,
+            UndoType.undo,
+          );
         },
         () {
           //debugger();
           elements.reset(newList);
           canvasDelegate.dispatchCanvasElementListChanged(
-              old, newList, elementList, UndoType.redo);
+            old,
+            newList,
+            elementList,
+            ElementChangeType.update,
+            UndoType.redo,
+          );
         },
       ));
     }
@@ -1340,7 +1405,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final op = elementList ?? [];
     elements.reset(op);
     canvasDelegate.dispatchCanvasElementListChanged(
-        old, elements, op, undoType);
+      old,
+      elements,
+      op,
+      ElementChangeType.update,
+      undoType,
+    );
     //undo
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -1349,13 +1419,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           //debugger();
           elements.reset(old);
           canvasDelegate.dispatchCanvasElementListChanged(
-              newList, old, op, UndoType.undo);
+            newList,
+            old,
+            op,
+            ElementChangeType.update,
+            UndoType.undo,
+          );
         },
         () {
           //debugger();
           elements.reset(newList);
           canvasDelegate.dispatchCanvasElementListChanged(
-              old, newList, op, UndoType.redo);
+            old,
+            newList,
+            op,
+            ElementChangeType.update,
+            UndoType.redo,
+          );
         },
       ));
     }
@@ -1486,6 +1566,45 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         name: 'afterElements', style: DiagnosticsTreeStyle.dense));
     properties.add(DiagnosticsProperty('selectedElement', selectedElement));
   }
+}
+
+/// 元素改变的类型
+enum ElementChangeType {
+  /// [CanvasElementManager.addElementList] 添加了新元素
+  add,
+
+  /// [CanvasElementManager.removeElementList] 删除了元素
+  remove,
+
+  /// [CanvasElementManager.replaceElementList] 替换了元素
+  replace,
+
+  /// [CanvasElementManager.arrangeElementList] 排序了元素顺序
+  arrange,
+
+  /// [CanvasElementManager.resetElementList] 重置元素
+  /// [CanvasElementManager.singleUpdateElementList] 更新元素
+  /// 在回滚/重置时，会使用此类型
+  update,
+
+  /// [CanvasMultiManager.selectCanvasState] 切换了画布
+  set,
+  ;
+}
+
+/// 选择元素的类型
+enum ElementSelectType {
+  /// 忽略本地选中元素
+  ignore,
+
+  /// 通过指针选中元素
+  pointer,
+
+  /// 通过多指触选中元素
+  multiTouch,
+
+  /// 通过代码选中元素
+  code,
 }
 
 /// 元素对齐方式

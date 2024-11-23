@@ -176,6 +176,7 @@ class CanvasListener {
     List<ElementPainter> from,
     List<ElementPainter> to,
     List<ElementPainter> op,
+    ElementChangeType changeType,
     UndoType undoType,
   )? onCanvasElementListChangedAction;
 

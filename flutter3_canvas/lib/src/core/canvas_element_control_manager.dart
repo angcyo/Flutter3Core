@@ -525,6 +525,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     List<ElementPainter> from,
     List<ElementPainter> to,
     List<ElementPainter> op,
+    ElementChangeType changeType,
     UndoType undoType,
     ElementSelectType selectType,
   ) {
@@ -1453,19 +1454,4 @@ class ElementSelectComponent extends ElementGroupPainter
       );
     }
   }
-}
-
-/// 选择元素的类型
-enum ElementSelectType {
-  /// 忽略本地选中元素
-  ignore,
-
-  /// 通过指针选中元素
-  pointer,
-
-  /// 通过多指触选中元素
-  multiTouch,
-
-  /// 通过代码选中元素
-  code,
 }

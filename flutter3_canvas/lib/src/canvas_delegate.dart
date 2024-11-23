@@ -488,19 +488,38 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 元素列表发生改变
+  /// 比如:
+  /// [CanvasElementManager.addElementList] 添加了新元素
+  /// [CanvasElementManager.removeElementList] 删除了元素
+  /// [CanvasElementManager.replaceElementList] 替换了元素
+  /// [CanvasElementManager.arrangeElementList] 排序了元素顺序
+  /// [CanvasMultiManager.selectCanvasState] 切换了画布
   void dispatchCanvasElementListChanged(
     List<ElementPainter> from,
     List<ElementPainter> to,
     List<ElementPainter> op,
+    ElementChangeType changeType,
     UndoType undoType, {
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     //debugger();
     isElementChanged = true;
-    canvasElementManager.canvasElementControlManager
-        .onSelfElementListChanged(from, to, op, undoType, selectType);
+    canvasElementManager.canvasElementControlManager.onSelfElementListChanged(
+      from,
+      to,
+      op,
+      changeType,
+      undoType,
+      selectType,
+    );
     _eachCanvasListener((element) {
-      element.onCanvasElementListChangedAction?.call(from, to, op, undoType);
+      element.onCanvasElementListChangedAction?.call(
+        from,
+        to,
+        op,
+        changeType,
+        undoType,
+      );
     });
     refresh();
   }
