@@ -111,11 +111,12 @@ extension ZipListEx on List<String> {
     String outputPath, {
     DateTime? modified,
     FutureOr Function(ZipFileEncoder zipEncoder)? action,
+    String? Function(String)? onGetFileName,
   }) async {
     final encoder = ZipFileEncoder();
     try {
       encoder.create(outputPath, modified: modified ?? DateTime.now());
-      await zipEncoder(encoder);
+      await zipEncoder(encoder, onGetFileName: onGetFileName);
       if (action != null) {
         await action(encoder);
       }
@@ -128,12 +129,16 @@ extension ZipListEx on List<String> {
 
   /// 入参不一样的压缩扩展方法
   /// [zip]
-  Future<void> zipEncoder(ZipFileEncoder encoder) async {
+  /// [onGetFileName] 获取文件名, 用于在压缩包中显示. 默认就是文件名
+  Future<void> zipEncoder(
+    ZipFileEncoder encoder, {
+    String? Function(String)? onGetFileName,
+  }) async {
     for (final path in this) {
       if (path.isDirectorySync()) {
         encoder.addDirectory(Directory(path));
       } else if (path.isExistsSync()) {
-        encoder.addFile(File(path));
+        encoder.addFile(File(path), onGetFileName?.call(path));
       }
     }
   }

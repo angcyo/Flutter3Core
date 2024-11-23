@@ -2562,6 +2562,11 @@ extension MapEx<K, V> on Map<K, V> {
     }
   }
 
+  /// 移除所有指定的keys
+  void removeAllKey(Iterable<K> keys) {
+    keys.forEach(remove);
+  }
+
   /// 遍历移除所有value为null的key
   Map<K, V> removeAllNull([bool copy = false]) {
     final map = copy ? Map.from(this) : this;

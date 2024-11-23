@@ -21,17 +21,21 @@ Future shareAppLog([String? logName]) async {
   list.addAll(tempShareLogPathList);
   list.addAll(globalShareLogPathList);
   //--
-  list.zip(output, action: (encoder) {
-    final hiveJson = hiveAll()?.toJsonString();
-    if (hiveJson != null && hiveJson.isNotEmpty) {
-      encoder.writeStringSync(hiveJson, 'hive.json');
-    }
-    final lastInfo =
-        DebugPage.lastDebugCopyStringBuilder(GlobalConfig.def.globalContext);
-    if (lastInfo != null && lastInfo.isNotEmpty) {
-      encoder.writeStringSync(lastInfo, 'last_debug_info.log');
-    }
-  }).ignore();
+  list
+      .zip(output,
+          action: (encoder) {
+            final hiveJson = hiveAll()?.toJsonString();
+            if (hiveJson != null && hiveJson.isNotEmpty) {
+              encoder.writeStringSync(hiveJson, 'hive.json');
+            }
+            final lastInfo = DebugPage.lastDebugCopyStringBuilder(
+                GlobalConfig.def.globalContext);
+            if (lastInfo != null && lastInfo.isNotEmpty) {
+              encoder.writeStringSync(lastInfo, 'last_debug_info.log');
+            }
+          },
+          onGetFileName: (path) => zipEntryKeyMap[path])
+      .ignore();
   assert(() {
     final log = "压缩完成:$output :${(output.file().fileSizeSync()).toSizeStr()}";
     l.i(log);

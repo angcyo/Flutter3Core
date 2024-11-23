@@ -28,16 +28,28 @@ final Set<String> tempShareLogPathList = {};
 /// 支持文件/文件夹类型
 final Set<String> globalShareLogPathList = {};
 
+/// 路径对应应该在zip包中的key
+/// [tempShareLogPathList]
+/// [globalShareLogPathList]
+final Map<String, String?> zipEntryKeyMap = {};
+
 /// 添加一个临时的日志分享路径/文件
 /// [temp] 是否是临时的
 @callPoint
-void addToShareLogPath(String? path, {bool temp = true}) {
+void addToShareLogPath(
+  String? path, {
+  String? key,
+  bool temp = true,
+}) {
   if (path == null) {
     assert(() {
       l.w("无效的操作[addToShareLogPath]");
       return true;
     }());
     return;
+  }
+  if (key != null) {
+    zipEntryKeyMap[path] = key;
   }
   if (temp) {
     tempShareLogPathList.add(path);
@@ -49,6 +61,7 @@ void addToShareLogPath(String? path, {bool temp = true}) {
 /// 清空临时的日志分享路径
 @callPoint
 void clearTempShareLogPath() {
+  zipEntryKeyMap.removeAllKey(tempShareLogPathList);
   tempShareLogPathList.clear();
 }
 
