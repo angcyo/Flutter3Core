@@ -1003,9 +1003,10 @@ class ElementPainter extends IPainter
     properties.add(DiagnosticsProperty('debug', debug));
     properties.add(DiagnosticsProperty('debugLabel', debugLabel));
     properties.add(DiagnosticsProperty('uuid', paintState.elementUuid));
-    properties.add(DiagnosticsProperty('elementName', paintState.elementName));
+    properties.add(DiagnosticsProperty('name', paintState.elementName));
     properties.add(DiagnosticsProperty('paintProperty', paintProperty));
     properties.add(DiagnosticsProperty('paintState', paintState));
+    properties.add(DiagnosticsProperty('bounds', elementsBounds));
 
     final canvasViewBox = canvasDelegate?.canvasViewBox;
     if (canvasViewBox != null) {
@@ -1287,7 +1288,14 @@ class ElementGroupPainter extends ElementPainter {
     );
   }
 
-//endregion ---apply--
+  //endregion ---apply--
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties.add(DiagnosticsProperty('children', children));
+  }
 }
 
 /// 元素绘制时的一些状态存储信息

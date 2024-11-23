@@ -96,6 +96,7 @@ part 'src/component/provider.dart';
 part 'src/component/value_change_mixin.dart';
 part 'src/component/uri_transform.dart';
 part 'src/component/listenable.dart';
+part 'src/component/data_chunk_info.dart';
 part 'src/debug/debug.dart';
 part 'src/debug/debug_keys.dart';
 part 'src/debug/navigator_observer_log.dart';

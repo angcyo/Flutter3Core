@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
@@ -18,6 +16,12 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 class LogFileInterceptor extends Interceptor {
   /// 禁止打印日志
   static const String kNoLogPrintKey = 'noLogPrint';
+
+  /// 禁止打印请求日志
+  static const String kNoRequestLogPrintKey = 'noRequestLogPrint';
+
+  /// 禁止打印响应日志
+  static const String kNoResponseLogPrintKey = 'noResponseLogPrint';
 
   /// 禁止日志写入文件
   static const String kNoLogFileKey = 'noLogFile';
@@ -90,6 +94,10 @@ class LogFileInterceptor extends Interceptor {
     final noLogFile = queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
         options.extra[kNoLogFileKey]?.toBoolOrNull() ??
         !toFile;
+    final noRequestLogPrint =
+        queryParameters[kNoRequestLogPrintKey]?.toBoolOrNull() ??
+            options.extra[kNoRequestLogPrintKey]?.toBoolOrNull() ??
+            !toPrint;
 
     //添加请求头
     options.headers["log-uuid"] = id;
@@ -127,7 +135,7 @@ class LogFileInterceptor extends Interceptor {
     _printLog(
       log,
       toFile: noLogFile == false,
-      toPrint: noLogPrint == false,
+      toPrint: noLogPrint == false && noRequestLogPrint == false,
     );
   }
 
@@ -140,6 +148,10 @@ class LogFileInterceptor extends Interceptor {
     final noLogFile = queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
         options.extra[kNoLogFileKey]?.toBoolOrNull() ??
         !toFile;
+    final noResponseLogPrint =
+        queryParameters[kNoResponseLogPrintKey]?.toBoolOrNull() ??
+            options.extra[kNoResponseLogPrintKey]?.toBoolOrNull() ??
+            !toPrint;
 
     final hashCode = options.hashCode;
     final value = uuidMap.remove(hashCode);
@@ -150,7 +162,7 @@ class LogFileInterceptor extends Interceptor {
     _printLog(
       log,
       toFile: noLogFile == false,
-      toPrint: noLogPrint == false,
+      toPrint: noLogPrint == false && noResponseLogPrint == false,
     );
   }
 

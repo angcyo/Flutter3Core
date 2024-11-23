@@ -588,6 +588,14 @@ Future<R> run<R>(ResultCallback<R> callback) {
 }
 
 /// 内存隔离, 不共享. 只能传递基础数据类型, 或者可以被`send`的对象
+/// [SendPort.send]
+/// ```
+/// Invalid argument(s): Illegal argument in isolate message:
+/// object is unsendable - Library:'dart:isolate' Class:
+/// _Timer@1026248 (see restrictions listed at `SendPort.send()`
+/// documentation for more information)
+/// ```
+///
 /// [Isolate.run]
 /// [Isolate.spawn]
 Future<R> isolateRun<R>(ResultCallback<R> callback) => run(callback);

@@ -53,7 +53,12 @@ typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
 /// 进度回调
 /// [count] 已发送的数据量
 /// [total] 总数据量, 有可能为0
+/// [ProgressCallback]
 typedef ProgressAction = void Function(int count, int total);
+
+/// 发送数据的进度回调, 通常发送的字节数据, 参数就是字节的长度
+/// [ProgressAction]
+typedef ProgressDataAction = void Function(DataChunkInfo chunkInfo);
 
 /// 进度回调[0~1]
 typedef ProgressRatioCallback = void Function(double progress);
@@ -64,7 +69,8 @@ typedef IndexCallback = void Function(int index);
 /// [num]数字类型的回调
 typedef NumCallback = void Function(num number);
 typedef NumNullCallback = void Function(num? number);
-typedef ContextNumNullCallback = void Function(BuildContext? context, num? number);
+typedef ContextNumNullCallback = void Function(
+    BuildContext? context, num? number);
 typedef RangeNumCallback = void Function(num startValue, num endValue);
 
 /// [bool]类型的回调

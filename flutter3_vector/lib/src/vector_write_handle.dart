@@ -583,6 +583,7 @@ class GCodeWriteHandle with VectorWriteMixin {
   static String gcodeFooter([bool auto = false]) => kGCodeFooter;
 
   /// 打开主轴
+  /// [power] 激光功率
   static String? gcodeToolOn([bool auto = false, int? power]) =>
       auto ? null : "M3S${power ?? 255}";
 
