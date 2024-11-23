@@ -162,7 +162,15 @@ class _PullBackWidgetState extends State<PullBackWidget>
     if (pullMaxBound == null) {
       _initController(1.0);
       if (restoreControllerValue && oldValue != null) {
-        _pullBackController?.value = oldValue;
+        try {
+          //setState() or markNeedsBuild() called during build.
+          _pullBackController?.value = oldValue;
+        } catch (e) {
+          assert(() {
+            l.w(e);
+            return true;
+          }());
+        }
       }
     } else if (pullMaxBound > 1) {
       final oldChildHeight = _childHeight;
