@@ -289,7 +289,15 @@ enum CanvasStateType {
 /// 画布状态数据, 用于支持多画布功能
 class CanvasStateData {
   /// 画布状态数量
+  @flagProperty
   static var _canvasStateCount = 0;
+
+  /// 画布默认的名称前缀
+  static const canvasDefNamePrefix = "Canvas";
+
+  /// 用户自定义的名称前缀
+  @configProperty
+  static String? customCanvasDefNamePrefix;
 
   /// 画布状态id1
   String id = $uuid;
@@ -330,11 +338,10 @@ class CanvasStateData {
     if (id != null) {
       this.id = id;
     }
-    if (name == null) {
-      this.name = "Canvas $_canvasStateCount";
-    } else {
-      this.name = name;
-    }
+    //debugger();
+    this.name = name ??
+        "${customCanvasDefNamePrefix ?? canvasDefNamePrefix} $_canvasStateCount";
+
     if (elements != null) {
       this.elements = elements;
     }

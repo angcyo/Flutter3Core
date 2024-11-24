@@ -2316,8 +2316,8 @@ extension ContextEx on BuildContext {
 
   /// 当前主题是否是中文语言
   bool get isThemeZh {
-    Locale locale = this.locale;
-    return locale.languageCode == 'zh';
+    final locale = maybeLocale;
+    return locale?.languageCode == 'zh';
   }
 
   /// 如果当前是暗色主题, 则返回[dark]否则返回[light]
@@ -2331,7 +2331,7 @@ extension ContextEx on BuildContext {
   }
 
   /// 根据中英环境自动选择数据
-  T? zhOrDef<T>(T? zh, T? def) {
+  T? zhOrDef<T>([T? zh, T? def]) {
     return isThemeZh ? (zh ?? def) : def;
   }
 
@@ -2360,7 +2360,16 @@ extension ContextEx on BuildContext {
   /// [Locale.languageCode] zh
   /// [Locale.countryCode] CN
   /// [Locale.scriptCode] Hans
+  /// ```
+  /// When an inherited widget changes, for example if the value of Theme.of() changes,
+  /// its dependent widgets are rebuilt.
+  /// If the dependent widget's reference to the inherited widget is in a constructor or an initState() method,
+  /// then the rebuilt dependent widget will not reflect the changes in the inherited widget.
+  /// ```
   Locale get locale => Localizations.localeOf(this);
+
+  /// [locale]
+  Locale? get maybeLocale => Localizations.maybeLocaleOf(this);
 
   /// 如果仅是想获取[MediaQueryData]而不想监听变化, 则使用此方法. 否则使用[MediaQuery.of]
   /// 通过[MediaQuery.of]方法获取到的[MediaQueryData]会通知监听变化
