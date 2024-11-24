@@ -93,7 +93,7 @@ class SliverExpandBox extends RenderShiftedBox {
       //debugger();
       //child!.layout(constraints, parentUsesSize: true);
       child!.layout(BoxConstraints.loose(size), parentUsesSize: true);
-      alignChildOffset(alignment, size, null, child: child);
+      alignChildOffset(alignment, size, child: child);
     }
 
     /*final sliverConstraints = findSliverConstraints();

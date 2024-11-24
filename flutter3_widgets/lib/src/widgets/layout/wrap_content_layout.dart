@@ -124,47 +124,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
   /// 对齐子元素, 通过修改[child!.parentData]这样的方式手势碰撞就会自动计算
   void _alignChild() {
-    if (child != null) {
-      var dx = 0.0;
-      var dy = 0.0;
-      switch (alignment) {
-        case AlignmentDirectional.topStart:
-        case AlignmentDirectional.centerStart:
-        case AlignmentDirectional.bottomStart:
-          dx = 0;
-          break;
-        case AlignmentDirectional.topCenter:
-        case AlignmentDirectional.center:
-        case AlignmentDirectional.bottomCenter:
-          dx = (size.width - child!.size.width) / 2;
-          break;
-        case AlignmentDirectional.topEnd:
-        case AlignmentDirectional.centerEnd:
-        case AlignmentDirectional.bottomEnd:
-          dx = size.width - child!.size.width;
-          break;
-      }
-      switch (alignment) {
-        case AlignmentDirectional.topStart:
-        case AlignmentDirectional.topCenter:
-        case AlignmentDirectional.topEnd:
-          dy = 0;
-          break;
-        case AlignmentDirectional.centerStart:
-        case AlignmentDirectional.center:
-        case AlignmentDirectional.centerEnd:
-          dy = (size.height - child!.size.height) / 2;
-          break;
-        case AlignmentDirectional.bottomStart:
-        case AlignmentDirectional.bottomCenter:
-        case AlignmentDirectional.bottomEnd:
-          dy = size.height - child!.size.height;
-          break;
-      }
-      final BoxParentData childParentData = child!.parentData! as BoxParentData;
-      //debugger();
-      childParentData.offset = Offset(dx, dy);
-    }
+    alignChildOffset(alignment, size, child: child);
   }
 
   void _setSize(Size childSize) {
@@ -181,6 +141,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
       height = constraints.maxWidth;
     }
     size = constraints.constrain(Size(width, height));
+    //debugger();
     _alignChild();
   }
 

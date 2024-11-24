@@ -16,8 +16,8 @@ part of '../../flutter3_basics.dart';
 /// 返回对应的偏移量
 Offset alignChildOffset(
   AlignmentGeometry alignment,
-  Size containsSize,
-  Size? childSize, {
+  Size containsSize, {
+  Size? childSize, //二选一
   RenderBox? child, //可以不传
 }) {
   var dx = 0.0;
@@ -96,7 +96,8 @@ Offset alignRectOffset(
   Rect containsBounds,
   Size childSize,
 ) {
-  final offset = alignChildOffset(alignment, containsBounds.size, childSize);
+  final offset =
+      alignChildOffset(alignment, containsBounds.size, childSize: childSize);
   return containsBounds.topLeft + offset;
 }
 

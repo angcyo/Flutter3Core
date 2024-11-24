@@ -111,7 +111,8 @@ class StrokeLoadingRenderObject extends RenderBox {
       math.min(size.width, this.size.width),
       math.min(size.width, this.size.height),
     );
-    final off = offset + alignChildOffset(Alignment.center, this.size, size);
+    final off =
+        offset + alignChildOffset(Alignment.center, this.size, childSize: size);
 
     Rect rect = (off & size).deflateValue(lineWidth / 2);
     canvas.drawArc(rect, 0, 360.hd, false, paint);

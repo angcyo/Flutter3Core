@@ -16,7 +16,10 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// sId(-1) 代表上一个兄弟元素，以此类推
 /// sId(1) 代表下一个兄弟元素，以此类推
-
+///
+/// cId("xxx") 指定一个id
+/// cId("canvas") 指定一个id
+///
 
 /// 快速使用一个约束布局
 /// [cl.ConstraintLayout]
