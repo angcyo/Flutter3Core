@@ -6,6 +6,7 @@ part of '../../flutter3_basics.dart';
 ///
 /// 当点击事件没有命中子组件时, 则忽略点击事件
 ///
+/// [IgnoreSelfPointer]
 enum IgnorePointerType {
   /// 不忽略
   none,

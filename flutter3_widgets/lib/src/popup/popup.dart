@@ -26,8 +26,10 @@ extension PopupEx on BuildContext {
   /// [ArrowPopupRoute]
   Future showArrowPopupRoute(
     Widget child, {
+    //--
     Rect? anchorRect,
     BuildContext? anchorChild,
+    //--
     Color? backgroundColor,
     Color? arrowColor,
     bool showArrow = true,
@@ -38,12 +40,12 @@ extension PopupEx on BuildContext {
     IgnorePointerType? barrierIgnorePointerType,
   }) async {
     anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds();
-    anchorRect ??= findRenderObject()?.getGlobalBounds();
+    anchorRect ??= findRenderObject()?.getGlobalBounds() ?? Rect.zero;
     final globalTheme = GlobalTheme.of(this);
     return Navigator.of(this).push(
       ArrowPopupRoute(
         child: child,
-        anchorRect: anchorRect!,
+        anchorRect: anchorRect,
         backgroundColor: backgroundColor ?? globalTheme.surfaceBgColor,
         arrowColor: arrowColor ?? globalTheme.surfaceBgColor,
         showArrow: showArrow,
