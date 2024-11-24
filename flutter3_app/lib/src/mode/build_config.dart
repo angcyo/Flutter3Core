@@ -15,7 +15,8 @@ class BuildConfig {
   /// 从[Asset]资源中解析构建信息
   /// [Asset]需要放到app包中
   /// 启动程序时初始化
-  static Future<BuildConfig?> intBuildConfig({
+  @initialize
+  static Future<BuildConfig?> initBuildConfig({
     String name = "$kConfigPathName/build_config.json",
     String prefix = kDefAssetsPrefix,
     String? package, //flutter3_app
@@ -102,8 +103,10 @@ class BuildConfig {
   @JsonKey(includeFromJson: false, includeToJson: false)
   Map<String, dynamic>? json;
 
+  /// [json]
   dynamic operator [](Object? key) => json?[key];
 
+  /// [json]
   void operator []=(String key, dynamic value) {
     json?[key] = value;
   }

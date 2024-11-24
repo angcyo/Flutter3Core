@@ -140,7 +140,7 @@ Future runGlobalApp(
   Future realRun() async {
     ensureInitialized();
     //--
-    BuildConfig.intBuildConfig();
+    BuildConfig.initBuildConfig();
     //key-value
     await initHive();
 
