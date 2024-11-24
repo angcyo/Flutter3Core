@@ -10,6 +10,9 @@ part of '../flutter3_vector.dart';
 /// - SVG 元素参考 https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element
 /// - SVG 属性参考 https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute
 class SvgBuilder {
+  /// [SvgBuilder.svgHeaderAnnotation]
+  static String? customSvgHeaderAnnotation;
+
   /// svg xml头部
   @configProperty
   String svgHeader = '<?xml version="1.0" encoding="UTF-8"?>';
@@ -61,7 +64,7 @@ class SvgBuilder {
     bool writeUnitTransform = false,
   }) {
     buffer.write(svgHeader);
-    svgHeaderAnnotation?.let((it) {
+    (customSvgHeaderAnnotation ?? svgHeaderAnnotation)?.let((it) {
       if (it.contains("<!")) {
         buffer.write(it);
       } else {
