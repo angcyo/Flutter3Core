@@ -1,4 +1,4 @@
-library flutter3_basics;
+library;
 
 import 'dart:async';
 import 'dart:convert';
@@ -139,6 +139,7 @@ part 'src/widgets/progress_listener.dart';
 part 'src/widgets/ignore_self_pointer.dart';
 part 'src/widgets/test_constraints_layout.dart';
 part 'src/widgets/any_widget.dart';
+part 'src/widgets/last_extend_row.dart';
 
 /// 类型重定义
 typedef UiImage = ui.Image;

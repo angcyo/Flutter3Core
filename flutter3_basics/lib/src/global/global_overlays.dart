@@ -112,10 +112,15 @@ OverlayEntry? toastBlur({
     );
 
 /// 顶部全屏toast
+/// [black] 背景是否是黑色,影响[background]
+///
 /// [showNotification]->[showOverlay]
 OverlayEntry? toastMessage(
   Widget msg, {
+  //--
   Color? background,
+  //--
+  double? bgBlurSigma,
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
 }) =>
@@ -123,6 +128,7 @@ OverlayEntry? toastMessage(
       Widget child = ToastWidget(
         background: background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
         elevation: 10,
+        bgBlurSigma: bgBlurSigma,
         child: msg,
       );
       return child;
@@ -131,29 +137,78 @@ OverlayEntry? toastMessage(
 /// [toastMessage]
 OverlayEntry? toastInfo(
   String? msg, {
-  /// 图标
+  //-- 图标
   IconData? icon,
+  Color? iconColor,
+  Widget? iconWidget,
+  //--
+  Widget? child,
+  Color? background,
+  bool? black,
+  //--
+  double? bgBlurSigma,
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
 }) {
   if (msg == null) return null;
   return toastMessage(
-    Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon(
-          icon ?? Icons.info_outline,
-          /*color: GlobalConfig.def.themeData.primaryColor,*/
+    child ??
+        LastExtendRow(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            iconWidget ??
+                Icon(
+                  icon ?? Icons.info_outline,
+                  color: iconColor /*GlobalConfig.def.themeData.primaryColor*/,
+                ),
+            //间隙
+            Empty.width(8),
+            Text(msg)
+            /*Text(
+              msg,
+              maxLines: 1,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+            )*/ /*.expanded(), 不使用`expanded`无法换行*/
+            ,
+          ],
         ),
-        //间隙
-        Empty.width(8),
-        Text(msg).expanded(),
-      ],
-    ),
+    background: background ??
+        GlobalConfig.def.globalTheme.blackBgColor.withOpacity(0.8),
     position: position,
+    bgBlurSigma: bgBlurSigma,
     animate: animate,
   );
 }
+
+/// 黑色模式下的[toastInfo]方法
+OverlayEntry? toastInfoBlack(
+  String? msg, {
+  //-- 图标
+  IconData? icon = Icons.info,
+  Color? iconColor,
+  Widget? iconWidget,
+  //--
+  Widget? child,
+  Color? background,
+  bool? black = true,
+  //--
+  OverlayPosition position = OverlayPosition.top,
+  OverlayAnimate? animate = OverlayAnimate.scale,
+}) =>
+    toastInfo(
+      msg,
+      black: black,
+      background: background,
+      icon: icon,
+      iconColor: iconColor ?? GlobalConfig.def.globalTheme.accentColor,
+      iconWidget: iconWidget,
+      child: child,
+      bgBlurSigma: kM,
+      position: position,
+      animate: animate,
+    );
 
 //---
 
