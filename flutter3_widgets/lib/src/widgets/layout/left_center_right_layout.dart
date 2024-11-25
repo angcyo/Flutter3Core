@@ -5,7 +5,7 @@ part of '../../../flutter3_widgets.dart';
 /// @author angcyo
 /// @date 2024/07/08
 ///
-/// [left] [center] [right]
+/// [left]..[center]..[right]
 /// [left].[right]平分去除[center]之后的剩余空间
 class LeftCenterRightLayout extends MultiChildRenderObjectWidget {
   /// 方向

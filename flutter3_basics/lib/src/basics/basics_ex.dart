@@ -1742,7 +1742,7 @@ extension NumEx on num {
 
   /// 检查此双精度值是否等于 other，避免浮点错误。
   /// [precisionErrorTolerance] 误差范围
-  bool equalTo(double other) => (this - other).abs() < 0.0000001;
+  bool equalTo(double other) => (this - other).abs() < precisionErrorTolerance;
 }
 
 extension IntEx on int {
@@ -1869,12 +1869,13 @@ extension DoubleEx on double {
 
   /// 判断2个浮点数是否相等
   /// [notEqualTo]
-  bool equalTo(double other, [double epsilon = 1e-8]) =>
+  /// [precisionErrorTolerance]
+  bool equalTo(double other, [double epsilon = precisionErrorTolerance]) =>
       (this - other).abs() < epsilon;
 
   /// 判断2个浮点数是否不等于
   /// [equalTo]
-  bool notEqualTo(double other, [double epsilon = 1e-8]) =>
+  bool notEqualTo(double other, [double epsilon = precisionErrorTolerance]) =>
       (this - other).abs() >= epsilon;
 
   /// 判断浮点数是否是一个有效的数值

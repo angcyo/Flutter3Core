@@ -33,7 +33,7 @@ class ToastWidget extends StatefulWidget {
   @defInjectMark
   final Color? background;
 
-  /// 背景模糊的伽马值
+  /// 背景模糊的伽马值, 非空时, 会添加模糊效果
   final double? bgBlurSigma;
 
   /// 阴影高度

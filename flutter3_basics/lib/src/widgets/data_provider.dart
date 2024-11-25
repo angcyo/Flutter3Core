@@ -1,4 +1,4 @@
-part of flutter3_basics;
+part of '../../flutter3_basics.dart';
 
 /// 用来提供数据的一个组件
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
