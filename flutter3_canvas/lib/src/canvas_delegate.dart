@@ -209,7 +209,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 是否有元素属性发生过改变
   /// [dispatchCanvasElementPropertyChanged]
   @flagProperty
-  bool isElementPropertyChanged = false;
+  bool isAnyElementPropertyChanged = false;
 
   /// 是否有元素数量发生过改变
   /// [dispatchCanvasElementListChanged]
@@ -220,7 +220,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [clearElementChangedFlag]
   @flagProperty
   bool get hasElementChangedFlag =>
-      isElementChanged || isElementPropertyChanged;
+      isElementChanged || isAnyElementPropertyChanged;
 
   //endregion ---core---
 
@@ -283,7 +283,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 清除元素改变标识
   void clearElementChangedFlag() {
     isElementChanged = false;
-    isElementPropertyChanged = false;
+    isAnyElementPropertyChanged = false;
   }
 
   /// 添加画布监听
@@ -485,9 +485,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     dynamic from,
     dynamic to,
     PainterPropertyType propertyType,
+    Object? fromObj,
     UndoType? fromUndoType,
   ) {
-    isElementPropertyChanged = true;
+    isAnyElementPropertyChanged = true;
     /*assert(() {
       l.d('元素属性发生改变:$elementPainter $from->$to :$propertyType');
       return true;
@@ -496,6 +497,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         .onSelfElementPropertyChanged(
       elementPainter,
       propertyType,
+      fromObj,
       fromUndoType,
     );
     _eachCanvasListener((element) {
@@ -504,6 +506,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         from,
         to,
         propertyType,
+        fromObj,
         fromUndoType,
       );
     });

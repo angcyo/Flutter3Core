@@ -42,7 +42,7 @@ class ElementPainter extends IPainter
 
   PaintState get paintState => _paintState;
 
-  set paintState(PaintState value) {
+  /*set paintState(PaintState value) {
     //debugger();
     final old = _paintState;
     _paintState = value;
@@ -52,6 +52,29 @@ class ElementPainter extends IPainter
         value,
         PainterPropertyType.state,
         null,
+      );
+    }
+  }*/
+
+  /// 更新[_paintState], 并触发通知
+  /// [updatePaintState]
+  /// [updatePaintProperty]
+  @api
+  void updatePaintState(
+    PaintState value, {
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    //debugger();
+    final old = _paintState;
+    _paintState = value;
+    if (old != value) {
+      dispatchSelfPaintPropertyChanged(
+        old,
+        value,
+        PainterPropertyType.state,
+        fromObj,
+        fromUndoType,
       );
     }
   }
@@ -67,6 +90,7 @@ class ElementPainter extends IPainter
       paintState,
       paintState,
       PainterPropertyType.state,
+      this,
       null,
     );
   }
@@ -82,6 +106,7 @@ class ElementPainter extends IPainter
         paintState,
         paintState,
         PainterPropertyType.state,
+        this,
         null,
       );
       if (!value) {
@@ -102,6 +127,7 @@ class ElementPainter extends IPainter
         paintState,
         paintState,
         PainterPropertyType.state,
+        this,
         null,
       );
       if (value) {
@@ -116,6 +142,8 @@ class ElementPainter extends IPainter
   void updatePainterName(
     String? elementName, {
     String? elementUuid,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     //debugger();
     paintState.elementName = elementName;
@@ -124,7 +152,8 @@ class ElementPainter extends IPainter
       paintState,
       paintState,
       PainterPropertyType.state,
-      null,
+      fromObj,
+      fromUndoType,
     );
   }
 
@@ -138,7 +167,7 @@ class ElementPainter extends IPainter
 
   PaintProperty? get paintProperty => _paintProperty;
 
-  set paintProperty(PaintProperty? value) {
+  /*set paintProperty(PaintProperty? value) {
     //debugger();
     final old = _paintProperty;
     _paintProperty = value;
@@ -146,17 +175,49 @@ class ElementPainter extends IPainter
       dispatchSelfPaintPropertyChanged(
           old, value, PainterPropertyType.paint, null);
     }
+  }*/
+
+  /// 更新[_paintProperty], 并触发通知
+  /// [notify] 是否要触发通知
+  ///
+  /// [updatePaintState]
+  @api
+  void updatePaintProperty(
+    PaintProperty? value, {
+    bool notify = true,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    final old = _paintProperty;
+    _paintProperty = value;
+    if (notify && old != value) {
+      dispatchSelfPaintPropertyChanged(
+        old,
+        value,
+        PainterPropertyType.paint,
+        fromObj,
+        fromUndoType,
+      );
+    }
   }
 
   /// 通过[Rect]设置元素的绘制属性
   /// [paintProperty]
-  void setPaintPropertyFromRect(@dp Rect? rect) {
+  void setPaintPropertyFromRect(
+    @dp Rect? rect, {
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     if (rect == null) {
-      paintProperty = null;
+      updatePaintProperty(null, fromObj: fromObj, fromUndoType: fromUndoType);
     } else {
       final property = PaintProperty();
       property.initWith(rect: rect);
-      paintProperty = property;
+      updatePaintProperty(
+        property,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     }
   }
 
@@ -255,7 +316,11 @@ class ElementPainter extends IPainter
   /// 更新元素的中心点到指定的位置
   /// 只修改[PaintProperty.left].[PaintProperty.top]
   @api
-  void updateCenterTo(@sceneCoordinate @dp Offset? center) {
+  void updateCenterTo(
+    @sceneCoordinate @dp Offset? center, {
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     if (center == null) {
       assert(() {
         l.d('无效的操作');
@@ -271,7 +336,11 @@ class ElementPainter extends IPainter
           center.dx - oldBounds.center.dx,
           center.dy - oldBounds.center.dy,
         );
-      paintProperty = property.copyWith()..applyTranslate(translate);
+      updatePaintProperty(
+        property.copyWith()..applyTranslate(translate),
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     }
   }
 
@@ -569,7 +638,9 @@ class ElementPainter extends IPainter
   /// 派发元素属性改变
   /// [old] 旧的属性
   /// [value] 新的属性
-  /// [propertyType] 属性类型
+  /// [propertyType] 改变的属性类型
+  /// [fromObj] 触发改变事件的对象
+  ///
   /// [PaintProperty]
   /// [PaintState]
   /// [ElementPainter.paintState]
@@ -578,6 +649,7 @@ class ElementPainter extends IPainter
     dynamic old,
     dynamic value,
     PainterPropertyType propertyType,
+    Object? fromObj,
     UndoType? fromUndoType,
   ) {
     //debugger();
@@ -586,6 +658,7 @@ class ElementPainter extends IPainter
       old,
       value,
       propertyType,
+      fromObj,
       fromUndoType,
     );
     canvasDelegate?.dispatchCanvasElementPropertyChanged(
@@ -593,6 +666,7 @@ class ElementPainter extends IPainter
       old,
       value,
       propertyType,
+      fromObj,
       fromUndoType,
     );
   }
@@ -603,7 +677,11 @@ class ElementPainter extends IPainter
   /// [flipElement]
   /// [scaleElementWithCenter]
   /// [onlyScaleSelfElement]
-  void dispatchSelfElementRawChanged(ElementDataType elementDataType) {}
+  void dispatchSelfElementRawChanged(
+    ElementDataType elementDataType, {
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {}
 
   //endregion ---paint---
 
@@ -614,11 +692,23 @@ class ElementPainter extends IPainter
   /// [translateElementBy]
   /// [translateElementTo]
   @api
-  void translateElement(Matrix4 matrix) {
+  void translateElement(
+    Matrix4 matrix, {
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     paintProperty?.let((it) {
-      paintProperty = it.copyWith()..applyTranslate(matrix);
+      updatePaintProperty(
+        it.copyWith()..applyTranslate(matrix),
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
-    dispatchSelfElementRawChanged(ElementDataType.size);
+    dispatchSelfElementRawChanged(
+      ElementDataType.size,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   /// 平移元素, 将元素平移一定的距离[tx].[ty]
@@ -630,6 +720,8 @@ class ElementPainter extends IPainter
     double? tx,
     double? ty,
     Offset? offset,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     tx ??= offset?.dx;
     ty ??= offset?.dy;
@@ -640,7 +732,11 @@ class ElementPainter extends IPainter
       }());
       return;
     }
-    translateElement(createTranslateMatrix(tx: tx ?? 0.0, ty: ty ?? 0.0));
+    translateElement(
+      createTranslateMatrix(tx: tx ?? 0.0, ty: ty ?? 0.0),
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   /// 平移元素, 将元素平移到指定位置[x].[y]
@@ -677,11 +773,20 @@ class ElementPainter extends IPainter
   void rotateElement(
     Matrix4 matrix, {
     double? refTargetRadians,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     paintProperty?.let((it) {
-      paintProperty = it.copyWith()
-        ..applyRotate(matrix, refTargetRadians: refTargetRadians);
-      dispatchSelfElementRawChanged(ElementDataType.size);
+      updatePaintProperty(
+        it.copyWith()..applyRotate(matrix, refTargetRadians: refTargetRadians),
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
+      dispatchSelfElementRawChanged(
+        ElementDataType.size,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
@@ -691,14 +796,24 @@ class ElementPainter extends IPainter
   void rotateElementTo(
     double radians, {
     Offset? anchor,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     paintProperty?.let((it) {
-      paintProperty = it.copyWith()
-        ..rotateTo(
-          radians: radians,
-          anchor: anchor,
-        );
-      dispatchSelfElementRawChanged(ElementDataType.size);
+      updatePaintProperty(
+        it.copyWith()
+          ..rotateTo(
+            radians: radians,
+            anchor: anchor,
+          ),
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
+      dispatchSelfElementRawChanged(
+        ElementDataType.size,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
@@ -714,12 +829,19 @@ class ElementPainter extends IPainter
     double radians, {
     Offset? anchor,
     double? refTargetRadians,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     paintProperty?.let((it) {
       //debugger();
       anchor ??= it.paintCenter;
       final matrix = Matrix4.identity()..rotateBy(radians, anchor: anchor);
-      rotateElement(matrix, refTargetRadians: refTargetRadians);
+      rotateElement(
+        matrix,
+        refTargetRadians: refTargetRadians,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
@@ -744,48 +866,98 @@ class ElementPainter extends IPainter
   /// [flipY] 是否要垂直翻转
   /// [CanvasElementControlManager.flipElement]
   @api
-  void flipElement({bool? flipX, bool? flipY}) {
+  void flipElement({
+    bool? flipX,
+    bool? flipY,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     paintProperty?.let((it) {
-      paintProperty = it.copyWith()..applyFlip(flipX: flipX, flipY: flipY);
+      updatePaintProperty(
+        it.copyWith()..applyFlip(flipX: flipX, flipY: flipY),
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
-    dispatchSelfElementRawChanged(ElementDataType.size);
+    dispatchSelfElementRawChanged(
+      ElementDataType.size,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   /// 使用缩放的方式翻转元素
   /// 这种方法的翻转不会跑到边界外
   /// [CanvasElementControlManager.flipElementWithScale]
   @api
-  void flipElementWithScale({bool? flipX, bool? flipY, Offset? anchor}) {
+  void flipElementWithScale({
+    bool? flipX,
+    bool? flipY,
+    Offset? anchor,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     final scaleMatrix = Matrix4.identity()
       ..scaleBy(
           sx: flipX == true ? -1 : 1,
           sy: flipY == true ? -1 : 1,
           anchor: anchor ?? paintProperty?.paintCenter);
-    scaleElementWithCenter(scaleMatrix);
+    scaleElementWithCenter(
+      scaleMatrix,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   /// 作用一个缩放矩阵
   /// [onlyScaleSelfElement]
   /// [scaleElementWithCenter]
   @api
-  void scaleElement({double sx = 1, double sy = 1, Offset? anchor}) {
+  void scaleElement({
+    double sx = 1,
+    double sy = 1,
+    Offset? anchor,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     if (anchor == null) {
-      onlyScaleSelfElement(sx: sx, sy: sy);
+      onlyScaleSelfElement(
+        sx: sx,
+        sy: sy,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     } else {
       final scaleMatrix = Matrix4.identity()
         ..scaleBy(sx: sx, sy: sy, anchor: anchor);
-      scaleElementWithCenter(scaleMatrix);
+      scaleElementWithCenter(
+        scaleMatrix,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     }
   }
 
   /// 应用矩阵, 通常在子元素缩放时需要使用方法
   @api
-  void scaleElementWithCenter(Matrix4 matrix) {
+  void scaleElementWithCenter(
+    Matrix4 matrix, {
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     //debugger();
     paintProperty?.let((it) {
-      paintProperty = it.copyWith()..applyScaleWithCenter(matrix);
+      updatePaintProperty(
+        it.copyWith()..applyScaleWithCenter(matrix),
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
-    dispatchSelfElementRawChanged(ElementDataType.size);
+    dispatchSelfElementRawChanged(
+      ElementDataType.size,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   /// 直接作用缩放, 通常在外边框缩放时使用方法
@@ -797,13 +969,22 @@ class ElementPainter extends IPainter
     double? sy,
     double? sxTo,
     double? syTo,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     //debugger();
     paintProperty?.let((it) {
-      paintProperty = it.copyWith()
-        ..applyScale(sxBy: sx, syBy: sy, sxTo: sxTo, syTo: syTo);
+      updatePaintProperty(
+        it.copyWith()..applyScale(sxBy: sx, syBy: sy, sxTo: sxTo, syTo: syTo),
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
-    dispatchSelfElementRawChanged(ElementDataType.size);
+    dispatchSelfElementRawChanged(
+      ElementDataType.size,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   //endregion ---apply paintProperty--
@@ -903,10 +1084,20 @@ class ElementPainter extends IPainter
     ElementPainter? template,
     ElementGroupPainter? parent,
     bool resetUuid = true,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     final newPainter = template ?? ElementPainter();
-    newPainter.paintState = paintState.copyWith();
-    newPainter.paintProperty = paintProperty?.copyWith();
+    newPainter.updatePaintState(
+      paintState.copyWith(),
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
+    newPainter.updatePaintProperty(
+      paintProperty?.copyWith(),
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
     if (resetUuid) {
       newPainter.paintState.elementUuid = $uuid;
     }
@@ -1055,6 +1246,10 @@ class ElementGroupPainter extends ElementPainter {
     painter.resetChildren(children);
   }
 
+  /// 仅是[ElementGroupPainter], 而非其他对象
+  ElementGroupPainter? get onlyElementGroupPainter =>
+      this is ElementSelectComponent ? null : this;
+
   //region ---core--
 
   /// 重置子元素
@@ -1086,13 +1281,26 @@ class ElementGroupPainter extends ElementPainter {
   /// 使用子元素的属性, 更新自身的绘制属性
   /// [resetGroupAngle] 是否要重置旋转角度
   @api
-  void updatePaintPropertyFromChildren({bool? resetGroupAngle}) {
+  void updatePaintPropertyFromChildren({
+    bool? resetGroupAngle,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     resetGroupAngle ??=
         canvasDelegate?.canvasStyle.enableResetElementAngle ?? true;
     if (isNullOrEmpty(children)) {
-      paintProperty = null;
+      //paintProperty = null;
+      updatePaintProperty(
+        null,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     } else if (children!.length == 1 && !resetGroupAngle) {
-      paintProperty = children!.first.paintProperty?.copyWith();
+      updatePaintProperty(
+        children!.first.paintProperty?.copyWith(),
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     } else {
       PaintProperty parentProperty = PaintProperty();
       Rect? rect;
@@ -1109,7 +1317,11 @@ class ElementGroupPainter extends ElementPainter {
         }
       }
       parentProperty.initWith(rect: rect);
-      paintProperty = parentProperty;
+      updatePaintProperty(
+        parentProperty,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     }
   }
 
@@ -1170,10 +1382,21 @@ class ElementGroupPainter extends ElementPainter {
     ElementPainter? template,
     ElementGroupPainter? parent,
     bool resetUuid = true,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     final newPainter = ElementGroupPainter();
-    newPainter.paintState = paintState.copyWith();
-    newPainter.paintProperty = paintProperty?.copyWith();
+    newPainter.updatePaintState(
+      paintState.copyWith(),
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
+    newPainter.updatePaintProperty(
+      paintProperty?.copyWith(),
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
+
     if (resetUuid) {
       newPainter.paintState.elementUuid = $uuid;
     }
@@ -1183,6 +1406,8 @@ class ElementGroupPainter extends ElementPainter {
       newChildren.add(element.copyElement(
         parent: newPainter,
         resetUuid: resetUuid,
+        fromObj: fromObj ?? onlyElementGroupPainter,
+        fromUndoType: fromUndoType,
       ));
     });
     newPainter.resetChildren(newChildren);
@@ -1190,15 +1415,21 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   /// 当有子元素[child]的属性发生变化时, 通知父元素
+  /// [ElementPainter.dispatchSelfPaintPropertyChanged]
   void onChildPaintPropertyChanged(
     ElementPainter child,
     dynamic old,
     dynamic value,
     PainterPropertyType propertyType,
+    Object? fromObj,
     UndoType? fromUndoType,
   ) {
-    //updatePaintPropertyFromChildren();
-    //debugger();
+    if (fromObj is! ElementStateStack && this != fromObj) {
+      //组内元素属性改变, 但是不同通过父元素改变的
+      //有可能是独立选择了组内某个元素单独修改的属性, 而未修改父元素的属性
+      updatePaintPropertyFromChildren();
+      //debugger();
+    }
   }
 
   //endregion ---core--
@@ -1206,10 +1437,22 @@ class ElementGroupPainter extends ElementPainter {
   //region ---apply--
 
   @override
-  void translateElement(Matrix4 matrix) {
-    super.translateElement(matrix);
+  void translateElement(
+    Matrix4 matrix, {
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    super.translateElement(
+      matrix,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
     children?.forEach((element) {
-      element.translateElement(matrix);
+      element.translateElement(
+        matrix,
+        fromObj: fromObj ?? onlyElementGroupPainter,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
@@ -1217,45 +1460,99 @@ class ElementGroupPainter extends ElementPainter {
   void rotateElement(
     Matrix4 matrix, {
     double? refTargetRadians,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
-    super.rotateElement(matrix, refTargetRadians: refTargetRadians);
+    super.rotateElement(
+      matrix,
+      refTargetRadians: refTargetRadians,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
     children?.forEach((element) {
-      element.rotateElement(matrix, refTargetRadians: refTargetRadians);
+      element.rotateElement(
+        matrix,
+        refTargetRadians: refTargetRadians,
+        fromObj: fromObj ?? onlyElementGroupPainter,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
   /// 不推荐在[ElementSelectComponent]对象上使用此方法
   /// 推荐使用[rotateElement]
   @override
-  void rotateElementTo(double radians, {Offset? anchor}) {
+  void rotateElementTo(
+    double radians, {
+    Offset? anchor,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     final childRadians = radians - (paintProperty?.angle ?? 0);
-    super.rotateElementTo(radians, anchor: anchor);
+    super.rotateElementTo(
+      radians,
+      anchor: anchor,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
     children?.forEach((element) {
       final matrix = Matrix4.identity()..rotateBy(childRadians, anchor: anchor);
-      element.rotateElement(matrix);
+      element.rotateElement(
+        matrix,
+        fromObj: fromObj ?? onlyElementGroupPainter,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
   @override
-  void flipElement({bool? flipX, bool? flipY}) {
-    super.flipElement(flipX: flipX, flipY: flipY);
+  void flipElement({
+    bool? flipX,
+    bool? flipY,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    super.flipElement(
+      flipX: flipX,
+      flipY: flipY,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
     children?.forEach((element) {
-      element.flipElement(flipX: flipX, flipY: flipY);
+      element.flipElement(
+        flipX: flipX,
+        flipY: flipY,
+        fromObj: fromObj ?? onlyElementGroupPainter,
+        fromUndoType: fromUndoType,
+      );
     });
     //这种方式翻转元素, 有可能会跑到边界外, 所以需要重新计算边界
-    updatePaintPropertyFromChildren();
+    updatePaintPropertyFromChildren(
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   /// 缩放选中的元素, 在[ElementGroupPainter]中需要分开处理自身和[children]
   /// [anchor] 缩放的锚点, 不指定则使用[PaintProperty]的锚点
   /// [ScaleControl]
   @override
-  void scaleElement({double sx = 1, double sy = 1, Offset? anchor}) {
+  void scaleElement({
+    double sx = 1,
+    double sy = 1,
+    Offset? anchor,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     double angle = paintProperty?.angle ?? 0; //弧度
     anchor ??= paintProperty?.anchor ?? Offset.zero;
 
     //自身使用直接缩放
-    paintProperty = paintProperty?.copyWith()?..applyScale(sxBy: sx, syBy: sy);
+    updatePaintProperty(
+      paintProperty?.copyWith()?..applyScale(sxBy: sx, syBy: sy),
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
 
     //---children处理---
 
@@ -1283,15 +1580,31 @@ class ElementGroupPainter extends ElementPainter {
     }
 
     children?.forEach((element) {
-      element.scaleElementWithCenter(matrix);
+      element.scaleElementWithCenter(
+        matrix,
+        fromObj: fromObj ?? onlyElementGroupPainter,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
   @override
-  void scaleElementWithCenter(Matrix4 matrix) {
-    super.scaleElementWithCenter(matrix);
+  void scaleElementWithCenter(
+    Matrix4 matrix, {
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    super.scaleElementWithCenter(
+      matrix,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
     children?.forEach((element) {
-      element.scaleElementWithCenter(matrix);
+      element.scaleElementWithCenter(
+        matrix,
+        fromObj: fromObj ?? onlyElementGroupPainter,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
@@ -1302,11 +1615,15 @@ class ElementGroupPainter extends ElementPainter {
     double angle, {
     Offset? anchor,
     double? refTargetRadians,
+    Object? fromObj,
+    UndoType? fromUndoType,
   }) {
     super.rotateBy(
       angle,
       anchor: anchor,
       refTargetRadians: refTargetRadians,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
     );
   }
 
@@ -1856,7 +2173,8 @@ class ElementStateStack {
     });*/
     elementPropertyMap.forEach((element, paintProperty) {
       //base
-      element.paintProperty = paintProperty;
+      //element.paintProperty = paintProperty;
+      element.updatePaintProperty(paintProperty, fromObj: this);
       //final paintState = elementStateMap[element];
       //element.paintState = paintState;
 

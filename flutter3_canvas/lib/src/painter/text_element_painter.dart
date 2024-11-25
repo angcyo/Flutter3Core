@@ -69,9 +69,12 @@ class TextElementPainter extends ElementPainter {
     textPainter.initPainter();
     this.textPainter = textPainter;
     final size = textPainter.painterBounds;
-    paintProperty = PaintProperty()
-      ..width = size.width
-      ..height = size.height;
+    updatePaintProperty(
+      PaintProperty()
+        ..width = size.width
+        ..height = size.height,
+      notify: false,
+    );
     //paintTextPainter = textPainter;
   }
 

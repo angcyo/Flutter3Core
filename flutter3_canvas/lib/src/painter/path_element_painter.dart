@@ -34,9 +34,9 @@ class PathElementPainter extends ElementPainter {
     if (initPaintProperty) {
       final bounds = painterPath?.getExactBounds(exactBounds) ?? Rect.zero;
       if (paintProperty == null) {
-        paintProperty = PaintProperty()
+        updatePaintProperty(PaintProperty()
           ..width = bounds.width
-          ..height = bounds.height;
+          ..height = bounds.height);
       } else {
         paintProperty?.let((it) {
           it.width = bounds.width;

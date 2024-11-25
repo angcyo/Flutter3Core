@@ -20,9 +20,9 @@ class ImageElementPainter extends ElementPainter {
   void initFromImage(UiImage? image) {
     painterImage = image;
     if (paintProperty == null) {
-      paintProperty = PaintProperty()
+      updatePaintProperty(PaintProperty()
         ..width = image?.width.toDouble() ?? 0
-        ..height = image?.height.toDouble() ?? 0;
+        ..height = image?.height.toDouble() ?? 0);
     } else {
       paintProperty?.let((it) {
         it.width = image?.width.toDouble() ?? 0;

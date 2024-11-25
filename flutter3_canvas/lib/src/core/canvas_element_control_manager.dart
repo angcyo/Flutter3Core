@@ -502,6 +502,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void onSelfElementPropertyChanged(
     ElementPainter element,
     PainterPropertyType propertyType,
+    Object? fromObj,
     UndoType? fromUndoType,
   ) {
     if (enableResetElementAngle) {
@@ -514,8 +515,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           elementSelectComponent.children?.contains(element) == true) {
         //当选中的元素被重做/撤销了, 则需要更新选择组件的属性
         scheduleMicrotask(() {
-          elementSelectComponent.updatePaintPropertyFromChildren(
-              resetGroupAngle: enableResetElementAngle);
+          elementSelectComponent.updatePaintPropertyFromChildren();
         });
         //debugger();
       }
@@ -1039,20 +1039,35 @@ class ElementSelectComponent extends ElementGroupPainter
     return this;
   }
 
-  /// [resetSelectElement]
-  /// [resetChildren]
-  /// [CanvasElementManager.resetSelectedElementList]
-  /// [CanvasElementManager.clearSelectedElement]
-  @override
+  /*@override
   set paintProperty(PaintProperty? value) {
-    /*if (super.paintProperty?.paintCenter != value?.paintCenter) {
+    */ /*if (super.paintProperty?.paintCenter != value?.paintCenter) {
       debugger();
     }
     assert(() {
       l.d('选择框中点:${value?.paintCenter}');
       return true;
-    }());*/
+    }());*/ /*
     super.paintProperty = value;
+  }*/
+
+  /// [resetSelectElement]
+  /// [resetChildren]
+  /// [CanvasElementManager.resetSelectedElementList]
+  /// [CanvasElementManager.clearSelectedElement]
+  @override
+  void updatePaintProperty(
+    PaintProperty? value, {
+    bool notify = true,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    super.updatePaintProperty(
+      value,
+      notify: notify,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   ElementSelectComponent(this.canvasElementControlManager) {
@@ -1270,6 +1285,7 @@ class ElementSelectComponent extends ElementGroupPainter
     dynamic old,
     dynamic value,
     PainterPropertyType propertyType,
+    Object? fromObj,
     UndoType? fromUndoType,
   ) {
     canvasElementControlManager.updateControlBounds();
@@ -1277,6 +1293,7 @@ class ElementSelectComponent extends ElementGroupPainter
       old,
       value,
       propertyType,
+      fromObj,
       fromUndoType,
     );
   }
@@ -1298,41 +1315,94 @@ class ElementSelectComponent extends ElementGroupPainter
 
   /// 使用子元素的属性, 更新自身的绘制属性.
   @override
-  void updatePaintPropertyFromChildren({bool? resetGroupAngle}) {
+  void updatePaintPropertyFromChildren({
+    bool? resetGroupAngle,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     //debugger();
-    super.updatePaintPropertyFromChildren(resetGroupAngle: resetGroupAngle);
+    super.updatePaintPropertyFromChildren(
+      resetGroupAngle: resetGroupAngle,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   /// 仅更新子元素的绘制属性, 不更新自身的绘制属性
   /// [updatePaintPropertyFromChildren]
   /// [updateChildPaintPropertyFromChildren]
   @property
-  void updateChildPaintPropertyFromChildren({bool? resetGroupAngle = false}) {
+  void updateChildPaintPropertyFromChildren({
+    bool? resetGroupAngle = false,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     getGroupPainterList()?.forEach((element) {
-      element.updatePaintPropertyFromChildren(resetGroupAngle: resetGroupAngle);
+      element.updatePaintPropertyFromChildren(
+        resetGroupAngle: resetGroupAngle,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 
   /// 直接操作缩放属性
   @override
-  void onlyScaleSelfElement(
-      {double? sx, double? sy, double? sxTo, double? syTo}) {
-    super.onlyScaleSelfElement(sx: sx, sy: sy, sxTo: sxTo, syTo: syTo);
+  void onlyScaleSelfElement({
+    double? sx,
+    double? sy,
+    double? sxTo,
+    double? syTo,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    super.onlyScaleSelfElement(
+      sx: sx,
+      sy: sy,
+      sxTo: sxTo,
+      syTo: syTo,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   /// 组内缩放元素
   @override
-  void scaleElement({double sx = 1, double sy = 1, Offset? anchor}) {
-    super.scaleElement(sx: sx, sy: sy, anchor: anchor);
+  void scaleElement({
+    double sx = 1,
+    double sy = 1,
+    Offset? anchor,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    super.scaleElement(
+      sx: sx,
+      sy: sy,
+      anchor: anchor,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   @override
-  void flipElementWithScale({bool? flipX, bool? flipY, Offset? anchor}) {
+  void flipElementWithScale({
+    bool? flipX,
+    bool? flipY,
+    Offset? anchor,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     //super.flipElementWithScale(flipX: flipX, flipY: flipY, anchor: anchor);
     //这种方式下的翻转, 自身不用动
     anchor ??= paintProperty?.paintCenter;
     children?.forEach((element) {
-      element.flipElementWithScale(flipX: flipX, flipY: flipY, anchor: anchor);
+      element.flipElementWithScale(
+        flipX: flipX,
+        flipY: flipY,
+        anchor: anchor,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
     });
   }
 

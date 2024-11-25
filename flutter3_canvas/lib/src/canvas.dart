@@ -153,6 +153,7 @@ class CanvasListener {
     dynamic from,
     dynamic to,
     PainterPropertyType propertyType,
+    Object? fromObj,
     UndoType? fromUndoType,
   )? onCanvasElementPropertyChangedAction;
 
