@@ -2083,6 +2083,13 @@ extension IterableEx<E> on Iterable<E> {
     }).toList(growable: growable);
   }
 
+  /// [map]
+  Iterable<R> mapFlat<R>(Iterable<R>? Function(E element) transform) sync* {
+    for (final current in this) {
+      yield* transform(current) ?? [];
+    }
+  }
+
   /// 复制一份, 浅拷贝
   /// [growable] 是否可变, 不可变的列表, 不能操作元素
   /// `Cannot remove from a fixed-length list`

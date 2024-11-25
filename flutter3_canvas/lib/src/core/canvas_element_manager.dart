@@ -339,7 +339,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, list);
 
     if (selected) {
-      resetSelectElement(list, selectType: selectType);
+      resetSelectedElementList(list, selectType: selectType);
       if (followContent) {
         if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
           //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
@@ -495,7 +495,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     );
 
     if (selected) {
-      resetSelectElement(list);
+      resetSelectedElementList(list);
       if (followRect) {
         canvasDelegate.followPainter(elementPainter: selectComponent);
       }
@@ -582,7 +582,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     ElementPainter? element, {
     bool showRect = true,
   }) {
-    resetSelectElement(element == null ? [] : [element]);
+    resetSelectedElementList(element == null ? [] : [element]);
     if (showRect) {
       canvasDelegate.followPainter(elementPainter: element);
     }
@@ -593,7 +593,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void selectAllElement({
     bool showRect = true,
   }) {
-    resetSelectElement(elements);
+    resetSelectedElementList(elements);
     if (showRect) {
       canvasDelegate.followRect(rect: elements.allElementBounds);
     }
@@ -640,9 +640,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     selectComponent.resetSelectElement(list, selectType);
   }
 
-  /// 重置选中的元素
+  /// 重置选中的元素集合
   @api
-  void resetSelectElement(
+  void resetSelectedElementList(
     List<ElementPainter>? elements, {
     ElementSelectType selectType = ElementSelectType.code,
   }) {
@@ -652,7 +652,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 清空选中的元素
   @api
   void clearSelectedElement() {
-    resetSelectElement(null);
+    resetSelectedElementList(null);
   }
 
   /// 如果操作的元素被选中, 则清空所有选中的元素
@@ -897,7 +897,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     //选中组合元素
     if (!isNullOrEmpty(op)) {
-      resetSelectElement(op);
+      resetSelectedElementList(op);
     }
   }
 
@@ -931,7 +931,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     resetElementList(newList, undoType: undoType);
 
     //选中组合元素
-    resetSelectElement([group]);
+    resetSelectedElementList([group]);
   }
 
   /// 解组元素
@@ -973,7 +973,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     resetElementList(newList, undoType: undoType);
 
     //选中组合元素
-    resetSelectElement(children);
+    resetSelectedElementList(children);
   }
 
   /// 对齐组内元素
@@ -1594,7 +1594,8 @@ enum ElementChangeType {
 
 /// 选择元素的类型
 enum ElementSelectType {
-  /// 忽略本地选中元素
+  /// 忽略本次选中元素
+  /// 请求忽略本次选中元素的回调处理
   ignore,
 
   /// 通过指针选中元素

@@ -1032,7 +1032,7 @@ class ElementSelectComponent extends ElementGroupPainter
 
   /// [resetSelectElement]
   /// [resetChildren]
-  /// [CanvasElementManager.resetSelectElement]
+  /// [CanvasElementManager.resetSelectedElementList]
   /// [CanvasElementManager.clearSelectedElement]
   @override
   set paintProperty(PaintProperty? value) {
@@ -1404,7 +1404,7 @@ class ElementSelectComponent extends ElementGroupPainter
   /// [CanvasElementManager.addSelectElementList]
   /// [CanvasElementManager.removeSelectElement]
   /// [CanvasElementManager.removeSelectElementList]
-  /// [CanvasElementManager.resetSelectElement]
+  /// [CanvasElementManager.resetSelectedElementList]
   @api
   void resetSelectElement(
     List<ElementPainter>? elements,

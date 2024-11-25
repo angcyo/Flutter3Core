@@ -364,6 +364,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     );
   }
 
+  /// 选中指定的元素集合
+  @api
+  void selectElementList(
+    List<ElementPainter>? elementPainters, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    canvasElementManager.resetSelectedElementList(
+      elementPainters,
+      selectType: selectType,
+    );
+  }
+
   //endregion ---api---
 
   //region ---事件派发---
@@ -606,16 +618,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [position] 按下时的坐标
   /// [downMenu] 是否有菜单在手势下面
   /// [downElementList] 按下时, 有哪些元素在手势下面
-  /// [isRepeat] 是否是重复按下, 在选择器上重复按下
+  /// [isRepeatSelect] 是否是重复按下, 在选择器上重复按下
   void dispatchPointerDown(
     @viewCoordinate Offset position,
     ElementMenu? downMenu,
     List<ElementPainter>? downElementList,
-    bool isRepeat,
+    bool isRepeatSelect,
   ) {
     _eachCanvasListener((element) {
       element.onPointerDownAction
-          ?.call(position, downMenu, downElementList, isRepeat);
+          ?.call(position, downMenu, downElementList, isRepeatSelect);
     });
   }
 

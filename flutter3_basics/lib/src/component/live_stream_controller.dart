@@ -310,3 +310,29 @@ extension StreamSubscriptionEx<T> on StreamSubscription<T> {
     });
   }
 }
+
+extension LiveStreamControllerEx<T> on LiveStreamController<T> {
+  /// [RebuildWidget]
+  Widget build(
+    DynamicDataWidgetBuilder builder, {
+    bool allowBackward = true,
+  }) =>
+      StreamBuilder(
+          stream: stream,
+          initialData: allowBackward ? latestValue : null,
+          builder: (context, snapshot) {
+            return builder(context, snapshot.data) ?? empty;
+          });
+
+  /// [RebuildWidget]
+  Widget buildFn(
+    Widget? Function() builder, {
+    bool allowBackward = true,
+  }) =>
+      StreamBuilder(
+          stream: stream,
+          initialData: allowBackward ? latestValue : null,
+          builder: (_, __) {
+            return builder() ?? empty;
+          });
+}

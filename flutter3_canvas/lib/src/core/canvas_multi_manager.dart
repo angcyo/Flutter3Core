@@ -247,7 +247,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     // 选中元素/跟随元素
     if (selectedElement) {
-      canvasDelegate.canvasElementManager.resetSelectElement(newElements);
+      canvasDelegate.canvasElementManager.resetSelectedElementList(newElements);
       if (followContent) {
         if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
           //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理

@@ -763,7 +763,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               //按在指定的元素上
               isPointerDownIn = true;
               canvasElementControlManager.canvasElementManager
-                  .resetSelectElement(downElement.ofList());
+                  .resetSelectedElementList(downElement.ofList());
               startControlTarget(selectComponent);
               return true;
             }
