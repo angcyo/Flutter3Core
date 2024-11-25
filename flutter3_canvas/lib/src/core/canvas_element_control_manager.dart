@@ -447,9 +447,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         //旋转结束之后
         if (enableResetElementAngle) {
           elementSelectComponent.updateChildPaintPropertyFromChildren(
-              resetGroupAngle: true);
+            resetGroupAngle: true,
+            fromObj: this,
+          );
           elementSelectComponent.updatePaintPropertyFromChildren(
-              resetGroupAngle: true);
+            resetGroupAngle: true,
+            fromObj: this,
+          );
         }
       }
       resetPaintInfoType();
@@ -695,6 +699,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     bool? isLockRatio,
     UndoType undoType = UndoType.normal,
   }) {
+    //debugger();
     if (elementPainter == null) {
       return;
     }
@@ -1268,8 +1273,14 @@ class ElementSelectComponent extends ElementGroupPainter
 
   ///
   @override
-  ElementStateStack createStateStack() {
-    return super.createStateStack();
+  ElementStateStack createStateStack({
+    List<ElementPainter>? otherStateElementList,
+    List<ElementPainter>? otherStateExcludeElementList,
+  }) {
+    return super.createStateStack(
+      otherStateElementList: otherStateElementList,
+      otherStateExcludeElementList: otherStateExcludeElementList,
+    );
   }
 
   ///

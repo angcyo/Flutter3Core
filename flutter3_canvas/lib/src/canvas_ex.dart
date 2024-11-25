@@ -100,6 +100,11 @@ extension ElementPainterEx on ElementPainter {
         elementBounds: elementBounds,
         extend: extend,
       );
+
+  /// 获取[ElementGroupPainter]的子元素列表
+  List<ElementPainter>? get childList => this is ElementGroupPainter
+      ? (this as ElementGroupPainter).children
+      : null;
 }
 
 extension ElementPainterListEx on List<ElementPainter> {
@@ -113,6 +118,10 @@ extension ElementPainterListEx on List<ElementPainter> {
         elementBounds: elementBounds,
         extend: extend,
       );
+
+  /// 获取[ElementPainter]对应的[ElementPainter.parentGroupPainter]
+  List<ElementGroupPainter>? get parentPainterList =>
+      map((e) => e.parentGroupPainter).toList().filterNull();
 }
 
 /// 订阅扩展

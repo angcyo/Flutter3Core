@@ -249,13 +249,20 @@ class L {
     //获取当前调用方法的文件名和行数
     final stackTrace = StackTrace.current.toString();
     final stackTraceList = stackTrace.split("\n");
+    //关建行
     final lineStackTrace =
         stackTraceList[math.min(forward, stackTraceList.length) - 1];
     //获取当前的文件名称以及路径行号:列号
     final filePathStr = lineStackTrace.substring(
         lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
-
-    final log = '$time[$filePathStr] $tagStr$levelStr->$msgType$msg';
+    //调用的方法名
+    final methodNameList = lineStackTrace
+        .replaceAll('<anonymous closure>', '<anonymous_closure>')
+        .split(" ");
+    final methodName = methodNameList.getOrNull(-2);
+    //debugger();
+    final log =
+        '$time[$filePathStr${methodName == null ? "" : "#$methodName"}] $tagStr$levelStr->$msgType$msg';
 
     if ((isDebug && level >= verbose) || level > debug) {
       //print(StackTrace.fromString("...test"));

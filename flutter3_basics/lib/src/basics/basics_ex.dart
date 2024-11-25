@@ -2218,8 +2218,11 @@ extension ListEx<T> on List<T> {
     return index;
   }
 
-  /// [List]
+  /// [List], 支持正负索引
   T? getOrNull(int index, [T? nul]) {
+    if (index < 0) {
+      index = length + index;
+    }
     if (index < 0 || index >= length) {
       return nul;
     }

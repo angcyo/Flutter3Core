@@ -336,7 +336,8 @@ class BaseControl
   /// 需要操作的目标元素
   ElementPainter? _targetElement;
 
-  /// 存档
+  /// 存档, 用于控制后的恢复
+  /// [endControlTarget]
   ElementStateStack? _elementStateStack;
 
   /// 是否应用了控制
@@ -387,9 +388,9 @@ class BaseControl
         return true;
       }());
     } else if (controlType == ControlTypeEnum.rotate) {
-      _targetElement?.rotateElement(matrix);
+      _targetElement?.rotateElement(matrix, fromObj: this);
     } else if (controlType == ControlTypeEnum.translate) {
-      _targetElement?.translateElement(matrix);
+      _targetElement?.translateElement(matrix, fromObj: this);
     } else {
       assert(() {
         l.d('未适配的控制操作[$controlType]');
@@ -407,11 +408,11 @@ class BaseControl
     _elementStateStack?.restore();
     final element = _targetElement;
     if (element is ElementSelectComponent) {
-      element.scaleElement(sx: sx, sy: sy, anchor: anchor);
+      element.scaleElement(sx: sx, sy: sy, anchor: anchor, fromObj: this);
     } else {
       final matrix = Matrix4.identity()
         ..scaleBy(sx: sx, sy: sy, anchor: anchor);
-      element?.scaleElementWithCenter(matrix);
+      element?.scaleElementWithCenter(matrix, fromObj: this);
     }
   }
 
@@ -419,27 +420,35 @@ class BaseControl
   @callPoint
   @supportUndo
   void endControlTarget() {
+    final element = _targetElement;
+
     canvasElementControlManager.onSelfControlStateChanged(
       state: ControlState.end,
       control: this,
-      controlElement: _targetElement,
+      controlElement: element,
     );
     _downTargetElementCenter = null;
     _downTargetElementAnchor = null;
     if (isControlApply) {
-      if (_targetElement != null) {
+      if (element != null) {
+        // 回退状态
         final old = _elementStateStack;
-        final stateStack = _targetElement?.createStateStack();
+        _elementStateStack = null; //清空状态栈, 防止被清楚
+        final stateStack = element.createStateStack();
         canvasElementControlManager.canvasDelegate.canvasUndoManager.addRunRedo(
           () {
             old?.restore();
           },
           () {
-            stateStack?.restore();
+            stateStack.restore();
           },
           false,
         );
       }
+    } else {
+      //释放
+      _elementStateStack?.dispose();
+      _elementStateStack = null;
     }
     isControlApply = false;
   }
@@ -745,7 +754,13 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
               .findElement(point: downScenePoint);
           _downElementList = downElementList;
 
-          if (selectComponent.hitTest(point: downScenePoint)) {
+          /*assert(() {
+            l.w("按下[${downElementList.length}]个元素->${downElementList.firstOrNull?.classHash()}:${downElementList.firstOrNull}");
+            return true;
+          }());*/
+
+          if (selectComponent.children != null &&
+              selectComponent.hitTest(point: downScenePoint)) {
             //在选择器上按下
             isPointerDownIn = true;
             isFirstHandle = true;
@@ -852,7 +867,10 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
           }());
           applyTargetMatrix(matrix);
           canvasDelegate.dispatchTranslateElement(
-              _targetElement, _isFirstTranslate, false);
+            _targetElement,
+            _isFirstTranslate,
+            false,
+          );
           _isFirstTranslate = false;
           //debugger();
         }
@@ -862,7 +880,10 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
         if (!_isFirstTranslate) {
           //移动过
           canvasDelegate.dispatchTranslateElement(
-              _targetElement, _isFirstTranslate, true);
+            _targetElement,
+            _isFirstTranslate,
+            true,
+          );
         }
         _isFirstTranslate = false;
         if (isFirstHandle && (_downElementList?.size() ?? 0) > 1) {

@@ -610,10 +610,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [isFirstTranslate] 是否是首次移动
   /// [isEnd] 是否移动结束
   void dispatchTranslateElement(
-      ElementPainter? targetElement, bool isFirstTranslate, bool isEnd) {
+    ElementPainter? targetElement,
+    bool isFirstTranslate,
+    bool isEnd,
+  ) {
     _eachCanvasListener((element) {
-      element.onTranslateElementAction
-          ?.call(targetElement, isFirstTranslate, isEnd);
+      element.onTranslateElementAction?.call(
+        targetElement,
+        isFirstTranslate,
+        isEnd,
+      );
     });
   }
 

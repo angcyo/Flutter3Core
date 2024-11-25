@@ -115,10 +115,14 @@ class UndoActionManager with Diagnosticable {
 
 @immutable
 class UndoActionItem {
+  /// 核心撤销回退回调
   final Action? undo;
   final Action? redo;
 
-  const UndoActionItem([this.undo, this.redo]);
+  const UndoActionItem([
+    this.undo,
+    this.redo,
+  ]);
 
   /// 执行回退
   /// `throw UnimplementedError();`

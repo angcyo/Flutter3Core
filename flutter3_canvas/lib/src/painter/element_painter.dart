@@ -1031,7 +1031,21 @@ class ElementPainter extends IPainter
 
   /// 保存当前元素的状态
   /// 使用[ElementStateStack.restore]恢复状态
-  ElementStateStack createStateStack() => ElementStateStack()..saveFrom(this);
+  /// [otherStateElementList]额外要存储的元素列表
+  /// [otherStateExcludeElementList].[otherStateElementList]在存储时, 需要排除的元素列表
+  ///
+  ElementStateStack createStateStack({
+    List<ElementPainter>? otherStateElementList,
+    List<ElementPainter>? otherStateExcludeElementList,
+  }) =>
+      ElementStateStack()
+        ..saveFrom(
+          this,
+          otherStateElementList:
+              otherStateElementList ?? childList?.parentPainterList,
+          otherStateExcludeElementList:
+              otherStateExcludeElementList ?? childList,
+        );
 
   /// 保存元素的额外数据到回退栈中
   /// [dataMap] 用来存储额外数据
@@ -1428,7 +1442,10 @@ class ElementGroupPainter extends ElementPainter {
       //组内元素属性改变, 但是不同通过父元素改变的
       //有可能是独立选择了组内某个元素单独修改的属性, 而未修改父元素的属性
       updatePaintPropertyFromChildren();
-      //debugger();
+      /*assert(() {
+        l.w("[${classHash()}]...updatePaintPropertyFromChildren");
+        return true;
+      }());*/
     }
   }
 
@@ -2137,16 +2154,39 @@ class ElementStateStack {
   final Map<ElementPainter, PaintState?> elementStateMap = {};
 
   /// 保存信息
+  /// [element] 当前的元素,
+  /// [parentElement] 额外要保存的父元素数据, 会自动从[ElementGroupPainter.children]中排除[element]
   @callPoint
   @mustCallSuper
-  void saveFrom(ElementPainter element) {
+  void saveFrom(
+    ElementPainter element, {
+    List<ElementPainter>? otherStateElementList,
+    List<ElementPainter>? otherStateExcludeElementList,
+  }) {
+    //debugger();
     isSaveState = true;
     fromElement = element;
     saveElement(element);
+
+    if (otherStateElementList != null) {
+      //debugger();
+      for (final e in otherStateElementList) {
+        saveElement(e, excludeElements: otherStateExcludeElementList);
+      }
+    }
+
+    /*assert(() {
+      l.i("[${classHash()}][${element.runtimeType}]save elementPropertyMap:${elementPropertyMap.length}");
+      return true;
+    }());*/
   }
 
+  /// [excludeElements] 需要排除的元素列表
   @overridePoint
-  void saveElement(ElementPainter element) {
+  void saveElement(
+    ElementPainter element, {
+    List<ElementPainter>? excludeElements,
+  }) {
     //base
     elementPropertyMap[element] = element.paintProperty?.copyWith();
     //stateMap[element] = element.paintState.copyWith();
@@ -2158,8 +2198,10 @@ class ElementStateStack {
 
     //group child
     if (element is ElementGroupPainter) {
-      element.children?.forEach((element) {
-        saveElement(element);
+      element.children?.forEach((sub) {
+        if (excludeElements?.contains(sub) != true) {
+          saveElement(sub, excludeElements: excludeElements);
+        }
       });
     }
   }
@@ -2171,7 +2213,13 @@ class ElementStateStack {
     /*stateMap.forEach((element, paintState) {
       element.paintState = paintState ?? element.paintState;
     });*/
+    //debugger();
+    /*assert(() {
+      l.i("[${classHash()}][${fromElement?.runtimeType}]restore elementPropertyMap:${elementPropertyMap.length}");
+      return true;
+    }());*/
     elementPropertyMap.forEach((element, paintProperty) {
+      //debugger();
       //base
       //element.paintProperty = paintProperty;
       element.updatePaintProperty(paintProperty, fromObj: this);
@@ -2191,6 +2239,11 @@ class ElementStateStack {
   @api
   @callPoint
   void dispose() {
+    //debugger();
+    assert(() {
+      l.w("[${classHash()}]clear.");
+      return true;
+    }());
     elementPropertyMap.clear();
     elementDataMap.clear();
     elementStateMap.clear();
