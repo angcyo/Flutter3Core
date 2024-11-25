@@ -89,8 +89,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return null;
     }
     final group = ElementGroupPainter();
-    group.resetChildren(
-        list, canvasElementControlManager.enableResetElementAngle);
+    group.resetChildren(list);
     return group.paintProperty
         ?.getBounds(canvasElementControlManager.enableResetElementAngle);
   }
@@ -358,8 +357,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
       if (followPainter) {
         ElementGroupPainter painter = ElementGroupPainter();
-        painter.resetChildren(
-            list, canvasElementControlManager.enableResetElementAngle);
+        painter.resetChildren(list);
         canvasDelegate.followPainter(elementPainter: painter);
       }
     }
@@ -501,8 +499,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
     } else if (followRect) {
       ElementGroupPainter painter = ElementGroupPainter();
-      painter.resetChildren(
-          list, canvasElementControlManager.enableResetElementAngle);
+      painter.resetChildren(list);
       canvasDelegate.followPainter(elementPainter: painter);
     }
 
@@ -712,9 +709,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [ElementSelectComponent]
   @api
   void updateSelectComponentPaintProperty() {
-    selectComponent.updatePaintPropertyFromChildren(
-      canvasElementControlManager.enableResetElementAngle,
-    );
+    selectComponent.updatePaintPropertyFromChildren();
   }
 
   //endregion ---select---
@@ -920,8 +915,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     //创建新的组合元素
     final group = ElementGroupPainter();
-    group.resetChildren(
-        elements, canvasElementControlManager.enableResetElementAngle);
+    group.resetChildren(elements);
     newList.add(group);
 
     //事件

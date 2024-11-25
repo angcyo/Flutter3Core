@@ -13,6 +13,8 @@ class CanvasStyle {
 
   //region ---core---
 
+  //--CanvasAxisManager
+
   /// 是否绘制网格
   bool get showGrid => drawType.have(sDrawGrid);
 
@@ -37,8 +39,21 @@ class CanvasStyle {
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
   int drawType = sDrawAxis | sDrawGrid;
 
+  //--ElementAdsorbControl
+
   /// 是否激活智能吸附
   bool enableElementAdsorb = true;
+
+  //--CanvasElementControlManager
+
+  /// 是否激活元素的控制操作, 关闭之后, 将无法通过手势交互控制元素
+  bool enableElementControl = true;
+
+  /// 是否激活元素[PaintProperty]属性改变后, 重置旋转角度
+  bool enableResetElementAngle = true;
+
+  /// 是否激活点击元素外, 取消选中元素
+  bool enableOutsideCancelSelectElement = true;
 
   //endregion ---core---
 

@@ -60,7 +60,7 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return null;
     }
     final group = ElementGroupPainter();
-    group.resetChildren(elements, true);
+    group.resetChildren(elements);
     return rasterizeElement(
       group,
       elementBounds: elementBounds,

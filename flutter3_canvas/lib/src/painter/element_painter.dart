@@ -313,6 +313,7 @@ class ElementPainter extends IPainter
   //region ---Group---
 
   /// 父元素
+  /// 当自身属性改变后会通知父元素[dispatchSelfPaintPropertyChanged]
   ElementGroupPainter? get parentGroupPainter =>
       canvasDelegate?.canvasElementManager.findElementGroupPainter(this);
 
@@ -580,6 +581,13 @@ class ElementPainter extends IPainter
     UndoType? fromUndoType,
   ) {
     //debugger();
+    parentGroupPainter?.onChildPaintPropertyChanged(
+      this,
+      old,
+      value,
+      propertyType,
+      fromUndoType,
+    );
     canvasDelegate?.dispatchCanvasElementPropertyChanged(
       this,
       old,
@@ -1025,7 +1033,7 @@ class ElementGroupPainter extends ElementPainter {
   /// 创建一个组合元素, 如果元素数量大于1, 则创建一个组合元素, 否则返回第一个元素
   static ElementPainter? createGroupIfNeed(List<ElementPainter>? elements) {
     if (elements != null && elements.length > 1) {
-      return ElementGroupPainter()..resetChildren(elements, true);
+      return ElementGroupPainter()..resetChildren(elements);
     }
     return elements?.firstOrNull;
   }
@@ -1044,7 +1052,7 @@ class ElementGroupPainter extends ElementPainter {
   /// 创建一个组合元素, 并且重置组合元素角度
   ElementGroupPainter.from(List<ElementPainter>? children) {
     ElementGroupPainter painter = ElementGroupPainter();
-    painter.resetChildren(children, true);
+    painter.resetChildren(children);
   }
 
   //region ---core--
@@ -1053,7 +1061,7 @@ class ElementGroupPainter extends ElementPainter {
   /// [CanvasElementManager.groupElement]
   /// [CanvasElementManager.ungroupElement]
   @api
-  void resetChildren(List<ElementPainter>? children, bool resetGroupAngle) {
+  void resetChildren(List<ElementPainter>? children, {bool? resetGroupAngle}) {
     //可能需要先解父元素
     this.children?.forEach((element) {
       if (children?.contains(element) != true) {
@@ -1072,13 +1080,15 @@ class ElementGroupPainter extends ElementPainter {
         element.onSelfElementGroupTo(this);
       }
     });
-    updatePaintPropertyFromChildren(resetGroupAngle);
+    updatePaintPropertyFromChildren(resetGroupAngle: resetGroupAngle);
   }
 
   /// 使用子元素的属性, 更新自身的绘制属性
   /// [resetGroupAngle] 是否要重置旋转角度
   @api
-  void updatePaintPropertyFromChildren(bool resetGroupAngle) {
+  void updatePaintPropertyFromChildren({bool? resetGroupAngle}) {
+    resetGroupAngle ??=
+        canvasDelegate?.canvasStyle.enableResetElementAngle ?? true;
     if (isNullOrEmpty(children)) {
       paintProperty = null;
     } else if (children!.length == 1 && !resetGroupAngle) {
@@ -1175,12 +1185,20 @@ class ElementGroupPainter extends ElementPainter {
         resetUuid: resetUuid,
       ));
     });
-    newPainter.resetChildren(
-        newChildren,
-        canvasDelegate?.canvasElementManager.canvasElementControlManager
-                .enableResetElementAngle ??
-            true);
+    newPainter.resetChildren(newChildren);
     return newPainter;
+  }
+
+  /// 当有子元素[child]的属性发生变化时, 通知父元素
+  void onChildPaintPropertyChanged(
+    ElementPainter child,
+    dynamic old,
+    dynamic value,
+    PainterPropertyType propertyType,
+    UndoType? fromUndoType,
+  ) {
+    //updatePaintPropertyFromChildren();
+    //debugger();
   }
 
   //endregion ---core--
@@ -1225,7 +1243,7 @@ class ElementGroupPainter extends ElementPainter {
       element.flipElement(flipX: flipX, flipY: flipY);
     });
     //这种方式翻转元素, 有可能会跑到边界外, 所以需要重新计算边界
-    updatePaintPropertyFromChildren(true);
+    updatePaintPropertyFromChildren();
   }
 
   /// 缩放选中的元素, 在[ElementGroupPainter]中需要分开处理自身和[children]

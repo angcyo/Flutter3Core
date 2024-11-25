@@ -30,13 +30,16 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   final CanvasElementManager canvasElementManager;
 
   /// 是否激活元素的控制操作, 关闭之后, 将无法通过手势交互控制元素
-  bool enableElementControl = true;
+  bool get enableElementControl =>
+      canvasDelegate.canvasStyle.enableElementControl;
 
   /// 是否激活元素[PaintProperty]属性改变后, 重置旋转角度
-  bool enableResetElementAngle = true;
+  bool get enableResetElementAngle =>
+      canvasDelegate.canvasStyle.enableResetElementAngle;
 
   /// 是否激活点击元素外, 取消选中元素
-  bool enableOutsideCancelSelectElement = true;
+  bool get enableOutsideCancelSelectElement =>
+      canvasDelegate.canvasStyle.enableOutsideCancelSelectElement;
 
   /// 是否要绘制[PaintInfoType]信息
   bool paintPainterInfo = true;
@@ -443,8 +446,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       if (controlType == ControlTypeEnum.rotate) {
         //旋转结束之后
         if (enableResetElementAngle) {
-          elementSelectComponent.updateChildPaintPropertyFromChildren(true);
-          elementSelectComponent.updatePaintPropertyFromChildren(true);
+          elementSelectComponent.updateChildPaintPropertyFromChildren(
+              resetGroupAngle: true);
+          elementSelectComponent.updatePaintPropertyFromChildren(
+              resetGroupAngle: true);
         }
       }
       resetPaintInfoType();
@@ -509,8 +514,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           elementSelectComponent.children?.contains(element) == true) {
         //当选中的元素被重做/撤销了, 则需要更新选择组件的属性
         scheduleMicrotask(() {
-          elementSelectComponent
-              .updatePaintPropertyFromChildren(enableResetElementAngle);
+          elementSelectComponent.updatePaintPropertyFromChildren(
+              resetGroupAngle: enableResetElementAngle);
         });
         //debugger();
       }
@@ -873,8 +878,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           anchor: anchor, refTargetRadians: refTargetRadians);
     }
     if (enableResetElementAngle) {
-      elementSelectComponent.updateChildPaintPropertyFromChildren(true);
-      elementSelectComponent.updatePaintPropertyFromChildren(true);
+      elementSelectComponent.updateChildPaintPropertyFromChildren(
+          resetGroupAngle: true);
+      elementSelectComponent.updatePaintPropertyFromChildren(
+          resetGroupAngle: true);
     }
   }
 
@@ -901,8 +908,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       elementPainter.rotateTo(radians, anchor: anchor);
     }
     if (enableResetElementAngle) {
-      elementSelectComponent.updateChildPaintPropertyFromChildren(true);
-      elementSelectComponent.updatePaintPropertyFromChildren(true);
+      elementSelectComponent.updateChildPaintPropertyFromChildren(
+          resetGroupAngle: true);
+      elementSelectComponent.updatePaintPropertyFromChildren(
+          resetGroupAngle: true);
     }
   }
 
@@ -1274,8 +1283,8 @@ class ElementSelectComponent extends ElementGroupPainter
 
   ///
   @override
-  void resetChildren(List<ElementPainter>? children, bool resetGroupAngle) {
-    super.resetChildren(children, resetGroupAngle);
+  void resetChildren(List<ElementPainter>? children, {bool? resetGroupAngle}) {
+    super.resetChildren(children, resetGroupAngle: resetGroupAngle);
   }
 
   @override
@@ -1289,18 +1298,18 @@ class ElementSelectComponent extends ElementGroupPainter
 
   /// 使用子元素的属性, 更新自身的绘制属性.
   @override
-  void updatePaintPropertyFromChildren(bool resetGroupAngle) {
+  void updatePaintPropertyFromChildren({bool? resetGroupAngle}) {
     //debugger();
-    super.updatePaintPropertyFromChildren(resetGroupAngle);
+    super.updatePaintPropertyFromChildren(resetGroupAngle: resetGroupAngle);
   }
 
   /// 仅更新子元素的绘制属性, 不更新自身的绘制属性
   /// [updatePaintPropertyFromChildren]
   /// [updateChildPaintPropertyFromChildren]
   @property
-  void updateChildPaintPropertyFromChildren([bool resetGroupAngle = false]) {
+  void updateChildPaintPropertyFromChildren({bool? resetGroupAngle = false}) {
     getGroupPainterList()?.forEach((element) {
-      element.updatePaintPropertyFromChildren(resetGroupAngle);
+      element.updatePaintPropertyFromChildren(resetGroupAngle: resetGroupAngle);
     });
   }
 
@@ -1419,10 +1428,7 @@ class ElementSelectComponent extends ElementGroupPainter
           l.d('取消之前选中的元素: $children');
           return true;
         }());
-        resetChildren(
-          null,
-          canvasElementControlManager.enableResetElementAngle,
-        );
+        resetChildren(null);
         canvasElementControlManager.onSelfSelectElementChanged(null);
         canvasDelegate?.dispatchCanvasElementSelectChanged(
           this,
@@ -1441,10 +1447,7 @@ class ElementSelectComponent extends ElementGroupPainter
         l.d('选中新的元素: $elements');
         return true;
       }());
-      resetChildren(
-        elements,
-        canvasElementControlManager.enableResetElementAngle,
-      );
+      resetChildren(elements);
       canvasElementControlManager.onSelfSelectElementChanged(elements);
       canvasDelegate?.dispatchCanvasElementSelectChanged(
         this,

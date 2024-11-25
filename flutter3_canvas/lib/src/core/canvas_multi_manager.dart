@@ -267,10 +267,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
       if (followPainter) {
         ElementGroupPainter painter = ElementGroupPainter();
-        painter.resetChildren(
-            newElements,
-            canvasDelegate.canvasElementManager.canvasElementControlManager
-                .enableResetElementAngle);
+        painter.resetChildren(newElements);
         canvasDelegate.followPainter(elementPainter: painter);
       }
     }
