@@ -147,6 +147,8 @@ class DebugPage extends StatefulWidget {
   /// [_initDebugLastInfo]
   static final List<WidgetNullBuilder> debugLastWidgetBuilderList = [];
 
+  //--
+
   /// 底部点击要复制的文本信息
   /// [_initDebugLastInfo]
   static List<String? Function(BuildContext? context)>

@@ -354,7 +354,7 @@ class SvgBuilder {
   /// [scaleImage] 图片放大倍数, 1.0: 不放大; 10: 放大10倍;
   /// 在使用[scaleImage]属性时, [image]必须要是[transform]后的图片, 否则具有缩放属性,宽高会对不上
   ///
-  /// [invertScaleImageMatrix] 是否反转缩放图片的矩阵, 通常在正常情况下都是需要的
+  /// [invertScaleImageMatrix] 是否反转缩放图片的矩阵, 通常在正常情况下都是需要的, 但是雕刻图片数据时, 并不需要反向缩放
   /// 默认[scaleImage]有值时, 就会反转
   /// 在生成雕刻数据时, 建议不反转, 因为雕刻数据在转成GCode时, 算法会处理
   ///
