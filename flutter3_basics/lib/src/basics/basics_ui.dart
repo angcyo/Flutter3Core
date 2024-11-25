@@ -98,6 +98,44 @@ typedef WidgetIterable = Iterable<Widget>;
 typedef WidgetNullList = List<Widget?>;
 typedef WidgetNullIterable = Iterable<Widget?>;
 
+/// [edgeInsets]
+EdgeInsets? edgeOnly({
+  double? vertical,
+  double? horizontal,
+  double left = 0,
+  double top = 0,
+  double right = 0,
+  double bottom = 0,
+}) =>
+    EdgeInsets.only(
+      left: horizontal ?? left,
+      top: vertical ?? top,
+      right: horizontal ?? right,
+      bottom: vertical ?? bottom,
+    );
+
+/// 将当前的小部件, 包裹在一个[Padding]中
+/// 根据html的padding属性, 生成padding
+EdgeInsets? edgeInsets([double? v1, double? v2, double? v3, double? v4]) {
+  //如果是4个参数
+  if (v1 != null && v2 != null && v3 != null && v4 != null) {
+    return EdgeInsets.fromLTRB(v1, v2, v3, v4);
+  }
+  //如果是3个参数
+  if (v1 != null && v2 != null && v3 != null) {
+    return EdgeInsets.fromLTRB(v1, v2, v3, v2);
+  }
+  //如果是2个参数
+  if (v1 != null && v2 != null) {
+    return EdgeInsets.fromLTRB(v1, v2, v1, v2);
+  }
+  //如果是1个参数
+  if (v1 != null) {
+    return EdgeInsets.all(v1);
+  }
+  return null;
+}
+
 /// 通过[Builder]小部件, 获取当前元素的[BuildContext]
 /// 然后当前[BuildContext]更新只会影响其子元素, 父元素不会受到影响
 /// [Builder]
@@ -141,28 +179,6 @@ Widget sliverLayout(
       builder: builder,
       key: key,
     );
-
-/// 将当前的小部件, 包裹在一个[Padding]中
-/// 根据html的padding属性, 生成padding
-EdgeInsets? edgeInsets([double? v1, double? v2, double? v3, double? v4]) {
-  //如果是4个参数
-  if (v1 != null && v2 != null && v3 != null && v4 != null) {
-    return EdgeInsets.fromLTRB(v1, v2, v3, v4);
-  }
-  //如果是3个参数
-  if (v1 != null && v2 != null && v3 != null) {
-    return EdgeInsets.fromLTRB(v1, v2, v3, v2);
-  }
-  //如果是2个参数
-  if (v1 != null && v2 != null) {
-    return EdgeInsets.fromLTRB(v1, v2, v1, v2);
-  }
-  //如果是1个参数
-  if (v1 != null) {
-    return EdgeInsets.all(v1);
-  }
-  return null;
-}
 
 extension WidgetListEx on WidgetNullList {
   /// 过滤空数据和填充间隙

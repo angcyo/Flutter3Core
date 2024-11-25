@@ -125,10 +125,13 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
                               (1 - notification.progress!))
                           .round());
                 }
-                if (controller?.value != null) {
+                if (controller?.value != null && !isSchedulerPhase) {
                   //更新界面
                   //[notifyListeners]
                   try {
+                    //This ListenableBuilder widget cannot be marked as needing to build because the framework is already in the process of building widgets.
+                    // A widget can be marked as needing to be built during the build phase only if one of its ancestors is currently building. This exception is allowed because the framework builds parent widgets before children, which means a dirty descendant will always be built.
+                    // Otherwise, the framework might not visit this widget during this build phase.
                     controller?.value = controller!.value;
                   } catch (e) {
                     assert(() {

@@ -119,8 +119,10 @@ OverlayEntry? toastMessage(
   Widget msg, {
   //--
   Color? background,
-  //--
   double? bgBlurSigma,
+  EdgeInsetsGeometry? padding,
+  EdgeInsetsGeometry? margin,
+  //--
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
 }) =>
@@ -129,6 +131,9 @@ OverlayEntry? toastMessage(
         background: background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
         elevation: 10,
         bgBlurSigma: bgBlurSigma,
+        padding: padding ??
+            const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
+        margin: margin ?? const EdgeInsets.all(kXh),
         child: msg,
       );
       return child;
@@ -144,7 +149,8 @@ OverlayEntry? toastInfo(
   //--
   Widget? child,
   Color? background,
-  bool? black,
+  EdgeInsetsGeometry? padding,
+  EdgeInsetsGeometry? margin,
   //--
   double? bgBlurSigma,
   OverlayPosition position = OverlayPosition.top,
@@ -178,6 +184,8 @@ OverlayEntry? toastInfo(
         GlobalConfig.def.globalTheme.blackBgColor.withOpacity(0.8),
     position: position,
     bgBlurSigma: bgBlurSigma,
+    padding: padding,
+    margin: margin,
     animate: animate,
   );
 }
@@ -192,14 +200,16 @@ OverlayEntry? toastInfoBlack(
   //--
   Widget? child,
   Color? background,
-  bool? black = true,
+  EdgeInsetsGeometry? padding,
+  EdgeInsetsGeometry? margin,
   //--
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
 }) =>
     toastInfo(
       msg,
-      black: black,
+      padding: padding,
+      margin: margin,
       background: background,
       icon: icon,
       iconColor: iconColor ?? GlobalConfig.def.globalTheme.accentColor,

@@ -121,10 +121,10 @@ class GlobalTheme {
   Color get successColor => const Color(0xff2fca54);
 
   /// 警告提示颜色
-  Color get warningColor => const Color(0xfffebf00);
+  Color get warnColor => const Color(0xfffebf00);
 
-  /// 错误提示颜色
-  Color get errorColor => const Color(0xffFF443D);
+  /// 错误提示颜色 #ff7d00
+  Color get errorColor => const Color(0xffff443d);
 
   /// 阴影高度默认取值
   double get elevation => 2;
