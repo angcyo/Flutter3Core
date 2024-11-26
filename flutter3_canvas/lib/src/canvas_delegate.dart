@@ -115,6 +115,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     dispatchCanvasUnitChanged(old, unit);
   }
 
+  //--
+
   /// 画布上所有单级元素的集合
   /// 多画布的情况下通过[CanvasMultiManager]获取其他画布下的元素集合
   List<ElementPainter> get allElementList => canvasElementManager.elements;
@@ -132,6 +134,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @sceneCoordinate
   List<Rect> get allSingleElementBoundsList =>
       allSingleElementList.map((e) => e.elementsBounds).filterNull();
+
+  //--
+
+  /// 所有选中的元素集合
+  List<ElementPainter>? get allSelectedElementList =>
+      canvasElementManager.getAllSelectedElement();
+
+  /// 所有选中的简单元素集合
+  List<ElementPainter>? get allSelectedSingleElementList =>
+      canvasElementManager.getAllSelectedElement(exportSingleElement: true);
 
   //endregion ---get/set---
 

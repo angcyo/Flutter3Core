@@ -685,11 +685,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   List<ElementPainter>? getAllSelectedElement({
     bool exportSingleElement = false,
     bool exportAllElementIfNoSelected = false,
+    bool includeGroupPainter = false,
   }) {
     if (isSelectedElement) {
       final selectComponent = this.selectComponent;
       if (exportSingleElement) {
-        return selectComponent.getSingleElementList();
+        return selectComponent.getSingleElementList(
+            includeGroupPainter: includeGroupPainter);
       }
       return selectComponent.children;
     } else if (exportAllElementIfNoSelected) {
