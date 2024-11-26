@@ -754,13 +754,18 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// [findElementGroupPainter]
   ElementGroupPainter? findElementGroupPainterInChildren(
-      ElementPainter? element, List<ElementPainter>? children) {
+    ElementPainter? element,
+    List<ElementPainter>? children,
+  ) {
     for (final e in children ?? []) {
       if (e is ElementGroupPainter) {
         if (e.children?.contains(element) == true) {
           return e;
         }
-        return findElementGroupPainterInChildren(element, e.children);
+        final result = findElementGroupPainterInChildren(element, e.children);
+        if (result != null) {
+          return result;
+        }
       }
     }
     return null;

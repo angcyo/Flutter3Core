@@ -652,6 +652,10 @@ class ElementPainter extends IPainter
     Object? fromObj,
     UndoType? fromUndoType,
   ) {
+    /*assert(() {
+      l.w("[${classHash()}]...dispatchSelfPaintPropertyChanged");
+      return true;
+    }());*/
     //debugger();
     parentGroupPainter?.onChildPaintPropertyChanged(
       this,
@@ -1460,16 +1464,16 @@ class ElementGroupPainter extends ElementPainter {
     Object? fromObj,
     UndoType? fromUndoType,
   ) {
+    /*assert(() {
+      l.w("[${classHash()}]...updatePaintPropertyFromChildren");
+      return true;
+    }());*/
     if (fromObj is! ElementStateStack && this != fromObj) {
-      debugger();
+      //debugger();
       if (propertyType == PainterPropertyType.paint) {
         //组内元素属性改变, 但是不同通过父元素改变的
         //有可能是独立选择了组内某个元素单独修改的属性, 而未修改父元素的属性
         updatePaintPropertyFromChildren();
-        /*assert(() {
-        l.w("[${classHash()}]...updatePaintPropertyFromChildren");
-        return true;
-      }());*/
       } else if (propertyType == PainterPropertyType.state) {
         debugger();
         final visibleList = children?.filterVisibleList;
