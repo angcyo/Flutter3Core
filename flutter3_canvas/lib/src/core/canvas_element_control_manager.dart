@@ -815,18 +815,18 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 移动元素到画布的中心位置
-  /// [center] 中心点的位置, 不指定则是[CanvasContentManager.canvasCenterInner]
+  /// [canvasCenter] 画布中心点的位置, 不指定则是[CanvasContentManager.canvasCenterInner]
   @api
   @supportUndo
   void translateElementCenter(
     ElementPainter? elementPainter, {
-    Offset? center,
+    Offset? canvasCenter,
     UndoType undoType = UndoType.normal,
   }) {
     if (elementPainter == null) {
       return;
     }
-    final canvasCenter = center ??
+    canvasCenter ??=
         canvasDelegate.canvasPaintManager.contentManager.canvasCenterInner;
     if (canvasCenter == null) {
       assert(() {
