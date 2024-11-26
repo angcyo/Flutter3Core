@@ -7,7 +7,39 @@ part of '../flutter3_canvas.dart';
 
 /// 画布扩展方法
 /// `on List<ElementPainter>`
-extension CanvasElementIterableEx on Iterable<ElementPainter> {
+extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
+  /// [CanvasPaintManager.rasterizeElementList]
+  Future<UiImage?> rasterizeElement({
+    Rect? elementBounds,
+    EdgeInsets? extend,
+  }) =>
+      CanvasPaintManager.rasterizeElementList(
+        toList(),
+        elementBounds: elementBounds,
+        extend: extend,
+      );
+
+  /// 获取[ElementPainter]对应的[ElementPainter.parentGroupPainter]
+  List<ElementGroupPainter>? get parentPainterList =>
+      map((e) => e.parentGroupPainter).toList().filterNull();
+
+  /// 过滤出所有可见的元素集合
+  List<ElementPainter>? get filterVisibleList => filter((e) => e.isVisible);
+
+  /// 所有可见元素是否都锁定了操作
+  bool get isAllLockOperate => all((e) => e.isLockOperate);
+
+  /// 所有可见元素是否没锁定操作
+  bool get isAllUnlockOperate => all((e) => !e.isLockOperate);
+
+  /// 所有元素是否都可见
+  bool get isAllVisible => all((e) => e.isVisible);
+
+  /// 所有元素是否都不可见
+  bool get isAllInvisible => all((e) => !e.isVisible);
+
+  //--
+
   /// 获取所有元素的边界
   Rect? get allElementBounds {
     if (isNil(this)) {
@@ -91,7 +123,7 @@ extension CanvasElementIterableEx on Iterable<ElementPainter> {
 }
 
 /// 元素扩展
-extension ElementPainterEx on ElementPainter {
+extension CanvasElementPainterEx on ElementPainter {
   /// [CanvasPaintManager.rasterizeElement]
   Future<UiImage?> rasterizeElement({
     Rect? elementBounds,
@@ -107,38 +139,6 @@ extension ElementPainterEx on ElementPainter {
   List<ElementPainter>? get childList => this is ElementGroupPainter
       ? (this as ElementGroupPainter).children
       : null;
-}
-
-extension ElementPainterListEx on List<ElementPainter> {
-  /// [CanvasPaintManager.rasterizeElementList]
-  Future<UiImage?> rasterizeElement({
-    Rect? elementBounds,
-    EdgeInsets? extend,
-  }) =>
-      CanvasPaintManager.rasterizeElementList(
-        this,
-        elementBounds: elementBounds,
-        extend: extend,
-      );
-
-  /// 获取[ElementPainter]对应的[ElementPainter.parentGroupPainter]
-  List<ElementGroupPainter>? get parentPainterList =>
-      map((e) => e.parentGroupPainter).toList().filterNull();
-
-  /// 过滤出所有可见的元素集合
-  List<ElementPainter>? get filterVisibleList => filter((e) => e.isVisible);
-
-  /// 所有可见元素是否都锁定了操作
-  bool get isAllLockOperate => all((e) => e.isLockOperate);
-
-  /// 所有可见元素是否没锁定操作
-  bool get isAllUnlockOperate => all((e) => !e.isLockOperate);
-
-  /// 所有元素是否都可见
-  bool get isAllVisible => all((e) => e.isVisible);
-
-  /// 所有元素是否都不可见
-  bool get isAllInvisible => all((e) => !e.isVisible);
 }
 
 /// 订阅扩展

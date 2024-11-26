@@ -2277,7 +2277,7 @@ class ElementStateStack {
   void dispose() {
     //debugger();
     assert(() {
-      l.w("[${classHash()}]clear.");
+      l.w("[${classHash()}][${fromElement?.classHash()}]clear.");
       return true;
     }());
     elementPropertyMap.clear();
