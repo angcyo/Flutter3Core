@@ -591,6 +591,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 元素列表添加元素通知
+  /// [list] 有可能是[CanvasElementManager.beforeElements].[CanvasElementManager.elements].[CanvasElementManager.afterElements]
   void dispatchCanvasElementListAddChanged(
     List<ElementPainter> list,
     List<ElementPainter> op,
@@ -601,6 +602,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 元素列表移除元素通知
+  /// [list] 有可能是[CanvasElementManager.beforeElements].[CanvasElementManager.elements].[CanvasElementManager.afterElements]
   void dispatchCanvasElementListRemoveChanged(
     List<ElementPainter> list,
     List<ElementPainter> op,

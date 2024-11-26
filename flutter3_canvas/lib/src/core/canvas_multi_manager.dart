@@ -237,6 +237,11 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         undoType,
       );
       canvasDelegate.canvasUndoManager.notifyChanged(undoType);
+      //--
+      canvasDelegate.dispatchCanvasElementListRemoveChanged(
+          canvasElementManager.elements, oldElements);
+      canvasDelegate.dispatchCanvasElementListAddChanged(
+          canvasElementManager.elements, newElements);
     }
 
     // 画布切换通知
