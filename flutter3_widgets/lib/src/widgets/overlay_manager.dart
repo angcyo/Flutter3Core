@@ -242,7 +242,16 @@ class OverlayManagerController {
     _animatePendingOverlayEntries.remove(entry);
   }
 
-//--
+  //--
+
+  /// 包裹一个异步操作,
+  /// [action]操作时隐藏所有弹窗,
+  /// [action]操作结束之后再显示所有弹窗
+  Future wrapHideAllOverlay(FutureOr Function() action) async {
+    hideAllOverlay();
+    await action();
+    hideAllOverlay(false);
+  }
 }
 
 /// [Overlay]管理[OverlayEntry]的小部件
