@@ -58,6 +58,13 @@ class GlobalTheme {
   /// 图标正常的颜色
   Color get icoNormalColor => const Color(0xff6f6f6f);
 
+  /// 图标亮的背景颜色
+  /// [icoNormalColor]
+  Color get iconWhiteBgColor => const Color(0xfff6f6f6);
+
+  /// [iconWhiteBgColor]禁用时的颜色
+  Color get iconWhiteDisableBgColor => const Color(0xfff6f6f6);
+
   /// 图标禁用的颜色
   Color get icoDisableColor => const Color(0xff949496);
 
@@ -312,7 +319,14 @@ class GlobalThemeDark extends GlobalTheme {
   Color get icoNormalColor => const Color(0xfff6f6f6);
 
   @override
-  Color get icoDisableColor => super.icoDisableColor;
+  ui.Color get iconWhiteBgColor => const Color(0xff949496);
+
+  ///
+  @override
+  ui.Color get iconWhiteDisableBgColor => super.iconWhiteDisableBgColor;
+
+  @override
+  Color get icoDisableColor => const Color(0xffb0b0b0);
 
   @override
   TextStyle get textGeneralStyle => super.textGeneralStyle.copyWith(

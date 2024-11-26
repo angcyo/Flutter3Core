@@ -29,6 +29,8 @@ class SingleGridTile extends StatelessWidget with TileMixin {
   final bool? iconFillDecoration;
   @indirectProperty
   final Color? iconFillDecorationColor;
+  @indirectProperty
+  final Color? iconDisableFillDecorationColor;
 
   //--
 
@@ -65,6 +67,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     this.iconDecoration,
     this.iconDecorationSize = 48,
     this.iconFillDecorationColor,
+    this.iconDisableFillDecorationColor,
     this.iconFillDecoration,
     this.iconTipWidget,
     //--
@@ -93,8 +96,11 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     Decoration? decoration = iconDecoration;
     if (iconFillDecoration == true) {
       decoration ??= fillDecoration(
-        color: iconFillDecorationColor ??
-            (enable ? globalTheme.itemWhiteBgColor : globalTheme.disableColor),
+        color: enable
+            ? iconFillDecorationColor ?? globalTheme.iconWhiteBgColor
+            : (iconDisableFillDecorationColor ??
+                iconFillDecorationColor ??
+                globalTheme.iconWhiteBgColor),
         radius: kDefaultBorderRadiusX,
       );
     }
