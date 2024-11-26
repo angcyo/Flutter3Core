@@ -53,11 +53,13 @@ extension CanvasElementIterableEx on Iterable<ElementPainter> {
   }
 
   /// 获取所有单的[ElementPainter]
+  /// [includeGroupPainter] 是否要包含[ElementGroupPainter]本身
   /// [ElementPainter.getSingleElementList]
-  List<ElementPainter> getAllSingleElement() {
+  List<ElementPainter> getAllSingleElement({bool includeGroupPainter = false}) {
     final result = <ElementPainter>[];
     for (final e in this) {
-      result.addAll(e.getSingleElementList());
+      result.addAll(
+          e.getSingleElementList(includeGroupPainter: includeGroupPainter));
     }
     return result;
   }
@@ -122,6 +124,21 @@ extension ElementPainterListEx on List<ElementPainter> {
   /// 获取[ElementPainter]对应的[ElementPainter.parentGroupPainter]
   List<ElementGroupPainter>? get parentPainterList =>
       map((e) => e.parentGroupPainter).toList().filterNull();
+
+  /// 过滤出所有可见的元素集合
+  List<ElementPainter>? get filterVisibleList => filter((e) => e.isVisible);
+
+  /// 所有可见元素是否都锁定了操作
+  bool get isAllLockOperate => all((e) => e.isLockOperate);
+
+  /// 所有可见元素是否没锁定操作
+  bool get isAllUnlockOperate => all((e) => !e.isLockOperate);
+
+  /// 所有元素是否都可见
+  bool get isAllVisible => all((e) => e.isVisible);
+
+  /// 所有元素是否都不可见
+  bool get isAllInvisible => all((e) => !e.isVisible);
 }
 
 /// 订阅扩展

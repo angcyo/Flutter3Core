@@ -1454,7 +1454,8 @@ class ElementSelectComponent extends ElementGroupPainter
     });
   }
 
-  /// 更新选择框边界, 并且触发选择选择
+  /// 更新选择框边界, 并且触发选择元素
+  /// 抬手之后, 获取需要选中的元素列表
   /// [select] 是否要使用[bounds]进行元素的元素
   void updateSelectBounds(Rect? bounds, bool select) {
     if (select) {

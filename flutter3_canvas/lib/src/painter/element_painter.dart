@@ -576,7 +576,7 @@ class ElementPainter extends IPainter
       return false;
     }
     final property = _paintProperty;
-    if (property == null) {
+    if (property == null || !isVisible) {
       return false;
     }
     path ??= Path()..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
@@ -1080,7 +1080,8 @@ class ElementPainter extends IPainter
 
   /// 获取单个元素列表
   @api
-  List<ElementPainter> getSingleElementList() {
+  List<ElementPainter> getSingleElementList(
+      {bool includeGroupPainter = false}) {
     return [this];
   }
 
@@ -1264,6 +1265,22 @@ class ElementGroupPainter extends ElementPainter {
   ElementGroupPainter? get onlyElementGroupPainter =>
       this is ElementSelectComponent ? null : this;
 
+  @override
+  set isLockOperate(bool value) {
+    super.isLockOperate = value;
+    children?.forEach((element) {
+      element.isLockOperate = value;
+    });
+  }
+
+  @override
+  set isVisible(bool value) {
+    super.isVisible = value;
+    children?.forEach((element) {
+      element.isVisible = value;
+    });
+  }
+
   //region ---core--
 
   /// 重置子元素
@@ -1373,10 +1390,15 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
-  List<ElementPainter> getSingleElementList() {
+  List<ElementPainter> getSingleElementList(
+      {bool includeGroupPainter = false}) {
     final result = <ElementPainter>[];
+    if (includeGroupPainter) {
+      result.add(this);
+    }
     children?.forEach((element) {
-      result.addAll(element.getSingleElementList());
+      result.addAll(element.getSingleElementList(
+          includeGroupPainter: includeGroupPainter));
     });
     return result;
   }
@@ -1439,13 +1461,23 @@ class ElementGroupPainter extends ElementPainter {
     UndoType? fromUndoType,
   ) {
     if (fromObj is! ElementStateStack && this != fromObj) {
-      //组内元素属性改变, 但是不同通过父元素改变的
-      //有可能是独立选择了组内某个元素单独修改的属性, 而未修改父元素的属性
-      updatePaintPropertyFromChildren();
-      /*assert(() {
+      debugger();
+      if (propertyType == PainterPropertyType.paint) {
+        //组内元素属性改变, 但是不同通过父元素改变的
+        //有可能是独立选择了组内某个元素单独修改的属性, 而未修改父元素的属性
+        updatePaintPropertyFromChildren();
+        /*assert(() {
         l.w("[${classHash()}]...updatePaintPropertyFromChildren");
         return true;
       }());*/
+      } else if (propertyType == PainterPropertyType.state) {
+        debugger();
+        final visibleList = children?.filterVisibleList;
+        if (visibleList?.length != children?.length) {
+          children = visibleList;
+          updatePaintPropertyFromChildren();
+        }
+      }
     }
   }
 

@@ -547,6 +547,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 查找元素, 按照元素的先添加先返回的顺序
   /// [checkLockOperate] 是否检查锁定操作
+  /// [checkVisible] 是否检查是否可见
   /// [ignoreElements] 忽略的元素集合
   @api
   List<ElementPainter> findElement({
@@ -554,6 +555,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     @sceneCoordinate Rect? rect,
     @sceneCoordinate Path? path,
     bool checkLockOperate = true,
+    bool checkVisible = true,
     List<ElementPainter>? ignoreElements,
   }) {
     final result = <ElementPainter>[];
@@ -561,8 +563,15 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       if (ignoreElements?.contains(element) == true) {
         continue;
       }
-      if ((!checkLockOperate || !element.paintState.isLockOperate) &&
-          element.hitTest(point: point, rect: rect, path: path)) {
+      if (checkVisible && !element.isVisible) {
+        //元素不可见
+        continue;
+      }
+      if (checkLockOperate && element.isLockOperate) {
+        //元素被锁定
+        continue;
+      }
+      if (element.hitTest(point: point, rect: rect, path: path)) {
         result.add(element);
       }
     }
@@ -655,8 +664,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 如果操作的元素被选中, 则清空所有选中的元素
   @api
   void clearSelectedElementIf(ElementPainter? element) {
-    if (element != null &&
-        selectComponent.children?.contains(element) == true) {
+    if (isElementSelected(element)) {
+      clearSelectedElement();
+    }
+  }
+
+  @api
+  void clearAnySelectedElementIf(List<ElementPainter>? elementList) {
+    if (isAnyElementSelected(elementList)) {
       clearSelectedElement();
     }
   }
@@ -699,10 +714,27 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     return selectComponent.children;
   }
 
-  /// 是否选中了元素
+  /// 是否选中了指定元素
+  /// 指定的元素是否在选中列表中,
+  /// 也就是指定的元素是否有被选中
   @api
   bool isElementSelected(ElementPainter? element) {
     return selectComponent.containsElement(element);
+  }
+
+  /// [elementList] 中是否有被选中的元素
+  /// [isElementSelected]
+  @api
+  bool isAnyElementSelected(List<ElementPainter>? elementList) {
+    if (elementList == null || elementList.isEmpty) {
+      return false;
+    }
+    for (final element in elementList) {
+      if (isElementSelected(element)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// 更新选择元素的边界, 通常在操作子元素绘制属性发生改变后调用
@@ -1507,6 +1539,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     UndoType undoType = UndoType.normal,
   ]) {
     final list = elementList?.clone() ?? <ElementPainter>[];
+    if (lock) {
+      //锁定元素
+      clearAnySelectedElementIf(elementList);
+    }
     canvasDelegate.canvasUndoManager.addRunRedo(() {
       for (final painter in list) {
         painter.isLockOperate = !lock;
@@ -1527,6 +1563,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     UndoType undoType = UndoType.normal,
   ]) {
     final list = elementList?.clone() ?? <ElementPainter>[];
+    if (!visible) {
+      //隐藏元素
+      clearAnySelectedElementIf(elementList);
+    }
     canvasDelegate.canvasUndoManager.addRunRedo(() {
       for (final painter in list) {
         painter.isVisible = !visible;
