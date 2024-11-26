@@ -164,6 +164,9 @@ class LabelWheelTile extends StatefulWidget {
 
   /// content
   final dynamic initValue;
+
+  /// 不指定[values], 则不显示[rightWidget];
+  /// 指定一个空[rightWidget], 则禁用[rightWidget];
   final List? values;
   final List<Widget>? valuesWidget;
   final TransformDataWidgetBuilder? transformValueWidget;
@@ -240,8 +243,11 @@ class _LabelWheelTileState extends State<LabelWheelTile>
     );
 
     final rightWidget = widget.rightWidget ??
-        (!isNil(widget.values)
-            ? loadCoreAssetSvgPicture(Assets.svg.coreNext)
+        (widget.values != null
+            ? loadCoreAssetSvgPicture(Assets.svg.coreNext,
+                tintColor: widget.values?.isEmpty == true
+                    ? globalTheme.icoDisableColor
+                    : null)
             : null);
 
     final content = Container(

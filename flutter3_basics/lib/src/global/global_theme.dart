@@ -66,6 +66,11 @@ class GlobalTheme {
   Color get iconWhiteDisableBgColor => const Color(0xfff6f6f6);
 
   /// 图标禁用的颜色
+  /// [disableColor]
+  /// [disableBgColor]
+  /// [icoDisableColor]
+  /// [disableTextColor]
+  /// [iconWhiteDisableBgColor]
   Color get icoDisableColor => const Color(0xff949496);
 
   /// 灰度图标的颜色
@@ -107,6 +112,11 @@ class GlobalTheme {
   Color get disableTextColor => const Color(0xffd8d8d8);
 
   /// 禁用时的颜色
+  /// [disableColor]
+  /// [disableBgColor]
+  /// [icoDisableColor]
+  /// [disableTextColor]
+  /// [iconWhiteDisableBgColor]
   Color get disableColor => Colors.black26;
 
   /// 链接的颜色
