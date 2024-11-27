@@ -84,14 +84,11 @@ class FillGradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
-    var fillRefColor = fillColor ?? gradientColors?.firstOrNull;
-    var isLightFill = fillRefColor?.isLight == true;
-    var textColor = this.textColor ??
-        (isLightFill
-            ? globalTheme.textPrimaryStyle.color
-            : globalTheme.themeWhiteColor);
-    var disabledTextColor =
+    final globalTheme = GlobalTheme.of(context);
+    final fillRefColor = fillColor ?? gradientColors?.firstOrNull;
+    //final isLightFill = fillRefColor?.isLight == true;
+    final textColor = this.textColor ?? globalTheme.textPrimaryStyle.color;
+    final disabledTextColor =
         this.disabledTextColor ?? (textColor ?? Colors.black38).disabledColor;
     return GradientButton(
       onTap: enabled
