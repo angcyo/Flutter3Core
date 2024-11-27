@@ -8,10 +8,56 @@ part of '../../flutter3_canvas.dart';
 /// [List<PathSimulationInfo>]仿真数据绘制
 class PathSimulationPainter extends ElementPainter {
   /// 仿真数据集合
-  List<PathSimulationInfo>? simulationInfoList;
+  PathSimulationInfo? _simulationInfo;
+
+  PathSimulationInfo? get simulationInfo => _simulationInfo;
+
+  set simulationInfo(PathSimulationInfo? value) {
+    distance = -1;
+    _simulationInfo = value;
+    initPaintProperty(rect: value?.bounds);
+  }
+
+  /// 绘制的距离, 不能超过[PathSimulationInfo.length]
+  /// 同时也是当前光标的位置
+  /// -1: 表示绘制所有
+  /// other: 绘制进度
+  double distance = -1;
+
+  /// 模拟速度, 每一帧移动的距离
+  double simulationSpeed = 1;
+
+  /// 是否开始了模拟动画
+  bool isStartSimulation = false;
+
+  //--
+
+  /// 十字光标的大小
+  @dp
+  double crossCursorLength = 20;
+
+  //--
 
   PathSimulationPainter() {
     forceVisibleInCanvasBox = true;
+  }
+
+  /// 开始仿真动画
+  @api
+  void startSimulation({
+    double? speed,
+    double? distance,
+  }) {
+    isStartSimulation = true;
+    simulationSpeed = speed ?? simulationSpeed;
+    this.distance = distance ?? 0;
+    refresh();
+  }
+
+  /// 在当前位置暂停
+  @api
+  void pauseSimulation() {
+    isStartSimulation = false;
   }
 
   @override
@@ -23,18 +69,82 @@ class PathSimulationPainter extends ElementPainter {
         ..style = PaintingStyle.fill
         ..color = Colors.red,
     );*/
-    for (final info in simulationInfoList ?? <PathSimulationInfo>[]) {
-      final path = info.path;
+
+    assert(() {
+      l.d("distance:$distance isStartSimulation:$isStartSimulation");
+      return true;
+    }());
+    double startLength = 0;
+    for (final part in simulationInfo?.partList ?? <PathSimulationPart>[]) {
+      final path = part.path;
+      final endLength = startLength + part.length;
       if (path != null) {
-        canvas.drawPath(
-          path,
-          Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth =
-                (paintStrokeWidth ?? 1.toDpFromPx()) / paintMeta.canvasScale
-            ..color = Colors.red,
-        );
+        final paint = Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth =
+              (paintStrokeWidth ?? 1.toDpFromPx()) / paintMeta.canvasScale
+          ..color = part.color ??
+              (part.type == PathSimulationType.line
+                  ? Colors.black
+                  : Colors.red);
+        //
+        //无动画
+        if (distance < 0 || distance >= startLength) {
+          //可能需要绘制
+          if (distance < 0 || distance >= endLength) {
+            //需要绘制完全的路径
+            canvas.drawPath(path, paint);
+
+            if (distance < 0) {
+              //绘制光标
+              final position = path.getTangentForOffset(0)?.position;
+              if (position != null) {
+                _drawCrossPath(canvas, paintMeta, paint, position);
+              }
+            }
+          } else {
+            //需要绘制一部分的路径
+            final partStart = distance - startLength;
+            final partEnd = endLength - partStart;
+            canvas.drawPath(path.extractPath(partStart, partEnd), paint);
+
+            //绘制光标
+            final position = path.getTangentForOffset(partStart)?.position;
+            if (position != null) {
+              _drawCrossPath(canvas, paintMeta, paint, position);
+            }
+          }
+        }
+      }
+      startLength = endLength;
+    }
+
+    //debugger();
+    if (simulationInfo != null && isStartSimulation) {
+      distance += simulationSpeed;
+      if (distance < simulationInfo!.length) {
+        refresh();
+      } else {
+        distance = simulationInfo!.length;
+        isStartSimulation = false;
+        refresh();
       }
     }
+  }
+
+  /// 绘制十字光标
+  void _drawCrossPath(
+    Canvas canvas,
+    PaintMeta paintMeta,
+    Paint paint,
+    Offset position,
+  ) {
+    canvas.drawPath(
+      generateCrossPath(
+        center: position,
+        length: crossCursorLength / paintMeta.canvasScale,
+      ),
+      paint,
+    );
   }
 }

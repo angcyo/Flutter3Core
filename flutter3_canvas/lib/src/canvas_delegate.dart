@@ -321,6 +321,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [animate] 是否动画改变
   /// [awaitAnimate] 是否等待动画结束
   /// [restoreDefault] 当没有rect时, 是否恢复默认的100%
+  ///
+  /// [followPainter]
   @api
   void followRect({
     @sceneCoordinate Rect? rect,
@@ -339,6 +341,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         canvasElementManager.allElementsBounds;
     if (rect == null || rect.isEmpty) {
       //followPainter(rect: canvasElementManager.allElementsBounds);
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
       return;
     }
     canvasFollowManager.followRect(
@@ -352,6 +358,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 跟随一个元素, 自动居中处理
+  /// [followRect]
   /// [CanvasFollowManager.followRect]
   @api
   void followPainter({
@@ -364,6 +371,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
         .canvasElementControlManager.enableResetElementAngle);
     if (rect == null) {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
       return;
     }
     canvasFollowManager.followRect(

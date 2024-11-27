@@ -177,6 +177,25 @@ class ElementPainter extends IPainter
     }
   }*/
 
+  /// 初始化元素的位置坐标
+  /// [paintProperty]
+  @api
+  void initPaintProperty({
+    @dp @sceneCoordinate Rect? rect,
+  }) {
+    if (rect != null) {
+      updatePaintProperty(
+        PaintProperty()
+          ..left = rect.left
+          ..top = rect.top
+          ..width = rect.width
+          ..height = rect.height,
+      );
+    } else {
+      updatePaintProperty(null);
+    }
+  }
+
   /// 更新[_paintProperty], 并触发通知
   /// [notify] 是否要触发通知
   ///

@@ -75,7 +75,7 @@ class PathSimulationBuilder {
   int _loopCount = 0;
 
   /// 循环收集数据的栈结构
-  final StackList<List<PathSimulationInfo>> _loopStack = StackList();
+  final StackList<List<PathSimulationPart>> _loopStack = StackList();
 
   /// 开始内部循环
   @entryPoint
@@ -92,35 +92,36 @@ class PathSimulationBuilder {
     final last = _loopStack.popOrNull();
     if (last != null) {
       final count = max(_loopCount, 1);
+      final list = _operateList;
       for (var i = 1; i <= count; i++) {
         //循环复制
         for (final info in last) {
-          _result.add(info.copyWith());
+          list.add(info.copyWith());
         }
+      }
+      if (list != _result) {
+        _result.addAll(list);
       }
     }
     _loopCount = 0;
   }
 
   /// 当前操作的数据列表
-  List<PathSimulationInfo> get _operateList => _loopStack.lastOrNull ?? _result;
+  List<PathSimulationPart> get _operateList => _loopStack.lastOrNull ?? _result;
 
   //endregion--循环次数--
 
   //region--辅助输出--
 
   /// 仿真数据输出的结果
-  final List<PathSimulationInfo> _result = [];
+  final List<PathSimulationPart> _result = [];
 
-  @output
-  List<PathSimulationInfo> get result => _result;
-
-  PathSimulationInfo? _currentInfo;
+  PathSimulationPart? _currentInfo;
 
   /// 新的一段数据收集
   void _generateSimulationInfo(PathSimulationType type) {
     _appendLast();
-    _currentInfo = PathSimulationInfo(type: type)..start();
+    _currentInfo = PathSimulationPart(type: type)..start();
   }
 
   /// 最后一段数据
@@ -134,17 +135,31 @@ class PathSimulationBuilder {
     _currentInfo = null;
   }
 
-  //endregion--辅助输出--
+  @output
+  PathSimulationInfo build() => PathSimulationInfo(_result);
 
-  //region--get--
+//endregion--辅助输出--
+}
+
+/// 仿真数据, 包含每一段的数据
+class PathSimulationInfo {
+  /// 所有段的集合
+  final List<PathSimulationPart> partList;
+
+  //--
 
   /// 路径的总长度
-  double get length => _result.sum((e) => e.length);
+  double length = 0;
+
+  /// 路径的边界
+  Rect? bounds;
+
+  //region--get--
 
   /// 合并所有路径, 用来测试
   Path get mergePath {
     final path = Path();
-    for (final element in _result) {
+    for (final element in partList) {
       if (element.path != null) {
         path.addPath(element.path!, Offset.zero);
       }
@@ -152,11 +167,28 @@ class PathSimulationBuilder {
     return path;
   }
 
-//endregion--get--
+  //endregion--get--
+
+  PathSimulationInfo(this.partList) {
+    length = 0;
+    //--
+    for (final part in partList) {
+      length += part.length;
+      //--
+      final partBounds = part.bounds;
+      if (partBounds != null) {
+        if (bounds == null) {
+          bounds = partBounds;
+        } else {
+          bounds = bounds?.expandToInclude(partBounds);
+        }
+      }
+    }
+  }
 }
 
-///
-class PathSimulationInfo {
+/// 仿真一段一段数据
+class PathSimulationPart {
   /// 路径类型
   /// 决定绘制时的颜色
   final PathSimulationType type;
@@ -164,36 +196,49 @@ class PathSimulationInfo {
   /// 路径, 用来绘制
   Path? path;
 
+  /// 绘制[path]时的颜色, 不指定则根据[type]自动设置
+  Color? color;
+
   //--
+
+  /// [path]的边界, 用来计算外包裹框
+  Rect? bounds;
 
   /// [path]的长度, 用来计算长度
   double length = 0;
 
-  PathSimulationInfo({required this.type});
+  PathSimulationPart({required this.type});
 
   //--
 
   /// 开始收集相同类型的路径
+  @callPoint
   void start() {
     path = Path();
   }
 
   /// 结束收集路径
+  @callPoint
   void end() {
     if (path != null) {
+      bounds = path!.getExactBounds();
       length = path!.length;
     }
   }
 
   ///copyWith
-  PathSimulationInfo copyWith({
+  PathSimulationPart copyWith({
     PathSimulationType? type,
     Path? path,
     double? length,
+    Color? color,
+    Rect? bounds,
   }) {
-    return PathSimulationInfo(type: type ?? this.type)
+    return PathSimulationPart(type: type ?? this.type)
       ..path = path ?? this.path
-      ..length = length ?? this.length;
+      ..length = length ?? this.length
+      ..bounds = bounds ?? this.bounds
+      ..color = color ?? this.color;
   }
 }
 

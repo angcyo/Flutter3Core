@@ -105,7 +105,13 @@ class CanvasRenderBox extends RenderBox {
 
   /// 重绘
   void _repaintListener() {
-    markNeedsPaint();
+    if (owner != null && !owner!.debugDoingPaint) {
+      markNeedsPaint();
+    } else {
+      postCallback(() {
+        _repaintListener();
+      });
+    }
   }
 }
 

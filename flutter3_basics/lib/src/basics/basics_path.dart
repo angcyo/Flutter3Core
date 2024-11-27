@@ -19,6 +19,28 @@ const double kPathAcceptableError = 0.025; //
 @mm
 const double kVectorTolerance = 0.01; //
 
+/// 定义一个空路径
+Path kEmptyPath = Path();
+
+/// 在指定中心点位置生成一个指定大小的十字路径[Path]
+/// 创建交叉十字路径
+Path generateCrossPath({
+  double? cx,
+  double? cy,
+  Offset? center,
+  double length = 20,
+}) {
+  cx ??= center?.dx ?? 0;
+  cy ??= center?.dy ?? 0;
+
+  final r = length / 2;
+  return Path()
+    ..moveTo(cx - r, cy)
+    ..lineTo(cx + r, cy)
+    ..moveTo(cx, cy - r)
+    ..lineTo(cx, cy + r);
+}
+
 /// [Path]路径上每个点的信息
 /// [PathEx.eachPathMetrics]
 class PathPointInfo {
@@ -43,9 +65,6 @@ class PathPointInfo {
     return "angle:$angle position:$position";
   }
 }
-
-/// 定义一个空路径
-Path kEmptyPath = Path();
 
 /// [Matrix4Ex.mapRect]
 extension PathEx on Path {
@@ -226,6 +245,60 @@ extension PathEx on Path {
 
   /// 路径总长度
   double get length => computeMetrics().sum((e) => e.length);
+
+  /// 从一个路径中(包含所有轮廓), 获取指定距离的位置
+  /// 支持所有段落的
+  /// [distance] 在所有轮廓中的距离
+  ui.Tangent? getTangentForOffset(double distance) {
+    final metrics = computeMetrics();
+    double startLength = 0;
+    for (final metric in metrics) {
+      final length = metric.length;
+      final endLength = startLength + length;
+
+      if (distance >= startLength && distance <= endLength) {
+        //到达开始位置
+        final partStart = distance - startLength;
+        return metric.getTangentForOffset(partStart);
+      }
+      startLength = endLength;
+    }
+    return null;
+  }
+
+  /// 从一个路径中(包含所有轮廓), 获取指定位置的路径路径
+  /// 支持所有段落的
+  /// [start].[end] 在所有轮廓中的距离
+  Path extractPath(double start, double end, {bool startWithMoveTo = true}) {
+    final path = Path();
+    final extractLength = end - start;
+    final metrics = computeMetrics();
+
+    double startLength = 0;
+    for (final metric in metrics) {
+      final length = metric.length;
+      final endLength = startLength + length;
+
+      if (start >= startLength && start <= endLength) {
+        //到达开始位置
+        final partStart = start - startLength;
+        path.addPath(
+            metric.extractPath(
+              partStart,
+              partStart + min(extractLength, length - partStart),
+              startWithMoveTo: startWithMoveTo,
+            ),
+            Offset.zero);
+      } else if (end < startLength) {
+        //到达结束位置
+        break;
+      } else {
+        //还未到开始位置
+      }
+      startLength = endLength;
+    }
+    return path;
+  }
 
   /// 按照指定的步长, 获取路径上的点
   ///
