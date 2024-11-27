@@ -166,6 +166,9 @@ mixin AbsScrollPage {
   /// 获取页面标题
   @property
   String? getTitle(BuildContext context) {
+    if (this is State) {
+      return (this as State).widget.runtimeType.toString();
+    }
     return runtimeType.toString();
   }
 
