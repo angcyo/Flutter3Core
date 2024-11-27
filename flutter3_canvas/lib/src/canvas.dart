@@ -84,7 +84,7 @@ class CanvasRenderBox extends RenderBox {
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
-    var hitInterceptBox = GestureHitInterceptScope.of(context);
+    final hitInterceptBox = GestureHitInterceptScope.of(context);
     hitInterceptBox?.interceptHitBox = this;
     canvasDelegate.handleEvent(event, entry);
   }

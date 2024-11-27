@@ -4,8 +4,13 @@ part of '../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/01/31
 ///
-
-/// 手势命中拦截小部件
+///
+/// 手势命中拦截小部件, 将之后的手势全部归为处理.
+///
+/// ```
+/// final hitInterceptBox = GestureHitInterceptScope.of(context);
+/// hitInterceptBox?.interceptHitBox = this;
+/// ```
 class GestureHitInterceptScope extends SingleChildRenderObjectWidget {
   /// 获取一个上层的[GestureHitInterceptBox]
   static GestureHitInterceptBox? of(BuildContext context) {
