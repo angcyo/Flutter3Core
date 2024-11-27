@@ -412,6 +412,7 @@ extension CanvasEx on Canvas {
     ui.ColorFilter? colorFilter,
     BoxFit? fit = BoxFit.contain,
     Alignment? alignment = Alignment.center,
+    bool? paintStrokeWidthSuppressScale = true,
   }) {
     if (path == null) {
       return;
@@ -468,10 +469,16 @@ extension CanvasEx on Canvas {
     final targetPath = path.transformPath(translateMatrix * scaleMatrix);
     withSave(() {
       //着色
-      if (colorFilter != null) {
-        saveLayer(null, Paint()..colorFilter = colorFilter);
+      if (paint != null) {
+        if (colorFilter != null) {
+          saveLayer(null, Paint()..colorFilter = colorFilter);
+        }
+        if (paintStrokeWidthSuppressScale == true) {
+          final scale = math.min(sx, sy);
+          paint.strokeWidth = paint.strokeWidth / scale;
+        }
+        drawPath(targetPath, paint);
       }
-      drawPath(targetPath, paint!);
     });
   }
 

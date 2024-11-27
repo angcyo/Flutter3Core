@@ -100,6 +100,7 @@ typedef WidgetNullIterable = Iterable<Widget?>;
 
 /// [edgeInsets]
 EdgeInsets? edgeOnly({
+  double? all,
   double? vertical,
   double? horizontal,
   double left = 0,
@@ -108,10 +109,10 @@ EdgeInsets? edgeOnly({
   double bottom = 0,
 }) =>
     EdgeInsets.only(
-      left: horizontal ?? left,
-      top: vertical ?? top,
-      right: horizontal ?? right,
-      bottom: vertical ?? bottom,
+      left: all ?? horizontal ?? left,
+      top: all ?? vertical ?? top,
+      right: all ?? horizontal ?? right,
+      bottom: all ?? vertical ?? bottom,
     );
 
 /// 将当前的小部件, 包裹在一个[Padding]中
@@ -661,6 +662,7 @@ extension WidgetEx on Widget {
       );
 
   Widget paddingOnly({
+    double? all,
     double? vertical,
     double? horizontal,
     double left = 0,
@@ -669,10 +671,10 @@ extension WidgetEx on Widget {
     double bottom = 0,
   }) =>
       paddingInsets(EdgeInsets.only(
-        left: horizontal ?? left,
-        top: vertical ?? top,
-        right: horizontal ?? right,
-        bottom: vertical ?? bottom,
+        left: all ?? horizontal ?? left,
+        top: all ?? vertical ?? top,
+        right: all ?? horizontal ?? right,
+        bottom: all ?? vertical ?? bottom,
       ));
 
 /*Widget paddingFromWindowPadding() {

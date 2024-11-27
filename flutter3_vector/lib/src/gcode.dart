@@ -72,14 +72,31 @@ class GCodeParser {
   /// 当前字符串
   String gcodeText = "";
 
+  /// 是否需要仿真数据
+  bool? simulation;
+
+  /// 仿真数据构造器
+  PathSimulationBuilder? simulationBuilder;
+
   @entryPoint
-  Path? parse(String? gcode) {
+  Path? parse(
+    String? gcode, {
+    bool? simulation,
+  }) {
     if (gcode == null || isNil(gcode)) {
       return null;
     }
+    //--
     gcodeText = gcode;
     length = gcodeText.length;
+    //--
+    this.simulation = simulation;
+    if (simulation == true) {
+      simulationBuilder = PathSimulationBuilder()..onStart();
+    }
+    //--
     startParseGCode();
+    simulationBuilder?.onEnd();
     /*final scanner = StringScanner(gcode);
     while (!scanner.isDone) {
       final chat = String.fromCharCode(scanner.readChar());
@@ -104,21 +121,37 @@ class GCodeParser {
   void moveTo(double x, double y) {
     initPath();
     _result?.moveTo(x, y);
+    simulationBuilder?.onMoveTo(x, y);
   }
 
   void lineTo(double x, double y) {
     initPath();
     _result?.lineTo(x, y);
+    simulationBuilder?.onLineTo(x, y);
   }
 
-  /// [startAngle].[sweepAngle]角度
-  void addArc(double left, double top, double right, double bottom,
-      double startAngle, double sweepAngle) {
+  /// [startAngle].[sweepAngle]角度单位
+  void arcTo(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    double startAngle,
+    double sweepAngle,
+  ) {
     initPath();
     _result?.addArc(
       Rect.fromLTRB(left, top, right, bottom),
       startAngle.hd,
       sweepAngle.hd,
+    );
+    simulationBuilder?.onArcTo(
+      left,
+      top,
+      right,
+      bottom,
+      startAngle,
+      sweepAngle,
     );
   }
 
@@ -184,7 +217,7 @@ class GCodeParser {
         skipCurrentLine();
       } else if (c == 'X' || c == 'Y' || c == 'I' || c == 'J') {
         //读取到坐标指令, 通常是在新的一行就读取了坐标指令
-        readGCmd(lastGCmd);
+        _handleGCmd(lastGCmd);
         skipCurrentLine();
       } else if (isIgnore(c)) {
         //空格
@@ -212,7 +245,7 @@ class GCodeParser {
       if (gCmd == "G0" || gCmd == "G1" || gCmd == "G2" || gCmd == "G3") {
         //直线 //圆弧
         lastGCmd = gCmd;
-        readGCmd(gCmd);
+        _handleGCmd(gCmd);
       } else if (gCmd == "G20") {
         //英寸
         currentFactor = inchFactor;
@@ -251,6 +284,14 @@ class GCodeParser {
       } else if (mCmd == "M2" || mCmd == "M02") {
         //结束, 文档结束
         index = length;
+      } else if (mCmd == "M98") {
+        //读取循环次数
+        final l = readAnyCmdNumber("L");
+        if (l != null) {
+          simulationBuilder?.onStartLoop(l.round());
+        }
+      } else if (mCmd == "M99") {
+        simulationBuilder?.onEndLoop();
       }
     } else if (currentCmd == 'F') {
       //速度
@@ -259,11 +300,12 @@ class GCodeParser {
     }
   }
 
-  void readGCmd(String gCmd) {
+  /// 处理G指令[gCmd]
+  void _handleGCmd(String gCmd) {
     if (gCmd == "G0" || gCmd == "G1") {
       //直线
       if (!readXY()) {
-        //没有有X Y指令
+        //没有X Y指令的G指令, 忽略处理
         return;
       }
 
@@ -391,7 +433,7 @@ class GCodeParser {
       } else {
         //startAngle * 180 / M_PI 弧度转角度
         //角度转弧度,  弧度 = 角度 * M_PI / 180
-        addArc(left, top, right, bottom, startAngle, sweepAngle);
+        arcTo(left, top, right, bottom, startAngle, sweepAngle);
         //l.d("arcTo: startAngle:%f sweepAngle:%f", startAngle, sweepAngle);
       }
 
@@ -549,6 +591,34 @@ class GCodeParser {
     }
     index = oldIndex;
     return haveR;
+  }
+
+  /// 读取任意指令后面的数字
+  /// [rollBackPosition]是否要回滚文件内容的读取位置
+  double? readAnyCmdNumber(
+    String cmd, {
+    bool rollBackPosition = false,
+  }) {
+    double? number;
+    int oldIndex = index;
+    while (index < gcodeText.length) {
+      final c = gcodeText[index].toUpperCase();
+      if (c == cmd) {
+        number = readNumberString().toDoubleOrNull();
+        break;
+      } else if (isAnnotation(c)) {
+        //注释
+        break;
+      } else if (isBreakLine(c)) {
+        //换行
+        break;
+      }
+      index++;
+    }
+    if (rollBackPosition) {
+      index = oldIndex;
+    }
+    return number;
   }
 
   //endregion---GCode解析---
@@ -812,5 +882,12 @@ extension GCodeStringEx on String {
   Path? toUiPathFromGCode() {
     GCodeParser parser = GCodeParser();
     return parser.parse(this)?..fillType = PathFillType.evenOdd;
+  }
+
+  /// GCode数据转换成仿真数据
+  PathSimulationBuilder toSimulationFromGCode() {
+    GCodeParser parser = GCodeParser();
+    parser.parse(this, simulation: true);
+    return parser.simulationBuilder!;
   }
 }

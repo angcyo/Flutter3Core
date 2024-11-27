@@ -2031,6 +2031,20 @@ extension IterableEx<E> on Iterable<E> {
         return test(element) ? count + 1 : count;
       });
 
+  /// 所有元素求和
+  T sum<T extends num>(T Function(E element) test) {
+    try {
+      0 as T;
+      return fold<T>(0 as T, (T count, E element) {
+        return (count + test(element)) as T;
+      });
+    } catch (e) {
+      return fold<T>(0.0 as T, (T count, E element) {
+        return (count + test(element)) as T;
+      });
+    }
+  }
+
   /// [filter]顺便转换类型
   List<R> filterCast<R>(bool Function(E element) test) =>
       where(test).cast<R>().toList();

@@ -224,6 +224,9 @@ extension PathEx on Path {
     return result;
   }
 
+  /// 路径总长度
+  double get length => computeMetrics().sum((e) => e.length);
+
   /// 按照指定的步长, 获取路径上的点
   ///
   /// ```
