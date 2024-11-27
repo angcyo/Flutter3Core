@@ -225,6 +225,13 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     // 基础通知
     if (notifyBasics) {
+      //通知之前的元素被清除
+      canvasDelegate.canvasElementManager.canvasElementControlManager
+          .onCanvasElementDeleted(
+        oldElements,
+        ElementSelectType.code,
+      );
+      //--
       canvasDelegate.dispatchCanvasElementListChanged(
         oldElements,
         newElements,

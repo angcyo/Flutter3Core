@@ -388,6 +388,72 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     );
   }
 
+  /// 将画布上的整体状态压入栈, 可以用来恢复整个画布状态
+  /// 不包含多画布, 只包含当前画布
+  CanvasStateStack createStateStack() => CanvasStateStack(this)
+    ..saveFrom(
+      null,
+      saveGroupChild: true,
+    );
+
+  /// 删除元素集合, 支持单独删除组内的元素
+  /// [CanvasElementManager.removeElementList]不支持删除组内元素
+  @api
+  @supportUndo
+  void removeElementList(
+    List<ElementPainter>? list, {
+    UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    if (list == null || isNil(list)) {
+      return;
+    }
+
+    final undoStateStack =
+        undoType == UndoType.normal ? createStateStack() : null;
+
+    //--开始操作
+    final removeList = <ElementPainter>[];
+
+    final elements = canvasElementManager.elements;
+    final oldElements = elements.clone();
+    for (final element in list) {
+      if (elements.contains(element)) {
+        removeList.add(element);
+      } else {
+        for (final group in elements) {
+          if (group is ElementGroupPainter) {
+            if (group.removeElement(element)) {
+              removeList.add(element);
+              if (group.isEmpty) {
+                //删完child之后, 组内无元素, 则删除组
+                removeList.add(group);
+              }
+            }
+          }
+        }
+      }
+    }
+    //Concurrent modification during iteration: Instance(length:2) of '_GrowableList'.
+    elements.removeAll(removeList);
+
+    canvasElementManager.canvasElementControlManager
+        .onCanvasElementDeleted(removeList, selectType);
+    dispatchCanvasElementListChanged(
+      oldElements,
+      elements,
+      elements,
+      ElementChangeType.remove,
+      undoType,
+    );
+    dispatchCanvasElementListRemoveChanged(elements, removeList);
+
+    if (undoType == UndoType.normal) {
+      final redoStateStack = createStateStack();
+      canvasUndoManager.addUntoState(undoStateStack, redoStateStack);
+    }
+  }
+
   //endregion ---api---
 
   //region ---事件派发---
@@ -814,4 +880,37 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
 //endregion ---diagnostic---
+}
+
+/// 画布状态栈[CanvasDelegate], 不包含多画布, 只包含当前画布
+class CanvasStateStack extends ElementStateStack {
+  final CanvasDelegate canvasDelegate;
+
+  CanvasStateStack(this.canvasDelegate);
+
+  @override
+  void saveFrom(
+    ElementPainter? element, {
+    List<ElementPainter>? otherStateElementList,
+    List<ElementPainter>? otherStateExcludeElementList,
+    bool? saveGroupChild,
+  }) {
+    final group = ElementGroupPainter();
+    group.children = [...canvasDelegate.canvasElementManager.elements];
+    super.saveFrom(
+      group,
+      otherStateElementList: otherStateElementList,
+      otherStateExcludeElementList: otherStateExcludeElementList,
+      saveGroupChild: saveGroupChild,
+    );
+  }
+
+  @override
+  void restore() {
+    super.restore();
+    final group = fromElement;
+    if (group is ElementGroupPainter) {
+      canvasDelegate.canvasElementManager.elements.reset(group.children);
+    }
+  }
 }

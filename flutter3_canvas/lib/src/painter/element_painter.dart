@@ -1270,6 +1270,9 @@ class ElementGroupPainter extends ElementPainter {
   /// 子元素列表
   List<ElementPainter>? children = [];
 
+  /// 是否为空
+  bool get isEmpty => children?.isEmpty ?? true;
+
   /// 是否绘制子元素, 在[ElementSelectComponent]组件中, 可以关闭子元素绘制.
   /// 如果要实现选中元素在顶层绘制, 那就不能设置为false
   bool paintChildren = true;
@@ -1502,6 +1505,26 @@ class ElementGroupPainter extends ElementPainter {
         }
       }
     }
+  }
+
+  /// 从组内删除元素
+  /// @return 是否删除成功
+  bool removeElement(ElementPainter? element) {
+    final result = children?.remove(element) ?? false;
+    if (result) {
+      updatePaintPropertyFromChildren(fromObj: this);
+    }
+    return result;
+  }
+
+  /// 从组内删除一组元素
+  /// @return 删除掉的元素列表
+  List<ElementPainter>? removeElementList(List<ElementPainter>? elementList) {
+    final result = children?.removeAll(elementList);
+    if (result?.isNotEmpty == true) {
+      updatePaintPropertyFromChildren(fromObj: this);
+    }
+    return result;
   }
 
   //endregion ---core--
@@ -2208,25 +2231,39 @@ class ElementStateStack {
   @implementation
   final Map<ElementPainter, PaintState?> elementStateMap = {};
 
+  /// 保存元素对应的children
+  final Map<ElementGroupPainter, List<ElementPainter>?> elementChildrenMap = {};
+
   /// 保存信息
   /// [element] 当前的元素,
-  /// [parentElement] 额外要保存的父元素数据, 会自动从[ElementGroupPainter.children]中排除[element]
+  /// [otherStateElementList] 额外要保存的元素数据集合, 会自动排除[otherStateExcludeElementList]中的元素
+  /// [saveGroupChild] 是否要保存[ElementGroupPainter.children]
+  ///
+  /// [dispose]
   @callPoint
   @mustCallSuper
   void saveFrom(
-    ElementPainter element, {
+    ElementPainter? element, {
     List<ElementPainter>? otherStateElementList,
     List<ElementPainter>? otherStateExcludeElementList,
+    bool? saveGroupChild,
   }) {
     //debugger();
     isSaveState = true;
     fromElement = element;
-    saveElement(element);
+
+    if (element != null) {
+      saveElement(element, saveGroupChild: saveGroupChild);
+    }
 
     if (otherStateElementList != null) {
       //debugger();
       for (final e in otherStateElementList) {
-        saveElement(e, excludeElements: otherStateExcludeElementList);
+        saveElement(
+          e,
+          excludeElements: otherStateExcludeElementList,
+          saveGroupChild: saveGroupChild,
+        );
       }
     }
 
@@ -2241,6 +2278,7 @@ class ElementStateStack {
   void saveElement(
     ElementPainter element, {
     List<ElementPainter>? excludeElements,
+    bool? saveGroupChild,
   }) {
     //base
     elementPropertyMap[element] = element.paintProperty?.copyWith();
@@ -2253,9 +2291,16 @@ class ElementStateStack {
 
     //group child
     if (element is ElementGroupPainter) {
+      if (saveGroupChild == true) {
+        elementChildrenMap[element] = element.children?.clone();
+      }
       element.children?.forEach((sub) {
         if (excludeElements?.contains(sub) != true) {
-          saveElement(sub, excludeElements: excludeElements);
+          saveElement(
+            sub,
+            excludeElements: excludeElements,
+            saveGroupChild: saveGroupChild,
+          );
         }
       });
     }
@@ -2273,6 +2318,13 @@ class ElementStateStack {
       l.i("[${classHash()}][${fromElement?.runtimeType}]restore elementPropertyMap:${elementPropertyMap.length}");
       return true;
     }());*/
+
+    //恢复children
+    elementChildrenMap.forEach((group, children) {
+      group.children?.reset(children);
+    });
+
+    //恢复paintProperty
     elementPropertyMap.forEach((element, paintProperty) {
       //debugger();
       //base
@@ -2302,6 +2354,7 @@ class ElementStateStack {
     elementPropertyMap.clear();
     elementDataMap.clear();
     elementStateMap.clear();
+    elementChildrenMap.clear();
     fromElement = null;
   }
 }

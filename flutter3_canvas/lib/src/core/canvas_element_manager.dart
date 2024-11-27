@@ -65,7 +65,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   final List<ElementPainter> beforeElements = [];
 
   /// 元素列表, 正常操作区域的元素, 参与控制操作
-  /// [paintElements]
+  /// 请勿直接赋值此对象, 因为会影响[CanvasStateData.elements]的数据
+  /// [paintElements]中绘制
+  ///
+  /// [resetElements]重试所有元素
+  ///
   List<ElementPainter> elements = [];
 
   /// 绘制在[elements]之后的元素列表, 不参与控制操作
@@ -76,7 +80,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   List<ElementPainter> get allSingleElements {
     final result = <ElementPainter>[];
-    for (var element in elements) {
+    for (final element in elements) {
       result.addAll(element.getSingleElementList());
     }
     return result;
@@ -259,6 +263,86 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     return false;
   }
 
+  /// 重置[elements]元素,
+  /// - 支持多画布[CanvasMultiManager]
+  /// - 支持撤销/回退
+  /// [CanvasStateData]
+  @api
+  @supportUndo
+  void resetElements(
+    List<ElementPainter> newElements, {
+    bool selected = false,
+    bool followPainter = false,
+    bool followContent = false,
+    UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    final oldElements = elements;
+    elements = newElements;
+    canvasDelegate.canvasMultiManager.selectedCanvasState?.elements = elements;
+
+    attachElementToCanvasDelegate(newElements);
+    canvasElementControlManager.onCanvasElementDeleted(oldElements, selectType);
+    canvasDelegate.dispatchCanvasElementListChanged(
+      oldElements,
+      newElements,
+      newElements,
+      ElementChangeType.add,
+      undoType,
+      selectType: selectType,
+    );
+    canvasDelegate.dispatchCanvasElementListAddChanged(elements, newElements);
+
+    selectedOrFollowElements(
+      newElements,
+      selected: selected,
+      followPainter: followPainter,
+      followContent: followContent,
+      selectType: selectType,
+    );
+
+    if (undoType == UndoType.normal) {
+      canvasDelegate.canvasUndoManager.add(UndoActionItem(
+        () {
+          //debugger();
+          elements = oldElements;
+          canvasDelegate.canvasMultiManager.selectedCanvasState?.elements =
+              elements;
+          canvasElementControlManager.onCanvasElementDeleted(
+              newElements, selectType);
+          detachElementToCanvasDelegate(newElements);
+          attachElementToCanvasDelegate(oldElements);
+          canvasDelegate.dispatchCanvasElementListChanged(
+            newElements,
+            oldElements,
+            oldElements,
+            ElementChangeType.update,
+            UndoType.undo,
+            selectType: selectType,
+          );
+        },
+        () {
+          //debugger();
+          elements = newElements;
+          canvasDelegate.canvasMultiManager.selectedCanvasState?.elements =
+              elements;
+          canvasElementControlManager.onCanvasElementDeleted(
+              oldElements, selectType);
+          detachElementToCanvasDelegate(oldElements);
+          attachElementToCanvasDelegate(newElements);
+          canvasDelegate.dispatchCanvasElementListChanged(
+            oldElements,
+            newElements,
+            newElements,
+            ElementChangeType.update,
+            UndoType.redo,
+            selectType: selectType,
+          );
+        },
+      ));
+    }
+  }
+
   /// 添加元素
   /// [element] 要添加的元素
   /// [selected] 是否选中对应元素
@@ -337,30 +421,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     );
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, list);
 
-    if (selected) {
-      resetSelectedElementList(list, selectType: selectType);
-      if (followContent) {
-        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
-          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
-          followPainter = false;
-        }
-      }
-      if (followPainter) {
-        canvasDelegate.followPainter(elementPainter: selectComponent);
-      }
-    } else {
-      if (followContent) {
-        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
-          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
-          followPainter = false;
-        }
-      }
-      if (followPainter) {
-        ElementGroupPainter painter = ElementGroupPainter();
-        painter.resetChildren(list);
-        canvasDelegate.followPainter(elementPainter: painter);
-      }
-    }
+    selectedOrFollowElements(
+      list,
+      selected: selected,
+      followPainter: followPainter,
+      followContent: followContent,
+      selectType: selectType,
+    );
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -396,6 +463,41 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
   }
 
+  /// 选中或者跟随元素
+  @api
+  void selectedOrFollowElements(
+    List<ElementPainter> elements, {
+    bool selected = false,
+    bool followPainter = false,
+    bool followContent = false,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    if (selected) {
+      resetSelectedElementList(elements, selectType: selectType);
+      if (followContent) {
+        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
+          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
+          followPainter = false;
+        }
+      }
+      if (followPainter) {
+        canvasDelegate.followPainter(elementPainter: selectComponent);
+      }
+    } else {
+      if (followContent) {
+        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
+          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
+          followPainter = false;
+        }
+      }
+      if (followPainter) {
+        ElementGroupPainter painter = ElementGroupPainter();
+        painter.resetChildren(elements);
+        canvasDelegate.followPainter(elementPainter: painter);
+      }
+    }
+  }
+
   /// 删除所有元素
   @api
   @supportUndo
@@ -411,7 +513,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     removeElementList(element.ofList(), undoType: undoType);
   }
 
-  /// 删除一组元素
+  /// 删除一组元素, 此方法不支持删除组内[ElementGroupPainter]单个元素
+  /// 如果删除的元素在组内, 那么整组一起删除
+  ///
+  /// [CanvasDelegate.removeElementList]支持删除组内元素
   @api
   @supportUndo
   void removeElementList(
@@ -751,6 +856,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   //region ---operate/api---
 
   /// 查找指定元素对应的父元素, 如果有
+  /// [findElementGroupPainter]
+  /// [findTopElementPainter]
   ElementGroupPainter? findElementGroupPainter(ElementPainter? element) =>
       findElementGroupPainterInChildren(element, elements);
 
@@ -774,6 +881,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 查找指定元素对应的顶层元素
+  /// [findElementGroupPainter]
+  /// [findTopElementPainter]
   ElementPainter? findTopElementPainter(ElementPainter? element) {
     for (final e in elements) {
       if (e == element) {

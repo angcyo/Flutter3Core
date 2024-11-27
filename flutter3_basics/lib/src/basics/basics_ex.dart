@@ -2338,7 +2338,7 @@ extension ListEx<T> on List<T> {
       return null;
     }
     final result = <T>[];
-    for (var element in elements) {
+    for (final element in elements) {
       if (contains(element)) {
         if (remove(element)) {
           result.add(element);
