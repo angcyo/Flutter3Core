@@ -397,6 +397,27 @@ class ElementPainter extends IPainter
 
   //region ---paint---
 
+  /// 主动更新画笔[paint]属性
+  /// [onPaintingSelfBefore]
+  @overridePoint
+  void updatePainterPaint({
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    paint
+      ..style = paintStyle ?? PaintingStyle.stroke
+      ..color = paintColor ?? Colors.black
+      ..strokeWidth = paintStrokeWidth ?? 1.toDpFromPx();
+    //
+    dispatchSelfPaintPropertyChanged(
+      paint,
+      paint,
+      PainterPropertyType.mode,
+      fromObj,
+      fromUndoType,
+    );
+  }
+
   ///[onPaintingSelfBefore]
   ///[onPaintingSelf]
   @entryPoint
@@ -410,16 +431,14 @@ class ElementPainter extends IPainter
 
   /// [painting]驱动
   /// [onPaintingSelf]绘制之前调用, 用来重新设置画笔样式等
+  /// [updatePainterPaint]
   @property
   void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
-    paint
-      ..style = paintStyle ?? PaintingStyle.stroke
-      ..color = paintColor ?? Colors.black
-      ..strokeWidth = paintStrokeWidth ?? 1.toDpFromPx();
     //抑制画布缩放
     if (paintStrokeWidthSuppressCanvasScale == true) {
       if (paint.style == PaintingStyle.stroke) {
-        paint.strokeWidth = paint.strokeWidth / paintMeta.canvasScale;
+        paint.strokeWidth =
+            (paintStrokeWidth ?? 1.toDpFromPx()) / paintMeta.canvasScale;
       }
     }
   }
@@ -2308,6 +2327,7 @@ enum PainterPropertyType {
   data,
 
   /// 元素的数据模式改变, 图片变成了文本等
+  /// 颜色改变等
   mode,
 }
 

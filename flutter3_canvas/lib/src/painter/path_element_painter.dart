@@ -15,7 +15,9 @@ class PathElementPainter extends ElementPainter {
   @dp
   Path? get operatePath => transformElementOperatePath(painterPath);
 
-  PathElementPainter();
+  PathElementPainter() {
+    paintStrokeWidthSuppressCanvasScale = true;
+  }
 
   /// [path] 要绘制路径数据
   /// [moveToZero] 是否移动到0,0点

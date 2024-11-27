@@ -560,14 +560,23 @@ extension FutureEx<T> on Future<T> {
 /// https://pub.dev/packages/hsluv
 extension ColorEx on Color {
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
-  static Color fromHex(String hexString) {
-    if (hexString.startsWith("0x")) {
-      hexString = hexString.substring(2);
+  /// [def] 失败后的默认颜色
+  static Color fromHex(String hexString, [Color def = Colors.black]) {
+    try {
+      if (hexString.startsWith("0x")) {
+        hexString = hexString.substring(2);
+      }
+      final buffer = StringBuffer();
+      if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+      buffer.write(hexString.replaceFirst('#', ''));
+      return Color(buffer.toString().toInt(radix: 16));
+    } catch (e) {
+      assert(() {
+        print(e);
+        return true;
+      }());
+      return def;
     }
-    final buffer = StringBuffer();
-    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
-    buffer.write(hexString.replaceFirst('#', ''));
-    return Color(buffer.toString().toInt(radix: 16));
   }
 
   /// 默认的[value]时argb
@@ -819,7 +828,7 @@ extension StringEx on String {
   bool? toBoolOrNull() => bool.tryParse(this, caseSensitive: false);
 
   /// 字符`#ffaabbcc`转换成Color对象
-  Color toColor() => ColorEx.fromHex(this);
+  Color toColor([Color def = Colors.black]) => ColorEx.fromHex(this, def);
 
   /// 使用json解析字符串, 返回[Map], [List]数据结构
   ///

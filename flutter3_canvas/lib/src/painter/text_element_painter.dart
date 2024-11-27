@@ -50,6 +50,8 @@ class TextElementPainter extends ElementPainter {
     }
   }
 
+  //--
+
   TextElementPainter() {
     debug = false;
   }
@@ -78,18 +80,28 @@ class TextElementPainter extends ElementPainter {
     //paintTextPainter = textPainter;
   }
 
+  //--
+
   /// 绘制前, 更新文本颜色
   @override
   void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
     super.onPaintingSelfBefore(canvas, paintMeta);
-    onSelfUpdateTextPainter();
   }
 
-  /// 绘制前, 更新文本颜色
+  /// 主动更新文本属性
   /// [onPaintingSelfBefore]
+  @override
   @overridePoint
-  void onSelfUpdateTextPainter() {
-    textPainter?.updateTextProperty(textColor: paint.color);
+  void updatePainterPaint({
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
+    super.updatePainterPaint(fromObj: fromObj, fromUndoType: fromUndoType);
+    textPainter?.updateTextProperty(
+      textColor: paintColor,
+      textStyle: paintStyle,
+      textStrokeWidth: paintStrokeWidth,
+    );
   }
 
   @override
