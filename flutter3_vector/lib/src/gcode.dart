@@ -186,9 +186,9 @@ class GCodeParser {
         //读取到坐标指令, 通常是在新的一行就读取了坐标指令
         readGCmd(lastGCmd);
         skipCurrentLine();
-      } else if (c == ' ') {
+      } else if (isIgnore(c)) {
         //空格
-      } else if (c == ';') {
+      } else if (isAnnotation(c)) {
         //注释
         readComment();
       } else if (isBreakLine(c)) {
@@ -423,7 +423,7 @@ class GCodeParser {
         isS0 = number <= 0;
         //l.d("关闭主轴转速: %d", isS0);
         break;
-      } else if (c == ';' || isBreakLine(c)) {
+      } else if (isAnnotation(c) || isBreakLine(c)) {
         break;
       }
       index++;
@@ -456,10 +456,10 @@ class GCodeParser {
           lastY += value;
         }
         haveXY = true;
-      } else if (c == ' ') {
+      } else if (isIgnore(c)) {
         //空格
         index++;
-      } else if (c == ';') {
+      } else if (isAnnotation(c)) {
         //注释
         break;
       } else if (isBreakLine(c)) {
@@ -500,10 +500,10 @@ class GCodeParser {
           lastJ += value;
         }
         haveIJ = true;
-      } else if (c == ' ') {
+      } else if (isIgnore(c)) {
         //空格
         index++;
-      } else if (c == ';') {
+      } else if (isAnnotation(c)) {
         //注释
         break;
       } else if (isBreakLine(c)) {
@@ -538,7 +538,7 @@ class GCodeParser {
         }
         haveR = true;
         break;
-      } else if (c == ';') {
+      } else if (isAnnotation(c)) {
         //注释
         break;
       } else if (isBreakLine(c)) {
@@ -566,8 +566,22 @@ class GCodeParser {
     }
   }
 
+  /// 是否是换行
+  /// 换行后, 需要处理当前数据, 并清除临时缓存
   bool isBreakLine(String c) {
     return c == '\r\n' || c == '\n' || c == '\r';
+  }
+
+  /// 是否是注释
+  /// 注释后面的数据不需要处理
+  bool isAnnotation(String c) {
+    return c == ';' || c == '#';
+  }
+
+  /// 是否是需要忽略的字符,
+  /// 忽略, 但是需要继续往后处理
+  bool isIgnore(String c) {
+    return c == ' ';
   }
 
   StringBuffer numberChars = StringBuffer();
