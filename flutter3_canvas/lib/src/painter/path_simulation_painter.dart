@@ -32,6 +32,12 @@ class PathSimulationPainter extends ElementPainter {
 
   //--
 
+  /// 移动以及光标的颜色
+  Color moveColor = Colors.red;
+
+  /// 线颜色
+  Color lineColor = Colors.black;
+
   /// 十字光标的大小
   @dp
   double crossCursorLength = 20;
@@ -70,32 +76,32 @@ class PathSimulationPainter extends ElementPainter {
         ..color = Colors.red,
     );*/
 
-    assert(() {
-      l.d("distance:$distance isStartSimulation:$isStartSimulation");
-      return true;
-    }());
     double startLength = 0;
     for (final part in simulationInfo?.partList ?? <PathSimulationPart>[]) {
       final path = part.path;
       final endLength = startLength + part.length;
+
+      /*assert(() {
+        l.d("distance:$distance ($startLength~$endLength) isStartSimulation:$isStartSimulation");
+        return true;
+      }());*/
+
       if (path != null) {
         final paint = Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth =
               (paintStrokeWidth ?? 1.toDpFromPx()) / paintMeta.canvasScale
           ..color = part.color ??
-              (part.type == PathSimulationType.line
-                  ? Colors.black
-                  : Colors.red);
-        //
-        //无动画
+              (part.type == PathSimulationType.line ? lineColor : moveColor);
+        //--
+        //debugger();
         if (distance < 0 || distance >= startLength) {
           //可能需要绘制
           if (distance < 0 || distance >= endLength) {
             //需要绘制完全的路径
             canvas.drawPath(path, paint);
 
-            if (distance < 0) {
+            if (distance < 0 || distance <= endLength) {
               //绘制光标
               final position = path.getTangentForOffset(0)?.position;
               if (position != null) {
@@ -105,8 +111,7 @@ class PathSimulationPainter extends ElementPainter {
           } else {
             //需要绘制一部分的路径
             final partStart = distance - startLength;
-            final partEnd = endLength - partStart;
-            canvas.drawPath(path.extractPath(partStart, partEnd), paint);
+            canvas.drawPath(path.extractPath(0, partStart), paint);
 
             //绘制光标
             final position = path.getTangentForOffset(partStart)?.position;
@@ -139,6 +144,7 @@ class PathSimulationPainter extends ElementPainter {
     Paint paint,
     Offset position,
   ) {
+    paint.color = moveColor;
     canvas.drawPath(
       generateCrossPath(
         center: position,
