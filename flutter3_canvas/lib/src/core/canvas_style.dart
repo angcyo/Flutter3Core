@@ -49,6 +49,9 @@ class CanvasStyle {
   /// 是否激活元素的控制操作, 关闭之后, 将无法通过手势交互控制元素
   bool enableElementControl = true;
 
+  /// 是否激活选择元素组件
+  bool enableElementSelect = true;
+
   /// 是否激活元素[PaintProperty]属性改变后, 重置旋转角度
   bool enableResetElementAngle = true;
 

@@ -719,6 +719,15 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
   TranslateControl(CanvasElementControlManager canvasElementControlManager)
       : super(canvasElementControlManager, ControlTypeEnum.translate);
 
+  //--
+
+  /// 是否激活组件事件处理
+  @override
+  bool get enableEventHandled =>
+      canvasElementControlManager.elementSelectComponent.enableEventHandled;
+
+  //--
+
   /// 是否在选择器上重复按下?
   bool _isDownSelectComponent = false;
 

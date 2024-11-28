@@ -19,12 +19,12 @@ class PathSimulationBuilder {
   void onStart() {}
 
   @entryPoint
-  void onMoveTo(double x, double y) {
+  void onMoveTo(double x, double y, {PathSimulationType? type}) {
     if (x.notEqualTo(lastX) || y.notEqualTo(lastY)) {
-      _generateSimulationInfo(PathSimulationType.move);
+      _generateSimulationInfo(type ?? PathSimulationType.move);
       //
-      _currentInfo?.path?.moveTo(lastX, lastY);
-      _currentInfo?.path?.lineTo(x, y);
+      _currentInfo?.startPoint(lastX, lastY, isMovePoint: true);
+      _currentInfo?.addPoint(x, y, isMovePoint: true);
       //
       lastX = x;
       lastY = y;
@@ -36,10 +36,10 @@ class PathSimulationBuilder {
     if (x.notEqualTo(lastX) || y.notEqualTo(lastY)) {
       if (_currentInfo?.type != PathSimulationType.line) {
         _generateSimulationInfo(PathSimulationType.line);
-        _currentInfo?.path?.moveTo(lastX, lastY);
+        _currentInfo?.startPoint(lastX, lastY, isMovePoint: true);
       }
       //
-      _currentInfo?.path?.lineTo(x, y);
+      _currentInfo?.addPoint(x, y);
       //
       lastX = x;
       lastY = y;
@@ -89,15 +89,36 @@ class PathSimulationBuilder {
   @entryPoint
   void onEndLoop() {
     _appendLast();
-    final last = _loopStack.popOrNull();
-    if (last != null) {
+    final lastPartList = _loopStack.popOrNull();
+    if (lastPartList != null) {
       final count = max(_loopCount, 1);
       final list = _operateList;
+
+      //循环的上一次的终点位置, 就是下一次循环的起始位置
+      double? endPointX;
+      double? endPointY;
       for (var i = 1; i <= count; i++) {
         //循环复制
-        for (final info in last) {
-          list.add(info.copyWith());
-        }
+        lastPartList.forEachIndexed((partIndex, part) {
+          final newPart = part.copyWith();
+          if (partIndex == 0 && i > 1) {
+            //多次循环, 第一段需要移动到上一次的终点位置
+            //并且要创建一条移动part
+            list.add(PathSimulationPart(type: PathSimulationType.empty)
+              ..startPoint(endPointX, endPointY)
+              ..addPoint(newPart._lastMovePointX, newPart._lastMovePointY)
+              ..build());
+
+            //--
+            newPart.build(
+              newStartPointX: newPart.endPointX,
+              newStartPointY: newPart.endPointY,
+            );
+          }
+          endPointX = newPart.endPointX;
+          endPointY = newPart.endPointY;
+          list.add(newPart);
+        });
       }
       if (list != _result) {
         _result.addAll(list);
@@ -121,13 +142,13 @@ class PathSimulationBuilder {
   /// 新的一段数据收集
   void _generateSimulationInfo(PathSimulationType type) {
     _appendLast();
-    _currentInfo = PathSimulationPart(type: type)..start();
+    _currentInfo = PathSimulationPart(type: type);
   }
 
   /// 最后一段数据
   void _appendLast() {
-    if (_currentInfo?.path != null) {
-      _currentInfo!.end();
+    if (_currentInfo != null) {
+      _currentInfo!.build();
       if (_currentInfo!.length > 0) {
         _operateList.add(_currentInfo!);
       }
@@ -193,7 +214,8 @@ class PathSimulationPart {
   /// 决定绘制时的颜色
   final PathSimulationType type;
 
-  /// 路径, 用来绘制
+  /// 路径, 用来绘制. 请不要直接使用此属性操作数据
+  /// 点位数据应该先存到[_points]中, 然后通过[build]方法构建数据
   Path? path;
 
   /// 绘制[path]时的颜色, 不指定则根据[type]自动设置
@@ -207,23 +229,81 @@ class PathSimulationPart {
   /// [path]的长度, 用来计算长度
   double length = 0;
 
+  //--
+
+  /// 开始的位置
+  double? _startPointX;
+  double? _startPointY;
+
+  /// 一直空移动的最后一个点
+  double? _lastMovePointX;
+  double? _lastMovePointY;
+
+  /// 存储路径的点位数据
+  /// [path]
+  final List<Offset> _points = [];
+
+  /// 获取最后一个点的坐标
+  /// 在下次循环[PathSimulationPart]时, 应该将最后一次的点坐标赋值给[_startPointX].[_startPointY]
+  double? get endPointX => _points.lastOrNull?.dx;
+
+  double? get endPointY => _points.lastOrNull?.dy;
+
   PathSimulationPart({required this.type});
 
   //--
 
   /// 开始收集相同类型的路径
   @callPoint
-  void start() {
-    path = Path();
+  void startPoint(
+    double? x,
+    double? y, {
+    bool? isMovePoint,
+  }) {
+    _startPointX = x;
+    _startPointY = y;
+    if (isMovePoint == true) {
+      _lastMovePointX = x;
+      _lastMovePointY = y;
+    }
   }
 
-  /// 结束收集路径
+  /// [isMovePoint]是否是move产生的点
   @callPoint
-  void end() {
-    if (path != null) {
-      bounds = path!.getExactBounds();
-      length = path!.length;
+  void addPoint(
+    double? x,
+    double? y, {
+    bool? isMovePoint,
+  }) {
+    if (x != null && y != null) {
+      _points.add(Offset(x, y));
     }
+    if (isMovePoint == true) {
+      _lastMovePointX = x;
+      _lastMovePointY = y;
+    }
+  }
+
+  /// 结束点位收集, 并构建路径
+  @callPoint
+  void build({
+    double? newStartPointX,
+    double? newStartPointY,
+  }) {
+    _startPointX = newStartPointX ?? _startPointX;
+    _startPointY = newStartPointY ?? _startPointY;
+    //--
+    final path = Path();
+    if (_startPointX != null && _startPointY != null) {
+      path.moveTo(_startPointX!, _startPointY!);
+    }
+    for (final point in _points) {
+      path.lineTo(point.dx, point.dy);
+    }
+    //--
+    bounds = path.getExactBounds();
+    length = path.length;
+    this.path = path;
   }
 
   ///copyWith
@@ -233,12 +313,22 @@ class PathSimulationPart {
     double? length,
     Color? color,
     Rect? bounds,
+    double? startPointX,
+    double? startPointY,
+    double? lastMovePointX,
+    double? lastMovePointY,
+    List<Offset>? points,
   }) {
     return PathSimulationPart(type: type ?? this.type)
       ..path = path ?? this.path
       ..length = length ?? this.length
       ..bounds = bounds ?? this.bounds
-      ..color = color ?? this.color;
+      ..color = color ?? this.color
+      .._startPointX = startPointX ?? _startPointX
+      .._startPointY = startPointY ?? _startPointY
+      .._lastMovePointX = lastMovePointX ?? _lastMovePointX
+      .._lastMovePointY = lastMovePointY ?? _lastMovePointY
+      .._points.addAll(points ?? _points);
   }
 }
 

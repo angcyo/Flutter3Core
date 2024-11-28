@@ -46,7 +46,7 @@ extension EventEx on PointerEvent {
 
 /// 事件处理
 mixin IHandleEventMixin {
-  /// 是否要激活手势事件处理, 需要在外层判断
+  /// 是否要激活手势事件处理, 需要在外层判断此属性的处理逻辑
   /// [PointerDispatchMixin]
   bool enableEventHandled = true;
 

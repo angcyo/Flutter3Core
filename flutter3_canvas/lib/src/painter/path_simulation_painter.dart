@@ -7,7 +7,13 @@ part of '../../flutter3_canvas.dart';
 /// [PathSimulationBuilder]
 /// [List<PathSimulationInfo>]仿真数据绘制
 class PathSimulationPainter extends ElementPainter {
+  /// 默认的仿真速度
+  /// 1mm ≈ 6.299212598425196
+  /// 0.1mm ≈ 0.6299212598425196
+  static double baseSimulationSpeed = 1.toDpFromMm();
+
   /// 仿真数据集合
+  @configProperty
   PathSimulationInfo? _simulationInfo;
 
   PathSimulationInfo? get simulationInfo => _simulationInfo;
@@ -18,29 +24,54 @@ class PathSimulationPainter extends ElementPainter {
     initPaintProperty(rect: value?.bounds);
   }
 
+  double _distance = -1;
+
   /// 绘制的距离, 不能超过[PathSimulationInfo.length]
   /// 同时也是当前光标的位置
   /// -1: 表示绘制所有
   /// other: 绘制进度
-  double distance = -1;
+  @configProperty
+  double get distance => _distance;
+
+  set distance(double value) {
+    _distance = value;
+    onSimulationDistanceChangedAction?.call();
+  }
 
   /// 模拟速度, 每一帧移动的距离
-  double simulationSpeed = 1;
+  @configProperty
+  double simulationSpeed = baseSimulationSpeed;
+
+  /// [simulationSpeed]的倍率
+  @configProperty
+  double simulationSpeedScale = 1;
 
   /// 是否开始了模拟动画
+  @configProperty
   bool isStartSimulation = false;
+
+  /// 是否绘制移动的路径类型
+  @configProperty
+  bool enableMovePath = true;
 
   //--
 
   /// 移动以及光标的颜色
+  @configProperty
   Color moveColor = Colors.red;
 
   /// 线颜色
+  @configProperty
   Color lineColor = Colors.black;
 
   /// 十字光标的大小
   @dp
+  @configProperty
   double crossCursorLength = 20;
+
+  /// 仿真距离改变通知
+  @configProperty
+  VoidCallback? onSimulationDistanceChangedAction;
 
   //--
 
@@ -49,15 +80,31 @@ class PathSimulationPainter extends ElementPainter {
   }
 
   /// 开始仿真动画
+  /// [start] 是否开始动画
+  /// [restart] 是否要重新开始
+  /// [speed] 速度
+  /// [distance] 指定当前的距离
   @api
   void startSimulation({
+    bool start = true,
+    bool restart = false,
     double? speed,
+    double? speedScale,
     double? distance,
   }) {
-    isStartSimulation = true;
-    simulationSpeed = speed ?? simulationSpeed;
-    this.distance = distance ?? 0;
-    refresh();
+    isStartSimulation = start;
+    if (start) {
+      simulationSpeed = speed ?? simulationSpeed;
+      simulationSpeedScale = speedScale ?? simulationSpeedScale;
+      if (restart) {
+        this.distance = 0;
+      } else if (this.distance <= 0) {
+        this.distance = distance ?? 0;
+      } else {
+        this.distance = distance ?? this.distance;
+      }
+      refresh();
+    }
   }
 
   /// 在当前位置暂停
@@ -76,10 +123,28 @@ class PathSimulationPainter extends ElementPainter {
         ..color = Colors.red,
     );*/
 
+    //是否绘制了光标
+    bool isDrawCross = false;
+    //当前枚举的路径长度
     double startLength = 0;
     for (final part in simulationInfo?.partList ?? <PathSimulationPart>[]) {
       final path = part.path;
       final endLength = startLength + part.length;
+
+      if (!enableMovePath) {
+        //debugger(when: isStartSimulation);
+        if (part.type != PathSimulationType.line) {
+          //跳过移动路径绘制
+          if (isStartSimulation) {
+            if (distance >= startLength && distance <= endLength) {
+              distance = endLength;
+              break;
+            }
+          }
+          startLength = endLength;
+          continue;
+        }
+      }
 
       /*assert(() {
         l.d("distance:$distance ($startLength~$endLength) isStartSimulation:$isStartSimulation");
@@ -104,8 +169,9 @@ class PathSimulationPainter extends ElementPainter {
             if (distance < 0 || distance <= endLength) {
               //绘制光标
               final position = path.getTangentForOffset(0)?.position;
-              if (position != null) {
+              if (!isDrawCross && position != null) {
                 _drawCrossPath(canvas, paintMeta, paint, position);
+                isDrawCross = true;
               }
             }
           } else {
@@ -115,8 +181,9 @@ class PathSimulationPainter extends ElementPainter {
 
             //绘制光标
             final position = path.getTangentForOffset(partStart)?.position;
-            if (position != null) {
+            if (!isDrawCross && position != null) {
               _drawCrossPath(canvas, paintMeta, paint, position);
+              isDrawCross = true;
             }
           }
         }
@@ -126,7 +193,7 @@ class PathSimulationPainter extends ElementPainter {
 
     //debugger();
     if (simulationInfo != null && isStartSimulation) {
-      distance += simulationSpeed;
+      distance += simulationSpeed * simulationSpeedScale;
       if (distance < simulationInfo!.length) {
         refresh();
       } else {

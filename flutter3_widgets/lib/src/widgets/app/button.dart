@@ -86,8 +86,11 @@ class FillGradientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final fillRefColor = fillColor ?? gradientColors?.firstOrNull;
-    //final isLightFill = fillRefColor?.isLight == true;
-    final textColor = this.textColor ?? globalTheme.textPrimaryStyle.color;
+    final isLightFill = fillRefColor?.isLight == true;
+    final textColor = this.textColor ??
+        (isLightFill
+            ? globalTheme.textPrimaryStyle.color
+            : globalTheme.themeWhiteColor);
     final disabledTextColor =
         this.disabledTextColor ?? (textColor ?? Colors.black38).disabledColor;
     return GradientButton(
@@ -173,11 +176,11 @@ class FillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
     final radius = borderRadius ??
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
-    var fillColor = this.fillColor ?? globalTheme.accentColor;
-    var textColor = this.textColor ?? globalTheme.themeWhiteColor;
+    final fillColor = this.fillColor ?? globalTheme.accentColor;
+    final textColor = this.textColor ?? globalTheme.themeWhiteColor;
 
     return Container(
             padding: padding,
@@ -257,11 +260,11 @@ class StrokeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
+    final globalTheme = GlobalTheme.of(context);
     final radius = borderRadius ??
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
-    var borderColor = this.borderColor ?? globalTheme.accentColor;
-    var textColor = this.textColor ?? borderColor;
+    final borderColor = this.borderColor ?? globalTheme.accentColor;
+    final textColor = this.textColor ?? borderColor;
     return Container(
             padding: padding,
             child: DefaultTextStyle(
@@ -362,8 +365,8 @@ class CheckButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
-    var borderColor = this.borderColor ??
+    final globalTheme = GlobalTheme.of(context);
+    final borderColor = this.borderColor ??
         globalTheme.textPlaceStyle.color ??
         globalTheme.icoNormalColor;
     return Checkbox(
@@ -455,8 +458,8 @@ class RadioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var globalTheme = GlobalTheme.of(context);
-    var normalFillColor = this.normalFillColor ??
+    final globalTheme = GlobalTheme.of(context);
+    final normalFillColor = this.normalFillColor ??
         globalTheme.textPlaceStyle.color ??
         globalTheme.icoNormalColor;
     return Radio<bool>(

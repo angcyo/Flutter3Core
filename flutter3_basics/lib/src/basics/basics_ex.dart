@@ -754,6 +754,20 @@ extension StringEx on String {
   /// 判断当前字符是否是数字
   bool get isNumber => isMatch(r'^\d+$');
 
+  /// 从字符串中提取正负整数数字
+  int? get getIntOrNull {
+    final reg = RegExp(r'[+-]?\d+');
+    final match = reg.firstMatch(this);
+    return match?.group(0)?.toInt();
+  }
+
+  /// 从字符串中提取正负小数数字
+  double? get getDoubleOrNull {
+    final reg = RegExp(r'[+-]?\d+(\.\d+)?');
+    final match = reg.firstMatch(this);
+    return match?.group(0)?.toDouble();
+  }
+
   /// 获取指定索引位置的字符串, 支持安全索引
   /// [negative] 是否要支持-索引
   String? getOrNull(int index, {bool negative = true}) {

@@ -1020,6 +1020,15 @@ class ElementSelectComponent extends ElementGroupPainter
         HandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
 
+  //
+
+  /// 是否激活组件事件处理
+  @override
+  bool get enableEventHandled =>
+      isCanvasComponentEnable && canvasStyle?.enableElementSelect != false;
+
+  //--
+
   /// 画笔
   final Paint boundsPaint = Paint();
 

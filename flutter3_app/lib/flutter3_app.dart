@@ -38,23 +38,14 @@ export 'src/mode/app_version_bean.dart';
 export 'src/mode/build_config.dart';
 
 part 'src/android_app.dart';
-
 part 'src/app_ex.dart';
-
 part 'src/app_info_interceptor.dart';
-
 part 'src/app_log.dart';
-
 part 'src/app_notifications.dart';
-
 part 'src/app_swiper_ex.dart';
-
 part 'src/mobile_ex.dart';
-
 part 'src/pages/app_update_dialog.dart';
-
 part 'src/platform/permissions.dart';
-
 part 'src/receive/receive_intent.dart';
 
 ///
