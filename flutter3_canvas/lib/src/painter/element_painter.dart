@@ -2231,6 +2231,8 @@ class PaintProperty with EquatableMixin {
 //endregion ---操作方法---
 }
 
+typedef ElementStateStackAction = void Function(ElementStateStack stack);
+
 /// 元素状态栈, 用来撤销和重做
 class ElementStateStack {
   /// 是否保存了状态, 目前只有标识作用, 没有逻辑作用
@@ -2252,6 +2254,28 @@ class ElementStateStack {
 
   /// 保存元素对应的children
   final Map<ElementGroupPainter, List<ElementPainter>?> elementChildrenMap = {};
+
+  //--
+
+  /// 当状态栈保存时, 额外执行的方法
+  @configProperty
+  final List<ElementStateStackAction> saveCallList = [];
+
+  /// 当状态栈恢复时, 额外执行的方法
+  @configProperty
+  final List<ElementStateStackAction> restoreCallList = [];
+
+  @api
+  void onSaveCall(ElementStateStackAction action) {
+    saveCallList.add(action);
+  }
+
+  @api
+  void onRestoreCall(ElementStateStackAction action) {
+    restoreCallList.add(action);
+  }
+
+  //--
 
   /// 保存信息
   /// [element] 当前的元素,
@@ -2286,6 +2310,10 @@ class ElementStateStack {
       }
     }
 
+    //--
+    for (final call in saveCallList) {
+      call(this);
+    }
     /*assert(() {
       l.i("[${classHash()}][${element.runtimeType}]save elementPropertyMap:${elementPropertyMap.length}");
       return true;
@@ -2359,6 +2387,11 @@ class ElementStateStack {
       //end
       element.onRestoreStateStack(this);
     });
+
+    //--
+    for (final call in restoreCallList) {
+      call(this);
+    }
   }
 
   /// 释放资源

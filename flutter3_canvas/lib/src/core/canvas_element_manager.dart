@@ -16,6 +16,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //---get---
 
+  /// 元素选择组件
   /// 选择框绘制, 选中元素操作, 按下选择元素
   /// [ElementSelectComponent]
   ElementSelectComponent get selectComponent =>
@@ -42,6 +43,17 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     return elementSelectComponent?.selectedChildElement;
   }
+
+  //--
+
+  /// 选中的顶级元素列表
+  List<ElementPainter>? get selectedElementList => selectComponent.children;
+
+  /// 选中的简单元素列表, 不包含[ElementGroupPainter]
+  List<ElementPainter>? get selectedSingleElementList =>
+      selectedElementList?.getAllSingleElement();
+
+  //--
 
   /// [canvasElementControlManager.isSelectedElement]
   bool get isSelectedElement => canvasElementControlManager.isSelectedElement;
