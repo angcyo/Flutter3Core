@@ -254,7 +254,7 @@ class GCodeParser {
   /// [_startParseGCodeAsync]
   Future _startParseGCodeAsync() async {
     currentFactor = mmFactor; //默认使用mm单位
-    await for (final i in loop()) {
+    await for (final _ in loop()) {
       _parseInner();
     }
   }

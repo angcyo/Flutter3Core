@@ -10,7 +10,7 @@ part of '../../flutter3_basics.dart';
 
 /// 路径采样间隙, 每隔多少距离, 采样一次路径上的点
 @dp
-const double kPathAcceptableError = 0.025; //
+const double kPathAcceptableError = 1; //2024-11-28: 1 ;// 0.025
 
 /// 矢量拟合公差
 /// 1.575dp = 0.25mm
@@ -315,6 +315,8 @@ extension PathEx on Path {
   /// [isClosed] 当前轮廓是否是闭合的
   ///
   /// [action] 返回true, 表示中断each
+  /// [eachPathMetrics]
+  /// [eachPathMetricsAsync]
   void eachPathMetrics(
     dynamic Function(
       int posIndex,
@@ -374,6 +376,72 @@ extension PathEx on Path {
       contourIndex++;
       if (interrupt) {
         break;
+      }
+    }
+  }
+
+  /// [eachPathMetrics]
+  /// [eachPathMetricsAsync]
+  Future eachPathMetricsAsync(
+    FutureOr Function(
+      int posIndex,
+      double ratio,
+      int contourIndex,
+      Offset position,
+      double angle,
+      bool isClosed,
+    ) action, [
+    @dp double? step,
+    int? contourInterval /*轮廓枚举延迟*/,
+    int? stepInterval /*步长枚举延迟*/,
+  ]) async {
+    final metrics = computeMetrics();
+    int contourIndex = 0;
+
+    //是否中断
+    bool interrupt = false;
+    await for (final metric in metrics.stream) {
+      final length = metric.length;
+      int posIndex = 0;
+      //--
+      await for (final distance in length.loop(
+        step: (step ?? kPathAcceptableError),
+        interval: stepInterval,
+      )) {
+        final tangent = metric.getTangentForOffset(distance);
+        if (tangent != null) {
+          final position = tangent.position;
+          double angle = tangent.angle;
+          final ratio = distance / length;
+          if (angle == 0) {
+            //水平方向
+            angle = 0; //清除`-0.0`的情况
+          } else if (angle > 0) {
+            //切线指向Y轴下方
+          } else {
+            //切线指向Y轴上方
+          }
+          final result = await action(
+            posIndex,
+            ratio,
+            contourIndex,
+            position,
+            angle,
+            metric.isClosed,
+          );
+          if (result is bool && result) {
+            interrupt = true;
+            break;
+          }
+        }
+        posIndex++;
+      }
+      contourIndex++;
+      if (interrupt) {
+        break;
+      }
+      if (contourInterval != null) {
+        await Future.delayed(Duration(milliseconds: contourInterval));
       }
     }
   }

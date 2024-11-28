@@ -294,6 +294,47 @@ class SvgBuilder {
     }
   }
 
+  /// [writeSvgPath]
+  /// [writeUiPath]
+  /// [writeUiPathAsync]
+  Future writeUiPathAsync(
+    UiPath? path, {
+    bool? fill,
+    Color? fillColor,
+    bool? stroke,
+    Color? strokeColor,
+    @dp double? strokeWidth,
+    Matrix4? transform,
+    String? id,
+    String? name,
+    //--
+    @dp double? pathStep,
+    @mm double? tolerance,
+    //--
+    int? contourInterval /*轮廓枚举延迟*/,
+    int? stepInterval /*步长枚举延迟*/,
+  }) async {
+    if (path != null) {
+      writeSvgPath(
+        await path.toSvgPathStringAsync(
+          pathStep: pathStep,
+          tolerance: tolerance,
+          contourInterval: contourInterval,
+          stepInterval: stepInterval,
+        ),
+        fillRule: path.fillType == PathFillType.evenOdd ? 'evenodd' : 'nonzero',
+        fill: fill,
+        fillColor: fillColor,
+        stroke: stroke,
+        strokeColor: strokeColor,
+        strokeWidth: strokeWidth,
+        transform: transform,
+        id: id,
+        name: name,
+      );
+    }
+  }
+
   /// 写入[path]元素
   ///
   /// path 元素是用来定义形状的通用元素。所有的基本形状都可以用 path 元素来创建。

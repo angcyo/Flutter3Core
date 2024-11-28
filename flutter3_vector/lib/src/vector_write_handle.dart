@@ -796,6 +796,34 @@ extension VectorPathEx on Path {
     }, handle.vectorStep);
   }
 
+  /// [handleVectorPath]
+  Future handleVectorPathAsync(
+    VectorWriteMixin handle, {
+    @dp double? pathStep,
+    @mm double? tolerance,
+    //--
+    int? contourInterval /*轮廓枚举延迟*/,
+    int? stepInterval /*步长枚举延迟*/,
+  }) async {
+    handle.enableVectorArc = false;
+    handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
+    handle.vectorStep = pathStep ?? kPathAcceptableError;
+    await eachPathMetricsAsync(
+      (posIndex, ratio, contourIndex, position, angle, isClose) {
+        handle.appendPoint(
+          posIndex,
+          ratio,
+          contourIndex,
+          position,
+          angle,
+        );
+      },
+      handle.vectorStep,
+      contourInterval,
+      stepInterval,
+    );
+  }
+
   /// 转换成矢量字符串数据
   String? toVectorString(
     VectorWriteMixin handle, {
@@ -803,6 +831,25 @@ extension VectorPathEx on Path {
     @mm double? tolerance,
   }) {
     handleVectorPath(handle, pathStep: pathStep, tolerance: tolerance);
+    return handle.getVectorString();
+  }
+
+  /// [toVectorString]
+  Future<String?> toVectorStringAsync(
+    VectorWriteMixin handle, {
+    @dp double? pathStep,
+    @mm double? tolerance,
+    //--
+    int? contourInterval /*轮廓枚举延迟*/,
+    int? stepInterval /*步长枚举延迟*/,
+  }) async {
+    await handleVectorPathAsync(
+      handle,
+      pathStep: pathStep,
+      tolerance: tolerance,
+      contourInterval: contourInterval,
+      stepInterval: stepInterval,
+    );
     return handle.getVectorString();
   }
 
@@ -863,6 +910,26 @@ extension VectorPathEx on Path {
     );
   }
 
+  /// [toSvgPathString]
+  Future<String?> toSvgPathStringAsync({
+    @dp double? pathStep,
+    @mm double? tolerance,
+    //--
+    int? contourInterval /*轮廓枚举延迟*/,
+    int? stepInterval /*步长枚举延迟*/,
+    //--
+    SvgWriteHandle? handle,
+  }) async {
+    handle ??= SvgWriteHandle();
+    return toVectorStringAsync(
+      handle,
+      pathStep: pathStep,
+      tolerance: tolerance,
+      contourInterval: contourInterval,
+      stepInterval: stepInterval,
+    );
+  }
+
   /// 输出svg xml文件格式
   /// [toSvgPathString]
   String? toSvgXmlString({
@@ -872,6 +939,27 @@ extension VectorPathEx on Path {
     SvgWriteHandle? handle,
   }) {
     final svgPath = toSvgPathString(
+      pathStep: pathStep,
+      tolerance: tolerance,
+      handle: handle,
+    );
+    if (isNil(svgPath)) {
+      return null;
+    }
+    final bounds = getExactBounds(exact, pathStep);
+    return _wrapSvgXml(bounds, (buffer) {
+      _wrapSvgPath(buffer, svgPath);
+    });
+  }
+
+  /// [toSvgXmlString]
+  Future<String?> toSvgXmlStringAsync({
+    bool? exact,
+    @dp double? pathStep,
+    @mm double? tolerance,
+    SvgWriteHandle? handle,
+  }) async {
+    final svgPath = await toSvgPathStringAsync(
       pathStep: pathStep,
       tolerance: tolerance,
       handle: handle,

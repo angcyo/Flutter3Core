@@ -2129,7 +2129,7 @@ extension WidgetEx on Widget {
   /// [reverse] 是否反向滚动
   Widget scroll({
     Axis scrollDirection = Axis.vertical,
-    ScrollPhysics? physics,
+    ScrollPhysics? physics = kScrollPhysics,
     ScrollController? controller,
     EdgeInsetsGeometry? padding,
     bool? primary,

@@ -1540,6 +1540,51 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
+  /// 异步循环生成器
+  /// 循环[this]的次数
+  /// [step] 循环的步长
+  /// ```
+  /// await for (final _ in loop()) {
+  ///   xxx;
+  ///   () async {}();
+  /// }
+  /// ```
+  /// [forceLast] 是否强制返回最后一个值
+  /// [interval] 延迟间隔毫秒
+  Stream<T> loop<T extends num>({
+    T? step,
+    bool forceLast = true,
+    int? interval,
+  }) async* {
+    try {
+      //试探一下数值的类型
+      0 as T;
+      //int 类型
+      T value = 0 as T;
+      while (value < this) {
+        yield value;
+        value = (value + (step ?? 1)) as T;
+        if (forceLast && value >= this) {
+          yield this as T;
+        } else if (interval != null) {
+          await Future.delayed(Duration(milliseconds: interval));
+        }
+      }
+    } catch (e) {
+      //浮点类型
+      T value = 0.0 as T;
+      while (value < this) {
+        yield value;
+        value = (value + (step ?? 1.0)) as T;
+        if (forceLast && value >= this) {
+          yield this as T;
+        } else if (interval != null) {
+          await Future.delayed(Duration(milliseconds: interval));
+        }
+      }
+    }
+  }
+
   ///高于60帧时, 保持60帧的刷新率
   ///三星手机会出现24帧率
   ///[refreshRate]
@@ -2007,7 +2052,6 @@ extension ListIntEx on List<int> {
 /// [ListEx]
 /// [IterableEx]
 extension IterableEx<E> on Iterable<E> {
-
   /// [Iterable] 转成流, 之后就可以使用
   /// ```
   ///
