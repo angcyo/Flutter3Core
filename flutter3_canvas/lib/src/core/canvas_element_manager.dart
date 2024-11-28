@@ -303,6 +303,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       undoType,
       selectType: selectType,
     );
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, oldElements);
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, newElements);
 
     selectedOrFollowElements(
@@ -595,12 +596,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selected = false,
     bool followRect = false,
     UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
     list ??= [];
     final old = elements.clone();
     final op = list.clone();
     _resetElementList(old, op);
 
+    canvasElementControlManager.onCanvasElementDeleted(old, selectType);
     canvasDelegate.dispatchCanvasElementListChanged(
       old,
       op,
@@ -608,9 +611,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       ElementChangeType.update,
       undoType,
     );
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, old);
+    canvasDelegate.dispatchCanvasElementListAddChanged(elements, op);
 
     if (selected) {
-      resetSelectedElementList(list);
+      resetSelectedElementList(list, selectType: selectType);
       if (followRect) {
         canvasDelegate.followPainter(elementPainter: selectComponent);
       }
@@ -704,8 +709,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void selectElement(
     ElementPainter? element, {
     bool showRect = true,
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
-    resetSelectedElementList(element == null ? [] : [element]);
+    resetSelectedElementList(element == null ? [] : [element],
+        selectType: selectType);
     if (showRect) {
       canvasDelegate.followPainter(elementPainter: element);
     }
@@ -715,8 +722,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void selectAllElement({
     bool showRect = true,
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
-    resetSelectedElementList(elements);
+    resetSelectedElementList(elements, selectType: selectType);
     if (showRect) {
       canvasDelegate.followRect(rect: elements.allElementBounds);
     }
@@ -774,22 +782,30 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 清空选中的元素
   @api
-  void clearSelectedElement() {
-    resetSelectedElementList(null);
+  void clearSelectedElement({
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    resetSelectedElementList(null, selectType: selectType);
   }
 
   /// 如果操作的元素被选中, 则清空所有选中的元素
   @api
-  void clearSelectedElementIf(ElementPainter? element) {
+  void clearSelectedElementIf(
+    ElementPainter? element, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     if (isElementSelected(element)) {
-      clearSelectedElement();
+      clearSelectedElement(selectType: selectType);
     }
   }
 
   @api
-  void clearAnySelectedElementIf(List<ElementPainter>? elementList) {
+  void clearAnySelectedElementIf(
+    List<ElementPainter>? elementList, {
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     if (isAnyElementSelected(elementList)) {
-      clearSelectedElement();
+      clearSelectedElement(selectType: selectType);
     }
   }
 
@@ -911,6 +927,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 如果移除的是[ElementGroupPainter]内部的子元素, 那么顶层的[ElementGroupPainter]也会被移除
   ///
   /// 此方法不支持undo操作, 请使用[removeElementList]
+  /// @return 被移除的元素列表
   @api
   List<ElementPainter>? removeElementListFromTop(List<ElementPainter>? list) {
     if (list == null || isNullOrEmpty(list)) {
@@ -980,6 +997,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     List<ElementPainter>? newElementList, {
     UndoType undoType = UndoType.normal,
     bool keepIndex = false,
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (isNullOrEmpty(oldElementList) && isNullOrEmpty(newElementList)) {
       assert(() {
@@ -997,7 +1015,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         : -1;
 
     //elements.removeAll(oldElementList ?? []);
-    removeElementListFromTop(oldElementList);
+    final removeList = removeElementListFromTop(oldElementList);
     if (index >= 0 && newElementList != null) {
       elements.insertAll(index, newElementList);
     } else {
@@ -1010,6 +1028,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     attachElementToCanvasDelegate(newElementList);
 
     final List<ElementPainter> op = newElementList ?? [];
+    canvasElementControlManager.onCanvasElementDeleted(
+        removeList ?? [], selectType);
     canvasDelegate.dispatchCanvasElementListChanged(
       old,
       elements,
@@ -1017,6 +1037,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       ElementChangeType.replace,
       undoType,
     );
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, removeList);
+    canvasDelegate.dispatchCanvasElementListAddChanged(elements, newElementList);
+
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -1051,14 +1074,17 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     //选中组合元素
-    resetSelectedElementList(op);
+    resetSelectedElementList(op, selectType: selectType);
   }
 
   /// 组合元素
   @api
   @supportUndo
-  void groupElement(List<ElementPainter>? elements,
-      {UndoType undoType = UndoType.normal}) {
+  void groupElement(
+    List<ElementPainter>? elements, {
+    UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     if (elements == null || elements.length < 2) {
       assert(() {
         l.d('不满足组合条件');
@@ -1077,20 +1103,26 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     newList.add(group);
 
     //事件
+    canvasElementControlManager.onCanvasElementDeleted(elements, selectType);
     canvasDelegate.dispatchCanvasGroupChanged(group, elements);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, elements);
+    canvasDelegate.dispatchCanvasElementListAddChanged(elements, [group]);
 
     //重置元素列表
     resetElementList(newList, undoType: undoType);
 
     //选中组合元素
-    resetSelectedElementList([group]);
+    resetSelectedElementList([group], selectType: selectType);
   }
 
   /// 解组元素
   @api
   @supportUndo
-  void ungroupElement(ElementPainter? group,
-      {UndoType undoType = UndoType.normal}) {
+  void ungroupElement(
+    ElementPainter? group, {
+    UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
     if (group == null || group is! ElementGroupPainter) {
       assert(() {
         l.d('不是[ElementGroupPainter]元素,不能解组');
@@ -1119,13 +1151,16 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //group.resetChildren(null, false);
 
     //事件
+    canvasElementControlManager.onCanvasElementDeleted([group], selectType);
     canvasDelegate.dispatchCanvasUngroupChanged(group);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, [group]);
+    canvasDelegate.dispatchCanvasElementListAddChanged(elements, children);
 
     //重置元素列表
     resetElementList(newList, undoType: undoType);
 
     //选中组合元素
-    resetSelectedElementList(children);
+    resetSelectedElementList(children, selectType: selectType);
   }
 
   /// 对齐组内元素

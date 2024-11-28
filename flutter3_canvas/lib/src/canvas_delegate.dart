@@ -671,8 +671,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [list] 有可能是[CanvasElementManager.beforeElements].[CanvasElementManager.elements].[CanvasElementManager.afterElements]
   void dispatchCanvasElementListAddChanged(
     List<ElementPainter> list,
-    List<ElementPainter> op,
+    List<ElementPainter>? op,
   ) {
+    if (op == null || isNil(op)) {
+      return;
+    }
     _eachCanvasListener((element) {
       element.onCanvasElementListAddChanged?.call(list, op);
     });
@@ -682,8 +685,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [list] 有可能是[CanvasElementManager.beforeElements].[CanvasElementManager.elements].[CanvasElementManager.afterElements]
   void dispatchCanvasElementListRemoveChanged(
     List<ElementPainter> list,
-    List<ElementPainter> op,
+    List<ElementPainter>? op,
   ) {
+    if (op == null || isNil(op)) {
+      return;
+    }
     _eachCanvasListener((element) {
       element.onCanvasElementListRemoveChanged?.call(list, op);
     });
