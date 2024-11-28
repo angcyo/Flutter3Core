@@ -95,7 +95,35 @@ class GCodeParser {
       simulationBuilder = PathSimulationBuilder()..onStart();
     }
     //--
-    startParseGCode();
+    _startParseGCode();
+    simulationBuilder?.onEnd();
+    /*final scanner = StringScanner(gcode);
+    while (!scanner.isDone) {
+      final chat = String.fromCharCode(scanner.readChar());
+      l.d(chat);
+    }*/
+    return _result;
+  }
+
+  /// 异步解析
+  @entryPoint
+  Future<Path?> parseAsync(
+    String? gcode, {
+    bool? simulation,
+  }) async {
+    if (gcode == null || isNil(gcode)) {
+      return null;
+    }
+    //--
+    gcodeText = gcode;
+    length = gcodeText.length;
+    //--
+    this.simulation = simulation;
+    if (simulation == true) {
+      simulationBuilder = PathSimulationBuilder()..onStart();
+    }
+    //--
+    await _startParseGCodeAsync();
     simulationBuilder?.onEnd();
     /*final scanner = StringScanner(gcode);
     while (!scanner.isDone) {
@@ -204,35 +232,57 @@ class GCodeParser {
   double lastJ = 0;
   double lastR = 0;
 
+  /// 异步循环生成器
+  Stream<int> loop() async* {
+    while (index < length) {
+      yield index;
+    }
+  }
+
   /// 开始解析GCode, 入口
-  void startParseGCode() {
+  /// [_startParseGCode]
+  /// [_startParseGCodeAsync]
+  void _startParseGCode() {
     currentFactor = mmFactor; //默认使用mm单位
     while (index < length) {
-      readPreCmd();
-      final c = gcodeText[index].toUpperCase();
-      //l.d("开始解析1:%ld %c", index, c);
-      if (c == 'G' || c == 'F' || c == 'M') {
-        //读取到指令
-        readCmd(c);
-        skipCurrentLine();
-      } else if (c == 'X' || c == 'Y' || c == 'I' || c == 'J') {
-        //读取到坐标指令, 通常是在新的一行就读取了坐标指令
-        _handleGCmd(lastGCmd);
-        skipCurrentLine();
-      } else if (isIgnore(c)) {
-        //空格
-      } else if (isAnnotation(c)) {
-        //注释
-        readComment();
-      } else if (isBreakLine(c)) {
-        //换行
-        line++;
-      } else {
-        //其他字符
-      }
-      index++;
+      _parseInner();
     }
     //l.d("解析结束:%ld", index);
+  }
+
+  /// [_startParseGCode]
+  /// [_startParseGCodeAsync]
+  Future _startParseGCodeAsync() async {
+    currentFactor = mmFactor; //默认使用mm单位
+    await for (final i in loop()) {
+      _parseInner();
+    }
+  }
+
+  void _parseInner() {
+    readPreCmd();
+    final c = gcodeText[index].toUpperCase();
+    //l.d("开始解析1:%ld %c", index, c);
+    if (c == 'G' || c == 'F' || c == 'M') {
+      //读取到指令
+      readCmd(c);
+      skipCurrentLine();
+    } else if (c == 'X' || c == 'Y' || c == 'I' || c == 'J') {
+      //读取到坐标指令, 通常是在新的一行就读取了坐标指令
+      _handleGCmd(lastGCmd);
+      skipCurrentLine();
+    } else if (isIgnore(c)) {
+      //空格
+    } else if (isAnnotation(c)) {
+      //注释
+      readComment();
+    } else if (isBreakLine(c)) {
+      //换行
+      line++;
+    } else {
+      //其他字符
+    }
+    index++;
   }
 
   /// 当读到有效指令之后
@@ -888,6 +938,13 @@ extension GCodeStringEx on String {
   PathSimulationBuilder toSimulationFromGCode() {
     GCodeParser parser = GCodeParser();
     parser.parse(this, simulation: true);
+    return parser.simulationBuilder!;
+  }
+
+  /// [toSimulationFromGCode]
+  Future<PathSimulationBuilder> toSimulationFromGCodeAsync() async {
+    GCodeParser parser = GCodeParser();
+    await parser.parseAsync(this, simulation: true);
     return parser.simulationBuilder!;
   }
 }
