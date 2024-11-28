@@ -1051,9 +1051,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     //选中组合元素
-    if (!isNullOrEmpty(op)) {
-      resetSelectedElementList(op);
-    }
+    resetSelectedElementList(op);
   }
 
   /// 组合元素
