@@ -27,6 +27,14 @@ String get $uuid {
   return uuid();
 }
 
+/// 等待[milliseconds]毫秒
+Future wait([int milliseconds = 1]) =>
+    Future.delayed(Duration(milliseconds: milliseconds));
+
+/// 延迟执行
+Future delayed([Duration? duration]) =>
+    Future.delayed(duration ?? Duration(milliseconds: 1));
+
 /// ```
 /// // Generate a v1 (time-based) id
 /// uuid.v1(); // -> '6c84fb90-12c4-11e1-840d-7b25c5ee775a'
