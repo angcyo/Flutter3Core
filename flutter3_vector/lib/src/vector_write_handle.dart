@@ -590,6 +590,9 @@ class GCodeWriteHandle with VectorWriteMixin {
   /// 关闭主轴
   static String? gcodeToolOff([bool auto = false]) => auto ? null : "M5S0";
 
+  /// 间隔字符
+  String space = "";
+
   //region ---数值转换---
 
   /// 默认GCode使用毫米单位, 入参的数据需要时dp单位
@@ -694,7 +697,7 @@ class GCodeWriteHandle with VectorWriteMixin {
     final y = position.dy.toDigits(digits: digits);
     if (point.type == VectorWriteMixin.sPointTypeStart) {
       _writeToolOff();
-      stringBuffer?.writeln('G0X${x}Y$y');
+      stringBuffer?.writeln('G0${space}X$x${space}Y$y');
     } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
       if (useCutData && data == null) {
         // 通过data来判断是否需要使用切割数据, 防止切割数据死循环
@@ -706,30 +709,30 @@ class GCodeWriteHandle with VectorWriteMixin {
             _fillCutGCodeByCircle(startPosition.position, point.position);
             if (i != cutDataLoopCount - 1) {
               //多次循环数据的话, 需要移动到起点
-              stringBuffer?.writeln('G0X${x}Y$y');
+              stringBuffer?.writeln('G0${space}X$x${space}Y$y');
             }
           }
         }
       } else {
         _writeToolOn();
-        stringBuffer?.write('G1X${x}Y$y');
+        stringBuffer?.write('G1${space}X$x${space}Y$y');
         _writePowerSpeed();
       }
     } else if (point.type.have(VectorWriteMixin.sPointTypeArc)) {
       _writeToolOn();
       if (point.sweepFlag == 1) {
         //顺时针
-        stringBuffer?.write("G3");
+        stringBuffer?.write("G3$space");
       } else {
         //逆时针
-        stringBuffer?.write("G2");
+        stringBuffer?.write("G2$space");
       }
       final ij = transformPoint(Offset(
           point.circleCenter!.dx - point.circleStart!.dx,
           point.circleCenter!.dy - point.circleStart!.dy));
-      stringBuffer?.write('X${x}Y$y');
+      stringBuffer?.write('X$x${space}Y$y');
       stringBuffer?.writeln(
-          'I${ij.dx.toDigits(digits: digits)}J${ij.dy.toDigits(digits: digits)}');
+          '${space}I${ij.dx.toDigits(digits: digits)}${space}J${ij.dy.toDigits(digits: digits)}');
       _writePowerSpeed();
     }
     super.onWritePoint(point, data);
@@ -1019,6 +1022,8 @@ extension VectorPathEx on Path {
     int? speed,
     bool? autoLaser, //必须指定才会自动生成
     int digits = 3,
+    //--
+    String space = "",
   }) {
     final buffer = StringBuffer();
     //圆的直径
@@ -1063,9 +1068,9 @@ extension VectorPathEx on Path {
           ((position.dy - startOffset.dy) / factor).toDigits(digits: digits);
 
       buffer.writelnIf(toolOff);
-      buffer.writelnIf('G0X${x}Y$y');
+      buffer.writelnIf('G0${space}X$x${space}Y$y');
       buffer.writelnIf(toolOn);
-      buffer.writelnIf("G2X${x}Y${y}I${i}J$j");
+      buffer.writelnIf("G2${space}X$x${space}Y$y${space}I$i${space}J$j");
     }, step);
     buffer.writeIf(footer ?? "");
     return buffer.toString();
