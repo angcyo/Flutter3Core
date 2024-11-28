@@ -46,9 +46,11 @@ class PathSimulationPainter extends ElementPainter {
   @configProperty
   double simulationSpeedScale = 1;
 
-  /// 是否开始了模拟动画
+  /// 模拟动画状态
   @configProperty
-  bool isStartSimulation = false;
+  SimulationState simulationState = SimulationState.init;
+
+  bool get isStartSimulation => simulationState == SimulationState.start;
 
   /// 是否绘制移动的路径类型
   @configProperty
@@ -87,30 +89,41 @@ class PathSimulationPainter extends ElementPainter {
   @api
   void startSimulation({
     bool start = true,
-    bool restart = false,
     double? speed,
     double? speedScale,
     double? distance,
   }) {
-    isStartSimulation = start;
     if (start) {
       simulationSpeed = speed ?? simulationSpeed;
       simulationSpeedScale = speedScale ?? simulationSpeedScale;
-      if (restart) {
-        this.distance = 0;
-      } else if (this.distance <= 0) {
-        this.distance = distance ?? 0;
+
+      if (isStartSimulation) {
+        //重复开始
+        return;
+      }
+      simulationState = SimulationState.start;
+      if (simulationState == SimulationState.pause) {
+        //恢复动画
       } else {
-        this.distance = distance ?? this.distance;
+        //重新开始动画
+        this.distance = distance ?? max(0, this.distance);
       }
       refresh();
+    } else {
+      if (isStartSimulation) {
+        simulationState = SimulationState.pause;
+      } else {
+        simulationState = SimulationState.init;
+      }
     }
   }
 
-  /// 在当前位置暂停
+  /// 暂停仿真动画
   @api
   void pauseSimulation() {
-    isStartSimulation = false;
+    if (isStartSimulation) {
+      simulationState = SimulationState.pause;
+    }
   }
 
   @override
@@ -131,7 +144,7 @@ class PathSimulationPainter extends ElementPainter {
       final path = part.path;
       final endLength = startLength + part.length;
 
-      if (!enableMovePath) {
+      /*if (!enableMovePath) {
         //debugger(when: isStartSimulation);
         if (part.type != PathSimulationType.line) {
           //跳过移动路径绘制
@@ -144,7 +157,7 @@ class PathSimulationPainter extends ElementPainter {
           startLength = endLength;
           continue;
         }
-      }
+      }*/
 
       /*assert(() {
         l.d("distance:$distance ($startLength~$endLength) isStartSimulation:$isStartSimulation");
@@ -164,7 +177,7 @@ class PathSimulationPainter extends ElementPainter {
           //可能需要绘制
           if (distance < 0 || distance >= endLength) {
             //需要绘制完全的路径
-            canvas.drawPath(path, paint);
+            _drawPath(canvas, paint, path, part);
 
             if (distance < 0 || distance <= endLength) {
               //绘制光标
@@ -177,7 +190,7 @@ class PathSimulationPainter extends ElementPainter {
           } else {
             //需要绘制一部分的路径
             final partStart = distance - startLength;
-            canvas.drawPath(path.extractPath(0, partStart), paint);
+            _drawPath(canvas, paint, path.extractPath(0, partStart), part);
 
             //绘制光标
             final position = path.getTangentForOffset(partStart)?.position;
@@ -198,9 +211,22 @@ class PathSimulationPainter extends ElementPainter {
         refresh();
       } else {
         distance = simulationInfo!.length;
-        isStartSimulation = false;
+        simulationState = SimulationState.finish;
         refresh();
       }
+    }
+  }
+
+  /// 绘制路径
+  void _drawPath(
+    Canvas canvas,
+    Paint paint,
+    Path path,
+    PathSimulationPart part,
+  ) {
+    if (part.type == PathSimulationType.line ||
+        (part.type != PathSimulationType.line && enableMovePath)) {
+      canvas.drawPath(path, paint);
     }
   }
 
@@ -220,4 +246,19 @@ class PathSimulationPainter extends ElementPainter {
       paint,
     );
   }
+}
+
+/// 仿真状态
+enum SimulationState {
+  /// 初始化
+  init,
+
+  /// 开始了
+  start,
+
+  /// 暂停中
+  pause,
+
+  /// 结束了
+  finish,
 }

@@ -2007,6 +2007,14 @@ extension ListIntEx on List<int> {
 /// [ListEx]
 /// [IterableEx]
 extension IterableEx<E> on Iterable<E> {
+
+  /// [Iterable] 转成流, 之后就可以使用
+  /// ```
+  ///
+  /// ```
+  ///
+  Stream<E> get stream => Stream.fromIterable(this);
+
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 
