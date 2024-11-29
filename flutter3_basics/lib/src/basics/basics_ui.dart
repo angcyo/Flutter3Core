@@ -3061,8 +3061,17 @@ extension NavigatorEx on BuildContext {
   /// [RoutePredicate]
   void popToRoot([
     bool rootNavigator = false,
+    RoutePredicate? predicate,
   ]) {
-    return navigatorOf(rootNavigator).popToRoot();
+    navigatorOf(rootNavigator).popToRoot(predicate);
+  }
+
+  /// 移除指定的路由
+  void removeRouteIf([
+    Route<dynamic>? route,
+    bool rootNavigator = false,
+  ]) {
+    navigatorOf(rootNavigator).removeRouteIf(route);
   }
 }
 
@@ -3154,7 +3163,7 @@ extension NavigatorStateEx on NavigatorState {
   /// [RoutePredicate]
   void popToRoot([RoutePredicate? predicate]) {
     final root = ModalRoute.withName('/');
-    return popUntil(predicate ?? root);
+    popUntil(predicate ?? root);
   }
 
   /// 移除指定的路由

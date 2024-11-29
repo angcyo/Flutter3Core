@@ -194,6 +194,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 画布回调监听
   final Set<CanvasListener> canvasListeners = {};
 
+  /// 用来存储自定义的工程信息使用
+  @flagProperty
+  dynamic project;
+
   /// 画布数据, 用来存储自定义的数据
   @flagProperty
   final Map<String, dynamic> dataMap = {};
@@ -868,21 +872,21 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     properties.add(IntProperty("重绘次数", paintCount));
     properties.add(DiagnosticsProperty('代理上下文', delegateContext));
     properties.add(DiagnosticsProperty('画布样式', canvasStyle));
+    properties.add(FlagProperty('有元素改变', value: hasElementChangedFlag));
     properties.add(canvasViewBox.toDiagnosticsNode(
       name: '视口控制',
       style: DiagnosticsTreeStyle.sparse,
     ));
     properties.add(DiagnosticsProperty<Ticker?>('ticker', _ticker));
 
-    properties.add(DiagnosticsProperty<bool>(
-        "重置旋转角度",
-        canvasElementManager
+    properties.add(FlagProperty("重置旋转角度",
+        value: canvasElementManager
             .canvasElementControlManager.enableResetElementAngle));
-    properties.add(DiagnosticsProperty<bool>("激活控制交互",
-        canvasElementManager.canvasElementControlManager.enableElementControl));
-    properties.add(DiagnosticsProperty<bool>(
-        "激活点击元素外取消选择",
-        canvasElementManager
+    properties.add(FlagProperty("激活控制交互",
+        value: canvasElementManager
+            .canvasElementControlManager.enableElementControl));
+    properties.add(FlagProperty("激活点击元素外取消选择",
+        value: canvasElementManager
             .canvasElementControlManager.enableOutsideCancelSelectElement));
 
     properties.add(canvasPaintManager.toDiagnosticsNode(
@@ -895,6 +899,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       name: '元素管理',
       style: DiagnosticsTreeStyle.sparse,
     ));
+
+    //--
+
+    properties.add(DiagnosticsProperty('project', project));
+    properties.add(DiagnosticsProperty('dataMap', dataMap));
   }
 
 //endregion ---diagnostic---
