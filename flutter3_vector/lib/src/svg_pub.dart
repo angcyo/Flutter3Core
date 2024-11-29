@@ -75,7 +75,7 @@ extension SvgStringEx on String {
     bool isMmUnit = false,
   }) {
     final path = parseSvgPath(this, failSilently: failSilently);
-    scale ??= isMmUnit ? 1.toDpFromMm() : 1.0;
+    scale ??= isMmUnit ? $mmFactor : 1.0;
     if (scale != 1.0) {
       final scaleMatrix = Matrix4.identity()..scale(scale);
       return path.transformPath(scaleMatrix);

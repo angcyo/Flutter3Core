@@ -10,7 +10,7 @@ class PathSimulationPainter extends ElementPainter {
   /// 默认的仿真速度
   /// 1mm ≈ 6.299212598425196
   /// 0.1mm ≈ 0.6299212598425196
-  static double baseSimulationSpeed = 1.toDpFromMm();
+  static double baseSimulationSpeed = $mmFactor;
 
   /// 仿真数据集合
   @configProperty

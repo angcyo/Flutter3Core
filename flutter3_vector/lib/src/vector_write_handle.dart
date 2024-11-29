@@ -15,6 +15,9 @@ const kGCodeAutoHeader = 'G21\nG90\nM8\nM5\nM4\n';
 /// gcode 默认尾部
 const kGCodeFooter = 'M5\nM9\nG1S0\nM2\n';
 
+/// gcode 指令间隙
+const kGCodeSpace = '';
+
 /// 默认切割数据使用的宽度/直径
 @mm
 const sDefaultCutWidth = 0.3;
@@ -591,7 +594,7 @@ class GCodeWriteHandle with VectorWriteMixin {
   static String? gcodeToolOff([bool auto = false]) => auto ? null : "M5S0";
 
   /// 间隔字符
-  String space = "";
+  String space = kGCodeSpace;
 
   //region ---数值转换---
 
@@ -1023,7 +1026,7 @@ extension VectorPathEx on Path {
     bool? autoLaser, //必须指定才会自动生成
     int digits = 3,
     //--
-    String space = "",
+    String space = kGCodeSpace,
   }) {
     final buffer = StringBuffer();
     //圆的直径
@@ -1045,7 +1048,7 @@ extension VectorPathEx on Path {
         autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
 
     //mm单位缩放因子
-    double? factor = 1.toDpFromMm();
+    double? factor = $mmFactor;
 
     final radius = diameter / 2;
     /*final i = (radius / factor).toDigits(digits: digits);

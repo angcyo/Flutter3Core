@@ -1206,6 +1206,7 @@ class ElementPainter extends IPainter
   /// 如果所有对象都具有此属性, 则说明可以进行布尔运算.
   ///
   /// [VectorPathEx.toSvgPathString]
+  @dp
   @output
   @overridePoint
   Path? get elementOutputPath {
@@ -1217,6 +1218,7 @@ class ElementPainter extends IPainter
 
   /// 获取元素的transform后所有输出[Path], 支持[ElementGroupPainter]
   /// 其他元素可能需要重写[elementOutputPath]方法
+  @dp
   @output
   List<Path> get elementOutputPathList {
     final result = <Path>[];

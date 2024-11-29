@@ -107,7 +107,11 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
           crossAxisAlignment: CrossAxisAlignment.center);
     }
 
-    final numberStr = formatNumber(_currentValue, numType: widget._numType);
+    final numberStr = formatNumber(
+      _currentValue,
+      numType: widget._numType,
+      digits: widget.maxDigits,
+    );
     final number = buildNumberWidget(context, numberStr, onTap: () async {
       final value = await context.showWidgetDialog(NumberKeyboardDialog(
         number: _currentValue,

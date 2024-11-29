@@ -10,7 +10,7 @@ part of '../../flutter3_basics.dart';
 
 /// 路径采样间隙, 每隔多少距离, 采样一次路径上的点
 @dp
-const double kPathAcceptableError = 1; //2024-11-28: 1 ;// 0.025
+const double kPathAcceptableError = 0.5; //2024-11-28: 1 ;// 0.025
 
 /// 矢量拟合公差
 /// 1.575dp = 0.25mm
@@ -532,6 +532,26 @@ extension PathEx on Path {
     );
 
     return transformPath(scale);
+  }
+
+  /// [scaleToMm]
+  @mm
+  Path toPathMm() => scaleToUnit(IUnit.mm);
+
+  /// [scaleToUnit]
+  @mm
+  Path scaleToMm() => scaleToUnit(IUnit.mm);
+
+  /// 将路径缩放到指定的单位大小
+  /// @return 返回新的路径
+  @unit
+  Path scaleToUnit([
+    IUnit unit = IUnit.mm,
+    Offset? scaleAnchor = Offset.zero,
+  ]) {
+    final scale = 1.toUnitFromDp(unit);
+    final scaleMatrix = createScaleMatrix(scale: scale, anchor: scaleAnchor);
+    return transformPath(scaleMatrix);
   }
 }
 

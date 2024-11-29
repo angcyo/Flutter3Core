@@ -46,6 +46,9 @@ const double sInchesPerPT = (1.0 / 72);
 /// mm
 const double sInchesPerMM = (1.0 / 25.4);
 
+/// 将dp变换成mm, 需要除以的因子
+double get $mmFactor => 1.toDpFromMm();
+
 abstract class IUnit {
   /// 单位常量
   static const px = PixelUnit();

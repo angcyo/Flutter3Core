@@ -1447,11 +1447,17 @@ extension RectEx on Rect {
 
   /// dp单位的坐标, 转换成mm单位的坐标
   @mm
-  Rect toRectMm() => Rect.fromLTRB(
-        left.toMmFromDp(),
-        top.toMmFromDp(),
-        right.toMmFromDp(),
-        bottom.toMmFromDp(),
+  Rect toRectMm({
+    double? left,
+    double? top,
+    double? right,
+    double? bottom,
+  }) =>
+      Rect.fromLTRB(
+        left ?? this.left.toMmFromDp(),
+        top ?? this.top.toMmFromDp(),
+        right ?? this.right.toMmFromDp(),
+        bottom ?? this.bottom.toMmFromDp(),
       );
 
   /// mm单位的坐标, 转换成dp单位的坐标

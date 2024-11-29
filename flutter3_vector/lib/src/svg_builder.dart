@@ -90,11 +90,11 @@ class SvgBuilder {
     if (boundsUnit != null) {
       if (bounds != null) {
         buffer.write(
-            'x="${formatValue(bounds.left.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
-            'y="${formatValue(bounds.top.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
+            'acy:x="${formatValue(bounds.left.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
+            'acy:y="${formatValue(bounds.top.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
         buffer.write(
-            'width="${formatValue(bounds.width.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
-            'height="${formatValue(bounds.height.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
+            'acy:width="${formatValue(bounds.width.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
+            'acy:height="${formatValue(bounds.height.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
       }
       if (writeUnitTransform) {
         final scale = 1.toUnitFromDp(boundsUnit);
@@ -313,15 +313,18 @@ class SvgBuilder {
     //--
     int? contourInterval /*轮廓枚举延迟*/,
     int? stepInterval /*步长枚举延迟*/,
+    //--
+    dynamic debugLabel,
   }) async {
     if (path != null) {
+      final svgPath = await path.toSvgPathStringAsync(
+        pathStep: pathStep,
+        tolerance: tolerance,
+        contourInterval: contourInterval,
+        stepInterval: stepInterval,
+      );
       writeSvgPath(
-        await path.toSvgPathStringAsync(
-          pathStep: pathStep,
-          tolerance: tolerance,
-          contourInterval: contourInterval,
-          stepInterval: stepInterval,
-        ),
+        svgPath,
         fillRule: path.fillType == PathFillType.evenOdd ? 'evenodd' : 'nonzero',
         fill: fill,
         fillColor: fillColor,

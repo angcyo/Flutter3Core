@@ -564,14 +564,19 @@ Matrix4 createTranslateMatrix({
 }
 
 /// 在指定锚点[anchor],创建一个缩放矩阵
-Matrix4 createScaleMatrix({double? sx, double? sy, Offset? anchor}) {
+Matrix4 createScaleMatrix({
+  double? scale,
+  double? sx,
+  double? sy,
+  Offset? anchor,
+}) {
   anchor ??= Offset.zero;
-  final translation = vector.Vector3(anchor.dx, anchor.dy, 0);
-  final scale = vector.Vector3(sx ?? 1.0, sy ?? 1.0, 1.0);
+  final tv = vector.Vector3(anchor.dx, anchor.dy, 0);
+  final sv = vector.Vector3(scale ?? sx ?? 1.0, scale ?? sy ?? 1.0, 1.0);
   return Matrix4.identity()
-    ..translate(translation)
-    ..scale(scale)
-    ..translate(-translation);
+    ..translate(tv)
+    ..scale(sv)
+    ..translate(-tv);
 }
 
 /// 在指定锚点[anchor],创建一个旋转矩阵
