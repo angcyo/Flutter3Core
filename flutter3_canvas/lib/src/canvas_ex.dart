@@ -128,11 +128,15 @@ extension CanvasElementPainterEx on ElementPainter {
   Future<UiImage?> rasterizeElement({
     Rect? elementBounds,
     EdgeInsets? extend,
+    int? maxWidth,
+    int? maxHeight,
   }) =>
       CanvasPaintManager.rasterizeElement(
         this,
         elementBounds: elementBounds,
         extend: extend,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
       );
 
   /// 获取[ElementGroupPainter]的子元素列表

@@ -218,9 +218,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 上一次请求刷新的时间, 毫秒
   Duration lastRequestRefreshTime = Duration.zero;
 
-  /// 空闲超时时长, 画布无操作多久之后, 触发空闲回调
-  /// [dispatchCanvasIdle]
-  Duration idleTimeout = 10.seconds;
+  /// 空闲超时时间
+  Duration get idleTimeout => canvasStyle.idleTimeout;
 
   /// 是否有元素属性发生过改变
   /// [dispatchCanvasElementPropertyChanged]

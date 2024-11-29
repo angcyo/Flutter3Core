@@ -15,6 +15,9 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     ElementPainter? element, {
     Rect? elementBounds,
     EdgeInsets? extend,
+    BoxFit? fit,
+    int? maxWidth,
+    int? maxHeight,
   }) async {
     /*assert(() {
       extend = EdgeInsets.zero;
@@ -31,19 +34,44 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //保证1个像素的大小
     final width = max(1, bounds.width);
     final height = max(1, bounds.height);
-    final size = Size(
+    Size size = Size(
       width + (extend?.horizontal ?? 0),
       height + (extend?.vertical ?? 0),
     );
-    final rect =
-        Rect.fromLTWH(bounds.left, bounds.top, size.width, size.height);
+    final src = Rect.fromLTWH(bounds.left, bounds.top, size.width, size.height);
+    //--
+    if (maxWidth != null || maxHeight != null) {
+      double? scaleWidth;
+      if (maxWidth != null) {
+        if (size.width > maxWidth) {
+          //宽度超出, 需要缩小宽度
+          scaleWidth = maxWidth / size.width;
+        }
+      }
+      double? scaleHeight;
+      if (maxHeight != null) {
+        if (size.height > maxHeight) {
+          scaleHeight = maxHeight / size.height;
+        }
+      }
+      if (scaleWidth != null && scaleHeight != null) {
+        //都需要缩小
+        final scale = min(scaleWidth, scaleHeight);
+        size = Size(size.width * scale, size.height * scale);
+      } else if (scaleWidth != null || scaleHeight != null) {
+        final scale = scaleWidth ?? scaleHeight ?? 1;
+        size = Size(size.width * scale, size.height * scale);
+      }
+      fit ??= BoxFit.contain;
+    }
+    //--
     final result = await drawImage(size, (canvas) {
-      canvas.drawInRect(size.toRect(), rect, () {
+      canvas.drawInRect(size.toRect(), src, () {
         element.painting(
           canvas,
           const PaintMeta(host: rasterizeElementHost),
         );
-      }, dstPadding: extend);
+      }, dstPadding: extend, fit: fit);
     });
     /*final base64 = await result.toBase64();
     debugger();*/

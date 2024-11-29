@@ -13,6 +13,12 @@ class CanvasStyle {
 
   //region ---core---
 
+  //--CanvasDelegate
+
+  /// 空闲超时时长, 画布无操作多久之后, 触发空闲回调
+  /// [CanvasDelegate.dispatchCanvasIdle]
+  Duration idleTimeout = 10.seconds;
+
   //--CanvasAxisManager
 
   /// 是否绘制网格
