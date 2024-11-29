@@ -225,6 +225,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 是否有元素数量发生过改变
   /// [dispatchCanvasElementListChanged]
+  /// [clearElementChangedFlag]
   @flagProperty
   bool isElementChanged = false;
 
