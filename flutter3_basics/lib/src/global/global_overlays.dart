@@ -78,21 +78,23 @@ OverlayEntry? toast(
   EdgeInsetsGeometry? padding =
       const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
 }) =>
-    showNotification(
-      (context) {
-        return ToastWidget(
-          background: background,
-          bgBlurSigma: bgBlurSigma,
-          loadingInfoNotifier: loadingInfoNotifier,
-          padding: padding,
-          margin: margin,
-          child: msg,
-        );
-      },
-      position: position,
-      animate: animate ?? OverlayAnimate.opacity,
-      loadingInfoNotifier: loadingInfoNotifier,
-    );
+    msg == null
+        ? null
+        : showNotification(
+            (context) {
+              return ToastWidget(
+                background: background,
+                bgBlurSigma: bgBlurSigma,
+                loadingInfoNotifier: loadingInfoNotifier,
+                padding: padding,
+                margin: margin,
+                child: msg,
+              );
+            },
+            position: position,
+            animate: animate ?? OverlayAnimate.opacity,
+            loadingInfoNotifier: loadingInfoNotifier,
+          );
 
 /// [msg] 显示小部件
 /// [text] 显示文本

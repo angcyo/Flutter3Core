@@ -49,6 +49,7 @@ OverlayEntry? showLoading({
     return currentLoadingEntry;
   }
 
+  //获取当前路由
   final route = context == null
       ? GlobalConfig.def.findModalRouteList().lastOrNull?.$1
       : ModalRoute.of(context);

@@ -2901,6 +2901,7 @@ extension RouteWidgetEx on Widget {
 extension NavigatorEx on BuildContext {
   //---Route↓
 
+  /// 获取当前路由
   /// [Route]
   /// [OverlayRoute]
   /// [TransitionRoute]
@@ -3154,6 +3155,13 @@ extension NavigatorStateEx on NavigatorState {
   void popToRoot([RoutePredicate? predicate]) {
     final root = ModalRoute.withName('/');
     return popUntil(predicate ?? root);
+  }
+
+  /// 移除指定的路由
+  void removeRouteIf(Route<dynamic>? route) {
+    if (route != null) {
+      removeRoute(route);
+    }
   }
 
   /// [removeRoute]
