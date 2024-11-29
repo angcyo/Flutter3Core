@@ -232,6 +232,16 @@ class GCodeParser {
   double lastJ = 0;
   double lastR = 0;
 
+  void _reset() {
+    isAutoCnc = true;
+    isCloseCnc = true;
+    isS0 = false;
+    isMoveTo = false;
+    //--要重置坐标系?
+    //currentFactor = 1.0;
+    //isAbsolutePosition = true;
+  }
+
   /// 异步循环生成器
   Stream<int> loop() async* {
     while (index < length) {
@@ -327,13 +337,14 @@ class GCodeParser {
       } else if (mCmd == "M5" || mCmd == "M05") {
         //主轴关闭
         isCloseCnc = true;
-        isAutoCnc = false;
+        //isAutoCnc = false;//2024-11-29 M5关主轴的情况下, 不清除自动cnc
       } else if (mCmd == "M4" || mCmd == "M04") {
         //自动cnc
         isAutoCnc = true;
       } else if (mCmd == "M2" || mCmd == "M02") {
-        //结束, 文档结束
-        index = length;
+        //程序结束
+        //index = length;
+        _reset();
       } else if (mCmd == "M98") {
         //读取循环次数
         final l = readAnyCmdNumber("L");
