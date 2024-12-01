@@ -29,8 +29,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasStateList.all((e) => e.isElementEmpty) && isCurrentCanvasEmpty;
 
   /// 当前画布是否为空
-  bool get isCurrentCanvasEmpty =>
-      (selectedCanvasState?.elements.size() ?? 0) <= 0;
+  bool get isCurrentCanvasEmpty => selectedCanvasState?.isElementEmpty == true;
 
   /// 从画布中初始化数据, 此方法为了兼容测试使用
   @implementation
@@ -103,6 +102,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 添加画布列表
   /// [autoSelectedCanvas] 是否自动选择画布
+  /// [resetCanvasState] 是否重置所有画布状态
   @api
   void addCanvasStateList(
     List<CanvasStateData> stateList, {
@@ -112,8 +112,11 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selectedElement = false,
     bool followPainter = false,
     bool followContent = false,
+    //--
+    bool? resetCanvasState,
   }) {
-    if (isAllCanvasEmpty) {
+    resetCanvasState ??= isAllCanvasEmpty;
+    if (resetCanvasState) {
       canvasStateList.reset(stateList);
     } else {
       canvasStateList.addAll(stateList);
@@ -122,7 +125,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasDelegate.dispatchCanvasMultiStateListChanged(canvasStateList);
     }
     if (autoSelectedCanvas) {
-      if (isAllCanvasEmpty) {
+      if (resetCanvasState) {
         ensureSelectCanvasState(
           notify: notify,
           selectedElement: selectedElement,
