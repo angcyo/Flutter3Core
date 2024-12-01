@@ -142,6 +142,13 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool notify = true,
     bool selected = false,
   }) {
+    if (CanvasStateData._canvasStateCount <= 1) {
+      CanvasStateData._canvasStateCount = canvasStateList.length;
+    }
+    CanvasStateData._canvasStateCount++;
+    canvasStateData.name ??=
+        "${CanvasStateData.customCanvasDefNamePrefix ?? CanvasStateData.canvasDefNamePrefix} ${CanvasStateData._canvasStateCount}";
+
     canvasStateList.add(canvasStateData);
     if (notify) {
       canvasDelegate.dispatchCanvasMultiStateChanged(
@@ -343,14 +350,12 @@ class CanvasStateData {
     List<UndoActionItem>? undoList,
     List<UndoActionItem>? redoList,
   }) {
-    _canvasStateCount++;
     if (id != null) {
-      this.id = id;
+      this.id ??= id;
     }
-    //debugger();
-    this.name = name ??
-        "${customCanvasDefNamePrefix ?? canvasDefNamePrefix} $_canvasStateCount";
-
+    if (name != null) {
+      this.name = name;
+    }
     if (elements != null) {
       this.elements = elements;
     }

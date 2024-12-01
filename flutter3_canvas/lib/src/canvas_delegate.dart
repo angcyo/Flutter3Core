@@ -232,11 +232,15 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @flagProperty
   bool isElementChanged = false;
 
+  /// 是否有多画布发生过改变
+  @flagProperty
+  bool isCanvasStateChanged = false;
+
   /// 是否有元素改变标识, 通常同来实现自动保存工程的判断依据
   /// [clearElementChangedFlag]
   @flagProperty
   bool get hasElementChangedFlag =>
-      isElementChanged || isAnyElementPropertyChanged;
+      isElementChanged || isCanvasStateChanged || isAnyElementPropertyChanged;
 
   //endregion ---core---
 
@@ -297,8 +301,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 清除元素改变标识
+  @flagProperty
   void clearElementChangedFlag() {
     isElementChanged = false;
+    isCanvasStateChanged = false;
     isAnyElementPropertyChanged = false;
   }
 
@@ -804,13 +810,15 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [type] 新增画布/移除画布
   void dispatchCanvasMultiStateChanged(
       CanvasStateData canvasStateData, CanvasStateType type) {
+    isCanvasStateChanged = true;
     _eachCanvasListener((element) {
       element.onCanvasMultiStateChanged?.call(canvasStateData, type);
     });
   }
 
-  /// 画布列表改变通知
+  /// 多画布的列表改变通知
   void dispatchCanvasMultiStateListChanged(List<CanvasStateData> to) {
+    isCanvasStateChanged = true;
     _eachCanvasListener((element) {
       element.onCanvasMultiStateListChanged?.call(to);
     });
