@@ -29,6 +29,13 @@ const kLabelPadding = EdgeInsets.only(
   bottom: kH,
 );
 
+const kSubLabelPadding = EdgeInsets.only(
+  left: kXx,
+  right: kX,
+  top: kH,
+  bottom: kH,
+);
+
 /// [kLabelPadding]的小号
 const kLabelPaddingMin = EdgeInsets.only(
   left: kH,
@@ -58,6 +65,13 @@ const kDesPadding = EdgeInsets.only(
 const kTilePadding = EdgeInsets.only(
   left: 0,
   right: kX,
+  top: kL,
+  bottom: kL,
+);
+
+const kSubTilePadding = EdgeInsets.only(
+  left: kX,
+  right: kXx,
   top: kL,
   bottom: kL,
 );
