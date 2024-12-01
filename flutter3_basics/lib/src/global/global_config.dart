@@ -271,6 +271,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   /// 全局的无数据占位小部件
+  /// [data] 额外的提示文本或小部件
   WidgetArgumentBuilder emptyPlaceholderBuilder = <T>(context, data) {
     final icon = loadAssetImageWidget(libAssetsStateNoDataKey,
                 package: 'flutter3_basics')

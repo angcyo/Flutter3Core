@@ -164,6 +164,7 @@ class CanvasListener {
   )? onCanvasElementPropertyChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementSelectChanged]
+  /// 选择的元素改变后回调
   /// 要想监听在一个选中的元素上重复点击, 可以通过[onPointerDownAction].[isRepeatSelect]参数实现
   final void Function(
     ElementSelectComponent selectComponent,
@@ -173,6 +174,7 @@ class CanvasListener {
   )? onCanvasElementSelectChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasSelectElementList]
+  /// 按下时, 有多个元素需要被选中.
   final void Function(
     ElementSelectComponent selectComponent,
     List<ElementPainter>? list,

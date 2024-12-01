@@ -350,15 +350,50 @@ class CanvasStateData {
     List<UndoActionItem>? undoList,
     List<UndoActionItem>? redoList,
   }) {
+    //--
     if (id != null) {
-      this.id ??= id;
+      this.id = id;
     }
     if (name != null) {
       this.name = name;
     }
+    //--
     if (elements != null) {
       this.elements = elements;
     }
+    //--
+    if (undoList != null) {
+      this.undoList = undoList;
+    }
+    if (redoList != null) {
+      this.redoList = redoList;
+    }
+  }
+
+  /// 创建一个画布状态数据
+  CanvasStateData.fromElementPainter({
+    ElementPainter? element,
+    List<ElementPainter>? elements,
+    //--
+    String? id,
+    String? name,
+    this.isSelected = false,
+    List<UndoActionItem>? undoList,
+    List<UndoActionItem>? redoList,
+  }) {
+    if (element != null) {
+      this.elements = [element];
+    } else if (elements != null) {
+      this.elements = elements;
+    }
+    //--
+    if (id != null) {
+      this.id = id;
+    }
+    if (name != null) {
+      this.name = name;
+    }
+    //--
     if (undoList != null) {
       this.undoList = undoList;
     }
