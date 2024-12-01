@@ -156,8 +156,12 @@ mixin HookPainterMixin on ElementPainter, HookMixin {
 
 /// 多画布扩展
 extension CanvasStateDataIterableEx on Iterable<CanvasStateData> {
-  /// 所有所有画布都没有元素
+  /// 所有画布都没有元素
   bool get isElementsEmpty {
     return isEmpty || every((element) => element.isElementEmpty);
   }
+
+  /// 所有画布对应的元素集合
+  List<ElementPainter> get allElementList =>
+      mapFlat((e) => e.elements).toList();
 }
