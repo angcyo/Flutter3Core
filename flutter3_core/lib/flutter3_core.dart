@@ -1,7 +1,6 @@
 library flutter3_core;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -136,6 +135,30 @@ SvgPicture? loadCoreAssetSvgPicture(
             height: size ?? height,
             colorFilter: colorFilter ?? tintColor?.toColorFilter(),
           );
+
+/// [loadAssetSvgWidget]
+Widget loadCoreSvgWidget(
+  String key, {
+  String? prefix = kDefAssetsSvgPrefix,
+  String? package = 'flutter3_core',
+  Color? tintColor,
+  UiColorFilter? colorFilter,
+  BoxFit fit = BoxFit.contain,
+  double? size,
+  double? width,
+  double? height,
+}) =>
+    loadAssetSvgWidget(
+      key,
+      prefix: prefix,
+      package: package,
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+      size: size,
+      width: width,
+      height: height,
+      fit: fit,
+    );
 
 /// 下一步svg图标
 SvgPicture coreNextSvgPicture({
