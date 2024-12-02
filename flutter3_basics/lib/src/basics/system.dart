@@ -21,23 +21,23 @@ Future<void> setScreenOrientation([DeviceOrientation? orientation]) =>
         orientation == null ? [] : [orientation]);
 
 Future<void> setScreenOrientations([List<DeviceOrientation>? orientations]) =>
-  SystemChrome.setPreferredOrientations(orientations ?? []);
+    SystemChrome.setPreferredOrientations(orientations ?? []);
 
 /// 设置横屏
-Future<void> setScreenLandscape([List<DeviceOrientation> orientations = const [
-  DeviceOrientation.landscapeLeft,
-  DeviceOrientation.landscapeRight
-]]) =>
-  setScreenOrientations(orientations);
-
+Future<void> setScreenLandscape(
+        [List<DeviceOrientation> orientations = const [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight
+        ]]) =>
+    setScreenOrientations(orientations);
 
 /// 设置竖屏
-Future<void> setScreenPortrait([List<DeviceOrientation> orientations = const [
-  DeviceOrientation.portraitUp,
-  DeviceOrientation.portraitDown
-]]) =>
-  setScreenOrientations(orientations);
-
+Future<void> setScreenPortrait(
+        [List<DeviceOrientation> orientations = const [
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown
+        ]]) =>
+    setScreenOrientations(orientations);
 
 /// 设置ui模式
 /// [SystemChrome.setEnabledSystemUIMode]
@@ -52,3 +52,7 @@ Future<void> setScreenPortrait([List<DeviceOrientation> orientations = const [
 //声音反馈
 //HapticFeedback.lightImpact();
 //SystemSound.play();
+
+/// 鼠标是否连接
+bool get mouseIsConnected =>
+    WidgetsBinding.instance.mouseTracker.mouseIsConnected;

@@ -170,6 +170,10 @@ class MyAppLifecycleListener extends AppLifecycleListener {
 final NavigatorObserverDispatcher navigatorObserverDispatcher =
     NavigatorObserverDispatcher();
 
+/// 获取新的路由监听
+NavigatorObserverDispatcher get navigatorObserverDispatcherGet =>
+    NavigatorObserverDispatcher();
+
 /// 路由回调派发
 class NavigatorObserverDispatcher extends NavigatorObserver {
   //region --观察者--

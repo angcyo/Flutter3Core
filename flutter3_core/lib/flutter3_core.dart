@@ -114,6 +114,8 @@ Future<void> initIsar() async {
   await openIsar();
 }
 
+//--
+
 /// [Image].[StatefulWidget]
 SvgPicture? loadCoreAssetSvgPicture(
   String? key, {
