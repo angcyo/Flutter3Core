@@ -21,6 +21,11 @@ dependencies:
   # https://pub.dev/packages/meta
   get_it: ^8.0.2
 
+  # https://pub.dev/packages/watch_it
+  # https://pub.dev/packages/functional_listener
+  # https://pub.dev/packages/get_it
+  watch_it: ^1.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

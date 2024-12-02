@@ -138,6 +138,9 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
   /// 是否撑满父容器的最大宽度
   bool? matchParentMaxWidth;
 
+  /// 是否撑满父容器的最大高度
+  bool? matchParentMaxHeight;
+
   //---
 
   /// 是否堆叠在一起, 如果开启堆叠, 那么当前的child, 不会占据原有的布局空间
@@ -155,12 +158,14 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
     this.excludeWeight = false,
     this.matchLineHeight,
     this.matchParentMaxWidth,
+    this.matchParentMaxHeight,
   });
 
   @override
   String toString() {
     return 'weight:$weight excludeGapCount:$excludeGapCount stack:$stack matchLineHeight:$matchLineHeight '
-        'offset=$offset constraints:$constraints excludeWeight:$excludeWeight matchParentMaxWidth:$matchParentMaxWidth';
+        'offset=$offset constraints:$constraints excludeWeight:$excludeWeight '
+        'matchParentMaxWidth:$matchParentMaxWidth matchParentMaxHeight:$matchParentMaxHeight';
   }
 }
 
@@ -189,6 +194,9 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
   /// [FlowLayoutParentData.matchParentMaxWidth]
   final bool? matchParentMaxWidth;
 
+  /// [FlowLayoutParentData.matchParentMaxHeight]
+  final bool? matchParentMaxHeight;
+
   const FlowLayoutData({
     super.key,
     required super.child,
@@ -197,6 +205,7 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
     this.stack = false,
     this.excludeWeight = false,
     this.matchParentMaxWidth,
+    this.matchParentMaxHeight,
     this.matchLineHeight,
     this.excludeGapCount = 0,
   });
@@ -244,6 +253,11 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
 
     if (parentData.matchParentMaxWidth != matchParentMaxWidth) {
       parentData.matchParentMaxWidth = matchParentMaxWidth;
+      needsLayout = true;
+    }
+
+    if (parentData.matchParentMaxHeight != matchParentMaxHeight) {
+      parentData.matchParentMaxHeight = matchParentMaxHeight;
       needsLayout = true;
     }
 
@@ -297,9 +311,6 @@ class FlowLayoutRender extends RenderBox
   /// 所有子元素的约束条件, 不指定则使用默认的[BoxConstraints]约束
   /// 可以通过[FlowLayoutParentData]单独指定子元素自身的约束条件
   BoxConstraints? childConstraints;
-
-  /// 默认的子元素约束条件
-  final BoxConstraints defChildConstraints = const BoxConstraints();
 
   /// 是否激活元素等宽, 间接设置[FlowLayoutParentData.weight]
   /// 等宽的[children]数量范围[x~xx], 满足条件才开启等宽
@@ -476,6 +487,8 @@ class FlowLayoutRender extends RenderBox
     //gap
     final paddingHorizontal = (padding?.horizontal ?? 0);
     final horizontalGap = childHorizontalGap ?? childGap;
+    final constraints = this.constraints;
+    final defChildConstraints = constraints;
 
     //先测量[noWeightChildren]
     double noWeightWidth = horizontalGap *
@@ -497,6 +510,9 @@ class FlowLayoutRender extends RenderBox
 
     //最大宽度, weight属性的参考值
     final maxWidth = refMaxWidth;
+    //记录当前child最大的size
+    double childMaxWidth = 0;
+    double childMaxHeight = 0;
 
     for (final child in weightChildren) {
       final childParentData = child.parentData! as FlowLayoutParentData;
@@ -539,7 +555,40 @@ class FlowLayoutRender extends RenderBox
           maxHeight: childConstraints.maxHeight,
         );
       }
+      if (childParentData.matchParentMaxHeight == true) {
+        childConstraints = BoxConstraints(
+          minWidth: childConstraints.minWidth,
+          maxWidth: childConstraints.maxWidth,
+          minHeight: childConstraints.minHeight,
+          maxHeight: constraints.maxHeight == double.infinity
+              ? (childMaxHeight > 0 ? childMaxHeight : refMaxHeight)
+              : refMaxHeight,
+        );
+      }
+      //--如果都是无限, 需要进行约束, 否则布局会报错
+      if (constraints.maxWidth == double.infinity &&
+          childConstraints.maxWidth == double.infinity) {
+        childConstraints = BoxConstraints(
+          minWidth: childConstraints.minWidth,
+          maxWidth: childConstraints.maxHeight,
+          minHeight: childConstraints.minHeight,
+          maxHeight: childConstraints.maxHeight,
+        );
+      }
+      if (constraints.maxHeight == double.infinity &&
+          childConstraints.maxHeight == double.infinity) {
+        childConstraints = BoxConstraints(
+          minWidth: childConstraints.minWidth,
+          maxWidth: childConstraints.maxWidth,
+          minHeight: childConstraints.minHeight,
+          maxHeight: childConstraints.maxWidth,
+        );
+      }
+      //--
+      //debugger();
       ChildLayoutHelper.layoutChild(child, childConstraints);
+      childMaxWidth = max(childMaxWidth, child.size.width);
+      childMaxHeight = max(childMaxHeight, child.size.height);
     }
   }
 
@@ -837,6 +886,7 @@ extension FlowLayoutEx on Widget {
     bool stack = false,
     bool? matchLineHeight,
     bool? matchParentMaxWidth,
+    bool? matchParentMaxHeight,
   }) =>
       FlowLayoutData(
         constraints: constraints,
@@ -846,6 +896,7 @@ extension FlowLayoutEx on Widget {
         excludeWeight: excludeWeight,
         matchLineHeight: matchLineHeight,
         matchParentMaxWidth: matchParentMaxWidth,
+        matchParentMaxHeight: matchParentMaxHeight,
         child: this,
       );
 }

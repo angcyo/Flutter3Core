@@ -5,7 +5,6 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2024/07/08
 ///
 /// [PageView]
-///
 /// 直接调用[buildPageView]
 ///
 /// https://api.flutter.dev/flutter/widgets/PageView-class.html
@@ -18,8 +17,16 @@ mixin PageViewMixin<T extends StatefulWidget>
   /// [PageController]
   late final PageController _pageViewControllerMixin = PageController();
 
+  /// [PageView]的滚动物理
+  ScrollPhysics? pageViewScrollPhysicsMixin;
+
   /// [PageView]页面控制器, 用来切换页面
   PageController? get pageViewController => _pageViewControllerMixin;
+
+  /// 当前页面索引
+  int? get currentPageIndex => _pageViewControllerMixin.hasClients == true
+      ? _pageViewControllerMixin.page?.round()
+      : null;
 
   /// 用来配合[TabBar]实现指示器的滚动效果
   TabController? get tabController {
@@ -65,13 +72,18 @@ mixin PageViewMixin<T extends StatefulWidget>
     ScrollPhysics? physics,
     Axis axis = Axis.horizontal,
     Clip clipBehavior = Clip.hardEdge,
+    //--
     bool pageSnapping = true,
     bool padEnds = true,
     bool keepAlive = false,
+    //--
     bool useLifecycle = false,
     bool useChildLifecycle = false,
   }) {
     WidgetList body = children ?? buildPageChildren(context);
+    if (physics != null) {
+      pageViewScrollPhysicsMixin = physics;
+    }
 
     if (useChildLifecycle) {
       body = body.mapIndex((e, index) {
@@ -139,10 +151,12 @@ mixin PageViewMixin<T extends StatefulWidget>
         // [PageView.scrollDirection] defaults to [Axis.horizontal].
         // Use [Axis.vertical] to scroll vertically.
         controller: pageViewController,
-        onPageChanged: onSelfPageViewChanged,
+        onPageChanged: (index) {
+          onSelfPageViewChanged(context, index);
+        },
         pageSnapping: pageSnapping,
         padEnds: padEnds,
-        physics: physics,
+        physics: physics ?? pageViewScrollPhysicsMixin,
         scrollDirection: axis,
         clipBehavior: clipBehavior,
         children: body,
@@ -152,11 +166,15 @@ mixin PageViewMixin<T extends StatefulWidget>
 
   /// 页面改变回调
   @overridePoint
-  void onSelfPageViewChanged(int index) {
+  void onSelfPageViewChanged(BuildContext context, int index) {
     assert(() {
       l.v('onSelfPageViewChanged:$index');
       return true;
     }());
+    if (this is NavigationBarMixin) {
+      (this as NavigationBarMixin).currentNavigateIndexMixin = index;
+      context.tryUpdateState();
+    }
   }
 
   /// 切换页面
@@ -168,17 +186,28 @@ mixin PageViewMixin<T extends StatefulWidget>
     Curve curve = Curves.ease,
   }) {
     final pageController = pageViewController;
-    if (pageController != null) {
+    if (pageController != null && pageController.hasClients) {
       final page = pageController.page;
-      if (animate == true || (page != null && (page - index).abs() <= 1)) {
+      bool isNoAnimate = false;
+      if (animate == false ||
+          pageViewScrollPhysicsMixin is NeverScrollableScrollPhysics) {
+        //无动画
+        isNoAnimate = true;
+      } else if (animate == true ||
+          (page != null && (page - index).abs() <= 1)) {
         //自动动画
+      } else {
+        isNoAnimate = true;
+      }
+      //--
+      if (isNoAnimate) {
+        pageController.jumpToPage(index);
+      } else {
         pageController.animateToPage(
           index,
           duration: duration ?? kTabScrollDuration,
           curve: curve,
         );
-      } else {
-        pageController.jumpToPage(index);
       }
     }
   }
