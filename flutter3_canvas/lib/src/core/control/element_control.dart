@@ -73,6 +73,10 @@ class BaseControl
   @viewCoordinate
   Rect? controlBounds;
 
+  /// 控制点的内边距[controlBounds]用来撑大点击区域
+  @viewCoordinate
+  EdgeInsets? controlPadding;
+
   /// 手势是否在控制点上按下, 每次按下时重置
   bool isPointerDownIn = false;
 
@@ -86,6 +90,8 @@ class BaseControl
   /// 距离目标的偏移量
   @dp
   double controlOffset = -4;
+
+  //--
 
   /// 绘制控制点图片额外的内边距
   @dp
@@ -107,12 +113,21 @@ class BaseControl
   void paintControl(Canvas canvas, PaintMeta paintMeta) {
     if (controlPainter != null || controlPainterFn != null) {
       controlBounds?.let((rect) {
+        rect = rect.padding(controlPadding);
         controlPainter?.painting(canvas, rect, isPointerDownIn);
         controlPainterFn?.call(canvas, rect, isPointerDownIn);
       });
     } else {
       paintControlWith(canvas, paintMeta);
     }
+    /*if (isDebug && controlBounds != null) {
+      canvas.drawRect(
+        controlBounds!,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..color = canvasDelegate.canvasStyle.canvasAccentColor,
+      );
+    }*/
   }
 
   @override
@@ -203,6 +218,7 @@ class BaseControl
   @callPoint
   void paintControlWith(Canvas canvas, PaintMeta paintMeta) {
     controlBounds?.let((rect) {
+      rect = rect.padding(controlPadding);
       canvas.drawCircle(
         rect.center,
         controlSize / 2,
@@ -239,7 +255,8 @@ class BaseControl
       ..rotateBy(selectComponentProperty.angle, anchor: anchor);
     center = rotateMatrix.mapPoint(center);
 
-    return Rect.fromCircle(center: center, radius: controlSize / 2);
+    return Rect.fromCircle(center: center, radius: controlSize / 2)
+        .expand(controlPadding);
   }
 
   /// 获取右上控制点边界
@@ -259,7 +276,8 @@ class BaseControl
       ..rotateBy(selectComponentProperty.angle, anchor: anchor);
     center = rotateMatrix.mapPoint(center);
 
-    return Rect.fromCircle(center: center, radius: controlSize / 2);
+    return Rect.fromCircle(center: center, radius: controlSize / 2)
+        .expand(controlPadding);
   }
 
   /// 获取右下控制点边界
@@ -279,7 +297,8 @@ class BaseControl
       ..rotateBy(selectComponentProperty.angle, anchor: anchor);
     center = rotateMatrix.mapPoint(center);
 
-    return Rect.fromCircle(center: center, radius: controlSize / 2);
+    return Rect.fromCircle(center: center, radius: controlSize / 2)
+        .expand(controlPadding);
   }
 
   /// 获取左下控制点边界
@@ -299,7 +318,8 @@ class BaseControl
       ..rotateBy(selectComponentProperty.angle, anchor: anchor);
     center = rotateMatrix.mapPoint(center);
 
-    return Rect.fromCircle(center: center, radius: controlSize / 2);
+    return Rect.fromCircle(center: center, radius: controlSize / 2)
+        .expand(controlPadding);
   }
 
   /// 加载控制点图片

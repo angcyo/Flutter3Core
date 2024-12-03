@@ -1516,6 +1516,32 @@ extension RectEx on Rect {
     }
     return result;
   }
+
+  /// 扩展一个[EdgeInsets]的距离
+  Rect expand([EdgeInsets? edgeInsets]) {
+    if (edgeInsets == null) {
+      return this;
+    }
+    return Rect.fromLTRB(
+      left - edgeInsets.left,
+      top - edgeInsets.top,
+      right + edgeInsets.right,
+      bottom + edgeInsets.bottom,
+    );
+  }
+
+  /// 填充一个[EdgeInsets]的距离
+  Rect padding([EdgeInsets? edgeInsets]) {
+    if (edgeInsets == null) {
+      return this;
+    }
+    return Rect.fromLTRB(
+      left + edgeInsets.left,
+      top + edgeInsets.top,
+      right - edgeInsets.right,
+      bottom - edgeInsets.bottom,
+    );
+  }
 }
 
 extension SizeEx on Size {
