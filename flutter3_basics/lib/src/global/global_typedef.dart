@@ -36,6 +36,9 @@ typedef ResultValueCallback<R, T> = R Function(T value);
 /// [Future] 返回值的回调
 typedef FutureResultCallback<R, T> = Future<R> Function(T value);
 
+/// [FutureOr] 返回值的回调
+typedef FutureOrResultCallback<R, T> = FutureOr<R> Function(T value);
+
 /// 只有一个值回调
 typedef ValueCallback<T> = dynamic Function(T value);
 

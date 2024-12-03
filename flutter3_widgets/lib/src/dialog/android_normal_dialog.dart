@@ -38,7 +38,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 确定按钮点击回调, 参数始终为true
   /// 返回true, 表示拦截默认处理
-  final FutureResultCallback<bool, bool>? onConfirmTap;
+  final FutureOrResultCallback<bool, bool>? onConfirmTap;
 
   /// 是否拦截Pop
   final bool interceptPop;
@@ -202,7 +202,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
               if (onConfirmTap == null) {
                 Navigator.pop(context, true);
               } else {
-                var intercept = await onConfirmTap!(true) == true;
+                final intercept = await onConfirmTap!(true) == true;
                 if (!intercept) {
                   if (context.mounted) {
                     Navigator.pop(context, true);
