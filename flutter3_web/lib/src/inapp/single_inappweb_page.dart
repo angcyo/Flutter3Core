@@ -10,13 +10,16 @@ part of '../../flutter3_web.dart';
 /// [SingleWebPage]
 /// [SingleInAppWebPage]
 /// [flutter_inappwebview]
-class SingleInAppWebPage extends StatefulWidget {
+class SingleInAppWebPage extends StatefulWidget with TranslationTypeMixin {
   /// 需要加载的网页地址
   final String? url;
 
   /// 需要加载的网页内容
   final String? html;
   final String? baseUrl;
+
+  @override
+  TranslationType get translationType => TranslationType.slide;
 
   const SingleInAppWebPage({
     super.key,
@@ -31,13 +34,11 @@ class SingleInAppWebPage extends StatefulWidget {
 
 class _SingleInAppWebPageState extends State<SingleInAppWebPage>
     with AbsScrollPage, InAppWebViewStateMixin {
-  WebviewConfig config = WebviewConfig();
-
   @override
   void initState() {
-    config.url = widget.url;
-    config.html = widget.html;
-    config.baseUrl = widget.baseUrl;
+    webConfigMixin.url = widget.url;
+    webConfigMixin.html = widget.html;
+    webConfigMixin.baseUrl = widget.baseUrl;
     super.initState();
   }
 
@@ -49,8 +50,8 @@ class _SingleInAppWebPageState extends State<SingleInAppWebPage>
 
   @override
   Widget buildBody(BuildContext context, WidgetList? children) =>
-      buildInAppWebView(context, config).interceptPopResult(() async {
-        if (await onBackPress() == true) {
+      buildInAppWebView(context, webConfigMixin).interceptPopResult(() async {
+        if (await onWebviewBackPress() == true) {
           buildContext?.pop();
         }
       });

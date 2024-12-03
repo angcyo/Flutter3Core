@@ -4,7 +4,7 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/29
 ///
-/// 进度条
+/// 进度条, 支持渐变进度颜色
 /// [LinearProgressIndicator]
 class ProgressBar extends StatefulWidget {
   /// 圆角半径
@@ -106,42 +106,41 @@ class _ProgressBarState extends State<ProgressBar>
 
   @override
   Widget build(BuildContext context) {
-    final globalTheme = GlobalTheme.of(context);
-
-    Widget buildProgressBar() {
-      return CustomPaint(
-        painter: ProgressBarPainter(
-          radius: widget.radius,
-          progress:
-              _controller.isAnimating ? _controller.value : widget.progress,
-          flowProgress: widget.enableFlowProgressAnimate
-              ? math.min(_flowController?.value ?? 0, widget.progress ?? 0)
-              : null,
-          progressColor: widget.progressColor ?? globalTheme.accentColor,
-          progressColorList: widget.progressColorList ??
-              [
-                globalTheme.primaryColor,
-                globalTheme.primaryColorDark,
-              ],
-          bgColor: widget.bgColor,
-          bgColorList: widget.bgColorList,
-        ),
-        size: const Size(double.infinity, kMinInteractiveHeight),
-      );
-    }
-
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
         return _flowController == null
-            ? buildProgressBar()
+            ? buildProgressBar(context)
             : AnimatedBuilder(
                 animation: _flowController!,
                 builder: (context, child) {
-                  return buildProgressBar();
+                  return buildProgressBar(context);
                 },
               );
       },
+    );
+  }
+
+  /// 构建进度条
+  Widget buildProgressBar(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    return CustomPaint(
+      painter: ProgressBarPainter(
+        radius: widget.radius,
+        progress: _controller.isAnimating ? _controller.value : widget.progress,
+        flowProgress: widget.enableFlowProgressAnimate
+            ? math.min(_flowController?.value ?? 0, widget.progress ?? 0)
+            : null,
+        progressColor: widget.progressColor ?? globalTheme.accentColor,
+        progressColorList: widget.progressColorList ??
+            [
+              globalTheme.primaryColor,
+              globalTheme.primaryColorDark,
+            ],
+        bgColor: widget.bgColor,
+        bgColorList: widget.bgColorList,
+      ),
+      size: const Size(double.infinity, kMinInteractiveHeight),
     );
   }
 }

@@ -23,12 +23,17 @@ class WebviewConfig {
 
   //endregion --ui--
 
+  /// 调试模式
+  @flagProperty
+  bool debug;
+
   WebviewConfig({
     this.url,
     this.html,
     this.baseUrl,
     this.buildRefreshWidget = false,
     this.buildLoadProgressWidget = true,
+    this.debug = isDebug,
   });
 }
 
@@ -43,6 +48,10 @@ mixin WebViewStateMixin<T extends StatefulWidget> on State<T> {}
 /// [flutter_inappwebview]
 mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   final GlobalKey inAppWebViewKey = GlobalKey();
+
+  /// 配置属性
+  @configProperty
+  WebviewConfig webConfigMixin = WebviewConfig();
 
   /// 页面控制, 自动获取
   @autoInjectMark
@@ -74,6 +83,25 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   /// 刷新控制
   PullToRefreshController? webviewPullToRefreshController;
 
+  /// debug刷新信号
+  final debugUpdateSignal = createUpdateSignal();
+
+  //--get
+
+  /// 缓存的ua
+  /// ```
+  /// Mozilla/5.0 (Linux; Android 14; Pixel 6 Build/AP2A.240905.003.F1; wv)
+  /// AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.107
+  /// Mobile Safari/537.36 angcyo
+  /// ```
+  String? webViewUserAgentCache;
+
+  /// 获取UA
+  Future<String?> get getWebViewUserAgent async =>
+      (await inAppWebViewController?.getSettings())?.userAgent;
+
+  //--
+
   @override
   void initState() {
     super.initState();
@@ -95,14 +123,33 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
           );
   }
 
+  /// 构建脚手架
+  @callPoint
+  Widget buildInAppWebViewScaffold(
+    BuildContext context, {
+    WebviewConfig? config,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    return Scaffold(
+      backgroundColor: globalTheme.surfaceBgColor,
+      body: buildInAppWebView(context, config ?? webConfigMixin)
+          .interceptPopResult(() async {
+        if (await onWebviewBackPress() == true) {
+          buildContext?.pop();
+        }
+      }),
+    );
+  }
+
   /// 构建webview
   @api
   Widget buildInAppWebView(BuildContext context, WebviewConfig config) {
+    final globalTheme = GlobalTheme.of(context);
     final urlRequest = !isNil(config.url)
         ? URLRequest(url: WebUri(config.url!))
         : URLRequest(body: (config.html ?? 'about:blank').bytes);
     //debugger();
-    Widget webview = InAppWebView(
+    final webview = InAppWebView(
       key: inAppWebViewKey,
       initialUrlRequest: urlRequest,
       pullToRefreshController:
@@ -112,10 +159,17 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         l.d("onWebViewCreated");
         inAppWebViewController = controller;
         _handlePendingControllerCompleter(controller);
+        () async {
+          webViewUserAgentCache = await getWebViewUserAgent;
+          if (config.debug) {
+            debugUpdateSignal.update();
+          }
+        }();
+        onSelfWebviewCreated();
       },
       onLoadStart: (controller, url) {
         l.d('onLoadStart:$url');
-        updateWebviewProgress(0);
+        onSelfWebviewProgress(0);
         /*setState(() {
           this.url = url.toString();
           inAppWebViewController?.text = this.url;
@@ -127,24 +181,10 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
             resources: request.resources,
             action: PermissionResponseAction.GRANT);
       },
-      shouldOverrideUrlLoading: (controller, navigationAction) async {
-        final uri = navigationAction.request.url!;
-        l.d('shouldOverrideUrlLoading[${uri.scheme}]:$uri');
-        if (!["http", "https", "file", "chrome", "data", "javascript", "about"]
-            .contains(uri.scheme)) {
-          //非上述的scheme, 都认为是App内部的scheme
-          if (await uri.canLaunch()) {
-            // Launch the App
-            await uri.launch();
-            // and cancel the request
-          }
-          return NavigationActionPolicy.CANCEL;
-        }
-        return NavigationActionPolicy.ALLOW;
-      },
+      shouldOverrideUrlLoading: onSelfShouldOverrideUrlLoading,
       onLoadStop: (controller, url) async {
         l.d('onLoadStop:$url');
-        updateWebviewProgress(100);
+        onSelfWebviewProgress(100);
         /*webviewPullToRefreshController?.endRefreshing().ignore();
         setState(() {
           this.url = url.toString();
@@ -156,8 +196,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         webviewPullToRefreshController?.endRefreshing().ignore();
       },
       onProgressChanged: (controller, progress) async {
-        l.d('onProgressChanged[$progress]->${await controller.getTitle()}');
-        updateWebviewProgress(progress);
+        l.d('onProgressChanged[${await controller.getTitle()}]->$progress');
+        onSelfWebviewProgress(progress);
         /*if (progress == 100) {
           webviewPullToRefreshController?.endRefreshing().ignore();
         }
@@ -184,22 +224,29 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     if (!config.buildLoadProgressWidget) {
       return webview;
     }
-    List<Widget> children = [];
+    final List<Widget> children = [];
     if (webviewLoadProgress > 0 && webviewLoadProgress < 100) {
       children.add(LinearProgressIndicator(
         value: webviewLoadProgress / 100,
+        color: globalTheme.accentColor,
       ));
     }
     children.add(webview);
-    return Stack(
-      children: children,
-    );
+    if (config.debug) {
+      //ua
+      children.add(debugUpdateSignal
+          .buildFn(() => webViewUserAgentCache?.text(
+              style: globalTheme.textPlaceStyle.copyWith(fontSize: 9)))
+          .position(alignBottom: true));
+    }
+    return Stack(children: children);
   }
 
   //region ---api---
 
   /// 按下返回键时, 等待页面back后返回
-  Future<bool> onBackPress() async {
+  /// @return true: webview已无back
+  Future<bool> onWebviewBackPress() async {
     final canBack = await inAppWebViewController?.canGoBack();
     if (canBack == true) {
       inAppWebViewController?.goBack();
@@ -334,6 +381,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   final List<Completer> _pendingPageCompleterList = [];
 
   /// 处理等待中的[Completer]
+  @CallFrom("updateWebviewProgress")
   void _handlePendingPageCompleter(bool finish) {
     try {
       for (final completer in _pendingPageCompleterList) {
@@ -356,11 +404,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
-  /// 等待隐私政策的返回
-  /// 如果同意了, 则直接返回true
-  /// 如果拒绝了, 返回false
-  /// [action] 同意与否执行的操作
-  /// [checkIfNeed]
+  /// 等待页面加载完成回调, 页面进度100%
+  /// [_handlePendingPageCompleter]
   @api
   Future waitWebviewLoadFinish([FutureBoolAction? action]) async {
     if (webviewLoadProgress >= 100) {
@@ -371,4 +416,48 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     final result = await completer.future;
     return action?.call(result == true);
   }
+
+  //--
+
+  /// webview创建
+  @overridePoint
+  void onSelfWebviewCreated() {}
+
+  /// 加载进度回调
+  @overridePoint
+  void onSelfWebviewProgress(int progress) {
+    updateWebviewProgress(progress);
+  }
+
+  /// 拦截url
+  @overridePoint
+  Future<NavigationActionPolicy?> onSelfShouldOverrideUrlLoading(
+      InAppWebViewController controller,
+      NavigationAction navigationAction) async {
+    final uri = navigationAction.request.url!;
+    l.d('shouldOverrideUrlLoading[${uri.scheme}]->$uri');
+    if (await onSelfInterceptUri(uri)) {
+      return NavigationActionPolicy.CANCEL;
+    }
+    if (!["http", "https", "file", "chrome", "data", "javascript", "about"]
+        .contains(uri.scheme)) {
+      //非上述的scheme, 都认为是App内部的scheme
+      if (await uri.canLaunch()) {
+        // Launch the App
+        await uri.launch();
+        // and cancel the request
+      }
+      return NavigationActionPolicy.CANCEL;
+    }
+    return NavigationActionPolicy.ALLOW;
+  }
+
+  /// 拦截uri
+  /// @return true:拦截[uri]的加载, false:不拦截
+  @overridePoint
+  Future<bool> onSelfInterceptUri(Uri uri) async {
+    return false;
+  }
+
+//--
 }
