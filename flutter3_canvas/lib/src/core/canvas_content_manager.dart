@@ -197,21 +197,30 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     }
 
     //填充
-    if (info.fill && info.fillColor != null) {
-      paint
-        ..style = PaintingStyle.fill
-        ..color = info.fillColor!;
-      draw();
+    if (info.fill) {
+      final fillColor =
+          canvasDelegate.darkOr(info.fillColorDark, info.fillColor) ??
+              info.fillColor;
+      if (fillColor != null) {
+        paint
+          ..style = PaintingStyle.fill
+          ..color = fillColor;
+        draw();
+      }
     }
 
     //描边
-    if (info.strokeWidth > 0 && info.strokeColor != null) {
-      paint
-        ..style = PaintingStyle.stroke
-        ..color = info.strokeColor!
-        ..strokeWidth = info.strokeWidth / canvasScale;
-
-      draw();
+    if (info.strokeWidth > 0) {
+      final strokeColor =
+          canvasDelegate.darkOr(info.strokeColorDark, info.strokeColor) ??
+              info.strokeColor;
+      if (strokeColor != null) {
+        paint
+          ..style = PaintingStyle.stroke
+          ..color = strokeColor
+          ..strokeWidth = info.strokeWidth / canvasScale;
+        draw();
+      }
     }
   }
 
@@ -379,8 +388,14 @@ class ContentPathPainterInfo {
   /// 绘制路径的描边颜色, 不指定, 不绘制
   Color? strokeColor;
 
+  /// [strokeColor]
+  Color? strokeColorDark;
+
   /// 绘制路径的填充颜色, 不指定, 不绘制
   Color? fillColor;
+
+  /// [fillColor]
+  Color? fillColorDark;
 
   /// 是否填充
   bool fill;
@@ -399,7 +414,9 @@ class ContentPathPainterInfo {
     this.pathBoundsCache,
     this.rect,
     this.strokeColor = Colors.blue,
+    this.strokeColorDark,
     this.fillColor = const Color(0xfff5f5f5),
+    this.fillColorDark,
     this.fill = false,
     this.strokeWidth = 1,
     this.tag,
