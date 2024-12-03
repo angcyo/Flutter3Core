@@ -259,7 +259,7 @@ class L {
     final methodNameList = lineStackTrace
         .replaceAll('<anonymous closure>', '<anonymous_closure>')
         .split(" ");
-    final methodName = methodNameList.getOrNull(-2);
+    final methodName = methodNameList.get(-2);
     //debugger();
     final log =
         '$time[$filePathStr${methodName == null ? "" : "#$methodName"}] $tagStr$levelStr->$msgType$msg';

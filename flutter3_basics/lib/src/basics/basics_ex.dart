@@ -2362,19 +2362,19 @@ extension ListEx<T> on List<T> {
     return index;
   }
 
-  /// [List], 支持正负索引
+  /// [List]
   T? getOrNull(int index, [T? nul]) {
-    if (index < 0) {
-      index = length + index;
-    }
     if (index < 0 || index >= length) {
       return nul;
     }
     return this[index];
   }
 
-  /// [List]
-  T get(int index, T def) {
+  /// [List], 支持正负索引
+  T? get(int index, [T? def]) {
+    if (index < 0) {
+      index = length + index;
+    }
     if (index < 0 || index >= length) {
       return def;
     }
