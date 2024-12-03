@@ -310,6 +310,9 @@ class GlobalThemeDark extends GlobalTheme {
   Color get itemWhiteBgColor => const Color(0xff1a1a1a);
 
   @override
+  Color get itemWhiteSubBgColor => const Color(0xff1d1d1d);
+
+  @override
   Color get themeBlackColor => const Color(0xff212121);
 
   @override

@@ -1509,15 +1509,15 @@ extension WidgetEx on Widget {
   /// 在暗色模式下才会过滤颜色
   Widget darkColorFiltered({
     BuildContext? context,
-    ColorFilter? colorFilter,
-    Color? color,
+    ColorFilter? darkColorFilter,
+    Color? darkColor,
     BlendMode blendMode = BlendMode.srcIn,
     bool enable = true,
   }) =>
       colorFiltered(
-        colorFilter: colorFilter,
+        colorFilter: darkColorFilter,
         color: (context ?? GlobalConfig.def.globalContext)?.isThemeDark == true
-            ? (color ?? GlobalTheme.of(context).icoNormalColor)
+            ? (darkColor ?? GlobalTheme.of(context).icoNormalColor)
             : null,
         blendMode: blendMode,
         enable: enable,
