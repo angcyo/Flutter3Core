@@ -235,7 +235,7 @@ class GraffitiBrushPenPainter extends GraffitiPainter
           if (tangent != null) {
             paint.strokeWidth = width;
 
-            /// 绘制一个点
+            // 绘制一个点
             final Path segmentPath = Path()
               ..moveTo(tangent.position.dx, tangent.position.dy)
               ..lineTo(tangent.position.dx, tangent.position.dy);

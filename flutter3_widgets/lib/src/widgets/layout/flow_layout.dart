@@ -488,7 +488,10 @@ class FlowLayoutRender extends RenderBox
     final paddingHorizontal = (padding?.horizontal ?? 0);
     final horizontalGap = childHorizontalGap ?? childGap;
     final constraints = this.constraints;
-    final defChildConstraints = constraints;
+    final defChildConstraints = BoxConstraints(
+      maxWidth: constraints.maxWidth,
+      maxHeight: constraints.maxHeight,
+    );
 
     //先测量[noWeightChildren]
     double noWeightWidth = horizontalGap *

@@ -693,7 +693,7 @@ Image? loadAssetImageWidget(
   String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,
-  BoxFit? fit = BoxFit.cover,
+  BoxFit? fit,
   double? size,
   double? width,
   double? height,
@@ -704,7 +704,7 @@ Image? loadAssetImageWidget(
         ? null
         : Image.asset(
             key.ensurePackagePrefix(package, prefix).transformKey(),
-            fit: fit,
+            fit: fit ?? BoxFit.cover,
             width: size ?? width,
             height: size ?? height,
             color: color,

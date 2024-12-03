@@ -2204,10 +2204,20 @@ extension IterableEx<E> on Iterable<E> {
   /// 将当前的列表和新的列表进行合并, 去除重复的元素, 添加新的元素, 返回新的列表
   List<E> merge(Iterable<E> elements) {
     final result = toList(growable: true);
-    for (var element in elements) {
+    for (final element in elements) {
       if (!result.contains(element)) {
         result.add(element);
       }
+    }
+    return result;
+  }
+
+  /// 替换旧元素
+  List<E> replaceList(Iterable<E> elements) {
+    final result = toList(growable: true);
+    for (final element in elements) {
+      result.remove(element);
+      result.add(element);
     }
     return result;
   }

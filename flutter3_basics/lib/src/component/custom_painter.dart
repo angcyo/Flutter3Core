@@ -369,12 +369,16 @@ class CirclePointPainter extends CustomPainter {
   /// 阴影偏移
   final Offset offset;
 
-  const  CirclePointPainter({
+  /// 是否绘制阴影
+  final bool drawShadow;
+
+  const CirclePointPainter({
     this.radius = 8,
     this.extendRadius = 2,
     this.offset = const Offset(0, 1.24),
     this.color = Colors.green,
     this.extendColor = Colors.white,
+    this.drawShadow = true,
   });
 
   @override
@@ -384,13 +388,15 @@ class CirclePointPainter extends CustomPainter {
     final sr = math.min(s, br - extendRadius);
     final bounds = Offset.zero & size;
     //绘制模糊阴影
-    canvas.drawCircle(
-      bounds.center + offset,
-      br,
-      Paint()
-        ..color = color.withOpacity(0.4)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
-    );
+    if (drawShadow) {
+      canvas.drawCircle(
+        bounds.center + offset,
+        br,
+        Paint()
+          ..color = color.withOpacity(0.4)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+      );
+    }
     //绘制白色圆内容
     canvas.drawCircle(
       bounds.center,

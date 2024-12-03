@@ -760,11 +760,11 @@ extension WidgetEx on Widget {
     double? width,
     double? height,
     //--
-    bool? match = true,
     bool? alignLeft,
     bool? alignTop,
     bool? alignRight,
     bool? alignBottom,
+    bool? match = true,
   }) {
     if (alignLeft == true) {
       left ??= 0;
@@ -772,19 +772,22 @@ extension WidgetEx on Widget {
         top ??= 0;
         bottom ??= 0;
       }
-    } else if (alignTop == true) {
+    }
+    if (alignTop == true) {
       top ??= 0;
       if (match == true) {
         left ??= 0;
         right ??= 0;
       }
-    } else if (alignRight == true) {
+    }
+    if (alignRight == true) {
       right ??= 0;
       if (match == true) {
         top ??= 0;
         bottom ??= 0;
       }
-    } else if (alignBottom == true) {
+    }
+    if (alignBottom == true) {
       bottom ??= 0;
       if (match == true) {
         left ??= 0;
