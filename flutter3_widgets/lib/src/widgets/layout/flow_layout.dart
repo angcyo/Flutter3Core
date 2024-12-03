@@ -519,6 +519,9 @@ class FlowLayoutRender extends RenderBox
 
     for (final child in weightChildren) {
       final childParentData = child.parentData! as FlowLayoutParentData;
+      final hasChildConstraints =
+          (childParentData.constraints ?? this.childConstraints) !=
+              null; //指定了child的约束
       var childConstraints = childParentData.constraints ??
           this.childConstraints ??
           defChildConstraints;
@@ -569,23 +572,25 @@ class FlowLayoutRender extends RenderBox
         );
       }
       //--如果都是无限, 需要进行约束, 否则布局会报错
-      if (constraints.maxWidth == double.infinity &&
-          childConstraints.maxWidth == double.infinity) {
-        childConstraints = BoxConstraints(
-          minWidth: childConstraints.minWidth,
-          maxWidth: childConstraints.maxHeight,
-          minHeight: childConstraints.minHeight,
-          maxHeight: childConstraints.maxHeight,
-        );
-      }
-      if (constraints.maxHeight == double.infinity &&
-          childConstraints.maxHeight == double.infinity) {
-        childConstraints = BoxConstraints(
-          minWidth: childConstraints.minWidth,
-          maxWidth: childConstraints.maxWidth,
-          minHeight: childConstraints.minHeight,
-          maxHeight: childConstraints.maxWidth,
-        );
+      if (!hasChildConstraints) {
+        if (constraints.maxWidth == double.infinity &&
+            childConstraints.maxWidth == double.infinity) {
+          childConstraints = BoxConstraints(
+            minWidth: childConstraints.minWidth,
+            maxWidth: childConstraints.maxHeight,
+            minHeight: childConstraints.minHeight,
+            maxHeight: childConstraints.maxHeight,
+          );
+        }
+        if (constraints.maxHeight == double.infinity &&
+            childConstraints.maxHeight == double.infinity) {
+          childConstraints = BoxConstraints(
+            minWidth: childConstraints.minWidth,
+            maxWidth: childConstraints.maxWidth,
+            minHeight: childConstraints.minHeight,
+            maxHeight: childConstraints.maxWidth,
+          );
+        }
       }
       //--
       //debugger();
