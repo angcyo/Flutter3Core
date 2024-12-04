@@ -192,6 +192,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         });*/
       },
       onReceivedError: (controller, request, error) {
+        //WebResourceError{description: net::ERR_CONNECTION_TIMED_OUT, type: TIMEOUT}
         l.w('onReceivedError[${request.url}]:$error');
         webviewPullToRefreshController?.endRefreshing().ignore();
       },
@@ -214,6 +215,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         });*/
       },
       onConsoleMessage: (controller, consoleMessage) {
+        //onConsoleMessage:ConsoleMessage{message: request send [object Object] [object Object], messageLevel: LOG}
         l.d('onConsoleMessage:$consoleMessage');
         /*if (kDebugMode) {
           print(consoleMessage);
