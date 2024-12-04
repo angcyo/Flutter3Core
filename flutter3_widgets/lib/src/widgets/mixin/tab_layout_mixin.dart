@@ -49,10 +49,13 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   Widget? buildTabLayoutIndicator(BuildContext context) =>
       buildGradientIndicator(context);
 
+  //--
+
   /// 构建一个渐变颜色的指示器
   /// [fillDecoration]
+  /// [buildTabLayoutIndicator]
   @api
-  Widget? buildGradientIndicator(
+  Widget buildGradientIndicator(
     BuildContext context, {
     List<Color>? colors,
     double? borderRadius = kDefaultBorderRadiusXX,
@@ -71,6 +74,39 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     ).tabItemData(
       itemType: TabItemType.indicator,
       enableIndicatorFlow: true,
+    );
+  }
+
+  /// 构建一个填充线条的指示器
+  /// [fillDecoration]
+  /// [buildTabLayoutIndicator]
+  @api
+  Widget buildBottomLineIndicator(
+    BuildContext context, {
+    double height = 2,
+    EdgeInsets? padding,
+    EdgeInsets? margin,
+    List<Color>? colors,
+    double? borderRadius = kDefaultBorderRadiusXX,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    return DecoratedBox(
+      decoration: fillDecoration(
+        color: globalTheme.accentColor,
+        radius: borderRadius,
+        gradient: linearGradient(colors ??
+            [
+              globalTheme.accentColor,
+              globalTheme.accentColor,
+            ]),
+      ),
+    ).tabItemData(
+      itemType: TabItemType.indicator,
+      alignment: Alignment.bottomCenter,
+      itemConstraints: LayoutBoxConstraints.fixedHeight(maxHeight: height),
+      enableIndicatorFlow: true,
+      padding: padding,
+      margin: margin,
     );
   }
 

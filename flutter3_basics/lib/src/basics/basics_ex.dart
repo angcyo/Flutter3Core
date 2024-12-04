@@ -1975,6 +1975,12 @@ extension IntEx on int {
 }
 
 extension DoubleEx on double {
+  /// 避免返回无限大
+  double infinityOr(double value) => this == double.infinity ? value : this;
+
+  double? infinityOrNull([double? value]) =>
+      this == double.infinity ? value : this;
+
   /// 取2个数的最大值
   double maxOf(double other) => math.max(this, other);
 

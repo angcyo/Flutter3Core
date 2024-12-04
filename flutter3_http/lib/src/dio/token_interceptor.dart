@@ -30,7 +30,10 @@ class TokenInterceptor extends Interceptor {
   }) {
     isTokenInvalid ??= (response) {
       if (response.statusCode == 401) {
-        //l.w("token失效");
+        assert(() {
+          l.w("token失效, 请重新登录!");
+          return true;
+        }());
         return true;
       }
       return false;

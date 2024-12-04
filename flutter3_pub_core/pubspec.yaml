@@ -11,6 +11,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter3_basics:
+    path: ../flutter3_basics
+
+  # https://pub.dev/packages/easy_refresh
+  # https://pub.dev/packages/path_drawing
+  easy_refresh: ^3.4.0
 
   # https://pub.dev/packages/rxdart
   rxdart: ^0.28.0

@@ -85,6 +85,13 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
   /// [RenderSliverPersistentHeader]
   /// [RenderSliverPinnedPersistentHeader]
   /// [SliverPaintRender.performLayout]
+  ///
+  /// ```
+  /// SliverGeometry is not valid: The "scrollExtent" is negative.
+  /// ```
+  ///
+  /// [SliverPaintRender]
+  ///
   @override
   void performLayout() {
     final constraints = this.constraints;
@@ -96,8 +103,10 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     for (final child in childrenIterable) {
       final parentData =
           child.parentData as SliverScrollCoordinateLayoutParentData;
-      child.layout(_getChildBoxConstraints(child, this.maxExtent),
-          parentUsesSize: true);
+      child.layout(
+        _getChildBoxConstraints(child, this.maxExtent),
+        parentUsesSize: true,
+      );
       //--
       final childSize = child.size;
       maxChildWidth = maxChildWidth.maxOf(childSize.width);
@@ -110,17 +119,22 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     double maxExtent = this.maxExtent ??
         (constraints.axis == Axis.vertical ? maxChildHeight : maxChildWidth);
 
-    //处理滚动进度,重新布局
+    //处理条子内的滚动进度,重新布局
     final scrollProgress = constraints.scrollOffset / (maxExtent - minExtent);
     for (final child in childrenIterable) {
       //debugger();
       final parentData =
           child.parentData as SliverScrollCoordinateLayoutParentData;
-      if (parentData.onCoordinateChildAction
-              ?.call(constraints, parentData, scrollProgress) ==
+      if (parentData.onCoordinateChildAction?.call(
+            constraints,
+            parentData,
+            scrollProgress,
+          ) ==
           true) {
-        child.layout(_getChildBoxConstraints(child, maxExtent),
-            parentUsesSize: true);
+        child.layout(
+          _getChildBoxConstraints(child, maxExtent),
+          parentUsesSize: true,
+        );
         //--
         final childSize = child.size;
         maxChildWidth = maxChildWidth.maxOf(childSize.width);
@@ -153,7 +167,7 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     //     " scrollOffset:${constraints.scrollOffset} overlap:${constraints.overlap} hasVisualOverflow:$hasVisualOverflow ");
 
     geometry = SliverGeometry(
-      scrollExtent: childExtent,
+      scrollExtent: childExtent.maxOf(minExtent),
       paintExtent: paintExtent,
       maxPaintExtent: cacheExtent.maxOf(paintExtent),
       cacheExtent: cacheExtent,
@@ -164,9 +178,15 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
   }
 
   /// [BoxConstraints]
-  BoxConstraints _getChildBoxConstraints(RenderBox child, double? maxExtent) {
+  /// [refMaxExtent] 主轴参考的最大值
+  BoxConstraints _getChildBoxConstraints(
+    RenderBox child,
+    double? refMaxExtent,
+  ) {
     final parentData =
         child.parentData as SliverScrollCoordinateLayoutParentData;
+    //交叉轴的最大值
+    final crossAxisExtent = constraints.crossAxisExtent;
     /*final childBoxConstraints = constraints.axis == Axis.vertical
         ? BoxConstraints(
             minWidth: 0,
@@ -187,13 +207,31 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     double? b = parentData.bottom;
 
     if (r != null) {
-      r = constraints.crossAxisExtent - r;
+      if (constraints.axis == Axis.horizontal) {
+        final maxWidth = parentData.maxWidth?.infinityOrNull(refMaxExtent) ??
+            parentData.minWidth?.infinityOrNull(refMaxExtent) ??
+            minExtent;
+        if (maxWidth != double.infinity) {
+          r = maxWidth - r;
+          //debugger();
+        }
+      } else {
+        r = crossAxisExtent - r;
+      }
     }
 
     if (b != null) {
       //与底部的距离
-      if (maxExtent != null) {
-        b = maxExtent - b;
+      if (constraints.axis == Axis.vertical) {
+        final maxHeight = parentData.maxHeight?.infinityOrNull(refMaxExtent) ??
+            parentData.minHeight?.infinityOrNull(refMaxExtent) ??
+            minExtent;
+        if (maxHeight != double.infinity) {
+          b = maxHeight - b;
+          //debugger();
+        }
+      } else {
+        b = crossAxisExtent - b;
       }
     }
 
@@ -209,17 +247,38 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     //debugger();
     final childBoxConstraints = constraints.axis == Axis.vertical
         ? BoxConstraints(
-            minWidth: w ?? parentData.width ?? 0,
-            maxWidth: w ?? parentData.width ?? constraints.crossAxisExtent,
-            minHeight: h ?? parentData.height ?? 0,
-            maxHeight: h ?? parentData.height ?? maxExtent ?? double.infinity,
+            //交叉轴
+            minWidth:
+                w ?? parentData.minWidth?.infinityOr(crossAxisExtent) ?? 0,
+            maxWidth: w ??
+                parentData.maxWidth?.infinityOr(crossAxisExtent) ??
+                crossAxisExtent,
+            //主轴
+            minHeight: h ??
+                parentData.minHeight?.infinityOrNull(refMaxExtent) ??
+                minExtent,
+            maxHeight: h ??
+                parentData.maxHeight?.infinityOrNull(refMaxExtent) ??
+                maxExtent ??
+                double.infinity,
           )
         : BoxConstraints(
-            minWidth: w ?? parentData.width ?? 0,
-            maxWidth: w ?? parentData.width ?? maxExtent ?? double.infinity,
-            minHeight: h ?? parentData.height ?? 0,
-            maxHeight: h ?? parentData.height ?? constraints.crossAxisExtent,
+            //主轴
+            minWidth: w ??
+                parentData.minWidth?.infinityOrNull(refMaxExtent) ??
+                minExtent,
+            maxWidth: w ??
+                parentData.maxWidth?.infinityOrNull(refMaxExtent) ??
+                maxExtent ??
+                double.infinity,
+            //交叉轴
+            minHeight:
+                h ?? parentData.minHeight?.infinityOr(crossAxisExtent) ?? 0,
+            maxHeight: h ??
+                parentData.maxHeight?.infinityOr(crossAxisExtent) ??
+                crossAxisExtent,
           );
+    //debugger();
     return childBoxConstraints;
   }
 
@@ -353,9 +412,11 @@ class SliverScrollCoordinateLayoutParentDataWidget
   final double? bottom;
   final double? left;
 
-  /// [SliverScrollCoordinateLayoutParentData.width]
-  final double? width;
-  final double? height;
+  /// [SliverScrollCoordinateLayoutParentData.minWidth]
+  final double? minWidth;
+  final double? minHeight;
+  final double? maxWidth;
+  final double? maxHeight;
 
   /// [SliverScrollCoordinateLayoutParentData.onCoordinateChildAction]
   final CoordinateLayoutChildAction? onCoordinateChildAction;
@@ -367,8 +428,10 @@ class SliverScrollCoordinateLayoutParentDataWidget
     this.right,
     this.bottom,
     this.left,
-    this.width,
-    this.height,
+    this.minWidth,
+    this.minHeight,
+    this.maxWidth,
+    this.maxHeight,
     this.onCoordinateChildAction,
   });
 
@@ -385,8 +448,10 @@ class SliverScrollCoordinateLayoutParentDataWidget
         ..top = top
         ..right = right
         ..bottom = bottom
-        ..width = width
-        ..height = height
+        ..minWidth = minWidth
+        ..minHeight = minHeight
+        ..maxWidth = maxWidth
+        ..maxHeight = maxHeight
         ..onCoordinateChildAction = onCoordinateChildAction;
       if (renderObject.parent is RenderSliverScrollCoordinateLayout) {
         renderObject.parent?.markNeedsLayout();
@@ -424,10 +489,25 @@ class SliverScrollCoordinateLayoutParentData
   double? left;
 
   /// 当前元素的大小
-  double? width;
-  double? height;
+  double? minWidth;
+  double? minHeight;
+  double? maxWidth;
+  double? maxHeight;
 
-  /// 协调布局的回调, child可以根据布局的进度进行布局的调整
+  /// 指定宽度
+  set width(double? value) {
+    minWidth = value;
+    maxWidth = value;
+  }
+
+  /// 指定高度
+  set height(double? value) {
+    minHeight = value;
+    maxHeight = value;
+  }
+
+  /// 协调布局的回调, child可以根据布局的进度进行布局的调整.
+  /// 可以在此会调用动态设置[SliverScrollCoordinateLayoutParentData]的属性值, 达到动态布局的目的
   /// @return 返回是否改变了, 如果返回true, 则会重新布局
   CoordinateLayoutChildAction? onCoordinateChildAction;
 
@@ -453,8 +533,10 @@ class SliverScrollCoordinateLayoutParentData
       if (right != null) 'right=${debugFormatDouble(right)}',
       if (bottom != null) 'bottom=${debugFormatDouble(bottom)}',
       if (left != null) 'left=${debugFormatDouble(left)}',
-      if (width != null) 'width=${debugFormatDouble(width)}',
-      if (height != null) 'height=${debugFormatDouble(height)}',
+      if (minWidth != null) 'minWidth=${debugFormatDouble(minWidth)}',
+      if (minHeight != null) 'minHeight=${debugFormatDouble(minHeight)}',
+      if (maxWidth != null) 'maxWidth=${debugFormatDouble(maxWidth)}',
+      if (maxHeight != null) 'maxHeight=${debugFormatDouble(maxHeight)}',
     ];
     if (values.isEmpty) values.add('not positioned');
     values.add(super.toString());
@@ -474,7 +556,12 @@ extension SliverScrollCoordinateLayoutEx on Widget {
     // 当前元素的大小
     double? width,
     double? height,
-    CoordinateLayoutChildAction? onCoordinateLayoutAction,
+    double? minWidth,
+    double? minHeight,
+    double? maxWidth,
+    double? maxHeight,
+    //--
+    CoordinateLayoutChildAction? onCoordinateChildAction,
   }) =>
       SliverScrollCoordinateLayoutParentDataWidget(
         key: key,
@@ -482,9 +569,11 @@ extension SliverScrollCoordinateLayoutEx on Widget {
         right: right,
         bottom: bottom,
         left: left,
-        width: width,
-        height: height,
-        onCoordinateChildAction: onCoordinateLayoutAction,
+        minWidth: width ?? minWidth,
+        minHeight: height ?? minHeight,
+        maxWidth: width ?? maxWidth,
+        maxHeight: height ?? maxHeight,
+        onCoordinateChildAction: onCoordinateChildAction,
         child: this,
       );
 }

@@ -312,8 +312,14 @@ extension StreamSubscriptionEx<T> on StreamSubscription<T> {
 }
 
 /// [LiveStreamController]
-LiveStreamController<T?> $live<T>([T? initialValue]) =>
-    LiveStreamController<T?>(initialValue);
+LiveStreamController<T?> $live<T>(
+        [T? initialValue, bool autoClearValue = false]) =>
+    LiveStreamController<T?>(initialValue, autoClearValue: autoClearValue);
+
+/// [LiveStreamController]
+LiveStreamController<T?> $liveOnce<T>(
+        [T? initialValue, bool autoClearValue = true]) =>
+    LiveStreamController<T?>(initialValue, autoClearValue: autoClearValue);
 
 extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   /// [RebuildWidget]

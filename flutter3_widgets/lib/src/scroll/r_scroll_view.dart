@@ -30,7 +30,6 @@ class RScrollView extends StatefulWidget {
     this.enableLoadMore = false,
     this.showLoadMoreCallback,
     this.primary,
-    this.scrollBehavior = const MaterialScrollBehavior(),
     this.shrinkWrap = false,
     this.center,
     this.anchor = 0.0,
@@ -40,6 +39,7 @@ class RScrollView extends StatefulWidget {
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
+    this.scrollBehavior = const MaterialScrollBehavior(),
     this.physics = kScrollPhysics,
     this.enableFrameLoad = false,
     this.frameSplitCount = 1,
@@ -289,7 +289,7 @@ extension RScrollViewEx on WidgetNullList {
   Widget rScroll({
     RScrollController? controller,
     Axis axis = Axis.vertical,
-    ScrollBehavior? scrollBehavior,
+    ScrollBehavior? scrollBehavior = const MaterialScrollBehavior(),
     ScrollPhysics? physics = kScrollPhysics,
   }) {
     return RScrollView(

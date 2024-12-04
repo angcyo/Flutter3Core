@@ -502,6 +502,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
 /// 不指定` physics: null,` `scrollBehavior: null,`时, 系统就会走
 /// [ScrollConfiguration]
+///
+/// [ScrollableState._updatePosition]
+/// `physics`会从[ScrollBehavior]中获取, 如果此时又指定了`physics`
+/// 则会调用自定义的[ScrollPhysics.applyTo]
+///
 class _PullBackScrollBehavior extends MaterialScrollBehavior {
   final ScrollPhysics? _physics;
 
