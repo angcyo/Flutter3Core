@@ -5,13 +5,13 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2024/08/23
 ///
 class SliverScrollCoordinateLayoutWidget extends MultiChildRenderObjectWidget {
-  /// 最小范围
+  /// [RenderSliverScrollCoordinateLayout.minExtent]
   final double minExtent;
 
-  /// 最大范围
+  /// [RenderSliverScrollCoordinateLayout.maxExtent]
   final double? maxExtent;
 
-  /// 协调布局进度回调
+  /// [RenderSliverScrollCoordinateLayout.onCoordinateLayoutAction]
   final CoordinateLayoutAction? onCoordinateLayoutAction;
 
   const SliverScrollCoordinateLayoutWidget({
@@ -47,13 +47,14 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
         ContainerRenderObjectMixin<RenderBox,
             ContainerParentDataMixin<RenderBox>>,
         RenderSliverHelpers {
-  /// 最小范围
+  /// 需要保持显示的最小范围
   double minExtent = 0;
 
-  /// 最大范围
+  /// 需要保持显示的最大范围
   double? maxExtent;
 
-  /// 协调布局进度回调
+  /// Sliver滚动协调布局进度回调
+  /// 这个回调会把进度回调出去
   CoordinateLayoutAction? onCoordinateLayoutAction;
 
   /// [SliverConstraints.overlap]
@@ -115,7 +116,7 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
       //debugger();
       final parentData =
           child.parentData as SliverScrollCoordinateLayoutParentData;
-      if (parentData.onCoordinateLayoutAction
+      if (parentData.onCoordinateChildAction
               ?.call(constraints, parentData, scrollProgress) ==
           true) {
         child.layout(_getChildBoxConstraints(child, maxExtent),
@@ -133,7 +134,7 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
           constraints.axis == Axis.vertical ? maxChildHeight : maxChildWidth;
     }
 
-    //回调
+    //布局进度回调
     onCoordinateLayoutAction?.call(constraints, maxExtent, scrollProgress);
 
     //后处理
@@ -346,19 +347,18 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
 
 class SliverScrollCoordinateLayoutParentDataWidget
     extends ParentDataWidget<SliverScrollCoordinateLayoutParentData> {
-  /// 当前元素的位置
+  /// [SliverScrollCoordinateLayoutParentData.top]
   final double? top;
   final double? right;
   final double? bottom;
   final double? left;
 
-  /// 当前元素的大小
+  /// [SliverScrollCoordinateLayoutParentData.width]
   final double? width;
   final double? height;
 
-  /// 协调布局的回调
-  /// @return 返回是否改变了, 如果返回true, 则会重新布局
-  final CoordinateLayoutChildAction? onCoordinateLayoutAction;
+  /// [SliverScrollCoordinateLayoutParentData.onCoordinateChildAction]
+  final CoordinateLayoutChildAction? onCoordinateChildAction;
 
   const SliverScrollCoordinateLayoutParentDataWidget({
     super.key,
@@ -369,7 +369,7 @@ class SliverScrollCoordinateLayoutParentDataWidget
     this.left,
     this.width,
     this.height,
-    this.onCoordinateLayoutAction,
+    this.onCoordinateChildAction,
   });
 
   @override
@@ -387,7 +387,7 @@ class SliverScrollCoordinateLayoutParentDataWidget
         ..bottom = bottom
         ..width = width
         ..height = height
-        ..onCoordinateLayoutAction = onCoordinateLayoutAction;
+        ..onCoordinateChildAction = onCoordinateChildAction;
       if (renderObject.parent is RenderSliverScrollCoordinateLayout) {
         renderObject.parent?.markNeedsLayout();
       }
@@ -399,12 +399,14 @@ class SliverScrollCoordinateLayoutParentDataWidget
       SliverScrollCoordinateLayoutWidget;
 }
 
+/// 整体布局进度的回调
 typedef CoordinateLayoutAction = bool Function(
   SliverConstraints constraints /*父容器的约束条件*/,
   double maxExtent /*父容器的最大高度*/,
   double scrollProgress /*当前滚动进度*/,
 );
 
+/// child 重新布局的回调拦截
 typedef CoordinateLayoutChildAction = bool Function(
   SliverConstraints constraints /*父容器的约束条件*/,
   SliverScrollCoordinateLayoutParentData parentData /*布局数据*/,
@@ -425,9 +427,9 @@ class SliverScrollCoordinateLayoutParentData
   double? width;
   double? height;
 
-  /// 协调布局的回调
+  /// 协调布局的回调, child可以根据布局的进度进行布局的调整
   /// @return 返回是否改变了, 如果返回true, 则会重新布局
-  CoordinateLayoutChildAction? onCoordinateLayoutAction;
+  CoordinateLayoutChildAction? onCoordinateChildAction;
 
   /// 绘制的偏移坐标
   Offset getPaintOffset(Rect parentBounds, Size childSize) {
@@ -482,7 +484,7 @@ extension SliverScrollCoordinateLayoutEx on Widget {
         left: left,
         width: width,
         height: height,
-        onCoordinateLayoutAction: onCoordinateLayoutAction,
+        onCoordinateChildAction: onCoordinateLayoutAction,
         child: this,
       );
 }

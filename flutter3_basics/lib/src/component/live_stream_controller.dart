@@ -311,6 +311,10 @@ extension StreamSubscriptionEx<T> on StreamSubscription<T> {
   }
 }
 
+/// [LiveStreamController]
+LiveStreamController<T?> $live<T>([T? initialValue]) =>
+    LiveStreamController<T?>(initialValue);
+
 extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   /// [RebuildWidget]
   Widget build(
