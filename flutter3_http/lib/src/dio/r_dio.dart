@@ -38,6 +38,10 @@ class RDio {
     )*/
 
   /// 获取一个dio对象, 并设置[baseUrl]
+  ///
+  /// [AppInfoInterceptor]
+  /// [LogFileInterceptor]
+  /// [TokenInterceptor]
   Dio get dio => _dio
         ..options.baseUrl = Http.getBaseUrl?.call() ?? ""
         ..interceptors.remove(_logFileInterceptor)

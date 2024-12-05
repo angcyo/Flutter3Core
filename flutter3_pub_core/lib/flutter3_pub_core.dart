@@ -28,6 +28,18 @@ part 'src/refresh/refresh_ex.dart';
 final $get = GetIt.instance;
 
 /// watch it
+/// ```
+/// class MyWidget extends StatelessWidget with WatchItMixin {
+///   @override
+///   Widget build(BuildContext context) {
+///     String country = watchValue((Model x) => x.country);
+///     ...
+///   }
+/// }
+/// ```
+///
+/// [WatchItMixin]
+/// [WatchItStatefulWidgetMixin]
 final $di = di;
 
 void _test(){
