@@ -69,7 +69,10 @@ extension RefreshEx on Widget {
               if (onLoadData == null) {
                 return IndicatorResult.success;
               } else {
-                return onLoadData.call(true);
+                final result = await onLoadData.call(true);
+                return result == null
+                    ? IndicatorResult.fail
+                    : IndicatorResult.success;
               }
             }
           : null,
@@ -79,7 +82,10 @@ extension RefreshEx on Widget {
               if (onLoadData == null) {
                 return IndicatorResult.noMore;
               } else {
-                return onLoadData.call(false);
+                final result = await onLoadData.call(false);
+                return result == null
+                    ? IndicatorResult.fail
+                    : IndicatorResult.success;
               }
             }
           : null,

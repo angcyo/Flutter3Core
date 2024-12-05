@@ -56,6 +56,7 @@ part 'src/pub/wheel.dart';
 part 'src/scroll/page/abs_scroll_page.dart';
 part 'src/scroll/page/r_scroll_page.dart';
 part 'src/scroll/page/r_status_scroll_page.dart';
+part 'src/scroll/page/r_tile_rebuild_mixin.dart';
 part 'src/scroll/r_item_tile.dart';
 part 'src/scroll/r_scroll_config.dart';
 part 'src/scroll/r_scroll_controller.dart';

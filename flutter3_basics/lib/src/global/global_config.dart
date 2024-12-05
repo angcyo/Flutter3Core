@@ -261,6 +261,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 全局的Loading指示器
   /// [OverlayEntry.type]
   /// [OverlayEntry]
+  ///
+  /// [WidgetStateBuildWidgetState]
+  ///
   @minifyProguardFlag
   ProgressWidgetBuilder loadingIndicatorBuilder = (context, data, progress) {
     //debugger();
@@ -272,6 +275,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局的无数据占位小部件
   /// [data] 额外的提示文本或小部件
+  ///
+  /// [WidgetStateBuildWidgetState]
   WidgetArgumentBuilder emptyPlaceholderBuilder = <T>(context, data) {
     final icon = loadAssetImageWidget(libAssetsStateNoDataKey,
                 package: 'flutter3_basics')
@@ -291,6 +296,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   /// 全局的错误占位小部件
+  ///
+  /// [WidgetStateBuildWidgetState]
   WidgetArgumentBuilder errorPlaceholderBuilder = <T>(context, error) {
     final icon = loadAssetImageWidget(libAssetsStateLoadErrorKey,
                 package: 'flutter3_basics')

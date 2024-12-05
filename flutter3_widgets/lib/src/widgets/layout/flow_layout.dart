@@ -844,7 +844,7 @@ extension FlowLayoutListEx on WidgetNullList {
     double childGap = 0,
     double? childHorizontalGap,
     double? childVerticalGap,
-    BoxConstraints? childConstraints,
+    BoxConstraints? childConstraints = const BoxConstraints(),
     String? equalWidthRange,
     int? lineMaxChildCount,
     int? lineChildCount,

@@ -74,7 +74,13 @@ class RScrollController extends ScrollController {
   /// [_checkScrollPosition]->[isSupportScrollLoadData]
   bool Function()? isSupportScrollLoadDataCallback;
 
+  /// 满状态控制器
   RScrollController();
+
+  /// 简单状态控制器
+  RScrollController.single() {
+    adapterStateValue.value = WidgetBuildState.none;
+  }
 
   /// 检查滚动位置
   /// 监听滚动到底部,驱动触发加载更多
@@ -258,7 +264,7 @@ class RScrollController extends ScrollController {
   /// [RScrollView.build]驱动
   @configProperty
   late WidgetWrapBuilder wrapRefreshWidget = (context, child) {
-    //debugger();
+    debugger();
     if (adapterStateValue.value.isLoading) {
       //如果情感图状态是加载中, 则不需要下拉刷新
       return child;
@@ -404,6 +410,10 @@ extension ScrollControllerEx on ScrollController {
     Curve curve = Curves.easeOut,
   }) {
     if (!hasClients) {
+      assert(() {
+        l.w('操作被忽略,无客户端!');
+        return true;
+      }());
       return;
     }
     if (anim) {
@@ -431,10 +441,38 @@ extension ScrollControllerEx on ScrollController {
     Curve curve = Curves.easeOut,
   }) {
     if (!hasClients) {
+      assert(() {
+        l.w('操作被忽略,无客户端!');
+        return true;
+      }());
       return;
     }
     scrollToTop(
       offset: position.maxScrollExtent,
+      anim: anim,
+      duration: duration,
+      curve: curve,
+    );
+  }
+
+  /// 滚动到当前位置
+  @api
+  void scrollToCurrent({
+    bool anim = false,
+    Duration duration = kDefaultAnimationDuration,
+    Curve curve = Curves.easeOut,
+  }) {
+    if (!hasClients) {
+      assert(() {
+        l.w('操作被忽略,无客户端!');
+        return true;
+      }());
+      return;
+    }
+    //l.d("...test:${position.pixels} ${position.minScrollExtent} ${position.maxScrollExtent}");
+    //debugger();
+    scrollToTop(
+      offset: min(position.pixels, position.maxScrollExtent),
       anim: anim,
       duration: duration,
       curve: curve,

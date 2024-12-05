@@ -28,7 +28,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [rebuildByBean]
   static UpdateValueNotifier? consumeRebuildBeanSignal() {
     if (_lastRebuildBeanSignal?.target != null) {
-      var signal = _lastRebuildBeanSignal?.target;
+      final signal = _lastRebuildBeanSignal?.target;
       _lastRebuildBeanSignal = null;
       return signal;
     }
@@ -496,7 +496,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @api
   void deleteTile(
       bool Function(RItemTile tile, UpdateValueNotifier signal) test) {
-    WidgetList removeList = [];
+    final WidgetList removeList = [];
     for (final element in pageWidgetList) {
       //debugger();
       if (element is RItemTile) {

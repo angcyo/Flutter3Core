@@ -440,14 +440,14 @@ extension FutureEx<T> on Future<T> {
         //debugger();
         final data = get?.call(value, null); //这一层的错误会被捕获
         return data ?? value;
-      } catch (error) {
+      } catch (error, s) {
         //debugger();
         if (throwError == true) {
           rethrow;
         } else {
           assert(() {
             l.w('FutureGet异常:$error↓');
-            printError(error, stack);
+            printError(error, s /*stack*/);
             return true;
           }());
         }

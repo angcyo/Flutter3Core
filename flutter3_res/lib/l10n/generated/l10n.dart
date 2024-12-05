@@ -230,6 +230,16 @@ class LibRes {
     );
   }
 
+  /// `删除后无法恢复，确认删除吗？`
+  String get libDeleteTip {
+    return Intl.message(
+      '删除后无法恢复，确认删除吗？',
+      name: 'libDeleteTip',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `下一步`
   String get libNext {
     return Intl.message(
@@ -300,6 +310,26 @@ class LibRes {
     );
   }
 
+  /// `保存成功`
+  String get libSaveSuccessful {
+    return Intl.message(
+      '保存成功',
+      name: 'libSaveSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `保存失败`
+  String get libSaveFailure {
+    return Intl.message(
+      '保存失败',
+      name: 'libSaveFailure',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `是`
   String get libYes {
     return Intl.message(
@@ -315,6 +345,36 @@ class LibRes {
     return Intl.message(
       '否',
       name: 'libNo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `重命名`
+  String get libRename {
+    return Intl.message(
+      '重命名',
+      name: 'libRename',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `复制`
+  String get libCopy {
+    return Intl.message(
+      '复制',
+      name: 'libCopy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `外部分享`
+  String get libExternalShare {
+    return Intl.message(
+      '外部分享',
+      name: 'libExternalShare',
       desc: '',
       args: [],
     );

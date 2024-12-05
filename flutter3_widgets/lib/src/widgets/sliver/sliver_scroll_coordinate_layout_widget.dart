@@ -152,28 +152,44 @@ class RenderSliverScrollCoordinateLayout extends RenderSliver
     onCoordinateLayoutAction?.call(constraints, maxExtent, scrollProgress);
 
     //后处理
+    //child 高度
     final double childExtent = maxExtent - minExtent;
 
+    //
     final double paintedChildSize =
         calculatePaintOffset(constraints, from: 0.0, to: maxExtent);
     final double cacheExtent =
         calculateCacheOffset(constraints, from: 0.0, to: maxExtent);
 
+    //计算需要绘制的高度
     final paintExtent = paintedChildSize.maxOf(minExtent);
     final hasVisualOverflow = childExtent > constraints.remainingPaintExtent ||
         constraints.scrollOffset > 0.0;
 
+    //计算布局占用的高度
+    final double effectiveRemainingPaintExtent =
+        max(0, constraints.remainingPaintExtent - constraints.overlap);
+    final double layoutExtent = clampDouble(
+        maxExtent - constraints.scrollOffset,
+        0.0,
+        effectiveRemainingPaintExtent);
+
     // l.i("scrollProgress:$scrollProgress paintedChildSize:$paintedChildSize paintExtent:$paintExtent"
     //     " scrollOffset:${constraints.scrollOffset} overlap:${constraints.overlap} hasVisualOverflow:$hasVisualOverflow ");
 
+    //scrollOffset:0.0 minExtent: 120.0 maxExtent: 370.0 layoutExtent:370.0 cacheExtent:370.0 paintExtent:370.0 paintedChildSize:370.0 hasVisualOverflow:false
+    //scrollOffset:634.4210526315788 minExtent: 120.0 maxExtent: 370.0 layoutExtent:0.0 cacheExtent:0.0 paintExtent:120.0 paintedChildSize:0.0 hasVisualOverflow:true
+    //l.i("scrollOffset:${constraints.scrollOffset} minExtent: $minExtent maxExtent: $maxExtent layoutExtent:$layoutExtent cacheExtent:$cacheExtent paintExtent:$paintExtent paintedChildSize:$paintedChildSize hasVisualOverflow:$hasVisualOverflow");
+
     geometry = SliverGeometry(
-      scrollExtent: childExtent.maxOf(minExtent),
+      scrollExtent: this.maxExtent ?? childExtent.maxOf(minExtent),
+      paintOrigin: constraints.overlap > 0 ? constraints.overlap : 0,
       paintExtent: paintExtent,
       maxPaintExtent: cacheExtent.maxOf(paintExtent),
+      layoutExtent: layoutExtent,
       cacheExtent: cacheExtent,
       hitTestExtent: paintedChildSize,
       hasVisualOverflow: hasVisualOverflow,
-      paintOrigin: constraints.overlap > 0 ? constraints.overlap : 0,
     );
   }
 

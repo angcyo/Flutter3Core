@@ -151,6 +151,9 @@ UpdateSignalNotifier<dynamic> get nullValueUpdateSignal =>
 UpdateSignalNotifier<T?> createUpdateSignal<T>() =>
     UpdateSignalNotifier<T?>(null);
 
+@updateSignalMark
+UpdateSignalNotifier<T?> $signal<T>() => UpdateSignalNotifier<T?>(null);
+
 mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
   /// 用来触发重构的信号
   late final List<Listenable> listenableList = [];
