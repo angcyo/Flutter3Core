@@ -3146,9 +3146,9 @@ extension NavigatorStateEx on NavigatorState {
     return maybePop(result);
   }
 
-  void popUntil<T extends Object?>(RoutePredicate predicate) {
+  /*void popUntil<T extends Object?>(RoutePredicate predicate) {
     popUntil(predicate);
-  }
+  }*/
 
   Future<T?> popAndPushNamed<T extends Object?, TO extends Object?>(
     String routeName, {
