@@ -149,7 +149,7 @@ Future wrapLoading(
         LoadingInfo(message: showCountDown ? "${timeout.inSeconds}" : null),
       );
     }
-    if (delay != null) {
+    if (delay != null && delay > Duration.zero) {
       postDelayCallback(() {
         //debugger();
         //l.w("delay end");
@@ -162,9 +162,7 @@ Future wrapLoading(
         }
       }, delay);
     } else {
-      showLoading(
-        loadingInfoNotifier: loadingInfoNotifier,
-      );
+      showLoading(loadingInfoNotifier: loadingInfoNotifier);
     }
   } else {
     onStart.call();

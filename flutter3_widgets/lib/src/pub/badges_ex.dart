@@ -8,6 +8,7 @@ part of flutter3_widgets;
 extension WidgetBadgesEx on Widget {
   /// 角标
   /// [text] 角标文本, null则不显示角标, ""则显示小红点, 其他则显示文本
+  /// [padding] 内部内边距
   /// [offset] 偏移量
   /// [badges.BadgeStyle] 角标样式
   Widget badge({

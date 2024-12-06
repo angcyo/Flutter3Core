@@ -43,11 +43,18 @@ class LiveStreamController<T> {
   /// 是否有错误
   bool get hasError => latestError != null;
 
+  /// 是否为空
+  bool get isEmpty => latestValue == null || isNil(latestValue);
+
   /// 发送数据
   @callPoint
   void add(T newValue) {
     latestError = null;
     if (ignoreLastNullNotify && latestValue == null && newValue == null) {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
       return;
     }
     latestValue = newValue;
@@ -130,6 +137,45 @@ class LiveStreamController<T> {
   @callPoint
   Future<void> close() {
     return _controller.close();
+  }
+
+  //--
+
+  /// 如果[latestValue]是一个[List]类型, 则塞到[latestValue]中
+  @callPoint
+  void addSub(dynamic subValue) {
+    if (latestValue is List) {
+      (latestValue as List).add(subValue);
+      add(latestValue);
+    } else {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
+    }
+  }
+
+  /// [addSub]
+  @callPoint
+  void removeSub(dynamic subValue) {
+    if (latestValue is List) {
+      (latestValue as List).remove(subValue);
+      add(latestValue);
+    } else {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
+    }
+  }
+
+  /// [addSub]
+  @callPoint
+  bool haveSubValue(dynamic subValue) {
+    if (latestValue is List) {
+      return (latestValue as List).contains(subValue);
+    }
+    return false;
   }
 }
 
@@ -348,4 +394,15 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
           builder: (_, __) {
             return builder() ?? empty;
           });
+}
+
+extension LiveStreamControllerIterableEx<T>
+    on Iterable<LiveStreamController<T>> {
+  /// [RebuildWidget]
+  Widget buildFn(Widget? Function() builder) => StreamBuilder(
+      stream: StreamGroup.mergeBroadcast(map((e) => e.stream)),
+      initialData: null,
+      builder: (_, __) {
+        return builder() ?? empty;
+      });
 }
