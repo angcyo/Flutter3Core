@@ -131,7 +131,7 @@ extension ImagePubEx on String {
                 GlobalConfig.of(context)
                     .errorPlaceholderBuilder(context, error),
           );
-        } else {
+        } else if (!isNil(this)) {
           return Image.asset(
             this,
             fit: fit,
@@ -149,10 +149,12 @@ extension ImagePubEx on String {
     }
     //debugger();
     l.w("不支持的图片类型:$type\n$this");
-    return "不支持的图片类型:$type\n${basename()}".text(
-      textAlign: TextAlign.center,
-      textColor: Colors.red,
-    );
+    return isDebug
+        ? "不支持的图片类型[${basename()}]:$type\n".text(
+            textAlign: TextAlign.center,
+            textColor: Colors.red,
+          )
+        : empty;
   }
 
   /// 网络图片提供器

@@ -128,7 +128,7 @@ void hideLoading() {
 /// [onStart] 自定义开始时的回调, 拦截默认显示加载提示
 /// [delay] 延迟多久后显示加载提示
 /// [timeout] 超时多久后触发[onEnd]回调, 并阻止[Future]的返回值,
-/// [showTime] 是否显示倒计时
+/// [showCountDown] 是否显示倒计时
 /// [wrapLoading]
 /// [wrapLoadingTimeout]
 Future wrapLoading(
@@ -137,7 +137,7 @@ Future wrapLoading(
   Duration? timeout,
   VoidCallback? onStart,
   ValueErrorCallback? onEnd,
-  bool showTime = false,
+  bool showCountDown = false,
 }) {
   Timer? timer;
   bool isTimeout = false;
@@ -146,7 +146,7 @@ Future wrapLoading(
   if (onStart == null) {
     if (timeout != null) {
       loadingInfoNotifier = LoadingValueNotifier(
-        LoadingInfo(message: showTime ? "${timeout.inSeconds}" : null),
+        LoadingInfo(message: showCountDown ? "${timeout.inSeconds}" : null),
       );
     }
     if (delay != null) {
@@ -171,7 +171,7 @@ Future wrapLoading(
   }
   //--
   if (timeout != null) {
-    if (showTime) {
+    if (showCountDown) {
       //需要显示倒计时
       timer = countdownCallback(timeout, (duration) {
         loadingInfoNotifier?.value =
@@ -223,14 +223,17 @@ Future wrapLoadingTimeout(
   Future future, {
   Duration? delay = const Duration(seconds: 1),
   Duration? timeout = const Duration(seconds: 30),
-  bool showTime = false,
+  bool showCountDown = false,
+  //--
+  VoidCallback? onStart,
   ValueErrorCallback? onEnd,
 }) {
   return wrapLoading(
     future,
     delay: delay,
     timeout: timeout,
-    showTime: showTime,
+    showCountDown: showCountDown,
+    onStart: onStart,
     onEnd: onEnd,
   );
 }
