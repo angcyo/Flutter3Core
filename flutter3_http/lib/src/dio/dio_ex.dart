@@ -342,6 +342,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     return get((response, error) {
       //debugger();
       if (error != null) {
+        //有错误
         final err = handle.handleError(error);
         callback?.call(response, err);
         if (throwError == true) {
@@ -349,17 +350,19 @@ extension DioFutureResponseEx<T> on Future<T> {
         }
         return null;
       } else if (response == null) {
+        //没有数据
         final exception = RException(message: "response is null", cause: error);
         final err = handle.handleError(exception);
-        callback?.call(response, err);
+        final callbackValue = callback?.call(response, err);
         if (throwError == true) {
           throw exception;
         }
-        return null;
+        return callbackValue;
       } else {
+        //有数据
         final data = handle.handleResponse(response);
-        callback?.call(data, null);
-        return data;
+        final callbackValue = callback?.call(data, null);
+        return callbackValue ?? data;
       }
     }).catchError((error) {
       //debugger();

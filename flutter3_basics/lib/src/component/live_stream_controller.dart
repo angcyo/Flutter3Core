@@ -40,6 +40,9 @@ class LiveStreamController<T> {
   /// 获取当前最新的错误
   Object? get error => latestError;
 
+  /// 是否有错误
+  bool get hasError => latestError != null;
+
   /// 发送数据
   @callPoint
   void add(T newValue) {
