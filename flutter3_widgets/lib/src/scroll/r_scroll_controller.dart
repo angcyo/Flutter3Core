@@ -264,7 +264,7 @@ class RScrollController extends ScrollController {
   /// [RScrollView.build]驱动
   @configProperty
   late WidgetWrapBuilder wrapRefreshWidget = (context, child) {
-    debugger();
+    //debugger();
     if (adapterStateValue.value.isLoading) {
       //如果情感图状态是加载中, 则不需要下拉刷新
       return child;
