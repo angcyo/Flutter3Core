@@ -38,6 +38,7 @@ export 'package:provider/provider.dart';
 
 export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
+export 'src/core/build_config.dart';
 
 part 'src/core/core_keys.dart';
 part 'src/core/svg_core.dart';

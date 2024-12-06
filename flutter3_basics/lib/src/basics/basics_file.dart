@@ -14,6 +14,10 @@ extension FileStringEx on String {
   /// [Directory]
   File toFile() => File(this);
 
+  String? get fileMd5Sync => toFile().md5Sync();
+
+  Future<String?> get fileMd5 => toFile().md5();
+
   //region ---Path---
 
   /// 转换成文件夹对象

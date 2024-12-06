@@ -41,6 +41,6 @@ class DataChunkInfo {
 
   @override
   String toString() {
-    return 'DataChunkInfo{total: $total, count: $count, speed: $speedStr progress: $progress';
+    return 'DataChunkInfo{$count/$total, speed: $speedStr progress: $progress}';
   }
 }
