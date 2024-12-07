@@ -37,6 +37,7 @@ class TokenInterceptor extends Interceptor {
           l.w("token失效, 请重新登录!");
           return true;
         }());
+        debugger();
         return true;
       }
       return false;

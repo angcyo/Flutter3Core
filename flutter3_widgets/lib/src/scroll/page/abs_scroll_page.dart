@@ -39,6 +39,10 @@ mixin AbsScrollPage {
     Color? backgroundColor,
     PreferredSizeWidget? appBar,
     Widget? body,
+    //--
+    bool useSafeArea = true,
+    bool safeAreaTop = false,
+    bool safeAreaBottom = true,
   }) {
     //debugger();
     final useSliverAppBar = this.useSliverAppBar(context) == true;
@@ -47,11 +51,17 @@ mixin AbsScrollPage {
       backgroundColor: backgroundColor ?? getBackgroundColor(context),
       resizeToAvoidBottomInset:
           resizeToAvoidBottomInset ?? getResizeToAvoidBottomInset(context),
-      body: body ??
-          (this is RebuildBodyMixin
-              ? rebuild((this as RebuildBodyMixin).bodyUpdateSignal,
-                  (context, value) => buildBody(context, children))
-              : buildBody(context, children)),
+      body: (body ??
+              (this is RebuildBodyMixin
+                  ? rebuild((this as RebuildBodyMixin).bodyUpdateSignal,
+                      (context, value) => buildBody(context, children))
+                  : buildBody(context, children)))
+          .safeArea(
+        useSafeArea: useSafeArea,
+        top: safeAreaTop,
+        bottom: safeAreaBottom,
+        maintainBottomViewPadding: safeAreaBottom,
+      ),
     );
   }
 

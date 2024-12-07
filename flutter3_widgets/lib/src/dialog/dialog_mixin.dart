@@ -173,6 +173,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     //CrossAxisAlignment.center, 需要考虑拖动手柄的样式
     CrossAxisAlignment? crossAxisAlignment,
     Widget? bottomWidget /*放在底部的小部件*/,
+    //--safeArea
+    bool useSafeArea = true,
   }) {
     Widget body;
     children = children.filterNull();
@@ -257,6 +259,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     final globalTheme = GlobalTheme.of(context);
     return body
         .size(height: height)
+        .safeArea(useSafeArea: useSafeArea, maintainBottomViewPadding: true)
         .material(color: bgColor ?? globalTheme.dialogSurfaceBgColor)
         .clipRadius(
           radius: clipRadius,

@@ -42,7 +42,10 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
           ) {
             final Widget pageChild = Builder(builder: builder);
             Widget dialog = themes?.wrap(pageChild) ?? pageChild;
-            return dialog.safeArea(useSafeArea: useSafeArea);
+            return dialog.safeArea(
+              useSafeArea: useSafeArea,
+              maintainBottomViewPadding: false,
+            );
           },
           transitionBuilder: (
             BuildContext context,
