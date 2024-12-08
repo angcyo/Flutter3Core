@@ -1611,6 +1611,7 @@ extension WidgetEx on Widget {
     return PopScope(
       canPop: canPop,
       onPopInvoked: onPopInvoked,
+      onPopInvokedWithResult: null,
       child: this,
     );
   }
@@ -1632,7 +1633,8 @@ extension WidgetEx on Widget {
     dynamic result,
   }) {
     return popScope(false, (didPop) async {
-      if (!didPop) {
+      //debugger();
+      if (!didPop && !$isShowLoading) {
         final result = await action();
         if (result is bool && !result) {
           (context ?? GlobalConfig.def.globalContext)?.pop(result);

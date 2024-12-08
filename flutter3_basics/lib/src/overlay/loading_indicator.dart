@@ -9,6 +9,8 @@ part of '../../flutter3_basics.dart';
 const double kMinLoadingIndicatorDimension = 28.0;
 const double kStrokeLoadingIndicatorDimension = 36.0;
 
+/// [CircularProgressIndicator]
+/// [StrokeLoadingWidget]
 class LoadingIndicator extends StatelessWidget {
   final Size? size;
 

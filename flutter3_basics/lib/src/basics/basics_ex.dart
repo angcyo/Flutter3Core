@@ -1632,6 +1632,7 @@ extension NumEx on num {
 
   ///高于60帧时, 保持60帧的刷新率
   ///三星手机会出现24帧率
+  ///高刷手机会有120/140帧率
   ///[refreshRate]
   double get rr =>
       refreshRate > 60.0 ? (this / (refreshRate / 60.0)) : toDouble();

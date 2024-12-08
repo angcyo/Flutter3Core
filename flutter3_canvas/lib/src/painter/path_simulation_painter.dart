@@ -206,7 +206,7 @@ class PathSimulationPainter extends ElementPainter {
 
     //debugger();
     if (simulationInfo != null && isStartSimulation) {
-      distance += simulationSpeed * simulationSpeedScale;
+      distance += simulationSpeed.rr * simulationSpeedScale;
       if (distance < simulationInfo!.length) {
         refresh();
       } else {

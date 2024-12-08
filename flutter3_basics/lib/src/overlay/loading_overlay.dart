@@ -11,6 +11,9 @@ Size kDefaultLoadingSize = const Size(50, 50);
 /// 弱引用
 WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 
+/// 是否显示了加载提示
+bool get $isShowLoading => _currentLoadingEntryRef?.target != null;
+
 /// 显示加载提示
 ///
 /// [builder] 构建加载提示的Widget
@@ -94,7 +97,7 @@ OverlayEntry? showLoading({
   }
 
   if (postShow) {
-    postFrameCallback((duration) {
+    postFrameCallbackIfNeed((duration) {
       insert();
     });
   } else {
@@ -310,6 +313,7 @@ class _LoadingOverlayState extends State<_LoadingOverlay> {
 
   /// 拦截返回键
   Future<bool> _onWillPop() async {
+    debugger();
     return false;
   }
 
@@ -325,10 +329,19 @@ class _LoadingOverlayState extends State<_LoadingOverlay> {
             },
             child: widget.builder(context, widget.loadingInfoNotifier?.value),
           );
-    return RouteWillPopScope(
+    /*return RouteWillPopScope(
       route: widget.route,
       onWillPop: _onWillPop,
       child: AbsorbPointer(absorbing: true, child: result), // 拦截手势
+    );*/
+    return RoutePopScope(
+      route: widget.route,
+      onCallPop: _onWillPop,
+      child: AbsorbPointer(absorbing: true, child: result), // 拦截手势
     );
+    /*return PopScope(
+      canPop: false,
+      child: AbsorbPointer(absorbing: true, child: result),
+    );*/
   }
 }

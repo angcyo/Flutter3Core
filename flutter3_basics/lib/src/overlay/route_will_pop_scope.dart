@@ -7,6 +7,10 @@ part of '../../flutter3_basics.dart';
 
 /// 系统的[WillPopScope]会从当前的context中获取, 有些情况下不一定获取到自己想要的
 /// 这个小部件指定了路由
+///
+/// [WillPopScope]
+/// [PopScope]
+///
 class RouteWillPopScope extends StatefulWidget {
   const RouteWillPopScope({
     super.key,
@@ -22,6 +26,7 @@ class RouteWillPopScope extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.ProxyWidget.child}
   /// [WillPopScope.child]
+  /// [PopScope.child]
   final Widget child;
 
   /// Called to veto attempts by the user to dismiss the enclosing [ModalRoute].
@@ -77,6 +82,79 @@ class _RouteWillPopScopeState extends State<RouteWillPopScope> {
         //no op
       }
     }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
+typedef CanPopCallback = Future<bool> Function();
+
+/// [RouteWillPopScope]
+/// [PopScope]
+class RoutePopScope extends StatefulWidget {
+  final ModalRoute<dynamic>? route;
+  final Widget child;
+  final CanPopCallback? onCallPop;
+
+  const RoutePopScope({
+    super.key,
+    this.route,
+    required this.child,
+    this.onCallPop,
+  });
+
+  @override
+  State<RoutePopScope> createState() => _RoutePopScopeState();
+}
+
+class _RoutePopScopeState extends State<RoutePopScope>
+    implements PopEntry<dynamic> {
+  ModalRoute<dynamic>? _route;
+
+  @override
+  void onPopInvoked(bool didPop) {
+    debugger();
+    throw UnimplementedError();
+  }
+
+  @override
+  void onPopInvokedWithResult(bool didPop, dynamic result) {
+    //debugger();
+    widget.onCallPop?.call().then((value) {
+      canPopNotifier.value = value;
+    });
+  }
+
+  @override
+  late final ValueNotifier<bool> canPopNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    canPopNotifier = ValueNotifier<bool>(false);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    //debugger();
+    _route?.unregisterPopEntry(this);
+    _route = widget.route ?? ModalRoute.of(context);
+    _route?.registerPopEntry(this);
+  }
+
+  @override
+  void didUpdateWidget(RoutePopScope oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    canPopNotifier.value = false;
+  }
+
+  @override
+  void dispose() {
+    _route?.unregisterPopEntry(this);
+    canPopNotifier.dispose();
     super.dispose();
   }
 
