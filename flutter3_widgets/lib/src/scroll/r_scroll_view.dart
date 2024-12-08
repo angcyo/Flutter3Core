@@ -290,13 +290,14 @@ extension RScrollViewEx on WidgetNullList {
   Widget rScroll({
     RScrollController? controller,
     Axis axis = Axis.vertical,
-    ScrollBehavior? scrollBehavior = const MaterialScrollBehavior(),
+    ScrollBehavior? scrollBehavior,
     ScrollPhysics? physics = kScrollPhysics,
   }) {
     return RScrollView(
       controller: controller,
       scrollDirection: axis,
-      scrollBehavior: scrollBehavior,
+      scrollBehavior: scrollBehavior ??
+          (physics == null ? null : const MaterialScrollBehavior()),
       physics: physics,
       children: filterNull(),
     );
