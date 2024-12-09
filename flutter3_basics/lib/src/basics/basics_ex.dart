@@ -455,6 +455,7 @@ extension FutureEx<T> on Future<T> {
         return null;
       }
     }, onError: (error, errorStack) {
+      //debugger();
       //此处无法捕获[get]中的异常
       if (error is RCancelException) {
         assert(() {
@@ -467,13 +468,12 @@ extension FutureEx<T> on Future<T> {
           return true;
         }());
       } else {
-        //debugger();
         if (throwError == true) {
           throw error;
         } else {
           assert(() {
             l.w('Future异常:$error↓');
-            printError(error, errorStack ?? stack);
+            printError(error, stack ?? errorStack);
             return true;
           }());
         }
