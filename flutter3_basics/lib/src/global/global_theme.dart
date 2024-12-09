@@ -42,6 +42,9 @@ class GlobalTheme {
   /// 系统导航栏的颜色
   Color get systemNavigationBarColor => accentColor;
 
+  /// 按下时的颜色
+  Color get pressColor => Colors.black12;
+
   /// 界面背景颜色
   /// [themeWhiteColor]
   Color get surfaceBgColor => whiteBgColor;

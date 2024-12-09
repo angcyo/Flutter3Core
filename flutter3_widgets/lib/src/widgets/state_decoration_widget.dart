@@ -296,6 +296,11 @@ extension StateDecorationWidgetEx on Widget {
     Decoration? decoration, {
     Key? key,
     Color? fillColor,
+    //--
+    Decoration? foregroundDecoration,
+    Decoration? pressedDecoration,
+    Decoration? selectedDecoration,
+    bool enablePressedDecoration = true,
   }) {
     decoration ??= fillColor == null ? null : BoxDecoration(color: fillColor);
     if (decoration == null) {
@@ -304,6 +309,11 @@ extension StateDecorationWidgetEx on Widget {
     return StateDecorationWidget(
       key: key,
       decoration: decoration,
+      //--
+      foregroundDecoration: foregroundDecoration,
+      pressedDecoration: pressedDecoration,
+      selectedDecoration: selectedDecoration,
+      enablePressedDecoration: enablePressedDecoration,
       child: this,
     );
   }
