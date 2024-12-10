@@ -646,6 +646,26 @@ extension ColorEx on Color {
   /// 值越小, 越弱调, 越暗, 黑色, min:0
   /// 值越大, 越强调, 越亮, 白色, max:100
   Color tone(int tone) => CorePalette.of(value).primary.get(tone).toColor();
+
+  //--
+
+  /// 调整一个颜色的色温
+  /// [hue] 色温[0~360]
+  /// @return 一个新的颜色
+  Color withHue(double hue) =>
+      HSLuvColor.fromColor(this).withHue(hue).toColor();
+
+  /// 调整一个颜色的亮度
+  /// [lightness]亮度[0~100]
+  /// @return 一个新的颜色
+  Color withBrightness(double brightness) =>
+      HSLuvColor.fromColor(this).withLightness(brightness).toColor();
+
+  /// 调整一个颜色的饱和度
+  /// [saturation]饱和度[0~100]
+  /// @return 一个新的颜色
+  Color withSaturation(double saturation) =>
+      HSLuvColor.fromColor(this).withSaturation(saturation).toColor();
 }
 
 //endregion Color 扩展
