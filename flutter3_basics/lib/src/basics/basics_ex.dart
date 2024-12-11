@@ -1068,7 +1068,8 @@ extension StringEx on String {
   /// [kDefAssetsPngPrefix]
   /// [kDefAssetsSvgPrefix]
   ///
-  String ensurePackagePrefix([String? package, String? prefix]) {
+  String ensurePackagePrefix(
+      [String? package, String? prefix = kDefAssetsPrefix]) {
     if (startsWith("packages/")) {
       //指定了包名根路径
       return this;

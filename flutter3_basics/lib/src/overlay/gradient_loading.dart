@@ -51,19 +51,19 @@ class SweepGradientLoadingWidget extends LeafRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      SweepGradientLoadingRender(config: this);
+      _SweepGradientLoadingRender(config: this);
 
   @override
   void updateRenderObject(
     BuildContext context,
-    covariant SweepGradientLoadingRender renderObject,
+    covariant _SweepGradientLoadingRender renderObject,
   ) {
     super.updateRenderObject(context, renderObject);
     renderObject.config = this;
   }
 }
 
-class SweepGradientLoadingRender extends RenderBox {
+class _SweepGradientLoadingRender extends RenderBox {
   SweepGradientLoadingWidget config;
 
   Offset get paddingOffset =>
@@ -76,7 +76,7 @@ class SweepGradientLoadingRender extends RenderBox {
   Offset get strokeWidthOffset =>
       Offset(config.strokeWidth / 2, config.strokeWidth / 2);
 
-  SweepGradientLoadingRender({
+  _SweepGradientLoadingRender({
     required this.config,
   });
 

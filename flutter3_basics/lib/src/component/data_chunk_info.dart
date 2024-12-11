@@ -28,6 +28,9 @@ class DataChunkInfo {
   /// 当前传输的进度[0~1]
   double get progress => (count / total).clamp(0, 1);
 
+  /// 当前传输的进度[0~100]
+  int get progressInt => (progress * 100).round();
+
   /// 计算速率 bytes/s
   int get speed {
     final time = nowTime();

@@ -71,6 +71,12 @@ void postFrameCallback(FrameCallback callback,
       .addPostFrameCallback(callback, debugLabel: debugLabel);
 }
 
+/// 下一针回调
+/// [postFrameCallback]
+void postFrame(VoidCallback callback) {
+  postFrameCallback((_) => callback());
+}
+
 /// 如果正在布局阶段, 则立即安排一帧, 否则立即执行回调
 void postFrameCallbackIfNeed(FrameCallback callback) {
   WidgetsFlutterBinding.ensureInitialized();
