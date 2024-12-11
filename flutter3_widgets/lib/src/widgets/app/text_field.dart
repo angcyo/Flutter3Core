@@ -63,11 +63,6 @@ class TextFieldConfig {
   TextInputAction? textInputAction;
 
   /// 输入过滤
-  /// [FilteringTextInputFormatter.singleLineFormatter]
-  /// [FilteringTextInputFormatter.digitsOnly]
-  /// [FilteringTextInputFormatter.allow]
-  /// [FilteringTextInputFormatter]
-  /// [LengthLimitingTextInputFormatter]
   /// [SingleInputWidget.inputFormatters]
   List<TextInputFormatter>? inputFormatters;
 
@@ -341,6 +336,11 @@ class SingleInputWidget extends StatefulWidget {
   /// FilteringTextInputFormatter.deny('\n');
   /// FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
   /// ```
+  /// 限制仅支持小数输入
+  /// ```
+  /// FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*'))
+  /// ```
+  ///
   /// [FilteringTextInputFormatter.singleLineFormatter]
   /// [FilteringTextInputFormatter.digitsOnly]
   /// [FilteringTextInputFormatter.allow]

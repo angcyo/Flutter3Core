@@ -655,17 +655,28 @@ extension ColorEx on Color {
   Color withHue(double hue) =>
       HSLuvColor.fromColor(this).withHue(hue).toColor();
 
+  /// 添加一个颜色的色温
+  Color addHue(double add) => HSLuvColor.fromColor(this).addHue(add).toColor();
+
   /// 调整一个颜色的亮度
   /// [lightness]亮度[0~100]
   /// @return 一个新的颜色
   Color withBrightness(double brightness) =>
       HSLuvColor.fromColor(this).withLightness(brightness).toColor();
 
+  /// 添加一个颜色的亮度
+  Color addBrightness(double add) =>
+      HSLuvColor.fromColor(this).addLightness(add).toColor();
+
   /// 调整一个颜色的饱和度
   /// [saturation]饱和度[0~100]
   /// @return 一个新的颜色
   Color withSaturation(double saturation) =>
       HSLuvColor.fromColor(this).withSaturation(saturation).toColor();
+
+  /// 添加一个颜色的饱和度
+  Color addSaturation(double add) =>
+      HSLuvColor.fromColor(this).addSaturation(add).toColor();
 }
 
 //endregion Color 扩展
@@ -1702,6 +1713,9 @@ extension NumEx on num {
 
   /// 正负取反
   get inverted => -this;
+
+  /// 是否正负取反
+  num invert([bool invert = true]) => invert == true ? -this : this;
 
   /// 2个数字是否同向, 同正或同负
   bool isSameSign(num other) => this * other > 0;
