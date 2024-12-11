@@ -116,6 +116,9 @@ class PathRenderBox extends RenderBox {
 //--
 
 class PathRegionInfo {
+  /// 是否精确命中
+  final bool isExactHit;
+
   /// 需要绘制的路径
   final Path? path;
 
@@ -139,11 +142,32 @@ class PathRegionInfo {
   /// 点击事件
   final VoidCallback? onTap;
 
-  // --
+  //--paint
+
+  /// 背景绘制信息
+  final void Function(Canvas canvas, PathRegionInfo regionInfo)?
+      onBackgroundPaint;
+
+  /// 前景绘制信息
+  final void Function(Canvas canvas, PathRegionInfo regionInfo)?
+      onForegroundPaint;
+
+  //--text
+
+  /// 在这个[boundsCache]区域需要绘制的文本信息
+  final String? text;
+  final Color textColor;
+  final Color? downTextColor;
+  final double fontSize;
+  final Alignment textAlignment;
+  final Offset textOffset;
+
+  // --cache
   Rect? boundsCache;
   bool isPointerDown;
 
   PathRegionInfo({
+    this.isExactHit = true,
     this.path,
     this.fillColor,
     this.downFillColor,
@@ -151,6 +175,16 @@ class PathRegionInfo {
     this.downStrokeColor,
     this.strokeWidth = 1.0,
     this.onTap,
+    //--
+    this.onBackgroundPaint,
+    this.onForegroundPaint,
+    //--
+    this.text,
+    this.textColor = Colors.black,
+    this.downTextColor,
+    this.fontSize = kDefaultFontSize,
+    this.textAlignment = Alignment.center,
+    this.textOffset = Offset.zero,
     //--
     this.boundsCache,
     this.isPointerDown = false,
@@ -160,15 +194,25 @@ class PathRegionInfo {
 /// [Path]路径区域绘制小部件
 /// 支持绘制n个[Path]并且支持事件响应
 class PathRegionWidget extends LeafRenderObjectWidget {
-  /// 检查命中元素时, 是否倒序
-  final bool reverseHitTest;
+  /// 绘制区域, 类似于svg的view box, 影响测量时的大小
+  final Rect? viewBox;
 
   final List<PathRegionInfo>? regionInfoList;
 
+  //--
+
+  /// 检查命中元素时, 是否倒序
+  final bool reverseHitTest;
+
+  /// 命中时, 颜色亮度
+  final double hitAddBrightness;
+
   const PathRegionWidget({
     super.key,
+    this.viewBox,
     this.reverseHitTest = false,
     this.regionInfoList,
+    this.hitAddBrightness = 10.0,
   });
 
   @override
@@ -195,11 +239,12 @@ class PathRegionRenderBox extends RenderBox {
   @override
   void performLayout() {
     final constraints = this.constraints;
-    size = constraints.biggest;
+    if (config.viewBox == null) {
+      size = constraints.biggest;
+    } else {
+      size = constraints.constrain(config.viewBox!.size);
+    }
   }
-
-  /// 命中时, 颜色亮度
-  final double _hitBrightness = 60.0;
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
@@ -208,31 +253,51 @@ class PathRegionRenderBox extends RenderBox {
     canvas.withTranslate(offset.dx, offset.dy, () {
       for (final item in config.regionInfoList ?? <PathRegionInfo>[]) {
         if (item.path != null) {
+          item.boundsCache ??= item.path!.getExactBounds();
+          //--
+          item.onBackgroundPaint?.call(canvas, item);
           if (item.fillColor != null) {
             canvas.drawPath(
                 item.path!,
                 Paint()
                   ..color = item.isPointerDown
                       ? item.downFillColor ??
-                          item.fillColor!.withBrightness(_hitBrightness)
+                          item.fillColor!.addBrightness(config.hitAddBrightness)
                       : item.fillColor!
                   ..strokeCap = StrokeCap.round
                   ..strokeJoin = StrokeJoin.round
                   ..style = PaintingStyle.fill);
           }
+          //--
           if (item.strokeColor != null) {
             canvas.drawPath(
                 item.path!,
                 Paint()
                   ..color = item.isPointerDown
                       ? item.downStrokeColor ??
-                          item.strokeColor!.withBrightness(_hitBrightness)
+                          item.strokeColor!
+                              .addBrightness(config.hitAddBrightness)
                       : item.strokeColor!
                   ..strokeCap = StrokeCap.round
                   ..strokeJoin = StrokeJoin.round
                   ..strokeWidth = item.strokeWidth
                   ..style = PaintingStyle.stroke);
           }
+          //--
+          if (item.text != null) {
+            canvas.drawText(
+              item.text!,
+              textColor: item.isPointerDown
+                  ? item.downTextColor ?? item.textColor
+                  : item.textColor,
+              fontSize: item.fontSize,
+              bounds: item.boundsCache,
+              alignment: item.textAlignment,
+              offset: item.textOffset,
+            );
+          }
+          //--
+          item.onForegroundPaint?.call(canvas, item);
         }
       }
     });
@@ -257,10 +322,15 @@ class PathRegionRenderBox extends RenderBox {
     }
     for (final item in _hitTestList) {
       if (event is PointerDownEvent) {
-        item.isPointerDown = item.path?.contains(event.localPosition) == true;
-        if (item.isPointerDown) {
-          markNeedsPaint();
-          break;
+        item.boundsCache ??= item.path!.getExactBounds();
+        if (item.onTap != null) {
+          item.isPointerDown = item.isExactHit
+              ? item.path?.contains(event.localPosition) == true
+              : item.boundsCache?.contains(event.localPosition) == true;
+          if (item.isPointerDown) {
+            markNeedsPaint();
+            break;
+          }
         }
       } else if (event is PointerUpEvent) {
         if (item.isPointerDown == true) {
