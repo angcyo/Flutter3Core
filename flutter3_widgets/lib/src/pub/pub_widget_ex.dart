@@ -44,7 +44,7 @@ extension PubStringEx on String {
 }
 
 /// [Slidable] 侧滑菜单action
-SlidableAction slideAction({
+/*SlidableAction slideAction({
   BuildContext? context,
   String? label,
   IconData? icon,
@@ -72,7 +72,7 @@ SlidableAction slideAction({
       spacing: spacing,
       padding: padding,
       borderRadius: borderRadius,
-    );
+    );*/
 
 extension PubWidgetEx on Widget {
   /// [Slidable] 侧滑删除小部件
@@ -84,7 +84,7 @@ extension PubWidgetEx on Widget {
   /// [ScrollMotion]
   /// [startExtentRatio].[endExtentRatio] 侧滑菜单的宽度比例
   /// [onStartDismissed].[onEndDismissed] 配置这个之后, 侧滑菜单支持整条滑动删除
-  Widget slideActions({
+  /*Widget slideActions({
     Key? key,
     List<SlidableAction>? startActions,
     Widget? startMotion,
@@ -124,7 +124,7 @@ extension PubWidgetEx on Widget {
         closeOnScroll: closeOnScroll,
         enabled: enabled,
         child: this,
-      );
+      );*/
 }
 
 //region pub widget

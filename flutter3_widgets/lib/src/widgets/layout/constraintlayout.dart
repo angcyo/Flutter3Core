@@ -22,9 +22,9 @@ part of '../../../flutter3_widgets.dart';
 ///
 
 /// 快速使用一个约束布局
-/// [cl.ConstraintLayout]
+/// [cl_layout.ConstraintLayout]
 Widget constrainLayout(void Function() block) =>
-    cl.ConstraintLayout().open(block);
+    cl_layout.ConstraintLayout().open(block);
 
 /// 约束扩展
 extension ConstraintLayoutEx on Widget {}
