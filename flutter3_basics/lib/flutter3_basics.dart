@@ -143,6 +143,7 @@ part 'src/widgets/test_constraints_layout.dart';
 part 'src/widgets/any_widget.dart';
 part 'src/widgets/last_extend_row.dart';
 part 'src/widgets/bounds_widget.dart';
+part 'src/widgets/offset_paint_widget.dart';
 
 /// 类型重定义
 typedef UiImage = ui.Image;
