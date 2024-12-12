@@ -43,6 +43,11 @@ extension DateTimeEx on DateTime {
   }
 }
 
+///
+const kMSUnit = ["ms", "s", "m", "h", "d"];
+const kMSLTUnit = ["", ":", ":", ":", ":"];
+const kSLTUnit = ["", "", ":", ":", ":"];
+
 extension TimeEx on int {
   /// 毫秒转时间对象
   DateTime toDateTime() => DateTime.fromMillisecondsSinceEpoch(this);
@@ -55,6 +60,12 @@ extension TimeEx on int {
   /// [format]
   String toTimeString([String? newPattern = "yyyy-MM-dd HH:mm:ss"]) =>
       format(newPattern);
+
+  /// 24小时制, 不足2位时, 前面补0
+  String to24String(bool is24Hour) {
+    final value = toString();
+    return is24Hour && value.length < 2 ? "0$value" : value;
+  }
 
   /// 13位时间戳转换成时间字符串, 短时间格式
   /// 转换成刚刚, 几秒前, 几分钟前, 几小时前, 昨天, 前天, 几天前, 几月前, 几年前, 具体时间.
@@ -93,10 +104,12 @@ extension TimeEx on int {
 
   /// 将毫秒转换成, 模板时间
   /// [pattern] 当前位置的值是否要输出显示. 0智能判断 1强制 -1忽略.
+  /// [is24Hour] 24小时制
   /// [TimeEx.toPatternTime]
   String toPatternTime({
     List<int> pattern = const [0, 0, 0, 0, 0],
-    List<String> unit = const ["ms", "s", "m", "h", "d"],
+    List<String> unit = kMSUnit,
+    bool is24Hour = false,
   }) {
     final times = toPartTimes();
     final ms = times[0];
@@ -106,19 +119,19 @@ extension TimeEx on int {
     final d = times[4];
     return stringBuilder((builder) {
       if (pattern.getOrNull(4) == 1 || (pattern.getOrNull(4) == 0 && d > 0)) {
-        builder.write("$d${unit[4]}");
+        builder.write("${d.to24String(is24Hour)}${unit[4]}");
       }
       if (pattern.getOrNull(3) == 1 || (pattern.getOrNull(3) == 0 && h > 0)) {
-        builder.write("$h${unit[3]}");
+        builder.write("${h.to24String(is24Hour)}${unit[3]}");
       }
       if (pattern.getOrNull(2) == 1 || (pattern.getOrNull(2) == 0 && m > 0)) {
-        builder.write("$m${unit[2]}");
+        builder.write("${m.to24String(is24Hour)}${unit[2]}");
       }
       if (pattern.getOrNull(1) == 1 || (pattern.getOrNull(1) == 0 && s > 0)) {
-        builder.write("$s${unit[1]}");
+        builder.write("${s.to24String(is24Hour)}${unit[1]}");
       }
       if (pattern.getOrNull(0) == 1 || (pattern.getOrNull(0) == 0 && ms > 0)) {
-        builder.write("$ms${unit[0]}");
+        builder.write("${ms.to24String(is24Hour)}${unit[0]}");
       }
     });
     //return "$d天 $h时 $m分 $s秒 $ms毫秒";
@@ -127,8 +140,18 @@ extension TimeEx on int {
   /// 多少m多少s
   String toMSTime({
     List<int> pattern = const [-1, 1, 1, 0, 0],
-    List<String> unit = const ["ms", "s", "m", "h", "d"],
+    List<String> unit = kMSUnit,
+    bool is24Hour = false,
   }) {
-    return toPatternTime(pattern: pattern, unit: unit);
+    return toPatternTime(pattern: pattern, unit: unit, is24Hour: is24Hour);
+  }
+
+  /// 多少h多少m多少s
+  String toHMSTime({
+    List<int> pattern = const [-1, 1, 1, 1, 0],
+    List<String> unit = kMSUnit,
+    bool is24Hour = false,
+  }) {
+    return toPatternTime(pattern: pattern, unit: unit, is24Hour: is24Hour);
   }
 }

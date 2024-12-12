@@ -81,6 +81,9 @@ class L {
   /// 是否显示日志tag
   static bool kShowTag = true;
 
+  /// 是否显示日志方法名
+  static bool kShowMethodName = false;
+
   /// tag
   static String kTag = 'angcyo';
 
@@ -97,8 +100,7 @@ class L {
   /// 开始输出日志
   /// [forward] 向前追溯几个调用.
   /// [object] 日志内容
-  log(
-    Object? object, {
+  log(Object? object, {
     int level = debug,
     String? tag,
     bool? showTime,
@@ -119,8 +121,7 @@ class L {
     }
   }
 
-  v(
-    Object? object, {
+  v(Object? object, {
     int level = verbose,
     String? tag,
     bool? showTime,
@@ -141,8 +142,7 @@ class L {
     }
   }
 
-  d(
-    Object? object, {
+  d(Object? object, {
     int level = debug,
     String? tag,
     bool? showTime,
@@ -163,8 +163,7 @@ class L {
     }
   }
 
-  i(
-    Object? object, {
+  i(Object? object, {
     int level = info,
     String? tag,
     bool? showTime,
@@ -185,8 +184,7 @@ class L {
     }
   }
 
-  w(
-    Object? object, {
+  w(Object? object, {
     int level = warn,
     String? tag,
     bool? showTime,
@@ -207,8 +205,7 @@ class L {
     }
   }
 
-  e(
-    Object? object, {
+  e(Object? object, {
     int level = error,
     String? tag,
     bool? showTime,
@@ -230,8 +227,7 @@ class L {
   }
 
   /// [forward] 向前追溯几个调用. 默认是3. 用来获取调用的文件,函数和行数
-  String _log(
-    Object? object, {
+  String _log(Object? object, {
     int level = debug,
     String? tag,
     bool? showTime,
@@ -243,7 +239,7 @@ class L {
     final levelStr = showLevel ?? kShowLevel ? _levelStr(level) : '';
     final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}] ' : '';
     final msgType =
-        object?.runtimeType == null ? '' : '[${object?.runtimeType}]';
+    object?.runtimeType == null ? '' : '[${object?.runtimeType}]';
     final msg = object?.toString() ?? 'null';
 
     //获取当前调用方法的文件名和行数
@@ -251,7 +247,7 @@ class L {
     final stackTraceList = stackTrace.split("\n");
     //关建行
     final lineStackTrace =
-        stackTraceList[math.min(forward, stackTraceList.length) - 1];
+    stackTraceList[math.min(forward, stackTraceList.length) - 1];
     //获取当前的文件名称以及路径行号:列号
     final filePathStr = lineStackTrace.substring(
         lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
@@ -262,7 +258,9 @@ class L {
     final methodName = methodNameList.get(-2);
     //debugger();
     final log =
-        '$time[$filePathStr${methodName == null ? "" : "#$methodName"}] $tagStr$levelStr->$msgType$msg';
+        '$time[$filePathStr${(!kShowMethodName || methodName == null)
+        ? ""
+        : "#$methodName"}] $tagStr$levelStr->$msgType$msg';
 
     if ((isDebug && level >= verbose) || level > debug) {
       //print(StackTrace.fromString("...test"));

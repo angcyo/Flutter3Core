@@ -29,7 +29,7 @@ class DataChunkInfo {
   double get progress => (count / total).clamp(0, 1);
 
   /// 当前传输的进度[0~100]
-  int get progressInt => (progress * 100).round();
+  int get progressInt => (progress * 100).toInt();
 
   /// 计算速率 bytes/s
   int get speed {
@@ -39,6 +39,9 @@ class DataChunkInfo {
     }
     return 0;
   }
+
+  /// 是否传输完成
+  bool get isFinish => startTime > 0 && count >= total;
 
   String get speedStr => '${speed.toSizeStr()}/s';
 

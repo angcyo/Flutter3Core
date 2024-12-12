@@ -1883,6 +1883,15 @@ class PaintProperty with EquatableMixin {
   /// final m' = m1 * m2; //前面的矩阵会影响后面矩阵的值.
   ///  - m1 中的缩放值, 会影响 m2 中的平移值
   ///  - m2 中的缩放值, 不会影响 m1 中的平移值
+  /// `*` 操作等同于 [Matrix4.multiplied]
+  ///
+  /// ```
+  /// final t = Matrix4.identity()..translate(100.0, 100.0);
+  /// final s = Matrix4.identity()..scale(3.0, 2.0);
+  /// final r1 = t * s;
+  /// final r2 = s * t;
+  /// final r3 = t.multiplied(s); //r3 == r1
+  /// ```
   Matrix4 get operateMatrix =>
       translateMatrix * rotateMatrix * scaleMatrix * flipMatrix * skewMatrix;
 
