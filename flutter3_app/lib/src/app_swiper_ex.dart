@@ -8,13 +8,15 @@ part of '../flutter3_app.dart';
 typedef SwiperWidgetBuilder<T> = Widget Function(T element, int index);
 
 extension AppSwiperEx<T> on List<T> {
-  ///[Swiper]
+  ///[Swiper]轮播小部件
   ///[paginationThreshold] 页码指示器的阈值, 当页面数量大于这个值时, 使用页面数量指示器. 否则使用样式指示器.
   ///[FractionPaginationBuilder]
   ///[DotSwiperPaginationBuilder]
   ///
   /// [autoplayDelay] 自动播放延迟时长, 默认3000ms
   /// [duration] 动画过度时长
+  ///
+  /// [CarouselView]系统自带
   Widget toSwiper({
     bool loop = true,
     bool autoplay = true,

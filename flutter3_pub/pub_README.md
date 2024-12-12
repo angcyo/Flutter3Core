@@ -55,6 +55,7 @@ flutter 最强大的 swiper, 多种布局方式，无限轮播，Android 和 iOS
 
 https://github.com/feicien/flutter_swiper_view
 
+- [CarouselView] 系统自带
 - [flutter_swiper_view: ^1.1.8](https://pub.dev/packages/flutter_swiper_view)
 - [card_swiper: ^3.0.1](https://pub.dev/packages/card_swiper)
 - [carousel_slider: ^4.2.1](https://pub.dev/packages/carousel_slider)
