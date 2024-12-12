@@ -81,6 +81,9 @@ dynamic clamp(num? x, num? min, num? max) {
   return x;
 }
 
+//double lerp(double a, double b, double t) => a + (b - a) * t;
+double progressIn(double value, double min, double max) => (value - min) / (max - min);
+
 /// orientation: 横向 0
 @flagProperty
 const kHorizontal = 0;

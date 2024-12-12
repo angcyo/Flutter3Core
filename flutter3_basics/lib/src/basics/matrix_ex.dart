@@ -508,14 +508,21 @@ extension Matrix4Ex on vector.Matrix4 {
     ..setEntry(2, 2, 1);
 
   /// 矩阵转换为字符串
+  /// [lineNumber] 是否显示行号
   /// [toString]
   /// [Vector4.toString]
-  String toMatrixString() {
-    const digits = 6;
-    return '[0] ${row0.x.toDigits(digits: digits)}, ${row0.y.toDigits(digits: digits)}, ${row0.z.toDigits(digits: digits)}, ${row0.w.toDigits(digits: digits)}$lineSeparator'
-        '[1] ${row1.x.toDigits(digits: digits)}, ${row1.y.toDigits(digits: digits)}, ${row1.z.toDigits(digits: digits)}, ${row1.w.toDigits(digits: digits)}$lineSeparator'
-        '[2] ${row2.x.toDigits(digits: digits)}, ${row2.y.toDigits(digits: digits)}, ${row2.z.toDigits(digits: digits)}, ${row2.w.toDigits(digits: digits)}$lineSeparator'
-        '[3] ${row3.x.toDigits(digits: digits)}, ${row3.y.toDigits(digits: digits)}, ${row3.z.toDigits(digits: digits)}, ${row3.w.toDigits(digits: digits)}';
+  String toMatrixString({
+    bool lineNumber = true,
+    int padWidth = 0,
+    int digits = 6,
+  }) {
+    String wrap(double value, [bool end = false]) =>
+        "${value.toDigits(digits: digits)}${end ? "" : ", "}"
+            .padRight(padWidth);
+    return '${lineNumber ? "[0] " : ""}${wrap(row0.x)}${wrap(row0.y)}${wrap(row0.z)}${wrap(row0.w, true)}$lineSeparator'
+        '${lineNumber ? "[1] " : ""}${wrap(row1.x)}${wrap(row1.y)}${wrap(row1.z)}${wrap(row1.w, true)}$lineSeparator'
+        '${lineNumber ? "[2] " : ""}${wrap(row2.x)}${wrap(row2.y)}${wrap(row2.z)}${wrap(row2.w, true)}$lineSeparator'
+        '${lineNumber ? "[3] " : ""}${wrap(row3.x)}${wrap(row3.y)}${wrap(row3.z)}${wrap(row3.w, true)}$lineSeparator';
   }
 }
 

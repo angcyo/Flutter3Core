@@ -491,9 +491,12 @@ extension CanvasEx on Canvas {
     TextStyle? textStyle,
     Color? textColor = Colors.black,
     double? fontSize = kDefaultFontSize,
+    FontWeight? fontWeight,
+    bool bold = false,
+    List<Shadow>? shadows,
+    bool shadow = false,
     //--
     TextAlign textAlign = TextAlign.start,
-
     //--
     Rect? bounds,
     Alignment alignment = Alignment.topLeft,
@@ -507,6 +510,17 @@ extension CanvasEx on Canvas {
               TextStyle(
                 color: textColor,
                 fontSize: fontSize,
+                shadows: shadows ??
+                    (shadow
+                        ? const <Shadow>[
+                            Shadow(
+                              offset: Offset(1, 1),
+                              color: Colors.black,
+                              blurRadius: 2,
+                            ),
+                          ]
+                        : null),
+                fontWeight: fontWeight ?? (bold ? FontWeight.bold : null),
               ),
         ),
         textAlign: textAlign,
@@ -534,13 +548,20 @@ extension CanvasEx on Canvas {
     Color? tintColor,
     ui.ColorFilter? colorFilter,
     EdgeInsets? dstPadding,
+    BoxFit? fit,
+    Alignment? alignment = Alignment.center,
   }) {
     if (picture == null) {
       return;
     }
     drawInRect(dst, pictureSize?.toRect(), () {
       this.drawPicture(picture);
-    }, tintColor: tintColor, colorFilter: colorFilter, dstPadding: dstPadding);
+    },
+        tintColor: tintColor,
+        colorFilter: colorFilter,
+        dstPadding: dstPadding,
+        fit: fit,
+        alignment: alignment);
   }
 
   /// 绘制[ui.Image]
@@ -549,6 +570,8 @@ extension CanvasEx on Canvas {
     Rect? dst,
     Color? tintColor,
     ui.ColorFilter? colorFilter,
+    BoxFit? fit,
+    Alignment? alignment = Alignment.center,
   }) {
     if (image == null) {
       return;
@@ -556,7 +579,11 @@ extension CanvasEx on Canvas {
     final imageSize = Size(image.width + 0.0, image.height + 0.0);
     drawInRect(dst, imageSize.toRect(), () {
       this.drawImage(image, ui.Offset.zero, Paint());
-    }, tintColor: tintColor, colorFilter: colorFilter);
+    },
+        tintColor: tintColor,
+        colorFilter: colorFilter,
+        fit: fit,
+        alignment: alignment);
   }
 
 //endregion ---draw---

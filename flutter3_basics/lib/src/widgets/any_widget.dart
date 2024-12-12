@@ -72,7 +72,9 @@ class _AnyRenderObject extends RenderProxyBox {
     super.performLayout();
     final layoutSize =
         widget?.anyWidget?.onLayout?.call(constraints, widget?.initResult);
-    size = layoutSize ?? constraints.biggest;
+    size = layoutSize == null
+        ? constraints.biggest
+        : constraints.constrain(layoutSize);
   }
 
   @override
@@ -153,7 +155,11 @@ class _AnyStatefulWidgetState extends State<AnyStatefulWidget> {
 /// [AnyStatefulWidget]
 Widget $any<Data>({
   Key? key,
+  //--
   Widget? child,
+  //--
+  Size? size,
+  //--
   Data? initData,
   AnyWidgetInitAction<Data>? onInit,
   AnyWidgetLayoutAction? onLayout,
@@ -163,7 +169,7 @@ Widget $any<Data>({
       key: key,
       initData: initData,
       onInit: onInit,
-      onLayout: onLayout,
+      onLayout: onLayout ?? (size == null ? null : (constraints, _) => size),
       onPaint: onPaint,
       child: child,
     );
