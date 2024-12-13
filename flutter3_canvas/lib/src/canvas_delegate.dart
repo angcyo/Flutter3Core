@@ -119,6 +119,15 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //--
 
+  /// 元素的数量
+  int get elementCount => allElementList.size();
+
+  /// 所有单元素的数量
+  int get singleElementCount => allSingleElementList.size();
+
+  /// 画布的数量
+  int get canvasCount => canvasMultiManager.canvasStateList.size();
+
   /// 画布上所有单级元素的集合
   /// 多画布的情况下通过[CanvasMultiManager]获取其他画布下的元素集合
   List<ElementPainter> get allElementList => canvasElementManager.elements;
@@ -568,6 +577,40 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       final redoStateStack = createStateStack();
       canvasUndoManager.addUntoState(undoStateStack, redoStateStack);
     }
+  }
+
+  /// 画布进入预览模式
+  /// [previewElement] 需要预览元素
+  @api
+  void previewMode({
+    ElementPainter? previewElement,
+    //--
+    bool followElement = true,
+  }) {
+    canvasStyle
+      ..showAxis = false
+      ..showGrid = false
+      ..showMonitor = isDebug
+      ..enableElementControl = false;
+
+    this.previewElement(
+      previewElement,
+      followElement: followElement,
+    );
+  }
+
+  /// 预览指定元素
+  @api
+  void previewElement(
+    ElementPainter? previewElement, {
+    //--
+    bool followElement = true,
+  }) {
+    canvasElementManager.resetElementList(
+      [if (previewElement != null) previewElement],
+      followElement: followElement,
+      undoType: UndoType.none,
+    );
   }
 
   //endregion ---api---

@@ -45,6 +45,11 @@ class CanvasStyle {
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
   int drawType = sDrawAxis | sDrawGrid;
 
+  /// 是否显示监控信息
+  /// 比如: 当前缩放的比例
+  ///    : fps(调试模式下)
+  bool showMonitor = true;
+
   //--ElementAdsorbControl
 
   /// 是否激活智能吸附

@@ -153,7 +153,9 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       //3: 绘制元素/以及控制点
       canvasDelegate.canvasElementManager.paintElements(canvas, paintMeta);
       //4: 绘制监视信息
-      monitorPainter.painting(canvas, paintMeta);
+      if (canvasDelegate.canvasStyle.showMonitor) {
+        monitorPainter.painting(canvas, paintMeta);
+      }
     });
     /*canvas.drawRect(canvasDelegate.canvasViewBox.canvasBounds + offset,
         Paint()..color = Colors.blue);

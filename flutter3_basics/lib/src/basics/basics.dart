@@ -82,7 +82,22 @@ dynamic clamp(num? x, num? min, num? max) {
 }
 
 //double lerp(double a, double b, double t) => a + (b - a) * t;
-double progressIn(double value, double min, double max) => (value - min) / (max - min);
+double progressIn(double value, double min, double max) =>
+    (value - min) / (max - min);
+
+/// 均分
+/// [min] 最小值
+/// [max] 最大值
+/// [count] 分成多少份
+List<int> averageInt(int count, int min, int max) {
+  assert(count > 0);
+  final step = count > 1
+      ? (max - min) / (count - 1)
+      : count > 0
+          ? max - min
+          : 0;
+  return List.generate(count, (index) => (min + step * index).round()).toList();
+}
 
 /// orientation: 横向 0
 @flagProperty

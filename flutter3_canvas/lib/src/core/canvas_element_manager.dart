@@ -303,7 +303,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       undoType,
       selectType: selectType,
     );
-    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, oldElements);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(
+        elements, oldElements);
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, newElements);
 
     selectedOrFollowElements(
@@ -594,7 +595,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void resetElementList(
     List<ElementPainter>? list, {
     bool selected = false,
-    bool followRect = false,
+    bool followElement = false,
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
@@ -616,13 +617,15 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (selected) {
       resetSelectedElementList(list, selectType: selectType);
-      if (followRect) {
+      if (followElement) {
         canvasDelegate.followPainter(elementPainter: selectComponent);
       }
-    } else if (followRect) {
-      ElementGroupPainter painter = ElementGroupPainter();
-      painter.resetChildren(list);
-      canvasDelegate.followPainter(elementPainter: painter);
+    } else if (followElement) {
+      if (!isNil(list)) {
+        ElementGroupPainter painter = ElementGroupPainter();
+        painter.resetChildren(list);
+        canvasDelegate.followPainter(elementPainter: painter);
+      }
     }
 
     if (undoType == UndoType.normal) {
@@ -1038,8 +1041,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       undoType,
     );
     canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, removeList);
-    canvasDelegate.dispatchCanvasElementListAddChanged(elements, newElementList);
-
+    canvasDelegate.dispatchCanvasElementListAddChanged(
+        elements, newElementList);
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();

@@ -1574,6 +1574,23 @@ extension RectEx on Rect {
       bottom - edgeInsets.bottom,
     );
   }
+
+  /// 根据[alignment]获取对应的[Rect]锚点
+  Offset alignmentOffset(Alignment alignment) {
+    if (alignment == Alignment.topLeft) {
+      return lt;
+    }
+    if (alignment == Alignment.topRight) {
+      return rt;
+    }
+    if (alignment == Alignment.bottomLeft) {
+      return lb;
+    }
+    if (alignment == Alignment.bottomRight) {
+      return rb;
+    }
+    return center;
+  }
 }
 
 extension SizeEx on Size {

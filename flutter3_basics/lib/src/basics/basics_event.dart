@@ -892,7 +892,7 @@ mixin FlingDetectorMixin {
     return animation(vsync, (value, isCompleted) {
       //debugger();
       final x = simulation.x(duration.inSeconds * value);
-      l.d('fling $isCompleted :$value x:$x');
+      //l.d('fling $isCompleted :$value x:$x');
       flingAction(x);
     }, duration: duration);
   }

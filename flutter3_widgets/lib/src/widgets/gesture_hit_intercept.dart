@@ -5,7 +5,7 @@ part of '../../flutter3_widgets.dart';
 /// @since 2024/01/31
 ///
 ///
-/// 手势命中拦截小部件, 将之后的手势全部归为处理.
+/// 手势命中拦截小部件, 将之后的手势全部归为己有处理.
 ///
 /// ```
 /// final hitInterceptBox = GestureHitInterceptScope.of(context);
@@ -104,6 +104,11 @@ class GestureHitInterceptBox extends RenderProxyBox {
     properties.add(
         DiagnosticsProperty<RenderBox>('interceptHitBox', interceptHitBox));
   }
+}
+
+extension GestureHitInterceptScopeEx on Widget {
+  ///[GestureHitInterceptScope]
+  Widget hitInterceptBox() => GestureHitInterceptScope(child: this);
 }
 
 /// 拦截手势命中的盒子

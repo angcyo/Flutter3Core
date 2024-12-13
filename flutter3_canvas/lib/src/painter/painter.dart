@@ -22,7 +22,12 @@ class CanvasMonitorPainter extends IPainter {
     final text = stringBuilder((builder) {
       builder.addText("${(viewBox.scaleX * 100).round()}%");
       if (isDebug) {
+        //元素数量:单元素数量/画布数量
+        builder.addText(
+            ' ${canvasDelegate.elementCount}:${canvasDelegate.singleElementCount}/${canvasDelegate.canvasCount}');
+        //fps帧率
         builder.addText(' ${fps.fps}');
+        //画布移动位置
         builder.addText(
             ' (${viewBox.translateX.toDigits()}, ${viewBox.translateY.toDigits()})');
       }

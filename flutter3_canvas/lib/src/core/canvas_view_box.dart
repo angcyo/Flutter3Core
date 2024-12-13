@@ -349,7 +349,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void translateTo(double tx, double ty, {bool anim = true}) {
     assert(() {
-      l.v('平移画布to: tx:$tx tx:$ty');
+      //l.v('平移画布to: tx:$tx tx:$ty');
       return true;
     }());
     changeMatrix(canvasMatrix.clone()..translateTo(x: tx, y: ty),

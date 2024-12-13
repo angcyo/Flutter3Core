@@ -296,9 +296,18 @@ class ElementPainter extends IPainter
   }
 
   /// 更新元素的可视大小到指定的大小
+  /// [keepAspectRatio] 是否保持宽高比
   @api
-  void updateSizeTo(@sceneCoordinate @dp Size? size) {
-    if (size == null) {
+  void updateSizeTo({
+    @sceneCoordinate @dp Size? size,
+    @sceneCoordinate @dp double? width,
+    @sceneCoordinate @dp double? height,
+    bool keepAspectRatio = false,
+    Alignment anchorAlignment = Alignment.topLeft,
+  }) {
+    width ??= size?.width;
+    height ??= size?.height;
+    if (width == null && height == null) {
       assert(() {
         l.d('无效的操作');
         return true;
@@ -308,13 +317,24 @@ class ElementPainter extends IPainter
     final property = paintProperty;
     if (property != null) {
       final oldBounds = property.getBounds(true);
-      final sx = size.width / oldBounds.width;
-      final sy = size.height / oldBounds.height;
+      double sx = width == null ? 1.0 : width / oldBounds.width;
+      double sy = height == null ? 1.0 : height / oldBounds.height;
+
+      if (width == null) {
+        if (keepAspectRatio) {
+          sx = sy;
+        }
+      }
+      if (height == null) {
+        if (keepAspectRatio) {
+          sy = sx;
+        }
+      }
       final scaleMatrix = Matrix4.identity()
         ..scaleBy(
           sx: sx,
           sy: sy,
-          anchor: oldBounds.topLeft,
+          anchor: oldBounds.alignmentOffset(anchorAlignment),
         );
       /*paintProperty = property.copyWith()..applyScaleWithCenter(scaleMatrix);*/
       scaleElementWithCenter(scaleMatrix);
@@ -324,8 +344,14 @@ class ElementPainter extends IPainter
   /// 更新元素的左上角到指定的位置
   /// 只修改[PaintProperty.left].[PaintProperty.top]
   @api
-  void updateLocationTo(@sceneCoordinate @dp Offset? location) {
-    if (location == null) {
+  void updateLocationTo({
+    @sceneCoordinate @dp Offset? location,
+    @sceneCoordinate @dp double? x,
+    @sceneCoordinate @dp double? y,
+  }) {
+    x ??= location?.dx;
+    y ??= location?.dy;
+    if (x == null && y == null) {
       assert(() {
         l.d('无效的操作');
         return true;
@@ -337,8 +363,8 @@ class ElementPainter extends IPainter
       final oldBounds = property.getBounds(true);
       final translate = Matrix4.identity()
         ..translate(
-          location.dx - oldBounds.lt.dx,
-          location.dy - oldBounds.lt.dy,
+          x != null ? x - oldBounds.lt.dx : 0,
+          y != null ? y - oldBounds.lt.dy : 0,
         );
       //paintProperty = property.copyWith()..applyTranslate(translate);
       translateElement(translate);
@@ -1174,6 +1200,21 @@ class ElementPainter extends IPainter
     UndoType? fromUndoType,
   }) {
     final newPainter = template ?? ElementPainter();
+
+    //--
+    newPainter
+      ..debug = debug
+      ..forceVisibleInCanvasBox = forceVisibleInCanvasBox
+      ..paintStrokeWidthSuppressCanvasScale =
+          paintStrokeWidthSuppressCanvasScale
+      ..keyPaintStyle = keyPaintStyle
+      ..keyPaintColor = keyPaintColor
+      ..keyPaintStrokeWidth = keyPaintStrokeWidth
+      ..paintStyle = paintStyle
+      ..paintColor = paintColor
+      ..paintStrokeWidth = paintStrokeWidth;
+
+    //--
     newPainter.updatePaintState(
       paintState.copyWith(),
       fromObj: fromObj,
