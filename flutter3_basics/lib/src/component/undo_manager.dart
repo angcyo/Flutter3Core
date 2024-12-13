@@ -83,6 +83,13 @@ class UndoActionManager with Diagnosticable {
     return null;
   }
 
+  /// 销毁
+  void dispose() {
+    undoList.clear();
+    redoList.clear();
+    _changeListeners.clear();
+  }
+
   //region ---改变通知---
 
   final Set<VoidCallback> _changeListeners = {};

@@ -103,6 +103,12 @@ class CanvasRenderBox extends RenderBox {
     canvasDelegate.detach();
   }
 
+  @override
+  void dispose() {
+    canvasDelegate.dispose();
+    super.dispose();
+  }
+
   /// 重绘
   void _repaintListener() {
     if (owner != null && !owner!.debugDoingPaint) {

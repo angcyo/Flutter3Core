@@ -96,9 +96,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 释放所有资源, 主动调用
   @entryPoint
-  void release() {
+  void dispose() {
     canvasElementManager.release();
+    canvasUndoManager.dispose();
     canvasListeners.clear();
+    dataMap.clear();
   }
 
   //endregion ---入口点---
