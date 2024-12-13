@@ -631,6 +631,38 @@ extension PaintEx on Paint {
 }
 
 extension AlignmentEx on Alignment {
+  bool get isLeft =>
+      this == AlignmentDirectional.topStart ||
+      this == AlignmentDirectional.centerStart ||
+      this == AlignmentDirectional.bottomStart ||
+      this == Alignment.topLeft ||
+      this == Alignment.centerLeft ||
+      this == Alignment.bottomLeft;
+
+  bool get isRight =>
+      this == AlignmentDirectional.topEnd ||
+      this == AlignmentDirectional.centerEnd ||
+      this == AlignmentDirectional.bottomEnd ||
+      this == Alignment.topRight ||
+      this == Alignment.centerRight ||
+      this == Alignment.bottomRight;
+
+  bool get isTop =>
+      this == AlignmentDirectional.topStart ||
+      this == AlignmentDirectional.topCenter ||
+      this == AlignmentDirectional.topEnd ||
+      this == Alignment.topLeft ||
+      this == Alignment.topCenter ||
+      this == Alignment.topRight;
+
+  bool get isBottom =>
+      this == AlignmentDirectional.bottomStart ||
+      this == AlignmentDirectional.bottomCenter ||
+      this == AlignmentDirectional.bottomEnd ||
+      this == Alignment.bottomLeft ||
+      this == Alignment.bottomCenter ||
+      this == Alignment.bottomRight;
+
   /// 根据对齐方式, 获取偏移量
   /// [Alignment.inscribe]
   /// [applyAlignMatrix]

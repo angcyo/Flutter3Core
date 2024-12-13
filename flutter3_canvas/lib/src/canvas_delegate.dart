@@ -376,7 +376,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void followPainter({
     @sceneCoordinate Rect? rect,
     ElementPainter? elementPainter,
-    EdgeInsets? margin,
+    @viewCoordinate EdgeInsets? margin,
     BoxFit? fit = BoxFit.none,
     Alignment? alignment = Alignment.center,
   }) {
@@ -397,6 +397,98 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       animate: true,
       awaitAnimate: false,
     );
+  }
+
+  /// 移动画布到内容的边缘, 使得对应的内容边界在视口中显示
+  @api
+  void followContentEdge({
+    Alignment alignment = Alignment.topCenter,
+    @viewCoordinate EdgeInsets? margin = const EdgeInsets.all(kXxh),
+    //--
+    bool animate = true,
+    bool awaitAnimate = false,
+  }) {
+    @sceneCoordinate
+    final contentRect =
+        canvasPaintManager.contentManager.canvasContentFollowRectInner;
+    if (contentRect == null) {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
+      return;
+    }
+    margin ??= canvasFollowManager.margin;
+    @viewCoordinate
+    final contentViewRect = canvasViewBox.toViewRect(contentRect);
+    //debugger();
+    double tx = 0, ty = 0;
+    //x
+    if (alignment.isLeft) {
+      tx = -(contentViewRect.left -
+              canvasViewBox.canvasBounds.left -
+              (margin?.left ?? 0)) /
+          canvasViewBox.scaleX;
+    }
+    //y
+    if (alignment.isTop) {
+      ty = -(contentViewRect.top -
+              canvasViewBox.canvasBounds.top -
+              (margin?.top ?? 0)) /
+          canvasViewBox.scaleY;
+    }
+    canvasViewBox.changeMatrix(
+      canvasViewBox.canvasMatrix * createTranslateMatrix(tx: tx, ty: ty),
+      animate: animate,
+      awaitAnimate: awaitAnimate,
+    );
+  }
+
+  /// 自动根据当前元素, 决定是否将内容边界移动到视口边缘
+  /// [followContentEdge]
+  @api
+  void followContentEdgeAuto({
+    ElementPainter? elementPainter,
+    //--
+    bool animate = true,
+    bool awaitAnimate = false,
+  }) {
+    elementPainter ??= canvasElementManager.selectComponent;
+    @sceneCoordinate
+    final targetRect = elementPainter.elementsBounds;
+    if (targetRect == null) {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
+      return;
+    }
+    @viewCoordinate
+    final targetViewRect = canvasViewBox.toViewRect(targetRect);
+
+    bool isInRight =
+        targetViewRect.center.dx > canvasViewBox.canvasBounds.center.dx;
+    bool isInBottom =
+        targetViewRect.center.dy > canvasViewBox.canvasBounds.center.dy;
+
+    if (isInRight && isInBottom) {
+      followContentEdge(
+          alignment: Alignment.topLeft,
+          animate: animate,
+          awaitAnimate: awaitAnimate);
+    } else if (isInBottom) {
+      //目标在视口整体中心的下方, 则内容区域往上移动
+      followContentEdge(
+          alignment: Alignment.topCenter,
+          animate: animate,
+          awaitAnimate: awaitAnimate);
+    } else if (isInRight) {
+      //目标在视口整体中心的右边, 则内容区域往左移动
+      followContentEdge(
+          alignment: Alignment.centerLeft,
+          animate: animate,
+          awaitAnimate: awaitAnimate);
+    }
   }
 
   /// 选中指定的元素集合
@@ -420,6 +512,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     );
 
   /// 删除元素集合, 支持单独删除组内的元素
+  /// 使用画布全栈保存/恢复的方式, 才能支持组内元素的删除, 此方法资源消耗大
   /// [CanvasElementManager.removeElementList]不支持删除组内元素
   @api
   @supportUndo
