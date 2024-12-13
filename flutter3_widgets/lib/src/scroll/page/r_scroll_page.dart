@@ -115,7 +115,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
-  /// 重新构建
+  /// 重新构建, 热更新触发
   @override
   void reassemble() {
     //debugger();

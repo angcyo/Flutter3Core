@@ -872,6 +872,8 @@ class ElementPainter extends IPainter
   }
 
   /// 旋转元素, [ElementGroupPainter]需要重写处理
+  /// [radians] 弧度
+  /// [anchor] 旋转锚点, 不指定时, 默认使用[paintBounds]中心
   @api
   @overridePoint
   void rotateElementTo(

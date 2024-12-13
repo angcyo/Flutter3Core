@@ -596,6 +596,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     List<ElementPainter>? list, {
     bool selected = false,
     bool followElement = false,
+    BoxFit? fit = BoxFit.none,
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
@@ -618,13 +619,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     if (selected) {
       resetSelectedElementList(list, selectType: selectType);
       if (followElement) {
-        canvasDelegate.followPainter(elementPainter: selectComponent);
+        canvasDelegate.followPainter(elementPainter: selectComponent, fit: fit);
       }
     } else if (followElement) {
       if (!isNil(list)) {
         ElementGroupPainter painter = ElementGroupPainter();
         painter.resetChildren(list);
-        canvasDelegate.followPainter(elementPainter: painter);
+        canvasDelegate.followPainter(elementPainter: painter, fit: fit);
       }
     }
 

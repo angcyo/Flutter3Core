@@ -587,6 +587,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     //--
     bool followElement = true,
   }) {
+    canvasViewBox
+      ..minScaleX = 0.001
+      ..minScaleY = 0.001
+      ..maxScaleX = 1000
+      ..maxScaleY = 1000;
+
     canvasStyle
       ..showAxis = false
       ..showGrid = false
@@ -610,6 +616,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       [if (previewElement != null) previewElement],
       followElement: followElement,
       undoType: UndoType.none,
+      fit: BoxFit.contain,
     );
   }
 

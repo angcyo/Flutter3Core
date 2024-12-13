@@ -248,9 +248,10 @@ class CanvasFollowManager with CanvasComponentMixin {
   /// [applyAlignRect]
   /// [applyAlignMatrix]
   ///
-  /// 特殊情况, 当[fit]为[BoxFit.none]时,
-  ///   如果当前缩放值, 已经能显示对应[rect], 则仅进行平移操作
-  ///   否则降级为默认的[CanvasFollowManager.fit]处理方式
+  /// [fit] 特殊情况, 当[fit]为[BoxFit.none]时,
+  ///   如果当前缩放值, 已经能显示对应[rect], 则仅进行平移操作;
+  ///   否则降级为默认的[CanvasFollowManager.fit]处理方式;
+  ///   更多时候这个值应该为[BoxFit.contain].
   ///
   @api
   void followRect(
