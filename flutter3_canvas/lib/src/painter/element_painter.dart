@@ -19,9 +19,22 @@ class ElementPainter extends IPainter
   //--画笔属性--
 
   /// 画笔的一些属性, 会在[onPaintingSelfBefore]中每次赋值
+  ///
+  /// 这几个属性也需要加入回退栈
+  /// [onSaveStateStackData]
+  /// [onRestoreStateStackData]
+  ///
+  /// [updatePainterPaint]
   PaintingStyle? paintStyle;
   Color? paintColor;
   double? paintStrokeWidth;
+
+  /// 入栈时的保存key值
+  /// [onSaveStateStackData]
+  /// [onRestoreStateStackData]
+  String keyPaintStyle = "keyPaintStyle";
+  String keyPaintColor = "keyPaintColor";
+  String keyPaintStrokeWidth = "keyPaintStrokeWidth";
 
   //--
 
@@ -1095,7 +1108,13 @@ class ElementPainter extends IPainter
   /// [onRestoreStateStackData]
   @mustCallSuper
   void onSaveStateStackData(
-      ElementStateStack stateStack, Map<String, dynamic> dataMap) {}
+    ElementStateStack stateStack,
+    Map<String, dynamic> dataMap,
+  ) {
+    dataMap[keyPaintStyle] = paintStyle;
+    dataMap[keyPaintColor] = paintColor;
+    dataMap[keyPaintStrokeWidth] = paintStrokeWidth;
+  }
 
   /// 恢复元素的额外数据
   /// [dataMap] 额外的数据, 用来恢复
@@ -1103,12 +1122,22 @@ class ElementPainter extends IPainter
   /// [onRestoreStateStackData]
   @mustCallSuper
   void onRestoreStateStackData(
-      ElementStateStack stateStack, Map<String, dynamic> dataMap) {}
+    ElementStateStack stateStack,
+    Map<String, dynamic>? dataMap,
+  ) {
+    if (dataMap != null) {
+      paintStyle = dataMap[keyPaintStyle];
+      paintColor = dataMap[keyPaintColor];
+      paintStrokeWidth = dataMap[keyPaintStrokeWidth];
+    }
+  }
 
   /// 当元素的状态恢复后, 收尾的回调
   /// [ElementStateStack.restore]
   @mustCallSuper
-  void onRestoreStateStack(ElementStateStack stateStack) {}
+  void onRestoreStateStack(ElementStateStack stateStack) {
+    updatePainterPaint(fromObj: stateStack, fromUndoType: UndoType.redo);
+  }
 
   //endregion ---创建回退栈---
 
@@ -2393,7 +2422,7 @@ class ElementStateStack {
 
       //data
       final dataMap = elementDataMap[element];
-      element.onRestoreStateStackData(this, dataMap ?? {});
+      element.onRestoreStateStackData(this, dataMap);
 
       //end
       element.onRestoreStateStack(this);
