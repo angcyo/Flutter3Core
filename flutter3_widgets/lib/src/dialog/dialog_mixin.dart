@@ -183,6 +183,9 @@ mixin DialogMixin implements TranslationTypeImpl {
       contentMinHeight = null;
       contentMaxHeight = null;
     }
+    if (fullScreen) {
+      contentMaxHeight = null;
+    }
 
     //滚动内容的最小最大高度
     if (contentMinHeight != null && contentMinHeight < 1) {
@@ -229,7 +232,8 @@ mixin DialogMixin implements TranslationTypeImpl {
       body = [
         if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...fixedChildren,
-        scrollBody?.expanded(enable: height != null /*固定高度时, 滚动布局需要撑满底部*/),
+        scrollBody?.expanded(
+            enable: height != null || fullScreen /*固定高度时, 滚动布局需要撑满底部*/),
         bottomWidget,
       ].column()!;
     } else {
