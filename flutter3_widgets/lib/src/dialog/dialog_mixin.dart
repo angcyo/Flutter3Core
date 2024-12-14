@@ -261,6 +261,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     }
 
     final globalTheme = GlobalTheme.of(context);
+    final navigator = context.navigatorOf();
+    final route = context.modalRoute;
     return body
         .size(height: height)
         .safeArea(useSafeArea: useSafeArea, maintainBottomViewPadding: true)
@@ -282,7 +284,12 @@ mixin DialogMixin implements TranslationTypeImpl {
           onPullBack: onPullBack ??
               (context) {
                 if (pullMaxBound == null) {
-                  closeDialogIf(context, true, maybePop);
+                  //debugger();
+                  /*if (route?.isCurrent == true) {
+                    closeDialogIf(context, true, maybePop);
+                  } else {*/
+                  navigator.removeRouteIf(route);
+                  /*}*/
                 }
               },
         )
@@ -338,12 +345,17 @@ mixin DialogMixin implements TranslationTypeImpl {
     BuildContext? context, [
     bool close = true,
     bool maybePop = false,
+    Route? route,
   ]) async {
     if (close && context?.isMounted == true) {
       if (maybePop) {
         return await context?.maybePop(popDialogResult) ?? false;
       }
-      context?.pop(popDialogResult);
+      if (route == null) {
+        context?.pop(popDialogResult);
+      } else {
+        context?.removeRouteIf(route);
+      }
       return true;
     }
     return false;

@@ -280,11 +280,13 @@ extension StateDecorationWidgetEx on Widget {
   Widget backgroundColor(
     Color? fillColor, {
     Key? key,
+    double? fillRadius,
   }) =>
       backgroundDecoration(
         null,
         key: key,
         fillColor: fillColor,
+        fillRadius: fillRadius,
       );
 
   /// 绘制背景
@@ -296,13 +298,19 @@ extension StateDecorationWidgetEx on Widget {
     Decoration? decoration, {
     Key? key,
     Color? fillColor,
+    double? fillRadius,
     //--
     Decoration? foregroundDecoration,
     Decoration? pressedDecoration,
     Decoration? selectedDecoration,
     bool enablePressedDecoration = true,
   }) {
-    decoration ??= fillColor == null ? null : BoxDecoration(color: fillColor);
+    decoration ??= fillColor == null
+        ? null
+        : BoxDecoration(
+            color: fillColor,
+            borderRadius:
+                fillRadius == null ? null : BorderRadius.circular(fillRadius));
     if (decoration == null) {
       return this;
     }

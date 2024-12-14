@@ -261,7 +261,7 @@ extension WidgetListEx on WidgetNullList {
     double? gap,
     Widget? gapWidget,
   }) {
-    WidgetList children = filterAndFillGap(gap: gap, gapWidget: gapWidget);
+    WidgetList children = filterAndFillGap(gapWidget: gapWidget);
     if (isNullOrEmpty(children)) {
       return null;
     }
@@ -272,6 +272,7 @@ extension WidgetListEx on WidgetNullList {
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
       textBaseline: textBaseline,
+      spacing: gap ?? 0,
       children: children,
     );
   }
@@ -291,7 +292,7 @@ extension WidgetListEx on WidgetNullList {
     double? gap,
     Widget? gapWidget,
   }) {
-    WidgetList children = filterAndFillGap(gap: gap, gapWidget: gapWidget);
+    WidgetList children = filterAndFillGap(gapWidget: gapWidget);
     if (isNullOrEmpty(children)) {
       return null;
     }
@@ -302,6 +303,7 @@ extension WidgetListEx on WidgetNullList {
       textDirection: textDirection,
       verticalDirection: verticalDirection ?? VerticalDirection.down,
       textBaseline: textBaseline,
+      spacing: gap ?? 0,
       children: children,
     );
   }
@@ -812,16 +814,16 @@ extension WidgetEx on Widget {
   }
 
   /// 旋转元素
-  /// [angle] 旋转角度, 顺时针为正, 弧度单位
+  /// [radians] 旋转角度, 顺时针为正, 弧度单位
   Widget rotate(
-    double angle, {
+    double radians, {
     AlignmentGeometry alignment = Alignment.center,
     Offset? origin,
     bool transformHitTests = true,
   }) {
     return Transform.rotate(
       alignment: alignment,
-      angle: angle,
+      angle: radians,
       origin: origin,
       transformHitTests: transformHitTests,
       child: this,

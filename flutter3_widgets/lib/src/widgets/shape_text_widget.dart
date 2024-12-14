@@ -26,6 +26,7 @@ class ShapeTextWidget extends LeafRenderObjectWidget {
   /// 选中范围需要扩展的距离
   final double extend;
 
+  /// 非圆形时[isCircleShape],
   /// 矩形时的圆角
   final double radius;
 

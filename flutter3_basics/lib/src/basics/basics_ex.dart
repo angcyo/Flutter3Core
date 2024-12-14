@@ -2163,6 +2163,27 @@ extension IterableEx<E> on Iterable<E> {
   ///
   Stream<E> get stream => Stream.fromIterable(this);
 
+  /// [List]
+  /// [Iterable]
+  E? getOrNull(int index, [E? nul]) {
+    if (index < 0 || index >= length) {
+      return nul;
+    }
+    return elementAt(index);
+  }
+
+  /// [List], 支持正负索引
+  /// [Iterable]
+  E? get(int index, [E? def]) {
+    if (index < 0) {
+      index = length + index;
+    }
+    if (index < 0 || index >= length) {
+      return def;
+    }
+    return elementAt(index);
+  }
+
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 
@@ -2419,25 +2440,6 @@ extension ListEx<T> on List<T> {
       return null;
     }
     return index;
-  }
-
-  /// [List]
-  T? getOrNull(int index, [T? nul]) {
-    if (index < 0 || index >= length) {
-      return nul;
-    }
-    return this[index];
-  }
-
-  /// [List], 支持正负索引
-  T? get(int index, [T? def]) {
-    if (index < 0) {
-      index = length + index;
-    }
-    if (index < 0 || index >= length) {
-      return def;
-    }
-    return this[index];
   }
 
   /// [List]

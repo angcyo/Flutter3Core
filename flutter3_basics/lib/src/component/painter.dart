@@ -25,19 +25,28 @@ class PaintMeta {
   /// [CanvasViewBox.canvasMatrix]
   final Matrix4? canvasMatrix;
 
+  /// 画布用于参考的缩放系数
+  /// [canvasMatrix]
+  /// [canvasScale]
+  @flagProperty
+  final double? refCanvasScale;
+
   //final CanvasViewBox? viewBox;
 
   const PaintMeta({
     this.host,
     this.originMatrix,
     this.canvasMatrix,
+    this.refCanvasScale,
     this.groupPaintChildren,
   });
 
   /// 获取画布缩放的系数
-  double get canvasScale => canvasMatrix?.scaleX ?? 1.0;
+  double get canvasScale => refCanvasScale ?? canvasMatrix?.scaleX ?? 1.0;
 
   /// [groupPaintChildren]
+  /// [ElementGroupPainter.painting]
+  @CallFrom("ElementGroupPainter.painting")
   bool get paintChildren => groupPaintChildren == null
       ? (host == rasterizeElementHost || host == elementOutputHost)
       : groupPaintChildren!;

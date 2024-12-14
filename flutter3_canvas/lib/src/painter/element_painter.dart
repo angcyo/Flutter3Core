@@ -1843,6 +1843,11 @@ class PaintState with EquatableMixin {
   /// 元素是否锁定了操作, 锁定后, 不可选中操作
   bool isLockOperate = false;
 
+  //--
+
+  /// 如果是群组, 是否折叠了
+  bool isFold = true;
+
   @override
   String toString() {
     return 'PaintState{elementUuid: $elementUuid, elementName: $elementName, '
@@ -1850,8 +1855,14 @@ class PaintState with EquatableMixin {
   }
 
   @override
-  List<Object?> get props =>
-      [elementUuid, elementName, isLockRatio, isVisible, isLockOperate];
+  List<Object?> get props => [
+        elementUuid,
+        elementName,
+        isLockRatio,
+        isVisible,
+        isLockOperate,
+        isFold,
+      ];
 
   /// copyWith
   PaintState copyWith({
@@ -1860,13 +1871,15 @@ class PaintState with EquatableMixin {
     bool? isLockRatio,
     bool? isVisible,
     bool? isLockOperate,
+    bool? isFold,
   }) {
     return PaintState()
       ..elementUuid = elementUuid ?? this.elementUuid
       ..elementName = elementName ?? this.elementName
       ..isLockRatio = isLockRatio ?? this.isLockRatio
       ..isVisible = isVisible ?? this.isVisible
-      ..isLockOperate = isLockOperate ?? this.isLockOperate;
+      ..isLockOperate = isLockOperate ?? this.isLockOperate
+      ..isFold = isFold ?? this.isFold;
   }
 }
 

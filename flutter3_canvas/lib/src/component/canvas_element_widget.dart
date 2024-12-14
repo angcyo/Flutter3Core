@@ -75,7 +75,10 @@ class CanvasElementRenderObject extends RenderBox {
           dst,
           src.ensureValid(),
           () {
-            painter.painting(canvas, const PaintMeta());
+            final sx = dst.width / src.width;
+            final sy = dst.height / src.height;
+            final scale = min(sx, sy);
+            painter.painting(canvas, PaintMeta(refCanvasScale: scale));
           },
           fit: fit,
           dstPadding: padding,
@@ -88,6 +91,7 @@ class CanvasElementRenderObject extends RenderBox {
 
   @override
   void performLayout() {
+    //debugger();
     if (elementPainter == null) {
       size = constraints.smallest;
     } else if (constraints.isTight) {

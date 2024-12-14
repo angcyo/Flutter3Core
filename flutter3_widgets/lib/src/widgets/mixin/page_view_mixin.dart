@@ -20,6 +20,10 @@ mixin PageViewMixin<T extends StatefulWidget>
   /// [PageView]的滚动物理
   ScrollPhysics? pageViewScrollPhysicsMixin;
 
+  /// 无动画切换页面
+  bool get isPageViewNoAnimate =>
+      pageViewScrollPhysicsMixin is NeverScrollableScrollPhysics;
+
   /// [PageView]页面控制器, 用来切换页面
   PageController? get pageViewController => _pageViewControllerMixin;
 
@@ -60,6 +64,9 @@ mixin PageViewMixin<T extends StatefulWidget>
   WidgetList buildPageChildren(BuildContext context) => [];
 
   /// 构建[PageView], 当切换界面后[children]并不会重新获取, 所以需要手动处理界面数据
+  ///
+  /// [disableScroll] 是否禁用[PageView]的滚动
+  ///
   /// [keepAlive] 是否自动保活
   /// - [KeepAliveWrapper]
   /// - [KeepAliveWrapperExtension.keepAlive]
@@ -77,12 +84,17 @@ mixin PageViewMixin<T extends StatefulWidget>
     bool padEnds = true,
     bool keepAlive = false,
     //--
+    bool disableScroll = false,
+    //--
     bool useLifecycle = false,
     bool useChildLifecycle = false,
   }) {
     WidgetList body = children ?? buildPageChildren(context);
     if (physics != null) {
       pageViewScrollPhysicsMixin = physics;
+    }
+    if (disableScroll) {
+      pageViewScrollPhysicsMixin = const NeverScrollableScrollPhysics();
     }
 
     if (useChildLifecycle) {
@@ -191,8 +203,7 @@ mixin PageViewMixin<T extends StatefulWidget>
     if (pageController != null && pageController.hasClients) {
       final page = pageController.page;
       bool isNoAnimate = false;
-      if (animate == false ||
-          pageViewScrollPhysicsMixin is NeverScrollableScrollPhysics) {
+      if (animate == false || isPageViewNoAnimate) {
         //无动画
         isNoAnimate = true;
       } else if (animate == true ||

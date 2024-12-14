@@ -52,24 +52,28 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   //--
 
   /// 构建一个渐变颜色的指示器
+  /// [fillColor] 使用纯色, 不使用渐变
   /// [fillDecoration]
   /// [buildTabLayoutIndicator]
   @api
   Widget buildGradientIndicator(
     BuildContext context, {
+    Color? fillColor,
     List<Color>? colors,
     double? borderRadius = kDefaultBorderRadiusXX,
   }) {
     final globalTheme = GlobalTheme.of(context);
     return DecoratedBox(
       decoration: fillDecoration(
-        color: globalTheme.accentColor,
+        color: fillColor,
         radius: borderRadius,
-        gradient: linearGradient(colors ??
-            [
-              globalTheme.primaryColor,
-              globalTheme.primaryColorDark,
-            ]),
+        gradient: fillColor == null
+            ? linearGradient(colors ??
+                [
+                  globalTheme.primaryColor,
+                  globalTheme.primaryColorDark,
+                ])
+            : null,
       ),
     ).tabItemData(
       itemType: TabItemType.indicator,
@@ -111,9 +115,12 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   }
 
   /// 构建[TabLayout]
+  /// [gap] 间隙
   /// [autoClick] 是否自动处理点击事件
   ///
   /// [children].[childrenBuilder]或者[buildTabLayoutChildren]构建内容
+  /// [childrenBuilder]可以根据[tabLayoutController.index]动态构建内容
+  /// [_tabSelectedUpdateSignal]
   ///
   /// [indicator]或者[buildTabLayoutIndicator]构建指示器
   ///
@@ -136,6 +143,8 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     bool autoTextAnimate = true /*是否使用文本样式变化动画*/,
     bool firstIndexNotify = false /*首次mount时, 是否需要通知*/,
     void Function(int from, int to)? onIndexChangedAction,
+    //--
+    bool? pageViewAnimate,
   }) {
     return () {
       List<Widget>? body =
@@ -168,9 +177,15 @@ mixin TabLayoutMixin<T extends StatefulWidget>
           body = body
               .mapIndex((child, index) => child.click(() {
                     if (this is PageViewMixin) {
-                      tabLayoutController.selectedItem(index,
-                          pageController:
-                              (this as PageViewMixin).pageViewController);
+                      tabLayoutController.selectedItem(
+                        index,
+                        animate: pageViewAnimate,
+                        /*animate: (this as PageViewMixin).isPageViewNoAnimate
+                            ? false
+                            : null,*/
+                        pageController:
+                            (this as PageViewMixin).pageViewController,
+                      );
                     } else {
                       tabLayoutController.selectedItem(index);
                     }

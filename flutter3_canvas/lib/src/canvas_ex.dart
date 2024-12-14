@@ -120,6 +120,24 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
     final elementList = getAllSingleElement();
     return elementList.all((e) => e.isPathElement);
   }
+
+  /// 两组元素类型是否发生了改变
+  bool isElementTypeChanged(Iterable<ElementPainter>? to) {
+    final oldSize = length;
+    final newSize = to?.length ?? 0;
+    if (oldSize != newSize) {
+      return true;
+    } else {
+      for (var i = 0; i < oldSize; i++) {
+        final oldElement = getOrNull(i);
+        final newElement = to?.getOrNull(i);
+        if (oldElement?.runtimeType != newElement?.runtimeType) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 /// 元素扩展
