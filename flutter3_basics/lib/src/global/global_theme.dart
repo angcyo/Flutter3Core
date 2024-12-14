@@ -325,6 +325,9 @@ class GlobalThemeDark extends GlobalTheme {
   Color get borderColor => const Color(0xff1a1a1a);
 
   @override
+  Color get disableTextColor => const Color(0xffb8b8b8);
+
+  @override
   Color get disableColor => const Color(0xffb0b0b0);
 
   /// 禁用时的背景颜色(偏黑色)
@@ -335,7 +338,7 @@ class GlobalThemeDark extends GlobalTheme {
   Color get icoNormalColor => const Color(0xfff6f6f6);
 
   @override
-  ui.Color get iconWhiteBgColor => const Color(0xff949496);
+  Color get iconWhiteBgColor => const Color(0xff949496);
 
   ///
   @override

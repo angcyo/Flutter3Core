@@ -247,7 +247,7 @@ class _LabelWheelTileState extends State<LabelWheelTile>
             ? loadCoreAssetSvgPicture(Assets.svg.coreNext,
                 tintColor: widget.values?.isEmpty == true
                     ? globalTheme.icoDisableColor
-                    : null)
+                    : globalTheme.icoNormalColor)
             : null);
 
     final content = Container(

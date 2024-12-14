@@ -102,16 +102,20 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
               fontSize: fontSize,
               textAlign: ui.TextAlign.center,
               style: globalTheme.textGeneralStyle.copyWith(
-                  color: enable ? null : globalTheme.disableTextColor),
+                  color: enable
+                      ? null
+                      : globalTheme.textGeneralStyle.color?.addBrightness(-20)),
             )
             .stateDecoration(
               enable
                   ? fillDecoration(
-                      color: globalTheme.whiteColor,
+                      color: globalTheme.themeWhiteColor,
                       radius: kDefaultBorderRadiusL,
                     )
                   : fillDecoration(
-                      color: globalTheme.whiteColor.withOpacity(0.9),
+                      color: context.darkOr(
+                          globalTheme.themeWhiteColor.addBrightness(-5),
+                          globalTheme.themeWhiteColor.withOpacity(0.9)),
                       radius: kDefaultBorderRadiusL,
                     ),
               pressedDecoration: fillDecoration(
