@@ -38,7 +38,7 @@ class CoreDialogTitle extends StatelessWidget {
   /// 点击取消后的回调
   final ClickAction? onLeadingTap;
 
-  /// 点击确认后的返回值
+  /// 点击确认后的返回回调, 需要手动pop
   final ClickAction? onTrailingTap;
 
   /// 拦截返回值, 不影响[pop]操作
