@@ -36,7 +36,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// final isImage = selectedElement is ImageElementPainter;
   /// final isGroup = selectedElement is ElementSelectComponent;
   /// ```
-  ///
+  /// @return
+  /// - [ElementPainter]
+  /// - [ElementSelectComponent]
   ElementPainter? get selectedElement {
     if (!isSelectedElement) {
       return null;

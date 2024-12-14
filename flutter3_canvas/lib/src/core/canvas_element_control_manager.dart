@@ -1047,6 +1047,10 @@ class ElementSelectComponent extends ElementGroupPainter
 
   /// 选中的元素, 如果是单元素, 则返回选中的元素, 否则返回[ElementSelectComponent]
   /// [CanvasElementManager.selectedElement]
+  ///
+  /// @return
+  /// - [ElementPainter]
+  /// - [ElementSelectComponent]
   ElementPainter get selectedChildElement {
     if (selectedElementCount == 1) {
       return children?.first ?? this;
