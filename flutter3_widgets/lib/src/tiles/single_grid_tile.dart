@@ -38,6 +38,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
   final String? label;
   final int? labelMaxLength;
   final Widget? labelWidget;
+  final TextOverflow labelOverflow;
 
   //--
 
@@ -75,6 +76,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     this.label,
     this.labelMaxLength,
     this.labelWidget,
+    this.labelOverflow = TextOverflow.fade,
     this.padding,
     this.margin,
     this.onTap,
@@ -126,10 +128,11 @@ class SingleGridTile extends StatelessWidget with TileMixin {
             label
                 ?.ellipsis(labelMaxLength)
                 .text(
-                    style: globalTheme.textBodyStyle,
-                    textAlign: ui.TextAlign.center,
-                    softWrap: false,
-                    overflow: TextOverflow.ellipsis)
+                  style: globalTheme.textBodyStyle,
+                  textAlign: ui.TextAlign.center,
+                  softWrap: false,
+                  overflow: labelOverflow,
+                )
                 .paddingAll(kM))
         ?.colorFiltered(color: enable ? null : globalTheme.icoDisableColor);
 
