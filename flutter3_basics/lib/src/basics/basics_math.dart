@@ -29,6 +29,9 @@ double distance(Offset a, Offset b) {
 }
 
 /// c边的长度
+double cOffset(Offset a, Offset b) => distance(a, b);
+
+/// c边的长度
 double c(double x1, double y1, double x2, double y2) {
   return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2));
 }
@@ -80,7 +83,9 @@ Offset getArcPoint(Rect oval, double radians) {
 /// https://blog.csdn.net/gongjianbo1992/article/details/107476030
 Offset getCirclePoint(Offset center, double radius, double radians) {
   return center.translate(
-      radius * math.cos(radians), radius * math.sin(radians));
+    radius * math.cos(radians),
+    radius * math.sin(radians),
+  );
 }
 
 /// 3个点求圆心
