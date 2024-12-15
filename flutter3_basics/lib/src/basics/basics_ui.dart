@@ -2969,16 +2969,23 @@ extension NavigatorEx on BuildContext {
   //---push↓
 
   /// 推送一个路由
+  /// [popTop] 是否弹出之前的顶层
+  /// [toRoot] 是否直接跳到顶层, 移除之前所有路由
   Future<T?> push<T extends Object?>(
     Route<T> route, {
     bool rootNavigator = false,
     bool popTop = false,
+    bool toRoot = false,
   }) {
     final navigator = navigatorOf(rootNavigator);
-    if (popTop) {
-      navigator.pop();
+    if (toRoot) {
+      return navigator.pushAndRemoveToRoot(route);
+    } else {
+      if (popTop) {
+        navigator.pop();
+      }
+      return navigator.push(route);
     }
-    return navigator.push(route);
   }
 
   /// 支持路由动画
@@ -2990,11 +2997,13 @@ extension NavigatorEx on BuildContext {
     TranslationType? type,
     bool rootNavigator = false,
     bool popTop = false,
+    bool toRoot = false,
   }) {
     return push(
       page.toRoute(type: type, settings: settings),
       rootNavigator: rootNavigator,
       popTop: popTop,
+      toRoot: toRoot,
     );
   }
 

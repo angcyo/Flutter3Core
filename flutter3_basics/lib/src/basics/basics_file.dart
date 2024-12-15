@@ -589,6 +589,20 @@ extension FileEx on File {
       return true;
     }
   }
+
+  /// 复制文件到指定的文件夹
+  Future<bool> copyTo(String folder) async {
+    try {
+      await copy(File("$folder/$filename").path);
+      return true;
+    } catch (e) {
+      assert(() {
+        print(e);
+        return true;
+      }());
+      return false;
+    }
+  }
 }
 
 //endregion File 扩展
