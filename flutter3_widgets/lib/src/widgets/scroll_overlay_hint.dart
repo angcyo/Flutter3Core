@@ -5,16 +5,20 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/08/24
 ///
 /// 如果滚动布局边界能够滚动, 则进行提示
+///
+/// [ScrollBehavior.buildOverscrollIndicator]
+/// [ScrollOverlayHintWidget]
+/// [StretchingOverscrollIndicator]
+/// [GlowingOverscrollIndicator]
+///
 class ScrollOverlayHintWidget extends StatefulWidget {
   /// 滚动布局, 能够发送[ScrollNotification]通知的布局
   final Widget child;
 
+  /// 第一次没有触发过滚动时, 无法获取到状态
   final bool drawTop;
-
   final bool drawBottom;
-
   final bool drawLeft;
-
   final bool drawRight;
 
   /// 提示的大小
@@ -26,12 +30,12 @@ class ScrollOverlayHintWidget extends StatefulWidget {
   const ScrollOverlayHintWidget({
     super.key,
     required this.child,
-    this.drawTop = true,
-    this.drawBottom = true,
-    this.drawLeft = true,
-    this.drawRight = true,
+    this.drawTop = false,
+    this.drawBottom = false,
+    this.drawLeft = false,
+    this.drawRight = false,
     this.hintSize = 30,
-    this.colors = const [Colors.black26, Colors.transparent],
+    this.colors = const [Colors.black12, Colors.transparent],
   });
 
   @override
@@ -85,6 +89,7 @@ class _ScrollOverlayHintWidgetState extends State<ScrollOverlayHintWidget> {
           drawTop = metrics.pixels > 0;
           drawBottom = metrics.maxScrollExtent > metrics.pixels;
         } else {
+          //debugger();
           drawLeft = metrics.pixels > 0;
           drawRight = metrics.maxScrollExtent > metrics.pixels;
         }
@@ -174,9 +179,10 @@ class RenderScrollOverlayHint extends RenderProxyBox {
                 from: rect.topLeft, to: rect.bottomLeft));
     }
     if (config.drawBottom) {
+      //debugger();
       final rect = Rect.fromLTWH(
         paintBounds.left + offset.dx,
-        paintBounds.bottom - config.hintSize,
+        paintBounds.bottom - config.hintSize + offset.dy,
         paintBounds.width,
         config.hintSize,
       );
@@ -202,7 +208,7 @@ class RenderScrollOverlayHint extends RenderProxyBox {
     }
     if (config.drawRight) {
       final rect = Rect.fromLTWH(
-        paintBounds.right - config.hintSize,
+        paintBounds.right - config.hintSize + offset.dx,
         paintBounds.top + offset.dy,
         config.hintSize,
         paintBounds.height,
@@ -214,4 +220,25 @@ class RenderScrollOverlayHint extends RenderProxyBox {
                 from: rect.topRight, to: rect.topLeft));
     }
   }
+}
+
+extension ScrollOverlayHintWidgetEx on Widget {
+  /// [ScrollOverlayHintWidget]
+  Widget overlayHint({
+    bool drawTop = false,
+    bool drawBottom = false,
+    bool drawLeft = false,
+    bool drawRight = false,
+    double hintSize = 30,
+    List<Color> colors = const [Colors.black12, Colors.transparent],
+  }) =>
+      ScrollOverlayHintWidget(
+        drawTop: drawTop,
+        drawBottom: drawBottom,
+        drawLeft: drawLeft,
+        drawRight: drawRight,
+        hintSize: hintSize,
+        colors: colors,
+        child: this,
+      );
 }

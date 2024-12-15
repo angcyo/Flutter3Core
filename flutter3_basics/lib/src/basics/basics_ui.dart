@@ -2158,6 +2158,24 @@ extension WidgetEx on Widget {
         child: this,
       );
 
+  /// [ScrollOverlayHintWidget]
+  /// [StretchingOverscrollIndicator]
+  /// [GlowingOverscrollIndicator]
+  @implementation
+  Widget overscrollIndicator({
+    Color color = Colors.redAccent,
+    bool showLeading = true,
+    bool showTrailing = true,
+    AxisDirection axisDirection = AxisDirection.up,
+  }) =>
+      GlowingOverscrollIndicator(
+        showLeading: showLeading,
+        showTrailing: showTrailing,
+        axisDirection: axisDirection,
+        color: color,
+        child: this,
+      );
+
   /// 控制当前的[Widget]可见性
   /// [AnimatedContainer]
   /// [AnimatedOpacity]
