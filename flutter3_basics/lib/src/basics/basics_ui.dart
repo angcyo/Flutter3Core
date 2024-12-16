@@ -2292,9 +2292,17 @@ extension StateEx on State {
   /// ```
   /// [Element.markNeedsBuild]
   /// [ContextEx.tryUpdateState]
-  bool updateState() {
+  bool updateState({
+    String? debugLabel,
+  }) {
     try {
       if (isMounted) {
+        assert(() {
+          if (debugLabel != null) {
+            l.i("请求更新界面:$debugLabel");
+          }
+          return true;
+        }());
         postFrameCallbackIfNeed((_) {
           setState(() {});
         });
