@@ -44,9 +44,11 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
     super.didChangePlatformBrightness();
   }
 
+  /// RouteInformation->content://com.ss.android.lark.common.fileprovider/external_files/Download/Lark/2024-11-29_2.gc
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
-    '[${classHash()}]AppLifecycle didPushRouteInformation:$routeInformation'
+    '[${classHash()}]AppLifecycle didPushRouteInformation:${routeInformation
+        .runtimeType}->${routeInformation.uri}'
         .writeToLog(level: L.verbose);
     return super.didPushRouteInformation(routeInformation);
   }
@@ -112,6 +114,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
     super.didChangeTextScaleFactor();
   }
 
+  /// didPushRoute:/external_files/Download/Lark/2024-11-29_2.gc
   @override
   Future<bool> didPushRoute(String route) {
     '[${classHash()}]AppLifecycle didPushRoute:$route'
