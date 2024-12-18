@@ -58,7 +58,7 @@ dependencies:
   # https://pub.dev/packages/plugin_platform_interface
   # https://pub.dev/packages/path
   # https://pub.dev/packages/win32
-  file_picker: ^8.1.5
+  file_picker: ^8.1.6
 
   # https://pub.dev/packages/archive
   # https://github.com/brendan-duncan/archive
