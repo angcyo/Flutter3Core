@@ -34,16 +34,23 @@ class DataChunkInfo {
   /// 计算速率 bytes/s
   int get speed {
     final time = nowTime();
-    if (time > startTime) {
-      return (count * 1000 / (time - startTime)).round();
-    }
-    return 0;
+    final dTime = time - startTime;
+    return dTime >= 1000 ? (count * 1000 / (time - startTime)).round() : count;
   }
 
   /// 是否传输完成
   bool get isFinish => startTime > 0 && count >= total;
 
   String get speedStr => '${speed.toSizeStr()}/s';
+
+  /// 使用指定的时间, 计算出速度
+  String getSpeedStr([int? time]) {
+    time ??= nowTime();
+    final dTime = time - startTime;
+    int speed =
+        dTime >= 1000 ? (count * 1000 / (time - startTime)).round() : count;
+    return '${speed.toSizeStr()}/s';
+  }
 
   @override
   String toString() {
