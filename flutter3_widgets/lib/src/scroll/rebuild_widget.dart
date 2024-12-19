@@ -152,7 +152,8 @@ UpdateSignalNotifier<T?> createUpdateSignal<T>() =>
     UpdateSignalNotifier<T?>(null);
 
 @updateSignalMark
-UpdateSignalNotifier<T?> $signal<T>() => UpdateSignalNotifier<T?>(null);
+UpdateSignalNotifier<T?> $signal<T>([T? value]) =>
+    UpdateSignalNotifier<T?>(value);
 
 mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
   /// 用来触发重构的信号

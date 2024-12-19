@@ -20,6 +20,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 内容
   final String? message;
   final Widget? messageWidget;
+  final TextAlign? messageTextAlign;
 
   /// 取消按钮
   final String? cancel;
@@ -57,6 +58,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.titleWidget,
     this.message,
     this.messageWidget,
+    this.messageTextAlign,
     this.cancel,
     this.showCancel = true,
     this.cancelWidget,
@@ -77,7 +79,8 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
     // 标题 / 内容
     Widget? title = _buildTitle(context);
-    Widget? message = _buildMessage(context);
+    Widget? message =
+        _buildMessage(context, textAlign: messageTextAlign ?? TextAlign.left);
 
     // 取消 / 中立 / 确定
     Widget? cancel = _buildCancelButton(context);

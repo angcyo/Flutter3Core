@@ -41,13 +41,27 @@ class ProgressStateNotification extends Notification {
 /// 监听进度通知,并自动刷新进度状态的小部件
 /// [ProgressStateNotification]
 class ProgressStateWidget extends StatefulWidget {
-  final Widget child;
+  final Widget? child;
+  final WidgetBuilder? childBuilder;
   final ProgressStateNotification? notification;
+
+  //--
+  /// 进度的颜色
+  final Color? color;
+  final Color? errorColor;
+
+  /// 进度条的高度
+  final double? height;
 
   const ProgressStateWidget({
     super.key,
-    required this.child,
+    this.child,
+    this.childBuilder,
     this.notification,
+    //--
+    this.color,
+    this.errorColor,
+    this.height,
   });
 
   @override
@@ -77,8 +91,8 @@ class _ProgressStateWidgetState extends State<ProgressStateWidget> {
       value: isError ? 1 : (value == null || value == -1 ? null : value),
       backgroundColor: _notification?.backgroundColor ?? Colors.transparent,
       color: isError
-          ? globalTheme.errorColor
-          : (_notification?.color ?? globalTheme.accentColor),
+          ? widget.errorColor ?? globalTheme.errorColor
+          : (_notification?.color ?? widget.color ?? globalTheme.accentColor),
     );
     return NotificationListener<ProgressStateNotification>(
       onNotification: (notification) {
@@ -86,9 +100,15 @@ class _ProgressStateWidgetState extends State<ProgressStateWidget> {
         updateState();
         return true;
       },
-      child: widget.child.stackOf(
+      child: (widget.childBuilder != null
+              ? LayoutBuilder(
+                  builder: (ctx, constraintsType) => widget.childBuilder!(ctx))
+              : widget.child)!
+          .stackOf(
         progress
-            .size(width: double.infinity, height: _notification?.height ?? 2)
+            .size(
+                width: double.infinity,
+                height: _notification?.height ?? widget.height ?? 2)
             .offstage(_notification == null || _notification?.progress == null),
         alignment: Alignment.topCenter,
       ),
@@ -171,5 +191,45 @@ class ProgressStateInfo {
   @override
   String toString() {
     return 'ProgressStateInfo{state: $state, progress: $progress, error: $error, data: $data, tag: $tag}';
+  }
+}
+
+extension ProgressStateWidgetEx on Widget {
+  /// 监听进度状态, 并自动刷新进度状态的小部件
+  Widget progressStateWidget({
+    ProgressStateNotification? notification,
+    Color? color,
+    Color? errorColor,
+    double? height,
+  }) {
+    return ProgressStateWidget(
+      notification: notification,
+      color: color,
+      errorColor: errorColor,
+      height: height,
+      child: this,
+    );
+  }
+}
+
+extension ProgressStateContextEx on BuildContext {
+  /// [ProgressStateNotification]
+  void dispatchProgressState({
+    dynamic tag,
+    double? progress = -1,
+    Color? color,
+    Color? backgroundColor,
+    double? height,
+    dynamic error,
+    //--
+  }) {
+    ProgressStateNotification(
+      tag: tag,
+      progress: progress,
+      color: color,
+      backgroundColor: backgroundColor,
+      height: height,
+      error: error,
+    ).dispatch(this);
   }
 }

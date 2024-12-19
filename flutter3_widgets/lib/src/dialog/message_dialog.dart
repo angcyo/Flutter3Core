@@ -13,6 +13,7 @@ class MessageDialog extends AndroidNormalDialog {
     super.titleWidget,
     super.message,
     super.messageWidget,
+    super.messageTextAlign,
     super.confirm,
     super.showConfirm = true,
     super.confirmWidget,
@@ -33,7 +34,8 @@ class MessageDialog extends AndroidNormalDialog {
 
     // 标题 / 内容
     Widget? title = _buildTitle(context, textAlign: TextAlign.center);
-    Widget? message = _buildMessage(context, textAlign: TextAlign.center);
+    Widget? message =
+        _buildMessage(context, textAlign: messageTextAlign ?? TextAlign.center);
 
     // 取消 / 中立 / 确定
     Widget? cancel =

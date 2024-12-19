@@ -40,6 +40,18 @@ dependencies:
   # https://github.com/dart-lang/sdk/tree/main/pkg/meta
   meta: any #^1.11.0 1.12.0
 
+  # https://pub.dev/packages/intl_utils
+  # https://pub.dev/packages/analyzer
+  # https://pub.dev/packages/archive
+  # https://pub.dev/packages/args
+  # https://pub.dev/packages/dart_style
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/intl
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/petitparser
+  # https://pub.dev/packages/yaml
+  #intl_utils: ^2.8.7
+
   # https://pub.dev/packages/async
   # https://github.com/dart-lang/async
   # https://pub.dev/packages/collection
