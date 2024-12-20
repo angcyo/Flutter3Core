@@ -162,21 +162,22 @@ const kSuffixIconSize = 18.0;
 
 /// 清除图标的约束
 const kSuffixIconConstraintsSize = 36.0;
+const kSuffixIconConstraintsMaxSize = 36.0;
 
 /// 后缀图标的约束
 const kSuffixIconConstraints = BoxConstraints(
   minWidth: kSuffixIconConstraintsSize,
   minHeight: kSuffixIconConstraintsSize,
-  maxWidth: double.infinity,
-  maxHeight: double.infinity,
+  maxWidth: kSuffixIconConstraintsMaxSize,
+  maxHeight: kSuffixIconConstraintsMaxSize,
 );
 
 /// 前缀图标的约束
 const kPrefixIconConstraints = BoxConstraints(
   minWidth: kSuffixIconConstraintsSize,
   minHeight: kSuffixIconConstraintsSize,
-  maxWidth: double.infinity,
-  maxHeight: double.infinity,
+  maxWidth: kSuffixIconConstraintsMaxSize,
+  maxHeight: kSuffixIconConstraintsMaxSize,
 );
 
 /// 用来控制密码输入控件, 密码的可见性
