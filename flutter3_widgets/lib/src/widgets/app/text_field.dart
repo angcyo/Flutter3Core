@@ -338,8 +338,8 @@ class SingleInputWidget extends StatefulWidget {
 
   /// 输入的文本格式化, 限制输入的字符
   /// ```
-  /// FilteringTextInputFormatter.deny('\n');
-  /// FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
+  /// FilteringTextInputFormatter.deny('\n'); // 禁止输入换行符, 也就是单行输入
+  /// FilteringTextInputFormatter.allow(RegExp(r'[0-9]')); // 仅支持数字输入
   /// ```
   /// 限制仅支持小数输入
   /// ```
