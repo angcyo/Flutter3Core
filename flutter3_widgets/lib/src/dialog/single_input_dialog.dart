@@ -49,6 +49,12 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
   /// 最大长度
   final int? maxLength;
 
+  //--
+
+  final ValueChanged<String>? onInputChanged;
+  final ContextValueChanged<String>? onInputContextValueChanged;
+  final InputCounterWidgetBuilder? inputBuildCounter;
+
   @override
   EdgeInsets get contentPadding => EdgeInsets.zero;
 
@@ -68,9 +74,23 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
     this.maxLines = 1,
     this.maxLength = kDefaultInputLength,
     this.useIcon = false,
+    //--
+    this.onInputChanged,
+    this.onInputContextValueChanged,
+    this.inputBuildCounter,
+    //--
     TextFieldConfig? inputConfig,
     String? text,
-  }) : _inputConfig = inputConfig ?? TextFieldConfig(text: text);
+    List<TextInputFormatter>? inputFormatters,
+    TextInputType? keyboardType,
+    bool? autofocus,
+  }) : _inputConfig = inputConfig ??
+            TextFieldConfig(
+              text: text,
+              inputFormatters: inputFormatters,
+              keyboardType: keyboardType,
+              autofocus: autofocus,
+            );
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +120,14 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
       //labelText: "",
       //isDense: false,
       contentPadding: const EdgeInsets.fromLTRB(kH, kL, kH, kL),
+      //--
+      onChanged: onInputChanged,
+      onContextValueChanged: onInputContextValueChanged,
+      inputBuildCounter: inputBuildCounter,
+      /*inputBuildCounter: (context,
+          {required currentLength, required maxLength, required isFocused}) {
+        return null;
+      },*/
     );
 
     // 取消 和 保存

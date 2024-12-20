@@ -80,6 +80,8 @@ class TextFieldConfig {
   /// [TextField.onChanged]
   ValueChanged<String>? onChanged;
 
+  ContextValueChanged<String>? onContextValueChanged;
+
   /// [TextField.onSubmitted]
   ValueChanged<String>? onSubmitted;
 
@@ -108,6 +110,7 @@ class TextFieldConfig {
     this.hintTextBuilder,
     this.prefixIcon,
     this.onChanged,
+    this.onContextValueChanged,
     this.onSubmitted,
     this.onEditingComplete,
     this.onFocusAction,
@@ -116,6 +119,7 @@ class TextFieldConfig {
         obscureNode = ObscureNode(obscureText ?? false) {
     if (notifyDefaultTextChange) {
       onChanged?.call(this.controller.text);
+      //onContextValueChanged?.call(this, this.controller.text);
     }
   }
 
@@ -405,6 +409,7 @@ class SingleInputWidget extends StatefulWidget {
   /// 回调
   /// https://blog.csdn.net/yuzhiqiang_1993/article/details/88204031
   final ValueChanged<String>? onChanged;
+  final ContextValueChanged<String>? onContextValueChanged;
 
   ///点击键盘的动作按钮时的回调, 通常是按回车之后回调
   final VoidCallback? onEditingComplete /*无参数的回调*/;
@@ -468,6 +473,7 @@ class SingleInputWidget extends StatefulWidget {
     this.disabledBorder,
     this.textInputAction,
     this.onChanged,
+    this.onContextValueChanged,
     this.onSubmitted,
     this.onEditingComplete,
     this.onFocusAction,
@@ -527,6 +533,7 @@ class SingleInputWidget extends StatefulWidget {
     this.disabledBorder,
     this.textInputAction,
     this.onChanged,
+    this.onContextValueChanged,
     this.onSubmitted,
     this.onEditingComplete,
     this.onFocusAction,
@@ -626,6 +633,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   void _onSelfValueChanged(String value) {
     widget.onChanged?.call(value);
     widget.config.onChanged?.call(value);
+    widget.onContextValueChanged?.call(context, value);
+    widget.config.onContextValueChanged?.call(context, value);
     _checkSuffixIcon();
 
     // 通知输入框的值改变了

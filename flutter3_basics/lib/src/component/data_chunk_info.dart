@@ -52,6 +52,11 @@ class DataChunkInfo {
     return '${speed.toSizeStr()}/s';
   }
 
+  String time([int? endTime]) {
+    endTime ??= nowTime();
+    return LTime.diffTime(startTime);
+  }
+
   @override
   String toString() {
     return 'DataChunkInfo{$count/$total, speed: $speedStr progress: $progress}';
