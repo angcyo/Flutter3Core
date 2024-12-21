@@ -361,6 +361,12 @@ mixin TouchDetectorMixin {
           _checkLongPress(event);
         });
       }
+    } else if (event.isPointerMove) {
+      //手势移动一定距离后,移除长按事件探测
+      if (event.isMoveExceed(
+          _pointerDownMap[pointer]?.localPosition, touchDetectorSlop)) {
+        _clearLongPress(pointer);
+      }
     } else if (event.isPointerUp) {
       _checkClick(event);
     }
@@ -371,12 +377,16 @@ mixin TouchDetectorMixin {
     }
   }
 
-  /// 处理点击事件
+  /// 处理点击/长按事件
+  /// [touchType] 事件类型,
+  ///  [TouchDetectorType.click] 点击事件
+  ///  [TouchDetectorType.longPress] 长按事件
   @overridePoint
   bool onTouchDetectorPointerEvent(
           PointerEvent event, TouchDetectorType touchType) =>
       false;
 
+  /// 检查当前的手势, 是否应该触发点击事件
   void _checkClick(PointerEvent event) {
     final downEvent = _pointerDownMap[event.pointer];
     if (downEvent == null ||
@@ -409,8 +419,13 @@ mixin TouchDetectorMixin {
 
   /// 清理指定手指的数据
   void _clear(PointerEvent event) {
-    var pointer = event.pointer;
+    final pointer = event.pointer;
     _pointerDownMap.remove(pointer);
+    _clearLongPress(pointer);
+  }
+
+  /// 清理指定手指的长按事件定时器
+  void _clearLongPress(int pointer) {
     _pointerLongMap[pointer]?.cancel();
     _pointerLongMap.remove(pointer);
   }
