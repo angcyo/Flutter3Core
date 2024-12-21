@@ -211,6 +211,11 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchDoubleTapElement]
   final void Function(ElementPainter elementPainter)? onDoubleTapElementAction;
 
+  /// [CanvasDelegate.dispatchTouchDetectorElement]
+  final void Function(
+          List<ElementPainter> elementList, TouchDetectorType touchType)?
+      onTouchDetectorElement;
+
   /// [CanvasDelegate.dispatchTranslateElement]
   final void Function(
     ElementPainter? targetElement,
@@ -284,6 +289,7 @@ class CanvasListener {
     this.onCanvasElementListAddChanged,
     this.onCanvasElementListRemoveChanged,
     this.onDoubleTapElementAction,
+    this.onTouchDetectorElement,
     this.onTranslateElementAction,
     this.onPointerDownAction,
     this.onElementTapMenuAction,

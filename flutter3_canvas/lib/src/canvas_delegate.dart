@@ -857,6 +857,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
+  /// 点击/长按元素时回调
+  void dispatchTouchDetectorElement(
+      List<ElementPainter> elementList, TouchDetectorType touchType) {
+    _eachCanvasListener((element) {
+      element.onTouchDetectorElement?.call(elementList, touchType);
+    });
+  }
+
   /// 移动元素时回调
   /// [targetElement] 移动的目标元素
   /// [isFirstTranslate] 是否是首次移动
@@ -877,7 +885,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 手势按下时回调
   /// [position] 按下时的坐标
-  /// [downMenu] 是否有菜单在手势下面
+  /// [downMenu] 是否有菜单在手势下面 [ElementMenuControl.onCreateElementMenuAction]
   /// [downElementList] 按下时, 有哪些元素在手势下面
   /// [isRepeatSelect] 是否是重复按下, 在选择器上重复按下
   void dispatchPointerDown(

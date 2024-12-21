@@ -1197,7 +1197,6 @@ class ElementSelectComponent extends ElementGroupPainter
     //debugger();
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(dispatch, event)) {
-        //debugger();
         final viewBox =
             canvasElementControlManager.canvasDelegate.canvasViewBox;
         if (event.isPointerDown) {
@@ -1227,7 +1226,6 @@ class ElementSelectComponent extends ElementGroupPainter
           //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
           //选择结束
-          //debugger();
           if (event.isMoveExceed(firstDownEvent?.localPosition)) {
             //移动了手指, 可能是滑动选择元素
             final selectList = _getSelectBoundsElementList();
@@ -1516,7 +1514,6 @@ class ElementSelectComponent extends ElementGroupPainter
     List<ElementPainter>? elements,
     ElementSelectType selectType,
   ) {
-    //debugger();
     List<ElementPainter>? old = children;
     if (isNullOrEmpty(elements)) {
       //取消元素选择

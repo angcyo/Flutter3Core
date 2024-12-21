@@ -5,6 +5,9 @@ part of '../../../flutter3_canvas.dart';
 /// @date 2024/07/30
 ///
 /// 元素菜单, 显示在选中元素上方
+///
+/// 通过[onCreateElementMenuAction]回调, 创建对应的菜单
+///
 /// [CanvasElementControlManager]的成员
 class ElementMenuControl
     with

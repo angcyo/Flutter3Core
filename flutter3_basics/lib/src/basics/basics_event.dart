@@ -17,7 +17,7 @@ extension EventEx on PointerEvent {
   /// 是否是手指操作相关事件
   bool get isTouchEvent =>
       synthesized == false /*非合成的事件*/ &&
-      (isPointerDown || isPointerMove || isPointerFinish);
+          (isPointerDown || isPointerMove || isPointerFinish);
 
   /// 是否是按下事件
   bool get isPointerDown => this is PointerDownEvent;
@@ -97,8 +97,8 @@ mixin IHandleEventMixin {
 
   /// 询问, 是否要拦截事件, 如果返回true, 则[onPointerEvent]执行, 并中断继续派发事件
   @property
-  bool interceptPointerEvent(
-      PointerDispatchMixin dispatch, PointerEvent event) {
+  bool interceptPointerEvent(PointerDispatchMixin dispatch,
+      PointerEvent event) {
     if (isFirstPointerEvent(dispatch, event)) {
       return onInterceptFirstPointerEvent(dispatch, event);
     }
@@ -117,18 +117,18 @@ mixin IHandleEventMixin {
   /// 当执行了回调[onPointerEvent]后, [ignoreEventHandle]被设为[true]时回调
   /// [ignoreEventHandle]
   @property
-  void onIgnorePointerEvent(
-      PointerDispatchMixin dispatch, PointerEvent event) {}
+  void onIgnorePointerEvent(PointerDispatchMixin dispatch,
+      PointerEvent event) {}
 
   //---
 
   /// 只回调第一个点的事件
-  void dispatchFirstPointerEvent(
-      PointerDispatchMixin dispatch, PointerEvent event) {}
+  void dispatchFirstPointerEvent(PointerDispatchMixin dispatch,
+      PointerEvent event) {}
 
   /// 只回调第一个点的事件
-  bool onInterceptFirstPointerEvent(
-          PointerDispatchMixin dispatch, PointerEvent event) =>
+  bool onInterceptFirstPointerEvent(PointerDispatchMixin dispatch,
+      PointerEvent event) =>
       false;
 
   /// 只回调第一个点的事件
@@ -145,7 +145,7 @@ mixin IHandleEventMixin {
   bool isFirstMoveExceed([double threshold = kTouchSlop]) {
     if (firstDownEvent == null || firstMoveEvent == null) return false;
     return firstDownEvent?.isMoveExceed(
-            firstMoveEvent!.localPosition, threshold) ==
+        firstMoveEvent!.localPosition, threshold) ==
         true;
   }
 }
@@ -209,7 +209,8 @@ mixin PointerDispatchMixin {
         handled = interceptHandleTarget!.onPointerEvent(this, event);
         assert(() {
           if (event.isPointerDown) {
-            l.v("手势(PointerDown)处理->${interceptHandleTarget.runtimeType} [$handled]");
+            l.v("手势(PointerDown)处理->${interceptHandleTarget
+                .runtimeType} [$handled]");
           }
           return true;
         }());
@@ -382,8 +383,8 @@ mixin TouchDetectorMixin {
   ///  [TouchDetectorType.click] 点击事件
   ///  [TouchDetectorType.longPress] 长按事件
   @overridePoint
-  bool onTouchDetectorPointerEvent(
-          PointerEvent event, TouchDetectorType touchType) =>
+  bool onTouchDetectorPointerEvent(PointerEvent event,
+      TouchDetectorType touchType) =>
       false;
 
   /// 检查当前的手势, 是否应该触发点击事件
@@ -411,8 +412,8 @@ mixin TouchDetectorMixin {
       loopLongPressTimer = null;
       loopLongPressTimer =
           Timer.periodic(loopLongPressDelay.milliseconds, (timer) {
-        onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
-      });
+            onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
+          });
     }
     _clear(event);
   }
@@ -651,7 +652,7 @@ mixin MultiPointerDetectorMixin {
   /// 当前移动的手势与上一次移动的手势, 之间的偏移
   Offset moveLastDelta() {
     final offsetList =
-        getPointerDeltaList(pointerMoveMap, pointerMoveLastMap, pointerDownMap);
+    getPointerDeltaList(pointerMoveMap, pointerMoveLastMap, pointerDownMap);
     if (offsetList.isNotEmpty) {
       //返回最小的偏移
       return offsetList.reduce((value, element) {
@@ -893,8 +894,7 @@ mixin FlingDetectorMixin {
   /// [ClampingScrollSimulation]
   /// [BouncingScrollSimulation]
   @api
-  AnimationController startFling(
-    void Function(double value) flingAction, {
+  AnimationController startFling(void Function(double value) flingAction, {
     required TickerProvider vsync,
     required double fromValue,
     required double velocity,
@@ -903,7 +903,7 @@ mixin FlingDetectorMixin {
     /*final physics = const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());
     final Simulation? simulation = physics.createBallisticSimulation(vsync, velocity);*/
     final simulation =
-        ClampingScrollSimulation(position: fromValue, velocity: velocity);
+    ClampingScrollSimulation(position: fromValue, velocity: velocity);
     return animation(vsync, (value, isCompleted) {
       //debugger();
       final x = simulation.x(duration.inSeconds * value);

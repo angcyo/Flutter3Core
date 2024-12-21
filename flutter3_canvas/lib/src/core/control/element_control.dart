@@ -735,7 +735,8 @@ class LockControl extends BaseControl {
 }
 
 /// 平移元素控制
-class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
+class TranslateControl extends BaseControl
+    with DoubleTapDetectorMixin, TouchDetectorMixin {
   TranslateControl(CanvasElementControlManager canvasElementControlManager)
       : super(canvasElementControlManager, ControlTypeEnum.translate);
 
@@ -767,7 +768,9 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
 
   @override
   bool interceptPointerEvent(
-      PointerDispatchMixin dispatch, PointerEvent event) {
+    PointerDispatchMixin dispatch,
+    PointerEvent event,
+  ) {
     //l.d('...2...${dispatch.pointerCount}');
     //debugger();
     if (isCanvasComponentEnable) {
@@ -839,6 +842,7 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
     //debugger();
     if (isPointerDownIn) {
       addDoubleTapDetectorPointerEvent(event);
+      addTouchDetectorPointerEvent(event);
       if (event.isPointerMove) {
         var localPosition = event.localPosition;
         if (isFirstHandle) {
@@ -929,11 +933,22 @@ class TranslateControl extends BaseControl with DoubleTapDetectorMixin {
     return true;
   }
 
+  /// [TouchDetectorMixin] 手势事件探测回调
+  /// 检查是否在元素上进行了点击/长按事件
+  @override
+  bool onTouchDetectorPointerEvent(
+      PointerEvent event, TouchDetectorType touchType) {
+    if (!isNil(_downElementList)) {
+      canvasDelegate.dispatchTouchDetectorElement(_downElementList!, touchType);
+    }
+    return true;
+  }
+
+  /// [DoubleTapDetectorMixin] 双击探测回调
   @override
   bool onDoubleTapDetectorPointerEvent(PointerEvent event) {
     //debugger();
-    _targetElement?.let((it) => canvasElementControlManager.canvasDelegate
-        .dispatchDoubleTapElement(it));
+    _targetElement?.let((it) => canvasDelegate.dispatchDoubleTapElement(it));
     return true;
   }
 }
