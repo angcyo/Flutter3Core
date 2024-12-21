@@ -5,6 +5,11 @@ part of '../../flutter3_canvas.dart';
 /// @author angcyo
 /// @date 2024/02/04
 /// 手势入口
+///
+/// 用于控制画布相关的操作
+/// [CanvasElementManager] 元素相关的手势在此类中实现
+/// [CanvasElementControlManager]
+///
 class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   final CanvasDelegate canvasDelegate;
 

@@ -1213,6 +1213,7 @@ class ElementSelectComponent extends ElementGroupPainter
           //debugger();
           //l.d('pointerMove pointerCount:$pointerCount');
           if (pointerCount == 1) {
+            //单指移动, 更新选择区域
             final scenePoint = viewBox.toScenePoint(event.localPosition);
             updateSelectBounds(
               Rect.fromPoints(_downScenePoint, scenePoint),
@@ -1470,7 +1471,7 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 更新选择框边界, 并且触发选择元素
   /// 抬手之后, 获取需要选中的元素列表
   /// [select] 是否要使用[bounds]进行元素的元素
-  void updateSelectBounds(Rect? bounds, bool select) {
+  void updateSelectBounds(@sceneCoordinate Rect? bounds, bool select) {
     if (select) {
       //需要选择元素
       resetSelectElement(
