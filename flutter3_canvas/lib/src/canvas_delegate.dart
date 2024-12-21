@@ -65,7 +65,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 手势输入的入口点
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    canvasEventManager.handleEvent(event, entry);
+    canvasEventManager.handleEvent(event);
   }
 
   /// 布局的大小

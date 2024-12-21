@@ -35,12 +35,18 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   /// [event] 最原始的事件参数, 未经过加工处理
   @entryPoint
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
+  void handleEvent(PointerEvent event) {
     //debugger();
-    handleDispatchEvent(event);
 
-    //元素操作事件
-    canvasDelegate.canvasElementManager.handleElementEvent(event, entry);
+    if (!_cancelDispatchEvent) {
+      handleDispatchEvent(event);
+
+      //元素操作事件
+      canvasDelegate.canvasElementManager.handleElementEvent(event);
+    }
+    if (event.isPointerFinish) {
+      _cancelDispatchEvent = false;
+    }
 
     assert(() {
       /*if (event.isPointerUp) {
@@ -50,6 +56,16 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       }*/
       return true;
     }());
+  }
+
+  bool _cancelDispatchEvent = false;
+
+  /// 临时取消所有事件的派发
+  @callPoint
+  void cancelDispatchEvent(PointerEvent seedEvent) {
+    final cancelEvent = createPointerCancelEvent(seedEvent);
+    handleEvent(cancelEvent);
+    _cancelDispatchEvent = true;
   }
 }
 

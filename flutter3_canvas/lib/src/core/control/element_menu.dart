@@ -123,7 +123,7 @@ class ElementMenuControl
   /// [CanvasElementControlManager.handleEvent]驱动, 可以拦截底部控制点的事件
   /// @return true 拦截事件
   @entryPoint
-  bool handleMenuEvent(PointerEvent event, BoxHitTestEntry entry) {
+  bool handleMenuEvent(PointerEvent event) {
     if (event.isTouchEvent) {
       bool handled = false;
       if (event.isPointerDown) {

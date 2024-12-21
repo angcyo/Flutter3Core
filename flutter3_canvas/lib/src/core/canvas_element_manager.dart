@@ -178,8 +178,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [event] 最原始的事件参数, 未经过加工处理
   /// 由[CanvasEventManager.handleEvent]驱动
   @entryPoint
-  void handleElementEvent(PointerEvent event, BoxHitTestEntry entry) {
-    canvasElementControlManager.handleEvent(event, entry);
+  void handleElementEvent(PointerEvent event) {
+    canvasElementControlManager.handleEvent(event);
   }
 
   /// 释放资源

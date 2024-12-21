@@ -207,13 +207,13 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   ///
   /// [event] 最原始的事件参数, 未经过加工处理
   @entryPoint
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
+  void handleEvent(PointerEvent event) {
     //debugger();
     final localPosition = event.localPosition;
     if (enableElementControl) {
       bool ignoreHandle = false;
       if (elementMenuControl.needHandleElementMenu() &&
-          elementMenuControl.handleMenuEvent(event, entry)) {
+          elementMenuControl.handleMenuEvent(event)) {
         ignoreHandle = true;
       }
       if (event.isPointerDown) {
