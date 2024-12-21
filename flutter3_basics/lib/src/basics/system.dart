@@ -13,6 +13,7 @@ part of '../../flutter3_basics.dart';
 /// MediaQuery.of(context).orientation;
 /// '屏幕方向: ${orientation == Orientation.portrait ? "纵向" : "横向"}',
 /// ```
+/// [MediaQueryData]
 ///
 /// [DeviceOrientation.landscapeRight] // 横屏模式，向右旋转
 /// [DeviceOrientation.landscapeLeft] // 横屏模式 向左旋转
@@ -38,6 +39,22 @@ Future<void> setScreenPortrait(
           DeviceOrientation.portraitDown
         ]]) =>
     setScreenOrientations(orientations);
+
+/// 根据屏幕方向进行布局
+/// ```
+/// MediaQuery.of(context).orientation;
+/// ```
+/// [MediaQueryData]
+/// [OrientationBuilder]
+Widget orientationBuilder(OrientationWidgetBuilder builder, [Key? key]) {
+  return OrientationBuilder(builder: builder, key: key);
+}
+
+extension OrientationEx on Orientation {
+  bool get isLandscape => this == Orientation.landscape;
+}
+
+//--
 
 /// 设置ui模式
 /// [SystemChrome.setEnabledSystemUIMode]

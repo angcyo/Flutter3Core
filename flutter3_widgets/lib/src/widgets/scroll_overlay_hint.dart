@@ -6,6 +6,8 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 如果滚动布局边界能够滚动, 则进行提示
 ///
+/// https://pub.dev/packages/flutter_scroll_shadow
+///
 /// [ScrollBehavior.buildOverscrollIndicator]
 /// [ScrollOverlayHintWidget]
 /// [StretchingOverscrollIndicator]
