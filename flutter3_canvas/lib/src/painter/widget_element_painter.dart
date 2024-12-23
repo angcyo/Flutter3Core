@@ -66,6 +66,7 @@ class WidgetElementPainter extends ElementPainter {
     }
     _widgetElement = null;
     _widgetRender = null;
+    _renderImageCache = null;
   }
 
   @override
@@ -82,17 +83,37 @@ class WidgetElementPainter extends ElementPainter {
     super.detachFromCanvasDelegate(canvasDelegate);
   }
 
+  //--
+
+  @override
+  UiImage? get elementOutputImage => _renderImageCache;
+
+  /// 因为绘制[_widgetRender]需要[PaintingContext], 但是栅格化或者截图时, 没有此对象;
+  /// 所以这里需要缓存一份[UiImage]
+  UiImage? _renderImageCache;
+
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     super.onPaintingSelf(canvas, paintMeta);
     //debugger();
     _widgetRender?.let((render) {
-      canvas.withMatrix(
-        paintProperty?.operateMatrix,
-        () {
-          render.paint(paintMeta.paintContext!, Offset.zero);
-        },
-      );
+      final paintContext = paintMeta.paintContext;
+      if (paintContext != null) {
+        _renderImageCache = render.captureImageSync();
+        canvas.withMatrix(
+          paintProperty?.operateMatrix,
+          () {
+            render.paint(paintMeta.paintContext!, Offset.zero);
+          },
+        );
+      } else if (_renderImageCache != null) {
+        canvas.withMatrix(
+          paintProperty?.operateMatrix,
+          () {
+            canvas.drawImage(_renderImageCache!, Offset.zero, paint);
+          },
+        );
+      }
     });
   }
 

@@ -275,11 +275,11 @@ class CanvasRenderBox extends RenderBox {
   ///
   @override
   void detach() {
-    debugger();
+    //debugger();
     visitWidgetElementPainter((painter) {
       final render = painter._widgetRender;
       if (render != null) {
-        debugger();
+        //debugger();
         removeChild(render);
       }
     });
