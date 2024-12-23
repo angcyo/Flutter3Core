@@ -137,6 +137,7 @@ class OverlayManagerController {
     String? tag,
     bool offstage = false,
   }) {
+    //debugger();
     if (id != null) {
       if (findEntryInfoById(id) != null) {
         //相同id的[OverlayEntry]只显示一次

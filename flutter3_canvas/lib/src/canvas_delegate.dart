@@ -52,6 +52,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 上下文, 用来发送通知
   /// [CanvasWidget.createRenderObject]
   /// [CanvasWidget.updateRenderObject]
+  /// [CanvasWidget]
+  @CallFrom("CanvasWidget.createRenderObject/CanvasWidget.updateRenderObject")
   BuildContext? delegateContext;
 
   /// 绘制的入口点
@@ -101,6 +103,52 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasUndoManager.dispose();
     canvasListeners.clear();
     dataMap.clear();
+  }
+
+  /// 安装一个[Widget]得到对应的[RenderObject]
+  @callPoint
+  Element? mountWidget(
+    Widget widget, {
+    Object? slot,
+  }) {
+    final element = delegateContext;
+    if (element is CanvasRenderObjectElement) {
+      /*RenderObject? renderObject;
+      element.owner?.lockState(() {
+        final Element newChild = widget.createElement();
+        newChild.mount(element, null);
+        renderObject = newChild.findRenderObject();
+        debugger();
+      });
+      debugger();
+      return renderObject;*/
+      return element.mountWidget(widget, slot: slot);
+    } else {
+      //debugger();
+      assert(() {
+        if (element == null) {
+          l.w("不支持的操作->delegateContext is not mount!");
+        } else {
+          l.w("不支持的操作->delegateContext is not CanvasRenderObjectElement!");
+        }
+        return true;
+      }());
+    }
+    return null;
+  }
+
+  /// 卸载一个[Element]
+  @callPoint
+  void unmountWidget(Element element) {
+    final delegateElement = delegateContext;
+    if (delegateElement is CanvasRenderObjectElement) {
+      delegateElement.unmountWidget(element);
+    } else {
+      assert(() {
+        l.w("不支持的操作->delegateElement is not CanvasRenderObjectElement");
+        return true;
+      }());
+    }
   }
 
   //endregion ---入口点---
@@ -155,6 +203,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 所有选中的简单元素集合
   List<ElementPainter>? get allSelectedSingleElementList =>
       canvasElementManager.getAllSelectedElement(exportSingleElement: true);
+
+  /// 所有选中的元素是否都是满足条件[test]的类型
+  bool isSelectedSameElementType(bool Function(ElementPainter element) test) {
+    return allSelectedSingleElementList?.all(test) ?? false;
+  }
 
   //endregion ---get/set---
 
@@ -619,6 +672,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       fit: BoxFit.contain,
     );
   }
+
+  /// 访问所有元素
+  /// [be]
+  void visitElementPainter(ElementPainterVisitor visitor) =>
+      canvasElementManager.visitElementPainter(visitor);
 
   //endregion ---api---
 

@@ -183,3 +183,6 @@ extension CanvasStateDataIterableEx on Iterable<CanvasStateData> {
   List<ElementPainter> get allElementList =>
       mapFlat((e) => e.elements).toList();
 }
+
+/// [ElementPainter]元素访问器回调
+typedef ElementPainterVisitor = void Function(ElementPainter element);

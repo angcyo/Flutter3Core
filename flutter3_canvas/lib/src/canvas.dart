@@ -11,6 +11,9 @@ class CanvasWidget extends LeafRenderObjectWidget {
   const CanvasWidget(this.canvasDelegate, {super.key});
 
   @override
+  LeafRenderObjectElement createElement() => CanvasRenderObjectElement(this);
+
+  @override
   RenderObject createRenderObject(BuildContext context) => CanvasRenderBox(
         context,
         canvasDelegate..delegateContext = context,
@@ -35,6 +38,146 @@ class CanvasWidget extends LeafRenderObjectWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty('canvasDelegate', canvasDelegate));
+  }
+}
+
+class CanvasRenderObjectElement extends LeafRenderObjectElement {
+  CanvasRenderObjectElement(super.widget);
+
+  @override
+  CanvasRenderBox get renderObject => super.renderObject as CanvasRenderBox;
+
+  @override
+  void forgetChild(Element child) {
+    //debugger();
+    super.forgetChild(child);
+  }
+
+  @override
+  Element? updateChild(Element? child, Widget? newWidget, Object? newSlot) {
+    //debugger();
+    return super.updateChild(child, newWidget, newSlot);
+  }
+
+  @override
+  void deactivateChild(Element child) {
+    //debugger();
+    if (child.mounted) {
+      super.deactivateChild(child);
+    }
+  }
+
+  /// 停用时, 所有的[RenderObject]都必须[RenderObject.detach]
+  /// [Element.updateChildren]
+  /// ```
+  /// Failed assertion: line 6658 pos 7: '!renderObject.attached': A RenderObject was still attached when attempting to deactivate its RenderObjectElement: RenderDecoratedBox#a056b relayoutBoundary=up4 NEEDS-PAINT
+  /// ```
+  @override
+  void deactivate() {
+    //debugger();
+    super.deactivate();
+  }
+
+  /// [Element.visitChildElements]->[Element.visitChildren]
+  @override
+  void visitChildren(ElementVisitor visitor) {
+    final widget = this.widget;
+    if (widget is CanvasWidget) {
+      widget.canvasDelegate.visitElementPainter((painter) {
+        if (painter is WidgetElementPainter) {
+          final element = painter._widgetElement;
+          if (element != null) {
+            visitor(element);
+          }
+        }
+      });
+    }
+    super.visitChildren(visitor);
+  }
+
+  /// 当有[RenderObject]对象需要插入到当前的树中时, 那么就会触发此回调
+  /// [RenderObjectElement._findAncestorRenderObjectElement]
+  ///
+  /// [Element.inflateWidget]->[Element.mount]->[RenderObjectElement.attachRenderObject]->
+  /// [insertRenderObjectChild]
+  ///
+  @override
+  void insertRenderObjectChild(RenderObject child, Object? slot) {
+    //debugger();
+    renderObject.insertChild(child);
+  }
+
+  @override
+  void moveRenderObjectChild(
+    RenderObject child,
+    Object? oldSlot,
+    Object? newSlot,
+  ) {
+    debugger();
+  }
+
+  /// [Element.deactivateChild]->[Element.detachRenderObject]->[Element.visitChildren]->
+  /// [child.detachRenderObject()]
+  @override
+  void removeRenderObjectChild(RenderObject child, Object? slot) {
+    //debugger();
+    renderObject.removeChild(child);
+  }
+
+  /// 当自己是一个[RenderObjectElement]元素, 那么[mount]时, 就会触发此回调
+  /// [RenderObjectWidget.createRenderObject]
+  @override
+  void attachRenderObject(Object? newSlot) {
+    //debugger();
+    super.attachRenderObject(newSlot);
+  }
+
+  //--
+
+  /// 安装一个[Widget]得到对应的[Element]
+  /// 通过[Element.findRenderObject]获取对应的[RenderObject]
+  @callPoint
+  Element? mountWidget(
+    Widget widget, {
+    Object? slot,
+  }) {
+    Element? widgetElement;
+    final owner = this.owner;
+    if (owner != null) {
+      owner.lockState(() {
+        final newChild = inflateWidget(widget, slot);
+        widgetElement = newChild;
+        /*widgetElement = newChild.findRenderObject();
+        widgetElement?.attach(renderObject.owner!);*/
+      });
+    } else {
+      assert(() {
+        l.w("不支持的操作->owner is null");
+        return true;
+      }());
+    }
+    return widgetElement;
+  }
+
+  /// [CanvasRenderObjectElement.deactivateChild]
+  /// 卸载一个[Element]
+  ///
+  /// ```
+  /// Failed assertion: line 4519 pos 12: 'child._parent == this': is not true.
+  /// ```
+  ///
+  @callPoint
+  void unmountWidget(Element element) {
+    try {
+      //debugger();
+      deactivateChild(element);
+    } catch (e) {
+      // Clean-up failed. Only surface original exception.
+      assert(() {
+        printError(e);
+        return true;
+      }());
+    }
   }
 }
 
@@ -89,15 +232,46 @@ class CanvasRenderBox extends RenderBox {
     canvasDelegate.handleEvent(event, entry);
   }
 
+  /// [CanvasRenderBox]
+  /// [RenderObjectElement.attachRenderObject]->[SingleChildRenderObjectElement.insertRenderObjectChild]->
+  /// [RenderObjectWithChildMixin.adoptChild]->[RenderObject.attach]
+  /// 在这里直接[mountWidget]会出现
+  /// ```
+  /// parent!._relayoutBoundary
+  /// ```
+  /// 所以延迟调用.
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
+    //debugger();
+    postFrame(() {
+      visitWidgetElementPainter((painter) {
+        //debugger();
+        painter.mountWidget(canvasDelegate, isUpdate: false);
+      });
+    });
     canvasDelegate.repaint.addListener(_repaintListener);
     canvasDelegate.attach();
   }
 
+  /// [CanvasRenderBox]
+  /// 所有的[RenderObject]child都必须[remove]
+  /// [ContainerRenderObjectMixin.remove]
+  ///
+  /// ```
+  /// Failed assertion: line 1873 pos 12: 'child.attached == attached': is not true.
+  /// ```
+  ///
   @override
   void detach() {
+    debugger();
+    visitWidgetElementPainter((painter) {
+      final render = painter._widgetRender;
+      if (render != null) {
+        debugger();
+        removeChild(render);
+      }
+    });
     super.detach();
     canvasDelegate.repaint.removeListener(_repaintListener);
     canvasDelegate.detach();
@@ -109,6 +283,8 @@ class CanvasRenderBox extends RenderBox {
     super.dispose();
   }
 
+  //--
+
   /// 重绘
   void _repaintListener() {
     if (owner != null && !owner!.debugDoingPaint) {
@@ -118,6 +294,59 @@ class CanvasRenderBox extends RenderBox {
         _repaintListener();
       });
     }
+  }
+
+  //--
+
+  /// 只有在[Layer]层的[RenderObject]才能调用[paint]方法
+  ///
+  /// ```
+  /// A RenderObject that still has dirty compositing bits cannot be painted because this indicates that the tree has not yet been properly configured for creating the layer tree.
+  /// This usually indicates an error in the Flutter framework itself.
+  /// ```
+  ///
+  @callPoint
+  void insertChild(RenderObject child) {
+    //debugger();
+    adoptChild(child);
+  }
+
+  @callPoint
+  void removeChild(RenderObject child) {
+    //debugger();
+    dropChild(child);
+  }
+
+  /// [CanvasRenderBox]
+  ///
+  /// [RendererBinding.drawFrame]->[PipelineOwner.flushCompositingBits]->
+  /// [RenderObject._updateCompositingBits]->[RenderObject.visitChildren]
+  ///
+  /// [ContainerRenderObjectMixin.visitChildren]
+  @override
+  void visitChildren(RenderObjectVisitor visitor) {
+    //debugger();
+    visitWidgetElementPainter((painter) {
+      final render = painter._widgetRender;
+      if (render != null) {
+        visitor(render);
+      }
+    });
+  }
+
+  @callPoint
+  void visitElementPainter(ElementPainterVisitor visitor) {
+    canvasDelegate.visitElementPainter(visitor);
+  }
+
+  @callPoint
+  void visitWidgetElementPainter(
+      void Function(WidgetElementPainter element) visitor) {
+    visitElementPainter((painter) {
+      if (painter is WidgetElementPainter) {
+        visitor(painter);
+      }
+    });
   }
 }
 

@@ -12,6 +12,9 @@ class PaintMeta {
   @flagProperty
   final dynamic host;
 
+  /// 为了支持[WidgetElementPainter]
+  final PaintingContext? paintContext;
+
   /// 默认情况下[ElementSelectComponent]并不会绘制[ElementGroupPainter.children]
   /// 可以通过此属性, 强制绘制[ElementGroupPainter.children]
   @flagProperty
@@ -34,7 +37,10 @@ class PaintMeta {
   //final CanvasViewBox? viewBox;
 
   const PaintMeta({
+    //--
     this.host,
+    this.paintContext,
+    //--
     this.originMatrix,
     this.canvasMatrix,
     this.refCanvasScale,

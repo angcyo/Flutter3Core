@@ -142,6 +142,7 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       final viewBox = canvasDelegate.canvasViewBox;
       final paintMeta = PaintMeta(
         host: canvasDelegate,
+        paintContext: context,
         originMatrix: viewBox.originMatrix,
         canvasMatrix: viewBox.canvasMatrix,
       );

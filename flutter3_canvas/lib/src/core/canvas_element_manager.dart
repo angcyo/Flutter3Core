@@ -194,6 +194,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //region ---element操作---
 
+  /// 访问所有元素
+  /// [beforeElements]
+  /// [elements]
+  /// [afterElements]
+  @api
+  void visitElementPainter(ElementPainterVisitor visitor) {
+    for (final element in beforeElements) {
+      visitor(element);
+    }
+    for (final element in elements) {
+      visitor(element);
+    }
+    for (final element in afterElements) {
+      visitor(element);
+    }
+  }
+
   /// [afterElements]
   /// [beforeElements]
   bool addBeforeElement(ElementPainter? element) =>
