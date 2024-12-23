@@ -198,6 +198,7 @@ class CanvasRenderBox extends RenderBox {
 
   @override
   void performLayout() {
+    //debugger();
     double? width =
         constraints.maxWidth == double.infinity ? null : constraints.maxWidth;
     double? height =
@@ -208,8 +209,18 @@ class CanvasRenderBox extends RenderBox {
     canvasDelegate.layout(size);
   }
 
+  /// [RenderProxyBoxMixin.performLayout]
+  @override
+  void layout(Constraints constraints, {bool parentUsesSize = false}) {
+    //debugger();
+    super.layout(constraints, parentUsesSize: parentUsesSize);
+  }
+
+  /// [RendererBinding.drawFrame]->[PipelineOwner.flushPaint]->[PaintingContext.repaintCompositedChild]
+  /// [RenderProxyBoxMixin.paint]
   @override
   void paint(PaintingContext context, Offset offset) {
+    //debugger();
     canvasDelegate.paint(context, offset);
   }
 
