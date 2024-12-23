@@ -522,6 +522,7 @@ extension ImageStringEx on String {
 }
 
 extension WidgetImageEx on Widget {
+  /// 截图[Widget]
   /// [captureImage]
   Future<ui.Image> toBuildImage({
     Duration? wait,
@@ -663,7 +664,36 @@ extension RenderObjectImageEx on RenderObject {
       }
       return result;
     } catch (e) {
-      l.e(e);
+      assert(() {
+        printError(e);
+        return true;
+      }());
+    }
+    return null;
+  }
+
+  /// [captureImage]同步方法
+  ui.Image? captureImageSync({double pixelRatio = 1.0}) {
+    //assert(!debugNeedsPaint);
+    try {
+      final OffsetLayer? layer = this.layer as OffsetLayer?;
+      //这里的[paintBounds]就是屏幕大小, 所以[pixelRatio]应该为1
+      //但是如果使用[size]那么[pixelRatio]应该为[devicePixelRatio]
+      ui.Image? result =
+          layer?.toImageSync(paintBounds, pixelRatio: pixelRatio);
+      if (result == null && this is RenderRepaintBoundary) {
+        final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
+        final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
+        //因为[RenderRepaintBoundary]里面用的是[size]
+        //所以这里的[pixelRatio]应该为[devicePixelRatio]
+        return boundary.toImageSync(pixelRatio: devicePixelRatio);
+      }
+      return result;
+    } catch (e) {
+      assert(() {
+        printError(e);
+        return true;
+      }());
     }
     return null;
   }
