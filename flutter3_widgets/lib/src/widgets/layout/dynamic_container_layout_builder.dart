@@ -108,6 +108,7 @@ class _DynamicContainerLayoutBuilderElement<
   Element? _child;
 
   /// 当前的条件
+  /// [_rebuildWithConstraints]
   Condition? _condition;
 
   /// 是否是首次安装
