@@ -195,14 +195,16 @@ class ElementPainter extends IPainter
   @api
   void initPaintProperty({
     @dp @sceneCoordinate Rect? rect,
+    @dp @sceneCoordinate double? width,
+    @dp @sceneCoordinate double? height,
   }) {
-    if (rect != null) {
+    if (rect != null || width != null || height != null) {
       updatePaintProperty(
         PaintProperty()
-          ..left = rect.left
-          ..top = rect.top
-          ..width = rect.width
-          ..height = rect.height,
+          ..left = rect?.left ?? 0
+          ..top = rect?.top ?? 0
+          ..width = rect?.width ?? width ?? screenWidth
+          ..height = rect?.height ?? height ?? screenHeight,
       );
     } else {
       updatePaintProperty(null);

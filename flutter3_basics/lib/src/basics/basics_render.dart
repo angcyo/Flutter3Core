@@ -70,6 +70,23 @@ extension RenderObjectMixinEx on RenderObject {
     }
   }
 
+  /// 是否具有大小, 通常在进行了[RenderObject.layout]后才有值
+  bool get hasRenderSize {
+    if (this is RenderBox) {
+      try {
+        return (this as RenderBox).hasSize;
+      } catch (e) {
+        assert(() {
+          l.e(e);
+          //printError(e);
+          return true;
+        }());
+        return false;
+      }
+    }
+    return false;
+  }
+
   /// 尝试获取[RenderObject]的大小, 只有[parent]才能合理的获取[ui.Size]否则会警告.
   /// ```
   /// RenderBox.size accessed beyond the scope of resize, layout, or permitted parent access.

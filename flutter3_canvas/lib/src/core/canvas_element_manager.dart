@@ -198,16 +198,33 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [beforeElements]
   /// [elements]
   /// [afterElements]
+  ///
+  /// [reverse] 是否逆序
   @api
-  void visitElementPainter(ElementPainterVisitor visitor) {
-    for (final element in beforeElements) {
-      visitor(element);
-    }
-    for (final element in elements) {
-      visitor(element);
-    }
-    for (final element in afterElements) {
-      visitor(element);
+  void visitElementPainter(
+    ElementPainterVisitor visitor, {
+    bool reverse = false,
+  }) {
+    if (reverse) {
+      for (final element in afterElements.reversed) {
+        visitor(element);
+      }
+      for (final element in elements.reversed) {
+        visitor(element);
+      }
+      for (final element in beforeElements.reversed) {
+        visitor(element);
+      }
+    } else {
+      for (final element in beforeElements) {
+        visitor(element);
+      }
+      for (final element in elements) {
+        visitor(element);
+      }
+      for (final element in afterElements) {
+        visitor(element);
+      }
     }
   }
 

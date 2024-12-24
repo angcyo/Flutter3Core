@@ -92,6 +92,8 @@ typedef OffsetCallback = void Function(Offset offset);
 typedef StringCallback = void Function(String text);
 
 /// 转变一个[widget]
+/// [Transform]->[RenderTransform]
+/// [MatrixTransition]
 typedef TransformWidgetBuilder = Widget Function(
     BuildContext context, Widget widget);
 

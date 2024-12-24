@@ -8,10 +8,19 @@ part of '../flutter3_canvas.dart';
 class CanvasWidget extends LeafRenderObjectWidget {
   final CanvasDelegate canvasDelegate;
 
-  const CanvasWidget(this.canvasDelegate, {super.key});
+  /// 是否要激活[WidgetElementPainter]的功能
+  final bool enableWidgetRender;
+
+  const CanvasWidget(
+    this.canvasDelegate, {
+    super.key,
+    this.enableWidgetRender = isDebug,
+  });
 
   @override
-  LeafRenderObjectElement createElement() => CanvasRenderObjectElement(this);
+  LeafRenderObjectElement createElement() => enableWidgetRender
+      ? CanvasRenderObjectElement(this)
+      : LeafRenderObjectElement(this);
 
   @override
   RenderObject createRenderObject(BuildContext context) => CanvasRenderBox(
@@ -30,7 +39,7 @@ class CanvasWidget extends LeafRenderObjectWidget {
   }
 
   @override
-  void didUnmountRenderObject(covariant RenderObject renderObject) {
+  void didUnmountRenderObject(CanvasRenderBox renderObject) {
     super.didUnmountRenderObject(renderObject);
   }
 
@@ -38,6 +47,8 @@ class CanvasWidget extends LeafRenderObjectWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty('canvasDelegate', canvasDelegate));
+    properties
+        .add(FlagProperty('enableWidgetRender', value: enableWidgetRender));
   }
 }
 
@@ -210,9 +221,44 @@ class CanvasRenderBox extends RenderBox {
   }
 
   /// [RenderProxyBoxMixin.performLayout]
+  ///
+  /// ```
+  /// To set the gesture recognizers at other times, trigger a new build using setState() and provide the new gesture recognizers as constructor arguments to the corresponding RawGestureDetector or GestureDetector object.
+  /// ```
+  ///
   @override
   void layout(Constraints constraints, {bool parentUsesSize = false}) {
     //debugger();
+    /*visitWidgetElementPainter((painter) {
+      //debugger();
+      final render = painter._widgetRender;
+      if (render?.hasRenderSize == true) {
+        //no op
+      } else if (render != null) {
+        final paintProperty = painter.paintProperty;
+        if (paintProperty == null) {
+          render.layout(BoxConstraints(), parentUsesSize: true);
+          final renderSize = render.renderSize;
+          if (renderSize == null) {
+            assert(() {
+              l.w("[WidgetElementPainter][${render.runtimeType}] renderSize == null");
+              return true;
+            }());
+          }
+          final size = renderSize ?? Size.zero;
+          //debugger();
+          painter.initPaintProperty(
+              rect: Rect.fromLTWH(0, 0, size.width, size.height));
+        } else {
+          render.layout(
+              BoxConstraints.expand(
+                width: paintProperty.width,
+                height: paintProperty.height,
+              ),
+              parentUsesSize: true);
+        }
+      }
+    });*/
     super.layout(constraints, parentUsesSize: parentUsesSize);
   }
 
@@ -224,6 +270,7 @@ class CanvasRenderBox extends RenderBox {
     canvasDelegate.paint(context, offset);
   }
 
+  /// [GestureBinding.handlePointerEvent]->[RenderView.hitTest]->[RenderBox.hitTest]
   @override
   bool hitTest(BoxHitTestResult result, {required Offset position}) {
     //debugger();
@@ -235,6 +282,15 @@ class CanvasRenderBox extends RenderBox {
     return true;
   }
 
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    return super.hitTestChildren(result, position: position);
+  }
+
+  /// [GestureBinding.handlePointerEvent]->[RendererBinding.dispatchEvent]->[RenderBox.handleEvent]
+  ///
+  /// [RenderTransform]
+  /// [RenderPointerListener]
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();

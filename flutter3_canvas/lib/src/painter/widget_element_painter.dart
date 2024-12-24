@@ -8,8 +8,12 @@ class WidgetElementPainter extends ElementPainter {
   /// 小部件
   Widget? widget;
 
+  //--
+
   Element? _widgetElement;
   RenderObject? _widgetRender;
+
+  //--
 
   WidgetElementPainter({this.widget});
 
@@ -18,7 +22,15 @@ class WidgetElementPainter extends ElementPainter {
   ///
   /// [isUpdate]是否是更新[Widget]
   ///
-  @api
+  /// ```
+  /// To set the gesture recognizers at other times, trigger a new build using setState() and provide the new gesture recognizers as constructor arguments to the corresponding RawGestureDetector or GestureDetector object.
+  /// ```
+  /// [RendererBinding.drawFrame]↓
+  /// [PipelineOwner.flushLayout]
+  /// [PipelineOwner.flushCompositingBits]
+  /// [PipelineOwner.flushPaint]
+  ///
+  @callPoint
   void mountWidget(CanvasDelegate canvasDelegate, {bool? isUpdate}) {
     //debugger();
     if (widget == null) {
@@ -32,14 +44,19 @@ class WidgetElementPainter extends ElementPainter {
         _widgetElement = element;
         if (element != null) {
           final render = element.findRenderObject();
+          _widgetRender = render;
           if (render != null) {
-            _widgetRender = render;
-
             final paintProperty = this.paintProperty;
             if (paintProperty == null) {
               render.layout(BoxConstraints(), parentUsesSize: true);
-
-              final size = render.renderSize ?? Size.zero;
+              final renderSize = render.renderSize;
+              if (renderSize == null) {
+                assert(() {
+                  l.w("[WidgetElementPainter][${render.runtimeType}] renderSize == null");
+                  return true;
+                }());
+              }
+              final size = renderSize ?? Size.zero;
               //debugger();
               initPaintProperty(
                   rect: Rect.fromLTWH(0, 0, size.width, size.height));
@@ -58,7 +75,7 @@ class WidgetElementPainter extends ElementPainter {
   }
 
   /// 卸载[Widget]小部件
-  @api
+  @callPoint
   void unmountWidget(CanvasDelegate canvasDelegate) {
     final element = _widgetElement;
     if (element != null) {
@@ -85,6 +102,38 @@ class WidgetElementPainter extends ElementPainter {
 
   //--
 
+  /// [RenderBox]命中测试[_widgetRender]
+  /// [RenderTransform]
+  @callPoint
+  bool hitRenderBoxTest(
+    BoxHitTestResult result,
+    @sceneCoordinate Offset point,
+  ) {
+    //debugger();
+    final render = _widgetRender;
+    if (render is RenderBox) {
+      if (hitTest(point: point, inflate: true)) {
+        final hitResult = BoxHitTestResult();
+        if (render.hitTest(hitResult,
+            position: render.size.center(Offset.zero))) {
+          for (final entry in hitResult.path) {
+            if (entry.target is RenderBox) {
+              result.add(PainterHitTestEntry(
+                entry.target as RenderBox,
+                point - (paintProperty?.paintBounds.lt ?? Offset.zero),
+                paintProperty?.operateMatrix,
+              ));
+            }
+          }
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  //--
+
   @override
   UiImage? get elementOutputImage => _renderImageCache;
 
@@ -99,7 +148,7 @@ class WidgetElementPainter extends ElementPainter {
     _widgetRender?.let((render) {
       final paintContext = paintMeta.paintContext;
       if (paintContext != null) {
-        _renderImageCache = render.captureImageSync();
+        //_renderImageCache = render.captureImageSync();
         canvas.withMatrix(
           paintProperty?.operateMatrix,
           () {
@@ -133,4 +182,16 @@ class WidgetElementPainter extends ElementPainter {
         fromObj: fromObj,
         fromUndoType: fromUndoType);
   }
+}
+
+/// [BoxHitTestEntry]
+class PainterHitTestEntry extends BoxHitTestEntry {
+  /// [PaintProperty.operateMatrix]
+  final Matrix4? operateMatrix;
+
+  PainterHitTestEntry(
+    super.target,
+    @sceneCoordinate super.localPosition /*命中时, 相对于元素左上角的距离位置*/,
+    this.operateMatrix,
+  );
 }

@@ -674,9 +674,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 访问所有元素
-  /// [be]
-  void visitElementPainter(ElementPainterVisitor visitor) =>
-      canvasElementManager.visitElementPainter(visitor);
+  /// [CanvasElementManager.visitElementPainter]
+  void visitElementPainter(
+    ElementPainterVisitor visitor, {
+    bool reverse = false,
+  }) =>
+      canvasElementManager.visitElementPainter(visitor, reverse: reverse);
 
   //endregion ---api---
 

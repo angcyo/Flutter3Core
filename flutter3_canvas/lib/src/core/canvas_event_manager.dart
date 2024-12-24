@@ -44,11 +44,12 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     //debugger();
 
     if (!_cancelDispatchEvent) {
+      _handleWidgetPainterEvent(event);
       handleDispatchEvent(event);
-
       //元素操作事件
       canvasDelegate.canvasElementManager.handleElementEvent(event);
     }
+    //--
     if (event.isPointerFinish) {
       _cancelDispatchEvent = false;
     }
@@ -63,6 +64,10 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     }());
   }
 
+  //--
+
+  /// 临时取消事件调度派发, 抬手后恢复
+  @flagProperty
   bool _cancelDispatchEvent = false;
 
   /// 临时取消所有事件的派发
@@ -71,6 +76,62 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     final cancelEvent = createPointerCancelEvent(seedEvent);
     handleEvent(cancelEvent);
     _cancelDispatchEvent = true;
+  }
+
+  //--
+
+  BoxHitTestResult? _painterHitResult;
+
+  /// [WidgetElementPainter]内的[RenderObject]事件处理
+  void _handleWidgetPainterEvent(PointerEvent event) {
+    //--
+    if (event.isPointerDown) {
+      _painterHitResult = BoxHitTestResult();
+
+      @viewCoordinate
+      final localPosition = event.localPosition;
+      @sceneCoordinate
+      final scenePosition =
+          canvasDelegate.canvasViewBox.toScenePoint(localPosition);
+
+      canvasDelegate.visitElementPainter((painter) {
+        //debugger();
+        if (painter is WidgetElementPainter) {
+          if (painter.hitRenderBoxTest(_painterHitResult!, scenePosition)) {
+            //no op
+            assert(() {
+              l.d('命中->$scenePosition');
+              return true;
+            }());
+          }
+        }
+      }, reverse: true);
+    }
+    if (_painterHitResult != null) {
+      for (final HitTestEntry entry in _painterHitResult!.path) {
+        try {
+          Matrix4? transform = entry.transform;
+          if (entry is PainterHitTestEntry) {
+            if (entry.operateMatrix != null) {
+              if (transform == null) {
+                transform = entry.operateMatrix!;
+              } else {
+                transform = transform * entry.operateMatrix!;
+              }
+            }
+          }
+          entry.target.handleEvent(event.transformed(transform), entry);
+        } catch (exception, stack) {
+          assert(() {
+            printError(exception, stack);
+            return true;
+          }());
+        }
+      }
+    }
+    if (event.isPointerFinish) {
+      _painterHitResult = null;
+    }
   }
 }
 
