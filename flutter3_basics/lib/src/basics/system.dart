@@ -7,7 +7,9 @@ part of '../../flutter3_basics.dart';
 
 /// 设置屏幕方向
 ///
-/// [OrientationBuilder] //屏幕方向监听
+/// [OrientationBuilder] //屏幕方向监听 [orientationBuilder]
+/// [VisibilityDetector ] //可见性探测 https://pub.dev/packages/visibility_detector
+///
 ///
 /// ```
 /// MediaQuery.of(context).orientation;
