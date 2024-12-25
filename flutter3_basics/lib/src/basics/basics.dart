@@ -442,8 +442,10 @@ bool get isLinux => UniversalPlatform.isLinux /*Platform.isLinux*/;
 bool get isFuchsia => UniversalPlatform.isFuchsia /*Platform.isFuchsia*/;
 
 /// 是否是pc客户端
-bool get isDesktop => UniversalPlatform
-    .isDesktop /*Platform.isWindows || Platform.isMacOS || Platform.isLinux*/;
+bool get isDesktop =>
+    !UniversalPlatform.isWeb &&
+    UniversalPlatform
+        .isDesktop /*Platform.isWindows || Platform.isMacOS || Platform.isLinux*/;
 
 /// 是否是pc客户端或者web
 bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
