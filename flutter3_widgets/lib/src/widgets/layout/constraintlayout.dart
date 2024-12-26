@@ -20,6 +20,20 @@ part of '../../../flutter3_widgets.dart';
 /// cId("xxx") 指定一个id
 /// cId("canvas") 指定一个id
 ///
+/// ```
+/// @override
+/// Widget build(BuildContext context) {
+///   return constrainLayout(() {
+///     "xxx".text().material().applyConstraint(
+///           left: parent.left,
+///           top: parent.top,
+///           bottom: parent.bottom,
+///           width: wrapContent,
+///           height: matchConstraint,
+///         );
+///   });
+/// }
+/// ```
 
 /// 快速使用一个约束布局
 /// [cl_layout.ConstraintLayout]
