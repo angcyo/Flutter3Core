@@ -72,6 +72,7 @@ part 'src/basics/system.dart';
 part 'src/basics/basics_state_property.dart';
 part 'src/component/hook.dart';
 part 'src/component/app_lifecycle_mixin.dart';
+part 'src/component/key_event_mixin.dart';
 part 'src/component/async_operation.dart';
 part 'src/component/batch_completer.dart';
 part 'src/component/compliance.dart';
@@ -144,6 +145,7 @@ part 'src/widgets/any_widget.dart';
 part 'src/widgets/last_extend_row.dart';
 part 'src/widgets/bounds_widget.dart';
 part 'src/widgets/offset_paint_widget.dart';
+part 'src/widgets/pointer_listener.dart';
 
 /// 类型重定义
 typedef UiImage = ui.Image;

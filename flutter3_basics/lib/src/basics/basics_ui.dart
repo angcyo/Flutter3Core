@@ -522,6 +522,51 @@ extension WidgetEx on Widget {
               child: this,
             );
 
+  /// 鼠标事件监听
+  /// [MouseRegion]
+  ///
+  /// [MouseTracker].[MouseTrackerAnnotation]
+  /// 只要实现[MouseTrackerAnnotation], 并且[HitTestEntry]命中返回, 即可获取鼠标事件.
+  /// 在参考[RenderMouseRegion]
+  ///
+  /// [onHover].来自[PointerHoverEvent]事件
+  ///
+  /// [_TransformedPointerEnterEvent]
+  /// [_TransformedPointerHoverEvent]
+  /// [_TransformedPointerExitEvent]
+  ///
+  Widget mouse({
+    Key? key,
+    PointerEnterEventListener? onEnter,
+    PointerExitEventListener? onExit,
+    PointerHoverEventListener? onHover,
+    MouseCursor cursor = MouseCursor.defer,
+    bool opaque = true,
+    HitTestBehavior? hitTestBehavior,
+  }) =>
+      MouseRegion(
+        key: key,
+        onEnter: onEnter,
+        onExit: onExit,
+        onHover: onHover,
+        cursor: cursor,
+        opaque: opaque,
+        hitTestBehavior: hitTestBehavior,
+        child: this,
+      );
+
+  /// [PointerListenerWidget]
+  /// [Listener]
+  Widget pointerListener(
+    PointerEventListener? onPointer, {
+    HitTestBehavior behavior = HitTestBehavior.deferToChild,
+  }) =>
+      PointerListenerWidget(
+        onPointer: onPointer,
+        behavior: behavior,
+        child: this,
+      );
+
   /// [CustomPaint]
   /// [paint] 背景绘制
   /// [foregroundPaint] 前景绘制
