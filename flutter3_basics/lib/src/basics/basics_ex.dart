@@ -595,6 +595,7 @@ extension ColorEx on Color {
   /// 使用一个增量透明比例创建一个新的颜色
   /// [withOpacity]
   /// [withAlpha]
+  /// [withValues]
   Color withOpacityRatio(double opacity) =>
       withAlpha((alpha * opacity).round());
 
@@ -640,7 +641,10 @@ extension ColorEx on Color {
   /// 获取当前颜色的禁用颜色变体
   /// [withAlpha] [0~255] 值越大, 越不透明.
   /// [withOpacity] [0~1] 值越小, 越透明.
-  Color get disabledColor => withOpacity(0.6);
+  Color get disabledColor => withValues(alpha: 0.6 * 255);
+
+  /// 悬停时的透明颜色
+  Color get withHoverAlphaColor => withValues(alpha: 0.8 * 255);
 
   /// 获取当前颜色的强调色,
   /// 值越小, 越弱调, 越暗, 黑色, min:0
