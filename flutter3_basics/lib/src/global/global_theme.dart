@@ -33,6 +33,12 @@ class GlobalTheme {
   /// 主题强调色
   Color get accentColor => const Color(0xff2febff);
 
+  /// 是否亮色主题
+  bool get isAccentLight => accentColor.isLight;
+
+  Brightness get accentBrightness =>
+      isAccentLight ? Brightness.light : Brightness.dark;
+
   /// 暗一点的主题色
   Color get primaryColorDark => const Color(0xff0cabea);
 
