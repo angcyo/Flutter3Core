@@ -402,3 +402,53 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
     return scale;
   }
 }
+
+///缩放路由动画
+/// [ZoomPageTransitionsBuilder]
+class ZoomPageRoute<T> extends MaterialPageRoute<T>
+    with SameRouteTransitionMixin<T> {
+  final Color? backgroundColor;
+
+  ZoomPageRoute({
+    required super.builder,
+    super.settings,
+    super.maintainState = true,
+    super.fullscreenDialog,
+    super.allowSnapshotting = true,
+    super.barrierDismissible = false,
+    bool enableSecondaryAnimation = true,
+    this.backgroundColor,
+  }) {
+    _enableSecondaryAnimation = enableSecondaryAnimation;
+  }
+
+  @override
+  Widget buildSameTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final zoomPageBuilder = ZoomPageTransitionsBuilder(
+      allowSnapshotting: allowSnapshotting,
+      allowEnterRouteSnapshotting: allowSnapshotting,
+      backgroundColor: backgroundColor,
+    );
+    if (!_enableSecondaryAnimation || isDebug) {
+      return zoomPageBuilder.buildTransitions(
+        this,
+        context,
+        animation,
+        kAlwaysCompleteAnimation,
+        child,
+      );
+    }
+    return zoomPageBuilder.buildTransitions(
+      this,
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+  }
+}

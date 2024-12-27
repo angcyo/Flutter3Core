@@ -2787,7 +2787,12 @@ enum TranslationType {
   translationTopToBottom(withTranslation: true, withTopToBottom: true),
 
   /// [TranslationPageRoute]
-  translationFade(withTranslation: true, withFade: true);
+  translationFade(withTranslation: true, withFade: true),
+
+  /// [ZoomPageRoute]
+  /// [ZoomPageTransitionsBuilder]
+  zoom,
+  ;
 
   const TranslationType({
     this.withTranslation = false,
@@ -2843,7 +2848,12 @@ extension RouteWidgetEx on Widget {
 
   /// [MaterialPageRoute]
   /// [CupertinoPageRoute]
-  Route<T> toRoute<T>({
+  ///
+  /// [MaterialPage]
+  /// [PageTransitionsBuilder]
+  /// [ZoomPageTransitionsBuilder]
+  ///
+  ModalRoute<T> toRoute<T>({
     RouteSettings? settings,
     TranslationType? type,
     bool maintainState = true,
@@ -2906,6 +2916,16 @@ extension RouteWidgetEx on Widget {
           barrierDismissible: barrierDismissible,
         );
         break;
+      case TranslationType.zoom:
+        targetRoute = ZoomPageRoute(
+          builder: (context) => this,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
       case TranslationType.translation:
       case TranslationType.translationTopToBottom:
       case TranslationType.translationFade:
@@ -2946,6 +2966,13 @@ extension NavigatorEx on BuildContext {
   /// [TransitionRoute]
   /// [ModalRoute]
   ModalRoute? get modalRoute => ModalRoute.of(this);
+
+  /// [ModalRoute] -> [PageRoute]
+  /// [ModalRoute] -> [PopupRoute]
+  PageRoute? get pageRoute {
+    final route = modalRoute;
+    return route is PageRoute ? route : null;
+  }
 
   RouteSettings? get routeSettings => modalRoute?.settings;
 
