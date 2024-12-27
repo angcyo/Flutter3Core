@@ -163,4 +163,7 @@ const autoDispose = AnnotationMeta('标识当前操作会自动释放');
 const clipFlag = AnnotationMeta('Canvas Clip 操作, 消耗资源');
 const fromFramework = AnnotationMeta('表示当前代码来自框架');
 const darkFlag = AnnotationMeta('标识自动适配暗色主题');
+//--
+const mobileFlag = AnnotationMeta('移动应用: Android 和 iOS');
+const desktopFlag = AnnotationMeta('桌面应用: Windows、macOS 和 Linux');
 //endregion---base

@@ -34,7 +34,7 @@ class BuildConfig {
       //debugger();
     } catch (e) {
       assert(() {
-        l.e(e);
+        l.e("$e, 是否在`yaml`中包含了[$prefix$name]");
         return true;
       }());
     }

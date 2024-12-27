@@ -1,7 +1,6 @@
 library flutter3_app;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -50,19 +49,26 @@ part 'src/receive/receive_intent.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/28
 ///
+/// 使用此方法代替系统的[runApp]
+///
 /// [beforeAction] 启动之前初始化, 请在此进行数据库表注册[registerIsarCollection]
 /// [afterAction] 启动之后初始化
 /// [zonedGuarded] 决定是否使用[runZonedGuarded]进行区域异常捕获,
 /// [onZonedError] .[runZonedGuarded]中的异常回调
+///
 @entryPoint
 @initialize
 @callPoint
 Future runGlobalApp(
   Widget app, {
+  //--
   FutureVoidAction? beforeAction,
   FutureVoidAction? afterAction,
+  //--
   bool zonedGuarded = true,
   void Function(Object error, StackTrace stack)? onZonedError,
+  //--
+  bool useViewModelProvider = false,
 }) async {
   /*if (isDebug) {
     io(() => testTime());
@@ -149,7 +155,8 @@ Future runGlobalApp(
     //open isar
     await initIsar();
     //app
-    runApp(GlobalApp(app: app.wrapGlobalViewModelProvider()));
+    runApp(GlobalApp(
+        app: useViewModelProvider ? app.wrapGlobalViewModelProvider() : app));
     //--after
     await afterAction?.call();
 
