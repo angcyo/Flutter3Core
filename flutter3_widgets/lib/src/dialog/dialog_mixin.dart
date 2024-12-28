@@ -431,6 +431,9 @@ extension NavigatorStateDialogEx on NavigatorState {
   /// [DialogPageRoute]
   /// [showDialog]
   /// [DialogExtension.showWidgetDialog]
+  ///
+  /// [PopupRoute]
+  /// [showMenu]
   Future<T?> showWidgetDialog<T>(
     Widget widget, {
     BuildContext? context,
