@@ -110,7 +110,7 @@ const kVertical = 1;
 /// 获取当前调用此方法的文件名
 /// ```
 /// I/flutter ( 2526): #0      currentFileName (package:flutter3_basics/src/basics.dart:36:33)
-/// I/flutter ( 2526): #1      main (package:flutter3_abc/main.dart:8:7)
+/// I/flutter ( 2526): #1      main (package:flutter3_mobile_abc/main.dart:8:7)
 /// I/flutter ( 2526): #2      _runMain.<anonymous closure> (dart:ui/hooks.dart:159:23)
 /// I/flutter ( 2526): #3      _delayEntrypointInvocation.<anonymous closure> (dart:isolate-patch/isolate_patch.dart:296:19)
 /// I/flutter ( 2526): #4      _RawReceivePort._handleMessage (dart:isolate-patch/isolate_patch.dart:189:12)
@@ -121,10 +121,10 @@ String currentTraceFileName([bool? fileLineNumber]) {
   //print(stackTrace);
   final stackTraceList = stackTrace.split(lineSeparator);
 
-  //#1      main (package:flutter3_abc/main.dart:8:7)
+  //#1      main (package:flutter3_mobile_abc/main.dart:8:7)
   final lineStackTrace = stackTraceList[1];
 
-  //package:flutter3_abc/main.dart:8:7
+  //package:flutter3_mobile_abc/main.dart:8:7
   final fileStr = lineStackTrace.substring(
       lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
   final lineStackTraceList = fileStr.split(":");
