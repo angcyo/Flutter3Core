@@ -18,7 +18,11 @@ abstract class Permissions {
   ];
 
   /// 是否有蓝牙权限
+  @PlatformFlag("Android iOS web Windows")
   static Future<bool> hasBluetoothPermissions() async {
+    if (isMacOs) {
+      return true;
+    }
     final list = await Future.wait(bluetoothPermissions.map((e) => e.status));
     assert(() {
       l.d('权限状态:$list');

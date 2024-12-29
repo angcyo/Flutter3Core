@@ -121,6 +121,18 @@ class Initialize {
   }
 }
 
+class PlatformFlag {
+  final String des;
+
+  const PlatformFlag(
+      [this.des = '标识当前仅支持特定平台Platform: Android iOS Linux macOS web Windows']);
+
+  @override
+  String toString() {
+    return 'PlatformFlag{des: $des}';
+  }
+}
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');
@@ -164,6 +176,7 @@ const clipFlag = AnnotationMeta('Canvas Clip 操作, 消耗资源');
 const fromFramework = AnnotationMeta('表示当前代码来自框架');
 const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 //--
+const platformFlag = PlatformFlag();
 const mobileFlag = AnnotationMeta('移动应用: Android 和 iOS');
 const desktopFlag = AnnotationMeta('桌面应用: Windows、macOS 和 Linux');
 //endregion---base
