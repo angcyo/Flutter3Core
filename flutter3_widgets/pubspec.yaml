@@ -56,6 +56,9 @@ dependencies:
   # https://pub.dev/packages/flutter_constraintlayout
   flutter_constraintlayout: ^1.7.0-stable
 
+  # https://pub.dev/packages/scrollview_observer
+  scrollview_observer: ^1.24.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

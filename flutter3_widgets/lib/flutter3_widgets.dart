@@ -25,6 +25,7 @@ import 'package:flutter_constraintlayout/flutter_constraintlayout.dart' as cl_la
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:lifecycle/lifecycle.dart';
 import 'package:rich_readmore/rich_readmore.dart';
+import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:wheel_picker/wheel_picker.dart';
 
@@ -53,6 +54,7 @@ part 'src/pub/pub_widget_ex.dart';
 part 'src/pub/verify_code.dart';
 part 'src/pub/watermark.dart';
 part 'src/pub/wheel.dart';
+part 'src/pub/scroll/scrollview_observer_ex.dart';
 part 'src/scroll/page/abs_scroll_page.dart';
 part 'src/scroll/page/r_scroll_page.dart';
 part 'src/scroll/page/r_status_scroll_page.dart';
