@@ -209,14 +209,16 @@ class CanvasRenderBox extends RenderBox {
 
   @override
   void performLayout() {
-    //debugger();
+    final constraints = this.constraints;
     double? width =
         constraints.maxWidth == double.infinity ? null : constraints.maxWidth;
     double? height =
         constraints.maxHeight == double.infinity ? null : constraints.maxHeight;
-    size =
-        Size(width ?? height ?? screenWidth, height ?? width ?? screenHeight);
-
+    size = Size(
+      width ?? height ?? screenWidth,
+      height ?? width ?? screenHeight,
+    );
+    //debugger();
     canvasDelegate.layout(size);
   }
 
