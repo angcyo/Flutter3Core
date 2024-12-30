@@ -691,12 +691,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       for (final client in canvasListeners) {
         try {
           action(client);
-        } catch (e) {
-          reportError(e);
+        } catch (e, s) {
+          assert(() {
+            printError(e, s);
+            return true;
+          }());
         }
       }
-    } catch (e) {
-      reportError(e);
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
     }
   }
 

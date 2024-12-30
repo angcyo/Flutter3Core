@@ -2799,6 +2799,43 @@ extension MapEx<K, V> on Map<K, V> {
     keys.forEach(map.remove);
     return map as Map<K, V>;
   }
+
+  /// 转换所有非基础类型的值, 多用于[jsonEncode]
+  Map<K, dynamic> convertValue({
+    dynamic Function(dynamic value)? test,
+    bool copy = false,
+  }) {
+    final map = copy ? Map<K, dynamic>.from(this) : this;
+
+    test ??= (value) => "$value";
+
+    //判断是否是普通类型
+    bool isBaseType(dynamic value) {
+      if (value is num || value is bool || value is String) {
+        return true;
+      }
+      return false;
+    }
+
+    map.forEach((key, value) {
+      if (isBaseType(value)) {
+        //no op
+      } else if (value is Iterable) {
+        if (value.isNotEmpty) {
+          if (isBaseType(value.first)) {
+            //no op
+          } else {
+            map[key] = value.map(test!);
+          }
+        }
+      } else if (value is Map) {
+        map[key] = value.convertValue(test: test, copy: copy);
+      } else {
+        map[key] = test!(value);
+      }
+    });
+    return map;
+  }
 }
 
 //endregion Map 扩展
