@@ -165,6 +165,17 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
   CanvasTranslateComponent(super.canvasDelegate);
 
   @override
+  void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    super.dispatchPointerEvent(dispatch, event);
+    if (isCanvasComponentEnable &&
+        !ignoreEventHandle &&
+        event.isMouseScrollEvent) {
+      final offset = -event.mouseScrollDelta;
+      _translateBy(offset.dx, offset.dy);
+    }
+  }
+
+  @override
   bool handleMultiPointerDetectorPointerEvent(PointerEvent event) {
     if (event.isPointerMove && pointerCount == 2) {
       //debugger();

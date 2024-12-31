@@ -52,6 +52,7 @@ class CanvasWidget extends LeafRenderObjectWidget {
   }
 }
 
+/// [Element]负责控制[RenderObject]
 class CanvasRenderObjectElement extends LeafRenderObjectElement {
   CanvasRenderObjectElement(super.widget);
 
