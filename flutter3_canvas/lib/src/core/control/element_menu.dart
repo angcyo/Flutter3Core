@@ -127,7 +127,7 @@ class ElementMenuControl
   /// @return true 拦截事件
   @entryPoint
   bool handleMenuEvent(PointerEvent event) {
-    if (event.isTouchEvent) {
+    if (event.isTouchPointerEvent) {
       bool handled = false;
       if (event.isPointerDown) {
         final localPosition = event.localPosition;

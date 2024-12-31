@@ -65,7 +65,7 @@ class MagnifierLayoutRender extends RenderProxyBox with MagnifierRenderMixin {
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     super.handleEvent(event, entry);
     //l.d('${event.position} ${event.localPosition} ${event.delta}');
-    if (event.isTouchEvent) {
+    if (event.isTouchPointerEvent) {
       if (event.isPointerFinish) {
         touchPointer = null;
       } else {

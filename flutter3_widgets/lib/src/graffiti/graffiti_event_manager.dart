@@ -19,7 +19,7 @@ class GraffitiEventManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    if (event.isTouchEvent) {
+    if (event.isTouchPointerEvent) {
       if (event.isPointerFinish) {
         currentTouchPointer = null;
       } else {

@@ -12,13 +12,23 @@ part of '../../flutter3_basics.dart';
 /// [LogicalKeyboardKey.control]
 /// [LogicalKeyboardKey.controlLeft]
 /// [LogicalKeyboardKey.controlRight]
-bool get isCtrlPressed =>
-    HardwareKeyboard.instance.logicalKeysPressed
-        .contains(LogicalKeyboardKey.control) ||
-    HardwareKeyboard.instance.logicalKeysPressed
-        .contains(LogicalKeyboardKey.controlLeft) ||
-    HardwareKeyboard.instance.logicalKeysPressed
-        .contains(LogicalKeyboardKey.controlRight);
+bool get isCtrlPressed => isKeyPressed(LogicalKeyboardKey.control, orKeys: [
+      LogicalKeyboardKey.controlLeft,
+      LogicalKeyboardKey.controlRight,
+    ]);
+
+/// 空格按键是否按下
+bool get isSpacePressed => isKeyPressed(LogicalKeyboardKey.space);
+
+/// 指定的按键, 是否按下
+bool isKeyPressed(
+  LogicalKeyboardKey key, {
+  List<LogicalKeyboardKey>? orKeys,
+}) =>
+    HardwareKeyboard.instance.logicalKeysPressed.contains(key) ||
+    (orKeys != null &&
+        HardwareKeyboard.instance.logicalKeysPressed
+            .any((e) => orKeys.contains(e)));
 
 /// 手势事件回调
 typedef PointerAction = void Function(PointerEvent event);
@@ -28,9 +38,26 @@ typedef PointerAction = void Function(PointerEvent event);
 @dp
 const double kTouchMoveSlop = 5;
 
+extension EventIntEx on int {
+  /// 是否是鼠标左键
+  bool get isMouseLeftDown =>
+      (this & kPrimaryMouseButton) == kPrimaryMouseButton;
+
+  /// 是否是鼠标右键
+  bool get isMouseRightDown =>
+      (this & kSecondaryMouseButton) == kSecondaryMouseButton;
+
+  /// 是否是鼠标中键,
+  bool get isMouseMiddleDown =>
+      (this & kMiddleMouseButton) == kMiddleMouseButton;
+}
+
 extension EventEx on PointerEvent {
+  /// 是否是手指类型事件
+  bool get isTouchEventKind => kind == PointerDeviceKind.touch;
+
   /// 是否是手指操作相关事件
-  bool get isTouchEvent =>
+  bool get isTouchPointerEvent =>
       synthesized == false /*非合成的事件*/ &&
       (isPointerDown || isPointerMove || isPointerFinish);
 
@@ -59,6 +86,18 @@ extension EventEx on PointerEvent {
   }
 
   //-- mouse event
+
+  /// 是否是鼠标事件
+  bool get isMouseEventKind => kind == PointerDeviceKind.mouse;
+
+  /// 是否是鼠标左键, 只有在[PointerDownEvent]时才能确定
+  bool get isMouseLeftDown => isMouseEventKind && buttons.isMouseLeftDown;
+
+  /// 是否是鼠标右键, 只有在[PointerDownEvent]时才能确定
+  bool get isMouseRightDown => isMouseEventKind && buttons.isMouseRightDown;
+
+  /// 是否是鼠标中键, 只有在[PointerDownEvent]时才能确定
+  bool get isMouseMiddleDown => isMouseEventKind && buttons.isMouseMiddleDown;
 
   /// 鼠标滚动事件[_TransformedPointerScrollEvent]
   bool get isMouseScrollEvent => this is PointerScrollEvent;
@@ -474,6 +513,10 @@ mixin DoubleTapDetectorMixin {
   /// 上一次按下的位置
   Offset lastDownPoint = Offset.zero;
 
+  /// 记录按下时的鼠标按键
+  /// [PointerDownEvent.buttons]
+  int lastDownButtons = 0;
+
   /// 双击检测时, 是否是第一次触摸
   bool isDoubleFirstTouch = true;
 
@@ -489,6 +532,7 @@ mixin DoubleTapDetectorMixin {
       if (isDoubleFirstTouch) {
         lastDownTime = DateTime.now();
         lastDownPoint = point;
+        lastDownButtons = event.buttons;
       }
     } else if (event.isPointerUp) {
       if (!isDoubleFirstTouch) {
@@ -499,9 +543,11 @@ mixin DoubleTapDetectorMixin {
           onDoubleTapDetectorPointerEvent(event);
         }
         isDoubleFirstTouch = true;
+        lastDownButtons = 0;
       }
     } else if (event.isPointerCancel) {
       isDoubleFirstTouch = true;
+      lastDownButtons = 0;
     }
   }
 
@@ -585,7 +631,7 @@ mixin MultiPointerDetectorMixin {
 
   @entryPoint
   void addMultiPointerDetectorPointerEvent(PointerEvent event) {
-    if (!event.isTouchEvent) {
+    if (!event.isTouchPointerEvent) {
       return;
     }
     //1---

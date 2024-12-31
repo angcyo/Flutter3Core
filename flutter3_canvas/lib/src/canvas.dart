@@ -300,6 +300,11 @@ class CanvasRenderBox extends RenderBox {
     final hitInterceptBox = GestureHitInterceptScope.of(context);
     hitInterceptBox?.interceptHitBox = this;
     canvasDelegate.handleEvent(event, entry);
+    /*assert((){
+      l.w("handleEvent:${event.runtimeType} ${event.buttons}");
+      return true;
+    }());*/
+    //debugger();
   }
 
   /// [CanvasRenderBox]

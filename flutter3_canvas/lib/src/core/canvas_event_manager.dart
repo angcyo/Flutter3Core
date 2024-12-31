@@ -288,15 +288,22 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
         .canvasElementManager.canvasElementControlManager.isTranslateElement) {
       return false;
     }
-    final scale = doubleScaleValue;
-    final pivot = event.localPosition;
-    //debugger();
-    scaleBy(
-      scaleX: scale,
-      scaleY: scale,
-      pivot: canvasDelegate.canvasViewBox.toScenePoint(pivot),
-      anim: true,
-    );
+    if (event.isMouseEventKind) {
+      /*l.w("event:${event.buttons}");
+      debugger();*/
+    }
+    if (event.isTouchEventKind ||
+        (event.isMouseEventKind && lastDownButtons.isMouseLeftDown)) {
+      final scale = doubleScaleValue;
+      final pivot = event.localPosition;
+      //debugger();
+      scaleBy(
+        scaleX: scale,
+        scaleY: scale,
+        pivot: canvasDelegate.canvasViewBox.toScenePoint(pivot),
+        anim: true,
+      );
+    }
     return super.onDoubleTapDetectorPointerEvent(event);
   }
 

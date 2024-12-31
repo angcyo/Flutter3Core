@@ -55,7 +55,7 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     super.handleEvent(event, entry);
     //l.d('${event.position} ${event.localPosition} ${event.delta}');
-    if (event.isTouchEvent) {
+    if (event.isTouchPointerEvent) {
       if (event.isPointerFinish) {
         if (touchPointer != null) {
           final imagePointer =

@@ -225,7 +225,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       //在画布内点击才响应
       handleDispatchEvent(event);
     }
-    if (event.isTouchEvent && event.isPointerDown) {
+    if (event.isTouchPointerEvent && event.isPointerDown) {
       //手势按下通知
       canvasDelegate.dispatchPointerDown(
         localPosition,
