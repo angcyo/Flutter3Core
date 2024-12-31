@@ -169,7 +169,8 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
     super.dispatchPointerEvent(dispatch, event);
     if (isCanvasComponentEnable &&
         !ignoreEventHandle &&
-        event.isMouseScrollEvent) {
+        event.isMouseScrollEvent &&
+        !isCtrlPressed) {
       final offset = -event.mouseScrollDelta;
       _translateBy(offset.dx, offset.dy);
     }
@@ -246,12 +247,38 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
   /// 双击时, 需要放大的比例
   double doubleScaleValue = 1.5;
 
+  /// 双击时, 需要缩小的比例
+  double doubleScaleReverseValue = 0.8;
+
   CanvasScaleComponent(super.canvasDelegate);
 
   @override
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     addDoubleTapDetectorPointerEvent(event);
     super.dispatchPointerEvent(dispatch, event);
+    if (isCanvasComponentEnable &&
+        !ignoreEventHandle &&
+        event.isMouseScrollEvent &&
+        isCtrlPressed) {
+      final pivot =
+          canvasDelegate.canvasViewBox.toScenePoint(event.localPosition);
+      final offset = event.mouseScrollDelta;
+      if (offset.dy > 0) {
+        //鼠标向下滚动, 缩小
+        scaleBy(
+          scaleX: doubleScaleReverseValue,
+          scaleY: doubleScaleReverseValue,
+          pivot: pivot,
+        );
+      } else {
+        //鼠标向上滚动, 放大
+        scaleBy(
+          scaleX: doubleScaleValue,
+          scaleY: doubleScaleValue,
+          pivot: pivot,
+        );
+      }
+    }
   }
 
   @override

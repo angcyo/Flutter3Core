@@ -5,6 +5,21 @@ part of '../../flutter3_basics.dart';
 /// @since 2024/01/30
 ///
 
+/// 按键事件处理
+/// [HardwareKeyboard]
+/// [HardwareKeyboard.instance]
+
+/// [LogicalKeyboardKey.control]
+/// [LogicalKeyboardKey.controlLeft]
+/// [LogicalKeyboardKey.controlRight]
+bool get isCtrlPressed =>
+    HardwareKeyboard.instance.logicalKeysPressed
+        .contains(LogicalKeyboardKey.control) ||
+    HardwareKeyboard.instance.logicalKeysPressed
+        .contains(LogicalKeyboardKey.controlLeft) ||
+    HardwareKeyboard.instance.logicalKeysPressed
+        .contains(LogicalKeyboardKey.controlRight);
+
 /// 手势事件回调
 typedef PointerAction = void Function(PointerEvent event);
 
