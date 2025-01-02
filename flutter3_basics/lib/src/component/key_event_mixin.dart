@@ -27,3 +27,23 @@ mixin KeyEventMixin<T extends StatefulWidget> on State<T> {
     return false;
   }
 }
+
+/// [KeyEventMixin]
+mixin KeyEventRenderObjectMixin on RenderObject {
+  @override
+  void attach(PipelineOwner owner) {
+    HardwareKeyboard.instance.addHandler(onKeyEventHandleMixin);
+    super.attach(owner);
+  }
+
+  @override
+  void detach() {
+    HardwareKeyboard.instance.removeHandler(onKeyEventHandleMixin);
+    super.detach();
+  }
+
+  @overridePoint
+  bool onKeyEventHandleMixin(KeyEvent event) {
+    return false;
+  }
+}

@@ -196,7 +196,9 @@ class CanvasRenderObjectElement extends LeafRenderObjectElement {
 /// 画布渲染核心类
 /// 负责画布的绘制入口
 /// 负责画布的手势入口
-class CanvasRenderBox extends RenderBox {
+class CanvasRenderBox extends RenderBox
+    with KeyEventRenderObjectMixin
+    implements MouseTrackerAnnotation {
   BuildContext context;
   CanvasDelegate canvasDelegate;
 
@@ -340,6 +342,7 @@ class CanvasRenderBox extends RenderBox {
   @override
   void detach() {
     //debugger();
+    _validForMouseTracker = false;
     visitWidgetElementPainter((painter) {
       final render = painter._widgetRender;
       if (render != null) {
@@ -348,6 +351,7 @@ class CanvasRenderBox extends RenderBox {
       }
     });
     super.detach();
+    _validForMouseTracker = true;
     canvasDelegate.repaint.removeListener(_repaintListener);
     canvasDelegate.detach();
   }
@@ -358,7 +362,7 @@ class CanvasRenderBox extends RenderBox {
     super.dispose();
   }
 
-  //--
+//--
 
   /// 重绘
   void _repaintListener() {
@@ -371,7 +375,7 @@ class CanvasRenderBox extends RenderBox {
     }
   }
 
-  //--
+//--
 
   /// 只有在[Layer]层的[RenderObject]才能调用[paint]方法
   ///
@@ -423,6 +427,39 @@ class CanvasRenderBox extends RenderBox {
       }
     });
   }
+
+  //region --KeyEvent--
+
+  @override
+  bool onKeyEventHandleMixin(KeyEvent event) {
+    if (event.isSpaceKey) {
+      markNeedsPaint();
+    }
+    return super.onKeyEventHandleMixin(event);
+  }
+
+  //endregion --KeyEvent--
+
+  //region --Mouse--
+
+  @override
+  MouseCursor get cursor =>
+      isKeyPressed(canvasDelegate.canvasStyle.dragKeyboardKey)
+          ? SystemMouseCursors.allScroll
+          : MouseCursor.defer;
+
+  @override
+  PointerEnterEventListener? get onEnter => null;
+
+  @override
+  PointerExitEventListener? get onExit => null;
+
+  bool _validForMouseTracker = false;
+
+  @override
+  bool get validForMouseTracker => _validForMouseTracker;
+
+//endregion --Mouse--
 }
 
 /// 画布回调监听

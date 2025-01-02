@@ -10,7 +10,7 @@ typedef OnCanvasBoundsEventAction = bool Function(
     PointerEvent event, TouchDetectorType touchType);
 
 class CanvasBoundsEventComponent
-    with CanvasComponentMixin, IHandleEventMixin, TouchDetectorMixin {
+    with CanvasComponentMixin, IHandlePointerEventMixin, TouchDetectorMixin {
   /// 事件监听
   Set<OnCanvasBoundsEventAction> boundsEventAction = {};
 

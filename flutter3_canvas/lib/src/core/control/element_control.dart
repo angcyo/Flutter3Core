@@ -60,7 +60,7 @@ mixin CanvasElementControlManagerMixin {
 class BaseControl
     with
         CanvasComponentMixin,
-        IHandleEventMixin,
+        IHandlePointerEventMixin,
         CanvasElementControlManagerMixin {
   @override
   final CanvasElementControlManager canvasElementControlManager;

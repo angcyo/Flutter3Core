@@ -12,7 +12,7 @@ part of '../../../flutter3_canvas.dart';
 class ElementMenuControl
     with
         CanvasComponentMixin,
-        IHandleEventMixin,
+        IHandlePointerEventMixin,
         CanvasElementControlManagerMixin {
   /// 画布元素控制器
   @override

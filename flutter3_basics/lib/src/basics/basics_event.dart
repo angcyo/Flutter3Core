@@ -52,7 +52,7 @@ extension EventIntEx on int {
       (this & kMiddleMouseButton) == kMiddleMouseButton;
 }
 
-extension EventEx on PointerEvent {
+extension PointerEventEx on PointerEvent {
   /// 是否是手指类型事件
   bool get isTouchEventKind => kind == PointerDeviceKind.touch;
 
@@ -109,8 +109,25 @@ extension EventEx on PointerEvent {
       : Offset.zero;
 }
 
+extension KeyEventEx on KeyEvent {
+  bool get isKeyDown => this is KeyDownEvent;
+
+  bool get isKeyRepeat => this is KeyRepeatEvent;
+
+  bool get isKeyUp => this is KeyUpEvent;
+
+  /// 是否是空格键
+  bool get isSpaceKey => logicalKey == LogicalKeyboardKey.space;
+
+  /// 是否是Ctrl键
+  bool get isCtrlKey =>
+      logicalKey == LogicalKeyboardKey.control ||
+      logicalKey == LogicalKeyboardKey.controlLeft ||
+      logicalKey == LogicalKeyboardKey.controlRight;
+}
+
 /// 事件处理
-mixin IHandleEventMixin {
+mixin IHandlePointerEventMixin {
   /// 是否要激活手势事件处理, 需要在外层判断此属性的处理逻辑
   /// [PointerDispatchMixin]
   bool enableEventHandled = true;
@@ -217,17 +234,17 @@ mixin IHandleEventMixin {
 
 /// 指针事件派发
 ///
-/// [handleDispatchEvent]->将事件派发给[IHandleEventMixin]
-///                      1:[IHandleEventMixin.dispatchPointerEvent]
-///                      2:[IHandleEventMixin.interceptPointerEvent]
-///                      3:[IHandleEventMixin.onPointerEvent]
+/// [handleDispatchEvent]->将事件派发给[IHandlePointerEventMixin]
+///                      1:[IHandlePointerEventMixin.dispatchPointerEvent]
+///                      2:[IHandlePointerEventMixin.interceptPointerEvent]
+///                      3:[IHandlePointerEventMixin.onPointerEvent]
 ///
 mixin PointerDispatchMixin {
   /// 事件处理客户端列表
-  Set<IHandleEventMixin> handleEventClientList = {};
+  Set<IHandlePointerEventMixin> handleEventClientList = {};
 
   /// 当前事件处理被此目标拦截
-  IHandleEventMixin? interceptHandleTarget;
+  IHandlePointerEventMixin? interceptHandleTarget;
 
   /// N个手指对应的事件
   Map<int, PointerEvent> pointerMap = {};
@@ -344,12 +361,12 @@ mixin PointerDispatchMixin {
   }
 
   /// 添加事件处理
-  void addHandleEventClient(IHandleEventMixin handleEvent) {
+  void addHandleEventClient(IHandlePointerEventMixin handleEvent) {
     handleEventClientList.add(handleEvent);
   }
 
   /// 移除事件处理
-  void removeHandleEventClient(IHandleEventMixin handleEvent) {
+  void removeHandleEventClient(IHandlePointerEventMixin handleEvent) {
     handleEventClientList.remove(handleEvent);
   }
 
@@ -737,7 +754,7 @@ mixin MultiPointerDetectorMixin {
   }
 
   /// 指定的手指, 移动的距离是否超过指定的阈值
-  /// [EventEx.isMoveExceed]
+  /// [PointerEventEx.isMoveExceed]
   bool isPointerMoveExceed(int pointer, [double threshold = kTouchSlop]) {
     final move = pointerMoveMap[pointer];
     final down = pointerDownMap[pointer];

@@ -1015,7 +1015,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 class ElementSelectComponent extends ElementGroupPainter
     with
         CanvasComponentMixin,
-        IHandleEventMixin,
+        IHandlePointerEventMixin,
         MultiPointerDetectorMixin,
         HandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
@@ -1196,7 +1196,9 @@ class ElementSelectComponent extends ElementGroupPainter
   bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     //debugger();
     if (isCanvasComponentEnable) {
-      if (isFirstPointerEvent(dispatch, event)) {
+      if (isFirstPointerEvent(dispatch, event) &&
+          !isKeyPressed(canvasElementControlManager
+              .canvasDelegate.canvasStyle.dragKeyboardKey)) {
         final viewBox =
             canvasElementControlManager.canvasDelegate.canvasViewBox;
         if (event.isPointerDown) {
@@ -1514,6 +1516,7 @@ class ElementSelectComponent extends ElementGroupPainter
     List<ElementPainter>? elements,
     ElementSelectType selectType,
   ) {
+    //debugger();
     List<ElementPainter>? old = children;
     if (isNullOrEmpty(elements)) {
       //取消元素选择

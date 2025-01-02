@@ -69,6 +69,11 @@ class CanvasStyle {
   /// 是否激活点击元素外, 取消选中元素
   bool enableOutsideCancelSelectElement = true;
 
+  //--key
+
+  /// 当按下此键时, 视为需要拖动画布
+  LogicalKeyboardKey dragKeyboardKey = LogicalKeyboardKey.space;
+
   //endregion ---core---
 
   //region ---basics---

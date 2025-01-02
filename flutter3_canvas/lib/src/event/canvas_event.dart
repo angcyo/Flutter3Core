@@ -5,7 +5,7 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/18
 ///
 /// 简单的事件处理混入, 支持[ignoreEventHandle]
-mixin HandleEventMixin on IHandleEventMixin, MultiPointerDetectorMixin {
+mixin HandleEventMixin on IHandlePointerEventMixin, MultiPointerDetectorMixin {
   @override
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     super.dispatchPointerEvent(dispatch, event);

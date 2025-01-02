@@ -68,8 +68,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 最小/最大缩放比例
   double minScaleX = 0.1;
   double minScaleY = 0.1;
-  double maxScaleX = 10;
-  double maxScaleY = 10;
+  double maxScaleX = isDesktopOrWeb ? 100 : 10;
+  double maxScaleY = isDesktopOrWeb ? 100 : 10;
 
   /// 最小/最大平移值
   double minTranslateX = double.negativeInfinity;
