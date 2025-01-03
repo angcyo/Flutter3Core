@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:el_tooltip/el_tooltip.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
@@ -13,8 +14,10 @@ export 'package:get_it/get_it.dart';
 export 'package:rxdart/rxdart.dart';
 export 'package:watch_it/watch_it.dart';
 export 'package:easy_refresh/easy_refresh.dart';
+export 'package:el_tooltip/el_tooltip.dart';
 
-part 'src/refresh/refresh_ex.dart';
+part 'src/refresh/easy_refresh_ex.dart';
+part 'src/tooltip/el_tooltip_ex.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

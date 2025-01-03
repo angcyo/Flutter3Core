@@ -34,7 +34,8 @@ void initDefaultRefresh() {
   }
 }
 
-extension RefreshEx on Widget {
+/// [EasyRefresh]
+extension EasyRefreshEx on Widget {
   /// 包裹一层[EasyRefresh]组件
   /// 被包裹的组件不能使用自定义的[physics],
   /// 必须使用null, 或者[childBuilder]回调的[physics]才能下拉刷新

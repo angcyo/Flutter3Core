@@ -40,5 +40,64 @@ part of '../../../flutter3_widgets.dart';
 Widget constrainLayout(void Function() block) =>
     cl_layout.ConstraintLayout().open(block);
 
+/// [constrainLayout]
+Widget cLayout(void Function() block) => constrainLayout(block);
+
 /// 约束扩展
-extension ConstraintLayoutEx on Widget {}
+extension ConstraintLayoutEx on Widget {
+  /// 对齐父容器左边的约束
+  Widget alignParentConstraint({
+    Alignment alignment = Alignment.centerLeft,
+    //--
+    double? width,
+    double? height,
+    cl_layout.ConstraintAlign? left,
+    cl_layout.ConstraintAlign? top,
+    cl_layout.ConstraintAlign? right,
+    cl_layout.ConstraintAlign? bottom,
+  }) {
+    if (alignment == Alignment.centerLeft) {
+      return applyConstraint(
+        width: width ?? cl_layout.wrapContent,
+        left: left ?? cl_layout.parent.left,
+        right: right,
+        top: top ?? cl_layout.parent.top,
+        bottom: bottom ?? cl_layout.parent.bottom,
+        height: height ?? cl_layout.matchConstraint,
+      );
+    } else if (alignment == Alignment.centerRight) {
+      return applyConstraint(
+        width: width ?? cl_layout.wrapContent,
+        left: left,
+        right: right ?? cl_layout.parent.right,
+        top: top ?? cl_layout.parent.top,
+        bottom: bottom ?? cl_layout.parent.bottom,
+        height: height ?? cl_layout.matchConstraint,
+      );
+    } else if (alignment == Alignment.topCenter) {
+      return applyConstraint(
+        width: width ?? cl_layout.matchConstraint,
+        top: top ?? cl_layout.parent.top,
+        bottom: bottom,
+        right: right ?? cl_layout.parent.right,
+        left: left ?? cl_layout.parent.left,
+        height: height ?? cl_layout.wrapContent,
+      );
+    } else if (alignment == Alignment.bottomCenter) {
+      return applyConstraint(
+        width: width ?? cl_layout.matchConstraint,
+        bottom: bottom ?? cl_layout.parent.bottom,
+        top: top,
+        right: right ?? cl_layout.parent.right,
+        left: left ?? cl_layout.parent.left,
+        height: height ?? cl_layout.wrapContent,
+      );
+    }
+    return applyConstraint(
+      width: width ?? cl_layout.wrapContent,
+      height: height ?? cl_layout.wrapContent,
+      centerHorizontalTo: cl_layout.parent,
+      centerVerticalTo: cl_layout.parent,
+    );
+  }
+}

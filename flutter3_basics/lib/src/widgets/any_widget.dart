@@ -11,7 +11,12 @@ part of '../../flutter3_basics.dart';
 typedef AnyWidgetInitAction<Data> = FutureOr Function(
     BuildContext? context, Data? data);
 
+/// 计算child的偏移
+typedef AnyWidgetOffsetAction = Offset Function(
+    BoxConstraints constraints, Size parentSize, Size childSize);
+
 /// 计算布局大小
+/// [AnyStatefulWidget]
 /// [_AnyRenderObject.performLayout]
 typedef AnyWidgetLayoutAction = Size Function(
     BoxConstraints constraints, dynamic initResult);
@@ -24,12 +29,16 @@ typedef AnyWidgetPaintAction = void Function(
   Size size,
 );
 
+/// [AnyStatefulWidget]
 mixin AnyWidgetMixin<Data> {
   /// 初始化时的数据
   Data? get initData;
 
   /// 初始化的回调
   AnyWidgetInitAction<Data>? get onInit;
+
+  /// 计算child的偏移
+  AnyWidgetOffsetAction? get onGetChildOffset;
 
   /// 计算布局大小的回调
   AnyWidgetLayoutAction? get onLayout;
@@ -68,18 +77,76 @@ class _AnyRenderObject extends RenderProxyBox {
   _AnyRenderObject(this.widget);
 
   @override
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! BoxParentData) {
+      child.parentData = BoxParentData();
+    }
+  }
+
+  @override
   void performLayout() {
-    super.performLayout();
     final layoutSize =
         widget?.anyWidget?.onLayout?.call(constraints, widget?.initResult);
     size = layoutSize == null
         ? constraints.biggest
         : constraints.constrain(layoutSize);
+
+    final child = this.child;
+    if (child != null) {
+      //debugger();
+      child.layout(BoxConstraints(maxWidth: size.width, maxHeight: size.height),
+          parentUsesSize: true);
+      final parentData = child.parentData;
+      if (parentData is BoxParentData) {
+        final offset = widget?.anyWidget?.onGetChildOffset
+            ?.call(constraints, size, child.size);
+        parentData.offset = offset ?? parentData.offset;
+      }
+    }
+  }
+
+  /// 在手势处理, 绘制涟漪效果时, 也会触发
+  /// 在[RenderBox.globalToLocal]->[RenderObject.getTransformTo]中会触发
+  /// 如果自身没有变换, 则不需要处理
+  /// [RenderBox.applyPaintTransform]
+  @override
+  void applyPaintTransform(covariant RenderObject child, Matrix4 transform) {
+    //debugger();
+    /*final BoxParentData childParentData = child.parentData! as BoxParentData;
+    final Offset offset = childParentData.offset;
+    transform.translate(offset.dx, offset.dy);*/
+    super.applyPaintTransform(child, transform);
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required ui.Offset position}) {
+    final RenderBox? child = this.child;
+    if (child != null) {
+      // The x, y parameters have the top left of the node's box as the origin.
+      final childParentData = child.parentData! as BoxParentData;
+      final bool isHit = result.addWithPaintOffset(
+        offset: childParentData.offset,
+        position: position,
+        hitTest: (BoxHitTestResult result, Offset transformed) {
+          assert(transformed == position - childParentData.offset);
+          return child.hitTest(result, position: transformed);
+        },
+      );
+      if (isHit) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
-    super.paint(context, offset);
+    final RenderBox? child = this.child;
+    if (child != null) {
+      final childParentData = child.parentData! as BoxParentData;
+      context.paintChild(child, childParentData.offset + offset);
+    }
+
     final onPaint = widget?.anyWidget?.onPaint;
     if (onPaint != null) {
       final canvas = context.canvas;
@@ -95,12 +162,15 @@ class _AnyRenderObject extends RenderProxyBox {
 
 //--
 
+/// 回调一些布局绘制关键方法给外部
+/// [CustomSingleChildLayout]
 class AnyStatefulWidget<Data> extends StatefulWidget with AnyWidgetMixin<Data> {
   const AnyStatefulWidget({
     super.key,
     this.child,
     this.initData,
     this.onInit,
+    this.onGetChildOffset,
     this.onLayout,
     this.onPaint,
   });
@@ -113,6 +183,9 @@ class AnyStatefulWidget<Data> extends StatefulWidget with AnyWidgetMixin<Data> {
 
   @override
   final AnyWidgetInitAction<Data>? onInit;
+
+  @override
+  final AnyWidgetOffsetAction? onGetChildOffset;
 
   @override
   final AnyWidgetLayoutAction? onLayout;
@@ -130,15 +203,18 @@ class _AnyStatefulWidgetState extends State<AnyStatefulWidget> {
 
   @override
   void initState() {
-    () async {
-      final result = await widget.onInit?.call(buildContext, widget.initData);
-      if (mounted) {
-        if (initResult != result) {
-          initResult = result;
-          updateState();
+    final onInit = widget.onInit;
+    if (onInit != null) {
+      () async {
+        final result = await onInit(buildContext, widget.initData);
+        if (mounted) {
+          if (initResult != result) {
+            initResult = result;
+            updateState();
+          }
         }
-      }
-    }();
+      }();
+    }
     super.initState();
   }
 
@@ -162,6 +238,7 @@ Widget $any<Data>({
   //--
   Data? initData,
   AnyWidgetInitAction<Data>? onInit,
+  AnyWidgetOffsetAction? onGetChildOffset,
   AnyWidgetLayoutAction? onLayout,
   AnyWidgetPaintAction? onPaint,
 }) =>
@@ -169,6 +246,7 @@ Widget $any<Data>({
       key: key,
       initData: initData,
       onInit: onInit,
+      onGetChildOffset: onGetChildOffset,
       onLayout: onLayout ?? (size == null ? null : (constraints, _) => size),
       onPaint: onPaint,
       child: child,
