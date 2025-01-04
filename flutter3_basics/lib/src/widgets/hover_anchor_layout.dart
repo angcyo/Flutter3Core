@@ -15,6 +15,9 @@ class HoverAnchorLayout extends StatefulWidget {
   /// 悬停/点击时显示的内容
   final Widget? content;
 
+  /// 控制器
+  final HoverAnchorLayoutController? controller;
+
   //--
 
   /// 命中区域放大的溢出大小
@@ -44,9 +47,13 @@ class HoverAnchorLayout extends StatefulWidget {
   /// 箭头额外的偏移量
   final double arrowOffset;
 
+  /// 是否激活悬停时自动显示
+  final bool enableHoverShow;
+
   const HoverAnchorLayout({
     super.key,
     required this.anchor,
+    this.controller,
     this.content,
     this.backgroundColor = Colors.white,
     this.backgroundShadows = const [
@@ -58,6 +65,7 @@ class HoverAnchorLayout extends StatefulWidget {
       ),
     ],
     this.showArrow = true,
+    this.enableHoverShow = true,
     this.arrowPosition,
     this.radius = kH,
     this.arrowSize = const Size(kX, kH),
@@ -69,11 +77,44 @@ class HoverAnchorLayout extends StatefulWidget {
   State<HoverAnchorLayout> createState() => _HoverAnchorLayoutState();
 }
 
+class HoverAnchorLayoutController {
+  Action? _show;
+  Action? _hide;
+  Action? _toggle;
+
+  @api
+  void show() {
+    assert(() {
+      if (_show == null) {
+        l.w("控制器未[attach]");
+      }
+      return true;
+    }());
+    _show?.call();
+  }
+
+  @api
+  void toggle() {
+    assert(() {
+      if (_toggle == null) {
+        l.w("控制器未[attach]");
+      }
+      return true;
+    }());
+    _toggle?.call();
+  }
+
+  @api
+  void hide() {
+    _hide?.call();
+  }
+}
+
 class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
   final OverlayPortalController controller = OverlayPortalController();
 
   /// 是否激活当前的部件功能
-  bool get isEnable => widget.content != null;
+  bool get isEnableLayout => widget.content != null;
 
   @override
   void initState() {
@@ -93,6 +134,9 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
   @override
   void didUpdateWidget(covariant HoverAnchorLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
+    oldWidget.controller?._show = null;
+    oldWidget.controller?._hide = null;
+    oldWidget.controller?._toggle = null;
     _initLayoutState();
   }
 
@@ -111,7 +155,21 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
   }
 
   void _initLayoutState() {
-    if (isEnable) {}
+    widget.controller?._show = () {
+      _checkShowHoverLayout();
+    };
+    widget.controller?._hide = () {
+      _checkHideHoverLayout(false);
+    };
+    widget.controller?._toggle = () {
+      if (_isShowHoverLayout) {
+        //debugger();
+        _checkHideHoverLayout(false);
+      } else {
+        _checkShowHoverLayout();
+      }
+    };
+    if (isEnableLayout) {}
   }
 
   /// 是否已经显示了悬停布局
@@ -119,6 +177,19 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
 
   /// [TooltipState._handleMouseEnter]
   void _handleMouseEnter(PointerEnterEvent event) {
+    if (!widget.enableHoverShow) {
+      return;
+    }
+    _checkShowHoverLayout();
+  }
+
+  /// [TooltipState._handleMouseExit]
+  void _handleMouseExit(PointerExitEvent event) {
+    //l.i("_handleMouseExit");
+    _checkHideHoverLayout();
+  }
+
+  void _checkShowHoverLayout() {
     if (_isShowHoverLayout) {
       return;
     }
@@ -130,27 +201,25 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
     });*/
   }
 
-  /// [TooltipState._handleMouseExit]
-  void _handleMouseExit(PointerExitEvent event) {
-    //l.i("_handleMouseExit");
-    _checkHideHoverLayout();
-  }
-
-  void _checkHideHoverLayout() {
+  void _checkHideHoverLayout([bool checkHoverArea = true]) {
     if (!_isShowHoverLayout) {
       return;
     }
-    //l.d("$_validHoverArea" + " $_mouseGlobalHoverPosition");
-    final hoverPosition = _mouseGlobalHoverPosition;
-    if (hoverPosition != null &&
-        (_anchorGlobalBounds
-                    ?.inflate(widget.hitInflate)
-                    .contains(hoverPosition) ==
-                true ||
-            _validHoverAreaList.any((element) =>
-                element.inflate(widget.hitInflate).contains(hoverPosition)))) {
-      // 鼠标悬停到悬停布局上, 不隐藏
-      return;
+
+    if (checkHoverArea) {
+      //l.d("$_validHoverArea" + " $_mouseGlobalHoverPosition");
+      final hoverPosition = _mouseGlobalHoverPosition;
+      if (hoverPosition != null &&
+          (_anchorGlobalBounds
+                      ?.inflate(widget.hitInflate)
+                      .contains(hoverPosition) ==
+                  true ||
+              _validHoverAreaList.any((element) => element
+                  .inflate(widget.hitInflate)
+                  .contains(hoverPosition)))) {
+        // 鼠标悬停到悬停布局上, 不隐藏
+        return;
+      }
     }
     //debugger();
 
@@ -167,7 +236,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
 
   @override
   Widget build(BuildContext context) {
-    if (!isEnable) {
+    if (!isEnableLayout) {
       return widget.anchor;
     }
     return MouseRegion(

@@ -261,6 +261,12 @@ class _AnyContainerRenderObject extends RenderBox
         final offset = config?.anyWidget?.onGetChildOffset
             ?.call(this, constraints, boxSize, child.size, parentData);
         parentData.offset = offset ?? parentData.offset;
+
+        //--
+        final afterOffset = parentData.afterOffset;
+        if (afterOffset != null) {
+          parentData.offset += afterOffset;
+        }
       }
     }
 
@@ -299,6 +305,7 @@ class AnyParentData extends StackParentData {
 
   //--
 
+  /// 约束最小/最大值
   double? minWidth;
   double? minHeight;
   double? maxWidth;
@@ -311,6 +318,9 @@ class AnyParentData extends StackParentData {
         maxHeight: maxHeight ?? double.infinity,
       );
 
+  /// 在当前容器[alignment]定位后, 额外需要的偏移量
+  Offset? afterOffset;
+
   //--
 
   /// 自身在容器中的定位
@@ -322,7 +332,7 @@ class AnyParentData extends StackParentData {
   @override
   String toString() {
     return '${super.toString()} tag:$tag visible:$visible alignment:$alignment '
-        'minWidth:$minWidth minHeight:$minHeight maxWidth:$maxWidth maxHeight:$maxHeight';
+        'minWidth:$minWidth minHeight:$minHeight maxWidth:$maxWidth maxHeight:$maxHeight afterOffset:$afterOffset';
   }
 }
 
@@ -350,6 +360,7 @@ class AnyParentDataWidget extends ParentDataWidget<AnyParentData> {
   final Alignment? alignment;
   final Object? tag;
   final bool visible;
+  final Offset? afterOffset;
 
   const AnyParentDataWidget({
     super.key,
@@ -366,6 +377,7 @@ class AnyParentDataWidget extends ParentDataWidget<AnyParentData> {
     this.maxHeight,
     //--
     this.tag,
+    this.afterOffset,
     this.alignment,
     this.visible = true,
     required super.child,
@@ -444,6 +456,13 @@ class AnyParentDataWidget extends ParentDataWidget<AnyParentData> {
       needsLayout = true;
     }
 
+    //--
+
+    if (parentData.afterOffset != afterOffset) {
+      parentData.afterOffset = afterOffset;
+      needsLayout = true;
+    }
+
     if (needsLayout) {
       renderObject.parent?.markNeedsLayout();
     }
@@ -470,6 +489,7 @@ extension AnyParentDataEx on Widget {
     double? maxHeight,
     //--
     Alignment? alignment,
+    Offset? afterOffset,
     Object? tag,
     bool visible = true,
   }) {
@@ -487,6 +507,7 @@ extension AnyParentDataEx on Widget {
       maxHeight: maxHeight,
       //--
       alignment: alignment,
+      afterOffset: afterOffset,
       tag: tag,
       visible: visible,
       child: this,
