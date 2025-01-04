@@ -1225,6 +1225,22 @@ extension OffsetEx on Offset {
   Matrix4 get translateMatrix => Matrix4.identity()..translate(dx, dy);
 }
 
+Rect rect({
+  double x = 0,
+  double y = 0,
+  double w = 0,
+  double h = 0,
+}) =>
+    Rect.fromLTWH(x, y, w, h);
+
+Rect rectLTRB({
+  double l = 0,
+  double t = 0,
+  double r = 0,
+  double b = 0,
+}) =>
+    Rect.fromLTRB(l, t, r, b);
+
 extension RectEx on Rect {
   /// [toString]
   String get log =>
@@ -1242,6 +1258,18 @@ extension RectEx on Rect {
 
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
+
+  double get centerX => left + width / 2;
+
+  double get centerY => top + height / 2;
+
+  double get x => left;
+
+  double get y => top;
+
+  double get w => width;
+
+  double get h => height;
 
   /// [Rect]的起点
   Offset get lt => Offset(left, top);

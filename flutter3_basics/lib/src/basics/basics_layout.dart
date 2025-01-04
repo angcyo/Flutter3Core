@@ -82,6 +82,11 @@ Offset alignChildOffset(
   final childParentData = child?.parentData;
   if (childParentData is BoxParentData) {
     childParentData.offset = offset;
+  } else if (childParentData is StackParentData) {
+    childParentData.left = offset.dx;
+    childParentData.top = offset.dy;
+    childParentData.width = childSize.width;
+    childParentData.height = childSize.height;
   }
   return offset;
 }
@@ -166,4 +171,51 @@ Matrix4 applyAlignMatrix(
           rect.left + (anchorOffset?.dx ?? 0),
           rect.top + (anchorOffset?.dy ?? 0),
         ));
+}
+
+/// [RenderBoxContainerDefaultsMixin.defaultPaint]
+void defaultPaintChild(
+  PaintingContext context,
+  Offset offset,
+  RenderObject? child,
+) {
+  if (child != null) {
+    final childParentData = child.parentData;
+    if (childParentData is AnyParentData && childParentData.visible != true) {
+      return;
+    }
+    if (childParentData is BoxParentData) {
+      context.paintChild(child, childParentData.offset + offset);
+    } else {
+      context.paintChild(child, offset);
+    }
+  }
+}
+
+/// [RenderBoxContainerDefaultsMixin.defaultHitTestChildren]
+bool defaultHitTestChild(
+  BoxHitTestResult result,
+  RenderObject? child,
+  Offset position,
+) {
+  if (child is RenderBox) {
+    // The x, y parameters have the top left of the node's box as the origin.
+    final childParentData = child.parentData;
+    if (childParentData is AnyParentData && childParentData.visible != true) {
+      return false;
+    }
+    if (childParentData is BoxParentData) {
+      return result.addWithPaintOffset(
+        offset: childParentData.offset,
+        position: position,
+        hitTest: (BoxHitTestResult result, Offset transformed) {
+          assert(transformed == position - childParentData.offset);
+          return child.hitTest(result, position: transformed);
+        },
+      );
+    } else {
+      return child.hitTest(result, position: position);
+    }
+  }
+  return false;
 }

@@ -64,6 +64,8 @@ CustomPaint paintWidget(
     );
 
 ///  绘制一个三角形
+/// [TrianglePainter]
+/// [ArrowWidget]
 class TrianglePainter extends CustomPainter {
   /// 三角形的颜色
   final Color color;

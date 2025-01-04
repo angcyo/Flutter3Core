@@ -506,6 +506,7 @@ class DynamicContainerLayoutBuilder
       DynamicContainerRenderLayoutBuilder();
 }
 
+/// 动态容器布局布局
 class DynamicContainerRenderLayoutBuilder extends RenderStack
     with
         DynamicRenderConstrainedLayoutBuilderMixin<BoxConstraints, RenderBox,
