@@ -108,22 +108,24 @@ class _AnyRenderObject extends RenderProxyBoxWithHitTestBehavior {
   void performLayout() {
     final layoutSize = config?.anyWidget?.onLayout
         ?.call(this, constraints, config?.initResult);
-    size = layoutSize == null
+    final boxSize = layoutSize == null
         ? constraints.biggest
         : constraints.constrain(layoutSize);
 
     final child = this.child;
     if (child != null) {
       //debugger();
-      child.layout(BoxConstraints(maxWidth: size.width, maxHeight: size.height),
+      child.layout(
+          BoxConstraints(maxWidth: boxSize.width, maxHeight: boxSize.height),
           parentUsesSize: true);
       final parentData = child.parentData;
       if (parentData is AnyParentData) {
         final offset = config?.anyWidget?.onGetChildOffset
-            ?.call(this, constraints, size, child.size, parentData);
+            ?.call(this, constraints, boxSize, child.size, parentData);
         parentData.offset = offset ?? parentData.offset;
       }
     }
+    size = boxSize;
   }
 
   /// 在手势处理, 绘制涟漪效果时, 也会触发
@@ -211,7 +213,17 @@ class _AnyContainerRenderObject extends RenderBox
 
   @override
   bool hitTestChildren(BoxHitTestResult result, {required ui.Offset position}) {
-    return defaultHitTestChildren(result, position: position);
+    RenderBox? child = firstChild;
+    while (child != null) {
+      final childParentData = child.parentData! as AnyParentData;
+      if (child.hasSize) {
+        if (defaultHitTestChild(result, child, position)) {
+          return true;
+        }
+      }
+      child = childParentData.nextSibling;
+    }
+    return false;
   }
 
   @override
@@ -219,7 +231,7 @@ class _AnyContainerRenderObject extends RenderBox
     //debugger();
     final layoutSize = config?.anyWidget?.onLayout
         ?.call(this, constraints, config?.initResult);
-    size = layoutSize == null
+    final boxSize = layoutSize == null
         ? constraints.biggest
         : constraints.constrain(layoutSize);
 
@@ -229,23 +241,30 @@ class _AnyContainerRenderObject extends RenderBox
       if (parentData is AnyParentData) {
         //--
         if (parentData.isPositioned) {
-          RenderStack.layoutPositionedChild(child, parentData, size,
+          RenderStack.layoutPositionedChild(child, parentData, boxSize,
               parentData.alignment ?? Alignment.topLeft);
         } else {
           child.layout(
-              BoxConstraints(maxWidth: size.width, maxHeight: size.height),
+              BoxConstraints(
+                minWidth: parentData.minWidth ?? 0,
+                minHeight: parentData.minHeight ?? 0,
+                maxWidth: parentData.maxWidth ?? boxSize.width,
+                maxHeight: parentData.maxHeight ?? boxSize.height,
+              ),
               parentUsesSize: true);
           if (parentData.alignment != null) {
-            alignChildOffset(parentData.alignment!, size, child: child);
+            alignChildOffset(parentData.alignment!, boxSize, child: child);
           }
         }
 
         //--
         final offset = config?.anyWidget?.onGetChildOffset
-            ?.call(this, constraints, size, child.size, parentData);
+            ?.call(this, constraints, boxSize, child.size, parentData);
         parentData.offset = offset ?? parentData.offset;
       }
     }
+
+    size = boxSize;
   }
 
   @override
@@ -278,6 +297,22 @@ class AnyParentData extends StackParentData {
   /// 自定义携带的数据
   Object? tag;
 
+  //--
+
+  double? minWidth;
+  double? minHeight;
+  double? maxWidth;
+  double? maxHeight;
+
+  BoxConstraints get parentDataConstraints => BoxConstraints(
+        minWidth: minWidth ?? 0,
+        minHeight: minHeight ?? 0,
+        maxWidth: maxWidth ?? double.infinity,
+        maxHeight: maxHeight ?? double.infinity,
+      );
+
+  //--
+
   /// 自身在容器中的定位
   Alignment? alignment;
 
@@ -286,7 +321,8 @@ class AnyParentData extends StackParentData {
 
   @override
   String toString() {
-    return '${super.toString()} tag:$tag visible:$visible alignment:$alignment';
+    return '${super.toString()} tag:$tag visible:$visible alignment:$alignment '
+        'minWidth:$minWidth minHeight:$minHeight maxWidth:$maxWidth maxHeight:$maxHeight';
   }
 }
 
@@ -304,6 +340,13 @@ class AnyParentDataWidget extends ParentDataWidget<AnyParentData> {
   final double? height;
 
   //--
+
+  final double? minWidth;
+  final double? minHeight;
+  final double? maxWidth;
+  final double? maxHeight;
+
+  //--
   final Alignment? alignment;
   final Object? tag;
   final bool visible;
@@ -316,6 +359,11 @@ class AnyParentDataWidget extends ParentDataWidget<AnyParentData> {
     this.bottom,
     this.width,
     this.height,
+    //--
+    this.minWidth,
+    this.minHeight,
+    this.maxWidth,
+    this.maxHeight,
     //--
     this.tag,
     this.alignment,
@@ -374,6 +422,28 @@ class AnyParentDataWidget extends ParentDataWidget<AnyParentData> {
       needsLayout = true;
     }
 
+    //--
+
+    if (parentData.minWidth != minWidth) {
+      parentData.minWidth = minWidth;
+      needsLayout = true;
+    }
+
+    if (parentData.minHeight != minHeight) {
+      parentData.minHeight = minHeight;
+      needsLayout = true;
+    }
+
+    if (parentData.maxWidth != maxWidth) {
+      parentData.maxWidth = maxWidth;
+      needsLayout = true;
+    }
+
+    if (parentData.maxHeight != maxHeight) {
+      parentData.maxHeight = maxHeight;
+      needsLayout = true;
+    }
+
     if (needsLayout) {
       renderObject.parent?.markNeedsLayout();
     }
@@ -391,8 +461,13 @@ extension AnyParentDataEx on Widget {
     double? right,
     double? bottom,
     double? left,
+    //--
     double? width,
     double? height,
+    double? minWidth,
+    double? minHeight,
+    double? maxWidth,
+    double? maxHeight,
     //--
     Alignment? alignment,
     Object? tag,
@@ -405,6 +480,12 @@ extension AnyParentDataEx on Widget {
       left: left,
       width: width,
       height: height,
+      //--
+      minWidth: minWidth,
+      minHeight: minHeight,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+      //--
       alignment: alignment,
       tag: tag,
       visible: visible,

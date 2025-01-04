@@ -31,6 +31,9 @@ class HoverAnchorLayout extends StatefulWidget {
   /// 背景圆角大小
   final double radius;
 
+  /// 是否显示箭头
+  final bool showArrow;
+
   /// 强行指定箭头的位置, 不指定则自动计算位置
   @autoInjectMark
   final ArrowPosition? arrowPosition;
@@ -54,11 +57,12 @@ class HoverAnchorLayout extends StatefulWidget {
         spreadRadius: 2,
       ),
     ],
+    this.showArrow = true,
     this.arrowPosition,
     this.radius = kH,
     this.arrowSize = const Size(kX, kH),
     this.hitInflate = kM,
-    this.arrowOffset = 30 /*kM*/,
+    this.arrowOffset = kM,
   });
 
   @override
@@ -180,6 +184,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
                 );
             //l.d("anchorBounds:$anchorBounds");
             return _ArrowPositionWidget(
+              showArrow: widget.showArrow,
               arrowPosition: widget.arrowPosition,
               arrowSize: widget.arrowSize,
               arrowOffset: widget.arrowOffset,
@@ -202,6 +207,7 @@ class _ArrowPositionWidget extends StatefulWidget {
   final Widget? content;
   final Rect? anchorBounds;
   final double radius;
+  final bool showArrow;
   final ArrowPosition? arrowPosition;
   final Size arrowSize;
   final double arrowOffset;
@@ -212,6 +218,7 @@ class _ArrowPositionWidget extends StatefulWidget {
 
   const _ArrowPositionWidget({
     super.key,
+    this.showArrow = true,
     this.arrowPosition,
     this.content,
     this.anchorBounds,
@@ -228,6 +235,9 @@ class _ArrowPositionWidget extends StatefulWidget {
 }
 
 class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
+  static const _kArrowTag = "arrow";
+  static const _kContentTag = "content";
+
   final ArrowPositionManager _arrowPositionManager = ArrowPositionManager();
 
   @override
@@ -247,19 +257,21 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
   @override
   Widget build(BuildContext context) {
     //debugger();
+    //l.d("build...");
     return $anyContainer(
       children: [
-        ArrowWidget(
-          arrowPosition: _arrowPositionManager.outputArrowPosition,
-          color: widget.backgroundColor,
-          width: widget.arrowSize.width,
-          height: widget.arrowSize.height,
-        ).anyParentData(
-          left: _arrowPositionManager.outputArrowRect.left,
-          top: _arrowPositionManager.outputArrowRect.top,
-          visible: _arrowPositionManager.isLoad,
-          tag: "arrow",
-        ),
+        if (widget.showArrow)
+          ArrowWidget(
+            arrowPosition: _arrowPositionManager.outputArrowPosition,
+            color: widget.backgroundColor,
+            width: widget.arrowSize.width,
+            height: widget.arrowSize.height,
+          ).anyParentData(
+            left: _arrowPositionManager.outputArrowRect.left,
+            top: _arrowPositionManager.outputArrowRect.top,
+            visible: _arrowPositionManager.isLoad,
+            tag: _kArrowTag,
+          ),
         if (widget.content != null)
           DecoratedBox(
             decoration: fillDecoration(
@@ -279,6 +291,7 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
             left: _arrowPositionManager.outputContentRect.left,
             top: _arrowPositionManager.outputContentRect.top,
             visible: _arrowPositionManager.isLoad,
+            tag: _kContentTag,
           ),
       ],
       onLayout: (render, constraints, initResult) {
@@ -289,7 +302,8 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
           (render, constraints, parentSize, childSize, parentData) {
         //debugger();
         if (!_arrowPositionManager.isLoad) {
-          _arrowPositionManager.arrowSize = widget.arrowSize;
+          _arrowPositionManager.arrowSize =
+              widget.showArrow ? widget.arrowSize : Size.zero;
           _arrowPositionManager.arrowOffset = widget.arrowOffset;
           _arrowPositionManager.screenSize = parentSize;
           _arrowPositionManager.contentSize = childSize;
@@ -297,26 +311,33 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
           _arrowPositionManager.anchorBox = widget.anchorBounds ?? Rect.zero;
           //debugger(when: parentData.tag == null);
           _arrowPositionManager.load(
-            isLoad: parentData.tag == null,
+            isLoad: parentData.tag == _kContentTag,
             preferredPosition: widget.arrowPosition,
           );
           updateState();
         }
 
-        final parentOffset = render.getGlobalLocation() ?? Offset.zero;
-        _parentOffset = parentOffset;
-        if (parentData.tag == "arrow") {
-          final outputArrowBounds = _arrowPositionManager.outputArrowBounds;
-          final childOffset = outputArrowBounds.lt;
-          final rect = (parentOffset + childOffset) & outputArrowBounds.size;
-          widget.validHoverAreaList.add(rect);
-          //debugger();
-        } else {
-          final childOffset = _arrowPositionManager.outputContentRect.lt;
-          final Rect rect = (parentOffset + childOffset) & childSize;
-          //debugger(when: parentData.tag == "arrow");
-          widget.validHoverAreaList.add(rect);
-        }
+        //debugger();
+        () {
+          //l.d("nextMicrotask...");
+          final parentOffset = render.getGlobalLocation() ?? Offset.zero;
+          _parentOffset = parentOffset;
+          if (parentData.tag == _kArrowTag) {
+            final outputArrowBounds = _arrowPositionManager.outputArrowBounds;
+            final childOffset = outputArrowBounds.lt;
+            final rect = (parentOffset + childOffset) & outputArrowBounds.size;
+            widget.validHoverAreaList.add(rect);
+            //debugger();
+          } else {
+            final childOffset = _arrowPositionManager.outputContentRect.lt;
+            final Rect rect = (parentOffset + childOffset) & childSize;
+            //debugger(when: parentData.tag == "arrow");
+            widget.validHoverAreaList.add(rect);
+          }
+          if (isDebug) {
+            render.markNeedsPaint();
+          }
+        }.nextMicrotask();
 
         //l.w(widget.validHoverAreaList);
         return null;
@@ -339,6 +360,7 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
                     ..style = PaintingStyle.stroke,
                 );
               }
+              //l.d("validHoverAreaList: ${widget.validHoverAreaList}");
             }
           : null,
     );

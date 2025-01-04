@@ -77,6 +77,11 @@ void postFrame(VoidCallback callback) {
   postFrameCallback((_) => callback());
 }
 
+/// [scheduleMicrotask]
+void $next(void Function() callback) {
+  scheduleMicrotask(callback);
+}
+
 /// 如果正在布局阶段, 则立即安排一帧, 否则立即执行回调
 void postFrameCallbackIfNeed(FrameCallback callback) {
   WidgetsFlutterBinding.ensureInitialized();
@@ -84,6 +89,18 @@ void postFrameCallbackIfNeed(FrameCallback callback) {
     postFrameCallback(callback);
   } else {
     callback(Duration(milliseconds: nowTimestamp()));
+  }
+}
+
+extension FrameFnEx on Function {
+  /// [scheduleMicrotask]
+  void nextMicrotask() {
+    scheduleMicrotask(() => this.call());
+  }
+
+  /// [postFrameCallback]
+  void nextFrame() {
+    postFrame(() => this.call());
   }
 }
 
@@ -2627,6 +2644,10 @@ extension ContextEx on BuildContext {
 }
 
 extension RenderObjectEx on RenderObject {
+  /// 是否有[RenderBox]的[size]
+  /// 一般在[RenderObject.layout]后, 才有大小
+  bool get hasBoxSize => this is RenderBox && (this as RenderBox).hasSize;
+
   /// 获取[RenderObject]的大小
   Size? getSizeOrNull() {
     final box = this;
@@ -2688,7 +2709,7 @@ extension RenderObjectEx on RenderObject {
     Offset? point,
   ]) {
     final box = this;
-    if (box is RenderBox) {
+    if (box is RenderBox && box.hasSize && box.parent?.hasBoxSize == true) {
       final location = box.localToGlobal(
         point ?? box.paintBounds.topLeft,
         ancestor: ancestor,
