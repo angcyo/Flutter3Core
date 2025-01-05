@@ -401,8 +401,11 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     Offset? pivot,
     bool anim = true,
   }) {
+    //debugger();
+    sx = sx != null ? clamp(sx, minScaleX, maxScaleX) : null;
+    sy = sy != null ? clamp(sy, minScaleY, maxScaleY) : null;
     assert(() {
-      l.v('缩放画布to: sx:$sx sy:$sy');
+      //l.v('缩放画布to: sx:$sx sy:$sy');
       return true;
     }());
     changeMatrix(

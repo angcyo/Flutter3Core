@@ -166,6 +166,8 @@ abstract class BaseCanvasViewBoxEventComponent
 }
 
 /// 画布平移组件
+/// [CanvasTranslateComponent]
+/// [CanvasScaleComponent]
 class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
   /// 移动阈值, 移动值, 达到此值时, 才会触发移动
   /// [kTouchSlop] 18
@@ -183,7 +185,9 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
               keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys)) {
         //非控制键按下+鼠标滚轮
         final offset = -event.mouseScrollDelta;
-        _translateBy(offset.dx, offset.dy);
+        if (offset != Offset.zero) {
+          _translateBy(offset.dx, offset.dy);
+        }
       } else if (event.isTouchPointerEvent &&
           isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)) {
         //空格+单鼠标拖动
@@ -192,9 +196,19 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
         final offsetList = MultiPointerDetectorMixin.getPointerDeltaList(
             pointerMoveMap, pointerDownMap);
         final offset = offsetList.firstOrNull;
-        if (offset != null) {
+        if (offset != null && offset != Offset.zero) {
           _translateBy(offset.dx, offset.dy);
           resetPointerMap(pointerDownMap, pointerMoveMap);
+        }
+      } else {
+        if (event is PointerPanZoomUpdateEvent) {
+          //触控板双指平移
+          //l.d("-->$event\n${event.transform}");
+          final offset = event.panDelta;
+          if (offset != Offset.zero) {
+            _translateBy(offset.dx, offset.dy);
+          }
+          //l.d("-->pan:${event.pan} panDelta:${event.panDelta} scale:${event.scale} rotation:${event.rotation}");
         }
       }
     }
@@ -260,6 +274,8 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
 }
 
 /// 画布缩放组件
+/// [CanvasScaleComponent]
+/// [CanvasTranslateComponent]
 class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
     with DoubleTapDetectorMixin {
   /// 缩放阈值, 缩放值, 达到此值时, 才会触发缩放
@@ -276,33 +292,54 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
 
   CanvasScaleComponent(super.canvasDelegate);
 
+  //--
+
+  double? _startPanScaleX;
+  double? _startPanScaleY;
+
   @override
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     addDoubleTapDetectorPointerEvent(event);
     super.dispatchPointerEvent(dispatch, event);
-    if (isCanvasComponentEnable &&
-        !ignoreEventHandle &&
-        event.isMouseScrollEvent &&
-        isKeyPressed(
-            keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys)) {
-      //控制键按下, 鼠标滚动
+    if (isCanvasComponentEnable && !ignoreEventHandle) {
       final pivot =
           canvasDelegate.canvasViewBox.toScenePoint(event.localPosition);
-      final offset = event.mouseScrollDelta;
-      if (offset.dy > 0) {
-        //鼠标向下滚动, 缩小
-        scaleBy(
-          scaleX: doubleScaleReverseValue,
-          scaleY: doubleScaleReverseValue,
-          pivot: pivot,
-        );
+      if (event.isMouseScrollEvent &&
+          isKeyPressed(
+              keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys)) {
+        //控制键按下, 鼠标滚动
+        final offset = event.mouseScrollDelta;
+        if (offset.dy > 0) {
+          //鼠标向下滚动, 缩小
+          scaleBy(
+            scaleX: doubleScaleReverseValue,
+            scaleY: doubleScaleReverseValue,
+            pivot: pivot,
+          );
+        } else {
+          //鼠标向上滚动, 放大
+          scaleBy(
+            scaleX: doubleScaleValue,
+            scaleY: doubleScaleValue,
+            pivot: pivot,
+          );
+        }
       } else {
-        //鼠标向上滚动, 放大
-        scaleBy(
-          scaleX: doubleScaleValue,
-          scaleY: doubleScaleValue,
-          pivot: pivot,
-        );
+        if (event.isPanZoomStart) {
+          _startPanScaleX = canvasDelegate.canvasViewBox.scaleX;
+          _startPanScaleY = canvasDelegate.canvasViewBox.scaleY;
+        } else if (event.isPanZoomUpdate) {
+          if (_startPanScaleX != null && _startPanScaleY != null) {
+            scaleTo(
+              scaleX: _startPanScaleX! * event.panScale,
+              scaleY: _startPanScaleY! * event.panScale,
+              pivot: pivot,
+            );
+          }
+        } else if (event.isPanZoomEnd) {
+          _startPanScaleX = null;
+          _startPanScaleY = null;
+        }
       }
     }
   }

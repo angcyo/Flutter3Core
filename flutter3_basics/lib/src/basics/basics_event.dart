@@ -59,6 +59,9 @@ extension PointerEventEx on PointerEvent {
   /// 是否是手指类型事件
   bool get isTouchEventKind => kind == PointerDeviceKind.touch;
 
+  /// 是否是触控板/托盘类型事件
+  bool get isTrackpadEventKind => kind == PointerDeviceKind.trackpad;
+
   /// 是否是手指操作相关事件
   bool get isTouchPointerEvent =>
       synthesized == false /*非合成的事件*/ &&
@@ -110,6 +113,27 @@ extension PointerEventEx on PointerEvent {
   Offset get mouseScrollDelta => this is PointerScrollEvent
       ? (this as PointerScrollEvent).scrollDelta
       : Offset.zero;
+
+  //-- trackpad event
+
+  /// [PointerPanZoomStartEvent]
+  /// [PointerPanZoomUpdateEvent]
+  /// [PointerPanZoomEndEvent]
+  bool get isPanZoomStart => this is PointerPanZoomStartEvent;
+
+  /// [PointerPanZoomUpdateEvent.pan] 从开始到结束的偏移量
+  /// [PointerPanZoomUpdateEvent.panDelta] 偏移增量
+  ///
+  /// [PointerPanZoomUpdateEvent.scale] 从开始到结束的缩放比例
+  /// [PointerPanZoomUpdateEvent.rotation] 从开始到结束的旋转弧度
+  ///
+  bool get isPanZoomUpdate => this is PointerPanZoomUpdateEvent;
+
+  double get panScale => this is PointerPanZoomUpdateEvent
+      ? (this as PointerPanZoomUpdateEvent).scale
+      : 1.0;
+
+  bool get isPanZoomEnd => this is PointerPanZoomEndEvent;
 }
 
 extension KeyEventEx on KeyEvent {
