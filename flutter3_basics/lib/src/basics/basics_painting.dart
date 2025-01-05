@@ -611,6 +611,54 @@ extension CanvasEx on Canvas {
     );
   }
 
+  /// 绘制一个阴影
+  /// [_BoxDecorationPainter]
+  /// [Canvas.drawShadow]
+  void drawShadows(
+    Rect rect,
+    List<BoxShadow>? boxShadows, {
+    BorderRadiusGeometry? borderRadius,
+    BoxShape shape = BoxShape.rectangle,
+    TextDirection? textDirection,
+  }) {
+    if (boxShadows == null || boxShadows.isEmpty) {
+      return;
+    }
+    final canvas = this;
+    for (final BoxShadow boxShadow in boxShadows) {
+      final Paint paint = boxShadow.toPaint();
+      final Rect bounds =
+          rect.shift(boxShadow.offset).inflate(boxShadow.spreadRadius);
+      assert(() {
+        if (debugDisableShadows && boxShadow.blurStyle == BlurStyle.outer) {
+          canvas.save();
+          canvas.clipRect(bounds);
+        }
+        return true;
+      }());
+      switch (shape) {
+        case BoxShape.circle:
+          assert(borderRadius == null);
+          final Offset center = rect.center;
+          final double radius = rect.shortestSide / 2.0;
+          canvas.drawCircle(center, radius, paint);
+        case BoxShape.rectangle:
+          if (borderRadius == null || borderRadius == BorderRadius.zero) {
+            canvas.drawRect(rect, paint);
+          } else {
+            canvas.drawRRect(
+                borderRadius.resolve(textDirection).toRRect(rect), paint);
+          }
+      }
+      assert(() {
+        if (debugDisableShadows && boxShadow.blurStyle == BlurStyle.outer) {
+          canvas.restore();
+        }
+        return true;
+      }());
+    }
+  }
+
 //endregion ---draw---
 }
 

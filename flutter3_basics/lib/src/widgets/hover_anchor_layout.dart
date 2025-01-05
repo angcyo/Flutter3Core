@@ -130,7 +130,8 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       duration: _fadeInDuration,
       reverseDuration: _fadeOutDuration,
       vsync: this,
-    )..addStatusListener(_handleStatusChanged);
+    )
+      ..addStatusListener(_handleStatusChanged);
   }
 
   CurvedAnimation? _backingOverlayAnimation;
@@ -263,12 +264,13 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       final hoverPosition = _mouseGlobalHoverPosition;
       if (hoverPosition != null &&
           (_anchorGlobalBounds
-                      ?.inflate(widget.hitInflate)
-                      .contains(hoverPosition) ==
-                  true ||
-              _validHoverAreaList.any((element) => element
-                  .inflate(widget.hitInflate)
-                  .contains(hoverPosition)))) {
+              ?.inflate(widget.hitInflate)
+              .contains(hoverPosition) ==
+              true ||
+              _validHoverAreaList.any((element) =>
+                  element
+                      .inflate(widget.hitInflate)
+                      .contains(hoverPosition)))) {
         // 鼠标悬停到悬停布局上, 不隐藏
         return;
       }
@@ -305,11 +307,14 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
           controller: _overlayController,
           overlayChildBuilder: (ctx) {
             final anchorGlobalBounds =
-                context.findRenderObject()?.getGlobalBounds();
+            context.findRenderObject()?.getGlobalBounds();
             _anchorGlobalBounds = anchorGlobalBounds;
             final anchorBounds = context.findRenderObject()?.getGlobalBounds(
-                  Overlay.maybeOf(context)?.context.findRenderObject(),
-                );
+              Overlay
+                  .maybeOf(context)
+                  ?.context
+                  .findRenderObject(),
+            );
             //l.d("anchorBounds:$anchorBounds");
             return _ArrowPositionWidget(
               showArrow: widget.showArrow,
@@ -325,26 +330,26 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
               content: widget.content,
               onPaintTransform: widget.enableAnimate
                   ? (render, context, offset, size) {
-                      final value = _overlayAnimation
-                          .tween(0.9, 1.0, curve: Curves.fastOutSlowIn)
-                          .value;
-                      if (_controller.isAnimating) {
-                        //l.d("value->$value");
-                        render.postMarkNeedsPaint();
-                      }
-                      return render.getEffectiveTransform(
-                          Matrix4.diagonal3Values(value, value, 1.0));
-                    }
+                final value = _overlayAnimation
+                    .tween(0.9, 1.0, curve: Curves.fastOutSlowIn)
+                    .value;
+                if (_controller.isAnimating) {
+                  //l.d("value->$value");
+                  render.postMarkNeedsPaint();
+                }
+                return render.getEffectiveTransform(
+                    Matrix4.diagonal3Values(value, value, 1.0));
+              }
                   : null,
             ).fadeTransition(widget.enableAnimate ? _overlayAnimation : null)
-                /*.scaleTransition(
+            /*.scaleTransition(
                   widget.enableAnimate ? _overlayAnimation : null,
                   from: 0.9,
                   to: 1,
                   alignment:
                       _arrowPositionManager.outputArrowPosition.alignment,
                 )*/
-                ;
+            ;
           },
           child: widget.anchor,
         ));
@@ -413,6 +418,7 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
     _arrowPositionManager.isLoad = false;
   }
 
+  @implementation
   Offset _parentOffset = Offset.zero;
 
   @override
@@ -422,31 +428,12 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
     return $anyContainer(
       onPaintTransform: widget.onPaintTransform,
       children: [
-        if (widget.showArrow)
-          ArrowWidget(
-            arrowPosition: _arrowPositionManager.outputArrowPosition,
-            color: widget.backgroundColor,
-            width: widget.arrowSize.width,
-            height: widget.arrowSize.height,
-          ).anyParentData(
-            left: _arrowPositionManager.outputArrowRect.left,
-            top: _arrowPositionManager.outputArrowRect.top,
-            visible: _arrowPositionManager.isLoad,
-            tag: _kArrowTag,
-          ),
         if (widget.content != null)
           DecoratedBox(
             decoration: fillDecoration(
               color: widget.backgroundColor,
               borderRadius: _arrowPositionManager.outputRadius,
-              boxShadow: [
-                BoxShadow(
-                  color: kShadowColor,
-                  offset: kShadowOffset,
-                  blurRadius: kDefaultBlurRadius,
-                  spreadRadius: 2,
-                )
-              ],
+              boxShadow: widget.backgroundShadows,
             ),
             child: widget.content,
           ).anyParentData(
@@ -454,6 +441,20 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
             top: _arrowPositionManager.outputContentRect.top,
             visible: _arrowPositionManager.isLoad,
             tag: _kContentTag,
+          ),
+        //因为有阴影的存在, 所以...
+        if (widget.showArrow)
+          ArrowWidget(
+            arrowPosition: _arrowPositionManager.outputArrowPosition,
+            color: widget.backgroundColor,
+            width: widget.arrowSize.width,
+            height: widget.arrowSize.height,
+            boxShadow: widget.backgroundShadows,
+          ).anyParentData(
+            left: _arrowPositionManager.outputArrowRect.left,
+            top: _arrowPositionManager.outputArrowRect.top,
+            visible: _arrowPositionManager.isLoad,
+            tag: _kArrowTag,
           ),
       ],
       onLayout: (render, constraints, initResult) {
@@ -465,7 +466,7 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
         //debugger();
         if (!_arrowPositionManager.isLoad) {
           _arrowPositionManager.arrowSize =
-              widget.showArrow ? widget.arrowSize : Size.zero;
+          widget.showArrow ? widget.arrowSize : Size.zero;
           _arrowPositionManager.arrowOffset = widget.arrowOffset;
           _arrowPositionManager.screenSize = parentSize;
           _arrowPositionManager.contentSize = childSize;
@@ -480,7 +481,7 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
         }
 
         //debugger();
-        () {
+            () {
           //l.d("nextMicrotask...");
           final parentOffset = render.getGlobalLocation() ?? Offset.zero;
           _parentOffset = parentOffset;
@@ -507,14 +508,14 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
       },
       onPaint: isDebug
           ? (render, canvas, size) {
-              canvas.drawRect(
-                widget.anchorBounds ?? Rect.zero,
-                Paint()
-                  ..color = Colors.redAccent
-                  ..strokeWidth = 1
-                  ..style = PaintingStyle.stroke,
-              );
-              for (final rect in widget.validHoverAreaList) {
+        canvas.drawRect(
+          widget.anchorBounds ?? Rect.zero,
+          Paint()
+            ..color = Colors.redAccent
+            ..strokeWidth = 1
+            ..style = PaintingStyle.stroke,
+        );
+        /*for (final rect in widget.validHoverAreaList) {
                 canvas.drawRect(
                   rect - _parentOffset,
                   Paint()
@@ -522,12 +523,12 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
                     ..strokeWidth = 1
                     ..style = PaintingStyle.stroke,
                 );
-              }
-              //canvas.drawCross(widget.arrowPositionManager.tempPosition - _parentOffset);
-              //canvas.drawText("$_parentOffset");
-              //render.postMarkNeedsPaint();
-              //l.d("validHoverAreaList: ${widget.validHoverAreaList}");
-            }
+              }*/
+        //canvas.drawCross(widget.arrowPositionManager.tempPosition - _parentOffset);
+        //canvas.drawText("$_parentOffset");
+        //render.postMarkNeedsPaint();
+        //l.d("validHoverAreaList: ${widget.validHoverAreaList}");
+      }
           : null,
     );
   }

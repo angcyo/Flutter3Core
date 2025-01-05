@@ -19,20 +19,22 @@ class ArrowWidget extends StatelessWidget {
   final ArrowPosition arrowPosition;
   final double width;
   final double height;
+  final List<BoxShadow>? boxShadow;
 
   const ArrowWidget({
     this.color = Colors.redAccent,
     this.arrowPosition = ArrowPosition.rightCenter,
     this.width = 16.0,
     this.height = 10.0,
+    this.boxShadow,
     super.key,
   });
 
   /// Returns either the center triangle or the corner triangle
   CustomPainter? _getElement(bool isArrow) {
     return isArrow
-        ? ArrowTrianglePainter(color: color)
-        : ArrowCornerPainter(color: color);
+        ? ArrowTrianglePainter(color: color, boxShadow: boxShadow)
+        : ArrowCornerPainter(color: color, boxShadow: boxShadow);
   }
 
   /// Applies the transformation to the triangle
@@ -145,10 +147,15 @@ extension ArrowPositionEx on ArrowPosition {
 
 /// Design of the triangle that appears attached to the tooltip
 class ArrowTrianglePainter extends CustomPainter {
+  final List<BoxShadow>? boxShadow;
+
   /// [color] of the arrow.
   final Color color;
 
-  ArrowTrianglePainter({this.color = const Color(0xff000000)});
+  ArrowTrianglePainter({
+    this.color = const Color(0xff000000),
+    this.boxShadow,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -166,6 +173,8 @@ class ArrowTrianglePainter extends CustomPainter {
         size.width * 0.66, size.height * 0.86);
     path.cubicTo(size.width * 0.66, size.height * 0.86, size.width * 0.66,
         size.height * 0.86, size.width * 0.66, size.height * 0.86);
+
+    canvas.drawShadows(Offset.zero & size, boxShadow);
     canvas.drawPath(path, paint);
   }
 
@@ -177,10 +186,15 @@ class ArrowTrianglePainter extends CustomPainter {
 
 /// Design of the corner triangle that appears attached to the tooltip
 class ArrowCornerPainter extends CustomPainter {
+  final List<BoxShadow>? boxShadow;
+
   /// [color] of the arrow.
   final Color color;
 
-  ArrowCornerPainter({this.color = const Color(0xff000000)});
+  ArrowCornerPainter({
+    this.color = const Color(0xff000000),
+    this.boxShadow,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -197,6 +211,8 @@ class ArrowCornerPainter extends CustomPainter {
     path.cubicTo(0, 0, 0, size.height * 0.69, 0, size.height * 0.69);
     path.cubicTo(
         0, size.height * 0.69, 0, size.height * 0.69, 0, size.height * 0.69);
+
+    canvas.drawShadows(Offset.zero & size, boxShadow);
     canvas.drawPath(path, paint);
   }
 
