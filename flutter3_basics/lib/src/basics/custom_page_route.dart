@@ -245,7 +245,7 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
     }
 
     if (fade) {
-      return slide.fade(opacity: animation);
+      return slide.fadeTransition(animation);
     }
     return slide;
   }
@@ -396,7 +396,7 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
     }
 
     if (fade) {
-      return scale.fade(opacity: animation);
+      return scale.fadeTransition(animation);
     }
 
     return scale;

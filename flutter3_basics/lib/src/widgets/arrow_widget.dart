@@ -123,6 +123,26 @@ enum ArrowPosition {
   leftEnd,
 }
 
+extension ArrowPositionEx on ArrowPosition {
+  Alignment get alignment => switch (this) {
+        ArrowPosition.topStart => Alignment.bottomLeft,
+        ArrowPosition.topCenter => Alignment.topCenter,
+        ArrowPosition.topEnd => Alignment.bottomRight,
+        //--
+        ArrowPosition.rightStart => Alignment.topLeft,
+        ArrowPosition.rightCenter => Alignment.centerLeft,
+        ArrowPosition.rightEnd => Alignment.bottomLeft,
+        //--
+        ArrowPosition.bottomStart => Alignment.topLeft,
+        ArrowPosition.bottomCenter => Alignment.topCenter,
+        ArrowPosition.bottomEnd => Alignment.topRight,
+        //--
+        ArrowPosition.leftStart => Alignment.topRight,
+        ArrowPosition.leftCenter => Alignment.centerRight,
+        ArrowPosition.leftEnd => Alignment.bottomRight,
+      };
+}
+
 /// Design of the triangle that appears attached to the tooltip
 class ArrowTrianglePainter extends CustomPainter {
   /// [color] of the arrow.

@@ -50,6 +50,9 @@ class HoverAnchorLayout extends StatefulWidget {
   /// 是否激活悬停时自动显示
   final bool enableHoverShow;
 
+  /// 是否激活动画
+  final bool enableAnimate;
+
   const HoverAnchorLayout({
     super.key,
     required this.anchor,
@@ -66,6 +69,7 @@ class HoverAnchorLayout extends StatefulWidget {
     ],
     this.showArrow = true,
     this.enableHoverShow = true,
+    this.enableAnimate = true,
     this.arrowPosition,
     this.radius = kH,
     this.arrowSize = const Size(kX, kH),
@@ -110,8 +114,50 @@ class HoverAnchorLayoutController {
   }
 }
 
-class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
-  final OverlayPortalController controller = OverlayPortalController();
+class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
+    with SingleTickerProviderStateMixin {
+  static const Duration _fadeInDuration = Duration(milliseconds: 150);
+  static const Duration _fadeOutDuration = Duration(milliseconds: 75);
+
+  final OverlayPortalController _overlayController = OverlayPortalController();
+
+  //--
+
+  AnimationController? _backingController;
+
+  AnimationController get _controller {
+    return _backingController ??= AnimationController(
+      duration: _fadeInDuration,
+      reverseDuration: _fadeOutDuration,
+      vsync: this,
+    )..addStatusListener(_handleStatusChanged);
+  }
+
+  CurvedAnimation? _backingOverlayAnimation;
+
+  CurvedAnimation get _overlayAnimation {
+    return _backingOverlayAnimation ??= CurvedAnimation(
+      parent: _controller,
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
+  AnimationStatus _animationStatus = AnimationStatus.dismissed;
+
+  void _handleStatusChanged(AnimationStatus status) {
+    assert(mounted);
+    switch ((_animationStatus.isDismissed, status.isDismissed)) {
+      case (false, true):
+        _checkHideHoverLayout(false);
+      case (true, false):
+        _checkShowHoverLayout();
+      case (true, true) || (false, false):
+        break;
+    }
+    _animationStatus = status;
+  }
+
+  //--
 
   /// 是否激活当前的部件功能
   bool get isEnableLayout => widget.content != null;
@@ -194,8 +240,11 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
       return;
     }
     //l.d("show->${nowTimeString()}");
-    controller.show();
+    _overlayController.show();
     _isShowHoverLayout = true;
+    if (widget.enableAnimate) {
+      _controller.forward();
+    }
     /*postFrame(() {
       _isShowHoverLayout = true;
     });*/
@@ -225,7 +274,11 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
 
     //l.i("hide:$_anchorGlobalBounds $_validHoverAreaList \n$hoverPosition");
     _isShowHoverLayout = false;
-    controller.hide();
+    if (widget.enableAnimate) {
+      _controller.reverse();
+    } else {
+      _overlayController.hide();
+    }
   }
 
   /// 锚点的全局区域
@@ -233,6 +286,8 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
 
   /// 有效鼠标hover区域集合
   final List<Rect> _validHoverAreaList = [];
+
+  final ArrowPositionManager _arrowPositionManager = ArrowPositionManager();
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +298,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
         onEnter: _handleMouseEnter,
         onExit: _handleMouseExit,
         child: OverlayPortal(
-          controller: controller,
+          controller: _overlayController,
           overlayChildBuilder: (ctx) {
             final anchorGlobalBounds =
                 context.findRenderObject()?.getGlobalBounds();
@@ -262,8 +317,17 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
               anchorBounds: anchorBounds,
               radius: widget.radius,
               validHoverAreaList: _validHoverAreaList,
+              arrowPositionManager: _arrowPositionManager,
               content: widget.content,
-            );
+            )
+                .fadeTransition(widget.enableAnimate ? _overlayAnimation : null)
+                .scaleTransition(
+                  widget.enableAnimate ? _overlayAnimation : null,
+                  from: 0.9,
+                  to: 1,
+                  alignment:
+                      _arrowPositionManager.outputArrowPosition.alignment,
+                );
           },
           child: widget.anchor,
         ));
@@ -273,6 +337,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout> {
 /// 箭头位置控制小部件
 /// 用来放置箭头的位置, 和内容的位置
 class _ArrowPositionWidget extends StatefulWidget {
+  final ArrowPositionManager arrowPositionManager;
   final Widget? content;
   final Rect? anchorBounds;
   final double radius;
@@ -296,6 +361,7 @@ class _ArrowPositionWidget extends StatefulWidget {
     this.arrowSize = const Size(kX, kH),
     this.backgroundColor = Colors.redAccent,
     this.backgroundShadows,
+    required this.arrowPositionManager,
     required this.validHoverAreaList,
   });
 
@@ -307,12 +373,18 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
   static const _kArrowTag = "arrow";
   static const _kContentTag = "content";
 
-  final ArrowPositionManager _arrowPositionManager = ArrowPositionManager();
+  ArrowPositionManager get _arrowPositionManager => widget.arrowPositionManager;
 
   @override
   void initState() {
     _arrowPositionManager.isLoad = false;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _arrowPositionManager.isLoad = false;
+    super.dispose();
   }
 
   @override

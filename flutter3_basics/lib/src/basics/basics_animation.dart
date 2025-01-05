@@ -52,7 +52,7 @@ enum AnimationDirection {
   reverse,
 }
 
-extension AnimationEx on Animation {
+extension AnimationEx<T> on Animation<T> {
   /// 动画是否开始了
   bool get isStarted =>
       status == AnimationStatus.forward || status == AnimationStatus.reverse;
@@ -63,27 +63,66 @@ extension AnimationEx on Animation {
       status == AnimationStatus.dismissed;
 }
 
+extension AnimationTweenEx on Animation<double> {
+  /// 动画插值
+  Animation<T> tween<T>(T? begin, T? end, {Curve curve = Curves.linear}) {
+    return Tween<T>(begin: begin, end: end).animate(
+      CurvedAnimation(
+        parent: this,
+        curve: curve,
+      ),
+    );
+  }
+}
+
 extension AnimationWidgetEx on Widget {
+  /// 缩放动画
+  /// [MatrixTransition]
+  /// [ScaleTransition]
+  Widget scaleTransition(
+    Animation<double>? scale, {
+    Alignment alignment = Alignment.center,
+    //--
+    double? from,
+    double? to,
+    Curve curve = Curves.fastOutSlowIn,
+  }) {
+    if (scale == null) {
+      return this;
+    }
+    return ScaleTransition(
+      scale: (from != null && to != null)
+          ? scale.tween(from, to, curve: curve)
+          : scale,
+      alignment: alignment,
+      child: this,
+    );
+  }
+
   /// 透明度动画, 渐隐动画.
   /// [out] fade out or fade in
-  Widget fade({
-    Animation<double>? opacity,
-    bool out = false,
+  ///
+  /// [FadeTransition]
+  Widget fadeTransition(
+    Animation<double>? opacity, {
+    //--
+    double? from,
+    double? to,
+    Curve curve = Curves.fastOutSlowIn,
   }) {
+    if (opacity == null) {
+      return this;
+    }
     return FadeTransition(
-      opacity: opacity ??
-          Tween(begin: out ? 1.0 : 0.0, end: out ? 0.0 : 1.0).animate(
-            CurvedAnimation(
-              parent: AlwaysStoppedAnimation(out ? 0 : 1),
-              curve: Curves.easeIn,
-            ),
-          ),
+      opacity: (from != null && to != null)
+          ? opacity.tween(from, to, curve: curve)
+          : opacity,
       child: this,
     );
   }
 
   /// 滑动动画
-  Widget slide({
+  Widget slideTransition({
     Animation<Offset>? offset,
     Offset? from,
     Offset? to,
@@ -103,21 +142,24 @@ extension AnimationWidgetEx on Widget {
   }
 
   /// 旋转动画
-  Widget rotation({
-    Animation<double>? rotate,
+  /// [from] 旋转角度, 角度单位
+  /// [to] 旋转角度, 角度单位
+  ///
+  /// [MatrixTransition]
+  /// [RotationTransition]
+  Widget rotationTransition(
+    Animation<double>? rotate, {
     double? from,
     double? to,
-    bool out = false,
+    Curve curve = Curves.fastOutSlowIn,
   }) {
+    if (rotate == null) {
+      return this;
+    }
     return RotationTransition(
-      turns: rotate ??
-          Tween(
-            begin: from ?? (out ? 360 : 0),
-            end: to ?? (out ? 360 : 0),
-          ).animate(CurvedAnimation(
-            parent: AlwaysStoppedAnimation(out ? 0 : 360),
-            curve: Curves.easeIn,
-          )),
+      turns: (from != null && to != null)
+          ? rotate.tween(from / 360, to / 360, curve: curve)
+          : rotate,
       child: this,
     );
   }
