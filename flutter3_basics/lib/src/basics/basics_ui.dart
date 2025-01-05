@@ -2787,6 +2787,37 @@ extension RenderObjectEx on RenderObject {
       }
     });
   }
+
+  /// [RenderTransform]
+  Matrix4? getEffectiveTransform(
+    Matrix4 transform, {
+    AlignmentGeometry? alignment = Alignment.center,
+    Offset? origin,
+    TextDirection? textDirection,
+  }) {
+    final size = getSizeOrNull() ?? Size.zero;
+    final Alignment? resolvedAlignment = alignment?.resolve(textDirection);
+    if (origin == null && resolvedAlignment == null) {
+      return transform;
+    }
+    final Matrix4 result = Matrix4.identity();
+    if (origin != null) {
+      result.translate(origin.dx, origin.dy);
+    }
+    Offset? translation;
+    if (resolvedAlignment != null) {
+      translation = resolvedAlignment.alongSize(size);
+      result.translate(translation.dx, translation.dy);
+    }
+    result.multiply(transform);
+    if (resolvedAlignment != null) {
+      result.translate(-translation!.dx, -translation.dy);
+    }
+    if (origin != null) {
+      result.translate(-origin.dx, -origin.dy);
+    }
+    return result;
+  }
 }
 
 extension ElementEx on Element {}

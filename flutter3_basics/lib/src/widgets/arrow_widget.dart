@@ -276,6 +276,11 @@ class ArrowPositionManager {
         rect.bottom + outputArrowOffsetRect.bottom,
       );
 
+  //--temp
+
+  @implementation
+  Offset tempPosition = Offset.zero;
+
   ArrowPositionManager();
 
   _topStart() {

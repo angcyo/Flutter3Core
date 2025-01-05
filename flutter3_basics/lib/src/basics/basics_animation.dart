@@ -102,6 +102,8 @@ extension AnimationWidgetEx on Widget {
   /// 透明度动画, 渐隐动画.
   /// [out] fade out or fade in
   ///
+  /// [Opacity]
+  /// [AnimatedOpacity]
   /// [FadeTransition]
   Widget fadeTransition(
     Animation<double>? opacity, {

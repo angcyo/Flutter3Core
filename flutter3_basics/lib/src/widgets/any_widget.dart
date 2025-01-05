@@ -29,7 +29,25 @@ typedef AnyWidgetLayoutAction = Size? Function(
   dynamic initResult,
 );
 
+/// 获取绘制转换回调
+/// [AnyWidgetPaintAction]
+/// [AnyWidgetPaintTransformAction]
+/// [_AnyRenderObject.paint]
+///
+/// [MatrixTransition]
+/// [Transform]
+/// [RenderTransform]
+///
+typedef AnyWidgetPaintTransformAction = Matrix4? Function(
+  RenderBox render,
+  PaintingContext context,
+  Offset offset,
+  Size size,
+);
+
 /// 绘制回调
+/// [AnyWidgetPaintAction]
+/// [AnyWidgetPaintTransformAction]
 /// [_AnyRenderObject.paint]
 typedef AnyWidgetPaintAction = void Function(
   RenderBox render,
@@ -54,6 +72,9 @@ mixin AnyWidgetMixin<Data> {
 
   /// 计算布局大小的回调
   AnyWidgetLayoutAction? get onLayout;
+
+  /// 绘制转换回调
+  AnyWidgetPaintTransformAction? get onPaintTransform;
 
   /// 绘制回调
   AnyWidgetPaintAction? get onPaint;
@@ -154,6 +175,37 @@ class _AnyRenderObject extends RenderProxyBoxWithHitTestBehavior {
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
+    final Matrix4? transform =
+        config?.anyWidget?.onPaintTransform?.call(this, context, offset, size);
+    if (transform != null) {
+      final Offset? childOffset = MatrixUtils.getAsTranslation(transform);
+      if (childOffset == null) {
+        // if the matrix is singular the children would be compressed to a line or
+        // single point, instead short-circuit and paint nothing.
+        final double det = transform.determinant();
+        if (det == 0 || !det.isFinite) {
+          layer = null;
+          return;
+        }
+        layer = context.pushTransform(
+          needsCompositing,
+          offset,
+          transform,
+          paintSelf,
+          oldLayer: layer is TransformLayer ? layer as TransformLayer? : null,
+        );
+      } else {
+        paintSelf(context, offset + childOffset);
+        layer = null;
+      }
+    } else {
+      paintSelf(context, offset);
+    }
+  }
+
+  /// [paint]
+  @entryPoint
+  void paintSelf(PaintingContext context, ui.Offset offset) {
     defaultPaintChild(context, offset, child);
 
     final onPaint = config?.anyWidget?.onPaint;
@@ -275,6 +327,37 @@ class _AnyContainerRenderObject extends RenderBox
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
+    final Matrix4? transform =
+        config?.anyWidget?.onPaintTransform?.call(this, context, offset, size);
+    if (transform != null) {
+      final Offset? childOffset = MatrixUtils.getAsTranslation(transform);
+      if (childOffset == null) {
+        // if the matrix is singular the children would be compressed to a line or
+        // single point, instead short-circuit and paint nothing.
+        final double det = transform.determinant();
+        if (det == 0 || !det.isFinite) {
+          layer = null;
+          return;
+        }
+        layer = context.pushTransform(
+          needsCompositing,
+          offset,
+          transform,
+          paintSelf,
+          oldLayer: layer is TransformLayer ? layer as TransformLayer? : null,
+        );
+      } else {
+        paintSelf(context, offset + childOffset);
+        layer = null;
+      }
+    } else {
+      paintSelf(context, offset);
+    }
+  }
+
+  /// [paint]
+  @entryPoint
+  void paintSelf(PaintingContext context, ui.Offset offset) {
     RenderBox? child = firstChild;
     while (child != null) {
       final childParentData = child.parentData! as AnyParentData;
@@ -530,6 +613,7 @@ class AnyStatefulWidget<Data> extends StatefulWidget with AnyWidgetMixin<Data> {
     this.onInit,
     this.onGetChildOffset,
     this.onLayout,
+    this.onPaintTransform,
     this.onPaint,
     this.behavior = HitTestBehavior.deferToChild,
   });
@@ -551,6 +635,9 @@ class AnyStatefulWidget<Data> extends StatefulWidget with AnyWidgetMixin<Data> {
 
   @override
   final AnyWidgetLayoutAction? onLayout;
+
+  @override
+  final AnyWidgetPaintTransformAction? onPaintTransform;
 
   @override
   final AnyWidgetPaintAction? onPaint;
@@ -602,6 +689,7 @@ Widget $any<Data>({
   AnyWidgetInitAction<Data>? onInit,
   AnyWidgetOffsetAction? onGetChildOffset,
   AnyWidgetLayoutAction? onLayout,
+  AnyWidgetPaintTransformAction? onPaintTransform,
   AnyWidgetPaintAction? onPaint,
   HitTestBehavior? behavior = HitTestBehavior.deferToChild,
 }) =>
@@ -612,6 +700,7 @@ Widget $any<Data>({
       onGetChildOffset: onGetChildOffset,
       onLayout:
           onLayout ?? (size == null ? null : (render, constraints, _) => size),
+      onPaintTransform: onPaintTransform,
       onPaint: onPaint,
       behavior: behavior,
       child: child,
@@ -630,6 +719,7 @@ class AnyContainerStatefulWidget<Data> extends StatefulWidget
     this.onInit,
     this.onGetChildOffset,
     this.onLayout,
+    this.onPaintTransform,
     this.onPaint,
     this.behavior = HitTestBehavior.deferToChild,
   });
@@ -651,6 +741,9 @@ class AnyContainerStatefulWidget<Data> extends StatefulWidget
 
   @override
   final AnyWidgetLayoutAction? onLayout;
+
+  @override
+  final AnyWidgetPaintTransformAction? onPaintTransform;
 
   @override
   final AnyWidgetPaintAction? onPaint;
@@ -704,6 +797,7 @@ Widget $anyContainer<Data>({
   AnyWidgetInitAction<Data>? onInit,
   AnyWidgetOffsetAction? onGetChildOffset,
   AnyWidgetLayoutAction? onLayout,
+  AnyWidgetPaintTransformAction? onPaintTransform,
   AnyWidgetPaintAction? onPaint,
   HitTestBehavior? behavior = HitTestBehavior.deferToChild,
 }) =>
@@ -714,6 +808,7 @@ Widget $anyContainer<Data>({
       onGetChildOffset: onGetChildOffset,
       onLayout:
           onLayout ?? (size == null ? null : (render, constraints, _) => size),
+      onPaintTransform: onPaintTransform,
       onPaint: onPaint,
       behavior: behavior,
       children: children,

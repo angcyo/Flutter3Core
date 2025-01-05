@@ -183,6 +183,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     oldWidget.controller?._show = null;
     oldWidget.controller?._hide = null;
     oldWidget.controller?._toggle = null;
+    _arrowPositionManager.isLoad = false;
     _initLayoutState();
   }
 
@@ -193,6 +194,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     //l.v("_handleGlobalPointerEvent->$event");
     if (event is PointerHoverEvent) {
       _mouseGlobalHoverPosition = event.position;
+      _arrowPositionManager.tempPosition = event.position;
       //l.v("_handleGlobalPointerEvent->$_mouseGlobalHoverPosition");
       if (_validHoverAreaList.isNotEmpty) {
         _checkHideHoverLayout();
@@ -239,6 +241,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     if (_isShowHoverLayout) {
       return;
     }
+    //debugger();
     //l.d("show->${nowTimeString()}");
     _overlayController.show();
     _isShowHoverLayout = true;
@@ -269,10 +272,11 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
         // 鼠标悬停到悬停布局上, 不隐藏
         return;
       }
+
+      //debugger();
+      //l.i("hide:$_anchorGlobalBounds $_validHoverAreaList \n$hoverPosition");
     }
     //debugger();
-
-    //l.i("hide:$_anchorGlobalBounds $_validHoverAreaList \n$hoverPosition");
     _isShowHoverLayout = false;
     if (widget.enableAnimate) {
       _controller.reverse();
@@ -319,15 +323,28 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
               validHoverAreaList: _validHoverAreaList,
               arrowPositionManager: _arrowPositionManager,
               content: widget.content,
-            )
-                .fadeTransition(widget.enableAnimate ? _overlayAnimation : null)
-                .scaleTransition(
+              onPaintTransform: widget.enableAnimate
+                  ? (render, context, offset, size) {
+                      final value = _overlayAnimation
+                          .tween(0.9, 1.0, curve: Curves.fastOutSlowIn)
+                          .value;
+                      if (_controller.isAnimating) {
+                        //l.d("value->$value");
+                        render.postMarkNeedsPaint();
+                      }
+                      return render.getEffectiveTransform(
+                          Matrix4.diagonal3Values(value, value, 1.0));
+                    }
+                  : null,
+            ).fadeTransition(widget.enableAnimate ? _overlayAnimation : null)
+                /*.scaleTransition(
                   widget.enableAnimate ? _overlayAnimation : null,
                   from: 0.9,
                   to: 1,
                   alignment:
                       _arrowPositionManager.outputArrowPosition.alignment,
-                );
+                )*/
+                ;
           },
           child: widget.anchor,
         ));
@@ -350,6 +367,8 @@ class _ArrowPositionWidget extends StatefulWidget {
   @output
   final List<Rect> validHoverAreaList;
 
+  final AnyWidgetPaintTransformAction? onPaintTransform;
+
   const _ArrowPositionWidget({
     super.key,
     this.showArrow = true,
@@ -361,6 +380,7 @@ class _ArrowPositionWidget extends StatefulWidget {
     this.arrowSize = const Size(kX, kH),
     this.backgroundColor = Colors.redAccent,
     this.backgroundShadows,
+    this.onPaintTransform,
     required this.arrowPositionManager,
     required this.validHoverAreaList,
   });
@@ -400,6 +420,7 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
     //debugger();
     //l.d("build...");
     return $anyContainer(
+      onPaintTransform: widget.onPaintTransform,
       children: [
         if (widget.showArrow)
           ArrowWidget(
@@ -468,8 +489,9 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
             final childOffset = outputArrowBounds.lt;
             final rect = (parentOffset + childOffset) & outputArrowBounds.size;
             widget.validHoverAreaList.add(rect);
+            //l.d("arrow->$rect ${_arrowPositionManager.outputArrowRect}->${_arrowPositionManager.outputArrowBounds}");
             //debugger();
-          } else {
+          } else if (parentData.tag == _kContentTag) {
             final childOffset = _arrowPositionManager.outputContentRect.lt;
             final Rect rect = (parentOffset + childOffset) & childSize;
             //debugger(when: parentData.tag == "arrow");
@@ -501,6 +523,9 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
                     ..style = PaintingStyle.stroke,
                 );
               }
+              //canvas.drawCross(widget.arrowPositionManager.tempPosition - _parentOffset);
+              //canvas.drawText("$_parentOffset");
+              //render.postMarkNeedsPaint();
               //l.d("validHoverAreaList: ${widget.validHoverAreaList}");
             }
           : null,

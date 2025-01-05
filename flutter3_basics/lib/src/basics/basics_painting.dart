@@ -586,6 +586,31 @@ extension CanvasEx on Canvas {
         alignment: alignment);
   }
 
+  /// 在一个位置[position]绘制十字线
+  void drawCross(
+    Offset position, {
+    double minX = 0,
+    double? maxX,
+    double minY = 0,
+    double? maxY,
+    Paint? paint,
+  }) {
+    paint ??= Paint()
+      ..color = Colors.redAccent
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    drawLine(
+      Offset(minX, position.dy),
+      Offset(maxX ?? screenWidth, position.dy),
+      paint,
+    );
+    drawLine(
+      Offset(position.dx, minY),
+      Offset(position.dx, maxY ?? screenHeight),
+      paint,
+    );
+  }
+
 //endregion ---draw---
 }
 
