@@ -432,10 +432,10 @@ class CanvasRenderBox extends RenderBox
 
   @override
   bool onKeyEventHandleMixin(KeyEvent event) {
-    if (event.isSpaceKey) {
+    if (event.isKeyboardKey(canvasDelegate.canvasStyle.dragKeyboardKey)) {
       markNeedsPaint();
     }
-    return super.onKeyEventHandleMixin(event);
+    return true;
   }
 
   //endregion --KeyEvent--
@@ -444,8 +444,10 @@ class CanvasRenderBox extends RenderBox
 
   @override
   MouseCursor get cursor =>
-      isKeyPressed(canvasDelegate.canvasStyle.dragKeyboardKey)
-          ? SystemMouseCursors.allScroll
+      isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)
+          ? (canvasDelegate.isPointerDown
+              ? SystemMouseCursors.grabbing
+              : SystemMouseCursors.grab)
           : MouseCursor.defer;
 
   @override

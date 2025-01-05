@@ -12,23 +12,26 @@ part of '../../flutter3_basics.dart';
 /// [LogicalKeyboardKey.control]
 /// [LogicalKeyboardKey.controlLeft]
 /// [LogicalKeyboardKey.controlRight]
-bool get isCtrlPressed => isKeyPressed(LogicalKeyboardKey.control, orKeys: [
+///
+/// [HardwareKeyboard.isControlPressed]
+bool get isCtrlPressed => isKeyPressed(key: LogicalKeyboardKey.control, keys: [
       LogicalKeyboardKey.controlLeft,
       LogicalKeyboardKey.controlRight,
     ]);
 
 /// 空格按键是否按下
-bool get isSpacePressed => isKeyPressed(LogicalKeyboardKey.space);
+bool get isSpacePressed => isKeyPressed(key: LogicalKeyboardKey.space);
 
 /// 指定的按键, 是否按下
-bool isKeyPressed(
-  LogicalKeyboardKey key, {
-  List<LogicalKeyboardKey>? orKeys,
+bool isKeyPressed({
+  LogicalKeyboardKey? key,
+  List<LogicalKeyboardKey>? keys,
 }) =>
-    HardwareKeyboard.instance.logicalKeysPressed.contains(key) ||
-    (orKeys != null &&
+    (key != null &&
+        HardwareKeyboard.instance.logicalKeysPressed.contains(key)) ||
+    (keys != null &&
         HardwareKeyboard.instance.logicalKeysPressed
-            .any((e) => orKeys.contains(e)));
+            .any((e) => keys.contains(e)));
 
 /// 手势事件回调
 typedef PointerAction = void Function(PointerEvent event);
@@ -117,13 +120,16 @@ extension KeyEventEx on KeyEvent {
   bool get isKeyUp => this is KeyUpEvent;
 
   /// 是否是空格键
-  bool get isSpaceKey => logicalKey == LogicalKeyboardKey.space;
+  bool get isSpaceKey => isKeyboardKey(LogicalKeyboardKey.space);
 
   /// 是否是Ctrl键
   bool get isCtrlKey =>
-      logicalKey == LogicalKeyboardKey.control ||
-      logicalKey == LogicalKeyboardKey.controlLeft ||
-      logicalKey == LogicalKeyboardKey.controlRight;
+      isKeyboardKey(LogicalKeyboardKey.control) ||
+      isKeyboardKey(LogicalKeyboardKey.controlLeft) ||
+      isKeyboardKey(LogicalKeyboardKey.controlRight);
+
+  /// 是否是指定的按键
+  bool isKeyboardKey(KeyboardKey key) => key == logicalKey;
 }
 
 /// 事件处理

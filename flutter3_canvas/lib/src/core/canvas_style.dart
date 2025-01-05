@@ -71,6 +71,12 @@ class CanvasStyle {
 
   //--key
 
+  /// 当这些控制按键被按下时, 鼠标的滚动视为需要缩放画布
+  List<LogicalKeyboardKey> scaleControlKeyboardKeys = [
+    LogicalKeyboardKey.controlLeft,
+    LogicalKeyboardKey.controlRight,
+  ];
+
   /// 当按下此键时, 视为需要拖动画布
   LogicalKeyboardKey dragKeyboardKey = LogicalKeyboardKey.space;
 

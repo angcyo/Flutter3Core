@@ -167,6 +167,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //--
 
+  /// 鼠标或者手势是否按下
+  bool get isPointerDown => canvasEventManager.isPointerDown;
+
   /// 元素的数量
   int get elementCount => allElementList.size();
 

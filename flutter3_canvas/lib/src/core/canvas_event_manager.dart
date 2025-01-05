@@ -15,19 +15,23 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   /// 画布平移组件
   late CanvasTranslateComponent canvasTranslateComponent =
-  CanvasTranslateComponent(canvasDelegate);
+      CanvasTranslateComponent(canvasDelegate);
 
   /// 画布缩放组件
   late CanvasScaleComponent canvasScaleComponent =
-  CanvasScaleComponent(canvasDelegate);
+      CanvasScaleComponent(canvasDelegate);
 
   /// 画布快速滑动组件
   late CanvasFlingComponent canvasFlingComponent =
-  CanvasFlingComponent(canvasDelegate);
+      CanvasFlingComponent(canvasDelegate);
 
   /// 画布区域点击事件组件
   CanvasBoundsEventComponent canvasBoundsEventComponent =
-  CanvasBoundsEventComponent();
+      CanvasBoundsEventComponent();
+
+  /// 鼠标或者手势是否按下
+  @output
+  bool isPointerDown = false;
 
   CanvasEventManager(this.canvasDelegate) {
     //
@@ -43,6 +47,11 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   void handleEvent(PointerEvent event) {
     //debugger();
 
+    //--
+    if (event.isPointerDown) {
+      isPointerDown = true;
+    }
+
     if (!_cancelDispatchEvent) {
       _handleWidgetPainterEvent(event);
       handleDispatchEvent(event);
@@ -52,6 +61,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     //--
     if (event.isPointerFinish) {
       _cancelDispatchEvent = false;
+      isPointerDown = false;
     }
 
     assert(() {
@@ -92,7 +102,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       final localPosition = event.localPosition;
       @sceneCoordinate
       final scenePosition =
-      canvasDelegate.canvasViewBox.toScenePoint(localPosition);
+          canvasDelegate.canvasViewBox.toScenePoint(localPosition);
 
       canvasDelegate.visitElementPainter((painter) {
         //debugger();
@@ -168,11 +178,15 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     super.dispatchPointerEvent(dispatch, event);
     if (isCanvasComponentEnable && !ignoreEventHandle) {
-      if (event.isMouseScrollEvent && !isCtrlPressed) {
+      if (event.isMouseScrollEvent &&
+          !isKeyPressed(
+              keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys)) {
+        //非控制键按下+鼠标滚轮
         final offset = -event.mouseScrollDelta;
         _translateBy(offset.dx, offset.dy);
       } else if (event.isTouchPointerEvent &&
-          isKeyPressed(canvasDelegate.canvasStyle.dragKeyboardKey)) {
+          isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)) {
+        //空格+单鼠标拖动
         //l.d("dispatchPointerEvent->$event");
         //debugger();
         final offsetList = MultiPointerDetectorMixin.getPointerDeltaList(
@@ -269,9 +283,11 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
     if (isCanvasComponentEnable &&
         !ignoreEventHandle &&
         event.isMouseScrollEvent &&
-        isCtrlPressed) {
+        isKeyPressed(
+            keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys)) {
+      //控制键按下, 鼠标滚动
       final pivot =
-      canvasDelegate.canvasViewBox.toScenePoint(event.localPosition);
+          canvasDelegate.canvasViewBox.toScenePoint(event.localPosition);
       final offset = event.mouseScrollDelta;
       if (offset.dy > 0) {
         //鼠标向下滚动, 缩小
@@ -302,6 +318,10 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
       /*l.w("event:${event.buttons}");
       debugger();*/
     }
+    if (isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)) {
+      //拖拽按键按下时, 不识别双击缩放操作
+      return false;
+    }
     if (event.isTouchEventKind ||
         (event.isMouseEventKind && lastDownButtons.isMouseLeftDown)) {
       final scale = doubleScaleValue;
@@ -326,9 +346,9 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
       //debugger();
       //双指缩放
       final downList =
-      MultiPointerDetectorMixin.getPointerPositionList(pointerDownMap);
+          MultiPointerDetectorMixin.getPointerPositionList(pointerDownMap);
       final moveList =
-      MultiPointerDetectorMixin.getPointerPositionList(pointerMoveMap);
+          MultiPointerDetectorMixin.getPointerPositionList(pointerMoveMap);
 
       //2点之间的距离
       final c1 = distance(downList.first, downList.last);

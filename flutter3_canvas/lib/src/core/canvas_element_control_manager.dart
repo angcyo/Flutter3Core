@@ -1197,8 +1197,10 @@ class ElementSelectComponent extends ElementGroupPainter
     //debugger();
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(dispatch, event) &&
-          !isKeyPressed(canvasElementControlManager
-              .canvasDelegate.canvasStyle.dragKeyboardKey)) {
+          !isKeyPressed(
+              key: canvasElementControlManager
+                  .canvasDelegate.canvasStyle.dragKeyboardKey)) {
+        //没有按下拖动控制按键时
         final viewBox =
             canvasElementControlManager.canvasDelegate.canvasViewBox;
         if (event.isPointerDown) {
