@@ -6,6 +6,15 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/03/31
 ///
 
+extension FileUriEx on Uri {
+  /// 获取文件全路径, 支持中文, 不需要进行解码
+  /// [StringEx.decodeUri]
+  String get filePath => toFilePath();
+
+  /// 转换成[File]类型
+  File toFile() => File.fromUri(this);
+}
+
 /// https://api.dart.dev/stable/3.2.0/dart-io/dart-io-library.html
 /// https://api.dart.dev/stable/3.2.0/dart-io/Process-class.html
 /// https://pub.dev/packages/uri_to_file

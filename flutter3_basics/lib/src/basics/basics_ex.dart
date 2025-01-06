@@ -2656,28 +2656,18 @@ extension ListEx<T> on List<T> {
         covertString?.call(iterator.current) ?? textOf(iterator.current);
     if (!iterator.moveNext()) return first;
     final buffer = StringBuffer(first ?? "");
-    // TODO(51681): Drop null check when de-supporting pre-2.12 code.
-    if (separator == null || separator.isEmpty) {
-      do {
-        final text =
-            covertString?.call(iterator.current) ?? textOf(iterator.current);
-        if (text != null) {
-          buffer.write(text);
-        }
-      } while (iterator.moveNext());
-    } else {
-      do {
-        final text =
-            covertString?.call(iterator.current) ?? textOf(iterator.current);
-        if (text != null) {
-          buffer.write(text);
-        }
+    do {
+      final text =
+          covertString?.call(iterator.current) ?? textOf(iterator.current);
+      if (separator == null || separator.isEmpty) {
+      } else {
         buffer.write(separator);
-        if (text != null) {
-          buffer.write(text);
-        }
-      } while (iterator.moveNext());
-    }
+      }
+      if (text != null) {
+        buffer.write(text);
+      }
+    } while (iterator.moveNext());
+
     return buffer.toString();
   }
 
@@ -2695,6 +2685,20 @@ extension ListEx<T> on List<T> {
   /// [StringEx.fromJsonBeanList]
   List<Bean> copyWithJson<Bean>(Bean Function(dynamic json) map) {
     return jsonDecode(jsonEncode(this)).map<Bean>(map).toList();
+  }
+
+  FutureOr<List<R>> asyncForEach<R>(
+      R Function(T element, Completer completer) action) async {
+    List<R> result = [];
+    for (final item in this) {
+      final completer = Completer();
+      final r = action(item, completer);
+      result.add(r);
+      if (!completer.isCompleted) {
+        await completer.future;
+      }
+    }
+    return result;
   }
 }
 
