@@ -57,12 +57,15 @@ extension EventIntEx on int {
 
 extension PointerEventEx on PointerEvent {
   /// 是否是手指类型事件
+  /// [isMouseEventKind]
+  /// [isTouchEventKind]
+  /// [isTrackpadEventKind]
   bool get isTouchEventKind => kind == PointerDeviceKind.touch;
 
-  /// 是否是鼠标类型事件
-  bool get isMouseEventKind => kind == PointerDeviceKind.mouse;
-
   /// 是否是触控板/托盘类型事件
+  /// [isMouseEventKind]
+  /// [isTouchEventKind]
+  /// [isTrackpadEventKind]
   bool get isTrackpadEventKind => kind == PointerDeviceKind.trackpad;
 
   /// 是否是手指操作相关事件
@@ -103,6 +106,9 @@ extension PointerEventEx on PointerEvent {
   //-- mouse event
 
   /// 是否是鼠标事件
+  /// [isMouseEventKind]
+  /// [isTouchEventKind]
+  /// [isTrackpadEventKind]
   bool get isMouseEventKind => kind == PointerDeviceKind.mouse;
 
   /// 是否是鼠标左键, 只有在[PointerDownEvent]时才能确定
