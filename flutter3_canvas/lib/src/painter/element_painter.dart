@@ -1585,14 +1585,18 @@ class ElementGroupPainter extends ElementPainter {
       l.w("[${classHash()}]...updatePaintPropertyFromChildren");
       return true;
     }());*/
-    if (fromObj is! ElementStateStack && this != fromObj) {
+    if (fromObj is BaseControl ||
+        fromObj is ElementStateStack ||
+        this == fromObj) {
+      //no op
+    } else {
       //debugger();
       if (propertyType == PainterPropertyType.paint) {
         //组内元素属性改变, 但是不同通过父元素改变的
         //有可能是独立选择了组内某个元素单独修改的属性, 而未修改父元素的属性
         updatePaintPropertyFromChildren();
       } else if (propertyType == PainterPropertyType.state) {
-        debugger();
+        //debugger();
         final visibleList = children?.filterVisibleList;
         if (visibleList?.length != children?.length) {
           children = visibleList;
