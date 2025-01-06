@@ -14,9 +14,31 @@ part of '../../flutter3_basics.dart';
 /// [LogicalKeyboardKey.controlRight]
 ///
 /// [HardwareKeyboard.isControlPressed]
+/// 是否是控制按键
+/// Windows: Ctrl
+/// macOs: control
+/// Linux: Ctrl
 bool get isCtrlPressed => isKeyPressed(key: LogicalKeyboardKey.control, keys: [
       LogicalKeyboardKey.controlLeft,
       LogicalKeyboardKey.controlRight,
+    ]);
+
+/// 是否是选项按键
+/// Windows: Alt
+/// macOs: option
+/// Linux: Alt
+bool get isAltPressed => isKeyPressed(key: LogicalKeyboardKey.alt, keys: [
+      LogicalKeyboardKey.altLeft,
+      LogicalKeyboardKey.altRight,
+    ]);
+
+/// 是否是meta按键
+/// Windows: Windows
+/// macOs: command
+/// Linux: ...
+bool get isMetaPressed => isKeyPressed(key: LogicalKeyboardKey.meta, keys: [
+      LogicalKeyboardKey.metaLeft,
+      LogicalKeyboardKey.metaRight,
     ]);
 
 /// 空格按键是否按下

@@ -178,6 +178,15 @@ const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 //--
 const platformFlag = PlatformFlag();
 const allPlatformFlag = PlatformFlag('全平台: Android iOS Linux macOS web Windows');
+
 const mobileFlag = PlatformFlag('移动应用: Android 和 iOS');
+const androidFlag = PlatformFlag('移动应用: Android');
+const iosFlag = PlatformFlag('移动应用: iOS');
+
 const desktopFlag = PlatformFlag('桌面应用: Windows、macOS 和 Linux');
+const windowsFlag = PlatformFlag('桌面应用: Windows');
+const macOSFlag = PlatformFlag('桌面应用: macOS');
+const linuxFlag = PlatformFlag('桌面应用: Linux');
+
+const webFlag = PlatformFlag('web应用');
 //endregion---base
