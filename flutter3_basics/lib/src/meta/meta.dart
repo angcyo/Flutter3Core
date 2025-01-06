@@ -177,6 +177,7 @@ const fromFramework = AnnotationMeta('表示当前代码来自框架');
 const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 //--
 const platformFlag = PlatformFlag();
-const mobileFlag = AnnotationMeta('移动应用: Android 和 iOS');
-const desktopFlag = AnnotationMeta('桌面应用: Windows、macOS 和 Linux');
+const allPlatformFlag = PlatformFlag('全平台: Android iOS Linux macOS web Windows');
+const mobileFlag = PlatformFlag('移动应用: Android 和 iOS');
+const desktopFlag = PlatformFlag('桌面应用: Windows、macOS 和 Linux');
 //endregion---base
