@@ -59,6 +59,9 @@ extension PointerEventEx on PointerEvent {
   /// 是否是手指类型事件
   bool get isTouchEventKind => kind == PointerDeviceKind.touch;
 
+  /// 是否是鼠标类型事件
+  bool get isMouseEventKind => kind == PointerDeviceKind.mouse;
+
   /// 是否是触控板/托盘类型事件
   bool get isTrackpadEventKind => kind == PointerDeviceKind.trackpad;
 
@@ -66,6 +69,9 @@ extension PointerEventEx on PointerEvent {
   bool get isTouchPointerEvent =>
       synthesized == false /*非合成的事件*/ &&
       (isPointerDown || isPointerMove || isPointerFinish);
+
+  /// 是否是非有效的操作事件
+  bool get isInvalidEvent => synthesized || isPointerHover;
 
   /// 是否是按下事件
   bool get isPointerDown => this is PointerDownEvent;
@@ -78,6 +84,9 @@ extension PointerEventEx on PointerEvent {
 
   /// 是否是取消事件
   bool get isPointerCancel => this is PointerCancelEvent;
+
+  /// 是否是鼠标悬停事件
+  bool get isPointerHover => this is PointerHoverEvent;
 
   /// 是否完成
   bool get isPointerFinish => isPointerUp || isPointerCancel;
@@ -297,7 +306,7 @@ mixin PointerDispatchMixin {
       return false;
     }
 
-    if (!event.synthesized) {
+    if (!event.isInvalidEvent) {
       //非合成的事件
       pointerMap[event.pointer] = event;
     }
@@ -321,7 +330,7 @@ mixin PointerDispatchMixin {
         handled = interceptHandleTarget!.onPointerEvent(this, event);
         assert(() {
           if (event.isPointerDown) {
-            l.v("手势(PointerDown)处理->${interceptHandleTarget.runtimeType} [$handled]");
+            l.v("手势(PointerDown)处理[$handled]->${interceptHandleTarget.runtimeType}");
           }
           return true;
         }());
@@ -333,7 +342,7 @@ mixin PointerDispatchMixin {
           interceptHandleTarget = element;
           assert(() {
             if (event.isPointerDown) {
-              //l.v("手势(PointerDown)被拦截->${interceptHandleTarget.runtimeType}");
+              l.v("手势(PointerDown)被拦截->${interceptHandleTarget.runtimeType}");
             }
             return true;
           }());
@@ -341,7 +350,7 @@ mixin PointerDispatchMixin {
             handled = element.onPointerEvent(this, event);
             assert(() {
               if (event.isPointerDown) {
-                //l.v("手势(PointerDown)处理->${interceptHandleTarget.runtimeType} [$handled]");
+                l.v("手势(PointerDown)处理[$handled]->${interceptHandleTarget.runtimeType}");
               }
               return true;
             }());
@@ -365,7 +374,7 @@ mixin PointerDispatchMixin {
             handled = element.onPointerEvent(this, event);
             assert(() {
               if (event.isPointerDown) {
-                //l.v("手势(PointerDown)分发轮询处理->${element.runtimeType} [$handled]");
+                l.v("手势(PointerDown)分发轮询处理[$handled]->${element.runtimeType}");
               }
               return true;
             }());
