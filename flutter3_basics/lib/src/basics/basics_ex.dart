@@ -692,8 +692,7 @@ typedef StringIndexEachCallback = dynamic Function(int index, String element);
 
 /// 获取剪切板的文本, 读取剪切板文本内容
 /// [StringEx.copy]
-@mobileFlag
-@desktopFlag
+@allPlatformFlag
 Future<String?> getClipboardText() async {
   var data = await Clipboard.getData(Clipboard.kTextPlain);
   return data?.text;
@@ -1166,8 +1165,7 @@ extension StringEx on String {
 
   /// 复制当前的字符串到剪切板
   /// [getClipboardText]
-  @mobileFlag
-  @desktopFlag
+  @allPlatformFlag
   Future<void> copy() async => Clipboard.setData(ClipboardData(text: this));
 
   /// 将`8000`转换成`8.0.0.0`
