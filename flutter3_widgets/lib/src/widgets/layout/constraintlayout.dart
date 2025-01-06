@@ -45,6 +45,17 @@ Widget cLayout(void Function() block) => constrainLayout(block);
 
 /// 约束扩展
 extension ConstraintLayoutEx on Widget {
+  /// 撑满父容器的约束
+  Widget matchParentConstraint({
+    //--
+    double? width,
+    double? height,
+  }) =>
+      applyConstraint(
+        width: width ?? cl_layout.matchParent,
+        height: height ?? cl_layout.matchParent,
+      );
+
   /// 对齐父容器左边的约束
   Widget alignParentConstraint({
     Alignment alignment = Alignment.centerLeft,

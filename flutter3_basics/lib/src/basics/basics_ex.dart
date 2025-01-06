@@ -1022,10 +1022,30 @@ extension StringEx on String {
   String md5() => bytes.md5();
 
   /// [Uri]
-  String decodeUri() => Uri.decodeFull(this);
+  String decodeUri() {
+    try {
+      return Uri.decodeFull(this);
+    } catch (e) {
+      assert(() {
+        l.w("无法解码[$this]->$e");
+        return true;
+      }());
+      return this;
+    }
+  }
 
   /// [Uri]
-  String encodeUri() => Uri.encodeFull(this);
+  String encodeUri() {
+    try {
+      return Uri.encodeFull(this);
+    } catch (e) {
+      assert(() {
+        l.w("无法编码[$this]->$e");
+        return true;
+      }());
+      return this;
+    }
+  }
 
   //endregion 加密
 

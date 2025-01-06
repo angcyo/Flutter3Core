@@ -501,6 +501,9 @@ class SingleCharTextPainter extends BaseTextPainter {
       double bottom = -2147483648;
 
       for (final line in list) {
+        if (line.isEmpty) {
+          continue;
+        }
         final first = line.first.bounds;
         final last = line.last.bounds;
 
@@ -571,6 +574,9 @@ class SingleCharTextPainter extends BaseTextPainter {
       return;
     }
     for (final line in list) {
+      if (line.isEmpty) {
+        continue;
+      }
       for (final char in line) {
         double dx = 0;
         double dy = 0;
