@@ -15,6 +15,12 @@ typedef VoidAction = Action;
 /// [VoidCallback]
 typedef ClickAction = void Function(BuildContext context);
 
+/// [BoolCallback]
+typedef ResultBoolAction = bool Function();
+
+/// [ResultBoolAction]
+typedef ResultDynamicAction = dynamic Function();
+
 /// 国际化文本构建器
 typedef IntlTextBuilder = String Function(BuildContext context);
 
@@ -80,6 +86,7 @@ typedef ContextNumNullCallback = void Function(
 typedef RangeNumCallback = void Function(num startValue, num endValue);
 
 /// [bool]类型的回调
+/// [ResultBoolAction]
 typedef BoolCallback = void Function(bool value);
 
 /// [Duration]类型的回调

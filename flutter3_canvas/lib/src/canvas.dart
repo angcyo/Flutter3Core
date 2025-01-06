@@ -321,6 +321,7 @@ class CanvasRenderBox extends RenderBox
   void attach(PipelineOwner owner) {
     super.attach(owner);
     //debugger();
+    registerKeyEventHandler();
     postFrame(() {
       visitWidgetElementPainter((painter) {
         //debugger();
@@ -430,11 +431,74 @@ class CanvasRenderBox extends RenderBox
 
   //region --KeyEvent--
 
+  /// 注册所有键盘事件
+  void registerKeyEventHandler() {
+    //空格键
+    registerKeyEvent([
+      [canvasDelegate.canvasStyle.dragKeyboardKey],
+    ], () {
+      markNeedsPaint();
+      return true;
+    });
+    //撤销
+    registerKeyEvent([
+      if (isMacOs) ...[
+        [
+          LogicalKeyboardKey.metaLeft,
+          LogicalKeyboardKey.keyZ,
+        ],
+        [
+          LogicalKeyboardKey.metaRight,
+          LogicalKeyboardKey.keyZ,
+        ]
+      ],
+      if (!isMacOs) ...[
+        [
+          LogicalKeyboardKey.controlLeft,
+          LogicalKeyboardKey.keyZ,
+        ],
+        [
+          LogicalKeyboardKey.controlRight,
+          LogicalKeyboardKey.keyZ,
+        ]
+      ],
+    ], () {
+      canvasDelegate.canvasUndoManager.undo();
+      return true;
+    });
+    //重做
+    registerKeyEvent([
+      if (isMacOs) ...[
+        [
+          LogicalKeyboardKey.metaLeft,
+          LogicalKeyboardKey.keyY,
+        ],
+        [
+          LogicalKeyboardKey.metaRight,
+          LogicalKeyboardKey.keyY,
+        ]
+      ],
+      if (!isMacOs) ...[
+        [
+          LogicalKeyboardKey.controlLeft,
+          LogicalKeyboardKey.shiftLeft,
+          LogicalKeyboardKey.keyZ,
+        ],
+        [
+          LogicalKeyboardKey.controlRight,
+          LogicalKeyboardKey.shiftRight,
+          LogicalKeyboardKey.keyZ,
+        ]
+      ],
+    ], () {
+      canvasDelegate.canvasUndoManager.redo();
+      return true;
+    });
+  }
+
   @override
   bool onKeyEventHandleMixin(KeyEvent event) {
-    if (event.isKeyboardKey(canvasDelegate.canvasStyle.dragKeyboardKey)) {
-      markNeedsPaint();
-    }
+    super.onKeyEventHandleMixin(event);
     return true;
   }
 

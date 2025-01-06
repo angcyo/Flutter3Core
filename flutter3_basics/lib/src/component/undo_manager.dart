@@ -24,22 +24,28 @@ class UndoActionManager with Diagnosticable {
   }
 
   /// 回退
-  void undo() {
+  /// @return 是否执行成功
+  @api
+  bool undo() {
     assert(() {
       l.d('准备撤销,共[${undoList.length}]');
       return true;
     }());
     if (undoList.isNotEmpty) {
       final item = undoList.removeLast();
-      item.doUndo();
+      final result = item.doUndo();
       redoList.add(item);
 
       notifyChanged(UndoType.undo);
+      return result;
     }
+    return false;
   }
 
   /// 重做
-  void redo() {
+  /// @return 是否执行成功
+  @api
+  bool redo() {
     assert(() {
       l.d('准备重做,共[${redoList.length}]');
       return true;
@@ -47,11 +53,13 @@ class UndoActionManager with Diagnosticable {
 
     if (redoList.isNotEmpty) {
       final item = redoList.removeLast();
-      item.doRedo();
+      final result = item.doRedo();
       undoList.add(item);
 
       notifyChanged(UndoType.redo);
+      return result;
     }
+    return false;
   }
 
   /// 是否可以回退
@@ -123,8 +131,8 @@ class UndoActionManager with Diagnosticable {
 @immutable
 class UndoActionItem {
   /// 核心撤销回退回调
-  final Action? undo;
-  final Action? redo;
+  final ResultDynamicAction? undo;
+  final ResultDynamicAction? redo;
 
   const UndoActionItem([
     this.undo,
@@ -134,14 +142,22 @@ class UndoActionItem {
   /// 执行回退
   /// `throw UnimplementedError();`
   @overridePoint
-  void doUndo() {
-    undo?.call();
+  bool doUndo() {
+    final result = undo?.call();
+    if (result is bool) {
+      return result;
+    }
+    return true;
   }
 
   /// 执行重做
   @overridePoint
-  void doRedo() {
-    redo?.call();
+  bool doRedo() {
+    final result = redo?.call();
+    if (result is bool) {
+      return result;
+    }
+    return true;
   }
 }
 

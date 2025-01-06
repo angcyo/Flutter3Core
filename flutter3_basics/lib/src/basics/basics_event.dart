@@ -13,11 +13,11 @@ part of '../../flutter3_basics.dart';
 /// [LogicalKeyboardKey.controlLeft]
 /// [LogicalKeyboardKey.controlRight]
 ///
-/// [HardwareKeyboard.isControlPressed]
 /// 是否是控制按键
 /// Windows: Ctrl
 /// macOs: control
 /// Linux: Ctrl
+/// [HardwareKeyboard.isControlPressed]
 bool get isCtrlPressed => isKeyPressed(key: LogicalKeyboardKey.control, keys: [
       LogicalKeyboardKey.controlLeft,
       LogicalKeyboardKey.controlRight,
@@ -27,6 +27,7 @@ bool get isCtrlPressed => isKeyPressed(key: LogicalKeyboardKey.control, keys: [
 /// Windows: Alt
 /// macOs: option
 /// Linux: Alt
+/// [HardwareKeyboard.isAltPressed]
 bool get isAltPressed => isKeyPressed(key: LogicalKeyboardKey.alt, keys: [
       LogicalKeyboardKey.altLeft,
       LogicalKeyboardKey.altRight,
@@ -36,9 +37,16 @@ bool get isAltPressed => isKeyPressed(key: LogicalKeyboardKey.alt, keys: [
 /// Windows: Windows
 /// macOs: command
 /// Linux: ...
+/// [HardwareKeyboard.isMetaPressed]
 bool get isMetaPressed => isKeyPressed(key: LogicalKeyboardKey.meta, keys: [
       LogicalKeyboardKey.metaLeft,
       LogicalKeyboardKey.metaRight,
+    ]);
+
+/// [HardwareKeyboard.isShiftPressed]
+bool get isShiftPressed => isKeyPressed(key: LogicalKeyboardKey.shift, keys: [
+      LogicalKeyboardKey.shiftLeft,
+      LogicalKeyboardKey.shiftRight,
     ]);
 
 /// 空格按键是否按下
@@ -54,6 +62,16 @@ bool isKeyPressed({
     (keys != null &&
         HardwareKeyboard.instance.logicalKeysPressed
             .any((e) => keys.contains(e)));
+
+/// 指定的按键, 是否都按下
+bool isKeysPressedAll(
+  List<LogicalKeyboardKey>? keys, {
+  bool def = false,
+}) =>
+    isNil(keys)
+        ? def
+        : keys!.all((key) =>
+            HardwareKeyboard.instance.logicalKeysPressed.contains(key));
 
 /// 手势事件回调
 typedef PointerAction = void Function(PointerEvent event);
@@ -177,6 +195,8 @@ extension KeyEventEx on KeyEvent {
   bool get isKeyDown => this is KeyDownEvent;
 
   bool get isKeyRepeat => this is KeyRepeatEvent;
+
+  bool get isKeyDownOrRepeat => isKeyDown || isKeyRepeat;
 
   bool get isKeyUp => this is KeyUpEvent;
 
