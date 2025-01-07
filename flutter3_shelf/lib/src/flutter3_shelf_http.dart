@@ -1,4 +1,4 @@
-part of 'flutter3_shelf.dart';
+part of '../flutter3_shelf.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

@@ -1,4 +1,4 @@
-part of 'flutter3_shelf.dart';
+part of '../flutter3_shelf.dart';
 
 ///
 /// Email:angcyo@126.com

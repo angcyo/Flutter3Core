@@ -1,4 +1,4 @@
-library flutter3_shelf;
+library;
 
 import 'dart:async';
 import 'dart:convert';
@@ -6,7 +6,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter3_core/flutter3_core.dart';
-import 'package:flutter3_shelf/shelf_html.dart';
+import 'package:flutter3_shelf/src/shelf_html.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -22,9 +22,10 @@ export 'package:shelf_multipart/shelf_multipart.dart';
 export 'package:shelf_router/shelf_router.dart';
 export 'package:udp/udp.dart';
 
-part 'flutter3_shelf_http.dart';
-part 'flutter3_shelf_web_socket.dart';
-part 'udp_ex.dart';
+part 'src/flutter3_shelf_http.dart';
+part 'src/flutter3_shelf_web_socket.dart';
+part 'src/udp_ex.dart';
+part 'src/udp_service.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
