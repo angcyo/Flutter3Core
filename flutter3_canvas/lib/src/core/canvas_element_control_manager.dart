@@ -114,6 +114,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   bool get isTranslateElement =>
       _currentControlRef?.target?.controlType == ControlTypeEnum.translate;
 
+  /// 是否正在一定元素, 并且没有结束
+  bool get isTranslateElementStart => isTranslateElement && isControlElement;
+
   /// 是否在元素上按下
   /// 按下时, 不绘制控制点
   /// [paint]
@@ -405,7 +408,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-  /// 当前控制点
+  /// 当前控制点, 正在操作的控制点信息
+  /// [onSelfControlStateChanged]
   WeakReference<BaseControl>? _currentControlRef;
 
   /// 当前控制点, 控制的元素
@@ -425,6 +429,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     ElementPainter? controlElement,
     required ControlState state,
   }) {
+    //debugger();
     //cache
     _currentControlRef = control.toWeakRef();
     _currentControlElementRef = controlElement?.toWeakRef();

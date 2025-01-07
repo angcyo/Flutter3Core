@@ -367,6 +367,8 @@ class BaseControl
 
   /// 初始化控制的目标元素
   /// 开始控制目标元素
+  ///
+  /// [endControlTarget]
   @callPoint
   void startControlTarget(ElementPainter? element) {
     _setControlTarget(element, ControlState.start);

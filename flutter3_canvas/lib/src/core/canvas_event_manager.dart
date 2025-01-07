@@ -351,8 +351,9 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
   @override
   bool onDoubleTapDetectorPointerEvent(PointerEvent event) {
     //debugger();
-    if (canvasDelegate
-        .canvasElementManager.canvasElementControlManager.isTranslateElement) {
+    //l.d("onDoubleTapDetectorPointerEvent->$event");
+    if (canvasDelegate.canvasElementManager.canvasElementControlManager
+        .isTranslateElementStart) {
       return false;
     }
     if (event.isMouseEventKind) {
