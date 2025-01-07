@@ -733,6 +733,8 @@ extension StringEx on String {
   /// [StringEx.ascii]
   int get ascii => codeUnitAt(0);
 
+  int charAt(int index)=> codeUnitAt(index);
+
   /// 将ascii对应的int值解析出来
   /// 7e2b7dfc->2116779516
   /// [StringEx.toAsciiInt]
