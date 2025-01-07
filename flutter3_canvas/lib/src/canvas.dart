@@ -202,6 +202,15 @@ class CanvasRenderBox extends RenderBox
   BuildContext context;
   CanvasDelegate canvasDelegate;
 
+  //--
+
+  /// 焦点
+  final FocusNode _focusNode = FocusNode(
+      debugLabel: "CanvasRenderBoxFocusNode",
+      onKeyEvent: (node, event) {
+        return KeyEventResult.handled;
+      });
+
   CanvasRenderBox(
     this.context,
     this.canvasDelegate,
@@ -299,6 +308,9 @@ class CanvasRenderBox extends RenderBox
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
+    if (event.isPointerDown) {
+      requestFocus();
+    }
     final hitInterceptBox = GestureHitInterceptScope.of(context);
     hitInterceptBox?.interceptHitBox = this;
     canvasDelegate.handleEvent(event, entry);
@@ -320,6 +332,7 @@ class CanvasRenderBox extends RenderBox
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
+    _focusNode.attach(context);
     //debugger();
     if (isDesktopOrWeb) {
       registerKeyEventHandler();
@@ -345,6 +358,7 @@ class CanvasRenderBox extends RenderBox
   @override
   void detach() {
     //debugger();
+    _focusNode.unfocus();
     _validForMouseTracker = false;
     visitWidgetElementPainter((painter) {
       final render = painter._widgetRender;
@@ -361,11 +375,17 @@ class CanvasRenderBox extends RenderBox
 
   @override
   void dispose() {
+    _focusNode.dispose();
     canvasDelegate.dispose();
     super.dispose();
   }
 
-//--
+  /// 请求焦点
+  void requestFocus() {
+    FocusScope.of(context).requestFocus(_focusNode);
+  }
+
+  //--
 
   /// 重绘
   void _repaintListener() {
@@ -476,6 +496,7 @@ class CanvasRenderBox extends RenderBox
       final canvasElementControlManager =
           canvasDelegate.canvasElementManager.canvasElementControlManager;
       if (canvasElementControlManager.isSelectedElement) {
+        requestFocus();
         final offset =
             canvasDelegate.canvasStyle.canvasArrowAdjustOffset.toOffsetDp();
         final dx = info.keys.contains(LogicalKeyboardKey.arrowLeft)
@@ -495,7 +516,7 @@ class CanvasRenderBox extends RenderBox
         );
       }
       return true;
-    });
+    }, matchKeyCount: false);
 
     //撤销
     registerKeyEvent([
@@ -555,8 +576,6 @@ class CanvasRenderBox extends RenderBox
           .copySelectedElement(autoAddToCanvas: false);
       return true;
     });
-
-    Rect.zero.toRectMm();
 
     //粘贴
     registerKeyEvent([

@@ -50,14 +50,15 @@ mixin KeyEventRenderObjectMixin on RenderObject {
 
   /// 注册一个键盘事件监听
   @api
-  void registerKeyEvent(
-    List<List<LogicalKeyboardKey>>? eventGroupKeys,
-    KeyEventHandleAction? onKeyEventAction, {
-    bool stopPropagation = true,
-  }) {
+  void registerKeyEvent(List<List<LogicalKeyboardKey>>? eventGroupKeys,
+      KeyEventHandleAction? onKeyEventAction, {
+        bool matchKeyCount = true,
+        bool stopPropagation = true,
+      }) {
     addKeyEventRegister(KeyEventRegister(
       eventGroupKeys,
       stopPropagation: stopPropagation,
+      matchKeyCount: matchKeyCount,
       onKeyEventAction: onKeyEventAction,
     ));
   }
@@ -95,10 +96,11 @@ mixin KeyEventRenderObjectMixin on RenderObject {
           //中断
           bool interrupt = false;
           for (final keys in eventGroupKeys) {
-            if (isKeysPressedAll(keys)) {
+            if (isKeysPressedAll(keys, matchKeyCount: register.matchKeyCount)) {
               handle = onKeyEvent(KeyEventHitInfo(keys, event.isKeyRepeat));
               assert(() {
-                l.d("按键命中->[${keys.connect(" + ", (e) => e.debugName ?? e.keyLabel)}] $handle");
+                l.d("按键命中->[${keys.connect(
+                    " + ", (e) => e.debugName ?? e.keyLabel)}] $handle");
                 return true;
               }());
               if (handle && register.stopPropagation) {
@@ -130,10 +132,13 @@ class KeyEventRegister {
   /// 事件被处理之后, 是否阻止冒泡
   final bool stopPropagation;
 
-  const KeyEventRegister(
-    this.eventGroupKeys, {
+  /// 是否要匹配按键的数量
+  final bool matchKeyCount;
+
+  const KeyEventRegister(this.eventGroupKeys, {
     this.onKeyEventAction,
     this.stopPropagation = true,
+    this.matchKeyCount = true,
   });
 }
 

@@ -90,12 +90,15 @@ bool isKeyPressed({
 /// 指定的按键, 是否都按下
 bool isKeysPressedAll(
   List<LogicalKeyboardKey>? keys, {
+  bool matchKeyCount = true,
   bool def = false,
 }) =>
     isNil(keys)
         ? def
-        : keys!.length == pressedKeyCount &&
-            keys.all((key) => isKeyPressed(key: key));
+        : matchKeyCount
+            ? (keys!.length == pressedKeyCount &&
+                keys.all((key) => isKeyPressed(key: key)))
+            : keys!.all((key) => isKeyPressed(key: key));
 
 /// 当前有多少按键被按下
 int get pressedKeyCount => HardwareKeyboard.instance.logicalKeysPressed.length;
