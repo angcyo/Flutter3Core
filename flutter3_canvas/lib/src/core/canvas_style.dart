@@ -83,6 +83,10 @@ class CanvasStyle {
   @mm
   Offset canvasCopyOffset = Offset(4.0, 4.0);
 
+  /// 按键盘箭头平移调整时的偏移量
+  @mm
+  Offset canvasArrowAdjustOffset = Offset(1.0, 1.0);
+
   //endregion ---core---
 
   //region ---basics---

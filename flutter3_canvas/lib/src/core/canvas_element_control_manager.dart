@@ -782,7 +782,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-  /// 按照指定的量平移元素
+  /// 按照指定的增量平移元素
   /// [translateElement]
   /// [scaleElement]
   /// [rotateElement]

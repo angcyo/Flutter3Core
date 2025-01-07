@@ -447,6 +447,56 @@ class CanvasRenderBox extends RenderBox
       return true;
     });
 
+    //删除选中元素
+    registerKeyEvent([
+      [
+        LogicalKeyboardKey.delete,
+      ],
+    ], (info) {
+      canvasDelegate.canvasElementManager.canvasElementControlManager
+          .removeSelectedElement();
+      return true;
+    });
+
+    //方向键, 移动选中元素
+    registerKeyEvent([
+      [
+        LogicalKeyboardKey.arrowUp,
+      ],
+      [
+        LogicalKeyboardKey.arrowDown,
+      ],
+      [
+        LogicalKeyboardKey.arrowLeft,
+      ],
+      [
+        LogicalKeyboardKey.arrowRight,
+      ],
+    ], (info) {
+      final canvasElementControlManager =
+          canvasDelegate.canvasElementManager.canvasElementControlManager;
+      if (canvasElementControlManager.isSelectedElement) {
+        final offset =
+            canvasDelegate.canvasStyle.canvasArrowAdjustOffset.toOffsetDp();
+        final dx = info.keys.contains(LogicalKeyboardKey.arrowLeft)
+            ? -offset.dx
+            : info.keys.contains(LogicalKeyboardKey.arrowRight)
+                ? offset.dx
+                : 0.0;
+        final dy = info.keys.contains(LogicalKeyboardKey.arrowUp)
+            ? -offset.dy
+            : info.keys.contains(LogicalKeyboardKey.arrowDown)
+                ? offset.dy
+                : 0.0;
+        canvasElementControlManager.translateElement(
+          canvasDelegate.canvasElementManager.selectComponent,
+          dx: dx,
+          dy: dy,
+        );
+      }
+      return true;
+    });
+
     //撤销
     registerKeyEvent([
       if (isMacOs) ...[
