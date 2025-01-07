@@ -71,14 +71,17 @@ class CanvasStyle {
 
   //--key
 
-  /// 当这些控制按键被按下时, 鼠标的滚动视为需要缩放画布
+  /// 当这些控制按键任意被按下时, 鼠标的滚动视为需要缩放画布
   List<LogicalKeyboardKey> scaleControlKeyboardKeys = [
-    LogicalKeyboardKey.controlLeft,
-    LogicalKeyboardKey.controlRight,
+    LogicalKeyboardKey.control,
   ];
 
   /// 当按下此键时, 视为需要拖动画布
   LogicalKeyboardKey dragKeyboardKey = LogicalKeyboardKey.space;
+
+  /// 默认的复制元素后, 新元素偏移距离
+  @mm
+  Offset canvasCopyOffset = Offset(4.0, 4.0);
 
   //endregion ---core---
 

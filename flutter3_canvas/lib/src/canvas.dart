@@ -321,7 +321,9 @@ class CanvasRenderBox extends RenderBox
   void attach(PipelineOwner owner) {
     super.attach(owner);
     //debugger();
-    registerKeyEventHandler();
+    if (isDesktopOrWeb) {
+      registerKeyEventHandler();
+    }
     postFrame(() {
       visitWidgetElementPainter((painter) {
         //debugger();
@@ -431,67 +433,124 @@ class CanvasRenderBox extends RenderBox
 
   //region --KeyEvent--
 
+  /// 复制的元素列表
+  List<ElementPainter>? _copyElementList;
+
   /// 注册所有键盘事件
+  @desktopFlag
   void registerKeyEventHandler() {
-    //空格键
+    //空格键, 开启拖拽
     registerKeyEvent([
       [canvasDelegate.canvasStyle.dragKeyboardKey],
-    ], () {
+    ], (info) {
       markNeedsPaint();
       return true;
     });
+
     //撤销
     registerKeyEvent([
       if (isMacOs) ...[
         [
-          LogicalKeyboardKey.metaLeft,
+          LogicalKeyboardKey.meta,
           LogicalKeyboardKey.keyZ,
         ],
-        [
-          LogicalKeyboardKey.metaRight,
-          LogicalKeyboardKey.keyZ,
-        ]
       ],
       if (!isMacOs) ...[
         [
-          LogicalKeyboardKey.controlLeft,
+          LogicalKeyboardKey.control,
           LogicalKeyboardKey.keyZ,
         ],
-        [
-          LogicalKeyboardKey.controlRight,
-          LogicalKeyboardKey.keyZ,
-        ]
       ],
-    ], () {
+    ], (info) {
       canvasDelegate.canvasUndoManager.undo();
       return true;
     });
+
     //重做
     registerKeyEvent([
       if (isMacOs) ...[
         [
-          LogicalKeyboardKey.metaLeft,
+          LogicalKeyboardKey.meta,
           LogicalKeyboardKey.keyY,
         ],
-        [
-          LogicalKeyboardKey.metaRight,
-          LogicalKeyboardKey.keyY,
-        ]
       ],
       if (!isMacOs) ...[
         [
-          LogicalKeyboardKey.controlLeft,
-          LogicalKeyboardKey.shiftLeft,
+          LogicalKeyboardKey.control,
+          LogicalKeyboardKey.shift,
           LogicalKeyboardKey.keyZ,
         ],
-        [
-          LogicalKeyboardKey.controlRight,
-          LogicalKeyboardKey.shiftRight,
-          LogicalKeyboardKey.keyZ,
-        ]
       ],
-    ], () {
+    ], (info) {
       canvasDelegate.canvasUndoManager.redo();
+      return true;
+    });
+
+    //复制
+    registerKeyEvent([
+      if (isMacOs) ...[
+        [
+          LogicalKeyboardKey.meta,
+          LogicalKeyboardKey.keyC,
+        ],
+      ],
+      if (!isMacOs) ...[
+        [
+          LogicalKeyboardKey.control,
+          LogicalKeyboardKey.keyC,
+        ],
+      ],
+    ], (info) {
+      _copyElementList = canvasDelegate.canvasElementManager
+          .copySelectedElement(autoAddToCanvas: false);
+      return true;
+    });
+
+    Rect.zero.toRectMm();
+
+    //粘贴
+    registerKeyEvent([
+      if (isMacOs) ...[
+        [
+          LogicalKeyboardKey.meta,
+          LogicalKeyboardKey.keyV,
+        ],
+      ],
+      if (!isMacOs) ...[
+        [
+          LogicalKeyboardKey.control,
+          LogicalKeyboardKey.keyV,
+        ],
+      ],
+    ], (info) {
+      if (!isNil(_copyElementList)) {
+        //为了下一次继续粘贴, 这里需要重新复制一份
+        final elementList = _copyElementList!.copyElementList;
+        canvasDelegate.canvasElementManager.addElementList(elementList,
+            selected: true,
+            followPainter: true,
+            offset: canvasDelegate.canvasStyle.canvasCopyOffset.toOffsetDp());
+        _copyElementList = elementList;
+      }
+      return true;
+    });
+
+    //全选
+    registerKeyEvent([
+      if (isMacOs) ...[
+        [
+          LogicalKeyboardKey.meta,
+          LogicalKeyboardKey.keyA,
+        ],
+      ],
+      if (!isMacOs) ...[
+        [
+          LogicalKeyboardKey.control,
+          LogicalKeyboardKey.keyA,
+        ],
+      ],
+    ], (info) {
+      canvasDelegate.canvasElementManager.selectAllElement();
       return true;
     });
   }

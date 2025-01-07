@@ -52,16 +52,40 @@ bool get isShiftPressed => isKeyPressed(key: LogicalKeyboardKey.shift, keys: [
 /// 空格按键是否按下
 bool get isSpacePressed => isKeyPressed(key: LogicalKeyboardKey.space);
 
-/// 指定的按键, 是否按下
+/// 指定的按键, 任意按键是否按下
 bool isKeyPressed({
   LogicalKeyboardKey? key,
   List<LogicalKeyboardKey>? keys,
 }) =>
     (key != null &&
-        HardwareKeyboard.instance.logicalKeysPressed.contains(key)) ||
+        () {
+          final keyboard = HardwareKeyboard.instance;
+          final logicalKeysPressed = keyboard.logicalKeysPressed;
+          if (key == LogicalKeyboardKey.control) {
+            return logicalKeysPressed.contains(LogicalKeyboardKey.control) ||
+                logicalKeysPressed.contains(LogicalKeyboardKey.controlLeft) ||
+                logicalKeysPressed.contains(LogicalKeyboardKey.controlRight);
+          }
+          if (key == LogicalKeyboardKey.alt) {
+            return logicalKeysPressed.contains(LogicalKeyboardKey.alt) ||
+                logicalKeysPressed.contains(LogicalKeyboardKey.altLeft) ||
+                logicalKeysPressed.contains(LogicalKeyboardKey.altRight);
+          }
+          if (key == LogicalKeyboardKey.meta) {
+            return logicalKeysPressed.contains(LogicalKeyboardKey.meta) ||
+                logicalKeysPressed.contains(LogicalKeyboardKey.metaLeft) ||
+                logicalKeysPressed.contains(LogicalKeyboardKey.metaRight);
+          }
+          if (key == LogicalKeyboardKey.shift) {
+            return logicalKeysPressed.contains(LogicalKeyboardKey.shift) ||
+                logicalKeysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
+                logicalKeysPressed.contains(LogicalKeyboardKey.shiftRight);
+          }
+          return logicalKeysPressed.contains(key);
+        }()) ||
     (keys != null &&
         HardwareKeyboard.instance.logicalKeysPressed
-            .any((e) => keys.contains(e)));
+            .any((e) => isKeyPressed(key: e)));
 
 /// 指定的按键, 是否都按下
 bool isKeysPressedAll(
@@ -70,8 +94,13 @@ bool isKeysPressedAll(
 }) =>
     isNil(keys)
         ? def
-        : keys!.all((key) =>
-            HardwareKeyboard.instance.logicalKeysPressed.contains(key));
+        : keys!.length == pressedKeyCount &&
+            keys.all((key) => isKeyPressed(key: key));
+
+/// 当前有多少按键被按下
+int get pressedKeyCount => HardwareKeyboard.instance.logicalKeysPressed.length;
+
+//--
 
 /// 手势事件回调
 typedef PointerAction = void Function(PointerEvent event);

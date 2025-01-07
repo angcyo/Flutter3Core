@@ -5,6 +5,9 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/20
 ///
 /// 元素管理, 包含元素的绘制, 选择, 添加/删除等相关操作
+///
+/// [CanvasDelegate] 的成员
+///
 class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   //region ---属性----
 
@@ -748,12 +751,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void selectElement(
     ElementPainter? element, {
-    bool showRect = true,
+    bool followPainter = true,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     resetSelectedElementList(element == null ? [] : [element],
         selectType: selectType);
-    if (showRect) {
+    if (followPainter) {
       canvasDelegate.followPainter(elementPainter: element);
     }
   }
@@ -761,11 +764,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 选中所有元素
   @api
   void selectAllElement({
-    bool showRect = true,
+    bool followPainter = true,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     resetSelectedElementList(elements, selectType: selectType);
-    if (showRect) {
+    if (followPainter) {
       canvasDelegate.followRect(rect: elements.allElementBounds);
     }
   }
@@ -1669,10 +1672,17 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 复制元素
+  ///
+  /// [copyElement]
+  /// [copyElementList]
+  /// [copySelectedElement]
+  /// [addElementList]
+  ///
   @api
   @supportUndo
-  void copyElement(
+  List<ElementPainter>? copyElement(
     ElementPainter? element, {
+    bool autoAddToCanvas = true,
     @dp Offset? offset,
     bool selected = true,
     bool followPainter = true,
@@ -1683,16 +1693,18 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         l.d('无效的操作');
         return true;
       }());
-      return;
+      return null;
     }
     if (element is ElementSelectComponent) {
-      copyElementList(element.children,
+      return copyElementList(element.children,
+          autoAddToCanvas: autoAddToCanvas,
           offset: offset,
           selected: selected,
           followPainter: followPainter,
           undoType: undoType);
     } else {
-      copyElementList(element.ofList(),
+      return copyElementList(element.ofList(),
+          autoAddToCanvas: autoAddToCanvas,
           offset: offset,
           selected: selected,
           followPainter: followPainter,
@@ -1701,10 +1713,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 复制元素
+  /// [autoAddToCanvas] 是否自动添加到画布
+  ///
+  /// [copyElement]
+  /// [copyElementList]
+  /// [copySelectedElement]
+  /// [addElementList]
+  ///
+  /// @return 复制后的元素列表
   @api
   @supportUndo
-  void copyElementList(
+  List<ElementPainter>? copyElementList(
     List<ElementPainter>? elementList, {
+    //--
+    bool autoAddToCanvas = true,
     @dp Offset? offset,
     bool selected = true,
     bool followPainter = true,
@@ -1715,21 +1737,42 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         l.d('无效的操作');
         return true;
       }());
-      return;
+      return null;
     }
-    final newElementList = <ElementPainter>[];
-    for (final element in elementList) {
-      final newElement = element.copyElement();
-      newElementList.add(newElement);
+    final newElementList = elementList.copyElementList;
+    if (autoAddToCanvas) {
+      addElementList(
+        newElementList,
+        offset:
+            offset ?? canvasDelegate.canvasStyle.canvasCopyOffset.toOffsetDp(),
+        selected: selected,
+        followPainter: followPainter,
+        undoType: undoType,
+      );
     }
-    addElementList(
-      newElementList,
-      offset: offset,
-      selected: selected,
-      followPainter: followPainter,
-      undoType: undoType,
-    );
+    return newElementList;
   }
+
+  /// 复制选中的所有元素
+  ///
+  /// [copyElement]
+  /// [copyElementList]
+  /// [copySelectedElement]
+  /// [addElementList]
+  @api
+  @supportUndo
+  List<ElementPainter>? copySelectedElement({
+    bool autoAddToCanvas = true,
+    @dp Offset? offset,
+    bool selected = true,
+    bool followPainter = true,
+  }) =>
+      canvasElementControlManager.copySelectedElement(
+        autoAddToCanvas: autoAddToCanvas,
+        offset: offset,
+        selected: selected,
+        followPainter: followPainter,
+      );
 
   /// 锁定操作指定的元素
   @api

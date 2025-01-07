@@ -28,7 +28,7 @@ class UndoActionManager with Diagnosticable {
   @api
   bool undo() {
     assert(() {
-      l.d('准备撤销,共[${undoList.length}]');
+      l.d('准备撤销,共[${undoList.length}]/${redoList.length}');
       return true;
     }());
     if (undoList.isNotEmpty) {
@@ -47,7 +47,7 @@ class UndoActionManager with Diagnosticable {
   @api
   bool redo() {
     assert(() {
-      l.d('准备重做,共[${redoList.length}]');
+      l.d('准备重做,共[${redoList.length}]/${undoList.length}');
       return true;
     }());
 
@@ -199,8 +199,7 @@ class UndoActionWidget extends StatefulWidget {
   final Widget? undoWidget;
   final Widget? redoWidget;
 
-  const UndoActionWidget(
-    this.undoActionManager, {
+  const UndoActionWidget(this.undoActionManager, {
     super.key,
     this.undoWidget,
     this.redoWidget,
@@ -236,17 +235,17 @@ class _UndoActionWidgetState extends State<UndoActionWidget> {
     final globalTheme = GlobalTheme.of(context);
 
     final enableColor =
-        context.darkOr(globalTheme.icoNormalColor, globalTheme.icoNormalColor);
+    context.darkOr(globalTheme.icoNormalColor, globalTheme.icoNormalColor);
     final disableColor =
-        context.darkOr(globalTheme.disableColor, globalTheme.icoDisableColor);
+    context.darkOr(globalTheme.disableColor, globalTheme.icoDisableColor);
 
     //撤销
     final canUndo = undoManager.canUndo();
     Widget undo = IconButton(
         onPressed: canUndo
             ? () {
-                undoManager.undo();
-              }
+          undoManager.undo();
+        }
             : null,
         icon: widget.undoWidget ?? const Icon(Icons.undo));
     if (isDebug) {
@@ -269,8 +268,8 @@ class _UndoActionWidgetState extends State<UndoActionWidget> {
     Widget redo = IconButton(
         onPressed: canRedo
             ? () {
-                undoManager.redo();
-              }
+          undoManager.redo();
+        }
             : null,
         icon: widget.redoWidget ?? const Icon(Icons.redo));
     if (isDebug) {
@@ -290,9 +289,9 @@ class _UndoActionWidgetState extends State<UndoActionWidget> {
     }
 
     return [
-          undo,
-          redo,
-        ].row(mainAxisSize: MainAxisSize.min) ??
+      undo,
+      redo,
+    ].row(mainAxisSize: MainAxisSize.min) ??
         empty;
   }
 

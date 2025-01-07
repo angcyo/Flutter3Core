@@ -625,20 +625,23 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 复制选中的所有元素
   @api
   @supportUndo
-  void copySelectedElement({
+  List<ElementPainter>? copySelectedElement({
+    bool autoAddToCanvas = true,
     @dp Offset? offset,
     bool selected = true,
     bool followPainter = true,
   }) {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
-      canvasDelegate.canvasElementManager.copyElementList(
+      return canvasDelegate.canvasElementManager.copyElementList(
         list,
+        autoAddToCanvas: autoAddToCanvas,
         offset: offset,
         selected: selected,
         followPainter: followPainter,
       );
     }
+    return null;
   }
 
   /// 锁定操作选中的所有元素
@@ -1543,7 +1546,12 @@ class ElementSelectComponent extends ElementGroupPainter
       }
     } else {
       assert(() {
-        l.d('选中新的元素: $elements');
+        final size = elements?.size() ?? 0;
+        if (size > 5) {
+          l.d('选中新的元素: $size');
+        } else {
+          l.d('选中新的元素: $elements');
+        }
         return true;
       }());
       resetChildren(elements);

@@ -1245,6 +1245,14 @@ extension OffsetEx on Offset {
 
   /// 平移矩阵
   Matrix4 get translateMatrix => Matrix4.identity()..translate(dx, dy);
+
+  /// mm单位的offset, 转换成dp单位
+  @dp
+  Offset toOffsetDp() => Offset(dx.toDpFromMm(), dy.toDpFromMm());
+
+  /// dp单位的offset, 转换成mm单位
+  @mm
+  Offset toOffsetMm() => Offset(dx.toMmFromDp(), dy.toMmFromDp());
 }
 
 Rect rect({

@@ -52,7 +52,7 @@ mixin KeyEventRenderObjectMixin on RenderObject {
   @api
   void registerKeyEvent(
     List<List<LogicalKeyboardKey>>? eventGroupKeys,
-    ResultBoolAction? onKeyEventAction, {
+    KeyEventHandleAction? onKeyEventAction, {
     bool stopPropagation = true,
   }) {
     addKeyEventRegister(KeyEventRegister(
@@ -96,7 +96,11 @@ mixin KeyEventRenderObjectMixin on RenderObject {
           bool interrupt = false;
           for (final keys in eventGroupKeys) {
             if (isKeysPressedAll(keys)) {
-              handle = onKeyEvent();
+              handle = onKeyEvent(KeyEventHitInfo(keys, event.isKeyRepeat));
+              assert(() {
+                l.d("按键命中->[${keys.connect(" + ", (e) => e.debugName ?? e.keyLabel)}] $handle");
+                return true;
+              }());
               if (handle && register.stopPropagation) {
                 interrupt = true;
                 break;
@@ -113,13 +117,15 @@ mixin KeyEventRenderObjectMixin on RenderObject {
   }
 }
 
+typedef KeyEventHandleAction = bool Function(KeyEventHitInfo);
+
 /// 键盘事件, 注册信息
 class KeyEventRegister {
   /// 事件按键
   final List<List<LogicalKeyboardKey>>? eventGroupKeys;
 
   /// 回调
-  final ResultBoolAction? onKeyEventAction;
+  final KeyEventHandleAction? onKeyEventAction;
 
   /// 事件被处理之后, 是否阻止冒泡
   final bool stopPropagation;
@@ -129,4 +135,21 @@ class KeyEventRegister {
     this.onKeyEventAction,
     this.stopPropagation = true,
   });
+}
+
+/// 键盘事件, 命中信息
+/// [KeyEventRegister]
+class KeyEventHitInfo {
+  /// 命中的按键组合
+  final List<LogicalKeyboardKey> keys;
+
+  /// 是否是重复事件
+  final bool isKeyRepeat;
+
+  const KeyEventHitInfo(this.keys, this.isKeyRepeat);
+
+  @override
+  String toString() {
+    return 'KeyEventHitInfo{keys: $keys, isKeyRepeat: $isKeyRepeat}';
+  }
 }
