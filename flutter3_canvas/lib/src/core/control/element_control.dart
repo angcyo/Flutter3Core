@@ -70,6 +70,7 @@ class BaseControl
   final ControlTypeEnum controlType;
 
   /// 控制点的位置, 视图坐标系
+  /// 在[updatePaintControlBounds]中被赋值
   @viewCoordinate
   Rect? controlBounds;
 
@@ -145,7 +146,7 @@ class BaseControl
   }
 
   /// 当前手势是否在控制点上
-  bool isPointerInBounds(PointerEvent event) =>
+  bool isPointerInBounds(@viewCoordinate PointerEvent event) =>
       controlBounds?.contains(event.localPosition) ?? false;
 
   @override
@@ -586,6 +587,20 @@ class ScaleControl extends BaseControl {
   Rect? _downTargetElementBounds;
 
   @override
+  void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    super.dispatchPointerEvent(dispatch, event);
+    if (isCanvasComponentEnable) {
+      //debugger();
+      if (isPointerInBounds(event)) {
+        canvasDelegate.addCursorStyle(SystemMouseCursors.resizeUpLeftDownRight);
+      } else {
+        canvasDelegate
+            .removeCursorStyle(SystemMouseCursors.resizeUpLeftDownRight);
+      }
+    }
+  }
+
+  @override
   bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     if (isPointerDownIn) {
       if (event.isPointerMove) {
@@ -791,7 +806,7 @@ class TranslateControl extends BaseControl
             return true;
           }());*/
 
-          if (selectComponent.children != null &&
+          if (selectComponent.isSelectedElement &&
               selectComponent.hitTest(point: downScenePoint)) {
             //在选择器上按下
             isPointerDownIn = true;

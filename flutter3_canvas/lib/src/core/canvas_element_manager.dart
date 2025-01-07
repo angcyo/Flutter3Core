@@ -159,7 +159,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 绘制元素
-  /// [paintElements]
+  /// [paintElements]驱动
   @property
   void paintElement(
     Canvas canvas,
@@ -181,8 +181,15 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [event] 最原始的事件参数, 未经过加工处理
   /// 由[CanvasEventManager.handleEvent]驱动
   @entryPoint
-  void handleElementEvent(PointerEvent event) {
+  void handleElementEvent(@viewCoordinate PointerEvent event) {
     canvasElementControlManager.handleEvent(event);
+    if (canvasElementControlManager.enableElementControl) {
+      for (final element in elements.reversed) {
+        if (element.handleEvent(event)) {
+          break;
+        }
+      }
+    }
   }
 
   /// 释放资源
@@ -207,26 +214,44 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void visitElementPainter(
     ElementPainterVisitor visitor, {
     bool reverse = false,
+    //--
+    bool before = true,
+    bool that = true,
+    bool after = true,
   }) {
     if (reverse) {
-      for (final element in afterElements.reversed) {
-        visitor(element);
+      //倒序
+      if (after) {
+        for (final element in afterElements.reversed) {
+          visitor(element);
+        }
       }
-      for (final element in elements.reversed) {
-        visitor(element);
+      if (that) {
+        for (final element in elements.reversed) {
+          visitor(element);
+        }
       }
-      for (final element in beforeElements.reversed) {
-        visitor(element);
+      if (before) {
+        for (final element in beforeElements.reversed) {
+          visitor(element);
+        }
       }
     } else {
-      for (final element in beforeElements) {
-        visitor(element);
+      //正序
+      if (before) {
+        for (final element in beforeElements) {
+          visitor(element);
+        }
       }
-      for (final element in elements) {
-        visitor(element);
+      if (that) {
+        for (final element in elements) {
+          visitor(element);
+        }
       }
-      for (final element in afterElements) {
-        visitor(element);
+      if (after) {
+        for (final element in afterElements) {
+          visitor(element);
+        }
       }
     }
   }
@@ -710,21 +735,62 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     removeElementList(elements.clone(), undoType: undoType);
   }
 
+  /// 根据一个事件,查找元素对应的元素, 从上往下查找, 找到后就返回
+  ElementPainter? findElementByEvent({
+    @viewCoordinate PointerEvent? event,
+    @viewCoordinate Offset? position,
+    //--
+    bool includeSelectComponent = true,
+  }) {
+    position ??= event?.localPosition;
+    if (position == null) {
+      return null;
+    }
+    @sceneCoordinate
+    final offset = canvasDelegate.canvasViewBox.toScenePoint(position);
+    return findElement(
+      point: offset,
+      reverse: true,
+      includeSelectComponent: true,
+      breakWhenFind: true,
+    ).firstOrNull;
+  }
+
   /// 查找元素, 按照元素的先添加先返回的顺序
   /// [checkLockOperate] 是否检查锁定操作
   /// [checkVisible] 是否检查是否可见
+  /// [includeSelectComponent] 是否包含选择组件
   /// [ignoreElements] 忽略的元素集合
+  /// [reverse] 是否倒序查找元素
+  /// [breakWhenFind] 是否中断查找
   @api
   List<ElementPainter> findElement({
     @sceneCoordinate Offset? point,
     @sceneCoordinate Rect? rect,
     @sceneCoordinate Path? path,
+    //--
     bool checkLockOperate = true,
     bool checkVisible = true,
+    bool includeSelectComponent = false,
     List<ElementPainter>? ignoreElements,
+    //--
+    bool reverse = false,
+    //查找到之后, 是否中断
+    bool breakWhenFind = false,
   }) {
     final result = <ElementPainter>[];
-    for (final element in elements) {
+    if (includeSelectComponent) {
+      if (selectComponent.isSelectedElement) {
+        if (selectComponent.hitTest(point: point, rect: rect, path: path)) {
+          result.add(selectComponent);
+          if (breakWhenFind) {
+            return result;
+          }
+        }
+      }
+    }
+    //--
+    for (final element in reverse ? elements.reversed : elements) {
       if (ignoreElements?.contains(element) == true) {
         continue;
       }
@@ -738,6 +804,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
       if (element.hitTest(point: point, rect: rect, path: path)) {
         result.add(element);
+        if (breakWhenFind) {
+          return result;
+        }
       }
     }
     return result;

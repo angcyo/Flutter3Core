@@ -44,7 +44,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   /// [event] 最原始的事件参数, 未经过加工处理
   @entryPoint
-  void handleEvent(PointerEvent event) {
+  void handleEvent(@viewCoordinate PointerEvent event) {
     if (!event.isPointerHover) {
       l.d("handleEvent[${event.synthesized}]->$event");
       //debugger();

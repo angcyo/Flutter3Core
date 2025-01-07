@@ -23,6 +23,7 @@ class ElementPainter extends IPainter
   /// 这几个属性也需要加入回退栈
   /// [onSaveStateStackData]
   /// [onRestoreStateStackData]
+  /// [copyElement]
   ///
   /// [updatePainterPaint]
   PaintingStyle? paintStyle;
@@ -32,6 +33,7 @@ class ElementPainter extends IPainter
   /// 入栈时的保存key值
   /// [onSaveStateStackData]
   /// [onRestoreStateStackData]
+  /// [copyElement]
   String keyPaintStyle = "keyPaintStyle";
   String keyPaintColor = "keyPaintColor";
   String keyPaintStrokeWidth = "keyPaintStrokeWidth";
@@ -172,7 +174,7 @@ class ElementPainter extends IPainter
 
   //endregion ---属性--
 
-  //region ---PaintProperty---
+  //region ---paintProperty---
 
   /// 元素绘制的属性信息
   /// 为空表示未初始化
@@ -437,9 +439,9 @@ class ElementPainter extends IPainter
     });
   }
 
-  //endregion ---PaintProperty---
+  //endregion ---paintProperty---
 
-  //region ---Group---
+  //region ---group---
 
   /// 父元素
   /// 当自身属性改变后会通知父元素[dispatchSelfPaintPropertyChanged]
@@ -453,39 +455,60 @@ class ElementPainter extends IPainter
   /// 当前元素从父元素中移除时触发
   void onSelfElementUnGroupFrom(ElementGroupPainter parent) {}
 
-  //endregion ---Group---
+  //endregion ---group---
 
   //region ---paint---
 
   /// 主动更新画笔[paint]属性
+  /// [painting]
   /// [onPaintingSelfBefore]
   @overridePoint
   void updatePainterPaint({
     Object? fromObj,
     UndoType? fromUndoType,
+    bool notify = true,
   }) {
     paint
       ..style = paintStyle ?? PaintingStyle.stroke
       ..color = paintColor ?? Colors.black
       ..strokeWidth = paintStrokeWidth ?? 1.toDpFromPx();
     //
-    dispatchSelfPaintPropertyChanged(
-      paint,
-      paint,
-      PainterPropertyType.mode,
-      fromObj,
-      fromUndoType,
-    );
+    if (notify) {
+      dispatchSelfPaintPropertyChanged(
+        paint,
+        paint,
+        PainterPropertyType.mode,
+        fromObj,
+        fromUndoType,
+      );
+    }
   }
 
   ///[onPaintingSelfBefore]
   ///[onPaintingSelf]
+  ///
+  /// [CanvasElementManager.paintElement]驱动
+  ///
   @entryPoint
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     paintMeta.withPaintMatrix(canvas, () {
       onPaintingSelfBefore(canvas, paintMeta);
+
+      //--悬停颜色支持
+      bool isUpdatePaint = false;
+      Color? oldPaintColor;
+      if (paintState.isHover) {
+        oldPaintColor = paintColor;
+        paintColor = canvasStyle?.canvasAccentColor ?? oldPaintColor;
+        updatePainterPaint(fromObj: this, notify: false);
+        isUpdatePaint = true;
+      }
       onPaintingSelf(canvas, paintMeta);
+      if (isUpdatePaint) {
+        paintColor = oldPaintColor;
+        updatePainterPaint(fromObj: this, notify: false);
+      }
     });
   }
 
@@ -527,6 +550,9 @@ class ElementPainter extends IPainter
           return true;
         }());*/
       }
+      if (paintState.isHover && this is ImageElementPainter) {
+        paintPropertyPaintPath(canvas, paintMeta, paint);
+      }
     }
   }
 
@@ -536,12 +562,13 @@ class ElementPainter extends IPainter
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       paint.withSavePaint(() {
-        //边框的颜色
-        paint.color = canvasStyle?.canvasAccentColor ?? paint.color;
-        //样式
-        paint.style = PaintingStyle.stroke;
-        //抵消画布缩放带来的宽度变细/变粗
-        paint.strokeWidth = 1 / paintMeta.canvasScale;
+        paint
+          //边框的颜色
+          ..color = canvasStyle?.canvasAccentColor ?? paint.color
+          //样式
+          ..style = PaintingStyle.stroke
+          //抵消画布缩放带来的宽度变细/变粗
+          ..strokeWidth = 1 / paintMeta.canvasScale;
 
         //debugger();
         final rect = it.paintScaleRect;
@@ -581,6 +608,7 @@ class ElementPainter extends IPainter
     });
   }
 
+  /// 绘制元素全贴合的路径边框
   /// [paintPropertyBounds]
   /// [onPaintingSelf]
   @property
@@ -588,7 +616,14 @@ class ElementPainter extends IPainter
     paintProperty?.let((it) {
       //debugger();
       paint.withSavePaint(() {
-        paint.color = Colors.purpleAccent;
+        //paint.color = Colors.purpleAccent;
+        paint
+          //边框的颜色
+          ..color = canvasStyle?.canvasAccentColor ?? paint.color
+          //样式
+          ..style = PaintingStyle.stroke
+          //抵消画布缩放带来的宽度变细/变粗
+          ..strokeWidth = 1 / paintMeta.canvasScale;
         canvas.drawPath(it.paintPath, paint);
       });
     });
@@ -1105,9 +1140,77 @@ class ElementPainter extends IPainter
   }
 
   /// 刷新画布
+  @api
   @mustCallSuper
   void refresh() {
     canvasDelegate?.refresh();
+  }
+
+  /// 响应事件
+  ///
+  /// [CanvasEventManager.handleElementEvent]驱动
+  @overridePoint
+  bool handleEvent(@viewCoordinate PointerEvent event) {
+    final canvasDelegate = this.canvasDelegate;
+    if (canvasDelegate == null) {
+      return false;
+    }
+    if (event.isPointerHover || event.isPointerDown) {
+      final localPosition = event.localPosition;
+      final offset = canvasDelegate.canvasViewBox.toScenePoint(localPosition);
+      if (event.isPointerHover) {
+        final selectComponent =
+            canvasDelegate.canvasElementManager.selectComponent;
+        if (selectComponent.isSelectedElement &&
+            selectComponent.hitTest(point: offset)) {
+          //在选择组件上悬停
+          canvasDelegate.addCursorStyle(SystemMouseCursors.move);
+          return true;
+        } else {
+          canvasDelegate.removeCursorStyle(SystemMouseCursors.move);
+        }
+      }
+
+      final isHit = hitTest(point: offset);
+
+      if (event.isPointerDown && isHit) {
+        //取消所有元素悬停状态
+        canvasDelegate.canvasElementManager.visitElementPainter((element) {
+          element.onHoverChanged(event, false);
+        }, before: false, after: false);
+        return true;
+      } else {
+        final oldHover = paintState.isHover;
+        if (oldHover != isHit) {
+          if (isHit) {
+            //取消其他元素的悬停状态
+            canvasDelegate.canvasElementManager.visitElementPainter((element) {
+              element.onHoverChanged(event, false);
+            }, before: false, after: false);
+            onHoverChanged(event, isHit);
+            return true;
+          }
+          onHoverChanged(event, isHit);
+        }
+      }
+    }
+    return false;
+  }
+
+  /// 鼠标悬停状态改变
+  /// 如果在[ElementGroupPainter]中悬停, 则所有子元素都应该属于悬停状态
+  /// 如果在[ElementSelectComponent]中悬停, 则需要特殊处理
+  /// [paintState]
+  /// [painting]
+  ///
+  /// [ElementPainter.handleEvent]驱动
+  @overridePoint
+  bool onHoverChanged(@viewCoordinate PointerEvent event, bool hover) {
+    if (paintState.isHover != hover) {
+      paintState.isHover = hover;
+      refresh();
+    }
+    return hover;
   }
 
   //endregion ---canvas---
@@ -1400,6 +1503,14 @@ class ElementGroupPainter extends ElementPainter {
     children?.forEach((element) {
       element.isVisible = value;
     });
+  }
+
+  @override
+  bool onHoverChanged(PointerEvent event, bool hover) {
+    children?.forEach((element) {
+      element.onHoverChanged(event, hover);
+    });
+    return super.onHoverChanged(event, hover);
   }
 
   //region ---core--
@@ -1854,10 +1965,20 @@ class PaintState with EquatableMixin {
   /// 如果是群组, 是否折叠了
   bool isFold = true;
 
+  //--
+
+  /// 元素是否被鼠标悬停
+  bool isHover = false;
+
+  /// 元素临时绘制的颜色
+  /// [ElementPainter.painting]
+  Color? color;
+
   @override
   String toString() {
     return 'PaintState{elementUuid: $elementUuid, elementName: $elementName, '
-        'isLockRatio: $isLockRatio, isVisible: $isVisible, isLockOperate: $isLockOperate}';
+        'isLockRatio: $isLockRatio, isVisible: $isVisible, isLockOperate: $isLockOperate, '
+        'isFold: $isFold, isHover: $isHover, color: $color}';
   }
 
   @override
@@ -1878,6 +1999,8 @@ class PaintState with EquatableMixin {
     bool? isVisible,
     bool? isLockOperate,
     bool? isFold,
+    bool? isHover,
+    Color? color,
   }) {
     return PaintState()
       ..elementUuid = elementUuid ?? this.elementUuid
@@ -1885,7 +2008,9 @@ class PaintState with EquatableMixin {
       ..isLockRatio = isLockRatio ?? this.isLockRatio
       ..isVisible = isVisible ?? this.isVisible
       ..isLockOperate = isLockOperate ?? this.isLockOperate
-      ..isFold = isFold ?? this.isFold;
+      ..isFold = isFold ?? this.isFold
+      ..isHover = isHover ?? this.isHover
+      ..color = color ?? this.color;
   }
 }
 

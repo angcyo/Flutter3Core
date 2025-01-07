@@ -66,7 +66,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 手势输入的入口点
   @entryPoint
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
+  void handleEvent(@viewCoordinate PointerEvent event, BoxHitTestEntry entry) {
     canvasEventManager.handleEvent(event);
   }
 
@@ -152,6 +152,31 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   //endregion ---入口点---
+
+  //region ---mouse/key---
+
+  /// 当前光标的样式, 直接赋值给[MouseTrackerAnnotation.cursor], 就会生效, 不需要额外的处理
+  MouseCursor? get currentCursorStyle => _currentCursorStyleList.lastOrNull;
+
+  /// 请求的光标样式
+  final List<MouseCursor> _currentCursorStyleList = [];
+
+  /// 添加一个鼠标样式
+  @api
+  void addCursorStyle(MouseCursor cursor) {
+    final last = _currentCursorStyleList.lastOrNull;
+    if (last != cursor) {
+      _currentCursorStyleList.add(cursor);
+    }
+  }
+
+  /// 移除一个鼠标样式
+  @api
+  void removeCursorStyle(MouseCursor cursor) {
+    _currentCursorStyleList.removeWhere((e) => e == cursor);
+  }
+
+  //endregion ---mouse/key---
 
   //region ---get/set---
 

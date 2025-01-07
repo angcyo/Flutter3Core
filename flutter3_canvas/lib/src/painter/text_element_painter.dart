@@ -95,8 +95,13 @@ class TextElementPainter extends ElementPainter {
   void updatePainterPaint({
     Object? fromObj,
     UndoType? fromUndoType,
+    bool notify = true,
   }) {
-    super.updatePainterPaint(fromObj: fromObj, fromUndoType: fromUndoType);
+    super.updatePainterPaint(
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+      notify: notify,
+    );
     textPainter?.updateTextProperty(
       textColor: paintColor,
       textStyle: paintStyle,

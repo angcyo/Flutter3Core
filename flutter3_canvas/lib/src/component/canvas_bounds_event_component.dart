@@ -6,9 +6,11 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 画布指定位置点击/长按事件处理组件
 
+/// 事件类型回调
 typedef OnCanvasBoundsEventAction = bool Function(
     PointerEvent event, TouchDetectorType touchType);
 
+/// 画布指定区域事件处理组件
 class CanvasBoundsEventComponent
     with CanvasComponentMixin, IHandlePointerEventMixin, TouchDetectorMixin {
   /// 事件监听

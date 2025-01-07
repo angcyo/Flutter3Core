@@ -148,6 +148,10 @@ extension PointerEventEx on PointerEvent {
   /// 是否是非有效的操作事件
   bool get isInvalidEvent => synthesized || isPointerHover;
 
+  /// 是否是普通Touch事件
+  bool get isNormalTouchEvent =>
+      isPointerDown || isPointerMove || isPointerUp || isPointerCancel;
+
   /// 是否是按下事件
   bool get isPointerDown => this is PointerDownEvent;
 
@@ -376,7 +380,9 @@ mixin PointerDispatchMixin {
 
   /// 派发事件, 入口点
   /// 事件分发到[handleEventClientList]客户端中
-  /// 返回事件是否被处理了
+  /// [isIgnorePointer]
+  /// [ignoreHandlePointer]
+  /// @return 返回事件是否被处理了
   @entryPoint
   bool handleDispatchEvent(PointerEvent event) {
     if (isIgnorePointer(event)) {
@@ -385,8 +391,9 @@ mixin PointerDispatchMixin {
       }
       return false;
     }
+    //debugger(when: event.isPointerFinish);
 
-    if (!event.isInvalidEvent) {
+    if (event.isNormalTouchEvent) {
       //非合成的事件
       pointerMap[event.pointer] = event;
     }
@@ -490,10 +497,14 @@ mixin PointerDispatchMixin {
   }
 
   /// 是否忽略了指定手势的处理
+  /// [isIgnorePointer]
+  /// [ignoreHandlePointer]
   bool isIgnorePointer(PointerEvent event) =>
       ignorePointerMap[event.pointer] == true;
 
   /// 忽略指定手势的处理
+  /// [isIgnorePointer]
+  /// [ignoreHandlePointer]
   void ignoreHandlePointer(PointerEvent event, [bool ignore = true]) {
     ignorePointerMap[event.pointer] = ignore;
   }

@@ -636,11 +636,12 @@ class CanvasRenderBox extends RenderBox
 
   @override
   MouseCursor get cursor =>
-      isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)
+      canvasDelegate.currentCursorStyle ??
+      (isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)
           ? (canvasDelegate.isPointerDown
               ? SystemMouseCursors.grabbing
               : SystemMouseCursors.grab)
-          : MouseCursor.defer;
+          : MouseCursor.defer);
 
   @override
   PointerEnterEventListener? get onEnter => null;

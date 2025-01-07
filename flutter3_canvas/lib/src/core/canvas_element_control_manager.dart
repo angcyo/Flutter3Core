@@ -207,7 +207,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   ///
   /// [event] 最原始的事件参数, 未经过加工处理
   @entryPoint
-  void handleEvent(PointerEvent event) {
+  void handleEvent(@viewCoordinate PointerEvent event) {
     //debugger();
     final localPosition = event.localPosition;
     if (enableElementControl) {
@@ -1453,6 +1453,11 @@ class ElementSelectComponent extends ElementGroupPainter
       final first = children!.first;
       first.isLockRatio = value;
     }
+  }
+
+  @override
+  bool onHoverChanged(PointerEvent event, bool hover) {
+    return hover;
   }
 
   @override
