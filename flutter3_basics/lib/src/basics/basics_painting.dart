@@ -106,13 +106,21 @@ extension StringPaintEx on String {
       List<double> np = substring("matrix(".length).parseNumbers();
       if (np.size() == 6) {
         //noinspection ConstantConditions
-        final matrix3 = Matrix3.fromList([
+        /*final matrix3 = Matrix3.fromList([
           // Row 1
           np.get(0)!, np.get(2)!, np.get(4)!,
           // Row 2
           np.get(1)!, np.get(3)!, np.get(5)!,
           // Row 3
           0, 0, 1,
+        ]);*/
+        final matrix3 = Matrix3.fromList([
+          //sx ky .
+          np.get(0)!, np.get(1)!, 0,
+          //kx sy .
+          np.get(2)!, np.get(3)!, 0,
+          //tx ty .
+          np.get(4)!, np.get(5)!, 1,
         ]);
         //debugger();
         matrix = matrix3.toMatrix4();
@@ -201,7 +209,7 @@ extension StringPaintEx on String {
       characters;
       String c = this[i];
       switch (c) {
-      // This ends the parsing, as we are on the next element
+        // This ends the parsing, as we are on the next element
         case 'M':
         case 'm':
         case 'Z':
@@ -225,9 +233,7 @@ extension StringPaintEx on String {
         case ')':
           {
             String str = substring(p, i);
-            if (str
-                .trim()
-                .isNotEmpty) {
+            if (str.trim().isNotEmpty) {
               //Log.d(TAG, "  Last: " + str);
               double f = double.parse(str);
               numbers.add(f);
@@ -249,9 +255,7 @@ extension StringPaintEx on String {
           {
             String str = substring(p, i);
             // Just keep moving if multiple whitespace
-            if (str
-                .trim()
-                .isNotEmpty) {
+            if (str.trim().isNotEmpty) {
               //Log.d(TAG, "  Next: " + str);
               double f = double.parse(str);
               numbers.add(f);
@@ -269,9 +273,7 @@ extension StringPaintEx on String {
       }
     }
     String last = substring(p);
-    if (last
-        .trim()
-        .isNotEmpty) {
+    if (last.trim().isNotEmpty) {
       //Log.d(TAG, "  Last: " + last);
       try {
         numbers.add(double.parse(last));
@@ -285,8 +287,7 @@ extension StringPaintEx on String {
   //--
 
   /// [TextSpanPaintEx.textSize]
-  Size textSize({@dp double? fontSize, TextStyle? style}) =>
-      TextSpan(
+  Size textSize({@dp double? fontSize, TextStyle? style}) => TextSpan(
         text: this,
         style: style ?? TextStyle(fontSize: fontSize),
       ).textSize();
@@ -296,8 +297,7 @@ extension StringPaintEx on String {
       textSize(fontSize: fontSize, style: style).width;
 
   /// [TextSpanPaintEx.textSize]
-  double textHeight({double? fontSize, TextStyle? style}) =>
-      textSize(
+  double textHeight({double? fontSize, TextStyle? style}) => textSize(
         fontSize: fontSize,
         style: style,
       ).height;
@@ -328,7 +328,8 @@ extension CanvasEx on Canvas {
   //region ---with---
 
   /// 使用一个颜色着色
-  void withColor(VoidCallback callback, {
+  void withColor(
+    VoidCallback callback, {
     Color? tintColor,
     ui.ColorFilter? colorFilter,
   }) {
@@ -336,8 +337,7 @@ extension CanvasEx on Canvas {
     if (colorFilter == null) {
       callback();
     } else {
-      withSaveLayer(callback, Paint()
-        ..colorFilter = colorFilter);
+      withSaveLayer(callback, Paint()..colorFilter = colorFilter);
     }
   }
 
@@ -373,12 +373,13 @@ extension CanvasEx on Canvas {
   }
 
   /// 在指定锚点处操作矩阵
-  void withPivot(VoidCallback action,
-      VoidCallback callback, {
-        ui.Offset? anchor,
-        double pivotX = 0,
-        double pivotY = 0,
-      }) {
+  void withPivot(
+    VoidCallback action,
+    VoidCallback callback, {
+    ui.Offset? anchor,
+    double pivotX = 0,
+    double pivotY = 0,
+  }) {
     if (anchor != null) {
       pivotX = anchor.dx;
       pivotY = anchor.dy;
@@ -418,13 +419,14 @@ extension CanvasEx on Canvas {
   /// [degrees] 角度
   /// [radians] 弧度, 如果指定了弧度优先使用此值
   /// [pivotX].[pivotY]旋转的锚点
-  void withRotate(num degrees,
-      VoidCallback callback, {
-        double? radians,
-        double pivotX = 0,
-        double pivotY = 0,
-        ui.Offset? anchor,
-      }) {
+  void withRotate(
+    num degrees,
+    VoidCallback callback, {
+    double? radians,
+    double pivotX = 0,
+    double pivotY = 0,
+    ui.Offset? anchor,
+  }) {
     withRotateRadians(
       radians ??= degrees.toRadians,
       callback,
@@ -435,12 +437,13 @@ extension CanvasEx on Canvas {
   }
 
   /// 旋转, 使用弧度单位
-  void withRotateRadians(double radians,
-      VoidCallback callback, {
-        double pivotX = 0,
-        double pivotY = 0,
-        ui.Offset? anchor,
-      }) {
+  void withRotateRadians(
+    double radians,
+    VoidCallback callback, {
+    double pivotX = 0,
+    double pivotY = 0,
+    ui.Offset? anchor,
+  }) {
     if (radians == 0) {
       callback();
     } else {
@@ -451,13 +454,14 @@ extension CanvasEx on Canvas {
   }
 
   /// 在指定位置缩放
-  void withScale(double sx,
-      double sy,
-      VoidCallback callback, {
-        double pivotX = 0,
-        double pivotY = 0,
-        ui.Offset? anchor,
-      }) {
+  void withScale(
+    double sx,
+    double sy,
+    VoidCallback callback, {
+    double pivotX = 0,
+    double pivotY = 0,
+    ui.Offset? anchor,
+  }) {
     if (sx == 1 && sy == 1) {
       callback();
     } else {
@@ -468,13 +472,14 @@ extension CanvasEx on Canvas {
   }
 
   /// 在指定位置倾斜/扭曲
-  void withSkew(double sx,
-      double sy,
-      VoidCallback callback, {
-        double pivotX = 0,
-        double pivotY = 0,
-        ui.Offset? anchor,
-      }) {
+  void withSkew(
+    double sx,
+    double sy,
+    VoidCallback callback, {
+    double pivotX = 0,
+    double pivotY = 0,
+    ui.Offset? anchor,
+  }) {
     if (sx == 0 && sy == 0) {
       callback();
     } else {
@@ -542,15 +547,16 @@ extension CanvasEx on Canvas {
   /// [dstPadding] 目标位置的内边距
   /// [src] 目标的大小和位置
   /// [colorFilter] 着色器. [tintColor]着色
-  void drawInRect(Rect? dst /*最终位置*/,
-      Rect? src /*原始位置*/,
-      VoidCallback drawCallback, {
-        EdgeInsets? dstPadding,
-        Color? tintColor,
-        ui.ColorFilter? colorFilter,
-        BoxFit? fit,
-        Alignment? alignment = Alignment.center,
-      }) {
+  void drawInRect(
+    Rect? dst /*最终位置*/,
+    Rect? src /*原始位置*/,
+    VoidCallback drawCallback, {
+    EdgeInsets? dstPadding,
+    Color? tintColor,
+    ui.ColorFilter? colorFilter,
+    BoxFit? fit,
+    Alignment? alignment = Alignment.center,
+  }) {
     //debugger();
     if (dst == null || src == null) {
       drawCallback();
@@ -599,8 +605,7 @@ extension CanvasEx on Canvas {
     withMatrix(translateMatrix * scaleMatrix, () {
       //着色
       if (colorFilter != null) {
-        saveLayer(null, Paint()
-          ..colorFilter = colorFilter);
+        saveLayer(null, Paint()..colorFilter = colorFilter);
       }
 
       //绘制
@@ -611,17 +616,18 @@ extension CanvasEx on Canvas {
   /// 缩放[Path]绘制到指定的目标内
   /// [dst] 元素需要绘制的区域,也是元素最终要绘制到的位置, 会根据[fit].[alignment]自动调整
   /// [drawInRect]
-  void drawPathIn(Path? path,
-      Rect? pathBounds,
-      Rect? dst, {
-        Paint? paint,
-        EdgeInsets? dstPadding,
-        Color? tintColor,
-        ui.ColorFilter? colorFilter,
-        BoxFit? fit = BoxFit.contain,
-        Alignment? alignment = Alignment.center,
-        bool? paintStrokeWidthSuppressScale = true,
-      }) {
+  void drawPathIn(
+    Path? path,
+    Rect? pathBounds,
+    Rect? dst, {
+    Paint? paint,
+    EdgeInsets? dstPadding,
+    Color? tintColor,
+    ui.ColorFilter? colorFilter,
+    BoxFit? fit = BoxFit.contain,
+    Alignment? alignment = Alignment.center,
+    bool? paintStrokeWidthSuppressScale = true,
+  }) {
     if (path == null) {
       return;
     }
@@ -679,8 +685,7 @@ extension CanvasEx on Canvas {
       //着色
       if (paint != null) {
         if (colorFilter != null) {
-          saveLayer(null, Paint()
-            ..colorFilter = colorFilter);
+          saveLayer(null, Paint()..colorFilter = colorFilter);
         }
         if (paintStrokeWidthSuppressScale == true) {
           final scale = math.min(sx, sy);
@@ -694,7 +699,8 @@ extension CanvasEx on Canvas {
   /// 绘制文本, 绘制出来的文本左上角对齐0,0位置
   /// [bounds].[alignment] 文本绘制在矩形框内的位置和对齐方式
   /// [offset].[getOffset] 获取文本的绘制位置的回调
-  void drawText(String? text, {
+  void drawText(
+    String? text, {
     //--
     TextStyle? textStyle,
     Color? textColor = Colors.black,
@@ -721,12 +727,12 @@ extension CanvasEx on Canvas {
                 shadows: shadows ??
                     (shadow
                         ? const <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        color: Colors.black,
-                        blurRadius: 2,
-                      ),
-                    ]
+                            Shadow(
+                              offset: Offset(1, 1),
+                              color: Colors.black,
+                              blurRadius: 2,
+                            ),
+                          ]
                         : null),
                 fontWeight: fontWeight ?? (bold ? FontWeight.bold : null),
               ),
@@ -737,11 +743,11 @@ extension CanvasEx on Canvas {
     painter.paint(
         this,
         (getOffset?.call(painter) ??
-            (bounds == null
-                ? ui.Offset.zero
-                : alignment
-                .inscribe(Size(painter.width, painter.height), bounds)
-                .topLeft)) +
+                (bounds == null
+                    ? ui.Offset.zero
+                    : alignment
+                        .inscribe(Size(painter.width, painter.height), bounds)
+                        .topLeft)) +
             offset);
   }
 
@@ -749,7 +755,8 @@ extension CanvasEx on Canvas {
   /// [pictureSize] 图片原始的大小
   /// [dst] 绘制的目标位置以及大小
   ///
-  void drawPictureInRect(ui.Picture? picture, {
+  void drawPictureInRect(
+    ui.Picture? picture, {
     Size? pictureSize,
     Rect? dst,
     Color? tintColor,
@@ -772,7 +779,8 @@ extension CanvasEx on Canvas {
   }
 
   /// 绘制[ui.Image]
-  void drawImageInRect(ui.Image? image, {
+  void drawImageInRect(
+    ui.Image? image, {
     Rect? dst,
     Color? tintColor,
     ui.ColorFilter? colorFilter,
@@ -793,7 +801,8 @@ extension CanvasEx on Canvas {
   }
 
   /// 在一个位置[position]绘制十字线
-  void drawCross(Offset position, {
+  void drawCross(
+    Offset position, {
     double minX = 0,
     double? maxX,
     double minY = 0,
@@ -819,12 +828,13 @@ extension CanvasEx on Canvas {
   /// 绘制一个阴影
   /// [_BoxDecorationPainter]
   /// [Canvas.drawShadow]
-  void drawShadows(Rect rect,
-      List<BoxShadow>? boxShadows, {
-        BorderRadiusGeometry? borderRadius,
-        BoxShape shape = BoxShape.rectangle,
-        TextDirection? textDirection,
-      }) {
+  void drawShadows(
+    Rect rect,
+    List<BoxShadow>? boxShadows, {
+    BorderRadiusGeometry? borderRadius,
+    BoxShape shape = BoxShape.rectangle,
+    TextDirection? textDirection,
+  }) {
     if (boxShadows == null || boxShadows.isEmpty) {
       return;
     }
@@ -832,7 +842,7 @@ extension CanvasEx on Canvas {
     for (final BoxShadow boxShadow in boxShadows) {
       final Paint paint = boxShadow.toPaint();
       final Rect bounds =
-      rect.shift(boxShadow.offset).inflate(boxShadow.spreadRadius);
+          rect.shift(boxShadow.offset).inflate(boxShadow.spreadRadius);
       assert(() {
         if (debugDisableShadows && boxShadow.blurStyle == BlurStyle.outer) {
           canvas.save();
@@ -910,35 +920,35 @@ extension PaintEx on Paint {
 extension AlignmentEx on Alignment {
   bool get isLeft =>
       this == AlignmentDirectional.topStart ||
-          this == AlignmentDirectional.centerStart ||
-          this == AlignmentDirectional.bottomStart ||
-          this == Alignment.topLeft ||
-          this == Alignment.centerLeft ||
-          this == Alignment.bottomLeft;
+      this == AlignmentDirectional.centerStart ||
+      this == AlignmentDirectional.bottomStart ||
+      this == Alignment.topLeft ||
+      this == Alignment.centerLeft ||
+      this == Alignment.bottomLeft;
 
   bool get isRight =>
       this == AlignmentDirectional.topEnd ||
-          this == AlignmentDirectional.centerEnd ||
-          this == AlignmentDirectional.bottomEnd ||
-          this == Alignment.topRight ||
-          this == Alignment.centerRight ||
-          this == Alignment.bottomRight;
+      this == AlignmentDirectional.centerEnd ||
+      this == AlignmentDirectional.bottomEnd ||
+      this == Alignment.topRight ||
+      this == Alignment.centerRight ||
+      this == Alignment.bottomRight;
 
   bool get isTop =>
       this == AlignmentDirectional.topStart ||
-          this == AlignmentDirectional.topCenter ||
-          this == AlignmentDirectional.topEnd ||
-          this == Alignment.topLeft ||
-          this == Alignment.topCenter ||
-          this == Alignment.topRight;
+      this == AlignmentDirectional.topCenter ||
+      this == AlignmentDirectional.topEnd ||
+      this == Alignment.topLeft ||
+      this == Alignment.topCenter ||
+      this == Alignment.topRight;
 
   bool get isBottom =>
       this == AlignmentDirectional.bottomStart ||
-          this == AlignmentDirectional.bottomCenter ||
-          this == AlignmentDirectional.bottomEnd ||
-          this == Alignment.bottomLeft ||
-          this == Alignment.bottomCenter ||
-          this == Alignment.bottomRight;
+      this == AlignmentDirectional.bottomCenter ||
+      this == AlignmentDirectional.bottomEnd ||
+      this == Alignment.bottomLeft ||
+      this == Alignment.bottomCenter ||
+      this == Alignment.bottomRight;
 
   /// 根据对齐方式, 获取偏移量
   /// [Alignment.inscribe]

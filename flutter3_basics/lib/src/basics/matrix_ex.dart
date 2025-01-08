@@ -536,6 +536,7 @@ extension Matrix4Ex on vector.Matrix4 {
   ///
   /// [Matrix3Ex.toTransformString]
   /// [Matrix4Ex.toTransformString]
+  /// [StringPaintEx.transformMatrix]
   String toTransformString({int digits = 15}) {
     return 'matrix(${scaleX.toDigits(digits: digits)}, ${skewY.toDigits(
         digits: digits)}, ${skewX.toDigits(digits: digits)}, ${scaleY.toDigits(
@@ -592,14 +593,14 @@ extension Matrix3Ex on vector.Matrix3 {
   /// [Matrix4Ex.toMatrix3]
   Matrix4 toMatrix4() =>
       Matrix4.fromList([
-        // Row 1
-        this[0], this[3], 0.0, 0.0,
-        // Row 2
-        this[1], this[4], 0.0, 0.0,
-        // Row 3
+        //sx ky . .
+        this[0], this[1], this[2], 0.0,
+        //kx sy . .
+        this[3], this[4], this[5], 0.0,
+        // . . . .
         0, 0, 1, 0,
-        // Row 4
-        this[2], this[5], 0.0, 1.0,
+        //tx ty tz .
+        this[6], this[7], 0, this[8],
       ]);
 
   /*Matrix4.fromList([
@@ -615,6 +616,7 @@ extension Matrix3Ex on vector.Matrix3 {
 
   /// [Matrix3Ex.toTransformString]
   /// [Matrix4Ex.toTransformString]
+  /// [StringPaintEx.transformMatrix]
   String toTransformString({int digits = 15}) {
     return 'matrix(${scaleX.toDigits(digits: digits)}, ${skewY.toDigits(
         digits: digits)}, ${skewX.toDigits(digits: digits)}, ${scaleY.toDigits(
