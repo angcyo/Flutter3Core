@@ -76,15 +76,18 @@ void main(List<String> arguments) async {
                 index == length - 1 &&
                 url != null) {
               //只在最后一个文件上传成功之后, 进行飞书webhook通知
+              final webhook =
+                  localYaml["feishu_webhook"] ?? yaml["feishu_webhook"];
+              final logUrl =
+                  localYaml["change_log_url"] ?? yaml["change_log_url"];
               await _sendFeishuWebhook(
-                localYaml["feishu_webhook"] ?? yaml["feishu_webhook"],
+                webhook,
                 versionMap?["versionName"] == null
                     ? null
                     : "新版本发布 V${versionMap?["versionName"]}",
                 versionMap?["versionDes"],
                 linkUrl: url,
-                changeLogUrl:
-                    localYaml["change_log_url"] ?? yaml["change_log_url"],
+                changeLogUrl: logUrl,
               );
             }
           }
@@ -270,13 +273,17 @@ extension MapEx<K, V> on Map<K, V> {
 /// 发送飞书webhook消息
 /// https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot
 Future _sendFeishuWebhook(
-  String webhook,
+  String? webhook,
   String? title,
   String? text, {
   String? linkUrl,
   String? changeLogUrl,
   bool atAll = true,
 }) async {
+  if (webhook == null) {
+    colorLog("未指定飞书webhook, 不发送消息");
+    return;
+  }
   //post请求
   final postBody = {
     "msg_type": "post",
