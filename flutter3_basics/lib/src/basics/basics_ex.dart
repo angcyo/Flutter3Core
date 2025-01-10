@@ -733,7 +733,7 @@ extension StringEx on String {
   /// [StringEx.ascii]
   int get ascii => codeUnitAt(0);
 
-  int charAt(int index)=> codeUnitAt(index);
+  int charAt(int index) => codeUnitAt(index);
 
   /// 将ascii对应的int值解析出来
   /// 7e2b7dfc->2116779516
@@ -1671,6 +1671,8 @@ extension SizeEx on Size {
 //region bool 扩展
 
 extension BoolEx on bool {
+  String get dc => toDC();
+
   /// 转换成对错字符显示
   /// 对错字符
   /// https://manual.toulan.fun/posts/macos-type-right-wrong-symbol/

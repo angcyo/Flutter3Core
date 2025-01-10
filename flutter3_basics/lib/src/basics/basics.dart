@@ -315,6 +315,7 @@ Locale get platformLocale => PlatformDispatcher.instance.locale;
 List<Locale> get platformLocales => PlatformDispatcher.instance.locales;
 
 /// 屏幕宽度 [screenWidthPixel]
+/// 在桌面系统中, 启动时多大, 就已经固定了多大
 @dp
 double get screenWidth => platformMediaQueryData.size.width;
 
