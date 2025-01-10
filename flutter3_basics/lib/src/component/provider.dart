@@ -27,7 +27,11 @@ String? textOf(dynamic data, [BuildContext? context]) {
   if (data == null) {
     return null;
   }
-  if (data is String || data is bool || data is num || data is Iterable) {
+  if (data is String ||
+      data is bool ||
+      data is num ||
+      data is Iterable ||
+      data is Map) {
     return "$data";
   }
   if (data is ITextProvider) {
@@ -49,6 +53,7 @@ String? textOf(dynamic data, [BuildContext? context]) {
     try {
       return data.text;
     } catch (e) {
+      //debugger();
       assert(() {
         l.w('当前类型[${data.runtimeType}],不支持[.text]/[ITextProvider]操作.');
         return true;
@@ -61,13 +66,12 @@ String? textOf(dynamic data, [BuildContext? context]) {
 
 /// 在一个数据中, 提取Widget
 /// [tryTextWidget] 是否尝试使用[Text]小部件
-Widget? widgetOf(
-  BuildContext context,
-  dynamic data, {
-  bool tryTextWidget = false,
-  TextStyle? textStyle,
-  TextAlign? textAlign,
-}) {
+Widget? widgetOf(BuildContext context,
+    dynamic data, {
+      bool tryTextWidget = false,
+      TextStyle? textStyle,
+      TextAlign? textAlign,
+    }) {
   if (data == null) {
     return null;
   }

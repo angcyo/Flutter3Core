@@ -493,6 +493,7 @@ class FlowLayoutRender extends RenderBox
       maxHeight: constraints.maxHeight,
     );
 
+    //debugger();
     //先测量[noWeightChildren]
     double noWeightWidth = horizontalGap *
         (noWeightChildren.size() - (weightChildren.isEmpty ? 1 : 0)).maxOf(0);
