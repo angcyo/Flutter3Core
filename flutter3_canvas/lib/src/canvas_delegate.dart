@@ -283,6 +283,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 同时还控制[canvasUndoManager]的回退栈
   late CanvasMultiManager canvasMultiManager = CanvasMultiManager(this);
 
+  /// 管理按键事件
+  late CanvasKeyManager canvasKeyManager = CanvasKeyManager(this);
+
+  /// 关键鼠标右键菜单
+  late CanvasMenuManager canvasMenuManager = CanvasMenuManager(this);
+
   /// 画布回调监听
   final Set<CanvasListener> canvasListeners = {};
 
@@ -703,11 +709,40 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 访问所有元素
   /// [CanvasElementManager.visitElementPainter]
+  @api
   void visitElementPainter(
     ElementPainterVisitor visitor, {
     bool reverse = false,
   }) =>
       canvasElementManager.visitElementPainter(visitor, reverse: reverse);
+
+  /// 在画布中的指定位置, 显示菜单
+  /// 比如鼠标右键弹起, 显示对应的菜单
+  @api
+  Future<T?> showMenu<T>(
+    List<Widget>? menus, {
+    @viewCoordinate Offset? position,
+  }) async {
+    final context = delegateContext;
+    if (context == null) {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
+      return null;
+    }
+    return context.showWidgetMenu<T>(
+      menus,
+      position: position,
+    );
+  }
+
+  /// 隐藏菜单
+  /// [showMenu]
+  @api
+  void hideMenu<T extends Object?>([T? result]) {
+    delegateContext?.popMenu(result);
+  }
 
   //endregion ---api---
 

@@ -1148,6 +1148,8 @@ class ElementPainter extends IPainter
 
   /// 响应事件
   ///
+  /// - 处理悬停时的高亮颜色
+  ///
   /// [CanvasEventManager.handleElementEvent]驱动
   @overridePoint
   bool handleEvent(@viewCoordinate PointerEvent event) {

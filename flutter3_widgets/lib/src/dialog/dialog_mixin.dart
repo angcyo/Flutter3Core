@@ -443,7 +443,7 @@ extension DialogExtension on BuildContext {
     T? initialValue,
     PopupMenuPosition? menuPosition /*PopupMenuPosition.over*/,
     //--
-    Offset? position /*强行指定在overlay中的位置*/,
+    Offset? position /*强行指定在overlay中的位置, 此位置会自动偏移anchor的左上角偏移*/,
     //--
     Offset offset = Offset.zero /*相对锚点左上角额外偏移的量*/,
     //--
@@ -485,6 +485,16 @@ extension DialogExtension on BuildContext {
       return null;
     }
 
+    //anchor
+    final anchor = findRenderObject();
+    if (anchor is! RenderBox) {
+      assert(() {
+        l.w('anchor is null');
+        return true;
+      }());
+      return null;
+    }
+
     //用来定位
     final RenderBox overlay = Navigator.of(
       this,
@@ -494,15 +504,6 @@ extension DialogExtension on BuildContext {
     //位置信息
     final RelativeRect relativePosition;
     if (position == null) {
-      //anchor
-      final anchor = findRenderObject();
-      if (anchor is! RenderBox) {
-        assert(() {
-          l.w('anchor is null');
-          return true;
-        }());
-        return null;
-      }
       final PopupMenuPosition popupMenuPosition =
           menuPosition ?? PopupMenuPosition.over;
       switch (popupMenuPosition) {
@@ -522,8 +523,12 @@ extension DialogExtension on BuildContext {
         Offset.zero & overlay.size,
       );
     } else {
+      final anchorLT = anchor.localToGlobal(offset, ancestor: overlay);
       relativePosition = RelativeRect.fromRect(
-        Rect.fromPoints(position, position),
+        Rect.fromPoints(
+          anchorLT + position + offset,
+          anchorLT + position + offset,
+        ),
         Offset.zero & overlay.size,
       );
     }

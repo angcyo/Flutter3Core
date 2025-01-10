@@ -184,9 +184,19 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void handleElementEvent(@viewCoordinate PointerEvent event) {
     canvasElementControlManager.handleEvent(event);
     if (canvasElementControlManager.enableElementControl) {
+      //将事件发送元素
       for (final element in elements.reversed) {
         if (element.handleEvent(event)) {
           break;
+        }
+      }
+      if (event.isMouseRightUp) {
+        //鼠标右键点击, 显示菜单
+        final menus = canvasDelegate.canvasMenuManager.buildMenuWidgets(
+          anchorPosition: event.localPosition,
+        );
+        if (!isNil(menus)) {
+          canvasDelegate.showMenu(menus, position: event.localPosition);
         }
       }
     }

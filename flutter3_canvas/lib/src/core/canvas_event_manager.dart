@@ -365,7 +365,7 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
       return false;
     }
     if (event.isTouchEventKind ||
-        (event.isMouseEventKind && lastDownButtons.isMouseLeftDown)) {
+        (event.isMouseEventKind && lastDownButtons.isMouseLeft)) {
       final scale = doubleScaleValue;
       final pivot = event.localPosition;
       //debugger();
