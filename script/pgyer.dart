@@ -82,9 +82,7 @@ void main(List<String> arguments) async {
                   localYaml["change_log_url"] ?? yaml["change_log_url"];
               await _sendFeishuWebhook(
                 webhook,
-                versionMap?["versionName"] == null
-                    ? null
-                    : "新版本发布 V${versionMap?["versionName"]}",
+                _assembleVersionTitle(versionMap),
                 versionMap?["versionDes"],
                 linkUrl: url,
                 changeLogUrl: logUrl,
@@ -268,6 +266,33 @@ extension MapEx<K, V> on Map<K, V> {
     keys.forEach(map.remove);
     return map as Map<K, V>;
   }
+}
+
+/// 组装版本发布通知的标题
+String? _assembleVersionTitle(Map<String, dynamic>? json) {
+  final versionTitle = json?["versionTitle"]?.toString();
+  if (versionTitle != null) {
+    return versionTitle;
+  }
+
+  final versionDate = json?["versionDate"]?.toString();
+  final versionName = json?["versionName"]?.toString();
+  final versionCode = json?["versionCode"]?.toString();
+
+  StringBuffer buffer = StringBuffer();
+  if (versionDate != null) {
+    buffer.write("$versionDate ");
+  }
+  buffer.write("新版本发布");
+  if (versionName != null) {
+    //版本名
+    buffer.write(" V$versionName");
+    if (versionCode != null) {
+      //版本号
+      buffer.write("($versionCode)");
+    }
+  }
+  return buffer.toString();
 }
 
 /// 发送飞书webhook消息

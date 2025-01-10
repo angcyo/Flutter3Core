@@ -40,15 +40,44 @@ Future _sendLP5xVersion({String? versionDes}) async {
       await _getVersionDes("E:/AndroidProjects/LaserPeckerRNPro/android/.apk");
   _sendFeishuPost(
     localYaml?["feishu_webhook_lp5"] ?? yaml?["feishu_webhook_lp5"],
-    versionMap?["versionName"] == null
-        ? null
-        : "新版本发布 V${versionMap?["versionName"]}",
+    _assembleVersionTitle(versionMap),
     versionDes ?? versionMap?["versionDes"],
     linkUrl: "https://www.pgyer.com/PNbc",
     changeLogUrl:
         "https://gitee.com/angcyo/file/raw/master/LaserPeckerPro/change.json",
   );
 }
+
+//--
+
+/// 组装版本发布通知的标题
+String? _assembleVersionTitle(Map<String, dynamic>? json) {
+  final versionTitle = json?["versionTitle"]?.toString();
+  if (versionTitle != null) {
+    return versionTitle;
+  }
+
+  final versionDate = json?["versionDate"]?.toString();
+  final versionName = json?["versionName"]?.toString();
+  final versionCode = json?["versionCode"]?.toString();
+
+  StringBuffer buffer = StringBuffer();
+  if (versionDate != null) {
+    buffer.write("$versionDate ");
+  }
+  buffer.write("新版本发布");
+  if (versionName != null) {
+    //版本名
+    buffer.write(" V$versionName");
+    if (versionCode != null) {
+      //版本号
+      buffer.write("($versionCode)");
+    }
+  }
+  return buffer.toString();
+}
+
+//--
 
 /// 飞书版本通知
 Future _sendFeishuVersion({
