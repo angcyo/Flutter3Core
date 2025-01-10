@@ -62,7 +62,8 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
       controller: observerSliverController,
       sliverContexts: () => observerSliverContexts,
       onObserveAll: (resultMap) {
-        l.d(resultMap.values);
+        //ListViewObserveModel
+        l.d(resultMap.values.join());
       },
       child: CustomScrollView(
         controller: scrollControllerMixin,

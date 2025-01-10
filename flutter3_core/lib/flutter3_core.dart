@@ -72,7 +72,9 @@ part 'src/view_model/view_model_ex.dart';
 String get currentDirPath => p.current;
 
 /// 初始化Flutter3核心库
+@initialize
 @entryPoint
+@CallFrom("runGlobalApp")
 Future<void> initFlutter3Core() async {
   // 写入文件fn
   GlobalConfig.def.writeFileFn = (fileName, folder, content) async {
@@ -97,6 +99,7 @@ Future<void> initFlutter3Core() async {
 /// 初始化hive
 @initialize
 @entryPoint
+@CallFrom("runGlobalApp")
 Future<void> initHive() async {
   //初始化Hive数据库
   //Hive.registerAdapter(adapter)
@@ -110,6 +113,7 @@ Future<void> initHive() async {
 /// [registerIsarCollection]
 @initialize
 @entryPoint
+@CallFrom("runGlobalApp")
 Future<void> initIsar() async {
   //初始化isar数据库
   await openIsar();
