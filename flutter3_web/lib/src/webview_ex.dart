@@ -81,6 +81,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   );
 
   /// 刷新控制
+  /// https://inappwebview.dev/docs/webview/pull-to-refresh-controller
+  @mobileFlag
   PullToRefreshController? webviewPullToRefreshController;
 
   /// debug刷新信号
@@ -106,9 +108,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   void initState() {
     super.initState();
     final globalTheme = GlobalTheme.of(context);
-    webviewPullToRefreshController = isWeb
-        ? null
-        : PullToRefreshController(
+    webviewPullToRefreshController = isMobile
+        ? PullToRefreshController(
             settings: PullToRefreshSettings(
               color: globalTheme.accentColor,
             ),
@@ -120,7 +121,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
                     urlRequest: URLRequest(url: webviewUrl));
               }
             },
-          );
+          )
+        : null;
   }
 
   /// 构建脚手架

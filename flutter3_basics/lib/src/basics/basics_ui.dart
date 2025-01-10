@@ -3066,7 +3066,8 @@ extension NavigatorEx on BuildContext {
   /// 是否是最上面的路由
   bool get isRouteCurrent => modalRoute?.isCurrent ?? false;
 
-  /// 是否要显示返回按键
+  /// 是否要显示返回按键, 路由页面下面是否还有活动的路由
+  /// [Route.hasActiveRouteBelow]
   bool get isAppBarDismissal => modalRoute?.impliesAppBarDismissal ?? false;
 
   /// 获取一个导航器[NavigatorState]
@@ -3182,36 +3183,54 @@ extension NavigatorEx on BuildContext {
   /// 是否可以弹出一个路由
   bool canPop([
     bool rootNavigator = false,
-  ]) =>
-      navigatorOf(rootNavigator).canPop();
+    bool checkDismissal = true,
+  ]) {
+    if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
+      return navigatorOf(rootNavigator).canPop();
+    } else {
+      return false;
+    }
+  }
 
   /// 弹出一个路由, 不能被[PopScope]拦截
   void pop<T extends Object?>([
     T? result,
     bool rootNavigator = false,
+    bool checkDismissal = true,
   ]) {
-    navigatorOf(rootNavigator).pop(result);
+    if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
+      navigatorOf(rootNavigator).pop(result);
+    }
   }
 
   /// 命名冲突
   void popRoute<T extends Object?>([
     T? result,
     bool rootNavigator = false,
-  ]) => pop(result, rootNavigator);
+    bool checkDismissal = true,
+  ]) =>
+      pop(result, rootNavigator, checkDismissal);
 
   /// 尝试弹出一个路由, 可以被[PopScope]拦截
   Future<bool> maybePop<T extends Object?>([
     T? result,
     bool rootNavigator = false,
-  ]) {
-    return navigatorOf(rootNavigator).maybePop(result);
+    bool checkDismissal = true,
+  ]) async {
+    if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
+      return navigatorOf(rootNavigator).maybePop(result);
+    }
+    return false;
   }
 
   /// [ModalRoute.withName('/login')]
   void popUntil<T extends Object?>(RoutePredicate predicate, [
     bool rootNavigator = false,
+    bool checkDismissal = true,
   ]) {
-    navigatorOf(rootNavigator).popUntil(predicate);
+    if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
+      navigatorOf(rootNavigator).popUntil(predicate);
+    }
   }
 
   Future<T?> popAndPushNamed<T extends Object?, TO extends Object?>(
