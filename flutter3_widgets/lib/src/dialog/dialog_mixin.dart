@@ -416,6 +416,137 @@ extension DialogExtension on BuildContext {
       barrierIgnorePointerType: barrierIgnorePointerType,
     );
   }
+
+  /// 在指定位置弹出一个菜单
+  /// [showMenu]
+  /// [PopupMenuButton]
+  ///
+  /// 内部使用[_PopupMenuRoute]路由实现的[NavigatorState.push]
+  ///
+  /// [constraints]
+  /// When unspecified, defaults to:
+  /// ```dart
+  /// const BoxConstraints(
+  ///   minWidth: 2.0 * 56.0,
+  ///   maxWidth: 5.0 * 56.0,
+  /// )
+  /// ```
+  ///
+  /// [requestFocus] If null, [Navigator.requestFocus] will be used instead.
+  ///
+  /// [_PopupMenuDefaultsM3]
+  /// [menuItemPadding]
+  Future<T?> showWidgetMenu<T>(
+    List<Widget>? menus /*辅助生成items*/, {
+    List<PopupMenuEntry<T>>? items /*菜单项*/,
+    //--
+    T? initialValue,
+    PopupMenuPosition? menuPosition /*PopupMenuPosition.over*/,
+    //--
+    Offset? position /*强行指定在overlay中的位置*/,
+    //--
+    Offset offset = Offset.zero /*相对锚点左上角额外偏移的量*/,
+    //--
+    double? elevation = kH,
+    Color? color /*菜单的背景颜色*/,
+    Color? shadowColor = Colors.black /*kShadowColor*/,
+    Color? surfaceTintColor/*= Colors.transparent*/,
+    ShapeBorder? shape = const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(4.0))),
+    EdgeInsets? menuPadding = const EdgeInsets.symmetric(vertical: 8.0),
+    BoxConstraints? constraints,
+    Clip clipBehavior = Clip.none,
+    //--
+    bool useRootNavigator = false,
+    AnimationStyle? popUpAnimationStyle,
+    RouteSettings? routeSettings,
+    bool? requestFocus,
+  }) async {
+    if (!mounted) {
+      assert(() {
+        l.w('context is not mounted');
+        return true;
+      }());
+      return null;
+    }
+
+    items ??= menus?.map((e) {
+      return PopupMenuItem<T>(
+        value: e as dynamic,
+        child: e,
+      );
+    }).toList();
+
+    if (isNil(items)) {
+      assert(() {
+        l.w('items is null');
+        return true;
+      }());
+      return null;
+    }
+
+    //用来定位
+    final RenderBox overlay = Navigator.of(
+      this,
+      rootNavigator: useRootNavigator,
+    ).overlay!.context.findRenderObject()! as RenderBox;
+
+    //位置信息
+    final RelativeRect relativePosition;
+    if (position == null) {
+      //anchor
+      final anchor = findRenderObject();
+      if (anchor is! RenderBox) {
+        assert(() {
+          l.w('anchor is null');
+          return true;
+        }());
+        return null;
+      }
+      final PopupMenuPosition popupMenuPosition =
+          menuPosition ?? PopupMenuPosition.over;
+      switch (popupMenuPosition) {
+        case PopupMenuPosition.over:
+          offset = offset;
+        case PopupMenuPosition.under:
+          offset = Offset(0.0, anchor.size.height) + offset;
+      }
+      relativePosition = RelativeRect.fromRect(
+        Rect.fromPoints(
+          anchor.localToGlobal(offset, ancestor: overlay),
+          anchor.localToGlobal(
+            anchor.size.bottomRight(Offset.zero) + offset,
+            ancestor: overlay,
+          ),
+        ),
+        Offset.zero & overlay.size,
+      );
+    } else {
+      relativePosition = RelativeRect.fromRect(
+        Rect.fromPoints(position, position),
+        Offset.zero & overlay.size,
+      );
+    }
+
+    return showMenu<T?>(
+      context: this,
+      elevation: elevation,
+      shadowColor: shadowColor,
+      surfaceTintColor: surfaceTintColor,
+      items: items ?? [],
+      initialValue: initialValue,
+      position: relativePosition,
+      shape: shape,
+      menuPadding: menuPadding,
+      color: color,
+      constraints: constraints,
+      clipBehavior: clipBehavior,
+      useRootNavigator: useRootNavigator,
+      popUpAnimationStyle: popUpAnimationStyle,
+      routeSettings: routeSettings,
+      requestFocus: requestFocus,
+    );
+  }
 }
 
 extension NavigatorStateDialogEx on NavigatorState {
@@ -424,6 +555,8 @@ extension NavigatorStateDialogEx on NavigatorState {
   /// 对话框的一些基础方法
   /// [barrierDismissible] 窗口外是否可以销毁对话框
   /// [barrierColor] 障碍的颜色, 默认是[Colors.black54]
+  ///
+  /// 内部使用路由实现的[NavigatorState.push]
   ///
   /// [useSafeArea] 是否使用安全区域
   ///

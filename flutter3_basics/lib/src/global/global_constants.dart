@@ -81,6 +81,7 @@ const kXInsets = EdgeInsets.all(kX);
 //--
 
 /// 阴影的颜色
+/// [Colors.black]
 const Color kShadowColor = Color(0x0D000000);
 
 /// 阴影的偏移量
