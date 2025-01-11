@@ -18,6 +18,9 @@ class CanvasMenuManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   CanvasViewBox get canvasViewBox => canvasDelegate.canvasViewBox;
 
+  /// 元素上下文
+  BuildContext? get context => canvasDelegate.delegateContext;
+
   CanvasMenuManager(this.canvasDelegate);
 
   /// 返回元素是否为空
@@ -36,6 +39,9 @@ class CanvasMenuManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasDelegate.canvasElementManager.selectedElement;
 
   /// 构建菜单的Widget, 返回null则不显示菜单
+  ///
+  /// [CanvasDelegate.showMenu]中显示这些菜单
+  ///
   /// [CanvasElementManager.handleElementEvent]驱动
   @callPoint
   List<Widget>? buildMenuWidgets({
@@ -48,26 +54,38 @@ class CanvasMenuManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       "全选".text().click(() {
         canvasDelegate.canvasElementManager.selectAllElement();
       }).popMenu(),
-      "放大".text().click(() {
-        canvasViewBox.scaleBy(
-          sx: canvasEventManager.canvasScaleComponent.doubleScaleValue,
-          sy: canvasEventManager.canvasScaleComponent.doubleScaleValue,
-          pivot: anchorPosition != null
-              ? canvasViewBox.toScenePoint(anchorPosition)
-              : canvasViewBox.canvasSceneVisibleBounds.center,
-          anim: true,
-        );
-      }).popMenu().backgroundColor(Colors.purpleAccent),
-      "缩小".text().click(() {
-        canvasViewBox.scaleBy(
-          sx: canvasEventManager.canvasScaleComponent.doubleScaleReverseValue,
-          sy: canvasEventManager.canvasScaleComponent.doubleScaleReverseValue,
-          pivot: anchorPosition != null
-              ? canvasViewBox.toScenePoint(anchorPosition)
-              : canvasViewBox.canvasSceneVisibleBounds.center,
-          anim: true,
-        );
-      }).popMenu().backgroundColor(Colors.purpleAccent),
+      "放大"
+          .text()
+          .click(() {
+            final canvasScaleComponent =
+                canvasEventManager.canvasScaleComponent;
+            canvasViewBox.scaleBy(
+              sx: canvasScaleComponent.doubleScaleValue,
+              sy: canvasScaleComponent.doubleScaleValue,
+              pivot: anchorPosition != null
+                  ? canvasViewBox.toScenePoint(anchorPosition)
+                  : canvasViewBox.canvasSceneVisibleBounds.center,
+              anim: true,
+            );
+          })
+          .popMenu()
+          .backgroundColor(Colors.purpleAccent),
+      "缩小"
+          .text()
+          .click(() {
+            final canvasScaleComponent =
+                canvasEventManager.canvasScaleComponent;
+            canvasViewBox.scaleBy(
+              sx: canvasScaleComponent.doubleScaleReverseValue,
+              sy: canvasScaleComponent.doubleScaleReverseValue,
+              pivot: anchorPosition != null
+                  ? canvasViewBox.toScenePoint(anchorPosition)
+                  : canvasViewBox.canvasSceneVisibleBounds.center,
+              anim: true,
+            );
+          })
+          .popMenu()
+          .backgroundColor(Colors.purpleAccent),
     ];
   }
 }

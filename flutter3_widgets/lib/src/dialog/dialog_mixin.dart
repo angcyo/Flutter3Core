@@ -533,7 +533,7 @@ extension DialogExtension on BuildContext {
       );
     }
 
-    return showMenu<T?>(
+    /*return showMenu<T?>(
       context: this,
       elevation: elevation,
       shadowColor: shadowColor,
@@ -550,6 +550,27 @@ extension DialogExtension on BuildContext {
       popUpAnimationStyle: popUpAnimationStyle,
       routeSettings: routeSettings,
       requestFocus: requestFocus,
+    );*/
+    return pushRoute(
+      PopupMenuRoute(
+        menu: GradientButton(
+          child: "child".text(),
+          onTap: () {
+            toastInfo("click ${nowTimeString()}");
+          },
+        ),
+        position: relativePosition,
+        clipBehavior: clipBehavior,
+        popUpAnimationStyle: popUpAnimationStyle,
+        shape: shape,
+        elevation: elevation,
+        color: color,
+        shadowColor: shadowColor,
+        surfaceTintColor: surfaceTintColor,
+        settings: routeSettings,
+        requestFocus: requestFocus,
+      ),
+      rootNavigator: useRootNavigator,
     );
   }
 }
