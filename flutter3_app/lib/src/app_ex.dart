@@ -170,8 +170,11 @@ extension ShareFileEx on File {
       );
 }
 
+/// https://pub.dev/packages/share_plus
 extension ShareStringEx on String {
   /// 分享文本
+  /// https://pub.dev/packages/share_plus
+  @allPlatformFlag
   Future<ShareResult> share({
     String? subject,
     BuildContext? shareContext,
@@ -187,6 +190,9 @@ extension ShareStringEx on String {
 
   /// 分享文件
   /// [mimeType] 文件类型
+  ///
+  /// https://pub.dev/packages/share_plus
+  @PlatformFlag("Android iOS MacOS Web Windows")
   Future<ShareResult> shareFile({
     List<String>? otherFiles,
     String? subject,
