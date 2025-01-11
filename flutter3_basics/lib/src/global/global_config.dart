@@ -11,7 +11,7 @@ typedef WidgetArgumentBuilder = Widget Function<T>(
 
 /// 全局打开[url]的回调方法, 返回成功or失败
 typedef GlobalOpenUrlFn = Future<bool> Function(
-    BuildContext? context, String? url);
+    BuildContext? context, String? url, Object? meta);
 
 /// 全局写入文件的回调方法, 返回文件路径
 typedef GlobalWriteFileFn = Future<String?> Function(
@@ -65,15 +65,31 @@ NavigatorState? get navigatorState => GlobalConfig.def.findNavigatorState();
 
 /// 快速打开url
 @dsl
-Future<bool> openWebUrl(String? url, [BuildContext? context]) async {
+Future<bool> openWebUrl(String? url,
+    [BuildContext? context, Object? meta]) async {
   if (context == null) {
     final fn = GlobalConfig.def.openUrlFn;
     if (fn == null) {
       return false;
     }
-    return await fn.call(GlobalConfig.def.globalContext, url);
+    return await fn.call(GlobalConfig.def.globalContext, url, meta);
   } else {
-    return context.openWebUrl(url);
+    return context.openWebUrl(url, meta: meta);
+  }
+}
+
+/// 快速打开file path
+@dsl
+Future<bool> openFilePath(String? filePath,
+    [BuildContext? context, Object? meta]) async {
+  if (context == null) {
+    final fn = GlobalConfig.def.openFileFn;
+    if (fn == null) {
+      return false;
+    }
+    return await fn.call(GlobalConfig.def.globalContext, filePath, meta);
+  } else {
+    return context.openFilePath(filePath, meta: meta);
   }
 }
 
@@ -83,12 +99,21 @@ extension GlobalConfigEx on BuildContext {
       GlobalConfig.of(this, depend: depend);
 
   /// [GlobalConfig.openUrlFn]
-  Future<bool> openWebUrl(String? url) async {
+  Future<bool> openWebUrl(String? url, {Object? meta}) async {
     var fn = GlobalConfig.of(this).openUrlFn ?? GlobalConfig.def.openUrlFn;
     if (fn == null) {
       return false;
     }
-    return await fn.call(this, url);
+    return await fn.call(this, url, meta);
+  }
+
+  /// [GlobalConfig.openFileFn]
+  Future<bool> openFilePath(String? filePath, {Object? meta}) async {
+    var fn = GlobalConfig.of(this).openFileFn ?? GlobalConfig.def.openFileFn;
+    if (fn == null) {
+      return false;
+    }
+    return await fn.call(this, filePath, meta);
   }
 }
 
@@ -207,11 +232,35 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return null;
   };
 
+  /// 注册一个全局的打开file方法, 可以是内部打开文件/也可以使用系统本机打开
+  /// - 支持文件路径
+  /// - 支持文件夹路径
+  /// ```
+  /// GlobalConfig.def.openFileFn = (context, url) {
+  ///   ...
+  ///   return Future.value(true);
+  /// };
+  /// ```
+  GlobalOpenUrlFn? openFileFn = (context, file, meta) {
+    assert(() {
+      l.w("企图打开file:$file from:$context meta:$meta");
+      return true;
+    }());
+    return Future.value(false);
+  };
+
   /// 注册一个全局的打开url方法, 一般是跳转到web页面
   /// 打开url
-  GlobalOpenUrlFn? openUrlFn = (context, url) {
+  ///
+  /// ```
+  /// GlobalConfig.def.openUrlFn = (context, url) {
+  ///   context?.openSingleWebView(url);
+  ///   return Future.value(true);
+  /// };
+  /// ```
+  GlobalOpenUrlFn? openUrlFn = (context, url, meta) {
     assert(() {
-      l.w("企图打开url:$url from:$context");
+      l.w("企图打开url:$url from:$context meta:$meta");
       return true;
     }());
     return Future.value(false);
@@ -601,6 +650,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     BuildContext? globalAppContext,
     ThemeData? globalThemeData,
     GlobalTheme? globalTheme,
+    GlobalOpenUrlFn? openFileFn,
     GlobalOpenUrlFn? openUrlFn,
     GlobalShareDataFn? shareDataFn,
     GlobalWriteFileFn? writeFileFn,
@@ -617,6 +667,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     )
       ..globalThemeData = globalThemeData ?? this.globalThemeData
       ..globalTheme = globalTheme ?? this.globalTheme
+      ..openFileFn = openFileFn ?? this.openFileFn
       ..openUrlFn = openUrlFn ?? this.openUrlFn
       ..shareDataFn = shareDataFn ?? this.shareDataFn
       ..writeFileFn = writeFileFn ?? this.writeFileFn
