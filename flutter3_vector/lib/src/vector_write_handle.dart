@@ -907,8 +907,11 @@ extension VectorPathEx on Path {
     @dp double? pathStep,
     @mm double? tolerance,
     SvgWriteHandle? handle,
+    //--
+    int? digits,
   }) {
     handle ??= SvgWriteHandle();
+    handle.digits = digits ?? handle.digits;
     return toVectorString(
       handle,
       pathStep: pathStep,
@@ -925,8 +928,12 @@ extension VectorPathEx on Path {
     int? stepInterval /*步长枚举延迟*/,
     //--
     SvgWriteHandle? handle,
+    //--
+    int? digits,
   }) async {
     handle ??= SvgWriteHandle();
+    handle.digits = digits ?? handle.digits;
+
     return toVectorStringAsync(
       handle,
       pathStep: pathStep,

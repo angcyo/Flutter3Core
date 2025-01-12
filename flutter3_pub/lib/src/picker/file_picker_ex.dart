@@ -49,6 +49,7 @@ Future<PlatformFile?> pickFile() async {
 /// [withData] 是否返回数据,而非文件. 在web端时需要.
 /// [withReadStream] 是否返回文件流
 /// [readSequential] 可以选择在 Web 上设置以在导入过程中保持导入文件顺序。
+@allPlatformFlag
 Future<FilePickerResult?> pickFiles({
   FileType type = FileType.any,
   bool allowMultiple = false,
@@ -95,6 +96,8 @@ Future<FilePickerResult?> pickFiles({
 
 /// 选择文件夹路径
 /// initialDirectory 可以选择设置为绝对路径，以指定对话框的打开位置。仅在 Linux 和 macOS 上受支持
+/// https://pub.dev/packages/file_picker
+@PlatformFlag("Android iOS Linux macOS Windows")
 Future<String?> pickDirectoryPath({
   String? dialogTitle,
   bool lockParentWindow = false,
@@ -115,6 +118,11 @@ Future<String?> pickDirectoryPath({
 
 /// 调用平台的对话框保存文件
 /// 此方法仅适用于桌面平台（Linux、macOS 和 Windows）。
+///
+/// @return 待保存文件的路径(文件可能不存在)
+///
+/// https://pub.dev/packages/file_picker
+@PlatformFlag("Android iOS Linux macOS Windows")
 Future<String?> saveFile({
   String? dialogTitle,
   String? fileName,

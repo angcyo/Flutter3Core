@@ -280,7 +280,11 @@ class SvgBuilder {
   }) {
     if (path != null) {
       writeSvgPath(
-        path.toSvgPathString(pathStep: pathStep, tolerance: tolerance),
+        path.toSvgPathString(
+          pathStep: pathStep,
+          tolerance: tolerance,
+          digits: digits,
+        ),
         fillRule: path.fillType == PathFillType.evenOdd ? 'evenodd' : 'nonzero',
         fill: fill,
         fillColor: fillColor,
@@ -322,6 +326,7 @@ class SvgBuilder {
         tolerance: tolerance,
         contourInterval: contourInterval,
         stepInterval: stepInterval,
+        digits: digits,
       );
       writeSvgPath(
         svgPath,
