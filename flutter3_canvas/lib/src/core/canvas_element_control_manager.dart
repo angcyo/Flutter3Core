@@ -97,18 +97,27 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 选中元素的数量
   int get selectedElementCount => elementSelectComponent.children?.length ?? 0;
 
-  /// 是否选中了一组元素
+  /// 是否选中了一组元素, 多个直接子元素/或者单个[ElementGroupPainter]元素
   bool get isSelectedGroupElements =>
       elementSelectComponent.children?.let((it) =>
           it.length > 1 ||
           (it.length == 1 && it.first is ElementGroupPainter)) ==
       true;
 
-  /// 是否只选中了[ElementGroupPainter]元素
+  /// 是否可以进行组合操作
+  /// [CanvasElementManager.groupElement]
+  bool get canGroupElements => selectedElementCount > 1;
+
+  /// 是否只选中了[ElementGroupPainter]元素, 此时可以进行解组操作
+  /// [CanvasElementManager.ungroupElement]
   bool get isSelectedGroupPainter =>
       elementSelectComponent.children
           ?.let((it) => it.length == 1 && it.first is ElementGroupPainter) ==
       true;
+
+  /// 是否可以进行解组操作
+  /// [CanvasElementManager.ungroupElement]
+  bool get canUngroupElements => isSelectedGroupPainter;
 
   /// 是否正在移动元素, 也有可能在双击
   bool get isTranslateElement =>
@@ -616,7 +625,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 移除选中的所有元素, 并且清空选择
   @api
   @supportUndo
-  void removeSelectedElement({
+  bool removeSelectedElement({
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (isSelectedElement) {
@@ -624,7 +633,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       //elementSelectComponent.resetChildren(null, enableResetElementAngle);
       elementSelectComponent.resetSelectElement(null, selectType);
       canvasDelegate.canvasElementManager.removeElementList(list);
+      return true;
     }
+    return false;
   }
 
   /// 复制选中的所有元素

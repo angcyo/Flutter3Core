@@ -436,7 +436,10 @@ extension DialogExtension on BuildContext {
   ///
   /// [_PopupMenuDefaultsM3]
   /// [menuItemPadding]
-  Future<T?> showWidgetMenu<T>(
+  ///
+  /// [showMenus]
+  /// [showWidgetMenu]
+  Future<T?> showMenus<T>(
     List<Widget>? menus /*辅助生成items*/, {
     List<PopupMenuEntry<T>>? items /*菜单项*/,
     //--
@@ -533,7 +536,7 @@ extension DialogExtension on BuildContext {
       );
     }
 
-    /*return showMenu<T?>(
+    return showMenu<T?>(
       context: this,
       elevation: elevation,
       shadowColor: shadowColor,
@@ -550,15 +553,93 @@ extension DialogExtension on BuildContext {
       popUpAnimationStyle: popUpAnimationStyle,
       routeSettings: routeSettings,
       requestFocus: requestFocus,
-    );*/
-    return pushRoute(
-      PopupMenuRoute(
-        menu: GradientButton(
-          child: "child".text(),
-          onTap: () {
-            toastInfo("click ${nowTimeString()}");
-          },
+    );
+  }
+
+  /// [showMenus]
+  /// [showWidgetMenu]
+  Future<T?> showWidgetMenu<T>(
+    Widget menu, {
+    PopupMenuPosition? menuPosition /*PopupMenuPosition.over*/,
+    //--
+    Offset? position /*强行指定在overlay中的位置, 此位置会自动偏移anchor的左上角偏移*/,
+    //--
+    Offset offset = Offset.zero /*相对锚点左上角额外偏移的量*/,
+    //--
+    double? elevation = kH,
+    Color? color /*菜单的背景颜色*/,
+    Color? shadowColor = Colors.black /*kShadowColor*/,
+    Color? surfaceTintColor/*= Colors.transparent*/,
+    ShapeBorder? shape = const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(4.0))),
+    EdgeInsets? menuPadding = const EdgeInsets.symmetric(vertical: 8.0),
+    BoxConstraints? constraints,
+    Clip clipBehavior = Clip.none,
+    //--
+    bool useRootNavigator = false,
+    AnimationStyle? popUpAnimationStyle,
+    RouteSettings? routeSettings,
+    bool? requestFocus,
+  }) async {
+    if (!mounted) {
+      assert(() {
+        l.w('context is not mounted');
+        return true;
+      }());
+      return null;
+    }
+
+    //anchor
+    final anchor = findRenderObject();
+    if (anchor is! RenderBox) {
+      assert(() {
+        l.w('anchor is null');
+        return true;
+      }());
+      return null;
+    }
+
+    //用来定位
+    final RenderBox overlay = Navigator.of(
+      this,
+      rootNavigator: useRootNavigator,
+    ).overlay!.context.findRenderObject()! as RenderBox;
+
+    //位置信息
+    final RelativeRect relativePosition;
+    if (position == null) {
+      final PopupMenuPosition popupMenuPosition =
+          menuPosition ?? PopupMenuPosition.over;
+      switch (popupMenuPosition) {
+        case PopupMenuPosition.over:
+          offset = offset;
+        case PopupMenuPosition.under:
+          offset = Offset(0.0, anchor.size.height) + offset;
+      }
+      relativePosition = RelativeRect.fromRect(
+        Rect.fromPoints(
+          anchor.localToGlobal(offset, ancestor: overlay),
+          anchor.localToGlobal(
+            anchor.size.bottomRight(Offset.zero) + offset,
+            ancestor: overlay,
+          ),
         ),
+        Offset.zero & overlay.size,
+      );
+    } else {
+      final anchorLT = anchor.localToGlobal(offset, ancestor: overlay);
+      relativePosition = RelativeRect.fromRect(
+        Rect.fromPoints(
+          anchorLT + position + offset,
+          anchorLT + position + offset,
+        ),
+        Offset.zero & overlay.size,
+      );
+    }
+
+    return pushRoute<T>(
+      PopupMenuRoute(
+        menu: menu,
         position: relativePosition,
         clipBehavior: clipBehavior,
         popUpAnimationStyle: popUpAnimationStyle,

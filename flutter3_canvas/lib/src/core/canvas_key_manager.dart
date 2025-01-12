@@ -8,7 +8,9 @@ part of '../../flutter3_canvas.dart';
 ///
 /// [CanvasDelegate] 的成员
 ///
-class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
+class CanvasKeyManager
+    with DiagnosticableTreeMixin, DiagnosticsMixin, CanvasDelegateManagerMixin {
+  @override
   final CanvasDelegate canvasDelegate;
 
   CanvasKeyManager(this.canvasDelegate);
@@ -22,7 +24,7 @@ class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void registerKeyEventHandler(CanvasRenderBox renderObject) {
     //空格键, 开启拖拽
     renderObject.registerKeyEvent([
-      [canvasDelegate.canvasStyle.dragKeyboardKey],
+      [canvasStyle.dragKeyboardKey],
     ], (info) {
       renderObject.markNeedsPaint();
       return true;
@@ -34,8 +36,7 @@ class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         LogicalKeyboardKey.delete,
       ],
     ], (info) {
-      canvasDelegate.canvasElementManager.canvasElementControlManager
-          .removeSelectedElement();
+      deleteSelectedElement();
       return true;
     });
 
@@ -55,11 +56,10 @@ class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       ],
     ], (info) {
       final canvasElementControlManager =
-          canvasDelegate.canvasElementManager.canvasElementControlManager;
+          canvasElementManager.canvasElementControlManager;
       if (canvasElementControlManager.isSelectedElement) {
         renderObject.requestFocus();
-        final offset =
-            canvasDelegate.canvasStyle.canvasArrowAdjustOffset.toOffsetDp();
+        final offset = canvasStyle.canvasArrowAdjustOffset.toOffsetDp();
         final dx = info.keys.contains(LogicalKeyboardKey.arrowLeft)
             ? -offset.dx
             : info.keys.contains(LogicalKeyboardKey.arrowRight)
@@ -71,7 +71,7 @@ class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
                 ? offset.dy
                 : 0.0;
         canvasElementControlManager.translateElement(
-          canvasDelegate.canvasElementManager.selectComponent,
+          canvasElementManager.selectComponent,
           dx: dx,
           dy: dy,
         );
@@ -94,7 +94,7 @@ class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         ],
       ],
     ], (info) {
-      canvasDelegate.canvasUndoManager.undo();
+      undo();
       return true;
     });
 
@@ -114,7 +114,7 @@ class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         ],
       ],
     ], (info) {
-      canvasDelegate.canvasUndoManager.redo();
+      redo();
       return true;
     });
 
@@ -133,8 +133,7 @@ class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         ],
       ],
     ], (info) {
-      _copyElementList = canvasDelegate.canvasElementManager
-          .copySelectedElement(autoAddToCanvas: false);
+      copySelectedElement();
       return true;
     });
 
@@ -172,23 +171,180 @@ class CanvasKeyManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         ],
       ],
     ], (info) {
-      canvasDelegate.canvasElementManager.selectAllElement();
+      selectAllElement();
+      return true;
+    });
+
+    //放大画布
+    renderObject.registerKeyEvent([
+      if (isMacOs) ...[
+        [
+          LogicalKeyboardKey.meta,
+          LogicalKeyboardKey.equal,
+        ],
+      ],
+      if (!isMacOs) ...[
+        [
+          LogicalKeyboardKey.control,
+          LogicalKeyboardKey.equal,
+        ],
+      ],
+    ], (info) {
+      zoomIn();
+      return true;
+    });
+
+    /// 缩小画布
+    renderObject.registerKeyEvent([
+      if (isMacOs) ...[
+        [
+          LogicalKeyboardKey.meta,
+          LogicalKeyboardKey.minus,
+        ],
+      ],
+      if (!isMacOs) ...[
+        [
+          LogicalKeyboardKey.control,
+          LogicalKeyboardKey.minus,
+        ],
+      ],
+    ], (info) {
+      zoomOut();
       return true;
     });
   }
 
+  //--
+
+  /// 撤销
+  @api
+  bool undo() {
+    return canvasUndoManager.undo();
+  }
+
+  /// 重做
+  @api
+  bool redo() {
+    return canvasUndoManager.redo();
+  }
+
+  //--
+
+  /// 复制选中的元素
+  @api
+  bool copySelectedElement() {
+    _copyElementList =
+        canvasElementManager.copySelectedElement(autoAddToCanvas: false);
+    return !isNil(_copyElementList);
+  }
+
+  /// 复制元素列表
+  @api
+  List<ElementPainter>? copyElementList(List<ElementPainter>? elementList) {
+    return canvasElementManager.copyElementList(
+      elementList,
+      autoAddToCanvas: false,
+    );
+  }
+
   /// 粘贴选中的元素
+  @api
   bool pasteSelectedElement() {
     if (!isNil(_copyElementList)) {
       //为了下一次继续粘贴, 这里需要重新复制一份
       final elementList = _copyElementList!.copyElementList;
-      canvasDelegate.canvasElementManager.addElementList(elementList,
+      canvasElementManager.addElementList(elementList,
           selected: true,
           followPainter: true,
-          offset: canvasDelegate.canvasStyle.canvasCopyOffset.toOffsetDp());
+          offset: canvasStyle.canvasCopyOffset.toOffsetDp());
       _copyElementList = elementList;
       return true;
     }
     return false;
   }
+
+  /// 选择所有元素
+  @api
+  bool selectAllElement() {
+    canvasElementManager.selectAllElement();
+    return true;
+  }
+
+  /// 删除选中的元素
+  @api
+  bool deleteSelectedElement() {
+    return canvasElementManager.canvasElementControlManager
+        .removeSelectedElement();
+  }
+
+  /// 删除元素
+  @api
+  @supportUndo
+  bool deleteElementList(
+    List<ElementPainter>? list, {
+    UndoType undoType = UndoType.normal,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    return canvasElementManager.removeElementList(
+      list,
+      undoType: undoType,
+      selectType: selectType,
+    );
+  }
+
+  //--
+
+  /// 放大画布
+  @api
+  void zoomIn({
+    @viewCoordinate Offset? anchorPosition,
+    bool anim = true,
+  }) {
+    final canvasScaleComponent = canvasEventManager.canvasScaleComponent;
+    canvasViewBox.scaleBy(
+      sx: canvasScaleComponent.doubleScaleValue,
+      sy: canvasScaleComponent.doubleScaleValue,
+      pivot: anchorPosition != null
+          ? canvasViewBox.toScenePoint(anchorPosition)
+          : canvasViewBox.canvasSceneVisibleBounds.center,
+      anim: anim,
+    );
+  }
+
+  /// 缩小画布
+  @api
+  void zoomOut({
+    @viewCoordinate Offset? anchorPosition,
+    bool anim = true,
+  }) {
+    final canvasScaleComponent = canvasEventManager.canvasScaleComponent;
+    canvasViewBox.scaleBy(
+      sx: canvasScaleComponent.doubleScaleReverseValue,
+      sy: canvasScaleComponent.doubleScaleReverseValue,
+      pivot: anchorPosition != null
+          ? canvasViewBox.toScenePoint(anchorPosition)
+          : canvasViewBox.canvasSceneVisibleBounds.center,
+      anim: anim,
+    );
+  }
+
+  //--
+
+  /// 组合选中元素
+  @api
+  bool groupSelectedElement() {
+    return canvasElementManager.groupElement(
+      canvasElementManager.elementSelectComponent?.children,
+    );
+  }
+
+  /// 解组选中的元素
+  @api
+  bool ungroupSelectedElement() {
+    return canvasElementManager.ungroupElement(
+      canvasElementManager.selectedElement,
+    );
+  }
+
+//--
 }

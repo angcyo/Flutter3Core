@@ -192,11 +192,18 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
       if (event.isMouseRightUp) {
         //鼠标右键点击, 显示菜单
-        final menus = canvasDelegate.canvasMenuManager.buildMenuWidgets(
+        final menus = canvasDelegate.canvasMenuManager.buildMenus(
           anchorPosition: event.localPosition,
         );
         if (!isNil(menus)) {
-          canvasDelegate.showMenu(menus, position: event.localPosition);
+          canvasDelegate.showMenus(menus, position: event.localPosition);
+        } else {
+          final menu = canvasDelegate.canvasMenuManager.buildMenuWidget(
+            anchorPosition: event.localPosition,
+          );
+          if (!isNil(menu)) {
+            canvasDelegate.showWidgetMenu(menu!, position: event.localPosition);
+          }
         }
       }
     }
@@ -607,13 +614,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [CanvasDelegate.removeElementList]支持删除组内元素
   @api
   @supportUndo
-  void removeElementList(
+  bool removeElementList(
     List<ElementPainter>? list, {
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (list == null || isNullOrEmpty(list)) {
-      return;
+      return false;
     }
     final old = elements.clone();
     //final op = elements.removeAll(list);
@@ -661,6 +668,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         },
       ));
     }
+    return true;
   }
 
   /// 重置元素列表
@@ -1202,7 +1210,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 组合元素
   @api
   @supportUndo
-  void groupElement(
+  bool groupElement(
     List<ElementPainter>? elements, {
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
@@ -1212,7 +1220,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         l.d('不满足组合条件');
         return true;
       }());
-      return;
+      return false;
     }
 
     //删除原来的元素
@@ -1235,12 +1243,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     //选中组合元素
     resetSelectedElementList([group], selectType: selectType);
+
+    return true;
   }
 
   /// 解组元素
   @api
   @supportUndo
-  void ungroupElement(
+  bool ungroupElement(
     ElementPainter? group, {
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
@@ -1250,7 +1260,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         l.d('不是[ElementGroupPainter]元素,不能解组');
         return true;
       }());
-      return;
+      return false;
     }
 
     final children = group.children;
@@ -1259,7 +1269,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         l.d('不满足解组条件');
         return true;
       }());
-      return;
+      return false;
     }
 
     final newList = elements.clone(true);
@@ -1283,6 +1293,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     //选中组合元素
     resetSelectedElementList(children, selectType: selectType);
+
+    return true;
   }
 
   /// 对齐组内元素

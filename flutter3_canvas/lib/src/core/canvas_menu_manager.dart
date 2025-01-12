@@ -8,84 +8,124 @@ part of '../../flutter3_canvas.dart';
 ///
 /// [CanvasDelegate] 的成员
 ///
-class CanvasMenuManager with DiagnosticableTreeMixin, DiagnosticsMixin {
+class CanvasMenuManager
+    with DiagnosticableTreeMixin, DiagnosticsMixin, CanvasDelegateManagerMixin {
+  @override
   final CanvasDelegate canvasDelegate;
-
-  CanvasKeyManager get canvasKeyManager => canvasDelegate.canvasKeyManager;
-
-  CanvasEventManager get canvasEventManager =>
-      canvasDelegate.canvasEventManager;
-
-  CanvasViewBox get canvasViewBox => canvasDelegate.canvasViewBox;
-
-  /// 元素上下文
-  BuildContext? get context => canvasDelegate.delegateContext;
 
   CanvasMenuManager(this.canvasDelegate);
 
-  /// 返回元素是否为空
-  bool get isEmptyElement =>
-      canvasDelegate.canvasElementManager.elements.isEmpty;
-
-  /// 返回是否选中元素
-  bool get isSelectedElement =>
-      canvasDelegate.canvasElementManager.isSelectedElement;
-
-  /// 返回选中的元素
-  /// @return
-  /// - [ElementPainter]
-  /// - [ElementSelectComponent]
-  ElementPainter? get selectedElement =>
-      canvasDelegate.canvasElementManager.selectedElement;
-
   /// 构建菜单的Widget, 返回null则不显示菜单
   ///
-  /// [CanvasDelegate.showMenu]中显示这些菜单
+  /// [CanvasDelegate.showMenus]中显示这些菜单
   ///
   /// [CanvasElementManager.handleElementEvent]驱动
   @callPoint
-  List<Widget>? buildMenuWidgets({
+  List<Widget>? buildMenus({
+    @viewCoordinate Offset? anchorPosition,
+  }) =>
+      null;
+
+  /// [CanvasDelegate.showWidgetMenu]中显示这些菜单
+  /// [CanvasElementManager.handleElementEvent]驱动
+  @callPoint
+  Widget? buildMenuWidget({
     @viewCoordinate Offset? anchorPosition,
   }) {
+    if (isSelectedElement) {
+      return _buildElementMenuWidget(anchorPosition: anchorPosition);
+    } else {
+      return _buildCanvasMenuWidget(anchorPosition: anchorPosition);
+    }
+  }
+
+  //--
+
+  /// 构建画布相关菜单, 未选择元素时的菜单
+  Widget? _buildCanvasMenuWidget({
+    @viewCoordinate Offset? anchorPosition,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    final enableSelect = !isEmptyElement;
+    final enablePaste = !isNil(canvasKeyManager._copyElementList);
+    //外部菜单
+    final otherMenus = canvasDelegate.dispatchBuildCanvasMenu();
     return [
-      "粘贴".text().click(() {
+      "粘贴"
+          .text(textColor: enablePaste ? null : globalTheme.disableTextColor)
+          .menuStyleItem()
+          .ink(() {
         canvasKeyManager.pasteSelectedElement();
+      }, enable: enablePaste).popMenu(enable: enablePaste),
+      "全选"
+          .text(textColor: enableSelect ? null : globalTheme.disableTextColor)
+          .menuStyleItem()
+          .ink(() {
+        canvasKeyManager.selectAllElement();
+      }, enable: enableSelect).popMenu(enable: enableSelect),
+      "放大".text().menuStyleItem().ink(() {
+        canvasKeyManager.zoomIn(anchorPosition: anchorPosition);
       }).popMenu(),
-      "全选".text().click(() {
-        canvasDelegate.canvasElementManager.selectAllElement();
+      "缩小".text().menuStyleItem().ink(() {
+        canvasKeyManager.zoomOut(anchorPosition: anchorPosition);
       }).popMenu(),
-      "放大"
-          .text()
-          .click(() {
-            final canvasScaleComponent =
-                canvasEventManager.canvasScaleComponent;
-            canvasViewBox.scaleBy(
-              sx: canvasScaleComponent.doubleScaleValue,
-              sy: canvasScaleComponent.doubleScaleValue,
-              pivot: anchorPosition != null
-                  ? canvasViewBox.toScenePoint(anchorPosition)
-                  : canvasViewBox.canvasSceneVisibleBounds.center,
-              anim: true,
-            );
-          })
-          .popMenu()
-          .backgroundColor(Colors.purpleAccent),
-      "缩小"
-          .text()
-          .click(() {
-            final canvasScaleComponent =
-                canvasEventManager.canvasScaleComponent;
-            canvasViewBox.scaleBy(
-              sx: canvasScaleComponent.doubleScaleReverseValue,
-              sy: canvasScaleComponent.doubleScaleReverseValue,
-              pivot: anchorPosition != null
-                  ? canvasViewBox.toScenePoint(anchorPosition)
-                  : canvasViewBox.canvasSceneVisibleBounds.center,
-              anim: true,
-            );
-          })
-          .popMenu()
-          .backgroundColor(Colors.purpleAccent),
-    ];
+      //--
+      if (otherMenus.isNotEmpty) hLine(context).size(width: kMenuMinWidth),
+      ...otherMenus,
+    ].scroll(
+      axis: Axis.vertical,
+    )! /*.textStyle(TextStyle(color: Colors.white))*/;
+  }
+
+  /// 构建元素相关菜单, 选择了元素时的菜单
+  Widget? _buildElementMenuWidget({
+    @viewCoordinate Offset? anchorPosition,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+
+    final enableSelect = !isEmptyElement;
+    final enablePaste = !isNil(canvasKeyManager._copyElementList);
+
+    final enableGroup =
+        canvasElementManager.canvasElementControlManager.canGroupElements;
+    final enableUngroup =
+        canvasElementManager.canvasElementControlManager.canUngroupElements;
+
+    //外部菜单
+    final otherMenus = canvasDelegate.dispatchBuildCanvasMenu();
+    return [
+      //--
+      "复制".text().menuStyleItem().ink(() {
+        canvasKeyManager.copySelectedElement();
+      }).popMenu(),
+      "粘贴"
+          .text(textColor: enablePaste ? null : globalTheme.disableTextColor)
+          .menuStyleItem()
+          .ink(() {
+        canvasKeyManager.pasteSelectedElement();
+      }, enable: enablePaste).popMenu(enable: enablePaste),
+      "删除".text().menuStyleItem().ink(() {
+        canvasKeyManager.deleteSelectedElement();
+      }).popMenu(),
+      //--
+      hLine(context).size(width: kMenuMinWidth),
+      "组合"
+          .text(textColor: enableGroup ? null : globalTheme.disableTextColor)
+          .menuStyleItem()
+          .ink(() {
+        canvasKeyManager.groupSelectedElement();
+      }, enable: enableGroup).popMenu(enable: enableGroup),
+      "取消组合"
+          .text(textColor: enableUngroup ? null : globalTheme.disableTextColor)
+          .menuStyleItem()
+          .ink(() {
+        canvasKeyManager.ungroupSelectedElement();
+      }, enable: enableUngroup).popMenu(enable: enableUngroup),
+      //--
+      if (otherMenus.isNotEmpty) hLine(context).size(width: kMenuMinWidth),
+      ...otherMenus,
+    ].scroll(
+      axis: Axis.vertical,
+    )!;
   }
 }

@@ -578,8 +578,9 @@ class CanvasListener {
 
   /// [CanvasDelegate.dispatchTouchDetectorElement]
   final void Function(
-          List<ElementPainter> elementList, TouchDetectorType touchType)?
-      onTouchDetectorElement;
+    List<ElementPainter> elementList,
+    TouchDetectorType touchType,
+  )? onTouchDetectorElement;
 
   /// [CanvasDelegate.dispatchTranslateElement]
   final void Function(
@@ -640,6 +641,15 @@ class CanvasListener {
   final void Function(CanvasDelegate delegate, ElementPainter painter)?
       onElementDetachToCanvasDelegate;
 
+  /// [CanvasDelegate.dispatchBuildCanvasMenu]
+  /// [onCreateElementMenuAction]
+  /// [onBuildCanvasMenu]
+  final void Function(
+    CanvasDelegate delegate,
+    CanvasMenuManager manager,
+    List<Widget> menus,
+  )? onBuildCanvasMenu;
+
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
@@ -668,5 +678,6 @@ class CanvasListener {
     this.onCanvasSelectedStateChanged,
     this.onElementAttachToCanvasDelegate,
     this.onElementDetachToCanvasDelegate,
+    this.onBuildCanvasMenu,
   });
 }

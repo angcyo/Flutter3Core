@@ -6,6 +6,9 @@ part of '../dialog.dart';
 ///
 /// 在菜单路由中, 点击过后, 自动弹出菜单, 并且不影响child的事件响应
 class PopMenuWidget extends StatefulWidget {
+  final bool enable;
+
+  //--
   final Widget child;
   final Object? result;
   final bool rootNavigator;
@@ -13,6 +16,7 @@ class PopMenuWidget extends StatefulWidget {
   const PopMenuWidget(
     this.child, {
     super.key,
+    this.enable = true,
     this.result,
     this.rootNavigator = false,
   });
@@ -28,7 +32,9 @@ class _PopMenuWidgetState extends State<PopMenuWidget> {
   void initState() {
     tapRecognizer.onTap = () {
       //debugger();
-      context.popMenu(widget.result, widget.rootNavigator, false);
+      if (widget.enable) {
+        context.popMenu(widget.result, widget.rootNavigator, false);
+      }
     };
     super.initState();
   }
@@ -75,13 +81,48 @@ class _PopMenuWidgetState extends State<PopMenuWidget> {
 }
 
 extension PopMenuWidgetEx on Widget {
+  /// 菜单样式item
+  Widget menuStyleItem({
+    //--
+    double? all,
+    double? vertical,
+    double? horizontal,
+    double left = kX,
+    double top = kH,
+    double right = kX,
+    double bottom = kH,
+    //--
+    double? minWidth = kMenuMinWidth,
+    double? minHeight,
+    double? maxWidth,
+    double? maxHeight,
+  }) =>
+      paddingOnly(
+        all: all,
+        vertical: vertical,
+        horizontal: horizontal,
+        left: left,
+        top: top,
+        right: right,
+        bottom: bottom,
+      ).constrainedMin(
+        minWidth: minWidth,
+        minHeight: minHeight,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+      );
+
   /// [PopMenuWidget]
   Widget popMenu({
+    //--
+    bool enable = true,
+    //--
     Object? result,
     bool rootNavigator = false,
   }) {
     return PopMenuWidget(
       this,
+      enable: enable,
       result: result,
       rootNavigator: rootNavigator,
     );

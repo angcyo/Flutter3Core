@@ -88,6 +88,7 @@ const kContentPadding = EdgeInsets.only(
 const kLabelMinWidth = 80.0;
 const kNumberMinWidth = 50.0;
 const kNumberMinHeight = 26.0;
+const kMenuMinWidth = 160.0;
 
 /// label默认的约束
 const kLabelConstraints = BoxConstraints(

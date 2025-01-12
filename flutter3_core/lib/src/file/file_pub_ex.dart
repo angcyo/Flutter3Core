@@ -24,7 +24,7 @@ Future<UiImage?> saveScreenCapture([
   double pixelRatio = 1.0,
 ]) async {
   final path =
-  (filePath ?? await cacheFilePath("ScreenCapture${nowTimestamp()}.png"));
+      (filePath ?? await cacheFilePath("ScreenCapture${nowTimestamp()}.png"));
   final image = await captureScreenImage(context, pixelRatio);
   await image?.saveToFile(path.file());
   assert(() {
@@ -57,9 +57,11 @@ Future<Directory> fileDirectory() async {
         //l.e(e);
       }
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS) {
+        defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.windows) {
       try {
         // /data/user/0/com.angcyo.flutter3_abc/files
+        //C:\Users\Administrator\AppData\Roaming\com.angcyo.flutter3.desktop.abc\flutter3_desktop_abc_pn
         directory = await getApplicationSupportDirectory();
       } catch (e) {
         assert(() {
@@ -104,6 +106,17 @@ Future<Directory> cacheDirectory() async {
       try {
         // /data/user/0/com.angcyo.flutter3_abc/cache
         directory = await getTemporaryDirectory();
+      } catch (e) {
+        assert(() {
+          l.e(e);
+          return true;
+        }());
+        //l.e(e);
+      }
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      try {
+        //C:\Users\Administrator\AppData\Roaming\com.angcyo.flutter3.desktop.abc\flutter3_desktop_abc_pn
+        directory = await getApplicationSupportDirectory();
       } catch (e) {
         assert(() {
           l.e(e);
@@ -182,7 +195,8 @@ extension FilePubEx on FileSystemEntity {
   /// [newName] 新文件名
   /// [overwrite] 是否覆盖同名文件
   /// [throwError] 是否抛出异常
-  Future<bool> renameTo(String newName, {
+  Future<bool> renameTo(
+    String newName, {
     bool overwrite = false,
     bool throwError = false,
   }) async {
@@ -218,7 +232,8 @@ extension FilePubEx on FileSystemEntity {
   /// [newName] 新文件名
   /// [overwrite] 是否覆盖同名文件
   /// [throwError] 是否抛出异常
-  bool renameToSync(String newName, {
+  bool renameToSync(
+    String newName, {
     bool overwrite = false,
     bool throwError = false,
   }) {
@@ -314,7 +329,7 @@ extension FileStringPubEx on String {
     bool useCacheFolder = false,
   ]) async {
     final folderPath =
-    useCacheFolder ? (await cacheFolder()).path : (await fileFolder()).path;
+        useCacheFolder ? (await cacheFolder()).path : (await fileFolder()).path;
     if (subFolder == null) {
       subFolder = folderPath;
     } else {
@@ -333,19 +348,19 @@ extension FileStringPubEx on String {
   /// https://pub.dev/packages/path
   String join(String part1,
       [String? part2,
-        String? part3,
-        String? part4,
-        String? part5,
-        String? part6,
-        String? part7,
-        String? part8,
-        String? part9,
-        String? part10,
-        String? part11,
-        String? part12,
-        String? part13,
-        String? part14,
-        String? part15]) {
+      String? part3,
+      String? part4,
+      String? part5,
+      String? part6,
+      String? part7,
+      String? part8,
+      String? part9,
+      String? part10,
+      String? part11,
+      String? part12,
+      String? part13,
+      String? part14,
+      String? part15]) {
     return p.join(
       this,
       part1,
@@ -375,7 +390,8 @@ extension FileStringPubEx on String {
   Directory directory({
     String? parentPath,
     String? childPath,
-  }) => Directory(p.join(parentPath ?? '', this, childPath ?? ''));
+  }) =>
+      Directory(p.join(parentPath ?? '', this, childPath ?? ''));
 
   /// 获取一个自身路径对应的文件对象
   /// 在web环境下, 会抛出异常
@@ -494,7 +510,8 @@ Future<Directory> fileFolder([
 /// File: '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/transfer/2855283474'
 /// ```
 /// [fileFolder]
-Future<String> filePath(String fileName, [
+Future<String> filePath(
+  String fileName, [
   String? part1,
   String? part2,
   String? part3,
@@ -511,22 +528,8 @@ Future<String> filePath(String fileName, [
   String? part14,
   String? part15,
 ]) async {
-  final folder = await fileFolder(
-      part1,
-      part2,
-      part3,
-      part4,
-      part5,
-      part6,
-      part7,
-      part8,
-      part9,
-      part10,
-      part11,
-      part12,
-      part13,
-      part14,
-      part15);
+  final folder = await fileFolder(part1, part2, part3, part4, part5, part6,
+      part7, part8, part9, part10, part11, part12, part13, part14, part15);
   return p.join(folder.path, fileName);
 }
 
@@ -575,7 +578,8 @@ Future<Directory> cacheFolder([
 
 /// 快速获取一个缓存文件路径, 会自动创建文件夹.
 /// [cacheFolder]
-Future<String> cacheFilePath(String fileName, [
+Future<String> cacheFilePath(
+  String fileName, [
   String? part1,
   String? part2,
   String? part3,
@@ -592,21 +596,7 @@ Future<String> cacheFilePath(String fileName, [
   String? part14,
   String? part15,
 ]) async {
-  final folder = await cacheFolder(
-      part1,
-      part2,
-      part3,
-      part4,
-      part5,
-      part6,
-      part7,
-      part8,
-      part9,
-      part10,
-      part11,
-      part12,
-      part13,
-      part14,
-      part15);
+  final folder = await cacheFolder(part1, part2, part3, part4, part5, part6,
+      part7, part8, part9, part10, part11, part12, part13, part14, part15);
   return p.join(folder.path, fileName);
 }

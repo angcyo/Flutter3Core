@@ -6,7 +6,7 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 竖线
 Line verticalLine(
-  BuildContext context, {
+  BuildContext? context, {
   Color? color,
   double? indent,
   double? endIndent,
@@ -19,9 +19,23 @@ Line verticalLine(
       endIndent: endIndent ?? indent,
     );
 
+/// [verticalLine]
+Line vLine(
+  BuildContext? context, {
+  Color? color,
+  double? indent,
+  double? endIndent,
+}) =>
+    verticalLine(
+      context,
+      color: color,
+      indent: indent,
+      endIndent: endIndent,
+    );
+
 /// 横线
 Line horizontalLine(
-  BuildContext context, {
+  BuildContext? context, {
   Color? color,
   double? indent,
   double? endIndent,
@@ -34,9 +48,23 @@ Line horizontalLine(
       endIndent: endIndent ?? indent,
     );
 
+/// [horizontalLine]
+Line hLine(
+  BuildContext? context, {
+  Color? color,
+  double? indent,
+  double? endIndent,
+}) =>
+    horizontalLine(
+      context,
+      color: color,
+      indent: indent,
+      endIndent: endIndent,
+    );
+
 /// 线
 Widget line(
-  BuildContext context, {
+  BuildContext? context, {
   Axis axis = Axis.vertical,
   double thickness = 1,
   double lineSize = 24,
@@ -44,8 +72,9 @@ Widget line(
 }) {
   final globalTheme = GlobalTheme.of(context);
   //color ??= context.isThemeDark ? const Color(0xff595450) : const Color(0xffececec);
-  color ??=
-      context.isThemeDark ? globalTheme.lineDarkColor : globalTheme.lineColor;
+  color ??= context?.isThemeDark == true
+      ? globalTheme.lineDarkColor
+      : globalTheme.lineColor;
   final w = axis == Axis.vertical ? thickness : lineSize;
   final h = axis == Axis.vertical ? lineSize : thickness;
   return DecoratedBox(decoration: fillDecoration(color: color))

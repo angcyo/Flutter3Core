@@ -718,8 +718,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 在画布中的指定位置, 显示菜单
   /// 比如鼠标右键弹起, 显示对应的菜单
+  /// [showMenus]
+  /// [showWidgetMenu]
   @api
-  Future<T?> showMenu<T>(
+  Future<T?> showMenus<T>(
     List<Widget>? menus, {
     @viewCoordinate Offset? position,
   }) async {
@@ -731,14 +733,36 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       }());
       return null;
     }
-    return context.showWidgetMenu<T>(
+    return context.showMenus<T>(
       menus,
       position: position,
     );
   }
 
+  /// [showMenus]
+  /// [showWidgetMenu]
+  @api
+  Future<T?> showWidgetMenu<T>(
+    Widget menu, {
+    @viewCoordinate Offset? position,
+  }) async {
+    final context = delegateContext;
+    if (context == null) {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
+      return null;
+    }
+    return context.showWidgetMenu(
+      menu,
+      position: position,
+      /*color: Color(0xff232327),*/
+    );
+  }
+
   /// 隐藏菜单
-  /// [showMenu]
+  /// [showMenus]
   @api
   void hideMenu<T extends Object?>([T? result]) {
     delegateContext?.popMenu(result);
@@ -1127,6 +1151,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     _eachCanvasListener((element) {
       element.onElementDetachToCanvasDelegate?.call(this, painter);
     });
+  }
+
+  /// 构建画布右键菜单
+  /// @return 返回菜单列表
+  List<Widget> dispatchBuildCanvasMenu() {
+    List<Widget> list = [];
+    _eachCanvasListener((element) {
+      element.onBuildCanvasMenu?.call(this, canvasMenuManager, list);
+    });
+    return list;
   }
 
   //endregion ---事件派发---
