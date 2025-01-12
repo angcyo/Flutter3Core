@@ -10,14 +10,15 @@ part of '../../flutter3_basics.dart';
 
 /// 路径采样间隙, 每隔多少距离, 采样一次路径上的点
 @dp
-const double kPathAcceptableError = 0.5; //2024-11-28: 1 ;// 0.025
+const double kPathAcceptableError = 0.025; //2024-11-28: 1 ;// 0.025
 
 /// 矢量拟合公差
 /// 1.575dp = 0.25mm
 /// 0.1dp 精度可以
 /// 0.5dp 也还可以
+/// 0.01mm
 @mm
-const double kVectorTolerance = 0.01; //
+const double kVectorTolerance = 0.001; //
 
 /// 定义一个空路径
 Path kEmptyPath = Path();
