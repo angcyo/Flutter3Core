@@ -7,6 +7,9 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// 用来触发重构的Widget, 配合[RItemTile], 实现[findTile].[updateTile]功能
+/// [AnimatedWidget]
+/// [ListenableBuilder]
+///
 /// [ValueNotifier]
 /// [UpdateValueNotifier]
 /// [ValueListenableBuilder]
@@ -196,6 +199,8 @@ mixin RebuildStateEx<T extends StatefulWidget> on State<T> {
 
 //--
 
+/// [AnimatedWidget]
+/// [ListenableBuilder]
 extension RebuildEx<T> on ValueNotifier<T> {
   /// [rebuild]
   Widget build(DynamicDataWidgetBuilder builder) => rebuild(this, builder);
@@ -205,6 +210,8 @@ extension RebuildEx<T> on ValueNotifier<T> {
       rebuild(this, (_, __) => builder());
 }
 
+/// [AnimatedWidget]
+/// [ListenableBuilder]
 extension RebuildIterableEx<T extends Listenable> on Iterable<T> {
   /// [rebuildList]
   Widget build(DynamicDataWidgetBuilder builder) => rebuildList(this, builder);
