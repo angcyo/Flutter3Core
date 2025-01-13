@@ -134,6 +134,9 @@ Future runGlobalApp(
   //runApp
   Future realRun() async {
     ensureInitialized();
+    "开始启动[${Platform.operatingSystem}][main]:${platformDispatcher.defaultRouteName}"
+        .writeToLog(level: L.info);
+
     //--
     BuildConfig.initBuildConfig();
     //key-value
@@ -142,8 +145,6 @@ Future runGlobalApp(
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
 
-    "开始启动[main]:${platformDispatcher.defaultRouteName}"
-        .writeToLog(level: L.info);
     await initFlutter3Core();
     AppLifecycleLog.install();
 
@@ -161,7 +162,8 @@ Future runGlobalApp(
     await afterAction?.call();
 
     //--
-    "启动完成:${lTime.time()}".writeToLog(level: L.info);
+    "启动完成[${Platform.resolvedExecutable}]:${lTime.time()}"
+        .writeToLog(level: L.info);
   }
 
   if (!zonedGuarded) {
