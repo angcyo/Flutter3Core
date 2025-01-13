@@ -75,3 +75,22 @@ extension OrientationEx on Orientation {
 /// 鼠标是否连接
 bool get mouseIsConnected =>
     WidgetsBinding.instance.mouseTracker.mouseIsConnected;
+
+bool get isMouseConnected => mouseIsConnected;
+
+//--
+
+/// 系统小部件相关扩展
+extension SystemWidgetEx on Widget {
+  /// 设置macOS平台上的菜单栏
+  /// 也可以使用`WidgetsBinding.instance.platformMenuDelegate.setMenus(menus);`主动设置,
+  /// 但是只能同时使用一种方法设置.
+  ///
+  /// [PlatformMenuItem] 菜单项
+  /// [PlatformMenu] 菜单, 没有分组的菜单会被默认丢到第一个Group中
+  /// [PlatformMenuItemGroup] 菜单组, 同时也可以进行分组/分割线设置
+  Widget platformMenuBar(
+    List<PlatformMenuItem> menus,
+  ) =>
+      PlatformMenuBar(menus: menus, child: this);
+}
