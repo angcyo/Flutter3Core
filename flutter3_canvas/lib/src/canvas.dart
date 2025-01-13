@@ -197,7 +197,7 @@ class CanvasRenderObjectElement extends LeafRenderObjectElement {
 /// 负责画布的绘制入口
 /// 负责画布的手势入口
 class CanvasRenderBox extends RenderBox
-    with KeyEventRenderObjectMixin
+    with KeyEventMixin, KeyEventRenderObjectMixin
     implements MouseTrackerAnnotation {
   BuildContext context;
   CanvasDelegate canvasDelegate;

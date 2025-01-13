@@ -9,27 +9,28 @@ part of '../../flutter3_basics.dart';
 /// [HardwareKeyboard]
 /// [KeyboardListener]
 /// [ServicesBinding.instance.keyEventManager.keyMessageHandler]
-mixin KeyEventMixin<T extends StatefulWidget> on State<T> {
-  @override
-  void dispose() {
-    HardwareKeyboard.instance.removeHandler(onKeyEventHandleMixin);
-    super.dispose();
-  }
-
+///
+/// [KeyEventStateMixin]
+/// [KeyEventRenderObjectMixin]
+///
+mixin KeyEventStateMixin<T extends StatefulWidget> on State<T>, KeyEventMixin {
   @override
   void initState() {
     HardwareKeyboard.instance.addHandler(onKeyEventHandleMixin);
     super.initState();
   }
 
-  @overridePoint
-  bool onKeyEventHandleMixin(KeyEvent event) {
-    return false;
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(onKeyEventHandleMixin);
+    _keyEventRegisterList.clear();
+    super.dispose();
   }
 }
 
-/// [KeyEventMixin]
-mixin KeyEventRenderObjectMixin on RenderObject {
+/// [KeyEventStateMixin]
+/// [KeyEventRenderObjectMixin]
+mixin KeyEventRenderObjectMixin on RenderObject, KeyEventMixin {
   @override
   void attach(PipelineOwner owner) {
     HardwareKeyboard.instance.addHandler(onKeyEventHandleMixin);
@@ -42,7 +43,9 @@ mixin KeyEventRenderObjectMixin on RenderObject {
     _keyEventRegisterList.clear();
     super.detach();
   }
+}
 
+mixin KeyEventMixin {
   //--
 
   /// 键盘事件监听

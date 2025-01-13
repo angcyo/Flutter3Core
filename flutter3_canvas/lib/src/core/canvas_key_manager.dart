@@ -194,7 +194,7 @@ class CanvasKeyManager
       return true;
     });
 
-    /// 缩小画布
+    //缩小画布
     renderObject.registerKeyEvent([
       if (isMacOs) ...[
         [
@@ -233,6 +233,7 @@ class CanvasKeyManager
   /// 复制选中的元素
   @api
   bool copySelectedElement() {
+    clearClipboard();
     _copyElementList =
         canvasElementManager.copySelectedElement(autoAddToCanvas: false);
     return !isNil(_copyElementList);
@@ -250,6 +251,7 @@ class CanvasKeyManager
   /// 粘贴选中的元素
   @api
   bool pasteSelectedElement() {
+    //debugger();
     if (!isNil(_copyElementList)) {
       //为了下一次继续粘贴, 这里需要重新复制一份
       final elementList = _copyElementList!.copyElementList;

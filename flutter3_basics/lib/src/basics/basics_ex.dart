@@ -1196,6 +1196,10 @@ extension StringEx on String {
 //endregion 功能
 }
 
+/// 清空剪切板
+@allPlatformFlag
+Future<void> clearClipboard() => Clipboard.setData(ClipboardData(text: ''));
+
 extension StringBufferEx on StringBuffer {
   /// 如果[StringBuffer]为空, 则追加指定的字符串, 否则不动
   StringBuffer appendIfEmpty([String str = "\n"]) {
@@ -2420,6 +2424,22 @@ extension IterableEx<E> on Iterable<E> {
 
     return flattenInner(this);
   }
+
+  /// 等待所有异步的结果
+  /// [asyncFuture]
+  FutureOr<List<R>> asyncForEach<R>(
+      R Function(E element, Completer completer) action) async {
+    List<R> result = [];
+    for (final item in this) {
+      final completer = Completer();
+      final r = action(item, completer);
+      result.add(r);
+      if (!completer.isCompleted) {
+        await completer.future;
+      }
+    }
+    return result;
+  }
 }
 
 /// [ListEx]
@@ -2717,20 +2737,6 @@ extension ListEx<T> on List<T> {
   /// [StringEx.fromJsonBeanList]
   List<Bean> copyWithJson<Bean>(Bean Function(dynamic json) map) {
     return jsonDecode(jsonEncode(this)).map<Bean>(map).toList();
-  }
-
-  FutureOr<List<R>> asyncForEach<R>(
-      R Function(T element, Completer completer) action) async {
-    List<R> result = [];
-    for (final item in this) {
-      final completer = Completer();
-      final r = action(item, completer);
-      result.add(r);
-      if (!completer.isCompleted) {
-        await completer.future;
-      }
-    }
-    return result;
   }
 }
 

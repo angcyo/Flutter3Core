@@ -154,6 +154,7 @@ Future<R> future<R>(FutureOr<R> Function() callback) async {
 /// [Completer.completeError]
 /// [Completer.completeError]
 /// [future]
+/// [IterableEx.asyncForEach]
 Future<R> asyncFuture<R>(void Function(Completer<R> completer) callback) {
   final completer = Completer<R>();
   try {

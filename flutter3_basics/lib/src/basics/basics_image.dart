@@ -617,7 +617,7 @@ extension WidgetImageEx on Widget {
 
 extension ContextImageEx on BuildContext {
   /// [RenderObjectImageEx.captureImage]
-  Future<ui.Image?> captureImage({double pixelRatio = 1.0}) {
+  Future<ui.Image?> captureImage({double? pixelRatio = 1.0}) {
     RenderObject? renderObject = findRenderObject();
     while (renderObject != null && !renderObject.isRepaintBoundary) {
       renderObject = renderObject.parent;
@@ -647,16 +647,17 @@ extension ElementImageEx on Element {
 extension RenderObjectImageEx on RenderObject {
   /// 获取元素的截图
   /// https://pub.dev/packages/image_gallery_saver
-  Future<ui.Image?> captureImage({double pixelRatio = 1.0}) async {
+  Future<ui.Image?> captureImage({double? pixelRatio = 1.0}) async {
     //assert(!debugNeedsPaint);
     try {
+      final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
+      pixelRatio ??= devicePixelRatio;
       final OffsetLayer? layer = this.layer as OffsetLayer?;
       //这里的[paintBounds]就是屏幕大小, 所以[pixelRatio]应该为1
       //但是如果使用[size]那么[pixelRatio]应该为[devicePixelRatio]
       ui.Image? result =
           await layer?.toImage(paintBounds, pixelRatio: pixelRatio);
       if (result == null && this is RenderRepaintBoundary) {
-        final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
         final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
         //因为[RenderRepaintBoundary]里面用的是[size]
         //所以这里的[pixelRatio]应该为[devicePixelRatio]
