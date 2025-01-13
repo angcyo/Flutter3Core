@@ -23,7 +23,7 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
   /// 正常状态下的前景装饰
   final Decoration? foregroundDecoration;
 
-  //endregion ---正常状态↓---
+  //endregion ---正常状态↑---
 
   //region ---按下状态↓---
 
@@ -36,7 +36,7 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
   /// 按下时的前景装饰
   final Decoration? pressedForegroundDecoration;
 
-  //endregion ---按下状态↓---
+  //endregion ---按下状态↑---
 
   //region ---选中状态↓---
 
@@ -49,7 +49,20 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
   /// 选中时的前景装饰
   final Decoration? selectedForegroundDecoration;
 
-  //endregion ---选中状态↓---
+  //endregion ---选中状态↑---
+  //
+  // region ---悬停状态↓---
+
+  /// 是否启用悬停时的装饰
+  final bool enableHoverDecoration;
+
+  /// 悬停时的背景装饰
+  final Decoration? hoverDecoration;
+
+  /// 悬停时的前景装饰
+  final Decoration? hoverForegroundDecoration;
+
+  //endregion ---悬停状态↑---
 
   //region ---按下时的回调---
 
@@ -69,6 +82,9 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
     this.onPointerDownAction,
     this.enablePressedDecoration = true,
     this.enableSelectedDecoration = true,
+    this.enableHoverDecoration = true,
+    this.hoverDecoration,
+    this.hoverForegroundDecoration,
   });
 
   @override
@@ -83,11 +99,14 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
         onPointerDownAction: onPointerDownAction,
         enablePressedDecoration: enablePressedDecoration,
         enableSelectedDecoration: enableSelectedDecoration,
+        enableHoverDecoration: enableHoverDecoration,
+        hoverDecoration: hoverDecoration,
+        hoverForegroundDecoration: hoverForegroundDecoration,
       );
 
   @override
-  void updateRenderObject(
-      BuildContext context, _RenderStateDecoration renderObject) {
+  void updateRenderObject(BuildContext context,
+      _RenderStateDecoration renderObject) {
     renderObject
       ..clearPainters()
       ..decoration = decoration
@@ -99,30 +118,40 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
       ..onPointerDownAction = onPointerDownAction
       ..enablePressedDecoration = enablePressedDecoration
       ..enableSelectedDecoration = enableSelectedDecoration
+      ..enableHoverDecoration = enableHoverDecoration
+      ..hoverDecoration = hoverDecoration
+      ..hoverForegroundDecoration = hoverForegroundDecoration
       ..markNeedsPaint();
   }
 }
 
 /// [RenderDecoratedBox]
-class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
+class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
+    implements MouseTrackerAnnotation {
   Decoration? decoration;
   BoxPainter? _painter;
 
   Decoration? foregroundDecoration;
   BoxPainter? _foregroundPainter;
 
-  bool enablePressedDecoration;
-  bool enableSelectedDecoration;
+  //--悬停样式
+  bool enableHoverDecoration;
+  Decoration? hoverDecoration;
+  BoxPainter? _hoverPainter;
+  Decoration? hoverForegroundDecoration;
+  BoxPainter? _hoverForegroundPainter;
 
+  //--按下样式
+  bool enablePressedDecoration;
   Decoration? pressedDecoration;
   BoxPainter? _pressedPainter;
-
-  Decoration? selectedDecoration;
-  BoxPainter? _selectedPainter;
-
   Decoration? pressedForegroundDecoration;
   BoxPainter? _pressedForegroundPainter;
 
+  //--选中样式
+  bool enableSelectedDecoration;
+  Decoration? selectedDecoration;
+  BoxPainter? _selectedPainter;
   Decoration? selectedForegroundDecoration;
   BoxPainter? _selectedForegroundPainter;
 
@@ -130,6 +159,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
 
   ImageConfiguration configuration = ImageConfiguration.empty;
 
+  @override
   HitTestBehavior behavior;
 
   _RenderStateDecoration({
@@ -137,15 +167,23 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
     this.behavior = HitTestBehavior.translucent,
     this.decoration,
     this.foregroundDecoration,
-    this.pressedDecoration,
-    this.selectedDecoration,
-    this.pressedForegroundDecoration,
-    this.selectedForegroundDecoration,
-    this.onPointerDownAction,
+    //--
+    this.enableHoverDecoration = true,
+    this.hoverDecoration,
+    this.hoverForegroundDecoration,
+    //--
     this.enablePressedDecoration = true,
+    this.pressedDecoration,
+    this.pressedForegroundDecoration,
+    //--
     this.enableSelectedDecoration = true,
+    this.selectedDecoration,
+    this.selectedForegroundDecoration,
+    //--
+    this.onPointerDownAction,
   }) : super(child: child, behavior: behavior);
 
+  ///
   @override
   void performLayout() {
     super.performLayout();
@@ -153,14 +191,22 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
 
   @override
   bool hitTestSelf(ui.Offset position) =>
-      enablePressedDecoration || onPointerDownAction != null;
+      enableHoverDecoration ||
+          enablePressedDecoration ||
+          onPointerDownAction != null;
 
+  bool _isHover = false;
   bool _isPointerDown = false;
   Offset? _pointerDown;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    if (event is PointerDownEvent) {
+    if (event is PointerHoverEvent) {
+      if (enableHoverDecoration) {
+        _isHover = true;
+        markNeedsPaint();
+      }
+    } else if (event is PointerDownEvent) {
       if (enablePressedDecoration) {
         _isPointerDown = true;
         _pointerDown = event.localPosition;
@@ -186,11 +232,17 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
   @override
   void paint(PaintingContext context, Offset offset) {
     final ImageConfiguration filledConfiguration =
-        configuration.copyWith(size: size);
+    configuration.copyWith(size: size);
     //背景绘制
     _painter ??= decoration?.createBoxPainter(markNeedsPaint);
     _painter?.paint(context.canvas, offset, filledConfiguration);
     setCanvasIsComplexHint(context, decoration);
+    if (_isHover) {
+      //
+      _hoverPainter ??= hoverDecoration?.createBoxPainter(markNeedsPaint);
+      _hoverPainter?.paint(context.canvas, offset, filledConfiguration);
+      setCanvasIsComplexHint(context, hoverDecoration);
+    }
     if (_isPointerDown) {
       //
       _pressedPainter ??= pressedDecoration?.createBoxPainter(markNeedsPaint);
@@ -203,6 +255,14 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
     setCanvasIsComplexHint(context, selectedDecoration);
     super.paint(context, offset);
     //前景绘制
+    if (_isHover) {
+      //
+      _hoverForegroundPainter ??=
+          hoverForegroundDecoration?.createBoxPainter(markNeedsPaint);
+      _hoverForegroundPainter?.paint(
+          context.canvas, offset, filledConfiguration);
+      setCanvasIsComplexHint(context, hoverForegroundDecoration);
+    }
     if (_isPointerDown) {
       //
       _pressedForegroundPainter ??=
@@ -241,15 +301,50 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior {
     _painter = null;
     _foregroundPainter?.dispose();
     _foregroundPainter = null;
+
     _pressedPainter?.dispose();
     _pressedPainter = null;
-    _selectedPainter?.dispose();
-    _selectedPainter = null;
     _pressedForegroundPainter?.dispose();
     _pressedForegroundPainter = null;
+
+    _selectedPainter?.dispose();
+    _selectedPainter = null;
     _selectedForegroundPainter?.dispose();
     _selectedForegroundPainter = null;
+
+    _hoverPainter?.dispose();
+    _hoverPainter = null;
+    _hoverForegroundPainter?.dispose();
+    _selectedForegroundPainter = null;
   }
+
+  void _handlePointerEnter(PointerEnterEvent event) {
+    _isHover = true;
+    markNeedsPaint();
+  }
+
+  void _handlePointerExit(PointerExitEvent event) {
+    if (_isHover) {
+      _isHover = false;
+      markNeedsPaint();
+    }
+  }
+
+  //region --Mouse--
+
+  @override
+  MouseCursor get cursor => MouseCursor.defer;
+
+  @override
+  PointerEnterEventListener? get onEnter => _handlePointerEnter;
+
+  @override
+  PointerExitEventListener? get onExit => _handlePointerExit;
+
+  @override
+  bool get validForMouseTracker => enableHoverDecoration;
+
+//endregion --Mouse--
 }
 
 extension StateDecorationWidgetEx on Widget {
@@ -259,8 +354,7 @@ extension StateDecorationWidgetEx on Widget {
   /// [pressedDecoration] 按下时的背景装饰
   /// [selectedDecoration] 选中时的背景装饰
   /// [StateDecorationWidget]
-  Widget stateDecoration(
-    Decoration? decoration, {
+  Widget stateDecoration(Decoration? decoration, {
     Decoration? foregroundDecoration,
     Decoration? pressedDecoration,
     Decoration? selectedDecoration,
@@ -277,8 +371,7 @@ extension StateDecorationWidgetEx on Widget {
   }
 
   /// [backgroundDecoration]
-  Widget backgroundColor(
-    Color? fillColor, {
+  Widget backgroundColor(Color? fillColor, {
     Key? key,
     double? fillRadius,
   }) =>
@@ -294,8 +387,7 @@ extension StateDecorationWidgetEx on Widget {
   /// [StateDecorationWidget]
   /// [Decoration]
   /// [fillDecoration]
-  Widget backgroundDecoration(
-    Decoration? decoration, {
+  Widget backgroundDecoration(Decoration? decoration, {
     Key? key,
     Color? fillColor,
     double? fillRadius,
@@ -308,9 +400,9 @@ extension StateDecorationWidgetEx on Widget {
     decoration ??= fillColor == null
         ? null
         : BoxDecoration(
-            color: fillColor,
-            borderRadius:
-                fillRadius == null ? null : BorderRadius.circular(fillRadius));
+        color: fillColor,
+        borderRadius:
+        fillRadius == null ? null : BorderRadius.circular(fillRadius));
     if (decoration == null) {
       return this;
     }

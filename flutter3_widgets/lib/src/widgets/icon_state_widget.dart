@@ -49,6 +49,9 @@ class IconStateWidget extends StatelessWidget {
   /// 选中时的背景装饰
   final Decoration? selectedDecoration;
 
+  /// 悬停时的背景装饰
+  final Decoration? hoverDecoration;
+
   const IconStateWidget({
     super.key,
     this.icon,
@@ -59,6 +62,7 @@ class IconStateWidget extends StatelessWidget {
     this.decoration,
     this.pressedDecoration,
     this.selectedDecoration,
+    this.hoverDecoration,
     this.enable = true,
     this.color,
     this.disableColor,
@@ -67,16 +71,31 @@ class IconStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     return StateDecorationWidget(
       decoration: decoration,
-      pressedDecoration: pressedDecoration,
+      pressedDecoration: enable
+          ? pressedDecoration ??
+              lineaGradientDecoration(
+                listOf(globalTheme.pressColor, globalTheme.pressColor),
+                borderRadius: kH,
+              )
+          : null,
       enablePressedDecoration: enable,
       selectedDecoration: selectedDecoration,
+      hoverDecoration: enable
+          ? hoverDecoration ??
+              lineaGradientDecoration(
+                listOf(globalTheme.pressColor.withHoverAlphaColor,
+                    globalTheme.pressColor.withHoverAlphaColor),
+                borderRadius: kH,
+              )
+          : null,
       child: [
         icon,
         text,
       ]
-          .column()
+          .column(mainAxisAlignment: MainAxisAlignment.center)
           ?.paddingInsets(padding)
           .colorFiltered(
             color: enable ? color : disableColor,
@@ -90,4 +109,38 @@ class IconStateWidget extends StatelessWidget {
           .onTouchDetector(onTap: onTap, enableClick: enable),
     ).tooltip(tooltip);
   }
+}
+
+extension IconStateWidgetEx on Widget {
+  /// [IconStateWidget]
+  Widget iconState({
+    Widget? icon,
+    Widget? text,
+    Widget? tip,
+    String? tooltip,
+    EdgeInsetsGeometry? padding,
+    Decoration? decoration,
+    Decoration? pressedDecoration,
+    Decoration? selectedDecoration,
+    Decoration? hoverDecoration,
+    bool enable = true,
+    Color? color,
+    Color? disableColor,
+    GestureTapCallback? onTap,
+  }) =>
+      IconStateWidget(
+        icon: icon = this,
+        text: text,
+        tip: tip,
+        tooltip: tooltip,
+        padding: padding,
+        decoration: decoration,
+        pressedDecoration: pressedDecoration,
+        selectedDecoration: selectedDecoration,
+        hoverDecoration: hoverDecoration,
+        enable: enable,
+        color: color,
+        disableColor: disableColor,
+        onTap: onTap,
+      );
 }

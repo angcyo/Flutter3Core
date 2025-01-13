@@ -493,8 +493,6 @@ class ElementPainter extends IPainter
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     paintMeta.withPaintMatrix(canvas, () {
-      onPaintingSelfBefore(canvas, paintMeta);
-
       //--悬停颜色支持
       bool isUpdatePaint = false;
       Color? oldPaintColor;
@@ -504,7 +502,10 @@ class ElementPainter extends IPainter
         updatePainterPaint(fromObj: this, notify: false);
         isUpdatePaint = true;
       }
+      //--
+      onPaintingSelfBefore(canvas, paintMeta);
       onPaintingSelf(canvas, paintMeta);
+      //--
       if (isUpdatePaint) {
         paintColor = oldPaintColor;
         updatePainterPaint(fromObj: this, notify: false);
@@ -617,6 +618,7 @@ class ElementPainter extends IPainter
       //debugger();
       paint.withSavePaint(() {
         //paint.color = Colors.purpleAccent;
+        //debugger();
         paint
           //边框的颜色
           ..color = canvasStyle?.canvasAccentColor ?? paint.color

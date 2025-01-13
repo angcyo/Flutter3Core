@@ -45,7 +45,10 @@ class TouchDetectorWidget extends SingleChildRenderObjectWidget {
   }
 }
 
-class RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
+/// [RenderMouseRegion] 鼠标区域, 用来自定义鼠标样式
+class RenderTouchDetector extends RenderProxyBox
+    with TouchDetectorMixin
+    implements MouseTrackerAnnotation {
   PointerAction? onClick;
   PointerAction? onLongPress;
 
@@ -100,6 +103,23 @@ class RenderTouchDetector extends RenderProxyBox with TouchDetectorMixin {
     }
     return super.onTouchDetectorPointerEvent(event, touchType);
   }
+
+  //region --Mouse--
+
+  @override
+  MouseCursor get cursor =>
+      _enableTouchDetector ? SystemMouseCursors.click : MouseCursor.defer;
+
+  @override
+  PointerEnterEventListener? get onEnter => null;
+
+  @override
+  PointerExitEventListener? get onExit => null;
+
+  @override
+  bool get validForMouseTracker => false;
+
+//endregion --Mouse--
 }
 
 extension TouchDetectorWidgetEx on Widget {
@@ -114,6 +134,9 @@ extension TouchDetectorWidgetEx on Widget {
     bool enableLoopLongPress = false,
   }) {
     if (!enableClick && !enableLongPress) {
+      if (mouseIsConnected) {
+        return mouse(cursor: SystemMouseCursors.forbidden);
+      }
       return this;
     }
     if (enableClick && onClick == null) {
@@ -123,9 +146,17 @@ extension TouchDetectorWidgetEx on Widget {
         };
       }
     }
+    final clickAction = enableClick ? onClick : null;
+    final longPressAction = enableLongPress ? onLongPress : null;
+    if (clickAction == null && longPressAction == null) {
+      if (mouseIsConnected) {
+        return mouse(cursor: SystemMouseCursors.forbidden);
+      }
+      return this;
+    }
     return TouchDetectorWidget(
-      onClick: enableClick ? onClick : null,
-      onLongPress: enableLongPress ? onLongPress : null,
+      onClick: clickAction,
+      onLongPress: longPressAction,
       enableLoopLongPress: enableLoopLongPress,
       child: this,
     );

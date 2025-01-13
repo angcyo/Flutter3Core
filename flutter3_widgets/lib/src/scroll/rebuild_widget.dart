@@ -12,8 +12,8 @@ part of '../../flutter3_widgets.dart';
 /// [ValueListenableBuilder]
 class RebuildWidget extends StatefulWidget {
   /// 用来触发重构的信号
-  final ValueNotifier? updateSignal;
-  final List<ValueNotifier>? updateSignalList;
+  final Listenable? updateSignal;
+  final Iterable<Listenable>? updateSignalList;
   final DynamicDataWidgetBuilder builder;
 
   const RebuildWidget({
@@ -205,6 +205,15 @@ extension RebuildEx<T> on ValueNotifier<T> {
       rebuild(this, (_, __) => builder());
 }
 
+extension RebuildIterableEx<T extends Listenable> on Iterable<T> {
+  /// [rebuildList]
+  Widget build(DynamicDataWidgetBuilder builder) => rebuildList(this, builder);
+
+  /// [rebuildList]
+  Widget buildFn(Widget? Function() builder) =>
+      rebuildList(this, (_, __) => builder());
+}
+
 extension RebuildFunctionEx on Function {
   /// 更新
   /// ```
@@ -237,7 +246,7 @@ Widget rebuild(
 /// [Iterable<dynamic>]
 @dsl
 Widget rebuildList(
-  @updateSignalMark List<ValueNotifier> updateSignalList,
+  @updateSignalMark Iterable<Listenable> updateSignalList,
   DynamicDataWidgetBuilder builder,
 ) {
   return RebuildWidget(

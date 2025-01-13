@@ -277,8 +277,10 @@ extension WidgetListEx on WidgetNullList {
     TextBaseline? textBaseline,
     double? gap,
     Widget? gapWidget,
+    String? debugLabel,
   }) {
     WidgetList children = filterAndFillGap(gapWidget: gapWidget);
+    debugger(when: debugLabel != null);
     if (isNullOrEmpty(children)) {
       return null;
     }
@@ -560,17 +562,20 @@ extension WidgetEx on Widget {
     MouseCursor cursor = MouseCursor.defer,
     bool opaque = true,
     HitTestBehavior? hitTestBehavior,
+    bool enable = true,
   }) =>
-      MouseRegion(
-        key: key,
-        onEnter: onEnter,
-        onExit: onExit,
-        onHover: onHover,
-        cursor: cursor,
-        opaque: opaque,
-        hitTestBehavior: hitTestBehavior,
-        child: this,
-      );
+      enable
+          ? MouseRegion(
+              key: key,
+              onEnter: onEnter,
+              onExit: onExit,
+              onHover: onHover,
+              cursor: cursor,
+              opaque: opaque,
+              hitTestBehavior: hitTestBehavior,
+              child: this,
+            )
+          : this;
 
   /// [PointerListenerWidget]
   /// [Listener]

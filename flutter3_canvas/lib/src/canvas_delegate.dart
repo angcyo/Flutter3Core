@@ -97,8 +97,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 释放所有资源, 主动调用
+  /// 在[Element.unmount]中会被调用
+  /// 可以使用[ValueKey]添加[Widget]更新判断, 防止[Element.unmount].
   @entryPoint
   void dispose() {
+    //debugger();
     canvasElementManager.release();
     canvasUndoManager.dispose();
     canvasListeners.clear();
@@ -773,6 +776,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---事件派发---
 
   /// each
+  /// [canvasListeners]
   void _eachCanvasListener(void Function(CanvasListener listener) action) {
     try {
       for (final client in canvasListeners) {
@@ -1154,6 +1158,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 构建画布右键菜单
+  /// [canvasListeners]
   /// @return 返回菜单列表
   List<Widget> dispatchBuildCanvasMenu() {
     List<Widget> list = [];

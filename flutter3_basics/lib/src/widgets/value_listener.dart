@@ -68,14 +68,21 @@ class _ValueListenerState extends State<ValueListener> {
 }
 
 extension ValueListenerEx on Listenable {
+
+  /// [ValueNotifier]
+  dynamic get value =>
+      this is ValueNotifier ? (this as ValueNotifier).value : null;
+
   /// 监听[Listenable]并自动重建小部件
-  Widget listener(WidgetBuilder builder) => ValueListener(
+  Widget listener(WidgetBuilder builder) =>
+      ValueListener(
         listenableList: [this],
         builder: (context, value) => builder(context),
       );
 
   /// 监听[Listenable]并自动重建小部件, 并把[value]回调出来
-  Widget listenerValue(DynamicDataWidgetBuilder builder) => ValueListener(
+  Widget listenerValue(DynamicDataWidgetBuilder builder) =>
+      ValueListener(
         listenableList: [this],
         builder: (context, value) => builder(context, value),
       );
@@ -83,13 +90,15 @@ extension ValueListenerEx on Listenable {
 
 extension ValueListListenerEx on List<Listenable> {
   /// 监听[Listenable]并自动重建小部件
-  Widget listener(WidgetBuilder builder) => ValueListener(
+  Widget listener(WidgetBuilder builder) =>
+      ValueListener(
         listenableList: this,
         builder: (context, value) => builder(context),
       );
 
   /// 监听[Listenable]并自动重建小部件, 并把[value]回调出来
-  Widget listenerValue(DynamicDataWidgetBuilder builder) => ValueListener(
+  Widget listenerValue(DynamicDataWidgetBuilder builder) =>
+      ValueListener(
         listenableList: this,
         builder: (context, value) => builder(context, value),
       );
