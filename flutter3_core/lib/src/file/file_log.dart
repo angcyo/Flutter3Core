@@ -37,6 +37,16 @@ extension LogEx on Object {
   String wrapLogString([String? prefix]) =>
       "${prefix ?? nowTimeString()} $this\n";
 
+  /// 日志文件对应的文件全路径
+  /// [kLFileName]
+  /// [kLogPathName]
+  /// [kConfigPathName]
+  Future<String> logFilePath({
+    String? subFolder = kLogPathName,
+    bool useCacheFolder = true,
+  }) async =>
+      "$this".filePathOf(subFolder, useCacheFolder);
+
   /// 写入到文件, 返回对应的文件
   /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象
   /// [FileDataType] 支持的数据类型
