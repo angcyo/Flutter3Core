@@ -20,6 +20,7 @@ final class CoreKeys {
   }
 
   /// 初始化设备uuid
+  @CallFrom(initHive)
   void initDeviceUuid() {
     if (!"deviceUuid".hiveHaveKey()) {
       "deviceUuid".hivePut($uuid);
@@ -47,6 +48,18 @@ final class CoreKeys {
 
   /// 平板尺寸阈值
   double? get tabletInchThreshold => "tabletInchThreshold".hiveGet<double>();
+
+  //--
+
+  /// 保存值
+  Future<dynamic> saveValue(String key, dynamic value) {
+    return key.hivePut(value);
+  }
+
+  /// 获取值
+  T? getValue<T>(String key) {
+    return key.hiveGet<T>();
+  }
 }
 
 /// CoreKeys的实例

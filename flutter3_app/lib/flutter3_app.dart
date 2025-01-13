@@ -153,7 +153,7 @@ Future runGlobalApp(
 
     //--before
     await beforeAction?.call();
-    //open isar
+    //open isar, 为了能在[beforeAction]中初始化外部数据库表结构
     await initIsar();
     //app
     runApp(GlobalApp(
