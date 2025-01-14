@@ -463,16 +463,27 @@ class CanvasRenderBox extends RenderBox
 
   @override
   bool onKeyEventHandleMixin(KeyEvent event) {
-    super.onKeyEventHandleMixin(event);
-    //将事件发送元素
-    for (final element
-        in canvasDelegate.canvasElementManager.elements.reversed) {
-      if (element.handleKeyEvent(event)) {
-        break;
+    bool handle = false;
+    //--
+    if (canvasDelegate.canvasStyle.enableElementControl ||
+        canvasDelegate.canvasStyle.enableCanvasKeyEvent == true) {
+      handle = super.onKeyEventHandleMixin(event);
+    }
+    //--
+    if (canvasDelegate.canvasStyle.enableElementControl ||
+        canvasDelegate.canvasStyle.enableElementKeyEvent == true) {
+      //将事件发送元素
+      for (final element
+          in canvasDelegate.canvasElementManager.elements.reversed) {
+        if (element.handleKeyEvent(event)) {
+          handle = true;
+          break;
+        }
       }
     }
-    canvasDelegate.dispatchKeyEvent(this, event);
-    return true;
+    //--
+    handle = handle || canvasDelegate.dispatchKeyEvent(this, event);
+    return handle;
   }
 
   //endregion --KeyEvent--

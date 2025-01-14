@@ -61,12 +61,22 @@ class CanvasStyle {
   bool enableElementControl = true;
 
   /// 是否要开启元素的事件回调, 不指定则使用[enableElementControl]的值
-  /// [CanvasElementManager.handleElementEvent]
+  /// [CanvasElementManager.handleElementEvent]处理
   bool? enableElementEvent;
 
   /// 是否要开启画布右键菜单, 不指定则使用[enableElementControl]的值
-  /// [CanvasElementManager.handleElementEvent]
+  /// [CanvasElementManager.handleElementEvent]处理
   bool? enableCanvasMenu;
+
+  /// 是否要开启画布键盘事件, 不指定则使用[enableElementControl]的值
+  /// [CanvasRenderBox.onKeyEventHandleMixin]处理
+  bool? enableCanvasKeyEvent;
+
+  /// 是否要开启画布元素键盘事件, 不指定则使用[enableElementControl]的值
+  /// [CanvasRenderBox.onKeyEventHandleMixin]处理
+  bool? enableElementKeyEvent;
+
+  //--
 
   /// 是否激活选择元素组件
   bool enableElementSelect = true;
