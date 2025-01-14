@@ -20,9 +20,15 @@ dependencies:
   # https://pub.dev/packages/equatable
   # https://pub.dev/packages/xml
   # excel: ^4.0.3 //读取wps的xlsx有bug Exception: custom numFmtId starts at 164 but found a value of 41
-  excel_dart: ^3.0.0
+  #excel_dart: ^3.0.0
+  #And because excel >=4.0.6 depends on archive ^3.6.1, every version of flutter3_abc from path requires archive ^3.6.1.
+  #excel: ^4.0.6
+  excel:
+    git:
+      url: git@github.com:FlutterStudioIst/excel.git
+      ref: 4.0.6-fix2
 
-# dependency_overrides:
+dependency_overrides:
   # in flutter3_pub
   # archive: ^3.6.1
 

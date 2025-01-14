@@ -52,11 +52,12 @@ dependencies:
   # https://pub.dev/packages/shelf
   # https://pub.dev/packages/stream_channel
   # https://pub.dev/packages/web_socket_channel
-  shelf_web_socket: ^2.0.0
+  shelf_web_socket: ^2.0.1
 
   # https://pub.dev/packages/stream_channel
   # https://pub.dev/packages/async
-  stream_channel: ^2.1.2
+  # Note: stream_channel is pinned to version 2.1.2 by flutter_test from the flutter SDK.
+  stream_channel: any
 
   # https://pub.dev/packages/web_socket_channel
   # https://pub.dev/packages/async
@@ -81,7 +82,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
   # 需要对应的权限
-  network_info_plus: ^6.1.1
+  network_info_plus: ^6.1.2
 
   # https://pub.dev/packages/udp
   udp: ^5.0.3

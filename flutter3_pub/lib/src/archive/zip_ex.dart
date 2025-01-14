@@ -14,7 +14,7 @@ extension ZipEx on String {
       FutureOr Function(ArchiveFile archive) action) async {
     final input = InputFileStream(this);
     try {
-      final archive = ZipDecoder().decodeBuffer(input);
+      final archive = ZipDecoder().decodeStream(input);
       for (final file in archive.files) {
         await action(file);
       }
@@ -52,7 +52,7 @@ extension ZipEx on String {
   /// [ArchiveFile.content] 内容
   Future<bool> readZipFile(FutureOr Function(Archive archive) action) async {
     final input = InputFileStream(this);
-    final archive = ZipDecoder().decodeBuffer(input);
+    final archive = ZipDecoder().decodeStream(input);
     //archive.findFile(name); //查找指定文件
 
     /*for (final file in archive.files) {
@@ -162,7 +162,8 @@ extension ZipFileEncoderEx on ZipFileEncoder {
     }
     addArchiveFile(compress
         ? ArchiveFile(name, 0, bytes) /*用0, 内部会自动使用length*/
-        : ArchiveFile.noCompress(name, bytes.length, bytes));
+        : ArchiveFile.bytes(name,
+            bytes)) /*ArchiveFile.noCompress(name, bytes.length, bytes))*/;
   }
 
   /// [writeBytesSync]
@@ -208,7 +209,8 @@ extension ZipFileEncoderEx on ZipFileEncoder {
       addArchiveFile(ArchiveFile.string(name, content));
     } else {
       final bytes = content.bytes; //[utf8.encode]
-      addArchiveFile(ArchiveFile.noCompress(name, bytes.size(), bytes));
+      //addArchiveFile(ArchiveFile.noCompress(name, bytes.size(), bytes));
+      addArchiveFile(ArchiveFile.bytes(name, bytes));
     }
   }
 
@@ -274,12 +276,13 @@ extension ArchiveFileEx on ArchiveFile {
   /// 读取文件内容
   /// [ArchiveFile.content]
   Uint8List? readContent() {
-    if (content is Uint8List) {
+    return content;
+    /*if (content is Uint8List) {
       return content as Uint8List;
     } else if (content is InputStream) {
       return (content as InputStream).toUint8List();
     }
-    return null;
+    return null;*/
   }
 
   /// 读取字符串
