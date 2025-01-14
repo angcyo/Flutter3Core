@@ -1145,7 +1145,14 @@ class ElementPainter extends IPainter
   @api
   @mustCallSuper
   void refresh() {
-    canvasDelegate?.refresh();
+    if (canvasDelegate == null) {
+      assert(() {
+        l.w("无效的操作[${classHash()}]可能未[attachToCanvasDelegate].");
+        return true;
+      }());
+    } else {
+      canvasDelegate?.refresh();
+    }
   }
 
   /// 响应事件

@@ -61,9 +61,13 @@ class PaintMeta {
   @api
   void withPaintMatrix(Canvas canvas, VoidCallback action) {
     //debugger();
-    canvas.withMatrix(originMatrix, () {
+    /*canvas.withMatrix(originMatrix, () {
       canvas.withMatrix(canvasMatrix, action);
-    });
+    });*/
+    canvas.withMatrix(
+        (originMatrix ?? Matrix4.identity()) *
+            (canvasMatrix ?? Matrix4.identity()),
+        action);
   }
 }
 

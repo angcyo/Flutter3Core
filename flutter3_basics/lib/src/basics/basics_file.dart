@@ -7,9 +7,25 @@ part of '../../flutter3_basics.dart';
 ///
 
 extension FileUriEx on Uri {
+  bool get isFileScheme => scheme == 'file';
+
+  bool get isHttpScheme => scheme == 'http' || scheme == 'https';
+
   /// 获取文件全路径, 支持中文, 不需要进行解码
   /// [StringEx.decodeUri]
+  ///
+  /// 如果不是一个文件路径, 则会报错
+  /// ```
+  /// Unsupported operation: Cannot extract a file path from a https URI
+  /// ```
+  ///
   String get filePath => toFilePath();
+
+  /// 如果是文件scheme, 则返回文件路径
+  /// 否则返回...
+  /// [filePath]
+  /// [toString]
+  String get filePathOrUrl => scheme == 'file' ? filePath : toString();
 
   /// 转换成[File]类型
   File toFile() => File.fromUri(this);

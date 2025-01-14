@@ -101,11 +101,11 @@ mixin KeyEventMixin {
           for (final keys in eventGroupKeys) {
             if (isKeysPressedAll(keys, matchKeyCount: register.matchKeyCount)) {
               handle = onKeyEvent(KeyEventHitInfo(keys, event.isKeyRepeat));
-              assert(() {
+              /*assert(() {
                 l.d("按键命中->[${keys.connect(
                     " + ", (e) => e.debugName ?? e.keyLabel)}] $handle");
                 return true;
-              }());
+              }());*/
               if (handle && register.stopPropagation) {
                 interrupt = true;
                 break;

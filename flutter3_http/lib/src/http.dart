@@ -19,6 +19,22 @@ class Http {
 String? get $host => Http.getBaseUrl?.call() ?? Http.baseUrl;
 
 extension HttpUriEx on Uri {
+  /// 从Uri中获取字节数据
+  /// - 支持file scheme
+  /// - 支持http scheme
+  Future<Uint8List?> getBytes({Map<String, String>? headers}) async {
+    if (isFileScheme) {
+      return File(filePath).readAsBytes();
+    } else if (isHttpScheme) {
+      return httpGetBytes(headers: headers);
+    }
+    assert(() {
+      l.w("不支持的Uri scheme[$scheme]->$this");
+      return true;
+    }());
+    return null;
+  }
+
   /// 获取uri对应的查询参数
   /// [queryParameters]
   /*Map<String, String?> get queryMap {

@@ -501,13 +501,13 @@ mixin PointerDispatchMixin {
         for (final element in clientList) {
           if (!element.ignoreEventHandle) {
             handled = element.onPointerEvent(this, event);
-            assert(() {
+            /*assert(() {
               if (event.isPointerDown) {
                 l.v("手势(PointerDown)分发轮询处理[$handled]->${element
                     .runtimeType}");
               }
               return true;
-            }());
+            }());*/
             if (element.ignoreEventHandle) {
               //此时忽略了, 则其他接收器发送取消事件
               element.onIgnorePointerEvent(this, event);
