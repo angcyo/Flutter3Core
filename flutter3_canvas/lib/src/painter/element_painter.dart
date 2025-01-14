@@ -471,9 +471,7 @@ class ElementPainter extends IPainter
   }) {
     painterCachePicture?.dispose();
     painterCachePicture = null;
-    if (refresh) {
-      this.refresh();
-    }
+    paintingSelfOnPicture(refresh: refresh);
   }
 
   /// 元素绘制缓存, 当缓存存在时, 应该直接绘制缓存
@@ -483,18 +481,30 @@ class ElementPainter extends IPainter
   /// [refresh] 更新缓存后, 是否通知界面刷新
   ///
   @callPoint
-  void paintingSelfOnPicture(
-    CanvasAction action, {
+  void paintingSelfOnPicture({
+    CanvasAction? action,
     bool update = false,
     bool refresh = false,
   }) {
     if (update || painterCachePicture == null) {
       painterCachePicture?.dispose();
-      painterCachePicture = drawPicture(action);
+      painterCachePicture = drawPicture((canvas) {
+        onPaintingSelfOnPicture(canvas);
+        action?.call(canvas);
+      });
       if (refresh) {
         this.refresh();
       }
     }
+  }
+
+  /// 重写此方法, 在缓存上绘制元素, 并在[onPaintingSelf]中自动绘制到画布上.
+  /// 需要主动调用一次[paintingSelfOnPicture]方法触发
+  /// [painterCachePicture]
+  /// [paintingSelfOnPicture]
+  @overridePoint
+  void onPaintingSelfOnPicture(Canvas canvas) {
+    //no op
   }
 
   //--
