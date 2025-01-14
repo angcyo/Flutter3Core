@@ -134,7 +134,7 @@ abstract class BaseTextPainter {
           //final translate = createTranslateMatrix(ty: bounds.height * 0.1);
           //final scale = createScaleMatrix(sx: 0.1, sy: 0.1);
           //vectorTextPathMap?[key] = path.transformPath(translate * scale);
-          //pathMap[key] = path.moveToZero(scale: scale);
+          //pathMap[key] = path.moveToZero(scale: scale, scaleAnchor: Offset.zero);
           pathMap[key] = path.transformPath(scaleMatrix);
         }
       });
@@ -764,7 +764,7 @@ class SingleCharTextPainter extends BaseTextPainter {
                     charPath,
                     charPathBounds,
                     vectorPaint,
-                    charPath.moveToZero(),
+                    charPath.moveToZero(scaleAnchor: Offset.zero),
                     Rect.fromLTWH(left, top, charWidth, charHeight),
                   )..debugPaintBounds = debugPaintBounds,
                 );

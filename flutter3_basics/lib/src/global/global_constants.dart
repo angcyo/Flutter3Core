@@ -18,6 +18,18 @@ const double kXx = 24;
 const double kXxh = 32;
 const double kXxx = 48;
 
+/// 鼠标的宽度
+/// macOS - 15
+/// [dpr]
+@dp
+const double kMouseWidth = 15;
+
+/// 鼠标的高度
+/// macOS - 20
+/// [dpr]
+@dp
+const double kMouseHeight = 20;
+
 /// 最小高度
 /// [kMinInteractiveHeight]
 const double kMinHeight = 28;

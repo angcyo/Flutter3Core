@@ -26,8 +26,7 @@ class CustomPaintWrap extends CustomPainter {
 /// [paintWidget]
 /// [TrianglePainter]
 /// [OvalPainter]
-CustomPaint customPainter(
-  CustomPainter? painter, {
+CustomPaint customPainter(CustomPainter? painter, {
   Size? size,
   double? s,
   double? width,
@@ -39,7 +38,7 @@ CustomPaint customPainter(
     CustomPaint(
       painter: painter,
       foregroundPainter:
-          foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
+      foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
       size: size ?? Size(s ?? width ?? 0, s ?? height ?? 0),
       isComplex: isComplex,
       willChange: willChange,
@@ -47,8 +46,7 @@ CustomPaint customPainter(
 
 /// 快速创建[CustomPaint], 并指定绘制回调
 /// 使用[CustomPaint]小组件, 使用[CustomPainter]绘制回调
-CustomPaint paintWidget(
-  PaintFn paint, {
+CustomPaint paintWidget(PaintFn paint, {
   PaintFn? foregroundPaint,
   Size size = Size.zero,
   bool isComplex = false,
@@ -57,7 +55,7 @@ CustomPaint paintWidget(
     CustomPaint(
       painter: CustomPaintWrap(paint),
       foregroundPainter:
-          foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
+      foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
       size: size,
       isComplex: isComplex,
       willChange: willChange,
@@ -214,33 +212,43 @@ class TransparentPixelWidget extends StatelessWidget {
 
 /// 绘制一个透明棋盘
 class PixelTransparentPainter extends CustomPainter {
+  /// 格子大小
   final double cellSize;
+
+  /// 格子间隙
+  final double cellGap;
+
+  /// 主色
   final Color primary;
+
+  /// 次色
   final Color secondary;
 
   const PixelTransparentPainter({
     this.cellSize = 20,
-    required this.primary,
-    required this.secondary,
+    this.cellGap = 0,
+    this.primary = const Color(-0x3d3d3e),
+    this.secondary = const Color(-0xc0c0d),
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final numCellsX = size.width / cellSize;
-    final numCellsY = size.height / cellSize;
+    final numCellsX = size.width / (cellSize + cellGap);
+    final numCellsY = size.height / (cellSize + cellGap);
 
     for (int row = 0; row < numCellsY; row++) {
       for (int col = 0; col < numCellsX; col++) {
         final color = (row + col) % 2 == 0 ? primary : secondary;
 
-        final left = col * cellSize;
-        final top = row * cellSize;
+        final left = col * cellSize + cellGap * col;
+        final top = row * cellSize + cellGap * row;
         final right = math.min(left + cellSize, size.width);
         final bottom = math.min(top + cellSize, size.height);
 
         canvas.drawRect(
           Rect.fromLTRB(left, top, right, bottom),
-          Paint()..color = color,
+          Paint()
+            ..color = color,
         );
       }
     }
@@ -260,8 +268,7 @@ class PointPainter extends CustomPainter {
   /// 颜色
   final Color color;
 
-  const PointPainter(
-    this.width, {
+  const PointPainter(this.width, {
     this.color = Colors.black,
   });
 
@@ -297,8 +304,7 @@ class DashLinkPainter extends CustomPainter {
   /// 方向
   final Axis axis;
 
-  const DashLinkPainter(
-    this.lineSizeList, {
+  const DashLinkPainter(this.lineSizeList, {
     this.thickness = 1,
     this.color = Colors.grey,
     this.axis = Axis.horizontal,
@@ -403,13 +409,15 @@ class CirclePointPainter extends CustomPainter {
     canvas.drawCircle(
       bounds.center,
       br,
-      Paint()..color = extendColor,
+      Paint()
+        ..color = extendColor,
     );
     //绘制绿色圆内容
     canvas.drawCircle(
       bounds.center,
       sr,
-      Paint()..color = color,
+      Paint()
+        ..color = color,
     );
   }
 

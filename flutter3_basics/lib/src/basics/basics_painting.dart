@@ -710,7 +710,8 @@ extension CanvasEx on Canvas {
   /// 绘制文本, 绘制出来的文本左上角对齐0,0位置
   /// [bounds].[alignment] 文本绘制在矩形框内的位置和对齐方式
   /// [offset].[getOffset] 获取文本的绘制位置的回调
-  void drawText(
+  /// @return 返回文本的大小
+  Size drawText(
     String? text, {
     //--
     TextStyle? textStyle,
@@ -727,6 +728,8 @@ extension CanvasEx on Canvas {
     Alignment alignment = Alignment.topLeft,
     ui.Offset offset = ui.Offset.zero,
     Offset? Function(TextPainter painter)? getOffset,
+    //--绘制前的回调
+    void Function(TextPainter painter, Offset offset)? onBeforeAction,
   }) {
     final painter = TextPainter(
         text: TextSpan(
@@ -751,15 +754,16 @@ extension CanvasEx on Canvas {
         textAlign: textAlign,
         textDirection: TextDirection.ltr)
       ..layout();
-    painter.paint(
-        this,
-        (getOffset?.call(painter) ??
-                (bounds == null
-                    ? ui.Offset.zero
-                    : alignment
-                        .inscribe(Size(painter.width, painter.height), bounds)
-                        .topLeft)) +
-            offset);
+    final textOffset = (getOffset?.call(painter) ??
+            (bounds == null
+                ? ui.Offset.zero
+                : alignment
+                    .inscribe(Size(painter.width, painter.height), bounds)
+                    .topLeft)) +
+        offset;
+    onBeforeAction?.call(painter, textOffset);
+    painter.paint(this, textOffset);
+    return painter.size;
   }
 
   /// 绘制[picture]

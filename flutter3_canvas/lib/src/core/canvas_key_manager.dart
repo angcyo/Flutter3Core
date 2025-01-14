@@ -26,9 +26,15 @@ class CanvasKeyManager
     renderObject.registerKeyEvent([
       [canvasStyle.dragKeyboardKey],
     ], (info) {
+      if (info.isKeyDown) {
+        canvasStyle.dragValue.value = true;
+      } else if (info.isKeyUp) {
+        canvasStyle.dragValue.value = false;
+      }
       renderObject.markNeedsPaint();
+      //renderObject.postMarkNeedsPaint();
       return true;
-    });
+    }, keyUp: true);
 
     //删除选中元素
     renderObject.registerKeyEvent([

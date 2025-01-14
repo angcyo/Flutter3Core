@@ -216,6 +216,8 @@ class CanvasRenderBox extends RenderBox
     this.canvasDelegate,
   );
 
+  //region --core--
+
   @override
   bool get isRepaintBoundary => true;
 
@@ -380,6 +382,10 @@ class CanvasRenderBox extends RenderBox
     super.dispose();
   }
 
+  //endregion --core--
+
+  //region --api--
+
   /// 请求焦点
   void requestFocus() {
     FocusScope.of(context).requestFocus(_focusNode);
@@ -398,7 +404,7 @@ class CanvasRenderBox extends RenderBox
     }
   }
 
-//--
+  //--
 
   /// 只有在[Layer]层的[RenderObject]才能调用[paint]方法
   ///
@@ -451,11 +457,21 @@ class CanvasRenderBox extends RenderBox
     });
   }
 
+  //endregion --api--
+
   //region --KeyEvent--
 
   @override
   bool onKeyEventHandleMixin(KeyEvent event) {
     super.onKeyEventHandleMixin(event);
+    //将事件发送元素
+    for (final element
+        in canvasDelegate.canvasElementManager.elements.reversed) {
+      if (element.handleKeyEvent(event)) {
+        break;
+      }
+    }
+    canvasDelegate.dispatchKeyEvent(this, event);
     return true;
   }
 
@@ -465,12 +481,11 @@ class CanvasRenderBox extends RenderBox
 
   @override
   MouseCursor get cursor =>
-      canvasDelegate.currentCursorStyle ??
       (isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)
           ? (canvasDelegate.isPointerDown
               ? SystemMouseCursors.grabbing
               : SystemMouseCursors.grab)
-          : MouseCursor.defer);
+          : canvasDelegate.currentCursorStyle ?? MouseCursor.defer);
 
   @override
   PointerEnterEventListener? get onEnter => null;
@@ -478,7 +493,7 @@ class CanvasRenderBox extends RenderBox
   @override
   PointerExitEventListener? get onExit => null;
 
-  bool _validForMouseTracker = false;
+  bool _validForMouseTracker = true;
 
   @override
   bool get validForMouseTracker => _validForMouseTracker;
@@ -650,6 +665,13 @@ class CanvasListener {
     List<Widget> menus,
   )? onBuildCanvasMenu;
 
+  /// [CanvasDelegate.dispatchKeyEvent]
+  final bool Function(
+    CanvasDelegate delegate,
+    CanvasRenderBox render,
+    KeyEvent event,
+  )? onKeyEventAction;
+
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
@@ -679,5 +701,6 @@ class CanvasListener {
     this.onElementAttachToCanvasDelegate,
     this.onElementDetachToCanvasDelegate,
     this.onBuildCanvasMenu,
+    this.onKeyEventAction,
   });
 }

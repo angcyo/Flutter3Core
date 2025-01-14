@@ -19,6 +19,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //---get---
 
+  CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
+
   /// 元素选择组件
   /// 选择框绘制, 选中元素操作, 按下选择元素
   /// [ElementSelectComponent]
@@ -183,13 +185,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @entryPoint
   void handleElementEvent(@viewCoordinate PointerEvent event) {
     canvasElementControlManager.handleEvent(event);
-    if (canvasElementControlManager.enableElementControl) {
+
+    //元素事件
+    if (canvasElementControlManager.enableElementControl ||
+        canvasStyle.enableElementEvent == true) {
       //将事件发送元素
       for (final element in elements.reversed) {
         if (element.handleEvent(event)) {
           break;
         }
       }
+    }
+    //画布菜单
+    if (canvasElementControlManager.enableElementControl ||
+        canvasStyle.enableCanvasMenu == true) {
       if (event.isMouseRightUp) {
         //鼠标右键点击, 显示菜单
         final menus = canvasDelegate.canvasMenuManager.buildMenus(

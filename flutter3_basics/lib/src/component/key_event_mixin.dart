@@ -53,15 +53,22 @@ mixin KeyEventMixin {
 
   /// 注册一个键盘事件监听
   @api
-  void registerKeyEvent(List<List<LogicalKeyboardKey>>? eventGroupKeys,
-      KeyEventHandleAction? onKeyEventAction, {
-        bool matchKeyCount = true,
-        bool stopPropagation = true,
-      }) {
+  void registerKeyEvent(
+    List<List<LogicalKeyboardKey>>? eventGroupKeys,
+    KeyEventHandleAction? onKeyEventAction, {
+    bool matchKeyCount = true,
+    bool stopPropagation = true,
+    bool keyDown = true,
+    bool keyRepeat = false,
+    bool keyUp = false,
+  }) {
     addKeyEventRegister(KeyEventRegister(
       eventGroupKeys,
       stopPropagation: stopPropagation,
       matchKeyCount: matchKeyCount,
+      keyDown: keyDown,
+      keyRepeat: keyRepeat,
+      keyUp: keyUp,
       onKeyEventAction: onKeyEventAction,
     ));
   }
@@ -87,8 +94,18 @@ mixin KeyEventMixin {
   @overridePoint
   bool onKeyEventHandleMixin(KeyEvent event) {
     bool handle = false;
-    if (event.isKeyDownOrRepeat) {
+    //debugger(when: event.isKeyUp);
+    if (event.isKeyDownOrRepeat || event.isKeyUp) {
       for (final register in _keyEventRegisterList) {
+        if ((event.isKeyDown && register.keyDown) ||
+            (event.isKeyRepeat && register.keyRepeat) ||
+            (event.isKeyUp && register.keyUp)) {
+          //需要处理 按下事件
+          //需要处理 重复事件
+          //需要处理 抬起事件
+        } else {
+          continue;
+        }
         final onKeyEvent = register.onKeyEventAction;
         if (onKeyEvent == null) {
           continue;
@@ -99,8 +116,16 @@ mixin KeyEventMixin {
           //中断
           bool interrupt = false;
           for (final keys in eventGroupKeys) {
-            if (isKeysPressedAll(keys, matchKeyCount: register.matchKeyCount)) {
-              handle = onKeyEvent(KeyEventHitInfo(keys, event.isKeyRepeat));
+            if (((event.isKeyDown || event.isKeyRepeat) &&
+                    isKeysPressedAll(keys,
+                        matchKeyCount: register.matchKeyCount)) ||
+                (event.isKeyUp && keys.lastOrNull == event.logicalKey)) {
+              handle = onKeyEvent(KeyEventHitInfo(
+                keys,
+                isKeyDown: event.isKeyDown,
+                isKeyRepeat: event.isKeyRepeat,
+                isKeyUp: event.isKeyUp,
+              ));
               /*assert(() {
                 l.d("按键命中->[${keys.connect(
                     " + ", (e) => e.debugName ?? e.keyLabel)}] $handle");
@@ -138,10 +163,23 @@ class KeyEventRegister {
   /// 是否要匹配按键的数量
   final bool matchKeyCount;
 
-  const KeyEventRegister(this.eventGroupKeys, {
+  /// 处理键盘按下事件
+  final bool keyDown;
+
+  /// 处理键盘重复事件
+  final bool keyRepeat;
+
+  /// 处理键盘抬起事件
+  final bool keyUp;
+
+  const KeyEventRegister(
+    this.eventGroupKeys, {
     this.onKeyEventAction,
     this.stopPropagation = true,
     this.matchKeyCount = true,
+    this.keyDown = true,
+    this.keyRepeat = false,
+    this.keyUp = false,
   });
 }
 
@@ -151,13 +189,24 @@ class KeyEventHitInfo {
   /// 命中的按键组合
   final List<LogicalKeyboardKey> keys;
 
+  /// 是否是按下事件
+  final bool isKeyDown;
+
   /// 是否是重复事件
   final bool isKeyRepeat;
 
-  const KeyEventHitInfo(this.keys, this.isKeyRepeat);
+  /// 是否是抬起事件
+  final bool isKeyUp;
+
+  const KeyEventHitInfo(
+    this.keys, {
+    this.isKeyRepeat = false,
+    this.isKeyDown = false,
+    this.isKeyUp = false,
+  });
 
   @override
   String toString() {
-    return 'KeyEventHitInfo{keys: $keys, isKeyRepeat: $isKeyRepeat}';
+    return 'KeyEventHitInfo{keys: $keys, isKeyDown: $isKeyDown, isKeyRepeat: $isKeyRepeat, isKeyUp: $isKeyUp}';
   }
 }

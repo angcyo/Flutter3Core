@@ -60,6 +60,14 @@ class CanvasStyle {
   /// 是否激活元素的控制操作, 关闭之后, 将无法通过手势交互控制元素
   bool enableElementControl = true;
 
+  /// 是否要开启元素的事件回调, 不指定则使用[enableElementControl]的值
+  /// [CanvasElementManager.handleElementEvent]
+  bool? enableElementEvent;
+
+  /// 是否要开启画布右键菜单, 不指定则使用[enableElementControl]的值
+  /// [CanvasElementManager.handleElementEvent]
+  bool? enableCanvasMenu;
+
   /// 是否激活选择元素组件
   bool enableElementSelect = true;
 
@@ -240,5 +248,15 @@ class CanvasStyle {
   @viewCoordinate
   double adsorbEscapeThreshold = 10;
 
-//endregion ---adsorb---
+  //endregion ---adsorb---
+
+  //region ---notifier---
+
+  /// 拖动状态监听
+  /// - true:正在拖动状态
+  /// - false:非拖动状态
+  /// [CanvasKeyManager.registerKeyEventHandler]中触发
+  final ValueNotifier<bool> dragValue = ValueNotifier(false);
+
+//endregion ---notifier---
 }

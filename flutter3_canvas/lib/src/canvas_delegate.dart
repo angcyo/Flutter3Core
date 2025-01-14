@@ -161,6 +161,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---mouse/key---
 
   /// 当前光标的样式, 直接赋值给[MouseTrackerAnnotation.cursor], 就会生效, 不需要额外的处理
+  /// [CanvasRenderBox.cursor]
   MouseCursor? get currentCursorStyle => _currentCursorStyleList.lastOrNull;
 
   /// 请求的光标样式
@@ -718,8 +719,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void visitElementPainter(
     ElementPainterVisitor visitor, {
     bool reverse = false,
+    //--
+    bool before = true,
+    bool that = true,
+    bool after = true,
   }) =>
-      canvasElementManager.visitElementPainter(visitor, reverse: reverse);
+      canvasElementManager.visitElementPainter(
+        visitor,
+        reverse: reverse,
+        before: before,
+        that: that,
+        after: after,
+      );
 
   /// 在画布中的指定位置, 显示菜单
   /// 比如鼠标右键弹起, 显示对应的菜单
@@ -778,12 +789,21 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---事件派发---
 
   /// each
+  /// [action] 返回true, 中断循环
   /// [canvasListeners]
-  void _eachCanvasListener(void Function(CanvasListener listener) action) {
+  void _eachCanvasListener(
+    dynamic Function(CanvasListener listener) action, {
+    bool reverse = false,
+  }) {
     try {
-      for (final client in canvasListeners) {
+      for (final client in reverse
+          ? canvasListeners.toList(growable: false).reversed
+          : canvasListeners) {
         try {
-          action(client);
+          final result = action(client);
+          if (result is bool && result) {
+            break;
+          }
         } catch (e, s) {
           assert(() {
             printError(e, s);
@@ -1168,6 +1188,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       element.onBuildCanvasMenu?.call(this, canvasMenuManager, list);
     });
     return list;
+  }
+
+  /// 派发键盘事件
+  bool dispatchKeyEvent(CanvasRenderBox render, KeyEvent event) {
+    var handle = false;
+    _eachCanvasListener((element) {
+      handle = element.onKeyEventAction?.call(this, render, event) == true;
+      if (handle) {
+        return true;
+      }
+    }, reverse: true);
+    return handle;
   }
 
   //endregion ---事件派发---

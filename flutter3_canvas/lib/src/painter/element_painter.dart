@@ -1174,6 +1174,8 @@ class ElementPainter extends IPainter
 
   CanvasStyle? get canvasStyle => canvasDelegate?.canvasStyle;
 
+  CanvasViewBox? get canvasViewBox => canvasDelegate?.canvasViewBox;
+
   /// 附加到[CanvasDelegate]
   @mustCallSuper
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
@@ -1279,6 +1281,13 @@ class ElementPainter extends IPainter
       refresh();
     }
     return hover;
+  }
+
+  /// 处理键盘事件
+  /// [CanvasRenderBox.onKeyEventHandleMixin]驱动
+  @overridePoint
+  bool handleKeyEvent(KeyEvent event) {
+    return false;
   }
 
   //endregion ---canvas---
