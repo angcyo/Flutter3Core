@@ -63,7 +63,7 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
           ? await DeviceInfoPlugin().iosInfo
           : isLinux
               ? await DeviceInfoPlugin().linuxInfo
-              : isMacOs
+              : isMacOS
                   ? await DeviceInfoPlugin().macOsInfo
                   : isWindows
                       ? await DeviceInfoPlugin().windowsInfo
@@ -95,7 +95,7 @@ Future<String?> get $platformDeviceModel async => isAndroid
         ? ((await $platformDeviceInfo) as IosDeviceInfo?)?.model
         : isLinux
             ? ((await $platformDeviceInfo) as LinuxDeviceInfo?)?.prettyName
-            : isMacOs
+            : isMacOS
                 ? ((await $platformDeviceInfo) as MacOsDeviceInfo?)?.model
                 : isWindows
                     ? ((await $platformDeviceInfo) as WindowsDeviceInfo?)

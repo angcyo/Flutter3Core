@@ -81,13 +81,13 @@ class CanvasKeyManager
 
     //撤销
     renderObject.registerKeyEvent([
-      if (isMacOs) ...[
+      if (isMacOS) ...[
         [
           LogicalKeyboardKey.meta,
           LogicalKeyboardKey.keyZ,
         ],
       ],
-      if (!isMacOs) ...[
+      if (!isMacOS) ...[
         [
           LogicalKeyboardKey.control,
           LogicalKeyboardKey.keyZ,
@@ -100,13 +100,13 @@ class CanvasKeyManager
 
     //重做
     renderObject.registerKeyEvent([
-      if (isMacOs) ...[
+      if (isMacOS) ...[
         [
           LogicalKeyboardKey.meta,
           LogicalKeyboardKey.keyY,
         ],
       ],
-      if (!isMacOs) ...[
+      if (!isMacOS) ...[
         [
           LogicalKeyboardKey.control,
           LogicalKeyboardKey.shift,
@@ -120,13 +120,13 @@ class CanvasKeyManager
 
     //复制
     renderObject.registerKeyEvent([
-      if (isMacOs) ...[
+      if (isMacOS) ...[
         [
           LogicalKeyboardKey.meta,
           LogicalKeyboardKey.keyC,
         ],
       ],
-      if (!isMacOs) ...[
+      if (!isMacOS) ...[
         [
           LogicalKeyboardKey.control,
           LogicalKeyboardKey.keyC,
@@ -139,13 +139,13 @@ class CanvasKeyManager
 
     //粘贴
     renderObject.registerKeyEvent([
-      if (isMacOs) ...[
+      if (isMacOS) ...[
         [
           LogicalKeyboardKey.meta,
           LogicalKeyboardKey.keyV,
         ],
       ],
-      if (!isMacOs) ...[
+      if (!isMacOS) ...[
         [
           LogicalKeyboardKey.control,
           LogicalKeyboardKey.keyV,
@@ -158,13 +158,13 @@ class CanvasKeyManager
 
     //全选
     renderObject.registerKeyEvent([
-      if (isMacOs) ...[
+      if (isMacOS) ...[
         [
           LogicalKeyboardKey.meta,
           LogicalKeyboardKey.keyA,
         ],
       ],
-      if (!isMacOs) ...[
+      if (!isMacOS) ...[
         [
           LogicalKeyboardKey.control,
           LogicalKeyboardKey.keyA,
@@ -177,13 +177,13 @@ class CanvasKeyManager
 
     //放大画布
     renderObject.registerKeyEvent([
-      if (isMacOs) ...[
+      if (isMacOS) ...[
         [
           LogicalKeyboardKey.meta,
           LogicalKeyboardKey.equal,
         ],
       ],
-      if (!isMacOs) ...[
+      if (!isMacOS) ...[
         [
           LogicalKeyboardKey.control,
           LogicalKeyboardKey.equal,
@@ -196,13 +196,13 @@ class CanvasKeyManager
 
     //缩小画布
     renderObject.registerKeyEvent([
-      if (isMacOs) ...[
+      if (isMacOS) ...[
         [
           LogicalKeyboardKey.meta,
           LogicalKeyboardKey.minus,
         ],
       ],
-      if (!isMacOs) ...[
+      if (!isMacOS) ...[
         [
           LogicalKeyboardKey.control,
           LogicalKeyboardKey.minus,

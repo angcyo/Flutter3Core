@@ -123,7 +123,7 @@ Future<bool?> isAndroidNotificationsPermissionGranted() async {
 
 /// 请求通知权限
 Future<bool?> requestNotificationsPermissions() async {
-  if (isIos || isMacOs) {
+  if (isIos || isMacOS) {
     await flutterLocalNotificationsPlugin
         ?.resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()

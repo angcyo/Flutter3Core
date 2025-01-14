@@ -408,7 +408,7 @@ TargetPlatform get currentPlatform {
     return TargetPlatform.android;
   } else if (isIos) {
     return TargetPlatform.iOS;
-  } else if (isMacOs) {
+  } else if (isMacOS) {
     return TargetPlatform.macOS;
   } else if (isWindows) {
     return TargetPlatform.windows;
@@ -428,7 +428,7 @@ bool get isAndroid => UniversalPlatform.isAndroid /*Platform.isAndroid*/;
 
 bool get isIos => UniversalPlatform.isIOS /*Platform.isIOS*/;
 
-bool get isMacOs => UniversalPlatform.isMacOS /*Platform.isIOS*/;
+bool get isMacOS => UniversalPlatform.isMacOS /*Platform.isIOS*/;
 
 /// 是否是web
 bool get isWeb => UniversalPlatform.isWeb /*kIsWeb*/;
@@ -490,7 +490,7 @@ String get $platformName {
     return "Android".toLowerCase();
   } else if (isIos) {
     return "iOS".toLowerCase();
-  } else if (isMacOs) {
+  } else if (isMacOS) {
     return "MacOS".toLowerCase();
   } else if (isWindows) {
     return "Windows".toLowerCase();
