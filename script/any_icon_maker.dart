@@ -6,9 +6,14 @@ import 'package:image/image.dart' as imglib;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/12/25
 ///
+///读取指定图片, 生成不同规格/不同尺寸的图片
+/// - 支持输入任意格式
+/// - 支持输出ico格式
+/// - 支持输出png格式
+/// - 支持输出任意尺寸
+///
 /// https://github.com/leanflutter/makeanyicon/tree/main/packages
 void main() async {
-  //读取指定图片, 生成不同规格/不同尺寸的图片
   final inputPath =
       "android/app/src/main/res/mipmap-xhdpi/flutter_dash_255.png";
   final outputPath = ".output/flutter_dash_256.ico";
@@ -17,8 +22,15 @@ void main() async {
 
   //--
   final originImageFile = File(inputPath);
-  imglib.Image originImage =
-      imglib.decodePng(originImageFile.readAsBytesSync())!;
+  //读取文件数据
+  final bytes = originImageFile.readAsBytesSync();
+  final imageFormat = imglib.findFormatForData(bytes);
+  colorLog("图片格式->$imageFormat");
+  //从数据从读取图片解码器
+  final decoder = imglib.findDecoderForData(bytes)!;
+  //解码图片
+  imglib.Image originImage = decoder.decode(bytes)!;
+  //imglib.Image originImage = imglib.decodePng(bytes)!;
 
   final resizedImage = imglib.copyResize(
     originImage,
