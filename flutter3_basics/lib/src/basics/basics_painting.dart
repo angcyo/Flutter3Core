@@ -34,12 +34,23 @@ typedef PaintFn = void Function(Canvas canvas, Size size);
 typedef CanvasAction = void Function(Canvas canvas);
 
 /// 使用[Canvas]绘制图片
+/// [cullRect] 剔除区域
+///
 /// [DecorationImage]
 /// [paintImage]
 /// [applyBoxFit]
-ui.Picture drawPicture(@dp Size size, CanvasAction action) {
+ui.Picture drawPicture(
+  CanvasAction action, {
+  @dp Size? cullSize,
+  @dp Rect? cullRect,
+}) {
   final ui.PictureRecorder recorder = ui.PictureRecorder();
-  final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, size.width, size.height));
+  final canvas = Canvas(
+      recorder,
+      cullRect ??
+          (cullSize == null
+              ? null
+              : Rect.fromLTWH(0, 0, cullSize.width, cullSize.height)));
   action(canvas);
   return recorder.endRecording();
 }
@@ -52,14 +63,14 @@ Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
   final radio = pixelRatio ?? 1;
   final width = size.width * radio;
   final height = size.height * radio;
-  final ui.Picture picture = drawPicture(size, callback);
+  final ui.Picture picture = drawPicture(callback, cullSize: size);
   if (radio == 1) {
     return picture.toImage(width.imageInt, height.imageInt);
   }
-  final ui.Picture result = drawPicture(ui.Size(width, height), (canvas) {
+  final ui.Picture result = drawPicture((canvas) {
     canvas.scale(radio, radio);
     canvas.drawPicture(picture);
-  });
+  }, cullSize: ui.Size(width, height));
   return result.toImage(width.imageInt, height.imageInt);
 }
 
@@ -67,7 +78,7 @@ Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
 /// [double.round] 四舍五入
 /// [double.ceil] 向上取整
 ui.Image drawImageSync(@dp Size size, CanvasAction callback) {
-  final ui.Picture picture = drawPicture(size, callback);
+  final ui.Picture picture = drawPicture(callback, cullSize: size);
   return picture.toImageSync(size.width.imageInt, size.height.imageInt);
 }
 

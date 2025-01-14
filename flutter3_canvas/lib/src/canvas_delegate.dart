@@ -60,7 +60,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @entryPoint
   void paint(PaintingContext context, Offset offset) {
     paintCount++;
+    //lTime.tick();
     canvasPaintManager.paint(context, offset);
+    //l.w("一帧耗时->${lTime.time()}");
     dispatchCanvasPaint(this, paintCount);
   }
 
