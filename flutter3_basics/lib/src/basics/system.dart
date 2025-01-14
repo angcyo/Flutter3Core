@@ -89,8 +89,9 @@ extension SystemWidgetEx on Widget {
   /// [PlatformMenuItem] 菜单项
   /// [PlatformMenu] 菜单, 没有分组的菜单会被默认丢到第一个Group中
   /// [PlatformMenuItemGroup] 菜单组, 同时也可以进行分组/分割线设置
+  @PlatformFlag("macOS")
   Widget platformMenuBar(
     List<PlatformMenuItem> menus,
   ) =>
-      PlatformMenuBar(menus: menus, child: this);
+      isMacOS ? PlatformMenuBar(menus: menus, child: this) : this;
 }
