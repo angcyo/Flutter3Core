@@ -459,6 +459,46 @@ class ElementPainter extends IPainter
 
   //region ---paint---
 
+  /// 元素绘制缓存, 当缓存存在时, 应该直接绘制缓存
+  /// 否则应该将元素绘制到缓存中, 并绘制缓存数据到画布上
+  Picture? painterCachePicture;
+
+  /// 使缓存无效
+  /// [refresh] 是否通知界面刷新
+  @api
+  void invalidate({
+    bool refresh = true,
+  }) {
+    painterCachePicture?.dispose();
+    painterCachePicture = null;
+    if (refresh) {
+      this.refresh();
+    }
+  }
+
+  /// 元素绘制缓存, 当缓存存在时, 应该直接绘制缓存
+  /// 调用此方法, 将数据绘制在缓存上
+  ///
+  /// [update] 是否更新缓存, 否则缓存不存在时才绘制
+  /// [refresh] 更新缓存后, 是否通知界面刷新
+  ///
+  @callPoint
+  void paintingSelfOnPicture(
+    CanvasAction action, {
+    bool update = false,
+    bool refresh = false,
+  }) {
+    if (update || painterCachePicture == null) {
+      painterCachePicture?.dispose();
+      painterCachePicture = drawPicture(action);
+      if (refresh) {
+        this.refresh();
+      }
+    }
+  }
+
+  //--
+
   /// 主动更新画笔[paint]属性
   /// [painting]
   /// [onPaintingSelfBefore]
@@ -516,6 +556,7 @@ class ElementPainter extends IPainter
   /// [painting]驱动
   /// [onPaintingSelf]绘制之前调用, 用来重新设置画笔样式等
   /// [updatePainterPaint]
+  @sceneCoordinate
   @property
   void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
     //抑制画布缩放
@@ -531,12 +572,19 @@ class ElementPainter extends IPainter
   /// [painting]驱动
   /// [paintPropertyRect]
   /// [paintPropertyBounds]
+  @sceneCoordinate
   @overridePoint
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //paint.color = Colors.black;
     //paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
     if (paintMeta.host is CanvasDelegate) {
       //debugger();
+
+      //绘制缓存
+      if (painterCachePicture != null) {
+        canvas.drawPicture(painterCachePicture!);
+      }
+
       if (debug ||
           canvasDelegate?.canvasElementManager.isElementSelected(this) ==
               true) {
@@ -560,6 +608,7 @@ class ElementPainter extends IPainter
   /// 绘制元素的旋转矩形, 用来提示元素的矩形+旋转信息
   /// [onPaintingSelf]
   @property
+  @sceneCoordinate
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       paint.withSavePaint(() {
@@ -598,11 +647,16 @@ class ElementPainter extends IPainter
   /// 绘制元素的包裹框边界, 全属性后的包裹框
   /// [onPaintingSelf]
   @property
-  void paintPropertyBounds(Canvas canvas, PaintMeta paintMeta, Paint paint) {
+  void paintPropertyBounds(
+    Canvas canvas,
+    PaintMeta paintMeta,
+    Paint paint, {
+    Color? color = Colors.redAccent,
+  }) {
     paintProperty?.let((it) {
       //debugger();
       paint.withSavePaint(() {
-        paint.color = Colors.redAccent;
+        paint.color = color ?? paint.color;
         //canvas.drawPath(it.paintPath, paint);
         canvas.drawRect(it.paintBounds, paint);
       });
@@ -613,6 +667,7 @@ class ElementPainter extends IPainter
   /// [paintPropertyBounds]
   /// [onPaintingSelf]
   @property
+  @sceneCoordinate
   void paintPropertyPaintPath(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       //debugger();
@@ -633,6 +688,7 @@ class ElementPainter extends IPainter
 
   /// 在操作属性的矩阵下, 绘制一个[TextPainter]对象
   @property
+  @sceneCoordinate
   void paintItTextPainter(
     Canvas canvas,
     PaintMeta paintMeta,
@@ -654,6 +710,7 @@ class ElementPainter extends IPainter
   /// 在操作属性的矩阵下, 绘制一个[UiImage]对象
   /// [convertToMmSize] 是否将图片的大小(默认dp)转换成mm大小
   @property
+  @sceneCoordinate
   void paintItUiImage(
     Canvas canvas,
     PaintMeta paintMeta,

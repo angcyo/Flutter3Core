@@ -64,10 +64,15 @@ class PaintMeta {
     /*canvas.withMatrix(originMatrix, () {
       canvas.withMatrix(canvasMatrix, action);
     });*/
-    canvas.withMatrix(
+    if (originMatrix == null && canvasMatrix == null) {
+      action();
+    } else {
+      canvas.withMatrix(
         (originMatrix ?? Matrix4.identity()) *
             (canvasMatrix ?? Matrix4.identity()),
-        action);
+        action,
+      );
+    }
   }
 }
 
