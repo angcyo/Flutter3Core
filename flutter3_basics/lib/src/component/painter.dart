@@ -34,8 +34,18 @@ class PaintMeta {
   @flagProperty
   final double? refCanvasScale;
 
+  /// 视图边界, 通常是整个布局的可绘制位置
+  /// [CanvasViewBox.paintBounds]
+  @dp
+  @viewCoordinate
+  @flagProperty
+  final Rect? viewBounds;
+
   //final CanvasViewBox? viewBox;
 
+  /// [CanvasPaintManager.rasterizeElement] 栅格化
+  /// [CanvasPaintManager.paint] 画布绘制入口
+  /// [CanvasViewBox]
   const PaintMeta({
     //--
     this.host,
@@ -45,6 +55,8 @@ class PaintMeta {
     this.canvasMatrix,
     this.refCanvasScale,
     this.groupPaintChildren,
+    //--
+    this.viewBounds,
   });
 
   /// 获取画布缩放的系数

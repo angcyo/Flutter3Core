@@ -14,6 +14,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 整个可绘制的区域, 包含坐标尺区域和内容区域以及其他空隙区域
   /// [updatePaintBounds] 在此方法中会更新此值
+  ///
+  /// [PaintMeta.viewBounds]
   @dp
   @viewCoordinate
   @autoInjectMark
@@ -40,10 +42,12 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 绘制画布内容时, 需要偏移到画布定义的原点位置
   /// [canvasMatrix]
+  /// [PaintMeta.originMatrix]
   Matrix4 get originMatrix =>
       Matrix4.identity()..translate(originOffset.dx, originOffset.dy);
 
   /// 绘制矩阵, 包含画布的缩放/平移数据
+  /// [PaintMeta.canvasMatrix]
   Matrix4 canvasMatrix = Matrix4.identity();
 
   double get scaleX => canvasMatrix.scaleX;

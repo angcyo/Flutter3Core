@@ -152,6 +152,7 @@ part 'src/widgets/arrow_widget.dart';
 
 /// 类型重定义
 typedef UiImage = ui.Image;
+typedef UiPicture = ui.Picture;
 typedef UiPath = ui.Path;
 typedef UiColor = ui.Color;
 typedef UiBlendMode = ui.BlendMode;

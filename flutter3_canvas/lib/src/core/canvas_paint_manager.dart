@@ -145,6 +145,7 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         paintContext: context,
         originMatrix: viewBox.originMatrix,
         canvasMatrix: viewBox.canvasMatrix,
+        viewBounds: viewBox.paintBounds,
       );
 
       //1: 绘制背景画布内容

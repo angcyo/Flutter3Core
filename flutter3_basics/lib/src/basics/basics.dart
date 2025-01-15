@@ -35,7 +35,7 @@ String nowTimeString([String? newPattern = "yyyy-MM-dd HH:mm:ss.SSS"]) =>
 /// [newPattern] 时间格式
 String nowTimeFileName(
         [String? suffix, String? newPattern = "yyyy-MM-dd_HH-mm-ss-SSS"]) =>
-    nowTimeString(newPattern).connect(suffix);
+    nowTimeString(newPattern).connect(suffix?.ensurePrefix("."));
 
 /// uuid文件名
 /// [suffix] 文件名后缀, 例如`.png`

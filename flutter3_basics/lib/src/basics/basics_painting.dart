@@ -793,6 +793,51 @@ extension CanvasEx on Canvas {
         alignment: alignment);
   }
 
+  /// 绘制指定大小的[ui.Image]
+  /// [size] 强制指定绘制后, 目标图片的大小
+  /// [width]/[height] 仅指定宽/高, 则等比缩放
+  /// @return 返回绘制的图片大小
+  Size? drawImageSize(
+    ui.Image? image, {
+    Offset? offset,
+    Paint? paint,
+    //--
+    Size? size,
+    double? width,
+    double? height,
+    //--
+  }) {
+    if (image == null) {
+      return null;
+    }
+    offset ??= ui.Offset.zero;
+    paint ??= Paint();
+    final imageSize = Size(image.width + 0.0, image.height + 0.0);
+    if (size == null && width == null && height == null) {
+      this.drawImage(image, offset, paint);
+      return imageSize;
+    }
+    double sx = 1;
+    double sy = 1;
+    if (size != null || (width != null && height != null)) {
+      //强制指定输出尺寸
+      size ??= Size(width ?? imageSize.width, height ?? imageSize.height);
+      sx = size.width / imageSize.width;
+      sy = size.height / imageSize.height;
+    } else if (width != null) {
+      sx = width / imageSize.width;
+      sy = sx;
+    } else if (height != null) {
+      sy = height / imageSize.height;
+      sx = sy;
+    }
+    final matrix = createScaleMatrix(sx: sx, sy: sy, anchor: offset);
+    withMatrix(matrix, () {
+      this.drawImage(image, offset!, paint!);
+    });
+    return Size(imageSize.width * sx, imageSize.height * sy);
+  }
+
   /// 绘制[ui.Image]
   void drawImageInRect(
     ui.Image? image, {
@@ -801,13 +846,14 @@ extension CanvasEx on Canvas {
     ui.ColorFilter? colorFilter,
     BoxFit? fit,
     Alignment? alignment = Alignment.center,
+    Paint? paint,
   }) {
     if (image == null) {
       return;
     }
     final imageSize = Size(image.width + 0.0, image.height + 0.0);
     drawInRect(dst, imageSize.toRect(), () {
-      this.drawImage(image, ui.Offset.zero, Paint());
+      this.drawImage(image, ui.Offset.zero, paint ?? Paint());
     },
         tintColor: tintColor,
         colorFilter: colorFilter,

@@ -64,7 +64,7 @@ Future<FilePickerResult?> pickFiles({
   bool lockParentWindow = false,
   bool readSequential = false,
 }) async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
+  final FilePickerResult? result = await FilePicker.platform.pickFiles(
     dialogTitle: dialogTitle,
     initialDirectory: initialDirectory,
     type: type,
@@ -103,20 +103,23 @@ Future<String?> pickDirectoryPath({
   bool lockParentWindow = false,
   String? initialDirectory,
 }) async {
-  var path = await FilePicker.platform.getDirectoryPath(
+  final path = await FilePicker.platform.getDirectoryPath(
     dialogTitle: dialogTitle,
     lockParentWindow: lockParentWindow,
     initialDirectory: initialDirectory,
   );
-  if (path != null) {
-    l.d('选择文件夹->$path');
-  } else {
-    l.d('取消选择文件夹');
-  }
+  assert(() {
+    if (path != null) {
+      l.d('选择文件夹->$path');
+    } else {
+      l.d('取消选择文件夹');
+    }
+    return true;
+  }());
   return path;
 }
 
-/// 调用平台的对话框保存文件
+/// 调用平台的对话框保存文件, 返回平台对应的保存文件路径
 /// 此方法仅适用于桌面平台（Linux、macOS 和 Windows）。
 ///
 /// @return 待保存文件的路径(文件可能不存在)
@@ -131,7 +134,7 @@ Future<String?> saveFile({
   List<String>? allowedExtensions,
   bool lockParentWindow = false,
 }) async {
-  var path = await FilePicker.platform.saveFile(
+  final path = await FilePicker.platform.saveFile(
     dialogTitle: dialogTitle,
     fileName: fileName,
     initialDirectory: initialDirectory,
@@ -139,10 +142,13 @@ Future<String?> saveFile({
     allowedExtensions: allowedExtensions,
     lockParentWindow: lockParentWindow,
   );
-  if (path != null) {
-    l.d('保存文件至->$path');
-  } else {
-    l.d('取消保存文件');
-  }
+  assert(() {
+    if (path != null) {
+      l.d('保存文件至->$path');
+    } else {
+      l.d('取消保存文件');
+    }
+    return true;
+  }());
   return path;
 }
