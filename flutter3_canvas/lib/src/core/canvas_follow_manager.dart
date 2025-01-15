@@ -79,7 +79,7 @@ class CanvasFollowManager with CanvasComponentMixin {
     bool? awaitAnimate,
   }) {
     final sceneBounds = canvasDelegate
-            .canvasPaintManager.contentManager.canvasContentFollowRectInner ??
+        .canvasPaintManager.contentManager.canvasContentFollowRectInner ??
         (rollbackPainter
             ? canvasDelegate.canvasElementManager.allElementsBounds
             : null);
@@ -108,8 +108,7 @@ class CanvasFollowManager with CanvasComponentMixin {
   /// 所有函数参数, 都只是临时生效的参数, 长久生效请使用属性
   @api
   @Deprecated("请使用[followRect]")
-  void followRectOld(
-    @sceneCoordinate Rect? rect, {
+  void followRectOld(@sceneCoordinate Rect? rect, {
     EdgeInsets? margin,
     Alignment? alignment,
     bool? enableZoomOut /*是否允许视口缩小处理*/,
@@ -202,7 +201,7 @@ class CanvasFollowManager with CanvasComponentMixin {
       anchor = rect.center;
 
       final canvasCenter =
-          Offset(canvasBounds.width / 2, canvasBounds.height / 2);
+      Offset(canvasBounds.width / 2, canvasBounds.height / 2);
       final offset = canvasCenter - rect.center;
       translateMatrix.translate(offset.dx, offset.dy);
     } else if (alignment == Alignment.topLeft) {
@@ -264,8 +263,7 @@ class CanvasFollowManager with CanvasComponentMixin {
   ///   更多时候这个值应该为[BoxFit.contain].
   ///
   @api
-  void followRect(
-    @sceneCoordinate Rect? rect, {
+  void followRect(@sceneCoordinate Rect? rect, {
     @viewCoordinate EdgeInsets? margin,
     Alignment? alignment,
     BoxFit? fit,
@@ -350,9 +348,9 @@ class CanvasFollowManager with CanvasComponentMixin {
         @viewCoordinate
         final targetViewAlignmentOffset = alignment
             .inscribe(
-              Size(targetViewWidth, targetViewHeight),
-              Rect.fromLTWH(0, 0, canvasBounds.width, canvasBounds.height),
-            )
+          Size(targetViewWidth, targetViewHeight),
+          Rect.fromLTWH(0, 0, canvasBounds.width, canvasBounds.height),
+        )
             .lt;
         //margin的偏移
         @viewCoordinate
@@ -415,7 +413,7 @@ class CanvasFollowManager with CanvasComponentMixin {
         marginTop = margin?.top ?? 0,
         marginRight = margin?.right ?? 0,
         marginBottom = margin?.bottom ?? 0;
-
+    
     @viewCoordinate
     final fromRect = Rect.fromLTWH(
         marginLeft,
@@ -430,6 +428,7 @@ class CanvasFollowManager with CanvasComponentMixin {
 
     //边距在此生效
     final translateMatrix = Matrix4.identity();
+    //translateMatrix.translate(offset.dx, offset.dy);
     translateMatrix.translate(
       -toRect.left + fromRect.left,
       -toRect.top + fromRect.top,

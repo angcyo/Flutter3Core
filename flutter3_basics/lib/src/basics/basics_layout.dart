@@ -163,14 +163,17 @@ Matrix4 applyAlignMatrix(
     fit: fit,
     alignment: alignment,
   );
+  //debugger();
   return Matrix4.identity()
     ..scaleBy(
-        sx: rect.width / childSize.width,
-        sy: rect.height / childSize.height,
-        anchor: Offset(
-          rect.left + (anchorOffset?.dx ?? 0),
-          rect.top + (anchorOffset?.dy ?? 0),
-        ));
+      sx: rect.width / childSize.width,
+      sy: rect.height / childSize.height,
+      anchor: Offset(
+        rect.left + (anchorOffset?.dx ?? 0),
+        rect.top + (anchorOffset?.dy ?? 0),
+      ),
+    )
+    ..translate(rect.left, rect.top);
 }
 
 /// [RenderBoxContainerDefaultsMixin.defaultPaint]
