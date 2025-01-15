@@ -601,7 +601,9 @@ class ElementPainter extends IPainter
 
       //绘制缓存
       if (painterCachePicture != null) {
+        //lTime.tick();
         canvas.drawPicture(painterCachePicture!);
+        //l.w("[ElementPainter.onPaintingSelf]一帧耗时->${lTime.time()}");
       }
 
       if (debug ||

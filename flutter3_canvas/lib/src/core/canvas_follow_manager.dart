@@ -298,6 +298,7 @@ class CanvasFollowManager with CanvasComponentMixin {
       });
       return;
     }
+
     fit ??= this.fit;
     if (fit == null) {
       assert(() {
@@ -343,6 +344,7 @@ class CanvasFollowManager with CanvasComponentMixin {
     @sceneCoordinate
     final toRect = rect;
 
+    //debugger();
     if (fit == BoxFit.none) {
       //特殊处理:
       if (canvasVisibleWidth > toRect.width &&
@@ -421,7 +423,7 @@ class CanvasFollowManager with CanvasComponentMixin {
         );
         return;
       } else {
-        fit = this.fit;
+        fit = BoxFit.contain;
       }
     }
 

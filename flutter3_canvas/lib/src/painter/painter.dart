@@ -21,7 +21,13 @@ class CanvasMonitorPainter extends IPainter {
     final viewBox = canvasDelegate.canvasViewBox;
     final text = stringBuilder((builder) {
       //缩放比例
-      builder.addText("${(viewBox.scaleX * 100).round()}%");
+      final sx = (viewBox.scaleX * 100).round();
+      final sy = (viewBox.scaleY * 100).round();
+      if (sx == sy) {
+        builder.addText("$sx%");
+      } else {
+        builder.addText("$sx%/$sy%");
+      }
       if (isDebug) {
         //元素数量:单元素数量/画布数量
         builder.addText(
