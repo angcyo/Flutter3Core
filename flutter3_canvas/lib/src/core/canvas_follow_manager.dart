@@ -37,9 +37,13 @@ class CanvasFollowManager with CanvasComponentMixin {
   /// [CanvasViewBox.canvasBounds]
   Alignment alignment = Alignment.center;
 
-  /// 缩放模式
+  /// 缩放模式,
+  /// [null] 不进行任何处理
+  /// [BoxFit.none] 会有特殊处理
+  /// [BoxFit.contain] 视图内撑满
   /// [CanvasViewBox.canvasBounds]
-  BoxFit fit = BoxFit.contain;
+  /// [followRect]
+  BoxFit? fit = isDesktopOrWeb ? BoxFit.none : BoxFit.contain;
 
   /// 当设置过画布内容模版时, 所有的[followRect]操作是否都将平移量
   /// 设置为内容模板的位置?
@@ -75,11 +79,14 @@ class CanvasFollowManager with CanvasComponentMixin {
   void followCanvasContent({
     bool rollbackPainter = true,
     bool? restoreDef,
+    //--
+    Alignment? alignment,
+    BoxFit? fit,
     bool? animate,
     bool? awaitAnimate,
   }) {
     final sceneBounds = canvasDelegate
-        .canvasPaintManager.contentManager.canvasContentFollowRectInner ??
+            .canvasPaintManager.contentManager.canvasContentFollowRectInner ??
         (rollbackPainter
             ? canvasDelegate.canvasElementManager.allElementsBounds
             : null);
@@ -97,9 +104,11 @@ class CanvasFollowManager with CanvasComponentMixin {
     } else {
       followRect(
         sceneBounds,
+        restoreDefault: restoreDef,
+        alignment: alignment,
+        fit: fit,
         animate: animate,
         awaitAnimate: awaitAnimate,
-        restoreDefault: restoreDef,
       );
     }
   }
@@ -108,7 +117,8 @@ class CanvasFollowManager with CanvasComponentMixin {
   /// 所有函数参数, 都只是临时生效的参数, 长久生效请使用属性
   @api
   @Deprecated("请使用[followRect]")
-  void followRectOld(@sceneCoordinate Rect? rect, {
+  void followRectOld(
+    @sceneCoordinate Rect? rect, {
     EdgeInsets? margin,
     Alignment? alignment,
     bool? enableZoomOut /*是否允许视口缩小处理*/,
@@ -201,7 +211,7 @@ class CanvasFollowManager with CanvasComponentMixin {
       anchor = rect.center;
 
       final canvasCenter =
-      Offset(canvasBounds.width / 2, canvasBounds.height / 2);
+          Offset(canvasBounds.width / 2, canvasBounds.height / 2);
       final offset = canvasCenter - rect.center;
       translateMatrix.translate(offset.dx, offset.dy);
     } else if (alignment == Alignment.topLeft) {
@@ -263,7 +273,8 @@ class CanvasFollowManager with CanvasComponentMixin {
   ///   更多时候这个值应该为[BoxFit.contain].
   ///
   @api
-  void followRect(@sceneCoordinate Rect? rect, {
+  void followRect(
+    @sceneCoordinate Rect? rect, {
     @viewCoordinate EdgeInsets? margin,
     Alignment? alignment,
     BoxFit? fit,
@@ -287,9 +298,16 @@ class CanvasFollowManager with CanvasComponentMixin {
       });
       return;
     }
+    fit ??= this.fit;
+    if (fit == null) {
+      assert(() {
+        l.d('操作被忽略[fit]为null!');
+        return true;
+      }());
+      return;
+    }
 
     alignment ??= this.alignment;
-    fit ??= this.fit;
     margin ??= this.margin;
     animate ??= this.animate;
     awaitAnimate ??= this.awaitAnimate;
@@ -348,9 +366,9 @@ class CanvasFollowManager with CanvasComponentMixin {
         @viewCoordinate
         final targetViewAlignmentOffset = alignment
             .inscribe(
-          Size(targetViewWidth, targetViewHeight),
-          Rect.fromLTWH(0, 0, canvasBounds.width, canvasBounds.height),
-        )
+              Size(targetViewWidth, targetViewHeight),
+              Rect.fromLTWH(0, 0, canvasBounds.width, canvasBounds.height),
+            )
             .lt;
         //margin的偏移
         @viewCoordinate
@@ -413,7 +431,7 @@ class CanvasFollowManager with CanvasComponentMixin {
         marginTop = margin?.top ?? 0,
         marginRight = margin?.right ?? 0,
         marginBottom = margin?.bottom ?? 0;
-    
+
     @viewCoordinate
     final fromRect = Rect.fromLTWH(
         marginLeft,
