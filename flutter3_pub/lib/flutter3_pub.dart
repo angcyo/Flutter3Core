@@ -8,6 +8,7 @@ import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter3_core/flutter3_core.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart';
 
@@ -38,3 +39,4 @@ part 'src/photo/nine_grid_ex.dart';
 part 'src/photo/photo_ex.dart';
 part 'src/photo/single_photo_dialog.dart';
 part 'src/picker/file_picker_ex.dart';
+part 'src/picker/color_picker_ex.dart';

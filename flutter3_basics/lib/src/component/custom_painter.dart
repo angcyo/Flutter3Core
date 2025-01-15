@@ -174,6 +174,7 @@ class OvalPainter extends CustomPainter {
 }
 
 /// 透明棋盘小部件
+/// [PixelTransparentPainter] 棋盘画笔
 class TransparentPixelWidget extends StatelessWidget {
   final double cellSize;
 

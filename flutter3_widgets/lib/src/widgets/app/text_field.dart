@@ -184,6 +184,18 @@ const kPrefixIconConstraints = BoxConstraints(
   maxHeight: kSuffixIconConstraintsMaxSize,
 );
 
+/// 数字输入格式化器, 仅支持输入数字
+FilteringTextInputFormatter get integerTextInputFormatter =>
+    FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
+
+/// 支持正负整数输入
+FilteringTextInputFormatter get numberTextInputFormatter =>
+    FilteringTextInputFormatter.allow(RegExp(r'^-?\d*'));
+
+/// 仅支持输入小数
+FilteringTextInputFormatter get decimalTextInputFormatter =>
+    FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*'));
+
 /// 用来控制密码输入控件, 密码的可见性
 class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {
   /// 是否是密码输入框

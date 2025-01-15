@@ -54,7 +54,6 @@ extension ImageLibEx on List<int> {
 }
 
 extension ImageEx on LImage {
-
   /// 图片转ui图片
   Future<UiImage> get uiImage {
     final image = this;
@@ -63,8 +62,13 @@ extension ImageEx on LImage {
   }
 
   /// 按照指定格式编码图片
+  /// [resize] 调整大小
   Uint8List encode(
     LImageFormat? format, {
+    //--
+    Size? resize,
+    LImageColor? backgroundColor,
+    //--
     bool singleFrame = false,
     //--jpg
     int quality = 100,
@@ -78,29 +82,41 @@ extension ImageEx on LImage {
     img.DitherKernel dither = img.DitherKernel.floydSteinberg,
     bool ditherSerpentine = false,
   }) {
+    LImage image = this;
+    if (resize != null) {
+      image = img.copyResize(
+        image,
+        width: resize.width.round(),
+        height: resize.height.round(),
+        maintainAspect: true,
+        backgroundColor: backgroundColor,
+      );
+    }
+
     return switch (format) {
-      LImageFormat.jpg => img.encodeJpg(this, quality: quality, chroma: chroma),
+      LImageFormat.jpg =>
+        img.encodeJpg(image, quality: quality, chroma: chroma),
       LImageFormat.png => img.encodePng(
-          this,
+          image,
           level: level,
           filter: filter,
           singleFrame: singleFrame,
         ),
       LImageFormat.gif => img.encodeGif(
-          this,
+          image,
           singleFrame: singleFrame,
           repeat: repeat,
           samplingFactor: samplingFactor,
           dither: dither,
           ditherSerpentine: ditherSerpentine,
         ),
-      LImageFormat.bmp => img.encodeBmp(this),
-      LImageFormat.tiff => img.encodeTiff(this, singleFrame: singleFrame),
-      LImageFormat.tga => img.encodeTga(this),
-      LImageFormat.pvr => img.encodePvr(this, singleFrame: singleFrame),
-      LImageFormat.ico => img.encodeIco(this, singleFrame: singleFrame),
+      LImageFormat.bmp => img.encodeBmp(image),
+      LImageFormat.tiff => img.encodeTiff(image, singleFrame: singleFrame),
+      LImageFormat.tga => img.encodeTga(image),
+      LImageFormat.pvr => img.encodePvr(image, singleFrame: singleFrame),
+      LImageFormat.ico => img.encodeIco(image, singleFrame: singleFrame),
       _ => img.encodePng(
-          this,
+          image,
           level: level,
           filter: filter,
           singleFrame: singleFrame,

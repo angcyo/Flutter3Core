@@ -5,6 +5,115 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/05/13
 ///
 /// 开关tile
+/// [text]     ...[Switch]
+class SwitchTile extends StatefulWidget {
+  /// 文本
+  final String? text;
+  final TextStyle? textStyle;
+  final EdgeInsets? textPadding;
+  final Widget? textWidget;
+
+  //--
+
+  /// 开关
+  final bool value;
+
+  /// 并不需要在此方法中更新界面
+  final ValueChanged<bool>? onValueChanged;
+
+  /// 在改变时, 需要进行的确认回调
+  /// 返回false, 则不进行改变
+  final FutureValueCallback<bool>? onValueConfirmChange;
+
+  /// [Switch]的高度
+  final double switchHeight;
+
+  /// [Switch]未激活时圆圈的颜色
+  final Color? switchInactiveThumbColor;
+
+  /// [Switch]的轮廓颜色
+  final WidgetStateProperty<Color?>? trackOutlineColor;
+
+  //
+
+  /// tile的填充
+  final EdgeInsets? tilePadding;
+
+  const SwitchTile({
+    super.key,
+    //--
+    this.text,
+    this.textStyle,
+    this.textWidget,
+    this.textPadding = const EdgeInsets.only(
+      right: kH,
+    ),
+    //--
+    this.value = false,
+    this.onValueChanged,
+    this.onValueConfirmChange,
+    this.switchHeight = kMinHeight,
+    this.switchInactiveThumbColor,
+    this.trackOutlineColor,
+    //--
+    this.tilePadding = kTilePadding,
+  });
+
+  @override
+  State<SwitchTile> createState() => _SwitchTileState();
+}
+
+class _SwitchTileState extends State<SwitchTile>
+    with TileMixin, ValueChangeMixin<SwitchTile, bool> {
+
+  @override
+  bool getInitialValueMixin() => widget.value;
+
+  @override
+  Widget build(BuildContext context) {
+    // build text
+    Widget? text = buildTextWidget(
+      context,
+      textWidget: widget.textWidget,
+      text: widget.text,
+      textStyle: widget.textStyle,
+      textPadding: widget.textPadding,
+      constraints: null,
+    );
+    return [
+      text?.expanded(),
+      buildSwitchWidget(
+        context,
+        currentValueMixin,
+        height: widget.switchHeight,
+        inactiveThumbColor: widget.switchInactiveThumbColor,
+        trackOutlineColor: widget.trackOutlineColor,
+        onChanged: (value) {
+          _changeValue(value);
+        },
+      ),
+    ]
+        .row(crossAxisAlignment: CrossAxisAlignment.center)!
+        .paddingInsets(widget.tilePadding)
+        .ink(() {
+      //debugger();
+      _changeValue(!currentValueMixin);
+    }).material();
+  }
+
+  void _changeValue(bool toValue) async {
+    if (widget.onValueConfirmChange != null) {
+      final result = await widget.onValueConfirmChange!(toValue);
+      if (result != true) {
+        return;
+      }
+    }
+    currentValueMixin = toValue;
+    widget.onValueChanged?.call(toValue);
+    updateState();
+  }
+}
+
 /// [label].[actions]     ...[Switch]
 /// [des]                 ...
 ///

@@ -4,7 +4,7 @@ part of '../../flutter3_pub.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/18
 ///
-
+/// 文件选择扩展
 /// 选择单图片, 默认关闭了图片压缩.
 /// 关闭图片压缩后, `file_picker`插件不会走sd卡权限获取
 Future<PlatformFile?> pickSingleImage({

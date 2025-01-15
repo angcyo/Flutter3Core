@@ -148,6 +148,7 @@ mixin TileMixin {
     bool themeStyle = true,
     EdgeInsets? textPadding,
     EdgeInsets? padding,
+    BoxConstraints? constraints,
   }) {
     final globalTheme = GlobalTheme.of(context);
     final widget = textWidget ??
@@ -159,6 +160,7 @@ mixin TileMixin {
               style:
                   textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
             )
+            .constrainedBox(constraints)
             .paddingInsets(textPadding));
     return widget?.paddingInsets(padding);
   }

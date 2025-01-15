@@ -3285,6 +3285,14 @@ extension NavigatorEx on BuildContext {
       pop(result, rootNavigator, checkDismissal);
 
   /// 弹出一个菜单路由
+  void popDialog<T extends Object?>([
+    T? result,
+    bool rootNavigator = false,
+    bool checkDismissal = false,
+  ]) =>
+      pop(result, rootNavigator, checkDismissal);
+
+  /// 弹出一个菜单路由
   void popMenu<T extends Object?>([
     T? result,
     bool rootNavigator = false,

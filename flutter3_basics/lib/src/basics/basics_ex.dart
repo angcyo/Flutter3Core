@@ -587,6 +587,15 @@ extension ColorEx on Color {
     }
   }
 
+  /// 系统的RGB值取值范围是[0~1], 这里转成[0~255]
+  int get R => (r * 255).round().clamp(0, 255);
+
+  int get G => (g * 255).round().clamp(0, 255);
+
+  int get B => (b * 255).round().clamp(0, 255);
+
+  int get A => (a * 255).round().clamp(0, 255);
+
   /// 默认的[value]时argb
   /// 这里返回rgba
   int get rgbaValue => red << 24 | green << 16 | blue << 8 | alpha;
