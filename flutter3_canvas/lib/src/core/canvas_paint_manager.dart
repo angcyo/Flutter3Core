@@ -123,8 +123,8 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       axisManager.yAxisBounds = Rect.fromLTRB(paintBounds.left, yAxisTop,
           paintBounds.left + axisManager.yAxisWidth, paintBounds.bottom);
     } else {
-      axisManager.xAxisBounds = Rect.zero;
-      axisManager.yAxisBounds = Rect.zero;
+      axisManager.xAxisBounds = null;
+      axisManager.yAxisBounds = null;
     }
   }
 

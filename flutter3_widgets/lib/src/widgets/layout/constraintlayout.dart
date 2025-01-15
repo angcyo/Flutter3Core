@@ -50,18 +50,31 @@ extension ConstraintLayoutEx on Widget {
     //--
     double? width,
     double? height,
+    //--
+    cl_layout.ConstraintAlign? left,
+    cl_layout.ConstraintAlign? top,
+    cl_layout.ConstraintAlign? right,
+    cl_layout.ConstraintAlign? bottom,
   }) =>
       applyConstraint(
-        width: width ?? cl_layout.matchParent,
-        height: height ?? cl_layout.matchParent,
+        width: width ?? cl_layout.matchConstraint,
+        height: height ?? cl_layout.matchConstraint,
+        //--
+        left: left ?? cl_layout.parent.left,
+        top: top ?? cl_layout.parent.top,
+        right: right ?? cl_layout.parent.right,
+        bottom: bottom ?? cl_layout.parent.bottom,
       );
 
   /// 对齐父容器左边的约束
+  /// - 对齐父容器
+  /// - 撑满对应的容器
   Widget alignParentConstraint({
     Alignment alignment = Alignment.centerLeft,
     //--
     double? width,
     double? height,
+    //--
     cl_layout.ConstraintAlign? left,
     cl_layout.ConstraintAlign? top,
     cl_layout.ConstraintAlign? right,

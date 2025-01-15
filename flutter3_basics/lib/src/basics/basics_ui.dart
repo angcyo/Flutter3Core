@@ -269,8 +269,8 @@ extension WidgetListEx on WidgetNullList {
   /// [crossAxisAlignment] 交叉轴上的对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
   Widget? column({
-    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
     MainAxisSize? mainAxisSize, //MainAxisSize.min
+    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
     CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.center
     TextDirection? textDirection,
     VerticalDirection? verticalDirection, //VerticalDirection.down
@@ -302,8 +302,8 @@ extension WidgetListEx on WidgetNullList {
   /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
   Widget? row({
-    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
     MainAxisSize? mainAxisSize, //MainAxisSize.max
+    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
     CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.center
     TextDirection? textDirection,
     VerticalDirection? verticalDirection, //VerticalDirection.down
@@ -355,12 +355,17 @@ extension WidgetListEx on WidgetNullList {
   /// [scroll]
   /// [WidgetEx.scroll]
   Widget? scroll({
+    //--
     Axis axis = Axis.horizontal,
     ScrollPhysics? physics = kScrollPhysics,
     ScrollController? controller,
     EdgeInsetsGeometry? padding,
     bool? primary,
+    bool reverse = false,
+    //--
     MainAxisSize? mainAxisSize, //MainAxisSize.min
+    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
+    CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.start
     double? gap,
     Widget? gapWidget,
   }) {
@@ -372,12 +377,16 @@ extension WidgetListEx on WidgetNullList {
     if (axis == Axis.vertical) {
       body = list.column(
         mainAxisSize: mainAxisSize ?? MainAxisSize.min,
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
         gap: gap,
         gapWidget: gapWidget,
       )!;
     } else {
       body = list.row(
         mainAxisSize: mainAxisSize ?? MainAxisSize.min,
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
         gap: gap,
         gapWidget: gapWidget,
       )!;
@@ -388,8 +397,39 @@ extension WidgetListEx on WidgetNullList {
       controller: controller,
       padding: padding,
       primary: primary,
+      reverse: reverse,
     );
   }
+
+  /// 垂直滚动
+  Widget? scrollVertical({
+    //--
+    Axis axis = Axis.vertical,
+    ScrollPhysics? physics = kScrollPhysics,
+    ScrollController? controller,
+    EdgeInsetsGeometry? padding,
+    bool? primary,
+    bool reverse = false,
+    //--
+    MainAxisSize? mainAxisSize = MainAxisSize.max,
+    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
+    CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.start
+    double? gap,
+    Widget? gapWidget,
+  }) =>
+      scroll(
+        axis: axis,
+        physics: physics,
+        controller: controller,
+        padding: padding,
+        primary: primary,
+        reverse: reverse,
+        mainAxisSize: mainAxisSize,
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment,
+        gap: gap,
+        gapWidget: gapWidget,
+      );
 
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints

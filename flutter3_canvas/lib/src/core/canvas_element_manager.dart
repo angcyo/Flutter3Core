@@ -113,8 +113,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     final group = ElementGroupPainter();
     group.resetChildren(list);
-    return group.paintProperty
+    final bounds = group.paintProperty
         ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+    if (isNil(bounds)) {
+      return null;
+    }
+    return bounds;
   }
 
   //endregion ---属性----

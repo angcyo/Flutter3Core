@@ -26,8 +26,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       CanvasFlingComponent(canvasDelegate);
 
   /// 画布区域点击事件组件
-  CanvasBoundsEventComponent canvasBoundsEventComponent =
-      CanvasBoundsEventComponent();
+  late CanvasBoundsEventComponent canvasBoundsEventComponent =
+      CanvasBoundsEventComponent(canvasDelegate);
 
   /// 鼠标或者手势是否按下
   @output

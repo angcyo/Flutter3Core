@@ -488,10 +488,17 @@ class ElementPainter extends IPainter
   }) {
     if (update || painterCachePicture == null) {
       painterCachePicture?.dispose();
-      painterCachePicture = drawPicture((canvas) {
-        onPaintingSelfOnPicture(canvas);
-        action?.call(canvas);
-      });
+      try {
+        painterCachePicture = drawPicture((canvas) {
+          onPaintingSelfOnPicture(canvas);
+          action?.call(canvas);
+        });
+      } catch (e, s) {
+        assert(() {
+          printError(e, s);
+          return true;
+        }());
+      }
       if (refresh) {
         this.refresh();
       }
@@ -502,6 +509,8 @@ class ElementPainter extends IPainter
   /// 需要主动调用一次[paintingSelfOnPicture]方法触发
   /// [painterCachePicture]
   /// [paintingSelfOnPicture]
+  ///
+  /// 抛出异常, 则不进行赋值
   @overridePoint
   void onPaintingSelfOnPicture(Canvas canvas) {
     //no op

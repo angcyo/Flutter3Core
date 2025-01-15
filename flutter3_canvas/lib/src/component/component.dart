@@ -25,12 +25,18 @@ mixin CanvasDelegateManagerMixin {
   CanvasElementManager get canvasElementManager =>
       canvasDelegate.canvasElementManager;
 
+  CanvasPaintManager get canvasPaintManager =>
+      canvasDelegate.canvasPaintManager;
+
   CanvasViewBox get canvasViewBox => canvasDelegate.canvasViewBox;
 
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
   /// 元素上下文
   BuildContext? get context => canvasDelegate.delegateContext;
+
+  /// 坐标系
+  CanvasAxisManager get axisManager => canvasPaintManager.axisManager;
 
   //--
 

@@ -69,16 +69,21 @@ class CanvasFollowManager with CanvasComponentMixin {
   //endregion --配置属性--
 
   /// 跟随画布内容模版
+  /// [rollbackPainter] 当未指定内容模版时, 是否降级到元素边界
   /// [restoreDef] 当未指定场景内容时, 是否恢复默认的1:1视图?
   /// [CanvasContentManager.followCanvasContentTemplate]
   void followCanvasContent({
+    bool rollbackPainter = true,
     bool? restoreDef,
     bool? animate,
     bool? awaitAnimate,
   }) {
-    //debugger();
     final sceneBounds = canvasDelegate
-        .canvasPaintManager.contentManager.canvasContentFollowRectInner;
+            .canvasPaintManager.contentManager.canvasContentFollowRectInner ??
+        (rollbackPainter
+            ? canvasDelegate.canvasElementManager.allElementsBounds
+            : null);
+    //debugger();
     if (sceneBounds == null) {
       if (restoreDef == true) {
         animate ??= this.animate;
@@ -90,7 +95,12 @@ class CanvasFollowManager with CanvasComponentMixin {
         );
       }
     } else {
-      followRect(sceneBounds);
+      followRect(
+        sceneBounds,
+        animate: animate,
+        awaitAnimate: awaitAnimate,
+        restoreDefault: restoreDef,
+      );
     }
   }
 
@@ -287,7 +297,7 @@ class CanvasFollowManager with CanvasComponentMixin {
     awaitAnimate ??= this.awaitAnimate;
 
     //default
-    if (rect == null) {
+    if (rect == null || rect.isEmpty) {
       if (restoreDefault == true) {
         if (!canvasDelegate.canvasPaintManager.contentManager
             .followCanvasContentTemplate()) {

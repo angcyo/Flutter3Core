@@ -4,6 +4,9 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/02/02
 /// 坐标轴管理, 负责坐标轴/坐标网格的绘制以及计算
+///
+/// [CanvasPaintManager]的成员
+///
 class CanvasAxisManager extends IPainter {
   final CanvasPaintManager paintManager;
 
@@ -20,12 +23,43 @@ class CanvasAxisManager extends IPainter {
   /// x横坐标轴的绘制边界
   /// [CanvasPaintManager.onUpdatePaintBounds] 会更新此值
   @dp
-  Rect xAxisBounds = Rect.zero;
+  @viewCoordinate
+  @output
+  Rect? xAxisBounds;
 
   /// y纵坐标轴的绘制边界
   /// [CanvasPaintManager.onUpdatePaintBounds] 会更新此值
   @dp
-  Rect yAxisBounds = Rect.zero;
+  @viewCoordinate
+  @output
+  Rect? yAxisBounds;
+
+  /// 获取x/y坐标轴相交的边界
+  @dp
+  @viewCoordinate
+  @output
+  Rect? get axisIntersectBounds {
+    final xBounds = xAxisBounds;
+    final yBounds = yAxisBounds;
+    if (xBounds == null || yBounds == null) {
+      return null;
+    }
+    if (xBounds.overlaps(yBounds)) {
+      //重叠
+      return Rect.fromLTRB(
+        xBounds.left,
+        yBounds.top,
+        xBounds.right,
+        yBounds.bottom,
+      );
+    }
+    return Rect.fromLTRB(
+      min(xBounds.left, yBounds.left),
+      min(xBounds.top, yBounds.top),
+      min(xBounds.left, yBounds.right),
+      min(xBounds.bottom, yBounds.top),
+    );
+  }
 
   //--
 
@@ -61,6 +95,10 @@ class CanvasAxisManager extends IPainter {
   CanvasAxisManager(this.paintManager);
 
   /// 调用此方法,更新坐标轴数据
+  ///
+  /// [CanvasDelegate.dispatchCanvasViewBoxChanged]驱动
+  /// [CanvasDelegate.dispatchCanvasUnitChanged]驱动
+  ///
   @entryPoint
   void updateAxisData(CanvasViewBox canvasViewBox) {
     xData.clear();
@@ -183,13 +221,13 @@ class CanvasAxisManager extends IPainter {
 
       //边界线
       canvas.drawLine(
-        Offset(paintBounds.left, xAxisBounds.bottom),
-        Offset(paintBounds.right, xAxisBounds.bottom),
+        Offset(paintBounds.left, xAxisBounds?.bottom ?? 0),
+        Offset(paintBounds.right, xAxisBounds?.bottom ?? 0),
         primaryPaint,
       );
       canvas.drawLine(
-        Offset(yAxisBounds.right, paintBounds.top),
-        Offset(yAxisBounds.right, paintBounds.bottom),
+        Offset(yAxisBounds?.right ?? 0, paintBounds.top),
+        Offset(yAxisBounds?.right ?? 0, paintBounds.bottom),
         primaryPaint,
       );
     }
@@ -241,9 +279,9 @@ class CanvasAxisManager extends IPainter {
         final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
 
         final left = origin.dx + bounds.left * scale;
-        final top = xAxisBounds.top;
+        final top = xAxisBounds?.top ?? 0;
         final right = origin.dx + bounds.right * scale;
-        final bottom = xAxisBounds.bottom;
+        final bottom = xAxisBounds?.bottom ?? 0;
 
         elementBoundsPaint.color = paintManager
             .canvasDelegate.canvasStyle.canvasAccentColor
@@ -269,9 +307,9 @@ class CanvasAxisManager extends IPainter {
         @viewCoordinate
         final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
 
-        final left = yAxisBounds.left;
+        final left = yAxisBounds?.left ?? 0;
         final top = origin.dy + bounds.top * scale;
-        final right = yAxisBounds.right;
+        final right = yAxisBounds?.right ?? 0;
         final bottom = origin.dy + bounds.bottom * scale;
 
         elementBoundsPaint.color = paintManager
@@ -325,8 +363,10 @@ class CanvasAxisManager extends IPainter {
                 )),
             textDirection: TextDirection.ltr)
           ..layout()
-          ..paint(canvas,
-              Offset(axisData.viewValue + axisLabelOffset, xAxisBounds.top));
+          ..paint(
+              canvas,
+              Offset(
+                  axisData.viewValue + axisLabelOffset, xAxisBounds?.top ?? 0));
       }
     }
   }
@@ -375,10 +415,12 @@ class CanvasAxisManager extends IPainter {
                   )),
               textDirection: TextDirection.ltr)
             ..layout()
-            ..paint(canvas,
-                Offset(yAxisBounds.left, axisData.viewValue - axisLabelOffset));
+            ..paint(
+                canvas,
+                Offset(yAxisBounds?.left ?? 0,
+                    axisData.viewValue - axisLabelOffset));
         },
-            pivotX: yAxisBounds.left,
+            pivotX: yAxisBounds?.left ?? 0,
             pivotY: axisData.viewValue - axisLabelOffset);
       }
     }

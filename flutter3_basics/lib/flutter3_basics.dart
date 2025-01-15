@@ -198,6 +198,12 @@ bool isNullOrEmpty(dynamic value) {
   if (value is Map) {
     return value.isEmpty;
   }
+  if (value is Rect) {
+    return value.isEmpty;
+  }
+  if (value is Size) {
+    return value.isEmpty;
+  }
   return false;
 }
 

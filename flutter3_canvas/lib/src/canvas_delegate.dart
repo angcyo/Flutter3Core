@@ -168,6 +168,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   final List<MouseCursor> _currentCursorStyleList = [];
 
   /// 添加一个鼠标样式
+  /// [MouseCursor.defer]         默认
+  /// [SystemMouseCursors.none]   隐藏鼠标
+  /// [SystemMouseCursors.click]  点击手样式
   @api
   void addCursorStyle(MouseCursor cursor) {
     final last = _currentCursorStyleList.lastOrNull;

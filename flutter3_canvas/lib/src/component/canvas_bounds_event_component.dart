@@ -12,14 +12,21 @@ typedef OnCanvasBoundsEventAction = bool Function(
 
 /// 画布指定区域事件处理组件
 class CanvasBoundsEventComponent
-    with CanvasComponentMixin, IHandlePointerEventMixin, TouchDetectorMixin {
+    with
+        CanvasComponentMixin,
+        IHandlePointerEventMixin,
+        TouchDetectorMixin,
+        CanvasDelegateManagerMixin {
+  @override
+  final CanvasDelegate canvasDelegate;
+
   /// 事件监听
-  Set<OnCanvasBoundsEventAction> boundsEventAction = {};
+  Set<OnCanvasBoundsEventAction> boundsEventActionList = {};
 
   /// 指定区域的事件监听
   Map<Rect, OnCanvasBoundsEventAction> boundsEventActionMap = {};
 
-  CanvasBoundsEventComponent();
+  CanvasBoundsEventComponent(this.canvasDelegate);
 
   @override
   bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
@@ -31,11 +38,13 @@ class CanvasBoundsEventComponent
 
   @override
   bool onTouchDetectorPointerEvent(
-      PointerEvent event, TouchDetectorType touchType) {
+    PointerEvent event,
+    TouchDetectorType touchType,
+  ) {
     //l.d('${event.localPosition} $touchType');
     bool handled = false;
-    if (boundsEventAction.isNotEmpty) {
-      for (final action in boundsEventAction.clone()) {
+    if (boundsEventActionList.isNotEmpty) {
+      for (final action in boundsEventActionList.clone()) {
         handled = action(event, touchType) || handled;
       }
     }
@@ -46,15 +55,29 @@ class CanvasBoundsEventComponent
         }
       }
     }
+    //--
+    if (!handled &&
+        boundsEventActionList.isEmpty &&
+        boundsEventActionMap.isEmpty) {
+      //默认处理, 当点击画布左上角时触发
+      if (touchType == TouchDetectorType.click) {
+        if (axisManager.axisIntersectBounds?.contains(event.localPosition) ==
+            true) {
+          canvasDelegate.canvasFollowManager
+              .followCanvasContent(restoreDef: true);
+          handled = true;
+        }
+      }
+    }
     return handled || super.onTouchDetectorPointerEvent(event, touchType);
   }
 
   void addBoundsEventAction(OnCanvasBoundsEventAction action) {
-    boundsEventAction.add(action);
+    boundsEventActionList.add(action);
   }
 
   void removeBoundsEventAction(OnCanvasBoundsEventAction action) {
-    boundsEventAction.remove(action);
+    boundsEventActionList.remove(action);
   }
 
   void addBoundsEventActionMap(Rect rect, OnCanvasBoundsEventAction action) {
