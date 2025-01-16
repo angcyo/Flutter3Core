@@ -2242,6 +2242,29 @@ extension IterableEx<E> on Iterable<E> {
   ///
   Stream<E> get stream => Stream.fromIterable(this);
 
+  /// [Iterable.join]
+  String? connect([String? separator = "", String Function(E)? covertString]) {
+    Iterator<E> iterator = this.iterator;
+    if (!iterator.moveNext()) return null;
+    final first =
+        covertString?.call(iterator.current) ?? textOf(iterator.current);
+    if (!iterator.moveNext()) return first;
+    final buffer = StringBuffer(first ?? "");
+    do {
+      final text =
+          covertString?.call(iterator.current) ?? textOf(iterator.current);
+      if (separator == null || separator.isEmpty) {
+      } else {
+        buffer.write(separator);
+      }
+      if (text != null) {
+        buffer.write(text);
+      }
+    } while (iterator.moveNext());
+
+    return buffer.toString();
+  }
+
   /// [List]
   /// [Iterable]
   E? getOrNull(int index, [E? nul]) {
@@ -2707,29 +2730,6 @@ extension ListEx<T> on List<T> {
       list.add(subListCount(i, count));
     }
     return list;
-  }
-
-  /// [Iterable.join]
-  String? connect([String? separator = "", String Function(T)? covertString]) {
-    Iterator<T> iterator = this.iterator;
-    if (!iterator.moveNext()) return null;
-    final first =
-        covertString?.call(iterator.current) ?? textOf(iterator.current);
-    if (!iterator.moveNext()) return first;
-    final buffer = StringBuffer(first ?? "");
-    do {
-      final text =
-          covertString?.call(iterator.current) ?? textOf(iterator.current);
-      if (separator == null || separator.isEmpty) {
-      } else {
-        buffer.write(separator);
-      }
-      if (text != null) {
-        buffer.write(text);
-      }
-    } while (iterator.moveNext());
-
-    return buffer.toString();
   }
 
   /// 复制列表, 浅拷贝
