@@ -43,7 +43,8 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
 
   //--sliver
 
-  /// 使用此方法创建[CustomScrollView]
+  /// 使用此方法创建[CustomScrollView], 再用[buildObserverSliverListBuilder]创建滚动内容
+  /// 之后就可以使用[scrollObserverTo]滚动内容
   @callPoint
   Widget buildObserverCustomScrollView(
     BuildContext context,
@@ -63,7 +64,10 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
       sliverContexts: () => observerSliverContexts,
       onObserveAll: (resultMap) {
         //ListViewObserveModel
-        l.d("${resultMap.runtimeType}->${resultMap.values.connect(",", (e) => e.runtimeType.toString())}");
+        assert(() {
+          l.d("${resultMap.runtimeType}->${resultMap.values.connect(",", (e) => e.runtimeType.toString())}");
+          return true;
+        }());
       },
       child: CustomScrollView(
         controller: scrollControllerMixin,

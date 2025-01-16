@@ -13,7 +13,7 @@ class WebviewConfig {
   String? html;
   String? baseUrl;
 
-  //region --ui--
+  //region ui
 
   /// 构建加载进度小部件
   bool buildLoadProgressWidget;
@@ -21,7 +21,7 @@ class WebviewConfig {
   /// 构建刷新小部件
   bool buildRefreshWidget;
 
-  //endregion --ui--
+  //endregion ui
 
   /// 调试模式
   @flagProperty

@@ -582,7 +582,8 @@ extension WidgetEx on Widget {
             );
 
   /// 鼠标事件监听
-  /// [MouseRegion]
+  /// [MouseRegion] 鼠标区域
+  /// [TapRegion]   手势区域
   ///
   /// [MouseTracker].[MouseTrackerAnnotation]
   /// 只要实现[MouseTrackerAnnotation], 并且[HitTestEntry]命中返回, 即可获取鼠标事件.
@@ -834,8 +835,11 @@ extension WidgetEx on Widget {
     AlignmentGeometry alignment, {
     double? widthFactor,
     double? heightFactor,
+    //--
     double? minWidth,
     double? minHeight,
+    double? maxWidth,
+    double? maxHeight,
   }) {
     return Align(
       alignment: alignment,
@@ -845,6 +849,8 @@ extension WidgetEx on Widget {
     ).constrainedMin(
       minWidth: minWidth,
       minHeight: minHeight,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
     );
   }
 
@@ -1802,15 +1808,22 @@ extension WidgetEx on Widget {
   }
 
   /// 约束大小
-  /// [enableRatio] 是否激活百分比
+  /// [enableRatio] 是否激活百分比, 则小小于1的值会被当做比例处理
   /// [constrainedBox]
   Widget constrained({
+    double? width,
+    double? height,
     double minWidth = 0.0,
     double maxWidth = double.infinity,
     double minHeight = 0.0,
     double maxHeight = double.infinity,
     bool enableRatio = true,
   }) {
+    minWidth = width ?? minWidth;
+    maxWidth = width ?? maxWidth;
+    minHeight = height ?? minHeight;
+    maxHeight = height ?? maxHeight;
+    //--
     if (enableRatio) {
       if (minWidth > 0 && minWidth < 1) {
         minWidth = screenHeight * minWidth;
@@ -1825,6 +1838,7 @@ extension WidgetEx on Widget {
         maxHeight = screenHeight * maxHeight;
       }
     }
+    //--
     return constrainedBox(BoxConstraints(
       minWidth: minWidth,
       maxWidth: maxWidth,

@@ -715,6 +715,32 @@ extension StringEx on String {
           ? "${substring(0, length)}$ellipsis"
           : this;
 
+  /// 从指定的字符串开始, 截取后面的所有字符串
+  /// [last] 是否截取最后一个
+  /// [substringStart]
+  /// [substringEnd]
+  String substringEnd(Pattern pattern, [bool last = true]) {
+    final int index;
+    if (last) {
+      index = lastIndexOf(pattern);
+    } else {
+      index = indexOf(pattern);
+    }
+    return index == -1 ? this : substring(index + "$pattern".length);
+  }
+
+  /// [substringStart]
+  /// [substringEnd]
+  String substringStart(Pattern pattern, [bool last = false]) {
+    final int index;
+    if (last) {
+      index = lastIndexOf(pattern);
+    } else {
+      index = indexOf(pattern);
+    }
+    return index == -1 ? this : substring(0, index);
+  }
+
   /// 转换成[DateTime]
   /// [pattern] 时间模板 'yyyy-MM-dd'
   /// ```

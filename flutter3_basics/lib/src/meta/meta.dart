@@ -133,6 +133,18 @@ class PlatformFlag {
   }
 }
 
+class FromFramework {
+  final String des;
+
+  const FromFramework(
+      [this.des = '标识代码来自系统架构']);
+
+  @override
+  String toString() {
+    return 'FromFramework{des: $des}';
+  }
+}
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');
@@ -173,7 +185,7 @@ const notify = AnnotationMeta('标识这只是一个通知,需要具体手动实
 const defInjectMark = AnnotationMeta('标识当前属性不指定时,也有注入默认值');
 const autoDispose = AnnotationMeta('标识当前操作会自动释放');
 const clipFlag = AnnotationMeta('Canvas Clip 操作, 消耗资源');
-const fromFramework = AnnotationMeta('表示当前代码来自框架');
+const fromFramework = FromFramework('表示当前代码来自框架');
 const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 //--
 const platformFlag = PlatformFlag();
