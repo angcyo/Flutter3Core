@@ -46,6 +46,11 @@ class LiveStreamController<T> {
   /// 是否为空
   bool get isEmpty => latestValue == null || isNil(latestValue);
 
+  @callPoint
+  void updateValue(T newValue) {
+    add(newValue);
+  }
+
   /// 发送数据
   @callPoint
   void add(T newValue) {

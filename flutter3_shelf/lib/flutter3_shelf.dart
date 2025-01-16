@@ -17,10 +17,19 @@ import 'package:udp/udp.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import 'src/mode/service_info_bean.dart';
+import 'src/mode/udp_client_info_bean.dart';
+import 'src/mode/udp_message_bean.dart';
+import 'src/mode/udp_packet_bean.dart';
+
 export 'package:shelf/shelf.dart';
 export 'package:shelf_multipart/shelf_multipart.dart';
 export 'package:shelf_router/shelf_router.dart';
 export 'package:udp/udp.dart';
+export 'src/mode/service_info_bean.dart';
+export 'src/mode/udp_packet_bean.dart';
+export 'src/mode/udp_message_bean.dart';
+export 'src/mode/udp_client_info_bean.dart';
 
 part 'src/flutter3_shelf_http.dart';
 part 'src/flutter3_shelf_web_socket.dart';

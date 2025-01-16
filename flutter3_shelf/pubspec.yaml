@@ -16,6 +16,9 @@ dependencies:
   flutter3_core:
     path: ../flutter3_core
 
+  #in flutter3_http
+  json_annotation: any
+
   # https://pub.dev/packages/shelf
   # https://pub.dev/packages/async
   # https://pub.dev/packages/collection
@@ -82,7 +85,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
   # 需要对应的权限
-  network_info_plus: ^6.1.2
+  network_info_plus: ^6.1.3
 
   # https://pub.dev/packages/udp
   udp: ^5.0.3
@@ -96,9 +99,10 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: any
   # https://pub.dev/packages/shelf_router_generator
-  shelf_router_generator: ^1.1.0
+  shelf_router_generator: ^1.1.1
   # https://pub.dev/packages/build_runner
   build_runner: any
+  json_serializable: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
