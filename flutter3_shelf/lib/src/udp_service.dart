@@ -473,3 +473,6 @@ class DefaultUdpService extends UdpService {
 
 //endregion 客户端
 }
+
+/// 默认的udp服务
+DefaultUdpService get $defaultUdp => DefaultUdpService.instance;

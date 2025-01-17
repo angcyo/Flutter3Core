@@ -126,19 +126,20 @@ enum ArrowPosition {
 }
 
 extension ArrowPositionEx on ArrowPosition {
-  Alignment get alignment => switch (this) {
+  Alignment get alignment =>
+      switch (this) {
         ArrowPosition.topStart => Alignment.bottomLeft,
         ArrowPosition.topCenter => Alignment.topCenter,
         ArrowPosition.topEnd => Alignment.bottomRight,
-        //--
+      //--
         ArrowPosition.rightStart => Alignment.topLeft,
         ArrowPosition.rightCenter => Alignment.centerLeft,
         ArrowPosition.rightEnd => Alignment.bottomLeft,
-        //--
+      //--
         ArrowPosition.bottomStart => Alignment.topLeft,
         ArrowPosition.bottomCenter => Alignment.topCenter,
         ArrowPosition.bottomEnd => Alignment.topRight,
-        //--
+      //--
         ArrowPosition.leftStart => Alignment.topRight,
         ArrowPosition.leftCenter => Alignment.centerRight,
         ArrowPosition.leftEnd => Alignment.bottomRight,
@@ -254,6 +255,7 @@ class ArrowPositionManager {
 
   /// 是否加载过
   @output
+  @flagProperty
   bool isLoad = false;
 
   /// 输出的箭头的位置
@@ -285,7 +287,8 @@ class ArrowPositionManager {
   Rect get outputArrowBounds => applyArrowOffset(outputArrowRect);
 
   /// 将一个矩形, 应用[outputArrowOffsetRect]
-  Rect applyArrowOffset(Rect rect) => Rect.fromLTRB(
+  Rect applyArrowOffset(Rect rect) =>
+      Rect.fromLTRB(
         rect.left - outputArrowOffsetRect.left,
         rect.top - outputArrowOffsetRect.top,
         rect.right + outputArrowOffsetRect.right,
@@ -596,7 +599,7 @@ class ArrowPositionManager {
     for (var position in positions) {
       if (_fitsScreen()) return position();
     }
-    return _topCenter();
+    //return _topCenter();
   }
 
   /// Load the calculated tooltip position
@@ -622,23 +625,52 @@ class ArrowPositionManager {
     if (preferredPosition == null) {
       //没有指定位置, 则自动计算位置
       if (this.anchorBox.centerX < this.screenSize.width / 2) {
-        //锚点在屏幕的左侧
+        //锚点在屏幕的左侧, 则向右显示箭头
         if (this.anchorBox.centerY > this.contentSize.height / 2) {
           //顶部有足够多的位置容纳内容
-          preferredPosition = ArrowPosition.rightCenter;
+          if (this.anchorBox.centerX > this.contentSize.width / 2) {
+            //虽然在左侧, 但是左侧还有足够多的空间显示内容
+            preferredPosition = ArrowPosition.topCenter;
+          } else {
+            preferredPosition = ArrowPosition.rightCenter;
+          }
         } else {
-          preferredPosition = ArrowPosition.rightStart;
+          if (this.anchorBox.centerX > this.contentSize.width / 2) {
+            //虽然在左侧, 但是左侧还有足够多的空间显示内容
+            preferredPosition = ArrowPosition.bottomCenter;
+          } else {
+            preferredPosition = ArrowPosition.rightStart;
+          }
         }
       } else {
+        //锚点在屏幕的右侧, 则向左显示箭头
         if (this.anchorBox.centerY > this.contentSize.height / 2) {
-          //顶部有足够多的位置容纳内容
-          preferredPosition = ArrowPosition.leftCenter;
+          //顶部有足够多的位置容纳内容, 锚点在, 右侧下半部
+          if ((this.screenSize.width - this.anchorBox.centerX) >
+              this.contentSize.width / 2) {
+            //虽然在右侧, 但是右侧还有足够多的空间显示内容
+            preferredPosition = ArrowPosition.topCenter;
+          } else {
+            preferredPosition = ArrowPosition.leftCenter;
+          }
         } else {
-          preferredPosition = ArrowPosition.leftStart;
+          //锚点在, 右侧上半部
+          if ((this.screenSize.width - this.anchorBox.centerX) >
+              this.contentSize.width / 2) {
+            //虽然在右侧, 但是右侧还有足够多的空间显示内容
+            preferredPosition = ArrowPosition.bottomCenter;
+          } else {
+            preferredPosition = ArrowPosition.leftStart;
+          }
         }
       }
+      /*assert(() {
+        l.d("自动匹配的位置->$preferredPosition");
+        return true;
+      }());*/
     }
 
+    //debugger();
     switch (preferredPosition) {
       case ArrowPosition.topStart:
         _topStart();
@@ -678,6 +710,7 @@ class ArrowPositionManager {
         break;
     }
 
+    //debugger();
     if (!_fitsScreen()) {
       _firstAvailablePosition();
     }

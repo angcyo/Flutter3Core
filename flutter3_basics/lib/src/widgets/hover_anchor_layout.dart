@@ -26,9 +26,11 @@ class HoverAnchorLayout extends StatefulWidget {
   //--
 
   /// 背景色, 同时也是箭头的颜色
-  final Color backgroundColor;
+  @autoInjectMark
+  final Color? backgroundColor;
 
   /// 背景阴影
+  @autoInjectMark
   final List<BoxShadow>? backgroundShadows;
 
   /// 背景圆角大小
@@ -36,6 +38,9 @@ class HoverAnchorLayout extends StatefulWidget {
 
   /// 是否显示箭头
   final bool showArrow;
+
+  /// 是否显示阴影
+  final bool showShadow;
 
   /// 强行指定箭头的位置, 不指定则自动计算位置
   @autoInjectMark
@@ -53,21 +58,20 @@ class HoverAnchorLayout extends StatefulWidget {
   /// 是否激活动画
   final bool enableAnimate;
 
+  //--
+
+  /// 是否使用根Overlay
+  final bool rootOverlay;
+
   const HoverAnchorLayout({
     super.key,
     required this.anchor,
     this.controller,
     this.content,
-    this.backgroundColor = Colors.white,
-    this.backgroundShadows = const [
-      BoxShadow(
-        color: kShadowColor,
-        offset: kShadowOffset,
-        blurRadius: kDefaultBlurRadius,
-        spreadRadius: 2,
-      ),
-    ],
+    this.backgroundColor,
+    this.backgroundShadows,
     this.showArrow = true,
+    this.showShadow = true,
     this.enableHoverShow = true,
     this.enableAnimate = true,
     this.arrowPosition,
@@ -75,6 +79,8 @@ class HoverAnchorLayout extends StatefulWidget {
     this.arrowSize = const Size(kX, kH),
     this.hitInflate = kM,
     this.arrowOffset = kM,
+    //--
+    this.rootOverlay = true,
   });
 
   @override
@@ -300,59 +306,82 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     if (!isEnableLayout) {
       return widget.anchor;
     }
+
+    final child = widget.rootOverlay
+        ? OverlayPortal.targetsRootOverlay(
+      controller: _overlayController,
+      overlayChildBuilder: _buildOverlayChild,
+      child: widget.anchor,
+    )
+        : OverlayPortal(
+      controller: _overlayController,
+      overlayChildBuilder: _buildOverlayChild,
+      child: widget.anchor,
+    );
+
     return MouseRegion(
-        onEnter: _handleMouseEnter,
-        onExit: _handleMouseExit,
-        child: OverlayPortal(
-          controller: _overlayController,
-          overlayChildBuilder: (ctx) {
-            final anchorGlobalBounds =
-            context.findRenderObject()?.getGlobalBounds();
-            _anchorGlobalBounds = anchorGlobalBounds;
-            final anchorBounds = context.findRenderObject()?.getGlobalBounds(
-              Overlay
-                  .maybeOf(context)
-                  ?.context
-                  .findRenderObject(),
-            );
-            //l.d("anchorBounds:$anchorBounds");
-            return _ArrowPositionWidget(
-              showArrow: widget.showArrow,
-              arrowPosition: widget.arrowPosition,
-              arrowSize: widget.arrowSize,
-              arrowOffset: widget.arrowOffset,
-              backgroundColor: widget.backgroundColor,
-              backgroundShadows: widget.backgroundShadows,
-              anchorBounds: anchorBounds,
-              radius: widget.radius,
-              validHoverAreaList: _validHoverAreaList,
-              arrowPositionManager: _arrowPositionManager,
-              content: widget.content,
-              onPaintTransform: widget.enableAnimate
-                  ? (render, context, offset, size) {
-                final value = _overlayAnimation
-                    .tween(0.9, 1.0, curve: Curves.fastOutSlowIn)
-                    .value;
-                if (_controller.isAnimating) {
-                  //l.d("value->$value");
-                  render.postMarkNeedsPaint();
-                }
-                return render.getEffectiveTransform(
-                    Matrix4.diagonal3Values(value, value, 1.0));
-              }
-                  : null,
-            ).fadeTransition(widget.enableAnimate ? _overlayAnimation : null)
-            /*.scaleTransition(
+      onEnter: _handleMouseEnter,
+      onExit: _handleMouseExit,
+      child: child,
+    );
+  }
+
+  /// 构建悬浮布局
+  Widget _buildOverlayChild(BuildContext ctx) {
+    final overlayRender = Overlay
+        .maybeOf(context, rootOverlay: widget.rootOverlay)
+        ?.context
+        .findRenderObject();
+    final anchorRender = context.findRenderObject();
+    final anchorGlobalBounds = anchorRender?.getGlobalBounds();
+    _anchorGlobalBounds = anchorGlobalBounds;
+    final anchorBounds = anchorRender?.getGlobalBounds(overlayRender);
+    //l.d("anchorBounds:$anchorBounds");
+    return _ArrowPositionWidget(
+      showArrow: widget.showArrow,
+      arrowPosition: widget.arrowPosition,
+      arrowSize: widget.arrowSize,
+      screenSize: overlayRender?.getSizeOrNull(),
+      arrowOffset: widget.arrowOffset,
+      backgroundColor: widget.backgroundColor ?? Colors.white,
+      backgroundShadows: widget.backgroundShadows ??
+          (widget.showShadow
+              ? const [
+            BoxShadow(
+              color: kShadowColor,
+              offset: kShadowOffset,
+              blurRadius: kDefaultBlurRadius,
+              spreadRadius: 2,
+            ),
+          ]
+              : null),
+      anchorBounds: anchorBounds,
+      radius: widget.radius,
+      validHoverAreaList: _validHoverAreaList,
+      arrowPositionManager: _arrowPositionManager,
+      content: widget.content,
+      onPaintTransform: widget.enableAnimate
+          ? (render, context, offset, size) {
+        final value = _overlayAnimation
+            .tween(0.9, 1.0, curve: Curves.fastOutSlowIn)
+            .value;
+        if (_controller.isAnimating) {
+          //l.d("value->$value");
+          render.postMarkNeedsPaint();
+        }
+        return render.getEffectiveTransform(
+            Matrix4.diagonal3Values(value, value, 1.0));
+      }
+          : null,
+    ).fadeTransition(widget.enableAnimate ? _overlayAnimation : null)
+    /*.scaleTransition(
                   widget.enableAnimate ? _overlayAnimation : null,
                   from: 0.9,
                   to: 1,
                   alignment:
                       _arrowPositionManager.outputArrowPosition.alignment,
                 )*/
-            ;
-          },
-          child: widget.anchor,
-        ));
+    ;
   }
 }
 
@@ -366,6 +395,7 @@ class _ArrowPositionWidget extends StatefulWidget {
   final bool showArrow;
   final ArrowPosition? arrowPosition;
   final Size arrowSize;
+  final Size? screenSize;
   final double arrowOffset;
   final Color backgroundColor;
   final List<BoxShadow>? backgroundShadows;
@@ -383,6 +413,7 @@ class _ArrowPositionWidget extends StatefulWidget {
     this.radius = 0,
     this.arrowOffset = 0,
     this.arrowSize = const Size(kX, kH),
+    this.screenSize,
     this.backgroundColor = Colors.redAccent,
     this.backgroundShadows,
     this.onPaintTransform,
@@ -468,7 +499,7 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
           _arrowPositionManager.arrowSize =
           widget.showArrow ? widget.arrowSize : Size.zero;
           _arrowPositionManager.arrowOffset = widget.arrowOffset;
-          _arrowPositionManager.screenSize = parentSize;
+          _arrowPositionManager.screenSize =  widget.screenSize ?? parentSize;
           _arrowPositionManager.contentSize = childSize;
           _arrowPositionManager.radius = Radius.circular(widget.radius);
           _arrowPositionManager.anchorBox = widget.anchorBounds ?? Rect.zero;
@@ -587,4 +618,29 @@ class _RenderExclusiveMouseRegion extends RenderMouseRegion {
     }
     return isHit;
   }
+}
+
+//--
+
+extension HoverAnchorLayoutEx on Widget {
+  /// 使用[HoverAnchorLayout]实现的悬停提示功能
+  /// [tooltip] 提示内容小部件
+  /// [arrowPosition] 箭头位置
+  Widget hoverTooltip(Widget? tooltip, {
+    //--
+    ArrowPosition? arrowPosition,
+    bool showArrow = true,
+    //--
+    bool showShadow = true,
+    Color? backgroundColor,
+  }) =>
+      HoverAnchorLayout(
+        anchor: this,
+        content: tooltip,
+        showShadow: showShadow,
+        backgroundColor: backgroundColor,
+        //--
+        showArrow: showArrow,
+        arrowPosition: arrowPosition,
+      );
 }
