@@ -115,7 +115,7 @@ class TextSpanBuilder {
   TextSpan buildTextSpan() => TextSpan(children: _textSpans);
 
   /// 构建
-  Text build({
+  Widget build({
     Key? key,
     TextStyle? style,
     StrutStyle? strutStyle,
@@ -131,28 +131,47 @@ class TextSpanBuilder {
     TextHeightBehavior? textHeightBehavior,
     Color? selectionColor,
     StringBuffer? logBuffer,
+    bool selectable = false,
   }) {
     final textSpan = buildTextSpan();
     if (logBuffer != null) {
       logBuffer.writeln(textSpan.toPlainText());
     }
-    return Text.rich(
-      buildTextSpan(),
-      key: key,
-      style: style,
-      strutStyle: strutStyle,
-      textAlign: textAlign,
-      textDirection: textDirection,
-      locale: locale,
-      softWrap: softWrap,
-      overflow: overflow,
-      textScaleFactor: textScaleFactor,
-      maxLines: maxLines,
-      semanticsLabel: semanticsLabel,
-      textWidthBasis: textWidthBasis,
-      textHeightBehavior: textHeightBehavior,
-      selectionColor: selectionColor,
-    );
+    return selectable
+        ? SelectableText.rich(
+            buildTextSpan(),
+            key: key,
+            style: style,
+            strutStyle: strutStyle,
+            textAlign: textAlign,
+            textDirection: textDirection,
+            textScaleFactor: textScaleFactor,
+            maxLines: maxLines,
+            semanticsLabel: semanticsLabel,
+            textWidthBasis: textWidthBasis,
+            textHeightBehavior: textHeightBehavior,
+            /*locale: locale,
+            softWrap: softWrap,
+            overflow: overflow,
+            selectionColor: selectionColor,*/
+          )
+        : Text.rich(
+            buildTextSpan(),
+            key: key,
+            style: style,
+            strutStyle: strutStyle,
+            textAlign: textAlign,
+            textDirection: textDirection,
+            textScaleFactor: textScaleFactor,
+            maxLines: maxLines,
+            semanticsLabel: semanticsLabel,
+            textWidthBasis: textWidthBasis,
+            textHeightBehavior: textHeightBehavior,
+            locale: locale,
+            softWrap: softWrap,
+            overflow: overflow,
+            selectionColor: selectionColor,
+          );
   }
 }
 
@@ -172,7 +191,7 @@ TextSpan inlineSpanBuilder(void Function(TextSpanBuilder builder) action) {
 /// 构建[Text].[StatelessWidget]
 /// `class Text extends StatelessWidget`
 @dsl
-Text textSpanBuilder(
+Widget textSpanBuilder(
   void Function(TextSpanBuilder builder) action, {
   Key? key,
   TextStyle? style,
@@ -189,6 +208,7 @@ Text textSpanBuilder(
   TextHeightBehavior? textHeightBehavior,
   Color? selectionColor,
   StringBuffer? logBuffer,
+  bool selectable = false,
 }) {
   TextSpanBuilder textSpanBuilder = TextSpanBuilder();
   action(textSpanBuilder);
@@ -208,5 +228,6 @@ Text textSpanBuilder(
     textHeightBehavior: textHeightBehavior,
     selectionColor: selectionColor,
     logBuffer: logBuffer,
+    selectable: selectable,
   );
 }
