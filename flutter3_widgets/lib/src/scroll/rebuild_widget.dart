@@ -113,9 +113,13 @@ class UpdateValueNotifier<T> extends ValueNotifier<T> with NotifierMixin {
   }
 
   /// 更新值, 不管值相同与否, 都会触发通知
+  /// 注意: 如果[newValue]是null时, 则不会赋值
+  /// [reset] 是否重置
   @api
-  void updateValue([dynamic newValue]) {
-    newValue ??= value;
+  void updateValue([dynamic newValue, bool reset = true]) {
+    if (reset) {
+      newValue ??= value;
+    }
     if (newValue == value) {
       notifyListeners();
     } else {

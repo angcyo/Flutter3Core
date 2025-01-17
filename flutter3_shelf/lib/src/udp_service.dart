@@ -56,7 +56,8 @@ class UdpService {
   /// 服务端服务信息改变通知
   @callPoint
   void onSelfServerInfoChanged(ServiceInfoBean? info) {
-    serverInfoSignal.updateValue(info);
+    //debugger();
+    serverInfoSignal.updateValue(info, false);
   }
 
   /// 当服务端收到一包数据时回调
@@ -196,6 +197,10 @@ class DefaultUdpService extends UdpService {
   @override
   @api
   FutureOr stopServer() async {
+    if (_serverUdp == null) {
+      //no op
+      return;
+    }
     try {
       _serverUdp?.close();
     } catch (e, s) {
@@ -391,6 +396,10 @@ class DefaultUdpService extends UdpService {
   @api
   @override
   Future<void> stopClient() async {
+    if (_clientUdp == null) {
+      //no op
+      return;
+    }
     try {
       _clientUdp?.close();
     } catch (e, s) {
