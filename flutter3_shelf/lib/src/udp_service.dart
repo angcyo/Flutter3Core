@@ -99,6 +99,10 @@ class UdpService {
     //50198
     packet.port; //数据包来自客户端的端口
     //final body = packet.data.utf8Str;
+    assert(() {
+      l.v("客户端收到数据包[${packet.address}:${packet.port}]->${packet.data.size().toSizeStr()}");
+      return true;
+    }());
   }
 
   //endregion client
@@ -393,7 +397,6 @@ class DefaultUdpService extends UdpService {
       //final udp = await bindRandomClientUdp();
       udp.asStream().listen(
         (packet) {
-          debugger();
           if (packet != null) {
             onSelfClientPacket(packet);
           }
@@ -470,6 +473,62 @@ class DefaultUdpService extends UdpService {
       Endpoint.broadcast(port: Port(serverPort)),
     );
     return dataLength;
+  }
+
+  ///测试使用tcp发送数据, 看udp能不能收到
+  ///
+  /// ```
+  /// Connection refused (OS Error: Connection refused, errno = 111), address = 192.168.31.250, port = 38196
+  /// ```
+  @implementation
+  FutureOr testTcpSendToClient(
+    String? host,
+    int? port,
+    List<int> data, {
+    Duration timeout = const Duration(seconds: 1),
+  }) async {
+    if (host == null || port == null) {
+      return false;
+    }
+    try {
+      //debugger();
+      final socket = await Socket.connect(host, port, timeout: timeout);
+      socket.add(data);
+      socket.close();
+      socket.destroy();
+      return true;
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
+  }
+
+  ///测试使用udp发送数据, 看udp能不能收到
+  ///udp 发送数据给 udp, 就是单播广播
+  @implementation
+  FutureOr testUdpSendToClient(
+    String? host,
+    int? port,
+    List<int> data, {
+    Duration timeout = const Duration(seconds: 1),
+  }) async {
+    if (host == null || port == null) {
+      return false;
+    }
+    try {
+      final udp = await UDP.bind(Endpoint.any());
+      final result = await udp.send(
+          data, Endpoint.unicast(InternetAddress(host), port: Port(port)));
+      udp.close();
+      return true;
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
   }
 
   //--
