@@ -73,6 +73,19 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 }
 
 /// 缓存
+///
+/// # AndroidDeviceInfo
+///
+/// ```
+/// {product: oriole, supportedAbis: [arm64-v8a, armeabi-v7a, armeabi], serialNumber: unknown,
+/// supported32BitAbis: [armeabi-v7a, armeabi], display: AP4A.241205.013, type: user, isPhysicalDevice: true,
+/// version: {baseOS: , securityPatch: 2024-12-05, sdkInt: 35, release: 15, codename: REL,
+/// previewSdkInt: 0, incremental: 12621605}, manufacturer: Google, tags: release-keys,
+/// supported64BitAbis: [arm64-v8a], bootloader: slider-15.1-12292109, fingerprint: google/oriole/oriole:15/AP4A.241205.013/12621605:user/release-keys,
+/// host: r-456ae1c9fa6a8c5c-k9hc, isLowRamDevice: false, model: Pixel 6, id: AP4A.241205.013,
+/// brand: google, device: oriole, board: oriole, hardware: oriole}
+/// ```
+///
 /// # WindowsDeviceInfo
 ///
 /// ```
@@ -85,6 +98,17 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 ///displayVersion: 22H2, editionId: Professional, installDate: 2022-03-26 13:17:42.000,
 ///productId: 00330-80000-00000-AA055, productName: Windows 10 Pro, registeredOwner: angcyo@126.com,
 ///releaseId: 2009, deviceId: {E401667C-1DD8-42E3-9245-F91D5CFCF200}}
+/// ```
+///
+/// # MacOsDeviceInfo
+///
+/// ```
+/// {minorVersion: 2, cpuFrequency: 0, computerName: RSen的MacBook Pro,
+/// kernelVersion: Darwin Kernel Version 24.2.0: Fri Dec  6 19:02:12 PST 2024;
+/// root:xnu-11215.61.5~2/RELEASE_ARM64_T6031, systemGUID: D40584C1-01BC-53A4-86F9-98B1E840D63A,
+/// majorVersion: 15, arch: arm64, patchVersion: 0, memorySize: 51539607552, hostName: Darwin,
+/// activeCPUs: 16, osRelease: Version 15.2 (Build 24C101), model: Mac15,9,
+/// modelName: MacBook Pro (16-inch, 2023)}
 /// ```
 ///
 BaseDeviceInfo? get $platformDeviceInfoCache {
