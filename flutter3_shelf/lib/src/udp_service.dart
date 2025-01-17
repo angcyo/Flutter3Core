@@ -88,7 +88,7 @@ class UdpService {
   /// 客户端服务信息改变通知
   @callPoint
   void onSelfClientInfoChanged(ServiceInfoBean? info) {
-    clientInfoSignal.updateValue(info);
+    clientInfoSignal.updateValue(info, false);
   }
 
   /// 当客户端收到一包数据时回调
@@ -167,9 +167,14 @@ class DefaultUdpService extends UdpService {
       final udp = await UDP.bind(Endpoint.any(port: Port(serverPort)));
       //debugger();
       udp.asStream().listen(
-        (packet) {
+            (packet) {
           //debugger();
           if (packet != null) {
+            assert(() {
+              l.v("服务端收到数据包[${packet.address}:${packet.port}]->${packet
+                  .data.size().toSizeStr()}");
+              return true;
+            }());
             onSelfServerPacket(packet);
           }
         },
@@ -181,14 +186,15 @@ class DefaultUdpService extends UdpService {
           stopServer();
         },
         onDone: () {
-          debugger();
+          //debugger();
           stopServer();
         },
         cancelOnError: true,
       );
       _serverUdp = udp;
       //--
-      onSelfServerInfoChanged(ServiceInfoBean()..servicePort = serverPort);
+      onSelfServerInfoChanged(ServiceInfoBean()
+        ..servicePort = serverPort);
     }
     return _serverUdp!;
   }
@@ -255,8 +261,8 @@ class DefaultUdpService extends UdpService {
 
   /// 专心处理客户端心跳消息
   @overridePoint
-  void onSelfServerHandleClientPacket(
-      UdpPacketBean packet, UdpClientInfoBean bean) {
+  void onSelfServerHandleClientPacket(UdpPacketBean packet,
+      UdpClientInfoBean bean) {
     final deviceId = bean.deviceId ??= packet.deviceId;
     final client = getServerClientInfo(deviceId);
     if (client != null) {
@@ -302,8 +308,8 @@ class DefaultUdpService extends UdpService {
 
   /// 专心处理客户端的消息
   @overridePoint
-  void onSelfServerHandleMessagePacket(
-      UdpPacketBean packet, UdpMessageBean bean) {
+  void onSelfServerHandleMessagePacket(UdpPacketBean packet,
+      UdpMessageBean bean) {
     final deviceId = bean.deviceId ??= packet.deviceId;
     final have = haveServerClient(deviceId);
     if (!have) {
@@ -361,7 +367,7 @@ class DefaultUdpService extends UdpService {
       final udp = await UDP.bind(Endpoint.any());
       //final udp = await bindRandomClientUdp();
       udp.asStream().listen(
-        (packet) {
+            (packet) {
           debugger();
           if (packet != null) {
             onSelfClientPacket(packet);
@@ -375,7 +381,7 @@ class DefaultUdpService extends UdpService {
           stopClient();
         },
         onDone: () {
-          debugger();
+          //debugger();
           stopClient();
         },
         cancelOnError: true,
@@ -383,7 +389,8 @@ class DefaultUdpService extends UdpService {
       _clientUdp = udp;
       //--
       onSelfClientInfoChanged(
-          ServiceInfoBean()..servicePort = udp.local.port?.value ?? -1);
+          ServiceInfoBean()
+            ..servicePort = udp.local.port?.value ?? -1);
       //--启动心跳
       _heartTimer = Timer.periodic(heartPeriod, (timer) {
         sendBroadcastHeart();
@@ -450,7 +457,10 @@ class DefaultUdpService extends UdpService {
     packet.deviceId ??= $deviceUuid;
     packet.time ??= nowTime();
     final length =
-        await sendBroadcast(packet.toJson().toJsonString(null).bytes);
+    await sendBroadcast(packet
+        .toJson()
+        .toJsonString(null)
+        .bytes);
     return (length ?? 0) > 0;
   }
 
@@ -462,7 +472,10 @@ class DefaultUdpService extends UdpService {
     clientInfo?.deviceId ??= packet.deviceId;
     packet
       ..type = UdpPacketTypeEnum.heart.name
-      ..data = clientInfo?.toJson().toJsonString(null).bytes;
+      ..data = clientInfo
+          ?.toJson()
+          .toJsonString(null)
+          .bytes;
     return sendBroadcastPacket(packet);
   }
 
@@ -476,7 +489,10 @@ class DefaultUdpService extends UdpService {
       ..time ??= nowTime();
     packet
       ..type = UdpPacketTypeEnum.message.name
-      ..data = message.toJson().toJsonString(null).bytes;
+      ..data = message
+          .toJson()
+          .toJsonString(null)
+          .bytes;
     return sendBroadcastPacket(packet);
   }
 
