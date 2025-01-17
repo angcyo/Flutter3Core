@@ -73,8 +73,27 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 }
 
 /// 缓存
+/// # WindowsDeviceInfo
+///
+/// ```
+///{computerName: Hi-angcyo-pc, numberOfCores: 16, systemMemoryInMegabytes: 65534,
+///userName: angcyo, majorVersion: 10, minorVersion: 0, buildNumber: 19045, platformId: 2,
+///csdVersion: , servicePackMajor: 0, servicePackMinor: 0, suitMask: 256, productType: 1,
+///reserved: 0, buildLab: 19041.vb_release.191206-1406,
+///buildLabEx: 19041.1.amd64fre.vb_release.191206-1406,
+///digitalProductId: [164, 0, 0, 0, 3, 0, 0, 0, 48, 48, 51, 51, 48, 45, 56, 48, 48, 48, 48, 45, 48, 48, 48, 48, 48, 45, 65, 65, 48, 53, 53, 0, 236, 12, 0, 0, 91, 84, 72, 93, 88, 49, 57, 45, 57, 56, 56, 52, 49, 0, 0, 0, 236, 12, 0, 0, 0, 0, 168, 210, 123, 110, 137, 129, 79, 109, 9, 0, 0, 0, 0, 0, 61, 18, 63, 98, 207, 87, 18, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 97, 221, 128],
+///displayVersion: 22H2, editionId: Professional, installDate: 2022-03-26 13:17:42.000,
+///productId: 00330-80000-00000-AA055, productName: Windows 10 Pro, registeredOwner: angcyo@126.com,
+///releaseId: 2009, deviceId: {E401667C-1DD8-42E3-9245-F91D5CFCF200}}
+/// ```
+///
 BaseDeviceInfo? get $platformDeviceInfoCache {
   $platformDeviceInfo.ignore();
+  assert(() {
+    l.d(_platformDeviceInfoCache?.runtimeType);
+    l.d(_platformDeviceInfoCache?.data);
+    return true;
+  }());
   return _platformDeviceInfoCache;
 }
 
