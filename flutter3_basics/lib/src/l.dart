@@ -100,13 +100,15 @@ class L {
   /// 开始输出日志
   /// [forward] 向前追溯几个调用.
   /// [object] 日志内容
-  log(Object? object, {
+  log(
+    Object? object, {
     int level = debug,
     String? tag,
     bool? showTime,
     bool? showLevel,
     bool? showTag,
     int forward = 3,
+    StackTrace? stack,
   }) {
     if (level >= verbose) {
       return _log(
@@ -117,17 +119,20 @@ class L {
         showLevel: showLevel,
         showTag: showTag,
         forward: forward,
+        stack: stack,
       );
     }
   }
 
-  v(Object? object, {
+  v(
+    Object? object, {
     int level = verbose,
     String? tag,
     bool? showTime,
     bool? showLevel,
     bool? showTag,
     int forward = 3,
+    StackTrace? stack,
   }) {
     if (level >= verbose) {
       return _log(
@@ -138,17 +143,20 @@ class L {
         showLevel: showLevel,
         showTag: showTag,
         forward: forward,
+        stack: stack,
       );
     }
   }
 
-  d(Object? object, {
+  d(
+    Object? object, {
     int level = debug,
     String? tag,
     bool? showTime,
     bool? showLevel,
     bool? showTag,
     int forward = 3,
+    StackTrace? stack,
   }) {
     if (level >= debug) {
       return _log(
@@ -159,17 +167,20 @@ class L {
         showLevel: showLevel,
         showTag: showTag,
         forward: forward,
+        stack: stack,
       );
     }
   }
 
-  i(Object? object, {
+  i(
+    Object? object, {
     int level = info,
     String? tag,
     bool? showTime,
     bool? showLevel,
     bool? showTag,
     int forward = 3,
+    StackTrace? stack,
   }) {
     if (level >= info) {
       return _log(
@@ -180,17 +191,20 @@ class L {
         showLevel: showLevel,
         showTag: showTag,
         forward: forward,
+        stack: stack,
       );
     }
   }
 
-  w(Object? object, {
+  w(
+    Object? object, {
     int level = warn,
     String? tag,
     bool? showTime,
     bool? showLevel,
     bool? showTag,
     int forward = 3,
+    StackTrace? stack,
   }) {
     if (level >= warn) {
       return _log(
@@ -201,17 +215,20 @@ class L {
         showLevel: showLevel,
         showTag: showTag,
         forward: forward,
+        stack: stack,
       );
     }
   }
 
-  e(Object? object, {
+  e(
+    Object? object, {
     int level = error,
     String? tag,
     bool? showTime,
     bool? showLevel,
     bool? showTag,
     int forward = 3,
+    StackTrace? stack,
   }) {
     if (level >= error) {
       return _log(
@@ -222,24 +239,27 @@ class L {
         showLevel: showLevel,
         showTag: showTag,
         forward: forward,
+        stack: stack,
       );
     }
   }
 
   /// [forward] 向前追溯几个调用. 默认是3. 用来获取调用的文件,函数和行数
-  String _log(Object? object, {
+  String _log(
+    Object? object, {
     int level = debug,
     String? tag,
     bool? showTime,
     bool? showLevel,
     bool? showTag,
     int forward = 3,
+    StackTrace? stack,
   }) {
     final time = showTime ?? kShowTime ? '${nowTimeString(kTimePattern)} ' : '';
     final levelStr = showLevel ?? kShowLevel ? _levelStr(level) : '';
     final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}] ' : '';
     final msgType =
-    object?.runtimeType == null ? '' : '[${object?.runtimeType}]';
+        object?.runtimeType == null ? '' : '[${object?.runtimeType}]';
     final msg = object?.toString() ?? 'null';
 
     //获取当前调用方法的文件名和行数
@@ -247,8 +267,9 @@ class L {
     final stackTraceList = stackTrace.split("\n");
     //关建行
     final lineStackTrace =
-    stackTraceList[math.min(forward, stackTraceList.length) - 1];
+        stackTraceList[math.min(forward, stackTraceList.length) - 1];
     //获取当前的文件名称以及路径行号:列号
+    //package:flutter3_basics/src/l.dart:352:33
     final filePathStr = lineStackTrace.substring(
         lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
     //调用的方法名
@@ -258,9 +279,7 @@ class L {
     final methodName = methodNameList.get(-2);
     //debugger();
     final log =
-        '$time[$filePathStr${(!kShowMethodName || methodName == null)
-        ? ""
-        : "#$methodName"}] $tagStr$levelStr->$msgType$msg';
+        '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}] $tagStr$levelStr->$msgType$msg';
 
     if ((isDebug && level >= verbose) || level > debug) {
       //print(StackTrace.fromString("...test"));
@@ -270,6 +289,11 @@ class L {
       //print("(package:flutter3_widgets/src/child_background_widget.dart:29:7)");
       //print("child_background_widget.dart:29:7");
       debugPrint(log);
+
+      //stack
+      if (stack != null) {
+        debugPrintStack(stackTrace: stack);
+      }
 
       //外部输出
       printLog(log);
@@ -321,6 +345,40 @@ class L {
       }
     }
   }
+}
+
+/// 当前调用的文件名
+String? get $currentFileName {
+  final forward = 2;
+  final stackTrace = StackTrace.current.toString();
+  final stackTraceList = stackTrace.split("\n");
+  //关建行
+  final lineStackTrace =
+      stackTraceList[math.min(forward, stackTraceList.length) - 1];
+  //获取当前的文件名称以及路径行号:列号
+  //package:flutter3_basics/src/l.dart:352:33
+  final filePathStr = lineStackTrace.substring(
+      lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
+  final filePath = filePathStr.split(":").subListCount(0, 2).join(":");
+  //debugger();
+  return filePath;
+}
+
+/// 当前调用的方法名
+String? get $currentMethodName {
+  final forward = 2;
+  final stackTrace = StackTrace.current.toString();
+  final stackTraceList = stackTrace.split("\n");
+  //关建行
+  final lineStackTrace =
+      stackTraceList[math.min(forward, stackTraceList.length) - 1];
+  //调用的方法名
+  final methodNameList = lineStackTrace
+      .replaceAll('<anonymous closure>', '<anonymous_closure>')
+      .split(" ");
+  final methodName = methodNameList.get(-2);
+  //debugger();
+  return methodName;
 }
 
 /// 全局对象

@@ -421,6 +421,10 @@ TargetPlatform get currentPlatform {
   }
 }
 
+/// 当前平台名称
+/// [currentPlatform]
+String get currentPlatformName => currentUniversalPlatform.name;
+
 /// 平台
 /// [defaultTargetPlatform]
 /// [currentUniversalPlatform]
