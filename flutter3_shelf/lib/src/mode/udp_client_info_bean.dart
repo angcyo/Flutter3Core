@@ -1,3 +1,4 @@
+import 'package:flutter3_app/flutter3_app.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -24,13 +25,18 @@ class UdpClientInfoBean {
   //--
 
   /// 客户端的id
-  String? deviceId;
+  String? deviceId = $deviceUuid;
 
   /// 客户端的名称
   String? name;
 
   /// 客户端在线时间
   int? time;
+
+  //--
+
+  /// 客户端的平台设备名称
+  String? deviceName = $platformDeviceInfoCache?.platformDeviceName;
 
   //--
 
@@ -45,5 +51,7 @@ class UdpClientInfoBean {
   //--
 
   /// 客户端显示的名称
-  String? get clientShowName => name ?? "$clientAddress:$clientPort";
+  String? get clientShowName => name ?? deviceName ?? clientIpAddress;
+
+  String? get clientIpAddress => name ?? "$clientAddress:$clientPort";
 }

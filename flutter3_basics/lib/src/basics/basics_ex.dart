@@ -75,6 +75,14 @@ typedef WidgetErrorBuilder = Widget Function(
   StackTrace stackTrace,
 );
 
+/// 判断当前数据是否是普通类型/基础数据类型
+bool isBaseType(dynamic value) {
+  if (value is num || value is bool || value is String) {
+    return true;
+  }
+  return false;
+}
+
 //region Object 扩展
 
 /// 动态[dynamic]的扩展, 只是在编译的时候有代码提示,
@@ -2907,22 +2915,22 @@ extension MapEx<K, V> on Map<K, V> {
     return map as Map<K, V>;
   }
 
+  /// 剔除非基础类型的值, 方便[toJsonString]
+  Map<K, dynamic> removeAllNonBaseTypeValue([bool copy = true]) => convertValue(
+        copy: copy,
+        remove: true,
+      );
+
   /// 转换所有非基础类型的值, 多用于[jsonEncode]
+  /// [remove] 是否移除非基础类型的值
   Map<K, dynamic> convertValue({
     dynamic Function(dynamic value)? test,
     bool copy = false,
+    bool remove = false,
   }) {
     final map = copy ? Map<K, dynamic>.from(this) : this;
 
     test ??= (value) => "$value";
-
-    //判断是否是普通类型
-    bool isBaseType(dynamic value) {
-      if (value is num || value is bool || value is String) {
-        return true;
-      }
-      return false;
-    }
 
     map.forEach((key, value) {
       if (isBaseType(value)) {
@@ -2937,6 +2945,8 @@ extension MapEx<K, V> on Map<K, V> {
         }
       } else if (value is Map) {
         map[key] = value.convertValue(test: test, copy: copy);
+      } else if (remove) {
+        map.remove(key);
       } else {
         map[key] = test!(value);
       }

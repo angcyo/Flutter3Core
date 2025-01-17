@@ -74,7 +74,9 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 
 /// 缓存
 ///
-/// # AndroidDeviceInfo
+/// # 2025-1-17
+///
+/// ## AndroidDeviceInfo
 ///
 /// ```
 /// {product: oriole, supportedAbis: [arm64-v8a, armeabi-v7a, armeabi], serialNumber: unknown,
@@ -86,7 +88,16 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 /// brand: google, device: oriole, board: oriole, hardware: oriole}
 /// ```
 ///
-/// # WindowsDeviceInfo
+/// ## IosDeviceInfo
+///
+/// ```
+/// {systemName: iOS, isPhysicalDevice: true, utsname: {release: 24.2.0, sysname: Darwin, nodename: localhost,
+/// machine: iPhone14,3, version: Darwin Kernel Version 24.2.0: Thu Nov 14 22:54:45 PST 2024; root:xnu-11215.62.3~1/RELEASE_ARM64_T8110},
+/// model: iPhone, localizedModel: iPhone, isiOSAppOnMac: false, systemVersion: 18.2.1, modelName: iPhone 13 Pro Max,
+/// name: iPhone, identifierForVendor: 411A82C6-6333-4D3A-A58F-493B83EA380E}
+/// ```
+///
+/// ## WindowsDeviceInfo
 ///
 /// ```
 ///{computerName: Hi-angcyo-pc, numberOfCores: 16, systemMemoryInMegabytes: 65534,
@@ -100,7 +111,7 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 ///releaseId: 2009, deviceId: {E401667C-1DD8-42E3-9245-F91D5CFCF200}}
 /// ```
 ///
-/// # MacOsDeviceInfo
+/// ## MacOsDeviceInfo
 ///
 /// ```
 /// {minorVersion: 2, cpuFrequency: 0, computerName: RSen的MacBook Pro,
@@ -144,6 +155,19 @@ Future<String?> get $platformDeviceModel async => isAndroid
                     ? ((await $platformDeviceInfo) as WindowsDeviceInfo?)
                         ?.productName
                     : null;
+
+/// [BaseDeviceInfo]
+extension PlatformDeviceInfoEx on BaseDeviceInfo {
+  /// 平台设备的名称
+  String? get platformDeviceName => switch (this) {
+        AndroidDeviceInfo info => info.model,
+        WindowsDeviceInfo info => info.productName,
+        IosDeviceInfo info => info.modelName,
+        MacOsDeviceInfo info => info.modelName,
+        LinuxDeviceInfo info => info.prettyName,
+        _ => null,
+      };
+}
 
 /// https://pub.dev/packages/share_plus
 /// `share_plus 需要 iPad 用户提供参数 sharePositionOrigin 。`
