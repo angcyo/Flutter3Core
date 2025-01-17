@@ -106,6 +106,10 @@ class UdpService {
   //region api
 
   /// 使用客户端udp向服务端口发送广播
+  ///
+  /// - 在`macOs`使用`udp`发送数据时, 需要开启 `Network` 才行. Outgoing Connections (Client)
+  /// - 在`iOS`中使用`udp`发送数据时, 需要申请 `com.apple.developer.networking.multicast` 权限才行.
+  ///
   /// @return 发送的字节数
   @api
   @overridePoint
