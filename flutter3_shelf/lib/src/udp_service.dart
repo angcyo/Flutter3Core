@@ -536,11 +536,19 @@ class DefaultUdpService extends UdpService {
       }());
       return null;
     }
-    final dataLength = await _clientUdp?.send(
-      data,
-      Endpoint.broadcast(port: Port(serverPort)),
-    );
-    return dataLength;
+    try {
+      final dataLength = await _clientUdp?.send(
+        data,
+        Endpoint.broadcast(port: Port(serverPort)),
+      );
+      return dataLength;
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+      return -1;
+    }
   }
 
   ///测试使用tcp发送数据, 看udp能不能收到
