@@ -64,7 +64,7 @@ class RScrollView extends StatefulWidget {
   /// [ScrollbarThemeData]
   final bool showScrollbar;
 
-  /// 控件配置
+  /// 控件配置, 过滤器和转换链
   final RScrollConfig? scrollConfig;
 
   /// 滚动控制, 状态切换控制, 刷新/加载更多控制

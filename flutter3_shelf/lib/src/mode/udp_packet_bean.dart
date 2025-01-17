@@ -29,16 +29,20 @@ class UdpPacketBean {
   //--
 
   /// 这一包的唯一id
+  @configProperty
   String? packetId = $uuid;
 
   /// 这一包的发送时间, 13位毫秒时间戳
+  @configProperty
   int? time = nowTime();
 
   /// 这一包发送的设备id
+  @configProperty
   String? deviceId = $deviceUuid;
 
   /// 这一包的类型
   /// [UdpPacketTypeEnum]
+  @configProperty
   String? type;
 
   //--
@@ -47,6 +51,7 @@ class UdpPacketBean {
   /// [type]
   /// - 消息包时数据是:[UdpMessageBean]
   /// - 心跳包时数据是:[UdpClientInfoBean]
+  @configProperty
   List<int>? data;
 
   //region get

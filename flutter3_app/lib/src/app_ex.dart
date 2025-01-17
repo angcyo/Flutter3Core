@@ -124,11 +124,11 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 ///
 BaseDeviceInfo? get $platformDeviceInfoCache {
   $platformDeviceInfo.ignore();
-  assert(() {
+  /*assert(() {
     l.d(_platformDeviceInfoCache?.runtimeType);
     l.d(_platformDeviceInfoCache?.data);
     return true;
-  }());
+  }());*/
   return _platformDeviceInfoCache;
 }
 

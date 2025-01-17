@@ -1,3 +1,4 @@
+import 'package:flutter3_app/flutter3_app.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -40,24 +41,36 @@ class UdpMessageBean {
   //--
 
   /// 客户端的id
+  @configProperty
   String? deviceId;
 
   /// 消息的唯一id
+  @configProperty
   String? messageId = $uuid;
 
   /// 这一包的发送时间, 13位毫秒时间戳
+  /// [receiveTime]
+  @configProperty
   int? time = nowTime();
 
   /// 消息的数据类型, 如果是文本消息, 默认使用utf8编码
   /// [UdpMessageTypeEnum]
   /// [data]
-  String? type = UdpMessageTypeEnum.bytes.name;
+  @configProperty
+  String? type = UdpMessageTypeEnum.text.name;
 
   /// 消息的数据
   /// [type]
+  @configProperty
   List<int>? data;
 
   //--
+
+  /// 收到消息的时间
+  /// [time]
+  /// [receiveTime]
+  @autoInjectMark
+  int? receiveTime;
 
   /// 客户端连接的地址, 在服务端收到后自动赋值
   @autoInjectMark
@@ -66,6 +79,17 @@ class UdpMessageBean {
   /// 客户端连接的端口, 在服务端收到后自动赋值
   @autoInjectMark
   int? clientPort;
+
+  //--
+
+  /// 数据接收耗时
+  String? get receiveDurationStr =>
+      receiveTime != null && time != null && receiveTime! >= time!
+          ? LTime.diffTime(time!, endTime: receiveTime!)
+          : null;
+
+  /// 数据大小字符串
+  String? get dataSizeStr => data?.size().toSizeStr();
 }
 
 /// 消息数据的类型

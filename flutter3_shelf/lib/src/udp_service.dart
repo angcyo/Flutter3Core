@@ -149,6 +149,10 @@ class DefaultUdpService extends UdpService {
   @output
   final newClientStreamOnce = $liveOnce<UdpClientInfoBean?>();
 
+  /// 客户端更新通知, 当前的客户端信息更新时通知
+  @output
+  final clientUpdateStreamOnce = $liveOnce<UdpClientInfoBean?>();
+
   /// 客户端信息列表
   @output
   final clientListStream = $live<List<UdpClientInfoBean>>([]);
@@ -176,10 +180,10 @@ class DefaultUdpService extends UdpService {
         (packet) {
           //debugger();
           if (packet != null) {
-            assert(() {
+            /*assert(() {
               l.v("服务端收到数据包[${packet.address}:${packet.port}]->${packet.data.size().toSizeStr()}");
               return true;
-            }());
+            }());*/
             onSelfServerPacket(packet);
           }
         },
@@ -247,16 +251,20 @@ class DefaultUdpService extends UdpService {
       } else {
         final message = packetBean.message;
         if (message != null) {
+          //debugger();
           //客户端发来的消息
           message
             ..deviceId = packetBean.deviceId
+            ..receiveTime = nowTime()
             ..clientAddress = packet.address.address.toString()
             ..clientPort = packet.port;
           onSelfServerHandleMessagePacket(packetBean, message);
         }
       }
     } catch (e, s) {
+      //非法格式的数据
       assert(() {
+        l.v("无法解析的数据包[${packet.address}:${packet.port}]->${packet.data.size().toSizeStr()}");
         printError(e, s);
         return true;
       }());
@@ -299,9 +307,17 @@ class DefaultUdpService extends UdpService {
   void addServerClientInfo(UdpClientInfoBean bean) {
     final deviceId = bean.deviceId;
     final clientList = clientListStream.value ?? [];
-    clientList.removeWhere((e) => e.deviceId == deviceId);
-    clientList.add(bean);
-    clientListStream.updateValue(clientList);
+    final findIndex = clientList.indexWhere((e) => e.deviceId == deviceId);
+    if (findIndex == -1) {
+      //未找到旧的
+      clientList.add(bean);
+      clientListStream.updateValue(clientList);
+    } else {
+      //找到旧的
+      final find = clientList[findIndex];
+      clientList[findIndex] = bean;
+      newClientStreamOnce.updateValue(find);
+    }
   }
 
   /// 获取服务端的客户端列表
@@ -336,9 +352,13 @@ class DefaultUdpService extends UdpService {
   @api
   void addServerMessageInfo(UdpMessageBean bean) {
     final deviceId = bean.deviceId;
+    if (deviceId == null) {
+      return;
+    }
     final messageMap = clientMessageMapStream.value ?? {};
     final messageList = messageMap[deviceId] ?? [];
     messageList.add(bean);
+    messageMap[deviceId] = messageList;
     clientMessageMapStream.updateValue(messageMap);
   }
 

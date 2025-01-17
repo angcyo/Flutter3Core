@@ -25,17 +25,21 @@ class UdpClientInfoBean {
   //--
 
   /// 客户端的id
+  @configProperty
   String? deviceId = $deviceUuid;
 
   /// 客户端的名称
+  @configProperty
   String? name;
 
   /// 客户端在线时间
+  @configProperty
   int? time;
 
   //--
 
   /// 客户端的平台设备名称
+  @flagProperty
   String? deviceName = $platformDeviceInfoCache?.platformDeviceName;
 
   //--
@@ -53,5 +57,7 @@ class UdpClientInfoBean {
   /// 客户端显示的名称
   String? get clientShowName => name ?? deviceName ?? clientIpAddress;
 
+  /// ip地址
+  /// [InternetAddress]
   String? get clientIpAddress => name ?? "$clientAddress:$clientPort";
 }
