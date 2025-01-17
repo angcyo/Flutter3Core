@@ -236,10 +236,11 @@ class DefaultUdpService extends UdpService {
   }
 
   @override
-  void onSelfServerPacket(Datagram packet) {
+  void onSelfServerPacket(Datagram packet) async {
     try {
       final text = packet.data.utf8Str;
       final packetBean = UdpPacketBean.fromJson(text.fromJson());
+      //final packetBean = await UdpPacketBean.fromBytes(packet.data);
       if (packetBean.type == UdpPacketTypeEnum.heart.name) {
         //客户端的心跳
         final client = packetBean.client ?? UdpClientInfoBean();

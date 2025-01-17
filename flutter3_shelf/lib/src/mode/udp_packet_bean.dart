@@ -26,6 +26,22 @@ class UdpPacketBean {
   @override
   String toString() => toJson().toString();
 
+  static Future<UdpPacketBean?> fromBytes(List<int> data) async {
+    try {
+      return isolateRun((){
+        final text = data.utf8Str;
+        final packetBean = UdpPacketBean.fromJson(text.fromJson());
+        return packetBean;
+      });
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+      return null;
+    }
+  }
+
   //--
 
   /// 这一包的唯一id
@@ -38,7 +54,7 @@ class UdpPacketBean {
 
   /// 这一包发送的设备id
   @configProperty
-  String? deviceId = $deviceUuid;
+  String? deviceId;
 
   /// 这一包的类型
   /// [UdpPacketTypeEnum]
