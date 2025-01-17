@@ -155,9 +155,21 @@ class DefaultUdpService extends UdpService {
   @configProperty
   int serverPort = 9992;
 
+  /// 5秒内, 没有心跳视为离线
+  @configProperty
+  Duration offlinePeriod = const Duration(seconds: 5);
+
   /// 新客户端上线通知
   @output
   final newClientStreamOnce = $liveOnce<UdpClientInfoBean?>();
+
+  /// 客户端上线通知
+  @output
+  final onlineClientStreamOnce = $liveOnce<UdpClientInfoBean?>();
+
+  /// 客户端离线通知
+  @output
+  final offlineClientStreamOnce = $liveOnce<UdpClientInfoBean?>();
 
   /// 客户端更新通知, 当前的客户端信息更新时通知
   @output
@@ -178,6 +190,11 @@ class DefaultUdpService extends UdpService {
   /// 服务端udp
   @output
   UDP? _serverUdp;
+
+  /// 客户端离线检查定时器
+  /// 如果客户端在指定时间内没有发送心跳数据, 则认为客户端已经离线.
+  @output
+  Timer? _offlineTimer;
 
   /// 启动服务端
   @api
@@ -213,6 +230,10 @@ class DefaultUdpService extends UdpService {
       _serverUdp = udp;
       //--
       onSelfServerInfoChanged(ServiceInfoBean()..servicePort = serverPort);
+      //--启动离线检查
+      _offlineTimer = Timer.periodic(offlinePeriod, (timer) {
+        checkClientOffline();
+      });
     }
     return _serverUdp!;
   }
@@ -237,6 +258,43 @@ class DefaultUdpService extends UdpService {
     //--
     try {
       onSelfServerInfoChanged(null);
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
+    _offlineTimer?.cancel();
+    _offlineTimer = null;
+  }
+
+  /// 检查客户端是否离线
+  void checkClientOffline() {
+    try {
+      final now = nowTime();
+      final list = clientListStream.value;
+      if (isNil(list)) {
+        return;
+      }
+      for (final client in list!) {
+        if (client.isOffline == true) {
+          continue;
+        }
+        if (client.deviceId == serverInfoSignal.value?.deviceId) {
+          //本身
+          continue;
+        }
+        final time = client.updateTime ?? client.time;
+        if (time == null) {
+          continue;
+        }
+        if (now - time > offlinePeriod.inMilliseconds) {
+          //客户端离线
+          //debugger();
+          client.offlineTime = now;
+          offlineClientStreamOnce.updateValue(client);
+        }
+      }
     } catch (e, s) {
       assert(() {
         printError(e, s);
@@ -316,6 +374,8 @@ class DefaultUdpService extends UdpService {
   /// 添加客户端
   @api
   void addServerClientInfo(UdpClientInfoBean bean) {
+    bean.offlineTime = null;
+    bean.updateTime = nowTime();
     final deviceId = bean.deviceId;
     final clientList = clientListStream.value ?? [];
     final findIndex = clientList.indexWhere((e) => e.deviceId == deviceId);
@@ -327,7 +387,9 @@ class DefaultUdpService extends UdpService {
       //找到旧的
       final find = clientList[findIndex];
       clientList[findIndex] = bean;
-      newClientStreamOnce.updateValue(find);
+      if (find.isOffline) {
+        onlineClientStreamOnce.updateValue(find);
+      }
     }
   }
 

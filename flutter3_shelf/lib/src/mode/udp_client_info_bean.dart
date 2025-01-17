@@ -1,5 +1,4 @@
 import 'package:flutter3_app/flutter3_app.dart';
-import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'udp_client_info_bean.g.dart';
@@ -32,10 +31,6 @@ class UdpClientInfoBean {
   @configProperty
   String? name;
 
-  /// 客户端在线时间
-  @configProperty
-  int? time;
-
   //--
 
   /// 客户端的平台设备名称
@@ -43,6 +38,18 @@ class UdpClientInfoBean {
   String? deviceName = $platformDeviceInfoCache?.platformDeviceName;
 
   //--
+
+  /// 客户端首次在线时间
+  @autoInjectMark
+  int? time;
+
+  /// 客户端更新时间, 用来检查离线
+  @autoInjectMark
+  int? updateTime;
+
+  /// 客户端离线时间
+  @autoInjectMark
+  int? offlineTime;
 
   /// 客户端连接的地址, 在服务端收到后自动赋值
   @autoInjectMark
@@ -53,6 +60,9 @@ class UdpClientInfoBean {
   int? clientPort;
 
   //--
+
+  /// 客户端是否离线
+  bool get isOffline => offlineTime != null;
 
   /// 客户端显示的名称
   String? get clientShowName => name ?? deviceName ?? clientIpAddress;
