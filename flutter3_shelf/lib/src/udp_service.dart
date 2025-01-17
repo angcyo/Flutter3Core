@@ -140,6 +140,12 @@ class DefaultUdpService extends UdpService {
 
   DefaultUdpService() {
     $platformDeviceInfoCache;
+    //转发控制台日志输出
+    l.printList.add((log) {
+      if (_clientUdp != null) {
+        sendBroadcastMessage(UdpMessageBean.text(log));
+      }
+    });
   }
 
   //region 服务端
