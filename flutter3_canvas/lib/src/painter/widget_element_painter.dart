@@ -4,6 +4,8 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/12/23
 ///
+/// 将[Widget]绘制在画布中...
+@implementation
 class WidgetElementPainter extends ElementPainter {
   /// 小部件
   Widget? widget;

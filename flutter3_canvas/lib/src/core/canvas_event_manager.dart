@@ -97,9 +97,12 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   //--
 
+  /// 用来支持[WidgetElementPainter]..
+  @implementation
   BoxHitTestResult? _painterHitResult;
 
   /// [WidgetElementPainter]内的[RenderObject]事件处理
+  @implementation
   void _handleWidgetPainterEvent(PointerEvent event) {
     //--
     if (event.isPointerDown) {
