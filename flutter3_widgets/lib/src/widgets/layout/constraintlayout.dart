@@ -103,8 +103,8 @@ extension ConstraintLayoutEx on Widget {
         width: width ?? cl_layout.matchConstraint,
         top: top ?? cl_layout.parent.top,
         bottom: bottom,
-        right: right ?? cl_layout.parent.right,
         left: left ?? cl_layout.parent.left,
+        right: right ?? cl_layout.parent.right,
         height: height ?? cl_layout.wrapContent,
       );
     } else if (alignment == Alignment.bottomCenter) {
@@ -112,8 +112,8 @@ extension ConstraintLayoutEx on Widget {
         width: width ?? cl_layout.matchConstraint,
         bottom: bottom ?? cl_layout.parent.bottom,
         top: top,
-        right: right ?? cl_layout.parent.right,
         left: left ?? cl_layout.parent.left,
+        right: right ?? cl_layout.parent.right,
         height: height ?? cl_layout.wrapContent,
       );
     }
@@ -122,6 +122,75 @@ extension ConstraintLayoutEx on Widget {
       height: height ?? cl_layout.wrapContent,
       centerHorizontalTo: cl_layout.parent,
       centerVerticalTo: cl_layout.parent,
+    );
+  }
+
+  /// 对齐指定元素的约束, 默认是上一个元素[sId]
+  /// [anchor] - 对齐指定的元素, 不指定则默认
+  /// - 撑满对应的约束
+  ///
+  /// [alignment] - 对齐方式
+  ///   - [Alignment.centerRight] 将自身对齐锚点的右边中心
+  ///   - [Alignment.centerLeft] 将自身对齐锚点的左边中心
+  ///   - [Alignment.topCenter] 将自身对齐锚点的上边中心
+  ///   - [Alignment.bottomCenter] 将自身对齐锚点的下边中心
+  ///
+  Widget alignConstraint({
+    cl_layout.ConstraintId? anchor,
+    //
+    Alignment alignment = Alignment.centerRight,
+    //--
+    double? width,
+    double? height,
+    //--
+    cl_layout.ConstraintAlign? left,
+    cl_layout.ConstraintAlign? top,
+    cl_layout.ConstraintAlign? right,
+    cl_layout.ConstraintAlign? bottom,
+  }) {
+    anchor ??= cl_layout.sId(-1);
+    if (alignment == Alignment.centerLeft) {
+      return applyConstraint(
+        width: width ?? cl_layout.wrapContent,
+        left: left,
+        right: right ?? anchor.left,
+        top: top ?? anchor.top,
+        bottom: bottom ?? anchor.bottom,
+        height: height ?? cl_layout.matchConstraint,
+      );
+    } else if (alignment == Alignment.centerRight) {
+      return applyConstraint(
+        width: width ?? cl_layout.wrapContent,
+        left: anchor.right,
+        right: right,
+        top: top ?? anchor.top,
+        bottom: bottom ?? anchor.bottom,
+        height: height ?? cl_layout.matchConstraint,
+      );
+    } else if (alignment == Alignment.topCenter) {
+      return applyConstraint(
+        width: width ?? cl_layout.matchConstraint,
+        top: top,
+        bottom: bottom ?? anchor.top,
+        left: left ?? anchor.left,
+        right: right ?? anchor.right,
+        height: height ?? cl_layout.wrapContent,
+      );
+    } else if (alignment == Alignment.bottomCenter) {
+      return applyConstraint(
+        width: width ?? cl_layout.matchConstraint,
+        bottom: bottom,
+        top: top ?? anchor.bottom,
+        left: left ?? anchor.left,
+        right: right ?? anchor.right,
+        height: height ?? cl_layout.wrapContent,
+      );
+    }
+    return applyConstraint(
+      width: width ?? cl_layout.wrapContent,
+      height: height ?? cl_layout.wrapContent,
+      centerHorizontalTo: anchor,
+      centerVerticalTo: anchor,
     );
   }
 }

@@ -275,3 +275,101 @@ class LineRender extends RenderBox {
     return result;
   }
 }
+
+/// 拖动线, 用来拖动调整布局大小
+class DragLineWidget extends StatefulWidget {
+  ///
+  final Widget? child;
+
+  /// 拖动线方向,
+  /// - 横向 [Axis.horizontal]
+  /// - 纵向 [Axis.vertical]
+  final Axis axis;
+
+  ///
+  final HitTestBehavior? hitTestBehavior;
+
+  /// 拖动线尺寸, 默认为 2.0
+  final double? size;
+
+  /// 拖拽量改变回调
+  /// - from   拖拽开始的手势位置
+  /// - to     拖拽当前的手势位置
+  /// - delta  当前拖拽的增量量
+  final void Function(double from, double to, double delta)? onDragChanged;
+
+  const DragLineWidget({
+    super.key,
+    this.child,
+    this.axis = Axis.horizontal,
+    this.hitTestBehavior = HitTestBehavior.translucent,
+    this.size = 2,
+    this.onDragChanged,
+  });
+
+  @override
+  State<DragLineWidget> createState() => _DragLineWidgetState();
+}
+
+class _DragLineWidgetState extends State<DragLineWidget> {
+  /// 拖动开始时的位置
+  Offset _dragStartPosition = Offset.zero;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: widget.hitTestBehavior,
+      onHorizontalDragDown: (DragDownDetails details) {
+        //l.d("onHorizontalDragDown->$details ${details.localPosition}");
+      },
+      onHorizontalDragStart: (DragStartDetails details) {
+        //l.d("onHorizontalDragStart->$details ${details.localPosition}");
+        if (widget.axis == Axis.horizontal) {
+          _dragStartPosition = details.localPosition;
+        }
+      },
+      onHorizontalDragUpdate: (DragUpdateDetails details) {
+        /*l.d("onHorizontalDragUpdate->$details ${details.delta} ${details
+            .primaryDelta} ${details.localPosition}");*/
+        if (widget.axis == Axis.horizontal) {
+          widget.onDragChanged?.call(
+            _dragStartPosition.dx,
+            details.localPosition.dx,
+            details.primaryDelta ?? 0,
+          );
+        }
+      },
+      onHorizontalDragEnd: (DragEndDetails details) {
+        //l.d("onHorizontalDragEnd->$details ${details.localPosition}");
+      },
+      onVerticalDragStart: (DragStartDetails details) {
+        if (widget.axis == Axis.vertical) {
+          _dragStartPosition = details.localPosition;
+        }
+      },
+      onVerticalDragUpdate: (DragUpdateDetails details) {
+        //l.d("onVerticalDragUpdate->$details ${details.delta} ${details.primaryDelta}");
+        if (widget.axis == Axis.vertical) {
+          widget.onDragChanged?.call(
+            _dragStartPosition.dy,
+            details.localPosition.dy,
+            details.primaryDelta ?? 0,
+          );
+        }
+      },
+      onVerticalDragEnd: (DragEndDetails details) {
+        //l.d("onVerticalDragEnd->$details ${details.localPosition}");
+      },
+      child: MouseRegion(
+        cursor: widget.axis == Axis.horizontal
+            ? SystemMouseCursors.resizeColumn
+            : SystemMouseCursors.resizeRow,
+        hitTestBehavior: widget.hitTestBehavior,
+        child: widget.child,
+      ),
+    ).size(
+      width: widget.axis == Axis.horizontal ? widget.size : null,
+      height: widget.axis == Axis.vertical ? widget.size : null,
+    );
+  }
+}

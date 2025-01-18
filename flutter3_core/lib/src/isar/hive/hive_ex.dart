@@ -64,6 +64,10 @@ extension HiveStringEx on String {
     return result;
   }
 
+  /// [hivePut]
+  Future<dynamic> hiveSet(dynamic value, [bool notifyChanged = true]) =>
+      hivePut(value, notifyChanged);
+
   /// 删除指定键
   Future<void> hiveDelete() => _hiveBox.delete(this);
 

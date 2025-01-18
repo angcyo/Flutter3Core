@@ -235,6 +235,7 @@ extension WidgetListEx on WidgetNullList {
   /// [alignment] 主轴对齐方式, 集体靠左/靠右/居中
   /// [crossAxisAlignment] 交叉轴对齐方式, 就是每一行的对齐方式
   Widget? wrap({
+    Key? key,
     double spacing = kH,
     double runSpacing = kH,
     Axis direction = Axis.horizontal,
@@ -250,6 +251,7 @@ extension WidgetListEx on WidgetNullList {
       return null;
     }
     return Wrap(
+      key: key,
       spacing: spacing,
       runSpacing: runSpacing,
       direction: direction,
@@ -269,6 +271,7 @@ extension WidgetListEx on WidgetNullList {
   /// [crossAxisAlignment] 交叉轴上的对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
   Widget? column({
+    Key? key,
     MainAxisSize? mainAxisSize, //MainAxisSize.min
     MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
     CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.center
@@ -285,6 +288,7 @@ extension WidgetListEx on WidgetNullList {
       return null;
     }
     return Column(
+      key: key,
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
       mainAxisSize: mainAxisSize ?? MainAxisSize.min,
       crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
@@ -302,6 +306,7 @@ extension WidgetListEx on WidgetNullList {
   /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
   Widget? row({
+    Key? key,
     MainAxisSize? mainAxisSize, //MainAxisSize.max
     MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
     CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.center
@@ -316,6 +321,7 @@ extension WidgetListEx on WidgetNullList {
       return null;
     }
     return Row(
+      key: key,
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
       mainAxisSize: mainAxisSize ?? MainAxisSize.max,
       crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
@@ -329,6 +335,7 @@ extension WidgetListEx on WidgetNullList {
 
   /// [Stack]
   Widget? stack({
+    Key? key,
     AlignmentGeometry alignment = AlignmentDirectional.topStart,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
@@ -339,6 +346,7 @@ extension WidgetListEx on WidgetNullList {
       return null;
     }
     return Stack(
+      key: key,
       alignment: alignment,
       textDirection: textDirection,
       fit: fit,
