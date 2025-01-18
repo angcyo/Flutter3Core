@@ -633,7 +633,7 @@ class CanvasListener {
   final void Function({
     required BaseControl control,
     ElementPainter? controlElement,
-    required ControlState state,
+    required ControlStateEnum state,
   })? onControlStateChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasUndoChanged]

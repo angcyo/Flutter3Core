@@ -220,13 +220,17 @@ class ElementPainter extends IPainter
   @api
   void updatePaintProperty(
     PaintProperty? value, {
-    bool notify = true,
+    bool? notify,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
     final old = _paintProperty;
     _paintProperty = value;
-    if (notify && old != value) {
+    if (fromUndoType == UndoType.undo || fromUndoType == UndoType.redo) {
+      //撤销重做时, 不触发通知
+      notify ??= false;
+    }
+    if (notify != false && old != value) {
       dispatchSelfPaintPropertyChanged(
         old,
         value,
@@ -1617,7 +1621,8 @@ class ElementGroupPainter extends ElementPainter {
   /// [CanvasElementManager.groupElement]
   /// [CanvasElementManager.ungroupElement]
   @api
-  void resetChildren(List<ElementPainter>? children, {bool? resetGroupAngle}) {
+  void resetChildren(List<ElementPainter>? children,
+      {@autoInjectMark bool? resetGroupAngle}) {
     //可能需要先解父元素
     this.children?.forEach((element) {
       if (children?.contains(element) != true) {
@@ -1643,7 +1648,7 @@ class ElementGroupPainter extends ElementPainter {
   /// [resetGroupAngle] 是否要重置旋转角度
   @api
   void updatePaintPropertyFromChildren({
-    bool? resetGroupAngle,
+    @autoInjectMark bool? resetGroupAngle,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
@@ -2679,9 +2684,10 @@ class ElementStateStack {
   }
 
   /// 恢复信息
+  /// [mute] 是否静默恢复, 静默恢复只会恢复一些基础属性, 并且不会触发任何回调
   @callPoint
   @mustCallSuper
-  void restore() {
+  void restore({bool? mute}) {
     /*stateMap.forEach((element, paintState) {
       element.paintState = paintState ?? element.paintState;
     });*/
@@ -2701,7 +2707,11 @@ class ElementStateStack {
       //debugger();
       //base
       //element.paintProperty = paintProperty;
-      element.updatePaintProperty(paintProperty, fromObj: this);
+      element.updatePaintProperty(
+        paintProperty,
+        fromObj: this,
+        notify: mute != true,
+      );
       //final paintState = elementStateMap[element];
       //element.paintState = paintState;
 
@@ -2710,12 +2720,16 @@ class ElementStateStack {
       element.onRestoreStateStackData(this, dataMap);
 
       //end
-      element.onRestoreStateStack(this);
+      if (mute != true) {
+        element.onRestoreStateStack(this);
+      }
     });
 
     //--
-    for (final call in restoreCallList) {
-      call(this);
+    if (mute != true) {
+      for (final call in restoreCallList) {
+        call(this);
+      }
     }
   }
 

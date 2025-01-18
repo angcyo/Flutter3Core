@@ -147,7 +147,7 @@ class ElementAdsorbControl
     }
   }
 
-  /// [CanvasElementControlManager.onSelfControlStateChanged] 驱动
+  /// [CanvasElementControlManager.onHandleControlStateChanged] 驱动
   void initAdsorbRefValueList(
       ElementPainter controlElement, ControlTypeEnum controlType) {
     if (controlType == ControlTypeEnum.translate) {
@@ -157,7 +157,7 @@ class ElementAdsorbControl
   }
 
   /// 释放资源
-  /// [CanvasElementControlManager.onSelfControlStateChanged] 驱动
+  /// [CanvasElementControlManager.onHandleControlStateChanged] 驱动
   void dispose(ControlTypeEnum controlType) {
     //debugger();
     _xAdsorbRefValue = null;

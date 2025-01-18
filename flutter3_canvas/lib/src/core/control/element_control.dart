@@ -371,17 +371,17 @@ class BaseControl
   /// [endControlTarget]
   @callPoint
   void startControlTarget(ElementPainter? element) {
-    _setControlTarget(element, ControlState.start);
+    _setControlTarget(element, ControlStateEnum.start);
   }
 
   /// 更新控制的目标元素, 多指选择元素之后调用
   @callPoint
   void updateControlTarget(ElementPainter? element) {
-    _setControlTarget(element, ControlState.update);
+    _setControlTarget(element, ControlStateEnum.update);
   }
 
   /// 设置控制目标
-  void _setControlTarget(ElementPainter? element, ControlState state) {
+  void _setControlTarget(ElementPainter? element, ControlStateEnum state) {
     _elementStateStack?.dispose();
     _downTargetElementCenter = element?.paintProperty?.paintCenter;
     _downTargetElementAnchor =
@@ -389,7 +389,7 @@ class BaseControl
     _targetElement = element;
     _elementStateStack = element?.createStateStack();
 
-    canvasElementControlManager.onSelfControlStateChanged(
+    canvasElementControlManager.onHandleControlStateChanged(
       state: state,
       control: this,
       controlElement: element,
@@ -402,7 +402,7 @@ class BaseControl
   void applyTargetMatrix(Matrix4 matrix, [ControlTypeEnum? controlType]) {
     //debugger();
     isControlApply = true;
-    _elementStateStack?.restore();
+    _elementStateStack?.restore(mute: true);
 
     controlType ??= this.controlType;
     if (_targetElement == null) {
@@ -445,8 +445,8 @@ class BaseControl
   void endControlTarget() {
     final element = _targetElement;
 
-    canvasElementControlManager.onSelfControlStateChanged(
-      state: ControlState.end,
+    canvasElementControlManager.onHandleControlStateChanged(
+      state: ControlStateEnum.end,
       control: this,
       controlElement: element,
     );
@@ -986,7 +986,7 @@ typedef ControlPainterFn = void Function(
     Canvas canvas, @viewCoordinate Rect bounds, bool downIn);
 
 /// 控制状态
-enum ControlState {
+enum ControlStateEnum {
   /// 开始控制
   start,
 

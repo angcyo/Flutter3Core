@@ -921,7 +921,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       return true;
     }());*/
     canvasElementManager.canvasElementControlManager
-        .onSelfElementPropertyChanged(
+        .onHandleElementPropertyChanged(
       elementPainter,
       propertyType,
       fromObj,
@@ -1094,7 +1094,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void dispatchControlStateChanged({
     required BaseControl control,
     ElementPainter? controlElement,
-    required ControlState state,
+    required ControlStateEnum state,
   }) {
     _eachCanvasListener((element) {
       element.onControlStateChangedAction?.call(
@@ -1312,8 +1312,8 @@ class CanvasStateStack extends ElementStateStack {
   }
 
   @override
-  void restore() {
-    super.restore();
+  void restore({bool? mute}) {
+    super.restore(mute: mute);
     final group = fromElement;
     if (group is ElementGroupPainter) {
       canvasDelegate.canvasElementManager.elements.reset(group.children);

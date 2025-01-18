@@ -133,8 +133,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 是否正在控制元素中
   bool get isControlElement =>
-      _currentControlState == ControlState.start ||
-      _currentControlState == ControlState.update;
+      _currentControlState == ControlStateEnum.start ||
+      _currentControlState == ControlStateEnum.update;
 
   /// 获取选中元素的边界
   Rect? get selectBounds => isSelectedElement
@@ -418,14 +418,14 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 当前控制点, 正在操作的控制点信息
-  /// [onSelfControlStateChanged]
+  /// [onHandleControlStateChanged]
   WeakReference<BaseControl>? _currentControlRef;
 
   /// 当前控制点, 控制的元素
   WeakReference<ElementPainter>? _currentControlElementRef;
 
   /// 当前控制点, 控制的状态
-  ControlState? _currentControlState;
+  ControlStateEnum? _currentControlState;
 
   /// 控制状态发生改变
   /// [control] 控制器
@@ -433,10 +433,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// [BaseControl.startControlTarget]
   /// [BaseControl.endControlTarget]
   @property
-  void onSelfControlStateChanged({
+  void onHandleControlStateChanged({
     required BaseControl control,
     ElementPainter? controlElement,
-    required ControlState state,
+    required ControlStateEnum state,
   }) {
     //debugger();
     //cache
@@ -446,7 +446,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
     //更新绘制信息
     final controlType = control.controlType;
-    if (state == ControlState.start) {
+    if (state == ControlStateEnum.start) {
       if (controlType == ControlTypeEnum.rotate) {
         updatePaintInfoType(PaintInfoType.rotate);
       } else if (controlType == ControlTypeEnum.translate) {
@@ -456,18 +456,22 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         canvasDelegate
             .canvasEventManager.canvasScaleComponent.isDoubleFirstTouch = true;
       }
-    } else if (state == ControlState.end) {
+    } else if (state == ControlStateEnum.end) {
       if (controlType == ControlTypeEnum.rotate) {
         //旋转结束之后
         if (enableResetElementAngle) {
+          //更新group中的group旋转属性
           elementSelectComponent.updateChildPaintPropertyFromChildren(
             resetGroupAngle: true,
-            fromObj: this,
+            fromObj: control,
           );
+          //更新group自身的旋转属性
           elementSelectComponent.updatePaintPropertyFromChildren(
             resetGroupAngle: true,
-            fromObj: this,
+            fromObj: control,
           );
+        } else {
+          //不需要更新旋转属性
         }
       }
       resetPaintInfoType();
@@ -476,10 +480,11 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     //初始化智能吸附
     if (elementAdsorbControl.isCanvasComponentEnable) {
       if (controlElement != null &&
-          (state == ControlState.start || state == ControlState.update)) {
+          (state == ControlStateEnum.start ||
+              state == ControlStateEnum.update)) {
         elementAdsorbControl.initAdsorbRefValueList(
             controlElement, controlType);
-      } else if (state == ControlState.end) {
+      } else if (state == ControlStateEnum.end) {
         elementAdsorbControl.dispose(controlType);
       }
     }
@@ -517,7 +522,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// [propertyType] 改变的属性类型
   @property
   @implementation
-  void onSelfElementPropertyChanged(
+  void onHandleElementPropertyChanged(
     ElementPainter element,
     PainterPropertyType propertyType,
     Object? fromObj,
@@ -528,12 +533,16 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         //no op
       }
     }
-    if (isSelectedElement) {
+    if (isSelectedElement && propertyType == PainterPropertyType.paint) {
       if (fromUndoType?.isUndoRedo == true &&
           elementSelectComponent.children?.contains(element) == true) {
         //当选中的元素被重做/撤销了, 则需要更新选择组件的属性
+        //debugger();
         scheduleMicrotask(() {
-          elementSelectComponent.updatePaintPropertyFromChildren();
+          elementSelectComponent.updatePaintPropertyFromChildren(
+            fromObj: fromObj,
+            fromUndoType: fromUndoType,
+          );
         });
         //debugger();
       }
@@ -1089,6 +1098,12 @@ class ElementSelectComponent extends ElementGroupPainter
     super.paintProperty = value;
   }*/
 
+  ElementSelectComponent(this.canvasElementControlManager) {
+    attachToCanvasDelegate(
+        canvasElementControlManager.canvasElementManager.canvasDelegate);
+    paintChildren = false;
+  }
+
   /// [resetSelectElement]
   /// [resetChildren]
   /// [CanvasElementManager.resetSelectedElementList]
@@ -1096,7 +1111,7 @@ class ElementSelectComponent extends ElementGroupPainter
   @override
   void updatePaintProperty(
     PaintProperty? value, {
-    bool notify = true,
+    bool? notify,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
@@ -1106,12 +1121,6 @@ class ElementSelectComponent extends ElementGroupPainter
       fromObj: fromObj,
       fromUndoType: fromUndoType,
     );
-  }
-
-  ElementSelectComponent(this.canvasElementControlManager) {
-    attachToCanvasDelegate(
-        canvasElementControlManager.canvasElementManager.canvasDelegate);
-    paintChildren = false;
   }
 
   @override
@@ -1363,11 +1372,12 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 使用子元素的属性, 更新自身的绘制属性.
   @override
   void updatePaintPropertyFromChildren({
-    bool? resetGroupAngle,
+    @autoInjectMark bool? resetGroupAngle,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
     //debugger();
+    //l.d("updatePaintPropertyFromChildren->[${fromObj?.runtimeType}] $resetGroupAngle $fromUndoType");
     super.updatePaintPropertyFromChildren(
       resetGroupAngle: resetGroupAngle,
       fromObj: fromObj,
@@ -1376,11 +1386,11 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   /// 仅更新子元素的绘制属性, 不更新自身的绘制属性
-  /// [updatePaintPropertyFromChildren]
+  /// 更新自身的绘制属性请使用[updatePaintPropertyFromChildren]
   /// [updateChildPaintPropertyFromChildren]
   @property
   void updateChildPaintPropertyFromChildren({
-    bool? resetGroupAngle = false,
+    @autoInjectMark bool? resetGroupAngle,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
