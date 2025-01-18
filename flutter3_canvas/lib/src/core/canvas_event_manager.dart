@@ -43,6 +43,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// [event] 最原始的事件参数, 未经过加工处理
+  /// [CanvasDelegate.handleEvent]驱动
   @entryPoint
   void handleEvent(@viewCoordinate PointerEvent event) {
     if (!event.isPointerHover) {
@@ -81,6 +82,26 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       }*/
       return true;
     }());
+  }
+
+  /// 键盘事件处理
+  /// [CanvasDelegate.handleKeyEvent]驱动
+  @entryPoint
+  bool handleKeyEvent(KeyEvent event) {
+    bool handle = false;
+    //--
+    if (canvasDelegate.canvasStyle.enableElementControl ||
+        canvasDelegate.canvasStyle.enableElementKeyEvent == true) {
+      //将事件发送元素
+      for (final element
+          in canvasDelegate.canvasElementManager.elements.reversed) {
+        if (element.handleKeyEvent(event)) {
+          handle = true;
+          break;
+        }
+      }
+    }
+    return handle;
   }
 
   //--

@@ -72,6 +72,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasEventManager.handleEvent(event);
   }
 
+  /// 键盘输入的入口点
+  /// 处理键盘事件
+  /// [CanvasRenderBox.onKeyEventHandleMixin]驱动
+  @entryPoint
+  bool handleKeyEvent(RenderObject render, KeyEvent event) {
+    bool handle = canvasEventManager.handleKeyEvent(event);
+    handle = handle || dispatchKeyEvent(render, event);
+    return handle;
+  }
+
   /// 布局的大小
   /// [layout]
   Size? _layoutSize;
@@ -1194,7 +1204,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 派发键盘事件
-  bool dispatchKeyEvent(CanvasRenderBox render, KeyEvent event) {
+  bool dispatchKeyEvent(RenderObject render, KeyEvent event) {
     var handle = false;
     _eachCanvasListener((element) {
       handle = element.onKeyEventAction?.call(this, render, event) == true;

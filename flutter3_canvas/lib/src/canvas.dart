@@ -467,20 +467,9 @@ class CanvasRenderBox extends RenderBox
         canvasDelegate.canvasStyle.enableCanvasKeyEvent == true) {
       handle = super.onKeyEventHandleMixin(event);
     }
-    //--
-    if (canvasDelegate.canvasStyle.enableElementControl ||
-        canvasDelegate.canvasStyle.enableElementKeyEvent == true) {
-      //将事件发送元素
-      for (final element
-          in canvasDelegate.canvasElementManager.elements.reversed) {
-        if (element.handleKeyEvent(event)) {
-          handle = true;
-          break;
-        }
-      }
+    if (canvasDelegate.handleKeyEvent(this, event)) {
+      handle = true;
     }
-    //--
-    handle = handle || canvasDelegate.dispatchKeyEvent(this, event);
     return handle;
   }
 
@@ -677,7 +666,7 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchKeyEvent]
   final bool Function(
     CanvasDelegate delegate,
-    CanvasRenderBox render,
+    RenderObject render,
     KeyEvent event,
   )? onKeyEventAction;
 
