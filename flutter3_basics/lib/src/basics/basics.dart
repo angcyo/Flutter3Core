@@ -174,6 +174,26 @@ Timer countdownCallback(
   });
 }
 
+/// 使用[Timer]实现一个周期循环
+/// [just] 是否立即执行一次
+Timer timerPeriodic(
+  Duration duration,
+  void Function(Timer timer) callback, {
+  bool just = true,
+}) {
+  final timer = Timer.periodic(duration, (timer) {
+    callback(timer);
+  });
+  if (just) {
+    callback(timer);
+  }
+  return timer;
+}
+
+/// 延迟后执行一个毁掉
+Timer timerDelay(Duration duration, VoidCallback callback) =>
+    Timer(duration, callback);
+
 /// 使用[Future]延迟执行[callback]
 /// 内部也是使用[Timer]实现的
 /// [Future.wait] 会等待所有的[Future]执行完毕
@@ -255,9 +275,9 @@ String stackToString({StackTrace? stackTrace, String? label, int? maxFrames}) {
   }
   Iterable<String> lines = stackTrace.toString().trimRight().split('\n');
   if (kIsWeb && lines.isNotEmpty) {
-    // Remove extra call to StackTrace.current for web platform.
-    // TODO(ferhat): remove when https://github.com/flutter/flutter/issues/37635
-    // is addressed.
+// Remove extra call to StackTrace.current for web platform.
+// TODO(ferhat): remove when https://github.com/flutter/flutter/issues/37635
+// is addressed.
     lines = lines.skipWhile((String line) {
       return line.contains('StackTrace.current') ||
           line.contains('dart-sdk/lib/_internal') ||
@@ -482,8 +502,8 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 ///    - 缺点：可能会使得灰度图像失去一些整体感，提取的特征不够全面。
 ///
 int rgbToGray(int r, int g, int b) {
-  //(r + g + b) ~/ 3
-  //return (r * 0.299 + g * 0.587 + b * 0.114).toInt().clamp(0, 255);
+//(r + g + b) ~/ 3
+//return (r * 0.299 + g * 0.587 + b * 0.114).toInt().clamp(0, 255);
   return (r * 0.34 + g * 0.5 + b * 0.16).toInt().clamp(0, 255);
 }
 
@@ -776,12 +796,12 @@ Future<UiImage> loadAssetImage(
   String prefix = kDefAssetsPngPrefix,
   String? package,
 }) async {
-  // 读取图片数据
+// 读取图片数据
   ByteData data =
       await loadAssetByteData(key, prefix: prefix, package: package);
   Uint8List bytes = data.buffer.asUint8List();
-  // 解码图片
-  /*ui.Codec codec = await ui.instantiateImageCodec(bytes);
+// 解码图片
+/*ui.Codec codec = await ui.instantiateImageCodec(bytes);
   ui.FrameInfo frameInfo = await codec.getNextFrame();
   return frameInfo.image;*/
   return decodeImageFromList(bytes);

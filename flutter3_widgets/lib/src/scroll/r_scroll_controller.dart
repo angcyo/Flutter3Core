@@ -416,6 +416,13 @@ extension ScrollControllerEx on ScrollController {
       }());
       return;
     }
+    if (!offset.isValid) {
+      assert(() {
+        l.w('操作被忽略,无效的滚动偏移量->$offset');
+        return true;
+      }());
+      return;
+    }
     if (anim) {
       animateTo(
         offset,
@@ -437,8 +444,11 @@ extension ScrollControllerEx on ScrollController {
   @api
   void scrollToBottom({
     bool anim = true,
-    Duration duration = kDefaultAnimationDuration,
+    Duration? duration,
     Curve curve = Curves.easeOut,
+    //--
+    double pollStep = 100 /*轮询滚动步长*/,
+    Duration timeoutDuration = const Duration(seconds: 5),
   }) {
     if (!hasClients) {
       assert(() {
@@ -447,12 +457,40 @@ extension ScrollControllerEx on ScrollController {
       }());
       return;
     }
-    scrollToTop(
-      offset: position.maxScrollExtent,
-      anim: anim,
-      duration: duration,
-      curve: curve,
-    );
+    duration ??= kDefaultAnimationDuration;
+    if (position.maxScrollExtent.isValid) {
+      //数值有效
+      scrollToTop(
+        offset: position.maxScrollExtent,
+        anim: anim,
+        duration: duration,
+        curve: curve,
+      );
+    } else {
+      //滚动数值无效, 则慢慢滚动直到数值有效
+      final timer = timerPeriodic(const Duration(milliseconds: 16), (timer) {
+        if (position.maxScrollExtent.isValid) {
+          timer.cancel();
+          //一旦发现数值有效, 则滚动到有效位置
+          scrollToTop(
+            offset: position.maxScrollExtent,
+            anim: anim,
+            duration: duration!,
+            curve: curve,
+          );
+        } else {
+          scrollToTop(
+            offset: position.pixels + pollStep,
+            anim: false,
+            duration: duration!,
+            curve: curve,
+          );
+        }
+      });
+      timerDelay(timeoutDuration, () {
+        timer.cancel();
+      });
+    }
   }
 
   /// 滚动到当前位置

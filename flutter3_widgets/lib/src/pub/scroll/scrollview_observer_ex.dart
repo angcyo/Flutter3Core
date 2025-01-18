@@ -64,10 +64,18 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
       sliverContexts: () => observerSliverContexts,
       onObserveAll: (resultMap) {
         //ListViewObserveModel
+        //debugger();
         assert(() {
           l.d("${resultMap.runtimeType}->${resultMap.values.connect(",", (e) => e.runtimeType.toString())}");
           return true;
         }());
+      },
+      onObserve: (result) {
+        //ListViewObserveModel
+        //final m1 = scrollControllerMixin;
+        //final c1 = observerSliverController;
+        //l.d("maxScrollExtent->${m1.position.maxScrollExtent}");
+        //debugger();
       },
       child: CustomScrollView(
         controller: scrollControllerMixin,
@@ -95,29 +103,78 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
           if (!observerSliverContexts.contains(context)) {
             observerSliverContexts.add(context);
           }
-          return itemBuilder(context, index);
+          final item = itemBuilder(context, index);
+          //l.d("build item->$index");
+          return item;
         },
       );
 
   /// 滚动到指定位置
+  /// [alignment] 参数用于指定你期望定位到子部件的对齐位置，该值需要在 [0.0, 1.0] 这个范围之间。默认为 0，比如：
+  ///
+  /// - alignment: 0 : 滚动到子部件的顶部位置
+  /// - alignment: 0.5 : 滚动到子部件的中间位置
+  /// - alignment: 1 : 滚动到子部件的尾部位置
+  ///
+  /// https://github.com/fluttercandies/flutter_scrollview_observer/wiki/2%E3%80%81%E6%BB%9A%E5%8A%A8%E5%88%B0%E6%8C%87%E5%AE%9A%E4%B8%8B%E6%A0%87%E4%BD%8D%E7%BD%AE#25alignment-%E5%8F%82%E6%95%B0
+  @api
   void scrollObserverTo(
     int index, {
-    Duration? duration = const Duration(milliseconds: 300),
     BuildContext? sliverContext,
+    Duration? duration = const Duration(milliseconds: 300),
+    Curve curve = Curves.easeInOut,
+    double alignment = 0,
   }) {
     if (duration == null) {
       observerSliverController.jumpTo(
         index: index,
+        alignment: alignment,
         sliverContext: sliverContext ?? observerSliverContexts.firstOrNull,
       );
     } else {
       observerSliverController.animateTo(
         index: index,
+        alignment: alignment,
         duration: duration,
-        curve: Curves.easeInOut,
+        curve: curve,
         sliverContext: sliverContext ?? observerSliverContexts.firstOrNull,
       );
     }
+  }
+
+  /// 滚动到顶部
+  @api
+  void scrollObserverToTop({
+    Duration? duration = const Duration(milliseconds: 300),
+    Curve curve = Curves.easeInOut,
+    double offset = 0,
+  }) {
+    if (duration == null) {
+      observerSliverController.controller?.scrollToTop(
+        anim: false,
+        offset: offset,
+      );
+    } else {
+      observerSliverController.controller?.scrollToTop(
+        anim: true,
+        offset: offset,
+        duration: duration,
+        curve: curve,
+      );
+    }
+  }
+
+  /// 滚动到底部
+  @api
+  void scrollObserverToBottom({
+    Duration? duration = const Duration(milliseconds: 300),
+    Curve curve = Curves.easeInOut,
+  }) {
+      observerSliverController.controller?.scrollToBottom(
+        anim: duration != null,
+        duration: duration,
+        curve: curve,
+      );
   }
 
 //--
