@@ -923,7 +923,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     selectComponent.resetSelectElement(elements, selectType);
   }
 
-  /// 清空选中的元素
+  /// 清空选中的元素/取消选中的元素
   @api
   void clearSelectedElement({
     ElementSelectType selectType = ElementSelectType.code,

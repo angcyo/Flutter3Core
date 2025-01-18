@@ -553,6 +553,7 @@ class ElementPainter extends IPainter
   /// [CanvasElementManager.paintElement]驱动
   ///
   @entryPoint
+  @viewCoordinate
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     paintMeta.withPaintMatrix(canvas, () {
@@ -579,8 +580,8 @@ class ElementPainter extends IPainter
   /// [painting]驱动
   /// [onPaintingSelf]绘制之前调用, 用来重新设置画笔样式等
   /// [updatePainterPaint]
-  @sceneCoordinate
   @property
+  @sceneCoordinate
   void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
     //抑制画布缩放
     if (paintStrokeWidthSuppressCanvasScale == true) {

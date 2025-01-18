@@ -154,7 +154,9 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       axisManager.painting(canvas, paintMeta);
       //3: 绘制元素/以及控制点
       canvasDelegate.canvasElementManager.paintElements(canvas, paintMeta);
-      //4: 绘制监视信息
+      //4: 覆盖层
+      canvasDelegate._overlayComponent?.painting(canvas, paintMeta);
+      //5: 绘制监视信息
       if (canvasDelegate.canvasStyle.showMonitor) {
         monitorPainter.painting(canvas, paintMeta);
       }

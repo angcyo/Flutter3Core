@@ -66,7 +66,12 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       }
       handleDispatchEvent(event);
       //元素操作事件
-      canvasDelegate.canvasElementManager.handleElementEvent(event);
+      final overlayComponent = canvasDelegate._overlayComponent;
+      if (overlayComponent == null) {
+        canvasDelegate.canvasElementManager.handleElementEvent(event);
+      } else {
+        overlayComponent.handleEvent(event);
+      }
     }
     //--
     if (event.isPointerFinish) {
@@ -88,6 +93,10 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   /// [CanvasDelegate.handleKeyEvent]驱动
   @entryPoint
   bool handleKeyEvent(KeyEvent event) {
+    final overlayComponent = canvasDelegate._overlayComponent;
+    if (overlayComponent != null) {
+      return overlayComponent.handleKeyEvent(event);
+    }
     bool handle = false;
     //--
     if (canvasDelegate.canvasStyle.enableElementControl ||

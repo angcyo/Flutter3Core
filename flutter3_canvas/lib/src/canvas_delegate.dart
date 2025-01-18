@@ -319,6 +319,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @flagProperty
   final Map<String, dynamic> dataMap = {};
 
+  //--
+
+  /// 画布覆盖组件
+  CanvasOverlayComponent? _overlayComponent;
+
   //--属性
 
   /// 重绘次数
@@ -795,6 +800,30 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @api
   void hideMenu<T extends Object?>([T? result]) {
     delegateContext?.popMenu(result);
+  }
+
+  /// 附加覆盖层
+  /// [cancelSelectedElement] 是否取消当前选中的元素
+  @api
+  void attachOverlay(
+    CanvasOverlayComponent? overlay, {
+    bool cancelSelectedElement = true,
+  }) {
+    detachOverlay();
+    if (overlay != null) {
+      if (cancelSelectedElement && canvasElementManager.isSelectedElement) {
+        canvasElementManager.clearSelectedElement();
+      }
+      _overlayComponent = overlay;
+      overlay.attachToCanvasDelegate(this);
+    }
+  }
+
+  /// 移除覆盖层[_overlayComponent]
+  @api
+  void detachOverlay() {
+    _overlayComponent?.detachFromCanvasDelegate(this);
+    _overlayComponent = null;
   }
 
   //endregion ---api---
