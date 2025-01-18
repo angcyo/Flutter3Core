@@ -8,19 +8,13 @@ part of '../flutter3_canvas.dart';
 class CanvasWidget extends LeafRenderObjectWidget {
   final CanvasDelegate canvasDelegate;
 
-  /// 是否要激活[WidgetElementPainter]的功能
-  final bool enableWidgetRender;
-
-  const CanvasWidget(
-    this.canvasDelegate, {
-    super.key,
-    this.enableWidgetRender = isDebug,
-  });
+  const CanvasWidget(this.canvasDelegate, {super.key});
 
   @override
-  LeafRenderObjectElement createElement() => enableWidgetRender
-      ? CanvasRenderObjectElement(this)
-      : LeafRenderObjectElement(this);
+  LeafRenderObjectElement createElement() =>
+      canvasDelegate.canvasStyle.enableWidgetRender
+          ? CanvasRenderObjectElement(this)
+          : LeafRenderObjectElement(this);
 
   @override
   RenderObject createRenderObject(BuildContext context) => CanvasRenderBox(
@@ -49,7 +43,7 @@ class CanvasWidget extends LeafRenderObjectWidget {
     properties.add(DiagnosticsProperty('canvasDelegate', canvasDelegate));
     properties.add(FlagProperty(
       'enableWidgetRender',
-      value: enableWidgetRender,
+      value: canvasDelegate.canvasStyle.enableWidgetRender,
       ifTrue: "支持[Widget]渲染",
     ));
   }

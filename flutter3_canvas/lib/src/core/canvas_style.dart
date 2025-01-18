@@ -87,6 +87,10 @@ class CanvasStyle {
   /// 是否激活点击元素外, 取消选中元素
   bool enableOutsideCancelSelectElement = true;
 
+  /// 是否要激活[WidgetElementPainter]的功能
+  @implementation
+  bool enableWidgetRender = isDebug;
+
   //--key
 
   /// 当这些控制按键任意被按下时, 鼠标的滚动视为需要缩放画布

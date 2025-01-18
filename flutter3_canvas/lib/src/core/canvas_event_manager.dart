@@ -60,7 +60,9 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     }
 
     if (!_cancelDispatchEvent) {
-      _handleWidgetPainterEvent(event);
+      if (canvasDelegate.canvasStyle.enableWidgetRender) {
+        _handleWidgetPainterEvent(event);
+      }
       handleDispatchEvent(event);
       //元素操作事件
       canvasDelegate.canvasElementManager.handleElementEvent(event);
@@ -95,7 +97,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     _cancelDispatchEvent = true;
   }
 
-  //--
+  //region WidgetElementPainter
 
   /// 用来支持[WidgetElementPainter]..
   @implementation
@@ -153,6 +155,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       _painterHitResult = null;
     }
   }
+
+//endregion WidgetElementPainter
 }
 
 /// [CanvasViewBox] 操作基础组件
