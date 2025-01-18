@@ -47,8 +47,11 @@ class CanvasWidget extends LeafRenderObjectWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty('canvasDelegate', canvasDelegate));
-    properties
-        .add(FlagProperty('enableWidgetRender', value: enableWidgetRender));
+    properties.add(FlagProperty(
+      'enableWidgetRender',
+      value: enableWidgetRender,
+      ifTrue: "支持[Widget]渲染",
+    ));
   }
 }
 

@@ -1238,22 +1238,35 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     properties.add(IntProperty("重绘次数", paintCount));
     properties.add(DiagnosticsProperty('代理上下文', delegateContext));
     properties.add(DiagnosticsProperty('画布样式', canvasStyle));
-    properties.add(FlagProperty('有元素改变', value: hasElementChangedFlag));
+    properties.add(FlagProperty(
+      '有元素改变',
+      value: hasElementChangedFlag,
+      ifTrue: "有元素发生改变",
+    ));
     properties.add(canvasViewBox.toDiagnosticsNode(
       name: '视口控制',
       style: DiagnosticsTreeStyle.sparse,
     ));
     properties.add(DiagnosticsProperty<Ticker?>('ticker', _ticker));
 
-    properties.add(FlagProperty("重置旋转角度",
-        value: canvasElementManager
-            .canvasElementControlManager.enableResetElementAngle));
-    properties.add(FlagProperty("激活控制交互",
-        value: canvasElementManager
-            .canvasElementControlManager.enableElementControl));
-    properties.add(FlagProperty("激活点击元素外取消选择",
-        value: canvasElementManager
-            .canvasElementControlManager.enableOutsideCancelSelectElement));
+    properties.add(FlagProperty(
+      "重置旋转角度",
+      value: canvasElementManager
+          .canvasElementControlManager.enableResetElementAngle,
+      ifTrue: "激活重置旋转角度",
+    ));
+    properties.add(FlagProperty(
+      "激活控制交互",
+      value:
+          canvasElementManager.canvasElementControlManager.enableElementControl,
+      ifTrue: "激活控制交互",
+    ));
+    properties.add(FlagProperty(
+      "激活点击元素外取消选择",
+      value: canvasElementManager
+          .canvasElementControlManager.enableOutsideCancelSelectElement,
+      ifTrue: "激活点击元素外取消选择",
+    ));
 
     properties.add(canvasPaintManager.toDiagnosticsNode(
       name: '画布管理',
