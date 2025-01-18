@@ -344,6 +344,7 @@ class DefaultUdpService extends UdpService {
   @overridePoint
   void onSelfServerHandleClientPacket(
       UdpPacketBean packet, UdpClientInfoBean bean) {
+    //debugger();
     final deviceId = bean.deviceId ??= packet.deviceId;
     final client = getServerClientInfo(deviceId);
     if (client != null) {
@@ -439,7 +440,8 @@ class DefaultUdpService extends UdpService {
 
   //region 客户端
 
-  /// 客户端的信息
+  /// 客户端的信息, 将通过心跳发送给服务端
+  /// [sendBroadcastHeart]
   @configProperty
   UdpClientInfoBean? clientInfo = UdpClientInfoBean();
 
@@ -625,7 +627,10 @@ class DefaultUdpService extends UdpService {
   Future<bool> sendBroadcastHeart() async {
     final packet = UdpPacketBean();
     packet.deviceId ??= $deviceUuid;
+    //--
+    clientInfo?.deviceName ??= $platformDeviceInfoCache?.platformDeviceName;
     clientInfo?.deviceId ??= packet.deviceId;
+    //--
     packet
       ..type = UdpPacketTypeEnum.heart.name
       ..data = clientInfo?.toJson().toJsonString(null).bytes;

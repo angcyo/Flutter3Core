@@ -35,7 +35,7 @@ class UdpClientInfoBean {
 
   /// 客户端的平台设备名称
   @flagProperty
-  String? deviceName = $platformDeviceInfoCache?.platformDeviceName;
+  String? deviceName;
 
   //--
 
