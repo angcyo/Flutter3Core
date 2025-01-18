@@ -4,7 +4,7 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/01/10
 ///
-/// 用来实现鼠标右键菜单
+/// 用来实现画布鼠标右键菜单
 ///
 /// [CanvasDelegate] 的成员
 ///

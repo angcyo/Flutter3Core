@@ -24,6 +24,7 @@ class CanvasBoundsEventComponent
   Set<OnCanvasBoundsEventAction> boundsEventActionList = {};
 
   /// 指定区域的事件监听
+  @viewCoordinate
   Map<Rect, OnCanvasBoundsEventAction> boundsEventActionMap = {};
 
   CanvasBoundsEventComponent(this.canvasDelegate);
@@ -49,10 +50,9 @@ class CanvasBoundsEventComponent
       }
     }
     if (boundsEventActionMap.isNotEmpty) {
-      for (final entry in boundsEventActionMap.entries) {
-        if (entry.key.contains(event.localPosition)) {
-          handled = entry.value(event, touchType) || handled;
-        }
+      final action = hitBoundsEventAction(event.localPosition);
+      if (action != null) {
+        handled = action(event, touchType) || handled;
       }
     }
     //--
@@ -72,6 +72,8 @@ class CanvasBoundsEventComponent
     return handled || super.onTouchDetectorPointerEvent(event, touchType);
   }
 
+  //--
+
   void addBoundsEventAction(OnCanvasBoundsEventAction action) {
     boundsEventActionList.add(action);
   }
@@ -80,11 +82,27 @@ class CanvasBoundsEventComponent
     boundsEventActionList.remove(action);
   }
 
-  void addBoundsEventActionMap(Rect rect, OnCanvasBoundsEventAction action) {
+  void addBoundsEventActionMap(
+    @viewCoordinate Rect rect,
+    OnCanvasBoundsEventAction action,
+  ) {
     boundsEventActionMap[rect] = action;
   }
 
   void removeBoundsEventActionMap(Rect rect) {
     boundsEventActionMap.remove(rect);
+  }
+
+  /// 获取[position]命中的区域事件回调
+  OnCanvasBoundsEventAction? hitBoundsEventAction(
+      @viewCoordinate Offset position) {
+    if (boundsEventActionMap.isNotEmpty) {
+      for (final entry in boundsEventActionMap.entries) {
+        if (entry.key.contains(position)) {
+          return entry.value;
+        }
+      }
+    }
+    return null;
   }
 }

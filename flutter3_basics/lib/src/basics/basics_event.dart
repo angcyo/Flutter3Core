@@ -18,7 +18,8 @@ part of '../../flutter3_basics.dart';
 /// macOs: control
 /// Linux: Ctrl
 /// [HardwareKeyboard.isControlPressed]
-bool get isCtrlPressed => isKeyPressed(key: LogicalKeyboardKey.control, keys: [
+bool get isCtrlPressed =>
+    isKeyPressed(key: LogicalKeyboardKey.control, keys: [
       LogicalKeyboardKey.controlLeft,
       LogicalKeyboardKey.controlRight,
     ]);
@@ -28,7 +29,8 @@ bool get isCtrlPressed => isKeyPressed(key: LogicalKeyboardKey.control, keys: [
 /// macOs: option
 /// Linux: Alt
 /// [HardwareKeyboard.isAltPressed]
-bool get isAltPressed => isKeyPressed(key: LogicalKeyboardKey.alt, keys: [
+bool get isAltPressed =>
+    isKeyPressed(key: LogicalKeyboardKey.alt, keys: [
       LogicalKeyboardKey.altLeft,
       LogicalKeyboardKey.altRight,
     ]);
@@ -38,13 +40,15 @@ bool get isAltPressed => isKeyPressed(key: LogicalKeyboardKey.alt, keys: [
 /// macOs: command
 /// Linux: ...
 /// [HardwareKeyboard.isMetaPressed]
-bool get isMetaPressed => isKeyPressed(key: LogicalKeyboardKey.meta, keys: [
+bool get isMetaPressed =>
+    isKeyPressed(key: LogicalKeyboardKey.meta, keys: [
       LogicalKeyboardKey.metaLeft,
       LogicalKeyboardKey.metaRight,
     ]);
 
 /// [HardwareKeyboard.isShiftPressed]
-bool get isShiftPressed => isKeyPressed(key: LogicalKeyboardKey.shift, keys: [
+bool get isShiftPressed =>
+    isKeyPressed(key: LogicalKeyboardKey.shift, keys: [
       LogicalKeyboardKey.shiftLeft,
       LogicalKeyboardKey.shiftRight,
     ]);
@@ -58,7 +62,7 @@ bool isKeyPressed({
   List<LogicalKeyboardKey>? keys,
 }) =>
     (key != null &&
-        () {
+            () {
           final keyboard = HardwareKeyboard.instance;
           final logicalKeysPressed = keyboard.logicalKeysPressed;
           if (key == LogicalKeyboardKey.control) {
@@ -83,22 +87,21 @@ bool isKeyPressed({
           }
           return logicalKeysPressed.contains(key);
         }()) ||
-    (keys != null &&
-        HardwareKeyboard.instance.logicalKeysPressed
-            .any((e) => isKeyPressed(key: e)));
+        (keys != null &&
+            HardwareKeyboard.instance.logicalKeysPressed
+                .any((e) => isKeyPressed(key: e)));
 
 /// 指定的按键, 是否都按下
-bool isKeysPressedAll(
-  List<LogicalKeyboardKey>? keys, {
+bool isKeysPressedAll(List<LogicalKeyboardKey>? keys, {
   bool matchKeyCount = true,
   bool def = false,
 }) =>
     isNil(keys)
         ? def
         : matchKeyCount
-            ? (keys!.length == pressedKeyCount &&
-                keys.all((key) => isKeyPressed(key: key)))
-            : keys!.all((key) => isKeyPressed(key: key));
+        ? (keys!.length == pressedKeyCount &&
+        keys.all((key) => isKeyPressed(key: key)))
+        : keys!.all((key) => isKeyPressed(key: key));
 
 /// 当前有多少按键被按下
 int get pressedKeyCount => HardwareKeyboard.instance.logicalKeysPressed.length;
@@ -141,7 +144,7 @@ extension PointerEventEx on PointerEvent {
   /// 是否是手指操作相关事件
   bool get isTouchPointerEvent =>
       synthesized == false /*非合成的事件*/ &&
-      (isPointerDown || isPointerMove || isPointerFinish);
+          (isPointerDown || isPointerMove || isPointerFinish);
 
   /// 是否是非有效的操作事件
   bool get isInvalidEvent => synthesized || isPointerHover;
@@ -200,50 +203,51 @@ extension PointerEventEx on PointerEvent {
   /// 是否是鼠标左键按下, 只有在[PointerDownEvent]时才能确定
   bool get isMouseLeftDown =>
       _saveMouseDownButtons &&
-      isMouseEventKind &&
-      buttons.isMouseLeft &&
-      isPointerDown;
+          isMouseEventKind &&
+          buttons.isMouseLeft &&
+          isPointerDown;
 
   bool get isMouseLeftUp =>
       _saveMouseDownButtons &&
-      isMouseEventKind &&
-      _mouseDownButtons.isMouseLeft &&
-      isPointerUp;
+          isMouseEventKind &&
+          _mouseDownButtons.isMouseLeft &&
+          isPointerUp;
 
   /// 是否是鼠标右键按下, 只有在[PointerDownEvent]时才能确定
   bool get isMouseRightDown =>
       _saveMouseDownButtons &&
-      isMouseEventKind &&
-      buttons.isMouseRight &&
-      isPointerDown;
+          isMouseEventKind &&
+          buttons.isMouseRight &&
+          isPointerDown;
 
   bool get isMouseRightUp =>
       _saveMouseDownButtons &&
-      isMouseEventKind &&
-      _mouseDownButtons.isMouseRight &&
-      isPointerUp;
+          isMouseEventKind &&
+          _mouseDownButtons.isMouseRight &&
+          isPointerUp;
 
   /// 是否是鼠标中键按下, 只有在[PointerDownEvent]时才能确定
   bool get isMouseMiddleDown =>
       _saveMouseDownButtons &&
-      isMouseEventKind &&
-      buttons.isMouseMiddle &&
-      isPointerDown;
+          isMouseEventKind &&
+          buttons.isMouseMiddle &&
+          isPointerDown;
 
   bool get isMouseMiddleUp =>
       _saveMouseDownButtons &&
-      isMouseEventKind &&
-      _mouseDownButtons.isMouseMiddle &&
-      isPointerUp;
+          isMouseEventKind &&
+          _mouseDownButtons.isMouseMiddle &&
+          isPointerUp;
 
   /// 鼠标滚动事件[_TransformedPointerScrollEvent]
   bool get isMouseScrollEvent => this is PointerScrollEvent;
 
   /// [PointerScrollEvent]事件的鼠标当前滚动量
   /// 在使用的时候通常需要取反
-  Offset get mouseScrollDelta => this is PointerScrollEvent
-      ? (this as PointerScrollEvent).scrollDelta
-      : Offset.zero;
+  Offset get mouseScrollDelta =>
+      this is PointerScrollEvent
+          ? (this as PointerScrollEvent).scrollDelta
+          : Offset.zero;
 
   //-- trackpad event
 
@@ -260,9 +264,10 @@ extension PointerEventEx on PointerEvent {
   ///
   bool get isPanZoomUpdate => this is PointerPanZoomUpdateEvent;
 
-  double get panScale => this is PointerPanZoomUpdateEvent
-      ? (this as PointerPanZoomUpdateEvent).scale
-      : 1.0;
+  double get panScale =>
+      this is PointerPanZoomUpdateEvent
+          ? (this as PointerPanZoomUpdateEvent).scale
+          : 1.0;
 
   bool get isPanZoomEnd => this is PointerPanZoomEndEvent;
 }
@@ -282,8 +287,8 @@ extension KeyEventEx on KeyEvent {
   /// 是否是Ctrl键
   bool get isCtrlKey =>
       isKeyboardKey(LogicalKeyboardKey.control) ||
-      isKeyboardKey(LogicalKeyboardKey.controlLeft) ||
-      isKeyboardKey(LogicalKeyboardKey.controlRight);
+          isKeyboardKey(LogicalKeyboardKey.controlLeft) ||
+          isKeyboardKey(LogicalKeyboardKey.controlRight);
 
   /// 是否是指定的按键
   bool isKeyboardKey(KeyboardKey key) => key == logicalKey;
@@ -342,8 +347,8 @@ mixin IHandlePointerEventMixin {
 
   /// 询问, 是否要拦截事件, 如果返回true, 则[onPointerEvent]执行, 并中断继续派发事件
   @property
-  bool interceptPointerEvent(
-      PointerDispatchMixin dispatch, PointerEvent event) {
+  bool interceptPointerEvent(PointerDispatchMixin dispatch,
+      PointerEvent event) {
     if (isFirstPointerEvent(dispatch, event)) {
       return onInterceptFirstPointerEvent(dispatch, event);
     }
@@ -362,18 +367,18 @@ mixin IHandlePointerEventMixin {
   /// 当执行了回调[onPointerEvent]后, [ignoreEventHandle]被设为[true]时回调
   /// [ignoreEventHandle]
   @property
-  void onIgnorePointerEvent(
-      PointerDispatchMixin dispatch, PointerEvent event) {}
+  void onIgnorePointerEvent(PointerDispatchMixin dispatch,
+      PointerEvent event) {}
 
   //---
 
   /// 只回调第一个点的事件
-  void dispatchFirstPointerEvent(
-      PointerDispatchMixin dispatch, PointerEvent event) {}
+  void dispatchFirstPointerEvent(PointerDispatchMixin dispatch,
+      PointerEvent event) {}
 
   /// 只回调第一个点的事件
-  bool onInterceptFirstPointerEvent(
-          PointerDispatchMixin dispatch, PointerEvent event) =>
+  bool onInterceptFirstPointerEvent(PointerDispatchMixin dispatch,
+      PointerEvent event) =>
       false;
 
   /// 只回调第一个点的事件
@@ -390,7 +395,7 @@ mixin IHandlePointerEventMixin {
   bool isFirstMoveExceed([double threshold = kTouchSlop]) {
     if (firstDownEvent == null || firstMoveEvent == null) return false;
     return firstDownEvent?.isMoveExceed(
-            firstMoveEvent!.localPosition, threshold) ==
+        firstMoveEvent!.localPosition, threshold) ==
         true;
   }
 }
@@ -457,7 +462,8 @@ mixin PointerDispatchMixin {
         handled = interceptHandleTarget!.onPointerEvent(this, event);
         assert(() {
           if (event.isPointerDown) {
-            l.v("手势(PointerDown)处理[$handled]->${interceptHandleTarget.runtimeType}");
+            l.v("手势(PointerDown)处理[$handled]->${interceptHandleTarget
+                .runtimeType}");
           }
           return true;
         }());
@@ -469,7 +475,8 @@ mixin PointerDispatchMixin {
           interceptHandleTarget = element;
           assert(() {
             if (event.isPointerDown) {
-              l.v("手势(PointerDown)被拦截->${interceptHandleTarget.runtimeType}");
+              l.v("手势(PointerDown)被拦截->${interceptHandleTarget
+                  .runtimeType}");
             }
             return true;
           }());
@@ -477,7 +484,8 @@ mixin PointerDispatchMixin {
             handled = element.onPointerEvent(this, event);
             assert(() {
               if (event.isPointerDown) {
-                l.v("手势(PointerDown)处理[$handled]->${interceptHandleTarget.runtimeType}");
+                l.v("手势(PointerDown)处理[$handled]->${interceptHandleTarget
+                    .runtimeType}");
               }
               return true;
             }());
@@ -576,35 +584,48 @@ enum TouchDetectorType {
 /// 点击/长按事件探测
 mixin TouchDetectorMixin {
   /// 是否要检查长按事件
+  @configProperty
   bool checkLongPress = true;
 
   /// 是否激活长按保持回调
   /// 激活后, 每隔[loopLongPressDelay]毫秒触发一个长按
+  @configProperty
   bool enableLoopLongPress = false;
 
   /// [enableLoopLongPress]
+  @configProperty
   double loopLongPressDelay = 60;
 
   /// 长按循环触发器
+  @output
   Timer? loopLongPressTimer;
 
   /// 超过此值的点视为无效
   @dp
+  @configProperty
   double touchDetectorSlop = kTouchSlop;
 
   /// 按下时长超过此值, 视为长按
+  @configProperty
   Duration touchLongPressTimeout = kLongPressTimeout;
 
   /// N个手指对应的按下事件
+  @output
   final Map<int, PointerEvent> _pointerDownMap = {};
 
   /// N个手指的长按定时器
+  @output
   final Map<int, Timer> _pointerLongMap = {};
+
+  /// 是否是鼠标右键
+  @output
+  bool isMouseRightDownDetector = false;
 
   /// 入口方法, 添加手势事件
   @entryPoint
   void addTouchDetectorPointerEvent(PointerEvent event) {
     final pointer = event.pointer;
+    isMouseRightDownDetector = event.isMouseRightDown;
     if (event.isPointerDown) {
       loopLongPressTimer?.cancel();
       loopLongPressTimer = null;
@@ -621,6 +642,7 @@ mixin TouchDetectorMixin {
         _clearLongPress(pointer);
       }
     } else if (event.isPointerUp) {
+      //debugger();
       _checkClick(event);
     }
     if (event.isPointerFinish) {
@@ -635,8 +657,8 @@ mixin TouchDetectorMixin {
   ///  [TouchDetectorType.click] 点击事件
   ///  [TouchDetectorType.longPress] 长按事件
   @overridePoint
-  bool onTouchDetectorPointerEvent(
-          PointerEvent event, TouchDetectorType touchType) =>
+  bool onTouchDetectorPointerEvent(PointerEvent event,
+      TouchDetectorType touchType) =>
       false;
 
   /// 检查当前的手势, 是否应该触发点击事件
@@ -664,8 +686,8 @@ mixin TouchDetectorMixin {
       loopLongPressTimer = null;
       loopLongPressTimer =
           Timer.periodic(loopLongPressDelay.milliseconds, (timer) {
-        onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
-      });
+            onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
+          });
     }
     _clear(event);
   }
@@ -911,7 +933,7 @@ mixin MultiPointerDetectorMixin {
   /// 当前移动的手势与上一次移动的手势, 之间的偏移
   Offset moveLastDelta() {
     final offsetList =
-        getPointerDeltaList(pointerMoveMap, pointerMoveLastMap, pointerDownMap);
+    getPointerDeltaList(pointerMoveMap, pointerMoveLastMap, pointerDownMap);
     if (offsetList.isNotEmpty) {
       //返回最小的偏移
       return offsetList.reduce((value, element) {
@@ -1153,8 +1175,7 @@ mixin FlingDetectorMixin {
   /// [ClampingScrollSimulation]
   /// [BouncingScrollSimulation]
   @api
-  AnimationController startFling(
-    void Function(double value) flingAction, {
+  AnimationController startFling(void Function(double value) flingAction, {
     required TickerProvider vsync,
     required double fromValue,
     required double velocity,
@@ -1163,7 +1184,7 @@ mixin FlingDetectorMixin {
     /*final physics = const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());
     final Simulation? simulation = physics.createBallisticSimulation(vsync, velocity);*/
     final simulation =
-        ClampingScrollSimulation(position: fromValue, velocity: velocity);
+    ClampingScrollSimulation(position: fromValue, velocity: velocity);
     return animation(vsync, (value, isCompleted) {
       //debugger();
       final x = simulation.x(duration.inSeconds * value);
