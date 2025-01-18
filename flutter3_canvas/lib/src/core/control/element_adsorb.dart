@@ -25,6 +25,7 @@ class ElementAdsorbControl
 
   //region --core--
 
+  /// 绘制吸附线和距离信息
   /// [CanvasElementControlManager.paint]驱动, 无法绘制在坐标轴上
   /// [CanvasElementManager.paintElements]驱动, 可以绘制在坐标轴上
   @entryPoint
@@ -147,7 +148,9 @@ class ElementAdsorbControl
     }
   }
 
+  /// 初始化吸附参数/参考值信息
   /// [CanvasElementControlManager.onHandleControlStateChanged] 驱动
+  @callPoint
   void initAdsorbRefValueList(
       ElementPainter controlElement, ControlTypeEnum controlType) {
     if (controlType == ControlTypeEnum.translate) {
@@ -158,6 +161,7 @@ class ElementAdsorbControl
 
   /// 释放资源
   /// [CanvasElementControlManager.onHandleControlStateChanged] 驱动
+  @callPoint
   void dispose(ControlTypeEnum controlType) {
     //debugger();
     _xAdsorbRefValue = null;
@@ -428,7 +432,10 @@ class ElementAdsorbControl
     }
 
     for (final element in canvasElementManager.elements) {
-      if (exclude.contains(element)) {
+      if (!element.isVisible /*元素不可见*/ ||
+              exclude.contains(element) /*需要排除元素*/ ||
+              !element.isVisibleInCanvasBox(canvasViewBox) /*元素不在画布内*/
+          ) {
         continue;
       }
       element.elementsBounds?.let((it) {
