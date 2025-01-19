@@ -284,6 +284,9 @@ extension KeyEventEx on KeyEvent {
   /// 是否是空格键
   bool get isSpaceKey => isKeyboardKey(LogicalKeyboardKey.space);
 
+  /// 是否是Esc键
+  bool get isEscKey => isKeyboardKey(LogicalKeyboardKey.escape);
+
   /// 是否是Ctrl键
   bool get isCtrlKey =>
       isKeyboardKey(LogicalKeyboardKey.control) ||

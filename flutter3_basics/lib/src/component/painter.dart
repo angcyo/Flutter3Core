@@ -91,7 +91,10 @@ class PaintMeta {
 /// 绘制接口
 /// [Canvas]
 abstract class IPainter with Diagnosticable {
-  /// 调试时用得的标签
+  /// 标签
+  String? tag;
+
+  /// 调试时用的标签
   String? debugLabel;
 
   /// 绘制入口

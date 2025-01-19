@@ -18,7 +18,6 @@ export 'package:xml/xml.dart';
 
 part 'src/gcode.dart';
 part 'src/path_simulation.dart';
-part 'src/point.dart';
 part 'src/svg_builder.dart';
 part 'src/svg_pub.dart';
 part 'src/vector_write_handle.dart';

@@ -134,7 +134,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void paintElements(Canvas canvas, PaintMeta paintMeta) {
     final canvasViewBox = canvasDelegate.canvasViewBox;
     canvas.withClipRect(canvasViewBox.canvasBounds, () {
-      //---元素绘制入口
+      //--元素绘制入口
       //debugger();
       for (final element in beforeElements) {
         paintElement(canvas, paintMeta, element);
@@ -145,20 +145,22 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       for (final element in afterElements) {
         paintElement(canvas, paintMeta, element);
       }
-      //---控制绘制, 在元素最上层绘制, 所以可以实现选中元素在顶层绘制
+      //--控制绘制, 在元素最上层绘制, 所以可以实现选中元素在顶层绘制
       canvasElementControlManager.paint(canvas, paintMeta);
-      //---绘制菜单
+      //--绘制菜单
       if (canvasElementControlManager.elementMenuControl
           .needHandleElementMenu()) {
         canvasElementControlManager.elementMenuControl
             .paintMenu(canvas, paintMeta);
       }
-      //---绘制吸附提示线
+      //--绘制吸附提示线
       if (canvasElementControlManager
           .elementAdsorbControl.isCanvasComponentEnable) {
         canvasElementControlManager.elementAdsorbControl
             .paintAdsorb(canvas, paintMeta);
       }
+      //--绘制覆盖层
+      canvasDelegate._overlayComponent?.painting(canvas, paintMeta);
     });
     //在下面此处绘制可以在坐标轴上↓
     //paint

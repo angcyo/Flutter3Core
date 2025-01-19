@@ -116,6 +116,7 @@ part 'src/global/overlay/overlay_notification.dart';
 part 'src/l.dart';
 part 'src/meta/meta.dart';
 part 'src/meta/package_info_meta.dart';
+part 'src/meta/point.dart';
 part 'src/overlay/loading.dart';
 part 'src/overlay/loading_indicator.dart';
 part 'src/overlay/loading_overlay.dart';

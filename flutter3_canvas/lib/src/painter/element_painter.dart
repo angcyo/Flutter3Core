@@ -827,6 +827,8 @@ class ElementPainter extends IElementPainter {
   }
 
   /// 在操作属性的矩阵下, 绘制一个[TextPainter]对象
+  /// [onPaintingSelf]
+  @CallFrom("onPaintingSelf")
   @property
   @sceneCoordinate
   void paintItTextPainter(
@@ -849,6 +851,8 @@ class ElementPainter extends IElementPainter {
 
   /// 在操作属性的矩阵下, 绘制一个[UiImage]对象
   /// [convertToMmSize] 是否将图片的大小(默认dp)转换成mm大小
+  /// [onPaintingSelf]
+  @CallFrom("onPaintingSelf")
   @property
   @sceneCoordinate
   void paintItUiImage(
@@ -871,6 +875,21 @@ class ElementPainter extends IElementPainter {
           canvas.drawImage(image, Offset.zero, paint);
         },
       );
+    }
+  }
+
+  /// 在操作属性的矩阵下, 绘制一个[Path]对象
+  /// [onPaintingSelf]
+  @CallFrom("onPaintingSelf")
+  @property
+  @sceneCoordinate
+  void paintItUiPath(
+    Canvas canvas,
+    PaintMeta paintMeta,
+    UiPath? path,
+  ) {
+    if (path != null) {
+      canvas.drawPath(path.transformPath(paintProperty?.operateMatrix), paint);
     }
   }
 

@@ -58,8 +58,7 @@ class PathElementPainter extends ElementPainter {
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //debugger();
-    painterPath?.let((it) =>
-        canvas.drawPath(it.transformPath(paintProperty?.operateMatrix), paint));
+    paintItUiPath(canvas, paintMeta, painterPath);
     if (painterPath == null) {
       assert(() {
         l.w('[$runtimeType]no data painting.');

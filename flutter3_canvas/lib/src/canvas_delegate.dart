@@ -1221,7 +1221,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [CanvasOverlayComponent]
   void dispatchElementDetachFromCanvasDelegate(IElementPainter painter) {
     _eachCanvasListener((element) {
-      element.onElementDetachToCanvasDelegate?.call(this, painter);
+      element.onElementDetachFromCanvasDelegate?.call(this, painter);
     });
   }
 

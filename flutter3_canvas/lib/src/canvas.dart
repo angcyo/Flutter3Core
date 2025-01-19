@@ -650,9 +650,9 @@ class CanvasListener {
   final void Function(CanvasDelegate delegate, IElementPainter painter)?
       onElementAttachToCanvasDelegate;
 
-  /// [CanvasDelegate.dispatchElementAttachToCanvasDelegate]
+  /// [CanvasDelegate.dispatchElementDetachFromCanvasDelegate]
   final void Function(CanvasDelegate delegate, IElementPainter painter)?
-      onElementDetachToCanvasDelegate;
+      onElementDetachFromCanvasDelegate;
 
   /// [CanvasDelegate.dispatchBuildCanvasMenu]
   /// [onCreateElementMenuAction]
@@ -697,7 +697,7 @@ class CanvasListener {
     this.onCanvasMultiStateListChanged,
     this.onCanvasSelectedStateChanged,
     this.onElementAttachToCanvasDelegate,
-    this.onElementDetachToCanvasDelegate,
+    this.onElementDetachFromCanvasDelegate,
     this.onBuildCanvasMenu,
     this.onKeyEventAction,
   });
