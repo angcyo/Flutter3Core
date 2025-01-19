@@ -193,6 +193,7 @@ void debugImage(UiImage? image, [String? debugLabel]) {
   }());
 }
 
+/// 重写[debugFillProperties]方法, 添加调试属性
 mixin DiagnosticsMixin on DiagnosticableTreeMixin {
   /// [DiagnosticsNode]
   /// [DiagnosticableTreeNode]

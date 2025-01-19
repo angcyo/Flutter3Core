@@ -1208,14 +1208,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 有元素添加到画布回调
-  void dispatchElementAttachToCanvasDelegate(ElementPainter painter) {
+  /// [ElementPainter]
+  /// [CanvasOverlayComponent]
+  void dispatchElementAttachToCanvasDelegate(IElementPainter painter) {
     _eachCanvasListener((element) {
       element.onElementAttachToCanvasDelegate?.call(this, painter);
     });
   }
 
   /// 有元素从画布移除回调
-  void dispatchElementDetachFromCanvasDelegate(ElementPainter painter) {
+  /// [ElementPainter]
+  /// [CanvasOverlayComponent]
+  void dispatchElementDetachFromCanvasDelegate(IElementPainter painter) {
     _eachCanvasListener((element) {
       element.onElementDetachToCanvasDelegate?.call(this, painter);
     });

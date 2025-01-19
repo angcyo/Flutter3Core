@@ -92,20 +92,29 @@ class TextElementPainter extends ElementPainter {
   /// [onPaintingSelfBefore]
   @override
   @overridePoint
-  void updatePainterPaint({
+  void updatePainterPaintProperty({
+    //--
+    PaintingStyle? style,
+    Color? color,
+    double? strokeWidth,
+    //--
     Object? fromObj,
     UndoType? fromUndoType,
     bool notify = true,
   }) {
-    super.updatePainterPaint(
+    super.updatePainterPaintProperty(
+      style: style,
+      color: color,
+      strokeWidth: strokeWidth,
+      //--
       fromObj: fromObj,
       fromUndoType: fromUndoType,
       notify: notify,
     );
     textPainter?.updateTextProperty(
-      textColor: paintColor,
-      textStyle: paintStyle,
-      textStrokeWidth: paintStrokeWidth,
+      textColor: color,
+      textPaintingStyle: style,
+      textStrokeWidth: strokeWidth,
     );
   }
 

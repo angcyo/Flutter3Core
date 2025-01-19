@@ -5,8 +5,154 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/20
 ///
 /// 绘制元素数据
-class ElementPainter extends IPainter
+/// 基础绘制类
+class IElementPainter extends IPainter
     with DiagnosticableTreeMixin, DiagnosticsMixin {
+  /// 画布代理
+  CanvasDelegate? canvasDelegate;
+
+  CanvasStyle? get canvasStyle => canvasDelegate?.canvasStyle;
+
+  CanvasViewBox? get canvasViewBox => canvasDelegate?.canvasViewBox;
+
+  /// 是否抑制[CanvasViewBox]的缩放, 用来控制[paintStrokeWidth]不受画布的缩放而缩放
+  /// 画布缩放时[paintStrokeWidth]会反向缩放
+  /// 通常在绘制描边矢量图形时, 需要开启
+  @configProperty
+  bool? paintStrokeWidthSuppressCanvasScale;
+
+  /// 画笔默认的宽度
+  /// 会在[onPaintingSelfBefore]中使用
+  @configProperty
+  double paintStrokeWidth = 1.toDpFromPx();
+
+  /// 画笔的一些属性, 会在[onPaintingSelfBefore]中使用
+  ///
+  /// 这几个属性也需要加入回退栈
+  /// [onSaveStateStackData]
+  /// [onRestoreStateStackData]
+  /// [copyElement]
+  ///
+  /// [updatePainterPaintProperty]
+  @configProperty
+  PaintingStyle paintStyle = PaintingStyle.stroke;
+
+  /// 会在[onPaintingSelfBefore]中使用
+  @configProperty
+  Color paintColor = Colors.black;
+
+  /// 画笔, 在[onPaintingSelfBefore]中设置画笔属性
+  @configProperty
+  Paint paint = Paint()
+    ..strokeJoin = StrokeJoin.round
+    ..strokeCap = StrokeCap.round;
+
+  //region core
+
+  /// 附加到[CanvasDelegate]
+  @mustCallSuper
+  void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
+    if (this.canvasDelegate == canvasDelegate) {
+      return;
+    }
+
+    final old = this.canvasDelegate;
+    if (old != null && old != canvasDelegate) {
+      detachFromCanvasDelegate(old);
+    }
+    this.canvasDelegate = canvasDelegate;
+    canvasDelegate.dispatchElementAttachToCanvasDelegate(this);
+  }
+
+  /// 从[CanvasDelegate]中移除
+  @mustCallSuper
+  void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
+    if (this.canvasDelegate == canvasDelegate) {
+      this.canvasDelegate = null;
+      canvasDelegate.dispatchElementDetachFromCanvasDelegate(this);
+    }
+  }
+
+  //--
+
+  ///[onPaintingSelfBefore]
+  ///[onPaintingSelf]
+  ///
+  /// [CanvasElementManager.paintElement]驱动
+  ///
+  @entryPoint
+  @viewCoordinate
+  @override
+  void painting(Canvas canvas, PaintMeta paintMeta) {
+    paintMeta.withPaintMatrix(canvas, () {
+      onPaintingSelfBefore(canvas, paintMeta);
+      onPaintingSelf(canvas, paintMeta);
+    });
+  }
+
+  /// [painting]驱动
+  /// [onPaintingSelf]绘制之前调用, 用来重新设置画笔样式等
+  /// [updatePainterPaintProperty]
+  @property
+  @sceneCoordinate
+  void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
+    paint
+      ..strokeWidth = paintStrokeWidth
+      ..color = paintColor
+      ..style = paintStyle;
+    //抑制画布缩放
+    if (paintStrokeWidthSuppressCanvasScale == true) {
+      if (paint.style == PaintingStyle.stroke) {
+        paint.strokeWidth = paint.strokeWidth / paintMeta.canvasScale;
+      }
+    }
+  }
+
+  /// 重写此方法, 实现在画布内绘制自己
+  /// [painting]驱动
+  /// [paintPropertyRect]
+  /// [paintPropertyBounds]
+  @sceneCoordinate
+  @overridePoint
+  void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {}
+
+  //--
+
+  /// 响应手势事件
+  /// [CanvasEventManager.handleElementEvent]驱动
+  @overridePoint
+  bool handleEvent(@viewCoordinate PointerEvent event) => false;
+
+  /// 处理键盘事件
+  /// [CanvasRenderBox.onKeyEventHandleMixin]驱动
+  @overridePoint
+  bool handleKeyEvent(KeyEvent event) => false;
+
+  //endregion core
+
+  //region api
+
+  /// 刷新画布
+  @api
+  @mustCallSuper
+  void refresh() {
+    if (canvasDelegate == null) {
+      assert(() {
+        l.w("无效的操作[${classHash()}]可能未[attachToCanvasDelegate].");
+        return true;
+      }());
+    } else {
+      canvasDelegate?.refresh();
+    }
+  }
+
+//endregion api
+}
+
+/// 单元素绘制
+/// [ElementPainter]
+/// [ElementGroupPainter]
+class ElementPainter extends IElementPainter {
   //region ---属性--
 
   /// 是否绘制调试信息
@@ -18,18 +164,6 @@ class ElementPainter extends IPainter
 
   //--画笔属性--
 
-  /// 画笔的一些属性, 会在[onPaintingSelfBefore]中每次赋值
-  ///
-  /// 这几个属性也需要加入回退栈
-  /// [onSaveStateStackData]
-  /// [onRestoreStateStackData]
-  /// [copyElement]
-  ///
-  /// [updatePainterPaint]
-  PaintingStyle? paintStyle;
-  Color? paintColor;
-  double? paintStrokeWidth;
-
   /// 入栈时的保存key值
   /// [onSaveStateStackData]
   /// [onRestoreStateStackData]
@@ -39,18 +173,6 @@ class ElementPainter extends IPainter
   String keyPaintStrokeWidth = "keyPaintStrokeWidth";
 
   //--
-
-  /// 是否抑制[CanvasViewBox]的缩放, 用来控制[paintStrokeWidth]不受画布的缩放而缩放
-  /// 画布缩放时[paintStrokeWidth]会反向缩放
-  bool? paintStrokeWidthSuppressCanvasScale;
-
-  /// 画笔
-  Paint paint = Paint()
-    ..style = PaintingStyle.stroke
-    ..color = Colors.black
-    ..strokeJoin = StrokeJoin.round
-    ..strokeCap = StrokeCap.round
-    ..strokeWidth = 1.toDpFromPx();
 
   /// 元素绘制的状态信息
   PaintState _paintState = PaintState();
@@ -454,9 +576,11 @@ class ElementPainter extends IPainter
 
   /// 当当前元素被组合到指定的父元素中时触发
   /// [ElementGroupPainter.resetChildren]
+  @overridePoint
   void onSelfElementGroupTo(ElementGroupPainter parent) {}
 
   /// 当前元素从父元素中移除时触发
+  @overridePoint
   void onSelfElementUnGroupFrom(ElementGroupPainter parent) {}
 
   //endregion ---group---
@@ -522,19 +646,29 @@ class ElementPainter extends IPainter
 
   //--
 
-  /// 主动更新画笔[paint]属性
+  /// 主动更新画笔[paint]的属性, 但是不更新属性值
   /// [painting]
   /// [onPaintingSelfBefore]
   @overridePoint
-  void updatePainterPaint({
+  void updatePainterPaintProperty({
+    //--
+    PaintingStyle? style,
+    Color? color,
+    double? strokeWidth,
+    //--
     Object? fromObj,
     UndoType? fromUndoType,
     bool notify = true,
   }) {
-    paint
-      ..style = paintStyle ?? PaintingStyle.stroke
-      ..color = paintColor ?? Colors.black
-      ..strokeWidth = paintStrokeWidth ?? 1.toDpFromPx();
+    if (style != null) {
+      paint.style = style;
+    }
+    if (color != null) {
+      paint.color = color;
+    }
+    if (strokeWidth != null) {
+      paint.strokeWidth = strokeWidth;
+    }
     //
     if (notify) {
       dispatchSelfPaintPropertyChanged(
@@ -557,39 +691,18 @@ class ElementPainter extends IPainter
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     paintMeta.withPaintMatrix(canvas, () {
-      //--悬停颜色支持
-      bool isUpdatePaint = false;
-      Color? oldPaintColor;
-      if (paintState.isHover) {
-        oldPaintColor = paintColor;
-        paintColor = canvasStyle?.canvasAccentColor ?? oldPaintColor;
-        updatePainterPaint(fromObj: this, notify: false);
-        isUpdatePaint = true;
-      }
       //--
       onPaintingSelfBefore(canvas, paintMeta);
-      onPaintingSelf(canvas, paintMeta);
+      if (paintState.isHover || paintState.color != null) {
+        //--临时颜色/悬停绘制颜色支持
+        updatePainterPaintProperty(
+            fromObj: this,
+            notify: false,
+            color: paintState.color ?? canvasStyle?.canvasAccentColor);
+      }
       //--
-      if (isUpdatePaint) {
-        paintColor = oldPaintColor;
-        updatePainterPaint(fromObj: this, notify: false);
-      }
+      onPaintingSelf(canvas, paintMeta);
     });
-  }
-
-  /// [painting]驱动
-  /// [onPaintingSelf]绘制之前调用, 用来重新设置画笔样式等
-  /// [updatePainterPaint]
-  @property
-  @sceneCoordinate
-  void onPaintingSelfBefore(Canvas canvas, PaintMeta paintMeta) {
-    //抑制画布缩放
-    if (paintStrokeWidthSuppressCanvasScale == true) {
-      if (paint.style == PaintingStyle.stroke) {
-        paint.strokeWidth =
-            (paintStrokeWidth ?? 1.toDpFromPx()) / paintMeta.canvasScale;
-      }
-    }
   }
 
   /// 重写此方法, 实现在画布内绘制自己
@@ -598,6 +711,7 @@ class ElementPainter extends IPainter
   /// [paintPropertyBounds]
   @sceneCoordinate
   @overridePoint
+  @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
     //paint.color = Colors.black;
     //paintProperty?.paintPath.let((it) => canvas.drawPath(it, paint));
@@ -1196,56 +1310,12 @@ class ElementPainter extends IPainter
 
   //region ---canvas---
 
-  CanvasDelegate? canvasDelegate;
-
-  CanvasStyle? get canvasStyle => canvasDelegate?.canvasStyle;
-
-  CanvasViewBox? get canvasViewBox => canvasDelegate?.canvasViewBox;
-
-  /// 附加到[CanvasDelegate]
-  @mustCallSuper
-  void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
-    if (this.canvasDelegate == canvasDelegate) {
-      return;
-    }
-
-    final old = this.canvasDelegate;
-    if (old != null && old != canvasDelegate) {
-      detachFromCanvasDelegate(old);
-    }
-    this.canvasDelegate = canvasDelegate;
-    canvasDelegate.dispatchElementAttachToCanvasDelegate(this);
-  }
-
-  /// 从[CanvasDelegate]中移除
-  @mustCallSuper
-  void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
-    if (this.canvasDelegate == canvasDelegate) {
-      this.canvasDelegate = null;
-      canvasDelegate.dispatchElementDetachFromCanvasDelegate(this);
-    }
-  }
-
-  /// 刷新画布
-  @api
-  @mustCallSuper
-  void refresh() {
-    if (canvasDelegate == null) {
-      assert(() {
-        l.w("无效的操作[${classHash()}]可能未[attachToCanvasDelegate].");
-        return true;
-      }());
-    } else {
-      canvasDelegate?.refresh();
-    }
-  }
-
   /// 响应事件
   ///
   /// - 处理悬停时的高亮颜色
   ///
   /// [CanvasEventManager.handleElementEvent]驱动
-  @overridePoint
+  @override
   bool handleEvent(@viewCoordinate PointerEvent event) {
     final canvasDelegate = this.canvasDelegate;
     if (canvasDelegate == null) {
@@ -1309,13 +1379,6 @@ class ElementPainter extends IPainter
     return hover;
   }
 
-  /// 处理键盘事件
-  /// [CanvasRenderBox.onKeyEventHandleMixin]驱动
-  @overridePoint
-  bool handleKeyEvent(KeyEvent event) {
-    return false;
-  }
-
   //endregion ---canvas---
 
   //region ---创建/恢复回退栈---
@@ -1372,7 +1435,8 @@ class ElementPainter extends IPainter
   /// [ElementStateStack.restore]
   @mustCallSuper
   void onRestoreStateStack(ElementStateStack stateStack) {
-    updatePainterPaint(fromObj: stateStack, fromUndoType: UndoType.redo);
+    updatePainterPaintProperty(
+        fromObj: stateStack, fromUndoType: UndoType.redo);
   }
 
   //endregion ---创建回退栈---
@@ -1559,6 +1623,8 @@ class ElementPainter extends IPainter
 }
 
 /// 一组元素的绘制
+/// [ElementPainter]
+/// [ElementGroupPainter]
 class ElementGroupPainter extends ElementPainter {
   /// 创建一个组合元素, 如果元素数量大于1, 则创建一个组合元素, 否则返回第一个元素
   static ElementPainter? createGroupIfNeed(List<ElementPainter>? elements) {

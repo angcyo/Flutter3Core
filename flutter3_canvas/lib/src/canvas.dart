@@ -647,11 +647,11 @@ class CanvasListener {
       onCanvasSelectedStateChanged;
 
   /// [CanvasDelegate.dispatchElementAttachToCanvasDelegate]
-  final void Function(CanvasDelegate delegate, ElementPainter painter)?
+  final void Function(CanvasDelegate delegate, IElementPainter painter)?
       onElementAttachToCanvasDelegate;
 
   /// [CanvasDelegate.dispatchElementAttachToCanvasDelegate]
-  final void Function(CanvasDelegate delegate, ElementPainter painter)?
+  final void Function(CanvasDelegate delegate, IElementPainter painter)?
       onElementDetachToCanvasDelegate;
 
   /// [CanvasDelegate.dispatchBuildCanvasMenu]

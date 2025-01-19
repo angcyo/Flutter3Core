@@ -177,12 +177,12 @@ abstract class BaseTextPainter {
   @overridePoint
   void updateTextProperty({
     Color? textColor,
-    PaintingStyle? textStyle,
+    PaintingStyle? textPaintingStyle,
     double? textStrokeWidth,
   }) {
     //debugger();
     this.textColor = textColor ?? this.textColor;
-    paintingStyle = textStyle ?? paintingStyle;
+    paintingStyle = textPaintingStyle ?? paintingStyle;
     strokeWidth = textStrokeWidth ?? strokeWidth;
   }
 
@@ -366,19 +366,19 @@ class NormalTextPainter extends BaseTextPainter {
   @override
   void updateTextProperty({
     Color? textColor,
-    PaintingStyle? textStyle,
+    PaintingStyle? textPaintingStyle,
     double? textStrokeWidth,
   }) {
     super.updateTextProperty(
       textColor: textColor,
-      textStyle: textStyle,
+      textPaintingStyle: textPaintingStyle,
       textStrokeWidth: textStrokeWidth,
     );
     BaseTextPainter.updateTextPainterProperty(
       _textPainter,
       textColor: textColor,
       textStrokeWidth: textStrokeWidth,
-      textStyle: textStyle,
+      textStyle: textPaintingStyle,
     );
   }
 
@@ -646,12 +646,12 @@ class SingleCharTextPainter extends BaseTextPainter {
   @override
   void updateTextProperty({
     Color? textColor,
-    PaintingStyle? textStyle,
+    PaintingStyle? textPaintingStyle,
     double? textStrokeWidth,
   }) {
     super.updateTextProperty(
       textColor: textColor,
-      textStyle: textStyle,
+      textPaintingStyle: textPaintingStyle,
       textStrokeWidth: textStrokeWidth,
     );
     //debugger();
@@ -663,14 +663,14 @@ class SingleCharTextPainter extends BaseTextPainter {
             char.charPainter,
             textColor: textColor,
             textStrokeWidth: textStrokeWidth,
-            textStyle: textStyle,
+            textStyle: textPaintingStyle,
           );
         } else if (char is CharPathPainter) {
           BaseTextPainter.updatePaintProperty(
             char.charPaint,
             textColor: textColor,
             textStrokeWidth: textStrokeWidth,
-            textStyle: textStyle,
+            textStyle: textPaintingStyle,
           );
         }
       }
