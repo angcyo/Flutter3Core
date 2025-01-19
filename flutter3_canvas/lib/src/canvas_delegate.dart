@@ -182,7 +182,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [SystemMouseCursors.none]   隐藏鼠标
   /// [SystemMouseCursors.click]  点击手样式
   @api
-  void addCursorStyle(MouseCursor cursor) {
+  void addCursorStyle(MouseCursor? cursor) {
+    if (cursor == null) {
+      return;
+    }
     final last = _currentCursorStyleList.lastOrNull;
     if (last != cursor) {
       _currentCursorStyleList.add(cursor);
@@ -191,7 +194,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 移除一个鼠标样式
   @api
-  void removeCursorStyle(MouseCursor cursor) {
+  void removeCursorStyle(MouseCursor? cursor) {
     _currentCursorStyleList.removeWhere((e) => e == cursor);
   }
 

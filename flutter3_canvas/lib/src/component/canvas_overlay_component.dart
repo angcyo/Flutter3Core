@@ -20,6 +20,10 @@ class CanvasOverlayComponent extends IElementPainter
   void Function(CanvasDelegate delegate, CanvasOverlayComponent overlay)?
       onOverlayDetachFromCanvasDelegate;
 
+  /// 自定义鼠标样式
+  @configProperty
+  MouseCursor? cursorStyle;
+
   CanvasOverlayComponent() {
     paintStrokeWidthSuppressCanvasScale = true;
   }
@@ -33,12 +37,14 @@ class CanvasOverlayComponent extends IElementPainter
   @override
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
     super.attachToCanvasDelegate(canvasDelegate);
+    canvasDelegate.addCursorStyle(cursorStyle);
     onOverlayAttachToCanvasDelegate?.call(canvasDelegate, this);
   }
 
   @override
   void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
     super.detachFromCanvasDelegate(canvasDelegate);
+    canvasDelegate.removeCursorStyle(cursorStyle);
     onOverlayDetachFromCanvasDelegate?.call(canvasDelegate, this);
   }
 
@@ -82,18 +88,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
 
   CanvasPenOverlayComponent() {
     paintStrokeWidth = 1;
-  }
-
-  @override
-  void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
-    super.attachToCanvasDelegate(canvasDelegate);
-    canvasDelegate.addCursorStyle(SystemMouseCursors.precise);
-  }
-
-  @override
-  void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
-    super.detachFromCanvasDelegate(canvasDelegate);
-    canvasDelegate.removeCursorStyle(SystemMouseCursors.precise);
+    cursorStyle = SystemMouseCursors.precise;
   }
 
   @override
@@ -479,3 +474,22 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
     return bounds.contains(position);
   }
 }
+
+/// 用来触发手势事件的覆盖层
+class CanvasPointerOverlayComponent extends CanvasOverlayComponent {
+  /// 完成后的输出回调
+  @configProperty
+  ResultValueCallback<bool, PointerEvent>? onPointerAction;
+
+  /// 触发手势事件
+  @override
+  bool handleEvent(@viewCoordinate PointerEvent event) {
+    if (onPointerAction == null) {
+      return super.handleEvent(event);
+    }
+    return onPointerAction!.call(event);
+  }
+}
+
+/// 用来触发
+class CanvasTextOverlayComponent extends CanvasOverlayComponent {}
