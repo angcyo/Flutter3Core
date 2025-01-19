@@ -702,6 +702,14 @@ class ElementPainter extends IElementPainter {
       }
       //--
       onPaintingSelf(canvas, paintMeta);
+      if (paintState.isHover || paintState.color != null) {
+        //恢复临时颜色
+        updatePainterPaintProperty(
+          fromObj: this,
+          notify: false,
+          color: paintColor,
+        );
+      }
     });
   }
 
