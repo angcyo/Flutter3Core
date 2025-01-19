@@ -32,7 +32,7 @@ class PathElementPainter extends ElementPainter {
     bool initPaintProperty = true,
     bool? exactBounds,
   }) {
-    painterPath = moveToZero ? path?.moveToZero() : path;
+    painterPath = moveToZero ? path?.moveToZero(exact: exactBounds) : path;
     if (initPaintProperty) {
       final bounds = painterPath?.getExactBounds(exactBounds) ?? Rect.zero;
       if (paintProperty == null) {

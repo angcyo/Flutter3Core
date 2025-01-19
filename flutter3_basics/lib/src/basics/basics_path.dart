@@ -20,8 +20,12 @@ const double kPathAcceptableError = 0.025; //2024-11-28: 1 ;// 0.025
 @mm
 const double kVectorTolerance = 0.001; //
 
+/// 是否精确计算边界
+/// [PathEx.getExactBounds]
+const bool kExactBounds = true;
+
 /// 定义一个空路径
-Path kEmptyPath = Path();
+final Path kEmptyPath = Path();
 
 /// 在指定中心点位置生成一个指定大小的十字路径[Path]
 /// 创建交叉十字路径
@@ -88,13 +92,12 @@ extension PathEx on Path {
   /// [startAngle] 起始角度, 角度值
   /// [sweepAngle] 扫描角度, 角度值
   /// [size] 大小/高度
-  void addFanShaped(
-    Offset center,
-    double radius, {
-    required double startAngle,
-    required double sweepAngle,
-    double size = 4,
-  }) {
+  void addFanShaped(Offset center,
+      double radius, {
+        required double startAngle,
+        required double sweepAngle,
+        double size = 4,
+      }) {
     sweepAngle = sweepAngle.jdm;
     final r = radius;
     if (sweepAngle.abs() != 360) {
@@ -104,7 +107,7 @@ extension PathEx on Path {
 
       final lt = getCirclePoint(center, r + size, startAngle.hd);
       final rt =
-          getCirclePoint(center, r + size, startAngle.hd + sweepAngle.hd);
+      getCirclePoint(center, r + size, startAngle.hd + sweepAngle.hd);
       final lb = getCirclePoint(center, r, startAngle.hd);
       final rb = getCirclePoint(center, r, startAngle.hd + sweepAngle.hd);
 
@@ -137,19 +140,32 @@ extension PathEx on Path {
   @dp
   Rect getExactBounds([
     bool? exact,
-    double? pathAcceptableError,
+    double? pathAcceptableError = 1,
   ]) {
+    //debugger();
+    exact ??= kExactBounds;
     if (exact != true) {
       return getBounds();
     }
     Rect? rect;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClosed) {
+      //debugger();
+      /*assert(() {
+        l.d(
+            "posIndex:$posIndex/$contourIndex position:$position ratio:$ratio isClosed:$isClosed");
+        return true;
+      }());*/
       if (rect == null) {
         rect = Rect.fromPoints(position, position);
       } else {
         rect = rect!.union(position);
       }
     }, pathAcceptableError);
+    /*assert(() {
+      l.i("bounds:$rect");
+      return true;
+    }());*/
+    //debugger();
     return rect ?? getBounds();
   }
 
@@ -157,7 +173,8 @@ extension PathEx on Path {
   /// [Path.fillType]
   /// [PathFillType]
   /// [PathFillType.evenOdd]
-  Path op(Path other, PathOperation operation) => Path.combine(
+  Path op(Path other, PathOperation operation) =>
+      Path.combine(
         operation,
         this,
         other,
@@ -167,7 +184,9 @@ extension PathEx on Path {
   bool contains(Offset offset) => this.contains(offset);
 
   /// 是否和矩形相交
-  bool intersectsRect(Rect rect) => intersects(Path()..addRect(rect));
+  bool intersectsRect(Rect rect) =>
+      intersects(Path()
+        ..addRect(rect));
 
   /// 是否和另一个路径相交
   bool intersects(Path other) {
@@ -318,15 +337,14 @@ extension PathEx on Path {
   /// [action] 返回true, 表示中断each
   /// [eachPathMetrics]
   /// [eachPathMetricsAsync]
-  void eachPathMetrics(
-    dynamic Function(
+  void eachPathMetrics(dynamic Function(
       int posIndex,
       double ratio,
       int contourIndex,
       Offset position,
       double angle,
       bool isClosed,
-    ) action, [
+      ) action, [
     @dp double? step,
   ]) {
     final metrics = computeMetrics();
@@ -383,15 +401,14 @@ extension PathEx on Path {
 
   /// [eachPathMetrics]
   /// [eachPathMetricsAsync]
-  Future eachPathMetricsAsync(
-    FutureOr Function(
+  Future eachPathMetricsAsync(FutureOr Function(
       int posIndex,
       double ratio,
       int contourIndex,
       Offset position,
       double angle,
       bool isClosed,
-    ) action, [
+      ) action, [
     @dp double? step,
     int? contourInterval /*轮廓枚举延迟*/,
     int? stepInterval /*步长枚举延迟*/,
@@ -464,17 +481,19 @@ extension PathEx on Path {
     double? sy,
     //--
     Offset? scaleAnchor,
+    bool? exact,
   }) {
     return ofList<Path>()
         .moveToZero(
-          size: size,
-          width: width,
-          height: height,
-          scale: scale,
-          sx: sx,
-          sy: sy,
-          scaleAnchor: scaleAnchor,
-        )
+      size: size,
+      width: width,
+      height: height,
+      scale: scale,
+      sx: sx,
+      sy: sy,
+      scaleAnchor: scaleAnchor,
+      exact: exact,
+    )
         .first;
   }
 
@@ -587,6 +606,7 @@ extension ListPathEx on List<Path> {
   }
 
   /// 获取包含所有路径的边界
+  /// 当svg中包含`C` `Q` `A` 此时不使用[exact]模式会有很大的误差
   /// [PathEx.getExactBounds]
   /// [ListPathEx.getExactBounds]
   @dp
@@ -619,8 +639,10 @@ extension ListPathEx on List<Path> {
     double? sy,
     //--
     Offset? scaleAnchor,
+    //--
+    bool? exact,
   }) {
-    final bounds = getExactBounds();
+    final bounds = getExactBounds(exact);
     final translate = Matrix4.identity();
     translate.translate(-bounds.left, -bounds.top);
 
@@ -672,7 +694,7 @@ extension ListPathEx on List<Path> {
     double width = 1,
   }) async {
     final uiImage =
-        await toUiImage(padding: padding, color: color, width: width);
+    await toUiImage(padding: padding, color: color, width: width);
     return uiImage.toBase64();
   }
 
@@ -688,17 +710,18 @@ extension ListPathEx on List<Path> {
     final height = (bounds.height + padding.vertical).ensureValid();
 
     return drawImageSync(ui.Size(math.max(1, width), math.max(1, height)),
-        (canvas) {
-      final paint = Paint()
-        ..strokeCap = StrokeCap.round
-        ..strokeJoin = StrokeJoin.round
-        ..style = PaintingStyle.stroke
-        ..color = color
-        ..strokeWidth = width;
-      canvas.translate(-bounds.left + padding.left, -bounds.top + padding.top);
-      for (final path in this) {
-        canvas.drawPath(path, paint);
-      }
-    });
+            (canvas) {
+          final paint = Paint()
+            ..strokeCap = StrokeCap.round
+            ..strokeJoin = StrokeJoin.round
+            ..style = PaintingStyle.stroke
+            ..color = color
+            ..strokeWidth = width;
+          canvas.translate(
+              -bounds.left + padding.left, -bounds.top + padding.top);
+          for (final path in this) {
+            canvas.drawPath(path, paint);
+          }
+        });
   }
 }

@@ -1041,7 +1041,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         undoType,
       );
     });
-    if (isCurrentCanvasEmpty) {
+    if (isNil(to)) {
       removeCursorStyle(SystemMouseCursors.move);
     }
     refresh();

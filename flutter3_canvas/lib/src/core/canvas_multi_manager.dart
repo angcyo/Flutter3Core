@@ -218,7 +218,9 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     selectedCanvasState?.isSelected = true;
 
     //取消选中元素
-    canvasElementManager.clearSelectedElement();
+    if (canvasElementManager.isSelectedElement) {
+      canvasElementManager.clearSelectedElement();
+    }
 
     // 切换画布中的元素
     final oldElements = canvasElementManager.elements.clone();
