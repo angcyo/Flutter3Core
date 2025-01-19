@@ -26,7 +26,8 @@ class SliverExpandWidget extends SingleChildRenderObjectWidget
   });
 
   @override
-  SliverExpandBox createRenderObject(BuildContext context) => SliverExpandBox(
+  SliverExpandBox createRenderObject(BuildContext context) =>
+      SliverExpandBox(
         alignment: alignment,
         excludeWidth: excludeWidth,
         excludeHeight: excludeHeight,
@@ -59,28 +60,52 @@ class SliverExpandBox extends RenderShiftedBox {
     this.excludeHeight = 0,
   }) : super(null);
 
+  /// 获取父节点有效的最大宽度约束
+  double? getParentBoxMaxWidth([RenderObject? parent, int depth = 0]) {
+    if (parent == null || depth > 10) {
+      return null;
+    }
+    final constraints = parent.constraints;
+    if (constraints is BoxConstraints && constraints.maxWidth.isValid) {
+      return constraints.maxWidth;
+    }
+    return getParentBoxMaxWidth(parent.parent, depth + 1);
+  }
+
+  /// 获取父节点有效的最大高度约束
+  double? getParentBoxMaxHeight([RenderObject? parent, int depth = 0]) {
+    if (parent == null || depth > 10) {
+      return null;
+    }
+    final constraints = parent.constraints;
+    if (constraints is BoxConstraints && constraints.maxHeight.isValid) {
+      return constraints.maxHeight;
+    }
+    return getParentBoxMaxHeight(parent.parent, depth + 1);
+  }
+
   @override
   void performLayout() {
     //获取到约束
     final constraints = this.constraints;
     final constraintSize = constraints.biggest;
     final parentConstraints = parent?.constraints;
+    final parentMaxWidth = getParentBoxMaxWidth(parent, 0);
+    final parentMaxHeight = getParentBoxMaxHeight(parent, 0);
 
     double width = constraintSize.width;
     double height = constraintSize.height;
     //debugger();
     if (width == double.infinity) {
-      if (parentConstraints is BoxConstraints) {
-        width =
-            parentConstraints.maxWidth.ensureValid(parentConstraints.maxHeight);
+      if (parentMaxWidth != null) {
+        width = parentMaxWidth.ensureValid(parentMaxHeight!);
       } else if (parentConstraints is SliverConstraints) {
         width = parentConstraints.crossAxisExtent;
       }
     }
     if (height == double.infinity) {
-      if (parentConstraints is BoxConstraints) {
-        height =
-            parentConstraints.maxHeight.ensureValid(parentConstraints.maxWidth);
+      if (parentMaxHeight != null) {
+        height = parentMaxHeight.ensureValid(parentMaxWidth!);
       } else if (parentConstraints is SliverConstraints) {
         height = parentConstraints.viewportMainAxisExtent;
       }

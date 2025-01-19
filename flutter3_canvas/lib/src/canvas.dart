@@ -566,6 +566,7 @@ class CanvasListener {
   )? onCanvasSelectElementListAction;
 
   /// [CanvasDelegate.dispatchCanvasElementListChanged]
+  /// 元素列表发生改变
   final void Function(
     List<ElementPainter> from,
     List<ElementPainter> to,
