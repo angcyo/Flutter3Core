@@ -141,13 +141,23 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       label?.expanded(),
       number?.paddingOnly(right: kX),
     ].row();
+    final value = _currentValue.toDouble();
+    final minValue = widget.minValue?.toDouble() ?? 0.0;
+    final maxValue = widget.maxValue?.toDouble() ?? 1.0;
+    if (value >= minValue && value <= maxValue) {
+    } else {
+      assert(() {
+        debugger();
+        return true;
+      }());
+    }
     final bottom = buildSliderWidget(
       context,
-      _currentValue.toDouble(),
+      value,
       label: numberStr,
       divisions: widget.divisions,
-      minValue: widget.minValue?.toDouble() ?? 0.0,
-      maxValue: widget.maxValue?.toDouble() ?? 1.0,
+      minValue: minValue,
+      maxValue: maxValue,
       activeTrackGradientColors: widget.activeTrackGradientColors,
       activeTrackColor: widget.activeTrackColor ??
           (widget.inactiveTrackGradientColors == null
