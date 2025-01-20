@@ -8,6 +8,8 @@ part of '../../flutter3_basics.dart';
 ///
 /// [Tooltip]
 ///
+/// [AnchorOverlayLayout]
+///
 class HoverAnchorLayout extends StatefulWidget {
   /// 锚点布局
   final Widget anchor;
@@ -55,13 +57,24 @@ class HoverAnchorLayout extends StatefulWidget {
   /// 是否激活悬停时自动显示
   final bool enableHoverShow;
 
+  /// 是否激活点击锚点显示
+  final bool enableTapShow;
+
   /// 是否激活动画
   final bool enableAnimate;
+
+  /// 是否激活点击后自动销毁
+  final bool enableTapDismiss;
 
   //--
 
   /// 是否使用根Overlay
   final bool rootOverlay;
+
+  /// 是否激活组件
+  final bool enable;
+
+  //--
 
   const HoverAnchorLayout({
     super.key,
@@ -73,7 +86,9 @@ class HoverAnchorLayout extends StatefulWidget {
     this.showArrow = true,
     this.showShadow = true,
     this.enableHoverShow = true,
+    this.enableTapShow = false,
     this.enableAnimate = true,
+    this.enableTapDismiss = false,
     this.arrowPosition,
     this.radius = kH,
     this.arrowSize = const Size(kX, kH),
@@ -81,43 +96,11 @@ class HoverAnchorLayout extends StatefulWidget {
     this.arrowOffset = kM,
     //--
     this.rootOverlay = true,
+    this.enable = true,
   });
 
   @override
   State<HoverAnchorLayout> createState() => _HoverAnchorLayoutState();
-}
-
-class HoverAnchorLayoutController {
-  Action? _show;
-  Action? _hide;
-  Action? _toggle;
-
-  @api
-  void show() {
-    assert(() {
-      if (_show == null) {
-        l.w("控制器未[attach]");
-      }
-      return true;
-    }());
-    _show?.call();
-  }
-
-  @api
-  void toggle() {
-    assert(() {
-      if (_toggle == null) {
-        l.w("控制器未[attach]");
-      }
-      return true;
-    }());
-    _toggle?.call();
-  }
-
-  @api
-  void hide() {
-    _hide?.call();
-  }
 }
 
 class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
@@ -136,8 +119,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       duration: _fadeInDuration,
       reverseDuration: _fadeOutDuration,
       vsync: this,
-    )
-      ..addStatusListener(_handleStatusChanged);
+    )..addStatusListener(_handleStatusChanged);
   }
 
   CurvedAnimation? _backingOverlayAnimation;
@@ -197,14 +179,32 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
   /// 记录一下鼠标悬停的位置
   Offset? _mouseGlobalHoverPosition;
 
+  /// 全局鼠标手势处理
   void _handleGlobalPointerEvent(PointerEvent event) {
+    if (!widget.enable) {
+      return;
+    }
     //l.v("_handleGlobalPointerEvent->$event");
-    if (event is PointerHoverEvent) {
+    if (event.isPointerHover) {
       _mouseGlobalHoverPosition = event.position;
       _arrowPositionManager.tempPosition = event.position;
       //l.v("_handleGlobalPointerEvent->$_mouseGlobalHoverPosition");
-      if (_validHoverAreaList.isNotEmpty) {
+      if (_validHoverAreaList.isNotEmpty && widget.enableHoverShow) {
         _checkHideHoverLayout();
+      }
+    } else if (event.isPointerDown) {
+      if (widget.enableTapShow) {
+        _checkHideHoverLayout();
+      }
+    } else if (event.isPointerUp) {
+      //l.v("_handleGlobalPointerEvent->$event $getAnchorGlobalBounds");
+      if (!widget.enableHoverShow && widget.enableTapShow) {
+        //激活点击显示
+        if (getAnchorGlobalBounds?.contains(event.position) == true) {
+          _checkShowHoverLayout();
+        } else if (widget.enableTapDismiss) {
+          _checkHideHoverLayout(false);
+        }
       }
     }
   }
@@ -252,7 +252,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     //l.d("show->${nowTimeString()}");
     _overlayController.show();
     _isShowHoverLayout = true;
-    if (widget.enableAnimate) {
+    if (widget.enableAnimate && isMounted) {
       _controller.forward();
     }
     /*postFrame(() {
@@ -265,18 +265,19 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       return;
     }
 
+    //debugger();
+
     if (checkHoverArea) {
       //l.d("$_validHoverArea" + " $_mouseGlobalHoverPosition");
       final hoverPosition = _mouseGlobalHoverPosition;
       if (hoverPosition != null &&
           (_anchorGlobalBounds
-              ?.inflate(widget.hitInflate)
-              .contains(hoverPosition) ==
-              true ||
-              _validHoverAreaList.any((element) =>
-                  element
-                      .inflate(widget.hitInflate)
-                      .contains(hoverPosition)))) {
+                      ?.inflate(widget.hitInflate)
+                      .contains(hoverPosition) ==
+                  true ||
+              _validHoverAreaList.any((element) => element
+                  .inflate(widget.hitInflate)
+                  .contains(hoverPosition)))) {
         // 鼠标悬停到悬停布局上, 不隐藏
         return;
       }
@@ -309,15 +310,15 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
 
     final child = widget.rootOverlay
         ? OverlayPortal.targetsRootOverlay(
-      controller: _overlayController,
-      overlayChildBuilder: _buildOverlayChild,
-      child: widget.anchor,
-    )
+            controller: _overlayController,
+            overlayChildBuilder: _buildOverlayChild,
+            child: widget.anchor,
+          )
         : OverlayPortal(
-      controller: _overlayController,
-      overlayChildBuilder: _buildOverlayChild,
-      child: widget.anchor,
-    );
+            controller: _overlayController,
+            overlayChildBuilder: _buildOverlayChild,
+            child: widget.anchor,
+          );
 
     return MouseRegion(
       onEnter: _handleMouseEnter,
@@ -326,12 +327,22 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     );
   }
 
+  /// 获取锚点在全局区域的位置
+  Rect? get getAnchorGlobalBounds =>
+      context.findRenderObject()?.getGlobalBounds();
+
+  /// 获取锚点在当前[Overlay]窗口中的位置
+  Rect? get getAnchorBounds => context.findRenderObject()?.getGlobalBounds(
+      Overlay.maybeOf(context, rootOverlay: widget.rootOverlay)
+          ?.context
+          .findRenderObject());
+
   /// 构建悬浮布局
   Widget _buildOverlayChild(BuildContext ctx) {
-    final overlayRender = Overlay
-        .maybeOf(context, rootOverlay: widget.rootOverlay)
-        ?.context
-        .findRenderObject();
+    final overlayRender =
+        Overlay.maybeOf(context, rootOverlay: widget.rootOverlay)
+            ?.context
+            .findRenderObject();
     final anchorRender = context.findRenderObject();
     final anchorGlobalBounds = anchorRender?.getGlobalBounds();
     _anchorGlobalBounds = anchorGlobalBounds;
@@ -347,13 +358,13 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       backgroundShadows: widget.backgroundShadows ??
           (widget.showShadow
               ? const [
-            BoxShadow(
-              color: kShadowColor,
-              offset: kShadowOffset,
-              blurRadius: kDefaultBlurRadius,
-              spreadRadius: 2,
-            ),
-          ]
+                  BoxShadow(
+                    color: kShadowColor,
+                    offset: kShadowOffset,
+                    blurRadius: kDefaultBlurRadius,
+                    spreadRadius: 2,
+                  ),
+                ]
               : null),
       anchorBounds: anchorBounds,
       radius: widget.radius,
@@ -362,26 +373,26 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       content: widget.content,
       onPaintTransform: widget.enableAnimate
           ? (render, context, offset, size) {
-        final value = _overlayAnimation
-            .tween(0.9, 1.0, curve: Curves.fastOutSlowIn)
-            .value;
-        if (_controller.isAnimating) {
-          //l.d("value->$value");
-          render.postMarkNeedsPaint();
-        }
-        return render.getEffectiveTransform(
-            Matrix4.diagonal3Values(value, value, 1.0));
-      }
+              final value = _overlayAnimation
+                  .tween(0.9, 1.0, curve: Curves.fastOutSlowIn)
+                  .value;
+              if (_controller.isAnimating) {
+                //l.d("value->$value");
+                render.postMarkNeedsPaint();
+              }
+              return render.getEffectiveTransform(
+                  Matrix4.diagonal3Values(value, value, 1.0));
+            }
           : null,
     ).fadeTransition(widget.enableAnimate ? _overlayAnimation : null)
-    /*.scaleTransition(
+        /*.scaleTransition(
                   widget.enableAnimate ? _overlayAnimation : null,
                   from: 0.9,
                   to: 1,
                   alignment:
                       _arrowPositionManager.outputArrowPosition.alignment,
                 )*/
-    ;
+        ;
   }
 }
 
@@ -497,9 +508,9 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
         //debugger();
         if (!_arrowPositionManager.isLoad) {
           _arrowPositionManager.arrowSize =
-          widget.showArrow ? widget.arrowSize : Size.zero;
+              widget.showArrow ? widget.arrowSize : Size.zero;
           _arrowPositionManager.arrowOffset = widget.arrowOffset;
-          _arrowPositionManager.screenSize =  widget.screenSize ?? parentSize;
+          _arrowPositionManager.screenSize = widget.screenSize ?? parentSize;
           _arrowPositionManager.contentSize = childSize;
           _arrowPositionManager.radius = Radius.circular(widget.radius);
           _arrowPositionManager.anchorBox = widget.anchorBounds ?? Rect.zero;
@@ -512,7 +523,7 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
         }
 
         //debugger();
-            () {
+        () {
           //l.d("nextMicrotask...");
           final parentOffset = render.getGlobalLocation() ?? Offset.zero;
           _parentOffset = parentOffset;
@@ -537,16 +548,16 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
         //l.w(widget.validHoverAreaList);
         return null;
       },
-      onPaint: isDebug
+      /*onPaint: isDebug
           ? (render, canvas, size) {
-        canvas.drawRect(
-          widget.anchorBounds ?? Rect.zero,
-          Paint()
-            ..color = Colors.redAccent
-            ..strokeWidth = 1
-            ..style = PaintingStyle.stroke,
-        );
-        /*for (final rect in widget.validHoverAreaList) {
+              canvas.drawRect(
+                widget.anchorBounds ?? Rect.zero,
+                Paint()
+                  ..color = Colors.redAccent
+                  ..strokeWidth = 1
+                  ..style = PaintingStyle.stroke,
+              );
+              */ /*for (final rect in widget.validHoverAreaList) {
                 canvas.drawRect(
                   rect - _parentOffset,
                   Paint()
@@ -554,14 +565,48 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
                     ..strokeWidth = 1
                     ..style = PaintingStyle.stroke,
                 );
-              }*/
-        //canvas.drawCross(widget.arrowPositionManager.tempPosition - _parentOffset);
-        //canvas.drawText("$_parentOffset");
-        //render.postMarkNeedsPaint();
-        //l.d("validHoverAreaList: ${widget.validHoverAreaList}");
-      }
-          : null,
+              }*/ /*
+              //canvas.drawCross(widget.arrowPositionManager.tempPosition - _parentOffset);
+              //canvas.drawText("$_parentOffset");
+              //render.postMarkNeedsPaint();
+              //l.d("validHoverAreaList: ${widget.validHoverAreaList}");
+            }
+          : null,*/
     );
+  }
+}
+
+/// 控制器
+class HoverAnchorLayoutController {
+  Action? _show;
+  Action? _hide;
+  Action? _toggle;
+
+  @api
+  void show() {
+    assert(() {
+      if (_show == null) {
+        l.w("控制器未[attach]");
+      }
+      return true;
+    }());
+    _show?.call();
+  }
+
+  @api
+  void toggle() {
+    assert(() {
+      if (_toggle == null) {
+        l.w("控制器未[attach]");
+      }
+      return true;
+    }());
+    _toggle?.call();
+  }
+
+  @api
+  void hide() {
+    _hide?.call();
   }
 }
 
@@ -626,21 +671,58 @@ extension HoverAnchorLayoutEx on Widget {
   /// 使用[HoverAnchorLayout]实现的悬停提示功能
   /// [tooltip] 提示内容小部件
   /// [arrowPosition] 箭头位置
-  Widget hoverTooltip(Widget? tooltip, {
+  Widget hoverTooltip(
+    Widget? tooltip, {
+    bool enable = true,
+    //--
+    ArrowPosition? arrowPosition,
+    bool showArrow = true,
+    //--
+    bool showShadow = true,
+    bool enableTapDismiss = false,
+    Color? backgroundColor,
+  }) =>
+      HoverAnchorLayout(
+        anchor: this,
+        content: tooltip,
+        enable: enable,
+        showShadow: showShadow,
+        backgroundColor: backgroundColor,
+        //--
+        showArrow: showArrow,
+        arrowPosition: arrowPosition,
+        enableTapDismiss: enableTapDismiss,
+      );
+
+  /// 使用[HoverAnchorLayout]实现的悬停布局功能
+  /// [overlay] 浮窗内容小部件
+  /// [arrowPosition] 箭头位置
+  Widget hoverLayout(
+    Widget? overlay, {
+    bool enable = true,
     //--
     ArrowPosition? arrowPosition,
     bool showArrow = true,
     //--
     bool showShadow = true,
     Color? backgroundColor,
+    //--
+    bool enableHoverShow = false,
+    bool enableTapTrigger = true,
+    bool enableTapDismiss = true,
   }) =>
       HoverAnchorLayout(
         anchor: this,
-        content: tooltip,
+        content: overlay,
+        enable: enable,
         showShadow: showShadow,
         backgroundColor: backgroundColor,
         //--
         showArrow: showArrow,
         arrowPosition: arrowPosition,
+        //--
+        enableHoverShow: enableHoverShow,
+        enableTapShow: enableTapTrigger,
+        enableTapDismiss: enableTapDismiss,
       );
 }

@@ -1169,6 +1169,24 @@ extension WidgetEx on Widget {
 
   //endregion ---SafeArea---
 
+  /// 禁用当前的小部件
+  Widget disable({
+    bool disable = true,
+    //--
+    ColorFilter? colorFilter,
+    Color? color = Colors.grey,
+    //--
+    MouseCursor cursor = SystemMouseCursors.forbidden,
+  }) {
+    if (disable) {
+      return ignorePointer()
+          .colorFiltered(colorFilter: colorFilter, color: color)
+          .mouse(cursor: cursor);
+    } else {
+      return this;
+    }
+  }
+
   /// 忽略小部件内的所有手势
   /// [IgnorePointer]
   Widget ignorePointer([bool ignoring = true]) {
@@ -2137,7 +2155,7 @@ extension WidgetEx on Widget {
   }) {
     if (!enable) {
       //禁用组件
-      if (mouseIsConnected) {
+      if (isDesktopOrWeb || mouseIsConnected) {
         return mouse(cursor: SystemMouseCursors.forbidden);
       }
       return this;

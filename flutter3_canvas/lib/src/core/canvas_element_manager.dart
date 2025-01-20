@@ -1312,15 +1312,21 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     return true;
   }
 
-  /// 对齐组内元素
+  /// 对齐元素/对齐组内元素
+  /// [averageElement] - 均分元素
+  /// [alignElement]   - 对齐元素
+  /// [arrangeElement] - 排列元素
   @api
   @supportUndo
-  void alignElement(ElementGroupPainter? group, CanvasAlignType align,
-      {UndoType undoType = UndoType.normal}) {
+  void alignElement(
+    ElementGroupPainter? group,
+    CanvasAlignType align, {
+    UndoType undoType = UndoType.normal,
+  }) {
     final children = group?.children;
     if (group == null || children == null || children.length < 2) {
       assert(() {
-        l.d('不满足对齐条件');
+        l.d('数量不够,不满足对齐条件');
         return true;
       }());
       return;
@@ -1388,9 +1394,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     updateSelectComponentPaintProperty();
   }
 
-  /// 均分组内元素, 默认均分规则每个元素之间的间隙保持相同
+  /// 均分元素/均分组内元素, 默认均分规则每个元素之间的间隙保持相同
   /// 可以设置[useCenterAverage], 使用中心点均匀分布, 元素中心点之间的距离保持等距
   /// [useCenterAverage] 是否使用中心点进行均分分布, 否则使用元素之间的等距进行均分分布
+  ///
+  /// [averageElement] - 均分元素
+  /// [alignElement]   - 对齐元素
+  /// [arrangeElement] - 排列元素
+  ///
   @api
   @supportUndo
   void averageElement(
@@ -1402,7 +1413,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final children = group?.children;
     if (group == null || children == null || children.length < 2) {
       assert(() {
-        l.d('不满足均分条件');
+        l.d('数量不够, 不满足均分条件');
         return true;
       }());
       return;
@@ -1628,6 +1639,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 排列元素
+  ///
+  /// [averageElement] - 均分元素
+  /// [alignElement]   - 对齐元素
+  /// [arrangeElement] - 排列元素
+  ///
   @api
   @supportUndo
   void arrangeElement(
@@ -1990,6 +2006,9 @@ enum ElementSelectType {
 
   /// 通过代码选中元素
   code,
+
+  /// 通过用户
+  user;
 }
 
 /// 元素对齐方式

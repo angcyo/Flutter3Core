@@ -150,7 +150,7 @@ extension TouchDetectorWidgetEx on Widget {
     final clickAction = enableClick ? onClick : null;
     final longPressAction = enableLongPress ? onLongPress : null;
     if (clickAction == null && longPressAction == null) {
-      if (mouseIsConnected) {
+      if (isDesktopOrWeb || mouseIsConnected) {
         return mouse(cursor: SystemMouseCursors.forbidden);
       }
       return this;

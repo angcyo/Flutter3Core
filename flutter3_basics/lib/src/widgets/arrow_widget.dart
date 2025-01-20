@@ -126,20 +126,19 @@ enum ArrowPosition {
 }
 
 extension ArrowPositionEx on ArrowPosition {
-  Alignment get alignment =>
-      switch (this) {
+  Alignment get alignment => switch (this) {
         ArrowPosition.topStart => Alignment.bottomLeft,
         ArrowPosition.topCenter => Alignment.topCenter,
         ArrowPosition.topEnd => Alignment.bottomRight,
-      //--
+        //--
         ArrowPosition.rightStart => Alignment.topLeft,
         ArrowPosition.rightCenter => Alignment.centerLeft,
         ArrowPosition.rightEnd => Alignment.bottomLeft,
-      //--
+        //--
         ArrowPosition.bottomStart => Alignment.topLeft,
         ArrowPosition.bottomCenter => Alignment.topCenter,
         ArrowPosition.bottomEnd => Alignment.topRight,
-      //--
+        //--
         ArrowPosition.leftStart => Alignment.topRight,
         ArrowPosition.leftCenter => Alignment.centerRight,
         ArrowPosition.leftEnd => Alignment.bottomRight,
@@ -287,8 +286,7 @@ class ArrowPositionManager {
   Rect get outputArrowBounds => applyArrowOffset(outputArrowRect);
 
   /// 将一个矩形, 应用[outputArrowOffsetRect]
-  Rect applyArrowOffset(Rect rect) =>
-      Rect.fromLTRB(
+  Rect applyArrowOffset(Rect rect) => Rect.fromLTRB(
         rect.left - outputArrowOffsetRect.left,
         rect.top - outputArrowOffsetRect.top,
         rect.right + outputArrowOffsetRect.right,
@@ -649,7 +647,14 @@ class ArrowPositionManager {
           if ((this.screenSize.width - this.anchorBox.centerX) >
               this.contentSize.width / 2) {
             //虽然在右侧, 但是右侧还有足够多的空间显示内容
-            preferredPosition = ArrowPosition.topCenter;
+            if (this.anchorBox.top > this.contentSize.height) {
+              //顶部够空间
+              preferredPosition = ArrowPosition.topCenter;
+            } else {
+              //否则显示在底部
+              preferredPosition = ArrowPosition.bottomCenter;
+            }
+            //debugger();
           } else {
             preferredPosition = ArrowPosition.leftCenter;
           }
@@ -658,7 +663,13 @@ class ArrowPositionManager {
           if ((this.screenSize.width - this.anchorBox.centerX) >
               this.contentSize.width / 2) {
             //虽然在右侧, 但是右侧还有足够多的空间显示内容
-            preferredPosition = ArrowPosition.bottomCenter;
+            if (this.anchorBox.top > this.contentSize.height) {
+              //顶部够空间
+              preferredPosition = ArrowPosition.topCenter;
+            } else {
+              //否则显示在底部
+              preferredPosition = ArrowPosition.bottomCenter;
+            }
           } else {
             preferredPosition = ArrowPosition.leftStart;
           }

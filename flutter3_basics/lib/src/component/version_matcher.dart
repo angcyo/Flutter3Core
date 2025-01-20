@@ -40,8 +40,10 @@ class VersionMatcher {
             list.add(VersionRange(min, min));
           }
         } else if (rangeString.length >= 2) {
-          final min = int.parse(rangeString[0]);
-          final max = int.parse(rangeString[1]);
+          //[x~]
+          //[~x]
+          final min = int.tryParse(rangeString[0]) ?? 0;
+          final max = int.tryParse(rangeString[1]) ?? intMax32Value;
           list.add(VersionRange(min, max));
         }
       }

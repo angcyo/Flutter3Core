@@ -228,6 +228,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 画布的数量
   int get canvasCount => canvasMultiManager.canvasStateList.size();
 
+  /// 选中元素的数量
+  int get selectedElementCount => canvasElementManager.selectedElementCount;
+
   /// 画布上所有单级元素的集合
   /// 多画布的情况下通过[CanvasMultiManager]获取其他画布下的元素集合
   List<ElementPainter> get allElementList => canvasElementManager.elements;

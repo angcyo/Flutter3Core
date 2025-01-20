@@ -70,7 +70,7 @@ class CanvasElementRenderObject extends RenderBox {
       painter.elementsBounds?.let((bounds) {
         final dst = offset & size;
         final src = bounds.ensureValid();
-        canvas.drawRect(dst, Paint()..color = Colors.black12);
+        /*canvas.drawRect(dst, Paint()..color = Colors.black12);*/
         //debugger();
         canvas.drawInRect(
           dst,
