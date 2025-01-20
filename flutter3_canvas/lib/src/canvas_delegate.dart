@@ -626,16 +626,34 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }
   }
 
+  /// 选中指定的元素
+  @api
+  void selectElement(
+    ElementPainter? element, {
+    bool followPainter = true,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    canvasElementManager.selectElement(
+      element,
+      followPainter: followPainter,
+      selectType: selectType,
+    );
+  }
+
   /// 选中指定的元素集合
   @api
   void selectElementList(
     List<ElementPainter>? elementPainters, {
+    bool followPainter = true,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     canvasElementManager.resetSelectedElementList(
       elementPainters,
       selectType: selectType,
     );
+    if (followPainter && !isNil(elementPainters)) {
+      followRect(rect: elementPainters?.allElementBounds);
+    }
   }
 
   /// 将画布上的整体状态压入栈, 可以用来恢复整个画布状态
