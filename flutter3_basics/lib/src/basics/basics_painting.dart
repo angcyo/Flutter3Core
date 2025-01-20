@@ -554,9 +554,9 @@ extension CanvasEx on Canvas {
 
   /// 将原本在[src]位置绘制的东西, 绘制到[dst]位置
   /// 会自动平移到[dst]矩形位置, 并且缩放至[dst]矩形大小
-  /// [dst] 绘制到的目标位置和大小. 包含了[dstPadding]
-  /// [dstPadding] 目标位置的内边距
-  /// [src] 目标的大小和位置
+  /// [dst] 绘制到的目标位置和大小.
+  /// [dstPadding] 目标位置的内边距, 在[dst]内往内偏移
+  /// [src] 目标的原始大小和位置
   /// [colorFilter] 着色器. [tintColor]着色
   void drawInRect(
     Rect? dst /*最终位置*/,
@@ -567,26 +567,63 @@ extension CanvasEx on Canvas {
     ui.ColorFilter? colorFilter,
     BoxFit? fit,
     Alignment? alignment = Alignment.center,
+    String? debugLabel,
   }) {
-    //debugger();
     if (dst == null || src == null) {
       drawCallback();
       return;
     }
+    final offsetLeft = dstPadding?.left ?? 0;
+    final offsetTop = dstPadding?.top ?? 0;
+    final offsetWidth = dstPadding?.horizontal ?? 0;
+    final offsetHeight = dstPadding?.vertical ?? 0;
+
     colorFilter ??= tintColor?.toColorFilter();
 
-    final targetSize = src.size;
+    //平移到目标
+    final translateMatrix = Matrix4.identity()
+      ..translate(
+        dst.left - src.left + offsetLeft,
+        dst.top - src.top + offsetTop,
+      );
+    debugger(when: debugLabel != null);
+    final scaleMatrix = applyAlignMatrix(
+      Size(dst.width - offsetWidth, dst.height - offsetHeight),
+      src.size,
+      fit: fit,
+      alignment: alignment,
+      anchorOffset: src.topLeft,
+      debugLabel: debugLabel,
+    );
+
+    withMatrix(translateMatrix * scaleMatrix, () {
+      //着色
+      if (colorFilter != null) {
+        saveLayer(null, Paint()..colorFilter = colorFilter);
+      }
+
+      //绘制
+      drawCallback();
+    });
+
+    /*//原始大小
+    final originSize = src.size;
+    //fit后的大小
     final Size fitTargetSize;
 
     //debugger();
 
     if (fit != null) {
       //获取fit作用后的大小
-      final fitSize = applyBoxFit(fit, targetSize, dst.size);
+      final fitSize = applyBoxFit(
+        fit,
+        originSize,
+        dst.size + Offset(-offsetWidth, -offsetHeight),
+      );
       fitTargetSize = fitSize.destination;
       //debugger();
     } else {
-      fitTargetSize = targetSize;
+      fitTargetSize = originSize;
     }
 
     if (alignment != null) {
@@ -595,20 +632,31 @@ extension CanvasEx on Canvas {
       dst = destinationRect;
     } else {
       dst = ui.Rect.fromLTWH(
-          dst.left, dst.top, fitTargetSize.width, fitTargetSize.height);
+        dst.left,
+        dst.top,
+        fitTargetSize.width,
+        fitTargetSize.height,
+      );
     }
 
-    final drawLeft = dst.left + (dstPadding?.left ?? 0);
-    final drawTop = dst.top + (dstPadding?.top ?? 0);
-    final drawWidth = dst.width - (dstPadding?.horizontal ?? 0);
-    final drawHeight = dst.height - (dstPadding?.vertical ?? 0);
+    final drawLeft = dst.left */ /* + offsetLeft*/ /*;
+    final drawTop = dst.top */ /* + offsetTop*/ /*;
+    double drawWidth = dst.width */ /*- offsetWidth*/ /*;
+    if (drawWidth < 0) {
+      drawWidth = dst.width;
+    }
+    double drawHeight = dst.height */ /*- offsetHeight*/ /*;
+    if (drawHeight < 0) {
+      drawHeight = dst.height;
+    }
+    debugger(when: debugLabel != null);
 
     //平移到目标
     final translateMatrix = Matrix4.identity()
       ..translate(drawLeft - src.left, drawTop - src.top);
 
-    final sx = drawWidth / targetSize.width;
-    final sy = drawHeight / targetSize.height;
+    final sx = drawWidth / originSize.width;
+    final sy = drawHeight / originSize.height;
     //缩放到目标大小
     final scaleMatrix = Matrix4.identity()
       ..scaleBy(sx: sx, sy: sy, anchor: src.topLeft);
@@ -621,7 +669,7 @@ extension CanvasEx on Canvas {
 
       //绘制
       drawCallback();
-    });
+    });*/
   }
 
   /// 缩放[Path]绘制到指定的目标内
@@ -777,20 +825,26 @@ extension CanvasEx on Canvas {
     Color? tintColor,
     ui.ColorFilter? colorFilter,
     EdgeInsets? dstPadding,
-    BoxFit? fit,
+    BoxFit? fit = BoxFit.contain,
     Alignment? alignment = Alignment.center,
+    String? debugLabel,
   }) {
     if (picture == null) {
       return;
     }
-    drawInRect(dst, pictureSize?.toRect(), () {
-      this.drawPicture(picture);
-    },
-        tintColor: tintColor,
-        colorFilter: colorFilter,
-        dstPadding: dstPadding,
-        fit: fit,
-        alignment: alignment);
+    drawInRect(
+      dst,
+      pictureSize?.toRect(),
+      () {
+        this.drawPicture(picture);
+      },
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+      dstPadding: dstPadding,
+      fit: fit,
+      alignment: alignment,
+      debugLabel: debugLabel,
+    );
   }
 
   /// 绘制指定大小的[ui.Image]

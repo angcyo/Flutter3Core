@@ -114,6 +114,7 @@ Rect applyAlignRect(
   Size childSize, {
   BoxFit? fit,
   Alignment? alignment = Alignment.center,
+  String? debugLabel,
 }) {
   final targetSize = childSize;
   final Size fitTargetSize;
@@ -149,21 +150,27 @@ Rect applyAlignRect(
 
 /// 与[applyAlignRect]类似, 只不过返回值是[Matrix4]
 /// [anchorOffset]. [alignment]对齐后缩放的锚点偏移量, 可以不指定
+///
+/// [parentSize] 最终容器大小
+/// [childSize] 当前child大小
+///
 Matrix4 applyAlignMatrix(
   Size parentSize,
   Size childSize, {
-  BoxFit? fit = BoxFit.contain /*尽可能显示最大尺寸*/,
-  Alignment? alignment = Alignment.center,
+  BoxFit? fit = BoxFit.contain /*默认:BoxFit.contain 尽可能显示最大尺寸*/,
+  Alignment? alignment = Alignment.center /*默认: Alignment.center*/,
   //--
   Offset? anchorOffset,
+  String? debugLabel,
 }) {
+  //debugger(when: debugLabel != null);
   final rect = applyAlignRect(
     parentSize,
     childSize,
     fit: fit,
     alignment: alignment,
   );
-  //debugger();
+  //debugger(when: debugLabel != null);
   return Matrix4.identity()
     ..scaleBy(
       sx: rect.width / childSize.width,

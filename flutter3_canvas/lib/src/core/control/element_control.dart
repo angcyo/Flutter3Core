@@ -231,10 +231,11 @@ class BaseControl
       //debugger();
       canvas.drawPictureInRect(
         _pictureInfo?.picture,
-        dst: rect.deflate(controlIcoPadding),
+        dst: rect/*rect.inflate(controlIcoPadding)*/,
         pictureSize: _pictureInfo?.size,
         tintColor: Colors.white,
         dstPadding: EdgeInsets.all(controlIcoPadding),
+        /*debugLabel: "control",*/
       );
     });
   }

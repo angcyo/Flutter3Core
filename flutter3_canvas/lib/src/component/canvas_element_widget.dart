@@ -67,21 +67,25 @@ class CanvasElementRenderObject extends RenderBox {
     elementPainter?.let((painter) {
       final canvas = context.canvas;
       //debugger();
-      painter.elementsBounds?.let((src) {
+      painter.elementsBounds?.let((bounds) {
         final dst = offset & size;
-        //canvas.drawRect(dst, Paint()..color = Colors.black12);
+        final src = bounds.ensureValid();
+        canvas.drawRect(dst, Paint()..color = Colors.black12);
         //debugger();
         canvas.drawInRect(
           dst,
-          src.ensureValid(),
+          src,
           () {
             final sx = dst.width / src.width;
             final sy = dst.height / src.height;
-            final scale = min(sx, sy);
+            final scale = /*bounds.height == 0 ? sy :*/ min(sx, sy);
+            //debugger();
             painter.painting(canvas, PaintMeta(refCanvasScale: scale));
           },
           fit: fit,
+          alignment: bounds.isEmpty ? Alignment.center : Alignment.center,
           dstPadding: padding,
+          /*debugLabel: bounds.isEmpty ? "isEmpty" : null,*/
         );
       });
 

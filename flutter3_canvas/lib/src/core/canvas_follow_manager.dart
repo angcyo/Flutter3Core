@@ -314,7 +314,7 @@ class CanvasFollowManager with CanvasComponentMixin {
     awaitAnimate ??= this.awaitAnimate;
 
     //default
-    if (rect == null || rect.isEmpty) {
+    if (rect == null) {
       if (restoreDefault == true) {
         if (!canvasDelegate.canvasPaintManager.contentManager
             .followCanvasContentTemplate()) {
