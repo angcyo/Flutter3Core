@@ -27,9 +27,9 @@ class CanvasKeyManager
       [canvasStyle.dragKeyboardKey],
     ], (info) {
       if (info.isKeyDown) {
-        canvasStyle.dragValue.value = true;
+        canvasDelegate.updateCanvasStyleModeChanged(CanvasStyleMode.dragMode);
       } else if (info.isKeyUp) {
-        canvasStyle.dragValue.value = false;
+        canvasDelegate.updateCanvasStyleModeChanged(null);
       }
       renderObject.markNeedsPaint();
       //renderObject.postMarkNeedsPaint();

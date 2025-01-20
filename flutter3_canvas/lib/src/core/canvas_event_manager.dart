@@ -232,8 +232,7 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
         if (offset != Offset.zero) {
           _translateBy(offset.dx, offset.dy);
         }
-      } else if (event.isTouchPointerEvent &&
-          isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)) {
+      } else if (event.isTouchPointerEvent && canvasDelegate.isDragMode) {
         //空格+单鼠标拖动
         //l.d("dispatchPointerEvent->$event");
         //debugger();
@@ -400,8 +399,8 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
       /*l.w("event:${event.buttons}");
       debugger();*/
     }
-    if (isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)) {
-      //拖拽按键按下时, 不识别双击缩放操作
+    if (canvasDelegate.isDragMode) {
+      //拖拽模式/拖拽按键按下时, 不识别双击缩放操作
       return false;
     }
     if (event.isTouchEventKind ||

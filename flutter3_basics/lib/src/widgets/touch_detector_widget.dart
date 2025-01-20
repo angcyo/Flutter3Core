@@ -133,8 +133,9 @@ extension TouchDetectorWidgetEx on Widget {
     bool enableLongPress = false,
     bool enableLoopLongPress = false,
   }) {
+    //debugger(when: !enableClick);
     if (!enableClick && !enableLongPress) {
-      if (mouseIsConnected) {
+      if (isDesktopOrWeb || mouseIsConnected) {
         return mouse(cursor: SystemMouseCursors.forbidden);
       }
       return this;

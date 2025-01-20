@@ -263,14 +263,4 @@ class CanvasStyle {
   double adsorbEscapeThreshold = 10;
 
   //endregion ---adsorb---
-
-  //region ---notifier---
-
-  /// 拖动状态监听
-  /// - true:正在拖动状态
-  /// - false:非拖动状态
-  /// [CanvasKeyManager.registerKeyEventHandler]中触发
-  final ValueNotifier<bool> dragValue = ValueNotifier(false);
-
-//endregion ---notifier---
 }

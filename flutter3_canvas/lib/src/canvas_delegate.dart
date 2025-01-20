@@ -181,6 +181,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [MouseCursor.defer]         默认
   /// [SystemMouseCursors.none]   隐藏鼠标
   /// [SystemMouseCursors.click]  点击手样式
+  ///
+  /// [CanvasRenderBox.cursor]
   @api
   void addCursorStyle(MouseCursor? cursor) {
     if (cursor == null) {
@@ -265,6 +267,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 画布样式/配置参数等信息
   final CanvasStyle canvasStyle = CanvasStyle();
+
+  /// 拖动状态监听
+  /// - [CanvasStyleMode.dragMode]]:正在拖动状态
+  /// - [CanvasStyleMode.defaultMode]:非拖动状态
+  /// [CanvasKeyManager.registerKeyEventHandler]中触发
+  final ValueNotifier<CanvasStyleMode> canvasStyleModeValue =
+      ValueNotifier(CanvasStyleMode.defaultMode);
+
+  /// 是否拖动状态
+  bool get isDragMode => canvasStyleModeValue.value == CanvasStyleMode.dragMode;
 
   /// 重绘通知, 监听此通知, 主动触发重绘
   /// [CanvasRenderBox]
@@ -829,6 +841,19 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     _overlayComponent = null;
   }
 
+  /// 更新画布模式
+  /// [canvasStyleModeValue]
+  /// [dispatchCanvasStyleModeChanged]
+  @api
+  void updateCanvasStyleModeChanged(CanvasStyleMode? mode) {
+    final old = canvasStyleModeValue.value;
+    final to = mode ?? CanvasStyleMode.defaultMode;
+    if (old != to) {
+      canvasStyleModeValue.value = mode ?? CanvasStyleMode.defaultMode;
+      dispatchCanvasStyleModeChanged(old, to);
+    }
+  }
+
   //endregion ---api---
 
   //region ---事件派发---
@@ -1254,6 +1279,15 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     return handle;
   }
 
+  /// 派发画布样式变化
+  /// [canvasStyleModeValue]
+  void dispatchCanvasStyleModeChanged(
+      CanvasStyleMode from, CanvasStyleMode to) {
+    _eachCanvasListener((element) {
+      element.onCanvasStyleModeChangedAction?.call(this, from, to);
+    });
+  }
+
   //endregion ---事件派发---
 
   //region ---辅助---
@@ -1368,4 +1402,14 @@ class CanvasStateStack extends ElementStateStack {
       canvasDelegate.canvasElementManager.elements.reset(group.children);
     }
   }
+}
+
+/// 画布当前的样式模式
+enum CanvasStyleMode {
+  /// 默认模式
+  defaultMode,
+
+  /// 移动模式
+  dragMode,
+  ;
 }

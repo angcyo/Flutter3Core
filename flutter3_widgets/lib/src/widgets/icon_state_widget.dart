@@ -19,16 +19,25 @@ class IconStateWidget extends StatelessWidget {
   /// 提示信息, 请使用[Positioned]定位
   final Widget? tip;
 
+  /// [icon]图标和[text]文本的间距
+  final double? gap;
+
   //---
 
   /// 是否启用
   final bool enable;
 
-  /// 正常颜色
+  /// 是否选中
+  final bool? selected;
+
+  /// 正常的着色颜色
   final Color? color;
 
-  /// 禁用的颜色
+  /// 禁用的着色颜色
   final Color? disableColor;
+
+  /// 选中时的着色颜色
+  final Color? selectedColor;
 
   final EdgeInsetsGeometry? padding;
 
@@ -59,12 +68,15 @@ class IconStateWidget extends StatelessWidget {
     this.tip,
     this.tooltip,
     this.padding = const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+    this.gap,
     this.decoration,
     this.pressedDecoration,
     this.selectedDecoration,
     this.hoverDecoration,
     this.enable = true,
+    this.selected,
     this.color,
+    this.selectedColor,
     this.disableColor,
     this.onTap,
   });
@@ -72,33 +84,43 @@ class IconStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final borderRadius = kH;
     return StateDecorationWidget(
       decoration: decoration,
       pressedDecoration: enable
           ? pressedDecoration ??
               lineaGradientDecoration(
                 listOf(globalTheme.pressColor, globalTheme.pressColor),
-                borderRadius: kH,
+                borderRadius: borderRadius,
               )
           : null,
       enablePressedDecoration: enable,
-      selectedDecoration: selectedDecoration,
+      selectedDecoration: selectedDecoration ??
+          (selected == true
+              ? lineaGradientDecoration(
+                  listOf(
+                      globalTheme.primaryColorDark, globalTheme.primaryColor),
+                  borderRadius: borderRadius,
+                )
+              : null),
       hoverDecoration: enable
           ? hoverDecoration ??
               lineaGradientDecoration(
                 listOf(globalTheme.pressColor.withHoverAlphaColor,
                     globalTheme.pressColor.withHoverAlphaColor),
-                borderRadius: kH,
+                borderRadius: borderRadius,
               )
           : null,
       child: [
         icon,
         text,
       ]
-          .column(mainAxisAlignment: MainAxisAlignment.center)
+          .column(mainAxisAlignment: MainAxisAlignment.center, gap: gap)
           ?.paddingInsets(padding)
           .colorFiltered(
-            color: enable ? color : disableColor,
+            color: enable
+                ? (selected == true ? selectedColor ?? color : color)
+                : disableColor,
             blendMode: BlendMode.srcIn,
           )
           //.click(onTap, enable)

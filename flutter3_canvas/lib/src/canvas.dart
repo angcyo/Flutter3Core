@@ -479,7 +479,7 @@ class CanvasRenderBox extends RenderBox
 
   @override
   MouseCursor get cursor =>
-      (isKeyPressed(key: canvasDelegate.canvasStyle.dragKeyboardKey)
+      (canvasDelegate.isDragMode
           ? (canvasDelegate.isPointerDown
               ? SystemMouseCursors.grabbing
               : SystemMouseCursors.grab)
@@ -622,6 +622,7 @@ class CanvasListener {
   })? onControlStateChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasUndoChanged]
+  /// 回退栈发生改变时回调
   final void Function(CanvasUndoManager undoManager)? onCanvasUndoChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasGroupChanged]
@@ -671,6 +672,13 @@ class CanvasListener {
     KeyEvent event,
   )? onKeyEventAction;
 
+  /// [CanvasDelegate.dispatchCanvasStyleModeChanged]
+  final void Function(
+    CanvasDelegate delegate,
+    CanvasStyleMode from,
+    CanvasStyleMode to,
+  )? onCanvasStyleModeChangedAction;
+
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
@@ -701,5 +709,6 @@ class CanvasListener {
     this.onElementDetachFromCanvasDelegate,
     this.onBuildCanvasMenu,
     this.onKeyEventAction,
+    this.onCanvasStyleModeChangedAction,
   });
 }
