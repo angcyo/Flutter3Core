@@ -81,6 +81,9 @@ class CanvasStyle {
   /// 是否激活选择元素组件
   bool enableElementSelect = true;
 
+  /// 是否激活多指多选元素操作
+  bool enableMultiSelect = true;
+
   /// 是否激活元素[PaintProperty]属性改变后, 重置旋转角度
   bool enableResetElementAngle = true;
 
@@ -100,6 +103,10 @@ class CanvasStyle {
 
   /// 当按下此键时, 视为需要拖动画布
   LogicalKeyboardKey dragKeyboardKey = LogicalKeyboardKey.space;
+
+  /// 当按下此键时, 视为多选元素
+  /// [enableMultiSelect] 需要先开启此项
+  LogicalKeyboardKey multiSelectKeyboardKey = LogicalKeyboardKey.control;
 
   /// 默认的复制元素后, 新元素偏移距离
   @mm

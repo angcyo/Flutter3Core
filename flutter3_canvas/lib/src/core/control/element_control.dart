@@ -231,7 +231,7 @@ class BaseControl
       //debugger();
       canvas.drawPictureInRect(
         _pictureInfo?.picture,
-        dst: rect/*rect.inflate(controlIcoPadding)*/,
+        dst: rect /*rect.inflate(controlIcoPadding)*/,
         pictureSize: _pictureInfo?.size,
         tintColor: Colors.white,
         dstPadding: EdgeInsets.all(controlIcoPadding),
@@ -809,6 +809,8 @@ class TranslateControl extends BaseControl
             return true;
           }());*/
 
+          //debugger();
+
           if (selectComponent.isSelectedElement &&
               selectComponent.hitTest(point: downScenePoint)) {
             //在选择器上按下
@@ -827,8 +829,16 @@ class TranslateControl extends BaseControl
             if (downElement != null) {
               //按在指定的元素上
               isPointerDownIn = true;
-              canvasElementControlManager.canvasElementManager
-                  .resetSelectedElementList(downElement.ofList());
+
+              if (canvasStyle.enableMultiSelect &&
+                  isKeyPressed(key: canvasStyle.multiSelectKeyboardKey)) {
+                //多选元素
+                canvasElementControlManager.canvasElementManager
+                    .addSelectElement(downElement);
+              } else {
+                canvasElementControlManager.canvasElementManager
+                    .resetSelectedElementList(downElement.ofList());
+              }
               startControlTarget(selectComponent);
               return true;
             }

@@ -1055,13 +1055,13 @@ class ElementSelectComponent extends ElementGroupPainter
   bool get enableEventHandled =>
       isCanvasComponentEnable && canvasStyle?.enableElementSelect != false;
 
+  /// 是否激活多指多选元素操作
+  bool get enableMultiSelect => canvasStyle?.enableMultiSelect == true;
+
   //--
 
   /// 画笔
   final Paint boundsPaint = Paint();
-
-  /// 是否激活多指多选元素操作
-  bool enableMultiSelect = true;
 
   /// 选择框的边界, 场景坐标系
   @sceneCoordinate
@@ -1220,10 +1220,13 @@ class ElementSelectComponent extends ElementGroupPainter
   /// [ElementSelectComponent._downElementList]
   List<ElementPainter>? _downElementList;
 
+  /// 此手势事件, 通常用来处理滑动选框选择元素
+  /// 点击选择可能需要在[TranslateControl]组件中处理
   @override
   bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     //debugger();
     if (isCanvasComponentEnable) {
+      //debugger(when: !event.isPointerHover);
       if (isFirstPointerEvent(dispatch, event) &&
           canvasDelegate?.isDragMode != true) {
         //没有按下拖动控制按键时/非拖拽模式
@@ -1256,6 +1259,7 @@ class ElementSelectComponent extends ElementGroupPainter
           //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
           //选择结束
+          //debugger();
           if (event.isMoveExceed(firstDownEvent?.localPosition)) {
             //移动了手指, 可能是滑动选择元素
             final selectList = _getSelectBoundsElementList();
