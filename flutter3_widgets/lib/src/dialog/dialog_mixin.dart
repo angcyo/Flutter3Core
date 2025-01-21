@@ -5,6 +5,9 @@ part of './dialog.dart';
 /// @since 2023/12/15
 ///
 ///
+/// [Dialog] 对话框布局
+/// [AlertDialog] 对话框组件[IntrinsicWidth]
+///
 /// 对话框的一些基础方法,一些基础约束
 mixin DialogMixin implements TranslationTypeImpl {
   /// 对话框路径过度动画
@@ -24,6 +27,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   //region ---对话框包裹---
 
   /// 对话框外边距
+  /// 系统默认的对话框内边距[_defaultInsetPadding]
   EdgeInsets get dialogMargin =>
       const EdgeInsets.symmetric(horizontal: 60, vertical: kToolbarHeight);
 

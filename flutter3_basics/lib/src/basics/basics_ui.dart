@@ -3333,6 +3333,7 @@ extension NavigatorEx on BuildContext {
   //---pop↓
 
   /// 是否可以弹出一个路由
+  /// [checkDismissal] 是否检测弹出最后一个根路由
   bool canPop([
     bool rootNavigator = false,
     bool checkDismissal = true,
@@ -3345,6 +3346,7 @@ extension NavigatorEx on BuildContext {
   }
 
   /// 弹出一个路由, 不能被[PopScope]拦截
+  /// [checkDismissal] 是否检测弹出最后一个根路由
   void pop<T extends Object?>([
     T? result,
     bool rootNavigator = false,
