@@ -230,13 +230,13 @@ class _SingleLabelInputTileState extends State<SingleLabelInputTile>
       label,
       input
           .container(
-            color: globalTheme.itemWhiteBgColor,
-            radius: kDefaultBorderRadiusX,
-            constraints: BoxConstraints(
-              minWidth: widget.inputWidth ?? 0,
-              maxWidth: widget.inputWidth ?? double.infinity,
-            ),
-          )
+        color: globalTheme.itemWhiteBgColor,
+        radius: kDefaultBorderRadiusX,
+        constraints: BoxConstraints(
+          minWidth: widget.inputWidth ?? 0,
+          maxWidth: widget.inputWidth ?? double.infinity,
+        ),
+      )
           .paddingSymmetric(horizontal: kX, vertical: kL)
           .align(Alignment.centerRight)
           .expanded(),
@@ -316,9 +316,9 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
 
   NumType? get _inputNumType =>
       widget.inputNumType ??
-      (widget.inputText is int
-          ? NumType.i
-          : (widget.inputText is double ? NumType.d : null));
+          (widget.inputText is int
+              ? NumType.i
+              : (widget.inputText is double ? NumType.d : null));
 
   bool get isInt => _inputNumType == NumType.i;
 
@@ -350,7 +350,9 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   @override
   void didUpdateWidget(covariant NumberInputWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    inputConfig.updateText(inputText);
+    if (oldWidget.inputText != inputText) {
+      inputConfig.updateText(inputText);
+    }
   }
 
   @override
@@ -366,8 +368,8 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
           (isDouble
               ? [decimalTextInputFormatter]
               : isInt
-                  ? [numberTextInputFormatter]
-                  : null),
+              ? [numberTextInputFormatter]
+              : null),
       textAlign: TextAlign.center,
       inputBorderType: InputBorderType.none,
       inputBuildCounter: null,

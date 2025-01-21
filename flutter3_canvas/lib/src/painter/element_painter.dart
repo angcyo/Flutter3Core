@@ -124,7 +124,7 @@ class IElementPainter extends IPainter
   bool handleEvent(@viewCoordinate PointerEvent event) => false;
 
   /// 处理键盘事件
-  /// [CanvasRenderBox.onKeyEventHandleMixin]驱动
+  /// [CanvasRenderBox.onHandleKeyEventMixin]驱动
   @overridePoint
   bool handleKeyEvent(KeyEvent event) => false;
 

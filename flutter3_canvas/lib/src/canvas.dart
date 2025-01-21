@@ -194,7 +194,7 @@ class CanvasRenderObjectElement extends LeafRenderObjectElement {
 /// 负责画布的绘制入口
 /// 负责画布的手势入口
 class CanvasRenderBox extends RenderBox
-    with KeyEventMixin, KeyEventRenderObjectMixin
+    with KeyEventMixin
     implements MouseTrackerAnnotation {
   BuildContext context;
   CanvasDelegate canvasDelegate;
@@ -202,10 +202,13 @@ class CanvasRenderBox extends RenderBox
   //--
 
   /// 焦点
-  final FocusNode _focusNode = FocusNode(
+  late final FocusNode _canvasFocusNode = FocusNode(
       debugLabel: "CanvasRenderBoxFocusNode",
       onKeyEvent: (node, event) {
-        return KeyEventResult.handled;
+        if (onHandleKeyEventMixin(event)) {
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
       });
 
   CanvasRenderBox(
@@ -331,7 +334,7 @@ class CanvasRenderBox extends RenderBox
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
-    _focusNode.attach(context);
+    _canvasFocusNode.attach(context);
     //debugger();
     if (isDesktopOrWeb) {
       canvasDelegate.canvasKeyManager.registerKeyEventHandler(this);
@@ -357,7 +360,7 @@ class CanvasRenderBox extends RenderBox
   @override
   void detach() {
     //debugger();
-    _focusNode.unfocus();
+    _canvasFocusNode.unfocus();
     _validForMouseTracker = false;
     visitWidgetElementPainter((painter) {
       final render = painter._widgetRender;
@@ -374,7 +377,7 @@ class CanvasRenderBox extends RenderBox
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    _canvasFocusNode.dispose();
     canvasDelegate.dispose();
     super.dispose();
   }
@@ -385,7 +388,7 @@ class CanvasRenderBox extends RenderBox
 
   /// 请求焦点
   void requestFocus() {
-    FocusScope.of(context).requestFocus(_focusNode);
+    FocusScope.of(context).requestFocus(_canvasFocusNode);
   }
 
   //--
@@ -460,12 +463,12 @@ class CanvasRenderBox extends RenderBox
 
   /// 画布键盘事件处理
   @override
-  bool onKeyEventHandleMixin(KeyEvent event) {
+  bool onHandleKeyEventMixin(KeyEvent event) {
     bool handle = false;
     //--
     if (canvasDelegate.canvasStyle.enableElementControl ||
         canvasDelegate.canvasStyle.enableCanvasKeyEvent == true) {
-      handle = super.onKeyEventHandleMixin(event);
+      handle = super.onHandleKeyEventMixin(event);
     }
     if (canvasDelegate.handleKeyEvent(this, event)) {
       handle = true;
@@ -478,12 +481,11 @@ class CanvasRenderBox extends RenderBox
   //region --Mouse--
 
   @override
-  MouseCursor get cursor =>
-      (canvasDelegate.isDragMode
-          ? (canvasDelegate.isPointerDown
-              ? SystemMouseCursors.grabbing
-              : SystemMouseCursors.grab)
-          : canvasDelegate.currentCursorStyle ?? MouseCursor.defer);
+  MouseCursor get cursor => (canvasDelegate.isDragMode
+      ? (canvasDelegate.isPointerDown
+          ? SystemMouseCursors.grabbing
+          : SystemMouseCursors.grab)
+      : canvasDelegate.currentCursorStyle ?? MouseCursor.defer);
 
   @override
   PointerEnterEventListener? get onEnter => null;

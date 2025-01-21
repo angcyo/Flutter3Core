@@ -74,7 +74,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 键盘输入的入口点
   /// 处理键盘事件
-  /// [CanvasRenderBox.onKeyEventHandleMixin]驱动
+  /// [CanvasRenderBox.onHandleKeyEventMixin]驱动
   @entryPoint
   bool handleKeyEvent(RenderObject render, KeyEvent event) {
     bool handle = canvasEventManager.handleKeyEvent(event);

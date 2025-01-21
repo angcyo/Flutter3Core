@@ -16,30 +16,32 @@ part of '../../flutter3_basics.dart';
 mixin KeyEventStateMixin<T extends StatefulWidget> on State<T>, KeyEventMixin {
   @override
   void initState() {
-    HardwareKeyboard.instance.addHandler(onKeyEventHandleMixin);
+    HardwareKeyboard.instance.addHandler(onHandleKeyEventMixin);
     super.initState();
   }
 
   @override
   void dispose() {
-    HardwareKeyboard.instance.removeHandler(onKeyEventHandleMixin);
+    HardwareKeyboard.instance.removeHandler(onHandleKeyEventMixin);
     _keyEventRegisterList.clear();
     super.dispose();
   }
 }
 
+/// 此混入会在全局范围内注册键盘事件
+/// 如果不希望全局获取键盘事件应该使用[FocusNode.onKeyEvent]
 /// [KeyEventStateMixin]
 /// [KeyEventRenderObjectMixin]
 mixin KeyEventRenderObjectMixin on RenderObject, KeyEventMixin {
   @override
   void attach(PipelineOwner owner) {
-    HardwareKeyboard.instance.addHandler(onKeyEventHandleMixin);
+    HardwareKeyboard.instance.addHandler(onHandleKeyEventMixin);
     super.attach(owner);
   }
 
   @override
   void detach() {
-    HardwareKeyboard.instance.removeHandler(onKeyEventHandleMixin);
+    HardwareKeyboard.instance.removeHandler(onHandleKeyEventMixin);
     _keyEventRegisterList.clear();
     super.detach();
   }
@@ -92,7 +94,7 @@ mixin KeyEventMixin {
   }
 
   @overridePoint
-  bool onKeyEventHandleMixin(KeyEvent event) {
+  bool onHandleKeyEventMixin(KeyEvent event) {
     bool handle = false;
     //debugger(when: event.isKeyUp);
     if (event.isKeyDownOrRepeat || event.isKeyUp) {
