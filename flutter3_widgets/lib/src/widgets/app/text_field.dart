@@ -547,8 +547,6 @@ class SingleInputWidget extends StatefulWidget {
   ///
   /// `EdgeInsets.fromLTRB(12, 12, 12, 12)` 默认
   ///
-  /// 输入框的[contentPadding]会影响文本绘制时的偏移, 不会影响测量时的大小
-  ///
   final EdgeInsetsGeometry? contentPadding;
 
   /// 键盘输入类型

@@ -743,6 +743,7 @@ mixin TileMixin {
     NumType? numType,
     GestureTapCallback? onTap,
     EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(vertical: kS),
+    EdgeInsetsGeometry? contentPadding = kNumberInputPadding,
     EdgeInsetsGeometry? margin,
     Decoration? decoration,
     Color? backgroundColor,
@@ -768,6 +769,7 @@ mixin TileMixin {
       padding: padding,
       child: NumberInputWidget(
         inputText: number,
+        contentPadding: contentPadding,
         inputNumType: numType ?? NumType.from(number),
         inputMinValue: minValue,
         inputMaxValue: maxValue,
