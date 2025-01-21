@@ -60,8 +60,8 @@ class CanvasContentTemplate {
   @sceneCoordinate
   Rect? get contentFollowRectInner =>
       contentFollowRect ??
-      contentBackgroundInfo?.rect ??
-      contentOptimumInfo?.rect;
+      contentBackgroundInfo?.bounds ??
+      contentOptimumInfo?.bounds;
 
   //endregion ---get---
 }

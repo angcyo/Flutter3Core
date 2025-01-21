@@ -19,6 +19,10 @@ class CanvasStyle {
   /// [CanvasDelegate.dispatchCanvasIdle]
   Duration idleTimeout = 10.seconds;
 
+  /// 首次布局时, 是否跟随模板
+  @configProperty
+  bool firstLayoutFollowTemplate = true;
+
   //--CanvasAxisManager
 
   /// 是否绘制网格

@@ -18,22 +18,27 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
-  /// 首次布局时, 是否跟随模板
-  bool firstLayoutFollowTemplate = true;
+  bool get firstLayoutFollowTemplate => canvasStyle.firstLayoutFollowTemplate;
 
   //--
 
   /// 画布内容模版, 描述了内容大小, 最佳区域等信息
   /// [updateFillStyleContentTemplate]
+  @configProperty
   CanvasContentTemplate? contentTemplate;
 
-  /// 画布内容区域[contentTemplate]
+  /// 画布内容有效区域, 可以用来检测元素是否超出了有效区域
+  /// [contentTemplate]
   @dp
   @sceneCoordinate
   Rect? get canvasContentBounds =>
-      contentTemplate?.contentBackgroundInfo?.rect ??
-      contentTemplate?.contentBackgroundInfo?.pathBoundsCache ??
-      contentTemplate?.contentBackgroundInfo?.path?.getExactBounds();
+      contentTemplate?.contentBackgroundInfo?.bounds;
+
+  /// 画布内容最佳区域, 可以用来检测元素是否超出了最佳区域
+  /// [contentTemplate]
+  @dp
+  @sceneCoordinate
+  Rect? get canvasOptimumBounds => contentTemplate?.contentOptimumInfo?.bounds;
 
   //--
 
@@ -60,9 +65,11 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   //--
 
   /// 额外需要绘制的路径信息
+  @configProperty
   final List<ContentPathPainterInfo> painterPathList = [];
 
   /// 额外画布内容绘制
+  @configProperty
   final List<IPainter> painterList = [];
 
   CanvasContentManager(this.paintManager);
@@ -382,6 +389,18 @@ class ContentPathPainterInfo {
 
   /// 要绘制的矩形, 有值时, 就绘制
   Rect? rect;
+
+  /// 边界信息
+  @output
+  Rect? get bounds {
+    if (rect != null) {
+      return rect;
+    }
+    if (pathBoundsCache != null) {
+      return pathBoundsCache;
+    }
+    return pathBoundsCache ??= path?.getExactBounds();
+  }
 
   //--绘制信息
 
