@@ -5,6 +5,9 @@ part of '../../flutter3_canvas.dart';
 /// @since 2024/02/02
 ///
 /// 绘制管理, 所有绘制相关的操作, 都在这里, 绘制的入口
+///
+/// [CanvasDelegate]的成员
+///
 class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 栅格化元素
   /// [element] 要栅格化的元素

@@ -257,6 +257,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   List<Rect> get allSingleElementBoundsList =>
       allSingleElementList.map((e) => e.elementsBounds).filterNull();
 
+  /// 画布有效内容区域, 通过画布内容模版设置
+  /// [CanvasContentTemplate]
+  @dp
+  @sceneCoordinate
+  Rect? get canvasContentRect =>
+      canvasPaintManager.contentManager.canvasContentFollowRectInner;
+
   //--
 
   /// 所有选中的元素集合

@@ -1316,24 +1316,40 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [averageElement] - 均分元素
   /// [alignElement]   - 对齐元素
   /// [arrangeElement] - 排列元素
+  ///
+  /// [alignCanvasContent] 是否强行对齐画布内容, 不指定时:当只有一个元素时,自动开启
+  /// [CanvasDelegate.canvasContentRect]
   @api
   @supportUndo
   void alignElement(
     ElementGroupPainter? group,
     CanvasAlignType align, {
+    bool? alignCanvasContent,
     UndoType undoType = UndoType.normal,
   }) {
     final children = group?.children;
-    if (group == null || children == null || children.length < 2) {
+    if (group == null || children == null || isNil(children)) {
       assert(() {
-        l.d('数量不够,不满足对齐条件');
+        l.d('没有需要对齐的元素');
         return true;
       }());
       return;
     }
-    final bounds = group.paintProperty
-        ?.getBounds(canvasElementControlManager.enableResetElementAngle);
-    if (bounds == null) {
+    alignCanvasContent ??= children.length < 2;
+    if (alignCanvasContent && canvasDelegate.canvasContentRect == null) {
+      assert(() {
+        l.d('请先设置画布内容模版[CanvasContentManager.contentTemplate]!');
+        return true;
+      }());
+      return;
+    }
+
+    //需要在此容器边界内对齐
+    final Rect? alignBounds = alignCanvasContent
+        ? canvasDelegate.canvasContentRect
+        : group.paintProperty
+            ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+    if (alignBounds == null) {
       assert(() {
         l.d('获取不到组合元素的边界');
         return true;
@@ -1350,38 +1366,40 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           case CanvasAlignType.left:
             //所有元素对齐bounds的左边
             element.translateElement(Matrix4.identity()
-              ..translate(bounds.left - elementBounds.left, 0.0));
+              ..translate(alignBounds.left - elementBounds.left, 0.0));
             break;
           case CanvasAlignType.top:
             //所有元素对齐bounds的上边
             element.translateElement(Matrix4.identity()
-              ..translate(0.0, bounds.top - elementBounds.top));
+              ..translate(0.0, alignBounds.top - elementBounds.top));
             break;
           case CanvasAlignType.right:
             //所有元素对齐bounds的右边
             element.translateElement(Matrix4.identity()
-              ..translate(bounds.right - elementBounds.right, 0.0));
+              ..translate(alignBounds.right - elementBounds.right, 0.0));
             break;
           case CanvasAlignType.bottom:
             //所有元素对齐bounds的下边
             element.translateElement(Matrix4.identity()
-              ..translate(0.0, bounds.bottom - elementBounds.bottom));
+              ..translate(0.0, alignBounds.bottom - elementBounds.bottom));
             break;
           case CanvasAlignType.center:
             //所有元素对齐bounds的中心
             element.translateElement(Matrix4.identity()
-              ..translate(bounds.center.dx - elementBounds.center.dx,
-                  bounds.center.dy - elementBounds.center.dy));
+              ..translate(alignBounds.center.dx - elementBounds.center.dx,
+                  alignBounds.center.dy - elementBounds.center.dy));
             break;
           case CanvasAlignType.horizontalCenter:
             //所有元素对齐bounds的水平中心
             element.translateElement(Matrix4.identity()
-              ..translate(0.0, bounds.center.dy - elementBounds.center.dy));
+              ..translate(
+                  0.0, alignBounds.center.dy - elementBounds.center.dy));
             break;
           case CanvasAlignType.verticalCenter:
             //所有元素对齐bounds的垂直中心
             element.translateElement(Matrix4.identity()
-              ..translate(bounds.center.dx - elementBounds.center.dx, 0.0));
+              ..translate(
+                  alignBounds.center.dx - elementBounds.center.dx, 0.0));
             break;
         }
       }
