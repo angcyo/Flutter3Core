@@ -208,7 +208,7 @@ class CanvasRenderBox extends RenderBox
         if (onHandleKeyEventMixin(event)) {
           return KeyEventResult.handled;
         }
-        return KeyEventResult.ignored;
+        return KeyEventResult.handled;
       });
 
   CanvasRenderBox(
