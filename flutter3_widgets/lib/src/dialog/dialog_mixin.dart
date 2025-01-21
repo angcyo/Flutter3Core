@@ -36,6 +36,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       const EdgeInsets.symmetric(horizontal: kX, vertical: kX);
 
   /// 对话框的最大宽度/高度限制
+  /// 系统[Dialog]最小宽度280.0
   BoxConstraints get dialogConstraints => BoxConstraints(
       minWidth: 0,
       maxWidth: min(screenWidth, screenHeight),
@@ -76,7 +77,7 @@ mixin DialogMixin implements TranslationTypeImpl {
                 borderRadius: borderRadius,
               ),
           child: child.paddingInsets(padding ?? contentPadding).material(),
-        ).blur(sigma: blur ? kL : null),
+        ).blur(sigma: blur ? kL : null).iw(),
       ).clip(borderRadius: borderRadius),
     );
   }

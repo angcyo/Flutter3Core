@@ -2011,6 +2011,18 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 使用[child]固有的宽度, 在系统的[AlertDialog]中使用
+  /// [IntrinsicWidth] 固有的宽度
+  Widget iw({
+    double? stepWidth,
+    double? stepHeight,
+  }) =>
+      IntrinsicWidth(
+        stepWidth: stepWidth,
+        stepHeight: stepHeight,
+        child: this,
+      );
+
   /// [FittedBox]
   Widget fittedBox({
     BoxFit? fit = BoxFit.contain,
