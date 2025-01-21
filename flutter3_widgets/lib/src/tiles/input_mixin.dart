@@ -128,7 +128,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
     BoxConstraints? prefixIconConstraints = kPrefixIconConstraints,
     BoxConstraints? suffixIconConstraints = kSuffixIconConstraints,
   }) {
-    Widget input = SingleInputWidget(
+    final Widget input = SingleInputWidget(
       config: _inputMixinConfig,
       maxLines: inputMixin.inputMaxLines,
       maxLength: inputMixin.inputMaxLength,

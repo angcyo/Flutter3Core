@@ -7,7 +7,7 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 输入框tile
 /// 上[label]
-/// 下input hint(des)
+/// 下[inputHint]](des)
 class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
   /// 标签/LabelMixin
   @override
@@ -141,6 +141,7 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   /// 输入框/InputMixin
   @override
   final TextFieldConfig? inputFieldConfig;
+
   /// 提示
   @override
   final String? inputHint;
@@ -240,5 +241,166 @@ class _SingleLabelInputTileState extends State<SingleLabelInputTile>
           .align(Alignment.centerRight)
           .expanded(),
     ].row()!;
+  }
+}
+
+/// 数字输入框
+/// - 取消删除icon
+/// - 默认不带背景/输入装饰
+class NumberInputWidget extends StatefulWidget {
+  /// 输入的文本
+  /// - 支持小数
+  /// - 支持整数
+  /// - 支持字符串
+  final dynamic inputText;
+
+  /// 输入的数字类型, 不指定就是字符串
+  final NumType? inputNumType;
+
+  /// 输入提示
+  final String? hintText;
+
+  /// 最大输入长度
+  final int inputMaxLength;
+
+  /// 如果是小数, 那么小数后最多显示几位
+  final int inputMaxDigits;
+
+  /// 最大值, 只在数字类型时有效
+  final num? inputMaxValue;
+
+  /// 最小值, 只在数字类型时有效
+  final num? inputMinValue;
+
+  /// 输入格式化器, 不指定会有默认值
+  @defInjectMark
+  final List<TextInputFormatter>? inputFormatters;
+
+  //--
+
+  /// 输入框的边距
+  final EdgeInsetsGeometry? contentPadding;
+
+  //--
+
+  /// 改变时的回调, 自动根据[inputNumType]返回对应类型的数据
+  final ValueChanged<dynamic>? onChanged;
+
+  /// 提交时的回调, 自动根据[inputNumType]返回对应类型的数据
+  final ValueChanged<dynamic>? onSubmitted;
+
+  const NumberInputWidget({
+    super.key,
+    this.inputText,
+    this.hintText,
+    this.inputMinValue,
+    this.inputMaxValue,
+    this.inputNumType,
+    this.inputMaxDigits = 2,
+    this.inputMaxLength = 9,
+    this.inputFormatters,
+    this.contentPadding = kNumberInputPadding,
+    this.onChanged,
+    this.onSubmitted,
+  });
+
+  @override
+  State<NumberInputWidget> createState() => _NumberInputWidgetState();
+}
+
+class _NumberInputWidgetState extends State<NumberInputWidget> {
+  /// 输入配置信息
+  final inputConfig = TextFieldConfig();
+
+  //--
+
+  NumType? get _inputNumType =>
+      widget.inputNumType ??
+      (widget.inputText is int
+          ? NumType.i
+          : (widget.inputText is double ? NumType.d : null));
+
+  bool get isInt => _inputNumType == NumType.i;
+
+  bool get isDouble => _inputNumType == NumType.d;
+
+  bool get isString => _inputNumType == null;
+
+  String get inputText {
+    if (widget.inputText == null) {
+      return "";
+    }
+    if (isDouble) {
+      return (widget.inputText as double).toDigits(
+        digits: widget.inputMaxDigits,
+        removeZero: false,
+      );
+    }
+    return "${widget.inputText}";
+  }
+
+  //--
+
+  @override
+  void initState() {
+    inputConfig.text = inputText;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant NumberInputWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    inputConfig.updateText(inputText);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //l.d("build->${inputConfig.text}");
+    final Widget input = SingleInputWidget(
+      config: inputConfig,
+      maxLines: 1,
+      maxLength: widget.inputMaxLength,
+      showInputCounter: false,
+      keyboardType: isString ? TextInputType.text : TextInputType.number,
+      inputFormatters: widget.inputFormatters ??
+          (isDouble
+              ? [decimalTextInputFormatter]
+              : isInt
+                  ? [numberTextInputFormatter]
+                  : null),
+      textAlign: TextAlign.center,
+      inputBorderType: InputBorderType.none,
+      inputBuildCounter: null,
+      contentPadding: widget.contentPadding,
+      autoShowSuffixIcon: false,
+      //--
+      hintText: widget.hintText,
+      onChanged: (value) {
+        //debugger();
+        assert(() {
+          l.d("onInputChanged:${inputConfig.text}->$value");
+          return true;
+        }());
+        widget.onChanged?.call(_formatResultValue(value));
+      },
+      onSubmitted: (value) {
+        widget.onSubmitted?.call(_formatResultValue(value));
+      },
+    );
+    return input;
+  }
+
+  /// 格式化输出的结果值
+  dynamic _formatResultValue(String value) {
+    //debugger();
+    if (isString) {
+      return value;
+    } else if (isDouble) {
+      return clamp(
+          value.toDouble(), widget.inputMinValue, widget.inputMaxValue);
+    } else if (isInt) {
+      return clamp(value.toInt(), widget.inputMinValue, widget.inputMaxValue);
+    }
+    return null;
   }
 }

@@ -15,7 +15,10 @@ enum NumType {
   i,
   ;
 
-  static NumType from(dynamic value) {
+  static NumType? from(dynamic value) {
+    if (value == null || value is! num) {
+      return null;
+    }
     if (value is int) {
       return NumType.i;
     }
@@ -239,12 +242,11 @@ String formatNumber(
   bool ensureInt = true,
 }) {
   numType ??= NumType.from(number);
-  switch (numType) {
-    case NumType.i:
-      return "${round ? number.round() : number.toInt()}";
-    case NumType.d:
-      return number.toDigits(digits: digits, ensureInt: ensureInt);
-  }
+  return switch (numType) {
+    NumType.i => "${round ? number.round() : number.toInt()}",
+    NumType.d => number.toDigits(digits: digits, ensureInt: ensureInt),
+    _ => "$number",
+  };
 }
 
 num formatDoubleNumber(

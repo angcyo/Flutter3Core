@@ -20,6 +20,14 @@ const kInputPadding = EdgeInsets.only(
   bottom: kX,
 );
 
+/// number input输入框默认的填充
+const kNumberInputPadding = EdgeInsets.only(
+  left: kM,
+  right: kM,
+  top: 0,
+  bottom: 0,
+);
+
 /// label默认的填充
 /// 左边显示的文本
 const kLabelPadding = EdgeInsets.only(
@@ -100,6 +108,14 @@ const kLabelConstraints = BoxConstraints(
 const kNumberConstraints = BoxConstraints(
   minWidth: kNumberMinWidth,
   minHeight: kNumberMinHeight,
+);
+
+/// input number数字输入默认的约束
+const kNumberInputConstraints = BoxConstraints(
+  minWidth: kNumberMinWidth,
+  minHeight: kNumberMinHeight,
+  maxWidth: kNumberMinWidth,
+  /*maxHeight: kNumberMinHeight,*/
 );
 
 //---
@@ -647,9 +663,9 @@ mixin TileMixin {
     return result;
   }
 
-  ///
+  /// 数字显示, 并输入的小部件
   /// [NumberKeyboardDialog]
-  Widget? buildNumberWidget(
+  Widget buildNumberWidget(
     BuildContext context,
     dynamic number, {
     Widget? numberWidget,
@@ -674,6 +690,65 @@ mixin TileMixin {
       constraints: constraints,
       padding: padding,
       child: (numberWidget ?? "$number".text()).center(),
+    ).ink(
+      () {
+        onTap?.call();
+      },
+      backgroundColor: backgroundColor ?? globalTheme.whiteSubBgColor,
+      radius: kDefaultBorderRadiusL,
+    ).paddingInsets(margin);
+  }
+
+  /// 数字输入的小部件
+  /// [NumberInputWidget]
+  Widget buildNumberInputWidget(
+    BuildContext context,
+    dynamic number, {
+    NumType? numType,
+    GestureTapCallback? onTap,
+    EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(vertical: kS),
+    EdgeInsetsGeometry? margin,
+    Decoration? decoration,
+    Color? backgroundColor,
+    BoxConstraints? constraints = kNumberInputConstraints,
+    //--
+    num? maxValue,
+    num? minValue,
+    int maxDigits = 2,
+    ValueChanged<dynamic>? onChanged,
+    ValueChanged<dynamic>? onSubmitted,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    if (onTap == null) {
+      //默认的点击事件
+    }
+    return Container(
+      /*fillDecoration(
+        color: globalTheme.whiteSubBgColor,
+        borderRadius: kDefaultBorderRadiusL,
+      )*/
+      decoration: decoration,
+      constraints: constraints,
+      padding: padding,
+      child: NumberInputWidget(
+        inputText: number,
+        inputNumType: numType ?? NumType.from(number),
+        inputMinValue: minValue,
+        inputMaxValue: maxValue,
+        inputMaxDigits: maxDigits,
+        onChanged: onChanged,
+        onSubmitted: onSubmitted,
+      ),
+      /*child: TextField(
+        */ /*contentPadding: padding,*/ /*
+        textAlign: TextAlign.center,
+        expands: false,
+        decoration: InputDecoration(
+          isDense: true,
+          contentPadding: padding */ /*EdgeInsets.zero*/ /*,
+          border: InputBorder.none,
+        ),
+      ),*/
     ).ink(
       () {
         onTap?.call();
