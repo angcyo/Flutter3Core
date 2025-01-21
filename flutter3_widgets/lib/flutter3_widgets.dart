@@ -84,6 +84,7 @@ part 'src/tiles/tab_layout_tile.dart';
 part 'src/tiles/label_mixin.dart';
 part 'src/tiles/label_info_mixin.dart';
 part 'src/tiles/label_unit_value_tile.dart';
+part 'src/tiles/segment_tile.dart';
 part 'src/widgets/layout/after_layout.dart';
 part 'src/widgets/app/button.dart';
 part 'src/widgets/app/search.dart';

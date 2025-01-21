@@ -430,6 +430,8 @@ class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {
 /// 单行/多行输入框
 /// [Autocomplete]
 ///
+/// [TextField]->[EditableText]->[_Editable]
+///
 class SingleInputWidget extends StatefulWidget {
   /// 是否激活
   final bool enabled;

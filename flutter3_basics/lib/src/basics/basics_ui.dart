@@ -1170,8 +1170,8 @@ extension WidgetEx on Widget {
   //endregion ---SafeArea---
 
   /// 禁用当前的小部件
-  Widget disable({
-    bool disable = true,
+  Widget disable(
+    bool disable, {
     //--
     ColorFilter? colorFilter,
     Color? color = Colors.grey,
@@ -2074,6 +2074,7 @@ extension WidgetEx on Widget {
     MaterialType type = MaterialType.canvas,
     Clip clipBehavior = Clip.none,
     BorderRadiusGeometry? borderRadius,
+    double? radius,
     TextStyle? textStyle,
   }) =>
       Material(
@@ -2085,7 +2086,7 @@ extension WidgetEx on Widget {
         type: type,
         surfaceTintColor: surfaceTintColor,
         clipBehavior: clipBehavior,
-        borderRadius: borderRadius,
+        borderRadius: borderRadius ?? radius?.toBorderRadius(),
         textStyle: textStyle,
         shape: shape,
         child: this,
@@ -2189,6 +2190,7 @@ extension WidgetEx on Widget {
         onTap,
         onLongPress: onLongPress,
         borderRadius: bRadius,
+        radius: radius,
         customBorder: isCircle ? const CircleBorder() : null,
         highlightShape: shape,
         highlightColor: highlightColor,

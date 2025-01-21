@@ -2179,6 +2179,9 @@ extension DoubleEx on double {
   /// [Picture.toImage]
   /// [Picture.toImageSync]
   int get imageInt => toInt() /*floor()*/;
+
+  /// [BorderRadius]
+  BorderRadius? toBorderRadius() => BorderRadius.all(Radius.circular(this));
 }
 
 //endregion Num 扩展
