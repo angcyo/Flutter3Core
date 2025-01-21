@@ -118,6 +118,28 @@ const kNumberInputConstraints = BoxConstraints(
   /*maxHeight: kNumberMinHeight,*/
 );
 
+/*
+class TestSliderComponentShape extends RoundSliderThumbShape {
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    //debugger();
+  }
+}
+*/
+
 //---
 
 mixin TileMixin {
@@ -394,6 +416,7 @@ mixin TileMixin {
   ///
   /// [trackHeight] 轨道的高度
   /// [thumbColor] 浮子的颜色
+  /// [thumbRadius] 浮子的半径, 默认是10.0, 使用[RoundSliderThumbShape]
   /// [overlayColor] 触摸时浮子光晕的颜色
   /// [activeTrackColor] 有值轨道的颜色
   /// [activeTrackGradientColors] 有值轨道的渐变颜色
@@ -405,7 +428,8 @@ mixin TileMixin {
   /// [useCenteredTrackShape] 是否使用中心轨道形状 [CenteredRectangularSliderTrackShape]
   ///
   /// [trackShape]轨道的shape, 默认[RoundedRectSliderTrackShape]
-  /// [thumbShape]浮子的shape, 默认[RoundSliderThumbShape]
+  /// [thumbShape]浮子的shape, 默认[RoundSliderThumbShape], 浮子不负责光晕的绘制
+  /// [overlayShape]光晕的shape, 默认[RoundSliderOverlayShape]
   ///
   /// [SliderTheme]->[SliderThemeData]
   ///
@@ -424,7 +448,9 @@ mixin TileMixin {
     ValueChanged<double>? onChangeStart,
     ValueChanged<double>? onChangeEnd,
     Color? thumbColor,
+    double? thumbRadius /*浮子的半径, 默认10*/,
     Color? overlayColor,
+    double? overlayRadius /*光晕的半径,默认24*/,
     Color? activeTrackColor,
     List<Color>? inactiveTrackGradientColors,
     List<double>? inactiveTrackGradientColorStops,
@@ -437,6 +463,7 @@ mixin TileMixin {
     bool? useCenteredTrackShape,
     SliderTrackShape? trackShape /*轨道的shape*/,
     SliderComponentShape? thumbShape /*浮子的shape*/,
+    SliderComponentShape? overlayShape /*光晕的shape*/,
     TextStyle? valueIndicatorTextStyle /*指示器中的文本样式*/,
   }) {
     if (trackShape == null) {
@@ -460,6 +487,7 @@ mixin TileMixin {
           inactiveColors: inactiveTrackGradientColors,
           inactiveColorStops: inactiveTrackGradientColorStops,
         );
+        //--
         final color = gradientColor ?? activeTrackGradientColors?.last;
         thumbColor ??= color;
         valueIndicatorColor ??= thumbColor;
@@ -473,6 +501,7 @@ mixin TileMixin {
             inactiveColors: inactiveTrackGradientColors,
             inactiveColorStops: inactiveTrackGradientColorStops,
           );
+          //--
           final color = gradientColor ?? activeTrackGradientColors?.last;
           thumbColor ??= color;
           valueIndicatorColor ??= thumbColor;
@@ -491,8 +520,15 @@ mixin TileMixin {
         overlayColor: overlayColor ?? darkAccentColor?.withOpacity(0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
         inactiveTrackColor: inactiveTrackColor,
-        thumbShape: thumbShape,
+        thumbShape: thumbShape ??
+            (thumbRadius == null
+                ? null
+                : RoundSliderThumbShape(enabledThumbRadius: thumbRadius)),
         trackShape: trackShape,
+        overlayShape: overlayShape ??
+            (overlayRadius == null
+                ? null
+                : RoundSliderOverlayShape(overlayRadius: overlayRadius)),
         /*inactiveTrackColor: Colors.redAccent,*/
         trackHeight: trackHeight,
         valueIndicatorTextStyle: valueIndicatorTextStyle,
