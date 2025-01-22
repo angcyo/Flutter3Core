@@ -9,6 +9,9 @@ part of '../../flutter3_widgets.dart';
 /// 上[label]
 /// 下[inputHint]](des)
 class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
+
+  //--label
+
   /// 标签/LabelMixin
   @override
   final String? label;
@@ -64,7 +67,7 @@ class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
   @override
   final TextInputType? inputKeyboardType;
 
-  //--
+  //--tile
 
   /// tile的填充
   final EdgeInsets? tilePadding;

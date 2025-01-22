@@ -647,12 +647,12 @@ class ArrowPositionManager {
           if ((this.screenSize.width - this.anchorBox.centerX) >
               this.contentSize.width / 2) {
             //虽然在右侧, 但是右侧还有足够多的空间显示内容
-            if (this.anchorBox.top > this.contentSize.height) {
-              //顶部够空间
-              preferredPosition = ArrowPosition.topCenter;
-            } else {
-              //否则显示在底部
+            if (this.anchorBox.bottom > this.contentSize.height) {
+              //底部够空间
               preferredPosition = ArrowPosition.bottomCenter;
+            } else {
+              preferredPosition = ArrowPosition.topCenter;
+              //否则显示在顶部
             }
             //debugger();
           } else {
@@ -663,12 +663,12 @@ class ArrowPositionManager {
           if ((this.screenSize.width - this.anchorBox.centerX) >
               this.contentSize.width / 2) {
             //虽然在右侧, 但是右侧还有足够多的空间显示内容
-            if (this.anchorBox.top > this.contentSize.height) {
-              //顶部够空间
-              preferredPosition = ArrowPosition.topCenter;
-            } else {
-              //否则显示在底部
+            if (this.anchorBox.bottom > this.contentSize.height) {
+              //底部够空间
               preferredPosition = ArrowPosition.bottomCenter;
+            } else {
+              //否则显示在顶部部
+              preferredPosition = ArrowPosition.topCenter;
             }
           } else {
             preferredPosition = ArrowPosition.leftStart;

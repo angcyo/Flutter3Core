@@ -17,6 +17,9 @@ class HoverAnchorLayout extends StatefulWidget {
   /// 悬停/点击时显示的内容
   final Widget? content;
 
+  /// [content]构建内容
+  final WidgetNullBuilder? contentBuilder;
+
   /// 控制器
   final HoverAnchorLayoutController? controller;
 
@@ -81,6 +84,7 @@ class HoverAnchorLayout extends StatefulWidget {
     required this.anchor,
     this.controller,
     this.content,
+    this.contentBuilder,
     this.backgroundColor,
     this.backgroundShadows,
     this.showArrow = true,
@@ -156,7 +160,8 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
   //--
 
   /// 是否激活当前的部件功能
-  bool get isEnableLayout => widget.content != null;
+  bool get isEnableLayout =>
+      widget.content != null || widget.contentBuilder != null;
 
   @override
   void initState() {
@@ -379,7 +384,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       radius: widget.radius,
       validHoverAreaList: _validHoverAreaList,
       arrowPositionManager: _arrowPositionManager,
-      content: widget.content,
+      content: widget.content ?? widget.contentBuilder!(ctx),
       onPaintTransform: widget.enableAnimate
           ? (render, context, offset, size) {
               final value = _overlayAnimation
@@ -714,8 +719,9 @@ extension HoverAnchorLayoutEx on Widget {
   /// 使用[HoverAnchorLayout]实现的悬停布局功能
   /// [overlay] 浮窗内容小部件
   /// [arrowPosition] 箭头位置
-  Widget hoverLayout(
-    Widget? overlay, {
+  Widget hoverLayout({
+    Widget? overlay,
+    WidgetNullBuilder? overlayBuilder,
     bool enable = true,
     //--
     ArrowPosition? arrowPosition,
@@ -731,6 +737,7 @@ extension HoverAnchorLayoutEx on Widget {
       HoverAnchorLayout(
         anchor: this,
         content: overlay,
+        contentBuilder: overlayBuilder,
         enable: enable,
         showShadow: showShadow,
         backgroundColor: backgroundColor,

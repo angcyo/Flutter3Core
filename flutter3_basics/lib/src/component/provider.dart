@@ -32,6 +32,9 @@ String? textOf(dynamic data, [BuildContext? context]) {
       data is num ||
       data is Iterable ||
       data is Map) {
+    if (data is double) {
+      return data.toDigits();
+    }
     return "$data";
   }
   if (data is ITextProvider) {
@@ -66,12 +69,13 @@ String? textOf(dynamic data, [BuildContext? context]) {
 
 /// 在一个数据中, 提取Widget
 /// [tryTextWidget] 是否尝试使用[Text]小部件
-Widget? widgetOf(BuildContext context,
-    dynamic data, {
-      bool tryTextWidget = false,
-      TextStyle? textStyle,
-      TextAlign? textAlign,
-    }) {
+Widget? widgetOf(
+  BuildContext context,
+  dynamic data, {
+  bool tryTextWidget = false,
+  TextStyle? textStyle,
+  TextAlign? textAlign,
+}) {
   if (data == null) {
     return null;
   }

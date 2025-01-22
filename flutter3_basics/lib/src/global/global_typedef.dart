@@ -119,6 +119,11 @@ typedef TransformChildDataWidgetBuilder = Widget? Function(
 /// 支持返回null的[WidgetBuilder]
 typedef WidgetNullBuilder = Widget? Function(BuildContext context);
 
+/// 通过一个[value], 返回对应的[Widget]
+/// [WidgetBuilder]
+typedef WidgetValueBuilder = Widget? Function(
+    BuildContext context, dynamic value);
+
 /// [RoutePageBuilder]
 /// [ModalRoute.buildTransitions]
 /// [RouteTransitionsBuilder]
