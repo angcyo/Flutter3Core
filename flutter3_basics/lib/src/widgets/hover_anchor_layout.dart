@@ -477,7 +477,9 @@ class _ArrowPositionWidgetState extends State<_ArrowPositionWidget> {
               borderRadius: _arrowPositionManager.outputRadius,
               boxShadow: widget.backgroundShadows,
             ),
-            child: widget.content,
+            child: widget.content?.clip(
+              borderRadius: _arrowPositionManager.outputRadius,
+            ),
           ).anyParentData(
             left: _arrowPositionManager.outputContentRect.left,
             top: _arrowPositionManager.outputContentRect.top,

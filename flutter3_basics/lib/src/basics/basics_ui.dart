@@ -1236,12 +1236,14 @@ extension WidgetEx on Widget {
     CustomClipper<RRect>? clipper,
     Clip clipBehavior = Clip.antiAlias,
   }) {
-    return ClipRRect(
-      borderRadius: borderRadius ?? BorderRadius.zero,
-      clipper: clipper,
-      clipBehavior: clipBehavior,
-      child: this,
-    );
+    return borderRadius == null
+        ? this
+        : ClipRRect(
+            borderRadius: borderRadius,
+            clipper: clipper,
+            clipBehavior: clipBehavior,
+            child: this,
+          );
   }
 
   /// 圆角
