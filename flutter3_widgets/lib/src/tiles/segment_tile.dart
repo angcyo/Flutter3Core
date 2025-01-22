@@ -112,7 +112,9 @@ class _SegmentTileState extends State<SegmentTile> {
     for (var i = 0; i < count; i++) {
       final isSelected = _isSelectedIndex(i);
       Widget child = _buildSegment(context, i).textStyle(
-        isSelected ? widget.selectedTextStyle : null,
+        isSelected
+            ? widget.selectedTextStyle
+            : widget.selectedTextStyle?.copyWith(fontWeight: FontWeight.normal),
         animate: true,
       );
       if (widget.enable && _canTapIndex(i)) {
