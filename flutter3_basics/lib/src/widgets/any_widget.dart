@@ -53,6 +53,7 @@ typedef AnyWidgetPaintAction = void Function(
   RenderBox render,
   Canvas canvas,
   Size size,
+  Offset offset,
 );
 
 /// [AnyStatefulWidget]
@@ -207,17 +208,7 @@ class _AnyRenderObject extends RenderProxyBoxWithHitTestBehavior {
   @entryPoint
   void paintSelf(PaintingContext context, ui.Offset offset) {
     defaultPaintChild(context, offset, child);
-
-    final onPaint = config?.anyWidget?.onPaint;
-    if (onPaint != null) {
-      final canvas = context.canvas;
-      canvas.save();
-      if (offset != Offset.zero) {
-        canvas.translate(offset.dx, offset.dy);
-      }
-      onPaint(this, canvas, size);
-      canvas.restore();
-    }
+    config?.anyWidget?.onPaint?.call(this, context.canvas, size, offset);
   }
 }
 
@@ -366,17 +357,7 @@ class _AnyContainerRenderObject extends RenderBox
       }
       child = childParentData.nextSibling;
     }
-
-    final onPaint = config?.anyWidget?.onPaint;
-    if (onPaint != null) {
-      final canvas = context.canvas;
-      canvas.save();
-      if (offset != Offset.zero) {
-        canvas.translate(offset.dx, offset.dy);
-      }
-      onPaint(this, canvas, size);
-      canvas.restore();
-    }
+    config?.anyWidget?.onPaint?.call(this, context.canvas, size, offset);
   }
 }
 
