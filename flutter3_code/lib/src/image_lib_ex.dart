@@ -33,7 +33,7 @@ extension ImageLibEx on List<int> {
   /// Find a [Decoder] that is able to decode the given image [data].
   img.Decoder? get imageDecoderForData => img.findDecoderForData(this);
 
-  /// 解码图片
+  /// 图片字节数据/解码图片
   /// # Read/Write
   ///   JPEG
   ///   PNG + Animated APNG
