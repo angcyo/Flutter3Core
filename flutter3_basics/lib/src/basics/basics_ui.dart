@@ -2935,6 +2935,7 @@ extension RenderObjectEx on RenderObject {
     });
   }
 
+  /// 相对自身的动画变换矩阵
   /// [RenderTransform]
   Matrix4? getEffectiveTransform(
     Matrix4 transform, {

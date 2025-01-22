@@ -135,9 +135,16 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
 
   void _handleStatusChanged(AnimationStatus status) {
     assert(mounted);
+    /*assert(() {
+      l.d("动画状态->$status");
+      return true;
+    }());*/
     switch ((_animationStatus.isDismissed, status.isDismissed)) {
       case (false, true):
-        _checkHideHoverLayout(false);
+        //debugger();
+        //_checkHideHoverLayout(false);
+        _isShowHoverLayout = false;
+        _overlayController.hide();
       case (true, false):
         _checkShowHoverLayout();
       case (true, true) || (false, false):
@@ -241,6 +248,9 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
   /// [TooltipState._handleMouseExit]
   void _handleMouseExit(PointerExitEvent event) {
     //l.i("_handleMouseExit");
+    if (!widget.enableHoverShow) {
+      return;
+    }
     _checkHideHoverLayout();
   }
 
@@ -266,7 +276,6 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     }
 
     //debugger();
-
     if (checkHoverArea) {
       //l.d("$_validHoverArea" + " $_mouseGlobalHoverPosition");
       final hoverPosition = _mouseGlobalHoverPosition;
@@ -380,8 +389,14 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
                 //l.d("value->$value");
                 render.postMarkNeedsPaint();
               }
+              /*assert(() {
+                l.d("${_arrowPositionManager.outputArrowBounds.center}");
+                return true;
+              }());*/
               return render.getEffectiveTransform(
-                  Matrix4.diagonal3Values(value, value, 1.0));
+                Matrix4.diagonal3Values(value, value, 1.0),
+                origin: _arrowPositionManager.outputArrowBounds.center,
+              );
             }
           : null,
     ).fadeTransition(widget.enableAnimate ? _overlayAnimation : null)
