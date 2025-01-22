@@ -77,8 +77,11 @@ mixin AnyWidgetMixin<Data> {
   /// 绘制转换回调
   AnyWidgetPaintTransformAction? get onPaintTransform;
 
-  /// 绘制回调
-  AnyWidgetPaintAction? get onPaint;
+  /// 自身绘制前回调
+  AnyWidgetPaintAction? get onBeforePaint;
+
+  /// 自身绘制后回调
+  AnyWidgetPaintAction? get onAfterPaint;
 }
 
 /// 支持一个`child`
@@ -207,8 +210,9 @@ class _AnyRenderObject extends RenderProxyBoxWithHitTestBehavior {
   /// [paint]
   @entryPoint
   void paintSelf(PaintingContext context, ui.Offset offset) {
+    config?.anyWidget?.onBeforePaint?.call(this, context.canvas, size, offset);
     defaultPaintChild(context, offset, child);
-    config?.anyWidget?.onPaint?.call(this, context.canvas, size, offset);
+    config?.anyWidget?.onAfterPaint?.call(this, context.canvas, size, offset);
   }
 }
 
@@ -349,6 +353,7 @@ class _AnyContainerRenderObject extends RenderBox
   /// [paint]
   @entryPoint
   void paintSelf(PaintingContext context, ui.Offset offset) {
+    config?.anyWidget?.onBeforePaint?.call(this, context.canvas, size, offset);
     RenderBox? child = firstChild;
     while (child != null) {
       final childParentData = child.parentData! as AnyParentData;
@@ -357,7 +362,7 @@ class _AnyContainerRenderObject extends RenderBox
       }
       child = childParentData.nextSibling;
     }
-    config?.anyWidget?.onPaint?.call(this, context.canvas, size, offset);
+    config?.anyWidget?.onAfterPaint?.call(this, context.canvas, size, offset);
   }
 }
 
@@ -595,7 +600,8 @@ class AnyStatefulWidget<Data> extends StatefulWidget with AnyWidgetMixin<Data> {
     this.onGetChildOffset,
     this.onLayout,
     this.onPaintTransform,
-    this.onPaint,
+    this.onBeforePaint,
+    this.onAfterPaint,
     this.behavior = HitTestBehavior.deferToChild,
   });
 
@@ -621,7 +627,10 @@ class AnyStatefulWidget<Data> extends StatefulWidget with AnyWidgetMixin<Data> {
   final AnyWidgetPaintTransformAction? onPaintTransform;
 
   @override
-  final AnyWidgetPaintAction? onPaint;
+  final AnyWidgetPaintAction? onBeforePaint;
+
+  @override
+  final AnyWidgetPaintAction? onAfterPaint;
 
   @override
   State<AnyStatefulWidget> createState() => _AnyStatefulWidgetState();
@@ -682,7 +691,7 @@ Widget $any<Data>({
       onLayout:
           onLayout ?? (size == null ? null : (render, constraints, _) => size),
       onPaintTransform: onPaintTransform,
-      onPaint: onPaint,
+      onAfterPaint: onPaint,
       behavior: behavior,
       child: child,
     );
@@ -701,7 +710,8 @@ class AnyContainerStatefulWidget<Data> extends StatefulWidget
     this.onGetChildOffset,
     this.onLayout,
     this.onPaintTransform,
-    this.onPaint,
+    this.onBeforePaint,
+    this.onAfterPaint,
     this.behavior = HitTestBehavior.deferToChild,
   });
 
@@ -727,7 +737,10 @@ class AnyContainerStatefulWidget<Data> extends StatefulWidget
   final AnyWidgetPaintTransformAction? onPaintTransform;
 
   @override
-  final AnyWidgetPaintAction? onPaint;
+  final AnyWidgetPaintAction? onBeforePaint;
+
+  @override
+  final AnyWidgetPaintAction? onAfterPaint;
 
   @override
   State<AnyContainerStatefulWidget> createState() =>
@@ -790,7 +803,7 @@ Widget $anyContainer<Data>({
       onLayout:
           onLayout ?? (size == null ? null : (render, constraints, _) => size),
       onPaintTransform: onPaintTransform,
-      onPaint: onPaint,
+      onAfterPaint: onPaint,
       behavior: behavior,
       children: children,
     );

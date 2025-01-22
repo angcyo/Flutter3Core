@@ -47,6 +47,16 @@ class FlowLayout extends MultiChildRenderObjectWidget {
   /// [FlowLayoutRender.matchLineHeight]
   final bool? matchLineHeight;
 
+  //--
+
+  /// 自身绘制前回调
+  /// [AnyWidgetMixin]
+  final AnyWidgetPaintAction? onBeforePaint;
+
+  /// 自身绘制后回调
+  /// [AnyWidgetMixin]
+  final AnyWidgetPaintAction? onAfterPaint;
+
   const FlowLayout({
     super.key,
     super.children,
@@ -63,6 +73,8 @@ class FlowLayout extends MultiChildRenderObjectWidget {
     this.lineMainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.matchLineHeight,
+    this.onBeforePaint,
+    this.onAfterPaint,
   });
 
   @override
@@ -80,6 +92,8 @@ class FlowLayout extends MultiChildRenderObjectWidget {
         lineMainAxisAlignment: lineMainAxisAlignment,
         crossAxisAlignment: crossAxisAlignment,
         matchLineHeight: matchLineHeight,
+        onBeforePaint: onBeforePaint,
+        onAfterPaint: onAfterPaint,
       );
 
   @override
@@ -98,6 +112,8 @@ class FlowLayout extends MultiChildRenderObjectWidget {
       ..lineMainAxisAlignment = lineMainAxisAlignment
       ..crossAxisAlignment = crossAxisAlignment
       ..matchLineHeight = matchLineHeight
+      ..onBeforePaint = onBeforePaint
+      ..onAfterPaint = onAfterPaint
       ..markNeedsLayout();
   }
 
@@ -346,6 +362,16 @@ class FlowLayoutRender extends RenderBox
   /// [FlowLayoutParentData.matchLineHeight]
   bool? matchLineHeight;
 
+  //--
+
+  /// 自身绘制前回调
+  /// [AnyWidgetMixin]
+  AnyWidgetPaintAction? onBeforePaint;
+
+  /// 自身绘制后回调
+  /// [AnyWidgetMixin]
+  AnyWidgetPaintAction? onAfterPaint;
+
   FlowLayoutRender({
     this.padding,
     this.childHorizontalGap,
@@ -360,6 +386,9 @@ class FlowLayoutRender extends RenderBox
     this.lineMainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.matchLineHeight,
+    //--
+    this.onBeforePaint,
+    this.onAfterPaint,
   });
 
   /// [RenderObjectElement.attachRenderObject]
@@ -828,7 +857,9 @@ class FlowLayoutRender extends RenderBox
       return true;
     }());*/
     //debugDrawBoxBounds(context, offset);
+    onBeforePaint?.call(this, context.canvas, size, offset);
     defaultPaint(context, offset);
+    onAfterPaint?.call(this, context.canvas, size, offset);
   }
 }
 
@@ -853,6 +884,9 @@ extension FlowLayoutListEx on WidgetNullList {
     MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.center,
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
     bool? matchLineHeight,
+    //--
+    AnyWidgetPaintAction? onBeforePaint,
+    AnyWidgetPaintAction? onAfterPaint,
   }) {
     WidgetList list = filterNull();
     if (isNil(list)) {
@@ -880,6 +914,8 @@ extension FlowLayoutListEx on WidgetNullList {
       lineMainAxisAlignment: lineMainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
       matchLineHeight: matchLineHeight,
+      onBeforePaint: onBeforePaint,
+      onAfterPaint: onAfterPaint,
       children: list,
     );
   }

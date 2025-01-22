@@ -1233,6 +1233,10 @@ extension WidgetEx on Widget {
   }
 
   /// 圆角
+  /// [ClipRect]
+  /// [ClipOval]
+  /// [ClipRRect]
+  /// [ClipPath]
   Widget clip({
     BorderRadiusGeometry? borderRadius,
     CustomClipper<RRect>? clipper,

@@ -182,7 +182,13 @@ extension RenderObjectMixinEx on RenderObject {
   }
 }
 
+/// [RenderBox]
 extension RenderBoxEx on RenderBox {
+  /// 当前盒子在父级中的偏移
+  Offset get offset => parentData is BoxParentData
+      ? (parentData as BoxParentData).offset
+      : Offset.zero;
+
   /// 调试模式下, 绘制盒子的边界
   /// [debugDrawBoxBounds]
   void debugPaintBoxBounds(PaintingContext context, Offset offset) =>
@@ -215,4 +221,56 @@ extension RenderBoxEx on RenderBox {
     });
     return axis;
   }
+
+  /// 可以访问的child数量
+  /// 通过[RenderObject.visitChildren]获取child的数量
+  int get visitChildCount {
+    int count = 0;
+    visitChildren((child) {
+      count++;
+    });
+    return count;
+  }
+
+  /// 访问所有[RenderBox]的child
+  /// [RenderObject.visitChildren]
+  /// [visitChildrenBox]
+  /// [visitChildrenBoxIndex]
+  void visitChildrenBox(RenderBoxVisitor visitor) {
+    visitChildren((child) {
+      if (child is RenderBox) {
+        visitor(child);
+      }
+    });
+  }
+
+  /// index:第几个child
+  void visitChildrenBoxIndex(RenderBoxIndexVisitor visitor) {
+    int index = 0;
+    visitChildren((child) {
+      if (child is RenderBox) {
+        visitor(child, index);
+      }
+      index++;
+    });
+  }
+}
+
+typedef RenderBoxVisitor = void Function(RenderBox child);
+typedef RenderBoxIndexVisitor = void Function(RenderBox child, int index);
+
+/// [RenderBoxContainerDefaultsMixin]
+extension RenderBoxContainerDefaultsMixinEx on RenderBoxContainerDefaultsMixin {
+  /// 访问所有child
+  /// [RenderObject.visitChildren]
+  /*void visitChildren(RenderObjectVisitor visitor) {
+    RenderObject? child = firstChild;
+    while (child != null) {
+      visitor(child);
+      final childParentData = child.parentData;
+      if (childParentData is ContainerParentDataMixin) {
+        child = childParentData.nextSibling;
+      }
+    }
+  }*/
 }

@@ -6,10 +6,10 @@ part of '../../../flutter3_widgets.dart';
 ///
 
 typedef SegmentWidgetBuilder = Widget Function(
-    BuildContext context,
-    int index,
-    bool isSelected,
-    );
+  BuildContext context,
+  int index,
+  bool isSelected,
+);
 
 ///
 /// 系统[SegmentedButton]
@@ -51,6 +51,17 @@ class SegmentTile extends StatefulWidget {
   /// 选中后的文本样式
   final TextStyle? selectedTextStyle;
 
+  /// 圆角大小
+  final double radius;
+
+  /// 区段边框的颜色, 同时也是是否绘制边框的使能条件
+  final Color? borderColor;
+
+  /// 选中后的边框颜色,
+  /// 当设置了[borderColor]后, 此值不指定也会有默认值
+  @defInjectMark
+  final Color? selectedBorderColor;
+
   //--
 
   /// 是否激活组件
@@ -76,6 +87,9 @@ class SegmentTile extends StatefulWidget {
     this.equalWidthRange,
     this.selectedDecoration,
     this.selectedTextStyle,
+    this.radius = 2.0,
+    this.borderColor,
+    this.selectedBorderColor,
     //--
     this.enable = true,
     this.isMultiSelect = false,
@@ -87,7 +101,11 @@ class SegmentTile extends StatefulWidget {
 }
 
 class _SegmentTileState extends State<SegmentTile> {
-  final _radius = 2.0;
+  double get _radius => widget.radius;
+
+  int get segmentCount => widget.segments?.length ?? widget.segmentCount;
+
+  //--
 
   /// 选中的列表
   final List<int> _selectedIndexList = [];
@@ -107,9 +125,9 @@ class _SegmentTileState extends State<SegmentTile> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final count = widget.segments?.length ?? widget.segmentCount;
+
     final children = <Widget>[];
-    for (var i = 0; i < count; i++) {
+    for (var i = 0; i < segmentCount; i++) {
       final isSelected = _isSelectedIndex(i);
       Widget child = _buildSegment(context, i).textStyle(
         isSelected
@@ -120,31 +138,70 @@ class _SegmentTileState extends State<SegmentTile> {
       if (widget.enable && _canTapIndex(i)) {
         child = child.ink(() {
           _onTapSegment(i);
-        }, radius: _radius).material(radius: _radius);
+        }, borderRadius: _buildBorderRadius(i)).material(
+            borderRadius: _buildBorderRadius(i));
       }
       child = child.stateDecoration(
         isSelected
             ? widget.selectedDecoration ??
-            fillDecoration(
-              context: context,
-              color: globalTheme.accentColor,
-              radius: _radius,
-            )
+                (widget.borderColor == null
+                    ? fillDecoration(
+                        context: context,
+                        color: globalTheme.accentColor,
+                        borderRadius: _buildBorderRadius(i),
+                      )
+                    : null)
             : null,
       );
       children.add(child);
     }
     final result = children
-        .flowLayout(
-      equalWidthRange: widget.equalWidthRange,
-      padding: widget.tilePadding,
-    )
-        ?.stateDecoration(widget.tileDecoration ??
-        fillDecoration(
-          context: context,
-          color: globalTheme.itemWhiteBgColor,
-          radius: _radius,
-        )) ??
+            .flowLayout(
+              equalWidthRange: widget.equalWidthRange,
+              padding: widget.tilePadding,
+              /*childGap: 1,*/
+              onAfterPaint: widget.borderColor != null
+                  ? (render, canvas, size, offset) {
+                      //先绘制未选中的样式
+                      render.visitChildrenBoxIndex((child, index) {
+                        final isSelected = _isSelectedIndex(index);
+                        if (!isSelected) {
+                          final childOffset = offset + child.offset;
+                          canvas.drawRRect(
+                            _buildBorderRadius(index)
+                                .toRRect((childOffset & child.size)),
+                            Paint()
+                              ..color = widget.borderColor!
+                              ..style = PaintingStyle.stroke,
+                          );
+                        }
+                      });
+                      //在绘制选中的样式, 防止样式覆盖
+                      render.visitChildrenBoxIndex((child, index) {
+                        final isSelected = _isSelectedIndex(index);
+                        if (isSelected) {
+                          final childOffset = offset + child.offset;
+                          canvas.drawRRect(
+                            _buildBorderRadius(index)
+                                .toRRect((childOffset & child.size)),
+                            Paint()
+                              ..color = widget.selectedBorderColor ??
+                                  globalTheme.accentColor
+                              ..style = PaintingStyle.stroke,
+                          );
+                        }
+                      });
+                    }
+                  : null,
+            )
+            ?.stateDecoration(widget.tileDecoration ??
+                (widget.borderColor == null
+                    ? fillDecoration(
+                        context: context,
+                        color: globalTheme.itemWhiteBgColor,
+                        radius: _radius,
+                      )
+                    : null)) ??
         empty;
     return result.disable(!widget.enable);
   }
@@ -164,6 +221,32 @@ class _SegmentTileState extends State<SegmentTile> {
 
   /// 是否选中索引
   bool _isSelectedIndex(int index) => _selectedIndexList.contains(index);
+
+  /// 获取指定索引的圆角信息
+  BorderRadius _buildBorderRadius(int index) {
+    final isFirst = index == 0;
+    final isLast = index == segmentCount - 1;
+    if (isFirst && isLast) {
+      return BorderRadius.circular(_radius);
+    }
+    if (isFirst) {
+      return BorderRadius.only(
+        topLeft: Radius.circular(_radius),
+        topRight: Radius.zero,
+        bottomLeft: Radius.circular(_radius),
+        bottomRight: Radius.zero,
+      );
+    }
+    if (isLast) {
+      return BorderRadius.only(
+        topLeft: Radius.zero,
+        topRight: Radius.circular(_radius),
+        bottomLeft: Radius.zero,
+        bottomRight: Radius.circular(_radius),
+      );
+    }
+    return BorderRadius.zero;
+  }
 
   /// 构建一个区段
   Widget _buildSegment(BuildContext context, int index) {
