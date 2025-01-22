@@ -971,8 +971,10 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// 旋转元素
+  /// 旋转元素, 无动画
   /// [radians] 旋转角度, 顺时针为正, 弧度单位
+  /// [RotateAnimation] 旋转动画
+  /// [RotationTransition] 旋转变换
   Widget rotate(
     double radians, {
     AlignmentGeometry alignment = Alignment.center,

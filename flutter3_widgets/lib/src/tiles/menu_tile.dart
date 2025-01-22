@@ -39,6 +39,9 @@ class LabelMenuTile extends StatefulWidget with LabelMixin {
   /// 菜单的值
   final Widget? valueWidget;
 
+  /// 菜单的提示箭头, 会有旋转提示
+  final Widget? arrowWidget;
+
   /// 菜单的值的小部件构造器
   @defInjectMark
   final WidgetValueBuilder? valueWidgetBuilder;
@@ -46,6 +49,11 @@ class LabelMenuTile extends StatefulWidget with LabelMixin {
   /// 选中后, 显示的图标
   @defInjectMark
   final Widget? checkedWidget;
+
+  /// 选中回调, 并不需要再此会调用更新界面
+  /// - 索引
+  /// - value
+  final DoubleValueChanged<int, dynamic>? onSelectedAction;
 
   //--tile
 
@@ -68,8 +76,10 @@ class LabelMenuTile extends StatefulWidget with LabelMixin {
     this.value,
     this.valueList,
     this.valueWidget,
+    this.arrowWidget,
     this.valueWidgetBuilder,
     this.checkedWidget,
+    this.onSelectedAction,
     //--
     this.tilePadding = kTilePadding,
     this.menuPadding = kItemPadding,
@@ -80,6 +90,24 @@ class LabelMenuTile extends StatefulWidget with LabelMixin {
 }
 
 class _LabelMenuTileState extends State<LabelMenuTile> {
+  /// 初始化值
+  dynamic initValue;
+
+  ///
+  bool _isShowOverlay = false;
+
+  @override
+  void initState() {
+    initValue = widget.value;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant LabelMenuTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    initValue = widget.value;
+  }
+
   @override
   Widget build(BuildContext context) {
     //build label
@@ -95,33 +123,42 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
     }
 
     //
-    Widget? value =
-        widget.valueWidget ?? _buildValueWidget(context, widget.value);
+    Widget? value = widget.valueWidget ?? _buildValueWidget(context, initValue);
     //debugger();
     if (value != null) {
       value = [
         empty.expanded(),
-        value.backgroundColor(Colors.red),
+        value,
+        widget.arrowWidget?.rotate(_isShowOverlay ? -180.hd : 0),
       ]
           .row(crossAxisAlignment: CrossAxisAlignment.center)
           ?.ink(() {}, enable: !isNil(widget.valueList))
           /*.material()*/
           .hoverLayout(
-            overlayBuilder: (ctx) => [
-              for (final v in widget.valueList ?? [])
-                _buildValueWidget(ctx, v, showIcon: true)
-                    ?.paddingInsets(widget.menuPadding)
-                    .constrained(minWidth: 140)
-                    .ink(() {})
-                    .material()
-            ].scrollVertical()?.constrained(maxHeight: 300),
-            enable: !isNil(widget.valueList),
-            showArrow: false,
-          );
+              overlayBuilder: (ctx) => [
+                    ...?widget.valueList?.mapIndexed((index, v) {
+                      return _buildValueWidget(ctx, v, showIcon: true)
+                          ?.paddingInsets(widget.menuPadding)
+                          .constrained(minWidth: 140)
+                          .ink(() {
+                        if (initValue != v) {
+                          initValue = v;
+                          widget.onSelectedAction?.call(index, v);
+                          updateState();
+                        }
+                      }).material();
+                    }),
+                  ].scrollVertical()?.constrained(maxHeight: 300),
+              enable: !isNil(widget.valueList),
+              showArrow: false,
+              onShowAction: (show) {
+                _isShowOverlay = show;
+                updateState();
+              });
     }
 
     return [
-      label?.backgroundColor(Colors.yellow),
+      label,
       value?.expanded(),
     ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
@@ -143,7 +180,7 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
       return valueWidget;
     }
     final globalTheme = GlobalTheme.of(context);
-    final isChecked = widget.value == value;
+    final isChecked = initValue == value;
     final checkedWidget = widget.checkedWidget ??
         Icon(
           Icons.check,

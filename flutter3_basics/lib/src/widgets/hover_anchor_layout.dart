@@ -23,6 +23,9 @@ class HoverAnchorLayout extends StatefulWidget {
   /// 控制器
   final HoverAnchorLayoutController? controller;
 
+  /// 显示/隐藏的状态回调
+  final ValueCallback<bool>? onShowAction;
+
   //--
 
   /// 命中区域放大的溢出大小
@@ -83,6 +86,7 @@ class HoverAnchorLayout extends StatefulWidget {
     super.key,
     required this.anchor,
     this.controller,
+    this.onShowAction,
     this.content,
     this.contentBuilder,
     this.backgroundColor,
@@ -147,14 +151,27 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       case (false, true):
         //debugger();
         //_checkHideHoverLayout(false);
-        _isShowHoverLayout = false;
-        _overlayController.hide();
+        _hideOverlay();
       case (true, false):
         _checkShowHoverLayout();
       case (true, true) || (false, false):
         break;
     }
     _animationStatus = status;
+  }
+
+  /// 隐藏浮窗
+  void _hideOverlay() {
+    _isShowHoverLayout = false;
+    _overlayController.hide();
+    widget.onShowAction?.call(false);
+  }
+
+  /// 显示浮窗
+  void _showOverlay() {
+    _isShowHoverLayout = true;
+    _overlayController.show();
+    widget.onShowAction?.call(true);
   }
 
   //--
@@ -265,8 +282,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     }
     //debugger();
     //l.d("show->${nowTimeString()}");
-    _overlayController.show();
-    _isShowHoverLayout = true;
+    _showOverlay();
     if (widget.enableAnimate && isMounted) {
       _controller.forward();
     }
@@ -304,7 +320,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
     if (widget.enableAnimate) {
       _controller.reverse();
     } else {
-      _overlayController.hide();
+      _hideOverlay();
     }
   }
 
@@ -723,6 +739,7 @@ extension HoverAnchorLayoutEx on Widget {
     Widget? overlay,
     WidgetNullBuilder? overlayBuilder,
     bool enable = true,
+    ValueCallback<bool>? onShowAction,
     //--
     ArrowPosition? arrowPosition,
     bool showArrow = true,
@@ -736,6 +753,7 @@ extension HoverAnchorLayoutEx on Widget {
   }) =>
       HoverAnchorLayout(
         anchor: this,
+        onShowAction: onShowAction,
         content: overlay,
         contentBuilder: overlayBuilder,
         enable: enable,
