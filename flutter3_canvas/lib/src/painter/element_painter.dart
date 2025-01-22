@@ -897,6 +897,11 @@ class ElementPainter extends IElementPainter {
     UiPath? path,
   ) {
     if (path != null) {
+      if (paintProperty?.rect.isEmpty == true &&
+          paint.style == PaintingStyle.fill) {
+        //在没有宽度或高度时, 比如线. 此时必须要设置style为stroke, 否则绘制出来的线看不到
+        paint.style = PaintingStyle.stroke;
+      }
       canvas.drawPath(path.transformPath(paintProperty?.operateMatrix), paint);
     }
   }
