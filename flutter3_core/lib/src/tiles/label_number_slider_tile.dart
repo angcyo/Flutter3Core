@@ -35,7 +35,10 @@ class LabelNumberSliderTile extends StatefulWidget {
   final double? trackHeight;
 
   /// 轨道颜色
+  @defInjectMark
   final Color? activeTrackColor;
+
+  /// 不活跃滚动颜色
   final Color? inactiveTrackColor;
 
   /// 是否使用双边的轨道
@@ -48,6 +51,7 @@ class LabelNumberSliderTile extends StatefulWidget {
   final TextStyle? valueIndicatorTextStyle;
 
   /// 浮子的颜色
+  @defInjectMark
   final Color? thumbColor;
 
   /// 自定义的浮子
@@ -174,13 +178,13 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       activeTrackGradientColors: widget.activeTrackGradientColors,
       activeTrackColor: widget.activeTrackColor ??
           (widget.inactiveTrackGradientColors == null
-              ? null
+              ? globalTheme.primaryColor
               : Colors.transparent),
       inactiveTrackColor: widget.inactiveTrackColor,
       inactiveTrackGradientColors: widget.inactiveTrackGradientColors,
       trackHeight: widget.trackHeight,
       useCenteredTrackShape: widget.useCenteredTrackShape,
-      thumbColor: widget.thumbColor,
+      thumbColor: widget.thumbColor ?? globalTheme.accentColor,
       valueIndicatorColor: widget.valueIndicatorColor,
       valueIndicatorTextStyle: widget.valueIndicatorTextStyle,
       thumbShape: widget.thumbShape,

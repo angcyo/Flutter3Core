@@ -61,7 +61,8 @@ class SvgBuilder {
   void writeViewBox(
     @dp Rect? bounds, {
     IUnit? boundsUnit = IUnit.mm,
-    bool writeUnitTransform = false,
+    bool writeProperty = false /*写入一些属性?*/,
+    bool writeUnitTransform = false /*写入unit对应的transform?*/,
   }) {
     buffer.write(svgHeader);
     (customSvgHeaderAnnotation ?? svgHeaderAnnotation)?.let((it) {
@@ -88,7 +89,7 @@ class SvgBuilder {
 
     //--
     if (boundsUnit != null) {
-      if (bounds != null) {
+      if (bounds != null && writeProperty) {
         buffer.write(
             'acy:x="${formatValue(bounds.left.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
             'acy:y="${formatValue(bounds.top.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');

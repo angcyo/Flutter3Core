@@ -241,6 +241,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///   return Future.value(true);
   /// };
   /// ```
+  /// [openFilePath]
   GlobalOpenUrlFn? openFileFn = (context, file, meta) {
     assert(() {
       l.w("企图打开file:$file from:$context meta:$meta");

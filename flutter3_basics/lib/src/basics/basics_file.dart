@@ -620,9 +620,9 @@ extension FileEx on File {
     try {
       await copy(File("$folder/$filename").path);
       return true;
-    } catch (e) {
+    } catch (e, s) {
       assert(() {
-        print(e);
+        printError(e, s);
         return true;
       }());
       return false;

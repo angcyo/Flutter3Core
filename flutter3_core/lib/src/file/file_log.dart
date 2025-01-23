@@ -47,6 +47,9 @@ extension LogEx on Object {
   }) async =>
       "$this".filePathOf(subFolder, useCacheFolder);
 
+  /// [writeToFile]
+  Future<File> saveToFile(File? file) => writeToFile(file: file);
+
   /// 写入到文件, 返回对应的文件
   /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象
   /// [FileDataType] 支持的数据类型

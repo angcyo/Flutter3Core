@@ -65,7 +65,6 @@ class SwitchTile extends StatefulWidget {
 
 class _SwitchTileState extends State<SwitchTile>
     with TileMixin, ValueChangeMixin<SwitchTile, bool> {
-
   @override
   bool getInitialValueMixin() => widget.value;
 
@@ -237,7 +236,7 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
         .ink(() {
       //debugger();
       _changeValue(!currentValueMixin);
-    }).material();
+    }, splashColor: Colors.transparent).material();
   }
 
   void _changeValue(bool toValue) async {

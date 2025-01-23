@@ -179,6 +179,11 @@ class ElementPainter extends IElementPainter {
 
   PaintState get paintState => _paintState;
 
+  /// --
+  String? get elementUuid => paintState.elementUuid;
+
+  String? get elementName => paintState.elementName;
+
   /*set paintState(PaintState value) {
     //debugger();
     final old = _paintState;

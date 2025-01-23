@@ -57,6 +57,10 @@ class FlowLayout extends MultiChildRenderObjectWidget {
   /// [AnyWidgetMixin]
   final AnyWidgetPaintAction? onAfterPaint;
 
+  //--
+
+  final String? debugLabel;
+
   const FlowLayout({
     super.key,
     super.children,
@@ -75,6 +79,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
     this.matchLineHeight,
     this.onBeforePaint,
     this.onAfterPaint,
+    this.debugLabel,
   });
 
   @override
@@ -94,6 +99,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
         matchLineHeight: matchLineHeight,
         onBeforePaint: onBeforePaint,
         onAfterPaint: onAfterPaint,
+        debugLabel: debugLabel,
       );
 
   @override
@@ -114,6 +120,7 @@ class FlowLayout extends MultiChildRenderObjectWidget {
       ..matchLineHeight = matchLineHeight
       ..onBeforePaint = onBeforePaint
       ..onAfterPaint = onAfterPaint
+      ..debugLabel = debugLabel
       ..markNeedsLayout();
   }
 
@@ -131,7 +138,8 @@ class FlowLayout extends MultiChildRenderObjectWidget {
       ..add(DiagnosticsProperty<LayoutBoxConstraints>(
           'selfConstraints', selfConstraints))
       ..add(DiagnosticsProperty<BoxConstraints>(
-          'childConstraints', childConstraints));
+          'childConstraints', childConstraints))
+      ..add(StringProperty('debugLabel', debugLabel));
   }
 }
 
@@ -372,6 +380,8 @@ class FlowLayoutRender extends RenderBox
   /// [AnyWidgetMixin]
   AnyWidgetPaintAction? onAfterPaint;
 
+  String? debugLabel;
+
   FlowLayoutRender({
     this.padding,
     this.childHorizontalGap,
@@ -389,6 +399,7 @@ class FlowLayoutRender extends RenderBox
     //--
     this.onBeforePaint,
     this.onAfterPaint,
+    this.debugLabel,
   });
 
   /// [RenderObjectElement.attachRenderObject]
@@ -403,6 +414,22 @@ class FlowLayoutRender extends RenderBox
   }
 
   @override
+  void detach() {
+    //debugger(when: debugLabel != null);
+    _childUsedWidth = 0;
+    _childUsedHeight = 0;
+    super.detach();
+  }
+
+  @override
+  void markNeedsLayout() {
+    //debugger(when: debugLabel != null);
+    _childUsedWidth = 0;
+    _childUsedHeight = 0;
+    super.markNeedsLayout();
+  }
+
+  @override
   ui.Size computeDryLayout(covariant BoxConstraints constraints) {
     return super.computeDryLayout(constraints);
   }
@@ -414,8 +441,8 @@ class FlowLayoutRender extends RenderBox
 
   @override
   void performLayout() {
-    final BoxConstraints constraints = this.constraints;
-    //debugger();
+    final constraints = this.constraints;
+    debugger(when: debugLabel != null);
     measureChild();
     layoutChild();
 
@@ -625,8 +652,9 @@ class FlowLayoutRender extends RenderBox
       //--
       //debugger();
       ChildLayoutHelper.layoutChild(child, childConstraints);
-      childMaxWidth = max(childMaxWidth, child.size.width);
-      childMaxHeight = max(childMaxHeight, child.size.height);
+      final childSize = child.size;
+      childMaxWidth = max(childMaxWidth, childSize.width);
+      childMaxHeight = max(childMaxHeight, childSize.height);
     }
   }
 
@@ -707,6 +735,7 @@ class FlowLayoutRender extends RenderBox
 
     //matchLineHeight 功能适配
     childrenLineList.forEachIndexed((index, lineChildList) {
+      /*debugger(when: debugLabel != null);*/
       final lineHeight = getLineUsedHeight(lineChildList);
       for (final child in lineChildList) {
         final childParentData = child.parentData! as FlowLayoutParentData;
@@ -743,7 +772,7 @@ class FlowLayoutRender extends RenderBox
     double top = paddingTop;
 
     if (maxHeight != double.infinity) {
-      //获取child总行的高度
+      //获取child总行的高度/整体对齐偏移
       if (mainAxisAlignment == MainAxisAlignment.center) {
         top = (maxHeight - childUsedHeight) / 2 + paddingTop - paddingBottom;
       } else if (mainAxisAlignment == MainAxisAlignment.end) {
@@ -753,7 +782,7 @@ class FlowLayoutRender extends RenderBox
     double left = paddingLeft;
     //遍历一行一行
     childrenLineList.forEachIndexed((index, lineChildList) {
-      //debugger();
+      /*debugger(when: debugLabel != null);*/
       double lineMaxWidth = getLineUsedWidth(lineChildList);
       double lineMaxHeight = getLineUsedHeight(lineChildList);
       double lineUsedHeight = 0;
@@ -772,6 +801,7 @@ class FlowLayoutRender extends RenderBox
         final FlowLayoutParentData childParentData =
             child.parentData! as FlowLayoutParentData;
 
+        //行内对齐偏移
         double lineTop = top;
         if (lineMainAxisAlignment == MainAxisAlignment.center) {
           lineTop = top + (lineMaxHeight - child.size.height) / 2;
@@ -887,6 +917,7 @@ extension FlowLayoutListEx on WidgetNullList {
     //--
     AnyWidgetPaintAction? onBeforePaint,
     AnyWidgetPaintAction? onAfterPaint,
+    String? debugLabel,
   }) {
     WidgetList list = filterNull();
     if (isNil(list)) {
@@ -916,6 +947,7 @@ extension FlowLayoutListEx on WidgetNullList {
       matchLineHeight: matchLineHeight,
       onBeforePaint: onBeforePaint,
       onAfterPaint: onAfterPaint,
+      debugLabel: debugLabel,
       children: list,
     );
   }

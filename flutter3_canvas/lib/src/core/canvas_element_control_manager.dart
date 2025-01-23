@@ -44,12 +44,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 是否要绘制[PaintInfoType]信息
   bool paintPainterInfo = true;
 
-  /// 绘制选中元素的信息, 比如大小/位置/旋转角度
+  /// 绘制选中元素的信息, 比如大小/位置/旋转角度. 默认绘制元素的大小信息
   /// [paint]
   /// [_paintControlLocationInfo]
   /// [_paintControlSizeInfo]
   /// [_paintControlRotateInfo]
-  PaintInfoType _paintInfoType = PaintInfoType.none;
+  PaintInfoType _paintInfoType = PaintInfoType.size;
 
   /// 绘制[_paintInfoType]的方向, 目前仅支持上下绘制
   /// [AxisDirection.up].
@@ -1047,6 +1047,11 @@ class ElementSelectComponent extends ElementGroupPainter
         MultiPointerDetectorMixin,
         HandleEventMixin {
   final CanvasElementControlManager canvasElementControlManager;
+
+  /// 元素名称
+  @override
+  String? get elementName =>
+      isNil(children) ? null : children?.firstOrNull?.elementName;
 
   //
 

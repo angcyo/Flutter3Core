@@ -2170,8 +2170,8 @@ extension WidgetEx on Widget {
     EdgeInsetsGeometry? padding,
     double? width,
     double? height,
-    Color? highlightColor,
-    Color? splashColor,
+    Color? highlightColor /*按下高亮的颜色*/,
+    Color? splashColor /*涟漪的颜色*/,
     GestureLongPressCallback? onLongPress,
   }) {
     if (!enable) {
@@ -2482,7 +2482,7 @@ extension WidgetEx on Widget {
   ]) {
     //debugger();
     final globalConfig = GlobalConfig.of(context);
-    if (globalConfig.isInTabletModel) {
+    if (globalConfig.isInTabletModel || isDesktopOrWeb) {
       //平板模式
       final globalTheme = GlobalTheme.of(context);
       return constrainedBox(globalTheme.tabletDialogConstraints)

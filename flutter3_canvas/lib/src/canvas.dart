@@ -228,9 +228,13 @@ class CanvasRenderBox extends RenderBox
         constraints.maxWidth == double.infinity ? null : constraints.maxWidth;
     double? height =
         constraints.maxHeight == double.infinity ? null : constraints.maxHeight;
+    //debugger();
     size = Size(
       width ?? height ?? screenWidth,
-      height ?? width ?? screenHeight,
+      height ??
+          (isDesktopOrWeb
+              ? (width ?? screenHeight) / 3
+              : (width ?? screenHeight)),
     );
     //debugger();
     canvasDelegate.layout(size);

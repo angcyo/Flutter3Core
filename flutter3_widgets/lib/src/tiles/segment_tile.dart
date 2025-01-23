@@ -29,7 +29,7 @@ class SegmentTile extends StatefulWidget {
   /// 选中的索引列表
   final Iterable<int>? selectedIndexList;
 
-  /// 选中回调, 并不需要再此会调用更新界面
+  /// 选中的索引回调, 并不需要再此会调用更新界面
   final void Function(List<int> list)? onSelectedAction;
 
   //--
@@ -135,11 +135,17 @@ class _SegmentTileState extends State<SegmentTile> {
             : widget.selectedTextStyle?.copyWith(fontWeight: FontWeight.normal),
         animate: true,
       );
-      if (widget.enable && _canTapIndex(i)) {
-        child = child.ink(() {
-          _onTapSegment(i);
-        }, borderRadius: _buildBorderRadius(i)).material(
-            borderRadius: _buildBorderRadius(i));
+      if (widget.enable) {
+        child = child.ink(
+          () {
+            if (_canTapIndex(i)) {
+              _onTapSegment(i);
+            }
+          },
+          borderRadius: _buildBorderRadius(i),
+          /*highlightColor: Colors.redAccent,*/
+          splashColor: Colors.transparent,
+        ).material(borderRadius: _buildBorderRadius(i));
       }
       child = child.stateDecoration(
         isSelected
@@ -157,6 +163,10 @@ class _SegmentTileState extends State<SegmentTile> {
     }
     final result = children
             .flowLayout(
+              /*debugLabel: "segment",*/
+              matchLineHeight: true,
+              mainAxisAlignment: MainAxisAlignment.start,
+              lineMainAxisAlignment: MainAxisAlignment.start,
               equalWidthRange: widget.equalWidthRange,
               padding: widget.tilePadding,
               /*childGap: 1,*/
