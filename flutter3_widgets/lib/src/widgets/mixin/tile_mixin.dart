@@ -511,13 +511,13 @@ mixin TileMixin {
     }
     final globalTheme = GlobalTheme.of(context);
     final darkAccentColor =
-        context.isThemeDark ? globalTheme.accentColor : null;
+        context.isThemeDark ? globalTheme.accentColor : globalTheme.accentColor;
     return SliderTheme(
       data: SliderThemeData(
         showValueIndicator: showValueIndicator,
         thumbColor: thumbColor ?? darkAccentColor,
         activeTrackColor: activeTrackColor ?? darkAccentColor,
-        overlayColor: overlayColor ?? darkAccentColor?.withOpacity(0.1),
+        overlayColor: overlayColor ?? darkAccentColor.withOpacity(0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
         inactiveTrackColor: inactiveTrackColor,
         thumbShape: thumbShape ??

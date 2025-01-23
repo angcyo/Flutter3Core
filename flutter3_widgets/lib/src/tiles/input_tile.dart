@@ -9,7 +9,6 @@ part of '../../flutter3_widgets.dart';
 /// 上[label]
 /// 下[inputHint]](des)
 class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
-
   //--label
 
   /// 标签/LabelMixin
@@ -233,13 +232,13 @@ class _SingleLabelInputTileState extends State<SingleLabelInputTile>
       label,
       input
           .container(
-        color: globalTheme.itemWhiteBgColor,
-        radius: kDefaultBorderRadiusX,
-        constraints: BoxConstraints(
-          minWidth: widget.inputWidth ?? 0,
-          maxWidth: widget.inputWidth ?? double.infinity,
-        ),
-      )
+            color: globalTheme.itemWhiteBgColor,
+            radius: kDefaultBorderRadiusX,
+            constraints: BoxConstraints(
+              minWidth: widget.inputWidth ?? 0,
+              maxWidth: widget.inputWidth ?? double.infinity,
+            ),
+          )
           .paddingSymmetric(horizontal: kX, vertical: kL)
           .align(Alignment.centerRight)
           .expanded(),
@@ -319,9 +318,9 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
 
   NumType? get _inputNumType =>
       widget.inputNumType ??
-          (widget.inputText is int
-              ? NumType.i
-              : (widget.inputText is double ? NumType.d : null));
+      (widget.inputText is int
+          ? NumType.i
+          : (widget.inputText is double ? NumType.d : null));
 
   bool get isInt => _inputNumType == NumType.i;
 
@@ -354,7 +353,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   void didUpdateWidget(covariant NumberInputWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.inputText != inputText) {
-      inputConfig.updateText(inputText);
+      inputConfig.updateText(inputText, notify: false);
     }
   }
 
@@ -371,8 +370,8 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
           (isDouble
               ? [decimalTextInputFormatter]
               : isInt
-              ? [numberTextInputFormatter]
-              : null),
+                  ? [numberTextInputFormatter]
+                  : null),
       textAlign: TextAlign.center,
       inputBorderType: InputBorderType.none,
       inputBuildCounter: null,
@@ -382,10 +381,10 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
       hintText: widget.hintText,
       onChanged: (value) {
         //debugger();
-        assert(() {
+        /*assert(() {
           l.d("onInputChanged:${inputConfig.text}->$value");
           return true;
-        }());
+        }());*/
         widget.onChanged?.call(_formatResultValue(value));
       },
       onSubmitted: (value) {

@@ -125,32 +125,40 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     final numberStr = formatNumber(_currentValue, numType: widget._numType);
     final number = widget.showNumber
         ? isDesktopOrWeb
-            ? buildNumberInputWidget(context, numberStr,
+            ? buildNumberInputWidget(
+                context,
+                numberStr,
                 minValue: widget.minValue,
                 maxValue: widget.maxValue,
                 maxDigits: widget.maxDigits,
-                numType: widget._numType, onChanged: (value) {
-                if (value != null) {
-                  _currentValue = value;
-                  widget.onValueChanged?.call(_currentValue);
-                  updateState();
-                }
-              })
-            : buildNumberWidget(context, numberStr, onTap: () async {
-                final value =
-                    await context.showWidgetDialog(NumberKeyboardDialog(
-                  number: _currentValue,
-                  minValue: widget.minValue,
-                  maxValue: widget.maxValue,
-                  maxDigits: widget.maxDigits,
-                  numType: widget._numType,
-                ));
-                if (value != null) {
-                  _currentValue = value;
-                  widget.onValueChanged?.call(_currentValue);
-                  updateState();
-                }
-              })
+                numType: widget._numType,
+                onChanged: (value) {
+                  if (value != null) {
+                    _currentValue = value;
+                    widget.onValueChanged?.call(_currentValue);
+                    updateState();
+                  }
+                },
+              )
+            : buildNumberWidget(
+                context,
+                numberStr,
+                onTap: () async {
+                  final value =
+                      await context.showWidgetDialog(NumberKeyboardDialog(
+                    number: _currentValue,
+                    minValue: widget.minValue,
+                    maxValue: widget.maxValue,
+                    maxDigits: widget.maxDigits,
+                    numType: widget._numType,
+                  ));
+                  if (value != null) {
+                    _currentValue = value;
+                    widget.onValueChanged?.call(_currentValue);
+                    updateState();
+                  }
+                },
+              )
         : null;
 
     //
