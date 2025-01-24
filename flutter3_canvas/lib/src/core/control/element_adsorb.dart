@@ -44,24 +44,32 @@ class ElementAdsorbControl
     });
   }
 
-  /// 绘制x轴的吸附线
+  /// 绘制x轴的吸附线, 竖线
   void _paintXAdsorb(
-      Canvas canvas, PaintMeta paintMeta, Rect controlElementBounds) {
+    Canvas canvas,
+    PaintMeta paintMeta,
+    Rect controlElementBounds,
+  ) {
     final xRefValue = _xAdsorbRefValue;
     final refBounds = xRefValue?.refBounds;
-    if (xRefValue != null && refBounds != null) {
+    if (xRefValue != null) {
       final x = xRefValue.refValue;
 
       //上下坐标
       double top, bottom;
-      if (refBounds.center.dy > controlElementBounds.center.dy) {
-        //参考元素在目标的下面
-        top = controlElementBounds.bottom;
-        bottom = refBounds.top;
+      if (refBounds != null) {
+        if (refBounds.center.dy > controlElementBounds.center.dy) {
+          //参考元素在目标的下面
+          top = controlElementBounds.bottom;
+          bottom = refBounds.top;
+        } else {
+          //参考元素在目标的上面
+          top = refBounds.bottom;
+          bottom = controlElementBounds.top;
+        }
       } else {
-        //参考元素在目标的上面
-        top = refBounds.bottom;
-        bottom = controlElementBounds.top;
+        top = controlElementBounds.top - controlElementBounds.height / 2;
+        bottom = controlElementBounds.bottom + controlElementBounds.height / 2;
       }
 
       //距离
@@ -69,10 +77,12 @@ class ElementAdsorbControl
       @sceneCoordinate
       double c = bottom - top;
 
-      if (xRefValue.refType == RefValueType.center || c < 0) {
-        top = refBounds.center.dy;
-        bottom = controlElementBounds.center.dy;
-        c = (bottom - top).abs();
+      if (refBounds != null) {
+        if (xRefValue.refType == RefValueType.center || c < 0) {
+          top = refBounds.center.dy;
+          bottom = controlElementBounds.center.dy;
+          c = (bottom - top).abs();
+        }
       }
 
       //绘制吸附线
@@ -82,39 +92,50 @@ class ElementAdsorbControl
           Paint()
             ..color = canvasStyle.adsorbLineColor
             ..strokeWidth = 1 / paintMeta.canvasScale);
+
       //绘制距离
-      canvas.drawText(
-        axisUnit.format(c.toUnitFromDp(axisUnit)),
-        textColor: canvasStyle.adsorbTextColor,
-        fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
-        getOffset: (painter) {
-          return Offset(
-            x + canvasStyle.adsorbTextOffset,
-            (top + bottom) / 2 - painter.size.height / 2,
-          );
-        },
-      );
+      if (refBounds != null) {
+        canvas.drawText(
+          axisUnit.format(c.toUnitFromDp(axisUnit)),
+          textColor: canvasStyle.adsorbTextColor,
+          fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
+          getOffset: (painter) {
+            return Offset(
+              x + canvasStyle.adsorbTextOffset,
+              (top + bottom) / 2 - painter.size.height / 2,
+            );
+          },
+        );
+      }
     }
   }
 
-  /// 绘制y轴的吸附线
+  /// 绘制y轴的吸附线, 横线
   void _paintYAdsorb(
-      Canvas canvas, PaintMeta paintMeta, Rect controlElementBounds) {
+    Canvas canvas,
+    PaintMeta paintMeta,
+    Rect controlElementBounds,
+  ) {
     final yRefValue = _yAdsorbRefValue;
     final refBounds = yRefValue?.refBounds;
-    if (yRefValue != null && refBounds != null) {
+    if (yRefValue != null) {
       final y = yRefValue.refValue;
 
       //左右坐标
       double left, right;
-      if (refBounds.center.dx > controlElementBounds.center.dx) {
-        //参考元素在目标的右边
-        left = controlElementBounds.right;
-        right = refBounds.left;
+      if (refBounds != null) {
+        if (refBounds.center.dx > controlElementBounds.center.dx) {
+          //参考元素在目标的右边
+          left = controlElementBounds.right;
+          right = refBounds.left;
+        } else {
+          //参考元素在目标的左边
+          left = refBounds.right;
+          right = controlElementBounds.left;
+        }
       } else {
-        //参考元素在目标的左边
-        left = refBounds.right;
-        right = controlElementBounds.left;
+        left = controlElementBounds.left - controlElementBounds.width / 2;
+        right = controlElementBounds.right + controlElementBounds.width / 2;
       }
 
       //距离
@@ -122,10 +143,12 @@ class ElementAdsorbControl
       @sceneCoordinate
       double c = right - left;
 
-      if (yRefValue.refType == RefValueType.center || c < 0) {
-        left = refBounds.center.dx;
-        right = controlElementBounds.center.dx;
-        c = (right - left).abs();
+      if (refBounds != null) {
+        if (yRefValue.refType == RefValueType.center || c < 0) {
+          left = refBounds.center.dx;
+          right = controlElementBounds.center.dx;
+          c = (right - left).abs();
+        }
       }
 
       //绘制吸附线
@@ -137,17 +160,19 @@ class ElementAdsorbControl
             ..strokeWidth = 1 / paintMeta.canvasScale);
 
       //绘制距离
-      canvas.drawText(
-        axisUnit.format(c.toUnitFromDp(axisUnit)),
-        textColor: canvasStyle.adsorbTextColor,
-        fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
-        getOffset: (painter) {
-          return Offset(
-            (left + right) / 2 - painter.size.width / 2,
-            y - canvasStyle.adsorbTextOffset - painter.size.height,
-          );
-        },
-      );
+      if (refBounds != null) {
+        canvas.drawText(
+          axisUnit.format(c.toUnitFromDp(axisUnit)),
+          textColor: canvasStyle.adsorbTextColor,
+          fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
+          getOffset: (painter) {
+            return Offset(
+              (left + right) / 2 - painter.size.width / 2,
+              y - canvasStyle.adsorbTextOffset - painter.size.height,
+            );
+          },
+        );
+      }
     }
   }
 
@@ -155,7 +180,9 @@ class ElementAdsorbControl
   /// [CanvasElementControlManager.onHandleControlStateChanged] 驱动
   @callPoint
   void initAdsorbRefValueList(
-      ElementPainter controlElement, ControlTypeEnum controlType) {
+    ElementPainter controlElement,
+    ControlTypeEnum controlType,
+  ) {
     if (controlType == ControlTypeEnum.translate) {
       _initTranslateRefValue(controlElement);
       //debugger();
@@ -386,6 +413,8 @@ class ElementAdsorbControl
   void _initTranslateRefValue(ElementPainter controlElement) {
     _xRefValueList.clear();
     _yRefValueList.clear();
+
+    // 要排除的元素
     final exclude = [
       if (controlElement is ElementSelectComponent) ...?controlElement.children,
       if (controlElement is! ElementSelectComponent) controlElement
@@ -394,6 +423,7 @@ class ElementAdsorbControl
     final elementsBounds = controlElement.elementsBounds;
     _controlElementsBounds = elementsBounds;
 
+    //吸附的矩形信息
     void adsorbRect(Rect bounds, {ElementPainter? element}) {
       _xRefValueList.add(AdsorbRefValue(
         refType: RefValueType.left,
@@ -434,6 +464,7 @@ class ElementAdsorbControl
       ));
     }
 
+    //计算需要吸附的元素
     for (final element in canvasElementManager.elements) {
       if (!element.isVisible /*元素不可见*/ ||
               exclude.contains(element) /*需要排除元素*/ ||
@@ -445,11 +476,34 @@ class ElementAdsorbControl
         adsorbRect(it, element: element);
       });
     }
+    //--
     canvasDelegate
         .canvasPaintManager.contentManager.canvasContentFollowRectInner
         ?.let((it) {
       adsorbRect(it);
     });
+    //计算需要吸附的坐标系信息
+    final axisManager = canvasDelegate.canvasPaintManager.axisManager;
+    for (final data in axisManager.xData) {
+      if (data.axisType.have(IUnit.axisTypePrimary)) {
+        _xRefValueList.add(AdsorbRefValue(
+          refType: RefValueType.left,
+          refValue: data.sceneValue,
+          refElement: null,
+          refBounds: null,
+        ));
+      }
+    }
+    for (final data in axisManager.yData) {
+      if (data.axisType.have(IUnit.axisTypePrimary)) {
+        _yRefValueList.add(AdsorbRefValue(
+          refType: RefValueType.top,
+          refValue: data.sceneValue,
+          refElement: null,
+          refBounds: null,
+        ));
+      }
+    }
   }
 
   /// 在[list]中, 查找于[value]距离最小的[AdsorbRefValue]值
@@ -523,6 +577,7 @@ class AdsorbRefValue {
   final double refValue;
 
   /// 参考的元素, 如果有
+  @implementation
   final ElementPainter? refElement;
 
   /// 参考的边界, 如果有. 用来计算到边界的距离.
