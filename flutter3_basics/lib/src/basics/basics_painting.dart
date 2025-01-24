@@ -79,6 +79,7 @@ Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
 /// [double.ceil] 向上取整
 ui.Image drawImageSync(@dp Size size, CanvasAction callback) {
   final ui.Picture picture = drawPicture(callback, cullSize: size);
+  //debugger();
   return picture.toImageSync(size.width.imageInt, size.height.imageInt);
 }
 

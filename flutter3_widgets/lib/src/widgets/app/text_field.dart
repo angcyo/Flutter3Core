@@ -52,7 +52,11 @@ class TextFieldConfig {
   //region TextField的属性,优先级低
 
   /// 浮动在输入框上方的提示文字
+  /// [SingleInputWidget.labelText]
   String? labelText;
+
+  /// [SingleInputWidget.labelStyle]
+  TextStyle? labelTextStyle;
 
   /// [labelText]的回调版本
   IntlTextBuilder? labelTextBuilder;
@@ -60,6 +64,9 @@ class TextFieldConfig {
   /// 输入框内的提示文字, 占位提示文本
   /// [SingleInputWidget.hintText]
   String? hintText;
+
+  /// [SingleInputWidget.hintStyle]
+  TextStyle? hintTextStyle;
 
   /// [hintText]的回调版本
   IntlTextBuilder? hintTextBuilder;
@@ -175,8 +182,10 @@ class TextFieldConfig {
     this.keyboardType,
     this.updateFieldValueFn,
     this.labelText,
+    this.labelTextStyle,
     this.labelTextBuilder,
     this.hintText,
+    this.hintTextStyle,
     this.hintTextBuilder,
     this.inputBuildCounter,
     this.prefixIcon,
@@ -1061,12 +1070,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
               widget.labelTextBuilder?.call(context) ??
               widget.config.labelText ??
               widget.config.labelTextBuilder?.call(context),
-          labelStyle: widget.labelStyle,
+          labelStyle: widget.labelStyle ?? widget.config.labelTextStyle,
           hintText: widget.hintText ??
               widget.hintTextBuilder?.call(context) ??
               widget.config.hintText ??
               widget.config.hintTextBuilder?.call(context),
-          hintStyle: widget.hintStyle,
+          hintStyle: widget.hintStyle ?? widget.config.hintTextStyle,
           //floatingLabel
           //floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelStyle: widget.floatingLabelStyle ??

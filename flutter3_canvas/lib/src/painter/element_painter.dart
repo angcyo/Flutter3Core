@@ -106,6 +106,11 @@ class IElementPainter extends IPainter
         paint.strokeWidth = paint.strokeWidth / paintMeta.canvasScale;
       }
     }
+    if (paintMeta.host == elementOutputHost ||
+        paintMeta.host == rasterizeElementHost) {
+      //导出元素时, 使用1dp的宽度
+      paint.strokeWidth = 1 / paintMeta.canvasScale;
+    }
   }
 
   /// 重写此方法, 实现在画布内绘制自己
@@ -907,7 +912,22 @@ class ElementPainter extends IElementPainter {
         //在没有宽度或高度时, 比如线. 此时必须要设置style为stroke, 否则绘制出来的线看不到
         paint.style = PaintingStyle.stroke;
       }
-      canvas.drawPath(path.transformPath(paintProperty?.operateMatrix), paint);
+      //debugger(when: paintMeta.host == elementOutputHost);
+      Path? drawPath = path.transformPath(paintProperty?.operateMatrix);
+      /*if (paintMeta.host == elementOutputHost &&
+          paint.style == PaintingStyle.stroke) {
+        //描边输出的时候, 缩放1个dp单位, 防止看不到
+        final bound = elementsBounds;
+        if (bound != null) {
+          final sx = (bound.width - 1) / bound.width;
+          final sy = (bound.height - 1) / bound.height;
+          final scaleStrokeMatrix =
+              createScaleMatrix(sx: sx, sy: sy, anchor: bound.lt);
+          //debugger(when: paintMeta.host == elementOutputHost);
+          drawPath = drawPath.transformPath(scaleStrokeMatrix);
+        }
+      }*/
+      canvas.drawPath(drawPath, paint);
     }
   }
 

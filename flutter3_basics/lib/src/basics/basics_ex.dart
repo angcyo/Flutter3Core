@@ -2178,7 +2178,7 @@ extension DoubleEx on double {
   /// [double.floor] 向下取整
   /// [Picture.toImage]
   /// [Picture.toImageSync]
-  int get imageInt => toInt() /*floor()*/;
+  int get imageInt => round() /*toInt()*/ /*floor()*/;
 
   /// [BorderRadius]
   BorderRadius? toBorderRadius() => BorderRadius.all(Radius.circular(this));
