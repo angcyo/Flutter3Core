@@ -41,6 +41,9 @@ class CanvasKeyManager
       [
         LogicalKeyboardKey.delete,
       ],
+      [
+        LogicalKeyboardKey.backspace,
+      ],
     ], (info) {
       deleteSelectedElement();
       return true;

@@ -100,12 +100,15 @@ class BaseControl
 
   /// 控制点的图片信息, 用来绘制控制点图标
   /// [paintControl]->[paintControlWith]
-  PictureInfo? _pictureInfo;
+  @configProperty
+  PictureInfo? pictureInfo;
 
   /// 控制点接管绘制对象
+  @configProperty
   IControlPainter? controlPainter;
 
   /// 控制点接管绘制方法
+  @configProperty
   ControlPainterFn? controlPainterFn;
 
   BaseControl(this.canvasElementControlManager, this.controlType);
@@ -230,9 +233,9 @@ class BaseControl
       );
       //debugger();
       canvas.drawPictureInRect(
-        _pictureInfo?.picture,
+        pictureInfo?.picture,
         dst: rect /*rect.inflate(controlIcoPadding)*/,
-        pictureSize: _pictureInfo?.size,
+        pictureSize: pictureInfo?.size,
         tintColor: Colors.white,
         dstPadding: EdgeInsets.all(controlIcoPadding),
         /*debugLabel: "control",*/
@@ -336,7 +339,7 @@ class BaseControl
           .toImageSync(size.width.round(), size.height.round())
           .toBase64();
       debugger();*/
-      _pictureInfo = value;
+      pictureInfo = value;
       onLoaded?.call(value);
     });
   }
@@ -571,8 +574,13 @@ class ScaleControl extends BaseControl {
     loadControlPicture('canvas_scale_point.svg');
   }
 
-  bool get _isLockRatio =>
-      canvasElementControlManager.elementSelectComponent.isLockRatio;
+  /// 是否锁定了等比操作
+  bool get isLockRatio =>
+      canvasElementControlManager.elementSelectComponent.isLockRatio &&
+      !isIgnoreLockRation;
+
+  /// 是否临时忽略等比锁定
+  bool get isIgnoreLockRation => isCtrlPressed;
 
   @sceneCoordinate
   Offset _downScenePointInvert = Offset.zero;
@@ -631,7 +639,7 @@ class ScaleControl extends BaseControl {
 
           if (_downTargetElementAnchorInvert != null) {
             final anchorInvert = _downTargetElementAnchorInvert!;
-            if (_isLockRatio) {
+            if (isLockRatio) {
               //等比缩放
               final oldC = distance(anchorInvert, _downScenePointInvert);
               final newC = distance(anchorInvert, moveScenePointInvert);
@@ -718,9 +726,9 @@ class LockControl extends BaseControl {
   set isLock(bool value) {
     _isLock = value;
     if (value) {
-      _pictureInfo = _lockPictureInfo;
+      pictureInfo = _lockPictureInfo;
     } else {
-      _pictureInfo = _unlockPictureInfo;
+      pictureInfo = _unlockPictureInfo;
     }
     canvasElementControlManager.canvasDelegate.refresh();
   }
@@ -733,15 +741,29 @@ class LockControl extends BaseControl {
     loadControlPicture('canvas_lock_point.svg', (value) {
       _lockPictureInfo = value;
       if (isLock) {
-        _pictureInfo = value;
+        pictureInfo = value;
       }
     });
     loadControlPicture('canvas_unlock_point.svg', (value) {
       _unlockPictureInfo = value;
       if (!isLock) {
-        _pictureInfo = value;
+        pictureInfo = value;
       }
     });
+  }
+
+  @override
+  void paintControl(Canvas canvas, PaintMeta paintMeta) {
+    if (canvasElementControlManager.scaleControl.isIgnoreLockRation) {
+      if (pictureInfo != _unlockPictureInfo) {
+        final old = pictureInfo;
+        pictureInfo = _unlockPictureInfo;
+        super.paintControl(canvas, paintMeta);
+        pictureInfo = old;
+      }
+    } else {
+      super.paintControl(canvas, paintMeta);
+    }
   }
 
   @override
