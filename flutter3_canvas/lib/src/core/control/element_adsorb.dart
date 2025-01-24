@@ -15,6 +15,9 @@ class ElementAdsorbControl
   bool get isCanvasComponentEnable => canvasElementControlManager
       .canvasDelegate.canvasStyle.enableElementAdsorb;
 
+  /// 是否临时关闭吸附
+  bool get isIgnoreAdsorb => isCtrlPressed;
+
   @override
   set isCanvasComponentEnable(bool componentEnable) {
     canvasElementControlManager.canvasDelegate.canvasStyle.enableElementAdsorb =
@@ -32,7 +35,7 @@ class ElementAdsorbControl
   void paintAdsorb(Canvas canvas, PaintMeta paintMeta) {
     final controlElementBounds = canvasElementControlManager
         ._currentControlElementRef?.target?.elementsBounds;
-    if (controlElementBounds == null) {
+    if (controlElementBounds == null || isIgnoreAdsorb) {
       return;
     }
     paintMeta.withPaintMatrix(canvas, () {

@@ -864,6 +864,14 @@ class TranslateControl extends BaseControl
   /// 是否是首次移动元素
   bool _isFirstTranslate = false;
 
+  /// 吸附控制
+  ElementAdsorbControl get adsorbControl => canvasDelegate
+      .canvasElementManager.canvasElementControlManager.elementAdsorbControl;
+
+  /// 是否要查找吸附
+  bool get findAdsorb =>
+      adsorbControl.isCanvasComponentEnable && !adsorbControl.isIgnoreAdsorb;
+
   @override
   bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     //l.d('...1...${dispatch.pointerCount}');
@@ -888,18 +896,14 @@ class TranslateControl extends BaseControl
           @sceneCoordinate
           Offset offset = moveScenePoint - downScenePoint;
 
-          final elementAdsorbControl = canvasDelegate.canvasElementManager
-              .canvasElementControlManager.elementAdsorbControl;
-          if (elementAdsorbControl.isCanvasComponentEnable) {
-            final xAdsorbValue =
-                elementAdsorbControl.findElementXAdsorbRefValue(
+          if (findAdsorb) {
+            final xAdsorbValue = adsorbControl.findElementXAdsorbRefValue(
               _targetElement,
               localPosition,
               offset.dx,
               firstMoveOffset.dx,
             );
-            final yAdsorbValue =
-                elementAdsorbControl.findElementYAdsorbRefValue(
+            final yAdsorbValue = adsorbControl.findElementYAdsorbRefValue(
               _targetElement,
               localPosition,
               offset.dy,
