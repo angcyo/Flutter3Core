@@ -12,8 +12,12 @@ screenshots:
     # path: png/png.png
 
 environment:
-  sdk: '>=3.1.3 <4.0.0'
+  sdk: '>=3.6.0 <4.0.0'
   flutter: ">=1.17.0"
+
+# https://dart.dev/tools/pub/workspaces/
+# Support for pub workspaces was introduced in Dart 3.6.0.
+resolution: workspace
 
 dependencies:
   flutter:

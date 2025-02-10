@@ -3,30 +3,53 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 ///
-/// Email:angcyo@126.com
-/// @author angcyo
-/// @date 2024/07/21
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
+/// @date 2025/02/10
 ///
-/// 在所有 Flutter 项目中，执行 flutter pub get
+/// ```
+/// dart pub workspace list
+/// ```
+///
+/// 输出当前1级路径下包含的`package`相对路径信息到`workspaces.txt`文件中
+/// https://dart.cn/tools/pub/workspaces/
+///
 @pragma("vm:entry-point")
 void main() async {
-  colorLog("当前路径->${Directory.current.path}");
+  final rootPath = Directory.current.path;
+  colorLog("当前路径->$rootPath");
 
+  //
   final flutterProjectList = <FileSystemEntity>[];
   await findFlutterProjectList(
-    Directory.current.path,
+    rootPath,
     0,
     flutterProjectList,
-    3,
-    true,
+    2,
+    false,
   );
-  flutterProjectList.sort((o1, o2) => o1.path.compareTo(o2.path));
   colorLog('找到Flutter工程[${flutterProjectList.length}]个.');
+
+  final flutterProjectMap = {};
+
   int index = 0;
   for (final item in flutterProjectList) {
-    colorLog('准备执行命令[${++index}/${flutterProjectList.length}]->${item.path}');
-    await runFlutterPubGetCommand(item.path);
+    //将路径item.path处理成相对于rootPath的相对路径
+    //colorLog(item.path.replaceFirst("$rootPath/", ""));
+
+    //colorLog('准备处理[${++index}/${flutterProjectList.length}]->${item.path}');
+    //await runFlutterPubGetCommand(item.path);
+    final list = flutterProjectMap.putIfAbsent(
+        item.parent.path, () => <FileSystemEntity>[]);
+    list.add(item);
   }
+  flutterProjectMap.forEach((key, value) {
+    //colorLog('${key}->${value.length}');
+    final configFile = File("$key/workspaces.txt");
+    configFile.writeAsStringSync(
+        value.map((e) => e.path.replaceFirst("$rootPath/", "- ")).join("\n"));
+  });
+  colorLog(flutterProjectMap);
+  //colorLog(flutterProjectMap.length);
   colorLog('执行结束[${flutterProjectList.length}]!');
 }
 
@@ -64,17 +87,6 @@ Future findFlutterProjectList(
       }
     }
   }
-}
-
-/// 执行命令
-Future runFlutterPubGetCommand(String dir) async {
-  final result = Process.runSync(
-    "flutter",
-    ["pub", "get"],
-    runInShell: true,
-    workingDirectory: dir,
-  );
-  colorLog(result.stdout, 250); //输出标准输出
 }
 
 void colorLog(dynamic msg, [int col = 93]) {
