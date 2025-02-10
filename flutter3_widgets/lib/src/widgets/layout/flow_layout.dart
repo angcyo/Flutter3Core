@@ -478,7 +478,7 @@ class FlowLayoutRender extends RenderBox
       maxWidth = size?.width ?? double.infinity;
       if (maxWidth == double.infinity) {
         assert(() {
-          l.v('无法确定的maxWidth,[weight]属性失效,只能左对齐,并且无法根据宽度换行');
+          l.v('[${classHash()}]无法确定的maxWidth,[weight]属性失效,只能左对齐,并且无法根据宽度换行');
           return true;
         }());
       }
