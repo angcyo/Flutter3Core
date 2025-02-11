@@ -18,7 +18,7 @@ void main() async {
   final rootPath = Directory.current.path;
   colorLog("当前路径->$rootPath");
 
-  //
+  //--
   final flutterProjectList = <FileSystemEntity>[];
   await findFlutterProjectList(
     rootPath,
@@ -30,8 +30,7 @@ void main() async {
   colorLog('找到Flutter工程[${flutterProjectList.length}]个.');
 
   final flutterProjectMap = {};
-
-  int index = 0;
+  //int index = 0;
   for (final item in flutterProjectList) {
     //将路径item.path处理成相对于rootPath的相对路径
     //colorLog(item.path.replaceFirst("$rootPath/", ""));
@@ -46,11 +45,12 @@ void main() async {
     //colorLog('${key}->${value.length}');
     final configFile = File("$key/workspaces.txt");
     configFile.writeAsStringSync(
-        value.map((e) => e.path.replaceFirst("$rootPath/", "- ")).join("\n"));
+        "# ${DateTime.now()}\n# Create by angcyo (${Platform.script.path.replaceFirst("$rootPath/", "")})\n${value.map((e) => e.path.replaceFirst("$rootPath/", "- ")).join("\n")}");
   });
-  colorLog(flutterProjectMap);
+  colorLog(flutterProjectMap.keys);
   //colorLog(flutterProjectMap.length);
-  colorLog('执行结束[${flutterProjectList.length}]!');
+  colorLog(
+      '执行结束[${flutterProjectList.length}], 处理工作区[${flutterProjectMap.keys.length}]个!');
 }
 
 /// 查找指定路径[path]下的所有`Flutter`项目所在的目录
