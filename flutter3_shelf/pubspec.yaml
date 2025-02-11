@@ -96,9 +96,9 @@ dependencies:
   # https://pub.dev/packages/udp
   udp: ^5.0.3
 
-dependency_overrides:
-  #in flutter3_shelf
-  collection: ^1.19.0
+#dependency_overrides:
+#  #in flutter3_shelf
+#  collection: ^1.19.0
 
 dev_dependencies:
   flutter_test:
