@@ -61,6 +61,7 @@ class SvgBuilder {
   void writeViewBox(
     @dp Rect? bounds, {
     IUnit? boundsUnit = IUnit.mm,
+    @mm Rect? boundsMm,
     bool writeProperty = false /*写入一些属性?*/,
     bool writeUnitTransform = false /*写入unit对应的transform?*/,
   }) {
@@ -85,18 +86,18 @@ class SvgBuilder {
       buffer.write(
           'viewBox="${formatValue(bounds.left)} ${formatValue(bounds.top)} '
           '${formatValue(bounds.width)} ${formatValue(bounds.height)}" ');
+      boundsMm ??= bounds.toRectUnit(boundsUnit);
     }
 
     //--
+    if (boundsMm != null && writeProperty) {
+      buffer.write('acy:x="${formatValue(boundsMm.left)}${IUnit.mm.suffix}" '
+          'acy:y="${formatValue(boundsMm.top)}${IUnit.mm.suffix}" ');
+      buffer.write(
+          'acy:width="${formatValue(boundsMm.width)}${IUnit.mm.suffix}" '
+          'acy:height="${formatValue(boundsMm.height)}${IUnit.mm.suffix}" ');
+    }
     if (boundsUnit != null) {
-      if (bounds != null && writeProperty) {
-        buffer.write(
-            'acy:x="${formatValue(bounds.left.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
-            'acy:y="${formatValue(bounds.top.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
-        buffer.write(
-            'acy:width="${formatValue(bounds.width.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" '
-            'acy:height="${formatValue(bounds.height.toUnitFromDp(boundsUnit))}${boundsUnit.suffix}" ');
-      }
       if (writeUnitTransform) {
         final scale = 1.toUnitFromDp(boundsUnit);
         writeTransform(sx: scale, sy: scale);

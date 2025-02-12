@@ -1593,6 +1593,20 @@ extension RectEx on Rect {
     );
   }
 
+  /// 创建一个新的矩形
+  Rect toRect({
+    double? left,
+    double? top,
+    double? right,
+    double? bottom,
+  }) =>
+      Rect.fromLTRB(
+        left ?? this.left,
+        top ?? this.top,
+        right ?? this.right,
+        bottom ?? this.bottom,
+      );
+
   /// dp单位的坐标, 转换成mm单位的坐标
   @mm
   Rect toRectMm({
@@ -1606,6 +1620,22 @@ extension RectEx on Rect {
         top ?? this.top.toMmFromDp(),
         right ?? this.right.toMmFromDp(),
         bottom ?? this.bottom.toMmFromDp(),
+      );
+
+  /// dp单位的坐标, 转换成unit单位的坐标
+  @unit
+  Rect toRectUnit(
+    IUnit? unit, {
+    double? left,
+    double? top,
+    double? right,
+    double? bottom,
+  }) =>
+      Rect.fromLTRB(
+        left ?? this.left.toUnitFromDp(unit),
+        top ?? this.top.toUnitFromDp(unit),
+        right ?? this.right.toUnitFromDp(unit),
+        bottom ?? this.bottom.toUnitFromDp(unit),
       );
 
   /// mm单位的坐标, 转换成dp单位的坐标
