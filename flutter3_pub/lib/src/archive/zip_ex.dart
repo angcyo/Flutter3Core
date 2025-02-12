@@ -136,9 +136,9 @@ extension ZipListEx on List<String> {
   }) async {
     for (final path in this) {
       if (path.isDirectorySync()) {
-        encoder.addDirectory(Directory(path));
+        await encoder.addDirectory(Directory(path));
       } else if (path.isExistsSync()) {
-        encoder.addFile(File(path), onGetFileName?.call(path));
+        await encoder.addFile(File(path), onGetFileName?.call(path));
       }
     }
   }
