@@ -13,9 +13,13 @@ import 'package:yaml/yaml.dart';
 /// 默认输出路径在`build/ios/ipa/xxx.ipa`
 /// 默认文件名是`ios/Runner/Info.plist`中`CFBundleName`对应的值
 ///
-/// 收集macos app产物(--macos)
+/// 收集macos app产物(macos)
 /// 默认输出路径在`build/macos/Build/Products/Release/xxx.app`
-///默认文件名是`macos/Runner/Configs/AppInfo.xcconfig`中`PRODUCT_NAME`对应的值
+/// 默认文件名是`macos/Runner/Configs/AppInfo.xcconfig`中`PRODUCT_NAME`对应的值
+///
+/// 收集windows exe产物(windows)
+/// 默认输出路径在`build/windows/x64/runner/Release`
+/// 默认文件名是`windows/CMakeLists.txt`中`BINARY_NAME`对应的值
 ///
 /// 配置项(在根的`script.yaml`文件中配置):
 /// 产物文件名格式: {app_name}-{version}_{build_config.buildType}.ipa
@@ -24,6 +28,7 @@ import 'package:yaml/yaml.dart';
 ///
 void main(List<String> arguments) async {
   final isCollectMacos = arguments.contains("macos");
+  final isCollectWindows = arguments.contains("windows");
 
   //--
   final fileName = Platform.script.path.split("/").last.split(".")[0];
@@ -32,10 +37,18 @@ void main(List<String> arguments) async {
   colorLog('[$fileName]工作路径->$currentPath');
 
   //输出路径
-  final outputPath = isCollectMacos ? ".output/.app" : ".output/.ipa";
+  final outputPath = isCollectWindows
+      ? ".output/.exe"
+      : isCollectMacos
+          ? ".output/.app"
+          : ".output/.ipa";
 
   //--
-  final targetFileName = isCollectMacos ? readProductName() : readBundleName();
+  final targetFileName = isCollectWindows
+      ? readExeName()
+      : isCollectMacos
+          ? readProductName()
+          : readBundleName();
   if (targetFileName == null || targetFileName.isEmpty) {
     if (isCollectMacos) {
       colorErrorLog(
@@ -68,9 +81,11 @@ void main(List<String> arguments) async {
   String? version = pubspecYaml?["version"]?.toString().split("+")[0];
 
   //源文件文件路径
-  final scrPath = isCollectMacos
-      ? "$currentPath/build//macos/Build/Products/Release/$targetFileName.app"
-      : "$currentPath/build/ios/ipa/$targetFileName.ipa";
+  final scrPath = isCollectWindows
+      ? "$currentPath/build/windows/x64/runner/Release"
+      : isCollectMacos
+          ? "$currentPath/build/macos/Build/Products/Release/$targetFileName.app"
+          : "$currentPath/build/ios/ipa/$targetFileName.ipa";
 
   //输出路径
   StringBuffer outputPathBuffer = StringBuffer();
@@ -85,15 +100,15 @@ void main(List<String> arguments) async {
   if (buildType != null) {
     outputPathBuffer.write("_$buildType");
   }
-  if (isCollectMacos) {
+  if (isCollectMacos || isCollectWindows) {
     outputPathBuffer.write(".zip");
   } else {
     outputPathBuffer.write(".ipa");
   }
 
   final outputPathString = outputPathBuffer.toString();
-  if (isCollectMacos) {
-    await zipFolder(scrPath, outputPathString);
+  if (isCollectMacos || isCollectWindows) {
+    await zipFolder(scrPath, outputPathString, excludeRoot: isCollectWindows);
   } else {
     copyFile(scrPath, outputPathString);
   }
@@ -155,6 +170,30 @@ String? readProductName() {
   return productName;
 }
 
+/// 默认文件名是`windows/CMakeLists.txt`中`BINARY_NAME`对应的值
+String? readExeName() {
+  final file = File("windows/CMakeLists.txt");
+  if (!file.existsSync()) {
+    return null;
+  }
+  final content = file.readAsStringSync();
+  final lines = content.split("\n");
+
+  String? productName;
+
+  for (final line in lines) {
+    if (line.contains("BINARY_NAME")) {
+      final match = RegExp(r'BINARY_NAME \"(.*)\"').firstMatch(line);
+      if (match != null) {
+        productName = match.group(1);
+        break;
+      }
+    }
+  }
+
+  return productName;
+}
+
 /// 复制文件到指定路径
 void copyFile(String srcPath, String dstPath) {
   final srcFile = File(srcPath);
@@ -170,7 +209,12 @@ void copyFile(String srcPath, String dstPath) {
 }
 
 /// 压缩源文件夹到指定路径
-Future zipFolder(String srcPath, String dstPath) async {
+/// [excludeRoot] 是否排除根目录
+Future zipFolder(
+  String srcPath,
+  String dstPath, {
+  bool excludeRoot = false,
+}) async {
   final srcFolder = Directory(srcPath);
   if (!srcFolder.existsSync()) {
     colorErrorLog("源文件夹不存在:$srcPath");
@@ -179,7 +223,15 @@ Future zipFolder(String srcPath, String dstPath) async {
   final encoder = ZipFileEncoder();
   try {
     encoder.create(dstPath);
-    await [srcPath].zipEncoder(encoder);
+    if (excludeRoot) {
+      await srcFolder
+          .listSync()
+          .map((e) => e.path)
+          .toList()
+          .zipEncoder(encoder);
+    } else {
+      await [srcPath].zipEncoder(encoder);
+    }
   } catch (e) {
     colorErrorLog(e);
   } finally {
