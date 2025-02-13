@@ -27,6 +27,9 @@ import 'package:yaml/yaml.dart';
 /// - build_config.buildType : 构建类型
 ///
 void main(List<String> arguments) async {
+  colorLog(
+      '[${Platform.script.path.split("/").last.split(".")[0]}]工作路径->${Directory.current.path}');
+  //--
   final isCollectMacos = arguments.contains("macos");
   final isCollectWindows = arguments.contains("windows");
 
@@ -34,7 +37,6 @@ void main(List<String> arguments) async {
   final fileName = Platform.script.path.split("/").last.split(".")[0];
 
   final currentPath = Directory.current.path;
-  colorLog('[$fileName]工作路径->$currentPath');
 
   //输出路径
   final outputPath = isCollectWindows
@@ -107,8 +109,10 @@ void main(List<String> arguments) async {
   }
 
   final outputPathString = outputPathBuffer.toString();
-  if (isCollectMacos || isCollectWindows) {
-    await zipFolder(scrPath, outputPathString, excludeRoot: isCollectWindows);
+  if (isCollectWindows) {
+    await zipFolder(scrPath, outputPathString, excludeRoot: true);
+  } else if (isCollectMacos) {
+    await zipFolderByPlatform(scrPath, outputPathString);
   } else {
     copyFile(scrPath, outputPathString);
   }
@@ -239,6 +243,34 @@ Future zipFolder(
   }
 }
 
+/// 使用平台压缩命令进行文件夹压缩
+Future<void> zipFolderByPlatform(
+  String srcPath,
+  String dstPath, {
+  bool excludeRoot = false,
+}) async {
+  final srcFolder = Directory(srcPath);
+  if (!srcFolder.existsSync()) {
+    colorErrorLog("源文件夹不存在:$srcPath");
+    return;
+  }
+  final pathList = excludeRoot
+      ? srcFolder.listSync().map((e) => e.path).toList()
+      : [srcPath];
+
+  final workPath = srcFolder.parent.path;
+  await Process.run(
+    Platform.isWindows ? "7z" : "zip",
+    [
+      Platform.isWindows ? "-a -c -f" : "-r",
+      dstPath,
+      ...pathList.map((e) => e.replaceFirst("$workPath/", "")),
+    ],
+    workingDirectory: workPath,
+    /*runInShell: true,*/
+  );
+}
+
 void colorLog(dynamic msg, [int col = 93]) {
   print('\x1B[38;5;${col}m$msg');
 }
@@ -282,7 +314,19 @@ extension ZipListEx on List<String> {
   }) async {
     for (final path in this) {
       if (FileSystemEntity.isDirectorySync(path)) {
-        await encoder.addDirectory(Directory(path));
+        await encoder.addDirectory(
+          Directory(path),
+          followLinks: false,
+          /*filter: (entity, progress) {
+            //debugger(when: entity.path.contains("Frameworks") && entity.path.contains("Resources"));
+            if (FileSystemEntity.isLinkSync(entity.parent.path) ||
+                (FileSystemEntity.isDirectorySync(entity.path) &&
+                    FileSystemEntity.isLinkSync(entity.path))) {
+              return ZipFileOperation.skip;
+            }
+            return ZipFileOperation.include;
+          },*/
+        );
       } else if (File(path).existsSync()) {
         await encoder.addFile(File(path), onGetFileName?.call(path));
       }

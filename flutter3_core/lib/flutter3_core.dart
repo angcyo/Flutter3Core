@@ -37,9 +37,9 @@ export 'package:mime/mime.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:provider/provider.dart';
 
+export 'src/core/build_config.dart';
 export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
-export 'src/core/build_config.dart';
 
 part 'src/core/core_keys.dart';
 part 'src/core/svg_core.dart';
@@ -104,7 +104,13 @@ Future<void> initFlutter3Core() async {
 Future<void> initHive() async {
   //初始化Hive数据库
   //Hive.registerAdapter(adapter)
-  await Hive.initHive();
+  try {
+    await Hive.initHive();
+  } catch (e, s) {
+    //初始化失败, 退出程序
+    debugger(when: isDebug);
+    exit(1);
+  }
 
   //device uuid
   $coreKeys.initDeviceUuid();
@@ -117,7 +123,13 @@ Future<void> initHive() async {
 @CallFrom("runGlobalApp")
 Future<void> initIsar() async {
   //初始化isar数据库
-  await openIsar();
+  try {
+    await openIsar();
+  } catch (e, s) {
+    //初始化失败, 退出程序
+    debugger(when: isDebug);
+    exit(1);
+  }
 }
 
 //--

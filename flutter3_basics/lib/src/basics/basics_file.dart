@@ -179,6 +179,9 @@ extension FileSystemEntityEx on FileSystemEntity {
 
   bool isFileSync() => FileSystemEntity.isFileSync(path);
 
+  /// 链接对象
+  bool isLinkSync() => FileSystemEntity.isLinkSync(path);
+
   /// 文件对象
   File? get file {
     if (this is File) {

@@ -133,10 +133,11 @@ extension ZipListEx on List<String> {
   Future<void> zipEncoder(
     ZipFileEncoder encoder, {
     String? Function(String)? onGetFileName,
+    bool followLinks = false,
   }) async {
     for (final path in this) {
       if (path.isDirectorySync()) {
-        await encoder.addDirectory(Directory(path));
+        await encoder.addDirectory(Directory(path), followLinks: followLinks);
       } else if (path.isExistsSync()) {
         await encoder.addFile(File(path), onGetFileName?.call(path));
       }

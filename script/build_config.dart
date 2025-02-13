@@ -9,8 +9,9 @@ import 'package:yaml/yaml.dart';
 ///
 /// 用来构建[BuildConfig]
 void main(List<String> arguments) {
+  colorLog(
+      '[${Platform.script.path.split("/").last.split(".")[0]}]工作路径->${Directory.current.path}');
   final currentPath = Directory.current.path;
-  colorLog('[buildConfig]工作路径->$currentPath');
 
   final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");
