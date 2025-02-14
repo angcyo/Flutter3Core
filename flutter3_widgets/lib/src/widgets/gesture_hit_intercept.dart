@@ -72,7 +72,7 @@ class GestureHitInterceptBox extends RenderProxyBox {
           });
       if (ignoreOtherBoxHit ?? true) {
         assert(() {
-          l.d('手势命中被拦截:$hitBox position:$position');
+          l.v('手势命中被拦截:$hitBox position:$position');
           return true;
         }());
         return true;
