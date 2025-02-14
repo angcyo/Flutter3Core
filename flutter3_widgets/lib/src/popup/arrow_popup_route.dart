@@ -68,8 +68,17 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     double arrowDirectionMinOffset = 15,
     AxisDirection? arrowDirection, //可以强制指定箭头方向
     this.barrierIgnorePointerType, //障碍手势穿透
+    this.animate = true,
+    @defInjectMark this.animateDuration,
   })  : _arrowDirectionMinOffset = arrowDirectionMinOffset,
         _arrowDirection = arrowDirection;
+
+  /// 是否需要动画
+  bool animate;
+
+  /// 动画时长
+  @defInjectMark
+  Duration? animateDuration;
 
   @override
   Color? get barrierColor => barriersColor ?? Colors.black.withOpacity(0.1);
@@ -101,6 +110,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     return super.didPush();
   }
 
+  ///
   @override
   Iterable<OverlayEntry> createOverlayEntries() {
     return super.createOverlayEntries();
@@ -178,5 +188,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   }
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 150);
+  Duration get transitionDuration => animate
+      ? animateDuration ?? const Duration(milliseconds: 150)
+      : Duration.zero;
 }
