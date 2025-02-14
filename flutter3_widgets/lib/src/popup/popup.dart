@@ -29,6 +29,7 @@ extension PopupEx on BuildContext {
     //--
     Rect? anchorRect,
     BuildContext? anchorChild,
+    bool rootNavigator = false,
     //--
     Color? backgroundColor,
     Color? arrowColor,
@@ -39,10 +40,13 @@ extension PopupEx on BuildContext {
     EdgeInsets? contentMargin = const EdgeInsets.all(kX),
     IgnorePointerType? barrierIgnorePointerType,
   }) async {
-    anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds();
+    final navigator = Navigator.of(this, rootNavigator: rootNavigator);
+    anchorRect ??= anchorChild
+        ?.findRenderObject()
+        ?.getGlobalBounds(navigator.context.findRenderObject());
     anchorRect ??= findRenderObject()?.getGlobalBounds() ?? Rect.zero;
     final globalTheme = GlobalTheme.of(this);
-    return Navigator.of(this).push(
+    return navigator.push(
       ArrowPopupRoute(
         child: child,
         anchorRect: anchorRect,
