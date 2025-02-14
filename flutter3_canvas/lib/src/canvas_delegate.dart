@@ -293,7 +293,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   final ValueNotifier<CanvasStyleMode> canvasStyleModeValue =
       ValueNotifier(CanvasStyleMode.defaultMode);
 
-  /// 是否拖动状态
+  /// 画布是否拖动状态
   bool get isDragMode => canvasStyleModeValue.value == CanvasStyleMode.dragMode;
 
   /// 重绘通知, 监听此通知, 主动触发重绘

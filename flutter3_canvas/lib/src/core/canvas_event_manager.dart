@@ -68,7 +68,11 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       //元素操作事件
       final overlayComponent = canvasDelegate._overlayComponent;
       if (overlayComponent == null) {
-        canvasDelegate.canvasElementManager.handleElementEvent(event);
+        if (canvasDelegate.isDragMode) {
+          //拖拽模式下, 不处理元素事件
+        } else {
+          canvasDelegate.canvasElementManager.handleElementEvent(event);
+        }
       } else {
         overlayComponent.handleEvent(event);
       }
