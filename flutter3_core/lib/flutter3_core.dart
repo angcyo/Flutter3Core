@@ -98,6 +98,7 @@ Future<void> initFlutter3Core() async {
 }
 
 /// 初始化hive
+/// [RCoreException]
 @initialize
 @entryPoint
 @CallFrom("runGlobalApp")
@@ -107,9 +108,12 @@ Future<void> initHive() async {
   try {
     await Hive.initHive();
   } catch (e, s) {
-    //初始化失败, 退出程序
     debugger(when: isDebug);
-    exit(1);
+    throw RCoreException(
+      message: '初始化Hive数据库失败:$e',
+      cause: e,
+      stackTrace: s,
+    );
   }
 
   //device uuid
@@ -126,9 +130,12 @@ Future<void> initIsar() async {
   try {
     await openIsar();
   } catch (e, s) {
-    //初始化失败, 退出程序
     debugger(when: isDebug);
-    exit(1);
+    throw RCoreException(
+      message: '初始化Isar数据库失败:$e',
+      cause: e,
+      stackTrace: s,
+    );
   }
 }
 

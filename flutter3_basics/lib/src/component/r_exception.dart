@@ -57,3 +57,15 @@ class RCancelException extends RException {
 class RInvalidException extends RException {
   RInvalidException({super.message, super.cause, super.stackTrace});
 }
+
+/// 核心异常, 此情况下应该退出程序
+/// 比如在初始化的时候, 数据库文件被锁定等
+/// ```
+/// exit(1);
+/// ```
+/// [popApp]
+/// [exitApp]
+/// [FileSystemException]
+class RCoreException extends RException {
+  RCoreException({super.message, super.cause, super.stackTrace});
+}

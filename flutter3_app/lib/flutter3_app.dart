@@ -1,6 +1,7 @@
 library flutter3_app;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -133,33 +134,84 @@ Future runGlobalApp(
 
   //runApp
   Future realRun() async {
+    Object? error;
+    StackTrace? stack;
+
     ensureInitialized();
     "开始启动[${Platform.operatingSystem}][main]:${platformDispatcher.defaultRouteName}"
         .writeToLog(level: L.info);
 
+    //debugger();
     //--
     BuildConfig.initBuildConfig();
     //key-value
-    await initHive();
+    try {
+      await initHive();
+    } catch (e, s) {
+      error = e;
+      stack = s;
+      printError(e, s);
+      debugger(when: isDebug);
+    }
 
     //网络请求基础信息拦截器
     rDio.addInterceptor(AppInfoInterceptor());
 
-    await initFlutter3Core();
+    try {
+      await initFlutter3Core();
+    } catch (e, s) {
+      error = e;
+      stack = s;
+      printError(e, s);
+      debugger(when: isDebug);
+    }
     AppLifecycleLog.install();
 
     //debug info
     _initDebugLastInfo();
 
     //--before
-    await beforeAction?.call();
-    //open isar, 为了能在[beforeAction]中初始化外部数据库表结构
-    await initIsar();
+    try {
+      await beforeAction?.call();
+    } catch (e, s) {
+      error = e;
+      stack = s;
+      printError(e, s);
+      debugger(when: isDebug);
+    }
+    try {
+      //open isar, 为了能在[beforeAction]中初始化外部数据库表结构
+      await initIsar();
+    } catch (e, s) {
+      error = e;
+      stack = s;
+      printError(e, s);
+      debugger(when: isDebug);
+    }
+
     //app
+    if (error != null) {
+      app = ErrorWidget.builder(FlutterErrorDetails(
+        exception: error,
+        stack: stack,
+        library: 'angcyo',
+      ));
+      if (!isDebug && error is RCoreException) {
+        exitApp();
+      }
+    }
     runApp(GlobalApp(
         app: useViewModelProvider ? app.wrapGlobalViewModelProvider() : app));
     //--after
-    await afterAction?.call();
+    try {
+      await afterAction?.call();
+    } catch (e, s) {
+      printError(e, s);
+      debugger(when: isDebug);
+      if (!isDebug && error is RCoreException) {
+        exitApp();
+      }
+    }
 
     //--
     "启动完成[${Platform.resolvedExecutable}]:${lTime.time()}"

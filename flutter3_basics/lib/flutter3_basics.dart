@@ -254,7 +254,12 @@ String get libAssetsStateLoadErrorKey => Assets.png.stateLoadError.keyName;
 /// 情感状态: 没有数据的图片资源key
 String get libAssetsStateNoDataKey => Assets.png.stateNoData.keyName;
 
-/// 退出应用
-void exitApp() {
+/// 弹出应用
+void popApp() {
   SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+}
+
+/// 退出应用
+void exitApp([int code = 1]) {
+  exit(code);
 }
