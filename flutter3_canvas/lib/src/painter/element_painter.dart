@@ -2335,8 +2335,20 @@ class PaintProperty with EquatableMixin {
   /// final r2 = s * t;
   /// final r3 = t.multiplied(s); //r3 == r1
   /// ```
-  Matrix4 get operateMatrix =>
-      translateMatrix * rotateMatrix * scaleMatrix * flipMatrix * skewMatrix;
+  Matrix4 get operateMatrix {
+    final matrix =
+        translateMatrix * rotateMatrix * scaleMatrix * flipMatrix * skewMatrix;
+    /*final matrix2 = createMatrix4(
+      scaleX: scaleX,
+      scaleY: scaleY,
+      skewX: skewX,
+      skewY: skewY,
+      translateX: left,
+      translateY: top,
+    );
+    debugger(when: matrix != matrix2);*/
+    return matrix;
+  }
 
   //---
 
