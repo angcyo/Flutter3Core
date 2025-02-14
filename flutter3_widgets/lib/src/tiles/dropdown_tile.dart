@@ -182,7 +182,8 @@ class DropdownMenuTile extends StatelessWidget with TileMixin {
   }
 }
 
-/// 锚点菜单tile, 使用[Overlay]实现
+/// 锚点菜单tile, 使用[MenuAnchor]实现
+/// 内部使用[Overlay]实现
 class MenuAnchorTile extends StatefulWidget {
   /// 标签
   final String? label;

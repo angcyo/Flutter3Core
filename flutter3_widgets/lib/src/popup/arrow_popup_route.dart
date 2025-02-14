@@ -51,6 +51,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   /// 与锚点之间/屏幕之间的间距
   final EdgeInsets? margin;
 
+  /// [PopupEx.showArrowPopupRoute]
   ArrowPopupRoute({
     super.settings,
     super.filter,
