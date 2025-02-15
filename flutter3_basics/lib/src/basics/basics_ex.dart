@@ -913,6 +913,8 @@ extension StringEx on String {
   /// [byteData]
   Uint8List get bytes => utf8.encode(this);
 
+  String get bytesSizeStr => bytes.length.toSizeStr();
+
   /// 转换成[utf8]字节数组
   /// [bytes]
   ByteData get byteData => ByteData.view(Uint8List.fromList(bytes).buffer);
@@ -2313,7 +2315,9 @@ extension ListIntEx on List<int> {
 extension IterableEx<E> on Iterable<E> {
   /// [Iterable] 转成流, 之后就可以使用
   /// ```
-  ///
+  /// await for (final metric in metrics.stream) {
+  ///   ...
+  /// }
   /// ```
   ///
   Stream<E> get stream => Stream.fromIterable(this);

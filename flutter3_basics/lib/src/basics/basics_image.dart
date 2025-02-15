@@ -29,9 +29,9 @@ class ImageMeta {
   /// 图片字节数据的长度
   int get length =>
       bytes?.lengthInBytes ??
-      width *
-          height *
-          (imageFormat == UiImageByteFormat.rawExtendedRgba128 ? 16 : 4);
+          width *
+              height *
+              (imageFormat == UiImageByteFormat.rawExtendedRgba128 ? 16 : 4);
 
   int get width => image.width;
 
@@ -39,7 +39,7 @@ class ImageMeta {
 
   ImageMeta(this.image, this.bytes, this.pixels,
       {this.imageFormat = UiImageByteFormat.rawRgba,
-      this.pixelsFormat = UiPixelFormat.rgba8888});
+        this.pixelsFormat = UiPixelFormat.rgba8888});
 
   /// [UiImage]转[ImageMeta]
   /// 此方法比较耗时: 292ms
@@ -89,15 +89,15 @@ class ImageMetaProvider extends ImageProvider<ImageMetaProvider> {
   }
 
   @override
-  ImageStreamCompleter loadBuffer(
-      ImageMetaProvider key, DecoderBufferCallback decode) {
+  ImageStreamCompleter loadBuffer(ImageMetaProvider key,
+      DecoderBufferCallback decode) {
     return memoryImage?.loadBuffer(memoryImage!, decode) ??
         imageStreamCompleter();
   }
 
   @override
-  ImageStreamCompleter loadImage(
-      ImageMetaProvider key, ImageDecoderCallback decode) {
+  ImageStreamCompleter loadImage(ImageMetaProvider key,
+      ImageDecoderCallback decode) {
     return memoryImage?.loadImage(memoryImage!, decode) ??
         imageStreamCompleter();
   }
@@ -152,10 +152,8 @@ class UiImageProvider extends ImageProvider<UiImageProvider> {
   final double scale;
 
   @override
-  ImageStreamCompleter loadImage(
-    UiImageProvider key,
-    ImageDecoderCallback decode,
-  ) {
+  ImageStreamCompleter loadImage(UiImageProvider key,
+      ImageDecoderCallback decode,) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key),
       scale: key.scale,
@@ -167,9 +165,9 @@ class UiImageProvider extends ImageProvider<UiImageProvider> {
     //image转ByteData
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     final ui.ImmutableBuffer buffer =
-        await ui.ImmutableBuffer.fromUint8List(byteData!.bytes);
+    await ui.ImmutableBuffer.fromUint8List(byteData!.bytes);
     var codec =
-        await PaintingBinding.instance.instantiateImageCodecWithSize(buffer);
+    await PaintingBinding.instance.instantiateImageCodecWithSize(buffer);
     return codec;
   }
 
@@ -287,7 +285,9 @@ extension Uint8ListImageEx on Uint8List {
   String toBase64Image([
     UiImageByteFormat format = UiImageByteFormat.png,
   ]) =>
-      'data:image/${format == UiImageByteFormat.png ? "png" : "jpeg"};base64,${base64Encode(this)}';
+      'data:image/${format == UiImageByteFormat.png
+          ? "png"
+          : "jpeg"};base64,${base64Encode(this)}';
 }
 
 extension ImageEx on UiImage {
@@ -317,7 +317,7 @@ extension ImageEx on UiImage {
   /// [Uint8ListImageEx.toImageFromPixels]
   /// [toBytes]
   Future<Uint8List?> toPixels(
-          [UiImageByteFormat format = UiImageByteFormat.rawRgba]) =>
+      [UiImageByteFormat format = UiImageByteFormat.rawRgba]) =>
       toBytes(format);
 
   /// 获取图片中的像素值
@@ -335,13 +335,14 @@ extension ImageEx on UiImage {
     if (r == null || g == null || b == null || a == null) {
       return null;
     }
-    return Color.fromARGB(a, r, g, b).value;
+    return Color
+        .fromARGB(a, r, g, b)
+        .value;
   }
 
   /// 保存图片到文件
   /// [saveToFile]
-  Future<File?> saveToFilePath(
-    String? filePath, {
+  Future<File?> saveToFilePath(String? filePath, {
     UiImageByteFormat format = UiImageByteFormat.png,
   }) async {
     if (isNil(filePath)) {
@@ -351,8 +352,7 @@ extension ImageEx on UiImage {
   }
 
   /// 保存图片到文件
-  Future<File?> saveToFile(
-    File? file, {
+  Future<File?> saveToFile(File? file, {
     UiImageByteFormat format = UiImageByteFormat.png,
   }) async {
     final Uint8List? bytes = await toBytes(format);
@@ -476,7 +476,7 @@ extension ImageStringEx on String {
   Future<ui.Image> toImageFromBase64() async {
     const c = ",";
     final Uint8List bytes =
-        contains(c) ? base64Decode(this) : base64Decode(split(c).last);
+    contains(c) ? base64Decode(this) : base64Decode(split(c).last);
     return decodeImageFromList(bytes);
   }
 
@@ -510,13 +510,13 @@ extension ImageStringEx on String {
     final Completer<ui.Image> completer = Completer();
     final img = NetworkImage(this);
     img.resolve(const ImageConfiguration()).addListener(
-          ImageStreamListener(
+      ImageStreamListener(
             (info, bool _) => completer.complete(info.image),
-            onError: (exception, stackTrace) {
-              completer.completeError(exception, stackTrace);
-            },
-          ),
-        );
+        onError: (exception, stackTrace) {
+          completer.completeError(exception, stackTrace);
+        },
+      ),
+    );
     return completer.future;
   }
 }
@@ -572,7 +572,7 @@ extension WidgetImageEx on Widget {
         child: repaintBoundary,
       ),
       configuration:
-          configuration ?? ViewConfiguration.fromView(view), //flutter 3.22.0
+      configuration ?? ViewConfiguration.fromView(view), //flutter 3.22.0
       /*configuration: ViewConfiguration(
         size: imageSize,
         devicePixelRatio: pixelRatio,
@@ -580,7 +580,8 @@ extension WidgetImageEx on Widget {
     );
 
     //管道
-    final pipelineOwner = PipelineOwner()..rootNode = renderView;
+    final pipelineOwner = PipelineOwner()
+      ..rootNode = renderView;
     renderView.prepareInitialFrame();
 
     //管道对象
@@ -656,7 +657,7 @@ extension RenderObjectImageEx on RenderObject {
       //这里的[paintBounds]就是屏幕大小, 所以[pixelRatio]应该为1
       //但是如果使用[size]那么[pixelRatio]应该为[devicePixelRatio]
       ui.Image? result =
-          await layer?.toImage(paintBounds, pixelRatio: pixelRatio);
+      await layer?.toImage(paintBounds, pixelRatio: pixelRatio);
       if (result == null && this is RenderRepaintBoundary) {
         final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
         //因为[RenderRepaintBoundary]里面用的是[size]
@@ -681,7 +682,7 @@ extension RenderObjectImageEx on RenderObject {
       //这里的[paintBounds]就是屏幕大小, 所以[pixelRatio]应该为1
       //但是如果使用[size]那么[pixelRatio]应该为[devicePixelRatio]
       ui.Image? result =
-          layer?.toImageSync(paintBounds, pixelRatio: pixelRatio);
+      layer?.toImageSync(paintBounds, pixelRatio: pixelRatio);
       if (result == null && this is RenderRepaintBoundary) {
         final devicePixelRatio = platformMediaQueryData.devicePixelRatio;
         final RenderRepaintBoundary boundary = this as RenderRepaintBoundary;
@@ -708,7 +709,7 @@ extension ImageProviderEx<T extends Object> on ImageProvider<T> {
     final Completer completer = Completer<ImageInfo>();
     final ImageStream stream = resolve(configuration);
     final listener = ImageStreamListener(
-      (ImageInfo info, bool synchronousCall) {
+          (ImageInfo info, bool synchronousCall) {
         if (!completer.isCompleted) {
           completer.complete(info);
         }

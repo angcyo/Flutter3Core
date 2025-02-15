@@ -416,6 +416,11 @@ class SvgBuilder {
     String? name,
     double? scaleImage,
     bool? invertScaleImageMatrix,
+    //--
+    dynamic x,
+    dynamic y,
+    dynamic width,
+    dynamic height,
   }) async {
     if (image != null) {
       if (scaleImage != null && scaleImage != 1) {
@@ -439,6 +444,11 @@ class SvgBuilder {
         transform: transform,
         id: id,
         name: name,
+        //--
+        x: x,
+        y: y,
+        width: width,
+        height: height,
       );
     }
   }

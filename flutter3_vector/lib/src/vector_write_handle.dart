@@ -7,12 +7,15 @@ part of '../flutter3_vector.dart';
 ///
 
 /// gcode 默认头部, 手动 manual
+/// [gcodeHeader]
 const kGCodeHeader = 'G21\nG90\nM8\nM5\nM3\n';
 
 /// gcode 自动激光头, 自动 auto
+/// [gcodeHeader]
 const kGCodeAutoHeader = 'G21\nG90\nM8\nM5\nM4\n';
 
 /// gcode 默认尾部
+/// [gcodeFooter]
 const kGCodeFooter = 'M5\nM9\nG1S0\nM2\n';
 
 /// gcode 指令间隙

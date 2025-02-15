@@ -144,7 +144,7 @@ Future<String?> saveFile({
   );
   assert(() {
     if (path != null) {
-      l.d('保存文件至->$path');
+      l.d('保存文件至->$path [${path.fileSizeStr}]');
     } else {
       l.d('取消保存文件');
     }
