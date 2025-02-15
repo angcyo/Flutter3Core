@@ -716,6 +716,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
   /// 更新元素的大小
   /// [width].[height]需要更新到的目标大小
+  /// [translateElement]更新元素的位置
+  ///
   /// [scaleElement]
   @api
   @supportUndo
@@ -732,6 +734,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       return;
     }
     if (width == null && height == null) {
+      assert(() {
+        l.w('无效的操作,width和height不能同时为空');
+        return true;
+      }());
       return;
     }
     final bounds =
@@ -808,6 +814,9 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 按照指定的增量平移元素
+  /// [dx].[dy] 需要移动的增量
+  /// [updateElementSize]更新元素大小
+  ///
   /// [translateElement]
   /// [scaleElement]
   /// [rotateElement]
@@ -826,6 +835,15 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
     dx ??= 0;
     dy ??= 0;
+
+    if (dx == 0 && dy == 0) {
+      assert(() {
+        l.w('无效的操作->dx,dy不能同时为0');
+        return true;
+      }());
+      return;
+    }
+
     final limit = controlLimit.limitTranslate(dx, dy,
         elementPainter.paintProperty?.getBounds(enableResetElementAngle));
     dx = limit[0];

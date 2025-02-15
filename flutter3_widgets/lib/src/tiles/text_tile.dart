@@ -4,6 +4,50 @@ part of '../../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/21
 ///
+
+/// 文本混入
+/// [LabelMixin]
+/// [TextMixin]
+mixin TextMixin {
+  //--text
+  /// 文本
+  String? get text => null;
+
+  Widget? get textWidget => null;
+
+  TextStyle? get textStyle => null;
+
+  EdgeInsets? get textPadding => null;
+
+  BoxConstraints? get textConstraints => null;
+
+  /// 构建对应的小部件
+  /// [buildTextWidgetMixin]
+  @callPoint
+  Widget? buildTextWidgetMixin(
+    BuildContext context, {
+    bool themeStyle = true,
+    EdgeInsets? padding,
+    String? text,
+    Widget? textWidget,
+    TextStyle? textStyle,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    text ??= this.text;
+    textWidget ??= this.textWidget;
+    textStyle ??= this.textStyle;
+    final widget = textWidget ??
+        (text
+            ?.text(
+              style:
+                  textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
+            )
+            .constrainedBox(textConstraints)
+            .paddingInsets(textPadding));
+    return widget?.paddingInsets(padding);
+  }
+}
+
 /// 单文本[text]显示的tile
 class TextTile extends StatelessWidget {
   /// 文本

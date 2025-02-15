@@ -6,7 +6,10 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2024/06/29
 /// 标签混入
 /// [kLabelPadding]
+/// [LabelMixin]
+/// [TextMixin]
 mixin LabelMixin {
+  //--label
   /// 标签
   String? get label => null;
 

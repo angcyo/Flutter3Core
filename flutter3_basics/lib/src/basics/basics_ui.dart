@@ -36,8 +36,7 @@ void scheduleFrame() {
 /// [Ticker.scheduleTick]
 /// [once] 是否只处理一次?
 /// @return id
-int scheduleFrameCallback(
-  FrameCallback callback, {
+int scheduleFrameCallback(FrameCallback callback, {
   bool rescheduling = false,
   bool once = false,
 }) {
@@ -163,8 +162,7 @@ EdgeInsets? edgeInsets([double? v1, double? v2, double? v3, double? v4]) {
 /// 通过[Builder]小部件, 获取当前元素的[BuildContext]
 /// 然后当前[BuildContext]更新只会影响其子元素, 父元素不会受到影响
 /// [Builder]
-Widget builder(
-  WidgetBuilder builder, [
+Widget builder(WidgetBuilder builder, [
   Key? key,
 ]) =>
     Builder(
@@ -185,9 +183,9 @@ Widget builder(
 /// [sliverLayout]
 /// [_DeferredLayout] 延迟布局
 Widget layout(
-  Widget Function(BuildContext context, BoxConstraints constraints) builder, [
-  Key? key,
-]) =>
+    Widget Function(BuildContext context, BoxConstraints constraints) builder, [
+      Key? key,
+    ]) =>
     LayoutBuilder(
       builder: builder,
       key: key,
@@ -195,10 +193,10 @@ Widget layout(
 
 /// [SliverLayoutBuilder]
 Widget sliverLayout(
-  Widget Function(BuildContext context, SliverConstraints constraints)
-      builder, [
-  Key? key,
-]) =>
+    Widget Function(BuildContext context, SliverConstraints constraints)
+    builder, [
+      Key? key,
+    ]) =>
     SliverLayoutBuilder(
       builder: builder,
       key: key,
@@ -491,13 +489,14 @@ extension WidgetEx on Widget {
       key == null ? this : KeyedSubtree(key: key, child: this);
 
   /// [Tooltip] 提示
-  Widget tooltip(String? tip, {InlineSpan? richMessage}) => tip == null
-      ? this
-      : Tooltip(
-          message: tip,
-          richMessage: richMessage,
-          child: this,
-        );
+  Widget tooltip(String? tip, {InlineSpan? richMessage}) =>
+      tip == null
+          ? this
+          : Tooltip(
+        message: tip,
+        richMessage: richMessage,
+        child: this,
+      );
 
   /// [Hero]
   /// hero动画不能在Dialog中使用
@@ -527,19 +526,19 @@ extension WidgetEx on Widget {
   }) =>
       enable
           ? Listener(
-              key: key,
-              onPointerDown: onPointerDown,
-              onPointerMove: onPointerMove,
-              onPointerUp: onPointerUp,
-              onPointerHover: onPointerHover,
-              onPointerCancel: onPointerCancel,
-              onPointerPanZoomStart: onPointerPanZoomStart,
-              onPointerPanZoomUpdate: onPointerPanZoomUpdate,
-              onPointerPanZoomEnd: onPointerPanZoomEnd,
-              onPointerSignal: onPointerSignal,
-              behavior: behavior,
-              child: this,
-            )
+        key: key,
+        onPointerDown: onPointerDown,
+        onPointerMove: onPointerMove,
+        onPointerUp: onPointerUp,
+        onPointerHover: onPointerHover,
+        onPointerCancel: onPointerCancel,
+        onPointerPanZoomStart: onPointerPanZoomStart,
+        onPointerPanZoomUpdate: onPointerPanZoomUpdate,
+        onPointerPanZoomEnd: onPointerPanZoomEnd,
+        onPointerSignal: onPointerSignal,
+        behavior: behavior,
+        child: this,
+      )
           : this;
 
   /// 点击事件
@@ -574,8 +573,7 @@ extension WidgetEx on Widget {
   ///
   /// 鼠标监听
   /// [Listener.onPointerSignal]
-  Widget click(
-    GestureTapCallback? onTap, [
+  Widget click(GestureTapCallback? onTap, [
     bool enable = true,
     GestureLongPressCallback? onLongPress,
     HitTestBehavior? behavior = HitTestBehavior.translucent,
@@ -583,18 +581,17 @@ extension WidgetEx on Widget {
       onTap == null || !enable
           ? this
           : GestureDetector(
-              onTap: onTap,
-              behavior: behavior,
-              onLongPress: onLongPress,
-              child: this,
-            );
+        onTap: onTap,
+        behavior: behavior,
+        onLongPress: onLongPress,
+        child: this,
+      );
 
   /// 双击事件
   /// [RenderProxyBoxWithHitTestBehavior]
   /// [click]
   /// [doubleClick]
-  Widget doubleClick(
-    GestureTapCallback? onDoubleTap, {
+  Widget doubleClick(GestureTapCallback? onDoubleTap, {
     bool enable = true,
     GestureTapCallback? onTap,
     HitTestBehavior? behavior = HitTestBehavior.translucent,
@@ -602,17 +599,16 @@ extension WidgetEx on Widget {
       onDoubleTap == null || !enable
           ? this
           : GestureDetector(
-              onDoubleTap: onDoubleTap,
-              onTap: onTap,
-              behavior: behavior,
-              child: this,
-            );
+        onDoubleTap: onDoubleTap,
+        onTap: onTap,
+        behavior: behavior,
+        child: this,
+      );
 
   /// 长按事件
   /// [behavior] 手势的命中测试行为, 父子都需要手势, 但是不想冲突, 可以设置[HitTestBehavior.opaque]
   /// [RenderProxyBoxWithHitTestBehavior]
-  Widget longClick(
-    GestureLongPressCallback? onLongPress, {
+  Widget longClick(GestureLongPressCallback? onLongPress, {
     bool enable = true,
     HitTestBehavior? behavior = HitTestBehavior.translucent,
     GestureTapCallback? onTap,
@@ -620,11 +616,11 @@ extension WidgetEx on Widget {
       onLongPress == null || !enable
           ? this
           : GestureDetector(
-              onLongPress: onLongPress,
-              onTap: onTap,
-              behavior: behavior,
-              child: this,
-            );
+        onLongPress: onLongPress,
+        onTap: onTap,
+        behavior: behavior,
+        child: this,
+      );
 
   /// 鼠标事件监听
   /// [MouseRegion] 鼠标区域
@@ -652,21 +648,46 @@ extension WidgetEx on Widget {
   }) =>
       enable
           ? MouseRegion(
-              key: key,
-              onEnter: onEnter,
-              onExit: onExit,
-              onHover: onHover,
-              cursor: cursor,
-              opaque: opaque,
-              hitTestBehavior: hitTestBehavior,
-              child: this,
-            )
+        key: key,
+        onEnter: onEnter,
+        onExit: onExit,
+        onHover: onHover,
+        cursor: cursor,
+        opaque: opaque,
+        hitTestBehavior: hitTestBehavior,
+        child: this,
+      )
+          : this;
+
+  /// 焦点, 同一个焦点[FocusNode]不能重复使用,尤其是父子级使用
+  /// ```
+  /// Tried to make a child into a parent of itself.
+  /// ```
+  /// [Focus]
+  /// [FocusScope]
+  Widget focus({
+    Key? key,
+    FocusNode? focusNode,
+    FocusNode? parentNode,
+    bool autofocus = false,
+    ValueChanged<bool>? onFocusChange,
+    bool enable = true,
+  }) =>
+      enable
+          ? Focus(
+          focusNode: focusNode,
+          parentNode: parentNode,
+          autofocus: autofocus,
+          onFocusChange: onFocusChange ??
+                  (value) {
+                l.i('focus change $value');
+              },
+          child: this)
           : this;
 
   /// [PointerListenerWidget]
   /// [Listener]
-  Widget pointerListener(
-    PointerEventListener? onPointer, {
+  Widget pointerListener(PointerEventListener? onPointer, {
     HitTestBehavior behavior = HitTestBehavior.deferToChild,
   }) =>
       PointerListenerWidget(
@@ -680,8 +701,7 @@ extension WidgetEx on Widget {
   /// [foregroundPaint] 前景绘制
   /// [isComplex] 是否是复杂的
   /// [willChange] 是否会在下一帧改变
-  CustomPaint paint(
-    PaintFn paint, {
+  CustomPaint paint(PaintFn paint, {
     PaintFn? foregroundPaint,
     Size size = Size.zero,
     bool isComplex = false,
@@ -690,7 +710,7 @@ extension WidgetEx on Widget {
       CustomPaint(
         painter: CustomPaintWrap(paint),
         foregroundPainter:
-            foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
+        foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
         size: size,
         isComplex: isComplex,
         willChange: willChange,
@@ -710,7 +730,8 @@ extension WidgetEx on Widget {
       );*/
 
   /// 为[child]小部件提供一个数据
-  Widget dataProvider([Object? data]) => DataProviderScope(
+  Widget dataProvider([Object? data]) =>
+      DataProviderScope(
         data: data,
         child: this,
       );
@@ -728,28 +749,28 @@ extension WidgetEx on Widget {
       duration == null
           ? this
           : AnimatedSize(
-              key: key,
-              alignment: alignment,
-              curve: curve,
-              duration: duration,
-              reverseDuration: reverseDuration,
-              clipBehavior: clipBehavior,
-              onEnd: onEnd,
-              child: this,
-            );
+        key: key,
+        alignment: alignment,
+        curve: curve,
+        duration: duration,
+        reverseDuration: reverseDuration,
+        clipBehavior: clipBehavior,
+        onEnd: onEnd,
+        child: this,
+      );
 
   /// [AnimatedBuilder]
   Widget animatedBuilder(Listenable? animation, [TransitionBuilder? builder]) =>
       animation == null
           ? this
           : AnimatedBuilder(
-              animation: animation,
-              builder: builder ??
-                  (context, child) {
-                    return child ?? this;
-                  },
-              child: this,
-            );
+        animation: animation,
+        builder: builder ??
+                (context, child) {
+              return child ?? this;
+            },
+        child: this,
+      );
 
   //region ---Padding---
 
@@ -760,9 +781,9 @@ extension WidgetEx on Widget {
     return insets == null || insets == EdgeInsets.zero
         ? this
         : Padding(
-            padding: insets,
-            child: this,
-          );
+      padding: insets,
+      child: this,
+    );
   }
 
   /// 将当前的小部件, 包裹在一个[Padding]中
@@ -876,8 +897,7 @@ extension WidgetEx on Widget {
   /// [Center]
   /// [Alignment.center]
   /// [AlignmentDirectional.center]
-  Widget align(
-    AlignmentGeometry alignment, {
+  Widget align(AlignmentGeometry alignment, {
     double? widthFactor,
     double? heightFactor,
     //--
@@ -975,8 +995,7 @@ extension WidgetEx on Widget {
   /// [radians] 旋转角度, 顺时针为正, 弧度单位
   /// [RotateAnimation] 旋转动画
   /// [RotationTransition] 旋转变换
-  Widget rotate(
-    double radians, {
+  Widget rotate(double radians, {
     AlignmentGeometry alignment = Alignment.center,
     Offset? origin,
     bool transformHitTests = true,
@@ -998,9 +1017,9 @@ extension WidgetEx on Widget {
   Widget offstage([bool offstage = true, bool always = false]) =>
       (offstage || always)
           ? Offstage(
-              offstage: offstage,
-              child: this,
-            )
+        offstage: offstage,
+        child: this,
+      )
           : this;
 
   /// 脚手架, 会消耗手势事件
@@ -1047,9 +1066,9 @@ extension WidgetEx on Widget {
             elevation: elevation,
             scrolledUnderElevation: elevation,
             foregroundColor:
-                foregroundColor ?? globalTheme.appBarForegroundColor,
+            foregroundColor ?? globalTheme.appBarForegroundColor,
             backgroundColor:
-                backgroundColor ?? globalTheme.appBarBackgroundColor,
+            backgroundColor ?? globalTheme.appBarBackgroundColor,
             //阴影高度
             shadowColor: globalTheme.appBarShadowColor,
             flexibleSpace: null, //渐变背景
@@ -1061,8 +1080,7 @@ extension WidgetEx on Widget {
   }
 
   /// 移除MediaQuery的padding
-  Widget removePadding(
-    BuildContext context, {
+  Widget removePadding(BuildContext context, {
     bool removeAll = false,
     bool removeTop = false,
     bool removeBottom = false,
@@ -1091,29 +1109,30 @@ extension WidgetEx on Widget {
   }) {
     return useSafeArea
         ? (useSliverSafeArea
-            ? SliverSafeArea(
-                left: left,
-                top: top,
-                right: right,
-                bottom: bottom ?? maintainBottomViewPadding,
-                minimum: minimum,
-                sliver: this,
-              )
-            : SafeArea(
-                left: left,
-                top: top,
-                right: right,
-                bottom: bottom ?? maintainBottomViewPadding,
-                minimum: minimum,
-                maintainBottomViewPadding: maintainBottomViewPadding,
-                child: this,
-              ))
+        ? SliverSafeArea(
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom ?? maintainBottomViewPadding,
+      minimum: minimum,
+      sliver: this,
+    )
+        : SafeArea(
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom ?? maintainBottomViewPadding,
+      minimum: minimum,
+      maintainBottomViewPadding: maintainBottomViewPadding,
+      child: this,
+    ))
         : this;
   }
 
   /// 状态栏亮色模式
   /// 背景白色, 状态栏图标/文本为黑色
-  Widget lightStatusBar() => systemUiOverlay(
+  Widget lightStatusBar() =>
+      systemUiOverlay(
         style: const SystemUiOverlayStyle(
           statusBarIconBrightness: Brightness.dark,
           statusBarBrightness: Brightness.light,
@@ -1122,7 +1141,8 @@ extension WidgetEx on Widget {
 
   /// 状态栏暗色模式
   /// 背景黑色, 状态栏图标/文本为白色
-  Widget darkStatusBar() => systemUiOverlay(
+  Widget darkStatusBar() =>
+      systemUiOverlay(
         style: const SystemUiOverlayStyle(
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
@@ -1157,9 +1177,9 @@ extension WidgetEx on Widget {
                 globalTheme.systemNavigationBarColor,
             systemNavigationBarDividerColor: systemNavigationBarDividerColor,
             systemNavigationBarIconBrightness:
-                systemNavigationBarIconBrightness,
+            systemNavigationBarIconBrightness,
             systemNavigationBarContrastEnforced:
-                systemNavigationBarContrastEnforced,
+            systemNavigationBarContrastEnforced,
             statusBarColor: statusBarColor ?? globalTheme.systemStatusBarColor,
             statusBarBrightness: statusBarBrightness,
             statusBarIconBrightness: statusBarIconBrightness,
@@ -1172,8 +1192,7 @@ extension WidgetEx on Widget {
   //endregion ---SafeArea---
 
   /// 禁用当前的小部件
-  Widget disable(
-    bool disable, {
+  Widget disable(bool disable, {
     //--
     ColorFilter? colorFilter,
     Color? color = Colors.grey,
@@ -1206,9 +1225,9 @@ extension WidgetEx on Widget {
     return ignoreType == null
         ? this
         : IgnoreSelfPointer(
-            ignoreType: ignoreType,
-            child: this,
-          );
+      ignoreType: ignoreType,
+      child: this,
+    );
   }
 
   /// 支持监听动画改变
@@ -1219,9 +1238,9 @@ extension WidgetEx on Widget {
     return ignoreType == null
         ? this
         : IgnoreSelfPointerListener(
-            this,
-            ignoreType: ignoreType,
-          );
+      this,
+      ignoreType: ignoreType,
+    );
   }
 
   /// 消耗小部件内的所有手势
@@ -1245,11 +1264,11 @@ extension WidgetEx on Widget {
     return borderRadius == null
         ? this
         : ClipRRect(
-            borderRadius: borderRadius,
-            clipper: clipper,
-            clipBehavior: clipBehavior,
-            child: this,
-          );
+      borderRadius: borderRadius,
+      clipper: clipper,
+      clipBehavior: clipBehavior,
+      child: this,
+    );
   }
 
   /// 圆角
@@ -1369,26 +1388,26 @@ extension WidgetEx on Widget {
     decoration ??= borderRadius == null
         ? null
         : BoxDecoration(
-            borderRadius: borderRadius,
-            color: color,
-            shape: shape,
-            gradient: gradient,
-            boxShadow: boxShadow ??
-                (shadowBlurRadius == null
-                    ? null
-                    : [
-                        BoxShadow(
-                            color: shadowColor ?? Colors.grey.withOpacity(0.1),
-                            offset: const Offset(2, 2), //阴影y轴偏移量
-                            blurRadius: shadowBlurRadius, //阴影模糊程度
-                            spreadRadius: shadowSpreadRadius //阴影扩散程度
-                            ),
-                      ]),
-            border: borderColor == null
-                ? null
-                : Border.all(color: borderColor, width: borderWidth),
-            image: decorationImage,
-          );
+      borderRadius: borderRadius,
+      color: color,
+      shape: shape,
+      gradient: gradient,
+      boxShadow: boxShadow ??
+          (shadowBlurRadius == null
+              ? null
+              : [
+            BoxShadow(
+                color: shadowColor ?? Colors.grey.withOpacity(0.1),
+                offset: const Offset(2, 2), //阴影y轴偏移量
+                blurRadius: shadowBlurRadius, //阴影模糊程度
+                spreadRadius: shadowSpreadRadius //阴影扩散程度
+            ),
+          ]),
+      border: borderColor == null
+          ? null
+          : Border.all(color: borderColor, width: borderWidth),
+      image: decorationImage,
+    );
     if (constraints == null) {
       if (minWidth != null || minHeight != null) {
         constraints = BoxConstraints(
@@ -1421,8 +1440,7 @@ extension WidgetEx on Widget {
   ///[Transform]
   ///[PaintingContext.pushTransform]
   ///[TransformLayer]
-  Widget matrix(
-    Matrix4 transform, {
+  Widget matrix(Matrix4 transform, {
     Offset? origin,
     AlignmentGeometry? alignment = Alignment.center,
     bool transformHitTests = true,
@@ -1437,8 +1455,7 @@ extension WidgetEx on Widget {
       );
 
   /// 应用一个变换[Matrix4].[Transform]
-  Widget transform(
-    Matrix4 transform, {
+  Widget transform(Matrix4 transform, {
     Offset? origin,
     AlignmentGeometry? alignment = Alignment.center,
     bool transformHitTests = true,
@@ -1641,15 +1658,15 @@ extension WidgetEx on Widget {
   }) =>
       enable && ((sigma ?? 0) > 0 || filter != null)
           ? BackdropFilter(
-              filter: filter ??
-                  ui.ImageFilter.blur(
-                    sigmaX: sigma!,
-                    sigmaY: sigma,
-                    tileMode: TileMode.clamp,
-                  ),
-              blendMode: blendMode,
-              child: this,
-            )
+        filter: filter ??
+            ui.ImageFilter.blur(
+              sigmaX: sigma!,
+              sigmaY: sigma,
+              tileMode: TileMode.clamp,
+            ),
+        blendMode: blendMode,
+        child: this,
+      )
           : this;
 
   /// 着色, 可以实现线性着色效果, 高光效果
@@ -1657,25 +1674,24 @@ extension WidgetEx on Widget {
   /// [ColorFiltered]
   /// [colorFiltered]
   /// https://pub.dev/packages/shimmer
-  Widget shaderMask(
-    ui.Shader? shader, {
+  Widget shaderMask(ui.Shader? shader, {
     BlendMode blendMode = BlendMode.modulate,
   }) =>
       shader == null
           ? this
           : ShaderMask(
-              shaderCallback: (Rect bounds) {
-                return shader;
-                /*return RadialGradient(
+        shaderCallback: (Rect bounds) {
+          return shader;
+          /*return RadialGradient(
             center: Alignment.topLeft,
             radius: 1.0,
             colors: <Color>[Colors.yellow, Colors.deepOrange.shade900],
             tileMode: TileMode.mirror,
           ).createShader(bounds);*/
-              },
-              blendMode: blendMode,
-              child: this,
-            );
+        },
+        blendMode: blendMode,
+        child: this,
+      );
 
   /// 可以实现灰度效果,灰度化app
   /// [ColorFiltered]
@@ -1694,9 +1710,9 @@ extension WidgetEx on Widget {
       (!enable || (colorFilter == null && color == null))
           ? this
           : ColorFiltered(
-              colorFilter: colorFilter ?? ColorFilter.mode(color!, blendMode),
-              child: this,
-            );
+        colorFilter: colorFilter ?? ColorFilter.mode(color!, blendMode),
+        child: this,
+      );
 
   /// 在暗色模式下才会过滤颜色
   Widget darkColorFiltered({
@@ -1709,7 +1725,9 @@ extension WidgetEx on Widget {
       colorFiltered(
         colorFilter: darkColorFilter,
         color: (context ?? GlobalConfig.def.globalContext)?.isThemeDark == true
-            ? (darkColor ?? GlobalTheme.of(context).icoNormalColor)
+            ? (darkColor ?? GlobalTheme
+            .of(context)
+            .icoNormalColor)
             : null,
         blendMode: blendMode,
         enable: enable,
@@ -1719,14 +1737,15 @@ extension WidgetEx on Widget {
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
   /// [WidgetListEx.repaintBoundary]
   /// [debugRepaintRainbowEnabled]
-  Widget repaintBoundary({int? childIndex}) => childIndex == null
-      ? RepaintBoundary(
-          child: this,
-        )
-      : RepaintBoundary.wrap(
-          this,
-          childIndex,
-        );
+  Widget repaintBoundary({int? childIndex}) =>
+      childIndex == null
+          ? RepaintBoundary(
+        child: this,
+      )
+          : RepaintBoundary.wrap(
+        this,
+        childIndex,
+      );
 
   /// 文本样式包裹
   /// [DefaultTextStyle]
@@ -1773,16 +1792,15 @@ extension WidgetEx on Widget {
   /// [DefaultTextStyle]
   /// [textStyle]
   /// [wrapTextStyle]
-  Widget textStyle(
-    TextStyle? style, {
+  Widget textStyle(TextStyle? style, {
     bool animate = false,
   }) =>
       style == null
           ? this
           : wrapTextStyle(
-              style: style,
-              animate: animate,
-            );
+        style: style,
+        animate: animate,
+      );
 
   /// 拦截路由的弹出, 返回键.
   /// [PopScope]
@@ -1823,8 +1841,7 @@ extension WidgetEx on Widget {
   /// 请在[action]中执行[pop]操作.才能关闭界面.
   /// [action] `navigatorOf(rootNavigator).pop(result);`
   /// [action] 返回false, 则自动[pop]操作
-  Widget interceptPopResult(
-    FutureOr Function() action, {
+  Widget interceptPopResult(FutureOr Function() action, {
     BuildContext? context,
     dynamic result,
   }) {
@@ -1873,9 +1890,9 @@ extension WidgetEx on Widget {
     return constraints == null
         ? this
         : ConstrainedBox(
-            constraints: constraints,
-            child: this,
-          );
+      constraints: constraints,
+      child: this,
+    );
   }
 
   /// 约束大小
@@ -1929,16 +1946,16 @@ extension WidgetEx on Widget {
     double? minWidth = kInteractiveHeight,
     double? minHeight = kMinInteractiveHeight,
     EdgeInsetsGeometry? margin =
-        const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
+    const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
     EdgeInsetsGeometry? padding,
     AlignmentGeometry alignment = Alignment.center,
   }) {
     return paddingInsets(margin)
         .align(alignment)
         .constrainedBox(BoxConstraints(
-          minWidth: minWidth ?? 0,
-          minHeight: minHeight ?? 0,
-        ))
+      minWidth: minWidth ?? 0,
+      minHeight: minHeight ?? 0,
+    ))
         .paddingInsets(padding);
   }
 
@@ -2064,7 +2081,8 @@ extension WidgetEx on Widget {
 
   /// 比例box [AspectRatio]
   /// 纵横比表示为宽度与高度的比率。例如，16:9宽高比的值为16.0/9.0。
-  Widget ratio(double aspectRatio) => AspectRatio(
+  Widget ratio(double aspectRatio) =>
+      AspectRatio(
         aspectRatio: aspectRatio,
         child: this,
       );
@@ -2102,8 +2120,7 @@ extension WidgetEx on Widget {
 
   /// 有大小, 有圆形波纹, 有提示
   /// [highlightColor] 按下时, 高亮的波纹颜色
-  Widget icon(
-    GestureTapCallback? onTap, {
+  Widget icon(GestureTapCallback? onTap, {
     bool enable = true,
     bool? enableFeedback,
     String? tooltip,
@@ -2157,8 +2174,7 @@ extension WidgetEx on Widget {
   ///
   /// [material]
   /// [inkWellCircle]
-  Widget ink(
-    GestureTapCallback? onTap, {
+  Widget ink(GestureTapCallback? onTap, {
     bool enable = true,
     //--
     double radius = 0,
@@ -2217,8 +2233,7 @@ extension WidgetEx on Widget {
   /// [CircleBorder]
   ///
   /// [inkWellCircle]
-  Widget inkWell(
-    GestureTapCallback? onTap, {
+  Widget inkWell(GestureTapCallback? onTap, {
     BorderRadius? borderRadius,
     Color? splashColor,
     Color? highlightColor,
@@ -2253,8 +2268,7 @@ extension WidgetEx on Widget {
   /// [ink]
   /// [inkWell]
   /// [InkWell]
-  Widget inkWellCircle(
-    GestureTapCallback? onTap, {
+  Widget inkWellCircle(GestureTapCallback? onTap, {
     Color? splashColor,
     Color? disableColor,
     Color? highlightColor,
@@ -2264,18 +2278,17 @@ extension WidgetEx on Widget {
       !enable
           ? colorFiltered(color: disableColor)
           : inkWell(
-              onTap,
-              //borderRadius: BorderRadius.circular(999),
-              customBorder: const CircleBorder(),
-              splashColor: splashColor,
-              highlightColor: highlightColor,
-              highlightShape: BoxShape.rectangle,
-              radius: radius,
-            );
+        onTap,
+        //borderRadius: BorderRadius.circular(999),
+        customBorder: const CircleBorder(),
+        splashColor: splashColor,
+        highlightColor: highlightColor,
+        highlightShape: BoxShape.rectangle,
+        radius: radius,
+      );
 
   /// 将[this]和[other] 使用[Column]包裹
-  Widget columnOf(
-    Widget? other, {
+  Widget columnOf(Widget? other, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize, //MainAxisSize.min
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -2288,22 +2301,21 @@ extension WidgetEx on Widget {
       other == null
           ? this
           : [
-              this,
-              other,
-            ].column(
-              mainAxisAlignment: mainAxisAlignment,
-              mainAxisSize: mainAxisSize,
-              crossAxisAlignment: crossAxisAlignment,
-              textDirection: textDirection,
-              verticalDirection: verticalDirection,
-              textBaseline: textBaseline,
-              gap: gap,
-              gapWidget: gapWidget,
-            )!;
+        this,
+        other,
+      ].column(
+        mainAxisAlignment: mainAxisAlignment,
+        mainAxisSize: mainAxisSize,
+        crossAxisAlignment: crossAxisAlignment,
+        textDirection: textDirection,
+        verticalDirection: verticalDirection,
+        textBaseline: textBaseline,
+        gap: gap,
+        gapWidget: gapWidget,
+      )!;
 
   /// 将[this]和[other] 使用[Row]包裹
-  Widget rowOf(
-    Widget? other, {
+  Widget rowOf(Widget? other, {
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize, //MainAxisSize.max
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -2316,22 +2328,21 @@ extension WidgetEx on Widget {
       other == null
           ? this
           : [
-              this,
-              other,
-            ].row(
-              mainAxisAlignment: mainAxisAlignment,
-              mainAxisSize: mainAxisSize,
-              crossAxisAlignment: crossAxisAlignment,
-              textDirection: textDirection,
-              verticalDirection: verticalDirection,
-              textBaseline: textBaseline,
-              gap: gap,
-              gapWidget: gapWidget,
-            )!;
+        this,
+        other,
+      ].row(
+        mainAxisAlignment: mainAxisAlignment,
+        mainAxisSize: mainAxisSize,
+        crossAxisAlignment: crossAxisAlignment,
+        textDirection: textDirection,
+        verticalDirection: verticalDirection,
+        textBaseline: textBaseline,
+        gap: gap,
+        gapWidget: gapWidget,
+      )!;
 
   /// 将[this]和[other] 使用[Stack]包裹
-  Widget stackOf(
-    Widget? other, {
+  Widget stackOf(Widget? other, {
     AlignmentGeometry alignment = AlignmentDirectional.center,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
@@ -2340,14 +2351,14 @@ extension WidgetEx on Widget {
       other == null
           ? this
           : [
-              this,
-              other,
-            ].stack(
-              alignment: alignment,
-              textDirection: textDirection,
-              fit: fit,
-              clipBehavior: clipBehavior,
-            )!;
+        this,
+        other,
+      ].stack(
+        alignment: alignment,
+        textDirection: textDirection,
+        fit: fit,
+        clipBehavior: clipBehavior,
+      )!;
 
   /// 简单的滚动小组件[SingleChildScrollView]
   /// [WidgetListEx.scroll]
@@ -2508,6 +2519,7 @@ extension StateEx on State {
   /// [Element.markNeedsBuild]
   /// [ContextEx.tryUpdateState]
   bool updateState({
+    bool post = false,
     String? debugLabel,
   }) {
     try {
@@ -2518,15 +2530,22 @@ extension StateEx on State {
           }
           return true;
         }());
-        postFrameCallbackIfNeed((_) {
-          setState(() {});
-        });
+        if (post) {
+          postFrame(() {
+            setState(() {});
+          });
+        } else {
+          postFrameCallbackIfNeed((_) {
+            setState(() {});
+          });
+        }
         return true;
       }
       return false;
     } catch (e) {
       assert(() {
-        l.w('当前页面可能已被销毁, 无法更新! (渲染调度中[${SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks}])');
+        l.w('当前页面可能已被销毁, 无法更新! (渲染调度中[${SchedulerBinding
+            .instance.schedulerPhase == SchedulerPhase.persistentCallbacks}])');
         printError(e);
         return true;
       }());
@@ -2677,8 +2696,7 @@ extension ContextEx on BuildContext {
   /// ```
   /// 此方法不能在build阶段调用
   /// [RenderObjectEx.eachVisitChildRenderObject]
-  eachVisitChildElements(
-    ConditionalElementVisitorDepth visitor, {
+  eachVisitChildElements(ConditionalElementVisitorDepth visitor, {
     int depth = 0,
   }) {
     if (owner == null || debugDoingBuild) {
@@ -2927,8 +2945,7 @@ extension RenderObjectEx on RenderObject {
   /// 遍历所有的子节点[RenderObject]
   /// [visitor] 返回值表示是否继续遍历; true: 继续深度遍历; false: 停止深度遍历;
   /// [ContextEx.eachVisitChildElements]
-  eachVisitChildRenderObject(
-    ConditionalRenderObjectVisitorDepth visitor, {
+  eachVisitChildRenderObject(ConditionalRenderObjectVisitorDepth visitor, {
     int depth = 0,
   }) {
     int childIndex = 0;
@@ -2943,8 +2960,7 @@ extension RenderObjectEx on RenderObject {
 
   /// 相对自身的动画变换矩阵
   /// [RenderTransform]
-  Matrix4? getEffectiveTransform(
-    Matrix4 transform, {
+  Matrix4? getEffectiveTransform(Matrix4 transform, {
     AlignmentGeometry? alignment = Alignment.center,
     Offset? origin,
     TextDirection? textDirection,
@@ -3241,7 +3257,8 @@ extension NavigatorEx on BuildContext {
   bool get isAppBarDismissal => modalRoute?.impliesAppBarDismissal ?? false;
 
   /// 获取一个导航器[NavigatorState]
-  NavigatorState navigatorOf([bool rootNavigator = false]) => Navigator.of(
+  NavigatorState navigatorOf([bool rootNavigator = false]) =>
+      Navigator.of(
         this,
         rootNavigator: rootNavigator,
       );
@@ -3258,8 +3275,7 @@ extension NavigatorEx on BuildContext {
   /// 推送一个路由
   /// [popTop] 是否弹出之前的顶层
   /// [toRoot] 是否直接跳到顶层, 移除之前所有路由
-  Future<T?> push<T extends Object?>(
-    Route<T> route, {
+  Future<T?> push<T extends Object?>(Route<T> route, {
     bool rootNavigator = false,
     bool popTop = false,
     bool toRoot = false,
@@ -3276,8 +3292,7 @@ extension NavigatorEx on BuildContext {
   }
 
   /// 命名冲突
-  Future<T?> pushRoute<T extends Object?>(
-    Route<T> route, {
+  Future<T?> pushRoute<T extends Object?>(Route<T> route, {
     bool rootNavigator = false,
     bool popTop = false,
     bool toRoot = false,
@@ -3292,8 +3307,7 @@ extension NavigatorEx on BuildContext {
   /// 支持路由动画
   /// [popTop] 是否弹出之前的顶层
   /// [push]
-  Future<T?> pushWidget<T extends Object?>(
-    Widget page, {
+  Future<T?> pushWidget<T extends Object?>(Widget page, {
     RouteSettings? settings,
     TranslationType? type,
     bool rootNavigator = false,
@@ -3315,8 +3329,7 @@ extension NavigatorEx on BuildContext {
   }
 
   /// [pushReplacement]
-  Future<T?> pushReplacementWidget<T extends Object?>(
-    Widget page, {
+  Future<T?> pushReplacementWidget<T extends Object?>(Widget page, {
     RouteSettings? settings,
     TranslationType? type,
     bool rootNavigator = false,
@@ -3326,8 +3339,7 @@ extension NavigatorEx on BuildContext {
   }
 
   /// [pushAndRemoveUntil]
-  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(
-    Widget page, {
+  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(Widget page, {
     RouteSettings? settings,
     TranslationType? type,
     RoutePredicate? predicate,
@@ -3341,8 +3353,7 @@ extension NavigatorEx on BuildContext {
   }
 
   /// [pushAndRemoveUntil]
-  Future<T?> pushAndRemoveToRoot<T extends Object?>(
-    Route<T> route, {
+  Future<T?> pushAndRemoveToRoot<T extends Object?>(Route<T> route, {
     RoutePredicate? predicate,
     bool rootNavigator = false,
   }) {
@@ -3417,8 +3428,7 @@ extension NavigatorEx on BuildContext {
   }
 
   /// [ModalRoute.withName('/login')]
-  void popUntil<T extends Object?>(
-    RoutePredicate predicate, [
+  void popUntil<T extends Object?>(RoutePredicate predicate, [
     bool rootNavigator = false,
     bool checkDismissal = true,
   ]) {
@@ -3428,11 +3438,11 @@ extension NavigatorEx on BuildContext {
   }
 
   Future<T?> popAndPushNamed<T extends Object?, TO extends Object?>(
-    String routeName, {
-    TO? result,
-    Object? arguments,
-    bool rootNavigator = false,
-  }) {
+      String routeName, {
+        TO? result,
+        Object? arguments,
+        bool rootNavigator = false,
+      }) {
     return navigatorOf(rootNavigator).popAndPushNamed(
       routeName,
       arguments: arguments,
@@ -3468,8 +3478,7 @@ extension NavigatorStateEx on NavigatorState {
 
   /// 支持路由动画
   /// [push]
-  Future<T?> pushWidget<T extends Object?>(
-    Widget page, {
+  Future<T?> pushWidget<T extends Object?>(Widget page, {
     TranslationType? type,
     RouteSettings? settings,
   }) {
@@ -3477,8 +3486,7 @@ extension NavigatorStateEx on NavigatorState {
   }
 
   /// [pushReplacement]
-  Future<T?> pushReplacementWidget<T extends Object?>(
-    Widget page, {
+  Future<T?> pushReplacementWidget<T extends Object?>(Widget page, {
     TranslationType? type,
     RouteSettings? settings,
   }) {
@@ -3486,8 +3494,7 @@ extension NavigatorStateEx on NavigatorState {
   }
 
   /// [pushAndRemoveUntil]
-  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(
-    Widget page, {
+  Future<T?> pushAndRemoveToRootWidget<T extends Object?>(Widget page, {
     TranslationType? type,
     RoutePredicate? predicate,
     RouteSettings? settings,
@@ -3500,8 +3507,7 @@ extension NavigatorStateEx on NavigatorState {
   }
 
   /// [pushAndRemoveUntil]
-  Future<T?> pushAndRemoveToRoot<T extends Object?>(
-    Route<T> route, {
+  Future<T?> pushAndRemoveToRoot<T extends Object?>(Route<T> route, {
     RoutePredicate? predicate,
   }) {
     final root = ModalRoute.withName('/');
@@ -3531,10 +3537,10 @@ extension NavigatorStateEx on NavigatorState {
   }*/
 
   Future<T?> popAndPushNamed<T extends Object?, TO extends Object?>(
-    String routeName, {
-    TO? result,
-    Object? arguments,
-  }) {
+      String routeName, {
+        TO? result,
+        Object? arguments,
+      }) {
     return popAndPushNamed(
       routeName,
       arguments: arguments,
@@ -3599,8 +3605,7 @@ Color getGradientColor(double progress, List<Color> colors,
 
 /// 线性渐变 [Shader]
 /// [rect] 请指定渐变的范围, 否则可能没有渐变效果
-UiGradient? linearGradientShader(
-  List<Color>? colors, {
+UiGradient? linearGradientShader(List<Color>? colors, {
   Rect? rect,
   Offset? from,
   Offset? to,
@@ -3611,36 +3616,34 @@ UiGradient? linearGradientShader(
     colors == null || colors.isEmpty
         ? null
         : UiGradient.linear(
-            from ?? rect?.lt ?? Offset.zero,
-            to ?? rect?.rt ?? Offset.zero,
-            colors,
-            colorStops ??
-                [for (var i = 0; i < colors.size(); i++) i / colors.size()],
-            tileMode,
-            matrix4,
-          );
+      from ?? rect?.lt ?? Offset.zero,
+      to ?? rect?.rt ?? Offset.zero,
+      colors,
+      colorStops ??
+          [for (var i = 0; i < colors.size(); i++) i / colors.size()],
+      tileMode,
+      matrix4,
+    );
 
 /// 径向渐变 [Shader]
-UiGradient? radialGradientShader(
-  double radius,
-  List<Color>? colors, {
-  Rect? rect,
-  Offset? center,
-}) =>
+UiGradient? radialGradientShader(double radius,
+    List<Color>? colors, {
+      Rect? rect,
+      Offset? center,
+    }) =>
     colors == null || colors.isEmpty
         ? null
         : UiGradient.radial(
-            center ?? rect?.center ?? Offset.zero,
-            radius,
-            colors,
-          );
+      center ?? rect?.center ?? Offset.zero,
+      radius,
+      colors,
+    );
 
 /// 扫描渐变 [Shader]
 /// 如果未指定[colorStops]时, 则[colors]的长度只能有2个
 /// 如果指定了[colorStops], 则长度必须与[colors]相同
 /// [_validateColorStops]
-UiGradient? sweepGradientShader(
-  List<Color>? colors, {
+UiGradient? sweepGradientShader(List<Color>? colors, {
   Rect? rect,
   Offset? center,
   List<double>? colorStops,
@@ -3648,16 +3651,15 @@ UiGradient? sweepGradientShader(
     colors == null || colors.isEmpty
         ? null
         : UiGradient.sweep(
-            center ?? rect?.center ?? Offset.zero,
-            colors,
-            colorStops,
-          );
+      center ?? rect?.center ?? Offset.zero,
+      colors,
+      colorStops,
+    );
 
 /// [Gradient]
 /// [Gradient.createShader]通过此方法, 创建一个[Shader], 然后作用给[Paint.shader]
 /// [UiGradient]
-LinearGradient linearGradient(
-  List<Color> colors, {
+LinearGradient linearGradient(List<Color> colors, {
   AlignmentGeometry begin = Alignment.centerLeft,
   AlignmentGeometry end = Alignment.centerRight,
   TileMode tileMode = TileMode.clamp,
@@ -3674,8 +3676,7 @@ LinearGradient linearGradient(
     );
 
 /// 径向渐变
-RadialGradient radialGradient(
-  List<Color> colors, {
+RadialGradient radialGradient(List<Color> colors, {
   AlignmentGeometry center = Alignment.center,
   double radius = 0.5,
   List<double>? stops,
@@ -3696,8 +3697,7 @@ RadialGradient radialGradient(
     );
 
 /// 扫描渐变
-SweepGradient sweepGradient(
-  List<Color> colors, {
+SweepGradient sweepGradient(List<Color> colors, {
   AlignmentGeometry center = Alignment.center,
   double startAngle = 0.0,
   double endAngle = math.pi * 2,
@@ -3718,8 +3718,7 @@ SweepGradient sweepGradient(
 /// 返回一个线性渐变的小部件
 /// [colors] 渐变颜色, 必须要2个颜色
 /// [gradientDirection] 渐变方向, 默认水平方向, 此属性只是用来设置[begin]和[end]的
-Widget linearGradientWidget(
-  List<Color> colors, {
+Widget linearGradientWidget(List<Color> colors, {
   double? width,
   double? height,
   BoxConstraints? constraints,
@@ -3757,28 +3756,32 @@ Widget linearGradientWidget(
 }
 
 /// 从底部到顶部透明的渐变阴影
-Widget btt({double? height = 10}) => linearGradientWidget(
+Widget btt({double? height = 10}) =>
+    linearGradientWidget(
       [Colors.transparent, Colors.black12],
       height: height,
       gradientDirection: Axis.vertical,
     );
 
 /// 从顶部到底部透明的渐变阴影
-Widget ttb({double? height = 10}) => linearGradientWidget(
+Widget ttb({double? height = 10}) =>
+    linearGradientWidget(
       [Colors.black12, Colors.transparent],
       height: height,
       gradientDirection: Axis.vertical,
     );
 
 /// 从左到右透明的渐变阴影
-Widget ltr({double? width = 10}) => linearGradientWidget(
+Widget ltr({double? width = 10}) =>
+    linearGradientWidget(
       [Colors.black12, Colors.transparent],
       width: width,
       gradientDirection: Axis.horizontal,
     );
 
 /// 从右到到透明的渐变阴影
-Widget rtl({double? width = 10}) => linearGradientWidget(
+Widget rtl({double? width = 10}) =>
+    linearGradientWidget(
       [Colors.transparent, Colors.black12],
       width: width,
       gradientDirection: Axis.horizontal,

@@ -716,6 +716,15 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+  /// 获取小数点后的位数
+  int get decimalDigits {
+    final list = split(".");
+    if (list.length <= 1) {
+      return 0;
+    }
+    return list.last.length;
+  }
+
   /// 截取字符串, 超过[length]的部分, 会用[ellipsis]代替
   /// 系统用的时[_kEllipsis]
   String ellipsis(int? length, [String ellipsis = '\u2026']) =>

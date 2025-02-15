@@ -16,16 +16,16 @@ class TextFieldConfig {
   /// [TextField.autofocus]
   final bool? autofocus;
 
-  /// 焦点模式
+  /// 焦点处理
   /// [EditableTextState.requestKeyboard]
   /// [FocusNode.requestFocus]
-  final FocusNode focusNode;
+  FocusNode? focusNode;
 
   /// 密码输入控制
   final ObscureNode obscureNode;
 
   /// 是否有焦点
-  bool get hasFocus => focusNode.hasFocus;
+  bool get hasFocus => focusNode?.hasFocus == true;
 
   /// 输入的文本
   String get text => controller.text;
@@ -243,8 +243,18 @@ class TextFieldConfig {
       }());
       return;
     }
+    text ??= '';
     updateValue(
-      TextEditingValue(text: text ?? ''),
+      //TextEditingValue(text: text),
+      value.copyWith(
+          text: text,
+          selection: value.selection.copyWith(
+            baseOffset: clamp(value.selection.baseOffset, 0, text.length),
+            extentOffset: clamp(value.selection.extentOffset, 0, text.length),
+          )),
+      /*TextEditingValue.empty.copyWith(
+          text: text ?? '',
+          selection: const TextSelection.collapsed(offset: 0)),*/
       inputFormatters: inputFormatters,
       notify: notify,
     );
@@ -678,6 +688,9 @@ class SingleInputWidget extends StatefulWidget {
   /// [FocusNode]
   final ValueChanged<bool>? onFocusAction;
 
+  /// 丢失焦点后, 是否自动触发提交
+  final bool autoSubmitOnUnFocus;
+
   /// [TextField] 内部实现
   /// [TextFieldConfig] 核心配置
   const SingleInputWidget({
@@ -740,6 +753,7 @@ class SingleInputWidget extends StatefulWidget {
     this.onFocusAction,
     this.prefixIconBuilder,
     this.suffixIconBuilder,
+    this.autoSubmitOnUnFocus = false,
   });
 
   /// 不带输入框的样式
@@ -803,6 +817,7 @@ class SingleInputWidget extends StatefulWidget {
     this.onFocusAction,
     this.prefixIconBuilder,
     this.suffixIconBuilder,
+    this.autoSubmitOnUnFocus = false,
   });
 
   @override
@@ -814,7 +829,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   bool get _showSuffixIcon =>
       widget.autoShowSuffixIcon &&
       widget.enabled &&
-      widget.config.focusNode.hasFocus == true &&
+      widget.config.hasFocus &&
       widget.config.controller.text.isNotEmpty;
 
   /// 前缀图标
@@ -910,6 +925,19 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     _onSelfValueChanged(TextEditingValue(text: text));
   }
 
+  /// 输入框的值提交时触发
+  /// 比如: 按下回车/焦点丢失
+  void _onSelfTextSubmitted(String text) {
+    widget.onSubmitted?.call(text);
+    widget.config.onTextFieldSubmitted(text);
+  }
+
+  /// 输入框编辑完成, 完成后就会触发[_onSelfTextSubmitted]
+  void _onSelfEditingComplete() {
+    widget.onEditingComplete?.call();
+    widget.config.onEditingComplete?.call();
+  }
+
   /// 输入框的值改变
   void _onSelfValueChanged(TextEditingValue value, {bool? notify}) {
     if (notify != false) {
@@ -927,9 +955,17 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   /// 焦点改变后的回调
   void _onFocusChanged() {
     _checkSuffixIcon();
-    final hasFocus = widget.config.focusNode.hasFocus;
+    final hasFocus = widget.config.hasFocus;
+    final text = widget.config.value.text;
     widget.onFocusAction?.call(hasFocus);
-    widget.config.onFocusAction?.call(hasFocus, widget.config.value.text);
+    widget.config.onFocusAction?.call(hasFocus, text);
+    if (!hasFocus) {
+      //丢失焦点
+      if (widget.autoSubmitOnUnFocus) {
+        _onSelfEditingComplete();
+        _onSelfTextSubmitted(text);
+      }
+    }
   }
 
   /// 检查是否需要显示后缀图标
@@ -941,7 +977,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 
   @override
   void initState() {
-    widget.config.focusNode.addListener(_onFocusChanged);
+    widget.config.focusNode?.addListener(_onFocusChanged);
     if (widget.config.obscureNode.obscureText) {
       widget.config.obscureNode.addListener(_checkSuffixIcon);
     }
@@ -953,7 +989,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   @override
   void dispose() {
     widget.config.updateFieldValueFn = null;
-    widget.config.focusNode.removeListener(_onFocusChanged);
+    widget.config.focusNode?.removeListener(_onFocusChanged);
     if (widget.config.obscureNode.obscureText) {
       widget.config.obscureNode.removeListener(_checkSuffixIcon);
     }
@@ -966,8 +1002,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     oldWidget.config.updateFieldValueFn = null;
     widget.config.updateFieldValueFn = _updateFieldValue;
 
-    oldWidget.config.focusNode.removeListener(_onFocusChanged);
-    widget.config.focusNode.addListener(_onFocusChanged);
+    oldWidget.config.focusNode?.removeListener(_onFocusChanged);
+    widget.config.focusNode?.addListener(_onFocusChanged);
 
     oldWidget.config.obscureNode.removeListener(_checkSuffixIcon);
     if (widget.config.obscureNode.obscureText) {
@@ -1108,8 +1144,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         //选中文本的颜色
         //mouseCursor: SystemMouseCursors.text,//鼠标的样式
         child: TextField(
-          autofocus:
-              widget.config.autofocus ?? widget.config.focusNode.hasFocus,
+          autofocus: widget.config.autofocus ?? widget.config.hasFocus,
           focusNode: widget.config.focusNode,
           decoration: decoration,
           controller: widget.config.controller,
@@ -1120,12 +1155,14 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
             _onSelfTextChanged(value);
           },
           onSubmitted: (value) {
-            widget.onSubmitted?.call(value);
-            widget.config.onTextFieldSubmitted(value);
+            //编辑完成后的提交
+            //l.w("onSubmitted");
+            _onSelfTextSubmitted(value);
           },
           onEditingComplete: () {
-            widget.onEditingComplete?.call();
-            widget.config.onEditingComplete?.call();
+            //编辑完成
+            //l.w("onEditingComplete");
+            _onSelfEditingComplete();
           },
           style: widget.textStyle,
           textAlign: widget.textAlign,

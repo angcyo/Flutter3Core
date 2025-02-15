@@ -28,6 +28,14 @@ const kNumberInputPadding = EdgeInsets.only(
   bottom: 0,
 );
 
+/// number input输入框label的填充
+const kNumberLabelPadding = EdgeInsets.only(
+  left: 0,
+  right: kM,
+  top: 0,
+  bottom: 0,
+);
+
 /// label默认的填充
 /// 左边显示的文本
 const kLabelPadding = EdgeInsets.only(

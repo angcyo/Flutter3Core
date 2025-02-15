@@ -278,6 +278,15 @@ class NumberInputWidget extends StatefulWidget {
   @defInjectMark
   final List<TextInputFormatter>? inputFormatters;
 
+  /// 文本对齐
+  final TextAlign textAlign;
+
+  /// 文本样式
+  final TextStyle? textStyle;
+
+  /// 请求焦点
+  final FocusNode? inputFocusNode;
+
   //--
 
   /// 输入框的边距
@@ -291,6 +300,9 @@ class NumberInputWidget extends StatefulWidget {
   /// 提交时的回调, 自动根据[inputNumType]返回对应类型的数据
   final ValueChanged<dynamic>? onSubmitted;
 
+  /// 自动提交
+  final bool autoSubmitOnUnFocus;
+
   const NumberInputWidget({
     super.key,
     this.inputText,
@@ -301,9 +313,13 @@ class NumberInputWidget extends StatefulWidget {
     this.inputMaxDigits = 2,
     this.inputMaxLength = 9,
     this.inputFormatters,
+    this.textStyle,
+    this.inputFocusNode,
+    this.textAlign = TextAlign.center,
     this.contentPadding = kNumberInputPadding,
     this.onChanged,
     this.onSubmitted,
+    this.autoSubmitOnUnFocus = true,
   });
 
   @override
@@ -333,18 +349,28 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
       return "";
     }
     if (isDouble) {
-      return (widget.inputText as double).toDigits(
-        digits: widget.inputMaxDigits,
-        removeZero: false,
-      );
+      return _formatDigits("${widget.inputText}");
     }
     return "${widget.inputText}";
+  }
+
+  /// 格式化数字字符串
+  String _formatDigits(String value) {
+    if (isDouble) {
+      return value.toDoubleOrNull()?.toDigits(
+                digits: widget.inputMaxDigits,
+                removeZero: !value.contains("."),
+              ) ??
+          value;
+    }
+    return value;
   }
 
   //--
 
   @override
   void initState() {
+    inputConfig.focusNode = widget.inputFocusNode ?? inputConfig.focusNode;
     inputConfig.text = inputText;
     super.initState();
   }
@@ -352,6 +378,9 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   @override
   void didUpdateWidget(covariant NumberInputWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.inputFocusNode == inputConfig.focusNode) {
+      inputConfig.focusNode = widget.inputFocusNode;
+    }
     if (oldWidget.inputText != inputText) {
       inputConfig.updateText(inputText, notify: false);
     }
@@ -372,11 +401,13 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
               : isInt
                   ? [numberTextInputFormatter]
                   : null),
-      textAlign: TextAlign.center,
+      textStyle: widget.textStyle,
+      textAlign: widget.textAlign,
       inputBorderType: InputBorderType.none,
       inputBuildCounter: null,
       contentPadding: widget.contentPadding,
       autoShowSuffixIcon: false,
+      autoSubmitOnUnFocus: widget.autoSubmitOnUnFocus,
       //--
       hintText: widget.hintText,
       onChanged: (value) {
@@ -385,9 +416,22 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
           l.d("onInputChanged:${inputConfig.text}->$value");
           return true;
         }());*/
+        final selection = inputConfig.controller.selection;
+        if (isDouble && widget.inputMaxDigits > 0 && selection.isCollapsed) {
+          final newValue = _formatDigits(value);
+          if (newValue != value &&
+              value.decimalDigits > widget.inputMaxDigits) {
+            //debugger();
+            inputConfig.text = newValue;
+          }
+        }
         widget.onChanged?.call(_formatResultValue(value));
       },
       onSubmitted: (value) {
+        /*assert(() {
+          l.d("onSubmitted:${inputConfig.text}->$value");
+          return true;
+        }());*/
         widget.onSubmitted?.call(_formatResultValue(value));
       },
     );
@@ -397,14 +441,158 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   /// 格式化输出的结果值
   dynamic _formatResultValue(String value) {
     //debugger();
-    if (isString) {
-      return value;
-    } else if (isDouble) {
-      return clamp(
-          value.toDouble(), widget.inputMinValue, widget.inputMaxValue);
-    } else if (isInt) {
-      return clamp(value.toInt(), widget.inputMinValue, widget.inputMaxValue);
+    try {
+      if (isString) {
+        return value;
+      } else if (isDouble) {
+        return clamp(
+          value.toDouble(),
+          widget.inputMinValue,
+          widget.inputMaxValue,
+        );
+      } else if (isInt) {
+        return clamp(
+          value.toInt(),
+          widget.inputMinValue,
+          widget.inputMaxValue,
+        );
+      }
+    } catch (e, s) {
+      /*assert(() {
+        printError(e, s);
+        return true;
+      }());*/
     }
     return null;
+  }
+}
+
+/// 数字输入tile
+/// 左[label].[输入框tile].[inputHint]
+class LabelNumberInputTile extends StatefulWidget with LabelMixin {
+  //--label
+
+  /// 标签/LabelMixin
+  @override
+  final String? label;
+  @override
+  final Widget? labelWidget;
+  @override
+  final TextStyle? labelTextStyle;
+  @override
+  final EdgeInsets? labelPadding;
+  @override
+  final BoxConstraints? labelConstraints;
+
+  //--input
+  final dynamic number;
+  final NumType? numType;
+  final num? maxValue;
+  final num? minValue;
+  final int maxDigits;
+  final ValueChanged<dynamic>? onChanged;
+  final ValueChanged<dynamic>? onSubmitted;
+  final EdgeInsetsGeometry? contentPadding;
+  @defInjectMark
+  final TextStyle? numberTextStyle;
+
+  //--trailing
+
+  /// 尾部widget
+  final Widget? trailingWidget;
+
+  //--tile
+
+  final double? radius;
+  final EdgeInsetsGeometry? tilePadding;
+
+  const LabelNumberInputTile({
+    super.key,
+    //--label
+    this.label,
+    this.labelWidget,
+    this.labelTextStyle,
+    this.labelPadding = kNumberLabelPadding,
+    this.labelConstraints,
+    //--input
+    this.number,
+    this.maxValue,
+    this.minValue,
+    this.maxDigits = 2,
+    this.onChanged,
+    this.onSubmitted,
+    this.numType,
+    this.contentPadding = kNumberInputPadding,
+    this.numberTextStyle,
+    //--trailing
+    this.trailingWidget,
+    //--tile
+    this.radius = kDefaultBorderRadiusL,
+    this.tilePadding = const EdgeInsets.symmetric(vertical: kM, horizontal: kM),
+  });
+
+  @override
+  State<LabelNumberInputTile> createState() => _LabelNumberInputTileState();
+}
+
+class _LabelNumberInputTileState extends State<LabelNumberInputTile>
+    with HoverStateMixin {
+  /// 当前输入的值
+  dynamic _currentNumber;
+
+  @override
+  void initState() {
+    _currentNumber = widget.number;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant LabelNumberInputTile oldWidget) {
+    _currentNumber = widget.number;
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    //build label
+    Widget? label = widget.buildLabelWidgetMixin(context,
+        labelTextStyle: widget.labelTextStyle ?? globalTheme.textDesStyle);
+    //build trailing
+    Widget? trailingWidget = widget.trailingWidget;
+
+    return buildHoverWidgetMixin(
+      context,
+      Row(
+        children: [
+          if (label != null) label,
+          NumberInputWidget(
+            inputText: _currentNumber,
+            contentPadding: widget.contentPadding,
+            inputNumType: widget.numType ?? NumType.from(widget.number),
+            inputMinValue: widget.minValue,
+            inputMaxValue: widget.maxValue,
+            inputMaxDigits: widget.maxDigits,
+            inputFocusNode: hoverFocusNodeMixin,
+            textStyle: widget.numberTextStyle ?? globalTheme.textBodyStyle,
+            textAlign: TextAlign.start,
+            onChanged: (value) {
+              _currentNumber = value;
+              widget.onChanged?.call(value);
+            },
+            onSubmitted: widget.onSubmitted,
+          ).expanded(),
+          if (trailingWidget != null) trailingWidget,
+        ],
+      )
+          .paddingInsets(widget.tilePadding)
+          .backgroundDecoration(
+            buildHoverDecorationMixin(
+              context,
+              radius: widget.radius,
+            ),
+          )
+          .constrained(),
+    );
   }
 }

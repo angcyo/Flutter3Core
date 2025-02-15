@@ -44,7 +44,7 @@ BoxDecoration strokeDecoration({
   Color? color,
   BuildContext? context,
   double strokeWidth = 1,
-  double borderRadius = kDefaultBorderRadiusXX,
+  double? radius = kDefaultBorderRadiusXX,
   BorderStyle style = BorderStyle.solid,
   double strokeAlign = BorderSide.strokeAlignInside,
   BorderSide? top,
@@ -66,9 +66,9 @@ BoxDecoration strokeDecoration({
       start: start ?? side,
       end: end ?? side,
     ),
-    borderRadius: borderRadius > 0
+    borderRadius: radius != null && radius > 0
         ? BorderRadius.all(
-            Radius.circular(borderRadius),
+            Radius.circular(radius),
           )
         : null,
   );
