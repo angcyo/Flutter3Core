@@ -580,7 +580,8 @@ class ScaleControl extends BaseControl {
       !isIgnoreLockRation;
 
   /// 是否临时忽略等比锁定
-  bool get isIgnoreLockRation => isCtrlPressed;
+  bool get isIgnoreLockRation =>
+      isKeyPressed(key: canvasDelegate.canvasStyle.ignoreLockKeyboardKey);
 
   @sceneCoordinate
   Offset _downScenePointInvert = Offset.zero;
@@ -752,18 +753,18 @@ class LockControl extends BaseControl {
     });
   }
 
-  @override
-  void paintControl(Canvas canvas, PaintMeta paintMeta) {
-    if (canvasElementControlManager.scaleControl.isIgnoreLockRation) {
-      if (pictureInfo != _unlockPictureInfo) {
-        final old = pictureInfo;
-        pictureInfo = _unlockPictureInfo;
-        super.paintControl(canvas, paintMeta);
-        pictureInfo = old;
-      }
+  /// 设置临时忽略锁定比例
+  void setIgnoreLockRation(bool ignore) {
+    if (ignore) {
+      pictureInfo = _unlockPictureInfo;
     } else {
-      super.paintControl(canvas, paintMeta);
+      if (isLock) {
+        pictureInfo = _lockPictureInfo;
+      } else {
+        pictureInfo = _unlockPictureInfo;
+      }
     }
+    canvasElementControlManager.canvasDelegate.refresh();
   }
 
   @override

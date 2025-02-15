@@ -54,6 +54,7 @@ mixin KeyEventMixin {
   final List<KeyEventRegister> _keyEventRegisterList = [];
 
   /// 注册一个键盘事件监听
+  /// [onHandleKeyEventMixin]
   @api
   void registerKeyEvent(
     List<List<LogicalKeyboardKey>>? eventGroupKeys,
@@ -93,9 +94,12 @@ mixin KeyEventMixin {
     _keyEventRegisterList.clear();
   }
 
+  /// 处理入口
+  @callPoint
   @overridePoint
   bool onHandleKeyEventMixin(KeyEvent event) {
     bool handle = false;
+    //l.w("onHandleKeyEventMixin[${event.isKeyUp}]->$event");
     //debugger(when: event.isKeyUp);
     if (event.isKeyDownOrRepeat || event.isKeyUp) {
       for (final register in _keyEventRegisterList) {
@@ -114,6 +118,7 @@ mixin KeyEventMixin {
         }
         //--
         final eventGroupKeys = register.eventGroupKeys;
+        //debugger(when: event.isKeyUp);
         if (eventGroupKeys != null) {
           //中断
           bool interrupt = false;
@@ -121,7 +126,8 @@ mixin KeyEventMixin {
             if (((event.isKeyDown || event.isKeyRepeat) &&
                     isKeysPressedAll(keys,
                         matchKeyCount: register.matchKeyCount)) ||
-                (event.isKeyUp && keys.lastOrNull == event.logicalKey)) {
+                (event.isKeyUp &&
+                    isSameLogicalKey(keys.lastOrNull, event.logicalKey))) {
               handle = onKeyEvent(KeyEventHitInfo(
                 keys,
                 isKeyDown: event.isKeyDown,

@@ -36,6 +36,21 @@ class CanvasKeyManager
       return true;
     }, keyUp: true);
 
+    //Ctrl键, 任意比例缩放
+    renderObject.registerKeyEvent([
+      [canvasStyle.ignoreLockKeyboardKey],
+    ], (info) {
+      l.i("info->$info");
+      final lockControl = canvasDelegate
+          .canvasElementManager.canvasElementControlManager.lockControl;
+      if (info.isKeyDown) {
+        lockControl.setIgnoreLockRation(true);
+      } else if (info.isKeyUp) {
+        lockControl.setIgnoreLockRation(false);
+      }
+      return true;
+    }, keyUp: true);
+
     //删除选中元素
     renderObject.registerKeyEvent([
       [
