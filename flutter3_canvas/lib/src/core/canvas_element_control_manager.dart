@@ -1408,6 +1408,10 @@ class ElementSelectComponent extends ElementGroupPainter
       fromObj: fromObj,
       fromUndoType: fromUndoType,
     );
+    if (fromUndoType == UndoType.redo) {
+      //来自重做, 更新自身的属性
+      canvasElementControlManager.updateControlBounds();
+    }
   }
 
   /// 仅更新子元素的绘制属性, 不更新自身的绘制属性
