@@ -44,13 +44,48 @@ PackageInfo? _platformPackageInfoCache;
 Future<String> get $appVersionName async =>
     (await $platformPackageInfo).version;
 
+String? get $appVersionNameCache => $platformPackageInfoCache?.version;
+
 /// app版本号
 Future<String> get $appVersionCode async =>
     (await $platformPackageInfo).buildNumber;
 
+String? get $appVersionCodeCache => $platformPackageInfoCache?.buildNumber;
+
 /// app平台的包名
 Future<String> get $appPlatformPackageName async =>
     (await $platformPackageInfo).packageName;
+
+String? get $appPlatformPackageNameCache =>
+    $platformPackageInfoCache?.packageName;
+
+/// 获取应用构建的版本
+Future<String> get $appBuildVersion async => stringBuilder((builder) async {
+      builder.append(await $appVersionName);
+      builder.append("(${await $appVersionCode})");
+      final config = $buildConfig;
+      if (!isNil(config?.buildType)) {
+        builder.append("-${config?.buildType}");
+      }
+      final flavor = $buildFlavor;
+      if (!isNil(flavor)) {
+        builder.append("-$flavor");
+      }
+    });
+
+/// 获取应用构建的版本
+String get $appBuildVersionCache => stringBuilder((builder) async {
+      builder.append($appVersionNameCache);
+      builder.append("(${$appVersionCodeCache})");
+      final config = $buildConfig;
+      if (!isNil(config?.buildType)) {
+        builder.append("-${config?.buildType}");
+      }
+      final flavor = $buildFlavor;
+      if (!isNil(flavor)) {
+        builder.append("-$flavor");
+      }
+    });
 
 //--
 

@@ -130,22 +130,22 @@ enum BuildTypeEnum {
 
 /// [BuildConfig]
 BuildConfig? get $buildConfig {
-  BuildConfig? bean = BuildConfig._buildConfig;
-  bean = bean?.platformMap?[$platformName] ?? bean;
-  return bean;
+  BuildConfig? config = BuildConfig._buildConfig;
+  config = config?.platformMap?[$platformName] ?? config;
+  return config;
 }
 
 /// 是否是调试构建类型状态
 bool get isDebugType {
-  final bean = $buildConfig;
-  if (bean == null) {
+  final config = $buildConfig;
+  if (config == null) {
     return isDebug;
   }
-  if (bean.buildType == null) {
+  if (config.buildType == null) {
     //未指定
     return isDebug;
   }
-  return bean.buildType != BuildTypeEnum.release.name;
+  return config.buildType != BuildTypeEnum.release.name;
 }
 
 /// 构建风味
