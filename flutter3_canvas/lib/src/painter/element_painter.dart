@@ -670,17 +670,21 @@ class ElementPainter extends IElementPainter {
     UndoType? fromUndoType,
     bool notify = true,
   }) {
+    bool isSet = false;
     if (style != null) {
       paint.style = style;
+      isSet = true;
     }
     if (color != null) {
       paint.color = color;
+      isSet = true;
     }
     if (strokeWidth != null) {
       paint.strokeWidth = strokeWidth;
+      isSet = true;
     }
     //
-    if (notify) {
+    if (isSet && notify) {
       dispatchSelfPaintPropertyChanged(
         paint,
         paint,

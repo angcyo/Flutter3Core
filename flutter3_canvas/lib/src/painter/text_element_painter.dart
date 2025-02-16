@@ -102,6 +102,7 @@ class TextElementPainter extends ElementPainter {
     UndoType? fromUndoType,
     bool notify = true,
   }) {
+    //debugger();
     super.updatePainterPaintProperty(
       style: style,
       color: color,
@@ -112,9 +113,9 @@ class TextElementPainter extends ElementPainter {
       notify: notify,
     );
     textPainter?.updateTextProperty(
-      textColor: color,
-      textPaintingStyle: style,
-      textStrokeWidth: strokeWidth,
+      textColor: color ?? paintColor,
+      textPaintingStyle: style ?? paintStyle,
+      textStrokeWidth: strokeWidth ?? paintStrokeWidth,
     );
   }
 
