@@ -566,10 +566,11 @@ class GCodeWriteHandle with VectorWriteMixin {
     int? power,
     int? speed, {
     bool newLine = true,
+    String space = kGCodeSpace,
   }) {
     final powerString = power != null ? 'S$power' : '';
     final speedString = speed != null ? 'F$speed' : '';
-    return 'G1$powerString$speedString${newLine ? "\n" : ""}';
+    return 'G1$space$powerString$space$speedString${newLine ? "\n" : ""}';
   }
 
   /// GCode 头部
@@ -577,10 +578,12 @@ class GCodeWriteHandle with VectorWriteMixin {
     int? power,
     int? speed, {
     bool auto = false,
+    String space = kGCodeSpace,
   }) {
     final pw = gcodePowerSpeedString(
       power ?? 255,
       speed ?? 12000,
+      space: space,
     );
     return (auto ? kGCodeAutoHeader : kGCodeHeader) + pw;
   }

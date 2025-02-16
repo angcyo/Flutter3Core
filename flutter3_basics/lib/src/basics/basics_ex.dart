@@ -1610,10 +1610,13 @@ extension RectEx on Rect {
     double? top,
     double? right,
     double? bottom,
+    //--
+    double? minLeft,
+    double? minTop,
   }) =>
       Rect.fromLTRB(
-        left ?? this.left,
-        top ?? this.top,
+        minLeft == null ? (left ?? this.left) : min(minLeft, left ?? this.left),
+        minTop == null ? (top ?? this.top) : min(minTop, top ?? this.top),
         right ?? this.right,
         bottom ?? this.bottom,
       );

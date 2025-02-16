@@ -194,9 +194,10 @@ class PathRegionInfo {
 /// [Path]路径区域绘制小部件
 /// 支持绘制n个[Path]并且支持事件响应
 class PathRegionWidget extends LeafRenderObjectWidget {
-  /// 绘制区域, 类似于svg的view box, 影响测量时的大小
+  /// 绘制区域, 类似于svg的view box, 影响小部件测量时的大小
   final Rect? viewBox;
 
+  /// 核心路径区域信息
   final List<PathRegionInfo>? regionInfoList;
 
   //--
@@ -204,7 +205,7 @@ class PathRegionWidget extends LeafRenderObjectWidget {
   /// 检查命中元素时, 是否倒序
   final bool reverseHitTest;
 
-  /// 命中时, 颜色亮度
+  /// 命中时, 颜色增加的亮度
   final double hitAddBrightness;
 
   const PathRegionWidget({

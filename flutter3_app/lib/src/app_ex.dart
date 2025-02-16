@@ -71,6 +71,9 @@ Future<String> get $appBuildVersion async => stringBuilder((builder) async {
       if (!isNil(flavor)) {
         builder.append("-$flavor");
       }
+      if (isDebugFlag) {
+        builder.append("(debug)");
+      }
     });
 
 /// 获取应用构建的版本
@@ -84,6 +87,9 @@ String get $appBuildVersionCache => stringBuilder((builder) async {
       final flavor = $buildFlavor;
       if (!isNil(flavor)) {
         builder.append("-$flavor");
+      }
+      if (isDebug) {
+        builder.append("(debug)");
       }
     });
 
