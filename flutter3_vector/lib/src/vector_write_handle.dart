@@ -291,6 +291,7 @@ mixin VectorWriteMixin {
     return c.abs() < circleTolerance;
   }
 
+  /// 从一个起点, 过2个点之后, 根据2个点的切线角度, 判断是否在直线上
   /// 判断2个点是否在一条直线上
   bool isPointInLine(VectorPoint point, VectorPoint beforePoint) {
     final beforeAngle = beforePoint.angle;
