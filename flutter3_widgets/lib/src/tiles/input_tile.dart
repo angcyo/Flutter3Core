@@ -590,6 +590,7 @@ class _LabelNumberInputTileState extends State<LabelNumberInputTile>
             buildHoverDecorationMixin(
               context,
               radius: widget.radius,
+              normalDecoration: const BoxDecoration(),
             ),
           )
           .constrained(),

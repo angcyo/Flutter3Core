@@ -28,6 +28,7 @@ mixin HoverStateMixin<T extends StatefulWidget> on State<T> {
   /// 焦点状态发生变化
   void onHoverFocusChangedMixin() {
     isFocusStateMixin = hoverFocusNodeMixin?.hasFocus == true;
+    //l.d("onHoverFocusChangedMixin->$isFocusStateMixin");
     _tryUpdateState();
   }
 
@@ -57,21 +58,28 @@ mixin HoverStateMixin<T extends StatefulWidget> on State<T> {
   Decoration? buildHoverDecorationMixin(
     BuildContext context, {
     double? radius = kDefaultBorderRadiusL,
+    //--
+    Decoration? normalDecoration,
+    Decoration? focusDecoration,
+    Decoration? hoverDecoration,
   }) {
     final globalTheme = GlobalTheme.of(context);
     if (isFocusStateMixin) {
-      return strokeDecoration(
-        color: globalTheme.accentColor,
-        radius: radius,
-      );
+      return focusDecoration ??
+          strokeDecoration(
+            color: globalTheme.accentColor,
+            radius: radius,
+          );
     }
     if (isHoverStateMixin) {
-      return fillDecoration(
-        color: globalTheme.pressColor,
-        radius: radius,
-      );
+      return hoverDecoration ??
+          fillDecoration(
+            color: globalTheme.pressColor,
+            radius: radius,
+          );
     }
-    return null;
+    //如果child中包含TextField, 则建议返回非空, 否则通过Tab键移动焦点时, 会出现TextField无法获取焦点的情况
+    return normalDecoration;
   }
 
   //--

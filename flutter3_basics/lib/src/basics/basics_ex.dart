@@ -1611,14 +1611,20 @@ extension RectEx on Rect {
     double? right,
     double? bottom,
     //--
-    double? minLeft,
-    double? minTop,
+    double? minLeft /*最小的left*/,
+    double? minTop /*最小的top*/,
+    double? maxRight /*最大的right*/,
+    double? maxBottom /*最大的bottom*/,
   }) =>
       Rect.fromLTRB(
         minLeft == null ? (left ?? this.left) : min(minLeft, left ?? this.left),
         minTop == null ? (top ?? this.top) : min(minTop, top ?? this.top),
-        right ?? this.right,
-        bottom ?? this.bottom,
+        maxRight == null
+            ? (right ?? this.right)
+            : max(maxRight, right ?? this.right),
+        maxBottom == null
+            ? (bottom ?? this.bottom)
+            : max(maxBottom, bottom ?? this.bottom),
       );
 
   /// dp单位的坐标, 转换成mm单位的坐标

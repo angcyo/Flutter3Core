@@ -688,6 +688,9 @@ class SingleInputWidget extends StatefulWidget {
   /// [FocusNode]
   final ValueChanged<bool>? onFocusAction;
 
+  /// [TextField.canRequestFocus]
+  final bool canRequestFocus;
+
   /// 丢失焦点后, 是否自动触发提交
   final bool autoSubmitOnUnFocus;
 
@@ -753,6 +756,7 @@ class SingleInputWidget extends StatefulWidget {
     this.onFocusAction,
     this.prefixIconBuilder,
     this.suffixIconBuilder,
+    this.canRequestFocus = true,
     this.autoSubmitOnUnFocus = false,
   });
 
@@ -817,6 +821,7 @@ class SingleInputWidget extends StatefulWidget {
     this.onFocusAction,
     this.prefixIconBuilder,
     this.suffixIconBuilder,
+    this.canRequestFocus = true,
     this.autoSubmitOnUnFocus = false,
   });
 
@@ -1144,8 +1149,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         //选中文本的颜色
         //mouseCursor: SystemMouseCursors.text,//鼠标的样式
         child: TextField(
+          /*groupId: EditableText,*/
           autofocus: widget.config.autofocus ?? widget.config.hasFocus,
           focusNode: widget.config.focusNode,
+          canRequestFocus: widget.canRequestFocus,
           decoration: decoration,
           controller: widget.config.controller,
           enabled: widget.enabled,

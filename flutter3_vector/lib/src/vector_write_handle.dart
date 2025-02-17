@@ -8,15 +8,15 @@ part of '../flutter3_vector.dart';
 
 /// gcode 默认头部, 手动 manual
 /// [gcodeHeader]
-const kGCodeHeader = 'G21\nG90\nM8\nM5\nM3\n';
+const kGCodeHeader = 'G90\nG21\nM8\nM5\nM3\n';
 
 /// gcode 自动激光头, 自动 auto
 /// [gcodeHeader]
-const kGCodeAutoHeader = 'G21\nG90\nM8\nM5\nM4\n';
+const kGCodeAutoHeader = 'G90\nG21\nM8\nM5\nM4\n';
 
 /// gcode 默认尾部
 /// [gcodeFooter]
-const kGCodeFooter = 'M5\nM9\nG1S0\nM2\n';
+const kGCodeFooter = 'M9\nM5\nG0S0\nM2\n';
 
 /// gcode 指令间隙
 const kGCodeSpace = '';
@@ -580,12 +580,10 @@ class GCodeWriteHandle with VectorWriteMixin {
     bool auto = false,
     String space = kGCodeSpace,
   }) {
-    final pw = gcodePowerSpeedString(
-      power ?? 255,
-      speed ?? 12000,
-      space: space,
-    );
-    return (auto ? kGCodeAutoHeader : kGCodeHeader) + pw;
+    power ??= 255;
+    speed ??= 12000;
+    //灰度图片, 通过这个最大功率, 和每个点的当前功率, 计算出当前的灰度值
+    return 'G90\nG21\nM8\nM5\n${auto ? "M4" : "M3"}${space}S$power\nG0${space}F$speed\n';
   }
 
   /// GCode 尾部
