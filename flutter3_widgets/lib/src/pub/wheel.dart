@@ -32,7 +32,8 @@ class Wheel extends StatelessWidget {
   final int initialIndex;
 
   /// 滚动回调
-  final IndexCallback? onIndexChanged;
+  final void Function(int index, WheelPickerInteractionType interactionType)?
+      onIndexChanged;
 
   /// 是否激活选中颜色
   final bool enableSelectedIndexColor;
@@ -84,9 +85,9 @@ class Wheel extends StatelessWidget {
       looping: looping,
       style: wheelStyle,
       onIndexChanged: onIndexChanged ??
-          (index) {
+          (index, type) {
             assert(() {
-              l.d("Wheel选中索引:$index");
+              l.d("Wheel选中索引[$type]:$index");
               return true;
             }());
           },

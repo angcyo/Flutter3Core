@@ -38,7 +38,7 @@ dependencies:
   # https://pub.dev/packages/markdown
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  flutter_markdown: ^0.7.5
+  flutter_markdown: ^0.7.6+2
   # https://pub.dev/packages/markdown
   # https://github.com/dart-lang/markdown
   # https://pub.dev/packages/args
@@ -62,7 +62,7 @@ dependencies:
   # https://pub.dev/packages/plugin_platform_interface
   # https://pub.dev/packages/path
   # https://pub.dev/packages/win32
-  file_picker: ^8.1.7
+  file_picker: ^9.0.0
 
   # https://pub.dev/packages/archive
   # https://github.com/brendan-duncan/archive

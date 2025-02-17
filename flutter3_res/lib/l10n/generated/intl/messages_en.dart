@@ -22,33 +22,36 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "libAdapterLoadMoreError":
-            MessageLookupByLibrary.simpleMessage("Load failed, click retry"),
-        "libAdapterNoData": MessageLookupByLibrary.simpleMessage("No data"),
-        "libAdapterNoMoreData":
-            MessageLookupByLibrary.simpleMessage("~It\'s the end~"),
-        "libAdd": MessageLookupByLibrary.simpleMessage("Add"),
-        "libBack": MessageLookupByLibrary.simpleMessage("Back"),
-        "libCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
-        "libChoose": MessageLookupByLibrary.simpleMessage("Please choose"),
-        "libConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
-        "libContinue": MessageLookupByLibrary.simpleMessage("Continue"),
-        "libDelete": MessageLookupByLibrary.simpleMessage("Delete"),
-        "libEdit": MessageLookupByLibrary.simpleMessage("Edit"),
-        "libFinish": MessageLookupByLibrary.simpleMessage("Finish"),
-        "libKnown": MessageLookupByLibrary.simpleMessage("Ok"),
-        "libNext": MessageLookupByLibrary.simpleMessage("Next"),
-        "libNo": MessageLookupByLibrary.simpleMessage("No"),
-        "libOpen": MessageLookupByLibrary.simpleMessage("Open"),
-        "libRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
-        "libSave": MessageLookupByLibrary.simpleMessage("Save"),
-        "libShare": MessageLookupByLibrary.simpleMessage("Share"),
-        "libTips": MessageLookupByLibrary.simpleMessage("Tips"),
-        "libValidRangeTip": MessageLookupByLibrary.simpleMessage("Valid range"),
-        "libWaitTip": MessageLookupByLibrary.simpleMessage("Please wait..."),
-        "libWarn": MessageLookupByLibrary.simpleMessage("Warning"),
-        "libYes": MessageLookupByLibrary.simpleMessage("Yes"),
-        "testResKey": MessageLookupByLibrary.simpleMessage(
-            "testResKey Translation resources")
-      };
+    "libAdapterLoadMoreError": MessageLookupByLibrary.simpleMessage(
+      "Load failed, click retry",
+    ),
+    "libAdapterNoData": MessageLookupByLibrary.simpleMessage("No data"),
+    "libAdapterNoMoreData": MessageLookupByLibrary.simpleMessage(
+      "~It\'s the end~",
+    ),
+    "libAdd": MessageLookupByLibrary.simpleMessage("Add"),
+    "libBack": MessageLookupByLibrary.simpleMessage("Back"),
+    "libCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "libChoose": MessageLookupByLibrary.simpleMessage("Please choose"),
+    "libConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+    "libContinue": MessageLookupByLibrary.simpleMessage("Continue"),
+    "libDelete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "libEdit": MessageLookupByLibrary.simpleMessage("Edit"),
+    "libFinish": MessageLookupByLibrary.simpleMessage("Finish"),
+    "libKnown": MessageLookupByLibrary.simpleMessage("Ok"),
+    "libNext": MessageLookupByLibrary.simpleMessage("Next"),
+    "libNo": MessageLookupByLibrary.simpleMessage("No"),
+    "libOpen": MessageLookupByLibrary.simpleMessage("Open"),
+    "libRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
+    "libSave": MessageLookupByLibrary.simpleMessage("Save"),
+    "libShare": MessageLookupByLibrary.simpleMessage("Share"),
+    "libTips": MessageLookupByLibrary.simpleMessage("Tips"),
+    "libValidRangeTip": MessageLookupByLibrary.simpleMessage("Valid range"),
+    "libWaitTip": MessageLookupByLibrary.simpleMessage("Please wait..."),
+    "libWarn": MessageLookupByLibrary.simpleMessage("Warning"),
+    "libYes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "testResKey": MessageLookupByLibrary.simpleMessage(
+      "testResKey Translation resources",
+    ),
+  };
 }

@@ -18,17 +18,20 @@ class LibRes {
   static LibRes? _current;
 
   static LibRes get current {
-    assert(_current != null,
-        'No instance of LibRes was loaded. Try to initialize the LibRes delegate before accessing LibRes.current.');
+    assert(
+      _current != null,
+      'No instance of LibRes was loaded. Try to initialize the LibRes delegate before accessing LibRes.current.',
+    );
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<LibRes> load(Locale locale) {
-    final name = (locale.countryCode?.isEmpty ?? false)
-        ? locale.languageCode
-        : locale.toString();
+    final name =
+        (locale.countryCode?.isEmpty ?? false)
+            ? locale.languageCode
+            : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -41,8 +44,10 @@ class LibRes {
 
   static LibRes of(BuildContext context) {
     final instance = LibRes.maybeOf(context);
-    assert(instance != null,
-        'No instance of LibRes present in the widget tree. Did you add LibRes.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of LibRes present in the widget tree. Did you add LibRes.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -112,122 +117,62 @@ class LibRes {
 
   /// `刷新`
   String get libRefresh {
-    return Intl.message(
-      '刷新',
-      name: 'libRefresh',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('刷新', name: 'libRefresh', desc: '', args: []);
   }
 
   /// `完成`
   String get libFinish {
-    return Intl.message(
-      '完成',
-      name: 'libFinish',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('完成', name: 'libFinish', desc: '', args: []);
   }
 
   /// `返回`
   String get libBack {
-    return Intl.message(
-      '返回',
-      name: 'libBack',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('返回', name: 'libBack', desc: '', args: []);
   }
 
   /// `添加`
   String get libAdd {
-    return Intl.message(
-      '添加',
-      name: 'libAdd',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('添加', name: 'libAdd', desc: '', args: []);
   }
 
   /// `编辑`
   String get libEdit {
-    return Intl.message(
-      '编辑',
-      name: 'libEdit',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('编辑', name: 'libEdit', desc: '', args: []);
   }
 
   /// `确定`
   String get libConfirm {
-    return Intl.message(
-      '确定',
-      name: 'libConfirm',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('确定', name: 'libConfirm', desc: '', args: []);
   }
 
   /// `取消`
   String get libCancel {
-    return Intl.message(
-      '取消',
-      name: 'libCancel',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('取消', name: 'libCancel', desc: '', args: []);
   }
 
   /// `继续`
   String get libContinue {
-    return Intl.message(
-      '继续',
-      name: 'libContinue',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('继续', name: 'libContinue', desc: '', args: []);
   }
 
   /// `请选择`
   String get libChoose {
-    return Intl.message(
-      '请选择',
-      name: 'libChoose',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('请选择', name: 'libChoose', desc: '', args: []);
   }
 
   /// `警告`
   String get libWarn {
-    return Intl.message(
-      '警告',
-      name: 'libWarn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('警告', name: 'libWarn', desc: '', args: []);
   }
 
   /// `提示`
   String get libTips {
-    return Intl.message(
-      '提示',
-      name: 'libTips',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('提示', name: 'libTips', desc: '', args: []);
   }
 
   /// `删除`
   String get libDelete {
-    return Intl.message(
-      '删除',
-      name: 'libDelete',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('删除', name: 'libDelete', desc: '', args: []);
   }
 
   /// `删除后无法恢复，确认删除吗？`
@@ -242,142 +187,72 @@ class LibRes {
 
   /// `下一步`
   String get libNext {
-    return Intl.message(
-      '下一步',
-      name: 'libNext',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('下一步', name: 'libNext', desc: '', args: []);
   }
 
   /// `打开`
   String get libOpen {
-    return Intl.message(
-      '打开',
-      name: 'libOpen',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('打开', name: 'libOpen', desc: '', args: []);
   }
 
   /// `分享`
   String get libShare {
-    return Intl.message(
-      '分享',
-      name: 'libShare',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('分享', name: 'libShare', desc: '', args: []);
   }
 
   /// `请稍等...`
   String get libWaitTip {
-    return Intl.message(
-      '请稍等...',
-      name: 'libWaitTip',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('请稍等...', name: 'libWaitTip', desc: '', args: []);
   }
 
   /// `有效范围`
   String get libValidRangeTip {
-    return Intl.message(
-      '有效范围',
-      name: 'libValidRangeTip',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('有效范围', name: 'libValidRangeTip', desc: '', args: []);
   }
 
   /// `我知道了`
   String get libKnown {
-    return Intl.message(
-      '我知道了',
-      name: 'libKnown',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('我知道了', name: 'libKnown', desc: '', args: []);
   }
 
   /// `保存`
   String get libSave {
-    return Intl.message(
-      '保存',
-      name: 'libSave',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('保存', name: 'libSave', desc: '', args: []);
   }
 
   /// `保存成功`
   String get libSaveSuccessful {
-    return Intl.message(
-      '保存成功',
-      name: 'libSaveSuccessful',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('保存成功', name: 'libSaveSuccessful', desc: '', args: []);
   }
 
   /// `保存失败`
   String get libSaveFailure {
-    return Intl.message(
-      '保存失败',
-      name: 'libSaveFailure',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('保存失败', name: 'libSaveFailure', desc: '', args: []);
   }
 
   /// `是`
   String get libYes {
-    return Intl.message(
-      '是',
-      name: 'libYes',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('是', name: 'libYes', desc: '', args: []);
   }
 
   /// `否`
   String get libNo {
-    return Intl.message(
-      '否',
-      name: 'libNo',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('否', name: 'libNo', desc: '', args: []);
   }
 
   /// `重命名`
   String get libRename {
-    return Intl.message(
-      '重命名',
-      name: 'libRename',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('重命名', name: 'libRename', desc: '', args: []);
   }
 
   /// `复制`
   String get libCopy {
-    return Intl.message(
-      '复制',
-      name: 'libCopy',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('复制', name: 'libCopy', desc: '', args: []);
   }
 
   /// `外部分享`
   String get libExternalShare {
-    return Intl.message(
-      '外部分享',
-      name: 'libExternalShare',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('外部分享', name: 'libExternalShare', desc: '', args: []);
   }
 }
 

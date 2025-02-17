@@ -61,7 +61,7 @@ dependencies:
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/meta
   # async is pinned to version 2.11.0 by flutter_test from the flutter SDK.
-  async: ^2.11.0
+  async: any
 
   # https://pub.dev/packages/material_color_utilities
   # https://pub.dev/packages/dynamic_color

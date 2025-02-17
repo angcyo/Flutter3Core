@@ -91,7 +91,7 @@ class _WheelDialogState extends State<WheelDialog>
                 initialIndex: currentValueMixin,
                 enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
                 selectedIndexColor: widget.wheelSelectedIndexColor,
-                onIndexChanged: (index) {
+                onIndexChanged: (index, type) {
                   currentValueMixin = index;
                   updateState();
                 },
@@ -255,7 +255,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       itemExtent: _wheelItemExtent,
       initialIndex: yearList.indexOf(currentYear),
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
-      onIndexChanged: (index) {
+      onIndexChanged: (index, type) {
         currentValueMixin = currentValueMixin.copyWith(year: yearList[index]);
         _titleUpdateNotifier.notify();
         _monthUpdateNotifier.notify();
@@ -315,7 +315,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       itemExtent: _wheelItemExtent,
       initialIndex: monthList.indexOfOrNull(currentMonth) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
-      onIndexChanged: (index) {
+      onIndexChanged: (index, type) {
         currentValueMixin = currentValueMixin.copyWith(
           month: monthList[index],
           day: 1, //重置天数, 否则在3月31日切换到2月时, 会切到3月2日的情况
@@ -377,7 +377,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       itemExtent: _wheelItemExtent,
       initialIndex: dayList.indexOfOrNull(currentDay) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
-      onIndexChanged: (index) {
+      onIndexChanged: (index, type) {
         currentValueMixin = currentValueMixin.copyWith(day: dayList[index]);
         _titleUpdateNotifier.notify();
         //currentValueMixin = index;
@@ -437,7 +437,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       itemExtent: _wheelItemExtent,
       initialIndex: hourList.indexOfOrNull(currentHour) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
-      onIndexChanged: (index) {
+      onIndexChanged: (index, type) {
         currentValueMixin = currentValueMixin.copyWith(hour: hourList[index]);
         _titleUpdateNotifier.notify();
         //currentValueMixin = index;
@@ -498,7 +498,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       itemExtent: _wheelItemExtent,
       initialIndex: minuteList.indexOfOrNull(currentMinute) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
-      onIndexChanged: (index) {
+      onIndexChanged: (index, type) {
         currentValueMixin =
             currentValueMixin.copyWith(minute: minuteList[index]);
         _titleUpdateNotifier.notify();
@@ -562,7 +562,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       itemExtent: _wheelItemExtent,
       initialIndex: secondList.indexOfOrNull(currentSecond) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
-      onIndexChanged: (index) {
+      onIndexChanged: (index, type) {
         currentValueMixin =
             currentValueMixin.copyWith(second: secondList[index]);
         _titleUpdateNotifier.notify();
