@@ -151,7 +151,7 @@ flutter_gen:
 
 # The following section is specific to Flutter packages.
 flutter:
-  generate: true # Add this line to enable code generation
+  #generate: true # Add this line to enable code generation
   assets:
     #- assets/svg/
     - assets/png/
