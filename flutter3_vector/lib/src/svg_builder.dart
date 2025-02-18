@@ -111,7 +111,7 @@ class SvgBuilder {
     attributes?.forEach((key, value) {
       if (key.contains(":")) {
         buffer.write('$key="$value" ');
-      } else {
+      } else if (value != null) {
         buffer.write('acy:$key="$value" ');
       }
     });
@@ -149,6 +149,7 @@ class SvgBuilder {
     String? name,
   }) {
     buffer.write('<line ');
+    writeId(id: id, name: name);
     if (x1 != null) {
       buffer.write('x1="${formatValue(x1)}" ');
     }
@@ -161,8 +162,8 @@ class SvgBuilder {
     if (y2 != null) {
       buffer.write('y2="${formatValue(y2)}" ');
     }
-    writeId(id: id, name: name);
     writeStyle(
+      fillRule: fillRule,
       fill: fill,
       fillColor: fillColor,
       stroke: stroke,
@@ -193,6 +194,7 @@ class SvgBuilder {
     String? name,
   }) {
     buffer.write('<ellipse ');
+    writeId(id: id, name: name);
     if (cx != null) {
       buffer.write('cx="${formatValue(cx)}" ');
     }
@@ -205,8 +207,8 @@ class SvgBuilder {
     if (ry != null) {
       buffer.write('ry="${formatValue(ry)}" ');
     }
-    writeId(id: id, name: name);
     writeStyle(
+      fillRule: fillRule,
       fill: fill,
       fillColor: fillColor,
       stroke: stroke,
@@ -239,6 +241,7 @@ class SvgBuilder {
     String? name,
   }) {
     buffer.write('<rect ');
+    writeId(id: id, name: name);
     if (x != null) {
       buffer.write('x="${formatValue(x)}" ');
     }
@@ -253,8 +256,8 @@ class SvgBuilder {
     if (ry != null) {
       buffer.write('ry="${formatValue(ry)}" ');
     }
-    writeId(id: id, name: name);
     writeStyle(
+      fillRule: fillRule,
       fill: fill,
       fillColor: fillColor,
       stroke: stroke,
@@ -370,6 +373,7 @@ class SvgBuilder {
     buffer.write('<path d="$svgPath" ');
     writeId(id: id, name: name);
     writeStyle(
+      fillRule: fillRule,
       fill: fill,
       fillColor: fillColor,
       stroke: stroke,
@@ -476,14 +480,8 @@ class SvgBuilder {
       // 还可以使用已弃用的xlink:href属性作为后备，例如 <use href="some-id" xlink:href="some-id" x="5" y="5" /> 。
       /*buffer.write(
           '<image width="$width" height="$height" xlink:href="$base64Image" ');*/
-      buffer.write('<image href="$base64Image" ');
-      //--
-      if (width != null) {
-        buffer.write('width="${formatValue(width)}" ');
-      }
-      if (height != null) {
-        buffer.write('height="${formatValue(height)}" ');
-      }
+      buffer.write('<image ');
+      writeId(id: id, name: name);
       //--
       if (x != null) {
         buffer.write('x="${formatValue(x)}" ');
@@ -491,9 +489,15 @@ class SvgBuilder {
       if (y != null) {
         buffer.write('y="${formatValue(y)}" ');
       }
-      writeId(id: id, name: name);
+      //--
+      if (width != null) {
+        buffer.write('width="${formatValue(width)}" ');
+      }
+      if (height != null) {
+        buffer.write('height="${formatValue(height)}" ');
+      }
       writeTransform(transform: transform);
-      buffer.write('/>');
+      buffer.write('href="$base64Image" />');
     }
   }
 
@@ -519,6 +523,7 @@ class SvgBuilder {
       return;
     }
     buffer.write('<text ');
+    writeId(id: id, name: name);
     if (x != null) {
       buffer.write('x="${formatValue(x)}" ');
     }
@@ -534,7 +539,6 @@ class SvgBuilder {
     if (fontFamily != null) {
       buffer.write('font-family="$fontFamily" ');
     }
-    writeId(id: id, name: name);
     writeTransform(transform: transform);
     buffer.write('>');
     if (text != null) {
@@ -569,6 +573,7 @@ class SvgBuilder {
   }) {
     if (!isNil(text)) {
       buffer.write('<tspan ');
+      writeId(id: id, name: name);
       if (x != null) {
         buffer.write('x="${formatValue(x)}" ');
       }
@@ -590,7 +595,6 @@ class SvgBuilder {
       if (fontFamily != null) {
         buffer.write('font-family="$fontFamily" ');
       }
-      writeId(id: id, name: name);
       writeTransform(transform: transform);
       buffer.write('>');
       buffer.write(text);
@@ -620,6 +624,7 @@ class SvgBuilder {
     buffer.write('<g ');
     writeId(id: id, name: name);
     writeStyle(
+      fillRule: fillRule,
       fill: fill,
       fillColor: fillColor,
       stroke: stroke,
@@ -653,6 +658,7 @@ class SvgBuilder {
     buffer.write('<g ');
     writeId(id: id, name: name);
     writeStyle(
+      fillRule: fillRule,
       fill: fill,
       fillColor: fillColor,
       stroke: stroke,
