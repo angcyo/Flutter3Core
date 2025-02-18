@@ -18,6 +18,9 @@ class PathWidget extends LeafRenderObjectWidget {
 
   final Alignment alignment;
 
+  /// 着色器
+  final Shader? shader;
+
   const PathWidget({
     super.key,
     this.path,
@@ -25,6 +28,7 @@ class PathWidget extends LeafRenderObjectWidget {
     this.color = Colors.black,
     this.fit = BoxFit.contain,
     this.alignment = Alignment.center,
+    this.shader,
   });
 
   @override
@@ -34,6 +38,7 @@ class PathWidget extends LeafRenderObjectWidget {
         color: color,
         fit: fit,
         alignment: alignment,
+        shader: shader,
       );
 
   @override
@@ -44,6 +49,7 @@ class PathWidget extends LeafRenderObjectWidget {
       ..color = color
       ..fit = fit
       ..alignment = alignment
+      ..shader = shader
       ..markNeedsPaint();
   }
 }
@@ -61,6 +67,9 @@ class PathRenderBox extends RenderBox {
 
   Alignment alignment;
 
+  /// 着色器
+  Shader? shader;
+
   Rect? _pathBounds;
 
   PathRenderBox({
@@ -69,6 +78,7 @@ class PathRenderBox extends RenderBox {
     this.color = Colors.black,
     this.fit = BoxFit.contain,
     this.alignment = Alignment.center,
+    this.shader,
   });
 
   void updatePath(Path? newPath) {
@@ -108,6 +118,7 @@ class PathRenderBox extends RenderBox {
             ..color = color
             ..strokeCap = StrokeCap.round
             ..strokeJoin = StrokeJoin.round
+            ..shader = shader
             ..style = style);
     }
   }
