@@ -141,6 +141,13 @@ class GCodeParser {
 
   //region---Path操作---
 
+  double? get _powerRatio {
+    if (lastMaxPower == null || lastPower == null) {
+      return null;
+    }
+    return lastPower! / lastMaxPower!;
+  }
+
   /// 初始化Path对象
   void initPath() {
     _result ??= Path();
@@ -155,7 +162,7 @@ class GCodeParser {
   void lineTo(double x, double y) {
     initPath();
     _result?.lineTo(x, y);
-    simulationBuilder?.onLineTo(x, y);
+    simulationBuilder?.onLineTo(x, y, powerRatio: _powerRatio);
   }
 
   /// [startAngle].[sweepAngle]角度单位
@@ -180,6 +187,7 @@ class GCodeParser {
       bottom,
       startAngle,
       sweepAngle,
+      powerRatio: _powerRatio,
     );
   }
 
@@ -231,6 +239,11 @@ class GCodeParser {
   double lastI = 0;
   double lastJ = 0;
   double lastR = 0;
+  double? lastPower;
+
+  /// 解析到的最大功率,没有则使用[kMaxPower],
+  /// 用于计算手动功率对应的比例
+  double? lastMaxPower;
 
   void _reset() {
     isAutoCnc = true;
@@ -270,10 +283,10 @@ class GCodeParser {
   }
 
   void _parseInner() {
-    readPreCmd();
+    obtainPreCmd();
     final c = gcodeText[index].toUpperCase();
     //l.d("开始解析1:%ld %c", index, c);
-    if (c == 'G' || c == 'F' || c == 'M') {
+    if (c == 'G' || c == 'F' || c == 'M' || c == 'S') {
       //读取到指令
       readCmd(c);
       skipCurrentLine();
@@ -325,50 +338,61 @@ class GCodeParser {
         readXY();
         moveTo(lastX, lastY);
       }
-    } else if (currentCmd == 'M') {
-      //M指令
-      int number = readNumberString().toIntOrNull() ?? 0;
-      String mCmd = "M$number";
-      //l.d("解析到m指令[%ld]:%s", index, mCmd.c_str());
-      if (mCmd == "M3" || mCmd == "M03") {
-        //主轴打开
-        isCloseCnc = false;
-        isAutoCnc = false;
-      } else if (mCmd == "M5" || mCmd == "M05") {
-        //主轴关闭
-        isCloseCnc = true;
-        //isAutoCnc = false;//2024-11-29 M5关主轴的情况下, 不清除自动cnc
-      } else if (mCmd == "M4" || mCmd == "M04") {
-        //自动cnc
-        isAutoCnc = true;
-      } else if (mCmd == "M2" || mCmd == "M02") {
-        //程序结束
-        //index = length;
-        _reset();
-      } else if (mCmd == "M98") {
-        //读取循环次数
-        final l = readAnyCmdNumber("L");
-        if (l != null) {
-          simulationBuilder?.onStartLoop(l.round());
+    } else {
+      lastMaxPower = obtainPowerValue() ?? lastMaxPower;
+      if (currentCmd == 'M') {
+        //M指令
+        int number = readNumberString().toIntOrNull() ?? 0;
+        String mCmd = "M$number";
+        //l.d("解析到m指令[%ld]:%s", index, mCmd.c_str());
+        if (mCmd == "M3" || mCmd == "M03") {
+          //主轴打开
+          isCloseCnc = false;
+          isAutoCnc = false;
+        } else if (mCmd == "M5" || mCmd == "M05") {
+          //主轴关闭
+          isCloseCnc = true;
+          //isAutoCnc = false;//2024-11-29 M5关主轴的情况下, 不清除自动cnc
+        } else if (mCmd == "M4" || mCmd == "M04") {
+          //自动cnc
+          isAutoCnc = true;
+        } else if (mCmd == "M2" || mCmd == "M02") {
+          //程序结束
+          //index = length;
+          _reset();
+        } else if (mCmd == "M98") {
+          //读取循环次数
+          final l = obtainAnyCmdNumber("L");
+          if (l != null) {
+            simulationBuilder?.onStartLoop(l.round());
+          }
+        } else if (mCmd == "M99") {
+          simulationBuilder?.onEndLoop();
         }
-      } else if (mCmd == "M99") {
-        simulationBuilder?.onEndLoop();
+      } else if (currentCmd == 'S') {
+      } else if (currentCmd == 'F') {
+        //速度
+        //readNumber();
+        //float speed = atof(string(numberChars.begin(), numberChars.end()).c_str());
       }
-    } else if (currentCmd == 'F') {
-      //速度
-      //readNumber();
-      //float speed = atof(string(numberChars.begin(), numberChars.end()).c_str());
     }
   }
 
   /// 处理G指令[gCmd]
   void _handleGCmd(String gCmd) {
+    final power = obtainPowerValue();
     if (gCmd == "G0" || gCmd == "G1") {
       //直线
+      if (gCmd == "G0") {
+        //清空功率
+        lastPower = null;
+      }
       if (!readXY()) {
         //没有X Y指令的G指令, 忽略处理
+        lastMaxPower = power ?? lastMaxPower;
         return;
       }
+      lastPower = power ?? lastPower;
 
       if (isAutoCnc && gCmd == "G1") {
         isCloseCnc = false;
@@ -388,8 +412,10 @@ class GCodeParser {
       double startY = lastY;
       if (!readXY()) {
         //没有X Y指令
+        lastMaxPower = power ?? lastMaxPower;
         return;
       }
+      lastPower = power ?? lastPower;
 
       if (isAutoCnc) {
         isCloseCnc = false;
@@ -405,7 +431,7 @@ class GCodeParser {
         }
       }
 
-      if (readR()) {
+      if (obtainHaveR()) {
         //有R指令, 则通过R指令计算I J
         double r = lastR;
         double x1 = startX;
@@ -516,14 +542,14 @@ class GCodeParser {
   }
 
   /// 读取前置指令, 比例[S]等影响一行中G1顺序的指令
-  void readPreCmd() {
+  void obtainPreCmd() {
     int oldIndex = index;
     while (index < length) {
       final c = gcodeText[index].toUpperCase();
       if (c == 'S') {
         //主轴转速
-        final number = readNumberString().toIntOrNull() ?? 0;
-        isS0 = number <= 0;
+        final number = readNumberString().toDoubleOrNull() ?? 0.0;
+        isS0 = number <= 0.0;
         //l.d("关闭主轴转速: %d", isS0);
         break;
       } else if (isAnnotation(c) || isBreakLine(c)) {
@@ -533,6 +559,9 @@ class GCodeParser {
     }
     index = oldIndex;
   }
+
+  /// 读取当前行中的功率数值`S1000`
+  double? obtainPowerValue() => obtainAnyCmdNumber('S', rollBackPosition: true);
 
   /// 从["G0" "G1"]指令后面读取X, Y, 直到换行或者遇到其他指令
   /// 返回整个语句中是否包含xy
@@ -626,7 +655,7 @@ class GCodeParser {
   /// 读取G2/G3 对应当然R半径指令, 返回是否有R指令
   /// 如果有R指令, 则R指令对应的值会保存到[lastR]中
   ///
-  bool readR() {
+  bool obtainHaveR() {
     int oldIndex = index;
     bool haveR = false;
     while (index < gcodeText.length) {
@@ -656,7 +685,7 @@ class GCodeParser {
 
   /// 读取任意指令后面的数字
   /// [rollBackPosition]是否要回滚文件内容的读取位置
-  double? readAnyCmdNumber(
+  double? obtainAnyCmdNumber(
     String cmd, {
     bool rollBackPosition = false,
   }) {

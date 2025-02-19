@@ -169,7 +169,7 @@ class PathSimulationPainter extends ElementPainter {
           ..style = PaintingStyle.stroke
           ..strokeWidth =
               (paintStrokeWidth ?? 1.toDpFromPx()) / paintMeta.canvasScale
-          ..color = part.color ??
+          ..color = part.paintColor ??
               (part.type == PathSimulationType.line ? lineColor : moveColor);
         //--
         //debugger();

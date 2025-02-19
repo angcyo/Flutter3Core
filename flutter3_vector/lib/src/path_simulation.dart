@@ -32,10 +32,19 @@ class PathSimulationBuilder {
   }
 
   @entryPoint
-  void onLineTo(double x, double y) {
+  void onLineTo(
+    double x,
+    double y, {
+    double? powerRatio,
+  }) {
     if (x.notEqualTo(lastX) || y.notEqualTo(lastY)) {
       if (_currentInfo?.type != PathSimulationType.line) {
         _generateSimulationInfo(PathSimulationType.line);
+        _currentInfo?.powerRatio = powerRatio;
+        /*assert(() {
+          l.d('powerRatio->$powerRatio');
+          return true;
+        }());*/
         _currentInfo?.startPoint(lastX, lastY, isMovePoint: true);
       }
       //
@@ -54,8 +63,9 @@ class PathSimulationBuilder {
     double right,
     double bottom,
     double startAngle,
-    double sweepAngle,
-  ) {
+    double sweepAngle, {
+    double? powerRatio,
+  }) {
     assert(() {
       l.w('请注意,暂不支持的操作!');
       return true;
@@ -220,6 +230,19 @@ class PathSimulationPart {
 
   /// 绘制[path]时的颜色, 不指定则根据[type]自动设置
   Color? color;
+
+  /// 功率比例, 比例越大说明当前段使用的功率越大
+  double? powerRatio;
+
+  /// [powerRatio]对应的灰度值
+  int? get _grey => powerRatio == null
+      ? null
+      : (255 * (1.0 - powerRatio!)).round().clamp(0, 255);
+
+  /// 绘制时的颜色
+  Color? get paintColor =>
+      color ??
+      (_grey == null ? null : Color.fromARGB(255, _grey!, _grey!, _grey!));
 
   //--
 
