@@ -66,24 +66,32 @@ bool isKeyPressed({
           final keyboard = HardwareKeyboard.instance;
           final logicalKeysPressed = keyboard.logicalKeysPressed;
           if (key == LogicalKeyboardKey.control) {
-            return logicalKeysPressed.contains(LogicalKeyboardKey.control) ||
-                logicalKeysPressed.contains(LogicalKeyboardKey.controlLeft) ||
-                logicalKeysPressed.contains(LogicalKeyboardKey.controlRight);
+            return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
+              LogicalKeyboardKey.control,
+              LogicalKeyboardKey.controlLeft,
+              LogicalKeyboardKey.controlRight,
+            });
           }
           if (key == LogicalKeyboardKey.alt) {
-            return logicalKeysPressed.contains(LogicalKeyboardKey.alt) ||
-                logicalKeysPressed.contains(LogicalKeyboardKey.altLeft) ||
-                logicalKeysPressed.contains(LogicalKeyboardKey.altRight);
+            return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
+              LogicalKeyboardKey.alt,
+              LogicalKeyboardKey.altLeft,
+              LogicalKeyboardKey.altRight,
+            });
           }
           if (key == LogicalKeyboardKey.meta) {
-            return logicalKeysPressed.contains(LogicalKeyboardKey.meta) ||
-                logicalKeysPressed.contains(LogicalKeyboardKey.metaLeft) ||
-                logicalKeysPressed.contains(LogicalKeyboardKey.metaRight);
+            return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
+              LogicalKeyboardKey.meta,
+              LogicalKeyboardKey.metaLeft,
+              LogicalKeyboardKey.metaRight,
+            });
           }
           if (key == LogicalKeyboardKey.shift) {
-            return logicalKeysPressed.contains(LogicalKeyboardKey.shift) ||
-                logicalKeysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
-                logicalKeysPressed.contains(LogicalKeyboardKey.shiftRight);
+            return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
+              LogicalKeyboardKey.shift,
+              LogicalKeyboardKey.shiftLeft,
+              LogicalKeyboardKey.shiftRight,
+            });
           }
           return logicalKeysPressed.contains(key);
         }()) ||
@@ -137,7 +145,7 @@ typedef PointerAction = void Function(PointerEvent event);
 @dp
 const double kTouchMoveSlop = 5;
 
-extension LogicalKeyboardKeyEx on LogicalKeyboardKey{
+extension LogicalKeyboardKeyEx on LogicalKeyboardKey {
   bool get isControlKey =>
       this == LogicalKeyboardKey.control ||
           this == LogicalKeyboardKey.controlLeft ||

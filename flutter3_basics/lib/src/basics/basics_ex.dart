@@ -2838,6 +2838,13 @@ extension ListEx<T> on List<T> {
   }
 }
 
+extension SetEx<E> on Set<E> {
+  /// 是否包含其它任意一个元素
+  bool containsAny(Set<Object?> other) {
+    return intersection(other).isNotEmpty;
+  }
+}
+
 /// 通过指定行列索引, 计算数组的索引
 int arrayIndex(int row, int column, int width) {
   return row * width + column;
