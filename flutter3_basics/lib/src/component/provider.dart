@@ -72,9 +72,12 @@ String? textOf(dynamic data, [BuildContext? context]) {
 Widget? widgetOf(
   BuildContext context,
   dynamic data, {
+  //--
   bool tryTextWidget = false,
   TextStyle? textStyle,
   TextAlign? textAlign,
+  bool textSelectable = false,
+  //--
 }) {
   if (data == null) {
     return null;
@@ -102,6 +105,7 @@ Widget? widgetOf(
       return text.text(
         style: textStyle ?? globalTheme.textGeneralStyle,
         textAlign: textAlign,
+        selectable: textSelectable,
       );
     }
   }

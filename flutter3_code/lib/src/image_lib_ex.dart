@@ -54,6 +54,32 @@ extension ImageLibEx on List<int> {
 }
 
 extension ImageEx on LImage {
+  /// 获取指定索引位置的颜色色值
+  /// ARGB
+  int getPixelColor(int index) {
+    final int x = index % width;
+    final int y = index ~/ width;
+    final pixel = getPixel(x, y);
+    return pixel.argbValue;
+  }
+
+  /// 获取对应的像素数据
+  Uint8List get pixelBytes {
+    final pixels = List<int>.filled(width * height, 0);
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        final pixel = getPixel(x, y);
+        pixels[y * width + x] = pixel.argbValue;
+      }
+    }
+    return Uint8List.fromList(pixels);
+  }
+
+  /// 获取对应的png格式字节数据
+  Uint8List get pngBytes {
+    return encode(LImageFormat.png);
+  }
+
   /// 图片转ui图片
   Future<UiImage> get uiImage {
     final image = this;
@@ -123,9 +149,51 @@ extension ImageEx on LImage {
         ),
     };
   }
+
+  /// 将图片转成svg格式的xml字符串
+  String? toSvgXml({
+    int grayThreshold = 128 /*小于这个值, 视为黑色*/,
+    String turnpolicy = "minority",
+    int turdsize = 2,
+    bool optcurve = true /*是否输出曲线*/,
+    num alphamax = 1,
+    num opttolerance = 0.2 /*公差*/,
+  }) =>
+      potrace(
+        this,
+        grayThreshold: grayThreshold,
+        turnpolicy: turnpolicy,
+        turdsize: turdsize,
+        optcurve: optcurve,
+        alphamax: alphamax,
+        opttolerance: opttolerance,
+      );
+
+  /// 将图片转成[Path]路径对象
+  Path? toUiPath({
+    int grayThreshold = 128 /*小于这个值, 视为黑色*/,
+    String turnpolicy = "minority",
+    int turdsize = 2,
+    bool optcurve = true,
+    num alphamax = 1,
+    num opttolerance = 0.2,
+  }) =>
+      potracePath(
+        this,
+        grayThreshold: grayThreshold,
+        turnpolicy: turnpolicy,
+        turdsize: turdsize,
+        optcurve: optcurve,
+        alphamax: alphamax,
+        opttolerance: opttolerance,
+      );
 }
 
 extension ImageColorEx on LImageColor {
+  /// ARGB 颜色值
+  int get argbValue =>
+      (a.round() << 24) | (r.round() << 16) | (g.round() << 8) | b.round();
+
   /// 颜色对象转ui颜色对象
   UiColor get uiColor =>
       Color.fromARGB(a.round(), r.round(), g.round(), b.round());

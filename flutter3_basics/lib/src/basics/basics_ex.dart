@@ -608,6 +608,11 @@ extension ColorEx on Color {
   /// 这里返回rgba
   int get rgbaValue => red << 24 | green << 16 | blue << 8 | alpha;
 
+  int get rgbaValue2 => R << 24 | G << 16 | B << 8 | A;
+
+  /// 返回argb色值
+  int get argbValue => A << 24 | R << 16 | G << 8 | B;
+
   /// 在已有的透明值上进行再次透明
   /// 使用一个增量透明比例创建一个新的颜色
   /// [withOpacity]
@@ -1242,7 +1247,10 @@ extension StringEx on String {
   /// 复制当前的字符串到剪切板
   /// [getClipboardText]
   @allPlatformFlag
-  Future<void> copy() async => Clipboard.setData(ClipboardData(text: this));
+  String copy() {
+    Clipboard.setData(ClipboardData(text: this));
+    return this;
+  }
 
   /// 将`8000`转换成`8.0.0.0`
   String toVersionString() => split("").join(".");
@@ -2146,6 +2154,15 @@ extension IntEx on int {
   /// 转换成颜色
   /// [Color]
   Color toColor() => Color(this);
+
+  /// 获取ARGB颜色中的a, r, g, b
+  int get a => this >> 24 & 0xFF;
+
+  int get r => (this >> 16) & 0xFF;
+
+  int get g => (this >> 8) & 0xFF;
+
+  int get b => this & 0xFF;
 
   /// 转换成十六进制颜色
   String toHexColor({bool leadingHashSign = true, bool a = true}) =>

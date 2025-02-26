@@ -92,9 +92,16 @@ class PathRenderBox extends RenderBox {
   @override
   void performLayout() {
     final constraints = this.constraints;
+    //debugger();
     if (path != null) {
       _pathBounds ??= path!.getExactBounds();
       final pathSize = _pathBounds!.size;
+      assert(() {
+        if (pathSize.isEmpty) {
+          l.w("path size isEmpty!");
+        }
+        return true;
+      }());
       if (constraints.isTight) {
         //有一种满意的约束尺寸
         size = constraints.smallest;

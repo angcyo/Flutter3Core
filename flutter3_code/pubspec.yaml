@@ -30,7 +30,7 @@ dependencies:
   # https://github.com/DavBfr/dart_barcode
   # https://pub.dev/packages/qr
   # https://pub.dev/packages/meta
-  barcode: ^2.2.8
+  barcode: ^2.2.9
 
   # https://pub.dev/packages/barcode_image
   # Dart 的条形码生成库，可以使用 pub:image 库生成条形码。
@@ -44,7 +44,7 @@ dependencies:
   # https://pub.dev/packages/archive
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/xml
-  image: ^4.5.2
+  image: ^4.5.3
 
 dev_dependencies:
   flutter_test:
