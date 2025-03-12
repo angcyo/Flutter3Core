@@ -136,12 +136,23 @@ class PlatformFlag {
 class FromFramework {
   final String des;
 
-  const FromFramework(
-      [this.des = '标识代码来自系统架构']);
+  const FromFramework([this.des = '标识代码来自系统架构']);
 
   @override
   String toString() {
     return 'FromFramework{des: $des}';
+  }
+}
+
+/// [Since]
+class Sign {
+  final String des;
+
+  const Sign([this.des = '标识当前在什么时候加入的']);
+
+  @override
+  String toString() {
+    return 'Sign{des: $des}';
   }
 }
 
@@ -189,7 +200,8 @@ const fromFramework = FromFramework('表示当前代码来自框架');
 const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 //--
 const platformFlag = PlatformFlag();
-const allPlatformFlag = PlatformFlag('全平台: Android iOS Linux macOS web Windows');
+const allPlatformFlag =
+    PlatformFlag('全平台: Android iOS Linux macOS web Windows');
 
 const mobileFlag = PlatformFlag('移动应用: Android 和 iOS');
 const androidFlag = PlatformFlag('移动应用: Android');
