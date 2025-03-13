@@ -1,34 +1,63 @@
-import 'dart:developer';
+import 'dart:convert';
 import 'dart:io';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/10/14
 ///
+///
+///
 void main() async {
+  // await startHttpServer();
+  await startSocketHttp();
+}
+
+/// 启动一个socket服务端
+Future startSocketHttp() async {
+  const serverPort = 8891;
+  final server = await ServerSocket.bind(InternetAddress.anyIPv4, serverPort);
+  print("socket server started->${Directory.current.path}");
+
+  logNetworkInterface(serverPort);
+
+  await for (final socket in server) {
+    print(
+        '[${DateTime.now()}] socket: ${socket.remoteAddress} ${socket.remotePort}');
+
+    //读取请求体中的所有字节数据
+    socket.listen((data) async {
+      //debugger();
+      final text = utf8.decode(data);
+      print('data[${data.length}]->$text');
+      //socket.write("HTTP/1.1 200 OK\nconnection: close\ncontent-type: text/plain; charset=utf-8\n\n$text");
+      //socket.write("HTTP/1.1 200\nback: 原封不动返回请求内容\n\n$text");
+      socket.write("HTTP/1.1 200\n"); //写入协议
+      //socket.write(Uri.encodeComponent("connection: close")); //写入头部信息
+      socket.write("connection: close"); //写入头部信息
+      socket.write("\n\n$text");
+      await socket.flush();
+      await socket.close();
+    });
+  }
+}
+
+//--
+
+/// 启动一个http协议的服务端
+Future startHttpServer() async {
   //监听http 8090端口
   const serverPort = 8890;
   //'localhost'
   final server = await HttpServer.bind(InternetAddress.anyIPv4, serverPort);
   print("http server started->${Directory.current.path}");
 
-  final interfaces = await NetworkInterface.list(
-    includeLoopback: false,
-    type: InternetAddressType.IPv4,
-  );
-
-  for (final interface in interfaces) {
-    for (final address in interface.addresses) {
-      if (address.type == InternetAddressType.IPv4) {
-        print("http://${address.address}:$serverPort/");
-      }
-    }
-  }
+  logNetworkInterface(serverPort);
 
   await for (final request in server) {
-    print('request: ${request.uri}');
+    print('[${DateTime.now()}] request[${request.method}]: ${request.uri}');
     try {
-      handleFormDataRequest(request);
+      //handleFormDataRequest(request);
+      handleRawRequest(request);
 
       //读取请求体中的所有字节数据
       /*await request.listen((data) {
@@ -111,6 +140,16 @@ void main() async {
   print('...end');
 }
 
+/// 原封不动的返回请求信息
+Future<void> handleRawRequest(HttpRequest request) async {
+  final List<int> bytes = await consolidateHttpClientResponseBytes(request);
+  final text = utf8.decode(bytes);
+  request.response
+    ..statusCode = HttpStatus.ok
+    ..write(text)
+    ..close();
+}
+
 /// 处理form-data请求
 Future<void> handleFormDataRequest(HttpRequest request) async {
   //debugger();
@@ -132,7 +171,7 @@ Future<void> handleFormDataRequest(HttpRequest request) async {
   } else {
     request.response
       ..statusCode = HttpStatus.badRequest
-      ..write('Invalid Content Type')
+      ..write('Invalid Content Type: ${request.headers.contentType}')
       ..close();
   }
 }
@@ -147,7 +186,9 @@ String? _getBoundary(String? contentType) {
 }
 
 Future<Map<String, dynamic>> _parseMultipartFormData(
-    HttpRequest request, String boundary) async {
+  HttpRequest request,
+  String boundary,
+) async {
   Map<String, dynamic> formData = {};
   final List<int> bytes = await consolidateHttpClientResponseBytes(request);
   final boundaryBytes = '--$boundary'.codeUnits;
@@ -219,10 +260,29 @@ extension ListEquals on List<int> {
 }
 
 Future<List<int>> consolidateHttpClientResponseBytes(
-    HttpRequest request) async {
+  HttpRequest request,
+) async {
   final bytes = <int>[];
   await for (final chunk in request) {
     bytes.addAll(chunk);
   }
   return bytes;
+}
+
+//--
+
+/// 打印网络接口
+Future logNetworkInterface(int serverPort) async {
+  final interfaces = await NetworkInterface.list(
+    includeLoopback: false,
+    type: InternetAddressType.IPv4,
+  );
+
+  for (final interface in interfaces) {
+    for (final address in interface.addresses) {
+      if (address.type == InternetAddressType.IPv4) {
+        print("http://${address.address}:$serverPort/");
+      }
+    }
+  }
 }
