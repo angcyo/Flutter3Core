@@ -75,6 +75,9 @@ class GCodeParser {
   /// 是否需要仿真数据
   bool? simulation;
 
+  /// 是否激活仿真数据的循环指令 M98/M99
+  bool? enableSimulationLoop;
+
   /// 仿真数据构造器
   PathSimulationBuilder? simulationBuilder;
 
@@ -360,13 +363,13 @@ class GCodeParser {
           //程序结束
           //index = length;
           _reset();
-        } else if (mCmd == "M98") {
+        } else if (mCmd == "M98" && enableSimulationLoop == true) {
           //读取循环次数
           final l = obtainAnyCmdNumber("L");
           if (l != null) {
             simulationBuilder?.onStartLoop(l.round());
           }
-        } else if (mCmd == "M99") {
+        } else if (mCmd == "M99" && enableSimulationLoop == true) {
           simulationBuilder?.onEndLoop();
         }
       } else if (currentCmd == 'S') {
@@ -977,6 +980,7 @@ extension GCodeStringEx on String {
   /// GCode数据转换成仿真数据
   PathSimulationBuilder toSimulationFromGCode() {
     GCodeParser parser = GCodeParser();
+    parser.enableSimulationLoop = false;
     parser.parse(this, simulation: true);
     return parser.simulationBuilder!;
   }
@@ -984,6 +988,7 @@ extension GCodeStringEx on String {
   /// [toSimulationFromGCode]
   Future<PathSimulationBuilder> toSimulationFromGCodeAsync() async {
     GCodeParser parser = GCodeParser();
+    parser.enableSimulationLoop = false;
     await parser.parseAsync(this, simulation: true);
     return parser.simulationBuilder!;
   }
