@@ -178,6 +178,7 @@ const experimental = AnnotationMeta('测试功能, 不稳定');
 const httpMask = AnnotationMeta('包含网络请求');
 const globalInstance = AnnotationMeta('描述当前对象是全局单例对象');
 const updateMark = AnnotationMeta('当前的方法会调用[setState]方法, 用来刷新界面');
+const autoUpdateMark = AnnotationMeta('当前改变会自动调用[setState]方法, 刷新界面');
 const private = AnnotationMeta('私有化的方法, 不建议外部调用');
 @experimental
 const implementation = AnnotationMeta('当前功能, 正在实现中...');
