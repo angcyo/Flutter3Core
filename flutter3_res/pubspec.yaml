@@ -28,7 +28,10 @@ dependencies:
   clock: any
 
   # https://pub.dev/packages/bidi
-  bidi: ^2.0.12
+  bidi: ^2.0.13
+
+  flutter3_basics:
+    path: ../flutter3_basics
 
 dev_dependencies:
   flutter_test:

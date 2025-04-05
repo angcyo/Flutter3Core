@@ -4,10 +4,13 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:bidi/bidi.dart' as bidi;
+import 'package:flutter/widgets.dart';
+import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'l10n/generated/intl/messages_en.dart' as messages_en;
 import 'l10n/generated/intl/messages_zh.dart' as messages_zh;
+import 'l10n/generated/l10n.dart';
 
 export 'l10n/generated/l10n.dart';
 
@@ -38,3 +41,20 @@ part 'intl_ex.dart';
 Map<String, dynamic> get libResEnMessages => messages_en.messages.messages;
 
 Map<String, dynamic> get libResZhMessages => messages_zh.messages.messages;
+
+/// 2025-04-05
+/// 获取当前语言的资源
+/// [LibRes]
+LibRes? libRes([BuildContext? context]) {
+  context ??= GlobalConfig.def.globalContext;
+  if (context == null) {
+    return null;
+  }
+  return LibRes.maybeOf(context);
+}
+
+/// 获取资源代理
+LocalizationsDelegate get libResDelegate => LibRes.delegate;
+
+/// 获取支持的语言环境
+List<Locale> get libResLocales => LibRes.delegate.supportedLocales;
