@@ -27,10 +27,15 @@ part 'src/go_router_ex.dart';
 /// @date 2024/11/5
 ///
 /// get it
+/// https://pub.dev/packages/get_it
+///
 /// ```
 /// $get.registerSingleton<AppModel>(AppModel());
+/// $get.registerLazySingleton<AppModel>(() => AppModel());
+///
 /// $get<AppModel>();
 /// ```
+/// [GetIt]
 final $get = GetIt.instance;
 
 /// watch it
@@ -39,6 +44,7 @@ final $get = GetIt.instance;
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     String country = watchValue((Model x) => x.country);
+///     //String country = watchPropertyValue((Model x) => x.country);
 ///     ...
 ///   }
 /// }
@@ -46,6 +52,13 @@ final $get = GetIt.instance;
 ///
 /// [WatchItMixin]
 /// [WatchItStatefulWidgetMixin]
+///
+/// [watchValue]
+/// [watchStream]
+/// [watchPropertyValue]
+/// [watchFuture]
+///
+/// [GetIt]
 final $di = di;
 
 void _test(){
