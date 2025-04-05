@@ -12,9 +12,13 @@
 # flutter run -d 1C151FDF60063X
 # flutter run -d 00008110-000E78DC0A8B801E
 flutter_launcher_icons:
-  image_path: "assets/ico/app_icon.png"
+  # 图像文件的位置
+  #image_path: "assets/ico/app_icon.png"
+  image_path: "assets/png/logo.png"
   android: true
+  min_sdk_android: 21 # android min sdk min:16, default 21
   ios: true
+  # 删除 IOS 图标的 alpha 通道
   remove_alpha_ios: true
   windows:
     generate: true
