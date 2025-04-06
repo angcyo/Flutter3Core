@@ -4,6 +4,7 @@ part of '../../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/12/02
 ///
+/// 导航条的混入
 /// [BottomNavigationBar]
 /// 直接调用[buildBottomNavigationBar]
 ///
