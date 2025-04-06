@@ -41,16 +41,17 @@ void main() async {
         item.parent.path, () => <FileSystemEntity>[]);
     list.add(item);
   }
+  final txtName = "workspaces.txt";
   flutterProjectMap.forEach((key, value) {
     //colorLog('${key}->${value.length}');
-    final configFile = File("$key/workspaces.txt");
+    final configFile = File("$key/$txtName");
     configFile.writeAsStringSync(
         "# ${DateTime.now()}\n# Create by angcyo (${Platform.script.path.replaceFirst("$rootPath/", "")})\n${value.map((e) => e.path.replaceFirst("$rootPath/", "- ")).join("\n")}");
   });
-  colorLog(flutterProjectMap.keys);
+  colorLog("\n找到工作区[${flutterProjectMap.keys.length}]个,输出到[$txtName]↓:\n${flutterProjectMap.keys.join("\n")}\n");
   //colorLog(flutterProjectMap.length);
   colorLog(
-      '执行结束[${flutterProjectList.length}], 处理工作区[${flutterProjectMap.keys.length}]个!');
+      '执行结束[${flutterProjectList.length}]!');
 }
 
 /// 查找指定路径[path]下的所有`Flutter`项目所在的目录
