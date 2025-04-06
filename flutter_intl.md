@@ -1,5 +1,7 @@
 # flutter_intl
 
+国际化插件, 用来将`arb`文件生成对应的`dart`文件.
+
 [intl: ^0.19.0] - 国际化, 一些api
 
 https://pub.dev/packages/intl

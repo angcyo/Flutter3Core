@@ -1,5 +1,7 @@
 # flutter_gen
 
+将`flutter`的资源文件, 转换成dart代码, 方便引用.
+
 [flutter_gen: ^5.4.0]
 
 https://pub.dev/packages/flutter_gen
