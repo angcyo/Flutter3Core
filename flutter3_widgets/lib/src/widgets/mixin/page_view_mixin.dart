@@ -71,6 +71,10 @@ mixin PageViewMixin<T extends StatefulWidget>
   /// - [KeepAliveWrapper]
   /// - [KeepAliveWrapperExtension.keepAlive]
   /// [useLifecycle] 是否为child提供生命周期感知能力[LifecycleAware]
+  /// [useChildLifecycle] child是否需要生命周期感知能力[LifecycleAware], 需要先开启[useLifecycle]
+  ///
+  /// [NeverScrollableScrollPhysics]
+  /// [BouncingScrollPhysics]
   ///
   @callPoint
   Widget buildPageView(

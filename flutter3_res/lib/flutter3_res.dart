@@ -54,7 +54,7 @@ LibRes? libRes([BuildContext? context]) {
 }
 
 /// 获取资源代理
-LocalizationsDelegate get libResDelegate => LibRes.delegate;
+const LocalizationsDelegate libResDelegate = LibRes.delegate;
 
 /// 获取支持的语言环境
 List<Locale> get libResLocales => LibRes.delegate.supportedLocales;

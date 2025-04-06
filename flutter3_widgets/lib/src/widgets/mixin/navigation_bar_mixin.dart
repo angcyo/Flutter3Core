@@ -43,8 +43,12 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
   Widget buildBottomNavigationBar(
     BuildContext context, {
     List<BottomNavigationBarItem>? items,
+    //--
     Color? selectedItemColor,
     Color? unselectedItemColor,
+    //--
+    bool? showSelectedLabels,
+    bool? showUnselectedLabels,
   }) {
     final globalTheme = GlobalTheme.of(context);
     items ??= buildBottomNavigationBarItems(context);
@@ -80,6 +84,9 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
       //--
       selectedIconTheme: selectedIconTheme,
       unselectedIconTheme: unselectedIconTheme,
+      //--
+      showSelectedLabels: showSelectedLabels,
+      showUnselectedLabels: showUnselectedLabels,
       //--
       onTap: (index) {
         onSelfNavigationIndexChanged(context, index);
