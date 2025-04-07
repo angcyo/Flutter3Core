@@ -10,14 +10,15 @@ part of '../../../flutter3_widgets.dart';
 /// 一般情况下重写[buildScrollBody]构建滚动体, 即可
 ///
 /// [RScrollView]
-/// [AbsScrollPage]
+/// [AbsScrollPage] 基础[RScrollView]页面
 /// [RScrollPage] 刷新,加载更多. 在[buildBody]中兼容[RScrollPage].
 /// [RStatusScrollPage] 状态切换
 ///
 /// [RebuildBodyMixin].[buildScaffold]
 ///
 /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
-/// [buildAppBar]
+/// [buildScrollBody] 重写此方法实现滚动内容构建
+/// [buildAppBar]     重写此方法实现标题栏构建
 mixin AbsScrollPage {
   /// 直接写一个[build]方法, 也可以继承[State.build]方法
   /// @override
@@ -47,7 +48,11 @@ mixin AbsScrollPage {
     //debugger();
     final useSliverAppBar = this.useSliverAppBar(context) == true;
     return Scaffold(
-      appBar: useSliverAppBar ? null : (appBar ?? buildAppBar(context)),
+      appBar: useSliverAppBar
+          ? null
+          : enableAppBar(context) == true
+              ? (appBar ?? buildAppBar(context))
+              : null,
       backgroundColor: backgroundColor ?? getBackgroundColor(context),
       resizeToAvoidBottomInset:
           resizeToAvoidBottomInset ?? getResizeToAvoidBottomInset(context),
@@ -111,6 +116,7 @@ mixin AbsScrollPage {
   /// ```
   ///
   @property
+  @overridePoint
   Widget buildBody(BuildContext context, WidgetList? children) {
     //构建子节点
     WidgetList? buildChildren() {
@@ -141,6 +147,7 @@ mixin AbsScrollPage {
   /// [buildBody]
   /// [pageScrollChildrenUpdateSignal]
   @property
+  @overridePoint
   WidgetList? buildScrollBody(BuildContext context) {
     return null;
   }
@@ -249,7 +256,11 @@ mixin AbsScrollPage {
   @property
   bool? isCenterTitle(BuildContext context) => null;
 
-  /// 是否使用[SliverAppBar]
+  /// 是否激活标题栏
+  @property
+  bool? enableAppBar(BuildContext context) => true;
+
+  /// 是否使用[SliverAppBar], 否则使用[buildAppBar]
   @property
   bool? useSliverAppBar(BuildContext context) => null;
 

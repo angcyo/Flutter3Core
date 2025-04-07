@@ -866,6 +866,30 @@ extension WidgetEx on Widget {
         bottom: vertical ?? bottom,
       );
 
+  /// [insets]
+  /// [paddingOnly]
+  /// [paddingInsets]
+  Widget insets({
+    double? all,
+    double? vertical,
+    double? horizontal,
+    double left = 0,
+    double top = 0,
+    double right = 0,
+    double bottom = 0,
+    EdgeInsetsGeometry? insets,
+  }) =>
+      paddingInsets(insets ??
+          EdgeInsets.only(
+            left: all ?? horizontal ?? left,
+            top: all ?? vertical ?? top,
+            right: all ?? horizontal ?? right,
+            bottom: all ?? vertical ?? bottom,
+          ));
+
+  /// [insets]
+  /// [paddingOnly]
+  /// [paddingInsets]
   Widget paddingOnly({
     double? all,
     double? vertical,
@@ -874,13 +898,15 @@ extension WidgetEx on Widget {
     double top = 0,
     double right = 0,
     double bottom = 0,
+    EdgeInsetsGeometry? insets,
   }) =>
-      paddingInsets(EdgeInsets.only(
-        left: all ?? horizontal ?? left,
-        top: all ?? vertical ?? top,
-        right: all ?? horizontal ?? right,
-        bottom: all ?? vertical ?? bottom,
-      ));
+      paddingInsets(insets ??
+          EdgeInsets.only(
+            left: all ?? horizontal ?? left,
+            top: all ?? vertical ?? top,
+            right: all ?? horizontal ?? right,
+            bottom: all ?? vertical ?? bottom,
+          ));
 
 /*Widget paddingFromWindowPadding() {
     return Padding(
@@ -1635,6 +1661,9 @@ extension WidgetEx on Widget {
   }
 
   /// 阴影装饰
+  /// [radius] 圆角半径
+  /// [decorationColor] 装饰的颜色, 通常是背景的颜色
+  ///
   /// [BoxDecoration]
   /// [shadowCircle]
   /// [shadowRadius]

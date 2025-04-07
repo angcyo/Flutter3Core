@@ -17,8 +17,8 @@ part of '../../../flutter3_widgets.dart';
 /// ```
 ///
 /// [RScrollView]
-/// [AbsScrollPage]
-/// [RScrollPage]
+/// [AbsScrollPage] 基础[RScrollView]页面
+/// [RScrollPage]   全功能[RScrollView]页面
 /// [RStatusScrollPage]
 mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 保存最后一次[rebuildByBean]方法创建的更新信号,
