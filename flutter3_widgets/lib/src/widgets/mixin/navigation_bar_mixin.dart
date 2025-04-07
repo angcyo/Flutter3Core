@@ -30,6 +30,16 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
 
   //region --BottomNavigationBar--
 
+  /// 在[_BottomNavigationBarState.build]中, 底部导航有最小的约束
+  /// ```
+  /// constraints: BoxConstraints(minHeight: kBottomNavigationBarHeight + additionalBottomPadding)
+  /// ```
+  double getNavigationBarMinHeight(BuildContext context) {
+    final double additionalBottomPadding =
+        MediaQuery.viewPaddingOf(context).bottom;
+    return kBottomNavigationBarHeight + additionalBottomPadding;
+  }
+
   /// 构建导航栏
   /// [buildBottomNavigationBar]->[buildBottomNavigationBarItems]
   @callPoint
