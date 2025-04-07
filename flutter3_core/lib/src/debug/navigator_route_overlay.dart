@@ -133,30 +133,34 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
     } else {
       result = _buildNormalState(context);
     }
-    return result.material().doubleClick(
-      () {
-        try {
-          widget.entry.remove();
-          widget.entry.dispose();
-        } catch (e) {
-          assert(() {
-            printError(e);
-            return true;
-          }());
-        }
-      },
-      onTap: () {
-        context.longPressFeedback();
-        setState(() {
-          if (showState == _NavigatorRouteOverlayStateEnum.routeStack) {
-            _routeTextSpan = null;
-          }
-          showState = showState == _NavigatorRouteOverlayStateEnum.normal
-              ? _NavigatorRouteOverlayStateEnum.routeStack
-              : _NavigatorRouteOverlayStateEnum.normal;
-        });
-      },
-    ).align(Alignment.bottomLeft);
+    return result
+        .material()
+        .doubleClick(
+          () {
+            try {
+              widget.entry.remove();
+              widget.entry.dispose();
+            } catch (e) {
+              assert(() {
+                printError(e);
+                return true;
+              }());
+            }
+          },
+          onTap: () {
+            context.longPressFeedback();
+            setState(() {
+              if (showState == _NavigatorRouteOverlayStateEnum.routeStack) {
+                _routeTextSpan = null;
+              }
+              showState = showState == _NavigatorRouteOverlayStateEnum.normal
+                  ? _NavigatorRouteOverlayStateEnum.routeStack
+                  : _NavigatorRouteOverlayStateEnum.normal;
+            });
+          },
+        )
+        .align(Alignment.bottomLeft)
+        .safeArea(bottom: true);
   }
 
   /// 正常状态, 显示小圆点

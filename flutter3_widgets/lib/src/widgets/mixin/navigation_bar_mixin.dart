@@ -35,9 +35,10 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
   /// constraints: BoxConstraints(minHeight: kBottomNavigationBarHeight + additionalBottomPadding)
   /// ```
   double getNavigationBarMinHeight(BuildContext context) {
-    final double additionalBottomPadding =
+    /*final double additionalBottomPadding =
         MediaQuery.viewPaddingOf(context).bottom;
-    return kBottomNavigationBarHeight + additionalBottomPadding;
+    return kBottomNavigationBarHeight + additionalBottomPadding;*/
+    return kBottomNavigationBarHeight;
   }
 
   /// 构建导航栏

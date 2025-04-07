@@ -2283,7 +2283,7 @@ extension WidgetEx on Widget {
   /// 默认块状波纹效果
   /// 使用涟漪动画包裹, 无法控制背景颜色, 波纹会超出范围. [ink]
   /// https://api.flutter.dev/flutter/material/InkWell-class.html
-  /// [splashColor] 涟漪颜色
+  /// [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
   /// [highlightColor] 高亮颜色
   /// [InkWell]
   /// [InkResponse]
@@ -2323,9 +2323,13 @@ extension WidgetEx on Widget {
 
   /// [enable] 是否启用
   /// [disableColor] 禁用时的颜色, 不指定不处理
+  /// [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
+  ///
   /// [ink]
   /// [inkWell]
   /// [InkWell]
+  ///
+  /// [Material] 有些时候, 可能需要使用此部件包裹一下
   Widget inkWellCircle(
     GestureTapCallback? onTap, {
     Color? splashColor,

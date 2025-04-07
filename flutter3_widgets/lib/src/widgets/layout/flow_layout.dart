@@ -895,7 +895,7 @@ class FlowLayoutRender extends RenderBox
 
 extension FlowLayoutListEx on WidgetNullList {
   /// [selfConstraints] 自身的约束条件, 不指定则使用父约束条件
-  /// [childGap] 子元素之间的间隙, 如果[childHorizontalGap]和[childVerticalGap]都不指定, 则使用[childGap]
+  /// [gap] . [childGap] 子元素之间的间隙, 如果[childHorizontalGap]和[childVerticalGap]都不指定, 则使用[childGap]
   /// [FlowLayout]
   /// [FlowLayoutEx.flowLayoutData]
   Widget? flowLayout({
@@ -903,6 +903,7 @@ extension FlowLayoutListEx on WidgetNullList {
     ConstraintsType? selfWidthType,
     ConstraintsType? selfHeightType,
     EdgeInsets? padding,
+    double? gap,
     double childGap = 0,
     double? childHorizontalGap,
     double? childVerticalGap,
@@ -933,7 +934,7 @@ extension FlowLayoutListEx on WidgetNullList {
     }
     return FlowLayout(
       padding: padding,
-      childGap: childGap,
+      childGap: gap ?? childGap,
       childHorizontalGap: childHorizontalGap,
       childVerticalGap: childVerticalGap,
       selfConstraints: selfConstraints,
