@@ -8,6 +8,9 @@ part of '../../../flutter3_widgets.dart';
 /// [kLabelPadding]
 /// [LabelMixin]
 /// [TextMixin]
+///
+/// [LabelLayoutTile]
+///
 mixin LabelMixin {
   //--label
   /// 标签
@@ -61,6 +64,8 @@ class LabelLayoutTile extends StatelessWidget with LabelMixin {
   final EdgeInsets? labelPadding;
   @override
   final BoxConstraints? labelConstraints;
+
+  //--
 
   /// layout
   final WidgetNullList? children;

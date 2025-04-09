@@ -384,6 +384,10 @@ extension StateDecorationWidgetEx on Widget {
 
   /// 绘制背景
   /// [fillColor] 使用纯色填充背景
+  ///
+  /// [fillDecoration] 填充装饰
+  /// [strokeDecoration] 描边装饰
+  ///
   /// [StateDecorationWidget]
   /// [Decoration]
   /// [fillDecoration]

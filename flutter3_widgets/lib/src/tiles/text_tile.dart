@@ -8,6 +8,8 @@ part of '../../../flutter3_widgets.dart';
 /// 文本混入
 /// [LabelMixin]
 /// [TextMixin]
+///
+/// [TextTile]
 mixin TextMixin {
   //--text
   /// 文本
@@ -49,12 +51,22 @@ mixin TextMixin {
 }
 
 /// 单文本[text]显示的tile
-class TextTile extends StatelessWidget {
-  /// 文本
+class TextTile extends StatelessWidget with TextMixin {
+  /// 文本/TextMixin
+  @override
   final String? text;
-  final TextStyle? textStyle;
-  final TextStyleType? textStyleType;
+  @override
   final Widget? textWidget;
+  @override
+  final TextStyle? textStyle;
+  @override
+  final EdgeInsets? textPadding;
+  @override
+  final BoxConstraints? textConstraints;
+
+  //--
+
+  final TextStyleType? textStyleType;
 
   /// 内边距
   final EdgeInsetsGeometry? padding;
@@ -62,10 +74,14 @@ class TextTile extends StatelessWidget {
   /// 简单的文本显示
   const TextTile({
     super.key,
+    //TextMixin
     this.text,
-    this.textStyle,
-    this.textStyleType = TextStyleType.body,
     this.textWidget,
+    this.textStyle,
+    this.textPadding,
+    this.textConstraints,
+    //--
+    this.textStyleType = TextStyleType.body,
     this.padding = const EdgeInsets.symmetric(
       horizontal: kX,
       vertical: kH,
@@ -75,10 +91,14 @@ class TextTile extends StatelessWidget {
   /// 副文本, 内边距更大
   const TextTile.subText({
     super.key,
+    //TextMixin
     this.text,
-    this.textStyle,
-    this.textStyleType = TextStyleType.des,
     this.textWidget,
+    this.textStyle,
+    this.textPadding,
+    this.textConstraints,
+    //--
+    this.textStyleType = TextStyleType.des,
     this.padding = const EdgeInsets.only(
       left: kXh + kX,
       top: kL,
@@ -90,24 +110,23 @@ class TextTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    var result = textWidget ??
-        Text(text ?? "",
-            style: textStyle ??
-                (textStyleType == TextStyleType.title
-                    ? globalTheme.textTitleStyle
-                    : textStyleType == TextStyleType.subTitle
-                        ? globalTheme.textSubTitleStyle
-                        : textStyleType == TextStyleType.des
-                            ? globalTheme.textDesStyle
-                            : textStyleType == TextStyleType.body
-                                ? globalTheme.textBodyStyle
-                                : textStyleType == TextStyleType.sub
-                                    ? globalTheme.textSubStyle
-                                    : textStyleType == TextStyleType.label
-                                        ? globalTheme.textLabelStyle
-                                        : textStyleType == TextStyleType.info
-                                            ? globalTheme.textInfoStyle
-                                            : null));
+    var result = buildTextWidgetMixin(context,
+        textStyle: textStyle ??
+            (textStyleType == TextStyleType.title
+                ? globalTheme.textTitleStyle
+                : textStyleType == TextStyleType.subTitle
+                    ? globalTheme.textSubTitleStyle
+                    : textStyleType == TextStyleType.des
+                        ? globalTheme.textDesStyle
+                        : textStyleType == TextStyleType.body
+                            ? globalTheme.textBodyStyle
+                            : textStyleType == TextStyleType.sub
+                                ? globalTheme.textSubStyle
+                                : textStyleType == TextStyleType.label
+                                    ? globalTheme.textLabelStyle
+                                    : textStyleType == TextStyleType.info
+                                        ? globalTheme.textInfoStyle
+                                        : null))!;
     if (padding != null) {
       result = Padding(
         padding: padding!,
