@@ -793,11 +793,18 @@ extension RItemTileExtension on Widget {
     double? edgePaddingLeft,
     double? edgePaddingRight,
     //--
+    EdgeInsetsGeometry? sliverPadding,
+    Color? decorationFillColor,
+    double decorationBorderRadius = kDefaultBorderRadiusXX,
+    List<BoxShadow>? decorationShadow,
+    //
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    //--
     bool hide = false,
     bool part = false,
     UpdateValueNotifier? updateSignal,
     bool enablePadding = false,
-    EdgeInsetsGeometry? sliverPadding,
     dynamic sliverType = SliverGrid,
   }) {
     mainAxisSpacing ??= 0;
@@ -816,6 +823,16 @@ extension RItemTileExtension on Widget {
       edgePaddingTop: edgePadding ?? edgePaddingTop,
       edgePaddingRight: edgePadding ?? edgePaddingRight,
       edgePaddingBottom: edgePadding ?? edgePaddingBottom,
+      //--
+      sliverDecoration: sliverDecoration ??
+          (decorationFillColor != null
+              ? fillDecoration(
+                  color: decorationFillColor,
+                  radius: decorationBorderRadius,
+                  boxShadow: decorationShadow,
+                )
+              : null),
+      sliverDecorationPosition: sliverDecorationPosition,
       sliverPadding: sliverPadding ??
           (enablePadding
               ? EdgeInsets.symmetric(

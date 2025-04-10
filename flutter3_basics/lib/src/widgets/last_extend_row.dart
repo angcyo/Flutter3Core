@@ -16,6 +16,7 @@ class LastExtendRow extends Row {
     super.textDirection,
     super.verticalDirection,
     super.textBaseline, // NO DEFAULT: we don't know what the text's baseline should be
+    super.spacing,
     super.children,
   });
 
@@ -30,12 +31,15 @@ class LastExtendRow extends Row {
       verticalDirection: verticalDirection,
       textBaseline: textBaseline,
       clipBehavior: clipBehavior,
+      spacing: spacing,
     );
   }
 
   @override
   void updateRenderObject(
-      BuildContext context, covariant LastExtendRenderFlex renderObject) {
+    BuildContext context,
+    covariant LastExtendRenderFlex renderObject,
+  ) {
     renderObject
       ..direction = direction
       ..mainAxisAlignment = mainAxisAlignment
@@ -44,6 +48,7 @@ class LastExtendRow extends Row {
       ..textDirection = getEffectiveTextDirection(context)
       ..verticalDirection = verticalDirection
       ..textBaseline = textBaseline
+      ..spacing = spacing
       ..clipBehavior = clipBehavior;
   }
 }
@@ -59,6 +64,7 @@ class LastExtendRenderFlex extends RenderFlex {
     super.verticalDirection = VerticalDirection.down,
     super.textBaseline,
     super.clipBehavior = Clip.none,
+    super.spacing = 0,
   });
 
   /// 是否溢出了
@@ -80,10 +86,16 @@ class LastExtendRenderFlex extends RenderFlex {
 
     double useWidth = 0;
     double maxHeight = 0;
+
+    //是否重新测量过child
+    bool isReLayoutChild = false;
+
     for (final child in children) {
       maxHeight = math.max(maxHeight, child.size.height);
+      //debugger();
       if (child == children.last) {
         final maxWidth = constraints.maxWidth - useWidth;
+        //debugger();
         if (child.size.width > maxWidth) {
           _isOverflow = true;
           //最后一个child的宽度大于剩余宽度, 则重新测量
@@ -123,11 +135,32 @@ class LastExtendRenderFlex extends RenderFlex {
                 }
               }
             }
+          } else if (isReLayoutChild) {
+            final FlexParentData childParentData =
+                child.parentData! as FlexParentData;
+            childParentData.offset = Offset(
+              useWidth,
+              childParentData.offset.dy,
+            );
           }
           //debugger();
         }
       } else {
-        useWidth += child.size.width;
+        if (child.size.width > 0) {
+          useWidth += child.size.width + spacing;
+        } else {
+          //如果child的宽度为0, 则有可能被最后一个元素挤掉了
+          final childParentData = child.parentData;
+          if (childParentData is FlexParentData) {
+            if ((childParentData.flex ?? 0) != 0) {
+              //重新测量被挤掉的元素
+              final childSize =
+                  ChildLayoutHelper.layoutChild(child, BoxConstraints());
+              useWidth += childSize.width + spacing;
+              isReLayoutChild = true;
+            }
+          }
+        }
       }
     }
   }

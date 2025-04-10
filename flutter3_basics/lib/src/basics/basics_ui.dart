@@ -323,6 +323,9 @@ extension WidgetListEx on WidgetNullList {
   /// [mainAxisSize] 主轴尺寸, 是要用最大尺寸, 还是要最小尺寸
   /// [crossAxisAlignment] 交叉轴对齐方式, 垂直方向, 垂直顶部对齐, 垂直居中对齐, 垂直底部对齐
   /// [gap] 间隙
+  ///
+  /// [LastExtendRow]
+  ///
   Widget? row({
     Key? key,
     MainAxisSize? mainAxisSize, //MainAxisSize.max
@@ -333,22 +336,36 @@ extension WidgetListEx on WidgetNullList {
     TextBaseline? textBaseline,
     double? gap,
     Widget? gapWidget,
+    //--
+    bool lastExtend = false,
   }) {
     WidgetList children = filterAndFillGap(gapWidget: gapWidget);
     if (isNullOrEmpty(children)) {
       return null;
     }
-    return Row(
-      key: key,
-      mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
-      mainAxisSize: mainAxisSize ?? MainAxisSize.max,
-      crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
-      textDirection: textDirection,
-      verticalDirection: verticalDirection ?? VerticalDirection.down,
-      textBaseline: textBaseline,
-      spacing: gap ?? 0,
-      children: children,
-    );
+    return lastExtend
+        ? LastExtendRow(
+            key: key,
+            mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+            mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+            crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
+            textDirection: textDirection,
+            verticalDirection: verticalDirection ?? VerticalDirection.down,
+            textBaseline: textBaseline,
+            spacing: gap ?? 0,
+            children: children,
+          )
+        : Row(
+            key: key,
+            mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+            mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+            crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
+            textDirection: textDirection,
+            verticalDirection: verticalDirection ?? VerticalDirection.down,
+            textBaseline: textBaseline,
+            spacing: gap ?? 0,
+            children: children,
+          );
   }
 
   /// [Stack]
