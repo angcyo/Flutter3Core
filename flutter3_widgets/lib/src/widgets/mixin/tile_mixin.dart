@@ -676,12 +676,19 @@ mixin TileMixin {
 
   /// 根据[values].[children]创建[WidgetList]
   /// [selectedIndex] 选中的索引, 选中的颜色会不一样
+  ///
+  /// [ValueMixin]
+  ///
   WidgetList? buildChildrenFromValues(
     BuildContext context, {
     List? values,
     List<Widget>? valuesWidget,
     TransformDataWidgetBuilder? transformValueWidget,
+    //--
     int? selectedIndex,
+    bool selectedBold = true,
+    TextStyle? textStyle,
+    TextStyle? selectedTextStyle,
   }) {
     WidgetList? result;
     if (valuesWidget == null) {
@@ -691,12 +698,17 @@ mixin TileMixin {
         if (widget != null) {
           return transformValueWidget?.call(context, widget, data) ?? widget;
         }
+        textStyle ??= globalTheme.textGeneralStyle.copyWith(
+          color: index == selectedIndex ? globalTheme.themeBlackColor : null,
+          fontWeight: (index == selectedIndex && selectedBold)
+              ? ui.FontWeight.bold
+              : null,
+          /*fontSize: 14,*/
+        );
         final textWidget = textOf(data)!.text(
-          style: globalTheme.textGeneralStyle.copyWith(
-            color: index == selectedIndex ? globalTheme.themeBlackColor : null,
-            fontWeight: index == selectedIndex ? ui.FontWeight.bold : null,
-            /*fontSize: 14,*/
-          ),
+          style: index == selectedIndex
+              ? selectedTextStyle ?? textStyle
+              : textStyle,
         );
         return transformValueWidget?.call(context, textWidget, data) ??
             textWidget.min();

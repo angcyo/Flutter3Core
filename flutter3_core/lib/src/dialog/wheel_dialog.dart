@@ -4,16 +4,35 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/24
 ///
+/// ```
+/// await buildContext?.showWidgetDialog(WheelDialog());
+/// ```
+///
 /// @return pop 返回选中的索引
-class WheelDialog extends StatefulWidget with DialogMixin {
-  /// title
+class WheelDialog extends StatefulWidget
+    with DialogMixin, TitleMixin, ValueMixin {
+  /// 标题/TitleMixin
+  @override
   final String? title;
+  @override
   final Widget? titleWidget;
+  @override
+  final TextStyle? titleTextStyle;
+  @override
+  final TextAlign? titleTextAlign;
+  @override
+  final EdgeInsets? titlePadding;
+  @override
+  final BoxConstraints? titleConstraints;
 
-  /// content
+  /// 值/ValueMixin
+  @override
   final dynamic initValue;
+  @override
   final List? values;
+  @override
   final List<Widget>? valuesWidget;
+  @override
   final TransformDataWidgetBuilder? transformValueWidget;
 
   /// wheel
@@ -27,12 +46,19 @@ class WheelDialog extends StatefulWidget with DialogMixin {
 
   const WheelDialog({
     super.key,
+    //TitleMixin
     this.title,
     this.titleWidget,
+    this.titleTextStyle,
+    this.titleTextAlign,
+    this.titlePadding,
+    this.titleConstraints,
+    //ValueMixin
     this.initValue,
     this.values,
     this.valuesWidget,
     this.transformValueWidget,
+    //
     this.enableWheelSelectedIndexColor = true,
     this.wheelSelectedIndexColor,
   });
@@ -42,30 +68,20 @@ class WheelDialog extends StatefulWidget with DialogMixin {
 }
 
 class _WheelDialogState extends State<WheelDialog>
-    with DialogMixin, TileMixin, ValueChangeMixin<WheelDialog, int> {
+    with ValueChangeMixin<WheelDialog, int> {
   final _wheelItemExtent = kMinItemInteractiveHeight;
   final _wheelHeight = 200.0;
 
   @override
-  int getInitialValueMixin() {
-    int index = widget.values?.indexOf(widget.initValue) ?? 0;
-    index = max(index, 0);
-    return index;
-  }
+  int getInitialValueMixin() => widget.valueIndexMixin;
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
-    WidgetList? children = buildChildrenFromValues(
-      context,
-      values: widget.values ??
-          (widget.valuesWidget == null ? [widget.initValue] : null),
-      valuesWidget: widget.valuesWidget,
-      transformValueWidget: widget.transformValueWidget,
-    );
+    WidgetList? children = widget.buildValuesWidgetListMixin(context);
 
-    return buildBottomChildrenDialog(
+    return widget.buildBottomChildrenDialog(
         context,
         [
           CoreDialogTitle(
@@ -114,6 +130,8 @@ class _WheelDialogState extends State<WheelDialog>
         clipTopRadius: kDefaultBorderRadiusXX);
   }
 }
+
+//-- DateTime
 
 const sDateWheelType = [
   "年",

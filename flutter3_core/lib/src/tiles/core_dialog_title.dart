@@ -13,6 +13,9 @@ part of '../../flutter3_core.dart';
 class CoreDialogTitle extends StatelessWidget {
   ///
   final Widget? leading;
+
+  //--
+  final Widget? leadingIcon;
   final bool enableLeading;
   final bool showLeading;
   final bool invisibleLeading;
@@ -20,6 +23,9 @@ class CoreDialogTitle extends StatelessWidget {
 
   ///
   final Widget? trailing;
+
+  //--
+  final Widget? trailingIcon;
   final bool enableTrailing;
   final bool showTrailing;
   final bool invisibleTrailing;
@@ -53,6 +59,8 @@ class CoreDialogTitle extends StatelessWidget {
   ///
   final EdgeInsetsGeometry? padding;
 
+  final double? minHeight;
+
   const CoreDialogTitle({
     super.key,
     this.title,
@@ -61,8 +69,10 @@ class CoreDialogTitle extends StatelessWidget {
     this.subTitle,
     this.subTitleWidget,
     this.leading,
+    this.leadingIcon,
     this.leadingSvgIconKey,
     this.trailing,
+    this.trailingIcon,
     this.trailingSvgIconKey,
     this.enableLeading = true,
     this.showLeading = true,
@@ -78,6 +88,7 @@ class CoreDialogTitle extends StatelessWidget {
     this.enableLine = true,
     this.line,
     this.padding,
+    this.minHeight,
   });
 
   @override
@@ -87,12 +98,13 @@ class CoreDialogTitle extends StatelessWidget {
         ? null
         : this.leading ??
             InkButton(
-              loadCoreAssetSvgPicture(
-                leadingSvgIconKey ?? Assets.svg.coreBack,
-                tintColor: context.isThemeDark
-                    ? globalTheme.textTitleStyle.color
-                    : null,
-              ),
+              leadingIcon ??
+                  loadCoreAssetSvgPicture(
+                    leadingSvgIconKey ?? Assets.svg.coreBack,
+                    tintColor: context.isThemeDark
+                        ? globalTheme.textTitleStyle.color
+                        : null,
+                  ),
               enable: enableLeading,
               onTap: () {
                 if (onLeadingTap == null) {
@@ -107,12 +119,13 @@ class CoreDialogTitle extends StatelessWidget {
         ? null
         : this.trailing ??
             InkButton(
-              loadCoreAssetSvgPicture(
-                trailingSvgIconKey ?? Assets.svg.coreConfirm,
-                tintColor: context.isThemeDark
-                    ? globalTheme.textTitleStyle.color
-                    : null,
-              ),
+              trailingIcon ??
+                  loadCoreAssetSvgPicture(
+                    trailingSvgIconKey ?? Assets.svg.coreConfirm,
+                    tintColor: context.isThemeDark
+                        ? globalTheme.textTitleStyle.color
+                        : null,
+                  ),
               enable: enableTrailing,
               onTap: () {
                 if (onTrailingTap == null) {
@@ -136,6 +149,7 @@ class CoreDialogTitle extends StatelessWidget {
       enableBottomLine: enableLine,
       bottomLine: line,
       padding: padding,
+      minHeight: minHeight,
     );
   }
 }

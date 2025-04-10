@@ -39,6 +39,10 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
   /// 填充内边距
   final EdgeInsetsGeometry? padding;
 
+  /// 最小的标题栏高度
+  @defInjectMark
+  final double? minHeight;
+
   const DialogTitleTile({
     super.key,
     this.title,
@@ -57,6 +61,7 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
     this.titleTextStyle,
     this.subTitleTextStyle,
     this.padding,
+    this.minHeight,
   });
 
   @override
@@ -88,7 +93,10 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
       titleColumn?.expanded(),
       trailing?.colorFiltered(
           color: enableTrailing ? null : globalTheme.disableColor),
-    ].row()!.constrainedMin(minHeight: kTitleHeight).paddingInsets(padding);
+    ]
+        .row()!
+        .constrainedMin(minHeight: minHeight ?? kTitleHeight)
+        .paddingInsets(padding);
     if (enableTopLine != true && enableBottomLine != true) {
       return body;
     }
