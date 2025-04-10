@@ -38,6 +38,7 @@ mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
 
   /// 重写此方法, 获取初始化的[initialValueMixin].值
   @initialize
+  @overridePoint
   V getInitialValueMixin() {
     final widget = this.widget;
     if (widget is ValueMixin) {
@@ -45,6 +46,28 @@ mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
       return mixin.initValue;
     }
     return null as dynamic;
+  }
+
+  //--
+  @api
+  void updateValueMixin(dynamic toValue) async => changeValueMixin(toValue);
+
+  /// 改变[currentValueMixin]的值
+  @api
+  void changeValueMixin(dynamic toValue) async {
+    final widget = this.widget;
+    if (widget is ValueMixin) {
+      final mixin = widget as ValueMixin;
+      if (mixin.onValueConfirmChange != null) {
+        final result = await mixin.onValueConfirmChange!(toValue);
+        if (result != true) {
+          return;
+        }
+      }
+      currentValueMixin = toValue;
+      mixin.onValueChanged?.call(toValue);
+      updateState();
+    }
   }
 }
 
@@ -76,6 +99,15 @@ mixin ValueMixin {
 
   //--
 
+  /// 并不需要在此方法中更新界面
+  ValueChanged<dynamic>? get onValueChanged => null;
+
+  /// 在改变时, 需要进行的确认回调
+  /// 返回false, 则不进行改变
+  FutureValueCallback<dynamic>? get onValueConfirmChange => null;
+
+  //--
+
   int get valueIndexMixin {
     int index = values?.indexOf(initValue) ?? 0;
     index = max(index, 0);
@@ -88,6 +120,7 @@ mixin ValueMixin {
   /// [selectedIndex] 选中的索引, 选中的颜色会不一样
   ///
   /// [TileMixin.buildChildrenFromValues]
+  @api
   WidgetList? buildValuesWidgetListMixin(
     BuildContext context, {
     List? values,
