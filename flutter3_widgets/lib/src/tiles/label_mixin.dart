@@ -20,6 +20,8 @@ mixin LabelMixin {
 
   TextStyle? get labelTextStyle => null;
 
+  TextAlign? get labelTextAlign => null;
+
   EdgeInsets? get labelPadding => null;
 
   BoxConstraints? get labelConstraints => null;
@@ -44,6 +46,7 @@ mixin LabelMixin {
             ?.text(
               style: labelTextStyle ??
                   (themeStyle ? globalTheme.textLabelStyle : null),
+              textAlign: labelTextAlign,
             )
             .constrainedBox(labelConstraints)
             .paddingInsets(labelPadding));

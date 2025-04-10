@@ -698,6 +698,8 @@ extension RItemTileExtension on Widget {
     EdgeInsetsGeometry? sliverPadding,
     Color? decorationFillColor,
     double decorationBorderRadius = kDefaultBorderRadiusXX,
+    List<BoxShadow>? decorationShadow,
+    //
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
     //--
@@ -739,6 +741,7 @@ extension RItemTileExtension on Widget {
               ? fillDecoration(
                   color: decorationFillColor,
                   radius: decorationBorderRadius,
+                  boxShadow: decorationShadow,
                 )
               : null),
       sliverDecorationPosition: sliverDecorationPosition,
@@ -879,7 +882,9 @@ extension RItemTileExtension on Widget {
     //--
     EdgeInsetsGeometry? sliverPadding,
     Color? decorationFillColor,
+    List<BoxShadow>? decorationShadow,
     double decorationBorderRadius = kDefaultBorderRadiusXX,
+    //
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
     //--
@@ -938,6 +943,7 @@ extension RItemTileExtension on Widget {
               : fillDecoration(
                   color: decorationFillColor,
                   radius: decorationBorderRadius,
+                  boxShadow: decorationShadow,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
@@ -1011,6 +1017,8 @@ extension RItemTileExtension on Widget {
     //--
     Color? decorationFillColor,
     double decorationBorderRadius = kDefaultBorderRadiusXX,
+    List<BoxShadow>? decorationShadow,
+    //
     EdgeInsetsGeometry? sliverPadding,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
@@ -1044,6 +1052,7 @@ extension RItemTileExtension on Widget {
               : fillDecoration(
                   color: decorationFillColor,
                   radius: decorationBorderRadius,
+                  boxShadow: decorationShadow,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
       bottomLeading: bottomLeading,
@@ -1074,6 +1083,8 @@ extension RItemTileExtension on Widget {
     bool part = false,
     Color? decorationFillColor,
     double decorationBorderRadius = kDefaultBorderRadiusXX,
+    List<BoxShadow>? decorationShadow,
+    //
     EdgeInsetsGeometry? sliverPadding,
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
@@ -1099,6 +1110,7 @@ extension RItemTileExtension on Widget {
               : fillDecoration(
                   color: decorationFillColor,
                   radius: decorationBorderRadius,
+                  boxShadow: decorationShadow,
                 )),
       sliverDecorationPosition: sliverDecorationPosition,
       bottomLeading: bottomLeading,
@@ -1224,6 +1236,8 @@ extension RItemTileListExtension on List<Widget> {
     EdgeInsetsGeometry? sliverPadding,
     Color? decorationFillColor,
     double decorationBorderRadius = kDefaultBorderRadiusXX,
+    List<BoxShadow>? decorationShadow,
+    //
     Decoration? sliverDecoration,
     DecorationPosition sliverDecorationPosition = DecorationPosition.background,
     //--
@@ -1248,6 +1262,7 @@ extension RItemTileListExtension on List<Widget> {
               ? fillDecoration(
                   color: decorationFillColor,
                   radius: decorationBorderRadius,
+                  boxShadow: decorationShadow,
                 )
               : null),
       sliverDecorationPosition: sliverDecorationPosition,

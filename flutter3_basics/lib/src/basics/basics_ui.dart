@@ -1674,6 +1674,9 @@ extension WidgetEx on Widget {
     double? radius = kDefaultBorderRadiusXXX,
     double shadowBlurRadius = kDefaultBlurRadius,
     double shadowSpreadRadius = kS,
+    //--
+    List<BoxShadow>? boxShadow,
+    //--
     BoxShape shape = BoxShape.rectangle,
     BorderRadiusGeometry? borderRadius,
     Color? decorationColor = Colors.white,
@@ -1687,14 +1690,15 @@ extension WidgetEx on Widget {
         shape: shape,
         borderRadius: borderRadius,
         color: decorationColor,
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            offset: shadowOffset,
-            blurRadius: shadowBlurRadius,
-            spreadRadius: shadowSpreadRadius,
-          ),
-        ],
+        boxShadow: boxShadow ??
+            [
+              BoxShadow(
+                color: shadowColor,
+                offset: shadowOffset,
+                blurRadius: shadowBlurRadius,
+                spreadRadius: shadowSpreadRadius,
+              ),
+            ],
       ),
       child: this,
     );

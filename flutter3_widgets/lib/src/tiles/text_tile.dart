@@ -19,6 +19,8 @@ mixin TextMixin {
 
   TextStyle? get textStyle => null;
 
+  TextAlign? get textAlign => null;
+
   EdgeInsets? get textPadding => null;
 
   BoxConstraints? get textConstraints => null;
@@ -43,6 +45,7 @@ mixin TextMixin {
             ?.text(
               style:
                   textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
+              textAlign: textAlign,
             )
             .constrainedBox(textConstraints)
             .paddingInsets(textPadding));
