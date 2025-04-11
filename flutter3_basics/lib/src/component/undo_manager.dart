@@ -192,14 +192,184 @@ class _UndoAnnotation {
 
 const supportUndo = _UndoAnnotation();
 
+//--
+
+///
+/// ```
+///   @override
+///   final UndoActionManager undoActionManager;
+///   @override
+///   final Widget? undoWidget;
+///   @override
+///   final Widget? redoWidget;
+///   @override
+///   final VisualDensity? visualDensity;
+/// ```
+///
+/// [UndoStateMixin]
+mixin UndoWidgetMixin {
+  UndoActionManager? get undoActionManager => null;
+
+  Widget? get undoWidget => null;
+
+  Widget? get redoWidget => null;
+
+  VisualDensity? get visualDensity => null;
+}
+
+/// [UndoWidgetMixin]
+mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
+  UndoActionManager? get undoManagerMixin => widget is UndoWidgetMixin
+      ? (widget as UndoWidgetMixin).undoActionManager
+      : null;
+
+  Widget? get undoWidgetMixin =>
+      widget is UndoWidgetMixin ? (widget as UndoWidgetMixin).undoWidget : null;
+
+  Widget? get redoWidgetMixin =>
+      widget is UndoWidgetMixin ? (widget as UndoWidgetMixin).redoWidget : null;
+
+  VisualDensity? get visualDensityMixin => widget is UndoWidgetMixin
+      ? (widget as UndoWidgetMixin).visualDensity
+      : null;
+
+  //--
+
+  @override
+  void initState() {
+    undoManagerMixin?.addChangeListener(handleUndoActionChangeMixin);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    undoManagerMixin?.removeChangeListener(handleUndoActionChangeMixin);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return [
+          buildUndoWidgetMixin(context),
+          buildRedoWidgetMixin(context),
+        ].row(mainAxisSize: MainAxisSize.min) ??
+        empty;
+  }
+
+  //--
+
+  /// 激活时小部件着色的颜色
+  @overridePoint
+  Color? getEnableColorMixin(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    return context.darkOr(
+        globalTheme.icoNormalColor, globalTheme.icoNormalColor);
+  }
+
+  /// 非激活时小部件着色的颜色
+  @overridePoint
+  Color? getDisableColorMixin(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    return context.darkOr(
+        globalTheme.disableColor, globalTheme.icoDisableColor);
+  }
+
+  /// 构建撤销回退小部件
+  Widget? buildUndoWidgetMixin(
+    BuildContext context, {
+    Widget? undoWidget,
+    Color? enableColor,
+    Color? disableColor,
+    VisualDensity? visualDensity,
+  }) {
+    final canUndo = undoManagerMixin?.canUndo() == true;
+    Widget undo = IconButton(
+        visualDensity: visualDensity ?? visualDensityMixin,
+        onPressed: canUndo
+            ? () {
+                undoManagerMixin?.undo();
+              }
+            : null,
+        icon: undoWidget ?? undoWidgetMixin ?? const Icon(Icons.undo));
+    if (isDebug) {
+      undo = undo.stackOf(
+        Text(
+          "${undoManagerMixin?.undoList.length ?? 0}",
+          style: const TextStyle(fontSize: 9),
+        ),
+        alignment: AlignmentDirectional.center,
+      );
+    }
+    if (canUndo) {
+      undo = undo.colorFiltered(
+          color: enableColor ?? getEnableColorMixin(context));
+    } else {
+      undo = undo.colorFiltered(
+          color: disableColor ?? getDisableColorMixin(context));
+    }
+    return undo;
+  }
+
+  /// 构建重做小部件
+  Widget? buildRedoWidgetMixin(
+    BuildContext context, {
+    Widget? redoWidget,
+    Color? enableColor,
+    Color? disableColor,
+    VisualDensity? visualDensity,
+  }) {
+    final canRedo = undoManagerMixin?.canRedo() == true;
+    Widget redo = IconButton(
+        visualDensity: visualDensity ?? visualDensityMixin,
+        onPressed: canRedo
+            ? () {
+                undoManagerMixin?.redo();
+              }
+            : null,
+        icon: redoWidget ?? redoWidgetMixin ?? const Icon(Icons.redo));
+    if (isDebug) {
+      redo = redo.stackOf(
+        Text(
+          "${undoManagerMixin?.redoList.length ?? 0}",
+          style: const TextStyle(fontSize: 9),
+        ),
+        alignment: AlignmentDirectional.center,
+      );
+    }
+
+    if (canRedo) {
+      redo = redo.colorFiltered(
+          color: enableColor ?? getEnableColorMixin(context));
+    } else {
+      redo = redo.colorFiltered(
+          color: disableColor ?? getDisableColorMixin(context));
+    }
+    return redo;
+  }
+
+  //--
+
+  /// 改变监听, 默认会调用[updateState]
+  @overridePoint
+  void handleUndoActionChangeMixin() {
+    updateState();
+  }
+}
+
+//--
+
 /// 撤销回退小部件
 /// [UndoActionManager]
-class UndoActionWidget extends StatefulWidget {
-  final UndoActionManager undoActionManager;
+class UndoActionWidget extends StatefulWidget with UndoWidgetMixin {
+  @override
+  final UndoActionManager? undoActionManager;
+  @override
   final Widget? undoWidget;
+  @override
   final Widget? redoWidget;
 
-  const UndoActionWidget(this.undoActionManager, {
+  const UndoActionWidget(
+    this.undoActionManager, {
     super.key,
     this.undoWidget,
     this.redoWidget,
@@ -209,93 +379,11 @@ class UndoActionWidget extends StatefulWidget {
   State<UndoActionWidget> createState() => _UndoActionWidgetState();
 }
 
-class _UndoActionWidgetState extends State<UndoActionWidget> {
-  UndoActionManager get undoManager => widget.undoActionManager;
-
-  @override
-  void initState() {
-    widget.undoActionManager.addChangeListener(_handleUndoActionChange);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    widget.undoActionManager.removeChangeListener(_handleUndoActionChange);
-    super.dispose();
-  }
-
+class _UndoActionWidgetState extends State<UndoActionWidget>
+    with UndoStateMixin {
   ///
   @override
   void didUpdateWidget(covariant UndoActionWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final globalTheme = GlobalTheme.of(context);
-
-    final enableColor =
-    context.darkOr(globalTheme.icoNormalColor, globalTheme.icoNormalColor);
-    final disableColor =
-    context.darkOr(globalTheme.disableColor, globalTheme.icoDisableColor);
-
-    //撤销
-    final canUndo = undoManager.canUndo();
-    Widget undo = IconButton(
-        onPressed: canUndo
-            ? () {
-          undoManager.undo();
-        }
-            : null,
-        icon: widget.undoWidget ?? const Icon(Icons.undo));
-    if (isDebug) {
-      undo = undo.stackOf(
-        Text(
-          "${undoManager.undoList.length}",
-          style: const TextStyle(fontSize: 9),
-        ),
-        alignment: AlignmentDirectional.center,
-      );
-    }
-    if (canUndo) {
-      undo = undo.colorFiltered(color: enableColor);
-    } else {
-      undo = undo.colorFiltered(color: disableColor);
-    }
-
-    //重做
-    final canRedo = undoManager.canRedo();
-    Widget redo = IconButton(
-        onPressed: canRedo
-            ? () {
-          undoManager.redo();
-        }
-            : null,
-        icon: widget.redoWidget ?? const Icon(Icons.redo));
-    if (isDebug) {
-      redo = redo.stackOf(
-        Text(
-          "${undoManager.redoList.length}",
-          style: const TextStyle(fontSize: 9),
-        ),
-        alignment: AlignmentDirectional.center,
-      );
-    }
-
-    if (canRedo) {
-      redo = redo.colorFiltered(color: enableColor);
-    } else {
-      redo = redo.colorFiltered(color: disableColor);
-    }
-
-    return [
-      undo,
-      redo,
-    ].row(mainAxisSize: MainAxisSize.min) ??
-        empty;
-  }
-
-  void _handleUndoActionChange() {
-    updateState();
   }
 }

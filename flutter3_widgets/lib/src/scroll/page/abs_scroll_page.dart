@@ -22,6 +22,10 @@ part of '../../../flutter3_widgets.dart';
 mixin AbsScrollPage {
   /// 直接写一个[build]方法, 也可以继承[State.build]方法
   /// @override
+  ///
+  /// [buildScaffold]
+  /// [buildAppBar]
+  /// [buildBody]
   @overridePoint
   @initialize
   Widget build(BuildContext context) {
@@ -31,6 +35,8 @@ mixin AbsScrollPage {
   //region Page
 
   /// 构建脚手架[Scaffold]
+  /// [buildAppBar]
+  /// [buildBody]
   @api
   @entryPoint
   Widget buildScaffold(
@@ -269,6 +275,21 @@ mixin AbsScrollPage {
   @property
   Widget? buildAppBarLeading(BuildContext context) => null;
 
+  /// 只在可以返回的情况下, 才会调用
+  /// 重写之后, 需要手动处理页面的[pop]操作
+  ///
+  /// ```
+  ///  @override
+  ///  Widget? buildAppBarDismissal(BuildContext context) {
+  ///    return ydResSvgWidget(ydCoreSvgRes.back, size: 18)?.icon(() {
+  ///      context.maybePop();
+  ///    });
+  ///  }
+  /// ```
+  ///
+  @property
+  Widget? buildAppBarDismissal(BuildContext context) => null;
+
   /// 构建标题栏上的动作按钮
   @property
   List<Widget>? buildAppBarActions(BuildContext context) => null;
@@ -291,6 +312,7 @@ mixin AbsScrollPage {
   Color? getAppBarForegroundColor(BuildContext context) => null;
 
   /// 获取标题栏背景色
+  /// 要实现渐变效果请使用[buildAppBarFlexibleSpace]
   @property
   Color? getAppBarBackgroundColor(BuildContext context) => null;
 
@@ -307,6 +329,9 @@ mixin AbsScrollPage {
 
   /// 构建顶部导航[AppBar]
   /// [AppBarBuilderFn]
+  ///
+  /// [GlobalConfig.appBarBuilder]
+  ///
   @property
   PreferredSizeWidget? buildAppBar(
     BuildContext context, {
@@ -318,6 +343,7 @@ mixin AbsScrollPage {
     bool? centerTitle,
     bool? automaticallyImplyLeading,
     Widget? leading,
+    Widget? dismissal,
     Widget? trailing,
     PreferredSizeWidget? bottom,
     List<Widget>? actions,
@@ -334,6 +360,7 @@ mixin AbsScrollPage {
       this,
       useSliverAppBar: useSliverAppBar ?? this.useSliverAppBar(context),
       leading: leading ?? buildAppBarLeading(context),
+      dismissal: dismissal ?? buildAppBarDismissal(context),
       automaticallyImplyLeading: automaticallyImplyLeading,
       title: title ?? buildTitle(context),
       centerTitle: centerTitle ?? isCenterTitle(context),

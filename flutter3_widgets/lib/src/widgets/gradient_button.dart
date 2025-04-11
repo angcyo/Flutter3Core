@@ -182,6 +182,8 @@ class GradientButton extends StatelessWidget {
   final Color? disabledTextColor;
 
   /// 禁用时的颜色
+  /// [GlobalTheme.disableBgColor]
+  @defInjectMark
   final Color? disabledColor;
 
   /// Defaults to 24.0 on the left and right if [textTheme] is [ButtonTextTheme.primary],

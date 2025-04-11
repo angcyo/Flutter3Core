@@ -35,6 +35,7 @@ typedef AppBarBuilderFn = PreferredSizeWidget? Function(
   Object? page, {
   bool? useSliverAppBar,
   Widget? leading,
+  Widget? dismissal,
   bool? automaticallyImplyLeading,
   Widget? title,
   List<Widget>? actions,
@@ -49,8 +50,8 @@ typedef AppBarBuilderFn = PreferredSizeWidget? Function(
   double? titleSpacing,
 });
 
-/// [AppBar]左边构建器函数
-typedef AppBarLeadingBuilderFn = Widget? Function(
+/// [AppBar]左边构建器函数, 在可以back的时候调用
+typedef AppBarDismissalBuilderFn = Widget? Function(
     BuildContext context, dynamic page);
 
 /// [GlobalConfig.allModalRouteList]
@@ -398,7 +399,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 用来创建自定义的[AppBar]左边的返回小部件
   /// [page] 用来识别界面, 做一些特殊处理
   /// @return null 使用系统默认的
-  AppBarLeadingBuilderFn appBarLeadingBuilder = (
+  AppBarDismissalBuilderFn appBarDismissalBuilder = (
     context,
     state,
   ) {
@@ -411,12 +412,17 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [backgroundColor] 透明的背景颜色, 会影响Android状态栏的颜色
   /// [flexibleSpace] 纯白色的[AppBar]推荐使用此属性设置白色, 否则会和底色叠加.
   /// [bottom] [AppBar.bottom]属性[PreferredSizeWidget]
+  ///
+  /// [leading] [AppBar.leading]属性
+  /// [dismissal] 在可以back的情况下显示的返回按钮
+  ///
   /// [copyWith]
   late AppBarBuilderFn appBarBuilder = (
     context,
     state, {
     useSliverAppBar,
     leading,
+    dismissal,
     automaticallyImplyLeading,
     title,
     actions,
@@ -445,7 +451,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
             ? null
             : leading ??
                 (context.isAppBarDismissal
-                    ? appBarLeadingBuilder(context, state)
+                    ? dismissal ?? appBarDismissalBuilder(context, state)
                     : null),
         actions: actions,
         bottom: bottom,
@@ -475,7 +481,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
           ? null
           : leading ??
               (context.isAppBarDismissal
-                  ? appBarLeadingBuilder(context, state)
+                  ? dismissal ?? appBarDismissalBuilder(context, state)
                   : null),
       actions: actions,
       bottom: bottom,
@@ -660,7 +666,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     WidgetArgumentBuilder? errorPlaceholderBuilder,
     ProgressWidgetBuilder? loadingOverlayWidgetBuilder,
     AppBarBuilderFn? appBarBuilder,
-    AppBarLeadingBuilderFn? appBarLeadingBuilder,
+    AppBarDismissalBuilderFn? appBarDismissalBuilder,
   }) {
     return GlobalConfig(
       globalTopContext: globalTopContext ?? this.globalTopContext,
@@ -681,8 +687,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       ..loadingOverlayWidgetBuilder =
           loadingOverlayWidgetBuilder ?? this.loadingOverlayWidgetBuilder
       ..appBarBuilder = appBarBuilder ?? this.appBarBuilder
-      ..appBarLeadingBuilder =
-          appBarLeadingBuilder ?? this.appBarLeadingBuilder;
+      ..appBarDismissalBuilder =
+          appBarDismissalBuilder ?? this.appBarDismissalBuilder;
   }
 }
 

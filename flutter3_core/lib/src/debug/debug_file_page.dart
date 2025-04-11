@@ -42,6 +42,7 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
     bool? centerTitle,
     bool? automaticallyImplyLeading,
     Widget? leading,
+    Widget? dismissal,
     Widget? trailing,
     PreferredSizeWidget? bottom,
     List<Widget>? actions,

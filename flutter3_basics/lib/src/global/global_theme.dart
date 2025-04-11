@@ -165,6 +165,7 @@ class GlobalTheme {
   Color get appBarShadowColor => shadowColor;
 
   /// [AppBar]的背景颜色
+  /// [appBarGradientBackgroundColorList] 渐变颜色列表
   Color get appBarBackgroundColor => primaryColor;
 
   /// [AppBar]的前景颜色
