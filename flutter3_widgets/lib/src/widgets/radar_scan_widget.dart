@@ -5,7 +5,11 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/04/10
 ///
 /// 雷达扫描动画
-/// 扫描, 圈圈一圈圈固定不变
+/// 扫描, 一根线绕着圆心扫描
+///
+/// [RadarScanWidget]
+/// [RadarScanWidget2]
+///
 class RadarScanWidget extends LeafRenderObjectWidget {
   /// 是否需要动画
   final bool isLoading;
@@ -164,7 +168,11 @@ class RadarScanBox extends RenderBox {
 //--
 
 /// 雷达扫描动画
-/// 扫描, 2个圈圈一圈圈固定不变
+/// 扫描, 2个圈圈, 半径往外扩散, 并逐渐透明
+///
+/// [RadarScanWidget]
+/// [RadarScanWidget2]
+///
 class RadarScanWidget2 extends LeafRenderObjectWidget {
   /// 是否需要动画
   final bool isLoading;
