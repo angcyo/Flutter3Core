@@ -21,11 +21,16 @@ void main(List<String> arguments) async {
   //_sendFeishuText(webhook, "text");
 
   //await _sendFeishuVersion();
-  await _sendLP5xVersion();
+  //await _sendLP5xVersion("E:/AndroidProjects/LaserPeckerRNPro/android/.apk");
+  await _sendLP5xVersion(
+      "/Users/angcyo/project/android/laserpecker-rn-pro/android/.apk/");
 }
 
 /// LP版本发布通知
-Future _sendLP5xVersion({String? versionDes}) async {
+Future _sendLP5xVersion(
+  String versionFilePath, {
+  String? versionDes,
+}) async {
   final currentPath = Directory.current.path;
 
   final localYamlFile = File("$currentPath/script.local.yaml");
@@ -36,9 +41,8 @@ Future _sendLP5xVersion({String? versionDes}) async {
   final yaml =
       loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
 
-  final versionMap =
-      await _getVersionDes("E:/AndroidProjects/LaserPeckerRNPro/android/.apk");
-  _sendFeishuPost(
+  final versionMap = await _getVersionDes(versionFilePath);
+  _sendFeishuWebhook(
     localYaml?["feishu_webhook_lp5"] ?? yaml?["feishu_webhook_lp5"],
     _assembleVersionTitle(versionMap),
     versionDes ?? versionMap?["versionDes"],
@@ -49,6 +53,7 @@ Future _sendLP5xVersion({String? versionDes}) async {
 }
 
 //--
+
 
 /// 组装版本发布通知的标题
 String? _assembleVersionTitle(Map<String, dynamic>? json) {
@@ -96,7 +101,7 @@ Future _sendFeishuVersion({
 
   for (final folder in (localYaml["pgyer_path"] ?? yaml["pgyer_path"])) {
     final versionMap = await _getVersionDes(folder);
-    _sendFeishuPost(
+    _sendFeishuWebhook(
       localYaml["feishu_webhook"] ?? yaml["feishu_webhook"],
       versionMap?["versionName"] == null
           ? null
@@ -135,14 +140,18 @@ Future _sendFeishuText(
 
 /// 发送飞书webhook消息
 /// https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot
-Future _sendFeishuPost(
-  String webhook,
+Future _sendFeishuWebhook(
+  String? webhook,
   String? title,
   String? text, {
   String? linkUrl,
   String? changeLogUrl,
   bool atAll = true,
 }) async {
+  if (webhook == null) {
+    colorLog("未指定飞书webhook, 不发送消息");
+    return;
+  }
   //post请求
   final postBody = {
     "msg_type": "post",
@@ -189,4 +198,8 @@ Future<Map<String, dynamic>?> _getVersionDes(String folder) async {
   } catch (e) {
     return null;
   }
+}
+
+void colorLog(dynamic msg, [int col = 93]) {
+  print('\x1B[38;5;${col}m$msg');
 }
