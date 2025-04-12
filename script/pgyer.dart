@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
+import '_script_common.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/16
@@ -80,7 +82,7 @@ void main(List<String> arguments) async {
                   localYaml["feishu_webhook"] ?? yaml["feishu_webhook"];
               final logUrl =
                   localYaml["change_log_url"] ?? yaml["change_log_url"];
-              await _sendFeishuWebhook(
+              await sendFeishuWebhookInteractive(
                 webhook,
                 _assembleVersionTitle(versionMap),
                 versionMap?["versionDes"],
@@ -293,59 +295,4 @@ String? _assembleVersionTitle(Map<String, dynamic>? json) {
     }
   }
   return buffer.toString();
-}
-
-/// 发送飞书webhook消息
-/// https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot
-Future _sendFeishuWebhook(
-  String? webhook,
-  String? title,
-  String? text, {
-  String? linkUrl,
-  String? changeLogUrl,
-  bool atAll = true,
-}) async {
-  if (webhook == null) {
-    colorLog("未指定飞书webhook, 不发送消息");
-    return;
-  }
-  //post请求
-  final postBody = {
-    "msg_type": "post",
-    "content": {
-      "post": {
-        "zh_cn": {
-          "title": title,
-          "content": [
-            [
-              if (text != null) ...[
-                {"tag": "text", "text": text},
-                {"tag": "text", "text": "\n"},
-              ],
-              if (linkUrl != null) ...[
-                {"tag": "text", "text": "\n"},
-                {"tag": "a", "text": "点击查看/下载", "href": linkUrl}
-              ],
-              if (changeLogUrl != null) ...[
-                {"tag": "text", "text": "\n"},
-                {"tag": "a", "text": "更新记录", "href": changeLogUrl}
-              ],
-              if (atAll) ...[
-                {"tag": "text", "text": "\n"},
-                {"tag": "at", "user_id": "all"}
-              ],
-            ]
-          ]
-        }
-      }
-    },
-  };
-  final response = await http.post(Uri.parse(webhook),
-      body: jsonEncode(postBody),
-      headers: {"Content-Type": "application/json"});
-  print(response.body);
-}
-
-void colorLog(dynamic msg, [int col = 93]) {
-  print('\x1B[38;5;${col}m$msg');
 }
