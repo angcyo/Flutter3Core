@@ -293,16 +293,24 @@ Future _initDebugLastInfo() async {
 /// 在具有[BuildContext]时, 进行首次初始化
 /// [MaterialApp.onGenerateTitle]中的[BuildContext]拿不到[Navigator].[Overlay]
 /// 推荐在[MaterialApp.home]中使用[Builder]小部件初始化
+///
+/// [checkOrShowNavigatorRouteOverlay]
+///
 @entryPoint
 @initialize
-Future initGlobalAppAtContext(BuildContext context) async {
+Future initGlobalAppAtContext(
+  BuildContext context, {
+  bool checkRouteOverlay = true,
+}) async {
   //debugger();
   if (GlobalConfig.def.globalAppContext == context) {
     return;
   }
   GlobalConfig.def.globalAppContext = context;
-  //调试信息
-  checkOrShowNavigatorRouteOverlay(context);
+  if (checkRouteOverlay) {
+    //调试信息
+    checkOrShowNavigatorRouteOverlay(context);
+  }
 }
 
 /// [NavigatorRouteOverlay]

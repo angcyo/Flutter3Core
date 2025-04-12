@@ -37,11 +37,21 @@ part of '../../../flutter3_widgets.dart';
 
 /// 快速使用一个约束布局
 /// [cl_layout.ConstraintLayout]
+/// [constrainLayout]
+/// [cLayout]
+/// [$cl]
 Widget constrainLayout(void Function() block) =>
     cl_layout.ConstraintLayout().open(block);
 
 /// [constrainLayout]
+/// [cLayout]
+/// [$cl]
 Widget cLayout(void Function() block) => constrainLayout(block);
+
+/// [constrainLayout]
+/// [cLayout]
+/// [$cl]
+Widget $cl(void Function() block) => constrainLayout(block);
 
 /// 约束扩展
 extension ConstraintLayoutEx on Widget {
