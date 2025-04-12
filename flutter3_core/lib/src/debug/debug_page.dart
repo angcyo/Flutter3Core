@@ -6,6 +6,41 @@ part of '../../flutter3_core.dart';
 ///
 /// 调试界面, 包含很多调试相关的功能
 class DebugPage extends StatefulWidget {
+  /// 使用[PinchGestureWidget]自动处理[DebugPage]页面
+  static Widget wrap(
+    BuildContext context,
+    Widget body, {
+    bool enable = true,
+  }) {
+    if (!enable) {
+      return body;
+    }
+    return PinchGestureWidget(
+      onPinchAction: () {
+        assert(() {
+          l.v("onPinchAction...捏合");
+          return true;
+        }());
+        //context.findNavigatorState()?.pushWidget(const DebugPage());
+        try {
+          context.pushWidget(const DebugPage());
+        } catch (e) {
+          GlobalConfig.def.globalAppContext?.pushWidget(const DebugPage());
+        }
+      },
+      multiLongPressDuration: 2.seconds,
+      onMultiLongPressDurationAction: () {
+        assert(() {
+          l.v("onMultiLongPressDurationAction...多指长按");
+          return true;
+        }());
+        context.longPressFeedback();
+        ScreenCaptureOverlay.showScreenCaptureOverlay();
+      },
+      child: body,
+    );
+  }
+
   /// debug
   static void _toastWidgetInfo(dynamic widget) {
     final text = stringBuilder((builder) {

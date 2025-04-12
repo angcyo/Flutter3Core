@@ -3318,6 +3318,18 @@ extension RouteWidgetEx on Widget {
 /// 导航扩展
 ///使用 ModalRoute.of(context).settings.arguments; 获取参数
 extension NavigatorEx on BuildContext {
+  //--NavigatorState↓
+
+  /// 从上往下查找 [NavigatorState]
+  /// [Navigator.of]
+  NavigatorState? findNavigatorState() {
+    var element = findElementOfWidget<Navigator>();
+    if (element is StatefulElement) {
+      return element.state as NavigatorState;
+    }
+    return null;
+  }
+
   //---Route↓
 
   /// 获取当前路由

@@ -549,13 +549,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 从上往下查找 [NavigatorState]
   /// [Navigator.of]
-  NavigatorState? findNavigatorState() {
-    var element = globalTopContext?.findElementOfWidget<Navigator>();
-    if (element is StatefulElement) {
-      return element.state as NavigatorState;
-    }
-    return null;
-  }
+  NavigatorState? findNavigatorState() =>
+      globalTopContext?.findNavigatorState();
 
   /// 从上往下查找所有[ModalRoute]
   /// release之后,字符串是否会变化?
