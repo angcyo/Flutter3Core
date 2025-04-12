@@ -2164,8 +2164,11 @@ extension WidgetEx on Widget {
       );
 
   /// [Material]组件会影响[ModalRoute.barrierDismissible]属性
+  /// 此组件在[OverlayEntry]中可能会影响手势传递.
+  ///
   /// [color] 背景颜色
   /// [surfaceTintColor]
+  ///
   Widget material({
     Key? key,
     ShapeBorder? shape,

@@ -65,9 +65,9 @@ class _ScreenCaptureOverlayWidget extends StatelessWidget {
           ).clipRadius(radius: kDefaultBorderRadiusX).inkWell(() {
             state.hide();
             globalConfig.shareAppLogFn?.call(context, runtimeType);
-          }),
+          }).material(),
         ),
       ],
-    ).material().safeArea();
+    ).safeArea();
   }
 }
