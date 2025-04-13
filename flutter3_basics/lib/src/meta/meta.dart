@@ -156,6 +156,20 @@ class Sign {
   }
 }
 
+/// [Alias]
+class Alias {
+  final String des;
+
+  const Alias([this.des = '标识当前方法是其它方法的别名']);
+
+  @override
+  String toString() {
+    return 'Alias{des: $des}';
+  }
+}
+
+const alias = Alias();
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');

@@ -20,6 +20,7 @@ Line verticalLine(
     );
 
 /// [verticalLine]
+@Alias("verticalLine")
 Line vLine(
   BuildContext? context, {
   Color? color,
@@ -49,6 +50,7 @@ Line horizontalLine(
     );
 
 /// [horizontalLine]
+@Alias("horizontalLine")
 Line hLine(
   BuildContext? context, {
   Color? color,
