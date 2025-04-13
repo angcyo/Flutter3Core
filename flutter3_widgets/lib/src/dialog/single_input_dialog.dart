@@ -56,7 +56,7 @@ class SingleInputDialog extends StatelessWidget with DialogMixin {
   final InputCounterWidgetBuilder? inputBuildCounter;
 
   @override
-  EdgeInsets get contentPadding => EdgeInsets.zero;
+  EdgeInsets get dialogContentPadding => EdgeInsets.zero;
 
   SingleInputDialog({
     super.key,

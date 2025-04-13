@@ -45,7 +45,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   final bool interceptPop;
 
   @override
-  EdgeInsets get contentPadding => EdgeInsets.zero;
+  EdgeInsets get dialogContentPadding => EdgeInsets.zero;
 
   @override
   TranslationType get translationType => TranslationType.scaleFade;

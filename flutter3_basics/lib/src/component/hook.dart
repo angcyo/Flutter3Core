@@ -13,6 +13,8 @@ part of '../../flutter3_basics.dart';
 /// [ListenableMixin]
 /// [StreamSubscriptionMixin]
 /// [AnimationMixin]
+///
+/// [HookStateMixin]
 mixin HookMixin {
   /// 资源
   @autoDispose
@@ -191,6 +193,7 @@ mixin HookMixin {
 //endregion --dispose--
 }
 
+/// [HookMixin]
 mixin HookStateMixin<T extends StatefulWidget> on State<T>, HookMixin {
   @override
   void dispose() {

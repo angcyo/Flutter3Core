@@ -169,12 +169,12 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
                 },
               ),
             if (widget.wrapInputAction == null)
-              input.paddingInsets(widget.inputMargin ?? widget.contentPadding),
+              input.paddingInsets(widget.inputMargin ?? widget.dialogContentPadding),
             if (widget.wrapInputAction != null)
               ...widget.wrapInputAction!(
                   context,
                   input.paddingInsets(
-                      widget.inputMargin ?? widget.contentPadding)),
+                      widget.inputMargin ?? widget.dialogContentPadding)),
           ],
           clipTopRadius: kDefaultBorderRadiusXX,
         )

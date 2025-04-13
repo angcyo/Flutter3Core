@@ -245,7 +245,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
         content.container(
           color: globalTheme.whiteBgColor,
           margin: EdgeInsets.only(top: widget.headerMarginTop),
-          padding: widget.contentPadding,
+          padding: widget.dialogContentPadding,
           radius: kDefaultBorderRadiusXX,
         ),
         header,

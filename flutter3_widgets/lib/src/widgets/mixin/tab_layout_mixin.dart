@@ -47,7 +47,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// 构建指示器
   @overridePoint
   Widget? buildTabLayoutIndicator(BuildContext context) =>
-      buildGradientIndicator(context);
+      buildGradientFillIndicator(context);
 
   //--
 
@@ -55,8 +55,12 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// [fillColor] 使用纯色, 不使用渐变
   /// [fillDecoration]
   /// [buildTabLayoutIndicator]
+  ///
+  /// [buildGradientFillIndicator]
+  /// [buildBottomLineIndicator]
+  /// [buildBottomLineGradientIndicator]
   @api
-  Widget buildGradientIndicator(
+  Widget buildGradientFillIndicator(
     BuildContext context, {
     Color? fillColor,
     List<Color>? colors,
@@ -84,10 +88,15 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// 构建一个填充线条的指示器
   /// [fillDecoration]
   /// [buildTabLayoutIndicator]
+  ///
+  /// [buildGradientFillIndicator]
+  /// [buildBottomLineIndicator]
+  /// [buildBottomLineGradientIndicator]
   @api
   Widget buildBottomLineIndicator(
     BuildContext context, {
     double height = 2,
+    double? width,
     EdgeInsets? padding,
     EdgeInsets? margin,
     List<Color>? colors,
@@ -107,7 +116,51 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     ).tabItemData(
       itemType: TabItemType.indicator,
       alignment: Alignment.bottomCenter,
-      itemConstraints: LayoutBoxConstraints.fixedHeight(maxHeight: height),
+      itemConstraints: LayoutBoxConstraints.fixedHeight(
+        maxHeight: height,
+        widthType: width != null ? ConstraintsType.fixedSize : null,
+        maxWidth: width ?? double.infinity,
+      ),
+      enableIndicatorFlow: true,
+      padding: padding,
+      margin: margin,
+    );
+  }
+
+  /// [width] 宽度
+  ///
+  /// [buildGradientFillIndicator]
+  /// [buildBottomLineIndicator]
+  /// [buildBottomLineGradientIndicator]
+  @api
+  Widget buildBottomLineGradientIndicator(
+    BuildContext context, {
+    double height = 2,
+    double? width,
+    EdgeInsets? padding,
+    EdgeInsets? margin,
+    List<Color>? colors,
+    double? borderRadius = kDefaultBorderRadiusXX,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    return DecoratedBox(
+      decoration: fillDecoration(
+        color: globalTheme.accentColor,
+        radius: borderRadius,
+        gradient: linearGradient(colors ??
+            [
+              globalTheme.primaryColor,
+              globalTheme.primaryColorDark,
+            ]),
+      ),
+    ).tabItemData(
+      itemType: TabItemType.indicator,
+      alignment: Alignment.bottomCenter,
+      itemConstraints: LayoutBoxConstraints.fixedHeight(
+        maxHeight: height,
+        widthType: width != null ? ConstraintsType.fixedSize : null,
+        maxWidth: width ?? double.infinity,
+      ),
       enableIndicatorFlow: true,
       padding: padding,
       margin: margin,
@@ -145,6 +198,9 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     void Function(int from, int to)? onIndexChangedAction,
     //--
     bool? pageViewAnimate,
+    //--
+    Color? normalTintColor /*正常时时的着色*/,
+    Color? selectedTintColor /*选中时的着色*/,
   }) {
     return () {
       List<Widget>? body =
@@ -162,6 +218,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
               normalTextStyle!.copyWith(fontWeight: FontWeight.normal);
         }
 
+        //选中文本样式支持
         if (selectedTextStyle != null) {
           body = body
               .mapIndex((child, index) => child.textStyle(
@@ -169,6 +226,17 @@ mixin TabLayoutMixin<T extends StatefulWidget>
                         ? selectedTextStyle
                         : normalTextStyle,
                     animate: autoTextAnimate,
+                  ))
+              .toList();
+        }
+
+        //着色支持
+        if (normalTintColor != null || selectedTintColor != null) {
+          body = body
+              .mapIndex((child, index) => child.colorFiltered(
+                    color: isTabIndexSelected(index)
+                        ? selectedTintColor
+                        : normalTintColor,
                   ))
               .toList();
         }

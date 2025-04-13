@@ -32,7 +32,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       const EdgeInsets.symmetric(horizontal: 60, vertical: kToolbarHeight);
 
   /// 对话框内容内边距
-  EdgeInsets get contentPadding =>
+  EdgeInsets get dialogContentPadding =>
       const EdgeInsets.symmetric(horizontal: kX, vertical: kX);
 
   /// 对话框的最大宽度/高度限制
@@ -42,6 +42,9 @@ mixin DialogMixin implements TranslationTypeImpl {
       maxWidth: min(screenWidth, screenHeight),
       minHeight: 0,
       maxHeight: min(screenWidth, screenHeight));
+
+  /// 是否背景模糊处理
+  bool get dialogBlur => false;
 
   /// 对话框的容器, 带圆角, 带margin
   /// [decorationColor] 背景颜色
@@ -61,14 +64,18 @@ mixin DialogMixin implements TranslationTypeImpl {
     BoxConstraints? constraints,
     BorderRadiusGeometry? borderRadius,
     double radius = kDefaultBorderRadiusXX,
-    bool blur = false,
+    bool? blur,
   }) {
     final globalTheme = GlobalTheme.of(context);
     borderRadius ??= BorderRadius.circular(radius);
+    margin ??= dialogMargin;
+    padding ??= dialogContentPadding;
+    constraints ??= dialogConstraints;
+    blur ??= dialogBlur;
     return Padding(
-      padding: margin ?? dialogMargin,
+      padding: margin,
       child: ConstrainedBox(
-        constraints: constraints ?? dialogConstraints,
+        constraints: constraints,
         child: DecoratedBox(
           decoration: decoration ??
               BoxDecoration(
@@ -76,7 +83,7 @@ mixin DialogMixin implements TranslationTypeImpl {
                     globalTheme.themeWhiteColor.withOpacity(blur ? 0.85 : 1.0),
                 borderRadius: borderRadius,
               ),
-          child: child.paddingInsets(padding ?? contentPadding).material(),
+          child: child.paddingInsets(padding).material(),
         ).blur(sigma: blur ? kL : null).iw(),
       ).clip(borderRadius: borderRadius),
     );
@@ -92,7 +99,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     EdgeInsets? margin,
     EdgeInsets? padding,
     Color? decorationColor,
-    bool blur = false,
+    bool? blur,
     double radius = kDefaultBorderRadiusXX,
   }) {
     return Center(
@@ -165,6 +172,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     double? height /*固定高度*/,
     double? contentMinHeight,
     double? contentMaxHeight = 0.8,
+    bool? blur,
     //--clip--↓
     double? clipRadius,
     double? clipTopRadius = kDefaultBorderRadiusXXX,
@@ -181,6 +189,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     //--safeArea
     bool useSafeArea = true,
   }) {
+    blur ??= dialogBlur;
+
     Widget body;
     children = children.filterNull();
 
@@ -301,7 +311,8 @@ mixin DialogMixin implements TranslationTypeImpl {
         .matchParent(matchHeight: fullScreen)
         .align(Alignment.bottomCenter)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
-        .adaptiveTablet(context);
+        .adaptiveTablet(context)
+        .blur(sigma: blur ? kL : null);
   }
 
   //endregion ---对话框包裹---
@@ -347,17 +358,18 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// 关闭一个对话框, 如果[close]为true
   @callPoint
   Future<bool> closeDialogIf(
-    BuildContext? context, [
+    BuildContext? context, {
     bool close = true,
     bool maybePop = false,
     Route? route,
-  ]) async {
+    dynamic result,
+  }) async {
     if (close && context?.isMounted == true) {
       if (maybePop) {
-        return await context?.maybePop(popDialogResult) ?? false;
+        return await context?.maybePop(result ?? popDialogResult) ?? false;
       }
       if (route == null) {
-        context?.pop(popDialogResult);
+        context?.pop(result ?? popDialogResult);
       } else {
         context?.removeRouteIf(route);
       }
