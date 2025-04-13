@@ -10,6 +10,10 @@ part of './dialog.dart';
 ///
 /// 对话框的一些基础方法,一些基础约束
 mixin DialogMixin implements TranslationTypeImpl {
+  /// [Dialog]对话框外点击是否关闭
+  @override
+  bool get dialogBarrierDismissible => true;
+
   /// 对话框路径过度动画
   @override
   TranslationType get translationType {
@@ -149,7 +153,8 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// [clipRadius] 整体圆角
   /// [clipTopRadius] 顶部圆角
   /// [clipBottomRadius] 底部圆角
-  /// [stackWidget] 堆在内容上的小部件, 如果有
+  /// [stackBeforeWidget] 堆在内容下的小部件, 如果有
+  /// [stackAfterWidget] 堆在内容上的小部件, 如果有
   /// [bottomWidget] 放在底部的小部件, 如果有
   ///
   /// 如果需要弹出键盘, 可能需要使用[Scaffold]包裹返回的小部件
@@ -177,7 +182,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     double? clipRadius,
     double? clipTopRadius = kDefaultBorderRadiusXXX,
     double? clipBottomRadius,
-    Widget? stackWidget,
+    Widget? stackBeforeWidget,
+    Widget? stackAfterWidget,
     bool fullScreen = false /*是否全屏*/,
     //--shadow--↓
     bool showTopShadow = true /*是否显示顶部阴影*/,
@@ -188,6 +194,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     Widget? bottomWidget /*放在底部的小部件*/,
     //--safeArea
     bool useSafeArea = true,
+    //--
+    TransformWidgetBuilder? contentBuilder /*将内容变换成其它*/,
   }) {
     blur ??= dialogBlur;
 
@@ -234,21 +242,33 @@ mixin DialogMixin implements TranslationTypeImpl {
       );
 
       //堆叠小部件
-      if (stackWidget != null) {
-        scrollBody = scrollBody
-                ?.position(all: children.isEmpty ? null : 0)
-                .stackOf(stackWidget) ??
-            stackWidget.constrainedMax(
-              minHeight: contentMinHeight,
-              maxHeight: contentMaxHeight,
-            );
+      if (stackAfterWidget != null || stackBeforeWidget != null) {
+        //debugger();
+        scrollBody =
+            (scrollBody?.position(all: children.isEmpty ? null : 0).stackOf(
+                          stackAfterWidget,
+                          before: stackBeforeWidget,
+                          fit: StackFit.expand,
+                        ) ??
+                    stackAfterWidget ??
+                    stackBeforeWidget)
+                ?.constrainedMax(
+          minHeight: contentMinHeight,
+          maxHeight: contentMaxHeight,
+        );
+      }
+
+      //内容重构
+      if (scrollBody != null && contentBuilder != null) {
+        scrollBody = contentBuilder(context, scrollBody);
       }
 
       body = [
         if (enablePullBack && showDragHandle) buildDragHandle(context),
         ...fixedChildren,
         scrollBody?.expanded(
-            enable: height != null || fullScreen /*固定高度时, 滚动布局需要撑满底部*/),
+          enable: height != null || fullScreen /*固定高度时, 滚动布局需要撑满底部*/,
+        ),
         bottomWidget,
       ].column()!;
     } else {
@@ -267,11 +287,18 @@ mixin DialogMixin implements TranslationTypeImpl {
             maxHeight: contentMaxHeight,
           );
 
+      //内容重构
+      if (contentBuilder != null) {
+        body = contentBuilder(context, body);
+      }
+
       //堆叠小部件
-      if (stackWidget != null) {
-        body = body
-            .position(all: children.isEmpty ? null : 0)
-            .stackOf(stackWidget);
+      if (stackAfterWidget != null || stackBeforeWidget != null) {
+        body = body.position(all: children.isEmpty ? null : 0).stackOf(
+              stackAfterWidget,
+              before: stackBeforeWidget,
+              fit: StackFit.expand,
+            );
       }
     }
 
@@ -395,7 +422,7 @@ extension DialogExtension on BuildContext {
   /// [DialogExtension.showWidgetDialog]
   Future<T?> showWidgetDialog<T>(
     Widget widget, {
-    bool barrierDismissible = true,
+    bool? barrierDismissible,
     Color? barrierColor = Colors.black54,
     String? barrierLabel,
     bool useSafeArea = true,
@@ -694,7 +721,7 @@ extension NavigatorStateDialogEx on NavigatorState {
   Future<T?> showWidgetDialog<T>(
     Widget widget, {
     BuildContext? context,
-    bool barrierDismissible = true,
+    bool? barrierDismissible,
     Color? barrierColor = Colors.black54,
     String? barrierLabel,
     bool useSafeArea = true,
@@ -723,6 +750,7 @@ extension NavigatorStateDialogEx on NavigatorState {
     );
 
     type ??= widget.getWidgetTranslationType();
+    barrierDismissible ??= widget.getWidgetDialogBarrierDismissible() ?? true;
 
     return push<T>(DialogPageRoute<T>(
       context: context,

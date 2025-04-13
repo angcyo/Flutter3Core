@@ -2434,19 +2434,22 @@ extension WidgetEx on Widget {
               gapWidget: gapWidget,
             )!;
 
-  /// 将[this]和[other] 使用[Stack]包裹
+  /// 将[before].[this]和[after] 使用[Stack]包裹
   Widget stackOf(
-    Widget? other, {
+    Widget? after, {
+    Widget? before,
+    //--
     AlignmentGeometry alignment = AlignmentDirectional.center,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
     Clip clipBehavior = Clip.hardEdge,
   }) =>
-      other == null
+      after == null && before == null
           ? this
           : [
+              before,
               this,
-              other,
+              after,
             ].stack(
               alignment: alignment,
               textDirection: textDirection,
@@ -3169,10 +3172,18 @@ enum TranslationType {
 }
 
 /// 过渡动画类型
+///
+/// [NavigatorStateDialogEx.showWidgetDialog]
+///
 /// [DialogMixin]
 /// `mixin DialogMixin implements TranslationTypeImpl`
 class TranslationTypeImpl {
+  /// [Dialog]对话框外点击是否关闭
+  /// [DialogPageRoute]
+  bool get dialogBarrierDismissible => true;
+
   /// [TranslationType]
+  /// [DialogPageRoute]
   TranslationType get translationType => TranslationType.material;
 }
 
@@ -3180,6 +3191,7 @@ class TranslationTypeImpl {
 /// [TranslationTypeImpl]
 mixin TranslationTypeMixin implements TranslationTypeImpl {}
 
+/// [TranslationTypeImpl]
 extension RouteWidgetEx on Widget {
   /// 获取[Widget]的指定的过渡动画类型
   TranslationType? getWidgetTranslationType({int depth = 3}) {
@@ -3198,6 +3210,34 @@ extension RouteWidgetEx on Widget {
         final child = (this as dynamic).child;
         if (child is Widget) {
           return child.getWidgetTranslationType(depth: depth - 1);
+        }
+      } catch (e, s) {
+        /*assert(() {
+          printError(e, s);
+          return true;
+        }());*/
+      }
+    }
+    return null;
+  }
+
+  /// 获取[Widget]的指定的过渡动画类型
+  bool? getWidgetDialogBarrierDismissible({int depth = 3}) {
+    if (depth <= 0) {
+      return null;
+    }
+    if (this is TranslationTypeImpl) {
+      return (this as TranslationTypeImpl).dialogBarrierDismissible;
+    } else if (this is SingleChildRenderObjectWidget) {
+      final child = (this as SingleChildRenderObjectWidget).child;
+      if (child != null) {
+        return child.getWidgetDialogBarrierDismissible(depth: depth - 1);
+      }
+    } else {
+      try {
+        final child = (this as dynamic).child;
+        if (child is Widget) {
+          return child.getWidgetDialogBarrierDismissible(depth: depth - 1);
         }
       } catch (e, s) {
         /*assert(() {
