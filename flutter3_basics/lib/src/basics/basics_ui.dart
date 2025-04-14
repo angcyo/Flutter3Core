@@ -1677,6 +1677,17 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 装饰[DecoratedBox]
+  Widget decoration(Decoration? decoration) {
+    if (decoration == null) {
+      return this;
+    }
+    return DecoratedBox(
+      decoration: decoration,
+      child: this,
+    );
+  }
+
   /// 阴影装饰
   /// [radius] 圆角半径
   /// [decorationColor] 装饰的颜色, 通常是背景的颜色

@@ -222,6 +222,9 @@ Widget textSpanBuilder(
 }) {
   TextSpanBuilder textSpanBuilder = TextSpanBuilder();
   action(textSpanBuilder);
+  if (maxLines != null) {
+    overflow ??= TextOverflow.ellipsis;
+  }
   return textSpanBuilder.build(
     key: key,
     style: style,

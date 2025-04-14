@@ -657,6 +657,22 @@ Future<String> loadAssetString(
   );
 }
 
+/// [loadAssetString]
+Future<String?> loadAssetStringNull(
+  String key, {
+  String prefix = kDefAssetsPrefix,
+  String? package,
+}) async {
+  try {
+    return await rootBundle.loadString(
+      key.ensurePackagePrefix(package, prefix).transformKey(),
+    );
+  } catch (e, s) {
+    printError(e, s);
+    return null;
+  }
+}
+
 /// 所有加载在子包中的资源都需要指定包名前缀[package].
 /// Unable to load asset: "assets/png/loadError.png".
 /// Exception: Asset not found.
