@@ -3189,7 +3189,10 @@ class TranslationTypeImpl {
 
 /// [DialogMixin]
 /// [TranslationTypeImpl]
-mixin TranslationTypeMixin implements TranslationTypeImpl {}
+mixin TranslationTypeMixin implements TranslationTypeImpl {
+  /// 对话框外点击是否关闭
+  bool get dialogBarrierDismissible => true;
+}
 
 /// [TranslationTypeImpl]
 extension RouteWidgetEx on Widget {
