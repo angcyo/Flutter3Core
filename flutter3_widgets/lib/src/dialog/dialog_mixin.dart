@@ -166,6 +166,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     WidgetNullList children, {
     Color? bgColor /*背景颜色, 不指定默认[globalTheme.surfaceBgColor]*/,
     bool enablePullBack = true,
+    bool useScrollConsume = true,
     bool showDragHandle = true,
     bool maybePop = false /*使用[maybePop]还是[pop]*/,
     double? pullMaxBound,
@@ -328,6 +329,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         )
         .pullBack(
           enablePullBack: enablePullBack,
+          useScrollConsume: useScrollConsume,
           pullMaxBound: pullMaxBound,
           onPullBack: onPullBack ??
               (context) {

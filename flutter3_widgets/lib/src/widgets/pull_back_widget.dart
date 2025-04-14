@@ -48,6 +48,9 @@ class PullBackWidget extends StatefulWidget {
   /// 下拉返回的内容组件, 是否要使用[SafeArea]
   final bool useSafeArea;
 
+  /// 是否使用滚动消费的方式处理下拉, 否则只有手势能处理下拉
+  final bool useScrollConsume;
+
   /// 是否显示拖拽手柄
   final bool showDragHandle;
 
@@ -82,6 +85,7 @@ class PullBackWidget extends StatefulWidget {
     this.onPullProgress,
     this.pullMaxBound,
     this.enablePullMaxBoundOverScroll = true,
+    this.useScrollConsume = true,
     this.canPullBackAction,
     this.showDragHandle = false,
     this.useSafeArea = false,
@@ -356,6 +360,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// [position] 为null时, 表示在非scroll内容中拖拽
   /// 在滚动列表中 velocity>0:快速向上拉 <0:快速向下拉, 正好相反.
   bool _handleDragEnd(ScrollMetrics? position, double velocity) {
+    if (position != null && !widget.useScrollConsume) {
+      return false;
+    }
     //debugger();
     //velocity:-926.796055846446 value:0.0 axis:Axis.vertical pixels:-57.73985209657339
     //l.d('velocity:$velocity value:$_pullBackValue axis:${position?.axis} pixels:${position?.pixels} position:$position ');
@@ -422,6 +429,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// [offset] 当前手势移动了多少距离
   /// 返回消耗后的距离
   double _handleConsumeUserOffset(ScrollMetrics position, double offset) {
+    if (!widget.useScrollConsume) {
+      return offset;
+    }
     //debugger();
     //l.d('_handleConsumeUserOffset: offset:$offset value:$_pullBackValue axis:${position.axis} pixels:${position.pixels} position:$position ');
     if (position.axis != widget.pullAxis) {
@@ -606,6 +616,7 @@ extension PullBackWidgetExtension on Widget {
   Widget pullBack({
     Key? key,
     bool enablePullBack = true,
+    bool useScrollConsume = true,
     AnimationController? pullBackController,
     double? pullMaxBound,
     void Function(BuildContext context)? onPullBack,
@@ -618,6 +629,7 @@ extension PullBackWidgetExtension on Widget {
     return PullBackWidget(
       key: key,
       pullMaxBound: pullMaxBound,
+      useScrollConsume: useScrollConsume,
       pullBackController: pullBackController,
       onPullBack: onPullBack ??
           (context) {
