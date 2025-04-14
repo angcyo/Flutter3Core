@@ -54,7 +54,7 @@ class RScrollView extends StatefulWidget {
   /// [RItemTile] 的列表核心的数据集合
   final List<Widget>? children;
 
-  /// 用来构建[children]
+  /// 用来构建[children], 优先于[children]
   final ChildrenBuilder? childrenBuilder;
 
   //--
@@ -158,7 +158,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     WidgetList? children,
     bool? useFrameLoad,
   }) {
-    children ??= widget.children ?? widget.childrenBuilder?.call(context) ?? [];
+    children ??= widget.childrenBuilder?.call(context) ?? widget.children ?? [];
 
     //debugger();
     final result = _transformTileList(context, children);
@@ -292,6 +292,8 @@ extension RScrollViewEx on WidgetNullList {
     Axis axis = Axis.vertical,
     ScrollBehavior? scrollBehavior,
     ScrollPhysics? physics = kScrollPhysics,
+    ChildrenBuilder? childrenBuilder,
+    Listenable? updateSignal,
   }) {
     return RScrollView(
       controller: controller,
@@ -299,6 +301,8 @@ extension RScrollViewEx on WidgetNullList {
       scrollBehavior: scrollBehavior ??
           (physics == null ? null : const MaterialScrollBehavior()),
       physics: physics,
+      childrenBuilder: childrenBuilder,
+      updateSignal: updateSignal,
       children: filterNull(),
     );
   }

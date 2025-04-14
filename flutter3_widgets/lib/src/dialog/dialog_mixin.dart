@@ -196,6 +196,10 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool useSafeArea = true,
     //--
     TransformWidgetBuilder? contentBuilder /*将内容变换成其它*/,
+    //--
+    ChildrenBuilder? scrollContentBuilder,
+    /*需要[useRScroll]支持*/
+    Listenable? contentUpdateSignal /*内容更新信号, 需要[useRScroll]支持*/,
   }) {
     blur ??= dialogBlur;
 
@@ -230,6 +234,8 @@ mixin DialogMixin implements TranslationTypeImpl {
           ? scrollChildren.rScroll(
               axis: Axis.vertical,
               physics: enablePullBack ? null : kScrollPhysics,
+              childrenBuilder: scrollContentBuilder,
+              updateSignal: contentUpdateSignal,
             )
           : scrollChildren.scroll(
               axis: Axis.vertical,
