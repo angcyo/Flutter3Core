@@ -64,6 +64,12 @@ class BytesWriter {
     }*/
   }
 
+  /// 写入一个32位的整数, 4个字节, 小端序
+  /// 低字节在高位
+  void writeIntLittle(int value, [int length = 4]) {
+    writeInt(value, length, Endian.little);
+  }
+
   /// 写入一个64位的整数, 8个字节
   void writeLong(int value, [int length = 8, Endian endian = Endian.big]) {
     if (endian == Endian.big) {
@@ -100,6 +106,12 @@ class BytesWriter {
       _bytes.add((value >> 48) & 0xff);
       _bytes.add((value >> 56) & 0xff);
     }*/
+  }
+
+  /// 写入一个32位的整数, 4个字节, 小端序
+  /// 低字节在高位
+  void writeLongLittle(int value, [int length = 8]) {
+    writeLong(value, length, Endian.little);
   }
 
   /// 写入一个其它字节数组
@@ -333,9 +345,12 @@ class ByteReader {
   }
 }
 
+///
+typedef BytesWriterFn = void Function(BytesWriter writer);
+
 /// [BytesWriter]
 @dsl
-List<int> bytesWriter(void Function(BytesWriter writer) action) {
+List<int> bytesWriter(BytesWriterFn action) {
   final writer = BytesWriter();
   action(writer);
   return writer.toBytes();
