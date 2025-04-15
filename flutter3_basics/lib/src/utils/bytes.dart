@@ -13,7 +13,11 @@ class BytesWriter {
   /// 限制写入的最大字节长度
   final int? limitMaxLength;
 
-  BytesWriter({this.limitMaxLength});
+  /// 字节序, 默认大端序, 低位在前, 高位在后
+  /// 小端序, 低位在前, 高位在后
+  final Endian endian;
+
+  BytesWriter({this.limitMaxLength, this.endian = Endian.big});
 
   /// 是否可以继续写入
   bool _canWrite() => limitMaxLength == null || _bytes.length < limitMaxLength!;
@@ -35,7 +39,8 @@ class BytesWriter {
   /// 写入一个32位的整数, 4个字节
   /// [length] 需要写入的字节长度, 默认4个字节
   /// [endian] 字节序, 默认大端序, 低位在前, 高位在后
-  void writeInt(int value, [int length = 4, Endian endian = Endian.big]) {
+  void writeInt(int value, [int length = 4, Endian? endian]) {
+    endian ??= this.endian;
     if (endian == Endian.big) {
       for (int i = 0; i < length; i++) {
         if (!_canWrite()) {
@@ -71,7 +76,8 @@ class BytesWriter {
   }
 
   /// 写入一个64位的整数, 8个字节
-  void writeLong(int value, [int length = 8, Endian endian = Endian.big]) {
+  void writeLong(int value, [int length = 8, Endian? endian]) {
+    endian ??= this.endian;
     if (endian == Endian.big) {
       for (int i = 0; i < length; i++) {
         if (!_canWrite()) {
@@ -189,7 +195,11 @@ class ByteReader {
   /// 排除多少个字节
   int excludeLength = 0;
 
-  ByteReader(this.bytes, {this.excludeLength = 0});
+  /// 字节序, 默认大端序, 低位在前, 高位在后
+  /// 小端序, 低位在前, 高位在后
+  Endian endian;
+
+  ByteReader(this.bytes, {this.excludeLength = 0, this.endian = Endian.big});
 
   int _index = 0;
 
@@ -206,18 +216,20 @@ class ByteReader {
 
   /// 读取一个32位的整数, 4个字节
   /// [length] 需要读取的字节长度
-  int readInt([int length = 4, int overflow = -1, Endian endian = Endian.big]) {
+  int readInt([int length = 4, int overflow = -1, Endian? endian]) {
     if (isDone) {
       return overflow;
     }
+    endian ??= this.endian;
     return readBytes(length)?.toInt(length, endian) ?? overflow;
   }
 
   /// 读取一个64位的整数, 8个字节
-  int readLong([int overflow = -1, Endian endian = Endian.big]) {
+  int readLong([int overflow = -1, Endian? endian]) {
     if (isDone) {
       return overflow;
     }
+    endian ??= this.endian;
     if (endian == Endian.big) {
       return (bytes[_index++] << 56) |
           (bytes[_index++] << 48) |
