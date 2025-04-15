@@ -87,7 +87,9 @@ void registerIsarCollection(
   _collectionSchemaMap[name] = list;
 }
 
-/// 打开一个isar数据库
+/// 打开一个isar数据库, 至少需要打开一个数据表, 否则会报错
+/// `IsarError: At least one collection needs to be opened.`
+///
 /// [schemas] 指定要打开的数据库表结构
 /// [name] 指定要打开的数据库名称, 默认是[kIsarName]
 /// [subDir] 指定数据库所在的子目录, 默认在[kIsarPath]子目录的根下
