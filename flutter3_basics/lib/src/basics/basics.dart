@@ -18,7 +18,7 @@ DateTime nowDateTime() => DateTime.now();
 /// [nowTimestamp]
 int nowTime() => nowTimestamp();
 
-/// 当前时间戳 `1699064019689` 13位
+/// 当前时间戳 `1699064019689` 13位毫秒
 /// [DateTime]
 int nowTimestamp() => DateTime.now().millisecondsSinceEpoch;
 

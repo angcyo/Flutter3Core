@@ -13,6 +13,7 @@ const kLFileName = "l.log"; //常规操作日志, l.x输出的日志, 会被写�
 const kOperateFileName = "operate.log"; //特殊操作日志
 const kLogFileName = "log.log"; //特殊日志文件
 const kBleFileName = "ble.log"; //蓝牙机器操作日志
+const kChannelFileName = "channel.log"; //通信数据日志
 const kWebSocketFileName = "websocket.log"; //websocket接收的日志
 const kErrorFileName = "error.log"; //错误日志
 const kHttpFileName = "http.log"; //网络请求日志

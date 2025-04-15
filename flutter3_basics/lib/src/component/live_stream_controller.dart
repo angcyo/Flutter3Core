@@ -365,6 +365,11 @@ extension StreamSubscriptionEx<T> on StreamSubscription<T> {
   }
 }
 
+/// LiveStreamController
+class LiveStream<T> extends LiveStreamController<T> {
+  LiveStream(super.initialValue, {super.autoClearValue = false});
+}
+
 /// [LiveStreamController]
 LiveStreamController<T?> $live<T>(
         [T? initialValue, bool autoClearValue = false]) =>
