@@ -140,14 +140,20 @@ class BytesWriter {
   /// 写入一个文本
   /// [writeText]
   /// [writeString]
-  void writeText(String value, [int? length]) {
+  void writeText(String? value, [int? length]) {
+    if (value == null || value.isEmpty) {
+      return;
+    }
     writeBytes(utf8.encode(value), length);
   }
 
   /// 写入一个字符串
   /// [writeText]
   /// [writeString]
-  void writeString(String value, [int? length, bool writeEnd = true]) {
+  void writeString(String? value, [int? length, bool writeEnd = true]) {
+    if (value == null || value.isEmpty) {
+      return;
+    }
     writeBytes(utf8.encode(value), length);
     if (writeEnd) {
       writeByte(0x00); //字符串结束符
@@ -357,8 +363,11 @@ class ByteReader {
   }
 }
 
-///
+/// 字节写入
 typedef BytesWriterFn = void Function(BytesWriter writer);
+
+/// 字节读取
+typedef BytesReaderFn<T> = T Function(ByteReader reader);
 
 /// [BytesWriter]
 @dsl
@@ -370,7 +379,7 @@ List<int> bytesWriter(BytesWriterFn action) {
 
 /// [ByteReader]
 @dsl
-T bytesReader<T>(List<int> bytes, T Function(ByteReader reader) action) {
+T bytesReader<T>(List<int> bytes, BytesReaderFn<T> action) {
   final reader = ByteReader(bytes);
   return action(reader);
 }
