@@ -173,6 +173,7 @@ class CoreDialogBottomTitle extends StatelessWidget {
   final bool enableTrailing;
   final bool showTrailing;
   final bool invisibleTrailing;
+  final bool trailingUseThemeColor;
   final String? trailingSvgIconKey;
 
   ///
@@ -224,6 +225,7 @@ class CoreDialogBottomTitle extends StatelessWidget {
     this.enableTrailing = true,
     this.showTrailing = true,
     this.invisibleTrailing = false,
+    this.trailingUseThemeColor = false,
     this.titleTextStyle,
     this.subTitleTextStyle,
     this.onLeadingTap,
@@ -275,7 +277,9 @@ class CoreDialogBottomTitle extends StatelessWidget {
                 trailingSvgIconKey ?? Assets.svg.coreConfirm,
                 tintColor: context.isThemeDark
                     ? globalTheme.textTitleStyle.color
-                    : null,
+                    : trailingUseThemeColor
+                        ? globalTheme.accentColor
+                        : null,
               ),
               enable: enableTrailing,
               splashColor: showDecoration ? fillDecorationColor : null,

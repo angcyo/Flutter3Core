@@ -59,7 +59,7 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
     with SingleTickerProviderStateMixin, TileMixin {
   late TabLayoutController tabLayoutController = TabLayoutController(
     vsync: this,
-    initialIndex: widget.values?.indexOf(widget.initValue) ?? 0,
+    initialIndex: (widget.values?.indexOf(widget.initValue) ?? 0).maxOf(0),
   );
 
   @override
@@ -98,6 +98,7 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
     );
 
     //--
+
     WidgetList? children = buildChildrenFromValues(
       context,
       values: widget.values,

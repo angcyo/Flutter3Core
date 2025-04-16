@@ -2086,6 +2086,7 @@ extension IntEx on int {
   /// 取2个数的最大值
   int maxOf(int other) => math.max(this, other);
 
+  /// 取2个数的最小值
   int minOf(int other) => math.min(this, other);
 
   /// ascii 码转成对应的字符
