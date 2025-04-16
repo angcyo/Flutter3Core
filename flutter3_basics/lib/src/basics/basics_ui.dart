@@ -2294,16 +2294,19 @@ extension WidgetEx on Widget {
       return this;
     }
     final isCircle = shape == BoxShape.circle;
-    final bRadius = borderRadius ??
-        (isCircle ? null : BorderRadius.all(Radius.circular(radius)));
+    if (isCircle) {
+      radius = Material.defaultSplashRadius;
+    }
+    final bRadius = borderRadius ?? BorderRadius.all(Radius.circular(radius));
     decoration ??= BoxDecoration(
-      shape: shape,
+      /*shape: shape,*/
       color: backgroundColor,
       borderRadius: bRadius,
     );
     return Ink(
       padding: padding,
       decoration: decoration,
+      /*color: backgroundColor,*/
       width: width,
       height: height,
       child: inkWell(
@@ -2311,8 +2314,8 @@ extension WidgetEx on Widget {
         onLongPress: onLongPress,
         borderRadius: bRadius,
         radius: radius,
-        customBorder: isCircle ? const CircleBorder() : null,
-        highlightShape: shape,
+        customBorder: /*isCircle ? const CircleBorder() : */ null,
+        /*highlightShape: shape,*/
         highlightColor: highlightColor,
         splashColor: splashColor,
       ),

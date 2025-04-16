@@ -16,15 +16,21 @@ class ConfirmButton extends StatelessWidget {
   /// 是否使用图标, 否则使用[text]
   final bool useIcon;
 
+  /// 是否使用主题颜色
+  final bool? useThemeColor;
+
   /// 对应的文本
   final String? text;
 
   /// 事件
   final GestureTapCallback? onTap;
 
+  //--
+
   const ConfirmButton({
     super.key,
     this.enable = true,
+    this.useThemeColor,
     this.useIcon = false,
     this.widget,
     this.text,
@@ -34,11 +40,15 @@ class ConfirmButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    Widget? result = widget ??
+    final enableColor = useThemeColor == true ? globalTheme.accentColor : null;
+
+    Widget? result = widget?.colorFiltered(
+          color: enable ? enableColor : globalTheme.disableColor,
+        ) ??
         (useIcon
                 ? Icon(
                     Icons.done,
-                    color: enable ? null : globalTheme.disableColor,
+                    color: enable ? enableColor : globalTheme.disableColor,
                   )
                 : text?.text(
                     style: globalTheme.textLabelStyle.copyWith(

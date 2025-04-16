@@ -359,11 +359,16 @@ mixin DialogMixin implements TranslationTypeImpl {
     String? title,
     bool enableConfirm = true,
     FutureOr Function()? onConfirm,
+    //--
+    bool? useConfirmThemeColor,
+    Widget? cancelWidget,
+    Widget? confirmWidget,
   }) {
     final globalTheme = GlobalTheme.of(context);
     return [
       CancelButton(
         useIcon: true,
+        widget: cancelWidget,
         onTap: () {
           closeDialogIf(context);
         },
@@ -377,7 +382,9 @@ mixin DialogMixin implements TranslationTypeImpl {
           .expanded(),
       ConfirmButton(
         useIcon: true,
+        useThemeColor: useConfirmThemeColor,
         enable: enableConfirm,
+        widget: confirmWidget,
         onTap: () {
           onConfirm?.call();
           closeDialogIf(context);
