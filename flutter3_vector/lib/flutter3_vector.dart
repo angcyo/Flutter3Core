@@ -1,7 +1,6 @@
 library flutter3_vector;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -29,4 +28,7 @@ extension VectorStringEx on String {
 
   /// 是否是svg内容
   bool get isSvgContent => have("</svg>");
+
+  /// 是否是svg path路径数据
+  bool get isSvgPathContent => startsWith("(m)|(M)".regex);
 }
