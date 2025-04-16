@@ -28,7 +28,6 @@ void main() async {
   //需要压缩的文件列表
   final List<(dynamic, dynamic)> arbFilePathList = [
     ("Flutter3Core/flutter3_res/lib/l10n/intl_zh.arb", "lib_intl_zh.arb"),
-    ("Flutter3Extend/lp_res/lib/l10n/intl_zh.arb", "lp_intl_zh.arb")
   ];
 
   final configPathList =
@@ -53,11 +52,12 @@ void main() async {
 
   //压缩文件列表到zip文件
   var count = 0;
-  await writeZipFile(outputPath, (encoder) {
+  await writeZipFile(outputPath, (encoder) async {
     for (final filePathPair in arbFilePathList) {
       final file = File(filePathPair.$1);
       if (file.existsSync()) {
-        encoder.addFile(file, filePathPair.$2);
+        await encoder.addFile(file, filePathPair.$2);
+        print("压缩: ${file.path} -> ${filePathPair.$2}");
         count++;
       } else {
         print("文件不存在:${file.path}");

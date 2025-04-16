@@ -4,6 +4,8 @@ part of './dialog.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/30
 ///
+/// 整体是透明背景, 带padding
+///
 /// ```
 /// [item]
 /// [item]
