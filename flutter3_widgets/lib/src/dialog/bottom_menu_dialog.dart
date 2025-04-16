@@ -4,7 +4,8 @@ part of './dialog.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/30
 ///
-/// 整体是透明背景, 带padding
+/// 整体是透明背景, 带padding.
+/// 可以通过指定[surfaceColor]控制样式
 ///
 /// ```
 /// [item]
@@ -40,6 +41,18 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   @defInjectMark
   final Widget? cancelItem;
 
+  //--
+
+  /// 背景色
+  final Color surfaceColor;
+
+  /// 取消按钮的分割线颜色
+  @defInjectMark
+  final Color? cancelGapColor;
+
+  /// 奸细的高度
+  final double cancelGap;
+
   const BottomMenuItemsDialog(
     this.items, {
     super.key,
@@ -47,32 +60,57 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
     this.clipRadius = kDefaultBorderRadiusXX,
     this.cancelItem,
     this.cancelText,
+    //--
+    this.surfaceColor = Colors.transparent,
+    this.cancelGapColor,
+    this.cancelGap = kH,
   });
+
+  /// 是否是透明背景样式
+  bool get isTransparentStyle => surfaceColor == Colors.transparent;
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+
+    Widget? body = items.column(gapWidget: horizontalLine(context));
+    if (isTransparentStyle) {
+      body = body?.clipRadius(radius: clipRadius);
+    }
+
+    Widget? cancel;
+    if (showCancelItem) {
+      cancel = (cancelItem ??
+          BottomMenuItemTile(
+            onTap: () {
+              //no op
+            },
+            closeAfterTap: true,
+            popResult: false,
+            child: (cancelText ?? LibRes.of(context).libCancel).text(),
+          ));
+    }
+    if (isTransparentStyle) {
+      cancel = cancel?.clipRadius(radius: clipRadius);
+    }
+
     return buildBottomChildrenDialog(
       context,
       [
-        items
-            .column(gapWidget: horizontalLine(context))
-            ?.clipRadius(radius: clipRadius),
-        Empty.height(kX),
-        if (showCancelItem)
-          (cancelItem ??
-                  BottomMenuItemTile(
-                    onTap: () {
-                      //no op
-                    },
-                    closeAfterTap: true,
-                    popResult: false,
-                    child: (cancelText ?? LibRes.of(context).libCancel).text(),
-                  ))
-              .clipRadius(radius: clipRadius)
+        body,
+        if (cancel != null)
+          isTransparentStyle
+              ? Empty.height(kX)
+              : hLine(
+                  context,
+                  thickness: cancelGap,
+                  color: cancelGapColor ?? globalTheme.lineColor,
+                ),
+        if (cancel != null) cancel,
       ],
       showDragHandle: false,
-      bgColor: Colors.transparent,
-      clipTopRadius: null,
-    ).paddingAll(kX);
+      bgColor: surfaceColor,
+      clipTopRadius: isTransparentStyle ? null : clipRadius,
+    ).paddingAll(isTransparentStyle ? kX : 0);
   }
 }

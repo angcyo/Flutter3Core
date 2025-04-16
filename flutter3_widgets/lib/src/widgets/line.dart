@@ -10,9 +10,10 @@ Line verticalLine(
   Color? color,
   double? indent,
   double? endIndent,
+  double thickness = 1,
 }) =>
     Line(
-      thickness: 1,
+      thickness: thickness,
       color: color ?? GlobalTheme.of(context).lineColor,
       axis: Axis.vertical,
       indent: indent,
@@ -26,12 +27,14 @@ Line vLine(
   Color? color,
   double? indent,
   double? endIndent,
+  double thickness = 1,
 }) =>
     verticalLine(
       context,
       color: color,
       indent: indent,
       endIndent: endIndent,
+      thickness: thickness,
     );
 
 /// 横线
@@ -40,9 +43,10 @@ Line horizontalLine(
   Color? color,
   double? indent,
   double? endIndent,
+  double thickness = 1,
 }) =>
     Line(
-      thickness: 1,
+      thickness: thickness,
       color: color ?? GlobalTheme.of(context).lineColor,
       axis: Axis.horizontal,
       indent: indent,
@@ -56,12 +60,14 @@ Line hLine(
   Color? color,
   double? indent,
   double? endIndent,
+  double thickness = 1,
 }) =>
     horizontalLine(
       context,
       color: color,
       indent: indent,
       endIndent: endIndent,
+      thickness: thickness,
     );
 
 /// 线
@@ -121,7 +127,7 @@ class Line extends LeafRenderObjectWidget {
     this.indent,
     this.endIndent,
     this.margin,
-    this.lineStrokeCap = StrokeCap.round,
+    this.lineStrokeCap = StrokeCap.square,
     this.lineStrokeJoin = StrokeJoin.round,
     this.decoration,
   });
