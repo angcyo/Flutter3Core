@@ -9,6 +9,32 @@ import 'package:flutter_test/flutter_test.dart';
 ///
 
 void main() async {
+  //await testFuture1();
+  await testFuture2();
+}
+
+Future testFuture2() async {
+  Completer completer = Completer();
+  Future future = completer.future;
+
+  future.whenComplete(() {
+    print("onComplete");
+  });
+
+  future.catchError((err) {
+    print("onError:$err");
+  }, test: (err) {
+    print("test:$err");
+    return true;
+  });
+
+  //completer.complete("true");
+  completer.completeError(Exception("error"));
+
+  await future;
+}
+
+Future testFuture1() async {
   /*final f1 = future(() => consoleLog('..1'));
   final f2 = asyncFuture((completer) {
     delayCallback(() {
