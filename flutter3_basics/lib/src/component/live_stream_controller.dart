@@ -56,10 +56,6 @@ class LiveStreamController<T> {
   void add(T newValue) {
     latestError = null;
     if (ignoreLastNullNotify && latestValue == null && newValue == null) {
-      assert(() {
-        l.w("无效的操作");
-        return true;
-      }());
       return;
     }
     latestValue = newValue;
