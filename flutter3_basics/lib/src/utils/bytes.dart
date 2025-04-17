@@ -172,6 +172,25 @@ class BytesWriter {
     }
   }
 
+  /// 按照 [00000000][00000001]...[0000000F][FFFFFFFF] 的格式填充字节
+  /// 写入填充到指定数字的字节数据
+  void writeFillHex({
+    int? number,
+    int? length,
+    bool writeEnd = true,
+  }) {
+    final builder = StringBuffer();
+    for (int i = 0; i <= (number ?? intMax32Value); i++) {
+      builder.write("[${i.toHex().padLeft(8, '0')}]");
+      if (length != null) {
+        if (builder.toString().bytes.length > length) {
+          break;
+        }
+      }
+    }
+    writeString(builder.toString(), length, writeEnd);
+  }
+
   /// 填充到多少个字节长度, 不包含当前[length], 比如将字节数据填充到64个字节
   /// [length]需要填充到的字节长度
   void fillTo(int length, [int fillValue = 0]) {

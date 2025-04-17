@@ -8,7 +8,7 @@ part of '../../flutter3_basics.dart';
 /// [startTime] 数据发送开始的时间, 用于
 /// [progress] [0~1]
 @immutable
-class DataChunkInfo {
+final class DataChunkInfo {
   /// 数据发送开始的时间, 毫秒
   final int startTime;
 
@@ -19,7 +19,7 @@ class DataChunkInfo {
   /// 已经发送的字节数
   final int count;
 
-  const DataChunkInfo({
+  DataChunkInfo({
     this.startTime = -1,
     this.total = 0,
     this.count = 0,
@@ -52,13 +52,17 @@ class DataChunkInfo {
     return '${speed.toSizeStr()}/s';
   }
 
+  int? _endTime;
+
   String time([int? endTime]) {
-    endTime ??= nowTime();
-    return LTime.diffTime(startTime);
+    if (isFinish) {
+      _endTime = nowTime();
+    }
+    return LTime.diffTime(startTime, endTime: _endTime ?? endTime ?? nowTime());
   }
 
   @override
   String toString() {
-    return 'DataChunkInfo{$count/$total, speed: $speedStr progress: $progress}';
+    return 'DataChunkInfo{[$count/$total]B, speed: $speedStr progress: $progress time: ${time()}}';
   }
 }
