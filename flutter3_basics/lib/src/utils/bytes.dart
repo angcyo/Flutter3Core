@@ -147,6 +147,14 @@ class BytesWriter {
     writeBytes(utf8.encode(value), length);
   }
 
+  /// 写入一个ASCII文本
+  void writeAsciiText(String? value, [int? length]) {
+    if (value == null || value.isEmpty) {
+      return;
+    }
+    writeBytes(value.asciiBytes, length);
+  }
+
   /// 写入一个字符串
   /// [writeText]
   /// [writeString]
