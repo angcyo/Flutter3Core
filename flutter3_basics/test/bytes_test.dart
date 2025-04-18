@@ -5,7 +5,10 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 /// @date 2025/04/17
 ///
 void main() {
-  print(bytesWriter((writer) {
+  /*print(bytesWriter((writer) {
     writer.writeFillHex(length: 100);
-  }).utf8Str);
+  }).utf8Str);*/
+
+  print("YDMG".bytes.toHex());
+  print("YDMG".asciiBytes.toHex());
 }

@@ -790,6 +790,10 @@ extension StringEx on String {
   /// [StringEx.ascii]
   int get ascii => codeUnitAt(0);
 
+  /// 获取[ascii]对应的字节数组
+  /// 在都占用1个字节的情况下和[bytes]返回的数据一致.
+  List<int> get asciiBytes => codeUnits;
+
   int charAt(int index) => codeUnitAt(index);
 
   /// 将ascii对应的int值解析出来
@@ -916,6 +920,8 @@ extension StringEx on String {
 
   /// 转换成[utf8]字节数组
   /// [byteData]
+  ///
+  /// [asciiBytes]
   Uint8List get bytes => utf8.encode(this);
 
   String get bytesSizeStr => bytes.length.toSizeStr();
