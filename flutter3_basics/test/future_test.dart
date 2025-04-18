@@ -11,15 +11,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() async {
   //await testFuture1();
   await testFuture2();
+  // await testFuture3();
 }
 
 Future testFuture2() async {
   Completer completer = Completer();
   Future future = completer.future;
-
-  future.whenComplete(() {
-    print("onComplete");
-  });
 
   future.catchError((err) {
     print("onError:$err");
@@ -28,10 +25,35 @@ Future testFuture2() async {
     return true;
   });
 
+  future.whenComplete(() {
+    print("onComplete");
+  });
+
   //completer.complete("true");
   completer.completeError(Exception("error"));
 
-  await future;
+  try {
+    await future.catchError((err) {
+      print("onError2:$err");
+    }, test: (err) {
+      print("test2:$err");
+      return true;
+    });
+  } catch (e) {
+    print(e);
+  }
+}
+
+Future testFuture3() async {
+  final c = Completer();
+  c.future.catchError((e) {
+    // Handle the error.
+    print("onError:$e");
+  });
+  c.future.whenComplete(() {
+    print("onComplete");
+  });
+  c.completeError(AssertionError('future not consumed'));
 }
 
 Future testFuture1() async {
