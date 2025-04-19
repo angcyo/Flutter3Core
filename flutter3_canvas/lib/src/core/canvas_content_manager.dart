@@ -241,9 +241,10 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     bool? animate,
     BoxFit? fit,
     VoidCallback? onUpdateAction,
+    bool? restoreDefault,
   }) {
     rect ??= canvasContentFollowRectInner;
-    if (rect == null) {
+    if (restoreDefault != true && rect == null) {
       assert(() {
         l.w("无效的操作[followCanvasContentTemplate]->rect is null!");
         return true;

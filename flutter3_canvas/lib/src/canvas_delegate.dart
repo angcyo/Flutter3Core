@@ -504,7 +504,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }
     rect ??= canvasPaintManager.contentManager.canvasContentFollowRectInner ??
         canvasElementManager.allElementsBounds;
-    if (rect == null || rect.isEmpty) {
+    if (restoreDefault != true && (rect == null || rect.isEmpty)) {
       //followPainter(rect: canvasElementManager.allElementsBounds);
       assert(() {
         l.w("无效的操作");
