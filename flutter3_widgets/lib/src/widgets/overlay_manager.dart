@@ -53,7 +53,7 @@ class OverlayManagerController {
   /// 首页
   OverlayEntryInfo? _homeEntry;
 
-  /// 子页集合
+  /// 子页集合, 排除了[_homeEntry]
   final List<OverlayEntryInfo> _subOverlayEntries = [];
 
   /// 动画队列, 需要执行移除动画的对象放这里
@@ -103,6 +103,7 @@ class OverlayManagerController {
   }
 
   /// 隐藏所有[OverlayEntry]
+  @api
   void hideAllOverlay([bool hide = true]) {
     for (final e in _subOverlayEntries) {
       e.entryKey?.currentState?.offstage = hide;
@@ -127,6 +128,9 @@ class OverlayManagerController {
   ///
   /// [id] 相同id的[OverlayEntry]只会显示一次
   ///
+  /// [offstage] 是否离屏
+  /// [hideLast] 是否隐藏最后一个[OverlayEntry]
+  ///
   /// [TranslationType] 动画类型
   /// [OverlayAnimateBuilder]
   @api
@@ -136,6 +140,8 @@ class OverlayManagerController {
     String? id,
     String? tag,
     bool offstage = false,
+    //--
+    bool hideLast = false,
   }) {
     //debugger();
     if (id != null) {
@@ -144,6 +150,9 @@ class OverlayManagerController {
         return;
       }
     }
+
+    //--last
+    final last = _subOverlayEntries.lastOrNull;
 
     type ??= widget.getWidgetTranslationType();
     final GlobalKey<OverlayAnimateBuilderState> animateKey = GlobalKey();
@@ -182,6 +191,10 @@ class OverlayManagerController {
       tag: tag,
       entryKey: animateKey,
     ));
+
+    if (hideLast) {
+      last?.entryKey?.currentState?.hide();
+    }
   }
 
   /// 移除一个[OverlayEntry]
@@ -226,6 +239,7 @@ class OverlayManagerController {
   /// 移除一个[OverlayEntryInfo], 有动画执行动画, 没动画直接解雇
   /// [dismissOverlayInfo]
   @api
+  @animateFlag
   void removeOverlayInfo(OverlayEntryInfo entry) {
     _subOverlayEntries.remove(entry); //提前移除, 防止动画时间内快速显示时已存在
     _animatePendingOverlayEntries.add(entry);
@@ -243,11 +257,25 @@ class OverlayManagerController {
     _animatePendingOverlayEntries.remove(entry);
   }
 
+  /// 移除顶层的, 并且显示上一个
+  @api
+  void pop({bool showPrev = false}) {
+    final last = _subOverlayEntries.get(-1);
+    final prev = _subOverlayEntries.get(-2); //再上一个
+    if (last != null) {
+      removeOverlayInfo(last);
+    }
+    if (showPrev) {
+      prev?.entryKey?.currentState?.show();
+    }
+  }
+
   //--
 
-  /// 包裹一个异步操作,
+  /// 包裹一个异步操作, 操作执行前隐藏所有弹窗, 操作执行后显示所有弹窗
   /// [action]操作时隐藏所有弹窗,
   /// [action]操作结束之后再显示所有弹窗
+  @api
   Future wrapHideAllOverlay(FutureOr Function() action) async {
     hideAllOverlay();
     await action();
