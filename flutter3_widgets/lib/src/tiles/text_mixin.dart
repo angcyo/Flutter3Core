@@ -120,6 +120,8 @@ mixin TextMixin {
     Widget? textWidget,
     TextStyle? textStyle,
     TextAlign? textAlign,
+    //--
+    int? maxLines,
   }) {
     final globalTheme = GlobalTheme.of(context);
     text ??= this.text;
@@ -132,6 +134,7 @@ mixin TextMixin {
               style:
                   textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null),
               textAlign: textAlign,
+              maxLines: maxLines,
             )
             .constrainedBox(textConstraints)
             .paddingInsets(textPadding));

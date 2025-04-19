@@ -13,17 +13,17 @@ part of '../../../flutter3_widgets.dart';
 /// [TabLayoutMixin]
 ///
 mixin TabLayoutMixin<T extends StatefulWidget>
-    on State<T>, TickerProviderStateMixin<T> {
+on State<T>, TickerProviderStateMixin<T> {
   /// [tabLayoutController]
   late final TabLayoutController _tabLayoutControllerMixin =
-      TabLayoutController(vsync: this);
+  TabLayoutController(vsync: this);
 
   /// [TabLayout] tab控制
   TabLayoutController get tabLayoutController => _tabLayoutControllerMixin;
 
   /// tab选中之后的更新信号
   final UpdateSignalNotifier _tabSelectedUpdateSignal =
-      UpdateSignalNotifier(null);
+  UpdateSignalNotifier(null);
 
   @override
   void dispose() {
@@ -60,8 +60,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// [buildBottomLineIndicator]
   /// [buildBottomLineGradientIndicator]
   @api
-  Widget buildGradientFillIndicator(
-    BuildContext context, {
+  Widget buildGradientFillIndicator(BuildContext context, {
     Color? fillColor,
     List<Color>? colors,
     double? borderRadius = kDefaultBorderRadiusXX,
@@ -73,10 +72,10 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         radius: borderRadius,
         gradient: fillColor == null
             ? linearGradient(colors ??
-                [
-                  globalTheme.primaryColor,
-                  globalTheme.primaryColorDark,
-                ])
+            [
+              globalTheme.primaryColor,
+              globalTheme.primaryColorDark,
+            ])
             : null,
       ),
     ).tabItemData(
@@ -93,8 +92,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// [buildBottomLineIndicator]
   /// [buildBottomLineGradientIndicator]
   @api
-  Widget buildBottomLineIndicator(
-    BuildContext context, {
+  Widget buildBottomLineIndicator(BuildContext context, {
     double height = 2,
     double? width,
     EdgeInsets? padding,
@@ -133,8 +131,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// [buildBottomLineIndicator]
   /// [buildBottomLineGradientIndicator]
   @api
-  Widget buildBottomLineGradientIndicator(
-    BuildContext context, {
+  Widget buildBottomLineGradientIndicator(BuildContext context, {
     double height = 2,
     double? width,
     EdgeInsets? padding,
@@ -178,8 +175,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// [indicator]或者[buildTabLayoutIndicator]构建指示器
   ///
   @callPoint
-  Widget buildTabLayout(
-    BuildContext context, {
+  Widget buildTabLayout(BuildContext context, {
     List<Widget>? children,
     IndexChildrenBuilder? childrenBuilder,
     double gap = 0,
@@ -221,43 +217,46 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         //选中文本样式支持
         if (selectedTextStyle != null) {
           body = body
-              .mapIndex((child, index) => child.textStyle(
-                    isTabIndexSelected(index)
-                        ? selectedTextStyle
-                        : normalTextStyle,
-                    animate: autoTextAnimate,
-                  ))
+              .mapIndex((child, index) =>
+              child.textStyle(
+                isTabIndexSelected(index)
+                    ? selectedTextStyle
+                    : normalTextStyle,
+                animate: autoTextAnimate,
+              ))
               .toList();
         }
 
         //着色支持
         if (normalTintColor != null || selectedTintColor != null) {
           body = body
-              .mapIndex((child, index) => child.colorFiltered(
-                    color: isTabIndexSelected(index)
-                        ? selectedTintColor
-                        : normalTintColor,
-                  ))
+              .mapIndex((child, index) =>
+              child.colorFiltered(
+                color: isTabIndexSelected(index)
+                    ? selectedTintColor
+                    : normalTintColor,
+              ))
               .toList();
         }
 
         if (autoClick) {
           body = body
-              .mapIndex((child, index) => child.click(() {
-                    if (this is PageViewMixin) {
-                      tabLayoutController.selectedItem(
-                        index,
-                        animate: pageViewAnimate,
-                        /*animate: (this as PageViewMixin).isPageViewNoAnimate
+              .mapIndex((child, index) =>
+              child.click(() {
+                if (this is PageViewMixin) {
+                  tabLayoutController.selectedItem(
+                    index,
+                    animate: pageViewAnimate,
+                    /*animate: (this as PageViewMixin).isPageViewNoAnimate
                             ? false
                             : null,*/
-                        pageController:
-                            (this as PageViewMixin).pageViewController,
-                      );
-                    } else {
-                      tabLayoutController.selectedItem(index);
-                    }
-                  }))
+                    pageController:
+                    (this as PageViewMixin).pageViewController,
+                  );
+                } else {
+                  tabLayoutController.selectedItem(index);
+                }
+              }))
               .toList();
         }
       }
@@ -277,9 +276,9 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         children: body == null
             ? buildTabLayoutChildren(context, tabLayoutController.index)
             : [
-                ...body,
-                indicator ?? buildTabLayoutIndicator(context),
-              ].filterNull(),
+          ...body,
+          indicator ?? buildTabLayoutIndicator(context),
+        ].filterNull(),
       );
     }.rebuild(
       _tabSelectedUpdateSignal,
@@ -291,7 +290,14 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   int get currentTabLayoutIndex => tabLayoutController.index;
 
   /// 指定的索引是否是tab选中的
+  @api
   bool isTabIndexSelected(int index) => currentTabLayoutIndex == index;
+
+  /// 选中指定的索引
+  @api
+  void selectedTabIndex(int index, {bool? animate}) {
+    tabLayoutController.selectedItem(index, animate: animate);
+  }
 
   /// tab索引改变回调
   @overridePoint
