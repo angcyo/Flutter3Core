@@ -648,6 +648,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 复制选中的所有元素
+  ///
+  /// [CanvasElementManager.copyElementList]
   @api
   @supportUndo
   List<ElementPainter>? copySelectedElement({
@@ -1034,6 +1036,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 水平翻转选中的元素
+  ///
+  /// [flipElementWithScale]
   @api
   @supportUndo
   void flipHorizontalSelectedElement() {
@@ -1043,6 +1047,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 垂直翻转选中的元素
+  ///
+  /// [flipElementWithScale]
   @api
   @supportUndo
   void flipVerticalSelectedElement() {

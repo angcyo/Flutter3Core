@@ -784,19 +784,21 @@ class TabLayoutRender extends ScrollContainerRenderBox {
         //滚动到居中位置
         final scrollController = this.scrollController;
         if (scrollController is ScrollContainerController) {
-          if (axis == Axis.horizontal) {
-            scrollController.scrollTo(
-              parentData.offset.dx + child.size.width / 2,
-              center: true,
-              animate: false,
-            );
-          } else {
-            scrollController.scrollTo(
-              parentData.offset.dy + child.size.height / 2,
-              center: true,
-              animate: false,
-            );
-          }
+          postFrame(() {
+            if (axis == Axis.horizontal) {
+              scrollController.scrollTo(
+                parentData.offset.dx + child.size.width / 2,
+                center: true,
+                animate: false,
+              );
+            } else {
+              scrollController.scrollTo(
+                parentData.offset.dy + child.size.height / 2,
+                center: true,
+                animate: false,
+              );
+            }
+          });
         }
       }
     }

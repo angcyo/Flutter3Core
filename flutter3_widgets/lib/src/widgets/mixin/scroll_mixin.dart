@@ -711,6 +711,7 @@ class ScrollContainerController extends ScrollController {
       }
       offset = clamp(offset, 0.0, maxScrollExtent);
       if (offset == this.offset) {
+        //Failed assertion: line 172 pos 12: '_positions.length == 1': ScrollController attached to multiple scroll views.
         return;
       }
       if (animate) {

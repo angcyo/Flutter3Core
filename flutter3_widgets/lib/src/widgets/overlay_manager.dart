@@ -91,6 +91,10 @@ class OverlayManagerController {
   /// 指定id的弹窗是否显示
   bool isShowEntry({String? id}) => findEntryInfoById(id) != null;
 
+  /// 指定id的弹窗是否处于隐藏状态
+  bool isEntryHidden({String? id}) =>
+      findEntryInfoById(id)?.entryKey?.currentState?.isHidden == true;
+
   /// 使用id查找[OverlayEntryInfo]
   OverlayEntryInfo? findEntryInfoById(String? id) =>
       _subOverlayEntries.findFirst((e) => e.id == id);
@@ -98,7 +102,7 @@ class OverlayManagerController {
   /// 更新id对应的界面
   /// [StateEx.updateState]
   @api
-  void updateEntryById(String? id) {
+  void updateEntryById({String? id}) {
     findEntryInfoById(id)?.entryKey?.currentState?.updateState();
   }
 
@@ -110,16 +114,16 @@ class OverlayManagerController {
     }
   }
 
-  /// 显示一个[OverlayEntry]
-  void showOverlay(
+  /// 插入一个[OverlayEntry]
+  void insertOverlay(
     OverlayEntry entry, {
     String? tag,
   }) {
-    showOverlayInfo(OverlayEntryInfo(entry, tag: tag));
+    insertOverlayInfo(OverlayEntryInfo(entry, tag: tag));
   }
 
-  /// 显示一个[OverlayEntryInfo]
-  void showOverlayInfo(OverlayEntryInfo entry) {
+  /// 插入一个[OverlayEntryInfo]
+  void insertOverlayInfo(OverlayEntryInfo entry) {
     _subOverlayEntries.add(entry);
     overlayKey.currentState?.insert(entry.entry);
   }
@@ -134,7 +138,7 @@ class OverlayManagerController {
   /// [type] 动画类型[TranslationType]
   /// [OverlayAnimateBuilder]
   @api
-  void showWidget(
+  void insertWidget(
     Widget widget, {
     TranslationType? type,
     String? id,
@@ -157,7 +161,7 @@ class OverlayManagerController {
     type ??= widget.getWidgetTranslationType();
     final GlobalKey<OverlayAnimateBuilderState> animateKey = GlobalKey();
     id ??= $uuid;
-    showOverlayInfo(OverlayEntryInfo(
+    insertOverlayInfo(OverlayEntryInfo(
       entryOf(
         OverlayAnimateBuilder(
           key: animateKey,
@@ -267,6 +271,34 @@ class OverlayManagerController {
     }
     if (showPrev) {
       prev?.entryKey?.currentState?.show();
+    }
+  }
+
+  /// 显示一个被动画隐藏的[OverlayEntryInfo]
+  /// [removeAbove] 是否移除上面的所有[OverlayEntry]
+  @api
+  void showEntry({
+    String? id,
+    bool removeAbove = true,
+  }) {
+    OverlayEntryInfo? anchorEntry;
+    List<OverlayEntryInfo> removeEntries = [];
+    bool findAnchor = false;
+    for (final entry in _subOverlayEntries) {
+      if (entry.id == id) {
+        anchorEntry = entry;
+        findAnchor = true;
+      } else if (findAnchor) {
+        removeEntries.add(entry);
+      }
+    }
+    if (anchorEntry != null) {
+      anchorEntry.entryKey?.currentState?.show();
+      if (removeAbove) {
+        for (final entry in removeEntries) {
+          removeOverlayInfo(entry);
+        }
+      }
     }
   }
 
@@ -381,6 +413,12 @@ class OverlayAnimateBuilderState extends State<OverlayAnimateBuilder>
   bool _offstage = false;
 
   bool get offstage => _offstage;
+
+  /// 是否隐藏了
+  bool get isHidden => _controller.isDismissed;
+
+  /// 是否处于显示状态
+  bool get isShow => _controller.isCompleted;
 
   set offstage(value) {
     if (_offstage != value) {
