@@ -1051,6 +1051,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     List<ElementPainter>? to,
     ElementSelectType selectType,
   ) {
+    //debugger();
     _eachCanvasListener((element) {
       element.onCanvasElementSelectChangedAction
           ?.call(selectComponent, from, to, selectType);

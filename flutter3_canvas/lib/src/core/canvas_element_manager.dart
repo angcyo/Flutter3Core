@@ -1248,7 +1248,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     newList.add(group);
 
     //事件
-    canvasElementControlManager.onCanvasElementDeleted(elements, selectType);
+    canvasElementControlManager.onCanvasElementDeleted(
+      elements,
+      selectType,
+      dispatchElementSelectChanged: false,
+    );
     canvasDelegate.dispatchCanvasGroupChanged(group, elements);
     canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, elements);
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, [group]);
@@ -1298,7 +1302,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //group.resetChildren(null, false);
 
     //事件
-    canvasElementControlManager.onCanvasElementDeleted([group], selectType);
+    canvasElementControlManager.onCanvasElementDeleted(
+      [group],
+      selectType,
+      dispatchElementSelectChanged: false,
+    );
     canvasDelegate.dispatchCanvasUngroupChanged(group);
     canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, [group]);
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, children);

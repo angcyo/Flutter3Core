@@ -503,14 +503,19 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   @flagProperty
   void onCanvasElementDeleted(
     List<ElementPainter> elements,
-    ElementSelectType selectType,
-  ) {
+    ElementSelectType selectType, {
+    bool? dispatchElementSelectChanged,
+  }) {
     final list = elementSelectComponent.children?.clone(true);
     if (list != null) {
       final op = list.removeAll(elements);
       if (op != null && op.isNotEmpty) {
         //有选中的元素被删除了
-        elementSelectComponent.resetSelectElement(list, selectType);
+        elementSelectComponent.resetSelectElement(
+          list,
+          selectType,
+          dispatchElementSelectChanged: dispatchElementSelectChanged,
+        );
       }
     }
   }
@@ -1585,9 +1590,11 @@ class ElementSelectComponent extends ElementGroupPainter
   @api
   void resetSelectElement(
     List<ElementPainter>? elements,
-    ElementSelectType selectType,
-  ) {
+    ElementSelectType selectType, {
+    bool? dispatchElementSelectChanged,
+  }) {
     //debugger();
+    dispatchElementSelectChanged ??= true;
     List<ElementPainter>? old = children;
     if (isNullOrEmpty(elements)) {
       //取消元素选择
@@ -1598,12 +1605,14 @@ class ElementSelectComponent extends ElementGroupPainter
         }());
         resetChildren(null);
         canvasElementControlManager.onSelfSelectElementChanged(null);
-        canvasDelegate?.dispatchCanvasElementSelectChanged(
-          this,
-          old,
-          children,
-          selectType,
-        );
+        if (dispatchElementSelectChanged) {
+          canvasDelegate?.dispatchCanvasElementSelectChanged(
+            this,
+            old,
+            children,
+            selectType,
+          );
+        }
       } else {
         assert(() {
           l.d('没有元素被选中');
@@ -1622,12 +1631,14 @@ class ElementSelectComponent extends ElementGroupPainter
       }());
       resetChildren(elements);
       canvasElementControlManager.onSelfSelectElementChanged(elements);
-      canvasDelegate?.dispatchCanvasElementSelectChanged(
-        this,
-        old,
-        children,
-        selectType,
-      );
+      if (dispatchElementSelectChanged) {
+        canvasDelegate?.dispatchCanvasElementSelectChanged(
+          this,
+          old,
+          children,
+          selectType,
+        );
+      }
     }
   }
 }

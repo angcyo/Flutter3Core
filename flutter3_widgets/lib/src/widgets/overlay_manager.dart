@@ -92,8 +92,9 @@ class OverlayManagerController {
   bool isShowEntry({String? id}) => findEntryInfoById(id) != null;
 
   /// 指定id的弹窗是否处于隐藏状态
-  bool isEntryHidden({String? id}) =>
-      findEntryInfoById(id)?.entryKey?.currentState?.isHidden == true;
+  bool isEntryHidden({String? id, OverlayEntryInfo? entry}) =>
+      (entry ?? findEntryInfoById(id))?.entryKey?.currentState?.isHidden ==
+      true;
 
   /// 使用id查找[OverlayEntryInfo]
   OverlayEntryInfo? findEntryInfoById(String? id) =>
@@ -149,8 +150,13 @@ class OverlayManagerController {
   }) {
     //debugger();
     if (id != null) {
-      if (findEntryInfoById(id) != null) {
+      final entry = findEntryInfoById(id);
+      if (entry != null) {
         //相同id的[OverlayEntry]只显示一次
+        if (isEntryHidden(entry: entry)) {
+          //entry.entryKey?.currentState?.updateState();
+          showEntry(entry: entry);
+        }
         return;
       }
     }
@@ -279,17 +285,19 @@ class OverlayManagerController {
   @api
   void showEntry({
     String? id,
+    OverlayEntryInfo? entry,
     bool removeAbove = true,
   }) {
+    id ??= entry?.id;
     OverlayEntryInfo? anchorEntry;
     List<OverlayEntryInfo> removeEntries = [];
     bool findAnchor = false;
-    for (final entry in _subOverlayEntries) {
-      if (entry.id == id) {
-        anchorEntry = entry;
+    for (final e in _subOverlayEntries) {
+      if (e.id == id) {
+        anchorEntry = e;
         findAnchor = true;
       } else if (findAnchor) {
-        removeEntries.add(entry);
+        removeEntries.add(e);
       }
     }
     if (anchorEntry != null) {
