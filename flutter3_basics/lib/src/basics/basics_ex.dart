@@ -721,6 +721,9 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+  /// 当前类名, 是否是全屏的页面
+  bool get isScreenName => endsWith("page") || endsWith("screen");
+
   /// 获取小数点后的位数
   int get decimalDigits {
     final list = split(".");

@@ -3211,7 +3211,19 @@ class TranslationTypeImpl {
 /// [TranslationTypeImpl]
 mixin TranslationTypeMixin implements TranslationTypeImpl {
   /// 对话框外点击是否关闭
+  @override
   bool get dialogBarrierDismissible => true;
+
+  /// 对话框路径过度动画
+  @override
+  TranslationType get translationType {
+    final type = runtimeType.toString().toLowerCase();
+    //debugger();
+    if (type.isScreenName) {
+      return TranslationType.translation;
+    }
+    return TranslationType.translationFade;
+  }
 }
 
 /// [TranslationTypeImpl]

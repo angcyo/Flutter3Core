@@ -17,9 +17,9 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// 对话框路径过度动画
   @override
   TranslationType get translationType {
-    final type = runtimeType.toString();
+    final type = runtimeType.toString().toLowerCase();
     //debugger();
-    if (type.endsWith("Page")) {
+    if (type.isScreenName) {
       return TranslationType.translation;
     }
     return TranslationType.translationFade;
@@ -357,12 +357,15 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildDialogIconTitle(
     BuildContext context, {
     String? title,
+    Widget? titleWidget,
     bool enableConfirm = true,
     FutureOr Function()? onConfirm,
     //--
     bool? useConfirmThemeColor,
     Widget? cancelWidget,
     Widget? confirmWidget,
+    bool invisibleCancel = false,
+    bool invisibleConfirm = false,
   }) {
     final globalTheme = GlobalTheme.of(context);
     return [
@@ -372,14 +375,14 @@ mixin DialogMixin implements TranslationTypeImpl {
         onTap: () {
           closeDialogIf(context);
         },
-      ),
-      title
-          ?.text(
-            style: globalTheme.textTitleStyle
-                .copyWith(fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          )
-          .expanded(),
+      ).invisible(invisible: invisibleCancel),
+      (titleWidget ??
+              title?.text(
+                style: globalTheme.textTitleStyle
+                    .copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ))
+          ?.expanded(),
       ConfirmButton(
         useIcon: true,
         useThemeColor: useConfirmThemeColor,
@@ -389,7 +392,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           onConfirm?.call();
           closeDialogIf(context);
         },
-      ),
+      ).invisible(invisible: invisibleConfirm),
     ].row()!;
   }
 

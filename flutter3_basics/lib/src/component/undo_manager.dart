@@ -210,11 +210,19 @@ const supportUndo = _UndoAnnotation();
 mixin UndoWidgetMixin {
   UndoActionManager? get undoActionManager => null;
 
+  //--
+
   Widget? get undoWidget => null;
 
   Widget? get redoWidget => null;
 
+  //--
+
   VisualDensity? get visualDensity => null;
+
+  Color? get enableColor => null;
+
+  Color? get disableColor => null;
 }
 
 /// [UndoWidgetMixin]
@@ -231,6 +239,14 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
 
   VisualDensity? get visualDensityMixin => widget is UndoWidgetMixin
       ? (widget as UndoWidgetMixin).visualDensity
+      : null;
+
+  Color? get enableColorMixin => widget is UndoWidgetMixin
+      ? (widget as UndoWidgetMixin).enableColor
+      : null;
+
+  Color? get disableColorMixin => widget is UndoWidgetMixin
+      ? (widget as UndoWidgetMixin).disableColor
       : null;
 
   //--
@@ -262,16 +278,16 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
   @overridePoint
   Color? getEnableColorMixin(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    return context.darkOr(
-        globalTheme.icoNormalColor, globalTheme.icoNormalColor);
+    return enableColorMixin ??
+        context.darkOr(globalTheme.icoNormalColor, globalTheme.icoNormalColor);
   }
 
   /// 非激活时小部件着色的颜色
   @overridePoint
   Color? getDisableColorMixin(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    return context.darkOr(
-        globalTheme.disableColor, globalTheme.icoDisableColor);
+    return disableColorMixin ??
+        context.darkOr(globalTheme.disableColor, globalTheme.icoDisableColor);
   }
 
   /// 构建撤销回退小部件

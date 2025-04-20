@@ -131,7 +131,7 @@ class OverlayManagerController {
   /// [offstage] 是否离屏
   /// [hideLast] 是否隐藏最后一个[OverlayEntry]
   ///
-  /// [TranslationType] 动画类型
+  /// [type] 动画类型[TranslationType]
   /// [OverlayAnimateBuilder]
   @api
   void showWidget(
