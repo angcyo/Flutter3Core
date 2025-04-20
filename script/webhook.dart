@@ -20,10 +20,10 @@ void main(List<String> arguments) async {
   //---
   //_sendFeishuText(webhook, "text");
 
-  //await _sendFeishuVersion();
+  await _sendFeishuVersion();
   //await _sendLP5xVersion("E:/AndroidProjects/LaserPeckerRNPro/android/.apk");
-  await _sendLP5xVersion(
-      "/Users/angcyo/project/android/laserpecker-rn-pro/android/.apk/");
+  /*await _sendLP5xVersion(
+      "/Users/angcyo/project/android/laserpecker-rn-pro/android/.apk/");*/
 }
 
 /// LP版本发布通知
@@ -54,7 +54,6 @@ Future _sendLP5xVersion(
 
 //--
 
-
 /// 组装版本发布通知的标题
 String? _assembleVersionTitle(Map<String, dynamic>? json) {
   final versionTitle = json?["versionTitle"]?.toString();
@@ -84,7 +83,7 @@ String? _assembleVersionTitle(Map<String, dynamic>? json) {
 
 //--
 
-/// 飞书版本通知
+/// 发送[version.json]飞书发布通知
 Future _sendFeishuVersion({
   String? versionDes,
   String? linkUrl,
@@ -103,15 +102,13 @@ Future _sendFeishuVersion({
     final versionMap = await _getVersionDes(folder);
     _sendFeishuWebhook(
       localYaml["feishu_webhook"] ?? yaml["feishu_webhook"],
-      versionMap?["versionName"] == null
-          ? null
-          : "新版本发布 V${versionMap?["versionName"]}",
+      _assembleVersionTitle(versionMap),
       versionDes ?? versionMap?["versionDes"],
       linkUrl: linkUrl ??
           versionMap?["downloadUrl"] ??
           versionMap?["versionUrl"] ??
           versionMap?["url"],
-      changeLogUrl: changeLogUrl ?? versionMap?[" changeLogUrl"],
+      changeLogUrl: changeLogUrl ?? versionMap?["changeLogUrl"],
     );
   }
 }
