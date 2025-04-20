@@ -233,7 +233,7 @@ class OverlayManagerController {
   /// 移除所有
   @api
   void removeAllOverlay() {
-    for (final e in _subOverlayEntries) {
+    for (final e in _subOverlayEntries.clone().reversed) {
       removeOverlayInfo(e);
     }
   }
