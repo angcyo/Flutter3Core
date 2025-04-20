@@ -63,6 +63,7 @@ final class DataChunkInfo {
 
   @override
   String toString() {
-    return 'DataChunkInfo{[$count/$total]B, speed: $speedStr progress: $progress time: ${time()}}';
+    //return 'DataChunkInfo{[$count/$total]B, speed: $speedStr progress: $progress time: ${time()}}';
+    return '[${count.toSizeStr()}/${total.toSizeStr()}] 速率:$speedStr 进度:${(progress * 100).round()}% 耗时:${time()}}';
   }
 }
