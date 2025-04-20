@@ -1541,14 +1541,15 @@ extension WidgetEx on Widget {
       );
 
   /// [Card]
+  /// [color] 卡片的颜色
   /// [elevation] 阴影的高度, 默认1.0
   /// [CardTheme]
   /// [ThemeData.cardTheme]
   Widget card({
-    Color? color,
-    Color? shadowColor,
+    @defInjectMark Color? color,
+    @defInjectMark Color? shadowColor,
     Color? surfaceTintColor,
-    double? elevation,
+    @defInjectMark double? elevation,
     ShapeBorder? shape,
     EdgeInsetsGeometry? margin,
     Clip? clipBehavior = Clip.antiAlias,
