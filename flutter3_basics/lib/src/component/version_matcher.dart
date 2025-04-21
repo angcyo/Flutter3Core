@@ -21,31 +21,9 @@ class VersionMatcher {
     final rangeStringList = config?.split(_RS);
     final list = <VersionRange>[];
     rangeStringList?.forEach((range) {
-      if (range == "*") {
-        list.add(VersionRange(intMinValue, intMaxValue));
-      } else {
-        final rangeString = range.split(_VS);
-        if (rangeString.length == 1) {
-          final min = int.parse(rangeString[0]);
-          if (range.have("*")) {
-            if (range.startsWith(_VS)) {
-              //[~xxx] 的格式
-              list.add(VersionRange(intMinValue, min));
-            } else {
-              //[x~] 的格式
-              list.add(VersionRange(min, intMaxValue));
-            }
-          } else {
-            //[x] 的格式
-            list.add(VersionRange(min, min));
-          }
-        } else if (rangeString.length >= 2) {
-          //[x~]
-          //[~x]
-          final min = int.tryParse(rangeString[0]) ?? 0;
-          final max = int.tryParse(rangeString[1]) ?? intMax32Value;
-          list.add(VersionRange(min, max));
-        }
+      final r = range.range;
+      if (r != null) {
+        list.add(r);
       }
     });
     return list;
@@ -137,6 +115,38 @@ extension VersionIntEx on int {
 
 /// [VersionIntEx]
 extension VersionStringEx on String {
+  /// 解析范围
+  /// 格式 [ x x~ ~x xxx~xxx xxx~xxx]
+  VersionRange? get range {
+    if (this == "*") {
+      return VersionRange(intMinValue, intMaxValue);
+    } else {
+      final rangeString = split(VersionMatcher._VS);
+      if (rangeString.length == 1) {
+        final min = int.parse(rangeString[0]);
+        if (have("*")) {
+          if (startsWith(VersionMatcher._VS)) {
+            //[~xxx] 的格式
+            return VersionRange(intMinValue, min);
+          } else {
+            //[x~] 的格式
+            return VersionRange(min, intMaxValue);
+          }
+        } else {
+          //[x] 的格式
+          return VersionRange(min, min);
+        }
+      } else if (rangeString.length >= 2) {
+        //[x~]
+        //[~x]
+        final min = int.tryParse(rangeString[0]) ?? 0;
+        final max = int.tryParse(rangeString[1]) ?? intMax32Value;
+        return VersionRange(min, max);
+      }
+    }
+    return null;
+  }
+
   /// 当前的版本范围是否配置指定的版本
   bool matchVersion(
     int? version, {
