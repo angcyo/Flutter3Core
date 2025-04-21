@@ -104,7 +104,11 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
               : hLine(
                   context,
                   thickness: cancelGap,
-                  color: cancelGapColor ?? globalTheme.lineColor,
+                  color: cancelGapColor ??
+                      context.darkOr(
+                        globalTheme.lineDarkColor,
+                        globalTheme.lineColor,
+                      ),
                 ),
         if (cancel != null) cancel,
       ],

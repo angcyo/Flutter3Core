@@ -14,7 +14,12 @@ Line verticalLine(
 }) =>
     Line(
       thickness: thickness,
-      color: color ?? GlobalTheme.of(context).lineColor,
+      color: color ??
+          context?.darkOr(
+            GlobalTheme.of(context).lineDarkColor,
+            GlobalTheme.of(context).lineColor,
+          ) ??
+          GlobalTheme.of(context).lineColor,
       axis: Axis.vertical,
       indent: indent,
       endIndent: endIndent ?? indent,
@@ -47,7 +52,12 @@ Line horizontalLine(
 }) =>
     Line(
       thickness: thickness,
-      color: color ?? GlobalTheme.of(context).lineColor,
+      color: color ??
+          context?.darkOr(
+            GlobalTheme.of(context).lineDarkColor,
+            GlobalTheme.of(context).lineColor,
+          ) ??
+          GlobalTheme.of(context).lineColor,
       axis: Axis.horizontal,
       indent: indent,
       endIndent: endIndent ?? indent,
