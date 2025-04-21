@@ -196,7 +196,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     //--safeArea
     bool useSafeArea = true,
     //--
-    TransformWidgetBuilder? contentBuilder /*将内容变换成其它*/,
+    TransformWidgetBuilder? contentBuilder /*将内容变换成其它, 建议开启滚动体*/,
     //--
     ChildrenBuilder? scrollContentBuilder,
     /*需要[useRScroll]支持*/

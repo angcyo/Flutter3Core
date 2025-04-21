@@ -205,7 +205,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     }
 
     //填充
-    if (info.fill) {
+    if (info.fill == true) {
       final fillColor =
           canvasDelegate.darkOr(info.fillColorDark, info.fillColor) ??
               info.fillColor;
@@ -218,7 +218,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     }
 
     //描边
-    if (info.strokeWidth > 0) {
+    if ((info.strokeWidth ?? 0) > 0) {
       final strokeColor =
           canvasDelegate.darkOr(info.strokeColorDark, info.strokeColor) ??
               info.strokeColor;
@@ -226,7 +226,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         paint
           ..style = PaintingStyle.stroke
           ..color = strokeColor
-          ..strokeWidth = info.strokeWidth / canvasScale;
+          ..strokeWidth = info.strokeWidth! / canvasScale;
         draw();
       }
     }
@@ -427,11 +427,11 @@ class ContentPathPainterInfo {
 
   /// 是否填充
   @configProperty
-  bool fill;
+  bool? fill;
 
   /// 线宽, <=0表示不绘制线框
   @configProperty
-  double strokeWidth;
+  double? strokeWidth;
 
   //--标识信息
 

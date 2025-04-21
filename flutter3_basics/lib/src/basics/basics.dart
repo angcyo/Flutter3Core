@@ -347,9 +347,15 @@ List<Locale> get platformLocales => PlatformDispatcher.instance.locales;
 @dp
 double get screenWidth => platformMediaQueryData.size.width;
 
+@alias
+double get $screenWidth => screenWidth;
+
 /// 屏幕高度, 此高度不包含导航栏的高度 [screenHeightPixel]
 @dp
 double get screenHeight => platformMediaQueryData.size.height;
+
+@alias
+double get $screenHeight => screenHeight;
 
 /// 是否是横屏
 bool get isLandscape => screenWidth > screenHeight;

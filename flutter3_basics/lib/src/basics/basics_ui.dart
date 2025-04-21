@@ -1345,6 +1345,7 @@ extension WidgetEx on Widget {
   ///
   /// [clipRadius]无效果的时候, 可能需要在包裹一层[material]
   Widget clipRadius({
+    bool enable = true,
     double? radius = kDefaultBorderRadiusXX,
     double? topRadius,
     double? bottomRadius,
@@ -1352,6 +1353,9 @@ extension WidgetEx on Widget {
     CustomClipper<RRect>? clipper,
     Clip clipBehavior = Clip.antiAlias,
   }) {
+    if (!enable) {
+      return this;
+    }
     BorderRadiusGeometry? borderRadiusGeometry;
     if (borderRadius != null) {
       borderRadiusGeometry = borderRadius;
