@@ -4,7 +4,7 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/10/21
 ///
-/// 画布内容显示模版
+/// 画布内容显示模版, 在[CanvasContentManager]中生效
 class CanvasContentTemplate {
   /// 标签, 用来自定义的标识
   @configProperty
@@ -63,5 +63,5 @@ class CanvasContentTemplate {
       contentBackgroundInfo?.bounds ??
       contentOptimumInfo?.bounds;
 
-  //endregion ---get---
+//endregion ---get---
 }

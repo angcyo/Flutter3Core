@@ -75,6 +75,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   CanvasContentManager(this.paintManager);
 
   /// [CanvasPaintManager.paint] 驱动
+  /// 所有绘制内容都在元素底部
   /// [withCanvasContent]
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
@@ -383,12 +384,15 @@ class ContentPathPainterInfo {
   //--边界信息
 
   /// 要绘制的路径, 有值时, 就绘制
+  @configProperty
   Path? path;
 
   /// [path]的边界缓存
+  @autoInjectMark
   Rect? pathBoundsCache;
 
   /// 要绘制的矩形, 有值时, 就绘制
+  @configProperty
   Rect? rect;
 
   /// 边界信息
@@ -406,21 +410,27 @@ class ContentPathPainterInfo {
   //--绘制信息
 
   /// 绘制路径的描边颜色, 不指定, 不绘制
+  @configProperty
   Color? strokeColor;
 
   /// [strokeColor]
+  @configProperty
   Color? strokeColorDark;
 
   /// 绘制路径的填充颜色, 不指定, 不绘制
+  @configProperty
   Color? fillColor;
 
   /// [fillColor]
+  @configProperty
   Color? fillColorDark;
 
   /// 是否填充
+  @configProperty
   bool fill;
 
   /// 线宽, <=0表示不绘制线框
+  @configProperty
   double strokeWidth;
 
   //--标识信息
