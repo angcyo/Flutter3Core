@@ -14,15 +14,15 @@ class $AssetsSvgGen {
   String get appUpdateHeader =>
       'packages/flutter3_app/assets/svg/app_update_header.svg';
 
-  /// Directory path: assets/svg
-  String get path => 'assets/svg';
+  /// Directory path: packages/flutter3_app/assets/svg
+  String get path => 'packages/flutter3_app/assets/svg';
 
   /// List of all assets
   List<String> get values => [appUpdateHeader];
 }
 
 class Assets {
-  Assets._();
+  const Assets._();
 
   static const String package = 'flutter3_app';
 

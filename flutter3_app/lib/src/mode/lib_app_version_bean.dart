@@ -1,7 +1,7 @@
 import 'package:flutter3_app/flutter3_app.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'app_version_bean.g.dart';
+part 'lib_app_version_bean.g.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -9,17 +9,17 @@ part 'app_version_bean.g.dart';
 ///
 /// 应用程序版本信息
 ///
-/// 1. 先获取对应平台的版本信息[AppVersionBean.platformMap]
-/// 2. 通过包名获取对应的设备版本信息[AppVersionBean.packageNameMap]
-/// 3. 通过uuid获取对应的设备版本信息[AppVersionBean.versionUuidMap]
+/// 1. 先获取对应平台的版本信息[LibAppVersionBean.platformMap]
+/// 2. 通过包名获取对应的设备版本信息[LibAppVersionBean.packageNameMap]
+/// 3. 通过uuid获取对应的设备版本信息[LibAppVersionBean.versionUuidMap]
 ///
 /// [AppUpdateDialog.checkUpdateAndShow]
 /// [AppUpdateDialog]
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
-class AppVersionBean {
-  static AppVersionBean? _appVersionBean;
+class LibAppVersionBean {
+  static LibAppVersionBean? _appVersionBean;
 
-  /// 从网络中获取[AppVersionBean]配置, 并且存储到本地
+  /// 从网络中获取[LibAppVersionBean]配置, 并且存储到本地
   /// 应用程序初始化成功后初始化...
   static Future fetchConfig(
     String url, {
@@ -38,7 +38,7 @@ class AppVersionBean {
       onHttpAction: (data) async {
         if (data is String) {
           //debugger();
-          final bean = AppVersionBean.fromJson(data.jsonDecode());
+          final bean = LibAppVersionBean.fromJson(data.jsonDecode());
           _appVersionBean = bean;
           //debugger();
           AppUpdateDialog.checkUpdateAndShow(
@@ -50,27 +50,27 @@ class AppVersionBean {
     );
   }
 
-  factory AppVersionBean.fromJson(Map<String, dynamic> json) =>
-      _$AppVersionBeanFromJson(json);
+  factory LibAppVersionBean.fromJson(Map<String, dynamic> json) =>
+      _$LibAppVersionBeanFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AppVersionBeanToJson(this);
+  Map<String, dynamic> toJson() => _$LibAppVersionBeanToJson(this);
 
-  AppVersionBean();
+  LibAppVersionBean();
 
   //region --精确平台/包名/指定设备--
 
   /// 每个平台单独设置信息, 小写字母
   /// [$platformName]
-  Map<String, AppVersionBean>? platformMap;
+  Map<String, LibAppVersionBean>? platformMap;
 
   /// 每个包名单独的版本信息
   /// [$buildPackageName]
   /// [AppSettingBean.packageName]
-  Map<String, AppVersionBean>? packageNameMap;
+  Map<String, LibAppVersionBean>? packageNameMap;
 
   /// 每个设备单独的版本信息
   /// [CoreKeys.deviceUuid]
-  Map<String, AppVersionBean>? versionUuidMap;
+  Map<String, LibAppVersionBean>? versionUuidMap;
 
   //endregion --精确平台/包名/指定设备--
 
@@ -128,7 +128,7 @@ class AppVersionBean {
 
   /// 版本号段对应的 forbidden 信息
   /// [VersionMatcher]
-  Map<String, AppVersionBean>? forbiddenVersionMap;
+  Map<String, LibAppVersionBean>? forbiddenVersionMap;
   String? forbiddenTile;
   String? forbiddenReason;
   bool? forceForbidden;
@@ -139,9 +139,9 @@ class AppVersionBean {
   String toString() => toJson().toString();
 }
 
-/// [AppVersionBean]
-AppVersionBean? get $appVersionBean {
-  AppVersionBean? bean = AppVersionBean._appVersionBean;
+/// [LibAppVersionBean]
+LibAppVersionBean? get $appVersionBean {
+  LibAppVersionBean? bean = LibAppVersionBean._appVersionBean;
 
   //1: 平台检查, 获取对应平台的版本信息
   bean = bean?.platformMap?[$platformName] ?? bean;

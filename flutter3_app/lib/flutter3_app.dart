@@ -9,7 +9,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
-import 'package:flutter3_app/src/mode/app_version_bean.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
@@ -22,7 +21,8 @@ import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uri_to_file/uri_to_file.dart' as uri_to_file;
 
-import 'src/mode/app_setting_bean.dart';
+import 'src/mode/lib_app_setting_bean.dart';
+import 'src/mode/lib_app_version_bean.dart';
 
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:flutter3_core/flutter3_core.dart';
@@ -32,8 +32,8 @@ export 'package:package_info_plus/package_info_plus.dart';
 export 'package:permission_handler/permission_handler.dart';
 export 'package:share_plus/share_plus.dart';
 
-export 'src/mode/app_setting_bean.dart';
-export 'src/mode/app_version_bean.dart';
+export 'src/mode/lib_app_setting_bean.dart';
+export 'src/mode/lib_app_version_bean.dart';
 
 part 'src/android_app.dart';
 part 'src/app_ex.dart';

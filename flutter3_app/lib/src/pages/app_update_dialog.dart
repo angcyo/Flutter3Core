@@ -26,7 +26,7 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
   @api
   static void checkUpdateAndShow(
     BuildContext? context,
-    AppVersionBean bean, {
+    LibAppVersionBean bean, {
     bool? forceShow,
   }) async {
     if (context == null || context.isMounted != true) {
@@ -40,20 +40,20 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
     final libRes = LibRes.of(context);
 
     //1: 平台检查, 获取对应平台的版本信息
-    final AppVersionBean platformBean =
+    final LibAppVersionBean platformBean =
         bean.platformMap?[$platformName] ?? bean;
 
     //2: 区分package, 获取对应报名的版本信息
-    final AppVersionBean packageBean =
+    final LibAppVersionBean packageBean =
         platformBean.packageNameMap?[$buildPackageName] ?? platformBean;
 
     //3: 获取指定设备的版本信息
     final deviceUuid = $coreKeys.deviceUuid;
-    final AppVersionBean deviceBean =
+    final LibAppVersionBean deviceBean =
         packageBean.versionUuidMap?[deviceUuid] ?? packageBean;
 
     //end
-    final AppVersionBean versionBean = deviceBean;
+    final LibAppVersionBean versionBean = deviceBean;
     bool ignoreDeviceUpdate = false; //是否要忽略当前设备的更新
 
     final allowVersionUuidList = versionBean.allowVersionUuidList;
@@ -113,7 +113,7 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
   TranslationType get translationType => TranslationType.scaleFade;
 
   /// 信息
-  final AppVersionBean versionBean;
+  final LibAppVersionBean versionBean;
 
   final double headerMarginTop;
   final double headerPaddingTop;

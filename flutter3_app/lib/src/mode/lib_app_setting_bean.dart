@@ -1,7 +1,7 @@
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'app_setting_bean.g.dart';
+part 'lib_app_setting_bean.g.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -9,10 +9,10 @@ part 'app_setting_bean.g.dart';
 ///
 /// 应用程序设置信息
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
-class AppSettingBean {
-  static AppSettingBean? _appSettingBean;
+class LibAppSettingBean {
+  static LibAppSettingBean? _appSettingBean;
 
-  /// 从网络中获取[AppSettingBean]配置, 并且存储到本地
+  /// 从网络中获取[LibAppSettingBean]配置, 并且存储到本地
   /// [Asset]资源需要放到app包中
   /// 应用程序初始化成功后初始化...
   static Future fetchAppConfig(
@@ -31,7 +31,7 @@ class AppSettingBean {
       httpUrl: url,
       onValueAction: (data) {
         if (data is String) {
-          final bean = AppSettingBean.fromJson(data.jsonDecode());
+          final bean = LibAppSettingBean.fromJson(data.jsonDecode());
           _appSettingBean = bean;
           //debugger();
         }
@@ -39,15 +39,15 @@ class AppSettingBean {
     );
   }
 
-  factory AppSettingBean.fromJson(Map<String, dynamic> json) =>
-      _$AppSettingBeanFromJson(json);
+  factory LibAppSettingBean.fromJson(Map<String, dynamic> json) =>
+      _$LibAppSettingBeanFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AppSettingBeanToJson(this);
+  Map<String, dynamic> toJson() => _$LibAppSettingBeanToJson(this);
 
-  AppSettingBean();
+  LibAppSettingBean();
 
   /// 每个平台单独设置信息, 平台名统一小写
-  Map<String, AppSettingBean>? platformMap;
+  Map<String, LibAppSettingBean>? platformMap;
 
   //--
 
@@ -80,9 +80,10 @@ enum AppStateEnum {
   publish
 }
 
-/// [AppSettingBean]
-AppSettingBean get $appSettingBean {
-  AppSettingBean bean = AppSettingBean._appSettingBean ?? AppSettingBean();
+/// [LibAppSettingBean]
+LibAppSettingBean get $appSettingBean {
+  LibAppSettingBean bean =
+      LibAppSettingBean._appSettingBean ?? LibAppSettingBean();
   bean = bean.platformMap?[$platformName] ?? bean;
   return bean;
 }
@@ -100,7 +101,7 @@ bool get isDebugFlagDevice {
   return bean.debugFlagUuidList!.contains($deviceUuid);
 }
 
-/// [AppSettingBean.appState]
+/// [LibAppSettingBean.appState]
 AppStateEnum get $appStateEnum {
   final bean = $appSettingBean;
   String? appState = bean.appState;
