@@ -577,7 +577,7 @@ extension FutureEx<T> on Future<T> {
 extension ColorEx on Color {
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
   /// [def] 失败后的默认颜色
-  static Color fromHex(String hexString, [Color def = Colors.black]) {
+  static Color? fromHex(String hexString) {
     try {
       if (hexString.startsWith("0x")) {
         hexString = hexString.substring(2);
@@ -591,7 +591,7 @@ extension ColorEx on Color {
         print(e);
         return true;
       }());
-      return def;
+      return null;
     }
   }
 
@@ -721,6 +721,59 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+  /// [Alignment]
+  Alignment get alignment {
+    return switch (this) {
+      "topLeft" => Alignment.topLeft,
+      "topCenter" => Alignment.topCenter,
+      "topRight" => Alignment.topRight,
+      "centerLeft" => Alignment.centerLeft,
+      "centerRight" => Alignment.centerRight,
+      "bottomLeft" => Alignment.bottomLeft,
+      "bottomCenter" => Alignment.bottomCenter,
+      "bottomRight" => Alignment.bottomRight,
+      _ => Alignment.center,
+    };
+  }
+
+  /// LTWH
+  /// "l,t,w,h"
+  Rect? get rect {
+    try {
+      final list = split(",");
+      if (list.length != 4) {
+        return null;
+      }
+      return Rect.fromLTWH(
+        double.parse(list[0]),
+        double.parse(list[1]),
+        double.parse(list[2]),
+        double.parse(list[3]),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// LTRB
+  /// "l,t,r,b"
+  EdgeInsets? get edgeInsets {
+    try {
+      final list = split(",");
+      if (list.length != 4) {
+        return null;
+      }
+      return EdgeInsets.fromLTRB(
+        double.parse(list[0]),
+        double.parse(list[1]),
+        double.parse(list[2]),
+        double.parse(list[3]),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// 当前类名, 是否是全屏的页面
   bool get isScreenName => endsWith("page") || endsWith("screen");
 
@@ -956,7 +1009,9 @@ extension StringEx on String {
   bool? toBoolOrNull() => bool.tryParse(this, caseSensitive: false);
 
   /// 字符`#ffaabbcc`转换成Color对象
-  Color toColor([Color def = Colors.black]) => ColorEx.fromHex(this, def);
+  Color toColor([Color def = Colors.black]) => ColorEx.fromHex(this) ?? def;
+
+  Color? toColorOrNull() => ColorEx.fromHex(this);
 
   /// 使用json解析字符串, 返回[Map], [List]数据结构
   ///

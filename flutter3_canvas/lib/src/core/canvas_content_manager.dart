@@ -23,6 +23,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   //--
 
   /// 画布内容模版, 描述了内容大小, 最佳区域等信息
+  /// [updateCanvasContentTemplate]
   /// [updateFillStyleContentTemplate]
   @configProperty
   CanvasContentTemplate? contentTemplate;
@@ -443,9 +444,9 @@ class ContentPathPainterInfo {
     this.path,
     this.pathBoundsCache,
     this.rect,
-    this.strokeColor = Colors.blue,
+    this.strokeColor/*= Colors.blue*/,
     this.strokeColorDark,
-    this.fillColor = const Color(0xfff5f5f5),
+    this.fillColor/*= const Color(0xfff5f5f5)*/,
     this.fillColorDark,
     this.fill = false,
     this.strokeWidth = 1,

@@ -35,6 +35,8 @@ class CanvasFollowManager with CanvasComponentMixin {
 
   /// 对齐画布的位置
   /// [CanvasViewBox.canvasBounds]
+  ///
+  /// [followRect]
   Alignment alignment = Alignment.center;
 
   /// 缩放模式,

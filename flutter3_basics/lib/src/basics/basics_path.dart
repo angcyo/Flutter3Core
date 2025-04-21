@@ -561,6 +561,7 @@ extension PathEx on Path {
   @mm
   Path toPathMm() => scaleToUnit(IUnit.mm);
 
+  /// dp 单位的[Path] 转换成 mm 单位的[Path]
   /// [scaleToUnit]
   @mm
   Path scaleToMm() => scaleToUnit(IUnit.mm);
@@ -573,6 +574,17 @@ extension PathEx on Path {
     Offset? scaleAnchor = Offset.zero,
   ]) {
     final scale = 1.toUnitFromDp(unit);
+    final scaleMatrix = createScaleMatrix(scale: scale, anchor: scaleAnchor);
+    return transformPath(scaleMatrix);
+  }
+
+  /// mm 单位的[Path] 转换成 dp 单位的[Path]
+  @dp
+  Path scaleToDp([
+    IUnit unit = IUnit.mm,
+    Offset? scaleAnchor = Offset.zero,
+  ]) {
+    final scale = IUnit.dp.toUnitFromUnit(unit, 1);
     final scaleMatrix = createScaleMatrix(scale: scale, anchor: scaleAnchor);
     return transformPath(scaleMatrix);
   }
