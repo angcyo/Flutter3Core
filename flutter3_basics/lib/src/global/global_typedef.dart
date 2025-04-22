@@ -22,7 +22,7 @@ typedef ResultBoolAction = bool Function();
 typedef ResultDynamicAction = dynamic Function();
 
 /// 国际化文本构建器
-typedef IntlTextBuilder = String Function(BuildContext context);
+typedef IntlTextBuilder = String? Function(BuildContext context);
 
 /// [VoidAction]
 typedef FutureVoidAction = FutureOr Function();
