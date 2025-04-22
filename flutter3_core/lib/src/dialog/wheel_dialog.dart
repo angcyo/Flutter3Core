@@ -44,6 +44,11 @@ class WheelDialog extends StatefulWidget
   @override
   TranslationType get translationType => TranslationType.translation;
 
+  /// title
+  final bool enableTitleLine;
+  final bool enableTrailingUseThemeColor;
+  final bool titleUseCloseIcon;
+
   const WheelDialog({
     super.key,
     //TitleMixin
@@ -61,6 +66,10 @@ class WheelDialog extends StatefulWidget
     //
     this.enableWheelSelectedIndexColor = true,
     this.wheelSelectedIndexColor,
+    //title
+    this.enableTitleLine = true,
+    this.enableTrailingUseThemeColor = false,
+    this.titleUseCloseIcon = false,
   });
 
   @override
@@ -88,6 +97,9 @@ class _WheelDialogState extends State<WheelDialog>
             title: widget.title,
             titleWidget: widget.titleWidget,
             enableTrailing: currentValueMixin != initialValueMixin,
+            enableLine: widget.enableTitleLine,
+            trailingUseThemeColor: widget.enableTrailingUseThemeColor,
+            useCloseIcon: widget.titleUseCloseIcon,
             onPop: () {
               return currentValueMixin;
             },

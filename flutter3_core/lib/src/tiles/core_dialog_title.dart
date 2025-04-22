@@ -61,6 +61,11 @@ class CoreDialogTitle extends StatelessWidget {
 
   final double? minHeight;
 
+  final bool trailingUseThemeColor;
+
+  /// close back icon
+  final bool useCloseIcon;
+
   const CoreDialogTitle({
     super.key,
     this.title,
@@ -89,6 +94,8 @@ class CoreDialogTitle extends StatelessWidget {
     this.line,
     this.padding,
     this.minHeight,
+    this.trailingUseThemeColor = false,
+    this.useCloseIcon = false,
   });
 
   @override
@@ -100,7 +107,10 @@ class CoreDialogTitle extends StatelessWidget {
             InkButton(
               leadingIcon ??
                   loadCoreAssetSvgPicture(
-                    leadingSvgIconKey ?? Assets.svg.coreBack,
+                    leadingSvgIconKey ??
+                        (useCloseIcon
+                            ? Assets.svg.coreClose
+                            : Assets.svg.coreBack),
                     tintColor: context.isThemeDark
                         ? globalTheme.textTitleStyle.color
                         : null,
@@ -124,7 +134,9 @@ class CoreDialogTitle extends StatelessWidget {
                     trailingSvgIconKey ?? Assets.svg.coreConfirm,
                     tintColor: context.isThemeDark
                         ? globalTheme.textTitleStyle.color
-                        : null,
+                        : trailingUseThemeColor
+                            ? globalTheme.accentColor
+                            : null,
                   ),
               enable: enableTrailing,
               onTap: () {
