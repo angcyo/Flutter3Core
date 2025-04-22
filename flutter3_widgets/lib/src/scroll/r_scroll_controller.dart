@@ -34,11 +34,15 @@ class RScrollController extends ScrollController {
 
   /// 情感图的状态
   /// [WidgetBuildState]
+  ///
+  /// [buildAdapterStateWidget]
   final ValueNotifier<WidgetBuildState> adapterStateValue =
       ValueNotifier(WidgetBuildState.preLoading);
 
   /// 加载更多的状态
   /// [WidgetBuildState]
+  ///
+  /// [buildLoadMoreStateWidget]
   final ValueNotifier<WidgetBuildState> loadMoreStateValue =
       ValueNotifier(WidgetBuildState.none);
 

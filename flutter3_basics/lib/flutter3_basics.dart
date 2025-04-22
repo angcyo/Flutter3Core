@@ -249,11 +249,15 @@ String join(String separator,
   ].whereNotNull().join(separator);
 }
 
+//--
+
 /// 情感状态: 加载失败的图片资源key
-String get libAssetsStateLoadErrorKey => Assets.png.stateLoadError.keyName;
+String libAssetsStateLoadErrorKey = Assets.png.stateLoadError.keyName;
 
 /// 情感状态: 没有数据的图片资源key
-String get libAssetsStateNoDataKey => Assets.png.stateNoData.keyName;
+String libAssetsStateNoDataKey = Assets.png.stateNoData.keyName;
+
+//--
 
 /// 弹出应用
 void popApp() {
@@ -264,3 +268,5 @@ void popApp() {
 void exitApp([int code = 1]) {
   exit(code);
 }
+
+//--

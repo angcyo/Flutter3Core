@@ -28,7 +28,7 @@ class ConfigFile {
   /// [onValueAction] 读取到数据后的回调
   static Future<String?> readConfigFile(
     String key, {
-    String prefix = kDefAssetsPrefix,
+    String prefix = kDefAssetsConfigPrefix,
     String? package,
     String? subFolder,
     bool forceFetch = false,

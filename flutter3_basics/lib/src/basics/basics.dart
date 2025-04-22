@@ -601,6 +601,7 @@ enum DownloadState {
 
 /// 默认的资源路径前缀
 const kDefAssetsPrefix = 'assets/';
+const kDefAssetsConfigPrefix = 'assets/config/';
 const kDefAssetsPngPrefix = 'assets/png/';
 const kDefAssetsSvgPrefix = 'assets/svg/';
 

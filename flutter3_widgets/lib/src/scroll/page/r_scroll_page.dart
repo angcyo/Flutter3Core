@@ -8,7 +8,7 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// [build]->[buildScrollPage]->[pageRScrollView]
 ///
-/// 重写[onLoadData]方法, 加载数据之后调用[loadDataEnd]
+/// 重写[onLoadData]方法, 加载数据之后调用[loadDataEnd]加载界面和数据
 /// ```
 /// @override
 /// FutureOr onLoadData() {
@@ -68,8 +68,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   WidgetList pageWidgetList = [];
 
   /// 获取所有[pageWidgetList].[RItemTile.UpdateValueNotifier]
-  List<T> getWidgetDataList<T>() {
-    final List<T> result = [];
+  List<Bean> getWidgetDataList<Bean>() {
+    final List<Bean> result = [];
     pageWidgetList.map((e) {
       if (e is RItemTile) {
         final value = e.updateSignal?.value;
