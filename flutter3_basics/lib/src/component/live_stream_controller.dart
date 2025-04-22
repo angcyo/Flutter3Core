@@ -370,12 +370,12 @@ class LiveStream<T> extends LiveStreamController<T> {
 /// [LiveStreamController]
 LiveStreamController<T?> $live<T>(
         [T? initialValue, bool autoClearValue = false]) =>
-    LiveStreamController<T?>(initialValue, autoClearValue: autoClearValue);
+    LiveStream<T?>(initialValue, autoClearValue: autoClearValue);
 
 /// [LiveStreamController]
 LiveStreamController<T?> $liveOnce<T>(
         [T? initialValue, bool autoClearValue = true]) =>
-    LiveStreamController<T?>(initialValue, autoClearValue: autoClearValue);
+    LiveStream<T?>(initialValue, autoClearValue: autoClearValue);
 
 extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   /// [RebuildWidget]
