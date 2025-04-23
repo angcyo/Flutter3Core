@@ -96,7 +96,8 @@ class _WheelDialogState extends State<WheelDialog>
           CoreDialogTitle(
             title: widget.title,
             titleWidget: widget.titleWidget,
-            enableTrailing: currentValueMixin != initialValueMixin,
+            enableTrailing: widget.initValue == null ||
+                currentValueMixin != initialValueMixin,
             enableLine: widget.enableTitleLine,
             trailingUseThemeColor: widget.enableTrailingUseThemeColor,
             useCloseIcon: widget.titleUseCloseIcon,
