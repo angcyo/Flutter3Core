@@ -36,22 +36,6 @@ const kNumberLabelPadding = EdgeInsets.only(
   bottom: 0,
 );
 
-/// label默认的填充
-/// 左边显示的文本
-const kLabelPadding = EdgeInsets.only(
-  left: kX,
-  right: kX,
-  top: kH,
-  bottom: kH,
-);
-
-const kSubLabelPadding = EdgeInsets.only(
-  left: kXx,
-  right: kX,
-  top: kH,
-  bottom: kH,
-);
-
 /// [kLabelPadding]的小号
 const kLabelPaddingMin = EdgeInsets.only(
   left: kH,
@@ -220,7 +204,7 @@ mixin TileMixin {
     String? label,
     TextStyle? labelStyle,
     bool themeStyle = true,
-    EdgeInsets? labelPadding = kLabelPadding,
+    EdgeInsets? labelPadding,
     EdgeInsets? padding,
     BoxConstraints? constraints = kLabelConstraints,
   }) {
@@ -232,7 +216,7 @@ mixin TileMixin {
                   (themeStyle ? globalTheme.textLabelStyle : null),
             )
             .constrainedBox(constraints)
-            .paddingInsets(labelPadding));
+            .paddingInsets(labelPadding ?? globalTheme.labelTilePadding));
     return widget?.paddingInsets(padding);
   }
 

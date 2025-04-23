@@ -134,6 +134,9 @@ class GlobalTheme {
   /// 线的颜色 #F6F6F6
   Color get lineColor => const Color(0xffececec);
 
+  /// 线的颜色 (更亮一点)
+  Color get lineLightColor => const Color(0xfff6f6f6);
+
   /// 线的颜色 (更暗一点)
   Color get lineDarkColor => const Color(0xffd8d8d8);
 
@@ -192,92 +195,81 @@ class GlobalTheme {
 
   double get xxxh => kXxx;
 
+  EdgeInsets get labelTilePadding => kLabelPadding;
+
   /// 按钮内边距
   EdgeInsets get buttonPadding =>
       EdgeInsets.symmetric(horizontal: x, vertical: h);
 
   /// 平板模式下, 对话框的约束
-  BoxConstraints get tabletDialogConstraints =>
-      BoxConstraints(
-          minWidth: 0,
-          maxWidth: math.min(screenWidth, screenHeight),
-          minHeight: 0,
-          maxHeight: double.infinity);
+  BoxConstraints get tabletDialogConstraints => BoxConstraints(
+      minWidth: 0,
+      maxWidth: math.min(screenWidth, screenHeight),
+      minHeight: 0,
+      maxHeight: double.infinity);
 
   //region 文本样式
 
   /// [_kDefaultFontSize] 14
-  TextStyle get textPrimaryStyle =>
-      const TextStyle(
+  TextStyle get textPrimaryStyle => const TextStyle(
         fontSize: 18,
         color: Color(0xff161B26),
       );
 
   /// 常规文本颜色
-  TextStyle get textGeneralStyle =>
-      const TextStyle(
+  TextStyle get textGeneralStyle => const TextStyle(
         fontSize: 14,
         color: Color(0xff182334),
       );
 
   /// 大号常规文本颜色
-  TextStyle get textBigGeneralStyle =>
-      const TextStyle(
+  TextStyle get textBigGeneralStyle => const TextStyle(
         fontSize: 28,
         color: Color(0xff182334),
       );
 
-  TextStyle get textTitleStyle =>
-      const TextStyle(
+  TextStyle get textTitleStyle => const TextStyle(
         fontSize: 17,
         color: Color(0xff333333),
       );
 
-  TextStyle get textSubTitleStyle =>
-      const TextStyle(
+  TextStyle get textSubTitleStyle => const TextStyle(
         fontSize: 14,
         color: Color(0xff929292),
       );
 
-  TextStyle get textBodyStyle =>
-      const TextStyle(
+  TextStyle get textBodyStyle => const TextStyle(
         fontSize: 14,
         color: Color(0xff333333),
       );
 
-  TextStyle get textSubStyle =>
-      const TextStyle(
+  TextStyle get textSubStyle => const TextStyle(
         fontSize: 12,
         color: Color(0xffB0B0B0),
       );
 
-  TextStyle get textDesStyle =>
-      const TextStyle(
+  TextStyle get textDesStyle => const TextStyle(
         fontSize: 12,
         color: Color(0xff949496),
       );
 
-  TextStyle get textPlaceStyle =>
-      const TextStyle(
+  TextStyle get textPlaceStyle => const TextStyle(
         fontSize: 12,
         color: Color(0xff6F6F6F),
       );
 
-  TextStyle get textDisableStyle =>
-      const TextStyle(
+  TextStyle get textDisableStyle => const TextStyle(
         fontSize: 14,
         color: Color(0xffb0b0b0),
       );
 
-  TextStyle get textLabelStyle =>
-      const TextStyle(
+  TextStyle get textLabelStyle => const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
         color: Color(0xff333333),
       );
 
-  TextStyle get textInfoStyle =>
-      const TextStyle(
+  TextStyle get textInfoStyle => const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         color: Color(0xff666666),
@@ -299,9 +291,7 @@ class GlobalTheme {
             ?.globalTheme;
       }
     }
-    return result ?? GlobalConfig
-        .of(context, depend: depend)
-        .globalTheme;
+    return result ?? GlobalConfig.of(context, depend: depend).globalTheme;
   }
 }
 
@@ -370,45 +360,56 @@ class GlobalThemeDark extends GlobalTheme {
   Color get icoDisableColor => const Color(0xffb0b0b0);
 
   @override
-  TextStyle get textPrimaryStyle =>
-      super.textPrimaryStyle.copyWith(
+  TextStyle get textPrimaryStyle => super.textPrimaryStyle.copyWith(
         color: const Color(0xfff6f6f6),
       );
 
   @override
-  TextStyle get textGeneralStyle =>
-      super.textGeneralStyle.copyWith(
+  TextStyle get textGeneralStyle => super.textGeneralStyle.copyWith(
         color: const Color(0xff6f6f6f),
       );
 
   @override
-  TextStyle get textBigGeneralStyle =>
-      const TextStyle(
+  TextStyle get textBigGeneralStyle => const TextStyle(
         fontSize: 28,
         color: Color(0xff6f6f6f),
       );
 
   @override
-  TextStyle get textTitleStyle =>
-      super.textTitleStyle.copyWith(
+  TextStyle get textTitleStyle => super.textTitleStyle.copyWith(
         color: const Color(0xfffcfbfc),
       );
 
   @override
-  TextStyle get textBodyStyle =>
-      super.textBodyStyle.copyWith(
+  TextStyle get textBodyStyle => super.textBodyStyle.copyWith(
         color: const Color(0xffa4a4a4),
       );
 
   @override
-  TextStyle get textDesStyle =>
-      super.textDesStyle.copyWith(
+  TextStyle get textDesStyle => super.textDesStyle.copyWith(
         color: const Color(0xff6f6f6f),
       );
 
   @override
-  TextStyle get textLabelStyle =>
-      super.textLabelStyle.copyWith(
+  TextStyle get textLabelStyle => super.textLabelStyle.copyWith(
         color: const Color(0xff787878),
       );
 }
+
+//--
+
+/// label默认的填充
+/// 左边显示的文本
+const kLabelPadding = EdgeInsets.only(
+  left: kX,
+  right: kX,
+  top: kH,
+  bottom: kH,
+);
+
+const kSubLabelPadding = EdgeInsets.only(
+  left: kXx,
+  right: kX,
+  top: kH,
+  bottom: kH,
+);
