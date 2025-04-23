@@ -17,10 +17,15 @@ class LabelNumberSliderTile extends StatefulWidget {
   final Widget? labelWidget;
 
   /// value
-  final num value;
+  /// 不指定[value]时, 则使用[valueText]显示
+  final num? value;
   final num? minValue;
   final num? maxValue;
   final int maxDigits;
+  final String? valueText;
+
+  /// 分段数, 必须>0, 表示把滑块分成多少段.
+  /// null: 表示连续的, 不分段
   final int? divisions;
   final NumType? _numType;
 
@@ -67,6 +72,7 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.labelWidget,
     //--
     this.value = 0.0,
+    this.valueText,
     this.minValue,
     this.maxValue,
     this.maxDigits = 2,
@@ -85,7 +91,12 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.valueIndicatorTextStyle,
     this.thumbColor,
     this.thumbShape,
-  }) : _numType = numType ?? (value is int ? NumType.i : NumType.d);
+  }) : _numType = numType ??
+            (value != null
+                ? (value is int ? NumType.i : NumType.d)
+                : (minValue != null
+                    ? (minValue is int ? NumType.i : NumType.d)
+                    : (maxValue is int ? NumType.i : NumType.d)));
 
   @override
   State<LabelNumberSliderTile> createState() => _LabelNumberSliderTileState();
@@ -93,8 +104,8 @@ class LabelNumberSliderTile extends StatefulWidget {
 
 class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     with TileMixin {
-  num _initialValue = 0;
-  num _currentValue = 0;
+  num? _initialValue = 0;
+  num? _currentValue = 0;
 
   @override
   void initState() {
@@ -117,13 +128,15 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
-    final label = buildLabelWidget(
+    final labelWidget = buildLabelWidget(
       context,
       label: widget.label,
       labelWidget: widget.labelWidget,
     );
-    final numberStr = formatNumber(_currentValue, numType: widget._numType);
-    final number = widget.showNumber
+    final numberStr = _currentValue == null
+        ? widget.valueText
+        : formatNumber(_currentValue!, numType: widget._numType);
+    final numberWidget = widget.showNumber
         ? isDesktopOrWeb
             ? buildNumberInputWidget(
                 context,
@@ -135,7 +148,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                 onChanged: (value) {
                   if (value != null) {
                     _currentValue = value;
-                    widget.onValueChanged?.call(_currentValue);
+                    widget.onValueChanged?.call(value);
                     updateState();
                   }
                 },
@@ -144,17 +157,18 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                 context,
                 numberStr,
                 onTap: () async {
-                  final value =
-                      await context.showWidgetDialog(NumberKeyboardDialog(
-                    number: _currentValue,
-                    minValue: widget.minValue,
-                    maxValue: widget.maxValue,
-                    maxDigits: widget.maxDigits,
-                    numType: widget._numType,
-                  ));
+                  final value = await context.showWidgetDialog(
+                    NumberKeyboardDialog(
+                      number: _currentValue ?? widget.minValue,
+                      minValue: widget.minValue,
+                      maxValue: widget.maxValue,
+                      maxDigits: widget.maxDigits,
+                      numType: widget._numType,
+                    ),
+                  );
                   if (value != null) {
                     _currentValue = value;
-                    widget.onValueChanged?.call(_currentValue);
+                    widget.onValueChanged?.call(value);
                     updateState();
                   }
                 },
@@ -163,18 +177,19 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
 
     //
     final top = [
-      label?.expanded(),
-      number?.paddingOnly(right: kX),
+      labelWidget?.expanded(),
+      numberWidget?.paddingOnly(right: kX),
     ].row();
-    final value = _currentValue.toDouble();
     final minValue = widget.minValue?.toDouble() ?? 0.0;
     final maxValue = widget.maxValue?.toDouble() ?? 1.0;
+    double value = _currentValue?.toDouble() ?? minValue;
     if (value >= minValue && value <= maxValue) {
     } else {
       assert(() {
         debugger();
         return true;
       }());
+      value = value.clamp(minValue, maxValue);
     }
     final bottom = buildSliderWidget(
       context,
@@ -201,9 +216,9 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
         updateState();
       },
       onChangeEnd: (value) {
-        num result = _currentValue;
+        num result = _currentValue ?? value;
         if (widget._numType == NumType.i) {
-          result = _currentValue.round();
+          result = (_currentValue ?? value).round();
         }
         widget.onValueChanged?.call(result);
       },

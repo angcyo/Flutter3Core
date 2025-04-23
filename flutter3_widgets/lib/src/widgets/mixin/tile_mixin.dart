@@ -745,7 +745,7 @@ mixin TileMixin {
       decoration: decoration,
       constraints: constraints,
       padding: padding,
-      child: (numberWidget ?? "$number".text()).center(),
+      child: (numberWidget ?? "${number ?? ""}".text()).center(),
     ).ink(
       () {
         onTap?.call();

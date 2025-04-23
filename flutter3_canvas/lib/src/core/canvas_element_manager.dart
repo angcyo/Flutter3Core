@@ -866,9 +866,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 选中所有元素
   @api
   void selectAllElement({
+    List<ElementPainter>? elements,
     bool followPainter = true,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
+    elements ??= this.elements;
     resetSelectedElementList(elements, selectType: selectType);
     if (followPainter) {
       canvasDelegate.followRect(rect: elements.allElementBounds);
