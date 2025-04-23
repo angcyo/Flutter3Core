@@ -32,8 +32,15 @@ mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
   /// 重写此方法, 初始化[initialValueMixin].[currentValueMixin]
   @overridePoint
   void updateInitialValueMixin() {
-    initialValueMixin = getInitialValueMixin();
-    currentValueMixin = initialValueMixin;
+    try {
+      initialValueMixin = getInitialValueMixin();
+      currentValueMixin = initialValueMixin;
+    } catch (e) {
+      assert(() {
+        print(e);
+        return true;
+      }());
+    }
   }
 
   /// 重写此方法, 获取初始化的[initialValueMixin].值
@@ -90,6 +97,10 @@ mixin ValueMixin {
 
   /// 值列表
   List? get values => null;
+
+  /// 当[initValue]为空时, 使用此部件占位
+  @defInjectMark
+  Widget? get valueNullWidget => null;
 
   /// 值对应的小部件列表 没有使用[Text]小部件自动生成对应的小部件
   List<Widget>? get valuesWidget => null;
