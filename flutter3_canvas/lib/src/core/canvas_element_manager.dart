@@ -106,6 +106,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 获取包裹所有元素[elements]的边界
+  @dp
+  @sceneCoordinate
   Rect? get allElementsBounds {
     final list = elements;
     if (isNullOrEmpty(list)) {

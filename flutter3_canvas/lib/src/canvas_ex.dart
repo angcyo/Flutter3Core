@@ -45,6 +45,8 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
   //--
 
   /// 获取所有元素的边界
+  @dp
+  @sceneCoordinate
   Rect? get allElementBounds {
     if (isNil(this)) {
       return Rect.zero;

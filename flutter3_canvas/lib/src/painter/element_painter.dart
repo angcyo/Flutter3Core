@@ -2393,6 +2393,7 @@ class PaintProperty with EquatableMixin {
 
   /// 全属性后的边界, 是旋转后的[rect]的外边界
   /// 更贴切的边界是[paintPath]的边界[PathEx.getExactBounds]
+  @dp
   @sceneCoordinate
   Rect get paintBounds => operateMatrix.mapRect(rect);
 
@@ -2411,6 +2412,7 @@ class PaintProperty with EquatableMixin {
   /// 获取元素的边界
   /// [resetElementAngle] 是否要获取重置角度后的元素边界
   /// [ElementPainter.elementsBounds]
+  @dp
   @sceneCoordinate
   Rect getBounds(bool resetElementAngle) {
     return resetElementAngle ? paintBounds : paintScaleRotateBounds;
