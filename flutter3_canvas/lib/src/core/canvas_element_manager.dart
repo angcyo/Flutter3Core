@@ -982,6 +982,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     return null;
   }
 
+  /// [exportSingleElement] 是否拆除[ElementGroupPainter]元素
   /// [getAllElement]
   /// [getAllSelectedElement]
   @api
@@ -995,7 +996,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
       return result;
     }
-    return selectComponent.children;
+    return elements /*selectComponent.children*/;
   }
 
   /// 是否选中了指定元素
