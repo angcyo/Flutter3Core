@@ -69,28 +69,34 @@ void main(List<String> arguments) async {
 
           final tokenJson = jsonDecode(tokenText);
 
-          while (await _uploadAppFile(tokenJson["data"], file)) {
-            count++;
-            await _writeUploadRecord(folder, file);
-            final url =
-                await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
-            if (useFeishuWebhook != false &&
-                index == length - 1 &&
-                url != null) {
-              //只在最后一个文件上传成功之后, 进行飞书webhook通知
-              final webhook =
-                  localYaml["feishu_webhook"] ?? yaml["feishu_webhook"];
-              final logUrl =
-                  localYaml["change_log_url"] ?? yaml["change_log_url"];
-              await sendFeishuWebhookInteractive(
-                webhook,
-                _assembleVersionTitle(versionMap),
-                versionMap?["versionDes"],
-                linkUrl: url,
-                changeLogUrl: logUrl,
-              );
+          int loopCount = 0;
+          while (loopCount < 5) {
+            final result = await _uploadAppFile(tokenJson["data"], file);
+            if (result) {
+              await _writeUploadRecord(folder, file);
+              final url =
+                  await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
+              if (useFeishuWebhook != false &&
+                  index == length - 1 &&
+                  url != null) {
+                //只在最后一个文件上传成功之后, 进行飞书webhook通知
+                final webhook =
+                    localYaml["feishu_webhook"] ?? yaml["feishu_webhook"];
+                final logUrl =
+                    localYaml["change_log_url"] ?? yaml["change_log_url"];
+                await sendFeishuWebhookInteractive(
+                  webhook,
+                  _assembleVersionTitle(versionMap),
+                  versionMap?["versionDes"],
+                  linkUrl: url,
+                  changeLogUrl: logUrl,
+                );
+              }
+              count++;
+              break;
+            } else {
+              loopCount++;
             }
-            break;
           }
         } else {
           colorLog("不支持的文件->$filePath");
