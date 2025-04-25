@@ -8,22 +8,37 @@ part of '../../flutter3_basics.dart';
 /// 支持自动清理
 /// 支持错误状态存储
 class LiveStreamController<T> {
-  /// 最后一个值
-  T latestValue;
-
-  /// 最后一个错误, 在每次[add]时, 清空
-  Object? latestError;
-
   /// 是否自动清空最后一个值
+  @configProperty
   bool autoClearValue = false;
 
   /// 如果上一次是null, 这一次也是null, 是否还要通知?
+  @configProperty
   bool ignoreLastNullNotify = true;
+
+  /// 当有值更新时, 会调用此方法
+  @configProperty
+  ValueCallback<T>? onUpdateValueAction;
+
+  //--
+
+  /// 最后一个值
+  @output
+  T latestValue;
+
+  /// 最后一个错误, 在每次[add]时, 清空
+  @output
+  Object? latestError;
+
+  //--
 
   final StreamController<T> _controller = StreamController<T>.broadcast();
 
-  LiveStreamController(T initialValue, {this.autoClearValue = false})
-      : latestValue = initialValue;
+  LiveStreamController(
+    T initialValue, {
+    this.autoClearValue = false,
+    this.onUpdateValueAction,
+  }) : latestValue = initialValue;
 
   /// 流
   Stream<T> get stream {
@@ -60,6 +75,14 @@ class LiveStreamController<T> {
     }
     latestValue = newValue;
     _controller.add(newValue);
+    try {
+      onUpdateValueAction?.call(newValue);
+    } catch (e) {
+      assert(() {
+        print(e);
+        return true;
+      }());
+    }
     if (autoClearValue) {
       try {
         dynamic clear;
