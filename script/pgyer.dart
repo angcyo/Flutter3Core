@@ -68,8 +68,8 @@ void main(List<String> arguments) async {
               buildUpdateDescription: versionMap?["versionDes"]);
 
           final tokenJson = jsonDecode(tokenText);
-          final succeed = await _uploadAppFile(tokenJson["data"], file);
-          if (succeed) {
+
+          while (await _uploadAppFile(tokenJson["data"], file)) {
             count++;
             await _writeUploadRecord(folder, file);
             final url =
@@ -90,6 +90,7 @@ void main(List<String> arguments) async {
                 changeLogUrl: logUrl,
               );
             }
+            break;
           }
         } else {
           colorLog("不支持的文件->$filePath");
@@ -215,16 +216,22 @@ Future<bool> _uploadAppFile(dynamic tokenData, File file) async {
   request.files.add(filePart);
 
   // 发送请求并获取响应
-  final response = await request.send();
+  try {
+    final response = await request.send();
 
-  // 读取响应内容
-  final responseBody = await response.stream.bytesToString();
+    // 读取响应内容
+    final responseBody = await response.stream.bytesToString();
 
-  print(responseBody);
-  if (response.statusCode == 204) {
-    colorLog("上传成功->${file.path}");
+    print(responseBody);
+    if (response.statusCode == 204) {
+      colorLog("上传成功->${file.path}");
+    }
+    return response.statusCode == 204;
+  } catch (e) {
+    print(e);
+    colorErrorLog("上传失败->${file.path}");
+    return false;
   }
-  return response.statusCode == 204;
 }
 
 /// 检查应用是否发布
