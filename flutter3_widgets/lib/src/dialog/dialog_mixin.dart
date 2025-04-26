@@ -387,7 +387,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         },
       ).invisible(invisible: invisibleCancel),
       (titleWidget ??
-              title?.text(
+              (title ?? "").text(
                 style: globalTheme.textTitleStyle
                     .copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
