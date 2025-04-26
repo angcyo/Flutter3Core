@@ -152,6 +152,7 @@ mixin ValueMixin {
     if (valuesWidget == null) {
       final globalTheme = GlobalTheme.of(context);
       result = values?.mapIndex((data, index) {
+        //widget
         final widget = widgetOf(context, data, tryTextWidget: false);
         if (widget != null) {
           return transformValueWidget?.call(context, widget, data) ?? widget;
@@ -163,6 +164,7 @@ mixin ValueMixin {
               : null,
           /*fontSize: 14,*/
         );
+        //尝试text小部件
         final textWidget = textOf(data)!.text(
           style: index == selectedIndex
               ? selectedTextStyle ?? textStyle

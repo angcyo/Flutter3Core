@@ -88,6 +88,7 @@ class _WheelDialogState extends State<WheelDialog>
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
+    //构建[values]对应的小部件
     WidgetList? children = widget.buildValuesWidgetListMixin(context);
 
     return widget.buildBottomChildrenDialog(
