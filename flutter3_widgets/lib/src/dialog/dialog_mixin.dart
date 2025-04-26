@@ -398,9 +398,9 @@ mixin DialogMixin implements TranslationTypeImpl {
         useThemeColor: useConfirmThemeColor,
         enable: enableConfirm,
         widget: confirmWidget,
-        onTap: () {
-          onConfirm?.call();
-          closeDialogIf(context);
+        onTap: () async {
+          final result = await onConfirm?.call();
+          closeDialogIf(context, result: result);
         },
       ).invisible(invisible: invisibleConfirm),
     ].row()!;
