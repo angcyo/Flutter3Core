@@ -73,7 +73,7 @@ class VersionMatcher {
       return false;
     }
     for (var range in rangeList) {
-      if (version >= range.min && version <= range.max) {
+      if (version >= range.minInt && version <= range.maxInt) {
         return true;
       }
     }
@@ -83,8 +83,12 @@ class VersionMatcher {
 
 /// 版本规则数据结构[min~max]
 class VersionRange {
-  final int min;
-  final int max;
+  final double min;
+  final double max;
+
+  int get minInt => min.round();
+
+  int get maxInt => max.round();
 
   VersionRange(this.min, this.max);
 
@@ -119,18 +123,21 @@ extension VersionStringEx on String {
   /// 格式 [ x x~ ~x xxx~xxx xxx~xxx]
   VersionRange? get range {
     if (this == "*") {
-      return VersionRange(intMinValue, intMaxValue);
+      return VersionRange(
+        intMinValue.roundToDouble(),
+        intMaxValue.roundToDouble(),
+      );
     } else {
       final rangeString = split(VersionMatcher._VS);
       if (rangeString.length == 1) {
-        final min = int.parse(rangeString[0]);
+        final min = double.parse(rangeString[0]);
         if (have("*")) {
           if (startsWith(VersionMatcher._VS)) {
             //[~xxx] 的格式
-            return VersionRange(intMinValue, min);
+            return VersionRange(intMinValue.roundToDouble(), min);
           } else {
             //[x~] 的格式
-            return VersionRange(min, intMaxValue);
+            return VersionRange(min, intMaxValue.roundToDouble());
           }
         } else {
           //[x] 的格式
@@ -139,8 +146,9 @@ extension VersionStringEx on String {
       } else if (rangeString.length >= 2) {
         //[x~]
         //[~x]
-        final min = int.tryParse(rangeString[0]) ?? 0;
-        final max = int.tryParse(rangeString[1]) ?? intMax32Value;
+        final min = double.tryParse(rangeString[0]) ?? 0.0;
+        final max =
+            double.tryParse(rangeString[1]) ?? intMax32Value.roundToDouble();
         return VersionRange(min, max);
       }
     }
