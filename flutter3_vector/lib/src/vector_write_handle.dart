@@ -420,6 +420,7 @@ class SvgWriteHandle with VectorWriteMixin {
 
 /// 输出二维点位数组
 class PointWriteHandle with VectorWriteMixin {
+  /// 每当枚举到的值时, 都转换成此单位, 不指定则不转换
   /// [IUnit.mm]
   /// [GCodeWriteHandle.unit]
   IUnit? unit = IUnit.mm;
@@ -592,8 +593,12 @@ class GCodeWriteHandle with VectorWriteMixin {
 
   /// 打开主轴
   /// [power] 激光功率
-  static String? gcodeToolOn([bool auto = false, int? power]) =>
-      auto ? null : "M3S${power ?? 255}";
+  static String? gcodeToolOn({
+    bool auto = false,
+    int? power,
+    String space = kGCodeSpace,
+  }) =>
+      auto ? null : "M3${space}S${power ?? 255}";
 
   /// 关闭主轴
   static String? gcodeToolOff([bool auto = false]) => auto ? null : "M5S0";
@@ -888,7 +893,7 @@ extension VectorPathEx on Path {
     footer ??=
         autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
     toolOn ??= autoLaser != null
-        ? GCodeWriteHandle.gcodeToolOn(autoLaser, speed)
+        ? GCodeWriteHandle.gcodeToolOn(auto: autoLaser, power: speed)
         : null;
     toolOff ??=
         autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
@@ -1054,7 +1059,7 @@ extension VectorPathEx on Path {
     footer ??=
         autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
     toolOn ??= autoLaser != null
-        ? GCodeWriteHandle.gcodeToolOn(autoLaser, speed)
+        ? GCodeWriteHandle.gcodeToolOn(auto: autoLaser, power: speed)
         : null;
     toolOff ??=
         autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
@@ -1185,17 +1190,28 @@ extension VectorListPathEx on List<Path> {
     bool? autoLaser, //必须指定才会自动生成
     GCodeWriteHandle? handle,
     int digits = 3,
+    //--
+    String space = kGCodeSpace,
   }) {
     if (isNil(this)) {
       return null;
     }
     header ??= autoLaser != null
-        ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
+        ? GCodeWriteHandle.gcodeHeader(
+            power,
+            speed,
+            auto: autoLaser,
+            space: space,
+          )
         : null;
     footer ??=
         autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
     toolOn ??= autoLaser != null
-        ? GCodeWriteHandle.gcodeToolOn(autoLaser, speed)
+        ? GCodeWriteHandle.gcodeToolOn(
+            auto: autoLaser,
+            power: speed,
+            space: space,
+          )
         : null;
     toolOff ??=
         autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
@@ -1203,6 +1219,7 @@ extension VectorListPathEx on List<Path> {
     final buffer = StringBuffer();
     handle ??= GCodeWriteHandle();
     handle
+      ..space = space
       ..digits = digits
       ..toolOn = toolOn
       ..toolOff = toolOff;
@@ -1305,7 +1322,7 @@ extension VectorListPathEx on List<Path> {
     footer ??=
         autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
     toolOn ??= autoLaser != null
-        ? GCodeWriteHandle.gcodeToolOn(autoLaser, speed)
+        ? GCodeWriteHandle.gcodeToolOn(auto: autoLaser, power: speed)
         : null;
     toolOff ??=
         autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
