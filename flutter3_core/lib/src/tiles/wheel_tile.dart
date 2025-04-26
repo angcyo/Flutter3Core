@@ -186,7 +186,7 @@ class LabelWheelTile extends StatefulWidget {
   /// wheel 选中项的颜色
   final Color? wheelSelectedIndexColor;
 
-  /// 拦截点击事件
+  /// 拦截默认的点击事件
   final GestureTapCallback? onContainerTap;
 
   /// [WheelDialog.title]对话框的标题, 默认[label]
