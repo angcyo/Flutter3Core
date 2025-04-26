@@ -2036,6 +2036,7 @@ extension WidgetEx on Widget {
 
   /// 最小约束
   Widget min({
+    double? minSize,
     double? minWidth = kInteractiveHeight,
     double? minHeight = kMinInteractiveHeight,
     EdgeInsetsGeometry? margin =
@@ -2046,8 +2047,8 @@ extension WidgetEx on Widget {
     return paddingInsets(margin)
         .align(alignment)
         .constrainedBox(BoxConstraints(
-          minWidth: minWidth ?? 0,
-          minHeight: minHeight ?? 0,
+          minWidth: minSize ?? minWidth ?? 0,
+          minHeight: minSize ?? minHeight ?? 0,
         ))
         .paddingInsets(padding);
   }
@@ -2056,11 +2057,18 @@ extension WidgetEx on Widget {
   /// [constrainedBox]
   /// [ConstrainedBox]
   Widget constrainedMin({
+    double? minSize,
     double? minWidth,
     double? minHeight,
+    //
+    double? maxSize,
     double? maxWidth,
     double? maxHeight,
   }) {
+    minWidth ??= minSize;
+    minHeight ??= minSize;
+    maxWidth ??= maxSize;
+    maxHeight ??= maxSize;
     if (maxWidth == null &&
         maxHeight == null &&
         minWidth == null &&
