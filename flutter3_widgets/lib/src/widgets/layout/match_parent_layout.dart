@@ -106,7 +106,7 @@ extension MatchParentLayoutEx on Widget {
   /// [matchBoth] 同时设置2个值
   /// [WrapContentLayoutEx.wrapContent]
   /// [MatchParentLayoutEx.matchParent]
-  MatchParentLayout matchParent({
+  Widget matchParent({
     bool? matchBoth,
     bool matchWidth = true,
     bool matchHeight = true,
@@ -124,26 +124,28 @@ extension MatchParentLayoutEx on Widget {
   /// [matchParent]
   /// [matchParentWidth]
   /// [matchParentHeight]
-  MatchParentLayout matchParentWidth({
+  Widget matchParentWidth({
     bool matchWidth = true,
     bool matchHeight = false,
     AlignmentDirectional alignment = AlignmentDirectional.center,
   }) =>
       matchParent(
-          matchWidth: matchWidth,
-          matchHeight: matchHeight,
-          alignment: alignment);
+        matchWidth: matchWidth,
+        matchHeight: matchHeight,
+        alignment: alignment,
+      );
 
   /// [matchParent]
   /// [matchParentWidth]
   /// [matchParentHeight]
-  MatchParentLayout matchParentHeight({
+  Widget matchParentHeight({
     bool matchWidth = false,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
   }) =>
       matchParent(
-          matchWidth: matchWidth,
-          matchHeight: matchHeight,
-          alignment: alignment);
+        matchWidth: matchWidth,
+        matchHeight: matchHeight,
+        alignment: alignment,
+      );
 }

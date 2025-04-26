@@ -2141,6 +2141,8 @@ extension WidgetEx on Widget {
         child: this,
       );
 
+  Widget ih() => IntrinsicHeight(child: this);
+
   /// [FittedBox]
   Widget fittedBox({
     BoxFit? fit = BoxFit.contain,

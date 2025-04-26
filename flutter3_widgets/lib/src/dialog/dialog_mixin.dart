@@ -207,6 +207,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Widget body;
     children = children.filterNull();
 
+    //debugger();
     if (height != null) {
       contentMinHeight = null;
       contentMaxHeight = null;
@@ -228,9 +229,12 @@ mixin DialogMixin implements TranslationTypeImpl {
     }
 
     if (useScroll) {
+      //顶部固定的内容
       final fixedChildren = children.subList(0, scrollChildIndex);
+      //滚动的内容
       final scrollChildren = children.subList(scrollChildIndex);
 
+      //debugger();
       Widget? scrollBody = useRScroll
           ? scrollChildren.rScroll(
               axis: Axis.vertical,
@@ -244,6 +248,8 @@ mixin DialogMixin implements TranslationTypeImpl {
             );
       //约束高度
       scrollBody = scrollBody?.constrainedMax(
+        minWidth: null,
+        maxWidth: null,
         minHeight: contentMinHeight,
         maxHeight: contentMaxHeight,
       );
@@ -260,6 +266,8 @@ mixin DialogMixin implements TranslationTypeImpl {
                     stackAfterWidget ??
                     stackBeforeWidget)
                 ?.constrainedMax(
+          minWidth: null,
+          maxWidth: null,
           minHeight: contentMinHeight,
           maxHeight: contentMaxHeight,
         );
@@ -290,6 +298,8 @@ mixin DialogMixin implements TranslationTypeImpl {
             crossAxisAlignment: crossAxisAlignment,
           )!
           .constrainedMax(
+            minWidth: null,
+            maxWidth: null,
             minHeight: contentMinHeight,
             maxHeight: contentMaxHeight,
           );

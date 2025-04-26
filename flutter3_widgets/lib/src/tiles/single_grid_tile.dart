@@ -59,6 +59,11 @@ class SingleGridTile extends StatelessWidget with TileMixin {
   /// 是否激活状态
   final bool enable;
 
+  //--
+
+  /// 显示在背景的小部件
+  final Widget? bgWidget;
+
   const SingleGridTile({
     super.key,
     //--
@@ -83,6 +88,8 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     this.margin,
     this.onTap,
     this.enable = true,
+    //--
+    this.bgWidget,
   });
 
   @override
@@ -138,13 +145,23 @@ class SingleGridTile extends StatelessWidget with TileMixin {
                 .paddingAll(kM))
         ?.colorFiltered(color: enable ? null : globalTheme.icoDisableColor);
 
+    //--
+    Widget body = [
+      if (top != null) top,
+      if (bottom != null) bottom,
+    ].column(mainAxisAlignment: MainAxisAlignment.center)!;
+
+    if (bgWidget != null) {
+      body = [bgWidget, body].stack(
+        alignment: Alignment.center,
+        fit: StackFit.expand,
+      )!;
+    }
+
     return Padding(
       padding:
           padding ?? const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
-      child: [
-        if (top != null) top,
-        if (bottom != null) bottom,
-      ].column()!.constrainedMin(minHeight: minHeight),
+      child: body.constrainedMin(minHeight: minHeight),
     ).inkWellCircle(onTap, enable: enable).material().paddingInsets(margin);
   }
 }
