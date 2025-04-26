@@ -294,6 +294,7 @@ extension RScrollViewEx on WidgetNullList {
     ScrollPhysics? physics = kScrollPhysics,
     ChildrenBuilder? childrenBuilder,
     Listenable? updateSignal,
+    bool shrinkWrap = false,
   }) {
     return RScrollView(
       controller: controller,
@@ -303,6 +304,7 @@ extension RScrollViewEx on WidgetNullList {
       physics: physics,
       childrenBuilder: childrenBuilder,
       updateSignal: updateSignal,
+      shrinkWrap: shrinkWrap,
       children: filterNull(),
     );
   }
