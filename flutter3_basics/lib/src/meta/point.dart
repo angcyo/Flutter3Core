@@ -224,6 +224,15 @@ extension ListPointEx on List<Point> {
     return result;
   }
 
+  /// 转换成[Offset]
+  List<Offset> toOffsetList() {
+    List<Offset> result = [];
+    for (final point in this) {
+      result.add(Offset(point.x, point.y));
+    }
+    return result;
+  }
+
   /// x,y,x,y...
   String toPointText() {
     StringBuffer buffer = StringBuffer();
@@ -240,6 +249,15 @@ extension ListListPointEx on List<List<Point>> {
     List<List<double>> result = [];
     for (final pointList in this) {
       result.add(pointList.toPointList());
+    }
+    return result;
+  }
+
+  /// 转换成[Offset]
+  List<List<Offset>> toOffsetList() {
+    List<List<Offset>> result = [];
+    for (final pointList in this) {
+      result.add(pointList.toOffsetList());
     }
     return result;
   }
