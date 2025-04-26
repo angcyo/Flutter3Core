@@ -652,7 +652,7 @@ extension WidgetEx on Widget {
     HitTestBehavior? behavior = HitTestBehavior.translucent,
     GestureTapCallback? onTap,
   }) =>
-      onLongPress == null || !enable
+      (onLongPress == null && onTap == null) || !enable
           ? this
           : GestureDetector(
               onLongPress: onLongPress,
