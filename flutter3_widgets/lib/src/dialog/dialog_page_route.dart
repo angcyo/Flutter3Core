@@ -20,6 +20,7 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
     super.barrierDismissible,
     String? barrierLabel,
     bool useSafeArea = true,
+    bool maintainBottomViewPadding = false /*是否保留系统默认的底部填充, 否则需要自行填充底部内容*/,
     this.useBarrierColorAnimate = true,
     super.settings,
     super.anchorPoint,
@@ -44,7 +45,7 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
             Widget dialog = themes?.wrap(pageChild) ?? pageChild;
             return dialog.safeArea(
               useSafeArea: useSafeArea,
-              maintainBottomViewPadding: false,
+              maintainBottomViewPadding: maintainBottomViewPadding,
             );
           },
           transitionBuilder: (

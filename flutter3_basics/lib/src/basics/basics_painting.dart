@@ -675,9 +675,12 @@ extension CanvasEx on Canvas {
 
   /// 缩放[Path]绘制到指定的目标内
   /// [dst] 元素需要绘制的区域,也是元素最终要绘制到的位置, 会根据[fit].[alignment]自动调整
+  /// [dstPadding] 元素内边距, 会在[dst]内往内偏移
+  /// [paintStrokeWidthSuppressScale] 画笔粗细是否要抑制path的缩放
+  ///
   /// [drawInRect]
   void drawPathIn(
-    Path? path,
+    List<Path>? pathList,
     Rect? pathBounds,
     Rect? dst, {
     Paint? paint,
@@ -688,7 +691,7 @@ extension CanvasEx on Canvas {
     Alignment? alignment = Alignment.center,
     bool? paintStrokeWidthSuppressScale = true,
   }) {
-    if (path == null) {
+    if (pathList == null || pathList.isEmpty) {
       return;
     }
     paint ??= Paint()
@@ -697,10 +700,12 @@ extension CanvasEx on Canvas {
       ..strokeJoin = StrokeJoin.round
       ..style = ui.PaintingStyle.stroke;
     if (dst == null) {
-      drawPath(path, paint);
+      for (final path in pathList) {
+        drawPath(path, paint);
+      }
       return;
     }
-    pathBounds ??= path.getExactBounds();
+    pathBounds ??= pathList.getExactBounds();
 
     final targetSize = pathBounds.size;
     final Size fitTargetSize;
@@ -740,7 +745,8 @@ extension CanvasEx on Canvas {
     final scaleMatrix = Matrix4.identity()
       ..scaleBy(sx: sx, sy: sy, anchor: pathBounds.topLeft);
 
-    final targetPath = path.transformPath(translateMatrix * scaleMatrix);
+    final targetPathList =
+        pathList.transformPath(translateMatrix * scaleMatrix);
     withSave(() {
       //着色
       if (paint != null) {
@@ -751,7 +757,9 @@ extension CanvasEx on Canvas {
           final scale = math.min(sx, sy);
           paint.strokeWidth = paint.strokeWidth / scale;
         }
-        drawPath(targetPath, paint);
+        for (final targetPath in targetPathList) {
+          drawPath(targetPath, paint);
+        }
       }
     });
   }

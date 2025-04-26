@@ -9,6 +9,9 @@ class PathWidget extends LeafRenderObjectWidget {
   /// The path to render.
   final Path? path;
 
+  /// 多个路径
+  final List<Path>? pathList;
+
   final ui.PaintingStyle style;
 
   /// The fill color to use when rendering the path.
@@ -21,42 +24,49 @@ class PathWidget extends LeafRenderObjectWidget {
   /// 着色器
   final Shader? shader;
 
+  /// 绘制填充的大小
+  final EdgeInsets? padding;
+
   const PathWidget({
     super.key,
     this.path,
+    this.pathList,
     this.style = ui.PaintingStyle.stroke,
     this.color = Colors.black,
     this.fit = BoxFit.contain,
     this.alignment = Alignment.center,
     this.shader,
+    this.padding,
   });
 
   @override
   RenderObject createRenderObject(BuildContext context) => PathRenderBox(
-        path: path,
+        pathList: pathList ?? (path != null ? [path!] : null),
         style: style,
         color: color,
         fit: fit,
         alignment: alignment,
         shader: shader,
+        padding: padding,
       );
 
   @override
   void updateRenderObject(BuildContext context, PathRenderBox renderObject) {
     renderObject
-      ..updatePath(path)
+      ..updatePath(pathList ?? (path != null ? [path!] : null))
       ..style = style
       ..color = color
       ..fit = fit
       ..alignment = alignment
       ..shader = shader
+      ..padding = padding
       ..markNeedsPaint();
   }
 }
 
 class PathRenderBox extends RenderBox {
   /// The path to render.
-  Path? path;
+  List<Path>? pathList;
 
   ui.PaintingStyle style;
 
@@ -72,20 +82,24 @@ class PathRenderBox extends RenderBox {
 
   Rect? _pathBounds;
 
+  /// 绘制填充的大小
+  EdgeInsets? padding;
+
   PathRenderBox({
-    this.path,
+    this.pathList,
     this.style = ui.PaintingStyle.stroke,
     this.color = Colors.black,
     this.fit = BoxFit.contain,
     this.alignment = Alignment.center,
     this.shader,
+    this.padding,
   });
 
-  void updatePath(Path? newPath) {
-    if (path != newPath) {
+  void updatePath(List<Path>? newPathList) {
+    if (pathList != newPathList) {
       _pathBounds = null;
     }
-    path = newPath;
+    pathList = newPathList;
     markNeedsPaint();
   }
 
@@ -93,8 +107,8 @@ class PathRenderBox extends RenderBox {
   void performLayout() {
     final constraints = this.constraints;
     //debugger();
-    if (path != null) {
-      _pathBounds ??= path!.getExactBounds();
+    if (pathList != null) {
+      _pathBounds ??= pathList!.getExactBounds();
       final pathSize = _pathBounds!.size;
       assert(() {
         if (pathSize.isEmpty) {
@@ -116,11 +130,12 @@ class PathRenderBox extends RenderBox {
   @override
   void paint(PaintingContext context, ui.Offset offset) {
     super.paint(context, offset);
-    if (path != null) {
+    if (pathList != null) {
       final canvas = context.canvas;
-      canvas.drawPathIn(path, _pathBounds, offset & size,
+      canvas.drawPathIn(pathList, _pathBounds, offset & size,
           fit: fit,
           alignment: alignment,
+          dstPadding: padding,
           paint: Paint()
             ..color = color
             ..strokeCap = StrokeCap.round

@@ -442,6 +442,7 @@ extension DialogExtension on BuildContext {
   /// [barrierColor] 障碍的颜色, 默认是[Colors.black54]
   ///
   /// [useSafeArea] 是否使用安全区域
+  /// [maintainBottomViewPadding] 是否保留系统默认的底部填充, 否则需要自行填充底部内容
   /// [popLast] pop弹出最后一个路由
   ///
   /// [DialogRoute]
@@ -454,6 +455,7 @@ extension DialogExtension on BuildContext {
     Color? barrierColor = Colors.black54,
     String? barrierLabel,
     bool useSafeArea = true,
+    bool maintainBottomViewPadding = false,
     bool useRootNavigator = true,
     RouteSettings? routeSettings,
     TraversalEdgeBehavior? traversalEdgeBehavior,
@@ -480,6 +482,7 @@ extension DialogExtension on BuildContext {
       barrierColor: barrierColor,
       barrierLabel: barrierLabel,
       useSafeArea: useSafeArea,
+      maintainBottomViewPadding: maintainBottomViewPadding,
       useRootNavigator: useRootNavigator,
       routeSettings: routeSettings,
       traversalEdgeBehavior: traversalEdgeBehavior,
@@ -738,6 +741,7 @@ extension NavigatorStateDialogEx on NavigatorState {
   /// 内部使用路由实现的[NavigatorState.push]
   ///
   /// [useSafeArea] 是否使用安全区域
+  /// [maintainBottomViewPadding] 是否保留系统默认的底部填充, 否则需要自行填充底部内容
   ///
   /// [DialogRoute]
   /// [DialogPageRoute]
@@ -753,6 +757,7 @@ extension NavigatorStateDialogEx on NavigatorState {
     Color? barrierColor = Colors.black54,
     String? barrierLabel,
     bool useSafeArea = true,
+    bool maintainBottomViewPadding = false,
     bool useBarrierColorAnimate = true,
     bool useRootNavigator = true,
     RouteSettings? routeSettings,
@@ -789,6 +794,7 @@ extension NavigatorStateDialogEx on NavigatorState {
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel,
       useSafeArea: useSafeArea,
+      maintainBottomViewPadding: maintainBottomViewPadding,
       useBarrierColorAnimate: useBarrierColorAnimate,
       settings: routeSettings,
       themes: themes,

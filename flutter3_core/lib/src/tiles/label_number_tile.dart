@@ -125,13 +125,16 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
             }
           })
         : buildNumberWidget(context, numberStr, onTap: () async {
-            final value = await context.showWidgetDialog(NumberKeyboardDialog(
-              number: _currentValue,
-              minValue: widget.minValue,
-              maxValue: widget.maxValue,
-              maxDigits: widget.maxDigits,
-              numType: widget._numType,
-            ));
+            final value = await context.showWidgetDialog(
+              NumberKeyboardDialog(
+                number: _currentValue,
+                minValue: widget.minValue,
+                maxValue: widget.maxValue,
+                maxDigits: widget.maxDigits,
+                numType: widget._numType,
+              ),
+              maintainBottomViewPadding: true,
+            );
             if (value != null) {
               _changeValue(value);
             }
