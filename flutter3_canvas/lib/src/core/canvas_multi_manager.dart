@@ -320,19 +320,25 @@ class CanvasStateData {
   @configProperty
   static String? customCanvasDefNamePrefix;
 
+  //--
+
   /// 画布状态id1
+  @configProperty
   String id = $uuid;
 
   /// 当前画布的名字
+  @configProperty
   String? name;
 
   /// 是否选中画布
+  @configProperty
   bool isSelected;
 
   //--
 
   /// 画布元素列表
   /// [CanvasElementManager.elements]
+  @configProperty
   List<ElementPainter> elements = [];
 
   //---
