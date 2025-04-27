@@ -9,8 +9,14 @@ part of '../flutter3_fonts.dart';
 /// [FontFamilyMeta]
 /// [GoogleFonts]
 ///
+/// [Axis.vertical]
 /// [字体名]           [trailingWidget]尾部
 /// [预览文本-可选]
+///
+/// [Axis.horizontal]
+/// [字体名]           [预览文本-可选][trailingWidget]尾部
+///
+/// [direction]
 ///
 class FontFamilyTile extends StatefulWidget {
   /// 字体描述元数据
@@ -35,6 +41,11 @@ class FontFamilyTile extends StatefulWidget {
   /// 对齐方式
   final Alignment? alignment;
 
+  //--
+
+  /// 布局方向, 默认是上下, 可以指定成左右
+  final Axis direction;
+
   const FontFamilyTile(
     this.fontFamilyMeta, {
     super.key,
@@ -44,6 +55,7 @@ class FontFamilyTile extends StatefulWidget {
     this.isSingleLine = false,
     this.defWidget,
     this.alignment,
+    this.direction = Axis.vertical,
   });
 
   @override
@@ -68,18 +80,27 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
     final textStyle = widget.fontFamilyMeta?.textStyle();
     final fontFamily = widget.fontFamilyMeta?.displayFontFamily;
 
-    final left = [
-      fontFamily?.text(
-            style: textStyle,
-            maxLines: widget.isSingleLine ? 1 : null,
-          ) ??
-          widget.defWidget ??
-          "Default".text(),
-      widget.previewText?.text(
-        style: textStyle,
-        maxLines: widget.isSingleLine ? 1 : null,
-      ),
-    ].column(
+    final fontFamilyWidget = fontFamily?.text(
+          style: textStyle,
+          maxLines: widget.isSingleLine ? 1 : null,
+        ) ??
+        widget.defWidget ??
+        "Default".text();
+
+    final previewTextWidget = widget.previewText?.text(
+      style: textStyle,
+      maxLines: widget.isSingleLine ? 1 : null,
+    );
+
+    if (widget.direction == Axis.horizontal) {
+      final left = fontFamilyWidget;
+      return [left.expanded(), previewTextWidget, widget.trailingWidget]
+              .row()
+              ?.paddingInsets(widget.padding) ??
+          empty;
+    }
+
+    final left = [fontFamilyWidget, previewTextWidget].column(
         crossAxisAlignment: widget.alignment == Alignment.center
             ? CrossAxisAlignment.center
             : CrossAxisAlignment.start);

@@ -69,9 +69,11 @@ class FontsManager {
       return [];
     }
     return [
-      ...getFontFamilyLocalPathList(_customFontFamilyMetaList,
+      ...getFontFamilyLocalPathList(customFontFamilyMetaList,
           filterDisplayFontFamilyList: [displayFontFamily]),
-      ...getFontFamilyLocalPathList(_systemFontFamilyMetaList,
+      ...getFontFamilyLocalPathList(systemFontFamilyMetaList,
+          filterDisplayFontFamilyList: [displayFontFamily]),
+      ...getFontFamilyLocalPathList(defaultFontFamilyMetaList,
           filterDisplayFontFamilyList: [displayFontFamily]),
     ];
   }
@@ -79,20 +81,20 @@ class FontsManager {
   //region ---默认字体---
 
   /// 默认字体加载后的缓存
-  final List<FontFamilyMeta> _defaultFontFamilyMetaList = [];
+  final List<FontFamilyMeta> defaultFontFamilyMetaList = [];
 
   /// 所有默认字体对应的本地文件路径
   List<String> get defaultFontLocalPathList =>
-      getFontFamilyLocalPathList(_defaultFontFamilyMetaList);
+      getFontFamilyLocalPathList(defaultFontFamilyMetaList);
 
-  /// 加载默认字体
+  /// 加载默认字体到系统中
   Future<bool> loadDefaultFont(FontFamilyMeta fontMeta) async {
-    if (_defaultFontFamilyMetaList.contains(fontMeta)) {
+    if (defaultFontFamilyMetaList.contains(fontMeta)) {
       return true;
     }
     final result = await loadFontFamily(fontMeta);
     if (result) {
-      _defaultFontFamilyMetaList.add(fontMeta);
+      defaultFontFamilyMetaList.add(fontMeta);
     }
     return result;
   }
@@ -105,7 +107,7 @@ class FontsManager {
   final List<String> customFontPathList = [];
 
   /// 自定义字体加载后的缓存
-  final List<FontFamilyMeta> _customFontFamilyMetaList = [];
+  final List<FontFamilyMeta> customFontFamilyMetaList = [];
 
   /// 尝试直接加载自定义字体
   /// [fontFamily] 字体名称, 同时也是.ttf的文件名
@@ -123,22 +125,22 @@ class FontsManager {
   }) async {
     //debugger();
     if (reload == true) {
-      _customFontFamilyMetaList.clear();
+      customFontFamilyMetaList.clear();
     }
-    if (_customFontFamilyMetaList.isNotEmpty) {
-      return _customFontFamilyMetaList;
+    if (customFontFamilyMetaList.isNotEmpty) {
+      return customFontFamilyMetaList;
     }
-    _customFontFamilyMetaList.addAll(await loadFileFontFamilyListIn(
+    customFontFamilyMetaList.addAll(await loadFileFontFamilyListIn(
       customFontPathList,
       parseVariant: parseVariant,
       autoLoad: autoLoad,
       reload: reload,
       waitLoad: waitLoad,
     ));
-    return _customFontFamilyMetaList;
+    return customFontFamilyMetaList;
   }
 
-  /// 保存自定义字体, 自动添加到[_customFontFamilyMetaList]
+  /// 保存自定义字体, 自动添加到[customFontFamilyMetaList]
   /// [fontFilePath] 原始的字体文件路径
   /// [fontData] 字体数据
   /// [fontFileName] 字体数据的文件名
@@ -161,9 +163,9 @@ class FontsManager {
         await file.copy(saveFile);
 
         //加载字体
-        if (autoLoad && _customFontFamilyMetaList.isNotEmpty) {
+        if (autoLoad && customFontFamilyMetaList.isNotEmpty) {
           final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
-          _customFontFamilyMetaList.add(fontMeta);
+          customFontFamilyMetaList.add(fontMeta);
         }
         return true;
       }
@@ -173,9 +175,9 @@ class FontsManager {
       await saveFile.file().writeAsBytes(fontData);
 
       //加载字体
-      if (autoLoad && _customFontFamilyMetaList.isNotEmpty) {
+      if (autoLoad && customFontFamilyMetaList.isNotEmpty) {
         final fontMeta = await loadFileFontFamily(saveFile, autoLoad: true);
-        _customFontFamilyMetaList.add(fontMeta);
+        customFontFamilyMetaList.add(fontMeta);
       }
       return true;
     }
@@ -183,7 +185,7 @@ class FontsManager {
   }
 
   /// 删除自定义的字体, 并删除对应的文件
-  /// [_customFontFamilyMetaList]
+  /// [customFontFamilyMetaList]
   Future<bool> deleteCustomFontFamily(
       List<FontFamilyMeta> fontFamilyMetaList) async {
     //删除成功的字体
@@ -210,7 +212,7 @@ class FontsManager {
       }
     }
     if (removeFamilyMetaList.isNotEmpty) {
-      _customFontFamilyMetaList.removeAll(removeFamilyMetaList);
+      customFontFamilyMetaList.removeAll(removeFamilyMetaList);
     }
     return removeFamilyMetaList.isNotEmpty && error == null;
   }
@@ -228,7 +230,7 @@ class FontsManager {
   ];
 
   /// 系统字体加载后的缓存
-  final List<FontFamilyMeta> _systemFontFamilyMetaList = [];
+  final List<FontFamilyMeta> systemFontFamilyMetaList = [];
 
   /// 尝试直接加载系统字体
   /// [fontFamily] 字体名称, 同时也是.ttf的文件名
@@ -245,19 +247,19 @@ class FontsManager {
     bool? waitLoad,
   }) async {
     if (reload == true) {
-      _systemFontFamilyMetaList.clear();
+      systemFontFamilyMetaList.clear();
     }
-    if (_systemFontFamilyMetaList.isNotEmpty) {
-      return _systemFontFamilyMetaList;
+    if (systemFontFamilyMetaList.isNotEmpty) {
+      return systemFontFamilyMetaList;
     }
-    _systemFontFamilyMetaList.addAll(await loadFileFontFamilyListIn(
+    systemFontFamilyMetaList.addAll(await loadFileFontFamilyListIn(
       systemFontPathList,
       parseVariant: parseVariant,
       autoLoad: autoLoad,
       reload: reload,
       waitLoad: waitLoad,
     ));
-    return _systemFontFamilyMetaList;
+    return systemFontFamilyMetaList;
   }
 
   //endregion ---系统字体---
