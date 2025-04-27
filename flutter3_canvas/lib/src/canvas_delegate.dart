@@ -1269,9 +1269,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 选中的画布改变
   void dispatchCanvasSelectedStateChanged(
-      CanvasStateData? from, CanvasStateData? to) {
+    CanvasStateData? from,
+    CanvasStateData? to,
+    ElementSelectType selectType,
+  ) {
     _eachCanvasListener((element) {
-      element.onCanvasSelectedStateChanged?.call(from, to);
+      element.onCanvasSelectedStateChanged?.call(from, to, selectType);
     });
   }
 

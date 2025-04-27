@@ -533,6 +533,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     );
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, list);
 
+    //debugger();
     selectedOrFollowElements(
       list,
       selected: selected,

@@ -57,6 +57,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selectedElement = false,
     bool followPainter = false,
     bool followContent = false,
+    //--
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
     CanvasStateData? selectedCanvasState =
         canvasStateList.findFirst((e) => e.isSelected) ??
@@ -69,6 +71,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       selectedElement: selectedElement,
       followPainter: followPainter,
       followContent: followContent,
+      //--
+      selectType: selectType,
     );
   }
 
@@ -83,6 +87,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //--
     bool selectedElement = false,
     bool followPainter = false,
+    //--
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
     canvasStateList.reset(stateList);
 
@@ -96,6 +102,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         notify: notify,
         selectedElement: selectedElement,
         followPainter: followPainter,
+        selectType: selectType,
       );
     }
   }
@@ -114,6 +121,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool followContent = false,
     //--
     bool? resetCanvasState,
+    //--
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
     resetCanvasState ??= isAllCanvasEmpty;
     if (resetCanvasState) {
@@ -131,6 +140,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           selectedElement: selectedElement,
           followPainter: followPainter,
           followContent: followContent,
+          selectType: selectType,
         );
       }
     }
@@ -206,6 +216,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selectedElement = false,
     bool followPainter = false,
     bool followContent = false,
+    //--
+    ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (selectedCanvasState == canvasStateData) {
       return false;
@@ -266,12 +278,16 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     // 画布切换通知
     if (notifySelected) {
       canvasDelegate.dispatchCanvasSelectedStateChanged(
-          oldSelected, selectedCanvasState);
+        oldSelected,
+        selectedCanvasState,
+        selectType,
+      );
     }
 
     // 选中元素/跟随元素
     if (selectedElement) {
-      canvasDelegate.canvasElementManager.resetSelectedElementList(newElements);
+      canvasDelegate.canvasElementManager
+          .resetSelectedElementList(newElements, selectType: selectType);
       if (followContent) {
         if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
           //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理

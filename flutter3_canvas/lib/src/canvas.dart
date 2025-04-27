@@ -651,8 +651,8 @@ class CanvasListener {
   final void Function(List<CanvasStateData> to)? onCanvasMultiStateListChanged;
 
   /// [CanvasDelegate.dispatchCanvasSelectedStateChanged]
-  final void Function(CanvasStateData? from, CanvasStateData? to)?
-      onCanvasSelectedStateChanged;
+  final void Function(CanvasStateData? from, CanvasStateData? to,
+      ElementSelectType selectType)? onCanvasSelectedStateChanged;
 
   /// [CanvasDelegate.dispatchElementAttachToCanvasDelegate]
   final void Function(CanvasDelegate delegate, IElementPainter painter)?
