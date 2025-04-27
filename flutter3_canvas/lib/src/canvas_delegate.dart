@@ -1141,6 +1141,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 双击元素时回调
+  /// [elementPainter]通常会是[ElementSelectComponent]
   void dispatchDoubleTapElement(ElementPainter elementPainter) {
     _eachCanvasListener((element) {
       element.onDoubleTapElementAction?.call(elementPainter);
