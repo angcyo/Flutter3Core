@@ -1198,6 +1198,38 @@ extension WidgetEx on Widget {
         : this;
   }
 
+  Widget safeBottomArea({
+    bool useSafeArea = true,
+    bool useSliverSafeArea = false,
+    bool left = false,
+    bool top = false,
+    bool right = false,
+    bool? bottom,
+    EdgeInsets minimum = EdgeInsets.zero,
+    bool maintainBottomViewPadding = true,
+  }) {
+    return useSafeArea
+        ? (useSliverSafeArea
+            ? SliverSafeArea(
+                left: left,
+                top: top,
+                right: right,
+                bottom: bottom ?? maintainBottomViewPadding,
+                minimum: minimum,
+                sliver: this,
+              )
+            : SafeArea(
+                left: left,
+                top: top,
+                right: right,
+                bottom: bottom ?? maintainBottomViewPadding,
+                minimum: minimum,
+                maintainBottomViewPadding: maintainBottomViewPadding,
+                child: this,
+              ))
+        : this;
+  }
+
   /// 状态栏亮色模式
   /// 背景白色, 状态栏图标/文本为黑色
   Widget lightStatusBar() => systemUiOverlay(
