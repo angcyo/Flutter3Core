@@ -83,6 +83,9 @@ class SingleBottomInputDialog extends StatefulWidget
   final WidgetNullList Function(BuildContext context, Widget input)?
       wrapInputAction;
 
+  //--
+  final bool trailingUseThemeColor;
+
   const SingleBottomInputDialog({
     super.key,
     //--dialog
@@ -109,6 +112,8 @@ class SingleBottomInputDialog extends StatefulWidget
     //--
     this.showTitle = true,
     this.wrapInputAction,
+    //--
+    this.trailingUseThemeColor = false,
   });
 
   const SingleBottomInputDialog.wrapInput(
@@ -137,6 +142,8 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputKeyboardType,
     //--
     this.showTitle = true,
+    //--
+    this.trailingUseThemeColor = false,
   });
 
   @override
@@ -167,9 +174,11 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
                 onTrailingTap: (context) {
                   buildContext?.pop(currentInputText);
                 },
+                trailingUseThemeColor: widget.trailingUseThemeColor,
               ),
             if (widget.wrapInputAction == null)
-              input.paddingInsets(widget.inputMargin ?? widget.dialogContentPadding),
+              input.paddingInsets(
+                  widget.inputMargin ?? widget.dialogContentPadding),
             if (widget.wrapInputAction != null)
               ...widget.wrapInputAction!(
                   context,

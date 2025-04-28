@@ -41,6 +41,9 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 返回true, 表示拦截默认处理
   final FutureOrResultCallback<bool, bool>? onConfirmTap;
 
+  /// [onConfirmTap]
+  final FutureOrResultCallback<bool, bool>? onCancelTap;
+
   /// 是否拦截Pop
   final bool interceptPop;
 
@@ -51,6 +54,10 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   TranslationType get translationType => TranslationType.scaleFade;
 
   final double gap = kX;
+
+  //--
+
+  final BoxConstraints? contentConstraints;
 
   const AndroidNormalDialog({
     super.key,
@@ -68,9 +75,11 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.neutral,
     this.neutralWidget,
     this.showNeutral,
+    this.onCancelTap,
     this.onConfirmTap,
     this.useIcon = false,
     this.interceptPop = false,
+    this.contentConstraints,
   });
 
   @override
@@ -91,11 +100,13 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
       cancel,
       neutral,
       confirm,
-    ].row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      mainAxisSize: MainAxisSize.max,
-      gap: gap,
-    );
+    ]
+        .row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.max,
+          gap: gap,
+        )
+        ?.paddingOnly(bottom: kL, right: kH);
 
     final bodyColumn = Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -113,19 +124,21 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
       bodyColumn,
       padding: EdgeInsets.zero,
       radius: kDefaultBorderRadiusL,
+      contentConstraints: contentConstraints,
     ).interceptPop(interceptPop);
   }
 
   /// 构建内容
   Widget? _buildMessage(
     BuildContext context, {
+    TextStyle? textStyle,
     TextAlign textAlign = TextAlign.left,
   }) {
     final globalTheme = GlobalTheme.of(context);
     return messageWidget ??
         message
             ?.text(
-              style: globalTheme.textBodyStyle,
+              style: textStyle ?? globalTheme.textGeneralStyle,
               textAlign: textAlign,
             )
             .paddingAll(gap);
@@ -134,15 +147,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 构建标题
   Widget? _buildTitle(
     BuildContext context, {
+    TextStyle? textStyle,
     TextAlign textAlign = TextAlign.left,
   }) {
     final globalTheme = GlobalTheme.of(context);
     return titleWidget ??
         title
             ?.text(
-              style: globalTheme.textTitleStyle.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: textStyle ??
+                  globalTheme.textTitleStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
               textAlign: textAlign,
             )
             .padding(gap, gap, gap,
@@ -163,8 +178,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             widget: cancelWidget,
             text: cancelText,
             useIcon: useIcon,
-            onTap: () {
-              Navigator.pop(context, false);
+            onTap: () async {
+              if (onCancelTap == null) {
+                Navigator.pop(context, false);
+              } else {
+                final intercept = await onCancelTap!(true) == true;
+                if (!intercept) {
+                  if (context.mounted) {
+                    Navigator.pop(context, false);
+                  }
+                }
+              }
             });
   }
 

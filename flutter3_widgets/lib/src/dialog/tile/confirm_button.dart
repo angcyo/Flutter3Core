@@ -66,6 +66,7 @@ class ConfirmButton extends StatelessWidget {
                   onTap?.call();
                 }
               : null,
+          radius: kX,
           shape: useIcon ? BoxShape.circle : BoxShape.rectangle,
         )
         .material();

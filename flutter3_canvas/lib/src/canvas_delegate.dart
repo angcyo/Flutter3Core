@@ -63,7 +63,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     //lTime.tick();
     canvasPaintManager.paint(context, offset);
     //l.w("[CanvasDelegate.paint]一帧耗时->${lTime.time()}");
-    dispatchCanvasPaint(this, paintCount);
+    dispatchCanvasPaint(paintCount);
   }
 
   /// 手势输入的入口点
@@ -345,6 +345,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   final Set<CanvasListener> canvasListeners = {};
 
   /// 用来存储自定义的工程信息使用
+  /// [projectBean]
+  /// [dispatchCanvasOpenProject]
   @flagProperty
   dynamic project;
 
@@ -445,7 +447,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     _cancelIdleTimer();
     _idleTimer = postDelayCallback(() {
       _idleTimer = null;
-      dispatchCanvasIdle(this, lastRefreshTime);
+      dispatchCanvasIdle(lastRefreshTime);
     }, idleTimeout);
   }
 
@@ -531,7 +533,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     ElementPainter? elementPainter,
     @viewCoordinate EdgeInsets? margin,
     BoxFit? fit = BoxFit.none,
-    Alignment? alignment = Alignment.center,
+    Alignment? alignment/*= Alignment.center*/,
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
         .canvasElementControlManager.enableResetElementAngle);
@@ -890,6 +892,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }
   }
 
+  /// [project]类型强转
+  Bean? projectBean<Bean>() {
+    return project as Bean?;
+  }
+
   //endregion ---api---
 
   //region ---事件派发---
@@ -926,16 +933,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 派发画布重绘的次数
-  void dispatchCanvasPaint(CanvasDelegate delegate, int paintCount) {
+  void dispatchCanvasPaint(int paintCount) {
     _eachCanvasListener((element) {
-      element.onCanvasPaintAction?.call(delegate, paintCount);
+      element.onCanvasPaintAction?.call(this, paintCount);
     });
   }
 
   /// 派发画布空闲时的回调, 当没有请求[refresh]方法时触发
-  void dispatchCanvasIdle(CanvasDelegate delegate, Duration lastRefreshTime) {
+  void dispatchCanvasIdle(Duration lastRefreshTime) {
     _eachCanvasListener((element) {
-      element.onCanvasIdleAction?.call(delegate, lastRefreshTime);
+      element.onCanvasIdleAction?.call(this, lastRefreshTime);
     });
   }
 
@@ -1326,6 +1333,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       CanvasStyleMode from, CanvasStyleMode to) {
     _eachCanvasListener((element) {
       element.onCanvasStyleModeChangedAction?.call(this, from, to);
+    });
+  }
+
+  /// 派发画布打开工程, 框架只做事件派发, 没有相关逻辑.
+  /// 此方法需要主动触发, 框架不触发.
+  /// 使用者可以在[CanvasListener.onCanvasOpenProject]会调用,根据项目结构信息,恢复画布状态信息.
+  /// [project]
+  void dispatchCanvasOpenProject(dynamic project) {
+    debugger();
+    this.project = project;
+    _eachCanvasListener((element) {
+      element.onCanvasOpenProject?.call(this, project);
     });
   }
 

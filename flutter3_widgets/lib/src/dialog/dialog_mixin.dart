@@ -105,6 +105,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Color? decorationColor,
     bool? blur,
     double radius = kDefaultBorderRadiusXX,
+    BoxConstraints? contentConstraints,
   }) {
     return Center(
       child: buildDialogContainer(
@@ -112,6 +113,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         margin: margin,
         padding: padding,
         child.matchParent(matchHeight: false),
+        constraints: contentConstraints,
         radius: radius,
         decorationColor: decorationColor,
         blur: blur,

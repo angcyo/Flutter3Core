@@ -685,6 +685,12 @@ class CanvasListener {
     CanvasStyleMode to,
   )? onCanvasStyleModeChangedAction;
 
+  /// [CanvasDelegate.dispatchCanvasOpenProject]
+  final void Function(
+    CanvasDelegate delegate,
+    dynamic project,
+  )? onCanvasOpenProject;
+
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
@@ -716,5 +722,6 @@ class CanvasListener {
     this.onBuildCanvasMenu,
     this.onKeyEventAction,
     this.onCanvasStyleModeChangedAction,
+    this.onCanvasOpenProject,
   });
 }

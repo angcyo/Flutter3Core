@@ -43,6 +43,7 @@ class CancelButton extends StatelessWidget {
       () {
         onTap?.call();
       },
+      radius: kX,
       shape: useIcon ? BoxShape.circle : BoxShape.rectangle,
     ).material();
     return result!;
