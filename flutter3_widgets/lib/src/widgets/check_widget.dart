@@ -119,6 +119,8 @@ class StrokeFillCheckWidget extends StatefulWidget {
   @defInjectMark
   final Color? checkedColor;
 
+  final double strokeWidth;
+
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final double borderRadius;
@@ -148,6 +150,7 @@ class StrokeFillCheckWidget extends StatefulWidget {
     this.margin = kMInsets,
     this.checkedColor,
     this.borderRadius = kDefaultBorderRadiusX,
+    this.strokeWidth = 1,
     //--
     this.useInkWell = false,
     this.enableTap = true,
@@ -195,6 +198,7 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
             border: strokeBorder(
               color: checkedColor,
               borderRadius: borderRadius,
+              strokeWidth: widget.strokeWidth,
             ),
           )
         : fillDecoration(
@@ -203,6 +207,7 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
             border: strokeBorder(
               color: globalTheme.itemWhiteBgColor,
               borderRadius: borderRadius,
+              strokeWidth: widget.strokeWidth,
             ),
           );
 
