@@ -6,6 +6,28 @@ part of '../../flutter3_app.dart';
 ///
 /// 接受外部应用的分享数据
 /// https://pub.dev/packages/receive_sharing_intent_plus
+///
+/// ```
+/// //监听平台文件分享流
+/// $receiveIntent.fileStream.listen((files) {
+///   if (!isNil(files)) {
+///     //监听到有需要处理的打开文件
+///     if (files!.length == 1 &&
+///         (files.first.path.endsWith("xxx"))) {
+///       //打开固件文件
+///       GlobalConfig.def.getNavigatorState(context)?.pushWidget(
+///           FirmwareUpgradePage(firmwareUrl: files.first.path));
+///     } else {
+///       GlobalConfig.def
+///           .getNavigatorState(context)
+///           ?.pushWidget(CanvasImportPreviewPage(files));
+///     }
+///     //处理完之后, 清空
+///     $receiveIntent.fileStream.add(null);
+///   }
+/// });
+/// ```
+///
 class ReceiveIntent {
   /// [ReceiveSharingIntentPlus.getInitialMedia]
   /// [SharedMediaFile]

@@ -19,12 +19,15 @@ class CancelButton extends StatelessWidget {
   /// 事件
   final GestureTapCallback? onTap;
 
+  final double radius;
+
   const CancelButton({
     super.key,
     this.useIcon = false,
     this.widget,
     this.text,
     this.onTap,
+    this.radius = 0,
   });
 
   @override
@@ -43,7 +46,7 @@ class CancelButton extends StatelessWidget {
       () {
         onTap?.call();
       },
-      radius: kX,
+      radius: radius,
       shape: useIcon ? BoxShape.circle : BoxShape.rectangle,
     ).material();
     return result!;

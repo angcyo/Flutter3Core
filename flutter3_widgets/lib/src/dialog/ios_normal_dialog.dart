@@ -23,8 +23,11 @@ class IosNormalDialog extends AndroidNormalDialog {
     super.neutral,
     super.neutralWidget,
     super.showNeutral,
+    super.onCancelTap,
     super.onConfirmTap,
     super.useIcon = false,
+    super.contentConstraints,
+    super.radius = 0,
   });
 
   @override
@@ -77,6 +80,7 @@ class IosNormalDialog extends AndroidNormalDialog {
       context,
       bodyColumn,
       padding: EdgeInsets.zero,
+      contentConstraints: contentConstraints,
       blur: true,
     );
   }

@@ -190,5 +190,33 @@ extension CanvasStateDataIterableEx on Iterable<CanvasStateData> {
       mapFlat((e) => e.elements).toList();
 }
 
+extension CanvasStateDataListEx on List<CanvasStateData> {
+  /// 合并画布数据
+  /// 将[CanvasStateData.id] 相同的[CanvasStateData.elements]元素合并, 不存在的则添加
+  Iterable<CanvasStateData> merge(Iterable<CanvasStateData>? other) {
+    if (isNil(other)) {
+      return this;
+    }
+    final needAddList = <CanvasStateData>[]; //最后需要添加的画布列表
+    final isSelected = findFirst((e) => e.isSelected) != null;
+
+    for (final o in other!) {
+      final existElement = findFirst((it) => it.id == o.id);
+      if (existElement != null) {
+        //已存在的画布数据
+        existElement.elements.addAll(o.elements);
+      } else {
+        if (isSelected) {
+          o.isSelected = false;
+        }
+        needAddList.add(o);
+      }
+    }
+    //--
+    addAll(needAddList);
+    return this;
+  }
+}
+
 /// [ElementPainter]元素访问器回调
 typedef ElementPainterVisitor = void Function(ElementPainter element);

@@ -324,6 +324,9 @@ enum CanvasStateType {
 }
 
 /// 画布状态数据, 用于支持多画布功能
+///
+/// [CanvasStateDataIterableEx]
+/// [CanvasStateDataListEx]
 class CanvasStateData {
   /// 画布状态数量
   @flagProperty

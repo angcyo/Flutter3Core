@@ -55,6 +55,8 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   final double gap = kX;
 
+  final double radius;
+
   //--
 
   final BoxConstraints? contentConstraints;
@@ -80,6 +82,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.useIcon = false,
     this.interceptPop = false,
     this.contentConstraints,
+    this.radius = kX,
   });
 
   @override
@@ -165,7 +168,10 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   }
 
   /// 构建取消按钮
-  Widget? _buildCancelButton(BuildContext context) {
+  Widget? _buildCancelButton(
+    BuildContext context, {
+    double? radius,
+  }) {
     String? cancelText = cancel;
     if (showCancel == false) {
       return null;
@@ -178,6 +184,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             widget: cancelWidget,
             text: cancelText,
             useIcon: useIcon,
+            radius: radius ?? this.radius,
             onTap: () async {
               if (onCancelTap == null) {
                 Navigator.pop(context, false);
@@ -193,7 +200,10 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   }
 
   /// 构建中立按钮
-  Widget? _buildNeutralButton(BuildContext context) {
+  Widget? _buildNeutralButton(
+    BuildContext context, {
+    double? radius,
+  }) {
     String? neutralText = neutral;
     if (showNeutral == false) {
       return null;
@@ -206,13 +216,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             widget: neutralWidget,
             text: neutralText,
             useIcon: useIcon,
+            radius: radius ?? this.radius,
             onTap: () {
               Navigator.pop(context, null);
             });
   }
 
   /// 构建确定按钮
-  Widget? _buildConfirmButton(BuildContext context) {
+  Widget? _buildConfirmButton(
+    BuildContext context, {
+    double? radius,
+  }) {
     String? confirmText = confirm;
     if (showConfirm == false) {
       return null;
@@ -225,6 +239,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             widget: confirmWidget,
             text: confirmText,
             useIcon: useIcon,
+            radius: radius ?? this.radius,
             onTap: () async {
               if (onConfirmTap == null) {
                 Navigator.pop(context, true);

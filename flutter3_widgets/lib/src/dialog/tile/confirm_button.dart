@@ -27,6 +27,8 @@ class ConfirmButton extends StatelessWidget {
 
   //--
 
+  final double radius;
+
   const ConfirmButton({
     super.key,
     this.enable = true,
@@ -35,6 +37,7 @@ class ConfirmButton extends StatelessWidget {
     this.widget,
     this.text,
     this.onTap,
+    this.radius = 0,
   });
 
   @override
@@ -66,7 +69,7 @@ class ConfirmButton extends StatelessWidget {
                   onTap?.call();
                 }
               : null,
-          radius: kX,
+          radius: radius,
           shape: useIcon ? BoxShape.circle : BoxShape.rectangle,
         )
         .material();
