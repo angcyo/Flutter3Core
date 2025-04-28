@@ -1341,7 +1341,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 使用者可以在[CanvasListener.onCanvasOpenProject]会调用,根据项目结构信息,恢复画布状态信息.
   /// [project]
   void dispatchCanvasOpenProject(dynamic project) {
-    debugger();
+    //debugger();
+    assert(() {
+      l.d("打开工程->$project");
+      return true;
+    }());
     this.project = project;
     _eachCanvasListener((element) {
       element.onCanvasOpenProject?.call(this, project);

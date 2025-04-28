@@ -16,8 +16,10 @@ class CanvasFollowManager with CanvasComponentMixin {
 
   //region --配置属性--
 
+  static EdgeInsets kContentFollowMargin = const EdgeInsets.all(kXxh);
+
   /// [margin] 矩形区域的外边距, 额外的外边距
-  EdgeInsets? margin = const EdgeInsets.all(kXxh);
+  EdgeInsets? margin = kContentFollowMargin;
 
   /// [enableZoomOut] 是否允许视口缩小处理, 否则只有平移[rect]到视口中心的效果
   @Deprecated("请使用[fit]")
@@ -348,6 +350,7 @@ class CanvasFollowManager with CanvasComponentMixin {
 
     //debugger();
     if (fit == BoxFit.none) {
+      margin ??= kContentFollowMargin; //重新恢复一下边距
       //特殊处理:
       if (canvasVisibleWidth > toRect.width &&
           canvasVisibleHeight > toRect.height) {
