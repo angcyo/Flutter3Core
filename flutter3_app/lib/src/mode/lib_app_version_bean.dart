@@ -21,11 +21,15 @@ class LibAppVersionBean {
 
   /// 从网络中获取[LibAppVersionBean]配置, 并且存储到本地
   /// 应用程序初始化成功后初始化...
+  /// [checkUpdate] 是否检查更新弹窗
+  ///
+  /// [AppUpdateDialog.checkUpdateAndShow]
   static Future fetchConfig(
     String url, {
     String name = "app_version.json",
     String package = "flutter3_app",
     String prefix = 'assets/$kConfigPathName/',
+    bool checkUpdate = true,
   }) {
     return ConfigFile.readConfigFile(
       name,
@@ -41,10 +45,12 @@ class LibAppVersionBean {
           final bean = LibAppVersionBean.fromJson(data.jsonDecode());
           _appVersionBean = bean;
           //debugger();
-          AppUpdateDialog.checkUpdateAndShow(
-            GlobalConfig.def.globalContext,
-            bean,
-          );
+          if (checkUpdate) {
+            AppUpdateDialog.checkUpdateAndShow(
+              GlobalConfig.def.globalContext,
+              bean,
+            );
+          }
         }
       },
     );
