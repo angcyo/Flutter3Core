@@ -36,6 +36,11 @@ class Compliance {
 
   /// 检查隐私政策, 如果需要的话
   /// 自动处理[action]的返回值
+  ///
+  /// - 如果已经同意了隐私政策, 则直接返回
+  /// - 如果同意了隐私政策, 则执行[agree]
+  /// - 如果拒绝了隐私政策, 则执行[reject]
+  ///
   @api
   Future checkIfNeed(BuildContext? context, FutureVoidAction action) async {
     if (_isAgree) {
@@ -56,6 +61,7 @@ class Compliance {
 
   /// 处理等待中的[Completer]
   void _handlePendingCompleter(BuildContext? context, bool agree) {
+    //debugger();
     try {
       for (final completer in _pendingCompleterList) {
         try {
