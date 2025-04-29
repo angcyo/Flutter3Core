@@ -15,11 +15,14 @@ class BuildConfig {
   /// 从[Asset]资源中解析构建信息
   /// [Asset]需要放到app包中
   /// 启动程序时初始化
+  ///
+  /// [package] 不指定, 就是顶级包
+  ///
   @initialize
   static Future<BuildConfig?> initBuildConfig({
     String name = "$kConfigPathName/build_config.json",
     String prefix = kDefAssetsPrefix,
-    String? package, //flutter3_app
+    String? package, //flutter3_app,
   }) async {
     try {
       final string = await loadAssetString(
@@ -69,6 +72,16 @@ class BuildConfig {
   @configProperty
   String? buildType;
 
+  //--
+
+  /// 编译时的版本名
+  @configProperty
+  String? buildVersionName;
+
+  /// 编译时的版本号
+  @configProperty
+  int? buildVersionCode;
+
   //--build--
 
   /// 构建时的时间
@@ -109,6 +122,11 @@ class BuildConfig {
   /// [json]
   void operator []=(String key, dynamic value) {
     json?[key] = value;
+  }
+
+  /// 短日志
+  String get shortString {
+    return "$buildPackageName $buildType ${buildFlavor ?? ""} $buildVersionName($buildVersionCode)\n$buildTime";
   }
 
   @override

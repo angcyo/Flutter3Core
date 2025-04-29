@@ -13,6 +13,8 @@ BuildConfig _$BuildConfigFromJson(Map<String, dynamic> json) => BuildConfig()
   ..buildPackageName = json['buildPackageName'] as String?
   ..buildFlavor = json['buildFlavor'] as String?
   ..buildType = json['buildType'] as String?
+  ..buildVersionName = json['buildVersionName'] as String?
+  ..buildVersionCode = (json['buildVersionCode'] as num?)?.toInt()
   ..buildTime = json['buildTime'] as String?
   ..buildOperatingSystem = json['buildOperatingSystem'] as String?
   ..buildOperatingSystemVersion = json['buildOperatingSystemVersion'] as String?
@@ -21,27 +23,26 @@ BuildConfig _$BuildConfigFromJson(Map<String, dynamic> json) => BuildConfig()
   ..buildOperatingSystemUserName =
       json['buildOperatingSystemUserName'] as String?;
 
-Map<String, dynamic> _$BuildConfigToJson(BuildConfig instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('platformMap',
-      instance.platformMap?.map((k, e) => MapEntry(k, e.toJson())));
-  writeNotNull('buildPackageName', instance.buildPackageName);
-  writeNotNull('buildFlavor', instance.buildFlavor);
-  writeNotNull('buildType', instance.buildType);
-  writeNotNull('buildTime', instance.buildTime);
-  writeNotNull('buildOperatingSystem', instance.buildOperatingSystem);
-  writeNotNull(
-      'buildOperatingSystemVersion', instance.buildOperatingSystemVersion);
-  writeNotNull('buildOperatingSystemLocaleName',
-      instance.buildOperatingSystemLocaleName);
-  writeNotNull(
-      'buildOperatingSystemUserName', instance.buildOperatingSystemUserName);
-  return val;
-}
+Map<String, dynamic> _$BuildConfigToJson(BuildConfig instance) =>
+    <String, dynamic>{
+      if (instance.platformMap?.map((k, e) => MapEntry(k, e.toJson()))
+          case final value?)
+        'platformMap': value,
+      if (instance.buildPackageName case final value?)
+        'buildPackageName': value,
+      if (instance.buildFlavor case final value?) 'buildFlavor': value,
+      if (instance.buildType case final value?) 'buildType': value,
+      if (instance.buildVersionName case final value?)
+        'buildVersionName': value,
+      if (instance.buildVersionCode case final value?)
+        'buildVersionCode': value,
+      if (instance.buildTime case final value?) 'buildTime': value,
+      if (instance.buildOperatingSystem case final value?)
+        'buildOperatingSystem': value,
+      if (instance.buildOperatingSystemVersion case final value?)
+        'buildOperatingSystemVersion': value,
+      if (instance.buildOperatingSystemLocaleName case final value?)
+        'buildOperatingSystemLocaleName': value,
+      if (instance.buildOperatingSystemUserName case final value?)
+        'buildOperatingSystemUserName': value,
+    };

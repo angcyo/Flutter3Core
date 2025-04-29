@@ -21,6 +21,13 @@ void main(List<String> arguments) {
   final yaml =
       loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
 
+  final pubspecFile = File("$currentPath/pubspec.yaml");
+  final pubspecYaml =
+      loadYaml(pubspecFile.existsSync() ? pubspecFile.readAsStringSync() : "");
+  final version = pubspecYaml["version"];
+  final buildVersionName = version.split("+")[0];
+  final buildVersionCode = version.split("+")[1];
+
   //1:
   final buildConfig = yaml?["build_config"] ?? localYaml?["build_config"];
   if (buildConfig == null) {
@@ -36,6 +43,8 @@ void main(List<String> arguments) {
     "buildOperatingSystemLocaleName": Platform.localeName,
     "buildOperatingSystemUserName":
         Platform.environment['USERNAME'] ?? Platform.environment['USER'],
+    "buildVersionName": buildVersionName,
+    "buildVersionCode": int.tryParse(buildVersionCode?.toString() ?? ""),
     if (buildConfig is Map) ...buildConfig,
   };
   //2:

@@ -119,6 +119,7 @@ dev_dependencies:
   hive_generator: ^2.0.1
   build_runner: any
   flutter_gen_runner: any
+  json_serializable: any
 
 # https://pub.dev/packages/flutter_gen
 # https://github.com/FlutterGen/flutter_gen
