@@ -200,6 +200,8 @@ class GlobalTheme {
 
   EdgeInsets get labelTilePadding => kLabelPadding;
 
+  EdgeInsets get tilePadding => kTilePadding;
+
   /// 按钮内边距
   EdgeInsets get buttonPadding =>
       EdgeInsets.symmetric(horizontal: x, vertical: h);
@@ -415,4 +417,13 @@ const kSubLabelPadding = EdgeInsets.only(
   right: kX,
   top: kH,
   bottom: kH,
+);
+
+/// tile默认的填充
+/// item整体
+const kTilePadding = EdgeInsets.only(
+  left: 0,
+  right: kX,
+  top: kL,
+  bottom: kL,
 );

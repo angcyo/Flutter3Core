@@ -60,15 +60,6 @@ const kDesPadding = EdgeInsets.only(
   bottom: 0,
 );
 
-/// tile默认的填充
-/// item整体
-const kTilePadding = EdgeInsets.only(
-  left: 0,
-  right: kX,
-  top: kL,
-  bottom: kL,
-);
-
 const kSubTilePadding = EdgeInsets.only(
   left: kX,
   right: kXx,
