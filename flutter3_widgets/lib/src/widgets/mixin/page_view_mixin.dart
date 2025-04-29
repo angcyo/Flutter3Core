@@ -66,6 +66,7 @@ mixin PageViewMixin<T extends StatefulWidget>
   /// 构建[PageView], 当切换界面后[children]并不会重新获取, 所以需要手动处理界面数据
   ///
   /// [disableScroll] 是否禁用[PageView]的滚动
+  /// [padEnds] 每个页面都填满页面, 否则可以使用[PageController.viewportFraction]实现非全屏页面
   ///
   /// [keepAlive] 是否自动保活
   /// - [KeepAliveWrapper]
@@ -75,6 +76,8 @@ mixin PageViewMixin<T extends StatefulWidget>
   ///
   /// [NeverScrollableScrollPhysics]
   /// [BouncingScrollPhysics]
+  ///
+  /// [BasePageChildLifecycleState]
   ///
   @callPoint
   Widget buildPageView(
@@ -86,13 +89,16 @@ mixin PageViewMixin<T extends StatefulWidget>
     //--
     bool pageSnapping = true,
     bool padEnds = true,
-    bool keepAlive = false,
     //--
     bool disableScroll = false,
     //--
     bool useLifecycle = false,
-    bool useChildLifecycle = false,
+    bool? useChildLifecycle,
+    bool? keepAlive,
   }) {
+    keepAlive ??= useLifecycle;
+    useChildLifecycle ??= useLifecycle;
+
     WidgetList body = children ?? buildPageChildren(context);
     if (physics != null) {
       pageViewScrollPhysicsMixin = physics;
@@ -110,7 +116,7 @@ mixin PageViewMixin<T extends StatefulWidget>
       }).toList();
     } else if (keepAlive) {
       body = body.map((e) {
-        return e.keepAlive(keepAlive: keepAlive);
+        return e.keepAlive(keepAlive: keepAlive!);
       }).toList();
     }
     return NotificationListener<ScrollNotification>(
