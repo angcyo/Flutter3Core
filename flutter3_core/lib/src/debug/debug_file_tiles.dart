@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter3_core/flutter3_core.dart';
+import 'package:flutter3_widgets/flutter3_widgets.dart';
 
 import '../../assets_generated/assets.gen.dart';
 import 'debug_file_menu_dialog.dart';

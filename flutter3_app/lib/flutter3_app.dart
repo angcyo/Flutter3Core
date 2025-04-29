@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/flutter3_core.dart';
+import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -26,6 +27,7 @@ import 'src/mode/lib_app_version_bean.dart';
 
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:flutter3_core/flutter3_core.dart';
+export 'package:flutter3_widgets/flutter3_widgets.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
 export 'package:flutter_animate/flutter_animate.dart';
 export 'package:package_info_plus/package_info_plus.dart';

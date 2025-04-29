@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter3_core/flutter3_core.dart';
+import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:http/http.dart' as http;
 
 export 'package:google_fonts/google_fonts.dart';

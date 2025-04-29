@@ -17,6 +17,8 @@ dependencies:
     sdk: flutter
   flutter3_basics:
     path: ../flutter3_basics
+  flutter3_widgets:
+    path: ../flutter3_widgets
   flutter3_core:
     path: ../flutter3_core
   flutter3_app:
