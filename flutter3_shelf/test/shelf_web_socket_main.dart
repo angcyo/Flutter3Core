@@ -1,15 +1,14 @@
-/// 
+///
 /// Email:angcyo@126.com
 /// @author angcyo
 /// @date 2024/07/16
-/// 
+///
 
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_web_socket/shelf_web_socket.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() async {
-  final handler = webSocketHandler((webSocket) {
+  final handler = webSocketHandler((webSocket, subProtocol) {
     webSocket.stream.listen((message) {
       webSocket.sink.add("echo $message");
     });
