@@ -135,6 +135,7 @@ class OverlayManagerController {
   ///
   /// [offstage] 是否离屏
   /// [hideLast] 是否隐藏最后一个[OverlayEntry]
+  /// [removeAll] 是否移除之前所有. [hideLast]将无效
   ///
   /// [type] 动画类型[TranslationType]
   /// [OverlayAnimateBuilder]
@@ -147,6 +148,8 @@ class OverlayManagerController {
     bool offstage = false,
     //--
     bool hideLast = false,
+    //--
+    bool removeAll = false,
   }) {
     //debugger();
     if (id != null) {
@@ -159,6 +162,10 @@ class OverlayManagerController {
         }
         return;
       }
+    }
+
+    if (removeAll) {
+      removeAllOverlay();
     }
 
     //--last
@@ -202,7 +209,7 @@ class OverlayManagerController {
       entryKey: animateKey,
     ));
 
-    if (hideLast) {
+    if (!removeAll && hideLast) {
       last?.entryKey?.currentState?.hide();
     }
   }
