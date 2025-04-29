@@ -313,6 +313,7 @@ extension FileStringPubEx on String {
   String folderPath() => dirname();
 
   /// 包含扩展名的文件名
+  /// [withoutExtension] 是否去掉扩展名
   /// [basename]
   String fileName([bool withoutExtension = false]) =>
       basename(withoutExtension);
