@@ -44,12 +44,17 @@ class LabelNumberTile extends StatefulWidget {
   /// tile的填充
   final EdgeInsets? tilePadding;
 
+  //--
+
+  /// 点击数字小部件时的回调
+  final GestureTapCallback? onNumberTap;
+
   const LabelNumberTile({
     super.key,
     this.label,
     this.labelTextStyle,
     this.labelWidget,
-    this.labelPadding = kLabelPadding,
+    this.labelPadding,
     this.labelActions,
     this.des,
     this.desWidget,
@@ -60,7 +65,8 @@ class LabelNumberTile extends StatefulWidget {
     this.maxDigits = 2,
     this.onValueChanged,
     this.onConfirmChange,
-    this.tilePadding = kTilePadding,
+    this.tilePadding,
+    this.onNumberTap,
     NumType? numType,
   }) : _numType = numType ?? (value is int ? NumType.i : NumType.d);
 
@@ -88,6 +94,7 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     // build label
     Widget? label = buildLabelWidget(
       context,
@@ -124,22 +131,23 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
               updateState();
             }
           })
-        : buildNumberWidget(context, numberStr, onTap: () async {
-            final value = await context.showWidgetDialog(
-              NumberKeyboardDialog(
-                number: _currentValue,
-                minValue: widget.minValue,
-                maxValue: widget.maxValue,
-                maxDigits: widget.maxDigits,
-                numType: widget._numType,
-              ),
-              maintainBottomViewPadding: true,
-            );
-            if (value != null) {
-              _changeValue(value);
-            }
-          });
-
+        : buildNumberWidget(context, numberStr,
+            onTap: widget.onNumberTap ??
+                () async {
+                  final value = await context.showWidgetDialog(
+                    NumberKeyboardDialog(
+                      number: _currentValue,
+                      minValue: widget.minValue,
+                      maxValue: widget.maxValue,
+                      maxDigits: widget.maxDigits,
+                      numType: widget._numType,
+                    ),
+                    maintainBottomViewPadding: true,
+                  );
+                  if (value != null) {
+                    _changeValue(value);
+                  }
+                });
     return [
       [
         label,
@@ -153,7 +161,7 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
       number,
     ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
-        .paddingInsets(widget.tilePadding)
+        .paddingInsets(widget.tilePadding ?? globalTheme.tilePadding)
         .material();
   }
 

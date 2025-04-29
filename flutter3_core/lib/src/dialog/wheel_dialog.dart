@@ -34,6 +34,8 @@ class WheelDialog extends StatefulWidget
   final List<Widget>? valuesWidget;
   @override
   final TransformDataWidgetBuilder? transformValueWidget;
+  @override
+  final ValueChanged<dynamic>? onValueChanged;
 
   /// wheel
   final bool enableWheelSelectedIndexColor;
@@ -63,6 +65,7 @@ class WheelDialog extends StatefulWidget
     this.values,
     this.valuesWidget,
     this.transformValueWidget,
+    this.onValueChanged,
     //
     this.enableWheelSelectedIndexColor = true,
     this.wheelSelectedIndexColor,
@@ -81,6 +84,7 @@ class _WheelDialogState extends State<WheelDialog>
   final _wheelItemExtent = kMinItemInteractiveHeight;
   final _wheelHeight = 200.0;
 
+  /// 走索引数据处理模式
   @override
   int getInitialValueMixin() => widget.valueIndexMixin;
 
@@ -103,7 +107,9 @@ class _WheelDialogState extends State<WheelDialog>
             trailingUseThemeColor: widget.enableTrailingUseThemeColor,
             useCloseIcon: widget.titleUseCloseIcon,
             onPop: () {
-              return currentValueMixin;
+              final value = widget.values?.getOrNull(currentValueMixin);
+              widget.onValueChanged?.call(value);
+              return value;
             },
           ),
           Stack(
@@ -111,9 +117,9 @@ class _WheelDialogState extends State<WheelDialog>
             children: [
               DecoratedBox(
                   decoration: fillDecoration(
-                color: Colors.black12,
-                radius: 0,
-              )).wh(double.infinity, _wheelItemExtent),
+                    color: Colors.black12,
+                    radius: 0,
+                  )).wh(double.infinity, _wheelItemExtent),
               Wheel(
                 looping: false,
                 size: _wheelHeight,
@@ -226,41 +232,42 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
         [
           rebuild(
             _titleUpdateNotifier,
-            (_, __) => CoreDialogTitle(
-              title: widget.title,
-              titleWidget: widget.titleWidget,
-              enableTrailing: currentValueMixin != initialValueMixin,
-              onPop: () {
-                return currentValueMixin;
-              },
-            ),
+                (_, __) =>
+                CoreDialogTitle(
+                  title: widget.title,
+                  titleWidget: widget.titleWidget,
+                  enableTrailing: currentValueMixin != initialValueMixin,
+                  onPop: () {
+                    return currentValueMixin;
+                  },
+                ),
           ),
           Stack(
             alignment: Alignment.center,
             children: [
               DecoratedBox(
                   decoration: fillDecoration(
-                color: Colors.black12,
-                radius: 0,
-              )).wh(double.infinity, _wheelItemExtent),
+                    color: Colors.black12,
+                    radius: 0,
+                  )).wh(double.infinity, _wheelItemExtent),
               [
                 if (widget.dateTimeType.getOrNull(0) != null)
                   buildYearWheel(context).expanded(),
                 if (widget.dateTimeType.getOrNull(1) != null)
                   rebuild(_monthUpdateNotifier,
-                      (_, __) => buildMonthWheel(context).expanded()),
+                          (_, __) => buildMonthWheel(context).expanded()),
                 if (widget.dateTimeType.getOrNull(2) != null)
                   rebuild(_dayUpdateNotifier,
-                      (_, __) => buildDayWheel(context).expanded()),
+                          (_, __) => buildDayWheel(context).expanded()),
                 if (widget.dateTimeType.getOrNull(3) != null)
                   rebuild(_hourUpdateNotifier,
-                      (_, __) => buildHourWheel(context).expanded()),
+                          (_, __) => buildHourWheel(context).expanded()),
                 if (widget.dateTimeType.getOrNull(4) != null)
                   rebuild(_minuteUpdateNotifier,
-                      (_, __) => buildMinuteWheel(context).expanded()),
+                          (_, __) => buildMinuteWheel(context).expanded()),
                 if (widget.dateTimeType.getOrNull(5) != null)
                   rebuild(_secondUpdateNotifier,
-                      (_, __) => buildSecondWheel(context).expanded()),
+                          (_, __) => buildSecondWheel(context).expanded()),
               ].row(mainAxisSize: MainAxisSize.max)!,
             ],
           ),

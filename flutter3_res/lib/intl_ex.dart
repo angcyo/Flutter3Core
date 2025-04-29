@@ -52,6 +52,9 @@ extension L10nStringEx on String {
 
   /// [intl.Intl.message]
   /// 使用指定的key name[this],获取对应的国际化文本资源
+  ///
+  /// 这个key [this]只需要arb文件中的key即可, 不需要报名或其它信息
+  ///
   String intlMessage({
     String? defMessage,
     String? desc = '',
