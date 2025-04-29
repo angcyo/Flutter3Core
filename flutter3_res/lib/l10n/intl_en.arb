@@ -40,5 +40,14 @@
   "libKnown": "Ok",
   "libSave": "Save",
   "libYes": "Yes",
-  "libNo": "No"
+  "libNo": "No",
+  "libLoading": "Loading...",
+  "@libPlaceholder": {
+    "placeholders": {
+      "des": {
+        "type": "String",
+        "example": "占位/Placeholder"
+      }
+    }
+  }
 }

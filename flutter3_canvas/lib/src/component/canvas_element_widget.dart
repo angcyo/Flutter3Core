@@ -243,6 +243,7 @@ class _CanvasElementAsyncWidgetState extends State<CanvasElementAsyncWidget> {
       }
     }
     return widget.loadingBuilder?.call(context) ??
-        GlobalConfig.of(context).loadingIndicatorBuilder(context, this, null);
+        GlobalConfig.of(context)
+            .loadingIndicatorBuilder(context, this, null, null);
   }
 }

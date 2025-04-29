@@ -254,6 +254,11 @@ class LibRes {
   String get libExternalShare {
     return Intl.message('外部分享', name: 'libExternalShare', desc: '', args: []);
   }
+
+  /// `加载中...`
+  String get libLoading {
+    return Intl.message('加载中...', name: 'libLoading', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

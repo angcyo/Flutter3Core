@@ -59,7 +59,7 @@ class _FutureOrBuilderState extends State<FutureOrBuilder> {
         }
         return widget.loadingBuilder?.call(context) ??
             GlobalConfig.of(context)
-                .loadingIndicatorBuilder(context, this, null);
+                .loadingIndicatorBuilder(context, this, null, null);
       },
     );
   }

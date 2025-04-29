@@ -68,6 +68,7 @@ OverlayEntry? showLoading({
             context,
             OverlayEntry,
             loadingInfo?.progress ?? progressValue,
+            null,
           );
           final message = loadingInfo?.message;
           if (message != null) {

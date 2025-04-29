@@ -27,7 +27,11 @@ typedef GlobalConfigGetFn = GlobalConfig Function();
 /// 进度小部件构建器
 /// [progress] 进度[0~1]
 typedef ProgressWidgetBuilder = Widget Function(
-    BuildContext context, dynamic data, double? progress);
+  BuildContext context,
+  dynamic data,
+  double? progress,
+  Color? color,
+);
 
 /// [AppBar]构建器函数
 typedef AppBarBuilderFn = PreferredSizeWidget? Function(
@@ -315,12 +319,22 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///
   /// [WidgetStateBuildWidgetState]
   ///
+  /// [LoadingIndicator]
+  /// - [CircularProgressIndicator]
+  /// - [StrokeLoadingWidget]
+  ///
   @minifyProguardFlag
-  ProgressWidgetBuilder loadingIndicatorBuilder = (context, data, progress) {
+  ProgressWidgetBuilder loadingIndicatorBuilder =
+      (context, data, progress, color) {
     //debugger();
+    //是否使用系统样式的加载小部件
+    final dataStr = "$data".toLowerCase();
+    final useSystemStyle =
+        !dataStr.contains("overlay") || dataStr.contains("system");
     return LoadingIndicator(
       progressValue: progress,
-      useSystemStyle: !"$data".toLowerCase().contains("overlay"),
+      useSystemStyle: useSystemStyle,
+      color: color,
     );
   };
 
@@ -371,11 +385,12 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [OverlayEntry]
   /// [showLoading]
   ProgressWidgetBuilder loadingOverlayWidgetBuilder =
-      (context, data, progress) {
+      (context, data, progress, color) {
     final loadingIndicator = GlobalConfig.of(context).loadingIndicatorBuilder(
       context,
       data,
       progress,
+      color,
     );
     return Container(
       alignment: Alignment.center,

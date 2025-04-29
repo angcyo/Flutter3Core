@@ -39,6 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libEdit": MessageLookupByLibrary.simpleMessage("Edit"),
     "libFinish": MessageLookupByLibrary.simpleMessage("Finish"),
     "libKnown": MessageLookupByLibrary.simpleMessage("Ok"),
+    "libLoading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "libNext": MessageLookupByLibrary.simpleMessage("Next"),
     "libNo": MessageLookupByLibrary.simpleMessage("No"),
     "libOpen": MessageLookupByLibrary.simpleMessage("Open"),

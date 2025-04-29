@@ -223,7 +223,7 @@ extension ImagePubEx on String {
             ? null
             : (context, url, downloadProgress) => GlobalConfig.of(context)
                 .loadingIndicatorBuilder(
-                    context, url, downloadProgress.progress),
+                    context, url, downloadProgress.progress, null),
         errorWidget: (context, url, error) =>
             GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
       );
@@ -243,14 +243,16 @@ extension ImagePubEx on String {
             : null,
         progressIndicatorBuilder: needPlaceholder
             ? null
-            : (context, progress) => GlobalConfig.of(context)
-                .loadingIndicatorBuilder(
-                    context,
-                    this,
-                    (progress == null || progress.expectedTotalBytes == null)
-                        ? null
-                        : progress.cumulativeBytesLoaded /
-                            progress.expectedTotalBytes!),
+            : (context, progress) =>
+                GlobalConfig.of(context).loadingIndicatorBuilder(
+                  context,
+                  this,
+                  (progress == null || progress.expectedTotalBytes == null)
+                      ? null
+                      : progress.cumulativeBytesLoaded /
+                          progress.expectedTotalBytes!,
+                  null,
+                ),
         errorBuilder: (context, url, error) =>
             GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
       );

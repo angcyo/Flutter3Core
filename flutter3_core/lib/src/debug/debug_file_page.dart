@@ -134,7 +134,7 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
             .sliverExpand(),
       if (_fileList == null)
         globalConfig
-            .loadingIndicatorBuilder(context, this, null)
+            .loadingIndicatorBuilder(context, this, null, null)
             .align(Alignment.center)
             .sliverExpand(),
       if (_fileList?.isEmpty == true)

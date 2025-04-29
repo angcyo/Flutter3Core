@@ -127,7 +127,7 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       progressValue = event.cumulativeBytesLoaded / event.expectedTotalBytes!;
     }
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, this, progressValue)
+        .loadingIndicatorBuilder(context, this, progressValue, null)
         .center();
   }
 }

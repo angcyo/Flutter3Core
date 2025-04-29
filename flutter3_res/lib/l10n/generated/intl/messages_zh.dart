@@ -42,6 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libExternalShare": MessageLookupByLibrary.simpleMessage("外部分享"),
     "libFinish": MessageLookupByLibrary.simpleMessage("完成"),
     "libKnown": MessageLookupByLibrary.simpleMessage("我知道了"),
+    "libLoading": MessageLookupByLibrary.simpleMessage("加载中..."),
     "libNext": MessageLookupByLibrary.simpleMessage("下一步"),
     "libNo": MessageLookupByLibrary.simpleMessage("否"),
     "libOpen": MessageLookupByLibrary.simpleMessage("打开"),

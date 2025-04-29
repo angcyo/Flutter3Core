@@ -178,10 +178,10 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   /// [WidgetBuildState.loading]状态
   @override
   Widget defBuildLoadingWidget(BuildContext context,
-      [dynamic data, double? progressValue]) {
+      [dynamic data, double? progressValue, Color? color]) {
     return (widget.buildLoadingWidgetState ?? widget.buildWidgetStateWidget)
             ?.call(context, _buildState, widget.stateData) ??
-        super.defBuildLoadingWidget(context, widget.stateData, progressValue);
+        super.defBuildLoadingWidget(context, widget.stateData, progressValue, color);
   }
 
   /// [WidgetBuildState.empty]状态
@@ -253,9 +253,9 @@ class AdapterStateWidgetState extends WidgetStateBuildWidgetState {
   /// [WidgetBuildState.loading]状态
   @override
   Widget defBuildLoadingWidget(BuildContext context,
-      [dynamic data, double? progressValue]) {
+      [dynamic data, double? progressValue, Color? color]) {
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, data, progressValue);
+        .loadingIndicatorBuilder(context, data, progressValue, color);
   }
 
   /// [WidgetBuildState.empty]状态
@@ -349,9 +349,9 @@ class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
   /// [WidgetBuildState.loading]状态
   @override
   Widget defBuildLoadingWidget(BuildContext context,
-      [dynamic data, double? progressValue]) {
+      [dynamic data, double? progressValue, Color? color]) {
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, data, progressValue)
+        .loadingIndicatorBuilder(context, data, progressValue, color)
         .wrapContent(minHeight: kInteractiveHeight)
         .paddingAll(kH);
   }
@@ -432,9 +432,9 @@ mixin StateWidgetBuildMixin {
 
   /// [WidgetBuildState.loading]状态
   Widget defBuildLoadingWidget(BuildContext context,
-      [dynamic data, double? progressValue]) {
+      [dynamic data, double? progressValue, Color? color]) {
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, data, progressValue);
+        .loadingIndicatorBuilder(context, data, progressValue, color);
   }
 
   /// [WidgetBuildState.empty]状态

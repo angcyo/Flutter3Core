@@ -21,11 +21,15 @@ class LoadingIndicator extends StatelessWidget {
   /// 是否使用系统样式
   final bool useSystemStyle;
 
+  /// 颜色
+  final Color? color;
+
   const LoadingIndicator({
     super.key,
     this.size,
     this.progressValue,
     this.useSystemStyle = true,
+    this.color,
   });
 
   @override
@@ -47,12 +51,12 @@ class LoadingIndicator extends StatelessWidget {
         child: useSystemStyle
             ? CircularProgressIndicator(
                 value: progressValue,
-                color: globalTheme.accentColor,
+                color: color ?? globalTheme.accentColor,
                 strokeWidth: 2,
               )
             : StrokeLoadingWidget(
                 progress: progressValue,
-                color: Colors.white,
+                color: color ?? Colors.white,
               ),
       ),
     ).repaintBoundary();
@@ -65,6 +69,7 @@ class LoadingWrapWidget extends StatelessWidget {
   final double? height;
   final AlignmentGeometry? alignment;
   final double? progressValue;
+  final Color? color;
 
   const LoadingWrapWidget({
     super.key,
@@ -72,12 +77,13 @@ class LoadingWrapWidget extends StatelessWidget {
     this.width,
     this.height,
     this.progressValue,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     Widget indicator = GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, this, progressValue);
+        .loadingIndicatorBuilder(context, this, progressValue, color);
     return Container(
       width: width,
       height: height,
@@ -101,10 +107,13 @@ class LoadingStateWidget extends StatelessWidget {
   /// 当前进度的值, 如果有.
   final double? progressValue;
 
+  final Color? color;
+
   const LoadingStateWidget({
     super.key,
     this.loading,
     this.progressValue,
+    this.color,
     required this.child,
     required this.isLoading,
   });
@@ -113,7 +122,7 @@ class LoadingStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget loading = this.loading ??
         GlobalConfig.of(context)
-            .loadingIndicatorBuilder(context, this, progressValue);
+            .loadingIndicatorBuilder(context, this, progressValue, color);
     return AnimatedSwitcher(
       duration: kDefaultAnimationDuration,
       child: isLoading ? loading : child,

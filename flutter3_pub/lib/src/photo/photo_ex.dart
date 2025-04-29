@@ -124,7 +124,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
       progressValue = event.cumulativeBytesLoaded / event.expectedTotalBytes!;
     }
     return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, this, progressValue)
+        .loadingIndicatorBuilder(context, this, progressValue, null)
         .center();
   }
 

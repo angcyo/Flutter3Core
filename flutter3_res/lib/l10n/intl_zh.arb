@@ -56,5 +56,13 @@
   "libRename": "重命名",
   "libCopy": "复制",
   "libExternalShare": "外部分享",
-  "@libPlaceholder": "占位"
+  "libLoading": "加载中...",
+  "@libPlaceholder": {
+    "placeholders": {
+      "des": {
+        "type": "String",
+        "example": "占位/Placeholder"
+      }
+    }
+  }
 }

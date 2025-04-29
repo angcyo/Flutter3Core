@@ -562,8 +562,12 @@ extension FutureEx<T> on Future<T> {
           }
         }
         return loadingBuilder?.call(context) ??
-            GlobalConfig.of(context)
-                .loadingIndicatorBuilder(context, this, null);
+            GlobalConfig.of(context).loadingIndicatorBuilder(
+              context,
+              this,
+              null,
+              null,
+            );
       },
     );
   }
