@@ -507,9 +507,7 @@ class NumberKeyboardInputController {
   /// 完成输入时调用
   /// @return 验证没问题后, 返回输入的键盘值
   @callPoint
-  num? onKeyboardInputFinish(
-    BuildContext? context,
-  ) {
+  num? onKeyboardInputFinish(BuildContext? context) {
     //debugger();
     if (checkInputValue(numberText)) {
       if (isSupportDecimal) {
