@@ -195,6 +195,9 @@ class GlobalTheme {
 
   double get xxxh => kXxx;
 
+  /// 对话框的圆角
+  double get dialogRadius => kDefaultBorderRadiusXX;
+
   EdgeInsets get labelTilePadding => kLabelPadding;
 
   /// 按钮内边距

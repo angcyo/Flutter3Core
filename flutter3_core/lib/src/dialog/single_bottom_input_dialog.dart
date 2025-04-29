@@ -157,6 +157,7 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
   Widget build(BuildContext context) {
     //input
     Widget input = buildInputWidgetMixin(context);
+    final globalTheme = GlobalTheme.of(context);
 
     //
     return widget
@@ -185,7 +186,7 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
                   input.paddingInsets(
                       widget.inputMargin ?? widget.dialogContentPadding)),
           ],
-          clipTopRadius: kDefaultBorderRadiusXX,
+          clipTopRadius: globalTheme.dialogRadius,
         )
         .scaffold();
   }

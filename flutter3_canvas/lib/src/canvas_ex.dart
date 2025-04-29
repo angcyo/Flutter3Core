@@ -8,6 +8,17 @@ part of '../flutter3_canvas.dart';
 /// 画布扩展方法
 /// `on List<ElementPainter>`
 extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
+  List<ElementPainter> get listPainter {
+    if (this is List<ElementPainter>) {
+      return this as List<ElementPainter>;
+    }
+    return toList();
+  }
+
+  /// [ElementGroupPainter.createGroupIfNeed]
+  ElementPainter? get wrapGroupPainter =>
+      ElementGroupPainter.createGroupIfNeed(listPainter);
+
   /// [CanvasPaintManager.rasterizeElementList]
   Future<UiImage?> rasterizeElement({
     Rect? elementBounds,
