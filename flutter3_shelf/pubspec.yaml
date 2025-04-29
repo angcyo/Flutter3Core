@@ -57,13 +57,13 @@ dependencies:
   # https://pub.dev/packages/mime
   # https://pub.dev/packages/shelf
   # https://pub.dev/packages/string_scanner
-  shelf_multipart: ^2.0.0
+  shelf_multipart: ^2.0.1
 
   # https://pub.dev/packages/shelf_web_socket
   # https://pub.dev/packages/shelf
   # https://pub.dev/packages/stream_channel
   # https://pub.dev/packages/web_socket_channel
-  shelf_web_socket: ^2.0.1
+  shelf_web_socket: ^3.0.0
 
   # https://pub.dev/packages/stream_channel
   # https://pub.dev/packages/async
@@ -76,11 +76,11 @@ dependencies:
   # https://pub.dev/packages/stream_channel
   # https://pub.dev/packages/web
   # https://pub.dev/packages/web_socket
-  web_socket_channel: ^3.0.1
+  web_socket_channel: ^3.0.3
 
   # https://pub.dev/packages/web_socket
   # https://pub.dev/packages/web
-  web_socket: ^0.1.6
+  web_socket: ^1.0.0
 
   # https://pub.dev/packages/web
   # mobile_scanner ^5.1.1 requires web ^0.5.1.
@@ -93,7 +93,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
   # 需要对应的权限
-  network_info_plus: ^6.1.3
+  network_info_plus: ^6.1.4
 
   # https://pub.dev/packages/udp
   udp: ^5.0.3

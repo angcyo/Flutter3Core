@@ -31,7 +31,8 @@ class Flutter3ShelfWebSocketServer extends Flutter3ShelfHttp {
     //http请求处理
     final httpHandler = super.createHandler();
     //WebSocket请求处理
-    final webHandler = webSocketHandler((IOWebSocketChannel webSocket) {
+    final webHandler =
+        webSocketHandler((WebSocketChannel webSocket, String? subProtocol) {
       //debugger();
       //webSocket.sink.close();
       if (_connectionInfo != null) {
@@ -146,7 +147,7 @@ class WebSocketClient {
   /// 双向通道
   /// [AdapterWebSocketChannel.sink] 用来发送数据
   /// [AdapterWebSocketChannel.stream] 用来监听数据
-  final IOWebSocketChannel channel;
+  final WebSocketChannel channel;
 
   /// 客户端连接信息
   final HttpConnectionInfo connectionInfo;

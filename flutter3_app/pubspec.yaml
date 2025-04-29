@@ -46,7 +46,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/win32
   # https://pub.dev/packages/win32_registry
-  device_info_plus: ^11.3.0
+  device_info_plus: ^11.4.0
 
   # https://pub.dev/packages/share_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/share_plus/share_plus
