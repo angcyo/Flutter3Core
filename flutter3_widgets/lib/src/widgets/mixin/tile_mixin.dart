@@ -675,25 +675,28 @@ mixin TileMixin {
         if (widget != null) {
           return transformValueWidget?.call(context, widget, data) ?? widget;
         }
-        textStyle ??= globalTheme.textGeneralStyle.copyWith(
-          color: index == selectedIndex
-              ? context.darkOr(
-                  globalTheme.textPrimaryStyle.color,
-                  globalTheme.themeBlackColor,
-                )
-              : context.darkOr(
-                  globalTheme.textPrimaryStyle.color,
-                  null,
-                ),
-          fontWeight: (index == selectedIndex && selectedBold)
-              ? ui.FontWeight.bold
-              : null,
-          /*fontSize: 14,*/
-        );
+        //debugger();
+        final style = textStyle ??
+            globalTheme.textGeneralStyle.copyWith(
+              color: index == selectedIndex
+                  ? context.darkOr(
+                      globalTheme.textPrimaryStyle.color,
+                      globalTheme.themeBlackColor,
+                    )
+                  : context.darkOr(
+                      globalTheme.textPrimaryStyle.color,
+                      null,
+                    ),
+              fontWeight: (index == selectedIndex && selectedBold)
+                  ? ui.FontWeight.bold
+                  : null,
+              /*fontSize: 14,*/
+            );
+        //尝试text小部件
         final textWidget = textOf(data)!.text(
           style: index == selectedIndex
-              ? selectedTextStyle ?? textStyle
-              : textStyle,
+              ? selectedTextStyle ?? style
+              : textStyle ?? style,
         );
         return transformValueWidget?.call(context, textWidget, data) ??
             textWidget.min();
