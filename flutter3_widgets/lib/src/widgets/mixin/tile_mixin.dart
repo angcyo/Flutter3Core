@@ -654,6 +654,8 @@ mixin TileMixin {
   ///
   /// [ValueMixin]
   ///
+  /// [ValueMixin.buildValuesWidgetListMixin]
+  ///
   WidgetList? buildChildrenFromValues(
     BuildContext context, {
     List? values,

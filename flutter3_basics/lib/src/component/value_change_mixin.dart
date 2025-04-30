@@ -158,7 +158,15 @@ mixin ValueMixin {
           return transformValueWidget?.call(context, widget, data) ?? widget;
         }
         textStyle ??= globalTheme.textGeneralStyle.copyWith(
-          color: index == selectedIndex ? globalTheme.themeBlackColor : null,
+          color: index == selectedIndex
+              ? context.darkOr(
+                  globalTheme.textPrimaryStyle.color,
+                  globalTheme.themeBlackColor,
+                )
+              : context.darkOr(
+                  globalTheme.textPrimaryStyle.color,
+                  null,
+                ),
           fontWeight: (index == selectedIndex && selectedBold)
               ? ui.FontWeight.bold
               : null,
