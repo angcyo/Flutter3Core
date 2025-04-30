@@ -674,7 +674,12 @@ mixin TileMixin {
           return transformValueWidget?.call(context, widget, data) ?? widget;
         }
         textStyle ??= globalTheme.textGeneralStyle.copyWith(
-          color: index == selectedIndex ? globalTheme.themeBlackColor : null,
+          color: index == selectedIndex
+              ? context.darkOr(
+                  globalTheme.iconWhiteBgColor,
+                  globalTheme.themeBlackColor,
+                )
+              : null,
           fontWeight: (index == selectedIndex && selectedBold)
               ? ui.FontWeight.bold
               : null,

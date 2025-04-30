@@ -309,6 +309,7 @@ class GlobalThemeDark extends GlobalTheme {
   @override
   Color get primaryColorDark => const Color(0xff2a2a2a);
 
+  /*const Color(0xfffcfbfc)*/
   @override
   Color get themeWhiteColor => primaryColor;
 
@@ -339,7 +340,7 @@ class GlobalThemeDark extends GlobalTheme {
   Color get whiteSubBgColor => const Color(0xff303030);
 
   /*@override
-  Color get borderColor => const Color(0xff292929) *//*const Color(0xff1a1a1a)*//*;*/
+  Color get borderColor => const Color(0xff292929) */ /*const Color(0xff1a1a1a)*/ /*;*/
 
   @override
   Color get disableTextColor => const Color(0xffb8b8b8);
@@ -360,6 +361,9 @@ class GlobalThemeDark extends GlobalTheme {
   ///
   @override
   ui.Color get iconWhiteDisableBgColor => super.iconWhiteDisableBgColor;
+
+  @override
+  ui.Color get dialogSurfaceBgColor => whiteBgColor;
 
   @override
   Color get icoDisableColor => const Color(0xffb0b0b0);
