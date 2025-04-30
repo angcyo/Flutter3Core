@@ -87,7 +87,8 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
       elevation: 0,
       currentIndex: currentNavigateIndexMixin,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: backgroundColor,
+      backgroundColor:
+          backgroundColor ?? context.darkOr(null, Colors.transparent),
       //--
       selectedItemColor: selectedItemColor,
       unselectedItemColor: unselectedItemColor,
