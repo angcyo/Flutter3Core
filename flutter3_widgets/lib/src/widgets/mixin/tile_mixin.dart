@@ -676,10 +676,13 @@ mixin TileMixin {
         textStyle ??= globalTheme.textGeneralStyle.copyWith(
           color: index == selectedIndex
               ? context.darkOr(
-                  globalTheme.iconWhiteBgColor,
+                  globalTheme.textPrimaryStyle.color,
                   globalTheme.themeBlackColor,
                 )
-              : null,
+              : context.darkOr(
+                  globalTheme.textPrimaryStyle.color,
+                  null,
+                ),
           fontWeight: (index == selectedIndex && selectedBold)
               ? ui.FontWeight.bold
               : null,
@@ -730,7 +733,11 @@ mixin TileMixin {
       () {
         onTap?.call();
       },
-      backgroundColor: backgroundColor ?? globalTheme.whiteSubBgColor,
+      backgroundColor: backgroundColor ??
+          context.darkOr(
+            globalTheme.lineDarkColor,
+            globalTheme.whiteSubBgColor,
+          ),
       radius: kDefaultBorderRadiusL,
     ).paddingInsets(margin);
   }
