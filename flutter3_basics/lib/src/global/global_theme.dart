@@ -338,8 +338,8 @@ class GlobalThemeDark extends GlobalTheme {
   @override
   Color get whiteSubBgColor => const Color(0xff303030);
 
-  @override
-  Color get borderColor => const Color(0xff1a1a1a);
+  /*@override
+  Color get borderColor => const Color(0xff292929) *//*const Color(0xff1a1a1a)*//*;*/
 
   @override
   Color get disableTextColor => const Color(0xffb8b8b8);

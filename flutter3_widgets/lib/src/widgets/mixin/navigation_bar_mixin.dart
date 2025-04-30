@@ -43,6 +43,8 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
 
   /// 构建导航栏
   /// [buildBottomNavigationBar]->[buildBottomNavigationBarItems]
+  ///
+  /// [BottomNavigationBarItem]必须要有`label`属性
   @callPoint
   @overridePoint
   List<BottomNavigationBarItem> buildBottomNavigationBarItems(
@@ -53,6 +55,9 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
   @callPoint
   Widget buildBottomNavigationBar(
     BuildContext context, {
+    //--
+    Color? backgroundColor,
+    //--
     List<BottomNavigationBarItem>? items,
     //--
     Color? selectedItemColor,
@@ -82,7 +87,7 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
       elevation: 0,
       currentIndex: currentNavigateIndexMixin,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.transparent,
+      backgroundColor: backgroundColor,
       //--
       selectedItemColor: selectedItemColor,
       unselectedItemColor: unselectedItemColor,

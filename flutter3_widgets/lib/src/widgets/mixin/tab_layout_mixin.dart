@@ -145,10 +145,16 @@ on State<T>, TickerProviderStateMixin<T> {
         color: globalTheme.accentColor,
         radius: borderRadius,
         gradient: linearGradient(colors ??
-            [
-              globalTheme.primaryColor,
-              globalTheme.primaryColorDark,
-            ]),
+            context.darkOr(
+              [
+                globalTheme.lineLightColor,
+                globalTheme.lineColor,
+              ],
+              [
+                globalTheme.primaryColor,
+                globalTheme.primaryColorDark,
+              ],
+            )!),
       ),
     ).tabItemData(
       itemType: TabItemType.indicator,
