@@ -13,6 +13,14 @@ import 'package:flutter_test/flutter_test.dart';
 /// 基于时间的一次性密码
 /// https://pypi.org/help/#totp
 ///
+/// https://pub.dev/packages/otp
+/// https://pub.dev/packages/uuid
+/// https://pub.dev/packages/base32
+///
+/// 绑定二维码内容:
+/// otpauth://totp/Twitter:@angcyo?secret=XOIQNA5Y6YZ2UTXR&issuer=Twitter
+/// otpauth://totp/Discord:angcyo@126.com?secret=xxx&issuer=Discord
+///
 void main() async {
   //CXJAJQXJDHWFE6AOGOTJOKKYN6CZW2HW
   //QZMAHO43DMZCSF7ECKARWEW2TYUZFBCY
@@ -42,30 +50,37 @@ class TOTP {
     required this.secret,
   });
 
+  /// 生成 TOTP
   Future<String> generateTOTP() async {
     // 获取当前时间戳
-    int timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    int timeCounter = (timestamp ~/ timeStep);
+    final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final timeCounter = (timestamp ~/ timeStep);
 
     // 将密钥从 Base32 转换为字节
-    Uint8List secretBytes = _decodeBase32(secret);
+    final Uint8List secretBytes = _decodeBase32(secret);
 
     // 生成 HMAC-SHA1
-    var hmac = Hmac.sha1();
-    var timeBytes = _intToBytes(timeCounter);
-    var hmacResult = await hmac.calculateMac(Uint8List.fromList(timeBytes),
+    final hmac = Hmac.sha1();
+    final timeBytes = _intToBytes(timeCounter);
+    final hmacResult = await hmac.calculateMac(Uint8List.fromList(timeBytes),
         secretKey: SecretKeyData(secretBytes));
 
     // 使用动态截断算法
-    int offset = hmacResult.bytes.last & 0x0F;
-    int binary = (hmacResult.bytes[offset] & 0x7F) << 24 |
+    final offset = hmacResult.bytes.last & 0x0F;
+    final binary = (hmacResult.bytes[offset] & 0x7F) << 24 |
         (hmacResult.bytes[offset + 1] & 0xFF) << 16 |
         (hmacResult.bytes[offset + 2] & 0xFF) << 8 |
         (hmacResult.bytes[offset + 3] & 0xFF);
 
     // 生成 TOTP
-    int otp = binary % pow(10, codeLength).toInt();
+    final otp = binary % pow(10, codeLength).toInt();
     return otp.toString().padLeft(codeLength, '0');
+  }
+
+  /// 验证 TOTP
+  Future<bool> verifyTOTP(String otp) async {
+    final generatedOtp = await generateTOTP();
+    return generatedOtp == otp;
   }
 
   Uint8List _intToBytes(int value) {
@@ -83,7 +98,7 @@ class TOTP {
       return base32Chars.indexOf(char);
     }).where((byte) => byte != -1).map((byte) {
       // Base32解码
-      int byteValue = byte;
+      final byteValue = byte;
       int value = 0;
       for (int i = 0; i < 5; i++) {
         if ((byteValue & (1 << (4 - i))) != 0) {
