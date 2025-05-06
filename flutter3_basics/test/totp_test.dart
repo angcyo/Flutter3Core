@@ -18,7 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// https://pub.dev/packages/base32
 ///
 /// 绑定二维码内容:
-/// otpauth://totp/Twitter:@angcyo?secret=XOIQNA5Y6YZ2UTXR&issuer=Twitter
+/// otpauth://totp/Twitter:@angcyo?secret=xxx&issuer=Twitter
 /// otpauth://totp/Discord:angcyo@126.com?secret=xxx&issuer=Discord
 ///
 void main() async {
