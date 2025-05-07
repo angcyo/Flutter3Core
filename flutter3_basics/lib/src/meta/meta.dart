@@ -170,6 +170,20 @@ class Alias {
 
 const alias = Alias();
 
+/// 权限
+class PermissionFlag {
+  final String des;
+
+  const PermissionFlag([this.des = '标识当前方法需要权限才能调用']);
+
+  @override
+  String toString() {
+    return 'PermissionFlag{des: $des}';
+  }
+}
+
+const permissionFlag = PermissionFlag();
+
 //region---单位
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');
