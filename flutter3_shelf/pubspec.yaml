@@ -80,7 +80,7 @@ dependencies:
 
   # https://pub.dev/packages/web_socket
   # https://pub.dev/packages/web
-  web_socket: ^1.0.0
+  web_socket: ^1.0.1
 
   # https://pub.dev/packages/web
   # mobile_scanner ^5.1.1 requires web ^0.5.1.
