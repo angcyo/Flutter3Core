@@ -7,7 +7,7 @@ part of '../flutter3_scanner.dart';
 ///
 /// 使用[ImagePicker]获取图片
 /// [ImageSource.gallery] 相册
-/// [ImageSource.camera] 拍照
+/// [ImageSource.camera] 拍照, 内部会申请相机权限.
 Future<XFile?> pickerImage({
   bool useCamera = false,
   double? maxWidth,
