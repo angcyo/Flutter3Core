@@ -356,7 +356,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //--
 
-  /// 画布覆盖组件
+  /// 画布覆盖组件, 独立绘制, 拦截所有元素手势.
+  /// [attachOverlay]
+  /// [detachOverlay]
+  ///
+  /// [CanvasElementManager.paintElements]
+  /// [CanvasEventManager.handleEvent]
   CanvasOverlayComponent? _overlayComponent;
 
   //--属性
