@@ -247,6 +247,14 @@ class ByteReader {
     return bytes[_index++];
   }
 
+  /// 读取有符号的一个字节
+  int readByteSigned([int overflow = -1]) {
+    if (isDone) {
+      return overflow;
+    }
+    return bytes[_index++].toSigned(8);
+  }
+
   /// 读取一个32位的整数, 4个字节
   /// [length] 需要读取的字节长度
   int readInt([int length = 4, int overflow = -1, Endian? endian]) {
@@ -373,7 +381,7 @@ class ByteReader {
     return result;
   }
 
-  /// 读取剩余的字节
+  /// 读取剩余的字节数组
   List<int> readRemaining() {
     if (isDone) {
       return [];
@@ -387,6 +395,19 @@ class ByteReader {
   /// 跳过指定的字节数
   void skip(int length) {
     _index += length;
+  }
+
+  /// 读取指定长度位代表的字节数据长度的数据
+  /// [readBytes]
+  /// [readRemaining]
+  void readLengthBytes(int length,
+      [Endian? endian, BytesReaderFn? bytesAction]) {
+    //读取后续字节的长度
+    final byteCount = readInt(length, 0, endian);
+    final bytes = readBytes(byteCount);
+    if (bytes != null && bytesAction != null) {
+      bytesReader(bytes, bytesAction);
+    }
   }
 }
 
