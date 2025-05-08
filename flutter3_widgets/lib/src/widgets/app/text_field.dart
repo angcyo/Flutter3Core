@@ -229,11 +229,13 @@ class TextFieldConfig {
 
   /// 更新输入框的文本
   /// [inputFormatters] 限制输入的字符
+  /// [restoreSelection] 是否恢复选中位置
   /// [notify] 是否要通知改变, 默认true
   @api
   void updateText(
     String? text, {
     List<TextInputFormatter>? inputFormatters,
+    bool? restoreSelection = false,
     bool? notify,
   }) {
     if (this.text == text) {
@@ -244,14 +246,18 @@ class TextFieldConfig {
       return;
     }
     text ??= '';
+    final selection = value.selection;
     updateValue(
       //TextEditingValue(text: text),
       value.copyWith(
-          text: text,
-          selection: value.selection.copyWith(
-            baseOffset: clamp(value.selection.baseOffset, 0, text.length),
-            extentOffset: clamp(value.selection.extentOffset, 0, text.length),
-          )),
+        text: text,
+        selection: restoreSelection == true
+            ? selection.copyWith(
+                baseOffset: clamp(selection.baseOffset, 0, text.length),
+                extentOffset: clamp(selection.extentOffset, 0, text.length),
+              )
+            : TextSelection.collapsed(offset: text.length),
+      ),
       /*TextEditingValue.empty.copyWith(
           text: text ?? '',
           selection: const TextSelection.collapsed(offset: 0)),*/
