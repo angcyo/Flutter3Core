@@ -69,8 +69,9 @@ class LogFileInterceptor extends Interceptor {
         builder.appendLine(
             "<--${value.$1} ${LTime.diffTime(value.$2)}(Dio异常[${err.response?.statusCode}])");
       }
-      builder.appendLine("$err");
+      builder.appendLine("error->$err");
       if (err.response != null) {
+        builder.append("response->");
         builder.append(_responseLog(err.response!));
       }
     });
