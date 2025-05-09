@@ -9,6 +9,7 @@ part of '../../flutter3_core.dart';
 const kMaxLogLength = 2 * 1024 * 1024; //2M
 /// 日志文件的扩展名
 const kLogExtension = ".log"; //日志文件后缀
+/// 常用日志文件名
 const kLFileName = "l.log"; //常规操作日志, l.x输出的日志, 会被写入到这个文件
 const kOperateFileName = "operate.log"; //特殊操作日志
 const kLogFileName = "log.log"; //特殊日志文件
@@ -19,9 +20,10 @@ const kErrorFileName = "error.log"; //错误日志
 const kHttpFileName = "http.log"; //网络请求日志
 const kPerfFileName = "perf.log"; //性能相关日志
 /// 路径
-const kLogPathName = "log"; //日志文件夹
-const kConfigPathName = "config"; //配置文件夹
-const kExportPathName = "export"; //导出的数据文件夹
+const kLogPathName = "log"; //日志存放的文件夹
+const kConfigPathName = "config"; //配置存放的文件夹
+const kExportPathName = "export"; //导出的数据存放文件夹
+const kPrintPathName = "print"; //打印雕刻的数据存放文件夹
 
 /// 当前支持写入文件的数据类型
 /// [UiImage]
@@ -29,12 +31,12 @@ const kExportPathName = "export"; //导出的数据文件夹
 /// [ByteBuffer]|[ByteBuffer.asUint8List]->[Uint8List]|[ByteBuffer.asByteData]->[ByteData]
 /// [Stream<List<int>>]/[List<int>]/[Uint8List]/[TypedData]|[Uint8List.buffer]->[ByteBuffer]
 /// [String]
-/// [LogEx.appendToFile]
+/// [ObjectLogEx.appendToFile]
 /// [FileSystemEntity].[File].[Directory].
 ///
 typedef FileDataType = Object;
 
-extension LogEx on Object {
+extension ObjectLogEx on Object {
   /// 包裹一下日志信息
   String wrapLogString([String? prefix]) =>
       "${prefix ?? nowTimeString()} $this\n";

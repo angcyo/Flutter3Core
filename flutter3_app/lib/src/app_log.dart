@@ -46,7 +46,11 @@ extension AppLogDirectoryEx on Directory {
 ///
 /// 快速分享app日志压缩文件, 分享日志
 /// [logName] 指定日志的名称, 不指定使用默认
-Future shareAppLog([String? logName]) async {
+/// [includeFilePath] 是否要包含文件路径数据的分享
+Future shareAppLog({
+  String? logName,
+  bool? includeFilePath = true,
+}) async {
   final info = await $platformPackageInfo;
   final output = await cacheFilePath(logName?.ensureSuffix(".zip") ??
       "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip");
@@ -58,9 +62,12 @@ Future shareAppLog([String? logName]) async {
   list.add(configFolderPath);
   //--
   list.addAll(tempShareLogPathList);
+  if (includeFilePath == true) {
+    list.addAll(tempShareFilePathList);
+  }
   list.addAll(globalShareLogPathList);
   //--
   await list.zipPathList(output);
   output.shareFile().ignore();
-  clearTempShareLogPath();
+  clearTempShareLogPath(clearFilePath: includeFilePath == true);
 }

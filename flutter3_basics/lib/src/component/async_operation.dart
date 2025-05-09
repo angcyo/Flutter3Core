@@ -71,8 +71,8 @@ mixin WaitFirstFutureMixin {
   final Map<String, List<Completer>> _waitFirstFutureMap = {};
 
   /// 等待第一个[Future]完成
-  /// [key] 唯一标识
-  /// [completer]
+  /// [key] 唯一标识, 相同的key的请求才会合并到一起
+  /// [completer] [Future]的[Completer]
   /// [doFirstOperation] 第一个[Future], 需要执行的操作
   Future waitFirstFuture(
     String key,
@@ -91,7 +91,7 @@ mixin WaitFirstFutureMixin {
         //完成后
         final waitList = _waitFirstFutureMap.remove(key);
         if (waitList != null) {
-          for (var item in waitList) {
+          for (final item in waitList) {
             item.complete(result);
           }
         }

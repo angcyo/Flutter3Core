@@ -24,11 +24,15 @@ part of '../../flutter3_basics.dart';
 /// 支持文件/文件夹类型
 final Set<String> tempShareLogPathList = {};
 
+/// 类似[tempShareLogPathList], 但是这里通常放的是文件, 比较占体积的数据.
+/// 在分享时, 通过参数选择是否要分享文件.
+final Set<String> tempShareFilePathList = {};
+
 /// 需要分享的日志路径, 全局共享, 分享后不清空
 /// 支持文件/文件夹类型
 final Set<String> globalShareLogPathList = {};
 
-/// 路径对应应该在zip包中的key
+/// 路径对应应该在zip包中的key, 就是在zip包中的全路径名称(需要包含名称和后缀)
 /// [tempShareLogPathList]
 /// [globalShareLogPathList]
 final Map<String, String?> zipEntryKeyMap = {};
@@ -40,6 +44,7 @@ void addToShareLogPath(
   String? path, {
   String? key,
   bool temp = true,
+  bool isFile = false,
 }) {
   if (path == null) {
     assert(() {
@@ -51,7 +56,9 @@ void addToShareLogPath(
   if (key != null) {
     zipEntryKeyMap[path] = key;
   }
-  if (temp) {
+  if (isFile) {
+    tempShareFilePathList.add(path);
+  } else if (temp) {
     tempShareLogPathList.add(path);
   } else {
     globalShareLogPathList.add(path);
@@ -60,9 +67,13 @@ void addToShareLogPath(
 
 /// 清空临时的日志分享路径
 @callPoint
-void clearTempShareLogPath() {
+void clearTempShareLogPath({bool clearFilePath = false}) {
   zipEntryKeyMap.removeAllKey(tempShareLogPathList);
   tempShareLogPathList.clear();
+  if (clearFilePath) {
+    zipEntryKeyMap.removeAllKey(tempShareFilePathList);
+    tempShareFilePathList.clear();
+  }
 }
 
 /// [randomString]

@@ -33,6 +33,9 @@ final class DataChunkInfo {
 
   /// 计算速率 bytes/s
   int get speed {
+    if (startTime <= 0) {
+      return 0;
+    }
     final time = nowTime();
     final dTime = time - startTime;
     return dTime >= 1000 ? (count * 1000 / (time - startTime)).round() : count;
