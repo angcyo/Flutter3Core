@@ -216,7 +216,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //--
 
-  /// 鼠标或者手势是否按下
+  /// 鼠标或者手势是否处于按下状态
   bool get isPointerDown => canvasEventManager.isPointerDown;
 
   /// 元素的数量
@@ -227,6 +227,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 画布的数量
   int get canvasCount => canvasMultiManager.canvasStateList.size();
+
+  /// 是否选中了元素
+  bool get isSelectedElement => selectedElementCount > 0;
 
   /// 选中的内部元素, 如果不是一组数据
   ElementPainter? get selectedElement => canvasElementManager.selectedElement;
@@ -656,7 +659,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void selectElement(
     ElementPainter? element, {
     bool followPainter = true,
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = ElementSelectType.user,
   }) {
     canvasElementManager.selectElement(
       element,
@@ -670,7 +673,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void selectElementList(
     List<ElementPainter>? elementPainters, {
     bool followPainter = true,
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = ElementSelectType.user,
   }) {
     canvasElementManager.resetSelectedElementList(
       elementPainters,
@@ -679,6 +682,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     if (followPainter && !isNil(elementPainters)) {
       followRect(rect: elementPainters?.allElementBounds);
     }
+  }
+
+  /// 清除选中的元素集合
+  @api
+  void clearSelectedElement({
+    ElementSelectType selectType = ElementSelectType.user,
+  }) {
+    canvasElementManager.clearSelectedElement(selectType: selectType);
   }
 
   /// 将画布上的整体状态压入栈, 可以用来恢复整个画布状态
@@ -697,7 +708,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void removeElementList(
     List<ElementPainter>? list, {
     UndoType undoType = UndoType.normal,
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = ElementSelectType.user,
   }) {
     if (list == null || isNil(list)) {
       return;
@@ -1097,7 +1108,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     List<ElementPainter> op,
     ElementChangeType changeType,
     UndoType undoType, {
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = ElementSelectType.user,
   }) {
     //debugger();
     isElementChanged = true;
