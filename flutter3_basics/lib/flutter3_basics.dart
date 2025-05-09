@@ -180,6 +180,10 @@ typedef NumFormat = String? Function(num? number);
 /// [GestureTapCallback]
 typedef GestureContextTapCallback = void Function(BuildContext contet);
 
+/// [GestureTapCallback] 异步手势回调
+/// [GestureContextTapCallback]
+typedef AsyncGestureContextTapCallback = FutureOr Function(BuildContext contet);
+
 ///[isNullOrEmpty]
 bool isNil(dynamic value) => isNullOrEmpty(value);
 

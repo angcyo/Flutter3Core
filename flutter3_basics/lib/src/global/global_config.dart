@@ -323,6 +323,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// - [CircularProgressIndicator]
   /// - [StrokeLoadingWidget]
   ///
+  /// [loadingOverlayWidgetBuilder]
+  ///
   @minifyProguardFlag
   ProgressWidgetBuilder loadingIndicatorBuilder =
       (context, data, progress, color) {

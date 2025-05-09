@@ -5,9 +5,8 @@ part of '../../flutter3_widgets.dart';
 /// @author angcyo
 /// @date 2023/11/09
 ///
-
 /// 渐变按钮
-class GradientButton extends StatelessWidget {
+class GradientButton extends StatefulWidget {
   /// 主题渐变样式
   const GradientButton({
     super.key,
@@ -16,6 +15,8 @@ class GradientButton extends StatelessWidget {
     this.onTap,
     required this.child,
     this.onContextTap,
+    this.onAsyncContextTap,
+    this.loadingWidget,
     this.enable,
     this.padding,
     this.textStyle,
@@ -40,6 +41,8 @@ class GradientButton extends StatelessWidget {
     this.colors,
     this.onTap,
     this.onContextTap,
+    this.onAsyncContextTap,
+    this.loadingWidget,
     required this.child,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kS, horizontal: kM),
@@ -65,6 +68,8 @@ class GradientButton extends StatelessWidget {
     this.colors,
     required this.child,
     this.onContextTap,
+    this.onAsyncContextTap,
+    this.loadingWidget,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
@@ -91,6 +96,8 @@ class GradientButton extends StatelessWidget {
     this.splashColor = const Color(0x20ffffff),
     required this.child,
     this.onContextTap,
+    this.onAsyncContextTap,
+    this.loadingWidget,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
@@ -117,6 +124,8 @@ class GradientButton extends StatelessWidget {
     this.splashColor = const Color(0x20000000),
     this.textColor = const Color(0xff000000),
     this.onContextTap,
+    this.onAsyncContextTap,
+    this.loadingWidget,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
@@ -145,6 +154,8 @@ class GradientButton extends StatelessWidget {
     this.colors,
     this.onTap,
     this.onContextTap,
+    this.onAsyncContextTap,
+    this.loadingWidget,
     required this.child,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
@@ -203,6 +214,14 @@ class GradientButton extends StatelessWidget {
 
   /// 带[BuildContext]参数的点击事件
   final GestureContextTapCallback? onContextTap;
+
+  /// 异步的点击事件, 同时开启loading状态显示
+  final AsyncGestureContextTapCallback? onAsyncContextTap;
+
+  /// [onAsyncContextTap]加载中显示的小部件, 不指定用默认
+  @defInjectMark
+  final Widget? loadingWidget;
+
   final ValueChanged<bool>? onHighlightChanged;
 
   /// [BoxConstraints.minWidth]
@@ -222,29 +241,40 @@ class GradientButton extends StatelessWidget {
   final Decoration? decoration;
 
   @override
+  State<GradientButton> createState() => _GradientButtonState();
+}
+
+class _GradientButtonState extends State<GradientButton> {
+  /// 没有设置手势事件
+  bool get noSetGestureTap =>
+      widget.onTap == null &&
+      widget.onContextTap == null &&
+      widget.onAsyncContextTap == null;
+
+  @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     //确保colors数组不空
-    final tempSplashColor = splashColor ??
-        this.colors?.lastOrNull ??
+    final tempSplashColor = widget.splashColor ??
+        widget.colors?.lastOrNull ??
         /*color?.withOpacity(0.3) ??*/
         Colors.black12;
-    List<Color> colors = this.colors ??
-        (color == null
+    List<Color> colors = widget.colors ??
+        (widget.color == null
             ? [globalTheme.primaryColor, globalTheme.primaryColorDark]
-            : [color!, color!]);
-    final radius = borderRadius ??
-        (this.radius == null ? null : BorderRadius.circular(this.radius!));
-    bool disabled =
-        enable == null ? (onTap == null && onContextTap == null) : !enable!;
+            : [widget.color!, widget.color!]);
+    final radius = widget.borderRadius ??
+        (widget.radius == null ? null : BorderRadius.circular(widget.radius!));
+    bool disabled = widget.enable == null ? noSetGestureTap : !widget.enable!;
     return DecoratedBox(
-      decoration: decoration ??
+      decoration: widget.decoration ??
           BoxDecoration(
             gradient: disabled || colors.isEmpty
                 ? null
                 : LinearGradient(colors: colors),
-            color:
-                disabled ? disabledColor ?? globalTheme.disableBgColor : color,
+            color: disabled
+                ? widget.disabledColor ?? globalTheme.disableBgColor
+                : widget.color,
             borderRadius: radius,
           ),
       child: Material(
@@ -253,37 +283,57 @@ class GradientButton extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minWidth: minWidth,
-            minHeight: minHeight,
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
+            minWidth: widget.minWidth,
+            minHeight: widget.minHeight,
+            maxWidth: widget.maxWidth,
+            maxHeight: widget.maxHeight,
           ),
           child: InkWell(
             splashColor: tempSplashColor,
             highlightColor: Colors.transparent,
-            onHighlightChanged: onHighlightChanged,
+            onHighlightChanged: widget.onHighlightChanged,
             onTap: disabled
                 ? null
-                : () {
-                    onTap?.call();
-                    onContextTap?.call(context);
+                : () async {
+                    if (_isLoading == true) {
+                      return;
+                    }
+                    widget.onTap?.call();
+                    widget.onContextTap?.call(context);
+                    if (widget.onAsyncContextTap != null) {
+                      _isLoading = true;
+                      updateState();
+                      try {
+                        await widget.onAsyncContextTap!(context);
+                        _isLoading = false;
+                        updateState();
+                      } catch (e) {
+                        assert(() {
+                          print(e);
+                          return true;
+                        }());
+                        _isLoading = false;
+                        updateState();
+                      }
+                    }
                   },
             child: Padding(
-              padding: padding ?? globalTheme.buttonPadding,
+              padding: widget.padding ?? globalTheme.buttonPadding,
               child: DefaultTextStyle(
                 style: const TextStyle(fontWeight: FontWeight.bold),
                 child: Center(
                   widthFactor: 1,
                   heightFactor: 1,
                   child: DefaultTextStyle(
-                    style: (textStyle ?? globalTheme.textBodyStyle).copyWith(
+                    style: (widget.textStyle ?? globalTheme.textBodyStyle)
+                        .copyWith(
                       color: disabled
-                          ? disabledTextColor ?? Colors.black38
-                          : textStyle == null
-                              ? (textColor ?? Colors.white)
+                          ? widget.disabledTextColor ?? Colors.black38
+                          : widget.textStyle == null
+                              ? (widget.textColor ?? Colors.white)
                               : null,
                     ),
-                    child: child,
+                    child: wrapLoadingIfNeed(context, widget.child),
                   ),
                 ),
               ),
@@ -292,6 +342,23 @@ class GradientButton extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// 是否处于加载中...
+  bool? _isLoading;
+
+  Widget wrapLoadingIfNeed(BuildContext context, Widget child) {
+    final globalTheme = GlobalTheme.of(context);
+    return _isLoading == true
+        ? widget.loadingWidget ??
+            CircularProgressIndicator(
+              value: null,
+              color: globalTheme.accentColor,
+              constraints: BoxConstraints.tightFor(width: 20, height: 20),
+              strokeWidth: 2,
+            )
+        /*.center()*/
+        : child;
   }
 }
 

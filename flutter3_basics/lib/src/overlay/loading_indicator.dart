@@ -24,12 +24,16 @@ class LoadingIndicator extends StatelessWidget {
   /// 颜色
   final Color? color;
 
+  /// [CircularProgressIndicator]的约束
+  final BoxConstraints? progressConstraints;
+
   const LoadingIndicator({
     super.key,
     this.size,
     this.progressValue,
     this.useSystemStyle = true,
     this.color,
+    this.progressConstraints,
   });
 
   @override
@@ -50,12 +54,13 @@ class LoadingIndicator extends StatelessWidget {
         height: height,
         child: useSystemStyle
             ? CircularProgressIndicator(
-                value: progressValue,
+                value: progressValue == -1 ? null : progressValue,
                 color: color ?? globalTheme.accentColor,
+                constraints: progressConstraints,
                 strokeWidth: 2,
               )
             : StrokeLoadingWidget(
-                progress: progressValue,
+                progress: progressValue == -1 ? null : progressValue,
                 color: color ?? Colors.white,
               ),
       ),
@@ -162,4 +167,16 @@ extension LoadingValueListenableEx on ValueListenable<bool> {
       child: child,
     );
   }
+}
+
+/// 加载指示器的样式
+///
+/// [LoadingIndicator]
+enum LoadingIndicatorStyle {
+  /// 系统圆环样式
+  circularProgressSystem,
+
+  ///
+  strokeLoading,
+  ;
 }
