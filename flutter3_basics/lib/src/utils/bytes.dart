@@ -247,12 +247,13 @@ class ByteReader {
     return bytes[_index++];
   }
 
-  /// 读取有符号的一个字节
-  int readByteSigned([int overflow = -1]) {
+  /// 读取有符号的一个字节, 这个方法支持返回负数
+  /// [width] 宽度, 默认8位
+  int readByteSigned([int width = 8, int overflow = -1]) {
     if (isDone) {
       return overflow;
     }
-    return bytes[_index++].toSigned(8);
+    return bytes[_index++].toSigned(width);
   }
 
   /// 读取一个32位的整数, 4个字节
