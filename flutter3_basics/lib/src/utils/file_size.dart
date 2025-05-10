@@ -9,73 +9,72 @@ extension FileSizeEx on num {
   /// filesize(1024);                   // "1 KB"
   /// filesize(664365320);              // "633.59 MB"
   /// filesize(4324324232343);          // "3.93 TB"
-  /// [filesize]
+  /// [fileSize]
   String toSizeStr([int round = 2, String space = ""]) {
-    return filesize(ceil(), round, space);
+    return fileSize(ceil(), round, space);
   }
 }
 
 /// A method returns a human readable string representing a file _size
-String filesize(dynamic size, [int round = 2, String space = ""]) {
-  /**
-   * [size] can be passed as number or as string
-   *
-   * the optional parameter [round] specifies the number
-   * of digits after comma/point (default is 2)
-   */
-  var divider = 1024;
-  int _size;
+///
+/// [size] can be passed as number or as string
+///
+/// the optional parameter [round] specifies the number
+/// of digits after comma/point (default is 2)
+///
+String fileSize(dynamic size, [int round = 2, String space = ""]) {
+  final divider = 1024;
+  int s;
   try {
-    _size = int.parse(size.toString());
+    s = int.parse(size.toString());
   } catch (e) {
     throw ArgumentError('Can not parse the size parameter: $e');
   }
 
-  if (_size < divider) {
-    return '$_size${space}B';
+  if (s < divider) {
+    return '$s${space}B';
   }
 
-  if (_size < divider * divider && _size % divider == 0) {
-    return '${(_size / divider).toStringAsFixed(0)}${space}KB';
+  if (s < divider * divider && s % divider == 0) {
+    return '${(s / divider).toStringAsFixed(0)}${space}KB';
   }
 
-  if (_size < divider * divider) {
-    return '${(_size / divider).toStringAsFixed(round)}${space}KB';
+  if (s < divider * divider) {
+    return '${(s / divider).toStringAsFixed(round)}${space}KB';
   }
 
-  if (_size < divider * divider * divider && _size % divider == 0) {
-    return '${(_size / (divider * divider)).toStringAsFixed(0)}${space}MB';
+  if (s < divider * divider * divider && s % divider == 0) {
+    return '${(s / (divider * divider)).toStringAsFixed(0)}${space}MB';
   }
 
-  if (_size < divider * divider * divider) {
-    return '${(_size / divider / divider).toStringAsFixed(round)}${space}MB';
+  if (s < divider * divider * divider) {
+    return '${(s / divider / divider).toStringAsFixed(round)}${space}MB';
   }
 
-  if (_size < divider * divider * divider * divider && _size % divider == 0) {
-    return '${(_size / (divider * divider * divider)).toStringAsFixed(0)}${space}GB';
+  if (s < divider * divider * divider * divider && s % divider == 0) {
+    return '${(s / (divider * divider * divider)).toStringAsFixed(0)}${space}GB';
   }
 
-  if (_size < divider * divider * divider * divider) {
-    return '${(_size / divider / divider / divider).toStringAsFixed(round)}${space}GB';
+  if (s < divider * divider * divider * divider) {
+    return '${(s / divider / divider / divider).toStringAsFixed(round)}${space}GB';
   }
 
-  if (_size < divider * divider * divider * divider * divider &&
-      _size % divider == 0) {
-    num r = _size / divider / divider / divider / divider;
+  if (s < divider * divider * divider * divider * divider && s % divider == 0) {
+    num r = s / divider / divider / divider / divider;
     return '${r.toStringAsFixed(0)}${space}TB';
   }
 
-  if (_size < divider * divider * divider * divider * divider) {
-    num r = _size / divider / divider / divider / divider;
+  if (s < divider * divider * divider * divider * divider) {
+    num r = s / divider / divider / divider / divider;
     return '${r.toStringAsFixed(round)}${space}TB';
   }
 
-  if (_size < divider * divider * divider * divider * divider * divider &&
-      _size % divider == 0) {
-    num r = _size / divider / divider / divider / divider / divider;
+  if (s < divider * divider * divider * divider * divider * divider &&
+      s % divider == 0) {
+    num r = s / divider / divider / divider / divider / divider;
     return '${r.toStringAsFixed(0)}${space}PB';
   } else {
-    num r = _size / divider / divider / divider / divider / divider;
+    num r = s / divider / divider / divider / divider / divider;
     return '${r.toStringAsFixed(round)}${space}PB';
   }
 }

@@ -2191,7 +2191,7 @@ extension IntEx on int {
 
   /// [FileSizeEx.toSizeStr]
   String toSizeStr([int round = 2, String space = ""]) {
-    return filesize(this, round);
+    return fileSize(this, round);
   }
 
   /// 从整型数中取第[bit]位的数
