@@ -406,11 +406,11 @@ class SvgBuilder {
   /// </svg>
   /// """
   /// ```
-  /// [scaleImage] 图片放大倍数, 1.0: 不放大; 10: 放大10倍;
-  /// 在使用[scaleImage]属性时, [image]必须要是[transform]后的图片, 否则具有缩放属性,宽高会对不上
+  /// [scaleImageFactor] 图片放大倍数, 1.0: 不放大; 10: 放大10倍;
+  /// 在使用[scaleImageFactor]属性时, [image]必须要是[transform]后的图片, 否则具有缩放属性,宽高会对不上
   ///
   /// [invertScaleImageMatrix] 是否反转缩放图片的矩阵, 通常在正常情况下都是需要的, 但是雕刻图片数据时, 并不需要反向缩放
-  /// 默认[scaleImage]有值时, 就会反转
+  /// 默认[scaleImageFactor]有值时, 就会反转
   /// 在生成雕刻数据时, 建议不反转, 因为雕刻数据在转成GCode时, 算法会处理
   ///
   Future writeImage(
@@ -418,7 +418,7 @@ class SvgBuilder {
     Matrix4? transform,
     String? id,
     String? name,
-    double? scaleImage,
+    double? scaleImageFactor,
     bool? invertScaleImageMatrix,
     //--
     dynamic x,
@@ -427,17 +427,17 @@ class SvgBuilder {
     dynamic height,
   }) async {
     if (image != null) {
-      if (scaleImage != null && scaleImage != 1) {
+      if (scaleImageFactor != null && scaleImageFactor != 1) {
         //debugger();
         //需要缩放图片
-        final scaleMatrix = createScaleMatrix(sx: scaleImage, sy: scaleImage);
+        final scaleMatrix = createScaleMatrix(sx: scaleImageFactor, sy: scaleImageFactor);
         image = await image.scale(scaleMatrix: scaleMatrix);
 
         //矩阵反向缩放
         invertScaleImageMatrix ??= true;
         if (invertScaleImageMatrix == true) {
           final scaleInvertMatrix =
-              createScaleMatrix(sx: 1 / scaleImage, sy: 1 / scaleImage);
+              createScaleMatrix(sx: 1 / scaleImageFactor, sy: 1 / scaleImageFactor);
           transform ??= Matrix4.identity();
           transform = transform * scaleInvertMatrix;
         }
