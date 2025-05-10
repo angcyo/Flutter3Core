@@ -1615,9 +1615,10 @@ class ElementSelectComponent extends ElementGroupPainter
         }
       } else {
         assert(() {
-          l.d('没有元素被选中');
+          l.d('没有元素被选中, 无需清空选择.');
           return true;
         }());
+        debugger();
       }
     } else {
       assert(() {
