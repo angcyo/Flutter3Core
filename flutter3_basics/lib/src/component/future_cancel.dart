@@ -14,14 +14,18 @@ class FutureCancelToken {
 
   FutureCancelException? _cancelException;
 
-  /// 是否已经取消
+  /// 主动判断是否已经取消
   bool get isCanceled => _cancelException != null;
 
+  /// 监听此方法, 可以监听到取消信号
   /// When cancelled, this future will be resolved.
+  @streamMark
   Future<FutureCancelException> get whenCancel => _completer.future;
 
+  /// 调用此方法, 可以取消[Future]
   /// 使用给定的原因, 取消[Future]
   /// Cancel the request with the given [reason].
+  @api
   void cancel([Object? reason]) {
     if (!isCanceled && !_completer.isCompleted) {
       _cancelException = FutureCancelException(
