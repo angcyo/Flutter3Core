@@ -148,6 +148,8 @@ class _ProgressBarState extends State<ProgressBar>
   }
 }
 
+/// [ProgressBar]
+/// [CustomPaint]
 class ProgressBarPainter extends CustomPainter {
   /// 圆角半径
   double? radius;
