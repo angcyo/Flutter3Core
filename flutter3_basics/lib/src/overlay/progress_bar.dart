@@ -64,12 +64,15 @@ class _ProgressBarState extends State<ProgressBar>
 
   void _startFlowAnimation() {
     _flowController?.dispose();
+    final value = _flowController?.value ?? 0;
+    final toValue = widget.progress ?? 0;
+    debugger(when: value < 0 || value > toValue);
     _flowController = AnimationController(
       duration: kDefaultSlowAnimationDuration,
       vsync: this,
-      value: _flowController?.value ?? 0,
+      value: value,
       lowerBound: 0,
-      upperBound: widget.progress ?? 0,
+      upperBound: toValue,
     );
     if (widget.enableFlowProgressAnimate) {
       _flowController?.repeat();

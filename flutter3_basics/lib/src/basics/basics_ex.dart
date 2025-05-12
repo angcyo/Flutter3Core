@@ -2277,6 +2277,9 @@ extension IntEx on int {
 }
 
 extension DoubleEx on double {
+  /// 当[this==other]时, 则返回[or], 否则返回自身
+  double equalOr(double other, double or) => equalTo(other) ? or : this;
+
   /// 避免返回无限大
   double infinityOr(double value) => this == double.infinity ? value : this;
 
