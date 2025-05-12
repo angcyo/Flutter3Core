@@ -80,6 +80,8 @@ const kLabelMinWidth = 80.0;
 const kNumberMinWidth = 50.0;
 const kNumberMinHeight = 26.0;
 const kMenuMinWidth = 160.0;
+/// 系统[Dialog]最小宽度280.0
+const kDialogMinWidth = 260.0;
 
 /// label默认的约束
 const kLabelConstraints = BoxConstraints(

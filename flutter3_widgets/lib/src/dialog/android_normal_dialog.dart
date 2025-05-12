@@ -244,7 +244,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
               if (onConfirmTap == null) {
                 Navigator.pop(context, true);
               } else {
-                final intercept = await onConfirmTap!(true) == true;
+                final intercept = (await onConfirmTap!(true)) == true;
                 if (!intercept) {
                   if (context.mounted) {
                     Navigator.pop(context, true);

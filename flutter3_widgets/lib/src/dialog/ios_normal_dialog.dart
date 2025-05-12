@@ -14,15 +14,19 @@ class IosNormalDialog extends AndroidNormalDialog {
     super.titleWidget,
     super.message,
     super.messageWidget,
+    //--
     super.cancel,
     super.showCancel = true,
     super.cancelWidget,
+    //--
     super.confirm,
     super.showConfirm = true,
     super.confirmWidget,
+    //--
     super.neutral,
     super.neutralWidget,
     super.showNeutral,
+    //--
     super.onCancelTap,
     super.onConfirmTap,
     super.useIcon = false,

@@ -1945,11 +1945,12 @@ extension WidgetEx on Widget {
   Widget popScope([
     bool canPop = false,
     PopInvokedCallback? onPopInvoked,
+    PopInvokedWithResultCallback? onPopInvokedWithResult,
   ]) {
     return PopScope(
       canPop: canPop,
       onPopInvoked: onPopInvoked,
-      onPopInvokedWithResult: null,
+      onPopInvokedWithResult: onPopInvokedWithResult,
       child: this,
     );
   }
@@ -1969,16 +1970,19 @@ extension WidgetEx on Widget {
     FutureOr Function() action, {
     BuildContext? context,
     dynamic result,
+    bool enable = true,
   }) {
-    return popScope(false, (didPop) async {
-      //debugger();
-      if (!didPop && !$isShowLoading) {
-        final result = await action();
-        if (result is bool && !result) {
-          (context ?? GlobalConfig.def.globalContext)?.pop(result);
-        }
-      }
-    });
+    return enable
+        ? popScope(false, (didPop) async {
+            //debugger();
+            if (!didPop && !$isShowLoading) {
+              final result = await action();
+              if (result is bool && !result) {
+                (context ?? GlobalConfig.def.globalContext)?.pop(result);
+              }
+            }
+          })
+        : this;
   }
 
   /// 当当前的路由[maybePop]时回调

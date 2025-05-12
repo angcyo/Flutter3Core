@@ -46,7 +46,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// 系统[Dialog]最小宽度280.0
   BoxConstraints get dialogConstraints =>
       BoxConstraints(
-          minWidth: 0,
+          minWidth: kDialogMinWidth,
           maxWidth: min(screenWidth, screenHeight),
           minHeight: 0,
           maxHeight: min(screenWidth, screenHeight));
