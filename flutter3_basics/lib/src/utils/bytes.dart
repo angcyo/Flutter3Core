@@ -120,9 +120,30 @@ class BytesWriter {
     writeLong(value, length, Endian.little);
   }
 
+  /// 在指定位置写入一个其它字节数组
+  /// [writeBytes]
+  /// [insertBytes]
+  void insertBytes(int index, List<int>? bytes, [int? length]) {
+    if (bytes == null || bytes.isEmpty) {
+      return;
+    }
+    if (!_canWrite()) {
+      return;
+    }
+    if (length == null) {
+      _bytes.insertAll(index, bytes);
+    } else {
+      _bytes.insertAll(index, bytes.sublist(0, math.min(length, bytes.size())));
+    }
+  }
+
   /// 写入一个其它字节数组
   /// [length] 需要写入的字节长度, 默认为[bytes]的长度
+  ///
   /// [writeFill]
+  /// [writeBytes]
+  /// [insertBytes]
+  ///
   void writeBytes(List<int>? bytes, [int? length]) {
     if (bytes == null || bytes.isEmpty) {
       return;
