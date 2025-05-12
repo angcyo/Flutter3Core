@@ -202,9 +202,9 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 }
 
 /// [delayCallback]
-Future futureDelay<T>(Duration duration,
+Future futureDelay<T>(Duration? duration,
         [FutureOr<T> Function()? computation]) async =>
-    Future.delayed(duration, computation);
+    Future.delayed(duration ?? Duration.zero, computation);
 
 /// 安排一个轻量的任务
 /// [scheduleTask]

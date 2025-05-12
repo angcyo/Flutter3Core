@@ -29,8 +29,8 @@ class FutureCancelToken {
   void cancel([Object? reason]) {
     if (!isCanceled && !_completer.isCompleted) {
       _cancelException = FutureCancelException(
-        reason,
-        StackTrace.current,
+        reason: reason,
+        stackTrace: StackTrace.current,
       );
       _completer.complete(_cancelException);
     }
@@ -43,7 +43,10 @@ class FutureCancelException implements Exception {
   final Object? reason;
   final StackTrace? stackTrace;
 
-  FutureCancelException(this.reason, this.stackTrace);
+  FutureCancelException({
+    this.reason,
+    this.stackTrace,
+  });
 
   @override
   String toString() {
