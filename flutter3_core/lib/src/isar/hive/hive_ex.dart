@@ -13,6 +13,7 @@ const kHiveBox = "HiveBox";
 const kHiveBoxPath = "hive";
 
 /// 默认的数据盒子
+/// [initHive]
 late Box _hiveBox;
 
 /// 默认的Hive数据库路径, 不支持修改
