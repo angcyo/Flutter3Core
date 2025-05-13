@@ -39,6 +39,11 @@ class SwitchTile extends StatefulWidget {
   /// tile的填充
   final EdgeInsets? tilePadding;
 
+  //--
+
+  /// 布局方向
+  final Axis axis;
+
   const SwitchTile({
     super.key,
     //--
@@ -57,6 +62,8 @@ class SwitchTile extends StatefulWidget {
     this.trackOutlineColor,
     //--
     this.tilePadding = kTilePadding,
+    //--
+    this.axis = Axis.horizontal,
   });
 
   @override
@@ -70,15 +77,41 @@ class _SwitchTileState extends State<SwitchTile>
 
   @override
   Widget build(BuildContext context) {
+    final isVertical = widget.axis == Axis.vertical;
     // build text
     Widget? text = buildTextWidget(
       context,
       textWidget: widget.textWidget,
       text: widget.text,
+      textAlign: isVertical ? TextAlign.center : null,
       textStyle: widget.textStyle,
-      textPadding: widget.textPadding,
+      textPadding: isVertical ? null : widget.textPadding,
       constraints: null,
     );
+
+    if (isVertical) {
+      return [
+        text,
+        buildSwitchWidget(
+          context,
+          currentValueMixin,
+          height: widget.switchHeight,
+          inactiveThumbColor: widget.switchInactiveThumbColor,
+          trackOutlineColor: widget.trackOutlineColor,
+          onChanged: (value) {
+            _changeValue(value);
+          },
+        ),
+      ]
+          .column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center)!
+          .ink(() {
+        //debugger();
+        _changeValue(!currentValueMixin);
+      }).material();
+    }
+
     return [
       text?.expanded(),
       buildSwitchWidget(
