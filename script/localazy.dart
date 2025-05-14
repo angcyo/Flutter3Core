@@ -26,18 +26,18 @@ import '_script_common.dart';
 /// ```
 ///
 void main(List<String> arguments) async {
-  // 是否要执行下载
-  final doDownload = false;
-  // 是否要执行上传
-  final doUpload = true;
-  // webhook
-  final doWebhook = true;
-
   colorLog('[localazy]工作路径->$currentPath');
   //await runCommand("localazy", args: ["list"]);
 
   final lang = $value("localazy_upload_lang") ?? "zh-Hans-CN";
   final uploadFiles = $list("localazy_upload_files");
+
+  // 是否要执行下载
+  final doDownload = $value("localazy_do_download") == true;
+  // 是否要执行上传
+  final doUpload = $value("localazy_do_upload") == true;
+  // webhook
+  final doWebhook = $value("localazy_do_webhook") == true;
 
   final configOutput = "$currentPath/.output/localazy.json";
   _configLocalazyJson({
@@ -86,17 +86,17 @@ void main(List<String> arguments) async {
       "-c",
       configOutput,
     ]);
+  }
 
-    if (doWebhook) {
-      final webhook = $value("localazy_feishu_webhook");
-      await sendFeishuWebhookInteractive(
-        webhook,
-        "🫡 localazy(lds-app-android)",
-        "✌️ Android 上传了资源文件, 请注意查收!",
-        linkUrl: "https://localazy.com/p/lds-app-android/files",
-        atAll: false,
-      );
-    }
+  if (doWebhook) {
+    final webhook = $value("localazy_feishu_webhook"); //feishu_webhook_test
+    await sendFeishuWebhookInteractive(
+      webhook,
+      "🫡 localazy(lds-app-android)",
+      "✌️: Android 上传了资源文件, 请注意查收!\n📅: ${DateTime.now()}",
+      linkUrl: "https://localazy.com/p/lds-app-android/files",
+      atAll: false,
+    );
   }
 }
 

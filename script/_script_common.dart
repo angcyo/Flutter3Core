@@ -9,7 +9,9 @@ import 'package:yaml/yaml.dart';
 /// @date 2025/04/12
 ///
 /// 脚本基础方法
-
+///
+/// emoji : https://getemoji.com/
+///
 /// 当前脚本运行的路径
 String get currentPath => Directory.current.path;
 
