@@ -3,5 +3,7 @@
 # Turn off echo
 set +x
 
+git remote show origin
+
 git fetch
 git rebase origin/main

@@ -3,6 +3,8 @@
 # Turn off echo
 set +x
 
+git remote show origin
+
 git add .
 git commit -a -m "* fix base"
 git push origin main
