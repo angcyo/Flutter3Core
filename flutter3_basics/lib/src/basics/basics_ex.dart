@@ -2423,6 +2423,11 @@ extension IterableEx<E> on Iterable<E> {
   ///
   Stream<E> get stream => Stream.fromIterable(this);
 
+  /// [Iterable] 遍历, 支持异步操作
+  Future<void> forEachAsync(FutureOr Function(E element) action) async {
+    await Future.forEach(this, action);
+  }
+
   /// [Iterable.join]
   String? connect([String? separator = "", String Function(E)? covertString]) {
     Iterator<E> iterator = this.iterator;
