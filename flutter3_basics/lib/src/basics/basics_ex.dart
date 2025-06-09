@@ -2367,6 +2367,7 @@ extension ListIntEx on List<int> {
 
   /// [ListIntEx]
   /// hex 32位
+  /// `13b2943ce931bd41aec6052bbe37aba0`
   String md5() => crypto.md5.convert(this).toString();
 
   /// [ListIntEx]
