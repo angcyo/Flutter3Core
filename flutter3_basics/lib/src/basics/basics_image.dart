@@ -205,6 +205,7 @@ extension ByteDataEx on ByteData {
   Image toImageWidget() => bytes.toImageWidget();
 
   /// [ui.Image]
+  /// [ImageEx.toBytes]
   Future<ui.Image> toImage() => bytes.toImage();
 
   /// [MemoryImage]
@@ -260,6 +261,8 @@ extension Uint8ListImageEx on Uint8List {
   /// final FrameInfo info = await codec.getNextFrame();
   /// info.image;
   /// ```
+  ///
+  /// [ImageEx.toBytes]
   Future<ui.Image> toImage() => decodeImageFromList(this);
 
   /// 将[PixelFormat.rgba8888]颜色格式的像素数据转换成图片
@@ -306,7 +309,7 @@ extension ImageEx on UiImage {
   /// 获取图片的字节数据(非像素数据)
   /// [ImageByteFormat.rawRgba]
   /// [ImageByteFormat.png]
-  /// [toPixels]
+  /// [ImageEx.toPixels]
   Future<Uint8List?> toBytes(
       [UiImageByteFormat format = UiImageByteFormat.png]) async {
     final ByteData? byteData = await toByteData(format: format);
@@ -315,7 +318,7 @@ extension ImageEx on UiImage {
 
   /// 获取图片的颜色数据
   /// [Uint8ListImageEx.toImageFromPixels]
-  /// [toBytes]
+  /// [ImageEx.toBytes]
   Future<Uint8List?> toPixels(
       [UiImageByteFormat format = UiImageByteFormat.rawRgba]) =>
       toBytes(format);
