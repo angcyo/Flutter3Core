@@ -2367,7 +2367,7 @@ extension ListIntEx on List<int> {
 
   /// [ListIntEx]
   /// hex 32位
-  /// `13b2943ce931bd41aec6052bbe37aba0`
+  /// `13b2943ce931bd41aec6052bbe37aba0` 32个字符, hex 16字节 128位
   String md5() => crypto.md5.convert(this).toString();
 
   /// [ListIntEx]
