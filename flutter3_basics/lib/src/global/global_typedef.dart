@@ -36,6 +36,9 @@ typedef ErrorAction = void Function(dynamic error);
 /// 只有返回值的回调
 typedef ResultCallback<T> = T Function();
 
+/// 返回一个字符串
+typedef StringResult = String Function();
+
 /// 返回值和一个参数的回调
 typedef ResultValueCallback<R, T> = R Function(T value);
 

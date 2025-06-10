@@ -50,8 +50,11 @@ mixin InputMixin {
   /// 并不需要在此方法中更新界面
   ValueChanged<String>? get onInputTextChanged => null;
 
+  /// 确认输入后的字符串返回
+  ValueCallback<String?>? get onInputTextResult => null;
+
   /// 在改变时, 需要进行的确认回调
-  /// 返回false, 则不进行改变
+  /// 返回false, 则不进行输入框的输入改变
   FutureValueCallback<String>? get onInputTextConfirmChange => null;
 
   /// 下划线的输入框样式
@@ -181,5 +184,12 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
     currentInputText = initialInputText;
     _inputMixinConfig.updateText(currentInputText);
     super.didUpdateWidget(oldWidget);
+  }
+
+  /// 输入结果回调
+  @overridePoint
+  void onSelfInputTextResult(BuildContext context, {String? result}) {
+    buildContext?.pop(result ?? currentInputText);
+    inputMixin.onInputTextResult?.call(result ?? currentInputText);
   }
 }

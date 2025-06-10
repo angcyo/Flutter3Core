@@ -51,6 +51,9 @@ class SingleBottomInputDialog extends StatefulWidget
   @override
   final ValueChanged<String>? onInputTextChanged;
 
+  @override
+  final ValueCallback<String?>? onInputTextResult;
+
   /// 在改变时, 需要进行的确认回调
   /// 返回false, 则不进行改变
   @override
@@ -86,6 +89,11 @@ class SingleBottomInputDialog extends StatefulWidget
   //--
   final bool trailingUseThemeColor;
 
+  //--
+
+  @defInjectMark
+  final double? dialogClipTopRadius;
+
   const SingleBottomInputDialog({
     super.key,
     //--dialog
@@ -100,6 +108,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputText,
     this.autofocus = true,
     this.onInputTextChanged,
+    this.onInputTextResult,
     this.onInputTextConfirmChange,
     this.inputBorderType = InputBorderType.underline,
     this.inputTextAlign = TextAlign.start,
@@ -114,6 +123,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.wrapInputAction,
     //--
     this.trailingUseThemeColor = false,
+    this.dialogClipTopRadius,
   });
 
   const SingleBottomInputDialog.wrapInput(
@@ -131,6 +141,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputText,
     this.autofocus = true,
     this.onInputTextChanged,
+    this.onInputTextResult,
     this.onInputTextConfirmChange,
     this.inputBorderType = InputBorderType.none,
     this.inputTextAlign = TextAlign.start,
@@ -144,6 +155,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.showTitle = true,
     //--
     this.trailingUseThemeColor = false,
+    this.dialogClipTopRadius,
   });
 
   @override
@@ -173,7 +185,7 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
                     (widget.enableInputEmpty ||
                         (!widget.enableInputEmpty && !isInputEmpty)),
                 onTrailingTap: (context) {
-                  buildContext?.pop(currentInputText);
+                  onSelfInputTextResult(context);
                 },
                 trailingUseThemeColor: widget.trailingUseThemeColor,
               ),
@@ -186,7 +198,7 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
                   input.paddingInsets(
                       widget.inputMargin ?? widget.dialogContentPadding)),
           ],
-          clipTopRadius: globalTheme.dialogRadius,
+          clipTopRadius: widget.dialogClipTopRadius ?? globalTheme.dialogRadius,
         )
         .scaffold();
   }
