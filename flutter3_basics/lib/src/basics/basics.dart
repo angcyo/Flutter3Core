@@ -311,6 +311,11 @@ String stackToString({StackTrace? stackTrace, String? label, int? maxFrames}) {
 ui.FlutterView get flutterView =>
     WidgetsBinding.instance.renderView.flutterView;
 
+/// [RenderView]
+RenderView get renderView =>
+    RendererBinding.instance.renderViews.firstOrNull ??
+    WidgetsBinding.instance.renderView;
+
 /// [WidgetsBinding.instance]
 /// [WidgetsBinding.platformDispatcher]
 /// [PlatformDispatcher.views]
