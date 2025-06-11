@@ -293,6 +293,7 @@ extension Uint8ListImageEx on Uint8List {
           : "jpeg"};base64,${base64Encode(this)}';
 }
 
+/// [UiImageEx]
 extension ImageEx on UiImage {
   /// [UiImageProvider]
   /// [ImageProviderEx.toImage]
