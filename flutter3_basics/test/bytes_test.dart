@@ -9,6 +9,9 @@ void main() {
     writer.writeFillHex(length: 100);
   }).utf8Str);*/
 
+  print("Y".ascii);
+  print("D".ascii);
+
   print("YDMG".bytes.toHex());
   print("YDMG".asciiBytes.toHex());
 }
