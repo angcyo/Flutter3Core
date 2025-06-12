@@ -1,3 +1,4 @@
+import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 ///
@@ -12,4 +13,8 @@ void main() {
       print("[$i]个字节能表示最大数值->$value");
     }
   });
+
+  int n = 0xFFFFFFFF;
+  print(n);
+  print(n.bits(8, 2));
 }

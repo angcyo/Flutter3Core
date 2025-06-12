@@ -2198,6 +2198,15 @@ extension IntEx on int {
   /// [bit] 从右往左, 第几位, 1开始
   int bit(int bit) => (this >> (math.max(bit, 1) - 1)) & 0x1;
 
+  /// 获取从[startBit]开始, 获取[count]个bit
+  /// 从右到左, 从0开始, 获取[count]个bit
+  int bits(int startBit, int count) {
+    if (startBit < 0 || count < 1) {
+      return 0;
+    }
+    return (this >> startBit) & ((1 << count) - 1);
+  }
+
   /// 当前字节数, 能表示的最大无符号整数
   int get maxUnsignedInt => (1 << 8 * this) - 1;
 
