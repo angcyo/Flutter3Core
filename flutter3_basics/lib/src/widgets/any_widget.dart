@@ -327,6 +327,7 @@ class _AnyContainerRenderObject extends RenderBox
   void paint(PaintingContext context, ui.Offset offset) {
     final Matrix4? transform =
         config?.anyWidget?.onPaintTransform?.call(this, context, offset, size);
+    _paintTransform = transform;
     if (transform != null) {
       final Offset? childOffset = MatrixUtils.getAsTranslation(transform);
       if (childOffset == null) {
@@ -367,6 +368,16 @@ class _AnyContainerRenderObject extends RenderBox
     }
     config?.anyWidget?.onAfterPaint?.call(this, context.canvas, size, offset);
   }
+
+  @override
+  void applyPaintTransform(RenderBox child, Matrix4 transform) {
+    final Matrix4? transform = _paintTransform;
+    if (transform != null) {
+      transform.multiply(transform);
+    }
+  }
+
+  Matrix4? _paintTransform;
 }
 
 /// [StackParentData]

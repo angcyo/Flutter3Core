@@ -200,12 +200,16 @@ extension AnimationWidgetEx on Widget {
   }
 }
 
+//--
+
 /// 创建一个控制动画, 指定时间
 /// 在指定的时间内, 从[0~1]的动画变化回调
 /// [value] 初始值
 /// [lowerBound] 最小值
 /// [upperBound] 最大值
-/// [curve] 动画曲线
+/// [curve] 动画曲线[Curves.easeInOut] [Curves.easeOut]
+/// [vsync] [TickerProviderStateMixin] [SingleTickerProviderStateMixin]
+///
 /// [AnimationController.stop] 停止动画
 /// [AnimationController.dispose] 释放资源
 AnimationController animation(
@@ -273,6 +277,33 @@ AnimationController matrixAnimation(
     listener(matrix, isCompleted);
   });
 }
+
+/// 启动一个值从[from]到[to]的变化动画
+AnimationController startValueAnimation(
+  double from,
+  double to,
+  TickerProvider vsync,
+  void Function(double value, bool isCompleted) listener, {
+  Duration duration = kDefaultAnimationDuration,
+  double? value,
+  double lowerBound = 0.0,
+  double upperBound = 1.0,
+  Curve? curve,
+}) {
+  return animation(
+    vsync,
+    (value, isCompleted) {
+      listener(from + (to - from) * value, isCompleted);
+    },
+    duration: duration,
+    value: value,
+    lowerBound: lowerBound,
+    upperBound: upperBound,
+    curve: curve,
+  );
+}
+
+//--
 
 /// 动画控制混入
 /// [SingleTickerProviderStateMixin]

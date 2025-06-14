@@ -75,6 +75,12 @@ extension Matrix4Ex on vector.Matrix4 {
   /// 映射一个点[Offset], 返回新的点
   Offset mapPoint(Offset point) => MatrixUtils.transformPoint(this, point);
 
+  /// 映射一个点[Size], 返回新的大小
+  Size mapSize(Size size) {
+    final offset = mapPoint(Offset(size.width, size.height));
+    return Size(offset.dx, offset.dy);
+  }
+
   /// 映射一个矩形[Rect], 返回新的矩形
   /// 映射后的矩形left/top依旧是小值, right/bottom依旧是大值
   Rect mapRect(Rect rect) => MatrixUtils.transformRect(this, rect);

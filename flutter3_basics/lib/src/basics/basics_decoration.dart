@@ -245,6 +245,9 @@ BoxDecoration imageDecoration(
   );
 }
 
+/// [PaintDecoration]
+PaintDecoration paintDecoration(PaintFn? paint) => PaintDecoration(paint);
+
 //endregion BoxDecoration
 
 //region InputDecoration

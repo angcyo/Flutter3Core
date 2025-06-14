@@ -48,7 +48,7 @@ CustomPaint customPainter(CustomPainter? painter, {
 /// 使用[CustomPaint]小组件, 使用[CustomPainter]绘制回调
 CustomPaint paintWidget(PaintFn paint, {
   PaintFn? foregroundPaint,
-  Size size = Size.zero,
+  Size size = Size.infinite,
   bool isComplex = false,
   bool willChange = false,
 }) =>
