@@ -112,6 +112,7 @@ class _AnyRenderObjectWidget extends SingleChildRenderObjectWidget {
   }
 }
 
+/// 单个child渲染
 /// [_AnyRenderObject]
 /// [_AnyContainerRenderObject]
 class _AnyRenderObject extends RenderProxyBoxWithHitTestBehavior {
@@ -216,7 +217,9 @@ class _AnyRenderObject extends RenderProxyBoxWithHitTestBehavior {
   }
 }
 
-/// 支持多个`children`
+/// 支持多个`children`渲染
+/// [_AnyRenderObject]
+/// [_AnyContainerRenderObject]
 class _AnyContainerRenderObjectWidget extends MultiChildRenderObjectWidget {
   const _AnyContainerRenderObjectWidget({
     super.key,
