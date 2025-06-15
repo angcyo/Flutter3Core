@@ -77,6 +77,9 @@ OverlayEntry? toast(
   /// 内容内边距
   EdgeInsetsGeometry? padding =
       const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
+
+  /// 显示时,是否保留底部的padding
+  bool maintainBottomViewPadding = true,
 }) =>
     msg == null
         ? null
@@ -88,6 +91,7 @@ OverlayEntry? toast(
                 loadingInfoNotifier: loadingInfoNotifier,
                 padding: padding,
                 margin: margin,
+                maintainBottomViewPadding: maintainBottomViewPadding,
                 child: msg,
               );
             },
@@ -105,12 +109,14 @@ OverlayEntry? toastBlur({
   double? bgBlurSigma = kM,
   OverlayPosition position = OverlayPosition.center,
   LoadingValueNotifier? loadingInfoNotifier,
+  bool maintainBottomViewPadding = true,
 }) =>
     toast(
       msg ?? text?.toString().text(),
       bgBlurSigma: bgBlurSigma,
       position: position,
       loadingInfoNotifier: loadingInfoNotifier,
+      maintainBottomViewPadding: maintainBottomViewPadding,
     );
 
 /// 顶部全屏toast

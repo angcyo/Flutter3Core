@@ -142,6 +142,8 @@ Future wrapLoading(
   VoidCallback? onStart,
   ValueErrorCallback? onEnd,
   bool showCountDown = false,
+  bool autoHideLoading = true,
+  String? debugLabel,
 }) {
   Timer? timer;
   bool isTimeout = false;
@@ -192,7 +194,7 @@ Future wrapLoading(
     }, timeout);
   }
   return future.get((value, error) {
-    //debugger();
+    debugger(when: debugLabel != null);
     //l.w("future end");
     if (isTimeout) {
       assert(() {
@@ -203,7 +205,9 @@ Future wrapLoading(
     }
     isEnd = true;
     timer?.cancel();
-    hideLoading();
+    if (autoHideLoading) {
+      hideLoading();
+    }
     if (onEnd == null) {
       //hideLoading();
     } else {

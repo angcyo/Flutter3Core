@@ -48,6 +48,9 @@ class ToastWidget extends StatefulWidget {
   /// 动态构建停止
   final LoadingValueNotifier? loadingInfoNotifier;
 
+  /// 是否保留底部视图填充
+  final bool maintainBottomViewPadding;
+
   const ToastWidget({
     super.key,
     this.child,
@@ -57,6 +60,7 @@ class ToastWidget extends StatefulWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
     this.margin = const EdgeInsets.all(kXh),
     this.loadingInfoNotifier,
+    this.maintainBottomViewPadding = true,
   });
 
   @override
@@ -121,11 +125,13 @@ class _ToastWidgetState extends State<ToastWidget> {
 
     //添加安全区域
     result = SafeArea(
-      maintainBottomViewPadding: true,
+      maintainBottomViewPadding: widget.maintainBottomViewPadding,
       child: Padding(
-        padding: EdgeInsets.only(
-            bottom: platformMediaQueryData.viewInsets.bottom +
-                kMinInteractiveDimension),
+        padding: widget.maintainBottomViewPadding
+            ? EdgeInsets.only(
+                bottom: platformMediaQueryData.viewInsets.bottom +
+                    kMinInteractiveDimension)
+            : EdgeInsets.only(bottom: kMinInteractiveDimension),
         child: result,
       ),
     );
