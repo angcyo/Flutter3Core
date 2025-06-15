@@ -2482,6 +2482,8 @@ extension WidgetEx on Widget {
     TextBaseline? textBaseline,
     double? gap,
     Widget? gapWidget,
+    //--
+    bool lastExtend = false,
   }) =>
       other == null
           ? this
@@ -2497,6 +2499,7 @@ extension WidgetEx on Widget {
               textBaseline: textBaseline,
               gap: gap,
               gapWidget: gapWidget,
+              lastExtend: lastExtend,
             )!;
 
   /// 将[before].[this]和[after] 使用[Stack]包裹
