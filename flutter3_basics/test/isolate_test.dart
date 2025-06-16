@@ -15,6 +15,7 @@ void main() async {
   final map = await Isolate.run(isolateFunction2, debugName: 'isolate2');
   print(map);
   await Isolate.spawn(isolateFunction3, TestDataClass());
+  await testIsolate();
 
   //等待
   await Future.delayed(Duration(seconds: 5));
@@ -44,9 +45,18 @@ FutureOr<Map<String, dynamic>> isolateFunction2() async {
 }
 
 /// 支持收发
-void isolateFunction3(TestDataClass message) {
+TestDataClass isolateFunction3(TestDataClass message) {
   print('Isolate Name: ${Isolate.current.debugName}');
   print(message);
+  return message;
+}
+
+/// 支持收发
+Future testIsolate() async {
+  final data = TestDataClass();
+  final map =
+      await Isolate.run(() => isolateFunction3(data), debugName: 'isolate2');
+  print("testIsolate->$map");
 }
 
 //--
