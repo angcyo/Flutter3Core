@@ -8,17 +8,22 @@
 /// ```
 import 'dart:developer';
 
-import '_import_ios.dart' if (Platform.isAndroid) '_import_android.dart'
+/// 没有测试通过
+import '_import_ios.dart' if (dart.io.Platform.isIOS) '_import_android.dart'
     deferred as import_test;
+
+/*import '_import_ios.dart' if (dart.library.js_util) '_import_android.dart'
+deferred as import_test;*/
 
 import '_import_deferred.dart' deferred as import_test_deferred;
 
 /// 测试导入
 void importTest() async {
+  //dart.io.Platform.isIOS;
   await import_test.loadLibrary();
   final testName = import_test.testImportName();
   print("testImportName->$testName");
-  debugger();
+  //debugger();
 
   //Deferred library import_test_deferred was not loaded.
   await import_test_deferred.loadLibrary();

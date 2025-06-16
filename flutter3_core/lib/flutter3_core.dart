@@ -121,6 +121,7 @@ Future<void> initFlutter3Core() async {
   };
 
   //--
+  testBasicsLibrary();
   /*postDelayCallback(() {
     testBasicsLibrary();
   }, 2.seconds);*/
