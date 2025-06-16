@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:flutter/foundation.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/06/05
@@ -57,10 +59,19 @@ Future testIsolate() async {
   final map =
       await Isolate.run(() => isolateFunction3(data), debugName: 'isolate2');
   print("testIsolate->$map");
+  final map2 = await compute((data) async {
+    return data;
+  }, data);
+  print("testIsolate2->$map2");
 }
 
 //--
 
+/// `SendPort ` 支持的 Message types  消息类型
+/// https://dart.dev/language/concurrency#message-types
+///
+/// `SendPort.send ` 可以发送的对象
+/// https://api.dart.dev/dart-isolate/SendPort/send.html
 class TestDataClass {
   final String name;
   final int age;
