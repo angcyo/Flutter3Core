@@ -145,7 +145,7 @@ Future runGlobalApp(
 
     //debugger();
     //--
-    BuildConfig.initBuildConfig();
+    await BuildConfig.initBuildConfig();
     //key-value
     try {
       await initHive();

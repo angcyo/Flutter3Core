@@ -3122,6 +3122,29 @@ extension MapEx<K, V> on Map<K, V> {
     });
     return map;
   }
+
+  /// 获取指定的value自身数据类型值, 如果没有则返回this
+  Map<K, V> getValueOrThis(K? key) {
+    if (key == null) {
+      return this;
+    }
+    final value = this[key];
+    if (value == null) {
+      return this;
+    }
+    if (value is Map) {
+      try {
+        return value as Map<K, V>;
+      } catch (e) {
+        assert(() {
+          print(e);
+          return true;
+        }());
+        return this;
+      }
+    }
+    return this;
+  }
 }
 
 //endregion Map 扩展

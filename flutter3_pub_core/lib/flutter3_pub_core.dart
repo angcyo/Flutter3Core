@@ -61,6 +61,7 @@ final $get = GetIt.instance;
 /// [GetIt]
 final $di = di;
 
+@testPoint
 void _test(){
 
 }

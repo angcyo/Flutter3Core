@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -32,7 +34,7 @@ class BuildConfig {
       );
       final json = string.jsonDecode();
       final bean = BuildConfig.fromJson(json);
-      bean.json = json;
+      //bean.json = json;
       _buildConfig = bean;
       //debugger();
     } catch (e) {
@@ -52,8 +54,17 @@ class BuildConfig {
   Map<String, dynamic> toJson() => _$BuildConfigToJson(this);
 
   /// 每个平台单独设置信息, 平台名统一小写
+  /// [$platformName] 对应的配置
   @configProperty
   Map<String, BuildConfig>? platformMap;
+
+  /// [buildType] 对应的配置
+  @configProperty
+  Map<String, BuildConfig>? buildTypeMap;
+
+  /// [buildFlavor] 对应的配置
+  @configProperty
+  Map<String, BuildConfig>? buildFlavorMap;
 
   //--
 
@@ -63,14 +74,14 @@ class BuildConfig {
   @configProperty
   String? buildPackageName;
 
-  /// 应用程序的风味, 不同风味的app, 可以有不同的配置
-  @configProperty
-  String? buildFlavor;
-
   /// 构建类型
   /// [BuildTypeEnum]
   @configProperty
   String? buildType;
+
+  /// 应用程序的风味, 不同风味的app, 可以有不同的配置
+  @configProperty
+  String? buildFlavor;
 
   //--
 
@@ -113,7 +124,6 @@ class BuildConfig {
 
   /// 全部json对象的数据
   /// 额外的自定义数据放在这里
-  @JsonKey(includeFromJson: false, includeToJson: false)
   Map<String, dynamic>? json;
 
   /// [json]
@@ -131,6 +141,27 @@ class BuildConfig {
 
   @override
   String toString() => json?.toString() ?? "" /*"${toJson()}"*/;
+
+  //--
+
+  /// 获取指定构建类型的配置
+  /// [getBuildTypeConfigOrThis]
+  /// [getBuildFlavorConfigOrThis]
+  BuildConfig getBuildTypeConfigOrThis(String? buildType, BuildConfig? or) {
+    if (buildType == null) {
+      return this;
+    }
+    return buildTypeMap?[buildType] ?? or ?? this;
+  }
+
+  /// [getBuildTypeConfigOrThis]
+  /// [getBuildFlavorConfigOrThis]
+  BuildConfig getBuildFlavorConfigOrThis(String? buildFlavor, BuildConfig? or) {
+    if (buildFlavor == null) {
+      return this;
+    }
+    return buildFlavorMap?[buildFlavor] ?? or ?? this;
+  }
 }
 
 /// 构建时应用程序的构建类型
@@ -146,11 +177,42 @@ enum BuildTypeEnum {
   ;
 }
 
-/// [BuildConfig]
+/// 顶层的[BuildConfig]
+BuildConfig? get $rootBuildConfig => BuildConfig._buildConfig;
+
+/// 指定平台配置->构建类型配置->构建风味配置后的[BuildConfig]
 BuildConfig? get $buildConfig {
-  BuildConfig? config = BuildConfig._buildConfig;
-  config = config?.platformMap?[$platformName] ?? config;
-  return config;
+  BuildConfig? rootConfig = BuildConfig._buildConfig;
+  final rootPlatformConfig = rootConfig?.platformMap?[$platformName];
+  final rootBuildTypeConfig = rootConfig?.buildTypeMap?[rootConfig.buildType];
+  final rootBuildFlavorConfig = (rootBuildTypeConfig ?? rootConfig)
+      ?.buildFlavorMap?[rootConfig?.buildFlavor];
+  //debugger();
+  // 指定平台配置->构建类型配置->构建风味配置
+  final resultConfig = (rootPlatformConfig ?? rootConfig)
+      ?.getBuildTypeConfigOrThis(rootConfig?.buildType, rootBuildTypeConfig)
+      .getBuildFlavorConfigOrThis(
+          rootConfig?.buildFlavor, rootBuildFlavorConfig);
+
+  // 赋值指定属性
+  if (resultConfig != rootConfig) {
+    resultConfig?.buildPackageName = rootConfig?.buildPackageName;
+    resultConfig?.buildType = rootConfig?.buildType;
+    resultConfig?.buildFlavor = rootConfig?.buildFlavor;
+
+    resultConfig?.buildVersionName = rootConfig?.buildVersionName;
+    resultConfig?.buildVersionCode = rootConfig?.buildVersionCode;
+    resultConfig?.buildTime = rootConfig?.buildTime;
+    resultConfig?.buildOperatingSystem = rootConfig?.buildOperatingSystem;
+    resultConfig?.buildOperatingSystemVersion =
+        rootConfig?.buildOperatingSystemVersion;
+    resultConfig?.buildOperatingSystemLocaleName =
+        rootConfig?.buildOperatingSystemLocaleName;
+    resultConfig?.buildOperatingSystemUserName =
+        rootConfig?.buildOperatingSystemUserName;
+  }
+
+  return resultConfig ?? rootConfig;
 }
 
 /// 是否是调试构建类型状态
