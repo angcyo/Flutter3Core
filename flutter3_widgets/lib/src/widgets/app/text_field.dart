@@ -27,6 +27,9 @@ class TextFieldConfig {
   /// 是否有焦点
   bool get hasFocus => focusNode?.hasFocus == true;
 
+  /// 是否为空
+  bool get isEmpty => text.isEmpty;
+
   /// 输入的文本
   String get text => controller.text;
 

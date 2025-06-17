@@ -13,17 +13,17 @@ part of '../../../flutter3_widgets.dart';
 /// [TabLayoutMixin]
 ///
 mixin TabLayoutMixin<T extends StatefulWidget>
-on State<T>, TickerProviderStateMixin<T> {
+    on State<T>, TickerProviderStateMixin<T> {
   /// [tabLayoutController]
   late final TabLayoutController _tabLayoutControllerMixin =
-  TabLayoutController(vsync: this);
+      TabLayoutController(vsync: this);
 
   /// [TabLayout] tab控制
   TabLayoutController get tabLayoutController => _tabLayoutControllerMixin;
 
   /// tab选中之后的更新信号
-  final UpdateSignalNotifier _tabSelectedUpdateSignal =
-  UpdateSignalNotifier(null);
+  final UpdateSignalNotifier tabSelectedUpdateSignal =
+      UpdateSignalNotifier(null);
 
   @override
   void dispose() {
@@ -31,7 +31,7 @@ on State<T>, TickerProviderStateMixin<T> {
     if (tabLayoutController != _tabLayoutControllerMixin) {
       tabLayoutController.dispose();
     }
-    _tabSelectedUpdateSignal.dispose();
+    tabSelectedUpdateSignal.dispose();
     super.dispose();
   }
 
@@ -60,7 +60,8 @@ on State<T>, TickerProviderStateMixin<T> {
   /// [buildBottomLineIndicator]
   /// [buildBottomLineGradientIndicator]
   @api
-  Widget buildGradientFillIndicator(BuildContext context, {
+  Widget buildGradientFillIndicator(
+    BuildContext context, {
     Color? fillColor,
     List<Color>? colors,
     double? borderRadius = kDefaultBorderRadiusXX,
@@ -72,10 +73,10 @@ on State<T>, TickerProviderStateMixin<T> {
         radius: borderRadius,
         gradient: fillColor == null
             ? linearGradient(colors ??
-            [
-              globalTheme.primaryColor,
-              globalTheme.primaryColorDark,
-            ])
+                [
+                  globalTheme.primaryColor,
+                  globalTheme.primaryColorDark,
+                ])
             : null,
       ),
     ).tabItemData(
@@ -92,7 +93,8 @@ on State<T>, TickerProviderStateMixin<T> {
   /// [buildBottomLineIndicator]
   /// [buildBottomLineGradientIndicator]
   @api
-  Widget buildBottomLineIndicator(BuildContext context, {
+  Widget buildBottomLineIndicator(
+    BuildContext context, {
     double height = 2,
     double? width,
     EdgeInsets? padding,
@@ -131,13 +133,15 @@ on State<T>, TickerProviderStateMixin<T> {
   /// [buildBottomLineIndicator]
   /// [buildBottomLineGradientIndicator]
   @api
-  Widget buildBottomLineGradientIndicator(BuildContext context, {
+  Widget buildBottomLineGradientIndicator(
+    BuildContext context, {
     double height = 2,
     double? width,
     EdgeInsets? padding,
     EdgeInsets? margin,
     List<Color>? colors,
     double? borderRadius = kDefaultBorderRadiusXX,
+    bool enableIndicatorFlow = true,
   }) {
     final globalTheme = GlobalTheme.of(context);
     return DecoratedBox(
@@ -164,7 +168,7 @@ on State<T>, TickerProviderStateMixin<T> {
         widthType: width != null ? ConstraintsType.fixedSize : null,
         maxWidth: width ?? double.infinity,
       ),
-      enableIndicatorFlow: true,
+      enableIndicatorFlow: enableIndicatorFlow,
       padding: padding,
       margin: margin,
     );
@@ -176,12 +180,13 @@ on State<T>, TickerProviderStateMixin<T> {
   ///
   /// [children].[childrenBuilder]或者[buildTabLayoutChildren]构建内容
   /// [childrenBuilder]可以根据[tabLayoutController.index]动态构建内容
-  /// [_tabSelectedUpdateSignal]
+  /// [tabSelectedUpdateSignal]
   ///
   /// [indicator]或者[buildTabLayoutIndicator]构建指示器
   ///
   @callPoint
-  Widget buildTabLayout(BuildContext context, {
+  Widget buildTabLayout(
+    BuildContext context, {
     List<Widget>? children,
     IndexChildrenBuilder? childrenBuilder,
     double gap = 0,
@@ -223,46 +228,43 @@ on State<T>, TickerProviderStateMixin<T> {
         //选中文本样式支持
         if (selectedTextStyle != null) {
           body = body
-              .mapIndex((child, index) =>
-              child.textStyle(
-                isTabIndexSelected(index)
-                    ? selectedTextStyle
-                    : normalTextStyle,
-                animate: autoTextAnimate,
-              ))
+              .mapIndex((child, index) => child.textStyle(
+                    isTabIndexSelected(index)
+                        ? selectedTextStyle
+                        : normalTextStyle,
+                    animate: autoTextAnimate,
+                  ))
               .toList();
         }
 
         //着色支持
         if (normalTintColor != null || selectedTintColor != null) {
           body = body
-              .mapIndex((child, index) =>
-              child.colorFiltered(
-                color: isTabIndexSelected(index)
-                    ? selectedTintColor
-                    : normalTintColor,
-              ))
+              .mapIndex((child, index) => child.colorFiltered(
+                    color: isTabIndexSelected(index)
+                        ? selectedTintColor
+                        : normalTintColor,
+                  ))
               .toList();
         }
 
         if (autoClick) {
           body = body
-              .mapIndex((child, index) =>
-              child.click(() {
-                if (this is PageViewMixin) {
-                  tabLayoutController.selectedItem(
-                    index,
-                    animate: pageViewAnimate,
-                    /*animate: (this as PageViewMixin).isPageViewNoAnimate
+              .mapIndex((child, index) => child.click(() {
+                    if (this is PageViewMixin) {
+                      tabLayoutController.selectedItem(
+                        index,
+                        animate: pageViewAnimate,
+                        /*animate: (this as PageViewMixin).isPageViewNoAnimate
                             ? false
                             : null,*/
-                    pageController:
-                    (this as PageViewMixin).pageViewController,
-                  );
-                } else {
-                  tabLayoutController.selectedItem(index);
-                }
-              }))
+                        pageController:
+                            (this as PageViewMixin).pageViewController,
+                      );
+                    } else {
+                      tabLayoutController.selectedItem(index);
+                    }
+                  }))
               .toList();
         }
       }
@@ -276,18 +278,18 @@ on State<T>, TickerProviderStateMixin<T> {
         padding: padding,
         firstIndexNotify: firstIndexNotify,
         onIndexChanged: (from, to) {
-          onSelfTabIndexChanged(from, to);
+          onSelfTabIndexChanged(context, from, to);
           onIndexChangedAction?.call(from, to);
         },
         children: body == null
             ? buildTabLayoutChildren(context, tabLayoutController.index)
             : [
-          ...body,
-          indicator ?? buildTabLayoutIndicator(context),
-        ].filterNull(),
+                ...body,
+                indicator ?? buildTabLayoutIndicator(context),
+              ].filterNull(),
       );
     }.rebuild(
-      _tabSelectedUpdateSignal,
+      tabSelectedUpdateSignal,
       enable: selectedTextStyle != null || autoTextBold || autoTextAnimate,
     );
   }
@@ -307,8 +309,8 @@ on State<T>, TickerProviderStateMixin<T> {
 
   /// tab索引改变回调
   @overridePoint
-  void onSelfTabIndexChanged(int from, int to) {
-    _tabSelectedUpdateSignal.updateValue(to);
+  void onSelfTabIndexChanged(BuildContext context, int from, int to) {
+    tabSelectedUpdateSignal.updateValue(to);
     assert(() {
       l.v('onSelfTabIndexChanged:$from->$to');
       return true;

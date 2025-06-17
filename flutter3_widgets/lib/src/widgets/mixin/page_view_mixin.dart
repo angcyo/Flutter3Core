@@ -41,6 +41,10 @@ mixin PageViewMixin<T extends StatefulWidget>
     return null;
   }
 
+  /// page切换之后的更新信号
+  final UpdateSignalNotifier pageChangedUpdateSignal =
+      UpdateSignalNotifier(null);
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +56,7 @@ mixin PageViewMixin<T extends StatefulWidget>
     if (pageViewController != _pageViewControllerMixin) {
       pageViewController?.dispose();
     }
+    pageChangedUpdateSignal.dispose();
     super.dispose();
   }
 
@@ -95,6 +100,8 @@ mixin PageViewMixin<T extends StatefulWidget>
     bool useLifecycle = false,
     bool? useChildLifecycle,
     bool? keepAlive,
+    //--
+    void Function(int index)? onPageChangedAction,
   }) {
     keepAlive ??= useLifecycle;
     useChildLifecycle ??= useLifecycle;
@@ -177,6 +184,7 @@ mixin PageViewMixin<T extends StatefulWidget>
         controller: pageViewController,
         onPageChanged: (index) {
           onSelfPageViewChanged(context, index);
+          onPageChangedAction?.call(index);
         },
         pageSnapping: pageSnapping,
         padEnds: padEnds,
@@ -191,6 +199,7 @@ mixin PageViewMixin<T extends StatefulWidget>
   /// 页面改变回调
   @overridePoint
   void onSelfPageViewChanged(BuildContext context, int index) {
+    pageChangedUpdateSignal.updateValue(index);
     assert(() {
       l.v('onSelfPageViewChanged:$index');
       return true;
