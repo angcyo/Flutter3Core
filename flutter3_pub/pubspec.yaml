@@ -45,6 +45,9 @@ dependencies:
   # https://pub.dev/packages/meta
   markdown: ^7.3.0
 
+  # https://pub.dev/packages/markdown_widget
+  #markdown_widget: ^2.3.2+8
+
   # https://pub.dev/packages/url_launcher
   # https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher
   # https://pub.dev/packages/url_launcher_platform_interface
