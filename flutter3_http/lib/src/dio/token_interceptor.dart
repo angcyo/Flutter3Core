@@ -11,8 +11,15 @@ part of '../../flutter3_http.dart';
 /// dio 拦截器实现 token 失效刷新
 /// https://juejin.cn/post/6844903785823731726
 class TokenInterceptor extends Interceptor {
+  /// 当前接口禁止验证Token
+  /// String:String
+  static const String kNoTokenVerify = 'noTokenVerify';
+
   /// 当前接口禁止请求刷新token
+  /// String:String
   static const String kNoRefreshTokenKey = 'noRefreshToken';
+
+  //--
 
   /// 配置token
   /// [options] 请求配置
@@ -57,7 +64,8 @@ class TokenInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
-    var refreshToken = await checkOrRefreshToken(response);
+    var refreshToken =
+        await checkOrRefreshToken(response.requestOptions, response);
     if (refreshToken == true) {
       //刷新了token, 则重新请求
       var newResponse = await rDio.reRequest(response.requestOptions);
@@ -69,7 +77,8 @@ class TokenInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    final refreshToken = await checkOrRefreshToken(err.response);
+    final refreshToken =
+        await checkOrRefreshToken(err.requestOptions, err.response);
     if (refreshToken == true) {
       //刷新了token, 则重新请求
       final newResponse = await rDio.reRequest(err.requestOptions);
@@ -81,11 +90,17 @@ class TokenInterceptor extends Interceptor {
 
   /// 检查或者请求刷新token
   /// @return true token刷新成功
-  Future<bool?> checkOrRefreshToken(Response? response) async {
+  Future<bool?> checkOrRefreshToken(
+    RequestOptions requestOptions,
+    Response? response,
+  ) async {
     if (response == null) {
       return null;
     }
-    if (isTokenInvalid?.call(response) == true) {
+    final noTokenVerify =
+        requestOptions.getQuery(kNoTokenVerify)?.toBoolOrNull() == true;
+    if (!noTokenVerify && isTokenInvalid?.call(response) == true) {
+      debugger();
       //token失效, 请求新的token
       final value = response.getQuery(kNoRefreshTokenKey);
       if (value != null && value.toBoolOrNull() == true) {

@@ -375,17 +375,24 @@ extension DioFutureResponseEx<T> on Future<T> {
   }
 }
 
+extension RequestOptionsEx on RequestOptions {
+  /// 获取对应的选项, 从以下源中获取
+  /// - [Response.requestOptions.extra]
+  /// - [Uri.queryParameters]
+  String? getQuery(String? key) {
+    final options = this;
+    final queryParameters = options.uri.queryParameters;
+    return queryParameters.containsKey(key)
+        ? queryParameters[key]
+        : options.extra[key]?.toString();
+  }
+}
+
 /// [DioStringEx.get]
 /// [DioFutureResponseEx.http]
 extension ResponseEx<T> on Response<T> {
   /// 获取对应的选项, 从以下源中获取
   /// - [Response.requestOptions.extra]
   /// - [Uri.queryParameters]
-  String? getQuery(String? key) {
-    final options = requestOptions;
-    final queryParameters = options.uri.queryParameters;
-    return queryParameters.containsKey(key)
-        ? queryParameters[key]
-        : options.extra[key]?.toString();
-  }
+  String? getQuery(String? key) => requestOptions.getQuery(key);
 }

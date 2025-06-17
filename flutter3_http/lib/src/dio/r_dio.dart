@@ -5,6 +5,23 @@ part of '../../flutter3_http.dart';
 /// @author angcyo
 /// @date 2023/11/25
 ///
+/// 全局的网络请求封装,
+/// # 拦截器
+/// - [LogFileInterceptor] -默认添加
+/// - [AppInfoInterceptor] -默认添加
+/// - [TokenInterceptor]
+///
+/// # Host
+/// 可以通过[Http.baseUrl]进行配置.
+/// [$host]可以获取当前配置的host.
+///
+/// # 进行请求
+/// [DioStringEx]
+///
+/// ```
+/// "/xxx".get().http((value, error){});
+/// "/xxx".post().http((value, error){});
+/// ```
 
 /// 全局单例
 /// [DioScope]

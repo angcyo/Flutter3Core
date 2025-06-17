@@ -127,10 +127,15 @@ class LogFileInterceptor extends Interceptor {
       builder.appendLine('headers[${options.headers.length}]↓');
       options.headers
           .forEach((key, v) => builder.append(' $key:', v, lineSeparator));
-      if (options.data != null) {
+      final data = options.data;
+      if (data != null) {
         //debugger();
-        builder.appendLine('data(${options.data.runtimeType})↓');
-        builder.appendAll(options.data);
+        builder.appendLine('data(${data.runtimeType})↓');
+        if (data is FormData) {
+          builder.appendAll(data.fields);
+        } else {
+          builder.appendAll(data);
+        }
       }
     });
     _printLog(
