@@ -101,8 +101,8 @@ class LogFileInterceptor extends Interceptor {
             !toPrint;
 
     //添加请求头
-    options.headers["log-uuid"] = id;
-    options.headers["request-time"] = nowTimestamp(); //请求时间
+    options.headers["logUuid"] = id;
+    options.headers["requestTime"] = nowTimestamp(); //请求时间
 
     uuidMap[hashCode] = (id, nowTimestamp());
     final log = stringBuilder((builder) {

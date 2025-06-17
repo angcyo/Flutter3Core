@@ -39,7 +39,7 @@ class TokenInterceptor extends Interceptor {
     this.refreshToken,
   }) {
     isTokenInvalid ??= (response) {
-      if (response.statusCode == 401) {
+      if (response.statusCode == 401 && response.isSameOrigin()) {
         assert(() {
           l.w("token失效, 请重新登录!");
           return true;
@@ -94,7 +94,7 @@ class TokenInterceptor extends Interceptor {
     RequestOptions requestOptions,
     Response? response,
   ) async {
-    if (response == null) {
+    if (response == null || !response.isSameOrigin()) {
       return null;
     }
     final noTokenVerify =

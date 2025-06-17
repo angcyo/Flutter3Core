@@ -386,6 +386,14 @@ extension RequestOptionsEx on RequestOptions {
         ? queryParameters[key]
         : options.extra[key]?.toString();
   }
+
+  /// 是否是同源地址
+  bool isSameOrigin() {
+    final origin = baseUrl;
+    final host = uri.host;
+    //debugger();
+    return origin.uri?.host == host;
+  }
 }
 
 /// [DioStringEx.get]
@@ -395,4 +403,12 @@ extension ResponseEx<T> on Response<T> {
   /// - [Response.requestOptions.extra]
   /// - [Uri.queryParameters]
   String? getQuery(String? key) => requestOptions.getQuery(key);
+
+  /// 是否是同源地址
+  bool isSameOrigin() {
+    final origin = requestOptions.baseUrl;
+    final host = realUri.host;
+    //debugger();
+    return origin.uri?.host == host;
+  }
 }
