@@ -31,18 +31,23 @@ class AppInfoInterceptor extends Interceptor {
     /*GlobalConfig.def.globalContext?.let((it) {
       options.headers["appDeviceId"] = ;
     });*/
+    //系统语言信息
     platformLocale.let<Locale>((it) {
       //platformLocale:zh_Hans_CN
       options.headers["platformLocale"] = it.toString();
-      //zh
+      /*//zh
       options.headers["platformLanguageCode"] = it.languageCode;
       //CN
       options.headers["platformCountryCode"] = it.countryCode;
       //Hans
       options.headers["platformScriptCode"] = it.scriptCode;
       //zh_CN
-      options.headers["language"] = "${it.languageCode}_${it.countryCode}";
+      options.headers["language"] = "${it.languageCode}_${it.countryCode}";*/
       return it;
+    });
+    //App语言信息
+    GlobalConfig.def.globalContext?.locale.let((it) {
+      options.headers["appLocale"] = it.toString();
     });
     super.onRequest(options, handler);
   }

@@ -213,11 +213,14 @@ extension ObjectEx on Object {
     TextSpan? textSpan,
     //--
     TextStyle? style,
+    //--
     double? fontSize,
     Color? textColor,
     FontWeight? fontWeight,
     double? lineHeight,
     bool? bold /*加粗*/,
+    bool isUnderline = false, //下划线
+    bool isLineThrough = false, //删除线
     FontStyle? fontStyle,
     String? fontFamily,
     TextAlign? textAlign,
@@ -366,7 +369,9 @@ extension ObjectEx on Object {
           fontWeight != null ||
           fontFamily != null ||
           fontStyle != null ||
-          lineHeight != null) {
+          lineHeight != null ||
+          isUnderline ||
+          isLineThrough) {
         style = style.copyWith(
           fontSize: fontSize ?? style.fontSize,
           color: textColor ?? style.color,
@@ -374,6 +379,11 @@ extension ObjectEx on Object {
           fontStyle: fontStyle ?? style.fontStyle,
           fontFamily: fontFamily ?? style.fontFamily,
           height: lineHeight ?? style.height,
+          decorationColor: textColor ?? style.color,
+          decoration: TextDecoration.combine([
+            if (isUnderline) TextDecoration.underline,
+            if (isLineThrough) TextDecoration.lineThrough,
+          ]),
         );
       }
     }
@@ -385,7 +395,9 @@ extension ObjectEx on Object {
                 fontWeight == null &&
                 fontFamily == null &&
                 fontStyle == null &&
-                lineHeight == null
+                lineHeight == null &&
+                !isUnderline &&
+                !isLineThrough
             ? null
             : TextStyle(
                 fontSize: fontSize,
@@ -394,6 +406,11 @@ extension ObjectEx on Object {
                 fontStyle: fontStyle,
                 fontFamily: fontFamily,
                 height: lineHeight,
+                decorationColor: textColor,
+                decoration: TextDecoration.combine([
+                  if (isUnderline) TextDecoration.underline,
+                  if (isLineThrough) TextDecoration.lineThrough,
+                ]),
               ));
 
     if (selectable) {
@@ -616,6 +633,9 @@ extension ColorEx on Color {
 
   /// 返回argb色值
   int get argbValue => A << 24 | R << 16 | G << 8 | B;
+
+  /// 不透明度的比例
+  Color o(double opacity) => withOpacityRatio(opacity);
 
   /// 在已有的透明值上进行再次透明
   /// 使用一个增量透明比例创建一个新的颜色

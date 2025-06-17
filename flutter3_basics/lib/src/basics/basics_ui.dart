@@ -1199,6 +1199,8 @@ extension WidgetEx on Widget {
         : this;
   }
 
+  /// 底部安全区域
+  /// [safeArea]
   Widget safeBottomArea({
     bool useSafeArea = true,
     bool useSliverSafeArea = false,
@@ -2841,9 +2843,19 @@ extension ContextEx on BuildContext {
   void postNotification(Notification notification) =>
       notification.dispatch(this);
 
-  /// 请求焦点, 传null, 可以收起键盘
-  requestFocus([FocusNode? node]) {
-    FocusScope.of(this).requestFocus(node ?? FocusNode());
+  /// 清除焦点, 隐藏键盘
+  void unfocus() {
+    // 检查当前输入框的焦点
+    final focusScope = FocusScope.of(this);
+    if (focusScope.hasFocus) {
+      focusScope.unfocus(); // 隐藏键盘
+    }
+  }
+
+  /// 请求焦点, 传null, 可以弹出键盘. 如果界面上有输入框.
+  /// [node] 指定需要获取焦点的节点
+  void requestFocus([FocusNode? node]) {
+    FocusScope.of(this).requestFocus(node);
   }
 
   /// 显示一个 [SnackBar]

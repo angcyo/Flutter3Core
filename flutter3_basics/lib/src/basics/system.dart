@@ -95,3 +95,7 @@ extension SystemWidgetEx on Widget {
   ) =>
       isMacOS ? PlatformMenuBar(menus: menus, child: this) : this;
 }
+
+/// 隐藏键盘
+/// 发送消息以隐藏键盘，但不改变输入框的焦点
+void hideKeyboard() => SystemChannels.textInput.invokeMethod('TextInput.hide');
