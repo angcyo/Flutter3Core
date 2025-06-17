@@ -745,6 +745,11 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
+
+  /// [Uri]
+  /// [Uri.host]
+  Uri? get uri => Uri.tryParse(this);
+
   /// [Alignment]
   Alignment get alignment {
     return switch (this) {

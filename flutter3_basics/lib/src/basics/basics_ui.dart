@@ -74,13 +74,17 @@ void postFrameCallback(FrameCallback callback,
 
 /// 下一针回调
 /// [postFrameCallback]
-void postFrame(VoidCallback callback) {
-  postFrameCallback((_) => callback());
+void postFrame(VoidCallback callback, [bool microtask = false]) {
+  if (microtask) {
+    scheduleMicrotask(callback);
+  } else {
+    postFrameCallback((_) => callback());
+  }
 }
 
 /// [scheduleMicrotask]
-void $next(void Function() callback) {
-  scheduleMicrotask(callback);
+void $next(void Function() callback, [bool microtask = true]) {
+  postFrame(callback, microtask);
 }
 
 /// 如果正在布局阶段, 则立即安排一帧, 否则立即执行回调
