@@ -280,6 +280,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Widget? bottomWidget /*放在底部的小部件*/,
     //--safeArea
     bool useSafeArea = true,
+    bool maintainBottomViewPadding = true,
     //--
     TransformWidgetBuilder? contentBuilder /*将内容变换成其它, 建议开启滚动体*/,
     //--
@@ -412,7 +413,9 @@ mixin DialogMixin implements TranslationTypeImpl {
     final route = context.modalRoute;
     return body
         .size(height: height)
-        .safeArea(useSafeArea: useSafeArea, maintainBottomViewPadding: true)
+        .safeArea(
+            useSafeArea: useSafeArea,
+            maintainBottomViewPadding: maintainBottomViewPadding)
         .material(color: bgColor ?? globalTheme.dialogSurfaceBgColor)
         .clipRadius(
           radius: clipRadius,

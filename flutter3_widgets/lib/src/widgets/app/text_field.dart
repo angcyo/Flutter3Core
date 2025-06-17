@@ -54,7 +54,7 @@ class TextFieldConfig {
 
   //region TextField的属性,优先级低
 
-  /// 浮动在输入框上方的提示文字
+  /// 浮动在输入框上方的提示文字, 单独指定[labelText]也会[hintText]的效果
   /// [SingleInputWidget.labelText]
   String? labelText;
 
@@ -221,6 +221,20 @@ class TextFieldConfig {
   }
 
   //region api
+
+  /// 请求焦点
+  @api
+  void requestFocus([BuildContext? context]) {
+    final node = focusNode;
+    if (node == null) {
+      return;
+    }
+    if (context == null) {
+      node.requestFocus();
+    } else {
+      FocusScope.of(context).requestFocus(node);
+    }
+  }
 
   ///[updateText]
   ///[updateValue]
@@ -680,6 +694,7 @@ class SingleInputWidget extends StatefulWidget {
   final InputBorder? disabledBorder;
 
   /// 键盘上的输入类型, 比如完成, 下一步等
+  /// [onSubmitted] 配合此方法, 请求下一个输入框的焦点.
   final TextInputAction? textInputAction;
 
   /// 回调

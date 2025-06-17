@@ -199,6 +199,7 @@ mixin PageViewMixin<T extends StatefulWidget>
   /// 页面改变回调
   @overridePoint
   void onSelfPageViewChanged(BuildContext context, int index) {
+    hideKeyboard(); //隐藏键盘, 但是不获取焦点, 之前的输入框依旧具有焦点
     pageChangedUpdateSignal.updateValue(index);
     assert(() {
       l.v('onSelfPageViewChanged:$index');
