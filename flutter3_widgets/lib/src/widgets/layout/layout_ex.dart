@@ -5,7 +5,7 @@ part of '../../../flutter3_widgets.dart';
 /// @author angcyo
 /// @date 2024/03/18
 ///
-
+/// 布局约束类型
 enum ConstraintsType {
   /// 包裹内容
   wrapContent,
@@ -118,10 +118,25 @@ class LayoutBoxConstraints extends BoxConstraints {
   final ConstraintsType? widthType;
   final ConstraintsType? heightType;
 
+  bool get isMatchParent => isMatchParentWidth || isMatchParentHeight;
+
+  bool get isMatchParentWidth => widthType == ConstraintsType.matchParent;
+
+  bool get isMatchParentHeight => heightType == ConstraintsType.matchParent;
+
   const LayoutBoxConstraints({
     this.widthType,
     this.heightType,
     //---
+    super.minWidth,
+    super.maxWidth,
+    super.minHeight,
+    super.maxHeight,
+  });
+
+  const LayoutBoxConstraints.matchParent({
+    this.widthType = ConstraintsType.matchParent,
+    this.heightType = ConstraintsType.matchParent,
     super.minWidth,
     super.maxWidth,
     super.minHeight,
