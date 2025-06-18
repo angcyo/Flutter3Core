@@ -54,7 +54,7 @@ class ScaleMatrixContainerLayout extends MultiChildRenderObjectWidget {
 /// 使用[ParentDataWidget]对[ParentData]进行赋值操作
 class ScaleMatrixParentData extends ContainerBoxParentData<RenderBox> {
   /// 指定child的约束, 不指定则使用parent传递的约束
-  BoxConstraints? childConstraints;
+  LayoutBoxConstraints? childConstraints;
 
   /// child 在没有作用矩阵之前的偏移量
   Offset childOffset = Offset.zero;
@@ -70,6 +70,9 @@ class ScaleMatrixParentData extends ContainerBoxParentData<RenderBox> {
   /// 是否作为参考的child
   /// [ScaleMatrixContainerLayout.refChildIndex]
   bool? isRefChild;
+
+  /// 当前child是否忽略矩阵
+  bool? ignoreTransform;
 
   //--
 
@@ -100,12 +103,14 @@ class ScaleMatrixParentDataWidget
     this.childOffset = Offset.zero,
     this.isRefChild,
     this.tag,
+    this.ignoreTransform,
   });
 
-  final BoxConstraints? childConstraints;
+  final LayoutBoxConstraints? childConstraints;
   final Offset childOffset;
   final Offset? childOffsetRadio;
   final bool? isRefChild;
+  final bool? ignoreTransform;
   final String? tag;
 
   @override
@@ -131,6 +136,11 @@ class ScaleMatrixParentDataWidget
 
     if (parentData.childOffsetRadio != childOffsetRadio) {
       parentData.childOffsetRadio = childOffsetRadio;
+      needsLayout = true;
+    }
+
+    if (parentData.ignoreTransform != ignoreTransform) {
+      parentData.ignoreTransform = ignoreTransform;
       needsLayout = true;
     }
 
@@ -308,9 +318,19 @@ class ScaleMatrixContainerRenderObject extends RenderBox
     int childIndex = 0;
     for (final child in childrenList) {
       final parentData = child.parentData as ScaleMatrixParentData;
-      final BoxConstraints childConstraints = parentData.childConstraints ??
+      BoxConstraints childConstraints = parentData.childConstraints ??
           config.refChildConstraints ??
           BoxConstraints();
+
+      if (childConstraints is LayoutBoxConstraints) {
+        if (childConstraints.isMatchParent) {
+          if (aspectRatio != null) {
+            continue;
+          }
+          childConstraints = constraints;
+        }
+      }
+
       final drySize = child.getDryLayout(childConstraints);
       //debugger();
       if (drySize.isEmpty || !drySize.isFinite) {
@@ -320,8 +340,11 @@ class ScaleMatrixContainerRenderObject extends RenderBox
         child.layout(childConstraints, parentUsesSize: true);
       }
       //debugger();
-      if (childIndex == config.refChildIndex || parentData.isRefChild == true) {
-        refChildSize = child.size;
+      if (parentData.ignoreTransform != true) {
+        if (childIndex == config.refChildIndex ||
+            parentData.isRefChild == true) {
+          refChildSize = child.size;
+        }
       }
       childIndex++;
     }
@@ -334,6 +357,19 @@ class ScaleMatrixContainerRenderObject extends RenderBox
       _effectiveTransform = Matrix4.diagonal3Values(sx, sy, 1.0);
     } else {
       _effectiveTransform = null;
+    }
+    //debugger();
+
+    //再次测量[MatchParent]的child
+    if (aspectRatio != null) {
+      final fixedConstraints = BoxConstraints.tight(parentSize);
+      for (final child in childrenList) {
+        final parentData = child.parentData as ScaleMatrixParentData;
+        LayoutBoxConstraints? childConstraints = parentData.childConstraints;
+        if (childConstraints?.isMatchParent == true) {
+          child.layout(fixedConstraints);
+        }
+      }
     }
 
     size = parentSize;
