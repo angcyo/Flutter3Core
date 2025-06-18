@@ -7,13 +7,33 @@ part of flutter3_widgets;
 /// 滑块验证码
 /// https://dun.163.com/trial/jigsaw
 class SliderCaptchaWidget extends StatefulWidget {
+  /// 验证码的状态
+  final SliderCaptchaState state;
+
   /// 滑动滑块完成的回调
   /// @return true:验证成功, false:验证失败
   final Future<bool> Function(double moveRadio)? onSliderFinish;
 
+  /// 滑块横纵比, 影响滑块小部件的宽高比例
+  final double? aspectRatio;
+
+  /// 验证码背景图片url
+  final String? backgroundImageUrl;
+
+  /// 验证的的图片url
+  final String? activeImageUrl;
+
+  /// [activeImageUrl]图片在[backgroundImageUrl]背景中的Y偏移量(像素偏移量)
+  final double activeImageOffsetY;
+
   const SliderCaptchaWidget({
     super.key,
     this.onSliderFinish,
+    this.state = SliderCaptchaState.loading,
+    this.aspectRatio,
+    this.backgroundImageUrl,
+    this.activeImageUrl,
+    this.activeImageOffsetY = 0,
   });
 
   @override
@@ -53,8 +73,11 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
   /// 当前滑块移动的比例
   double _moveRadio = 0.0;
 
+  /// 是否正在移动滑块
+  bool _isMoving = false;
+
   /// 当前滑块的状态
-  SliderCaptchaState _sliderState = SliderCaptchaState.normal;
+  SliderCaptchaState get _sliderState => widget.state;
 
   /// 浮子状态颜色
   Color? getThumbStateColor(BuildContext context) {
@@ -78,6 +101,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
 
   @override
   Widget build(BuildContext context) {
+    final lRes = libRes(context);
     final globalTheme = GlobalTheme.of(context);
     return Column(
       spacing: kX,
@@ -86,13 +110,23 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
         ScaleMatrixContainerLayout(
           aspectRatio: 590 / 360,
           children: [
-            Image.network(
-                "http://192.168.31.76:8888/slider_captcha_background.png"),
-            ScaleMatrixParentDataWidget(
-                childOffset: Offset(0, 126),
-                childOffsetRadio: Offset(_moveRadio, 0),
-                child: Image.network(
-                    "http://192.168.31.76:8888/slider_captcha_active.png")),
+            if (_sliderState == SliderCaptchaState.loading)
+              ScaleMatrixParentDataWidget(
+                ignoreTransform: true,
+                childConstraints: LayoutBoxConstraints.matchParent(),
+                child: buildLoadingWidget(context)
+                    .size(size: 50)
+                    .backgroundColor(globalTheme.lineDarkColor),
+              ),
+            if (_sliderState != SliderCaptchaState.loading &&
+                widget.backgroundImageUrl != null)
+              Image.network(widget.backgroundImageUrl!),
+            if (_sliderState != SliderCaptchaState.loading &&
+                widget.activeImageUrl != null)
+              ScaleMatrixParentDataWidget(
+                  childOffset: Offset(0, widget.activeImageOffsetY),
+                  childOffsetRadio: Offset(_moveRadio, 0),
+                  child: Image.network(widget.activeImageUrl!)),
           ],
         ),
         //滑块
@@ -101,7 +135,8 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
             if (event.isPointerDown &&
                 _sliderState == SliderCaptchaState.normal) {
               if (render.hitTestChild(thumbTag, event.localPosition)) {
-                _sliderState = SliderCaptchaState.moving;
+                //_sliderState = SliderCaptchaState.moving;
+                _isMoving = true;
                 updateState();
               }
             } else if (event.isPointerFinish &&
@@ -114,13 +149,13 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
                 _animateThumbTo(0);
               } else {
                 onSliderFinish.call(_moveRadio).then((value) {
-                  if (value) {
+                  /*if (value) {
                     _sliderState = SliderCaptchaState.success;
                     updateState();
                   } else {
                     _sliderState = SliderCaptchaState.fail;
                     _animateThumbTo(0);
-                  }
+                  }*/
                 });
               }
             }
@@ -161,10 +196,24 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
                       ..style = PaintingStyle.fill);
               })).size(size: _trackHeight),
             ),
+            if (_sliderState == SliderCaptchaState.loading)
+              ScaleMatrixParentDataWidget(
+                ignoreTransform: true,
+                childConstraints: LayoutBoxConstraints.matchParent(),
+                child: lRes?.libLoading.text().center() ?? empty,
+              ),
           ],
         ).size(height: _trackHeight)
       ],
     ).paddingOnly(all: kX);
+  }
+
+  //--
+
+  /// 获取加载中...的小部件
+  Widget buildLoadingWidget(BuildContext context) {
+    final globalConfig = GlobalConfig.of(context);
+    return globalConfig.loadingIndicatorBuilder(context, null, null, null);
   }
 
   //--
@@ -191,7 +240,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
     startValueAnimation(_moveRadio, value, this, (value, isCompleted) {
       _moveRadio = value;
       if (isCompleted) {
-        _sliderState = SliderCaptchaState.normal;
+        //_sliderState = SliderCaptchaState.normal;
       }
       updateState();
     });
