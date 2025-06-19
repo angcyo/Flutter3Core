@@ -745,10 +745,24 @@ Future<String?> getClipboardText() async {
 }
 
 extension StringEx on String {
-
   /// [Uri]
   /// [Uri.host]
   Uri? get uri => Uri.tryParse(this);
+
+  /// 追加查询参数
+  String? appendUriQuery(Map<String, dynamic>? queryParameters) {
+    if (queryParameters == null || queryParameters.isEmpty) {
+      return null;
+    }
+    final uri = this.uri;
+    if (uri == null) {
+      return null;
+    }
+    return uri.replace(queryParameters: {
+      ...uri.queryParameters,
+      ...queryParameters,
+    }).toString();
+  }
 
   /// [Alignment]
   Alignment get alignment {
