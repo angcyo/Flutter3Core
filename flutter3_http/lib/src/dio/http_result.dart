@@ -9,27 +9,31 @@ part of '../../flutter3_http.dart';
 /// {"errMsg":"操作成功","code":200,"data":{"id":18434,"nickname":"8️⃣🅱️Q了","say":null}}
 /// ```
 class HttpResultHandle {
-  static const kDefHttpErrorMessage = "network error";
-  static const kDefHttpDataCodeKey = "code";
-  static const kDefHttpDataDataKey = "data";
-  static const kDefHttpDataMessageKey = "errMsg";
+  static const kDefHttpErrorMessage = "Network error!";
+  static const kDefHttpDataCodeKeyList = ["code"];
+  static const kDefHttpDataDataKeyList = ["data"];
+  static const kDefHttpDataMessageKeyList = ["msg", "errMsg", "error"];
 
   /// json当中对应的资源key
-  String? codeKey = kDefHttpDataCodeKey;
-  String? dataKey = kDefHttpDataDataKey;
-  String? messageKey = kDefHttpDataMessageKey;
+  List<String>? codeKeyList = kDefHttpDataCodeKeyList;
+  List<String>? dataKeyList = kDefHttpDataDataKeyList;
+  List<String>? messageKeyList = kDefHttpDataMessageKeyList;
 
   /// 默认的错误消息
+  @configProperty
   String? defHttpErrorMessage = kDefHttpErrorMessage;
 
   /// 是否要显示错误提示
+  @configProperty
   bool showErrorToast = true;
 
   /// 如果返回的是字符串类型, 是否需要使用json解码
+  @configProperty
   bool needJsonDecode = true;
 
   /// 使用数据code码来判断请求是否成功
   /// [codeKey]
+  @configProperty
   bool useDataCodeStatus = true;
 
   /// 处理网络请求返回的数据
@@ -48,18 +52,20 @@ class HttpResultHandle {
         } else {
           if (useDataCodeStatus) {
             //需要判断逻辑code码
-            if (codeKey != null) {
-              final dataCode = data[codeKey];
+            if (!isNil(codeKeyList)) {
+              final dataCode = data.getValue(codeKeyList);
               if (dataCode is int && dataCode >= 200 && dataCode < 300) {
                 //成功
-                return dataKey == null ? data : data[dataKey];
+                return isNil(dataKeyList) ? data : data.getValue(dataKeyList);
               } else {
                 throw RException(
-                    message: (messageKey == null ? null : data[messageKey]) ??
+                    message: (isNil(messageKeyList)
+                            ? null
+                            : data.getValue(messageKeyList)) ??
                         defHttpErrorMessage);
               }
             } else {
-              return dataKey == null ? data : data[dataKey];
+              return isNil(dataKeyList) ? data : data.getValue(dataKeyList);
             }
           } else {
             //不需要判断逻辑code码, 则直接返回数据
@@ -86,11 +92,14 @@ class HttpResultHandle {
     //debugger();
     var tip = defHttpErrorMessage;
     if (error is DioException) {
-      var errorMessage = error.response?.data[messageKey];
+      final data = error.response?.data;
+      String? errorMessage;
       if (error.type == DioExceptionType.connectionTimeout ||
           error.type == DioExceptionType.receiveTimeout ||
           error.type == DioExceptionType.sendTimeout) {
         errorMessage ??= defHttpErrorMessage;
+      } else if (data is Map<String, dynamic>) {
+        errorMessage ??= data.getValue(messageKeyList);
       }
       tip = errorMessage ?? error.message ?? tip;
     }

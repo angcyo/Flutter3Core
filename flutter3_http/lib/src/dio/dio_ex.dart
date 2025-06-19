@@ -327,20 +327,21 @@ extension DioFutureResponseEx<T> on Future<T> {
     HttpResultHandle? resultHandle,
     bool? showErrorToast,
     bool? throwError,
-    String? codeKey,
-    String? dataKey,
-    String? messageKey,
+    List<String>? codeKeyList,
+    List<String>? dataKeyList,
+    List<String>? messageKeyList,
     bool? useDataCodeStatus,
+    String? debugLabel,
   }) async {
     //debugger();
     final handle = resultHandle ?? HttpResultHandle();
-    handle.codeKey = codeKey ?? handle.codeKey;
-    handle.dataKey = dataKey ?? handle.dataKey;
-    handle.messageKey = messageKey ?? handle.messageKey;
+    handle.codeKeyList = codeKeyList ?? handle.codeKeyList;
+    handle.dataKeyList = dataKeyList ?? handle.dataKeyList;
+    handle.messageKeyList = messageKeyList ?? handle.messageKeyList;
     handle.showErrorToast = showErrorToast ?? handle.showErrorToast;
     handle.useDataCodeStatus = useDataCodeStatus ?? handle.useDataCodeStatus;
     return get((response, error) {
-      //debugger();
+      debugger(when: debugLabel != null);
       if (error != null) {
         //有错误
         final err = handle.handleError(error);
