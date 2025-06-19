@@ -9,9 +9,11 @@ part of '../../flutter3_core.dart';
 final class CoreKeys {
   CoreKeys._();
 
+  static const String kKeyDeviceUUID = "deviceUuid";
+
   /// 为设备分配一个uuid
   String get deviceUuid {
-    const key = "deviceUuid";
+    const key = kKeyDeviceUUID;
     String? id = key.hiveGet<String>(null);
     if (isNil(id)) {
       initDeviceUuid();
@@ -22,8 +24,8 @@ final class CoreKeys {
   /// 初始化设备uuid
   @CallFrom(initHive)
   void initDeviceUuid() {
-    if (!"deviceUuid".hiveHaveKey()) {
-      "deviceUuid".hivePut($uuid);
+    if (!kKeyDeviceUUID.hiveHaveKey()) {
+      kKeyDeviceUUID.hivePut($uuid);
     }
   }
 

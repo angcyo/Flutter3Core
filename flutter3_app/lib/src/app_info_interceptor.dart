@@ -21,10 +21,10 @@ class AppInfoInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (_packageInfo != null) {
-      options.headers["appVersionName"] = _packageInfo!.version;
-      options.headers["appVersionCode"] = _packageInfo!.buildNumber;
-      options.headers["appPackageName"] = _packageInfo!.packageName;
-      options.headers["appSignature"] = _packageInfo!.buildSignature;
+      //options.headers["appVersionName"] = _packageInfo!.version;
+      //options.headers["appVersionCode"] = _packageInfo!.buildNumber;
+      //options.headers["appPackageName"] = _packageInfo!.packageName;
+      //options.headers["appSignature"] = _packageInfo!.buildSignature;
       options.headers.addAll(kAppInfoHeader);
     }
     //一些运行的环境信息
@@ -34,7 +34,7 @@ class AppInfoInterceptor extends Interceptor {
     //系统语言信息
     platformLocale.let<Locale>((it) {
       //platformLocale:zh_Hans_CN
-      options.headers["platformLocale"] = it.toString();
+      //options.headers["platformLocale"] = it.toString();
       /*//zh
       options.headers["platformLanguageCode"] = it.languageCode;
       //CN
@@ -47,7 +47,7 @@ class AppInfoInterceptor extends Interceptor {
     });
     //App语言信息
     GlobalConfig.def.globalContext?.locale.let((it) {
-      options.headers["appLocale"] = it.toString();
+      //options.headers["appLocale"] = it.toString();
     });
     super.onRequest(options, handler);
   }

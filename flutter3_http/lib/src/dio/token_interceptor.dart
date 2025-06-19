@@ -94,7 +94,7 @@ class TokenInterceptor extends Interceptor {
     RequestOptions requestOptions,
     Response? response,
   ) async {
-    if (response == null || !response.isSameOrigin()) {
+    if (response == null || !response.isSameOrigin() || refreshToken == null) {
       return null;
     }
     final noTokenVerify =
@@ -107,7 +107,7 @@ class TokenInterceptor extends Interceptor {
         //不重新请求token
         return null;
       }
-      return await refreshToken?.call(response) ?? false;
+      return await refreshToken?.call(response);
     } else {
       //token有效
       return null;

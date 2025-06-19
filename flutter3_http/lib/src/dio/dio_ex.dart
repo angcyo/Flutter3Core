@@ -384,7 +384,7 @@ extension RequestOptionsEx on RequestOptions {
     final queryParameters = options.uri.queryParameters;
     return queryParameters.containsKey(key)
         ? queryParameters[key]
-        : options.extra[key]?.toString();
+        : options.extra[key]?.toString() ?? options.headers[key]?.toString();
   }
 
   /// 是否是同源地址
