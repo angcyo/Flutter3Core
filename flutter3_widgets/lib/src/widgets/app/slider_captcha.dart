@@ -20,11 +20,20 @@ class SliderCaptchaWidget extends StatefulWidget {
   /// 验证码背景图片url
   final String? backgroundImageUrl;
 
+  /// [backgroundImageUrl]背景图的宽高
+  final Size? backgroundImageSize;
+
   /// 验证的的图片url
   final String? activeImageUrl;
 
+  /// [activeImageUrl]背景图的宽高
+  final Size? activeImageSize;
+
   /// [activeImageUrl]图片在[backgroundImageUrl]背景中的Y偏移量(像素偏移量)
   final double activeImageOffsetY;
+
+  /// 验证码背景右上角的活动按钮
+  final Widget? action;
 
   const SliderCaptchaWidget({
     super.key,
@@ -32,8 +41,11 @@ class SliderCaptchaWidget extends StatefulWidget {
     this.state = SliderCaptchaState.loading,
     this.aspectRatio,
     this.backgroundImageUrl,
+    this.backgroundImageSize,
     this.activeImageUrl,
+    this.activeImageSize,
     this.activeImageOffsetY = 0,
+    this.action,
   });
 
   @override
@@ -47,9 +59,6 @@ enum SliderCaptchaState {
 
   /// 加载中...
   loading,
-
-  /// 正在滑动
-  moving,
 
   /// 验证成功
   success,
@@ -82,10 +91,12 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
   /// 浮子状态颜色
   Color? getThumbStateColor(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    if (_isMoving) {
+      return globalTheme.accentColor;
+    }
     return switch (_sliderState) {
       SliderCaptchaState.success => globalTheme.successColor,
       SliderCaptchaState.fail => globalTheme.errorColor,
-      SliderCaptchaState.moving => globalTheme.accentColor,
       _ => null,
     };
   }
@@ -100,16 +111,27 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
   }
 
   @override
+  void didUpdateWidget(covariant SliderCaptchaWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_sliderState == SliderCaptchaState.loading) {
+      _isMoving = false;
+      _animateThumbTo(0);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final lRes = libRes(context);
     final globalTheme = GlobalTheme.of(context);
     //debugger();
+    final moveRadio = _moveRadio;
     return Column(
       spacing: kX,
       children: [
         //图片
         ScaleMatrixContainerLayout(
           aspectRatio: widget.aspectRatio,
+          refChildIndex: _sliderState == SliderCaptchaState.loading ? null : 0,
           children: [
             if (_sliderState == SliderCaptchaState.loading)
               ScaleMatrixParentDataWidget(
@@ -121,15 +143,29 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
               ),
             if (_sliderState != SliderCaptchaState.loading &&
                 widget.backgroundImageUrl != null)
-              Image.network(widget.backgroundImageUrl!),
+              ScaleMatrixParentDataWidget(
+                childConstraints: widget.backgroundImageSize == null
+                    ? null
+                    : LayoutBoxConstraints.fixedSize(
+                        widget.backgroundImageSize!.width,
+                        widget.backgroundImageSize!.height,
+                      ),
+                child: Image.network(widget.backgroundImageUrl!),
+              ),
             if (_sliderState != SliderCaptchaState.loading &&
                 widget.activeImageUrl != null)
               ScaleMatrixParentDataWidget(
                   childOffset: Offset(0, widget.activeImageOffsetY),
-                  childOffsetRadio: Offset(_moveRadio, 0),
+                  childOffsetRadio: Offset(moveRadio, 0),
+                  childConstraints: widget.activeImageSize == null
+                      ? null
+                      : LayoutBoxConstraints.fixedSize(
+                          widget.activeImageSize!.width,
+                          widget.activeImageSize!.height,
+                        ),
                   child: Image.network(widget.activeImageUrl!)),
           ],
-        ),
+        ).stackOf(widget.action, alignment: Alignment.topRight),
         //滑块
         ScaleMatrixContainerLayout(
           onHandlePointerEvent: (render, event, tx, ty) {
@@ -140,8 +176,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
                 _isMoving = true;
                 updateState();
               }
-            } else if (event.isPointerFinish &&
-                _sliderState == SliderCaptchaState.moving) {
+            } else if (event.isPointerFinish && _isMoving) {
               //开始校验验证码
               final onSliderFinish = widget.onSliderFinish;
               if (onSliderFinish == null) {
@@ -160,7 +195,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
                 });
               }
             }
-            if (_sliderState == SliderCaptchaState.moving) {
+            if (_isMoving) {
               _moveRadio =
                   clampDouble(tx / (render.size.width - _trackHeight), 0, 1);
               //l.d("tx:$tx ${render.size.width} _moveRadio: $_moveRadio");
@@ -177,13 +212,13 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
               final rect2 = Rect.fromLTWH(
                   0,
                   0,
-                  (size.width - _trackHeight) * _moveRadio + _trackHeight,
+                  (size.width - _trackHeight) * moveRadio + _trackHeight,
                   size.height);
               _drawTrackRect(canvas, rect2, getThumbStateColor(context));
             }),
             ScaleMatrixParentDataWidget(
               tag: thumbTag,
-              childOffsetRadio: Offset(_moveRadio, 0),
+              childOffsetRadio: Offset(moveRadio, 0),
               child: Icon(
                 getThumbStateIcon(context),
                 size: 16,

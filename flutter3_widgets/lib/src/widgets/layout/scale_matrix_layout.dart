@@ -45,6 +45,7 @@ class ScaleMatrixContainerLayout extends MultiChildRenderObjectWidget {
       BuildContext context, ScaleMatrixContainerRenderObject renderObject) {
     renderObject
       ..config = this
+      .._effectiveTransform = null
       ..markNeedsLayout();
   }
 }
@@ -295,6 +296,7 @@ class ScaleMatrixContainerRenderObject extends RenderBox
     BoxConstraints constraints = this.constraints;
     Size parentSize = constraints.biggest;
 
+    //自身比例约束处理
     final aspectRatio = config.aspectRatio;
     if (aspectRatio != null) {
       if (parentSize.width == double.infinity) {
@@ -314,6 +316,7 @@ class ScaleMatrixContainerRenderObject extends RenderBox
       );
     }
 
+    //参考child 计算缩放比例
     Size? refChildSize;
     int childIndex = 0;
     for (final child in childrenList) {
@@ -332,7 +335,7 @@ class ScaleMatrixContainerRenderObject extends RenderBox
       }
 
       final drySize = child.getDryLayout(childConstraints);
-      //debugger();
+      //debugger(when: childIndex == 0);
       if (drySize.isEmpty || !drySize.isFinite) {
         //重新测量
         child.layout(constraints, parentUsesSize: true);
@@ -347,6 +350,11 @@ class ScaleMatrixContainerRenderObject extends RenderBox
         }
       }
       childIndex++;
+
+      assert(() {
+        //l.w("child[$childIndex]->${child.size} parent:$constraints child:$childConstraints");
+        return true;
+      }());
     }
 
     //计算矩阵
@@ -355,6 +363,10 @@ class ScaleMatrixContainerRenderObject extends RenderBox
       final sy = parentSize.height / refChildSize.height;
       //debugger();
       _effectiveTransform = Matrix4.diagonal3Values(sx, sy, 1.0);
+      assert(() {
+        //l.i("scale sx: $sx, sy: $sy");
+        return true;
+      }());
     } else {
       _effectiveTransform = null;
     }
@@ -367,6 +379,7 @@ class ScaleMatrixContainerRenderObject extends RenderBox
         final parentData = child.parentData as ScaleMatrixParentData;
         LayoutBoxConstraints? childConstraints = parentData.childConstraints;
         if (childConstraints?.isMatchParent == true) {
+          //debugger();
           child.layout(fixedConstraints);
         }
       }
