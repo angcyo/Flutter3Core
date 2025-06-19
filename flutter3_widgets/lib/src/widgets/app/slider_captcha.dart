@@ -103,12 +103,13 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
   Widget build(BuildContext context) {
     final lRes = libRes(context);
     final globalTheme = GlobalTheme.of(context);
+    //debugger();
     return Column(
       spacing: kX,
       children: [
         //图片
         ScaleMatrixContainerLayout(
-          aspectRatio: 590 / 360,
+          aspectRatio: widget.aspectRatio,
           children: [
             if (_sliderState == SliderCaptchaState.loading)
               ScaleMatrixParentDataWidget(
