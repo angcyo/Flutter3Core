@@ -115,8 +115,11 @@ extension LayoutParentDataEx on ParentData {
 /// [BoxConstraintsEx]
 /// [alignChildOffset]
 class LayoutBoxConstraints extends BoxConstraints {
+  //--
   final ConstraintsType? widthType;
   final ConstraintsType? heightType;
+
+  //--
 
   bool get isMatchParent => isMatchParentWidth || isMatchParentHeight;
 
@@ -144,18 +147,25 @@ class LayoutBoxConstraints extends BoxConstraints {
   });
 
   /// 固定大小约束
-  const LayoutBoxConstraints.fixedSize({
-    this.widthType = ConstraintsType.fixedSize,
-    this.heightType = ConstraintsType.fixedSize,
-    super.maxWidth,
-    super.maxHeight,
-  });
+  LayoutBoxConstraints.fixedSize(
+    double width,
+    double height,
+  ) : this.tight(Size(width, height));
+
+  /// 固定大小约束
+  LayoutBoxConstraints.tight(
+    super.size,
+  )   : widthType = ConstraintsType.fixedSize,
+        heightType = ConstraintsType.fixedSize,
+        super.tight();
 
   /// 固定高度的约束
   const LayoutBoxConstraints.fixedHeight({
     this.widthType,
     this.heightType = ConstraintsType.fixedSize,
+    super.minWidth,
     super.maxWidth,
+    super.minHeight,
     super.maxHeight,
   });
 

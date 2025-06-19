@@ -31,6 +31,8 @@ String get $uuid {
 Future wait([int milliseconds = 1]) =>
     Future.delayed(Duration(milliseconds: milliseconds));
 
+Future sleep([int milliseconds = 1]) => wait(milliseconds);
+
 /// 延迟执行
 Future delayed([Duration? duration]) =>
     Future.delayed(duration ?? Duration(milliseconds: 1));
@@ -3160,6 +3162,19 @@ extension MapEx<K, V> on Map<K, V> {
       }
     });
     return map;
+  }
+
+  /// 从一组key中获取有值的键值对
+  V? getValue(List<K?>? keys) {
+    if (keys == null || keys.isEmpty) return null;
+    for (final key in keys) {
+      if (key == null) continue;
+      final value = this[key];
+      if (value != null) {
+        return value;
+      }
+    }
+    return null;
   }
 
   /// 获取指定的value自身数据类型值, 如果没有则返回this
