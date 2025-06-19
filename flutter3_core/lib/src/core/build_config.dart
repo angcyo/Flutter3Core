@@ -129,6 +129,15 @@ class BuildConfig {
   /// [json]
   dynamic operator [](Object? key) => json?[key];
 
+  /// 从自身中获取数据, 获取不到则从[$rootBuildConfig]中获取
+  /// [json]
+  dynamic getOrRoot(Object? key) {
+    if (this == $rootBuildConfig) {
+      return this[key];
+    }
+    return this[key] ?? $rootBuildConfig?[key];
+  }
+
   /// [json]
   void operator []=(String key, dynamic value) {
     json?[key] = value;

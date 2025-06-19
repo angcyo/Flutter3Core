@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
@@ -81,6 +83,10 @@ class LogFileInterceptor extends Interceptor {
       toPrint: noLogPrint == false,
     );
     super.onError(err, handler);
+    assert(() {
+      l.e("[${err.response?.statusCode}]请求失败[${err.requestOptions.uri}]->$err");
+      return true;
+    }());
   }
 
   void _logRequest(RequestOptions options) {
