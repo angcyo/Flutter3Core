@@ -352,7 +352,8 @@ extension DioFutureResponseEx<T> on Future<T> {
         return null;
       } else if (response == null) {
         //没有数据
-        final exception = RException(message: "response is null", cause: error);
+        final exception =
+            RHttpException(message: "response is null", error: error);
         final err = handle.handleError(exception);
         final callbackValue = callback?.call(response, err);
         if (throwError == true) {

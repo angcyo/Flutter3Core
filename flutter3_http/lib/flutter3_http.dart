@@ -18,6 +18,7 @@ export 'src/dio/log_interceptor.dart';
 part 'src/dio/dio_ex.dart';
 part 'src/dio/http_result.dart';
 part 'src/dio/r_dio.dart';
+part 'src/dio/r_http_exception.dart';
 part 'src/dio/token_interceptor.dart';
 part 'src/http.dart';
 part 'src/network_string_loader.dart';

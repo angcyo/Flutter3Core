@@ -58,11 +58,14 @@ class HttpResultHandle {
                 //成功
                 return isNil(dataKeyList) ? data : data.getValue(dataKeyList);
               } else {
-                throw RException(
-                    message: (isNil(messageKeyList)
-                            ? null
-                            : data.getValue(messageKeyList)) ??
-                        defHttpErrorMessage);
+                throw RHttpException(
+                  message: (isNil(messageKeyList)
+                          ? null
+                          : data.getValue(messageKeyList)) ??
+                      defHttpErrorMessage,
+                  statusCode: dataCode,
+                  error: data,
+                );
               }
             } else {
               return isNil(dataKeyList) ? data : data.getValue(dataKeyList);
@@ -77,7 +80,11 @@ class HttpResultHandle {
           l.w("网络请求状态码[$code]");
           return true;
         }());
-        throw RException(message: "code[$code]${response.statusMessage ?? ""}");
+        throw RHttpException(
+          message: "code[$code]${response.statusMessage ?? ""}",
+          statusCode: code,
+          error: response,
+        );
       }
     } else {
       //throw RException(message: "无法解析的数据类型");
@@ -91,7 +98,9 @@ class HttpResultHandle {
   late dynamic Function(dynamic error) handleError = (error) {
     //debugger();
     var tip = defHttpErrorMessage;
+    int? statusCode;
     if (error is DioException) {
+      statusCode = error.response?.statusCode;
       final data = error.response?.data;
       String? errorMessage;
       if (error.type == DioExceptionType.connectionTimeout ||
@@ -102,16 +111,26 @@ class HttpResultHandle {
         errorMessage ??= data.getValue(messageKeyList);
       }
       tip = errorMessage ?? error.message ?? tip;
-    }
-    /*else if (error is Exception) {
-      tip = error.toString();
-    } */
-    else {
+    } else if (error is RHttpException) {
+      tip = error.message ?? tip;
+      statusCode = error.statusCode;
+      error = error.error;
+    } else {
       tip = error?.toString() ?? tip;
     }
     if (showErrorToast) {
       toastBlur(text: tip.toString());
     }
-    return RException(message: tip, cause: error);
+    return RHttpException(
+      message: tip,
+      statusCode: statusCode,
+      error: error,
+    );
   };
 }
+
+/// 网络请求返回的数据处理回调
+typedef HttpValueCallback<T> = dynamic Function(
+  T? value,
+  RHttpException? error,
+);
