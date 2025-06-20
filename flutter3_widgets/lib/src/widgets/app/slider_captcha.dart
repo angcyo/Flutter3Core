@@ -79,7 +79,10 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
   /// 圆角
   final _radius = 2.0;
 
-  /// 当前滑块移动的比例
+  /// 当前滑块左边移动的比例
+  double _leftMoveRadio = 0.0;
+
+  /// 手势移动在整体范围中的比例
   double _moveRadio = 0.0;
 
   /// 是否正在移动滑块
@@ -124,7 +127,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
     final lRes = libRes(context);
     final globalTheme = GlobalTheme.of(context);
     //debugger();
-    final moveRadio = _moveRadio;
+    final leftMoveRadio = _leftMoveRadio;
     return Column(
       spacing: kX,
       children: [
@@ -156,7 +159,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
                 widget.activeImageUrl != null)
               ScaleMatrixParentDataWidget(
                   childOffset: Offset(0, widget.activeImageOffsetY),
-                  childOffsetRadio: Offset(moveRadio, 0),
+                  childOffsetRadio: Offset(leftMoveRadio, 0),
                   childConstraints: widget.activeImageSize == null
                       ? null
                       : LayoutBoxConstraints.fixedSize(
@@ -196,8 +199,9 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
               }
             }
             if (_isMoving) {
-              _moveRadio =
+              _leftMoveRadio =
                   clampDouble(tx / (render.size.width - _trackHeight), 0, 1);
+              _moveRadio = clampDouble(tx / render.size.width, 0, 1);
               //l.d("tx:$tx ${render.size.width} _moveRadio: $_moveRadio");
               updateState();
             }
@@ -212,13 +216,13 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
               final rect2 = Rect.fromLTWH(
                   0,
                   0,
-                  (size.width - _trackHeight) * moveRadio + _trackHeight,
+                  (size.width - _trackHeight) * leftMoveRadio + _trackHeight,
                   size.height);
               _drawTrackRect(canvas, rect2, getThumbStateColor(context));
             }),
             ScaleMatrixParentDataWidget(
               tag: thumbTag,
-              childOffsetRadio: Offset(moveRadio, 0),
+              childOffsetRadio: Offset(leftMoveRadio, 0),
               child: Icon(
                 getThumbStateIcon(context),
                 size: 16,
@@ -273,8 +277,8 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
 
   /// 动画的方式移动滑块
   void _animateThumbTo(double value) {
-    startValueAnimation(_moveRadio, value, this, (value, isCompleted) {
-      _moveRadio = value;
+    startValueAnimation(_leftMoveRadio, value, this, (value, isCompleted) {
+      _leftMoveRadio = value;
       if (isCompleted) {
         //_sliderState = SliderCaptchaState.normal;
       }
