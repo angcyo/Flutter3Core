@@ -286,7 +286,7 @@ R? ffiPtrList<R>(
       FlutterError.dumpErrorToConsole(
         FlutterErrorDetails(
           exception: e,
-          stack: StackTrace.current,
+          stack: s /*?? StackTrace.current*/,
         ),
         forceReport: true,
       );

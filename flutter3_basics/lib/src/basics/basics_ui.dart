@@ -227,6 +227,7 @@ Widget sliverLayout(
       key: key,
     );
 
+/// List<Widget?>
 extension WidgetListEx on WidgetNullList {
   /// 过滤空数据和填充间隙
   WidgetList filterAndFillGap({
@@ -523,6 +524,7 @@ extension WidgetListEx on WidgetNullList {
   WidgetList repaintBoundary() => RepaintBoundary.wrapAll(filterNull());
 }
 
+/// [Widget]
 extension WidgetEx on Widget {
   /// 为child添加一个key
   /// [KeyedSubtree]
@@ -1296,6 +1298,8 @@ extension WidgetEx on Widget {
   }
 
   //endregion ---SafeArea---
+
+  //region ---Single Widget---
 
   /// 禁用当前的小部件
   Widget disable(
@@ -2614,7 +2618,11 @@ extension WidgetEx on Widget {
     );
   }
 
-//--theme---
+  //endregion ---Single Widget---
+
+  //region ---Button Theme---
+
+  //--theme---
 
   /// [ButtonStyle]
   /// [FilledButton]
@@ -2657,6 +2665,8 @@ extension WidgetEx on Widget {
         data: theme ?? TextButtonThemeData(style: style),
         child: this,
       );
+
+  //endregion ---Button Theme---
 
   /// 平板适配
   Widget adaptiveTablet([
