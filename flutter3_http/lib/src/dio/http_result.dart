@@ -36,12 +36,16 @@ class HttpResultHandle {
   @configProperty
   bool useDataCodeStatus = true;
 
+  /// 处理当前[code]码是否表示成功
+  late bool Function(dynamic code) isSuccessCode =
+      (code) => code is int && code >= 200 && code < 300;
+
   /// 处理网络请求返回的数据
   late dynamic Function(dynamic response) handleResponse = (response) {
     //debugger();
     if (response is Response) {
       final code = response.statusCode ?? 0;
-      if (code >= 200 && code < 300) {
+      if (isSuccessCode(code)) {
         //http 状态成功
         dynamic data = response.data;
         if (needJsonDecode && data is String) {
@@ -54,21 +58,26 @@ class HttpResultHandle {
             //需要判断逻辑code码
             if (!isNil(codeKeyList)) {
               final dataCode = data.getValue(codeKeyList);
-              if (dataCode is int && dataCode >= 200 && dataCode < 300) {
+              if (isSuccessCode(dataCode)) {
                 //成功
-                return isNil(dataKeyList) ? data : data.getValue(dataKeyList);
+                return isNil(dataKeyList)
+                    ? data
+                    : data.getValue(dataKeyList, data);
               } else {
                 throw RHttpException(
                   message: (isNil(messageKeyList)
                           ? null
-                          : data.getValue(messageKeyList)) ??
+                          : data.getValue(
+                              messageKeyList, defHttpErrorMessage)) ??
                       defHttpErrorMessage,
                   statusCode: dataCode,
                   error: data,
                 );
               }
             } else {
-              return isNil(dataKeyList) ? data : data.getValue(dataKeyList);
+              return isNil(dataKeyList)
+                  ? data
+                  : data.getValue(dataKeyList, data);
             }
           } else {
             //不需要判断逻辑code码, 则直接返回数据

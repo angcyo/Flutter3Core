@@ -32,7 +32,7 @@ class LiveStreamController<T> {
 
   //--
 
-  final StreamController<T> _controller = StreamController<T>.broadcast();
+  final StreamController<T> controller = StreamController<T>.broadcast();
 
   LiveStreamController(
     T initialValue, {
@@ -43,9 +43,9 @@ class LiveStreamController<T> {
   /// 流
   Stream<T> get stream {
     if (latestValue != null) {
-      return _controller.stream.newStreamWithInitialValue(latestValue!);
+      return controller.stream.newStreamWithInitialValue(latestValue!);
     } else {
-      return _controller.stream;
+      return controller.stream;
     }
   }
 
@@ -74,7 +74,8 @@ class LiveStreamController<T> {
       return;
     }
     latestValue = newValue;
-    _controller.add(newValue);
+    onValueChanged(newValue);
+    controller.add(newValue);
     try {
       onUpdateValueAction?.call(newValue);
     } catch (e) {
@@ -88,7 +89,8 @@ class LiveStreamController<T> {
         dynamic clear;
         latestError = null;
         latestValue = clear;
-        _controller.add(clear);
+        onValueChanged(clear);
+        controller.add(clear);
       } catch (e) {
         assert(() {
           l.e(e);
@@ -97,6 +99,10 @@ class LiveStreamController<T> {
       }
     }
   }
+
+  /// 当值改变后触发
+  @overridePoint
+  void onValueChanged(T value) {}
 
   /// 使用最后一次的[value]进行通知
   @callPoint
@@ -108,7 +114,7 @@ class LiveStreamController<T> {
   @callPoint
   void addError(Object error) {
     latestError = error;
-    _controller.addError(error);
+    controller.addError(error);
   }
 
   /// 监听流
@@ -128,7 +134,7 @@ class LiveStreamController<T> {
     }
     if (autoCancel) {
       StreamSubscription<T>? subscription;
-      subscription = _controller.stream.listen(
+      subscription = controller.stream.listen(
         (event) async {
           final cancel = await onData(event);
           if (cancel is bool && cancel) {
@@ -142,7 +148,7 @@ class LiveStreamController<T> {
       );
       return subscription;
     } else {
-      return _controller.stream.listen(
+      return controller.stream.listen(
         onData,
         onError: onError,
         onDone: onDone,
@@ -160,7 +166,7 @@ class LiveStreamController<T> {
   /// 关闭流, 关闭之后不能调用[add]方法
   @callPoint
   Future<void> close() {
-    return _controller.close();
+    return controller.close();
   }
 
   //--
@@ -391,13 +397,11 @@ class LiveStream<T> extends LiveStreamController<T> {
 }
 
 /// [LiveStreamController]
-LiveStreamController<T?> $live<T>(
-        [T? initialValue, bool autoClearValue = false]) =>
+LiveStream<T?> $live<T>([T? initialValue, bool autoClearValue = false]) =>
     LiveStream<T?>(initialValue, autoClearValue: autoClearValue);
 
 /// [LiveStreamController]
-LiveStreamController<T?> $liveOnce<T>(
-        [T? initialValue, bool autoClearValue = true]) =>
+LiveStream<T?> $liveOnce<T>([T? initialValue, bool autoClearValue = true]) =>
     LiveStream<T?>(initialValue, autoClearValue: autoClearValue);
 
 extension LiveStreamControllerEx<T> on LiveStreamController<T> {
@@ -423,6 +427,18 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
           initialData: allowBackward ? latestValue : null,
           builder: (_, __) {
             return builder() ?? empty;
+          });
+
+  /// [RebuildWidget]
+  Widget buildDataFn(
+    Widget? Function(T? data) builder, {
+    bool allowBackward = true,
+  }) =>
+      StreamBuilder(
+          stream: stream,
+          initialData: allowBackward ? latestValue : null,
+          builder: (_, snapshot) {
+            return builder(snapshot.data) ?? empty;
           });
 }
 

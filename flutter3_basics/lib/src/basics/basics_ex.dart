@@ -3165,16 +3165,19 @@ extension MapEx<K, V> on Map<K, V> {
   }
 
   /// 从一组key中获取有值的键值对
-  V? getValue(List<K?>? keys) {
+  /// [noKeyDefValue] 键不存在时返回的默认值
+  V? getValue(List<K?>? keys, [V? noKeyDefValue]) {
     if (keys == null || keys.isEmpty) return null;
+    bool haveKeys = false;
     for (final key in keys) {
       if (key == null) continue;
+      haveKeys = haveKeys || containsKey(key);
       final value = this[key];
       if (value != null) {
         return value;
       }
     }
-    return null;
+    return haveKeys ? null : noKeyDefValue;
   }
 
   /// 获取指定的value自身数据类型值, 如果没有则返回this
