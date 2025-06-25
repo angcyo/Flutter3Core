@@ -27,6 +27,9 @@ class GlobalThemeScope extends InheritedWidget {
 /// [_colorSchemeDarkM3]
 /// [_colorSchemeLightM3]
 class GlobalTheme {
+  /// 标签, 用于持久化是恢复主题
+  String? get tag => runtimeType.toString();
+
   /// 颜色配置, 主要颜色
   Color get primaryColor => const Color(0xff2febff);
 
@@ -296,6 +299,7 @@ class GlobalTheme {
             ?.globalTheme;
       }
     }
+    //debugger(when: result == null);
     return result ?? GlobalConfig.of(context, depend: depend).globalTheme;
   }
 }

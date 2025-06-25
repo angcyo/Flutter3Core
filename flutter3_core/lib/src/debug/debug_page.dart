@@ -20,7 +20,7 @@ class DebugPage extends StatefulWidget {
       return body;
     }
 
-    $onGlobalAppContextAction((ctx) {
+    $onGlobalAppContextChanged((ctx) {
       if (isDebug) {
         DebugOverlayButton.show(ctx);
       }

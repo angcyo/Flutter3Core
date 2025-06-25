@@ -1948,7 +1948,7 @@ extension WidgetEx on Widget {
     ui.TextHeightBehavior? textHeightBehavior,
     bool animate = false,
   }) {
-    style ??= GlobalConfig.def.globalThemeData?.primaryTextTheme.bodyMedium ??
+    style ??= GlobalConfig.def.themeData?.primaryTextTheme.bodyMedium ??
         GlobalConfig.def.globalTheme.textGeneralStyle;
     if (animate) {
       return AnimatedDefaultTextStyle(
@@ -2832,13 +2832,13 @@ extension ContextEx on BuildContext {
 
   /// 当前主题是否是暗黑模式
   bool get isThemeDark {
-    final theme = GlobalConfig.def.globalThemeData ?? Theme.of(this);
+    final theme = GlobalConfig.def.themeData ?? Theme.of(this);
     return theme.brightness == Brightness.dark;
   }
 
   /// 当前主题是否是亮色模式
   bool get isThemeLight {
-    final theme = GlobalConfig.def.globalThemeData ?? Theme.of(this);
+    final theme = GlobalConfig.def.themeData ?? Theme.of(this);
     return theme.brightness == Brightness.light;
   }
 

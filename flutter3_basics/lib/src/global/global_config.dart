@@ -192,11 +192,82 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   //region ThemeData
 
-  /// 全局的主题样式
-  ThemeData? globalThemeData;
+  /// 主题模式
+  /// - [ThemeMode.system] 系统模式
+  /// - [ThemeMode.light] 亮色模式
+  /// - [ThemeMode.dark] 暗色模式
+  @configProperty
+  ThemeMode themeMode = ThemeMode.system;
 
-  /// 全局主题配置
+  /// 当前语言, 不指定则使用系统语言
+  /// ```
+  /// [List<Locale>][zh_Hans_CN, en_US, zh_Hant_TW, ja_JP, zh_Hant_MO, zh_Hant_HK, zh_Hans_SG, yue_HK]
+  /// ```
+  /// [L10nStringEx.toLocale]
+  /// [Locale.fromSubtags]
+  @configProperty
+  Locale? locale;
+
+  /// 主题改变通知, 收到通知后需要重建页面
+  /// - 暗色模式改变
+  /// - 语言改变
+  /// - 主题色改变
+  ///
+  /// [notifyThemeChanged]
+  final themeStreamOnce = $liveOnce<GlobalConfig>();
+
+  /// 全局的主题样式
+  /// [ThemeData]
+  /// [ThemeData.textTheme]->[TextTheme]
+  /// [TextTheme.displayLarge]->[TextStyle]
+  /// [TextStyle.fontFamily]->[String] 字体
+  ThemeData? themeData;
+
+  /// 当前的全局主题配置
   GlobalTheme globalTheme = GlobalTheme();
+
+  /// 当前是否是亮色主题模式
+  @api
+  bool isThemeLight([BuildContext? context]) {
+    if (themeMode == ThemeMode.system) {
+      context ??= globalContext;
+      if (context == null) {
+        return true;
+      }
+      final platformBrightness = MediaQuery.platformBrightnessOf(context);
+      return platformBrightness == Brightness.light;
+    }
+    return themeMode == ThemeMode.light;
+  }
+
+  /// 初始化主题
+  @api
+  ThemeData initGlobalTheme(
+    BuildContext? context,
+    GlobalTheme Function(bool isLight) onGetGlobalTheme,
+    ThemeData Function(GlobalTheme globalTheme, bool isLight) onGetThemeData, {
+    Locale? locale,
+    ThemeMode? themeMode,
+  }) {
+    this.locale = locale ?? this.locale;
+    this.themeMode = themeMode ?? this.themeMode;
+
+    final isLight = isThemeLight(context);
+
+    final globalTheme = onGetGlobalTheme(isLight);
+    this.globalTheme = globalTheme;
+
+    final themeData = onGetThemeData(globalTheme, isLight);
+    this.themeData = themeData;
+
+    return themeData;
+  }
+
+  /// 通知主题发生了改变
+  @api
+  void notifyThemeChanged() {
+    themeStreamOnce.updateValue(this);
+  }
 
   //endregion ThemeData
 
@@ -246,17 +317,18 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// calling dependOnInheritedWidgetOfExactType() in the widget's didChangeDependencies() method.
   /// ```
   static GlobalConfig of(BuildContext? context, {bool depend = false}) {
-    GlobalConfig? globalConfig;
+    GlobalConfig? result;
     if (depend) {
-      globalConfig = (context ?? GlobalConfig.def.globalTopContext)
+      result = (context ?? GlobalConfig.def.globalTopContext)
           ?.dependOnInheritedWidgetOfExactType<GlobalConfigScope>()
           ?.getGlobalConfig;
     } else {
-      globalConfig = context
+      result = context
           ?.getInheritedWidgetOfExactType<GlobalConfigScope>()
           ?.getGlobalConfig;
     }
-    return globalConfig ?? GlobalConfig.def;
+    //debugger(when: $globalDebugLabel != null && result == null);
+    return result ?? GlobalConfig.def;
   }
 
   /// 获取当前程序中的所有路由
@@ -490,9 +562,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     //debugger();
     final globalConfig = GlobalConfig.of(context);
     final globalTheme = GlobalTheme.of(context);
-    elevation ??= globalConfig.globalThemeData?.appBarTheme.elevation;
+    elevation ??= globalConfig.themeData?.appBarTheme.elevation;
     scrolledUnderElevation ??=
-        globalConfig.globalThemeData?.appBarTheme.scrolledUnderElevation;
+        globalConfig.themeData?.appBarTheme.scrolledUnderElevation;
     //debugger();
     if (useSliverAppBar == true) {
       return PreferredSizeSliverAppBar(
@@ -701,7 +773,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   GlobalConfig copyWith({
     BuildContext? globalTopContext,
     BuildContext? globalAppContext,
-    ThemeData? globalThemeData,
+    ThemeMode? themeMode,
+    Locale? locale,
+    ThemeData? themeData,
     GlobalTheme? globalTheme,
     GlobalOpenUrlFn? openFileFn,
     GlobalOpenUrlFn? openUrlFn,
@@ -718,7 +792,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       globalTopContext: globalTopContext ?? this.globalTopContext,
       globalAppContext: globalAppContext ?? this.globalAppContext,
     )
-      ..globalThemeData = globalThemeData ?? this.globalThemeData
+      ..themeMode = themeMode ?? this.themeMode
+      ..locale = locale ?? this.locale
+      ..themeData = themeData ?? this.themeData
       ..globalTheme = globalTheme ?? this.globalTheme
       ..openFileFn = openFileFn ?? this.openFileFn
       ..openUrlFn = openUrlFn ?? this.openUrlFn
@@ -740,9 +816,22 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
 //--
 
+//region 全局
+
 /// 注册一个全局App上下文改变的监听[ContextAction]
-void $onGlobalAppContextAction(ContextAction action) {
+void $onGlobalAppContextChanged(ContextAction action) {
   GlobalConfig.def.onGlobalAppContextChangedActions.add(action);
+}
+
+/// 注册一个主题改变的监听[GlobalConfig]
+/// [GlobalAppStateMixin]
+StreamSubscription<GlobalConfig?> $onGlobalThemeChanged(
+    ValueCallback<GlobalConfig> action) {
+  return GlobalConfig.def.themeStreamOnce.listen((data) {
+    if (data is GlobalConfig) {
+      action(data);
+    }
+  });
 }
 
 /// [PlaceholderBuildContext]
@@ -759,3 +848,34 @@ class PlaceholderBuildContext extends BuildContext {
     }());
   }
 }
+
+//endregion 全局
+
+//region Mixin
+
+/// 混入一个主题改变回调
+/// [GlobalConfig]
+mixin GlobalAppStateMixin<T extends StatefulWidget, V> on State<T> {
+  StreamSubscription<GlobalConfig?>? _subscription;
+
+  @override
+  void initState() {
+    _subscription = $onGlobalThemeChanged((config) {
+      //主题改变后, 持久化
+      onGlobalThemeChanged(config);
+      updateState();
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  @overridePoint
+  void onGlobalThemeChanged(GlobalConfig config) {}
+}
+
+//endregion Mixin

@@ -49,6 +49,7 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton> {
   @override
   Widget build(BuildContext context) {
     //debugger();
+
     return Stack(
       children: [
         Positioned(
@@ -62,6 +63,19 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton> {
             },
             onTap: () {
               toast("click".text());
+              $globalDebugLabel = "debug";
+              final globalConfig = GlobalConfig.of(context);
+              if (globalConfig.themeMode != ThemeMode.dark) {
+                globalConfig.themeMode = ThemeMode.dark;
+              } else {
+                globalConfig.themeMode = ThemeMode.light;
+              }
+              if (globalConfig.locale == null) {
+                globalConfig.locale = "en".toLocale();
+              } else {
+                globalConfig.locale = null;
+              }
+              globalConfig.notifyThemeChanged();
             },
           ),
         )

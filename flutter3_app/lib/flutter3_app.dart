@@ -201,8 +201,10 @@ Future runGlobalApp(
         exitApp();
       }
     }
+    //app
     runApp(GlobalApp(
-        app: useViewModelProvider ? app.wrapGlobalViewModelProvider() : app));
+      app: useViewModelProvider ? app.wrapGlobalViewModelProvider() : app,
+    ));
     //--after
     try {
       await afterAction?.call();

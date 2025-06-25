@@ -82,7 +82,7 @@ class _ToastWidgetState extends State<ToastWidget> {
           );
     final isLight = widget.background?.isLight ?? false;
     final textColor = isLight
-        ? (GlobalConfig.def.globalThemeData?.textTheme.titleSmall?.color ??
+        ? (GlobalConfig.def.themeData?.textTheme.titleSmall?.color ??
             Colors.black87)
         : context.isThemeDark
             ? GlobalConfig.def.globalTheme.whiteColor

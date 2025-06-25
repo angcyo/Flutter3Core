@@ -1,7 +1,6 @@
 library flutter3_res;
 
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:bidi/bidi.dart' as bidi;
 import 'package:flutter/widgets.dart';
@@ -10,7 +9,6 @@ import 'package:intl/intl.dart' as intl;
 
 import 'l10n/generated/intl/messages_en.dart' as messages_en;
 import 'l10n/generated/intl/messages_zh.dart' as messages_zh;
-import 'l10n/generated/l10n.dart';
 
 export 'l10n/generated/l10n.dart';
 
@@ -41,6 +39,16 @@ part 'intl_ex.dart';
 Map<String, dynamic> get libResEnMessages => messages_en.messages.messages;
 
 Map<String, dynamic> get libResZhMessages => messages_zh.messages.messages;
+
+/// 合并[libResZhMessages] [libResEnMessages]中的资源到[messages]中
+@callPoint
+void mergeLibResMessages({
+  Map<String, dynamic>? zhMessages,
+  Map<String, dynamic>? enMessages,
+}) {
+  zhMessages?.addAll(libResZhMessages);
+  enMessages?.addAll(libResEnMessages);
+}
 
 /// 2025-04-05
 /// 获取当前语言的资源

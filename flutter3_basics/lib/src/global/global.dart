@@ -4,6 +4,12 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/10
 ///
+///
+/// 全局调试标签
+/// ```
+/// debugger(when: $globalDebugLabel != null);
+/// ```
+String? $globalDebugLabel;
 
 /// 全局入口[Widget]
 class GlobalApp extends StatefulWidget {
