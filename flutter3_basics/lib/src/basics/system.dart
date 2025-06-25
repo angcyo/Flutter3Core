@@ -62,8 +62,24 @@ extension OrientationEx on Orientation {
 /// [SystemChrome.setEnabledSystemUIMode]
 /// void
 
-//设置状态栏样式
-//SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+///设置状态栏样式
+void setSystemUIOverlayStyle(SystemUiOverlayStyle style) {
+  /*// Android状态栏透明 splash为白色,所以调整状态栏文字为黑色
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.light));*/
+  SystemChrome.setSystemUIOverlayStyle(style);
+}
+
+/// 设置状态栏为浅色, 亮色背景, 黑色字体
+void setSystemUILightStyle() {
+  setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+}
+
+/// 设置状态栏为深色, 暗色背景, 白色字体
+void setSystemUIDarkStyle() {
+  setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+}
 
 //震动反馈
 //Feedback.forLongPress(context);
