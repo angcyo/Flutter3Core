@@ -5,6 +5,10 @@ part of '../../flutter3_core.dart';
 /// @date 2024/03/26
 ///
 /// 调试界面, 包含很多调试相关的功能
+/// - 多指捏合进入Debug界面
+/// - 多指长按截图分享
+///
+/// [NavigatorRouteOverlay] 导航路由调试信息
 class DebugPage extends StatefulWidget {
   /// 使用[PinchGestureWidget]自动处理[DebugPage]页面
   static Widget wrap(

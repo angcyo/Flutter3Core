@@ -10,7 +10,7 @@ class NavigatorRouteOverlay extends StatefulWidget {
   /// 是否显示了视图
   static bool _isShowNavigatorRouteOverlay = false;
 
-  /// 显示
+  /// 显示左下角覆盖层小部件
   /// No Overlay widget found.
   /// Some widgets require an Overlay widget ancestor for correct operation.
   /// The most common way to add an Overlay to an application is to include a MaterialApp, CupertinoApp or
