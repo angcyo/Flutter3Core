@@ -553,6 +553,9 @@ extension WidgetEx on Widget {
   /// 监听手势
   /// [Listener]
   /// [click]
+  ///
+  /// [gesture]
+  /// [listenerPointer]
   Widget listenerPointer({
     bool enable = true,
     Key? key,
@@ -667,6 +670,55 @@ extension WidgetEx on Widget {
               behavior: behavior,
               child: this,
             );
+
+  /// 手势探测
+  /// [onVerticalDragUpdate] 仅在垂直滑动时回调
+  /// [onHorizontalDragUpdate] 仅在水平滑动时回调
+  /// [onPanUpdate] 水平或垂直滑动时回调
+  ///
+  /// [GestureDetector]
+  ///
+  /// [gesture]
+  /// [listenerPointer]
+  Widget gesture({
+    //--
+    GestureDragStartCallback? onVerticalDragStart,
+    GestureDragUpdateCallback? onVerticalDragUpdate,
+    GestureDragEndCallback? onVerticalDragEnd,
+    //--
+    GestureDragStartCallback? onHorizontalDragStart,
+    GestureDragUpdateCallback? onHorizontalDragUpdate,
+    GestureDragEndCallback? onHorizontalDragEnd,
+    //--
+    GestureDragStartCallback? onPanStart,
+    GestureDragUpdateCallback? onPanUpdate,
+    GestureDragEndCallback? onPanEnd,
+    //--
+    GestureLongPressCallback? onLongPress,
+    GestureTapCallback? onTap,
+    //--
+    HitTestBehavior? behavior = HitTestBehavior.translucent,
+  }) {
+    return GestureDetector(
+      onVerticalDragStart: onVerticalDragStart,
+      onVerticalDragUpdate: onVerticalDragUpdate,
+      onVerticalDragEnd: onVerticalDragEnd,
+      //--
+      onHorizontalDragStart: onHorizontalDragStart,
+      onHorizontalDragUpdate: onHorizontalDragUpdate,
+      onHorizontalDragEnd: onHorizontalDragEnd,
+      //--
+      onPanStart: onPanStart,
+      onPanUpdate: onPanUpdate,
+      onPanEnd: onPanEnd,
+      //--
+      onLongPress: onLongPress,
+      onTap: onTap,
+      //--
+      behavior: behavior,
+      child: this,
+    );
+  }
 
   /// 鼠标事件监听
   /// [MouseRegion] 鼠标区域
@@ -2159,17 +2211,28 @@ extension WidgetEx on Widget {
     double? size,
     double? width,
     double? height,
+  }) =>
+      box(size: size, width: width, height: height);
+
+  /// 指定大小
+  /// [SizedBox]
+  Widget box({
+    double? size,
+    double? width,
+    double? height,
   }) {
-    width ??= size;
-    height ??= size;
-    if (width == null && height == null) {
-      return this;
+    {
+      width ??= size;
+      height ??= size;
+      if (width == null && height == null) {
+        return this;
+      }
+      return SizedBox(
+        width: width,
+        height: height,
+        child: this,
+      );
     }
-    return SizedBox(
-      width: width,
-      height: height,
-      child: this,
-    );
   }
 
   /// [size]

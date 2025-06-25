@@ -146,7 +146,10 @@ class GlobalConfigScope extends InheritedWidget {
       globalConfigGet != oldWidget.globalConfigGet;
 }
 
+/// 全局配置
 class GlobalConfig with Diagnosticable, OverlayManage {
+  //region context
+
   /// 全局的上下文, 在[WidgetsApp]顶上
   BuildContext? globalTopContext;
 
@@ -155,6 +158,27 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局的上下文[globalAppContext]->[globalTopContext]
   BuildContext? get globalContext => globalAppContext ?? globalTopContext;
+
+  /// 全局App上下文变化监听
+  Set<ContextAction> onGlobalAppContextChangedActions = {};
+
+  /// 更新全局App上下文
+  @callPoint
+  void updateGlobalAppContext(BuildContext context) {
+    globalAppContext = context;
+    for (final action in onGlobalAppContextChangedActions) {
+      try {
+        action(context);
+      } catch (e) {
+        assert(() {
+          print(e);
+          return true;
+        }());
+      }
+    }
+  }
+
+  //endregion context
 
   //region ThemeData
 
@@ -705,6 +729,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 }
 
 //--
+
+/// 注册一个全局App上下文改变的监听[ContextAction]
+void $onGlobalAppContextAction(ContextAction action) {
+  GlobalConfig.def.onGlobalAppContextChangedActions.add(action);
+}
 
 /// [PlaceholderBuildContext]
 BuildContext $placeholderContext = PlaceholderBuildContext();

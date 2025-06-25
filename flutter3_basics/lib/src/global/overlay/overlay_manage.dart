@@ -6,6 +6,7 @@ part of '../../../flutter3_basics.dart';
 /// @date 2023/11/10
 ///
 
+/// 浮窗管理
 mixin OverlayManage<Entry extends OverlayEntry> on Diagnosticable {
   /// [UniqueKey] 用于标识[OverlayEntry]
   final Map<Key, Entry> _overlayEntries = {};

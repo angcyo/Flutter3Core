@@ -19,6 +19,16 @@ class DebugPage extends StatefulWidget {
     if (!enable) {
       return body;
     }
+
+    $onGlobalAppContextAction((ctx) {
+      if (isDebug) {
+        DebugOverlayButton.show(ctx);
+      }
+      if (isDebugType) {
+        NavigatorRouteOverlay.show(ctx);
+      }
+    });
+
     return PinchGestureWidget(
       onPinchAction: () {
         assert(() {

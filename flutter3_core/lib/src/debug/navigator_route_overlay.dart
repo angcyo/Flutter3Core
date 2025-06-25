@@ -8,18 +8,18 @@ part of '../../flutter3_core.dart';
 /// [GlobalConfig.findModalRouteList]
 class NavigatorRouteOverlay extends StatefulWidget {
   /// 是否显示了视图
-  static bool _isShowNavigatorRouteOverlay = false;
+  static bool _isShow = false;
 
   /// 显示左下角覆盖层小部件
   /// No Overlay widget found.
   /// Some widgets require an Overlay widget ancestor for correct operation.
   /// The most common way to add an Overlay to an application is to include a MaterialApp, CupertinoApp or
   /// Navigator widget in the runApp() call.
-  static void showNavigatorRouteOverlay(BuildContext context) {
-    if (_isShowNavigatorRouteOverlay) {
+  static void show(BuildContext context) {
+    if (_isShow) {
       return;
     }
-    _isShowNavigatorRouteOverlay = true;
+    _isShow = true;
     postFrameCallback((_) {
       showOverlay((entry, state, context, progress) {
         return NavigatorRouteOverlay(entry);
@@ -33,6 +33,7 @@ class NavigatorRouteOverlay extends StatefulWidget {
   /// 交互的大小
   final double interactiveSize;
 
+  /// 浮窗实体, 用于移除浮窗
   final OverlayEntry entry;
 
   const NavigatorRouteOverlay(
@@ -95,7 +96,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
 
   @override
   void dispose() {
-    NavigatorRouteOverlay._isShowNavigatorRouteOverlay = false;
+    NavigatorRouteOverlay._isShow = false;
     super.dispose();
   }
 

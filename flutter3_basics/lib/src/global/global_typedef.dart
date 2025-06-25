@@ -15,6 +15,9 @@ typedef VoidAction = Action;
 /// [VoidCallback]
 typedef ClickAction = void Function(BuildContext context);
 
+/// 回调一个[BuildContext]
+typedef ContextAction = void Function(BuildContext context);
+
 /// [BoolCallback]
 typedef ResultBoolAction = bool Function();
 
