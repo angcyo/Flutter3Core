@@ -99,7 +99,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
     super.dispose();
   }
 
-  /// 更新信息
+  /// 更新路由模式下的信息
   void _updateIfNeed() {
     //debugger();
     if (showState == _NavigatorRouteOverlayStateEnum.routeStack) {
