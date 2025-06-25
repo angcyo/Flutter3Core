@@ -51,12 +51,13 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
           BuildContext context) =>
       [];
 
-  /// [kBottomNavigationBarHeight]
+  /// [kBottomNavigationBarHeight] 固定高度 56.0
   @callPoint
   Widget buildBottomNavigationBar(
     BuildContext context, {
     //--
-    Color? backgroundColor,
+    double elevation = 0,
+    Color? backgroundColor = Colors.transparent,
     //--
     List<BottomNavigationBarItem>? items,
     //--
@@ -84,11 +85,10 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
 
     return BottomNavigationBar(
       items: items,
-      elevation: 0,
+      elevation: elevation,
       currentIndex: currentNavigateIndexMixin,
       type: BottomNavigationBarType.fixed,
-      backgroundColor:
-          backgroundColor ?? context.darkOr(null, Colors.transparent),
+      backgroundColor: backgroundColor,
       //--
       selectedItemColor: selectedItemColor,
       unselectedItemColor: unselectedItemColor,
