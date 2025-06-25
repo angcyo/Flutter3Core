@@ -7,19 +7,29 @@ part of '../../flutter3_basics.dart';
 
 /// 带参数的[WidgetBuilder]
 typedef WidgetArgumentBuilder = Widget Function<T>(
-    BuildContext context, T? arg);
+  BuildContext context,
+  T? arg,
+);
 
 /// 全局打开[url]的回调方法, 返回成功or失败
 typedef GlobalOpenUrlFn = Future<bool> Function(
-    BuildContext? context, String? url, Object? meta);
+  BuildContext? context,
+  String? url,
+  Object? meta,
+);
 
 /// 全局写入文件的回调方法, 返回文件路径
 typedef GlobalWriteFileFn = Future<String?> Function(
-    String fileName, String? folder, dynamic content);
+  String fileName,
+  String? folder,
+  dynamic content,
+);
 
 /// 全局分享[data]的回调方法, 返回成功or失败
 typedef GlobalShareDataFn = Future<bool> Function(
-    BuildContext? context, dynamic data);
+  BuildContext? context,
+  dynamic data,
+);
 
 /// 获取[GlobalConfig]的方法
 typedef GlobalConfigGetFn = GlobalConfig Function();
