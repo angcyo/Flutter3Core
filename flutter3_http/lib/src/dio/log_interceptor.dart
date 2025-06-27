@@ -36,6 +36,9 @@ class LogFileInterceptor extends Interceptor {
     this.toPrint = true,
   });
 
+  /// ```
+  /// handler.resolve(response);
+  /// ```
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     _logRequest(options);

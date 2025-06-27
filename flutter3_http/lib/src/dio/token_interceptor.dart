@@ -64,11 +64,11 @@ class TokenInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
-    var refreshToken =
+    final refreshToken =
         await checkOrRefreshToken(response.requestOptions, response);
     if (refreshToken == true) {
       //刷新了token, 则重新请求
-      var newResponse = await rDio.reRequest(response.requestOptions);
+      final newResponse = await rDio.reRequest(response.requestOptions);
       super.onResponse(newResponse, handler);
       return;
     }

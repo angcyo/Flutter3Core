@@ -4,7 +4,10 @@ part of '../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/08/24
 ///
-/// 如果滚动布局边界能够滚动, 则进行提示
+/// 如果滚动布局边界能够滚动, 则进行提示.
+/// 滚动边界提示.
+///
+/// https://pub.dev/packages/fading_edge_scrollview
 ///
 /// https://pub.dev/packages/flutter_scroll_shadow
 ///
