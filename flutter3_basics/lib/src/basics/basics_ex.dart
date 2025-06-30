@@ -138,6 +138,17 @@ extension ObjectEx on Object {
   /// [Object]的hash值
   String classHash() => "$runtimeType(${hash()})";
 
+  /// 优先使用[Object]的[toJson]方法转成[String]
+  /// 如果没有[toJson]方法,则直接使用[toString]方法
+  String toStringOrJson() {
+    try {
+      final json = toJson();
+      return json.toString();
+    } catch (e) {
+      return toString();
+    }
+  }
+
   ld() {
     assert(() {
       l.d(this);

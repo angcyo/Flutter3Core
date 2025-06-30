@@ -15,6 +15,9 @@ class RHttpException implements Exception {
   /// 异常对象
   final Object? error;
 
+  /// 是否是授权失败401的错误
+  bool get isAuthError => statusCode == 401;
+
   RHttpException({
     this.statusCode,
     this.message,

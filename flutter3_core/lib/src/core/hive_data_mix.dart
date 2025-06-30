@@ -9,7 +9,7 @@ part of '../../flutter3_core.dart';
 /// 读取时: 将读到的字符串数据进行jsonDecode, 返回json obj.
 ///
 /// [LiveStreamController]
-class HiveLiveStream<T> extends LiveStream<T> {
+class HiveLiveStream<T> extends LiveStreamController<T> {
   /// 持久化时的key
   @configProperty
   final String? hiveKey;
@@ -30,6 +30,7 @@ class HiveLiveStream<T> extends LiveStream<T> {
     this.onConvertJsonToObj,
     bool autoInitHiveValue = true,
     super.autoClearValue = false,
+    super.onUpdateValueAction,
   }) {
     final key = hiveKey;
     //debugger();
@@ -49,6 +50,10 @@ class HiveLiveStream<T> extends LiveStream<T> {
     //debugger();
     final key = hiveKey;
     if (key != null) {
+      assert(() {
+        l.v("[$runtimeType]更新[$key]->${value.toJsonString()}");
+        return true;
+      }());
       if (value == null) {
         key.hiveDelete();
       } else {
@@ -112,6 +117,8 @@ HiveLiveStream<T?> $hiveLive<T>(
   T? initialValue,
   ValueCallback<T?>? onInitValueAction,
   bool autoInitHiveValue = true,
+  //--
+  ValueCallback<T?>? onUpdateValueAction,
   bool autoClearValue = false,
 }) =>
     HiveLiveStream<T?>(
@@ -120,5 +127,6 @@ HiveLiveStream<T?> $hiveLive<T>(
       autoInitHiveValue: autoInitHiveValue,
       onInitValueAction: onInitValueAction,
       onConvertJsonToObj: onConvertJsonToObj,
+      onUpdateValueAction: onUpdateValueAction,
       autoClearValue: autoClearValue,
     );

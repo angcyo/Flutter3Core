@@ -200,6 +200,11 @@ extension FileSystemEntityEx on FileSystemEntity {
 }
 
 extension FileEx on File {
+  /// 文件流
+  Stream<List<int>> get stream {
+    return openRead();
+  }
+
   /// 有个path库的方法叫做[basename]
   /// 获取路径对应的文件名, 包含扩展名
   String get filename {
