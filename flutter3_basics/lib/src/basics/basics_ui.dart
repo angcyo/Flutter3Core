@@ -127,20 +127,43 @@ typedef WidgetNullList = List<Widget?>;
 typedef WidgetNullIterable = Iterable<Widget?>;
 
 /// [edgeInsets]
+/// [edgeOnly]
+/// [insets]
 EdgeInsets? edgeOnly({
   double? all,
   double? vertical,
   double? horizontal,
-  double left = 0,
-  double top = 0,
-  double right = 0,
-  double bottom = 0,
+  double? left,
+  double? top,
+  double? right,
+  double? bottom,
 }) =>
     EdgeInsets.only(
-      left: all ?? horizontal ?? left,
-      top: all ?? vertical ?? top,
-      right: all ?? horizontal ?? right,
-      bottom: all ?? vertical ?? bottom,
+      left: left ?? horizontal ?? all ?? 0,
+      top: top ?? vertical ?? all ?? 0,
+      right: right ?? horizontal ?? all ?? 0,
+      bottom: bottom ?? vertical ?? all ?? 0,
+    );
+
+/// [edgeOnly]
+/// [insets]
+EdgeInsets? insets({
+  double? all,
+  double? vertical,
+  double? horizontal,
+  double? left,
+  double? top,
+  double? right,
+  double? bottom,
+}) =>
+    edgeOnly(
+      all: all,
+      vertical: vertical,
+      horizontal: horizontal,
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom,
     );
 
 /// 将当前的小部件, 包裹在一个[Padding]中
@@ -942,25 +965,28 @@ extension WidgetEx on Widget {
         bottom: vertical ?? bottom,
       );
 
+  /// [edgeInsets]
+  /// [edgeOnly]
   /// [insets]
+  ///
   /// [paddingOnly]
   /// [paddingInsets]
   Widget insets({
     double? all,
     double? vertical,
     double? horizontal,
-    double left = 0,
-    double top = 0,
-    double right = 0,
-    double bottom = 0,
+    double? left,
+    double? top,
+    double? right,
+    double? bottom,
     EdgeInsetsGeometry? insets,
   }) =>
       paddingInsets(insets ??
           EdgeInsets.only(
-            left: all ?? horizontal ?? left,
-            top: all ?? vertical ?? top,
-            right: all ?? horizontal ?? right,
-            bottom: all ?? vertical ?? bottom,
+            left: left ?? horizontal ?? all ?? 0,
+            top: top ?? vertical ?? all ?? 0,
+            right: right ?? horizontal ?? all ?? 0,
+            bottom: bottom ?? vertical ?? all ?? 0,
           ));
 
   /// [insets]
@@ -970,18 +996,18 @@ extension WidgetEx on Widget {
     double? all,
     double? vertical,
     double? horizontal,
-    double left = 0,
-    double top = 0,
-    double right = 0,
-    double bottom = 0,
+    double? left,
+    double? top,
+    double? right,
+    double? bottom,
     EdgeInsetsGeometry? insets,
   }) =>
       paddingInsets(insets ??
           EdgeInsets.only(
-            left: all ?? horizontal ?? left,
-            top: all ?? vertical ?? top,
-            right: all ?? horizontal ?? right,
-            bottom: all ?? vertical ?? bottom,
+            left: left ?? horizontal ?? all ?? 0,
+            top: top ?? vertical ?? all ?? 0,
+            right: right ?? horizontal ?? all ?? 0,
+            bottom: bottom ?? vertical ?? all ?? 0,
           ));
 
 /*Widget paddingFromWindowPadding() {

@@ -58,6 +58,8 @@ extension ImagePubEx on String {
   /// 支持http/file
   /// 支持svg/image
   /// [toImageProvider]
+  /// [ImagePubEx.toImageWidget]
+  /// [ImageMetaEx.toImageWidget]
   Widget toImageWidget({
     BoxFit? fit = BoxFit.cover,
     bool usePlaceholder = false,
