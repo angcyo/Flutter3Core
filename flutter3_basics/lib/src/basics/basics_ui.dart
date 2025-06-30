@@ -2872,13 +2872,13 @@ extension ContextEx on BuildContext {
   /// [platformLocale]
   /// [platformLocales]
   bool get isSystemZh {
-    return platformLocale.languageCode == 'zh';
+    return platformLocale.isZh;
   }
 
   /// 当前主题是否是中文语言
   bool get isThemeZh {
     final locale = maybeLocale;
-    return locale?.languageCode == 'zh';
+    return locale?.isZh == true;
   }
 
   /// 如果当前是暗色主题, 则返回[dark]否则返回[light]
@@ -3296,6 +3296,15 @@ extension GlobalKeyEx on GlobalKey {
       return box.getGlobalBounds(ancestor, point);
     }
     return null;
+  }
+}
+
+extension LocaleEx on Locale {
+  /// 系统当前的语言环境
+  /// [platformLocale]
+  /// [platformLocales]
+  bool get isZh {
+    return languageCode == 'zh';
   }
 }
 

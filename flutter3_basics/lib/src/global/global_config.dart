@@ -157,6 +157,12 @@ class GlobalConfigScope extends InheritedWidget {
 }
 
 /// 全局配置
+///
+/// [GlobalConfig.initGlobalTheme]初始化主题属性
+/// [GlobalConfig.notifyThemeChanged]通知主题属性改变
+///
+/// [GlobalConfigScope]
+/// [GlobalAppStateMixin]
 class GlobalConfig with Diagnosticable, OverlayManage {
   //region context
 
@@ -263,7 +269,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return themeData;
   }
 
+  /// 改变主题属性之后, 调用此方法通知
   /// 通知主题发生了改变
+  /// [GlobalAppStateMixin]
   @api
   void notifyThemeChanged() {
     themeStreamOnce.updateValue(this);

@@ -340,11 +340,11 @@ UiPlatformDispatcher get platformDispatcher => UiPlatformDispatcher.instance;
 /// 获取当前平台的亮度模式
 Brightness get platformBrightness => platformMediaQueryData.platformBrightness;
 
-/// 获取当前平台的语言设置[Locale]
+/// 获取当前平台的语言设置[Locale], 系统语言.
 /// http://www.lingoes.net/en/translator/langcode.htm
 Locale get platformLocale => PlatformDispatcher.instance.locale;
 
-/// 获取当前平台的语言设置列表[Locale]
+/// 获取当前平台的语言设置列表[Locale], 系统语言列表
 List<Locale> get platformLocales => PlatformDispatcher.instance.locales;
 
 /// 屏幕宽度 [screenWidthPixel]
