@@ -51,7 +51,7 @@ class HiveLiveStream<T> extends LiveStreamController<T> {
     final key = hiveKey;
     if (key != null) {
       assert(() {
-        l.v("[$runtimeType]更新[$key]->${value.toJsonString()}");
+        l.v("[$runtimeType]更新[$key]->$value");
         return true;
       }());
       if (value == null) {
