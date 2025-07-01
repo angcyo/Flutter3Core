@@ -7,5 +7,5 @@ set +x
 git remote -v
 
 git add .
-git commit -a -m "* fix base"
+git commit -a -m "+ udp test"
 git push origin

@@ -6,14 +6,59 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter3_core/flutter3_core.dart';
 import 'package:udp/udp.dart';
 
 void main() async {
-  _testUdp();
+  //_testUdp();
   //_testUdpSocket();
+  await _testUdpBroadcast();
 
   await Future.delayed(Duration(seconds: 5));
+  print("...end");
+}
+
+/// 测试udp发送广播
+Future _testUdpBroadcast() async {
+  int port = 9999;
+
+  // listen forever & send response
+  RawDatagramSocket.bind(InternetAddress.anyIPv4, port).then((socket) {
+    socket.listen(
+      (event) {
+        if (event != RawSocketEvent.read) {
+          print("event->$event");
+        }
+        if (event == RawSocketEvent.read) {
+          Datagram? dg = socket.receive();
+          if (dg != null) {
+            final recvd = utf8.decode(dg.data); //String.fromCharCodes(dg.data);
+
+            // send ack to anyone who sends ping
+            /*if (recvd == "ping"){
+              socket.send(Utf8Codec().encode("ping ack"), dg.address, port);
+            }*/
+            print("收到[${dg.address.address}:${dg.port}]->$recvd");
+          }
+        }
+        if (event == RawSocketEvent.write) {
+          //socket.close();
+        }
+      },
+      onError: (error) {
+        print("onError->$error");
+      },
+      onDone: () {
+        print("onDone");
+      },
+      cancelOnError: true,
+    );
+    socket.broadcastEnabled = true;
+    final bytes = utf8.encode("发送广播");
+    final send =
+        socket.send(bytes, InternetAddress("255.255.255.255"), port - 1);
+    print(
+        "发送广播[${socket.address}]->[${send}/${bytes.length}]${utf8.decode(bytes)}");
+  });
 }
 
 ///
@@ -26,11 +71,11 @@ void _testUdpSocket() {
       if (event == RawSocketEvent.read) {
         Datagram? dg = socket.receive();
         if (dg == null) return;
-        final recvd = dg.data.utf8Str; //String.fromCharCodes(dg.data);
+        final recvd = utf8.decode(dg.data); //String.fromCharCodes(dg.data);
 
         /// send ack to anyone who sends ping
         if (recvd == "ping")
-          socket.send(Utf8Codec().encode("ping ack"), dg.address, port);
+          socket.send(utf8.encode("ping ack"), dg.address, port);
         print("$recvd from ${dg.address.address}:${dg.port}");
       }
     });
@@ -39,8 +84,7 @@ void _testUdpSocket() {
 
   // send single packet then close the socket
   RawDatagramSocket.bind(InternetAddress.anyIPv4, port + 1).then((socket) {
-    socket.send(
-        Utf8Codec().encode("single send"), InternetAddress("127.0.0.1"), port);
+    socket.send(utf8.encode("single send"), InternetAddress("127.0.0.1"), port);
     socket.listen((event) {
       if (event == RawSocketEvent.write) {
         socket.close();
@@ -52,8 +96,7 @@ void _testUdpSocket() {
   // 发送广播
   RawDatagramSocket.bind(InternetAddress.anyIPv4, port + 2).then((socket) {
     socket.broadcastEnabled = true;
-    socket.send(
-        Utf8Codec().encode("发送广播"), InternetAddress("255.255.255.255"), port);
+    socket.send(utf8.encode("发送广播"), InternetAddress("255.255.255.255"), port);
     socket.listen((event) {
       if (event == RawSocketEvent.write) {
         socket.close();
