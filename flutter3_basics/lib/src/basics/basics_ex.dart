@@ -547,6 +547,12 @@ extension FutureEx<T> on Future<T> {
         return value;
       }, stack);
 
+  /// 等待[Future]完成
+  Future<T> wait(Duration timeLimit, {FutureOr<T> Function()? onTimeout}) {
+    //Future.wait([this]).timeout(timeLimit);
+    return timeout(timeLimit, onTimeout: onTimeout);
+  }
+
   /// 此方法并不能立即出发[Future]
   /// 不需要等待当前的[Future]执行完成, 但是会报告错误
   /// [FutureExtensions.ignore] 完成和错误都被忽略

@@ -6,6 +6,33 @@ part of '../flutter3_shelf.dart';
 /// @date 2024/07/23
 ///
 
+/// 向指定地址和端口, 发送指定的UDP数据
+/// @return 返回发送的数据长度
+Future<int> sendUdpData(
+  String? host,
+  int? port,
+  List<int> data, {
+  Duration timeout = const Duration(seconds: 1),
+}) async {
+  if (host == null || port == null) {
+    return -1;
+  }
+  try {
+    final udp = await UDP.bind(Endpoint.any());
+    final result = await udp
+        .send(data, Endpoint.unicast(InternetAddress(host), port: Port(port)))
+        .wait(timeout);
+    udp.close();
+    return result;
+  } catch (e, s) {
+    assert(() {
+      printError(e, s);
+      return true;
+    }());
+    return -1;
+  }
+}
+
 /// 在指定端口, 发送指定的UDP数据广播
 /// [data] 发送的数据.[text]发送文本
 /// [port] 发送的端口
