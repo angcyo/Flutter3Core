@@ -362,6 +362,14 @@ double get screenHeight => platformMediaQueryData.size.height;
 @alias
 double get $screenHeight => screenHeight;
 
+/// 屏幕最小边长
+@dp
+double get $screenMinSize => min(screenWidth, screenHeight);
+
+/// 屏幕尺寸
+@dp
+Size get $screenSize => Size(screenWidth, screenHeight);
+
 /// 是否是横屏
 bool get isLandscape => screenWidth > screenHeight;
 

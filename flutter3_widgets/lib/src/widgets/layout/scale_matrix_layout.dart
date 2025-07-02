@@ -294,7 +294,12 @@ class ScaleMatrixContainerRenderObject extends RenderBox
   @override
   void performLayout() {
     BoxConstraints constraints = this.constraints;
-    Size parentSize = constraints.biggest;
+    Size parentSize = constraints.biggest.ensureValid(
+      width: $screenWidth,
+      height: $screenMinSize,
+    );
+
+    //debugger();
 
     //自身比例约束处理
     final aspectRatio = config.aspectRatio;
