@@ -209,6 +209,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// ```
   /// [List<Locale>][zh_Hans_CN, en_US, zh_Hant_TW, ja_JP, zh_Hant_MO, zh_Hant_HK, zh_Hans_SG, yue_HK]
   /// ```
+  ///
+  /// ```
+  /// const locale = Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN');
+  /// ```
   /// [L10nStringEx.toLocale]
   /// [Locale.fromSubtags]
   @configProperty
@@ -255,14 +259,17 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     Locale? locale,
     ThemeMode? themeMode,
   }) {
+    //语言 / 暗色模式
     this.locale = locale ?? this.locale;
     this.themeMode = themeMode ?? this.themeMode;
 
+    //主题样式
     final isLight = isThemeLight(context);
 
     final globalTheme = onGetGlobalTheme(isLight);
     this.globalTheme = globalTheme;
 
+    //主题数据
     final themeData = onGetThemeData(globalTheme, isLight);
     this.themeData = themeData;
 
