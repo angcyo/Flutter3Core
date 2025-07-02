@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter3_app/flutter3_app.dart';
 import 'package:flutter3_core/flutter3_core.dart';

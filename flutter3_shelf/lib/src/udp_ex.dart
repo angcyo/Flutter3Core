@@ -33,9 +33,36 @@ Future<int> sendUdpData(
   }
 }
 
+/// 接收UDP广播的数据
+/// [receiveUdpBroadcast]
+Future<Uint8List?> receiveUdpData(
+  int port, {
+  Duration? timeout,
+  void Function(Datagram? datagram)? onDatagramAction,
+}) async {
+  final completer = Completer<Uint8List?>();
+  final udp = await receiveUdpBroadcast(
+    port,
+    timeout: timeout,
+    onDatagramAction: (datagram) {
+      onDatagramAction?.call(datagram);
+      if (!completer.isCompleted) {
+        final data = datagram?.data;
+        completer.complete(data);
+      }
+    },
+  );
+  return completer.future;
+}
+
 /// 在指定端口, 发送指定的UDP数据广播
 /// [data] 发送的数据.[text]发送文本
 /// [port] 发送的端口
+///
+/// ```
+/// iOS 发送udp广播需要申请权限.
+/// ```
+///
 /// @return 返回发送的数据长度
 Future<int> sendUdpBroadcast(
   int port, {
@@ -60,8 +87,15 @@ Future<int> sendUdpBroadcast(
 }
 
 /// 在指定端口, 接收UDP数据广播
+/// [port] 监听的端口, 如果端口已被占用会报错.
+/// ```
+///  SocketException: Failed to create datagram socket (OS Error: Address already in use, errno = 48), address = 0.0.0.0, port = 9999
+/// ```
 /// [timeout] 接收超时自动关闭时长, 不指定不自动关闭
-/// [onDatagramAction] 数据接收回调
+/// [onDatagramAction] 数据接收回调.
+///
+/// [Datagram.data] 获取字节数据
+///
 Future<UDP> receiveUdpBroadcast(
   int port, {
   Duration? timeout,
@@ -72,12 +106,25 @@ Future<UDP> receiveUdpBroadcast(
   final receiver = await UDP.bind(Endpoint.any(port: Port(port)));
   //debugger();
   // receiving\listening
-  receiver.asStream(timeout: timeout).listen((datagram) {
-    //var str = String.fromCharCodes(datagram.data);
-    //stdout.write(str);
-    //debugger();
-    onDatagramAction?.call(datagram);
-  });
+  receiver.asStream(timeout: timeout).listen(
+    (datagram) {
+      //var str = String.fromCharCodes(datagram.data);
+      //stdout.write(str);
+      debugger();
+      onDatagramAction?.call(datagram);
+    },
+    onDone: () {
+      //完成, 超时之后流会被close, 会走此方法.
+      debugger();
+      onDatagramAction?.call(null);
+    },
+    onError: (e) {
+      //错误
+      debugger();
+      onDatagramAction?.call(null);
+    },
+    cancelOnError: true,
+  );
   return receiver;
 
   /*final receiver = await UDP.bind(Endpoint.any(port: Port(port)));
