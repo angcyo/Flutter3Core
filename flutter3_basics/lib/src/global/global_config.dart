@@ -254,8 +254,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   @api
   ThemeData initGlobalTheme(
     BuildContext? context,
-    GlobalTheme Function(bool isLight) onGetGlobalTheme,
     ThemeData Function(GlobalTheme globalTheme, bool isLight) onGetThemeData, {
+    GlobalTheme Function(bool isLight)? onGetGlobalTheme,
     Locale? locale,
     ThemeMode? themeMode,
   }) {
@@ -266,7 +266,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     //主题样式
     final isLight = isThemeLight(context);
 
-    final globalTheme = onGetGlobalTheme(isLight);
+    final globalTheme = onGetGlobalTheme?.call(isLight) ??
+        (isLight ? GlobalTheme() : GlobalThemeDark());
     this.globalTheme = globalTheme;
 
     //主题数据
