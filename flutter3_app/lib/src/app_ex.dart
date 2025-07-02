@@ -200,6 +200,7 @@ Future<String?> get $platformDeviceModel async => isAndroid
 /// [BaseDeviceInfo]
 extension PlatformDeviceInfoEx on BaseDeviceInfo {
   /// 平台设备的名称
+  /// [Platform.operatingSystem]
   String? get platformDeviceName => switch (this) {
         AndroidDeviceInfo info => info.model,
         WindowsDeviceInfo info => info.productName,

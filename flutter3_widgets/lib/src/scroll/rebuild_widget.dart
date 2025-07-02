@@ -225,6 +225,9 @@ extension RebuildIterableEx<T extends Listenable> on Iterable<T> {
   Widget build(DynamicDataWidgetBuilder builder) => rebuildList(this, builder);
 
   /// [rebuildList]
+  ///
+  /// [RebuildIterableEx.buildFn]
+  /// [LiveStreamControllerIterableEx.buildFn]
   Widget buildFn(Widget? Function() builder) =>
       rebuildList(this, (_, __) => builder());
 }

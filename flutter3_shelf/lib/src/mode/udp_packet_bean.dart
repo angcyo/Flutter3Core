@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:flutter3_core/flutter3_core.dart';
+import 'package:flutter3_app/flutter3_app.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'udp_client_info_bean.dart';
@@ -28,7 +29,7 @@ class UdpPacketBean {
 
   static Future<UdpPacketBean?> fromBytes(List<int> data) async {
     try {
-      return isolateRun((){
+      return isolateRun(() {
         final text = data.utf8Str;
         final packetBean = UdpPacketBean.fromJson(text.fromJson());
         return packetBean;
@@ -40,6 +41,19 @@ class UdpPacketBean {
       }());
       return null;
     }
+  }
+
+  /// 使用指定的客户端信息[client]构建一个心跳包
+  UdpPacketBean.heart(UdpClientInfoBean? client) {
+    deviceId ??= $deviceUuid;
+    //--
+    client?.name ??= Platform.operatingSystem;
+    client?.deviceName ??= $platformDeviceInfoCache?.platformDeviceName;
+    client?.deviceId ??= deviceId;
+    //--
+    this
+      ..type = UdpPacketTypeEnum.heart.name
+      ..data = client?.toJson().toJsonString(null).bytes;
   }
 
   //--
@@ -72,6 +86,7 @@ class UdpPacketBean {
 
   //region get
 
+  /// 消息数据包
   /// 将[data]解析成[UdpMessageBean]
   UdpMessageBean? get message {
     if (type == UdpPacketTypeEnum.message.name && data != null) {
@@ -80,6 +95,7 @@ class UdpPacketBean {
     return null;
   }
 
+  /// 心跳数据包
   /// 将[data]解析成[UdpClientInfoBean]
   UdpClientInfoBean? get client {
     if (type == UdpPacketTypeEnum.heart.name) {

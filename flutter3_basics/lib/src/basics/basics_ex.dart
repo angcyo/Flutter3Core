@@ -85,6 +85,14 @@ bool isBaseType(dynamic value) {
   return false;
 }
 
+/// 将任意对象转换成json字符串
+String? jsonString(dynamic obj, [String? indent]) {
+  if (obj == null || obj is! Object) {
+    return null;
+  }
+  return JsonEncoder.withIndent(indent).convert(obj);
+}
+
 //region Object 扩展
 
 /// 动态[dynamic]的扩展, 只是在编译的时候有代码提示,

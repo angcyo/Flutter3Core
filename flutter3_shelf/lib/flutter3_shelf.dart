@@ -1,4 +1,4 @@
-library;
+library flutter3_shelf;
 
 import 'dart:async';
 import 'dart:convert';
@@ -34,6 +34,9 @@ export 'src/mode/udp_packet_bean.dart';
 export 'src/mode/udp_message_bean.dart';
 export 'src/mode/udp_client_info_bean.dart';
 
+part 'src/local/local_udp_base.dart';
+part 'src/local/local_udp_server.dart';
+part 'src/local/local_udp_client.dart';
 part 'src/flutter3_shelf_http.dart';
 part 'src/flutter3_shelf_web_socket.dart';
 part 'src/udp_ex.dart';

@@ -7,14 +7,42 @@ part of '../flutter3_shelf.dart';
 ///
 /// 使用UDP进行数据广播以及接收
 class UdpService {
-  /// 获取一个随机未被占用端口的[UDP]
+  /// 判断指定主机和端口是否被占用
+  static Future<bool> isPortOccupied(
+    int port, {
+    String? hostname,
+  }) async {
+    // 创建一个尝试连接到指定主机和端口的 Socket。
+    Socket? socket;
+    try {
+      // 设置一个短超时，防止永远等待连接
+      socket = await Socket.connect(
+        hostname ?? "127.0.0.1",
+        port,
+        timeout: Duration(milliseconds: 0),
+      );
+      // 端口被占用
+      return true;
+    } catch (e) {
+      //端口未被占用
+      /*assert(() {
+        l.v("[$port]端口被占用!");
+        return true;
+      }());*/
+      return false;
+    } finally {
+      socket?.destroy(); //关闭 socket
+    }
+  }
+
+  /// 获取一个随机未被占用本机端口的[UDP]
   @api
   static Future<UDP?> bindRandomClientUdp() async {
     //被占用的端口
     List<int> occupiedPorts = [];
     int nextPort() {
       final min = 1111;
-      final max = 8888;
+      final max = 9999;
       int port = nextInt(max, min);
       while (occupiedPorts.contains(port)) {
         port = nextInt(max, min);
@@ -38,6 +66,32 @@ class UdpService {
       }
     }
     return null;
+  }
+
+  /// 获取一个随机可用的端口
+  @api
+  static Future<int> generatePort() async {
+    //被占用的端口
+    List<int> occupiedPorts = [];
+    int nextPort() {
+      final min = 1111;
+      final max = 65535;
+      int port = nextInt(max, min);
+      while (occupiedPorts.contains(port)) {
+        port = nextInt(max, min);
+      }
+      return port;
+    }
+
+    while (true) {
+      final port = nextPort();
+      final used = await isPortOccupied(port);
+      if (used) {
+        occupiedPorts.add(port);
+        continue;
+      }
+      return port;
+    }
   }
 
   //region server

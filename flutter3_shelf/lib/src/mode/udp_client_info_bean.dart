@@ -59,15 +59,33 @@ class UdpClientInfoBean {
   @autoInjectMark
   int? clientPort;
 
-  //--
+  //region get
 
   /// 客户端是否离线
   bool get isOffline => offlineTime != null;
 
   /// 客户端显示的名称
-  String? get clientShowName => name ?? deviceName ?? clientIpAddress;
+  String? get clientShowName {
+    if (name != null && deviceName != null) {
+      return "$name ($deviceName)";
+    }
+    return name ?? deviceName ?? clientIpAddress;
+  }
 
   /// ip地址
   /// [InternetAddress]
-  String? get clientIpAddress => name ?? "$clientAddress:$clientPort";
+  String? get clientIpAddress => "$clientAddress:$clientPort";
+
+  //endregion get
+
+  ///
+  void updateFrom(UdpClientInfoBean newBean) {
+    name = newBean.name ?? name;
+    deviceName = newBean.deviceName ?? deviceName;
+    time = newBean.time ?? time;
+    updateTime = newBean.updateTime ?? updateTime;
+    offlineTime = newBean.offlineTime ?? offlineTime;
+    clientAddress = newBean.clientAddress ?? clientAddress;
+    clientPort = newBean.clientPort ?? clientPort;
+  }
 }

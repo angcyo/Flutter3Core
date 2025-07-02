@@ -10,8 +10,10 @@ part of '../flutter3_shelf.dart';
 /// @return 返回发送的数据长度
 Future<int> sendUdpData(
   String? host,
-  int? port,
-  List<int> data, {
+  int? port, {
+  String? text,
+  List<int>? data,
+  dynamic bean,
   Duration timeout = const Duration(seconds: 1),
 }) async {
   if (host == null || port == null) {
@@ -20,7 +22,10 @@ Future<int> sendUdpData(
   try {
     final udp = await UDP.bind(Endpoint.any());
     final result = await udp
-        .send(data, Endpoint.unicast(InternetAddress(host), port: Port(port)))
+        .send(
+          data ?? text?.bytes ?? jsonString(bean?.toJson())?.bytes ?? [],
+          Endpoint.unicast(InternetAddress(host), port: Port(port)),
+        )
         .wait(timeout);
     udp.close();
     return result;
@@ -68,6 +73,7 @@ Future<int> sendUdpBroadcast(
   int port, {
   String? text,
   List<int>? data,
+  dynamic bean,
 }) async {
   /*UdpSocket.bind(InternetAddress.anyIPv4, port).then((socket) {
     socket.send(data.codeUnits, InternetAddress.anyIPv4, port);
@@ -79,7 +85,7 @@ Future<int> sendUdpBroadcast(
   // send a simple string to a broadcast endpoint on port 65001.
   //debugger();
   final dataLength = await sender.send(
-    data ?? text?.bytes ?? [],
+    data ?? text?.bytes ?? jsonString(bean?.toJson())?.bytes ?? [],
     Endpoint.broadcast(port: Port(port)),
   );
   sender.close();
@@ -110,7 +116,7 @@ Future<UDP> receiveUdpBroadcast(
     (datagram) {
       //var str = String.fromCharCodes(datagram.data);
       //stdout.write(str);
-      debugger();
+      //debugger();
       onDatagramAction?.call(datagram);
     },
     onDone: () {

@@ -446,7 +446,14 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
 
 extension LiveStreamControllerIterableEx<T>
     on Iterable<LiveStreamController<T>> {
+
+  /// [StreamGroup]
+  /// [StreamZip]
+  ///
   /// [RebuildWidget]
+  ///
+  /// [RebuildIterableEx.buildFn]
+  /// [LiveStreamControllerIterableEx.buildFn]
   Widget buildFn(Widget? Function() builder) => StreamBuilder(
       stream: StreamGroup.mergeBroadcast(map((e) => e.stream)),
       initialData: null,
