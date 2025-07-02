@@ -416,6 +416,8 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
           });
 
   /// [RebuildWidget]
+  ///
+  /// [RebuildEx.buildFn]
   Widget buildFn(
     Widget? Function() builder, {
     bool allowBackward = true,
@@ -428,6 +430,8 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
           });
 
   /// [RebuildWidget]
+  ///
+  /// [RebuildEx.buildDataFn]
   Widget buildDataFn(
     Widget? Function(T? data) builder, {
     bool allowBackward = true,

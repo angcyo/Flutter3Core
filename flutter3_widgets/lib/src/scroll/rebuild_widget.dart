@@ -144,9 +144,7 @@ class UpdateValueNotifier<T> extends ValueNotifier<T> with NotifierMixin {
 }
 
 /// 换个名字
-class UpdateSignalNotifier<T> extends UpdateValueNotifier<T> {
-  UpdateSignalNotifier(super.value, [super.data]);
-}
+typedef UpdateSignalNotifier<T> = UpdateValueNotifier<T>;
 
 /// [UpdateValueNotifier]的快速构建方法
 @updateSignalMark
@@ -210,8 +208,14 @@ extension RebuildEx<T> on ValueNotifier<T> {
   Widget build(DynamicDataWidgetBuilder builder) => rebuild(this, builder);
 
   /// [rebuild]
+  ///
+  /// [LiveStreamControllerEx.buildFn]
   Widget buildFn(Widget? Function() builder) =>
       rebuild(this, (_, __) => builder());
+
+  /// [LiveStreamControllerEx.buildDataFn]
+  Widget buildDataFn(Widget? Function(T? data) builder) =>
+      rebuild(this, (ctx, data) => builder(data));
 }
 
 /// [AnimatedWidget]
