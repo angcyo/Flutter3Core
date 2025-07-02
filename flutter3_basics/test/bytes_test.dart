@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter3_basics/flutter3_basics.dart';
 
 ///
@@ -5,13 +7,32 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 /// @date 2025/04/17
 ///
 void main() {
-  /*print(bytesWriter((writer) {
+  print(bytesWriter((writer) {
     writer.writeFillHex(length: 100);
-  }).utf8Str);*/
+  }).utf8Str);
 
   print("Y".ascii);
   print("D".ascii);
 
   print("YDMG".bytes.toHex());
   print("YDMG".asciiBytes.toHex());
+
+  print(15.toHex());
+  print(255.toHex());
+
+  print("[255]大端序:${bytesWriter((writer) {
+    writer.writeInt(255, 4, Endian.big);
+  }).toHex()}");
+
+  print("[255]小端序:${bytesWriter((writer) {
+    writer.writeInt(255, 4, Endian.little);
+  }).toHex()}");
+
+  print("[10000]大端序:${bytesWriter((writer) {
+    writer.writeInt(10000, 4, Endian.big);
+  }).toHex()}");
+
+  print("[10000]小端序:${bytesWriter((writer) {
+    writer.writeInt(10000, 4, Endian.little);
+  }).toHex()}");
 }

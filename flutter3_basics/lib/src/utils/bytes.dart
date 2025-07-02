@@ -42,6 +42,7 @@ class BytesWriter {
   void writeInt(int value, [int length = 4, Endian? endian]) {
     endian ??= this.endian;
     if (endian == Endian.big) {
+      //大端序, 默认
       for (int i = 0; i < length; i++) {
         if (!_canWrite()) {
           break;
@@ -49,6 +50,7 @@ class BytesWriter {
         _bytes.add((value >> ((length - i - 1) * 8)) & 0xff);
       }
     } else {
+      //小端序
       for (int i = 0; i < length; i++) {
         if (!_canWrite()) {
           break;
