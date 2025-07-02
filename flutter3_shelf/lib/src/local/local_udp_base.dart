@@ -69,6 +69,7 @@ abstract class LocalUdpBase {
   Future<bool> stop() async {
     stopHeartTimer();
     stopReceiveUdpBroadcast();
+    localInfoStream.updateValue(null);
     return true;
   }
 
@@ -179,25 +180,31 @@ abstract class LocalUdpBase {
   void onSelfHandleUdpBroadcast(Datagram datagram, String message) {}
 
   /// 处理客户端[client]结构数据
+  /// [checkClientOffline]
   @callPoint
   void handleClientInfoMessage(UdpClientInfoBean client) {
-    client.offlineTime = null; //清空离线时间
-
     final deviceId = client.deviceId;
-    final old =
-        clientListStream.value?.findFirst((e) => e.deviceId == deviceId);
+    final list = clientList;
+    final old = list.findFirst((e) => e.deviceId == deviceId);
     if (old == null) {
       //新增
-      final list = clientListStream.value ?? [];
-      list.add(client);
-      clientListStream.add(list);
 
-      clientOnlineStreamOnce.add(client);
+      list.add(client);
+      clientListStream.updateValue(list);
+
+      clientOnlineStreamOnce.updateValue(client);
     } else {
       //更新
+      //debugger();
+      final isOffline = old.isOffline;
+      old.offlineTime = null; //清空离线时间
       old.updateFrom(client);
+      //l.w("客户端在线时间->${old.updateTime}");
 
-      clientUpdateStreamOnce.add(client);
+      clientUpdateStreamOnce.updateValue(client);
+      if (isOffline) {
+        clientOnlineStreamOnce.updateValue(client);
+      }
     }
   }
 
@@ -227,11 +234,11 @@ abstract class LocalUdpBase {
   void checkClientOffline() {
     try {
       final now = nowTime();
-      final list = clientListStream.value;
+      final list = clientList;
       if (isNil(list)) {
         return;
       }
-      for (final client in list!) {
+      for (final client in list) {
         if (client.isOffline == true) {
           continue;
         }
@@ -239,6 +246,7 @@ abstract class LocalUdpBase {
           //本身
           continue;
         }
+        //debugger();
         final time = client.updateTime ?? client.time;
         if (time == null) {
           continue;
@@ -246,6 +254,7 @@ abstract class LocalUdpBase {
         if (now - time > offlinePeriod.inMilliseconds) {
           //客户端离线
           //debugger();
+          //l.w("客户端离线->$now ${client.updateTime}");
           client.offlineTime = now;
           clientOfflineStreamOnce.updateValue(client);
         }

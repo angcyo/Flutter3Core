@@ -60,6 +60,7 @@ class LocalUdpServer extends LocalUdpBase {
         client.clientPort ??= datagram.port;
         client.clientAddress ??= datagram.address.address;
         //客户端发来的心跳数据, 此时应该保存客户端信息, 用户接受归纳客户端数据
+        //debugger();
         handleClientInfoMessage(client);
       } else {
         final message = packetBean.message;

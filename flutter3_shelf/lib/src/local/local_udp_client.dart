@@ -43,9 +43,14 @@ class LocalUdpClient extends LocalUdpBase {
   void onSelfHandleHeart(Timer timer) {
     super.onSelfHandleHeart(timer);
 
-    localInfoStream.value?.updateTime = nowTime();
-    final heart = UdpPacketBean.heart(localInfoStream.value);
-    sendClientPacket(heart);
+    final info = localInfoStream.value;
+    if (info != null) {
+      info.updateTime = nowTime();
+      localInfoStream.updateValue(info);
+
+      final heart = UdpPacketBean.heart(info);
+      sendClientPacket(heart);
+    }
   }
 
   /// 收到服务端发来的广播
