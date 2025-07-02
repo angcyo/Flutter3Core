@@ -122,8 +122,8 @@ class TextFieldConfig {
   //region 自动完成
 
   /// 设置此值后, 自动激活自动完成功能
-  /// [Autocomplete]
-  /// [buildWrapAutocomplete]
+  ///
+  /// 在此方法中[buildWrapAutocomplete]使用[Autocomplete]小部件包裹
   ///
   /// @return 返回值即自动完成的提示选项列表
   final FutureOr<Iterable<Object>> Function(
@@ -1043,6 +1043,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   /// [MaterialTextSelectionControls.buildHandle]选中后的控制按钮构建
   @override
   Widget build(BuildContext context) {
+    //debugger();
     //圆角填充的输入装饰样式
     final globalTheme = GlobalTheme.of(context);
     //normal正常状态
@@ -1058,11 +1059,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           InputBorderType.outline => OutlineInputBorder(
               gapPadding: widget.gapPadding,
               borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: normalBorderSide),
+              borderSide: normalBorderSide,
+            ),
           InputBorderType.underline => UnderlineInputBorder(
               borderSide: normalBorderSide,
-              borderRadius:
-                  BorderRadius.circular(widget.underlineBorderRadius)),
+              borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
+            ),
           _ => InputBorder.none,
         };
 
@@ -1079,11 +1081,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           InputBorderType.outline => OutlineInputBorder(
               gapPadding: widget.gapPadding,
               borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: focusedBorderSide),
+              borderSide: focusedBorderSide,
+            ),
           InputBorderType.underline => UnderlineInputBorder(
               borderSide: focusedBorderSide,
-              borderRadius:
-                  BorderRadius.circular(widget.underlineBorderRadius)),
+              borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
+            ),
           _ => InputBorder.none,
         };
 
@@ -1100,11 +1103,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           InputBorderType.outline => OutlineInputBorder(
               gapPadding: widget.gapPadding,
               borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: disableBorderSide),
+              borderSide: disableBorderSide,
+            ),
           InputBorderType.underline => UnderlineInputBorder(
               borderSide: disableBorderSide,
-              borderRadius:
-                  BorderRadius.circular(widget.underlineBorderRadius)),
+              borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
+            ),
           _ => InputBorder.none,
         };
 
@@ -1128,8 +1132,11 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           //contentPadding: const EdgeInsets.all(0),
           //contentPadding: EdgeInsets.symmetric(horizontal: globalTheme.xh),
           border: normalBorder,
+          //2025-07-02
+          enabledBorder: normalBorder,
           focusedBorder: focusedBorder,
           disabledBorder: disabledBorder,
+          enabled: widget.enabled,
           label: widget.label,
           labelText: widget.labelText ??
               widget.labelTextBuilder?.call(context) ??

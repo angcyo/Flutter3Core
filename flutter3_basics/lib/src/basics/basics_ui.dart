@@ -1251,6 +1251,7 @@ extension WidgetEx on Widget {
   }
 
   /// 将当前的小部件, 包裹在一个[SafeArea]中
+  /// [safeBottomArea] 底部安全区域
   Widget safeArea({
     bool useSafeArea = true,
     bool useSliverSafeArea = false,
