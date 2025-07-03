@@ -62,24 +62,31 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton> {
               });
             },
             onTap: () {
-              toast("click".text());
-              $globalDebugLabel = "debug";
-              final globalConfig = GlobalConfig.of(context);
-              if (globalConfig.themeMode != ThemeMode.dark) {
-                globalConfig.themeMode = ThemeMode.dark;
-              } else {
-                globalConfig.themeMode = ThemeMode.light;
-              }
-              if (globalConfig.locale == null) {
-                globalConfig.locale = "en".toLocale();
-              } else {
-                globalConfig.locale = null;
-              }
-              globalConfig.notifyThemeChanged();
+              //toast("click".text());
+              //$globalDebugLabel = "debug";
+              //_testGlobalTheme(context);
             },
           ),
         )
       ],
     );
+  }
+
+  //--
+
+  /// 测试主题改变功能
+  void _testGlobalTheme(BuildContext context) {
+    final globalConfig = GlobalConfig.of(context);
+    if (globalConfig.themeMode != ThemeMode.dark) {
+      globalConfig.themeMode = ThemeMode.dark;
+    } else {
+      globalConfig.themeMode = ThemeMode.light;
+    }
+    if (globalConfig.locale == null) {
+      globalConfig.locale = "en".toLocale();
+    } else {
+      globalConfig.locale = null;
+    }
+    globalConfig.notifyThemeChanged();
   }
 }
