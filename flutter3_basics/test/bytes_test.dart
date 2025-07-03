@@ -35,4 +35,10 @@ void main() {
   print("[10000]小端序:${bytesWriter((writer) {
     writer.writeInt(10000, 4, Endian.little);
   }).toHex()}");
+
+  print("MD5:${bytesWriter((writer) {
+    writer.writeInt(1, 1);
+  }).md5().toUpperCase()}");
+
+  print("MD5:${"angcyo".md5().toUpperCase()}");
 }
