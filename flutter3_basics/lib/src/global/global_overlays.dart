@@ -163,6 +163,8 @@ OverlayEntry? toastInfo(
   double? bgBlurSigma,
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
+  //--
+  TextStyle? textStyle,
 }) {
   if (msg == null) return null;
   return toastMessage(
@@ -178,7 +180,10 @@ OverlayEntry? toastInfo(
                 ),
             //间隙
             Empty.width(8),
-            Text(msg)
+            Text(
+              msg,
+              style: textStyle ?? GlobalConfig.def.globalTheme.textGeneralStyle,
+            )
             /*Text(
               msg,
               maxLines: 1,
