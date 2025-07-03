@@ -53,207 +53,107 @@ export 'package:flutter3_res/flutter3_res.dart';
 //export 'package:leak_tracker/leak_tracker.dart';
 
 part 'src/basics/basics.dart';
-
 part 'src/basics/basics_animation.dart';
-
 part 'src/basics/basics_date_time.dart';
-
 part 'src/basics/basics_decoration.dart';
-
 part 'src/basics/basics_event.dart';
-
 part 'src/basics/basics_ex.dart';
-
 part 'src/basics/basics_file.dart';
-
 part 'src/basics/basics_image.dart';
-
 part 'src/basics/basics_io.dart';
-
 part 'src/basics/basics_layout.dart';
-
 part 'src/basics/basics_math.dart';
-
 part 'src/basics/basics_notifier.dart';
-
 part 'src/basics/basics_painting.dart';
-
 part 'src/basics/basics_path.dart';
-
 part 'src/basics/basics_render.dart';
-
 part 'src/basics/basics_ui.dart';
-
 part 'src/basics/custom_page_route.dart';
-
 part 'src/basics/matrix_ex.dart';
-
 part 'src/basics/system.dart';
-
 part 'src/basics/basics_state_property.dart';
-
 part 'src/component/gradient/gradient_borders.dart';
-
 part 'src/component/hook.dart';
-
 part 'src/component/app_lifecycle_mixin.dart';
-
 part 'src/component/key_event_mixin.dart';
-
 part 'src/component/async_operation.dart';
-
 part 'src/component/batch_completer.dart';
-
 part 'src/component/compliance.dart';
-
 part 'src/component/custom_painter.dart';
-
 part 'src/component/debounce.dart';
-
 part 'src/component/fps.dart';
-
 part 'src/component/limit.dart';
-
 part 'src/component/future_cancel.dart';
-
 part 'src/component/id_gen.dart';
-
 part 'src/component/live_stream_controller.dart';
-
 part 'src/component/mutex_key.dart';
-
 part 'src/component/r_exception.dart';
-
 part 'src/component/request_page.dart';
-
 part 'src/component/stack_list.dart';
-
 part 'src/component/string_cache.dart';
-
 part 'src/component/throttle.dart';
-
 part 'src/component/undo_manager.dart';
-
 part 'src/component/version_matcher.dart';
-
 part 'src/component/painter.dart';
-
 part 'src/component/number_template_parser.dart';
-
 part 'src/component/date_template_parser.dart';
-
 part 'src/component/provider.dart';
-
 part 'src/component/value_change_mixin.dart';
-
 part 'src/component/uri_transform.dart';
-
 part 'src/component/listenable.dart';
-
 part 'src/component/data_chunk_info.dart';
-
 part 'src/component/default_extension_map.dart';
-
 part 'src/debug/debug.dart';
-
 part 'src/debug/debug_keys.dart';
-
 part 'src/debug/navigator_observer_log.dart';
-
 part 'src/debug/state_log.dart';
-
 part 'src/global/global.dart';
-
 part 'src/global/global_config.dart';
-
 part 'src/global/global_constants.dart';
-
 part 'src/global/global_overlays.dart';
-
 part 'src/global/global_theme.dart';
-
 part 'src/global/global_typedef.dart';
-
 part 'src/global/overlay/overlay_animation.dart';
-
 part 'src/global/overlay/overlay_manage.dart';
-
 part 'src/global/overlay/overlay_notification.dart';
-
 part 'src/l.dart';
-
 part 'src/meta/meta.dart';
-
 part 'src/meta/package_info_meta.dart';
-
 part 'src/meta/point.dart';
-
 part 'src/overlay/loading.dart';
-
 part 'src/overlay/loading_indicator.dart';
-
 part 'src/overlay/loading_overlay.dart';
-
 part 'src/overlay/progress_bar.dart';
-
 part 'src/overlay/rotate_animation.dart';
-
 part 'src/overlay/route_will_pop_scope.dart';
-
 part 'src/overlay/stroke_loading.dart';
-
 part 'src/overlay/gradient_loading.dart';
-
 part 'src/unit/unit.dart';
-
 part 'src/utils/bytes.dart';
-
 part 'src/utils/file_size.dart';
-
 part 'src/utils/frame_split.dart';
-
 part 'src/utils/l_time.dart';
-
 part 'src/utils/list_utils.dart';
-
 part 'src/utils/process_util.dart';
-
+part 'src/utils/socket_mix.dart';
 part 'src/utils/string_utils.dart';
-
 part 'src/utils/text_span_builder.dart';
-
 part 'src/widgets/data_provider.dart';
-
 part 'src/widgets/empty.dart';
-
 part 'src/widgets/path_widget.dart';
-
 part 'src/widgets/touch_detector_widget.dart';
-
 part 'src/widgets/value_listener.dart';
-
 part 'src/widgets/preferred_size_sliver_app_bar.dart';
-
 part 'src/widgets/progress_listener.dart';
-
 part 'src/widgets/ignore_self_pointer.dart';
-
 part 'src/widgets/test_constraints_layout.dart';
-
 part 'src/widgets/any_widget.dart';
-
 part 'src/widgets/last_extend_row.dart';
-
 part 'src/widgets/bounds_widget.dart';
-
 part 'src/widgets/offset_paint_widget.dart';
-
 part 'src/widgets/pointer_listener.dart';
-
 part 'src/widgets/hover_anchor_layout.dart';
-
 part 'src/widgets/anchor_overlay_layout.dart';
-
 part 'src/widgets/arrow_widget.dart';
 
 /// 类型重定义
