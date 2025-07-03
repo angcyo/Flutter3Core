@@ -179,7 +179,7 @@ class LiveStreamController<T> {
       add(latestValue);
     } else {
       assert(() {
-        l.w("无效的操作");
+        l.w("无效的[addSub]操作, 之前的数据类型不是[List]->${latestValue?.runtimeType}");
         return true;
       }());
     }
@@ -193,7 +193,7 @@ class LiveStreamController<T> {
       add(latestValue);
     } else {
       assert(() {
-        l.w("无效的操作");
+        l.w("无效的[removeSub]操作, 之前的数据类型不是[List]->${latestValue?.runtimeType}");
         return true;
       }());
     }
@@ -446,7 +446,6 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
 
 extension LiveStreamControllerIterableEx<T>
     on Iterable<LiveStreamController<T>> {
-
   /// [StreamGroup]
   /// [StreamZip]
   ///
