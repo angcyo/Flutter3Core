@@ -168,6 +168,7 @@ class Alias {
   }
 }
 
+/// 别名
 const alias = Alias();
 
 /// 权限

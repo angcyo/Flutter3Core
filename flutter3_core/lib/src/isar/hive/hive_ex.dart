@@ -66,6 +66,7 @@ extension HiveStringEx on String {
   }
 
   /// [hivePut]
+  @alias
   Future<dynamic> hiveSet(dynamic value, [bool notifyChanged = true]) =>
       hivePut(value, notifyChanged);
 
