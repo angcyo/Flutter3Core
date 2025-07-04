@@ -78,7 +78,7 @@ extension FfiVecUint8Ex on Vec_uint8_t {
     final result = ptr;
     final reversedBytes = result.asTypedList(len);
     //debugger();
-    calloc.free(result);
+    //calloc.free(result);释放内存之后, 数据会变成脏数据
     return reversedBytes;
   }
 
@@ -141,7 +141,7 @@ extension FfiVecDoubleEx on Vec_double_t {
   Float64List toDoubleList() {
     final result = ptr;
     final reversedBytes = result.asTypedList(len);
-    calloc.free(result);
+    //calloc.free(result);
     return reversedBytes;
   }
 }
