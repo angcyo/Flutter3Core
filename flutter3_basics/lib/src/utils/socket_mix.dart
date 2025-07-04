@@ -87,7 +87,10 @@ mixin SocketMixin {
   //--
 
   /// 如果在[State]中, 也会触发此方法
-  void dispose() {
+  /// ```
+  /// dispose() implementations must always call their superclass dispose() method, to ensure that all the resources used by the widget are fully released.
+  /// ```
+  /*void release() {
     disconnectSocket();
-  }
+  }*/
 }
