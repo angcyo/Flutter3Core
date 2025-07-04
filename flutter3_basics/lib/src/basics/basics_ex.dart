@@ -577,8 +577,9 @@ extension FutureEx<T> on Future<T> {
     }
   }
 
-  /// [initialData] 当初始化的值有值时, 不会则直接触发[builder]
+  /// [initialData] 当初始化的值有值时, 则直接触发[builder]
   /// [FutureBuilder]
+  /// [FutureOrBuilder]
   Widget toWidget(
     Widget Function(BuildContext context, T? value) builder, {
     Widget Function(BuildContext context, dynamic error)? errorBuilder,
