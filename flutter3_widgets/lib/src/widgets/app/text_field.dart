@@ -79,6 +79,7 @@ class TextFieldConfig {
   Widget? prefixIcon;
 
   /// 键盘上的输入类型, 比如完成, 下一步等
+  /// [onSubmitted] 配合此方法, 请求下一个输入框的焦点.
   /// [SingleInputWidget.textInputAction]
   /// [TextInputAction.done]
   /// [TextInputAction.search]
@@ -106,6 +107,7 @@ class TextFieldConfig {
 
   final ContextValueChanged<String>? onContextValueChanged;
 
+  /// [textInputAction]
   /// [TextField.onSubmitted]
   final ValueChanged<String>? onSubmitted;
 
@@ -170,6 +172,9 @@ class TextFieldConfig {
   /// 弹窗窗口最大高度
   final double autoOptionsMaxHeight;
 
+  /// 自定义的标签数据
+  final String? tag;
+
   //endregion 自动完成
 
   /// [SingleInputWidget] 的配置信息
@@ -181,6 +186,7 @@ class TextFieldConfig {
     bool notifyDefaultTextChange = false /*是否要触发默认文本改变*/,
     this.autofocus,
     this.textInputAction,
+    this.onSubmitted,
     this.inputFormatters,
     this.keyboardType,
     this.updateFieldValueFn,
@@ -194,7 +200,6 @@ class TextFieldConfig {
     this.prefixIcon,
     this.onChanged,
     this.onContextValueChanged,
-    this.onSubmitted,
     this.onEditingComplete,
     this.onFocusAction,
     //--
@@ -211,6 +216,7 @@ class TextFieldConfig {
     this.autoOverlayShape,
     this.autoOverlayBorderRadius,
     this.autoOptionsMaxHeight = 200,
+    this.tag,
   })  : controller = controller ?? TextEditingController(text: text),
         focusNode = focusNode ?? FocusNode(),
         obscureNode = ObscureNode(obscureText ?? false) {
@@ -233,6 +239,20 @@ class TextFieldConfig {
       node.requestFocus();
     } else {
       FocusScope.of(context).requestFocus(node);
+    }
+  }
+
+  /// 移除焦点
+  @api
+  void removeFocus([BuildContext? context]) {
+    final node = focusNode;
+    if (node == null) {
+      return;
+    }
+    if (context == null) {
+      node.unfocus();
+    } else {
+      FocusScope.of(context).unfocus();
     }
   }
 
@@ -773,9 +793,9 @@ class SingleInputWidget extends StatefulWidget {
     this.focusedBorder,
     this.disabledBorder,
     this.textInputAction,
+    this.onSubmitted,
     this.onChanged,
     this.onContextValueChanged,
-    this.onSubmitted,
     this.onEditingComplete,
     this.onFocusAction,
     this.prefixIconBuilder,
