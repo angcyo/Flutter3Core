@@ -123,6 +123,20 @@ class BytesWriter {
     writeLong(value, length, Endian.little);
   }
 
+  /// 写入float
+  void writeFloat(double value, [int? length = 4, Endian? endian]) {
+    final bd = ByteData(4);
+    bd.setFloat32(0, value, endian ?? this.endian);
+    writeBytes(bd.bytes, length);
+  }
+
+  /// 写入double
+  void writeDouble(double value, [int? length = 8, Endian? endian]) {
+    final bd = ByteData(8);
+    bd.setFloat64(0, value, endian ?? this.endian);
+    writeBytes(bd.bytes, length);
+  }
+
   /// 在指定位置写入一个其它字节数组
   /// [writeBytes]
   /// [insertBytes]
@@ -511,7 +525,7 @@ class ByteReader {
     return byteCount > sumLength - _index;
   }
 
-  //endregion find
+//endregion find
 }
 
 /// 字节写入

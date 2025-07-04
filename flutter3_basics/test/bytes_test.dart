@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter3_basics/flutter3_basics.dart';
@@ -44,4 +45,29 @@ void main() {
   }).md5().toUpperCase()}");
 
   print("MD5:${"angcyo".md5().toUpperCase()}");
+
+  //--
+
+  final double = 1.0; // 0.99
+  final b1 = Float32List.fromList([double]).buffer.asUint8List();
+  final b2 = Float64List.fromList([double]).buffer.asUint8List();
+
+  final bd1 = ByteData(4);
+  final bd2 = ByteData(8);
+  bd1.setFloat32(0, double);
+  bd2.setFloat64(0, double);
+  final b3 = bd1.bytes;
+  final b4 = bd2.bytes;
+
+  final bd3 = ByteData(4);
+  final bd4 = ByteData(8);
+  bd3.setFloat32(0, double, Endian.little);
+  bd4.setFloat64(0, double, Endian.little);
+  final b5 = bd3.bytes; // == b1
+  final b6 = bd4.bytes; // == b2
+
+  //ByteData.sublistView(uint8List);
+  //ByteData.getFloat32(0, Endian.little); // 使用小端序
+
+  debugger();
 }
