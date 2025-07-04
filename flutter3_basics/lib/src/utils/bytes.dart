@@ -17,7 +17,8 @@ class BytesWriter {
   /// 小端序, 低位在前, 高位在后
   final Endian endian;
 
-  BytesWriter({this.limitMaxLength, this.endian = Endian.big});
+  BytesWriter({this.limitMaxLength, Endian? endian})
+      : endian = endian ?? Endian.big;
 
   /// 是否可以继续写入
   bool _canWrite() => limitMaxLength == null || _bytes.length < limitMaxLength!;
@@ -146,6 +147,8 @@ class BytesWriter {
   /// [writeBytes]
   /// [insertBytes]
   ///
+  /// [writeBytesBlock]
+  ///
   void writeBytes(List<int>? bytes, [int? length]) {
     if (bytes == null || bytes.isEmpty) {
       return;
@@ -230,6 +233,22 @@ class BytesWriter {
     }
   }
 
+  //--
+
+  /// 写入一块字节数据
+  /// [action] 一块字节数据
+  /// [blockUseLength] 一块字节数据的长度占用多少个字节
+  ///
+  /// [writeBytes]
+  void writeBytesBlock(BytesWriterFn action,
+      [int blockUseLength = 4, Endian? blockLengthEndian]) {
+    final bytes = bytesWriter(action);
+    writeInt(bytes.length, blockUseLength, blockLengthEndian);
+    writeBytes(bytes);
+  }
+
+  //--
+
   /// 返回写入的字节数据
   @output
   List<int> toBytes() {
@@ -248,14 +267,15 @@ class ByteReader {
 
   int get sumLength => bytes.length - excludeLength;
 
-  /// 排除多少个字节
+  /// 排除多少个字节不读取
   int excludeLength = 0;
 
   /// 字节序, 默认大端序, 低位在前, 高位在后
   /// 小端序, 低位在前, 高位在后
   Endian endian;
 
-  ByteReader(this.bytes, {this.excludeLength = 0, this.endian = Endian.big});
+  ByteReader(this.bytes, {this.excludeLength = 0, Endian? endian})
+      : endian = endian ?? Endian.big;
 
   int _index = 0;
 
@@ -318,8 +338,10 @@ class ByteReader {
 
   /// 读取一个其它字节数组
   /// [length] 需要读取的字节长度
+  ///
+  /// 不够返回null
   List<int>? readBytes(int length, [List<int>? overflow]) {
-    if (isDone) {
+    if (isDone || length > sumLength - _index) {
       return overflow;
     }
     final result = bytes.sublist(_index, math.min(_index + length, sumLength));
@@ -406,12 +428,18 @@ class ByteReader {
   }
 
   /// 读取剩余的字节数组
-  List<int> readRemaining() {
+  ///
+  /// [startIndex] 读取的起始索引
+  /// [retainCount] 需要保留多少个字节
+  List<int> readRemaining({
+    int? startIndex,
+    int? retainCount,
+  }) {
     if (isDone) {
       return [];
     }
-    final end = sumLength;
-    final result = bytes.sublist(_index, end);
+    final end = sumLength - (retainCount ?? 0);
+    final result = bytes.sublist(startIndex ?? _index, end);
     _index = end;
     return result;
   }
@@ -422,9 +450,15 @@ class ByteReader {
   }
 
   /// 读取指定长度位代表的字节数据长度的数据
+  /// [length] 描述长度的字节数
+  ///
   /// [readBytes]
   /// [readRemaining]
-  void readLengthBytes(int length,
+  ///
+  /// [patternLengthBytes]
+  ///
+  /// @return [length]描述的所有字节数据, 不够返回null
+  List<int>? readLengthBytes(int length,
       [Endian? endian, BytesReaderFn? bytesAction]) {
     //读取后续字节的长度
     final byteCount = readInt(length, 0, endian);
@@ -432,7 +466,52 @@ class ByteReader {
     if (bytes != null && bytesAction != null) {
       bytesReader(bytes, bytesAction);
     }
+    return bytes;
   }
+
+  //region find
+
+  /// 在当前位置查找指定的字节数据
+  /// [remaining] 是否要获取剩余字节数据
+  /// 找到后, 返回开始的索引 和 剩余的字节数据
+  (int, List<int>?) findBytes(List<int> bytes, [bool remaining = true]) {
+    final index = bytes.indexListOf(bytes, _index);
+    if (index == -1) {
+      return (-1, null);
+    }
+    return (
+      index,
+      remaining ? bytes.sublist(index + bytes.length, sumLength) : null
+    );
+  }
+
+  /// 匹配指定的字节数组数据, 并移动位置
+  /// @return 返回是否找到
+  bool patternBytes(List<int> bytes) {
+    final (index, _) = findBytes(bytes, false);
+    if (index != -1) {
+      //找到, 移动位置
+      _index = index + bytes.length;
+    }
+    return index != -1;
+  }
+
+  bool patternHex(String hex) {
+    final bytes = hex.toHexBytes();
+    return patternBytes(bytes);
+  }
+
+  /// 判断后面是否有指定长度的字节数据
+  /// [readLengthBytes]
+  bool patternLengthBytes(int length, [Endian? endian]) {
+    final byteCount = readInt(length, -1, endian);
+    if (byteCount == -1) {
+      return false;
+    }
+    return byteCount > sumLength - _index;
+  }
+
+  //endregion find
 }
 
 /// 字节写入
@@ -443,15 +522,15 @@ typedef BytesReaderFn<T> = T Function(ByteReader reader);
 
 /// [BytesWriter]
 @dsl
-List<int> bytesWriter(BytesWriterFn action) {
-  final writer = BytesWriter();
+List<int> bytesWriter(BytesWriterFn action, [Endian? endian]) {
+  final writer = BytesWriter(endian: endian);
   action(writer);
   return writer.toBytes();
 }
 
 /// [ByteReader]
 @dsl
-T bytesReader<T>(List<int> bytes, BytesReaderFn<T> action) {
-  final reader = ByteReader(bytes);
+T bytesReader<T>(List<int> bytes, BytesReaderFn<T> action, [Endian? endian]) {
+  final reader = ByteReader(bytes, endian: endian);
   return action(reader);
 }

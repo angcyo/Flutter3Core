@@ -7,6 +7,9 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 /// @date 2025/04/17
 ///
 void main() {
+  //[85, 221]
+  print("55DD".toHexBytes());
+
   print(bytesWriter((writer) {
     writer.writeFillHex(length: 100);
   }).utf8Str);

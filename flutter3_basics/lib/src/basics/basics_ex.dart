@@ -2811,6 +2811,41 @@ extension ListEx<T> on List<T> {
     }).toList(growable: growable);
   }
 
+  /// 在列表中查找一组连续的数据
+  /// [List]
+  /// [indexOf]
+  int indexListOf(List<T>? elementList, [int start = 0]) {
+    int index = -1;
+    if (elementList == null ||
+        elementList.isEmpty ||
+        length < elementList.length) {
+      return index;
+    }
+    for (var i = start; i < length; i++) {
+      final e = this[i];
+
+      if (e == elementList[0]) {
+        //第一个匹配成功, 进行后续的匹配
+        index = i;
+        for (var j = 1; j < elementList.length; j++) {
+          final old = getOrNull(i + j);
+          if (old == null) {
+            return index;
+          } else if (old != elementList[j]) {
+            //next元素匹配失败
+            index = -1;
+            break;
+          }
+        }
+        if (index != -1) {
+          //找到
+          return index;
+        }
+      }
+    }
+    return index;
+  }
+
   /// [List]
   int? indexOfOrNull(T? element, [int start = 0]) {
     if (element == null) {

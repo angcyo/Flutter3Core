@@ -11,6 +11,10 @@ mixin SocketMixin {
   @configProperty
   Duration? socketConnectTimeoutMixin = Duration(seconds: 5);
 
+  /// 接收数据的回调
+  @configProperty
+  void Function(Uint8List bytes)? onReceiveDataActionMixin;
+
   //--
 
   /// 连上的[Socket]
@@ -44,6 +48,7 @@ mixin SocketMixin {
       );
       socketSubscriptionMixin = socketMixin?.listen(
         (value) {
+          onReceiveDataActionMixin?.call(value);
           onReceiveAction?.call(value, null);
         },
         onDone: () {
@@ -52,6 +57,7 @@ mixin SocketMixin {
             return true;
           }());
           onReceiveAction?.call(null, null);
+          disconnectSocket();
         },
         onError: (e) {
           assert(() {
@@ -84,13 +90,31 @@ mixin SocketMixin {
     socketSubscriptionMixin = null;
   }
 
-  //--
+  /// 写入字节数据到[Socket]
+  @api
+  bool writeSocket(List<int> bytes) {
+    if (socketMixin == null) {
+      return false;
+    }
+    try {
+      socketMixin?.add(bytes);
+      return true;
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      return false;
+    }
+  }
+
+//--
 
   /// 如果在[State]中, 也会触发此方法
   /// ```
   /// dispose() implementations must always call their superclass dispose() method, to ensure that all the resources used by the widget are fully released.
   /// ```
-  /*void release() {
+/*void release() {
     disconnectSocket();
   }*/
 }
