@@ -393,7 +393,7 @@ mixin AbsScrollPage {
 ///
 mixin RebuildBodyMixin {
   /// [buildBody]更新的信号
-  final UpdateSignalNotifier bodyUpdateSignal = UpdateSignalNotifier(null);
+  final bodyUpdateSignal = UpdateSignalNotifier<Object?>(null);
 
   /// 重建[buildBody]
   @updateMark
@@ -414,8 +414,7 @@ mixin RebuildBodyMixin {
 ///
 mixin RebuildScrollChildrenMixin {
   /// [buildBody]更新的信号
-  final UpdateSignalNotifier scrollChildrenUpdateSignal =
-      UpdateSignalNotifier(null);
+  final scrollChildrenUpdateSignal = UpdateSignalNotifier<Object?>(null);
 
   /// 重建[RScrollView]的滚动体内容
   @updateMark
@@ -431,7 +430,7 @@ mixin RebuildScrollChildrenMixin {
 
 mixin RebuildPageTitleMixin {
   /// 标题更新的信号
-  final UpdateSignalNotifier titleUpdateSignal = UpdateSignalNotifier(null);
+  final titleUpdateSignal = UpdateSignalNotifier<Object?>(null);
 
   /// 重建[RScrollView]的滚动体内容
   @updateMark

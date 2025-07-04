@@ -42,8 +42,7 @@ mixin PageViewMixin<T extends StatefulWidget>
   }
 
   /// page切换之后的更新信号
-  final UpdateSignalNotifier pageChangedUpdateSignal =
-      UpdateSignalNotifier(null);
+  final pageChangedUpdateSignal = UpdateSignalNotifier<Object?>(null);
 
   @override
   void initState() {

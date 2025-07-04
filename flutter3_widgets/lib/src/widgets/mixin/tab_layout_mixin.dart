@@ -22,8 +22,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   TabLayoutController get tabLayoutController => _tabLayoutControllerMixin;
 
   /// tab选中之后的更新信号
-  final UpdateSignalNotifier tabSelectedUpdateSignal =
-      UpdateSignalNotifier(null);
+  final tabSelectedUpdateSignal = UpdateSignalNotifier<int?>(null);
 
   @override
   void dispose() {
@@ -251,6 +250,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         if (autoClick) {
           body = body
               .mapIndex((child, index) => child.click(() {
+                    l.w("点击了: $index");
                     if (this is PageViewMixin) {
                       tabLayoutController.selectedItem(
                         index,
@@ -310,11 +310,11 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   /// tab索引改变回调
   @overridePoint
   void onSelfTabIndexChanged(BuildContext context, int from, int to) {
-    tabSelectedUpdateSignal.updateValue(to);
     assert(() {
       l.v('onSelfTabIndexChanged:$from->$to');
       return true;
     }());
+    tabSelectedUpdateSignal.updateValue(to);
   }
 
 //endregion --TabLayout--
