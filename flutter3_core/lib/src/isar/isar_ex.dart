@@ -127,6 +127,7 @@ Future<void> openIsar([
 
   defIsarFilePath = isarPath.join("$name.isar");
   assert(() {
+    //Android : /storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/isar/isar.isar :1MB
     l.i("[$name]isar数据库路径:$defIsarFilePath :${defIsarFilePath.file().lengthSync().toSizeStr()}");
     return true;
   }());
