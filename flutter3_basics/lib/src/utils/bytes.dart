@@ -123,14 +123,14 @@ class BytesWriter {
     writeLong(value, length, Endian.little);
   }
 
-  /// 写入float
+  /// 写入float, 单精度4个字节, 32位
   void writeFloat(double value, [int? length = 4, Endian? endian]) {
     final bd = ByteData(4);
     bd.setFloat32(0, value, endian ?? this.endian);
     writeBytes(bd.bytes, length);
   }
 
-  /// 写入double
+  /// 写入double, 双精度8个字节, 64位
   void writeDouble(double value, [int? length = 8, Endian? endian]) {
     final bd = ByteData(8);
     bd.setFloat64(0, value, endian ?? this.endian);
