@@ -6,13 +6,19 @@ part of '../flutter3_ffi.dart';
 /// @date 2024/04/30
 ///
 /// ffi扩展
+///
+/// [FfiListIntEx]
+/// [FfiListDoubleEx]
+///
+/// [FfiVecUint8Ex]
+/// [FfiVecDoubleEx]
 extension FfiListIntEx on List<int> {
   /// 转成[Vec_uint8_t]
   ffi.Pointer<Vec_uint8_t> toVecUint8() {
     final bytes = this;
     //创建一个指针, 用来ffi传递
     final ffi.Pointer<ffi.Uint8> bytesPtr =
-        calloc.allocate<ffi.Uint8>(bytes.length);
+    calloc.allocate<ffi.Uint8>(bytes.length);
     final Uint8List nativeBytes = bytesPtr.asTypedList(bytes.length);
     nativeBytes.setAll(0, bytes);
 
@@ -28,13 +34,14 @@ extension FfiListIntEx on List<int> {
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {
     Stopwatch? watch;
     if (kDebugMode) {
-      watch = Stopwatch()..start();
+      watch = Stopwatch()
+        ..start();
     }
     final bytes = this;
     //创建一个指针, 用来ffi传递
     //分配内存: 55ms
     final ffi.Pointer<ffi.Uint8> bytesPtr =
-        calloc.allocate<ffi.Uint8>(bytes.length);
+    calloc.allocate<ffi.Uint8>(bytes.length);
     final Uint8List nativeBytes = bytesPtr.asTypedList(bytes.length);
     nativeBytes.setAll(0, bytes);
 
@@ -51,7 +58,8 @@ extension FfiListIntEx on List<int> {
       }
       Stopwatch? watch2;
       if (kDebugMode) {
-        watch2 = Stopwatch()..start();
+        watch2 = Stopwatch()
+          ..start();
       }
       //执行耗时: 4688ms
       final result = action(ptr);
@@ -72,6 +80,11 @@ extension FfiListIntEx on List<int> {
   }
 }
 
+/// [FfiListIntEx]
+/// [FfiListDoubleEx]
+///
+/// [FfiVecUint8Ex]
+/// [FfiVecDoubleEx]
 extension FfiVecUint8Ex on Vec_uint8_t {
   /// 转成字节
   Uint8List toBytes() {
@@ -102,13 +115,18 @@ extension FfiVecUint8Ex on Vec_uint8_t {
   String toStr() => utf8.decode(toBytes());
 }
 
+/// [FfiListIntEx]
+/// [FfiListDoubleEx]
+///
+/// [FfiVecUint8Ex]
+/// [FfiVecDoubleEx]
 extension FfiListDoubleEx on List<double> {
   /// 转成[Vec_double_t]
   ffi.Pointer<Vec_double_t> toVecDouble() {
     final bytes = this;
     //创建一个指针, 用来ffi传递
     final ffi.Pointer<ffi.Double> bytesPtr =
-        calloc.allocate<ffi.Double>(bytes.length);
+    calloc.allocate<ffi.Double>(bytes.length);
     final Float64List nativeBytes = bytesPtr.asTypedList(bytes.length);
     nativeBytes.setAll(0, bytes);
     //ffi传递的结构体
@@ -153,12 +171,14 @@ extension FfiListListDoubleEx on List<List<double>> {
     final bytes = this;
     //创建一个指针, 用来ffi传递
     final ffi.Pointer<Vec_double_t> bytesPtr =
-        calloc.allocate<Vec_double_t>(bytes.length);
+    calloc.allocate<Vec_double_t>(bytes.length);
 
     for (var i = 0; i < bytes.length; i++) {
       final list = bytes[i];
       //list.toVecDouble()
-      final ref = list.toVecDouble().ref;
+      final ref = list
+          .toVecDouble()
+          .ref;
       bytesPtr[i] = ref;
       //bytesPtr.elementAt(i);
       //bytesPtr += ref;
@@ -259,10 +279,8 @@ extension FfiPixelsImageEx on PixelsImage {
 }
 
 /// 批量创建[Vec_uint8_t]指针
-R? ffiPtrList<R>(
-  R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
-  List<dynamic> args,
-) {
+R? ffiPtrList<R>(R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
+    List<dynamic> args,) {
   final ptrList = <ffi.Pointer<Vec_uint8_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
@@ -271,6 +289,46 @@ R? ffiPtrList<R>(
     } else if (arg is List<int>) {
       ptrList.add(arg.toVecUint8());
     } else if (arg is ffi.Pointer<Vec_uint8_t>) {
+      ptrList.add(arg);
+    } else {
+      assert(() {
+        print("无法处理的类型: [${arg.runtimeType}]");
+        return true;
+      }());
+    }
+  }
+  try {
+    return action(ptrList);
+  } catch (e, s) {
+    assert(() {
+      FlutterError.dumpErrorToConsole(
+        FlutterErrorDetails(
+          exception: e,
+          stack: s /*?? StackTrace.current*/,
+        ),
+        forceReport: true,
+      );
+      return true;
+    }());
+  } finally {
+    for (final element in ptrList) {
+      calloc.free(element.ref.ptr);
+      calloc.free(element);
+    }
+  }
+  return null;
+}
+
+/// 批量创建[Vec_double_t]指针
+R? ffiPtrDoubleList<R>(
+    R? Function(List<ffi.Pointer<Vec_double_t>> ptrList) action,
+    List<dynamic> args,) {
+  final ptrList = <ffi.Pointer<Vec_double_t>>[];
+  for (var i = 0; i < args.length; i++) {
+    final arg = args[i];
+    if (arg is List<double>) {
+      ptrList.add(arg.toVecDouble());
+    } else if (arg is ffi.Pointer<Vec_double_t>) {
       ptrList.add(arg);
     } else {
       assert(() {
