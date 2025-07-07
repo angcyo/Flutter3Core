@@ -92,3 +92,22 @@ final class PixelsImage extends ffi.Struct {
 ///
 /// 像素图片
 typedef PixelsImage_t = PixelsImage;
+
+/// \brief
+/// Same as [`Vec<T>`][`rust::Vec`], but with guaranteed `#[repr(C)]` layout
+final class Vec_float extends ffi.Struct {
+  /// <No documentation available>
+  external ffi.Pointer<ffi.Float> ptr;
+
+  /// <No documentation available>
+  @ffi.Size()
+  external int len;
+
+  /// <No documentation available>
+  @ffi.Size()
+  external int cap;
+}
+
+/// \brief
+/// Same as [`Vec<T>`][`rust::Vec`], but with guaranteed `#[repr(C)]` layout
+typedef Vec_float_t = Vec_float;

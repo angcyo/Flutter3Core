@@ -18,7 +18,7 @@ extension FfiListIntEx on List<int> {
     final bytes = this;
     //创建一个指针, 用来ffi传递
     final ffi.Pointer<ffi.Uint8> bytesPtr =
-    calloc.allocate<ffi.Uint8>(bytes.length);
+        calloc.allocate<ffi.Uint8>(bytes.length);
     final Uint8List nativeBytes = bytesPtr.asTypedList(bytes.length);
     nativeBytes.setAll(0, bytes);
 
@@ -34,14 +34,13 @@ extension FfiListIntEx on List<int> {
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {
     Stopwatch? watch;
     if (kDebugMode) {
-      watch = Stopwatch()
-        ..start();
+      watch = Stopwatch()..start();
     }
     final bytes = this;
     //创建一个指针, 用来ffi传递
     //分配内存: 55ms
     final ffi.Pointer<ffi.Uint8> bytesPtr =
-    calloc.allocate<ffi.Uint8>(bytes.length);
+        calloc.allocate<ffi.Uint8>(bytes.length);
     final Uint8List nativeBytes = bytesPtr.asTypedList(bytes.length);
     nativeBytes.setAll(0, bytes);
 
@@ -58,8 +57,7 @@ extension FfiListIntEx on List<int> {
       }
       Stopwatch? watch2;
       if (kDebugMode) {
-        watch2 = Stopwatch()
-          ..start();
+        watch2 = Stopwatch()..start();
       }
       //执行耗时: 4688ms
       final result = action(ptr);
@@ -113,6 +111,9 @@ extension FfiVecUint8Ex on Vec_uint8_t {
 
   /// 转成字符串
   String toStr() => utf8.decode(toBytes());
+
+  /// [toStr]
+  String toUtf8() => toStr();
 }
 
 /// [FfiListIntEx]
@@ -121,12 +122,28 @@ extension FfiVecUint8Ex on Vec_uint8_t {
 /// [FfiVecUint8Ex]
 /// [FfiVecDoubleEx]
 extension FfiListDoubleEx on List<double> {
+  /// 转成[Vec_float_t]
+  ffi.Pointer<Vec_float_t> toVecFloat() {
+    final bytes = this;
+    //创建一个指针, 用来ffi传递
+    final ffi.Pointer<ffi.Float> bytesPtr =
+        calloc.allocate<ffi.Float>(bytes.length);
+    final Float32List nativeBytes = bytesPtr.asTypedList(bytes.length);
+    nativeBytes.setAll(0, bytes);
+    //ffi传递的结构体
+    final ptr = calloc<Vec_float_t>();
+    ptr.ref.ptr = bytesPtr;
+    ptr.ref.len = bytes.length;
+    ptr.ref.cap = bytes.length;
+    return ptr;
+  }
+
   /// 转成[Vec_double_t]
   ffi.Pointer<Vec_double_t> toVecDouble() {
     final bytes = this;
     //创建一个指针, 用来ffi传递
     final ffi.Pointer<ffi.Double> bytesPtr =
-    calloc.allocate<ffi.Double>(bytes.length);
+        calloc.allocate<ffi.Double>(bytes.length);
     final Float64List nativeBytes = bytesPtr.asTypedList(bytes.length);
     nativeBytes.setAll(0, bytes);
     //ffi传递的结构体
@@ -137,7 +154,10 @@ extension FfiListDoubleEx on List<double> {
     return ptr;
   }
 
+  //--
+
   /// 自动释放内存
+  /// [toVecDouble]
   R? withVecDouble<R>(R? Function(ffi.Pointer<Vec_double_t> ptr) action) {
     final ptr = toVecDouble();
     try {
@@ -152,15 +172,58 @@ extension FfiListDoubleEx on List<double> {
       calloc.free(ptr);
     }
   }
+
+  /// 自动释放内存
+  /// [toVecFloat]
+  R? withVecFloat<R>(R? Function(ffi.Pointer<Vec_float_t> ptr) action) {
+    final ptr = toVecFloat();
+    try {
+      return action(ptr);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    } finally {
+      calloc.free(ptr.ref.ptr);
+      calloc.free(ptr);
+    }
+  }
+}
+
+extension FfiVecFloatEx on Vec_float_t {
+  /// 转成列表[Float32List]
+  ///
+  /// ```
+  /// 此方法调用多次会崩溃...
+  /// Abort message: 'Scudo ERROR: corrupted chunk header at address 0x200007a2a3f87b0'
+  /// ```
+  Float32List toFloatList() {
+    final result = ptr;
+    final reversedBytes = result.asTypedList(len);
+    try {
+      return Float32List.fromList(reversedBytes);
+    } finally {
+      calloc.free(result);
+    }
+  }
 }
 
 extension FfiVecDoubleEx on Vec_double_t {
   /// 转成列表[Float64List]
+  ///
+  /// ```
+  /// 此方法调用多次会崩溃...
+  /// Abort message: 'Scudo ERROR: corrupted chunk header at address 0x200007a2a3f87b0'
+  /// ```
   Float64List toDoubleList() {
     final result = ptr;
     final reversedBytes = result.asTypedList(len);
-    //calloc.free(result);
-    return reversedBytes;
+    try {
+      return Float64List.fromList(reversedBytes);
+    } finally {
+      calloc.free(result);
+    }
   }
 }
 
@@ -171,14 +234,12 @@ extension FfiListListDoubleEx on List<List<double>> {
     final bytes = this;
     //创建一个指针, 用来ffi传递
     final ffi.Pointer<Vec_double_t> bytesPtr =
-    calloc.allocate<Vec_double_t>(bytes.length);
+        calloc.allocate<Vec_double_t>(bytes.length);
 
     for (var i = 0; i < bytes.length; i++) {
       final list = bytes[i];
       //list.toVecDouble()
-      final ref = list
-          .toVecDouble()
-          .ref;
+      final ref = list.toVecDouble().ref;
       bytesPtr[i] = ref;
       //bytesPtr.elementAt(i);
       //bytesPtr += ref;
@@ -279,8 +340,10 @@ extension FfiPixelsImageEx on PixelsImage {
 }
 
 /// 批量创建[Vec_uint8_t]指针
-R? ffiPtrList<R>(R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
-    List<dynamic> args,) {
+R? ffiPtrList<R>(
+  R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
+  List<dynamic> args,
+) {
   final ptrList = <ffi.Pointer<Vec_uint8_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
@@ -321,8 +384,9 @@ R? ffiPtrList<R>(R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
 
 /// 批量创建[Vec_double_t]指针
 R? ffiPtrDoubleList<R>(
-    R? Function(List<ffi.Pointer<Vec_double_t>> ptrList) action,
-    List<dynamic> args,) {
+  R? Function(List<ffi.Pointer<Vec_double_t>> ptrList) action,
+  List<dynamic> args,
+) {
   final ptrList = <ffi.Pointer<Vec_double_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
