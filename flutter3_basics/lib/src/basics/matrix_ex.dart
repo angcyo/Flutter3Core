@@ -737,6 +737,7 @@ Matrix4 createMatrix4({
 ///
 /// [Matrix4Ex.toMatrix3]
 ///
+@Deprecated("请使用[createPerspectiveMatrix2]")
 Matrix4 createPerspectiveMatrix(List<Offset> from, List<Offset> to) {
   assert(from.length == 4 && to.length == 4);
 
@@ -852,4 +853,105 @@ List<double> _solve(List<List<double>> A, List<double> b) {
   }
 
   return x; // 返回解向量
+}
+
+/// Dart 纯实现：4点求透视矩阵, 8个点坐标.（单精度）
+/// [createPerspectiveMatrix]
+/// [createPerspectiveMatrix2]
+Matrix3 createPerspectiveMatrix2(List<double> from, List<double> to) {
+  assert(from.length >= 8 && to.length >= 8);
+
+  // 构建8x9增广矩阵
+  List<List<double>> A = List.generate(8, (_) => List.filled(9, 0.0));
+
+  for (int i = 0; i < 4; i++) {
+    final index = i * 2;
+    final index2 = i * 2 + 1;
+    double x = from[index], y = from[index2];
+    double u = to[index], v = to[index2];
+
+    A[index][0] = x;
+    A[index][1] = y;
+    A[index][2] = 1;
+    A[index][3] = 0;
+    A[index][4] = 0;
+    A[index][5] = 0;
+    A[index][6] = -u * x;
+    A[index][7] = -u * y;
+    A[index][8] = -u;
+
+    A[index2][0] = 0;
+    A[index2][1] = 0;
+    A[index2][2] = 0;
+    A[index2][3] = x;
+    A[index2][4] = y;
+    A[index2][5] = 1;
+    A[index2][6] = -v * x;
+    A[index2][7] = -v * y;
+    A[index2][8] = -v;
+  }
+
+  // 高斯-约旦消元，解 null space
+  List<double> h = _solveHomographyMatrix(A);
+
+  // 得到3x3矩阵（最后一位归一化为1.0）
+  //debugger();
+  //return Matrix3.fromList(h);
+  /*return [
+    [h[0], h[1], h[2]],
+    [h[3], h[4], h[5]],
+    [h[6], h[7], h[8]],
+  ];*/
+  return Matrix3.columns(
+    Vector3(h[0], h[3], h[6]),
+    Vector3(h[1], h[4], h[7]),
+    Vector3(h[2], h[5], h[8]),
+  );
+}
+
+/// 解 8x9 增广矩阵的 null space，返回解向量
+List<double> _solveHomographyMatrix(List<List<double>> A) {
+  int row = A.length;
+  int col = A[0].length;
+
+  // 逐列消元
+  for (int i = 0; i < row; i++) {
+    // 寻找主元
+    int maxRow = i;
+    for (int k = i + 1; k < row; k++) {
+      if (A[k][i].abs() > A[maxRow][i].abs()) maxRow = k;
+    }
+    // 交换行
+    var temp = A[i];
+    A[i] = A[maxRow];
+    A[maxRow] = temp;
+
+    // 主元归一化
+    double div = A[i][i];
+    if (div.abs() < 1e-12) continue;
+    for (int j = i; j < col; j++) {
+      A[i][j] /= div;
+    }
+
+    // 消元
+    for (int k = 0; k < row; k++) {
+      if (k == i) continue;
+      double factor = A[k][i];
+      for (int j = i; j < col; j++) {
+        A[k][j] -= factor * A[i][j];
+      }
+    }
+  }
+
+  // 取最后一列（自由变量）为1，回代解
+  List<double> h = List.filled(9, 0.0);
+  h[8] = 1.0;
+  for (int i = row - 1; i >= 0; i--) {
+    double s = 0.0;
+    for (int j = i + 1; j < 8; j++) {
+      s += A[i][j] * h[j];
+    }
+    h[i] = -s - A[i][8] * h[8];
+  }
+  return h;
 }
