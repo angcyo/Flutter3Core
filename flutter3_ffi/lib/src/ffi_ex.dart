@@ -14,6 +14,10 @@ part of '../flutter3_ffi.dart';
 /// [FfiVecDoubleEx]
 extension FfiListIntEx on List<int> {
   /// 转成[Vec_uint8_t]
+  /// [StringUtf8Pointer.toNativeUtf8]
+  ///
+  /// [malloc]
+  /// [calloc]
   ffi.Pointer<Vec_uint8_t> toVecUint8() {
     final bytes = this;
     //创建一个指针, 用来ffi传递
@@ -108,9 +112,11 @@ extension FfiVecUint8Ex on Vec_uint8_t {
   }
 
   /// 转成字符串
+  /// [Utf8Pointer.toDartString]
   String toStr() => utf8.decode(toBytes());
 
   /// [toStr]
+  /// [Utf8Pointer.toDartString]
   String toUtf8() => toStr();
 }
 

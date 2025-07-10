@@ -94,6 +94,58 @@ final class PixelsImage extends ffi.Struct {
 typedef PixelsImage_t = PixelsImage;
 
 /// \brief
+/// `Arc<dyn Send + Sync + Fn() -> Ret>`
+final class ArcDynFn0_void extends ffi.Struct {
+  /// <No documentation available>
+  external ffi.Pointer<ffi.Void> env_ptr;
+
+  /// <No documentation available>
+  external ffi.Pointer<
+      ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>
+  >
+  call;
+
+  /// <No documentation available>
+  external ffi.Pointer<
+      ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>
+  >
+  release;
+
+  /// <No documentation available>
+  external ffi.Pointer<
+      ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>
+  >
+  retain;
+}
+
+/// \brief
+/// `Arc<dyn Send + Sync + Fn() -> Ret>`
+typedef ArcDynFn0_void_t = ArcDynFn0_void;
+
+/// \brief
+/// `Box<dyn 'static + Send + FnMut() -> Ret>`
+final class BoxDynFnMut0_void extends ffi.Struct {
+  /// <No documentation available>
+  external ffi.Pointer<ffi.Void> env_ptr;
+
+  /// <No documentation available>
+  external ffi.Pointer<
+      ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>
+  >
+  call;
+
+  /// <No documentation available>
+  external ffi.Pointer<
+      ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>
+  >
+  free;
+}
+
+/// \brief
+/// `Box<dyn 'static + Send + FnMut() -> Ret>`
+typedef BoxDynFnMut0_void_t = BoxDynFnMut0_void;
+
+/// \brief
 /// Same as [`Vec<T>`][`rust::Vec`], but with guaranteed `#[repr(C)]` layout
 final class Vec_float extends ffi.Struct {
   /// <No documentation available>
