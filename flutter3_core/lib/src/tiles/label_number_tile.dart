@@ -42,6 +42,8 @@ class LabelNumberTile extends StatefulWidget {
   final FutureValueCallback<num>? onConfirmChange;
 
   /// tile的填充
+  /// [GlobalTheme.tilePadding]
+  @defInjectMark
   final EdgeInsets? tilePadding;
 
   //--

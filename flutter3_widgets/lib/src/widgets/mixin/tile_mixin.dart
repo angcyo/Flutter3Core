@@ -312,7 +312,9 @@ mixin TileMixin {
                   )
                 : null)
         .click(onTap,
-            enable && !disableTap && (selectedDisableTap ? !isSelected : true));
+            enable: enable &&
+                !disableTap &&
+                (selectedDisableTap ? !isSelected : true));
   }
 
   //endregion ---构建小部件---

@@ -29,6 +29,10 @@ enum NumberKeyboardType {
   /// 键盘类型: 退格
   backspace,
 
+  /// 键盘类型: 清空
+  /// All Clear
+  clear,
+
   /// 键盘类型: 小数点
   decimal,
 
@@ -353,6 +357,8 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
           ).align(Alignment.center),
         ).click(() {
           _onSelfInput("", NumberKeyboardType.backspace);
+        }, onLongPress: () {
+          _onSelfInput("", NumberKeyboardType.clear);
         }),
         _createNumberButton("4", NumberKeyboardType.number),
         _createNumberButton("5", NumberKeyboardType.number),
@@ -553,6 +559,8 @@ class NumberKeyboardInputController {
       if (numberText.isNotEmpty) {
         numberText = numberText.substring(0, numberText.length - 1);
       }
+    } else if (type == NumberKeyboardType.clear) {
+      numberText = "";
     } else if (type == NumberKeyboardType.positiveNegative) {
       if (numberText.startsWith("-")) {
         numberText = numberText.substring(1);

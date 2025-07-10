@@ -149,7 +149,7 @@ class _WheelTileState extends State<WheelTile> {
         updateState();
         widget.onWheelIndexInput?.call(index);
       }
-    }, widget.enable && !isNil(widget.wheelValues)).paddingInsets(
+    }, enable: widget.enable && !isNil(widget.wheelValues)).paddingInsets(
         widget.margin);
   }
 }

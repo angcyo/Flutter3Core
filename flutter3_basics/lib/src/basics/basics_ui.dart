@@ -643,11 +643,11 @@ extension WidgetEx on Widget {
   /// 鼠标监听
   /// [Listener.onPointerSignal]
   Widget click(
-    GestureTapCallback? onTap, [
+    GestureTapCallback? onTap, {
     bool enable = true,
     GestureLongPressCallback? onLongPress,
     HitTestBehavior? behavior = HitTestBehavior.translucent,
-  ]) =>
+  }) =>
       onTap == null || !enable
           ? this
           : GestureDetector(

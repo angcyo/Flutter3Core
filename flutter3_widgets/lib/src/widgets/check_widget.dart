@@ -102,7 +102,7 @@ class _HighlightCheckWidgetState extends State<HighlightCheckWidget> {
                     widget.onValueChanged?.call(_currentValue);
                   });
                 },
-            widget.enableTap);
+            enable: widget.enableTap);
   }
 }
 
@@ -246,8 +246,8 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
                   widget.onValueChanged?.call(_currentValue);
                 });
               },
-          widget.enableTap,
-          widget.onLongPress,
+          enable: widget.enableTap,
+          onLongPress: widget.onLongPress,
         );
   }
 }
