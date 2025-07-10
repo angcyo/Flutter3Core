@@ -326,6 +326,21 @@ extension FfiVecVecDoubleEx on Vec_Vec_double_t {
 }
 
 extension FfiStringEx on String {
+
+  /// 转成[Vec_uint8_t]
+  Vec_uint8_t toVecUint8() {
+    final bytes = utf8.encode(this);
+    final ffi.Pointer<ffi.Uint8> bytesPtr = calloc<ffi.Uint8>(bytes.length);
+    final Uint8List nativeBytes = bytesPtr.asTypedList(bytes.length);
+    nativeBytes.setAll(0, bytes);
+    //ffi传递的结构体
+    final ptr = calloc<Vec_uint8_t>();
+    ptr.ref.ptr = bytesPtr;
+    ptr.ref.len = bytes.length;
+    ptr.ref.cap = bytes.length;
+    return ptr.ref;
+  }
+  
   /// [FfiListIntEx.withVecUint8]
   /// [nullptr]
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {

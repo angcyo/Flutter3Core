@@ -146,6 +146,35 @@ final class BoxDynFnMut0_void extends ffi.Struct {
 typedef BoxDynFnMut0_void_t = BoxDynFnMut0_void;
 
 /// \brief
+/// `Arc<dyn Send + Sync + Fn(A1) -> Ret>`
+final class ArcDynFn1_Vec_uint8_Vec_uint8 extends ffi.Struct {
+  /// <No documentation available>
+  external ffi.Pointer<ffi.Void> env_ptr;
+
+  /// <No documentation available>
+  external ffi.Pointer<
+      ffi.NativeFunction<Vec_uint8_t Function(ffi.Pointer<ffi.Void>, Vec_uint8_t)>
+  >
+  call;
+
+  /// <No documentation available>
+  external ffi.Pointer<
+      ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>
+  >
+  release;
+
+  /// <No documentation available>
+  external ffi.Pointer<
+      ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>
+  >
+  retain;
+}
+
+/// \brief
+/// `Arc<dyn Send + Sync + Fn(A1) -> Ret>`
+typedef ArcDynFn1_Vec_uint8_Vec_uint8_t = ArcDynFn1_Vec_uint8_Vec_uint8;
+
+/// \brief
 /// Same as [`Vec<T>`][`rust::Vec`], but with guaranteed `#[repr(C)]` layout
 final class Vec_float extends ffi.Struct {
   /// <No documentation available>
