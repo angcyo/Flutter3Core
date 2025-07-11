@@ -186,7 +186,7 @@ Future<List<NetworkInterface>> $getNetworkInterfaceList({
   return list;
 }
 
-/// 获取本地IP地址[InternetAddress]
+/// 获取本地IP地址[InternetAddress], 本机ip
 ///
 /// [$getNetworkInterfaceList]
 ///
