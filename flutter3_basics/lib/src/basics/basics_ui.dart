@@ -1698,6 +1698,7 @@ extension WidgetEx on Widget {
   /// [shadowBlurRadius] 阴影模糊半径
   /// [shadowOffset] 阴影偏移
   /// [shadowSpreadRadius] 阴影扩散半径
+  /// [decorationColor] 背景颜色
   ///
   /// [shadowCircle]
   /// [shadowRadius]

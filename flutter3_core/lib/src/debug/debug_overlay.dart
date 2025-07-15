@@ -36,7 +36,8 @@ class DebugOverlayButton extends StatefulWidget {
   State<DebugOverlayButton> createState() => _DebugOverlayButtonState();
 }
 
-class _DebugOverlayButtonState extends State<DebugOverlayButton> {
+class _DebugOverlayButtonState extends State<DebugOverlayButton>
+    with GlobalAppStateMixin {
   /// 当前位置
   late Offset offset;
 
@@ -49,13 +50,21 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton> {
   @override
   Widget build(BuildContext context) {
     //debugger();
-
+    final globalConfig = GlobalConfig.of(context);
+    final globalTheme = GlobalTheme.of(context);
     return Stack(
       children: [
         Positioned(
           left: offset.x,
           top: offset.y,
-          child: Icon(Icons.bug_report).box(size: 40).shadowCircle().gesture(
+          child: Icon(
+            Icons.bug_report,
+            color:
+                globalConfig.isThemeLight() ? globalTheme.icoNormalColor : null,
+          )
+              .box(size: 40)
+              .shadowCircle(decorationColor: globalTheme.themeWhiteColor)
+              .gesture(
             onPanUpdate: (details) {
               setState(() {
                 offset = offset + details.delta;
@@ -64,7 +73,7 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton> {
             onTap: () {
               //toast("click".text());
               //$globalDebugLabel = "debug";
-              //_testGlobalTheme(context);
+              _testGlobalTheme(context);
             },
           ),
         )
@@ -82,11 +91,11 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton> {
     } else {
       globalConfig.themeMode = ThemeMode.light;
     }
-    if (globalConfig.locale == null) {
+    /*if (globalConfig.locale == null) {
       globalConfig.locale = "en".toLocale();
     } else {
       globalConfig.locale = null;
-    }
+    }*/
     globalConfig.notifyThemeChanged();
   }
 }
