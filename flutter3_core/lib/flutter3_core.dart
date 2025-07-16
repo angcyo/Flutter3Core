@@ -49,6 +49,7 @@ part 'src/core/svg_core.dart';
 part 'src/core/hive_data_mix.dart';
 part 'src/debug/core_debug.dart';
 part 'src/debug/debug_file_page.dart';
+part 'src/debug/debug_mix.dart';
 part 'src/debug/debug_page.dart';
 part 'src/debug/navigator_route_overlay.dart';
 part 'src/debug/screen_capture_overlay.dart';
