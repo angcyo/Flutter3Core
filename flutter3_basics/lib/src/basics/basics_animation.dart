@@ -204,14 +204,16 @@ extension AnimationWidgetEx on Widget {
 
 /// 创建一个控制动画, 指定时间
 /// 在指定的时间内, 从[0~1]的动画变化回调
-/// [value] 初始值
-/// [lowerBound] 最小值
-/// [upperBound] 最大值
-/// [curve] 动画曲线[Curves.easeInOut] [Curves.easeOut]
-/// [vsync] [TickerProviderStateMixin] [SingleTickerProviderStateMixin]
+/// - [value] 初始值
+/// - [lowerBound] 最小值
+/// - [upperBound] 最大值
+/// - [curve] 动画曲线[Curves.easeInOut].[Curves.easeOut]
+/// - [vsync].[TickerProviderStateMixin].[SingleTickerProviderStateMixin]
 ///
-/// [AnimationController.stop] 停止动画
-/// [AnimationController.dispose] 释放资源
+/// - [AnimationController.stop] 停止动画
+/// - [AnimationController.dispose] 释放资源
+///
+/// - [startValueAnimation]
 AnimationController animation(
   TickerProvider vsync,
   void Function(double value, bool isCompleted) listener, {
@@ -249,7 +251,11 @@ AnimationController animation(
     ..addStatusListener((status) {
       assert(() {
         //AnimationStatus.forward -> AnimationStatus.completed
-        l.d('动画状态改变: $status');
+        if (status.isCompleted) {
+          l.d('动画状态改变: $status isCompleted:${status.isCompleted.toDC()} isDismissed:${status.isDismissed.toDC()}');
+        } else {
+          l.v('动画状态改变: $status isCompleted:${status.isCompleted.toDC()} isDismissed:${status.isDismissed.toDC()}');
+        }
         return true;
       }());
       listener(animation?.value ?? controller.value,
@@ -279,6 +285,8 @@ AnimationController matrixAnimation(
 }
 
 /// 启动一个值从[from]到[to]的变化动画
+/// [AnimationController.stop] 停止动画
+/// [AnimationController.dispose] 释放资源
 AnimationController startValueAnimation(
   double from,
   double to,

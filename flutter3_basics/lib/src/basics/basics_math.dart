@@ -194,15 +194,28 @@ bool greaterThan(num? value, num? num, {bool than = true, bool def = true}) {
 }
 
 /// 获取一个值在首尾值中平分的值
-/// [left] 左边的值
-/// [right] 右边的值
-/// [index] 当前第几段数据, 从0开始
-/// [count] 总共的段数
-/// [lerpDuration]
-/// [lerpDouble]
+/// - [left] 左边的值
+/// - [right] 右边的值
+/// - [index] 当前第几段数据, 从0开始
+/// - [count] 总共的段数
+/// - [lerpDuration]
+/// - [lerpDouble]
+/// - [lerpOffset]
 double lerpNum(num left, num right, int index, int count) {
   final step = (right - left) / math.max(1, (count - 1));
   return left + step * index;
+}
+
+double lerpDouble(double begin, double end, double progress) {
+  return begin + (end - begin) * progress;
+}
+
+/// [lerpOffset]
+Offset lerpOffset(Offset from, Offset to, double progress) {
+  return Offset(
+    lerpDouble(from.dx, to.dx, progress),
+    lerpDouble(from.dy, to.dy, progress),
+  );
 }
 
 /*enum Direction {

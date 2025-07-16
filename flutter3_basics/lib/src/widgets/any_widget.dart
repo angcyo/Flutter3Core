@@ -29,6 +29,18 @@ typedef AnyWidgetLayoutAction = Size? Function(
   dynamic initResult,
 );
 
+/// [performLayout]整体布局结束之后
+typedef AnyWidgetDidLayoutAction = void Function(
+  RenderBox render,
+  Size size,
+);
+
+/// [child]布局之后
+typedef AnyWidgetChildDidLayoutAction = void Function(
+  RenderBox render,
+  RenderBox child,
+);
+
 /// 获取绘制转换回调
 /// [AnyWidgetPaintAction]
 /// [AnyWidgetPaintTransformAction]
@@ -73,6 +85,12 @@ mixin AnyWidgetMixin<Data> {
 
   /// 计算布局大小的回调
   AnyWidgetLayoutAction? get onLayout;
+
+  /// 整个布局完成之后
+  AnyWidgetDidLayoutAction? get didLayout;
+
+  /// [child]布局完成之后
+  AnyWidgetChildDidLayoutAction? get didChildLayout;
 
   /// 绘制转换回调
   AnyWidgetPaintTransformAction? get onPaintTransform;
@@ -150,8 +168,10 @@ class _AnyRenderObject extends RenderProxyBoxWithHitTestBehavior {
             ?.call(this, constraints, boxSize, child.size, parentData);
         parentData.offset = offset ?? parentData.offset;
       }
+      config?.anyWidget?.didChildLayout?.call(this, child);
     }
     size = boxSize;
+    config?.anyWidget?.didLayout?.call(this, boxSize);
   }
 
   /// 在手势处理, 绘制涟漪效果时, 也会触发
@@ -317,10 +337,12 @@ class _AnyContainerRenderObject extends RenderBox
         if (afterOffset != null) {
           parentData.offset += afterOffset;
         }
+        config?.anyWidget?.didChildLayout?.call(this, child);
       }
     }
 
     size = boxSize;
+    config?.anyWidget?.didLayout?.call(this, boxSize);
   }
 
   @override
@@ -613,6 +635,8 @@ class AnyStatefulWidget<Data> extends StatefulWidget with AnyWidgetMixin<Data> {
     this.onInit,
     this.onGetChildOffset,
     this.onLayout,
+    this.didLayout,
+    this.didChildLayout,
     this.onPaintTransform,
     this.onBeforePaint,
     this.onAfterPaint,
@@ -636,6 +660,12 @@ class AnyStatefulWidget<Data> extends StatefulWidget with AnyWidgetMixin<Data> {
 
   @override
   final AnyWidgetLayoutAction? onLayout;
+
+  @override
+  final AnyWidgetDidLayoutAction? didLayout;
+
+  @override
+  final AnyWidgetChildDidLayoutAction? didChildLayout;
 
   @override
   final AnyWidgetPaintTransformAction? onPaintTransform;
@@ -682,6 +712,8 @@ class _AnyStatefulWidgetState extends State<AnyStatefulWidget> {
 }
 
 /// [AnyStatefulWidget]
+/// [$any]
+/// [$anyContainer]
 Widget $any<Data>({
   Key? key,
   //--
@@ -693,6 +725,8 @@ Widget $any<Data>({
   AnyWidgetInitAction<Data>? onInit,
   AnyWidgetOffsetAction? onGetChildOffset,
   AnyWidgetLayoutAction? onLayout,
+  AnyWidgetDidLayoutAction? didLayout,
+  AnyWidgetChildDidLayoutAction? didChildLayout,
   AnyWidgetPaintTransformAction? onPaintTransform,
   AnyWidgetPaintAction? onPaint,
   HitTestBehavior? behavior = HitTestBehavior.deferToChild,
@@ -704,6 +738,8 @@ Widget $any<Data>({
       onGetChildOffset: onGetChildOffset,
       onLayout:
           onLayout ?? (size == null ? null : (render, constraints, _) => size),
+      didLayout: didLayout,
+      didChildLayout: didChildLayout,
       onPaintTransform: onPaintTransform,
       onAfterPaint: onPaint,
       behavior: behavior,
@@ -723,6 +759,8 @@ class AnyContainerStatefulWidget<Data> extends StatefulWidget
     this.onInit,
     this.onGetChildOffset,
     this.onLayout,
+    this.didLayout,
+    this.didChildLayout,
     this.onPaintTransform,
     this.onBeforePaint,
     this.onAfterPaint,
@@ -746,6 +784,12 @@ class AnyContainerStatefulWidget<Data> extends StatefulWidget
 
   @override
   final AnyWidgetLayoutAction? onLayout;
+
+  @override
+  final AnyWidgetDidLayoutAction? didLayout;
+
+  @override
+  final AnyWidgetChildDidLayoutAction? didChildLayout;
 
   @override
   final AnyWidgetPaintTransformAction? onPaintTransform;
@@ -794,6 +838,8 @@ class _AnyContainerStatefulWidgetState
 }
 
 /// [AnyContainerStatefulWidget]
+/// [$any]
+/// [$anyContainer]
 Widget $anyContainer<Data>({
   Key? key,
   //--
@@ -805,6 +851,8 @@ Widget $anyContainer<Data>({
   AnyWidgetInitAction<Data>? onInit,
   AnyWidgetOffsetAction? onGetChildOffset,
   AnyWidgetLayoutAction? onLayout,
+  AnyWidgetDidLayoutAction? didLayout,
+  AnyWidgetChildDidLayoutAction? didChildLayout,
   AnyWidgetPaintTransformAction? onPaintTransform,
   AnyWidgetPaintAction? onPaint,
   HitTestBehavior? behavior = HitTestBehavior.deferToChild,
@@ -816,6 +864,8 @@ Widget $anyContainer<Data>({
       onGetChildOffset: onGetChildOffset,
       onLayout:
           onLayout ?? (size == null ? null : (render, constraints, _) => size),
+      didLayout: didLayout,
+      didChildLayout: didChildLayout,
       onPaintTransform: onPaintTransform,
       onAfterPaint: onPaint,
       behavior: behavior,

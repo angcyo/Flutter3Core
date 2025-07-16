@@ -37,7 +37,14 @@ class DebugOverlayButton extends StatefulWidget {
 }
 
 class _DebugOverlayButtonState extends State<DebugOverlayButton>
-    with GlobalAppStateMixin {
+    with
+        GlobalAppStateMixin,
+        TickerProviderStateMixin,
+        HookMixin,
+        HookStateMixin {
+  /// 按钮的大小
+  final buttonSize = 40.0;
+
   /// 当前位置
   late Offset offset;
 
@@ -62,13 +69,19 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton>
             color:
                 globalConfig.isThemeLight() ? globalTheme.icoNormalColor : null,
           )
-              .box(size: 40)
+              .box(size: buttonSize)
               .shadowCircle(decorationColor: globalTheme.themeWhiteColor)
               .gesture(
             onPanUpdate: (details) {
               setState(() {
                 offset = offset + details.delta;
               });
+            },
+            onPanStart: (details) {
+              disposeAnyByKey("animation");
+            },
+            onPanEnd: (details) {
+              _resetOffset();
             },
             onTap: () {
               //toast("click".text());
@@ -79,6 +92,27 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton>
         )
       ],
     );
+  }
+
+  /// 归位, 自动贴边
+  void _resetOffset() {
+    final currentOffset = offset;
+    final Offset targetOffset;
+    if (offset.dx + buttonSize / 2 > $screenWidth / 2) {
+      targetOffset = Offset($screenWidth - buttonSize, offset.dy);
+    } else {
+      targetOffset = Offset(0, offset.dy);
+    }
+    hookAnyByKey(
+        "animation",
+        animation(
+          this,
+          (value, isCompleted) {
+            offset = lerpOffset(currentOffset, targetOffset, value);
+            updateState();
+          },
+          curve: Curves.easeOut,
+        ));
   }
 
   //--

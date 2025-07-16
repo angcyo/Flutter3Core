@@ -18,16 +18,21 @@ part of '../../flutter3_basics.dart';
 mixin HookMixin {
   /// 资源
   @autoDispose
-  late final List<dynamic> _hookAnyList = [];
+  List<dynamic>? _hookAnyList;
+
+  /// 带key的资源
+  /// - [_hookAnyList]
+  @autoDispose
+  Map<String, List<dynamic>>? _hookAnyByKeyMap;
 
   /// 资源
   @autoDispose
-  late final Map<Listenable, VoidCallback> _hookAnyListenableMap = {};
+  Map<Listenable, VoidCallback>? _hookAnyListenableMap;
 
   /// 资源
   /// hive key 改变通知
   @autoDispose
-  late final Map<String, DebugValueChanged> _hookAnyKeyMap = {};
+  Map<String, DebugValueChanged>? _hookAnyKeyMap;
 
   //region --hook--
 
@@ -39,7 +44,34 @@ mixin HookMixin {
   @api
   @autoDispose
   void hookAny(dynamic any) {
-    _hookAnyList.add(any);
+    _hookAnyList ??= [];
+    _hookAnyList?.add(any);
+  }
+
+  /// - [hookAnyByKey]
+  /// - [disposeAnyByKey]
+  @api
+  @autoDispose
+  void hookAnyByKey(String key, dynamic any) {
+    _hookAnyByKeyMap ??= {};
+    _hookAnyByKeyMap?.putIn(key, any, () => []);
+  }
+
+  /// 释放
+  @api
+  void disposeAnyByKey(String key) {
+    try {
+      if (_hookAnyByKeyMap != null) {
+        final list = _hookAnyByKeyMap?.remove(key);
+        if (list != null) {
+          for (final any in list) {
+            _disposeAny(any);
+          }
+        }
+      }
+    } catch (e, s) {
+      //
+    }
   }
 
   /// 在[dispose]时, 释放所有hook的资源
@@ -53,7 +85,8 @@ mixin HookMixin {
     }
 
     key.onDebugValueChanged(debugValueChanged);
-    _hookAnyKeyMap[key] = debugValueChanged;
+    _hookAnyKeyMap ??= {};
+    _hookAnyKeyMap?[key] = debugValueChanged;
   }
 
   /// [hookAny]
@@ -63,11 +96,12 @@ mixin HookMixin {
     if (value == null) {
       return;
     }
-    final oldListener = _hookAnyListenableMap[value];
+    _hookAnyListenableMap ??= {};
+    final oldListener = _hookAnyListenableMap?[value];
     if (oldListener != null) {
       value.removeListener(oldListener);
     }
-    _hookAnyListenableMap[value] = action;
+    _hookAnyListenableMap?[value] = action;
     value.addListener(action);
   }
 
@@ -81,7 +115,8 @@ mixin HookMixin {
     if (value == null) {
       return;
     }
-    final oldListener = _hookAnyListenableMap[value];
+    _hookAnyListenableMap ??= {};
+    final oldListener = _hookAnyListenableMap?[value];
     if (oldListener != null) {
       value.removeListener(oldListener);
     }
@@ -98,7 +133,7 @@ mixin HookMixin {
       }
     }
 
-    _hookAnyListenableMap[value] = valueAction;
+    _hookAnyListenableMap?[value] = valueAction;
     value.addListener(valueAction);
   }
 
@@ -110,6 +145,7 @@ mixin HookMixin {
   @callPoint
   void disposeHook() {
     disposeAny();
+    disposeAnyByKeyAll();
     disposeAnyListenable();
     disposeAnyKey();
   }
@@ -117,76 +153,99 @@ mixin HookMixin {
   /// 释放
   void disposeAny() {
     try {
-      for (final any in _hookAnyList) {
-        try {
-          if (any is StreamSubscription) {
-            any.cancel();
-          } else if (any is AnimationController) {
-            any.dispose();
-          } else {
-            //兜底
-            try {
-              any.cancel();
-            } catch (e) {
-              //no op
-            }
-            try {
-              any.dispose();
-            } catch (e) {
-              //no op
-            }
-          }
-        } catch (e) {
-          assert(() {
-            l.e(e);
-            return true;
-          }());
+      if (_hookAnyList != null) {
+        for (final any in _hookAnyList!) {
+          _disposeAny(any);
         }
       }
     } finally {
-      _hookAnyList.clear();
+      _hookAnyList?.clear();
     }
   }
 
   /// 释放
   void disposeAnyListenable() {
     try {
-      for (final key in _hookAnyListenableMap.keys) {
-        try {
-          final value = _hookAnyListenableMap[key];
-          if (value != null) {
-            key.removeListener(value);
+      if (_hookAnyListenableMap != null) {
+        for (final key in _hookAnyListenableMap!.keys) {
+          try {
+            final value = _hookAnyListenableMap?[key];
+            if (value != null) {
+              key.removeListener(value);
+            }
+          } catch (e) {
+            assert(() {
+              l.e(e);
+              return true;
+            }());
           }
-        } catch (e) {
-          assert(() {
-            l.e(e);
-            return true;
-          }());
         }
       }
     } finally {
-      _hookAnyListenableMap.clear();
+      _hookAnyListenableMap?.clear();
+    }
+  }
+
+  /// 释放
+  void disposeAnyByKeyAll() {
+    try {
+      if (_hookAnyByKeyMap != null) {
+        for (final key in _hookAnyByKeyMap!.keys) {
+          disposeAnyByKey(key);
+        }
+      }
+    } finally {
+      _hookAnyByKeyMap?.clear();
     }
   }
 
   /// 释放
   void disposeAnyKey() {
     try {
-      for (final key in _hookAnyKeyMap.keys) {
-        try {
-          final value = _hookAnyKeyMap[key];
-          if (value is DebugValueChanged) {
-            key.removeDebugValueChanged(value);
+      if (_hookAnyKeyMap != null) {
+        for (final key in _hookAnyKeyMap!.keys) {
+          try {
+            final value = _hookAnyKeyMap?[key];
+            if (value is DebugValueChanged) {
+              key.removeDebugValueChanged(value);
+            }
+          } catch (e) {
+            assert(() {
+              l.e(e);
+              return true;
+            }());
           }
-        } catch (e) {
-          assert(() {
-            l.e(e);
-            return true;
-          }());
         }
       }
     } finally {
-      _hookAnyKeyMap.clear();
+      _hookAnyKeyMap?.clear();
+    }
+  }
+
+  void _disposeAny(dynamic any) {
+    try {
+      if (any is StreamSubscription) {
+        any.cancel();
+      } else if (any is AnimationController) {
+        any.dispose();
+      } else {
+        //兜底
+        try {
+          any.cancel();
+        } catch (e) {
+          //no op
+        }
+        try {
+          any.dispose();
+        } catch (e) {
+          //no op
+        }
+      }
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
     }
   }
 

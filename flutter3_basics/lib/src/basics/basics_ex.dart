@@ -3263,6 +3263,23 @@ extension MapEx<K, V> on Map<K, V> {
     }
     return this;
   }
+
+  /// 将一个值, put到value中
+  Map<K, V> putIn<T>(K? key, T item, V Function() ifAbsent) {
+    if (key == null) {
+      return this;
+    }
+    V? value = this[key] ??= putIfAbsent(key, ifAbsent);
+    if (value is List<T>) {
+      value.add(item);
+    } else {
+      assert(() {
+        l.w("[putIn]无法完成操作, 类型不匹配");
+        return true;
+      }());
+    }
+    return this;
+  }
 }
 
 //endregion Map 扩展
