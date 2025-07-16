@@ -254,7 +254,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   @api
   ThemeData initGlobalTheme(
     BuildContext? context,
-    ThemeData Function(GlobalTheme globalTheme, bool isLight) onGetThemeData, {
+    ThemeData Function(
+      GlobalTheme globalTheme,
+      bool isLight,
+      ThemeMode themeMode,
+    ) onGetThemeData, {
     GlobalTheme Function(bool isLight)? onGetGlobalTheme,
     Locale? locale,
     ThemeMode? themeMode,
@@ -271,10 +275,17 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     this.globalTheme = globalTheme;
 
     //主题数据
-    final themeData = onGetThemeData(globalTheme, isLight);
+    final themeData = onGetThemeData(globalTheme, isLight, this.themeMode);
     this.themeData = themeData;
 
     return themeData;
+  }
+
+  /// 包裹一个主题更改操作
+  @api
+  void updateThemeAction(FutureVoidAction action) async {
+    await action();
+    notifyThemeChanged();
   }
 
   /// 改变主题属性之后, 调用此方法通知
@@ -871,7 +882,7 @@ class PlaceholderBuildContext extends BuildContext {
 
 /// 混入一个主题改变回调
 /// [GlobalConfig]
-mixin GlobalAppStateMixin<T extends StatefulWidget, V> on State<T> {
+mixin GlobalAppStateMixin<T extends StatefulWidget> on State<T> {
   StreamSubscription<GlobalConfig?>? _subscription;
 
   @override
@@ -892,6 +903,15 @@ mixin GlobalAppStateMixin<T extends StatefulWidget, V> on State<T> {
 
   @overridePoint
   void onGlobalThemeChanged(GlobalConfig config) {}
+}
+
+extension ThemeModeEx on ThemeMode {
+  /// 获取当前主题的亮度
+  Brightness get brightness => this == ThemeMode.system
+      ? platformBrightness
+      : this == ThemeMode.light
+          ? Brightness.light
+          : Brightness.dark;
 }
 
 //endregion Mixin
