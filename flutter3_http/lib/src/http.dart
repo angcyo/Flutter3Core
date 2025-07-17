@@ -9,14 +9,14 @@ part of '../flutter3_http.dart';
 /// [HttpStatus] http状态码
 class Http {
   /// api host, 不需要/结尾
-  static String? baseUrl;
+  static final baseUrlData = $live<String?>();
 
   /// 获取一个[baseUrl]
-  static String? Function()? getBaseUrl = () => baseUrl;
+  static String? Function()? getBaseUrl = () => baseUrlData.value;
 }
 
-/// api host, 不需要/结尾
-String? get $host => Http.getBaseUrl?.call() ?? Http.baseUrl;
+/// api host, 不需要`/`结尾
+String? get $host => Http.getBaseUrl?.call() ?? Http.baseUrlData.value;
 
 extension HttpUriEx on Uri {
   /// 从Uri中获取字节数据
