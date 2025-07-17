@@ -126,8 +126,12 @@ void initAliyunOssSts({
   }
 
   assert(!isNil(stsUrl) || authGetter != null, "[initAliyunOssSts]初始化参数错误.");
-  assert(
-      !isNil(ossBucket) && !isNil(ossEndpoint), "[initAliyunOssSts]初始化参数错误.");
+  assert(() {
+    if (isNil(ossBucket) || isNil(ossEndpoint)) {
+      l.w("[initAliyunOssSts]未指定[ossBucket][ossEndpoint]参数");
+    }
+    return true;
+  }());
 
   OssClient._stsUrl = stsUrl;
   OssClient._ossBucket = ossBucket;
