@@ -229,6 +229,7 @@ const clipFlag = AnnotationMeta('Canvas Clip 操作, 消耗资源');
 const fromFramework = FromFramework('表示当前代码来自框架');
 const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 const animateFlag = AnnotationMeta('标识当前操作执行动画');
+const tempFlag = AnnotationMeta('临时存储的缓存');
 //--
 const platformFlag = PlatformFlag();
 const allPlatformFlag =
