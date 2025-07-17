@@ -125,7 +125,7 @@ void initAliyunOssSts({
     return;
   }
 
-  assert(!isNil(ossBucket) || authGetter != null, "[initAliyunOssSts]初始化参数错误.");
+  assert(!isNil(stsUrl) || authGetter != null, "[initAliyunOssSts]初始化参数错误.");
   assert(
       !isNil(ossBucket) && !isNil(ossEndpoint), "[initAliyunOssSts]初始化参数错误.");
 
