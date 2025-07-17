@@ -1,5 +1,8 @@
 library flutter3_oss;
 
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter_oss_aliyun/flutter_oss_aliyun.dart';
 
@@ -10,29 +13,131 @@ export 'package:flutter_oss_aliyun/flutter_oss_aliyun.dart';
 /// @date 2024-12-6
 ///
 /// oss sts document: https://help.aliyun.com/document_detail/100624.html
+///
+/// # 初始化oss
+///
+/// - [initAliyunOssSts]
+///
+/// 可能还需要在[$buildConfig]中配置
+/// - ossEndpoint
+/// - ossBucket
+/// - ossBaseUrl `可选`
+///
+/// ```script_build_config.json
+/// {
+///   ...
+///   "json": {
+///      ...
+///     "ossEndpoint": "https://oss-cn-hongkong.aliyuncs.com",
+///     "ossBucket": "xxx-prod",
+///     "ossBaseUrl": "https://xxx-prod.oss-cn-hongkong.aliyuncs.com/",
+///     ...
+///   },
+///   ...
+/// }
+/// ```
+///
+/// ## 查看阿里云OSS的Endpoint
+///
+/// `登录控制台`->`对象存储 OSS`->`Bucket 列表`->`Bucket 名称`->`概览`->`访问端口`.
+///
+/// `Bucket 域名` = `Bucket 名称`.`Endpoint`
+///
+/// # 上传单文件
+///
+/// - [uploadAliyunOssFile]
+///
+/// # 上传多文件
+///
+/// -[uploadAliyunOssFileList]
+///
 class OssClient {
   OssClient._();
 
   static Client? aliyunOssClient;
+
+  //--
+
+  @tempFlag
+  static String? _stsUrl;
+  @tempFlag
+  static String? _ossEndpoint;
+  @tempFlag
+  static String? _ossBucket;
+
+  //--
+
+  /// 阿里云OSS的Bucket 域名
+  static String? get ossBaseUrl {
+    final String? url = $buildConfig?["ossBaseUrl"];
+    if (url != null) {
+      return url;
+    }
+    String? ossBucket = $buildConfig?["ossBucket"];
+    String? ossEndpoint = $buildConfig?["ossEndpoint"];
+    if (ossBucket != null && ossEndpoint != null) {
+      if (ossEndpoint.startsWith("^https?://")) {
+        return "$ossBucket.$ossEndpoint";
+      }
+      return "https://$ossBucket.$ossEndpoint";
+    }
+    return null;
+  }
 }
 
 /// 使用sts授权的方式, 初始化阿里云oss
-/// [ossEndpoint] 不需要使用 `https://` 开头
+///
+/// sts默认应该返回以下结构: [Auth]
+/// ```
+/// {
+///   "AccessKeyId": "xxx",
+///   "AccessKeySecret": "xxx",
+///   "SecurityToken": "xxx",
+///   "Expiration": "xxx",
+/// }
+/// ```
+/// 非以上结构, 都需要自定义解析授权
+///
+/// - [ossEndpoint] 不需要使用 `https://` 开头
 @initialize
-void initAliyunOssSts(
-  String stsUrl, {
+void initAliyunOssSts({
+  String? stsUrl,
   String? ossEndpoint,
   String? ossBucket,
+  //--
+  FutureOr<Auth> Function()? authGetter,
+  //--
 }) {
   ossEndpoint ??= $buildConfig?["ossEndpoint"];
   ossBucket ??= $buildConfig?["ossBucket"];
-  if (ossEndpoint != null) {
+  if (ossEndpoint != null && ossEndpoint.startsWith("^https?://")) {
     ossEndpoint = ossEndpoint.replaceFirst(RegExp(r"^https?://"), "");
   }
+  stsUrl = stsUrl?.transformUrl().toApi();
+
+  if (OssClient._stsUrl == stsUrl &&
+      OssClient._ossBucket == ossBucket &&
+      OssClient._ossEndpoint == ossEndpoint) {
+    assert(() {
+      l.w("[initAliyunOssSts]不需要重新初始化.");
+      return true;
+    }());
+    return;
+  }
+
+  assert(!isNil(ossBucket) || authGetter != null, "[initAliyunOssSts]初始化参数错误.");
+  assert(
+      !isNil(ossBucket) && !isNil(ossEndpoint), "[initAliyunOssSts]初始化参数错误.");
+
+  OssClient._stsUrl = stsUrl;
+  OssClient._ossBucket = ossBucket;
+  OssClient._ossEndpoint = ossEndpoint;
+
   OssClient.aliyunOssClient = Client.init(
-    stsUrl: stsUrl.transformUrl().toApi(),
+    stsUrl: stsUrl,
     ossEndpoint: ossEndpoint ?? "",
     bucketName: ossBucket ?? "",
+    authGetter: authGetter,
     dio: rDio.dio,
   );
 }
@@ -89,9 +194,10 @@ PutRequestOption _putRequestOption({
 }
 
 /// 上传文件
-/// [bucketName] 不指定则使用默认的
-/// [key]
-/// [baseUrl] 下载拼接使用的地址
+/// - [bucketName] 不指定则使用默认的
+/// - [prefixKey] 前缀, 会拼上文件名然后当做[key]
+/// - [key] 上传文件的key, 不指定就是文件名
+/// - [baseUrl] 下载拼接使用的地址
 ///
 /// ```
 /// DioException [connection error]: The connection errored: Failed host lookup: 'laserpecker-prod.https' This indicates an error which most likely cannot be solved by the library.
@@ -99,9 +205,13 @@ PutRequestOption _putRequestOption({
 /// https://laserpecker-prod.oss-cn-hongkong.aliyuncs.com/6e44b305d1c94182a83fbf0846348fcd.lp2
 /// ```
 ///
-/// @return 返回文件可以下载的url地址
+/// - @return 返回文件可以下载的url地址
+///
+/// - [uploadAliyunOssBytes]
+/// - [uploadAliyunOssFile]
 Future<String> uploadAliyunOssFile(
   String filepath, {
+  String? prefixKey,
   String? key,
   CancelToken? cancelToken,
   //--
@@ -115,8 +225,10 @@ Future<String> uploadAliyunOssFile(
   ProgressDataAction? onReceiveAction,
 }) async {
   //--
-  key ??= filepath.fileName();
-  baseUrl ??= $buildConfig?["ossBaseUrl"];
+  key ??= prefixKey == null
+      ? filepath.fileName()
+      : "$prefixKey/${filepath.fileName()}";
+  baseUrl ??= OssClient.ossBaseUrl;
   await OssClient.aliyunOssClient!.putObjectFile(
     filepath,
     fileKey: key,
@@ -135,6 +247,7 @@ Future<String> uploadAliyunOssFile(
 /// [uploadAliyunOssFile]
 Future<List<String>> uploadAliyunOssFileList(
   List<String> pathList, {
+  String? prefixKey,
   List<String>? keyList,
   CancelToken? cancelToken,
   //--
@@ -146,7 +259,7 @@ Future<List<String>> uploadAliyunOssFileList(
   ProgressDataAction? onSendAction,
   ProgressDataAction? onReceiveAction,
 }) async {
-  baseUrl ??= $buildConfig?["ossBaseUrl"];
+  baseUrl ??= OssClient.ossBaseUrl;
 
   final List<AssetFileEntity> assetEntities = [];
   final List<String> result = [];
@@ -160,7 +273,10 @@ Future<List<String>> uploadAliyunOssFileList(
   int allReceiveCount = 0;
 
   pathList.forEachIndexed((index, filepath) {
-    final key = keyList?[index] ?? filepath.fileName();
+    final key = keyList?[index] ??
+        (prefixKey == null
+            ? filepath.fileName()
+            : "$prefixKey/${filepath.fileName()}");
     result.add((baseUrl ?? "").connectUrl(key));
     assetEntities.add(
       AssetFileEntity(
@@ -198,3 +314,41 @@ Future<List<String>> uploadAliyunOssFileList(
   );
   return result;
 }
+
+//region bytes
+
+/// 直接上传字节数据
+/// - [uploadAliyunOssFile]
+/// - [uploadAliyunOssBytes]
+Future<String> uploadAliyunOssBytes(
+  String key,
+  List<int> bytes, {
+  CancelToken? cancelToken,
+  //--
+  String? baseUrl,
+  //--
+  String? bucketName,
+  bool override = false,
+  PutRequestOption? option,
+  //--
+  ProgressDataAction? onSendAction,
+  ProgressDataAction? onReceiveAction,
+}) async {
+  baseUrl ??= OssClient.ossBaseUrl;
+  await OssClient.aliyunOssClient!.putObject(
+    bytes,
+    key,
+    cancelToken: cancelToken,
+    option: option ??
+        _putRequestOption(
+          bucketName: bucketName,
+          override: override,
+          onSendAction: onSendAction,
+          onReceiveAction: onReceiveAction,
+        ),
+  );
+  debugger();
+  return (baseUrl ?? "").connectUrl(key);
+}
+
+//endregion bytes
