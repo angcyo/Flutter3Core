@@ -482,14 +482,14 @@ class SingleCharTextPainter extends BaseTextPainter {
       return [];
     }
     final list = text.split('\n');
-    return list.map((e) => e.split('')).toList();
+    return list.map((e) => e.characters.clone()).clone();
   }
 
   /// 测量总体的大小
   /// 最终缓存在[_painterBounds]中
   void _measureCharPainterSize() {
     final list = charPainterList;
-    if (list == null) {
+    if (list == null || list.isEmpty) {
       _painterBounds = Rect.zero;
     } else {
       double width = -2147483648;
@@ -570,7 +570,7 @@ class SingleCharTextPainter extends BaseTextPainter {
   /// [crossTextAlign]
   void _measureCharPainterOffset() {
     final list = charPainterList;
-    if (list == null) {
+    if (list == null || list.isEmpty) {
       return;
     }
     for (final line in list) {
@@ -799,7 +799,9 @@ class SingleCharTextPainter extends BaseTextPainter {
       }
 
       //result
-      charPainterList.add(lineCharPainterList);
+      if (lineCharPainterList.isNotEmpty) {
+        charPainterList.add(lineCharPainterList);
+      }
 
       //下一行
       if (orientation.isVertical) {
