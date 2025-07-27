@@ -86,6 +86,10 @@ class ConfigFile {
             value!.writeToFile(file: file);
             onHttpAction?.call(value);
             onValueAction?.call(value);
+            assert(() {
+              l.i("保存配置[$key]: $httpUrl -> ${file.path}");
+              return true;
+            }());
           } catch (e) {
             assert(() {
               printError(e);

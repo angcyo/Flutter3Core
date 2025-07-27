@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -127,7 +125,17 @@ class BuildConfig {
   Map<String, dynamic>? json;
 
   /// [json]
-  dynamic operator [](Object? key) => json?[key];
+  dynamic operator [](Object? key) {
+    BuildConfig? rootConfig = this;
+    final rootPlatformConfig = rootConfig.platformMap?[$platformName];
+    final rootBuildTypeConfig = rootConfig.buildTypeMap?[rootConfig.buildType];
+    final rootBuildFlavorConfig = (rootBuildTypeConfig ?? rootConfig)
+        .buildFlavorMap?[rootConfig.buildFlavor];
+    return rootBuildFlavorConfig?.json?[key] /*buildFlavor*/ ??
+        rootBuildTypeConfig?.json?[key] /*buildType*/ ??
+        rootPlatformConfig?.json?[key] /*$platformName*/ ??
+        rootConfig.json?[key] /*this*/;
+  }
 
   /// 从自身中获取数据, 获取不到则从[$rootBuildConfig]中获取
   /// [json]
