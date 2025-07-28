@@ -271,15 +271,24 @@ extension FileEx on File {
   /// (OS Error: No such file or directory, errno = 2)
   /// ```
   /// [loadAssetString]
-  Future<String?> readString({Encoding encoding = utf8}) async {
+  Future<String?> readString({
+    Encoding encoding = utf8,
+    bool ignoreError = true,
+    bool ignoreErrorLog = false,
+  }) async {
     try {
       return await readAsString(encoding: encoding);
     } catch (e, s) {
-      assert(() {
-        l.e(e);
-        printError(e, s);
-        return true;
-      }());
+      if (!ignoreErrorLog) {
+        assert(() {
+          l.e(e);
+          printError(e, s);
+          return true;
+        }());
+      }
+      if (!ignoreError) {
+        rethrow;
+      }
     }
     return null;
   }

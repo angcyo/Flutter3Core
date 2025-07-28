@@ -182,7 +182,9 @@ OverlayEntry? toastInfo(
             Empty.width(8),
             Text(
               msg,
-              style: textStyle ?? GlobalConfig.def.globalTheme.textGeneralStyle,
+              style: textStyle ??
+                  GlobalConfig.def.globalTheme.textGeneralStyle.copyWith(
+                      color: GlobalConfig.def.globalTheme.themeWhiteColor),
             )
             /*Text(
               msg,

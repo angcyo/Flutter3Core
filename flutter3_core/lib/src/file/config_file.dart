@@ -119,7 +119,7 @@ class ConfigFile {
             : p.join(configFolder.path, subFolder, key))
         .file();
     try {
-      result = await file.readString();
+      result = await file.readString(ignoreErrorLog: true);
     } catch (e) {
       assert(() {
         l.w('读取配置文件失败[$file]:$e');
