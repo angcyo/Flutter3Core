@@ -39,13 +39,14 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }) {
     if (isNil(canvasStateList)) {
       addCanvasState(
-          CanvasStateData(
-            elements: canvasElementManager.elements,
-            undoList: canvasDelegate.canvasUndoManager.undoList,
-            redoList: canvasDelegate.canvasUndoManager.redoList,
-          ),
-          notify: notify,
-          selected: selected);
+        CanvasStateData(
+          elements: canvasElementManager.elements,
+          undoList: canvasDelegate.canvasUndoManager.undoList,
+          redoList: canvasDelegate.canvasUndoManager.redoList,
+        ),
+        notify: notify,
+        selected: selected,
+      );
     }
   }
 
@@ -68,7 +69,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       notifyBasics: notify,
       notifySelected: notify,
       //--
-      selectedElement: selectedElement,
+      selectedCanvasStateElement: selectedElement,
       followPainter: followPainter,
       followContent: followContent,
       //--
@@ -205,6 +206,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 切换选中的画布
+  /// - [canvasStateData] 需要选中的画布信息
+  /// - [selectedCanvasStateElement] 是否选中画布中的所有元素
   /// @return 操作是否成功
   @api
   bool selectCanvasState(
@@ -213,7 +216,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool notifySelected = true,
     UndoType undoType = UndoType.reset,
     //--
-    bool selectedElement = false,
+    bool selectedCanvasStateElement = false,
     bool followPainter = false,
     bool followContent = false,
     //--
@@ -229,26 +232,37 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     selectedCanvasState = canvasStateData;
     selectedCanvasState?.isSelected = true;
 
-    //取消选中元素
-    if (canvasElementManager.isSelectedElement) {
-      canvasElementManager.clearSelectedElement();
-    }
-
     // 切换画布中的元素
     final oldElements = canvasElementManager.elements.clone();
     final newElements = selectedCanvasState?.elements ?? [];
-    canvasElementManager.elements = newElements;
-    canvasElementManager.detachElementToCanvasDelegate(oldElements);
-    canvasElementManager.attachElementToCanvasDelegate(newElements);
+
+    // 一组新的元素, 初始化时, 元素可能就是旧的
+    final isNewElements = !newElements.equals(oldElements);
+    if (isNewElements) {
+      //如果有元素被取消选中元素
+      if (canvasElementManager.isSelectedElement) {
+        canvasElementManager.clearSelectedElement();
+      }
+      canvasElementManager.elements = newElements;
+      canvasElementManager.detachElementToCanvasDelegate(oldElements);
+      canvasElementManager.attachElementToCanvasDelegate(newElements);
+    } else {
+      canvasElementManager.elements = newElements;
+    }
 
     // 切换回退栈
     canvasDelegate.canvasUndoManager.undoList =
         selectedCanvasState?.undoList ?? [];
     canvasDelegate.canvasUndoManager.redoList =
         selectedCanvasState?.redoList ?? [];
+    canvasDelegate.dispatchCanvasUndoChanged(
+      canvasDelegate.canvasUndoManager,
+      undoType,
+    );
+    canvasDelegate.canvasUndoManager.notifyChanged(undoType);
 
     // 基础通知
-    if (notifyBasics) {
+    if (notifyBasics && isNewElements) {
       //通知之前的元素被清除
       canvasDelegate.canvasElementManager.canvasElementControlManager
           .onCanvasElementDeleted(
@@ -263,11 +277,6 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         ElementChangeType.set,
         undoType,
       );
-      canvasDelegate.dispatchCanvasUndoChanged(
-        canvasDelegate.canvasUndoManager,
-        undoType,
-      );
-      canvasDelegate.canvasUndoManager.notifyChanged(undoType);
       //--
       canvasDelegate.dispatchCanvasElementListRemoveChanged(
           canvasElementManager.elements, oldElements);
@@ -285,7 +294,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     // 选中元素/跟随元素
-    if (selectedElement) {
+    if (selectedCanvasStateElement) {
       canvasDelegate.canvasElementManager
           .resetSelectedElementList(newElements, selectType: selectType);
       if (followContent) {
