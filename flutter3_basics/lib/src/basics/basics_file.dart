@@ -274,9 +274,10 @@ extension FileEx on File {
   Future<String?> readString({Encoding encoding = utf8}) async {
     try {
       return await readAsString(encoding: encoding);
-    } catch (e) {
+    } catch (e, s) {
       assert(() {
         l.e(e);
+        printError(e, s);
         return true;
       }());
     }

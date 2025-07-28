@@ -672,6 +672,7 @@ class ScrollContainerController extends ScrollController {
     final count = scrollContainerChildrenBounds.length;
     if (index < 0 || index >= count) {
       assert(() {
+        debugger(when: count > 0);
         l.w('index out of range [0~$count]:$index');
         return true;
       }());

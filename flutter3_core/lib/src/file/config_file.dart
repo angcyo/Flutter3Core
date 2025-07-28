@@ -122,7 +122,7 @@ class ConfigFile {
       result = await file.readString();
     } catch (e) {
       assert(() {
-        l.w('读取文件失败[$file]:$e');
+        l.w('读取配置文件失败[$file]:$e');
         return true;
       }());
     }
