@@ -106,6 +106,17 @@ Offset alignRectOffset(
   return containsBounds.topLeft + offset;
 }
 
+/// 将一个很大目标的[childSize], 放到一个小一点的容器内[parentSize].
+/// 输出一个适合的[Size], 适合于[parentSize].
+Size applySizeFit(
+  Size parentSize,
+  Size childSize, {
+  BoxFit fit = BoxFit.scaleDown,
+}) {
+  final fitSize = applyBoxFit(fit, childSize, parentSize);
+  return fitSize.destination;
+}
+
 /// 将一个大小,按照[fit].[alignment]规则, 返回计算后的位置和大小
 /// [parentRect] 容器大小
 /// [childRect] 目标child大小

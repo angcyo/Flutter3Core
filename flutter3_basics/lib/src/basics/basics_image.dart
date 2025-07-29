@@ -432,6 +432,29 @@ extension ImageEx on UiImage {
         scaleMatrix ?? createScaleMatrix(sx: scale ?? sx, sy: scale ?? sy));
   }
 
+  /// 缩放图片到指定大小, 如果只指定了一个参数, 则等比缩
+  Future<UiImage> scaleTo({
+    double? width,
+    double? height,
+  }) async {
+    if (width == null && height == null) {
+      return this;
+    }
+    final w = this.width.toDouble();
+    final h = this.height.toDouble();
+
+    if (width != null && height != null) {
+      return scale(sx: width / w, sy: height / h);
+    } else if (width != null) {
+      final scale = width / w;
+      return this.scale(scale: scale);
+    } else if (height != null) {
+      final scale = height / h;
+      return this.scale(scale: scale);
+    }
+    return this;
+  }
+
   /// 缩放图片
   /// [transformSync]
   UiImage scaleSync({

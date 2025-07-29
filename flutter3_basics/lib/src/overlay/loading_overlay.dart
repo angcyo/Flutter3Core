@@ -14,6 +14,10 @@ WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 /// 是否显示了加载提示
 bool get $isShowLoading => _currentLoadingEntryRef?.target != null;
 
+/// 是否暂停加载提示的超时检查
+/// - [wrapLoading]
+bool $pauseLoadingTimeoutCheck = false;
+
 /// 显示加载提示
 ///
 /// [builder] 构建加载提示的Widget
@@ -156,7 +160,25 @@ Future wrapLoading(
       );
     }
     if (delay != null && delay > Duration.zero) {
-      postDelayCallback(() {
+      countdownCallback(
+        delay,
+        (duration) {
+          if ($pauseLoadingTimeoutCheck) {
+            return false;
+          }
+          if (duration.inSeconds <= 0) {
+            if (isEnd || isTimeout) {
+            } else {
+              showLoading(
+                postShow: false,
+                loadingInfoNotifier: loadingInfoNotifier,
+              );
+            }
+          }
+        },
+        just: false,
+      );
+      /*postDelayCallback(() {
         //debugger();
         //l.w("delay end");
         if (isEnd || isTimeout) {
@@ -166,7 +188,7 @@ Future wrapLoading(
             loadingInfoNotifier: loadingInfoNotifier,
           );
         }
-      }, delay);
+      }, delay);*/
     } else {
       showLoading(loadingInfoNotifier: loadingInfoNotifier);
     }

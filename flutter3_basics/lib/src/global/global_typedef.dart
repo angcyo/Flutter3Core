@@ -96,7 +96,7 @@ typedef RangeNumCallback = void Function(num startValue, num endValue);
 typedef BoolCallback = void Function(bool value);
 
 /// [Duration]类型的回调
-typedef DurationCallback = void Function(Duration value);
+typedef DurationCallback = dynamic Function(Duration value);
 
 /// [Offset]类型的回调
 typedef OffsetCallback = void Function(Offset offset);

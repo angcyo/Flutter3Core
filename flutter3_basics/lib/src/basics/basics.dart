@@ -153,21 +153,29 @@ Timer postDelayCallback(VoidCallback callback,
     Timer(duration, callback);
 
 /// 使用[Timer]实现一个倒计时
+/// [callback] 倒计时的回调, 返回false, 可以阻止计时
 /// [period] tick的周期
 /// [Timer.periodic]
 /// [Timer.cancel]
 Timer countdownCallback(
-  Duration duration,
+  Duration duration /*时长*/,
   DurationCallback callback, {
-  Duration? period,
-  Duration? step,
+  Duration? period /*计时周期, 默认1s*/,
+  Duration? step /*计时步长, 默认1s*/,
+  bool just = true /*是否立即执行一次*/,
 }) {
   period ??= const Duration(seconds: 1);
   step ??= const Duration(seconds: 1);
-  callback(duration); //立即触发一次
+  if (just) {
+    callback(duration); //立即触发一次, 否则 period 后才会触发第一次
+  }
   return Timer.periodic(period, (timer) {
     duration -= step!;
-    callback(duration);
+    final result = callback(duration);
+    if (result is bool && !result) {
+      //阻止计时
+      duration += step!;
+    }
     if (duration.inSeconds <= 0) {
       timer.cancel();
     }
