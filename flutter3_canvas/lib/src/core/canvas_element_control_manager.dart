@@ -905,7 +905,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     );
   }
 
-  /// 旋转元素
+  /// 旋转元素, by(增量) 的方式.
   /// [radians] 旋转的角度, 单位: 弧度
   /// [refTargetRadians] 参考的需要旋转到的目标角度, 用来决定存储值时的正负数 单位: 弧度
   /// [translateElement]
