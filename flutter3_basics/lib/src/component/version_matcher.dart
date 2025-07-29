@@ -90,6 +90,11 @@ class VersionRange {
 
   int get maxInt => max.round();
 
+  /// 值
+  int get numInt => num.round();
+
+  double get num => max - min;
+
   VersionRange(this.min, this.max);
 
   @override
