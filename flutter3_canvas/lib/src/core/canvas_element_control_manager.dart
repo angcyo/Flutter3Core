@@ -1618,9 +1618,9 @@ class ElementSelectComponent extends ElementGroupPainter
           l.d('没有元素被选中, 无需清空选择.');
           return true;
         }());
-        debugger(
+        /*debugger(
             when: selectType == ElementSelectType.code ||
-                selectType == ElementSelectType.user);
+                selectType == ElementSelectType.user);*/
       }
     } else {
       assert(() {
