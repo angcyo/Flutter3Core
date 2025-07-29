@@ -33,7 +33,7 @@ Future<PlatformFile?> pickFile() async {
       .firstOrNull;
 }
 
-/// 选择文件, 使用系统自带的文件选择器
+/// 选择多个文件[allowMultiple], 使用系统自带的文件选择器
 /// 选择图片
 /// 选择视频
 /// ```
