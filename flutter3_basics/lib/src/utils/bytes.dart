@@ -7,6 +7,36 @@ part of '../../flutter3_basics.dart';
 ///
 /// 字节写入器
 /// [ByteData]
+///
+/// ```
+/// final bytes = bytesWriter((writer) {
+///   writer.writeInt(100, 2);
+/// });
+/// final hex = bytes.toHex();
+///
+/// final bytes2 = bytesWriter((writer) {
+///   writer.writeInt(-100, 2);
+/// });
+/// final hex2 = bytes2.toHex();
+///
+/// final bytes3 = bytesWriter((writer) {
+///   writer.writeIntSigned(-100, 2);
+/// });
+/// final hex3 = bytes3.toHex();
+///
+/// bytesReader(bytes3, (render) {
+///   final int = render.readInt(2);
+///   debugger();
+/// });
+///
+/// bytesReader(bytes3, (render) {
+///   final int = render.readIntSigned(2);
+///   debugger();
+/// });
+/// debugger();
+/// ```
+///
+///
 class BytesWriter {
   final List<int> _bytes = [];
 
@@ -70,6 +100,21 @@ class BytesWriter {
       _bytes.add((value >> 16) & 0xff);
       _bytes.add((value >> 24) & 0xff);
     }*/
+  }
+
+  /// 写入一个有符号的int, 通常会和[writeInt]表现一致
+  void writeIntSigned(int value, [int length = 4, Endian? endian]) {
+    final bd = ByteData(length);
+    if (length == 1) {
+      bd.setInt8(0, value);
+    } else if (length == 2) {
+      bd.setInt16(0, value, endian ?? this.endian);
+    } else if (length == 4) {
+      bd.setInt32(0, value, endian ?? this.endian);
+    } else if (length == 8) {
+      bd.setInt64(0, value, endian ?? this.endian);
+    }
+    writeBytes(bd.bytes, length);
   }
 
   /// 写入一个32位的整数, 4个字节, 小端序
@@ -313,14 +358,39 @@ class ByteReader {
     return bytes[_index++].toSigned(width);
   }
 
-  /// 读取一个32位的整数, 4个字节
+  /// 读取一个32位的整数(不支持符号int), 4个字节
   /// [length] 需要读取的字节长度
+  ///
+  /// - [readIntSigned] 有符号的 int
   int readInt([int length = 4, int overflow = -1, Endian? endian]) {
     if (isDone) {
       return overflow;
     }
     endian ??= this.endian;
     return readBytes(length)?.toInt(length, endian) ?? overflow;
+  }
+
+  /// 读取有符号的int
+  int readIntSigned([int length = 4, int overflow = -1, Endian? endian]) {
+    if (isDone) {
+      return overflow;
+    }
+    endian ??= this.endian;
+    final bytes = readBytes(length);
+    if (bytes == null) {
+      return overflow;
+    }
+    ByteData byteData = ByteData.sublistView(Uint8List.fromList(bytes));
+    if (length == 1) {
+      return byteData.getInt8(0);
+    } else if (length == 2) {
+      return byteData.getInt16(0, endian);
+    } else if (length == 4) {
+      return byteData.getInt32(0, endian);
+    } else if (length == 8) {
+      return byteData.getInt64(0, endian);
+    }
+    return overflow;
   }
 
   /// 读取一个64位的整数, 8个字节
