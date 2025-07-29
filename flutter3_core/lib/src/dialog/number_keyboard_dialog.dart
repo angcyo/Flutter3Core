@@ -206,6 +206,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
         height: 10,
         gradientDirection: Axis.vertical,
       ),
+      //--
       [
         [
           if (isNullOrEmpty(_controller.numberText))
@@ -225,7 +226,8 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
         _controller.isFirstClearAll = !_controller.isFirstClearAll;
         updateState();
       }),
-      keyboard.backgroundColor(globalTheme.whiteSubBgColor),
+      //--
+      keyboard.safeBottomArea().backgroundColor(globalTheme.whiteSubBgColor),
     ]
         .column(
           mainAxisAlignment: MainAxisAlignment.end,
