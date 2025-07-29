@@ -146,6 +146,9 @@ class CoreDialogTitle extends StatelessWidget {
                   onTrailingTap?.call(context);
                 }
               },
+            ).invisible(
+              enable: globalTheme.enableTrailingInvisible,
+              invisible: !enableTrailing,
             );
 
     return DialogTitleTile(

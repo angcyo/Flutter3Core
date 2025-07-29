@@ -27,8 +27,17 @@ class GlobalThemeScope extends InheritedWidget {
 /// [_colorSchemeDarkM3]
 /// [_colorSchemeLightM3]
 class GlobalTheme {
+  //region 其它配置
+
   /// 标签, 用于持久化是恢复主题
   String? get tag => runtimeType.toString();
+
+  /// 当未激活对话框标题上的确定按钮时, 是否将其不可见处理.
+  bool get enableTrailingInvisible => false;
+
+  //endregion 其它配置
+
+  //region 颜色配置
 
   /// 颜色配置, 主要颜色
   Color get primaryColor => const Color(0xff2febff);
@@ -181,6 +190,10 @@ class GlobalTheme {
   List<Color>? get appBarGradientBackgroundColorList =>
       listOf(primaryColor, primaryColorDark);
 
+  //endregion 颜色配置
+
+  //region 尺寸配置
+
   /// 基础距离配置
   double get s => kS;
 
@@ -215,6 +228,8 @@ class GlobalTheme {
       maxWidth: math.min(screenWidth, screenHeight),
       minHeight: 0,
       maxHeight: double.infinity);
+
+  //endregion 尺寸配置
 
   //region 文本样式
 

@@ -2688,9 +2688,12 @@ extension WidgetEx on Widget {
   }
 
   /// 使一个[Widget]不可见, 但是仍然占据空间, 并且忽略手势
+  /// [enable] 是否激活组件
   /// [invisible] 是否可见, 默认不可见
   /// [replacement] 不占空间时需要替换的小部件
   Widget invisible({
+    bool enable = true,
+    //--
     bool invisible = false,
     bool maintainSize = true,
     bool maintainState = true,
@@ -2698,15 +2701,17 @@ extension WidgetEx on Widget {
     bool maintainInteractivity = false,
     Widget replacement = const SizedBox.shrink(),
   }) {
-    return Visibility(
-      visible: !invisible,
-      maintainSize: maintainSize,
-      maintainState: maintainState,
-      maintainAnimation: maintainAnimation,
-      maintainInteractivity: maintainInteractivity,
-      replacement: replacement,
-      child: this,
-    );
+    return enable
+        ? Visibility(
+            visible: !invisible,
+            maintainSize: maintainSize,
+            maintainState: maintainState,
+            maintainAnimation: maintainAnimation,
+            maintainInteractivity: maintainInteractivity,
+            replacement: replacement,
+            child: this,
+          )
+        : this;
   }
 
   //endregion ---Single Widget---
@@ -2995,7 +3000,7 @@ extension ContextEx on BuildContext {
     });
   }
 
-  /// 从上往下查找
+  /// 从上往下查找, 查找到非系统的元素[Widget]
   /// 查找第一个非系统元素[Widget]的[Element]
   Element? findFirstNotSystemElement() {
     const systemWidgetList = [
@@ -3020,6 +3025,7 @@ extension ContextEx on BuildContext {
       DualTransitionBuilder,
       DisplayFeatureSubScreen,
       DefaultTextStyle,
+      DefaultSelectionStyle,
       ElevatedButton,
       FadeTransition,
       FractionalTranslation,
@@ -3073,7 +3079,7 @@ extension ContextEx on BuildContext {
       //debugger();
       if ("$runtimeType".startsWith("_") ||
           systemWidgetList.contains(runtimeType) ||
-          prefixWidgetList.findFirst((e) => "$runtimeType".startsWith("$e")) !=
+          prefixWidgetList.findFirst((e) => "$runtimeType".startsWith(e)) !=
               null) {
         return true;
       }
