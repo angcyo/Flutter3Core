@@ -147,6 +147,8 @@ class SvgBuilder {
     @dp double? strokeWidth,
     String? id,
     String? name,
+    //--
+    Map<String, dynamic>? attributes,
   }) {
     buffer.write('<line ');
     writeId(id: id, name: name);
@@ -171,6 +173,7 @@ class SvgBuilder {
       strokeWidth: strokeWidth,
     );
     writeTransform(transform: transform);
+    writeAttributes(attributes);
     buffer.write(' />');
   }
 
@@ -192,6 +195,8 @@ class SvgBuilder {
     @dp double? strokeWidth,
     String? id,
     String? name,
+    //--
+    Map<String, dynamic>? attributes,
   }) {
     buffer.write('<ellipse ');
     writeId(id: id, name: name);
@@ -216,6 +221,7 @@ class SvgBuilder {
       strokeWidth: strokeWidth,
     );
     writeTransform(transform: transform);
+    writeAttributes(attributes);
     buffer.write(' />');
   }
 
@@ -239,6 +245,8 @@ class SvgBuilder {
     @dp double? strokeWidth,
     String? id,
     String? name,
+    //--
+    Map<String, dynamic>? attributes,
   }) {
     buffer.write('<rect ');
     writeId(id: id, name: name);
@@ -265,6 +273,7 @@ class SvgBuilder {
       strokeWidth: strokeWidth,
     );
     writeTransform(transform: transform);
+    writeAttributes(attributes);
     buffer.write(' />');
   }
 
@@ -282,6 +291,8 @@ class SvgBuilder {
     //--
     @dp double? pathStep,
     @mm double? tolerance,
+    //--
+    Map<String, dynamic>? attributes,
   }) {
     if (path != null) {
       writeSvgPath(
@@ -299,6 +310,7 @@ class SvgBuilder {
         transform: transform,
         id: id,
         name: name,
+        attributes: attributes,
       );
     }
   }
@@ -324,6 +336,8 @@ class SvgBuilder {
     int? stepInterval /*步长枚举延迟*/,
     //--
     dynamic debugLabel,
+    //--
+    Map<String, dynamic>? attributes,
   }) async {
     if (path != null) {
       final svgPath = await path.toSvgPathStringAsync(
@@ -344,6 +358,7 @@ class SvgBuilder {
         transform: transform,
         id: id,
         name: name,
+        attributes: attributes,
       );
     }
   }
@@ -366,6 +381,8 @@ class SvgBuilder {
     Matrix4? transform,
     String? id,
     String? name,
+    //--
+    Map<String, dynamic>? attributes,
   }) {
     if (isNil(svgPath)) {
       return;
@@ -381,6 +398,7 @@ class SvgBuilder {
       strokeWidth: strokeWidth,
     );
     writeTransform(transform: transform);
+    writeAttributes(attributes);
     buffer.write('/>');
   }
 
@@ -425,19 +443,22 @@ class SvgBuilder {
     dynamic y,
     dynamic width,
     dynamic height,
+    //--
+    Map<String, dynamic>? attributes,
   }) async {
     if (image != null) {
       if (scaleImageFactor != null && scaleImageFactor != 1) {
         //debugger();
         //需要缩放图片
-        final scaleMatrix = createScaleMatrix(sx: scaleImageFactor, sy: scaleImageFactor);
+        final scaleMatrix =
+            createScaleMatrix(sx: scaleImageFactor, sy: scaleImageFactor);
         image = await image.scale(scaleMatrix: scaleMatrix);
 
         //矩阵反向缩放
         invertScaleImageMatrix ??= true;
         if (invertScaleImageMatrix == true) {
-          final scaleInvertMatrix =
-              createScaleMatrix(sx: 1 / scaleImageFactor, sy: 1 / scaleImageFactor);
+          final scaleInvertMatrix = createScaleMatrix(
+              sx: 1 / scaleImageFactor, sy: 1 / scaleImageFactor);
           transform ??= Matrix4.identity();
           transform = transform * scaleInvertMatrix;
         }
@@ -453,6 +474,8 @@ class SvgBuilder {
         y: y,
         width: width,
         height: height,
+        //--
+        attributes: attributes,
       );
     }
   }
@@ -471,9 +494,12 @@ class SvgBuilder {
     dynamic y,
     dynamic width,
     dynamic height,
+    //--
     Matrix4? transform,
     String? id,
     String? name,
+    //--
+    Map<String, dynamic>? attributes,
   }) async {
     if (!isNil(base64Image)) {
       //SVG 2 之前的规范定义了xlink:href属性，现在该属性已被href属性废弃。如果您需要支持早期的浏览器版本，除了href属性之外，
@@ -497,6 +523,7 @@ class SvgBuilder {
         buffer.write('height="${formatValue(height)}" ');
       }
       writeTransform(transform: transform);
+      writeAttributes(attributes);
       buffer.write('href="$base64Image" />');
     }
   }
@@ -518,6 +545,8 @@ class SvgBuilder {
     Matrix4? transform,
     String? id,
     String? name,
+    //--
+    Map<String, dynamic>? attributes,
   }) {
     if (isNil(text) && textSpanAction == null) {
       return;
@@ -540,6 +569,7 @@ class SvgBuilder {
       buffer.write('font-family="$fontFamily" ');
     }
     writeTransform(transform: transform);
+    writeAttributes(attributes);
     buffer.write('>');
     if (text != null) {
       buffer.write(text);
@@ -570,6 +600,8 @@ class SvgBuilder {
     Matrix4? transform,
     String? id,
     String? name,
+    //--
+    Map<String, dynamic>? attributes,
   }) {
     if (!isNil(text)) {
       buffer.write('<tspan ');
@@ -596,6 +628,7 @@ class SvgBuilder {
         buffer.write('font-family="$fontFamily" ');
       }
       writeTransform(transform: transform);
+      writeAttributes(attributes);
       buffer.write('>');
       buffer.write(text);
       buffer.write('</tspan>');
@@ -620,6 +653,8 @@ class SvgBuilder {
     String? name,
     //--
     Matrix4? transform,
+    //--
+    Map<String, dynamic>? attributes,
   }) {
     buffer.write('<g ');
     writeId(id: id, name: name);
@@ -632,6 +667,7 @@ class SvgBuilder {
       strokeWidth: strokeWidth,
     );
     writeTransform(transform: transform);
+    writeAttributes(attributes);
     buffer.write('>');
     final subBuilder = SvgBuilder();
     subBuilder.digits = digits;
@@ -654,6 +690,8 @@ class SvgBuilder {
     String? name,
     //--
     Matrix4? transform,
+    //--
+    Map<String, dynamic>? attributes,
   }) async {
     buffer.write('<g ');
     writeId(id: id, name: name);
@@ -666,6 +704,7 @@ class SvgBuilder {
       strokeWidth: strokeWidth,
     );
     writeTransform(transform: transform);
+    writeAttributes(attributes);
     buffer.write('>');
     final subBuilder = SvgBuilder();
     subBuilder.digits = digits;
@@ -828,6 +867,17 @@ class SvgBuilder {
     buffer.write(
         "matrix(${formatValue(sx)} ${formatValue(ky)} ${formatValue(kx)} ${formatValue(sy)} ${formatValue(tx)} ${formatValue(ty)})");
     buffer.write('" ');
+  }
+
+  /// 写入自定义的属性
+  void writeAttributes(Map<String, dynamic>? attributes) {
+    attributes?.forEach((key, value) {
+      if (key.contains("=")) {
+        buffer.write('$key ');
+      } else if (value != null) {
+        buffer.write('$key="$value" ');
+      }
+    });
   }
 
   //endregion --属性--
