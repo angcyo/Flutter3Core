@@ -29,6 +29,11 @@ class OverlayEntryInfo {
   });
 }
 
+typedef OverlayEntryInfoPopAction = void Function(
+  OverlayEntryInfo popEntry /*弹出的实体*/,
+  OverlayEntryInfo? showEntry /*弹出后,显示的实体*/,
+);
+
 /// [OverlayManager]的控制器
 class OverlayManagerController {
   /// [Widget]->[OverlayEntry]
@@ -47,7 +52,13 @@ class OverlayManagerController {
         canSizeOverlay: canSizeOverlay,
       );
 
+  //region 核心
+
+  /// [OverlayManagerState]
   OverlayManagerState? managerState;
+
+  /// [OverlayManagerState.build]
+  /// [Overlay]
   final GlobalKey<OverlayState> overlayKey = GlobalKey();
 
   /// 首页
@@ -64,6 +75,14 @@ class OverlayManagerController {
         if (_homeEntry != null) _homeEntry!.entry,
         ..._subOverlayEntries.map((e) => e.entry),
       ];
+
+  //endregion 核心
+
+  //--
+
+  /// 弹出实体回调
+  /// [pop]
+  final List<OverlayEntryInfoPopAction> popActionList = [];
 
   /// 初始化首页
   @initialize
@@ -129,16 +148,16 @@ class OverlayManagerController {
     overlayKey.currentState?.insert(entry.entry);
   }
 
-  /// 显示一个[widget], 最终还是[OverlayEntry]
+  /// 显示一个[widget], 最终还是[OverlayEntry], 同时可以控制隐藏最后一个.
   ///
   /// [id] 相同id的[OverlayEntry]只会显示一次
   ///
-  /// [offstage] 是否离屏
-  /// [hideLast] 是否隐藏最后一个[OverlayEntry]
-  /// [removeAll] 是否移除之前所有. [hideLast]将无效
+  /// - [offstage] 是否离屏
+  /// - [hideLast] 是否隐藏最后一个[OverlayEntry]
+  /// - [removeAll] 是否移除之前所有. [hideLast]将无效
   ///
-  /// [type] 动画类型[TranslationType]
-  /// [OverlayAnimateBuilder]
+  /// - [type] 动画类型[TranslationType]
+  /// - [OverlayAnimateBuilder]
   @api
   void insertWidget(
     Widget widget, {
@@ -276,7 +295,10 @@ class OverlayManagerController {
 
   /// 移除顶层的, 并且显示上一个
   @api
-  void pop({bool showPrev = false}) {
+  void pop({
+    bool showPrev = false,
+    OverlayEntryInfoPopAction? popAction,
+  }) {
     final last = _subOverlayEntries.get(-1);
     final prev = _subOverlayEntries.get(-2); //再上一个
     if (last != null) {
@@ -284,6 +306,14 @@ class OverlayManagerController {
     }
     if (showPrev) {
       prev?.entryKey?.currentState?.show();
+    }
+
+    //action
+    if (last != null) {
+      for (final action in popActionList) {
+        action(last, showPrev ? prev : null);
+      }
+      popAction?.call(last, showPrev ? prev : null);
     }
   }
 
