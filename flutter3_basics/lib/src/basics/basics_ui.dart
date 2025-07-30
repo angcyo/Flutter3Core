@@ -3679,6 +3679,7 @@ extension NavigatorEx on BuildContext {
   //---push↓
 
   /// 推送一个路由
+  /// 与`go_router`中的扩展命名冲突
   /// [popTop] 是否弹出之前的顶层
   /// [toRoot] 是否直接跳到顶层, 移除之前所有路由
   Future<T?> push<T extends Object?>(
@@ -3795,7 +3796,10 @@ extension NavigatorEx on BuildContext {
     }
   }
 
-  /// 弹出一个路由, 不能被[PopScope]拦截
+  /// 弹出一个路由, 不能被[PopScope]拦截.
+  ///
+  /// 与`go_router`中的扩展命名冲突
+  ///
   /// [checkDismissal] 是否检测弹出最后一个根路由
   void pop<T extends Object?>([
     T? result,

@@ -1,26 +1,25 @@
 library flutter3_pub_core;
 
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:el_tooltip/el_tooltip.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
-import 'package:watch_it/watch_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:watch_it/watch_it.dart';
 
-export 'package:get_it/get_it.dart';
-export 'package:rxdart/rxdart.dart';
-export 'package:watch_it/watch_it.dart';
 export 'package:easy_refresh/easy_refresh.dart';
 export 'package:el_tooltip/el_tooltip.dart';
+export 'package:get_it/get_it.dart';
 export 'package:go_router/go_router.dart';
+export 'package:rxdart/rxdart.dart';
+export 'package:watch_it/watch_it.dart';
 
+part 'src/go_router_ex.dart';
 part 'src/refresh/easy_refresh_ex.dart';
 part 'src/tooltip/el_tooltip_ex.dart';
-part 'src/go_router_ex.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -61,7 +60,19 @@ final $get = GetIt.instance;
 /// [GetIt]
 final $di = di;
 
-@testPoint
-void _test(){
-
+/// 保持屏幕常亮
+void keepScreenOn([bool enable = true]) {
+  if (enable) {
+    WakelockPlus.enable();
+  } else {
+    WakelockPlus.disable();
+  }
 }
+
+/// 关闭屏幕亮
+void closeScreenOn() {
+  WakelockPlus.disable();
+}
+
+@testPoint
+void _test() {}
