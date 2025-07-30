@@ -1073,7 +1073,7 @@ class ElementPainter extends IElementPainter {
 
   //region ---apply paintProperty--
 
-  /// 平移元素
+  /// 平移元素, by(增量)的方式
   /// [translateElement]
   /// [translateElementBy]
   /// [translateElementTo]
