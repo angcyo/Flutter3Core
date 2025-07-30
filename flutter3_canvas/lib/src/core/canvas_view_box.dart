@@ -405,7 +405,6 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     Offset? pivot,
     bool anim = true,
   }) {
-    //debugger();
     sx = sx != null ? clamp(sx, minScaleX, maxScaleX) : null;
     sy = sy != null ? clamp(sy, minScaleY, maxScaleY) : null;
     assert(() {
@@ -413,17 +412,28 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       return true;
     }());
     changeMatrix(
-        canvasMatrix.clone()
-          ..scaleTo(
-            sx: sx,
-            sy: sy,
-            pivotX: pivot?.dx ?? 0,
-            pivotY: pivot?.dy ?? 0,
-          ),
-        animate: anim);
+      canvasMatrix.clone()
+        ..scaleTo(
+          sx: sx,
+          sy: sy,
+          pivotX: pivot?.dx ?? 0,
+          pivotY: pivot?.dy ?? 0,
+        ),
+      animate: anim,
+    );
   }
 
-//endregion ---操作---
+  /// 重置画布矩阵
+  @api
+  void resetMatrix({
+    Matrix4? target,
+    bool anim = true,
+  }) {
+    target ??= Matrix4.identity();
+    changeMatrix(target, animate: anim);
+  }
+
+  //endregion ---操作---
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
