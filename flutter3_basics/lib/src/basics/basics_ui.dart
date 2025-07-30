@@ -3102,6 +3102,19 @@ extension ContextEx on BuildContext {
     return result;
   }
 
+  /// 通过指定的[State]类型查找对应的[State]
+  T? findState<T extends State>() {
+    T? result;
+    eachVisitChildElements((element, depth, childIndex) {
+      if (element is StatefulElement && element.state is T) {
+        result = element.state as T;
+        return false;
+      }
+      return true;
+    });
+    return result;
+  }
+
   //--
 
   /// [MediaQueryData]

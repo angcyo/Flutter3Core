@@ -5,7 +5,7 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/08/24
 ///
 /// 如果滚动布局边界能够滚动, 则进行提示.
-/// 滚动边界提示.
+/// 滚动边界提示, 滚动溢出提示.
 ///
 /// https://pub.dev/packages/fading_edge_scrollview
 ///
@@ -20,27 +20,18 @@ class ScrollOverlayHintWidget extends StatefulWidget {
   /// 滚动布局, 能够发送[ScrollNotification]通知的布局
   final Widget child;
 
-  /// 第一次没有触发过滚动时, 无法获取到状态
-  final bool drawTop;
-  final bool drawBottom;
-  final bool drawLeft;
-  final bool drawRight;
-
   /// 提示的大小
   final double hintSize;
 
-  /// 渐变的颜色
+  /// 渐变的颜色, 不指定则从主题中获取.
+  @defInjectMark
   final List<Color>? colors;
 
   const ScrollOverlayHintWidget({
     super.key,
     required this.child,
-    this.drawTop = false,
-    this.drawBottom = false,
-    this.drawLeft = false,
-    this.drawRight = false,
     this.hintSize = 30,
-    this.colors = const [Colors.black12, Colors.transparent],
+    this.colors,
   });
 
   @override
@@ -58,47 +49,29 @@ class _ScrollOverlayHintWidgetState extends State<ScrollOverlayHintWidget> {
 
   @override
   void initState() {
-    drawTop = widget.drawTop;
-    drawBottom = widget.drawBottom;
-    drawLeft = widget.drawLeft;
-    drawRight = widget.drawRight;
     super.initState();
+    postFrame(() {
+      //第一次主动查询滚动位置状态
+      final state = context.findState<ScrollableState>();
+      final position = state?.position;
+      if (position != null) {
+        _checkOverlayHint(position);
+      }
+    });
   }
 
   @override
   void didUpdateWidget(covariant ScrollOverlayHintWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    drawTop = widget.drawTop;
-    drawBottom = widget.drawBottom;
-    drawLeft = widget.drawLeft;
-    drawRight = widget.drawRight;
     _signalNotifier.update();
   }
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
-        final metrics = notification.metrics;
-        /*l.d("方向->${metrics.axis} "
-            "最大滚动距离->${metrics.maxScrollExtent} "
-            "当前滚动距离->${metrics.pixels} "
-            "剩余距离->${metrics.maxScrollExtent - metrics.pixels}");*/
-
-        drawTop = false;
-        drawBottom = false;
-        drawLeft = false;
-        drawRight = false;
-
-        if (metrics.axis == Axis.vertical) {
-          drawTop = metrics.pixels > 0;
-          drawBottom = metrics.maxScrollExtent > metrics.pixels;
-        } else {
-          //debugger();
-          drawLeft = metrics.pixels > 0;
-          drawRight = metrics.maxScrollExtent > metrics.pixels;
-        }
-        _signalNotifier.update();
+        _checkOverlayHint(notification.metrics);
         return false;
       },
       child: rebuild(_signalNotifier, (_, __) {
@@ -108,14 +81,45 @@ class _ScrollOverlayHintWidgetState extends State<ScrollOverlayHintWidget> {
           drawTop: drawTop,
           drawBottom: drawBottom,
           hintSize: widget.hintSize,
-          colors: widget.colors,
+          colors: widget.colors ??
+              [
+                globalTheme.themeBlackColor.withOpacityRatio(0.15),
+                Colors.transparent,
+              ],
           child: widget.child,
         );
       }),
     );
   }
+
+  /// 检查是否需要绘制溢出滚动
+  void _checkOverlayHint(ScrollMetrics metrics) {
+    /*assert(() {
+      l.d("方向->${metrics.axis} "
+          "最大滚动距离->${metrics.maxScrollExtent} "
+          "当前滚动距离->${metrics.pixels} "
+          "剩余距离->${metrics.maxScrollExtent - metrics.pixels}");
+      return true;
+    }());*/
+    drawTop = false;
+    drawBottom = false;
+    drawLeft = false;
+    drawRight = false;
+
+    if (metrics.axis == Axis.vertical) {
+      drawTop = metrics.pixels > 0;
+      drawBottom = metrics.maxScrollExtent > metrics.pixels;
+    } else {
+      //debugger();
+      drawLeft = metrics.pixels > 0;
+      drawRight = metrics.maxScrollExtent > metrics.pixels;
+    }
+    _signalNotifier.update();
+  }
 }
 
+/// 决定具体是否要绘制的小部件
+/// - [RenderScrollOverlayHint] 真实绘制的对象
 class ScrollOverlayHintRender extends SingleChildRenderObjectWidget {
   /// 是否绘制对应方向的提示
   final bool drawTop;
@@ -137,7 +141,7 @@ class ScrollOverlayHintRender extends SingleChildRenderObjectWidget {
     this.drawLeft = false,
     this.drawRight = false,
     this.hintSize = 30,
-    this.colors = const [Colors.black26, Colors.transparent],
+    this.colors,
   });
 
   @override
@@ -146,13 +150,16 @@ class ScrollOverlayHintRender extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, RenderScrollOverlayHint renderObject) {
+    BuildContext context,
+    RenderScrollOverlayHint renderObject,
+  ) {
     renderObject
       ..config = this
       ..markNeedsPaint();
   }
 }
 
+/// 具体的提示绘制类
 class RenderScrollOverlayHint extends RenderProxyBox {
   /// 配置
   ScrollOverlayHintRender config;
@@ -235,13 +242,9 @@ extension ScrollOverlayHintWidgetEx on Widget {
     bool drawLeft = false,
     bool drawRight = false,
     double hintSize = 30,
-    List<Color> colors = const [Colors.black12, Colors.transparent],
+    List<Color>? colors,
   }) =>
       ScrollOverlayHintWidget(
-        drawTop: drawTop,
-        drawBottom: drawBottom,
-        drawLeft: drawLeft,
-        drawRight: drawRight,
         hintSize: hintSize,
         colors: colors,
         child: this,
