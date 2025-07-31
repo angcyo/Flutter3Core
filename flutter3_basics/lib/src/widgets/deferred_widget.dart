@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 typedef LibraryLoader = Future<void> Function();
 typedef DeferredWidgetBuilder = Widget Function();
 
+/// Dart 延迟导入:
+/// https://dart.dev/language/libraries#lazily-loading-a-library
+///
 /// Wraps the child inside a deferred module loader.
 ///
 /// The child is created and a single instance of the Widget is maintained in
