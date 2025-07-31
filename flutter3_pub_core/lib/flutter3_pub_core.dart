@@ -13,7 +13,7 @@ import 'package:watch_it/watch_it.dart';
 export 'package:easy_refresh/easy_refresh.dart';
 export 'package:el_tooltip/el_tooltip.dart';
 export 'package:get_it/get_it.dart';
-export 'package:go_router/go_router.dart';
+export 'package:go_router/go_router.dart' hide GoRouterHelper;
 export 'package:rxdart/rxdart.dart';
 export 'package:watch_it/watch_it.dart';
 
