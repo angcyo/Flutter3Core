@@ -17,7 +17,9 @@ typedef DeferredWidgetBuilder = Widget Function();
 /// The child is created and a single instance of the Widget is maintained in
 /// state as long as closure to create widget stays the same.
 ///
-/// 延迟加载组件
+/// Flutter 延迟加载组件:
+///
+/// https://docs.flutter.dev/perf/deferred-components
 ///
 /// ```
 /// 1: 延迟导入
