@@ -3812,8 +3812,10 @@ extension NavigatorEx on BuildContext {
   /// 弹出一个路由, 不能被[PopScope]拦截.
   ///
   /// 与`go_router`中的扩展命名冲突
+  /// - [rootNavigator] 是否使用根导航器
+  /// - [checkDismissal] 是否弹出检测, 保留最后一个根路由页面.
   ///
-  /// [checkDismissal] 是否检测弹出最后一个根路由
+  /// - [isAppBarDismissal]
   void pop<T extends Object?>([
     T? result,
     bool rootNavigator = false,
