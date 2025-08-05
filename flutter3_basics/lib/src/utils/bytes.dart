@@ -274,14 +274,15 @@ class BytesWriter {
   }) {
     final builder = StringBuffer();
     for (int i = 0; i <= (number ?? intMax32Value); i++) {
-      builder.write("[${i.toHex().padLeft(8, '0')}]");
+      //builder.write("[${i.toHex().padLeft(8, '0')}]");
+      builder.write("[${i.toRadixString(16).padLeft(8, '0')}]");
       if (length != null) {
-        if (builder.toString().bytes.length > length) {
+        if (builder.length > length) {
           break;
         }
       }
     }
-    writeString(builder.toString(), length, writeEnd);
+    writeString(builder.toString().toUpperCase(), length, writeEnd);
   }
 
   /// 填充到多少个字节长度, 不包含当前[length], 比如将字节数据填充到64个字节
