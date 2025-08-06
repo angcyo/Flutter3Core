@@ -109,6 +109,7 @@ class L {
     bool? showTag,
     int forward = 3,
     StackTrace? stack,
+    String? debugLabel,
   }) {
     if (level >= verbose) {
       return _log(
@@ -120,6 +121,7 @@ class L {
         showTag: showTag,
         forward: forward,
         stack: stack,
+        debugLabel: debugLabel,
       );
     }
   }
@@ -133,6 +135,7 @@ class L {
     bool? showTag,
     int forward = 3,
     StackTrace? stack,
+    String? debugLabel,
   }) {
     if (level >= verbose) {
       return _log(
@@ -144,6 +147,7 @@ class L {
         showTag: showTag,
         forward: forward,
         stack: stack,
+        debugLabel: debugLabel,
       );
     }
   }
@@ -157,6 +161,7 @@ class L {
     bool? showTag,
     int forward = 3,
     StackTrace? stack,
+    String? debugLabel,
   }) {
     if (level >= debug) {
       return _log(
@@ -168,6 +173,7 @@ class L {
         showTag: showTag,
         forward: forward,
         stack: stack,
+        debugLabel: debugLabel,
       );
     }
   }
@@ -181,6 +187,7 @@ class L {
     bool? showTag,
     int forward = 3,
     StackTrace? stack,
+    String? debugLabel,
   }) {
     if (level >= info) {
       return _log(
@@ -192,6 +199,7 @@ class L {
         showTag: showTag,
         forward: forward,
         stack: stack,
+        debugLabel: debugLabel,
       );
     }
   }
@@ -205,6 +213,7 @@ class L {
     bool? showTag,
     int forward = 3,
     StackTrace? stack,
+    String? debugLabel,
   }) {
     if (level >= warn) {
       return _log(
@@ -216,6 +225,7 @@ class L {
         showTag: showTag,
         forward: forward,
         stack: stack,
+        debugLabel: debugLabel,
       );
     }
   }
@@ -229,6 +239,7 @@ class L {
     bool? showTag,
     int forward = 3,
     StackTrace? stack,
+    String? debugLabel,
   }) {
     if (level >= error) {
       return _log(
@@ -240,6 +251,7 @@ class L {
         showTag: showTag,
         forward: forward,
         stack: stack,
+        debugLabel: debugLabel,
       );
     }
   }
@@ -254,7 +266,9 @@ class L {
     bool? showTag,
     int forward = 3,
     StackTrace? stack,
+    String? debugLabel,
   }) {
+    debugger(when: debugLabel != null);
     final time = showTime ?? kShowTime ? '${nowTimeString(kTimePattern)} ' : '';
     final levelStr = showLevel ?? kShowLevel ? _levelStr(level) : '';
     final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}] ' : '';
@@ -279,7 +293,7 @@ class L {
     final methodName = methodNameList.get(-2);
     //debugger();
     final log =
-        '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}] $tagStr$levelStr->$msgType$msg';
+        '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}] $tagStr$levelStr->$msgType $msg';
 
     if ((isDebug && level >= verbose) || level > debug) {
       //print(StackTrace.fromString("...test"));
