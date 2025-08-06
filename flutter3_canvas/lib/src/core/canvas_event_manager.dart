@@ -78,6 +78,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       }
     }
     //--
+    canvasDelegate.dispatchPointerEvent(event);
+    //--
     if (event.isPointerFinish) {
       _cancelDispatchEvent = false;
       isPointerDown = false;
@@ -120,6 +122,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   //--
 
   /// 临时取消事件调度派发, 抬手后恢复
+  ///
+  /// - [cancelDispatchEvent]
   @flagProperty
   bool _cancelDispatchEvent = false;
 

@@ -680,6 +680,12 @@ class CanvasListener {
     KeyEvent event,
   )? onKeyEventAction;
 
+  /// [CanvasDelegate.dispatchPointerEvent]
+  final bool Function(
+    CanvasDelegate delegate,
+    @viewCoordinate PointerEvent event,
+  )? onPointerEventAction;
+
   /// [CanvasDelegate.dispatchCanvasStyleModeChanged]
   final void Function(
     CanvasDelegate delegate,
@@ -723,6 +729,7 @@ class CanvasListener {
     this.onElementDetachFromCanvasDelegate,
     this.onBuildCanvasMenu,
     this.onKeyEventAction,
+    this.onPointerEventAction,
     this.onCanvasStyleModeChangedAction,
     this.onCanvasOpenProject,
   });

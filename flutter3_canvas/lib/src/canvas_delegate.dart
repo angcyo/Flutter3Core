@@ -1332,6 +1332,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 派发键盘事件
+  ///
+  /// - [CanvasDelegate.handleKeyEvent]
   bool dispatchKeyEvent(RenderObject render, KeyEvent event) {
     var handle = false;
     _eachCanvasListener((element) {
@@ -1341,6 +1343,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       }
     }, reverse: true);
     return handle;
+  }
+
+  /// 派发手势事件, 顶层的手势事件.
+  /// 在库处理完手势后, 派发给上层.
+  ///
+  /// - [CanvasEventManager.handleEvent]
+  void dispatchPointerEvent(@viewCoordinate PointerEvent event) {
+    _eachCanvasListener((element) {
+      element.onPointerEventAction?.call(this, event);
+    }, reverse: true);
   }
 
   /// 派发画布样式变化
