@@ -1411,16 +1411,20 @@ class ElementPainter extends IElementPainter {
 
   //region ---canvas---
 
-  /// 响应事件
+  /// 响应事件, 手势不在元素内, 也会响应事件.
   ///
   /// - 处理悬停时的高亮颜色
+  ///
+  /// - [CanvasStyle.enableElementControl] 使能响应事件
+  /// - [CanvasStyle.enableElementEvent] 使能响应事件
   ///
   /// [CanvasEventManager.handleElementEvent]驱动
   @override
   bool handleEvent(@viewCoordinate PointerEvent event) {
+    bool handle = false;
     final canvasDelegate = this.canvasDelegate;
     if (canvasDelegate == null) {
-      return false;
+      return handle;
     }
     if (event.isPointerHover || event.isPointerDown) {
       final localPosition = event.localPosition;
@@ -1441,6 +1445,7 @@ class ElementPainter extends IElementPainter {
       final isHit = hitTest(point: offset);
 
       if (event.isPointerDown && isHit) {
+        paintState.pointerDownPoint = localPosition;
         //取消所有元素悬停状态
         canvasDelegate.canvasElementManager.visitElementPainter((element) {
           element.onHoverChanged(event, false);
@@ -1454,13 +1459,33 @@ class ElementPainter extends IElementPainter {
             canvasDelegate.canvasElementManager.visitElementPainter((element) {
               element.onHoverChanged(event, false);
             }, before: false, after: false);
-            onHoverChanged(event, isHit);
-            return true;
+            handle = onHoverChanged(event, isHit);
+          } else {
+            handle = onHoverChanged(event, isHit);
           }
-          onHoverChanged(event, isHit);
         }
       }
     }
+    //--
+    if (event.isPointerFinish) {
+      if (event.isPointerUp &&
+          paintState.isPointerDown &&
+          !event.isMoveExceed(paintState.pointerDownPoint)) {
+        final localPosition = event.localPosition;
+        final offset = canvasDelegate.canvasViewBox.toScenePoint(localPosition);
+        handle = onSelfHandlePointerClick(event, offset);
+      }
+      paintState.pointerDownPoint = null;
+    }
+    return handle;
+  }
+
+  /// 当点击元素时触发
+  @overridePoint
+  bool onSelfHandlePointerClick(
+    @viewCoordinate PointerEvent event,
+    @sceneCoordinate Offset point,
+  ) {
     return false;
   }
 
@@ -1474,7 +1499,7 @@ class ElementPainter extends IElementPainter {
   @overridePoint
   bool onHoverChanged(@viewCoordinate PointerEvent event, bool hover) {
     if (paintState.isHover != hover) {
-      paintState.isHover = hover;
+      paintState.hoverPoint = event.localPosition;
       refresh();
     }
     return hover;
@@ -2239,7 +2264,18 @@ class PaintState with EquatableMixin {
   //--
 
   /// 元素是否被鼠标悬停
-  bool isHover = false;
+  bool get isHover => hoverPoint != null;
+
+  /// 元素hover时, 鼠标的坐标
+  @viewCoordinate
+  Offset? hoverPoint;
+
+  /// 元素是否被按下
+  bool get isPointerDown => pointerDownPoint != null;
+
+  /// 元素按下时时, 鼠标的坐标
+  @viewCoordinate
+  Offset? pointerDownPoint;
 
   /// 元素临时绘制的颜色
   /// [ElementPainter.painting]
@@ -2249,7 +2285,7 @@ class PaintState with EquatableMixin {
   String toString() {
     return 'PaintState{elementUuid: $elementUuid, elementName: $elementName, '
         'isLockRatio: $isLockRatio, isVisible: $isVisible, isLockOperate: $isLockOperate, '
-        'isFold: $isFold, isHover: $isHover, color: $color}';
+        'isFold: $isFold, isHover: $isHover, isPointerDown: $isPointerDown, color: $color}';
   }
 
   @override
@@ -2270,7 +2306,8 @@ class PaintState with EquatableMixin {
     bool? isVisible,
     bool? isLockOperate,
     bool? isFold,
-    bool? isHover,
+    Offset? hoverPoint,
+    Offset? pointerDownPoint,
     Color? color,
   }) {
     return PaintState()
@@ -2280,7 +2317,8 @@ class PaintState with EquatableMixin {
       ..isVisible = isVisible ?? this.isVisible
       ..isLockOperate = isLockOperate ?? this.isLockOperate
       ..isFold = isFold ?? this.isFold
-      ..isHover = isHover ?? this.isHover
+      ..hoverPoint = hoverPoint ?? this.hoverPoint
+      ..pointerDownPoint = pointerDownPoint ?? this.pointerDownPoint
       ..color = color ?? this.color;
   }
 }
