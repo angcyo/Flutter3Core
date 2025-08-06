@@ -103,15 +103,18 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     );
 
     //contentTemplate
-    if (isFirstInitialize &&
-        canvasDelegate
-            .canvasPaintManager.contentManager.firstLayoutFollowTemplate) {
-      final contentTemplate =
-          canvasDelegate.canvasPaintManager.contentManager.contentTemplate;
-      final followRect = contentTemplate?.contentFollowRectInner;
-      if (followRect != null) {
-        canvasDelegate.followRect(rect: followRect, animate: false);
-      } else {
+    final contentManager = canvasDelegate.canvasPaintManager.contentManager;
+    if (isFirstInitialize) {
+      if (contentManager.firstLayoutFollowTemplate) {
+        final contentTemplate = contentManager.contentTemplate;
+        final followRect = contentTemplate?.contentFollowRectInner;
+        if (followRect != null) {
+          canvasDelegate.followRect(rect: followRect, animate: false);
+        } else if (contentManager.firstLayoutFollowContent) {
+          canvasDelegate.canvasFollowManager
+              .followCanvasContent(animate: false);
+        }
+      } else if (contentManager.firstLayoutFollowContent) {
         canvasDelegate.canvasFollowManager.followCanvasContent(animate: false);
       }
     }

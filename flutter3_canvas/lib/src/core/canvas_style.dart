@@ -28,6 +28,10 @@ class CanvasStyle {
   @configProperty
   bool firstLayoutFollowTemplate = true;
 
+  /// 首次布局时, 是否跟随内容
+  @configProperty
+  bool firstLayoutFollowContent = true;
+
   //--CanvasAxisManager
 
   /// 是否绘制网格

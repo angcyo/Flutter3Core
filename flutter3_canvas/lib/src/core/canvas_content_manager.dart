@@ -19,6 +19,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
   bool get firstLayoutFollowTemplate => canvasStyle.firstLayoutFollowTemplate;
+  bool get firstLayoutFollowContent => canvasStyle.firstLayoutFollowTemplate;
 
   //--
 
