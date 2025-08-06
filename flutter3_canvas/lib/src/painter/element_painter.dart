@@ -28,6 +28,7 @@ class IElementPainter extends IPainter
 
   /// 画笔默认的宽度
   /// 会在[onPaintingSelfBefore]中使用
+  @dp
   @configProperty
   double paintStrokeWidth = 1.toDpFromPx();
 
@@ -958,6 +959,11 @@ class ElementPainter extends IElementPainter {
   //---
 
   /// 判断当前元素是否与指定的点相交
+  ///
+  /// - [point] 是否与点相交
+  /// - [rect] 是否与矩形相交
+  /// - [path] 是否与路径相交
+  ///
   /// [inflate] 未命中时, 是否膨胀
   /// [isVisibleInCanvasBox]
   bool hitTest({
@@ -971,6 +977,17 @@ class ElementPainter extends IElementPainter {
     }
     final property = _paintProperty;
     if (property == null || !isVisible) {
+      final elementBounds = elementsBounds;
+      if (elementBounds != null) {
+        //没有绘制属性, 但是有元素边界, 可能是自定义的元素
+        path ??= Path()
+          ..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
+        bool hit = elementBounds.toPath().intersects(path);
+        if (!hit && inflate) {
+          hit = elementBounds.inflateValue(10).toPath().intersects(path);
+        }
+        return hit;
+      }
       return false;
     }
     path ??= Path()..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
@@ -1823,8 +1840,8 @@ class ElementGroupPainter extends ElementPainter {
       Rect? rect;
       for (final child in children!) {
         //final childBounds = child.paintProperty?.paintPath.getExactBounds();
-        final childBounds =
-            child.paintProperty?.getBounds(true); //resetGroupAngle
+        final childBounds = child.paintProperty?.getBounds(true) ??
+            child.elementsBounds; //resetGroupAngle
         if (childBounds != null) {
           if (rect == null) {
             rect = childBounds;

@@ -111,6 +111,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       final followRect = contentTemplate?.contentFollowRectInner;
       if (followRect != null) {
         canvasDelegate.followRect(rect: followRect, animate: false);
+      } else {
+        canvasDelegate.canvasFollowManager.followCanvasContent(animate: false);
       }
     }
 

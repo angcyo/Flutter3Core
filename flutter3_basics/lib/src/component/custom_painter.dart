@@ -77,7 +77,7 @@ class TrianglePainter extends CustomPainter {
     if (center != null) {
       offset = center - size.center(Offset.zero);
     }
-    Path path = Path();
+    final Path path = Path();
     switch (direction) {
       case AxisDirection.down:
         path.moveTo(size.width * 0.66, size.height * 0.86);

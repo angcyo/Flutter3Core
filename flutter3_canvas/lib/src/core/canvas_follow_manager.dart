@@ -94,7 +94,6 @@ class CanvasFollowManager with CanvasComponentMixin {
         (rollbackPainter
             ? canvasDelegate.canvasElementManager.allElementsBounds
             : null);
-    //debugger();
     if (sceneBounds == null) {
       if (restoreDef == true) {
         animate ??= this.animate;
