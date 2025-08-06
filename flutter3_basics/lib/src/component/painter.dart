@@ -89,6 +89,9 @@ class PaintMeta {
 }
 
 /// 绘制接口
+///
+/// - [painting]
+///
 /// [Canvas]
 abstract class IPainter with Diagnosticable {
   /// 标签

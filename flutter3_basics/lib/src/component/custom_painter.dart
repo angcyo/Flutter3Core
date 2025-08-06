@@ -26,7 +26,8 @@ class CustomPaintWrap extends CustomPainter {
 /// [paintWidget]
 /// [TrianglePainter]
 /// [OvalPainter]
-CustomPaint customPainter(CustomPainter? painter, {
+CustomPaint customPainter(
+  CustomPainter? painter, {
   Size? size,
   double? s,
   double? width,
@@ -38,7 +39,7 @@ CustomPaint customPainter(CustomPainter? painter, {
     CustomPaint(
       painter: painter,
       foregroundPainter:
-      foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
+          foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
       size: size ?? Size(s ?? width ?? 0, s ?? height ?? 0),
       isComplex: isComplex,
       willChange: willChange,
@@ -46,7 +47,8 @@ CustomPaint customPainter(CustomPainter? painter, {
 
 /// 快速创建[CustomPaint], 并指定绘制回调
 /// 使用[CustomPaint]小组件, 使用[CustomPainter]绘制回调
-CustomPaint paintWidget(PaintFn paint, {
+CustomPaint paintWidget(
+  PaintFn paint, {
   PaintFn? foregroundPaint,
   Size size = Size.infinite,
   bool isComplex = false,
@@ -55,7 +57,7 @@ CustomPaint paintWidget(PaintFn paint, {
     CustomPaint(
       painter: CustomPaintWrap(paint),
       foregroundPainter:
-      foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
+          foregroundPaint == null ? null : CustomPaintWrap(foregroundPaint),
       size: size,
       isComplex: isComplex,
       willChange: willChange,
@@ -65,6 +67,74 @@ CustomPaint paintWidget(PaintFn paint, {
 /// [TrianglePainter]
 /// [ArrowWidget]
 class TrianglePainter extends CustomPainter {
+  /// 创建一个三角形
+  static Path createTrianglePath(
+    Size size, {
+    AxisDirection direction = AxisDirection.down,
+    Offset? center,
+  }) {
+    Offset? offset;
+    if (center != null) {
+      offset = center - size.center(Offset.zero);
+    }
+    Path path = Path();
+    switch (direction) {
+      case AxisDirection.down:
+        path.moveTo(size.width * 0.66, size.height * 0.86);
+        path.cubicTo(size.width * 0.58, size.height * 1.05, size.width * 0.42,
+            size.height * 1.05, size.width * 0.34, size.height * 0.86);
+        path.cubicTo(size.width * 0.34, size.height * 0.86, 0, 0, 0, 0);
+        path.cubicTo(0, 0, size.width, 0, size.width, 0);
+        path.cubicTo(size.width, 0, size.width * 0.66, size.height * 0.86,
+            size.width * 0.66, size.height * 0.86);
+        path.cubicTo(size.width * 0.66, size.height * 0.86, size.width * 0.66,
+            size.height * 0.86, size.width * 0.66, size.height * 0.86);
+        break;
+      case AxisDirection.up:
+        path.moveTo(size.width * 0.66, size.height * 0.14);
+        path.cubicTo(size.width * 0.58, size.height * -0.05, size.width * 0.42,
+            size.height * -0.05, size.width * 0.34, size.height * 0.14);
+        path.cubicTo(size.width * 0.34, size.height * 0.14, 0, size.height, 0,
+            size.height);
+        path.cubicTo(
+            0, size.height, size.width, size.height, size.width, size.height);
+        path.cubicTo(size.width, size.height, size.width * 0.66,
+            size.height * 0.14, size.width * 0.66, size.height * 0.14);
+        path.cubicTo(size.width * 0.66, size.height * 0.14, size.width * 0.66,
+            size.height * 0.14, size.width * 0.66, size.height * 0.14);
+        break;
+      case AxisDirection.left:
+        path.moveTo(size.width * 0.14, size.height * 0.66);
+        path.cubicTo(size.width * -0.05, size.height * 0.58, size.width * -0.05,
+            size.height * 0.42, size.width * 0.14, size.height * 0.34);
+        path.cubicTo(size.width * 0.14, size.height * 0.34, size.width, 0,
+            size.width, 0);
+        path.cubicTo(
+            size.width, 0, size.width, size.height, size.width, size.height);
+        path.cubicTo(size.width, size.height, size.width * 0.14,
+            size.height * 0.66, size.width * 0.14, size.height * 0.66);
+        path.cubicTo(size.width * 0.14, size.height * 0.66, size.width * 0.14,
+            size.height * 0.66, size.width * 0.14, size.height * 0.66);
+        break;
+      case AxisDirection.right:
+        path.moveTo(size.width * 0.86, size.height * 0.66);
+        path.cubicTo(size.width * 1.05, size.height * 0.58, size.width * 1.05,
+            size.height * 0.42, size.width * 0.86, size.height * 0.34);
+        path.cubicTo(size.width * 0.86, size.height * 0.34, 0, 0, 0, 0);
+        path.cubicTo(0, 0, 0, size.height, 0, size.height);
+        path.cubicTo(0, size.height, size.width * 0.86, size.height * 0.66,
+            size.width * 0.86, size.height * 0.66);
+        path.cubicTo(size.width * 0.86, size.height * 0.66, size.width * 0.86,
+            size.height * 0.66, size.width * 0.86, size.height * 0.66);
+        break;
+    }
+
+    if (offset != null) {
+      return path.shift(offset);
+    }
+    return path;
+  }
+
   /// 三角形的颜色
   final Color color;
 
@@ -79,61 +149,9 @@ class TrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
-    final path = Path();
     paint.isAntiAlias = true;
     paint.color = color;
-
-    switch (direction) {
-      case AxisDirection.down:
-        path.lineTo(size.width * 0.66, size.height * 0.86);
-        path.cubicTo(size.width * 0.58, size.height * 1.05, size.width * 0.42,
-            size.height * 1.05, size.width * 0.34, size.height * 0.86);
-        path.cubicTo(size.width * 0.34, size.height * 0.86, 0, 0, 0, 0);
-        path.cubicTo(0, 0, size.width, 0, size.width, 0);
-        path.cubicTo(size.width, 0, size.width * 0.66, size.height * 0.86,
-            size.width * 0.66, size.height * 0.86);
-        path.cubicTo(size.width * 0.66, size.height * 0.86, size.width * 0.66,
-            size.height * 0.86, size.width * 0.66, size.height * 0.86);
-        break;
-      case AxisDirection.up:
-        path.lineTo(size.width * 0.66, size.height * 0.14);
-        path.cubicTo(size.width * 0.58, size.height * -0.05, size.width * 0.42,
-            size.height * -0.05, size.width * 0.34, size.height * 0.14);
-        path.cubicTo(size.width * 0.34, size.height * 0.14, 0, size.height, 0,
-            size.height);
-        path.cubicTo(
-            0, size.height, size.width, size.height, size.width, size.height);
-        path.cubicTo(size.width, size.height, size.width * 0.66,
-            size.height * 0.14, size.width * 0.66, size.height * 0.14);
-        path.cubicTo(size.width * 0.66, size.height * 0.14, size.width * 0.66,
-            size.height * 0.14, size.width * 0.66, size.height * 0.14);
-        break;
-      case AxisDirection.left:
-        path.lineTo(size.width * 0.14, size.height * 0.66);
-        path.cubicTo(size.width * -0.05, size.height * 0.58, size.width * -0.05,
-            size.height * 0.42, size.width * 0.14, size.height * 0.34);
-        path.cubicTo(size.width * 0.14, size.height * 0.34, size.width, 0,
-            size.width, 0);
-        path.cubicTo(
-            size.width, 0, size.width, size.height, size.width, size.height);
-        path.cubicTo(size.width, size.height, size.width * 0.14,
-            size.height * 0.66, size.width * 0.14, size.height * 0.66);
-        path.cubicTo(size.width * 0.14, size.height * 0.66, size.width * 0.14,
-            size.height * 0.66, size.width * 0.14, size.height * 0.66);
-        break;
-      case AxisDirection.right:
-        path.lineTo(size.width * 0.86, size.height * 0.66);
-        path.cubicTo(size.width * 1.05, size.height * 0.58, size.width * 1.05,
-            size.height * 0.42, size.width * 0.86, size.height * 0.34);
-        path.cubicTo(size.width * 0.86, size.height * 0.34, 0, 0, 0, 0);
-        path.cubicTo(0, 0, 0, size.height, 0, size.height);
-        path.cubicTo(0, size.height, size.width * 0.86, size.height * 0.66,
-            size.width * 0.86, size.height * 0.66);
-        path.cubicTo(size.width * 0.86, size.height * 0.66, size.width * 0.86,
-            size.height * 0.66, size.width * 0.86, size.height * 0.66);
-        break;
-    }
-    canvas.drawPath(path, paint);
+    canvas.drawPath(createTrianglePath(size, direction: direction), paint);
   }
 
   @override
@@ -248,8 +266,7 @@ class PixelTransparentPainter extends CustomPainter {
 
         canvas.drawRect(
           Rect.fromLTRB(left, top, right, bottom),
-          Paint()
-            ..color = color,
+          Paint()..color = color,
         );
       }
     }
@@ -269,7 +286,8 @@ class PointPainter extends CustomPainter {
   /// 颜色
   final Color color;
 
-  const PointPainter(this.width, {
+  const PointPainter(
+    this.width, {
     this.color = Colors.black,
   });
 
@@ -305,7 +323,8 @@ class DashLinkPainter extends CustomPainter {
   /// 方向
   final Axis axis;
 
-  const DashLinkPainter(this.lineSizeList, {
+  const DashLinkPainter(
+    this.lineSizeList, {
     this.thickness = 1,
     this.color = Colors.grey,
     this.axis = Axis.horizontal,
@@ -410,15 +429,13 @@ class CirclePointPainter extends CustomPainter {
     canvas.drawCircle(
       bounds.center,
       br,
-      Paint()
-        ..color = extendColor,
+      Paint()..color = extendColor,
     );
     //绘制绿色圆内容
     canvas.drawCircle(
       bounds.center,
       sr,
-      Paint()
-        ..color = color,
+      Paint()..color = color,
     );
   }
 

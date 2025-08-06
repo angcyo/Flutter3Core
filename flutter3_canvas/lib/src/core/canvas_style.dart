@@ -4,6 +4,11 @@ part of '../../flutter3_canvas.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/02/20
 /// 画布样式
+///
+/// - [showGrid] 是否绘制网格
+/// - [showAxis] 是否绘制坐标轴
+/// - [enableElementControl] 是否激活元素控制
+///
 class CanvasStyle {
   /// 绘制坐标轴
   static const int sDrawAxis = 0X01;
@@ -61,7 +66,7 @@ class CanvasStyle {
 
   //--CanvasElementControlManager
 
-  /// 是否激活元素的控制操作, 关闭之后, 将无法通过手势交互控制元素
+  /// 是否激活元素的控制操作, 关闭之后, 将无法通过手势选择/交互控制元素.
   bool enableElementControl = true;
 
   /// 是否要开启元素的事件回调, 不指定则使用[enableElementControl]的值
@@ -276,5 +281,5 @@ class CanvasStyle {
   @viewCoordinate
   double adsorbEscapeThreshold = 10;
 
-  //endregion ---adsorb---
+//endregion ---adsorb---
 }

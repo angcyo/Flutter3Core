@@ -6,6 +6,11 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 绘制元素数据
 /// 基础绘制类
+///
+/// - [painting]
+///   - [onPaintingSelfBefore]
+///   - [onPaintingSelf]
+///
 class IElementPainter extends IPainter
     with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 画布代理
@@ -155,8 +160,15 @@ class IElementPainter extends IPainter
 }
 
 /// 单元素绘制
-/// [ElementPainter]
-/// [ElementGroupPainter]
+///
+/// - [paintBounds]
+/// - [elementsBounds]
+/// - [forceVisibleInCanvasBox]
+///
+/// - [isVisibleInCanvasBox]
+///
+/// - [ElementPainter]
+/// - [ElementGroupPainter]
 class ElementPainter extends IElementPainter {
   //region ---属性--
 
@@ -992,6 +1004,9 @@ class ElementPainter extends IElementPainter {
   }
 
   /// 当前元素在画布中是否可见, 不可见的元素不会在画布中绘制
+  ///
+  /// - [forceVisibleInCanvasBox]
+  ///
   /// [hitTest]
   bool isVisibleInCanvasBox(CanvasViewBox viewBox) =>
       forceVisibleInCanvasBox == true ||
