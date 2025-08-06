@@ -592,15 +592,23 @@ extension WidgetEx on Widget {
     PointerPanZoomEndEventListener? onPointerPanZoomEnd,
     PointerSignalEventListener? onPointerSignal,
     HitTestBehavior behavior = HitTestBehavior.translucent,
+    //--
+    void Function(PointerEvent event)? onPointerFinish /*手势结束事件*/,
   }) =>
       enable
           ? Listener(
               key: key,
               onPointerDown: onPointerDown,
               onPointerMove: onPointerMove,
-              onPointerUp: onPointerUp,
+              onPointerUp: onPointerUp ??
+                  (onPointerFinish == null
+                      ? null
+                      : (event) => onPointerFinish(event)),
               onPointerHover: onPointerHover,
-              onPointerCancel: onPointerCancel,
+              onPointerCancel: onPointerCancel ??
+                  (onPointerFinish == null
+                      ? null
+                      : (event) => onPointerFinish(event)),
               onPointerPanZoomStart: onPointerPanZoomStart,
               onPointerPanZoomUpdate: onPointerPanZoomUpdate,
               onPointerPanZoomEnd: onPointerPanZoomEnd,
@@ -2482,13 +2490,15 @@ extension WidgetEx on Widget {
   /// 默认块状波纹效果
   /// 使用涟漪动画包裹, 无法控制背景颜色, 波纹会超出范围. [ink]
   /// https://api.flutter.dev/flutter/material/InkWell-class.html
-  /// [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
-  /// [highlightColor] 高亮颜色
-  /// [InkWell]
-  /// [InkResponse]
-  /// [CircleBorder]
+  /// - [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
+  /// - [highlightColor] 高亮颜色
+  /// - [onLongPressPeriodic] 周期性的长按回调事件
   ///
-  /// [inkWellCircle]
+  /// - [InkWell]
+  /// - [InkResponse]
+  /// - [CircleBorder]
+  ///
+  /// - [inkWellCircle]
   Widget inkWell(
     GestureTapCallback? onTap, {
     BorderRadius? borderRadius,
@@ -2499,14 +2509,36 @@ extension WidgetEx on Widget {
     ShapeBorder? customBorder,
     GestureLongPressCallback? onLongPress,
     bool enable = true,
+    //--
+    Duration? periodicDuration,
+    GestureLongPressCallback? onLongPressPeriodic,
   }) {
     if (!enable) {
       //禁用组件
       return this;
     }
-    return InkResponse(
+    Timer? periodicTimer;
+    Widget body = InkResponse(
       onTap: onTap,
-      onLongPress: onLongPress,
+      onLongPress: onLongPressPeriodic != null
+          ? () {
+              onLongPress?.call();
+              periodicTimer = Timer.periodic(
+                periodicDuration ?? Duration(milliseconds: 160),
+                (timer) {
+                  onLongPressPeriodic();
+                },
+              );
+            }
+          : onLongPress,
+      onTapUp: (details) {
+        periodicTimer?.cancel();
+        periodicTimer = null;
+      },
+      onTapCancel: () {
+        periodicTimer?.cancel();
+        periodicTimer = null;
+      },
       radius: radius,
       splashColor: splashColor,
       highlightColor: highlightColor,
@@ -2518,6 +2550,13 @@ extension WidgetEx on Widget {
       containedInkWell: true,
       child: this,
     );
+    if (onLongPressPeriodic != null) {
+      body = body.listenerPointer(onPointerFinish: (event) {
+        periodicTimer?.cancel();
+        periodicTimer = null;
+      });
+    }
+    return body;
   }
 
   /// [enable] 是否启用
@@ -2536,6 +2575,10 @@ extension WidgetEx on Widget {
     Color? highlightColor,
     double? radius,
     bool enable = true,
+    GestureLongPressCallback? onLongPress,
+    //--
+    Duration? periodicDuration,
+    GestureLongPressCallback? onLongPressPeriodic,
   }) =>
       !enable
           ? colorFiltered(color: disableColor)
@@ -2547,6 +2590,9 @@ extension WidgetEx on Widget {
               highlightColor: highlightColor,
               highlightShape: BoxShape.rectangle,
               radius: radius,
+              onLongPress: onLongPress,
+              periodicDuration: periodicDuration,
+              onLongPressPeriodic: onLongPressPeriodic,
             );
 
   /// 将[this]和[other] 使用[Column]包裹
