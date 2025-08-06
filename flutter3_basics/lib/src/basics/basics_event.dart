@@ -217,6 +217,7 @@ extension PointerEventEx on PointerEvent {
   /// 是否完成
   bool get isPointerFinish => isPointerUp || isPointerCancel;
 
+  /// 移动是否超过阈值.
   /// 当前的事件与[other]之间, 是否超过了指定的移动阈值
   bool isMoveExceed(Offset? other, [double threshold = kTouchMoveSlop]) {
     if (other == null) {

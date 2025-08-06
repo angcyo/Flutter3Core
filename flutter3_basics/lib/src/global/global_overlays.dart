@@ -53,52 +53,60 @@ enum OverlayPosition {
   bottom,
 }
 
+/// 最后一次显示的toast
+OverlayEntry? _lastToastEntry;
+
 /// toast通知
 OverlayEntry? toast(
   Widget? msg, {
-  /// 背景颜色
+  // 背景颜色
   Color? background,
-
-  /// 背景模糊的伽马值
+  // 背景模糊的伽马值
   double? bgBlurSigma,
-
-  /// 显示的位置
+  // 显示的位置
   OverlayPosition position = OverlayPosition.bottom,
-
-  /// 显示的动画
+  // 显示的动画
   OverlayAnimate? animate,
-
-  /// 动态toast数据监听
+  // 动态toast数据监听
   LoadingValueNotifier? loadingInfoNotifier,
-
-  /// 整体的内边距, 距离屏幕的内边距
+  // 整体的内边距, 距离屏幕的内边距
   EdgeInsetsGeometry? margin = const EdgeInsets.all(kXh),
-
-  /// 内容内边距
+  // 内容内边距
   EdgeInsetsGeometry? padding =
       const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
-
-  /// 显示时,是否保留底部的padding
+  // 显示时,是否保留底部的padding
   bool maintainBottomViewPadding = true,
-}) =>
-    msg == null
-        ? null
-        : showNotification(
-            (context) {
-              return ToastWidget(
-                background: background,
-                bgBlurSigma: bgBlurSigma,
-                loadingInfoNotifier: loadingInfoNotifier,
-                padding: padding,
-                margin: margin,
-                maintainBottomViewPadding: maintainBottomViewPadding,
-                child: msg,
-              );
-            },
-            position: position,
-            animate: animate ?? OverlayAnimate.opacity,
-            loadingInfoNotifier: loadingInfoNotifier,
-          );
+  // 显示时, 是否互斥, 互斥的情况下, 会自动隐藏上一次的弹窗
+  bool mutex = true,
+}) {
+  if (msg == null) return null;
+  final entry = showNotification(
+    (context) {
+      return ToastWidget(
+        background: background,
+        bgBlurSigma: bgBlurSigma,
+        loadingInfoNotifier: loadingInfoNotifier,
+        padding: padding,
+        margin: margin,
+        maintainBottomViewPadding: maintainBottomViewPadding,
+        child: msg,
+      );
+    },
+    position: position,
+    animate: animate ?? OverlayAnimate.opacity,
+    loadingInfoNotifier: loadingInfoNotifier,
+    onRemoveAction: () {
+      if (mutex) {
+        _lastToastEntry = null;
+      }
+    },
+  );
+  if (mutex) {
+    _lastToastEntry?.remove();
+    _lastToastEntry = entry;
+  }
+  return entry;
+}
 
 /// [msg] 显示小部件
 /// [text] 显示文本
@@ -323,6 +331,7 @@ OverlayEntry? showNotification(
   OverlayAnimate? animate,
   BuildContext? context,
   LoadingValueNotifier? loadingInfoNotifier,
+  VoidCallback? onRemoveAction,
 }) {
   return showOverlay(
     (entry, state, context, progress) {
@@ -382,6 +391,7 @@ OverlayEntry? showNotification(
     context: context,
     curve: animate == OverlayAnimate.scale ? Curves.easeOutBack : null,
     loadingInfoNotifier: loadingInfoNotifier,
+    onRemoveAction: onRemoveAction,
   );
 }
 
@@ -403,6 +413,7 @@ OverlayEntry? showOverlay(
   Duration? animationDuration,
   Duration? reverseAnimationDuration,
   LoadingValueNotifier? loadingInfoNotifier,
+  VoidCallback? onRemoveAction,
 }) {
   OverlayState? overlayState;
   if (context == null) {
@@ -469,6 +480,7 @@ OverlayEntry? showOverlay(
           duration: duration ?? Duration.zero,
           overlayKey: overlayKey,
           loadingInfoNotifier: loadingInfoNotifier,
+          onRemoveAction: onRemoveAction,
         ),
       );
     },

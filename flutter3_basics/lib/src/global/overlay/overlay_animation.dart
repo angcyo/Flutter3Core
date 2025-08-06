@@ -30,6 +30,9 @@ class OverlayAnimated extends StatefulWidget {
   /// 布局的构建在别的层处理
   final LoadingValueNotifier? loadingInfoNotifier;
 
+  /// 当[OverlayEntry]被移除时触发的回调
+  final VoidCallback? onRemoveAction;
+
   const OverlayAnimated({
     required Key key,
     required this.animationDuration,
@@ -39,6 +42,7 @@ class OverlayAnimated extends StatefulWidget {
     required this.duration,
     required this.overlayKey,
     this.loadingInfoNotifier,
+    this.onRemoveAction,
   })  : curve = curve ?? Curves.easeInOut,
         assert(animationDuration >= Duration.zero),
         assert(reverseAnimationDuration >= Duration.zero),
@@ -120,6 +124,7 @@ class OverlayAnimatedState extends State<OverlayAnimated>
     _dismissed = true;
     entry?.remove();
     _dismissedCompleter.complete();
+    widget.onRemoveAction?.call();
   }
 
   @override
