@@ -841,16 +841,20 @@ extension WidgetEx on Widget {
       );
 
   /// 监听一个通知
+  ///
+  /// - [onNotification] 通知回调, 返回true表示消费通知, 否则继续冒泡
+  ///
   /// [ContextEx.postNotification]
   /// [Notification]
-  /*Widget listenerNotification<T extends Notification>({
-    required NotificationListenerCallback<T> onNotification,
-    bool? Function(T)? shouldNotify,
+  Widget listenerNotification<T extends Notification>(
+    NotificationListenerCallback<T> onNotification, {
+    Key? key,
   }) =>
       NotificationListener<T>(
+        key: key,
         onNotification: onNotification,
         child: this,
-      );*/
+      );
 
   /// 为[child]小部件提供一个数据
   Widget dataProvider([Object? data]) => DataProviderScope(

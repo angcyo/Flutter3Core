@@ -135,6 +135,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// 快速下拉速度阈值, 快速下拉速度超过这个阈值, 就会关闭
   final double closeFlingVelocity = 1000.0;
 
+  /// 是否激活组件
+  bool _enablePullBack = true;
+
   @override
   void initState() {
     super.initState();
@@ -310,6 +313,17 @@ class _PullBackWidgetState extends State<PullBackWidget>
       body = SafeArea(child: body);
     }
 
+    //监听通知
+    body =
+        body.listenerNotification<PullBackControlNotification>((notification) {
+      final old = _enablePullBack;
+      if (old && !notification.enable) {
+        _handleDragEnd(null, 0);
+      }
+      _enablePullBack = notification.enable;
+      return true;
+    });
+
     if (widget.barrierColor == null) {
       return body;
     }
@@ -324,6 +338,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   /// [primaryDelta] 手势每次移动的距离 >0:向下拉 <0:向上拉
   void _handleDragUpdate(double primaryDelta) async {
+    if (!_enablePullBack) {
+      return;
+    }
     _isDragEnd = false;
     final progress = primaryDelta / (_childHeight ?? primaryDelta);
     //l.d('progress:$progress [$primaryDelta/$_childHeight]');
@@ -362,6 +379,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// [position] 为null时, 表示在非scroll内容中拖拽
   /// 在滚动列表中 velocity>0:快速向上拉 <0:快速向下拉, 正好相反.
   bool _handleDragEnd(ScrollMetrics? position, double velocity) {
+    if (!_enablePullBack) {
+      return false;
+    }
     if (position != null && !widget.useScrollConsume) {
       return false;
     }
@@ -431,6 +451,10 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// [offset] 当前手势移动了多少距离
   /// 返回消耗后的距离
   double _handleConsumeUserOffset(ScrollMetrics position, double offset) {
+    if (!_enablePullBack) {
+      return 0;
+    }
+
     if (!widget.useScrollConsume) {
       return offset;
     }
@@ -464,6 +488,14 @@ class _PullBackWidgetState extends State<PullBackWidget>
     }
     return true;
   }
+}
+
+/// 下拉控制通知, 用来激活或者禁用小组件
+class PullBackControlNotification extends Notification {
+  /// 是否激活下拉返回
+  final bool enable;
+
+  PullBackControlNotification(this.enable);
 }
 
 /*class _PullBackKeepProgressAnimation extends Animatable<double> {

@@ -319,6 +319,8 @@ class CanvasRenderBox extends RenderBox
     }
     final hitInterceptBox = GestureHitInterceptScope.of(context);
     hitInterceptBox?.interceptHitBox = this;
+    context
+        .postNotification(PullBackControlNotification(event.isPointerFinish));
     canvasDelegate.handleEvent(event, entry);
     /*assert((){
       l.w("handleEvent:${event.runtimeType} ${event.buttons}");
