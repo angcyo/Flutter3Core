@@ -66,21 +66,24 @@ class CheckboxTile extends StatefulWidget {
 
   const CheckboxTile({
     super.key,
+    //--
     this.text,
     this.textStyle,
     this.textWidget,
     this.textPadding = kContentPadding,
-    this.mainAxisSize,
-    this.value = false,
+    //--
     this.tristate = false,
-    this.isCircleShape = false,
+    this.value = false,
     this.enableCheckedTap = true,
+    this.onChanged,
+    this.isCircleShape = false,
+    //--
+    this.mainAxisSize,
     this.visualDensity = VisualDensity.compact,
     this.normalColor,
     this.normalWidth = 1.0,
     this.activeColor,
     this.checkColor,
-    this.onChanged,
   });
 
   @override
