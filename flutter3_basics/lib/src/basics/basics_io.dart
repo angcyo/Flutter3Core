@@ -15,14 +15,14 @@ const kIsolateComputePixelsSize = 1024 * 1024 * 10;
 /// 定义一个常量, 当图片字节数据大于这个值时, 建议使用[flutterCompute]
 const kIsolateComputeBytesSize = 1024 * 1024 * 1;
 
-/// 并发
+/// # 并发
 /// https://dart.cn/guides/language/concurrency
 ///
-/// Isolate 的工作原理
+/// # Isolate 的工作原理
 /// https://dart.cn/guides/language/concurrency#how-isolates-work
 ///
-/// io计算
-/// [compute] 会创建一个新的[Isolate]来执行[callback]
+/// # io计算
+/// [compute] 会创建一个新的[Isolate]来执行[callback]. 内部使用[Isolate.run]执行.
 /// https://pub.dev/documentation/compute/latest/compute/compute-constant.html
 ///
 /// ```
@@ -33,20 +33,34 @@ const kIsolateComputeBytesSize = 1024 * 1024 * 1;
 /// });
 /// ```
 ///
-/// io中操作的数据必须通过参数的方式传入/传出, 否则会报错.
+/// # io中操作的数据必须通过参数的方式传入/传出, 否则会报错.
 ///
 /// `Illegal argument in isolate message: object is unsendable`
+///
+/// # 示例
+///
+/// ```
+/// List<int> _createTestData(int length) {
+///   final bytes = bytesWriter((writer) {
+///     writer.writeFillHex(length: length);
+///   });
+///   return bytes;
+/// }
+///
+/// final bytes = await io(size, _createTestData);
+/// ```
 ///
 /// [Completer]
 Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
     compute(callback, message, debugLabel: "io-${nowTimeString()}");
 
 /// 在[Isolate]中运行, [callback]可以直接访问上下文的数据(能够send的数据), 不需要主动send
-/// [SendPort.send]
+/// - [SendPort.send]
 /// https://www.youtube.com/watch?v=PPwJ75vqP_s&list=PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG&index=2
 /// ```
 /// final data = await run(() => jsonDecode(jsonString));
 /// ```
+///
 /// ```
 /// Invalid argument(s): Illegal argument in isolate message:
 /// object is unsendable - Library:'dart:async'
@@ -54,7 +68,8 @@ Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
 /// (see restrictions listed at `SendPort.send()` documentation for more information)
 /// Isolate._spawnFunction (dart:isolate-patch/isolate_patch.dart:398:25)
 /// ```
-/// [Future.sync]
+///
+/// - [Future.sync]
 Future<R> run<R>(ResultCallback<R> callback) {
   return Isolate.run(() => callback(), debugName: "run-${nowTimeString()}");
 }
@@ -71,8 +86,8 @@ Future<R> run<R>(ResultCallback<R> callback) {
 /// documentation for more information)
 /// ```
 ///
-/// [Isolate.run]
-/// [Isolate.spawn]
+/// - [Isolate.run]
+/// - [Isolate.spawn]
 Future<R> isolateRun<R>(ResultCallback<R> callback) => run(callback);
 
 ///
