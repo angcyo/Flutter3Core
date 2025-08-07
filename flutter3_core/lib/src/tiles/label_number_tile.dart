@@ -89,8 +89,11 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
 
   @override
   void didUpdateWidget(covariant LabelNumberTile oldWidget) {
-    _initialValue = widget.value;
-    _currentValue = _initialValue;
+    //debugger();
+    if (_initialValue != widget.value) {
+      _initialValue = widget.value;
+      _currentValue = _initialValue;
+    }
     super.didUpdateWidget(oldWidget);
   }
 
