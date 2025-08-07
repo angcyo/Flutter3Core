@@ -5,6 +5,9 @@ part of '../../../flutter3_canvas.dart';
 /// @date 2024/08/20
 ///
 /// 智能吸附控制
+///
+/// - [CanvasElementControlManager] in
+///
 class ElementAdsorbControl
     with CanvasComponentMixin, CanvasElementControlManagerMixin {
   /// 画布元素控制器
