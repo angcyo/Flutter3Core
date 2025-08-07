@@ -1188,7 +1188,9 @@ extension WidgetEx on Widget {
           : this;
 
   /// 脚手架, 会消耗手势事件
+  /// 脚手架并不会处理[SafeArea]区域的内容.
   Widget scaffold({
+    bool enable = true,
     BuildContext? context,
     Color? backgroundColor,
     bool resizeToAvoidBottomInset = true,
@@ -1206,6 +1208,9 @@ extension WidgetEx on Widget {
     List<Widget>? actions,
     //--
   }) {
+    if (!enable) {
+      return this;
+    }
     if (context == null) {
       return Scaffold(
         appBar: appBar,

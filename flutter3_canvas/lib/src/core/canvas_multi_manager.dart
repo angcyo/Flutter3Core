@@ -80,6 +80,9 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   //--
 
   /// 重置画布列表
+  ///
+  /// - [resetCanvasStateList]
+  /// - [addCanvasStateList]
   @api
   void resetCanvasStateList(
     List<CanvasStateData> stateList, {
@@ -88,6 +91,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //--
     bool selectedElement = false,
     bool followPainter = false,
+    bool followContent = false,
     //--
     ElementSelectType selectType = ElementSelectType.code,
   }) {
@@ -103,6 +107,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         notify: notify,
         selectedElement: selectedElement,
         followPainter: followPainter,
+        followContent: followContent,
         selectType: selectType,
       );
     }

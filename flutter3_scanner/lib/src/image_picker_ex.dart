@@ -6,8 +6,11 @@ part of '../flutter3_scanner.dart';
 /// @date 2024/06/11
 ///
 /// 使用[ImagePicker]获取图片
-/// [ImageSource.gallery] 相册
-/// [ImageSource.camera] 拍照, 内部会申请相机权限.
+/// - [ImageSource.gallery] 相册
+/// - [ImageSource.camera] 拍照, 内部会申请相机权限. 请注意隐私政策.
+///
+/// - [XFile.path] 文件路径.
+///
 @permissionFlag
 Future<XFile?> pickerImage({
   bool useCamera = false,
