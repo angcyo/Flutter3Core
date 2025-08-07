@@ -1146,6 +1146,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   void replaceElementList(
     List<ElementPainter>? oldElementList,
     List<ElementPainter>? newElementList, {
+    bool selected = true,
     UndoType undoType = UndoType.normal,
     bool keepIndex = false,
     ElementSelectType selectType = ElementSelectType.code,
@@ -1190,7 +1191,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     );
     canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, removeList);
     canvasDelegate.dispatchCanvasElementListAddChanged(
-        elements, newElementList);
+      elements,
+      newElementList,
+    );
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -1225,7 +1228,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     //选中组合元素
-    resetSelectedElementList(op, selectType: selectType);
+    if (selected) {
+      resetSelectedElementList(op, selectType: selectType);
+    }
   }
 
   /// 组合元素

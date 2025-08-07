@@ -1466,9 +1466,10 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 组内缩放元素
   @override
   void scaleElement({
-    double sx = 1,
-    double sy = 1,
+    double? sx,
+    double? sy,
     Offset? anchor,
+    bool? useCenterAnchor,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
@@ -1476,6 +1477,7 @@ class ElementSelectComponent extends ElementGroupPainter
       sx: sx,
       sy: sy,
       anchor: anchor,
+      useCenterAnchor: useCenterAnchor,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
     );

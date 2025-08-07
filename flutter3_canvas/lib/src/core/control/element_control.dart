@@ -439,7 +439,7 @@ class BaseControl
     } else {
       final matrix = Matrix4.identity()
         ..scaleBy(sx: sx, sy: sy, anchor: anchor);
-      element?.scaleElementWithCenter(matrix, fromObj: this);
+      element?.scaleElementWithCenter(matrix: matrix, fromObj: this);
     }
   }
 

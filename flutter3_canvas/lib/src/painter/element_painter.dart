@@ -451,7 +451,7 @@ class ElementPainter extends IElementPainter {
       /*paintProperty = property.copyWith()
         ..applyScaleWithCenter(scaleMatrix)
         ..applyTranslate(translate);*/
-      scaleElementWithCenter(scaleMatrix);
+      scaleElementWithCenter(matrix: scaleMatrix);
       translateElement(translate);
     }
   }
@@ -498,7 +498,7 @@ class ElementPainter extends IElementPainter {
           anchor: oldBounds.alignmentOffset(anchorAlignment),
         );
       /*paintProperty = property.copyWith()..applyScaleWithCenter(scaleMatrix);*/
-      scaleElementWithCenter(scaleMatrix);
+      scaleElementWithCenter(matrix: scaleMatrix);
     }
   }
 
@@ -1323,7 +1323,7 @@ class ElementPainter extends IElementPainter {
           sy: flipY == true ? -1 : 1,
           anchor: anchor ?? paintProperty?.paintCenter);
     scaleElementWithCenter(
-      scaleMatrix,
+      matrix: scaleMatrix,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
     );
@@ -1334,24 +1334,38 @@ class ElementPainter extends IElementPainter {
   /// [scaleElementWithCenter]
   @api
   void scaleElement({
-    double sx = 1,
-    double sy = 1,
+    double? sx,
+    double? sy,
     Offset? anchor,
+    bool? useCenterAnchor,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
+    if (sx == null && sy == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    anchor ??= useCenterAnchor == true ? paintProperty?.paintCenter : null;
+
     if (anchor == null) {
       onlyScaleSelfElement(
-        sx: sx,
-        sy: sy,
+        sx: sx ?? (isLockRatio ? sy : null),
+        sy: sy ?? (isLockRatio ? sx : null),
         fromObj: fromObj,
         fromUndoType: fromUndoType,
       );
     } else {
       final scaleMatrix = Matrix4.identity()
-        ..scaleBy(sx: sx, sy: sy, anchor: anchor);
+        ..scaleBy(
+          sx: sx ?? (isLockRatio ? sy : null),
+          sy: sy ?? (isLockRatio ? sx : null),
+          anchor: anchor,
+        );
       scaleElementWithCenter(
-        scaleMatrix,
+        matrix: scaleMatrix,
         fromObj: fromObj,
         fromUndoType: fromUndoType,
       );
@@ -1359,25 +1373,41 @@ class ElementPainter extends IElementPainter {
   }
 
   /// 应用矩阵, 通常在子元素缩放时需要使用方法
+  /// - 保持中心点不变
   @api
-  void scaleElementWithCenter(
-    Matrix4 matrix, {
+  void scaleElementWithCenter({
+    double? sx,
+    double? sy,
+    Matrix4? matrix,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
+    if (matrix == null && sx == null && sy == null) {
+      assert(() {
+        l.d('无效的操作');
+        return true;
+      }());
+      return;
+    }
+    matrix ??= Matrix4.identity()
+      ..scaleBy(
+        sx: sx ?? (isLockRatio ? sy : null),
+        sy: sy ?? (isLockRatio ? sx : null),
+      );
     //debugger();
-    paintProperty?.let((it) {
+    final paintProperty = this.paintProperty;
+    if (paintProperty != null) {
       updatePaintProperty(
-        it.copyWith()..applyScaleWithCenter(matrix),
+        paintProperty.copyWith()..applyScaleWithCenter(matrix),
         fromObj: fromObj,
         fromUndoType: fromUndoType,
       );
-    });
-    dispatchSelfElementRawChanged(
-      ElementDataType.size,
-      fromObj: fromObj,
-      fromUndoType: fromUndoType,
-    );
+      dispatchSelfElementRawChanged(
+        ElementDataType.size,
+        fromObj: fromObj,
+        fromUndoType: fromUndoType,
+      );
+    }
   }
 
   /// 直接作用缩放, 通常在外边框缩放时使用方法
@@ -2139,14 +2169,18 @@ class ElementGroupPainter extends ElementPainter {
   /// [ScaleControl]
   @override
   void scaleElement({
-    double sx = 1,
-    double sy = 1,
+    double? sx,
+    double? sy,
     Offset? anchor,
+    bool? useCenterAnchor,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
     double angle = paintProperty?.angle ?? 0; //弧度
-    anchor ??= paintProperty?.anchor ?? Offset.zero;
+    anchor ??= (useCenterAnchor == true
+            ? paintProperty?.paintCenter
+            : paintProperty?.anchor) ??
+        Offset.zero;
 
     //自身使用直接缩放
     updatePaintProperty(
@@ -2182,7 +2216,7 @@ class ElementGroupPainter extends ElementPainter {
 
     children?.forEach((element) {
       element.scaleElementWithCenter(
-        matrix,
+        matrix: matrix,
         fromObj: fromObj ?? onlyElementGroupPainter,
         fromUndoType: fromUndoType,
       );
@@ -2190,19 +2224,25 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
-  void scaleElementWithCenter(
-    Matrix4 matrix, {
+  void scaleElementWithCenter({
+    double? sx,
+    double? sy,
+    Matrix4? matrix,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
     super.scaleElementWithCenter(
-      matrix,
+      sx: sx,
+      sy: sy,
+      matrix: matrix,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
     );
     children?.forEach((element) {
       element.scaleElementWithCenter(
-        matrix,
+        sx: sx,
+        sy: sy,
+        matrix: matrix,
         fromObj: fromObj ?? onlyElementGroupPainter,
         fromUndoType: fromUndoType,
       );
@@ -2463,6 +2503,9 @@ class PaintProperty with EquatableMixin {
 
   /// 全属性后的边界, 是旋转后的[rect]的外边界
   /// 更贴切的边界是[paintPath]的边界[PathEx.getExactBounds]
+  ///
+  /// - [getBounds]
+  /// - [paintBounds]
   @dp
   @sceneCoordinate
   Rect get paintBounds => operateMatrix.mapRect(rect);
@@ -2482,6 +2525,9 @@ class PaintProperty with EquatableMixin {
   /// 获取元素的边界
   /// [resetElementAngle] 是否要获取重置角度后的元素边界
   /// [ElementPainter.elementsBounds]
+  ///
+  /// - [paintBounds]
+  /// - [paintScaleRotateBounds]
   @dp
   @sceneCoordinate
   Rect getBounds(bool resetElementAngle) {

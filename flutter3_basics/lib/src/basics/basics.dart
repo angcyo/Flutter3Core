@@ -65,14 +65,29 @@ double nextDouble([double? min, double? max]) {
 }
 
 /// 限制[x] 在 [min] ~ [max] 之间
-dynamic clamp(num? x, num? min, num? max) {
+///
+/// - [correctMinMaxValue] 是否修正[min]和[max]的值, 默认false
+///
+dynamic clamp(
+  num? x,
+  num? min,
+  num? max, {
+  bool correctMinMaxValue = false,
+}) {
+  if (correctMinMaxValue) {
+    if (min != null && max != null) {
+      final temp = min;
+      min = math.min(min, max);
+      max = math.max(temp, max);
+    }
+  }
   if (x == null) {
     return min ?? max ?? 0;
   }
-  if (min != null && x < min) {
+  if (min != null && x <= min) {
     return min;
   }
-  if (max != null && x > max) {
+  if (max != null && x >= max) {
     return max;
   }
   if (x.isNaN) {
