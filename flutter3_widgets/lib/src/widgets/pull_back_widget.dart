@@ -30,6 +30,9 @@ class PullBackWidget extends StatefulWidget {
   /// 下拉返回控制器, 动画到1就是关闭界面
   final AnimationController? pullBackController;
 
+  /// 是否使用[maybePop]
+  final bool useMaybePop;
+
   /// 下拉返回触发的回调
   final void Function(BuildContext context)? onPullBack;
 
@@ -89,6 +92,7 @@ class PullBackWidget extends StatefulWidget {
     this.canPullBackAction,
     this.showDragHandle = false,
     this.useSafeArea = false,
+    this.useMaybePop = false,
     this.contentDecoration,
     this.behavior = HitTestBehavior.deferToChild,
   });
@@ -440,7 +444,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
     //l.d('completed:${_pullBackValue}');
     if (widget.onPullBack == null) {
       if (widget.pullMaxBound == null) {
-        buildContext?.pop();
+        if (widget.useMaybePop) {
+          buildContext?.maybePop();
+        } else {
+          buildContext?.pop();
+        }
       }
     } else if (buildContext != null) {
       widget.onPullBack?.call(buildContext!);
@@ -649,6 +657,7 @@ extension PullBackWidgetExtension on Widget {
   /// [buildDragHandle]
   Widget pullBack({
     Key? key,
+    bool useMaybePop = false,
     bool enablePullBack = true,
     bool useScrollConsume = true,
     AnimationController? pullBackController,
@@ -665,9 +674,14 @@ extension PullBackWidgetExtension on Widget {
       pullMaxBound: pullMaxBound,
       useScrollConsume: useScrollConsume,
       pullBackController: pullBackController,
+      useMaybePop: useMaybePop,
       onPullBack: onPullBack ??
           (context) {
-            context.pop();
+            if (useMaybePop) {
+              context.maybePop();
+            } else {
+              context.pop();
+            }
           },
       onPullProgress: onPullProgress,
       canPullBackAction: canPullBackAction ?? () async => true,

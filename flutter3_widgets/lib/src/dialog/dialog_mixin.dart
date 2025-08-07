@@ -432,6 +432,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           enablePullBack: enablePullBack,
           useScrollConsume: useScrollConsume,
           pullMaxBound: pullMaxBound,
+          useMaybePop: maybePop,
           onPullBack: onPullBack ??
               (context) {
                 if (pullMaxBound == null) {
@@ -439,8 +440,12 @@ mixin DialogMixin implements TranslationTypeImpl {
                   /*if (route?.isCurrent == true) {
                     closeDialogIf(context, true, maybePop);
                   } else {*/
-                  navigator.removeRouteIf(route);
                   /*}*/
+                  if (maybePop) {
+                    navigator.maybePop();
+                  } else {
+                    navigator.removeRouteIf(route);
+                  }
                 }
               },
         )
