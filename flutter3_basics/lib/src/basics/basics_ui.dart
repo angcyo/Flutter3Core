@@ -3460,6 +3460,9 @@ class TranslationTypeImpl {
   bool get dialogBarrierDismissible => true;
 
   /// [Dialog]对话框背景色 [Colors.black54]
+  ///
+  /// - [Colors.transparent] 可以指定透明颜色
+  ///
   @defInjectMark
   Color? get dialogBarrierColor => null;
 

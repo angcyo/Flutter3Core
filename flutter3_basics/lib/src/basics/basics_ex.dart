@@ -624,6 +624,7 @@ extension FutureEx<T> on Future<T> {
 
 /// https://pub.dev/packages/hsluv
 extension ColorEx on Color {
+  /// ARGB
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
   /// [def] 失败后的默认颜色
   static Color? fromHex(String hexString) {
@@ -673,7 +674,7 @@ extension ColorEx on Color {
   Color withOpacityRatio(double opacity) =>
       withAlpha((alpha * opacity).round());
 
-  /// 返回小写的十六进制字符串
+  /// 返回小写的十六进制字符串, ARGB
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
   /// [leadingHashSign] 是否包含#
   /// [includeAlpha] 是否包含透明通道
@@ -1079,7 +1080,7 @@ extension StringEx on String {
 
   bool? toBoolOrNull() => bool.tryParse(this, caseSensitive: false);
 
-  /// 字符`#ffaabbcc`转换成Color对象
+  /// ARGB字符`#ffaabbcc`转换成Color对象
   Color toColor([Color def = Colors.black]) => ColorEx.fromHex(this) ?? def;
 
   Color? toColorOrNull() => ColorEx.fromHex(this);
