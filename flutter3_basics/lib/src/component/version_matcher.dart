@@ -17,9 +17,9 @@ class VersionMatcher {
 
   /// 解析范围
   /// [config] 格式 [ x x~ ~x xxx~xxx xxx~xxx]
-  static List<VersionRange> parseRange(String? config) {
+  static List<ValueRange> parseRange(String? config) {
     final rangeStringList = config?.split(_RS);
-    final list = <VersionRange>[];
+    final list = <ValueRange>[];
     rangeStringList?.forEach((range) {
       final r = range.range;
       if (r != null) {
@@ -68,7 +68,7 @@ class VersionMatcher {
   }
 
   /// 匹配, 当前输入的版本号[version]是否在指定的范围内
-  static bool matchesRange(int? version, List<VersionRange> rangeList) {
+  static bool matchesRange(int? version, List<ValueRange> rangeList) {
     if (version == null) {
       return false;
     }
@@ -81,8 +81,9 @@ class VersionMatcher {
   }
 }
 
+/// 数值范围最小和最大值
 /// 版本规则数据结构[min~max]
-class VersionRange {
+class ValueRange {
   final double min;
   final double max;
 
@@ -95,7 +96,7 @@ class VersionRange {
 
   double get num => max - min;
 
-  VersionRange(this.min, this.max);
+  ValueRange(this.min, this.max);
 
   @override
   String toString() {
@@ -126,9 +127,9 @@ extension VersionIntEx on int {
 extension VersionStringEx on String {
   /// 解析范围
   /// 格式 [ x x~ ~x xxx~xxx xxx~xxx]
-  VersionRange? get range {
+  ValueRange? get range {
     if (this == "*") {
-      return VersionRange(
+      return ValueRange(
         intMinValue.roundToDouble(),
         intMaxValue.roundToDouble(),
       );
@@ -139,14 +140,14 @@ extension VersionStringEx on String {
         if (have("*")) {
           if (startsWith(VersionMatcher._VS)) {
             //[~xxx] 的格式
-            return VersionRange(intMinValue.roundToDouble(), min);
+            return ValueRange(intMinValue.roundToDouble(), min);
           } else {
             //[x~] 的格式
-            return VersionRange(min, intMaxValue.roundToDouble());
+            return ValueRange(min, intMaxValue.roundToDouble());
           }
         } else {
           //[x] 的格式
-          return VersionRange(min, min);
+          return ValueRange(min, min);
         }
       } else if (rangeString.length >= 2) {
         //[x~]
@@ -154,7 +155,7 @@ extension VersionStringEx on String {
         final min = double.tryParse(rangeString[0]) ?? 0.0;
         final max =
             double.tryParse(rangeString[1]) ?? intMax32Value.roundToDouble();
-        return VersionRange(min, max);
+        return ValueRange(min, max);
       }
     }
     return null;
