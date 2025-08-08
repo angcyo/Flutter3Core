@@ -141,7 +141,10 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     return messageWidget ??
         message
             ?.text(
-              style: textStyle ?? globalTheme.textGeneralStyle,
+              style: textStyle ??
+                  globalTheme.textGeneralStyle.copyWith(
+                    fontSize: globalTheme.textInfoStyle.fontSize,
+                  ),
               textAlign: textAlign,
             )
             .paddingAll(gap);
