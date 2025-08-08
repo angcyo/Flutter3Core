@@ -167,9 +167,14 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   //region context
 
   /// 全局的上下文, 在[WidgetsApp]顶上
+  ///
+  /// - [findNavigatorState] 获取导航器
+  /// - [findOverlayState] 获取Overlay
   BuildContext? globalTopContext;
 
   /// 全局的上下文, 在[WidgetsApp]下
+  ///
+  /// - 此上下文可以获取到导航/覆盖层
   BuildContext? globalAppContext;
 
   /// 全局的上下文[globalAppContext]->[globalTopContext]
