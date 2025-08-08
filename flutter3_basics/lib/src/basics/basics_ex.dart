@@ -1896,6 +1896,17 @@ extension RectEx on Rect {
     }
     return center;
   }
+
+  /// 当前矩形是否完全包含另一个矩形
+  bool containsRect(Rect? rect) {
+    if (rect == null) {
+      return false;
+    }
+    return rect.left >= left &&
+        rect.right <= right &&
+        rect.top >= top &&
+        rect.bottom <= bottom;
+  }
 }
 
 extension SizeEx on Size {

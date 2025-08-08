@@ -19,6 +19,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
   bool get firstLayoutFollowTemplate => canvasStyle.firstLayoutFollowTemplate;
+
   bool get firstLayoutFollowContent => canvasStyle.firstLayoutFollowTemplate;
 
   //--
@@ -379,6 +380,52 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
       });
     }
   }*/
+
+  /// 判断元素是否完全在画布区域内.
+  ///
+  /// [exact] 是否获取精确计算的边界, 会有性能损耗
+  ///
+  @api
+  bool isElementInCanvasContent(
+    ElementPainter? element, {
+    bool? exact,
+  }) {
+    if (element == null) {
+      return false;
+    }
+    final contentBackgroundInfo = contentTemplate?.contentBackgroundInfo;
+    if (contentBackgroundInfo == null) {
+      return true;
+    }
+
+    final contentRect = contentBackgroundInfo.bounds;
+    if (contentRect == null) {
+      return true;
+    }
+    final elementsBounds = element.elementsBounds;
+    if (elementsBounds == null) {
+      return false;
+    }
+    if (contentRect.containsRect(elementsBounds)) {
+      if (exact == true) {
+        final contentPath =
+            contentBackgroundInfo.path ?? contentBackgroundInfo.rect?.toPath();
+        if (contentPath == null) {
+          return true;
+        }
+
+        final elementPath = element.elementsBounds?.toPath();
+        if (elementPath == null) {
+          return false;
+        }
+
+        return contentPath.containsPath(elementPath);
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 /// 需要绘制的路径信息

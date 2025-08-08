@@ -196,6 +196,18 @@ extension PathEx on Path {
     return !intersection.isEmpty;
   }
 
+  /// 判断当前路径是否完全包含另一个路径
+  ///
+  /// - 2个[Path]需要相交
+  bool containsPath(Path other) {
+    final diff = Path.combine(
+      PathOperation.difference,
+      other,
+      this,
+    );
+    return diff.isEmpty;
+  }
+
   /// 从当前路径中创建一个虚线[Path]路径
   Path dashPath(List<double> dashArray) {
     final Path dest = Path();

@@ -229,10 +229,30 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   int get canvasCount => canvasMultiManager.canvasStateList.size();
 
   /// 是否选中了元素
+  ///
+  /// - [allElementList]
+  /// - [allSingleElementList]
+  ///
+  /// - [selectedElementList]
+  /// - [selectedSingleElementList]
   bool get isSelectedElement => selectedElementCount > 0;
 
   /// 选中的内部元素, 如果不是一组数据
   ElementPainter? get selectedElement => canvasElementManager.selectedElement;
+
+  /// 选中的元素集合
+  ///
+  /// - [allElementList]
+  /// - [allSingleElementList]
+  ///
+  /// - [selectedElementList]
+  /// - [selectedSingleElementList]
+  List<ElementPainter>? get selectedElementList =>
+      canvasElementManager.selectedElementList;
+
+  /// 选中的单元素集合
+  List<ElementPainter>? get selectedSingleElementList =>
+      canvasElementManager.selectedSingleElementList;
 
   /// 选中的元素边界
   @dp
@@ -244,6 +264,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 画布上所有单级元素的集合
   /// 多画布的情况下通过[CanvasMultiManager]获取其他画布下的元素集合
+  ///
+  /// - [allElementList]
+  /// - [allSingleElementList]
+  ///
+  /// - [selectedElementList]
+  /// - [selectedSingleElementList]
   List<ElementPainter> get allElementList => canvasElementManager.elements;
 
   @dp
