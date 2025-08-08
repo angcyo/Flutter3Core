@@ -361,6 +361,10 @@ class OverlayManagerController {
 }
 
 /// [Overlay]管理[OverlayEntry]的小部件
+///
+/// - [Overlay]
+/// - [OverlayPortal]
+///
 class OverlayManager extends StatefulWidget {
   /// 第一个主页, 之后的页面显示在[home]上
   final Widget? home;
