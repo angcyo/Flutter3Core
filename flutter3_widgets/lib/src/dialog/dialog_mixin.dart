@@ -254,7 +254,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool enablePullBack = true,
     bool useScrollConsume = true,
     bool maybePop = false /*使用[maybePop]还是[pop]*/,
-    double? pullMaxBound,
+    double? pullMaxBound /*可以下拉的最大比例, 或者底部需要预留的高度*/,
     void Function(BuildContext context)? onPullBack,
     bool useScroll = false,
     bool useRScroll = false,

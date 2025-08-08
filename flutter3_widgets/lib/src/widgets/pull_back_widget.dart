@@ -63,7 +63,8 @@ class PullBackWidget extends StatefulWidget {
   //---
 
   /// 下拉最大的边界,
-  /// 如果这个值>1, 则表示底部需要保留的高度
+  /// - 如果这个值>1, 则表示底部需要保留的高度
+  /// - 如果这个值<1, 则表示可以下拉的最大比例
   /// [0~1]
   final double? pullMaxBound;
 
