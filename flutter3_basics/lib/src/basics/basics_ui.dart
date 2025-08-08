@@ -74,7 +74,10 @@ void postFrameCallback(FrameCallback callback,
 
 /// 下一针回调
 /// [postFrameCallback]
-void postFrame(VoidCallback callback, [bool microtask = false]) {
+void postFrame(VoidCallback? callback, [bool microtask = false]) {
+  if (callback == null) {
+    return;
+  }
   if (microtask) {
     scheduleMicrotask(callback);
   } else {
@@ -82,8 +85,21 @@ void postFrame(VoidCallback callback, [bool microtask = false]) {
   }
 }
 
-/// [scheduleMicrotask]
-void $next(void Function() callback, [bool microtask = true]) {
+/// - [scheduleMicrotask]
+/// - [postFrameCallback]
+///
+/// - [$next]
+/// - [$nextFrame]
+void $next(void Function()? callback, [bool microtask = true]) {
+  postFrame(callback, microtask);
+}
+
+/// - [scheduleMicrotask]
+/// - [postFrameCallback]
+///
+/// - [$next]
+/// - [$nextFrame]
+void $nextFrame(void Function()? callback, [bool microtask = false]) {
   postFrame(callback, microtask);
 }
 

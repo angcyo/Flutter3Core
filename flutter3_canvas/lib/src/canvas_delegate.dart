@@ -438,6 +438,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 请求刷新画布
+  ///
+  /// - [void Function()]
+  /// - [VoidCallback]
   @api
   void refresh() {
     final time = lastRequestRefreshTime;

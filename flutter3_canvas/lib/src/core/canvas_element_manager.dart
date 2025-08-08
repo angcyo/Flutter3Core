@@ -356,7 +356,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //debugger();
     if (element == null) {
       assert(() {
-        l.w('无效的操作');
+        l.w('无效的操作[_removeElementFrom]');
         return true;
       }());
       return false;

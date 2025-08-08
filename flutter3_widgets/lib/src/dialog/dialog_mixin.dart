@@ -435,6 +435,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           useMaybePop: maybePop,
           onPullBack: onPullBack ??
               (context) {
+                //debugger();
                 if (pullMaxBound == null) {
                   //debugger();
                   /*if (route?.isCurrent == true) {

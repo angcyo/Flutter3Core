@@ -163,9 +163,9 @@ void postRun(VoidCallback callback) {
 
 /// 使用[Timer]尽快执行[callback]
 /// [Timer.cancel]
-Timer postDelayCallback(VoidCallback callback,
+Timer? postDelayCallback(VoidCallback? callback,
         [Duration duration = Duration.zero]) =>
-    Timer(duration, callback);
+    callback == null ? null : Timer(duration, callback);
 
 /// 使用[Timer]实现一个倒计时
 /// [callback] 倒计时的回调, 返回false, 可以阻止计时
