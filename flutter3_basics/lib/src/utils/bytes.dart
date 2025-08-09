@@ -240,9 +240,11 @@ class BytesWriter {
     writeBytes(value.asciiBytes, length);
   }
 
-  /// 写入一个字符串
-  /// [writeText]
-  /// [writeString]
+  /// 写入一个字符串.
+  /// - [writeEnd] 默认true
+  ///
+  /// - [writeText]
+  /// - [writeString]
   void writeString(String? value, [int? length, bool writeEnd = true]) {
     if (value == null || value.isEmpty) {
       return;

@@ -565,13 +565,13 @@ class CanvasListener {
     ElementSelectType selectType,
   )? onCanvasElementSelectChangedAction;
 
-  /// [CanvasDelegate.dispatchCanvasSelectElementList]
+  /// [CanvasDelegate.dispatchCanvasChooseSelectElementList]
   /// 按下时, 有多个元素需要被选中.
   final void Function(
     ElementSelectComponent selectComponent,
     List<ElementPainter>? list,
     ElementSelectType selectType,
-  )? onCanvasSelectElementListAction;
+  )? onCanvasChooseSelectElementListAction;
 
   /// [CanvasDelegate.dispatchCanvasElementListChanged]
   /// 元素列表发生改变
@@ -708,7 +708,7 @@ class CanvasListener {
     this.onCanvasSelectBoundsChangedAction,
     this.onCanvasElementPropertyChangedAction,
     this.onCanvasElementSelectChangedAction,
-    this.onCanvasSelectElementListAction,
+    this.onCanvasChooseSelectElementListAction,
     this.onCanvasElementListChangedAction,
     this.onCanvasElementListAddChanged,
     this.onCanvasElementListRemoveChanged,

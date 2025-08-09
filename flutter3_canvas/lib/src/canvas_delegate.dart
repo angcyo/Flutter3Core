@@ -1113,13 +1113,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 按下时, 有多个元素需要被选中.
   /// 默认按下选中回调只会回调最上层的元素, 可以通过此方法弹出选择其他元素的对话框
-  void dispatchCanvasSelectElementList(
+  void dispatchCanvasChooseSelectElementList(
     ElementSelectComponent selectComponent,
     List<ElementPainter>? list,
     ElementSelectType selectType,
   ) {
     _eachCanvasListener((element) {
-      element.onCanvasSelectElementListAction
+      element.onCanvasChooseSelectElementListAction
           ?.call(selectComponent, list, selectType);
     });
   }

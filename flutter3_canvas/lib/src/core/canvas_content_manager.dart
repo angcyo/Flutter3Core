@@ -388,9 +388,10 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   @api
   bool isElementInCanvasContent(
     ElementPainter? element, {
+    @dp Rect? elementRect,
     bool? exact,
   }) {
-    if (element == null) {
+    if (element == null && elementRect == null) {
       return false;
     }
     final contentBackgroundInfo = contentTemplate?.contentBackgroundInfo;
@@ -402,7 +403,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     if (contentRect == null) {
       return true;
     }
-    final elementsBounds = element.elementsBounds;
+    final elementsBounds = element?.elementsBounds ?? elementRect;
     if (elementsBounds == null) {
       return false;
     }
@@ -414,8 +415,8 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
           return true;
         }
 
-        final elementPath = element.elementsBounds?.toPath();
-        if (elementPath == null) {
+        final elementPath = elementsBounds.toPath();
+        if (elementPath.isEmpty) {
           return false;
         }
 

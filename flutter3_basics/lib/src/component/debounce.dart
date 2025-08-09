@@ -73,7 +73,7 @@ class Debounce {
 extension DebounceEx on dynamic {
   static final Map<int, Timer> _debounceMap = {};
 
-  ///抖动
+  /// 抖动, 延迟多少毫秒只执行一次
   void debounce(VoidCallback callback, [int millisecond = 200, int? key]) {
     //debugger();
     key ??= hashCode;
@@ -88,7 +88,11 @@ extension DebounceEx on dynamic {
 }
 
 /// https://pub.dev/packages/dev_prokit
+///
+/// [Throttle]
+/// [Debounce]
 extension DebounceFunction on Function {
+  /// 抖动, 延迟多少毫秒只执行一次
   /// No parameter button debouncing,
   /// Default parameter 200 milliseconds.
   ///

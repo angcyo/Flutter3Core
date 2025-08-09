@@ -976,7 +976,7 @@ class TranslateControl extends BaseControl
         _isFirstTranslate = false;
         if (isFirstHandle && (_downElementList?.size() ?? 0) > 1) {
           //多个元素被选中的回调, 按下多个元素
-          canvasDelegate.dispatchCanvasSelectElementList(
+          canvasDelegate.dispatchCanvasChooseSelectElementList(
             canvasElementControlManager.elementSelectComponent,
             _downElementList!,
             ElementSelectType.pointer,
