@@ -94,6 +94,7 @@ dependencies:
   # https://pub.dev/packages/nm
   # 需要对应的权限
   network_info_plus: ^6.1.4
+  #connectivity_plus: ^6.1.4
 
   # https://pub.dev/packages/udp
   udp: ^5.0.3

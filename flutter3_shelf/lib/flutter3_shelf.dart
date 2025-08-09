@@ -7,9 +7,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter3_app/flutter3_app.dart';
-import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_shelf/src/shelf_html.dart';
-import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -29,16 +27,18 @@ export 'package:shelf/shelf.dart';
 export 'package:shelf_multipart/shelf_multipart.dart';
 export 'package:shelf_router/shelf_router.dart';
 export 'package:udp/udp.dart';
-export 'src/mode/service_info_bean.dart';
-export 'src/mode/udp_packet_bean.dart';
-export 'src/mode/udp_message_bean.dart';
-export 'src/mode/udp_client_info_bean.dart';
 
-part 'src/local/local_udp_base.dart';
-part 'src/local/local_udp_server.dart';
-part 'src/local/local_udp_client.dart';
+export 'src/mode/service_info_bean.dart';
+export 'src/mode/udp_client_info_bean.dart';
+export 'src/mode/udp_message_bean.dart';
+export 'src/mode/udp_packet_bean.dart';
+
 part 'src/flutter3_shelf_http.dart';
 part 'src/flutter3_shelf_web_socket.dart';
+part 'src/local/local_udp_base.dart';
+part 'src/local/local_udp_client.dart';
+part 'src/local/local_udp_server.dart';
+part 'src/network/network_mix.dart';
 part 'src/udp_ex.dart';
 part 'src/udp_service.dart';
 
@@ -47,15 +47,6 @@ part 'src/udp_service.dart';
 /// @since 2024-7-15
 ///
 
-/// 获取上次获取到的wifi ip地址
-/// 需要先调用[networkWifiIp]
-String? $lastWifiIpCache;
-
-/// 获取网络wifi ip地址
-Future<String?> get networkWifiIp async {
-  $lastWifiIpCache = await NetworkInfo().getWifiIP();
-  return $lastWifiIpCache;
-}
 
 final _defaultMimeTypeResolver = MimeTypeResolver();
 

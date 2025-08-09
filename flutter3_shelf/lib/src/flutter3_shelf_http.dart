@@ -160,7 +160,7 @@ class Flutter3ShelfHttp {
     while (count <= retryCount) {
       try {
         //debugger();
-        final ip = await networkWifiIp;
+        final ip = await $getWifiIp();
         if (checkNetwork && ip == null) {
           throw "无网络, 请检查网络连接!";
         }
