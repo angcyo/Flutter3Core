@@ -266,7 +266,15 @@ class ElementPainter extends IElementPainter {
   /// 元素是否可见, 不可见的元素也不会绘制
   bool get isVisible => paintState.isVisible;
 
-  set isVisible(bool value) {
+  /// 更新元素的可见性
+  ///
+  /// - 支持[ElementPainter]
+  /// - 支持[ElementGroupPainter]
+  @overridePoint
+  void updateVisible(
+    bool value, {
+    Object? fromObj,
+  }) {
     final old = paintState.isVisible;
     if (old != value) {
       paintState.isVisible = value;
@@ -274,7 +282,7 @@ class ElementPainter extends IElementPainter {
         paintState,
         paintState,
         PainterPropertyType.state,
-        this,
+        fromObj ?? this,
         null,
       );
       if (!value) {
@@ -287,7 +295,12 @@ class ElementPainter extends IElementPainter {
   /// 元素是否锁定了操作, 锁定后, 不可选中操作
   bool get isLockOperate => paintState.isLockOperate;
 
-  set isLockOperate(bool value) {
+  /// 更新元素锁定操作
+  @overridePoint
+  void updateLockOperate(
+    bool value, {
+    Object? fromObj,
+  }) {
     final old = paintState.isLockOperate;
     if (old != value) {
       paintState.isLockOperate = value;
@@ -295,7 +308,7 @@ class ElementPainter extends IElementPainter {
         paintState,
         paintState,
         PainterPropertyType.state,
-        this,
+        fromObj ?? this,
         null,
       );
       if (value) {
@@ -1059,6 +1072,9 @@ class ElementPainter extends IElementPainter {
   /// [PaintState]
   /// [ElementPainter.paintState]
   /// [ElementPainter.paintProperty]
+  ///
+  /// - [ElementGroupPainter.onChildPaintPropertyChanged]
+  ///
   void dispatchSelfPaintPropertyChanged(
     dynamic old,
     dynamic value,
@@ -1815,18 +1831,24 @@ class ElementGroupPainter extends ElementPainter {
       this is ElementSelectComponent ? null : this;
 
   @override
-  set isLockOperate(bool value) {
-    super.isLockOperate = value;
+  void updateLockOperate(
+    bool value, {
+    Object? fromObj,
+  }) {
+    super.updateLockOperate(value, fromObj: fromObj ?? this);
     children?.forEach((element) {
-      element.isLockOperate = value;
+      element.updateLockOperate(value, fromObj: fromObj ?? this);
     });
   }
 
   @override
-  set isVisible(bool value) {
-    super.isVisible = value;
+  void updateVisible(
+    bool value, {
+    Object? fromObj,
+  }) {
+    super.updateVisible(value, fromObj: fromObj ?? this);
     children?.forEach((element) {
-      element.isVisible = value;
+      element.updateVisible(value, fromObj: fromObj ?? this);
     });
   }
 
@@ -2034,10 +2056,12 @@ class ElementGroupPainter extends ElementPainter {
         updatePaintPropertyFromChildren();
       } else if (propertyType == PainterPropertyType.state) {
         //debugger();
-        final visibleList = children?.filterVisibleList;
-        if (visibleList?.length != children?.length) {
-          children = visibleList;
-          updatePaintPropertyFromChildren();
+        if (isVisible /*自身可见, 但是child有不可见的元素*/) {
+          final visibleList = children?.filterVisibleList;
+          if (visibleList?.length != children?.length) {
+            children = visibleList;
+            updatePaintPropertyFromChildren();
+          }
         }
       }
     }

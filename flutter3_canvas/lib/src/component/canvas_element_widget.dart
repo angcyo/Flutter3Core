@@ -64,10 +64,13 @@ class CanvasElementRenderObject extends RenderBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     super.paint(context, offset);
-    elementPainter?.let((painter) {
+
+    final painter = elementPainter;
+    if (painter != null) {
+      //debugger(when: painter is ElementGroupPainter);
       final canvas = context.canvas;
-      //debugger();
-      painter.elementsBounds?.let((bounds) {
+      final bounds = painter.elementsBounds;
+      if (bounds != null) {
         final dst = offset & size;
         final src = bounds.ensureValid();
         /*canvas.drawRect(dst, Paint()..color = Colors.black12);*/
@@ -87,10 +90,9 @@ class CanvasElementRenderObject extends RenderBox {
           dstPadding: padding,
           /*debugLabel: bounds.isEmpty ? "isEmpty" : null,*/
         );
-      });
-
+      }
       //context.canvas.drawRect(offset & size, Paint());
-    });
+    }
   }
 
   @override

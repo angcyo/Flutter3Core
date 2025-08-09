@@ -1948,11 +1948,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     canvasDelegate.canvasUndoManager.addRunRedo(() {
       for (final painter in list) {
-        painter.isLockOperate = !lock;
+        painter.updateLockOperate(!lock);
       }
     }, () {
       for (final painter in list) {
-        painter.isLockOperate = lock;
+        painter.updateLockOperate(lock);
       }
     }, true, undoType);
   }
@@ -1972,11 +1972,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     canvasDelegate.canvasUndoManager.addRunRedo(() {
       for (final painter in list) {
-        painter.isVisible = !visible;
+        painter.updateVisible(!visible);
       }
     }, () {
       for (final painter in list) {
-        painter.isVisible = visible;
+        painter.updateVisible(visible);
       }
     }, true, undoType);
   }
