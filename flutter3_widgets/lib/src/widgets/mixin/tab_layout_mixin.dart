@@ -126,7 +126,9 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     );
   }
 
-  /// [width] 宽度
+  /// - [width] 宽度, 不指定则全宽
+  /// - [padding] 内边距
+  /// - [margin] 外边距
   ///
   /// [buildGradientFillIndicator]
   /// [buildBottomLineIndicator]
