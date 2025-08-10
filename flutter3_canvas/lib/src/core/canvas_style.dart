@@ -219,11 +219,11 @@ class CanvasStyle {
 
   /// x横坐标轴的高度
   @dp
-  double xAxisHeight = 20;
+  double xAxisHeight = 12;
 
   /// y纵坐标轴的宽度
   @dp
-  double yAxisWidth = 20;
+  double yAxisWidth = 12;
 
   /// 是否绘制坐标轴上的单位
   bool showAxisUnitSuffix = false;
@@ -285,5 +285,5 @@ class CanvasStyle {
   @viewCoordinate
   double adsorbEscapeThreshold = 10;
 
-//endregion ---adsorb---
+  //endregion ---adsorb---
 }

@@ -5,8 +5,16 @@ part of '../flutter3_canvas.dart';
 /// @since 2024/02/02
 ///
 /// 画布代理类, 核心类, 整个框架的入口
-/// [CanvasWidget]
-/// [CanvasRenderBox]
+///
+/// 关键代理方法:
+///
+/// - [layout] 布局入口
+/// - [paint] 绘制入口
+/// - [handleEvent] 手势事件入口
+/// - [handleKeyEvent] 键盘事件入口
+///
+/// - [CanvasWidget]
+/// - [CanvasRenderBox]
 class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 设置新建画布默认的名称前缀
   @api
@@ -21,6 +29,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         defName ?? CanvasStateData.canvasDefNamePrefix;
   }
 
+  /// [CanvasStateData.customCanvasDefNamePrefix]
   /// ```
   /// When an inherited widget changes, for example if the value of Theme.of() changes,
   /// its dependent widgets are rebuilt.
@@ -313,7 +322,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---core---
 
   /// 画布样式/配置参数等信息
-  final CanvasStyle canvasStyle = CanvasStyle();
+  CanvasStyle canvasStyle = CanvasStyle();
 
   /// 拖动状态监听
   /// - [CanvasStyleMode.dragMode]]:正在拖动状态
@@ -453,13 +462,25 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
-  /// 请求重新布局, 在隐藏标尺之后, 需要重新布局
+  /// 请求重新布局
+  /// - 在隐藏标尺之后, 需要重新布局
+  /// - 调整标尺尺寸之后, 需要重新布局
+  ///
   @api
-  void relayout() {
+  void relayout({
+    bool? reassemble,
+  }) {
     final size = _layoutSize;
     if (size != null) {
+      if (reassemble == true) {
+        canvasStyle = CanvasStyle();
+      }
       layout(size);
       refresh();
+      assert(() {
+        l.v("canvasStyle->${canvasStyle.yAxisWidth} ${canvasStyle.xAxisHeight}");
+        return true;
+      }());
     }
   }
 
