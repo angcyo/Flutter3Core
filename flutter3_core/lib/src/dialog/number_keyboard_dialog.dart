@@ -46,6 +46,8 @@ enum NumberKeyboardType {
 /// 数字键盘输入对话框
 /// 如果是小数, 返回小数
 /// 如果是整数, 返回整数
+///
+/// - [NumberKeyboardLayout]
 class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
   //---
 
@@ -111,12 +113,16 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
 
   final borderRadius = 4.0;
 
+  /// 范围提示文本样式
   late final rangeHintStyle = const TextStyle(
     fontSize: 14,
     color: Colors.grey,
   );
 
+  /// 数字文本样式
   late final TextStyle numberValueStyle;
+
+  /// 输入为空时, 提示文本样式
   late final numberHintStyle = const TextStyle(
     fontSize: 20,
     color: Colors.grey,
@@ -300,6 +306,10 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
     radius: widget.itemBorderRadius,
   );
 
+  /// [NumberKeyboardType.finish] 完成按键的文本样式
+  late final TextStyle keyboardFinishStyle;
+
+  /// [NumberKeyboardType.number] 完成按键的文本样式
   late final TextStyle keyboardNumberStyle;
 
   //--
@@ -322,13 +332,14 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
       radius: widget.itemBorderRadius,
     );
 
-    keyboardNumberStyle = TextStyle(
+    keyboardFinishStyle = TextStyle(
       fontSize: 16,
       color: context.isThemeDark
           ? globalTheme.textTitleStyle.color
           : globalTheme.textGeneralStyle.color,
       fontWeight: FontWeight.bold,
     );
+    keyboardNumberStyle = keyboardFinishStyle.copyWith(fontSize: 22);
   }
 
   @override
@@ -362,6 +373,7 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
         }, onLongPress: () {
           _onSelfInput("", NumberKeyboardType.clear);
         }),
+        //--
         _createNumberButton("4", NumberKeyboardType.number),
         _createNumberButton("5", NumberKeyboardType.number),
         _createNumberButton("6", NumberKeyboardType.number),
@@ -373,7 +385,7 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
           pressedDecoration: pressedDecoration,
           child: LibRes.of(context)
               .libFinish
-              .text(style: keyboardNumberStyle)
+              .text(style: keyboardFinishStyle)
               .align(Alignment.center),
         ).click(() {
           _onSelfInput("", NumberKeyboardType.finish);
@@ -384,18 +396,19 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
             minHeight: widget.itemHeight * 3 + widget.itemGap * 2,
           ),
         ),
+        //--
         _createEmptyButton(),
         _createNumberButton("7", NumberKeyboardType.number),
         _createNumberButton("8", NumberKeyboardType.number),
         _createNumberButton("9", NumberKeyboardType.number),
         _createEmptyButton(),
+        if (isSupportDecimal)
+          _createNumberButton(".", NumberKeyboardType.decimal),
         if (isSupportDecimal || isSupportNegative)
           _createNumberButton("0", NumberKeyboardType.number)
         else
           _createNumberButton("0", NumberKeyboardType.number)
               .flowLayoutData(weight: 1.0 / 4 * 2, excludeGapCount: 2),
-        if (isSupportDecimal)
-          _createNumberButton(".", NumberKeyboardType.decimal),
         if (isSupportNegative)
           _createNumberButton("±", NumberKeyboardType.positiveNegative),
         if (isShowPackUp)
