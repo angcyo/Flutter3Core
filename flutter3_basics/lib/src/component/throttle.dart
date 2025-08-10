@@ -42,17 +42,32 @@ extension ThrottleEx on dynamic {
   static final Map<int, int> _throttleTimeMap = {};
 
   /// 限流, 短时间内的连续事件忽略
-  void throttle(VoidCallback callback, [int millisecond = 200, int? key]) {
+  ///
+  /// - [doFirst] 立即执行第一次?
+  /// - [doLast] 最后一次是否执行?
+  ///
+  void throttle(
+    VoidCallback callback, [
+    int millisecond = 200,
+    int? key,
+    bool? doLast,
+    bool? doFirst = true,
+  ]) {
     //debugger();
     key ??= hashCode;
     Timer? timer = _throttleMap[key];
     int? time = _throttleTimeMap[key];
     if (timer == null || nowTime() - time! >= millisecond) {
-      callback.call();
+      if (doFirst == true) {
+        callback.call();
+      }
       timer?.cancel();
       timer = Timer(Duration(milliseconds: millisecond), () {
         _throttleMap.remove(key);
         _throttleTimeMap.remove(key);
+        if (doLast == true) {
+          callback.call();
+        }
       });
       _throttleMap[key] = timer;
       _throttleTimeMap[key] = nowTime();
@@ -64,6 +79,7 @@ extension ThrottleEx on dynamic {
 /// [Throttle]
 /// [Debounce]
 extension ThrottleFunction on Function {
+  /// 将一个函数包裹成一个限流的函数
   /// Throttling for calling events without parameters,
   /// The default parameter is 200 milliseconds.
   ///
