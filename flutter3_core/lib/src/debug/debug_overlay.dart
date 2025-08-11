@@ -235,6 +235,7 @@ class _DebugOverlayDialogState extends State<DebugOverlayDialog>
     with DebugActionMixin, GlobalAppStateMixin {
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     final defClickList = DebugOverlayButton.defDebugActions
         .filter((item) => item.clickAction != null);
     final defHiveList = DebugOverlayButton.defDebugActions
@@ -249,13 +250,24 @@ class _DebugOverlayDialogState extends State<DebugOverlayDialog>
       context,
       [
         if (defClickList.isNotEmpty)
-          buildClickActionList(context, defClickList).wrap()!.paddingSym(),
+          //库中默认的
+          buildClickActionList(context, defClickList)
+              .wrap()!
+              .paddingOnly(all: kH)
+              .backgroundColor(globalTheme.borderColor, fillRadius: kX)
+              .paddingOnly(all: kL),
         if (clickList.isNotEmpty)
-          buildClickActionList(context, clickList).wrap()!.paddingSym(),
+          //用户自定义的
+          buildClickActionList(context, clickList)
+              .wrap()!
+              .paddingOnly(all: kH)
+              .backgroundColor(globalTheme.borderColor, fillRadius: kX)
+              .paddingOnly(all: kL),
         if (defHiveList.isNotEmpty)
           ...buildHiveActionList(context, defHiveList),
         if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
       ].filterNull(),
+      scrollChildIndex: 0,
       contentMaxHeight: 0.3,
       useRScroll: true,
     );

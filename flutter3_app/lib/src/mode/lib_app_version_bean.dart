@@ -56,12 +56,88 @@ class LibAppVersionBean {
     );
   }
 
+  static List<LibAppVersionBean> fromMarkdownList(String markdown) {
+    List<LibAppVersionBean> result = [];
+
+    LibAppVersionBean? last;
+    final versionDesBuffer = StringBuffer();
+    markdown.eachLine((line) {
+      final lineStr = line.trim();
+      final lineParts = lineStr.split(" ").map((e) => e.trim()).toList();
+      if (lineStr.startsWith("#") && lineParts.length >= 4) {
+        //title
+        if (last != null) {
+          last!.versionDes = versionDesBuffer.toString();
+          result.add(last!);
+          versionDesBuffer.clear();
+          last = null;
+        }
+        //2025-07-28 `5.9.1-alpha16` 5910
+        last = LibAppVersionBean()
+          ..versionDate = lineParts[1]
+          ..versionName = lineParts[2].trimBoth("`")
+          ..versionCode = lineParts[3].trimBoth("`").toInt();
+      } else if (last?.versionCode != null) {
+        if (lineStr.isNotEmpty) {
+          versionDesBuffer.appendIfNotEmpty();
+          versionDesBuffer.write(lineStr);
+        }
+      }
+    });
+    if (last != null) {
+      last!.versionDes = versionDesBuffer.toString();
+      result.add(last!);
+      versionDesBuffer.clear();
+      last = null;
+    }
+    return result;
+  }
+
   factory LibAppVersionBean.fromJson(Map<String, dynamic> json) =>
       _$LibAppVersionBeanFromJson(json);
 
   Map<String, dynamic> toJson() => _$LibAppVersionBeanToJson(this);
 
   LibAppVersionBean();
+
+  /// 从Markdown格式中, 解析出数据结构
+  ///
+  /// ```
+  /// # 2025-07-28 `5.9.1-alpha16` 5910
+  ///
+  /// - 修复1
+  /// - 修复2
+  /// - 新增1
+  /// - 移除1
+  /// ```
+  ///
+  factory LibAppVersionBean.fromMarkdown(String markdown) {
+    final bean = LibAppVersionBean();
+
+    final versionDesBuffer = StringBuffer();
+    markdown.eachLine((line) {
+      final lineStr = line.trim();
+      final lineParts = lineStr.split(" ").map((e) => e.trim()).toList();
+      if (lineStr.startsWith("#") && lineParts.length >= 4) {
+        //title
+        if (bean.versionDes != null) {
+          //已经有数据了, 则结束解析.
+          return true;
+        }
+
+        //2025-07-28 `5.9.1-alpha16` 5910
+        bean.versionDate = lineParts[1];
+        bean.versionName = lineParts[2].trimBoth("`");
+        bean.versionCode = lineParts[3].trimBoth("`").toInt();
+      } else if (bean.versionCode != null) {
+        if (versionDesBuffer.isNotEmpty || lineStr.isNotEmpty) {
+          versionDesBuffer.writeln(lineStr);
+        }
+      }
+    });
+    bean.versionDes = versionDesBuffer.toString();
+    return bean;
+  }
 
   //region --精确平台/包名/指定设备--
 
@@ -104,7 +180,10 @@ class LibAppVersionBean {
   /// 版本号, 用来比对
   int? versionCode;
 
-  /// 版本描述信息
+  /// 版本描述信息, Markdown格式
+  ///
+  /// - [AppUpdateDialog]
+  ///
   String? versionDes;
 
   /// 是否强制更新, 强制更新则不允许关闭窗口
@@ -126,6 +205,7 @@ class LibAppVersionBean {
   bool? jumpToMarket;
 
   /// 版本时间
+  /// `2025-06-10`
   String? versionDate;
 
   //endregion --核心信息--

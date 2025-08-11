@@ -259,9 +259,19 @@ class _DebugPageState extends State<DebugPage>
 
     return [
       if (defClickList.isNotEmpty)
-        buildClickActionList(context, defClickList).wrap()!.paddingSym(),
+        //库中默认的
+        buildClickActionList(context, defClickList)
+            .wrap()!
+            .paddingOnly(all: kH)
+            .backgroundColor(globalTheme.borderColor, fillRadius: kX)
+            .paddingOnly(all: kL),
       if (clickList.isNotEmpty)
-        buildClickActionList(context, clickList).wrap()!.paddingSym(),
+        //用户自定义的
+        buildClickActionList(context, clickList)
+            .wrap()!
+            .paddingOnly(all: kH)
+            .backgroundColor(globalTheme.borderColor, fillRadius: kX)
+            .paddingOnly(all: kL),
       if (defHiveList.isNotEmpty) ...buildHiveActionList(context, defHiveList),
       if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
       [

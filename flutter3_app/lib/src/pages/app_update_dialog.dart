@@ -19,6 +19,11 @@ part of '../../flutter3_app.dart';
 /// ```
 ///
 /// 应用程序更新提示弹窗
+///
+/// - [AppUpdateDialog]
+/// - [AppUpdateLogDialog]
+/// - [AppUpdateLogListScreen]
+///
 class AppUpdateDialog extends StatefulWidget with DialogMixin {
   /// 检查更新并且显示
   /// [forceShow] 是否强制显示更新, 不检查版本号
@@ -216,7 +221,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
       widget.versionBean.versionDes
           ?.text(style: globalTheme.textBodyStyle)
           .scroll()
-          .constrainedMax(minWidth: double.infinity, maxHeight: 200)
+          .constrainedMax(
+            minWidth: double.infinity,
+            maxHeight: $screenHeight / 3,
+          )
           .paddingSymmetric(vertical: kX),
       _buildProgress(),
       control
@@ -332,5 +340,114 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
   void _startInstallApk() {
     //debugger();
     AndroidPackageInstaller.installApk(apkFilePath: _downloadFilePathCache);
+  }
+}
+
+/// 更新日志弹窗
+class AppUpdateLogDialog extends StatelessWidget with DialogMixin {
+  final LibAppVersionBean bean;
+
+  /// 查看更多
+  final VoidAction? onClickMoreAction;
+
+  @override
+  TranslationType get translationType => TranslationType.scaleFade;
+
+  const AppUpdateLogDialog({
+    super.key,
+    required this.bean,
+    this.onClickMoreAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final lRes = libRes(context);
+    return buildCenterDialog(
+      context,
+      [
+        (bean.versionTile ?? "${bean.versionName} 更新说明:")
+            .text(
+              style: globalTheme.textTitleStyle,
+              bold: true,
+            )
+            .paddingOnly(horizontal: kX, top: kX),
+        bean.versionDes
+            ?.text()
+            .scroll()
+            .constrainedMax(
+              minWidth: double.infinity,
+              maxHeight: $screenHeight / 3,
+            )
+            .paddingSymmetric(vertical: kX),
+        hLine(context),
+        "查看更多"
+            .text(textAlign: TextAlign.center)
+            .center()
+            .constrainedMin(minHeight: kButtonHeight)
+            .matchParentWidth()
+            .inkWell(() {
+          context.popDialog();
+          onClickMoreAction?.call();
+        }),
+        hLine(context),
+        "确定"
+            .text(
+                textAlign: TextAlign.center, textColor: globalTheme.accentColor)
+            .center()
+            .constrainedMin(minHeight: kButtonHeight)
+            .matchParentWidth()
+            .inkWell(() {
+          context.popDialog();
+        }),
+      ].column(crossAxisAlignment: CrossAxisAlignment.start)!,
+      padding: EdgeInsets.zero,
+    );
+  }
+}
+
+/// 更新日志列表界面
+/// - [_AppUpdateLogTile]
+class AppUpdateLogListScreen extends StatelessWidget with AbsScrollPage {
+  final List<LibAppVersionBean> beanList;
+
+  const AppUpdateLogListScreen({
+    super.key,
+    required this.beanList,
+  });
+
+  @override
+  String? getTitle(BuildContext context) => "更新记录";
+
+  @override
+  WidgetList? buildScrollBody(BuildContext context) {
+    return [
+      for (final bean in beanList) _AppUpdateLogTile(bean: bean),
+    ];
+  }
+}
+
+/// [AppUpdateLogListScreen]
+class _AppUpdateLogTile extends StatelessWidget {
+  final LibAppVersionBean bean;
+
+  const _AppUpdateLogTile({
+    super.key,
+    required this.bean,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    return [
+      (bean.versionTile ?? "${bean.versionDate} / ${bean.versionName}")
+          .text(
+            style: globalTheme.textTitleStyle,
+            bold: true,
+          )
+          .paddingOnly(horizontal: kX, top: kX),
+      bean.versionDes?.text().paddingSymmetric(vertical: kX),
+      hLine(context),
+    ].column(crossAxisAlignment: CrossAxisAlignment.start)!;
   }
 }

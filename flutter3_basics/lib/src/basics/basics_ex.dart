@@ -1205,6 +1205,27 @@ extension StringEx on String {
     return allMatches(regex).map((e) => int.parse(e.group(0)!)).toList();
   }
 
+  /// 移除首尾指定的字符
+  String trimBoth(String chars) {
+    return trimStart(chars).trimEnd(chars);
+  }
+
+  /// 替换头部指定字符
+  String trimStart(String chars) {
+    if (startsWith(chars)) {
+      return substring(chars.length);
+    }
+    return this;
+  }
+
+  /// 替换尾部指定字符串
+  String trimEnd(String chars) {
+    if (endsWith(chars)) {
+      return substring(0, length - chars.length);
+    }
+    return this;
+  }
+
   //endregion 正则
 
   //region 加密

@@ -91,6 +91,7 @@ part 'src/component/r_exception.dart';
 part 'src/component/request_page.dart';
 part 'src/component/stack_list.dart';
 part 'src/component/string_cache.dart';
+part 'src/component/string_iterator.dart';
 part 'src/component/throttle.dart';
 part 'src/component/undo_manager.dart';
 part 'src/component/version_matcher.dart';
