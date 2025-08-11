@@ -6,10 +6,13 @@ part of './dialog.dart';
 /// @date 2023/12/24
 ///
 /// 参考[DialogRoute]
-/// [RouteWidgetEx.toRoute]
-/// [DisplayFeatureSubScreen]
-/// [DisplayFeatureSubScreen.anchorPoint]
+/// - 支持穿透手势事件
+///
+/// - [RouteWidgetEx.toRoute]
+/// - [DisplayFeatureSubScreen]
+/// - [DisplayFeatureSubScreen.anchorPoint]
 class DialogPageRoute<T> extends RawDialogRoute<T> {
+  /// 通过[IgnorePointerType.all]属性, 可以让弹窗穿透点击事件
   final IgnorePointerType? barrierIgnorePointerType;
 
   DialogPageRoute({
