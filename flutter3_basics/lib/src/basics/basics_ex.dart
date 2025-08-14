@@ -28,12 +28,25 @@ String get $uuid {
 }
 
 /// 等待[milliseconds]毫秒
+///
+/// - [wait]
+/// - [sleep]
+/// - [delayed]
+@Alias("delayed")
 Future wait([int milliseconds = 1]) =>
     Future.delayed(Duration(milliseconds: milliseconds));
 
+/// - [wait]
+/// - [sleep]
+/// - [delayed]
+@Alias("delayed")
 Future sleep([int milliseconds = 1]) => wait(milliseconds);
 
 /// 延迟执行
+/// - [wait]
+/// - [sleep]
+/// - [delayed]
+@Alias("Future.delayed")
 Future delayed([Duration? duration]) =>
     Future.delayed(duration ?? Duration(milliseconds: 1));
 
@@ -2382,6 +2395,21 @@ extension IntEx on int {
       list.add((this >> (i * 8)) & 0xFF);
     }
     return list.reversed.toList();
+  }
+
+  /// 1 .. 100
+  Stream<int> to(
+    int to, {
+    bool includeTo = true,
+    int step = 1,
+  }) async* {
+    for (var i = this; i <= to; i += step) {
+      if (includeTo || i < to) {
+        yield i;
+      } else if (i >= to) {
+        break;
+      }
+    }
   }
 }
 
