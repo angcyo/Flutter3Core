@@ -37,6 +37,9 @@ class Throttle {
 }
 
 /// 每隔多少毫秒, 并执行一次, 首次执行不限流
+///
+/// [ThrottleEx]
+/// [DebounceEx]
 extension ThrottleEx on dynamic {
   static final Map<int, Timer> _throttleMap = {};
   static final Map<int, int> _throttleTimeMap = {};
@@ -47,12 +50,12 @@ extension ThrottleEx on dynamic {
   /// - [doLast] 最后一次是否执行?
   ///
   void throttle(
-    VoidCallback callback, [
+    VoidCallback callback, {
     int millisecond = 200,
     int? key,
     bool? doLast,
     bool? doFirst = true,
-  ]) {
+  }) {
     //debugger();
     key ??= hashCode;
     Timer? timer = _throttleMap[key];

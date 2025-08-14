@@ -70,11 +70,18 @@ class Debounce {
 }
 
 /// 抖动处理, 防止多次调用, 只执行最后一次
+///
+/// [ThrottleEx]
+/// [DebounceEx]
 extension DebounceEx on dynamic {
   static final Map<int, Timer> _debounceMap = {};
 
   /// 抖动, 延迟多少毫秒只执行一次
-  void debounce(VoidCallback callback, [int millisecond = 200, int? key]) {
+  void debounce(
+    VoidCallback callback, {
+    int millisecond = 200,
+    int? key,
+  }) {
     //debugger();
     key ??= hashCode;
     Timer? timer = _debounceMap[key];
