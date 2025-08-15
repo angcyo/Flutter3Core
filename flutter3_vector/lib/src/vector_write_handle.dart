@@ -418,7 +418,7 @@ class SvgWriteHandle with VectorWriteMixin {
   }
 }
 
-/// 输出二维点位数组
+/// 输出二维点位数组, 关键点数据输出, 起点-终点
 class PointWriteHandle with VectorWriteMixin {
   /// 每当枚举到的值时, 都转换成此单位, 不指定则不转换
   /// [IUnit.mm]
