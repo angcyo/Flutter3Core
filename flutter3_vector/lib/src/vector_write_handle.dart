@@ -30,9 +30,10 @@ const sDefaultCutWidth = 0.3;
 const sDefaultCutStep = 0.03;
 
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
-String _wrapSvgXml(@dp Rect bounds, void Function(StringBuffer) action) =>
+String _wrapSvgXml(@dp Rect bounds, void Function(StringBuffer) action,
+        {bool writeProperty = true}) =>
     svgBuilderSync((builder) {
-      builder.writeViewBox(bounds);
+      builder.writeViewBox(bounds, writeProperty: writeProperty);
       action(builder.buffer);
     });
 
@@ -1155,23 +1156,32 @@ extension VectorListPathEx on List<Path> {
     @dp double? pathStep,
     @mm double? tolerance,
     SvgWriteHandle? handle,
+    //--
+    @dp Rect? pathBounds,
+    //--
+    bool writeProperty = true,
   }) {
     if (isNil(this)) {
       return null;
     }
-    final bounds = getExactBounds(true, pathStep);
-    return _wrapSvgXml(bounds, (buffer) {
-      for (final path in this) {
-        final svgPath = path.toSvgPathString(
-          pathStep: pathStep,
-          tolerance: tolerance,
-          handle: handle,
-        );
-        if (!isNil(svgPath)) {
-          _wrapSvgPath(buffer, svgPath);
+    @dp
+    final bounds = pathBounds ?? getExactBounds(true, pathStep);
+    return _wrapSvgXml(
+      bounds,
+      (buffer) {
+        for (final path in this) {
+          final svgPath = path.toSvgPathString(
+            pathStep: pathStep,
+            tolerance: tolerance,
+            handle: handle,
+          );
+          if (!isNil(svgPath)) {
+            _wrapSvgPath(buffer, svgPath);
+          }
         }
-      }
-    });
+      },
+      writeProperty: writeProperty,
+    );
   }
 
   /// 转换成gcode字符串数据

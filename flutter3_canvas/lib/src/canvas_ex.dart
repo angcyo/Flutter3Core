@@ -114,6 +114,7 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
   }
 
   /// [useElementBounds]当元素没有[Path]时, 是否使用元素的bounds代替
+  @dp
   List<Path> getAllElementOutputPathList({
     bool useElementBounds = false,
   }) {

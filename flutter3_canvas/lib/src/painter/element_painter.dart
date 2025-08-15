@@ -1707,6 +1707,12 @@ class ElementPainter extends IElementPainter {
   }
 
   /// 获取元素用于输出的边界[Path]
+  ///
+  /// - [elementOutputBoundsPath]
+  /// - [elementOutputPath]
+  ///
+  /// - [CanvasElementPainterIterableEx.getAllElementOutputPathList]
+  @dp
   @output
   Path? get elementOutputBoundsPath => paintProperty?.paintPath;
 
@@ -1722,6 +1728,9 @@ class ElementPainter extends IElementPainter {
   /// 如果所有对象都具有此属性, 则说明可以进行布尔运算.
   ///
   /// [VectorPathEx.toSvgPathString]
+  ///
+  /// - [elementOutputBoundsPath]
+  /// - [elementOutputPath]
   @dp
   @output
   @overridePoint
@@ -2434,6 +2443,7 @@ class PaintProperty with EquatableMixin {
   Offset get anchor => Offset(left, top);
 
   /// 元素最基础的矩形
+  @dp
   Rect get rect => Rect.fromLTWH(0, 0, width, height);
 
   /// 倾斜矩阵, 锚点无关的矩阵
@@ -2536,6 +2546,7 @@ class PaintProperty with EquatableMixin {
 
   /// 元素全属性绘制路径, 用来判断是否相交
   /// 完全包裹的path路径
+  @dp
   Path get paintPath => Path().let((it) {
         //debugger();
         it.addRect(rect);

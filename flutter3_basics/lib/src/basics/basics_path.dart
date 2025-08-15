@@ -617,6 +617,27 @@ extension ListPathEx on List<Path> {
     return result;
   }
 
+  /// [scaleToMm]
+  @mm
+  List<Path> toPathMm() => scaleToUnit(IUnit.mm);
+
+  /// dp 单位的[Path] 转换成 mm 单位的[Path]
+  /// [scaleToUnit]
+  @mm
+  List<Path> scaleToMm() => scaleToUnit(IUnit.mm);
+
+  /// 将路径缩放到指定的单位大小
+  /// @return 返回新的路径
+  @unit
+  List<Path> scaleToUnit([
+    IUnit unit = IUnit.mm,
+    Offset? scaleAnchor = Offset.zero,
+  ]) {
+    final scale = 1.toUnitFromDp(unit);
+    final scaleMatrix = createScaleMatrix(scale: scale, anchor: scaleAnchor);
+    return transformPath(scaleMatrix);
+  }
+
   /// 变换路径, 返回新的路径
   List<Path> transformPath([Matrix4? matrix4]) {
     if (matrix4 == null) {

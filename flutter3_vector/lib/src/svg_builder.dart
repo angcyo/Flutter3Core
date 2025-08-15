@@ -65,6 +65,8 @@ class SvgBuilder {
     bool writeProperty = false /*写入一些属性?*/,
     bool writeUnitTransform = false /*写入unit对应的transform?*/,
   }) {
+    digits = boundsUnit?.digits ?? digits;
+    //-
     buffer.write(svgHeader);
     (customSvgHeaderAnnotation ?? svgHeaderAnnotation)?.let((it) {
       if (it.contains("<!")) {
@@ -90,12 +92,14 @@ class SvgBuilder {
     }
 
     //--
-    if (boundsMm != null && writeProperty) {
-      buffer.write('acy:x="${formatValue(boundsMm.left)}${IUnit.mm.suffix}" '
-          'acy:y="${formatValue(boundsMm.top)}${IUnit.mm.suffix}" ');
-      buffer.write(
-          'acy:width="${formatValue(boundsMm.width)}${IUnit.mm.suffix}" '
-          'acy:height="${formatValue(boundsMm.height)}${IUnit.mm.suffix}" ');
+    if (boundsMm != null) {
+      if (writeProperty) {
+        buffer.write('width="${formatValue(boundsMm.width)}${IUnit.mm.suffix}" '
+            'height="${formatValue(boundsMm.height)}${IUnit.mm.suffix}" ');
+
+        buffer.write('acy:x="${formatValue(boundsMm.left)}${IUnit.mm.suffix}" '
+            'acy:y="${formatValue(boundsMm.top)}${IUnit.mm.suffix}" ');
+      }
     }
     if (boundsUnit != null) {
       if (writeUnitTransform) {

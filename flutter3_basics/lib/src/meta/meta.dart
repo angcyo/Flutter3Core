@@ -189,6 +189,7 @@ const permissionFlag = PermissionFlag();
 
 const unit = AnnotationMeta('当前的值根据设置的Unit自动适配');
 const pixel = AnnotationMeta('pixel像素单位');
+const px = pixel;
 const mm = AnnotationMeta('Mm毫米单位');
 const pt = AnnotationMeta('pt磅单位');
 const inch = AnnotationMeta('in英寸单位');
