@@ -466,9 +466,14 @@ class ByteReader {
     return overflow;
   }
 
-  /// 循环读取连续的字符串
-  /// [maxSize] 需要读取的最大字节数
-  List<String> readStringList([int? maxSize, Encoding codec = utf8]) {
+  /// 循环读取连续的字符串, 字符串以0x00结束
+  /// - [maxSize] 需要读取的最大字节数
+  /// - [stopPredicate] 返回true, 中断loop
+  List<String> readStringList({
+    int? maxSize,
+    Encoding codec = utf8,
+    bool Function(List<String>)? stopPredicate /*中断标识*/,
+  }) {
     final result = <String>[];
     var count = 0;
     while (!isDone) {
@@ -482,6 +487,9 @@ class ByteReader {
       count += bytes.size();
       if (maxSize != null && count >= maxSize) {
         //超出范围
+        break;
+      }
+      if (stopPredicate != null && stopPredicate(result)) {
         break;
       }
     }

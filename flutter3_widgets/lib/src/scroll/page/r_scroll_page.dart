@@ -199,14 +199,15 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 重写此方法, 加载数据, 自动处理异常状态
   /// 通过[RequestPage]实现页面分页
+  /// 加载数据完成后, 调用[loadDataEnd]刷新界面
   ///
-  /// [onSelfLoadDataWrap]
+  /// - [onSelfLoadDataWrap]
   @overridePoint
   FutureOr onLoadData();
 
   /// 调用此方法, 加载数据完成, 并自动处理情感图/加载更多状态控制
   /// [loadData] 当前加载到的数据, 非所有数据. 当前只支持[WidgetList]类型
-  /// [stateData] 当前状态的附加信息, 用来识别是否有错误
+  /// [stateData] 当前状态的附加信息, 用来识别是否有错误[Exception]
   /// [handleData] 是否自动处理数据到[pageWidgetList]
   ///
   /// 重写[wrapScrollChildren]方法,实现额外的布局
@@ -214,13 +215,13 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [updateLoadDataWidget] 简单刷新整体界面
   ///
   /// ```
-  /// values?.mapToList<Widget>((e)=>Widget());
+  /// loadDataEnd(values?.mapToList<Widget>((e)=>Widget());, error);
   /// ```
   ///
   @callPoint
   @updateMark
   void loadDataEnd(
-    List? loadData, [
+    List? loadData /*支持[WidgetList]*/, [
     dynamic stateData,
     bool handleData = true,
   ]) {
@@ -279,11 +280,14 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   ///
   /// [loadDataEnd]
   @callPoint
-  void updateLoadDataWidget(WidgetList widgetList) {
-    if (scrollController.requestPage.isFirstPage) {
-      pageWidgetList.clear();
+  void updateLoadDataWidget([WidgetList? widgetList]) {
+    widgetList ??= pageWidgetList;
+    if (pageWidgetList != widgetList) {
+      if (scrollController.requestPage.isFirstPage) {
+        pageWidgetList.clear();
+      }
+      pageWidgetList.addAll(widgetList);
     }
-    pageWidgetList.addAll(widgetList);
     _scrollUpdateSignal.update();
   }
 
