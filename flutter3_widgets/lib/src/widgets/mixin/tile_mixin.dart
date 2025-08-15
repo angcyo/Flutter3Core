@@ -422,8 +422,12 @@ mixin TileMixin {
   ///
   /// [SliderTheme]->[SliderThemeData]
   ///
-  /// [Slider]小部件需要[Material]支持.
-  /// [RangeSlider]双向滑块
+  /// - [Slider]小部件需要[Material]支持.
+  /// - [RangeSlider]双向滑块
+  ///
+  /// - [buildSliderWidget]
+  /// - [buildRangeSliderWidget]
+  ///
   Widget buildSliderWidget(
     BuildContext context,
     double value, {
@@ -469,6 +473,7 @@ mixin TileMixin {
       }
 
       //居中双边shape
+      //debugger();
       if (useCenteredTrackShape == true) {
         trackShape = CenteredRectangularSliderTrackShape(
           activeColors: activeTrackGradientColors,
@@ -518,7 +523,6 @@ mixin TileMixin {
             (overlayRadius == null
                 ? null
                 : RoundSliderOverlayShape(overlayRadius: overlayRadius)),
-        /*inactiveTrackColor: Colors.redAccent,*/
         trackHeight: trackHeight,
         valueIndicatorTextStyle: valueIndicatorTextStyle,
       ),
@@ -542,6 +546,12 @@ mixin TileMixin {
   }
 
   /// [RangeSlider]双向滑块, 双向范围滑块
+  ///
+  /// - [RoundedRectRangeSliderTrackShape]
+  ///
+  /// - [buildSliderWidget]
+  /// - [buildRangeSliderWidget]
+  ///
   Widget buildRangeSliderWidget(
     BuildContext context,
     double startValue,

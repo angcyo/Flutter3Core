@@ -223,7 +223,8 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
   final List<Color>? activeColors;
   final List<double>? activeColorStops;
 
-  /// 额外的轨道高度
+  /// 有效轨道, 额外的高度
+  /// 在[RoundedRectRangeSliderTrackShape].[RoundedRectSliderTrackShape].[GradientSliderTrackShape]中, 这个值是2.
   final double additionalActiveTrackHeight;
 
   const CenteredRectangularSliderTrackShape({
@@ -231,7 +232,7 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
     this.activeColorStops,
     this.inactiveColors,
     this.inactiveColorStops,
-    this.additionalActiveTrackHeight = 0,
+    this.additionalActiveTrackHeight = 2,
   });
 
   @override
@@ -295,9 +296,9 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
     if (trackCenter.dx < thumbCenter.dx) {
       final Rect leftTrackSegment = Rect.fromLTRB(
           trackRect.left,
-          trackRect.top - (additionalActiveTrackHeight / 2),
+          trackRect.top,
           min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
-          trackRect.bottom + (additionalActiveTrackHeight / 2));
+          trackRect.bottom);
 
       if (!leftTrackSegment.isEmpty) {
         inactivePaint.shader = linearGradientShader(
@@ -330,9 +331,9 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
 
       final Rect rightTrackSegment = Rect.fromLTRB(
           thumbCenter.dx + thumbSize.width / 2,
-          trackRect.top - (additionalActiveTrackHeight / 2),
+          trackRect.top,
           trackRect.right,
-          trackRect.bottom + (additionalActiveTrackHeight / 2));
+          trackRect.bottom);
       if (!rightTrackSegment.isEmpty) {
         inactivePaint.shader = linearGradientShader(
           inactiveColors,
@@ -344,9 +345,9 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
     } else if (trackCenter.dx > thumbCenter.dx) {
       final Rect leftTrackSegment = Rect.fromLTRB(
         trackRect.left,
-        trackRect.top - (additionalActiveTrackHeight / 2),
+        trackRect.top,
         thumbCenter.dx + thumbSize.width / 2,
-        trackRect.bottom + (additionalActiveTrackHeight / 2),
+        trackRect.bottom,
       );
       if (!leftTrackSegment.isEmpty) {
         context.canvas.drawRect(leftTrackSegment, inactivePaint);
@@ -374,9 +375,9 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
 
       final Rect rightTrackSegment = Rect.fromLTRB(
         max(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
-        trackRect.top - (additionalActiveTrackHeight / 2),
+        trackRect.top,
         trackRect.right,
-        trackRect.bottom + (additionalActiveTrackHeight / 2),
+        trackRect.bottom,
       );
 
       if (!rightTrackSegment.isEmpty) {
@@ -385,18 +386,18 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
     } else {
       final Rect leftTrackSegment = Rect.fromLTRB(
           trackRect.left,
-          trackRect.top - (additionalActiveTrackHeight / 2),
+          trackRect.top,
           min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
-          trackRect.bottom + (additionalActiveTrackHeight / 2));
+          trackRect.bottom);
       if (!leftTrackSegment.isEmpty) {
         context.canvas.drawRect(leftTrackSegment, inactivePaint);
       }
 
       final Rect rightTrackSegment = Rect.fromLTRB(
           min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
-          trackRect.top - (additionalActiveTrackHeight / 2),
+          trackRect.top,
           trackRect.right,
-          trackRect.bottom + (additionalActiveTrackHeight / 2));
+          trackRect.bottom);
       if (!rightTrackSegment.isEmpty) {
         context.canvas.drawRect(rightTrackSegment, inactivePaint);
       }
