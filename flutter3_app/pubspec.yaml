@@ -35,7 +35,7 @@ dependencies:
   # https://pub.dev/packages/package_info_plus_platform_interface
   # https://pub.dev/packages/web
   # https://pub.dev/packages/win32
-  package_info_plus: ^8.3.0
+  package_info_plus: ^8.3.1
 
   # https://pub.dev/packages/device_info_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/device_info_plus/device_info_plus
@@ -46,7 +46,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/win32
   # https://pub.dev/packages/win32_registry
-  device_info_plus: ^11.4.0
+  device_info_plus: ^11.5.0
 
   # https://pub.dev/packages/share_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/share_plus/share_plus
@@ -57,7 +57,7 @@ dependencies:
   # https://pub.dev/packages/file
   # https://pub.dev/packages/ffi
   # https://pub.dev/packages/win32
-  share_plus: ^11.0.0
+  share_plus: ^11.1.0
 
   # https://pub.dev/packages/flutter_local_notifications
   # https://github.com/MaikuB/flutter_local_notifications
@@ -67,25 +67,25 @@ dependencies:
   # https://pub.dev/packages/flutter_local_notifications_platform_interface
   # https://pub.dev/packages/timezone
   # ANDROID IOS LINUX MACOS
-  flutter_local_notifications: ^19.1.0
+  flutter_local_notifications: ^19.4.0
 
   # https://pub.dev/packages/flutter_animate
   # https://github.com/gskinner/flutter_animate
   flutter_animate: ^4.5.2
 
-  # 权限处理插件
+  # 权限处理插件 #ANDROID IOS WEB WINDOWS
   # https://pub.dev/packages/permission_handler
   # https://github.com/baseflow/flutter-permission-handler
   # https://pub.dev/packages/meta
-  permission_handler: ^11.3.1 #ANDROID IOS WEB WINDOWS
+  permission_handler: ^12.0.1
 
-  # 保存图片到相册
+  # 保存图片到相册 #ANDROID IOS
   # https://pub.dev/packages/image_gallery_saver
   # https://github.com/hui-z/image_gallery_saver
   #image_gallery_saver: ^2.0.3 #ANDROID IOS
   # https://pub.dev/packages/image_gallery_saver_plus
   # https://github.com/ArmanKT/image_gallery_saver_plus
-  image_gallery_saver_plus: ^4.0.1 #ANDROID IOS
+  image_gallery_saver_plus: ^4.0.1
 
   # https://pub.dev/packages/flutter_install_app
   # flutter_install_app: ^1.3.0 #ANDROID IOS

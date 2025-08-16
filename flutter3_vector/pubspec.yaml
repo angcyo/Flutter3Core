@@ -23,7 +23,7 @@ dependencies:
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/vector_graphics_compiler
-  flutter_svg: ^2.0.15
+  flutter_svg: ^2.2.0
   # https://pub.dev/packages/vector_graphics_compiler
   # https://github.com/dnfield/vector_graphics
   # https://pub.dev/packages/args
@@ -32,13 +32,13 @@ dependencies:
   # https://pub.dev/packages/xml # collection, meta, petitparser
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/path
-  vector_graphics_compiler: ^1.1.15
+  vector_graphics_compiler: ^1.1.18
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/http
   # https://pub.dev/packages/vector_graphics_codec
-  vector_graphics: ^1.1.15
+  vector_graphics: ^1.1.19
   # https://pub.dev/packages/vector_graphics_codec
-  vector_graphics_codec: ^1.1.12
+  vector_graphics_codec: ^1.1.13
 
   # https://pub.dev/packages/svg_path_parser # flutter, string_scanner
   # https://github.com/masterashu/svg_path_parser
@@ -48,7 +48,7 @@ dependencies:
   # https://pub.dev/packages/string_scanner
   # https://pub.dev/packages/source_span
   # string_scanner is pinned to version 1.2.0 by flutter_test from the flutter SDK.
-  string_scanner: ^1.2.0
+  string_scanner: ^1.4.1
 
   # https://pub.dev/packages/xml
   # https://pub.dev/packages/collection

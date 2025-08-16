@@ -39,7 +39,7 @@ dependencies:
   cross_file: ^0.3.4+2
   # https://pub.dev/packages/web
   # mobile_scanner ^5.1.1 requires web ^0.5.1.
-  web: ^1.1.0
+  web: ^1.1.1
 
   # https://pub.dev/packages/path_provider
   # https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider
@@ -48,11 +48,13 @@ dependencies:
   # https://pub.dev/packages/path
   # https://github.com/dart-lang/path
   # path is pinned to version 1.9.0 by flutter_test from the flutter SDK.
-  path: ^1.9.0
+  path: ^1.9.1
 
   # https://pub.dev/packages/mime
   # https://github.com/dart-lang/mime
   # shelf_multipart 2.0.0 depends on mime ^1.0.0
+  # Because flutter_oss_aliyun 6.4.2 depends on mime ^1.0.4 and no versions of flutter_oss_aliyun match >6.4.2 <7.0.0, flutter_oss_aliyun ^6.4.2 requires mime ^1.0.4.
+  # So, because flutter3_core depends on mime ^2.0.0 and flutter3_oss depends on flutter_oss_aliyun ^6.4.2, version solving failed.
   mime: ^1.0.6
 
   # https://pub.dev/packages/filesize
@@ -63,7 +65,7 @@ dependencies:
   # https://github.com/rrousselGit/provider
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/nested
-  provider: ^6.1.2
+  provider: ^6.1.5
 
   # https://pub.dev/packages/jetpack
   # https://github.com/praja/jetpack

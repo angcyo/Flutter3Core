@@ -44,7 +44,7 @@ dependencies:
   # https://pub.dev/packages/archive
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/xml
-  image: ^4.5.3
+  image: ^4.5.4
 
 dev_dependencies:
   flutter_test:
