@@ -5,7 +5,7 @@ homepage: https://github.com/angcyo/Flutter3Core
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: '>=3.6.0 <4.0.0'
+  sdk: ^3.8.0
   flutter: ">=1.17.0"
 
 # https://pub.dev/packages/isar
@@ -117,8 +117,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: any
-  isar_generator: *isar_version
-  hive_generator: ^2.0.1
+  #isar_generator: *isar_version
+  flutter_isar_generator_fixed: ^0.0.1
+  #hive_generator: ^2.0.1
+  #flutter_hive_generator_fixed: ^0.0.1
   build_runner: any
   flutter_gen_runner: any
   json_serializable: any
