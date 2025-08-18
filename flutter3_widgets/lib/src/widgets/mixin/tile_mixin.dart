@@ -709,7 +709,7 @@ mixin TileMixin {
               /*fontSize: 14,*/
             );
         //尝试text小部件
-        final textWidget = textOf(data)!.text(
+        final textWidget = textOf(data, context)!.text(
           style: index == selectedIndex
               ? selectedTextStyle ?? style
               : textStyle ?? style,

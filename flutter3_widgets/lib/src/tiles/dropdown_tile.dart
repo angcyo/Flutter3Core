@@ -89,7 +89,7 @@ class DropdownButtonTile extends StatelessWidget with TileMixin {
           value: value,
           enabled: true,
           alignment: itemAlignment,
-          child: widgetOf(context, value) ?? textOf(value)!.text(),
+          child: widgetOf(context, value) ?? textOf(value, context)!.text(),
         )
     ];
   }
@@ -170,7 +170,7 @@ class DropdownMenuTile extends StatelessWidget with TileMixin {
     return [
       for (final value in dropdownValueList ?? [])
         DropdownMenuEntry(
-          label: "${textOf(value)}",
+          label: "${textOf(value, context)}",
           value: value,
           labelWidget: null,
           leadingIcon: null,
@@ -279,7 +279,7 @@ class _MenuAnchorTileState extends State<MenuAnchorTile> with TileMixin {
     return [
       for (final value in widget.menuValueList ?? [])
         widgetOf(context, value) ??
-            textOf(value)!
+            textOf(value, context)!
                 .text(textAlign: ui.TextAlign.start)
                 .paddingSymmetric(horizontal: kX)
                 .align(AlignmentDirectional.centerStart)
