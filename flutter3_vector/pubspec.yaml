@@ -54,6 +54,8 @@ dependencies:
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/petitparser
+  #Because vector_graphics_compiler 1.1.18 depends on xml >=6.3.0 <=6.5.0 and no versions of vector_graphics_compiler match >1.1.18 <2.0.0, vector_graphics_compiler ^1.1.18 requires xml >=6.3.0 <=6.5.0.
+  #So, because flutter3_vector depends on both vector_graphics_compiler ^1.1.18 and xml ^6.6.1, version solving failed.
   xml: ^6.5.0
 
 dev_dependencies:
