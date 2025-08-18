@@ -218,6 +218,24 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// loadDataEnd(values?.mapToList<Widget>((e)=>Widget());, error);
   /// ```
   ///
+  /// ## 如果需要动态更新Tile
+  ///
+  /// 先使用[rebuildByBean]包裹[Widget]
+  /// 然后就可以使用[rebuildTile]更新对应的[Widget]
+  ///
+  /// - [rebuildByBean]
+  /// - [deleteTile]
+  /// - [rebuildTile]
+  /// - [updateTile]
+  ///
+  /// ```
+  /// rebuildByBean(bean, (ctx, bean) => widget).rTile;
+  /// ```
+  ///
+  /// - [RScrollPage._lastRebuildBeanSignal] 创建更新信号
+  /// - [RScrollPage.consumeRebuildBeanSignal] 消耗更新信号
+  /// - [RItemTile.updateSignal] 存储对应的信号
+  ///
   @callPoint
   @updateMark
   void loadDataEnd(
@@ -436,13 +454,34 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 更新指定[value]对应的tile
   /// [value] 可以是单个值, 也可以是多个值(列表)
   /// 如果是多个值, 则所有命中[RItemTile.updateSignal]值的tile, 都将收到更新信号通知
-  /// [rebuildTile]
+  /// - [rebuildTile]
+  /// - [updateTile]
+  /// - [updateTileList]
   @api
   void updateTile(dynamic value) {
     rebuildTile((tile, signal) {
-      return signal.value == value ||
+      //debugger();
+      final update = signal.value == value ||
           (value is Iterable && value.contains(signal.value));
+      assert(() {
+        if (update) {
+          l.d("更新[${tile.classHash()}]->$value");
+        }
+        return true;
+      }());
+      return update;
     });
+  }
+
+  /// 更新一组 tile
+  /// - [rebuildTile]
+  /// - [updateTile]
+  /// - [updateTileList]
+  @api
+  void updateTileList(List<dynamic> values) {
+    for (final value in values) {
+      updateTile(value);
+    }
   }
 
   /// 更新所有tile

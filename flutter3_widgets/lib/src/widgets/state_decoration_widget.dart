@@ -105,8 +105,8 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
       );
 
   @override
-  void updateRenderObject(BuildContext context,
-      _RenderStateDecoration renderObject) {
+  void updateRenderObject(
+      BuildContext context, _RenderStateDecoration renderObject) {
     renderObject
       ..clearPainters()
       ..decoration = decoration
@@ -192,8 +192,8 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
   @override
   bool hitTestSelf(ui.Offset position) =>
       enableHoverDecoration ||
-          enablePressedDecoration ||
-          onPointerDownAction != null;
+      enablePressedDecoration ||
+      onPointerDownAction != null;
 
   bool _isHover = false;
   bool _isPointerDown = false;
@@ -232,7 +232,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
   @override
   void paint(PaintingContext context, Offset offset) {
     final ImageConfiguration filledConfiguration =
-    configuration.copyWith(size: size);
+        configuration.copyWith(size: size);
     //背景绘制
     _painter ??= decoration?.createBoxPainter(markNeedsPaint);
     _painter?.paint(context.canvas, offset, filledConfiguration);
@@ -354,7 +354,8 @@ extension StateDecorationWidgetEx on Widget {
   /// [pressedDecoration] 按下时的背景装饰
   /// [selectedDecoration] 选中时的背景装饰
   /// [StateDecorationWidget]
-  Widget stateDecoration(Decoration? decoration, {
+  Widget stateDecoration(
+    Decoration? decoration, {
     Decoration? foregroundDecoration,
     Decoration? pressedDecoration,
     Decoration? selectedDecoration,
@@ -371,15 +372,26 @@ extension StateDecorationWidgetEx on Widget {
   }
 
   /// [backgroundDecoration]
-  Widget backgroundColor(Color? fillColor, {
+  Widget backgroundColor(
+    Color? fillColor, {
     Key? key,
     double? fillRadius,
+    //--
+    Color? strokeColor,
+    double strokeWidth = 1,
+    BorderStyle strokeStyle = BorderStyle.solid,
+    double strokeAlign = BorderSide.strokeAlignInside,
   }) =>
       backgroundDecoration(
         null,
         key: key,
         fillColor: fillColor,
         fillRadius: fillRadius,
+        //--
+        strokeColor: strokeColor,
+        strokeWidth: strokeWidth,
+        strokeStyle: strokeStyle,
+        strokeAlign: strokeAlign,
       );
 
   /// 绘制背景
@@ -391,22 +403,47 @@ extension StateDecorationWidgetEx on Widget {
   /// [StateDecorationWidget]
   /// [Decoration]
   /// [fillDecoration]
-  Widget backgroundDecoration(Decoration? decoration, {
+  Widget backgroundDecoration(
+    Decoration? decoration, {
     Key? key,
     Color? fillColor,
     double? fillRadius,
+    //--
+    Color? strokeColor,
+    double strokeWidth = 1,
+    BorderStyle strokeStyle = BorderStyle.solid,
+    double strokeAlign = BorderSide.strokeAlignInside,
     //--
     Decoration? foregroundDecoration,
     Decoration? pressedDecoration,
     Decoration? selectedDecoration,
     bool enablePressedDecoration = true,
   }) {
+    final BorderSide? strokeSide = strokeColor == null
+        ? null
+        : BorderSide(
+            color: strokeColor,
+            width: strokeWidth,
+            style: strokeStyle,
+            strokeAlign: strokeAlign,
+          );
+
     decoration ??= fillColor == null
         ? null
         : BoxDecoration(
-        color: fillColor,
-        borderRadius:
-        fillRadius == null ? null : BorderRadius.circular(fillRadius));
+            color: fillColor,
+            borderRadius:
+                fillRadius == null ? null : BorderRadius.circular(fillRadius),
+            //--
+            border: strokeSide == null
+                ? null
+                : BorderDirectional(
+                    top: strokeSide,
+                    bottom: strokeSide,
+                    start: strokeSide,
+                    end: strokeSide,
+                  ),
+          );
     if (decoration == null) {
       return this;
     }

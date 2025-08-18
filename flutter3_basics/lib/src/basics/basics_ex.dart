@@ -122,7 +122,12 @@ extension DynamicEx on dynamic {
   /// [encode]
   /// [_defaultToEncodable]
   /// 从json字符串中解析出对应的数据类型
-  dynamic fromJson() => toString().fromJson();
+  dynamic fromJson() =>
+      this is String ? (this as String).fromJson() : toString().fromJson();
+
+  Iterable<dynamic>? fromJsonArray() => this is String
+      ? (this as String).fromJsonArray()
+      : toString().fromJsonArray();
 
   /// 请在具体的类型上实现[toJson]方法, 否则会抛异常
   /// 此方法通常返回的是Map<String, dynamic>类型
@@ -1116,6 +1121,19 @@ extension StringEx on String {
   /// 将`jsonArray`解析成`List<dynamic>`类型
   /// [fromJsonBeanList]
   dynamic fromJson() => json.decode(this);
+
+  /// 将json字符串, 转换成数组对象
+  Iterable<dynamic>? fromJsonArray() {
+    try {
+      return json.decode(this);
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+      return null;
+    }
+  }
 
   /// Bean bean = "".fromJsonBean<Bean>();
   Bean fromJsonBean<Bean>(Bean Function(dynamic json) map) =>
