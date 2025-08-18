@@ -2320,7 +2320,9 @@ extension WidgetEx on Widget {
         child: this,
       );
 
-  Widget ih() => IntrinsicHeight(child: this);
+  /// 使用[child]固有的高度
+  Widget ih([bool enbale = true]) =>
+      enbale ? IntrinsicHeight(child: this) : this;
 
   /// [FittedBox]
   Widget fittedBox({
