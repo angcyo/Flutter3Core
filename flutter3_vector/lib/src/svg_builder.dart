@@ -62,7 +62,8 @@ class SvgBuilder {
     @dp Rect? bounds, {
     IUnit? boundsUnit = IUnit.mm,
     @mm Rect? boundsMm,
-    bool writeProperty = false /*写入一些属性?*/,
+    bool writeSvgProperty = false /*写入一些svg基础属性?*/,
+    bool writeAcyProperty = false /*写入一些acy属性?*/,
     bool writeUnitTransform = false /*写入unit对应的transform?*/,
   }) {
     digits = boundsUnit?.digits ?? digits;
@@ -93,9 +94,14 @@ class SvgBuilder {
 
     //--
     if (boundsMm != null) {
-      if (writeProperty) {
+      if (writeSvgProperty) {
         buffer.write('width="${formatValue(boundsMm.width)}${IUnit.mm.suffix}" '
             'height="${formatValue(boundsMm.height)}${IUnit.mm.suffix}" ');
+      }
+      if (writeAcyProperty) {
+        buffer.write(
+            'acy:width="${formatValue(boundsMm.width)}${IUnit.mm.suffix}" '
+            'acy:height="${formatValue(boundsMm.height)}${IUnit.mm.suffix}" ');
 
         buffer.write('acy:x="${formatValue(boundsMm.left)}${IUnit.mm.suffix}" '
             'acy:y="${formatValue(boundsMm.top)}${IUnit.mm.suffix}" ');
@@ -109,8 +115,10 @@ class SvgBuilder {
     }
 
     //--
-    buffer.write(
-        'acy:author="$author" acy:version="$version" acy:build="${nowTimeString()}" ');
+    if (writeAcyProperty || writeSvgProperty) {
+      buffer.write(
+          'acy:author="$author" acy:version="$version" acy:build="${nowTimeString()}" ');
+    }
     //
     attributes?.forEach((key, value) {
       if (key.contains(":")) {
