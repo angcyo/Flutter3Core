@@ -502,10 +502,10 @@ class ByteReader {
     final result = <int>[];
     while (!isDone) {
       final byte = readByte();
-      result.add(byte);
       if (predicate(result, byte)) {
         break;
       }
+      result.add(byte);
     }
     return result;
   }
