@@ -5,14 +5,16 @@ part of '../../flutter3_basics.dart';
 /// @author angcyo
 /// @date 2024/06/29
 ///
-/// 提供一个文本字符串
+/// 提供一个文本字符串, 之后通过[textOf]函数调用
+///
 mixin ITextProvider {
   /// 获取一个文本
   String? get provideText => null;
 
   /// 获取一个国际化的文本
-  IntlTextBuilder? get provideIntlText =>
-      provideText == null ? null : (_) => provideText!;
+  String? provideIntlText(BuildContext context) {
+    return provideText;
+  }
 }
 
 /// 提供一个Widget
