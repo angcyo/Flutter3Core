@@ -707,7 +707,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   NavigatorState? findNavigatorState() =>
       globalTopContext?.findNavigatorState();
 
-  /// 从上往下查找所有[ModalRoute]
+  /// 从上往下查找所有[ModalRoute], 查找所有路由器.
   /// release之后,字符串是否会变化?
   /// [ContextEx.findFirstNotSystemElement]
   @minifyProguardFlag
