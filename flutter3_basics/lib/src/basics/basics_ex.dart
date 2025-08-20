@@ -787,9 +787,15 @@ typedef StringIndexEachCallback = dynamic Function(int index, String element);
 /// [StringEx.copy]
 @allPlatformFlag
 Future<String?> getClipboardText() async {
-  var data = await Clipboard.getData(Clipboard.kTextPlain);
+  final data = await Clipboard.getData(Clipboard.kTextPlain);
   return data?.text;
 }
+
+/// 设置剪切板文本
+/// - [setClipboardText]
+/// - [getClipboardText]
+Future<void> setClipboardText([String? text]) =>
+    Clipboard.setData(ClipboardData(text: text ?? ""));
 
 extension StringEx on String {
   /// [Uri]
@@ -960,10 +966,10 @@ extension StringEx on String {
 
   /// 使用base64加密当前的字符串
   /// 'Dart is open source' -> `RGFydCBpcyBvcGVuIHNvdXJjZQ==`
-  String? get toBase64 => base64Encode(codeUnits);
+  String get toBase64 => base64Encode(codeUnits);
 
   /// 使用base64解密当前的字符串
-  String? get fromBase64 => base64Decode(this).utf8Str;
+  String get fromBase64 => base64Decode(this).utf8Str;
 
   /// 判断当前字符串是否是http协议开头
   bool get isHttpScheme {
