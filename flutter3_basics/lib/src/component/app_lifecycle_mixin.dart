@@ -10,11 +10,11 @@ part of '../../flutter3_basics.dart';
 /// [AppLifecycleMixin]
 /// [NavigatorObserverMixin]
 mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
-  MyAppLifecycleListener? _appLifecycleListener;
+  AgentAppLifecycleListener? _appLifecycleListener;
 
   @override
   void initState() {
-    _appLifecycleListener = MyAppLifecycleListener(
+    _appLifecycleListener = AgentAppLifecycleListener(
       onShow: onAppLifecycleShow,
       onResume: onAppLifecycleResume,
       onHide: onAppLifecycleHide,
@@ -46,6 +46,9 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
     }());
   }
 
+  /// 应用程序恢复
+  /// - 从后台切回来
+  /// - 从其它程序切回来
   /// [onAppLifecycleShow]
   @overridePoint
   void onAppLifecycleResume() {
@@ -55,6 +58,7 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
     }());
   }
 
+  /// 应用程序处于后台时触发
   /// [onAppLifecycleHide]->[onAppLifecyclePause]
   @overridePoint
   void onAppLifecycleHide() {
@@ -64,7 +68,7 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
     }());
   }
 
-  /// [onAppLifecycleHide]
+  /// [onAppLifecyclePause]
   @overridePoint
   void onAppLifecyclePause() {
     assert(() {
@@ -97,13 +101,14 @@ mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
   void onAppChangeMetrics() {}
 }
 
-class MyAppLifecycleListener extends AppLifecycleListener {
+/// - [AppLifecycleLogMixin] 日志
+class AgentAppLifecycleListener extends AppLifecycleListener {
   final VoidCallback? onChangeMetrics;
   final VoidCallback? onChangePlatformBrightness;
   final VoidCallback? onChangeTextScaleFactor;
   final VoidCallback? onHaveMemoryPressure;
 
-  MyAppLifecycleListener({
+  AgentAppLifecycleListener({
     WidgetsBinding? binding,
     super.onResume,
     super.onInactive,

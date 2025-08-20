@@ -98,7 +98,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
     super.didChangeAppLifecycleState(state);
   }
 
-  /// 低内存回调
+  /// 低内存回调, 此时需要释放内容
   @override
   void didHaveMemoryPressure() {
     '[${classHash()}]AppLifecycle didHaveMemoryPressure'
