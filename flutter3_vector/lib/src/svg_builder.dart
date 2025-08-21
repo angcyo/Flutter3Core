@@ -86,6 +86,7 @@ class SvgBuilder {
         '${formatValue(bounds.width.toUnitFromDp(unit))} ${formatValue(bounds.height.toUnitFromDp(unit))}" ');*/
 
     if (bounds != null) {
+      //l t w h
       buffer.write(
           'viewBox="${formatValue(bounds.left)} ${formatValue(bounds.top)} '
           '${formatValue(bounds.width)} ${formatValue(bounds.height)}" ');

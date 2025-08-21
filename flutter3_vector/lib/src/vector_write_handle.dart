@@ -30,10 +30,18 @@ const sDefaultCutWidth = 0.3;
 const sDefaultCutStep = 0.03;
 
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
-String _wrapSvgXml(@dp Rect bounds, void Function(StringBuffer) action,
-        {bool writeProperty = true}) =>
+String _wrapSvgXml(
+  @dp Rect bounds,
+  void Function(StringBuffer) action, {
+  bool writeSvgProperty = true,
+  bool writeAcyProperty = false,
+}) =>
     svgBuilderSync((builder) {
-      builder.writeViewBox(bounds, writeSvgProperty: writeProperty);
+      builder.writeViewBox(
+        bounds,
+        writeSvgProperty: writeSvgProperty,
+        writeAcyProperty: writeAcyProperty,
+      );
       action(builder.buffer);
     });
 
@@ -1159,7 +1167,8 @@ extension VectorListPathEx on List<Path> {
     //--
     @dp Rect? pathBounds,
     //--
-    bool writeProperty = true,
+    bool writeSvgProperty = true,
+    bool writeAcyProperty = false,
   }) {
     if (isNil(this)) {
       return null;
@@ -1180,7 +1189,8 @@ extension VectorListPathEx on List<Path> {
           }
         }
       },
-      writeProperty: writeProperty,
+      writeSvgProperty: writeSvgProperty,
+      writeAcyProperty: writeAcyProperty,
     );
   }
 
