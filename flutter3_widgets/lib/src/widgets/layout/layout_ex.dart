@@ -668,6 +668,14 @@ extension BoxConstraintsEx on BoxConstraints {
       maxHeight: maxHeight,
     );
   }
+
+  /// 指定的大小[size]是否在约束范围内
+  bool isConstraintsSize(Size size) {
+    return size.width <= maxWidth &&
+        size.width >= minWidth &&
+        size.height <= maxHeight &&
+        size.height >= minHeight;
+  }
 }
 
 /// [BoxConstraintsEx.isWrapContentWidth]

@@ -9,15 +9,22 @@ part of '../../../flutter3_widgets.dart';
 
 /// [WrapContentLayout]
 class MatchParentLayout extends SingleChildRenderObjectWidget {
-  /// 对齐方式
+  /// [child]在容器中的对齐方式
   final AlignmentDirectional alignment;
 
-  /// 是否撑满宽度
+  /// 自身和[child]是否都撑满宽度
   final bool matchWidth;
 
-  /// 是否撑满高度
+  /// 自身和[child]是否都撑满高度
   final bool matchHeight;
 
+  /// [child]是否优先使用自身的宽度, 超过之后再使用约束的宽度
+  final bool? childWrapWidth;
+
+  /// [child]是否优先使用自身的高度, 超过之后再使用约束的高度
+  final bool? childWrapHeight;
+
+  /// 调试标签
   final String? debugLabel;
 
   const MatchParentLayout({
@@ -26,14 +33,18 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
     this.matchWidth = true,
     this.matchHeight = true,
     this.alignment = AlignmentDirectional.center,
+    this.childWrapWidth,
+    this.childWrapHeight,
     this.debugLabel,
   });
 
   @override
   RenderObject createRenderObject(BuildContext context) => MatchParentBox(
         alignment: alignment,
-        matchHeight: matchHeight,
         matchWidth: matchWidth,
+        matchHeight: matchHeight,
+        childWrapWidth: childWrapWidth,
+        childWrapHeight: childWrapHeight,
         debugLabel: debugLabel,
         textDirection: Directionality.of(context),
       );
@@ -44,6 +55,8 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
       ..alignment = alignment
       ..matchWidth = matchWidth
       ..matchHeight = matchHeight
+      ..childWrapWidth = childWrapWidth
+      ..childWrapHeight = childWrapHeight
       ..debugLabel = debugLabel
       ..markNeedsLayout();
   }
@@ -51,12 +64,19 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
 
 /// [WrapContentBox]
 class MatchParentBox extends WrapContentBox {
-  /// 是否撑满宽度
+  /// 自身和[child]是否都撑满宽度
   bool matchWidth;
 
-  /// 是否撑满高度
+  /// 自身和[child]是否都撑满高度
   bool matchHeight;
 
+  /// [child]是否优先使用自身的宽度, 超过之后再使用约束的宽度
+  bool? childWrapWidth;
+
+  /// [child]是否优先使用自身的高度, 超过之后再使用约束的高度
+  bool? childWrapHeight;
+
+  /// 调试标签
   String? debugLabel;
 
   MatchParentBox({
@@ -64,12 +84,14 @@ class MatchParentBox extends WrapContentBox {
     super.textDirection,
     this.matchWidth = true,
     this.matchHeight = true,
+    this.childWrapWidth,
+    this.childWrapHeight,
     this.debugLabel,
   });
 
   @override
   void performLayout() {
-    //debugger(when: debugLabel != null);
+    debugger(when: debugLabel != null);
     BoxConstraints constraints = this.constraints;
     BoxConstraints? parentConstraints = parentBoxConstraints;
     if (constraints.isUnconstrained) {
@@ -79,7 +101,7 @@ class MatchParentBox extends WrapContentBox {
       size = constraints.smallest;
     } else {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
-      final innerConstraints = BoxConstraints(
+      final childConstraints = BoxConstraints(
         minWidth: matchWidth
             ? constraints.maxWidth
                 .ensureValid(constraints.minWidth.ensureValid(0))
@@ -92,9 +114,20 @@ class MatchParentBox extends WrapContentBox {
         maxWidth: constraints.maxWidth,
         maxHeight: constraints.maxHeight,
       );
+      if (childWrapWidth == true || childWrapHeight == true) {
+        //优先使用子节点自身的宽高, 超过后再使用约束的宽高
+        child!.layout(BoxConstraints(), parentUsesSize: true);
+        final childSize = child!.size;
+        debugger(when: debugLabel != null);
+        if (constraints.isConstraintsSize(childSize)) {
+          size = childConstraints.constrain(childSize);
+          _alignChild();
+          return;
+        }
+      }
       //final parentConstraints = parent?.constraints;
       //debugger();
-      child!.layout(innerConstraints, parentUsesSize: true);
+      child!.layout(childConstraints, parentUsesSize: true);
       //debugger(when: debugLabel != null);
       size = constraints.constrain(child!.size);
       _alignChild();
@@ -111,12 +144,16 @@ extension MatchParentLayoutEx on Widget {
     bool matchWidth = true,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
+    bool? childWrapWidth,
+    bool? childWrapHeight,
     String? debugLabel,
   }) =>
       MatchParentLayout(
         alignment: alignment,
         matchWidth: matchBoth ?? matchWidth,
         matchHeight: matchBoth ?? matchHeight,
+        childWrapWidth: childWrapWidth,
+        childWrapHeight: childWrapHeight,
         debugLabel: debugLabel,
         child: this,
       );
@@ -128,11 +165,17 @@ extension MatchParentLayoutEx on Widget {
     bool matchWidth = true,
     bool matchHeight = false,
     AlignmentDirectional alignment = AlignmentDirectional.center,
+    bool? childWrapWidth,
+    bool? childWrapHeight,
+    String? debugLabel,
   }) =>
       matchParent(
         matchWidth: matchWidth,
         matchHeight: matchHeight,
         alignment: alignment,
+        childWrapWidth: childWrapWidth,
+        childWrapHeight: childWrapHeight,
+        debugLabel: debugLabel,
       );
 
   /// [matchParent]
@@ -142,10 +185,16 @@ extension MatchParentLayoutEx on Widget {
     bool matchWidth = false,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
+    bool? childWrapWidth,
+    bool? childWrapHeight,
+    String? debugLabel,
   }) =>
       matchParent(
         matchWidth: matchWidth,
         matchHeight: matchHeight,
         alignment: alignment,
+        childWrapWidth: childWrapWidth,
+        childWrapHeight: childWrapHeight,
+        debugLabel: debugLabel,
       );
 }
