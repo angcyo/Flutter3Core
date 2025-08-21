@@ -8,6 +8,9 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 用最小的约束包裹住child, 用自身的约束限制child的最大宽高
 /// [child] 的约束永远都不会超过自身的约束
+///
+/// - [CustomScrollView] 在此小部件中wrap会异常.
+///
 class WrapContentLayout extends SingleChildRenderObjectWidget {
   /// 夹紧[child], 如果[child]使用[wrap_content]测量出的大小不超过自身的约束, 则使用[child]的大小
   /// 如果超过自身的约束, 则使用自身的约束重新测量[child]
@@ -27,6 +30,8 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
   final double? minWidth;
   final double? minHeight;
 
+  final String? debugLabel;
+
   const WrapContentLayout({
     super.key,
     super.child,
@@ -36,6 +41,7 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
     this.alignment = AlignmentDirectional.center,
     this.minWidth,
     this.minHeight,
+    this.debugLabel,
   });
 
   @override
@@ -47,6 +53,7 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
         textDirection: Directionality.of(context),
         minWidth: minWidth,
         minHeight: minHeight,
+        debugLabel: debugLabel,
       );
 
   @override
@@ -58,6 +65,7 @@ class WrapContentLayout extends SingleChildRenderObjectWidget {
       ..alignment = alignment
       ..minWidth = minWidth
       ..minHeight = minHeight
+      ..debugLabel = debugLabel
       ..markNeedsLayout();
   }
 }
@@ -75,6 +83,8 @@ class WrapContentBox extends RenderAligningShiftedBox {
   double? minWidth;
   double? minHeight;
 
+  String? debugLabel;
+
   WrapContentBox({
     super.alignment,
     super.textDirection,
@@ -83,6 +93,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
     this.wrapHeight = false,
     this.minWidth,
     this.minHeight,
+    this.debugLabel,
   });
 
   @override
@@ -147,11 +158,13 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
   @override
   void performLayout() {
-    //debugger();
+    debugger(when: debugLabel != null);
+    final child = this.child;
     if (child == null) {
       size = constraints.smallest;
     } else {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
+      final constraints = this.constraints;
       final parent = this.parent;
       final parentConstraints = parent?.constraints;
       double parentMaxWidth = double.infinity;
@@ -189,9 +202,11 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
       if (tightChild) {
         //关键布局
-        child!.layout(const BoxConstraints(), parentUsesSize: true);
-        if (child!.size.width <= maxWidth && child!.size.height <= maxHeight) {
-          _setSize(child!.size);
+        child.layout(BoxConstraints(), parentUsesSize: true);
+        final childSize = child.size;
+        debugger(when: debugLabel != null);
+        if (childSize.width <= maxWidth && childSize.height <= maxHeight) {
+          _setSize(childSize);
           return;
         }
       }
@@ -203,8 +218,8 @@ class WrapContentBox extends RenderAligningShiftedBox {
         maxWidth: maxWidth,
         maxHeight: maxHeight,
       );
-      child!.layout(innerConstraints, parentUsesSize: true);
-      _setSize(child!.size);
+      child.layout(innerConstraints, parentUsesSize: true);
+      _setSize(child.size);
     }
   }
 
@@ -235,6 +250,7 @@ extension WrapContentLayoutEx on Widget {
     AlignmentGeometry alignment = AlignmentDirectional.center,
     double? minWidth,
     double? minHeight,
+    String? debugLabel,
   }) =>
       WrapContentLayout(
         tightChild: tightChild,
@@ -243,6 +259,7 @@ extension WrapContentLayoutEx on Widget {
         alignment: alignment,
         minWidth: minWidth,
         minHeight: minHeight,
+        debugLabel: debugLabel,
         child: this,
       );
 
@@ -256,6 +273,7 @@ extension WrapContentLayoutEx on Widget {
     AlignmentGeometry alignment = AlignmentDirectional.center,
     double? minWidth,
     double? minHeight,
+    String? debugLabel,
   }) =>
       wrapContent(
         tightChild: tightChild,
@@ -264,6 +282,7 @@ extension WrapContentLayoutEx on Widget {
         alignment: alignment,
         minWidth: minWidth,
         minHeight: minHeight,
+        debugLabel: debugLabel,
       );
 
   /// [wrapContent]
@@ -276,6 +295,7 @@ extension WrapContentLayoutEx on Widget {
     AlignmentDirectional alignment = AlignmentDirectional.center,
     double? minWidth,
     double? minHeight,
+    String? debugLabel,
   }) =>
       wrapContent(
         tightChild: tightChild,
@@ -284,5 +304,6 @@ extension WrapContentLayoutEx on Widget {
         alignment: alignment,
         minWidth: minWidth,
         minHeight: minHeight,
+        debugLabel: debugLabel,
       );
 }

@@ -287,6 +287,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     ChildrenBuilder? scrollContentBuilder,
     /*需要[useRScroll]支持*/
     Listenable? contentUpdateSignal /*内容更新信号, 需要[useRScroll]支持*/,
+    String? debugLabel,
   }) {
     blur ??= dialogBlur;
 
@@ -335,6 +336,10 @@ mixin DialogMixin implements TranslationTypeImpl {
               axis: Axis.vertical,
               physics: enablePullBack ? null : kScrollPhysics,
             );
+      /*if (debugLabel != null) {
+        debugger(when: debugLabel != null);
+        scrollBody = scrollBody?.wrapContentHeight(debugLabel: debugLabel);
+      }*/
       //约束高度
       scrollBody = scrollBody?.constrainedMax(
         minWidth: null,
