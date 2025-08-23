@@ -30,6 +30,7 @@ class CoreDialogTitle extends StatelessWidget {
   final bool showTrailing;
   final bool invisibleTrailing;
   final String? trailingSvgIconKey;
+  final Color? trailingTintColor;
 
   ///
   final String? title;
@@ -79,6 +80,7 @@ class CoreDialogTitle extends StatelessWidget {
     this.trailing,
     this.trailingIcon,
     this.trailingSvgIconKey,
+    this.trailingTintColor,
     this.enableLeading = true,
     this.showLeading = true,
     this.invisibleLeading = false,
@@ -104,52 +106,54 @@ class CoreDialogTitle extends StatelessWidget {
     final leading = !showLeading
         ? null
         : this.leading ??
-            InkButton(
-              leadingIcon ??
-                  loadCoreAssetSvgPicture(
-                    leadingSvgIconKey ??
-                        (useCloseIcon
-                            ? Assets.svg.coreClose
-                            : Assets.svg.coreBack),
-                    tintColor: context.isThemeDark
-                        ? globalTheme.textTitleStyle.color
-                        : null,
-                  ),
-              enable: enableLeading,
-              onTap: () {
-                if (onLeadingTap == null) {
-                  context.pop();
-                } else {
-                  onLeadingTap?.call(context);
-                }
-              },
-            );
+              InkButton(
+                leadingIcon ??
+                    loadCoreAssetSvgPicture(
+                      leadingSvgIconKey ??
+                          (useCloseIcon
+                              ? Assets.svg.coreClose
+                              : Assets.svg.coreBack),
+                      tintColor: context.isThemeDark
+                          ? globalTheme.textTitleStyle.color
+                          : null,
+                    ),
+                enable: enableLeading,
+                onTap: () {
+                  if (onLeadingTap == null) {
+                    context.pop();
+                  } else {
+                    onLeadingTap?.call(context);
+                  }
+                },
+              );
 
     final trailing = !showTrailing
         ? null
         : this.trailing ??
-            InkButton(
-              trailingIcon ??
-                  loadCoreAssetSvgPicture(
-                    trailingSvgIconKey ?? Assets.svg.coreConfirm,
-                    tintColor: context.isThemeDark
-                        ? globalTheme.textTitleStyle.color
-                        : trailingUseThemeColor
-                            ? globalTheme.accentColor
-                            : null,
-                  ),
-              enable: enableTrailing,
-              onTap: () {
-                if (onTrailingTap == null) {
-                  context.pop(onPop == null ? true : onPop?.call());
-                } else {
-                  onTrailingTap?.call(context);
-                }
-              },
-            ).invisible(
-              enable: globalTheme.enableTrailingInvisible,
-              invisible: !enableTrailing,
-            );
+              InkButton(
+                trailingIcon ??
+                    loadCoreAssetSvgPicture(
+                      trailingSvgIconKey ?? Assets.svg.coreConfirm,
+                      tintColor:
+                          trailingTintColor ??
+                          (context.isThemeDark
+                              ? globalTheme.textTitleStyle.color
+                              : trailingUseThemeColor
+                              ? globalTheme.accentColor
+                              : null),
+                    ),
+                enable: enableTrailing,
+                onTap: () {
+                  if (onTrailingTap == null) {
+                    context.pop(onPop == null ? true : onPop?.call());
+                  } else {
+                    onTrailingTap?.call(context);
+                  }
+                },
+              ).invisible(
+                enable: globalTheme.enableTrailingInvisible,
+                invisible: !enableTrailing,
+              );
 
     return DialogTitleTile(
       leading: leading?.invisible(invisible: invisibleLeading),
@@ -256,62 +260,69 @@ class CoreDialogBottomTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    const decorationButtonPadding =
-        EdgeInsets.symmetric(horizontal: kX, vertical: kM);
+    const decorationButtonPadding = EdgeInsets.symmetric(
+      horizontal: kX,
+      vertical: kM,
+    );
     const buttonPadding = EdgeInsets.symmetric(horizontal: kX, vertical: kH);
     final fillDecorationColor = globalTheme.itemWhiteBgColor;
     Widget? leading = !showLeading
         ? null
         : this.leading ??
-            InkButton(
-              loadCoreAssetSvgPicture(
-                leadingSvgIconKey ?? Assets.svg.coreClose,
-                tintColor: context.isThemeDark
-                    ? globalTheme.textTitleStyle.color
-                    : null,
-              ),
-              enable: enableLeading,
-              splashColor: showDecoration ? fillDecorationColor : null,
-              minWidth: showDecoration ? null : kInteractiveHeight,
-              minHeight: showDecoration ? null : kInteractiveHeight,
-              padding: showDecoration ? decorationButtonPadding : buttonPadding,
-              onTap: () {
-                if (onLeadingTap == null) {
-                  context.maybePop();
-                } else {
-                  onLeadingTap?.call(context);
-                }
-              },
-            );
+              InkButton(
+                loadCoreAssetSvgPicture(
+                  leadingSvgIconKey ?? Assets.svg.coreClose,
+                  tintColor: context.isThemeDark
+                      ? globalTheme.textTitleStyle.color
+                      : null,
+                ),
+                enable: enableLeading,
+                splashColor: showDecoration ? fillDecorationColor : null,
+                minWidth: showDecoration ? null : kInteractiveHeight,
+                minHeight: showDecoration ? null : kInteractiveHeight,
+                padding: showDecoration
+                    ? decorationButtonPadding
+                    : buttonPadding,
+                onTap: () {
+                  if (onLeadingTap == null) {
+                    context.maybePop();
+                  } else {
+                    onLeadingTap?.call(context);
+                  }
+                },
+              );
 
     Widget? trailing = !showTrailing
         ? null
         : this.trailing ??
-            InkButton(
-              loadCoreAssetSvgPicture(
-                trailingSvgIconKey ?? Assets.svg.coreConfirm,
-                tintColor: context.isThemeDark
-                    ? globalTheme.textTitleStyle.color
-                    : trailingUseThemeColor
-                        ? globalTheme.accentColor
-                        : null,
-              ),
-              enable: enableTrailing,
-              splashColor: showDecoration ? fillDecorationColor : null,
-              minWidth: showDecoration ? null : kInteractiveHeight,
-              minHeight: showDecoration ? null : kInteractiveHeight,
-              padding: showDecoration ? decorationButtonPadding : buttonPadding,
-              onTap: () {
-                if (onTrailingTap == null) {
-                  context.maybePop(onPop == null ? true : onPop?.call());
-                } else {
-                  onTrailingTap?.call(context);
-                }
-              },
-            );
+              InkButton(
+                loadCoreAssetSvgPicture(
+                  trailingSvgIconKey ?? Assets.svg.coreConfirm,
+                  tintColor: context.isThemeDark
+                      ? globalTheme.textTitleStyle.color
+                      : trailingUseThemeColor
+                      ? globalTheme.accentColor
+                      : null,
+                ),
+                enable: enableTrailing,
+                splashColor: showDecoration ? fillDecorationColor : null,
+                minWidth: showDecoration ? null : kInteractiveHeight,
+                minHeight: showDecoration ? null : kInteractiveHeight,
+                padding: showDecoration
+                    ? decorationButtonPadding
+                    : buttonPadding,
+                onTap: () {
+                  if (onTrailingTap == null) {
+                    context.maybePop(onPop == null ? true : onPop?.call());
+                  } else {
+                    onTrailingTap?.call(context);
+                  }
+                },
+              );
 
     if (showDecoration) {
-      final decoration = this.decoration ??
+      final decoration =
+          this.decoration ??
           fillDecoration(
             color: fillDecorationColor,
             radius: kDefaultBorderRadiusX,

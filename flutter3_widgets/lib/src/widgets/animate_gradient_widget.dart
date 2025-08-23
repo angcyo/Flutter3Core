@@ -26,8 +26,8 @@ class AnimateGradient extends StatefulWidget {
     this.duration = const Duration(seconds: 4),
     this.animateAlignments = true,
     this.reverse = true,
-  })  : assert(primaryColors.length >= 2),
-        assert(primaryColors.length == secondaryColors.length);
+  }) : assert(primaryColors.length >= 2),
+       assert(primaryColors.length == secondaryColors.length);
 
   /// [controller]: pass this to have a fine control over the [Animation]
   final AnimationController? controller;
@@ -115,9 +115,9 @@ class _AnimateGradientState extends State<AnimateGradient>
   }
 
   @override
-  void didUpdateWidget(_) {
+  void didUpdateWidget(covariant oldWidget) {
     _initialize();
-    super.didUpdateWidget(_);
+    super.didUpdateWidget(oldWidget);
   }
 
   void _initialize() {
@@ -160,10 +160,7 @@ class _AnimateGradientState extends State<AnimateGradient>
 
     for (int i = 0; i < primaryColors.length; i++) {
       colorTweens.add(
-        ColorTween(
-          begin: primaryColors[i],
-          end: secondaryColors[i],
-        ),
+        ColorTween(begin: primaryColors[i], end: secondaryColors[i]),
       );
     }
 
@@ -203,16 +200,11 @@ class _AnimateGradientState extends State<AnimateGradient>
   }
 
   void _setAnimations() {
-    _controller = widget.controller ??
-        AnimationController(
-          vsync: this,
-          duration: widget.duration,
-        )
-      ..repeat(reverse: widget.reverse);
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+    _controller =
+        widget.controller ??
+              AnimationController(vsync: this, duration: widget.duration)
+          ..repeat(reverse: widget.reverse);
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
   }
 
   @override

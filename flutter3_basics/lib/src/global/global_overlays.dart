@@ -15,18 +15,17 @@ const Duration kNotificationSlideDuration = Duration(milliseconds: 300);
 /// To build a widget with animated value.
 /// [progress] : the progress of overlay animation from 0 - 1
 ///
-typedef OverlayAnimatedWidgetBuilder = Widget Function(
-  BuildContext context,
-  double progress,
-);
+typedef OverlayAnimatedWidgetBuilder =
+    Widget Function(BuildContext context, double progress);
 
 /// [OverlayAnimatedWidgetBuilder]
-typedef OverlayEntryAnimatedWidgetBuilder = Widget Function(
-  OverlayEntry entry,
-  OverlayAnimatedState state,
-  BuildContext context,
-  double progress,
-);
+typedef OverlayEntryAnimatedWidgetBuilder =
+    Widget Function(
+      OverlayEntry entry,
+      OverlayAnimatedState state,
+      BuildContext context,
+      double progress,
+    );
 
 /// 动画类型
 enum OverlayAnimate {
@@ -47,11 +46,7 @@ enum OverlayAnimate {
 }
 
 /// 显示的位置
-enum OverlayPosition {
-  top,
-  center,
-  bottom,
-}
+enum OverlayPosition { top, center, bottom }
 
 /// 最后一次显示的toast
 OverlayEntry? _lastToastEntry;
@@ -72,9 +67,11 @@ OverlayEntry? toast(
   // 整体的内边距, 距离屏幕的内边距
   EdgeInsetsGeometry? margin = const EdgeInsets.all(kXh),
   // 内容内边距
-  EdgeInsetsGeometry? padding =
-      const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
-  // 显示时,是否保留底部的padding
+  EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(
+    horizontal: kXh,
+    vertical: kX,
+  ),
+  // 显示时,是否保留底部的padding, 键盘/导航的高度
   bool maintainBottomViewPadding = true,
   // 显示时, 是否互斥, 互斥的情况下, 会自动隐藏上一次的弹窗
   bool mutex = true,
@@ -117,15 +114,14 @@ OverlayEntry? toastBlur({
   double? bgBlurSigma = kM,
   OverlayPosition position = OverlayPosition.center,
   LoadingValueNotifier? loadingInfoNotifier,
-  bool maintainBottomViewPadding = true,
-}) =>
-    toast(
-      msg ?? text?.toString().text(),
-      bgBlurSigma: bgBlurSigma,
-      position: position,
-      loadingInfoNotifier: loadingInfoNotifier,
-      maintainBottomViewPadding: maintainBottomViewPadding,
-    );
+  bool maintainBottomViewPadding = true /*是否保持底部的Padding(键盘/导航)*/,
+}) => toast(
+  msg ?? text?.toString().text(),
+  bgBlurSigma: bgBlurSigma,
+  position: position,
+  loadingInfoNotifier: loadingInfoNotifier,
+  maintainBottomViewPadding: maintainBottomViewPadding,
+);
 
 /// 顶部全屏toast
 /// [black] 背景是否是黑色,影响[background]
@@ -141,19 +137,22 @@ OverlayEntry? toastMessage(
   //--
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
-}) =>
-    showNotification((context) {
-      Widget child = ToastWidget(
-        background: background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
-        elevation: 10,
-        bgBlurSigma: bgBlurSigma,
-        padding: padding ??
-            const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
-        margin: margin ?? const EdgeInsets.all(kXh),
-        child: msg,
-      );
-      return child;
-    }, position: position, animate: animate ?? OverlayAnimate.opacity);
+}) => showNotification(
+  (context) {
+    Widget child = ToastWidget(
+      background: background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
+      elevation: 10,
+      bgBlurSigma: bgBlurSigma,
+      padding:
+          padding ?? const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
+      margin: margin ?? const EdgeInsets.all(kXh),
+      child: msg,
+    );
+    return child;
+  },
+  position: position,
+  animate: animate ?? OverlayAnimate.opacity,
+);
 
 /// [toastMessage]
 OverlayEntry? toastInfo(
@@ -190,20 +189,23 @@ OverlayEntry? toastInfo(
             Empty.width(8),
             Text(
               msg,
-              style: textStyle ??
+              style:
+                  textStyle ??
                   GlobalConfig.def.globalTheme.textGeneralStyle.copyWith(
-                      color: GlobalConfig.def.globalTheme.themeWhiteColor),
-            )
+                    color: GlobalConfig.def.globalTheme.themeWhiteColor,
+                  ),
+            ),
             /*Text(
               msg,
               maxLines: 1,
               softWrap: true,
               overflow: TextOverflow.ellipsis,
-            )*/ /*.expanded(), 不使用`expanded`无法换行*/
-            ,
+            )*/
+            /*.expanded(), 不使用`expanded`无法换行*/
           ],
         ),
-    background: background ??
+    background:
+        background ??
         GlobalConfig.def.globalTheme.blackBgColor.withOpacity(0.8),
     position: position,
     bgBlurSigma: bgBlurSigma,
@@ -228,20 +230,19 @@ OverlayEntry? toastInfoBlack(
   //--
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
-}) =>
-    toastInfo(
-      msg,
-      padding: padding,
-      margin: margin,
-      background: background,
-      icon: icon,
-      iconColor: iconColor ?? GlobalConfig.def.globalTheme.accentColor,
-      iconWidget: iconWidget,
-      child: child,
-      bgBlurSigma: kM,
-      position: position,
-      animate: animate,
-    );
+}) => toastInfo(
+  msg,
+  padding: padding,
+  margin: margin,
+  background: background,
+  icon: icon,
+  iconColor: iconColor ?? GlobalConfig.def.globalTheme.accentColor,
+  iconWidget: iconWidget,
+  child: child,
+  bgBlurSigma: kM,
+  position: position,
+  animate: animate,
+);
 
 //---
 
@@ -249,6 +250,7 @@ OverlayEntry? toastInfoBlack(
 /// [showNotification]->[showOverlay]的简单封装
 OverlayEntry? showSimpleNotification(
   Widget content, {
+
   /// 通知的背景颜色
   Color? background,
 
@@ -299,7 +301,8 @@ OverlayEntry? showSimpleNotification(
     ),
   );
   child = Material(
-    color: background ??
+    color:
+        background ??
         GlobalConfig.def.themeData?.colorScheme.secondary ??
         GlobalConfig.def.globalTheme.whiteBgColor,
     elevation: elevation,
@@ -313,9 +316,13 @@ OverlayEntry? showSimpleNotification(
       child: child,
     );
   }
-  return showNotification((context) {
-    return child;
-  }, position: position, animate: animate);
+  return showNotification(
+    (context) {
+      return child;
+    },
+    position: position,
+    animate: animate,
+  );
 }
 
 /// 显示一个通知
@@ -356,10 +363,7 @@ OverlayEntry? showNotification(
       if (anim == OverlayAnimate.topSlide) {
         content = TopSlideNotification(builder: builder, progress: progress);
       } else if (anim == OverlayAnimate.opacity) {
-        content = OpacityNotification(
-          builder: builder,
-          progress: progress,
-        );
+        content = OpacityNotification(builder: builder, progress: progress);
       } else if (anim == OverlayAnimate.bottomSlide) {
         content = BottomSlideNotification(builder: builder, progress: progress);
       } else if (anim == OverlayAnimate.scale) {
@@ -378,10 +382,7 @@ OverlayEntry? showNotification(
       } else {
         alignment = Alignment.center;
       }
-      return Align(
-        alignment: alignment,
-        child: content,
-      );
+      return Align(alignment: alignment, child: content);
     },
     duration: duration,
     animationDuration: animationDuration,
@@ -427,8 +428,11 @@ OverlayEntry? showOverlay(
           return true;
         }());
       } else {
-        GlobalConfig.def.globalTopContext
-            ?.eachVisitChildElements((element, depth, childIndex) {
+        GlobalConfig.def.globalTopContext?.eachVisitChildElements((
+          element,
+          depth,
+          childIndex,
+        ) {
           if (element.widget is Overlay) {
             overlayState =
                 (element as StatefulElement?)?.state as OverlayState?;

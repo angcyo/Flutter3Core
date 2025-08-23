@@ -3022,7 +3022,13 @@ extension ListEx<T> on List<T> {
   }
 
   /// 重置列表的元素
+  @alias
   void reset(Iterable<T>? elements) {
+    resetAll(elements);
+  }
+
+  /// 重置列表的元素
+  void resetAll(Iterable<T>? elements) {
     clear();
     if (elements != null) {
       addAll(elements);
