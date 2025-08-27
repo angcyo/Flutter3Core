@@ -20,8 +20,13 @@ enum InputBorderType {
 
 /// 不使用长度显示小部件构建
 /// [TextField.buildCounter]
-InputCounterWidgetBuilder get noneInputBuildCounter => (context,
-        {required currentLength, required maxLength, required isFocused}) {
+InputCounterWidgetBuilder get noneInputBuildCounter =>
+    (
+      context, {
+      required currentLength,
+      required maxLength,
+      required isFocused,
+    }) {
       return null;
     };
 
@@ -124,6 +129,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
     InputBorder? focusedBorder,
     InputBorder? disabledBorder,
     InputCounterWidgetBuilder? inputBuildCounter,
+    List<TextInputFormatter>? inputFormatters,
     double? prefixIconSize = kSuffixIconSize,
     double? suffixIconSize = kSuffixIconSize,
     EdgeInsetsGeometry? prefixIconPadding,
@@ -137,7 +143,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
       maxLength: inputMixin.inputMaxLength,
       showInputCounter: inputMixin.showInputCounter,
       keyboardType: inputMixin.inputKeyboardType,
-      inputFormatters: inputMixin.inputFormatters,
+      inputFormatters: inputFormatters ?? inputMixin.inputFormatters,
       textAlign: textAlign ?? inputMixin.inputTextAlign,
       border: border,
       focusedBorder: focusedBorder,
