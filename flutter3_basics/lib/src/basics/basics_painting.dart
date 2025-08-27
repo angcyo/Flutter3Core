@@ -24,8 +24,8 @@ void setCanvasIsComplexHint(PaintingContext context, Decoration? decoration) {
 /// 自定义的绘制方法
 /// [childRect] 当前元素的绘制区域
 /// [parentRect] 父元素的绘制区域
-typedef PainterFn = void Function(
-    Canvas canvas, Rect childRect, Rect parentRect);
+typedef PainterFn =
+    void Function(Canvas canvas, Rect childRect, Rect parentRect);
 
 /// [CustomPaint]
 /// [CustomPainter]
@@ -46,11 +46,12 @@ ui.Picture drawPicture(
 }) {
   final ui.PictureRecorder recorder = ui.PictureRecorder();
   final canvas = Canvas(
-      recorder,
-      cullRect ??
-          (cullSize == null
-              ? null
-              : Rect.fromLTWH(0, 0, cullSize.width, cullSize.height)));
+    recorder,
+    cullRect ??
+        (cullSize == null
+            ? null
+            : Rect.fromLTWH(0, 0, cullSize.width, cullSize.height)),
+  );
   action(canvas);
   return recorder.endRecording();
 }
@@ -58,8 +59,11 @@ ui.Picture drawPicture(
 /// 使用[Canvas]绘制图片
 /// [size] 绘制的大小, 像素单位
 /// [pixelRatio] 像素密度[dpr]
-Future<ui.Image> drawImage(@dp Size size, CanvasAction callback,
-    [double? pixelRatio]) {
+Future<ui.Image> drawImage(
+  @dp Size size,
+  CanvasAction callback, [
+  double? pixelRatio,
+]) {
   final radio = pixelRatio ?? 1;
   final width = size.width * radio;
   final height = size.height * radio;
@@ -184,7 +188,7 @@ extension StringPaintEx on String {
         //preRotate
         matrix =
             Matrix4.identity().postRotate(angle.hd, pivotX: cx, pivotY: cy) *
-                matrix;
+            matrix;
       } else {
         //preRotate
         matrix = Matrix4.identity().postRotate(angle.hd) * matrix;
@@ -300,19 +304,17 @@ extension StringPaintEx on String {
 
   /// [TextSpanPaintEx.textSize]
   Size textSize({@dp double? fontSize, TextStyle? style}) => TextSpan(
-        text: this,
-        style: style ?? TextStyle(fontSize: fontSize),
-      ).textSize();
+    text: this,
+    style: style ?? TextStyle(fontSize: fontSize),
+  ).textSize();
 
   /// [TextSpanPaintEx.textWidth]
   double textWidth({double? fontSize, TextStyle? style}) =>
       textSize(fontSize: fontSize, style: style).width;
 
   /// [TextSpanPaintEx.textSize]
-  double textHeight({double? fontSize, TextStyle? style}) => textSize(
-        fontSize: fontSize,
-        style: style,
-      ).height;
+  double textHeight({double? fontSize, TextStyle? style}) =>
+      textSize(fontSize: fontSize, style: style).height;
 }
 
 extension TextSpanPaintEx on InlineSpan {
@@ -459,9 +461,15 @@ extension CanvasEx on Canvas {
     if (radians == 0) {
       callback();
     } else {
-      withPivot(() {
-        rotate(radians);
-      }, callback, anchor: anchor, pivotX: pivotX, pivotY: pivotY);
+      withPivot(
+        () {
+          rotate(radians);
+        },
+        callback,
+        anchor: anchor,
+        pivotX: pivotX,
+        pivotY: pivotY,
+      );
     }
   }
 
@@ -477,9 +485,15 @@ extension CanvasEx on Canvas {
     if (sx == 1 && sy == 1) {
       callback();
     } else {
-      withPivot(() {
-        scale(sx, sy);
-      }, callback, anchor: anchor, pivotX: pivotX, pivotY: pivotY);
+      withPivot(
+        () {
+          scale(sx, sy);
+        },
+        callback,
+        anchor: anchor,
+        pivotX: pivotX,
+        pivotY: pivotY,
+      );
     }
   }
 
@@ -495,9 +509,15 @@ extension CanvasEx on Canvas {
     if (sx == 0 && sy == 0) {
       callback();
     } else {
-      withPivot(() {
-        skew(sx, sy);
-      }, callback, anchor: anchor, pivotX: pivotX, pivotY: pivotY);
+      withPivot(
+        () {
+          skew(sx, sy);
+        },
+        callback,
+        anchor: anchor,
+        pivotX: pivotX,
+        pivotY: pivotY,
+      );
     }
   }
 
@@ -727,7 +747,11 @@ extension CanvasEx on Canvas {
       dst = destinationRect;
     } else {
       dst = ui.Rect.fromLTWH(
-          dst.left, dst.top, fitTargetSize.width, fitTargetSize.height);
+        dst.left,
+        dst.top,
+        fitTargetSize.width,
+        fitTargetSize.height,
+      );
     }
 
     final drawLeft = dst.left + (dstPadding?.left ?? 0);
@@ -745,8 +769,9 @@ extension CanvasEx on Canvas {
     final scaleMatrix = Matrix4.identity()
       ..scaleBy(sx: sx, sy: sy, anchor: pathBounds.topLeft);
 
-    final targetPathList =
-        pathList.transformPath(translateMatrix * scaleMatrix);
+    final targetPathList = pathList.transformPath(
+      translateMatrix * scaleMatrix,
+    );
     withSave(() {
       //着色
       if (paint != null) {
@@ -789,34 +814,37 @@ extension CanvasEx on Canvas {
     void Function(TextPainter painter, Offset offset)? onBeforeAction,
   }) {
     final painter = TextPainter(
-        text: TextSpan(
-          text: text,
-          style: textStyle ??
-              TextStyle(
-                color: textColor,
-                fontSize: fontSize,
-                shadows: shadows ??
-                    (shadow
-                        ? const <Shadow>[
-                            Shadow(
-                              offset: Offset(1, 1),
-                              color: Colors.black,
-                              blurRadius: 2,
-                            ),
-                          ]
-                        : null),
-                fontWeight: fontWeight ?? (bold ? FontWeight.bold : null),
-              ),
-        ),
-        textAlign: textAlign,
-        textDirection: TextDirection.ltr)
-      ..layout();
-    final textOffset = (getOffset?.call(painter) ??
+      text: TextSpan(
+        text: text,
+        style:
+            textStyle ??
+            TextStyle(
+              color: textColor,
+              fontSize: fontSize,
+              shadows:
+                  shadows ??
+                  (shadow
+                      ? const <Shadow>[
+                          Shadow(
+                            offset: Offset(1, 1),
+                            color: Colors.black,
+                            blurRadius: 2,
+                          ),
+                        ]
+                      : null),
+              fontWeight: fontWeight ?? (bold ? FontWeight.bold : null),
+            ),
+      ),
+      textAlign: textAlign,
+      textDirection: TextDirection.ltr,
+    )..layout();
+    final textOffset =
+        (getOffset?.call(painter) ??
             (bounds == null
                 ? ui.Offset.zero
                 : alignment
-                    .inscribe(Size(painter.width, painter.height), bounds)
-                    .topLeft)) +
+                      .inscribe(Size(painter.width, painter.height), bounds)
+                      .topLeft)) +
         offset;
     onBeforeAction?.call(painter, textOffset);
     painter.paint(this, textOffset);
@@ -901,7 +929,10 @@ extension CanvasEx on Canvas {
     return Size(imageSize.width * sx, imageSize.height * sy);
   }
 
-  /// 绘制[ui.Image]
+  /// 将[ui.Image]绘制在目标矩形[dst]内
+  ///
+  /// - [fit]
+  /// - [alignment]
   void drawImageInRect(
     ui.Image? image, {
     Rect? dst,
@@ -915,13 +946,17 @@ extension CanvasEx on Canvas {
       return;
     }
     final imageSize = Size(image.width + 0.0, image.height + 0.0);
-    drawInRect(dst, imageSize.toRect(), () {
-      this.drawImage(image, ui.Offset.zero, paint ?? Paint());
-    },
-        tintColor: tintColor,
-        colorFilter: colorFilter,
-        fit: fit,
-        alignment: alignment);
+    drawInRect(
+      dst,
+      imageSize.toRect(),
+      () {
+        this.drawImage(image, ui.Offset.zero, paint ?? Paint());
+      },
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+      fit: fit,
+      alignment: alignment,
+    );
   }
 
   /// 在一个位置[position]绘制十字线
@@ -965,8 +1000,9 @@ extension CanvasEx on Canvas {
     final canvas = this;
     for (final BoxShadow boxShadow in boxShadows) {
       final Paint paint = boxShadow.toPaint();
-      final Rect bounds =
-          rect.shift(boxShadow.offset).inflate(boxShadow.spreadRadius);
+      final Rect bounds = rect
+          .shift(boxShadow.offset)
+          .inflate(boxShadow.spreadRadius);
       assert(() {
         if (debugDisableShadows && boxShadow.blurStyle == BlurStyle.outer) {
           canvas.save();
@@ -985,7 +1021,9 @@ extension CanvasEx on Canvas {
             canvas.drawRect(rect, paint);
           } else {
             canvas.drawRRect(
-                borderRadius.resolve(textDirection).toRRect(rect), paint);
+              borderRadius.resolve(textDirection).toRRect(rect),
+              paint,
+            );
           }
       }
       assert(() {
@@ -997,7 +1035,7 @@ extension CanvasEx on Canvas {
     }
   }
 
-//endregion ---draw---
+  //endregion ---draw---
 }
 
 extension PaintEx on Paint {

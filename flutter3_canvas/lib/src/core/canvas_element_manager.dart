@@ -115,8 +115,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     final group = ElementGroupPainter();
     group.resetChildren(list);
-    final bounds = group.paintProperty
-        ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+    final bounds = group.paintProperty?.getBounds(
+      canvasElementControlManager.enableResetElementAngle,
+    );
     if (isNil(bounds)) {
       return null;
     }
@@ -152,14 +153,19 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       //--绘制菜单
       if (canvasElementControlManager.elementMenuControl
           .needHandleElementMenu()) {
-        canvasElementControlManager.elementMenuControl
-            .paintMenu(canvas, paintMeta);
+        canvasElementControlManager.elementMenuControl.paintMenu(
+          canvas,
+          paintMeta,
+        );
       }
       //--绘制吸附提示线
       if (canvasElementControlManager
-          .elementAdsorbControl.isCanvasComponentEnable) {
-        canvasElementControlManager.elementAdsorbControl
-            .paintAdsorb(canvas, paintMeta);
+          .elementAdsorbControl
+          .isCanvasComponentEnable) {
+        canvasElementControlManager.elementAdsorbControl.paintAdsorb(
+          canvas,
+          paintMeta,
+        );
       }
       //--绘制覆盖层
       canvasDelegate._overlayComponent?.painting(canvas, paintMeta);
@@ -300,6 +306,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   bool addAfterElement(ElementPainter? element) =>
       _addElementIn(afterElements, element);
 
+  //--
+
   /// [afterElements]
   /// [beforeElements]
   bool removeBeforeElement(ElementPainter? element) =>
@@ -309,6 +317,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [beforeElements]
   bool removeAfterElement(ElementPainter? element) =>
       _removeElementFrom(afterElements, element);
+
+  bool removeBeforeElementList(List<ElementPainter>? elementList) =>
+      _removeElementListFrom(beforeElements, elementList);
+
+  bool removeAfterElementList(List<ElementPainter>? elementList) =>
+      _removeElementListFrom(afterElements, elementList);
+
+  //--
+
+  List<E>? findBeforeElementType<E extends ElementPainter>() =>
+      _findElementType(beforeElements);
+
+  List<E>? findAfterElementType<E extends ElementPainter>() =>
+      _findElementType(afterElements);
 
   /// [detachElementToCanvasDelegate]
   void attachElementToCanvasDelegate(List<ElementPainter>? elements) {
@@ -373,6 +395,50 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     return false;
   }
 
+  bool _removeElementListFrom(
+    List<ElementPainter> list,
+    List<ElementPainter>? elementList,
+  ) {
+    //debugger();
+    if (isNil(elementList)) {
+      assert(() {
+        l.w('无效的操作[_removeElementListFrom]');
+        return true;
+      }());
+      return false;
+    }
+    final removeList = list.removeAll(elementList);
+    if (!isNil(removeList)) {
+      for (final element in removeList!) {
+        if (element.canvasDelegate == canvasDelegate) {
+          element.detachFromCanvasDelegate(canvasDelegate);
+        }
+      }
+      canvasDelegate.dispatchCanvasElementListAddChanged(list, removeList);
+      canvasDelegate.refresh();
+      return true;
+    }
+    return false;
+  }
+
+  /// 查找指定类型元素
+  List<E>? _findElementType<E extends ElementPainter>(
+    List<ElementPainter> list,
+  ) {
+    List<E>? result;
+    if (list.isEmpty) {
+      return result;
+    }
+
+    for (final element in list) {
+      if (element is E) {
+        result ??= [];
+        result.add(element);
+      }
+    }
+    return result;
+  }
+
   /// 重置[elements]元素,
   /// - 支持多画布[CanvasMultiManager]
   /// - 支持撤销/回退
@@ -402,7 +468,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       selectType: selectType,
     );
     canvasDelegate.dispatchCanvasElementListRemoveChanged(
-        elements, oldElements);
+      elements,
+      oldElements,
+    );
     canvasDelegate.dispatchCanvasElementListAddChanged(elements, newElements);
 
     selectedOrFollowElements(
@@ -414,44 +482,50 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     );
 
     if (undoType == UndoType.normal) {
-      canvasDelegate.canvasUndoManager.add(UndoActionItem(
-        () {
-          //debugger();
-          elements = oldElements;
-          canvasDelegate.canvasMultiManager.selectedCanvasState?.elements =
-              elements;
-          canvasElementControlManager.onCanvasElementDeleted(
-              newElements, selectType);
-          detachElementToCanvasDelegate(newElements);
-          attachElementToCanvasDelegate(oldElements);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            newElements,
-            oldElements,
-            oldElements,
-            ElementChangeType.update,
-            UndoType.undo,
-            selectType: selectType,
-          );
-        },
-        () {
-          //debugger();
-          elements = newElements;
-          canvasDelegate.canvasMultiManager.selectedCanvasState?.elements =
-              elements;
-          canvasElementControlManager.onCanvasElementDeleted(
-              oldElements, selectType);
-          detachElementToCanvasDelegate(oldElements);
-          attachElementToCanvasDelegate(newElements);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            oldElements,
-            newElements,
-            newElements,
-            ElementChangeType.update,
-            UndoType.redo,
-            selectType: selectType,
-          );
-        },
-      ));
+      canvasDelegate.canvasUndoManager.add(
+        UndoActionItem(
+          () {
+            //debugger();
+            elements = oldElements;
+            canvasDelegate.canvasMultiManager.selectedCanvasState?.elements =
+                elements;
+            canvasElementControlManager.onCanvasElementDeleted(
+              newElements,
+              selectType,
+            );
+            detachElementToCanvasDelegate(newElements);
+            attachElementToCanvasDelegate(oldElements);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              newElements,
+              oldElements,
+              oldElements,
+              ElementChangeType.update,
+              UndoType.undo,
+              selectType: selectType,
+            );
+          },
+          () {
+            //debugger();
+            elements = newElements;
+            canvasDelegate.canvasMultiManager.selectedCanvasState?.elements =
+                elements;
+            canvasElementControlManager.onCanvasElementDeleted(
+              oldElements,
+              selectType,
+            );
+            detachElementToCanvasDelegate(oldElements);
+            attachElementToCanvasDelegate(newElements);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              oldElements,
+              newElements,
+              newElements,
+              ElementChangeType.update,
+              UndoType.redo,
+              selectType: selectType,
+            );
+          },
+        ),
+      );
     }
   }
 
@@ -516,7 +590,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     if (offset != null) {
       for (final element in list) {
         element.translateElement(
-            Matrix4.identity()..translate(offset.dx, offset.dy));
+          Matrix4.identity()..translate(offset.dx, offset.dy),
+        );
       }
     }
 
@@ -544,35 +619,40 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoActionItem(
-        () {
-          //debugger();
-          elements.reset(old);
-          canvasElementControlManager.onCanvasElementDeleted(list, selectType);
-          detachElementToCanvasDelegate(list);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            newList,
-            old,
-            list,
-            ElementChangeType.update,
-            UndoType.undo,
-            selectType: selectType,
-          );
-        },
-        () {
-          //debugger();
-          elements.reset(newList);
-          attachElementToCanvasDelegate(list);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            old,
-            newList,
-            list,
-            ElementChangeType.update,
-            UndoType.redo,
-            selectType: selectType,
-          );
-        },
-      ));
+      canvasDelegate.canvasUndoManager.add(
+        UndoActionItem(
+          () {
+            //debugger();
+            elements.reset(old);
+            canvasElementControlManager.onCanvasElementDeleted(
+              list,
+              selectType,
+            );
+            detachElementToCanvasDelegate(list);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              newList,
+              old,
+              list,
+              ElementChangeType.update,
+              UndoType.undo,
+              selectType: selectType,
+            );
+          },
+          () {
+            //debugger();
+            elements.reset(newList);
+            attachElementToCanvasDelegate(list);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              old,
+              newList,
+              list,
+              ElementChangeType.update,
+              UndoType.redo,
+              selectType: selectType,
+            );
+          },
+        ),
+      );
     }
   }
 
@@ -621,8 +701,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 删除元素
   @api
   @supportUndo
-  void removeElement(ElementPainter element,
-      {UndoType undoType = UndoType.normal}) {
+  void removeElement(
+    ElementPainter element, {
+    UndoType undoType = UndoType.normal,
+  }) {
     removeElementList(element.ofList(), undoType: undoType);
   }
 
@@ -658,33 +740,35 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoActionItem(
-        () {
-          //debugger();
-          elements.reset(old);
-          attachElementToCanvasDelegate(op);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            newList,
-            old,
-            op,
-            ElementChangeType.update,
-            UndoType.undo,
-          );
-        },
-        () {
-          //debugger();
-          elements.reset(newList);
-          canvasElementControlManager.onCanvasElementDeleted(op, selectType);
-          detachElementToCanvasDelegate(op);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            old,
-            newList,
-            op,
-            ElementChangeType.update,
-            UndoType.redo,
-          );
-        },
-      ));
+      canvasDelegate.canvasUndoManager.add(
+        UndoActionItem(
+          () {
+            //debugger();
+            elements.reset(old);
+            attachElementToCanvasDelegate(op);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              newList,
+              old,
+              op,
+              ElementChangeType.update,
+              UndoType.undo,
+            );
+          },
+          () {
+            //debugger();
+            elements.reset(newList);
+            canvasElementControlManager.onCanvasElementDeleted(op, selectType);
+            detachElementToCanvasDelegate(op);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              old,
+              newList,
+              op,
+              ElementChangeType.update,
+              UndoType.redo,
+            );
+          },
+        ),
+      );
     }
     return true;
   }
@@ -731,30 +815,32 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = op;
-      canvasDelegate.canvasUndoManager.add(UndoActionItem(
-        () {
-          //debugger();
-          _resetElementList(newList, old);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            newList,
-            old,
-            op,
-            ElementChangeType.update,
-            UndoType.undo,
-          );
-        },
-        () {
-          //debugger();
-          _resetElementList(old, newList);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            old,
-            newList,
-            op,
-            ElementChangeType.update,
-            UndoType.redo,
-          );
-        },
-      ));
+      canvasDelegate.canvasUndoManager.add(
+        UndoActionItem(
+          () {
+            //debugger();
+            _resetElementList(newList, old);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              newList,
+              old,
+              op,
+              ElementChangeType.update,
+              UndoType.undo,
+            );
+          },
+          () {
+            //debugger();
+            _resetElementList(old, newList);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              old,
+              newList,
+              op,
+              ElementChangeType.update,
+              UndoType.redo,
+            );
+          },
+        ),
+      );
     }
   }
 
@@ -859,8 +945,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool followPainter = true,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
-    resetSelectedElementList(element == null ? [] : [element],
-        selectType: selectType);
+    resetSelectedElementList(
+      element == null ? [] : [element],
+      selectType: selectType,
+    );
     if (followPainter) {
       canvasDelegate.followPainter(elementPainter: element);
     }
@@ -974,7 +1062,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       final selectComponent = this.selectComponent;
       if (exportSingleElement) {
         return selectComponent.getSingleElementList(
-            includeGroupPainter: includeGroupPainter);
+          includeGroupPainter: includeGroupPainter,
+        );
       }
       return selectComponent.children;
     } else if (exportAllElementIfNoSelected) {
@@ -987,9 +1076,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [getAllElement]
   /// [getAllSelectedElement]
   @api
-  List<ElementPainter>? getAllElement({
-    bool exportSingleElement = false,
-  }) {
+  List<ElementPainter>? getAllElement({bool exportSingleElement = false}) {
     if (exportSingleElement) {
       final result = <ElementPainter>[];
       for (final element in elements) {
@@ -1128,8 +1215,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       oldElementList = oldElement == null ? [] : [oldElement];
     }
 
-    final List<ElementPainter> newElementList =
-        newElement == null ? [] : [newElement];
+    final List<ElementPainter> newElementList = newElement == null
+        ? []
+        : [newElement];
 
     replaceElementList(
       oldElementList,
@@ -1181,7 +1269,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     final List<ElementPainter> op = newElementList ?? [];
     canvasElementControlManager.onCanvasElementDeleted(
-        removeList ?? [], selectType);
+      removeList ?? [],
+      selectType,
+    );
     canvasDelegate.dispatchCanvasElementListChanged(
       old,
       elements,
@@ -1197,34 +1287,36 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoActionItem(
-        () {
-          //debugger();
-          elements.reset(old);
-          detachElementToCanvasDelegate(newElementList);
-          attachElementToCanvasDelegate(oldElementList);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            newList,
-            old,
-            op,
-            ElementChangeType.update,
-            UndoType.undo,
-          );
-        },
-        () {
-          //debugger();
-          elements.reset(newList);
-          detachElementToCanvasDelegate(oldElementList);
-          attachElementToCanvasDelegate(newElementList);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            old,
-            newList,
-            op,
-            ElementChangeType.update,
-            UndoType.redo,
-          );
-        },
-      ));
+      canvasDelegate.canvasUndoManager.add(
+        UndoActionItem(
+          () {
+            //debugger();
+            elements.reset(old);
+            detachElementToCanvasDelegate(newElementList);
+            attachElementToCanvasDelegate(oldElementList);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              newList,
+              old,
+              op,
+              ElementChangeType.update,
+              UndoType.undo,
+            );
+          },
+          () {
+            //debugger();
+            elements.reset(newList);
+            detachElementToCanvasDelegate(oldElementList);
+            attachElementToCanvasDelegate(newElementList);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              old,
+              newList,
+              op,
+              ElementChangeType.update,
+              UndoType.redo,
+            );
+          },
+        ),
+      );
     }
 
     //选中组合元素
@@ -1366,8 +1458,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //需要在此容器边界内对齐
     final Rect? alignBounds = alignCanvasContent
         ? canvasDelegate.canvasContentRect
-        : group.paintProperty
-            ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+        : group.paintProperty?.getBounds(
+            canvasElementControlManager.enableResetElementAngle,
+          );
     if (alignBounds == null) {
       assert(() {
         l.d('获取不到组合元素的边界');
@@ -1378,47 +1471,65 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     final undoState = group.createStateStack();
     for (final element in children) {
-      final elementBounds = element.paintProperty
-          ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+      final elementBounds = element.paintProperty?.getBounds(
+        canvasElementControlManager.enableResetElementAngle,
+      );
       if (elementBounds != null) {
         switch (align) {
           case CanvasAlignType.left:
             //所有元素对齐bounds的左边
-            element.translateElement(Matrix4.identity()
-              ..translate(alignBounds.left - elementBounds.left, 0.0));
+            element.translateElement(
+              Matrix4.identity()
+                ..translate(alignBounds.left - elementBounds.left, 0.0),
+            );
             break;
           case CanvasAlignType.top:
             //所有元素对齐bounds的上边
-            element.translateElement(Matrix4.identity()
-              ..translate(0.0, alignBounds.top - elementBounds.top));
+            element.translateElement(
+              Matrix4.identity()
+                ..translate(0.0, alignBounds.top - elementBounds.top),
+            );
             break;
           case CanvasAlignType.right:
             //所有元素对齐bounds的右边
-            element.translateElement(Matrix4.identity()
-              ..translate(alignBounds.right - elementBounds.right, 0.0));
+            element.translateElement(
+              Matrix4.identity()
+                ..translate(alignBounds.right - elementBounds.right, 0.0),
+            );
             break;
           case CanvasAlignType.bottom:
             //所有元素对齐bounds的下边
-            element.translateElement(Matrix4.identity()
-              ..translate(0.0, alignBounds.bottom - elementBounds.bottom));
+            element.translateElement(
+              Matrix4.identity()
+                ..translate(0.0, alignBounds.bottom - elementBounds.bottom),
+            );
             break;
           case CanvasAlignType.center:
             //所有元素对齐bounds的中心
-            element.translateElement(Matrix4.identity()
-              ..translate(alignBounds.center.dx - elementBounds.center.dx,
-                  alignBounds.center.dy - elementBounds.center.dy));
+            element.translateElement(
+              Matrix4.identity()..translate(
+                alignBounds.center.dx - elementBounds.center.dx,
+                alignBounds.center.dy - elementBounds.center.dy,
+              ),
+            );
             break;
           case CanvasAlignType.horizontalCenter:
             //所有元素对齐bounds的水平中心
-            element.translateElement(Matrix4.identity()
-              ..translate(
-                  0.0, alignBounds.center.dy - elementBounds.center.dy));
+            element.translateElement(
+              Matrix4.identity()..translate(
+                0.0,
+                alignBounds.center.dy - elementBounds.center.dy,
+              ),
+            );
             break;
           case CanvasAlignType.verticalCenter:
             //所有元素对齐bounds的垂直中心
-            element.translateElement(Matrix4.identity()
-              ..translate(
-                  alignBounds.center.dx - elementBounds.center.dx, 0.0));
+            element.translateElement(
+              Matrix4.identity()..translate(
+                alignBounds.center.dx - elementBounds.center.dx,
+                0.0,
+              ),
+            );
             break;
         }
       }
@@ -1474,10 +1585,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       );
       final first = list.first;
       final last = list.last;
-      final firstBounds = first.paintProperty
-          ?.getBounds(canvasElementControlManager.enableResetElementAngle);
-      final lastBounds = last.paintProperty
-          ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+      final firstBounds = first.paintProperty?.getBounds(
+        canvasElementControlManager.enableResetElementAngle,
+      );
+      final lastBounds = last.paintProperty?.getBounds(
+        canvasElementControlManager.enableResetElementAngle,
+      );
 
       if (firstBounds == null || lastBounds == null) {
         assert(() {
@@ -1500,8 +1613,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
         double position = 0.0;
         for (final element in list) {
-          final bounds = element.paintProperty
-              ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+          final bounds = element.paintProperty?.getBounds(
+            canvasElementControlManager.enableResetElementAngle,
+          );
           if (element == first) {
             if (average == CanvasAverageType.horizontal) {
               position = bounds?.center.dx ?? 0;
@@ -1533,8 +1647,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           if (element == first || element == last) {
             return value;
           }
-          final bounds = element.paintProperty
-              ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+          final bounds = element.paintProperty?.getBounds(
+            canvasElementControlManager.enableResetElementAngle,
+          );
           return value +
               (average == CanvasAverageType.horizontal
                   ? bounds?.width ?? 0
@@ -1554,8 +1669,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
         double position = 0.0;
         for (final element in list) {
-          final bounds = element.paintProperty
-              ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+          final bounds = element.paintProperty?.getBounds(
+            canvasElementControlManager.enableResetElementAngle,
+          );
           if (element == first) {
             if (average == CanvasAverageType.horizontal) {
               position = bounds?.right ?? 0;
@@ -1601,8 +1717,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
             leftTop: true,
           )
           .first;
-      final anchorBounds = anchorElement.paintProperty
-          ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+      final anchorBounds = anchorElement.paintProperty?.getBounds(
+        canvasElementControlManager.enableResetElementAngle,
+      );
 
       if (anchorBounds == null) {
         assert(() {
@@ -1617,8 +1734,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         if (element == anchorElement) {
           continue;
         }
-        final elementBounds = element.paintProperty
-            ?.getBounds(canvasElementControlManager.enableResetElementAngle);
+        final elementBounds = element.paintProperty?.getBounds(
+          canvasElementControlManager.enableResetElementAngle,
+        );
         if (elementBounds != null) {
           switch (average) {
             case CanvasAverageType.width:
@@ -1656,8 +1774,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     final targetElement = element is ElementSelectComponent
         ? element.children?.first
         : element is ElementPainter
-            ? element
-            : null;
+        ? element
+        : null;
     if (targetElement == null) {
       assert(() {
         l.d('无效的操作');
@@ -1696,9 +1814,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return;
     }
     arrangeElementList(
-        element is ElementSelectComponent ? element.children : element.ofList(),
-        arrange,
-        undoType: undoType);
+      element is ElementSelectComponent ? element.children : element.ofList(),
+      arrange,
+      undoType: undoType,
+    );
   }
 
   /// 排列元素
@@ -1756,30 +1875,32 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoActionItem(
-        () {
-          //debugger();
-          elements.reset(old);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            newList,
-            old,
-            elementList,
-            ElementChangeType.update,
-            UndoType.undo,
-          );
-        },
-        () {
-          //debugger();
-          elements.reset(newList);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            old,
-            newList,
-            elementList,
-            ElementChangeType.update,
-            UndoType.redo,
-          );
-        },
-      ));
+      canvasDelegate.canvasUndoManager.add(
+        UndoActionItem(
+          () {
+            //debugger();
+            elements.reset(old);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              newList,
+              old,
+              elementList,
+              ElementChangeType.update,
+              UndoType.undo,
+            );
+          },
+          () {
+            //debugger();
+            elements.reset(newList);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              old,
+              newList,
+              elementList,
+              ElementChangeType.update,
+              UndoType.redo,
+            );
+          },
+        ),
+      );
     }
   }
 
@@ -1803,30 +1924,32 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //undo
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
-      canvasDelegate.canvasUndoManager.add(UndoActionItem(
-        () {
-          //debugger();
-          elements.reset(old);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            newList,
-            old,
-            op,
-            ElementChangeType.update,
-            UndoType.undo,
-          );
-        },
-        () {
-          //debugger();
-          elements.reset(newList);
-          canvasDelegate.dispatchCanvasElementListChanged(
-            old,
-            newList,
-            op,
-            ElementChangeType.update,
-            UndoType.redo,
-          );
-        },
-      ));
+      canvasDelegate.canvasUndoManager.add(
+        UndoActionItem(
+          () {
+            //debugger();
+            elements.reset(old);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              newList,
+              old,
+              op,
+              ElementChangeType.update,
+              UndoType.undo,
+            );
+          },
+          () {
+            //debugger();
+            elements.reset(newList);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              old,
+              newList,
+              op,
+              ElementChangeType.update,
+              UndoType.redo,
+            );
+          },
+        ),
+      );
     }
   }
 
@@ -1855,19 +1978,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return null;
     }
     if (element is ElementSelectComponent) {
-      return copyElementList(element.children,
-          autoAddToCanvas: autoAddToCanvas,
-          offset: offset,
-          selected: selected,
-          followPainter: followPainter,
-          undoType: undoType);
+      return copyElementList(
+        element.children,
+        autoAddToCanvas: autoAddToCanvas,
+        offset: offset,
+        selected: selected,
+        followPainter: followPainter,
+        undoType: undoType,
+      );
     } else {
-      return copyElementList(element.ofList(),
-          autoAddToCanvas: autoAddToCanvas,
-          offset: offset,
-          selected: selected,
-          followPainter: followPainter,
-          undoType: undoType);
+      return copyElementList(
+        element.ofList(),
+        autoAddToCanvas: autoAddToCanvas,
+        offset: offset,
+        selected: selected,
+        followPainter: followPainter,
+        undoType: undoType,
+      );
     }
   }
 
@@ -1925,13 +2052,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     @dp Offset? offset,
     bool selected = true,
     bool followPainter = true,
-  }) =>
-      canvasElementControlManager.copySelectedElement(
-        autoAddToCanvas: autoAddToCanvas,
-        offset: offset,
-        selected: selected,
-        followPainter: followPainter,
-      );
+  }) => canvasElementControlManager.copySelectedElement(
+    autoAddToCanvas: autoAddToCanvas,
+    offset: offset,
+    selected: selected,
+    followPainter: followPainter,
+  );
 
   /// 锁定操作指定的元素
   @api
@@ -1946,15 +2072,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       //锁定元素
       clearAnySelectedElementIf(elementList);
     }
-    canvasDelegate.canvasUndoManager.addRunRedo(() {
-      for (final painter in list) {
-        painter.updateLockOperate(!lock);
-      }
-    }, () {
-      for (final painter in list) {
-        painter.updateLockOperate(lock);
-      }
-    }, true, undoType);
+    canvasDelegate.canvasUndoManager.addRunRedo(
+      () {
+        for (final painter in list) {
+          painter.updateLockOperate(!lock);
+        }
+      },
+      () {
+        for (final painter in list) {
+          painter.updateLockOperate(lock);
+        }
+      },
+      true,
+      undoType,
+    );
   }
 
   /// 不可见指定的元素
@@ -1970,37 +2101,57 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       //隐藏元素
       clearAnySelectedElementIf(elementList);
     }
-    canvasDelegate.canvasUndoManager.addRunRedo(() {
-      for (final painter in list) {
-        painter.updateVisible(!visible);
-      }
-    }, () {
-      for (final painter in list) {
-        painter.updateVisible(visible);
-      }
-    }, true, undoType);
+    canvasDelegate.canvasUndoManager.addRunRedo(
+      () {
+        for (final painter in list) {
+          painter.updateVisible(!visible);
+        }
+      },
+      () {
+        for (final painter in list) {
+          painter.updateVisible(visible);
+        }
+      },
+      true,
+      undoType,
+    );
   }
 
   //endregion ---operate/api---
 
   @override
   String toStringShort() => buildString((builder) {
-        builder
-          ..addText(isSelectedElement
-              ? "选中[${elementSelectComponent?.children?.length}个元素 "
-              : "")
-          ..addText(
-              "[${beforeElements.length}][${elements.length}][${afterElements.length}]");
-      });
+    builder
+      ..addText(
+        isSelectedElement
+            ? "选中[${elementSelectComponent?.children?.length}个元素 "
+            : "",
+      )
+      ..addText(
+        "[${beforeElements.length}][${elements.length}][${afterElements.length}]",
+      );
+  });
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    properties.add(ElementDiagnosticsNode(beforeElements).toDiagnosticsNode(
-        name: 'beforeElements', style: DiagnosticsTreeStyle.sparse));
-    properties.add(ElementDiagnosticsNode(elements).toDiagnosticsNode(
-        name: 'elements', style: DiagnosticsTreeStyle.whitespace));
-    properties.add(ElementDiagnosticsNode(afterElements).toDiagnosticsNode(
-        name: 'afterElements', style: DiagnosticsTreeStyle.dense));
+    properties.add(
+      ElementDiagnosticsNode(beforeElements).toDiagnosticsNode(
+        name: 'beforeElements',
+        style: DiagnosticsTreeStyle.sparse,
+      ),
+    );
+    properties.add(
+      ElementDiagnosticsNode(elements).toDiagnosticsNode(
+        name: 'elements',
+        style: DiagnosticsTreeStyle.whitespace,
+      ),
+    );
+    properties.add(
+      ElementDiagnosticsNode(afterElements).toDiagnosticsNode(
+        name: 'afterElements',
+        style: DiagnosticsTreeStyle.dense,
+      ),
+    );
     properties.add(DiagnosticsProperty('selectedElement', selectedElement));
   }
 }
@@ -2026,7 +2177,6 @@ enum ElementChangeType {
 
   /// [CanvasMultiManager.selectCanvasState] 切换了画布
   set,
-  ;
 }
 
 /// 选择元素的类型
@@ -2045,7 +2195,7 @@ enum ElementSelectType {
   code,
 
   /// 通过用户
-  user;
+  user,
 }
 
 /// 元素对齐方式

@@ -119,12 +119,15 @@ class IElementPainter extends IPainter
     }
   }
 
-  /// 重写此方法, 实现在画布内绘制自己
+  /// 重写此方法, 实现在画布内绘制自己.
+  ///
+  /// 作用了画布矩阵, 自身的矩阵需要自身控制.
+  ///
   /// [painting]驱动
   /// [paintPropertyRect]
   /// [paintPropertyBounds]
-  @sceneCoordinate
   @overridePoint
+  @sceneCoordinate
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {}
 
   //--
