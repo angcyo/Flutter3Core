@@ -216,6 +216,9 @@ bool isNullOrEmpty(dynamic value) {
   if (value is Size) {
     return value.isEmpty;
   }
+  if (value is Path) {
+    return value.isEmpty;
+  }
   return false;
 }
 

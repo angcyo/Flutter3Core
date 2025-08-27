@@ -132,11 +132,13 @@ abstract class IUnit {
     bool removeZero = true,
     bool ensureInt = true,
   }) {
-    return format(toUnitFromDp(value),
-        showSuffix: showSuffix,
-        fractionDigits: fractionDigits,
-        removeZero: removeZero,
-        ensureInt: ensureInt);
+    return format(
+      toUnitFromDp(value),
+      showSuffix: showSuffix,
+      fractionDigits: fractionDigits,
+      removeZero: removeZero,
+      ensureInt: ensureInt,
+    );
   }
 
   /// 使用当前单位格式化一个mm值到当前的单位值
@@ -147,11 +149,13 @@ abstract class IUnit {
     bool removeZero = true,
     bool ensureInt = true,
   }) {
-    return format(toUnitFromMm(value),
-        showSuffix: showSuffix,
-        fractionDigits: fractionDigits,
-        removeZero: removeZero,
-        ensureInt: ensureInt);
+    return format(
+      toUnitFromMm(value),
+      showSuffix: showSuffix,
+      fractionDigits: fractionDigits,
+      removeZero: removeZero,
+      ensureInt: ensureInt,
+    );
   }
 
   //endregion ---基础---
@@ -201,7 +205,7 @@ abstract class IUnit {
     return IUnit.axisTypeNormal;
   }
 
-//endregion ---坐标轴---
+  //endregion ---坐标轴---
 }
 
 /// 像素单位
@@ -221,11 +225,7 @@ class PixelUnit extends IUnit {
     int? fractionDigits,
     String space = " ",
   }) {
-    return "${value.toDigits(
-      digits: fractionDigits ?? digits,
-      removeZero: removeZero,
-      ensureInt: ensureInt,
-    )}${showSuffix ? space + suffix : ''}";
+    return "${value.toDigits(digits: fractionDigits ?? digits, removeZero: removeZero, ensureInt: ensureInt)}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -255,11 +255,7 @@ class DpUnit extends IUnit {
     int? fractionDigits,
     String space = " ",
   }) {
-    return "${value.toDigits(
-      digits: fractionDigits ?? digits,
-      removeZero: removeZero,
-      ensureInt: ensureInt,
-    )}${showSuffix ? space + suffix : ''}";
+    return "${value.toDigits(digits: fractionDigits ?? digits, removeZero: removeZero, ensureInt: ensureInt)}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -291,11 +287,7 @@ class MmUnit extends IUnit {
     int? fractionDigits,
     String space = " ",
   }) {
-    return "${value.toDigits(
-      digits: fractionDigits ?? digits,
-      removeZero: removeZero,
-      ensureInt: ensureInt,
-    )}${showSuffix ? space + suffix : ''}";
+    return "${value.toDigits(digits: fractionDigits ?? digits, removeZero: removeZero, ensureInt: ensureInt)}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -329,11 +321,7 @@ class PcMmUnit extends IUnit {
     int? fractionDigits,
     String space = " ",
   }) {
-    return "${value.toDigits(
-      digits: fractionDigits ?? digits,
-      removeZero: removeZero,
-      ensureInt: ensureInt,
-    )}${showSuffix ? space + suffix : ''}";
+    return "${value.toDigits(digits: fractionDigits ?? digits, removeZero: removeZero, ensureInt: ensureInt)}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -363,11 +351,7 @@ class PtUnit extends IUnit {
     int? fractionDigits,
     String space = " ",
   }) {
-    return "${value.toDigits(
-      digits: fractionDigits ?? digits,
-      removeZero: removeZero,
-      ensureInt: ensureInt,
-    )}${showSuffix ? space + suffix : ''}";
+    return "${value.toDigits(digits: fractionDigits ?? digits, removeZero: removeZero, ensureInt: ensureInt)}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -400,11 +384,7 @@ class InchUnit extends IUnit {
     int? fractionDigits,
     String space = " ",
   }) {
-    return "${value.toDigits(
-      digits: fractionDigits ?? digits,
-      removeZero: removeZero,
-      ensureInt: ensureInt,
-    )}${showSuffix ? space + suffix : ''}";
+    return "${value.toDigits(digits: fractionDigits ?? digits, removeZero: removeZero, ensureInt: ensureInt)}${showSuffix ? space + suffix : ''}";
   }
 
   @override
@@ -415,11 +395,13 @@ class InchUnit extends IUnit {
     bool removeZero = true,
     bool ensureInt = true,
   }) {
-    return super.formatFromDp(value,
-        showSuffix: showSuffix,
-        fractionDigits: fractionDigits,
-        removeZero: removeZero,
-        ensureInt: ensureInt);
+    return super.formatFromDp(
+      value,
+      showSuffix: showSuffix,
+      fractionDigits: fractionDigits,
+      removeZero: removeZero,
+      ensureInt: ensureInt,
+    );
   }
 
   @override
@@ -568,6 +550,9 @@ extension UnitNumEx on num {
     return IUnit.mm.toUnit(toPixel(unit));
   }
 
+  /// ```
+  /// 1.toMmFromDp() = 0.15875
+  /// ```
   @mm
   double toMmFromDp([@unit IUnit unit = IUnit.dp]) {
     return IUnit.mm.toUnit(toPixel(unit));
@@ -582,6 +567,9 @@ extension UnitNumEx on num {
 
   //---
 
+  /// ```
+  /// 1.toDpFromMm() = 6.299212598425196
+  /// ```
   @Dp()
   double toDpFromMm([@unit IUnit unit = IUnit.mm]) {
     return IUnit.dp.toUnit(toPixel(unit));
