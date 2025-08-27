@@ -4,8 +4,8 @@ part of './dialog.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/30
 ///
-/// 整体是透明背景, 带padding.
-/// 可以通过指定[surfaceColor]控制样式
+/// 如果[surfaceColor]是透明颜色, 则整体带padding.
+/// 否则就是全屏背景样式的弹窗
 ///
 /// ```
 /// [item]
@@ -80,7 +80,8 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
 
     Widget? cancel;
     if (showCancelItem) {
-      cancel = (cancelItem ??
+      cancel =
+          (cancelItem ??
           BottomMenuItemTile(
             onTap: () {
               //no op
@@ -104,7 +105,8 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
               : hLine(
                   context,
                   thickness: cancelGap,
-                  color: cancelGapColor ??
+                  color:
+                      cancelGapColor ??
                       context.darkOr(
                         globalTheme.lineDarkColor,
                         globalTheme.lineColor,

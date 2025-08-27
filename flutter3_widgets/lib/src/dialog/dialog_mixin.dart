@@ -842,8 +842,9 @@ extension NavigatorStateDialogEx on NavigatorState {
   ///
   /// 内部使用路由实现的[NavigatorState.push]
   ///
-  /// [useSafeArea] 是否使用安全区域
-  /// [maintainBottomViewPadding] 是否保留系统默认的底部填充, 否则需要自行填充底部内容
+  /// - [useSafeArea] 是否使用安全区域
+  /// - [maintainBottomViewPadding] 是否保留系统默认的底部填充, 否则需要自行填充底部内容
+  /// - [traversalEdgeBehavior] : [ModalRoute.traversalEdgeBehavior]
   ///
   /// [DialogRoute]
   /// [DialogPageRoute]
