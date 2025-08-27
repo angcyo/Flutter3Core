@@ -113,11 +113,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
           //额外绘制的路径信息
           for (final pathInfo in painterPathList) {
-            _drawPathPainterInfo(
-              canvas,
-              paintMeta.canvasScale,
-              pathInfo,
-            );
+            _drawPathPainterInfo(canvas, paintMeta.canvasScale, pathInfo);
           }
 
           //额外绘制内容
@@ -153,11 +149,12 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         });
         if (canvasStyle.paintContentTemplateStroke) {
           canvas.drawPath(
-              path,
-              Paint()
-                ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
-                ..color = canvasStyle.axisSecondaryColor
-                ..style = PaintingStyle.stroke);
+            path,
+            Paint()
+              ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
+              ..color = canvasStyle.axisSecondaryColor
+              ..style = PaintingStyle.stroke,
+          );
         }
       } else if (boundsInfo.rect != null) {
         final rect = canvasViewBox.toViewRect(boundsInfo.rect!);
@@ -166,11 +163,12 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         });
         if (canvasStyle.paintContentTemplateStroke) {
           canvas.drawRect(
-              rect,
-              Paint()
-                ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
-                ..color = canvasStyle.axisSecondaryColor
-                ..style = PaintingStyle.stroke);
+            rect,
+            Paint()
+              ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
+              ..color = canvasStyle.axisSecondaryColor
+              ..style = PaintingStyle.stroke,
+          );
         }
       } else {
         action();
@@ -211,7 +209,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     if (info.fill == true) {
       final fillColor =
           canvasDelegate.darkOr(info.fillColorDark, info.fillColor) ??
-              info.fillColor;
+          info.fillColor;
       if (fillColor != null) {
         paint
           ..style = PaintingStyle.fill
@@ -224,7 +222,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     if ((info.strokeWidth ?? 0) > 0) {
       final strokeColor =
           canvasDelegate.darkOr(info.strokeColorDark, info.strokeColor) ??
-              info.strokeColor;
+          info.strokeColor;
       if (strokeColor != null) {
         paint
           ..style = PaintingStyle.stroke
@@ -256,11 +254,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
       return false;
     }
     if (canvasDelegate.canvasViewBox.isCanvasBoxInitialize) {
-      canvasDelegate.followRect(
-        rect: rect,
-        animate: animate,
-        fit: fit,
-      );
+      canvasDelegate.followRect(rect: rect, animate: animate, fit: fit);
       onUpdateAction?.call();
       return true;
     } else {
@@ -338,7 +332,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   /// [boundsInfo] 边界信息
   /// [path].[bounds]->[boundsInfo]
   /// [onUpdateAction] 更新成功的回调
-/*void updateCanvasSceneContentBounds({
+  /*void updateCanvasSceneContentBounds({
     @dp @sceneCoordinate @indirectProperty Path? path,
     @dp @sceneCoordinate @indirectProperty Rect? bounds,
     bool? followRect,
@@ -383,13 +377,16 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
   /// 判断元素是否完全在画布区域内.
   ///
-  /// [exact] 是否获取精确计算的边界, 会有性能损耗
+  /// - [exact] 是否获取精确计算的边界, 会有性能损耗
+  /// - [epsilon] 浮点相等比较的误差值
   ///
   @api
   bool isElementInCanvasContent(
     ElementPainter? element, {
     @dp Rect? elementRect,
     bool? exact,
+    double epsilon = 0.0001,
+    String? debugLabel,
   }) {
     if (element == null && elementRect == null) {
       return false;
@@ -407,7 +404,8 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     if (elementsBounds == null) {
       return false;
     }
-    if (contentRect.containsRect(elementsBounds)) {
+    debugger(when: debugLabel != null);
+    if (contentRect.containsRect(elementsBounds, epsilon)) {
       if (exact == true) {
         final contentPath =
             contentBackgroundInfo.path ?? contentBackgroundInfo.rect?.toPath();
@@ -493,9 +491,9 @@ class ContentPathPainterInfo {
     this.path,
     this.pathBoundsCache,
     this.rect,
-    this.strokeColor/*= Colors.blue*/,
+    this.strokeColor /*= Colors.blue*/,
     this.strokeColorDark,
-    this.fillColor/*= const Color(0xfff5f5f5)*/,
+    this.fillColor /*= const Color(0xfff5f5f5)*/,
     this.fillColorDark,
     this.fill = false,
     this.strokeWidth = 1,

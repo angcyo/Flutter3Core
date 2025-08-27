@@ -1913,14 +1913,18 @@ extension RectEx on Rect {
   }
 
   /// 当前矩形是否完全包含另一个矩形
-  bool containsRect(Rect? rect) {
+  bool containsRect(Rect? rect, [double epsilon = precisionErrorTolerance]) {
     if (rect == null) {
       return false;
     }
-    return rect.left >= left &&
+    return rect.left.greaterThanOrEqualTo(left, epsilon) &&
+        rect.right.lessThanOrEqualTo(right, epsilon) &&
+        rect.top.greaterThanOrEqualTo(top, epsilon) &&
+        rect.bottom.lessThanOrEqualTo(bottom, epsilon);
+    /*return rect.left >= left &&
         rect.right <= right &&
         rect.top >= top &&
-        rect.bottom <= bottom;
+        rect.bottom <= bottom;*/
   }
 }
 
@@ -2415,6 +2419,18 @@ extension DoubleEx on double {
   /// [equalTo]
   bool notEqualTo(double other, [double epsilon = precisionErrorTolerance]) =>
       (this - other).abs() >= epsilon;
+
+  /// this >= other
+  bool greaterThanOrEqualTo(
+    double other, [
+    double epsilon = precisionErrorTolerance,
+  ]) => this > other || equalTo(other, epsilon);
+
+  /// this <=  other
+  bool lessThanOrEqualTo(
+    double other, [
+    double epsilon = precisionErrorTolerance,
+  ]) => this < other || equalTo(other, epsilon);
 
   /// 判断浮点数是否是一个有效的数值
   /// `0/0`:Nan
