@@ -172,28 +172,28 @@ extension ObjectEx on Object {
     }
   }
 
-  ld() {
+  void ld() {
     assert(() {
       l.d(this);
       return true;
     }());
   }
 
-  li() {
+  void li() {
     assert(() {
       l.i(this);
       return true;
     }());
   }
 
-  lw() {
+  void lw() {
     assert(() {
       l.w(this);
       return true;
     }());
   }
 
-  le() {
+  void le() {
     assert(() {
       l.e(this);
       return true;
@@ -1393,7 +1393,7 @@ extension StringEx on String {
 
   /// 遍历字符串, 不带索引
   /// [callback] 返回true, 中断遍历
-  forEach(StringEachCallback callback) {
+  void forEach(StringEachCallback callback) {
     for (var i = 0; i < length; i++) {
       final result = callback(this[i]);
       if (result is bool) {
@@ -1406,7 +1406,7 @@ extension StringEx on String {
 
   /// 遍历字符串, 带索引
   /// [callback] 返回true, 中断遍历
-  forEachIndex(StringIndexEachCallback callback) {
+  void forEachIndex(StringIndexEachCallback callback) {
     for (var i = 0; i < length; i++) {
       final result = callback(i, this[i]);
       if (result is bool) {
@@ -1418,7 +1418,7 @@ extension StringEx on String {
   }
 
   /// 遍历字符串, 不带索引
-  forEachByChars(StringEachCallback callback) {
+  void forEachByChars(StringEachCallback callback) {
     for (final element in characters) {
       final result = callback(element);
       if (result is bool) {
@@ -1430,7 +1430,7 @@ extension StringEx on String {
   }
 
   /// 遍历字符串, 带索引
-  forEachIndexByChars(StringIndexEachCallback callback) {
+  void forEachIndexByChars(StringIndexEachCallback callback) {
     var index = 0;
     for (var element in characters) {
       callback(index++, element);

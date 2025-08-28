@@ -201,7 +201,7 @@ extension RenderBoxEx on RenderBox {
         offset & size,
         Paint()
           ..color = Colors.purpleAccent
-          ..strokeWidth = 1
+          ..strokeWidth = 4
           ..style = ui.PaintingStyle.stroke,
       );
       return true;
