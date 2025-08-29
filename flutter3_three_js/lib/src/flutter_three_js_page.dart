@@ -69,13 +69,20 @@ class _FlutterThreeJsPageState extends State<FlutterThreeJsPage>
         ? three.OBJLoader()
         : (src.endsWith(".glb") || src.endsWith(".gltf")
               ? three.GLTFLoader()
+              : (src.endsWith(".gcode") ||
+                    src.endsWith(".nc") ||
+                    src.endsWith(".gc"))
+              ? three.GCodeLoader()
               : three.STLLoader());
 
     try {
       final object = isHttpScheme
           ? await loader.fromNetwork(widget.src.toUri()!)
           : await loader.fromFile(widget.src.toFile());
-      debugger();
+      assert(() {
+        l.i("${loader.runtimeType} 加载-> ${widget.src}");
+        return true;
+      }());
       if (object != null) {
         if (object is three.GLTFData) {
           threeJs.scene.add(object.scene);
