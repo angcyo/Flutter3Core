@@ -97,6 +97,38 @@ class _Flutter3dPageState extends State<Flutter3dPage> with AbsScrollPage {
   @override
   Widget buildBody(BuildContext context, WidgetList? children) {
     final globalTheme = GlobalTheme.of(context);
+    final src = widget.src.toLowerCase();
+    final isObj = src.endsWith(".obj");
+
+    if (isObj) {
+      /*只支持加载http / assets 中的obj数据*/
+      //The 3D viewer widget for obj format
+      return Flutter3DViewer.obj(
+        src: widget.src /*'assets/flutter_dash.obj'*/,
+        //src: 'https://raw.githubusercontent.com/m-r-davari/content-holder/refs/heads/master/flutter_3d_controller/flutter_dash_model/flutter_dash.obj',
+        // Initial scale of obj model
+        scale: 5,
+        // Initial cameraX position of obj model
+        cameraX: 0,
+        //Initial cameraY position of obj model
+        cameraY: 0,
+        //Initial cameraZ position of obj model
+        cameraZ: 10,
+        //This callBack will return the loading progress value between 0 and 1.0
+        onProgress: (double progressValue) {
+          l.d('model loading progress : $progressValue');
+        },
+        //This callBack will call after model loaded successfully and will return model address
+        onLoad: (String modelAddress) {
+          l.d('model loaded : $modelAddress');
+        },
+        //this callBack will call when model failed to load and will return failure erro
+        onError: (String error) {
+          l.e('model failed to load : $error');
+        },
+      );
+    }
+
     return //The 3D viewer widget for glb and gltf format
     Flutter3DViewer(
       //If you pass 'true' the flutter_3d_controller will add gesture interceptor layer
