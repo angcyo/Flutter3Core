@@ -14,6 +14,8 @@ part of '../../flutter3_web.dart';
 /// - sheen_chair.glb      ︎︎✔ ︎
 /// - business_man.glb     ︎︎✔ ︎
 ///
+/// https://pub.dev/packages/flutter_3d_controller
+/// https://modelviewer.dev/
 ///
 class Flutter3dPage extends StatefulWidget {
   /// 模型的数据

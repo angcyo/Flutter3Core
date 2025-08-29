@@ -1,4 +1,4 @@
-# 2025-04-06 09:34:43.212207
+# 2025-08-29 14:42:01.238736
 # Create by angcyo (Flutter3Core/script/pub_workspace.dart)
 - Flutter3Core/flutter3_oss
 - Flutter3Core/flutter3_ffi
@@ -6,6 +6,7 @@
 - Flutter3Core/flutter3_basics
 - Flutter3Core/flutter3_widgets
 - Flutter3Core/flutter3_pub
+- Flutter3Core/flutter3_three_js
 - Flutter3Core/flutter3_scanner
 - Flutter3Core/flutter3_excel
 - Flutter3Core/flutter3_app

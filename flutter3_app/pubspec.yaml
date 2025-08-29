@@ -98,7 +98,9 @@ dependencies:
   receive_sharing_intent_plus: #^1.0.1
     git: git@github.com:angcyo/receive_sharing_intent_plus.git
   # https://pub.dev/packages/uri_to_file
-  uri_to_file: ^1.0.0
+  #uri_to_file: ^1.0.0
+  # https://github.com/FlutterStudioIst/uri-to-file
+  flutter_uri_to_file: ^1.0.0+1
 
   # https://pub.dev/packages/flutter_move_task_back
   # flutter_move_task_back: ^1.0.0 #ANDROID

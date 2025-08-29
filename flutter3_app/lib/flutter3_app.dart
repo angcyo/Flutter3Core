@@ -19,7 +19,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:uri_to_file/uri_to_file.dart' as uri_to_file;
+import 'package:flutter_uri_to_file/flutter_uri_to_file.dart' as uri_to_file;
 
 import 'src/mode/lib_app_setting_bean.dart';
 import 'src/mode/lib_app_version_bean.dart';
