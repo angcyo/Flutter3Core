@@ -6,67 +6,59 @@ part of '../../flutter3_basics.dart';
 ///
 
 /// 带参数的[WidgetBuilder]
-typedef WidgetArgumentBuilder = Widget Function<T>(
-  BuildContext context,
-  T? arg,
-);
+typedef WidgetArgumentBuilder =
+    Widget Function<T>(BuildContext context, T? arg);
 
 /// 全局打开[url]的回调方法, 返回成功or失败
-typedef GlobalOpenUrlFn = Future<bool> Function(
-  BuildContext? context,
-  String? url,
-  Object? meta,
-);
+typedef GlobalOpenUrlFn =
+    Future<bool> Function(BuildContext? context, String? url, Object? meta);
 
 /// 全局写入文件的回调方法, 返回文件路径
-typedef GlobalWriteFileFn = Future<String?> Function(
-  String fileName,
-  String? folder,
-  dynamic content,
-);
+typedef GlobalWriteFileFn =
+    Future<String?> Function(String fileName, String? folder, dynamic content);
 
 /// 全局分享[data]的回调方法, 返回成功or失败
-typedef GlobalShareDataFn = Future<bool> Function(
-  BuildContext? context,
-  dynamic data,
-);
+typedef GlobalShareDataFn =
+    Future<bool> Function(BuildContext? context, dynamic data);
 
 /// 获取[GlobalConfig]的方法
 typedef GlobalConfigGetFn = GlobalConfig Function();
 
 /// 进度小部件构建器
 /// [progress] 进度[0~1]
-typedef ProgressWidgetBuilder = Widget Function(
-  BuildContext context,
-  dynamic data,
-  double? progress,
-  Color? color,
-);
+typedef ProgressWidgetBuilder =
+    Widget Function(
+      BuildContext context,
+      dynamic data,
+      double? progress,
+      Color? color,
+    );
 
 /// [AppBar]构建器函数
-typedef AppBarBuilderFn = PreferredSizeWidget? Function(
-  BuildContext context,
-  Object? page, {
-  bool? useSliverAppBar,
-  Widget? leading,
-  Widget? dismissal,
-  bool? automaticallyImplyLeading,
-  Widget? title,
-  List<Widget>? actions,
-  PreferredSizeWidget? bottom,
-  Color? backgroundColor,
-  Color? foregroundColor,
-  double? elevation,
-  double? scrolledUnderElevation,
-  Color? shadowColor,
-  Widget? flexibleSpace,
-  bool? centerTitle,
-  double? titleSpacing,
-});
+typedef AppBarBuilderFn =
+    PreferredSizeWidget? Function(
+      BuildContext context,
+      Object? page, {
+      bool? useSliverAppBar,
+      Widget? leading,
+      Widget? dismissal,
+      bool? automaticallyImplyLeading,
+      Widget? title,
+      List<Widget>? actions,
+      PreferredSizeWidget? bottom,
+      Color? backgroundColor,
+      Color? foregroundColor,
+      double? elevation,
+      double? scrolledUnderElevation,
+      Color? shadowColor,
+      Widget? flexibleSpace,
+      bool? centerTitle,
+      double? titleSpacing,
+    });
 
 /// [AppBar]左边构建器函数, 在可以back的时候调用
-typedef AppBarDismissalBuilderFn = Widget? Function(
-    BuildContext context, dynamic page);
+typedef AppBarDismissalBuilderFn =
+    Widget? Function(BuildContext context, dynamic page);
 
 /// [GlobalConfig.allModalRouteList]
 ModalRoute? get lastModalRoute =>
@@ -80,8 +72,11 @@ NavigatorState? get navigatorState => GlobalConfig.def.findNavigatorState();
 
 /// 快速打开url
 @dsl
-Future<bool> openWebUrl(String? url,
-    [BuildContext? context, Object? meta]) async {
+Future<bool> openWebUrl(
+  String? url, [
+  BuildContext? context,
+  Object? meta,
+]) async {
   if (context == null) {
     final fn = GlobalConfig.def.openUrlFn;
     if (fn == null) {
@@ -95,8 +90,11 @@ Future<bool> openWebUrl(String? url,
 
 /// 快速打开file path
 @dsl
-Future<bool> openFilePath(String? filePath,
-    [BuildContext? context, Object? meta]) async {
+Future<bool> openFilePath(
+  String? filePath, [
+  BuildContext? context,
+  Object? meta,
+]) async {
   if (context == null) {
     final fn = GlobalConfig.def.openFileFn;
     if (fn == null) {
@@ -263,7 +261,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       GlobalTheme globalTheme,
       bool isLight,
       ThemeMode themeMode,
-    ) onGetThemeData, {
+    )
+    onGetThemeData, {
     GlobalTheme Function(bool isLight)? onGetGlobalTheme,
     Locale? locale,
     ThemeMode? themeMode,
@@ -275,7 +274,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     //主题样式
     final isLight = isThemeLight(context);
 
-    final globalTheme = onGetGlobalTheme?.call(isLight) ??
+    final globalTheme =
+        onGetGlobalTheme?.call(isLight) ??
         (isLight ? GlobalTheme() : GlobalThemeDark());
     this.globalTheme = globalTheme;
 
@@ -320,10 +320,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   //endregion tablet平板适配
 
-  GlobalConfig({
-    this.globalTopContext,
-    this.globalAppContext,
-  });
+  GlobalConfig({this.globalTopContext, this.globalAppContext});
 
   GlobalConfig._() {
     l.v('初始化默认的[${classHash()}]');
@@ -466,27 +463,31 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   @minifyProguardFlag
   ProgressWidgetBuilder loadingIndicatorBuilder =
       (context, data, progress, color) {
-    //debugger();
-    //是否使用系统样式的加载小部件
-    final dataStr = "$data".toLowerCase();
-    final useSystemStyle =
-        !dataStr.contains("overlay") || dataStr.contains("system");
-    return LoadingIndicator(
-      progressValue: progress,
-      useSystemStyle: useSystemStyle,
-      color: color,
-    );
-  };
+        //debugger();
+        //是否使用系统样式的加载小部件
+        final dataStr = "$data".toLowerCase();
+        final useSystemStyle =
+            !dataStr.contains("overlay") || dataStr.contains("system");
+        return LoadingIndicator(
+          progressValue: progress,
+          useSystemStyle: useSystemStyle,
+          color: color,
+        );
+      };
 
   /// 全局的无数据占位小部件
   /// [data] 额外的提示文本或小部件
   ///
   /// [WidgetStateBuildWidgetState]
   WidgetArgumentBuilder emptyPlaceholderBuilder = <T>(context, data) {
-    final icon = loadAssetImageWidget(libAssetsStateNoDataKey,
-                package: 'flutter3_basics')
-            ?.constrainedMax(
-                maxWidth: kStateImageSize, maxHeight: kStateImageSize) ??
+    final icon =
+        loadAssetImageWidget(
+          libAssetsStateNoDataKey,
+          package: 'flutter3_basics',
+        )?.constrainedMax(
+          maxWidth: kStateImageSize,
+          maxHeight: kStateImageSize,
+        ) ??
         const Icon(Icons.privacy_tip);
 
     if (data == null) {
@@ -504,10 +505,14 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///
   /// [WidgetStateBuildWidgetState]
   WidgetArgumentBuilder errorPlaceholderBuilder = <T>(context, error) {
-    final icon = loadAssetImageWidget(libAssetsStateLoadErrorKey,
-                package: 'flutter3_basics')
-            ?.constrainedMax(
-                maxWidth: kStateImageSize, maxHeight: kStateImageSize) ??
+    final icon =
+        loadAssetImageWidget(
+          libAssetsStateLoadErrorKey,
+          package: 'flutter3_basics',
+        )?.constrainedMax(
+          maxWidth: kStateImageSize,
+          maxHeight: kStateImageSize,
+        ) ??
         const Icon(Icons.error);
 
     if (error == null) {
@@ -526,26 +531,23 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [showLoading]
   ProgressWidgetBuilder loadingOverlayWidgetBuilder =
       (context, data, progress, color) {
-    final loadingIndicator = GlobalConfig.of(context).loadingIndicatorBuilder(
-      context,
-      data,
-      progress,
-      color,
-    );
-    return Container(
-      alignment: Alignment.center,
-      child: SizedBox.fromSize(
-        size: kDefaultLoadingSize,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withAlpha(80),
-            borderRadius: BorderRadius.circular(8),
+        final loadingIndicator = GlobalConfig.of(
+          context,
+        ).loadingIndicatorBuilder(context, data, progress, color);
+        return Container(
+          alignment: Alignment.center,
+          child: SizedBox.fromSize(
+            size: kDefaultLoadingSize,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha(80),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: loadingIndicator,
+            ),
           ),
-          child: loadingIndicator,
-        ),
-      ),
-    );
-  };
+        );
+      };
 
   //endregion Widget
 
@@ -554,10 +556,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 用来创建自定义的[AppBar]左边的返回小部件
   /// [page] 用来识别界面, 做一些特殊处理
   /// @return null 使用系统默认的
-  AppBarDismissalBuilderFn appBarDismissalBuilder = (
-    context,
-    state,
-  ) {
+  AppBarDismissalBuilderFn appBarDismissalBuilder = (context, state) {
     return null;
   };
 
@@ -572,90 +571,97 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [dismissal] 在可以back的情况下显示的返回按钮
   ///
   /// [copyWith]
-  late AppBarBuilderFn appBarBuilder = (
-    context,
-    state, {
-    useSliverAppBar,
-    leading,
-    dismissal,
-    automaticallyImplyLeading,
-    title,
-    actions,
-    bottom,
-    backgroundColor,
-    foregroundColor,
-    elevation,
-    scrolledUnderElevation,
-    shadowColor,
-    flexibleSpace,
-    centerTitle,
-    titleSpacing,
-  }) {
-    //debugger();
-    final globalConfig = GlobalConfig.of(context);
-    final globalTheme = GlobalTheme.of(context);
-    elevation ??= globalConfig.themeData?.appBarTheme.elevation;
-    scrolledUnderElevation ??=
-        globalConfig.themeData?.appBarTheme.scrolledUnderElevation;
-    //debugger();
-    if (useSliverAppBar == true) {
-      return PreferredSizeSliverAppBar(
-        title: title,
-        automaticallyImplyLeading: automaticallyImplyLeading ?? true,
-        leading: leading is IgnoreWidget
-            ? null
-            : leading ??
-                (context.isAppBarDismissal
-                    ? dismissal ?? appBarDismissalBuilder(context, state)
+  late AppBarBuilderFn appBarBuilder =
+      (
+        context,
+        state, {
+        useSliverAppBar,
+        leading,
+        dismissal,
+        automaticallyImplyLeading,
+        title,
+        actions,
+        bottom,
+        backgroundColor,
+        foregroundColor,
+        elevation,
+        scrolledUnderElevation,
+        shadowColor,
+        flexibleSpace,
+        centerTitle,
+        titleSpacing,
+      }) {
+        //debugger();
+        final globalConfig = GlobalConfig.of(context);
+        final globalTheme = GlobalTheme.of(context);
+        elevation ??= globalConfig.themeData?.appBarTheme.elevation;
+        scrolledUnderElevation ??=
+            globalConfig.themeData?.appBarTheme.scrolledUnderElevation;
+        //debugger();
+        if (useSliverAppBar == true) {
+          return PreferredSizeSliverAppBar(
+            title: title,
+            automaticallyImplyLeading: automaticallyImplyLeading ?? true,
+            leading: leading is IgnoreWidget
+                ? null
+                : leading ??
+                      (context.isAppBarDismissal
+                          ? dismissal ?? appBarDismissalBuilder(context, state)
+                          : null),
+            actions: actions,
+            bottom: bottom,
+            elevation: elevation,
+            shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
+            backgroundColor:
+                backgroundColor ?? globalTheme.appBarBackgroundColor,
+            foregroundColor:
+                foregroundColor ?? globalTheme.appBarForegroundColor,
+            scrolledUnderElevation: scrolledUnderElevation ?? elevation,
+            flexibleSpace:
+                flexibleSpace ??
+                (backgroundColor == null
+                    ? ((globalTheme.appBarGradientBackgroundColorList == null
+                          ? null
+                          : linearGradientWidget(
+                              globalTheme.appBarGradientBackgroundColorList!,
+                            )))
                     : null),
-        actions: actions,
-        bottom: bottom,
-        elevation: elevation,
-        shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
-        backgroundColor: backgroundColor ?? globalTheme.appBarBackgroundColor,
-        foregroundColor: foregroundColor ?? globalTheme.appBarForegroundColor,
-        scrolledUnderElevation: scrolledUnderElevation ?? elevation,
-        flexibleSpace: flexibleSpace ??
-            (backgroundColor == null
-                ? ((globalTheme.appBarGradientBackgroundColorList == null
-                    ? null
-                    : linearGradientWidget(
-                        globalTheme.appBarGradientBackgroundColorList!)))
-                : null),
-        centerTitle: centerTitle,
-        titleSpacing: titleSpacing,
-        floating: true,
-        pinned: false,
-      );
-    }
+            centerTitle: centerTitle,
+            titleSpacing: titleSpacing,
+            floating: true,
+            pinned: false,
+          );
+        }
 
-    return AppBar(
-      title: title,
-      automaticallyImplyLeading: automaticallyImplyLeading ?? true,
-      leading: leading is IgnoreWidget
-          ? null
-          : leading ??
-              (context.isAppBarDismissal
-                  ? dismissal ?? appBarDismissalBuilder(context, state)
+        return AppBar(
+          title: title,
+          automaticallyImplyLeading: automaticallyImplyLeading ?? true,
+          leading: leading is IgnoreWidget
+              ? null
+              : leading ??
+                    (context.isAppBarDismissal
+                        ? dismissal ?? appBarDismissalBuilder(context, state)
+                        : null),
+          actions: actions,
+          bottom: bottom,
+          elevation: elevation,
+          shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
+          backgroundColor: backgroundColor ?? globalTheme.appBarBackgroundColor,
+          foregroundColor: foregroundColor ?? globalTheme.appBarForegroundColor,
+          scrolledUnderElevation: scrolledUnderElevation ?? elevation,
+          flexibleSpace:
+              flexibleSpace ??
+              (backgroundColor == null
+                  ? ((globalTheme.appBarGradientBackgroundColorList == null
+                        ? null
+                        : linearGradientWidget(
+                            globalTheme.appBarGradientBackgroundColorList!,
+                          )))
                   : null),
-      actions: actions,
-      bottom: bottom,
-      elevation: elevation,
-      shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
-      backgroundColor: backgroundColor ?? globalTheme.appBarBackgroundColor,
-      foregroundColor: foregroundColor ?? globalTheme.appBarForegroundColor,
-      scrolledUnderElevation: scrolledUnderElevation ?? elevation,
-      flexibleSpace: flexibleSpace ??
-          (backgroundColor == null
-              ? ((globalTheme.appBarGradientBackgroundColorList == null
-                  ? null
-                  : linearGradientWidget(
-                      globalTheme.appBarGradientBackgroundColorList!)))
-              : null),
-      centerTitle: centerTitle,
-      titleSpacing: titleSpacing,
-    );
-  };
+          centerTitle: centerTitle,
+          titleSpacing: titleSpacing,
+        );
+      };
 
   //endregion AppBar
 
@@ -721,10 +727,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       } else {
         l.d(element.runtimeType);
       }*/
-      if (element.widget.runtimeType
-          .toString()
-          .toLowerCase()
-          .contains("ModalScopeStatus".toLowerCase())) {
+      if (element.widget.runtimeType.toString().toLowerCase().contains(
+        "ModalScopeStatus".toLowerCase(),
+      )) {
         routeElementList.add(element);
         return false;
       }
@@ -757,7 +762,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       if (findRoute != null) {
         //debugger();
         final firstElement = element.findFirstNotSystemElement();
-        result.add((findRoute!, firstElement));
+        result.add((findRoute!, firstElement ?? element));
       }
     }
     return result;
@@ -777,8 +782,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [Localizations.maybeLocaleOf]
   Locale? findLocale() {
     //final element = globalTopContext?.findElementOfWidget<Localizations>();
-    final element =
-        globalTopContext?.findElementOfWidget<Title>(); //通过title元素获取
+    final element = globalTopContext
+        ?.findElementOfWidget<Title>(); //通过title元素获取
     Locale? result;
     if (element is StatefulElement) {
       //_LocalizationsState 无法访问, 通过子元素访问
@@ -821,9 +826,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     AppBarDismissalBuilderFn? appBarDismissalBuilder,
   }) {
     return GlobalConfig(
-      globalTopContext: globalTopContext ?? this.globalTopContext,
-      globalAppContext: globalAppContext ?? this.globalAppContext,
-    )
+        globalTopContext: globalTopContext ?? this.globalTopContext,
+        globalAppContext: globalAppContext ?? this.globalAppContext,
+      )
       ..themeMode = themeMode ?? this.themeMode
       ..locale = locale ?? this.locale
       ..themeData = themeData ?? this.themeData
@@ -858,7 +863,8 @@ void $onGlobalAppContextChanged(ContextAction action) {
 /// 注册一个主题改变的监听[GlobalConfig]
 /// [GlobalAppStateMixin]
 StreamSubscription<GlobalConfig?> $onGlobalThemeChanged(
-    ValueCallback<GlobalConfig> action) {
+  ValueCallback<GlobalConfig> action,
+) {
   return GlobalConfig.def.themeStreamOnce.listen((data) {
     if (data is GlobalConfig) {
       action(data);
@@ -915,8 +921,8 @@ extension ThemeModeEx on ThemeMode {
   Brightness get brightness => this == ThemeMode.system
       ? platformBrightness
       : this == ThemeMode.light
-          ? Brightness.light
-          : Brightness.dark;
+      ? Brightness.light
+      : Brightness.dark;
 }
 
 //endregion Mixin

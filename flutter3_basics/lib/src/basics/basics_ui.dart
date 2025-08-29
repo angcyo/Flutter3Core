@@ -3002,6 +3002,7 @@ extension ContextEx on BuildContext {
       RawMaterialButton,
       RotationTransition,
       RawGestureDetector,
+      RichText,
       Scaffold,
       Semantics,
       SnapshotWidget,

@@ -11,11 +11,14 @@ part of '../../flutter3_core.dart';
 /// [NavigatorRouteOverlay] 导航路由调试信息
 class DebugPage extends StatefulWidget {
   /// 使用[PinchGestureWidget]自动处理[DebugPage]页面
-  static Widget wrap(
-    BuildContext context,
-    Widget body, {
-    bool enable = true,
-  }) {
+  ///
+  /// ```
+  /// DebugPage.wrap(
+  ///   context,
+  ///   MaterialApp(),
+  /// );
+  /// ```
+  static Widget wrap(BuildContext context, Widget body, {bool enable = true}) {
     if (!enable) {
       return body;
     }
@@ -110,9 +113,7 @@ class DebugPage extends StatefulWidget {
     DebugAction(
       label: "testWidgetMinify",
       clickAction: (context) {
-        final w1 = SliverFillRemaining(
-          child: "test".text(),
-        );
+        final w1 = SliverFillRemaining(child: "test".text());
         final w2 = OverlayEntry(builder: (context) => "test".text());
         final text =
             "${w1.runtimeType}\n$w1\n${w1.toStringShort()}\n${w2.runtimeType}\n$w2";
@@ -169,10 +170,7 @@ class DebugPage extends StatefulWidget {
 
   /// 在[DebugPage]中注册一个调试动作, 可以是一个按钮, 也可以是一个属性编辑tile
   static void addClickDebugAction(String label, ClickAction clickAction) {
-    debugActions.add(DebugAction(
-      label: label,
-      clickAction: clickAction,
-    ));
+    debugActions.add(DebugAction(label: label, clickAction: clickAction));
   }
 
   /// [debugActions]
@@ -183,13 +181,15 @@ class DebugPage extends StatefulWidget {
     String hiveKey,
     dynamic defHiveValue,
   ) {
-    debugActions.add(DebugAction(
-      label: label,
-      des: des,
-      hiveKey: hiveKey,
-      hiveType: hiveType,
-      defHiveValue: defHiveValue,
-    ));
+    debugActions.add(
+      DebugAction(
+        label: label,
+        des: des,
+        hiveKey: hiveKey,
+        hiveType: hiveType,
+        defHiveValue: defHiveValue,
+      ),
+    );
   }
 
   //--
@@ -203,22 +203,23 @@ class DebugPage extends StatefulWidget {
   /// 底部点击要复制的文本信息
   /// [_initDebugLastInfo]
   static List<String? Function(BuildContext? context)>
-      debugLastCopyStringBuilderList = [];
+  debugLastCopyStringBuilderList = [];
 
   /// [debugLastCopyString]
   static String? Function(BuildContext? context)
-      get lastDebugCopyStringBuilder => (context) {
-            return stringBuilder((builder) {
-              for (final b in debugLastCopyStringBuilderList) {
-                builder.append(b(context));
-              }
-              builder.newLineIfNotEmpty();
-              builder.append(
-                  "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()} $dpr");
-              builder.newLineIfNotEmpty();
-              builder.append($coreKeys.deviceUuid);
-            });
-          };
+  get lastDebugCopyStringBuilder => (context) {
+    return stringBuilder((builder) {
+      for (final b in debugLastCopyStringBuilderList) {
+        builder.append(b(context));
+      }
+      builder.newLineIfNotEmpty();
+      builder.append(
+        "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()} $dpr",
+      );
+      builder.newLineIfNotEmpty();
+      builder.append($coreKeys.deviceUuid);
+    });
+  };
 
   static Locale? _currentLocale;
 
@@ -247,15 +248,19 @@ class _DebugPageState extends State<DebugPage>
     final currentLocale = Localizations.localeOf(context);
     DebugPage._currentLocale = currentLocale;
 
-    final defClickList =
-        DebugPage.defDebugActions.filter((item) => item.clickAction != null);
-    final defHiveList =
-        DebugPage.defDebugActions.filter((item) => item.hiveKey != null);
+    final defClickList = DebugPage.defDebugActions.filter(
+      (item) => item.clickAction != null,
+    );
+    final defHiveList = DebugPage.defDebugActions.filter(
+      (item) => item.hiveKey != null,
+    );
 
-    final clickList =
-        DebugPage.debugActions.filter((item) => item.clickAction != null);
-    final hiveList =
-        DebugPage.debugActions.filter((item) => item.hiveKey != null);
+    final clickList = DebugPage.debugActions.filter(
+      (item) => item.clickAction != null,
+    );
+    final hiveList = DebugPage.debugActions.filter(
+      (item) => item.hiveKey != null,
+    );
 
     return [
       if (defClickList.isNotEmpty)
@@ -275,15 +280,16 @@ class _DebugPageState extends State<DebugPage>
       if (defHiveList.isNotEmpty) ...buildHiveActionList(context, defHiveList),
       if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
       [
-        for (final builder in DebugPage.debugLastWidgetBuilderList)
-          builder(context),
-        "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr"
-            .text(style: globalTheme.textPlaceStyle),
-        $coreKeys.deviceUuid.text(
-          style: globalTheme.textPlaceStyle
-              .copyWith(color: globalTheme.accentColor),
-        ),
-      ]
+            for (final builder in DebugPage.debugLastWidgetBuilderList)
+              builder(context),
+            "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr"
+                .text(style: globalTheme.textPlaceStyle),
+            $coreKeys.deviceUuid.text(
+              style: globalTheme.textPlaceStyle.copyWith(
+                color: globalTheme.accentColor,
+              ),
+            ),
+          ]
           .column()
           ?.matchParentWidth()
           .click(() {
@@ -291,7 +297,7 @@ class _DebugPageState extends State<DebugPage>
             toastBlur(text: "已复制");
           })
           .align(Alignment.bottomCenter)
-          .rFill()
+          .rFill(),
     ].filterNull();
   }
 
@@ -318,24 +324,26 @@ class _DebugHiveEditPageState extends State<DebugHiveEditPage>
     const Widget add = Icon(Icons.add);
     return [
       add.icon(() {
-        context.showWidgetDialog(SingleInputDialog(
-          title: "请输入",
-          hintText: "格式: @key#type=value",
-          alignment: Alignment.bottomCenter,
-          useIcon: true,
-          onSaveTap: (text) async {
-            final (key, type, value) = CoreDebug.parseHiveKey(text);
-            if (isNil(key) || isNil(type)) {
-              toastInfo("格式错误");
-              return true;
-            } else {
-              key?.hivePut(value);
-              updateState();
-              return false;
-            }
-          },
-        ));
-      })
+        context.showWidgetDialog(
+          SingleInputDialog(
+            title: "请输入",
+            hintText: "格式: @key#type=value",
+            alignment: Alignment.bottomCenter,
+            useIcon: true,
+            onSaveTap: (text) async {
+              final (key, type, value) = CoreDebug.parseHiveKey(text);
+              if (isNil(key) || isNil(type)) {
+                toastInfo("格式错误");
+                return true;
+              } else {
+                key?.hivePut(value);
+                updateState();
+                return false;
+              }
+            },
+          ),
+        );
+      }),
     ];
   }
 
@@ -345,36 +353,45 @@ class _DebugHiveEditPageState extends State<DebugHiveEditPage>
     WidgetList list = [];
     map?.forEach((key, value) {
       if (value is String) {
-        list.add(LabelSingleInputTile(
+        list.add(
+          LabelSingleInputTile(
             label: key,
             inputText: value,
             onInputTextChanged: (value) {
               key.hivePut(value);
-            }));
+            },
+          ),
+        );
       } else if (value is int) {
-        list.add(LabelNumberTile(
-          label: key,
-          value: value,
-          onValueChanged: (value) {
-            key.hivePut(value);
-          },
-        ));
+        list.add(
+          LabelNumberTile(
+            label: key,
+            value: value,
+            onValueChanged: (value) {
+              key.hivePut(value);
+            },
+          ),
+        );
       } else if (value is double) {
-        list.add(LabelNumberTile(
-          label: key,
-          value: value,
-          onValueChanged: (value) {
-            key.hivePut(value);
-          },
-        ));
+        list.add(
+          LabelNumberTile(
+            label: key,
+            value: value,
+            onValueChanged: (value) {
+              key.hivePut(value);
+            },
+          ),
+        );
       } else if (value is bool) {
-        list.add(LabelSwitchTile(
-          label: key,
-          value: value,
-          onValueChanged: (value) {
-            key.hivePut(value);
-          },
-        ));
+        list.add(
+          LabelSwitchTile(
+            label: key,
+            value: value,
+            onValueChanged: (value) {
+              key.hivePut(value);
+            },
+          ),
+        );
       }
     });
     return list;
@@ -382,4 +399,11 @@ class _DebugHiveEditPageState extends State<DebugHiveEditPage>
 
   @override
   Widget build(BuildContext context) => buildScaffold(context);
+}
+
+extension DebugPageWidgetEx on Widget {
+  /// 添加调试相关页面
+  /// [DebugPage]
+  Widget wrapDebugPage(BuildContext context, {bool enable = true}) =>
+      DebugPage.wrap(context, this, enable: enable);
 }
