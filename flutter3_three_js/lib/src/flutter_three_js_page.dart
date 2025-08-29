@@ -67,13 +67,29 @@ class _FlutterThreeJsPageState extends State<FlutterThreeJsPage>
         src.startsWith("http://") || src.startsWith("https://");
     final three.Loader loader = src.endsWith(".obj")
         ? three.OBJLoader()
-        : three.STLLoader();
+        : (src.endsWith(".glb") || src.endsWith(".gltf")
+              ? three.GLTFLoader()
+              : three.STLLoader());
 
-    final object = isHttpScheme
-        ? await loader.fromNetwork(widget.src.toUri()!)
-        : await loader.fromFile(widget.src.toFile());
-    if (object != null) {
-      threeJs.scene.add(object);
+    try {
+      final object = isHttpScheme
+          ? await loader.fromNetwork(widget.src.toUri()!)
+          : await loader.fromFile(widget.src.toFile());
+      debugger();
+      if (object != null) {
+        if (object is three.GLTFData) {
+          threeJs.scene.add(object.scene);
+        } else {
+          threeJs.scene.add(object);
+        }
+      }
+    } catch (e, s) {
+      debugger();
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+      toast(e.toString().text());
     }
   }
 }
