@@ -35,6 +35,9 @@ dependencies:
   # https://inappwebview.dev/docs/intro/#setup-ios
   flutter_inappwebview: ^6.1.5
 
+  # https://pub.dev/packages/flutter_3d_controller
+  flutter_3d_controller: ^2.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
