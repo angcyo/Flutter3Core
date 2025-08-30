@@ -160,7 +160,7 @@ class IElementPainter extends IPainter
     }
   }
 
-//endregion api
+  //endregion api
 }
 
 /// 单元素绘制
@@ -274,10 +274,7 @@ class ElementPainter extends IElementPainter {
   /// - 支持[ElementPainter]
   /// - 支持[ElementGroupPainter]
   @overridePoint
-  void updateVisible(
-    bool value, {
-    Object? fromObj,
-  }) {
+  void updateVisible(bool value, {Object? fromObj}) {
     final old = paintState.isVisible;
     if (old != value) {
       paintState.isVisible = value;
@@ -300,10 +297,7 @@ class ElementPainter extends IElementPainter {
 
   /// 更新元素锁定操作
   @overridePoint
-  void updateLockOperate(
-    bool value, {
-    Object? fromObj,
-  }) {
+  void updateLockOperate(bool value, {Object? fromObj}) {
     final old = paintState.isLockOperate;
     if (old != value) {
       paintState.isLockOperate = value;
@@ -434,9 +428,13 @@ class ElementPainter extends IElementPainter {
   @dp
   @sceneCoordinate
   Rect? get elementsBounds {
-    return paintProperty?.getBounds(canvasDelegate?.canvasElementManager
-            .canvasElementControlManager.enableResetElementAngle ==
-        true);
+    return paintProperty?.getBounds(
+      canvasDelegate
+              ?.canvasElementManager
+              .canvasElementControlManager
+              .enableResetElementAngle ==
+          true,
+    );
   }
 
   /// 更新当前元素的边界到指定位置
@@ -457,11 +455,7 @@ class ElementPainter extends IElementPainter {
       final sx = bounds.width / oldBounds.width;
       final sy = bounds.height / oldBounds.height;
       final scaleMatrix = Matrix4.identity()
-        ..scaleBy(
-          sx: sx,
-          sy: sy,
-          anchor: oldBounds.topLeft,
-        );
+        ..scaleBy(sx: sx, sy: sy, anchor: oldBounds.topLeft);
       final translate = Matrix4.identity()
         ..translate(bounds.left - oldBounds.left, bounds.top - oldBounds.top);
       /*paintProperty = property.copyWith()
@@ -591,8 +585,11 @@ class ElementPainter extends IElementPainter {
       return;
     }
     paintProperty?.let((it) {
-      final resetElementAngle = canvasDelegate?.canvasElementManager
-              .canvasElementControlManager.enableResetElementAngle ??
+      final resetElementAngle =
+          canvasDelegate
+              ?.canvasElementManager
+              .canvasElementControlManager
+              .enableResetElementAngle ??
           true;
       final oldBounds = it.getBounds(resetElementAngle);
       final oldWidth = oldBounds.width;
@@ -615,6 +612,16 @@ class ElementPainter extends IElementPainter {
   //endregion ---paintProperty---
 
   //region ---group---
+
+  /// 是否在选中的元素内, 也就是是否被选中
+  bool get isInElementSelectComponent =>
+      canvasDelegate
+          ?.canvasElementManager
+          .canvasElementControlManager
+          .elementSelectComponent
+          .children
+          ?.contains(this) ==
+      true;
 
   /// 父元素
   /// 当自身属性改变后会通知父元素[dispatchSelfPaintPropertyChanged]
@@ -641,9 +648,7 @@ class ElementPainter extends IElementPainter {
   /// 使缓存无效
   /// [refresh] 是否通知界面刷新
   @api
-  void invalidate({
-    bool refresh = true,
-  }) {
+  void invalidate({bool refresh = true}) {
     painterCachePicture?.dispose();
     painterCachePicture = null;
     paintingSelfOnPicture(refresh: refresh);
@@ -747,9 +752,10 @@ class ElementPainter extends IElementPainter {
       if (paintState.isHover || paintState.color != null) {
         //--临时颜色/悬停绘制颜色支持
         updatePainterPaintProperty(
-            fromObj: this,
-            notify: false,
-            color: paintState.color ?? canvasStyle?.canvasAccentColor);
+          fromObj: this,
+          notify: false,
+          color: paintState.color ?? canvasStyle?.canvasAccentColor,
+        );
       }
       //--
       onPaintingSelf(canvas, paintMeta);
@@ -897,14 +903,11 @@ class ElementPainter extends IElementPainter {
   ) {
     final painter = textPainter;
     if (painter != null) {
-      canvas.withMatrix(
-        paintProperty?.operateMatrix,
-        () {
-          //painter.paint(canvas, Offset.zero);
-          //debugger();
-          painter.painterText(canvas, Offset.zero);
-        },
-      );
+      canvas.withMatrix(paintProperty?.operateMatrix, () {
+        //painter.paint(canvas, Offset.zero);
+        //debugger();
+        painter.painterText(canvas, Offset.zero);
+      });
     }
   }
 
@@ -942,11 +945,7 @@ class ElementPainter extends IElementPainter {
   @CallFrom("onPaintingSelf")
   @property
   @sceneCoordinate
-  void paintItUiPath(
-    Canvas canvas,
-    PaintMeta paintMeta,
-    UiPath? path,
-  ) {
+  void paintItUiPath(Canvas canvas, PaintMeta paintMeta, UiPath? path) {
     if (path != null) {
       if (paintProperty?.rect.isEmpty == true &&
           paint.style == PaintingStyle.fill) {
@@ -1018,13 +1017,14 @@ class ElementPainter extends IElementPainter {
             elementBounds.width <= 10 && elementBounds.height <= 10;
 
         //元素是线条元素
-        final isLineElement = (property.width == 0 && property.height != 0) ||
+        final isLineElement =
+            (property.width == 0 && property.height != 0) ||
             (property.width != 0 && property.height == 0);
 
         //绘制时是线条
         final isPainterLine =
             (elementBounds.width == 0 && elementBounds.height != 0) ||
-                (elementBounds.width != 0 && elementBounds.height == 0);
+            (elementBounds.width != 0 && elementBounds.height == 0);
 
         if (isLittleElement || isLineElement || isPainterLine) {
           final bounds = property.paintPath.getExactBounds();
@@ -1083,13 +1083,14 @@ class ElementPainter extends IElementPainter {
     dynamic value,
     PainterPropertyType propertyType,
     Object? fromObj,
-    UndoType? fromUndoType,
-  ) {
+    UndoType? fromUndoType, {
+    String? debugLabel,
+  }) {
     /*assert(() {
       l.w("[${classHash()}]...dispatchSelfPaintPropertyChanged");
       return true;
     }());*/
-    //debugger();
+    debugger(when: debugLabel != null);
     parentGroupPainter?.onChildPaintPropertyChanged(
       this,
       old,
@@ -1097,6 +1098,7 @@ class ElementPainter extends IElementPainter {
       propertyType,
       fromObj,
       fromUndoType,
+      debugLabel: debugLabel,
     );
     canvasDelegate?.dispatchCanvasElementPropertyChanged(
       this,
@@ -1105,10 +1107,14 @@ class ElementPainter extends IElementPainter {
       propertyType,
       fromObj,
       fromUndoType,
+      debugLabel: debugLabel,
     );
   }
 
   /// 派发元素数据改变, 通常意味着这个元素要产生新的数据了
+  ///
+  /// - 此时可以重置元素id/索引等信息
+  ///
   /// [rotateElement]
   /// [translateElement]
   /// [flipElement]
@@ -1181,10 +1187,7 @@ class ElementPainter extends IElementPainter {
   /// [translateElementBy]
   /// [translateElementTo]
   @api
-  void translateElementTo({
-    double? x,
-    double? y,
-  }) {
+  void translateElementTo({double? x, double? y}) {
     if (x == null && y == 0) {
       assert(() {
         l.d('无效的操作');
@@ -1196,10 +1199,9 @@ class ElementPainter extends IElementPainter {
       final bounds = it.paintBounds;
       x ??= bounds.left;
       y ??= bounds.top;
-      translateElement(createTranslateMatrix(
-        tx: x! - bounds.left,
-        ty: y! - bounds.top,
-      ));
+      translateElement(
+        createTranslateMatrix(tx: x! - bounds.left, ty: y! - bounds.top),
+      );
     });
   }
 
@@ -1240,11 +1242,7 @@ class ElementPainter extends IElementPainter {
   }) {
     paintProperty?.let((it) {
       updatePaintProperty(
-        it.copyWith()
-          ..rotateTo(
-            radians: radians,
-            anchor: anchor,
-          ),
+        it.copyWith()..rotateTo(radians: radians, anchor: anchor),
         fromObj: fromObj,
         fromUndoType: fromUndoType,
       );
@@ -1288,10 +1286,7 @@ class ElementPainter extends IElementPainter {
   /// [radians] 弧度
   @api
   @indirectProperty
-  void rotateTo(
-    double radians, {
-    Offset? anchor,
-  }) {
+  void rotateTo(double radians, {Offset? anchor}) {
     paintProperty?.let((it) {
       //debugger();
       anchor ??= it.paintCenter;
@@ -1338,9 +1333,10 @@ class ElementPainter extends IElementPainter {
   }) {
     final scaleMatrix = Matrix4.identity()
       ..scaleBy(
-          sx: flipX == true ? -1 : 1,
-          sy: flipY == true ? -1 : 1,
-          anchor: anchor ?? paintProperty?.paintCenter);
+        sx: flipX == true ? -1 : 1,
+        sy: flipY == true ? -1 : 1,
+        anchor: anchor ?? paintProperty?.paintCenter,
+      );
     scaleElementWithCenter(
       matrix: scaleMatrix,
       fromObj: fromObj,
@@ -1496,18 +1492,26 @@ class ElementPainter extends IElementPainter {
       if (event.isPointerDown && isHit) {
         paintState.pointerDownPoint = localPosition;
         //取消所有元素悬停状态
-        canvasDelegate.canvasElementManager.visitElementPainter((element) {
-          element.onHoverChanged(event, false);
-        }, before: false, after: false);
+        canvasDelegate.canvasElementManager.visitElementPainter(
+          (element) {
+            element.onHoverChanged(event, false);
+          },
+          before: false,
+          after: false,
+        );
         return true;
       } else {
         final oldHover = paintState.isHover;
         if (oldHover != isHit) {
           if (isHit) {
             //取消其他元素的悬停状态
-            canvasDelegate.canvasElementManager.visitElementPainter((element) {
-              element.onHoverChanged(event, false);
-            }, before: false, after: false);
+            canvasDelegate.canvasElementManager.visitElementPainter(
+              (element) {
+                element.onHoverChanged(event, false);
+              },
+              before: false,
+              after: false,
+            );
             handle = onHoverChanged(event, isHit);
           } else {
             handle = onHoverChanged(event, isHit);
@@ -1566,15 +1570,13 @@ class ElementPainter extends IElementPainter {
   ElementStateStack createStateStack({
     List<ElementPainter>? otherStateElementList,
     List<ElementPainter>? otherStateExcludeElementList,
-  }) =>
-      ElementStateStack()
-        ..saveFrom(
-          this,
-          otherStateElementList:
-              otherStateElementList ?? childList?.parentPainterList,
-          otherStateExcludeElementList:
-              otherStateExcludeElementList ?? childList,
-        );
+  }) => ElementStateStack()
+    ..saveFrom(
+      this,
+      otherStateElementList:
+          otherStateElementList ?? childList?.parentPainterList,
+      otherStateExcludeElementList: otherStateExcludeElementList ?? childList,
+    );
 
   /// 保存元素的额外数据到回退栈中
   /// [dataMap] 用来存储额外数据
@@ -1611,7 +1613,9 @@ class ElementPainter extends IElementPainter {
   @mustCallSuper
   void onRestoreStateStack(ElementStateStack stateStack) {
     updatePainterPaintProperty(
-        fromObj: stateStack, fromUndoType: UndoType.redo);
+      fromObj: stateStack,
+      fromUndoType: UndoType.redo,
+    );
   }
 
   //endregion ---创建回退栈---
@@ -1626,8 +1630,9 @@ class ElementPainter extends IElementPainter {
 
   /// 获取单个元素列表
   @api
-  List<ElementPainter> getSingleElementList(
-      {bool includeGroupPainter = false}) {
+  List<ElementPainter> getSingleElementList({
+    bool includeGroupPainter = false,
+  }) {
     return [this];
   }
 
@@ -1801,7 +1806,8 @@ class ElementPainter extends IElementPainter {
     final canvasViewBox = canvasDelegate?.canvasViewBox;
     if (canvasViewBox != null) {
       properties.add(
-          DiagnosticsProperty('是否在画布中', isVisibleInCanvasBox(canvasViewBox)));
+        DiagnosticsProperty('是否在画布中', isVisibleInCanvasBox(canvasViewBox)),
+      );
     }
   }
 }
@@ -1843,10 +1849,7 @@ class ElementGroupPainter extends ElementPainter {
       this is ElementSelectComponent ? null : this;
 
   @override
-  void updateLockOperate(
-    bool value, {
-    Object? fromObj,
-  }) {
+  void updateLockOperate(bool value, {Object? fromObj}) {
     super.updateLockOperate(value, fromObj: fromObj ?? this);
     children?.forEach((element) {
       element.updateLockOperate(value, fromObj: fromObj ?? this);
@@ -1854,10 +1857,7 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
-  void updateVisible(
-    bool value, {
-    Object? fromObj,
-  }) {
+  void updateVisible(bool value, {Object? fromObj}) {
     super.updateVisible(value, fromObj: fromObj ?? this);
     children?.forEach((element) {
       element.updateVisible(value, fromObj: fromObj ?? this);
@@ -1878,8 +1878,10 @@ class ElementGroupPainter extends ElementPainter {
   /// [CanvasElementManager.groupElement]
   /// [CanvasElementManager.ungroupElement]
   @api
-  void resetChildren(List<ElementPainter>? children,
-      {@autoInjectMark bool? resetGroupAngle}) {
+  void resetChildren(
+    List<ElementPainter>? children, {
+    @autoInjectMark bool? resetGroupAngle,
+  }) {
     //可能需要先解父元素
     this.children?.forEach((element) {
       if (children?.contains(element) != true) {
@@ -1913,11 +1915,7 @@ class ElementGroupPainter extends ElementPainter {
         canvasDelegate?.canvasStyle.enableResetElementAngle ?? true;
     if (isNullOrEmpty(children)) {
       //paintProperty = null;
-      updatePaintProperty(
-        null,
-        fromObj: fromObj,
-        fromUndoType: fromUndoType,
-      );
+      updatePaintProperty(null, fromObj: fromObj, fromUndoType: fromUndoType);
     } else if (children!.length == 1 && !resetGroupAngle) {
       updatePaintProperty(
         children!.first.paintProperty?.copyWith(),
@@ -1929,7 +1927,8 @@ class ElementGroupPainter extends ElementPainter {
       Rect? rect;
       for (final child in children!) {
         //final childBounds = child.paintProperty?.paintPath.getExactBounds();
-        final childBounds = child.paintProperty?.getBounds(true) ??
+        final childBounds =
+            child.paintProperty?.getBounds(true) ??
             child.elementsBounds; //resetGroupAngle
         if (childBounds != null) {
           if (rect == null) {
@@ -1982,15 +1981,17 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
-  List<ElementPainter> getSingleElementList(
-      {bool includeGroupPainter = false}) {
+  List<ElementPainter> getSingleElementList({
+    bool includeGroupPainter = false,
+  }) {
     final result = <ElementPainter>[];
     if (includeGroupPainter) {
       result.add(this);
     }
     children?.forEach((element) {
-      result.addAll(element.getSingleElementList(
-          includeGroupPainter: includeGroupPainter));
+      result.addAll(
+        element.getSingleElementList(includeGroupPainter: includeGroupPainter),
+      );
     });
     return result;
   }
@@ -2031,12 +2032,14 @@ class ElementGroupPainter extends ElementPainter {
 
     final newChildren = <ElementPainter>[];
     children?.forEach((element) {
-      newChildren.add(element.copyElement(
-        parent: newPainter,
-        resetUuid: resetUuid,
-        fromObj: fromObj ?? onlyElementGroupPainter,
-        fromUndoType: fromUndoType,
-      ));
+      newChildren.add(
+        element.copyElement(
+          parent: newPainter,
+          resetUuid: resetUuid,
+          fromObj: fromObj ?? onlyElementGroupPainter,
+          fromUndoType: fromUndoType,
+        ),
+      );
     });
     newPainter.resetChildren(newChildren);
     return newPainter;
@@ -2050,8 +2053,10 @@ class ElementGroupPainter extends ElementPainter {
     dynamic value,
     PainterPropertyType propertyType,
     Object? fromObj,
-    UndoType? fromUndoType,
-  ) {
+    UndoType? fromUndoType, {
+    String? debugLabel,
+  }) {
+    debugger(when: debugLabel != null);
     /*assert(() {
       l.w("[${classHash()}]...updatePaintPropertyFromChildren");
       return true;
@@ -2068,7 +2073,7 @@ class ElementGroupPainter extends ElementPainter {
         updatePaintPropertyFromChildren();
       } else if (propertyType == PainterPropertyType.state) {
         //debugger();
-        if (isVisible /*自身可见, 但是child有不可见的元素*/) {
+        if (isVisible /*自身可见, 但是child有不可见的元素*/ ) {
           final visibleList = children?.filterVisibleList;
           if (visibleList?.length != children?.length) {
             children = visibleList;
@@ -2213,7 +2218,8 @@ class ElementGroupPainter extends ElementPainter {
     UndoType? fromUndoType,
   }) {
     double angle = paintProperty?.angle ?? 0; //弧度
-    anchor ??= (useCenterAnchor == true
+    anchor ??=
+        (useCenterAnchor == true
             ? paintProperty?.paintCenter
             : paintProperty?.anchor) ??
         Offset.zero;
@@ -2366,13 +2372,13 @@ class PaintState with EquatableMixin {
 
   @override
   List<Object?> get props => [
-        elementUuid,
-        elementName,
-        isLockRatio,
-        isVisible,
-        isLockOperate,
-        isFold,
-      ];
+    elementUuid,
+    elementName,
+    isLockRatio,
+    isVisible,
+    isLockOperate,
+    isFold,
+  ];
 
   /// copyWith
   PaintState copyWith({
@@ -2456,25 +2462,16 @@ class PaintProperty with EquatableMixin {
   Matrix4 get scaleMatrix => Matrix4.identity()..scale(scaleX, scaleY, 1);
 
   /// 镜像矩阵, 锚点需要在中心位置
-  Matrix4 get flipMatrix => createFlipMatrix(
-        flipX: flipX,
-        flipY: flipY,
-        anchor: rect.center,
-      );
+  Matrix4 get flipMatrix =>
+      createFlipMatrix(flipX: flipX, flipY: flipY, anchor: rect.center);
 
   /// 旋转矩阵, 锚点需要在中心位置
-  Matrix4 get rotateMatrix => createRotateMatrix(
-        angle,
-        anchor: rect.center,
-      );
+  Matrix4 get rotateMatrix => createRotateMatrix(angle, anchor: rect.center);
 
   /// 平移矩阵, 平移到指定的目标位置
   Matrix4 get translateMatrix {
     Offset center = Offset(left + width / 2, top + height / 2);
-    final rotateMatrix = createRotateMatrix(
-      angle,
-      anchor: anchor,
-    );
+    final rotateMatrix = createRotateMatrix(angle, anchor: anchor);
     //计算出元素最终的中心点
     center = rotateMatrix.mapPoint(center);
     return Matrix4.identity()
@@ -2531,10 +2528,7 @@ class PaintProperty with EquatableMixin {
   Rect get paintScaleRotateBounds {
     final rect = paintScaleRect;
     final anchor = Offset(rect.width / 2, rect.height / 2);
-    final matrix = createRotateMatrix(
-      angle,
-      anchor: anchor,
-    );
+    final matrix = createRotateMatrix(angle, anchor: anchor);
     return matrix.mapRect(rect);
   }
 
@@ -2551,10 +2545,10 @@ class PaintProperty with EquatableMixin {
   /// 完全包裹的path路径
   @dp
   Path get paintPath => Path().let((it) {
-        //debugger();
-        it.addRect(rect);
-        return it.transformPath(operateMatrix);
-      });
+    //debugger();
+    it.addRect(rect);
+    return it.transformPath(operateMatrix);
+  });
 
   //endregion ---get属性---
 
@@ -2578,10 +2572,7 @@ class PaintProperty with EquatableMixin {
     Offset target = paintCenter;
     Offset center = rect.center;
     center = matrix.mapPoint(center);
-    matrix.postTranslateBy(
-      x: target.dx - center.dx,
-      y: target.dy - center.dy,
-    );
+    matrix.postTranslateBy(x: target.dx - center.dx, y: target.dy - center.dy);
     return matrix;
   }
 
@@ -2641,10 +2632,7 @@ class PaintProperty with EquatableMixin {
   /// 如果要将中心点平移到指定位置, 可以使用[Alignment.center]
   /// [applyTranslate]
   @api
-  void translateTo(
-    Offset anchor, {
-    Alignment? anchorAlignment,
-  }) {
+  void translateTo(Offset anchor, {Alignment? anchorAlignment}) {
     final oldAnchor = anchorAlignment?.withinRect(paintBounds) ?? this.anchor;
     final offset = anchor - oldAnchor;
     applyTranslate(createTranslateMatrix(offset: offset));
@@ -2684,10 +2672,7 @@ class PaintProperty with EquatableMixin {
   /// 旋转操作
   /// [refTargetRadians] 参考的需要旋转到的目标角度, 用来决定存储值时的正负数 单位: 弧度
   @api
-  void applyRotate(
-    Matrix4 matrix, {
-    double? refTargetRadians,
-  }) {
+  void applyRotate(Matrix4 matrix, {double? refTargetRadians}) {
     //debugger();
     // 锚点也需要翻转
     applyTranslate(matrix);
@@ -2849,20 +2834,20 @@ class PaintProperty with EquatableMixin {
 
   @override
   List<Object?> get props => [
-        left,
-        top,
-        width,
-        height,
-        scaleX,
-        scaleY,
-        skewX,
-        skewY,
-        angle,
-        flipX,
-        flipY,
-      ];
+    left,
+    top,
+    width,
+    height,
+    scaleX,
+    scaleY,
+    skewX,
+    skewY,
+    angle,
+    flipX,
+    flipY,
+  ];
 
-//endregion ---操作方法---
+  //endregion ---操作方法---
 }
 
 typedef ElementStateStackAction = void Function(ElementStateStack stack);
@@ -2911,7 +2896,7 @@ class ElementStateStack {
 
   //--
 
-  /// 保存信息
+  /// 保存信息, 多用于回退栈
   /// [element] 当前的元素,
   /// [otherStateElementList] 额外要保存的元素数据集合, 会自动排除[otherStateExcludeElementList]中的元素
   /// [saveGroupChild] 是否要保存[ElementGroupPainter.children]

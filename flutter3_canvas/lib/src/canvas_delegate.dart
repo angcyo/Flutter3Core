@@ -131,10 +131,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 安装一个[Widget]得到对应的[RenderObject]
   @callPoint
-  Element? mountWidget(
-    Widget widget, {
-    Object? slot,
-  }) {
+  Element? mountWidget(Widget widget, {Object? slot}) {
     final element = delegateContext;
     if (element is CanvasRenderObjectElement) {
       /*RenderObject? renderObject;
@@ -328,8 +325,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// - [CanvasStyleMode.dragMode]]:正在拖动状态
   /// - [CanvasStyleMode.defaultMode]:非拖动状态
   /// [CanvasKeyManager.registerKeyEventHandler]中触发
-  final ValueNotifier<CanvasStyleMode> canvasStyleModeValue =
-      ValueNotifier(CanvasStyleMode.defaultMode);
+  final ValueNotifier<CanvasStyleMode> canvasStyleModeValue = ValueNotifier(
+    CanvasStyleMode.defaultMode,
+  );
 
   /// 画布是否拖动状态
   bool get isDragMode => canvasStyleModeValue.value == CanvasStyleMode.dragMode;
@@ -467,9 +465,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// - 调整标尺尺寸之后, 需要重新布局
   ///
   @api
-  void relayout({
-    bool? reassemble,
-  }) {
+  void relayout({bool? reassemble}) {
     final size = _layoutSize;
     if (size != null) {
       if (reassemble == true) {
@@ -478,7 +474,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       layout(size);
       refresh();
       assert(() {
-        l.v("canvasStyle->${canvasStyle.yAxisWidth} ${canvasStyle.xAxisHeight}");
+        l.v(
+          "canvasStyle->${canvasStyle.yAxisWidth} ${canvasStyle.xAxisHeight}",
+        );
         return true;
       }());
     }
@@ -562,7 +560,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       followPainter(elementPainter: elementPainter);
       return;
     }
-    rect ??= canvasPaintManager.contentManager.canvasContentFollowRectInner ??
+    rect ??=
+        canvasPaintManager.contentManager.canvasContentFollowRectInner ??
         canvasElementManager.allElementsBounds;
     if (restoreDefault != true && (rect == null || rect.isEmpty)) {
       //followPainter(rect: canvasElementManager.allElementsBounds);
@@ -591,10 +590,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     ElementPainter? elementPainter,
     @viewCoordinate EdgeInsets? margin,
     BoxFit? fit = BoxFit.none,
-    Alignment? alignment/*= Alignment.center*/,
+    Alignment? alignment /*= Alignment.center*/,
   }) {
-    rect ??= elementPainter?.paintProperty?.getBounds(canvasElementManager
-        .canvasElementControlManager.enableResetElementAngle);
+    rect ??= elementPainter?.paintProperty?.getBounds(
+      canvasElementManager.canvasElementControlManager.enableResetElementAngle,
+    );
     if (rect == null) {
       assert(() {
         l.w("无效的操作");
@@ -638,14 +638,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     double tx = 0, ty = 0;
     //x
     if (alignment.isLeft) {
-      tx = -(contentViewRect.left -
+      tx =
+          -(contentViewRect.left -
               canvasViewBox.canvasBounds.left -
               (margin?.left ?? 0)) /
           canvasViewBox.scaleX;
     }
     //y
     if (alignment.isTop) {
-      ty = -(contentViewRect.top -
+      ty =
+          -(contentViewRect.top -
               canvasViewBox.canvasBounds.top -
               (margin?.top ?? 0)) /
           canvasViewBox.scaleY;
@@ -686,21 +688,24 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
     if (isInRight && isInBottom) {
       followContentEdge(
-          alignment: Alignment.topLeft,
-          animate: animate,
-          awaitAnimate: awaitAnimate);
+        alignment: Alignment.topLeft,
+        animate: animate,
+        awaitAnimate: awaitAnimate,
+      );
     } else if (isInBottom) {
       //目标在视口整体中心的下方, 则内容区域往上移动
       followContentEdge(
-          alignment: Alignment.topCenter,
-          animate: animate,
-          awaitAnimate: awaitAnimate);
+        alignment: Alignment.topCenter,
+        animate: animate,
+        awaitAnimate: awaitAnimate,
+      );
     } else if (isInRight) {
       //目标在视口整体中心的右边, 则内容区域往左移动
       followContentEdge(
-          alignment: Alignment.centerLeft,
-          animate: animate,
-          awaitAnimate: awaitAnimate);
+        alignment: Alignment.centerLeft,
+        animate: animate,
+        awaitAnimate: awaitAnimate,
+      );
     }
   }
 
@@ -744,11 +749,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 将画布上的整体状态压入栈, 可以用来恢复整个画布状态
   /// 不包含多画布, 只包含当前画布
-  CanvasStateStack createStateStack() => CanvasStateStack(this)
-    ..saveFrom(
-      null,
-      saveGroupChild: true,
-    );
+  CanvasStateStack createStateStack() =>
+      CanvasStateStack(this)..saveFrom(null, saveGroupChild: true);
 
   /// 删除元素集合, 支持单独删除组内的元素
   /// 使用画布全栈保存/恢复的方式, 才能支持组内元素的删除, 此方法资源消耗大
@@ -764,8 +766,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       return;
     }
 
-    final undoStateStack =
-        undoType == UndoType.normal ? createStateStack() : null;
+    final undoStateStack = undoType == UndoType.normal
+        ? createStateStack()
+        : null;
 
     //--开始操作
     final removeList = <ElementPainter>[];
@@ -792,8 +795,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     //Concurrent modification during iteration: Instance(length:2) of '_GrowableList'.
     elements.removeAll(removeList);
 
-    canvasElementManager.canvasElementControlManager
-        .onCanvasElementDeleted(removeList, selectType);
+    canvasElementManager.canvasElementControlManager.onCanvasElementDeleted(
+      removeList,
+      selectType,
+    );
     dispatchCanvasElementListChanged(
       oldElements,
       elements,
@@ -829,10 +834,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       ..showMonitor = isDebug
       ..enableElementControl = false;
 
-    this.previewElement(
-      previewElement,
-      followElement: followElement,
-    );
+    this.previewElement(previewElement, followElement: followElement);
   }
 
   /// 预览指定元素
@@ -860,14 +862,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     bool before = true,
     bool that = true,
     bool after = true,
-  }) =>
-      canvasElementManager.visitElementPainter(
-        visitor,
-        reverse: reverse,
-        before: before,
-        that: that,
-        after: after,
-      );
+  }) => canvasElementManager.visitElementPainter(
+    visitor,
+    reverse: reverse,
+    before: before,
+    that: that,
+    after: after,
+  );
 
   /// 在画布中的指定位置, 显示菜单
   /// 比如鼠标右键弹起, 显示对应的菜单
@@ -886,10 +887,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       }());
       return null;
     }
-    return context.showMenus<T>(
-      menus,
-      position: position,
-    );
+    return context.showMenus<T>(menus, position: position);
   }
 
   /// [showMenus]
@@ -975,9 +973,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     bool reverse = false,
   }) {
     try {
-      for (final client in reverse
-          ? canvasListeners.toList(growable: false).reversed
-          : canvasListeners) {
+      for (final client
+          in reverse
+              ? canvasListeners.toList(growable: false).reversed
+              : canvasListeners) {
         try {
           final result = action(client);
           if (result is bool && result) {
@@ -1046,8 +1045,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   ) {
     canvasElementManager.canvasElementControlManager.updateControlBounds();
     canvasPaintManager.axisManager.updateAxisData(canvasViewBox);
-    CanvasViewBoxChangedNotification(canvasViewBox, isCompleted)
-        .dispatch(delegateContext);
+    CanvasViewBoxChangedNotification(
+      canvasViewBox,
+      isCompleted,
+    ).dispatch(delegateContext);
     _eachCanvasListener((element) {
       element.onCanvasViewBoxChangedAction?.call(
         canvasViewBox,
@@ -1089,8 +1090,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     dynamic to,
     PainterPropertyType propertyType,
     Object? fromObj,
-    UndoType? fromUndoType,
-  ) {
+    UndoType? fromUndoType, {
+    String? debugLabel,
+  }) {
     isAnyElementPropertyChanged = true;
     /*assert(() {
       l.d('元素属性发生改变:$elementPainter $from->$to :$propertyType');
@@ -1098,11 +1100,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }());*/
     canvasElementManager.canvasElementControlManager
         .onHandleElementPropertyChanged(
-      elementPainter,
-      propertyType,
-      fromObj,
-      fromUndoType,
-    );
+          elementPainter,
+          propertyType,
+          fromObj,
+          fromUndoType,
+          debugLabel: debugLabel,
+        );
     _eachCanvasListener((element) {
       element.onCanvasElementPropertyChangedAction?.call(
         elementPainter,
@@ -1126,8 +1129,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   ) {
     //debugger();
     _eachCanvasListener((element) {
-      element.onCanvasElementSelectChangedAction
-          ?.call(selectComponent, from, to, selectType);
+      element.onCanvasElementSelectChangedAction?.call(
+        selectComponent,
+        from,
+        to,
+        selectType,
+      );
     });
     refresh();
   }
@@ -1140,8 +1147,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     ElementSelectType selectType,
   ) {
     _eachCanvasListener((element) {
-      element.onCanvasChooseSelectElementListAction
-          ?.call(selectComponent, list, selectType);
+      element.onCanvasChooseSelectElementListAction?.call(
+        selectComponent,
+        list,
+        selectType,
+      );
     });
   }
 
@@ -1223,7 +1233,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 点击/长按元素时回调
   void dispatchTouchDetectorElement(
-      List<ElementPainter> elementList, TouchDetectorType touchType) {
+    List<ElementPainter> elementList,
+    TouchDetectorType touchType,
+  ) {
     _eachCanvasListener((element) {
       element.onTouchDetectorElement?.call(elementList, touchType);
     });
@@ -1259,8 +1271,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     bool isRepeatSelect,
   ) {
     _eachCanvasListener((element) {
-      element.onPointerDownAction
-          ?.call(position, downMenu, downElementList, isRepeatSelect);
+      element.onPointerDownAction?.call(
+        position,
+        downMenu,
+        downElementList,
+        isRepeatSelect,
+      );
     });
   }
 
@@ -1288,7 +1304,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 回退栈发生改变时回调
   void dispatchCanvasUndoChanged(
-      CanvasUndoManager undoManager, UndoType fromType) {
+    CanvasUndoManager undoManager,
+    UndoType fromType,
+  ) {
     if (fromType == UndoType.undo) {
       //撤销操作时, 取消选中元素
       canvasElementManager.clearSelectedElement();
@@ -1302,7 +1320,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [group] 产生的组合元素
   /// [elements] 组合的子元素列表
   void dispatchCanvasGroupChanged(
-      ElementGroupPainter group, List<ElementPainter> elements) {
+    ElementGroupPainter group,
+    List<ElementPainter> elements,
+  ) {
     _eachCanvasListener((element) {
       element.onCanvasGroupChangedAction?.call(group, elements);
     });
@@ -1326,7 +1346,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [canvasStateData] 画布状态数据
   /// [type] 新增画布/移除画布
   void dispatchCanvasMultiStateChanged(
-      CanvasStateData canvasStateData, CanvasStateType type) {
+    CanvasStateData canvasStateData,
+    CanvasStateType type,
+  ) {
     isCanvasStateChanged = true;
     _eachCanvasListener((element) {
       element.onCanvasMultiStateChanged?.call(canvasStateData, type);
@@ -1408,7 +1430,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 派发画布样式变化
   /// [canvasStyleModeValue]
   void dispatchCanvasStyleModeChanged(
-      CanvasStyleMode from, CanvasStyleMode to) {
+    CanvasStyleMode from,
+    CanvasStyleMode to,
+  ) {
     _eachCanvasListener((element) {
       element.onCanvasStyleModeChangedAction?.call(this, from, to);
     });
@@ -1446,8 +1470,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   @override
   Ticker createTicker(TickerCallback onTick) {
-    _ticker =
-        Ticker(onTick, debugLabel: 'created by ${describeIdentity(this)}');
+    _ticker = Ticker(
+      onTick,
+      debugLabel: 'created by ${describeIdentity(this)}',
+    );
     return _ticker!;
   }
 
@@ -1463,46 +1489,60 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     properties.add(IntProperty("重绘次数", paintCount));
     properties.add(DiagnosticsProperty('代理上下文', delegateContext));
     properties.add(DiagnosticsProperty('画布样式', canvasStyle));
-    properties.add(FlagProperty(
-      '有元素改变',
-      value: hasElementChangedFlag,
-      ifTrue: "有元素发生改变",
-    ));
-    properties.add(canvasViewBox.toDiagnosticsNode(
-      name: '视口控制',
-      style: DiagnosticsTreeStyle.sparse,
-    ));
+    properties.add(
+      FlagProperty('有元素改变', value: hasElementChangedFlag, ifTrue: "有元素发生改变"),
+    );
+    properties.add(
+      canvasViewBox.toDiagnosticsNode(
+        name: '视口控制',
+        style: DiagnosticsTreeStyle.sparse,
+      ),
+    );
     properties.add(DiagnosticsProperty<Ticker?>('ticker', _ticker));
 
-    properties.add(FlagProperty(
-      "重置旋转角度",
-      value: canvasElementManager
-          .canvasElementControlManager.enableResetElementAngle,
-      ifTrue: "激活重置旋转角度",
-    ));
-    properties.add(FlagProperty(
-      "激活控制交互",
-      value:
-          canvasElementManager.canvasElementControlManager.enableElementControl,
-      ifTrue: "激活控制交互",
-    ));
-    properties.add(FlagProperty(
-      "激活点击元素外取消选择",
-      value: canvasElementManager
-          .canvasElementControlManager.enableOutsideCancelSelectElement,
-      ifTrue: "激活点击元素外取消选择",
-    ));
-
-    properties.add(canvasPaintManager.toDiagnosticsNode(
-      name: '画布管理',
-      style: DiagnosticsTreeStyle.sparse,
-    ));
     properties.add(
-        DiagnosticsProperty<CanvasEventManager>('手势管理', canvasEventManager));
-    properties.add(canvasElementManager.toDiagnosticsNode(
-      name: '元素管理',
-      style: DiagnosticsTreeStyle.sparse,
-    ));
+      FlagProperty(
+        "重置旋转角度",
+        value: canvasElementManager
+            .canvasElementControlManager
+            .enableResetElementAngle,
+        ifTrue: "激活重置旋转角度",
+      ),
+    );
+    properties.add(
+      FlagProperty(
+        "激活控制交互",
+        value: canvasElementManager
+            .canvasElementControlManager
+            .enableElementControl,
+        ifTrue: "激活控制交互",
+      ),
+    );
+    properties.add(
+      FlagProperty(
+        "激活点击元素外取消选择",
+        value: canvasElementManager
+            .canvasElementControlManager
+            .enableOutsideCancelSelectElement,
+        ifTrue: "激活点击元素外取消选择",
+      ),
+    );
+
+    properties.add(
+      canvasPaintManager.toDiagnosticsNode(
+        name: '画布管理',
+        style: DiagnosticsTreeStyle.sparse,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<CanvasEventManager>('手势管理', canvasEventManager),
+    );
+    properties.add(
+      canvasElementManager.toDiagnosticsNode(
+        name: '元素管理',
+        style: DiagnosticsTreeStyle.sparse,
+      ),
+    );
 
     //--
 
@@ -1510,7 +1550,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     properties.add(DiagnosticsProperty('dataMap', dataMap));
   }
 
-//endregion ---diagnostic---
+  //endregion ---diagnostic---
 }
 
 /// 画布状态栈[CanvasDelegate], 不包含多画布, 只包含当前画布
@@ -1553,5 +1593,4 @@ enum CanvasStyleMode {
 
   /// 移动模式
   dragMode,
-  ;
 }
