@@ -29,6 +29,7 @@ class _FlutterThreeJsPageState extends State<FlutterThreeJsPage>
   @override
   void initState() {
     threeJs = three.ThreeJS(
+      settings: three.Settings(clearAlpha: 1, clearColor: 0x000000),
       onSetupComplete: () {
         updateState();
       },
@@ -39,6 +40,7 @@ class _FlutterThreeJsPageState extends State<FlutterThreeJsPage>
 
   @override
   void dispose() {
+    controls.dispose();
     threeJs.dispose();
     three.loading.clear();
     super.dispose();
@@ -49,7 +51,20 @@ class _FlutterThreeJsPageState extends State<FlutterThreeJsPage>
     return threeJs.build();
   }
 
+  @override
+  void reassemble() {
+    super.reassemble();
+    threeJs.camera.position.setValues(3, 7, 10);
+    //threeJs.camera.position.setValues(0.5, 0.5, 10);
+    threeJs.render();
+  }
+
+  /// 轨道控制器
+  late three.OrbitControls controls;
+
+  /// 设置
   Future<void> setup() async {
+    //摄像机
     threeJs.camera = three.PerspectiveCamera(
       45,
       threeJs.width / threeJs.height,
@@ -58,10 +73,32 @@ class _FlutterThreeJsPageState extends State<FlutterThreeJsPage>
     );
     threeJs.camera.position.setValues(3, 6, 10);
 
+    //控制器
+    controls = three.OrbitControls(threeJs.camera, threeJs.globalKey);
+
+    //场景 背景色
     threeJs.scene = three.Scene();
+    threeJs.scene.background = three.Color.fromHex32(0xffffff);
+
+    //是否激活光照
+    final enableLight = false;
+    if (enableLight) {
+      //环境光
+      final ambientLight = three.AmbientLight(0xffffff, 0.9);
+      threeJs.scene.add(ambientLight);
+
+      //点光源
+      final pointLight = three.PointLight(0xffffff, 0.8);
+      pointLight.position.setValues(0, 0, 0);
+      //添加点光源
+      threeJs.camera.add(pointLight);
+    }
+
     threeJs.scene.add(threeJs.camera);
+    //摄像机对准场景
     threeJs.camera.lookAt(threeJs.scene.position);
 
+    //加载模型
     final src = widget.src.toLowerCase();
     final isHttpScheme =
         src.startsWith("http://") || src.startsWith("https://");
