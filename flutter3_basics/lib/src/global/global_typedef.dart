@@ -24,6 +24,9 @@ typedef ResultBoolAction = bool Function();
 /// [ResultBoolAction]
 typedef ResultDynamicAction = dynamic Function();
 
+/// [ResultDynamicAction]
+typedef FutureOrAction = FutureOr Function();
+
 /// 国际化文本构建器
 typedef IntlTextBuilder = String? Function(BuildContext context);
 
@@ -87,8 +90,8 @@ typedef IndexCallback = void Function(int index);
 /// [num]数字类型的回调
 typedef NumCallback = void Function(num number);
 typedef NumNullCallback = void Function(num? number);
-typedef ContextNumNullCallback = void Function(
-    BuildContext? context, num? number);
+typedef ContextNumNullCallback =
+    void Function(BuildContext? context, num? number);
 typedef RangeNumCallback = void Function(num startValue, num endValue);
 
 /// [bool]类型的回调
@@ -107,28 +110,28 @@ typedef StringCallback = void Function(String text);
 /// 转变一个[widget]
 /// [Transform]->[RenderTransform]
 /// [MatrixTransition]
-typedef TransformWidgetBuilder = Widget Function(
-    BuildContext context, Widget widget);
+typedef TransformWidgetBuilder =
+    Widget Function(BuildContext context, Widget widget);
 
 /// 转变一个[widget], 携带一个[data]参数
-typedef TransformDataWidgetBuilder = Widget Function(
-    BuildContext context, Widget widget, dynamic data);
+typedef TransformDataWidgetBuilder =
+    Widget Function(BuildContext context, Widget widget, dynamic data);
 
 /// [TransformWidgetBuilder] 的支持null版本
-typedef TransformChildWidgetBuilder = Widget? Function(
-    BuildContext context, Widget? child);
+typedef TransformChildWidgetBuilder =
+    Widget? Function(BuildContext context, Widget? child);
 
 /// [TransformDataWidgetBuilder] 的支持null版本
-typedef TransformChildDataWidgetBuilder = Widget? Function(
-    BuildContext context, Widget? child, dynamic data);
+typedef TransformChildDataWidgetBuilder =
+    Widget? Function(BuildContext context, Widget? child, dynamic data);
 
 /// 支持返回null的[WidgetBuilder]
 typedef WidgetNullBuilder = Widget? Function(BuildContext context);
 
 /// 通过一个[value], 返回对应的[Widget]
 /// [WidgetBuilder]
-typedef WidgetValueBuilder = Widget? Function(
-    BuildContext context, dynamic value);
+typedef WidgetValueBuilder =
+    Widget? Function(BuildContext context, dynamic value);
 
 /// [RoutePageBuilder]
 /// [ModalRoute.buildTransitions]
@@ -137,14 +140,18 @@ typedef WidgetValueBuilder = Widget? Function(
 /// [child] 用来传递不需要重新build的[Widget].
 /// 此方法里面只rebuild动画处理相关的[Widget].
 ///
-typedef TransitionsBuilder = Widget Function(
-    BuildContext context, Animation<double> animation, Widget? child);
+typedef TransitionsBuilder =
+    Widget Function(
+      BuildContext context,
+      Animation<double> animation,
+      Widget? child,
+    );
 
 /// [WidgetBuilder]
 typedef ChildrenBuilder = List<Widget>? Function(BuildContext context);
 
 /// [IndexedWidgetBuilder]
-typedef IndexChildrenBuilder = List<Widget>? Function(
-    BuildContext context, int index);
+typedef IndexChildrenBuilder =
+    List<Widget>? Function(BuildContext context, int index);
 
 //endregion Fn

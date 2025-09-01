@@ -23,232 +23,219 @@ class CanvasKeyManager
   @callPoint
   void registerKeyEventHandler(CanvasRenderBox renderObject) {
     //空格键, 开启拖拽
-    renderObject.registerKeyEvent([
-      [canvasStyle.dragKeyboardKey],
-    ], (info) {
-      if (info.isKeyDown) {
-        canvasDelegate.updateCanvasStyleModeChanged(CanvasStyleMode.dragMode);
-      } else if (info.isKeyUp) {
-        canvasDelegate.updateCanvasStyleModeChanged(null);
-      }
-      renderObject.markNeedsPaint();
-      //renderObject.postMarkNeedsPaint();
-      return true;
-    }, keyUp: true);
+    renderObject.registerKeyEvent(
+      [
+        [canvasStyle.dragKeyboardKey],
+      ],
+      (info) {
+        if (info.isKeyDown) {
+          canvasDelegate.updateCanvasStyleModeChanged(CanvasStyleMode.dragMode);
+        } else if (info.isKeyUp) {
+          canvasDelegate.updateCanvasStyleModeChanged(null);
+        }
+        renderObject.markNeedsPaint();
+        //renderObject.postMarkNeedsPaint();
+        return true;
+      },
+      keyUp: true,
+    );
 
     //Ctrl键, 任意比例缩放
-    renderObject.registerKeyEvent([
-      [canvasStyle.ignoreLockKeyboardKey],
-    ], (info) {
-      l.i("info->$info");
-      final lockControl = canvasDelegate
-          .canvasElementManager.canvasElementControlManager.lockControl;
-      if (info.isKeyDown) {
-        lockControl.setIgnoreLockRation(true);
-      } else if (info.isKeyUp) {
-        lockControl.setIgnoreLockRation(false);
-      }
-      return true;
-    }, keyUp: true);
+    renderObject.registerKeyEvent(
+      [
+        [canvasStyle.ignoreLockKeyboardKey],
+      ],
+      (info) {
+        l.i("info->$info");
+        final lockControl = canvasDelegate
+            .canvasElementManager
+            .canvasElementControlManager
+            .lockControl;
+        if (info.isKeyDown) {
+          lockControl.setIgnoreLockRation(true);
+        } else if (info.isKeyUp) {
+          lockControl.setIgnoreLockRation(false);
+        }
+        return true;
+      },
+      keyUp: true,
+    );
 
     //删除选中元素
-    renderObject.registerKeyEvent([
+    renderObject.registerKeyEvent(
       [
-        LogicalKeyboardKey.delete,
+        [LogicalKeyboardKey.delete],
+        [LogicalKeyboardKey.backspace],
       ],
-      [
-        LogicalKeyboardKey.backspace,
-      ],
-    ], (info) {
-      deleteSelectedElement();
-      return true;
-    });
+      (info) {
+        deleteSelectedElement();
+        return true;
+      },
+    );
 
     //方向键, 移动选中元素
-    renderObject.registerKeyEvent([
+    renderObject.registerKeyEvent(
       [
-        LogicalKeyboardKey.arrowUp,
+        [LogicalKeyboardKey.arrowUp],
+        [LogicalKeyboardKey.arrowDown],
+        [LogicalKeyboardKey.arrowLeft],
+        [LogicalKeyboardKey.arrowRight],
       ],
-      [
-        LogicalKeyboardKey.arrowDown,
-      ],
-      [
-        LogicalKeyboardKey.arrowLeft,
-      ],
-      [
-        LogicalKeyboardKey.arrowRight,
-      ],
-    ], (info) {
-      final canvasElementControlManager =
-          canvasElementManager.canvasElementControlManager;
-      if (canvasElementControlManager.isSelectedElement) {
-        renderObject.requestFocus();
-        final offset = canvasStyle.canvasArrowAdjustOffset.toOffsetDp();
-        final dx = info.keys.contains(LogicalKeyboardKey.arrowLeft)
-            ? -offset.dx
-            : info.keys.contains(LogicalKeyboardKey.arrowRight)
-                ? offset.dx
-                : 0.0;
-        final dy = info.keys.contains(LogicalKeyboardKey.arrowUp)
-            ? -offset.dy
-            : info.keys.contains(LogicalKeyboardKey.arrowDown)
-                ? offset.dy
-                : 0.0;
-        canvasElementControlManager.translateElement(
-          canvasElementManager.selectComponent,
-          dx: dx,
-          dy: dy,
-        );
-      }
-      return true;
-    }, matchKeyCount: false);
+      (info) {
+        final canvasElementControlManager =
+            canvasElementManager.canvasElementControlManager;
+        if (canvasElementControlManager.isSelectedElement) {
+          renderObject.requestFocus();
+          final offset = canvasStyle.canvasArrowAdjustOffset.toOffsetDp();
+          final dx = info.keys.contains(LogicalKeyboardKey.arrowLeft)
+              ? -offset.dx
+              : info.keys.contains(LogicalKeyboardKey.arrowRight)
+              ? offset.dx
+              : 0.0;
+          final dy = info.keys.contains(LogicalKeyboardKey.arrowUp)
+              ? -offset.dy
+              : info.keys.contains(LogicalKeyboardKey.arrowDown)
+              ? offset.dy
+              : 0.0;
+          canvasElementControlManager.translateElement(
+            canvasElementManager.selectComponent,
+            dx: dx,
+            dy: dy,
+          );
+        }
+        return true;
+      },
+      matchKeyCount: false,
+    );
 
     //撤销
-    renderObject.registerKeyEvent([
-      if (isMacOS) ...[
-        [
-          LogicalKeyboardKey.meta,
-          LogicalKeyboardKey.keyZ,
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ],
+        ],
+        if (!isMacOS) ...[
+          [LogicalKeyboardKey.control, LogicalKeyboardKey.keyZ],
         ],
       ],
-      if (!isMacOS) ...[
-        [
-          LogicalKeyboardKey.control,
-          LogicalKeyboardKey.keyZ,
-        ],
-      ],
-    ], (info) {
-      undo();
-      return true;
-    });
+      (info) {
+        undo();
+        return true;
+      },
+    );
 
     //重做
-    renderObject.registerKeyEvent([
-      if (isMacOS) ...[
-        [
-          LogicalKeyboardKey.meta,
-          LogicalKeyboardKey.keyY,
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyY],
+        ],
+        if (!isMacOS) ...[
+          [
+            LogicalKeyboardKey.control,
+            LogicalKeyboardKey.shift,
+            LogicalKeyboardKey.keyZ,
+          ],
         ],
       ],
-      if (!isMacOS) ...[
-        [
-          LogicalKeyboardKey.control,
-          LogicalKeyboardKey.shift,
-          LogicalKeyboardKey.keyZ,
-        ],
-      ],
-    ], (info) {
-      redo();
-      return true;
-    });
+      (info) {
+        redo();
+        return true;
+      },
+    );
 
     //复制
-    renderObject.registerKeyEvent([
-      if (isMacOS) ...[
-        [
-          LogicalKeyboardKey.meta,
-          LogicalKeyboardKey.keyC,
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyC],
+        ],
+        if (!isMacOS) ...[
+          [LogicalKeyboardKey.control, LogicalKeyboardKey.keyC],
         ],
       ],
-      if (!isMacOS) ...[
-        [
-          LogicalKeyboardKey.control,
-          LogicalKeyboardKey.keyC,
-        ],
-      ],
-    ], (info) {
-      copySelectedElement();
-      return true;
-    });
+      (info) {
+        copySelectedElement();
+        return true;
+      },
+    );
 
     //粘贴
-    renderObject.registerKeyEvent([
-      if (isMacOS) ...[
-        [
-          LogicalKeyboardKey.meta,
-          LogicalKeyboardKey.keyV,
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyV],
+        ],
+        if (!isMacOS) ...[
+          [LogicalKeyboardKey.control, LogicalKeyboardKey.keyV],
         ],
       ],
-      if (!isMacOS) ...[
-        [
-          LogicalKeyboardKey.control,
-          LogicalKeyboardKey.keyV,
-        ],
-      ],
-    ], (info) {
-      pasteSelectedElement();
-      return true;
-    });
+      (info) {
+        pasteSelectedElement();
+        return true;
+      },
+    );
 
     //全选
-    renderObject.registerKeyEvent([
-      if (isMacOS) ...[
-        [
-          LogicalKeyboardKey.meta,
-          LogicalKeyboardKey.keyA,
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyA],
+        ],
+        if (!isMacOS) ...[
+          [LogicalKeyboardKey.control, LogicalKeyboardKey.keyA],
         ],
       ],
-      if (!isMacOS) ...[
-        [
-          LogicalKeyboardKey.control,
-          LogicalKeyboardKey.keyA,
-        ],
-      ],
-    ], (info) {
-      selectAllElement();
-      return true;
-    });
+      (info) {
+        selectAllElement();
+        return true;
+      },
+    );
 
     //放大画布
-    renderObject.registerKeyEvent([
-      if (isMacOS) ...[
-        [
-          LogicalKeyboardKey.meta,
-          LogicalKeyboardKey.equal,
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [LogicalKeyboardKey.meta, LogicalKeyboardKey.equal],
+        ],
+        if (!isMacOS) ...[
+          [LogicalKeyboardKey.control, LogicalKeyboardKey.equal],
         ],
       ],
-      if (!isMacOS) ...[
-        [
-          LogicalKeyboardKey.control,
-          LogicalKeyboardKey.equal,
-        ],
-      ],
-    ], (info) {
-      zoomIn();
-      return true;
-    });
+      (info) {
+        zoomIn();
+        return true;
+      },
+    );
 
     //缩小画布
-    renderObject.registerKeyEvent([
-      if (isMacOS) ...[
-        [
-          LogicalKeyboardKey.meta,
-          LogicalKeyboardKey.minus,
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [LogicalKeyboardKey.meta, LogicalKeyboardKey.minus],
+        ],
+        if (!isMacOS) ...[
+          [LogicalKeyboardKey.control, LogicalKeyboardKey.minus],
         ],
       ],
-      if (!isMacOS) ...[
-        [
-          LogicalKeyboardKey.control,
-          LogicalKeyboardKey.minus,
-        ],
-      ],
-    ], (info) {
-      zoomOut();
-      return true;
-    });
+      (info) {
+        zoomOut();
+        return true;
+      },
+    );
   }
 
   //--
 
   /// 撤销
   @api
-  bool undo() {
+  FutureOr<bool> undo() {
     return canvasUndoManager.undo();
   }
 
   /// 重做
   @api
-  bool redo() {
+  FutureOr<bool> redo() {
     return canvasUndoManager.redo();
   }
 
@@ -258,8 +245,9 @@ class CanvasKeyManager
   @api
   bool copySelectedElement() {
     clearClipboard();
-    _copyElementList =
-        canvasElementManager.copySelectedElement(autoAddToCanvas: false);
+    _copyElementList = canvasElementManager.copySelectedElement(
+      autoAddToCanvas: false,
+    );
     return !isNil(_copyElementList);
   }
 
@@ -279,10 +267,12 @@ class CanvasKeyManager
     if (!isNil(_copyElementList)) {
       //为了下一次继续粘贴, 这里需要重新复制一份
       final elementList = _copyElementList!.copyElementList;
-      canvasElementManager.addElementList(elementList,
-          selected: true,
-          followPainter: true,
-          offset: canvasStyle.canvasCopyOffset.toOffsetDp());
+      canvasElementManager.addElementList(
+        elementList,
+        selected: true,
+        followPainter: true,
+        offset: canvasStyle.canvasCopyOffset.toOffsetDp(),
+      );
       _copyElementList = elementList;
       return true;
     }
@@ -322,10 +312,7 @@ class CanvasKeyManager
 
   /// 放大画布
   @api
-  void zoomIn({
-    @viewCoordinate Offset? anchorPosition,
-    bool anim = true,
-  }) {
+  void zoomIn({@viewCoordinate Offset? anchorPosition, bool anim = true}) {
     final canvasScaleComponent = canvasEventManager.canvasScaleComponent;
     canvasViewBox.scaleBy(
       sx: canvasScaleComponent.doubleScaleValue,
@@ -339,10 +326,7 @@ class CanvasKeyManager
 
   /// 缩小画布
   @api
-  void zoomOut({
-    @viewCoordinate Offset? anchorPosition,
-    bool anim = true,
-  }) {
+  void zoomOut({@viewCoordinate Offset? anchorPosition, bool anim = true}) {
     final canvasScaleComponent = canvasEventManager.canvasScaleComponent;
     canvasViewBox.scaleBy(
       sx: canvasScaleComponent.doubleScaleReverseValue,
@@ -372,5 +356,5 @@ class CanvasKeyManager
     );
   }
 
-//--
+  //--
 }

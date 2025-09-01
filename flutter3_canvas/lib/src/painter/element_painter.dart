@@ -393,7 +393,7 @@ class ElementPainter extends IElementPainter {
       //撤销重做时, 不触发通知
       notify ??= false;
     }
-    if (notify != false && old != value) {
+    if (notify == true || (notify != false && old != value)) {
       dispatchSelfPaintPropertyChanged(
         old,
         value,
@@ -2795,6 +2795,24 @@ class PaintProperty with EquatableMixin {
 
     flipX = qr[1] < 0;
     flipY = qr[2] < 0;
+  }
+
+  /// updateFrom
+  void updateFrom(PaintProperty? other) {
+    if (other == null) {
+      return;
+    }
+    left = other.left;
+    top = other.top;
+    width = other.width;
+    height = other.height;
+    scaleX = other.scaleX;
+    scaleY = other.scaleY;
+    skewX = other.skewX;
+    skewY = other.skewY;
+    angle = other.angle;
+    flipX = other.flipX;
+    flipY = other.flipY;
   }
 
   /// copyWith

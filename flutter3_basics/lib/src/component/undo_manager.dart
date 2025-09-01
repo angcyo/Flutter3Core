@@ -26,14 +26,14 @@ class UndoActionManager with Diagnosticable {
   /// 回退
   /// @return 是否执行成功
   @api
-  bool undo() {
+  FutureOr<bool> undo() async {
     assert(() {
       l.d('准备撤销,共[${undoList.length}]/${redoList.length}');
       return true;
     }());
     if (undoList.isNotEmpty) {
       final item = undoList.removeLast();
-      final result = item.doUndo();
+      final result = await item.doUndo();
       redoList.add(item);
 
       notifyChanged(UndoType.undo);
@@ -45,7 +45,7 @@ class UndoActionManager with Diagnosticable {
   /// 重做
   /// @return 是否执行成功
   @api
-  bool redo() {
+  FutureOr<bool> redo() async {
     assert(() {
       l.d('准备重做,共[${redoList.length}]/${undoList.length}');
       return true;
@@ -53,7 +53,7 @@ class UndoActionManager with Diagnosticable {
 
     if (redoList.isNotEmpty) {
       final item = redoList.removeLast();
-      final result = item.doRedo();
+      final result = await item.doRedo();
       undoList.add(item);
 
       notifyChanged(UndoType.redo);
@@ -73,6 +73,7 @@ class UndoActionManager with Diagnosticable {
   }
 
   /// 添加一个可以撤销的操作, 并且立即执行
+  /// - [runRedo] 是否立即执行重做
   @supportUndo
   UndoActionItem? addRunRedo([
     Action? undo,
@@ -131,19 +132,16 @@ class UndoActionManager with Diagnosticable {
 @immutable
 class UndoActionItem {
   /// 核心撤销回退回调
-  final ResultDynamicAction? undo;
-  final ResultDynamicAction? redo;
+  final FutureOrAction? undo;
+  final FutureOrAction? redo;
 
-  const UndoActionItem([
-    this.undo,
-    this.redo,
-  ]);
+  const UndoActionItem([this.undo, this.redo]);
 
   /// 执行回退
   /// `throw UnimplementedError();`
   @overridePoint
-  bool doUndo() {
-    final result = undo?.call();
+  FutureOr<bool> doUndo() async {
+    final result = await undo?.call();
     if (result is bool) {
       return result;
     }
@@ -152,8 +150,8 @@ class UndoActionItem {
 
   /// 执行重做
   @overridePoint
-  bool doRedo() {
-    final result = redo?.call();
+  FutureOr<bool> doRedo() async {
+    final result = await redo?.call();
     if (result is bool) {
       return result;
     }
@@ -300,13 +298,14 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
   }) {
     final canUndo = undoManagerMixin?.canUndo() == true;
     Widget undo = IconButton(
-        visualDensity: visualDensity ?? visualDensityMixin,
-        onPressed: canUndo
-            ? () {
-                undoManagerMixin?.undo();
-              }
-            : null,
-        icon: undoWidget ?? undoWidgetMixin ?? const Icon(Icons.undo));
+      visualDensity: visualDensity ?? visualDensityMixin,
+      onPressed: canUndo
+          ? () {
+              undoManagerMixin?.undo();
+            }
+          : null,
+      icon: undoWidget ?? undoWidgetMixin ?? const Icon(Icons.undo),
+    );
     if (isDebug) {
       undo = undo.stackOf(
         Text(
@@ -318,10 +317,12 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
     }
     if (canUndo) {
       undo = undo.colorFiltered(
-          color: enableColor ?? getEnableColorMixin(context));
+        color: enableColor ?? getEnableColorMixin(context),
+      );
     } else {
       undo = undo.colorFiltered(
-          color: disableColor ?? getDisableColorMixin(context));
+        color: disableColor ?? getDisableColorMixin(context),
+      );
     }
     return undo;
   }
@@ -336,13 +337,14 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
   }) {
     final canRedo = undoManagerMixin?.canRedo() == true;
     Widget redo = IconButton(
-        visualDensity: visualDensity ?? visualDensityMixin,
-        onPressed: canRedo
-            ? () {
-                undoManagerMixin?.redo();
-              }
-            : null,
-        icon: redoWidget ?? redoWidgetMixin ?? const Icon(Icons.redo));
+      visualDensity: visualDensity ?? visualDensityMixin,
+      onPressed: canRedo
+          ? () {
+              undoManagerMixin?.redo();
+            }
+          : null,
+      icon: redoWidget ?? redoWidgetMixin ?? const Icon(Icons.redo),
+    );
     if (isDebug) {
       redo = redo.stackOf(
         Text(
@@ -355,10 +357,12 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
 
     if (canRedo) {
       redo = redo.colorFiltered(
-          color: enableColor ?? getEnableColorMixin(context));
+        color: enableColor ?? getEnableColorMixin(context),
+      );
     } else {
       redo = redo.colorFiltered(
-          color: disableColor ?? getDisableColorMixin(context));
+        color: disableColor ?? getDisableColorMixin(context),
+      );
     }
     return redo;
   }
