@@ -41,14 +41,14 @@ class PathWidget extends LeafRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) => PathRenderBox(
-        pathList: pathList ?? (path != null ? [path!] : null),
-        style: style,
-        color: color,
-        fit: fit,
-        alignment: alignment,
-        shader: shader,
-        padding: padding,
-      );
+    pathList: pathList ?? (path != null ? [path!] : null),
+    style: style,
+    color: color,
+    fit: fit,
+    alignment: alignment,
+    shader: shader,
+    padding: padding,
+  );
 
   @override
   void updateRenderObject(BuildContext context, PathRenderBox renderObject) {
@@ -96,6 +96,7 @@ class PathRenderBox extends RenderBox {
   });
 
   void updatePath(List<Path>? newPathList) {
+    //debugger();
     if (pathList != newPathList) {
       _pathBounds = null;
     }
@@ -124,6 +125,7 @@ class PathRenderBox extends RenderBox {
       }
     } else {
       size = constraints.constrain(Size.zero);
+      debugger();
     }
   }
 
@@ -132,16 +134,20 @@ class PathRenderBox extends RenderBox {
     super.paint(context, offset);
     if (pathList != null) {
       final canvas = context.canvas;
-      canvas.drawPathIn(pathList, _pathBounds, offset & size,
-          fit: fit,
-          alignment: alignment,
-          dstPadding: padding,
-          paint: Paint()
-            ..color = color
-            ..strokeCap = StrokeCap.round
-            ..strokeJoin = StrokeJoin.round
-            ..shader = shader
-            ..style = style);
+      canvas.drawPathIn(
+        pathList,
+        _pathBounds,
+        offset & size,
+        fit: fit,
+        alignment: alignment,
+        dstPadding: padding,
+        paint: Paint()
+          ..color = color
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round
+          ..shader = shader
+          ..style = style,
+      );
     }
   }
 }
@@ -179,11 +185,11 @@ class PathRegionInfo {
 
   /// 背景绘制信息
   final void Function(Canvas canvas, PathRegionInfo regionInfo)?
-      onBackgroundPaint;
+  onBackgroundPaint;
 
   /// 前景绘制信息
   final void Function(Canvas canvas, PathRegionInfo regionInfo)?
-      onForegroundPaint;
+  onForegroundPaint;
 
   //--text
 
@@ -255,7 +261,9 @@ class PathRegionWidget extends LeafRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, PathRegionRenderBox renderObject) {
+    BuildContext context,
+    PathRegionRenderBox renderObject,
+  ) {
     super.updateRenderObject(context, renderObject);
     renderObject
       ..config = this
@@ -266,9 +274,7 @@ class PathRegionWidget extends LeafRenderObjectWidget {
 class PathRegionRenderBox extends RenderBox {
   PathRegionWidget config;
 
-  PathRegionRenderBox(
-    this.config,
-  );
+  PathRegionRenderBox(this.config);
 
   @override
   void performLayout() {
@@ -292,30 +298,33 @@ class PathRegionRenderBox extends RenderBox {
           item.onBackgroundPaint?.call(canvas, item);
           if (item.fillColor != null) {
             canvas.drawPath(
-                item.path!,
-                Paint()
-                  ..color = item.isPointerDown
-                      ? item.downFillColor ??
+              item.path!,
+              Paint()
+                ..color = item.isPointerDown
+                    ? item.downFillColor ??
                           item.fillColor!.addBrightness(config.hitAddBrightness)
-                      : item.fillColor!
-                  ..strokeCap = StrokeCap.round
-                  ..strokeJoin = StrokeJoin.round
-                  ..style = PaintingStyle.fill);
+                    : item.fillColor!
+                ..strokeCap = StrokeCap.round
+                ..strokeJoin = StrokeJoin.round
+                ..style = PaintingStyle.fill,
+            );
           }
           //--
           if (item.strokeColor != null) {
             canvas.drawPath(
-                item.path!,
-                Paint()
-                  ..color = item.isPointerDown
-                      ? item.downStrokeColor ??
-                          item.strokeColor!
-                              .addBrightness(config.hitAddBrightness)
-                      : item.strokeColor!
-                  ..strokeCap = StrokeCap.round
-                  ..strokeJoin = StrokeJoin.round
-                  ..strokeWidth = item.strokeWidth
-                  ..style = PaintingStyle.stroke);
+              item.path!,
+              Paint()
+                ..color = item.isPointerDown
+                    ? item.downStrokeColor ??
+                          item.strokeColor!.addBrightness(
+                            config.hitAddBrightness,
+                          )
+                    : item.strokeColor!
+                ..strokeCap = StrokeCap.round
+                ..strokeJoin = StrokeJoin.round
+                ..strokeWidth = item.strokeWidth
+                ..style = PaintingStyle.stroke,
+            );
           }
           //--
           if (item.text != null) {
