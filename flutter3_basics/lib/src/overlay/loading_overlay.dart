@@ -242,7 +242,7 @@ Future wrapLoading(
   });
 }
 
-/// 自动超时, 自动延时
+/// 自动超时, 自动延时.
 /// ```
 /// wrapLoadingTimeout(() async {}());
 /// ```

@@ -2450,14 +2450,18 @@ extension WidgetEx on Widget {
               );
             }
           : onLongPress,
-      onTapUp: (details) {
-        periodicTimer?.cancel();
-        periodicTimer = null;
-      },
-      onTapCancel: () {
-        periodicTimer?.cancel();
-        periodicTimer = null;
-      },
+      onTapUp: onLongPressPeriodic != null
+          ? (details) {
+              periodicTimer?.cancel();
+              periodicTimer = null;
+            }
+          : null,
+      onTapCancel: onLongPressPeriodic != null
+          ? () {
+              periodicTimer?.cancel();
+              periodicTimer = null;
+            }
+          : null,
       radius: radius,
       splashColor: splashColor,
       highlightColor: highlightColor,
