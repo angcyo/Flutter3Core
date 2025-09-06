@@ -48,7 +48,7 @@ class BytesWriter {
   final Endian endian;
 
   BytesWriter({this.limitMaxLength, Endian? endian})
-      : endian = endian ?? Endian.big;
+    : endian = endian ?? Endian.big;
 
   /// 是否可以继续写入
   bool _canWrite() => limitMaxLength == null || _bytes.length < limitMaxLength!;
@@ -269,11 +269,7 @@ class BytesWriter {
 
   /// 按照 [00000000][00000001]...[0000000F][FFFFFFFF] 的格式填充字节
   /// 写入填充到指定数字的字节数据
-  void writeFillHex({
-    int? number,
-    int? length,
-    bool writeEnd = true,
-  }) {
+  void writeFillHex({int? number, int? length, bool writeEnd = true}) {
     final builder = StringBuffer();
     for (int i = 0; i <= (number ?? intMax32Value); i++) {
       //builder.write("[${i.toHex().padLeft(8, '0')}]");
@@ -302,8 +298,11 @@ class BytesWriter {
   /// [blockUseLength] 一块字节数据的长度占用多少个字节
   ///
   /// [writeBytes]
-  void writeBytesBlock(BytesWriterFn action,
-      [int blockUseLength = 4, Endian? blockLengthEndian]) {
+  void writeBytesBlock(
+    BytesWriterFn action, [
+    int blockUseLength = 4,
+    Endian? blockLengthEndian,
+  ]) {
     final bytes = bytesWriter(action);
     writeInt(bytes.length, blockUseLength, blockLengthEndian);
     writeBytes(bytes);
@@ -337,9 +336,13 @@ class ByteReader {
   Endian endian;
 
   ByteReader(this.bytes, {this.excludeLength = 0, Endian? endian})
-      : endian = endian ?? Endian.big;
+    : endian = endian ?? Endian.big;
 
+  /// 当前读取的位置
   int _index = 0;
+
+  /// 返回当前的位置
+  int get index => _index;
 
   /// 是否读取完毕
   bool get isDone => _index >= sumLength;
@@ -436,6 +439,7 @@ class ByteReader {
     return result;
   }
 
+  /// 读取指定字节的ASCII字符
   /// 读取指定字节长度的一个字符串
   /// [length] 需要读取的字节长度
   String? readString(int length, [String? overflow]) {
@@ -443,8 +447,9 @@ class ByteReader {
       return overflow;
     }
     final result = utf8.decode(
-        bytes.sublist(_index, math.min(_index + length, sumLength)),
-        allowMalformed: true);
+      bytes.sublist(_index, math.min(_index + length, sumLength)),
+      allowMalformed: true,
+    );
     _index += length;
     return result;
   }
@@ -516,8 +521,9 @@ class ByteReader {
     if (isDone) {
       return overflow;
     }
-    final result =
-        bytes.sublist(_index, math.min(_index + length, sumLength)).toHex();
+    final result = bytes
+        .sublist(_index, math.min(_index + length, sumLength))
+        .toHex();
     _index += length;
     return result;
   }
@@ -526,10 +532,7 @@ class ByteReader {
   ///
   /// [startIndex] 读取的起始索引
   /// [retainCount] 需要保留多少个字节
-  List<int> readRemaining({
-    int? startIndex,
-    int? retainCount,
-  }) {
+  List<int> readRemaining({int? startIndex, int? retainCount}) {
     if (isDone) {
       return [];
     }
@@ -540,8 +543,26 @@ class ByteReader {
   }
 
   /// 跳过指定的字节数
-  void skip(int length) {
+  void skip([int length = 1]) {
     _index += length;
+  }
+
+  /// 回退指定的字节数
+  void back([int length = 1]) {
+    _index -= length;
+    if (_index < 0) {
+      _index = 0;
+    }
+  }
+
+  /// 回到指定索引位置
+  void jump(int index) {
+    _index = index;
+  }
+
+  /// 结束
+  void done() {
+    _index = sumLength;
   }
 
   /// 读取指定长度位代表的字节数据长度的数据
@@ -553,8 +574,11 @@ class ByteReader {
   /// [patternLengthBytes]
   ///
   /// @return [length]描述的所有字节数据, 不够返回null
-  List<int>? readLengthBytes(int length,
-      [Endian? endian, BytesReaderFn? bytesAction]) {
+  List<int>? readLengthBytes(
+    int length, [
+    Endian? endian,
+    BytesReaderFn? bytesAction,
+  ]) {
     //读取后续字节的长度
     final byteCount = readInt(length, 0, endian);
     final bytes = readBytes(byteCount);
@@ -576,7 +600,7 @@ class ByteReader {
     }
     return (
       index,
-      remaining ? bytes.sublist(index + bytes.length, sumLength) : null
+      remaining ? bytes.sublist(index + bytes.length, sumLength) : null,
     );
   }
 
@@ -606,7 +630,7 @@ class ByteReader {
     return byteCount > sumLength - _index;
   }
 
-//endregion find
+  //endregion find
 }
 
 /// 字节写入

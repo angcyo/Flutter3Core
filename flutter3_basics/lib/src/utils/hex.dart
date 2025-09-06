@@ -130,6 +130,7 @@ extension HexIntEx on int {
 extension HexBytesEx on List<int> {
   /// Convert a byte array to a hexadecimal string.
   /// 将字节数组转换为十六进制字符串。
+  /// 默认大写
   String toHex() => _HEX.encoder.convert(this);
 
   /// Convert a byte array to a byte buffer.
