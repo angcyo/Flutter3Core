@@ -64,6 +64,25 @@ extension FileStringEx on String {
   /// 父路径
   String get parentPath => FileSystemEntity.parentOf(this);
 
+  /// 复制文件到指定全路径
+  Future<File?> copyTo(String targetPath) async {
+    try {
+      return await File(this).copy(targetPath);
+    } catch (e) {
+      //
+    }
+    return null;
+  }
+
+  File? copyToSync(String targetPath) {
+    try {
+      return File(this).copySync(targetPath);
+    } catch (e) {
+      //
+    }
+    return null;
+  }
+
   /// 当前文件/文件夹是否存在
   Future<bool> isExists() async =>
       await File(this).exists() || await Directory(this).exists();
@@ -99,11 +118,7 @@ extension FileStringEx on String {
   Stream<FileSystemEntity> listFilesStream({
     bool recursive = false,
     bool followLinks = true,
-  }) =>
-      Directory(this).list(
-        recursive: recursive,
-        followLinks: followLinks,
-      );
+  }) => Directory(this).list(recursive: recursive, followLinks: followLinks);
 
   /// 获取文件夹中的文件列表
   /// [recursive] 是否递归
@@ -112,12 +127,9 @@ extension FileStringEx on String {
     bool followLinks = true,
   }) async {
     try {
-      return await Directory(this)
-          .list(
-            recursive: recursive,
-            followLinks: followLinks,
-          )
-          .toList();
+      return await Directory(
+        this,
+      ).list(recursive: recursive, followLinks: followLinks).toList();
     } catch (e) {
       assert(() {
         l.e(e);
@@ -134,12 +146,9 @@ extension FileStringEx on String {
     bool followLinks = true,
   }) {
     try {
-      return Directory(this)
-          .listSync(
-            recursive: recursive,
-            followLinks: followLinks,
-          )
-          .toList();
+      return Directory(
+        this,
+      ).listSync(recursive: recursive, followLinks: followLinks).toList();
     } catch (e) {
       assert(() {
         l.e(e);
@@ -149,7 +158,7 @@ extension FileStringEx on String {
     return null;
   }
 
-//endregion ---Path---
+  //endregion ---Path---
 }
 
 //region File 扩展
@@ -394,13 +403,12 @@ extension FileEx on File {
   }) {
     try {
       parent.path.ensureDirectory();
-      return this
-        ..writeAsStringSync(
-          contents,
-          mode: mode,
-          encoding: encoding,
-          flush: flush,
-        );
+      return this..writeAsStringSync(
+        contents,
+        mode: mode,
+        encoding: encoding,
+        flush: flush,
+      );
     } catch (e) {
       assert(() {
         l.e(e);
@@ -417,11 +425,7 @@ extension FileEx on File {
     bool flush = false,
   }) async {
     try {
-      return await writeAsBytes(
-        bytes,
-        mode: mode,
-        flush: flush,
-      );
+      return await writeAsBytes(bytes, mode: mode, flush: flush);
     } catch (e) {
       assert(() {
         l.e(e);
@@ -438,12 +442,7 @@ extension FileEx on File {
     bool flush = false,
   }) {
     try {
-      return this
-        ..writeAsBytesSync(
-          bytes,
-          mode: mode,
-          flush: flush,
-        );
+      return this..writeAsBytesSync(bytes, mode: mode, flush: flush);
     } catch (e) {
       assert(() {
         l.e(e);
@@ -484,10 +483,7 @@ extension FileEx on File {
   }) async {
     try {
       if (await path.isDirectory()) {
-        return path.listFiles(
-          recursive: recursive,
-          followLinks: followLinks,
-        );
+        return path.listFiles(recursive: recursive, followLinks: followLinks);
       }
     } catch (e) {
       assert(() {
@@ -702,12 +698,14 @@ extension DirectoryEx on Directory {
     await for (final entity in list()) {
       if (entity is File) {
         // 复制文件
-        await entity
-            .copy('${destination.path}/${entity.uri.pathSegments.last}');
+        await entity.copy(
+          '${destination.path}/${entity.uri.pathSegments.last}',
+        );
       } else if (entity is Directory) {
         // 递归复制子文件夹
         await entity.copyDirectory(
-            Directory('${destination.path}/${entity.uri.pathSegments.last}'));
+          Directory('${destination.path}/${entity.uri.pathSegments.last}'),
+        );
       }
     }
     return true;
@@ -721,8 +719,9 @@ extension FileListEx on List<FileSystemEntity> {
   /// [file] 支持[String].[FileSystemEntity]
   bool containsFile(dynamic file) {
     return firstWhereOrNull((element) {
-          final filePath =
-              file is FileSystemEntity ? file.path : file?.toString();
+          final filePath = file is FileSystemEntity
+              ? file.path
+              : file?.toString();
           return element.path == filePath;
         }) !=
         null;
@@ -765,8 +764,10 @@ extension FileListEx on List<FileSystemEntity> {
         }
         return r;
       } else if (modifiedTimeDesc != null) {
-        final r = a.lastModifiedSync
-                ?.compareTo(b.lastModifiedSync ?? DateTime.now()) ??
+        final r =
+            a.lastModifiedSync?.compareTo(
+              b.lastModifiedSync ?? DateTime.now(),
+            ) ??
             0;
         if (modifiedTimeDesc == true) {
           //修改时间降序
