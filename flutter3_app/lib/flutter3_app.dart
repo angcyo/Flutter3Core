@@ -14,12 +14,12 @@ import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_move_task_back/flutter_move_task_back.dart';
+import 'package:flutter_uri_to_file/flutter_uri_to_file.dart' as uri_to_file;
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_uri_to_file/flutter_uri_to_file.dart' as uri_to_file;
 
 import 'src/mode/lib_app_setting_bean.dart';
 import 'src/mode/lib_app_version_bean.dart';
@@ -192,19 +192,19 @@ Future runGlobalApp(
 
     //app
     if (error != null) {
-      app = ErrorWidget.builder(FlutterErrorDetails(
-        exception: error,
-        stack: stack,
-        library: 'angcyo',
-      ));
+      app = ErrorWidget.builder(
+        FlutterErrorDetails(exception: error, stack: stack, library: 'angcyo'),
+      );
       if (!isDebug && error is RCoreException) {
         exitApp();
       }
     }
     //app
-    runApp(GlobalApp(
-      app: useViewModelProvider ? app.wrapGlobalViewModelProvider() : app,
-    ));
+    runApp(
+      GlobalApp(
+        app: useViewModelProvider ? app.wrapGlobalViewModelProvider() : app,
+      ),
+    );
     //--after
     try {
       await afterAction?.call();
@@ -217,8 +217,9 @@ Future runGlobalApp(
     }
 
     //--
-    "启动完成[${Platform.resolvedExecutable}]:${lTime.time()}"
-        .writeToLog(level: L.info);
+    "启动完成[${Platform.resolvedExecutable}]:${lTime.time()}".writeToLog(
+      level: L.info,
+    );
   }
 
   if (!zonedGuarded) {
@@ -269,26 +270,33 @@ Future _initDebugLastInfo() async {
       //widget
       final textStyle = GlobalConfig.def.globalTheme.textPlaceStyle;
       //--app包的信息
-      DebugPage.debugLastWidgetBuilderList.add((_) =>
-          packageInfo.text(textAlign: TextAlign.center, style: textStyle));
+      DebugPage.debugLastWidgetBuilderList.add(
+        (_) => packageInfo.text(textAlign: TextAlign.center, style: textStyle),
+      );
       //--平台设备信息
-      DebugPage.debugLastWidgetBuilderList.add((_) =>
-          deviceInfoData.text(textAlign: TextAlign.center, style: textStyle));
+      DebugPage.debugLastWidgetBuilderList.add(
+        (_) =>
+            deviceInfoData.text(textAlign: TextAlign.center, style: textStyle),
+      );
       //--build信息
-      DebugPage.debugLastWidgetBuilderList.add((_) => $buildConfig
-          ?.toString()
-          .text(textAlign: TextAlign.center, style: textStyle));
+      DebugPage.debugLastWidgetBuilderList.add(
+        (_) => $buildConfig?.toString().text(
+          textAlign: TextAlign.center,
+          style: textStyle,
+        ),
+      );
 
       //string-copy
-      DebugPage.debugLastCopyStringBuilderList
-          .add((_) => stringBuilder((builder) {
-                //debugger();
-                builder.appendLine("$packageInfo");
-                builder.appendLine("$deviceInfoData");
-                if ($buildConfig != null) {
-                  builder.appendLine($buildConfig?.toString());
-                }
-              }));
+      DebugPage.debugLastCopyStringBuilderList.add(
+        (_) => stringBuilder((builder) {
+          //debugger();
+          builder.appendLine("$packageInfo");
+          builder.appendLine("$deviceInfoData");
+          if ($buildConfig != null) {
+            builder.appendLine($buildConfig?.toString());
+          }
+        }),
+      );
     }
   });
 }
@@ -327,17 +335,16 @@ Widget loadAppSvgWidget(
   double? size,
   double? width,
   double? height,
-}) =>
-    loadAssetSvgWidget(
-      key,
-      package: "flutter3_app",
-      tintColor: tintColor,
-      colorFilter: colorFilter,
-      size: size,
-      width: width,
-      height: height,
-      fit: fit,
-    );
+}) => loadAssetSvgWidget(
+  key,
+  package: "flutter3_app",
+  tintColor: tintColor,
+  colorFilter: colorFilter,
+  size: size,
+  width: width,
+  height: height,
+  fit: fit,
+);
 
 /// [isDebug]
 /// [CoreKeys.isDebugFlag]

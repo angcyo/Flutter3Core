@@ -4,12 +4,12 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024/06/07
 ///
-/// App生命周期混入
-/// [WidgetsBindingObserver]
-/// [AppLifecycleListener]
-/// [AppLifecycleMixin]
-/// [NavigatorObserverMixin]
-mixin AppLifecycleMixin<T extends StatefulWidget> on State<T> {
+/// App生命周期混入, 使用[AppLifecycleListener]实现.
+/// - [WidgetsBindingObserver]
+/// - [AppLifecycleListener]
+/// - [AppLifecycleStateMixin]
+/// - [NavigatorObserverMixin]
+mixin AppLifecycleStateMixin<T extends StatefulWidget> on State<T> {
   AgentAppLifecycleListener? _appLifecycleListener;
 
   @override
@@ -171,7 +171,7 @@ class AgentAppLifecycleListener extends AppLifecycleListener {
 /// 路由导航监听
 /// [NavigatorObserverDispatcher]
 /// [NavigatorObserverMixin]
-/// [AppLifecycleMixin]
+/// [AppLifecycleStateMixin]
 final NavigatorObserverDispatcher navigatorObserverDispatcher =
     NavigatorObserverDispatcher();
 
@@ -287,7 +287,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
     }
   }
 
-//endregion --回调--
+  //endregion --回调--
 }
 
 /// 导航监听混入

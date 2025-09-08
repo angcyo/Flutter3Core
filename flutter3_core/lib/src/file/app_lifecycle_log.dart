@@ -8,7 +8,7 @@ part of '../../flutter3_core.dart';
 /// 只要创建了[AppLifecycleListener]对象, 就会自动调用[WidgetsBinding.addObserver]方法
 /// [WidgetsBindingObserver]
 /// [AppLifecycleLog]
-/// [AppLifecycleMixin]
+/// [AppLifecycleStateMixin]
 /// [NavigatorObserverMixin]
 mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// [AppExitResponse.exit]
@@ -16,39 +16,42 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// [AppExitResponse.values]
   @override
   Future<UiAppExitResponse> didRequestAppExit() {
-    '[${classHash()}]AppLifecycle didRequestAppExit'
-        .writeToLog(level: L.verbose);
+    '[${classHash()}]AppLifecycle didRequestAppExit'.writeToLog(
+      level: L.verbose,
+    );
     return super.didRequestAppExit();
   }
 
   @override
   void didChangeAccessibilityFeatures() {
-    '[${classHash()}]AppLifecycle didChangeAccessibilityFeatures'
-        .writeToLog(level: L.verbose);
+    '[${classHash()}]AppLifecycle didChangeAccessibilityFeatures'.writeToLog(
+      level: L.verbose,
+    );
     super.didChangeAccessibilityFeatures();
   }
 
   ///语言环境发生改变时回调这里
   @override
   void didChangeLocales(List<Locale>? locales) {
-    '[${classHash()}]AppLifecycle didChangeLocales:$locales'
-        .writeToLog(level: L.verbose);
+    '[${classHash()}]AppLifecycle didChangeLocales:$locales'.writeToLog(
+      level: L.verbose,
+    );
     super.didChangeLocales(locales);
   }
 
   ///手机系统屏幕亮度发生改变时回调
   @override
   void didChangePlatformBrightness() {
-    '[${classHash()}]AppLifecycle didChangePlatformBrightness'
-        .writeToLog(level: L.verbose);
+    '[${classHash()}]AppLifecycle didChangePlatformBrightness'.writeToLog(
+      level: L.verbose,
+    );
     super.didChangePlatformBrightness();
   }
 
   /// RouteInformation->content://com.ss.android.lark.common.fileprovider/external_files/Download/Lark/2024-11-29_2.gc
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
-    '[${classHash()}]AppLifecycle didPushRouteInformation:${routeInformation
-        .runtimeType}->${routeInformation.uri}'
+    '[${classHash()}]AppLifecycle didPushRouteInformation:${routeInformation.runtimeType}->${routeInformation.uri}'
         .writeToLog(level: L.verbose);
     return super.didPushRouteInformation(routeInformation);
   }
@@ -63,7 +66,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   ///系统窗口改变回调 如键盘弹出 屏幕旋转等
   @override
   void didChangeMetrics() {
-    '[${classHash()}]AppLifecycle didChangeMetrics'
+    '[${classHash()}]AppLifecycle didChangeMetrics sw:$screenWidth sh:$screenHeight'
         .writeToLog(level: L.verbose);
     super.didChangeMetrics();
   }
@@ -93,32 +96,36 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// ```
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    '[${classHash()}]AppLifecycle didChangeAppLifecycleState:$state'
-        .writeToLog(level: L.verbose);
+    '[${classHash()}]AppLifecycle didChangeAppLifecycleState:$state'.writeToLog(
+      level: L.verbose,
+    );
     super.didChangeAppLifecycleState(state);
   }
 
   /// 低内存回调, 此时需要释放内容
   @override
   void didHaveMemoryPressure() {
-    '[${classHash()}]AppLifecycle didHaveMemoryPressure'
-        .writeToLog(level: L.verbose);
+    '[${classHash()}]AppLifecycle didHaveMemoryPressure'.writeToLog(
+      level: L.verbose,
+    );
     super.didHaveMemoryPressure();
   }
 
   ///手机系统文本缩放系数改变里回调这里
   @override
   void didChangeTextScaleFactor() {
-    '[${classHash()}]AppLifecycle didChangeTextScaleFactor'
-        .writeToLog(level: L.verbose);
+    '[${classHash()}]AppLifecycle didChangeTextScaleFactor'.writeToLog(
+      level: L.verbose,
+    );
     super.didChangeTextScaleFactor();
   }
 
   /// didPushRoute:/external_files/Download/Lark/2024-11-29_2.gc
   @override
   Future<bool> didPushRoute(String route) {
-    '[${classHash()}]AppLifecycle didPushRoute:$route'
-        .writeToLog(level: L.verbose);
+    '[${classHash()}]AppLifecycle didPushRoute:$route'.writeToLog(
+      level: L.verbose,
+    );
     return super.didPushRoute(route);
   }
 
@@ -150,8 +157,14 @@ class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
     dispose();
   }
 
+  /// [uninstall]
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
   }
 }

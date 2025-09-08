@@ -235,6 +235,8 @@ class RenderScrollOverlayHint extends RenderProxyBox {
 }
 
 extension ScrollOverlayHintWidgetEx on Widget {
+
+  /// 滚动溢出提示
   /// [ScrollOverlayHintWidget]
   Widget overlayHint({
     bool drawTop = false,
