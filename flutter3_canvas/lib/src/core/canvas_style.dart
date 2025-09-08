@@ -219,11 +219,11 @@ class CanvasStyle {
 
   /// x横坐标轴的高度
   @dp
-  double xAxisHeight = 12;
+  double xAxisHeight = 20;
 
   /// y纵坐标轴的宽度
   @dp
-  double yAxisWidth = 12;
+  double yAxisWidth = 20;
 
   /// 是否绘制坐标轴上的单位
   bool showAxisUnitSuffix = false;
