@@ -156,6 +156,7 @@ part 'src/widgets/pointer_listener.dart';
 part 'src/widgets/hover_anchor_layout.dart';
 part 'src/widgets/anchor_overlay_layout.dart';
 part 'src/widgets/arrow_widget.dart';
+part 'src/widgets/media_query_data_widget.dart';
 
 /// 类型重定义
 typedef UiImage = ui.Image;

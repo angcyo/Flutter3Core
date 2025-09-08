@@ -13,14 +13,12 @@ class CanvasWidget extends LeafRenderObjectWidget {
   @override
   LeafRenderObjectElement createElement() =>
       canvasDelegate.canvasStyle.enableWidgetRender
-          ? CanvasRenderObjectElement(this)
-          : LeafRenderObjectElement(this);
+      ? CanvasRenderObjectElement(this)
+      : LeafRenderObjectElement(this);
 
   @override
-  RenderObject createRenderObject(BuildContext context) => CanvasRenderBox(
-        context,
-        canvasDelegate..delegateContext = context,
-      );
+  RenderObject createRenderObject(BuildContext context) =>
+      CanvasRenderBox(context, canvasDelegate..delegateContext = context);
 
   @override
   void updateRenderObject(BuildContext context, CanvasRenderBox renderObject) {
@@ -41,11 +39,13 @@ class CanvasWidget extends LeafRenderObjectWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty('canvasDelegate', canvasDelegate));
-    properties.add(FlagProperty(
-      'enableWidgetRender',
-      value: canvasDelegate.canvasStyle.enableWidgetRender,
-      ifTrue: "支持[Widget]渲染",
-    ));
+    properties.add(
+      FlagProperty(
+        'enableWidgetRender',
+        value: canvasDelegate.canvasStyle.enableWidgetRender,
+        ifTrue: "支持[Widget]渲染",
+      ),
+    );
   }
 }
 
@@ -146,10 +146,7 @@ class CanvasRenderObjectElement extends LeafRenderObjectElement {
   /// 安装一个[Widget]得到对应的[Element]
   /// 通过[Element.findRenderObject]获取对应的[RenderObject]
   @callPoint
-  Element? mountWidget(
-    Widget widget, {
-    Object? slot,
-  }) {
+  Element? mountWidget(Widget widget, {Object? slot}) {
     Element? widgetElement;
     final owner = this.owner;
     if (owner != null) {
@@ -203,18 +200,16 @@ class CanvasRenderBox extends RenderBox
 
   /// 焦点
   late final FocusNode _canvasFocusNode = FocusNode(
-      debugLabel: "CanvasRenderBoxFocusNode",
-      onKeyEvent: (node, event) {
-        if (onHandleKeyEventMixin(event)) {
-          return KeyEventResult.handled;
-        }
+    debugLabel: "CanvasRenderBoxFocusNode",
+    onKeyEvent: (node, event) {
+      if (onHandleKeyEventMixin(event)) {
         return KeyEventResult.handled;
-      });
-
-  CanvasRenderBox(
-    this.context,
-    this.canvasDelegate,
+      }
+      return KeyEventResult.handled;
+    },
   );
+
+  CanvasRenderBox(this.context, this.canvasDelegate);
 
   //region --core--
 
@@ -224,10 +219,12 @@ class CanvasRenderBox extends RenderBox
   @override
   void performLayout() {
     final constraints = this.constraints;
-    double? width =
-        constraints.maxWidth == double.infinity ? null : constraints.maxWidth;
-    double? height =
-        constraints.maxHeight == double.infinity ? null : constraints.maxHeight;
+    double? width = constraints.maxWidth == double.infinity
+        ? null
+        : constraints.maxWidth;
+    double? height = constraints.maxHeight == double.infinity
+        ? null
+        : constraints.maxHeight;
     //debugger();
     size = Size(
       width ?? height ?? screenWidth,
@@ -319,8 +316,9 @@ class CanvasRenderBox extends RenderBox
     }
     final hitInterceptBox = GestureHitInterceptScope.of(context);
     hitInterceptBox?.interceptHitBox = this;
-    context
-        .postNotification(PullBackControlNotification(event.isPointerFinish));
+    context.postNotification(
+      PullBackControlNotification(event.isPointerFinish),
+    );
     canvasDelegate.handleEvent(event, entry);
     /*assert((){
       l.w("handleEvent:${event.runtimeType} ${event.buttons}");
@@ -455,7 +453,8 @@ class CanvasRenderBox extends RenderBox
 
   @callPoint
   void visitWidgetElementPainter(
-      void Function(WidgetElementPainter element) visitor) {
+    void Function(WidgetElementPainter element) visitor,
+  ) {
     visitElementPainter((painter) {
       if (painter is WidgetElementPainter) {
         visitor(painter);
@@ -489,8 +488,8 @@ class CanvasRenderBox extends RenderBox
   @override
   MouseCursor get cursor => (canvasDelegate.isDragMode
       ? (canvasDelegate.isPointerDown
-          ? SystemMouseCursors.grabbing
-          : SystemMouseCursors.grab)
+            ? SystemMouseCursors.grabbing
+            : SystemMouseCursors.grab)
       : canvasDelegate.currentCursorStyle ?? MouseCursor.defer);
 
   @override
@@ -504,22 +503,18 @@ class CanvasRenderBox extends RenderBox
   @override
   bool get validForMouseTracker => _validForMouseTracker;
 
-//endregion --Mouse--
+  //endregion --Mouse--
 }
 
 /// 画布回调监听
 class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasPaint]
-  final void Function(
-    CanvasDelegate delegate,
-    int paintCount,
-  )? onCanvasPaintAction;
+  final void Function(CanvasDelegate delegate, int paintCount)?
+  onCanvasPaintAction;
 
   /// [CanvasDelegate.dispatchCanvasIdle]
-  final void Function(
-    CanvasDelegate delegate,
-    Duration lastRefreshTime,
-  )? onCanvasIdleAction;
+  final void Function(CanvasDelegate delegate, Duration lastRefreshTime)?
+  onCanvasIdleAction;
 
   /// [CanvasDelegate.dispatchCanvasViewBoxPaintBoundsChanged]
   final void Function(
@@ -527,20 +522,19 @@ class CanvasListener {
     Rect fromPaintBounds,
     Rect toPaintBounds,
     bool isFirstInitialize,
-  )? onCanvasViewBoxPaintBoundsChangedAction;
+  )?
+  onCanvasViewBoxPaintBoundsChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]
   final void Function(
     CanvasViewBox canvasViewBox,
     bool fromInitialize,
     bool isCompleted,
-  )? onCanvasViewBoxChangedAction;
+  )?
+  onCanvasViewBoxChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasUnitChanged]
-  final void Function(
-    IUnit from,
-    IUnit to,
-  )? onCanvasUnitChangedAction;
+  final void Function(IUnit from, IUnit to)? onCanvasUnitChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasSelectBoundsChanged]
   final void Function(Rect? bounds)? onCanvasSelectBoundsChangedAction;
@@ -553,7 +547,8 @@ class CanvasListener {
     PainterPropertyType propertyType,
     Object? fromObj,
     UndoType? fromUndoType,
-  )? onCanvasElementPropertyChangedAction;
+  )?
+  onCanvasElementPropertyChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementSelectChanged]
   /// 选择的元素改变后回调
@@ -563,7 +558,8 @@ class CanvasListener {
     List<ElementPainter>? from,
     List<ElementPainter>? to,
     ElementSelectType selectType,
-  )? onCanvasElementSelectChangedAction;
+  )?
+  onCanvasElementSelectChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasChooseSelectElementList]
   /// 按下时, 有多个元素需要被选中.
@@ -571,7 +567,8 @@ class CanvasListener {
     ElementSelectComponent selectComponent,
     List<ElementPainter>? list,
     ElementSelectType selectType,
-  )? onCanvasChooseSelectElementListAction;
+  )?
+  onCanvasChooseSelectElementListAction;
 
   /// [CanvasDelegate.dispatchCanvasElementListChanged]
   /// 元素列表发生改变
@@ -581,19 +578,16 @@ class CanvasListener {
     List<ElementPainter> op,
     ElementChangeType changeType,
     UndoType undoType,
-  )? onCanvasElementListChangedAction;
+  )?
+  onCanvasElementListChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementListAddChanged]
-  final void Function(
-    List<ElementPainter> list,
-    List<ElementPainter> op,
-  )? onCanvasElementListAddChanged;
+  final void Function(List<ElementPainter> list, List<ElementPainter> op)?
+  onCanvasElementListAddChanged;
 
   /// [CanvasDelegate.dispatchCanvasElementListRemoveChanged]
-  final void Function(
-    List<ElementPainter> list,
-    List<ElementPainter> op,
-  )? onCanvasElementListRemoveChanged;
+  final void Function(List<ElementPainter> list, List<ElementPainter> op)?
+  onCanvasElementListRemoveChanged;
 
   /// [CanvasDelegate.dispatchDoubleTapElement]
   final void Function(ElementPainter elementPainter)? onDoubleTapElementAction;
@@ -602,14 +596,16 @@ class CanvasListener {
   final void Function(
     List<ElementPainter> elementList,
     TouchDetectorType touchType,
-  )? onTouchDetectorElement;
+  )?
+  onTouchDetectorElement;
 
   /// [CanvasDelegate.dispatchTranslateElement]
   final void Function(
     ElementPainter? targetElement,
     bool isFirstTranslate,
     bool isEnd,
-  )? onTranslateElementAction;
+  )?
+  onTranslateElementAction;
 
   /// [CanvasDelegate.dispatchPointerDown]
   final void Function(
@@ -617,7 +613,8 @@ class CanvasListener {
     ElementMenu? downMenu,
     List<ElementPainter>? downElementList,
     bool isRepeatSelect,
-  )? onPointerDownAction;
+  )?
+  onPointerDownAction;
 
   /// [CanvasDelegate.dispatchElementTapMenu]
   final void Function(ElementMenu menu)? onElementTapMenuAction;
@@ -627,17 +624,16 @@ class CanvasListener {
     required BaseControl control,
     ElementPainter? controlElement,
     required ControlStateEnum state,
-  })? onControlStateChangedAction;
+  })?
+  onControlStateChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasUndoChanged]
   /// 回退栈发生改变时回调
   final void Function(CanvasUndoManager undoManager)? onCanvasUndoChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasGroupChanged]
-  final void Function(
-    ElementGroupPainter group,
-    List<ElementPainter> elements,
-  )? onCanvasGroupChangedAction;
+  final void Function(ElementGroupPainter group, List<ElementPainter> elements)?
+  onCanvasGroupChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasUngroupChanged]
   final void Function(ElementGroupPainter group)? onCanvasUngroupChangedAction;
@@ -647,22 +643,26 @@ class CanvasListener {
 
   /// [CanvasDelegate.dispatchCanvasMultiStateChanged]
   final void Function(CanvasStateData canvasStateData, CanvasStateType type)?
-      onCanvasMultiStateChanged;
+  onCanvasMultiStateChanged;
 
   /// [CanvasDelegate.dispatchCanvasMultiStateListChanged]
   final void Function(List<CanvasStateData> to)? onCanvasMultiStateListChanged;
 
   /// [CanvasDelegate.dispatchCanvasSelectedStateChanged]
-  final void Function(CanvasStateData? from, CanvasStateData? to,
-      ElementSelectType selectType)? onCanvasSelectedStateChanged;
+  final void Function(
+    CanvasStateData? from,
+    CanvasStateData? to,
+    ElementSelectType selectType,
+  )?
+  onCanvasSelectedStateChanged;
 
   /// [CanvasDelegate.dispatchElementAttachToCanvasDelegate]
   final void Function(CanvasDelegate delegate, IElementPainter painter)?
-      onElementAttachToCanvasDelegate;
+  onElementAttachToCanvasDelegate;
 
   /// [CanvasDelegate.dispatchElementDetachFromCanvasDelegate]
   final void Function(CanvasDelegate delegate, IElementPainter painter)?
-      onElementDetachFromCanvasDelegate;
+  onElementDetachFromCanvasDelegate;
 
   /// [CanvasDelegate.dispatchBuildCanvasMenu]
   /// [onCreateElementMenuAction]
@@ -671,33 +671,35 @@ class CanvasListener {
     CanvasDelegate delegate,
     CanvasMenuManager manager,
     List<Widget> menus,
-  )? onBuildCanvasMenu;
+  )?
+  onBuildCanvasMenu;
 
   /// [CanvasDelegate.dispatchKeyEvent]
   final bool Function(
     CanvasDelegate delegate,
     RenderObject render,
     KeyEvent event,
-  )? onKeyEventAction;
+  )?
+  onKeyEventAction;
 
   /// [CanvasDelegate.dispatchPointerEvent]
   final bool Function(
     CanvasDelegate delegate,
     @viewCoordinate PointerEvent event,
-  )? onPointerEventAction;
+  )?
+  onPointerEventAction;
 
   /// [CanvasDelegate.dispatchCanvasStyleModeChanged]
   final void Function(
     CanvasDelegate delegate,
     CanvasStyleMode from,
     CanvasStyleMode to,
-  )? onCanvasStyleModeChangedAction;
+  )?
+  onCanvasStyleModeChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasOpenProject]
-  final void Function(
-    CanvasDelegate delegate,
-    dynamic project,
-  )? onCanvasOpenProject;
+  final void Function(CanvasDelegate delegate, dynamic project)?
+  onCanvasOpenProject;
 
   CanvasListener({
     this.onCanvasPaintAction,
