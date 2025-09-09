@@ -12,16 +12,16 @@ class ControlLimit {
   //---
 
   @dp
-  double? minLeft = -10000;
+  double? minLeft = -999999;
 
   @dp
-  double? maxLeft = 10000;
+  double? maxLeft = 999999;
 
   @dp
-  double? minTop = -10000;
+  double? minTop = -999999;
 
   @dp
-  double? maxTop = 10000;
+  double? maxTop = 999999;
 
   ///限制元素最小的宽度
   @dp
@@ -33,11 +33,11 @@ class ControlLimit {
 
   /// 限制元素最大的宽度
   @dp
-  double? elementMaxWidth = 10000;
+  double? elementMaxWidth = 999999;
 
   /// 限制元素最大的高度
   @dp
-  double? elementMaxHeight = 10000;
+  double? elementMaxHeight = 999999;
 
   //---
 
