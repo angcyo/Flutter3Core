@@ -107,8 +107,11 @@ extension PathEx on Path {
       final cy = center.y;
 
       final lt = getCirclePoint(center, r + size, startAngle.hd);
-      final rt =
-          getCirclePoint(center, r + size, startAngle.hd + sweepAngle.hd);
+      final rt = getCirclePoint(
+        center,
+        r + size,
+        startAngle.hd + sweepAngle.hd,
+      );
       final lb = getCirclePoint(center, r, startAngle.hd);
       final rb = getCirclePoint(center, r, startAngle.hd + sweepAngle.hd);
 
@@ -139,10 +142,7 @@ extension PathEx on Path {
   /// [PathEx.getExactBounds]
   /// [ListPathEx.getExactBounds]
   @dp
-  Rect getExactBounds([
-    bool? exact,
-    double? pathAcceptableError = 1,
-  ]) {
+  Rect getExactBounds([bool? exact, double? pathAcceptableError = 1]) {
     //debugger();
     exact ??= kExactBounds;
     if (exact != true) {
@@ -174,11 +174,8 @@ extension PathEx on Path {
   /// [Path.fillType]
   /// [PathFillType]
   /// [PathFillType.evenOdd]
-  Path op(Path other, PathOperation operation) => Path.combine(
-        operation,
-        this,
-        other,
-      );
+  Path op(Path other, PathOperation operation) =>
+      Path.combine(operation, this, other);
 
   /// 是否包含指定点
   bool contains(Offset offset) => this.contains(offset);
@@ -188,11 +185,7 @@ extension PathEx on Path {
 
   /// 是否和另一个路径相交
   bool intersects(Path other) {
-    final intersection = Path.combine(
-      PathOperation.intersect,
-      this,
-      other,
-    );
+    final intersection = Path.combine(PathOperation.intersect, this, other);
     return !intersection.isEmpty;
   }
 
@@ -200,11 +193,7 @@ extension PathEx on Path {
   ///
   /// - 2个[Path]需要相交
   bool containsPath(Path other) {
-    final diff = Path.combine(
-      PathOperation.difference,
-      other,
-      this,
-    );
+    final diff = Path.combine(PathOperation.difference, other, this);
     return diff.isEmpty;
   }
 
@@ -258,14 +247,16 @@ extension PathEx on Path {
         }
         contour = [];
       }
-      contour?.add(PathPointInfo(
-        posIndex: posIndex,
-        ratio: ratio,
-        contourIndex: contourIndex,
-        position: position,
-        angle: angle,
-        isClosed: isClose,
-      ));
+      contour?.add(
+        PathPointInfo(
+          posIndex: posIndex,
+          ratio: ratio,
+          contourIndex: contourIndex,
+          position: position,
+          angle: angle,
+          isClosed: isClose,
+        ),
+      );
     }, step);
     if (contour != null) {
       result.add(contour!);
@@ -313,12 +304,13 @@ extension PathEx on Path {
         //到达开始位置
         final partStart = start - startLength;
         path.addPath(
-            metric.extractPath(
-              partStart,
-              partStart + min(extractLength, length - partStart),
-              startWithMoveTo: startWithMoveTo,
-            ),
-            Offset.zero);
+          metric.extractPath(
+            partStart,
+            partStart + min(extractLength, length - partStart),
+            startWithMoveTo: startWithMoveTo,
+          ),
+          Offset.zero,
+        );
       } else if (end < startLength) {
         //到达结束位置
         break;
@@ -355,7 +347,8 @@ extension PathEx on Path {
       Offset position,
       double angle,
       bool isClosed,
-    ) action, [
+    )
+    action, [
     @dp double? step,
   ]) {
     final metrics = computeMetrics();
@@ -420,7 +413,8 @@ extension PathEx on Path {
       Offset position,
       double angle,
       bool isClosed,
-    ) action, [
+    )
+    action, [
     @dp double? step,
     int? contourInterval /*轮廓枚举延迟*/,
     int? stepInterval /*步长枚举延迟*/,
@@ -576,15 +570,13 @@ extension PathEx on Path {
   /// dp 单位的[Path] 转换成 mm 单位的[Path]
   /// [scaleToUnit]
   @mm
-  Path scaleToMm() => scaleToUnit(IUnit.mm);
+  Path scaleToMm({bool? enable}) =>
+      enable != false ? scaleToUnit(IUnit.mm) : this;
 
   /// 将路径缩放到指定的单位大小
   /// @return 返回新的路径
   @unit
-  Path scaleToUnit([
-    IUnit unit = IUnit.mm,
-    Offset? scaleAnchor = Offset.zero,
-  ]) {
+  Path scaleToUnit([IUnit unit = IUnit.mm, Offset? scaleAnchor = Offset.zero]) {
     final scale = 1.toUnitFromDp(unit);
     final scaleMatrix = createScaleMatrix(scale: scale, anchor: scaleAnchor);
     return transformPath(scaleMatrix);
@@ -592,10 +584,7 @@ extension PathEx on Path {
 
   /// mm 单位的[Path] 转换成 dp 单位的[Path]
   @dp
-  Path scaleToDp([
-    IUnit unit = IUnit.mm,
-    Offset? scaleAnchor = Offset.zero,
-  ]) {
+  Path scaleToDp([IUnit unit = IUnit.mm, Offset? scaleAnchor = Offset.zero]) {
     final scale = IUnit.dp.toUnitFromUnit(unit, 1);
     final scaleMatrix = createScaleMatrix(scale: scale, anchor: scaleAnchor);
     return transformPath(scaleMatrix);
@@ -655,10 +644,7 @@ extension ListPathEx on List<Path> {
   /// [PathEx.getExactBounds]
   /// [ListPathEx.getExactBounds]
   @dp
-  Rect getExactBounds([
-    bool? exact,
-    double? pathAcceptableError,
-  ]) {
+  Rect getExactBounds([bool? exact, double? pathAcceptableError]) {
     Rect? rect;
     for (final path in this) {
       final bounds = path.getExactBounds(exact, pathAcceptableError);
@@ -728,8 +714,7 @@ extension ListPathEx on List<Path> {
     EdgeInsets padding = EdgeInsets.zero,
     Color color = Colors.black,
     double width = 1,
-  }) async =>
-      toUiImageSync(padding: padding, color: color, width: width);
+  }) async => toUiImageSync(padding: padding, color: color, width: width);
 
   /// [toUiImage]
   /// [ImageEx.toBase64]
@@ -738,8 +723,11 @@ extension ListPathEx on List<Path> {
     Color color = Colors.black,
     double width = 1,
   }) async {
-    final uiImage =
-        await toUiImage(padding: padding, color: color, width: width);
+    final uiImage = await toUiImage(
+      padding: padding,
+      color: color,
+      width: width,
+    );
     return uiImage.toBase64();
   }
 
@@ -754,8 +742,9 @@ extension ListPathEx on List<Path> {
     final width = (bounds.width + padding.horizontal).ensureValid();
     final height = (bounds.height + padding.vertical).ensureValid();
 
-    return drawImageSync(ui.Size(math.max(1, width), math.max(1, height)),
-        (canvas) {
+    return drawImageSync(ui.Size(math.max(1, width), math.max(1, height)), (
+      canvas,
+    ) {
       final paint = Paint()
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round
