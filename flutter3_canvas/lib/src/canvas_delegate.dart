@@ -728,6 +728,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void selectElementList(
     List<ElementPainter>? elementPainters, {
     bool followPainter = true,
+    EdgeInsets? margin,
+    BoxFit? fit,
+    //--
     ElementSelectType selectType = ElementSelectType.user,
   }) {
     canvasElementManager.resetSelectedElementList(
@@ -735,7 +738,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       selectType: selectType,
     );
     if (followPainter && !isNil(elementPainters)) {
-      followRect(rect: elementPainters?.allElementBounds);
+      followRect(
+        rect: elementPainters?.allElementBounds,
+        margin: margin,
+        fit: fit,
+      );
     }
   }
 

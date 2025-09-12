@@ -647,6 +647,8 @@ extension ColorEx on Color {
   /// ARGB
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
   /// [def] 失败后的默认颜色
+  /// - [toHex]
+  /// - [toHexColor]
   static Color? fromHex(String hexString) {
     try {
       if (hexString.startsWith("0x")) {
@@ -696,9 +698,11 @@ extension ColorEx on Color {
 
   /// 返回小写的十六进制字符串, ARGB
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
-  /// [leadingHashSign] 是否包含#
-  /// [includeAlpha] 是否包含透明通道
-  /// [toHexColor]
+  /// - [leadingHashSign] 是否包含#
+  /// - [includeAlpha] 是否包含透明通道
+  ///
+  /// - [toHex]
+  /// - [toHexColor]
   String toHex({bool leadingHashSign = true, bool includeAlpha = true}) =>
       '${leadingHashSign ? '#' : ''}'
       '${includeAlpha ? alpha.toRadixString(16).padLeft(2, '0') : ""}'
@@ -706,8 +710,12 @@ extension ColorEx on Color {
       '${green.toRadixString(16).padLeft(2, '0')}'
       '${blue.toRadixString(16).padLeft(2, '0')}';
 
-  /// 返回#ff00ff00
-  /// [toHex]
+  /// 返回#ff00ff00, ARGB
+  /// - [leadingHashSign] 是否包含#
+  /// - [includeAlpha] 是否包含透明通道
+  ///
+  /// - [toHex]
+  /// - [toHexColor]
   String toHexColor([bool leadingHashSign = true, bool includeAlpha = true]) =>
       toHex(leadingHashSign: leadingHashSign, includeAlpha: includeAlpha);
 

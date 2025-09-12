@@ -749,7 +749,8 @@ class ElementPainter extends IElementPainter {
     paintMeta.withPaintMatrix(canvas, () {
       //--
       onPaintingSelfBefore(canvas, paintMeta);
-      if (paintState.isHover || paintState.color != null) {
+      final updateTempColor = paintState.isHover || paintState.color != null;
+      if (updateTempColor) {
         //--临时颜色/悬停绘制颜色支持
         updatePainterPaintProperty(
           fromObj: this,
@@ -759,7 +760,7 @@ class ElementPainter extends IElementPainter {
       }
       //--
       onPaintingSelf(canvas, paintMeta);
-      if (paintState.isHover || paintState.color != null) {
+      if (updateTempColor) {
         //恢复临时颜色
         updatePainterPaintProperty(
           fromObj: this,
