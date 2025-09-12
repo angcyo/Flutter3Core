@@ -69,7 +69,7 @@ Future<FilePickerResult?> pickFiles({
     initialDirectory: initialDirectory,
     type: type,
     allowedExtensions: allowedExtensions,
-    compressionQuality: allowCompression ? (compressionQuality ?? 30) : 100,
+    compressionQuality: allowCompression ? (compressionQuality ?? 30) : 0,
     onFileLoading: onFileLoading,
     allowCompression: allowCompression,
     allowMultiple: allowMultiple,
