@@ -11,7 +11,8 @@ part of '../../flutter3_pub.dart';
 extension ZipEx on String {
   /// 遍历压缩包中的文件
   Future<bool> eachArchiveFile(
-      FutureOr Function(ArchiveFile archive) action) async {
+    FutureOr Function(ArchiveFile archive) action,
+  ) async {
     final input = InputFileStream(this);
     try {
       final archive = ZipDecoder().decodeStream(input);
@@ -27,7 +28,8 @@ extension ZipEx on String {
   /// 修改指定压缩包中的文件
   /// [action] 修改文件的回调, 返回null 则删除了文件
   Future<bool> modifyArchiveFile(
-      Future<ArchiveFile?> Function(ArchiveFile archive) action) async {
+    Future<ArchiveFile?> Function(ArchiveFile archive) action,
+  ) async {
     final tempCacheFilePath = await cacheFilePath(uuidFileName());
     final targetZipFilePath = this;
     final result = await tempCacheFilePath.writeZipFile((zipEncoder) async {
@@ -150,21 +152,18 @@ extension ZipFileEncoderEx on ZipFileEncoder {
   /// [InputStream]
   /// [name] 名称
   /// [compress] 是否压缩
-  void writeBytesSync(
-    Uint8List? bytes,
-    String? name, {
-    bool compress = true,
-  }) {
+  void writeBytesSync(Uint8List? bytes, String? name, {bool compress = true}) {
     if (bytes == null || name == null) {
       return;
     }
     if (isNil(bytes)) {
       return;
     }
-    addArchiveFile(compress
-        ? ArchiveFile(name, 0, bytes) /*用0, 内部会自动使用length*/
-        : ArchiveFile.bytes(name,
-            bytes)) /*ArchiveFile.noCompress(name, bytes.length, bytes))*/;
+    addArchiveFile(
+      compress
+          ? ArchiveFile.bytes(name, bytes)
+          : ArchiveFile.noCompress(name, bytes.length, bytes),
+    );
   }
 
   /// [writeBytesSync]
@@ -172,10 +171,9 @@ extension ZipFileEncoderEx on ZipFileEncoder {
     Uint8List? bytes,
     String? name, {
     bool compress = true,
-  }) async =>
-      () async {
-        return writeBytesSync(bytes, name, compress: compress);
-      }();
+  }) async => () async {
+    return writeBytesSync(bytes, name, compress: compress);
+  }();
 
   /// 写入[UiImage]
   /// [Uint8List]
@@ -197,11 +195,7 @@ extension ZipFileEncoderEx on ZipFileEncoder {
   /// [content] 字符内容
   /// [name] 名称
   /// [compress] 是否要将[content]使用[utf8.encode]变成[Uint8List]
-  void writeStringSync(
-    String? content,
-    String? name, {
-    bool compress = false,
-  }) {
+  void writeStringSync(String? content, String? name, {bool compress = true}) {
     //debugger();
     if (content == null || name == null) {
       return;
@@ -210,8 +204,8 @@ extension ZipFileEncoderEx on ZipFileEncoder {
       addArchiveFile(ArchiveFile.string(name, content));
     } else {
       final bytes = content.bytes; //[utf8.encode]
-      //addArchiveFile(ArchiveFile.noCompress(name, bytes.size(), bytes));
-      addArchiveFile(ArchiveFile.bytes(name, bytes));
+      addArchiveFile(ArchiveFile.noCompress(name, bytes.size(), bytes));
+      //addArchiveFile(ArchiveFile.bytes(name, bytes));
     }
   }
 
@@ -219,11 +213,10 @@ extension ZipFileEncoderEx on ZipFileEncoder {
   Future writeString(
     String? content,
     String? name, {
-    bool compress = false,
-  }) async =>
-      () async {
-        return writeStringSync(content, name, compress: compress);
-      }();
+    bool compress = true,
+  }) async => () async {
+    return writeStringSync(content, name, compress: compress);
+  }();
 }
 
 extension ArchiveEx on Archive {
