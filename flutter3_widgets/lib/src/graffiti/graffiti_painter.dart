@@ -60,7 +60,7 @@ class GraffitiPainter extends IPainter
   @output
   String? outputPathString;
 
-//endregion ---output---
+  //endregion ---output---
 }
 
 /// 铅笔数据绘制, 宽度一致
@@ -124,25 +124,33 @@ class GraffitiFountainPenPainter extends GraffitiPainter
         path = Path();
         path?.moveTo(curveBezierMeta.start.x, curveBezierMeta.start.y);
         pathBuffer = StringBuffer();
-        pathBuffer
-            ?.write('M ${curveBezierMeta.start.x} ${curveBezierMeta.start.y}');
+        pathBuffer?.write(
+          'M ${formatValue(curveBezierMeta.start.x)} ${formatValue(curveBezierMeta.start.y)}',
+        );
       }
 
       //--
       path?.cubicTo(
-          curveBezierMeta.c1.x,
-          curveBezierMeta.c1.y,
-          curveBezierMeta.c2.x,
-          curveBezierMeta.c2.y,
-          curveBezierMeta.end.x,
-          curveBezierMeta.end.y);
+        curveBezierMeta.c1.x,
+        curveBezierMeta.c1.y,
+        curveBezierMeta.c2.x,
+        curveBezierMeta.c2.y,
+        curveBezierMeta.end.x,
+        curveBezierMeta.end.y,
+      );
       pathBuffer?.write(
-          'C ${curveBezierMeta.c1.x} ${curveBezierMeta.c1.y} ${curveBezierMeta.c2.x} ${curveBezierMeta.c2.y} ${curveBezierMeta.end.x} ${curveBezierMeta.end.y}');
+        'C ${formatValue(curveBezierMeta.c1.x)} ${formatValue(curveBezierMeta.c1.y)} '
+        '${formatValue(curveBezierMeta.c2.x)} ${formatValue(curveBezierMeta.c2.y)} '
+        '${formatValue(curveBezierMeta.end.x)} ${formatValue(curveBezierMeta.end.y)}',
+      );
 
       //--
       pointListCache.removeFirstIfNotEmpty();
     }
   }
+
+  /// 格式化数字
+  String formatValue(double value) => value.toDigits(digits: 6);
 }
 
 /// 毛笔数据绘制, 宽度不等
@@ -184,9 +192,10 @@ class GraffitiBrushPenPainter extends GraffitiPainter
     if (points.isNotEmpty) {
       // 绘制椭圆
       final Rect rect = Rect.fromCenter(
-          center: Offset(points[0].dx, points[0].dy),
-          width: originalWidth - 1,
-          height: originalWidth + 2);
+        center: Offset(points[0].dx, points[0].dy),
+        width: originalWidth - 1,
+        height: originalWidth + 2,
+      );
 
       paint.strokeWidth = 0;
       paint.style = PaintingStyle.fill;
@@ -201,12 +210,7 @@ class GraffitiBrushPenPainter extends GraffitiPainter
           (points[i].dx + points[i + 1].dx) / 2,
           (points[i].dy + points[i + 1].dy) / 2,
         );
-        path.quadraticBezierTo(
-          points[i].dx,
-          points[i].dy,
-          mid.dx,
-          mid.dy,
-        );
+        path.quadraticBezierTo(points[i].dx, points[i].dy, mid.dx, mid.dy);
       }
       path.lineTo(points.last.dx, points.last.dy);
 
@@ -226,7 +230,8 @@ class GraffitiBrushPenPainter extends GraffitiPainter
 
         for (double i = startPosition; i < segmentLength; i += 1.0) {
           // 计算 segmentLength - 60开始的宽度递减
-          double width = originalWidth -
+          double width =
+              originalWidth -
               ((i - startPosition) / (segmentLength - startPosition)) *
                   (originalWidth - minWidth);
           width = width.clamp(minWidth, originalWidth);
@@ -269,7 +274,8 @@ class GraffitiBrushPenPainter extends GraffitiPainter
 
       double velocity = endPoint.velocityFrom(startPoint);
 
-      velocity = velocityFilterWeight * velocity +
+      velocity =
+          velocityFilterWeight * velocity +
           (1 - velocityFilterWeight) * _lastVelocity;
       velocity = velocity.ensureValid();
 
@@ -321,8 +327,11 @@ class GraffitiBrushPenPainter extends GraffitiPainter
         y += ttt * curveBezierMeta.end.y;
 
         // Set the incremental stroke width and draw.
-        final pointMeta = PointEventMeta(ui.Offset(x, y), nowTimestamp(),
-            width: startWidth + ttt * widthDelta);
+        final pointMeta = PointEventMeta(
+          ui.Offset(x, y),
+          nowTimestamp(),
+          width: startWidth + ttt * widthDelta,
+        );
         points.add(pointMeta);
       }
 

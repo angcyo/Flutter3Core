@@ -13,6 +13,10 @@ class SvgBuilder {
   /// [SvgBuilder.svgHeaderAnnotation]
   static String? customSvgHeaderAnnotation;
 
+  /// 格式化数字
+  static String? formatValue(dynamic value, {int digits = 6}) =>
+      value is num ? value.toDigits(digits: digits) : value.toString();
+
   /// svg xml头部
   @configProperty
   String svgHeader = '<?xml version="1.0" encoding="UTF-8"?>';
@@ -28,7 +32,7 @@ class SvgBuilder {
 
   /// 浮点小数点位数
   @configProperty
-  int digits = 15;
+  int digits = 6;
 
   @configProperty
   int version = 1;
@@ -88,24 +92,30 @@ class SvgBuilder {
     if (bounds != null) {
       //l t w h
       buffer.write(
-          'viewBox="${formatValue(bounds.left)} ${formatValue(bounds.top)} '
-          '${formatValue(bounds.width)} ${formatValue(bounds.height)}" ');
+        'viewBox="${formatSvgValue(bounds.left)} ${formatSvgValue(bounds.top)} '
+        '${formatSvgValue(bounds.width)} ${formatSvgValue(bounds.height)}" ',
+      );
       boundsMm ??= bounds.toRectUnit(boundsUnit);
     }
 
     //--
     if (boundsMm != null) {
       if (writeSvgProperty) {
-        buffer.write('width="${formatValue(boundsMm.width)}${IUnit.mm.suffix}" '
-            'height="${formatValue(boundsMm.height)}${IUnit.mm.suffix}" ');
+        buffer.write(
+          'width="${formatSvgValue(boundsMm.width)}${IUnit.mm.suffix}" '
+          'height="${formatSvgValue(boundsMm.height)}${IUnit.mm.suffix}" ',
+        );
       }
       if (writeAcyProperty) {
         buffer.write(
-            'acy:width="${formatValue(boundsMm.width)}${IUnit.mm.suffix}" '
-            'acy:height="${formatValue(boundsMm.height)}${IUnit.mm.suffix}" ');
+          'acy:width="${formatSvgValue(boundsMm.width)}${IUnit.mm.suffix}" '
+          'acy:height="${formatSvgValue(boundsMm.height)}${IUnit.mm.suffix}" ',
+        );
 
-        buffer.write('acy:x="${formatValue(boundsMm.left)}${IUnit.mm.suffix}" '
-            'acy:y="${formatValue(boundsMm.top)}${IUnit.mm.suffix}" ');
+        buffer.write(
+          'acy:x="${formatSvgValue(boundsMm.left)}${IUnit.mm.suffix}" '
+          'acy:y="${formatSvgValue(boundsMm.top)}${IUnit.mm.suffix}" ',
+        );
       }
     }
     if (boundsUnit != null) {
@@ -118,7 +128,8 @@ class SvgBuilder {
     //--
     if (writeAcyProperty || writeSvgProperty) {
       buffer.write(
-          'acy:author="$author" acy:version="$version" acy:build="${nowTimeString()}" ');
+        'acy:author="$author" acy:version="$version" acy:build="${nowTimeString()}" ',
+      );
     }
     //
     attributes?.forEach((key, value) {
@@ -166,16 +177,16 @@ class SvgBuilder {
     buffer.write('<line ');
     writeId(id: id, name: name);
     if (x1 != null) {
-      buffer.write('x1="${formatValue(x1)}" ');
+      buffer.write('x1="${formatSvgValue(x1)}" ');
     }
     if (y1 != null) {
-      buffer.write('y1="${formatValue(y1)}" ');
+      buffer.write('y1="${formatSvgValue(y1)}" ');
     }
     if (x2 != null) {
-      buffer.write('x2="${formatValue(x2)}" ');
+      buffer.write('x2="${formatSvgValue(x2)}" ');
     }
     if (y2 != null) {
-      buffer.write('y2="${formatValue(y2)}" ');
+      buffer.write('y2="${formatSvgValue(y2)}" ');
     }
     writeStyle(
       fillRule: fillRule,
@@ -214,16 +225,16 @@ class SvgBuilder {
     buffer.write('<ellipse ');
     writeId(id: id, name: name);
     if (cx != null) {
-      buffer.write('cx="${formatValue(cx)}" ');
+      buffer.write('cx="${formatSvgValue(cx)}" ');
     }
     if (cy != null) {
-      buffer.write('cy="${formatValue(cy)}" ');
+      buffer.write('cy="${formatSvgValue(cy)}" ');
     }
     if (rx != null) {
-      buffer.write('rx="${formatValue(rx)}" ');
+      buffer.write('rx="${formatSvgValue(rx)}" ');
     }
     if (ry != null) {
-      buffer.write('ry="${formatValue(ry)}" ');
+      buffer.write('ry="${formatSvgValue(ry)}" ');
     }
     writeStyle(
       fillRule: fillRule,
@@ -264,18 +275,18 @@ class SvgBuilder {
     buffer.write('<rect ');
     writeId(id: id, name: name);
     if (x != null) {
-      buffer.write('x="${formatValue(x)}" ');
+      buffer.write('x="${formatSvgValue(x)}" ');
     }
     if (y != null) {
-      buffer.write('y="${formatValue(y)}" ');
+      buffer.write('y="${formatSvgValue(y)}" ');
     }
-    buffer.write('width="${formatValue(width)}" ');
-    buffer.write('height="${formatValue(height)}" ');
+    buffer.write('width="${formatSvgValue(width)}" ');
+    buffer.write('height="${formatSvgValue(height)}" ');
     if (rx != null) {
-      buffer.write('rx="${formatValue(rx)}" ');
+      buffer.write('rx="${formatSvgValue(rx)}" ');
     }
     if (ry != null) {
-      buffer.write('ry="${formatValue(ry)}" ');
+      buffer.write('ry="${formatSvgValue(ry)}" ');
     }
     writeStyle(
       fillRule: fillRule,
@@ -463,15 +474,19 @@ class SvgBuilder {
       if (scaleImageFactor != null && scaleImageFactor != 1) {
         //debugger();
         //需要缩放图片
-        final scaleMatrix =
-            createScaleMatrix(sx: scaleImageFactor, sy: scaleImageFactor);
+        final scaleMatrix = createScaleMatrix(
+          sx: scaleImageFactor,
+          sy: scaleImageFactor,
+        );
         image = await image.scale(scaleMatrix: scaleMatrix);
 
         //矩阵反向缩放
         invertScaleImageMatrix ??= true;
         if (invertScaleImageMatrix == true) {
           final scaleInvertMatrix = createScaleMatrix(
-              sx: 1 / scaleImageFactor, sy: 1 / scaleImageFactor);
+            sx: 1 / scaleImageFactor,
+            sy: 1 / scaleImageFactor,
+          );
           transform ??= Matrix4.identity();
           transform = transform * scaleInvertMatrix;
         }
@@ -523,17 +538,17 @@ class SvgBuilder {
       writeId(id: id, name: name);
       //--
       if (x != null) {
-        buffer.write('x="${formatValue(x)}" ');
+        buffer.write('x="${formatSvgValue(x)}" ');
       }
       if (y != null) {
-        buffer.write('y="${formatValue(y)}" ');
+        buffer.write('y="${formatSvgValue(y)}" ');
       }
       //--
       if (width != null) {
-        buffer.write('width="${formatValue(width)}" ');
+        buffer.write('width="${formatSvgValue(width)}" ');
       }
       if (height != null) {
-        buffer.write('height="${formatValue(height)}" ');
+        buffer.write('height="${formatSvgValue(height)}" ');
       }
       writeTransform(transform: transform);
       writeAttributes(attributes);
@@ -567,13 +582,13 @@ class SvgBuilder {
     buffer.write('<text ');
     writeId(id: id, name: name);
     if (x != null) {
-      buffer.write('x="${formatValue(x)}" ');
+      buffer.write('x="${formatSvgValue(x)}" ');
     }
     if (y != null) {
-      buffer.write('y="${formatValue(y)}" ');
+      buffer.write('y="${formatSvgValue(y)}" ');
     }
     if (fontSize != null) {
-      buffer.write('font-size="${formatValue(fontSize)}" ');
+      buffer.write('font-size="${formatSvgValue(fontSize)}" ');
     }
     if (color != null) {
       buffer.write('fill="${color.toHex(includeAlpha: false)}" ');
@@ -620,19 +635,19 @@ class SvgBuilder {
       buffer.write('<tspan ');
       writeId(id: id, name: name);
       if (x != null) {
-        buffer.write('x="${formatValue(x)}" ');
+        buffer.write('x="${formatSvgValue(x)}" ');
       }
       if (y != null) {
-        buffer.write('y="${formatValue(y)}" ');
+        buffer.write('y="${formatSvgValue(y)}" ');
       }
       if (dx != null) {
-        buffer.write('dx="${formatValue(dx)}" ');
+        buffer.write('dx="${formatSvgValue(dx)}" ');
       }
       if (dy != null) {
-        buffer.write('dy="${formatValue(dy)}" ');
+        buffer.write('dy="${formatSvgValue(dy)}" ');
       }
       if (fontSize != null) {
-        buffer.write('font-size="${formatValue(fontSize)}" ');
+        buffer.write('font-size="${formatSvgValue(fontSize)}" ');
       }
       if (color != null) {
         buffer.write('fill="${color.toHex(includeAlpha: false)}" ');
@@ -732,10 +747,7 @@ class SvgBuilder {
 
   /// 写入[id].[name]属性
   /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/id
-  void writeId({
-    String? id,
-    String? name,
-  }) {
+  void writeId({String? id, String? name}) {
     if (!isNil(id)) {
       buffer.write('id="$id" ');
     }
@@ -756,7 +768,8 @@ class SvgBuilder {
     //--
     if (fill == true) {
       buffer.write(
-          'fill="${(fillColor ?? Colors.black).toHex(includeAlpha: false)}" ');
+        'fill="${(fillColor ?? Colors.black).toHex(includeAlpha: false)}" ',
+      );
 
       if (fillRule != null) {
         buffer.write('fill-rule="$fillRule" ');
@@ -767,7 +780,8 @@ class SvgBuilder {
     //--
     if (stroke == true) {
       buffer.write(
-          'stroke="${(strokeColor ?? Colors.black).toHex(includeAlpha: false)}" ');
+        'stroke="${(strokeColor ?? Colors.black).toHex(includeAlpha: false)}" ',
+      );
       if (strokeWidth != null) {
         buffer.write('stroke-width="$strokeWidth" ');
       }
@@ -878,7 +892,8 @@ class SvgBuilder {
     kx ??= transform?.skewX ?? 0;
     ky ??= transform?.skewY ?? 0;
     buffer.write(
-        "matrix(${formatValue(sx)} ${formatValue(ky)} ${formatValue(kx)} ${formatValue(sy)} ${formatValue(tx)} ${formatValue(ty)})");
+      "matrix(${formatSvgValue(sx)} ${formatSvgValue(ky)} ${formatSvgValue(kx)} ${formatSvgValue(sy)} ${formatSvgValue(tx)} ${formatSvgValue(ty)})",
+    );
     buffer.write('" ');
   }
 
@@ -896,8 +911,7 @@ class SvgBuilder {
   //endregion --属性--
 
   /// 格式化数字
-  String? formatValue(dynamic value) =>
-      value is num ? value.toDigits(digits: digits) : value.toString();
+  String? formatSvgValue(dynamic value) => formatValue(value, digits: digits);
 
   @output
   String build() {
