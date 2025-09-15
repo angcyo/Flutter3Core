@@ -257,6 +257,9 @@ PaintDecoration paintDecoration(PaintFn? paint) => PaintDecoration(paint);
 /// [BorderSide.none]
 /// [InputDecoration]
 /// [OutlineInputBorder]
+///
+/// - [outlineInputBorder]
+/// - [underlineInputBorder]
 OutlineInputBorder outlineInputBorder({
   BuildContext? context,
   Color? color,
@@ -281,6 +284,9 @@ OutlineInputBorder outlineInputBorder({
 
 /// [InputDecoration]
 /// [UnderlineInputBorder]
+///
+/// - [outlineInputBorder]
+/// - [underlineInputBorder]
 UnderlineInputBorder underlineInputBorder({
   BuildContext? context,
   Color? color,

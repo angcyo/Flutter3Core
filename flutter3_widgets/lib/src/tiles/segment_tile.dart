@@ -448,7 +448,7 @@ class _ValueSegmentTileState extends State<ValueSegmentTile> {
             )
             .paddingOnly(
               horizontal: kX,
-              vertical: kH,
+              vertical: kL,
               insets: widget.tileInsets,
             ) ??
         empty;

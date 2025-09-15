@@ -131,7 +131,8 @@ class TextFieldConfig {
   final FutureOr<Iterable<Object>> Function(
     TextFieldConfig config,
     TextEditingValue textEditingValue,
-  )? autoOptionsBuilder;
+  )?
+  autoOptionsBuilder;
 
   /// 选项转文本类型
   /// [buildWrapAutocomplete]
@@ -152,7 +153,8 @@ class TextFieldConfig {
     BuildContext context,
     AutocompleteOnSelected<Object> onSelected,
     Iterable<Object> options,
-  )? autoOptionsViewBuilder;
+  )?
+  autoOptionsViewBuilder;
 
   /// 构建弹出窗口, 内容包裹小部件
   final WidgetWrapBuilder? autoOverlayBodyWrapBuilder;
@@ -217,9 +219,9 @@ class TextFieldConfig {
     this.autoOverlayBorderRadius,
     this.autoOptionsMaxHeight = 200,
     this.tag,
-  })  : controller = controller ?? TextEditingController(text: text),
-        focusNode = focusNode ?? FocusNode(),
-        obscureNode = ObscureNode(obscureText ?? false) {
+  }) : controller = controller ?? TextEditingController(text: text),
+       focusNode = focusNode ?? FocusNode(),
+       obscureNode = ObscureNode(obscureText ?? false) {
     if (notifyDefaultTextChange) {
       onChanged?.call(this.controller.value.text);
       //onContextValueChanged?.call(this, this.controller.text);
@@ -314,7 +316,8 @@ class TextFieldConfig {
     //过滤
     TextEditingValue oldValue = const TextEditingValue(text: "");
     /*TextEditingValue value = TextEditingValue(text: text);*/
-    value = (inputFormatters ?? this.inputFormatters)?.fold<TextEditingValue>(
+    value =
+        (inputFormatters ?? this.inputFormatters)?.fold<TextEditingValue>(
           value,
           (newValue, formatter) {
             final resultValue = formatter.formatEditUpdate(oldValue, newValue);
@@ -361,10 +364,7 @@ class TextFieldConfig {
   /// 包裹[TextField]的自动完成小部件
   @callPoint
   @overridePoint
-  Widget buildWrapAutocomplete(
-    BuildContext context,
-    Widget textField,
-  ) {
+  Widget buildWrapAutocomplete(BuildContext context, Widget textField) {
     _autocompleteFieldSubmitted = null;
     if (autoOptionsBuilder == null) {
       return textField;
@@ -372,65 +372,69 @@ class TextFieldConfig {
     return RawAutocomplete<Object>(
       textEditingController: controller,
       focusNode: focusNode,
-      fieldViewBuilder /*构建输入框*/ : (
-        BuildContext context,
-        TextEditingController textEditingController,
-        FocusNode focusNode,
-        VoidCallback onFieldSubmitted,
-      ) {
-        _autocompleteFieldSubmitted = onFieldSubmitted;
-        return textField;
-      },
+      fieldViewBuilder /*构建输入框*/ :
+          (
+            BuildContext context,
+            TextEditingController textEditingController,
+            FocusNode focusNode,
+            VoidCallback onFieldSubmitted,
+          ) {
+            _autocompleteFieldSubmitted = onFieldSubmitted;
+            return textField;
+          },
       displayStringForOption: autoDisplayStringForOption,
       /*initialValue: value //不能和[textEditingController]同时指定,*/
       optionsViewOpenDirection /*弹出方向*/ : autoOptionsViewOpenDirection,
       optionsBuilder /*自动提示选项*/ : (TextEditingValue textEditingValue) async {
         return autoOptionsBuilder!(this, textEditingValue);
       },
-      optionsViewBuilder /*构建下拉选项内容小部件*/ : (
-        BuildContext ctx,
-        AutocompleteOnSelected<Object> onSelected,
-        Iterable<Object> options,
-      ) {
-        final renderBox = context.findRenderObject();
-        final anchorBounds = renderBox?.getGlobalBounds(
-              Overlay.maybeOf(context, rootOverlay: true)
-                  ?.context
-                  .findRenderObject(),
-            ) ??
-            Rect.zero;
+      optionsViewBuilder /*构建下拉选项内容小部件*/ :
+          (
+            BuildContext ctx,
+            AutocompleteOnSelected<Object> onSelected,
+            Iterable<Object> options,
+          ) {
+            final renderBox = context.findRenderObject();
+            final anchorBounds =
+                renderBox?.getGlobalBounds(
+                  Overlay.maybeOf(
+                    context,
+                    rootOverlay: true,
+                  )?.context.findRenderObject(),
+                ) ??
+                Rect.zero;
 
-        if (autoOptionsViewBuilder != null) {
-          return autoOptionsViewBuilder!(
-            this,
-            anchorBounds,
-            ctx,
-            onSelected,
-            options,
-          );
-        }
+            if (autoOptionsViewBuilder != null) {
+              return autoOptionsViewBuilder!(
+                this,
+                anchorBounds,
+                ctx,
+                onSelected,
+                options,
+              );
+            }
 
-        return AutocompleteOptionsWidget<Object>(
-          displayStringForOption: autoDisplayStringForOption,
-          onSelected: onSelected,
-          options: options,
-          openDirection: autoOptionsViewOpenDirection,
-          maxOptionsHeight: autoOptionsMaxHeight,
-          bodyWrapBuilder: autoOverlayBodyWrapBuilder,
-          optionItemBuilder: autoOptionItemBuilder,
-          anchorBounds: anchorBounds,
-          elevation: autoOverlayElevation,
-          color: autoOverlayColor,
-          shadowColor: autoOverlayShadowColor,
-          shape: autoOverlayShape,
-          borderRadius: autoOverlayBorderRadius,
-        );
-      },
+            return AutocompleteOptionsWidget<Object>(
+              displayStringForOption: autoDisplayStringForOption,
+              onSelected: onSelected,
+              options: options,
+              openDirection: autoOptionsViewOpenDirection,
+              maxOptionsHeight: autoOptionsMaxHeight,
+              bodyWrapBuilder: autoOverlayBodyWrapBuilder,
+              optionItemBuilder: autoOptionItemBuilder,
+              anchorBounds: anchorBounds,
+              elevation: autoOverlayElevation,
+              color: autoOverlayColor,
+              shadowColor: autoOverlayShadowColor,
+              shape: autoOverlayShape,
+              borderRadius: autoOverlayBorderRadius,
+            );
+          },
       onSelected: onAutoOptionSelected,
     );
   }
 
-//endregion Autocomplete
+  //endregion Autocomplete
 }
 
 /// 清除图标的大小
@@ -477,10 +481,7 @@ class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {
   /// 密码替换字符
   final String obscuringCharacter;
 
-  ObscureNode(
-    this.obscureText, {
-    this.obscuringCharacter = '•',
-  });
+  ObscureNode(this.obscureText, {this.obscuringCharacter = '•'});
 
   /// 是否要显示密码
   bool _showObscureText = false;
@@ -509,6 +510,10 @@ class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {
 ///
 /// [TextField]->[EditableText]->[_Editable]
 ///
+///
+/// - [SingleInputWidget]
+/// - [BorderSingleInputWidget]
+/// - [AutocompleteOptionsWidget]
 class SingleInputWidget extends StatefulWidget {
   /// 是否激活
   final bool enabled;
@@ -723,10 +728,12 @@ class SingleInputWidget extends StatefulWidget {
   final ContextValueChanged<String>? onContextValueChanged;
 
   ///点击键盘的动作按钮时的回调, 通常是按回车之后回调
-  final VoidCallback? onEditingComplete /*无参数的回调*/;
+  final VoidCallback? onEditingComplete
+  /*无参数的回调*/;
 
   /// [onEditingComplete]回调之后会马上触发[onSubmitted]回调
-  final ValueChanged<String>? onSubmitted /*有参数的回调*/;
+  final ValueChanged<String>? onSubmitted
+  /*有参数的回调*/;
 
   /// 焦点改变后的回调
   /// [FocusNode]
@@ -1069,72 +1076,79 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     //normal正常状态
     final normalBorderSide =
         widget.borderColor == Colors.transparent || widget.borderWidth <= 0
-            ? BorderSide.none
-            : BorderSide(
-                color: widget.borderColor ?? globalTheme.borderColor,
-                width: widget.borderWidth,
-              );
-    final normalBorder = widget.border ??
+        ? BorderSide.none
+        : BorderSide(
+            color: widget.borderColor ?? globalTheme.borderColor,
+            width: widget.borderWidth,
+          );
+    final normalBorder =
+        widget.border ??
         switch (widget.inputBorderType) {
           InputBorderType.outline => OutlineInputBorder(
-              gapPadding: widget.gapPadding,
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: normalBorderSide,
-            ),
+            gapPadding: widget.gapPadding,
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            borderSide: normalBorderSide,
+          ),
           InputBorderType.underline => UnderlineInputBorder(
-              borderSide: normalBorderSide,
-              borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
-            ),
+            borderSide: normalBorderSide,
+            borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
+          ),
           _ => InputBorder.none,
         };
 
     //focused聚焦状态
-    final focusedBorderSide = widget.focusBorderColor == Colors.transparent ||
+    final focusedBorderSide =
+        widget.focusBorderColor == Colors.transparent ||
             (widget.focusBorderWidth ?? widget.borderWidth) <= 0
         ? BorderSide.none
         : BorderSide(
             color: widget.focusBorderColor ?? globalTheme.accentColor,
             width: (widget.focusBorderWidth ?? widget.borderWidth),
           );
-    final focusedBorder = widget.focusedBorder ??
+    final focusedBorder =
+        widget.focusedBorder ??
         switch (widget.inputBorderType) {
           InputBorderType.outline => OutlineInputBorder(
-              gapPadding: widget.gapPadding,
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: focusedBorderSide,
-            ),
+            gapPadding: widget.gapPadding,
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            borderSide: focusedBorderSide,
+          ),
           InputBorderType.underline => UnderlineInputBorder(
-              borderSide: focusedBorderSide,
-              borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
-            ),
+            borderSide: focusedBorderSide,
+            borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
+          ),
           _ => InputBorder.none,
         };
 
     //disabled禁用状态
-    final disableBorderSide = widget.disableBorderColor == Colors.transparent ||
+    final disableBorderSide =
+        widget.disableBorderColor == Colors.transparent ||
             (widget.disableBorderWidth ?? widget.borderWidth) <= 0
         ? BorderSide.none
         : BorderSide(
             color: widget.disableBorderColor ?? globalTheme.disableColor,
             width: (widget.disableBorderWidth ?? widget.borderWidth),
           );
-    final disabledBorder = widget.disabledBorder ??
+    final disabledBorder =
+        widget.disabledBorder ??
         switch (widget.inputBorderType) {
           InputBorderType.outline => OutlineInputBorder(
-              gapPadding: widget.gapPadding,
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              borderSide: disableBorderSide,
-            ),
+            gapPadding: widget.gapPadding,
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            borderSide: disableBorderSide,
+          ),
           InputBorderType.underline => UnderlineInputBorder(
-              borderSide: disableBorderSide,
-              borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
-            ),
+            borderSide: disableBorderSide,
+            borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
+          ),
           _ => InputBorder.none,
         };
 
-    final decoration = widget.decoration ??
+    final decoration =
+        widget.decoration ??
         InputDecoration(
-          filled: widget.fillColor != null ||
+          filled:
+              widget.fillColor != null ||
               (!widget.enabled && widget.disabledFillColor != null),
           fillColor: widget.enabled
               ? widget.fillColor
@@ -1142,7 +1156,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           isDense: widget.isDense,
           isCollapsed: widget.isCollapsed,
           counterText: widget.counterText,
-          contentPadding: widget.contentPadding ??
+          contentPadding:
+              widget.contentPadding ??
               switch (widget.inputBorderType) {
                 InputBorderType.outline => null,
                 InputBorderType.underline => const EdgeInsets.all(12),
@@ -1158,19 +1173,22 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           disabledBorder: disabledBorder,
           enabled: widget.enabled,
           label: widget.label,
-          labelText: widget.labelText ??
+          labelText:
+              widget.labelText ??
               widget.labelTextBuilder?.call(context) ??
               widget.config.labelText ??
               widget.config.labelTextBuilder?.call(context),
           labelStyle: widget.labelStyle ?? widget.config.labelTextStyle,
-          hintText: widget.hintText ??
+          hintText:
+              widget.hintText ??
               widget.hintTextBuilder?.call(context) ??
               widget.config.hintText ??
               widget.config.hintTextBuilder?.call(context),
           hintStyle: widget.hintStyle ?? widget.config.hintTextStyle,
           //floatingLabel
           //floatingLabelAlignment: FloatingLabelAlignment.center,
-          floatingLabelStyle: widget.floatingLabelStyle ??
+          floatingLabelStyle:
+              widget.floatingLabelStyle ??
               widget.labelStyle ??
               TextStyle(
                 color: widget.focusBorderColor ?? globalTheme.accentColor,
@@ -1233,7 +1251,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
               ? noneInputBuildCounter
               : widget.inputBuildCounter ?? widget.config.inputBuildCounter,
           //scrollPadding: EdgeInsets.zero,
-          obscureText: widget.config.obscureNode.obscureText &&
+          obscureText:
+              widget.config.obscureNode.obscureText &&
               !widget.config.obscureNode._showObscureText,
           obscuringCharacter: widget.config.obscureNode.obscuringCharacter,
           keyboardType: widget.config.keyboardType ?? widget.keyboardType,
@@ -1251,11 +1270,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 }
 
 /// 选项item小部件构建
-typedef AutocompleteOptionItemWidgetBuilder = Widget Function(
-  BuildContext context,
-  bool isHighlighted,
-  Object option,
-);
+typedef AutocompleteOptionItemWidgetBuilder =
+    Widget Function(BuildContext context, bool isHighlighted, Object option);
 
 // The default Material-style Autocomplete options.
 @FromFramework("_AutocompleteOptions")
@@ -1327,27 +1343,31 @@ class AutocompleteOptionsWidget<T extends Object> extends StatelessWidget {
           onTap: () {
             onSelected(option);
           },
-          child: Builder(builder: (BuildContext context) {
-            final bool highlight =
-                AutocompleteHighlightedOption.of(context) == index;
-            if (highlight) {
-              SchedulerBinding.instance.addPostFrameCallback(
-                  (Duration timeStamp) {
-                Scrollable.ensureVisible(context, alignment: 0.5);
-              }, debugLabel: 'AutocompleteOptions.ensureVisible');
-            }
-            return optionItemBuilder?.call(context, highlight, option) ??
-                Container(
-                  color: highlight ? Theme.of(context).focusColor : null,
-                  padding: const EdgeInsets.all(16.0),
-                  child: displayStringForOption(option).text(),
-                );
-          }),
+          child: Builder(
+            builder: (BuildContext context) {
+              final bool highlight =
+                  AutocompleteHighlightedOption.of(context) == index;
+              if (highlight) {
+                SchedulerBinding.instance.addPostFrameCallback((
+                  Duration timeStamp,
+                ) {
+                  Scrollable.ensureVisible(context, alignment: 0.5);
+                }, debugLabel: 'AutocompleteOptions.ensureVisible');
+              }
+              return optionItemBuilder?.call(context, highlight, option) ??
+                  Container(
+                    color: highlight ? Theme.of(context).focusColor : null,
+                    padding: const EdgeInsets.all(16.0),
+                    child: displayStringForOption(option).text(),
+                  );
+            },
+          ),
         );
       },
     );
 
-    body = bodyWrapBuilder?.call(context, body) ??
+    body =
+        bodyWrapBuilder?.call(context, body) ??
         Material(
           elevation: elevation,
           color: color,
@@ -1357,7 +1377,8 @@ class AutocompleteOptionsWidget<T extends Object> extends StatelessWidget {
           borderRadius: borderRadius,
           textStyle: textStyle,
           child: ConstrainedBox(
-            constraints: constraints ??
+            constraints:
+                constraints ??
                 BoxConstraints(
                   maxHeight: maxOptionsHeight,
                   minWidth: anchorBounds?.width ?? 0,
@@ -1367,12 +1388,112 @@ class AutocompleteOptionsWidget<T extends Object> extends StatelessWidget {
           ),
         );
 
-    return Align(
-      alignment: optionsAlignment,
-      child: body,
-    );
+    return Align(alignment: optionsAlignment, child: body);
   }
 }
+
+//--
+
+/// 单行/多行文本输入
+/// 样式: 边框线
+///
+/// - [SingleInputWidget]
+/// - [BorderSingleInputWidget]
+/// - [AutocompleteOptionsWidget]
+class BorderSingleInputWidget extends StatefulWidget {
+  /// 默认的文本
+  final String? text;
+
+  /// 提示文本
+  final String? hintText;
+
+  /// [TextField.autofocus]
+  final bool? autofocus;
+
+  /// [SingleInputWidget.inputFormatters]
+  final List<TextInputFormatter>? inputFormatters;
+
+  /// [SingleInputWidget.keyboardType]
+  final TextInputType? keyboardType;
+
+  /// 最大行数
+  final int maxLines;
+
+  /// 最大长度
+  final int? maxLength;
+
+  /// 显示输入计数
+  final bool? showInputCounter;
+
+  /// 输入值改变
+  final ValueChanged<String>? onChanged;
+
+  //--
+
+  final double? borderRadius;
+
+  /// 边距
+  final EdgeInsetsGeometry? tileInsets;
+
+  const BorderSingleInputWidget({
+    super.key,
+    this.text,
+    this.hintText,
+    this.autofocus,
+    this.inputFormatters,
+    this.keyboardType,
+    this.maxLines = 1,
+    this.maxLength = kDefaultInputLength,
+    this.showInputCounter = false,
+    this.onChanged,
+    //--
+    this.borderRadius = kDefaultBorderRadiusX,
+    this.tileInsets,
+  });
+
+  @override
+  State<BorderSingleInputWidget> createState() =>
+      _BorderSingleInputWidgetState();
+}
+
+class _BorderSingleInputWidgetState extends State<BorderSingleInputWidget> {
+  /// 输入框配置
+  late TextFieldConfig _inputConfig;
+
+  @override
+  void initState() {
+    _inputConfig = TextFieldConfig(
+      text: widget.text,
+      hintText: widget.hintText,
+      inputFormatters: widget.inputFormatters,
+      keyboardType: widget.keyboardType,
+      autofocus: widget.autofocus,
+    );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    return SingleInputWidget(
+      config: _inputConfig,
+      maxLength: widget.maxLength,
+      maxLines: widget.maxLines,
+      showInputCounter: widget.showInputCounter,
+      border: outlineInputBorder(
+        color: globalTheme.borderColor,
+        borderRadius: widget.borderRadius,
+      ),
+      focusedBorder: outlineInputBorder(
+        color: globalTheme.accentColor,
+        borderRadius: widget.borderRadius,
+      ),
+      onChanged: widget.onChanged,
+    ).paddingOnly(horizontal: kX, vertical: kL, insets: widget.tileInsets);
+  }
+}
+
+//--
 
 extension TextFieldConfigEx on TextFieldConfig {
   /// [TextFieldConfig] 输入框的一些核心配置

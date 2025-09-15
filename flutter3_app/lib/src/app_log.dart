@@ -4,19 +4,22 @@ extension AppLogPathListEx on List<String> {
   /// 压缩文件/文件夹
   /// [output] zip文件输出全路径
   Future zipPathList(String output) async {
-    await zip(output,
-        action: (encoder) {
-          final hiveJson = hiveAll()?.toJsonString();
-          if (hiveJson != null && hiveJson.isNotEmpty) {
-            encoder.writeStringSync(hiveJson, 'hive.json');
-          }
-          final lastInfo = DebugPage.lastDebugCopyStringBuilder(
-              GlobalConfig.def.globalContext);
-          if (lastInfo != null && lastInfo.isNotEmpty) {
-            encoder.writeStringSync(lastInfo, 'last_debug_info.log');
-          }
-        },
-        onGetFileName: (path) => zipEntryKeyMap[path]);
+    await zip(
+      output,
+      action: (encoder) {
+        final hiveJson = hiveAll()?.toJsonString();
+        if (hiveJson != null && hiveJson.isNotEmpty) {
+          encoder.writeStringSync(hiveJson, 'hive.json');
+        }
+        final lastInfo = DebugPage.lastDebugCopyStringBuilder(
+          GlobalConfig.def.globalContext,
+        );
+        if (lastInfo != null && lastInfo.isNotEmpty) {
+          encoder.writeStringSync(lastInfo, 'last_debug_info.log');
+        }
+      },
+      onGetFileName: (path) => zipEntryKeyMap[path],
+    );
     assert(() {
       final log =
           "压缩完成[${size()}]:$output :${(output.file().fileSizeSync()).toSizeStr()}";
@@ -31,8 +34,10 @@ extension AppLogDirectoryEx on Directory {
   /// [shareAppLog]
   Future shareAppLog([String? logName]) async {
     final info = await $platformPackageInfo;
-    final output = await cacheFilePath(logName?.ensureSuffix(".zip") ??
-        "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip");
+    final output = await cacheFilePath(
+      logName?.ensureSuffix(".zip") ??
+          "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip",
+    );
     final list = <String>[path];
     await list.zipPathList(output);
     output.shareFile().ignore();
@@ -45,15 +50,22 @@ extension AppLogDirectoryEx on Directory {
 /// @date 2023/12/03
 ///
 /// 快速分享app日志压缩文件, 分享日志
-/// [logName] 指定日志的名称, 不指定使用默认
-/// [includeFilePath] 是否要包含文件路径数据的分享
-Future shareAppLog({
+/// - [logName] 指定日志的名称, 不指定使用默认
+/// - [includeFilePath] 是否要包含文件路径数据的分享
+/// - [clearTempPath] 是否要清理临时文件
+/// - [share] 是否要分享
+/// @return 返回zip包文件本地全路径
+Future<String> shareAppLog({
   String? logName,
   bool? includeFilePath = true,
+  bool? clearTempPath = true,
+  bool? share = true,
 }) async {
   final info = await $platformPackageInfo;
-  final output = await cacheFilePath(logName?.ensureSuffix(".zip") ??
-      "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip");
+  final output = await cacheFilePath(
+    logName?.ensureSuffix(".zip") ??
+        "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}.zip",
+  );
   final list = <String>[];
   //--
   final logFolderPath = (await fileFolder(kLogPathName)).path;
@@ -68,6 +80,11 @@ Future shareAppLog({
   list.addAll(globalShareLogPathList);
   //--
   await list.zipPathList(output);
-  output.shareFile().ignore();
-  clearTempShareLogPath(clearFilePath: includeFilePath == true);
+  if (share == true) {
+    output.shareFile().ignore();
+  }
+  if (clearTempPath == true) {
+    clearTempShareLogPath(clearFilePath: includeFilePath == true);
+  }
+  return output;
 }

@@ -8,6 +8,9 @@ part of '../../flutter3_widgets.dart';
 /// 输入框tile
 /// 上[label]
 /// 下[inputHint]](des)
+///
+/// - [LabelSingleInputTile]
+/// - [SingleLabelInputTile]
 class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
   //--label
 
@@ -127,6 +130,9 @@ class _LabelSingleInputTileState extends State<LabelSingleInputTile>
 }
 
 /// 左[label] 右[input] 的输入tile
+///
+/// - [LabelSingleInputTile]
+/// - [SingleLabelInputTile]
 class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   /// 标签/LabelMixin
   @override
@@ -249,6 +255,9 @@ class _SingleLabelInputTileState extends State<SingleLabelInputTile>
 /// 数字输入框
 /// - 取消删除icon
 /// - 默认不带背景/输入装饰
+///
+/// - [LabelNumberInputTile]
+/// - [NumberInputWidget]
 class NumberInputWidget extends StatefulWidget {
   /// 输入的文本
   /// - 支持小数
@@ -469,6 +478,9 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
 
 /// 数字输入tile
 /// 左[label].[输入框tile].[inputHint]
+///
+/// - [LabelNumberInputTile]
+/// - [NumberInputWidget]
 class LabelNumberInputTile extends StatefulWidget with LabelMixin {
   //--label
 
