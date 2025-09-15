@@ -33,10 +33,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 从画布中初始化数据, 此方法为了兼容测试使用
   @implementation
-  void initFromCanvasDelegate({
-    bool notify = true,
-    bool selected = true,
-  }) {
+  void initFromCanvasDelegate({bool notify = true, bool selected = true}) {
     if (isNil(canvasStateList)) {
       addCanvasState(
         CanvasStateData(
@@ -63,7 +60,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }) {
     CanvasStateData? selectedCanvasState =
         canvasStateList.findFirst((e) => e.isSelected) ??
-            canvasStateList.lastOrNull;
+        canvasStateList.lastOrNull;
     selectCanvasState(
       selectedCanvasState,
       notifyBasics: notify,
@@ -171,7 +168,9 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasStateList.add(canvasStateData);
     if (notify) {
       canvasDelegate.dispatchCanvasMultiStateChanged(
-          canvasStateData, CanvasStateType.add);
+        canvasStateData,
+        CanvasStateType.add,
+      );
       canvasDelegate.dispatchCanvasMultiStateListChanged(canvasStateList);
     }
     if (selected) {
@@ -195,7 +194,9 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasStateList.remove(canvasStateData);
     if (notify) {
       canvasDelegate.dispatchCanvasMultiStateChanged(
-          canvasStateData, CanvasStateType.remove);
+        canvasStateData,
+        CanvasStateType.remove,
+      );
       canvasDelegate.dispatchCanvasMultiStateListChanged(canvasStateList);
     }
 
@@ -270,10 +271,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     if (notifyBasics && isNewElements) {
       //通知之前的元素被清除
       canvasDelegate.canvasElementManager.canvasElementControlManager
-          .onCanvasElementDeleted(
-        oldElements,
-        ElementSelectType.code,
-      );
+          .onCanvasElementDeleted(oldElements, ElementSelectType.code);
       //--
       canvasDelegate.dispatchCanvasElementListChanged(
         oldElements,
@@ -284,9 +282,15 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       );
       //--
       canvasDelegate.dispatchCanvasElementListRemoveChanged(
-          canvasElementManager.elements, oldElements);
+        CanvasElementType.element,
+        canvasElementManager.elements,
+        oldElements,
+      );
       canvasDelegate.dispatchCanvasElementListAddChanged(
-          canvasElementManager.elements, newElements);
+        CanvasElementType.element,
+        canvasElementManager.elements,
+        newElements,
+      );
     }
 
     // 画布切换通知
@@ -300,8 +304,10 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
     // 选中元素/跟随元素
     if (selectedCanvasStateElement) {
-      canvasDelegate.canvasElementManager
-          .resetSelectedElementList(newElements, selectType: selectType);
+      canvasDelegate.canvasElementManager.resetSelectedElementList(
+        newElements,
+        selectType: selectType,
+      );
       if (followContent) {
         if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
           //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
@@ -310,7 +316,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
       if (followPainter) {
         canvasDelegate.followPainter(
-            elementPainter: canvasElementManager.selectComponent);
+          elementPainter: canvasElementManager.selectComponent,
+        );
       }
     } else {
       if (followContent) {

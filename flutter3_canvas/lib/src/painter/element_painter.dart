@@ -53,6 +53,21 @@ class IElementPainter extends IPainter
     ..strokeJoin = StrokeJoin.round
     ..strokeCap = StrokeCap.round;
 
+  /// 选中/鼠标悬浮后的边框绘制颜色
+  ///  - [paintPropertyRect]
+  ///  - [paintPropertyBounds]
+  ///  - [paintPropertyPaintPath]
+  @configProperty
+  Color? _boundsColor;
+
+  Color? get boundsColor {
+    return _boundsColor ?? canvasStyle?.canvasAccentColor;
+  }
+
+  set boundsColor(Color? color) {
+    _boundsColor = color;
+  }
+
   //region core
 
   /// 附加到[CanvasDelegate]
@@ -755,7 +770,7 @@ class ElementPainter extends IElementPainter {
         updatePainterPaintProperty(
           fromObj: this,
           notify: false,
-          color: paintState.color ?? canvasStyle?.canvasAccentColor,
+          color: paintState.color ?? boundsColor,
         );
       }
       //--
@@ -773,8 +788,10 @@ class ElementPainter extends IElementPainter {
 
   /// 重写此方法, 实现在画布内绘制自己
   /// [painting]驱动
-  /// [paintPropertyRect]
-  /// [paintPropertyBounds]
+  ///
+  ///  - [paintPropertyRect]
+  ///  - [paintPropertyBounds]
+  ///  - [paintPropertyPaintPath]
   @sceneCoordinate
   @overridePoint
   @override
@@ -813,14 +830,19 @@ class ElementPainter extends IElementPainter {
 
   /// 绘制元素的旋转矩形, 用来提示元素的矩形+旋转信息
   /// [onPaintingSelf]
+  ///
+  ///  - [paintPropertyRect]
+  ///  - [paintPropertyBounds]
+  ///  - [paintPropertyPaintPath]
   @property
   @sceneCoordinate
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       paint.withSavePaint(() {
+        debugger(when: debugLabel != null);
         paint
           //边框的颜色
-          ..color = canvasStyle?.canvasAccentColor ?? paint.color
+          ..color = boundsColor ?? paint.color
           //样式
           ..style = PaintingStyle.stroke
           //抵消画布缩放带来的宽度变细/变粗
@@ -852,17 +874,21 @@ class ElementPainter extends IElementPainter {
 
   /// 绘制元素的包裹框边界, 全属性后的包裹框
   /// [onPaintingSelf]
+  ///
+  ///  - [paintPropertyRect]
+  ///  - [paintPropertyBounds]
+  ///  - [paintPropertyPaintPath]
   @property
   void paintPropertyBounds(
     Canvas canvas,
     PaintMeta paintMeta,
     Paint paint, {
-    Color? color = Colors.redAccent,
+    Color? color,
   }) {
     paintProperty?.let((it) {
       //debugger();
       paint.withSavePaint(() {
-        paint.color = color ?? paint.color;
+        paint.color = color ?? boundsColor ?? paint.color;
         //canvas.drawPath(it.paintPath, paint);
         canvas.drawRect(it.paintBounds, paint);
       });
@@ -872,6 +898,10 @@ class ElementPainter extends IElementPainter {
   /// 绘制元素全贴合的路径边框
   /// [paintPropertyBounds]
   /// [onPaintingSelf]
+  ///
+  ///  - [paintPropertyRect]
+  ///  - [paintPropertyBounds]
+  ///  - [paintPropertyPaintPath]
   @property
   @sceneCoordinate
   void paintPropertyPaintPath(Canvas canvas, PaintMeta paintMeta, Paint paint) {
@@ -882,7 +912,7 @@ class ElementPainter extends IElementPainter {
         //debugger();
         paint
           //边框的颜色
-          ..color = canvasStyle?.canvasAccentColor ?? paint.color
+          ..color = boundsColor ?? paint.color
           //样式
           ..style = PaintingStyle.stroke
           //抵消画布缩放带来的宽度变细/变粗

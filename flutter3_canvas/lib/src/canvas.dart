@@ -582,11 +582,19 @@ class CanvasListener {
   onCanvasElementListChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasElementListAddChanged]
-  final void Function(List<ElementPainter> list, List<ElementPainter> op)?
+  final void Function(
+    CanvasElementType type,
+    List<ElementPainter> list,
+    List<ElementPainter> op,
+  )?
   onCanvasElementListAddChanged;
 
   /// [CanvasDelegate.dispatchCanvasElementListRemoveChanged]
-  final void Function(List<ElementPainter> list, List<ElementPainter> op)?
+  final void Function(
+    CanvasElementType type,
+    List<ElementPainter> list,
+    List<ElementPainter> op,
+  )?
   onCanvasElementListRemoveChanged;
 
   /// [CanvasDelegate.dispatchDoubleTapElement]

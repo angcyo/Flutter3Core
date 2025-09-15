@@ -80,7 +80,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   //--核心元素列表--
 
   /// 绘制在[elements]之前的元素列表, 不参与控制操作
-  /// [paintElements]
+  /// - [paintElements]
+  ///
+  /// - [CanvasElementType.before]
   final List<ElementPainter> beforeElements = [];
 
   /// 元素列表, 正常操作区域的元素, 参与控制操作
@@ -89,10 +91,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   ///
   /// [resetElements]重试所有元素
   ///
+  /// - [CanvasElementType.element]
   List<ElementPainter> elements = [];
 
   /// 绘制在[elements]之后的元素列表, 不参与控制操作
-  /// [paintElements]
+  /// - [paintElements]
+  ///
+  /// - [CanvasElementType.after]
   final List<ElementPainter> afterElements = [];
 
   //--元素get--
@@ -299,30 +304,38 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [afterElements]
   /// [beforeElements]
   bool addBeforeElement(ElementPainter? element) =>
-      _addElementIn(beforeElements, element);
+      _addElementIn(CanvasElementType.before, beforeElements, element);
 
   /// [afterElements]
   /// [beforeElements]
   bool addAfterElement(ElementPainter? element) =>
-      _addElementIn(afterElements, element);
+      _addElementIn(CanvasElementType.after, afterElements, element);
 
   //--
 
   /// [afterElements]
   /// [beforeElements]
   bool removeBeforeElement(ElementPainter? element) =>
-      _removeElementFrom(beforeElements, element);
+      _removeElementFrom(CanvasElementType.before, beforeElements, element);
 
   /// [afterElements]
   /// [beforeElements]
   bool removeAfterElement(ElementPainter? element) =>
-      _removeElementFrom(afterElements, element);
+      _removeElementFrom(CanvasElementType.after, afterElements, element);
 
   bool removeBeforeElementList(List<ElementPainter>? elementList) =>
-      _removeElementListFrom(beforeElements, elementList);
+      _removeElementListFrom(
+        CanvasElementType.element,
+        beforeElements,
+        elementList,
+      );
 
   bool removeAfterElementList(List<ElementPainter>? elementList) =>
-      _removeElementListFrom(afterElements, elementList);
+      _removeElementListFrom(
+        CanvasElementType.element,
+        afterElements,
+        elementList,
+      );
 
   //--
 
@@ -352,7 +365,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 在指定容器中添加元素
   /// 返回值表示操作是否成功
-  bool _addElementIn(List<ElementPainter> list, ElementPainter? element) {
+  bool _addElementIn(
+    CanvasElementType type,
+    List<ElementPainter> list,
+    ElementPainter? element,
+  ) {
     if (element == null) {
       assert(() {
         l.w('无效的操作');
@@ -365,7 +382,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       if (element.canvasDelegate != canvasDelegate) {
         element.attachToCanvasDelegate(canvasDelegate);
       }
-      canvasDelegate.dispatchCanvasElementListAddChanged(list, [element]);
+      canvasDelegate.dispatchCanvasElementListAddChanged(type, list, [element]);
       canvasDelegate.refresh();
       return true;
     }
@@ -374,7 +391,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 从指定容器中移除元素
   /// 返回值表示操作是否成功
-  bool _removeElementFrom(List<ElementPainter> list, ElementPainter? element) {
+  bool _removeElementFrom(
+    CanvasElementType type,
+    List<ElementPainter> list,
+    ElementPainter? element,
+  ) {
     //debugger();
     if (element == null) {
       assert(() {
@@ -388,7 +409,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       if (element.canvasDelegate == canvasDelegate) {
         element.detachFromCanvasDelegate(canvasDelegate);
       }
-      canvasDelegate.dispatchCanvasElementListAddChanged(list, [element]);
+      canvasDelegate.dispatchCanvasElementListRemoveChanged(type, list, [
+        element,
+      ]);
       canvasDelegate.refresh();
       return true;
     }
@@ -396,6 +419,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   bool _removeElementListFrom(
+    CanvasElementType type,
     List<ElementPainter> list,
     List<ElementPainter>? elementList,
   ) {
@@ -414,7 +438,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           element.detachFromCanvasDelegate(canvasDelegate);
         }
       }
-      canvasDelegate.dispatchCanvasElementListAddChanged(list, removeList);
+      canvasDelegate.dispatchCanvasElementListRemoveChanged(
+        type,
+        list,
+        removeList,
+      );
       canvasDelegate.refresh();
       return true;
     }
@@ -468,10 +496,15 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       selectType: selectType,
     );
     canvasDelegate.dispatchCanvasElementListRemoveChanged(
+      CanvasElementType.element,
       elements,
       oldElements,
     );
-    canvasDelegate.dispatchCanvasElementListAddChanged(elements, newElements);
+    canvasDelegate.dispatchCanvasElementListAddChanged(
+      CanvasElementType.element,
+      elements,
+      newElements,
+    );
 
     selectedOrFollowElements(
       newElements,
@@ -606,7 +639,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       undoType,
       selectType: selectType,
     );
-    canvasDelegate.dispatchCanvasElementListAddChanged(elements, list);
+    canvasDelegate.dispatchCanvasElementListAddChanged(
+      CanvasElementType.element,
+      elements,
+      list,
+    );
 
     //debugger();
     selectedOrFollowElements(
@@ -736,7 +773,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       ElementChangeType.remove,
       undoType,
     );
-    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, op);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(
+      CanvasElementType.element,
+      elements,
+      op,
+    );
 
     if (undoType == UndoType.normal) {
       final newList = elements.clone();
@@ -797,8 +838,16 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       ElementChangeType.update,
       undoType,
     );
-    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, old);
-    canvasDelegate.dispatchCanvasElementListAddChanged(elements, op);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(
+      CanvasElementType.element,
+      elements,
+      old,
+    );
+    canvasDelegate.dispatchCanvasElementListAddChanged(
+      CanvasElementType.element,
+      elements,
+      op,
+    );
 
     if (selected) {
       resetSelectedElementList(list, selectType: selectType);
@@ -1279,8 +1328,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       ElementChangeType.replace,
       undoType,
     );
-    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, removeList);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(
+      CanvasElementType.element,
+      elements,
+      removeList,
+    );
     canvasDelegate.dispatchCanvasElementListAddChanged(
+      CanvasElementType.element,
       elements,
       newElementList,
     );
@@ -1357,8 +1411,16 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       dispatchElementSelectChanged: false,
     );
     canvasDelegate.dispatchCanvasGroupChanged(group, elements);
-    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, elements);
-    canvasDelegate.dispatchCanvasElementListAddChanged(elements, [group]);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(
+      CanvasElementType.element,
+      elements,
+      elements,
+    );
+    canvasDelegate.dispatchCanvasElementListAddChanged(
+      CanvasElementType.element,
+      elements,
+      [group],
+    );
 
     //重置元素列表
     resetElementList(newList, undoType: undoType);
@@ -1411,8 +1473,16 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       dispatchElementSelectChanged: false,
     );
     canvasDelegate.dispatchCanvasUngroupChanged(group);
-    canvasDelegate.dispatchCanvasElementListRemoveChanged(elements, [group]);
-    canvasDelegate.dispatchCanvasElementListAddChanged(elements, children);
+    canvasDelegate.dispatchCanvasElementListRemoveChanged(
+      CanvasElementType.element,
+      elements,
+      [group],
+    );
+    canvasDelegate.dispatchCanvasElementListAddChanged(
+      CanvasElementType.element,
+      elements,
+      children,
+    );
 
     //重置元素列表
     resetElementList(newList, undoType: undoType);

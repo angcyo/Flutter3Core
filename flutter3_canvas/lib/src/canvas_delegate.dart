@@ -813,7 +813,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       ElementChangeType.remove,
       undoType,
     );
-    dispatchCanvasElementListRemoveChanged(elements, removeList);
+    dispatchCanvasElementListRemoveChanged(
+      CanvasElementType.element,
+      elements,
+      removeList,
+    );
 
     if (undoType == UndoType.normal) {
       final redoStateStack = createStateStack();
@@ -1205,6 +1209,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 元素列表添加元素通知
   /// [list] 有可能是[CanvasElementManager.beforeElements].[CanvasElementManager.elements].[CanvasElementManager.afterElements]
   void dispatchCanvasElementListAddChanged(
+    CanvasElementType type,
     List<ElementPainter> list,
     List<ElementPainter>? op,
   ) {
@@ -1212,13 +1217,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       return;
     }
     _eachCanvasListener((element) {
-      element.onCanvasElementListAddChanged?.call(list, op);
+      element.onCanvasElementListAddChanged?.call(type, list, op);
     });
   }
 
   /// 元素列表移除元素通知
   /// [list] 有可能是[CanvasElementManager.beforeElements].[CanvasElementManager.elements].[CanvasElementManager.afterElements]
   void dispatchCanvasElementListRemoveChanged(
+    CanvasElementType type,
     List<ElementPainter> list,
     List<ElementPainter>? op,
   ) {
@@ -1226,7 +1232,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       return;
     }
     _eachCanvasListener((element) {
-      element.onCanvasElementListRemoveChanged?.call(list, op);
+      element.onCanvasElementListRemoveChanged?.call(type, list, op);
     });
   }
 
@@ -1594,10 +1600,23 @@ class CanvasStateStack extends ElementStateStack {
 }
 
 /// 画布当前的样式模式
+/// 用于在桌面端实现按下[空格键]进入移动模式和退出移动模式
 enum CanvasStyleMode {
   /// 默认模式
   defaultMode,
 
   /// 移动模式
   dragMode,
+}
+
+/// 画布元素所在的容器类型
+enum CanvasElementType {
+  /// 对应[CanvasElementManager.beforeElements]容器
+  before,
+
+  /// 对应[CanvasElementManager.elements]
+  element,
+
+  /// 对应[CanvasElementManager.afterElements]
+  after,
 }
