@@ -96,6 +96,7 @@ mixin ValueMixin {
   dynamic get initValue => null;
 
   /// 值列表
+  /// - [widgetOf]
   List? get values => null;
 
   /// 当[initValue]为空时, 使用此部件占位

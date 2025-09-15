@@ -5,11 +5,8 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2025/01/21
 ///
 
-typedef SegmentWidgetBuilder = Widget Function(
-  BuildContext context,
-  int index,
-  bool isSelected,
-);
+typedef SegmentWidgetBuilder =
+    Widget Function(BuildContext context, int index, bool isSelected);
 
 ///
 /// 系统[SegmentedButton]
@@ -136,32 +133,35 @@ class _SegmentTileState extends State<SegmentTile> {
         animate: true,
       );
       if (widget.enable) {
-        child = child.ink(
-          () {
-            if (_canTapIndex(i)) {
-              _onTapSegment(i);
-            }
-          },
-          borderRadius: _buildBorderRadius(i),
-          /*highlightColor: Colors.redAccent,*/
-          splashColor: Colors.transparent,
-        ).material(borderRadius: _buildBorderRadius(i));
+        child = child
+            .ink(
+              () {
+                if (_canTapIndex(i)) {
+                  _onTapSegment(i);
+                }
+              },
+              borderRadius: _buildBorderRadius(i),
+              /*highlightColor: Colors.redAccent,*/
+              splashColor: Colors.transparent,
+            )
+            .material(borderRadius: _buildBorderRadius(i));
       }
       child = child.stateDecoration(
         isSelected
             ? widget.selectedDecoration ??
-                (widget.borderColor == null
-                    ? fillDecoration(
-                        context: context,
-                        color: globalTheme.accentColor,
-                        borderRadius: _buildBorderRadius(i),
-                      )
-                    : null)
+                  (widget.borderColor == null
+                      ? fillDecoration(
+                          context: context,
+                          color: globalTheme.accentColor,
+                          borderRadius: _buildBorderRadius(i),
+                        )
+                      : null)
             : null,
       );
       children.add(child);
     }
-    final result = children
+    final result =
+        children
             .flowLayout(
               /*debugLabel: "segment",*/
               matchLineHeight: true,
@@ -178,8 +178,9 @@ class _SegmentTileState extends State<SegmentTile> {
                         if (!isSelected) {
                           final childOffset = offset + child.offset;
                           canvas.drawRRect(
-                            _buildBorderRadius(index)
-                                .toRRect((childOffset & child.size)),
+                            _buildBorderRadius(
+                              index,
+                            ).toRRect((childOffset & child.size)),
                             Paint()
                               ..color = widget.borderColor!
                               ..style = PaintingStyle.stroke,
@@ -192,10 +193,12 @@ class _SegmentTileState extends State<SegmentTile> {
                         if (isSelected) {
                           final childOffset = offset + child.offset;
                           canvas.drawRRect(
-                            _buildBorderRadius(index)
-                                .toRRect((childOffset & child.size)),
+                            _buildBorderRadius(
+                              index,
+                            ).toRRect((childOffset & child.size)),
                             Paint()
-                              ..color = widget.selectedBorderColor ??
+                              ..color =
+                                  widget.selectedBorderColor ??
                                   globalTheme.accentColor
                               ..style = PaintingStyle.stroke,
                           );
@@ -204,14 +207,16 @@ class _SegmentTileState extends State<SegmentTile> {
                     }
                   : null,
             )
-            ?.stateDecoration(widget.tileDecoration ??
-                (widget.borderColor == null
-                    ? fillDecoration(
-                        context: context,
-                        color: globalTheme.itemWhiteBgColor,
-                        radius: _radius,
-                      )
-                    : null)) ??
+            ?.stateDecoration(
+              widget.tileDecoration ??
+                  (widget.borderColor == null
+                      ? fillDecoration(
+                          context: context,
+                          color: globalTheme.itemWhiteBgColor,
+                          radius: _radius,
+                        )
+                      : null),
+            ) ??
         empty;
     return result.disable(!widget.enable);
   }
@@ -281,5 +286,199 @@ class _SegmentTileState extends State<SegmentTile> {
     widget.onSelectedAction?.call(_selectedIndexList);
     updateState();
     /*l.d("点击区段:$index $_selectedIndexList");*/
+  }
+}
+
+//--
+
+/// - [SegmentTile]
+/// - [ValueSegmentTile]
+class ValueSegmentTile extends StatefulWidget {
+  /// 值列表
+  /// - [widgetOf]
+  final List? values;
+
+  /// 选中的值列表
+  final List? selectedValues;
+
+  /// 值列表对应的Widget
+  final List<Widget>? valuesWidget;
+
+  //--
+
+  /// 是否激活交互
+  final bool enable;
+
+  /// 最多选中数量
+  final int maxSelectedCount;
+
+  /// 是否允许空选择
+  final bool enableSelectedEmpty;
+
+  /// 选中样式: 背景颜色
+  final Color? selectedBgColor;
+
+  /// 选中样式: 圆角大小
+  final double? selectedBorderRadius;
+
+  /// 正常情况下的文本样式
+  final TextStyle? textStyle;
+
+  /// 选中样式: 文本样式
+  final TextStyle? textSelectedStyle;
+
+  //--
+
+  /// 点击事件回调
+  final ValueCallback? onTapValue;
+
+  /// 边距
+  final EdgeInsetsGeometry? tileInsets;
+
+  /// 选中的值列表改变回调
+  final ValueCallback<List>? onValuesSelected;
+
+  const ValueSegmentTile({
+    super.key,
+    //--
+    this.values,
+    this.selectedValues,
+    this.valuesWidget,
+    //--
+    this.enable = true,
+    this.maxSelectedCount = 1,
+    this.enableSelectedEmpty = false,
+    this.selectedBgColor,
+    this.textStyle,
+    this.textSelectedStyle,
+    this.selectedBorderRadius = kDefaultBorderRadiusXX,
+    //--
+    this.tileInsets,
+    this.onTapValue,
+    this.onValuesSelected,
+  });
+
+  @override
+  State<ValueSegmentTile> createState() => _ValueSegmentTileState();
+}
+
+class _ValueSegmentTileState extends State<ValueSegmentTile> {
+  late List _selectedValues;
+
+  /// 是否是多选模式
+  bool get _isMultiSelect => widget.maxSelectedCount > 1;
+
+  @override
+  void initState() {
+    _selectedValues = [...?widget.selectedValues];
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final borderRadius = widget.selectedBorderRadius ?? kDefaultBorderRadiusX;
+    final segmentList =
+        widget.valuesWidget ??
+        widget.values?.mapIndexed((index, value) {
+          return widgetOf(
+                context,
+                value,
+                tryTextWidget: true,
+                textAlign: TextAlign.center,
+                textStyle: _isSelectedValue(value)
+                    ? widget.textSelectedStyle
+                    : widget.textStyle,
+              )
+              ?.paddingOnly(all: kL)
+              .backgroundDecoration(
+                !widget.enable
+                    ? fillDecoration(
+                        color: globalTheme.disableColor,
+                        radius: borderRadius,
+                      )
+                    : _isSelectedValue(value)
+                    ? fillDecoration(
+                        color:
+                            widget.selectedBgColor ?? globalTheme.accentColor,
+                        radius: borderRadius,
+                      )
+                    : null,
+              )
+              .click(
+                () {
+                  //debugger();
+                  widget.onTapValue?.call(value);
+                  if (_isSelectedValue(value)) {
+                    if (_canCancelSelectedValue(value)) {
+                      _selectedValues.remove(value);
+                      widget.onValuesSelected?.call(_selectedValues);
+                      updateState();
+                    }
+                  } else {
+                    if (_canSelectedValue(value)) {
+                      if (!_isMultiSelect) {
+                        _selectedValues.clear();
+                      }
+                      _selectedValues.add(value);
+                      widget.onValuesSelected?.call(_selectedValues);
+                      updateState();
+                    }
+                  }
+                },
+                enable: widget.enable /*&&
+                    !disableTap &&
+                    (selectedDisableTap ? !isSelected : true)*/,
+              );
+        }).toList();
+    return segmentList
+            ?.flowLayout(
+              equalWidthRange: "",
+              padding: const EdgeInsets.all(kL),
+              selfConstraints: const LayoutBoxConstraints(
+                widthType: ConstraintsType.matchParent,
+                minHeight: kMinInteractiveHeight,
+              ),
+            )
+            ?.backgroundDecoration(
+              fillDecoration(
+                color: globalTheme.whiteSubBgColor,
+                radius: borderRadius,
+              ),
+            )
+            .paddingOnly(
+              horizontal: kX,
+              vertical: kH,
+              insets: widget.tileInsets,
+            ) ??
+        empty;
+  }
+
+  /// 指定的值[value]是否选中了
+  bool _isSelectedValue(dynamic value) {
+    return _selectedValues.contains(value) ?? false;
+  }
+
+  /// 是否可以选中指定的值[value]
+  bool _canSelectedValue(dynamic value) {
+    if (_isSelectedValue(value)) {
+      return false;
+    }
+    if (!_isMultiSelect) {
+      return true;
+    }
+    final selectedCount = _selectedValues.size();
+    if (selectedCount >= widget.maxSelectedCount) {
+      return false;
+    }
+    return true;
+  }
+
+  /// 是否可以取消指定的值[value]
+  bool _canCancelSelectedValue(dynamic value) {
+    if (_isMultiSelect) {
+      return widget.enableSelectedEmpty || _selectedValues.contains(value);
+    }
+    return widget.enableSelectedEmpty;
   }
 }
