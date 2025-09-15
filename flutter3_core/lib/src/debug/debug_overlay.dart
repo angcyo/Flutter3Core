@@ -90,10 +90,7 @@ class DebugOverlayButton extends StatefulWidget {
 
   /// 在[DebugPage]中注册一个调试动作, 可以是一个按钮, 也可以是一个属性编辑tile
   static void addClickDebugAction(String label, ClickAction clickAction) {
-    debugActions.add(DebugAction(
-      label: label,
-      clickAction: clickAction,
-    ));
+    debugActions.add(DebugAction(label: label, clickAction: clickAction));
   }
 
   /// [debugActions]
@@ -104,13 +101,15 @@ class DebugOverlayButton extends StatefulWidget {
     String hiveKey,
     dynamic defHiveValue,
   ) {
-    debugActions.add(DebugAction(
-      label: label,
-      des: des,
-      hiveKey: hiveKey,
-      hiveType: hiveType,
-      defHiveValue: defHiveValue,
-    ));
+    debugActions.add(
+      DebugAction(
+        label: label,
+        des: des,
+        hiveKey: hiveKey,
+        hiveType: hiveType,
+        defHiveValue: defHiveValue,
+      ),
+    );
   }
 
   //endregion action配置
@@ -129,79 +128,36 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton>
         GlobalAppStateMixin,
         TickerProviderStateMixin,
         HookMixin,
-        HookStateMixin {
+        HookStateMixin,
+        OverlayPositionMixin {
   /// 按钮的大小
   final buttonSize = 40.0;
 
-  /// 当前位置
-  late Offset offset;
-
   @override
   void initState() {
-    offset = Offset(0, $screenHeight / 2);
+    positionOffset = Offset(0, $screenHeight / 2);
+    onTapBody = () {
+      //toast("click".text());
+      //$globalDebugLabel = "debug";
+      //_testGlobalTheme(context);
+      buildContext?.showWidgetDialog(DebugOverlayDialog());
+    };
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildOverlayBody(BuildContext context) {
     //debugger();
     final globalConfig = GlobalConfig.of(context);
     final globalTheme = GlobalTheme.of(context);
-    return Stack(
-      children: [
-        Positioned(
-          left: offset.x,
-          top: offset.y,
-          child: Icon(
-            Icons.bug_report,
-            color:
-                globalConfig.isThemeLight() ? globalTheme.icoNormalColor : null,
-          )
-              .box(size: buttonSize)
-              .shadowCircle(decorationColor: globalTheme.themeWhiteColor)
-              .gesture(
-            onPanUpdate: (details) {
-              setState(() {
-                offset = offset + details.delta;
-              });
-            },
-            onPanStart: (details) {
-              disposeAnyByKey("animation");
-            },
-            onPanEnd: (details) {
-              _resetOffset();
-            },
-            onTap: () {
-              //toast("click".text());
-              //$globalDebugLabel = "debug";
-              //_testGlobalTheme(context);
-              context.showWidgetDialog(DebugOverlayDialog());
-            },
-          ),
+    return Icon(
+          Icons.bug_report,
+          color: globalConfig.isThemeLight()
+              ? globalTheme.icoNormalColor
+              : null,
         )
-      ],
-    );
-  }
-
-  /// 归位, 自动贴边
-  void _resetOffset() {
-    final currentOffset = offset;
-    final Offset targetOffset;
-    if (offset.dx + buttonSize / 2 > $screenWidth / 2) {
-      targetOffset = Offset($screenWidth - buttonSize, offset.dy);
-    } else {
-      targetOffset = Offset(0, offset.dy);
-    }
-    hookAnyByKey(
-        "animation",
-        animation(
-          this,
-          (value, isCompleted) {
-            offset = lerpOffset(currentOffset, targetOffset, value);
-            updateState();
-          },
-          curve: Curves.easeOut,
-        ));
+        .box(size: buttonSize)
+        .shadowCircle(decorationColor: globalTheme.themeWhiteColor);
   }
 
   //--
@@ -236,15 +192,19 @@ class _DebugOverlayDialogState extends State<DebugOverlayDialog>
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final defClickList = DebugOverlayButton.defDebugActions
-        .filter((item) => item.clickAction != null);
-    final defHiveList = DebugOverlayButton.defDebugActions
-        .filter((item) => item.hiveKey != null);
+    final defClickList = DebugOverlayButton.defDebugActions.filter(
+      (item) => item.clickAction != null,
+    );
+    final defHiveList = DebugOverlayButton.defDebugActions.filter(
+      (item) => item.hiveKey != null,
+    );
 
-    final clickList = DebugOverlayButton.debugActions
-        .filter((item) => item.clickAction != null);
-    final hiveList =
-        DebugOverlayButton.debugActions.filter((item) => item.hiveKey != null);
+    final clickList = DebugOverlayButton.debugActions.filter(
+      (item) => item.clickAction != null,
+    );
+    final hiveList = DebugOverlayButton.debugActions.filter(
+      (item) => item.hiveKey != null,
+    );
 
     return widget.buildBottomChildrenDialog(
       context,

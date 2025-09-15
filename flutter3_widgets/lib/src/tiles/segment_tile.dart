@@ -186,7 +186,7 @@ class _SegmentTileState extends State<SegmentTile> {
                           );
                         }
                       });
-                      //在绘制选中的样式, 防止样式覆盖
+                      //再绘制选中的样式, 防止样式覆盖
                       render.visitChildrenBoxIndex((child, index) {
                         final isSelected = _isSelectedIndex(index);
                         if (isSelected) {

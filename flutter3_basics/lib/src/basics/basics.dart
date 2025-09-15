@@ -33,9 +33,10 @@ String nowTimeString([String? newPattern = "yyyy-MM-dd HH:mm:ss.SSS"]) =>
 /// 格式化时间`2023-11-04_10-13-40-083` 的文件名
 /// [suffix] 文件名后缀, 例如`.png`
 /// [newPattern] 时间格式
-String nowTimeFileName(
-        [String? suffix, String? newPattern = "yyyy-MM-dd_HH-mm-ss-SSS"]) =>
-    nowTimeString(newPattern).connect(suffix?.ensurePrefix("."));
+String nowTimeFileName([
+  String? suffix,
+  String? newPattern = "yyyy-MM-dd_HH-mm-ss-SSS",
+]) => nowTimeString(newPattern).connect(suffix?.ensurePrefix("."));
 
 /// uuid文件名
 /// [suffix] 文件名后缀, 例如`.png`
@@ -68,12 +69,7 @@ double nextDouble([double? min, double? max]) {
 ///
 /// - [correctMinMaxValue] 是否修正[min]和[max]的值, 默认false
 ///
-dynamic clamp(
-  num? x,
-  num? min,
-  num? max, {
-  bool correctMinMaxValue = false,
-}) {
+dynamic clamp(num? x, num? min, num? max, {bool correctMinMaxValue = false}) {
   if (correctMinMaxValue) {
     if (min != null && max != null) {
       final temp = min;
@@ -109,8 +105,8 @@ List<int> averageInt(int count, int min, int max) {
   final step = count > 1
       ? (max - min) / (count - 1)
       : count > 0
-          ? max - min
-          : 0;
+      ? max - min
+      : 0;
   return List.generate(count, (index) => (min + step * index).round()).toList();
 }
 
@@ -141,7 +137,9 @@ String currentTraceFileName([bool? fileLineNumber]) {
 
   //package:flutter3_mobile_abc/main.dart:8:7
   final fileStr = lineStackTrace.substring(
-      lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
+    lineStackTrace.indexOf("(") + 1,
+    lineStackTrace.indexOf(")"),
+  );
   final lineStackTraceList = fileStr.split(":");
 
   final fileName = lineStackTraceList[1].split("/").last;
@@ -163,9 +161,10 @@ void postRun(VoidCallback callback) {
 
 /// 使用[Timer]尽快执行[callback]
 /// [Timer.cancel]
-Timer? postDelayCallback(VoidCallback? callback,
-        [Duration duration = Duration.zero]) =>
-    callback == null ? null : Timer(duration, callback);
+Timer? postDelayCallback(
+  VoidCallback? callback, [
+  Duration duration = Duration.zero,
+]) => callback == null ? null : Timer(duration, callback);
 
 /// 使用[Timer]实现一个倒计时
 /// [callback] 倒计时的回调, 返回false, 可以阻止计时
@@ -225,17 +224,22 @@ Future<T> delayCallback<T>(T Function() callback, [Duration? duration]) {
 }
 
 /// [delayCallback]
-Future futureDelay<T>(Duration? duration,
-        [FutureOr<T> Function()? computation]) async =>
-    Future.delayed(duration ?? Duration.zero, computation);
+Future futureDelay<T>(
+  Duration? duration, [
+  FutureOr<T> Function()? computation,
+]) async => Future.delayed(duration ?? Duration.zero, computation);
 
 /// 安排一个轻量的任务
 /// [scheduleTask]
 /// [scheduleMicrotask]
-Future<R> scheduleTask<R>(ResultCallback<R> callback,
-        [Priority priority = Priority.animation]) =>
-    SchedulerBinding.instance.scheduleTask(() => callback(), priority,
-        debugLabel: "scheduleTask-${nowTimeString()}");
+Future<R> scheduleTask<R>(
+  ResultCallback<R> callback, [
+  Priority priority = Priority.animation,
+]) => SchedulerBinding.instance.scheduleTask(
+  () => callback(),
+  priority,
+  debugLabel: "scheduleTask-${nowTimeString()}",
+);
 
 //error() => Future.error("asynchronous error");
 //debugger(message: "等待调试...");
@@ -250,10 +254,7 @@ Future<R> scheduleTask<R>(ResultCallback<R> callback,
 /// [printError]
 void reportError(exception) {
   FlutterError.reportError(
-    FlutterErrorDetails(
-      exception: exception,
-      stack: StackTrace.current,
-    ),
+    FlutterErrorDetails(exception: exception, stack: StackTrace.current),
   );
 }
 
@@ -306,9 +307,9 @@ String stackToString({StackTrace? stackTrace, String? label, int? maxFrames}) {
   }
   Iterable<String> lines = stackTrace.toString().trimRight().split('\n');
   if (kIsWeb && lines.isNotEmpty) {
-// Remove extra call to StackTrace.current for web platform.
-// TODO(ferhat): remove when https://github.com/flutter/flutter/issues/37635
-// is addressed.
+    // Remove extra call to StackTrace.current for web platform.
+    // TODO(ferhat): remove when https://github.com/flutter/flutter/issues/37635
+    // is addressed.
     lines = lines.skipWhile((String line) {
       return line.contains('StackTrace.current') ||
           line.contains('dart-sdk/lib/_internal') ||
@@ -357,6 +358,9 @@ Iterable<RenderView> get renderViews => WidgetsBinding.instance.renderViews;
 MediaQueryData get platformMediaQueryData =>
     MediaQueryData.fromView(flutterView);
 
+@alias
+MediaQueryData get $platformMediaQueryData => platformMediaQueryData;
+
 /// 平台事件调度程序单例。
 UiPlatformDispatcher get platformDispatcher => UiPlatformDispatcher.instance;
 
@@ -404,9 +408,19 @@ double get screenDiagonalLength => cl(screenWidth, screenHeight);
 @dp
 double get screenStatusBar => platformMediaQueryData.padding.top;
 
+/// - [$screenStatusBar]
+/// - [$screenBottomBar]
+@alias
+double get $screenStatusBar => screenStatusBar;
+
 /// 获取底部安全区域
 @dp
 double get screenBottomBar => platformMediaQueryData.padding.bottom;
+
+/// - [$screenStatusBar]
+/// - [$screenBottomBar]
+@alias
+double get $screenBottomBar => screenBottomBar;
 
 /// 底部导航的高度
 @dp
@@ -552,8 +566,8 @@ bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 ///    - 缺点：可能会使得灰度图像失去一些整体感，提取的特征不够全面。
 ///
 int rgbToGray(int r, int g, int b) {
-//(r + g + b) ~/ 3
-//return (r * 0.299 + g * 0.587 + b * 0.114).toInt().clamp(0, 255);
+  //(r + g + b) ~/ 3
+  //return (r * 0.299 + g * 0.587 + b * 0.114).toInt().clamp(0, 255);
   return (r * 0.34 + g * 0.5 + b * 0.16).toInt().clamp(0, 255);
 }
 
@@ -647,8 +661,9 @@ Future<ByteData> loadAssetByteData(
   String prefix = kDefAssetsPrefix,
   String? package,
 }) async {
-  return (await rootBundle
-      .load(key.ensurePackagePrefix(package, prefix).transformKey()));
+  return (await rootBundle.load(
+    key.ensurePackagePrefix(package, prefix).transformKey(),
+  ));
 }
 
 /// [loadAssetString]
@@ -736,17 +751,16 @@ Image? loadAssetImageWidget(
   double? height,
   Color? color,
   BlendMode? colorBlendMode,
-}) =>
-    key == null
-        ? null
-        : Image.asset(
-            key.ensurePackagePrefix(package, prefix).transformKey(),
-            fit: fit ?? BoxFit.cover,
-            width: size ?? width,
-            height: size ?? height,
-            color: color,
-            colorBlendMode: colorBlendMode,
-          );
+}) => key == null
+    ? null
+    : Image.asset(
+        key.ensurePackagePrefix(package, prefix).transformKey(),
+        fit: fit ?? BoxFit.cover,
+        width: size ?? width,
+        height: size ?? height,
+        color: color,
+        colorBlendMode: colorBlendMode,
+      );
 
 /// [ImageProvider]
 /// [AssetBundleImageProvider]
@@ -756,12 +770,9 @@ AssetImage? loadAssetImageProvider(
   String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,
-}) =>
-    key == null
-        ? null
-        : AssetImage(
-            key.ensurePackagePrefix(package, prefix).transformKey(),
-          );
+}) => key == null
+    ? null
+    : AssetImage(key.ensurePackagePrefix(package, prefix).transformKey());
 
 /// [UiImage]
 /// [loadAssetString]
@@ -772,9 +783,11 @@ Future<UiImage>? loadAssetImageByProvider(
   String? prefix = kDefAssetsPngPrefix,
   String? package,
   ImageConfiguration configuration = const ImageConfiguration(),
-}) =>
-    loadAssetImageProvider(key, prefix: prefix, package: package)
-        ?.toImage(configuration);
+}) => loadAssetImageProvider(
+  key,
+  prefix: prefix,
+  package: package,
+)?.toImage(configuration);
 
 /// [loadAssetString]
 /// [loadAssetImage]
@@ -785,12 +798,15 @@ Future<UiImage> loadAssetImage(
   String prefix = kDefAssetsPngPrefix,
   String? package,
 }) async {
-// 读取图片数据
-  ByteData data =
-      await loadAssetByteData(key, prefix: prefix, package: package);
+  // 读取图片数据
+  ByteData data = await loadAssetByteData(
+    key,
+    prefix: prefix,
+    package: package,
+  );
   Uint8List bytes = data.buffer.asUint8List();
-// 解码图片
-/*ui.Codec codec = await ui.instantiateImageCodec(bytes);
+  // 解码图片
+  /*ui.Codec codec = await ui.instantiateImageCodec(bytes);
   ui.FrameInfo frameInfo = await codec.getNextFrame();
   return frameInfo.image;*/
   return decodeImageFromList(bytes);

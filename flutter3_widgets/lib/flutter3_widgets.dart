@@ -116,6 +116,7 @@ part 'src/widgets/mixin/tile_mixin.dart';
 part 'src/widgets/mixin/page_view_mixin.dart';
 part 'src/widgets/mixin/navigation_bar_mixin.dart';
 part 'src/widgets/mixin/tab_layout_mixin.dart';
+part 'src/widgets/mixin/overlay_position_mixin.dart';
 part 'src/widgets/pull_back_widget.dart';
 part 'src/widgets/radar_scan_widget.dart';
 part 'src/widgets/size_animation_widget.dart';

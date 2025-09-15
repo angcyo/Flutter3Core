@@ -7,10 +7,8 @@ part of '../../../flutter3_widgets.dart';
 ///
 
 /// [RenderBox.size]
-typedef AfterLayoutCallback = void Function(
-  BuildContext parentContext,
-  RenderBox childRenderBox,
-);
+typedef AfterLayoutCallback =
+    void Function(BuildContext parentContext, RenderBox childRenderBox);
 
 /// 在小部件布局完成之后第一时间触发回调
 class AfterLayout extends SingleChildRenderObjectWidget {
@@ -39,9 +37,10 @@ class AfterLayout extends SingleChildRenderObjectWidget {
   @override
   AfterLayoutRenderObject createRenderObject(BuildContext context) =>
       AfterLayoutRenderObject(
-          afterLayoutAction: afterLayoutAction,
-          postAfterLayoutAction: postAfterLayoutAction,
-          context: context);
+        afterLayoutAction: afterLayoutAction,
+        postAfterLayoutAction: postAfterLayoutAction,
+        context: context,
+      );
 
   @override
   void updateRenderObject(
@@ -74,6 +73,7 @@ class AfterLayoutRenderObject extends RenderProxyBox {
 
   @override
   void performLayout() {
+    //debugger();
     super.performLayout();
     afterLayoutAction?.call(context, this);
     if (postAfterLayoutAction != null) {
@@ -92,11 +92,8 @@ class WidgetPostSize extends StatefulWidget {
   final Widget child;
   final Function(Size) onChange;
 
-  const WidgetPostSize({
-    Key? key,
-    required this.onChange,
-    required this.child,
-  }) : super(key: key);
+  const WidgetPostSize({Key? key, required this.onChange, required this.child})
+    : super(key: key);
 
   @override
   _WidgetPostSizeState createState() => _WidgetPostSizeState();
@@ -106,10 +103,7 @@ class _WidgetPostSizeState extends State<WidgetPostSize> {
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback(postFrameCallback);
-    return Container(
-      key: widgetKey,
-      child: widget.child,
-    );
+    return Container(key: widgetKey, child: widget.child);
   }
 
   var widgetKey = GlobalKey();
