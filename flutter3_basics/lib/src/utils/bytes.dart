@@ -169,17 +169,17 @@ class BytesWriter {
   }
 
   /// 写入float, 单精度4个字节, 32位
-  void writeFloat(double value, [int? length = 4, Endian? endian]) {
+  void writeFloat(double value, [Endian? endian]) {
     final bd = ByteData(4);
     bd.setFloat32(0, value, endian ?? this.endian);
-    writeBytes(bd.bytes, length);
+    writeBytes(bd.bytes, 4);
   }
 
   /// 写入double, 双精度8个字节, 64位
-  void writeDouble(double value, [int? length = 8, Endian? endian]) {
+  void writeDouble(double value, [Endian? endian]) {
     final bd = ByteData(8);
     bd.setFloat64(0, value, endian ?? this.endian);
-    writeBytes(bd.bytes, length);
+    writeBytes(bd.bytes, 8);
   }
 
   /// 在指定位置写入一个其它字节数组
