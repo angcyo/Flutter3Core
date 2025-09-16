@@ -135,14 +135,14 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton>
 
   @override
   void initState() {
-    positionOffset = Offset(0, $screenHeight / 2);
+    super.initState();
+    positionOffset = Offset(0, $screenHeight * 4 / 5);
     onTapBody = () {
       //toast("click".text());
       //$globalDebugLabel = "debug";
       //_testGlobalTheme(context);
       buildContext?.showWidgetDialog(DebugOverlayDialog());
     };
-    super.initState();
   }
 
   @override
