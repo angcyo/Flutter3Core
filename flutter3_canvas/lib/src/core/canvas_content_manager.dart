@@ -63,6 +63,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   /// 画布中心点
   @dp
   @sceneCoordinate
+  @configProperty
   Offset? canvasCenter;
 
   //--
