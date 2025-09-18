@@ -25,13 +25,21 @@ class StringBuilder {
   StringBuffer stringBuffer = StringBuffer();
 
   void write(Object? object) {
-    stringBuffer.write(object);
+    if (object != null) {
+      stringBuffer.write(object);
+    }
   }
 
+  @alias
+  void add(Object? object) => write(object);
+
+  @alias
   void addText(Object? object) => write(object);
 
-  void writeln([Object? obj = ""]) {
-    stringBuffer.writeln(obj);
+  void writeln([Object? object = ""]) {
+    if (object != null) {
+      stringBuffer.writeln(object);
+    }
   }
 
   StringBuilder append(
@@ -120,9 +128,13 @@ class StringBuilder {
     return this;
   }
 
+  @alias
   StringBuilder appendLineIfNotEmpty() => newLineIfNotEmpty();
 
-  void appendAll(msg) {
+  void appendAll(Object? msg) {
+    if (msg == null) {
+      return;
+    }
     final list = msg.toString().split('\n');
     list.forEachIndexed((index, element) {
       if (index == list.lastIndex) {
