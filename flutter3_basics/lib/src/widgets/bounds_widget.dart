@@ -9,14 +9,18 @@ class BoundsWidget extends SingleChildRenderObjectWidget {
   /// 边界颜色
   final Color color;
 
-  ///
+  /// 边界线宽
   final double strokeWidth;
+
+  /// 圆角大小
+  final double radius;
 
   const BoundsWidget({
     super.key,
     super.child,
     this.color = Colors.red,
     this.strokeWidth = 1,
+    this.radius = 0,
   });
 
   @override
@@ -36,21 +40,28 @@ class BoundsWidget extends SingleChildRenderObjectWidget {
 }
 
 class _BoundsWidgetRenderObject extends RenderProxyBox {
-  BoundsWidget? config;
+  BoundsWidget config;
 
   _BoundsWidgetRenderObject(this.config);
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
     super.paint(context, offset);
-    final canvas = context.canvas;
-    canvas.drawRect(
-      Rect.fromLTWH(offset.dx, offset.dy, size.width, size.height),
-      Paint()
-        ..color = config?.color ?? Colors.red.withOpacity(0.2)
-        ..strokeWidth = config?.strokeWidth ?? 1
-        ..style = PaintingStyle.stroke,
-    );
+    if (config.color != Colors.transparent && config.strokeWidth > 0) {
+      final canvas = context.canvas;
+      canvas.drawRRect(
+        Rect.fromLTWH(
+          offset.dx,
+          offset.dy,
+          size.width,
+          size.height,
+        ).toRRect(config.radius),
+        Paint()
+          ..color = config.color
+          ..strokeWidth = config.strokeWidth
+          ..style = PaintingStyle.stroke,
+      );
+    }
   }
 }
 
@@ -59,10 +70,11 @@ extension BoundsWidgetEx on Widget {
   Widget bounds({
     Color color = Colors.red,
     double strokeWidth = 1,
-  }) =>
-      BoundsWidget(
-        color: color,
-        strokeWidth: strokeWidth,
-        child: this,
-      );
+    double radius = 0,
+  }) => BoundsWidget(
+    color: color,
+    strokeWidth: strokeWidth,
+    radius: radius,
+    child: this,
+  );
 }

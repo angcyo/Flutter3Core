@@ -84,23 +84,23 @@ class FlowLayout extends MultiChildRenderObjectWidget {
 
   @override
   FlowLayoutRender createRenderObject(BuildContext context) => FlowLayoutRender(
-        padding: padding,
-        childGap: childGap,
-        childHorizontalGap: childHorizontalGap,
-        childVerticalGap: childVerticalGap,
-        selfConstraints: selfConstraints,
-        childConstraints: childConstraints,
-        equalWidthRange: equalWidthRange,
-        lineMaxChildCount: lineMaxChildCount,
-        lineChildCount: lineChildCount,
-        mainAxisAlignment: mainAxisAlignment,
-        lineMainAxisAlignment: lineMainAxisAlignment,
-        crossAxisAlignment: crossAxisAlignment,
-        matchLineHeight: matchLineHeight,
-        onBeforePaint: onBeforePaint,
-        onAfterPaint: onAfterPaint,
-        debugLabel: debugLabel,
-      );
+    padding: padding,
+    childGap: childGap,
+    childHorizontalGap: childHorizontalGap,
+    childVerticalGap: childVerticalGap,
+    selfConstraints: selfConstraints,
+    childConstraints: childConstraints,
+    equalWidthRange: equalWidthRange,
+    lineMaxChildCount: lineMaxChildCount,
+    lineChildCount: lineChildCount,
+    mainAxisAlignment: mainAxisAlignment,
+    lineMainAxisAlignment: lineMainAxisAlignment,
+    crossAxisAlignment: crossAxisAlignment,
+    matchLineHeight: matchLineHeight,
+    onBeforePaint: onBeforePaint,
+    onAfterPaint: onAfterPaint,
+    debugLabel: debugLabel,
+  );
 
   @override
   void updateRenderObject(BuildContext context, FlowLayoutRender renderObject) {
@@ -135,10 +135,18 @@ class FlowLayout extends MultiChildRenderObjectWidget {
       ..add(DoubleProperty('childGap', childGap))
       ..add(DoubleProperty('childHorizontalGap', childHorizontalGap))
       ..add(DoubleProperty('childVerticalGap', childVerticalGap))
-      ..add(DiagnosticsProperty<LayoutBoxConstraints>(
-          'selfConstraints', selfConstraints))
-      ..add(DiagnosticsProperty<BoxConstraints>(
-          'childConstraints', childConstraints))
+      ..add(
+        DiagnosticsProperty<LayoutBoxConstraints>(
+          'selfConstraints',
+          selfConstraints,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<BoxConstraints>(
+          'childConstraints',
+          childConstraints,
+        ),
+      )
       ..add(StringProperty('debugLabel', debugLabel));
   }
 }
@@ -147,7 +155,15 @@ class FlowLayout extends MultiChildRenderObjectWidget {
 /// [FlexParentData]
 class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
   /// 单独设置子元素的约束条件, 设置此属性后, [weight]属性将失效
+  /// - [constraints]
+  /// - [onGetChildConstraints]
   BoxConstraints? constraints;
+
+  /// 获取子元素的约束条件
+  /// - [constraints]
+  /// - [onGetChildConstraints]
+  BoxConstraints? Function(FlowLayoutRender parent, RenderBox child)?
+  onGetChildConstraints;
 
   /// 宽度占用权重
   /// `boxWidth * weight`
@@ -176,6 +192,7 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
 
   FlowLayoutParentData({
     this.constraints,
+    this.onGetChildConstraints,
     this.weight,
     this.excludeGapCount = 0,
     this.stack = false,
@@ -199,6 +216,10 @@ class FlowLayoutParentData extends ContainerBoxParentData<RenderBox> {
 class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
   /// [FlowLayoutParentData.constraints]
   final BoxConstraints? constraints;
+
+  /// [FlowLayoutParentData.onGetChildConstraints]
+  final BoxConstraints? Function(FlowLayoutRender parent, RenderBox child)?
+  onGetChildConstraints;
 
   /// [FlowLayoutParentData.weight]
   final double? weight;
@@ -226,6 +247,7 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
     required super.child,
     this.weight,
     this.constraints,
+    this.onGetChildConstraints,
     this.stack = false,
     this.excludeWeight = false,
     this.matchParentMaxWidth,
@@ -247,6 +269,11 @@ class FlowLayoutData extends ParentDataWidget<FlowLayoutParentData> {
 
     if (parentData.constraints != constraints) {
       parentData.constraints = constraints;
+      needsLayout = true;
+    }
+
+    if (parentData.onGetChildConstraints != onGetChildConstraints) {
+      parentData.onGetChildConstraints = onGetChildConstraints;
       needsLayout = true;
     }
 
@@ -447,9 +474,11 @@ class FlowLayoutRender extends RenderBox
     layoutChild();
 
     final childSize = Size(_childUsedWidth, _childUsedHeight);
-    size = selfConstraints?.constrainSize(constraints, childSize, padding) ??
+    size =
+        selfConstraints?.constrainSize(constraints, childSize, padding) ??
         constraints.constrain(
-            childSize + UiOffset(paddingHorizontal, paddingVertical));
+          childSize + UiOffset(paddingHorizontal, paddingVertical),
+        );
   }
 
   /// 最大的参考宽度, weight属性的参考值
@@ -474,7 +503,10 @@ class FlowLayoutRender extends RenderBox
       maxWidth = _childUsedWidth + paddingHorizontal;
     } else {
       final size = selfConstraints?.constrainSize(
-          constraints, const UiSize(double.infinity, double.infinity), padding);
+        constraints,
+        const UiSize(double.infinity, double.infinity),
+        padding,
+      );
       maxWidth = size?.width ?? double.infinity;
       if (maxWidth == double.infinity) {
         assert(() {
@@ -507,8 +539,11 @@ class FlowLayoutRender extends RenderBox
     } else if (_childUsedHeight > 0) {
       maxHeight = _childUsedHeight + paddingVertical;
     } else {
-      final size = selfConstraints?.constrainSize(constraints,
-          const ui.Size(double.infinity, double.infinity), padding);
+      final size = selfConstraints?.constrainSize(
+        constraints,
+        const ui.Size(double.infinity, double.infinity),
+        padding,
+      );
       maxHeight = size?.height ?? double.infinity;
       if (maxHeight == double.infinity) {
         assert(() {
@@ -551,11 +586,14 @@ class FlowLayoutRender extends RenderBox
 
     //debugger();
     //先测量[noWeightChildren]
-    double noWeightWidth = horizontalGap *
+    double noWeightWidth =
+        horizontalGap *
         (noWeightChildren.size() - (weightChildren.isEmpty ? 1 : 0)).maxOf(0);
     for (final child in noWeightChildren) {
       final childParentData = child.parentData! as FlowLayoutParentData;
-      final childConstraints = childParentData.constraints ??
+      final childConstraints =
+          childParentData.onGetChildConstraints?.call(this, child) ??
+          childParentData.constraints ??
           this.childConstraints ??
           defChildConstraints;
       ChildLayoutHelper.layoutChild(child, childConstraints);
@@ -576,20 +614,30 @@ class FlowLayoutRender extends RenderBox
 
     for (final child in weightChildren) {
       final childParentData = child.parentData! as FlowLayoutParentData;
+      final getChildConstraints = childParentData.onGetChildConstraints?.call(
+        this,
+        child,
+      );
       final hasChildConstraints =
-          (childParentData.constraints ?? this.childConstraints) !=
-              null; //指定了child的约束
-      var childConstraints = childParentData.constraints ??
+          (getChildConstraints ??
+              childParentData.constraints ??
+              this.childConstraints) !=
+          null; //指定了child的约束
+      var childConstraints =
+          getChildConstraints ??
+          childParentData.constraints ??
           this.childConstraints ??
           defChildConstraints;
 
       //权重
-      double? weight = childParentData.weight ??
+      double? weight =
+          childParentData.weight ??
           (isEqualWidth ? 1.0 / weightChildCount : null);
 
       if (maxWidth != double.infinity && weight != null) {
         //需要使用权重约束
-        final gap = horizontalGap *
+        final gap =
+            horizontalGap *
             (weightChildCount - 1 - childParentData.excludeGapCount);
         final boxValidWidth =
             maxWidth - paddingHorizontal - gap - 0.5 - noWeightWidth; //防止浮点误差
@@ -675,8 +723,10 @@ class FlowLayoutRender extends RenderBox
     var lineChildList = <RenderBox>[];
 
     //一行最大应该布局多少个child
-    final lineMaxChildCount =
-        min(this.lineMaxChildCount ?? children.length, children.length);
+    final lineMaxChildCount = min(
+      this.lineMaxChildCount ?? children.length,
+      children.length,
+    );
 
     // 一行中剩余的宽度空间
     double lineRemainWidth = 0;
@@ -704,8 +754,7 @@ class FlowLayoutRender extends RenderBox
 
     //归类/分行分组
     for (final child in children) {
-      final FlowLayoutParentData childParentData =
-          child.parentData! as FlowLayoutParentData;
+      final childParentData = child.parentData! as FlowLayoutParentData;
       if (childParentData.stack) {
         // 堆叠child, 不占用原有的布局空间
         stackChildren.add(child);
@@ -798,8 +847,7 @@ class FlowLayoutRender extends RenderBox
 
       //遍历一行中的所有child
       lineChildList.forEachIndexed((index, child) {
-        final FlowLayoutParentData childParentData =
-            child.parentData! as FlowLayoutParentData;
+        final childParentData = child.parentData! as FlowLayoutParentData;
 
         //行内对齐偏移
         double lineTop = top;
@@ -958,6 +1006,8 @@ extension FlowLayoutEx on Widget {
   /// [FlowLayoutData]
   Widget flowLayoutData({
     BoxConstraints? constraints,
+    BoxConstraints? Function(FlowLayoutRender parent, RenderBox child)?
+    onGetChildConstraints,
     double? weight,
     int excludeGapCount = 0,
     bool excludeWeight = false,
@@ -965,16 +1015,16 @@ extension FlowLayoutEx on Widget {
     bool? matchLineHeight,
     bool? matchParentMaxWidth,
     bool? matchParentMaxHeight,
-  }) =>
-      FlowLayoutData(
-        constraints: constraints,
-        weight: weight,
-        excludeGapCount: excludeGapCount,
-        stack: stack,
-        excludeWeight: excludeWeight,
-        matchLineHeight: matchLineHeight,
-        matchParentMaxWidth: matchParentMaxWidth,
-        matchParentMaxHeight: matchParentMaxHeight,
-        child: this,
-      );
+  }) => FlowLayoutData(
+    constraints: constraints,
+    onGetChildConstraints: onGetChildConstraints,
+    weight: weight,
+    excludeGapCount: excludeGapCount,
+    stack: stack,
+    excludeWeight: excludeWeight,
+    matchLineHeight: matchLineHeight,
+    matchParentMaxWidth: matchParentMaxWidth,
+    matchParentMaxHeight: matchParentMaxHeight,
+    child: this,
+  );
 }

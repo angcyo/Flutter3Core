@@ -3600,6 +3600,7 @@ extension NavigatorEx on BuildContext {
     return route is PageRoute ? route : null;
   }
 
+  /// [ModalRoute.settingsOf]
   RouteSettings? get routeSettings => modalRoute?.settings;
 
   /// 路由处于活跃状态
