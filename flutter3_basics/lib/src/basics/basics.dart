@@ -465,11 +465,35 @@ double get deviceHeightPixel => flutterView.display.size.height;
 double get deviceHeight => deviceHeightPixel / dpr;
 
 /// 设备对角线的英寸大小 >=7 视为平板, 7.07 大约 10英寸
+///
+/// - [isTabletDevice]
 double get deviceInch => cl(deviceWidthPixel, deviceHeightPixel) / dpi;
 
-/// 是否是平板, 根据屏幕对角线尺寸判断
+/// 是否是平板, 根据屏幕对角线尺寸判断. 通常认为对角线大于等于 7 英寸的设备为平板。
+/// 7 * 25.4mm = 177.8mm 17.78cm
+///
+/// ```
+/// （MediaQuery.of(context).size.shortestSide）。一般：
+///  - >= 600dp 认为是 Tablet（平板）
+///  - < 600dp 认为是 Phone（手机）
+/// ```
+///
 /// [GlobalConfig.isAdaptiveTablet]
+///
+/// - [isTabletDevice]
+/// - [isTabletWindow]
+@Deprecated("请使用[isTabletWindow]")
 bool get isTabletDevice => deviceInch >= 7;
+
+/// 当前窗口是否是平板样式, 在分屏模式下, 窗口的宽度大于等于 600dp 认为是平板样式
+///
+/// - [responsive_builder] 响应式布局, 内部依赖[provider]
+/// - [responsive_framework] 响应式框架
+///
+/// - [isTabletDevice]
+/// - [isTabletWindow]
+bool get isTabletWindow =>
+    isTabletDevice /*flutterView.display.size.shortestSide >= 600*/;
 
 /// 延迟随机发生器
 /// [delay] 延迟多久触发一次[generate]

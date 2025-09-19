@@ -46,13 +46,16 @@ Future<void> setScreenPortrait(
 /// ```
 /// MediaQuery.of(context).orientation;
 /// ```
-/// [MediaQueryData]
-/// [OrientationBuilder]
+/// - [MediaQueryData]
+/// - [OrientationBuilder]
+/// - [LayoutBuilder]
 Widget orientationBuilder(OrientationWidgetBuilder builder, [Key? key]) {
   return OrientationBuilder(builder: builder, key: key);
 }
 
 extension OrientationEx on Orientation {
+
+  /// 是否是横屏
   bool get isLandscape => this == Orientation.landscape;
 }
 
