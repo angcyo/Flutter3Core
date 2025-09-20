@@ -76,15 +76,18 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
   @override
   void didUpdateWidget(covariant LabelTabLayoutTile oldWidget) {
     super.didUpdateWidget(oldWidget);
-    //debugger();
-    final index = widget.values?.indexOf(widget.initValue) ?? -1;
+    final values = widget.values;
+    final index = values?.indexOf(widget.initValue) ?? -1;
     if (index == -1) {
       assert(() {
         l.w('不在列表内的元素[${widget.initValue}]');
+        debugger();
         return true;
       }());
     }
-    tabLayoutController.index = index.clamp(0, widget.values?.lastIndex ?? 0);
+    if (!isNil(values)) {
+      tabLayoutController.index = index.clamp(0, values?.lastIndex ?? 0);
+    }
   }
 
   @override
@@ -99,19 +102,20 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
 
     //--
 
-    WidgetList? children = buildChildrenFromValues(
-      context,
-      values: widget.values,
-      valuesWidget: widget.valuesWidget,
-      selectedIndex: tabLayoutController.index,
-    )
-        ?.mapIndex(
-          (child, index) => child.click(() {
-            tabLayoutController.selectedItem(index);
-            widget.onTabIndexChanged?.call(index);
-          }),
-        )
-        .toList();
+    WidgetList? children =
+        buildChildrenFromValues(
+              context,
+              values: widget.values,
+              valuesWidget: widget.valuesWidget,
+              selectedIndex: tabLayoutController.index,
+            )
+            ?.mapIndex(
+              (child, index) => child.click(() {
+                tabLayoutController.selectedItem(index);
+                widget.onTabIndexChanged?.call(index);
+              }),
+            )
+            .toList();
     final content = isNil(children)
         ? empty
         : TabLayout(
@@ -126,10 +130,11 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
             children: [
               ...?children,
               DecoratedBox(
-                      decoration: fillDecoration(
-                color: widget.indicatorColor ?? globalTheme.accentColor,
-                radius: widget.borderRadius,
-              ))
+                    decoration: fillDecoration(
+                      color: widget.indicatorColor ?? globalTheme.accentColor,
+                      radius: widget.borderRadius,
+                    ),
+                  )
                   .shadowDecorated(
                     radius: widget.borderRadius,
                     shadowBlurRadius: 6,
@@ -138,7 +143,7 @@ class _LabelTabLayoutTileState extends State<LabelTabLayoutTile>
                   .tabItemData(
                     itemType: TabItemType.indicator /*指示器*/,
                     itemPaintType: TabItemPaintType.background,
-                  )
+                  ),
             ],
           ).paddingInsets(
             widget.axis == Axis.vertical
