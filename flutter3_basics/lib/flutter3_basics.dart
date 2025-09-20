@@ -191,6 +191,17 @@ typedef AsyncGestureContextTapCallback = FutureOr Function(BuildContext contet);
 ///[isNullOrEmpty]
 bool isNil(dynamic value) => isNullOrEmpty(value);
 
+/// 当前的数据有多个
+bool isMore(dynamic value) {
+  if (value is Iterable) {
+    return value.length > 1;
+  }
+  if (value is Map) {
+    return value.length > 1;
+  }
+  return false;
+}
+
 /// 这个数字的绝对值。
 int abs(int value) => value.abs();
 
