@@ -40,6 +40,8 @@ Map<String, dynamic>? hiveAll([Box? box]) {
 extension HiveStringEx on String {
   /// 保存键值对, 当[value]不支持时, 会自动使用字符串存储
   /// `[HiveError]HiveError: Cannot write, unknown type: TextEditingValue. Did you forget to register an adapter?`
+  ///
+  /// @return void
   Future<dynamic> hivePut(dynamic value, [bool notifyChanged = true]) {
     //debugger();
     if (value == null) {
@@ -161,7 +163,9 @@ extension HiveEx on HiveInterface {
 
     _hiveBox = await Hive.openBox(kHiveBox);
     defHiveBoxFilePath = hiveBoxPath.join("${kHiveBox.toLowerCase()}.hive");
-    l.i("[$kHiveBox]HiveBox数据库路径:$defHiveBoxFilePath :${defHiveBoxFilePath.file().lengthSync().toSizeStr()}");
+    l.i(
+      "[$kHiveBox]HiveBox数据库路径:$defHiveBoxFilePath :${defHiveBoxFilePath.file().lengthSync().toSizeStr()}",
+    );
     //_hiveBox.add(value)
     //_hiveBox.get(key)
     //Hive.box
