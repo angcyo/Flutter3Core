@@ -45,7 +45,8 @@ mixin LabelMixin {
   /// 构建对应的小部件
   /// [buildLabelWidget]
   @callPoint
-  Widget? buildLabelWidgetMixin(BuildContext context, {
+  Widget? buildLabelWidgetMixin(
+    BuildContext context, {
     bool themeStyle = true,
     EdgeInsets? padding,
     String? label,
@@ -58,13 +59,15 @@ mixin LabelMixin {
     labelWidget ??= this.labelWidget;
     labelTextStyle ??= this.labelTextStyle;
     labelTextAlign ??= this.labelTextAlign;
-    final widget = labelWidget ??
+    final widget =
+        labelWidget ??
         (label
             ?.text(
-          style: labelTextStyle ??
-              (themeStyle ? globalTheme.textLabelStyle : null),
-          textAlign: labelTextAlign,
-        )
+              style:
+                  labelTextStyle ??
+                  (themeStyle ? globalTheme.tileTextLabelStyle : null),
+              textAlign: labelTextAlign,
+            )
             .constrainedBox(labelConstraints)
             .paddingInsets(labelPadding));
     return widget?.paddingInsets(padding);
@@ -111,7 +114,8 @@ mixin TextMixin {
   /// 构建对应的小部件
   /// [buildTextWidgetMixin]
   @callPoint
-  Widget? buildTextWidgetMixin(BuildContext context, {
+  Widget? buildTextWidgetMixin(
+    BuildContext context, {
     bool themeStyle = true,
     bool? bold,
     EdgeInsets? padding,
@@ -128,17 +132,14 @@ mixin TextMixin {
     textStyle ??= this.textStyle;
     textAlign ??= this.textAlign;
 
-    textStyle ??= (themeStyle ? globalTheme.textBodyStyle : null);
+    textStyle ??= (themeStyle ? globalTheme.tileTextBodyStyle : null);
     if (bold == true) {
       textStyle = textStyle?.copyWith(fontWeight: FontWeight.bold);
     }
-    final widget = textWidget ??
+    final widget =
+        textWidget ??
         (text
-            ?.text(
-          style: textStyle,
-          textAlign: textAlign,
-          maxLines: maxLines,
-        )
+            ?.text(style: textStyle, textAlign: textAlign, maxLines: maxLines)
             .constrainedBox(textConstraints)
             .paddingInsets(textPadding));
     return widget?.paddingInsets(padding);
@@ -181,7 +182,8 @@ mixin TitleMixin {
   /// 构建对应的小部件
   /// [buildTitleWidget]
   @callPoint
-  Widget? buildTitleWidgetMixin(BuildContext context, {
+  Widget? buildTitleWidgetMixin(
+    BuildContext context, {
     bool themeStyle = true,
     EdgeInsets? padding,
     String? title,
@@ -194,13 +196,15 @@ mixin TitleMixin {
     titleWidget ??= this.titleWidget;
     titleTextStyle ??= this.titleTextStyle;
     titleTextAlign ??= this.titleTextAlign;
-    final widget = titleWidget ??
+    final widget =
+        titleWidget ??
         (title
             ?.text(
-          style: titleTextStyle ??
-              (themeStyle ? globalTheme.textTitleStyle : null),
-          textAlign: titleTextAlign,
-        )
+              style:
+                  titleTextStyle ??
+                  (themeStyle ? globalTheme.tileTextTitleStyle : null),
+              textAlign: titleTextAlign,
+            )
             .constrainedBox(titleConstraints)
             .paddingInsets(titlePadding));
     return widget?.paddingInsets(padding);

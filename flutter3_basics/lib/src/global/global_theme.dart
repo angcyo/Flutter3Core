@@ -283,6 +283,14 @@ class GlobalTheme {
     color: Color(0xff666666),
   );
 
+  //--
+
+  TextStyle get tileTextTitleStyle => textTitleStyle;
+
+  TextStyle get tileTextLabelStyle => textLabelStyle;
+
+  TextStyle get tileTextBodyStyle => textBodyStyle;
+
   //endregion 文本样式
 
   /// [GlobalTheme]
