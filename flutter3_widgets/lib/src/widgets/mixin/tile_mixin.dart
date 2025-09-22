@@ -5,20 +5,10 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2024/03/21
 ///
 /// 单item默认的填充
-const kItemPadding = EdgeInsets.only(
-  left: kX,
-  right: kX,
-  top: kH,
-  bottom: kH,
-);
+const kItemPadding = EdgeInsets.only(left: kX, right: kX, top: kH, bottom: kH);
 
 /// input输入框默认的填充
-const kInputPadding = EdgeInsets.only(
-  left: kH,
-  right: kH,
-  top: kX,
-  bottom: kX,
-);
+const kInputPadding = EdgeInsets.only(left: kH, right: kH, top: kX, bottom: kX);
 
 /// number input输入框默认的填充
 const kNumberInputPadding = EdgeInsets.only(
@@ -53,12 +43,7 @@ const kLabelPaddingInline = EdgeInsets.only(
 
 /// des默认的填充
 /// [label]下面显示的文本
-const kDesPadding = EdgeInsets.only(
-  left: kX,
-  right: kX,
-  top: 0,
-  bottom: 0,
-);
+const kDesPadding = EdgeInsets.only(left: kX, right: kX, top: 0, bottom: 0);
 
 const kSubTilePadding = EdgeInsets.only(
   left: kX,
@@ -143,7 +128,8 @@ mixin TileMixin {
     EdgeInsets? padding,
   }) {
     final globalTheme = GlobalTheme.of(context);
-    final widget = iconWidget ??
+    final widget =
+        iconWidget ??
         (icon == null
             ? null
             : Icon(
@@ -176,7 +162,8 @@ mixin TileMixin {
     BoxConstraints? constraints,
   }) {
     final globalTheme = GlobalTheme.of(context);
-    final widget = textWidget ??
+    final widget =
+        textWidget ??
         ((textSpan != null ? "" : text)
             ?.text(
               textSpan: textSpan,
@@ -190,25 +177,39 @@ mixin TileMixin {
     return widget?.paddingInsets(padding);
   }
 
-  /// [buildTextWidget]
-  /// [buildDesWidget]
-  /// [buildLabelWidget]
+  /// - [LabelMixin]
+  ///
+  /// - [buildTextWidget]
+  /// - [buildDesWidget]
+  /// - [buildLabelWidget]
   Widget? buildLabelWidget(
     BuildContext context, {
     Widget? labelWidget,
     String? label,
     TextStyle? labelStyle,
+    TextAlign? labelTextAlign,
     bool themeStyle = true,
+    //--
     EdgeInsets? labelPadding,
     EdgeInsets? padding,
     BoxConstraints? constraints = kLabelConstraints,
+    //--
+    bool isRequired = false,
   }) {
     final globalTheme = GlobalTheme.of(context);
-    final widget = labelWidget ??
+    final widget =
+        labelWidget ??
         (label
             ?.text(
-              style: labelStyle ??
+              style:
+                  labelStyle ??
                   (themeStyle ? globalTheme.textLabelStyle : null),
+              textAlign: labelTextAlign,
+            )
+            .rowOf(
+              isRequired ? " *".text(textColor: Colors.redAccent) : null,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
             )
             .constrainedBox(constraints)
             .paddingInsets(labelPadding ?? globalTheme.labelTilePadding));
@@ -229,7 +230,8 @@ mixin TileMixin {
     BoxConstraints? constraints,
   }) {
     final globalTheme = GlobalTheme.of(context);
-    final widget = desWidget ??
+    final widget =
+        desWidget ??
         (des
             ?.text(
               style: desStyle ?? (themeStyle ? globalTheme.textDesStyle : null),
@@ -273,19 +275,23 @@ mixin TileMixin {
     final globalTheme = GlobalTheme.of(context);
     final normalTextStyle =
         textStyle ?? (themeStyle ? globalTheme.textBodyStyle : null);
-    final selectTextStyle = selectedTextStyle ??
+    final selectTextStyle =
+        selectedTextStyle ??
         textStyle?.copyWith(
-            fontWeight: selectedTextBold ? ui.FontWeight.bold : null,
-            color: selectedTextColor) ??
+          fontWeight: selectedTextBold ? ui.FontWeight.bold : null,
+          color: selectedTextColor,
+        ) ??
         (themeStyle
             ? globalTheme.textBodyStyle.copyWith(
                 fontWeight: selectedTextBold ? ui.FontWeight.bold : null,
                 color: context.isThemeDark
                     ? globalTheme.blackColor
-                    : selectedTextColor)
+                    : selectedTextColor,
+              )
             : null);
 
-    Widget? widget = textWidget ??
+    Widget? widget =
+        textWidget ??
         (text?.text(
           textAlign: ui.TextAlign.center,
           style: isSelected ? selectTextStyle : normalTextStyle,
@@ -293,28 +299,37 @@ mixin TileMixin {
     if (widget != null && isSelected) {
       //选中了
       if (textSelectedLeading != null || textSelectedTrailing != null) {
-        widget = [textSelectedLeading, widget, textSelectedTrailing]
-                .row(mainAxisSize: MainAxisSize.min, gap: textSelectedGap) ??
+        widget =
+            [
+              textSelectedLeading,
+              widget,
+              textSelectedTrailing,
+            ].row(mainAxisSize: MainAxisSize.min, gap: textSelectedGap) ??
             widget;
       }
     }
     return widget
         ?.paddingInsets(padding)
-        .backgroundDecoration(!enable
-            ? fillDecoration(
-                color: globalTheme.disableColor,
-                radius: kDefaultBorderRadiusX,
-              )
-            : isSelected
-                ? fillDecoration(
-                    color: selectedBgColor ?? globalTheme.accentColor,
-                    radius: selectedBorderRadius,
-                  )
-                : null)
-        .click(onTap,
-            enable: enable &&
-                !disableTap &&
-                (selectedDisableTap ? !isSelected : true));
+        .backgroundDecoration(
+          !enable
+              ? fillDecoration(
+                  color: globalTheme.disableColor,
+                  radius: kDefaultBorderRadiusX,
+                )
+              : isSelected
+              ? fillDecoration(
+                  color: selectedBgColor ?? globalTheme.accentColor,
+                  radius: selectedBorderRadius,
+                )
+              : null,
+        )
+        .click(
+          onTap,
+          enable:
+              enable &&
+              !disableTap &&
+              (selectedDisableTap ? !isSelected : true),
+        );
   }
 
   //endregion ---构建小部件---
@@ -369,7 +384,8 @@ mixin TileMixin {
     final globalTheme = GlobalTheme.of(context);
     Widget widget = Switch(
       value: value,
-      onChanged: onChanged ??
+      onChanged:
+          onChanged ??
           (value) {
             assert(() {
               l.d('开关切换->$value');
@@ -467,9 +483,11 @@ mixin TileMixin {
               !isNil(inactiveTrackGradientColors))) {
         final progress = (value - minValue) / (maxValue - minValue);
         gradientColor = getGradientColor(
-            progress, activeTrackGradientColors ?? inactiveTrackGradientColors!,
-            colorStops: activeTrackGradientColorStops ??
-                inactiveTrackGradientColorStops);
+          progress,
+          activeTrackGradientColors ?? inactiveTrackGradientColors!,
+          colorStops:
+              activeTrackGradientColorStops ?? inactiveTrackGradientColorStops,
+        );
       }
 
       //居中双边shape
@@ -504,8 +522,9 @@ mixin TileMixin {
       }
     }
     final globalTheme = GlobalTheme.of(context);
-    final darkAccentColor =
-        context.isThemeDark ? globalTheme.accentColor : globalTheme.accentColor;
+    final darkAccentColor = context.isThemeDark
+        ? globalTheme.accentColor
+        : globalTheme.accentColor;
     return SliderTheme(
       data: SliderThemeData(
         showValueIndicator: showValueIndicator,
@@ -514,12 +533,14 @@ mixin TileMixin {
         overlayColor: overlayColor ?? darkAccentColor.withOpacity(0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
         inactiveTrackColor: inactiveTrackColor,
-        thumbShape: thumbShape ??
+        thumbShape:
+            thumbShape ??
             (thumbRadius == null
                 ? null
                 : RoundSliderThumbShape(enabledThumbRadius: thumbRadius)),
         trackShape: trackShape,
-        overlayShape: overlayShape ??
+        overlayShape:
+            overlayShape ??
             (overlayRadius == null
                 ? null
                 : RoundSliderOverlayShape(overlayRadius: overlayRadius)),
@@ -532,7 +553,8 @@ mixin TileMixin {
         max: maxValue,
         divisions: divisions,
         label: label ?? value.toDigits(digits: digits),
-        onChanged: onChanged ??
+        onChanged:
+            onChanged ??
             (value) {
               assert(() {
                 l.d('滑块[$minValue~$maxValue]:$value');
@@ -624,8 +646,9 @@ mixin TileMixin {
       }
     }*/
     final globalTheme = GlobalTheme.of(context);
-    final darkAccentColor =
-        context.isThemeDark ? globalTheme.accentColor : null;
+    final darkAccentColor = context.isThemeDark
+        ? globalTheme.accentColor
+        : null;
     return SliderTheme(
       data: SliderThemeData(
         showValueIndicator: showValueIndicator,
@@ -646,9 +669,12 @@ mixin TileMixin {
         min: minValue,
         max: maxValue,
         divisions: divisions,
-        labels: RangeLabels(startLabel ?? startValue.toDigits(digits: digits),
-            endLabel ?? endValue.toDigits(digits: digits)),
-        onChanged: onChanged ??
+        labels: RangeLabels(
+          startLabel ?? startValue.toDigits(digits: digits),
+          endLabel ?? endValue.toDigits(digits: digits),
+        ),
+        onChanged:
+            onChanged ??
             (values) {
               assert(() {
                 l.d('滑块[$minValue~$maxValue]:(${values.start}, ${values.end})');
@@ -692,17 +718,15 @@ mixin TileMixin {
           return transformValueWidget?.call(context, widget, data) ?? widget;
         }
         //debugger();
-        final style = textStyle ??
+        final style =
+            textStyle ??
             globalTheme.textGeneralStyle.copyWith(
               color: index == selectedIndex
                   ? context.darkOr(
                       globalTheme.textPrimaryStyle.color,
                       globalTheme.themeBlackColor,
                     )
-                  : context.darkOr(
-                      globalTheme.textPrimaryStyle.color,
-                      null,
-                    ),
+                  : context.darkOr(globalTheme.textPrimaryStyle.color, null),
               fontWeight: (index == selectedIndex && selectedBold)
                   ? ui.FontWeight.bold
                   : null,
@@ -730,8 +754,10 @@ mixin TileMixin {
     dynamic number, {
     Widget? numberWidget,
     GestureTapCallback? onTap,
-    EdgeInsetsGeometry? padding =
-        const EdgeInsets.symmetric(horizontal: kH, vertical: kM),
+    EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(
+      horizontal: kH,
+      vertical: kM,
+    ),
     EdgeInsetsGeometry? margin,
     Decoration? decoration,
     Color? backgroundColor,
@@ -742,25 +768,28 @@ mixin TileMixin {
       //默认的点击事件
     }
     return Container(
-      /*fillDecoration(
+          /*fillDecoration(
         color: globalTheme.whiteSubBgColor,
         borderRadius: kDefaultBorderRadiusL,
       )*/
-      decoration: decoration,
-      constraints: constraints,
-      padding: padding,
-      child: (numberWidget ?? "${number ?? ""}".text()).center(),
-    ).ink(
-      () {
-        onTap?.call();
-      },
-      backgroundColor: backgroundColor ??
-          context.darkOr(
-            globalTheme.lineDarkColor,
-            globalTheme.whiteSubBgColor,
-          ),
-      radius: kDefaultBorderRadiusL,
-    ).paddingInsets(margin);
+          decoration: decoration,
+          constraints: constraints,
+          padding: padding,
+          child: (numberWidget ?? "${number ?? ""}".text()).center(),
+        )
+        .ink(
+          () {
+            onTap?.call();
+          },
+          backgroundColor:
+              backgroundColor ??
+              context.darkOr(
+                globalTheme.lineDarkColor,
+                globalTheme.whiteSubBgColor,
+              ),
+          radius: kDefaultBorderRadiusL,
+        )
+        .paddingInsets(margin);
   }
 
   /// 数字输入的小部件
@@ -788,40 +817,46 @@ mixin TileMixin {
       //默认的点击事件
     }
     return Container(
-      /*fillDecoration(
+          /*fillDecoration(
         color: globalTheme.whiteSubBgColor,
         borderRadius: kDefaultBorderRadiusL,
       )*/
-      decoration: decoration,
-      constraints: constraints,
-      padding: padding,
-      child: NumberInputWidget(
-        inputText: number,
-        contentPadding: contentPadding,
-        inputNumType: numType ?? NumType.from(number),
-        inputMinValue: minValue,
-        inputMaxValue: maxValue,
-        inputMaxDigits: maxDigits,
-        onChanged: onChanged,
-        onSubmitted: onSubmitted,
-      ),
-      /*child: TextField(
-        */ /*contentPadding: padding,*/ /*
+          decoration: decoration,
+          constraints: constraints,
+          padding: padding,
+          child: NumberInputWidget(
+            inputText: number,
+            contentPadding: contentPadding,
+            inputNumType: numType ?? NumType.from(number),
+            inputMinValue: minValue,
+            inputMaxValue: maxValue,
+            inputMaxDigits: maxDigits,
+            onChanged: onChanged,
+            onSubmitted: onSubmitted,
+          ),
+          /*child: TextField(
+        */
+          /*contentPadding: padding,*/
+          /*
         textAlign: TextAlign.center,
         expands: false,
         decoration: InputDecoration(
           isDense: true,
-          contentPadding: padding */ /*EdgeInsets.zero*/ /*,
+          contentPadding: padding */
+          /*EdgeInsets.zero*/
+          /*,
           border: InputBorder.none,
         ),
       ),*/
-    ).ink(
-      () {
-        onTap?.call();
-      },
-      backgroundColor: backgroundColor ?? globalTheme.whiteSubBgColor,
-      radius: kDefaultBorderRadiusL,
-    ).paddingInsets(margin);
+        )
+        .ink(
+          () {
+            onTap?.call();
+          },
+          backgroundColor: backgroundColor ?? globalTheme.whiteSubBgColor,
+          radius: kDefaultBorderRadiusL,
+        )
+        .paddingInsets(margin);
   }
 
   /// 构建一个用于点击操作的容器, 带圆角背景
@@ -830,8 +865,10 @@ mixin TileMixin {
     Widget? child, {
     GestureTapCallback? onTap,
     EdgeInsetsGeometry? contentMargin = kContentPadding,
-    EdgeInsetsGeometry? contentPadding =
-        const EdgeInsets.symmetric(horizontal: kH, vertical: kX),
+    EdgeInsetsGeometry? contentPadding = const EdgeInsets.symmetric(
+      horizontal: kH,
+      vertical: kX,
+    ),
     AlignmentGeometry? contentAlignment = Alignment.centerLeft,
     BoxConstraints? contentConstraints = const BoxConstraints(
       minHeight: kMinInteractiveHeight,
@@ -839,20 +876,21 @@ mixin TileMixin {
     double radius = kDefaultBorderRadiusXX,
   }) {
     final globalTheme = GlobalTheme.of(context);
-    final result = Container(
-      padding: contentPadding,
-      alignment: contentAlignment,
-      constraints: contentConstraints,
-      child: child,
-    )
-        .ink(
-          onTap,
-          backgroundColor: globalTheme.itemWhiteBgColor,
-          radius: radius,
-        )
-        .paddingInsets(contentMargin);
+    final result =
+        Container(
+              padding: contentPadding,
+              alignment: contentAlignment,
+              constraints: contentConstraints,
+              child: child,
+            )
+            .ink(
+              onTap,
+              backgroundColor: globalTheme.itemWhiteBgColor,
+              radius: radius,
+            )
+            .paddingInsets(contentMargin);
     return result;
   }
 
-//endregion ---辅助小部件---
+  //endregion ---辅助小部件---
 }

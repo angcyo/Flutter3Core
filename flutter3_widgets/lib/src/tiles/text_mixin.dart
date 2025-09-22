@@ -53,12 +53,14 @@ mixin LabelMixin {
     Widget? labelWidget,
     TextStyle? labelTextStyle,
     TextAlign? labelTextAlign,
+    //--
+    bool? isRequired,
   }) {
-    final globalTheme = GlobalTheme.of(context);
     label ??= this.label;
     labelWidget ??= this.labelWidget;
     labelTextStyle ??= this.labelTextStyle;
     labelTextAlign ??= this.labelTextAlign;
+    final globalTheme = GlobalTheme.of(context);
     final widget =
         labelWidget ??
         (label
@@ -67,6 +69,13 @@ mixin LabelMixin {
                   labelTextStyle ??
                   (themeStyle ? globalTheme.tileTextLabelStyle : null),
               textAlign: labelTextAlign,
+            )
+            .rowOf(
+              isRequired == true
+                  ? " *".text(textColor: Colors.redAccent)
+                  : null,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
             )
             .constrainedBox(labelConstraints)
             .paddingInsets(labelPadding));
