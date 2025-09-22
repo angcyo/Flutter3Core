@@ -40,6 +40,7 @@ class ReceiveIntent {
   /// [ReceiveSharingIntentPlus.getInitialTextAsUri]
   final LiveStreamController<Uri?> uriStream = LiveStreamController(null);
 
+  /// 监听文件流,用来处理不同的文件
   /// 合并了[mediaFileStream]和[uriStream]的通知, 只返回对应的文件对象
   final LiveStreamController<List<File>?> fileStream =
       LiveStreamController(null);
