@@ -64,6 +64,10 @@ class GlobalTheme {
   /// [themeWhiteColor]
   Color get surfaceBgColor => whiteBgColor;
 
+  /// - [surfaceBgColor]
+  /// - [surfaceSubBgColor]
+  Color get surfaceSubBgColor => const Color(0xfff0f1f5);
+
   /// 对话框默认的背景颜色
   Color get dialogSurfaceBgColor => themeWhiteColor;
 
@@ -224,79 +228,60 @@ class GlobalTheme {
 
   /// 平板模式下, 对话框的约束
   BoxConstraints get tabletDialogConstraints => BoxConstraints(
-      minWidth: 0,
-      maxWidth: math.min(screenWidth, screenHeight),
-      minHeight: 0,
-      maxHeight: double.infinity);
+    minWidth: 0,
+    maxWidth: math.min(screenWidth, screenHeight),
+    minHeight: 0,
+    maxHeight: double.infinity,
+  );
 
   //endregion 尺寸配置
 
   //region 文本样式
 
   /// [_kDefaultFontSize] 14
-  TextStyle get textPrimaryStyle => const TextStyle(
-        fontSize: 18,
-        color: Color(0xff161B26),
-      );
+  TextStyle get textPrimaryStyle =>
+      const TextStyle(fontSize: 18, color: Color(0xff161B26));
 
   /// 常规文本颜色
-  TextStyle get textGeneralStyle => const TextStyle(
-        fontSize: 14,
-        color: Color(0xff182334),
-      );
+  TextStyle get textGeneralStyle =>
+      const TextStyle(fontSize: 14, color: Color(0xff182334));
 
   /// 大号常规文本颜色
-  TextStyle get textBigGeneralStyle => const TextStyle(
-        fontSize: 28,
-        color: Color(0xff182334),
-      );
+  TextStyle get textBigGeneralStyle =>
+      const TextStyle(fontSize: 28, color: Color(0xff182334));
 
-  TextStyle get textTitleStyle => const TextStyle(
-        fontSize: 17,
-        color: Color(0xff333333),
-      );
+  TextStyle get textTitleStyle =>
+      const TextStyle(fontSize: 17, color: Color(0xff333333));
 
-  TextStyle get textSubTitleStyle => const TextStyle(
-        fontSize: 14,
-        color: Color(0xff929292),
-      );
+  TextStyle get textSubTitleStyle =>
+      const TextStyle(fontSize: 14, color: Color(0xff929292));
 
-  TextStyle get textBodyStyle => const TextStyle(
-        fontSize: 14,
-        color: Color(0xff333333),
-      );
+  TextStyle get textBodyStyle =>
+      const TextStyle(fontSize: 14, color: Color(0xff333333));
 
-  TextStyle get textSubStyle => const TextStyle(
-        fontSize: 12,
-        color: Color(0xffB0B0B0),
-      );
+  TextStyle get textSubStyle =>
+      const TextStyle(fontSize: 12, color: Color(0xffB0B0B0));
 
-  TextStyle get textDesStyle => const TextStyle(
-        fontSize: 12,
-        color: Color(0xff949496),
-      );
+  TextStyle get textDesStyle =>
+      const TextStyle(fontSize: 12, color: Color(0xff949496));
 
-  TextStyle get textPlaceStyle => const TextStyle(
-        fontSize: 12,
-        color: Color(0xff6F6F6F),
-      );
+  TextStyle get textPlaceStyle =>
+      const TextStyle(fontSize: 12, color: Color(0xff6F6F6F));
 
-  TextStyle get textDisableStyle => const TextStyle(
-        fontSize: 14,
-        color: Color(0xffb0b0b0),
-      );
+  TextStyle get textDisableStyle =>
+      const TextStyle(fontSize: 14, color: Color(0xffb0b0b0));
 
   TextStyle get textLabelStyle => const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-        color: Color(0xff333333),
-      );
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    color: Color(0xff333333),
+  );
 
   TextStyle get textInfoStyle => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: Color(0xff666666),
-      );
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: Color(0xff666666),
+  );
 
   //endregion 文本样式
 
@@ -382,58 +367,48 @@ class GlobalThemeDark extends GlobalTheme {
   ui.Color get iconWhiteDisableBgColor => super.iconWhiteDisableBgColor;
 
   @override
+  ui.Color get surfaceSubBgColor => super.surfaceBgColor;
+
+  @override
   ui.Color get dialogSurfaceBgColor => whiteBgColor;
 
   @override
   Color get icoDisableColor => const Color(0xffb0b0b0);
 
   @override
-  TextStyle get textPrimaryStyle => super.textPrimaryStyle.copyWith(
-        color: const Color(0xfff6f6f6),
-      );
+  TextStyle get textPrimaryStyle =>
+      super.textPrimaryStyle.copyWith(color: const Color(0xfff6f6f6));
 
   @override
-  TextStyle get textGeneralStyle => super.textGeneralStyle.copyWith(
-        color: const Color(0xff6f6f6f),
-      );
+  TextStyle get textGeneralStyle =>
+      super.textGeneralStyle.copyWith(color: const Color(0xff6f6f6f));
 
   @override
-  TextStyle get textBigGeneralStyle => const TextStyle(
-        fontSize: 28,
-        color: Color(0xff6f6f6f),
-      );
+  TextStyle get textBigGeneralStyle =>
+      const TextStyle(fontSize: 28, color: Color(0xff6f6f6f));
 
   @override
-  TextStyle get textTitleStyle => super.textTitleStyle.copyWith(
-        color: const Color(0xfffcfbfc),
-      );
+  TextStyle get textTitleStyle =>
+      super.textTitleStyle.copyWith(color: const Color(0xfffcfbfc));
 
   @override
-  TextStyle get textBodyStyle => super.textBodyStyle.copyWith(
-        color: const Color(0xffa4a4a4),
-      );
+  TextStyle get textBodyStyle =>
+      super.textBodyStyle.copyWith(color: const Color(0xffa4a4a4));
 
   @override
-  TextStyle get textDesStyle => super.textDesStyle.copyWith(
-        color: const Color(0xff6f6f6f),
-      );
+  TextStyle get textDesStyle =>
+      super.textDesStyle.copyWith(color: const Color(0xff6f6f6f));
 
   @override
-  TextStyle get textLabelStyle => super.textLabelStyle.copyWith(
-        color: const Color(0xff787878),
-      );
+  TextStyle get textLabelStyle =>
+      super.textLabelStyle.copyWith(color: const Color(0xff787878));
 }
 
 //--
 
 /// label默认的填充
 /// 左边显示的文本
-const kLabelPadding = EdgeInsets.only(
-  left: kX,
-  right: kX,
-  top: kH,
-  bottom: kH,
-);
+const kLabelPadding = EdgeInsets.only(left: kX, right: kX, top: kH, bottom: kH);
 
 const kSubLabelPadding = EdgeInsets.only(
   left: kXx,
@@ -444,9 +419,4 @@ const kSubLabelPadding = EdgeInsets.only(
 
 /// tile默认的填充
 /// item整体
-const kTilePadding = EdgeInsets.only(
-  left: 0,
-  right: kX,
-  top: kL,
-  bottom: kL,
-);
+const kTilePadding = EdgeInsets.only(left: 0, right: kX, top: kL, bottom: kL);

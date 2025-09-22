@@ -57,22 +57,25 @@ mixin AbsScrollPage {
       appBar: useSliverAppBar
           ? null
           : enableAppBar(context) == true
-              ? (appBar ?? buildAppBar(context))
-              : null,
+          ? (appBar ?? buildAppBar(context))
+          : null,
       backgroundColor: backgroundColor ?? getBackgroundColor(context),
       resizeToAvoidBottomInset:
           resizeToAvoidBottomInset ?? getResizeToAvoidBottomInset(context),
-      body: (body ??
-              (this is RebuildBodyMixin
-                  ? rebuild((this as RebuildBodyMixin).bodyUpdateSignal,
-                      (context, value) => buildBody(context, children))
-                  : buildBody(context, children)))
-          .safeArea(
-        useSafeArea: useSafeArea,
-        top: safeAreaTop,
-        bottom: safeAreaBottom,
-        maintainBottomViewPadding: safeAreaBottom,
-      ),
+      body:
+          (body ??
+                  (this is RebuildBodyMixin
+                      ? rebuild(
+                          (this as RebuildBodyMixin).bodyUpdateSignal,
+                          (context, value) => buildBody(context, children),
+                        )
+                      : buildBody(context, children)))
+              .safeArea(
+                useSafeArea: useSafeArea,
+                top: safeAreaTop,
+                bottom: safeAreaBottom,
+                maintainBottomViewPadding: safeAreaBottom,
+              ),
     );
   }
 
@@ -98,8 +101,8 @@ mixin AbsScrollPage {
   ///
   UpdateValueNotifier? get pageScrollChildrenUpdateSignal =>
       this is RebuildScrollChildrenMixin
-          ? (this as RebuildScrollChildrenMixin).scrollChildrenUpdateSignal
-          : null;
+      ? (this as RebuildScrollChildrenMixin).scrollChildrenUpdateSignal
+      : null;
 
   /// 构建滚动内容
   /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
@@ -137,16 +140,46 @@ mixin AbsScrollPage {
       return result;
     }
 
+    //--
+    final Widget body;
     if (this is RScrollPage) {
-      return (this as RScrollPage).pageRScrollView(children: buildChildren());
+      body = (this as RScrollPage).pageRScrollView(children: buildChildren());
+    } else {
+      body = RScrollView(
+        /*physics: null,
+          scrollBehavior: null,*/
+        /*children: children,*/
+        updateSignal: pageScrollChildrenUpdateSignal,
+        childrenBuilder: (context) => buildChildren(),
+      );
     }
-    return RScrollView(
-      /*physics: null,
-      scrollBehavior: null,*/
-      /*children: children,*/
-      updateSignal: pageScrollChildrenUpdateSignal,
-      childrenBuilder: (context) => buildChildren(),
-    );
+    final before = buildBodyBefore(context);
+    final after = buildBodyAfter(context);
+    return before == null && after == null
+        ? body
+        : [
+            ?before,
+            body.expanded(),
+            ?after,
+          ].column(mainAxisSize: MainAxisSize.max)!;
+  }
+
+  /// 构建内容前面的内容
+  /// - [buildBody]
+  /// - [buildBodyBefore]
+  /// - [buildBodyAfter]
+  @overridePoint
+  Widget? buildBodyBefore(BuildContext context) {
+    return null;
+  }
+
+  /// 构建内容后面的内容
+  /// - [buildBody]
+  /// - [buildBodyBefore]
+  /// - [buildBodyAfter]
+  @overridePoint
+  Widget? buildBodyAfter(BuildContext context) {
+    return null;
   }
 
   /// 如果没有指定[children]时, 则调用此方法构建滚动内容
@@ -183,8 +216,8 @@ mixin AbsScrollPage {
   /// 标题更新信号
   UpdateValueNotifier? get pageTitleUpdateSignal =>
       this is RebuildPageTitleMixin
-          ? (this as RebuildPageTitleMixin).titleUpdateSignal
-          : null;
+      ? (this as RebuildPageTitleMixin).titleUpdateSignal
+      : null;
 
   /// 获取页面标题
   @property
@@ -214,7 +247,8 @@ mixin AbsScrollPage {
       final globalConfig = GlobalConfig.of(context);
       final textStyle = globalConfig.globalTheme.textTitleStyle.copyWith(
         fontWeight: FontWeight.bold,
-        color: getAppBarForegroundColor(context) ??
+        color:
+            getAppBarForegroundColor(context) ??
             globalConfig.globalTheme.appBarForegroundColor,
       );
       final titleTextSpan = getTitleTextSpan(context);
@@ -224,10 +258,9 @@ mixin AbsScrollPage {
               style: textStyle,
               textAlign: getTitleTextAlign(context),
             )
-          : getTitle(context)?.text(
-              style: textStyle,
-              textAlign: getTitleTextAlign(context),
-            );
+          : getTitle(
+              context,
+            )?.text(style: textStyle, textAlign: getTitleTextAlign(context));
       return titleWidget;
     }
 
@@ -383,7 +416,7 @@ mixin AbsScrollPage {
     return null;
   }
 
-//endregion AppBar
+  //endregion AppBar
 }
 
 /// 更新body混入, 配合[AbsScrollPage]使用
