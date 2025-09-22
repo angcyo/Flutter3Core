@@ -2314,8 +2314,10 @@ extension IntEx on int {
   /// [bit] 从右往左, 第几位, 0开始
   int bitIndex(int bit) => (this >> math.max(bit, 1)) & 0x1;
 
-  /// 获取从[startBit]开始, 获取[count]个bit
-  /// 从右到左, 从0开始, 获取[count]个bit
+  /// 获取从[startBit]开始的[count]个bit
+  /// 从右到左, 从0开始, 获取[count]个bit对应的数值
+  /// - [startBit]第几位[0~31]
+  /// - [count]需要几位[1-32]
   int bits(int startBit, int count) {
     if (startBit < 0 || count < 1) {
       return 0;
