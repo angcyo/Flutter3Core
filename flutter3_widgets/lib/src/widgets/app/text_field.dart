@@ -1178,13 +1178,19 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
               widget.labelTextBuilder?.call(context) ??
               widget.config.labelText ??
               widget.config.labelTextBuilder?.call(context),
-          labelStyle: widget.labelStyle ?? widget.config.labelTextStyle,
+          labelStyle:
+              widget.labelStyle ??
+              widget.config.labelTextStyle ??
+              globalTheme.textLabelStyle,
           hintText:
               widget.hintText ??
               widget.hintTextBuilder?.call(context) ??
               widget.config.hintText ??
               widget.config.hintTextBuilder?.call(context),
-          hintStyle: widget.hintStyle ?? widget.config.hintTextStyle,
+          hintStyle:
+              widget.hintStyle ??
+              widget.config.hintTextStyle ??
+              globalTheme.textPlaceStyle,
           //floatingLabel
           //floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelStyle:
