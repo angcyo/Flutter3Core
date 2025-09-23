@@ -5,8 +5,8 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/11/23
 ///
 /// 如果是[String]数据, 参数就是发送的字符长度
-/// [startTime] 数据发送开始的时间, 用于
-/// [progress] [0~1]
+/// - [startTime] 数据发送开始的时间, 用于
+/// - [progress].[0~1]
 @immutable
 final class DataChunkInfo {
   /// 数据发送开始的时间, 毫秒
@@ -19,11 +19,7 @@ final class DataChunkInfo {
   /// 已经发送的字节数
   final int count;
 
-  DataChunkInfo({
-    this.startTime = -1,
-    this.total = 0,
-    this.count = 0,
-  });
+  DataChunkInfo({this.startTime = -1, this.total = 0, this.count = 0});
 
   /// 当前传输的进度[0~1]
   double get progress => (count / total).clamp(0, 1);
@@ -50,8 +46,9 @@ final class DataChunkInfo {
   String getSpeedStr([int? time]) {
     time ??= nowTime();
     final dTime = time - startTime;
-    int speed =
-        dTime >= 1000 ? (count * 1000 / (time - startTime)).round() : count;
+    int speed = dTime >= 1000
+        ? (count * 1000 / (time - startTime)).round()
+        : count;
     return '${speed.toSizeStr()}/s';
   }
 

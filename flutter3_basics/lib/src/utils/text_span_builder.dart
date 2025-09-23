@@ -29,10 +29,7 @@ class TextSpanBuilder {
   /// [addTextSpans]
   /// [addTextStyle]
   TextSpanBuilder addText(String? text, {TextStyle? style}) {
-    _textSpans.add(TextSpan(
-      text: text,
-      style: style,
-    ));
+    _textSpans.add(TextSpan(text: text, style: style));
     return this;
   }
 
@@ -43,26 +40,31 @@ class TextSpanBuilder {
     double? fontSize,
     double? letterSpacing,
   }) {
-    addText(text,
-        style: style ??
-            TextStyle(
-              color: color,
-              fontSize: fontSize,
-              letterSpacing: letterSpacing,
-            ));
+    addText(
+      text,
+      style:
+          style ??
+          TextStyle(
+            color: color,
+            fontSize: fontSize,
+            letterSpacing: letterSpacing,
+          ),
+    );
     return this;
   }
 
-  TextSpanBuilder addTextColor(String? text, Color? color) {
+  TextSpanBuilder addTextColor(String? text, [Color? color]) {
     addTextStyle(text, color: color);
     return this;
   }
 
-  TextSpanBuilder addTextBackgroundColor(String? text, Color color) {
-    _textSpans.add(TextSpan(
-      text: text,
-      style: TextStyle(backgroundColor: color),
-    ));
+  TextSpanBuilder addTextBackgroundColor(String? text, [Color? color]) {
+    _textSpans.add(
+      TextSpan(
+        text: text,
+        style: TextStyle(backgroundColor: color),
+      ),
+    );
     return this;
   }
 
@@ -73,12 +75,14 @@ class TextSpanBuilder {
     ui.PlaceholderAlignment alignment = ui.PlaceholderAlignment.middle,
     TextBaseline? baseline,
   }) {
-    _textSpans.add(WidgetSpan(
-      child: widget,
-      alignment: alignment,
-      baseline: baseline,
-      style: style,
-    ));
+    _textSpans.add(
+      WidgetSpan(
+        child: widget,
+        alignment: alignment,
+        baseline: baseline,
+        style: style,
+      ),
+    );
     return this;
   }
 

@@ -100,22 +100,29 @@ class _ProgressStateWidgetState extends State<ProgressStateWidget> {
         updateState();
         return true;
       },
-      child: (widget.childBuilder != null
-              ? LayoutBuilder(
-                  builder: (ctx, constraintsType) => widget.childBuilder!(ctx))
-              : widget.child)!
-          .stackOf(
-        progress
-            .size(
-                width: double.infinity,
-                height: _notification?.height ?? widget.height ?? 2)
-            .offstage(_notification == null || _notification?.progress == null),
-        alignment: Alignment.topCenter,
-      ),
+      child:
+          (widget.childBuilder != null
+                  ? LayoutBuilder(
+                      builder: (ctx, constraintsType) =>
+                          widget.childBuilder!(ctx),
+                    )
+                  : widget.child)!
+              .stackOf(
+                progress
+                    .size(
+                      width: double.infinity,
+                      height: _notification?.height ?? widget.height ?? 2,
+                    )
+                    .offstage(
+                      _notification == null || _notification?.progress == null,
+                    ),
+                alignment: Alignment.topCenter,
+              ),
     );
   }
 }
 
+/// 进度当前的状态期
 enum ProgressStateType {
   /// 正常
   normal,
@@ -134,6 +141,10 @@ enum ProgressStateType {
 }
 
 /// 进度状态信息
+/// - 当前状态
+/// - 当前进度
+/// - 错误数据
+/// - 携带数据
 class ProgressStateInfo {
   /// 状态
   ProgressStateType state = ProgressStateType.normal;

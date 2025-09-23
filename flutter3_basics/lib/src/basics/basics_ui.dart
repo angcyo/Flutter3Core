@@ -562,6 +562,24 @@ extension WidgetListEx on WidgetNullList {
 
 /// [Widget]
 extension WidgetEx on Widget {
+  //region operator
+
+  /// 使用[Row]横向包裹[count]个[Widget]
+  Widget operator *(int? count) => (count ?? 0) > 1
+      ? [
+          for (int i = 0; i < count!; i++) this,
+        ].row(mainAxisSize: MainAxisSize.min)!
+      : this;
+
+  /// 使用[Column]横向包裹[count]个[Widget]
+  Widget operator /(int? count) => (count ?? 0) > 1
+      ? [
+          for (int i = 0; i < count!; i++) this,
+        ].column(mainAxisSize: MainAxisSize.min)!
+      : this;
+
+  //endregion operator
+
   /// 为child添加一个key
   /// [KeyedSubtree]
   /// [repaintBoundary]

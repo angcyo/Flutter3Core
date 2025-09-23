@@ -2530,6 +2530,12 @@ extension ListIntEx on List<int> {
   ///
   Uint8List get bytes => Uint8List.fromList(this);
 
+  /// [bytes]->[buffer]->[byteData]
+  ByteBuffer get buffer => bytes.buffer;
+
+  /// [bytes]->[buffer]->[byteData]
+  ByteData get byteData => ByteData.view(buffer);
+
   /// 将字节数组转成对应的流
   Stream<List<int>> get stream => Stream.fromIterable([this]);
 

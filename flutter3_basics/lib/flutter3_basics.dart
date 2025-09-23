@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:math' as math;
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter3_basics/src/import_test/import_test.dart';
