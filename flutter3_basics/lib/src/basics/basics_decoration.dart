@@ -19,6 +19,80 @@ class PaintDecoration extends Decoration {
   }
 }
 
+/// 带进度的[BoxDecoration]装饰
+class ProgressBoxDecoration extends BoxDecoration {
+  /// 进度[0~1]
+  /// - [ProgressStateInfo]
+  final double? progress;
+
+  /// 调试标签
+  final String? debugLabel;
+
+  const ProgressBoxDecoration({
+    this.progress,
+    this.debugLabel,
+    super.color,
+    super.image,
+    super.border,
+    super.borderRadius,
+    super.boxShadow,
+    super.gradient,
+    super.backgroundBlendMode,
+    super.shape = BoxShape.rectangle,
+  });
+
+  /// 此方法会在[RenderDecoratedBox.paint]方法中创建一次并缓存
+  @override
+  BoxPainter createBoxPainter([ui.VoidCallback? onChanged]) {
+    debugger(when: debugLabel != null);
+    final parent = super.createBoxPainter(onChanged);
+    return ProgressBoxPainter(parent, onChanged, progress: progress);
+  }
+}
+
+class ProgressBoxPainter extends BoxPainter {
+  /// 进度[0~1]
+  /// - [ProgressStateInfo]
+  final double? progress;
+
+  final BoxPainter parentPainter;
+
+  const ProgressBoxPainter(
+    this.parentPainter,
+    super.onChanged, {
+    this.progress,
+  });
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    final progress = this.progress;
+    //debugger(when: progress != null);
+    if (progress == null || progress == ProgressStateInfo.noProgress) {
+      parentPainter.paint(canvas, offset, configuration);
+    } else if (progress == ProgressStateInfo.infinityProgress) {
+    } else if (progress >= 0 && progress <= 1) {
+      final Rect rect = offset & configuration.size!;
+      canvas.withClipRect(
+        Rect.fromLTWH(
+          rect.left,
+          rect.top,
+          progress == 0 ? 1 : rect.width * progress,
+          rect.height,
+        ),
+        () {
+          parentPainter.paint(canvas, offset, configuration);
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    parentPainter.dispose();
+  }
+}
+
 class PaintBoxPainter extends BoxPainter {
   final PaintFn? paintFn;
 
@@ -67,9 +141,7 @@ BoxDecoration strokeDecoration({
       end: end ?? side,
     ),
     borderRadius: radius != null && radius > 0
-        ? BorderRadius.all(
-            Radius.circular(radius),
-          )
+        ? BorderRadius.all(Radius.circular(radius))
         : null,
   );
 }
@@ -121,15 +193,21 @@ BoxDecoration lineDecoration({
   final lineColor = GlobalTheme.of(context).lineColor;
   return BoxDecoration(
     border: Border(
-      left: leftSide ??
+      left:
+          leftSide ??
           BorderSide(color: leftLineColor ?? lineColor, width: leftLineWidth),
-      top: topSide ??
+      top:
+          topSide ??
           BorderSide(color: topLineColor ?? lineColor, width: topLineWidth),
-      right: rightSide ??
+      right:
+          rightSide ??
           BorderSide(color: rightLineColor ?? lineColor, width: rightLineWidth),
-      bottom: bottomSide ??
+      bottom:
+          bottomSide ??
           BorderSide(
-              color: bottomLineColor ?? lineColor, width: bottomLineWidth),
+            color: bottomLineColor ?? lineColor,
+            width: bottomLineWidth,
+          ),
     ),
   );
 }
@@ -175,30 +253,29 @@ BoxDecoration fillDecoration({
         bottomRight: Radius.circular(onlyRightRadius ?? 0),
       );
     } else {
-      borderRadius = BorderRadius.all(
-        Radius.circular(radius ?? 0),
-      );
+      borderRadius = BorderRadius.all(Radius.circular(radius ?? 0));
     }
   }
 
   return BoxDecoration(
-      color: fillColor,
-      gradient: gradient,
-      borderRadius: borderRadius,
-      border: border,
-      boxShadow: boxShadow ??
-          (shadowColor == null
-              ? null
-              : [
-                  BoxShadow(
-                      color: shadowColor,
-                      offset: shadowOffset, //阴影y轴偏移量
-                      blurRadius: shadowBlurRadius, //阴影模糊程度
-                      spreadRadius: shadowSpreadRadius //阴影扩散程度
-                      ),
-                ])
-      //gradient:
-      );
+    color: fillColor,
+    gradient: gradient,
+    borderRadius: borderRadius,
+    border: border,
+    boxShadow:
+        boxShadow ??
+        (shadowColor == null
+            ? null
+            : [
+                BoxShadow(
+                  color: shadowColor,
+                  offset: shadowOffset, //阴影y轴偏移量
+                  blurRadius: shadowBlurRadius, //阴影模糊程度
+                  spreadRadius: shadowSpreadRadius, //阴影扩散程度
+                ),
+              ]),
+    //gradient:
+  );
 }
 
 /// 线性渐变装饰
@@ -217,15 +294,9 @@ BoxDecoration lineaGradientDecoration(
     color: color,
     gradient: colors == null
         ? null
-        : linearGradient(
-            colors,
-            begin: begin,
-            end: end,
-          ),
+        : linearGradient(colors, begin: begin, end: end),
     borderRadius: borderRadius > 0
-        ? BorderRadius.all(
-            Radius.circular(borderRadius),
-          )
+        ? BorderRadius.all(Radius.circular(borderRadius))
         : null,
     //gradient:
   );
@@ -233,15 +304,9 @@ BoxDecoration lineaGradientDecoration(
 
 /// 图片装饰
 /// [Decoration]->[BoxDecoration]
-BoxDecoration imageDecoration(
-  ImageProvider image, {
-  BoxFit fit = BoxFit.fill,
-}) {
+BoxDecoration imageDecoration(ImageProvider image, {BoxFit fit = BoxFit.fill}) {
   return BoxDecoration(
-    image: DecorationImage(
-      image: image,
-      fit: fit,
-    ),
+    image: DecorationImage(image: image, fit: fit),
   );
 }
 
@@ -273,11 +338,9 @@ OutlineInputBorder outlineInputBorder({
     borderRadius: borderRadius != null
         ? BorderRadius.circular(borderRadius)
         : BorderRadius.circular(kDefaultBorderRadiusXX),
-    borderSide: borderSide ??
-        BorderSide(
-          color: color ?? globalTheme.borderColor,
-          width: width,
-        ),
+    borderSide:
+        borderSide ??
+        BorderSide(color: color ?? globalTheme.borderColor, width: width),
     gapPadding: gapPadding,
   );
 }

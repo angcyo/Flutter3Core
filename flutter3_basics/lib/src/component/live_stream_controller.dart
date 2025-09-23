@@ -61,9 +61,16 @@ class LiveStreamController<T> {
   /// 是否为空
   bool get isEmpty => latestValue == null || isNil(latestValue);
 
+  @alias
+  LiveStreamController operator >>(T newValue) {
+    updateValue(newValue);
+    return this;
+  }
+
   @callPoint
-  void updateValue(T newValue) {
+  LiveStreamController updateValue(T newValue) {
     add(newValue);
+    return this;
   }
 
   /// 发送数据
@@ -280,11 +287,7 @@ class _NewStreamWithInitialValueTransformer<T>
 
       // listen to the original stream, if needed
       if (listenerCount == 0) {
-        subscription = stream.listen(
-          onData,
-          onError: onError,
-          onDone: onDone,
-        );
+        subscription = stream.listen(onData, onError: onError, onDone: onDone);
       }
 
       // count listeners of the new stream
@@ -404,30 +407,26 @@ LiveStream<T?> $liveOnce<T>([T? initialValue, bool autoClearValue = true]) =>
 
 extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   /// [RebuildWidget]
-  Widget build(
-    DynamicDataWidgetBuilder builder, {
-    bool allowBackward = true,
-  }) =>
+  Widget build(DynamicDataWidgetBuilder builder, {bool allowBackward = true}) =>
       StreamBuilder(
-          stream: stream,
-          initialData: allowBackward ? latestValue : null,
-          builder: (context, snapshot) {
-            return builder(context, snapshot.data) ?? empty;
-          });
+        stream: stream,
+        initialData: allowBackward ? latestValue : null,
+        builder: (context, snapshot) {
+          return builder(context, snapshot.data) ?? empty;
+        },
+      );
 
   /// [RebuildWidget]
   ///
   /// [RebuildEx.buildFn]
-  Widget buildFn(
-    Widget? Function() builder, {
-    bool allowBackward = true,
-  }) =>
+  Widget buildFn(Widget? Function() builder, {bool allowBackward = true}) =>
       StreamBuilder(
-          stream: stream,
-          initialData: allowBackward ? latestValue : null,
-          builder: (_, __) {
-            return builder() ?? empty;
-          });
+        stream: stream,
+        initialData: allowBackward ? latestValue : null,
+        builder: (_, __) {
+          return builder() ?? empty;
+        },
+      );
 
   /// [RebuildWidget]
   ///
@@ -435,13 +434,13 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   Widget buildDataFn(
     Widget? Function(T? data) builder, {
     bool allowBackward = true,
-  }) =>
-      StreamBuilder(
-          stream: stream,
-          initialData: allowBackward ? latestValue : null,
-          builder: (_, snapshot) {
-            return builder(snapshot.data) ?? empty;
-          });
+  }) => StreamBuilder(
+    stream: stream,
+    initialData: allowBackward ? latestValue : null,
+    builder: (_, snapshot) {
+      return builder(snapshot.data) ?? empty;
+    },
+  );
 }
 
 extension LiveStreamControllerIterableEx<T>
@@ -454,9 +453,10 @@ extension LiveStreamControllerIterableEx<T>
   /// [RebuildIterableEx.buildFn]
   /// [LiveStreamControllerIterableEx.buildFn]
   Widget buildFn(Widget? Function() builder) => StreamBuilder(
-      stream: StreamGroup.mergeBroadcast(map((e) => e.stream)),
-      initialData: null,
-      builder: (_, __) {
-        return builder() ?? empty;
-      });
+    stream: StreamGroup.mergeBroadcast(map((e) => e.stream)),
+    initialData: null,
+    builder: (_, __) {
+      return builder() ?? empty;
+    },
+  );
 }

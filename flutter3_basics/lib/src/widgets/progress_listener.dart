@@ -146,10 +146,17 @@ enum ProgressStateType {
 /// - 错误数据
 /// - 携带数据
 class ProgressStateInfo {
+  /// 无限进度
+  static const double infinityProgress = -1;
+
+  /// 无进度
+  static const double noProgress = -100;
+
   /// 状态
   ProgressStateType state = ProgressStateType.normal;
 
   /// 进度状态时的进度值[0~1], -1:不确定的进度
+  /// - [infinityProgress]
   double progress = 0;
 
   /// 错误状态时的错误信息

@@ -22,6 +22,9 @@ final class DataChunkInfo {
   DataChunkInfo({this.startTime = -1, this.total = 0, this.count = 0});
 
   /// 当前传输的进度[0~1]
+  /// - [ProgressStateInfo]
+  /// - [ProgressStateInfo.noProgress]
+  /// - [ProgressStateInfo.infinityProgress]
   double get progress => (count / total).clamp(0, 1);
 
   /// 当前传输的进度[0~100]

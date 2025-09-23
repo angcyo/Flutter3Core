@@ -32,6 +32,8 @@ class GradientButton extends StatefulWidget {
     this.maxWidth = double.infinity,
     this.minHeight = kButtonHeight,
     this.maxHeight = double.infinity,
+    this.progress,
+    this.debugLabel,
   });
 
   /// 最小样式
@@ -59,6 +61,8 @@ class GradientButton extends StatefulWidget {
     this.maxWidth = double.infinity,
     this.minHeight = 0,
     this.maxHeight = double.infinity,
+    this.progress,
+    this.debugLabel,
   });
 
   const GradientButton.normal(
@@ -85,6 +89,8 @@ class GradientButton extends StatefulWidget {
     this.maxWidth = double.infinity,
     this.minHeight = kMinHeight,
     this.maxHeight = double.infinity,
+    this.progress,
+    this.debugLabel,
   });
 
   /// 黑色填充按钮样式
@@ -112,6 +118,8 @@ class GradientButton extends StatefulWidget {
     this.maxWidth = double.infinity,
     this.minHeight = kButtonHeight,
     this.maxHeight = double.infinity,
+    this.progress,
+    this.debugLabel,
   });
 
   /// 白色填充按钮样式
@@ -139,6 +147,8 @@ class GradientButton extends StatefulWidget {
     this.maxWidth = double.infinity,
     this.minHeight = kButtonHeight,
     this.maxHeight = double.infinity,
+    this.progress,
+    this.debugLabel,
   });
 
   /// 描边按钮样式
@@ -169,13 +179,15 @@ class GradientButton extends StatefulWidget {
     this.maxWidth = double.infinity,
     this.minHeight = kButtonHeight,
     this.maxHeight = double.infinity,
+    this.progress,
+    this.debugLabel,
   }) : decoration = BoxDecoration(
-          border: Border.fromBorderSide(
-            BorderSide(color: strokeColor ?? Colors.grey, width: strokeWidth),
-          ),
-          borderRadius:
-              borderRadius ?? BorderRadius.all(Radius.circular(radius ?? 0)),
-        );
+         border: Border.fromBorderSide(
+           BorderSide(color: strokeColor ?? Colors.grey, width: strokeWidth),
+         ),
+         borderRadius:
+             borderRadius ?? BorderRadius.all(Radius.circular(radius ?? 0)),
+       );
 
   /// 是否启用
   /// 为`null`时, 自动根据[onTap]判断
@@ -240,6 +252,17 @@ class GradientButton extends StatefulWidget {
   /// [BoxDecoration]
   final Decoration? decoration;
 
+  //--
+
+  /// 按钮的背景进度提示[0~1]
+  /// - [ProgressStateInfo]
+  /// - [ProgressStateInfo.noProgress]
+  /// - [ProgressStateInfo.infinityProgress]
+  final double? progress;
+
+  /// 调试标签
+  final String? debugLabel;
+
   @override
   State<GradientButton> createState() => _GradientButtonState();
 }
@@ -255,20 +278,25 @@ class _GradientButtonState extends State<GradientButton> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     //确保colors数组不空
-    final tempSplashColor = widget.splashColor ??
+    final tempSplashColor =
+        widget.splashColor ??
         widget.colors?.lastOrNull ??
         /*color?.withOpacity(0.3) ??*/
         Colors.black12;
-    List<Color> colors = widget.colors ??
+    List<Color> colors =
+        widget.colors ??
         (widget.color == null
             ? [globalTheme.primaryColor, globalTheme.primaryColorDark]
             : [widget.color!, widget.color!]);
-    final radius = widget.borderRadius ??
+    final radius =
+        widget.borderRadius ??
         (widget.radius == null ? null : BorderRadius.circular(widget.radius!));
     bool disabled = widget.enable == null ? noSetGestureTap : !widget.enable!;
+    debugger(when: widget.debugLabel != null);
     return DecoratedBox(
-      decoration: widget.decoration ??
-          BoxDecoration(
+      decoration:
+          widget.decoration ??
+          ProgressBoxDecoration(
             gradient: disabled || colors.isEmpty
                 ? null
                 : LinearGradient(colors: colors),
@@ -276,6 +304,8 @@ class _GradientButtonState extends State<GradientButton> {
                 ? widget.disabledColor ?? globalTheme.disableBgColor
                 : widget.color,
             borderRadius: radius,
+            debugLabel: widget.debugLabel,
+            progress: widget.progress,
           ),
       child: Material(
         type: MaterialType.transparency,
@@ -327,12 +357,12 @@ class _GradientButtonState extends State<GradientButton> {
                   child: DefaultTextStyle(
                     style: (widget.textStyle ?? globalTheme.textBodyStyle)
                         .copyWith(
-                      color: disabled
-                          ? widget.disabledTextColor ?? Colors.black38
-                          : widget.textStyle == null
+                          color: disabled
+                              ? widget.disabledTextColor ?? Colors.black38
+                              : widget.textStyle == null
                               ? (widget.textColor ?? Colors.white)
                               : null,
-                    ),
+                        ),
                     child: wrapLoadingIfNeed(context, widget.child),
                   ),
                 ),
@@ -351,12 +381,12 @@ class _GradientButtonState extends State<GradientButton> {
     final globalTheme = GlobalTheme.of(context);
     return _isLoading == true
         ? widget.loadingWidget ??
-            CircularProgressIndicator(
-              value: null,
-              color: globalTheme.accentColor,
-              constraints: BoxConstraints.tightFor(width: 20, height: 20),
-              strokeWidth: 2,
-            )
+              CircularProgressIndicator(
+                value: null,
+                color: globalTheme.accentColor,
+                constraints: BoxConstraints.tightFor(width: 20, height: 20),
+                strokeWidth: 2,
+              )
         /*.center()*/
         : child;
   }
@@ -439,7 +469,7 @@ class _ElevatedGradientButtonState extends State<ElevatedGradientButton> {
                         spreadRadius: -2,
                         blurRadius: 3,
                         color: widget.shadowColor ?? Colors.black87,
-                      )
+                      ),
               ],
       ),
       child: GradientButton(
