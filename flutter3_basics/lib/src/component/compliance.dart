@@ -105,3 +105,6 @@ typedef ComplianceAction = FutureOr Function(BuildContext? context, bool value);
 
 /// 隐私合规管理
 final Compliance $compliance = Compliance._instance;
+
+/// 表明当前操作需要在合规之后调用
+const complianceFlag = AnnotationMeta('表明当前操作需要在合规之后调用');

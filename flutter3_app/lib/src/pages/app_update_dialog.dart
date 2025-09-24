@@ -146,6 +146,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final lRes = libRes(context);
 
     //控制按钮
     Widget control = [
@@ -156,7 +157,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
           },
           color: globalTheme.whiteSubBgColor,
           radius: kMaxBorderRadius,
-          child: "下次再说".text(
+          child: lRes?.libNextTime.text(
             style: globalTheme.textGeneralStyle,
             fontWeight: FontWeight.bold,
           ),
@@ -172,7 +173,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
             }
           },
           radius: kMaxBorderRadius,
-          child: "前往下载".text(
+          child: lRes?.libGoDownload.text(
             style: globalTheme.textGeneralStyle,
             fontWeight: FontWeight.bold,
           ),
@@ -200,16 +201,16 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
           radius: kMaxBorderRadius,
           child:
               (_downloadState == DownloadState.none
-                      ? "立即下载"
+                      ? lRes?.libDownloadNow
                       : (_downloadState == DownloadState.downloading
-                            ? "下载中..."
+                            ? lRes?.libDownloading
                             : (_downloadState == DownloadState.downloaded
-                                  ? "立即安装"
+                                  ? lRes?.libInstallNow
                                   : (_downloadState ==
                                             DownloadState.downloadFailed
-                                        ? "点击重试"
+                                        ? lRes?.libClickRetry
                                         : "Unknown"))))
-                  .text(
+                  ?.text(
                     style: globalTheme.textGeneralStyle,
                     fontWeight: FontWeight.bold,
                   ),
@@ -219,10 +220,17 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
     //内容
     Widget content = [
       Empty.height(widget.headerPaddingTop),
-      "V${widget.versionBean.versionName ?? ""}".text(
-        style: globalTheme.textGeneralStyle,
-        fontWeight: FontWeight.bold,
-      ),
+      widget.versionBean.versionName
+          ?.connect(
+            null,
+            widget.versionBean.versionName?.startsWith("V") == true
+                ? null
+                : "V",
+          )
+          .text(
+            style: globalTheme.textGeneralStyle,
+            fontWeight: FontWeight.bold,
+          ),
       //widget.versionBean.versionDes?.toMarkdownWidget(context)
       widget.versionBean.versionDes
           ?.text(style: globalTheme.textBodyStyle)
@@ -231,7 +239,8 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
             minWidth: double.infinity,
             maxHeight: $screenHeight / 3,
           )
-          .paddingSymmetric(vertical: kX),
+          .paddingSymmetric(vertical: kX)
+          .expanded(),
       _buildProgress(),
       control,
     ].column(crossAxisAlignment: CrossAxisAlignment.start)!;
@@ -242,9 +251,9 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
         resKey: Assets.svg.appUpdateHeader,
         libPackage: Assets.package,
       ).position(left: 0, right: 0),
-      widget.versionBean.versionTile
+      (widget.versionBean.versionTile ?? lRes?.libNewReleases)
           ?.text(
-            style: globalTheme.textBigGeneralStyle,
+            style: globalTheme.textGeneralStyle.copyWith(fontSize: 22),
             fontWeight: FontWeight.bold,
           )
           .position(left: kX, bottom: 0),

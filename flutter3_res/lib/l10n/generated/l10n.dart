@@ -258,6 +258,41 @@ class LibRes {
   String get libLoading {
     return Intl.message('加载中...', name: 'libLoading', desc: '', args: []);
   }
+
+  /// `下载中...`
+  String get libDownloading {
+    return Intl.message('下载中...', name: 'libDownloading', desc: '', args: []);
+  }
+
+  /// `发现新版本`
+  String get libNewReleases {
+    return Intl.message('发现新版本', name: 'libNewReleases', desc: '', args: []);
+  }
+
+  /// `下次再说`
+  String get libNextTime {
+    return Intl.message('下次再说', name: 'libNextTime', desc: '', args: []);
+  }
+
+  /// `前往下载`
+  String get libGoDownload {
+    return Intl.message('前往下载', name: 'libGoDownload', desc: '', args: []);
+  }
+
+  /// `立即下载`
+  String get libDownloadNow {
+    return Intl.message('立即下载', name: 'libDownloadNow', desc: '', args: []);
+  }
+
+  /// `点击重试`
+  String get libClickRetry {
+    return Intl.message('点击重试', name: 'libClickRetry', desc: '', args: []);
+  }
+
+  /// `立即安装`
+  String get libInstallNow {
+    return Intl.message('立即安装', name: 'libInstallNow', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

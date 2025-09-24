@@ -64,7 +64,7 @@ class LibAppVersionBean {
 
     LibAppVersionBean? last;
     final versionDesBuffer = StringBuffer();
-    markdown?.eachLine((line) {
+    markdown.eachLine((line) {
       final lineStr = line.trim();
       final lineParts = lineStr.split(" ").map((e) => e.trim()).toList();
       if (lineStr.startsWith("#") && lineParts.length >= 2) {
@@ -75,11 +75,16 @@ class LibAppVersionBean {
           versionDesBuffer.clear();
           last = null;
         }
-        //2025-07-28 `5.9.1-alpha16` 5910
-        last = LibAppVersionBean()
-          ..versionDate = lineParts.getOrNull(1)
-          ..versionName = lineParts.getOrNull(2)?.trimBoth("`")
-          ..versionCode = lineParts.getOrNull(3)?.trimBoth("`").toInt();
+        final platform = lineParts.getOrNull(4)?.toLowerCase();
+        if (platform != null && platform != $platformName) {
+          //与当前平台不一致, 则继续解析
+        } else {
+          //2025-07-28 `5.9.1-alpha16` 5910 platform
+          last = LibAppVersionBean()
+            ..versionDate = lineParts.getOrNull(1)
+            ..versionName = lineParts.getOrNull(2)?.trimBoth("`")
+            ..versionCode = lineParts.getOrNull(3)?.trimBoth("`").toInt();
+        }
       } else if (last?.versionDate != null) {
         if (lineStr.isNotEmpty) {
           versionDesBuffer.appendIfNotEmpty();
@@ -128,10 +133,15 @@ class LibAppVersionBean {
           return true;
         }
 
-        //2025-07-28 `5.9.1-alpha16` 5910
-        bean.versionDate = lineParts.getOrNull(1);
-        bean.versionName = lineParts.getOrNull(2)?.trimBoth("`");
-        bean.versionCode = lineParts.getOrNull(3)?.trimBoth("`").toInt();
+        final platform = lineParts.getOrNull(4)?.toLowerCase();
+        if (platform != null && platform != $platformName) {
+          //与当前平台不一致, 则继续解析
+        } else {
+          //2025-07-28 `5.9.1-alpha16` 5910 platform
+          bean.versionDate = lineParts.getOrNull(1);
+          bean.versionName = lineParts.getOrNull(2)?.trimBoth("`");
+          bean.versionCode = lineParts.getOrNull(3)?.trimBoth("`").toInt();
+        }
       } else if (bean.versionDate != null) {
         if (versionDesBuffer.isNotEmpty || lineStr.isNotEmpty) {
           versionDesBuffer.writeln(lineStr);
@@ -144,16 +154,16 @@ class LibAppVersionBean {
 
   //region --精确平台/包名/指定设备--
 
-  /// 每个平台单独设置信息, 小写字母
+  /// 1. 每个平台单独设置信息, 小写字母
   /// [$platformName]
   Map<String, LibAppVersionBean>? platformMap;
 
-  /// 每个包名单独的版本信息
+  /// 2. 每个包名单独的版本信息
   /// [$buildPackageName]
   /// [AppSettingBean.packageName]
   Map<String, LibAppVersionBean>? packageNameMap;
 
-  /// 每个设备单独的版本信息
+  /// 3. 每个设备单独的版本信息
   /// [CoreKeys.deviceUuid]
   Map<String, LibAppVersionBean>? versionUuidMap;
 
@@ -174,7 +184,7 @@ class LibAppVersionBean {
 
   //region --核心信息--
 
-  /// 抬头
+  /// 抬头, 不指定则使用[versionName]
   String? versionTile;
 
   /// 版本名称, 用来显示
@@ -196,6 +206,8 @@ class LibAppVersionBean {
   String? downloadUrl;
 
   /// 跳转市场的地址
+  /// - [marketUrl]
+  /// - [jumpToMarket]
   String? marketUrl;
 
   /// [downloadUrl] 外链下载? 还是直接下载
@@ -205,6 +217,8 @@ class LibAppVersionBean {
 
   /// 是否跳转到应用市场?
   /// 优先级高于[outLink]
+  /// - [marketUrl]
+  /// - [jumpToMarket]
   bool? jumpToMarket;
 
   /// 版本时间

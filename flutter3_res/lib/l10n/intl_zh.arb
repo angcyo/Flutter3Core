@@ -57,6 +57,13 @@
   "libCopy": "复制",
   "libExternalShare": "外部分享",
   "libLoading": "加载中...",
+  "libDownloading": "下载中...",
+  "libNewReleases": "发现新版本",
+  "libNextTime": "下次再说",
+  "libGoDownload": "前往下载",
+  "libDownloadNow": "立即下载",
+  "libClickRetry": "点击重试",
+  "libInstallNow": "立即安装",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

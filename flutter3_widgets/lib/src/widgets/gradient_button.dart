@@ -221,7 +221,7 @@ class GradientButton extends StatefulWidget {
   /// [ButtonThemeData.padding]
   final EdgeInsetsGeometry? padding;
 
-  final Widget child;
+  final Widget? child;
 
   /// 文本默认样式
   final TextStyle? textStyle;
@@ -394,7 +394,7 @@ class _GradientButtonState extends State<GradientButton> {
   /// 是否处于加载中...
   bool? _isLoading;
 
-  Widget wrapLoadingIfNeed(BuildContext context, Widget child) {
+  Widget wrapLoadingIfNeed(BuildContext context, Widget? child) {
     final globalTheme = GlobalTheme.of(context);
     return _isLoading == true
         ? widget.loadingWidget ??
@@ -405,7 +405,7 @@ class _GradientButtonState extends State<GradientButton> {
                 strokeWidth: 2,
               )
         /*.center()*/
-        : child;
+        : (child ?? empty);
   }
 }
 
