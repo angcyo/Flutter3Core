@@ -561,16 +561,19 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   /// 用来创建[AppBar]
-  /// [AppBarTheme] 相关默认样式在此声明, 可以通过[Theme]小部件覆盖
-  /// [scrolledUnderElevation] 滚动时, 阴影的高度
-  /// [backgroundColor] 透明的背景颜色, 会影响Android状态栏的颜色
-  /// [flexibleSpace] 纯白色的[AppBar]推荐使用此属性设置白色, 否则会和底色叠加.
-  /// [bottom] [AppBar.bottom]属性[PreferredSizeWidget]
+  /// - [AppBarTheme] 相关默认样式在此声明, 可以通过[Theme]小部件覆盖
+  /// - [scrolledUnderElevation] 滚动时, 阴影的高度
+  /// - [backgroundColor] 透明的背景颜色, 会影响Android状态栏的颜色
+  /// - [flexibleSpace] 纯白色的[AppBar]推荐使用此属性设置白色, 否则会和底色叠加.
+  /// - [bottom].[AppBar.bottom]属性[PreferredSizeWidget]
   ///
-  /// [leading] [AppBar.leading]属性
-  /// [dismissal] 在可以back的情况下显示的返回按钮
+  /// - [leading].[AppBar.leading]属性
+  /// - [dismissal] 在可以back的情况下显示的返回按钮
   ///
-  /// [copyWith]
+  /// - [copyWith]
+  ///
+  /// - [AppBar]
+  /// - [PreferredSizeSliverAppBar]
   late AppBarBuilderFn appBarBuilder =
       (
         context,
@@ -643,12 +646,12 @@ class GlobalConfig with Diagnosticable, OverlayManage {
                         ? dismissal ?? appBarDismissalBuilder(context, state)
                         : null),
           actions: actions,
-          bottom: bottom,
           elevation: elevation,
+          scrolledUnderElevation: scrolledUnderElevation ?? elevation,
+          bottom: bottom,
           shadowColor: shadowColor ?? globalTheme.appBarShadowColor,
           backgroundColor: backgroundColor ?? globalTheme.appBarBackgroundColor,
           foregroundColor: foregroundColor ?? globalTheme.appBarForegroundColor,
-          scrolledUnderElevation: scrolledUnderElevation ?? elevation,
           flexibleSpace:
               flexibleSpace ??
               (backgroundColor == null

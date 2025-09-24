@@ -328,24 +328,36 @@ mixin AbsScrollPage {
   List<Widget>? buildAppBarActions(BuildContext context) => null;
 
   /// 获取标题栏高度
+  /// - [getAppBarElevation]
+  /// - [getAppBarScrolledUnderElevation]
+  /// - [getAppBarShadowColor]
   @property
   double? getAppBarElevation(BuildContext context) => null;
 
   /// 获取标题栏滚动时的阴影高度
+  /// - [getAppBarElevation]
+  /// - [getAppBarScrolledUnderElevation]
   @property
   double? getAppBarScrolledUnderElevation(BuildContext context) =>
       getAppBarElevation(context);
 
   /// 获取标题栏阴影颜色
+  /// - [getAppBarElevation]
+  /// - [getAppBarScrolledUnderElevation]
+  /// - [getAppBarShadowColor]
   @property
   Color? getAppBarShadowColor(BuildContext context) => null;
 
   /// 获取标题栏前景色
+  /// - [getAppBarForegroundColor]
+  /// - [getAppBarBackgroundColor]
   @property
   Color? getAppBarForegroundColor(BuildContext context) => null;
 
   /// 获取标题栏背景色
   /// 要实现渐变效果请使用[buildAppBarFlexibleSpace]
+  /// - [getAppBarForegroundColor]
+  /// - [getAppBarBackgroundColor]
   @property
   Color? getAppBarBackgroundColor(BuildContext context) => null;
 
@@ -361,6 +373,9 @@ mixin AbsScrollPage {
   }
 
   /// 构建顶部导航[AppBar]
+  /// - [AppBar]
+  /// - [PreferredSizeSliverAppBar]
+  ///
   /// [AppBarBuilderFn]
   ///
   /// [GlobalConfig.appBarBuilder]
@@ -399,13 +414,14 @@ mixin AbsScrollPage {
       centerTitle: centerTitle ?? isCenterTitle(context),
       actions: actions ?? buildAppBarActions(context),
       bottom: bottom ?? buildAppBarBottom(context),
+      //阴影高度
       elevation: elevation ?? getAppBarElevation(context),
       scrolledUnderElevation:
           getAppBarScrolledUnderElevation(context) ?? elevation,
+      //阴影颜色
+      shadowColor: getAppBarShadowColor(context),
       foregroundColor: foregroundColor ?? getAppBarForegroundColor(context),
       backgroundColor: backgroundColor ?? getAppBarBackgroundColor(context),
-      //阴影高度
-      shadowColor: getAppBarShadowColor(context),
       flexibleSpace: buildAppBarFlexibleSpace(context), //渐变背景
     );
   }
