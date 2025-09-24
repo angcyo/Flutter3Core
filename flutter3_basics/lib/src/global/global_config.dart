@@ -156,11 +156,15 @@ class GlobalConfigScope extends InheritedWidget {
 
 /// 全局配置
 ///
-/// [GlobalConfig.initGlobalTheme]初始化主题属性
-/// [GlobalConfig.notifyThemeChanged]通知主题属性改变
+/// - [GlobalConfig.initGlobalTheme]初始化主题属性
+/// - [GlobalConfig.notifyThemeChanged]通知主题属性改变
 ///
-/// [GlobalConfigScope]
-/// [GlobalAppStateMixin]
+/// - [GlobalConfigScope]
+/// - [GlobalAppStateMixin]
+///
+/// ```
+/// final navigator = GlobalConfig.def.findNavigatorState();
+/// ```
 class GlobalConfig with Diagnosticable, OverlayManage {
   //region context
 

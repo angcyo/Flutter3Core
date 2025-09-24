@@ -191,10 +191,10 @@ enum BuildTypeEnum {
 
   /// 正式
   release,
-  ;
 }
 
 /// 顶层的[BuildConfig]
+/// - 在获取[BuildConfig.json]中的数据时, 优先使用顶层对象.
 BuildConfig? get $rootBuildConfig => BuildConfig._buildConfig;
 
 /// 指定平台配置->构建类型配置->构建风味配置后的[BuildConfig]
@@ -209,7 +209,9 @@ BuildConfig? get $buildConfig {
   final resultConfig = (rootPlatformConfig ?? rootConfig)
       ?.getBuildTypeConfigOrThis(rootConfig?.buildType, rootBuildTypeConfig)
       .getBuildFlavorConfigOrThis(
-          rootConfig?.buildFlavor, rootBuildFlavorConfig);
+        rootConfig?.buildFlavor,
+        rootBuildFlavorConfig,
+      );
 
   // 赋值指定属性
   if (resultConfig != rootConfig) {

@@ -56,15 +56,18 @@ class LibAppVersionBean {
     );
   }
 
-  static List<LibAppVersionBean> fromMarkdownList(String markdown) {
+  static List<LibAppVersionBean>? fromMarkdownList(String? markdown) {
+    if (markdown == null || markdown.isEmpty) {
+      return null;
+    }
     List<LibAppVersionBean> result = [];
 
     LibAppVersionBean? last;
     final versionDesBuffer = StringBuffer();
-    markdown.eachLine((line) {
+    markdown?.eachLine((line) {
       final lineStr = line.trim();
       final lineParts = lineStr.split(" ").map((e) => e.trim()).toList();
-      if (lineStr.startsWith("#") && lineParts.length >= 4) {
+      if (lineStr.startsWith("#") && lineParts.length >= 2) {
         //title
         if (last != null) {
           last!.versionDes = versionDesBuffer.toString();
@@ -74,10 +77,10 @@ class LibAppVersionBean {
         }
         //2025-07-28 `5.9.1-alpha16` 5910
         last = LibAppVersionBean()
-          ..versionDate = lineParts[1]
-          ..versionName = lineParts[2].trimBoth("`")
-          ..versionCode = lineParts[3].trimBoth("`").toInt();
-      } else if (last?.versionCode != null) {
+          ..versionDate = lineParts.getOrNull(1)
+          ..versionName = lineParts.getOrNull(2)?.trimBoth("`")
+          ..versionCode = lineParts.getOrNull(3)?.trimBoth("`").toInt();
+      } else if (last?.versionDate != null) {
         if (lineStr.isNotEmpty) {
           versionDesBuffer.appendIfNotEmpty();
           versionDesBuffer.write(lineStr);
@@ -118,18 +121,18 @@ class LibAppVersionBean {
     markdown.eachLine((line) {
       final lineStr = line.trim();
       final lineParts = lineStr.split(" ").map((e) => e.trim()).toList();
-      if (lineStr.startsWith("#") && lineParts.length >= 4) {
+      if (lineStr.startsWith("#") && lineParts.length >= 2) {
         //title
         if (bean.versionDes != null) {
-          //已经有数据了, 则结束解析.
+          //已经有数据了, 则结束解析. 仅解析最上面的一条数据
           return true;
         }
 
         //2025-07-28 `5.9.1-alpha16` 5910
-        bean.versionDate = lineParts[1];
-        bean.versionName = lineParts[2].trimBoth("`");
-        bean.versionCode = lineParts[3].trimBoth("`").toInt();
-      } else if (bean.versionCode != null) {
+        bean.versionDate = lineParts.getOrNull(1);
+        bean.versionName = lineParts.getOrNull(2)?.trimBoth("`");
+        bean.versionCode = lineParts.getOrNull(3)?.trimBoth("`").toInt();
+      } else if (bean.versionDate != null) {
         if (versionDesBuffer.isNotEmpty || lineStr.isNotEmpty) {
           versionDesBuffer.writeln(lineStr);
         }

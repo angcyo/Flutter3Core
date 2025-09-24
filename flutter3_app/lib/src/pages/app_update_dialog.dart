@@ -88,19 +88,21 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
         (versionBean.debug == true && isDebugFlag)) {
       //forbidden检查
       final forbiddenVersionMap = versionBean.forbiddenVersionMap;
-      final forbiddenBean = forbiddenVersionMap
+      final forbiddenBean =
+          forbiddenVersionMap
               ?.find((key, value) => key.matchVersion(localVersionCode))
               ?.value ??
           versionBean;
       if (forbiddenBean.forbiddenReason != null) {
-        (GlobalConfig.def.findNavigatorState() ?? navigator)
-            .showWidgetDialog(MessageDialog(
-          title: forbiddenBean.forbiddenTile,
-          message: forbiddenBean.forbiddenReason,
-          confirm: libRes.libConfirm,
-          showConfirm: forbiddenBean.forceForbidden != true,
-          interceptPop: forbiddenBean.forceForbidden == true,
-        ));
+        (GlobalConfig.def.findNavigatorState() ?? navigator).showWidgetDialog(
+          MessageDialog(
+            title: forbiddenBean.forbiddenTile,
+            message: forbiddenBean.forbiddenReason,
+            confirm: libRes.libConfirm,
+            showConfirm: forbiddenBean.forceForbidden != true,
+            interceptPop: forbiddenBean.forceForbidden == true,
+          ),
+        );
       }
 
       //更新检查
@@ -149,65 +151,69 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
     Widget control = [
       if (widget.versionBean.forceUpdate != true)
         GradientButton(
-                onTap: () {
-                  context.pop();
-                },
-                color: globalTheme.whiteSubBgColor,
-                radius: kMaxBorderRadius,
-                child: "下次再说".text(
-                    style: globalTheme.textGeneralStyle,
-                    fontWeight: FontWeight.bold))
-            .expanded(),
+          onTap: () {
+            context.pop();
+          },
+          color: globalTheme.whiteSubBgColor,
+          radius: kMaxBorderRadius,
+          child: "下次再说".text(
+            style: globalTheme.textGeneralStyle,
+            fontWeight: FontWeight.bold,
+          ),
+        ).expanded(),
       if (widget.versionBean.jumpToMarket == true ||
           widget.versionBean.outLink == true)
         GradientButton(
-                onTap: () {
-                  if (widget.versionBean.jumpToMarket == true) {
-                    widget.versionBean.marketUrl?.launch();
-                  } else if (widget.versionBean.outLink == true) {
-                    widget.versionBean.downloadUrl?.launch();
-                  }
-                },
-                radius: kMaxBorderRadius,
-                child: "前往下载".text(
-                    style: globalTheme.textGeneralStyle,
-                    fontWeight: FontWeight.bold))
-            .expanded()
+          onTap: () {
+            if (widget.versionBean.jumpToMarket == true) {
+              widget.versionBean.marketUrl?.launch();
+            } else if (widget.versionBean.outLink == true) {
+              widget.versionBean.downloadUrl?.launch();
+            }
+          },
+          radius: kMaxBorderRadius,
+          child: "前往下载".text(
+            style: globalTheme.textGeneralStyle,
+            fontWeight: FontWeight.bold,
+          ),
+        ).expanded()
       else
         GradientButton(
-                onTap: () {
-                  switch (_downloadState) {
-                    case DownloadState.none:
-                      _startDownload(widget.versionBean.downloadUrl ?? "");
-                      break;
-                    case DownloadState.downloading:
-                      break;
-                    case DownloadState.downloaded:
-                      //安装apk
-                      _startInstallApk();
-                      break;
-                    case DownloadState.downloadFailed:
-                      _startDownload(widget.versionBean.downloadUrl ?? "");
-                      break;
-                    default:
-                      break;
-                  }
-                },
-                radius: kMaxBorderRadius,
-                child: (_downloadState == DownloadState.none
-                        ? "立即下载"
-                        : (_downloadState == DownloadState.downloading
+          onTap: () {
+            switch (_downloadState) {
+              case DownloadState.none:
+                _startDownload(widget.versionBean.downloadUrl ?? "");
+                break;
+              case DownloadState.downloading:
+                break;
+              case DownloadState.downloaded:
+                //安装apk
+                _startInstallApk();
+                break;
+              case DownloadState.downloadFailed:
+                _startDownload(widget.versionBean.downloadUrl ?? "");
+                break;
+              default:
+                break;
+            }
+          },
+          radius: kMaxBorderRadius,
+          child:
+              (_downloadState == DownloadState.none
+                      ? "立即下载"
+                      : (_downloadState == DownloadState.downloading
                             ? "下载中..."
                             : (_downloadState == DownloadState.downloaded
-                                ? "立即安装"
-                                : (_downloadState ==
-                                        DownloadState.downloadFailed
-                                    ? "点击重试"
-                                    : "Unknown"))))
-                    .text(
-                        style: globalTheme.textGeneralStyle,
-                        fontWeight: FontWeight.bold))
-            .expanded(),
+                                  ? "立即安装"
+                                  : (_downloadState ==
+                                            DownloadState.downloadFailed
+                                        ? "点击重试"
+                                        : "Unknown"))))
+                  .text(
+                    style: globalTheme.textGeneralStyle,
+                    fontWeight: FontWeight.bold,
+                  ),
+        ).expanded(),
     ].row(gap: kX)!;
 
     //内容
@@ -227,10 +233,8 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
           )
           .paddingSymmetric(vertical: kX),
       _buildProgress(),
-      control
-    ].column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-    )!;
+      control,
+    ].column(crossAxisAlignment: CrossAxisAlignment.start)!;
 
     //头部
     Widget header = [
@@ -243,7 +247,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
             style: globalTheme.textBigGeneralStyle,
             fontWeight: FontWeight.bold,
           )
-          .position(left: kX, bottom: 0)
+          .position(left: kX, bottom: 0),
     ].stack()!.size(height: widget.headerMarginTop + widget.headerPaddingTop);
 
     //body
@@ -308,32 +312,33 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
     _downloadFilePathCache = filePath;
     url
         .download(
-            savePath: filePath,
-            cancelToken: _downloadToken,
-            onReceiveProgress: (count, total) {
-              if (total > 0) {
-                //l.d("下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$url]->[$filePath]");
-                _downloadProgress = count / total;
-                updateState();
-              } else {
-                //l.d("下载进度:$count ${count.toSizeStr()} \n[$url]->[$filePath]");
-                _downloadProgress = -1;
-              }
-            })
+          savePath: filePath,
+          cancelToken: _downloadToken,
+          onReceiveProgress: (count, total) {
+            if (total > 0) {
+              //l.d("下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$url]->[$filePath]");
+              _downloadProgress = count / total;
+              updateState();
+            } else {
+              //l.d("下载进度:$count ${count.toSizeStr()} \n[$url]->[$filePath]");
+              _downloadProgress = -1;
+            }
+          },
+        )
         .get((response, error) {
-      if (response != null) {
-        _downloadState = DownloadState.downloaded;
-        updateState();
-        _startInstallApk();
-        //l.d("下载完成:$filePath");
-      } else if (error != null) {
-        if (_downloadProgress == -1) {
-          _downloadProgress = 0;
-        }
-        _downloadState = DownloadState.downloadFailed;
-        updateState();
-      }
-    });
+          if (response != null) {
+            _downloadState = DownloadState.downloaded;
+            updateState();
+            _startInstallApk();
+            //l.d("下载完成:$filePath");
+          } else if (error != null) {
+            if (_downloadProgress == -1) {
+              _downloadProgress = 0;
+            }
+            _downloadState = DownloadState.downloadFailed;
+            updateState();
+          }
+        });
   }
 
   /// iOS 平台无法安装APK
@@ -344,10 +349,16 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
 }
 
 /// 更新日志弹窗
+/// - [AppUpdateLogDialog]
+/// - [AppUpdateLogListScreen]
 class AppUpdateLogDialog extends StatelessWidget with DialogMixin {
+  /// 当前的数据
   final LibAppVersionBean bean;
 
-  /// 查看更多
+  /// 查看更多时的数据
+  final List<LibAppVersionBean>? beanList;
+
+  /// 不指定[beanList]时, 可以单独设置查看更多回调
   final VoidAction? onClickMoreAction;
 
   @override
@@ -356,74 +367,100 @@ class AppUpdateLogDialog extends StatelessWidget with DialogMixin {
   const AppUpdateLogDialog({
     super.key,
     required this.bean,
+    this.beanList,
     this.onClickMoreAction,
   });
+
+  /// 是否显示查看更多
+  bool get showMore => beanList != null || onClickMoreAction != null;
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final lRes = libRes(context);
-    return buildCenterDialog(
-      context,
-      [
-        (bean.versionTile ?? "${bean.versionName} 更新说明:")
-            .text(
-              style: globalTheme.textTitleStyle,
-              bold: true,
-            )
-            .paddingOnly(horizontal: kX, top: kX),
-        bean.versionDes
-            ?.text()
-            .scroll()
-            .constrainedMax(
-              minWidth: double.infinity,
-              maxHeight: $screenHeight / 3,
-            )
-            .paddingSymmetric(vertical: kX),
-        hLine(context),
+
+    //内容
+    final content = [
+      (bean.versionTile ?? "${bean.versionName} 更新说明:")
+          .text(style: globalTheme.textTitleStyle, bold: true)
+          .paddingOnly(horizontal: kX, top: kX * 2),
+      bean.versionDes
+          ?.text()
+          .scroll()
+          .constrainedMax(
+            minWidth: double.infinity,
+            maxHeight: $screenHeight / 3,
+          )
+          .paddingSymmetric(vertical: kX)
+          .expanded(),
+      hLine(context),
+      if (showMore)
         "查看更多"
             .text(textAlign: TextAlign.center)
             .center()
             .constrainedMin(minHeight: kButtonHeight)
             .matchParentWidth()
             .inkWell(() {
-          context.popDialog();
-          onClickMoreAction?.call();
-        }),
-        hLine(context),
-        "确定"
-            .text(
-                textAlign: TextAlign.center, textColor: globalTheme.accentColor)
-            .center()
-            .constrainedMin(minHeight: kButtonHeight)
-            .matchParentWidth()
-            .inkWell(() {
-          context.popDialog();
-        }),
-      ].column(crossAxisAlignment: CrossAxisAlignment.start)!,
+              context.popDialog();
+              if (onClickMoreAction == null) {
+                context.pushWidget(AppUpdateLogListScreen(beanList: beanList));
+              } else {
+                onClickMoreAction?.call();
+              }
+            }),
+      if (showMore) hLine(context),
+      "确定"
+          .text(textAlign: TextAlign.center, textColor: globalTheme.accentColor)
+          .center()
+          .constrainedMin(minHeight: kButtonHeight)
+          .matchParentWidth()
+          .inkWell(() {
+            context.popDialog();
+          }),
+    ].column(crossAxisAlignment: CrossAxisAlignment.start)!.material();
+
+    //头部
+    final marginTop = 100.0;
+    Widget header = [
+      SizedBox()
+          .backgroundColor(
+            globalTheme.themeWhiteColor,
+            fillRadius: kDefaultBorderRadiusXX,
+          )
+          .position(top: marginTop, left: 0, right: 0, bottom: 0),
+      AppPackageAssetsSvgWidget(
+        resKey: Assets.svg.appUpdateLogHeader,
+        libPackage: Assets.package,
+        size: 200,
+      ).position(left: 0, right: 0),
+      content.position(top: marginTop, left: 0, right: 0, bottom: 0),
+    ].stack()!;
+
+    return buildCenterDialog(
+      context,
+      header,
+      decorationColor: Colors.transparent,
       padding: EdgeInsets.zero,
     );
   }
 }
 
 /// 更新日志列表界面
+/// - [AppUpdateLogDialog]
+/// - [AppUpdateLogListScreen]
+///
 /// - [_AppUpdateLogTile]
 class AppUpdateLogListScreen extends StatelessWidget with AbsScrollPage {
-  final List<LibAppVersionBean> beanList;
+  final List<LibAppVersionBean>? beanList;
 
-  const AppUpdateLogListScreen({
-    super.key,
-    required this.beanList,
-  });
+  const AppUpdateLogListScreen({super.key, required this.beanList});
 
   @override
   String? getTitle(BuildContext context) => "更新记录";
 
   @override
   WidgetList? buildScrollBody(BuildContext context) {
-    return [
-      for (final bean in beanList) _AppUpdateLogTile(bean: bean),
-    ];
+    return [for (final bean in beanList ?? []) _AppUpdateLogTile(bean: bean)];
   }
 }
 
@@ -431,20 +468,15 @@ class AppUpdateLogListScreen extends StatelessWidget with AbsScrollPage {
 class _AppUpdateLogTile extends StatelessWidget {
   final LibAppVersionBean bean;
 
-  const _AppUpdateLogTile({
-    super.key,
-    required this.bean,
-  });
+  const _AppUpdateLogTile({super.key, required this.bean});
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     return [
-      (bean.versionTile ?? "${bean.versionDate} / ${bean.versionName}")
-          .text(
-            style: globalTheme.textTitleStyle,
-            bold: true,
-          )
+      (bean.versionTile ??
+              "${bean.versionDate?.connect(bean.versionName != null ? " / ${bean.versionName}" : null)}")
+          .text(style: globalTheme.textTitleStyle, bold: true)
           .paddingOnly(horizontal: kX, top: kX),
       bean.versionDes?.text().paddingSymmetric(vertical: kX),
       hLine(context),
