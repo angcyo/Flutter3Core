@@ -12,6 +12,7 @@ class GradientButton extends StatefulWidget {
     super.key,
     this.color /*指定单一颜色, 无渐变*/,
     this.colors /*指定渐变颜色*/,
+    this.onLongPress,
     this.onTap,
     required this.child,
     this.onContextTap,
@@ -41,6 +42,7 @@ class GradientButton extends StatefulWidget {
     super.key,
     this.color,
     this.colors,
+    this.onLongPress,
     this.onTap,
     this.onContextTap,
     this.onAsyncContextTap,
@@ -71,6 +73,7 @@ class GradientButton extends StatefulWidget {
     this.color,
     this.colors,
     required this.child,
+    this.onLongPress,
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
@@ -101,6 +104,7 @@ class GradientButton extends StatefulWidget {
     this.colors,
     this.splashColor = const Color(0x20ffffff),
     required this.child,
+    this.onLongPress,
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
@@ -131,6 +135,7 @@ class GradientButton extends StatefulWidget {
     this.colors,
     this.splashColor = const Color(0x20000000),
     this.textColor = const Color(0xff000000),
+    this.onLongPress,
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
@@ -163,6 +168,7 @@ class GradientButton extends StatefulWidget {
     this.color,
     this.colors,
     this.onTap,
+    this.onLongPress,
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
@@ -222,12 +228,22 @@ class GradientButton extends StatefulWidget {
   final double? radius;
   final BorderRadius? borderRadius;
 
+  /// 点击事件
+  /// - [onTap]
+  /// - [onContextTap]
+  /// - [onAsyncContextTap]
   final GestureTapCallback? onTap;
+
+  /// 长按事件
+  final GestureLongPressCallback? onLongPress;
 
   /// 带[BuildContext]参数的点击事件
   final GestureContextTapCallback? onContextTap;
 
   /// 异步的点击事件, 同时开启loading状态显示
+  /// - [onTap]
+  /// - [onContextTap]
+  /// - [onAsyncContextTap]
   final AsyncGestureContextTapCallback? onAsyncContextTap;
 
   /// [onAsyncContextTap]加载中显示的小部件, 不指定用默认
@@ -322,6 +338,7 @@ class _GradientButtonState extends State<GradientButton> {
             splashColor: tempSplashColor,
             highlightColor: Colors.transparent,
             onHighlightChanged: widget.onHighlightChanged,
+            onLongPress: widget.onLongPress,
             onTap: disabled
                 ? null
                 : () async {
