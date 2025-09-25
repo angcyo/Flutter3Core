@@ -14,7 +14,8 @@ WeakReference<OverlayEntry>? _currentLoadingEntryRef;
 /// 是否显示了加载提示
 bool get $isShowLoading => _currentLoadingEntryRef?.target != null;
 
-/// 是否暂停加载提示的超时检查
+/// 是否暂停加载提示的超时检查,
+/// 比如在loading的同时, 弹出了一个异步需要确认的交互弹窗时, 则需要暂停超时计时.
 /// - [wrapLoading]
 bool $pauseLoadingTimeoutCheck = false;
 
@@ -62,8 +63,9 @@ OverlayEntry? showLoading({
       : ModalRoute.of(context);
 
   // 创建Entry
-  currentLoadingEntry = OverlayEntry(builder: (context) {
-    return _LoadingOverlay(
+  currentLoadingEntry = OverlayEntry(
+    builder: (context) {
+      return _LoadingOverlay(
         route: route,
         loadingInfoNotifier: loadingInfoNotifier,
         builder: builder ??= (context, loadingInfo) {
@@ -78,14 +80,20 @@ OverlayEntry? showLoading({
           if (message != null) {
             final globalTheme = GlobalTheme.of(context);
             result = result
-                .stackOf(message.text(
-                    style: globalTheme.textPlaceStyle
-                        .copyWith(color: globalTheme.whiteColor)))
+                .stackOf(
+                  message.text(
+                    style: globalTheme.textPlaceStyle.copyWith(
+                      color: globalTheme.whiteColor,
+                    ),
+                  ),
+                )
                 .material();
           }
           return result;
-        });
-  });
+        },
+      );
+    },
+  );
   _currentLoadingEntryRef = WeakReference(currentLoadingEntry);
 
   void insert() {
@@ -132,13 +140,15 @@ void hideLoading() {
 }
 
 /// 包裹[showLoading].[hideLoading].[Future]
-/// [future] 需要包裹的[Future], 等带这个[future]的返回结果
-/// [onStart] 自定义开始时的回调, 拦截默认显示加载提示
-/// [delay] 延迟多久后显示加载提示
-/// [timeout] 超时多久后触发[onEnd]回调, 并阻止[Future]的返回值,
-/// [showCountDown] 是否显示倒计时
-/// [wrapLoading]
-/// [wrapLoadingTimeout]
+/// - [future] 需要包裹的[Future], 等带这个[future]的返回结果
+/// - [onStart] 自定义开始时的回调, 拦截默认显示加载提示
+/// - [delay] 延迟多久后显示加载提示
+/// - [timeout] 超时多久后触发[onEnd]回调, 并阻止[Future]的返回值,
+/// - [showCountDown] 是否显示倒计时
+/// - [loadingInfoNotifier] 用来控制加载中的数据
+///
+/// - [wrapLoading]
+/// - [wrapLoadingTimeout]
 Future wrapLoading(
   Future future, {
   Duration? delay,
@@ -147,37 +157,36 @@ Future wrapLoading(
   ValueErrorCallback? onEnd,
   bool showCountDown = false,
   bool autoHideLoading = true,
+  //--
+  LoadingValueNotifier? loadingInfoNotifier,
+  //--
   String? debugLabel,
 }) {
   Timer? timer;
   bool isTimeout = false;
   bool isEnd = false;
-  LoadingValueNotifier? loadingInfoNotifier;
+
   if (onStart == null) {
     if (timeout != null) {
-      loadingInfoNotifier = LoadingValueNotifier(
+      loadingInfoNotifier ??= LoadingValueNotifier(
         LoadingInfo(message: showCountDown ? "${timeout.inSeconds}" : null),
       );
     }
     if (delay != null && delay > Duration.zero) {
-      countdownCallback(
-        delay,
-        (duration) {
-          if ($pauseLoadingTimeoutCheck) {
-            return false;
+      countdownCallback(delay, (duration) {
+        if ($pauseLoadingTimeoutCheck) {
+          return false;
+        }
+        if (duration.inSeconds <= 0) {
+          if (isEnd || isTimeout) {
+          } else {
+            showLoading(
+              postShow: false,
+              loadingInfoNotifier: loadingInfoNotifier,
+            );
           }
-          if (duration.inSeconds <= 0) {
-            if (isEnd || isTimeout) {
-            } else {
-              showLoading(
-                postShow: false,
-                loadingInfoNotifier: loadingInfoNotifier,
-              );
-            }
-          }
-        },
-        just: false,
-      );
+        }
+      }, just: false);
       /*postDelayCallback(() {
         //debugger();
         //l.w("delay end");
@@ -200,8 +209,9 @@ Future wrapLoading(
     if (showCountDown) {
       //需要显示倒计时
       timer = countdownCallback(timeout, (duration) {
-        loadingInfoNotifier?.value =
-            LoadingInfo(message: "${duration.inSeconds}");
+        loadingInfoNotifier?.value = LoadingInfo(
+          message: "${duration.inSeconds}",
+        );
       });
     }
 
@@ -269,31 +279,31 @@ Future wrapLoadingTimeout(
 /// 加载框支持的数据
 /// [_LoadingOverlay]
 class LoadingInfo {
-  /// 指定进度的值
-  /// [0~1]
+  /// 指定进度的值, [0~1]
+  /// - [ProgressStateInfo]
+  /// - [ProgressStateInfo.noProgress]
+  /// - [ProgressStateInfo.infinityProgress]
   double? progress;
 
   /// 指定需要显示的消息
   String? message;
 
-  /// 自定义构建器, 不指定则使用[_LoadingOverlay.builder]
+  /// 自定义小部件构建器, 不指定则使用[_LoadingOverlay.builder]
   @defInjectMark
   WidgetBuilder? builder;
 
-  LoadingInfo({
-    this.progress,
-    this.message,
-    this.builder,
-  });
+  LoadingInfo({this.progress, this.message, this.builder});
 }
 
-/// 通知值改变的桥梁
-/// [ValueListenableBuilder]
+/// 通知值改变的桥梁, 当设置[ValueNotifier.value]的值时, 会自动刷新对应的界面
+/// - [_LoadingOverlay]
+/// - [ValueListenableBuilder]
 class LoadingValueNotifier extends ValueNotifier<LoadingInfo?>
     with NotifierMixin {
   LoadingValueNotifier(super.value);
 }
 
+/// [_LoadingOverlay.loadingInfoNotifier]
 class _LoadingOverlay extends StatefulWidget {
   const _LoadingOverlay({
     super.key,
@@ -348,13 +358,13 @@ class _LoadingOverlayState extends State<_LoadingOverlay> {
   Widget build(BuildContext context) {
     final loadingInfoNotifier = widget.loadingInfoNotifier;
     Widget result = loadingInfoNotifier == null
-        ? widget.builder(context, widget.loadingInfoNotifier?.value)
+        ? widget.builder(context, null)
         : ValueListenableBuilder(
             valueListenable: loadingInfoNotifier,
             builder: (context, value, child) {
               return value?.builder?.call(context) ?? child ?? empty;
             },
-            child: widget.builder(context, widget.loadingInfoNotifier?.value),
+            child: widget.builder(context, loadingInfoNotifier.value),
           );
     /*return RouteWillPopScope(
       route: widget.route,
