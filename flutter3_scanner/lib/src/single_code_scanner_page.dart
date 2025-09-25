@@ -14,7 +14,7 @@ const kScannerControlButtonBottom = 26.0;
 
 /// 简单的二维码扫描界面
 /// 返回扫码结果, 可能包含多个
-/// [List<String>]
+/// - [List<String>]
 class SingleCodeScannerPage extends StatefulWidget {
   /// 扫描的格式, 默认[BarcodeFormat.qrCode]
   final List<BarcodeFormat> scanFormats;
@@ -96,8 +96,15 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
   /// 处理字符串返回值
   void _handleStringResult(List<String>? list) {
     if (!isNil(list)) {
+      assert(() {
+        l.i("扫码结果->$list");
+        return true;
+      }());
       Feedback.forLongPress(buildContext!);
       widget.onCodeScannerCallback?.call(list!);
+      if (widget.onCodeScannerCallback == null) {
+        toastMessage(list!.join("\n").text());
+      }
       if (widget.autoPop) {
         _isDisposed = true;
         postFrameCallback((_) {
@@ -226,15 +233,17 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
           MobileScanner(
             controller: controller,
             scanWindow: scanWindowRect,
-            errorBuilder: (context, error, child) {
+            errorBuilder: (context, error) {
               return ScannerErrorWidget(error: error);
             },
             fit: BoxFit.cover,
           ),
           _buildBarcodeOverlay(),
           if (scanWindowRect != null) _buildScanWindow(scanWindowRect),
-          const SizedBox(width: double.infinity, height: double.infinity)
-              .doubleClick(() {
+          const SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+          ).doubleClick(() {
             //双击放大/缩小
             if (_zoomFactor == 0.0) {
               _zoomFactor = widget.doubleZoomFactor;
@@ -253,11 +262,11 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
                 .align(Alignment.bottomCenter),
           if (widget.showAnalyzeImageButton)
             AnalyzeImageFromGalleryButton(
-              controller: controller,
-              onCodeScannerCallback: (result) {
-                _handleStringResult(result);
-              },
-            )
+                  controller: controller,
+                  onCodeScannerCallback: (result) {
+                    _handleStringResult(result);
+                  },
+                )
                 .paddingOnly(right: kX, bottom: kScannerControlButtonBottom)
                 .align(Alignment.bottomRight),
         ],
@@ -297,10 +306,7 @@ class ScannerErrorWidget extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 16),
               child: Icon(Icons.error, color: Colors.white),
             ),
-            Text(
-              errorMessage,
-              style: const TextStyle(color: Colors.white),
-            ),
+            Text(errorMessage, style: const TextStyle(color: Colors.white)),
             Text(
               error.errorDetails?.message ?? '',
               style: const TextStyle(color: Colors.white),
@@ -314,10 +320,7 @@ class ScannerErrorWidget extends StatelessWidget {
 
 /// 扫描框
 class ScannerOverlay extends CustomPainter {
-  const ScannerOverlay({
-    required this.scanWindow,
-    this.borderRadius = 12.0,
-  });
+  const ScannerOverlay({required this.scanWindow, this.borderRadius = 12.0});
 
   final Rect scanWindow;
   final double borderRadius;
@@ -500,10 +503,7 @@ class ToggleFlashlightButton extends StatelessWidget {
             return const IconButton(
               color: Colors.grey,
               iconSize: kScannerControlButtonSize,
-              icon: Icon(
-                Icons.no_flash,
-                color: Colors.grey,
-              ),
+              icon: Icon(Icons.no_flash, color: Colors.grey),
               onPressed: null,
             );
         }
@@ -551,7 +551,8 @@ class AnalyzeImageFromGalleryButton extends StatelessWidget {
         }
 
         //result
-        final list = barcodes?.barcodes
+        final list =
+            barcodes?.barcodes
                 .map((e) => e.displayValue)
                 .filterNull<String>()
                 .toList() ??
