@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+# shellcheck disable=SC2103
+cd ..
+output=".output/deps.txt"
+echo "依赖关系输出在-> $output"
+flutter pub deps > $output

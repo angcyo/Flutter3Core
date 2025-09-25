@@ -1,3 +1,5 @@
+// dart format width=80
+
 /// GENERATED CODE - DO NOT MODIFY BY HAND
 /// *****************************************************
 ///  FlutterGen
@@ -5,7 +7,7 @@
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
-// ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
+// ignore_for_file: deprecated_member_use,directives_ordering,implicit_dynamic_list_literal,unnecessary_import
 
 import 'package:flutter/widgets.dart';
 
@@ -13,95 +15,109 @@ class $AssetsPngGen {
   const $AssetsPngGen();
 
   /// File path: assets/png/core_file_icon_7z.png
-  AssetGenImage get coreFileIcon7z =>
-      const AssetGenImage('assets/png/core_file_icon_7z.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIcon7z => const AssetGenImage(
+    'assets/png/core_file_icon_7z.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_apk.png
-  AssetGenImage get coreFileIconApk =>
-      const AssetGenImage('assets/png/core_file_icon_apk.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconApk => const AssetGenImage(
+    'assets/png/core_file_icon_apk.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_audio.png
-  AssetGenImage get coreFileIconAudio =>
-      const AssetGenImage('assets/png/core_file_icon_audio.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconAudio => const AssetGenImage(
+    'assets/png/core_file_icon_audio.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_emptyfile.png
-  AssetGenImage get coreFileIconEmptyfile =>
-      const AssetGenImage('assets/png/core_file_icon_emptyfile.png',
-          size: Size(144.0, 144.0));
+  AssetGenImage get coreFileIconEmptyfile => const AssetGenImage(
+    'assets/png/core_file_icon_emptyfile.png',
+    size: const Size(144.0, 144.0),
+  );
 
   /// File path: assets/png/core_file_icon_folder.png
-  AssetGenImage get coreFileIconFolder =>
-      const AssetGenImage('assets/png/core_file_icon_folder.png',
-          size: Size(161.0, 136.0));
+  AssetGenImage get coreFileIconFolder => const AssetGenImage(
+    'assets/png/core_file_icon_folder.png',
+    size: const Size(161.0, 136.0),
+  );
 
   /// File path: assets/png/core_file_icon_font.png
-  AssetGenImage get coreFileIconFont =>
-      const AssetGenImage('assets/png/core_file_icon_font.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconFont => const AssetGenImage(
+    'assets/png/core_file_icon_font.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_log.png
-  AssetGenImage get coreFileIconLog =>
-      const AssetGenImage('assets/png/core_file_icon_log.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconLog => const AssetGenImage(
+    'assets/png/core_file_icon_log.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_picture.png
-  AssetGenImage get coreFileIconPicture =>
-      const AssetGenImage('assets/png/core_file_icon_picture.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconPicture => const AssetGenImage(
+    'assets/png/core_file_icon_picture.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_rar.png
-  AssetGenImage get coreFileIconRar =>
-      const AssetGenImage('assets/png/core_file_icon_rar.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconRar => const AssetGenImage(
+    'assets/png/core_file_icon_rar.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_text.png
-  AssetGenImage get coreFileIconText =>
-      const AssetGenImage('assets/png/core_file_icon_text.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconText => const AssetGenImage(
+    'assets/png/core_file_icon_text.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_unknown.png
-  AssetGenImage get coreFileIconUnknown =>
-      const AssetGenImage('assets/png/core_file_icon_unknown.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconUnknown => const AssetGenImage(
+    'assets/png/core_file_icon_unknown.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_video.png
-  AssetGenImage get coreFileIconVideo =>
-      const AssetGenImage('assets/png/core_file_icon_video.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconVideo => const AssetGenImage(
+    'assets/png/core_file_icon_video.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_xml.png
-  AssetGenImage get coreFileIconXml =>
-      const AssetGenImage('assets/png/core_file_icon_xml.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconXml => const AssetGenImage(
+    'assets/png/core_file_icon_xml.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// File path: assets/png/core_file_icon_zip.png
-  AssetGenImage get coreFileIconZip =>
-      const AssetGenImage('assets/png/core_file_icon_zip.png',
-          size: Size(140.0, 160.0));
+  AssetGenImage get coreFileIconZip => const AssetGenImage(
+    'assets/png/core_file_icon_zip.png',
+    size: const Size(140.0, 160.0),
+  );
 
   /// Directory path: packages/flutter3_core/assets/png
   String get path => 'packages/flutter3_core/assets/png';
 
   /// List of all assets
   List<AssetGenImage> get values => [
-        coreFileIcon7z,
-        coreFileIconApk,
-        coreFileIconAudio,
-        coreFileIconEmptyfile,
-        coreFileIconFolder,
-        coreFileIconFont,
-        coreFileIconLog,
-        coreFileIconPicture,
-        coreFileIconRar,
-        coreFileIconText,
-        coreFileIconUnknown,
-        coreFileIconVideo,
-        coreFileIconXml,
-        coreFileIconZip
-      ];
+    coreFileIcon7z,
+    coreFileIconApk,
+    coreFileIconAudio,
+    coreFileIconEmptyfile,
+    coreFileIconFolder,
+    coreFileIconFont,
+    coreFileIconLog,
+    coreFileIconPicture,
+    coreFileIconRar,
+    coreFileIconText,
+    coreFileIconUnknown,
+    coreFileIconVideo,
+    coreFileIconXml,
+    coreFileIconZip,
+  ];
 }
 
 class $AssetsSvgGen {
@@ -149,17 +165,17 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<String> get values => [
-        coreBack,
-        coreClose,
-        coreConfirm,
-        coreNext,
-        fileBrowseDelete,
-        fileBrowseHome,
-        fileBrowseOpen,
-        fileBrowseShare,
-        keyboardBackspace,
-        keyboardPackUp
-      ];
+    coreBack,
+    coreClose,
+    coreConfirm,
+    coreNext,
+    fileBrowseDelete,
+    fileBrowseHome,
+    fileBrowseOpen,
+    fileBrowseShare,
+    keyboardBackspace,
+    keyboardPackUp,
+  ];
 }
 
 class Assets {
@@ -176,6 +192,7 @@ class AssetGenImage {
     this._assetName, {
     this.size,
     this.flavors = const {},
+    this.animation,
   });
 
   final String _assetName;
@@ -184,6 +201,7 @@ class AssetGenImage {
 
   final Size? size;
   final Set<String> flavors;
+  final AssetGenImageAnimation? animation;
 
   Image image({
     Key? key,
@@ -244,14 +262,22 @@ class AssetGenImage {
     @Deprecated('Do not specify package for a generated library asset')
     String? package = package,
   }) {
-    return AssetImage(
-      _assetName,
-      bundle: bundle,
-      package: package,
-    );
+    return AssetImage(_assetName, bundle: bundle, package: package);
   }
 
   String get path => _assetName;
 
   String get keyName => 'packages/flutter3_core/$_assetName';
+}
+
+class AssetGenImageAnimation {
+  const AssetGenImageAnimation({
+    required this.isAnimation,
+    required this.duration,
+    required this.frames,
+  });
+
+  final bool isAnimation;
+  final Duration duration;
+  final int frames;
 }

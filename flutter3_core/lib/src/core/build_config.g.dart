@@ -30,33 +30,25 @@ BuildConfig _$BuildConfigFromJson(Map<String, dynamic> json) => BuildConfig()
       json['buildOperatingSystemUserName'] as String?
   ..json = json['json'] as Map<String, dynamic>?;
 
-Map<String, dynamic> _$BuildConfigToJson(BuildConfig instance) =>
-    <String, dynamic>{
-      if (instance.platformMap?.map((k, e) => MapEntry(k, e.toJson()))
-          case final value?)
-        'platformMap': value,
-      if (instance.buildTypeMap?.map((k, e) => MapEntry(k, e.toJson()))
-          case final value?)
-        'buildTypeMap': value,
-      if (instance.buildFlavorMap?.map((k, e) => MapEntry(k, e.toJson()))
-          case final value?)
-        'buildFlavorMap': value,
-      if (instance.buildPackageName case final value?)
-        'buildPackageName': value,
-      if (instance.buildType case final value?) 'buildType': value,
-      if (instance.buildFlavor case final value?) 'buildFlavor': value,
-      if (instance.buildVersionName case final value?)
-        'buildVersionName': value,
-      if (instance.buildVersionCode case final value?)
-        'buildVersionCode': value,
-      if (instance.buildTime case final value?) 'buildTime': value,
-      if (instance.buildOperatingSystem case final value?)
-        'buildOperatingSystem': value,
-      if (instance.buildOperatingSystemVersion case final value?)
-        'buildOperatingSystemVersion': value,
-      if (instance.buildOperatingSystemLocaleName case final value?)
-        'buildOperatingSystemLocaleName': value,
-      if (instance.buildOperatingSystemUserName case final value?)
-        'buildOperatingSystemUserName': value,
-      if (instance.json case final value?) 'json': value,
-    };
+Map<String, dynamic> _$BuildConfigToJson(
+  BuildConfig instance,
+) => <String, dynamic>{
+  'platformMap': ?instance.platformMap?.map((k, e) => MapEntry(k, e.toJson())),
+  'buildTypeMap': ?instance.buildTypeMap?.map(
+    (k, e) => MapEntry(k, e.toJson()),
+  ),
+  'buildFlavorMap': ?instance.buildFlavorMap?.map(
+    (k, e) => MapEntry(k, e.toJson()),
+  ),
+  'buildPackageName': ?instance.buildPackageName,
+  'buildType': ?instance.buildType,
+  'buildFlavor': ?instance.buildFlavor,
+  'buildVersionName': ?instance.buildVersionName,
+  'buildVersionCode': ?instance.buildVersionCode,
+  'buildTime': ?instance.buildTime,
+  'buildOperatingSystem': ?instance.buildOperatingSystem,
+  'buildOperatingSystemVersion': ?instance.buildOperatingSystemVersion,
+  'buildOperatingSystemLocaleName': ?instance.buildOperatingSystemLocaleName,
+  'buildOperatingSystemUserName': ?instance.buildOperatingSystemUserName,
+  'json': ?instance.json,
+};

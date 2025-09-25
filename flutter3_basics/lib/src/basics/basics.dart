@@ -264,7 +264,7 @@ void reportError(exception) {
 /// [StackTrace.current]
 /// [reportError]
 /// [printError]
-void printError(exception, [StackTrace? stack]) {
+void printError(dynamic exception, [StackTrace? stack]) {
   FlutterError.dumpErrorToConsole(
     exception is FlutterErrorDetails
         ? exception

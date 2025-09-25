@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import '../../flutter3_core.dart';
 
 part 'isar_test_collection.g.dart';
 
@@ -46,7 +46,7 @@ part 'isar_test_collection.g.dart';
 ///   List<double>
 ///   List<DateTime>
 ///   List<String>
-@collection
+@isarCollection
 @Name("TestCollection")
 class TestCollection {
   //Id? id;
@@ -106,7 +106,7 @@ class TestCollection {
 ///   final count = await isar.recipes.deleteAll([1, 2, 3]);
 ///   print('We deleted $count recipes');
 /// });
-/// 
+///
 /// await isar.writeTxn(() async {
 ///   final count = await isar.recipes.filter()
 ///     .isFavoriteEqualTo(false)

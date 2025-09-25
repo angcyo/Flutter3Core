@@ -26,8 +26,9 @@ const TestCollectionSchema = CollectionSchema(
       id: 1,
       name: r'lastName',
       type: IsarType.string,
-    )
+    ),
   },
+
   estimateSize: _testCollectionEstimateSize,
   serialize: _testCollectionSerialize,
   deserialize: _testCollectionDeserialize,
@@ -36,10 +37,11 @@ const TestCollectionSchema = CollectionSchema(
   indexes: {},
   links: {},
   embeddedSchemas: {},
+
   getId: _testCollectionGetId,
   getLinks: _testCollectionGetLinks,
   attach: _testCollectionAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.2',
 );
 
 int _testCollectionEstimateSize(
@@ -111,7 +113,10 @@ List<IsarLinkBase<dynamic>> _testCollectionGetLinks(TestCollection object) {
 }
 
 void _testCollectionAttach(
-    IsarCollection<dynamic> col, Id id, TestCollection object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  TestCollection object,
+) {
   object.id = id;
 }
 
@@ -127,17 +132,16 @@ extension TestCollectionQueryWhereSort
 extension TestCollectionQueryWhere
     on QueryBuilder<TestCollection, TestCollection, QWhereClause> {
   QueryBuilder<TestCollection, TestCollection, QAfterWhereClause> idEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterWhereClause> idNotEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -160,8 +164,9 @@ extension TestCollectionQueryWhere
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterWhereClause> idGreaterThan(
-      Id id,
-      {bool include = false}) {
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -170,8 +175,9 @@ extension TestCollectionQueryWhere
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterWhereClause> idLessThan(
-      Id id,
-      {bool include = false}) {
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -186,12 +192,14 @@ extension TestCollectionQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -199,71 +207,74 @@ extension TestCollectionQueryWhere
 extension TestCollectionQueryFilter
     on QueryBuilder<TestCollection, TestCollection, QFilterCondition> {
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameIsNull() {
+  firstNameIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'firstName',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'firstName'),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameIsNotNull() {
+  firstNameIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'firstName',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'firstName'),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  firstNameEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'firstName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'firstName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'firstName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameLessThan(
+  firstNameGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'firstName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'firstName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameBetween(
+  firstNameLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'firstName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
+  firstNameBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -271,122 +282,122 @@ extension TestCollectionQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'firstName',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'firstName',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  firstNameStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'firstName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'firstName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  firstNameEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'firstName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'firstName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameContains(String value, {bool caseSensitive = true}) {
+  firstNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'firstName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'firstName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameMatches(String pattern, {bool caseSensitive = true}) {
+  firstNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'firstName',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'firstName',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameIsEmpty() {
+  firstNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'firstName',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'firstName', value: ''),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      firstNameIsNotEmpty() {
+  firstNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'firstName',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'firstName', value: ''),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition> idEqualTo(
-      Id value) {
+    Id value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idGreaterThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idLessThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -397,82 +408,87 @@ extension TestCollectionQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameIsNull() {
+  lastNameIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'lastName',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'lastName'),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameIsNotNull() {
+  lastNameIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'lastName',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'lastName'),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  lastNameEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'lastName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'lastName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameLessThan(
+  lastNameGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'lastName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'lastName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameBetween(
+  lastNameLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'lastName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
+  lastNameBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -480,84 +496,86 @@ extension TestCollectionQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'lastName',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'lastName',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  lastNameStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'lastName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'lastName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  lastNameEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'lastName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'lastName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameContains(String value, {bool caseSensitive = true}) {
+  lastNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'lastName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'lastName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameMatches(String pattern, {bool caseSensitive = true}) {
+  lastNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'lastName',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'lastName',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameIsEmpty() {
+  lastNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastName',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'lastName', value: ''),
+      );
     });
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterFilterCondition>
-      lastNameIsNotEmpty() {
+  lastNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'lastName',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'lastName', value: ''),
+      );
     });
   }
 }
@@ -577,7 +595,7 @@ extension TestCollectionQuerySortBy
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterSortBy>
-      sortByFirstNameDesc() {
+  sortByFirstNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'firstName', Sort.desc);
     });
@@ -590,7 +608,7 @@ extension TestCollectionQuerySortBy
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterSortBy>
-      sortByLastNameDesc() {
+  sortByLastNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastName', Sort.desc);
     });
@@ -606,7 +624,7 @@ extension TestCollectionQuerySortThenBy
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterSortBy>
-      thenByFirstNameDesc() {
+  thenByFirstNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'firstName', Sort.desc);
     });
@@ -631,7 +649,7 @@ extension TestCollectionQuerySortThenBy
   }
 
   QueryBuilder<TestCollection, TestCollection, QAfterSortBy>
-      thenByLastNameDesc() {
+  thenByLastNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastName', Sort.desc);
     });
@@ -640,15 +658,17 @@ extension TestCollectionQuerySortThenBy
 
 extension TestCollectionQueryWhereDistinct
     on QueryBuilder<TestCollection, TestCollection, QDistinct> {
-  QueryBuilder<TestCollection, TestCollection, QDistinct> distinctByFirstName(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TestCollection, TestCollection, QDistinct> distinctByFirstName({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'firstName', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<TestCollection, TestCollection, QDistinct> distinctByLastName(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TestCollection, TestCollection, QDistinct> distinctByLastName({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastName', caseSensitive: caseSensitive);
     });
