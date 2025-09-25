@@ -397,13 +397,14 @@ OverlayEntry? showNotification(
 }
 
 /// 全局显示一个[OverlayEntry]
-/// [curve] 动画曲线/差值器
+/// - [curve] 动画曲线/差值器
 ///
-/// [OverlayState]
-/// [Overlay.of]
+/// - [OverlayState]
+/// - [Overlay.of]
+/// - [GlobalConfig.findOverlayState]
 ///
-/// [Navigator.of]
-/// [NavigatorState.overlay]
+/// - [Navigator.of]
+/// - [NavigatorState.overlay]
 OverlayEntry? showOverlay(
   OverlayEntryAnimatedWidgetBuilder builder, {
   BuildContext? context,

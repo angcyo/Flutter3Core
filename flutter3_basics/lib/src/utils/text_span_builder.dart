@@ -28,11 +28,29 @@ class TextSpanBuilder {
   /// [addTextSpan]
   /// [addTextSpans]
   /// [addTextStyle]
-  TextSpanBuilder addText(String? text, {TextStyle? style}) {
-    _textSpans.add(TextSpan(text: text, style: style));
+  TextSpanBuilder addText(
+    String? text, {
+    TextStyle? style,
+    Color? color,
+    double? fontSize,
+    double? letterSpacing,
+  }) {
+    _textSpans.add(
+      TextSpan(
+        text: text,
+        style:
+            style ??
+            TextStyle(
+              color: color,
+              fontSize: fontSize,
+              letterSpacing: letterSpacing,
+            ),
+      ),
+    );
     return this;
   }
 
+  @alias
   TextSpanBuilder addTextStyle(
     String? text, {
     TextStyle? style,

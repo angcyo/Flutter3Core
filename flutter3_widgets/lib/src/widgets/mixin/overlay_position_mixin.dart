@@ -22,6 +22,16 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
   @configProperty
   GestureTapCallback? onTapBody;
 
+  /// 调试标签
+  String? debugLabel;
+
+  //--
+
+  /// 浮窗是否在容器右边
+  bool get isOverlayInRight =>
+      positionOffset.dx + _overlayBodySize.width / 2 >
+      _overlayContainerSize.width / 2;
+
   @override
   void initState() {
     //初始化默认位置
@@ -34,6 +44,7 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
     return buildContainer(buildOverlayBody(context));
   }
 
+  /// 构建浮窗内容
   @overridePoint
   Widget buildOverlayBody(BuildContext context) {
     return Placeholder();
@@ -41,7 +52,10 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
 
   //--
 
-  /// 构建浮窗容器
+  /// 构建浮窗容器, 以便获取容器的信息, 方便在容器中贴边定位
+  /// - 支持全屏容器
+  /// - 支持局部容器
+  ///
   /// - [buildContainer]
   /// - [wrapBody]
   @api
@@ -52,12 +66,12 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
           Positioned(
             left: positionOffset.x,
             top: positionOffset.y,
-            child: wrapBody(body).size(size: 40),
+            child: wrapBody(body),
           ),
         ],
       ),
       afterLayoutAction: (ctx, child) {
-        //debugger();
+        debugger(when: debugLabel != null);
         _overlayContainerSize = child.size;
       },
     );
@@ -84,7 +98,7 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
         onTap: onTapBody,
       ),
       afterLayoutAction: (ctx, child) {
-        //debugger();
+        debugger(when: debugLabel != null);
         _overlayBodySize = child.size;
       },
     );

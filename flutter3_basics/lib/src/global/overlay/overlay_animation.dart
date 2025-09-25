@@ -31,6 +31,7 @@ class OverlayAnimated extends StatefulWidget {
   final LoadingValueNotifier? loadingInfoNotifier;
 
   /// 当[OverlayEntry]被移除时触发的回调
+  /// 需要调用[OverlayAnimatedState.hide]才能触发
   final VoidCallback? onRemoveAction;
 
   const OverlayAnimated({
@@ -43,11 +44,11 @@ class OverlayAnimated extends StatefulWidget {
     required this.overlayKey,
     this.loadingInfoNotifier,
     this.onRemoveAction,
-  })  : curve = curve ?? Curves.easeInOut,
-        assert(animationDuration >= Duration.zero),
-        assert(reverseAnimationDuration >= Duration.zero),
-        assert(duration >= Duration.zero),
-        super(key: key);
+  }) : curve = curve ?? Curves.easeInOut,
+       assert(animationDuration >= Duration.zero),
+       assert(reverseAnimationDuration >= Duration.zero),
+       assert(duration >= Duration.zero),
+       super(key: key);
 
   @override
   OverlayAnimatedState createState() => OverlayAnimatedState();
@@ -88,8 +89,9 @@ class OverlayAnimatedState extends State<OverlayAnimated>
     if (_dismissed || (_dismissScheduled && animate)) {
       return;
     }
-    OverlayEntry? entry =
-        GlobalConfig.of(context).getOverlayEntry(key: widget.overlayKey);
+    OverlayEntry? entry = GlobalConfig.of(
+      context,
+    ).getOverlayEntry(key: widget.overlayKey);
     if (!_dismissScheduled) {
       // Remove this entry from overlaySupportState no matter it is animating or not.
       // because when the entry with the same key, we need to show it now.
@@ -131,10 +133,11 @@ class OverlayAnimatedState extends State<OverlayAnimated>
   void initState() {
     widget.loadingInfoNotifier?.addListener(_resetAnimate);
     _controller = AnimationController(
-        vsync: this,
-        duration: widget.animationDuration,
-        reverseDuration: widget.reverseAnimationDuration,
-        debugLabel: 'OverlayAnimatedShowHideAnimation');
+      vsync: this,
+      duration: widget.animationDuration,
+      reverseDuration: widget.reverseAnimationDuration,
+      debugLabel: 'OverlayAnimatedShowHideAnimation',
+    );
     super.initState();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {
@@ -214,8 +217,11 @@ class TopSlideNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FractionalTranslation(
-      translation:
-          Offset.lerp(const Offset(0, -1), const Offset(0, 0), progress)!,
+      translation: Offset.lerp(
+        const Offset(0, -1),
+        const Offset(0, 0),
+        progress,
+      )!,
       child: builder(context),
     );
   }
@@ -237,8 +243,11 @@ class BottomSlideNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FractionalTranslation(
-      translation:
-          Offset.lerp(const Offset(0, 1), const Offset(0, 0), progress)!,
+      translation: Offset.lerp(
+        const Offset(0, 1),
+        const Offset(0, 0),
+        progress,
+      )!,
       child: builder(context),
     );
   }
@@ -259,10 +268,7 @@ class OpacityNotification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: progress,
-      child: builder(context),
-    );
+    return Opacity(opacity: progress, child: builder(context));
   }
 }
 
@@ -283,9 +289,6 @@ class ScaleNotification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Transform.scale(
-      scale: progress,
-      child: builder(context),
-    );
+    return Transform.scale(scale: progress, child: builder(context));
   }
 }
