@@ -254,9 +254,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
           pageWidgetList.clear();
         }
         pageWidgetList.addAll(loadData.cast<Widget>());
-      } else {
+      } else if (loadData.isNotEmpty) {
         assert(() {
           l.w('无法处理的数据类型:${loadData.runtimeType}');
+          debugger();
           return true;
         }());
       }
@@ -439,10 +440,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 然后在[RItemTileExtension]中消耗此信号对象
   /// 之后可以通过[updateTile]更新指定的小部件
   @api
-  Widget rebuildByBean<Bean>(
-    Bean bean,
-    DataWidgetBuilder<Bean> builder,
-  ) {
+  Widget rebuildByBean<Bean>(Bean bean, DataWidgetBuilder<Bean> builder) {
     final updateSignal = UpdateSignalNotifier(bean);
     RScrollPage._lastRebuildBeanSignal = WeakReference(updateSignal);
     return rebuild(updateSignal, (context, value) {
@@ -461,7 +459,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   void updateTile(dynamic value) {
     rebuildTile((tile, signal) {
       //debugger();
-      final update = signal.value == value ||
+      final update =
+          signal.value == value ||
           (value is Iterable && value.contains(signal.value));
       assert(() {
         if (update) {
@@ -498,7 +497,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [test] 测试是否需要更新, 返回true, 表示需要rebuild
   @api
   void rebuildTile(
-      bool Function(RItemTile tile, UpdateValueNotifier signal) test) {
+    bool Function(RItemTile tile, UpdateValueNotifier signal) test,
+  ) {
     for (final element in pageWidgetList) {
       //debugger();
       if (element is RItemTile) {
@@ -538,7 +538,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [pageWidgetList]
   @api
   void deleteTile(
-      bool Function(RItemTile tile, UpdateValueNotifier signal) test) {
+    bool Function(RItemTile tile, UpdateValueNotifier signal) test,
+  ) {
     final WidgetList removeList = [];
     for (final element in pageWidgetList) {
       //debugger();
@@ -573,5 +574,5 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     }
   }
 
-//endregion 页面更新
+  //endregion 页面更新
 }
