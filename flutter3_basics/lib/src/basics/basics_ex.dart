@@ -975,7 +975,7 @@ extension StringEx on String {
 
   /// 使用base64加密当前的字符串
   /// 'Dart is open source' -> `RGFydCBpcyBvcGVuIHNvdXJjZQ==`
-  String get toBase64 => base64Encode(codeUnits);
+  String get toBase64 => base64Encode(bytes);
 
   /// 使用base64解密当前的字符串
   String get fromBase64 => base64Decode(this).utf8Str;
