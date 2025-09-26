@@ -3354,6 +3354,18 @@ extension MapEx<K, V> on Map<K, V> {
     }
     return this;
   }
+
+  /// 替换key
+  Map<K, V> replaceKey(K oldKey, K newKey) {
+    if (containsKey(oldKey)) {
+      final value = this[oldKey];
+      remove(oldKey);
+      if (value != null) {
+        this[newKey] = value;
+      }
+    }
+    return this;
+  }
 }
 
 //endregion Map 扩展

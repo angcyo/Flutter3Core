@@ -61,6 +61,14 @@ class LiveStreamController<T> {
   /// 是否为空
   bool get isEmpty => latestValue == null || isNil(latestValue);
 
+  /// 通知操作符
+  @alias
+  LiveStreamController operator ~() {
+    notify();
+    return this;
+  }
+
+  /// 赋值操作符
   @alias
   LiveStreamController operator <<(T newValue) {
     updateValue(newValue);
