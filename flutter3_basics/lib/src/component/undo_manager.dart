@@ -262,6 +262,13 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   @override
+  void didUpdateWidget(covariant oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //undoManagerMixin?.removeChangeListener(handleUndoActionChangeMixin);
+    //undoManagerMixin?.addChangeListener(handleUndoActionChangeMixin);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return [
           buildUndoWidgetMixin(context),

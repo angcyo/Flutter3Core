@@ -48,13 +48,6 @@ class CanvasStyle {
     drawType = drawType.add(sDrawAxis, value);
   }
 
-  /// 绘制label时, 额外需要的偏移量
-  @dp
-  double axisLabelOffset = 1;
-
-  /// 坐标系的单位
-  IUnit axisUnit = IUnit.mm;
-
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
   int drawType = sDrawAxis | sDrawGrid;
 
@@ -162,8 +155,10 @@ class CanvasStyle {
 
   /// 文本在背景内,额外的填充内边界
   @dp
-  EdgeInsets paintInfoTextPadding =
-      const EdgeInsets.symmetric(horizontal: 4, vertical: 2);
+  EdgeInsets paintInfoTextPadding = const EdgeInsets.symmetric(
+    horizontal: 4,
+    vertical: 2,
+  );
 
   /// 元素信息绘制的背景颜色
   Color paintInfoBgColor = Colors.black54; //0x61000000
@@ -182,8 +177,12 @@ class CanvasStyle {
   //region ---config---
 
   /// [CanvasContentManager] 画布整体的背景颜色, 指定了就会绘制
-  /// [CanvasViewBox.canvasBounds] 的背景颜色
+  /// - [CanvasViewBox.canvasBounds]内的背景颜色, 不影响坐标轴的背景
   Color? canvasBgColor;
+
+  /// 坐标轴的背景颜色, 不指定则由界面的背景颜色决定
+  /// - [CanvasAxisManager]
+  Color? canvasAxisBgColor;
 
   /// 当设置了[CanvasContentManager.contentTemplate]内容模版时,
   /// 是否要在内容模版的边界上绘制一层描边
@@ -195,6 +194,13 @@ class CanvasStyle {
   //endregion ---config---
 
   //region ---axis---
+
+  /// 绘制label时, 额外需要的偏移量
+  @dp
+  double axisLabelOffset = 1;
+
+  /// 坐标系的单位
+  IUnit axisUnit = IUnit.mm;
 
   ///dark #b0b0b0
   Color axisPrimaryColor = const Color(0xffbcbcbc); //const Color(0xFFB2B2B2);
@@ -230,6 +236,9 @@ class CanvasStyle {
 
   /// 是否仅在绘制原点时, 绘制单位
   bool showOriginAxisUnitSuffix = true;
+
+  /// 是否绘制坐标轴的边缘线
+  bool showAxisEdgeLine = true;
 
   //endregion ---axis---
 

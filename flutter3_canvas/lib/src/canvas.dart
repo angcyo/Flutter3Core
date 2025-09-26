@@ -382,7 +382,8 @@ class CanvasRenderBox extends RenderBox
   @override
   void dispose() {
     _canvasFocusNode.dispose();
-    canvasDelegate.dispose();
+    //2025-09-26 有可能是从一个浮窗界面, 移动到另一个浮窗界面, 所以这里不销毁数据,
+    //canvasDelegate.dispose();
     super.dispose();
   }
 

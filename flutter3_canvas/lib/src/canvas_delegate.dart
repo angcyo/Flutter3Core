@@ -117,9 +117,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     _ticker = null;
   }
 
-  /// 释放所有资源, 主动调用
+  /// 释放所有资源, 主动调用, 请在主界面销毁时主动调用
   /// 在[Element.unmount]中会被调用
   /// 可以使用[ValueKey]添加[Widget]更新判断, 防止[Element.unmount].
+  @api
   @entryPoint
   void dispose() {
     //debugger();

@@ -75,6 +75,9 @@ class CanvasAxisManager extends IPainter {
   /// 选中元素大小提示块绘制的画笔
   Paint elementBoundsPaint = Paint()..style = PaintingStyle.fill;
 
+  /// 坐标轴背景画笔
+  Paint axisBgPaint = Paint()..style = PaintingStyle.fill;
+
   //--
 
   /// x横坐标轴的高度
@@ -207,58 +210,80 @@ class CanvasAxisManager extends IPainter {
 
     //绘制坐标刻度
     if (drawType.have(CanvasStyle.sDrawAxis)) {
-      // x
+      //坐标轴背景
+      final canvasAxisBgColor = canvasStyle.canvasAxisBgColor;
+      if (canvasAxisBgColor != null) {
+        axisBgPaint.color = canvasAxisBgColor;
+        if (xAxisBounds != null) {
+          canvas.drawRect(xAxisBounds!, axisBgPaint);
+        }
+        if (yAxisBounds != null) {
+          canvas.drawRect(yAxisBounds!, axisBgPaint);
+        }
+      }
+
+      // x轴
       canvas.withClipRect(isDebug ? null : xAxisBounds, () {
         paintSelectElementWidthSize(canvas, paintMeta);
         paintXAxis(canvas);
       });
 
-      // y
+      // y轴
       canvas.withClipRect(isDebug ? null : yAxisBounds, () {
         paintSelectElementHeightSize(canvas, paintMeta);
         paintYAxis(canvas);
       });
 
       //边界线
-      canvas.drawLine(
-        Offset(paintBounds.left, xAxisBounds?.bottom ?? 0),
-        Offset(paintBounds.right, xAxisBounds?.bottom ?? 0),
-        primaryPaint,
-      );
-      canvas.drawLine(
-        Offset(yAxisBounds?.right ?? 0, paintBounds.top),
-        Offset(yAxisBounds?.right ?? 0, paintBounds.bottom),
-        primaryPaint,
-      );
+      if (canvasStyle.showAxisEdgeLine) {
+        canvas.drawLine(
+          Offset(paintBounds.left, xAxisBounds?.bottom ?? 0),
+          Offset(paintBounds.right, xAxisBounds?.bottom ?? 0),
+          primaryPaint,
+        );
+        canvas.drawLine(
+          Offset(yAxisBounds?.right ?? 0, paintBounds.top),
+          Offset(yAxisBounds?.right ?? 0, paintBounds.bottom),
+          primaryPaint,
+        );
+      }
     }
 
     // 绘制坐标网格
     if (drawType.have(CanvasStyle.sDrawGrid)) {
       canvas.withClipRect(canvasBounds, () /*画布区域裁剪*/ {
-        canvasDelegate.canvasPaintManager.contentManager
-            .withCanvasContent(canvas, () /*内容区域裁剪*/ {
-          for (final axisData in xData) {
-            final paint = axisData.axisType.have(IUnit.axisTypePrimary)
-                ? primaryPaint
-                : axisData.axisType.have(IUnit.axisTypeSecondary)
-                    ? secondaryPaint
-                    : normalPaint;
+        canvasDelegate.canvasPaintManager.contentManager.withCanvasContent(
+          canvas,
+          () /*内容区域裁剪*/ {
+            for (final axisData in xData) {
+              final paint = axisData.axisType.have(IUnit.axisTypePrimary)
+                  ? primaryPaint
+                  : axisData.axisType.have(IUnit.axisTypeSecondary)
+                  ? secondaryPaint
+                  : normalPaint;
 
-            canvas.drawLine(Offset(axisData.viewValue, paintBounds.top),
-                Offset(axisData.viewValue, paintBounds.bottom), paint);
-          }
+              canvas.drawLine(
+                Offset(axisData.viewValue, paintBounds.top),
+                Offset(axisData.viewValue, paintBounds.bottom),
+                paint,
+              );
+            }
 
-          for (final axisData in yData) {
-            final paint = axisData.axisType.have(IUnit.axisTypePrimary)
-                ? primaryPaint
-                : axisData.axisType.have(IUnit.axisTypeSecondary)
-                    ? secondaryPaint
-                    : normalPaint;
+            for (final axisData in yData) {
+              final paint = axisData.axisType.have(IUnit.axisTypePrimary)
+                  ? primaryPaint
+                  : axisData.axisType.have(IUnit.axisTypeSecondary)
+                  ? secondaryPaint
+                  : normalPaint;
 
-            canvas.drawLine(Offset(paintBounds.left, axisData.viewValue),
-                Offset(paintBounds.right, axisData.viewValue), paint);
-          }
-        });
+              canvas.drawLine(
+                Offset(paintBounds.left, axisData.viewValue),
+                Offset(paintBounds.right, axisData.viewValue),
+                paint,
+              );
+            }
+          },
+        );
       });
     }
   }
@@ -270,25 +295,32 @@ class CanvasAxisManager extends IPainter {
         elementManager.canvasElementControlManager;
     if (elementManager.isSelectedElement) {
       elementManager
-          .canvasElementControlManager.elementSelectComponent.paintProperty
+          .canvasElementControlManager
+          .elementSelectComponent
+          .paintProperty
           ?.let((it) {
-        final bounds =
-            it.getBounds(canvasElementControlManager.enableResetElementAngle);
-        final scale = paintManager.canvasDelegate.canvasViewBox.scaleX;
-        @viewCoordinate
-        final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
+            final bounds = it.getBounds(
+              canvasElementControlManager.enableResetElementAngle,
+            );
+            final scale = paintManager.canvasDelegate.canvasViewBox.scaleX;
+            @viewCoordinate
+            final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
 
-        final left = origin.dx + bounds.left * scale;
-        final top = xAxisBounds?.top ?? 0;
-        final right = origin.dx + bounds.right * scale;
-        final bottom = xAxisBounds?.bottom ?? 0;
+            final left = origin.dx + bounds.left * scale;
+            final top = xAxisBounds?.top ?? 0;
+            final right = origin.dx + bounds.right * scale;
+            final bottom = xAxisBounds?.bottom ?? 0;
 
-        elementBoundsPaint.color = paintManager
-            .canvasDelegate.canvasStyle.canvasAccentColor
-            .withOpacity(0.3);
-        canvas.drawRect(
-            Rect.fromLTRB(left, top, right, bottom), elementBoundsPaint);
-      });
+            elementBoundsPaint.color = paintManager
+                .canvasDelegate
+                .canvasStyle
+                .canvasAccentColor
+                .withOpacity(0.3);
+            canvas.drawRect(
+              Rect.fromLTRB(left, top, right, bottom),
+              elementBoundsPaint,
+            );
+          });
     }
   }
 
@@ -299,25 +331,32 @@ class CanvasAxisManager extends IPainter {
         elementManager.canvasElementControlManager;
     if (elementManager.isSelectedElement) {
       elementManager
-          .canvasElementControlManager.elementSelectComponent.paintProperty
+          .canvasElementControlManager
+          .elementSelectComponent
+          .paintProperty
           ?.let((it) {
-        final bounds =
-            it.getBounds(canvasElementControlManager.enableResetElementAngle);
-        final scale = paintManager.canvasDelegate.canvasViewBox.scaleY;
-        @viewCoordinate
-        final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
+            final bounds = it.getBounds(
+              canvasElementControlManager.enableResetElementAngle,
+            );
+            final scale = paintManager.canvasDelegate.canvasViewBox.scaleY;
+            @viewCoordinate
+            final origin = paintManager.canvasDelegate.canvasViewBox.sceneOrigin;
 
-        final left = yAxisBounds?.left ?? 0;
-        final top = origin.dy + bounds.top * scale;
-        final right = yAxisBounds?.right ?? 0;
-        final bottom = origin.dy + bounds.bottom * scale;
+            final left = yAxisBounds?.left ?? 0;
+            final top = origin.dy + bounds.top * scale;
+            final right = yAxisBounds?.right ?? 0;
+            final bottom = origin.dy + bounds.bottom * scale;
 
-        elementBoundsPaint.color = paintManager
-            .canvasDelegate.canvasStyle.canvasAccentColor
-            .withOpacity(0.3);
-        canvas.drawRect(
-            Rect.fromLTRB(left, top, right, bottom), elementBoundsPaint);
-      });
+            elementBoundsPaint.color = paintManager
+                .canvasDelegate
+                .canvasStyle
+                .canvasAccentColor
+                .withOpacity(0.3);
+            canvas.drawRect(
+              Rect.fromLTRB(left, top, right, bottom),
+              elementBoundsPaint,
+            );
+          });
     }
   }
 
@@ -330,15 +369,15 @@ class CanvasAxisManager extends IPainter {
       final height = axisData.axisType.have(IUnit.axisTypePrimary)
           ? xAxisHeight
           : axisData.axisType.have(IUnit.axisTypeSecondary)
-              ? xAxisHeight * 0.8
-              : xAxisHeight * 0.5;
+          ? xAxisHeight * 0.8
+          : xAxisHeight * 0.5;
       final bottom = paintBounds.top + xAxisHeight;
 
       final paint = axisData.axisType.have(IUnit.axisTypePrimary)
           ? primaryPaint
           : axisData.axisType.have(IUnit.axisTypeSecondary)
-              ? secondaryPaint
-              : normalPaint;
+          ? secondaryPaint
+          : normalPaint;
 
       canvas.drawLine(
         Offset(axisData.viewValue, bottom - height),
@@ -350,23 +389,26 @@ class CanvasAxisManager extends IPainter {
         // 绘制Label
         TextPainter(
             text: TextSpan(
-                text: axisUnit.formatFromDp(
-                  axisData.sceneValue,
-                  showSuffix: canvasStyle.showAxisUnitSuffix ||
-                      (canvasStyle.showOriginAxisUnitSuffix &&
-                          axisData.sceneValue == 0),
-                ),
-                style: TextStyle(
-                  color: paintManager.canvasDelegate.canvasStyle.axisLabelColor,
-                  fontSize:
-                      paintManager.canvasDelegate.canvasStyle.axisLabelFontSize,
-                )),
-            textDirection: TextDirection.ltr)
+              text: axisUnit.formatFromDp(
+                axisData.sceneValue,
+                showSuffix:
+                    canvasStyle.showAxisUnitSuffix ||
+                    (canvasStyle.showOriginAxisUnitSuffix &&
+                        axisData.sceneValue == 0),
+              ),
+              style: TextStyle(
+                color: paintManager.canvasDelegate.canvasStyle.axisLabelColor,
+                fontSize:
+                    paintManager.canvasDelegate.canvasStyle.axisLabelFontSize,
+              ),
+            ),
+            textDirection: TextDirection.ltr,
+          )
           ..layout()
           ..paint(
-              canvas,
-              Offset(
-                  axisData.viewValue + axisLabelOffset, xAxisBounds?.top ?? 0));
+            canvas,
+            Offset(axisData.viewValue + axisLabelOffset, xAxisBounds?.top ?? 0),
+          );
       }
     }
   }
@@ -379,16 +421,16 @@ class CanvasAxisManager extends IPainter {
       final width = axisData.axisType.have(IUnit.axisTypePrimary)
           ? yAxisWidth
           : axisData.axisType.have(IUnit.axisTypeSecondary)
-              ? yAxisWidth * 0.8
-              : yAxisWidth * 0.5;
+          ? yAxisWidth * 0.8
+          : yAxisWidth * 0.5;
 
       final right = paintBounds.left + yAxisWidth;
 
       final paint = axisData.axisType.have(IUnit.axisTypePrimary)
           ? primaryPaint
           : axisData.axisType.have(IUnit.axisTypeSecondary)
-              ? secondaryPaint
-              : normalPaint;
+          ? secondaryPaint
+          : normalPaint;
 
       canvas.drawLine(
         Offset(right, axisData.viewValue),
@@ -398,12 +440,15 @@ class CanvasAxisManager extends IPainter {
 
       if (axisData.axisType.have(IUnit.axisTypeLabel)) {
         // 绘制Label, 需要旋转90度
-        canvas.withRotate(-90, () {
-          TextPainter(
-              text: TextSpan(
+        canvas.withRotate(
+          -90,
+          () {
+            TextPainter(
+                text: TextSpan(
                   text: axisUnit.formatFromDp(
                     axisData.sceneValue,
-                    showSuffix: canvasStyle.showAxisUnitSuffix ||
+                    showSuffix:
+                        canvasStyle.showAxisUnitSuffix ||
                         (canvasStyle.showOriginAxisUnitSuffix &&
                             axisData.sceneValue == 0),
                   ),
@@ -411,17 +456,25 @@ class CanvasAxisManager extends IPainter {
                     color:
                         paintManager.canvasDelegate.canvasStyle.axisLabelColor,
                     fontSize: paintManager
-                        .canvasDelegate.canvasStyle.axisLabelFontSize,
-                  )),
-              textDirection: TextDirection.ltr)
-            ..layout()
-            ..paint(
+                        .canvasDelegate
+                        .canvasStyle
+                        .axisLabelFontSize,
+                  ),
+                ),
+                textDirection: TextDirection.ltr,
+              )
+              ..layout()
+              ..paint(
                 canvas,
-                Offset(yAxisBounds?.left ?? 0,
-                    axisData.viewValue - axisLabelOffset));
-        },
-            pivotX: yAxisBounds?.left ?? 0,
-            pivotY: axisData.viewValue - axisLabelOffset);
+                Offset(
+                  yAxisBounds?.left ?? 0,
+                  axisData.viewValue - axisLabelOffset,
+                ),
+              );
+          },
+          pivotX: yAxisBounds?.left ?? 0,
+          pivotY: axisData.viewValue - axisLabelOffset,
+        );
       }
     }
   }

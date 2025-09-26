@@ -314,6 +314,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return isAdaptiveTablet && (isTabletWindow || forceTabletDevice);
   }
 
+  /// 是否处于平板的宽屏模式
+  bool get isInTabletLandscapeModel {
+    return isAdaptiveTablet && isTabletLandscape;
+  }
+
   /// 是否需要适配平板设备
   /// [isTabletWindow]
   @configProperty

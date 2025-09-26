@@ -21,18 +21,14 @@ class OverlayEntryInfo {
   /// 关闭overlay的动画控制
   final GlobalKey<OverlayAnimateBuilderState>? entryKey;
 
-  const OverlayEntryInfo(
-    this.entry, {
-    this.id,
-    this.tag,
-    this.entryKey,
-  });
+  const OverlayEntryInfo(this.entry, {this.id, this.tag, this.entryKey});
 }
 
-typedef OverlayEntryInfoPopAction = void Function(
-  OverlayEntryInfo popEntry /*弹出的实体*/,
-  OverlayEntryInfo? showEntry /*弹出后,显示的实体*/,
-);
+typedef OverlayEntryInfoPopAction =
+    void Function(
+      OverlayEntryInfo popEntry /*弹出的实体*/,
+      OverlayEntryInfo? showEntry /*弹出后,显示的实体*/,
+    );
 
 /// [OverlayManager]的控制器
 class OverlayManagerController {
@@ -42,15 +38,14 @@ class OverlayManagerController {
     bool opaque = false,
     bool maintainState = false,
     bool canSizeOverlay = false,
-  }) =>
-      OverlayEntry(
-        builder: (context) {
-          return widget;
-        },
-        opaque: opaque,
-        maintainState: maintainState,
-        canSizeOverlay: canSizeOverlay,
-      );
+  }) => OverlayEntry(
+    builder: (context) {
+      return widget;
+    },
+    opaque: opaque,
+    maintainState: maintainState,
+    canSizeOverlay: canSizeOverlay,
+  );
 
   //region 核心
 
@@ -59,7 +54,7 @@ class OverlayManagerController {
 
   /// [OverlayManagerState.build]
   /// [Overlay]
-  final GlobalKey<OverlayState> overlayKey = GlobalKey();
+  GlobalKey<OverlayState> overlayKey = GlobalKey();
 
   /// 首页
   OverlayEntryInfo? _homeEntry;
@@ -72,9 +67,9 @@ class OverlayManagerController {
 
   /// 所有的[OverlayEntry], 用于界面显示
   List<OverlayEntry> get overlayEntries => [
-        if (_homeEntry != null) _homeEntry!.entry,
-        ..._subOverlayEntries.map((e) => e.entry),
-      ];
+    if (_homeEntry != null) _homeEntry!.entry,
+    ..._subOverlayEntries.map((e) => e.entry),
+  ];
 
   //endregion 核心
 
@@ -89,17 +84,10 @@ class OverlayManagerController {
   void _initHomeEntry(Widget? home, OverlayEntry? homeEntry) {
     _homeEntry = null;
     if (homeEntry != null) {
-      _homeEntry = OverlayEntryInfo(
-        homeEntry,
-        tag: 'home',
-      );
+      _homeEntry = OverlayEntryInfo(homeEntry, tag: 'home');
     } else if (home != null) {
       _homeEntry = OverlayEntryInfo(
-        entryOf(
-          home,
-          opaque: true,
-          maintainState: true,
-        ),
+        entryOf(home, opaque: true, maintainState: true),
         tag: 'home',
       );
     }
@@ -135,10 +123,7 @@ class OverlayManagerController {
   }
 
   /// 插入一个[OverlayEntry]
-  void insertOverlay(
-    OverlayEntry entry, {
-    String? tag,
-  }) {
+  void insertOverlay(OverlayEntry entry, {String? tag}) {
     insertOverlayInfo(OverlayEntryInfo(entry, tag: tag));
   }
 
@@ -193,40 +178,47 @@ class OverlayManagerController {
     type ??= widget.getWidgetTranslationType();
     final GlobalKey<OverlayAnimateBuilderState> animateKey = GlobalKey();
     id ??= $uuid;
-    insertOverlayInfo(OverlayEntryInfo(
-      entryOf(
-        OverlayAnimateBuilder(
-          key: animateKey,
-          offstage: offstage,
-          builder: (BuildContext context, Animation<double> animation,
-              Widget? child) {
-            return buildDialogTransitions(
-              context,
-              animation,
-              animation,
-              child!,
-              type,
-            );
-          },
-          animationStatusAction: (status) {
-            if (status == AnimationStatus.completed) {
-              // 完全显示
-            } else if (status == AnimationStatus.dismissed) {
-              // 完全隐藏
-              final find =
-                  _animatePendingOverlayEntries.findFirst((e) => e.id == id);
-              if (find != null) {
-                dismissOverlayInfo(find);
+    insertOverlayInfo(
+      OverlayEntryInfo(
+        entryOf(
+          OverlayAnimateBuilder(
+            key: animateKey,
+            offstage: offstage,
+            builder:
+                (
+                  BuildContext context,
+                  Animation<double> animation,
+                  Widget? child,
+                ) {
+                  return buildDialogTransitions(
+                    context,
+                    animation,
+                    animation,
+                    child!,
+                    type,
+                  );
+                },
+            animationStatusAction: (status) {
+              if (status == AnimationStatus.completed) {
+                // 完全显示
+              } else if (status == AnimationStatus.dismissed) {
+                // 完全隐藏
+                final find = _animatePendingOverlayEntries.findFirst(
+                  (e) => e.id == id,
+                );
+                if (find != null) {
+                  dismissOverlayInfo(find);
+                }
               }
-            }
-          },
-          child: widget,
+            },
+            child: widget,
+          ),
         ),
+        id: id,
+        tag: tag,
+        entryKey: animateKey,
       ),
-      id: id,
-      tag: tag,
-      entryKey: animateKey,
-    ));
+    );
 
     if (!removeAll && hideLast) {
       last?.entryKey?.currentState?.hide();
@@ -242,8 +234,9 @@ class OverlayManagerController {
     String? id,
     bool? anim,
   }) {
-    final find = _subOverlayEntries
-        .findLast((e) => e.entry == entry || e.tag == tag || e.id == id);
+    final find = _subOverlayEntries.findLast(
+      (e) => e.entry == entry || e.tag == tag || e.id == id,
+    );
     if (find != null) {
       if (anim == false) {
         dismissOverlayInfo(find);
@@ -295,10 +288,7 @@ class OverlayManagerController {
 
   /// 移除顶层的, 并且显示上一个
   @api
-  void pop({
-    bool showPrev = false,
-    OverlayEntryInfoPopAction? popAction,
-  }) {
+  void pop({bool showPrev = false, OverlayEntryInfoPopAction? popAction}) {
     final last = _subOverlayEntries.get(-1);
     final prev = _subOverlayEntries.get(-2); //再上一个
     if (last != null) {
@@ -358,6 +348,15 @@ class OverlayManagerController {
     await action();
     hideAllOverlay(false);
   }
+
+  //--
+
+  /// 重置所有实体[OverlayEntryInfo], 包括[_homeEntry]
+  @api
+  void resetOverlay() {
+    removeAllOverlay();
+    overlayKey = GlobalKey();
+  }
 }
 
 /// [Overlay]管理[OverlayEntry]的小部件
@@ -371,12 +370,7 @@ class OverlayManager extends StatefulWidget {
   final OverlayEntry? homeEntry;
   final OverlayManagerController? controller;
 
-  const OverlayManager({
-    super.key,
-    this.home,
-    this.homeEntry,
-    this.controller,
-  });
+  const OverlayManager({super.key, this.home, this.homeEntry, this.controller});
 
   @override
   State<OverlayManager> createState() => OverlayManagerState();
@@ -397,6 +391,11 @@ class OverlayManagerState extends State<OverlayManager> {
   @override
   void didUpdateWidget(covariant OverlayManager oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.home != widget.home ||
+        oldWidget.homeEntry != widget.homeEntry) {
+      //重置key, 以便重新创建[OverlayEntry]
+      _controller?.resetOverlay();
+    }
     _controller
       ?..managerState = this
       .._initHomeEntry(widget.home, widget.homeEntry);
@@ -495,10 +494,11 @@ class OverlayAnimateBuilderState extends State<OverlayAnimateBuilder>
   void initState() {
     _offstage = widget.offstage;
     _controller = AnimationController(
-        vsync: this,
-        duration: widget.animationDuration,
-        reverseDuration: widget.reverseAnimationDuration,
-        debugLabel: 'OverlayAnimatedShowHideAnimation');
+      vsync: this,
+      duration: widget.animationDuration,
+      reverseDuration: widget.reverseAnimationDuration,
+      debugLabel: 'OverlayAnimatedShowHideAnimation',
+    );
     super.initState();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {

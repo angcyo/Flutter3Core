@@ -495,6 +495,10 @@ bool get isTabletDevice => deviceInch >= 7;
 bool get isTabletWindow =>
     isTabletDevice /*flutterView.display.size.shortestSide >= 600*/;
 
+/// 是否处于平板宽屏模式
+bool get isTabletLandscape =>
+    isTabletWindow && screenWidth > screenHeight && screenWidth >= 600;
+
 /// 延迟随机发生器
 /// [delay] 延迟多久触发一次[generate]
 /// [count] 总共要出发几次[generate]
