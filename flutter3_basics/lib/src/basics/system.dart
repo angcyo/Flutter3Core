@@ -17,30 +17,37 @@ part of '../../flutter3_basics.dart';
 /// ```
 /// [MediaQueryData]
 ///
-/// [DeviceOrientation.landscapeRight] // 横屏模式，向右旋转
-/// [DeviceOrientation.landscapeLeft] // 横屏模式 向左旋转
+/// - [DeviceOrientation.landscapeRight] // 横屏模式，向右旋转
+/// - [DeviceOrientation.landscapeLeft] // 横屏模式 向左旋转
+/// - 空, 则表示全方向都支持
 Future<void> setScreenOrientation([DeviceOrientation? orientation]) =>
-    SystemChrome.setPreferredOrientations(
-        orientation == null ? [] : [orientation]);
+    setScreenOrientations(orientation == null ? [] : [orientation]);
 
-Future<void> setScreenOrientations([List<DeviceOrientation>? orientations]) =>
-    SystemChrome.setPreferredOrientations(orientations ?? []);
+List<DeviceOrientation>? _lastOrientations;
+
+/// [setScreenOrientation]
+Future<void> setScreenOrientations([
+  List<DeviceOrientation>? orientations,
+]) async {
+  _lastOrientations = orientations;
+  SystemChrome.setPreferredOrientations(orientations ?? []);
+}
 
 /// 设置横屏
-Future<void> setScreenLandscape(
-        [List<DeviceOrientation> orientations = const [
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight
-        ]]) =>
-    setScreenOrientations(orientations);
+Future<void> setScreenLandscape([
+  List<DeviceOrientation> orientations = const [
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ],
+]) => setScreenOrientations(orientations);
 
 /// 设置竖屏
-Future<void> setScreenPortrait(
-        [List<DeviceOrientation> orientations = const [
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown
-        ]]) =>
-    setScreenOrientations(orientations);
+Future<void> setScreenPortrait([
+  List<DeviceOrientation> orientations = const [
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ],
+]) => setScreenOrientations(orientations);
 
 /// 根据屏幕方向进行布局
 /// ```
@@ -54,7 +61,6 @@ Widget orientationBuilder(OrientationWidgetBuilder builder, [Key? key]) {
 }
 
 extension OrientationEx on Orientation {
-
   /// 是否是横屏
   bool get isLandscape => this == Orientation.landscape;
 }
@@ -99,6 +105,104 @@ bool get isMouseConnected => mouseIsConnected;
 
 //--
 
+/// 屏幕方向小部件
+/// - 指定进入页面时的屏幕方向
+/// - 退出时, 恢复到之前状态
+///
+/// - [ScreenOrientationWidget]
+/// - [MediaQueryDataBuilderWidget]
+/// - [MediaQueryDataChangeMixin]
+class ScreenOrientationWidget extends StatefulWidget {
+  /// 需要指定的屏幕方向
+  final List<DeviceOrientation>? orientations;
+
+  /// 退出时, 恢复到之前状态
+  @defInjectMark
+  final List<DeviceOrientation>? reverseOrientations;
+  final Widget? child;
+  final WidgetBuilder? builder;
+
+  /// 是否激活监听屏幕尺寸变化
+  final bool enableSizeObserver;
+
+  /// 监听的[ui.FlutterView]
+  /// - 多窗口时需要
+  final ui.FlutterView? view;
+
+  const ScreenOrientationWidget(
+    this.orientations, {
+    super.key,
+    this.child,
+    this.builder,
+    this.reverseOrientations,
+    this.view,
+    this.enableSizeObserver = false,
+  }) : assert(builder != null || child != null);
+
+  @override
+  State<ScreenOrientationWidget> createState() =>
+      _ScreenOrientationWidgetState();
+}
+
+class _ScreenOrientationWidgetState extends State<ScreenOrientationWidget>
+    with WidgetsBindingObserver {
+  //--
+  List<DeviceOrientation>? reverseOrientations;
+
+  //--
+  ui.FlutterView? _view;
+  MediaQueryData? _mediaQueryData;
+
+  @override
+  void initState() {
+    reverseOrientations = widget.reverseOrientations ?? _lastOrientations;
+    setScreenOrientations(widget.orientations);
+    if (widget.enableSizeObserver) {
+      _view =
+          widget.view ??
+          WidgetsBinding.instance.platformDispatcher.views.firstOrNull ??
+          flutterViews.firstOrNull ??
+          flutterView;
+      _mediaQueryData = MediaQueryData.fromView(_view!);
+      WidgetsBinding.instance.addObserver(this);
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    setScreenOrientations(reverseOrientations);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //debugger();
+    return widget.builder?.call(context) ?? widget.child!;
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    final mediaQueryData = MediaQueryData.fromView(_view!);
+    //debugger();
+    if (_mediaQueryData?.size != mediaQueryData.size) {
+      final old = _mediaQueryData;
+      _mediaQueryData = mediaQueryData;
+      onSelfMediaQuerySizeChanged(old, mediaQueryData);
+    }
+    //debugger();
+  }
+
+  /// [MediaQueryData]数据改变
+  void onSelfMediaQuerySizeChanged(MediaQueryData? from, MediaQueryData to) {
+    updateState();
+  }
+}
+
+//--
+
 /// 系统小部件相关扩展
 extension SystemWidgetEx on Widget {
   /// 设置macOS平台上的菜单栏
@@ -109,10 +213,12 @@ extension SystemWidgetEx on Widget {
   /// [PlatformMenu] 菜单, 没有分组的菜单会被默认丢到第一个Group中
   /// [PlatformMenuItemGroup] 菜单组, 同时也可以进行分组/分割线设置
   @PlatformFlag("macOS")
-  Widget platformMenuBar(
-    List<PlatformMenuItem> menus,
-  ) =>
+  Widget platformMenuBar(List<PlatformMenuItem> menus) =>
       isMacOS ? PlatformMenuBar(menus: menus, child: this) : this;
+
+  /// 屏幕方向设置小部件
+  Widget orientation(List<DeviceOrientation>? orientations) =>
+      ScreenOrientationWidget(orientations, child: this);
 }
 
 /// 隐藏键盘

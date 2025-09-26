@@ -5,6 +5,7 @@ part of '../../flutter3_basics.dart';
 /// @date 2025/09/08
 ///
 /// [MediaQueryData]数据改变监听小部件
+/// - [MediaQueryDataChangeMixin]
 ///
 /// - 当[MediaQueryData]改变时通知
 ///   - 包含窗口大小改变时, 通知, 并重建界面
@@ -64,7 +65,7 @@ class _MediaQueryDataBuilderWidgetState
 
   @override
   void didChangeMetrics() {
-    //super.didChangeMetrics();
+    super.didChangeMetrics();
     final mediaQueryData = MediaQueryData.fromView(_view!);
     if (_mediaQueryData != mediaQueryData) {
       _mediaQueryData = mediaQueryData;
@@ -78,3 +79,51 @@ class _MediaQueryDataBuilderWidgetState
 
 typedef MediaQueryDataWidgetBuilder =
     Widget Function(BuildContext context, MediaQueryData mediaQueryData);
+
+/// [MediaQueryData]数据改变监听小部件
+mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
+    on State<T>, WidgetsBindingObserver {
+  ///
+  ui.FlutterView? viewMixin;
+
+  ///
+  MediaQueryData? mediaQueryDataMixin;
+
+  @override
+  void initState() {
+    viewMixin =
+        WidgetsBinding.instance.platformDispatcher.views.firstOrNull ??
+        flutterViews.firstOrNull ??
+        flutterView;
+    if (viewMixin != null) {
+      mediaQueryDataMixin = MediaQueryData.fromView(viewMixin!);
+    }
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    //super.didChangeMetrics();
+    if (viewMixin != null) {
+      final mediaQueryData = MediaQueryData.fromView(viewMixin!);
+      if (mediaQueryDataMixin != mediaQueryData) {
+        final old = mediaQueryDataMixin;
+        mediaQueryDataMixin = mediaQueryData;
+        onSelfMediaQueryDataChanged(old, mediaQueryData);
+      }
+    }
+    //debugger();
+  }
+
+  /// [MediaQueryData]数据改变
+  void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
+    updateState();
+  }
+}

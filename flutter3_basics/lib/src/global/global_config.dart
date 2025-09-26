@@ -311,15 +311,17 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 是否处于平板模式, 开启平板适配, 并且是平板设备
   bool get isInTabletModel {
-    return isAdaptiveTablet && (isTabletDevice || forceTabletDevice);
+    return isAdaptiveTablet && (isTabletWindow || forceTabletDevice);
   }
 
   /// 是否需要适配平板设备
-  /// [isTabletDevice]
+  /// [isTabletWindow]
+  @configProperty
   bool isAdaptiveTablet = false;
 
   /// 是否强制标识为平板设备
-  /// [isTabletDevice]
+  /// [isTabletWindow]
+  @configProperty
   bool forceTabletDevice = false;
 
   //endregion tablet平板适配
