@@ -268,7 +268,7 @@ Widget sliverLayout(
   Key? key,
 ]) => SliverLayoutBuilder(builder: builder, key: key);
 
-/// List<Widget?>
+/// [List<Widget>]
 extension WidgetListEx on WidgetNullList {
   /// 过滤空数据和填充间隙
   WidgetList filterAndFillGap({double? gap, Widget? gapWidget}) {
@@ -439,8 +439,10 @@ extension WidgetListEx on WidgetNullList {
   /// [physics] 滚动行为, 如果需要下拉返回功能, 这里就需要设置为null.
   /// 系统会通过[ScrollConfiguration]自动获取到[PullBackScrollPhysics]
   ///
-  /// [scroll]
-  /// [WidgetEx.scroll]
+  /// - [scroll]
+  /// - [WidgetListEx.scrollVertical]
+  /// - [WidgetListEx.scrollHorizontal]
+  /// - [WidgetEx.scroll]
   Widget? scroll({
     Key? key,
     //--
