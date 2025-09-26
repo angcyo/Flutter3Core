@@ -62,7 +62,7 @@ class LiveStreamController<T> {
   bool get isEmpty => latestValue == null || isNil(latestValue);
 
   @alias
-  LiveStreamController operator >>(T newValue) {
+  LiveStreamController operator <<(T newValue) {
     updateValue(newValue);
     return this;
   }

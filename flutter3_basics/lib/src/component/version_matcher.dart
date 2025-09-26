@@ -9,16 +9,19 @@ part of '../../flutter3_basics.dart';
 class VersionMatcher {
   VersionMatcher._();
 
+  /// 所有版本
+  static const kAll = "*";
+
   /// 多个范围用空格隔开
-  static const _RS = " ";
+  static const kRS = " ";
 
   /// min和max用波浪号隔开
-  static const _VS = "~";
+  static const kVS = "~";
 
   /// 解析范围
   /// [config] 格式 [ x x~ ~x xxx~xxx xxx~xxx]
   static List<ValueRange> parseRange(String? config) {
-    final rangeStringList = config?.split(_RS);
+    final rangeStringList = config?.split(kRS);
     final list = <ValueRange>[];
     rangeStringList?.forEach((range) {
       final r = range.range;
@@ -128,17 +131,17 @@ extension VersionStringEx on String {
   /// 解析范围
   /// 格式 [ x x~ ~x xxx~xxx xxx~xxx]
   ValueRange? get range {
-    if (this == "*") {
+    if (this == VersionMatcher.kAll) {
       return ValueRange(
         intMinValue.roundToDouble(),
         intMaxValue.roundToDouble(),
       );
     } else {
-      final rangeString = split(VersionMatcher._VS);
+      final rangeString = split(VersionMatcher.kVS);
       if (rangeString.length == 1) {
         final min = double.parse(rangeString[0]);
-        if (have("*")) {
-          if (startsWith(VersionMatcher._VS)) {
+        if (have(VersionMatcher.kAll)) {
+          if (startsWith(VersionMatcher.kVS)) {
             //[~xxx] 的格式
             return ValueRange(intMinValue.roundToDouble(), min);
           } else {
@@ -168,9 +171,11 @@ extension VersionStringEx on String {
     bool defOrNull = false,
     /*[config]规则为空时*/
     bool defOrEmpty = true,
-  }) =>
-      version == null
-          ? false
-          : version.matchVersion(this,
-              defOrNull: defOrNull, defOrEmpty: defOrEmpty);
+  }) => version == null
+      ? false
+      : version.matchVersion(
+          this,
+          defOrNull: defOrNull,
+          defOrEmpty: defOrEmpty,
+        );
 }
