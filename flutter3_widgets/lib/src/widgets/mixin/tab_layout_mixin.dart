@@ -71,17 +71,13 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         color: fillColor,
         radius: borderRadius,
         gradient: fillColor == null
-            ? linearGradient(colors ??
-                [
-                  globalTheme.primaryColor,
-                  globalTheme.primaryColorDark,
-                ])
+            ? linearGradient(
+                colors ??
+                    [globalTheme.primaryColor, globalTheme.primaryColorDark],
+              )
             : null,
       ),
-    ).tabItemData(
-      itemType: TabItemType.indicator,
-      enableIndicatorFlow: true,
-    );
+    ).tabItemData(itemType: TabItemType.indicator, enableIndicatorFlow: true);
   }
 
   /// 构建一个填充线条的指示器
@@ -106,11 +102,9 @@ mixin TabLayoutMixin<T extends StatefulWidget>
       decoration: fillDecoration(
         color: globalTheme.accentColor,
         radius: borderRadius,
-        gradient: linearGradient(colors ??
-            [
-              globalTheme.accentColor,
-              globalTheme.accentColor,
-            ]),
+        gradient: linearGradient(
+          colors ?? [globalTheme.accentColor, globalTheme.accentColor],
+        ),
       ),
     ).tabItemData(
       itemType: TabItemType.indicator,
@@ -149,17 +143,13 @@ mixin TabLayoutMixin<T extends StatefulWidget>
       decoration: fillDecoration(
         color: globalTheme.accentColor,
         radius: borderRadius,
-        gradient: linearGradient(colors ??
-            context.darkOr(
-              [
-                globalTheme.lineLightColor,
-                globalTheme.lineColor,
-              ],
-              [
-                globalTheme.primaryColor,
-                globalTheme.primaryColorDark,
-              ],
-            )!),
+        gradient: linearGradient(
+          colors ??
+              context.darkOr(
+                [globalTheme.lineLightColor, globalTheme.lineColor],
+                [globalTheme.primaryColor, globalTheme.primaryColorDark],
+              )!,
+        ),
       ),
     ).tabItemData(
       itemType: TabItemType.indicator,
@@ -218,55 +208,63 @@ mixin TabLayoutMixin<T extends StatefulWidget>
           final globalTheme = GlobalTheme.of(context);
           //--
           selectedTextStyle ??= globalTheme.textGeneralStyle;
-          selectedTextStyle =
-              selectedTextStyle!.copyWith(fontWeight: FontWeight.bold);
+          selectedTextStyle = selectedTextStyle!.copyWith(
+            fontWeight: FontWeight.bold,
+          );
           //--
           normalTextStyle ??= globalTheme.textGeneralStyle;
-          normalTextStyle =
-              normalTextStyle!.copyWith(fontWeight: FontWeight.normal);
+          normalTextStyle = normalTextStyle!.copyWith(
+            fontWeight: FontWeight.normal,
+          );
         }
 
         //选中文本样式支持
         if (selectedTextStyle != null) {
           body = body
-              .mapIndex((child, index) => child.textStyle(
-                    isTabIndexSelected(index)
-                        ? selectedTextStyle
-                        : normalTextStyle,
-                    animate: autoTextAnimate,
-                  ))
+              .mapIndex(
+                (child, index) => child.textStyle(
+                  isTabIndexSelected(index)
+                      ? selectedTextStyle
+                      : normalTextStyle,
+                  animate: autoTextAnimate,
+                ),
+              )
               .toList();
         }
 
         //着色支持
         if (normalTintColor != null || selectedTintColor != null) {
           body = body
-              .mapIndex((child, index) => child.colorFiltered(
-                    color: isTabIndexSelected(index)
-                        ? selectedTintColor
-                        : normalTintColor,
-                  ))
+              .mapIndex(
+                (child, index) => child.colorFiltered(
+                  color: isTabIndexSelected(index)
+                      ? selectedTintColor
+                      : normalTintColor,
+                ),
+              )
               .toList();
         }
 
         if (autoClick) {
           body = body
-              .mapIndex((child, index) => child.click(() {
-                    l.w("点击了: $index");
-                    if (this is PageViewMixin) {
-                      tabLayoutController.selectedItem(
-                        index,
-                        animate: pageViewAnimate,
-                        /*animate: (this as PageViewMixin).isPageViewNoAnimate
+              .mapIndex(
+                (child, index) => child.click(() {
+                  l.w("点击了Tab: $index");
+                  if (this is PageViewMixin) {
+                    tabLayoutController.selectedItem(
+                      index,
+                      animate: pageViewAnimate,
+                      /*animate: (this as PageViewMixin).isPageViewNoAnimate
                             ? false
                             : null,*/
-                        pageController:
-                            (this as PageViewMixin).pageViewController,
-                      );
-                    } else {
-                      tabLayoutController.selectedItem(index);
-                    }
-                  }))
+                      pageController:
+                          (this as PageViewMixin).pageViewController,
+                    );
+                  } else {
+                    tabLayoutController.selectedItem(index);
+                  }
+                }),
+              )
               .toList();
         }
       }
@@ -319,5 +317,5 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     tabSelectedUpdateSignal.updateValue(to);
   }
 
-//endregion --TabLayout--
+  //endregion --TabLayout--
 }
