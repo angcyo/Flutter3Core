@@ -14,7 +14,7 @@ class ArrowPopupOverlay extends StatefulWidget {
     required this.anchorRect,
     this.backgroundColor = Colors.white,
     this.radius,
-    this.arrowColor = Colors.white,
+    this.arrowColor,
     required this.showArrow,
     this.autoArrowDirection = true,
     this.barriersColor,
@@ -34,7 +34,7 @@ class ArrowPopupOverlay extends StatefulWidget {
   final GlobalKey _arrowKey = GlobalKey();
   final Color? backgroundColor;
   final double? radius;
-  final Color arrowColor;
+  final Color? arrowColor;
   final bool showArrow;
   final Color? barriersColor;
 

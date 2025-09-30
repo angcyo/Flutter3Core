@@ -27,8 +27,8 @@ class ArrowLayout extends StatefulWidget {
   /// 箭头的大小
   final Size arrowSize;
 
-  /// 箭头的颜色
-  final Color arrowColor;
+  /// 箭头的颜色, 不指定则取背景色[backgroundColor]
+  final Color? arrowColor;
 
   //--content
 
@@ -65,7 +65,7 @@ class ArrowLayout extends StatefulWidget {
     this.childKey,
     this.arrowKey,
     this.showArrow = true,
-    this.arrowColor = Colors.white,
+    this.arrowColor,
     Size? arrowSize,
     this.arrowDirection = AxisDirection.down,
     this.arrowDirectionOffset = 0,
@@ -179,7 +179,10 @@ class _ArrowLayoutState extends State<ArrowLayout> {
               key: widget.arrowKey,
               size: widget.showArrow ? widget.arrowSize : Size.zero,
               painter: TrianglePainter(
-                color: widget.arrowColor,
+                color:
+                    widget.arrowColor ??
+                    widget.backgroundColor ??
+                    Colors.transparent,
                 direction: widget.arrowDirection,
               ),
             ),

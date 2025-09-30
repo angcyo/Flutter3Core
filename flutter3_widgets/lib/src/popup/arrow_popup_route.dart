@@ -17,7 +17,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   final GlobalKey _arrowKey = GlobalKey();
   final Color? backgroundColor;
   final double? radius;
-  final Color arrowColor;
+  final Color? arrowColor;
   final bool showArrow;
   final Color? barriersColor;
 
@@ -65,7 +65,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     required this.anchorRect,
     this.backgroundColor = Colors.white,
     this.radius,
-    this.arrowColor = Colors.white,
+    this.arrowColor,
     required this.showArrow,
     this.autoArrowDirection = true,
     this.barriersColor,
