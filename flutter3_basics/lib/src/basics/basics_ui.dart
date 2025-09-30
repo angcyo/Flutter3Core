@@ -493,6 +493,9 @@ extension WidgetListEx on WidgetNullList {
   }
 
   /// 垂直滚动
+  /// - [Row]
+  /// - [Column]
+  /// - [SingleChildScrollView]
   Widget? scrollVertical({
     Key? key,
     //--
@@ -524,6 +527,9 @@ extension WidgetListEx on WidgetNullList {
   );
 
   /// 横向滚动
+  /// - [Row]
+  /// - [Column]
+  /// - [SingleChildScrollView]
   Widget? scrollHorizontal({
     Key? key,
     //--
@@ -1220,6 +1226,11 @@ extension WidgetEx on Widget {
   //region ---SafeArea---
 
   /// 离屏渲染
+  /// - 没有大小
+  /// - 不触发绘制
+  ///
+  /// - [invisible]
+  /// - [offstage]
   Widget offstage([bool offstage = true, bool always = false]) =>
       (offstage || always) ? Offstage(offstage: offstage, child: this) : this;
 
@@ -2715,9 +2726,12 @@ extension WidgetEx on Widget {
   }
 
   /// 使一个[Widget]不可见, 但是仍然占据空间, 并且忽略手势
-  /// [enable] 是否激活组件
-  /// [invisible] 是否可见, 默认不可见
-  /// [replacement] 不占空间时需要替换的小部件
+  /// - [enable] 是否激活组件
+  /// - [invisible] 是否可见, 默认不可见
+  /// - [replacement] 不占空间时需要替换的小部件
+  ///
+  /// - [invisible]
+  /// - [offstage]
   Widget invisible({
     bool enable = true,
     //--

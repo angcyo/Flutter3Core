@@ -13,6 +13,7 @@ class ArrowPopupOverlay extends StatefulWidget {
     required this.child,
     required this.anchorRect,
     this.backgroundColor = Colors.white,
+    this.radius,
     this.arrowColor = Colors.white,
     required this.showArrow,
     this.autoArrowDirection = true,
@@ -23,6 +24,7 @@ class ArrowPopupOverlay extends StatefulWidget {
     this.animateDuration = const Duration(milliseconds: 150),
     this.enablePassEvent = true,
     this.controller,
+    this.childOffsetCallback,
   });
 
   final Rect anchorRect;
@@ -31,6 +33,7 @@ class ArrowPopupOverlay extends StatefulWidget {
   final GlobalKey _childKey = GlobalKey();
   final GlobalKey _arrowKey = GlobalKey();
   final Color? backgroundColor;
+  final double? radius;
   final Color arrowColor;
   final bool showArrow;
   final Color? barriersColor;
@@ -61,6 +64,10 @@ class ArrowPopupOverlay extends StatefulWidget {
 
   /// 控制器
   final ArrowPopupOverlayController? controller;
+
+  /// 计算child的偏移量回调
+  /// 返回child的left top偏移量
+  final ArrowLayoutChildOffsetCallback? childOffsetCallback;
 
   @override
   State<ArrowPopupOverlay> createState() => _ArrowPopupOverlayState();
@@ -119,6 +126,7 @@ class _ArrowPopupOverlayState extends State<ArrowPopupOverlay>
       calculateChildOffset(
         anchorRect: widget.anchorRect,
         childRect: childRect,
+        childOffsetCallback: widget.childOffsetCallback,
       );
       calculateArrowOffset(
         anchorRect: widget.anchorRect,
@@ -152,6 +160,7 @@ class _ArrowPopupOverlayState extends State<ArrowPopupOverlay>
       arrowDirectionOffset: _arrowDirectionOffset,
       arrowDirection: arrowDirection ?? AxisDirection.down,
       backgroundColor: widget.backgroundColor,
+      radius: widget.radius,
       arrowColor: widget.arrowColor,
       showArrow: widget.showArrow,
       child: widget.child,
@@ -218,10 +227,7 @@ class _ArrowPopupOverlayState extends State<ArrowPopupOverlay>
         },
         child: widget.barriersColor == Colors.transparent
             ? child
-            : Container(
-                color: widget.barriersColor,
-                child: child,
-              ),
+            : Container(color: widget.barriersColor, child: child),
       ),
     );
   }

@@ -110,8 +110,8 @@ class SingleGridTile extends StatelessWidget with TileMixin {
         color: enable
             ? iconFillDecorationColor ?? globalTheme.iconWhiteBgColor
             : (iconDisableFillDecorationColor ??
-                iconFillDecorationColor ??
-                globalTheme.iconWhiteBgColor),
+                  iconFillDecorationColor ??
+                  globalTheme.iconWhiteBgColor),
         radius: kDefaultBorderRadiusX,
       );
     }
@@ -124,26 +124,24 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     }
     if (iconTipWidget != null) {
       top = top?.stackOf(
-        iconTipWidget!.position(
-          right: -10,
-          top: -10,
-        ),
+        iconTipWidget!.position(right: -10, top: -10),
         clipBehavior: Clip.none,
       );
     }
 
     //--
-    final bottom = (labelWidget ??
-            label
-                ?.ellipsis(labelMaxLength)
-                .text(
-                  style: labelStyle ?? globalTheme.textBodyStyle,
-                  textAlign: ui.TextAlign.center,
-                  softWrap: false,
-                  overflow: labelOverflow,
-                )
-                .paddingAll(kM))
-        ?.colorFiltered(color: enable ? null : globalTheme.icoDisableColor);
+    final bottom =
+        (labelWidget ??
+                label
+                    ?.ellipsis(labelMaxLength)
+                    .text(
+                      style: labelStyle ?? globalTheme.textBodyStyle,
+                      textAlign: ui.TextAlign.center,
+                      softWrap: false,
+                      overflow: labelOverflow,
+                    )
+                    .paddingAll(kM))
+            ?.colorFiltered(color: enable ? null : globalTheme.icoDisableColor);
 
     //--
     Widget body = [
@@ -152,10 +150,10 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     ].column(mainAxisAlignment: MainAxisAlignment.center)!;
 
     if (bgWidget != null) {
-      body = [bgWidget, body].stack(
-        alignment: Alignment.center,
-        fit: StackFit.expand,
-      )!;
+      body = [
+        bgWidget,
+        body,
+      ].stack(alignment: Alignment.center, fit: StackFit.expand)!;
     }
 
     return Padding(
@@ -163,5 +161,79 @@ class SingleGridTile extends StatelessWidget with TileMixin {
           padding ?? const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
       child: body.constrainedMin(minHeight: minHeight),
     ).inkWellCircle(onTap, enable: enable).material().paddingInsets(margin);
+  }
+}
+
+/// 桌面样式的网格图标tile
+/// - 支持右下角显示more图标
+/// - 支持配置选中后的菜单弹窗
+@desktopLayout
+class SingleDesktopGridTile extends StatefulWidget {
+  /// 图标
+  final Widget? iconWidget;
+
+  /// 右下角显示的更多图标
+  @defInjectMark
+  final Widget? moreWidget;
+
+  /// 是否处于选中状态, 会有背景装饰
+  final bool isSelected;
+
+  /// tile的填充
+  @defInjectMark
+  final EdgeInsets? tilePadding;
+
+  //--
+
+  /// 弹窗背景的圆角
+  final double? radius;
+
+  const SingleDesktopGridTile({
+    super.key,
+    this.iconWidget,
+    this.moreWidget,
+    this.tilePadding,
+    this.radius = 4,
+    this.isSelected = false,
+  });
+
+  @override
+  State<SingleDesktopGridTile> createState() => _SingleDesktopGridTileState();
+}
+
+class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final isShowMore = true;
+    return [
+          widget.iconWidget?.paddingOnly(all: 4),
+          if (isShowMore)
+            (widget.moreWidget ?? Icon(Icons.more_horiz, size: 8)).position(
+              right: 0,
+              bottom: 0,
+            ),
+        ]
+        .stack()!
+        .paddingOnly(horizontal: kM, vertical: kM, insets: widget.tilePadding)
+        .backgroundColor(
+          widget.isSelected ? globalTheme.pressColor : null,
+          fillRadius: kDefaultBorderRadiusX,
+        )
+        .inkWell(() {
+          buildContext?.showArrowPopupRoute(
+            ["text1".text(), "text2".text()].column()!,
+            showArrow: false,
+            /*arrowDirectionMinOffset: 0,*/
+            /*arrowDirection: AxisDirection.left,*/
+            childOffsetCallback: (anchorRect, childRect) {
+              return Offset(anchorRect.right + 8, anchorRect.top);
+            },
+            contentMargin: EdgeInsets.zero,
+            radius: widget.radius,
+            barriersColor: Colors.transparent,
+          );
+        })
+        .material();
   }
 }

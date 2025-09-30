@@ -124,8 +124,9 @@ class Initialize {
 class PlatformFlag {
   final String des;
 
-  const PlatformFlag(
-      [this.des = '标识当前仅支持特定平台Platform: Android iOS Linux macOS web Windows']);
+  const PlatformFlag([
+    this.des = '标识当前仅支持特定平台Platform: Android iOS Linux macOS web Windows',
+  ]);
 
   @override
   String toString() {
@@ -234,8 +235,9 @@ const tempFlag = AnnotationMeta('临时存储的缓存');
 const dynamicGet = AnnotationMeta('表示当前的属性会通过(xxx as dynamic)的方式动态读取');
 //--
 const platformFlag = PlatformFlag();
-const allPlatformFlag =
-    PlatformFlag('全平台: Android iOS Linux macOS web Windows');
+const allPlatformFlag = PlatformFlag(
+  '全平台: Android iOS Linux macOS web Windows',
+);
 
 const mobileFlag = PlatformFlag('移动应用: Android 和 iOS');
 const androidFlag = PlatformFlag('移动应用: Android');
@@ -247,4 +249,8 @@ const macOSFlag = PlatformFlag('桌面应用: macOS');
 const linuxFlag = PlatformFlag('桌面应用: Linux');
 
 const webFlag = PlatformFlag('web应用');
+
+const desktopLayout = PlatformFlag('表示当前在桌面布局中生效');
+const padLayout = PlatformFlag('表示当前在平板布局中生效');
+const mobileLayout = PlatformFlag('表示当前在移动布局中生效');
 //endregion---base

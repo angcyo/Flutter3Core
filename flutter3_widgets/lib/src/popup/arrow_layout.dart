@@ -49,6 +49,10 @@ class ArrowLayout extends StatefulWidget {
   /// 背景颜色
   final Color? backgroundColor;
 
+  /// 背景圆角
+  @defInjectMark
+  final double? radius;
+
   /// 内容的padding
   final EdgeInsets? padding;
 
@@ -69,13 +73,15 @@ class ArrowLayout extends StatefulWidget {
     this.wrapChild = true,
     this.minWidth = kMinHeight,
     this.backgroundColor = Colors.white,
+    this.radius,
     this.padding = const EdgeInsets.all(kH),
     this.margin = const EdgeInsets.all(kX),
-  }) : arrowSize = arrowSize ??
-            (arrowDirection == AxisDirection.up ||
-                    arrowDirection == AxisDirection.down
-                ? const Size(16, 8)
-                : const Size(8, 16));
+  }) : arrowSize =
+           arrowSize ??
+           (arrowDirection == AxisDirection.up ||
+                   arrowDirection == AxisDirection.down
+               ? const Size(16, 8)
+               : const Size(8, 16));
 
   @override
   State<ArrowLayout> createState() => _ArrowLayoutState();
@@ -97,22 +103,22 @@ class _ArrowLayoutState extends State<ArrowLayout> {
         case AxisDirection.up:
           arrowOffsetContent +=
               (widget.margin?.top ?? widget.arrowSize.height) -
-                  widget.arrowSize.height;
+              widget.arrowSize.height;
           break;
         case AxisDirection.down:
           arrowOffsetContent +=
               (widget.margin?.bottom ?? widget.arrowSize.height) -
-                  widget.arrowSize.height;
+              widget.arrowSize.height;
           break;
         case AxisDirection.left:
           arrowOffsetContent +=
               (widget.margin?.left ?? widget.arrowSize.width) -
-                  widget.arrowSize.width;
+              widget.arrowSize.width;
           break;
         case AxisDirection.right:
           arrowOffsetContent +=
               (widget.margin?.right ?? widget.arrowSize.width) -
-                  widget.arrowSize.width;
+              widget.arrowSize.width;
           break;
       }
     }
@@ -129,37 +135,43 @@ class _ArrowLayoutState extends State<ArrowLayout> {
                       right: arrowDirection == AxisDirection.left ? 0 : null,
                     ),
                     constraints: BoxConstraints(minWidth: widget.minWidth),
-                    decoration: BoxDecoration(
-                      color: widget.backgroundColor,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                        ),
-                      ],
-                    ),
+                    decoration: widget.backgroundColor != null
+                        ? BoxDecoration(
+                            color: widget.backgroundColor,
+                            borderRadius: BorderRadius.circular(
+                              widget.radius ?? 8,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                              ),
+                            ],
+                          )
+                        : null,
                     child: widget.child,
                   )
                 : widget.child)
             .childKeyed(widget.childKey),
         if (widget.showArrow)
           Positioned(
-            top: widget.arrowDirection == AxisDirection.left ||
+            top:
+                widget.arrowDirection == AxisDirection.left ||
                     widget.arrowDirection == AxisDirection.right
                 ? widget.arrowDirectionOffset
                 : widget.arrowDirection == AxisDirection.up
-                    ? arrowOffsetContent
-                    : null,
+                ? arrowOffsetContent
+                : null,
             bottom: widget.arrowDirection == AxisDirection.down
                 ? arrowOffsetContent
                 : null,
-            left: widget.arrowDirection == AxisDirection.up ||
+            left:
+                widget.arrowDirection == AxisDirection.up ||
                     widget.arrowDirection == AxisDirection.down
                 ? widget.arrowDirectionOffset
                 : widget.arrowDirection == AxisDirection.left
-                    ? arrowOffsetContent
-                    : null,
+                ? arrowOffsetContent
+                : null,
             right: widget.arrowDirection == AxisDirection.right
                 ? arrowOffsetContent
                 : null,
@@ -178,6 +190,11 @@ class _ArrowLayoutState extends State<ArrowLayout> {
 }
 
 //---
+
+/// - [anchorRect] 锚点在窗口中的位置
+/// - [childRect] child当前在窗口中的位置
+typedef ArrowLayoutChildOffsetCallback =
+    Offset? Function(Rect anchorRect, Rect childRect);
 
 /// 用来计算箭头的方向, 和偏移
 mixin ArrowDirectionMixin {
@@ -228,8 +245,19 @@ mixin ArrowDirectionMixin {
   }
 
   // Calculate the position of the popover
-  void calculateChildOffset({required Rect anchorRect, Rect? childRect}) {
+  void calculateChildOffset({
+    required Rect anchorRect,
+    Rect? childRect,
+    ArrowLayoutChildOffsetCallback? childOffsetCallback,
+  }) {
     if (childRect == null) return;
+
+    final childOffset = childOffsetCallback?.call(anchorRect, childRect);
+    if (childOffset != null) {
+      _left = childOffset.dx;
+      _top = childOffset.dy;
+      return;
+    }
 
     // Calculate the vertical position of the popover
     final topHeight = anchorRect.top - _viewportRect.top;

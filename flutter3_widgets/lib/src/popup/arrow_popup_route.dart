@@ -16,6 +16,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   final GlobalKey _childKey = GlobalKey();
   final GlobalKey _arrowKey = GlobalKey();
   final Color? backgroundColor;
+  final double? radius;
   final Color arrowColor;
   final bool showArrow;
   final Color? barriersColor;
@@ -51,6 +52,10 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   /// 与锚点之间/屏幕之间的间距
   final EdgeInsets? margin;
 
+  /// 计算child的偏移量回调
+  /// 返回child的left top偏移量
+  final ArrowLayoutChildOffsetCallback? childOffsetCallback;
+
   /// [PopupEx.showArrowPopupRoute]
   ArrowPopupRoute({
     super.settings,
@@ -59,6 +64,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     required this.child,
     required this.anchorRect,
     this.backgroundColor = Colors.white,
+    this.radius,
     this.arrowColor = Colors.white,
     required this.showArrow,
     this.autoArrowDirection = true,
@@ -70,8 +76,9 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     this.barrierIgnorePointerType, //障碍手势穿透
     this.animate = true,
     @defInjectMark this.animateDuration,
-  })  : _arrowDirectionMinOffset = arrowDirectionMinOffset,
-        _arrowDirection = arrowDirection;
+    this.childOffsetCallback,
+  }) : _arrowDirectionMinOffset = arrowDirectionMinOffset,
+       _arrowDirection = arrowDirection;
 
   /// 是否需要动画
   bool animate;
@@ -99,6 +106,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
       calculateChildOffset(
         anchorRect: anchorRect,
         childRect: childRect,
+        childOffsetCallback: childOffsetCallback,
       );
       calculateArrowOffset(
         anchorRect: anchorRect,
@@ -118,9 +126,9 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
 
   @override
   Widget buildModalBarrier() {
-    return super
-        .buildModalBarrier()
-        .ignoreSelfPointer(ignoreType: barrierIgnorePointerType);
+    return super.buildModalBarrier().ignoreSelfPointer(
+      ignoreType: barrierIgnorePointerType,
+    );
   }
 
   @override
@@ -148,6 +156,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
       arrowDirectionOffset: _arrowDirectionOffset,
       arrowDirection: arrowDirection ?? AxisDirection.down,
       backgroundColor: backgroundColor,
+      radius: radius,
       arrowColor: arrowColor,
       showArrow: showArrow,
       padding: padding,
@@ -164,6 +173,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
         ),
       );
     }
+
     return Stack(
       children: [
         Positioned(
