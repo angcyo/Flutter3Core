@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
+import '../../flutter3_widgets.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/15
@@ -40,6 +42,7 @@ extension PopupEx on BuildContext {
     EdgeInsets? contentPadding = const EdgeInsets.all(kS),
     EdgeInsets? contentMargin = EdgeInsets.zero,
     IgnorePointerType? barrierIgnorePointerType,
+    TranslationType? translationType,
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) {
@@ -51,6 +54,12 @@ extension PopupEx on BuildContext {
       backgroundColor: backgroundColor,
       animate: animate,
       showArrow: false,
+      contentMargin: contentMargin,
+      contentPadding: contentPadding,
+      radius: radius,
+      barriersColor: barriersColor,
+      translationType: translationType,
+      barrierIgnorePointerType: barrierIgnorePointerType,
       childOffsetCallback:
           childOffsetCallback ??
           (anchorRect, childRect) {
@@ -120,11 +129,6 @@ extension PopupEx on BuildContext {
             }
             return Offset(anchorRect.right + 8, anchorRect.top);
           },
-      contentMargin: contentMargin,
-      contentPadding: contentPadding,
-      radius: radius,
-      barriersColor: barriersColor,
-      barrierIgnorePointerType: barrierIgnorePointerType,
     );
   }
 
@@ -158,6 +162,7 @@ extension PopupEx on BuildContext {
     EdgeInsets? contentPadding = const EdgeInsets.all(kH),
     EdgeInsets? contentMargin = const EdgeInsets.all(kX),
     IgnorePointerType? barrierIgnorePointerType,
+    TranslationType? translationType,
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) async {
@@ -183,6 +188,7 @@ extension PopupEx on BuildContext {
         margin: contentMargin,
         barrierIgnorePointerType: barrierIgnorePointerType,
         childOffsetCallback: childOffsetCallback,
+        translationType: translationType,
       ),
     );
   }

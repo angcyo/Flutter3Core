@@ -30,6 +30,9 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
 
   final IgnorePointerType? barrierIgnorePointerType;
 
+  /// 过度动画类型
+  final TranslationType? translationType;
+
   @override
   AxisDirection? get arrowDirection => _arrowDirection;
   AxisDirection? _arrowDirection;
@@ -80,6 +83,7 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
     this.animate = true,
     @defInjectMark this.animateDuration,
     this.childOffsetCallback,
+    this.translationType,
   }) : _arrowDirectionMinOffset = arrowDirectionMinOffset,
        _arrowDirection = arrowDirection;
 
@@ -167,14 +171,21 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
       child: child,
     );
     if (!animation.isCompleted) {
-      child = FadeTransition(
+      child = buildDialogTransitions(
+        context,
+        animation,
+        animation,
+        child,
+        translationType ?? TranslationType.scaleFade,
+      );
+      /*child = FadeTransition(
         opacity: animation,
         child: ScaleTransition(
           alignment: FractionalOffset(_scaleAlignDx, _scaleAlignDy),
           scale: animation,
           child: child,
         ),
-      );
+      );*/
     }
 
     return Stack(

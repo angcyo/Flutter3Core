@@ -37,38 +37,41 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
     //2024-7-6
     this.barrierIgnorePointerType,
   }) : super(
-          barrierLabel: barrierLabel ??
-              MaterialLocalizations.of(context).modalBarrierDismissLabel,
-          transitionDuration: type == TranslationType.none
-              ? Duration.zero
-              : (transitionDuration ?? const Duration(milliseconds: 200)),
-          pageBuilder: (
-            BuildContext buildContext,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-          ) {
-            final Widget pageChild = Builder(builder: builder);
-            Widget dialog = themes?.wrap(pageChild) ?? pageChild;
-            return dialog.safeArea(
-              useSafeArea: useSafeArea,
-              maintainBottomViewPadding: maintainBottomViewPadding,
-            );
-          },
-          transitionBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-            Widget child,
-          ) {
-            return buildDialogTransitions(
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-              type,
-            );
-          },
-        ) {
+         barrierLabel:
+             barrierLabel ??
+             MaterialLocalizations.of(context).modalBarrierDismissLabel,
+         transitionDuration: type == TranslationType.none
+             ? Duration.zero
+             : (transitionDuration ?? const Duration(milliseconds: 200)),
+         pageBuilder:
+             (
+               BuildContext buildContext,
+               Animation<double> animation,
+               Animation<double> secondaryAnimation,
+             ) {
+               final Widget pageChild = Builder(builder: builder);
+               Widget dialog = themes?.wrap(pageChild) ?? pageChild;
+               return dialog.safeArea(
+                 useSafeArea: useSafeArea,
+                 maintainBottomViewPadding: maintainBottomViewPadding,
+               );
+             },
+         transitionBuilder:
+             (
+               BuildContext context,
+               Animation<double> animation,
+               Animation<double> secondaryAnimation,
+               Widget child,
+             ) {
+               return buildDialogTransitions(
+                 context,
+                 animation,
+                 secondaryAnimation,
+                 child,
+                 type,
+               );
+             },
+       ) {
     _initialBarrierColor = barrierColor;
   }
 
@@ -82,18 +85,21 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
   /// 通常在下拉返回组件中, 根据进度算出来的颜色
   Color? progressBarrierColor;
 
+  ///
   @override
   Duration get transitionDuration => super.transitionDuration;
 
   @override
   Color? get barrierColor => progressBarrierColor ?? super.barrierColor;
 
+  ///
   @override
   bool get barrierDismissible => super.barrierDismissible;
 
   @override
   AnimationController? get controller => super.controller;
 
+  ///
   @override
   AnimationController createAnimationController() {
     return super.createAnimationController();
@@ -102,15 +108,15 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
   @override
   Widget buildModalBarrier() {
     return (useBarrierColorAnimate && controller == null)
-        ? super
-            .buildModalBarrier()
-            .ignoreSelfPointer(ignoreType: barrierIgnorePointerType)
+        ? super.buildModalBarrier().ignoreSelfPointer(
+            ignoreType: barrierIgnorePointerType,
+          )
         : AnimatedBuilder(
             animation: controller!,
             builder: (context, child) {
-              return super
-                  .buildModalBarrier()
-                  .ignoreSelfPointer(ignoreType: barrierIgnorePointerType);
+              return super.buildModalBarrier().ignoreSelfPointer(
+                ignoreType: barrierIgnorePointerType,
+              );
             },
           );
   }
@@ -131,9 +137,9 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
                 progressBarrierColor ??= barrierColor;
                 if (_initialBarrierColor != null) {
                   progressBarrierColor = _initialBarrierColor!.withAlpha(
-                      (_initialBarrierColor!.alpha *
-                              (1 - notification.progress!))
-                          .round());
+                    (_initialBarrierColor!.alpha * (1 - notification.progress!))
+                        .round(),
+                  );
                 }
                 if (controller?.value != null && !isSchedulerPhase) {
                   //更新界面
@@ -154,17 +160,9 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
               }
               return false;
             },
-            child: super.buildPage(
-              context,
-              animation,
-              secondaryAnimation,
-            ),
+            child: super.buildPage(context, animation, secondaryAnimation),
           )
-        : super.buildPage(
-            context,
-            animation,
-            secondaryAnimation,
-          );
+        : super.buildPage(context, animation, secondaryAnimation);
   }
 
   /// 1:先[buildTransitions]生成动画
@@ -183,6 +181,7 @@ class DialogPageRoute<T> extends RawDialogRoute<T> {
     );
   }
 
+  ///
   @override
   Iterable<OverlayEntry> createOverlayEntries() {
     return super.createOverlayEntries();
@@ -295,21 +294,23 @@ Widget buildDialogTransitions(
     ).buildSameTransitions(context, animation, secondaryAnimation, child);
   }
   return buildMaterialDialogTransitions(
-      context, animation, secondaryAnimation, child);
+    context,
+    animation,
+    secondaryAnimation,
+    child,
+  );
 }
 
 /// 系统默认的动画
 /// [_buildMaterialDialogTransitions]
 Widget buildMaterialDialogTransitions(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child) {
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
   return FadeTransition(
-    opacity: CurvedAnimation(
-      parent: animation,
-      curve: Curves.easeOut,
-    ),
+    opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
     child: child,
   );
 }
