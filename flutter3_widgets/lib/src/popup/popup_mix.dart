@@ -17,6 +17,117 @@ part 'arrow_popup_route.dart';
 
 /// 弹窗路由扩展
 extension PopupEx on BuildContext {
+  /// 在指定锚点位置显示一个弹窗路由
+  ///
+  /// - [alignment]弹窗需要对齐锚点的哪个方向
+  /// - [bodyMargin] 弹窗的在对应方向上的边距
+  ///
+  /// - [showArrowPopupRoute]
+  Future showPopupDialog(
+    Widget body, {
+    //--
+    Rect? anchorRect,
+    BuildContext? anchorChild,
+    bool rootNavigator = false,
+    double bodyMargin = kH,
+    //--
+    Alignment? alignment,
+    //--
+    Color? backgroundColor,
+    double? radius,
+    bool animate = true,
+    Color? barriersColor = Colors.transparent,
+    EdgeInsets? contentPadding = const EdgeInsets.all(kS),
+    EdgeInsets? contentMargin = EdgeInsets.zero,
+    IgnorePointerType? barrierIgnorePointerType,
+    //--
+    ArrowLayoutChildOffsetCallback? childOffsetCallback,
+  }) {
+    return showArrowPopupRoute(
+      body,
+      anchorRect: anchorRect,
+      anchorChild: anchorChild,
+      rootNavigator: rootNavigator,
+      backgroundColor: backgroundColor,
+      animate: animate,
+      showArrow: false,
+      childOffsetCallback:
+          childOffsetCallback ??
+          (anchorRect, childRect) {
+            Alignment bodyAlign;
+            if (alignment != null) {
+              bodyAlign = alignment;
+            } else {
+              final anchorCx = anchorRect.center.dx;
+              final anchorCy = anchorRect.center.dy;
+              final screenCx = $screenWidth / 2;
+              final screenCy = $screenHeight / 2;
+              if (anchorCx < screenCx) {
+                if (anchorCy < screenCy) {
+                  //锚点在屏幕左上
+                  bodyAlign = Alignment.topRight;
+                } else {
+                  //锚点在屏幕左下
+                  bodyAlign = Alignment.bottomRight;
+                }
+              } else {
+                if (anchorCy < screenCy) {
+                  //锚点在屏幕右上
+                  bodyAlign = Alignment.topLeft;
+                } else {
+                  //锚点在屏幕右下
+                  bodyAlign = Alignment.bottomLeft;
+                }
+              }
+            }
+            if (bodyAlign == Alignment.topLeft) {
+              return Offset(
+                anchorRect.left - childRect.w - bodyMargin,
+                anchorRect.top,
+              );
+            } else if (bodyAlign == Alignment.topCenter) {
+              return Offset(
+                anchorRect.center.dx - childRect.w / 2,
+                anchorRect.top - childRect.h - bodyMargin,
+              );
+            } else if (bodyAlign == Alignment.topRight) {
+              return Offset(anchorRect.right + bodyMargin, anchorRect.top);
+            } else if (bodyAlign == Alignment.centerRight) {
+              return Offset(
+                anchorRect.right + bodyMargin,
+                anchorRect.center.dy - childRect.h / 2,
+              );
+            } else if (bodyAlign == Alignment.bottomRight) {
+              return Offset(
+                anchorRect.right + bodyMargin,
+                anchorRect.bottom - childRect.h,
+              );
+            } else if (bodyAlign == Alignment.bottomCenter) {
+              return Offset(
+                anchorRect.center.dx - childRect.w / 2,
+                anchorRect.bottom + bodyMargin,
+              );
+            } else if (bodyAlign == Alignment.bottomLeft) {
+              return Offset(
+                anchorRect.left - childRect.w - bodyMargin,
+                anchorRect.bottom - childRect.h,
+              );
+            } else if (bodyAlign == Alignment.centerLeft) {
+              return Offset(
+                anchorRect.left - childRect.w - bodyMargin,
+                anchorRect.centerY - childRect.h / 2,
+              );
+            }
+            return Offset(anchorRect.right + 8, anchorRect.top);
+          },
+      contentMargin: contentMargin,
+      contentPadding: contentPadding,
+      radius: radius,
+      barriersColor: barriersColor,
+      barrierIgnorePointerType: barrierIgnorePointerType,
+    );
+  }
+
   /// 使用路由的方式显示界面[ArrowPopupRoute], 手势不可以穿透, 支持系统的back按键
   /// 在指定的[anchorRect]位置, 显示[ArrowPopupRoute]的[Widget]
   /// - [anchorRect].[anchorChild]必须指定一个

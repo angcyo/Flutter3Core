@@ -4,9 +4,9 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/01/04
 ///
-/// 箭头小部件/三角形, 支持全三角和半三角
-/// [TrianglePainter]
-/// [ArrowWidget]
+/// 箭头小部件/三角形, 支持全三角和半三角, 12个方向
+/// - [TrianglePainter]
+/// - [ArrowWidget]
 ///
 /// [ArrowPosition]
 /// [ArrowPositionManager]

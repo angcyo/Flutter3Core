@@ -63,7 +63,7 @@ CustomPaint paintWidget(
   willChange: willChange,
 );
 
-///  绘制一个三角形
+///  绘制一个三角形, 只有4个方向
 /// [TrianglePainter]
 /// [ArrowWidget]
 class TrianglePainter extends CustomPainter {

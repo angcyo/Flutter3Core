@@ -221,17 +221,13 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
           fillRadius: kDefaultBorderRadiusX,
         )
         .inkWell(() {
-          buildContext?.showArrowPopupRoute(
-            ["text1".text(), "text2".text()].column()!,
-            showArrow: false,
-            /*arrowDirectionMinOffset: 0,*/
-            /*arrowDirection: AxisDirection.left,*/
-            childOffsetCallback: (anchorRect, childRect) {
-              return Offset(anchorRect.right + 8, anchorRect.top);
-            },
-            contentMargin: EdgeInsets.zero,
-            radius: widget.radius,
-            barriersColor: Colors.transparent,
+          buildContext?.showPopupDialog(
+            [
+              "text1".text(),
+              "text2".text(),
+              "text3".text(),
+              "text4".text(),
+            ].column()!,
           );
         })
         .material();
