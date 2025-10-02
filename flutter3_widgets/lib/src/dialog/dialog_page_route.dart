@@ -11,6 +11,9 @@ part of './dialog.dart';
 /// - [RouteWidgetEx.toRoute]
 /// - [DisplayFeatureSubScreen]
 /// - [DisplayFeatureSubScreen.anchorPoint]
+///
+/// - [DialogPageRoute]
+/// - [ArrowPopupRoute]
 class DialogPageRoute<T> extends RawDialogRoute<T> {
   /// 通过[IgnorePointerType.all]属性, 可以让弹窗穿透点击事件
   final IgnorePointerType? barrierIgnorePointerType;

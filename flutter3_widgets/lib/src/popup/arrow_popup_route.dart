@@ -9,6 +9,9 @@ part of 'popup_mix.dart';
 /// 用来显示popup的路由
 /// 使用路由的方式显示popup, 会阻止手势穿透
 /// [ArrowPopupOverlay]
+///
+/// - [DialogPageRoute]
+/// - [ArrowPopupRoute]
 class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   final Rect anchorRect;
   final Widget child;
