@@ -154,9 +154,10 @@ part 'src/widgets/last_extend_row.dart';
 part 'src/widgets/bounds_widget.dart';
 part 'src/widgets/offset_paint_widget.dart';
 part 'src/widgets/pointer_listener.dart';
-part 'src/widgets/hover_anchor_layout.dart';
-part 'src/widgets/anchor_overlay_layout.dart';
 part 'src/widgets/arrow_widget.dart';
+part 'src/widgets/anchor_trace_layout.dart';
+part 'src/widgets/anchor_overlay_layout.dart';
+part 'src/widgets/hover_anchor_layout.dart';
 part 'src/widgets/media_query_data_widget.dart';
 
 /// 类型重定义
