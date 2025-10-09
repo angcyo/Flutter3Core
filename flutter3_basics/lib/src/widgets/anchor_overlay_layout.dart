@@ -9,8 +9,9 @@ part of '../../flutter3_basics.dart';
 /// - [CompositedTransformTarget]    锚点目标
 /// - [CompositedTransformFollower]  跟随目标
 ///
-/// [HoverAnchorLayout] 悬停覆盖布局
-/// [RawAutocomplete] 系统自动完成布局
+/// - [AnchorOverlayLayout]
+/// - [HoverAnchorLayout] 悬停覆盖布局
+/// - [RawAutocomplete] 系统自动完成布局
 class AnchorOverlayLayout extends StatefulWidget {
   /// 锚点布局
   final Widget anchor;
@@ -251,5 +252,5 @@ class _AnchorOverlayLayoutState extends State<AnchorOverlayLayout> {
     );
   }
 
-//--
+  //--
 }

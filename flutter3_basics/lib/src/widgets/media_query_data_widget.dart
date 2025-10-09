@@ -18,6 +18,7 @@ class MediaQueryDataBuilderWidget extends StatefulWidget {
   final MediaQueryDataWidgetBuilder builder;
 
   /// 当[MediaQueryData]改变时触发的回调
+  /// - 默认处理: 刷新界面
   /// @return true 表示拦截默认处理
   final bool Function(BuildContext context, MediaQueryData mediaQueryData)?
   onChange;
