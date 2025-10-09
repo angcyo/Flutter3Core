@@ -314,18 +314,27 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return isAdaptiveTablet && (isTabletWindow || forceTabletDevice);
   }
 
-  /// 是否处于平板的宽屏模式
+  /// 是否处于平板模式下的宽屏模式
   bool get isInTabletLandscapeModel {
-    return isAdaptiveTablet && isTabletLandscape;
+    return isAdaptiveTablet &&
+        isTabletLandscape &&
+        isAdaptiveTabletLandscapeModel;
   }
 
   /// 是否需要适配平板设备
-  /// [isTabletWindow]
+  /// - 平板布局, 否则常规的手机布局
+  /// - [isTabletWindow]
   @configProperty
   bool isAdaptiveTablet = false;
 
+  /// 是否要适配平板设备下的宽屏模式, 需要先开启平板适配
+  /// - 宽屏模式, 可能理解为pc端布局
+  /// - [isAdaptiveTablet]
+  @configProperty
+  bool isAdaptiveTabletLandscapeModel = false;
+
   /// 是否强制标识为平板设备
-  /// [isTabletWindow]
+  /// - [isTabletWindow]
   @configProperty
   bool forceTabletDevice = false;
 
