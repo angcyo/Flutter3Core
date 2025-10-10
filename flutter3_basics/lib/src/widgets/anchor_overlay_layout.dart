@@ -5,7 +5,7 @@ part of '../../flutter3_basics.dart';
 /// @date 2025/01/16
 ///
 /// 使用[OverlayPortal]在指定的锚点[Widget]上显示内容。
-/// [LayerLink]
+/// [LayerLink] 连接对象
 /// - [CompositedTransformTarget]    锚点目标
 /// - [CompositedTransformFollower]  跟随目标
 ///
