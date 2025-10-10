@@ -7,6 +7,10 @@ part of '../../flutter3_basics.dart';
 /// 锚点[anchor]元素在屏幕中的位置跟踪
 /// - 当锚点位置发生改变时, 触发通知
 /// - 当锚点不存在时, 触发通知
+///
+/// - 需要动态构建元素?
+@implementation
+@Deprecated("implementation")
 class AnchorTraceLayout extends SingleChildRenderObjectWidget {
   /// 需要跟踪位置的锚点元素
   final BuildContext? anchor;
@@ -28,13 +32,20 @@ class AnchorTraceLayout extends SingleChildRenderObjectWidget {
   ) {
     renderObject.anchor = anchor;
   }
+
+  @override
+  void didUnmountRenderObject(AnchorTraceRenderObject renderObject) {
+    super.didUnmountRenderObject(renderObject);
+  }
 }
 
 /// [WidgetBuilder]
 typedef AnchorTraceCallback =
     Widget? Function(BuildContext context, Rect? anchorRect);
 
-/// [CustomSingleChildLayout]
+/// - [CustomSingleChildLayout]
+/// - [AbstractLayoutBuilder]
+/// - [ConstrainedLayoutBuilder]
 class AnchorTraceRenderObject extends RenderProxyBox {
   BuildContext? _anchor;
 

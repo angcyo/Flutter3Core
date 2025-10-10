@@ -166,15 +166,22 @@ extension PopupEx on BuildContext {
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) async {
+    final that = this;
     final navigator = Navigator.of(this, rootNavigator: rootNavigator);
-    anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds(
-      navigator.context.findRenderObject(),
-    );
-    anchorRect ??= findRenderObject()?.getGlobalBounds() ?? Rect.zero;
+    final ancestor = navigator.context.findRenderObject();
+    anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds(ancestor);
+    anchorRect ??= findRenderObject()?.getGlobalBounds(ancestor) ?? Rect.zero;
     final globalTheme = GlobalTheme.of(this);
     return navigator.push(
       ArrowPopupRoute(
-        child: child,
+        child: child /*AnchorLocationLayout(
+          anchor: that,
+          anchorAncestor: ancestor,
+          onAnchorUnmount: () {
+            navigator.pop();
+          },
+          child: child,
+        )*/,
         anchorRect: anchorRect,
         backgroundColor: backgroundColor ?? globalTheme.surfaceBgColor,
         radius: radius,
