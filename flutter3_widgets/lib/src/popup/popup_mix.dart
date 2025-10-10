@@ -27,6 +27,7 @@ extension PopupEx on BuildContext {
   /// - [showArrowPopupRoute]
   Future showPopupDialog(
     Widget body, {
+    GlobalKey? anchorKey,
     //--
     Rect? anchorRect,
     BuildContext? anchorChild,
@@ -48,6 +49,7 @@ extension PopupEx on BuildContext {
   }) {
     return showArrowPopupRoute(
       body,
+      anchorKey: anchorKey,
       anchorRect: anchorRect,
       anchorChild: anchorChild,
       rootNavigator: rootNavigator,
@@ -146,6 +148,7 @@ extension PopupEx on BuildContext {
   /// - [showArrowPopupRoute] 手势不可以穿透
   Future showArrowPopupRoute(
     Widget child, {
+    GlobalKey? anchorKey,
     //--
     Rect? anchorRect,
     BuildContext? anchorChild,
@@ -176,6 +179,7 @@ extension PopupEx on BuildContext {
       ArrowPopupRoute(
         child: child /*AnchorLocationLayout(
           anchor: that,
+          anchorKey: anchorKey,
           anchorAncestor: ancestor,
           onAnchorUnmount: () {
             navigator.pop();

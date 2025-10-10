@@ -13,6 +13,9 @@ class AnchorLocationLayout extends SingleChildRenderObjectWidget {
   /// 锚点元素, 用来获取位置
   final BuildContext? anchor;
 
+  /// 锚点元素的key
+  final GlobalKey? anchorKey;
+
   /// 锚点元素所在的祖先, 不指定就是全屏幕
   final RenderObject? anchorAncestor;
 
@@ -33,6 +36,7 @@ class AnchorLocationLayout extends SingleChildRenderObjectWidget {
   const AnchorLocationLayout({
     super.key,
     this.anchor,
+    this.anchorKey,
     this.anchorAncestor,
     this.onAnchorUnmount,
     this.align,
@@ -103,7 +107,7 @@ class AnchorLocationRenderObject extends RenderProxyBox {
       if (parentData is BoxParentData) {
         parentData.offset = _anchorOffset;
       }
-      debugger();
+      //debugger();
 
       size = constraints.biggest;
     }
@@ -112,7 +116,8 @@ class AnchorLocationRenderObject extends RenderProxyBox {
   @override
   void paint(PaintingContext context, ui.Offset offset) {
     final parentData = child?.parentData;
-    debugger();
+    //debugger();
+    //measureAnchorLocation();
     checkAnchorUnmount();
     super.paint(context, offset);
   }
@@ -152,14 +157,15 @@ class AnchorLocationRenderObject extends RenderProxyBox {
   /// 测量锚点在祖先中的位置, 在布局阶段不可以调用此方法
   void measureAnchorLocation() {
     //debugger();
-    if (config?.anchor?.isMounted == true) {
+    if (isSchedulerIdle || config?.anchor?.isMounted == true) {
       _ancestorSize =
           config?.anchorAncestor?.renderSize ??
           Size($screenWidth, $screenHeight);
-      final rect = config?.anchor?.findRenderObject()?.getGlobalBounds(
-        config?.anchorAncestor,
-      );
+      final rect = (config?.anchorKey?.currentContext ?? config?.anchor)
+          ?.findRenderObject()
+          ?.getGlobalBounds(config?.anchorAncestor);
       _anchorRect = rect;
+      //debugger();
     }
   }
 
@@ -254,6 +260,10 @@ class AnchorLocationRenderObject extends RenderProxyBox {
     if (_anchorRect != null && config?.anchor?.isMounted == false) {
       //config?.onAnchorUnmount?.call();
     }
-    debugger();
+    //debugger();
+    if (isSchedulerIdle) {
+      //final selfBounds = getGlobalBounds(config?.anchorAncestor);
+      //debugger();
+    }
   }
 }

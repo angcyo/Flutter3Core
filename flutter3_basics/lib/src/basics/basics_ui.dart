@@ -23,6 +23,10 @@ bool get isSchedulerPhase {
       SchedulerPhase.persistentCallbacks;
 }
 
+/// 当前是否处于空闲阶段
+bool get isSchedulerIdle =>
+    WidgetsBinding.instance.schedulerPhase == SchedulerPhase.idle;
+
 /// 立即安排一帧
 /// [scheduleTask]
 /// [scheduleMicrotask]
@@ -3208,15 +3212,28 @@ extension RenderObjectEx on RenderObject {
   }
 
   /// 获取[RenderObject]的位置信息
-  /// [ancestor] 祖先节点, 如果为null, 则为根节点
-  /// [point] 参考点
-  /// [RenderBox.localToGlobal]
+  /// - [ancestor] 祖先节点, 如果为null, 则为根节点
+  /// - [point] 参考点
+  /// - [RenderBox.localToGlobal]
   /// ```
   /// Scrollable.of(context).context.findRenderObject();
   /// ```
-  /// [RenderBox.globalToLocal]
+  /// - [RenderBox.globalToLocal]
+  ///
+  /// 在布局阶段不允许获取box的大小
+  ///
+  /// ```
+  /// RenderBox.size accessed beyond the scope of resize, layout, or permitted parent access.
+  /// RenderBox can always access its own size, otherwise, the only object that is allowed to read RenderBox.size is its parent,
+  /// if they have said they will. It you hit this assert trying to access a child's size,
+  /// pass "parentUsesSize: true" to that child's layout() in _ColorFilterRenderObject.performLayout.
+  /// ```
+  ///
   Offset? getGlobalLocation([RenderObject? ancestor, Offset? point]) {
     final box = this;
+    if (box is RenderProxyBox) {
+      return box.child?.getGlobalLocation(ancestor, point);
+    }
     if (box is RenderBox && box.hasSize && box.parent?.hasBoxSize == true) {
       final location = box.localToGlobal(
         point ?? box.paintBounds.topLeft,

@@ -49,20 +49,36 @@ class _BoundsWidgetRenderObject extends RenderProxyBox {
 
   @override
   void attach(PipelineOwner owner) {
-    debugger(when: config.debugLabel != null);
+    //debugger(when: config.debugLabel != null);
+    if (config.debugLabel != null) {
+      l.i("[${classHash()}] attach key:${config.key?.classHash()}");
+    }
     super.attach(owner);
   }
 
   @override
   void detach() {
-    debugger(when: config.debugLabel != null);
+    //debugger(when: config.debugLabel != null);
+    if (config.debugLabel != null) {
+      l.w("[${classHash()}] detach key:${config.key?.classHash()}");
+    }
     super.detach();
   }
 
   @override
   void dispose() {
-    debugger(when: config.debugLabel != null);
+    //debugger(when: config.debugLabel != null);
+    if (config.debugLabel != null) {
+      l.e("[${classHash()}] dispose key:${config.key?.classHash()}");
+    }
     super.dispose();
+  }
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    /*debugger(when: config.debugLabel != null);
+    final bounds = getGlobalBounds();*/
   }
 
   @override
@@ -83,6 +99,13 @@ class _BoundsWidgetRenderObject extends RenderProxyBox {
           ..style = PaintingStyle.stroke,
       );
     }
+    //if (isSchedulerIdle) {
+      //debugger(when: config.debugLabel != null);
+      if (config.debugLabel != null) {
+        final bounds = getGlobalBounds();
+        l.d("[${classHash()}] $bounds key:${config.key?.classHash()}");
+      }
+    //}
   }
 }
 

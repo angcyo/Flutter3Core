@@ -188,6 +188,9 @@ class SingleDesktopGridTile extends StatefulWidget {
   /// 弹窗背景的圆角
   final double? radius;
 
+  /// 当锚点销毁时, 是否自动移除弹窗
+  final bool autoRemovePopup;
+
   const SingleDesktopGridTile({
     super.key,
     this.iconWidget,
@@ -195,6 +198,7 @@ class SingleDesktopGridTile extends StatefulWidget {
     this.tilePadding,
     this.radius = 4,
     this.isSelected = false,
+    this.autoRemovePopup = true,
   });
 
   @override
@@ -202,6 +206,24 @@ class SingleDesktopGridTile extends StatefulWidget {
 }
 
 class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
+  final ValueNotifier<Rect?> locationNotifier = ValueNotifier(null);
+
+  @override
+  void initState() {
+    locationNotifier.addListener(() {
+      debugger();
+      if (locationNotifier.value == null || buildContext == null) {
+        //unmount
+        if (widget.autoRemovePopup && _isShowPopup) {
+          GlobalConfig.appDef?.findNavigatorState()?.pop();
+        }
+      }
+    });
+    super.initState();
+  }
+
+  bool _isShowPopup = false;
+
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -220,8 +242,9 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
           widget.isSelected ? globalTheme.pressColor : null,
           fillRadius: kDefaultBorderRadiusX,
         )
-        .inkWell(() {
-          buildContext?.showPopupDialog(
+        .inkWell(() async {
+          _isShowPopup = true;
+          await buildContext?.showPopupDialog(
             [
               "text1".text(),
               "text2".text(),
@@ -229,7 +252,9 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
               "text4".text(),
             ].column()!,
           );
+          _isShowPopup = false;
         })
-        .material();
+        .material()
+        .localLocation(key: widget.key, locationNotifier: locationNotifier);
   }
 }
