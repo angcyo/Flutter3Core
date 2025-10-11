@@ -159,6 +159,7 @@ class _ScreenOrientationWidgetState extends State<ScreenOrientationWidget>
 
   @override
   void initState() {
+    _isFirst = true;
     reverseOrientations = widget.reverseOrientations ?? _lastOrientations;
     setScreenOrientations(widget.orientations);
     if (widget.enableSizeObserver) {
