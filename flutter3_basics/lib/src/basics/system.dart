@@ -120,7 +120,8 @@ class ScreenOrientationWidget extends StatefulWidget {
   @defInjectMark
   final List<DeviceOrientation>? reverseOrientations;
   final Widget? child;
-  final Widget Function(BuildContext context, bool changed)? builder;
+  final Widget Function(BuildContext context, bool first, bool changed)?
+  builder;
 
   /// 是否激活监听屏幕尺寸变化
   final bool enableSizeObserver;
@@ -153,6 +154,9 @@ class _ScreenOrientationWidgetState extends State<ScreenOrientationWidget>
   ui.FlutterView? _view;
   MediaQueryData? _mediaQueryData;
 
+  /// 是否是第一次进入页面
+  bool _isFirst = true;
+
   @override
   void initState() {
     reverseOrientations = widget.reverseOrientations ?? _lastOrientations;
@@ -179,9 +183,11 @@ class _ScreenOrientationWidgetState extends State<ScreenOrientationWidget>
   @override
   Widget build(BuildContext context) {
     //debugger();
+    final bool isFirst = _isFirst;
     final bool isChanged = _isChanged;
     _isChanged = false;
-    return widget.builder?.call(context, isChanged) ?? widget.child!;
+    _isFirst = false;
+    return widget.builder?.call(context, isFirst, isChanged) ?? widget.child!;
   }
 
   /// 是否发生过改变
