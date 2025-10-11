@@ -74,6 +74,9 @@ class GlobalTheme {
   /// 按下时的颜色
   Color get pressColor => Colors.black12;
 
+  /// 悬停时的颜色
+  Color get hoverColor => pressColor.withValues(alpha: 0.1 /*[0~1]*/);
+
   /// 图标按下的颜色/选择的颜色等
   Color get icoSelectedColor => primaryColor;
 

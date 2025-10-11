@@ -269,7 +269,7 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
         .stack()!
         .paddingOnly(horizontal: kM, vertical: kM, insets: widget.tilePadding)
         .backgroundColor(
-          isSelected ? globalTheme.pressColor : null,
+          isSelected ? globalTheme.hoverColor : null,
           fillRadius: radius,
         )
         .inkWell(

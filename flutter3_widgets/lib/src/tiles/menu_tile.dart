@@ -287,7 +287,7 @@ class _DesktopMenuTileState extends State<DesktopMenuTile> {
         )
         .constrainedMin(minWidth: widget.tileMinWidth)
         .backgroundColor(
-          isSelected ? globalTheme.pressColor.withHoverAlphaColor : null,
+          isSelected ? globalTheme.hoverColor : null,
           fillRadius: radius,
         )
         .inkWell(
