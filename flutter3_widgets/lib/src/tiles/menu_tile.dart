@@ -198,6 +198,10 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
 /// 桌面端菜单tile
 /// 左[leadingWidget]...[text]...右[trailingWidget]
 /// - 支持选中/悬停高亮
+///
+/// - [DesktopMenuTile]
+/// - [SingleDesktopGridTile]
+@desktopLayout
 class DesktopMenuTile extends StatefulWidget {
   //--leading
 

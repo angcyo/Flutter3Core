@@ -167,6 +167,9 @@ class SingleGridTile extends StatelessWidget with TileMixin {
 /// 桌面样式的网格图标tile
 /// - 支持右下角显示more图标
 /// - 支持配置选中后的菜单弹窗
+///
+/// - [DesktopMenuTile]
+/// - [SingleDesktopGridTile]
 @desktopLayout
 class SingleDesktopGridTile extends StatefulWidget {
   /// 图标
@@ -188,6 +191,10 @@ class SingleDesktopGridTile extends StatefulWidget {
   /// 弹窗背景的圆角
   final double? radius;
 
+  /// 自定义点击事件
+  /// - 会拦截默认的弹出[popupBodyWidget]处理
+  final GestureTapCallback? onTap;
+
   /// 弹窗内容小部件
   /// - 设置之后才会显示[moreWidget]
   /// - 弹出弹窗之后, 会自动进入选中状态
@@ -206,6 +213,7 @@ class SingleDesktopGridTile extends StatefulWidget {
     this.isSelected = false,
     this.popupBodyWidget,
     this.autoRemovePopup = true,
+    this.onTap,
   });
 
   @override
@@ -245,6 +253,7 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
     final isShowMore = widget.popupBodyWidget != null;
     final isSelected = widget.isSelected || _isShowPopup;
     //debugger();
@@ -264,15 +273,16 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
           fillRadius: radius,
         )
         .inkWell(
-          () async {
-            _isShowPopup = true;
-            updateState();
-            await buildContext?.showPopupDialog(widget.popupBodyWidget!);
-            _isShowPopup = false;
-            updateState();
-          },
+          widget.onTap ??
+              () async {
+                _isShowPopup = true;
+                updateState();
+                await buildContext?.showPopupDialog(widget.popupBodyWidget!);
+                _isShowPopup = false;
+                updateState();
+              },
           borderRadius: BorderRadius.circular(radius),
-          enable: widget.popupBodyWidget != null,
+          enable: isEnableTap,
         )
         .material()
         .localLocation(key: widget.key, locationNotifier: locationNotifier);
