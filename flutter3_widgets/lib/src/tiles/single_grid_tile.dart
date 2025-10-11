@@ -188,7 +188,13 @@ class SingleDesktopGridTile extends StatefulWidget {
   /// 弹窗背景的圆角
   final double? radius;
 
+  /// 弹窗内容小部件
+  /// - 设置之后才会显示[moreWidget]
+  /// - 弹出弹窗之后, 会自动进入选中状态
+  final Widget? popupBodyWidget;
+
   /// 当锚点销毁时, 是否自动移除弹窗
+  /// - 使用此功能需要指定[key]
   final bool autoRemovePopup;
 
   const SingleDesktopGridTile({
@@ -198,6 +204,7 @@ class SingleDesktopGridTile extends StatefulWidget {
     this.tilePadding,
     this.radius = 4,
     this.isSelected = false,
+    this.popupBodyWidget,
     this.autoRemovePopup = true,
   });
 
@@ -210,16 +217,27 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
 
   @override
   void initState() {
+    //debugger();
     locationNotifier.addListener(() {
-      debugger();
+      //debugger(when: locationNotifier.value == null);
       if (locationNotifier.value == null || buildContext == null) {
         //unmount
         if (widget.autoRemovePopup && _isShowPopup) {
-          GlobalConfig.appDef?.findNavigatorState()?.pop();
+          //debugger();
+          $nextFrame(() {
+            GlobalConfig.def.findNavigatorState()?.pop();
+            _isShowPopup = false;
+          });
+          //buildContext?.pop();
         }
       }
     });
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant SingleDesktopGridTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   bool _isShowPopup = false;
@@ -227,7 +245,10 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final isShowMore = true;
+    final isShowMore = widget.popupBodyWidget != null;
+    final isSelected = widget.isSelected || _isShowPopup;
+    //debugger();
+    final radius = kDefaultBorderRadiusX;
     return [
           widget.iconWidget?.paddingOnly(all: 4),
           if (isShowMore)
@@ -239,21 +260,20 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
         .stack()!
         .paddingOnly(horizontal: kM, vertical: kM, insets: widget.tilePadding)
         .backgroundColor(
-          widget.isSelected ? globalTheme.pressColor : null,
-          fillRadius: kDefaultBorderRadiusX,
+          isSelected ? globalTheme.pressColor : null,
+          fillRadius: radius,
         )
-        .inkWell(() async {
-          _isShowPopup = true;
-          await buildContext?.showPopupDialog(
-            [
-              "text1".text(),
-              "text2".text(),
-              "text3".text(),
-              "text4".text(),
-            ].column()!,
-          );
-          _isShowPopup = false;
-        })
+        .inkWell(
+          () async {
+            _isShowPopup = true;
+            updateState();
+            await buildContext?.showPopupDialog(widget.popupBodyWidget!);
+            _isShowPopup = false;
+            updateState();
+          },
+          borderRadius: BorderRadius.circular(radius),
+          enable: widget.popupBodyWidget != null,
+        )
         .material()
         .localLocation(key: widget.key, locationNotifier: locationNotifier);
   }

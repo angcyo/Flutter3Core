@@ -113,65 +113,67 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
     //build label
     Widget? label = widget.buildLabelWidgetMixin(context);
     if (label != null && !isNil(widget.labelActions)) {
-      label = [
-        label,
-        ...?widget.labelActions,
-      ].row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center);
+      label = [label, ...?widget.labelActions].row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+      );
     }
 
     //
     Widget? value = widget.valueWidget ?? _buildValueWidget(context, initValue);
     //debugger();
     if (value != null) {
-      value = [
-        empty.expanded(),
-        value,
-        widget.arrowWidget?.rotate(_isShowOverlay ? -180.hd : 0),
-      ]
-          .row(crossAxisAlignment: CrossAxisAlignment.center)
-          ?.ink(() {}, enable: !isNil(widget.valueList))
-          /*.material()*/
-          .hoverLayout(
-              overlayBuilder: (ctx) => [
-                    ...?widget.valueList?.mapIndexed((index, v) {
-                      return _buildValueWidget(ctx, v, showIcon: true)
-                          ?.paddingInsets(widget.menuPadding)
-                          .constrained(minWidth: 140)
-                          .ink(() {
-                        if (initValue != v) {
-                          initValue = v;
-                          widget.onSelectedAction?.call(index, v);
-                          updateState();
-                        }
-                      }).material();
-                    }),
-                  ].scrollVertical()?.constrained(maxHeight: 300),
-              enable: !isNil(widget.valueList),
-              showArrow: false,
-              onShowAction: (show) {
-                _isShowOverlay = show;
-                updateState();
-              });
+      value =
+          [
+                empty.expanded(),
+                value,
+                widget.arrowWidget?.rotate(_isShowOverlay ? -180.hd : 0),
+              ]
+              .row(crossAxisAlignment: CrossAxisAlignment.center)
+              ?.ink(() {}, enable: !isNil(widget.valueList))
+              /*.material()*/
+              .hoverLayout(
+                overlayBuilder: (ctx) => [
+                  ...?widget.valueList?.mapIndexed((index, v) {
+                    return _buildValueWidget(ctx, v, showIcon: true)
+                        ?.paddingInsets(widget.menuPadding)
+                        .constrained(minWidth: 140)
+                        .ink(() {
+                          if (initValue != v) {
+                            initValue = v;
+                            widget.onSelectedAction?.call(index, v);
+                            updateState();
+                          }
+                        })
+                        .material();
+                  }),
+                ].scrollVertical()?.constrained(maxHeight: 300),
+                enable: !isNil(widget.valueList),
+                showArrow: false,
+                onShowAction: (show) {
+                  _isShowOverlay = show;
+                  updateState();
+                },
+              );
     }
 
-    return [
-      label,
-      value?.expanded(),
-    ]
+    return [label, value?.expanded()]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
         .paddingInsets(widget.tilePadding);
   }
 
   /// 构建值小部件
-  Widget? _buildValueWidget(BuildContext context, dynamic value,
-      {bool showIcon = false}) {
+  Widget? _buildValueWidget(
+    BuildContext context,
+    dynamic value, {
+    bool showIcon = false,
+  }) {
     if (value == null) {
       return null;
     }
-    final valueWidget = widget.valueWidgetBuilder?.call(context, value) ??
+    final valueWidget =
+        widget.valueWidgetBuilder?.call(context, value) ??
         widgetOf(context, value, tryTextWidget: true);
     if (valueWidget == null) {
       return null;
@@ -181,14 +183,121 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
     }
     final globalTheme = GlobalTheme.of(context);
     final isChecked = initValue == value;
-    final checkedWidget = widget.checkedWidget ??
-        Icon(
-          Icons.check,
-          size: 16,
-          color: globalTheme.accentColor,
-        );
-    return [valueWidget.expanded(), isChecked ? checkedWidget : empty]
-        .row()
-        ?.iw();
+    final checkedWidget =
+        widget.checkedWidget ??
+        Icon(Icons.check, size: 16, color: globalTheme.accentColor);
+    return [
+      valueWidget.expanded(),
+      isChecked ? checkedWidget : empty,
+    ].row()?.iw();
+  }
+}
+
+//--
+
+/// 桌面端菜单tile
+/// 左[leadingWidget]...[text]...右[trailingWidget]
+/// - 支持选中/悬停高亮
+class DesktopMenuTile extends StatefulWidget {
+  //--leading
+
+  ///领头的小部件. (不指定也占空间)
+  final Widget? leadingWidget;
+
+  //--trailing
+
+  /// 尾随的小部件. (不指定也占空间)
+  /// 当指定了[popupBodyWidget], 会有默认值的箭头
+  final Widget? trailingWidget;
+
+  //--text
+
+  /// 中间的文本内容
+  final String? text;
+
+  //--
+
+  /// 是否处于选中状态, 会有背景装饰
+  final bool isSelected;
+
+  /// 弹窗内容小部件
+  /// - 设置之后才会显示[moreWidget]
+  /// - 弹出弹窗之后, 会自动进入选中状态
+  final Widget? popupBodyWidget;
+
+  /// 自定义点击事件
+  /// - 会拦截默认的弹出[popupBodyWidget]处理
+  final GestureTapCallback? onTap;
+
+  /// 菜单最小宽度
+  final double tileMinWidth;
+
+  const DesktopMenuTile({
+    super.key,
+    this.text,
+    this.leadingWidget,
+    this.trailingWidget,
+    //--
+    this.isSelected = false,
+    this.tileMinWidth = 100,
+    this.popupBodyWidget,
+    this.onTap,
+  });
+
+  @override
+  State<DesktopMenuTile> createState() => _DesktopMenuTileState();
+}
+
+class _DesktopMenuTileState extends State<DesktopMenuTile> {
+  /// 占位的小部件大小
+  final Size placeholderSize = const Size(32, 32);
+
+  bool _isShowPopup = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final radius = kDefaultBorderRadiusX;
+
+    final isSelected = widget.isSelected || _isShowPopup;
+    final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
+
+    Widget? trailingWidget = widget.trailingWidget;
+    if (trailingWidget == null && widget.popupBodyWidget != null) {
+      trailingWidget = Icon(
+        Icons.navigate_next,
+        size: 16,
+        color: globalTheme.icoDisableColor,
+      ).paddingOnly(horizontal: kL);
+    }
+    return [
+          //-- leading
+          widget.leadingWidget ?? SizedBox.fromSize(size: placeholderSize),
+          (widget.text ?? "").text(style: globalTheme.textBodyStyle).expanded(),
+          //-- trailing
+          trailingWidget ?? SizedBox.fromSize(size: placeholderSize),
+        ]
+        .row()!
+        .colorFiltered(
+          color: isEnableTap ? null : globalTheme.textDisableStyle.color,
+        )
+        .constrainedMin(minWidth: widget.tileMinWidth)
+        .backgroundColor(
+          isSelected ? globalTheme.pressColor.withHoverAlphaColor : null,
+          fillRadius: radius,
+        )
+        .inkWell(
+          widget.onTap ??
+              () async {
+                _isShowPopup = true;
+                updateState();
+                await buildContext?.showPopupDialog(widget.popupBodyWidget!);
+                _isShowPopup = false;
+                updateState();
+              },
+          borderRadius: BorderRadius.circular(radius),
+          enable: isEnableTap,
+        )
+        .material();
   }
 }
