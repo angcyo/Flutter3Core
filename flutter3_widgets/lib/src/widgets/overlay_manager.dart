@@ -381,6 +381,7 @@ class OverlayManagerState extends State<OverlayManager> {
 
   @override
   void initState() {
+    //debugger();
     _controller = widget.controller ?? OverlayManagerController();
     _controller
       ?..managerState = this
@@ -391,8 +392,19 @@ class OverlayManagerState extends State<OverlayManager> {
   @override
   void didUpdateWidget(covariant OverlayManager oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.home != widget.home ||
-        oldWidget.homeEntry != widget.homeEntry) {
+
+    bool homeChanged = false;
+    if (oldWidget.home == null || widget.home == null) {
+      homeChanged = false;
+    } else if (oldWidget.home != null &&
+        widget.home != null &&
+        Widget.canUpdate(oldWidget.home!, widget.home!)) {
+      homeChanged = false;
+    } else {
+      homeChanged = true;
+    }
+    //debugger();
+    if (homeChanged || oldWidget.homeEntry != widget.homeEntry) {
       //重置key, 以便重新创建[OverlayEntry]
       _controller?.resetOverlay();
     }
