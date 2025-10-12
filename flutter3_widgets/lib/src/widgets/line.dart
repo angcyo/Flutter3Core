@@ -11,19 +11,21 @@ Line verticalLine(
   double? indent,
   double? endIndent,
   double thickness = 1,
-}) =>
-    Line(
-      thickness: thickness,
-      color: color ??
-          context?.darkOr(
-            GlobalTheme.of(context).lineDarkColor,
-            GlobalTheme.of(context).lineColor,
-          ) ??
-          GlobalTheme.of(context).lineColor,
-      axis: Axis.vertical,
-      indent: indent,
-      endIndent: endIndent ?? indent,
-    );
+  EdgeInsets? margin,
+}) => Line(
+  thickness: thickness,
+  color:
+      color ??
+      context?.darkOr(
+        GlobalTheme.of(context).lineDarkColor,
+        GlobalTheme.of(context).lineColor,
+      ) ??
+      GlobalTheme.of(context).lineColor,
+  axis: Axis.vertical,
+  indent: indent,
+  endIndent: endIndent ?? indent,
+  margin: margin,
+);
 
 /// [verticalLine]
 @Alias("verticalLine")
@@ -33,14 +35,15 @@ Line vLine(
   double? indent,
   double? endIndent,
   double thickness = 1,
-}) =>
-    verticalLine(
-      context,
-      color: color,
-      indent: indent,
-      endIndent: endIndent,
-      thickness: thickness,
-    );
+  EdgeInsets? margin,
+}) => verticalLine(
+  context,
+  color: color,
+  indent: indent,
+  endIndent: endIndent,
+  thickness: thickness,
+  margin: margin,
+);
 
 /// 横线
 Line horizontalLine(
@@ -49,19 +52,21 @@ Line horizontalLine(
   double? indent,
   double? endIndent,
   double thickness = 1,
-}) =>
-    Line(
-      thickness: thickness,
-      color: color ??
-          context?.darkOr(
-            GlobalTheme.of(context).lineDarkColor,
-            GlobalTheme.of(context).lineColor,
-          ) ??
-          GlobalTheme.of(context).lineColor,
-      axis: Axis.horizontal,
-      indent: indent,
-      endIndent: endIndent ?? indent,
-    );
+  EdgeInsets? margin,
+}) => Line(
+  thickness: thickness,
+  color:
+      color ??
+      context?.darkOr(
+        GlobalTheme.of(context).lineDarkColor,
+        GlobalTheme.of(context).lineColor,
+      ) ??
+      GlobalTheme.of(context).lineColor,
+  axis: Axis.horizontal,
+  indent: indent,
+  endIndent: endIndent ?? indent,
+  margin: margin,
+);
 
 /// [horizontalLine]
 @Alias("horizontalLine")
@@ -71,14 +76,15 @@ Line hLine(
   double? indent,
   double? endIndent,
   double thickness = 1,
-}) =>
-    horizontalLine(
-      context,
-      color: color,
-      indent: indent,
-      endIndent: endIndent,
-      thickness: thickness,
-    );
+  EdgeInsets? margin,
+}) => horizontalLine(
+  context,
+  color: color,
+  indent: indent,
+  endIndent: endIndent,
+  thickness: thickness,
+  margin: margin,
+);
 
 /// 线
 Widget line(
@@ -95,8 +101,9 @@ Widget line(
       : globalTheme.lineColor;
   final w = axis == Axis.vertical ? thickness : lineSize;
   final h = axis == Axis.vertical ? lineSize : thickness;
-  return DecoratedBox(decoration: fillDecoration(color: color))
-      .size(width: w, height: h);
+  return DecoratedBox(
+    decoration: fillDecoration(color: color),
+  ).size(width: w, height: h);
 }
 
 class Line extends LeafRenderObjectWidget {
@@ -155,8 +162,12 @@ class Line extends LeafRenderObjectWidget {
   }
 }
 
+/// 定义一个动态计算大小的[RenderObject]
+/// - 动态大小的组件不允许在布局期间获取尺寸
+mixin DynamicComponentSizeMixin {}
+
 /// 线条渲染
-class LineRender extends RenderBox {
+class LineRender extends RenderBox with DynamicComponentSizeMixin {
   Line line;
 
   LineRender(this.line);
@@ -166,6 +177,17 @@ class LineRender extends RenderBox {
   BoxPainter? _painter;
 
   void reset() {}
+
+  @override
+  ui.Size computeDryLayout(covariant BoxConstraints constraints) {
+    return super.computeDryLayout(constraints);
+  }
+
+  @override
+  ui.Size getDryLayout(covariant BoxConstraints constraints) {
+    super.getDryLayout(constraints);
+    return constraints.smallest;
+  }
 
   @override
   void performLayout() {
@@ -203,8 +225,10 @@ class LineRender extends RenderBox {
       }
       height = height - (line.indent ?? 0) - (line.endIndent ?? 0);
     }
-    size = Size(width + (line.margin?.horizontal ?? 0),
-        height + (line.margin?.vertical ?? 0));
+    size = Size(
+      width + (line.margin?.horizontal ?? 0),
+      height + (line.margin?.vertical ?? 0),
+    );
   }
 
   @override
@@ -229,43 +253,60 @@ class LineRender extends RenderBox {
 
     if (line.axis == Axis.horizontal) {
       final ImageConfiguration filledConfiguration = configuration.copyWith(
-          size: ui.Size(
-        size.width - indent - endIndent - leftMargin - rightMargin,
-        size.height - topMargin - bottomMargin,
-      ));
+        size: ui.Size(
+          size.width - indent - endIndent - leftMargin - rightMargin,
+          size.height - topMargin - bottomMargin,
+        ),
+      );
       //背景绘制
       _painter ??= line.decoration?.createBoxPainter(markNeedsPaint);
-      _painter?.paint(context.canvas, offset + Offset(leftMargin, topMargin),
-          filledConfiguration);
+      _painter?.paint(
+        context.canvas,
+        offset + Offset(leftMargin, topMargin),
+        filledConfiguration,
+      );
       setCanvasIsComplexHint(context, line.decoration);
 
       //var lineHeight = size.height - topMargin - bottomMargin;
       canvas.drawLine(
-          offset.translate(indent + leftMargin + line.thickness / 2,
-              topMargin + line.thickness / 2),
-          offset.translate(
-              size.width - endIndent - rightMargin - line.thickness / 2,
-              topMargin + line.thickness / 2),
-          paint);
+        offset.translate(
+          indent + leftMargin + line.thickness / 2,
+          topMargin + line.thickness / 2,
+        ),
+        offset.translate(
+          size.width - endIndent - rightMargin - line.thickness / 2,
+          topMargin + line.thickness / 2,
+        ),
+        paint,
+      );
     } else {
       final ImageConfiguration filledConfiguration = configuration.copyWith(
-          size: ui.Size(
-        size.width - leftMargin - rightMargin,
-        size.height - indent - endIndent,
-      ));
+        size: ui.Size(
+          size.width - leftMargin - rightMargin,
+          size.height - indent - endIndent,
+        ),
+      );
       //背景绘制
       _painter ??= line.decoration?.createBoxPainter(markNeedsPaint);
-      _painter?.paint(context.canvas, offset + Offset(leftMargin, topMargin),
-          filledConfiguration);
+      _painter?.paint(
+        context.canvas,
+        offset + Offset(leftMargin, topMargin),
+        filledConfiguration,
+      );
       setCanvasIsComplexHint(context, line.decoration);
 
       //var lineWidth = size.width - leftMargin - rightMargin;
       canvas.drawLine(
-          offset.translate(leftMargin + line.thickness / 2,
-              indent + topMargin + line.thickness / 2),
-          offset.translate(leftMargin + line.thickness / 2,
-              size.height - endIndent - bottomMargin - line.thickness / 2),
-          paint);
+        offset.translate(
+          leftMargin + line.thickness / 2,
+          indent + topMargin + line.thickness / 2,
+        ),
+        offset.translate(
+          leftMargin + line.thickness / 2,
+          size.height - endIndent - bottomMargin - line.thickness / 2,
+        ),
+        paint,
+      );
     }
   }
 
@@ -273,8 +314,11 @@ class LineRender extends RenderBox {
   Size? _findSiblingSize() {
     Size? result;
     if (parent != null) {
+      //debugger();
       for (final child in parent!.childrenList) {
-        if (child == this) {
+        if (child == this ||
+            child.runtimeType == LineRender ||
+            child is DynamicComponentSizeMixin) {
           continue;
         }
         var renderSize = child.renderSize ?? child.measureRenderSize();
