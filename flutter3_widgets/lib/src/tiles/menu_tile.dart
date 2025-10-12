@@ -195,14 +195,15 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
 
 //--
 
-/// 桌面端菜单tile
+/// 桌面端文本菜单tile
 /// 左[leadingWidget]...[text]...右[trailingWidget]
 /// - 支持选中/悬停高亮
 ///
-/// - [DesktopMenuTile]
+/// - [DesktopTextMenuTile]
+/// - [DesktopIconMenuTile]
 /// - [SingleDesktopGridTile]
 @desktopLayout
-class DesktopMenuTile extends StatefulWidget {
+class DesktopTextMenuTile extends StatefulWidget {
   //--leading
 
   ///领头的小部件. (不指定也占空间)
@@ -211,7 +212,8 @@ class DesktopMenuTile extends StatefulWidget {
   //--trailing
 
   /// 尾随的小部件. (不指定也占空间)
-  /// 当指定了[popupBodyWidget], 会有默认值的箭头
+  /// 当指定了[popupBodyWidget], 会有默认值的向右箭头
+  @defInjectMark
   final Widget? trailingWidget;
 
   //--text
@@ -225,7 +227,7 @@ class DesktopMenuTile extends StatefulWidget {
   final bool isSelected;
 
   /// 弹窗内容小部件
-  /// - 设置之后才会显示[moreWidget]
+  /// - 设置之后才会显示[trailingWidget]
   /// - 弹出弹窗之后, 会自动进入选中状态
   final Widget? popupBodyWidget;
 
@@ -236,7 +238,7 @@ class DesktopMenuTile extends StatefulWidget {
   /// 菜单最小宽度
   final double tileMinWidth;
 
-  const DesktopMenuTile({
+  const DesktopTextMenuTile({
     super.key,
     this.text,
     this.leadingWidget,
@@ -249,21 +251,20 @@ class DesktopMenuTile extends StatefulWidget {
   });
 
   @override
-  State<DesktopMenuTile> createState() => _DesktopMenuTileState();
+  State<DesktopTextMenuTile> createState() => _DesktopTextMenuTileState();
 }
 
-class _DesktopMenuTileState extends State<DesktopMenuTile> {
+class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
+    with DesktopPopupStateMixin {
   /// 占位的小部件大小
   final Size placeholderSize = const Size(32, 32);
-
-  bool _isShowPopup = false;
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final radius = kDefaultBorderRadiusX;
 
-    final isSelected = widget.isSelected || _isShowPopup;
+    final isSelected = widget.isSelected || isShowPopupMixin;
     final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
 
     Widget? trailingWidget = widget.trailingWidget;
@@ -292,16 +293,125 @@ class _DesktopMenuTileState extends State<DesktopMenuTile> {
         )
         .inkWell(
           widget.onTap ??
-              () async {
-                _isShowPopup = true;
-                updateState();
-                await buildContext?.showPopupDialog(widget.popupBodyWidget!);
-                _isShowPopup = false;
-                updateState();
+              () {
+                wrapShowPopupMixin(() async {
+                  await buildContext?.showPopupDialog(widget.popupBodyWidget!);
+                });
               },
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )
-        .material();
+        .material()
+        .localLocation(
+          key: widget.key,
+          locationNotifier: locationNotifierMixin,
+        );
+  }
+}
+
+//--
+
+/// 桌面端图标菜单tile
+/// 左[leadingWidget]...[icon]...右[trailingWidget]
+/// - 支持选中/悬停高亮
+///
+/// - [DesktopTextMenuTile]
+/// - [DesktopIconMenuTile]
+/// - [SingleDesktopGridTile]
+class DesktopIconMenuTile extends StatefulWidget {
+  //--leading
+
+  ///领头的小部件
+  final Widget? leadingWidget;
+
+  //--trailing
+
+  /// 尾随的小部件
+  /// 当指定了[popupBodyWidget], 会有默认值的向下箭头
+  @defInjectMark
+  final Widget? trailingWidget;
+
+  //--text
+
+  /// 中间的图标
+  final Widget? icon;
+
+  //--
+
+  /// 是否处于选中状态, 会有背景装饰
+  final bool isSelected;
+
+  /// 弹窗内容小部件
+  /// - 设置之后才会显示[trailingWidget]
+  /// - 弹出弹窗之后, 会自动进入选中状态
+  final Widget? popupBodyWidget;
+
+  /// 自定义点击事件
+  /// - 会拦截默认的弹出[popupBodyWidget]处理
+  final GestureTapCallback? onTap;
+
+  const DesktopIconMenuTile({
+    super.key,
+    this.icon,
+    this.leadingWidget,
+    this.trailingWidget,
+    //--
+    this.isSelected = false,
+    this.popupBodyWidget,
+    this.onTap,
+  });
+
+  @override
+  State<DesktopIconMenuTile> createState() => _DesktopIconMenuTileState();
+}
+
+class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
+    with DesktopPopupStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final radius = kDefaultBorderRadiusX;
+
+    final isSelected = widget.isSelected || isShowPopupMixin;
+    final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
+
+    Widget? trailingWidget = widget.trailingWidget;
+    if (trailingWidget == null && widget.popupBodyWidget != null) {
+      trailingWidget = Icon(
+        Icons.navigate_next,
+        size: 16,
+        color: globalTheme.icoDisableColor,
+      ).rotate(90.hd).paddingOnly(horizontal: kL);
+    }
+    return [
+          //-- leading
+          widget.leadingWidget,
+          widget.icon,
+          //-- trailing
+          trailingWidget,
+        ]
+        .row()!
+        .colorFiltered(
+          color: isEnableTap ? null : globalTheme.textDisableStyle.color,
+        )
+        .backgroundColor(
+          isSelected ? globalTheme.hoverColor : null,
+          fillRadius: radius,
+        )
+        .inkWell(
+          widget.onTap ??
+              () {
+                wrapShowPopupMixin(() async {
+                  await buildContext?.showPopupDialog(widget.popupBodyWidget!);
+                });
+              },
+          borderRadius: BorderRadius.circular(radius),
+          enable: isEnableTap,
+        )
+        .material()
+        .localLocation(
+          key: widget.key,
+          locationNotifier: locationNotifierMixin,
+        );
   }
 }

@@ -168,7 +168,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
 /// - 支持右下角显示more图标
 /// - 支持配置选中后的菜单弹窗
 ///
-/// - [DesktopMenuTile]
+/// - [DesktopTextMenuTile]
 /// - [SingleDesktopGridTile]
 @desktopLayout
 class SingleDesktopGridTile extends StatefulWidget {
@@ -220,42 +220,26 @@ class SingleDesktopGridTile extends StatefulWidget {
   State<SingleDesktopGridTile> createState() => _SingleDesktopGridTileState();
 }
 
-class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
-  final ValueNotifier<Rect?> locationNotifier = ValueNotifier(null);
-
+class _SingleDesktopGridTileState extends State<SingleDesktopGridTile>
+    with DesktopPopupStateMixin {
   @override
   void initState() {
-    //debugger();
-    locationNotifier.addListener(() {
-      //debugger(when: locationNotifier.value == null);
-      if (locationNotifier.value == null || buildContext == null) {
-        //unmount
-        if (widget.autoRemovePopup && _isShowPopup) {
-          //debugger();
-          $nextFrame(() {
-            GlobalConfig.def.findNavigatorState()?.pop();
-            _isShowPopup = false;
-          });
-          //buildContext?.pop();
-        }
-      }
-    });
+    autoRemovePopupMixin = widget.autoRemovePopup;
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant SingleDesktopGridTile oldWidget) {
     super.didUpdateWidget(oldWidget);
+    autoRemovePopupMixin = widget.autoRemovePopup;
   }
-
-  bool _isShowPopup = false;
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
     final isShowMore = widget.popupBodyWidget != null;
-    final isSelected = widget.isSelected || _isShowPopup;
+    final isSelected = widget.isSelected || isShowPopupMixin;
     //debugger();
     final radius = kDefaultBorderRadiusX;
     return [
@@ -274,17 +258,18 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile> {
         )
         .inkWell(
           widget.onTap ??
-              () async {
-                _isShowPopup = true;
-                updateState();
-                await buildContext?.showPopupDialog(widget.popupBodyWidget!);
-                _isShowPopup = false;
-                updateState();
+              () {
+                wrapShowPopupMixin(() async {
+                  await buildContext?.showPopupDialog(widget.popupBodyWidget!);
+                });
               },
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )
         .material()
-        .localLocation(key: widget.key, locationNotifier: locationNotifier);
+        .localLocation(
+          key: widget.key,
+          locationNotifier: locationNotifierMixin,
+        );
   }
 }

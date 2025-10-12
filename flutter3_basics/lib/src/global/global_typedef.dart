@@ -93,6 +93,8 @@ typedef NumNullCallback = void Function(num? number);
 typedef ContextNumNullCallback =
     void Function(BuildContext? context, num? number);
 typedef RangeNumCallback = void Function(num startValue, num endValue);
+/// 数字格式化
+typedef FormatNumNullCallback = String? Function(num? number);
 
 /// [bool]类型的回调
 /// [ResultBoolAction]
