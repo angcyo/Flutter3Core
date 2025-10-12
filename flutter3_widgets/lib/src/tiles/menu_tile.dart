@@ -257,12 +257,12 @@ class DesktopTextMenuTile extends StatefulWidget {
 class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
     with DesktopPopupStateMixin {
   /// 占位的小部件大小
-  final Size placeholderSize = const Size(32, 32);
+  final Size placeholderSize = const Size(24, 24);
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final radius = kDefaultBorderRadiusX;
+    final radius = kDefaultBorderRadiusH;
 
     final isSelected = widget.isSelected || isShowPopupMixin;
     final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
@@ -334,7 +334,7 @@ class DesktopIconMenuTile extends StatefulWidget {
   //--text
 
   /// 中间的图标
-  final Widget? icon;
+  final Widget? iconWidget;
 
   //--
 
@@ -350,15 +350,26 @@ class DesktopIconMenuTile extends StatefulWidget {
   /// - 会拦截默认的弹出[popupBodyWidget]处理
   final GestureTapCallback? onTap;
 
+  /// 弹窗对齐锚点的方式
+  final Alignment? popupAlignment;
+
+  //--
+
+  /// 长按提示文本
+  final String? tooltip;
+
   const DesktopIconMenuTile({
     super.key,
-    this.icon,
+    this.iconWidget,
     this.leadingWidget,
     this.trailingWidget,
     //--
     this.isSelected = false,
     this.popupBodyWidget,
     this.onTap,
+    this.popupAlignment,
+    //--
+    this.tooltip,
   });
 
   @override
@@ -370,7 +381,7 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final radius = kDefaultBorderRadiusX;
+    final radius = kDefaultBorderRadiusH;
 
     final isSelected = widget.isSelected || isShowPopupMixin;
     final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
@@ -381,12 +392,16 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
         Icons.navigate_next,
         size: 16,
         color: globalTheme.icoDisableColor,
-      ).rotate(90.hd).paddingOnly(horizontal: kL);
+      ).rotate(90.hd);
     }
     return [
           //-- leading
           widget.leadingWidget,
-          widget.icon,
+          widget.iconWidget?.paddingOnly(
+            left: kM,
+            vertical: kM,
+            right: trailingWidget == null ? kM : null,
+          ),
           //-- trailing
           trailingWidget,
         ]
@@ -402,12 +417,16 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
           widget.onTap ??
               () {
                 wrapShowPopupMixin(() async {
-                  await buildContext?.showPopupDialog(widget.popupBodyWidget!);
+                  await buildContext?.showPopupDialog(
+                    widget.popupBodyWidget!,
+                    alignment: widget.popupAlignment,
+                  );
                 });
               },
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )
+        .tooltip(widget.tooltip)
         .material()
         .localLocation(
           key: widget.key,
