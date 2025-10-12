@@ -180,7 +180,7 @@ mixin HiveHookMixin<T extends StatefulWidget> on State<T> {
   /// [key] 持久化存储的key值
   /// [ValueListenable]
   /// [TextEditingValue]
-  hookHiveKey(String key, ValueListenable notify, {bool notifyChanged = true}) {
+  void hookHiveKey(String key, ValueListenable notify, {bool notifyChanged = true}) {
     if (hiveHookMap.containsKey(notify)) {
       return;
     }
