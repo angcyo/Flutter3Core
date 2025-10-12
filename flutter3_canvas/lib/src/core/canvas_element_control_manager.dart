@@ -368,7 +368,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       final Size size = paintRectBounds.size;
 
       final axisUnit = canvasDelegate.canvasPaintManager.axisManager.axisUnit;
-      final withString = axisUnit.format(
+      final widthString = axisUnit.format(
         axisUnit.toUnit(size.width.toPixelFromDp()),
         showSuffix: paintInfoSingleLine ? false : showUnitSuffix,
         removeZero: false,
@@ -381,8 +381,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         ensureInt: false,
       );
       final text = paintInfoSingleLine
-          ? 'w:$withString * h:$heightString'
-          : 'w:$withString\nh:$heightString';
+          ? 'W: $widthString * H: $heightString'
+          : 'W: $widthString\nH: $heightString';
       _paintControlInfo(canvas, paintMeta, paintProperty, text);
     });
   }
@@ -424,8 +424,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         ensureInt: false,
       );
       final text = paintInfoSingleLine
-          ? 'x:$xString  y:$yString'
-          : 'x:$xString\ny:$yString';
+          ? 'X: $xString  Y: $yString'
+          : 'X: $xString\nY: $yString';
       _paintControlInfo(canvas, paintMeta, paintProperty, text);
     });
   }

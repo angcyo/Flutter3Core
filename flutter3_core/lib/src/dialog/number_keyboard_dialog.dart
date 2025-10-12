@@ -44,8 +44,8 @@ enum NumberKeyboardType {
 }
 
 /// 数字键盘输入对话框
-/// 如果是小数, 返回小数
-/// 如果是整数, 返回整数
+/// - 如果是小数, 返回小数
+/// - 如果是整数, 返回整数
 ///
 /// - [NumberKeyboardLayout]
 class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
@@ -65,6 +65,12 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
 
   /// 浮点时, 最大的小数位个数
   final int maxDigits;
+
+  /// 数字文本样式
+  @defInjectMark
+  final TextStyle? numberStyle;
+
+  //--
 
   /// 允许输入的最大长度, 包含小数点
   final int maxLength;
@@ -88,6 +94,15 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
   /// 输入完成回调
   final NumNullCallback? onNumberResult;
 
+  //--
+
+  /// 输入框的边距
+  @defInjectMark
+  final EdgeInsetsGeometry? numberPadding;
+
+  /// 是否显示顶部的阴影
+  final bool showTopShadow;
+
   const NumberKeyboardDialog({
     super.key,
     required this.number,
@@ -100,6 +115,9 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
     this.supportNegative,
     this.onNumberInputFinishIntercept,
     this.onNumberResult,
+    this.showTopShadow = true,
+    this.numberStyle,
+    this.numberPadding,
     NumType? numType,
   }) : _numType = numType ?? (number is int ? NumType.i : NumType.d);
 
@@ -114,10 +132,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   final borderRadius = 4.0;
 
   /// 范围提示文本样式
-  late final rangeHintStyle = const TextStyle(
-    fontSize: 14,
-    color: Colors.grey,
-  );
+  late final rangeHintStyle = const TextStyle(fontSize: 14, color: Colors.grey);
 
   /// 数字文本样式
   late final TextStyle numberValueStyle;
@@ -154,10 +169,10 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       ..initInputValue(widget.number);
     numberValueStyle = TextStyle(
       fontSize: 22,
+      fontWeight: FontWeight.bold,
       color: context.isThemeDark
           ? globalTheme.textTitleStyle.color
           : globalTheme.textGeneralStyle.color,
-      fontWeight: FontWeight.bold,
     );
   }
 
@@ -176,6 +191,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final lRes = libRes(context);
 
     final keyboard = NumberKeyboardLayout(
       showDecimal: isSupportDecimal,
@@ -190,7 +206,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     );
 
     //前缀
-    String? prefixText = '有效范围';
+    String? prefixText = lRes?.libValidRangeTip ?? '有效范围';
     // 获取范围对应的文本
     String? rangeText;
     if (widget.maxValue != null && widget.minValue != null) {
@@ -206,43 +222,60 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     }
 
     return [
-      //渐变阴影
-      linearGradientWidget(
-        [Colors.transparent, Colors.black12],
-        height: 10,
-        gradientDirection: Axis.vertical,
-      ),
-      //--
-      [
-        [
-          if (isNullOrEmpty(_controller.numberText))
-            widget.hintText?.text(style: numberHintStyle),
-          _controller.numberText.text(style: numberValueStyle).container(
-              color:
-                  _controller.isFirstClearAll ? globalTheme.accentColor : null),
-        ].stack()?.expanded(),
-        rangeText?.text(style: rangeHintStyle),
-      ]
-          .row()
-          ?.container(
-            color: globalTheme.surfaceBgColor,
-            padding: const EdgeInsets.symmetric(vertical: kX, horizontal: kX),
-          )
-          .click(() {
-        _controller.isFirstClearAll = !_controller.isFirstClearAll;
-        updateState();
-      }),
-      //--
-      keyboard.safeBottomArea().backgroundColor(globalTheme.whiteSubBgColor),
-    ]
+          //渐变阴影
+          if (widget.showTopShadow)
+            linearGradientWidget(
+              [Colors.transparent, Colors.black12],
+              height: 10,
+              gradientDirection: Axis.vertical,
+            ),
+          //输入框
+          [
+                [
+                  if (isNullOrEmpty(_controller.numberText))
+                    widget.hintText?.text(style: numberHintStyle),
+                  _controller.numberText
+                      .text(
+                        style: (widget.numberStyle ?? numberValueStyle)
+                            .copyWith(
+                              color: context.isThemeDark
+                                  ? globalTheme.textTitleStyle.color
+                                  : globalTheme.textGeneralStyle.color,
+                            ),
+                      )
+                      .container(
+                        color: _controller.isFirstClearAll
+                            ? globalTheme.accentColor
+                            : null,
+                      ),
+                ].stack()?.expanded(),
+                rangeText?.text(style: rangeHintStyle),
+              ]
+              .row()
+              ?.container(
+                color: globalTheme.surfaceBgColor,
+                padding:
+                    widget.numberPadding ??
+                    const EdgeInsets.symmetric(vertical: kX, horizontal: kX),
+              )
+              .click(() {
+                _controller.isFirstClearAll = !_controller.isFirstClearAll;
+                updateState();
+              }),
+          //键盘布局
+          keyboard.safeBottomArea().backgroundColor(
+            globalTheme.whiteSubBgColor,
+          ),
+        ]
         .column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
         )!
         .adaptiveTablet(context)
         .willPop(() async {
-      return widget.canPop;
-    }).material();
+          return widget.canPop;
+        })
+        .material();
   }
 
   String? _formatValue(num? value) {
@@ -283,7 +316,7 @@ class NumberKeyboardLayout extends StatefulWidget {
 
   /// 键盘输入回调
   final void Function(String keyboard, NumberKeyboardType type)?
-      onKeyboardInput;
+  onKeyboardInput;
 
   const NumberKeyboardLayout({
     super.key,
@@ -368,34 +401,38 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
             prefix: kDefAssetsSvgPrefix,
             tintColor: context.isThemeDark ? keyboardNumberStyle.color : null,
           ).align(Alignment.center),
-        ).click(() {
-          _onSelfInput("", NumberKeyboardType.backspace);
-        }, onLongPress: () {
-          _onSelfInput("", NumberKeyboardType.clear);
-        }),
+        ).click(
+          () {
+            _onSelfInput("", NumberKeyboardType.backspace);
+          },
+          onLongPress: () {
+            _onSelfInput("", NumberKeyboardType.clear);
+          },
+        ),
         //--
         _createNumberButton("4", NumberKeyboardType.number),
         _createNumberButton("5", NumberKeyboardType.number),
         _createNumberButton("6", NumberKeyboardType.number),
         StateDecorationWidget(
-          decoration: fillDecoration(
-            color: globalTheme.accentColor,
-            radius: widget.itemBorderRadius,
-          ),
-          pressedDecoration: pressedDecoration,
-          child: LibRes.of(context)
-              .libFinish
-              .text(style: keyboardFinishStyle)
-              .align(Alignment.center),
-        ).click(() {
-          _onSelfInput("", NumberKeyboardType.finish);
-        }).flowLayoutData(
-          stack: true,
-          weight: 1.0 / 4,
-          constraints: BoxConstraints(
-            minHeight: widget.itemHeight * 3 + widget.itemGap * 2,
-          ),
-        ),
+              decoration: fillDecoration(
+                color: globalTheme.accentColor,
+                radius: widget.itemBorderRadius,
+              ),
+              pressedDecoration: pressedDecoration,
+              child: LibRes.of(context).libFinish
+                  .text(style: keyboardFinishStyle)
+                  .align(Alignment.center),
+            )
+            .click(() {
+              _onSelfInput("", NumberKeyboardType.finish);
+            })
+            .flowLayoutData(
+              stack: true,
+              weight: 1.0 / 4,
+              constraints: BoxConstraints(
+                minHeight: widget.itemHeight * 3 + widget.itemGap * 2,
+              ),
+            ),
         //--
         _createEmptyButton(),
         _createNumberButton("7", NumberKeyboardType.number),
@@ -407,8 +444,10 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
         if (isSupportDecimal || isSupportNegative)
           _createNumberButton("0", NumberKeyboardType.number)
         else
-          _createNumberButton("0", NumberKeyboardType.number)
-              .flowLayoutData(weight: 1.0 / 4 * 2, excludeGapCount: 2),
+          _createNumberButton(
+            "0",
+            NumberKeyboardType.number,
+          ).flowLayoutData(weight: 1.0 / 4 * 2, excludeGapCount: 2),
         if (isSupportNegative)
           _createNumberButton("±", NumberKeyboardType.positiveNegative),
         if (isShowPackUp)
@@ -431,8 +470,11 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
   }
 
   /// 创建数字按钮
-  Widget _createNumberButton(String text, NumberKeyboardType type,
-      [TextStyle? textStyle]) {
+  Widget _createNumberButton(
+    String text,
+    NumberKeyboardType type, [
+    TextStyle? textStyle,
+  ]) {
     return StateDecorationWidget(
       decoration: decoration,
       pressedDecoration: pressedDecoration,
@@ -500,11 +542,7 @@ class NumberKeyboardInputController {
     if (value == null) {
       return null;
     }
-    return formatNumber(
-      value,
-      numType: numType,
-      digits: maxDigits,
-    );
+    return formatNumber(value, numType: numType, digits: maxDigits);
   }
 
   /// 检查输入的值是否有效
