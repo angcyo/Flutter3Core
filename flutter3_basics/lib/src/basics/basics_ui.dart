@@ -3718,6 +3718,9 @@ extension NavigatorEx on BuildContext {
   /// [Route.hasActiveRouteBelow]
   bool get isAppBarDismissal => modalRoute?.impliesAppBarDismissal ?? false;
 
+  /// 获取导航元素的上下文
+  BuildContext? get navigatorContext => navigatorOf().buildContext;
+
   /// 获取一个导航器[NavigatorState]
   NavigatorState navigatorOf([bool rootNavigator = false]) =>
       Navigator.of(this, rootNavigator: rootNavigator);
