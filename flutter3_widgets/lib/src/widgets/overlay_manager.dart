@@ -406,11 +406,11 @@ class OverlayManagerState extends State<OverlayManager> {
     //debugger();
     if (homeChanged || oldWidget.homeEntry != widget.homeEntry) {
       //重置key, 以便重新创建[OverlayEntry]
-      _controller?.resetOverlay();
+      _controller
+        ?..resetOverlay()
+        .._initHomeEntry(widget.home, widget.homeEntry);
     }
-    _controller
-      ?..managerState = this
-      .._initHomeEntry(widget.home, widget.homeEntry);
+    _controller?.managerState = this;
   }
 
   @override
