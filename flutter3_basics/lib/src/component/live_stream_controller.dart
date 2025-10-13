@@ -75,8 +75,21 @@ class LiveStreamController<T> {
     return this;
   }
 
+  /// 赋值操作符, 数据改变后才通知
+  @alias
+  LiveStreamController operator <=(T newValue) {
+    updateValue(newValue, checkChanged: true);
+    return this;
+  }
+
+  /// [checkChanged] 检测是否只在数据改变后通知
   @callPoint
-  LiveStreamController updateValue(T newValue) {
+  LiveStreamController updateValue(T newValue, {bool checkChanged = false}) {
+    if (checkChanged) {
+      if (latestValue == newValue) {
+        return this;
+      }
+    }
     add(newValue);
     return this;
   }

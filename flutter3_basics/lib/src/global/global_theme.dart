@@ -254,7 +254,7 @@ class GlobalTheme {
       const TextStyle(fontSize: 28, color: Color(0xff182334));
 
   TextStyle get textTitleStyle =>
-      const TextStyle(fontSize: 17, color: Color(0xff333333));
+      const TextStyle(fontSize: 16, color: Color(0xff333333));
 
   TextStyle get textSubTitleStyle =>
       const TextStyle(fontSize: 14, color: Color(0xff929292));

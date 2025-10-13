@@ -50,6 +50,7 @@ const double kMinItemInteractiveHeight = 40;
 const double kTabHeight = 46;
 const double kTabItemHeight = 30;
 const double kTitleHeight = 56;
+const double kDesktopTitleHeight = 38;
 
 /// 标题栏中item的交互高度
 const double kTitleItemInteractiveHeight = 56;

@@ -185,24 +185,38 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
 
   final List<NavigatorObserverMixin> navigatorObserverList = [];
 
-  void add(NavigatorObserverMixin observer) {
-    navigatorObserverList.add(observer);
+  @api
+  void add(NavigatorObserverMixin? observer) {
+    if (observer != null && !navigatorObserverList.contains(observer)) {
+      navigatorObserverList.add(observer);
+    }
   }
 
-  void remove(NavigatorObserverMixin observer) {
-    navigatorObserverList.remove(observer);
+  @api
+  void remove(NavigatorObserverMixin? observer) {
+    if (observer != null && navigatorObserverList.contains(observer)) {
+      navigatorObserverList.remove(observer);
+    }
   }
 
   //endregion --观察者--
 
   //region --回调--
 
+  String? debugLabel;
+
+  /// 路由栈数量
+  final List<RouteSettings> _routeStack = [];
+
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
+    _routeStack.remove(route.settings);
+    debugger(when: debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidPop(route, previousRoute);
+        element.onRouteStackChanged(_routeStack);
       } catch (e) {
         assert(() {
           printError(e);
@@ -215,9 +229,12 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
+    _routeStack.add(route.settings);
+    debugger(when: debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidPush(route, previousRoute);
+        element.onRouteStackChanged(_routeStack);
       } catch (e) {
         assert(() {
           printError(e);
@@ -230,9 +247,12 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didRemove(Route route, Route? previousRoute) {
     super.didRemove(route, previousRoute);
+    _routeStack.remove(route.settings);
+    debugger(when: debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidRemove(route, previousRoute);
+        element.onRouteStackChanged(_routeStack);
       } catch (e) {
         assert(() {
           printError(e);
@@ -245,6 +265,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didReplace({Route? newRoute, Route? oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    debugger(when: debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidReplace(newRoute: newRoute, oldRoute: oldRoute);
@@ -260,6 +281,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didStartUserGesture(Route route, Route? previousRoute) {
     super.didStartUserGesture(route, previousRoute);
+    debugger(when: debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidStartUserGesture(route, previousRoute);
@@ -275,6 +297,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didStopUserGesture() {
     super.didStopUserGesture();
+    debugger(when: debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidStopUserGesture();
@@ -285,6 +308,12 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
         }());
       }
     }
+  }
+
+  @override
+  void didChangeTop(Route topRoute, Route? previousTopRoute) {
+    debugger(when: debugLabel != null);
+    super.didChangeTop(topRoute, previousTopRoute);
   }
 
   //endregion --回调--
@@ -330,4 +359,12 @@ mixin NavigatorObserverMixin<T extends StatefulWidget> on State<T> {
 
   @overridePoint
   void onRouteDidStopUserGesture() {}
+
+  //--
+
+  ///当路由栈发生改变时触发
+  /// - 移除了路由
+  /// - 添加了路由
+  @overridePoint
+  void onRouteStackChanged(List<RouteSettings> routeStack) {}
 }
