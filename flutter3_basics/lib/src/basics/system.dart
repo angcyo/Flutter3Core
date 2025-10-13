@@ -120,7 +120,12 @@ class ScreenOrientationWidget extends StatefulWidget {
   @defInjectMark
   final List<DeviceOrientation>? reverseOrientations;
   final Widget? child;
-  final Widget Function(BuildContext context, bool first, bool changed)?
+  final Widget Function(
+    BuildContext context,
+    MediaQueryData? mediaData,
+    bool first,
+    bool changed,
+  )?
   builder;
 
   /// 是否激活监听屏幕尺寸变化
@@ -188,7 +193,8 @@ class _ScreenOrientationWidgetState extends State<ScreenOrientationWidget>
     final bool isChanged = _isChanged;
     _isChanged = false;
     _isFirst = false;
-    return widget.builder?.call(context, isFirst, isChanged) ?? widget.child!;
+    return widget.builder?.call(context, _mediaQueryData, isFirst, isChanged) ??
+        widget.child!;
   }
 
   /// 是否发生过改变
