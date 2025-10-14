@@ -238,6 +238,12 @@ class DesktopTextMenuTile extends StatefulWidget {
   /// 菜单最小宽度
   final double tileMinWidth;
 
+  //--
+
+  /// 菜单的填充
+  @defInjectMark
+  final EdgeInsets? tilePadding;
+
   const DesktopTextMenuTile({
     super.key,
     this.text,
@@ -248,6 +254,8 @@ class DesktopTextMenuTile extends StatefulWidget {
     this.tileMinWidth = 100,
     this.popupBodyWidget,
     this.onTap,
+    //--
+    this.tilePadding,
   });
 
   @override
@@ -302,6 +310,7 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
           enable: isEnableTap,
         )
         .material()
+        .paddingOnly(all: kL, insets: widget.tilePadding)
         .localLocation(
           key: widget.key,
           locationNotifier: locationNotifierMixin,
