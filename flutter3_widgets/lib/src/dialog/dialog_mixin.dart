@@ -4,11 +4,14 @@ part of './dialog.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/12/15
 ///
-///
-/// [Dialog] 对话框布局
-/// [AlertDialog] 对话框组件[IntrinsicWidth]
-///
 /// 对话框的一些基础方法,一些基础约束
+///
+/// - [Dialog] 对话框布局
+/// - [AlertDialog] 对话框组件[IntrinsicWidth]
+///
+/// - [DialogMixin]
+/// - [DesktopDialogMixin]
+///
 mixin DialogMixin implements TranslationTypeImpl {
   /// [Dialog]对话框外点击是否关闭
   @override
@@ -24,6 +27,9 @@ mixin DialogMixin implements TranslationTypeImpl {
     //debugger();
     if (type.isScreenName) {
       return TranslationType.translation;
+    }
+    if (type.contains("desktop")) {
+      return TranslationType.scaleFade;
     }
     return TranslationType.translationFade;
   }
@@ -42,24 +48,34 @@ mixin DialogMixin implements TranslationTypeImpl {
   EdgeInsets get dialogContentPadding =>
       const EdgeInsets.symmetric(horizontal: kX, vertical: kX);
 
+  /// 对话框的最小宽度限制
+  /// - [dialogConstraints]
+  double get dialogMinWidth => kDialogMinWidth;
+
+  /// 对话框的最小高度限制
+  /// - [dialogConstraints]
+  double get dialogMinHeight => 0;
+
   /// 对话框的最大宽度/高度限制
   /// 系统[Dialog]最小宽度280.0
   BoxConstraints get dialogConstraints => BoxConstraints(
-      minWidth: kDialogMinWidth,
-      maxWidth: min(screenWidth, screenHeight),
-      minHeight: 0,
-      maxHeight: min(screenWidth, screenHeight));
+    minWidth: dialogMinWidth,
+    maxWidth: min(screenWidth, screenHeight),
+    minHeight: dialogMinHeight,
+    maxHeight: min(screenWidth, screenHeight),
+  );
 
   /// 是否背景模糊处理
   bool get dialogBlur => false;
 
-  /// 对话框的容器, 带圆角, 带margin
-  /// [decorationColor] 背景颜色
-  /// [margin] 整体外边距
-  /// [padding] 内容内边距
-  /// [blur] 是否使用模糊
-  /// [fillDecoration]
-  /// [strokeDecoration]
+  /// 对话框的容器, 带圆角, 带[margin]
+  /// - [decorationColor] 背景颜色
+  /// - [margin] 整体外边距
+  /// - [padding] 内容内边距
+  /// - [blur] 是否使用模糊
+  ///
+  /// - [fillDecoration]
+  /// - [strokeDecoration]
   @property
   Widget buildDialogContainer(
     BuildContext context,
@@ -84,9 +100,11 @@ mixin DialogMixin implements TranslationTypeImpl {
       child: ConstrainedBox(
         constraints: constraints,
         child: DecoratedBox(
-          decoration: decoration ??
+          decoration:
+              decoration ??
               BoxDecoration(
-                color: decorationColor ??
+                color:
+                    decorationColor ??
                     globalTheme.themeWhiteColor.withOpacity(blur ? 0.85 : 1.0),
                 borderRadius: borderRadius,
               ),
@@ -206,7 +224,8 @@ mixin DialogMixin implements TranslationTypeImpl {
           enablePullBack: enablePullBack,
           useScrollConsume: useScrollConsume,
           pullMaxBound: pullMaxBound,
-          onPullBack: onPullBack ??
+          onPullBack:
+              onPullBack ??
               (context) {
                 if (pullMaxBound == null) {
                   //debugger();
@@ -352,7 +371,9 @@ mixin DialogMixin implements TranslationTypeImpl {
       if (stackAfterWidget != null || stackBeforeWidget != null) {
         //debugger();
         scrollBody =
-            (scrollBody?.position(all: children.isEmpty ? null : 0).stackOf(
+            (scrollBody
+                        ?.position(all: children.isEmpty ? null : 0)
+                        .stackOf(
                           stackAfterWidget,
                           before: stackBeforeWidget,
                           fit: StackFit.expand,
@@ -360,11 +381,11 @@ mixin DialogMixin implements TranslationTypeImpl {
                     stackAfterWidget ??
                     stackBeforeWidget)
                 ?.constrainedMax(
-          minWidth: null,
-          maxWidth: null,
-          minHeight: contentMinHeight,
-          maxHeight: contentMaxHeight,
-        );
+                  minWidth: null,
+                  maxWidth: null,
+                  minHeight: contentMinHeight,
+                  maxHeight: contentMaxHeight,
+                );
       }
 
       //内容重构
@@ -382,21 +403,22 @@ mixin DialogMixin implements TranslationTypeImpl {
       ].column()!;
     } else {
       //普通布局, 不使用滚动布局
-      body = [
-        if (enablePullBack && showDragHandle) buildDragHandle(context),
-        ...children,
-        bottomWidget,
-      ]
-          .column(
-            mainAxisAlignment: mainAxisAlignment,
-            crossAxisAlignment: crossAxisAlignment,
-          )!
-          .constrainedMax(
-            minWidth: null,
-            maxWidth: null,
-            minHeight: contentMinHeight,
-            maxHeight: contentMaxHeight,
-          );
+      body =
+          [
+                if (enablePullBack && showDragHandle) buildDragHandle(context),
+                ...children,
+                bottomWidget,
+              ]
+              .column(
+                mainAxisAlignment: mainAxisAlignment,
+                crossAxisAlignment: crossAxisAlignment,
+              )!
+              .constrainedMax(
+                minWidth: null,
+                maxWidth: null,
+                minHeight: contentMinHeight,
+                maxHeight: contentMaxHeight,
+              );
 
       //内容重构
       if (contentBuilder != null) {
@@ -405,7 +427,9 @@ mixin DialogMixin implements TranslationTypeImpl {
 
       //堆叠小部件
       if (stackAfterWidget != null || stackBeforeWidget != null) {
-        body = body.position(all: children.isEmpty ? null : 0).stackOf(
+        body = body
+            .position(all: children.isEmpty ? null : 0)
+            .stackOf(
               stackAfterWidget,
               before: stackBeforeWidget,
               fit: StackFit.expand,
@@ -419,8 +443,9 @@ mixin DialogMixin implements TranslationTypeImpl {
     return body
         .size(height: height)
         .safeArea(
-            useSafeArea: useSafeArea,
-            maintainBottomViewPadding: maintainBottomViewPadding)
+          useSafeArea: useSafeArea,
+          maintainBottomViewPadding: maintainBottomViewPadding,
+        )
         .material(color: bgColor ?? globalTheme.dialogSurfaceBgColor)
         .clipRadius(
           radius: clipRadius,
@@ -438,7 +463,8 @@ mixin DialogMixin implements TranslationTypeImpl {
           useScrollConsume: useScrollConsume,
           pullMaxBound: pullMaxBound,
           useMaybePop: maybePop,
-          onPullBack: onPullBack ??
+          onPullBack:
+              onPullBack ??
               (context) {
                 //debugger();
                 if (pullMaxBound == null) {
@@ -490,8 +516,9 @@ mixin DialogMixin implements TranslationTypeImpl {
       ).invisible(invisible: invisibleCancel),
       (titleWidget ??
               (title ?? "").text(
-                style: globalTheme.textTitleStyle
-                    .copyWith(fontWeight: FontWeight.bold),
+                style: globalTheme.textTitleStyle.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ))
           ?.expanded(),
@@ -535,7 +562,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     return false;
   }
 
-//endregion 辅助方法
+  //endregion 辅助方法
 }
 
 extension DialogExtension on BuildContext {
@@ -630,9 +657,10 @@ extension DialogExtension on BuildContext {
     double? elevation = kH,
     Color? color /*菜单的背景颜色*/,
     Color? shadowColor = Colors.black /*kShadowColor*/,
-    Color? surfaceTintColor/*= Colors.transparent*/,
+    Color? surfaceTintColor /*= Colors.transparent*/,
     ShapeBorder? shape = const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(4.0))),
+      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+    ),
     EdgeInsets? menuPadding = const EdgeInsets.symmetric(vertical: 8.0),
     BoxConstraints? constraints,
     Clip clipBehavior = Clip.none,
@@ -651,10 +679,7 @@ extension DialogExtension on BuildContext {
     }
 
     items ??= menus?.map((e) {
-      return PopupMenuItem<T>(
-        value: e as dynamic,
-        child: e,
-      );
+      return PopupMenuItem<T>(value: e as dynamic, child: e);
     }).toList();
 
     if (isNil(items)) {
@@ -676,10 +701,12 @@ extension DialogExtension on BuildContext {
     }
 
     //用来定位
-    final RenderBox overlay = Navigator.of(
-      this,
-      rootNavigator: useRootNavigator,
-    ).overlay!.context.findRenderObject()! as RenderBox;
+    final RenderBox overlay =
+        Navigator.of(
+              this,
+              rootNavigator: useRootNavigator,
+            ).overlay!.context.findRenderObject()!
+            as RenderBox;
 
     //位置信息
     final RelativeRect relativePosition;
@@ -746,9 +773,10 @@ extension DialogExtension on BuildContext {
     double? elevation = kH,
     Color? color /*菜单的背景颜色*/,
     Color? shadowColor = Colors.black /*kShadowColor*/,
-    Color? surfaceTintColor/*= Colors.transparent*/,
+    Color? surfaceTintColor /*= Colors.transparent*/,
     ShapeBorder? shape = const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(4.0))),
+      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+    ),
     EdgeInsets? menuPadding = const EdgeInsets.symmetric(vertical: 8.0),
     BoxConstraints? constraints,
     Clip clipBehavior = Clip.none,
@@ -777,10 +805,12 @@ extension DialogExtension on BuildContext {
     }
 
     //用来定位
-    final RenderBox overlay = Navigator.of(
-      this,
-      rootNavigator: useRootNavigator,
-    ).overlay!.context.findRenderObject()! as RenderBox;
+    final RenderBox overlay =
+        Navigator.of(
+              this,
+              rootNavigator: useRootNavigator,
+            ).overlay!.context.findRenderObject()!
+            as RenderBox;
 
     //位置信息
     final RelativeRect relativePosition;
@@ -879,35 +909,34 @@ extension NavigatorStateDialogEx on NavigatorState {
     }
     final CapturedThemes themes = InheritedTheme.capture(
       from: context,
-      to: Navigator.of(
-        context,
-        rootNavigator: useRootNavigator,
-      ).context,
+      to: Navigator.of(context, rootNavigator: useRootNavigator).context,
     );
 
     type ??= widget.getWidgetTranslationType();
     barrierDismissible ??= widget.getWidgetDialogBarrierDismissible() ?? true;
     barrierColor ??= widget.getWidgetDialogBarrierColor() ?? Colors.black54;
 
-    return push<T>(DialogPageRoute<T>(
-      context: context,
-      builder: (context) {
-        return widget;
-      },
-      barrierColor: barrierColor,
-      barrierDismissible: barrierDismissible,
-      barrierLabel: barrierLabel,
-      useSafeArea: useSafeArea,
-      maintainBottomViewPadding: maintainBottomViewPadding,
-      useBarrierColorAnimate: useBarrierColorAnimate,
-      settings: routeSettings,
-      themes: themes,
-      anchorPoint: anchorPoint,
-      traversalEdgeBehavior:
-          traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
-      type: type,
-      barrierIgnorePointerType: barrierIgnorePointerType,
-    ));
+    return push<T>(
+      DialogPageRoute<T>(
+        context: context,
+        builder: (context) {
+          return widget;
+        },
+        barrierColor: barrierColor,
+        barrierDismissible: barrierDismissible,
+        barrierLabel: barrierLabel,
+        useSafeArea: useSafeArea,
+        maintainBottomViewPadding: maintainBottomViewPadding,
+        useBarrierColorAnimate: useBarrierColorAnimate,
+        settings: routeSettings,
+        themes: themes,
+        anchorPoint: anchorPoint,
+        traversalEdgeBehavior:
+            traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
+        type: type,
+        barrierIgnorePointerType: barrierIgnorePointerType,
+      ),
+    );
 
     /*return showDialog<T>(
     context: context,

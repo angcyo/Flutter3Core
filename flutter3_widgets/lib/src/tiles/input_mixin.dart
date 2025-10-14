@@ -15,7 +15,40 @@ enum InputBorderType {
   underline,
 
   /// [UnderlineInputBorder]
-  outline,
+  outline;
+
+  /// 构建边框
+  /// [InputDecoration.border]
+  InputBorder build({
+    Color? borderColor,
+    double borderWidth = 1,
+    double borderRadius = kM,
+    double gapPadding = 0,
+  }) {
+    if (this == InputBorderType.none) {
+      return InputBorder.none;
+    }
+
+    final borderSide = borderColor == Colors.transparent || borderWidth <= 0
+        ? BorderSide.none
+        : BorderSide(color: borderColor ?? Colors.grey, width: borderWidth);
+
+    switch (this) {
+      case InputBorderType.underline:
+        return UnderlineInputBorder(
+          borderSide: borderSide,
+          borderRadius: BorderRadius.circular(borderRadius),
+        );
+      case InputBorderType.outline:
+        return OutlineInputBorder(
+          gapPadding: gapPadding,
+          borderRadius: BorderRadius.circular(borderRadius),
+          borderSide: borderSide,
+        );
+      case InputBorderType.none:
+        return InputBorder.none;
+    }
+  }
 }
 
 /// 不使用长度显示小部件构建
@@ -125,6 +158,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   Widget buildInputWidgetMixin(
     BuildContext context, {
     TextAlign? textAlign,
+    InputBorderType? inputBorderType,
     InputBorder? border,
     InputBorder? focusedBorder,
     InputBorder? disabledBorder,
@@ -149,7 +183,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
       focusedBorder: focusedBorder,
       disabledBorder: disabledBorder,
       inputBuildCounter: inputBuildCounter,
-      inputBorderType: inputMixin.inputBorderType,
+      inputBorderType: inputBorderType ?? inputMixin.inputBorderType,
       contentPadding: inputMixin.inputPadding,
       prefixIconSize: prefixIconSize,
       suffixIconSize: suffixIconSize,

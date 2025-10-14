@@ -84,7 +84,7 @@ class SingleBottomInputDialog extends StatefulWidget
 
   /// 包裹输入框的回调
   final WidgetNullList Function(BuildContext context, Widget input)?
-      wrapInputAction;
+  wrapInputAction;
 
   //--
   final bool trailingUseThemeColor;
@@ -167,39 +167,40 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
     with InputStateMixin {
   @override
   Widget build(BuildContext context) {
-    //input
-    Widget input = buildInputWidgetMixin(context);
     final globalTheme = GlobalTheme.of(context);
-
+    //input
+    final input = buildInputWidgetMixin(context);
     //
-    return widget
-        .buildBottomChildrenDialog(
-          context,
-          [
-            if (widget.showTitle)
-              CoreDialogTitle(
-                title: widget.title,
-                titleWidget: widget.titleWidget,
-                enableTrailing: (isInputChanged ||
-                        (isInputDefault && widget.enableInputDefault)) &&
-                    (widget.enableInputEmpty ||
-                        (!widget.enableInputEmpty && !isInputEmpty)),
-                onTrailingTap: (context) {
-                  onSelfInputTextResult(context);
-                },
-                trailingUseThemeColor: widget.trailingUseThemeColor,
-              ),
-            if (widget.wrapInputAction == null)
-              input.paddingInsets(
-                  widget.inputMargin ?? widget.dialogContentPadding),
-            if (widget.wrapInputAction != null)
-              ...widget.wrapInputAction!(
-                  context,
-                  input.paddingInsets(
-                      widget.inputMargin ?? widget.dialogContentPadding)),
-          ],
-          clipTopRadius: widget.dialogClipTopRadius ?? globalTheme.dialogRadius,
-        )
-        .scaffold();
+    return widget.buildBottomChildrenDialog(
+      context,
+      [
+        if (widget.showTitle)
+          CoreDialogTitle(
+            title: widget.title,
+            titleWidget: widget.titleWidget,
+            enableTrailing:
+                (isInputChanged ||
+                    (isInputDefault && widget.enableInputDefault)) &&
+                (widget.enableInputEmpty ||
+                    (!widget.enableInputEmpty && !isInputEmpty)),
+            onTrailingTap: (context) {
+              onSelfInputTextResult(context);
+            },
+            trailingUseThemeColor: widget.trailingUseThemeColor,
+          ),
+        if (widget.wrapInputAction == null)
+          input.paddingInsets(
+            widget.inputMargin ?? widget.dialogContentPadding,
+          ),
+        if (widget.wrapInputAction != null)
+          ...widget.wrapInputAction!(
+            context,
+            input.paddingInsets(
+              widget.inputMargin ?? widget.dialogContentPadding,
+            ),
+          ),
+      ],
+      clipTopRadius: widget.dialogClipTopRadius ?? globalTheme.dialogRadius,
+    ).scaffold();
   }
 }

@@ -211,7 +211,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
                         Icons.close,
                         color: globalTheme.icoNormalColor,
                         size: 20,
-                      ).paddingOnly(all: kL).inkWellCircle(() {
+                      ).paddingOnly(all: kH).inkWellCircle(() {
                         context.popDialog();
                       }))
                   .colorFiltered(

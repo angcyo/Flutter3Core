@@ -20,6 +20,7 @@ import 'package:flutter3_widgets/flutter3_widgets.dart';
 
 part 'android_normal_dialog.dart';
 part 'dialog_mixin.dart';
+part 'desktop_dialog_mix.dart';
 part 'dialog_page_route.dart';
 part 'ios_normal_dialog.dart';
 part 'message_dialog.dart';

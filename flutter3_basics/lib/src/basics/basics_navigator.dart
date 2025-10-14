@@ -573,7 +573,8 @@ extension NavigatorEx on BuildContext {
     }
   }
 
-  /// 命名冲突
+  /// 别名, 和go路由命名冲突
+  @alias
   void popRoute<T extends Object?>([
     T? result,
     bool rootNavigator = false,
@@ -588,6 +589,7 @@ extension NavigatorEx on BuildContext {
   ]) => pop(result, rootNavigator, checkDismissal);
 
   /// 弹出一个菜单路由
+  @alias
   void popMenu<T extends Object?>([
     T? result,
     bool rootNavigator = false,

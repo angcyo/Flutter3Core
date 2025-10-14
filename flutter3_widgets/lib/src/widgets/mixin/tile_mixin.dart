@@ -73,6 +73,10 @@ const kMenuMinWidth = 160.0;
 /// 系统[Dialog]最小宽度280.0
 const kDialogMinWidth = 260.0;
 
+/// 桌面[Dialog]最小宽度
+@desktopLayout
+const kDesktopDialogMinWidth = kDialogMinWidth * 2;
+
 /// label默认的约束
 const kLabelConstraints = BoxConstraints(
   minWidth: kLabelMinWidth,
