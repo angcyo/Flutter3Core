@@ -310,7 +310,7 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
           enable: isEnableTap,
         )
         .material()
-        .paddingOnly(all: kL, insets: widget.tilePadding)
+        .paddingOnly(horizontal: kM, vertical: kM, insets: widget.tilePadding)
         .localLocation(
           key: widget.key,
           locationNotifier: locationNotifierMixin,

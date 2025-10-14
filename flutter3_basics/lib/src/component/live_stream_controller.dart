@@ -440,14 +440,18 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   /// [RebuildWidget]
   ///
   /// [RebuildEx.buildFn]
-  Widget buildFn(Widget? Function() builder, {bool allowBackward = true}) =>
-      StreamBuilder(
-        stream: stream,
-        initialData: allowBackward ? latestValue : null,
-        builder: (_, __) {
-          return builder() ?? empty;
-        },
-      );
+  Widget buildFn(
+    Widget? Function() builder, {
+    bool allowBackward = true,
+    String? debugLabel,
+  }) => StreamBuilder(
+    stream: stream,
+    initialData: allowBackward ? latestValue : null,
+    builder: (_, __) {
+      debugger(when: debugLabel != null);
+      return builder() ?? empty;
+    },
+  );
 
   /// [RebuildWidget]
   ///

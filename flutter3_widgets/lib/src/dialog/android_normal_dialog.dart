@@ -91,19 +91,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
     // 标题 / 内容
     Widget? title = _buildTitle(context);
-    Widget? message =
-        _buildMessage(context, textAlign: messageTextAlign ?? TextAlign.left);
+    Widget? message = _buildMessage(
+      context,
+      textAlign: messageTextAlign ?? TextAlign.left,
+    );
 
     // 取消 / 中立 / 确定
     Widget? cancel = _buildCancelButton(context);
     Widget? neutral = _buildNeutralButton(context);
     Widget? confirm = _buildConfirmButton(context);
 
-    final controlRow = [
-      cancel,
-      neutral,
-      confirm,
-    ]
+    final controlRow = [cancel, neutral, confirm]
         .row(
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.max,
@@ -134,6 +132,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 构建内容
   Widget? _buildMessage(
     BuildContext context, {
+    double? padding,
     TextStyle? textStyle,
     TextAlign textAlign = TextAlign.left,
   }) {
@@ -141,13 +140,14 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     return messageWidget ??
         message
             ?.text(
-              style: textStyle ??
+              style:
+                  textStyle ??
                   globalTheme.textGeneralStyle.copyWith(
                     fontSize: globalTheme.textInfoStyle.fontSize,
                   ),
               textAlign: textAlign,
             )
-            .paddingAll(gap);
+            .paddingAll(padding ?? gap);
   }
 
   /// 构建标题
@@ -160,21 +160,23 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     return titleWidget ??
         title
             ?.text(
-              style: textStyle ??
+              style:
+                  textStyle ??
                   globalTheme.textTitleStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
               textAlign: textAlign,
             )
-            .padding(gap, gap, gap,
-                (message == null && messageWidget == null) ? gap : 0);
+            .padding(
+              gap,
+              gap,
+              gap,
+              (message == null && messageWidget == null) ? gap : 0,
+            );
   }
 
   /// 构建取消按钮
-  Widget? _buildCancelButton(
-    BuildContext context, {
-    double? radius,
-  }) {
+  Widget? _buildCancelButton(BuildContext context, {double? radius}) {
     String? cancelText = cancel;
     if (showCancel == false) {
       return null;
@@ -199,14 +201,12 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
                   }
                 }
               }
-            });
+            },
+          );
   }
 
   /// 构建中立按钮
-  Widget? _buildNeutralButton(
-    BuildContext context, {
-    double? radius,
-  }) {
+  Widget? _buildNeutralButton(BuildContext context, {double? radius}) {
     String? neutralText = neutral;
     if (showNeutral == false) {
       return null;
@@ -222,14 +222,12 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             radius: radius ?? this.radius,
             onTap: () {
               Navigator.pop(context, null);
-            });
+            },
+          );
   }
 
   /// 构建确定按钮
-  Widget? _buildConfirmButton(
-    BuildContext context, {
-    double? radius,
-  }) {
+  Widget? _buildConfirmButton(BuildContext context, {double? radius}) {
     String? confirmText = confirm;
     if (showConfirm == false) {
       return null;
@@ -243,17 +241,23 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             text: confirmText,
             useIcon: useIcon,
             radius: radius ?? this.radius,
-            onTap: () async {
-              if (onConfirmTap == null) {
-                Navigator.pop(context, true);
-              } else {
-                final intercept = (await onConfirmTap!(true)) == true;
-                if (!intercept) {
-                  if (context.mounted) {
-                    Navigator.pop(context, true);
-                  }
-                }
-              }
-            });
+            onTap: () {
+              _doConfirmTap(context);
+            },
+          );
+  }
+
+  /// 确定按钮点击
+  void _doConfirmTap(BuildContext context) async {
+    if (onConfirmTap == null) {
+      Navigator.pop(context, true);
+    } else {
+      final intercept = (await onConfirmTap!(true)) == true;
+      if (!intercept) {
+        if (context.mounted) {
+          Navigator.pop(context, true);
+        }
+      }
+    }
   }
 }

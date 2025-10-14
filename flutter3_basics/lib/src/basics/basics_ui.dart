@@ -2395,10 +2395,10 @@ extension WidgetEx on Widget {
     Color? splashColor,
     Color? hoverColor,
     Color? focusColor,
-    double? iconSize,
+    double? iconSize /*系统默认 24*/,
     double? splashRadius,
     AlignmentGeometry? alignment,
-    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? padding /*系统默认 const EdgeInsets.all(8.0)*/,
     VisualDensity? visualDensity,
     BoxConstraints? constraints,
     ButtonStyle? style,
@@ -2420,8 +2420,19 @@ extension WidgetEx on Widget {
       splashRadius: splashRadius,
       alignment: alignment,
       padding: padding,
-      visualDensity: visualDensity,
-      constraints: constraints,
+      visualDensity:
+          visualDensity ??
+          (iconSize == null
+              ? null
+              : VisualDensity(
+                  vertical: VisualDensity.minimumDensity,
+                  horizontal: VisualDensity.minimumDensity,
+                )),
+      constraints:
+          constraints ??
+          (iconSize == null
+              ? null
+              : BoxConstraints.tightFor(width: iconSize, height: iconSize)),
       style: style,
       isSelected: isSelected,
       selectedIcon: selectedIcon,

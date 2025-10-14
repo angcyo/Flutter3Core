@@ -229,6 +229,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (selectedCanvasState == canvasStateData) {
+      //no op
       return false;
     }
     for (final stateData in canvasStateList) {

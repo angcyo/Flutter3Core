@@ -169,6 +169,7 @@ extension PopupEx on BuildContext {
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) async {
+    //debugger();
     final that = this;
     final navigator = Navigator.of(this, rootNavigator: rootNavigator);
     final ancestor = navigator.context.findRenderObject();
