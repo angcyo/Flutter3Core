@@ -15,14 +15,16 @@ import 'package:yaml/yaml.dart';
 /// 当前脚本运行的路径
 String get currentPath => Directory.current.path;
 
+final String _reset = '\x1B[0m';
+
 /// 输出带颜色的日志
 void colorLog(dynamic msg, [int col = 93]) {
-  print('\x1B[38;5;${col}m$msg');
+  print('\x1B[38;5;${col}m$msg$_reset');
 }
 
 /// 输出带颜色的错误日志
 void colorErrorLog(dynamic msg, [int col = 9]) {
-  print('\x1B[38;5;${col}m$msg');
+  print('\x1B[38;5;${col}m$msg$_reset');
 }
 
 /// 确保文件夹存在

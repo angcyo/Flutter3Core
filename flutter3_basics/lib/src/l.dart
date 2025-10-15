@@ -37,17 +37,19 @@ part of '../flutter3_basics.dart';
 ///
 typedef LPrint = void Function(String log);
 
+final String _reset = '\x1B[0m';
+
 /// [consoleFgColorLog]
 void consoleLog(dynamic msg, [int col = 93]) => consoleFgColorLog(msg, col);
 
 /// 控制台前景颜色日志输出
 void consoleFgColorLog(dynamic msg, [int col = 93]) {
-  debugPrint('\x1B[38;5;${col}m$msg');
+  debugPrint('\x1B[38;5;${col}m$msg$_reset');
 }
 
 /// 控制台背景颜色日志输出
 void consoleBgColorLog(dynamic msg, [int col = 93]) {
-  debugPrint('\x1B[48;5;${col}m$msg');
+  debugPrint('\x1B[48;5;${col}m$msg$_reset');
 }
 
 class L {

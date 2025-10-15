@@ -55,9 +55,9 @@ void main() async {
 }
 
 void colorLog(dynamic msg, [int col = 93]) {
-  print('\x1B[38;5;${col}m$msg');
+  print('\x1B[38;5;${col}m$msg\x1B[0m');
 }
 
 void colorErrorLog(dynamic msg, [int col = 9]) {
-  print('\x1B[38;5;${col}m$msg');
+  print('\x1B[38;5;${col}m$msg\x1B[0m');
 }
