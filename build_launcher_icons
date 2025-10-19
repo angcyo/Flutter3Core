@@ -6,3 +6,4 @@ set +x
 pwd
 echo "生成应用程序图标..."
 dart run flutter_launcher_icons -f Flutter3Core/flutter_launcher_icons.yaml
+flutter clean
