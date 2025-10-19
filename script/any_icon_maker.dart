@@ -6,7 +6,7 @@ import 'package:image/image.dart' as imglib;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/12/25
 ///
-///读取指定图片, 生成不同规格/不同尺寸的图片
+/// 读取指定图片, 生成不同规格/不同尺寸的图片. 识别后缀自动编码.
 /// - 支持输入任意格式
 /// - 支持输出ico格式
 /// - 支持输出png格式
