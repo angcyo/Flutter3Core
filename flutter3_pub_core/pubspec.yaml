@@ -17,6 +17,8 @@ dependencies:
     sdk: flutter
   flutter3_basics:
     path: ../flutter3_basics
+  flutter3_widgets:
+    path: ../flutter3_widgets
 
   # https://pub.dev/packages/easy_refresh
   # https://pub.dev/packages/path_drawing

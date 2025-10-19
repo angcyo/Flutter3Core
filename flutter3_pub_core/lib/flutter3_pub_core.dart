@@ -6,6 +6,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:el_tooltip/el_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:watch_it/watch_it.dart';

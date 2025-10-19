@@ -48,6 +48,12 @@ extension GoRouterEx on BuildContext {
     return null;
   }
 
+  /// 获取当前路由的[Uri]
+  Uri get goRouterUri => goRouterState.uri;
+
+  /// 获取当前路由路径
+  String get goRouterPath => goRouterUri.path;
+
   /// 当前路由下, 是否可以返回[GoRouter.pop]
   /// [GoRouter.of(context).pop]
   bool get goRouterCanPop {
@@ -207,6 +213,75 @@ extension GoRouterEx on BuildContext {
   );
 }
 
+extension GoRouterWidgetEx on Widget {
+  /// 创建 [GoRoute], 支持路由动画[TranslationTypeMixin]
+  GoRoute toGoRoute(String path, {String? name}) {
+    final child = this;
+    return GoRoute(
+      path: path,
+      name: name,
+      builder: (ctx, state) => child,
+      pageBuilder: (ctx, state) {
+        final route = child.toRoute();
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: child,
+          transitionsBuilder:
+              (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+                Widget child,
+              ) {
+                //l.d("[${child.hash()}]animation:$animation");
+                //l.v("[${child.hash()}]secondaryAnimation:$secondaryAnimation");
+                return route.buildTransitions(
+                  context,
+                  animation,
+                  secondaryAnimation,
+                  child,
+                );
+                /*return ZoomPageTransitionsBuilder().buildTransitions(
+                          context.pageRoute!,
+                          context,
+                          animation,
+                          secondaryAnimation,
+                          child,
+                        );*/
+              },
+        );
+      },
+    );
+  }
+}
+
+/// 创建 [GoRouter]
+/// - [GoRouter] <- [RouterConfig]
+///   - [GoRoute] <- [RouteBase]
+///   - [ShellRoute] <- [ShellRouteBase] <- [RouteBase]
+GoRouter goRouter(
+  List<RouteBase> routes, {
+  List<NavigatorObserver>? observers,
+  GlobalKey<NavigatorState>? navigatorKey,
+  GoRouterRedirect? redirect,
+  //--
+  String? initialLocation,
+}) {
+  return GoRouter(
+    initialLocation: initialLocation,
+    routes: routes,
+    observers: [
+      ...?observers,
+      lifecycleNavigatorObserver,
+      navigatorObserverDispatcher,
+      NavigatorObserverLog(),
+    ],
+    debugLogDiagnostics: isDebug,
+    navigatorKey: navigatorKey ?? GlobalConfig.def.rootNavigatorKey,
+    redirect: redirect,
+  );
+}
+
 /// 使用 [GoRouter] 创建 [MaterialApp]
 /// https://pub.dev/packages/go_router
 /// https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html
@@ -214,11 +289,70 @@ extension GoRouterEx on BuildContext {
 /// - [routerConfig] 路由配置
 ///   `class GoRouter implements RouterConfig<RouteMatchList>`
 ///
+/// ## Child routes  子路由
+///   https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html
+/// - [GoRoute]
+///
+/// ```
+/// GoRoute(
+///   path: '/',
+///   builder: (context, state) {
+///     return HomeScreen();
+///   },
+///   routes: [
+///     GoRoute(
+///       path: 'details',
+///       builder: (context, state) {
+///         return DetailsScreen();
+///       },
+///     ),
+///   ],
+/// )
+/// ```
+///
+/// ## Nested navigation  嵌套导航
+///   https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html
+/// - [ShellRoute]
+///   https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/shell_route.dart
+///
+/// ```
+/// ShellRoute(
+///   builder:
+///       (BuildContext context, GoRouterState state, Widget child) {
+///     return Scaffold(
+///       body: child,
+///       /* ... */
+///       bottomNavigationBar: BottomNavigationBar(
+///       /* ... */
+///       ),
+///     );
+///   },
+///   routes: <RouteBase>[
+///     GoRoute(
+///       path: 'details',
+///       builder: (BuildContext context, GoRouterState state) {
+///         return const DetailsScreen();
+///       },
+///     ),
+///   ],
+/// ),
+/// ```
+///
+/// ## 路由动画
+/// https://pub.dev/documentation/go_router/latest/topics/Transition%20animations-topic.html
+///
 /// - [MaterialApp]
 /// - [MaterialApp.router]
 /// - [CupertinoApp.router]
-Widget goRouterApp(
-  GoRouter? routerConfig, {
+Widget goRouterApp({
+  //--
+  @defInjectMark GoRouter? routerConfig,
+  //--
+  List<RouteBase>? routes,
+  List<NavigatorObserver>? observers,
+  GlobalKey<NavigatorState>? navigatorKey,
+  GoRouterRedirect? redirect,
+  //--
   String? title,
   GenerateAppTitle? onGenerateTitle,
   //--
@@ -227,7 +361,7 @@ Widget goRouterApp(
 }) {
   //路由
   return MaterialApp.router(
-    routerConfig: routerConfig,
+    routerConfig: routerConfig ?? goRouter(routes!),
     //--
     title: title,
     onGenerateTitle: onGenerateTitle,
@@ -251,10 +385,5 @@ Widget goRouterApp(
       const Locale('en', 'US'),
     ],
     //--
-    /*navigatorObservers: [
-      lifecycleNavigatorObserver,
-      navigatorObserverDispatcher,
-      NavigatorObserverLog(),
-    ],*/
   );
 }

@@ -203,6 +203,24 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   //endregion context
 
+  //region Router
+
+  /// https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html
+  GlobalKey<NavigatorState>? _rootNavigatorKey;
+
+  /// https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html
+  GlobalKey<NavigatorState>? _shellNavigatorKey;
+
+  GlobalKey<NavigatorState> get rootNavigatorKey {
+    return _rootNavigatorKey ??= GlobalKey<NavigatorState>();
+  }
+
+  GlobalKey<NavigatorState>? get shellNavigatorKey {
+    return _shellNavigatorKey ??= GlobalKey<NavigatorState>();
+  }
+
+  //endregion Router
+
   //region ThemeData
 
   /// 主题模式
