@@ -211,11 +211,14 @@ extension GoRouterEx on BuildContext {
 /// https://pub.dev/packages/go_router
 /// https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html
 ///
+/// - [routerConfig] 路由配置
+///   `class GoRouter implements RouterConfig<RouteMatchList>`
+///
 /// - [MaterialApp]
 /// - [MaterialApp.router]
 /// - [CupertinoApp.router]
 Widget goRouterApp(
-  RouterConfig<Object>? routerConfig, {
+  GoRouter? routerConfig, {
   String? title,
   GenerateAppTitle? onGenerateTitle,
   //--

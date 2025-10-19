@@ -37,7 +37,7 @@ class BuildConfig {
       //debugger();
     } catch (e) {
       assert(() {
-        l.e("$e, 是否在`yaml`中包含了[$prefix$name]");
+        l.e("${e.toString().trimLines(" ")}, 是否在`yaml`中配置了资产[$prefix$name]");
         return true;
       }());
     }

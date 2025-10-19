@@ -1262,6 +1262,11 @@ extension StringEx on String {
     return trimStart(chars).trimEnd(chars);
   }
 
+  /// 移除所有换行符
+  String trimLines([String replace = ""]) {
+    return replaceAll(r"\n", replace);
+  }
+
   /// 替换头部指定字符
   String trimStart(String chars) {
     if (startsWith(chars)) {
