@@ -258,6 +258,12 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   }
 
   /// 初始化主题
+  /// - [locale] 指定当前语言, 不指定则使用系统
+  /// - [themeMode] 指定当前主题模式, 不指定则使用系统
+  /// - [onGetGlobalTheme] 获取自定义的主题样式[GlobalTheme]
+  ///   - [GlobalTheme]
+  ///   - [GlobalThemeDark]
+  /// - [onGetThemeData] 根据当前主题模式和主题色, 获取[Flutter]需要的主题样式[ThemeData]
   @api
   ThemeData initGlobalTheme(
     BuildContext? context,
@@ -267,7 +273,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       ThemeMode themeMode,
     )
     onGetThemeData, {
-    GlobalTheme Function(bool isLight)? onGetGlobalTheme,
+    @defInjectMark GlobalTheme Function(bool isLight)? onGetGlobalTheme,
     Locale? locale,
     ThemeMode? themeMode,
   }) {

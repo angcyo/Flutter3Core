@@ -74,11 +74,12 @@ extension GoRouterEx on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     String? fragment,
-  }) =>
-      GoRouter.of(this).namedLocation(name,
-          pathParameters: pathParameters,
-          queryParameters: queryParameters,
-          fragment: fragment);
+  }) => GoRouter.of(this).namedLocation(
+    name,
+    pathParameters: pathParameters,
+    queryParameters: queryParameters,
+    fragment: fragment,
+  );
 
   /// Navigate to a location.
   void go(String location, {Object? extra}) =>
@@ -91,12 +92,13 @@ extension GoRouterEx on BuildContext {
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
     String? fragment,
-  }) =>
-      GoRouter.of(this).goNamed(name,
-          pathParameters: pathParameters,
-          queryParameters: queryParameters,
-          extra: extra,
-          fragment: fragment);
+  }) => GoRouter.of(this).goNamed(
+    name,
+    pathParameters: pathParameters,
+    queryParameters: queryParameters,
+    extra: extra,
+    fragment: fragment,
+  );
 
   /// Push a location onto the page stack.
   ///
@@ -117,13 +119,12 @@ extension GoRouterEx on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
-  }) =>
-      GoRouter.of(this).pushNamed<T>(
-        name,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
-        extra: extra,
-      );
+  }) => GoRouter.of(this).pushNamed<T>(
+    name,
+    pathParameters: pathParameters,
+    queryParameters: queryParameters,
+    extra: extra,
+  );
 
   /// Returns `true` if there is more than 1 page on the stack.
   @Alias("canPop")
@@ -160,13 +161,12 @@ extension GoRouterEx on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
-  }) =>
-      GoRouter.of(this).pushReplacementNamed(
-        name,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
-        extra: extra,
-      );
+  }) => GoRouter.of(this).pushReplacementNamed(
+    name,
+    pathParameters: pathParameters,
+    queryParameters: queryParameters,
+    extra: extra,
+  );
 
   /// Replaces the top-most page of the page stack with the given one but treats
   /// it as the same page.
@@ -199,9 +199,59 @@ extension GoRouterEx on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
-  }) =>
-      GoRouter.of(this).replaceNamed<Object?>(name,
-          pathParameters: pathParameters,
-          queryParameters: queryParameters,
-          extra: extra);
+  }) => GoRouter.of(this).replaceNamed<Object?>(
+    name,
+    pathParameters: pathParameters,
+    queryParameters: queryParameters,
+    extra: extra,
+  );
+}
+
+/// 使用 [GoRouter] 创建 [MaterialApp]
+/// https://pub.dev/packages/go_router
+/// https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html
+///
+/// - [MaterialApp]
+/// - [MaterialApp.router]
+/// - [CupertinoApp.router]
+Widget goRouterApp(
+  RouterConfig<Object>? routerConfig, {
+  String? title,
+  GenerateAppTitle? onGenerateTitle,
+  //--
+  Iterable<LocalizationsDelegate<dynamic>>? localizationsDelegates,
+  Iterable<Locale>? supportedLocales,
+}) {
+  //路由
+  return MaterialApp.router(
+    routerConfig: routerConfig,
+    //--
+    title: title,
+    onGenerateTitle: onGenerateTitle,
+    theme: GlobalConfig.def.themeData,
+    locale: GlobalConfig.def.locale,
+    themeMode: GlobalConfig.def.themeMode,
+    //--
+    localizationsDelegates: [
+      ...?localizationsDelegates,
+      LibRes.delegate, // 必须
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    //http://www.lingoes.net/en/translator/langcode.htm
+    supportedLocales: [
+      /*...LibRes.delegate.supportedLocales,*/
+      ...?supportedLocales,
+      //可以不需要
+      const Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN'),
+      const Locale('en', 'US'),
+    ],
+    //--
+    /*navigatorObservers: [
+      lifecycleNavigatorObserver,
+      navigatorObserverDispatcher,
+      NavigatorObserverLog(),
+    ],*/
+  );
 }
