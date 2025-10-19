@@ -1,4 +1,5 @@
 # https://pub.dev/packages/flutter_launcher_icons
+# 构建应用程序的图标
 # dart run flutter_launcher_icons:generate
 # dart run flutter_launcher_icons -f Flutter3Core/flutter_launcher_icons.yaml
 # 生成之后, 清除缓存, 重新编译↓
