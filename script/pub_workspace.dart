@@ -7,6 +7,10 @@ import 'package:path/path.dart' as p;
 /// @date 2025/02/10
 ///
 /// ```
+/// # 运行本脚本
+/// dart run Flutter3Core/script/pub_workspace.dart
+///
+/// # 列出所有工作区包
 /// dart pub workspace list
 /// ```
 ///
@@ -46,7 +50,7 @@ void main() async {
     //colorLog('${key}->${value.length}');
     final configFile = File("$key/$txtName");
     configFile.writeAsStringSync(
-        "# ${DateTime.now()}\n# Create by angcyo (${Platform.script.path.replaceFirst("$rootPath/", "")})\n${value.map((e) => e.path.replaceFirst("$rootPath/", "- ")).join("\n")}");
+        "# ${DateTime.now()}\n# Create by angcyo (dart run ${Platform.script.path.replaceFirst("$rootPath/", "")})\n${value.map((e) => e.path.replaceFirst("$rootPath/", "- ")).join("\n")}");
   });
   colorLog("\n找到工作区[${flutterProjectMap.keys.length}]个,输出到[$txtName]↓:\n${flutterProjectMap.keys.join("\n")}\n");
   //colorLog(flutterProjectMap.length);
