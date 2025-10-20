@@ -1,4 +1,4 @@
-# 2025-10-20 14:32:52.152860
+# 2025-10-20 14:45:19.947247
 # Create by angcyo (dart run Flutter3Core/script/pub_workspace.dart)
 - Flutter3Core/flutter3_oss
 - Flutter3Core/flutter3_ffi
@@ -10,6 +10,7 @@
 - Flutter3Core/flutter3_scanner
 - Flutter3Core/flutter3_excel
 - Flutter3Core/flutter3_app
+- Flutter3Core/flutter3_opencv
 - Flutter3Core/flutter3_core
 - Flutter3Core/flutter3_canvas
 - Flutter3Core/flutter3_pub_core

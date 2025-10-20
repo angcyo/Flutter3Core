@@ -58,8 +58,9 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
   late int currentIndex = widget.initialIndex;
 
   /// 页面控制, 左右翻页
-  late final PageController pageController =
-      PageController(initialPage: currentIndex);
+  late final PageController pageController = PageController(
+    initialPage: currentIndex,
+  );
 
   /// photo 状态控制, 比如缩放/平移等操作
   late PhotoViewController photoStateController;
@@ -123,9 +124,9 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
     if (event != null && event.expectedTotalBytes != null) {
       progressValue = event.cumulativeBytesLoaded / event.expectedTotalBytes!;
     }
-    return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, this, progressValue, null)
-        .center();
+    return GlobalConfig.of(
+      context,
+    ).loadingIndicatorBuilder(context, this, progressValue, null).center();
   }
 
   /// 翻页通知
@@ -149,9 +150,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
   Widget build(BuildContext context) {
     Widget result;
     if (widget.photoItems.isEmpty) {
-      result = Container(
-        decoration: widget.backgroundDecoration,
-      );
+      result = Container(decoration: widget.backgroundDecoration);
     } else if (widget.photoItems.length <= 1) {
       var first = _wrapPhotoViewPageOptions(0);
       result = PhotoView(
@@ -187,9 +186,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
       result = [
         result,
         "${currentIndex + 1}/${widget.photoItems.length}"
-            .text(
-              style: const TextStyle(color: Colors.white),
-            )
+            .text(style: const TextStyle(color: Colors.white))
             .align(Alignment.bottomCenter)
             .padding(kXh),
       ].stack()!;
@@ -205,10 +202,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
         child: result,
       );
     }
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: result,
-    );
+    return Scaffold(backgroundColor: Colors.black, body: result);
   }
 }
 
@@ -221,6 +215,40 @@ extension PhotoViewOptionsEx on ImageProvider {
           tag: PhotoPreviewPage.getHeroTagFrom(this),
         ),
       );
+
+  /// [PhotoView]
+  Widget toPhotoView({
+    PhotoViewController? photoStateController,
+    PhotoViewScaleStateController? scaleStateController,
+    //--
+    PhotoViewHeroAttributes? heroAttributes,
+    LoadingBuilder? loadingBuilder,
+    //--
+    BoxDecoration? backgroundDecoration,
+    bool enableRotation = false,
+  }) {
+    return PhotoView(
+      imageProvider: this,
+      loadingBuilder:
+          loadingBuilder ??
+          (context, event) {
+            double? progressValue;
+            if (event != null && event.expectedTotalBytes != null) {
+              progressValue =
+                  event.cumulativeBytesLoaded / event.expectedTotalBytes!;
+            }
+            return GlobalConfig.of(context)
+                .loadingIndicatorBuilder(context, this, progressValue, null)
+                .center();
+          },
+      controller: photoStateController,
+      scaleStateController: scaleStateController,
+      backgroundDecoration:
+          backgroundDecoration ?? fillDecoration(color: Colors.transparent),
+      enableRotation: enableRotation,
+      heroAttributes: heroAttributes,
+    );
+  }
 }
 
 extension PhotoObjectEx on Object {
@@ -243,21 +271,25 @@ extension PhotoViewEx on BuildContext {
     List<ImageProvider>? imageProviders,
     List<PhotoViewGalleryPageOptions>? photoItems,
   }) {
-    assert(!isNullOrEmpty(imageProvider) || !isNullOrEmpty(imageProviders),
-        "未指定数据, 操作被取消");
+    assert(
+      !isNullOrEmpty(imageProvider) || !isNullOrEmpty(imageProviders),
+      "未指定数据, 操作被取消",
+    );
     if (isNullOrEmpty(imageProvider) && isNullOrEmpty(imageProviders)) {
       return;
     }
-    push(MaterialPageRoute(
-      builder: (context) => PhotoPreviewPage(
-        initialIndex: initialIndex,
-        photoItems: [
-          if (imageProvider != null) imageProvider.toPhotoPageOptions(),
-          if (imageProviders != null)
-            ...imageProviders.map((element) => element.toPhotoPageOptions()),
-          ...?photoItems,
-        ],
+    push(
+      MaterialPageRoute(
+        builder: (context) => PhotoPreviewPage(
+          initialIndex: initialIndex,
+          photoItems: [
+            if (imageProvider != null) imageProvider.toPhotoPageOptions(),
+            if (imageProviders != null)
+              ...imageProviders.map((element) => element.toPhotoPageOptions()),
+            ...?photoItems,
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

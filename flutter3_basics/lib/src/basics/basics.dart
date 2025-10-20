@@ -686,7 +686,7 @@ const kDefAssetsSvgPrefix = 'assets/svg/';
 /// [loadAssetString]
 Future<ByteData> loadAssetByteData(
   String key, {
-  String prefix = kDefAssetsPrefix,
+  String? prefix = kDefAssetsPrefix,
   String? package,
 }) async {
   return (await rootBundle.load(
@@ -823,7 +823,7 @@ Future<UiImage>? loadAssetImageByProvider(
 /// [decodeImageFromList]
 Future<UiImage> loadAssetImage(
   String key, {
-  String prefix = kDefAssetsPngPrefix,
+  String? prefix = kDefAssetsPngPrefix,
   String? package,
 }) async {
   // 读取图片数据

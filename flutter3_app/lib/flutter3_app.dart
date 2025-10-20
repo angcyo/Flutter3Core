@@ -327,6 +327,27 @@ void checkOrShowNavigatorRouteOverlay([BuildContext? context]) {
 }
 
 /// [loadAssetSvgWidget]
+Widget loadRootImageWidget(
+  String key, {
+  Color? color,
+  BlendMode? colorBlendMode,
+  BoxFit fit = BoxFit.contain,
+  double? size,
+  double? width,
+  double? height,
+}) => loadAssetImageWidget(
+  key,
+  package: null,
+  prefix: null,
+  color: color,
+  colorBlendMode: colorBlendMode,
+  size: size,
+  width: width,
+  height: height,
+  fit: fit,
+)!;
+
+/// [loadAssetSvgWidget]
 Widget loadRootSvgWidget(
   String key, {
   Color? tintColor,
@@ -338,6 +359,7 @@ Widget loadRootSvgWidget(
 }) => loadAssetSvgWidget(
   key,
   package: null,
+  prefix: null,
   tintColor: tintColor,
   colorFilter: colorFilter,
   size: size,
