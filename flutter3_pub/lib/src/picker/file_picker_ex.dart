@@ -122,6 +122,8 @@ Future<String?> pickDirectoryPath({
 /// 调用平台的对话框保存文件, 返回平台对应的保存文件路径
 /// 此方法仅适用于桌面平台（Linux、macOS 和 Windows）。
 ///
+/// 桌面端显示本地对话框保存文件.
+///
 /// @return 待保存文件的路径(文件可能不存在)
 ///
 /// https://pub.dev/packages/file_picker

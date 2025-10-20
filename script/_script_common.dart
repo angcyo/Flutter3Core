@@ -15,6 +15,9 @@ import 'package:yaml/yaml.dart';
 /// 当前脚本运行的路径
 String get currentPath => Directory.current.path;
 
+/// 当前脚本文件的路径
+String get currentFilePath => Platform.script.path;
+
 final String _reset = '\x1B[0m';
 
 /// 输出带颜色的日志
@@ -27,6 +30,18 @@ void colorErrorLog(dynamic msg, [int col = 9]) {
   print('\x1B[38;5;${col}m$msg$_reset');
 }
 
+/// 控制台前景颜色日志输出
+void fgPrint(dynamic msg, [int col = 93]) {
+  print('\x1B[38;5;${col}m$msg\x1B[0m');
+}
+
+/// 控制台背景颜色日志输出
+void bgPrint(dynamic msg, [int col = 93]) {
+  print('\x1B[48;5;${col}m$msg\x1B[0m');
+}
+
+//--
+
 /// 确保文件夹存在
 void ensureFolder(String? folderPath) {
   if (folderPath == null || folderPath.isEmpty) {
@@ -38,11 +53,7 @@ void ensureFolder(String? folderPath) {
 //---
 
 /// 执行命令
-Future runCommand(
-  String executable, {
-  String? dir,
-  List<String>? args,
-}) async {
+Future runCommand(String executable, {String? dir, List<String>? args}) async {
   final result = Process.runSync(
     executable,
     [...?args],
@@ -62,7 +73,8 @@ dynamic getScriptYamlValue(String key) {
   if (_localYaml == null) {
     final localYamlFile = File("$currentPath/script.local.yaml");
     _localYaml = loadYaml(
-        localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
+      localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "",
+    );
   }
 
   if (_yaml == null) {
@@ -120,25 +132,27 @@ Future sendFeishuWebhookPost(
               ],
               if (linkUrl != null) ...[
                 {"tag": "text", "text": "\n"},
-                {"tag": "a", "text": "点击查看/下载", "href": linkUrl}
+                {"tag": "a", "text": "点击查看/下载", "href": linkUrl},
               ],
               if (changeLogUrl != null) ...[
                 {"tag": "text", "text": "\n"},
-                {"tag": "a", "text": "查看更新记录", "href": changeLogUrl}
+                {"tag": "a", "text": "查看更新记录", "href": changeLogUrl},
               ],
               if (atAll) ...[
                 {"tag": "text", "text": "\n"},
-                {"tag": "at", "user_id": "all"}
+                {"tag": "at", "user_id": "all"},
               ],
-            ]
-          ]
-        }
-      }
+            ],
+          ],
+        },
+      },
     },
   };
-  final response = await http.post(Uri.parse(webhook),
-      body: jsonEncode(postBody),
-      headers: {"Content-Type": "application/json"});
+  final response = await http.post(
+    Uri.parse(webhook),
+    body: jsonEncode(postBody),
+    headers: {"Content-Type": "application/json"},
+  );
   print(response.body);
 }
 
@@ -173,10 +187,10 @@ Future sendFeishuWebhookInteractive(
             "normal_v2": {
               "default": "normal",
               "pc": "normal",
-              "mobile": "heading"
-            }
-          }
-        }
+              "mobile": "heading",
+            },
+          },
+        },
       },
       "header": title == null
           ? null
@@ -185,7 +199,7 @@ Future sendFeishuWebhookInteractive(
               "subtitle": {"tag": "plain_text", "content": subTitle},
               "template": "blue",
               // blue wathet turquoise green yellow orange red carmine violet purple indigo grey default
-              "padding": "12px 12px 12px 12px"
+              "padding": "12px 12px 12px 12px",
             },
       "body": {
         "direction": "vertical",
@@ -197,7 +211,7 @@ Future sendFeishuWebhookInteractive(
               "content": text,
               "text_align": "left",
               "text_size": "normal_v2",
-              "margin": "0px 0px 0px 0px"
+              "margin": "0px 0px 0px 0px",
             },
           if (changeLogUrl != null)
             {
@@ -212,10 +226,10 @@ Future sendFeishuWebhookInteractive(
                   "default_url": changeLogUrl,
                   "pc_url": "",
                   "ios_url": "",
-                  "android_url": ""
-                }
+                  "android_url": "",
+                },
               ],
-              "margin": "0px 0px 0px 0px"
+              "margin": "0px 0px 0px 0px",
             },
           if (linkUrl != null)
             {
@@ -230,22 +244,24 @@ Future sendFeishuWebhookInteractive(
                   "default_url": linkUrl,
                   "pc_url": "",
                   "ios_url": "",
-                  "android_url": ""
-                }
+                  "android_url": "",
+                },
               ],
-              "margin": "0px 0px 0px 0px"
+              "margin": "0px 0px 0px 0px",
             },
           if (atAll)
             {
               "tag": "div",
-              "text": {"content": "<at id=all></at>", "tag": "lark_md"}
-            }
-        ]
-      }
+              "text": {"content": "<at id=all></at>", "tag": "lark_md"},
+            },
+        ],
+      },
     },
   };
-  final response = await http.post(Uri.parse(webhook),
-      body: jsonEncode(postBody),
-      headers: {"Content-Type": "application/json"});
+  final response = await http.post(
+    Uri.parse(webhook),
+    body: jsonEncode(postBody),
+    headers: {"Content-Type": "application/json"},
+  );
   print(response.body);
 }

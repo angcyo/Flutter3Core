@@ -327,6 +327,26 @@ void checkOrShowNavigatorRouteOverlay([BuildContext? context]) {
 }
 
 /// [loadAssetSvgWidget]
+Widget loadRootSvgWidget(
+  String key, {
+  Color? tintColor,
+  UiColorFilter? colorFilter,
+  BoxFit fit = BoxFit.contain,
+  double? size,
+  double? width,
+  double? height,
+}) => loadAssetSvgWidget(
+  key,
+  package: null,
+  tintColor: tintColor,
+  colorFilter: colorFilter,
+  size: size,
+  width: width,
+  height: height,
+  fit: fit,
+);
+
+/// [loadAssetSvgWidget]
 Widget loadAppSvgWidget(
   String key, {
   Color? tintColor,
@@ -337,7 +357,7 @@ Widget loadAppSvgWidget(
   double? height,
 }) => loadAssetSvgWidget(
   key,
-  package: "flutter3_app",
+  package: Assets.package,
   tintColor: tintColor,
   colorFilter: colorFilter,
   size: size,

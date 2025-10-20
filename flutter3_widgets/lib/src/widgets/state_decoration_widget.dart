@@ -106,7 +106,9 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, _RenderStateDecoration renderObject) {
+    BuildContext context,
+    _RenderStateDecoration renderObject,
+  ) {
     renderObject
       ..clearPainters()
       ..decoration = decoration
@@ -231,8 +233,9 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    final ImageConfiguration filledConfiguration =
-        configuration.copyWith(size: size);
+    final ImageConfiguration filledConfiguration = configuration.copyWith(
+      size: size,
+    );
     //背景绘制
     _painter ??= decoration?.createBoxPainter(markNeedsPaint);
     _painter?.paint(context.canvas, offset, filledConfiguration);
@@ -257,29 +260,40 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
     //前景绘制
     if (_isHover) {
       //
-      _hoverForegroundPainter ??=
-          hoverForegroundDecoration?.createBoxPainter(markNeedsPaint);
+      _hoverForegroundPainter ??= hoverForegroundDecoration?.createBoxPainter(
+        markNeedsPaint,
+      );
       _hoverForegroundPainter?.paint(
-          context.canvas, offset, filledConfiguration);
+        context.canvas,
+        offset,
+        filledConfiguration,
+      );
       setCanvasIsComplexHint(context, hoverForegroundDecoration);
     }
     if (_isPointerDown) {
       //
-      _pressedForegroundPainter ??=
-          pressedForegroundDecoration?.createBoxPainter(markNeedsPaint);
+      _pressedForegroundPainter ??= pressedForegroundDecoration
+          ?.createBoxPainter(markNeedsPaint);
       _pressedForegroundPainter?.paint(
-          context.canvas, offset, filledConfiguration);
+        context.canvas,
+        offset,
+        filledConfiguration,
+      );
       setCanvasIsComplexHint(context, pressedForegroundDecoration);
     }
     //
-    _selectedForegroundPainter ??=
-        selectedForegroundDecoration?.createBoxPainter(markNeedsPaint);
+    _selectedForegroundPainter ??= selectedForegroundDecoration
+        ?.createBoxPainter(markNeedsPaint);
     _selectedForegroundPainter?.paint(
-        context.canvas, offset, filledConfiguration);
+      context.canvas,
+      offset,
+      filledConfiguration,
+    );
     setCanvasIsComplexHint(context, selectedForegroundDecoration);
     //
-    _foregroundPainter ??=
-        foregroundDecoration?.createBoxPainter(markNeedsPaint);
+    _foregroundPainter ??= foregroundDecoration?.createBoxPainter(
+      markNeedsPaint,
+    );
     _foregroundPainter?.paint(context.canvas, offset, filledConfiguration);
     setCanvasIsComplexHint(context, foregroundDecoration);
   }
@@ -344,7 +358,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
   @override
   bool get validForMouseTracker => enableHoverDecoration;
 
-//endregion --Mouse--
+  //endregion --Mouse--
 }
 
 extension StateDecorationWidgetEx on Widget {
@@ -381,18 +395,19 @@ extension StateDecorationWidgetEx on Widget {
     double strokeWidth = 1,
     BorderStyle strokeStyle = BorderStyle.solid,
     double strokeAlign = BorderSide.strokeAlignInside,
-  }) =>
-      backgroundDecoration(
-        null,
-        key: key,
-        fillColor: fillColor,
-        fillRadius: fillRadius,
-        //--
-        strokeColor: strokeColor,
-        strokeWidth: strokeWidth,
-        strokeStyle: strokeStyle,
-        strokeAlign: strokeAlign,
-      );
+    //--
+    bool clip = false,
+  }) => backgroundDecoration(
+    null,
+    key: key,
+    fillColor: fillColor,
+    fillRadius: fillRadius,
+    //--
+    strokeColor: strokeColor,
+    strokeWidth: strokeWidth,
+    strokeStyle: strokeStyle,
+    strokeAlign: strokeAlign,
+  );
 
   /// 绘制背景
   /// [fillColor] 使用纯色填充背景
@@ -418,6 +433,8 @@ extension StateDecorationWidgetEx on Widget {
     Decoration? pressedDecoration,
     Decoration? selectedDecoration,
     bool enablePressedDecoration = true,
+    //--
+    bool clip = false,
   }) {
     final BorderSide? strokeSide = strokeColor == null
         ? null
@@ -428,12 +445,14 @@ extension StateDecorationWidgetEx on Widget {
             strokeAlign: strokeAlign,
           );
 
+    final borderRadius = fillRadius == null
+        ? null
+        : BorderRadius.circular(fillRadius);
     decoration ??= fillColor == null
         ? null
         : BoxDecoration(
             color: fillColor,
-            borderRadius:
-                fillRadius == null ? null : BorderRadius.circular(fillRadius),
+            borderRadius: borderRadius,
             //--
             border: strokeSide == null
                 ? null
@@ -456,6 +475,9 @@ extension StateDecorationWidgetEx on Widget {
       selectedDecoration: selectedDecoration,
       enablePressedDecoration: enablePressedDecoration,
       child: this,
+    ).clipRadius(
+      enable: clip && borderRadius != null,
+      borderRadius: borderRadius,
     );
   }
 }

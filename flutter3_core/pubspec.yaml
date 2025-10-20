@@ -129,7 +129,9 @@ dev_dependencies:
   #flutter_hive_generator_fixed: ^0.0.3
   # https://pub.dev/packages/build_runner
   build_runner: any
+  # https://pub.dev/packages/flutter_gen_runner
   flutter_gen_runner: any
+  # https://pub.dev/packages/json_serializable
   json_serializable: any
 
 # https://pub.dev/packages/flutter_gen
