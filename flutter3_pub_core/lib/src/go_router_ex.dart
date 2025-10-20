@@ -88,8 +88,7 @@ extension GoRouterEx on BuildContext {
   );
 
   /// Navigate to a location.
-  void go(String location, {Object? extra}) =>
-      GoRouter.of(this).go(location, extra: extra);
+  void go(String location, {Object? extra}) => location.go(this, extra: extra);
 
   /// Navigate to a named route.
   void goNamed(
@@ -213,6 +212,15 @@ extension GoRouterEx on BuildContext {
   );
 }
 
+extension GoRouterStringEx on String {
+  /// Go
+  void go(BuildContext context, {Object? extra}) =>
+      GoRouter.of(context).go(this, extra: extra);
+
+  /// 判断当前路由是否是[this]
+  bool isCurrentRoute(BuildContext context) => startsWith(context.goRouterPath);
+}
+
 extension GoRouterWidgetEx on Widget {
   /// 创建 [GoRoute], 支持路由动画[TranslationTypeMixin]
   GoRoute toGoRoute(String path, {String? name}) {
@@ -255,7 +263,7 @@ extension GoRouterWidgetEx on Widget {
   }
 }
 
-/// 创建 [GoRouter]
+/// 创建 [GoRouter] 应用的路由配置。
 /// - [GoRouter] <- [RouterConfig]
 ///   - [GoRoute] <- [RouteBase]
 ///   - [ShellRoute] <- [ShellRouteBase] <- [RouteBase]
@@ -279,6 +287,67 @@ GoRouter goRouter(
     debugLogDiagnostics: isDebug,
     navigatorKey: navigatorKey ?? GlobalConfig.def.rootNavigatorKey,
     redirect: redirect,
+  );
+}
+
+/// 创建 [GoRoute] 具体的路由导航项
+GoRoute goRoute(
+  String path, {
+  //--
+  Widget? child,
+  TranslationType? translationType,
+  //--
+  GoRouterWidgetBuilder? builder,
+  GoRouterPageBuilder? pageBuilder,
+  //--
+  String? name,
+  GlobalKey<NavigatorState>? parentNavigatorKey,
+  List<RouteBase>? routes,
+}) {
+  translationType ??= child?.getWidgetTranslationType();
+  return GoRoute(
+    path: path,
+    name: name,
+    parentNavigatorKey: parentNavigatorKey,
+    builder: child == null ? builder : (ctx, state) => child,
+    routes: routes ?? const <RouteBase>[],
+    pageBuilder: translationType == null
+        ? pageBuilder
+        : (ctx, state) {
+            final buildChild = builder?.call(ctx, state);
+            final route =
+                child?.toRoute() ??
+                translationType!.toRoute((ctx) => buildChild!);
+
+            final body = child ?? buildChild;
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: body!,
+              transitionsBuilder:
+                  (
+                    BuildContext context,
+                    Animation<double> animation,
+                    Animation<double> secondaryAnimation,
+                    Widget child,
+                  ) {
+                    //l.d("[${child.hash()}]animation:$animation");
+                    //l.v("[${child.hash()}]secondaryAnimation:$secondaryAnimation");
+                    return route.buildTransitions(
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    );
+                    /*return ZoomPageTransitionsBuilder().buildTransitions(
+                          context.pageRoute!,
+                          context,
+                          animation,
+                          secondaryAnimation,
+                          child,
+                        );*/
+                  },
+            );
+          },
   );
 }
 
@@ -352,6 +421,7 @@ Widget goRouterApp({
   List<NavigatorObserver>? observers,
   GlobalKey<NavigatorState>? navigatorKey,
   GoRouterRedirect? redirect,
+  String? initialLocation,
   //--
   String? title,
   GenerateAppTitle? onGenerateTitle,
@@ -361,7 +431,15 @@ Widget goRouterApp({
 }) {
   //路由
   return MaterialApp.router(
-    routerConfig: routerConfig ?? goRouter(routes!),
+    routerConfig:
+        routerConfig ??
+        goRouter(
+          routes!,
+          observers: observers,
+          navigatorKey: navigatorKey,
+          redirect: redirect,
+          initialLocation: initialLocation,
+        ),
     //--
     title: title,
     onGenerateTitle: onGenerateTitle,

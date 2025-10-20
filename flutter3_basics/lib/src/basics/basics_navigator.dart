@@ -62,6 +62,116 @@ enum TranslationType {
   final bool withTranslation;
   final bool withFade;
   final bool withTopToBottom;
+
+  /// [MaterialPageRoute]
+  /// [CupertinoPageRoute]
+  ///
+  /// [MaterialPage]
+  /// [PageTransitionsBuilder]
+  /// [ZoomPageTransitionsBuilder]
+  ///
+  ModalRoute<T> toRoute<T>(
+    WidgetBuilder builder, {
+    RouteSettings? settings,
+    TranslationType? type,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    bool allowSnapshotting = true,
+    bool barrierDismissible = false,
+  }) {
+    final type = this;
+    dynamic targetRoute;
+    switch (type) {
+      case TranslationType.none:
+        targetRoute = PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              builder(context),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+        break;
+      case TranslationType.cupertino:
+        targetRoute = CupertinoPageRoute(
+          builder: builder,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.fade:
+        targetRoute = FadePageRoute(
+          builder: builder,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.slide:
+        targetRoute = SlidePageRoute(
+          builder: builder,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.scale:
+      case TranslationType.scaleFade:
+        targetRoute = ScalePageRoute(
+          fade: type.withFade == true,
+          builder: builder,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.zoom:
+        targetRoute = ZoomPageRoute(
+          builder: builder,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      case TranslationType.translation:
+      case TranslationType.translationTopToBottom:
+      case TranslationType.translationFade:
+        targetRoute = TranslationPageRoute(
+          fade: type.withFade == true,
+          topToBottom: type.withTopToBottom == true,
+          builder: builder,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+      default:
+        targetRoute = MaterialPageRoute(
+          builder: builder,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          allowSnapshotting: allowSnapshotting,
+          barrierDismissible: barrierDismissible,
+        );
+        break;
+    }
+    return targetRoute;
+  }
 }
 
 /// 过渡动画类型
@@ -216,97 +326,16 @@ extension RouteWidgetEx on Widget {
     bool allowSnapshotting = true,
     bool barrierDismissible = false,
   }) {
-    type ??= getWidgetTranslationType();
-    dynamic targetRoute;
-    switch (type) {
-      case TranslationType.none:
-        targetRoute = PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => this,
-          transitionDuration: Duration.zero,
-          reverseTransitionDuration: Duration.zero,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return child;
-          },
-        );
-        break;
-      case TranslationType.cupertino:
-        targetRoute = CupertinoPageRoute(
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
-      case TranslationType.fade:
-        targetRoute = FadePageRoute(
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
-      case TranslationType.slide:
-        targetRoute = SlidePageRoute(
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
-      case TranslationType.scale:
-      case TranslationType.scaleFade:
-        targetRoute = ScalePageRoute(
-          fade: type?.withFade == true,
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
-      case TranslationType.zoom:
-        targetRoute = ZoomPageRoute(
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
-      case TranslationType.translation:
-      case TranslationType.translationTopToBottom:
-      case TranslationType.translationFade:
-        targetRoute = TranslationPageRoute(
-          fade: type?.withFade == true,
-          topToBottom: type?.withTopToBottom == true,
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
-      default:
-        targetRoute = MaterialPageRoute(
-          builder: (context) => this,
-          settings: settings,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          allowSnapshotting: allowSnapshotting,
-          barrierDismissible: barrierDismissible,
-        );
-        break;
-    }
-    return targetRoute;
+    type ??= getWidgetTranslationType() ?? TranslationType.def;
+    return type.toRoute(
+      (ctx) => this,
+      settings: settings,
+      type: type,
+      maintainState: maintainState,
+      fullscreenDialog: fullscreenDialog,
+      allowSnapshotting: allowSnapshotting,
+      barrierDismissible: barrierDismissible,
+    );
   }
 }
 
