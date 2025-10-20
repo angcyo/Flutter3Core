@@ -40,7 +40,7 @@ dependencies:
   # https://pub.dev/packages/http
   # https://pub.dev/packages/path
   # https://pub.dev/packages/vector_math
-  flutter_3d_controller: ^2.2.0
+  flutter_3d_controller: ^2.3.0
 
 dev_dependencies:
   flutter_test:
