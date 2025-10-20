@@ -109,8 +109,27 @@ class CameraCalibrateHelper {
     this.distCoeffs = distCoeffs;
     //distCoeffs:Mat(addr=0x6000012e88c0, type=CV_64FC1, rows=1, cols=5, channels=1) [[-0.7881097007309008, 2.8231170733523783, 0.02692497935255397, 0.08256194583654793, -7.601687967063381]]
     //cameraMatrix:Mat(addr=0x6000012e8890, type=CV_64FC1, rows=3, cols=3, channels=1) [[802.4764753450518, 0.0, 12.792931450932988], [0.0, 1934.0012961748434, -14.44565026590872], [0.0, 0.0, 1.0]]
-    l.d("distCoeffs: ${distCoeffs.toList()}");
-    l.d("cameraMatrix: ${cameraMatrix.toList()}");
+    l.d(
+      "distCoeffs: $distCoeffs",
+    ); //distCoeffs: Mat(addr=0x600002fdb060, type=CV_64FC1, rows=1, cols=5, channels=1)
+    l.i("distCoeffs: ${distCoeffs.toList()}");
+    l.d(
+      "cameraMatrix: $cameraMatrix",
+    ); //Mat(addr=0x600002fdb470, type=CV_64FC1, rows=3, cols=3, channels=1)
+    l.i("cameraMatrix: ${cameraMatrix.toList()}");
+
+    assert(() {
+      final list = cameraMatrix.toList();
+      //final flatten = list.flattenList<num>();
+      final flatten = list.flatten<num>();
+      l.d("list->${list.runtimeType} ${flatten.runtimeType}");
+      final cameraMatrix2 = cv.Mat.from2DList(
+        flatten.to2DList(3),
+        cv.MatType.CV_64FC1,
+      );
+      l.i("cameraMatrix2: ${cameraMatrix2.toList()}");
+      return true;
+    }());
 
     final (cv.Mat rval, cv.Rect validPixROI) = cv.getOptimalNewCameraMatrix(
       cameraMatrix,
@@ -118,7 +137,9 @@ class CameraCalibrateHelper {
       patternSize,
       1,
     );
+    //rval: [[251.89067723195916, 0.0, 13.173594365507311], [0.0, 328.36261300909996, 120.09392185903232], [0.0, 0.0, 1.0]]
     l.d("rval: ${rval.toList()}");
+    //validPixROI: Rect(0, 1, 6, 4)
     l.d("validPixROI: $validPixROI");
   }
 
@@ -137,6 +158,43 @@ class CameraCalibrateHelper {
     cornersMap.clear();
     originCornersMap.clear();
   }
+
+  /// 获取[tag]对应的渲染图
+  @api
+  UiImage? getImage(String tag) {
+    return cornersImageMap[tag] ?? originImageMap[tag];
+  }
+
+  /// [tag]对应的角点是否有效
+  /// - [null] 表示还未拍照
+  /// - [true] 表示有效
+  /// - [false] 拍照的图片无效
+  @api
+  bool? isCornersValid(String tag) {
+    if (originImageMap.containsKey(tag)) {
+      return cornersMap.containsKey(tag);
+    }
+    return null;
+  }
+
+  /// 所有角点是否有效
+  @api
+  bool isAllCornersValid() {
+    for (final tag in originImageMap.keys) {
+      if (!cornersMap.containsKey(tag)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /// 有效角点数据的数量
+  @api
+  int get validCornersCount {
+    return cornersMap.length;
+  }
+
+  //--
 
   /// 构建对象世界坐标点
   List<cv.Point3f> _buildObjectPoints({double space = 10}) {

@@ -2756,6 +2756,27 @@ extension IterableEx<E> on Iterable<E> {
     }
   }
 
+  /// 获取子列表
+  /// - [List.sublist]
+  List<E> sublist(int start, [int? end]) {
+    end ??= length;
+    List<E> result = [];
+    for (var i = start; i < end; i++) {
+      result.add(elementAt(i));
+    }
+    return result;
+  }
+
+  /// 转换成2D 列表, 二维数组
+  /// - [cols] 列数, 默认为1
+  List<List<E>> to2DList([int cols = 1]) {
+    List<List<E>> result = [];
+    for (var i = 0; i < length; i += cols) {
+      result.add(sublist(i, i + cols));
+    }
+    return result;
+  }
+
   /// 复制一份, 浅拷贝
   /// [growable] 是否可变, 不可变的列表, 不能操作元素
   /// `Cannot remove from a fixed-length list`
@@ -2790,18 +2811,48 @@ extension IterableEx<E> on Iterable<E> {
 
   /// 平铺所有元素
   /// 压扁所有元素
-  Iterable<E> flatten() {
-    Iterable<E> flattenInner(Iterable<E> list) sync* {
+  Iterable<Type> flatten<Type>() {
+    Iterable<Type> flattenInner(Iterable list) sync* {
+      //debugger();
       for (final value in list) {
-        if (value is Iterable<E>) {
+        if (value is Type) {
+          yield value;
+        } else if (value is Iterable<Type>) {
+          for (final v in value) {
+            yield v;
+          }
+        } else if (value is Iterable) {
+          //l.d("flattenInner...2");
           yield* flattenInner(value);
         } else {
+          //l.d("flattenInner...!!!");
           yield value;
         }
       }
     }
 
     return flattenInner(this);
+  }
+
+  /// 压扁所有元素
+  List<Type> flattenList<Type>() {
+    final List<Type> result = [];
+    void flattenInner(Iterable list) {
+      for (final value in list) {
+        if (value is Type) {
+          result.add(value);
+        } else if (value is Iterable<Type>) {
+          result.addAll(value);
+        } else if (value is Iterable) {
+          flattenInner(value);
+        } else {
+          result.add(value);
+        }
+      }
+    }
+
+    flattenInner(this);
+    return result;
   }
 
   /// 等待所有异步的结果
