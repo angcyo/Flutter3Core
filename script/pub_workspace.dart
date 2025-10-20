@@ -24,13 +24,7 @@ void main() async {
 
   //--
   final flutterProjectList = <FileSystemEntity>[];
-  await findFlutterProjectList(
-    rootPath,
-    0,
-    flutterProjectList,
-    2,
-    false,
-  );
+  await findFlutterProjectList(rootPath, 0, flutterProjectList, 2, false);
   colorLog('找到Flutter工程[${flutterProjectList.length}]个.');
 
   final flutterProjectMap = {};
@@ -42,20 +36,45 @@ void main() async {
     //colorLog('准备处理[${++index}/${flutterProjectList.length}]->${item.path}');
     //await runFlutterPubGetCommand(item.path);
     final list = flutterProjectMap.putIfAbsent(
-        item.parent.path, () => <FileSystemEntity>[]);
+      item.parent.path,
+      () => <FileSystemEntity>[],
+    );
     list.add(item);
   }
+  //归纳工作区的状态
+  // - 新建
+  // - 更新
+  // - 未更新
+  final stateMap = {};
   final txtName = "workspaces.txt";
   flutterProjectMap.forEach((key, value) {
-    //colorLog('${key}->${value.length}');
+    //colorLog('$key->${value.length}');
     final configFile = File("$key/$txtName");
-    configFile.writeAsStringSync(
-        "# ${DateTime.now()}\n# Create by angcyo (dart run ${Platform.script.path.replaceFirst("$rootPath/", "")})\n${value.map((e) => e.path.replaceFirst("$rootPath/", "- ")).join("\n")}");
+    final isNewWorkspace = !configFile.existsSync();
+    //读取文件, 用来比对内容是否有改变
+    final oldLines = isNewWorkspace ? ["empty"] : configFile.readAsLinesSync();
+    final newLines = value.map((e) => e.path.replaceFirst("$rootPath/", "- "));
+    bool updateFile = false;
+    if (isNewWorkspace) {
+      stateMap[key] = "新建";
+      updateFile = true;
+    } else if (oldLines.join("\n") != newLines.join("\n")) {
+      stateMap[key] = "未更新";
+    } else {
+      stateMap[key] = "更新";
+      updateFile = true;
+    }
+    if (updateFile) {
+      configFile.writeAsStringSync(
+        "# ${DateTime.now()}\n# Create by angcyo (dart run ${Platform.script.path.replaceFirst("$rootPath/", "")})\n${newLines.join("\n")}",
+      );
+    }
   });
-  colorLog("\n找到工作区[${flutterProjectMap.keys.length}]个,输出到[$txtName]↓:\n${flutterProjectMap.keys.join("\n")}\n");
-  //colorLog(flutterProjectMap.length);
   colorLog(
-      '执行结束[${flutterProjectList.length}]!');
+    "\n找到工作区[${flutterProjectMap.keys.length}]个,输出到[$txtName]↓:\n${flutterProjectMap.keys.map((e) => e + " -> ${stateMap[e]}").join("\n")}\n",
+  );
+  //colorLog(flutterProjectMap.length);
+  colorLog('执行结束[${flutterProjectList.length}]!');
 }
 
 /// 查找指定路径[path]下的所有`Flutter`项目所在的目录
