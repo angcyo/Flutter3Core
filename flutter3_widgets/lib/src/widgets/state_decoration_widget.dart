@@ -204,7 +204,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     if (event is PointerHoverEvent) {
-      if (enableHoverDecoration) {
+      if (enableHoverDecoration && !_isHover) {
         _isHover = true;
         markNeedsPaint();
       }
@@ -299,7 +299,14 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
   }
 
   @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    _validForMouseTracker = true;
+  }
+
+  @override
   void detach() {
+    _validForMouseTracker = false;
     clearPainters();
     super.detach();
   }
@@ -333,18 +340,28 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
   }
 
   void _handlePointerEnter(PointerEnterEvent event) {
-    _isHover = true;
-    markNeedsPaint();
+    if (!_isHover) {
+      _isHover = true;
+      markNeedsPaint();
+      /*postFrame(() {
+        markNeedsPaint();
+      });*/
+    }
   }
 
   void _handlePointerExit(PointerExitEvent event) {
     if (_isHover) {
       _isHover = false;
       markNeedsPaint();
+      /*postFrame(() {
+        markNeedsPaint();
+      });*/
     }
   }
 
   //region --Mouse--
+
+  bool _validForMouseTracker = false;
 
   @override
   MouseCursor get cursor => MouseCursor.defer;
@@ -356,7 +373,8 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
   PointerExitEventListener? get onExit => _handlePointerExit;
 
   @override
-  bool get validForMouseTracker => enableHoverDecoration;
+  bool get validForMouseTracker =>
+      _validForMouseTracker && enableHoverDecoration;
 
   //endregion --Mouse--
 }

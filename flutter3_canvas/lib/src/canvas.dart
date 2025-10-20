@@ -499,7 +499,7 @@ class CanvasRenderBox extends RenderBox
   @override
   PointerExitEventListener? get onExit => null;
 
-  bool _validForMouseTracker = true;
+  bool _validForMouseTracker = false;
 
   @override
   bool get validForMouseTracker => _validForMouseTracker;
