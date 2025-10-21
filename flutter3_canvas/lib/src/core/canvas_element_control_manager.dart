@@ -771,6 +771,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     Offset? anchor,
     bool? isLockRatio,
     UndoType undoType = UndoType.normal,
+    String? debugLabel,
   }) {
     //debugger();
     if (elementPainter == null) {
@@ -817,6 +818,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       anchor: anchor,
       isLockRatio: isLockRatio,
       undoType: undoType,
+      debugLabel: debugLabel,
     );
   }
 
@@ -835,6 +837,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     Offset? anchor,
     bool? isLockRatio,
     UndoType undoType = UndoType.normal,
+    String? debugLabel,
   }) {
     if (elementPainter == null) {
       return;
@@ -852,14 +855,24 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     sy = limit[1];
     if (undoType == UndoType.normal) {
       final undoStateStack = elementPainter.createStateStack();
-      elementPainter.scaleElement(sx: sx, sy: sy, anchor: anchor);
+      elementPainter.scaleElement(
+        sx: sx,
+        sy: sy,
+        anchor: anchor,
+        debugLabel: debugLabel,
+      );
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager.addUntoState(
         undoStateStack,
         redoStateStack,
       );
     } else {
-      elementPainter.scaleElement(sx: sx, sy: sy, anchor: anchor);
+      elementPainter.scaleElement(
+        sx: sx,
+        sy: sy,
+        anchor: anchor,
+        debugLabel: debugLabel,
+      );
     }
   }
 
@@ -1221,12 +1234,14 @@ class ElementSelectComponent extends ElementGroupPainter
     bool? notify,
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     super.updatePaintProperty(
       value,
       notify: notify,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
+      debugLabel: debugLabel,
     );
   }
 
@@ -1544,6 +1559,7 @@ class ElementSelectComponent extends ElementGroupPainter
     double? syTo,
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     super.onlyScaleSelfElement(
       sx: sx,
@@ -1552,6 +1568,7 @@ class ElementSelectComponent extends ElementGroupPainter
       syTo: syTo,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
+      debugLabel: debugLabel,
     );
   }
 
@@ -1561,17 +1578,19 @@ class ElementSelectComponent extends ElementGroupPainter
     double? sx,
     double? sy,
     Offset? anchor,
-    bool? useCenterAnchor,
+    Alignment? anchorAlignment,
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     super.scaleElement(
       sx: sx,
       sy: sy,
       anchor: anchor,
-      useCenterAnchor: useCenterAnchor,
+      anchorAlignment: anchorAlignment,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
+      debugLabel: debugLabel,
     );
   }
 

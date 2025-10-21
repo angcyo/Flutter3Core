@@ -401,6 +401,7 @@ class ElementPainter extends IElementPainter {
     bool? notify,
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     final old = _paintProperty;
     _paintProperty = value;
@@ -415,6 +416,7 @@ class ElementPainter extends IElementPainter {
         PainterPropertyType.paint,
         fromObj,
         fromUndoType,
+        debugLabel: debugLabel,
       );
     }
   }
@@ -1107,6 +1109,7 @@ class ElementPainter extends IElementPainter {
   /// [ElementPainter.paintState]
   /// [ElementPainter.paintProperty]
   ///
+  /// - [ElementSelectComponent.dispatchSelfPaintPropertyChanged]
   /// - [ElementGroupPainter.onChildPaintPropertyChanged]
   ///
   void dispatchSelfPaintPropertyChanged(
@@ -1122,6 +1125,13 @@ class ElementPainter extends IElementPainter {
       return true;
     }());*/
     debugger(when: debugLabel != null);
+    if (this != canvasDelegate?.canvasElementManager.selectComponent &&
+        fromObj != canvasDelegate?.canvasElementManager.selectComponent &&
+        canvasDelegate?.canvasElementManager.isElementSelected(this) == true) {
+      //当前元素被选中了, 但是更新元素属性又不是通过选择组件触发的, 此时需要更新选择组件的控制边界
+      canvasDelegate?.canvasElementManager.selectComponent
+          .updatePaintPropertyFromChildren(fromObj: fromObj ?? this);
+    }
     parentGroupPainter?.onChildPaintPropertyChanged(
       this,
       old,
@@ -1382,10 +1392,13 @@ class ElementPainter extends IElementPainter {
   void scaleElement({
     double? sx,
     double? sy,
+    //--
     Offset? anchor,
-    bool? useCenterAnchor,
+    Alignment? anchorAlignment,
+    //--
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     if (sx == null && sy == null) {
       assert(() {
@@ -1394,7 +1407,12 @@ class ElementPainter extends IElementPainter {
       }());
       return;
     }
-    anchor ??= useCenterAnchor == true ? paintProperty?.paintCenter : null;
+    anchor ??= anchorAlignment != null
+        ? paintProperty?.getAnchor(anchorAlignment)
+        : paintProperty?.paintCenter;
+
+    //test
+    //anchor = paintProperty?.getAnchor(Alignment.center);
 
     if (anchor == null) {
       onlyScaleSelfElement(
@@ -1402,6 +1420,7 @@ class ElementPainter extends IElementPainter {
         sy: sy ?? (isLockRatio ? sx : null),
         fromObj: fromObj,
         fromUndoType: fromUndoType,
+        debugLabel: debugLabel,
       );
     } else {
       final scaleMatrix = Matrix4.identity()
@@ -1414,6 +1433,7 @@ class ElementPainter extends IElementPainter {
         matrix: scaleMatrix,
         fromObj: fromObj,
         fromUndoType: fromUndoType,
+        debugLabel: debugLabel,
       );
     }
   }
@@ -1427,6 +1447,7 @@ class ElementPainter extends IElementPainter {
     Matrix4? matrix,
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     if (matrix == null && sx == null && sy == null) {
       assert(() {
@@ -1447,6 +1468,7 @@ class ElementPainter extends IElementPainter {
         paintProperty.copyWith()..applyScaleWithCenter(matrix),
         fromObj: fromObj,
         fromUndoType: fromUndoType,
+        debugLabel: debugLabel,
       );
       dispatchSelfElementRawChanged(
         ElementDataType.size,
@@ -1467,6 +1489,7 @@ class ElementPainter extends IElementPainter {
     double? syTo,
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     //debugger();
     paintProperty?.let((it) {
@@ -1474,6 +1497,7 @@ class ElementPainter extends IElementPainter {
         it.copyWith()..applyScale(sxBy: sx, syBy: sy, sxTo: sxTo, syTo: syTo),
         fromObj: fromObj,
         fromUndoType: fromUndoType,
+        debugLabel: debugLabel,
       );
     });
     dispatchSelfElementRawChanged(
@@ -2244,14 +2268,15 @@ class ElementGroupPainter extends ElementPainter {
     double? sx,
     double? sy,
     Offset? anchor,
-    bool? useCenterAnchor,
+    Alignment? anchorAlignment,
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     double angle = paintProperty?.angle ?? 0; //弧度
     anchor ??=
-        (useCenterAnchor == true
-            ? paintProperty?.paintCenter
+        (anchorAlignment != null
+            ? paintProperty?.getAnchor(anchorAlignment)
             : paintProperty?.anchor) ??
         Offset.zero;
 
@@ -2260,6 +2285,7 @@ class ElementGroupPainter extends ElementPainter {
       paintProperty?.copyWith()?..applyScale(sxBy: sx, syBy: sy),
       fromObj: fromObj,
       fromUndoType: fromUndoType,
+      debugLabel: debugLabel,
     );
 
     //---children处理---
@@ -2292,6 +2318,7 @@ class ElementGroupPainter extends ElementPainter {
         matrix: matrix,
         fromObj: fromObj ?? onlyElementGroupPainter,
         fromUndoType: fromUndoType,
+        debugLabel: debugLabel,
       );
     });
   }
@@ -2303,6 +2330,7 @@ class ElementGroupPainter extends ElementPainter {
     Matrix4? matrix,
     Object? fromObj,
     UndoType? fromUndoType,
+    String? debugLabel,
   }) {
     super.scaleElementWithCenter(
       sx: sx,
@@ -2310,6 +2338,7 @@ class ElementGroupPainter extends ElementPainter {
       matrix: matrix,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
+      debugLabel: debugLabel,
     );
     children?.forEach((element) {
       element.scaleElementWithCenter(
@@ -2318,6 +2347,7 @@ class ElementGroupPainter extends ElementPainter {
         matrix: matrix,
         fromObj: fromObj ?? onlyElementGroupPainter,
         fromUndoType: fromUndoType,
+        debugLabel: debugLabel,
       );
     });
   }
@@ -2541,6 +2571,12 @@ class PaintProperty with EquatableMixin {
 
   /// 元素最终的中心点
   Offset get paintCenter => paintBounds.center;
+
+  /// 根据对齐方式, 获取锚点位置
+  Offset getAnchor(Alignment alignment) {
+    final offset = alignment.withinRect(rect);
+    return operateMatrix.mapPoint(offset);
+  }
 
   /// 倾斜和缩放后的矩形大小, 未平移和旋转, 翻转不影响size
   Rect get scaleRect {
