@@ -821,23 +821,32 @@ Future<UiImage>? loadAssetImageByProvider(
 /// [loadAssetImage]
 /// [loadAssetImageByProvider]
 /// [decodeImageFromList]
-Future<UiImage> loadAssetImage(
-  String key, {
+Future<UiImage?> loadAssetImage(
+  String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,
 }) async {
-  // 读取图片数据
-  ByteData data = await loadAssetByteData(
-    key,
-    prefix: prefix,
-    package: package,
-  );
-  Uint8List bytes = data.buffer.asUint8List();
-  // 解码图片
-  /*ui.Codec codec = await ui.instantiateImageCodec(bytes);
-  ui.FrameInfo frameInfo = await codec.getNextFrame();
-  return frameInfo.image;*/
-  return decodeImageFromList(bytes);
+  try {
+    if (key == null) return null;
+    // 读取图片数据
+    ByteData data = await loadAssetByteData(
+      key,
+      prefix: prefix,
+      package: package,
+    );
+    Uint8List bytes = data.buffer.asUint8List();
+    // 解码图片
+    /*ui.Codec codec = await ui.instantiateImageCodec(bytes);
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    return frameInfo.image;*/
+    return decodeImageFromList(bytes);
+  } catch (e, s) {
+    assert(() {
+      printError(e, s);
+      return true;
+    }());
+    return null;
+  }
 }
 
 //endregion Asset
