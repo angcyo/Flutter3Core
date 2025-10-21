@@ -768,7 +768,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     ElementPainter? elementPainter, {
     @dp double? width,
     @dp double? height,
+    //--
     Offset? anchor,
+    Alignment? anchorAlignment,
+    //--
     bool? isLockRatio,
     UndoType undoType = UndoType.normal,
     String? debugLabel,
@@ -816,6 +819,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       sx: sx,
       sy: sy,
       anchor: anchor,
+      anchorAlignment: anchorAlignment,
       isLockRatio: isLockRatio,
       undoType: undoType,
       debugLabel: debugLabel,
@@ -834,7 +838,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     ElementPainter? elementPainter, {
     double? sx,
     double? sy,
+    //--
     Offset? anchor,
+    Alignment? anchorAlignment,
+    //--
     bool? isLockRatio,
     UndoType undoType = UndoType.normal,
     String? debugLabel,
@@ -859,6 +866,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         sx: sx,
         sy: sy,
         anchor: anchor,
+        anchorAlignment: anchorAlignment,
         debugLabel: debugLabel,
       );
       final redoStateStack = elementPainter.createStateStack();
@@ -871,6 +879,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         sx: sx,
         sy: sy,
         anchor: anchor,
+        anchorAlignment: anchorAlignment,
         debugLabel: debugLabel,
       );
     }

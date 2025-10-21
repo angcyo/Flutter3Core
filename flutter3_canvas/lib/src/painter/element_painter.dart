@@ -1409,7 +1409,7 @@ class ElementPainter extends IElementPainter {
     }
     anchor ??= anchorAlignment != null
         ? paintProperty?.getAnchor(anchorAlignment)
-        : paintProperty?.paintCenter;
+        : null;
 
     //test
     //anchor = paintProperty?.getAnchor(Alignment.center);

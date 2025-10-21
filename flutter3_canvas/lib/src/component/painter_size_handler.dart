@@ -219,7 +219,7 @@ class PainterSizeHandler {
           canvasDelegate?.canvasElementManager.canvasElementControlManager;
       painter ??= _targetPainter;
       if (controlManager != null && painter != null) {
-        debugger();
+        //debugger();
         controlManager.updateElementSize(
           painter,
           width: newW.toDpFromUnit(_unit),
