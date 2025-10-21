@@ -363,6 +363,17 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
   }
 
+  /// 过滤出[list]不在[from]列表中的数据
+  List<ElementPainter>? _filterElementList(
+    List<ElementPainter>? list,
+    List<ElementPainter>? from,
+  ) {
+    if (from == null || list == null) {
+      return list;
+    }
+    return list.where((element) => !from.contains(element)).toList();
+  }
+
   /// 在指定容器中添加元素
   /// 返回值表示操作是否成功
   bool _addElementIn(
@@ -377,6 +388,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }());
       return false;
     }
+
     if (!list.contains(element)) {
       list.add(element);
       if (element.canvasDelegate != canvasDelegate) {
@@ -385,6 +397,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasDelegate.dispatchCanvasElementListAddChanged(type, list, [element]);
       canvasDelegate.refresh();
       return true;
+    } else {
+      assert(() {
+        l.w('元素已在列表中');
+        return true;
+      }());
     }
     return false;
   }
@@ -445,6 +462,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       );
       canvasDelegate.refresh();
       return true;
+    } else {
+      assert(() {
+        l.w('元素不在列表中');
+        return true;
+      }());
     }
     return false;
   }
@@ -585,6 +607,13 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }());
       return;
     }
+    if (elements.contains(element)) {
+      assert(() {
+        l.w('元素已在列表中');
+        return true;
+      }());
+      return;
+    }
     addElementList(
       element.ofList(),
       offset: offset,
@@ -613,15 +642,19 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
-    if (list == null || isNullOrEmpty(list)) {
+    //过滤出不在列表中的元素
+    final op = _filterElementList(list, elements);
+
+    if (op == null || isNullOrEmpty(op)) {
       assert(() {
         l.w('无效的操作');
         return true;
       }());
       return;
     }
+
     if (offset != null) {
-      for (final element in list) {
+      for (final element in op) {
         element.translateElement(
           Matrix4.identity()..translate(offset.dx, offset.dy),
         );
@@ -629,12 +662,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     final old = elements.clone();
-    elements.addAll(list);
-    attachElementToCanvasDelegate(list);
+    elements.addAll(op);
+    attachElementToCanvasDelegate(op);
     canvasDelegate.dispatchCanvasElementListChanged(
       old,
       elements,
-      list,
+      op,
       ElementChangeType.add,
       undoType,
       selectType: selectType,
@@ -642,12 +675,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasDelegate.dispatchCanvasElementListAddChanged(
       CanvasElementType.element,
       elements,
-      list,
+      op,
     );
 
     //debugger();
     selectedOrFollowElements(
-      list,
+      op,
       selected: selected,
       followPainter: followPainter,
       followContent: followContent,
@@ -661,15 +694,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           () {
             //debugger();
             elements.reset(old);
-            canvasElementControlManager.onCanvasElementDeleted(
-              list,
-              selectType,
-            );
-            detachElementToCanvasDelegate(list);
+            canvasElementControlManager.onCanvasElementDeleted(op, selectType);
+            detachElementToCanvasDelegate(op);
             canvasDelegate.dispatchCanvasElementListChanged(
               newList,
               old,
-              list,
+              op,
               ElementChangeType.update,
               UndoType.undo,
               selectType: selectType,
@@ -678,11 +708,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           () {
             //debugger();
             elements.reset(newList);
-            attachElementToCanvasDelegate(list);
+            attachElementToCanvasDelegate(op);
             canvasDelegate.dispatchCanvasElementListChanged(
               old,
               newList,
-              list,
+              op,
               ElementChangeType.update,
               UndoType.redo,
               selectType: selectType,
