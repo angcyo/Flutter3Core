@@ -12,8 +12,7 @@ enum NumType {
   d,
 
   /// 整型
-  i,
-  ;
+  i;
 
   static NumType? from(dynamic value) {
     if (value == null || value is! num) {
@@ -142,17 +141,22 @@ List<Offset> centerOfCircleRadius(Offset p1, Offset p2, double dRadius) {
 
   k = (p2y - p1y) / (p2x - p1x); // 斜率
   if (k == 0) {
-    center1 = Offset((p1x + p2x) / 2.0,
-        p1y + math.sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0));
-    center2 = Offset((p1x + p2x) / 2.0,
-        p1y - math.sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0));
+    center1 = Offset(
+      (p1x + p2x) / 2.0,
+      p1y + math.sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0),
+    );
+    center2 = Offset(
+      (p1x + p2x) / 2.0,
+      p1y - math.sqrt(dRadius * dRadius - (p1x - p2x) * (p1x - p2x) / 4.0),
+    );
   } else {
     kVertical = -1.0 / k;
     midX = (p1x + p2x) / 2.0;
     midY = (p1y + p2y) / 2.0;
     a = 1.0 + kVertical * kVertical;
     b = -2 * midX - kVertical * kVertical * (p1x + p2x);
-    c = midX * midX +
+    c =
+        midX * midX +
         kVertical * kVertical * (p1x + p2x) * (p1x + p2x) / 4.0 -
         (dRadius * dRadius -
             ((midX - p1x) * (midX - p1x) + (midY - p1y) * (midY - p1y)));
@@ -193,7 +197,7 @@ bool greaterThan(num? value, num? num, {bool than = true, bool def = true}) {
   return than ? value >= num : value > num;
 }
 
-/// 获取一个值在首尾值中平分的值
+/// 获取一个值在首尾值中平分的值, 乐普表达式（Leprechaun Expression）源自于乐普（Leprechaun）的传说.
 /// - [left] 左边的值
 /// - [right] 右边的值
 /// - [index] 当前第几段数据, 从0开始
@@ -265,11 +269,7 @@ String formatNumber(
   };
 }
 
-num formatDoubleNumber(
-  double number,
-  NumType? numType, {
-  bool round = true,
-}) {
+num formatDoubleNumber(double number, NumType? numType, {bool round = true}) {
   switch (numType) {
     case NumType.i:
       return round ? number.round() : number.toInt();
@@ -278,4 +278,69 @@ num formatDoubleNumber(
     case null:
       return number;
   }
+}
+
+extension MathStringEx on String {
+  /// LTWH
+  /// "l,t,w,h"
+  Rect? get rect => ltwhRect;
+
+  Rect? get ltwhRect {
+    try {
+      final list = split(",");
+      if (list.length != 4) {
+        return null;
+      }
+      return Rect.fromLTWH(
+        double.parse(list[0]),
+        double.parse(list[1]),
+        double.parse(list[2]),
+        double.parse(list[3]),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Rect? get ltrbRect {
+    try {
+      final list = split(",");
+      if (list.length != 4) {
+        return null;
+      }
+      return Rect.fromLTRB(
+        double.parse(list[0]),
+        double.parse(list[1]),
+        double.parse(list[2]),
+        double.parse(list[3]),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// LTRB
+  /// "l,t,r,b"
+  EdgeInsets? get edgeInsets {
+    try {
+      final list = split(",");
+      if (list.length != 4) {
+        return null;
+      }
+      return EdgeInsets.fromLTRB(
+        double.parse(list[0]),
+        double.parse(list[1]),
+        double.parse(list[2]),
+        double.parse(list[3]),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+}
+
+extension MathRectEx on Rect {
+  String get ltwhString => "$left,$top,$width,$height";
+
+  String get ltrbString => "$left,$top,$right,$bottom";
 }

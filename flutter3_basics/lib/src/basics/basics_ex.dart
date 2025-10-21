@@ -841,44 +841,6 @@ extension StringEx on String {
     };
   }
 
-  /// LTWH
-  /// "l,t,w,h"
-  Rect? get rect {
-    try {
-      final list = split(",");
-      if (list.length != 4) {
-        return null;
-      }
-      return Rect.fromLTWH(
-        double.parse(list[0]),
-        double.parse(list[1]),
-        double.parse(list[2]),
-        double.parse(list[3]),
-      );
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// LTRB
-  /// "l,t,r,b"
-  EdgeInsets? get edgeInsets {
-    try {
-      final list = split(",");
-      if (list.length != 4) {
-        return null;
-      }
-      return EdgeInsets.fromLTRB(
-        double.parse(list[0]),
-        double.parse(list[1]),
-        double.parse(list[2]),
-        double.parse(list[3]),
-      );
-    } catch (e) {
-      return null;
-    }
-  }
-
   /// 当前类名, 是否是全屏的页面
   bool get isScreenName => endsWith("page") || endsWith("screen");
 

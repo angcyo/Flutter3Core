@@ -280,7 +280,7 @@ class TextFieldConfig {
     if (this.text == text) {
       //debugger();
       assert(() {
-        l.w('相同的text[$text], 忽略更新[updateText]');
+        l.v('${classHash()} 相同的text[$text], 忽略更新[updateText]');
         return true;
       }());
       return;
