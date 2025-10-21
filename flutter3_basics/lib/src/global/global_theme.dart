@@ -159,8 +159,11 @@ class GlobalTheme {
   /// 线的颜色 (更暗一点)
   Color get lineDarkColor => const Color(0xffd8d8d8);
 
-  /// 边框的颜色
+  /// 边框样式的修饰颜色
   Color get borderColor => const Color(0xff6f6f6f);
+
+  /// 填充样式背景修饰颜色
+  Color get fillColor => const Color(0xfff0f1f5);
 
   /// 信息提示颜色
   Color get infoColor => const Color(0xff4b7efe);
