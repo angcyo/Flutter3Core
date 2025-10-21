@@ -37,12 +37,18 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   final Widget? neutralWidget;
   final bool? showNeutral;
 
-  /// 确定按钮点击回调, 参数始终为true
+  /// 确定按钮点击拦截回调, 参数始终为true
   /// 返回true, 表示拦截默认处理
-  final FutureOrResultCallback<bool, bool>? onConfirmTap;
+  final FutureOrResultCallback<bool, bool>? onInterceptConfirmTap;
 
-  /// [onConfirmTap]
-  final FutureOrResultCallback<bool, bool>? onCancelTap;
+  /// 确认按钮回调
+  final GestureTapCallback? onConfirmTap;
+
+  /// [onInterceptConfirmTap]
+  final FutureOrResultCallback<bool, bool>? onInterceptCancelTap;
+
+  /// 取消按钮回调
+  final GestureTapCallback? onCancelTap;
 
   /// 是否拦截Pop
   final bool interceptPop;
@@ -77,7 +83,9 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.neutral,
     this.neutralWidget,
     this.showNeutral,
+    this.onInterceptCancelTap,
     this.onCancelTap,
+    this.onInterceptConfirmTap,
     this.onConfirmTap,
     this.useIcon = false,
     this.interceptPop = false,
@@ -191,13 +199,15 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             useIcon: useIcon,
             radius: radius ?? this.radius,
             onTap: () async {
-              if (onCancelTap == null) {
+              if (onInterceptCancelTap == null) {
                 Navigator.pop(context, false);
+                onCancelTap?.call();
               } else {
-                final intercept = await onCancelTap!(true) == true;
+                final intercept = await onInterceptCancelTap!(true) == true;
                 if (!intercept) {
                   if (context.mounted) {
                     Navigator.pop(context, false);
+                    onCancelTap?.call();
                   }
                 }
               }
@@ -249,13 +259,15 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 确定按钮点击
   void _doConfirmTap(BuildContext context) async {
-    if (onConfirmTap == null) {
+    if (onInterceptConfirmTap == null) {
       Navigator.pop(context, true);
+      onConfirmTap?.call();
     } else {
-      final intercept = (await onConfirmTap!(true)) == true;
+      final intercept = (await onInterceptConfirmTap!(true)) == true;
       if (!intercept) {
         if (context.mounted) {
           Navigator.pop(context, true);
+          onConfirmTap?.call();
         }
       }
     }
