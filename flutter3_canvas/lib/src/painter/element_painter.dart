@@ -68,6 +68,13 @@ class IElementPainter extends IPainter
     _boundsColor = color;
   }
 
+  //region component
+
+  /// 元素上覆盖的触摸点处理组件
+  PainterTouchSpotHandler? painterTouchSpotHandler;
+
+  //endregion component
+
   //region core
 
   /// 附加到[CanvasDelegate]
@@ -109,6 +116,7 @@ class IElementPainter extends IPainter
       onPaintingSelfBefore(canvas, paintMeta);
       onPaintingSelf(canvas, paintMeta);
     });
+    painterTouchSpotHandler?.painting(canvas, paintMeta);
   }
 
   /// [painting]驱动
@@ -150,7 +158,19 @@ class IElementPainter extends IPainter
   /// 响应手势事件
   /// [CanvasEventManager.handleElementEvent]驱动
   @overridePoint
-  bool handleEvent(@viewCoordinate PointerEvent event) => false;
+  bool handleEvent(@viewCoordinate PointerEvent event) {
+    bool handle = false;
+    //debugger();
+    //--
+    if (painterTouchSpotHandler != null) {
+      final localPosition = event.localPosition;
+      final offset = canvasDelegate?.canvasViewBox.toScenePoint(localPosition);
+      if (offset != null) {
+        handle = handle || painterTouchSpotHandler!.handleEvent(event, offset);
+      }
+    }
+    return handle;
+  }
 
   /// 处理键盘事件
   /// [CanvasRenderBox.onHandleKeyEventMixin]驱动
@@ -789,6 +809,7 @@ class ElementPainter extends IElementPainter {
         );
       }
     });
+    painterTouchSpotHandler?.painting(canvas, paintMeta);
   }
 
   /// 重写此方法, 实现在画布内绘制自己
@@ -1129,6 +1150,9 @@ class ElementPainter extends IElementPainter {
       return true;
     }());*/
     debugger(when: debugLabel != null);
+    if (propertyType == PainterPropertyType.paint) {
+      painterTouchSpotHandler?.containerMatrix = paintProperty?.operateMatrix;
+    }
     parentGroupPainter?.onChildPaintPropertyChanged(
       this,
       old,
@@ -1515,10 +1539,11 @@ class ElementPainter extends IElementPainter {
   /// - [CanvasStyle.enableElementControl] 使能响应事件
   /// - [CanvasStyle.enableElementEvent] 使能响应事件
   ///
-  /// [CanvasEventManager.handleElementEvent]驱动
+  /// [CanvasEventManager.handleEvent] 驱动 ↓
+  /// [CanvasElementManager.handleElementEvent] 驱动
   @override
   bool handleEvent(@viewCoordinate PointerEvent event) {
-    bool handle = false;
+    bool handle = super.handleEvent(event);
     final canvasDelegate = this.canvasDelegate;
     if (canvasDelegate == null) {
       return handle;

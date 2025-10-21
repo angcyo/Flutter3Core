@@ -24,7 +24,7 @@ class PaintMeta {
   /// [CanvasViewBox.originMatrix]
   final Matrix4? originMatrix;
 
-  /// 画布缩放/平移/旋转/倾斜
+  /// 画布的缩放/平移/旋转/倾斜矩阵
   /// [CanvasViewBox.canvasMatrix]
   final Matrix4? canvasMatrix;
 
@@ -69,7 +69,15 @@ class PaintMeta {
       ? (host == rasterizeElementHost || host == elementOutputHost)
       : groupPaintChildren!;
 
+  /// 综合需要绘制的矩阵
+  Matrix4 get paintMatrix {
+    Matrix4 result = originMatrix ?? Matrix4.identity();
+    result = canvasMatrix != null ? result.multiplied(canvasMatrix!) : result;
+    return result;
+  }
+
   /// 组合[originMatrix] 和 [canvasMatrix]
+  /// - [matrix] 附加的矩阵
   @api
   void withPaintMatrix(Canvas canvas, VoidCallback action) {
     //debugger();
@@ -79,12 +87,30 @@ class PaintMeta {
     if (originMatrix == null && canvasMatrix == null) {
       action();
     } else {
-      canvas.withMatrix(
-        (originMatrix ?? Matrix4.identity()) *
-            (canvasMatrix ?? Matrix4.identity()),
-        action,
-      );
+      canvas.withMatrix(paintMatrix, action);
     }
+  }
+
+  /// 复制[PaintMeta]
+  @api
+  PaintMeta copyWith({
+    dynamic host,
+    PaintingContext? paintContext,
+    Matrix4? originMatrix,
+    Matrix4? canvasMatrix,
+    double? refCanvasScale,
+    bool? groupPaintChildren,
+    Rect? viewBounds,
+  }) {
+    return PaintMeta(
+      host: host ?? this.host,
+      paintContext: paintContext ?? this.paintContext,
+      originMatrix: originMatrix ?? this.originMatrix,
+      canvasMatrix: canvasMatrix ?? this.canvasMatrix,
+      refCanvasScale: refCanvasScale ?? this.refCanvasScale,
+      groupPaintChildren: groupPaintChildren ?? this.groupPaintChildren,
+      viewBounds: viewBounds ?? this.viewBounds,
+    );
   }
 }
 
@@ -121,17 +147,10 @@ class PointEventMeta {
 
   double get y => position.dy;
 
-  const PointEventMeta(
-    this.position,
-    this.timestamp, {
-    this.width,
-  });
+  const PointEventMeta(this.position, this.timestamp, {this.width});
 
   ///copyWith
-  PointEventMeta copyWith({
-    Offset? position,
-    int? timestamp,
-  }) {
+  PointEventMeta copyWith({Offset? position, int? timestamp}) {
     return PointEventMeta(
       position ?? this.position,
       timestamp ?? this.timestamp,
@@ -171,12 +190,7 @@ class CurveBezierMeta {
   final PointEventMeta c2;
   final PointEventMeta end;
 
-  const CurveBezierMeta(
-    this.start,
-    this.c1,
-    this.c2,
-    this.end,
-  );
+  const CurveBezierMeta(this.start, this.c1, this.c2, this.end);
 
   /// 曲线大概的长度
   double length([int steps = 10]) {
@@ -209,7 +223,10 @@ class CurveBezierMeta {
 mixin CurvePointEventMixin {
   /// 输入3个点, 输出2个控制点
   static List<PointEventMeta> calculateCurveControlPoints(
-      PointEventMeta s1, PointEventMeta s2, PointEventMeta s3) {
+    PointEventMeta s1,
+    PointEventMeta s2,
+    PointEventMeta s3,
+  ) {
     double dx1 = s1.x - s2.x;
     double dy1 = s1.y - s2.y;
     double dx2 = s2.x - s3.x;
@@ -234,14 +251,8 @@ mixin CurvePointEventMixin {
     double ty = s2.y - cmY;
 
     return [
-      PointEventMeta(
-        Offset(m1X + tx, m1Y + ty),
-        nowTimestamp(),
-      ),
-      PointEventMeta(
-        Offset(m2X + tx, m2Y + ty),
-        nowTimestamp(),
-      )
+      PointEventMeta(Offset(m1X + tx, m1Y + ty), nowTimestamp()),
+      PointEventMeta(Offset(m2X + tx, m2Y + ty), nowTimestamp()),
     ];
   }
 

@@ -211,6 +211,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       //将事件发送元素
       for (final element in elements.reversed) {
         if (element.handleEvent(event)) {
+          //debugger();
           break;
         }
       }

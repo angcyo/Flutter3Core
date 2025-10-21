@@ -18,12 +18,14 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       CanvasTranslateComponent(canvasDelegate);
 
   /// 画布缩放组件
-  late CanvasScaleComponent canvasScaleComponent =
-      CanvasScaleComponent(canvasDelegate);
+  late CanvasScaleComponent canvasScaleComponent = CanvasScaleComponent(
+    canvasDelegate,
+  );
 
   /// 画布快速滑动组件
-  late CanvasFlingComponent canvasFlingComponent =
-      CanvasFlingComponent(canvasDelegate);
+  late CanvasFlingComponent canvasFlingComponent = CanvasFlingComponent(
+    canvasDelegate,
+  );
 
   /// 画布区域点击事件组件
   late CanvasBoundsEventComponent canvasBoundsEventComponent =
@@ -71,6 +73,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
         if (canvasDelegate.isDragMode) {
           //拖拽模式下, 不处理元素事件
         } else {
+          //元素事件分发
+          //debugger();
           canvasDelegate.canvasElementManager.handleElementEvent(event);
         }
       } else {
@@ -151,8 +155,9 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       @viewCoordinate
       final localPosition = event.localPosition;
       @sceneCoordinate
-      final scenePosition =
-          canvasDelegate.canvasViewBox.toScenePoint(localPosition);
+      final scenePosition = canvasDelegate.canvasViewBox.toScenePoint(
+        localPosition,
+      );
 
       canvasDelegate.visitElementPainter((painter) {
         //debugger();
@@ -194,7 +199,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
-//endregion WidgetElementPainter
+  //endregion WidgetElementPainter
 }
 
 /// [CanvasViewBox] 操作基础组件
@@ -234,7 +239,8 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
     if (isCanvasComponentEnable && !ignoreEventHandle) {
       if (event.isMouseScrollEvent &&
           !isKeyPressed(
-              keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys)) {
+            keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys,
+          )) {
         //非控制键按下+鼠标滚轮
         final offset = -event.mouseScrollDelta;
         if (offset != Offset.zero) {
@@ -245,7 +251,9 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
         //l.d("dispatchPointerEvent->$event");
         //debugger();
         final offsetList = MultiPointerDetectorMixin.getPointerDeltaList(
-            pointerMoveMap, pointerDownMap);
+          pointerMoveMap,
+          pointerDownMap,
+        );
         final offset = offsetList.firstOrNull;
         if (offset != null && offset != Offset.zero) {
           _translateBy(offset.dx, offset.dy);
@@ -271,7 +279,9 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
       //debugger();
       //双指移动
       final offsetList = MultiPointerDetectorMixin.getPointerDeltaList(
-          pointerMoveMap, pointerDownMap);
+        pointerMoveMap,
+        pointerDownMap,
+      );
       final offset1 = offsetList.first;
       final offset2 = offsetList.last;
 
@@ -353,11 +363,13 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
     addDoubleTapDetectorPointerEvent(event);
     super.dispatchPointerEvent(dispatch, event);
     if (isCanvasComponentEnable && !ignoreEventHandle) {
-      final pivot =
-          canvasDelegate.canvasViewBox.toScenePoint(event.localPosition);
+      final pivot = canvasDelegate.canvasViewBox.toScenePoint(
+        event.localPosition,
+      );
       if (event.isMouseScrollEvent &&
           isKeyPressed(
-              keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys)) {
+            keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys,
+          )) {
         //控制键按下, 鼠标滚动
         final offset = event.mouseScrollDelta;
         if (offset.dy > 0) {
@@ -399,7 +411,9 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
   bool onDoubleTapDetectorPointerEvent(PointerEvent event) {
     //debugger();
     //l.d("onDoubleTapDetectorPointerEvent->$event");
-    if (canvasDelegate.canvasElementManager.canvasElementControlManager
+    if (canvasDelegate
+        .canvasElementManager
+        .canvasElementControlManager
         .isTranslateElementStart) {
       return false;
     }
@@ -434,10 +448,12 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
     if (event.isPointerMove && pointerCount == 2) {
       //debugger();
       //双指缩放
-      final downList =
-          MultiPointerDetectorMixin.getPointerPositionList(pointerDownMap);
-      final moveList =
-          MultiPointerDetectorMixin.getPointerPositionList(pointerMoveMap);
+      final downList = MultiPointerDetectorMixin.getPointerPositionList(
+        pointerDownMap,
+      );
+      final moveList = MultiPointerDetectorMixin.getPointerPositionList(
+        pointerMoveMap,
+      );
 
       //2点之间的距离
       final c1 = distance(downList.first, downList.last);
@@ -451,9 +467,10 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
         final scale = c2 / c1;
         final pivot = center(moveList.first, moveList.last);
         scaleBy(
-            scaleX: scale,
-            scaleY: scale,
-            pivot: canvasDelegate.canvasViewBox.toScenePoint(pivot));
+          scaleX: scale,
+          scaleY: scale,
+          pivot: canvasDelegate.canvasViewBox.toScenePoint(pivot),
+        );
         return true;
       }
     } else {
@@ -526,30 +543,34 @@ class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
         //双指横向滑动
         l.d('fling:$velocity');
         isFirstEventHandled = true;
-        _flingController = startFling((value) {
-          canvasDelegate.canvasViewBox.translateTo(
-            value,
-            canvasDelegate.canvasViewBox.translateY,
-            anim: false,
-          );
-        },
-            vsync: canvasDelegate,
-            fromValue: canvasDelegate.canvasViewBox.translateX,
-            velocity: velocity.pixelsPerSecond.dx);
+        _flingController = startFling(
+          (value) {
+            canvasDelegate.canvasViewBox.translateTo(
+              value,
+              canvasDelegate.canvasViewBox.translateY,
+              anim: false,
+            );
+          },
+          vsync: canvasDelegate,
+          fromValue: canvasDelegate.canvasViewBox.translateX,
+          velocity: velocity.pixelsPerSecond.dx,
+        );
       } else if (velocity.pixelsPerSecond.dy.abs() > flingVelocityThreshold) {
         //双指纵向滑动
         l.d('fling:$velocity');
         isFirstEventHandled = true;
-        _flingController = startFling((value) {
-          canvasDelegate.canvasViewBox.translateTo(
-            canvasDelegate.canvasViewBox.translateX,
-            value,
-            anim: false,
-          );
-        },
-            vsync: canvasDelegate,
-            fromValue: canvasDelegate.canvasViewBox.translateY,
-            velocity: velocity.pixelsPerSecond.dy);
+        _flingController = startFling(
+          (value) {
+            canvasDelegate.canvasViewBox.translateTo(
+              canvasDelegate.canvasViewBox.translateX,
+              value,
+              anim: false,
+            );
+          },
+          vsync: canvasDelegate,
+          fromValue: canvasDelegate.canvasViewBox.translateY,
+          velocity: velocity.pixelsPerSecond.dy,
+        );
       }
     }
     return super.handleFlingDetectorPointerEvent(event, velocity);
