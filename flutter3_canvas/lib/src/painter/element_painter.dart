@@ -442,6 +442,8 @@ class ElementPainter extends IElementPainter {
   }
 
   /// 获取元素[paintProperty]的边界
+  /// - [PaintProperty.paintBounds]
+  /// - [PaintProperty.paintPath]
   @dp
   @sceneCoordinate
   Rect? get elementsBounds {
@@ -631,6 +633,7 @@ class ElementPainter extends IElementPainter {
   //region ---group---
 
   /// 是否在选中的元素内, 也就是是否被选中
+  /// 元素是否被选中, 元素是否在元素列表中
   bool get isInElementSelectComponent =>
       canvasDelegate
           ?.canvasElementManager
@@ -2598,6 +2601,7 @@ class PaintProperty with EquatableMixin {
   ///
   /// - [getBounds]
   /// - [paintBounds]
+  /// - [paintPath]
   @dp
   @sceneCoordinate
   Rect get paintBounds => operateMatrix.mapRect(rect);

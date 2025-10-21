@@ -361,10 +361,11 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   bool get isString => _inputNumType == null;
 
   String get inputText {
+    //debugger(when: isInt);
     if (widget.inputText == null) {
       return "";
     }
-    if (isDouble) {
+    if (isInt || isDouble) {
       return _formatDigits("${widget.inputText}");
     }
     return "${widget.inputText}";
@@ -372,10 +373,11 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
 
   /// 格式化数字字符串
   String _formatDigits(String value) {
-    if (isDouble) {
+    if (isDouble || isInt) {
       return widget.onNumberFormat?.call(value.toDoubleOrNull()) ??
           value.toDoubleOrNull()?.toDigits(
             digits: widget.inputMaxDigits,
+            ensureInt: isInt,
             removeZero: !value.contains("."),
           ) ??
           value;

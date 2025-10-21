@@ -1560,6 +1560,8 @@ extension RectEx on Rect {
   /// `1/0`:Infinity
   bool get isValid => !hasNaN && !isInfinite;
 
+  bool get isNotEmpty => !isEmpty;
+
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
 

@@ -1035,6 +1035,29 @@ extension CanvasEx on Canvas {
     }
   }
 
+  /// 绘制一个覆盖挖洞的效果
+  /// - [coverColor] 覆盖在上面的颜色
+  /// - [path] 需要挖掉的区域
+  void drawCoverHole(Color coverColor, Path path) {
+    withSaveLayer(() {
+      drawColor(coverColor, BlendMode.src);
+      drawPath(path, Paint()..blendMode = BlendMode.clear);
+    });
+  }
+
+  /// 在指定区域上挖掉指定的区域
+  void drawPathHole(Color color, Path path, Path holePath) {
+    withSaveLayer(() {
+      drawPath(
+        path,
+        Paint()
+          ..color = color
+          ..blendMode = BlendMode.src,
+      );
+      drawPath(holePath, Paint()..blendMode = BlendMode.clear);
+    });
+  }
+
   //endregion ---draw---
 }
 

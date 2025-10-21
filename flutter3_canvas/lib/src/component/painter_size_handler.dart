@@ -51,6 +51,19 @@ class PainterSizeHandler {
   @property
   IUnit? _unit;
 
+  /// 调用了更新操作之后, 输出的元素边界
+  /// - [updateNewX]
+  /// - [updateNewY]
+  /// - [updateNewW]
+  /// - [updateNewH]
+  @output
+  Rect? get outputBounds {
+    if (x == null || y == null || w == null || h == null) {
+      return null;
+    }
+    return Rect.fromLTWH(x ?? 0, y ?? 0, w ?? 0, h ?? 0);
+  }
+
   //--
 
   /// 初始化数据
@@ -166,13 +179,8 @@ class PainterSizeHandler {
           dx: (newX - x!).toDpFromUnit(_unit),
           dy: null,
         );
-        //x = newX as double?;
-      } else {
-        assert(() {
-          l.w("操作被忽略, 请检查对象[CanvasDelegate].[CanvasElementControlManager]");
-          return true;
-        }());
       }
+      x = newX.toDpFromUnit(_unit);
     }
   }
 
@@ -195,13 +203,8 @@ class PainterSizeHandler {
           dx: null,
           dy: (newY - y!).toDpFromUnit(_unit),
         );
-        //y = newY as double?;
-      } else {
-        assert(() {
-          l.w("操作被忽略, 请检查对象[CanvasDelegate].[CanvasElementControlManager]");
-          return true;
-        }());
       }
+      y = newY.toDpFromUnit(_unit);
     }
   }
 
@@ -225,13 +228,8 @@ class PainterSizeHandler {
           width: newW.toDpFromUnit(_unit),
           height: null,
         );
-        //w = newW as double?;
-      } else {
-        assert(() {
-          l.w("操作被忽略, 请检查对象[CanvasDelegate].[CanvasElementControlManager]");
-          return true;
-        }());
       }
+      w = newW.toDpFromUnit(_unit);
     }
   }
 
@@ -255,13 +253,8 @@ class PainterSizeHandler {
           height: newH.toDpFromUnit(_unit),
           /*debugLabel: "test",*/
         );
-        //h = newH as double?;
-      } else {
-        assert(() {
-          l.w("操作被忽略, 请检查对象[CanvasDelegate].[CanvasElementControlManager]");
-          return true;
-        }());
       }
+      h = newH.toDpFromUnit(_unit);
     }
   }
 
@@ -283,13 +276,8 @@ class PainterSizeHandler {
         final r = newAngle.hd - angle.hd;
         //debugger();
         controlManager.rotateElement(painter, r, refTargetRadians: newAngle.hd);
-        //angle = newAngle as double?;
-      } else {
-        assert(() {
-          l.w("操作被忽略, 请检查对象[CanvasDelegate].[CanvasElementControlManager]");
-          return true;
-        }());
       }
+      //angle = newAngle as double?;
     }
   }
 }
