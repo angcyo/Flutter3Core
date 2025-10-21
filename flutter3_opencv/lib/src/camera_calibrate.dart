@@ -53,10 +53,21 @@ class CameraCalibrateHelper {
 
   /// 寻找每一张拍照图片的棋盘格角点
   /// - 并将成功的结果存储在 corners 中
+  ///
+  /// - [clearTestImage] 是否清除之前的测试图片
   @api
-  Future<bool> findChessboardCorners(String tag, UiImage image) async {
+  Future<bool> findChessboardCorners(
+    String tag,
+    UiImage image, {
+    bool clearTestImage = true,
+  }) async {
     originImageMap[tag] = image;
     cornersImageMap.remove(tag);
+
+    if (clearTestImage) {
+      testImage = null;
+      testUndistortImage = null;
+    }
 
     final img = await image.toMatAsync(flags: cv.IMREAD_GRAYSCALE);
     final (bool success, cv.VecPoint2f corners) = cv.findChessboardCorners(
@@ -83,8 +94,15 @@ class CameraCalibrateHelper {
   }
 
   /// 开始标定
+  ///
+  /// - [clearTestImage] 是否清除之前的测试图片
   @api
-  Future calibrateCamera() async {
+  Future calibrateCamera({bool clearTestImage = true}) async {
+    if (clearTestImage) {
+      testImage = null;
+      testUndistortImage = null;
+    }
+
     List<List<cv.Point3f>> objectPoints = [];
     List<List<cv.Point2f>> imagePoints = [];
     for (final tag in cornersMap.keys) {
@@ -143,13 +161,23 @@ class CameraCalibrateHelper {
     l.d("validPixROI: $validPixROI");
   }
 
+  /// 测试畸变的原图
+  UiImage? testImage;
+
+  /// 测试去畸变后的图片
+  @output
+  UiImage? testUndistortImage;
+
   /// 测试区畸变
   @api
   Future<UiImage> undistort(UiImage image) async {
+    testImage = image;
     final img = await image.toMatAsync();
     //undistort 去畸变
     final dst = await cv.undistortAsync(img, cameraMatrix!, distCoeffs!);
-    return dst.toUiImage();
+    final revImage = await dst.toUiImage();
+    testUndistortImage = revImage;
+    return revImage;
   }
 
   /// 重置
@@ -185,13 +213,19 @@ class CameraCalibrateHelper {
         return false;
       }
     }
-    return true;
+    return cornersMap.isNotEmpty;
   }
 
   /// 有效角点数据的数量
   @api
   int get validCornersCount {
     return cornersMap.length;
+  }
+
+  /// 是否校准成功了
+  @api
+  bool get isCalibrated {
+    return cameraMatrix != null && distCoeffs != null;
   }
 
   //--
@@ -205,5 +239,13 @@ class CameraCalibrateHelper {
       }
     }
     return objectPoints;
+  }
+
+  @override
+  String toString() {
+    if (isCalibrated) {
+      return "相机矩阵: ${cameraMatrix?.toList()}\n畸变系数: ${distCoeffs?.toList()}";
+    }
+    return "请先校准!";
   }
 }
