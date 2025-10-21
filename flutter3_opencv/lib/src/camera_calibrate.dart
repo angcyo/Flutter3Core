@@ -11,7 +11,12 @@ part of "../flutter3_opencv.dart";
 /// - 最低可用数：6–10 张（只在受限条件下且棋盘点很多时才勉强可用）。
 /// - 这里用9张测试.
 ///
-/// 输出:
+/// ## 使用
+/// - 调用[findChessboardCorners]方法寻找棋盘格角点
+/// - 调用[calibrateCamera]方法计算内参矩阵和畸变参数
+/// - 调用[undistort]方法测试去畸变
+///
+/// ## 输出:
 /// - 内参矩阵 cameraMatrix
 ///   - fx s cx 0 fy cy 0 0 1
 ///   - fx, fy：在像素坐标系下的焦距（f * sx, f * sy）；
