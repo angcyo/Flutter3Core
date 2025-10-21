@@ -295,6 +295,9 @@ class NumberInputWidget extends StatefulWidget {
   /// 请求焦点
   final FocusNode? inputFocusNode;
 
+  /// 格式化数字
+  final FormatNumNullCallback? onNumberFormat;
+
   //--
 
   /// 输入框的边距
@@ -324,6 +327,7 @@ class NumberInputWidget extends StatefulWidget {
     this.inputMaxDigits = 2,
     this.inputMaxLength = 9,
     this.inputFormatters,
+    this.onNumberFormat,
     this.textStyle,
     this.inputFocusNode,
     this.textAlign = TextAlign.center,
@@ -369,7 +373,8 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   /// 格式化数字字符串
   String _formatDigits(String value) {
     if (isDouble) {
-      return value.toDoubleOrNull()?.toDigits(
+      return widget.onNumberFormat?.call(value.toDoubleOrNull()) ??
+          value.toDoubleOrNull()?.toDigits(
             digits: widget.inputMaxDigits,
             removeZero: !value.contains("."),
           ) ??
@@ -510,9 +515,14 @@ class LabelNumberInputTile extends StatefulWidget with LabelMixin {
   final TextStyle? numberTextStyle;
   final bool autoShowSuffixIcon;
 
+  /// 格式化数字
+  final FormatNumNullCallback? onNumberFormat;
+
   //--trailing
 
   /// 尾部widget
+  final String? trailing;
+  final TextStyle? trailingTextStyle;
   final Widget? trailingWidget;
 
   //--tile
@@ -539,7 +549,10 @@ class LabelNumberInputTile extends StatefulWidget with LabelMixin {
     this.contentPadding = kNumberInputPadding,
     this.numberTextStyle,
     this.autoShowSuffixIcon = false,
+    this.onNumberFormat,
     //--trailing
+    this.trailing,
+    this.trailingTextStyle,
     this.trailingWidget,
     //--tile
     this.radius = kDefaultBorderRadiusL,
@@ -576,7 +589,11 @@ class _LabelNumberInputTileState extends State<LabelNumberInputTile>
       labelTextStyle: widget.labelTextStyle ?? globalTheme.textDesStyle,
     );
     //build trailing
-    Widget? trailingWidget = widget.trailingWidget;
+    Widget? trailingWidget =
+        widget.trailingWidget ??
+        widget.trailing?.text(
+          style: widget.trailingTextStyle ?? globalTheme.textDesStyle,
+        );
 
     return buildHoverWidgetMixin(
       context,
@@ -594,6 +611,7 @@ class _LabelNumberInputTileState extends State<LabelNumberInputTile>
                 textStyle: widget.numberTextStyle ?? globalTheme.textBodyStyle,
                 textAlign: TextAlign.start,
                 autoShowSuffixIcon: widget.autoShowSuffixIcon,
+                onNumberFormat: widget.onNumberFormat,
                 onChanged: (value) {
                   _currentNumber = value;
                   widget.onChanged?.call(value);

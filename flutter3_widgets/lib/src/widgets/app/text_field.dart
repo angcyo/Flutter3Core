@@ -278,8 +278,9 @@ class TextFieldConfig {
     bool? notify,
   }) {
     if (this.text == text) {
+      //debugger();
       assert(() {
-        l.w('相同的text[$text], 忽略更新');
+        l.w('相同的text[$text], 忽略更新[updateText]');
         return true;
       }());
       return;
@@ -732,6 +733,7 @@ class SingleInputWidget extends StatefulWidget {
   /*无参数的回调*/;
 
   /// [onEditingComplete]回调之后会马上触发[onSubmitted]回调
+  /// 按回车键之后会触发此回调
   final ValueChanged<String>? onSubmitted
   /*有参数的回调*/;
 
