@@ -567,14 +567,17 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     UndoType? fromUndoType, {
     String? debugLabel,
   }) {
+    //debugger();
+    debugger(when: debugLabel != null);
     if (enableResetElementAngle) {
       if (isControlElement) {
         //no op
       }
     }
     if (isSelectedElement && propertyType == PainterPropertyType.paint) {
-      if (fromUndoType?.isUndoRedo == true &&
-          element.isInElementSelectComponent) {
+      if (element.isInElementSelectComponent /*属性变化的额元素是被选中的*/ &&
+          (fromUndoType == null || fromUndoType.isUndoRedo) /*合规的操作*/ &&
+          fromObj != rotateControl /*非来自旋转控制的操作*/ ) {
         //当选中的元素被重做/撤销了, 则需要更新选择组件的属性
         //debugger();
         scheduleMicrotask(() {

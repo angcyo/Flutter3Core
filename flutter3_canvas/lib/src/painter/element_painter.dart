@@ -1111,6 +1111,7 @@ class ElementPainter extends IElementPainter {
   ///
   /// - [ElementSelectComponent.dispatchSelfPaintPropertyChanged]
   /// - [ElementGroupPainter.onChildPaintPropertyChanged]
+  /// - [CanvasElementControlManager.onHandleElementPropertyChanged]
   ///
   void dispatchSelfPaintPropertyChanged(
     dynamic old,
@@ -1125,13 +1126,6 @@ class ElementPainter extends IElementPainter {
       return true;
     }());*/
     debugger(when: debugLabel != null);
-    if (this != canvasDelegate?.canvasElementManager.selectComponent &&
-        fromObj != canvasDelegate?.canvasElementManager.selectComponent &&
-        canvasDelegate?.canvasElementManager.isElementSelected(this) == true) {
-      //当前元素被选中了, 但是更新元素属性又不是通过选择组件触发的, 此时需要更新选择组件的控制边界
-      canvasDelegate?.canvasElementManager.selectComponent
-          .updatePaintPropertyFromChildren(fromObj: fromObj ?? this);
-    }
     parentGroupPainter?.onChildPaintPropertyChanged(
       this,
       old,
