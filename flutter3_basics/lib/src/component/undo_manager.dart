@@ -318,7 +318,7 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
         Text(
           "${undoManagerMixin?.undoList.length ?? 0}",
           style: const TextStyle(fontSize: 9),
-        ),
+        ).ignorePointer(),
         alignment: AlignmentDirectional.center,
       );
     }
@@ -357,7 +357,7 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
         Text(
           "${undoManagerMixin?.redoList.length ?? 0}",
           style: const TextStyle(fontSize: 9),
-        ),
+        ).ignorePointer(),
         alignment: AlignmentDirectional.center,
       );
     }
