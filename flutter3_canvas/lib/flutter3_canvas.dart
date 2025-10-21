@@ -44,6 +44,7 @@ part 'src/core/control/element_control.dart';
 part 'src/core/control/element_menu.dart';
 part 'src/event/canvas_event.dart';
 part 'src/event/canvas_notify.dart';
+part 'src/event/painter_event.dart';
 part 'src/painter/base_char_painter.dart';
 part 'src/painter/base_text_painter.dart';
 part 'src/painter/element_painter.dart';

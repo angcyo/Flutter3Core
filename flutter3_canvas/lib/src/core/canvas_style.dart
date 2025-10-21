@@ -67,15 +67,20 @@ class CanvasStyle {
   bool enableElementControl = true;
 
   /// 是否要开启元素的事件回调, 不指定则使用[enableElementControl]的值
-  /// [CanvasElementManager.handleElementEvent]处理
+  /// [CanvasElementManager.handleElementPointerEvent]处理
+  ///
+  /// - [enableElementEvent]
+  /// - [enableElementKeyEvent]
   bool? enableElementEvent;
 
   /// 是否要开启画布右键菜单, 不指定则使用[enableElementControl]的值
-  /// [CanvasElementManager.handleElementEvent]处理
+  /// [CanvasElementManager.handleElementPointerEvent]处理
   bool? enableCanvasMenu;
 
   /// 是否要开启画布键盘事件, 不指定则使用[enableElementControl]的值
   /// [CanvasRenderBox.onHandleKeyEventMixin]处理
+  /// - [enableCanvasKeyEvent]
+  /// - [enableCanvasEvent]
   bool? enableCanvasKeyEvent;
 
   /// 是否要开启画布元素键盘事件, 不指定则使用[enableElementControl]的值
@@ -99,6 +104,14 @@ class CanvasStyle {
   /// 是否要激活[WidgetElementPainter]的功能
   @implementation
   bool enableWidgetRender = isDebug;
+
+  /// 是否要激活画布手势事件, 这是画布整个事件的总开关
+  /// - [enableCanvasKeyEvent]
+  /// - [enableCanvasEvent]
+  ///
+  /// - [enableElementEvent]
+  /// - [enableElementKeyEvent]
+  bool enableCanvasEvent = true;
 
   //--key
 

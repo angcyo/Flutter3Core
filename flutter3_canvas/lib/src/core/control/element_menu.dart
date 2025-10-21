@@ -122,8 +122,8 @@ class ElementMenuControl
   @viewCoordinate
   Offset? _touchPosition;
 
-  /// [CanvasElementManager.handleElementEvent]->
-  /// [CanvasElementControlManager.handleEvent]驱动, 可以拦截底部控制点的事件
+  /// [CanvasElementManager.handleElementPointerEvent]->
+  /// [CanvasElementControlManager.handlePointerEvent]驱动, 可以拦截底部控制点的事件
   /// @return true 拦截事件
   @entryPoint
   bool handleMenuEvent(PointerEvent event) {

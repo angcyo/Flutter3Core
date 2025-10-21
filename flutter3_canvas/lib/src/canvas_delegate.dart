@@ -10,7 +10,7 @@ part of '../flutter3_canvas.dart';
 ///
 /// - [layout] 布局入口
 /// - [paint] 绘制入口
-/// - [handleEvent] 手势事件入口
+/// - [handlePointerEvent] 手势事件入口
 /// - [handleKeyEvent] 键盘事件入口
 ///
 /// - [CanvasWidget]
@@ -77,8 +77,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 手势输入的入口点
   @entryPoint
-  void handleEvent(@viewCoordinate PointerEvent event, BoxHitTestEntry entry) {
-    canvasEventManager.handleEvent(event);
+  void handlePointerEvent(
+    @viewCoordinate PointerEvent event,
+    BoxHitTestEntry entry,
+  ) {
+    canvasEventManager.handlePointerEvent(event);
   }
 
   /// 键盘输入的入口点
@@ -398,7 +401,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [detachOverlay]
   ///
   /// [CanvasElementManager.paintElements]
-  /// [CanvasEventManager.handleEvent]
+  /// [CanvasEventManager.handlePointerEvent]
   CanvasOverlayComponent? _overlayComponent;
 
   //--属性
@@ -1434,7 +1437,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 派发手势事件, 顶层的手势事件.
   /// 在库处理完手势后, 派发给上层.
   ///
-  /// - [CanvasEventManager.handleEvent]
+  /// - [CanvasEventManager.handlePointerEvent]
   void dispatchPointerEvent(@viewCoordinate PointerEvent event) {
     _eachCanvasListener((element) {
       element.onPointerEventAction?.call(this, event);
@@ -1495,10 +1498,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //region ---diagnostic---
 
+  /// 调试标签
+  String? debugLabel;
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
 
+    properties.add(StringProperty("调试标签", debugLabel));
     properties.add(IntProperty("请求刷新次数", refreshCount));
     properties.add(IntProperty("重绘次数", paintCount));
     properties.add(DiagnosticsProperty('代理上下文', delegateContext));

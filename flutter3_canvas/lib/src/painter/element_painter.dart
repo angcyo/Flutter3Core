@@ -12,7 +12,8 @@ part of '../../flutter3_canvas.dart';
 ///   - [onPaintingSelf]
 ///
 class IElementPainter extends IPainter
-    with DiagnosticableTreeMixin, DiagnosticsMixin {
+    with DiagnosticableTreeMixin, DiagnosticsMixin
+    implements IPainterEventHandler {
   /// 画布代理
   CanvasDelegate? canvasDelegate;
 
@@ -156,9 +157,9 @@ class IElementPainter extends IPainter
   //--
 
   /// 响应手势事件
-  /// [CanvasEventManager.handleElementEvent]驱动
-  @overridePoint
-  bool handleEvent(@viewCoordinate PointerEvent event) {
+  /// [CanvasEventManager.handleElementPointerEvent]驱动
+  @override
+  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
     bool handle = false;
     //debugger();
     //--
@@ -166,7 +167,16 @@ class IElementPainter extends IPainter
       final localPosition = event.localPosition;
       final offset = canvasDelegate?.canvasViewBox.toScenePoint(localPosition);
       if (offset != null) {
-        handle = handle || painterTouchSpotHandler!.handleEvent(event, offset);
+        if (painterTouchSpotHandler!.handleEvent(event, offset)) {
+          handle = true;
+          canvasDelegate?.canvasEventManager.requestInterceptPointerEvent(
+            this,
+            event,
+          );
+        }
+        if (event.isPointerFinish) {
+          canvasDelegate?.canvasEventManager.cancelInterceptPointerEvent(this);
+        }
       }
     }
     return handle;
@@ -1151,7 +1161,7 @@ class ElementPainter extends IElementPainter {
     }());*/
     debugger(when: debugLabel != null);
     if (propertyType == PainterPropertyType.paint) {
-      painterTouchSpotHandler?.containerMatrix = paintProperty?.operateMatrix;
+      painterTouchSpotHandler?.parentMatrix = paintProperty?.operateMatrix;
     }
     parentGroupPainter?.onChildPaintPropertyChanged(
       this,
@@ -1539,11 +1549,11 @@ class ElementPainter extends IElementPainter {
   /// - [CanvasStyle.enableElementControl] 使能响应事件
   /// - [CanvasStyle.enableElementEvent] 使能响应事件
   ///
-  /// [CanvasEventManager.handleEvent] 驱动 ↓
-  /// [CanvasElementManager.handleElementEvent] 驱动
+  /// [CanvasEventManager.handlePointerEvent] 驱动 ↓
+  /// [CanvasElementManager.handleElementPointerEvent] 驱动
   @override
-  bool handleEvent(@viewCoordinate PointerEvent event) {
-    bool handle = super.handleEvent(event);
+  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
+    bool handle = super.handlePointerEvent(event);
     final canvasDelegate = this.canvasDelegate;
     if (canvasDelegate == null) {
       return handle;
@@ -1625,7 +1635,7 @@ class ElementPainter extends IElementPainter {
   /// [paintState]
   /// [painting]
   ///
-  /// [ElementPainter.handleEvent]驱动
+  /// [ElementPainter.handlePointerEvent]驱动
   @overridePoint
   bool onHoverChanged(@viewCoordinate PointerEvent event, bool hover) {
     if (paintState.isHover != hover) {

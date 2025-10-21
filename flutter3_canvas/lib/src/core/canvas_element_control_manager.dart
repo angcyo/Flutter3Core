@@ -231,12 +231,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 事件处理入口
-  /// [CanvasEventManager.handleEvent]事件总入口
-  /// 由[CanvasElementManager.handleElementEvent]驱动
+  /// [CanvasEventManager.handlePointerEvent]事件总入口
+  /// 由[CanvasElementManager.handleElementPointerEvent]驱动
   ///
   /// [event] 最原始的事件参数, 未经过加工处理
   @entryPoint
-  void handleEvent(@viewCoordinate PointerEvent event) {
+  void handlePointerEvent(@viewCoordinate PointerEvent event) {
     //debugger();
     final localPosition = event.localPosition;
     if (enableElementControl) {
@@ -1314,6 +1314,7 @@ class ElementSelectComponent extends ElementGroupPainter
 
   @override
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    //debugger(when: event.isPointerMove);
     if (enableMultiSelect && pointerCount > 0 && isSelectedElement) {
       if (event.isPointerDown) {
         _multiSelectPointerId = event.pointer;
@@ -1350,7 +1351,7 @@ class ElementSelectComponent extends ElementGroupPainter
     PointerDispatchMixin dispatch,
     PointerEvent event,
   ) {
-    //debugger();
+    //debugger(when: event.isPointerMove);
     return super.interceptPointerEvent(dispatch, event);
   }
 
@@ -1366,7 +1367,7 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 点击选择可能需要在[TranslateControl]组件中处理
   @override
   bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
-    //debugger();
+    //debugger(when: event.isPointerMove);
     if (isCanvasComponentEnable) {
       //debugger(when: !event.isPointerHover);
       if (isFirstPointerEvent(dispatch, event) &&
@@ -1727,6 +1728,7 @@ class ElementSelectComponent extends ElementGroupPainter
       //取消元素选择
       if (!isNullOrEmpty(children)) {
         assert(() {
+          debugger();
           l.d('取消之前选中的元素: $children');
           return true;
         }());

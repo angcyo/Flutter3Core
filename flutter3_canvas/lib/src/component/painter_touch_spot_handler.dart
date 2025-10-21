@@ -10,7 +10,7 @@ part of '../../flutter3_canvas.dart';
 class PainterTouchSpotHandler extends IPainter {
   /// 所在容器的矩阵
   @configProperty
-  Matrix4? containerMatrix;
+  Matrix4? parentMatrix;
 
   /// 触点列表
   @configProperty
@@ -23,10 +23,10 @@ class PainterTouchSpotHandler extends IPainter {
   void painting(Canvas canvas, PaintMeta paintMeta) {
     PaintMeta meta = paintMeta;
     //debugger();
-    if (containerMatrix != null) {
+    if (parentMatrix != null) {
       meta = paintMeta.copyWith(
         originMatrix: Matrix4.identity(),
-        canvasMatrix: paintMeta.paintMatrix * containerMatrix!,
+        canvasMatrix: paintMeta.paintMatrix * parentMatrix!,
       );
     }
     meta.withPaintMatrix(canvas, () {
@@ -36,6 +36,9 @@ class PainterTouchSpotHandler extends IPainter {
     });
   }
 
+  /// 正在触摸的触点
+  TouchSpot? _touchSpot;
+
   /// 手势入口
   @overridePoint
   bool handleEvent(
@@ -43,13 +46,42 @@ class PainterTouchSpotHandler extends IPainter {
     @sceneCoordinate Offset position,
   ) {
     //debugger();
-    l.d("test->$position");
-    return event.isPointerDown;
+    bool handle = false;
+    //l.d("test->$position");
+    if (event.isPointerDown) {
+      final touchSpot = findTouchSpot(position);
+      handle = touchSpot != null;
+      _touchSpot = touchSpot;
+    } else {
+      if (_touchSpot != null) {
+        _touchSpot!.handlePointerEvent(event);
+        handle = true;
+      }
+    }
+    if (event.isPointerFinish) {
+      _touchSpot = null;
+    }
+    return handle;
   }
 
   //endregion core
 
   //region api
+
+  /// 使用画布坐标系[position]点, 查找能命中的触点
+  @api
+  TouchSpot? findTouchSpot(@sceneCoordinate Offset position) {
+    for (final element in touchSpotList.reversed) {
+      final location = element.location;
+      if (location != null) {
+        final bounds = (parentMatrix?.mapRect(location) ?? location);
+        if (bounds.contains(position)) {
+          return element;
+        }
+      }
+    }
+    return null;
+  }
 
   /// 添加一个触点到列表中
   @api
@@ -68,7 +100,7 @@ class PainterTouchSpotHandler extends IPainter {
 
 /// 触点
 /// - [PainterTouchSpotHandler]
-class TouchSpot extends IPainter {
+class TouchSpot extends IPainter implements IPainterEventHandler {
   /// 触点的位置
   /// - 相对于父坐标位置的位置
   @dp
@@ -84,5 +116,10 @@ class TouchSpot extends IPainter {
     paintMeta.withPaintMatrix(canvas, () {
       onPainting?.call(canvas, paintMeta);
     });
+  }
+
+  @override
+  bool handlePointerEvent(PointerEvent event) {
+    return false;
   }
 }

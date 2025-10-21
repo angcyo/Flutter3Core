@@ -319,7 +319,7 @@ class CanvasRenderBox extends RenderBox
     context.postNotification(
       PullBackControlNotification(event.isPointerFinish),
     );
-    canvasDelegate.handleEvent(event, entry);
+    canvasDelegate.handlePointerEvent(event, entry);
     /*assert((){
       l.w("handleEvent:${event.runtimeType} ${event.buttons}");
       return true;

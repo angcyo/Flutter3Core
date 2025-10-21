@@ -199,18 +199,25 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 事件处理入口
-  /// [event] 最原始的事件参数, 未经过加工处理
-  /// 由[CanvasEventManager.handleEvent]驱动
+  /// - [event] 最原始的事件参数, 未经过加工处理
+  /// - [ignoreHandler] 忽略的元素事件处理者
+  /// 由[CanvasEventManager.handlePointerEvent]驱动
   @entryPoint
-  void handleElementEvent(@viewCoordinate PointerEvent event) {
-    canvasElementControlManager.handleEvent(event);
+  void handleElementPointerEvent(
+    @viewCoordinate PointerEvent event, {
+    IPainterEventHandler? ignoreHandler,
+  }) {
+    canvasElementControlManager.handlePointerEvent(event);
 
     //元素事件
     if (canvasElementControlManager.enableElementControl ||
         canvasStyle.enableElementEvent == true) {
       //将事件发送元素
       for (final element in elements.reversed) {
-        if (element.handleEvent(event)) {
+        if (element == ignoreHandler) {
+          continue;
+        }
+        if (element.handlePointerEvent(event)) {
           //debugger();
           break;
         }

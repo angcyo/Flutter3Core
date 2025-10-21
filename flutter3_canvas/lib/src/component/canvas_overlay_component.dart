@@ -49,9 +49,9 @@ class CanvasOverlayComponent extends IElementPainter
   }
 
   /// 处理元素事件
-  /// [CanvasEventManager.handleEvent]驱动
+  /// [CanvasEventManager.handlePointerEvent]驱动
   @override
-  bool handleEvent(@viewCoordinate PointerEvent event) {
+  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
     return false;
   }
 
@@ -286,11 +286,11 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   bool _isPointerDown = false;
 
   @override
-  bool handleEvent(PointerEvent event) {
+  bool handlePointerEvent(PointerEvent event) {
     //l.d("handleEvent->$event");
     final viewBox = canvasViewBox;
     if (viewBox == null) {
-      return super.handleEvent(event);
+      return super.handlePointerEvent(event);
     }
     final point = viewBox.toScenePoint(event.localPosition);
 
@@ -483,9 +483,9 @@ class CanvasPointerOverlayComponent extends CanvasOverlayComponent {
 
   /// 触发手势事件
   @override
-  bool handleEvent(@viewCoordinate PointerEvent event) {
+  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
     if (onPointerAction == null) {
-      return super.handleEvent(event);
+      return super.handlePointerEvent(event);
     }
     return onPointerAction!.call(event);
   }

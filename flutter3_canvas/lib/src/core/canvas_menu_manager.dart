@@ -19,7 +19,7 @@ class CanvasMenuManager
   ///
   /// [CanvasDelegate.showMenus]中显示这些菜单
   ///
-  /// [CanvasElementManager.handleElementEvent]驱动
+  /// [CanvasElementManager.handleElementPointerEvent]驱动
   @callPoint
   List<Widget>? buildMenus({
     @viewCoordinate Offset? anchorPosition,
@@ -27,7 +27,7 @@ class CanvasMenuManager
       null;
 
   /// [CanvasDelegate.showWidgetMenu]中显示这些菜单
-  /// [CanvasElementManager.handleElementEvent]驱动
+  /// [CanvasElementManager.handleElementPointerEvent]驱动
   @callPoint
   Widget? buildMenuWidget({
     @viewCoordinate Offset? anchorPosition,

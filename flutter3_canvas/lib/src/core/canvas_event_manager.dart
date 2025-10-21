@@ -10,6 +10,8 @@ part of '../../flutter3_canvas.dart';
 /// [CanvasElementManager] 元素相关的手势在此类中实现
 /// [CanvasElementControlManager]
 ///
+/// - [CanvasDelegate.canvasEventManager] 成员属性
+///
 class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   final CanvasDelegate canvasDelegate;
 
@@ -45,9 +47,12 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// [event] 最原始的事件参数, 未经过加工处理
-  /// [CanvasDelegate.handleEvent]驱动
+  /// [CanvasDelegate.handlePointerEvent]驱动
   @entryPoint
-  void handleEvent(@viewCoordinate PointerEvent event) {
+  void handlePointerEvent(@viewCoordinate PointerEvent event) {
+    if (!canvasDelegate.canvasStyle.enableCanvasEvent) {
+      return;
+    }
     if (!event.isPointerHover) {
       /*assert((){
         l.d("handleEvent[${event.synthesized}]->$event");
@@ -66,27 +71,32 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       if (canvasDelegate.canvasStyle.enableWidgetRender) {
         _handleWidgetPainterEvent(event);
       }
+      //派发事件到客户端
       handleDispatchEvent(event);
       //元素操作事件
       final overlayComponent = canvasDelegate._overlayComponent;
       if (overlayComponent == null) {
+        //debugger(when: event.isPointerMove);
         if (canvasDelegate.isDragMode) {
           //拖拽模式下, 不处理元素事件
+        } else if (_painterEventInterceptHandler != null) {
+          _painterEventInterceptHandler?.handlePointerEvent(event);
         } else {
           //元素事件分发
           //debugger();
-          canvasDelegate.canvasElementManager.handleElementEvent(event);
+          canvasDelegate.canvasElementManager.handleElementPointerEvent(event);
         }
       } else {
-        overlayComponent.handleEvent(event);
+        overlayComponent.handlePointerEvent(event);
       }
     }
-    //--
+    //--canvasListeners
     canvasDelegate.dispatchPointerEvent(event);
-    //--
+    //--finish
     if (event.isPointerFinish) {
       _cancelDispatchEvent = false;
       isPointerDown = false;
+      _painterEventInterceptHandler = null;
     }
 
     assert(() {
@@ -125,6 +135,36 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   //--
 
+  /// 拦截手势事件处理
+  /// - 将会拦截[CanvasElementManager.handleElementPointerEvent]的事件派发
+  IPainterEventHandler? _painterEventInterceptHandler;
+
+  /// 请求拦截手势事件处理
+  @api
+  void requestInterceptPointerEvent(
+    IPainterEventHandler? painter,
+    PointerEvent seedEvent,
+  ) {
+    _painterEventInterceptHandler = painter;
+    if (painter != null) {
+      //派发取消事件到所有元素
+      final cancelEvent = createPointerCancelEvent(seedEvent);
+      canvasDelegate.canvasElementManager.handleElementPointerEvent(
+        cancelEvent,
+        ignoreHandler: painter,
+      );
+    }
+  }
+
+  /// 请求移除拦截手势事件处理
+  @api
+  void cancelInterceptPointerEvent(IPainterEventHandler? painter) {
+    if (_painterEventInterceptHandler == painter) {
+      //debugger();
+      _painterEventInterceptHandler = null;
+    }
+  }
+
   /// 临时取消事件调度派发, 抬手后恢复
   ///
   /// - [cancelDispatchEvent]
@@ -135,7 +175,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   @callPoint
   void cancelDispatchEvent(PointerEvent seedEvent) {
     final cancelEvent = createPointerCancelEvent(seedEvent);
-    handleEvent(cancelEvent);
+    handlePointerEvent(cancelEvent);
     _cancelDispatchEvent = true;
   }
 
