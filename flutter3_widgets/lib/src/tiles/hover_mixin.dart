@@ -5,17 +5,20 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2025/02/15
 ///
 /// 悬停效果/焦点效果混入
-/// 使用[buildHoverWidgetMixin]包裹目标小部件
-/// 使用[buildHoverDecorationMixin]创建对应的状态装饰器
+/// - 使用[buildHoverWidgetMixin]包裹目标小部件
+/// - 使用[buildHoverDecorationMixin]创建对应的状态装饰器
 mixin HoverStateMixin<T extends StatefulWidget> on State<T> {
   /// 是否处于焦点状态
   /// 优先判断此状态
+  @output
   bool isFocusStateMixin = false;
 
   /// 是否处于悬停状态
+  @output
   bool isHoverStateMixin = false;
 
-  /// 焦点节点
+  /// 焦点节点, 用来监听焦点的变化
+  @property
   FocusNode? hoverFocusNodeMixin;
 
   @override
@@ -66,17 +69,11 @@ mixin HoverStateMixin<T extends StatefulWidget> on State<T> {
     final globalTheme = GlobalTheme.of(context);
     if (isFocusStateMixin) {
       return focusDecoration ??
-          strokeDecoration(
-            color: globalTheme.accentColor,
-            radius: radius,
-          );
+          strokeDecoration(color: globalTheme.accentColor, radius: radius);
     }
     if (isHoverStateMixin) {
       return hoverDecoration ??
-          fillDecoration(
-            color: globalTheme.pressColor,
-            radius: radius,
-          );
+          fillDecoration(color: globalTheme.pressColor, radius: radius);
     }
     //如果child中包含TextField, 则建议返回非空, 否则通过Tab键移动焦点时, 会出现TextField无法获取焦点的情况
     return normalDecoration;

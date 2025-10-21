@@ -72,9 +72,17 @@ class GlobalTheme {
   Color get dialogSurfaceBgColor => themeWhiteColor;
 
   /// 按下时的颜色
+  /// - [pressColor]
+  /// - [hoverColor]
+  /// - [borderColor]
+  /// - [fillColor]
   Color get pressColor => Colors.black12;
 
   /// 悬停时的颜色
+  /// - [pressColor]
+  /// - [hoverColor]
+  /// - [borderColor]
+  /// - [fillColor]
   Color get hoverColor => pressColor.withValues(alpha: 0.1 /*[0~1]*/);
 
   /// 图标按下的颜色/选择的颜色等
@@ -160,9 +168,17 @@ class GlobalTheme {
   Color get lineDarkColor => const Color(0xffd8d8d8);
 
   /// 边框样式的修饰颜色
+  /// - [pressColor]
+  /// - [hoverColor]
+  /// - [borderColor]
+  /// - [fillColor]
   Color get borderColor => const Color(0xff6f6f6f);
 
   /// 填充样式背景修饰颜色
+  /// - [pressColor]
+  /// - [hoverColor]
+  /// - [borderColor]
+  /// - [fillColor]
   Color get fillColor => const Color(0xfff0f1f5);
 
   /// 信息提示颜色

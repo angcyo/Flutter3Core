@@ -110,18 +110,17 @@ class _LabelSingleInputTileState extends State<LabelSingleInputTile>
     //build label
     Widget? label = widget.buildLabelWidgetMixin(context);
     if (label != null && !isNil(widget.labelActions)) {
-      label = [
-        label,
-        ...?widget.labelActions,
-      ].row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center);
+      label = [label, ...?widget.labelActions].row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+      );
     }
 
     //input
-    Widget input = buildInputWidgetMixin(context)
-        .paddingOnly(left: widget.labelPadding?.left ?? 0);
+    Widget input = buildInputWidgetMixin(
+      context,
+    ).paddingOnly(left: widget.labelPadding?.left ?? 0);
 
     return [label, input]
         .column(crossAxisAlignment: CrossAxisAlignment.start)!
@@ -312,6 +311,9 @@ class NumberInputWidget extends StatefulWidget {
   /// 自动提交
   final bool autoSubmitOnUnFocus;
 
+  /// 显示后缀icon
+  final bool autoShowSuffixIcon;
+
   const NumberInputWidget({
     super.key,
     this.inputText,
@@ -329,6 +331,7 @@ class NumberInputWidget extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.autoSubmitOnUnFocus = true,
+    this.autoShowSuffixIcon = false,
   });
 
   @override
@@ -367,9 +370,9 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   String _formatDigits(String value) {
     if (isDouble) {
       return value.toDoubleOrNull()?.toDigits(
-                digits: widget.inputMaxDigits,
-                removeZero: !value.contains("."),
-              ) ??
+            digits: widget.inputMaxDigits,
+            removeZero: !value.contains("."),
+          ) ??
           value;
     }
     return value;
@@ -404,18 +407,19 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
       maxLength: widget.inputMaxLength,
       showInputCounter: false,
       keyboardType: isString ? TextInputType.text : TextInputType.number,
-      inputFormatters: widget.inputFormatters ??
+      inputFormatters:
+          widget.inputFormatters ??
           (isDouble
               ? [decimalTextInputFormatter]
               : isInt
-                  ? [numberTextInputFormatter]
-                  : null),
+              ? [numberTextInputFormatter]
+              : null),
       textStyle: widget.textStyle,
       textAlign: widget.textAlign,
       inputBorderType: InputBorderType.none,
       inputBuildCounter: null,
       contentPadding: widget.contentPadding,
-      autoShowSuffixIcon: false,
+      autoShowSuffixIcon: widget.autoShowSuffixIcon,
       autoSubmitOnUnFocus: widget.autoSubmitOnUnFocus,
       //--
       hintText: widget.hintText,
@@ -460,11 +464,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
           widget.inputMaxValue,
         );
       } else if (isInt) {
-        return clamp(
-          value.toInt(),
-          widget.inputMinValue,
-          widget.inputMaxValue,
-        );
+        return clamp(value.toInt(), widget.inputMinValue, widget.inputMaxValue);
       }
     } catch (e, s) {
       /*assert(() {
@@ -478,6 +478,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
 
 /// 数字输入tile
 /// 左[label].[输入框tile].[inputHint]
+/// - 支持鼠标悬停效果
 ///
 /// - [LabelNumberInputTile]
 /// - [NumberInputWidget]
@@ -507,6 +508,7 @@ class LabelNumberInputTile extends StatefulWidget with LabelMixin {
   final EdgeInsetsGeometry? contentPadding;
   @defInjectMark
   final TextStyle? numberTextStyle;
+  final bool autoShowSuffixIcon;
 
   //--trailing
 
@@ -536,6 +538,7 @@ class LabelNumberInputTile extends StatefulWidget with LabelMixin {
     this.numType,
     this.contentPadding = kNumberInputPadding,
     this.numberTextStyle,
+    this.autoShowSuffixIcon = false,
     //--trailing
     this.trailingWidget,
     //--tile
@@ -568,35 +571,38 @@ class _LabelNumberInputTileState extends State<LabelNumberInputTile>
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     //build label
-    Widget? label = widget.buildLabelWidgetMixin(context,
-        labelTextStyle: widget.labelTextStyle ?? globalTheme.textDesStyle);
+    Widget? label = widget.buildLabelWidgetMixin(
+      context,
+      labelTextStyle: widget.labelTextStyle ?? globalTheme.textDesStyle,
+    );
     //build trailing
     Widget? trailingWidget = widget.trailingWidget;
 
     return buildHoverWidgetMixin(
       context,
       Row(
-        children: [
-          if (label != null) label,
-          NumberInputWidget(
-            inputText: _currentNumber,
-            contentPadding: widget.contentPadding,
-            inputNumType: widget.numType ?? NumType.from(widget.number),
-            inputMinValue: widget.minValue,
-            inputMaxValue: widget.maxValue,
-            inputMaxDigits: widget.maxDigits,
-            inputFocusNode: hoverFocusNodeMixin,
-            textStyle: widget.numberTextStyle ?? globalTheme.textBodyStyle,
-            textAlign: TextAlign.start,
-            onChanged: (value) {
-              _currentNumber = value;
-              widget.onChanged?.call(value);
-            },
-            onSubmitted: widget.onSubmitted,
-          ).expanded(),
-          if (trailingWidget != null) trailingWidget,
-        ],
-      )
+            children: [
+              if (label != null) label,
+              NumberInputWidget(
+                inputText: _currentNumber,
+                contentPadding: widget.contentPadding,
+                inputNumType: widget.numType ?? NumType.from(widget.number),
+                inputMinValue: widget.minValue,
+                inputMaxValue: widget.maxValue,
+                inputMaxDigits: widget.maxDigits,
+                inputFocusNode: hoverFocusNodeMixin,
+                textStyle: widget.numberTextStyle ?? globalTheme.textBodyStyle,
+                textAlign: TextAlign.start,
+                autoShowSuffixIcon: widget.autoShowSuffixIcon,
+                onChanged: (value) {
+                  _currentNumber = value;
+                  widget.onChanged?.call(value);
+                },
+                onSubmitted: widget.onSubmitted,
+              ).expanded(),
+              if (trailingWidget != null) trailingWidget,
+            ],
+          )
           .paddingInsets(widget.tilePadding)
           .backgroundDecoration(
             buildHoverDecorationMixin(
