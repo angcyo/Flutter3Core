@@ -16,13 +16,17 @@ class ImageElementPainter extends ElementPainter {
     debug = false;
   }
 
+  /// 使用指定的[image]初始化元素
+  /// - 设置元素的宽高
   @property
   void initFromImage(UiImage? image) {
     painterImage = image;
     if (paintProperty == null) {
-      updatePaintProperty(PaintProperty()
-        ..width = image?.width.toDouble() ?? 0
-        ..height = image?.height.toDouble() ?? 0);
+      updatePaintProperty(
+        PaintProperty()
+          ..width = image?.width.toDouble() ?? 0
+          ..height = image?.height.toDouble() ?? 0,
+      );
     } else {
       paintProperty?.let((it) {
         it.width = image?.width.toDouble() ?? 0;
