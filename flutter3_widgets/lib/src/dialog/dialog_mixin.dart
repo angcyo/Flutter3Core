@@ -139,7 +139,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         decorationColor: decorationColor,
         blur: blur,
       ),
-    );
+    ).autoCloseDialog(context);
   }
 
   /// 底部撑满显示的对话框样式
@@ -161,7 +161,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           topRight: Radius.circular(radius),
         ),
       ),
-    );
+    ).autoCloseDialog(context);
   }
 
   /// 底部撑满显示的对话框样式
@@ -241,7 +241,8 @@ mixin DialogMixin implements TranslationTypeImpl {
         .align(Alignment.bottomCenter)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(context)
-        .blur(sigma: blur ? kL : null);
+        .blur(sigma: blur ? kL : null)
+        .autoCloseDialog(context);
   }
 
   /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
@@ -485,7 +486,8 @@ mixin DialogMixin implements TranslationTypeImpl {
         .align(Alignment.bottomCenter)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(context)
-        .blur(sigma: blur ? kL : null);
+        .blur(sigma: blur ? kL : null)
+        .autoCloseDialog(context);
   }
 
   //endregion ---对话框包裹---

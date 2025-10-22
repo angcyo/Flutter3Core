@@ -828,28 +828,111 @@ extension WidgetEx on Widget {
   /// ```
   /// Tried to make a child into a parent of itself.
   /// ```
-  /// [Focus]
-  /// [FocusScope]
+  ///
+  /// - [onKeyEvent] 具有焦点之后, 键盘事件会回调[onKeyEvent]
+  ///
+  /// - [Focus]
+  /// - [FocusScope]
+  ///
+  /// - [KeyboardListener]
   Widget focus({
     Key? key,
     FocusNode? focusNode,
     FocusNode? parentNode,
-    bool autofocus = false,
+    bool autofocus = true,
     ValueChanged<bool>? onFocusChange,
     bool enable = true,
+    FocusOnKeyEventCallback? onKeyEvent,
   }) => enable
       ? Focus(
           focusNode: focusNode,
           parentNode: parentNode,
           autofocus: autofocus,
+          onKeyEvent: onKeyEvent,
           onFocusChange:
               onFocusChange ??
-              (value) {
-                l.i('focus change $value');
-              },
+              (isDebug
+                  ? (value) {
+                      l.i('[$runtimeType] focus change $value');
+                    }
+                  : null),
           child: this,
         )
       : this;
+
+  /// 按键事件监听, 同样需要在有焦点的时候才会触发回调
+  ///
+  /// ```
+  /// # Escape 按下/抬起
+  /// KeyDownEvent#b5fcc(physicalKey: PhysicalKeyboardKey#e41f8(usbHidUsage: "0x00070029", debugName: "Escape"), logicalKey: LogicalKeyboardKey#4eada(keyId: "0x10000001b", keyLabel: "Escape", debugName: "Escape"), character: "", timeStamp: 312:12:22.271771)
+  /// KeyUpEvent#c2df8(physicalKey: PhysicalKeyboardKey#e41f8(usbHidUsage: "0x00070029", debugName: "Escape"), logicalKey: LogicalKeyboardKey#4eada(keyId: "0x10000001b", keyLabel: "Escape", debugName: "Escape"), character: null, timeStamp: 312:12:22.375289)
+  ///
+  /// # 回车键 按下/抬起
+  /// KeyDownEvent#3c98c(physicalKey: PhysicalKeyboardKey#e14a9(usbHidUsage: "0x00070028", debugName: "Enter"), logicalKey: LogicalKeyboardKey#2604c(keyId: "0x10000000d", keyLabel: "Enter", debugName: "Enter"), character: "", timeStamp: 312:12:25.359871)
+  /// KeyUpEvent#4bf94(physicalKey: PhysicalKeyboardKey#e14a9(usbHidUsage: "0x00070028", debugName: "Enter"), logicalKey: LogicalKeyboardKey#2604c(keyId: "0x10000000d", keyLabel: "Enter", debugName: "Enter"), character: null, timeStamp: 312:12:25.574965)
+  /// ```
+  ///
+  /// - [KeyboardListener]
+  Widget keyboardListener({
+    ValueChanged<KeyEvent>? onKeyEvent,
+    //--
+    Key? key,
+    FocusNode? focusNode,
+    bool autofocus = true,
+  }) {
+    if (onKeyEvent == null) {
+      return this;
+    }
+    focusNode ??= FocusNode();
+    return KeyboardListener(
+      key: key,
+      onKeyEvent: (event) {
+        if (autofocus) {
+          focusNode?.unfocus();
+        }
+        onKeyEvent.call(event);
+      },
+      focusNode: focusNode,
+      autofocus: autofocus,
+      child: this,
+    );
+  }
+
+  /// 在桌面平台监听[LogicalKeyboardKey.escape]按键自动关闭窗口
+  ///
+  /// - [Shortcuts] 也可以通过此小部件实现
+  Widget autoCloseDialog(
+    BuildContext? context, {
+    bool onlyDesktop = true,
+    Key? key,
+    //--
+    dynamic result,
+    //--
+    bool autofocus = true,
+    //--
+    bool enable = true,
+  }) => !enable
+      ? this
+      : focus(
+          key: key,
+          autofocus: autofocus,
+          enable: onlyDesktop ? isDesktopOrWeb : true,
+          onKeyEvent: (node, event) {
+            if (event.isKeyUp &&
+                event.logicalKey == LogicalKeyboardKey.escape) {
+              if (autofocus) {
+                node.unfocus(); //一定要丢掉焦点, 否则会报错
+              }
+              //Failed assertion: line 516 pos 11: '!_pressedKeys.containsKey(event.physicalKey)': A KeyDownEvent is dispatched, but the state shows that the physical key is already pressed.
+              // If this occurs in real application, please report this bug to Flutter.
+              // If this occurs in unit tests, please ensure that simulated events follow Flutter's event model as documented in `HardwareKeyboard`.
+              // This was the event: KeyDownEvent#487e3(physicalKey: PhysicalKeyboardKey#e41f8(usbHidUsage: "0x00070029", debugName: "Escape"), logicalKey: LogicalKeyboardKey#4eada(keyId: "0x10000001b", keyLabel: "Escape", debugName: "Escape"), character: "", timeStamp: 0:00:00.000000)
+              context?.maybePop(result);
+              return KeyEventResult.handled;
+            }
+            return KeyEventResult.ignored;
+          },
+        );
 
   /// [PointerListenerWidget]
   /// [Listener]

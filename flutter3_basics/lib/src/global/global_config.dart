@@ -349,18 +349,18 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// - 平板布局, 否则常规的手机布局
   /// - [isTabletWindow]
   @configProperty
-  bool isAdaptiveTablet = false;
+  bool isAdaptiveTablet = isDesktopOrWeb;
 
   /// 是否要适配平板设备下的宽屏模式, 需要先开启平板适配
   /// - 宽屏模式, 可能理解为pc端布局
   /// - [isAdaptiveTablet]
   @configProperty
-  bool isAdaptiveTabletLandscapeModel = false;
+  bool isAdaptiveTabletLandscapeModel = isDesktopOrWeb;
 
   /// 是否强制标识为平板设备
   /// - [isTabletWindow]
   @configProperty
-  bool forceTabletDevice = false;
+  bool forceTabletDevice = isDesktopOrWeb;
 
   //endregion tablet平板适配
 
