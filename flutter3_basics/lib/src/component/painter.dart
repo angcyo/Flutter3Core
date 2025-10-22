@@ -277,6 +277,7 @@ mixin CurvePointEventMixin {
 /// 坐标系
 const viewCoordinate = AnnotationMeta('视图坐标的值, 以屏幕左上角为原点');
 const sceneCoordinate = AnnotationMeta('场景坐标的值, 以内容坐标中心为原点');
+const relativeCoordinate = AnnotationMeta('相对坐标的值, 容器或父元素为原点');
 
 /// [PaintMeta]
 const rasterizeElementHost = AnnotationMeta('栅格化元素, 栅格化时, 不应该绘制额外的干扰信息');

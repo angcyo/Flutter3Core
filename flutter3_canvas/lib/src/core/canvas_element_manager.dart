@@ -207,9 +207,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     @viewCoordinate PointerEvent event, {
     IPainterEventHandler? ignoreHandler,
   }) {
+    //元素事件控制派发
     canvasElementControlManager.handlePointerEvent(event);
 
-    //元素事件
+    //元素自身的事件派发
     if (canvasElementControlManager.enableElementControl ||
         canvasStyle.enableElementEvent == true) {
       //将事件发送元素
@@ -223,6 +224,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         }
       }
     }
+
     //画布菜单
     if (canvasElementControlManager.enableElementControl ||
         canvasStyle.enableCanvasMenu == true) {

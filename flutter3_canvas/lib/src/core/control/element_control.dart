@@ -154,7 +154,9 @@ class BaseControl
 
   @override
   bool interceptPointerEvent(
-      PointerDispatchMixin dispatch, PointerEvent event) {
+    PointerDispatchMixin dispatch,
+    PointerEvent event,
+  ) {
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(dispatch, event)) {
         if (event.isPointerDown && controlBounds != null) {
@@ -253,15 +255,18 @@ class BaseControl
     @viewCoordinate
     Offset center = canvasViewBox.toViewPoint(bounds.lt);
 
-    center += Offset(-controlSize / 2, -controlSize / 2) +
+    center +=
+        Offset(-controlSize / 2, -controlSize / 2) +
         Offset(-controlOffset, -controlOffset);
 
     final rotateMatrix = Matrix4.identity()
       ..rotateBy(selectComponentProperty.angle, anchor: anchor);
     center = rotateMatrix.mapPoint(center);
 
-    return Rect.fromCircle(center: center, radius: controlSize / 2)
-        .expand(controlPadding);
+    return Rect.fromCircle(
+      center: center,
+      radius: controlSize / 2,
+    ).expand(controlPadding);
   }
 
   /// 获取右上控制点边界
@@ -274,15 +279,18 @@ class BaseControl
     @viewCoordinate
     Offset center = canvasViewBox.toViewPoint(bounds.rt);
 
-    center += Offset(controlSize / 2, -controlSize / 2) +
+    center +=
+        Offset(controlSize / 2, -controlSize / 2) +
         Offset(controlOffset, -controlOffset);
 
     final rotateMatrix = Matrix4.identity()
       ..rotateBy(selectComponentProperty.angle, anchor: anchor);
     center = rotateMatrix.mapPoint(center);
 
-    return Rect.fromCircle(center: center, radius: controlSize / 2)
-        .expand(controlPadding);
+    return Rect.fromCircle(
+      center: center,
+      radius: controlSize / 2,
+    ).expand(controlPadding);
   }
 
   /// 获取右下控制点边界
@@ -295,15 +303,18 @@ class BaseControl
     @viewCoordinate
     Offset center = canvasViewBox.toViewPoint(bounds.rb);
 
-    center += Offset(controlSize / 2, controlSize / 2) +
+    center +=
+        Offset(controlSize / 2, controlSize / 2) +
         Offset(controlOffset, controlOffset);
 
     final rotateMatrix = Matrix4.identity()
       ..rotateBy(selectComponentProperty.angle, anchor: anchor);
     center = rotateMatrix.mapPoint(center);
 
-    return Rect.fromCircle(center: center, radius: controlSize / 2)
-        .expand(controlPadding);
+    return Rect.fromCircle(
+      center: center,
+      radius: controlSize / 2,
+    ).expand(controlPadding);
   }
 
   /// 获取左下控制点边界
@@ -316,20 +327,25 @@ class BaseControl
     @viewCoordinate
     Offset center = canvasViewBox.toViewPoint(bounds.lb);
 
-    center += Offset(-controlSize / 2, controlSize / 2) +
+    center +=
+        Offset(-controlSize / 2, controlSize / 2) +
         Offset(-controlOffset, controlOffset);
 
     final rotateMatrix = Matrix4.identity()
       ..rotateBy(selectComponentProperty.angle, anchor: anchor);
     center = rotateMatrix.mapPoint(center);
 
-    return Rect.fromCircle(center: center, radius: controlSize / 2)
-        .expand(controlPadding);
+    return Rect.fromCircle(
+      center: center,
+      radius: controlSize / 2,
+    ).expand(controlPadding);
   }
 
   /// 加载控制点图片
-  void loadControlPicture(String svgName,
-      [void Function(PictureInfo)? onLoaded]) {
+  void loadControlPicture(
+    String svgName, [
+    void Function(PictureInfo)? onLoaded,
+  ]) {
     loadAssetSvgPicture(
       'packages/flutter3_canvas/assets/svg/$svgName',
       prefix: null,
@@ -388,8 +404,9 @@ class BaseControl
   void _setControlTarget(ElementPainter? element, ControlStateEnum state) {
     _elementStateStack?.dispose();
     _downTargetElementCenter = element?.paintProperty?.paintCenter;
-    _downTargetElementAnchor =
-        element?.paintProperty?.let((it) => Offset(it.left, it.top));
+    _downTargetElementAnchor = element?.paintProperty?.let(
+      (it) => Offset(it.left, it.top),
+    );
     _targetElement = element;
     _elementStateStack = element?.createStateStack();
 
@@ -486,8 +503,11 @@ class BaseControl
   /// [point] 需要反转的点
   /// [center] 旋转锚点
   /// [angle].[point]当前旋转的角度, 弧度
-  Offset? reverseRotateScenePoint(Offset? point,
-      [Offset? center, double? angle]) {
+  Offset? reverseRotateScenePoint(
+    Offset? point, [
+    Offset? center,
+    double? angle,
+  ]) {
     if (point == null) {
       return null;
     }
@@ -510,7 +530,7 @@ class BaseControl
 /// 删除元素控制
 class DeleteControl extends BaseControl {
   DeleteControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, ControlTypeEnum.delete) {
+    : super(canvasElementControlManager, ControlTypeEnum.delete) {
     loadControlPicture('canvas_delete_point.svg');
   }
 
@@ -523,7 +543,7 @@ class DeleteControl extends BaseControl {
 /// 旋转元素控制
 class RotateControl extends BaseControl {
   RotateControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, ControlTypeEnum.rotate) {
+    : super(canvasElementControlManager, ControlTypeEnum.rotate) {
     loadControlPicture('canvas_rotate_point.svg');
   }
 
@@ -541,12 +561,14 @@ class RotateControl extends BaseControl {
             //首次移动, 并且超过了阈值
             isFirstHandle = false;
             startControlTarget(
-                canvasElementControlManager.elementSelectComponent);
+              canvasElementControlManager.elementSelectComponent,
+            );
           }
         }
         if (!isFirstHandle) {
-          final moveScenePoint =
-              canvasViewBox.toScenePoint(event.localPosition);
+          final moveScenePoint = canvasViewBox.toScenePoint(
+            event.localPosition,
+          );
           _downTargetElementCenter?.let((it) {
             final angle = angleBetween(it, downScenePoint, it, moveScenePoint);
             final matrix = Matrix4.identity()..rotateBy(angle, anchor: it);
@@ -570,7 +592,7 @@ class RotateControl extends BaseControl {
 /// 缩放元素控制
 class ScaleControl extends BaseControl {
   ScaleControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, ControlTypeEnum.scale) {
+    : super(canvasElementControlManager, ControlTypeEnum.scale) {
     loadControlPicture('canvas_scale_point.svg');
   }
 
@@ -604,10 +626,15 @@ class ScaleControl extends BaseControl {
     if (isCanvasComponentEnable) {
       //debugger();
       if (isPointerInBounds(event)) {
-        canvasDelegate.addCursorStyle(SystemMouseCursors.resizeUpLeftDownRight);
+        canvasDelegate.addCursorStyle(
+          "cursor_scale",
+          SystemMouseCursors.resizeUpLeftDownRight,
+        );
       } else {
-        canvasDelegate
-            .removeCursorStyle(SystemMouseCursors.resizeUpLeftDownRight);
+        canvasDelegate.removeCursorStyle(
+          "cursor_scale",
+          SystemMouseCursors.resizeUpLeftDownRight,
+        );
       }
     }
   }
@@ -621,17 +648,22 @@ class ScaleControl extends BaseControl {
             //首次移动, 并且超过了阈值
             isFirstHandle = false;
             startControlTarget(
-                canvasElementControlManager.elementSelectComponent);
+              canvasElementControlManager.elementSelectComponent,
+            );
             _downScenePointInvert = reverseRotateScenePoint(downScenePoint)!;
-            _downTargetElementAnchorInvert =
-                reverseRotateScenePoint(_downTargetElementAnchor);
+            _downTargetElementAnchorInvert = reverseRotateScenePoint(
+              _downTargetElementAnchor,
+            );
             _downTargetElementBounds = canvasElementControlManager
-                .elementSelectComponent.paintProperty?.paintBounds;
+                .elementSelectComponent
+                .paintProperty
+                ?.paintBounds;
           }
         }
         if (!isFirstHandle) {
-          final moveScenePoint =
-              canvasViewBox.toScenePoint(event.localPosition);
+          final moveScenePoint = canvasViewBox.toScenePoint(
+            event.localPosition,
+          );
           final moveScenePointInvert = reverseRotateScenePoint(moveScenePoint)!;
 
           //需要计算的缩放比例
@@ -738,7 +770,7 @@ class LockControl extends BaseControl {
   PictureInfo? _unlockPictureInfo;
 
   LockControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, ControlTypeEnum.lock) {
+    : super(canvasElementControlManager, ControlTypeEnum.lock) {
     loadControlPicture('canvas_lock_point.svg', (value) {
       _lockPictureInfo = value;
       if (isLock) {
@@ -779,7 +811,7 @@ class LockControl extends BaseControl {
 class TranslateControl extends BaseControl
     with DoubleTapDetectorMixin, TouchDetectorMixin {
   TranslateControl(CanvasElementControlManager canvasElementControlManager)
-      : super(canvasElementControlManager, ControlTypeEnum.translate);
+    : super(canvasElementControlManager, ControlTypeEnum.translate);
 
   //--
 
@@ -840,8 +872,9 @@ class TranslateControl extends BaseControl
             isPointerDownIn = true;
             isFirstHandle = true;
             _isDownSelectComponent = true;
-            canvasElementControlManager
-                .updatePaintInfoType(PaintInfoType.location);
+            canvasElementControlManager.updatePaintInfoType(
+              PaintInfoType.location,
+            );
             //在元素上点击, 就需要拦截事件, 因为还有双击操作
             startControlTarget(selectComponent);
             return true;
@@ -889,7 +922,9 @@ class TranslateControl extends BaseControl
 
   /// 吸附控制
   ElementAdsorbControl get adsorbControl => canvasDelegate
-      .canvasElementManager.canvasElementControlManager.elementAdsorbControl;
+      .canvasElementManager
+      .canvasElementControlManager
+      .elementAdsorbControl;
 
   /// 是否要查找吸附
   bool get findAdsorb =>
@@ -908,8 +943,9 @@ class TranslateControl extends BaseControl
           if (firstDownEvent?.isMoveExceed(localPosition) == true) {
             //首次移动, 并且超过了阈值
             isFirstHandle = false;
-            canvasElementControlManager
-                .updatePaintInfoType(PaintInfoType.location);
+            canvasElementControlManager.updatePaintInfoType(
+              PaintInfoType.location,
+            );
           }
         }
         //debugger();
@@ -933,8 +969,10 @@ class TranslateControl extends BaseControl
               firstMoveOffset.dy,
             );
 
-            offset = Offset(xAdsorbValue?.adsorbValue ?? offset.dx,
-                yAdsorbValue?.adsorbValue ?? offset.dy);
+            offset = Offset(
+              xAdsorbValue?.adsorbValue ?? offset.dx,
+              yAdsorbValue?.adsorbValue ?? offset.dy,
+            );
 
             /*double dx = offset.dx;
             double dy = offset.dy;
@@ -992,7 +1030,9 @@ class TranslateControl extends BaseControl
   /// 检查是否在元素上进行了点击/长按事件
   @override
   bool onTouchDetectorPointerEvent(
-      PointerEvent event, TouchDetectorType touchType) {
+    PointerEvent event,
+    TouchDetectorType touchType,
+  ) {
     if (!isNil(_downElementList)) {
       canvasDelegate.dispatchTouchDetectorElement(_downElementList!, touchType);
     }
@@ -1020,8 +1060,8 @@ abstract class IControlPainter with Diagnosticable {
 }
 
 /// [IControlPainter]
-typedef ControlPainterFn = void Function(
-    Canvas canvas, @viewCoordinate Rect bounds, bool downIn);
+typedef ControlPainterFn =
+    void Function(Canvas canvas, @viewCoordinate Rect bounds, bool downIn);
 
 /// 控制状态
 enum ControlStateEnum {

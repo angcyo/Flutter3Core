@@ -1728,7 +1728,12 @@ class ElementSelectComponent extends ElementGroupPainter
       //取消元素选择
       if (!isNullOrEmpty(children)) {
         assert(() {
-          debugger();
+          debugger(
+            when:
+                selectType != ElementSelectType.pointer &&
+                selectType != ElementSelectType.code &&
+                selectType != ElementSelectType.user,
+          );
           l.d('取消之前选中的元素: $children');
           return true;
         }());

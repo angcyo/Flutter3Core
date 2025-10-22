@@ -181,33 +181,58 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   //region ---mouse/key---
 
   /// 当前光标的样式, 直接赋值给[MouseTrackerAnnotation.cursor], 就会生效, 不需要额外的处理
-  /// [CanvasRenderBox.cursor]
-  MouseCursor? get currentCursorStyle => _currentCursorStyleList.lastOrNull;
+  /// - [CanvasRenderBox.cursor]
+  /// - [CanvasRenderBox.cursor] 在这里生效
+  MouseCursor? get currentCursorStyle =>
+      _cursorIntentList.lastOrNull?.mouseCursors.lastOrNull;
 
   /// 请求的光标样式
-  final List<MouseCursor> _currentCursorStyleList = [];
+  final List<MouseCursorIntent> _cursorIntentList = [];
 
   /// 添加一个鼠标样式
-  /// [MouseCursor.defer]         默认
-  /// [SystemMouseCursors.none]   隐藏鼠标
-  /// [SystemMouseCursors.click]  点击手样式
+  /// - [MouseCursor.defer]         默认
+  /// - [SystemMouseCursors.none]   隐藏鼠标
+  /// - [SystemMouseCursors.click]  点击手样式
+  /// - [SystemMouseCursors.move]   移动样式
   ///
   /// [CanvasRenderBox.cursor]
   @api
-  void addCursorStyle(MouseCursor? cursor) {
+  void addCursorStyle(String tag, MouseCursor? cursor) {
     if (cursor == null) {
       return;
     }
-    final last = _currentCursorStyleList.lastOrNull;
-    if (last != cursor) {
-      _currentCursorStyleList.add(cursor);
+    final find = _cursorIntentList.findLast((e) => e.tag == tag);
+    if (find == null) {
+      _cursorIntentList.add(
+        MouseCursorIntent(tag)..addCursorStyle(tag, cursor),
+      );
+      refresh();
+    } else if (find.addCursorStyle(tag, cursor) == true) {
+      refresh();
     }
   }
 
   /// 移除一个鼠标样式
   @api
-  void removeCursorStyle(MouseCursor? cursor) {
-    _currentCursorStyleList.removeWhere((e) => e == cursor);
+  void removeCursorStyle(String tag, MouseCursor? cursor) {
+    final find = _cursorIntentList.findLast((e) => e.tag == tag);
+    if (find != null) {
+      find.removeCursorStyle(tag, cursor);
+      if (find.isEmpty == true) {
+        _cursorIntentList.remove(find);
+      }
+      refresh();
+    }
+  }
+
+  /// 移除所有[tag]对应的鼠标样式
+  @api
+  void removeTagCursorStyle(String tag) {
+    final find = _cursorIntentList.findLast((e) => e.tag == tag);
+    if (find != null) {
+      _cursorIntentList.remove(find);
+      refresh();
+    }
   }
 
   //endregion ---mouse/key---
@@ -1205,7 +1230,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       );
     });
     if (isNil(to)) {
-      removeCursorStyle(SystemMouseCursors.move);
+      removeTagCursorStyle("cursor_element");
     }
     refresh();
   }
@@ -1627,4 +1652,42 @@ enum CanvasElementType {
 
   /// 对应[CanvasElementManager.afterElements]
   after,
+}
+
+/// 鼠标样式意图
+/// - [MouseCursor]
+class MouseCursorIntent {
+  /// 鼠标样式意图标签
+  /// - 详情标签的异常在一起管理
+  final String tag;
+
+  /// 鼠标样式
+  final List<MouseCursor> mouseCursors = [];
+
+  MouseCursorIntent(this.tag);
+
+  bool get isEmpty => mouseCursors.isEmpty;
+
+  /// 添加一个鼠标样式
+  @api
+  bool addCursorStyle(String tag, MouseCursor? cursor) {
+    if (cursor == null || this.tag != tag) {
+      return false;
+    }
+    final last = mouseCursors.lastOrNull;
+    if (last != cursor) {
+      mouseCursors.add(cursor);
+      return true;
+    }
+    return false;
+  }
+
+  /// 移除一个鼠标样式
+  @api
+  void removeCursorStyle(String tag, MouseCursor? cursor) {
+    if (this.tag != tag) {
+      return;
+    }
+    mouseCursors.removeWhere((e) => e == cursor);
+  }
 }

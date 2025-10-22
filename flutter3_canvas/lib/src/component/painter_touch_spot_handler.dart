@@ -41,23 +41,33 @@ class PainterTouchSpotHandler extends IPainter {
 
   /// 手势入口
   @overridePoint
-  bool handleEvent(
+  bool handlePointerEvent(
     @viewCoordinate PointerEvent event,
-    @sceneCoordinate Offset position,
-  ) {
+    @sceneCoordinate Offset position, {
+    void Function(MouseCursor? cursor)? onUpdateCursor,
+  }) {
     //debugger();
     bool handle = false;
     //l.d("test->$position");
-    if (event.isPointerDown) {
-      final touchSpot = findTouchSpot(position);
+    if (event.isPointerHover) {
+      final touchSpot = findTouchSpot(position, filterHandlerEvent: false);
+      if (touchSpot != null) {
+        final (h, cursor) = touchSpot.handlePointerHover(event, true);
+        onUpdateCursor?.call(cursor);
+      } else {
+        onUpdateCursor?.call(null);
+      }
+    } else if (event.isPointerDown) {
+      final touchSpot = findTouchSpot(position, filterHandlerEvent: true);
       handle = touchSpot != null;
       _touchSpot = touchSpot;
-    } else {
-      if (_touchSpot != null) {
-        _touchSpot!.handlePointerEvent(event);
-        handle = true;
-      }
     }
+    //--
+    if (_touchSpot != null) {
+      _touchSpot!.handlePointerEvent(event);
+      handle = true;
+    }
+    //--
     if (event.isPointerFinish) {
       _touchSpot = null;
     }
@@ -70,8 +80,14 @@ class PainterTouchSpotHandler extends IPainter {
 
   /// 使用画布坐标系[position]点, 查找能命中的触点
   @api
-  TouchSpot? findTouchSpot(@sceneCoordinate Offset position) {
+  TouchSpot? findTouchSpot(
+    @sceneCoordinate Offset position, {
+    bool filterHandlerEvent = false,
+  }) {
     for (final element in touchSpotList.reversed) {
+      if (filterHandlerEvent && !element.isEnablePointerEvent()) {
+        continue;
+      }
       final location = element.location;
       if (location != null) {
         final bounds = (parentMatrix?.mapRect(location) ?? location);
@@ -95,16 +111,32 @@ class PainterTouchSpotHandler extends IPainter {
     touchSpotList.resetAll(elements);
   }
 
+  /// 取消所有触点的悬停状态
+  @api
+  void cancelTouchSpotHover(
+    @viewCoordinate PointerEvent event, [
+    TouchSpot? ignoreTouchSpot,
+  ]) {
+    for (final element in touchSpotList) {
+      if (element == ignoreTouchSpot) {
+        continue;
+      }
+      element.handlePointerHover(event, false);
+    }
+  }
+
   //endregion api
 }
 
 /// 触点
 /// - [PainterTouchSpotHandler]
-class TouchSpot extends IPainter implements IPainterEventHandler {
-  /// 触点的位置
+class TouchSpot extends IPainter
+    implements IPainterEventHandler, IPainterHoverHandler {
+  /// 触点的位置, 相对坐标系
   /// - 相对于父坐标位置的位置
   @dp
   @configProperty
+  @relativeCoordinate
   Rect? location;
 
   /// 绘制回调
@@ -119,7 +151,32 @@ class TouchSpot extends IPainter implements IPainterEventHandler {
   }
 
   @override
-  bool handlePointerEvent(PointerEvent event) {
+  bool isEnablePointerEvent() => true;
+
+  @override
+  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
     return false;
+  }
+
+  //--
+
+  /// 出否处于悬停状态
+  @property
+  bool isHover = false;
+
+  @override
+  (bool, MouseCursor?) handlePointerHover(
+    @viewCoordinate PointerEvent event,
+    bool hover,
+  ) {
+    isHover = hover;
+    return (
+      false,
+      isHover
+          ? isMacOS
+                ? SystemMouseCursors.click
+                : SystemMouseCursors.move
+          : null,
+    );
   }
 }

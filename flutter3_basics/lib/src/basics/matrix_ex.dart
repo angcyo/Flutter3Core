@@ -105,12 +105,7 @@ extension Matrix4Ex on vector.Matrix4 {
   Matrix4 postConcatIt(Matrix4 other) => Matrix4.copy(this)..postConcat(other);
 
   /// 平移到指定位置
-  Matrix4 translateTo({
-    ui.Offset? offset,
-    double? x,
-    double? y,
-    double? z,
-  }) {
+  Matrix4 translateTo({ui.Offset? offset, double? x, double? y, double? z}) {
     if (offset != null) {
       x = offset.dx;
       y = offset.dy;
@@ -120,12 +115,7 @@ extension Matrix4Ex on vector.Matrix4 {
   }
 
   /// 平移指定的距离
-  Matrix4 translateBy({
-    ui.Offset? offset,
-    double? dx,
-    double? dy,
-    double? dz,
-  }) {
+  Matrix4 translateBy({ui.Offset? offset, double? dx, double? dy, double? dz}) {
     if (offset != null) {
       dx = offset.dx;
       dy = offset.dy;
@@ -208,10 +198,16 @@ extension Matrix4Ex on vector.Matrix4 {
     if (sx == 1 && sy == 1 && sz == 1) {
       return this;
     }
-    withPivot(() {
-      final scale = vector.Vector3(sx ?? 1.0, sy ?? 1.0, sz ?? 1.0);
-      this.scale(scale);
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    withPivot(
+      () {
+        final scale = vector.Vector3(sx ?? 1.0, sy ?? 1.0, sz ?? 1.0);
+        this.scale(scale);
+      },
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
 
     /*final translation =
         vector.Vector3(anchor?.dx ?? pivotX, anchor?.dy ?? pivotY, pivotZ);
@@ -266,17 +262,23 @@ extension Matrix4Ex on vector.Matrix4 {
     if (sx == 1 && sy == 1 && sz == 1) {
       return this;
     }
-    withPivot(() {
-      if (sx != null) {
-        setEntry(0, 0, sx);
-      }
-      if (sy != null) {
-        setEntry(1, 1, sy);
-      }
-      if (sz != null) {
-        setEntry(2, 2, sz);
-      }
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    withPivot(
+      () {
+        if (sx != null) {
+          setEntry(0, 0, sx);
+        }
+        if (sy != null) {
+          setEntry(1, 1, sy);
+        }
+        if (sz != null) {
+          setEntry(2, 2, sz);
+        }
+      },
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
     return this;
   }
 
@@ -295,12 +297,18 @@ extension Matrix4Ex on vector.Matrix4 {
       return this;
     }
 
-    withPivot(() {
-      final skewMatrix = vector.Matrix4.skew(kx, ky);
-      //final matrix = this * skewMatrix;
-      postConcat(skewMatrix);
-      //multiply(skewMatrix);
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    withPivot(
+      () {
+        final skewMatrix = vector.Matrix4.skew(kx, ky);
+        //final matrix = this * skewMatrix;
+        postConcat(skewMatrix);
+        //multiply(skewMatrix);
+      },
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
 
     //倾斜矩阵的translate, 似乎不影响结果
     /*
@@ -335,18 +343,24 @@ extension Matrix4Ex on vector.Matrix4 {
     if (kx == 0 && ky == 0) {
       return this;
     }
-    withPivot(() {
-      final skewMatrix = vector.Matrix4.skew(kx ?? 0.0, ky ?? 0.0);
-      //debugger();
-      if (kx != null) {
-        //final index = this.index(0, 1);
-        setEntry(0, 1, skewMatrix.entry(0, 1));
-      }
-      if (ky != null) {
-        //final index = this.index(1, 0);
-        setEntry(1, 0, skewMatrix.entry(1, 0));
-      }
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    withPivot(
+      () {
+        final skewMatrix = vector.Matrix4.skew(kx ?? 0.0, ky ?? 0.0);
+        //debugger();
+        if (kx != null) {
+          //final index = this.index(0, 1);
+          setEntry(0, 1, skewMatrix.entry(0, 1));
+        }
+        if (ky != null) {
+          //final index = this.index(1, 0);
+          setEntry(1, 0, skewMatrix.entry(1, 0));
+        }
+      },
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
     return this;
   }
 
@@ -364,10 +378,16 @@ extension Matrix4Ex on vector.Matrix4 {
     if (angle % (2 * math.pi) == 0) {
       return this;
     }
-    withPivot(() {
-      //rotate(vector.Quaternion.euler(x, y, z), );
-      rotateZ(angle);
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    withPivot(
+      () {
+        //rotate(vector.Quaternion.euler(x, y, z), );
+        rotateZ(angle);
+      },
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
     return this;
   }
 
@@ -383,10 +403,16 @@ extension Matrix4Ex on vector.Matrix4 {
     if (angle % (2 * math.pi) == 0) {
       return this;
     }
-    withPivot(() {
-      final matrix = Matrix4.identity()..rotateZ(angle);
-      postConcat(matrix);
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    withPivot(
+      () {
+        final matrix = Matrix4.identity()..rotateZ(angle);
+        postConcat(matrix);
+      },
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
     return this;
   }
 
@@ -398,9 +424,15 @@ extension Matrix4Ex on vector.Matrix4 {
     double pivotY = 0,
     double pivotZ = 0,
   }) {
-    withPivot(() {
-      setRotation(Matrix3.rotationZ(angle));
-    }, anchor: anchor, pivotX: pivotX, pivotY: pivotY, pivotZ: pivotZ);
+    withPivot(
+      () {
+        setRotation(Matrix3.rotationZ(angle));
+      },
+      anchor: anchor,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      pivotZ: pivotZ,
+    );
     return this;
   }
 
@@ -486,17 +518,14 @@ extension Matrix4Ex on vector.Matrix4 {
       resultScaleX, //正负值
       resultScaleY, //正负值
       resultSkewX, //弧度
-      resultSkewY //始终为0
+      resultSkewY, //始终为0
     ];
   }
 
   /// 保证相对于(0,0)位置的锚点保持不变
   /// [anchorOriginMatrix] 锚点之前作用的矩阵
   /// @return 返回包含平移的矩阵
-  Matrix4 keepAnchor(
-    Offset anchor, {
-    Matrix4? anchorOriginMatrix,
-  }) {
+  Matrix4 keepAnchor(Offset anchor, {Matrix4? anchorOriginMatrix}) {
     //debugger();
     final Matrix4 beforeMatrix = anchorOriginMatrix ?? Matrix4.identity();
 
@@ -561,8 +590,9 @@ extension Matrix4Ex on vector.Matrix4 {
     int digits = 6,
   }) {
     String wrap(double value, [bool end = false]) =>
-        "${value.toDigits(digits: digits)}${end ? "" : ", "}"
-            .padRight(padWidth);
+        "${value.toDigits(digits: digits)}${end ? "" : ", "}".padRight(
+          padWidth,
+        );
     return '${lineNumber ? "[0] " : ""}${wrap(row0.x)}${wrap(row0.y)}${wrap(row0.z)}${wrap(row0.w, true)}$lineSeparator'
         '${lineNumber ? "[1] " : ""}${wrap(row1.x)}${wrap(row1.y)}${wrap(row1.z)}${wrap(row1.w, true)}$lineSeparator'
         '${lineNumber ? "[2] " : ""}${wrap(row2.x)}${wrap(row2.y)}${wrap(row2.z)}${wrap(row2.w, true)}$lineSeparator'
@@ -595,15 +625,15 @@ extension Matrix3Ex on vector.Matrix3 {
   /// 转换成4*4矩阵[Matrix4]
   /// [Matrix4Ex.toMatrix3]
   Matrix4 toMatrix4() => Matrix4.fromList([
-        //sx ky . .
-        this[0], this[1], this[2], 0.0,
-        //kx sy . .
-        this[3], this[4], this[5], 0.0,
-        // . . . .
-        0, 0, 1, 0,
-        //tx ty tz .
-        this[6], this[7], 0, this[8],
-      ]);
+    //sx ky . .
+    this[0], this[1], this[2], 0.0,
+    //kx sy . .
+    this[3], this[4], this[5], 0.0,
+    // . . . .
+    0, 0, 1, 0,
+    //tx ty tz .
+    this[6], this[7], 0, this[8],
+  ]);
 
   /*Matrix4.fromList([
         // Row 1
@@ -697,15 +727,14 @@ Matrix3 createMatrix3({
   double scaleY = 1.0,
   double translateX = 0.0,
   double translateY = 0.0,
-}) =>
-    Matrix3.fromList([
-      //sx ky .
-      scaleX, skewY, 0,
-      //kx sy .
-      skewY, scaleX, 0,
-      //tx ty .
-      translateX, translateY, 1,
-    ]);
+}) => Matrix3.fromList([
+  //sx ky .
+  scaleX, skewY, 0,
+  //kx sy .
+  skewY, scaleX, 0,
+  //tx ty .
+  translateX, translateY, 1,
+]);
 
 /// [createMatrix3]
 Matrix4 createMatrix4({
@@ -715,20 +744,18 @@ Matrix4 createMatrix4({
   double scaleY = 1.0,
   double translateX = 0.0,
   double translateY = 0.0,
-}) =>
-    createMatrix3(
-      scaleX: scaleX,
-      skewX: skewX,
-      skewY: skewY,
-      scaleY: scaleY,
-      translateX: translateX,
-      translateY: translateY,
-    ).toMatrix4();
+}) => createMatrix3(
+  scaleX: scaleX,
+  skewX: skewX,
+  skewY: skewY,
+  scaleY: scaleY,
+  translateX: translateX,
+  translateY: translateY,
+).toMatrix4();
 
 //--
 
-/// 创建一个透视矩阵
-
+/// 创建一个透视矩阵, `精度不够`
 /// 透视矩阵变换, 4个原始点, 4个目标点, 计算透视矩阵
 ///
 /// https://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
@@ -751,7 +778,7 @@ Matrix4 createPerspectiveMatrix(List<Offset> from, List<Offset> to) {
       0,
       0,
       -from[i].x * to[i].x,
-      -from[i].y * to[i].x
+      -from[i].y * to[i].x,
     ]);
     A.add([
       0,
@@ -761,7 +788,7 @@ Matrix4 createPerspectiveMatrix(List<Offset> from, List<Offset> to) {
       from[i].y,
       1,
       -from[i].x * to[i].y,
-      -from[i].y * to[i].y
+      -from[i].y * to[i].y,
     ]);
   }
 
@@ -779,7 +806,7 @@ Matrix4 createPerspectiveMatrix(List<Offset> from, List<Offset> to) {
     [h[0], h[1], 0, h[2]],
     [h[3], h[4], 0, h[5]],
     [0, 0, 1, 0],
-    [h[6], h[7], 0, 1]
+    [h[6], h[7], 0, 1],
   ];
 
   return Matrix4.fromList([

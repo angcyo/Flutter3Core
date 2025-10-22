@@ -156,6 +156,9 @@ class IElementPainter extends IPainter
 
   //--
 
+  @override
+  bool isEnablePointerEvent() => true;
+
   /// 响应手势事件
   /// [CanvasEventManager.handleElementPointerEvent]驱动
   @override
@@ -167,7 +170,17 @@ class IElementPainter extends IPainter
       final localPosition = event.localPosition;
       final offset = canvasDelegate?.canvasViewBox.toScenePoint(localPosition);
       if (offset != null) {
-        if (painterTouchSpotHandler!.handleEvent(event, offset)) {
+        if (painterTouchSpotHandler!.handlePointerEvent(
+          event,
+          offset,
+          onUpdateCursor: (cursor) {
+            if (cursor == null) {
+              canvasDelegate?.removeTagCursorStyle("cursor_touchSpot");
+            } else {
+              canvasDelegate?.addCursorStyle("cursor_touchSpot", cursor);
+            }
+          },
+        )) {
           handle = true;
           canvasDelegate?.canvasEventManager.requestInterceptPointerEvent(
             this,
@@ -222,10 +235,16 @@ class ElementPainter extends IElementPainter {
   //region ---属性--
 
   /// 是否绘制调试信息
+  @configProperty
   bool debug = false;
+
+  /// 是否处理鼠标悬停样式
+  @configProperty
+  bool mouseHoverStyle = true;
 
   /// 是否强制可见在画布中
   /// [isVisibleInCanvasBox]
+  @configProperty
   bool? forceVisibleInCanvasBox;
 
   //--画笔属性--
@@ -234,8 +253,11 @@ class ElementPainter extends IElementPainter {
   /// [onSaveStateStackData]
   /// [onRestoreStateStackData]
   /// [copyElement]
+  @configProperty
   String keyPaintStyle = "keyPaintStyle";
+  @configProperty
   String keyPaintColor = "keyPaintColor";
+  @configProperty
   String keyPaintStrokeWidth = "keyPaintStrokeWidth";
 
   //--
@@ -819,6 +841,7 @@ class ElementPainter extends IElementPainter {
         );
       }
     });
+    //--
     painterTouchSpotHandler?.painting(canvas, paintMeta);
   }
 
@@ -1561,19 +1584,25 @@ class ElementPainter extends IElementPainter {
     if (event.isPointerHover || event.isPointerDown) {
       final localPosition = event.localPosition;
       final offset = canvasDelegate.canvasViewBox.toScenePoint(localPosition);
-      if (event.isPointerHover) {
+      if (event.isPointerHover && mouseHoverStyle) {
+        //悬停样式处理
         final selectComponent =
             canvasDelegate.canvasElementManager.selectComponent;
+        final cursor = isMacOS
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.move;
         if (selectComponent.isSelectedElement &&
             selectComponent.hitTest(point: offset)) {
           //在选择组件上悬停
-          canvasDelegate.addCursorStyle(SystemMouseCursors.move);
+          //debugger();
+          canvasDelegate.addCursorStyle("cursor_element", cursor);
           return true;
         } else {
-          canvasDelegate.removeCursorStyle(SystemMouseCursors.move);
+          canvasDelegate.removeCursorStyle("cursor_element", cursor);
         }
       }
 
+      //命中检查
       final isHit = hitTest(point: offset);
 
       if (event.isPointerDown && isHit) {
@@ -1587,7 +1616,7 @@ class ElementPainter extends IElementPainter {
           after: false,
         );
         return true;
-      } else {
+      } else if (mouseHoverStyle) {
         final oldHover = paintState.isHover;
         if (oldHover != isHit) {
           if (isHit) {
@@ -1606,7 +1635,7 @@ class ElementPainter extends IElementPainter {
         }
       }
     }
-    //--
+    //处理点击元素事件
     if (event.isPointerFinish) {
       if (event.isPointerUp &&
           paintState.isPointerDown &&
@@ -2441,7 +2470,8 @@ class PaintState with EquatableMixin {
   /// 元素是否被鼠标悬停
   bool get isHover => hoverPoint != null;
 
-  /// 元素hover时, 鼠标的坐标
+  /// 元素悬停时, 鼠标的坐标
+  /// - [onHoverChanged]
   @viewCoordinate
   Offset? hoverPoint;
 

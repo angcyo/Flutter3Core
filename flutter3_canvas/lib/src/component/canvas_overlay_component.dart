@@ -13,12 +13,12 @@ class CanvasOverlayComponent extends IElementPainter
   /// 回调方法
   @configProperty
   void Function(CanvasDelegate delegate, CanvasOverlayComponent overlay)?
-      onOverlayAttachToCanvasDelegate;
+  onOverlayAttachToCanvasDelegate;
 
   /// 回调方法
   @configProperty
   void Function(CanvasDelegate delegate, CanvasOverlayComponent overlay)?
-      onOverlayDetachFromCanvasDelegate;
+  onOverlayDetachFromCanvasDelegate;
 
   /// 自定义鼠标样式
   @configProperty
@@ -37,14 +37,14 @@ class CanvasOverlayComponent extends IElementPainter
   @override
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
     super.attachToCanvasDelegate(canvasDelegate);
-    canvasDelegate.addCursorStyle(cursorStyle);
+    canvasDelegate.addCursorStyle("cursor_overlay", cursorStyle);
     onOverlayAttachToCanvasDelegate?.call(canvasDelegate, this);
   }
 
   @override
   void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
     super.detachFromCanvasDelegate(canvasDelegate);
-    canvasDelegate.removeCursorStyle(cursorStyle);
+    canvasDelegate.removeCursorStyle("cursor_overlay", cursorStyle);
     onOverlayDetachFromCanvasDelegate?.call(canvasDelegate, this);
   }
 
@@ -62,7 +62,7 @@ class CanvasOverlayComponent extends IElementPainter
     return false;
   }
 
-//endregion painting
+  //endregion painting
 }
 
 /// 钢笔工具覆盖层
@@ -77,11 +77,8 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
 
   /// 输出svg path路径数据
   @output
-  String? get outputSvgPath => Point.buildSvgPath(
-        _points,
-        digits: 3,
-        unit: outputUnit,
-      );
+  String? get outputSvgPath =>
+      Point.buildSvgPath(_points, digits: 3, unit: outputUnit);
 
   @output
   IUnit outputUnit = IUnit.dp;
@@ -236,15 +233,25 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
       canvas.drawLine(from, to, paint);
       //--
       if (isEditControlPoint(point.sc)) {
-        _paintRect(canvas, paintMeta, from,
-            canvasStyle?.canvasAccentColor ?? paintColor, PaintingStyle.fill);
+        _paintRect(
+          canvas,
+          paintMeta,
+          from,
+          canvasStyle?.canvasAccentColor ?? paintColor,
+          PaintingStyle.fill,
+        );
       } else {
         _paintRect(canvas, paintMeta, from, Colors.white, PaintingStyle.stroke);
       }
       //--
       if (isEditControlPoint(point.c)) {
-        _paintRect(canvas, paintMeta, to,
-            canvasStyle?.canvasAccentColor ?? paintColor, PaintingStyle.fill);
+        _paintRect(
+          canvas,
+          paintMeta,
+          to,
+          canvasStyle?.canvasAccentColor ?? paintColor,
+          PaintingStyle.fill,
+        );
       } else {
         _paintRect(canvas, paintMeta, to, Colors.white, PaintingStyle.stroke);
       }
@@ -298,16 +305,25 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
       //二次编辑模式
       if (event.isPointerDown) {
         final find = findPoint(point);
-        canvasDelegate?.removeCursorStyle(SystemMouseCursors.click);
+        canvasDelegate?.removeCursorStyle(
+          "cursor_pen",
+          SystemMouseCursors.click,
+        );
         if (find != null) {
-          canvasDelegate?.addCursorStyle(SystemMouseCursors.click);
+          canvasDelegate?.addCursorStyle(
+            "cursor_pen",
+            SystemMouseCursors.click,
+          );
         }
       } else if (event.isPointerMove) {
         updateEditPoint(point);
       } else if (event.isPointerFinish) {
         _parentPoint = null;
         _controlPoint = null;
-        canvasDelegate?.removeCursorStyle(SystemMouseCursors.click);
+        canvasDelegate?.removeCursorStyle(
+          "cursor_pen",
+          SystemMouseCursors.click,
+        );
       }
     } else {
       //创作模式
@@ -345,8 +361,11 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
         _hoverPoint = null;
         _isPointerDown = false;
         _isEditMode = true;
-        canvasDelegate?.removeCursorStyle(SystemMouseCursors.precise);
-        canvasDelegate?.addCursorStyle(SystemMouseCursors.basic);
+        canvasDelegate?.removeCursorStyle(
+          "cursor_pen",
+          SystemMouseCursors.precise,
+        );
+        canvasDelegate?.addCursorStyle("cursor_pen", SystemMouseCursors.basic);
       }
     }
     return true;
