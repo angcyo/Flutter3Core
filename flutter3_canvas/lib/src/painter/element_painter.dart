@@ -13,7 +13,7 @@ part of '../../flutter3_canvas.dart';
 ///
 class IElementPainter extends IPainter
     with DiagnosticableTreeMixin, DiagnosticsMixin
-    implements IPainterEventHandler {
+    implements IPainterEventHandlerMixin {
   /// 画布代理
   CanvasDelegate? canvasDelegate;
 

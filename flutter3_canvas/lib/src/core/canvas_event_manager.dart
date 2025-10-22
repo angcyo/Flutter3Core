@@ -137,12 +137,12 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   /// 拦截手势事件处理
   /// - 将会拦截[CanvasElementManager.handleElementPointerEvent]的事件派发
-  IPainterEventHandler? _painterEventInterceptHandler;
+  IPainterEventHandlerMixin? _painterEventInterceptHandler;
 
   /// 请求拦截手势事件处理
   @api
   void requestInterceptPointerEvent(
-    IPainterEventHandler? painter,
+    IPainterEventHandlerMixin? painter,
     PointerEvent seedEvent,
   ) {
     _painterEventInterceptHandler = painter;
@@ -158,7 +158,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   /// 请求移除拦截手势事件处理
   @api
-  void cancelInterceptPointerEvent(IPainterEventHandler? painter) {
+  void cancelInterceptPointerEvent(IPainterEventHandlerMixin? painter) {
     if (_painterEventInterceptHandler == painter) {
       //debugger();
       _painterEventInterceptHandler = null;

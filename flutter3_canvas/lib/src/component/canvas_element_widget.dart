@@ -83,7 +83,7 @@ class CanvasElementRenderObject extends RenderBox {
             final sy = dst.height / src.height;
             final scale = /*bounds.height == 0 ? sy :*/ min(sx, sy);
             //debugger();
-            painter.painting(canvas, PaintMeta(refCanvasScale: scale));
+            painter.painting(canvas, PaintMeta(refCanvasScaleX: scale));
           },
           fit: fit,
           alignment: bounds.isEmpty ? Alignment.center : Alignment.center,

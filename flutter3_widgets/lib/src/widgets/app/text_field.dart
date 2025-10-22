@@ -279,10 +279,12 @@ class TextFieldConfig {
   }) {
     if (this.text == text) {
       //debugger();
-      assert(() {
-        l.v('${classHash()} 相同的text[$text], 忽略更新[updateText]');
-        return true;
-      }());
+      if (notify == true) {
+        assert(() {
+          l.v('${classHash()} 相同的text[$text], 忽略更新[updateText]');
+          return true;
+        }());
+      }
       return;
     }
     text ??= '';

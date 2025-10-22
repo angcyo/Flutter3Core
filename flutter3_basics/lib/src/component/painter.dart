@@ -32,7 +32,8 @@ class PaintMeta {
   /// [canvasMatrix]
   /// [canvasScale]
   @flagProperty
-  final double? refCanvasScale;
+  final double? refCanvasScaleX;
+  final double? refCanvasScaleY;
 
   /// 视图边界, 通常是整个布局的可绘制位置
   /// [CanvasViewBox.paintBounds]
@@ -53,14 +54,20 @@ class PaintMeta {
     //--
     this.originMatrix,
     this.canvasMatrix,
-    this.refCanvasScale,
+    this.refCanvasScaleX,
+    this.refCanvasScaleY,
     this.groupPaintChildren,
     //--
     this.viewBounds,
   });
 
   /// 获取画布缩放的系数
-  double get canvasScale => refCanvasScale ?? canvasMatrix?.scaleX ?? 1.0;
+  double get canvasScale => canvasScaleX;
+
+  double get canvasScaleX => refCanvasScaleX ?? canvasMatrix?.scaleX ?? 1.0;
+
+  double get canvasScaleY =>
+      (refCanvasScaleY ?? refCanvasScaleX) ?? canvasMatrix?.scaleY ?? 1.0;
 
   /// [groupPaintChildren]
   /// [ElementGroupPainter.painting]
@@ -98,7 +105,8 @@ class PaintMeta {
     PaintingContext? paintContext,
     Matrix4? originMatrix,
     Matrix4? canvasMatrix,
-    double? refCanvasScale,
+    double? refCanvasScaleX,
+    double? refCanvasScaleY,
     bool? groupPaintChildren,
     Rect? viewBounds,
   }) {
@@ -107,7 +115,8 @@ class PaintMeta {
       paintContext: paintContext ?? this.paintContext,
       originMatrix: originMatrix ?? this.originMatrix,
       canvasMatrix: canvasMatrix ?? this.canvasMatrix,
-      refCanvasScale: refCanvasScale ?? this.refCanvasScale,
+      refCanvasScaleX: refCanvasScaleX ?? this.refCanvasScaleX,
+      refCanvasScaleY: refCanvasScaleY ?? this.refCanvasScaleY,
       groupPaintChildren: groupPaintChildren ?? this.groupPaintChildren,
       viewBounds: viewBounds ?? this.viewBounds,
     );
@@ -129,6 +138,60 @@ abstract class IPainter with Diagnosticable {
   /// 绘制入口
   @entryPoint
   void painting(Canvas canvas, PaintMeta paintMeta);
+
+  //--
+
+  IPainter? get parent => _parent;
+  IPainter? _parent;
+
+  /// 将[child]绑定到自身
+  /// [RenderObject.adoptChild]
+  @api
+  void adoptChild(IPainter child) {
+    if (child._parent == this) {
+      return;
+    }
+    child.parent?.dropChild(child);
+    child._parent = this;
+  }
+
+  /// 将[child]从自身上解除
+  /// [RenderObject.dropChild]
+  @api
+  void dropChild(IPainter child) {
+    child._parent = null;
+    debugger();
+  }
+
+  /// 获取当前绘制元素的转换矩阵. 不包含自身的转换矩阵
+  /// [RenderObject.getTransformTo]
+  @api
+  Matrix4 getTransformTo([IPainter? target]) {
+    final List<IPainter> parentPath = [];
+    //父级为空, 则表示一直到顶级
+    IPainter? to = parent;
+    while (to != null && to != target) {
+      parentPath.add(to);
+      to = to.parent;
+    }
+
+    Matrix4 fromTransform = Matrix4.identity();
+    for (int index = parentPath.lastIndex; index >= 0; index -= 1) {
+      parentPath[index].applyPaintTransform(
+        parentPath.getOrNull(index - 1) ?? this,
+        fromTransform,
+      );
+    }
+    debugger(when: parentPath.isEmpty);
+
+    return fromTransform;
+  }
+
+  /// [RenderObject.applyPaintTransform]
+  @api
+  void applyPaintTransform(IPainter child, Matrix4 transform) {
+    assert(child.parent == this);
+  }
 }
 
 /// [PointerEvent]事件相关信息

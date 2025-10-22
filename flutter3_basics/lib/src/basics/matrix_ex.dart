@@ -446,8 +446,9 @@ extension Matrix4Ex on vector.Matrix4 {
     return this;
   }
 
-  /// 反转矩阵, 返回新的矩阵
+  /// 反转矩阵
   /// [invertMatrix]
+  /// @return 返回新的矩阵
   Matrix4 invertedMatrix() {
     try {
       return canInvert ? Matrix4.inverted(this) : this;

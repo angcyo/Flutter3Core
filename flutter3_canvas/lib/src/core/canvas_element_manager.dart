@@ -205,7 +205,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @entryPoint
   void handleElementPointerEvent(
     @viewCoordinate PointerEvent event, {
-    IPainterEventHandler? ignoreHandler,
+    IPainterEventHandlerMixin? ignoreHandler,
   }) {
     //元素事件控制派发
     canvasElementControlManager.handlePointerEvent(event);

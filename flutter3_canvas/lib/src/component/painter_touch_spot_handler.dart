@@ -18,6 +18,15 @@ class PainterTouchSpotHandler extends IPainter {
 
   //region core
 
+  @override
+  void applyPaintTransform(IPainter child, Matrix4 transform) {
+    if (parentMatrix != null) {
+      debugger(when: debugLabel != null);
+      transform.multiply(parentMatrix!);
+    }
+    super.applyPaintTransform(child, transform);
+  }
+
   /// 绘制入口
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
@@ -51,6 +60,7 @@ class PainterTouchSpotHandler extends IPainter {
     //l.d("test->$position");
     if (event.isPointerHover) {
       final touchSpot = findTouchSpot(position, filterHandlerEvent: false);
+      cancelTouchSpotHover(event, ignoreTouchSpot: touchSpot);
       if (touchSpot != null) {
         final (h, cursor) = touchSpot.handlePointerHover(event, true);
         onUpdateCursor?.call(cursor);
@@ -88,7 +98,7 @@ class PainterTouchSpotHandler extends IPainter {
       if (filterHandlerEvent && !element.isEnablePointerEvent()) {
         continue;
       }
-      final location = element.location;
+      final location = element.bounds;
       if (location != null) {
         final bounds = (parentMatrix?.mapRect(location) ?? location);
         if (bounds.contains(position)) {
@@ -103,20 +113,33 @@ class PainterTouchSpotHandler extends IPainter {
   @api
   void addTouchSpot(TouchSpot touchSpot) {
     touchSpotList.add(touchSpot);
+    adoptChild(touchSpot);
   }
 
   /// 重置所有触点
   @api
   void resetTouchSpot([Iterable<TouchSpot>? elements]) {
+    if (elements != null) {
+      final removeList = touchSpotList.where((element) {
+        return !elements.contains(element);
+      });
+      for (final e in removeList) {
+        dropChild(e);
+      }
+    }
+
     touchSpotList.resetAll(elements);
+    for (final e in touchSpotList) {
+      adoptChild(e);
+    }
   }
 
   /// 取消所有触点的悬停状态
   @api
   void cancelTouchSpotHover(
-    @viewCoordinate PointerEvent event, [
+    @viewCoordinate PointerEvent event, {
     TouchSpot? ignoreTouchSpot,
-  ]) {
+  }) {
     for (final element in touchSpotList) {
       if (element == ignoreTouchSpot) {
         continue;
@@ -131,20 +154,35 @@ class PainterTouchSpotHandler extends IPainter {
 /// 触点
 /// - [PainterTouchSpotHandler]
 class TouchSpot extends IPainter
-    implements IPainterEventHandler, IPainterHoverHandler {
+    with
+        IPainterEventHandlerMixin,
+        IPainterHoverHandlerMixin,
+        TranslateDetectorMixin,
+        TouchSpotTranslateMixin {
   /// 触点的位置, 相对坐标系
   /// - 相对于父坐标位置的位置
   @dp
   @configProperty
   @relativeCoordinate
-  Rect? location;
+  Rect? bounds;
 
   /// 绘制回调
   @configProperty
   void Function(Canvas canvas, PaintMeta paintMeta)? onPainting;
 
+  /// [bounds]更新的回调
+  @configProperty
+  void Function(TouchSpot touchSpot, Rect? bounds)? onDidBoundsUpdate;
+
+  /// 坐标缩放比例
+  @property
+  double coordinateScaleX = 1;
+  double coordinateScaleY = 1;
+
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
+    coordinateScaleX = paintMeta.canvasScaleX;
+    coordinateScaleY = paintMeta.canvasScaleY;
     paintMeta.withPaintMatrix(canvas, () {
       onPainting?.call(canvas, paintMeta);
     });
@@ -153,9 +191,19 @@ class TouchSpot extends IPainter
   @override
   bool isEnablePointerEvent() => true;
 
+  /// 事件入口
   @override
   bool handlePointerEvent(@viewCoordinate PointerEvent event) {
-    return false;
+    return super.handlePointerEvent(event);
+  }
+
+  /// 用来更新[bounds], 并触发回调
+  @api
+  void updateBounds(@dp @relativeCoordinate Rect? bounds) {
+    if (bounds != this.bounds) {
+      this.bounds = bounds;
+      onDidBoundsUpdate?.call(this, bounds);
+    }
   }
 
   //--
@@ -178,5 +226,59 @@ class TouchSpot extends IPainter
                 : SystemMouseCursors.move
           : null,
     );
+  }
+}
+
+/// 用来支持移动触点的混入
+mixin TouchSpotTranslateMixin
+    on IPainterEventHandlerMixin, TranslateDetectorMixin {
+  /// 按下时[TouchSpot.bounds]
+  Rect? _downBounds;
+
+  @override
+  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
+    if (event.isPointerDown) {
+      final that = this;
+      if (that is TouchSpot) {
+        //debugger();
+        //l.d("coordinateScaleX->${that.coordinateScaleX}");
+        translateDetectorSlopX = kTouchMoveSlop * that.coordinateScaleX;
+        translateDetectorSlopY = kTouchMoveSlop * that.coordinateScaleY;
+        _downBounds = that.bounds;
+      } else {
+        translateDetectorSlopX = kTouchMoveSlop;
+        translateDetectorSlopY = kTouchMoveSlop;
+      }
+    }
+    return addTranslateDetectorPointerEvent(event);
+  }
+
+  @override
+  Offset getTranslateDetectorPointerEventPosition(PointerEvent event) {
+    final position = super.getTranslateDetectorPointerEventPosition(event);
+    final that = this;
+    if (that is TouchSpot) {
+      //debugger();
+      final matrix = that.getTransformTo();
+      //l.i("matrix↓\n$matrix");
+      return matrix.invertedMatrix().mapPoint(position);
+    }
+    return position;
+  }
+
+  @override
+  bool handleTranslateDetectorPointerEvent(
+    PointerEvent event,
+    double ddx,
+    double ddy,
+    double mdx,
+    double mdy,
+  ) {
+    final that = this;
+    if (mdx != 0 && mdy != 0 && _downBounds != null && that is TouchSpot) {
+      that.updateBounds(_downBounds?.translate(ddx, ddy));
+      return true;
+    }
+    return false;
   }
 }

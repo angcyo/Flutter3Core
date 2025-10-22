@@ -61,11 +61,31 @@ class FourPoint {
 
   Offset get lt => Offset(x1, y1);
 
+  set lt(Offset offset) {
+    x1 = offset.dx;
+    y1 = offset.dy;
+  }
+
   Offset get rt => Offset(x2, y2);
+
+  set rt(Offset offset) {
+    x2 = offset.dx;
+    y2 = offset.dy;
+  }
 
   Offset get rb => Offset(x3, y3);
 
+  set rb(Offset offset) {
+    x3 = offset.dx;
+    y3 = offset.dy;
+  }
+
   Offset get lb => Offset(x4, y4);
+
+  set lb(Offset offset) {
+    x4 = offset.dx;
+    y4 = offset.dy;
+  }
 
   /// 理论上是还原不了真正对应的矩形
   /// 只能返回最大包裹框的矩形
