@@ -72,7 +72,20 @@ class IElementPainter extends IPainter
   //region component
 
   /// 元素上覆盖的触摸点处理组件
-  PainterTouchSpotHandler? painterTouchSpotHandler;
+  PainterTouchSpotHandler? _painterTouchSpotHandler;
+
+  PainterTouchSpotHandler? get painterTouchSpotHandler =>
+      _painterTouchSpotHandler;
+
+  set painterTouchSpotHandler(PainterTouchSpotHandler? value) {
+    if (_painterTouchSpotHandler != null && _painterTouchSpotHandler != value) {
+      dropChild(_painterTouchSpotHandler!);
+    }
+    _painterTouchSpotHandler = value;
+    if (value != null) {
+      adoptChild(value);
+    }
+  }
 
   //endregion component
 
@@ -421,6 +434,16 @@ class ElementPainter extends IElementPainter {
           old, value, PainterPropertyType.paint, null);
     }
   }*/
+
+  @override
+  void applyPaintTransform(IPainter child, Matrix4 transform) {
+    final operateMatrix = paintProperty?.operateMatrix;
+    if (operateMatrix != null) {
+      debugger(when: debugLabel != null);
+      transform.multiply(operateMatrix);
+    }
+    super.applyPaintTransform(child, transform);
+  }
 
   /// 初始化元素的位置坐标
   /// [paintProperty]

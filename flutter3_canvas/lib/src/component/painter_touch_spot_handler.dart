@@ -20,7 +20,7 @@ class PainterTouchSpotHandler extends IPainter {
 
   @override
   void applyPaintTransform(IPainter child, Matrix4 transform) {
-    if (parentMatrix != null) {
+    if (this.parent == null && parentMatrix != null) {
       debugger(when: debugLabel != null);
       transform.multiply(parentMatrix!);
     }
@@ -227,6 +227,27 @@ class TouchSpot extends IPainter
           : null,
     );
   }
+
+  //--
+
+  /// [CanvasDelegate]
+  Matrix4? getCanvasMatrix() {
+    IPainter? parent = this.parent;
+    if (parent is ElementPainter) {
+      return parent.canvasDelegate?.canvasViewBox.canvasMatrix;
+    } else {
+      while (true) {
+        parent = parent?.parent;
+        if (parent is ElementPainter) {
+          return parent.canvasDelegate?.canvasViewBox.canvasMatrix;
+        } else if (parent == null) {
+          break;
+        }
+      }
+    }
+
+    return null;
+  }
 }
 
 /// 用来支持移动触点的混入
@@ -259,7 +280,9 @@ mixin TouchSpotTranslateMixin
     final that = this;
     if (that is TouchSpot) {
       //debugger();
-      final matrix = that.getTransformTo();
+      final Matrix4 matrix =
+          (that.getCanvasMatrix() ?? Matrix4.identity()) *
+          that.getTransformTo();
       //l.i("matrix↓\n$matrix");
       return matrix.invertedMatrix().mapPoint(position);
     }

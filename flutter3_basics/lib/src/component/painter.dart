@@ -170,8 +170,11 @@ abstract class IPainter with Diagnosticable {
     final List<IPainter> parentPath = [];
     //父级为空, 则表示一直到顶级
     IPainter? to = parent;
-    while (to != null && to != target) {
+    while (to != null) {
       parentPath.add(to);
+      if (to == target) {
+        break;
+      }
       to = to.parent;
     }
 

@@ -47,7 +47,9 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       Matrix4.identity()..translate(originOffset.dx, originOffset.dy);
 
   /// 绘制矩阵, 包含画布的缩放/平移数据
-  /// [PaintMeta.canvasMatrix]
+  /// - [PaintMeta.canvasMatrix]
+  ///
+  /// - [changeMatrix] 在此方法中修改
   Matrix4 canvasMatrix = Matrix4.identity();
 
   double get scaleX => canvasMatrix.scaleX;
@@ -111,8 +113,9 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
         if (followRect != null) {
           canvasDelegate.followRect(rect: followRect, animate: false);
         } else if (contentManager.firstLayoutFollowContent) {
-          canvasDelegate.canvasFollowManager
-              .followCanvasContent(animate: false);
+          canvasDelegate.canvasFollowManager.followCanvasContent(
+            animate: false,
+          );
         }
       } else if (contentManager.firstLayoutFollowContent) {
         canvasDelegate.canvasFollowManager.followCanvasContent(animate: false);
@@ -165,8 +168,10 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
         paintBounds.right,
         paintBounds.bottom,
       );
-      Size childSize = Size(width ?? paintBounds.width - axisManager.yAxisWidth,
-          height ?? paintBounds.height - axisManager.xAxisHeight);
+      Size childSize = Size(
+        width ?? paintBounds.width - axisManager.yAxisWidth,
+        height ?? paintBounds.height - axisManager.xAxisHeight,
+      );
       final offset = alignRectOffset(Alignment.center, bounds, childSize);
       canvasBounds = Rect.fromLTRB(
         maxOf(bounds.left, offset.dx),
@@ -207,27 +212,29 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [isSceneOrigin] 表示[point]是否是相对于场景原点的坐标
   @api
   @sceneCoordinate
-  Offset toScenePoint(@viewCoordinate Offset point,
-      {bool isSceneOrigin = false}) {
-    return canvasMatrix
-        .invertedMatrix()
-        .mapPoint(isSceneOrigin ? point : offsetToSceneOriginPoint(point));
+  Offset toScenePoint(
+    @viewCoordinate Offset point, {
+    bool isSceneOrigin = false,
+  }) {
+    return canvasMatrix.invertedMatrix().mapPoint(
+      isSceneOrigin ? point : offsetToSceneOriginPoint(point),
+    );
   }
 
   @api
   @sceneCoordinate
   Rect toSceneRect(@viewCoordinate Rect rect, {bool isSceneOrigin = false}) {
-    return canvasMatrix
-        .invertedMatrix()
-        .mapRect(isSceneOrigin ? rect : offsetToSceneOriginRect(rect));
+    return canvasMatrix.invertedMatrix().mapRect(
+      isSceneOrigin ? rect : offsetToSceneOriginRect(rect),
+    );
   }
 
   @api
   @sceneCoordinate
   Path toScenePath(@viewCoordinate Path path, {bool isSceneOrigin = false}) {
-    return canvasMatrix
-        .invertedMatrix()
-        .mapPath(isSceneOrigin ? path : offsetToSceneOriginPath(path));
+    return canvasMatrix.invertedMatrix().mapPath(
+      isSceneOrigin ? path : offsetToSceneOriginPath(path),
+    );
   }
 
   /// 将当前相对于场景原点的坐标, 偏移成相对于视图左上角的坐标
@@ -310,10 +317,14 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
           _changeMatrixCompleter?.isCompleted == true) {
         _changeMatrixCompleter = Completer();
       }
-      final matrixTween =
-          Matrix4Tween(begin: canvasMatrix, end: _checkMatrix(target));
-      _lastAnimationController =
-          animation(canvasDelegate, (value, isCompleted) {
+      final matrixTween = Matrix4Tween(
+        begin: canvasMatrix,
+        end: _checkMatrix(target),
+      );
+      _lastAnimationController = animation(canvasDelegate, (
+        value,
+        isCompleted,
+      ) {
         final matrix = matrixTween.lerp(value);
         canvasMatrix.setFrom(matrix);
         completedAction?.call(isCompleted);
@@ -350,8 +361,10 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       //l.v('平移画布by: tx:$tx ty:$ty');
       return true;
     }());
-    changeMatrix(canvasMatrix.clone()..translateBy(dx: tx, dy: ty),
-        animate: anim);
+    changeMatrix(
+      canvasMatrix.clone()..translateBy(dx: tx, dy: ty),
+      animate: anim,
+    );
   }
 
   /// 平移画布
@@ -361,19 +374,16 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       //l.v('平移画布to: tx:$tx tx:$ty');
       return true;
     }());
-    changeMatrix(canvasMatrix.clone()..translateTo(x: tx, y: ty),
-        animate: anim);
+    changeMatrix(
+      canvasMatrix.clone()..translateTo(x: tx, y: ty),
+      animate: anim,
+    );
   }
 
   /// 使用比例缩放画布
   /// [pivot] 缩放的锚点
   @api
-  void scaleBy({
-    double? sx,
-    double? sy,
-    Offset? pivot,
-    bool anim = true,
-  }) {
+  void scaleBy({double? sx, double? sy, Offset? pivot, bool anim = true}) {
     if (sx != null) {
       if ((sx < 1 && scaleX <= minScaleX) || (sx > 1 && scaleX >= maxScaleX)) {
         //已经达到了最小/最大, 还想缩放/放大
@@ -389,12 +399,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     final matrix = canvasMatrix.clone()
-      ..scaleBy(
-        sx: sx,
-        sy: sy,
-        pivotX: pivot?.dx ?? 0,
-        pivotY: pivot?.dy ?? 0,
-      );
+      ..scaleBy(sx: sx, sy: sy, pivotX: pivot?.dx ?? 0, pivotY: pivot?.dy ?? 0);
     assert(() {
       //l.v('缩放画布by: sx:$sx sy:$sy pivot:$pivot anim:$anim');
       return true;
@@ -404,12 +409,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 使用指定比例缩放画布
   @api
-  void scaleTo({
-    double? sx,
-    double? sy,
-    Offset? pivot,
-    bool anim = true,
-  }) {
+  void scaleTo({double? sx, double? sy, Offset? pivot, bool anim = true}) {
     sx = sx != null ? clamp(sx, minScaleX, maxScaleX) : null;
     sy = sy != null ? clamp(sy, minScaleY, maxScaleY) : null;
     assert(() {
@@ -417,23 +417,19 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       return true;
     }());
     changeMatrix(
-      canvasMatrix.clone()
-        ..scaleTo(
-          sx: sx,
-          sy: sy,
-          pivotX: pivot?.dx ?? 0,
-          pivotY: pivot?.dy ?? 0,
-        ),
+      canvasMatrix.clone()..scaleTo(
+        sx: sx,
+        sy: sy,
+        pivotX: pivot?.dx ?? 0,
+        pivotY: pivot?.dy ?? 0,
+      ),
       animate: anim,
     );
   }
 
   /// 重置画布矩阵
   @api
-  void resetMatrix({
-    Matrix4? target,
-    bool anim = true,
-  }) {
+  void resetMatrix({Matrix4? target, bool anim = true}) {
     target ??= Matrix4.identity();
     changeMatrix(target, animate: anim);
   }
