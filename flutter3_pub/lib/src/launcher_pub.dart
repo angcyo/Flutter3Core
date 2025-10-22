@@ -42,7 +42,10 @@ extension LauncherUriEx on Uri {
 }
 
 extension LauncherStringEx on String {
-  /// [LauncherUriEx.launch]
+  /// -[LaunchMode.platformDefault] 使用平台浏览器打开url,打开网页, 在高版本Edge浏览器中也会在App内打开网页, 但是不用手动控制导航栏.
+  /// - 桌面端: 浏览器打开网页
+  ///
+  /// - [LauncherUriEx.launch]
   Future<bool> launch({
     LaunchMode mode = LaunchMode.platformDefault,
     WebViewConfiguration webViewConfiguration = const WebViewConfiguration(),

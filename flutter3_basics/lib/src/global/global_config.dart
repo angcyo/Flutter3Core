@@ -439,7 +439,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///
   /// ```
   /// GlobalConfig.def.openUrlFn = (context, url) {
-  ///   context?.openSingleWebView(url);
+  ///     if (isDesktopOrWeb) {
+  ///       url?.launch(mode: LaunchMode.platformDefault);
+  ///     } else {
+  ///       context?.openSingleWebView(url);
+  ///     }
   ///   return Future.value(true);
   /// };
   /// ```
