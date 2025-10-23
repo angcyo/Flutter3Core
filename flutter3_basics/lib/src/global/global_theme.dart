@@ -406,6 +406,12 @@ class GlobalThemeDark extends GlobalTheme {
   Color get icoDisableColor => const Color(0xffb0b0b0);
 
   @override
+  ui.Color get borderColor => super.borderColor;
+
+  @override
+  Color get fillColor => const Color(0xffb0b0b0);
+
+  @override
   TextStyle get textPrimaryStyle =>
       super.textPrimaryStyle.copyWith(color: const Color(0xfff6f6f6));
 

@@ -42,19 +42,29 @@ class ReceiveIntent {
 
   /// 监听文件流,用来处理不同的文件
   /// 合并了[mediaFileStream]和[uriStream]的通知, 只返回对应的文件对象
-  final LiveStreamController<List<File>?> fileStream =
-      LiveStreamController(null);
+  final LiveStreamController<List<File>?> fileStream = LiveStreamController(
+    null,
+  );
 
   /// 自定义标签数据, 标识属性
   @flagProperty
   dynamic tag;
 
   ReceiveIntent._() {
+    if (isDesktopOrWeb) {
+      assert(() {
+        l.w("[${classHash()}] 当前插件不支持在桌面端运行.");
+        return true;
+      }());
+      return;
+    }
     // 首次打开软件时, 检查平台分享数据
     ReceiveSharingIntentPlus.getInitialMedia().get((value, _) {
       if (value is List<SharedMediaFile> && value.isNotEmpty) {
         assert(() {
-          l.i('Initial Shared Media[${value.size()}]:${value.map((f) => f.path).join(',') ?? ''}');
+          l.i(
+            'Initial Shared Media[${value.size()}]:${value.map((f) => f.path).join(',') ?? ''}',
+          );
           return true;
         }());
         mediaFileStream.add(value);

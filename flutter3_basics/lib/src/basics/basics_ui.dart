@@ -2688,10 +2688,12 @@ extension WidgetEx on Widget {
   /// 默认块状波纹效果
   /// 使用涟漪动画包裹, 无法控制背景颜色, 波纹会超出范围. [ink]
   /// https://api.flutter.dev/flutter/material/InkWell-class.html
-  /// - [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
-  /// - [highlightColor] 高亮颜色
+  /// - [splashColor] 涟漪颜色, 手势按住时的涟漪颜色, 不指定此颜色可能无效果[Colors.black12]
+  /// - [highlightColor] 高亮颜色, 手势按下时的高亮颜色
   /// - [hoverColor] 鼠标悬停时的颜色
   /// - [onLongPressPeriodic] 周期性的长按回调事件
+  ///
+  /// - [disableColor] 是否要禁用所有颜色效果
   ///
   /// - [InkWell]
   /// - [InkResponse]
@@ -2709,6 +2711,7 @@ extension WidgetEx on Widget {
     GestureLongPressCallback? onLongPress,
     bool enable = true,
     //--
+    bool disableColor = false,
     Color? hoverColor,
     //--
     Duration? periodicDuration,
@@ -2717,6 +2720,11 @@ extension WidgetEx on Widget {
     if (!enable) {
       //禁用组件
       return this;
+    }
+    if (disableColor) {
+      splashColor = Colors.transparent;
+      highlightColor = Colors.transparent;
+      hoverColor = Colors.transparent;
     }
     Timer? periodicTimer;
     Widget body = InkResponse(

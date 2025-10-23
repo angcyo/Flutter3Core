@@ -8,6 +8,9 @@ part of '../../flutter3_widgets.dart';
 /// 手势按下/抬起时的回调
 typedef OnPointerDownAction = void Function(PointerEvent event, bool isDownIn);
 
+/// 鼠标悬停改变的回调
+typedef OnPointerHoverAction = void Function(PointerEvent event, bool isHover);
+
 /// 不同状态下, 绘制不同背景的装饰小部件
 /// [DecoratedBox]
 /// [strokeDecoration]
@@ -64,11 +67,12 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
 
   //endregion ---悬停状态↑---
 
-  //region ---按下时的回调---
+  //region ---手势的回调---
 
   final OnPointerDownAction? onPointerDownAction;
+  final OnPointerHoverAction? onPointerHoverAction;
 
-  //endregion ---按下时的回调---
+  //endregion ---手势的回调---
 
   const StateDecorationWidget({
     super.key,
@@ -79,12 +83,13 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
     this.selectedDecoration,
     this.pressedForegroundDecoration,
     this.selectedForegroundDecoration,
-    this.onPointerDownAction,
+    this.hoverDecoration,
+    this.hoverForegroundDecoration,
     this.enablePressedDecoration = true,
     this.enableSelectedDecoration = true,
     this.enableHoverDecoration = true,
-    this.hoverDecoration,
-    this.hoverForegroundDecoration,
+    this.onPointerDownAction,
+    this.onPointerHoverAction,
   });
 
   @override
@@ -96,12 +101,13 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
         selectedDecoration: selectedDecoration,
         pressedForegroundDecoration: pressedForegroundDecoration,
         selectedForegroundDecoration: selectedForegroundDecoration,
-        onPointerDownAction: onPointerDownAction,
+        hoverDecoration: hoverDecoration,
+        hoverForegroundDecoration: hoverForegroundDecoration,
         enablePressedDecoration: enablePressedDecoration,
         enableSelectedDecoration: enableSelectedDecoration,
         enableHoverDecoration: enableHoverDecoration,
-        hoverDecoration: hoverDecoration,
-        hoverForegroundDecoration: hoverForegroundDecoration,
+        onPointerDownAction: onPointerDownAction,
+        onPointerHoverAction: onPointerHoverAction,
       );
 
   @override
@@ -117,12 +123,13 @@ class StateDecorationWidget extends SingleChildRenderObjectWidget {
       ..selectedDecoration = selectedDecoration
       ..pressedForegroundDecoration = pressedForegroundDecoration
       ..selectedForegroundDecoration = selectedForegroundDecoration
-      ..onPointerDownAction = onPointerDownAction
+      ..hoverDecoration = hoverDecoration
+      ..hoverForegroundDecoration = hoverForegroundDecoration
       ..enablePressedDecoration = enablePressedDecoration
       ..enableSelectedDecoration = enableSelectedDecoration
       ..enableHoverDecoration = enableHoverDecoration
-      ..hoverDecoration = hoverDecoration
-      ..hoverForegroundDecoration = hoverForegroundDecoration
+      ..onPointerDownAction = onPointerDownAction
+      ..onPointerHoverAction = onPointerHoverAction
       ..markNeedsPaint();
   }
 }
@@ -158,6 +165,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
   BoxPainter? _selectedForegroundPainter;
 
   OnPointerDownAction? onPointerDownAction;
+  OnPointerHoverAction? onPointerHoverAction;
 
   ImageConfiguration configuration = ImageConfiguration.empty;
 
@@ -183,6 +191,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
     this.selectedForegroundDecoration,
     //--
     this.onPointerDownAction,
+    this.onPointerHoverAction,
   }) : super(child: child, behavior: behavior);
 
   ///
@@ -207,6 +216,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
       if (enableHoverDecoration && !_isHover) {
         _isHover = true;
         markNeedsPaint();
+        onPointerHoverAction?.call(event, _isHover);
       }
     } else if (event is PointerDownEvent) {
       if (enablePressedDecoration) {
@@ -253,9 +263,11 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
       setCanvasIsComplexHint(context, pressedDecoration);
     }
     //
-    _selectedPainter ??= selectedDecoration?.createBoxPainter(markNeedsPaint);
-    _selectedPainter?.paint(context.canvas, offset, filledConfiguration);
-    setCanvasIsComplexHint(context, selectedDecoration);
+    if (enableSelectedDecoration) {
+      _selectedPainter ??= selectedDecoration?.createBoxPainter(markNeedsPaint);
+      _selectedPainter?.paint(context.canvas, offset, filledConfiguration);
+      setCanvasIsComplexHint(context, selectedDecoration);
+    }
     super.paint(context, offset);
     //前景绘制
     if (_isHover) {
@@ -282,14 +294,16 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
       setCanvasIsComplexHint(context, pressedForegroundDecoration);
     }
     //
-    _selectedForegroundPainter ??= selectedForegroundDecoration
-        ?.createBoxPainter(markNeedsPaint);
-    _selectedForegroundPainter?.paint(
-      context.canvas,
-      offset,
-      filledConfiguration,
-    );
-    setCanvasIsComplexHint(context, selectedForegroundDecoration);
+    if (enableSelectedDecoration) {
+      _selectedForegroundPainter ??= selectedForegroundDecoration
+          ?.createBoxPainter(markNeedsPaint);
+      _selectedForegroundPainter?.paint(
+        context.canvas,
+        offset,
+        filledConfiguration,
+      );
+      setCanvasIsComplexHint(context, selectedForegroundDecoration);
+    }
     //
     _foregroundPainter ??= foregroundDecoration?.createBoxPainter(
       markNeedsPaint,
@@ -343,6 +357,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
     if (!_isHover) {
       _isHover = true;
       markNeedsPaint();
+      onPointerHoverAction?.call(event, _isHover);
       /*postFrame(() {
         markNeedsPaint();
       });*/
@@ -353,6 +368,7 @@ class _RenderStateDecoration extends RenderProxyBoxWithHitTestBehavior
     if (_isHover) {
       _isHover = false;
       markNeedsPaint();
+      onPointerHoverAction?.call(event, _isHover);
       /*postFrame(() {
         markNeedsPaint();
       });*/
@@ -391,6 +407,9 @@ extension StateDecorationWidgetEx on Widget {
     Decoration? foregroundDecoration,
     Decoration? pressedDecoration,
     Decoration? selectedDecoration,
+    Decoration? hoverDecoration,
+    bool enableSelectedDecoration = true,
+    bool enableHoverDecoration = true,
     bool enablePressedDecoration = true,
   }) {
     return StateDecorationWidget(
@@ -398,7 +417,10 @@ extension StateDecorationWidgetEx on Widget {
       foregroundDecoration: foregroundDecoration,
       pressedDecoration: pressedDecoration,
       selectedDecoration: selectedDecoration,
+      hoverDecoration: hoverDecoration,
       enablePressedDecoration: enablePressedDecoration,
+      enableSelectedDecoration: enableSelectedDecoration,
+      enableHoverDecoration: enableHoverDecoration,
       child: this,
     );
   }
