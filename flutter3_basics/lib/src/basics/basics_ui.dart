@@ -2690,6 +2690,7 @@ extension WidgetEx on Widget {
   /// https://api.flutter.dev/flutter/material/InkWell-class.html
   /// - [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
   /// - [highlightColor] 高亮颜色
+  /// - [hoverColor] 鼠标悬停时的颜色
   /// - [onLongPressPeriodic] 周期性的长按回调事件
   ///
   /// - [InkWell]
@@ -2707,6 +2708,8 @@ extension WidgetEx on Widget {
     ShapeBorder? customBorder,
     GestureLongPressCallback? onLongPress,
     bool enable = true,
+    //--
+    Color? hoverColor,
     //--
     Duration? periodicDuration,
     GestureLongPressCallback? onLongPressPeriodic,
@@ -2743,6 +2746,7 @@ extension WidgetEx on Widget {
           : null,
       radius: radius,
       splashColor: splashColor,
+      hoverColor: hoverColor,
       highlightColor: highlightColor,
       //overlayColor: MaterialStateProperty.all(Colors.blue),
       borderRadius: borderRadius,
