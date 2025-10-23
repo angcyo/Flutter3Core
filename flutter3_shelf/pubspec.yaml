@@ -93,7 +93,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
   # 需要对应的权限
-  network_info_plus: ^6.1.4
+  network_info_plus: ^7.0.0
   #connectivity_plus: ^6.1.4
 
   # https://pub.dev/packages/udp

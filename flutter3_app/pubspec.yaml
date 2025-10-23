@@ -46,7 +46,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/win32
   # https://pub.dev/packages/win32_registry
-  device_info_plus: ^12.1.0
+  device_info_plus: ^12.2.0
 
   # https://pub.dev/packages/share_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/share_plus/share_plus
@@ -57,7 +57,7 @@ dependencies:
   # https://pub.dev/packages/file
   # https://pub.dev/packages/ffi
   # https://pub.dev/packages/win32
-  share_plus: ^12.0.0
+  share_plus: ^12.0.1
 
   # https://pub.dev/packages/flutter_local_notifications
   # https://github.com/MaikuB/flutter_local_notifications
