@@ -73,6 +73,14 @@ class PathPointInfo {
 
 /// [Matrix4Ex.mapRect]
 extension PathEx on Path {
+  /// [getBounds]
+  @alias
+  Rect get bounds => getBounds();
+
+  /// [getExactBounds]
+  @alias
+  Rect get exactBounds => getExactBounds(true);
+
   /// 判断路径是否为空
   bool get isEmpty {
     //return computeMetrics().isEmpty;

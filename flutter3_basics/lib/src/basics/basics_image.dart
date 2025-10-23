@@ -310,6 +310,10 @@ extension Uint8ListImageEx on Uint8List {
 /// [UiImageEx]
 /// [Uint8ListImageEx]
 extension ImageEx on UiImage {
+  double get cx => width / 2;
+
+  double get cy => height / 2;
+
   /// [UiImageProvider]
   /// [ImageProviderEx.toImage]
   UiImageProvider toImageProvider([double scale = 1]) =>

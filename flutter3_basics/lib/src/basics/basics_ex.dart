@@ -1527,6 +1527,10 @@ extension RectEx on Rect {
   /// [Rect]的中心点
   Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
 
+  double get cx => centerX;
+
+  double get cy => centerY;
+
   double get centerX => left + width / 2;
 
   double get centerY => top + height / 2;

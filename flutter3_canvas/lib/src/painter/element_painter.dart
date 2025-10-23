@@ -561,13 +561,14 @@ class ElementPainter extends IElementPainter {
   }
 
   /// 更新元素的可视大小到指定的大小
-  /// [keepAspectRatio] 是否保持宽高比
+  /// - [keepAspectRatio] 是否保持宽高比, 默认为[isLockRatio]
   @api
   void updateSizeTo({
     @sceneCoordinate @dp Size? size,
     @sceneCoordinate @dp double? width,
     @sceneCoordinate @dp double? height,
-    bool keepAspectRatio = false,
+    //--
+    @defInjectMark bool? keepAspectRatio = false,
     Alignment anchorAlignment = Alignment.topLeft,
   }) {
     width ??= size?.width;
@@ -579,22 +580,26 @@ class ElementPainter extends IElementPainter {
       }());
       return;
     }
+    keepAspectRatio ??= isLockRatio;
     final property = paintProperty;
     if (property != null) {
       final oldBounds = property.getBounds(true);
       double sx = width == null ? 1.0 : width / oldBounds.width;
       double sy = height == null ? 1.0 : height / oldBounds.height;
 
-      if (width == null) {
-        if (keepAspectRatio) {
+      if (keepAspectRatio) {
+        if (width == null) {
           sx = sy;
-        }
-      }
-      if (height == null) {
-        if (keepAspectRatio) {
+        } else if (height == null) {
           sy = sx;
+        } else {
+          final scale = max(sx, sy); //保证所有调整都有过之
+          // min(sx, sy); //有一个调整超过即可
+          sx = scale;
+          sy = scale;
         }
       }
+
       final scaleMatrix = Matrix4.identity()
         ..scaleBy(
           sx: sx,
@@ -1651,13 +1656,18 @@ class ElementPainter extends IElementPainter {
               before: false,
               after: false,
             );
-            handle = onHoverChanged(event, isHit);
+            handle = handle || onHoverChanged(event, isHit);
           } else {
-            handle = onHoverChanged(event, isHit);
+            //取消自身的悬停状态
+            handle = handle || onHoverChanged(event, isHit);
           }
         }
+        if (event.isPointerHover && isHit) {
+          //在当前元素上悬停, 必须要消耗掉这个事件, 否则如果底部有重叠的元素, 则会跳动
+          handle = true;
+        }
       }
-    }
+    } //--end
     //处理点击元素事件
     if (event.isPointerFinish) {
       if (event.isPointerUp &&
@@ -1665,7 +1675,7 @@ class ElementPainter extends IElementPainter {
           !event.isMoveExceed(paintState.pointerDownPoint)) {
         final localPosition = event.localPosition;
         final offset = canvasDelegate.canvasViewBox.toScenePoint(localPosition);
-        handle = onSelfHandlePointerClick(event, offset);
+        handle = handle || onSelfHandlePointerClick(event, offset);
       }
       paintState.pointerDownPoint = null;
     }
@@ -1684,14 +1694,18 @@ class ElementPainter extends IElementPainter {
   /// 鼠标悬停状态改变
   /// 如果在[ElementGroupPainter]中悬停, 则所有子元素都应该属于悬停状态
   /// 如果在[ElementSelectComponent]中悬停, 则需要特殊处理
-  /// [paintState]
-  /// [painting]
+  /// - [paintState]
+  /// - [painting]
   ///
-  /// [ElementPainter.handlePointerEvent]驱动
+  /// - [ElementPainter.handlePointerEvent]驱动
   @overridePoint
   bool onHoverChanged(@viewCoordinate PointerEvent event, bool hover) {
     if (paintState.isHover != hover) {
-      paintState.hoverPoint = event.localPosition;
+      assert(() {
+        l.d("[${classHash()}] 悬停状态改变->$hover");
+        return true;
+      }());
+      paintState.hoverPoint = hover ? event.localPosition : null;
       refresh();
     }
     return hover;
