@@ -31,7 +31,9 @@ mixin DialogMixin implements TranslationTypeImpl {
     if (type.contains("desktop")) {
       return TranslationType.scaleFade;
     }
-    return TranslationType.translationFade;
+    return isDesktopOrWeb
+        ? TranslationType.scaleFade
+        : TranslationType.translationFade;
   }
 
   /// 弹出对话框时, 返回对话框的结果

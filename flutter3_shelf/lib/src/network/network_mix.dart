@@ -57,7 +57,7 @@ Future<bool> $isWifiConnected() async {
   final wifiGatewayIp = await info.getWifiGatewayIP();
   _isWifiConnectedCache = wifiGatewayIp != null && wifiGatewayIp.isNotEmpty;
   assert(() {
-    l.v("网关IP:$wifiGatewayIp");
+    l.v("网关IP:$wifiGatewayIp 是WiFi连接[${_isWifiConnectedCache.toDC()}]");
     return true;
   }());
   return _isWifiConnectedCache;
