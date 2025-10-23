@@ -66,7 +66,8 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   ///系统窗口改变回调 如键盘弹出 屏幕旋转等
   @override
   void didChangeMetrics() {
-    '[${classHash()}]AppLifecycle didChangeMetrics screen:$screenWidth * $screenHeight [$dpr]'
+    '[${classHash()}]AppLifecycle didChangeMetrics screen:${screenWidth.toDigits(ensureInt: true)}x${screenHeight.toDigits(ensureInt: true)} ${screenInch.toDigits(ensureInt: true)}\''
+            ' device:${deviceWidth.toDigits(ensureInt: true)}x${deviceHeight.toDigits(ensureInt: true)} ${deviceInch.toDigits(ensureInt: true)}\' [$dpr]'
         .writeToLog(level: L.verbose);
     super.didChangeMetrics();
   }

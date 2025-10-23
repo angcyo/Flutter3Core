@@ -469,6 +469,9 @@ double get deviceHeight => deviceHeightPixel / dpr;
 /// - [isTabletDevice]
 double get deviceInch => cl(deviceWidthPixel, deviceHeightPixel) / dpi;
 
+/// 屏幕对角线的英寸大小, 桌面下可以动态调整窗口的尺寸
+double get screenInch => cl(screenWidthPixel, screenHeightPixel) / dpi;
+
 /// 是否是平板, 根据屏幕对角线尺寸判断. 通常认为对角线大于等于 7 英寸的设备为平板。
 /// 7 * 25.4mm = 177.8mm 17.78cm
 ///
