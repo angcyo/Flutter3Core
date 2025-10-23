@@ -137,6 +137,11 @@ const BoxShadow kBoxShadowTop = BoxShadow(
 //--
 
 /// 默认的滚动物理特性/滚动行为
+///
+/// - [ClampingScrollPhysics] 滚动到边缘, 停止滚动
+/// - [AlwaysScrollableScrollPhysics] 滚动到边缘, 允许继续滚动
+/// - [BouncingScrollPhysics] 滚动到边缘, 允许继续滚动, 弹簧效果
+///
 const kScrollPhysics = AlwaysScrollableScrollPhysics(
   parent: BouncingScrollPhysics(),
 );

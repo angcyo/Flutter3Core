@@ -1525,7 +1525,8 @@ extension RectEx on Rect {
   bool get isNotEmpty => !isEmpty;
 
   /// [Rect]的中心点
-  Offset get center => Offset.fromDirection(0, width / 2) + topLeft;
+  Offset get center =>
+      this.center /*Offset.fromDirection(0, width / 2) + topLeft*/;
 
   double get cx => centerX;
 
