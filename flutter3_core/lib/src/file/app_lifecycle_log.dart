@@ -66,7 +66,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   ///系统窗口改变回调 如键盘弹出 屏幕旋转等
   @override
   void didChangeMetrics() {
-    '[${classHash()}]AppLifecycle didChangeMetrics sw:$screenWidth sh:$screenHeight'
+    '[${classHash()}]AppLifecycle didChangeMetrics screen:$screenWidth * $screenHeight [$dpr]'
         .writeToLog(level: L.verbose);
     super.didChangeMetrics();
   }
@@ -163,6 +163,7 @@ class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
     super.dispose();
   }
 
+  ///
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
