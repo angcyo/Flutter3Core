@@ -824,7 +824,45 @@ extension WidgetEx on Widget {
         )
       : this;
 
-  /// 焦点, 同一个焦点[FocusNode]不能重复使用,尤其是父子级使用
+  /// 焦点域
+  /// - [FocusScope]
+  Widget focusScope({
+    //--
+    bool enable = true,
+    FocusScopeNode? node,
+    //--
+    Key? key,
+    bool autofocus = true,
+    FocusNode? focusNode,
+    FocusNode? parentNode,
+    ValueChanged<bool>? onFocusChange,
+    FocusOnKeyEventCallback? onKeyEvent,
+    //--
+    bool? canRequestFocus,
+    bool? skipTraversal,
+  }) => enable
+      ? FocusScope(
+          node: node,
+          parentNode: parentNode,
+          autofocus: autofocus,
+          onKeyEvent: onKeyEvent,
+          canRequestFocus: canRequestFocus,
+          skipTraversal: skipTraversal,
+          onFocusChange:
+              onFocusChange ??
+              (isDebug
+                  ? (value) {
+                      l.i('[${classHash()}] focus change: $value');
+                    }
+                  : null),
+          child: this,
+        )
+      : this;
+
+  /// 焦点, 同一个焦点[FocusNode]不能重复使用,尤其是父子级使用.
+  ///
+  /// 如果内部包含了子焦点, 自子焦点失去焦点后, 当前焦点也会同样失去.
+  ///
   /// ```
   /// Tried to make a child into a parent of itself.
   /// ```
@@ -836,24 +874,31 @@ extension WidgetEx on Widget {
   ///
   /// - [KeyboardListener]
   Widget focus({
+    //--
+    bool enable = true,
+    //--
     Key? key,
+    bool autofocus = true,
     FocusNode? focusNode,
     FocusNode? parentNode,
-    bool autofocus = true,
     ValueChanged<bool>? onFocusChange,
-    bool enable = true,
     FocusOnKeyEventCallback? onKeyEvent,
+    //--
+    bool? canRequestFocus,
+    bool? skipTraversal,
   }) => enable
       ? Focus(
           focusNode: focusNode,
           parentNode: parentNode,
           autofocus: autofocus,
           onKeyEvent: onKeyEvent,
+          canRequestFocus: canRequestFocus,
+          skipTraversal: skipTraversal,
           onFocusChange:
               onFocusChange ??
               (isDebug
                   ? (value) {
-                      l.i('[$runtimeType] focus change $value');
+                      l.i('[${classHash()}] focus change $value');
                     }
                   : null),
           child: this,
@@ -913,24 +958,16 @@ extension WidgetEx on Widget {
     bool enable = true,
   }) => !enable
       ? this
-      : focus(
-          key: key,
-          autofocus: autofocus,
+      : focusScope(
           enable: onlyDesktop ? isDesktopOrWeb : true,
+          autofocus: autofocus,
           onKeyEvent: (node, event) {
-            if (event.isKeyUp &&
-                event.logicalKey == LogicalKeyboardKey.escape) {
-              if (autofocus) {
-                node.unfocus(); //一定要丢掉焦点, 否则会报错
+            if (event.logicalKey == LogicalKeyboardKey.escape) {
+              if (event.isKeyUp) {
+                context?.maybePop(result);
               }
-              //Failed assertion: line 516 pos 11: '!_pressedKeys.containsKey(event.physicalKey)': A KeyDownEvent is dispatched, but the state shows that the physical key is already pressed.
-              // If this occurs in real application, please report this bug to Flutter.
-              // If this occurs in unit tests, please ensure that simulated events follow Flutter's event model as documented in `HardwareKeyboard`.
-              // This was the event: KeyDownEvent#487e3(physicalKey: PhysicalKeyboardKey#e41f8(usbHidUsage: "0x00070029", debugName: "Escape"), logicalKey: LogicalKeyboardKey#4eada(keyId: "0x10000001b", keyLabel: "Escape", debugName: "Escape"), character: "", timeStamp: 0:00:00.000000)
-              context?.maybePop(result);
-              return KeyEventResult.handled;
             }
-            return KeyEventResult.ignored;
+            return KeyEventResult.handled;
           },
         );
 
@@ -2300,10 +2337,72 @@ extension WidgetEx on Widget {
         .paddingInsets(padding);
   }
 
+  /// 最小宽高约束桌面端对话框布局
+  /// - 限制显示的最小宽度/或者固定宽度
+  /// - 限制显示的最大高度/或者固定高度
+  ///
+  /// - [fitDialog] 自动适配对话框中的样式
+  /// - [fitDesktop] 自动适配桌面端
+  ///
+  /// - [fixedWidth] 是否固定宽度
+  Widget desktopConstrained({
+    //
+    bool fitDialog = true,
+    @defInjectMark bool? fitDesktop,
+    @defInjectMark bool? fixedWidth,
+    bool? fixedHeight,
+    //
+    double? minSize,
+    double? minWidth,
+    double? minHeight,
+    //
+    double? maxSize,
+    double? maxWidth,
+    double? maxHeight,
+  }) {
+    minWidth ??= minSize;
+    minHeight ??= minSize;
+    maxWidth ??= maxSize;
+    maxHeight ??= maxSize;
+
+    //--
+    fitDesktop ??= isDesktopOrWeb;
+    fixedWidth ??= fitDesktop;
+    if (fitDialog) {
+      //debugger();
+      if (fitDesktop) {
+        minWidth ??= minOf($screenMinSize, kDesktopDialogMinWidth);
+        maxHeight ??= minOf(minWidth, $screenHeight * 3 / 4); //最大是正方向
+        //maxHeight ??= $screenHeight;
+      } else {
+        minWidth ??= minOf($screenMinSize, kDialogMinWidth);
+        maxHeight ??= $screenHeight; //最大是长方形
+      }
+    }
+
+    //--
+    if (fixedWidth == true) {
+      maxWidth ??= minWidth;
+    }
+    if (fixedHeight == true) {
+      minHeight ??= maxHeight;
+      maxHeight ??= minHeight;
+    }
+    return constrainedMin(
+      minSize: minSize,
+      minWidth: minWidth,
+      minHeight: minHeight,
+      maxSize: maxSize,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+    );
+  }
+
   /// 约束最小宽高
   /// [constrainedBox]
   /// [ConstrainedBox]
   Widget constrainedMin({
+    //
     double? minSize,
     double? minWidth,
     double? minHeight,
@@ -2389,8 +2488,8 @@ extension WidgetEx on Widget {
       IntrinsicWidth(stepWidth: stepWidth, stepHeight: stepHeight, child: this);
 
   /// 使用[child]固有的高度
-  Widget ih([bool enbale = true]) =>
-      enbale ? IntrinsicHeight(child: this) : this;
+  Widget ih([bool enable = true]) =>
+      enable ? IntrinsicHeight(child: this) : this;
 
   /// [FittedBox]
   Widget fittedBox({

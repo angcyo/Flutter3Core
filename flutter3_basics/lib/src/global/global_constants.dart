@@ -77,6 +77,20 @@ const double kMaxBorderRadius = 45.0;
 /// 情感图的默认的最大大小
 const double kStateImageSize = 160.0;
 
+const kLabelMinWidth = 80.0;
+const kLabelMaxWidth = 130.0;
+const kNumberMinWidth = 50.0;
+const kNumberMinHeight = 26.0;
+const kMenuMinWidth = 160.0;
+
+/// 系统[Dialog]最小宽度280.0
+/// - [Dialog.build] 代码中写死了最小宽度
+const kDialogMinWidth = 280.0;
+
+/// 桌面[Dialog]最小宽度
+@desktopLayout
+const kDesktopDialogMinWidth = kDialogMinWidth * 2;
+
 //--
 
 /// [EdgeInsets.zero]
@@ -106,18 +120,19 @@ const Offset kShadowOffsetTop = Offset(0, -4);
 
 /// [BoxShadow] 阴影
 const BoxShadow kBoxShadow = BoxShadow(
-    color: kShadowColor,
-    offset: kShadowOffset, //阴影y轴偏移量
-    blurRadius: kDefaultBlurRadius, //阴影模糊程度
-    spreadRadius: kS //阴影扩散程度
-    );
+  color: kShadowColor,
+  offset: kShadowOffset, //阴影y轴偏移量
+  blurRadius: kDefaultBlurRadius, //阴影模糊程度
+  spreadRadius: kS, //阴影扩散程度
+);
 
 /// [kBoxShadow]
 const BoxShadow kBoxShadowTop = BoxShadow(
-    color: kShadowColor,
-    offset: kShadowOffsetTop,
-    blurRadius: kDefaultBorderRadiusXX,
-    spreadRadius: kH);
+  color: kShadowColor,
+  offset: kShadowOffsetTop,
+  blurRadius: kDefaultBorderRadiusXX,
+  spreadRadius: kH,
+);
 
 //--
 

@@ -7,7 +7,8 @@ part of '../../../flutter3_widgets.dart';
 /// icons图标, m3图标列表
 /// https://fonts.google.com/icons
 /// 输入框控制配置
-/// [SingleInputWidget]
+/// - [SingleInputWidget]
+/// - [TextField]
 class TextFieldConfig {
   /// 输入控制, 用于获取输入内容
   final TextEditingController controller;
@@ -233,6 +234,7 @@ class TextFieldConfig {
   /// 请求焦点
   @api
   void requestFocus([BuildContext? context]) {
+    debugger();
     final node = focusNode;
     if (node == null) {
       return;
@@ -247,6 +249,7 @@ class TextFieldConfig {
   /// 移除焦点
   @api
   void removeFocus([BuildContext? context]) {
+    debugger();
     final node = focusNode;
     if (node == null) {
       return;
@@ -749,6 +752,9 @@ class SingleInputWidget extends StatefulWidget {
   /// 丢失焦点后, 是否自动触发提交
   final bool autoSubmitOnUnFocus;
 
+  /// 调试标签
+  final String? debugLabel;
+
   /// [TextField] 内部实现
   /// [TextFieldConfig] 核心配置
   const SingleInputWidget({
@@ -813,6 +819,7 @@ class SingleInputWidget extends StatefulWidget {
     this.suffixIconBuilder,
     this.canRequestFocus = true,
     this.autoSubmitOnUnFocus = false,
+    this.debugLabel,
   });
 
   /// 不带输入框的样式
@@ -878,6 +885,7 @@ class SingleInputWidget extends StatefulWidget {
     this.suffixIconBuilder,
     this.canRequestFocus = true,
     this.autoSubmitOnUnFocus = false,
+    this.debugLabel,
   });
 
   /// 去掉了所有默认装饰的样式
@@ -945,6 +953,7 @@ class SingleInputWidget extends StatefulWidget {
     this.suffixIconBuilder,
     this.canRequestFocus = true,
     this.autoSubmitOnUnFocus = false,
+    this.debugLabel,
   });
 
   @override
@@ -1083,6 +1092,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   void _onFocusChanged() {
     _checkSuffixIcon();
     final hasFocus = widget.config.hasFocus;
+    assert(() {
+      l.d("[${classHash()}] 焦点变化：$hasFocus");
+      return true;
+    }());
     final text = widget.config.value.text;
     widget.onFocusAction?.call(hasFocus);
     widget.config.onFocusAction?.call(hasFocus, text);

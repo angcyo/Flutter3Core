@@ -97,16 +97,15 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   /// ```
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    '[${classHash()}]AppLifecycle didChangeAppLifecycleState:$state'.writeToLog(
-      level: L.verbose,
-    );
+    '[${classHash()}] AppLifecycle didChangeAppLifecycleState:$state'
+        .writeToLog(level: L.verbose);
     super.didChangeAppLifecycleState(state);
   }
 
   /// 低内存回调, 此时需要释放内容
   @override
   void didHaveMemoryPressure() {
-    '[${classHash()}]AppLifecycle didHaveMemoryPressure'.writeToLog(
+    '[${classHash()}] AppLifecycle didHaveMemoryPressure'.writeToLog(
       level: L.verbose,
     );
     super.didHaveMemoryPressure();
@@ -115,7 +114,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   ///手机系统文本缩放系数改变里回调这里
   @override
   void didChangeTextScaleFactor() {
-    '[${classHash()}]AppLifecycle didChangeTextScaleFactor'.writeToLog(
+    '[${classHash()}] AppLifecycle didChangeTextScaleFactor'.writeToLog(
       level: L.verbose,
     );
     super.didChangeTextScaleFactor();
@@ -132,7 +131,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
 
   @override
   Future<bool> didPopRoute() {
-    '[${classHash()}]AppLifecycle didPopRoute'.writeToLog(level: L.verbose);
+    '[${classHash()}] AppLifecycle didPopRoute'.writeToLog(level: L.verbose);
     return super.didPopRoute();
   }
 }

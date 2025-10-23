@@ -249,7 +249,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
           body = body
               .mapIndex(
                 (child, index) => child.click(() {
-                  l.w("点击了Tab: $index");
+                  l.w("[${classHash()}] 点击了Tab索引: $index .");
                   if (this is PageViewMixin) {
                     tabLayoutController.selectedItem(
                       index,
@@ -311,7 +311,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
   @overridePoint
   void onSelfTabIndexChanged(BuildContext context, int from, int to) {
     assert(() {
-      l.v('onSelfTabIndexChanged:$from->$to');
+      l.v('[${classHash()}] onSelfTabIndexChanged:$from->$to');
       return true;
     }());
     tabSelectedUpdateSignal.updateValue(to);
