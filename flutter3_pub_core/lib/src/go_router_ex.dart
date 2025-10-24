@@ -291,6 +291,8 @@ GoRouter goRouter(
 }
 
 /// 创建 [GoRoute] 具体的路由导航项
+/// - [路由动画](https://pub.dev/documentation/go_router/latest/topics/Transition%20animations-topic.html)
+/// - [MaterialPage]
 GoRoute goRoute(
   String path, {
   //--
@@ -304,7 +306,9 @@ GoRoute goRoute(
   GlobalKey<NavigatorState>? parentNavigatorKey,
   List<RouteBase>? routes,
 }) {
-  translationType ??= child?.getWidgetTranslationType();
+  translationType ??=
+      child?.getWidgetTranslationType() ??
+      (isDesktopOrWeb ? TranslationType.fade : null);
   return GoRoute(
     path: path,
     name: name,
