@@ -495,25 +495,27 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
 
   //region 参考线
 
-  /// 横向参考线
+  /// 横向/纵向 参考线集合
   @output
-  List<RefLineData> hRefLineData = [RefLineData(Axis.horizontal, 10)];
-
-  /// 纵向参考线
-  @property
-  List<RefLineData> vRefLineData = [RefLineData(Axis.vertical, 10)];
+  List<RefLineData> refLineDataList = [];
 
   @override
   bool isEnablePointerEvent() => drawType.have(CanvasStyle.sDrawRefLine);
 
-  /// 动态创建参考线的组件
+  /// 鼠标悬浮的参考线数据
+  RefLineData? _hoverRefLineData;
+
+  /// 动态创建/编辑参考线的组件
   RefLineComponent? _refLineComponent;
 
   @override
   bool handlePointerEvent(@viewCoordinate PointerEvent event) {
     if (event.isPointerHover) {
       final localPosition = event.localPosition;
-      if (xAxisBounds?.contains(localPosition) == true) {
+      _hoverRefLineData = findRefLineData(localPosition);
+      if (xAxisBounds?.contains(localPosition) == true ||
+          _hoverRefLineData?.axis == Axis.horizontal) {
+        // 横向参考线
         canvasDelegate.addCursorStyle(
           "cursor_x_axis",
           SystemMouseCursors.resizeRow,
@@ -521,7 +523,9 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
       } else {
         canvasDelegate.removeTagCursorStyle("cursor_x_axis");
       }
-      if (yAxisBounds?.contains(localPosition) == true) {
+      if (yAxisBounds?.contains(localPosition) == true ||
+          _hoverRefLineData?.axis == Axis.vertical) {
+        // 纵向参考线
         canvasDelegate.addCursorStyle(
           "cursor_y_axis",
           SystemMouseCursors.resizeColumn,
@@ -531,16 +535,25 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
       }
     } else if (event.isPointerDown) {
       final localPosition = event.localPosition;
-      if (xAxisBounds?.contains(localPosition) == true) {
+      final downRefLineData = findRefLineData(localPosition);
+      if (downRefLineData != null) {
+        _refLineComponent = RefLineComponent(this, downRefLineData.axis)
+          .._refLineData = downRefLineData;
+        canvasDelegate.refresh();
+      } else if (xAxisBounds?.contains(localPosition) == true) {
         _refLineComponent = RefLineComponent(this, Axis.horizontal);
       } else if (yAxisBounds?.contains(localPosition) == true) {
         _refLineComponent = RefLineComponent(this, Axis.vertical);
       }
       _refLineComponent?.handlePointerEvent(event);
+      return _refLineComponent != null;
     } else {
       if (_refLineComponent != null) {
         final handle = _refLineComponent!.handlePointerEvent(event);
         if (event.isPointerFinish) {
+          if (isRefLineMoveToAxis(_refLineComponent?._refLineData)) {
+            removeRefLine(_refLineComponent?._refLineData);
+          }
           _refLineComponent = null;
         }
         return handle;
@@ -558,38 +571,87 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
       final canvasStyle = this.canvasStyle;
       final linePaint = Paint()..color = canvasStyle.axisRefLineColor;
 
-      for (final lineData in hRefLineData) {
+      for (final lineData in refLineDataList) {
         @sceneCoordinate
-        final point = Offset(0, lineData.sceneValue);
+        final point = Offset(lineData.sceneValue, lineData.sceneValue);
         @viewCoordinate
         final viewPoint = canvasViewBox.toViewPoint(point);
 
-        canvas.drawLine(
-          Offset(paintBounds.left, viewPoint.dy),
-          Offset(paintBounds.right, viewPoint.dy),
-          linePaint,
-        );
+        linePaint.color = isHighlightRefLine(lineData)
+            ? canvasStyle.axisRefLineHighlightColor
+            : canvasStyle.axisRefLineColor;
+
+        if (lineData.axis == Axis.horizontal) {
+          canvas.drawLine(
+            Offset(paintBounds.left, viewPoint.dy),
+            Offset(paintBounds.right, viewPoint.dy),
+            linePaint,
+          );
+        } else if (lineData.axis == Axis.vertical) {
+          canvas.drawLine(
+            Offset(viewPoint.dx, paintBounds.top),
+            Offset(viewPoint.dx, paintBounds.bottom),
+            linePaint,
+          );
+        }
       }
-
-      for (final lineData in vRefLineData) {
-        @sceneCoordinate
-        final point = Offset(lineData.sceneValue, 0);
-        @viewCoordinate
-        final viewPoint = canvasViewBox.toViewPoint(point);
-
-        canvas.drawLine(
-          Offset(viewPoint.dx, paintBounds.top),
-          Offset(viewPoint.dx, paintBounds.bottom),
-          linePaint,
-        );
-      }
-
-      /*canvas.drawLine(
-        Offset(100, 0),
-        Offset(100, 100),
-        Paint()..color = Colors.purpleAccent,
-      );*/
     }
+  }
+
+  /// 查找点击命中的参考线
+  RefLineData? findRefLineData(@viewCoordinate Offset point) {
+    for (final lineData in refLineDataList.reversed) {
+      if (isHitRefLineData(lineData, point)) {
+        return lineData;
+      }
+    }
+    return null;
+  }
+
+  /// 点[point]是否命中[lineData]参考线
+  bool isHitRefLineData(RefLineData lineData, @viewCoordinate Offset point) {
+    final canvasViewBox = paintManager.canvasDelegate.canvasViewBox;
+    @viewCoordinate
+    final paintBounds = canvasViewBox.paintBounds;
+    final double threshold = 10;
+    if (lineData.axis == Axis.horizontal) {
+      @viewCoordinate
+      final lineDataPoint = toViewPoint(Offset(0, lineData.sceneValue));
+      return point.dx >= paintBounds.left &&
+          point.dx <= paintBounds.right &&
+          (point.y - lineDataPoint.y).abs() <= threshold;
+    }
+    if (lineData.axis == Axis.vertical) {
+      @viewCoordinate
+      final lineDataPoint = toViewPoint(Offset(lineData.sceneValue, 0));
+      return point.dy >= paintBounds.top &&
+          point.dy <= paintBounds.bottom &&
+          (point.x - lineDataPoint.x).abs() <= threshold;
+    }
+    return false;
+  }
+
+  /// 判断当前参考线是否移动到坐标轴上了, 此时应该移除参考线
+  bool isRefLineMoveToAxis(RefLineData? lineData) {
+    if (lineData == null) {
+      return false;
+    }
+    @viewCoordinate
+    final lineDataPoint = toViewPoint(
+      Offset(lineData.sceneValue, lineData.sceneValue),
+    );
+    if (lineData.axis == Axis.horizontal) {
+      return lineDataPoint.y <= (xAxisBounds?.bottom ?? 0);
+    }
+    if (lineData.axis == Axis.vertical) {
+      return lineDataPoint.x <= (yAxisBounds?.right ?? 0);
+    }
+    return false;
+  }
+
+  /// 当前参考线是否要高亮
+  bool isHighlightRefLine(RefLineData lineData) {
+    return lineData == _refLineComponent?._refLineData;
   }
 
   /// 场景内的坐标转换成视图坐标
@@ -610,17 +672,22 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
     if (data == null) {
       return;
     }
-    if (data.axis == Axis.vertical) {
-      if (!vRefLineData.contains(data)) {
-        vRefLineData.add(data);
-      }
-      canvasDelegate.refresh();
-    } else if (data.axis == Axis.horizontal) {
-      if (!hRefLineData.contains(data)) {
-        hRefLineData.add(data);
-      }
-      canvasDelegate.refresh();
+    if (!refLineDataList.contains(data)) {
+      refLineDataList.add(data);
     }
+    canvasDelegate.refresh();
+  }
+
+  /// 移除一个参考线
+  @api
+  void removeRefLine(RefLineData? data) {
+    if (data == null) {
+      return;
+    }
+    if (refLineDataList.contains(data)) {
+      refLineDataList.remove(data);
+    }
+    canvasDelegate.refresh();
   }
 
   //endregion 参考线

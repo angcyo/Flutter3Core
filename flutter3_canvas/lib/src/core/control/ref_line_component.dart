@@ -5,7 +5,8 @@ part of '../../../flutter3_canvas.dart';
 /// @date 2025/10/24
 ///
 /// 参考线构建组件
-/// 在坐标轴上拖动以生成参考线
+/// - 在坐标轴上拖动以生成参考线
+/// - 在已有的参考线上拖动编辑
 ///
 class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
   final CanvasAxisManager axisManager;
@@ -14,6 +15,12 @@ class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
   final Axis axis;
 
   RefLineComponent(this.axisManager, this.axis);
+
+  @override
+  double? get translateDetectorSecondSlopX => 1;
+
+  @override
+  double? get translateDetectorSecondSlopY => 1;
 
   @override
   bool handlePointerEvent(@viewCoordinate PointerEvent event) {
@@ -31,15 +38,17 @@ class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
     double mdy,
   ) {
     //debugger();
-    _refLineData ??= RefLineData(axis, 0);
-    final value = axis == Axis.horizontal
-        ? axisManager.toScenePoint(event.localPosition).y
-        : axisManager.toScenePoint(event.localPosition).x;
-    _refLineData?.sceneValue = value;
-    l.i(
-      "sceneValue->${_refLineData?.axis} $value -> ${_refLineData?.sceneValue}",
-    );
-    axisManager.addRefLine(_refLineData);
+    if (mdx != 0 && mdy != 0) {
+      _refLineData ??= RefLineData(axis, 0);
+      final value = axis == Axis.horizontal
+          ? axisManager.toScenePoint(event.localPosition).y
+          : axisManager.toScenePoint(event.localPosition).x;
+      _refLineData?.sceneValue = value;
+      /*l.i(
+        "sceneValue->${_refLineData?.axis} $value -> ${_refLineData?.sceneValue}",
+      );*/
+      axisManager.addRefLine(_refLineData);
+    }
     return true;
   }
 }

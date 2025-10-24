@@ -1403,6 +1403,15 @@ mixin TranslateDetectorMixin {
   double translateDetectorSlopX = kTouchMoveSlop;
   double translateDetectorSlopY = kTouchMoveSlop;
 
+  /// 当已经触发移动后, 此时的移动阈值, 不指定则使用
+  /// - [translateDetectorSlopX]
+  /// - [translateDetectorSlopY]
+  @dp
+  @configProperty
+  double? translateDetectorSecondSlopX;
+
+  double? translateDetectorSecondSlopY;
+
   /// 是否发生过移动
   @output
   bool isTranslateHappened = false;
@@ -1428,7 +1437,6 @@ mixin TranslateDetectorMixin {
     bool handle = false;
     final pointer = event.pointer;
     if (event.isPointerDown) {
-      isTranslateHappened = false;
       isTranslating = false;
       _downPointer = pointer;
       _downPosition = getTranslateDetectorPointerEventPosition(event);
@@ -1439,8 +1447,15 @@ mixin TranslateDetectorMixin {
       final mdy = localPosition.dy - _movePosition.dy;
       final ddx = localPosition.dx - _downPosition.dx;
       final ddy = localPosition.dy - _downPosition.dy;
-      if (mdx.abs() >= translateDetectorSlopX ||
-          mdy.abs() >= translateDetectorSlopY) {
+
+      final slopX = isTranslateHappened
+          ? translateDetectorSecondSlopX ?? translateDetectorSlopX
+          : translateDetectorSlopX;
+      final slopY = isTranslateHappened
+          ? translateDetectorSecondSlopY ?? translateDetectorSlopY
+          : translateDetectorSlopY;
+
+      if (mdx.abs() >= slopX || mdy.abs() >= slopY) {
         //有有效的移动
         isTranslateHappened = true;
         isTranslating = true;
