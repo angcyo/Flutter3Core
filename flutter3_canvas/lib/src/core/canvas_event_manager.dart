@@ -15,21 +15,26 @@ part of '../../flutter3_canvas.dart';
 class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   final CanvasDelegate canvasDelegate;
 
-  /// 画布平移组件
+  /// 画布平移组件, 操控[CanvasViewBox]对象
+  /// - [CanvasViewBox.translateTo]
+  /// - [CanvasViewBox.translateBy]
   late CanvasTranslateComponent canvasTranslateComponent =
       CanvasTranslateComponent(canvasDelegate);
 
-  /// 画布缩放组件
+  /// 画布缩放组件, 操控[CanvasViewBox]对象
+  /// - [CanvasViewBox.scaleTo]
+  /// - [CanvasViewBox.scaleBy]
   late CanvasScaleComponent canvasScaleComponent = CanvasScaleComponent(
     canvasDelegate,
   );
 
-  /// 画布快速滑动组件
+  /// 画布快速滑动组件, 操控[CanvasViewBox]对象
   late CanvasFlingComponent canvasFlingComponent = CanvasFlingComponent(
     canvasDelegate,
   );
 
   /// 画布区域点击事件组件
+  /// - 包含坐标轴左上角的区域点击事件
   late CanvasBoundsEventComponent canvasBoundsEventComponent =
       CanvasBoundsEventComponent(canvasDelegate);
 

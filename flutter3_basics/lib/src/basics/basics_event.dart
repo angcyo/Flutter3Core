@@ -637,12 +637,17 @@ enum TouchDetectorType {
   /// 点击事件
   click,
 
+  /// 双击事件
+  doubleClick,
+
   /// 长按事件, 此时手势还未抬起
   longPress,
 }
 
 /// 点击/长按事件探测
 mixin TouchDetectorMixin {
+  //--
+
   /// 是否要检查长按事件
   @configProperty
   bool checkLongPress = true;
@@ -656,18 +661,54 @@ mixin TouchDetectorMixin {
   @configProperty
   double loopLongPressDelay = 60;
 
-  /// 长按循环触发器
-  @output
-  Timer? loopLongPressTimer;
-
-  /// 超过此值的点视为无效
-  @dp
-  @configProperty
-  double touchDetectorSlop = kTouchSlop;
-
   /// 按下时长超过此值, 视为长按
   @configProperty
   Duration touchLongPressTimeout = kLongPressTimeout;
+
+  /// 长按循环触发器
+  @output
+  Timer? _loopLongPressTimer;
+
+  //--
+
+  /// 双击事件探测触发的点击次数. 这里可以指定N次触发
+  /// - <2: 表示关闭双击检查
+  /// - 2: 表示短时间点击2次即触发事件
+  @configProperty
+  int touchDoubleClickCount = 2;
+
+  /// 是否要检查双击事件
+  /// - 关闭双击检查, 点击事件会触发的更快
+  bool get checkDoubleClick => touchDoubleClickCount > 1;
+
+  /// 第二次点击抬手时的时间间隔小于此值, 视为双击
+  /// - 距离上一次的点击事件不能超过此时, 超过则会重置有效的点击计数
+  ///
+  /// - [kDoubleTapTimeout]
+  /// - [kDoubleTapMinTime]
+  @configProperty
+  Duration touchDoubleTimeout = Duration(milliseconds: 160);
+
+  /// 上一次有效的手指抬手的时间, null表示还未抬手过
+  /// - 双击时, 必须只有一个手势触发. 不支持多个手势下的双击
+  /// -
+  @output
+  int? _lastPointerUpTime;
+
+  /// 已经点击的有效点击次数
+  @output
+  int _touchDetectorClickCount = 0;
+
+  /// 双击模式下, 点击事件的触发器
+  @output
+  Timer? _clickDetectorTimer;
+
+  //--
+
+  /// 移动超过此值的点视为无效的点击操作
+  @dp
+  @configProperty
+  double touchDetectorSlop = kTouchSlop;
 
   /// N个手指对应的按下事件
   @output
@@ -687,13 +728,16 @@ mixin TouchDetectorMixin {
     final pointer = event.pointer;
     isMouseRightDownDetector = event.isMouseRightDown;
     if (event.isPointerDown) {
-      loopLongPressTimer?.cancel();
-      loopLongPressTimer = null;
+      _loopLongPressTimer?.cancel();
+      _loopLongPressTimer = null;
       _pointerDownMap[pointer] = event;
       if (checkLongPress) {
         _pointerLongMap[pointer] = Timer(touchLongPressTimeout, () {
           _checkLongPress(event);
         });
+      }
+      if (_pointerDownMap.length > 1) {
+        _clearDoubleClickCount();
       }
     } else if (event.isPointerMove) {
       //手势移动一定距离后,移除长按事件探测
@@ -702,14 +746,15 @@ mixin TouchDetectorMixin {
         touchDetectorSlop,
       )) {
         _clearLongPress(pointer);
+        _clearDoubleClickCount();
       }
     } else if (event.isPointerUp) {
       //debugger();
       _checkClick(event);
     }
     if (event.isPointerFinish) {
-      loopLongPressTimer?.cancel();
-      loopLongPressTimer = null;
+      _loopLongPressTimer?.cancel();
+      _loopLongPressTimer = null;
       _clear(event);
     }
   }
@@ -730,9 +775,37 @@ mixin TouchDetectorMixin {
     if (downEvent == null ||
         event.isMoveExceed(downEvent.localPosition, touchDetectorSlop)) {
       //超出了移动范围
+      _clearDoubleClickCount();
       return;
     }
-    onTouchDetectorPointerEvent(event, TouchDetectorType.click);
+    if (checkDoubleClick) {
+      //双击检查
+      _clickDetectorTimer?.cancel();
+      //debugger(when: _touchDetectorClickCount > 0);
+      final time = nowTime();
+      if (_lastPointerUpTime == null ||
+          time - _lastPointerUpTime! <= touchDoubleTimeout.inMilliseconds) {
+        //第一次点击, 或者有效的点击
+        _lastPointerUpTime = time;
+        _touchDetectorClickCount++;
+      } else {
+        //间隔很长, 无效的点击
+        _clearDoubleClickCount();
+      }
+
+      if (_touchDetectorClickCount >= touchDoubleClickCount) {
+        //触发双击事件
+        onTouchDetectorPointerEvent(event, TouchDetectorType.doubleClick);
+        _clearDoubleClickCount();
+      } else {
+        _clickDetectorTimer = Timer(touchDoubleTimeout, () {
+          onTouchDetectorPointerEvent(event, TouchDetectorType.click);
+          _clearDoubleClickCount();
+        });
+      }
+    } else {
+      onTouchDetectorPointerEvent(event, TouchDetectorType.click);
+    }
   }
 
   /// 检查是否需要触发长按事件回调
@@ -745,9 +818,9 @@ mixin TouchDetectorMixin {
     }
     onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
     if (enableLoopLongPress) {
-      loopLongPressTimer?.cancel();
-      loopLongPressTimer = null;
-      loopLongPressTimer = Timer.periodic(loopLongPressDelay.milliseconds, (
+      _loopLongPressTimer?.cancel();
+      _loopLongPressTimer = null;
+      _loopLongPressTimer = Timer.periodic(loopLongPressDelay.milliseconds, (
         timer,
       ) {
         onTouchDetectorPointerEvent(event, TouchDetectorType.longPress);
@@ -767,6 +840,14 @@ mixin TouchDetectorMixin {
   void _clearLongPress(int pointer) {
     _pointerLongMap[pointer]?.cancel();
     _pointerLongMap.remove(pointer);
+  }
+
+  /// 清理双击点击计数, 这样会重置双击检查
+  void _clearDoubleClickCount() {
+    _lastPointerUpTime = null;
+    _touchDetectorClickCount = 0;
+    _clickDetectorTimer?.cancel();
+    _clickDetectorTimer = null;
   }
 }
 

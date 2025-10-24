@@ -295,7 +295,9 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   Completer<bool>? _changeMatrixCompleter;
 
   /// 改变画布矩阵, 支持动画
-  /// [awaitAnimate] 是否等待动画结束
+  /// 如果要回复到默认状态, 传入[Matrix4.identity]即可
+  ///
+  /// - [awaitAnimate] 是否等待动画结束
   Future<bool> changeMatrix(
     Matrix4 target, {
     bool animate = true,
