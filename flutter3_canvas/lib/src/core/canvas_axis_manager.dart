@@ -577,7 +577,10 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
         @viewCoordinate
         final viewPoint = canvasViewBox.toViewPoint(point);
 
-        linePaint.color = isHighlightRefLine(lineData)
+        final isHighlight = isHighlightRefLine(lineData);
+        final isHover = _hoverRefLineData == lineData;
+
+        linePaint.color = isHighlight
             ? canvasStyle.axisRefLineHighlightColor
             : canvasStyle.axisRefLineColor;
 
@@ -587,12 +590,72 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
             Offset(paintBounds.right, viewPoint.dy),
             linePaint,
           );
+
+          if (isHighlight || isHover) {
+            //绘制参考刻度值
+            canvas.withRotate(
+              -90,
+              () {
+                TextPainter(
+                    text: TextSpan(
+                      text: axisUnit.formatFromDp(
+                        lineData.sceneValue,
+                        showSuffix: false,
+                      ),
+                      style: TextStyle(
+                        color: linePaint.color,
+                        fontSize: paintManager
+                            .canvasDelegate
+                            .canvasStyle
+                            .axisLabelFontSize,
+                      ),
+                    ),
+                    textDirection: TextDirection.ltr,
+                  )
+                  ..layout()
+                  ..paint(
+                    canvas,
+                    Offset(
+                      yAxisBounds?.left ?? 0,
+                      viewPoint.y - axisLabelOffset,
+                    ),
+                  );
+              },
+              pivotX: yAxisBounds?.left ?? 0,
+              pivotY: viewPoint.y - axisLabelOffset,
+            );
+          }
         } else if (lineData.axis == Axis.vertical) {
           canvas.drawLine(
             Offset(viewPoint.dx, paintBounds.top),
             Offset(viewPoint.dx, paintBounds.bottom),
             linePaint,
           );
+
+          if (isHighlight || isHover) {
+            //绘制参考刻度值
+            TextPainter(
+                text: TextSpan(
+                  text: axisUnit.formatFromDp(
+                    lineData.sceneValue,
+                    showSuffix: false,
+                  ),
+                  style: TextStyle(
+                    color: linePaint.color,
+                    fontSize: paintManager
+                        .canvasDelegate
+                        .canvasStyle
+                        .axisLabelFontSize,
+                  ),
+                ),
+                textDirection: TextDirection.ltr,
+              )
+              ..layout()
+              ..paint(
+                canvas,
+                Offset(viewPoint.x + axisLabelOffset, xAxisBounds?.top ?? 0),
+              );
+          }
         }
       }
     }

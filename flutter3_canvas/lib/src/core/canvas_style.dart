@@ -220,7 +220,7 @@ class CanvasStyle {
 
   /// 绘制label时, 额外需要的偏移量
   @dp
-  double axisLabelOffset = 1;
+  double axisLabelOffset = 2;
 
   /// 坐标系的单位
   IUnit axisUnit = IUnit.mm;
