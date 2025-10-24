@@ -168,6 +168,10 @@ extension EventIntEx on int {
 }
 
 extension PointerEventEx on PointerEvent {
+  double get x => localPosition.dx;
+
+  double get y => localPosition.dy;
+
   /// 是否是手指类型事件
   /// [isMouseEventKind]
   /// [isTouchEventKind]
@@ -1463,13 +1467,13 @@ mixin TranslateDetectorMixin {
     return event.localPosition;
   }
 
-  /// 事件处理函数
+  /// 事件处理函数. [mdx].[mdy]都为0时, 表示结束了平移
   /// - 移动事件会触发此回调
   /// - 抬起事件也会触发此回调
   ///
   /// - [ddx] 与按下时移动的距离差
   /// - [ddy]
-  /// - [mdx] 与上一次移动的距离差
+  /// - [mdx] 与上一次移动的距离差.
   /// - [mdy]
   @overridePoint
   bool handleTranslateDetectorPointerEvent(

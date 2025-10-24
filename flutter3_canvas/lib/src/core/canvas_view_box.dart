@@ -12,10 +12,13 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   //region ---属性---
 
-  /// 整个可绘制的区域, 包含坐标尺区域和内容区域以及其他空隙区域
-  /// [updatePaintBounds] 在此方法中会更新此值
+  /// 整个可绘制的区域,
+  /// - 包含坐标尺区域和内容区域以及其他空隙区域
+  /// - 包含了[canvasBounds]
   ///
-  /// [PaintMeta.viewBounds]
+  /// - [updatePaintBounds] 在此方法中会更新此值
+  ///
+  /// - [PaintMeta.viewBounds]
   @dp
   @viewCoordinate
   @autoInjectMark

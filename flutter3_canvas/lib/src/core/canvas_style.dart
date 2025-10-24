@@ -16,6 +16,9 @@ class CanvasStyle {
   /// 绘制坐标网格
   static const int sDrawGrid = sDrawAxis << 1;
 
+  /// 绘制坐标参考线
+  static const int sDrawRefLine = sDrawGrid << 1;
+
   //region ---core---
 
   //--CanvasDelegate
@@ -34,6 +37,9 @@ class CanvasStyle {
 
   //--CanvasAxisManager
 
+  /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
+  int drawType = sDrawAxis | sDrawGrid | sDrawRefLine;
+
   /// 是否绘制网格
   bool get showGrid => drawType.have(sDrawGrid);
 
@@ -48,8 +54,12 @@ class CanvasStyle {
     drawType = drawType.add(sDrawAxis, value);
   }
 
-  /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
-  int drawType = sDrawAxis | sDrawGrid;
+  /// 是否绘制参考线
+  bool get showRefLine => drawType.have(sDrawRefLine);
+
+  set showRefLine(bool value) {
+    drawType = drawType.add(sDrawRefLine, value);
+  }
 
   /// 是否显示监控信息
   /// 比如: 当前缩放的比例
@@ -252,6 +262,17 @@ class CanvasStyle {
 
   /// 是否绘制坐标轴的边缘线
   bool showAxisEdgeLine = true;
+
+  /// 坐标参考线的颜色
+  ///
+  /// - [axisRefLineColor]
+  /// - [axisRefLineHighlightColor]
+  Color axisRefLineColor = Colors.purpleAccent;
+
+  /// 参考线高亮的颜色
+  /// - 在添加时使用
+  /// - 在选中时使用
+  Color axisRefLineHighlightColor = Colors.blueAccent;
 
   //endregion ---axis---
 

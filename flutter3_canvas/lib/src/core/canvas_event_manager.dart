@@ -15,6 +15,9 @@ part of '../../flutter3_canvas.dart';
 class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   final CanvasDelegate canvasDelegate;
 
+  CanvasAxisManager get axisManager =>
+      canvasDelegate.canvasPaintManager.axisManager;
+
   /// 画布平移组件, 操控[CanvasViewBox]对象
   /// - [CanvasViewBox.translateTo]
   /// - [CanvasViewBox.translateBy]
@@ -56,9 +59,11 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   @entryPoint
   void handlePointerEvent(@viewCoordinate PointerEvent event) {
     if (!canvasDelegate.canvasStyle.enableCanvasEvent) {
+      //事件总开关被关闭, 不处理任何手势
       return;
     }
     if (!event.isPointerHover) {
+      //非悬停事件
       /*assert((){
         l.d("handleEvent[${event.synthesized}]->$event");
         return true;
@@ -86,6 +91,9 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
           //拖拽模式下, 不处理元素事件
         } else if (_painterEventInterceptHandler != null) {
           _painterEventInterceptHandler?.handlePointerEvent(event);
+        } else if (axisManager.isEnablePointerEvent() &&
+            axisManager.handlePointerEvent(event)) {
+          //坐标轴事件处理
         } else {
           //元素事件分发
           //debugger();

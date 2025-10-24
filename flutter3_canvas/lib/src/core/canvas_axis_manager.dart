@@ -6,19 +6,27 @@ part of '../../flutter3_canvas.dart';
 /// 坐标轴管理, 负责坐标轴/坐标网格的绘制以及计算
 ///
 /// [CanvasPaintManager]的成员
+/// [CanvasPaintManager.axisManager]
 ///
-class CanvasAxisManager extends IPainter {
+/// - [updateAxisData] 更新坐标轴数据
+/// - [painting] 绘制坐标轴
+///
+class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
   final CanvasPaintManager paintManager;
 
   CanvasDelegate get canvasDelegate => paintManager.canvasDelegate;
 
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
-  /// x横坐标轴的数据
-  List<AxisData> xData = [];
+  /// x横坐标轴的数据, 绘制的是竖线
+  /// - [updateAxisData]
+  @output
+  List<AxisData> xAxisData = [];
 
-  /// y纵坐标轴的数据
-  List<AxisData> yData = [];
+  /// y纵坐标轴的数据, 绘制的是横线
+  /// - [updateAxisData]
+  @output
+  List<AxisData> yAxisData = [];
 
   /// x横坐标轴的绘制边界
   /// [CanvasPaintManager.onUpdatePaintBounds] 会更新此值
@@ -97,15 +105,16 @@ class CanvasAxisManager extends IPainter {
 
   CanvasAxisManager(this.paintManager);
 
-  /// 调用此方法,更新坐标轴数据
+  /// 调用此方法,更新坐标轴数据.
+  /// 在[CanvasViewBox]发生变化时, 需要调用此方法更新坐标系数据.
   ///
   /// [CanvasDelegate.dispatchCanvasViewBoxChanged]驱动
   /// [CanvasDelegate.dispatchCanvasUnitChanged]驱动
   ///
   @entryPoint
   void updateAxisData(CanvasViewBox canvasViewBox) {
-    xData.clear();
-    yData.clear();
+    xAxisData.clear();
+    yAxisData.clear();
 
     //debugger();
     if (drawType.have(CanvasStyle.sDrawAxis) ||
@@ -137,7 +146,7 @@ class CanvasAxisManager extends IPainter {
       double gapValue = gap * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
       if (viewValue >= yAxisWidth && viewValue <= paintBounds.right) {
-        xData.add(AxisData(viewValue, index * gap, axisType, index));
+        xAxisData.add(AxisData(viewValue, index * gap, axisType, index));
       }
       distance -= gapValue;
       viewValue += gapValue;
@@ -152,7 +161,7 @@ class CanvasAxisManager extends IPainter {
       double gapValue = gap * scaleX;
       int axisType = axisUnit.getAxisType(index, scaleX);
       if (viewValue >= yAxisWidth && viewValue <= paintBounds.right) {
-        xData.add(AxisData(viewValue, index * gap, axisType, index));
+        xAxisData.add(AxisData(viewValue, index * gap, axisType, index));
       }
       distance -= gapValue;
       viewValue -= gapValue;
@@ -169,7 +178,7 @@ class CanvasAxisManager extends IPainter {
       double gapValue = gap * scaleY;
       int axisType = axisUnit.getAxisType(index, scaleY);
       if (viewValue >= xAxisHeight && viewValue <= paintBounds.bottom) {
-        yData.add(AxisData(viewValue, index * gap, axisType, index));
+        yAxisData.add(AxisData(viewValue, index * gap, axisType, index));
       }
       distance -= gapValue;
       viewValue += gapValue;
@@ -184,7 +193,7 @@ class CanvasAxisManager extends IPainter {
       double gapValue = gap * scaleY;
       int axisType = axisUnit.getAxisType(index, scaleY);
       if (viewValue >= xAxisHeight && viewValue <= paintBounds.bottom) {
-        yData.add(AxisData(viewValue, index * gap, axisType, index));
+        yAxisData.add(AxisData(viewValue, index * gap, axisType, index));
       }
       distance -= gapValue;
       viewValue -= gapValue;
@@ -255,7 +264,7 @@ class CanvasAxisManager extends IPainter {
         canvasDelegate.canvasPaintManager.contentManager.withCanvasContent(
           canvas,
           () /*内容区域裁剪*/ {
-            for (final axisData in xData) {
+            for (final axisData in xAxisData) {
               final paint = axisData.axisType.have(IUnit.axisTypePrimary)
                   ? primaryPaint
                   : axisData.axisType.have(IUnit.axisTypeSecondary)
@@ -269,7 +278,7 @@ class CanvasAxisManager extends IPainter {
               );
             }
 
-            for (final axisData in yData) {
+            for (final axisData in yAxisData) {
               final paint = axisData.axisType.have(IUnit.axisTypePrimary)
                   ? primaryPaint
                   : axisData.axisType.have(IUnit.axisTypeSecondary)
@@ -289,6 +298,7 @@ class CanvasAxisManager extends IPainter {
   }
 
   /// 在坐标轴中绘制选中元素的宽度色块
+  @property
   void paintSelectElementWidthSize(Canvas canvas, PaintMeta paintMeta) {
     final elementManager = paintManager.canvasDelegate.canvasElementManager;
     final canvasElementControlManager =
@@ -325,6 +335,7 @@ class CanvasAxisManager extends IPainter {
   }
 
   /// 在坐标轴中绘制选中元素的高度色块
+  @property
   void paintSelectElementHeightSize(Canvas canvas, PaintMeta paintMeta) {
     final elementManager = paintManager.canvasDelegate.canvasElementManager;
     final canvasElementControlManager =
@@ -360,11 +371,12 @@ class CanvasAxisManager extends IPainter {
     }
   }
 
-  /// 绘制x轴刻度
+  /// 绘制x轴刻度文本信息
+  @property
   void paintXAxis(Canvas canvas) {
     final canvasStyle = paintManager.canvasDelegate.canvasStyle;
     final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
-    for (var axisData in xData) {
+    for (var axisData in xAxisData) {
       // 绘制坐标轴, 竖线
       final height = axisData.axisType.have(IUnit.axisTypePrimary)
           ? xAxisHeight
@@ -413,10 +425,12 @@ class CanvasAxisManager extends IPainter {
     }
   }
 
+  /// 绘制y轴刻度文本信息
+  @property
   void paintYAxis(Canvas canvas) {
     final canvasStyle = paintManager.canvasDelegate.canvasStyle;
     final paintBounds = paintManager.canvasDelegate.canvasViewBox.paintBounds;
-    for (var axisData in yData) {
+    for (var axisData in yAxisData) {
       // 绘制坐标轴, 横线
       final width = axisData.axisType.have(IUnit.axisTypePrimary)
           ? yAxisWidth
@@ -478,10 +492,142 @@ class CanvasAxisManager extends IPainter {
       }
     }
   }
+
+  //region 参考线
+
+  /// 横向参考线
+  @output
+  List<RefLineData> hRefLineData = [RefLineData(Axis.horizontal, 10)];
+
+  /// 纵向参考线
+  @property
+  List<RefLineData> vRefLineData = [RefLineData(Axis.vertical, 10)];
+
+  @override
+  bool isEnablePointerEvent() => drawType.have(CanvasStyle.sDrawRefLine);
+
+  /// 动态创建参考线的组件
+  RefLineComponent? _refLineComponent;
+
+  @override
+  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
+    if (event.isPointerHover) {
+      final localPosition = event.localPosition;
+      if (xAxisBounds?.contains(localPosition) == true) {
+        canvasDelegate.addCursorStyle(
+          "cursor_x_axis",
+          SystemMouseCursors.resizeRow,
+        );
+      } else {
+        canvasDelegate.removeTagCursorStyle("cursor_x_axis");
+      }
+      if (yAxisBounds?.contains(localPosition) == true) {
+        canvasDelegate.addCursorStyle(
+          "cursor_y_axis",
+          SystemMouseCursors.resizeColumn,
+        );
+      } else {
+        canvasDelegate.removeTagCursorStyle("cursor_y_axis");
+      }
+    } else if (event.isPointerDown) {
+      final localPosition = event.localPosition;
+      if (xAxisBounds?.contains(localPosition) == true) {
+        _refLineComponent = RefLineComponent(this, Axis.horizontal);
+      } else if (yAxisBounds?.contains(localPosition) == true) {
+        _refLineComponent = RefLineComponent(this, Axis.vertical);
+      }
+      _refLineComponent?.handlePointerEvent(event);
+    } else {
+      if (_refLineComponent != null) {
+        final handle = _refLineComponent!.handlePointerEvent(event);
+        if (event.isPointerFinish) {
+          _refLineComponent = null;
+        }
+        return handle;
+      }
+    }
+    return false;
+  }
+
+  /// 绘制参考线
+  @callPoint
+  void paintRefLine(Canvas canvas, PaintMeta paintMeta) {
+    if (drawType.have(CanvasStyle.sDrawRefLine)) {
+      final canvasViewBox = paintManager.canvasDelegate.canvasViewBox;
+      final paintBounds = canvasViewBox.paintBounds;
+      final canvasStyle = this.canvasStyle;
+      final linePaint = Paint()..color = canvasStyle.axisRefLineColor;
+
+      for (final lineData in hRefLineData) {
+        @sceneCoordinate
+        final point = Offset(0, lineData.sceneValue);
+        @viewCoordinate
+        final viewPoint = canvasViewBox.toViewPoint(point);
+
+        canvas.drawLine(
+          Offset(paintBounds.left, viewPoint.dy),
+          Offset(paintBounds.right, viewPoint.dy),
+          linePaint,
+        );
+      }
+
+      for (final lineData in vRefLineData) {
+        @sceneCoordinate
+        final point = Offset(lineData.sceneValue, 0);
+        @viewCoordinate
+        final viewPoint = canvasViewBox.toViewPoint(point);
+
+        canvas.drawLine(
+          Offset(viewPoint.dx, paintBounds.top),
+          Offset(viewPoint.dx, paintBounds.bottom),
+          linePaint,
+        );
+      }
+
+      /*canvas.drawLine(
+        Offset(100, 0),
+        Offset(100, 100),
+        Paint()..color = Colors.purpleAccent,
+      );*/
+    }
+  }
+
+  /// 场景内的坐标转换成视图坐标
+  @viewCoordinate
+  Offset toViewPoint(@sceneCoordinate Offset point) {
+    return paintManager.canvasDelegate.canvasViewBox.toViewPoint(point);
+  }
+
+  /// 视图坐标转换成场景坐标
+  @sceneCoordinate
+  Offset toScenePoint(@viewCoordinate Offset point) {
+    return paintManager.canvasDelegate.canvasViewBox.toScenePoint(point);
+  }
+
+  /// 添加一个参考线
+  @api
+  void addRefLine(RefLineData? data) {
+    if (data == null) {
+      return;
+    }
+    if (data.axis == Axis.vertical) {
+      if (!vRefLineData.contains(data)) {
+        vRefLineData.add(data);
+      }
+      canvasDelegate.refresh();
+    } else if (data.axis == Axis.horizontal) {
+      if (!hRefLineData.contains(data)) {
+        hRefLineData.add(data);
+      }
+      canvasDelegate.refresh();
+    }
+  }
+
+  //endregion 参考线
 }
 
 /// 坐标轴数据
-class AxisData {
+final class AxisData {
   /// 视图中, 距离视图左上角的距离值, 用来绘制坐标
   @dp
   @viewCoordinate

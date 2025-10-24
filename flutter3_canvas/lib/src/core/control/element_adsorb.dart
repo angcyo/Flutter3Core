@@ -487,7 +487,7 @@ class ElementAdsorbControl
     });
     //计算需要吸附的坐标系信息
     final axisManager = canvasDelegate.canvasPaintManager.axisManager;
-    for (final data in axisManager.xData) {
+    for (final data in axisManager.xAxisData) {
       if (data.axisType.have(IUnit.axisTypePrimary)) {
         _xRefValueList.add(AdsorbRefValue(
           refType: RefValueType.left,
@@ -497,7 +497,7 @@ class ElementAdsorbControl
         ));
       }
     }
-    for (final data in axisManager.yData) {
+    for (final data in axisManager.yAxisData) {
       if (data.axisType.have(IUnit.axisTypePrimary)) {
         _yRefValueList.add(AdsorbRefValue(
           refType: RefValueType.top,

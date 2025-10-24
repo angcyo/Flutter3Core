@@ -7,6 +7,14 @@ part of '../../flutter3_canvas.dart';
 /// 绘制管理, 所有绘制相关的操作, 都在这里, 绘制的入口
 ///
 /// [CanvasDelegate]的成员
+/// [CanvasDelegate.canvasPaintManager]
+///
+/// [paint]绘制顺序:
+/// - [contentManager] 绘制背景
+/// - [axisManager] 绘制坐标系
+/// - [canvasElementManager] 绘制元素
+/// - [axisManager] 绘制参考线
+/// - [monitorPainter] 绘制监视信息
 ///
 class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 栅格化元素
@@ -69,12 +77,15 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
     //--
     final result = await drawImage(size, (canvas) {
-      canvas.drawInRect(size.toRect(), src, () {
-        element.painting(
-          canvas,
-          const PaintMeta(host: rasterizeElementHost),
-        );
-      }, dstPadding: extend, fit: fit);
+      canvas.drawInRect(
+        size.toRect(),
+        src,
+        () {
+          element.painting(canvas, const PaintMeta(host: rasterizeElementHost));
+        },
+        dstPadding: extend,
+        fit: fit,
+      );
     });
     /*final base64 = await result.toBase64();
     debugger();*/
@@ -107,9 +118,14 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 画布内容管理, 可见背景, 背景颜色等
   late CanvasContentManager contentManager = CanvasContentManager(this);
 
+  /// 元素管理
+  CanvasElementManager get canvasElementManager =>
+      canvasDelegate.canvasElementManager;
+
   /// 监视信息, 比如缩放比例, fps帧率等
-  late CanvasMonitorPainter monitorPainter =
-      CanvasMonitorPainter(canvasDelegate);
+  late CanvasMonitorPainter monitorPainter = CanvasMonitorPainter(
+    canvasDelegate,
+  );
 
   CanvasPaintManager(this.canvasDelegate);
 
@@ -121,10 +137,18 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       final paintBounds = canvasDelegate.canvasViewBox.paintBounds;
       final xAxisLeft = paintBounds.left + axisManager.yAxisWidth;
       final yAxisTop = paintBounds.top + axisManager.xAxisHeight;
-      axisManager.xAxisBounds = Rect.fromLTRB(xAxisLeft, paintBounds.top,
-          paintBounds.right, paintBounds.top + axisManager.xAxisHeight);
-      axisManager.yAxisBounds = Rect.fromLTRB(paintBounds.left, yAxisTop,
-          paintBounds.left + axisManager.yAxisWidth, paintBounds.bottom);
+      axisManager.xAxisBounds = Rect.fromLTRB(
+        xAxisLeft,
+        paintBounds.top,
+        paintBounds.right,
+        paintBounds.top + axisManager.xAxisHeight,
+      );
+      axisManager.yAxisBounds = Rect.fromLTRB(
+        paintBounds.left,
+        yAxisTop,
+        paintBounds.left + axisManager.yAxisWidth,
+        paintBounds.bottom,
+      );
     } else {
       axisManager.xAxisBounds = null;
       axisManager.yAxisBounds = null;
@@ -156,8 +180,10 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       //2: 绘制坐标系
       axisManager.painting(canvas, paintMeta);
       //3: 绘制元素/以及控制点
-      canvasDelegate.canvasElementManager.paintElements(canvas, paintMeta);
-      //4: 绘制监视信息
+      canvasElementManager.paintElements(canvas, paintMeta);
+      //4: 绘制参考系
+      axisManager.paintRefLine(canvas, paintMeta);
+      //5: 绘制监视信息
       if (canvasDelegate.canvasStyle.showMonitor) {
         monitorPainter.painting(canvas, paintMeta);
       }
@@ -178,7 +204,8 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   @override
-  String toStringShort() => '画布大小:${canvasDelegate.canvasViewBox.paintBounds} '
+  String toStringShort() =>
+      '画布大小:${canvasDelegate.canvasViewBox.paintBounds} '
       '可视区域:${canvasDelegate.canvasViewBox.canvasSceneVisibleBounds} ';
 
   @override
@@ -186,8 +213,13 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty('坐标系单位', axisManager.axisUnit));
     properties.add(
-        DiagnosticsProperty('画布大小', canvasDelegate.canvasViewBox.paintBounds));
-    properties.add(DiagnosticsProperty(
-        '可视区域', canvasDelegate.canvasViewBox.canvasSceneVisibleBounds));
+      DiagnosticsProperty('画布大小', canvasDelegate.canvasViewBox.paintBounds),
+    );
+    properties.add(
+      DiagnosticsProperty(
+        '可视区域',
+        canvasDelegate.canvasViewBox.canvasSceneVisibleBounds,
+      ),
+    );
   }
 }
