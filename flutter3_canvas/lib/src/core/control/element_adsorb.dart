@@ -6,6 +6,12 @@ part of '../../../flutter3_canvas.dart';
 ///
 /// 智能吸附控制
 ///
+/// - [initAdsorbRefValueList] 初始化吸附目标数据
+/// - [findElementXAdsorbRefValue] 查找吸附参考数据
+/// - [findElementYAdsorbRefValue]
+/// - [findXAdsorbRefValue]
+/// - [findYAdsorbRefValue]
+///
 /// - [CanvasElementControlManager] in
 ///
 class ElementAdsorbControl
@@ -16,7 +22,9 @@ class ElementAdsorbControl
 
   @override
   bool get isCanvasComponentEnable => canvasElementControlManager
-      .canvasDelegate.canvasStyle.enableElementAdsorb;
+      .canvasDelegate
+      .canvasStyle
+      .enableElementAdsorb;
 
   /// 是否临时关闭吸附
   bool get isIgnoreAdsorb => isCtrlPressed;
@@ -37,7 +45,9 @@ class ElementAdsorbControl
   @entryPoint
   void paintAdsorb(Canvas canvas, PaintMeta paintMeta) {
     final controlElementBounds = canvasElementControlManager
-        ._currentControlElementRef?.target?.elementsBounds;
+        ._currentControlElementRef
+        ?.target
+        ?.elementsBounds;
     if (controlElementBounds == null || isIgnoreAdsorb) {
       return;
     }
@@ -90,11 +100,12 @@ class ElementAdsorbControl
 
       //绘制吸附线
       canvas.drawLine(
-          Offset(x, top),
-          Offset(x, bottom),
-          Paint()
-            ..color = canvasStyle.adsorbLineColor
-            ..strokeWidth = 1 / paintMeta.canvasScale);
+        Offset(x, top),
+        Offset(x, bottom),
+        Paint()
+          ..color = canvasStyle.adsorbLineColor
+          ..strokeWidth = 1 / paintMeta.canvasScale,
+      );
 
       //绘制距离
       if (refBounds != null) {
@@ -156,11 +167,12 @@ class ElementAdsorbControl
 
       //绘制吸附线
       canvas.drawLine(
-          Offset(left, y),
-          Offset(right, y),
-          Paint()
-            ..color = canvasStyle.adsorbLineColor
-            ..strokeWidth = 1 / paintMeta.canvasScale);
+        Offset(left, y),
+        Offset(right, y),
+        Paint()
+          ..color = canvasStyle.adsorbLineColor
+          ..strokeWidth = 1 / paintMeta.canvasScale,
+      );
 
       //绘制距离
       if (refBounds != null) {
@@ -228,16 +240,22 @@ class ElementAdsorbControl
     }
 
     //先使用left为参照值查找
-    AdsorbRefValue? refValue =
-        findXAdsorbRefValue(controlElementsBounds.left + tx, localPosition);
+    AdsorbRefValue? refValue = findXAdsorbRefValue(
+      controlElementsBounds.left + tx,
+      localPosition,
+    );
     if (refValue == null) {
       //再使用center为参考值查找
       refValue = findXAdsorbRefValue(
-          controlElementsBounds.center.dx + tx, localPosition);
+        controlElementsBounds.center.dx + tx,
+        localPosition,
+      );
       if (refValue == null) {
         //最后使用right为参考值查找
         refValue = findXAdsorbRefValue(
-            controlElementsBounds.right + tx, localPosition);
+          controlElementsBounds.right + tx,
+          localPosition,
+        );
         if (refValue == null) {
           //没有找到可以吸附的值
         } else {
@@ -279,16 +297,22 @@ class ElementAdsorbControl
     }
 
     //先使用top为参照值查找
-    AdsorbRefValue? refValue =
-        findYAdsorbRefValue(controlElementsBounds.top + ty, localPosition);
+    AdsorbRefValue? refValue = findYAdsorbRefValue(
+      controlElementsBounds.top + ty,
+      localPosition,
+    );
     if (refValue == null) {
       //再使用center为参考值查找
       refValue = findYAdsorbRefValue(
-          controlElementsBounds.center.dy + ty, localPosition);
+        controlElementsBounds.center.dy + ty,
+        localPosition,
+      );
       if (refValue == null) {
         //最后使用bottom为参考值查找
         refValue = findYAdsorbRefValue(
-            controlElementsBounds.bottom + ty, localPosition);
+          controlElementsBounds.bottom + ty,
+          localPosition,
+        );
         if (refValue == null) {
           //没有找到可以吸附的值
         } else {
@@ -420,7 +444,7 @@ class ElementAdsorbControl
     // 要排除的元素
     final exclude = [
       if (controlElement is ElementSelectComponent) ...?controlElement.children,
-      if (controlElement is! ElementSelectComponent) controlElement
+      if (controlElement is! ElementSelectComponent) controlElement,
     ];
 
     final elementsBounds = controlElement.elementsBounds;
@@ -428,51 +452,62 @@ class ElementAdsorbControl
 
     //吸附的矩形信息
     void adsorbRect(Rect bounds, {ElementPainter? element}) {
-      _xRefValueList.add(AdsorbRefValue(
-        refType: RefValueType.left,
-        refValue: bounds.left,
-        refElement: element,
-        refBounds: bounds,
-      ));
-      _xRefValueList.add(AdsorbRefValue(
-        refType: RefValueType.center,
-        refValue: bounds.center.dx,
-        refElement: element,
-        refBounds: bounds,
-      ));
-      _xRefValueList.add(AdsorbRefValue(
-        refType: RefValueType.right,
-        refValue: bounds.right,
-        refElement: element,
-        refBounds: bounds,
-      ));
+      _xRefValueList.add(
+        AdsorbRefValue(
+          refType: RefValueType.left,
+          refValue: bounds.left,
+          refElement: element,
+          refBounds: bounds,
+        ),
+      );
+      _xRefValueList.add(
+        AdsorbRefValue(
+          refType: RefValueType.center,
+          refValue: bounds.center.dx,
+          refElement: element,
+          refBounds: bounds,
+        ),
+      );
+      _xRefValueList.add(
+        AdsorbRefValue(
+          refType: RefValueType.right,
+          refValue: bounds.right,
+          refElement: element,
+          refBounds: bounds,
+        ),
+      );
       //--
-      _yRefValueList.add(AdsorbRefValue(
-        refType: RefValueType.top,
-        refValue: bounds.top,
-        refElement: element,
-        refBounds: bounds,
-      ));
-      _yRefValueList.add(AdsorbRefValue(
-        refType: RefValueType.center,
-        refValue: bounds.center.dy,
-        refElement: element,
-        refBounds: bounds,
-      ));
-      _yRefValueList.add(AdsorbRefValue(
-        refType: RefValueType.bottom,
-        refValue: bounds.bottom,
-        refElement: element,
-        refBounds: bounds,
-      ));
+      _yRefValueList.add(
+        AdsorbRefValue(
+          refType: RefValueType.top,
+          refValue: bounds.top,
+          refElement: element,
+          refBounds: bounds,
+        ),
+      );
+      _yRefValueList.add(
+        AdsorbRefValue(
+          refType: RefValueType.center,
+          refValue: bounds.center.dy,
+          refElement: element,
+          refBounds: bounds,
+        ),
+      );
+      _yRefValueList.add(
+        AdsorbRefValue(
+          refType: RefValueType.bottom,
+          refValue: bounds.bottom,
+          refElement: element,
+          refBounds: bounds,
+        ),
+      );
     }
 
     //计算需要吸附的元素
     for (final element in canvasElementManager.elements) {
       if (!element.isVisible /*元素不可见*/ ||
-              exclude.contains(element) /*需要排除元素*/ ||
-              !element.isVisibleInCanvasBox(canvasViewBox) /*元素不在画布内*/
-          ) {
+          exclude.contains(element) /*需要排除元素*/ ||
+          !element.isVisibleInCanvasBox(canvasViewBox) /*元素不在画布内*/ ) {
         continue;
       }
       element.elementsBounds?.let((it) {
@@ -481,30 +516,58 @@ class ElementAdsorbControl
     }
     //--
     canvasDelegate
-        .canvasPaintManager.contentManager.canvasContentFollowRectInner
+        .canvasPaintManager
+        .contentManager
+        .canvasContentFollowRectInner
         ?.let((it) {
-      adsorbRect(it);
-    });
+          adsorbRect(it);
+        });
     //计算需要吸附的坐标系信息
     final axisManager = canvasDelegate.canvasPaintManager.axisManager;
     for (final data in axisManager.xAxisData) {
       if (data.axisType.have(IUnit.axisTypePrimary)) {
-        _xRefValueList.add(AdsorbRefValue(
-          refType: RefValueType.left,
-          refValue: data.sceneValue,
-          refElement: null,
-          refBounds: null,
-        ));
+        _xRefValueList.add(
+          AdsorbRefValue(
+            refType: RefValueType.left,
+            refValue: data.sceneValue,
+            refElement: null,
+            refBounds: null,
+          ),
+        );
       }
     }
     for (final data in axisManager.yAxisData) {
       if (data.axisType.have(IUnit.axisTypePrimary)) {
-        _yRefValueList.add(AdsorbRefValue(
-          refType: RefValueType.top,
-          refValue: data.sceneValue,
-          refElement: null,
-          refBounds: null,
-        ));
+        _yRefValueList.add(
+          AdsorbRefValue(
+            refType: RefValueType.top,
+            refValue: data.sceneValue,
+            refElement: null,
+            refBounds: null,
+          ),
+        );
+      }
+    }
+    //--
+    for (final data in axisManager.refLineDataList) {
+      if (data.axis == Axis.horizontal) {
+        _yRefValueList.add(
+          AdsorbRefValue(
+            refType: RefValueType.top,
+            refValue: data.sceneValue,
+            refElement: null,
+            refBounds: null,
+          ),
+        );
+      } else if (data.axis == Axis.vertical) {
+        _xRefValueList.add(
+          AdsorbRefValue(
+            refType: RefValueType.left,
+            refValue: data.sceneValue,
+            refElement: null,
+            refBounds: null,
+          ),
+        );
       }
     }
   }
@@ -555,18 +618,11 @@ class ElementAdsorbControl
     return minRefValue;
   }
 
-//endregion --辅助--
+  //endregion --辅助--
 }
 
-/// 引用值的类型
-enum RefValueType {
-  none,
-  left,
-  top,
-  center,
-  right,
-  bottom,
-}
+/// 引用值的类型, 表示对齐目标的什么位置
+enum RefValueType { none, left, top, center, right, bottom }
 
 /// 吸附参考值结构
 class AdsorbRefValue {

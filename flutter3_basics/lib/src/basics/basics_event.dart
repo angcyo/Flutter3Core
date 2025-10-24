@@ -487,6 +487,7 @@ mixin PointerDispatchMixin {
     if (isIgnorePointer(event)) {
       if (event.isPointerFinish) {
         ignoreHandlePointer(event, false);
+        _handlePointerFinish(event);
       }
       return false;
     }
@@ -495,6 +496,9 @@ mixin PointerDispatchMixin {
     if (event.isNormalTouchEvent) {
       //非合成的事件
       pointerMap[event.pointer] = event;
+      /*l.w(
+        "${classHash()} 记录手势[${event.pointer}] ${event.classHash()} :${pointerMap.length}",
+      );*/
     }
     final clientList = handleEventClientList
         .where((e) => !ignoreClientHandlePointer(e, event))
@@ -517,7 +521,7 @@ mixin PointerDispatchMixin {
         assert(() {
           if (event.isPointerDown) {
             l.v(
-              "手势(PointerDown)处理[$handled]->${interceptHandleTarget.runtimeType}",
+              "手势(PointerDown)被拦截的目标处理[$handled]->${interceptHandleTarget.runtimeType}",
             );
           }
           return true;
@@ -530,7 +534,9 @@ mixin PointerDispatchMixin {
           interceptHandleTarget = element;
           assert(() {
             if (event.isPointerDown) {
-              l.v("手势(PointerDown)被拦截->${interceptHandleTarget.runtimeType}");
+              l.v(
+                "手势(PointerDown)被新拦截目标->${interceptHandleTarget.runtimeType}",
+              );
             }
             return true;
           }());
@@ -539,7 +545,7 @@ mixin PointerDispatchMixin {
             assert(() {
               if (event.isPointerDown) {
                 l.v(
-                  "手势(PointerDown)被处理[$handled]->${interceptHandleTarget.runtimeType}",
+                  "手势(PointerDown)被新目标处理[$handled]->${interceptHandleTarget.runtimeType}",
                 );
               }
               return true;
@@ -581,13 +587,21 @@ mixin PointerDispatchMixin {
 
     //4:last
     if (event.isPointerFinish) {
-      //debugger();
-      pointerMap.remove(event.pointer);
-      if (pointerMap.isEmpty) {
-        interceptHandleTarget = null;
-      }
+      _handlePointerFinish(event);
     }
     return handled;
+  }
+
+  /// 处理手势完成事件
+  void _handlePointerFinish(PointerEvent event) {
+    //debugger();
+    pointerMap.remove(event.pointer);
+    /*l.e(
+      "${classHash()} 移除手势[${event.pointer}] ${event.classHash()} :${pointerMap.length}",
+    );*/
+    if (pointerMap.isEmpty) {
+      interceptHandleTarget = null;
+    }
   }
 
   /// 添加事件处理

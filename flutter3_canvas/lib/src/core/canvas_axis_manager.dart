@@ -534,6 +534,7 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
         canvasDelegate.removeTagCursorStyle("cursor_y_axis");
       }
     } else if (event.isPointerDown) {
+      //debugger();
       final localPosition = event.localPosition;
       final downRefLineData = findRefLineData(localPosition);
       if (downRefLineData != null) {

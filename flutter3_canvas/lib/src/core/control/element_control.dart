@@ -832,6 +832,7 @@ class TranslateControl extends BaseControl
 
   @override
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    //debugger(when: event.isPointerDown);
     super.dispatchPointerEvent(dispatch, event);
     if (event.isPointerDown || event.isPointerCancel) {
       _isDownSelectComponent = false;
@@ -845,7 +846,7 @@ class TranslateControl extends BaseControl
     PointerEvent event,
   ) {
     //l.d('...2...${dispatch.pointerCount}');
-    //debugger();
+    //debugger(when: event.isPointerDown);
     if (isCanvasComponentEnable) {
       if (isFirstPointerEvent(dispatch, event)) {
         final selectComponent =
@@ -933,7 +934,8 @@ class TranslateControl extends BaseControl
   @override
   bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     //l.d('...1...${dispatch.pointerCount}');
-    //debugger();
+    //l.d('[${classHash()}] onFirstPointerEvent->${event.classHash()} $isPointerDownIn');
+    //debugger(when: event.isPointerMove);
     if (isPointerDownIn) {
       addDoubleTapDetectorPointerEvent(event);
       addTouchDetectorPointerEvent(event);

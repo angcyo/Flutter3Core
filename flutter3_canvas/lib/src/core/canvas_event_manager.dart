@@ -94,9 +94,14 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
         } else if (axisManager.isEnablePointerEvent() &&
             axisManager.handlePointerEvent(event)) {
           //坐标轴事件处理
+          //l.d("[${event.classHash()}]事件被坐标系拦截处理了.");
+          canvasDelegate.canvasElementManager.handleElementPointerEvent(
+            createPointerCancelEvent(event),
+          );
         } else {
           //元素事件分发
           //debugger();
+          //l.d("[${event.classHash()}]事件正常分发.");
           canvasDelegate.canvasElementManager.handleElementPointerEvent(event);
         }
       } else {

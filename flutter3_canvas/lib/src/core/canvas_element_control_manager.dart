@@ -510,6 +510,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
     //初始化智能吸附
     if (elementAdsorbControl.isCanvasComponentEnable) {
+      //激活了吸附
       if (controlElement != null &&
           (state == ControlStateEnum.start ||
               state == ControlStateEnum.update)) {
