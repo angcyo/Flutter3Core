@@ -74,7 +74,7 @@ class PainterTouchSpotHandler extends IPainter {
     }
     //--
     if (_touchSpot != null) {
-      _touchSpot!.handlePointerEvent(event);
+      _touchSpot!.handlePainterPointerEvent(event);
       handle = true;
     }
     //--
@@ -95,7 +95,7 @@ class PainterTouchSpotHandler extends IPainter {
     bool filterHandlerEvent = false,
   }) {
     for (final element in touchSpotList.reversed) {
-      if (filterHandlerEvent && !element.isEnablePointerEvent()) {
+      if (filterHandlerEvent && !element.isEnablePainterPointerEvent()) {
         continue;
       }
       final location = element.bounds;
@@ -189,12 +189,12 @@ class TouchSpot extends IPainter
   }
 
   @override
-  bool isEnablePointerEvent() => true;
+  bool isEnablePainterPointerEvent() => true;
 
   /// 事件入口
   @override
-  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
-    return super.handlePointerEvent(event);
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
+    return super.handlePainterPointerEvent(event);
   }
 
   /// 用来更新[bounds], 并触发回调
@@ -257,7 +257,7 @@ mixin TouchSpotTranslateMixin
   Rect? _downBounds;
 
   @override
-  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
     if (event.isPointerDown) {
       final that = this;
       if (that is TouchSpot) {

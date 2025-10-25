@@ -500,7 +500,7 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
   List<RefLineData> refLineDataList = [];
 
   @override
-  bool isEnablePointerEvent() => drawType.have(CanvasStyle.sDrawRefLine);
+  bool isEnablePainterPointerEvent() => drawType.have(CanvasStyle.sDrawRefLine);
 
   /// 鼠标悬浮的参考线数据
   RefLineData? _hoverRefLineData;
@@ -509,7 +509,7 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
   RefLineComponent? _refLineComponent;
 
   @override
-  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
+  bool interceptPainterPointerEvent(PointerEvent event) {
     if (event.isPointerHover) {
       final localPosition = event.localPosition;
       _hoverRefLineData = findRefLineData(localPosition);
@@ -534,6 +534,22 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
         canvasDelegate.removeTagCursorStyle("cursor_y_axis");
       }
     } else if (event.isPointerDown) {
+      final localPosition = event.localPosition;
+      final downRefLineData = findRefLineData(localPosition);
+      if (downRefLineData != null) {
+        return true;
+      } else if (xAxisBounds?.contains(localPosition) == true) {
+        return true;
+      } else if (yAxisBounds?.contains(localPosition) == true) {
+        return true;
+      }
+    }
+    return super.interceptPainterPointerEvent(event);
+  }
+
+  @override
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
+    if (event.isPointerDown) {
       //debugger();
       final localPosition = event.localPosition;
       final downRefLineData = findRefLineData(localPosition);
@@ -546,11 +562,11 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
       } else if (yAxisBounds?.contains(localPosition) == true) {
         _refLineComponent = RefLineComponent(this, Axis.vertical);
       }
-      _refLineComponent?.handlePointerEvent(event);
+      _refLineComponent?.handlePainterPointerEvent(event);
       return _refLineComponent != null;
     } else {
       if (_refLineComponent != null) {
-        final handle = _refLineComponent!.handlePointerEvent(event);
+        final handle = _refLineComponent!.handlePainterPointerEvent(event);
         if (event.isPointerFinish) {
           if (isRefLineMoveToAxis(_refLineComponent?._refLineData)) {
             removeRefLine(_refLineComponent?._refLineData);

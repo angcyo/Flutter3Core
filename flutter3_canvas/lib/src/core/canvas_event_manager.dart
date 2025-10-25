@@ -86,26 +86,37 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       //元素操作事件
       final overlayComponent = canvasDelegate._overlayComponent;
       if (overlayComponent == null) {
+        //debugger(when: event.isPointerDown);
         //debugger(when: event.isPointerMove);
         if (canvasDelegate.isDragMode) {
           //拖拽模式下, 不处理元素事件
         } else if (_painterEventInterceptHandler != null) {
-          _painterEventInterceptHandler?.handlePointerEvent(event);
-        } else if (axisManager.isEnablePointerEvent() &&
-            axisManager.handlePointerEvent(event)) {
-          //坐标轴事件处理
-          //l.d("[${event.classHash()}]事件被坐标系拦截处理了.");
-          canvasDelegate.canvasElementManager.handleElementPointerEvent(
-            createPointerCancelEvent(event),
+          l.d(
+            "[${event.classHash()}]事件被拦截器处理 ${_painterEventInterceptHandler?.classHash()}",
           );
+          _painterEventInterceptHandler?.handlePainterPointerEvent(event);
         } else {
-          //元素事件分发
           //debugger();
           //l.d("[${event.classHash()}]事件正常分发.");
-          canvasDelegate.canvasElementManager.handleElementPointerEvent(event);
+
+          if (axisManager.isEnablePainterPointerEvent()) {
+            //坐标轴事件处理
+            //l.d("[${event.classHash()}]事件被坐标系拦截处理了.");
+            if (axisManager.interceptPainterPointerEvent(event)) {
+              axisManager.handlePainterPointerEvent(event);
+              requestInterceptPointerEvent(axisManager, event);
+            }
+          }
+
+          if (_painterEventInterceptHandler == null) {
+            //元素事件分发
+            canvasDelegate.canvasElementManager.handleElementPointerEvent(
+              event,
+            );
+          }
         }
       } else {
-        overlayComponent.handlePointerEvent(event);
+        overlayComponent.handlePainterPointerEvent(event);
       }
     }
     //--canvasListeners
@@ -161,7 +172,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   @api
   void requestInterceptPointerEvent(
     IPainterEventHandlerMixin? painter,
-    PointerEvent seedEvent,
+    @viewCoordinate PointerEvent seedEvent,
   ) {
     _painterEventInterceptHandler = painter;
     if (painter != null) {

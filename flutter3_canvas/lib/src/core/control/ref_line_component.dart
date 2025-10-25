@@ -23,7 +23,7 @@ class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
   double? get translateDetectorSecondSlopY => 1;
 
   @override
-  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
     return addTranslateDetectorPointerEvent(event);
   }
 

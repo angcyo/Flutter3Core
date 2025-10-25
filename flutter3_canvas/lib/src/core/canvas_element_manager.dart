@@ -218,7 +218,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         if (element == ignoreHandler) {
           continue;
         }
-        if (element.handlePointerEvent(event)) {
+        if (element.handlePainterPointerEvent(event)) {
           //debugger();
           break;
         }

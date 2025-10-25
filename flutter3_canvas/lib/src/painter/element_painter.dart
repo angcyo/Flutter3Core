@@ -12,8 +12,7 @@ part of '../../flutter3_canvas.dart';
 ///   - [onPaintingSelf]
 ///
 class IElementPainter extends IPainter
-    with DiagnosticableTreeMixin, DiagnosticsMixin
-    implements IPainterEventHandlerMixin {
+    with DiagnosticableTreeMixin, DiagnosticsMixin, IPainterEventHandlerMixin {
   /// 画布代理
   CanvasDelegate? canvasDelegate;
 
@@ -169,13 +168,10 @@ class IElementPainter extends IPainter
 
   //--
 
-  @override
-  bool isEnablePointerEvent() => true;
-
   /// 响应手势事件
   /// [CanvasEventManager.handleElementPointerEvent]驱动
   @override
-  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
     bool handle = false;
     //debugger();
     //--
@@ -1603,8 +1599,8 @@ class ElementPainter extends IElementPainter {
   /// [CanvasEventManager.handlePointerEvent] 驱动 ↓
   /// [CanvasElementManager.handleElementPointerEvent] 驱动
   @override
-  bool handlePointerEvent(@viewCoordinate PointerEvent event) {
-    bool handle = super.handlePointerEvent(event);
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
+    bool handle = super.handlePainterPointerEvent(event);
     final canvasDelegate = this.canvasDelegate;
     if (canvasDelegate == null) {
       return handle;
@@ -1697,7 +1693,7 @@ class ElementPainter extends IElementPainter {
   /// - [paintState]
   /// - [painting]
   ///
-  /// - [ElementPainter.handlePointerEvent]驱动
+  /// - [ElementPainter.handlePainterPointerEvent]驱动
   @overridePoint
   bool onHoverChanged(@viewCoordinate PointerEvent event, bool hover) {
     if (paintState.isHover != hover) {

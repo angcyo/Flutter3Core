@@ -340,6 +340,9 @@ extension KeyEventEx on KeyEvent {
 }
 
 /// 事件处理
+///
+/// - [PointerDispatchMixin]
+/// - [IHandlePointerEventMixin]
 mixin IHandlePointerEventMixin {
   /// 是否要激活手势事件处理, 需要在外层判断此属性的处理逻辑
   /// [PointerDispatchMixin]

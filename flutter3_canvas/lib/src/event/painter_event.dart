@@ -5,13 +5,22 @@ part of '../../flutter3_canvas.dart';
 /// @date 2025/10/21
 ///
 /// [IElementPainter] 响应手势事件客户端处理器
+///
+/// - [PointerDispatchMixin]
+/// - [IHandlePointerEventMixin]
 mixin IPainterEventHandlerMixin {
   /// 是否激活指针事件处理
-  bool isEnablePointerEvent() => true;
+  bool isEnablePainterPointerEvent() => true;
+
+  /// 是否需要拦截事件, 拦截之后一定会触发[handlePainterPointerEvent]
+  /// - 否则只有在没有其它客户端处理事件时才会触发[handlePainterPointerEvent]
+  @overridePoint
+  bool interceptPainterPointerEvent(@viewCoordinate PointerEvent event) =>
+      false;
 
   /// 响应手势事件
   @overridePoint
-  bool handlePointerEvent(@viewCoordinate PointerEvent event);
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) => false;
 }
 
 /// [IElementPainter] 响应手势悬停事件客户端处理器
