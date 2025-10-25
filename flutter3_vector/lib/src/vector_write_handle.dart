@@ -35,15 +35,14 @@ String _wrapSvgXml(
   void Function(StringBuffer) action, {
   bool writeSvgProperty = true,
   bool writeAcyProperty = false,
-}) =>
-    svgBuilderSync((builder) {
-      builder.writeViewBox(
-        bounds,
-        writeSvgProperty: writeSvgProperty,
-        writeAcyProperty: writeAcyProperty,
-      );
-      action(builder.buffer);
-    });
+}) => svgBuilderSync((builder) {
+  builder.writeViewBox(
+    bounds,
+    writeSvgProperty: writeSvgProperty,
+    writeAcyProperty: writeAcyProperty,
+  );
+  action(builder.buffer);
+});
 
 /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
 void _wrapSvgPath(
@@ -172,7 +171,10 @@ mixin VectorWriteMixin {
       //曲线拟合
       newPoint.circleStart = startPoint.position;
       newPoint.circleCenter = centerOfCircle(
-          newPoint.position, startPoint.position, beforePoint.position);
+        newPoint.position,
+        startPoint.position,
+        beforePoint.position,
+      );
       if (beforePoint.circleCenter == null) {
         //之前的点没有圆心
         if (isPointInLine(newPoint, startPoint)) {
@@ -180,7 +182,11 @@ mixin VectorWriteMixin {
           _pointList.add(newPoint);
         }
       } else if (isPointInCircle(
-          beforePoint.circleCenter!, newPoint, startPoint, beforePoint)) {
+        beforePoint.circleCenter!,
+        newPoint,
+        startPoint,
+        beforePoint,
+      )) {
         newPoint.type = sPointTypeArc;
         newPoint.sweepFlag = (angle == null || angle > 0) ? 0 : 1;
 
@@ -206,8 +212,12 @@ mixin VectorWriteMixin {
         }*/
 
         //如果弧度在变大, 则是顺时针, 否则是逆时针
-        newPoint.sweepFlag = isClockwise(
-                startPoint.position, newPoint.circleCenter!, newPoint.position)
+        newPoint.sweepFlag =
+            isClockwise(
+              startPoint.position,
+              newPoint.circleCenter!,
+              newPoint.position,
+            )
             ? 1
             : 0;
         if (this is SvgWriteHandle &&
@@ -289,10 +299,17 @@ mixin VectorWriteMixin {
 
   /// 判断当前点是否在指定的圆心圆上
   /// [circleCenter] 指定的圆心坐标
-  bool isPointInCircle(Offset circleCenter, VectorPoint point,
-      VectorPoint startPoint, VectorPoint beforePoint) {
+  bool isPointInCircle(
+    Offset circleCenter,
+    VectorPoint point,
+    VectorPoint startPoint,
+    VectorPoint beforePoint,
+  ) {
     final cc = centerOfCircle(
-        point.position, startPoint.position, beforePoint.position);
+      point.position,
+      startPoint.position,
+      beforePoint.position,
+    );
     if (cc == null) {
       return false;
     }
@@ -334,7 +351,7 @@ mixin VectorWriteMixin {
     _pointList = [];
   }
 
-//endregion ---中间数据---
+  //endregion ---中间数据---
 }
 
 /// 矢量上的点
@@ -410,10 +427,13 @@ class SvgWriteHandle with VectorWriteMixin {
     } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
       stringBuffer?.write(' L$x,$y');
     } else if (point.type.have(VectorWriteMixin.sPointTypeArc)) {
-      final c =
-          distance(position, point.circleCenter!).toDigits(digits: digits);
-      stringBuffer
-          ?.write(' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} $x,$y');
+      final c = distance(
+        position,
+        point.circleCenter!,
+      ).toDigits(digits: digits);
+      stringBuffer?.write(
+        ' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} $x,$y',
+      );
     }
     super.onWritePoint(point, data);
   }
@@ -606,8 +626,7 @@ class GCodeWriteHandle with VectorWriteMixin {
     bool auto = false,
     int? power,
     String space = kGCodeSpace,
-  }) =>
-      auto ? null : "M3${space}S${power ?? 255}";
+  }) => auto ? null : "M3${space}S${power ?? 255}";
 
   /// 关闭主轴
   static String? gcodeToolOff([bool auto = false]) => auto ? null : "M5S0";
@@ -749,12 +768,16 @@ class GCodeWriteHandle with VectorWriteMixin {
         //逆时针
         stringBuffer?.write("G2$space");
       }
-      final ij = transformPoint(Offset(
+      final ij = transformPoint(
+        Offset(
           point.circleCenter!.dx - point.circleStart!.dx,
-          point.circleCenter!.dy - point.circleStart!.dy));
+          point.circleCenter!.dy - point.circleStart!.dy,
+        ),
+      );
       stringBuffer?.write('X$x${space}Y$y');
       stringBuffer?.writeln(
-          '${space}I${ij.dx.toDigits(digits: digits)}${space}J${ij.dy.toDigits(digits: digits)}');
+        '${space}I${ij.dx.toDigits(digits: digits)}${space}J${ij.dy.toDigits(digits: digits)}',
+      );
       _writePowerSpeed();
     }
     super.onWritePoint(point, data);
@@ -784,15 +807,33 @@ class GCodeWriteHandle with VectorWriteMixin {
       final circlePath = Path();
       circlePath.addOval(Rect.fromCircle(center: center, radius: diameter / 2));
 
-      circlePath.eachPathMetrics(
-          (posIndex, ratio, contourIndex, position, angle, isClose) {
+      circlePath.eachPathMetrics((
+        posIndex,
+        ratio,
+        contourIndex,
+        position,
+        angle,
+        isClose,
+      ) {
         appendPoint(
-            posIndex, ratio, contourIndex + 0xffff, position, angle, "cut");
+          posIndex,
+          ratio,
+          contourIndex + 0xffff,
+          position,
+          angle,
+          "cut",
+        );
       }, vectorStep);
     }
 
-    linePath.eachPathMetrics(
-        (posIndex, ratio, contourIndex, position, angle, isClose) {
+    linePath.eachPathMetrics((
+      posIndex,
+      ratio,
+      contourIndex,
+      position,
+      angle,
+      isClose,
+    ) {
       circleIn(position);
     }, step);
   }
@@ -805,19 +846,13 @@ extension VectorPathEx on Path {
   void handleVectorPath(
     VectorWriteMixin handle, {
     @dp double? pathStep,
-    @mm double? tolerance,
+    @defInjectMark @mm double? tolerance,
   }) {
     handle.enableVectorArc = false;
     handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
     handle.vectorStep = pathStep ?? kPathAcceptableError;
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
-      handle.appendPoint(
-        posIndex,
-        ratio,
-        contourIndex,
-        position,
-        angle,
-      );
+      handle.appendPoint(posIndex, ratio, contourIndex, position, angle);
     }, handle.vectorStep);
   }
 
@@ -835,13 +870,7 @@ extension VectorPathEx on Path {
     handle.vectorStep = pathStep ?? kPathAcceptableError;
     await eachPathMetricsAsync(
       (posIndex, ratio, contourIndex, position, angle, isClose) {
-        handle.appendPoint(
-          posIndex,
-          ratio,
-          contourIndex,
-          position,
-          angle,
-        );
+        handle.appendPoint(posIndex, ratio, contourIndex, position, angle);
       },
       handle.vectorStep,
       contourInterval,
@@ -863,7 +892,7 @@ extension VectorPathEx on Path {
   Future<String?> toVectorStringAsync(
     VectorWriteMixin handle, {
     @dp double? pathStep,
-    @mm double? tolerance,
+    @defInjectMark @mm double? tolerance,
     //--
     int? contourInterval /*轮廓枚举延迟*/,
     int? stepInterval /*步长枚举延迟*/,
@@ -883,7 +912,7 @@ extension VectorPathEx on Path {
   /// [VectorListPathEx.toGCodeString]
   String? toGCodeString({
     @dp double? pathStep,
-    @mm double? tolerance,
+    @defInjectMark @mm double? tolerance,
     //--
     String? header,
     String? footer,
@@ -899,13 +928,15 @@ extension VectorPathEx on Path {
     header ??= autoLaser != null
         ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
         : null;
-    footer ??=
-        autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
+    footer ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeFooter(autoLaser)
+        : null;
     toolOn ??= autoLaser != null
         ? GCodeWriteHandle.gcodeToolOn(auto: autoLaser, power: speed)
         : null;
-    toolOff ??=
-        autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
+    toolOff ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeToolOff(autoLaser)
+        : null;
 
     handle ??= GCodeWriteHandle();
     handle
@@ -931,11 +962,7 @@ extension VectorPathEx on Path {
   }) {
     handle ??= SvgWriteHandle();
     handle.digits = digits ?? handle.digits;
-    return toVectorString(
-      handle,
-      pathStep: pathStep,
-      tolerance: tolerance,
-    );
+    return toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
   }
 
   /// [toSvgPathString]
@@ -1065,13 +1092,15 @@ extension VectorPathEx on Path {
     header ??= autoLaser != null
         ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
         : null;
-    footer ??=
-        autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
+    footer ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeFooter(autoLaser)
+        : null;
     toolOn ??= autoLaser != null
         ? GCodeWriteHandle.gcodeToolOn(auto: autoLaser, power: speed)
         : null;
-    toolOff ??=
-        autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
+    toolOff ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeToolOff(autoLaser)
+        : null;
 
     //mm单位缩放因子
     double? factor = $mmFactor;
@@ -1081,8 +1110,14 @@ extension VectorPathEx on Path {
     final j = i;*/
 
     buffer.writeIf(header ?? "");
-    eachPathMetrics(
-        (posIndex, ratio, contourIndex, position, radians, isClose) {
+    eachPathMetrics((
+      posIndex,
+      ratio,
+      contourIndex,
+      position,
+      radians,
+      isClose,
+    ) {
       final matrix = createRotateMatrix(radians, anchor: position);
       Offset startOffset = Offset(position.dx - radius, position.dy - radius);
       startOffset = matrix.mapPoint(startOffset);
@@ -1091,10 +1126,12 @@ extension VectorPathEx on Path {
       final x = (startOffset.dx / factor).toDigits(digits: digits);
       final y = (startOffset.dy / factor).toDigits(digits: digits);
 
-      final i =
-          ((position.dx - startOffset.dx) / factor).toDigits(digits: digits);
-      final j =
-          ((position.dy - startOffset.dy) / factor).toDigits(digits: digits);
+      final i = ((position.dx - startOffset.dx) / factor).toDigits(
+        digits: digits,
+      );
+      final j = ((position.dy - startOffset.dy) / factor).toDigits(
+        digits: digits,
+      );
 
       buffer.writelnIf(toolOff);
       buffer.writelnIf('G0${space}X$x${space}Y$y');
@@ -1122,12 +1159,19 @@ extension VectorPathEx on Path {
     @dp
     final step = cutDataStep.toDpFromMm();
 
-    eachPathMetrics(
-        (posIndex, ratio, contourIndex, position, radians, isClose) {
+    eachPathMetrics((
+      posIndex,
+      ratio,
+      contourIndex,
+      position,
+      radians,
+      isClose,
+    ) {
       //使用圆形数据切割
       final circlePath = Path();
-      circlePath
-          .addOval(Rect.fromCircle(center: position, radius: diameter / 2));
+      circlePath.addOval(
+        Rect.fromCircle(center: position, radius: diameter / 2),
+      );
       /*circlePath.transformPath(createRotateMatrix(radians, anchor: position));*/
       result.add(circlePath);
     }, step);
@@ -1224,8 +1268,9 @@ extension VectorListPathEx on List<Path> {
             space: space,
           )
         : null;
-    footer ??=
-        autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
+    footer ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeFooter(autoLaser)
+        : null;
     toolOn ??= autoLaser != null
         ? GCodeWriteHandle.gcodeToolOn(
             auto: autoLaser,
@@ -1233,8 +1278,9 @@ extension VectorListPathEx on List<Path> {
             space: space,
           )
         : null;
-    toolOff ??=
-        autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
+    toolOff ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeToolOff(autoLaser)
+        : null;
 
     final buffer = StringBuffer();
     handle ??= GCodeWriteHandle();
@@ -1288,11 +1334,7 @@ extension VectorListPathEx on List<Path> {
       ..offsetY = offsetY;
     for (final path in this) {
       handle.pointResultBuilder = []; //reset
-      path.handleVectorPath(
-        handle,
-        pathStep: pathStep,
-        tolerance: tolerance,
-      );
+      path.handleVectorPath(handle, pathStep: pathStep, tolerance: tolerance);
       final pointList = handle.pointList;
       if (!isNil(pointList)) {
         result.addAll(pointList);
@@ -1339,13 +1381,15 @@ extension VectorListPathEx on List<Path> {
     header ??= autoLaser != null
         ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
         : null;
-    footer ??=
-        autoLaser != null ? GCodeWriteHandle.gcodeFooter(autoLaser) : null;
+    footer ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeFooter(autoLaser)
+        : null;
     toolOn ??= autoLaser != null
         ? GCodeWriteHandle.gcodeToolOn(auto: autoLaser, power: speed)
         : null;
-    toolOff ??=
-        autoLaser != null ? GCodeWriteHandle.gcodeToolOff(autoLaser) : null;
+    toolOff ??= autoLaser != null
+        ? GCodeWriteHandle.gcodeToolOff(autoLaser)
+        : null;
 
     buffer.writeIf(header ?? "");
     for (final path in this) {
