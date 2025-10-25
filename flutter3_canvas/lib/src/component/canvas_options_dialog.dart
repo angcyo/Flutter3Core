@@ -81,7 +81,7 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog> {
         label: "使用英制单位",
         value: canvasStyle.axisUnit is InchUnit,
         onValueChanged: (value) {
-          canvasStyle.axisUnit = value ? IUnit.inch : IUnit.mm;
+          canvasStyle.axisUnit = value ? IUnit.inch : IUnit.dp;
           updateState();
           canvasDelegate.refresh();
           canvasDelegate.dispatchCanvasStyleChanged();
