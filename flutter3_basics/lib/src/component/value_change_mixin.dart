@@ -9,13 +9,17 @@ part of '../../flutter3_basics.dart';
 /// 并保持只刷新自身的情况下保持ui
 mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
   /// 初始化的值
-  late V initialValueMixin;
+  late V? initialValueMixin;
 
   /// 当前的值
-  late V currentValueMixin;
+  late V? currentValueMixin;
 
   /// 是否发生了改变
   bool get isValueChangedMixin => initialValueMixin != currentValueMixin;
+
+  /// 当前是否有值被选中
+  bool get isValueSelectedMixin =>
+      currentValueMixin != null && isValueChangedMixin;
 
   @override
   void initState() {
@@ -55,13 +59,29 @@ mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
     return null as dynamic;
   }
 
+  /// 获取指定的数据[data]在[ValueMixin.values]中的索引
+  int indexOfValuesMixin(dynamic data) {
+    final widget = this.widget;
+    if (widget is ValueMixin) {
+      final mixin = widget as ValueMixin;
+      return mixin.values?.indexOf(data) ?? -1;
+    }
+    return -1;
+  }
+
+  /// 指定的[value]是否选中
+  @api
+  bool isSelectedValueMixin(V? value) {
+    return currentValueMixin == value;
+  }
+
   //--
   @api
-  void updateValueMixin(dynamic toValue) async => changeValueMixin(toValue);
+  void updateValueMixin(V? toValue) async => changeValueMixin(toValue);
 
   /// 改变[currentValueMixin]的值
   @api
-  void changeValueMixin(dynamic toValue) async {
+  void changeValueMixin(V? toValue) async {
     final widget = this.widget;
     if (widget is ValueMixin) {
       final mixin = widget as ValueMixin;
@@ -120,10 +140,16 @@ mixin ValueMixin {
 
   //--
 
+  /// 获取当前值对应的索引
   int get valueIndexMixin {
-    int index = values?.indexOf(initValue) ?? 0;
-    index = max(index, 0);
+    int index = values?.indexOf(initValue) ?? -1;
+    index = max(index, -1);
     return index;
+  }
+
+  /// 指定的索引是否选中
+  bool isSelectedIndexMixin(int index) {
+    return valueIndexMixin == index;
   }
 
   //--
@@ -142,11 +168,19 @@ mixin ValueMixin {
     int? selectedIndex,
     bool selectedBold = true,
     TextStyle? textStyle,
+    TextAlign? textAlign,
     TextStyle? selectedTextStyle,
   }) {
     valuesWidget ??= this.valuesWidget;
     transformValueWidget ??= this.transformValueWidget;
-    values ??= this.values ?? (valuesWidget == null ? [initValue] : null);
+    values ??=
+        this.values ??
+        (valuesWidget == null
+            ? initValue == null
+                  ? null
+                  : [initValue]
+            : null);
+    selectedIndex = valueIndexMixin;
 
     WidgetList? result;
 
@@ -155,22 +189,26 @@ mixin ValueMixin {
       result = values?.mapIndex((data, index) {
         //debugger();
         //widget
-        final widget = widgetOf(context, data, tryTextWidget: false);
+        final widget = widgetOf(
+          context,
+          data,
+          tryTextWidget: false,
+          textAlign: textAlign,
+        );
         if (widget != null) {
-          return transformValueWidget?.call(context, widget, data) ?? widget;
+          return transformValueWidget?.call(context, widget, index, data) ??
+              widget;
         }
         //debugger();
-        final style = textStyle ??
+        final style =
+            textStyle ??
             globalTheme.textGeneralStyle.copyWith(
               color: index == selectedIndex
                   ? context.darkOr(
                       globalTheme.textPrimaryStyle.color,
                       globalTheme.themeBlackColor,
                     )
-                  : context.darkOr(
-                      globalTheme.textPrimaryStyle.color,
-                      null,
-                    ),
+                  : context.darkOr(globalTheme.textPrimaryStyle.color, null),
               fontWeight: (index == selectedIndex && selectedBold)
                   ? ui.FontWeight.bold
                   : null,
@@ -181,8 +219,9 @@ mixin ValueMixin {
           style: index == selectedIndex
               ? selectedTextStyle ?? style
               : textStyle ?? style,
+          textAlign: textAlign,
         );
-        return transformValueWidget?.call(context, textWidget, data) ??
+        return transformValueWidget?.call(context, textWidget, index, data) ??
             textWidget.min();
       }).toList();
     } else {

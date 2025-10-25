@@ -50,9 +50,7 @@ class SwitchTile extends StatefulWidget {
     this.text,
     this.textStyle,
     this.textWidget,
-    this.textPadding = const EdgeInsets.only(
-      right: kH,
-    ),
+    this.textPadding = const EdgeInsets.only(right: kH),
     //--
     this.value = false,
     this.onValueChanged,
@@ -91,46 +89,49 @@ class _SwitchTileState extends State<SwitchTile>
 
     if (isVertical) {
       return [
-        text,
-        buildSwitchWidget(
-          context,
-          currentValueMixin,
-          height: widget.switchHeight,
-          inactiveThumbColor: widget.switchInactiveThumbColor,
-          trackOutlineColor: widget.trackOutlineColor,
-          onChanged: (value) {
-            _changeValue(value);
-          },
-        ),
-      ]
+            text,
+            buildSwitchWidget(
+              context,
+              currentValueMixin!,
+              height: widget.switchHeight,
+              inactiveThumbColor: widget.switchInactiveThumbColor,
+              trackOutlineColor: widget.trackOutlineColor,
+              onChanged: (value) {
+                _changeValue(value);
+              },
+            ),
+          ]
           .column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center)!
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+          )!
           .ink(() {
-        //debugger();
-        _changeValue(!currentValueMixin);
-      }).material();
+            //debugger();
+            _changeValue(!currentValueMixin!);
+          })
+          .material();
     }
 
     return [
-      text?.expanded(),
-      buildSwitchWidget(
-        context,
-        currentValueMixin,
-        height: widget.switchHeight,
-        inactiveThumbColor: widget.switchInactiveThumbColor,
-        trackOutlineColor: widget.trackOutlineColor,
-        onChanged: (value) {
-          _changeValue(value);
-        },
-      ),
-    ]
+          text?.expanded(),
+          buildSwitchWidget(
+            context,
+            currentValueMixin!,
+            height: widget.switchHeight,
+            inactiveThumbColor: widget.switchInactiveThumbColor,
+            trackOutlineColor: widget.trackOutlineColor,
+            onChanged: (value) {
+              _changeValue(value);
+            },
+          ),
+        ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
         .paddingInsets(widget.tilePadding)
         .ink(() {
-      //debugger();
-      _changeValue(!currentValueMixin);
-    }).material();
+          //debugger();
+          _changeValue(!currentValueMixin!);
+        })
+        .material();
   }
 
   void _changeValue(bool toValue) async {
@@ -235,41 +236,40 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
       constraints: null,
     );
     if (label != null && !isNil(widget.labelActions)) {
-      label = [
-        label,
-        ...?widget.labelActions,
-      ].row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center);
+      label = [label, ...?widget.labelActions].row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+      );
     }
     return [
-      [
-        label,
-        buildDesWidget(
-          context,
-          desWidget: widget.desWidget,
-          des: widget.des,
-          desPadding: widget.desPadding,
-        )
-      ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
-      buildSwitchWidget(
-        context,
-        currentValueMixin,
-        height: widget.switchHeight,
-        inactiveThumbColor: widget.switchInactiveThumbColor,
-        trackOutlineColor: widget.trackOutlineColor,
-        onChanged: (value) {
-          _changeValue(value);
-        },
-      ),
-    ]
+          [
+            label,
+            buildDesWidget(
+              context,
+              desWidget: widget.desWidget,
+              des: widget.des,
+              desPadding: widget.desPadding,
+            ),
+          ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
+          buildSwitchWidget(
+            context,
+            currentValueMixin!,
+            height: widget.switchHeight,
+            inactiveThumbColor: widget.switchInactiveThumbColor,
+            trackOutlineColor: widget.trackOutlineColor,
+            onChanged: (value) {
+              _changeValue(value);
+            },
+          ),
+        ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
         .paddingInsets(widget.tilePadding)
         .ink(() {
-      //debugger();
-      _changeValue(!currentValueMixin);
-    }, splashColor: Colors.transparent).material();
+          //debugger();
+          _changeValue(!currentValueMixin!);
+        }, splashColor: Colors.transparent)
+        .material();
   }
 
   void _changeValue(bool toValue) async {

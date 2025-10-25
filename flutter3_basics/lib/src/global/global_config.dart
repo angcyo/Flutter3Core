@@ -524,7 +524,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       };
 
   /// 全局的无数据占位小部件
-  /// [data] 额外的提示文本或小部件
+  /// - [data] 额外的提示文本或小部件
+  ///   - 支持[Widget]
+  ///   - 支持[Object]
   ///
   /// [WidgetStateBuildWidgetState]
   WidgetArgumentBuilder emptyPlaceholderBuilder = <T>(context, data) {

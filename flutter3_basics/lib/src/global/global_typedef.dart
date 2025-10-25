@@ -93,6 +93,7 @@ typedef NumNullCallback = void Function(num? number);
 typedef ContextNumNullCallback =
     void Function(BuildContext? context, num? number);
 typedef RangeNumCallback = void Function(num startValue, num endValue);
+
 /// 数字格式化
 typedef FormatNumNullCallback = String? Function(num? number);
 
@@ -117,7 +118,12 @@ typedef TransformWidgetBuilder =
 
 /// 转变一个[widget], 携带一个[data]参数
 typedef TransformDataWidgetBuilder =
-    Widget Function(BuildContext context, Widget widget, dynamic data);
+    Widget Function(
+      BuildContext context,
+      Widget widget,
+      int index,
+      dynamic data,
+    );
 
 /// [TransformWidgetBuilder] 的支持null版本
 typedef TransformChildWidgetBuilder =

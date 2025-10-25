@@ -4,11 +4,13 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/24
 ///
+/// 滚轮选择对话框
+///
 /// ```
 /// await buildContext?.showWidgetDialog(WheelDialog());
 /// ```
 ///
-/// @return pop 返回选中的索引
+/// @return pop 返回选中的value
 class WheelDialog extends StatefulWidget
     with DialogMixin, TitleMixin, ValueMixin {
   /// 标题/TitleMixin
@@ -95,47 +97,43 @@ class _WheelDialogState extends State<WheelDialog>
     //构建[values]对应的小部件
     WidgetList? children = widget.buildValuesWidgetListMixin(context);
 
-    return widget.buildBottomChildrenDialog(
-        context,
-        [
-          CoreDialogTitle(
-            title: widget.title,
-            titleWidget: widget.titleWidget,
-            enableTrailing: widget.initValue == null ||
-                currentValueMixin != initialValueMixin,
-            enableLine: widget.enableTitleLine,
-            trailingUseThemeColor: widget.enableTrailingUseThemeColor,
-            useCloseIcon: widget.titleUseCloseIcon,
-            onPop: () {
-              final value = widget.values?.getOrNull(currentValueMixin);
-              widget.onValueChanged?.call(value);
-              return value;
+    return widget.buildBottomChildrenDialog(context, [
+      CoreDialogTitle(
+        title: widget.title,
+        titleWidget: widget.titleWidget,
+        enableTrailing:
+            widget.initValue == null || currentValueMixin != initialValueMixin,
+        enableLine: widget.enableTitleLine,
+        trailingUseThemeColor: widget.enableTrailingUseThemeColor,
+        useCloseIcon: widget.titleUseCloseIcon,
+        onPop: () {
+          final value = widget.values?.getOrNull(currentValueMixin!);
+          widget.onValueChanged?.call(value);
+          return value;
+        },
+      ),
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          DecoratedBox(
+            decoration: fillDecoration(color: Colors.black12, radius: 0),
+          ).wh(double.infinity, _wheelItemExtent),
+          Wheel(
+            looping: false,
+            size: _wheelHeight,
+            itemExtent: _wheelItemExtent,
+            initialIndex: currentValueMixin!,
+            enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
+            selectedIndexColor: widget.wheelSelectedIndexColor,
+            onIndexChanged: (index, type) {
+              currentValueMixin = index;
+              updateState();
             },
-          ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              DecoratedBox(
-                  decoration: fillDecoration(
-                    color: Colors.black12,
-                    radius: 0,
-                  )).wh(double.infinity, _wheelItemExtent),
-              Wheel(
-                looping: false,
-                size: _wheelHeight,
-                itemExtent: _wheelItemExtent,
-                initialIndex: currentValueMixin,
-                enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
-                selectedIndexColor: widget.wheelSelectedIndexColor,
-                onIndexChanged: (index, type) {
-                  currentValueMixin = index;
-                  updateState();
-                },
-                children: [...?children, if (children == null) empty],
-              ).wh(double.infinity, _wheelHeight),
-            ],
-          ),
-          /*ListWheelScrollView(
+            children: [...?children, if (children == null) empty],
+          ).wh(double.infinity, _wheelHeight),
+        ],
+      ),
+      /*ListWheelScrollView(
             itemExtent: _itemExtent,
             children: [
               "1".text(),
@@ -146,30 +144,15 @@ class _WheelDialogState extends State<WheelDialog>
               "1".text(),
             ],
           ).size(width: double.infinity, height: 200)*/
-        ],
-        clipTopRadius: kDefaultBorderRadiusXX);
+    ], clipTopRadius: kDefaultBorderRadiusXX);
   }
 }
 
 //-- DateTime
 
-const sDateWheelType = [
-  "年",
-  "月",
-  "日",
-  null,
-  null,
-  null,
-];
+const sDateWheelType = ["年", "月", "日", null, null, null];
 
-const sTimeWheelType = [
-  null,
-  null,
-  null,
-  "时",
-  "分",
-  "秒",
-];
+const sTimeWheelType = [null, null, null, "时", "分", "秒"];
 
 /// 日期选择对话框
 /// @return [DateTime]
@@ -227,52 +210,56 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
 
   @override
   Widget build(BuildContext context) {
-    return widget.buildBottomChildrenDialog(
-        context,
-        [
-          rebuild(
-            _titleUpdateNotifier,
-                (_, __) =>
-                CoreDialogTitle(
-                  title: widget.title,
-                  titleWidget: widget.titleWidget,
-                  enableTrailing: currentValueMixin != initialValueMixin,
-                  onPop: () {
-                    return currentValueMixin;
-                  },
-                ),
-          ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              DecoratedBox(
-                  decoration: fillDecoration(
-                    color: Colors.black12,
-                    radius: 0,
-                  )).wh(double.infinity, _wheelItemExtent),
-              [
-                if (widget.dateTimeType.getOrNull(0) != null)
-                  buildYearWheel(context).expanded(),
-                if (widget.dateTimeType.getOrNull(1) != null)
-                  rebuild(_monthUpdateNotifier,
-                          (_, __) => buildMonthWheel(context).expanded()),
-                if (widget.dateTimeType.getOrNull(2) != null)
-                  rebuild(_dayUpdateNotifier,
-                          (_, __) => buildDayWheel(context).expanded()),
-                if (widget.dateTimeType.getOrNull(3) != null)
-                  rebuild(_hourUpdateNotifier,
-                          (_, __) => buildHourWheel(context).expanded()),
-                if (widget.dateTimeType.getOrNull(4) != null)
-                  rebuild(_minuteUpdateNotifier,
-                          (_, __) => buildMinuteWheel(context).expanded()),
-                if (widget.dateTimeType.getOrNull(5) != null)
-                  rebuild(_secondUpdateNotifier,
-                          (_, __) => buildSecondWheel(context).expanded()),
-              ].row(mainAxisSize: MainAxisSize.max)!,
-            ],
-          ),
+    return widget.buildBottomChildrenDialog(context, [
+      rebuild(
+        _titleUpdateNotifier,
+        (_, __) => CoreDialogTitle(
+          title: widget.title,
+          titleWidget: widget.titleWidget,
+          enableTrailing: currentValueMixin != initialValueMixin,
+          onPop: () {
+            return currentValueMixin;
+          },
+        ),
+      ),
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          DecoratedBox(
+            decoration: fillDecoration(color: Colors.black12, radius: 0),
+          ).wh(double.infinity, _wheelItemExtent),
+          [
+            if (widget.dateTimeType.getOrNull(0) != null)
+              buildYearWheel(context).expanded(),
+            if (widget.dateTimeType.getOrNull(1) != null)
+              rebuild(
+                _monthUpdateNotifier,
+                (_, __) => buildMonthWheel(context).expanded(),
+              ),
+            if (widget.dateTimeType.getOrNull(2) != null)
+              rebuild(
+                _dayUpdateNotifier,
+                (_, __) => buildDayWheel(context).expanded(),
+              ),
+            if (widget.dateTimeType.getOrNull(3) != null)
+              rebuild(
+                _hourUpdateNotifier,
+                (_, __) => buildHourWheel(context).expanded(),
+              ),
+            if (widget.dateTimeType.getOrNull(4) != null)
+              rebuild(
+                _minuteUpdateNotifier,
+                (_, __) => buildMinuteWheel(context).expanded(),
+              ),
+            if (widget.dateTimeType.getOrNull(5) != null)
+              rebuild(
+                _secondUpdateNotifier,
+                (_, __) => buildSecondWheel(context).expanded(),
+              ),
+          ].row(mainAxisSize: MainAxisSize.max)!,
         ],
-        clipTopRadius: kDefaultBorderRadiusXX);
+      ),
+    ], clipTopRadius: kDefaultBorderRadiusXX);
   }
 
   //--year
@@ -281,7 +268,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
 
   int get maxYear => widget.maxDateTime?.year ?? 2100;
 
-  int get currentYear => currentValueMixin.year;
+  int get currentYear => currentValueMixin!.year;
 
   /// 构建年份选择
   Widget buildYearWheel(BuildContext context) {
@@ -295,7 +282,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       initialIndex: yearList.indexOf(currentYear),
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
       onIndexChanged: (index, type) {
-        currentValueMixin = currentValueMixin.copyWith(year: yearList[index]);
+        currentValueMixin = currentValueMixin!.copyWith(year: yearList[index]);
         _titleUpdateNotifier.notify();
         _monthUpdateNotifier.notify();
         _dayUpdateNotifier.notify();
@@ -309,8 +296,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
             year,
             tryTextWidget: true,
             textAlign: TextAlign.center,
-          )!
-              .center(),
+          )!.center(),
       ],
     ).wh(double.infinity, _wheelHeight);
   }
@@ -339,7 +325,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
 
   int get currentMonth {
     //currentValueMixin.copyWith(year: currentYear)
-    return currentValueMixin.month;
+    return currentValueMixin!.month;
   }
 
   /// 构建月份选择
@@ -355,7 +341,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       initialIndex: monthList.indexOfOrNull(currentMonth) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
       onIndexChanged: (index, type) {
-        currentValueMixin = currentValueMixin.copyWith(
+        currentValueMixin = currentValueMixin!.copyWith(
           month: monthList[index],
           day: 1, //重置天数, 否则在3月31日切换到2月时, 会切到3月2日的情况
         );
@@ -371,8 +357,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
             month,
             tryTextWidget: true,
             textAlign: TextAlign.center,
-          )!
-              .center(),
+          )!.center(),
       ],
     ).wh(double.infinity, _wheelHeight);
   }
@@ -382,7 +367,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
   int get minDay {
     if (widget.minDateTime == null) {
       return 1;
-    } else if (currentValueMixin.isBefore(widget.minDateTime!)) {
+    } else if (currentValueMixin!.isBefore(widget.minDateTime!)) {
       return widget.minDateTime!.day;
     } else {
       return 1;
@@ -391,17 +376,17 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
 
   int get maxDay {
     if (widget.maxDateTime == null) {
-      return currentValueMixin.daysInMonth;
+      return currentValueMixin!.daysInMonth;
     } else if (currentYear >= maxYear && currentMonth >= maxMonth) {
       return widget.maxDateTime!.day;
     } else {
-      return currentValueMixin.daysInMonth;
+      return currentValueMixin!.daysInMonth;
     }
   }
 
   int get currentDay {
     //currentValueMixin.copyWith(year: currentYear)
-    return currentValueMixin.day;
+    return currentValueMixin!.day;
   }
 
   /// 构建天选择
@@ -417,7 +402,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       initialIndex: dayList.indexOfOrNull(currentDay) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
       onIndexChanged: (index, type) {
-        currentValueMixin = currentValueMixin.copyWith(day: dayList[index]);
+        currentValueMixin = currentValueMixin!.copyWith(day: dayList[index]);
         _titleUpdateNotifier.notify();
         //currentValueMixin = index;
         //updateState();
@@ -429,8 +414,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
             day,
             tryTextWidget: true,
             textAlign: TextAlign.center,
-          )!
-              .center(),
+          )!.center(),
       ],
     ).wh(double.infinity, _wheelHeight);
   }
@@ -440,7 +424,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
   int get minHour {
     if (widget.minDateTime == null) {
       return 00;
-    } else if (currentValueMixin.isBefore(widget.minDateTime!)) {
+    } else if (currentValueMixin!.isBefore(widget.minDateTime!)) {
       return widget.minDateTime!.hour;
     } else {
       return 00;
@@ -455,13 +439,13 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
         currentDay >= maxDay) {
       return widget.maxDateTime!.hour;
     } else {
-      return currentValueMixin.hour;
+      return currentValueMixin!.hour;
     }
   }
 
   int get currentHour {
     //currentValueMixin.copyWith(year: currentYear)
-    return currentValueMixin.hour;
+    return currentValueMixin!.hour;
   }
 
   /// 构建小时选择
@@ -477,7 +461,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       initialIndex: hourList.indexOfOrNull(currentHour) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
       onIndexChanged: (index, type) {
-        currentValueMixin = currentValueMixin.copyWith(hour: hourList[index]);
+        currentValueMixin = currentValueMixin!.copyWith(hour: hourList[index]);
         _titleUpdateNotifier.notify();
         //currentValueMixin = index;
         //updateState();
@@ -489,8 +473,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
             hour,
             tryTextWidget: true,
             textAlign: TextAlign.center,
-          )!
-              .center(),
+          )!.center(),
       ],
     ).wh(double.infinity, _wheelHeight);
   }
@@ -500,7 +483,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
   int get minMinute {
     if (widget.minDateTime == null) {
       return 00;
-    } else if (currentValueMixin.isBefore(widget.minDateTime!)) {
+    } else if (currentValueMixin!.isBefore(widget.minDateTime!)) {
       return widget.minDateTime!.minute;
     } else {
       return 59;
@@ -516,13 +499,13 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
         currentHour >= maxHour) {
       return widget.maxDateTime!.minute;
     } else {
-      return currentValueMixin.minute;
+      return currentValueMixin!.minute;
     }
   }
 
   int get currentMinute {
     //currentValueMixin.copyWith(year: currentYear)
-    return currentValueMixin.minute;
+    return currentValueMixin!.minute;
   }
 
   /// 构建分选择
@@ -538,8 +521,9 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
       initialIndex: minuteList.indexOfOrNull(currentMinute) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
       onIndexChanged: (index, type) {
-        currentValueMixin =
-            currentValueMixin.copyWith(minute: minuteList[index]);
+        currentValueMixin = currentValueMixin!.copyWith(
+          minute: minuteList[index],
+        );
         _titleUpdateNotifier.notify();
         //currentValueMixin = index;
         //updateState();
@@ -551,8 +535,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
             minute,
             tryTextWidget: true,
             textAlign: TextAlign.center,
-          )!
-              .center(),
+          )!.center(),
       ],
     ).wh(double.infinity, _wheelHeight);
   }
@@ -562,7 +545,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
   int get minSecond {
     if (widget.minDateTime == null) {
       return 00;
-    } else if (currentValueMixin.isBefore(widget.minDateTime!)) {
+    } else if (currentValueMixin!.isBefore(widget.minDateTime!)) {
       return widget.minDateTime!.second;
     } else {
       return 59;
@@ -579,13 +562,13 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
         currentMinute >= maxMinute) {
       return widget.maxDateTime!.second;
     } else {
-      return currentValueMixin.second;
+      return currentValueMixin!.second;
     }
   }
 
   int get currentSecond {
     //currentValueMixin.copyWith(year: currentYear)
-    return currentValueMixin.second;
+    return currentValueMixin!.second;
   }
 
   /// 构建秒选择
@@ -595,15 +578,17 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
     });
     return Wheel(
       key: Key(
-          "${currentYear}_${currentMonth}_${currentDay}_${currentHour}_$currentMinute"),
+        "${currentYear}_${currentMonth}_${currentDay}_${currentHour}_$currentMinute",
+      ),
       looping: false,
       size: _wheelHeight,
       itemExtent: _wheelItemExtent,
       initialIndex: secondList.indexOfOrNull(currentSecond) ?? 0,
       enableSelectedIndexColor: widget.enableWheelSelectedIndexColor,
       onIndexChanged: (index, type) {
-        currentValueMixin =
-            currentValueMixin.copyWith(second: secondList[index]);
+        currentValueMixin = currentValueMixin!.copyWith(
+          second: secondList[index],
+        );
         _titleUpdateNotifier.notify();
         //currentValueMixin = index;
         //updateState();
@@ -615,8 +600,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
             second,
             tryTextWidget: true,
             textAlign: TextAlign.center,
-          )!
-              .center(),
+          )!.center(),
       ],
     ).wh(double.infinity, _wheelHeight);
   }

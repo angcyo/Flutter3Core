@@ -103,12 +103,14 @@ class _WheelTileState extends State<WheelTile> {
     final globalTheme = GlobalTheme.of(context);
     final radius = widget.decorationRadius;
 
-    final valueWidget = (widget.onValueBuilder?.call(_initValue) ??
-            widgetOf(context, _initValue) ??
-            _initValue?.toString().text())
-        ?.align(widget.valueAlignment);
+    final valueWidget =
+        (widget.onValueBuilder?.call(_initValue) ??
+                widgetOf(context, _initValue) ??
+                _initValue?.toString().text())
+            ?.align(widget.valueAlignment);
 
-    final rightWidget = widget.rightWidget ??
+    final rightWidget =
+        widget.rightWidget ??
         (!isNil(widget.wheelValues)
             ? Icon(
                 Icons.arrow_forward_ios,
@@ -120,37 +122,38 @@ class _WheelTileState extends State<WheelTile> {
             : null);
 
     return StateDecorationWidget(
-      decoration: fillDecoration(
-        color: widget.enable
-            ? globalTheme.whiteSubBgColor
-            : globalTheme.disableBgColor,
-        radius: radius,
-      ),
-      pressedDecoration: fillDecoration(
-        color: widget.pressedColor,
-        radius: radius,
-      ),
-      enablePressedDecoration: widget.enable && _initValue != null,
-      child: [
-        widget.leftWidget,
-        valueWidget?.expanded(),
-        rightWidget,
-      ].row()?.paddingInsets(widget.padding),
-    ).click(() async {
-      if (!isNil(widget.wheelValues)) {
-        final index = await context.showWidgetDialog(
-          WheelDialog(
-            title: widget.wheelTitle ?? "请选择",
-            initValue: _initValue,
-            values: widget.wheelValues,
+          decoration: fillDecoration(
+            color: widget.enable
+                ? globalTheme.whiteSubBgColor
+                : globalTheme.disableBgColor,
+            radius: radius,
           ),
-        );
-        _initValue = widget.wheelValues?[index];
-        updateState();
-        widget.onWheelIndexInput?.call(index);
-      }
-    }, enable: widget.enable && !isNil(widget.wheelValues)).paddingInsets(
-        widget.margin);
+          pressedDecoration: fillDecoration(
+            color: widget.pressedColor,
+            radius: radius,
+          ),
+          enablePressedDecoration: widget.enable && _initValue != null,
+          child: [
+            widget.leftWidget,
+            valueWidget?.expanded(),
+            rightWidget,
+          ].row()?.paddingInsets(widget.padding),
+        )
+        .click(() async {
+          if (!isNil(widget.wheelValues)) {
+            final index = await context.showWidgetDialog(
+              WheelDialog(
+                title: widget.wheelTitle ?? "请选择",
+                initValue: _initValue,
+                values: widget.wheelValues,
+              ),
+            );
+            _initValue = widget.wheelValues?[index];
+            updateState();
+            widget.onWheelIndexInput?.call(index);
+          }
+        }, enable: widget.enable && !isNil(widget.wheelValues))
+        .paddingInsets(widget.margin);
   }
 }
 
@@ -242,73 +245,79 @@ class _LabelWheelTileState extends State<LabelWheelTile>
       labelWidget: widget.labelWidget,
     );
 
-    final rightWidget = widget.rightWidget ??
+    final rightWidget =
+        widget.rightWidget ??
         (widget.values != null
-            ? loadCoreAssetSvgPicture(Assets.svg.coreNext,
+            ? loadCoreAssetSvgPicture(
+                Assets.svg.coreNext,
                 tintColor: widget.values?.isEmpty == true
                     ? globalTheme.icoDisableColor
-                    : globalTheme.icoNormalColor)
+                    : globalTheme.icoNormalColor,
+              )
             : null);
 
-    final content = Container(
-      padding: const EdgeInsets.symmetric(horizontal: kH, vertical: kX),
-      alignment: Alignment.centerLeft,
-      constraints: BoxConstraints(
-        minWidth: widget.valueWidth ?? 0,
-        maxWidth: widget.valueWidth ?? double.infinity,
-        minHeight: kMinInteractiveHeight,
-      ),
-      child: [
-        widget.leftWidget,
-        (widgetOf(context, currentValueMixin, tryTextWidget: true) ?? empty)
-            .expanded(),
-        rightWidget,
-      ].row()!,
-    )
-        .ink(
-          widget.onContainerTap ??
-              () async {
-                if (isNil(widget.values) && isNil(widget.valuesWidget)) {
-                  return;
-                }
-                final resultIndex = await context.showWidgetDialog(
-                  WheelDialog(
-                    title: widget.wheelTitle ?? widget.label,
-                    initValue: currentValueMixin,
-                    values: widget.values,
-                    valuesWidget: widget.valuesWidget,
-                    transformValueWidget: widget.transformValueWidget,
-                    wheelSelectedIndexColor: widget.wheelSelectedIndexColor,
-                    enableWheelSelectedIndexColor:
-                        widget.enableWheelSelectedIndexColor,
-                  ),
-                );
-                if (resultIndex is int) {
-                  currentValueMixin = widget.values?.getOrNull(resultIndex) ??
-                      currentValueMixin;
-                  widget.onValueIndexChanged?.call(resultIndex);
-                  widget.onValueChanged?.call(
-                      widget.values?.getOrNull(resultIndex) ??
-                          widget.valuesWidget?.getOrNull(resultIndex));
-                  updateState();
-                } else {
-                  assert(() {
-                    l.w('无效的wheel返回值类型[$resultIndex]');
-                    return true;
-                  }());
-                }
-              },
-          backgroundColor: globalTheme.itemWhiteBgColor,
-          radius: kDefaultBorderRadiusXX,
-        )
-        .paddingInsets(kContentPadding)
-        .ignorePointer(
-          isNil(widget.values),
-        );
+    final content =
+        Container(
+              padding: const EdgeInsets.symmetric(horizontal: kH, vertical: kX),
+              alignment: Alignment.centerLeft,
+              constraints: BoxConstraints(
+                minWidth: widget.valueWidth ?? 0,
+                maxWidth: widget.valueWidth ?? double.infinity,
+                minHeight: kMinInteractiveHeight,
+              ),
+              child: [
+                widget.leftWidget,
+                (widgetOf(context, currentValueMixin, tryTextWidget: true) ??
+                        empty)
+                    .expanded(),
+                rightWidget,
+              ].row()!,
+            )
+            .ink(
+              widget.onContainerTap ??
+                  () async {
+                    if (isNil(widget.values) && isNil(widget.valuesWidget)) {
+                      return;
+                    }
+                    final resultIndex = await context.showWidgetDialog(
+                      WheelDialog(
+                        title: widget.wheelTitle ?? widget.label,
+                        initValue: currentValueMixin,
+                        values: widget.values,
+                        valuesWidget: widget.valuesWidget,
+                        transformValueWidget: widget.transformValueWidget,
+                        wheelSelectedIndexColor: widget.wheelSelectedIndexColor,
+                        enableWheelSelectedIndexColor:
+                            widget.enableWheelSelectedIndexColor,
+                      ),
+                    );
+                    if (resultIndex is int) {
+                      currentValueMixin =
+                          widget.values?.getOrNull(resultIndex) ??
+                          currentValueMixin;
+                      widget.onValueIndexChanged?.call(resultIndex);
+                      widget.onValueChanged?.call(
+                        widget.values?.getOrNull(resultIndex) ??
+                            widget.valuesWidget?.getOrNull(resultIndex),
+                      );
+                      updateState();
+                    } else {
+                      assert(() {
+                        l.w('无效的wheel返回值类型[$resultIndex]');
+                        return true;
+                      }());
+                    }
+                  },
+              backgroundColor: globalTheme.itemWhiteBgColor,
+              radius: kDefaultBorderRadiusXX,
+            )
+            .paddingInsets(kContentPadding)
+            .ignorePointer(isNil(widget.values));
 
-    return [label, content.align(Alignment.centerRight).expanded()]
-        .row()!
-        .material();
+    return [
+      label,
+      content.align(Alignment.centerRight).expanded(),
+    ].row()!.material();
   }
 }
 
@@ -378,38 +387,45 @@ class _LabelWheelDateTimeTileState extends State<LabelWheelDateTimeTile>
     );
 
     final content = buildClickContainerWidget(
-        context,
-        [
-          (widgetOf(context, currentValueMixin.format(widget.dateTimePattern),
-                      tryTextWidget: true) ??
-                  empty)
-              .expanded(),
-          loadCoreAssetSvgPicture(Assets.svg.coreNext)
-        ].row()!,
-        onTap: widget.onContainerTap ??
-            () async {
-              final resultDateTime =
-                  await context.showWidgetDialog(WheelDateTimeDialog(
+      context,
+      [
+        (widgetOf(
+                  context,
+                  currentValueMixin!.format(widget.dateTimePattern),
+                  tryTextWidget: true,
+                ) ??
+                empty)
+            .expanded(),
+        loadCoreAssetSvgPicture(Assets.svg.coreNext),
+      ].row()!,
+      onTap:
+          widget.onContainerTap ??
+          () async {
+            final resultDateTime = await context.showWidgetDialog(
+              WheelDateTimeDialog(
                 title: widget.wheelTitle ?? widget.label,
-                initDateTime: currentValueMixin,
+                initDateTime: currentValueMixin!,
                 minDateTime: widget.minDateTime,
                 maxDateTime: widget.maxDateTime,
                 dateTimeType: widget.wheelDateTimeType,
-              ));
-              if (resultDateTime is DateTime) {
-                currentValueMixin = resultDateTime;
-                widget.onDateTimeValueChanged?.call(resultDateTime);
-                updateState();
-              } else {
-                assert(() {
-                  l.w('无效的wheel返回值类型[$resultDateTime]');
-                  return true;
-                }());
-              }
-            });
+              ),
+            );
+            if (resultDateTime is DateTime) {
+              currentValueMixin = resultDateTime;
+              widget.onDateTimeValueChanged?.call(resultDateTime);
+              updateState();
+            } else {
+              assert(() {
+                l.w('无效的wheel返回值类型[$resultDateTime]');
+                return true;
+              }());
+            }
+          },
+    );
 
-    return [label, content.align(Alignment.centerRight).expanded()]
-        .row()!
-        .material();
+    return [
+      label,
+      content.align(Alignment.centerRight).expanded(),
+    ].row()!.material();
   }
 }

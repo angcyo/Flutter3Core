@@ -23,6 +23,7 @@ class CanvasOptionsDialog extends StatefulWidget with DialogMixin {
 class _CanvasOptionsDialogState extends State<CanvasOptionsDialog> {
   @override
   Widget build(BuildContext context) {
+    final globalConfig = GlobalConfig.of(context);
     final canvasDelegate = widget.canvasDelegate;
     final canvasStyle = canvasDelegate.canvasStyle;
 
@@ -89,7 +90,7 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog> {
       ),
     ];
 
-    if (isDesktopOrWeb) {
+    if (globalConfig.isInTabletLandscapeModel) {
       return widget.buildCenterDialog(
         context,
         children.column()!.desktopConstrained(),
