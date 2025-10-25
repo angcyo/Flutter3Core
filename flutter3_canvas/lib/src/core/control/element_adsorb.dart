@@ -13,6 +13,7 @@ part of '../../../flutter3_canvas.dart';
 /// - [findYAdsorbRefValue]
 ///
 /// - [CanvasElementControlManager] in
+/// - [CanvasElementControlManager.elementAdsorbControl] in
 ///
 class ElementAdsorbControl
     with CanvasComponentMixin, CanvasElementControlManagerMixin {
@@ -44,11 +45,17 @@ class ElementAdsorbControl
   /// [CanvasElementManager.paintElements]驱动, 可以绘制在坐标轴上
   @entryPoint
   void paintAdsorb(Canvas canvas, PaintMeta paintMeta) {
-    final controlElementBounds = canvasElementControlManager
-        ._currentControlElementRef
-        ?.target
-        ?.elementsBounds;
-    if (controlElementBounds == null || isIgnoreAdsorb) {
+    //debugger();
+    if (isIgnoreAdsorb) {
+      return;
+    }
+    final controlElementBounds =
+        canvasElementControlManager
+            ._currentControlElementRef
+            ?.target
+            ?.elementsBounds ??
+        _controlElementsBounds;
+    if (controlElementBounds == null) {
       return;
     }
     paintMeta.withPaintMatrix(canvas, () {
@@ -195,12 +202,32 @@ class ElementAdsorbControl
   /// [CanvasElementControlManager.onHandleControlStateChanged] 驱动
   @callPoint
   void initAdsorbRefValueList(
-    ElementPainter controlElement,
-    ControlTypeEnum controlType,
-  ) {
+    ControlTypeEnum controlType, {
+    ElementPainter? controlElement,
+    @dp @sceneCoordinate Rect? controlBounds,
+    //--
+    bool includeElement = true,
+    bool includeCanvasContent = true,
+    bool includeAxis = true,
+    bool includeRefLine = true,
+  }) {
     if (controlType == ControlTypeEnum.translate) {
-      _initTranslateRefValue(controlElement);
+      //仅在平移时支持吸附
+      _initTranslateRefValue(
+        controlElement: controlElement,
+        controlBounds: controlBounds,
+        //--
+        includeElement: includeElement,
+        includeCanvasContent: includeCanvasContent,
+        includeAxis: includeAxis,
+        includeRefLine: includeRefLine,
+      );
       //debugger();
+    } else {
+      assert(() {
+        l.d("不支持吸附的控制行为[$controlType]");
+        return true;
+      }());
     }
   }
 
@@ -352,7 +379,7 @@ class ElementAdsorbControl
   }
 
   /// 查找x轴的吸附参考值
-  /// [x] 当前的x
+  /// [x] 当前在场景中的x值
   /// [localPosition] 当前手势的位置
   AdsorbRefValue? findXAdsorbRefValue(
     @dp @sceneCoordinate double x,
@@ -384,7 +411,7 @@ class ElementAdsorbControl
   }
 
   /// 查找y轴的吸附参考值
-  /// [y] 当前的x
+  /// [y] 当前在场景中的y值
   /// [localPosition] 当前手势的位置
   AdsorbRefValue? findYAdsorbRefValue(
     @dp @sceneCoordinate double y,
@@ -437,7 +464,23 @@ class ElementAdsorbControl
   Rect? _controlElementsBounds;
 
   /// 初始化移动时的参考值
-  void _initTranslateRefValue(ElementPainter controlElement) {
+  /// - [controlElement] 正在被控制的元素
+  /// - [controlBounds] 或者被控制的边界
+  ///
+  /// - [includeElement] 是否需要元素边界的吸附?
+  /// - [includeCanvasContent] 是否需要画布内容边界的吸附?
+  /// - [includeAxis] 是否需要坐标系刻度的吸附?
+  /// - [includeRefLine] 是否需要参考线的吸附?
+  ///
+  void _initTranslateRefValue({
+    ElementPainter? controlElement,
+    @dp @sceneCoordinate Rect? controlBounds,
+    //--
+    bool includeElement = true,
+    bool includeCanvasContent = true,
+    bool includeAxis = true,
+    bool includeRefLine = true,
+  }) {
     _xRefValueList.clear();
     _yRefValueList.clear();
 
@@ -447,7 +490,7 @@ class ElementAdsorbControl
       if (controlElement is! ElementSelectComponent) controlElement,
     ];
 
-    final elementsBounds = controlElement.elementsBounds;
+    final elementsBounds = controlElement?.elementsBounds ?? controlBounds;
     _controlElementsBounds = elementsBounds;
 
     //吸附的矩形信息
@@ -504,72 +547,86 @@ class ElementAdsorbControl
     }
 
     //计算需要吸附的元素
-    for (final element in canvasElementManager.elements) {
-      if (!element.isVisible /*元素不可见*/ ||
-          exclude.contains(element) /*需要排除元素*/ ||
-          !element.isVisibleInCanvasBox(canvasViewBox) /*元素不在画布内*/ ) {
-        continue;
+    if (includeElement) {
+      for (final element in canvasElementManager.elements) {
+        if (!element.isVisible /*元素不可见*/ ||
+            exclude.contains(element) /*需要排除元素*/ ||
+            !element.isVisibleInCanvasBox(canvasViewBox) /*元素不在画布内*/ ) {
+          continue;
+        }
+        element.elementsBounds?.let((it) {
+          adsorbRect(it, element: element);
+        });
       }
-      element.elementsBounds?.let((it) {
-        adsorbRect(it, element: element);
-      });
     }
     //--
-    canvasDelegate
-        .canvasPaintManager
-        .contentManager
-        .canvasContentFollowRectInner
-        ?.let((it) {
-          adsorbRect(it);
-        });
+    if (includeCanvasContent) {
+      canvasDelegate
+          .canvasPaintManager
+          .contentManager
+          .canvasContentFollowRectInner
+          ?.let((it) {
+            adsorbRect(it);
+          });
+    }
     //计算需要吸附的坐标系信息
     final axisManager = canvasDelegate.canvasPaintManager.axisManager;
-    for (final data in axisManager.xAxisData) {
-      if (data.axisType.have(IUnit.axisTypePrimary)) {
-        _xRefValueList.add(
-          AdsorbRefValue(
-            refType: RefValueType.left,
-            refValue: data.sceneValue,
-            refElement: null,
-            refBounds: null,
-          ),
-        );
+    if (includeAxis) {
+      for (final data in axisManager.xAxisData) {
+        if (data.axisType.have(IUnit.axisTypePrimary)) {
+          _xRefValueList.add(
+            AdsorbRefValue(
+              refType: RefValueType.left,
+              refValue: data.sceneValue,
+              refElement: null,
+              refBounds: null,
+            ),
+          );
+        }
       }
-    }
-    for (final data in axisManager.yAxisData) {
-      if (data.axisType.have(IUnit.axisTypePrimary)) {
-        _yRefValueList.add(
-          AdsorbRefValue(
-            refType: RefValueType.top,
-            refValue: data.sceneValue,
-            refElement: null,
-            refBounds: null,
-          ),
-        );
+      for (final data in axisManager.yAxisData) {
+        if (data.axisType.have(IUnit.axisTypePrimary)) {
+          _yRefValueList.add(
+            AdsorbRefValue(
+              refType: RefValueType.top,
+              refValue: data.sceneValue,
+              refElement: null,
+              refBounds: null,
+            ),
+          );
+        }
       }
     }
     //--
-    for (final data in axisManager.refLineDataList) {
-      if (data.axis == Axis.horizontal) {
-        _yRefValueList.add(
-          AdsorbRefValue(
-            refType: RefValueType.top,
-            refValue: data.sceneValue,
-            refElement: null,
-            refBounds: null,
-          ),
-        );
-      } else if (data.axis == Axis.vertical) {
-        _xRefValueList.add(
-          AdsorbRefValue(
-            refType: RefValueType.left,
-            refValue: data.sceneValue,
-            refElement: null,
-            refBounds: null,
-          ),
-        );
+    if (includeRefLine) {
+      for (final data in axisManager.refLineDataList) {
+        if (data.axis == Axis.horizontal) {
+          _yRefValueList.add(
+            AdsorbRefValue(
+              refType: RefValueType.top,
+              refValue: data.sceneValue,
+              refElement: null,
+              refBounds: null,
+            ),
+          );
+        } else if (data.axis == Axis.vertical) {
+          _xRefValueList.add(
+            AdsorbRefValue(
+              refType: RefValueType.left,
+              refValue: data.sceneValue,
+              refElement: null,
+              refBounds: null,
+            ),
+          );
+        }
       }
     }
+  }
+
+  /// 仅更新控制元素的边界
+  /// - 比如在参考线的拖动中, [bounds]就是参考线的是是位置
+  void updateControlElementsBounds(@dp @sceneCoordinate Rect? bounds) {
+    _controlElementsBounds = bounds;
   }
 
   /// 在[list]中, 查找于[value]距离最小的[AdsorbRefValue]值

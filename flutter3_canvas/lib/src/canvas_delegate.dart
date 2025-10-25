@@ -930,8 +930,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     return context.showMenus<T>(menus, position: position);
   }
 
-  /// [showMenus]
-  /// [showWidgetMenu]
+  /// 用来触发显示一个菜单路由
+  /// - [showMenus]
+  /// - [showWidgetMenu]
   @api
   Future<T?> showWidgetMenu<T>(
     Widget menu, {
@@ -957,6 +958,20 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @api
   void hideMenu<T extends Object?>([T? result]) {
     delegateContext?.popMenu(result);
+  }
+
+  /// 用来触发显示一个对话框路由
+  @api
+  Future<T?> showWidgetDialog<T>(Widget dialog) async {
+    final context = delegateContext;
+    if (context == null) {
+      assert(() {
+        l.w("无效的操作");
+        return true;
+      }());
+      return null;
+    }
+    return context.showWidgetDialog(dialog);
   }
 
   /// 附加覆盖层
@@ -1469,7 +1484,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }, reverse: true);
   }
 
-  /// 派发画布样式变化
+  /// 派发画布样式模式变化
+  /// - [CanvasStyleMode]
   /// [canvasStyleModeValue]
   void dispatchCanvasStyleModeChanged(
     CanvasStyleMode from,
@@ -1477,6 +1493,15 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   ) {
     _eachCanvasListener((element) {
       element.onCanvasStyleModeChangedAction?.call(this, from, to);
+    });
+  }
+
+  /// 派发画布样式变化
+  /// - [CanvasStyle]
+  /// - [canvasStyle]
+  void dispatchCanvasStyleChanged() {
+    _eachCanvasListener((element) {
+      element.onCanvasStyleChangedAction?.call(this, canvasStyle);
     });
   }
 

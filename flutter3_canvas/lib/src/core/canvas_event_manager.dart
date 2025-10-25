@@ -91,9 +91,9 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
         if (canvasDelegate.isDragMode) {
           //拖拽模式下, 不处理元素事件
         } else if (_painterEventInterceptHandler != null) {
-          l.d(
+          /*l.d(
             "[${event.classHash()}]事件被拦截器处理 ${_painterEventInterceptHandler?.classHash()}",
-          );
+          );*/
           _painterEventInterceptHandler?.handlePainterPointerEvent(event);
         } else {
           //debugger();

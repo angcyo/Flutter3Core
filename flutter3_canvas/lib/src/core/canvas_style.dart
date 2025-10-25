@@ -54,6 +54,9 @@ class CanvasStyle {
     drawType = drawType.add(sDrawAxis, value);
   }
 
+  /// 是否激活参考线功能
+  bool enableRefLine = true;
+
   /// 是否绘制参考线
   bool get showRefLine => drawType.have(sDrawRefLine);
 

@@ -515,8 +515,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           (state == ControlStateEnum.start ||
               state == ControlStateEnum.update)) {
         elementAdsorbControl.initAdsorbRefValueList(
-          controlElement,
           controlType,
+          controlElement: controlElement,
         );
       } else if (state == ControlStateEnum.end) {
         elementAdsorbControl.dispose(controlType);

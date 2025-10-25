@@ -22,9 +22,81 @@ class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
   @override
   double? get translateDetectorSecondSlopY => 1;
 
+  /// 吸附控制
+  ElementAdsorbControl? _adsorbControl;
+
   @override
   bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
+    if (event.isPointerDown) {
+      final elementAdsorbControl = axisManager
+          .canvasDelegate
+          .canvasElementManager
+          .canvasElementControlManager
+          .elementAdsorbControl;
+      if (elementAdsorbControl.isCanvasComponentEnable) {
+        elementAdsorbControl.initAdsorbRefValueList(
+          ControlTypeEnum.translate,
+          includeRefLine: false,
+        );
+        elementAdsorbControl.updateControlElementsBounds(
+          axisManager.getRefLineSceneRect(_refLineData),
+        );
+        _adsorbControl = elementAdsorbControl;
+      }
+    } else if (event.isPointerMove) {
+      _adsorbControl?.updateControlElementsBounds(
+        axisManager.getRefLineSceneRect(_refLineData),
+      );
+    } else if (event.isPointerFinish) {
+      _adsorbControl?.dispose(ControlTypeEnum.translate);
+      _adsorbControl = null;
+    }
     return addTranslateDetectorPointerEvent(event);
+  }
+
+  @override
+  Offset transformDetectorPointerEventPosition(PointerEvent event) {
+    final localPosition = event.localPosition;
+    if (event.isPointerMove) {
+      final adsorbControl = _adsorbControl;
+      if (adsorbControl != null) {
+        if (axis == Axis.horizontal) {
+          final refValue = adsorbControl.findYAdsorbRefValue(
+            axisManager.toScenePoint(localPosition).y,
+            localPosition,
+          );
+          if (refValue != null) {
+            //debugger();
+            return Offset(
+              localPosition.x,
+              axisManager
+                  .toViewPoint(Offset(refValue.refValue, refValue.refValue))
+                  .y,
+            );
+          }
+        } else if (axis == Axis.vertical) {
+          final fromX = axisManager.toScenePoint(localPosition).x;
+          final refValue = adsorbControl.findXAdsorbRefValue(
+            fromX,
+            localPosition,
+          );
+          if (refValue != null) {
+            //debugger();
+            assert(() {
+              l.d("找到推荐点$fromX -> ${refValue.refValue}");
+              return true;
+            }());
+            return Offset(
+              axisManager
+                  .toViewPoint(Offset(refValue.refValue, refValue.refValue))
+                  .x,
+              localPosition.y,
+            );
+          }
+        }
+      }
+    }
+    return localPosition;
   }
 
   RefLineData? _refLineData;

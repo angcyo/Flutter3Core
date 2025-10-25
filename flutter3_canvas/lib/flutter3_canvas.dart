@@ -25,6 +25,7 @@ part 'src/component/control_limit.dart';
 part 'src/component/canvas_overlay_component.dart';
 part 'src/component/painter_size_handler.dart';
 part 'src/component/painter_touch_spot_handler.dart';
+part 'src/component/canvas_options_dialog.dart';
 part 'src/core/canvas_axis_manager.dart';
 part 'src/core/canvas_content_manager.dart';
 part 'src/core/canvas_content_template.dart';

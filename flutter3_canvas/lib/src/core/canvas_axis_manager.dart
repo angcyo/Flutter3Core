@@ -218,7 +218,7 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
     normalPaint.strokeWidth = canvasStyle.axisNormalWidth;
 
     //绘制坐标刻度
-    if (drawType.have(CanvasStyle.sDrawAxis)) {
+    if (canvasStyle.showAxis) {
       //坐标轴背景
       final canvasAxisBgColor = canvasStyle.canvasAxisBgColor;
       if (canvasAxisBgColor != null) {
@@ -259,7 +259,7 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
     }
 
     // 绘制坐标网格
-    if (drawType.have(CanvasStyle.sDrawGrid)) {
+    if (canvasStyle.showGrid) {
       canvas.withClipRect(canvasBounds, () /*画布区域裁剪*/ {
         canvasDelegate.canvasPaintManager.contentManager.withCanvasContent(
           canvas,
@@ -500,7 +500,7 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
   List<RefLineData> refLineDataList = [];
 
   @override
-  bool isEnablePainterPointerEvent() => drawType.have(CanvasStyle.sDrawRefLine);
+  bool isEnablePainterPointerEvent() => canvasStyle.enableRefLine;
 
   /// 鼠标悬浮的参考线数据
   RefLineData? _hoverRefLineData;
@@ -582,7 +582,7 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
   /// 绘制参考线
   @callPoint
   void paintRefLine(Canvas canvas, PaintMeta paintMeta) {
-    if (drawType.have(CanvasStyle.sDrawRefLine)) {
+    if (canvasStyle.showRefLine) {
       final canvasViewBox = paintManager.canvasDelegate.canvasViewBox;
       final paintBounds = canvasViewBox.paintBounds;
       final canvasStyle = this.canvasStyle;
@@ -768,6 +768,46 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
       refLineDataList.remove(data);
     }
     canvasDelegate.refresh();
+  }
+
+  /// 获取参考线在场景内的矩形
+  @api
+  @sceneCoordinate
+  Rect? getRefLineSceneRect(
+    RefLineData? lineData, {
+    @viewCoordinate double lineWidth = 2,
+  }) {
+    if (lineData == null) {
+      return null;
+    }
+    final canvasViewBox = paintManager.canvasDelegate.canvasViewBox;
+    final paintBounds = canvasViewBox.paintBounds;
+    @sceneCoordinate
+    final point = Offset(lineData.sceneValue, lineData.sceneValue);
+    @viewCoordinate
+    final viewPoint = canvasViewBox.toViewPoint(point);
+    if (lineData.axis == Axis.horizontal) {
+      final viewRect = Rect.fromLTRB(
+        paintBounds.left,
+        viewPoint.y - lineWidth / 2,
+        paintBounds.right,
+        viewPoint.y + lineWidth / 2,
+      );
+      return canvasViewBox.toSceneRect(viewRect);
+    } else if (lineData.axis == Axis.vertical) {
+      final viewRect = Rect.fromLTRB(
+        viewPoint.x - lineWidth / 2,
+        paintBounds.top,
+        viewPoint.x + lineWidth / 2,
+        paintBounds.bottom,
+      );
+      /*assert(() {
+        l.d("$viewRect");
+        return true;
+      }());*/
+      return canvasViewBox.toSceneRect(viewRect);
+    }
+    return null;
   }
 
   //endregion 参考线
