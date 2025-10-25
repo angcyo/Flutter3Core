@@ -275,8 +275,8 @@ mixin TouchSpotTranslateMixin
   }
 
   @override
-  Offset getTranslateDetectorPointerEventPosition(PointerEvent event) {
-    final position = super.getTranslateDetectorPointerEventPosition(event);
+  Offset transformDetectorPointerEventPosition(PointerEvent event) {
+    final position = super.transformDetectorPointerEventPosition(event);
     final that = this;
     if (that is TouchSpot) {
       //debugger();

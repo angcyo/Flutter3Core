@@ -1456,10 +1456,10 @@ mixin TranslateDetectorMixin {
     if (event.isPointerDown) {
       isTranslating = false;
       _downPointer = pointer;
-      _downPosition = getTranslateDetectorPointerEventPosition(event);
+      _downPosition = transformDetectorPointerEventPosition(event);
       _movePosition = _downPosition;
     } else if (event is PointerMoveEvent && pointer == _downPointer) {
-      final localPosition = getTranslateDetectorPointerEventPosition(event);
+      final localPosition = transformDetectorPointerEventPosition(event);
       final mdx = localPosition.dx - _movePosition.dx;
       final mdy = localPosition.dy - _movePosition.dy;
       final ddx = localPosition.dx - _downPosition.dx;
@@ -1495,7 +1495,7 @@ mixin TranslateDetectorMixin {
   /// 获取当前手势对应的位置坐标
   /// - 在这个方法中可以变换事件的坐标系
   @overridePoint
-  Offset getTranslateDetectorPointerEventPosition(PointerEvent event) {
+  Offset transformDetectorPointerEventPosition(PointerEvent event) {
     return event.localPosition;
   }
 
