@@ -38,65 +38,20 @@ class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
           ControlTypeEnum.translate,
           includeRefLine: false,
         );
-        elementAdsorbControl.updateControlElementsBounds(
+        /*elementAdsorbControl.updateControlElementsBounds(
           axisManager.getRefLineSceneRect(_refLineData),
-        );
+        );*/
         _adsorbControl = elementAdsorbControl;
       }
     } else if (event.isPointerMove) {
-      _adsorbControl?.updateControlElementsBounds(
+      /*_adsorbControl?.updateControlElementsBounds(
         axisManager.getRefLineSceneRect(_refLineData),
-      );
+      );*/
     } else if (event.isPointerFinish) {
       _adsorbControl?.dispose(ControlTypeEnum.translate);
       _adsorbControl = null;
     }
     return addTranslateDetectorPointerEvent(event);
-  }
-
-  @override
-  Offset transformDetectorPointerEventPosition(PointerEvent event) {
-    final localPosition = event.localPosition;
-    if (event.isPointerMove) {
-      final adsorbControl = _adsorbControl;
-      if (adsorbControl != null) {
-        if (axis == Axis.horizontal) {
-          final refValue = adsorbControl.findYAdsorbRefValue(
-            axisManager.toScenePoint(localPosition).y,
-            localPosition,
-          );
-          if (refValue != null) {
-            //debugger();
-            return Offset(
-              localPosition.x,
-              axisManager
-                  .toViewPoint(Offset(refValue.refValue, refValue.refValue))
-                  .y,
-            );
-          }
-        } else if (axis == Axis.vertical) {
-          final fromX = axisManager.toScenePoint(localPosition).x;
-          final refValue = adsorbControl.findXAdsorbRefValue(
-            fromX,
-            localPosition,
-          );
-          if (refValue != null) {
-            //debugger();
-            assert(() {
-              l.d("找到推荐点$fromX -> ${refValue.refValue}");
-              return true;
-            }());
-            return Offset(
-              axisManager
-                  .toViewPoint(Offset(refValue.refValue, refValue.refValue))
-                  .x,
-              localPosition.y,
-            );
-          }
-        }
-      }
-    }
-    return localPosition;
   }
 
   RefLineData? _refLineData;
@@ -112,9 +67,40 @@ class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
     //debugger();
     if (mdx != 0 && mdy != 0) {
       _refLineData ??= RefLineData(axis, 0);
-      final value = axis == Axis.horizontal
-          ? axisManager.toScenePoint(event.localPosition).y
-          : axisManager.toScenePoint(event.localPosition).x;
+
+      final localPosition = event.localPosition;
+
+      //自动吸附查找值
+      final adsorbControl = _adsorbControl;
+      if (adsorbControl != null) {
+        if (axis == Axis.horizontal) {
+          @sceneCoordinate
+          final refValue = adsorbControl.findYAdsorbRefValue(
+            axisManager.toScenePoint(localPosition).y,
+            localPosition,
+          );
+          if (refValue != null) {
+            _refLineData?.sceneValue = refValue.refValue;
+            axisManager.addRefLine(_refLineData);
+            return true;
+          }
+        } else if (axis == Axis.vertical) {
+          final fromX = axisManager.toScenePoint(localPosition).x;
+          @sceneCoordinate
+          final refValue = adsorbControl.findXAdsorbRefValue(
+            fromX,
+            localPosition,
+          );
+          if (refValue != null) {
+            _refLineData?.sceneValue = refValue.refValue;
+            axisManager.addRefLine(_refLineData);
+            return true;
+          }
+        }
+      }
+
+      final scenePoint = axisManager.toScenePoint(localPosition);
+      final value = axis == Axis.horizontal ? scenePoint.y : scenePoint.x;
       _refLineData?.sceneValue = value;
       /*l.i(
         "sceneValue->${_refLineData?.axis} $value -> ${_refLineData?.sceneValue}",

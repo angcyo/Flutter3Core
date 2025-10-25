@@ -603,7 +603,7 @@ class ElementAdsorbControl
         if (data.axis == Axis.horizontal) {
           _yRefValueList.add(
             AdsorbRefValue(
-              refType: RefValueType.top,
+              refType: RefValueType.center,
               refValue: data.sceneValue,
               refElement: null,
               refBounds: null,
@@ -612,7 +612,7 @@ class ElementAdsorbControl
         } else if (data.axis == Axis.vertical) {
           _xRefValueList.add(
             AdsorbRefValue(
-              refType: RefValueType.left,
+              refType: RefValueType.center,
               refValue: data.sceneValue,
               refElement: null,
               refBounds: null,
