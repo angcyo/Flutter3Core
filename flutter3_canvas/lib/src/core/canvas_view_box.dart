@@ -28,7 +28,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 有可能会偏移包含坐标系的大小
   /// [updatePaintBounds] 在此方法中会更新此值
   ///
-  /// [originOffset]
+  /// - [originOffset]
+  /// - [canvasSceneVisibleBounds]
   @dp
   @viewCoordinate
   @autoInjectMark
@@ -273,6 +274,17 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   @viewCoordinate
   Path toViewPath(@sceneCoordinate Path path) {
     return offsetToViewOriginPath(canvasMatrix.mapPath(path));
+  }
+
+  /// 指定的矩形是否在画布中可见
+  @api
+  bool isRectVisibleInCanvas(@sceneCoordinate Rect? rect) {
+    if (rect == null) return false;
+    final canvasBounds = canvasSceneVisibleBounds;
+    return rect.left <= canvasBounds.right &&
+        rect.top <= canvasBounds.bottom &&
+        rect.right >= canvasBounds.left &&
+        rect.bottom >= canvasBounds.top;
   }
 
   //endregion ---api---

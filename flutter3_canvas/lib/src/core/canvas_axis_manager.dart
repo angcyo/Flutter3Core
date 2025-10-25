@@ -589,6 +589,9 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
       final linePaint = Paint()..color = canvasStyle.axisRefLineColor;
 
       for (final lineData in refLineDataList) {
+        if (!isRefLineVisibleInCanvasBox(lineData)) {
+          continue;
+        }
         @sceneCoordinate
         final point = Offset(lineData.sceneValue, lineData.sceneValue);
         @viewCoordinate
@@ -732,6 +735,13 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
   /// 当前参考线是否要高亮
   bool isHighlightRefLine(RefLineData lineData) {
     return lineData == _refLineComponent?._refLineData;
+  }
+
+  /// 当前参考线是否在画布中可见, 不可见不绘制
+  bool isRefLineVisibleInCanvasBox(RefLineData lineData) {
+    final canvasViewBox = paintManager.canvasDelegate.canvasViewBox;
+    return canvasViewBox.canvasSceneVisibleBounds.isValid &&
+        canvasViewBox.isRectVisibleInCanvas(getRefLineSceneRect(lineData));
   }
 
   /// 场景内的坐标转换成视图坐标
