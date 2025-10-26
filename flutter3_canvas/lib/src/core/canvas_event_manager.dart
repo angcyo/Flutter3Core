@@ -64,13 +64,21 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     }
     if (!event.isPointerHover) {
       //非悬停事件
-      /*assert((){
-        l.d("handleEvent[${event.synthesized}]->$event");
+      /*assert(() {
+        l.d("handleEvent[${event.synthesized}]->$event ${event.delta}");
         return true;
       }());*/
       //debugger();
     }
-    //debugger();
+    /*if (event is PointerPanZoomUpdateEvent) {
+      assert(() {
+        l.d(
+          "[${event.runtimeType}]handleEvent[${event.synthesized}]->${event.timeStamp.inMilliseconds} pan:${event.pan} panDelta:${event.panDelta} scale:${event.scale} rotation:${event.rotation}",
+        );
+        return true;
+      }());
+    }*/
+    //debugger(when: event.isPanZoomUpdate);
 
     //--
     if (event.isPointerDown) {
@@ -625,7 +633,7 @@ class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
   @override
   bool handleMultiPointerDetectorPointerEvent(PointerEvent event) {
     //debugger();
-    if (event.isPointerDown) {
+    if (event.isPointerDown || event.isPanZoomStart) {
       _flingController?.dispose();
       _flingController = null;
     }
@@ -636,7 +644,8 @@ class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
   @override
   bool handleFlingDetectorPointerEvent(PointerEvent event, Velocity velocity) {
     //debugger();
-    if (pointerCount == 2 && event.isPointerUp) {
+    if ((pointerCount == 2 || event.isPanPointerEvent) &&
+        (event.isPointerUp || event.isPanZoomEnd)) {
       if (velocity.pixelsPerSecond.dx.abs() > flingVelocityThreshold) {
         //双指横向滑动
         l.d('fling:$velocity');

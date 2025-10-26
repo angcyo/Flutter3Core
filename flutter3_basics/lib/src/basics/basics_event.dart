@@ -294,6 +294,10 @@ extension PointerEventEx on PointerEvent {
 
   //-- trackpad event
 
+  /// 是否是触控板事件
+  bool get isPanPointerEvent =>
+      isPanZoomStart || isPanZoomUpdate || isPanZoomEnd;
+
   /// [PointerPanZoomStartEvent]
   /// [PointerPanZoomUpdateEvent]
   /// [PointerPanZoomEndEvent]
@@ -312,6 +316,9 @@ extension PointerEventEx on PointerEvent {
       : 1.0;
 
   bool get isPanZoomEnd => this is PointerPanZoomEndEvent;
+
+  bool get isPanFinish =>
+      isPanZoomEnd || this is PointerScrollInertiaCancelEvent;
 }
 
 extension KeyEventEx on KeyEvent {
@@ -1044,18 +1051,18 @@ mixin MultiPointerDetectorMixin {
 
   @entryPoint
   void addMultiPointerDetectorPointerEvent(PointerEvent event) {
-    if (!event.isTouchPointerEvent) {
+    if (!event.isTouchPointerEvent && !event.isPanPointerEvent) {
       return;
     }
     //1---
     var pointer = event.pointer;
-    if (event.isPointerDown) {
+    if (event.isPointerDown || event.isPanZoomStart) {
       //手势按下
       pointerDownMap[pointer] = event;
       pointerMoveMap[pointer] = event;
       pointerMoveLastMap[pointer] = event;
       startCheckMultiLongPress();
-    } else if (event.isPointerMove) {
+    } else if (event.isPointerMove || event.isPanZoomUpdate) {
       //手势移动
       pointerMoveMap[pointer] = event;
       if (isEnableMultiLongPress) {
@@ -1065,7 +1072,7 @@ mixin MultiPointerDetectorMixin {
           stopCheckMultiLongPress();
         }
       }
-    } else if (event.isPointerFinish) {
+    } else if (event.isPointerFinish || event.isPanFinish) {
       //有手势抬起, 取消长按检查
       stopCheckMultiLongPress();
     }
@@ -1078,7 +1085,7 @@ mixin MultiPointerDetectorMixin {
     }
     pointerMoveLastMap[pointer] = event;
     //3---
-    if (event.isPointerFinish) {
+    if (event.isPointerFinish || event.isPanFinish) {
       removePointer(event);
     }
     if (isHandledMultiPointerDetectorEvent && pointerDownMap.isEmpty) {
@@ -1339,27 +1346,40 @@ mixin FlingDetectorMixin {
   /// 每个手指的速度追踪器
   final Map<int, VelocityTracker> velocityTrackersMap = {};
 
+  /// 快速滑动的起始位置
+  Offset _startPosition = Offset.zero;
+
   /// 入口函数
   @entryPoint
   void addFlingDetectorPointerEvent(PointerEvent event) {
-    if (event is PointerDownEvent) {
+    if (event is PointerDownEvent || event is PointerPanZoomStartEvent) {
       velocityTrackersMap[event.pointer] = VelocityTracker.withKind(event.kind);
+      _startPosition = event.localPosition;
+      l.d("_startPosition->$_startPosition");
     }
 
     //1
     final tracker = velocityTrackersMap[event.pointer];
-    tracker?.addPosition(event.timeStamp, event.localPosition);
+    if (event is PointerPanZoomUpdateEvent) {
+      tracker?.addPosition(event.timeStamp, _startPosition + event.pan);
+    } else {
+      tracker?.addPosition(event.timeStamp, event.localPosition);
+    }
 
     //2
-    if (tracker != null && event is PointerUpEvent) {
+    if (tracker != null &&
+        (event is PointerUpEvent || event is PointerPanZoomEndEvent)) {
       final velocity = tracker.getVelocity();
+      //debugger();
       if (handleFlingDetectorPointerEvent(event, velocity)) {
         velocityTrackersMap.remove(event.pointer);
       }
     }
 
     //3
-    if (event is PointerUpEvent || event is PointerCancelEvent) {
+    if ((event is PointerUpEvent || event is PointerPanZoomEndEvent) ||
+        (event is PointerCancelEvent ||
+            event is PointerScrollInertiaCancelEvent)) {
       velocityTrackersMap.remove(event.pointer);
     }
   }
