@@ -335,6 +335,39 @@ extension KeyEventEx on KeyEvent {
       isKeyboardKey(LogicalKeyboardKey.controlLeft) ||
       isKeyboardKey(LogicalKeyboardKey.controlRight);
 
+  /// 是否是Alt键
+  bool get isAltKey =>
+      isKeyboardKey(LogicalKeyboardKey.alt) ||
+      isKeyboardKey(LogicalKeyboardKey.altLeft) ||
+      isKeyboardKey(LogicalKeyboardKey.altRight);
+
+  /// 是否是Shift键
+  bool get isShiftKey =>
+      isKeyboardKey(LogicalKeyboardKey.shift) ||
+      isKeyboardKey(LogicalKeyboardKey.shiftLeft) ||
+      isKeyboardKey(LogicalKeyboardKey.shiftRight);
+
+  /// 是否是数字键
+  bool get isNumberKey =>
+      logicalKey == LogicalKeyboardKey.digit1 ||
+      logicalKey == LogicalKeyboardKey.digit2 ||
+      logicalKey == LogicalKeyboardKey.digit3 ||
+      logicalKey == LogicalKeyboardKey.digit4 ||
+      logicalKey == LogicalKeyboardKey.digit5 ||
+      logicalKey == LogicalKeyboardKey.digit6 ||
+      logicalKey == LogicalKeyboardKey.digit7 ||
+      logicalKey == LogicalKeyboardKey.digit8 ||
+      logicalKey == LogicalKeyboardKey.digit9 ||
+      logicalKey == LogicalKeyboardKey.digit0;
+
+  /// 是否是+-键
+  bool get isPlusMinusKey =>
+      logicalKey == LogicalKeyboardKey.equal ||
+      logicalKey == LogicalKeyboardKey.minus;
+
+  /// 是否是小数点
+  bool get isDotKey => logicalKey == LogicalKeyboardKey.period;
+
   /// 是否是指定的按键
   bool isKeyboardKey(KeyboardKey key) => key == logicalKey;
 }

@@ -12,7 +12,11 @@ part of '../../flutter3_canvas.dart';
 ///   - [onPaintingSelf]
 ///
 class IElementPainter extends IPainter
-    with DiagnosticableTreeMixin, DiagnosticsMixin, IPainterEventHandlerMixin {
+    with
+        DiagnosticableTreeMixin,
+        DiagnosticsMixin,
+        IPainterEventHandlerMixin,
+        KeyEventClientMixin {
   /// 画布代理
   CanvasDelegate? canvasDelegate;
 
@@ -206,7 +210,7 @@ class IElementPainter extends IPainter
 
   /// 处理键盘事件
   /// [CanvasRenderBox.onHandleKeyEventMixin]驱动
-  @overridePoint
+  @override
   bool handleKeyEvent(KeyEvent event) => false;
 
   //endregion core

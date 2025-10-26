@@ -8,7 +8,12 @@ part of '../../../flutter3_canvas.dart';
 /// - 在坐标轴上拖动以生成参考线
 /// - 在已有的参考线上拖动编辑
 ///
-class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
+class RefLineComponent
+    with
+        IPainterEventHandlerMixin,
+        TranslateDetectorMixin,
+        KeyEventClientMixin,
+        NumberKeyEventDetectorMixin {
   final CanvasAxisManager axisManager;
 
   /// 要构建什么方向的参考线
@@ -105,6 +110,25 @@ class RefLineComponent with IPainterEventHandlerMixin, TranslateDetectorMixin {
       /*l.i(
         "sceneValue->${_refLineData?.axis} $value -> ${_refLineData?.sceneValue}",
       );*/
+      axisManager.addRefLine(_refLineData);
+    }
+    return true;
+  }
+
+  @override
+  bool handleKeyEvent(KeyEvent event) {
+    /*if (event.isKeyDownOrRepeat) {
+      l.d("KeyEvent[${event.character}]->$event");
+      debugger();
+    }*/
+    return addNumberDetectorKeyEvent(event);
+  }
+
+  @override
+  bool handleNumberDetectorKeyEvent(KeyEvent event, number) {
+    if (_refLineData != null) {
+      final dp = (number as double).toDpFromUnit(axisManager.axisUnit);
+      _refLineData?.sceneValue = dp;
       axisManager.addRefLine(_refLineData);
     }
     return true;

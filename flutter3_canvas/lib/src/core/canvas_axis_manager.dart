@@ -11,7 +11,8 @@ part of '../../flutter3_canvas.dart';
 /// - [updateAxisData] 更新坐标轴数据
 /// - [painting] 绘制坐标轴
 ///
-class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
+class CanvasAxisManager extends IPainter
+    with IPainterEventHandlerMixin, KeyEventClientMixin {
   final CanvasPaintManager paintManager;
 
   CanvasDelegate get canvasDelegate => paintManager.canvasDelegate;
@@ -538,10 +539,16 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
       final downRefLineData = findRefLineData(localPosition);
       if (downRefLineData != null) {
         return true;
-      } else if (xAxisBounds?.contains(localPosition) == true) {
-        return true;
-      } else if (yAxisBounds?.contains(localPosition) == true) {
-        return true;
+      } else {
+        if (_refLineComponent != null) {
+          _refLineComponent = null;
+          canvasDelegate.refresh();
+        }
+        if (xAxisBounds?.contains(localPosition) == true) {
+          return true;
+        } else if (yAxisBounds?.contains(localPosition) == true) {
+          return true;
+        }
       }
     }
     return super.interceptPainterPointerEvent(event);
@@ -557,10 +564,12 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
         _refLineComponent = RefLineComponent(this, downRefLineData.axis)
           .._refLineData = downRefLineData;
         canvasDelegate.refresh();
-      } else if (xAxisBounds?.contains(localPosition) == true) {
-        _refLineComponent = RefLineComponent(this, Axis.horizontal);
-      } else if (yAxisBounds?.contains(localPosition) == true) {
-        _refLineComponent = RefLineComponent(this, Axis.vertical);
+      } else {
+        if (xAxisBounds?.contains(localPosition) == true) {
+          _refLineComponent = RefLineComponent(this, Axis.horizontal);
+        } else if (yAxisBounds?.contains(localPosition) == true) {
+          _refLineComponent = RefLineComponent(this, Axis.vertical);
+        }
       }
       _refLineComponent?.handlePainterPointerEvent(event);
       return _refLineComponent != null;
@@ -571,12 +580,22 @@ class CanvasAxisManager extends IPainter with IPainterEventHandlerMixin {
           if (isRefLineMoveToAxis(_refLineComponent?._refLineData)) {
             removeRefLine(_refLineComponent?._refLineData);
           }
-          _refLineComponent = null;
+          //_refLineComponent = null;
         }
         return handle;
       }
     }
     return false;
+  }
+
+  @override
+  bool interceptKeyEvent(KeyEvent event) {
+    return _refLineComponent?.interceptKeyEvent(event) ?? false;
+  }
+
+  @override
+  bool handleKeyEvent(KeyEvent event) {
+    return _refLineComponent?.handleKeyEvent(event) ?? false;
   }
 
   /// 绘制参考线

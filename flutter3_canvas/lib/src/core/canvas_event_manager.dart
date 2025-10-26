@@ -138,6 +138,9 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     }());
   }
 
+  /// 拦截了键盘事件的客户端
+  KeyEventClientMixin? _keyEventInterceptClient;
+
   /// 键盘事件处理
   /// [CanvasDelegate.handleKeyEvent]驱动
   @entryPoint
@@ -151,15 +154,41 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     if (canvasDelegate.canvasStyle.enableElementControl ||
         canvasDelegate.canvasStyle.enableElementKeyEvent == true) {
       //将事件发送元素
-      for (final element
-          in canvasDelegate.canvasElementManager.elements.reversed) {
-        if (element.handleKeyEvent(event)) {
-          handle = true;
-          break;
+      if (_keyEventInterceptClient != null) {
+        handle = _keyEventInterceptClient!.handleKeyEvent(event);
+        if (!handle) {
+          requestInterceptKeyEvent(null);
+        }
+      } else {
+        final List<KeyEventClientMixin> clients = [
+          axisManager,
+          ...canvasDelegate.canvasElementManager.elements.reversed,
+        ];
+        for (final client in clients) {
+          if (client.interceptKeyEvent(event)) {
+            handle = true;
+            requestInterceptKeyEvent(client);
+            client.handleKeyEvent(event);
+            break;
+          }
+        }
+        if (_keyEventInterceptClient == null) {
+          for (final client in clients) {
+            if (client.handleKeyEvent(event)) {
+              handle = true;
+              break;
+            }
+          }
         }
       }
     }
     return handle;
+  }
+
+  /// 请求拦截键盘事件处理
+  @api
+  void requestInterceptKeyEvent(KeyEventClientMixin? client) {
+    _keyEventInterceptClient = client;
   }
 
   //--

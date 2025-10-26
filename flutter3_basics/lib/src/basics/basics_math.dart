@@ -280,6 +280,7 @@ num formatDoubleNumber(double number, NumType? numType, {bool round = true}) {
   }
 }
 
+/// 数学字符串扩展
 extension MathStringEx on String {
   /// LTWH
   /// "l,t,w,h"
@@ -337,8 +338,15 @@ extension MathStringEx on String {
       return null;
     }
   }
+
+  /// 判断当前字符串是否是整数
+  bool get isInt => int.tryParse(this) != null;
+
+  /// 判断当前字符串是小数
+  bool get isDouble => double.tryParse(this) != null;
 }
 
+/// 数学矩形扩展
 extension MathRectEx on Rect {
   String get ltwhString => "$left,$top,$width,$height";
 
