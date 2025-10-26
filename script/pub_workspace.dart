@@ -55,7 +55,9 @@ void main() async {
     final configFile = File("$key/$txtName");
     final isNewWorkspace = !configFile.existsSync();
     //读取文件, 用来比对内容是否有改变
-    final oldLines = isNewWorkspace ? ["empty"] : configFile.readAsLinesSync().skip(2);
+    final oldLines = isNewWorkspace
+        ? ["empty"]
+        : configFile.readAsLinesSync().skipWhile((e) => e.startsWith("#"));
     final newLines = value.map((e) => e.path.replaceFirst("$rootPath/", "- "));
     /*if (key.endsWith("LaserCore")) {
       colorLog("old->${oldLines.join("\n")}");
