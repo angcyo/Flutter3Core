@@ -1355,7 +1355,7 @@ mixin FlingDetectorMixin {
     if (event is PointerDownEvent || event is PointerPanZoomStartEvent) {
       velocityTrackersMap[event.pointer] = VelocityTracker.withKind(event.kind);
       _startPosition = event.localPosition;
-      l.d("_startPosition->$_startPosition");
+      //l.d("_startPosition->$_startPosition");
     }
 
     //1
