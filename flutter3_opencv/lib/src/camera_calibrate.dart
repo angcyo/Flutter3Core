@@ -130,16 +130,27 @@ class CameraCalibrateHelper {
     );
     this.cameraMatrix = cameraMatrix;
     this.distCoeffs = distCoeffs;
-    //distCoeffs:Mat(addr=0x6000012e88c0, type=CV_64FC1, rows=1, cols=5, channels=1) [[-0.7881097007309008, 2.8231170733523783, 0.02692497935255397, 0.08256194583654793, -7.601687967063381]]
-    //cameraMatrix:Mat(addr=0x6000012e8890, type=CV_64FC1, rows=3, cols=3, channels=1) [[802.4764753450518, 0.0, 12.792931450932988], [0.0, 1934.0012961748434, -14.44565026590872], [0.0, 0.0, 1.0]]
-    l.d(
-      "distCoeffs: $distCoeffs",
-    ); //distCoeffs: Mat(addr=0x600002fdb060, type=CV_64FC1, rows=1, cols=5, channels=1)
-    l.i("distCoeffs: ${distCoeffs.toList()}");
-    l.d(
-      "cameraMatrix: $cameraMatrix",
-    ); //Mat(addr=0x600002fdb470, type=CV_64FC1, rows=3, cols=3, channels=1)
-    l.i("cameraMatrix: ${cameraMatrix.toList()}");
+
+    assert(() {
+      final cameraMatrix2 = cameraMatrix.cameraMatrixString().cameraMatrix;
+      final distCoeffs2 = distCoeffs.distCoeffsString().distCoeffs;
+      //debugger();
+      return true;
+    }());
+
+    assert(() {
+      //distCoeffs:Mat(addr=0x6000012e88c0, type=CV_64FC1, rows=1, cols=5, channels=1) [[-0.7881097007309008, 2.8231170733523783, 0.02692497935255397, 0.08256194583654793, -7.601687967063381]]
+      //cameraMatrix:Mat(addr=0x6000012e8890, type=CV_64FC1, rows=3, cols=3, channels=1) [[802.4764753450518, 0.0, 12.792931450932988], [0.0, 1934.0012961748434, -14.44565026590872], [0.0, 0.0, 1.0]]
+      l.d(
+        "distCoeffs: $distCoeffs",
+      ); //distCoeffs: Mat(addr=0x600002fdb060, type=CV_64FC1, rows=1, cols=5, channels=1)
+      l.i("distCoeffs: ${distCoeffs.toList()}");
+      l.d(
+        "cameraMatrix: $cameraMatrix",
+      ); //Mat(addr=0x600002fdb470, type=CV_64FC1, rows=3, cols=3, channels=1)
+      l.i("cameraMatrix: ${cameraMatrix.toList()}");
+      return true;
+    }());
 
     assert(() {
       final list = cameraMatrix.toList();
@@ -154,16 +165,19 @@ class CameraCalibrateHelper {
       return true;
     }());
 
-    final (cv.Mat rval, cv.Rect validPixROI) = cv.getOptimalNewCameraMatrix(
-      cameraMatrix,
-      distCoeffs,
-      patternSize,
-      1,
-    );
-    //rval: [[251.89067723195916, 0.0, 13.173594365507311], [0.0, 328.36261300909996, 120.09392185903232], [0.0, 0.0, 1.0]]
-    l.d("rval: ${rval.toList()}");
-    //validPixROI: Rect(0, 1, 6, 4)
-    l.d("validPixROI: $validPixROI");
+    assert(() {
+      final (cv.Mat rval, cv.Rect validPixROI) = cv.getOptimalNewCameraMatrix(
+        cameraMatrix,
+        distCoeffs,
+        patternSize,
+        1,
+      );
+      //rval: [[251.89067723195916, 0.0, 13.173594365507311], [0.0, 328.36261300909996, 120.09392185903232], [0.0, 0.0, 1.0]]
+      l.d("rval: ${rval.toList()}");
+      //validPixROI: Rect(0, 1, 6, 4)
+      l.d("validPixROI: $validPixROI");
+      return true;
+    }());
   }
 
   /// 测试畸变的原图

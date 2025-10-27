@@ -387,6 +387,37 @@ extension MatEx on cv.Mat {
   Future<UiImage> toUiImage() async {
     return cvImgEncodeMat(this)!.toImage();
   }
+
+  /// 将相机内参矩阵转换成字符串, 方便传输
+  /// - [MatEx.cameraMatrixString]
+  /// - [MatStringEx.cameraMatrix]
+  ///
+  /// ```
+  /// //cameraMatrix:Mat(addr=0x6000012e8890, type=CV_64FC1, rows=3, cols=3, channels=1)
+  /// [[802.4764753450518, 0.0, 12.792931450932988],
+  /// [0.0, 1934.0012961748434, -14.44565026590872],
+  /// [0.0, 0.0, 1.0]]
+  /// ```
+  String cameraMatrixString() {
+    final list = toList();
+    final flatten = list.flatten<num>();
+    return flatten.join(',');
+  }
+
+  /// 将相机畸变参数转换成字符串, 方便传输
+  /// - [MatEx.distCoeffsString]
+  /// - [MatStringEx.distCoeffs]
+  ///
+  /// ```
+  /// distCoeffs:Mat(addr=0x6000012e88c0, type=CV_64FC1, rows=1, cols=5, channels=1)
+  /// [[-0.7881097007309008, 2.8231170733523783, 0.02692497935255397, 0.08256194583654793, -7.601687967063381]]
+  ///
+  /// ```
+  String distCoeffsString() {
+    final list = toList();
+    final flatten = list.flatten<num>();
+    return flatten.join(',');
+  }
 }
 
 extension MatUiImageEx on UiImage {
@@ -397,5 +428,39 @@ extension MatUiImageEx on UiImage {
   }) async {
     final bytes = await toBytes(format);
     return cvImgDecodeMatAsync(bytes!, flags: flags);
+  }
+}
+
+extension MatStringEx on String {
+  /// 将存储的相机内参矩阵字符串转换成[cv.Mat]
+  /// - [MatEx.cameraMatrixString]
+  /// - [MatStringEx.cameraMatrix]
+  ///
+  /// ```
+  /// 953.3601440185421,0.0,20.99147803728926, 0.0,1150.5279533663834,34.79296704018406 ,0.0,0.0,1.0
+  /// ```
+  cv.Mat? get cameraMatrix {
+    final list = split(',').map((e) => double.parse(e)).toList();
+    final cameraMatrix = cv.Mat.from2DList(
+      list.to2DList(3),
+      cv.MatType.CV_64FC1,
+    );
+    return cameraMatrix;
+  }
+
+  /// 将存储的相机畸变参数字符串转换成[cv.Mat]
+  /// - [MatEx.distCoeffsString]
+  /// - [MatStringEx.distCoeffs]
+  ///
+  /// ```
+  /// -0.15912404178645986,-1.3501136289999192,0.021079322288846902,0.058574551893847956,2.2543234290446703
+  /// ```
+  cv.Mat? get distCoeffs {
+    final list = split(',').map((e) => double.parse(e)).toList();
+    final cameraMatrix = cv.Mat.from2DList(
+      list.to2DList(list.length),
+      cv.MatType.CV_64FC1,
+    );
+    return cameraMatrix;
   }
 }
