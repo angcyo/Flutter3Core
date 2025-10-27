@@ -121,6 +121,12 @@ class RefLineComponent
       l.d("KeyEvent[${event.character}]->$event");
       debugger();
     }*/
+    if (event.isEscKey) {
+      if (!axisManager.canvasDelegate.canvasEventManager.isPointerDown) {
+        axisManager.removeRefLine(_refLineData);
+        _refLineData = null;
+      }
+    }
     return addNumberDetectorKeyEvent(event);
   }
 

@@ -793,6 +793,13 @@ class CanvasAxisManager extends IPainter
     if (data == null) {
       return;
     }
+    if (data == _refLineComponent?._refLineData) {
+      //移除的是正在编辑的参考线
+      _refLineComponent = null;
+    }
+    if (data == _hoverRefLineData) {
+      _hoverRefLineData = null;
+    }
     if (refLineDataList.contains(data)) {
       refLineDataList.remove(data);
     }

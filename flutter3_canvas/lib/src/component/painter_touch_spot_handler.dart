@@ -12,6 +12,10 @@ class PainterTouchSpotHandler extends IPainter {
   @configProperty
   Matrix4? parentMatrix;
 
+  /// 是否在相对于容器的矩阵绘制触点
+  @configProperty
+  bool isRelativeParent = true;
+
   /// 触点列表
   @configProperty
   final List<TouchSpot> touchSpotList = [];
@@ -20,7 +24,7 @@ class PainterTouchSpotHandler extends IPainter {
 
   @override
   void applyPaintTransform(IPainter child, Matrix4 transform) {
-    if (this.parent == null && parentMatrix != null) {
+    if (isRelativeParent && this.parent == null && parentMatrix != null) {
       debugger(when: debugLabel != null);
       transform.multiply(parentMatrix!);
     }
@@ -32,7 +36,7 @@ class PainterTouchSpotHandler extends IPainter {
   void painting(Canvas canvas, PaintMeta paintMeta) {
     PaintMeta meta = paintMeta;
     //debugger();
-    if (parentMatrix != null) {
+    if (isRelativeParent && parentMatrix != null) {
       meta = paintMeta.copyWith(
         originMatrix: Matrix4.identity(),
         canvasMatrix: paintMeta.paintMatrix * parentMatrix!,
@@ -100,7 +104,9 @@ class PainterTouchSpotHandler extends IPainter {
       }
       final location = element.bounds;
       if (location != null) {
-        final bounds = (parentMatrix?.mapRect(location) ?? location);
+        final bounds = isRelativeParent
+            ? (parentMatrix?.mapRect(location) ?? location)
+            : location;
         if (bounds.contains(position)) {
           return element;
         }

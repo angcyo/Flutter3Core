@@ -1761,9 +1761,9 @@ class ElementSelectComponent extends ElementGroupPainter
       assert(() {
         final size = elements?.size() ?? 0;
         if (size > 5) {
-          l.d('选中新的元素: $size');
+          l.d('[${classHash()}]选中新的元素: $size');
         } else {
-          l.d('选中新的元素: $elements');
+          l.d('[${classHash()}]选中新的元素: $elements');
         }
         return true;
       }());
