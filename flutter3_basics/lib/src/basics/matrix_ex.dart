@@ -32,6 +32,11 @@ extension Matrix4Ex on vector.Matrix4 {
     return storage.join(",");
   }
 
+  /// 获取平移距离
+  Offset get offset {
+    return Offset(translateX, translateY);
+  }
+
   /// 获取X轴平移距离
   /// [getTranslation]
   double get translateX => row0.w;

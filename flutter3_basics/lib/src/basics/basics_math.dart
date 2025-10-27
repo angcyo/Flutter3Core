@@ -357,3 +357,29 @@ extension MathRectEx on Rect {
 
   String get ltrbString => "$left,$top,$right,$bottom";
 }
+
+extension MathListDoubleEx on List<double> {
+  /// 获取矩形信息
+  /// - 如果是4个值, 则表示 ltwh
+  /// - 如果是8个值, 则表示 ltrb
+  Rect? get rect {
+    if (length == 4) {
+      return Rect.fromLTWH(this[0], this[1], this[2], this[3]);
+    } else if (length == 8) {
+      final x1 = this[0];
+      final y1 = this[1];
+      final x2 = this[2];
+      final y2 = this[3];
+      final x3 = this[4];
+      final y3 = this[5];
+      final x4 = this[6];
+      final y4 = this[7];
+      final left = min(x1, min(x2, min(x3, x4)));
+      final top = min(y1, min(y2, min(y3, y4)));
+      final right = max(x1, max(x2, max(x3, x4)));
+      final bottom = max(y1, max(y2, max(y3, y4)));
+      return Rect.fromLTRB(left, top, right, bottom);
+    }
+    return null;
+  }
+}
