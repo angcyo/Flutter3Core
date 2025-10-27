@@ -408,29 +408,30 @@ extension ImageEx on UiImage {
     color: tintColor,
   );
 
-  /// 将图片transform,得到一张新的图片
+  /// 将图片进行一次[matrix]变换,得到一张新的图片
   /// [transformSync]
-  Future<UiImage> transform(Matrix4 matrix) async {
+  Future<UiImage> transform(Matrix4 matrix, {Paint? paint}) async {
     final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
     final newBounds = matrix.mapRect(bounds);
     final image = await drawImage(newBounds.size, (canvas) {
       final translate = Matrix4.identity()
         ..translate(-newBounds.left, -newBounds.top);
       canvas.transform((translate * matrix).storage);
-      canvas.drawImage(this, Offset.zero, Paint());
+      canvas.drawImage(this, Offset.zero, paint ?? Paint());
     });
     return image;
   }
 
-  /// [transform]
-  UiImage transformSync(Matrix4 matrix) {
+  /// - [transform]
+  /// - [transformSync]
+  UiImage transformSync(Matrix4 matrix, {Paint? paint}) {
     final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
     final newBounds = matrix.mapRect(bounds);
     final image = drawImageSync(newBounds.size, (canvas) {
       final translate = Matrix4.identity()
         ..translate(-newBounds.left, -newBounds.top);
       canvas.transform((translate * matrix).storage);
-      canvas.drawImage(this, Offset.zero, Paint());
+      canvas.drawImage(this, Offset.zero, paint ?? Paint());
     });
     return image;
   }
@@ -480,17 +481,23 @@ extension ImageEx on UiImage {
 
   //--
 
-  /// 裁剪图片
-  /// [clipRect] 剪切区域, 以及输出的图片大小
-  /// [clip] 需要裁剪的区域, 在图片中的1:1坐标系
-  /// [matrix] 图片绘制的矩阵
-  /// [transformSync]
-  Future<UiImage> crop(Rect clipRect, Path? clip, {Matrix4? matrix}) async {
+  /// 裁剪图片, 获取图片指定区域的图片
+  /// - [clipRect] 剪切区域, 以及输出的图片大小
+  /// - [clip] 需要裁剪的区域, 在图片中的1:1坐标系
+  /// - [matrix] 图片绘制的矩阵
+  ///
+  /// - [transformSync]
+  Future<UiImage> crop(
+    Rect clipRect,
+    Path? clip, {
+    Matrix4? matrix,
+    Paint? paint,
+  }) async {
     final image = await drawImage(clipRect.size, (canvas) {
       canvas.withTranslate(-clipRect.left, -clipRect.top, () {
         canvas.withClipPath(clip, () {
           canvas.withMatrix(matrix, () {
-            canvas.drawImage(this, Offset.zero, Paint());
+            canvas.drawImage(this, Offset.zero, paint ?? Paint());
           });
         });
       });
@@ -499,12 +506,12 @@ extension ImageEx on UiImage {
   }
 
   /// [crop]
-  UiImage cropSync(Rect clipRect, Path? clip, {Matrix4? matrix}) {
+  UiImage cropSync(Rect clipRect, Path? clip, {Matrix4? matrix, Paint? paint}) {
     final image = drawImageSync(clipRect.size, (canvas) {
       canvas.withTranslate(-clipRect.left, -clipRect.top, () {
         canvas.withClipPath(clip, () {
           canvas.withMatrix(matrix, () {
-            canvas.drawImage(this, Offset.zero, Paint());
+            canvas.drawImage(this, Offset.zero, paint ?? Paint());
           });
         });
       });
