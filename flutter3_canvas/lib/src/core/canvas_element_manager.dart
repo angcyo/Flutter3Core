@@ -2241,6 +2241,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     return list.any((element) => !element.isVisible);
   }
 
+  /// 所有元素是否都锁定了
+  @api
+  bool isAllElementLocked({@defInjectMark List<ElementPainter>? elementList}) {
+    final list = elementList ?? elements;
+    return list.every((element) => element.isLockOperate);
+  }
+
+  /// 是否有元素锁定了
+  @api
+  bool isAnyElementLocked({@defInjectMark List<ElementPainter>? elementList}) {
+    final list = elementList ?? elements;
+    return list.any((element) => element.isLockOperate);
+  }
+
   //endregion ---operate/api---
 
   @override

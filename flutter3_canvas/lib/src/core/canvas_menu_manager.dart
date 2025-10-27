@@ -68,6 +68,23 @@ class CanvasMenuManager
       "画布选项".text().menuStyleItem().ink(() {
         canvasDelegate.showWidgetDialog(CanvasOptionsDialog(canvasDelegate));
       }).popMenu(),
+      hLine(context).size(width: kMenuMinWidth),
+      if (!canvasDelegate.isCurrentCanvasEmpty &&
+          !canvasElementManager.isAllElementHidden())
+        "隐藏所有元素".text().menuStyleItem().ink(() {
+          canvasElementManager.visibleElementList(
+            canvasElementManager.elements,
+            visible: false,
+          );
+        }).popMenu(),
+      if (!canvasDelegate.isCurrentCanvasEmpty &&
+          canvasElementManager.isAnyElementHidden())
+        "显示所有元素".text().menuStyleItem().ink(() {
+          canvasElementManager.visibleElementList(
+            canvasElementManager.elements,
+            visible: true,
+          );
+        }).popMenu(),
       //--
       if (otherMenus.isNotEmpty) hLine(context).size(width: kMenuMinWidth),
       ...otherMenus,
@@ -122,6 +139,14 @@ class CanvasMenuManager
             canvasKeyManager.ungroupSelectedElement();
           }, enable: enableUngroup)
           .popMenu(enable: enableUngroup),
+      //--
+      hLine(context).size(width: kMenuMinWidth),
+      "隐藏元素".text().menuStyleItem().ink(() {
+        canvasElementManager.visibleElementList(
+          canvasElementManager.elementSelectComponent?.children,
+          visible: false,
+        );
+      }).popMenu(),
       //--
       if (otherMenus.isNotEmpty) hLine(context).size(width: kMenuMinWidth),
       ...otherMenus,
