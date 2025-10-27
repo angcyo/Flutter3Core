@@ -1339,39 +1339,55 @@ mixin MultiPointerDetectorMixin {
 }
 
 /// fling 快速滑动探测
-/// [DragGestureRecognizer._velocityTrackers]
-/// [DragGestureRecognizer._defaultBuilder]
-/// [DragGestureRecognizer.isFlingGesture]
+/// - [VerticalDragGestureRecognizer]
+///
+/// - [DragGestureRecognizer._velocityTrackers]
+/// - [DragGestureRecognizer._defaultBuilder]
+/// - [DragGestureRecognizer.isFlingGesture]
 mixin FlingDetectorMixin {
   /// 每个手指的速度追踪器
   final Map<int, VelocityTracker> velocityTrackersMap = {};
 
-  /// 快速滑动的起始位置
-  Offset _startPosition = Offset.zero;
-
   /// 入口函数
+  ///
+  /// - [DragGestureRecognizer.handleEvent]
   @entryPoint
   void addFlingDetectorPointerEvent(PointerEvent event) {
-    if (event is PointerDownEvent || event is PointerPanZoomStartEvent) {
-      velocityTrackersMap[event.pointer] = VelocityTracker.withKind(event.kind);
-      _startPosition = event.localPosition;
-      //l.d("_startPosition->$_startPosition");
-    }
-
-    //1
-    final tracker = velocityTrackersMap[event.pointer];
+    //l.d("[${event.runtimeType}][${event.pointer}]->${event.localPosition}");
     if (event is PointerPanZoomUpdateEvent) {
-      tracker?.addPosition(event.timeStamp, _startPosition + event.pan);
-    } else {
-      tracker?.addPosition(event.timeStamp, event.localPosition);
+      /*l.d(
+        "[${event.runtimeType}]->localPan:${event.localPan} pan:${event.pan}",
+      );*/
+    }
+    if (event is PointerDownEvent || event is PointerPanZoomStartEvent) {
+      //DragGestureRecognizer._defaultBuilder
+      velocityTrackersMap[event.pointer] = VelocityTracker.withKind(event.kind);
+      //l.d("[${event.runtimeType}]_startPosition->$_startPosition");
+    }
+    final tracker = velocityTrackersMap[event.pointer];
+    //1
+    if (!event.synthesized &&
+        (event is PointerDownEvent ||
+            event is PointerMoveEvent ||
+            event is PointerPanZoomStartEvent ||
+            event is PointerPanZoomUpdateEvent)) {
+      final Offset position = switch (event) {
+        PointerPanZoomStartEvent() => Offset.zero,
+        PointerPanZoomUpdateEvent() => event.pan,
+        _ => event.localPosition,
+      };
+      tracker?.addPosition(event.timeStamp, position);
     }
 
     //2
     if (tracker != null &&
         (event is PointerUpEvent || event is PointerPanZoomEndEvent)) {
-      final velocity = tracker.getVelocity();
+      //final velocity = tracker.getVelocity();
+      final estimate = tracker.getVelocityEstimate();
       //debugger();
-      if (handleFlingDetectorPointerEvent(event, velocity)) {
+      //l.w("estimate->$estimate");
+      if (estimate != null &&
+          handleFlingDetectorPointerEvent(event, estimate)) {
         velocityTrackersMap.remove(event.pointer);
       }
     }
@@ -1386,8 +1402,11 @@ mixin FlingDetectorMixin {
 
   /// 当手势抬起时, 处理是否需要快速滑动事件
   @overridePoint
-  bool handleFlingDetectorPointerEvent(PointerEvent event, Velocity velocity) {
-    velocity.pixelsPerSecond;
+  bool handleFlingDetectorPointerEvent(
+    PointerEvent event,
+    VelocityEstimate estimate,
+  ) {
+    //estimate.pixelsPerSecond;
     return false;
   }
 
@@ -1415,12 +1434,17 @@ mixin FlingDetectorMixin {
       position: fromValue,
       velocity: velocity,
     );
-    return animation(vsync, (value, isCompleted) {
-      //debugger();
-      final x = simulation.x(duration.inSeconds * value);
-      //l.d('fling $isCompleted :$value x:$x');
-      flingAction(x);
-    }, duration: duration);
+    return animation(
+      vsync,
+      (value, isCompleted) {
+        //debugger();
+        final x = simulation.x(duration.inSeconds * value);
+        //l.d('fling $isCompleted :$value x:$x');
+        flingAction(x);
+      },
+      duration: duration,
+      tag: classHash(),
+    );
   }
 
   /// 开始快速滑动

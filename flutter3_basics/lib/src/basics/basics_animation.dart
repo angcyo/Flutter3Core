@@ -66,12 +66,10 @@ extension AnimationEx<T> on Animation<T> {
 extension AnimationTweenEx on Animation<double> {
   /// 动画插值
   Animation<T> tween<T>(T? begin, T? end, {Curve curve = Curves.linear}) {
-    return Tween<T>(begin: begin, end: end).animate(
-      CurvedAnimation(
-        parent: this,
-        curve: curve,
-      ),
-    );
+    return Tween<T>(
+      begin: begin,
+      end: end,
+    ).animate(CurvedAnimation(parent: this, curve: curve));
   }
 }
 
@@ -131,14 +129,17 @@ extension AnimationWidgetEx on Widget {
     bool out = false,
   }) {
     return SlideTransition(
-      position: offset ??
+      position:
+          offset ??
           Tween<Offset>(
             begin: from ?? (out ? Offset.zero : const Offset(0, 1)),
             end: to ?? (out ? const Offset(0, 1) : Offset.zero),
-          ).animate(CurvedAnimation(
-            parent: AlwaysStoppedAnimation(out ? 0 : 1),
-            curve: Curves.easeIn,
-          )),
+          ).animate(
+            CurvedAnimation(
+              parent: AlwaysStoppedAnimation(out ? 0 : 1),
+              curve: Curves.easeIn,
+            ),
+          ),
       child: this,
     );
   }
@@ -170,10 +171,10 @@ extension AnimationWidgetEx on Widget {
   /// [AnimatedContainer]
   /// [AnimatedOpacity]
   Widget animatedOpacity({required double opacity}) => AnimatedOpacity(
-        opacity: opacity,
-        duration: kDefaultAnimationDuration,
-        child: this,
-      );
+    opacity: opacity,
+    duration: kDefaultAnimationDuration,
+    child: this,
+  );
 
   /// 动画切换2个[Widget].[AnimatedSwitcher]
   Widget animatedSwitcher({
@@ -223,6 +224,8 @@ AnimationController animation(
   double upperBound = 1.0,
   Curve? curve,
   Curve? reverseCurve,
+  //--
+  String? tag,
 }) {
   final controller = AnimationController(
     value: value,
@@ -236,7 +239,10 @@ AnimationController animation(
   final CurvedAnimation? animation = curve == null
       ? null
       : CurvedAnimation(
-          parent: controller, curve: curve, reverseCurve: reverseCurve);
+          parent: controller,
+          curve: curve,
+          reverseCurve: reverseCurve,
+        );
 
   //监听动画值变化
   controller
@@ -252,14 +258,20 @@ AnimationController animation(
       assert(() {
         //AnimationStatus.forward -> AnimationStatus.completed
         if (status.isCompleted) {
-          l.d('动画状态改变: $status isCompleted:${status.isCompleted.toDC()} isDismissed:${status.isDismissed.toDC()}');
+          l.d(
+            '[$tag]动画状态改变: $status isCompleted:${status.isCompleted.toDC()} isDismissed:${status.isDismissed.toDC()}',
+          );
         } else {
-          l.v('动画状态改变: $status isCompleted:${status.isCompleted.toDC()} isDismissed:${status.isDismissed.toDC()}');
+          l.v(
+            '[$tag]动画状态改变: $status isCompleted:${status.isCompleted.toDC()} isDismissed:${status.isDismissed.toDC()}',
+          );
         }
         return true;
       }());
-      listener(animation?.value ?? controller.value,
-          status == AnimationStatus.completed);
+      listener(
+        animation?.value ?? controller.value,
+        status == AnimationStatus.completed,
+      );
     })
     ..forward();
   //释放资源

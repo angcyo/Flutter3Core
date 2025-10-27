@@ -620,7 +620,10 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
 class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
     with FlingDetectorMixin {
   /// 速度阈值, 速度达到这个值时, 才会触发fling
-  double flingVelocityThreshold = 1000;
+  double minFlingVelocityThreshold = 1000;
+
+  /// 最大速度
+  double maxFlingVelocityThreshold = kMaxFlingVelocity;
 
   /// 滑动阈值, 滑动超过这个值时, 才会触发fling
   @dp
@@ -642,13 +645,30 @@ class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
   }
 
   @override
-  bool handleFlingDetectorPointerEvent(PointerEvent event, Velocity velocity) {
+  bool handleFlingDetectorPointerEvent(
+    PointerEvent event,
+    VelocityEstimate estimate,
+  ) {
     //debugger();
     if ((pointerCount == 2 || event.isPanPointerEvent) &&
-        (event.isPointerUp || event.isPanZoomEnd)) {
-      if (velocity.pixelsPerSecond.dx.abs() > flingVelocityThreshold) {
+        (event.isPointerUp ||
+            (event.isPanZoomEnd ? estimate.confidence > 0 : false))) {
+      final vx = clampDouble(
+        estimate.pixelsPerSecond.dx,
+        -maxFlingVelocityThreshold,
+        maxFlingVelocityThreshold,
+      );
+      final vy = clampDouble(
+        estimate.pixelsPerSecond.dy,
+        -maxFlingVelocityThreshold,
+        maxFlingVelocityThreshold,
+      );
+      if (vx.abs() > minFlingVelocityThreshold && vx.abs() >= vy.abs()) {
         //双指横向滑动
-        l.d('fling:$velocity');
+        assert(() {
+          l.d('横向fling:$estimate');
+          return true;
+        }());
         isFirstEventHandled = true;
         _flingController = startFling(
           (value) {
@@ -660,11 +680,14 @@ class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
           },
           vsync: canvasDelegate,
           fromValue: canvasDelegate.canvasViewBox.translateX,
-          velocity: velocity.pixelsPerSecond.dx,
+          velocity: vx,
         );
-      } else if (velocity.pixelsPerSecond.dy.abs() > flingVelocityThreshold) {
+      } else if (vy.abs() > minFlingVelocityThreshold) {
         //双指纵向滑动
-        l.d('fling:$velocity');
+        assert(() {
+          l.d('纵向fling:$estimate');
+          return true;
+        }());
         isFirstEventHandled = true;
         _flingController = startFling(
           (value) {
@@ -676,10 +699,10 @@ class CanvasFlingComponent extends BaseCanvasViewBoxEventComponent
           },
           vsync: canvasDelegate,
           fromValue: canvasDelegate.canvasViewBox.translateY,
-          velocity: velocity.pixelsPerSecond.dy,
+          velocity: vy,
         );
       }
     }
-    return super.handleFlingDetectorPointerEvent(event, velocity);
+    return super.handleFlingDetectorPointerEvent(event, estimate);
   }
 }
