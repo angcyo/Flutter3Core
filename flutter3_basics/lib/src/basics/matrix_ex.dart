@@ -15,6 +15,23 @@ part of '../../flutter3_basics.dart';
 /// https://developer.mozilla.org/zh-CN/docs/Web/CSS/transform-function/matrix
 ///
 extension Matrix4Ex on vector.Matrix4 {
+  /// 用来存储矩阵的数据结构
+  ///
+  /// ```
+  /// [0] [0.9525653704794811,-0.30433405160002863,0.0,335.1483767553776]
+  /// [1] [0.30433405160002863,0.9525653704794811,0.0,240.92653749772006]
+  /// [2] [0.0,0.0,1.0,0.0]
+  /// [3] [0.0,0.0,0.0,1.0]
+  /// ##
+  /// 0.9525653704794811,0.30433405160002863,0.0,0.0,-0.30433405160002863,0.9525653704794811,0.0,0.0,0.0,0.0,1.0,0.0,335.1483767553776,240.92653749772006,0.0,1.0
+  /// ```
+  ///
+  /// - [Matrix4Ex.matrix4String]
+  /// - [Matrix4StringEx.matrix4]
+  String get matrix4String {
+    return storage.join(",");
+  }
+
   /// 获取X轴平移距离
   /// [getTranslation]
   double get translateX => row0.w;
@@ -599,6 +616,18 @@ extension Matrix4Ex on vector.Matrix4 {
         '${lineNumber ? "[2] " : ""}${wrap(row2.x)}${wrap(row2.y)}${wrap(row2.z)}${wrap(row2.w, true)}$lineSeparator'
         '${lineNumber ? "[3] " : ""}${wrap(row3.x)}${wrap(row3.y)}${wrap(row3.z)}${wrap(row3.w, true)}$lineSeparator';
   }
+}
+
+extension Matrix4StringEx on String {
+  /// 用来存储矩阵的数据结构
+  ///
+  /// ```
+  /// 0.9525653704794811,0.30433405160002863,0.0,0.0,-0.30433405160002863,0.9525653704794811,0.0,0.0,0.0,0.0,1.0,0.0,335.1483767553776,240.92653749772006,0.0,1.0
+  /// ```
+  ///
+  /// - [Matrix4Ex.matrix4String]
+  /// - [Matrix4StringEx.matrix4]
+  Matrix4 get matrix4 => Matrix4.fromList(doubleList);
 }
 
 extension Matrix3Ex on vector.Matrix3 {

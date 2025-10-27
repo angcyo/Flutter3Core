@@ -467,7 +467,7 @@ extension MatStringEx on String {
   /// 953.3601440185421,0.0,20.99147803728926, 0.0,1150.5279533663834,34.79296704018406 ,0.0,0.0,1.0
   /// ```
   cv.Mat? get cvCameraMatrix {
-    final list = split(',').map((e) => double.parse(e)).toList();
+    final list = doubleList;
     final cameraMatrix = cv.Mat.from2DList(
       list.to2DList(3),
       cv.MatType.CV_64FC1,
@@ -483,7 +483,7 @@ extension MatStringEx on String {
   /// -0.15912404178645986,-1.3501136289999192,0.021079322288846902,0.058574551893847956,2.2543234290446703
   /// ```
   cv.Mat? get cvDistCoeffs {
-    final list = split(',').map((e) => double.parse(e)).toList();
+    final list = doubleList;
     final cameraMatrix = cv.Mat.from2DList(
       list.to2DList(list.length),
       cv.MatType.CV_64FC1,
@@ -500,7 +500,7 @@ extension MatStringEx on String {
   /// 25.115459457396405,-0.37128071248135014,-6985.416105677234, 10.56256529565071,15.73150297766723,-8164.720811665292, 0.019392064126516825,-0.0004494108804756873,1.0
   /// ```
   cv.Mat? get cvMatrix3 {
-    final list = split(',').map((e) => double.parse(e)).toList();
+    final list = doubleList;
     final cameraMatrix = cv.Mat.from2DList(
       list.to2DList(3),
       cv.MatType.CV_64FC1,

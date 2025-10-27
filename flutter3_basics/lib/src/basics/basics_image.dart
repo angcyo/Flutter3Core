@@ -417,7 +417,9 @@ extension ImageEx on UiImage {
     Matrix4 matrix, {
     bool keepOriginSize = false,
     @defInjectMark Offset? keepAnchor,
+    //--
     Paint? paint,
+    FilterQuality filterQuality = FilterQuality.low,
   }) async {
     final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
     final anchor = keepAnchor ?? bounds.center;
@@ -438,7 +440,12 @@ extension ImageEx on UiImage {
             keepOriginSize ? -(newAnchor.dy - anchor.dy) : -newBounds.top,
           );
         canvas.transform((translate * matrix).storage);
-        canvas.drawImage(this, Offset.zero, paint ?? Paint());
+        canvas.drawImage(
+          this,
+          Offset.zero,
+          paint ?? Paint()
+            ..filterQuality = filterQuality,
+        );
       },
     );
     return image;
@@ -450,7 +457,9 @@ extension ImageEx on UiImage {
     Matrix4 matrix, {
     bool keepOriginSize = false,
     @defInjectMark Offset? keepAnchor,
+    //--
     Paint? paint,
+    FilterQuality filterQuality = FilterQuality.low,
   }) {
     final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
     final anchor = keepAnchor ?? bounds.center;
@@ -471,7 +480,12 @@ extension ImageEx on UiImage {
           keepOriginSize ? -(newAnchor.dy - anchor.dy) : -newBounds.top,
         );
       canvas.transform((translate * matrix).storage);
-      canvas.drawImage(this, Offset.zero, paint ?? Paint());
+      canvas.drawImage(
+        this,
+        Offset.zero,
+        paint ?? Paint()
+          ..filterQuality = filterQuality,
+      );
     });
     return image;
   }

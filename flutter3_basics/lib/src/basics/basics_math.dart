@@ -282,6 +282,11 @@ num formatDoubleNumber(double number, NumType? numType, {bool round = true}) {
 
 /// 数学字符串扩展
 extension MathStringEx on String {
+  List<int> get intList => split(',').map((e) => int.parse(e)).toList();
+
+  List<double> get doubleList =>
+      split(',').map((e) => double.parse(e)).toList();
+
   /// LTWH
   /// "l,t,w,h"
   Rect? get rect => ltwhRect;
