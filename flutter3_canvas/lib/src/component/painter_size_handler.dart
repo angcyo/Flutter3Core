@@ -64,24 +64,43 @@ class PainterSizeHandler {
     return Rect.fromLTWH(x ?? 0, y ?? 0, w ?? 0, h ?? 0);
   }
 
+  /// 一定输出dp单位的坐标
+  @dp
+  @output
+  Rect? get outputBoundsDp {
+    if (_unit == null || _unit is DpUnit) {
+      return outputBounds;
+    }
+    if (x == null || y == null || w == null || h == null) {
+      return null;
+    }
+    return Rect.fromLTWH(
+      x?.toDpFromUnit(_unit) ?? 0,
+      y?.toDpFromUnit(_unit) ?? 0,
+      w?.toDpFromUnit(_unit) ?? 0,
+      h?.toDpFromUnit(_unit) ?? 0,
+    );
+  }
+
   //--
 
   /// 初始化数据
   /// - [painter] 可以使用元素初始化, 后续会自动操作元素
   /// - [elementsBounds] 也可以直接使用坐标初始化,
-  /// - [axisUnit] 当前画布的单位, 不指定则默认dp
+  /// - [unit] 当前画布的单位, 不指定则默认dp
   @api
   void initFrom({
     ElementPainter? painter,
     @dp Rect? elementsBounds,
-    IUnit? axisUnit,
+    IUnit? unit,
   }) {
     _targetPainter = painter ?? _targetPainter;
-    _unit = axisUnit ?? _unit;
+    _unit = unit ?? _unit;
 
     //角度
     angle = _targetPainter?.paintProperty?.angle.jd.round();
 
+    @dp
     final bounds = _targetPainter?.elementsBounds ?? elementsBounds;
     if (bounds == null) {
       return;
@@ -163,7 +182,7 @@ class PainterSizeHandler {
   /// 更新新的[x]坐标
   @api
   void updateNewX(
-    num? newX, {
+    @unit num? newX, {
     CanvasDelegate? canvasDelegate,
     CanvasElementControlManager? controlManager,
     //--
@@ -180,14 +199,14 @@ class PainterSizeHandler {
           dy: null,
         );
       }
-      x = newX.toDpFromUnit(_unit);
+      x = newX.toDouble();
     }
   }
 
   /// 更新新的[y]坐标
   @api
   void updateNewY(
-    num? newY, {
+    @unit num? newY, {
     CanvasDelegate? canvasDelegate,
     CanvasElementControlManager? controlManager,
     //--
@@ -204,14 +223,14 @@ class PainterSizeHandler {
           dy: (newY - y!).toDpFromUnit(_unit),
         );
       }
-      y = newY.toDpFromUnit(_unit);
+      y = newY.toDouble();
     }
   }
 
   /// 更新新的[w]宽度
   @api
   void updateNewW(
-    num? newW, {
+    @unit num? newW, {
     CanvasDelegate? canvasDelegate,
     CanvasElementControlManager? controlManager,
     //--
@@ -229,14 +248,14 @@ class PainterSizeHandler {
           height: null,
         );
       }
-      w = newW.toDpFromUnit(_unit);
+      w = newW.toDouble();
     }
   }
 
   /// 更新新的[h]宽度
   @api
   void updateNewH(
-    num? newH, {
+    @unit num? newH, {
     CanvasDelegate? canvasDelegate,
     CanvasElementControlManager? controlManager,
     //--
@@ -254,7 +273,7 @@ class PainterSizeHandler {
           /*debugLabel: "test",*/
         );
       }
-      h = newH.toDpFromUnit(_unit);
+      h = newH.toDouble();
     }
   }
 

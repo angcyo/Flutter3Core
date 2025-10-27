@@ -2169,7 +2169,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     followPainter: followPainter,
   );
 
-  /// 锁定操作指定的元素
+  /// 锁定元素, 锁定操作指定的元素
   @api
   @supportUndo
   void lockOperateElementList(
@@ -2198,14 +2198,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     );
   }
 
-  /// 不可见指定的元素
+  /// 隐藏元素, 不可见指定的元素
   @api
   @supportUndo
   void visibleElementList(
-    List<ElementPainter>? elementList, [
+    List<ElementPainter>? elementList, {
     bool visible = true,
     UndoType undoType = UndoType.normal,
-  ]) {
+  }) {
     final list = elementList?.clone() ?? <ElementPainter>[];
     if (!visible) {
       //隐藏元素
@@ -2225,6 +2225,20 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       true,
       undoType,
     );
+  }
+
+  /// 是否所有元素都隐藏了
+  @api
+  bool isAllElementHidden({@defInjectMark List<ElementPainter>? elementList}) {
+    final list = elementList ?? elements;
+    return list.every((element) => !element.isVisible);
+  }
+
+  /// 是否有元素隐藏了
+  @api
+  bool isAnyElementHidden({@defInjectMark List<ElementPainter>? elementList}) {
+    final list = elementList ?? elements;
+    return list.any((element) => !element.isVisible);
   }
 
   //endregion ---operate/api---

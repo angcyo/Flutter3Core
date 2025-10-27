@@ -735,15 +735,15 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 不可见选中的所有元素
   @api
   @supportUndo
-  void visibleSelectedElement([
+  void visibleSelectedElement({
     bool visible = true,
     UndoType undoType = UndoType.normal,
-  ]) {
+  }) {
     if (isSelectedElement) {
       canvasDelegate.canvasElementManager.visibleElementList(
         elementSelectComponent.children,
-        visible,
-        undoType,
+        visible: visible,
+        undoType: undoType,
       );
     }
   }
