@@ -410,19 +410,21 @@ extension ImageEx on UiImage {
 
   /// 将图片进行一次[matrix]变换,得到一张新的图片
   /// - [keepOriginSize] 是否保持原图片大小
+  /// - [keepAnchor] 需要保持的锚点,默认是图片中心
   ///
   /// - [transformSync]
   Future<UiImage> transform(
     Matrix4 matrix, {
     bool keepOriginSize = false,
+    @defInjectMark Offset? keepAnchor,
     Paint? paint,
   }) async {
     final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
-    final center = bounds.center;
+    final anchor = keepAnchor ?? bounds.center;
 
     final newBounds = matrix.mapRect(bounds);
-    final newCenter = keepOriginSize
-        ? matrix.mapPoint(center)
+    final newAnchor = keepOriginSize
+        ? matrix.mapPoint(anchor)
         : newBounds.center;
 
     //debugger();
@@ -432,8 +434,8 @@ extension ImageEx on UiImage {
       (canvas) {
         final translate = Matrix4.identity()
           ..translate(
-            keepOriginSize ? -(newCenter.dx - center.dx) : -newBounds.left,
-            keepOriginSize ? -(newCenter.dy - center.dy) : -newBounds.top,
+            keepOriginSize ? -(newAnchor.dx - anchor.dx) : -newBounds.left,
+            keepOriginSize ? -(newAnchor.dy - anchor.dy) : -newBounds.top,
           );
         canvas.transform((translate * matrix).storage);
         canvas.drawImage(this, Offset.zero, paint ?? Paint());
@@ -447,14 +449,15 @@ extension ImageEx on UiImage {
   UiImage transformSync(
     Matrix4 matrix, {
     bool keepOriginSize = false,
+    @defInjectMark Offset? keepAnchor,
     Paint? paint,
   }) {
     final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
-    final center = bounds.center;
+    final anchor = keepAnchor ?? bounds.center;
 
     final newBounds = matrix.mapRect(bounds);
-    final newCenter = keepOriginSize
-        ? matrix.mapPoint(center)
+    final newAnchor = keepOriginSize
+        ? matrix.mapPoint(anchor)
         : newBounds.center;
 
     //debugger();
@@ -464,8 +467,8 @@ extension ImageEx on UiImage {
     ) {
       final translate = Matrix4.identity()
         ..translate(
-          keepOriginSize ? -(newCenter.dx - center.dx) : -newBounds.left,
-          keepOriginSize ? -(newCenter.dy - center.dy) : -newBounds.top,
+          keepOriginSize ? -(newAnchor.dx - anchor.dx) : -newBounds.left,
+          keepOriginSize ? -(newAnchor.dy - anchor.dy) : -newBounds.top,
         );
       canvas.transform((translate * matrix).storage);
       canvas.drawImage(this, Offset.zero, paint ?? Paint());
