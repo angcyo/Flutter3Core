@@ -409,27 +409,64 @@ extension ImageEx on UiImage {
   );
 
   /// 将图片进行一次[matrix]变换,得到一张新的图片
-  /// [transformSync]
-  Future<UiImage> transform(Matrix4 matrix, {Paint? paint}) async {
+  /// - [keepOriginSize] 是否保持原图片大小
+  ///
+  /// - [transformSync]
+  Future<UiImage> transform(
+    Matrix4 matrix, {
+    bool keepOriginSize = false,
+    Paint? paint,
+  }) async {
     final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
+    final center = bounds.center;
+
     final newBounds = matrix.mapRect(bounds);
-    final image = await drawImage(newBounds.size, (canvas) {
-      final translate = Matrix4.identity()
-        ..translate(-newBounds.left, -newBounds.top);
-      canvas.transform((translate * matrix).storage);
-      canvas.drawImage(this, Offset.zero, paint ?? Paint());
-    });
+    final newCenter = keepOriginSize
+        ? matrix.mapPoint(center)
+        : newBounds.center;
+
+    //debugger();
+
+    final image = await drawImage(
+      keepOriginSize ? bounds.size : newBounds.size,
+      (canvas) {
+        final translate = Matrix4.identity()
+          ..translate(
+            keepOriginSize ? -(newCenter.dx - center.dx) : -newBounds.left,
+            keepOriginSize ? -(newCenter.dy - center.dy) : -newBounds.top,
+          );
+        canvas.transform((translate * matrix).storage);
+        canvas.drawImage(this, Offset.zero, paint ?? Paint());
+      },
+    );
     return image;
   }
 
   /// - [transform]
   /// - [transformSync]
-  UiImage transformSync(Matrix4 matrix, {Paint? paint}) {
+  UiImage transformSync(
+    Matrix4 matrix, {
+    bool keepOriginSize = false,
+    Paint? paint,
+  }) {
     final bounds = Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
+    final center = bounds.center;
+
     final newBounds = matrix.mapRect(bounds);
-    final image = drawImageSync(newBounds.size, (canvas) {
+    final newCenter = keepOriginSize
+        ? matrix.mapPoint(center)
+        : newBounds.center;
+
+    //debugger();
+
+    final image = drawImageSync(keepOriginSize ? bounds.size : newBounds.size, (
+      canvas,
+    ) {
       final translate = Matrix4.identity()
-        ..translate(-newBounds.left, -newBounds.top);
+        ..translate(
+          keepOriginSize ? -(newCenter.dx - center.dx) : -newBounds.left,
+          keepOriginSize ? -(newCenter.dy - center.dy) : -newBounds.top,
+        );
       canvas.transform((translate * matrix).storage);
       canvas.drawImage(this, Offset.zero, paint ?? Paint());
     });

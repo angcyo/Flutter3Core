@@ -4,9 +4,9 @@ part of '../../flutter3_pub.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/04
 ///
-/// 支持图片放大缩小的查看对话框
-/// [SingleImageDialog]
-/// [SinglePhotoDialog]
+/// 支持图片放大缩小的查看对话框, 使用[PhotoView]实现
+/// - [SingleImageDialog] 不支持放大缩小
+/// - [SinglePhotoDialog] 支持放大缩小
 class SinglePhotoDialog extends StatefulWidget {
   /// [Hero] 动画属性
   final PhotoViewHeroAttributes? heroAttributes;
@@ -66,7 +66,8 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       scaleStateController: photoScaleStateController,
       backgroundDecoration: fillDecoration(color: Colors.transparent),
       enableRotation: false,
-      heroAttributes: widget.heroAttributes ??
+      heroAttributes:
+          widget.heroAttributes ??
           widget.content?.toPhotoViewHeroAttributes() ??
           widget.filePath?.toPhotoViewHeroAttributes(),
     );
@@ -76,12 +77,14 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       final imageLog = image == null
           ? ''
           : "${image.width}*${image.height} (${(image.width * image.height * 4).toSizeStr()})";
-      result = result.stackOf(isDebug
-          ? "$imageLog ${widget.filePath == null ? '' : '\n$filePath'}"
-              .text(textColor: Colors.white, fontSize: 8)
-              .paddingAll(kH)
-              .position(left: 0, top: 0)
-          : null);
+      result = result.stackOf(
+        isDebug
+            ? "$imageLog ${widget.filePath == null ? '' : '\n$filePath'}"
+                  .text(textColor: Colors.white, fontSize: 8)
+                  .paddingAll(kH)
+                  .position(left: 0, top: 0)
+            : null,
+      );
     }
 
     result = result.blur(sigma: widget.blur ? kM : 0.0);
@@ -116,9 +119,9 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       result,
     ].stack()!.material();*/
     return result.material().systemUiOverlay(
-          statusBarBrightness: Brightness.light,
-          statusBarIconBrightness: Brightness.light,
-        );
+      statusBarBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.light,
+    );
   }
 
   Widget _buildLoading(BuildContext context, ImageChunkEvent? event) {
@@ -126,8 +129,8 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
     if (event != null && event.expectedTotalBytes != null) {
       progressValue = event.cumulativeBytesLoaded / event.expectedTotalBytes!;
     }
-    return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, this, progressValue, null)
-        .center();
+    return GlobalConfig.of(
+      context,
+    ).loadingIndicatorBuilder(context, this, progressValue, null).center();
   }
 }

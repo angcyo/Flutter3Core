@@ -57,6 +57,7 @@ class FourPoint {
 
   //--
 
+  /// ltrb
   List<double> get list => [x1, y1, x2, y2, x3, y3, x4, y4];
 
   Offset get lt => Offset(x1, y1);

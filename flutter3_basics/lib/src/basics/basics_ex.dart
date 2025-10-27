@@ -2436,11 +2436,12 @@ extension DoubleEx on double {
   double ensureValid([double def = 0]) => isValid ? this : def;
 
   /// 四舍五入
-  /// [double.round] 四舍五入
-  /// [double.ceil] 向上取整
-  /// [double.floor] 向下取整
-  /// [Picture.toImage]
-  /// [Picture.toImageSync]
+  /// - [double.round] 四舍五入
+  /// - [double.ceil] 向上取整
+  /// - [double.floor] 向下取整
+  ///
+  /// - [Picture.toImage]
+  /// - [Picture.toImageSync]
   int get imageInt => round() /*toInt()*/ /*floor()*/;
 
   /// [BorderRadius]

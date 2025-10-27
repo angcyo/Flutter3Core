@@ -33,6 +33,7 @@ double cvOtsu(cv.InputArray src) {
 /// https:///docs.opencv.org/master/da/d54/group__imgproc__transform.html#ga8c1ae0e3589a9d77fffc962c49b22043
 ///
 /// - [cv.warpPerspective] 透视变换作用到图片
+/// - [cv.perspectiveTransform]
 ///
 cv.Mat cvPerspectiveTransform(
   List<cv.Point> srcPoints,
@@ -363,7 +364,7 @@ extension MatEx on cv.Mat {
   /// 0.014188208530941089, 0.9391478601047357, -0.000048519939015975823,
   /// 8.176286297216732, 8.216367882118266, 1.0]
   /// ```
-  List<double> get matrix3 {
+  List<double> get matrix3List {
     final matrix3 = List<double>.filled(9, 0);
     forEachRow((row, values) {
       for (int i = 0; i < values.length; i++) {
@@ -372,6 +373,23 @@ extension MatEx on cv.Mat {
     });
     return matrix3;
   }
+
+  Matrix3 get matrix3 {
+    final matrix3 = Matrix3.identity();
+    forEachRow((row, values) {
+      matrix3.setRow(
+        row,
+        Vector3(
+          values[0].toDouble(),
+          values[1].toDouble(),
+          values[2].toDouble(),
+        ),
+      );
+    });
+    return matrix3;
+  }
+
+  Matrix4 get matrix4 => matrix3.toMatrix4();
 
   /// 转成灰度图片
   cv.Mat get gray {
@@ -388,9 +406,16 @@ extension MatEx on cv.Mat {
     return cvImgEncodeMat(this)!.toImage();
   }
 
+  /// 将矩阵转换成字符串
+  String flattenString() {
+    final list = toList();
+    final flatten = list.flatten<num>();
+    return flatten.join(',');
+  }
+
   /// 将相机内参矩阵转换成字符串, 方便传输
   /// - [MatEx.cameraMatrixString]
-  /// - [MatStringEx.cameraMatrix]
+  /// - [MatStringEx.cvCameraMatrix]
   ///
   /// ```
   /// //cameraMatrix:Mat(addr=0x6000012e8890, type=CV_64FC1, rows=3, cols=3, channels=1)
@@ -398,26 +423,28 @@ extension MatEx on cv.Mat {
   /// [0.0, 1934.0012961748434, -14.44565026590872],
   /// [0.0, 0.0, 1.0]]
   /// ```
-  String cameraMatrixString() {
-    final list = toList();
-    final flatten = list.flatten<num>();
-    return flatten.join(',');
-  }
+  String cameraMatrixString() => flattenString();
 
   /// 将相机畸变参数转换成字符串, 方便传输
   /// - [MatEx.distCoeffsString]
-  /// - [MatStringEx.distCoeffs]
+  /// - [MatStringEx.cvDistCoeffs]
   ///
   /// ```
   /// distCoeffs:Mat(addr=0x6000012e88c0, type=CV_64FC1, rows=1, cols=5, channels=1)
   /// [[-0.7881097007309008, 2.8231170733523783, 0.02692497935255397, 0.08256194583654793, -7.601687967063381]]
   ///
   /// ```
-  String distCoeffsString() {
-    final list = toList();
-    final flatten = list.flatten<num>();
-    return flatten.join(',');
-  }
+  String distCoeffsString() => flattenString();
+
+  /// 3*3的矩阵
+  /// - [MatEx.matrix3String]
+  /// - [MatStringEx.cvMatrix3]
+  ///
+  /// ```
+  /// Mat(addr=0x600000d662d0, type=CV_64FC1, rows=3, cols=3, channels=1)
+  /// [25.115459457396405, -0.37128071248135014, -6985.416105677234],[10.56256529565071, 15.73150297766723, -8164.720811665292],[0.019392064126516825, -0.0004494108804756873, 1.0]
+  /// ```
+  String matrix3String() => flattenString();
 }
 
 extension MatUiImageEx on UiImage {
@@ -434,12 +461,12 @@ extension MatUiImageEx on UiImage {
 extension MatStringEx on String {
   /// 将存储的相机内参矩阵字符串转换成[cv.Mat]
   /// - [MatEx.cameraMatrixString]
-  /// - [MatStringEx.cameraMatrix]
+  /// - [MatStringEx.cvCameraMatrix]
   ///
   /// ```
   /// 953.3601440185421,0.0,20.99147803728926, 0.0,1150.5279533663834,34.79296704018406 ,0.0,0.0,1.0
   /// ```
-  cv.Mat? get cameraMatrix {
+  cv.Mat? get cvCameraMatrix {
     final list = split(',').map((e) => double.parse(e)).toList();
     final cameraMatrix = cv.Mat.from2DList(
       list.to2DList(3),
@@ -450,17 +477,46 @@ extension MatStringEx on String {
 
   /// 将存储的相机畸变参数字符串转换成[cv.Mat]
   /// - [MatEx.distCoeffsString]
-  /// - [MatStringEx.distCoeffs]
+  /// - [MatStringEx.cvDistCoeffs]
   ///
   /// ```
   /// -0.15912404178645986,-1.3501136289999192,0.021079322288846902,0.058574551893847956,2.2543234290446703
   /// ```
-  cv.Mat? get distCoeffs {
+  cv.Mat? get cvDistCoeffs {
     final list = split(',').map((e) => double.parse(e)).toList();
     final cameraMatrix = cv.Mat.from2DList(
       list.to2DList(list.length),
       cv.MatType.CV_64FC1,
     );
     return cameraMatrix;
+  }
+
+  /// 3*3 的矩阵字符串
+  ///
+  /// - [MatEx.matrix3String]
+  /// - [MatStringEx.cvMatrix3]
+  ///
+  /// ```
+  /// 25.115459457396405,-0.37128071248135014,-6985.416105677234, 10.56256529565071,15.73150297766723,-8164.720811665292, 0.019392064126516825,-0.0004494108804756873,1.0
+  /// ```
+  cv.Mat? get cvMatrix3 {
+    final list = split(',').map((e) => double.parse(e)).toList();
+    final cameraMatrix = cv.Mat.from2DList(
+      list.to2DList(3),
+      cv.MatType.CV_64FC1,
+    );
+    return cameraMatrix;
+  }
+}
+
+extension MatListDoubleEx on List<double> {
+  /// 每2个数字转换成一个[cv.Point2f]
+  List<cv.Point2f> toCvPoint2fList() {
+    List<cv.Point2f> list = [];
+    for (int i = 0; i < length; i += 2) {
+      final point = cv.Point2f(this[i], this[i + 1]);
+      list.add(point);
+    }
+    return list;
   }
 }

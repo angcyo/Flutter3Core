@@ -132,8 +132,8 @@ class CameraCalibrateHelper {
     this.distCoeffs = distCoeffs;
 
     assert(() {
-      final cameraMatrix2 = cameraMatrix.cameraMatrixString().cameraMatrix;
-      final distCoeffs2 = distCoeffs.distCoeffsString().distCoeffs;
+      final cameraMatrix2 = cameraMatrix.cameraMatrixString().cvCameraMatrix;
+      final distCoeffs2 = distCoeffs.distCoeffsString().cvDistCoeffs;
       //debugger();
       return true;
     }());

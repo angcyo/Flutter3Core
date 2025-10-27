@@ -52,7 +52,7 @@ String testOpencv() {
     // [-0.00010755186200365007, -0.000048519939015975823, 1.0]]
     l.d("$mat");
     l.d("${mat.toList()}");
-    l.d("${mat.matrix3}");
+    l.d("${mat.matrix3List}");
     return true;
   }());
   return log;
