@@ -908,8 +908,11 @@ extension VectorPathEx on Path {
   }
 
   /// 转换成gcode字符串数据
-  /// [toSvgPathString]
-  /// [VectorListPathEx.toGCodeString]
+  /// - [unit] 当前[path]的数据需要转换成的单位
+  ///   - 如果当前[path]已经是mm单位, 则传入null
+  ///
+  /// - [toSvgPathString]
+  /// - [VectorListPathEx.toGCodeString]
   String? toGCodeString({
     @dp double? pathStep,
     @defInjectMark @mm double? tolerance,
@@ -924,6 +927,7 @@ extension VectorPathEx on Path {
     bool? autoLaser, //必须指定才会自动生成GCode参数
     GCodeWriteHandle? handle,
     int digits = 3,
+    IUnit? unit = IUnit.mm,
   }) {
     header ??= autoLaser != null
         ? GCodeWriteHandle.gcodeHeader(power, speed, auto: autoLaser)
@@ -940,6 +944,7 @@ extension VectorPathEx on Path {
 
     handle ??= GCodeWriteHandle();
     handle
+      ..unit = unit
       ..digits = digits
       ..toolOn = toolOn
       ..toolOff = toolOff;
