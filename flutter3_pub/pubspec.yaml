@@ -33,12 +33,19 @@ dependencies:
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/list_counter
   flutter_html: ^3.0.0
+  # https://pub.dev/packages/html
+  # https://pub.dev/packages/csslib
+  html: ^0.15.6
+  # https://pub.dev/packages/csslib
+  csslib: ^1.0.2
+  # https://pub.dev/packages/list_counter
+  list_counter: ^1.0.2
 
   # https://pub.dev/packages/flutter_markdown
   # https://pub.dev/packages/markdown
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  flutter_markdown: ^0.7.7+1
+  flutter_markdown: ^0.7.7+1 # replaced by: flutter_markdown_plus: ^1.0.5 # flutter_markdown_plus_latex: ^1.0.5
   # https://pub.dev/packages/markdown
   # https://github.com/dart-lang/markdown
   # https://pub.dev/packages/args

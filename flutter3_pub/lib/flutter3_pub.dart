@@ -10,7 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:markdown/markdown.dart';
+import 'package:html/parser.dart';
 
 import 'flutter3_pub.dart';
 
@@ -29,6 +31,7 @@ export 'package:photo_view/photo_view.dart';
 export 'package:photo_view/photo_view_gallery.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:archive/archive_io.dart';
+export 'package:html/dom.dart';
 
 part 'src/archive/zip_ex.dart';
 part 'src/http/html_pub.dart';

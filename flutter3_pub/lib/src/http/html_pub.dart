@@ -60,4 +60,19 @@ extension HtmlStringEx on String {
       doNotRenderTheseTags: doNotRenderTheseTags,
     );
   }
+
+  /// 解析html字符串, 解析网页数据
+  ///
+  /// - [dom.Document]
+  /// - [dom.Document.querySelector]
+  /// - [dom.Document.querySelectorAll]
+  ///
+  /// - [dom.Element]
+  /// - [dom.Element.querySelector] 查询子元素
+  /// - [dom.Element.querySelectorAll] 查询子元素列表
+  dom.Document parseHtml({
+    String? encoding,
+    bool generateSpans = false,
+    String? sourceUrl,
+  }) => parse(this);
 }
