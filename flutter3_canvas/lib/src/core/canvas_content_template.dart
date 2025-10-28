@@ -5,6 +5,12 @@ part of '../../flutter3_canvas.dart';
 /// @date 2024/10/21
 ///
 /// 画布内容显示模版, 在[CanvasContentManager]中生效
+///
+/// - [contentBackgroundInfo] 背景绘制成员
+/// - [contentOptimumInfo] 背景最佳绘制成员
+/// - [contentForegroundInfo] 前景绘制成员
+///
+/// - [ContentPathPainterInfo] 绘制信息
 class CanvasContentTemplate {
   /// 标签, 用来自定义的标识
   @configProperty

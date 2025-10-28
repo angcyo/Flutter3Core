@@ -217,6 +217,12 @@ class CanvasStyle {
   /// [paintContentTemplateStroke]开启后, 绘制的宽度
   double contentTemplateStrokeWidth = 1;
 
+  /// 内容模版暗色默认的填充颜色
+  Color? contentTemplateFillColorDark = "#2c2c2c".toColorOrNull();
+
+  /// 内容模版暗色默认的描边颜色
+  Color? contentTemplateStrokeColorDark = "#2c2c2c".toColorOrNull();
+
   //endregion ---config---
 
   //region ---axis---

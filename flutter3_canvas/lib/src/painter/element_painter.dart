@@ -56,6 +56,7 @@ class IElementPainter extends IPainter
   /// - [paintImage]
   @configProperty
   Paint paint = Paint()
+    ..isAntiAlias = true
     ..filterQuality = FilterQuality.medium
     ..strokeJoin = StrokeJoin.round
     ..strokeCap = StrokeCap.round;

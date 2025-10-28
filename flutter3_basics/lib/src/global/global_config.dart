@@ -261,6 +261,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 当前的全局主题配置
   GlobalTheme globalTheme = GlobalTheme();
 
+  /// 当前是否是暗色主题模式
+  bool get isThemeDark =>
+      !isThemeLight() /*themeData?.brightness == Brightness.dark*/;
+
   /// 当前是否是亮色主题模式
   @api
   bool isThemeLight([BuildContext? context]) {

@@ -9,6 +9,9 @@ part of '../../flutter3_canvas.dart';
 ///
 /// [CanvasPaintManager]的成员
 ///
+/// - [contentTemplate] 内容绘制模板
+///
+/// - [CanvasContentTemplate]
 class CanvasContentManager extends IPainter with CanvasComponentMixin {
   final CanvasPaintManager paintManager;
 
@@ -208,8 +211,12 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
     //填充
     if (info.fill == true) {
+      //debugger();
       final fillColor =
-          canvasDelegate.darkOr(info.fillColorDark, info.fillColor) ??
+          canvasDelegate.darkOr(
+            info.fillColorDark ?? canvasStyle.contentTemplateFillColorDark,
+            info.fillColor,
+          ) ??
           info.fillColor;
       if (fillColor != null) {
         paint
@@ -222,7 +229,10 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     //描边
     if ((info.strokeWidth ?? 0) > 0) {
       final strokeColor =
-          canvasDelegate.darkOr(info.strokeColorDark, info.strokeColor) ??
+          canvasDelegate.darkOr(
+            info.strokeColorDark ?? canvasStyle.contentTemplateStrokeColorDark,
+            info.strokeColor,
+          ) ??
           info.strokeColor;
       if (strokeColor != null) {
         paint
@@ -471,7 +481,9 @@ class ContentPathPainterInfo {
   Color? fillColor;
 
   /// [fillColor]
+  /// - `#2c2c2c`
   @configProperty
+  @defInjectMark
   Color? fillColorDark;
 
   /// 是否填充

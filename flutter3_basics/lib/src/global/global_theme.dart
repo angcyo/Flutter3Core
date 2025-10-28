@@ -23,6 +23,9 @@ class GlobalThemeScope extends InheritedWidget {
 /// 全局颜色配置
 /// 亮色主题[ui.Brightness.light]
 ///
+/// - [GlobalTheme]
+/// - [GlobalThemeDark]
+///
 /// 默认flutter主题颜色↓
 /// [_colorSchemeDarkM3]
 /// [_colorSchemeLightM3]
@@ -335,6 +338,9 @@ class GlobalTheme {
 }
 
 /// 暗色主题[ui.Brightness.dark]
+///
+/// - [GlobalTheme]
+/// - [GlobalThemeDark]
 class GlobalThemeDark extends GlobalTheme {
   /// 0xff212121
   @override
@@ -405,6 +411,7 @@ class GlobalThemeDark extends GlobalTheme {
   @override
   Color get icoDisableColor => const Color(0xffb0b0b0);
 
+  ///
   @override
   ui.Color get borderColor => super.borderColor;
 
