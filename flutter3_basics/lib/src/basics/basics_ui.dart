@@ -905,6 +905,55 @@ extension WidgetEx on Widget {
         )
       : this;
 
+  /// [KeyEventWidget]
+  Widget keyEvent(
+    List<KeyboardKey> keys,
+    KeyEventHandleAction? onKeyEventAction, {
+    //--
+    bool enable = true,
+    //--
+    Key? key,
+    List<List<KeyboardKey>>? eventGroupKeys,
+    //--
+    bool stopPropagation = true,
+    bool matchKeyCount = true,
+    bool keyDown = true,
+    bool keyRepeat = false,
+    bool keyUp = false,
+  }) => enable
+      ? KeyEventWidget(
+          key: key,
+          keyEventRegisterList: [
+            KeyEventRegister(
+              eventGroupKeys ?? [keys],
+              onKeyEventAction: onKeyEventAction,
+              stopPropagation: stopPropagation,
+              matchKeyCount: matchKeyCount,
+              keyDown: keyDown,
+              keyRepeat: keyRepeat,
+              keyUp: keyUp,
+            ),
+          ],
+          child: this,
+        )
+      : this;
+
+  /// 监听按键事件
+  /// - [KeyEventWidget]
+  Widget keyEventList(
+    List<KeyEventRegister> keyEventRegisterList, {
+    //--
+    bool enable = true,
+    //--
+    Key? key,
+  }) => enable
+      ? KeyEventWidget(
+          key: key,
+          keyEventRegisterList: keyEventRegisterList,
+          child: this,
+        )
+      : this;
+
   /// 按键事件监听, 同样需要在有焦点的时候才会触发回调
   ///
   /// ```
@@ -917,9 +966,13 @@ extension WidgetEx on Widget {
   /// KeyUpEvent#4bf94(physicalKey: PhysicalKeyboardKey#e14a9(usbHidUsage: "0x00070028", debugName: "Enter"), logicalKey: LogicalKeyboardKey#2604c(keyId: "0x10000000d", keyLabel: "Enter", debugName: "Enter"), character: null, timeStamp: 312:12:25.574965)
   /// ```
   ///
+  ///
+  /// -[pointerListener] 手势/鼠标事件监听
+  /// -[keyboardListener] 键盘事件监听
+  ///
   /// - [KeyboardListener]
-  Widget keyboardListener({
-    ValueChanged<KeyEvent>? onKeyEvent,
+  Widget keyboardListener(
+    ValueChanged<KeyEvent>? onKeyEvent, {
     //--
     Key? key,
     FocusNode? focusNode,
@@ -971,8 +1024,11 @@ extension WidgetEx on Widget {
           },
         );
 
-  /// [PointerListenerWidget]
-  /// [Listener]
+  /// -[pointerListener] 手势/鼠标事件监听
+  /// -[keyboardListener] 键盘事件监听
+  ///
+  /// - [PointerListenerWidget]
+  /// - [Listener]
   Widget pointerListener(
     PointerEventListener? onPointer, {
     HitTestBehavior behavior = HitTestBehavior.deferToChild,

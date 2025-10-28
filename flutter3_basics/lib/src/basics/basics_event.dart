@@ -53,11 +53,44 @@ bool get isShiftPressed => isKeyPressed(
 bool get isSpacePressed => isKeyPressed(key: LogicalKeyboardKey.space);
 
 /// 指定的按键, 任意按键是否按下
-bool isKeyPressed({LogicalKeyboardKey? key, List<LogicalKeyboardKey>? keys}) =>
-    (key != null &&
-        () {
+bool isKeyPressed({
+  KeyboardKey? key,
+  List<KeyboardKey>? keys,
+  //--
+  Set<LogicalKeyboardKey>? logicalPressedKeys,
+  Set<PhysicalKeyboardKey>? physicalPressedKeys,
+}) {
+  if (key != null) {
+    if (key is LogicalKeyboardKey) {
+      return isLogicalKeyPressed([key], pressedKeys: logicalPressedKeys);
+    }
+    if (key is PhysicalKeyboardKey) {
+      return isPhysicalKeyPressed([key], pressedKeys: physicalPressedKeys);
+    }
+    return false;
+  }
+  if (isNil(keys)) {
+    return true;
+  }
+  return isLogicalKeyPressed(
+        keys!.filterLogicalKeysPressed,
+        pressedKeys: logicalPressedKeys,
+      ) &&
+      isPhysicalKeyPressed(
+        keys!.filterPhysicalKeysPressed,
+        pressedKeys: physicalPressedKeys,
+      );
+}
+
+/// 所有的逻辑按键是否都按下
+bool isLogicalKeyPressed(
+  Iterable<LogicalKeyboardKey>? keys, {
+  Set<LogicalKeyboardKey>? pressedKeys,
+}) =>
+    isNil(keys) ||
+    keys?.every((key) {
           final keyboard = HardwareKeyboard.instance;
-          final logicalKeysPressed = keyboard.logicalKeysPressed;
+          final logicalKeysPressed = pressedKeys ?? keyboard.logicalKeysPressed;
           if (key == LogicalKeyboardKey.control) {
             return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
               LogicalKeyboardKey.control,
@@ -86,15 +119,27 @@ bool isKeyPressed({LogicalKeyboardKey? key, List<LogicalKeyboardKey>? keys}) =>
               LogicalKeyboardKey.shiftRight,
             });
           }
-          return logicalKeysPressed.contains(key);
-        }()) ||
-    (keys != null &&
-        HardwareKeyboard.instance.logicalKeysPressed.any(
-          (e) => isKeyPressed(key: e),
-        ));
+          return pressedKeys == null
+              ? HardwareKeyboard.instance.isLogicalKeyPressed(key)
+              : pressedKeys.contains(key);
+        }) ==
+        true;
+
+/// 所有的物理按键是否都按下
+bool isPhysicalKeyPressed(
+  Iterable<PhysicalKeyboardKey>? keys, {
+  Set<PhysicalKeyboardKey>? pressedKeys,
+}) =>
+    isNil(keys) ||
+    keys?.every(
+          (key) => pressedKeys == null
+              ? HardwareKeyboard.instance.isPhysicalKeyPressed(key)
+              : pressedKeys.contains(key),
+        ) ==
+        true;
 
 /// 是否是相同的按键
-bool isSameLogicalKey(LogicalKeyboardKey? key1, LogicalKeyboardKey? key2) {
+bool isSameLogicalKey(KeyboardKey? key1, KeyboardKey? key2) {
   if (key1 == null || key2 == null) {
     return false;
   }
@@ -115,15 +160,38 @@ bool isSameLogicalKey(LogicalKeyboardKey? key1, LogicalKeyboardKey? key2) {
 
 /// 指定的按键, 是否都按下
 bool isKeysPressedAll(
-  List<LogicalKeyboardKey>? keys, {
+  List<KeyboardKey>? keys, {
   bool matchKeyCount = true,
   bool def = false,
+  //--
+  Set<LogicalKeyboardKey>? logicalPressedKeys,
+  Set<PhysicalKeyboardKey>? physicalPressedKeys,
 }) => isNil(keys)
     ? def
     : matchKeyCount
     ? (keys!.length == pressedKeyCount &&
-          keys.all((key) => isKeyPressed(key: key)))
-    : keys!.all((key) => isKeyPressed(key: key));
+          keys.all(
+            (key) => isKeyPressed(
+              key: key,
+              logicalPressedKeys: logicalPressedKeys,
+              physicalPressedKeys: physicalPressedKeys,
+            ),
+          ))
+    : keys!.all(
+        (key) => isKeyPressed(
+          key: key,
+          logicalPressedKeys: logicalPressedKeys,
+          physicalPressedKeys: physicalPressedKeys,
+        ),
+      );
+
+extension KeyboardKeyIterableEx on Iterable<KeyboardKey> {
+  Iterable<LogicalKeyboardKey> get filterLogicalKeysPressed =>
+      whereType<LogicalKeyboardKey>().cast<LogicalKeyboardKey>();
+
+  Iterable<PhysicalKeyboardKey> get filterPhysicalKeysPressed =>
+      whereType<PhysicalKeyboardKey>().cast<PhysicalKeyboardKey>();
+}
 
 /// 当前有多少按键被按下
 int get pressedKeyCount => HardwareKeyboard.instance.logicalKeysPressed.length;
@@ -138,7 +206,7 @@ typedef PointerAction = void Function(PointerEvent event);
 @dp
 const double kTouchMoveSlop = 5;
 
-extension LogicalKeyboardKeyEx on LogicalKeyboardKey {
+extension LogicalKeyboardKeyEx on KeyboardKey {
   bool get isControlKey =>
       this == LogicalKeyboardKey.control ||
       this == LogicalKeyboardKey.controlLeft ||

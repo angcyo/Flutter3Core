@@ -56,6 +56,9 @@ mixin KeyEventMixin {
   /// 键盘事件监听
   final List<KeyEventRegister> _keyEventRegisterList = [];
 
+  /// 当前按下的物理按键
+  final Set<PhysicalKeyboardKey> _physicalKeysPressed = {};
+
   /// 注册一个键盘事件监听
   /// [onHandleKeyEventMixin]
   @api
@@ -93,6 +96,12 @@ mixin KeyEventMixin {
     _keyEventRegisterList.remove(register);
   }
 
+  /// 重置所有键盘事件监听
+  @api
+  void resetAllKeyEventRegister(Iterable<KeyEventRegister> list) {
+    _keyEventRegisterList.resetAll(list);
+  }
+
   /// 移除所有键盘事件监听
   @api
   void removeAllKeyEventRegister() {
@@ -106,6 +115,10 @@ mixin KeyEventMixin {
     bool handle = false;
     //l.w("onHandleKeyEventMixin[${event.isKeyUp}]->$event");
     //debugger(when: event.isKeyUp);
+    if (event.isKeyDown) {
+      _physicalKeysPressed.add(event.physicalKey);
+    }
+
     if (event.isKeyDownOrRepeat || event.isKeyUp) {
       for (final register in _keyEventRegisterList) {
         if ((event.isKeyDown && register.keyDown) ||
@@ -128,13 +141,19 @@ mixin KeyEventMixin {
           //中断
           bool interrupt = false;
           for (final keys in eventGroupKeys) {
-            if (((event.isKeyDown || event.isKeyRepeat) &&
+            if ((((register.keyDown && event.isKeyDown) ||
+                        (register.keyRepeat && event.isKeyRepeat)) &&
                     isKeysPressedAll(
                       keys,
                       matchKeyCount: register.matchKeyCount,
+                      physicalPressedKeys: _physicalKeysPressed,
                     )) ||
-                (event.isKeyUp &&
-                    isSameLogicalKey(keys.lastOrNull, event.logicalKey))) {
+                (register.keyUp &&
+                    event.isKeyUp &&
+                    isSameLogicalKey(
+                      keys.filterLogicalKeysPressed.lastOrNull,
+                      event.logicalKey,
+                    ))) {
               handle = onKeyEvent(
                 KeyEventHitInfo(
                   keys,
@@ -160,16 +179,25 @@ mixin KeyEventMixin {
         }
       }
     }
+    if (event.isKeyUp) {
+      _physicalKeysPressed.remove(event.physicalKey);
+    }
+    if (handle) {
+      //清空
+      _physicalKeysPressed.clear();
+    }
     return handle;
   }
 }
 
-typedef KeyEventHandleAction = bool Function(KeyEventHitInfo);
+typedef KeyEventHandleAction = bool Function(KeyEventHitInfo event);
 
-/// 键盘事件, 注册信息
+/// 键盘事件, 注册的信息
+/// - [KeyEventRegister]
+/// - [KeyEventHitInfo]
 class KeyEventRegister {
   /// 事件按键
-  final List<List<LogicalKeyboardKey>>? eventGroupKeys;
+  final List<List<KeyboardKey>>? eventGroupKeys;
 
   /// 回调
   final KeyEventHandleAction? onKeyEventAction;
@@ -200,11 +228,11 @@ class KeyEventRegister {
   });
 }
 
-/// 键盘事件, 命中信息
+/// 键盘事件, 命中的信息
 /// [KeyEventRegister]
 class KeyEventHitInfo {
   /// 命中的按键组合
-  final List<LogicalKeyboardKey> keys;
+  final List<KeyboardKey> keys;
 
   /// 是否是按下事件
   final bool isKeyDown;
@@ -320,5 +348,70 @@ mixin NumberKeyEventDetectorMixin {
     _numberDetectorTimer?.cancel();
     _numberDetectorTimer = null;
     _keyCharacterMixin.clear();
+  }
+}
+
+//--
+
+/// [KeyEventMixin]
+class KeyEventWidget extends StatefulWidget {
+  /// 按键匹配处理列表
+  final List<KeyEventRegister> keyEventRegisterList;
+
+  /// 内容
+  final Widget child;
+
+  const KeyEventWidget({
+    super.key,
+    required this.keyEventRegisterList,
+    required this.child,
+  });
+
+  @override
+  State<KeyEventWidget> createState() => _KeyEventWidgetState();
+}
+
+class _KeyEventWidgetState extends State<KeyEventWidget> with KeyEventMixin {
+  @override
+  void initState() {
+    resetAllKeyEventRegister(widget.keyEventRegisterList);
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant KeyEventWidget oldWidget) {
+    resetAllKeyEventRegister(widget.keyEventRegisterList);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Focus(
+      focusNode: null,
+      parentNode: null,
+      autofocus: true,
+      canRequestFocus: null,
+      skipTraversal: null,
+      onFocusChange: isDebug
+          ? (value) {
+              l.i('[${classHash()}] focus change $value');
+            }
+          : null,
+      onKeyEvent: (node, event) {
+        assert(() {
+          //l.i('[${classHash()}] key event $event');
+          //l.w("${HardwareKeyboard.instance.physicalKeysPressed}");
+          return true;
+        }());
+        //debugger(when: event.physicalKey == PhysicalKeyboardKey.keyS);
+        //debugger(when: event.isKeyUp);
+        final handle = onHandleKeyEventMixin(event);
+        if (handle) {
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: widget.child,
+    );
   }
 }

@@ -68,11 +68,15 @@ class _PopMenuWidgetState extends State<PopMenuWidget> {
       },
       onPointerUp: (event) {
         //debugger();
-        tapRecognizer.handleEvent(event);
+        if (tapRecognizer.state != GestureRecognizerState.ready) {
+          tapRecognizer.handleEvent(event);
+        }
       },
       onPointerCancel: (event) {
-        debugger();
-        tapRecognizer.handleEvent(event);
+        //debugger();
+        if (tapRecognizer.state != GestureRecognizerState.ready) {
+          tapRecognizer.handleEvent(event);
+        }
       },
       behavior: HitTestBehavior.opaque,
       child: widget.child,

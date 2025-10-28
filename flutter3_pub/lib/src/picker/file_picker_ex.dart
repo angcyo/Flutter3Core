@@ -16,9 +16,7 @@ Future<PlatformFile?> pickSingleImage({
     allowCompression: allowCompression,
     compressionQuality: compressionQuality,
     allowMultiple: false,
-  ))
-      ?.files
-      .firstOrNull;
+  ))?.files.firstOrNull;
 }
 
 /// 选择单个文件, 选择多个文件请使用[pickFiles]
@@ -28,9 +26,7 @@ Future<PlatformFile?> pickFile() async {
     allowCompression: false,
     compressionQuality: 0,
     allowMultiple: false,
-  ))
-      ?.files
-      .firstOrNull;
+  ))?.files.firstOrNull;
 }
 
 /// 选择多个文件[allowMultiple], 使用系统自带的文件选择器
@@ -83,7 +79,9 @@ Future<FilePickerResult?> pickFiles({
   assert(() {
     if (result != null) {
       result.files.forEachIndexed((index, element) {
-        l.d('选择文件[$index][${element.name}:${element.size.toSizeStr()}][${element.path?.mimeType(element.bytes)}]->${element.path} bytes:${element.bytes?.length}');
+        l.d(
+          '选择文件[$index][${element.name}:${element.size.toSizeStr()}][${element.path?.mimeType(element.bytes)}]->${element.path} bytes:${element.bytes?.length}',
+        );
       });
     } else {
       l.d('取消选择文件');
@@ -124,6 +122,17 @@ Future<String?> pickDirectoryPath({
 ///
 /// 桌面端显示本地对话框保存文件.
 ///
+/// ## macOS
+///
+/// 需要权限: ENTITLEMENT_REQUIRED_WRITE, 在 `DebugProfile.entitlements`和`Release.entitlements` 文件中加入:
+///
+/// ```
+/// <key>com.apple.security.files.user-selected.read-write</key>
+/// <true/>
+/// ```
+///
+/// https://github.com/miguelpruivo/flutter_file_picker/wiki/Setup#--desktop
+///
 /// @return 待保存文件的路径(文件可能不存在)
 ///
 /// https://pub.dev/packages/file_picker
@@ -153,4 +162,27 @@ Future<String?> saveFile({
     return true;
   }());
   return path;
+}
+
+extension PickerImageEx on UiImage {
+  /// 调用系统弹窗, 选择文件路径, 保存图片
+  @desktopFlag
+  Future<File?> saveAsFile({
+    String? dialogTitle,
+    String? fileName,
+    UiImageByteFormat format = UiImageByteFormat.png,
+  }) async {
+    final filePath = await saveFile(
+      dialogTitle: dialogTitle,
+      fileName: fileName,
+    );
+    if (!isNil(filePath)) {
+      final Uint8List? bytes = await toBytes(format);
+      if (bytes == null) {
+        return null;
+      }
+      return filePath!.file().writeAsBytes(bytes);
+    }
+    return null;
+  }
 }
