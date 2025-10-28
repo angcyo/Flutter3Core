@@ -129,6 +129,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool? blur,
     double radius = kDefaultBorderRadiusXX,
     BoxConstraints? contentConstraints,
+    //--
+    dynamic result,
   }) {
     return Center(
       child: buildDialogContainer(
@@ -139,9 +141,8 @@ mixin DialogMixin implements TranslationTypeImpl {
         constraints: contentConstraints,
         radius: radius,
         decorationColor: decorationColor,
-        blur: blur,
       ),
-    ).autoCloseDialog(context);
+    ).blur(enable: blur == true).autoCloseDialog(context, result: result);
   }
 
   /// 底部撑满显示的对话框样式
