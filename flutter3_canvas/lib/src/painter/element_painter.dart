@@ -52,8 +52,11 @@ class IElementPainter extends IPainter
   Color paintColor = Colors.black;
 
   /// 画笔, 在[onPaintingSelfBefore]中设置画笔属性
+  /// - [RenderImage]
+  /// - [paintImage]
   @configProperty
   Paint paint = Paint()
+    ..filterQuality = FilterQuality.medium
     ..strokeJoin = StrokeJoin.round
     ..strokeCap = StrokeCap.round;
 
