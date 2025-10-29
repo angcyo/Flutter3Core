@@ -145,6 +145,36 @@ mixin DialogMixin implements TranslationTypeImpl {
     ).blur(enable: blur == true).autoCloseDialog(context, result: result);
   }
 
+  /// 居中显示的桌面样式的对话框
+  /// [buildCenterDialog]
+  @api
+  @entryPoint
+  @desktopLayout
+  Widget buildDesktopCenterDialog(
+    BuildContext context,
+    Widget content, {
+    EdgeInsets? margin,
+    EdgeInsets? contentPadding = EdgeInsets.zero,
+    Color? decorationColor,
+    bool? blur,
+    double radius = kDefaultBorderRadiusXX,
+    BoxConstraints? contentConstraints,
+    //--
+    dynamic result,
+  }) {
+    return Center(
+      child: buildDialogContainer(
+        context,
+        margin: margin,
+        padding: contentPadding,
+        content.desktopConstrained().matchParent(matchHeight: false),
+        constraints: contentConstraints,
+        radius: radius,
+        decorationColor: decorationColor,
+      ),
+    ).blur(enable: blur == true).autoCloseDialog(context, result: result);
+  }
+
   /// 底部撑满显示的对话框样式
   /// [child] 内容小部件
   @api
