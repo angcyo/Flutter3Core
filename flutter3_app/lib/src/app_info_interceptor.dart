@@ -46,7 +46,7 @@ class AppInfoInterceptor extends Interceptor {
       return it;
     });
     //App语言信息
-    GlobalConfig.def.globalContext?.locale.let((it) {
+    GlobalConfig.def.globalContext?.maybeLocale.let((it) {
       //options.headers["appLocale"] = it.toString();
     });
     super.onRequest(options, handler);

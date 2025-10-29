@@ -92,6 +92,10 @@ dependencies:
   # https://pub.dev/packages/flutter_colorpicker
   flutter_colorpicker: ^1.1.0
 
+  # gbk 编码
+  # https://pub.dev/packages/charset
+  charset: ^2.0.1
+
 # dependency_overrides:
 
 dev_dependencies:

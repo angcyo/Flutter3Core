@@ -34,6 +34,11 @@ const kDefTimeout = 10;
 class RDio {
   /// 获取一个上层提供的[RDio],如果有.
   /// 如果有没有则返回单例
+  ///
+  /// ```
+  /// Error: Requested the Locale of a context that does not include a Localizations ancestor.
+  /// To request the Locale, the context used to retrieve the Localizations widget must be that of a widget that is a descendant of a Localizations widget.
+  /// ```
   static RDio get({BuildContext? context, bool depend = false}) {
     if (depend) {
       return context?.dependOnInheritedWidgetOfExactType<DioScope>()?.rDio ??

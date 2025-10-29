@@ -21,11 +21,7 @@ class DioScope extends InheritedWidget {
 
   final RDio rDio;
 
-  const DioScope({
-    super.key,
-    required super.child,
-    required this.rDio,
-  });
+  const DioScope({super.key, required super.child, required this.rDio});
 
   @override
   bool updateShouldNotify(DioScope oldWidget) => rDio != oldWidget.rDio;
@@ -72,18 +68,19 @@ extension DioStringEx on String {
     BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.get<T>(
-          transformUrl(),
-          data: body,
-          queryParameters: queryParameters,
-          options: options,
-          cancelToken: cancelToken,
-          onReceiveProgress: onReceiveProgress,
-        );
+      transformUrl(),
+      data: body,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
+    );
     //debugger();
     return response;
   }
 
-  /// 获取http字符串内容
+  /// 获取http字符串内容, 只能使用utf8编码.
+  /// 要想使用其它编码, 请使用[dioGetBytes]自行编解码
   /// [HttpStringEx.httpGetContent]
   Future<String?> dioGetString({
     Map<String, dynamic>? queryParameters,
@@ -93,12 +90,12 @@ extension DioStringEx on String {
     BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.get<String>(
-          transformUrl(),
-          queryParameters: queryParameters,
-          options: (options ?? Options())..responseType = ResponseType.plain,
-          cancelToken: cancelToken,
-          onReceiveProgress: onReceiveProgress,
-        );
+      transformUrl(),
+      queryParameters: queryParameters,
+      options: (options ?? Options())..responseType = ResponseType.plain,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
+    );
     //debugger();
     return response.data;
   }
@@ -113,12 +110,12 @@ extension DioStringEx on String {
     BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.get(
-          transformUrl(),
-          queryParameters: queryParameters,
-          options: (options ?? Options())..responseType = ResponseType.bytes,
-          cancelToken: cancelToken,
-          onReceiveProgress: onReceiveProgress,
-        );
+      transformUrl(),
+      queryParameters: queryParameters,
+      options: (options ?? Options())..responseType = ResponseType.bytes,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
+    );
     //debugger();
     return Uint8List.fromList(response.data);
   }
@@ -157,14 +154,14 @@ extension DioStringEx on String {
     BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.post<T>(
-          transformUrl(),
-          data: body,
-          queryParameters: queryParameters,
-          options: options,
-          cancelToken: cancelToken,
-          onSendProgress: onSendProgress,
-          onReceiveProgress: onReceiveProgress,
-        );
+      transformUrl(),
+      data: body,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
     return response;
   }
 
@@ -181,14 +178,14 @@ extension DioStringEx on String {
     BuildContext? context,
   }) async {
     final response = await RDio.get(context: context).dio.put<T>(
-          transformUrl(),
-          data: body,
-          queryParameters: queryParameters,
-          options: options,
-          cancelToken: cancelToken,
-          onSendProgress: onSendProgress,
-          onReceiveProgress: onReceiveProgress,
-        );
+      transformUrl(),
+      data: body,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
     //debugger();
     return response;
   }
@@ -277,7 +274,9 @@ extension DioStringEx on String {
       final length = saveFilePath!.length;
       onReceiveProgress?.call(length, length);
       return Response(
-          requestOptions: RequestOptions(path: this), data: saveFilePath);
+        requestOptions: RequestOptions(path: this),
+        data: saveFilePath,
+      );
     }
     final response = dio.download(
       transformUrl(),
@@ -287,9 +286,13 @@ extension DioStringEx on String {
           if (debugLog) {
             if (total > 0) {
               // 日志限流
-              l.d("下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveFilePath]");
+              l.d(
+                "下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveFilePath]",
+              );
             } else {
-              l.d("下载进度:$count ${count.toSizeStr()} \n[$this]->[$saveFilePath]");
+              l.d(
+                "下载进度:$count ${count.toSizeStr()} \n[$this]->[$saveFilePath]",
+              );
             }
           }
           return true;
@@ -352,8 +355,10 @@ extension DioFutureResponseEx<T> on Future<T> {
         return null;
       } else if (response == null) {
         //没有数据
-        final exception =
-            RHttpException(message: "response is null", error: error);
+        final exception = RHttpException(
+          message: "response is null",
+          error: error,
+        );
         final err = handle.handleError(exception);
         final callbackValue = callback?.call(response, err);
         if (throwError == true) {

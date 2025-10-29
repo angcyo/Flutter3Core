@@ -74,7 +74,7 @@ extension AnimationTweenEx on Animation<double> {
 }
 
 extension AnimationWidgetEx on Widget {
-  /// 缩放动画
+  /// 缩放变换动画
   /// [MatrixTransition]
   /// [ScaleTransition]
   Widget scaleTransition(
@@ -97,7 +97,7 @@ extension AnimationWidgetEx on Widget {
     );
   }
 
-  /// 透明度动画, 渐隐动画.
+  /// 透明度变换动画, 渐隐动画.
   /// [out] fade out or fade in
   ///
   /// [Opacity]
@@ -121,7 +121,7 @@ extension AnimationWidgetEx on Widget {
     );
   }
 
-  /// 滑动动画
+  /// 滑动变换动画
   Widget slideTransition({
     Animation<Offset>? offset,
     Offset? from,
@@ -144,12 +144,15 @@ extension AnimationWidgetEx on Widget {
     );
   }
 
-  /// 旋转动画
+  /// 旋转变换动画
   /// [from] 旋转角度, 角度单位
   /// [to] 旋转角度, 角度单位
   ///
-  /// [MatrixTransition]
-  /// [RotationTransition]
+  /// - [MatrixTransition]
+  /// - [RotationTransition]
+  ///
+  /// - [AnimatedBuilder]
+  /// - [AnimationController]
   Widget rotationTransition(
     Animation<double>? rotate, {
     double? from,
@@ -199,6 +202,13 @@ extension AnimationWidgetEx on Widget {
       child: this,
     );
   }
+
+  /// 无限旋转动画
+  /// - [RotateAnimation]
+  ///
+  /// - [rotationTransition]
+  Widget rotateAnimation({Key? key, bool enable = true}) =>
+      enable ? RotateAnimation(this, key: key) : this;
 }
 
 //--

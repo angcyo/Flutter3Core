@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
@@ -31,10 +29,7 @@ class LogFileInterceptor extends Interceptor {
   final bool toFile;
   final bool toPrint;
 
-  LogFileInterceptor({
-    this.toFile = true,
-    this.toPrint = true,
-  });
+  LogFileInterceptor({this.toFile = true, this.toPrint = true});
 
   /// ```
   /// handler.resolve(response);
@@ -57,10 +52,12 @@ class LogFileInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final options = err.requestOptions;
     final queryParameters = options.uri.queryParameters;
-    final noLogPrint = queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
+    final noLogPrint =
+        queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
         options.extra[kNoLogPrintKey]?.toBoolOrNull() ??
         !toPrint;
-    final noLogFile = queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
+    final noLogFile =
+        queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
         options.extra[kNoLogFileKey]?.toBoolOrNull() ??
         !toFile;
 
@@ -69,10 +66,12 @@ class LogFileInterceptor extends Interceptor {
     final log = stringBuilder((builder) {
       if (value == null) {
         builder.appendLine(
-            "<--${err.requestOptions.uri}(Dio异常[${err.response?.statusCode}])");
+          "<--${err.requestOptions.uri}(Dio异常[${err.response?.statusCode}])",
+        );
       } else {
         builder.appendLine(
-            "<--${value.$1} ${LTime.diffTime(value.$2)}(Dio异常[${err.response?.statusCode}])");
+          "<--${value.$1} ${LTime.diffTime(value.$2)}(Dio异常[${err.response?.statusCode}])",
+        );
       }
       builder.appendLine("error->$err");
       if (err.response != null) {
@@ -80,14 +79,13 @@ class LogFileInterceptor extends Interceptor {
         builder.append(_responseLog(err.response!));
       }
     });
-    _printLog(
-      log,
-      toFile: noLogFile == false,
-      toPrint: noLogPrint == false,
-    );
+    _printLog(log, toFile: noLogFile == false, toPrint: noLogPrint == false);
     super.onError(err, handler);
     assert(() {
-      l.e("[${err.response?.statusCode}]请求失败[${err.requestOptions.uri}]->$err");
+      l.e(
+        "${err.response?.statusCode?.toString().connect("]", "[")}"
+        "请求失败[${err.requestOptions.uri}]->$err",
+      );
       return true;
     }());
   }
@@ -98,16 +96,18 @@ class LogFileInterceptor extends Interceptor {
 
     //日志输出控制
     final queryParameters = options.uri.queryParameters;
-    final noLogPrint = queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
+    final noLogPrint =
+        queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
         options.extra[kNoLogPrintKey]?.toBoolOrNull() ??
         !toPrint;
-    final noLogFile = queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
+    final noLogFile =
+        queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
         options.extra[kNoLogFileKey]?.toBoolOrNull() ??
         !toFile;
     final noRequestLogPrint =
         queryParameters[kNoRequestLogPrintKey]?.toBoolOrNull() ??
-            options.extra[kNoRequestLogPrintKey]?.toBoolOrNull() ??
-            !toPrint;
+        options.extra[kNoRequestLogPrintKey]?.toBoolOrNull() ??
+        !toPrint;
 
     //添加请求头
     options.headers["logUuid"] = id;
@@ -124,24 +124,36 @@ class LogFileInterceptor extends Interceptor {
         lineSeparator,
       );
       builder.append(
-          'followRedirects:', options.followRedirects, lineSeparator);
+        'followRedirects:',
+        options.followRedirects,
+        lineSeparator,
+      );
       builder.append(
-          'persistentConnection:', options.persistentConnection, lineSeparator);
+        'persistentConnection:',
+        options.persistentConnection,
+        lineSeparator,
+      );
       builder.append('connectTimeout:', options.connectTimeout, lineSeparator);
       builder.append('sendTimeout:', options.sendTimeout, lineSeparator);
       builder.append('receiveTimeout:', options.receiveTimeout, lineSeparator);
-      builder.append('receiveDataWhenStatusError:',
-          options.receiveDataWhenStatusError, lineSeparator);
+      builder.append(
+        'receiveDataWhenStatusError:',
+        options.receiveDataWhenStatusError,
+        lineSeparator,
+      );
       builder.append('extra:', options.extra, lineSeparator);
       builder.appendLine('headers[${options.headers.length}]↓');
-      options.headers
-          .forEach((key, v) => builder.append(' $key:', v, lineSeparator));
+      options.headers.forEach(
+        (key, v) => builder.append(' $key:', v, lineSeparator),
+      );
       final data = options.data;
       if (data != null) {
         //debugger();
-        builder.appendLine('data(${data.runtimeType})↓');
+        builder.appendLine('options.data(${data.runtimeType})↓');
         if (data is FormData) {
           builder.appendAll(data.fields);
+        } else if (data is Iterable<int>) {
+          builder.appendAll(data.length.toSizeStr(space: " "));
         } else {
           builder.appendAll(data);
         }
@@ -157,16 +169,18 @@ class LogFileInterceptor extends Interceptor {
   void _logResponse(Response response) {
     final options = response.requestOptions;
     final queryParameters = options.uri.queryParameters;
-    final noLogPrint = queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
+    final noLogPrint =
+        queryParameters[kNoLogPrintKey]?.toBoolOrNull() ??
         options.extra[kNoLogPrintKey]?.toBoolOrNull() ??
         !toPrint;
-    final noLogFile = queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
+    final noLogFile =
+        queryParameters[kNoLogFileKey]?.toBoolOrNull() ??
         options.extra[kNoLogFileKey]?.toBoolOrNull() ??
         !toFile;
     final noResponseLogPrint =
         queryParameters[kNoResponseLogPrintKey]?.toBoolOrNull() ??
-            options.extra[kNoResponseLogPrintKey]?.toBoolOrNull() ??
-            !toPrint;
+        options.extra[kNoResponseLogPrintKey]?.toBoolOrNull() ??
+        !toPrint;
 
     final hashCode = options.hashCode;
     final value = uuidMap.remove(hashCode);
@@ -183,25 +197,28 @@ class LogFileInterceptor extends Interceptor {
 
   String _responseLog(Response response) {
     var log = stringBuilder((builder) {
-      builder
-          .appendLine("[${response.statusCode}]${response.requestOptions.uri}");
+      builder.appendLine(
+        "[${response.statusCode}]${response.requestOptions.uri}",
+      );
       if (response.isRedirect == true) {
         builder.append('redirect:', response.realUri, lineSeparator);
       }
       builder.appendLine('headers↓');
-      response.headers
-          .forEach((key, v) => builder.append(' $key:', v, lineSeparator));
-      builder.appendLine('data(${response.data.runtimeType})↓');
-      builder.appendAll(response.toString());
+      response.headers.forEach(
+        (key, v) => builder.append(' $key:', v, lineSeparator),
+      );
+      final data = response.data;
+      builder.appendLine('response.data(${data.runtimeType})↓');
+      if (data is Iterable<int>) {
+        builder.appendAll(data.length.toSizeStr(space: " "));
+      } else {
+        builder.appendAll(response.toString());
+      }
     });
     return log;
   }
 
-  void _printLog(
-    String log, {
-    bool? toFile,
-    bool? toPrint,
-  }) {
+  void _printLog(String log, {bool? toFile, bool? toPrint}) {
     //debugger();
     if (toFile ?? this.toFile) {
       GlobalConfig.def.writeFileFn?.call('http.log', 'log', log);

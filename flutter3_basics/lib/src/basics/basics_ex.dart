@@ -2277,8 +2277,8 @@ extension IntEx on int {
   }
 
   /// [FileSizeEx.toSizeStr]
-  String toSizeStr([int round = 2, String space = ""]) {
-    return fileSize(this, round);
+  String toSizeStr({int round = 2, String space = ""}) {
+    return fileSize(this, round, space);
   }
 
   /// 从整型数中取第[bit]位的数
@@ -2605,6 +2605,9 @@ extension IterableEx<E> on Iterable<E> {
     }
     return elementAt(index);
   }
+
+  /// 随机获取一个
+  E? get random => isNotEmpty ? elementAt(nextInt(length)) : null;
 
   /// 最后一个元素的索引
   int get lastIndex => length - 1;

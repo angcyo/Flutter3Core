@@ -4,30 +4,32 @@ part of '../../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/22
 ///
-/// [FlowLayout]
+/// 将自身的约束, 同步作用到所有子元素
+///
+/// - [Stack]
+/// - [FlowLayout]
 class FrameLayout extends MultiChildRenderObjectWidget {
-  const FrameLayout({
-    super.key,
-    super.children,
-  });
+  const FrameLayout({super.key, super.children});
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    // TODO: implement createRenderObject
-    throw UnimplementedError();
+    return FrameLayoutRender();
   }
 
   @override
   void updateRenderObject(
-      BuildContext context, covariant RenderObject renderObject) {
+    BuildContext context,
+    FrameLayoutRender renderObject,
+  ) {
     super.updateRenderObject(context, renderObject);
   }
 
   @override
-  void didUnmountRenderObject(covariant RenderObject renderObject) {
+  void didUnmountRenderObject(FrameLayoutRender renderObject) {
     super.didUnmountRenderObject(renderObject);
   }
 
+  ///
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -51,11 +53,8 @@ class FrameLayoutParentData extends ContainerBoxParentData<RenderBox> {
 }
 
 /// [FrameLayoutParentData] 的包裹类
-class FrameLayoutData extends ParentDataWidget<FrameLayoutParentData> {
-  const FrameLayoutData({
-    super.key,
-    required super.child,
-  });
+class FrameLayoutDataWidget extends ParentDataWidget<FrameLayoutParentData> {
+  const FrameLayoutDataWidget({super.key, required super.child});
 
   @override
   void applyParentData(RenderObject renderObject) {
@@ -71,8 +70,8 @@ class FrameLayoutData extends ParentDataWidget<FrameLayoutParentData> {
 /// [FlowLayout] 的渲染对象
 class FrameLayoutRender extends RenderBox
     with
-        ContainerRenderObjectMixin<RenderBox, FlowLayoutParentData>,
-        RenderBoxContainerDefaultsMixin<RenderBox, FlowLayoutParentData>,
+        ContainerRenderObjectMixin<RenderBox, FrameLayoutParentData>,
+        RenderBoxContainerDefaultsMixin<RenderBox, FrameLayoutParentData>,
         DebugOverflowIndicatorMixin,
         LayoutMixin {
   FrameLayoutRender();
@@ -93,16 +92,42 @@ class FrameLayoutRender extends RenderBox
   @override
   void performLayout() {
     final BoxConstraints constraints = this.constraints;
+
+    double childMaxWidth = 0;
+    double childMaxHeight = 0;
     final children = getChildren();
     for (final child in children) {
       final childConstraints = constraints;
       ChildLayoutHelper.layoutChild(child, childConstraints);
+      final childSize = child.size;
+      childMaxWidth = max(childMaxWidth, childSize.width);
+      childMaxHeight = max(childMaxHeight, childSize.height);
     }
-    size = constraints.constrain(constraints.biggest);
+    size = constraints.constrain(Size(childMaxWidth, childMaxHeight));
+    //debugger();
   }
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
     defaultPaint(context, offset);
+  }
+}
+
+extension FrameLayoutEx on Widget {
+  /// 将[before].[this]和[after] 使用[FrameLayout]包裹
+  Widget frameOf(Widget? after, {Widget? before, Key? key}) =>
+      after == null && before == null
+      ? this
+      : [before, this, after].frame(key: key)!;
+}
+
+extension FrameLayoutListEx on WidgetNullList {
+  /// [FrameLayout]
+  Widget? frame({Key? key}) {
+    WidgetList list = filterNull();
+    if (isNullOrEmpty(list)) {
+      return null;
+    }
+    return FrameLayout(key: key, children: list);
   }
 }

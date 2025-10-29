@@ -71,8 +71,13 @@ extension HtmlStringEx on String {
   /// - [dom.Element.querySelector] 查询子元素
   /// - [dom.Element.querySelectorAll] 查询子元素列表
   dom.Document parseHtml({
-    String? encoding,
+    String? encoding = "utf8",
     bool generateSpans = false,
     String? sourceUrl,
-  }) => parse(this);
+  }) => parse(
+    this,
+    encoding: encoding,
+    generateSpans: generateSpans,
+    sourceUrl: sourceUrl,
+  );
 }

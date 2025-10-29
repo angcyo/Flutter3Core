@@ -803,6 +803,9 @@ extension WidgetEx on Widget {
   /// [_TransformedPointerExitEvent]
   ///
   Widget mouse({
+    //--
+    void Function(bool enter)? onMouseAction,
+    //--
     Key? key,
     PointerEnterEventListener? onEnter,
     PointerExitEventListener? onExit,
@@ -814,8 +817,20 @@ extension WidgetEx on Widget {
   }) => enable
       ? MouseRegion(
           key: key,
-          onEnter: onEnter,
-          onExit: onExit,
+          onEnter:
+              onEnter ??
+              (onMouseAction != null
+                  ? (event) {
+                      onMouseAction(true);
+                    }
+                  : null),
+          onExit:
+              onExit ??
+              (onMouseAction != null
+                  ? (event) {
+                      onMouseAction(false);
+                    }
+                  : null),
           onHover: onHover,
           cursor: cursor,
           opaque: opaque,
@@ -2869,6 +2884,7 @@ extension WidgetEx on Widget {
   /// 将[this]和[other] 使用[Column]包裹
   Widget columnOf(
     Widget? other, {
+    Key? key,
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize, //MainAxisSize.min
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -2880,6 +2896,7 @@ extension WidgetEx on Widget {
   }) => other == null
       ? this
       : [this, other].column(
+          key: key,
           mainAxisAlignment: mainAxisAlignment,
           mainAxisSize: mainAxisSize,
           crossAxisAlignment: crossAxisAlignment,
@@ -2893,6 +2910,7 @@ extension WidgetEx on Widget {
   /// 将[this]和[other] 使用[Row]包裹
   Widget rowOf(
     Widget? other, {
+    Key? key,
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize, //MainAxisSize.max
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -2906,6 +2924,7 @@ extension WidgetEx on Widget {
   }) => other == null
       ? this
       : [this, other].row(
+          key: key,
           mainAxisAlignment: mainAxisAlignment,
           mainAxisSize: mainAxisSize,
           crossAxisAlignment: crossAxisAlignment,
@@ -2922,6 +2941,7 @@ extension WidgetEx on Widget {
     Widget? after, {
     Widget? before,
     //--
+    Key? key,
     AlignmentGeometry alignment = AlignmentDirectional.center,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
@@ -2929,6 +2949,7 @@ extension WidgetEx on Widget {
   }) => after == null && before == null
       ? this
       : [before, this, after].stack(
+          key: key,
           alignment: alignment,
           textDirection: textDirection,
           fit: fit,
