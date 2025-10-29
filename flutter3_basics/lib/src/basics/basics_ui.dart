@@ -1012,11 +1012,13 @@ extension WidgetEx on Widget {
   }
 
   /// 在桌面平台监听[LogicalKeyboardKey.escape]按键自动关闭窗口
+  /// - [onlyDesktop] 是否只在桌面平台下监听, 否则全部监听
   ///
   /// - [Shortcuts] 也可以通过此小部件实现
   Widget autoCloseDialog(
     BuildContext? context, {
     bool onlyDesktop = true,
+    KeyEventResult otherKeyEventResult = KeyEventResult.ignored,
     Key? key,
     //--
     dynamic result,
@@ -1033,9 +1035,11 @@ extension WidgetEx on Widget {
             if (event.logicalKey == LogicalKeyboardKey.escape) {
               if (event.isKeyUp) {
                 context?.maybePop(result);
+                return KeyEventResult.handled;
               }
             }
-            return KeyEventResult.handled;
+            //如果处理了所有的键盘事件, 此时child内部有输入框, 则可以会拦截键盘事件.
+            return otherKeyEventResult;
           },
         );
 
