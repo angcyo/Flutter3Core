@@ -66,7 +66,10 @@ dependencies:
   # https://pub.dev/packages/flutter_local_notifications_linux
   # https://pub.dev/packages/flutter_local_notifications_platform_interface
   # https://pub.dev/packages/timezone
-  # ANDROID IOS LINUX MACOS
+  # Android iOS Linux macOS Windows
+  #
+  # https://github.com/MaikuB/flutter_local_notifications/issues/2667
+  # https://github.com/MaikuB/flutter_local_notifications/issues/2631
   flutter_local_notifications: ^19.5.0
 
   # https://pub.dev/packages/flutter_animate
