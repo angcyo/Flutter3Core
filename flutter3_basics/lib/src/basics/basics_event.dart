@@ -1479,15 +1479,16 @@ mixin FlingDetectorMixin {
   }
 
   /// 开始快速滑动
-  /// [ScrollUpdateNotification]
-  /// [ScrollStartNotification]
-  /// [OverscrollNotification]
-  /// [ScrollPosition.setPixels]
-  /// [ScrollPosition.didOverscrollBy]
-  /// [BouncingScrollPhysics.applyPhysicsToUserOffset]
+  /// - [ScrollUpdateNotification]
+  /// - [ScrollStartNotification]
+  /// - [OverscrollNotification]
+  /// - [ScrollPosition.setPixels]
+  /// - [ScrollPosition.didOverscrollBy]
+  /// - [BouncingScrollPhysics.applyPhysicsToUserOffset]
   ///
-  /// [ClampingScrollSimulation]
-  /// [BouncingScrollSimulation]
+  /// - [ClampingScrollSimulation]
+  /// - [BouncingScrollSimulation]
+  /// - [FrictionSimulation]
   @api
   AnimationController startFling(
     void Function(double value) flingAction, {
