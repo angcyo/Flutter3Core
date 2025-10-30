@@ -420,7 +420,15 @@ OverlayEntry? showOverlay(
   OverlayState? overlayState;
   if (context == null) {
     if (GlobalConfig.def.globalAppContext != null) {
-      overlayState = Overlay.of(GlobalConfig.def.globalAppContext!);
+      try {
+        overlayState = Overlay.of(GlobalConfig.def.globalAppContext!);
+      } catch (e) {
+        assert(() {
+          l.w(e);
+          //debugger();
+          return true;
+        }());
+      }
     }
     if (overlayState == null) {
       if (isSchedulerPhase) {

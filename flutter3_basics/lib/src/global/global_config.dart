@@ -176,7 +176,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局的上下文, 在[WidgetsApp]下
   ///
-  /// - 此上下文可以获取到导航/覆盖层
+  /// - 此上下文可以获取到导航[Navigator]/覆盖层[Overlay]
   BuildContext? globalAppContext;
 
   /// 全局的上下文[globalAppContext]->[globalTopContext]
@@ -188,6 +188,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 更新全局App上下文
   @callPoint
   void updateGlobalAppContext(BuildContext context) {
+    assert(() {
+      l.i('更新全局App上下文:${context.classHash()}');
+      return true;
+    }());
     globalAppContext = context;
     for (final action in onGlobalAppContextChangedActions) {
       try {
@@ -732,8 +736,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 从上往下查找 [WidgetsApp]
   /// [Overlay.of]
-  Element? findWidgetsAppElement() {
-    final element = globalTopContext?.findElementOfWidget<WidgetsApp>();
+  Element? findWidgetsAppElement([BuildContext? context]) {
+    final element = (context ?? globalTopContext)
+        ?.findElementOfWidget<WidgetsApp>();
     return element;
   }
 
@@ -748,8 +753,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 从上往下查找 [OverlayState]
   /// [Overlay.of]
-  OverlayState? findOverlayState() {
-    var element = globalTopContext?.findElementOfWidget<Overlay>();
+  OverlayState? findOverlayState([BuildContext? context]) {
+    var element = (context ?? globalTopContext)?.findElementOfWidget<Overlay>();
     if (element is StatefulElement) {
       return element.state as OverlayState;
     }
@@ -767,17 +772,21 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 从上往下查找 [NavigatorState]
   /// [Navigator.of]
-  NavigatorState? findNavigatorState() =>
-      globalTopContext?.findNavigatorState();
+  NavigatorState? findNavigatorState([BuildContext? context]) =>
+      (context ?? globalTopContext)?.findNavigatorState();
 
   /// 从上往下查找所有[ModalRoute], 查找所有路由器.
   /// release之后,字符串是否会变化?
   /// [ContextEx.findFirstNotSystemElement]
   @minifyProguardFlag
-  List<(ModalRoute, Element?)> findModalRouteList() {
+  List<(ModalRoute, Element?)> findModalRouteList([BuildContext? context]) {
     List<Element> routeElementList = [];
     List<(ModalRoute, Element?)> result = [];
-    globalTopContext?.eachVisitChildElements((element, depth, childIndex) {
+    (context ?? globalTopContext)?.eachVisitChildElements((
+      element,
+      depth,
+      childIndex,
+    ) {
       /*if (element.runtimeType == StatefulElement ||
           element.runtimeType == StatelessElement ||
           element.runtimeType == InheritedElement) {
@@ -837,9 +846,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 从上往下查找 [Localizations]
   /// [Localizations.localeOf]
   /// [Localizations.maybeLocaleOf]
-  Locale? findLocale() {
+  Locale? findLocale([BuildContext? context]) {
     //final element = globalTopContext?.findElementOfWidget<Localizations>();
-    final element = globalTopContext
+    final element = (context ?? globalTopContext)
         ?.findElementOfWidget<Title>(); //通过title元素获取
     Locale? result;
     if (element is StatefulElement) {

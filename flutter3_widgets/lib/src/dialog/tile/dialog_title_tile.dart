@@ -197,7 +197,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
         .column(crossAxisAlignment: CrossAxisAlignment.start)
         ?.paddingOnly(
           horizontal: leading == null ? kX : null,
-          vertical: leading == null ? kL : null,
+          vertical: leading == null ? kX : null,
         );
 
     final body =

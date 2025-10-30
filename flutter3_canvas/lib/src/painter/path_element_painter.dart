@@ -19,31 +19,39 @@ class PathElementPainter extends ElementPainter {
     paintStrokeWidthSuppressCanvasScale = true;
   }
 
-  /// [path] 要绘制路径数据
-  /// [moveToZero] 是否移动到0,0点
-  /// [initPaintProperty] 是否初始化[PaintProperty]属性
-  /// [exactBounds] 是否精确计算边界, 会消耗性能
+  /// - [path] 要绘制路径数据
+  /// - [useDataPosition] 是否要使用[path]数据中对应的位置信息
+  /// - [moveToZero] 是否将[path]数据移动到0,0点的位置, 方便绘制
+  /// - [initPaintProperty] 是否初始化[PaintProperty]属性
+  /// - [exactBounds] 是否精确计算边界, 会消耗性能
   ///
   /// 请注意[isVisibleInCanvasBox]可见性测试
   @property
   void initFromPath(
-    Path? path, {
+    @dp Path? path, {
+    bool useDataPosition = true,
     bool moveToZero = true,
     bool initPaintProperty = true,
     bool? exactBounds,
   }) {
+    //debugger();
+    final bounds = path?.getExactBounds(exactBounds) ?? Rect.zero;
     painterPath = moveToZero ? path?.moveToZero(exact: exactBounds) : path;
     if (initPaintProperty) {
-      final bounds = painterPath?.getExactBounds(exactBounds) ?? Rect.zero;
       if (paintProperty == null) {
-        updatePaintProperty(PaintProperty()
-          ..width = bounds.width
-          ..height = bounds.height);
+        updatePaintProperty(
+          PaintProperty()
+            ..left = useDataPosition ? bounds.left : 0
+            ..top = useDataPosition ? bounds.top : 0
+            ..width = bounds.width
+            ..height = bounds.height,
+        );
       } else {
-        paintProperty?.let((it) {
-          it.width = bounds.width;
-          it.height = bounds.height;
-        });
+        paintProperty
+          ?..left = useDataPosition ? bounds.left : 0
+          ..top = useDataPosition ? bounds.top : 0
+          ..width = bounds.width
+          ..height = bounds.height;
       }
     }
     refresh();

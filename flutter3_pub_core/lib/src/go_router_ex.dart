@@ -429,6 +429,7 @@ Widget goRouterApp({
   //--
   String? title,
   GenerateAppTitle? onGenerateTitle,
+  TransitionBuilder? builder /*这里的 context 获取不到 Overlay*/,
   //--
   Iterable<LocalizationsDelegate<dynamic>>? localizationsDelegates,
   Iterable<Locale>? supportedLocales,
@@ -450,6 +451,7 @@ Widget goRouterApp({
     theme: GlobalConfig.def.themeData,
     locale: GlobalConfig.def.locale,
     themeMode: GlobalConfig.def.themeMode,
+    builder: builder,
     //--
     localizationsDelegates: [
       ...?localizationsDelegates,

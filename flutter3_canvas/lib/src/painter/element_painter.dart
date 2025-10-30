@@ -357,6 +357,7 @@ class ElementPainter extends IElementPainter {
   ///
   /// - 支持[ElementPainter]
   /// - 支持[ElementGroupPainter]
+  @api
   @overridePoint
   void updateVisible(bool value, {Object? fromObj}) {
     final old = paintState.isVisible;
@@ -380,6 +381,7 @@ class ElementPainter extends IElementPainter {
   bool get isLockOperate => paintState.isLockOperate;
 
   /// 更新元素锁定操作
+  @api
   @overridePoint
   void updateLockOperate(bool value, {Object? fromObj}) {
     final old = paintState.isLockOperate;

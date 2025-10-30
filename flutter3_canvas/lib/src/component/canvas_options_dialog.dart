@@ -91,9 +91,9 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog> {
     ];
 
     if (globalConfig.isInTabletLandscapeModel) {
-      return widget.buildCenterDialog(
+      return widget.buildDesktopCenterDialog(
         context,
-        children.column()!.desktopConstrained(),
+        [DesktopDialogTitleTile(title: "画布选项"), ...children].column()!,
       );
     }
 
