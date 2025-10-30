@@ -118,3 +118,7 @@ class FourPoint {
 extension FourPointStringEx on String {
   FourPoint? get fourPoint => FourPoint.fromListString(this);
 }
+
+extension FourPointRectEx on Rect {
+  FourPoint? get fourPoint => FourPoint.fromRect(this);
+}
