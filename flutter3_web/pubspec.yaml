@@ -33,6 +33,7 @@ dependencies:
   #
   # https://inappwebview.dev/docs/intro/#setup-android
   # https://inappwebview.dev/docs/intro/#setup-ios
+  # https://inappwebview.dev/docs/intro/#setup-windows
   flutter_inappwebview: ^6.1.5
 
   # https://pub.dev/packages/flutter_3d_controller
