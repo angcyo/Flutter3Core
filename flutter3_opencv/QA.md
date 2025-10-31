@@ -16,3 +16,9 @@ Will change the error to warning in the future.
 ```
 
 属于正常情况, 无视即可.
+
+# fatal error LNK1120
+
+TLDR: upgrade your visual studio.
+
+https://github.com/rainyl/opencv_dart/issues/375
