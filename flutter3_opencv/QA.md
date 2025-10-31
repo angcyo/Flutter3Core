@@ -17,7 +17,7 @@ Will change the error to warning in the future.
 
 属于正常情况, 无视即可.
 
-# fatal error LNK1120
+# fatal error LNK1120 / error LNK2001
 
 TLDR: upgrade your visual studio.
 
