@@ -115,7 +115,7 @@ If you wish to support `opening urls` into your app, add the following to the `i
 
 上述配置需要`Apple ID`开启了`Associated Domains`功能, 才能使用.否则报错:
 
-> Provisioning profile "iOS Team Provisioning Profile: com.laser.abc.beeb" doesn't support the Associated Domains capability.
+> Provisioning profile "iOS Team Provisioning Profile: com.laser.abc.beeb.app" doesn't support the Associated Domains capability.
 
 ## 6. Configure `Share Extension` Target `Working`
 
