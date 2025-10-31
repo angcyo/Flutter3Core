@@ -189,7 +189,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   @callPoint
   void updateGlobalAppContext(BuildContext context) {
     assert(() {
-      l.i('更新全局App上下文:${context.classHash()}');
+      l.i('更新全局App上下文为->${context.classHash()}');
       return true;
     }());
     globalAppContext = context;
