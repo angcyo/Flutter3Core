@@ -1,4 +1,5 @@
-part of '../flutter3_app.dart';
+import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,9 +12,8 @@ part of '../flutter3_app.dart';
 /// 默认图标名称`defaultIcon`
 ///
 @callPoint
-void initPlatformNotification({
-  required String notifyIcon,
-}) {
+@PlatformFlag("Android iOS Linux macOS Windows")
+void initPlatformNotification({required String notifyIcon}) {
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   AndroidInitializationSettings initializationSettingsAndroid =
@@ -25,9 +25,9 @@ void initPlatformNotification({
       DarwinInitializationSettings();
   const LinuxInitializationSettings initializationSettingsLinux =
       LinuxInitializationSettings(
-    defaultActionName: 'Open notification',
-    /*defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),*/
-  );
+        defaultActionName: 'Open notification',
+        /*defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),*/
+      );
 
   InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
@@ -59,32 +59,30 @@ Future<void> showPlatformNotification({
   channelName ??= "Default";
   AndroidNotificationDetails androidNotificationDetails =
       AndroidNotificationDetails(
-    androidChannelId ?? "Default",
-    channelName,
-    channelDescription: androidChannelDescription,
-    importance: importance ?? Importance.max,
-    priority: priority ?? Priority.high,
-    ticker: content ?? title,
-    //actions: ,
-    //autoCancel: ,
-    //enableLights: ,
-    //enableVibration:,
-  );
+        androidChannelId ?? "Default",
+        channelName,
+        channelDescription: androidChannelDescription,
+        importance: importance ?? Importance.max,
+        priority: priority ?? Priority.high,
+        ticker: content ?? title,
+        //actions: ,
+        //autoCancel: ,
+        //enableLights: ,
+        //enableVibration:,
+      );
   DarwinNotificationDetails iosNotificationDetails = DarwinNotificationDetails(
     categoryIdentifier: channelName,
     //sound: ,
   );
 
   DarwinNotificationDetails macOSNotificationDetails =
-      DarwinNotificationDetails(
-    categoryIdentifier: channelName,
-  );
+      DarwinNotificationDetails(categoryIdentifier: channelName);
 
   LinuxNotificationDetails linuxNotificationDetails =
       const LinuxNotificationDetails(
-          //category: LinuxNotificationCategory(channelName),
-          //actions: <LinuxNotificationAction>[],
-          );
+        //category: LinuxNotificationCategory(channelName),
+        //actions: <LinuxNotificationAction>[],
+      );
 
   notificationDetails ??= NotificationDetails(
     android: androidNotificationDetails,
@@ -110,9 +108,11 @@ Future<void> cancelNotification(int id, {String? tag}) async {
 /// Android平台通知权限是否给予
 Future<bool?> isAndroidNotificationsPermissionGranted() async {
   if (isAndroid) {
-    final bool granted = await flutterLocalNotificationsPlugin
+    final bool granted =
+        await flutterLocalNotificationsPlugin
             ?.resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin
+            >()
             ?.areNotificationsEnabled() ??
         false;
     return granted;
@@ -126,27 +126,23 @@ Future<bool?> requestNotificationsPermissions() async {
   if (isIos || isMacOS) {
     await flutterLocalNotificationsPlugin
         ?.resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+          IOSFlutterLocalNotificationsPlugin
+        >()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
     await flutterLocalNotificationsPlugin
         ?.resolvePlatformSpecificImplementation<
-            MacOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+          MacOSFlutterLocalNotificationsPlugin
+        >()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
   } else if (isAndroid) {
     final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-        flutterLocalNotificationsPlugin?.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+        flutterLocalNotificationsPlugin
+            ?.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
 
-    final bool? grantedNotificationPermission =
-        await androidImplementation?.requestNotificationsPermission();
+    final bool? grantedNotificationPermission = await androidImplementation
+        ?.requestNotificationsPermission();
     return grantedNotificationPermission ?? false;
   }
   //未知平台, 返回null

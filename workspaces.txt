@@ -1,4 +1,4 @@
-# 2025-10-20 14:45:19.947247
+# 2025-10-31 10:47:51.614230
 # Create by angcyo (dart run Flutter3Core/script/pub_workspace.dart)
 - Flutter3Core/flutter3_oss
 - Flutter3Core/flutter3_ffi
@@ -15,6 +15,7 @@
 - Flutter3Core/flutter3_canvas
 - Flutter3Core/flutter3_pub_core
 - Flutter3Core/flutter3_res
+- Flutter3Core/flutter3_notification
 - Flutter3Core/flutter3_code
 - Flutter3Core/flutter3_web
 - Flutter3Core/flutter3_shelf

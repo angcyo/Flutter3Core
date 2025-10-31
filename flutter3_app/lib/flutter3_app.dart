@@ -12,7 +12,6 @@ import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_move_task_back/flutter_move_task_back.dart';
 import 'package:flutter_uri_to_file/flutter_uri_to_file.dart' as uri_to_file;
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
@@ -40,7 +39,6 @@ part 'src/android_app.dart';
 part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';
 part 'src/app_log.dart';
-part 'src/app_notifications.dart';
 part 'src/app_swiper_ex.dart';
 part 'src/mobile_ex.dart';
 part 'src/pages/app_update_dialog.dart';
@@ -174,6 +172,7 @@ Future runGlobalApp(
     //--before
     try {
       await beforeAction?.call();
+      await executeGlobalInitialize(before: true);
     } catch (e, s) {
       error = e;
       stack = s;
@@ -208,6 +207,7 @@ Future runGlobalApp(
     //--after
     try {
       await afterAction?.call();
+      await executeGlobalInitialize(after: true);
     } catch (e, s) {
       printError(e, s);
       debugger(when: isDebug);
@@ -297,6 +297,14 @@ Future _initDebugLastInfo() async {
           }
         }),
       );
+
+      //合规后的初始化
+      try {
+        await executeGlobalInitialize(compliance: true);
+      } catch (e, s) {
+        printError(e, s);
+        debugger(when: isDebug);
+      }
     }
   });
 }
