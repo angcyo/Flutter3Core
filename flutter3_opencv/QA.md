@@ -22,3 +22,7 @@ Will change the error to warning in the future.
 TLDR: upgrade your visual studio.
 
 https://github.com/rainyl/opencv_dart/issues/375
+
+或者更新`MSVC`: https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170
