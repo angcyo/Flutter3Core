@@ -50,7 +50,8 @@ Invalid argument(s): Failed to lookup symbol 'cv_Mat_create': dlsym(RTLD_DEFAULT
 
 打开官网 https://opencv.org/releases/ 下载 `Windows` `OpenCV – 4.12.0` 
 
-- 配置环境变量 `DARTCV_DISABLE_DOWNLOAD_OPENCV` 为 `ON` 禁用下载缓存
+- 配置环境变量 `DARTCV_CACHE_DIR` `opencv sdk`缓存自动下载的路径
+- 配置环境变量 `DARTCV_DISABLE_DOWNLOAD_OPENCV` 为 `ON` 禁用下载缓存, 禁用后使用`OpenCV_DIR`指定手动下载的路径
 - 配置环境变量 `OpenCV_DIR` 为包含 `OpenCVConfig.cmake`文件所在的目录. `E:\Downloads\libopencv-windows-x64\x64\vc17\staticlib`
 
 # opencv_dart: ^1.4.1

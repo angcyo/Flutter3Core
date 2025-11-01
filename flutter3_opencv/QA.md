@@ -19,7 +19,7 @@ Will change the error to warning in the future.
 
 # fatal error LNK1120 / error LNK2001
 
-TLDR: upgrade your visual studio.
+TLDR: upgrade your [visual studio](https://visualstudio.microsoft.com/zh-hans/). 
 
 https://github.com/rainyl/opencv_dart/issues/375
 
