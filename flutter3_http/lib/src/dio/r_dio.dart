@@ -49,15 +49,28 @@ class RDio {
   }
 
   /// dio对象
+  ///
+  /// - [DefaultHttpClientAdapter]
+  /// - [IOHttpClientAdapter]
   late final Dio _dio = Dio()
-        ..options.connectTimeout = const Duration(seconds: kDefTimeout)
-        ..options.sendTimeout = const Duration(seconds: kDefTimeout)
-        ..options.receiveTimeout = const Duration(seconds: kDefTimeout) //超时设置
-      ;
-
-  /*..httpClientAdapter = Http2Adapter(
-      ConnectionManager(idleTimeout: const Duration(seconds: 10)),
-    )*/
+    ..httpClientAdapter = IOHttpClientAdapter(
+      createHttpClient: () {
+        return HttpClient()
+          ..badCertificateCallback =
+              (X509Certificate cert, String host, int port) {
+                assert(() {
+                  l.w("证书验证->$host:$port");
+                  return true;
+                }());
+                return true;
+              };
+      },
+    )
+    ..options.connectTimeout = const Duration(seconds: kDefTimeout)
+    ..options.sendTimeout = const Duration(seconds: kDefTimeout)
+    ..options.receiveTimeout =
+        const Duration(seconds: kDefTimeout) //超时设置
+        ;
 
   /// 获取一个dio对象, 并设置[baseUrl]
   ///
@@ -65,10 +78,10 @@ class RDio {
   /// [LogFileInterceptor]
   /// [TokenInterceptor]
   Dio get dio => _dio
-        ..options.baseUrl = Http.getBaseUrl?.call() ?? ""
-        ..interceptors.remove(_logFileInterceptor)
-        ..interceptors.add(_logFileInterceptor) //日志拦截器需要放在最后
-      ;
+    ..options.baseUrl = Http.getBaseUrl?.call() ?? ""
+    ..interceptors.remove(_logFileInterceptor)
+    ..interceptors.add(_logFileInterceptor) //日志拦截器需要放在最后
+    ;
 
   /// 添加一个拦截器, 调用此方法. 方便调试
   void addInterceptor(Interceptor interceptor) {
