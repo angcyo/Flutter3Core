@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:yaml/yaml.dart';
@@ -11,20 +10,24 @@ import 'package:yaml/yaml.dart';
 /// 用来构建[BuildConfig]
 void main(List<String> arguments) {
   colorLog(
-      '[${Platform.script.path.split("/").last.split(".")[0]}]工作路径->${Directory.current.path}');
+    '[${Platform.script.path.split("/").last.split(".")[0]}]工作路径->${Directory.current.path}',
+  );
   final currentPath = Directory.current.path;
 
   final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");
 
   final localYaml = loadYaml(
-      localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
-  final yaml =
-      loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
+    localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "",
+  );
+  final yaml = loadYaml(
+    yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
+  );
 
   final pubspecFile = File("$currentPath/pubspec.yaml");
-  final pubspecYaml =
-      loadYaml(pubspecFile.existsSync() ? pubspecFile.readAsStringSync() : "");
+  final pubspecYaml = loadYaml(
+    pubspecFile.existsSync() ? pubspecFile.readAsStringSync() : "",
+  );
   final version = pubspecYaml["version"];
   final buildVersionName = version.split("+")[0];
   final buildVersionCode = version.split("+")[1];
@@ -53,7 +56,8 @@ void main(List<String> arguments) {
   final buildConfig = readConfigMap("build_config");
   if (buildConfig == null) {
     colorLog(
-        "未找到自定义的[build_config]]配置:请在项目根目录中的[script.yaml]文件中加入[build_config]配置信息.");
+      "未找到自定义的[build_config]]配置:请在项目根目录中的[script.yaml]文件中加入[build_config]配置信息.",
+    );
   }
   final json = {
     "buildTime": DateTime.now().toString(),
@@ -71,7 +75,7 @@ void main(List<String> arguments) {
   //目标文件
   const outputPath = "assets/config";
   final outputFile = File("$currentPath/$outputPath/build_config.json");
-  outputFile.parent.createSync();
+  outputFile.parent.createSync(recursive: true);
 
   outputFile.writeAsStringSync(jsonEncode(json));
   colorLog('构建信息修改->${outputFile.path}↓\n$json');
