@@ -17,6 +17,10 @@ dependencies:
     sdk: flutter
   flutter3_basics:
     path: ../flutter3_basics
+  flutter3_widgets:
+    path: ../flutter3_widgets
+  flutter3_pub:
+    path: ../flutter3_pub
 
   # https://pub.dev/packages/webview_flutter
   # 与 `flutter_inappwebview` 有冲突
@@ -31,6 +35,12 @@ dependencies:
   # https://inappwebview.dev/docs/intro/#setup-ios
   # https://inappwebview.dev/docs/intro/#setup-windows
   flutter_inappwebview: ^6.1.5 # Android iOS macOS web Windows
+  # https://pub.dev/packages/flutter_3d_controller
+  # https://pub.dev/packages/flutter_inappwebview
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/vector_math
+  flutter_3d_controller: ^2.3.0
 
 dev_dependencies:
   flutter_test:

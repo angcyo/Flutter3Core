@@ -1,4 +1,4 @@
-part of '../flutter3_web.dart';
+part of '../flutter3_webview.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -10,12 +10,7 @@ part of '../flutter3_web.dart';
 /// [webview_flutter]
 @Deprecated("请使用SingleInAppWebPage")
 class SingleWebPage extends StatefulWidget {
-  const SingleWebPage({
-    super.key,
-    this.url,
-    this.html,
-    this.baseUrl,
-  });
+  const SingleWebPage({super.key, this.url, this.html, this.baseUrl});
 
   /// 需要加载的网页地址
   final String? url;
@@ -113,13 +108,9 @@ class _SingleWebPageState extends State<SingleWebPage> with AbsScrollPage {
   Widget buildBody(BuildContext context, WidgetList? children) {
     List<Widget> children = [];
     if (_progress > 0 && _progress < 1) {
-      children.add(LinearProgressIndicator(
-        value: _progress,
-      ));
+      children.add(LinearProgressIndicator(value: _progress));
     }
     //children.add(WebViewWidget(controller: webViewController));
-    return Stack(
-      children: children,
-    );
+    return Stack(children: children);
   }
 }

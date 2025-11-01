@@ -1,4 +1,4 @@
-part of '../../flutter3_web.dart';
+part of '../flutter3_webview.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -21,12 +21,7 @@ class SingleInAppWebPage extends StatefulWidget with TranslationTypeMixin {
   @override
   TranslationType get translationType => TranslationType.slide;
 
-  const SingleInAppWebPage({
-    super.key,
-    this.url,
-    this.html,
-    this.baseUrl,
-  });
+  const SingleInAppWebPage({super.key, this.url, this.html, this.baseUrl});
 
   @override
   State<SingleInAppWebPage> createState() => _SingleInAppWebPageState();

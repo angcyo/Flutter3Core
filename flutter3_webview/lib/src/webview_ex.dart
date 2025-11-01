@@ -1,4 +1,4 @@
-part of '../flutter3_web.dart';
+part of '../flutter3_webview.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -110,15 +110,14 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     final globalTheme = GlobalTheme.of(context);
     webviewPullToRefreshController = isMobile
         ? PullToRefreshController(
-            settings: PullToRefreshSettings(
-              color: globalTheme.accentColor,
-            ),
+            settings: PullToRefreshSettings(color: globalTheme.accentColor),
             onRefresh: () async {
               if (isAndroid) {
                 inAppWebViewController?.reload();
               } else if (isIos) {
                 inAppWebViewController?.loadUrl(
-                    urlRequest: URLRequest(url: webviewUrl));
+                  urlRequest: URLRequest(url: webviewUrl),
+                );
               }
             },
           )
@@ -136,10 +135,10 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
       backgroundColor: globalTheme.surfaceBgColor,
       body: buildInAppWebView(context, config ?? webConfigMixin)
           .interceptPopResult(() async {
-        if (await onWebviewBackPress() == true) {
-          buildContext?.pop();
-        }
-      }),
+            if (await onWebviewBackPress() == true) {
+              buildContext?.pop();
+            }
+          }),
     );
   }
 
@@ -154,8 +153,9 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     final webview = InAppWebView(
       key: inAppWebViewKey,
       initialUrlRequest: urlRequest,
-      pullToRefreshController:
-          config.buildRefreshWidget ? webviewPullToRefreshController : null,
+      pullToRefreshController: config.buildRefreshWidget
+          ? webviewPullToRefreshController
+          : null,
       initialSettings: inAppWebViewSettings,
       onWebViewCreated: (controller) {
         l.d("onWebViewCreated");
@@ -180,8 +180,9 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
       onPermissionRequest: (controller, request) async {
         l.d('onPermissionRequest:$request');
         return PermissionResponse(
-            resources: request.resources,
-            action: PermissionResponseAction.GRANT);
+          resources: request.resources,
+          action: PermissionResponseAction.GRANT,
+        );
       },
       shouldOverrideUrlLoading: onSelfShouldOverrideUrlLoading,
       onLoadStop: (controller, url) async {
@@ -230,18 +231,25 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     }
     final List<Widget> children = [];
     if (webviewLoadProgress > 0 && webviewLoadProgress < 100) {
-      children.add(LinearProgressIndicator(
-        value: webviewLoadProgress / 100,
-        color: globalTheme.accentColor,
-      ));
+      children.add(
+        LinearProgressIndicator(
+          value: webviewLoadProgress / 100,
+          color: globalTheme.accentColor,
+        ),
+      );
     }
     children.add(webview);
     if (config.debug) {
       //ua
-      children.add(debugUpdateSignal
-          .buildFn(() => webViewUserAgentCache?.text(
-              style: globalTheme.textPlaceStyle.copyWith(fontSize: 9)))
-          .position(alignBottom: true));
+      children.add(
+        debugUpdateSignal
+            .buildFn(
+              () => webViewUserAgentCache?.text(
+                style: globalTheme.textPlaceStyle.copyWith(fontSize: 9),
+              ),
+            )
+            .position(alignBottom: true),
+      );
     }
     return Stack(children: children);
   }
@@ -262,7 +270,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   /// 加载指定[url]
   Future<void> loadWebviewUrl(String url) async {
     return inAppWebViewController?.loadUrl(
-        urlRequest: URLRequest(url: WebUri(url)));
+      urlRequest: URLRequest(url: WebUri(url)),
+    );
   }
 
   /// 加载指定html数据[data]
@@ -368,8 +377,9 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   @api
-  Future waitWebviewController(
-      [FutureOr Function(InAppWebViewController controller)? action]) async {
+  Future waitWebviewController([
+    FutureOr Function(InAppWebViewController controller)? action,
+  ]) async {
     if (inAppWebViewController != null) {
       return action?.call(inAppWebViewController!);
     }
@@ -436,15 +446,23 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   /// 拦截url
   @overridePoint
   Future<NavigationActionPolicy?> onSelfShouldOverrideUrlLoading(
-      InAppWebViewController controller,
-      NavigationAction navigationAction) async {
+    InAppWebViewController controller,
+    NavigationAction navigationAction,
+  ) async {
     final uri = navigationAction.request.url!;
     l.d('shouldOverrideUrlLoading[${uri.scheme}]->$uri');
     if (await onSelfInterceptUri(uri)) {
       return NavigationActionPolicy.CANCEL;
     }
-    if (!["http", "https", "file", "chrome", "data", "javascript", "about"]
-        .contains(uri.scheme)) {
+    if (![
+      "http",
+      "https",
+      "file",
+      "chrome",
+      "data",
+      "javascript",
+      "about",
+    ].contains(uri.scheme)) {
       //非上述的scheme, 都认为是App内部的scheme
       if (await uri.canLaunch()) {
         // Launch the App
@@ -463,5 +481,5 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     return false;
   }
 
-//--
+  //--
 }

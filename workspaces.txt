@@ -1,5 +1,5 @@
-# 2025-11-01 11:26:11.204943
-# Create by angcyo (dart run /E:/projects/flutter/LaserABCTools/Flutter3Core/script/pub_workspace.dart)
+# 2025-11-01 12:07:14.380038
+# Create by angcyo (dart run /E:/projects/flutter/LaserABC/Flutter3Core/script/pub_workspace.dart)
 - Flutter3Core/flutter3_app
 - Flutter3Core/flutter3_basics
 - Flutter3Core/flutter3_canvas
@@ -19,6 +19,5 @@
 - Flutter3Core/flutter3_shelf
 - Flutter3Core/flutter3_three_js
 - Flutter3Core/flutter3_vector
-- Flutter3Core/flutter3_web
 - Flutter3Core/flutter3_webview
 - Flutter3Core/flutter3_widgets

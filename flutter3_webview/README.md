@@ -1,39 +1,22 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+# QA
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+## Windows
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```
+Launching lib\main.dart on Windows in debug mode...
+Building Windows application...
+C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(382,5): error MSB3491: δ�����ļ���x64\Debug\flutter_inappwebview_windows_DEPENDENCIES_DOWNLOAD\flutter_.556B9A3A.tlog\flutter_inappwebview_windows_DEPENDENCIES_DOWNLOAD.lastbuildstate��д�������С�·��: x64\Debug\flutter_inappwebview_windows_DEPENDENCIES_DOWNLOAD\flutter_.556B9A3A.tlog\flutter_inappwebview_windows_DEPENDENCIES_DOWNLOAD.lastbuildstate ���� OS ���·�����ơ���ȫ�޶����ļ����������� 260 ���ַ��� [E:\projects\flutter\LaserABCTools\apps\LaserABCFactoryTools\build\windows\x64\plugins\flutter_inappwebview_windows\flutter_inappwebview_windows_DEPENDENCIES_DOWNLOAD.vcxproj]
+Error: Build process failed.
 ```
 
-## Additional information
+打开注册表 `regedit` 修改:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem]
+"LongPathsEnabled"=dword:00000001
+```
+
+https://github.com/pichillilorenzo/flutter_inappwebview/issues/2329
