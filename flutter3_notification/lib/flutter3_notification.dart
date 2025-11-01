@@ -16,30 +16,39 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 void initPlatformNotification({required String notifyIcon}) {
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings(notifyIcon);
+  // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+  final initializationSettingsAndroid = AndroidInitializationSettings(
+    notifyIcon,
+  );
 
-  const DarwinInitializationSettings initializationSettingsIOS =
-      DarwinInitializationSettings();
-  const DarwinInitializationSettings initializationSettingsMacOS =
-      DarwinInitializationSettings();
-  const LinuxInitializationSettings initializationSettingsLinux =
-      LinuxInitializationSettings(
-        defaultActionName: 'Open notification',
-        /*defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),*/
-      );
+  final initializationSettingsIOS = DarwinInitializationSettings();
+  final initializationSettingsMacOS = DarwinInitializationSettings();
+  final initializationSettingsLinux = LinuxInitializationSettings(
+    defaultActionName:
+        'Open notification' /*defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),*/,
+  );
+  final initializationSettingsWindows = WindowsInitializationSettings(
+    appName: 'Flutter Local Notifications Example',
+    appUserModelId: 'Com.Dexterous.FlutterLocalNotificationsExample',
+    // Search online for GUID generators to make your own
+    guid: 'd49b0314-ee7a-4626-bf79-97cdb8a991bb',
+  );
 
-  InitializationSettings initializationSettings = InitializationSettings(
+  final initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsIOS,
     macOS: initializationSettingsMacOS,
     linux: initializationSettingsLinux,
+    windows: initializationSettingsWindows,
   );
 
   flutterLocalNotificationsPlugin?.initialize(initializationSettings);
 }
 
 late FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
+
+/// -[FlutterLocalNotificationsPlugin.cancelAll] 取消所有通知
+FlutterLocalNotificationsPlugin? get $notify => flutterLocalNotificationsPlugin;
 
 ///[importance] 重要性
 ///[priority] 优先级
@@ -57,38 +66,51 @@ Future<void> showPlatformNotification({
   String? androidChannelDescription,
 }) async {
   channelName ??= "Default";
-  AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails(
-        androidChannelId ?? "Default",
-        channelName,
-        channelDescription: androidChannelDescription,
-        importance: importance ?? Importance.max,
-        priority: priority ?? Priority.high,
-        ticker: content ?? title,
-        //actions: ,
-        //autoCancel: ,
-        //enableLights: ,
-        //enableVibration:,
-      );
-  DarwinNotificationDetails iosNotificationDetails = DarwinNotificationDetails(
+  final androidNotificationDetails = AndroidNotificationDetails(
+    androidChannelId ?? "Default",
+    channelName,
+    channelDescription: androidChannelDescription,
+    importance: importance ?? Importance.max,
+    priority: priority ?? Priority.high,
+    ticker: content ?? title,
+    //actions: ,
+    //autoCancel: ,
+    //enableLights: ,
+    //enableVibration:,
+  );
+  final iosNotificationDetails = DarwinNotificationDetails(
     categoryIdentifier: channelName,
     //sound: ,
   );
 
-  DarwinNotificationDetails macOSNotificationDetails =
-      DarwinNotificationDetails(categoryIdentifier: channelName);
+  final macOSNotificationDetails = DarwinNotificationDetails(
+    categoryIdentifier: channelName,
+  );
 
-  LinuxNotificationDetails linuxNotificationDetails =
-      const LinuxNotificationDetails(
-        //category: LinuxNotificationCategory(channelName),
-        //actions: <LinuxNotificationAction>[],
-      );
+  final linuxNotificationDetails = const LinuxNotificationDetails(
+    //category: LinuxNotificationCategory(channelName),
+    //actions: <LinuxNotificationAction>[],
+  );
+
+  final windowsNotificationDetails = WindowsNotificationDetails(
+    //icon: ,
+    //actions: ,
+    //critical: ,
+    //group: ,
+    //groupSummary: ,
+    //largeIcon: ,
+    //suppressSound: ,
+    //tag: ,
+    //timestamp: ,
+    //vibrates: ,
+  );
 
   notificationDetails ??= NotificationDetails(
     android: androidNotificationDetails,
     iOS: iosNotificationDetails,
     macOS: macOSNotificationDetails,
     linux: linuxNotificationDetails,
+    windows: windowsNotificationDetails,
   );
   await flutterLocalNotificationsPlugin?.show(
     id,
