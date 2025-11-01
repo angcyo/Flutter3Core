@@ -22,20 +22,6 @@ dependencies:
   flutter3_pub:
     path: ../flutter3_pub
 
-  # https://pub.dev/packages/webview_flutter
-  # 与 `flutter_inappwebview` 有冲突
-  # androidx.webkit:webkit:1.8.0
-  # webview_flutter: ^4.8.0
-
-  # https://pub.dev/packages/flutter_inappwebview
-  # https://inappwebview.dev/docs/intro
-  # androidx.webkit:webkit:1.11.0
-  #
-  # https://inappwebview.dev/docs/intro/#setup-android
-  # https://inappwebview.dev/docs/intro/#setup-ios
-  # https://inappwebview.dev/docs/intro/#setup-windows
-  flutter_inappwebview: ^6.1.5
-
   # https://pub.dev/packages/flutter_3d_controller
   # https://pub.dev/packages/flutter_inappwebview
   # https://pub.dev/packages/http

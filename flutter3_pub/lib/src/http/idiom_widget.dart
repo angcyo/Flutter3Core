@@ -41,7 +41,8 @@ class IdiomWidget extends StatelessWidget {
               .column(crossAxisAlignment: CrossAxisAlignment.start)!
               .paddingOnly(all: kH)
               .ink(() {
-                idiomBean!.url.launch();
+                //idiomBean!.url.launch();
+                openWebUrl(idiomBean!.url, context);
               });
     return body.card();
   }

@@ -48,17 +48,23 @@ void main() async {
   final stateMap = {};
   final txtName = "workspaces.txt";
   flutterProjectMap.forEach((key, value) {
-    /*if (key.endsWith("LaserCore")) {
-      //colorLog('$key->${value.length}');
-      //colorLog('$key->$value');
-    }*/
+    if (key.endsWith("LaserCore")) {
+      colorLog('$key->${value.length}');
+      colorLog('$key->$value');
+    }
     final configFile = File("$key/$txtName");
     final isNewWorkspace = !configFile.existsSync();
     //读取文件, 用来比对内容是否有改变
     final oldLines = isNewWorkspace
         ? ["empty"]
         : configFile.readAsLinesSync().skipWhile((e) => e.startsWith("#"));
-    final newLines = value.map((e) => e.path.replaceFirst("$rootPath/", "- "));
+    final newLines = Platform.isWindows
+        ? value.map(
+            (e) => e.path
+                .replaceAll(r"\", "/")
+                .replaceFirst("${rootPath.replaceAll(r"\", "/")}/", "- "),
+          )
+        : value.map((e) => e.path.replaceFirst("$rootPath/", "- "));
     /*if (key.endsWith("LaserCore")) {
       colorLog("old->${oldLines.join("\n")}");
       colorLog('new->${newLines.join("\n")}');

@@ -1,0 +1,76 @@
+name: flutter3_webview
+description: "A Flutter Webview package"
+version: 0.0.1
+homepage: https://github.com/angcyo/Flutter3Core
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: ^3.9.2
+  flutter: ">=1.17.0"
+
+# https://dart.dev/tools/pub/workspaces/
+# Support for pub workspaces was introduced in Dart 3.6.0.
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter3_basics:
+    path: ../flutter3_basics
+
+  # https://pub.dev/packages/webview_flutter
+  # 与 `flutter_inappwebview` 有冲突
+  # androidx.webkit:webkit:1.8.0
+  # webview_flutter: ^4.8.0 # Android iOS macOS
+
+  # https://pub.dev/packages/flutter_inappwebview
+  # https://inappwebview.dev/docs/intro
+  # androidx.webkit:webkit:1.11.0
+  #
+  # https://inappwebview.dev/docs/intro/#setup-android
+  # https://inappwebview.dev/docs/intro/#setup-ios
+  # https://inappwebview.dev/docs/intro/#setup-windows
+  flutter_inappwebview: ^6.1.5 # Android iOS macOS web Windows
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # in flutter3_basics
+  flutter_lints: any
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # To add assets to your package, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+  #
+  # For details regarding assets in packages, see
+  # https://flutter.dev/to/asset-from-package
+  #
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # To add custom fonts to your package, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts in packages, see
+  # https://flutter.dev/to/font-from-package
