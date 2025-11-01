@@ -326,7 +326,7 @@ String stackToString({StackTrace? stackTrace, String? label, int? maxFrames}) {
 /// [RendererBinding.instance]
 /// [PlatformDispatcher.implicitView]
 /// [FlutterView.display]
-/// [FlutterView.display.size] //可以获取屏幕尺寸
+/// [FlutterView.display.size] //可以获取屏幕尺寸, 在windows上这个大小会是0
 ///
 /// [SingletonFlutterWindow].[FlutterView]
 /// [window.physicalSize]
@@ -336,6 +336,7 @@ ui.FlutterView get flutterView =>
     WidgetsBinding.instance.renderView.flutterView;
 
 /// [RenderView]
+/// [RenderView.size]
 RenderView get renderView =>
     RendererBinding.instance.renderViews.firstOrNull ??
     WidgetsBinding.instance.renderView;
@@ -488,7 +489,7 @@ double get screenInch => cl(screenWidthPixel, screenHeightPixel) / dpi;
 /// - [isTabletDevice]
 /// - [isTabletWindow]
 @Deprecated("请使用[isTabletWindow]")
-bool get isTabletDevice => deviceInch >= 7;
+bool get isTabletDevice => deviceInch >= 7 || screenInch >= 7;
 
 /// 当前窗口是否是平板样式, 在分屏模式下, 窗口的宽度大于等于 600dp 认为是平板样式
 ///
