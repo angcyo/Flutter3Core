@@ -951,6 +951,8 @@ extension StringEx on String {
   /// 判断当前字符串是否是ip字符串
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
 
+  String get local => endsWith('.local') ? this : '$this.local';
+
   /// 判断当前字符串
   /// - 如果是http协议, 则直接返回
   /// - 如果是ip, 则返回 http://ip:port
