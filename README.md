@@ -1,5 +1,29 @@
 # Flutter3Core
 
+## Idea 技巧
+
+### 折叠代码
+
+```
+//region name
+...
+//endregion name
+```
+
+```
+//<editor-fold desc="name">
+...
+//</editor-fold desc="name">
+```
+
+### 关闭代码格式化
+
+```
+// @formatter:off
+...
+// @formatter:on
+```
+
 ## 2023-10-20
 
 ```
