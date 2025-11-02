@@ -30,8 +30,10 @@ class CanvasKeyManager
       (info) {
         if (info.isKeyDown) {
           canvasDelegate.updateCanvasStyleModeChanged(CanvasStyleMode.dragMode);
+          //canvasDelegate.addCursorStyle("drag", SystemMouseCursors.click);
         } else if (info.isKeyUp) {
           canvasDelegate.updateCanvasStyleModeChanged(null);
+          //canvasDelegate.removeCursorStyle("drag", SystemMouseCursors.click);
         }
         renderObject.markNeedsPaint();
         //renderObject.postMarkNeedsPaint();

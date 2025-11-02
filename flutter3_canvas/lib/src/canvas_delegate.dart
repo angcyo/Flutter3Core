@@ -206,8 +206,16 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       _cursorIntentList.add(
         MouseCursorIntent(tag)..addCursorStyle(tag, cursor),
       );
+      assert(() {
+        l.i("添加鼠标样式->$tag:$cursor 当前:$currentCursorStyle");
+        return true;
+      }());
       refresh();
     } else if (find.addCursorStyle(tag, cursor) == true) {
+      assert(() {
+        l.i("更新鼠标样式->$tag:$cursor 当前:$currentCursorStyle");
+        return true;
+      }());
       refresh();
     }
   }
@@ -221,6 +229,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       if (find.isEmpty == true) {
         _cursorIntentList.remove(find);
       }
+      assert(() {
+        l.i("移除鼠标样式->$tag:$cursor 当前:$currentCursorStyle");
+        return true;
+      }());
       refresh();
     }
   }
