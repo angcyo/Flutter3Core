@@ -244,6 +244,7 @@ class GradientButton extends StatefulWidget {
   /// - [onTap]
   /// - [onContextTap]
   /// - [onAsyncContextTap]
+  /// - [loadingWidget]
   final AsyncGestureContextTapCallback? onAsyncContextTap;
 
   /// [onAsyncContextTap]加载中显示的小部件, 不指定用默认
@@ -380,7 +381,12 @@ class _GradientButtonState extends State<GradientButton> {
                               ? (widget.textColor ?? Colors.white)
                               : null,
                         ),
-                    child: wrapLoadingIfNeed(context, widget.child),
+                    child: wrapLoadingIfNeed(
+                      context,
+                      globalTheme,
+                      widget.child,
+                      colors,
+                    ),
                   ),
                 ),
               ),
@@ -392,15 +398,23 @@ class _GradientButtonState extends State<GradientButton> {
   }
 
   /// 是否处于加载中...
+  /// - [onAsyncContextTap] 配置此成员后自动激活
   bool? _isLoading;
 
-  Widget wrapLoadingIfNeed(BuildContext context, Widget? child) {
-    final globalTheme = GlobalTheme.of(context);
+  /// - [colors] 按钮当前的颜色, 用来决定loading的颜色
+  Widget wrapLoadingIfNeed(
+    BuildContext context,
+    GlobalTheme globalTheme,
+    Widget? child,
+    List<Color> colors,
+  ) {
     return _isLoading == true
         ? widget.loadingWidget ??
               CircularProgressIndicator(
                 value: null,
-                color: globalTheme.accentColor,
+                color: colors.firstOrNull?.isLight == true
+                    ? globalTheme.accentColor
+                    : globalTheme.themeWhiteColor,
                 constraints: BoxConstraints.tightFor(width: 20, height: 20),
                 strokeWidth: 2,
               )
