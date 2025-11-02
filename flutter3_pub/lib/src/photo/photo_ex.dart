@@ -226,9 +226,11 @@ extension PhotoViewOptionsEx on ImageProvider {
     //--
     BoxDecoration? backgroundDecoration,
     bool enableRotation = false,
+    bool? enablePanAlways /*默认: false*/,
   }) {
     return PhotoView(
       imageProvider: this,
+      enablePanAlways: enablePanAlways,
       loadingBuilder:
           loadingBuilder ??
           (context, event) {
