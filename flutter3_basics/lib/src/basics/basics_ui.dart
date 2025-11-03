@@ -2231,7 +2231,7 @@ extension WidgetEx on Widget {
         child: this,
       );
     }
-    return DefaultTextStyle(
+    return DefaultTextStyle.merge(
       style: style,
       textAlign: textAlign,
       softWrap: softWrap,

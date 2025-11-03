@@ -83,40 +83,33 @@ class _ToastWidgetState extends State<ToastWidget> {
     final isLight = widget.background?.isLight ?? false;
     final textColor = isLight
         ? (GlobalConfig.def.themeData?.textTheme.titleSmall?.color ??
-            Colors.black87)
+              Colors.black87)
         : context.isThemeDark
-            ? GlobalConfig.def.globalTheme.whiteColor
-            : GlobalConfig.def.globalTheme.themeWhiteColor;
+        ? GlobalConfig.def.globalTheme.whiteColor
+        : GlobalConfig.def.globalTheme.themeWhiteColor;
     //添加背景
     //debugger();
-    result = Container(
-      color: widget.background ?? "#333333".toColor().withOpacity(0.6),
-      padding: widget.padding,
-      child: result,
-    )
-        .constrainedMax(maxWidth: math.min(screenWidth, screenHeight))
-        .blur(sigma: widget.bgBlurSigma);
+    result =
+        Container(
+              color: widget.background ?? "#333333".toColor().withOpacity(0.6),
+              padding: widget.padding,
+              child: result,
+            )
+            .constrainedMax(maxWidth: math.min(screenWidth, screenHeight))
+            .blur(sigma: widget.bgBlurSigma);
     //添加圆角
     result = ClipRRect(
       borderRadius: BorderRadius.circular(kDefaultBorderRadiusXX),
       child: result,
     );
     if (widget.elevation != null) {
-      result = result.elevation(
-        widget.elevation!,
-      );
+      result = result.elevation(widget.elevation!);
     }
     //添加屏幕内边距
-    result = Padding(
-      padding: widget.margin ?? EdgeInsets.zero,
-      child: result,
-    );
+    result = Padding(padding: widget.margin ?? EdgeInsets.zero, child: result);
     //添加主题样式
-    result = DefaultTextStyle(
-      style: TextStyle(
-        color: textColor,
-        fontSize: 14,
-      ),
+    result = DefaultTextStyle.merge(
+      style: TextStyle(color: textColor, fontSize: 14),
       child: IconTheme(
         data: IconThemeData(color: textColor),
         child: result,
@@ -129,8 +122,10 @@ class _ToastWidgetState extends State<ToastWidget> {
       child: Padding(
         padding: widget.maintainBottomViewPadding
             ? EdgeInsets.only(
-                bottom: platformMediaQueryData.viewInsets.bottom +
-                    kMinInteractiveDimension)
+                bottom:
+                    platformMediaQueryData.viewInsets.bottom +
+                    kMinInteractiveDimension,
+              )
             : EdgeInsets.only(bottom: kMinInteractiveDimension),
         child: result,
       ),
@@ -154,8 +149,8 @@ class _SlideDismissible extends StatelessWidget {
     required this.child,
     DismissDirection? direction,
     required this.overlayAnimatedStateKey,
-  })  : direction = direction ?? DismissDirection.none,
-        super(key: key);
+  }) : direction = direction ?? DismissDirection.none,
+       super(key: key);
 
   @override
   Widget build(BuildContext context) {

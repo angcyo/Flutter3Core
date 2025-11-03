@@ -573,6 +573,9 @@ bool get isDesktop =>
 /// 是否是pc客户端或者web
 bool get isDesktopOrWeb => UniversalPlatform.isDesktopOrWeb;
 
+/// 是否是苹果系的系统
+bool get isAppleOS => isIos || isMacOS;
+
 /// 根据rgb的值, 计算出灰度值
 /// 加权平均法计算灰度值
 ///

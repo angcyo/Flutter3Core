@@ -189,7 +189,7 @@ class FillButton extends StatelessWidget {
               minWidth: minWidth ?? 0,
               minHeight: minHeight ?? 0,
             ),
-            child: DefaultTextStyle(
+            child: DefaultTextStyle.merge(
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: textColor,
@@ -267,7 +267,7 @@ class StrokeButton extends StatelessWidget {
     final textColor = this.textColor ?? borderColor;
     return Container(
             padding: padding,
-            child: DefaultTextStyle(
+            child: DefaultTextStyle.merge(
               style: textStyle ??
                   TextStyle(
                     color: textColor,

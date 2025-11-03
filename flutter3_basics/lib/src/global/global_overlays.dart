@@ -495,7 +495,7 @@ OverlayEntry? showOverlay(
           loadingInfoNotifier: loadingInfoNotifier,
           onRemoveAction: onRemoveAction,
         ),
-      );
+      ).material();
     },
   );
 

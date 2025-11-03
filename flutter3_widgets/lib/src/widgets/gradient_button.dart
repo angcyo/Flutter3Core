@@ -367,12 +367,12 @@ class _GradientButtonState extends State<GradientButton> {
                   },
             child: Padding(
               padding: widget.padding ?? globalTheme.buttonPadding,
-              child: DefaultTextStyle(
+              child: DefaultTextStyle.merge(
                 style: const TextStyle(fontWeight: FontWeight.bold),
                 child: Center(
                   widthFactor: 1,
                   heightFactor: 1,
-                  child: DefaultTextStyle(
+                  child: DefaultTextStyle.merge(
                     style: (widget.textStyle ?? globalTheme.textBodyStyle)
                         .copyWith(
                           color: disabled
