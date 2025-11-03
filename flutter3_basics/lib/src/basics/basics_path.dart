@@ -236,11 +236,14 @@ extension PathEx on Path {
     return transform(matrix4.storage);
   }
 
-  /// 获取[Path]路径上所有点的信息
-  /// 有些[Path]可能具有多段, 一段上具有多个点
-  /// [step] 步长
-  /// [eachPathMetrics]
-  /// [kPathAcceptableError]
+  /// 按照[step] 步长, 获取[Path]路径上所有点的信息.
+  /// 有些[Path]可能具有多段, 一段上具有多个点.
+  ///
+  /// - 用于生成打点数据
+  ///
+  /// - [step] 步长
+  /// - [eachPathMetrics]
+  /// - [kPathAcceptableError]
   List<List<PathPointInfo>> toPointInfoList([@dp double? step = 1]) {
     List<List<PathPointInfo>> result = [];
     //一段

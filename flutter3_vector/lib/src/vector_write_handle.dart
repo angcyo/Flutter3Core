@@ -464,6 +464,10 @@ class PointWriteHandle with VectorWriteMixin {
   double offsetX = 0;
   double offsetY = 0;
 
+  /// 数值额外需要的缩放比例
+  double scaleXFactor = 1;
+  double scaleYFactor = 1;
+
   /// 限制一段最多多少个点, 超过之后, 起一个新段
   int? contourMaxPointCount;
 
@@ -499,7 +503,9 @@ class PointWriteHandle with VectorWriteMixin {
 
   @override
   void onWritePoint(VectorPoint point, [dynamic data]) {
-    final position = transformPoint(point.position);
+    final position = transformPoint(
+      point.position,
+    ).scale(scaleXFactor, scaleYFactor);
     if (point.type == VectorWriteMixin.sPointTypeStart ||
         point.type == VectorWriteMixin.sPointTypeLine) {
       final pointBuilder = pointContourBuilder;
@@ -644,6 +650,15 @@ class GCodeWriteHandle with VectorWriteMixin {
   @override
   int get digits => 3;
 
+  /// [transformPoint]之后 [digits]之前, 点位还需要偏移的值
+  /// 此数据同样会收到[unit]的影响
+  double offsetX = 0;
+  double offsetY = 0;
+
+  /// 数值额外需要的缩放比例
+  double scaleXFactor = 1;
+  double scaleYFactor = 1;
+
   //endregion ---数值转换---
 
   //region ---GCode数据参数---
@@ -733,7 +748,11 @@ class GCodeWriteHandle with VectorWriteMixin {
   @override
   void onWritePoint(VectorPoint point, [dynamic data]) {
     initStringBuffer();
-    final position = transformPoint(point.position);
+    final offsetX = unit?.toUnitFromDp(this.offsetX) ?? this.offsetX;
+    final offsetY = unit?.toUnitFromDp(this.offsetY) ?? this.offsetY;
+    final position = transformPoint(
+      point.position,
+    ).scale(scaleXFactor, scaleYFactor).translate(offsetX, offsetY);
     final x = position.dx.toDigits(digits: digits);
     final y = position.dy.toDigits(digits: digits);
     if (point.type == VectorWriteMixin.sPointTypeStart) {
@@ -841,16 +860,23 @@ class GCodeWriteHandle with VectorWriteMixin {
 
 extension VectorPathEx on Path {
   /// 处理矢量路径
-  /// [kVectorTolerance]
-  /// [kPathAcceptableError]
+  /// - [kVectorTolerance]
+  /// - [kPathAcceptableError]
   void handleVectorPath(
     VectorWriteMixin handle, {
-    @dp double? pathStep,
+    bool isMmPath = false,
+    @defInjectMark @dp double? pathStep,
     @defInjectMark @mm double? tolerance,
   }) {
     handle.enableVectorArc = false;
     handle.vectorTolerance = tolerance?.toDpFromMm() ?? handle.vectorTolerance;
-    handle.vectorStep = pathStep ?? kPathAcceptableError;
+    handle.vectorStep = pathStep ?? handle.vectorStep;
+
+    if (isMmPath) {
+      handle.vectorTolerance = handle.vectorTolerance.toMmFromDp();
+      //handle.vectorStep = handle.vectorStep.toMmFromDp();
+    }
+
     eachPathMetrics((posIndex, ratio, contourIndex, position, angle, isClose) {
       handle.appendPoint(posIndex, ratio, contourIndex, position, angle);
     }, handle.vectorStep);
@@ -881,10 +907,16 @@ extension VectorPathEx on Path {
   /// 转换成矢量字符串数据
   String? toVectorString(
     VectorWriteMixin handle, {
-    @dp double? pathStep,
-    @mm double? tolerance,
+    bool isMmPath = false,
+    @defInjectMark @dp double? pathStep,
+    @defInjectMark @mm double? tolerance,
   }) {
-    handleVectorPath(handle, pathStep: pathStep, tolerance: tolerance);
+    handleVectorPath(
+      handle,
+      isMmPath: isMmPath,
+      pathStep: pathStep,
+      tolerance: tolerance,
+    );
     return handle.getVectorString();
   }
 
@@ -1059,13 +1091,26 @@ extension VectorPathEx on Path {
   /// Point{x:100.0, y:100.0 a:-1.5707963267948966}, Point{x:0.0, y:100.0 a:-3.141592653589793},
   /// Point{x:0.0, y:0.0 a:1.5707963267948966}]]
   /// ```
+  ///
+  /// - [precision] 数据输出的精度, 也就是输出数据需要放大的小数点后几位
   List<List<Point>> toPointList({
-    @dp double? pathStep,
-    @mm double? tolerance,
+    bool isMmPath = false,
+    int precision = 0,
+    @defInjectMark @dp double? pathStep,
+    @defInjectMark @mm double? tolerance,
     PointWriteHandle? handle,
   }) {
     handle ??= PointWriteHandle();
-    toVectorString(handle, pathStep: pathStep, tolerance: tolerance);
+    handle.digits = precision;
+    if (isMmPath) {
+      handle.unit = null;
+    }
+    toVectorString(
+      handle,
+      isMmPath: isMmPath,
+      pathStep: pathStep,
+      tolerance: tolerance,
+    );
     return handle.pointList;
   }
 
@@ -1311,18 +1356,21 @@ extension VectorListPathEx on List<Path> {
   }
 
   /// 转换成N段线段折点数据
-  /// [precision] 精度, 会将数值乘以10E2存储
-  /// [unit] 输出数值的单位
-  /// [contourMaxPointCount] 限制一段最多多少个点, 超过之后, 起一个新段
-  /// [VectorPathEx.toGCodeString]
+  /// - [precision] 精度, 会将数值乘以10E2存储
+  /// - [unit] 输出数值的单位
+  /// - [contourMaxPointCount] 限制一段最多多少个点, 超过之后, 起一个新段
+  /// - [VectorPathEx.toGCodeString]
   @mm
   List<List<Point>>? toPointList({
-    @dp double? pathStep,
-    @mm double? tolerance,
+    bool isMmPath = false,
+    @defInjectMark @dp double? pathStep,
+    @defInjectMark @mm double? tolerance,
     IUnit? unit = IUnit.mm,
     int precision = 2,
     @dp double offsetX = 0,
     @dp double offsetY = 0,
+    double scaleXFactor = 1,
+    double scaleYFactor = 1,
     int? contourMaxPointCount,
     PointWriteHandle? handle,
   }) {
@@ -1332,14 +1380,21 @@ extension VectorListPathEx on List<Path> {
     final result = <List<Point>>[];
     handle ??= PointWriteHandle();
     handle
-      ..unit = unit
+      ..unit = isMmPath ? null : unit
       ..contourMaxPointCount = contourMaxPointCount
       ..digits = precision
       ..offsetX = offsetX
-      ..offsetY = offsetY;
+      ..offsetY = offsetY
+      ..scaleXFactor = scaleXFactor
+      ..scaleYFactor = scaleYFactor;
     for (final path in this) {
       handle.pointResultBuilder = []; //reset
-      path.handleVectorPath(handle, pathStep: pathStep, tolerance: tolerance);
+      path.handleVectorPath(
+        handle,
+        isMmPath: isMmPath,
+        pathStep: pathStep,
+        tolerance: tolerance,
+      );
       final pointList = handle.pointList;
       if (!isNil(pointList)) {
         result.addAll(pointList);
