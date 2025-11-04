@@ -410,6 +410,12 @@ class _UndoActionWidgetState extends State<UndoActionWidget>
     with UndoStateMixin {
   ///
   @override
+  Widget build(BuildContext context) {
+    return super.build(context);
+  }
+
+  ///
+  @override
   void didUpdateWidget(covariant UndoActionWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
   }

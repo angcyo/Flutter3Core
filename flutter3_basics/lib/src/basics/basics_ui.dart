@@ -2081,7 +2081,7 @@ extension WidgetEx on Widget {
     //--
     BoxShape shape = BoxShape.rectangle,
     BorderRadiusGeometry? borderRadius,
-    Color? decorationColor = Colors.white,
+    Color? decorationColor,
     bool enable = true,
   }) {
     if (!enable || shadowColor == null) {
@@ -2092,7 +2092,7 @@ extension WidgetEx on Widget {
       decoration: BoxDecoration(
         shape: shape,
         borderRadius: borderRadius,
-        color: decorationColor,
+        color: decorationColor ?? GlobalConfig.def.globalTheme.themeWhiteColor,
         boxShadow:
             boxShadow ??
             [
