@@ -19,49 +19,57 @@ class CanvasKeyManager
   List<ElementPainter>? _copyElementList;
 
   /// 注册所有键盘事件
+  ///
+  /// - [CanvasRenderBox.attach] 驱动
   @desktopFlag
   @callPoint
   void registerKeyEventHandler(CanvasRenderBox renderObject) {
     //空格键, 开启拖拽
-    renderObject.registerKeyEvent(
-      [
-        [canvasStyle.dragKeyboardKey],
-      ],
-      (info) {
-        if (info.isKeyDown) {
-          canvasDelegate.updateCanvasStyleModeChanged(CanvasStyleMode.dragMode);
-          //canvasDelegate.addCursorStyle("drag", SystemMouseCursors.click);
-        } else if (info.isKeyUp) {
-          canvasDelegate.updateCanvasStyleModeChanged(null);
-          //canvasDelegate.removeCursorStyle("drag", SystemMouseCursors.click);
-        }
-        renderObject.markNeedsPaint();
-        //renderObject.postMarkNeedsPaint();
-        return true;
-      },
-      keyUp: true,
-    );
+    if (canvasStyle.dragKeyboardKey != null) {
+      renderObject.registerKeyEvent(
+        [
+          [canvasStyle.dragKeyboardKey!],
+        ],
+        (info) {
+          if (info.isKeyDown) {
+            canvasDelegate.updateCanvasStyleModeChanged(
+              CanvasStyleMode.dragMode,
+            );
+            //canvasDelegate.addCursorStyle("drag", SystemMouseCursors.click);
+          } else if (info.isKeyUp) {
+            canvasDelegate.updateCanvasStyleModeChanged(null);
+            //canvasDelegate.removeCursorStyle("drag", SystemMouseCursors.click);
+          }
+          renderObject.markNeedsPaint();
+          //renderObject.postMarkNeedsPaint();
+          return true;
+        },
+        keyUp: true,
+      );
+    }
 
     //Ctrl键, 任意比例缩放
-    renderObject.registerKeyEvent(
-      [
-        [canvasStyle.ignoreLockKeyboardKey],
-      ],
-      (info) {
-        l.i("info->$info");
-        final lockControl = canvasDelegate
-            .canvasElementManager
-            .canvasElementControlManager
-            .lockControl;
-        if (info.isKeyDown) {
-          lockControl.setIgnoreLockRation(true);
-        } else if (info.isKeyUp) {
-          lockControl.setIgnoreLockRation(false);
-        }
-        return true;
-      },
-      keyUp: true,
-    );
+    if (canvasStyle.ignoreLockKeyboardKey != null) {
+      renderObject.registerKeyEvent(
+        [
+          [canvasStyle.ignoreLockKeyboardKey!],
+        ],
+        (info) {
+          //l.i("info->$info");
+          final lockControl = canvasDelegate
+              .canvasElementManager
+              .canvasElementControlManager
+              .lockControl;
+          if (info.isKeyDown) {
+            lockControl.setIgnoreLockRation(true);
+          } else if (info.isKeyUp) {
+            lockControl.setIgnoreLockRation(false);
+          }
+          return true;
+        },
+        keyUp: true,
+      );
+    }
 
     //删除选中元素
     renderObject.registerKeyEvent(

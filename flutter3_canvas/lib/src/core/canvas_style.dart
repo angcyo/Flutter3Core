@@ -129,22 +129,25 @@ class CanvasStyle {
   //--key
 
   /// 当这些控制按键任意被按下时, 鼠标的滚动视为需要缩放画布
-  List<LogicalKeyboardKey> scaleControlKeyboardKeys = [
+  List<LogicalKeyboardKey>? scaleControlKeyboardKeys = [
     LogicalKeyboardKey.control,
   ];
 
   /// 当按下此键时, 视为需要拖动画布
-  LogicalKeyboardKey dragKeyboardKey = LogicalKeyboardKey.space;
+  LogicalKeyboardKey? dragKeyboardKey = LogicalKeyboardKey.space;
 
   /// 当按下此键时, 视为忽略等比缩放
-  LogicalKeyboardKey ignoreLockKeyboardKey = LogicalKeyboardKey.control;
+  LogicalKeyboardKey? ignoreLockKeyboardKey = LogicalKeyboardKey.control;
 
   /// 当按下此键时, 视为忽略智能吸附查询
-  LogicalKeyboardKey ignoreAdsorbKeyboardKey = LogicalKeyboardKey.control;
+  LogicalKeyboardKey? ignoreAdsorbKeyboardKey = LogicalKeyboardKey.control;
 
   /// 当按下此键时, 视为多选元素
   /// [enableMultiSelect] 需要先开启此项
-  LogicalKeyboardKey multiSelectKeyboardKey = LogicalKeyboardKey.control;
+  LogicalKeyboardKey? multiSelectKeyboardKey = LogicalKeyboardKey.control;
+
+  /// 当按下此键时, 激活画布测距功能
+  LogicalKeyboardKey? measureKeyboardKey = LogicalKeyboardKey.alt;
 
   /// 默认的复制元素后, 新元素偏移距离
   @mm
