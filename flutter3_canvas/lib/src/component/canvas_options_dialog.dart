@@ -72,9 +72,8 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog> {
         label: "使用公制单位",
         value: canvasStyle.axisUnit is MmUnit,
         onValueChanged: (value) {
-          canvasStyle.axisUnit = value ? IUnit.mm : IUnit.dp;
+          canvasDelegate.axisUnit = value ? IUnit.mm : IUnit.dp;
           updateState();
-          canvasDelegate.refresh();
           canvasDelegate.dispatchCanvasStyleChanged();
         },
       ),
@@ -82,9 +81,8 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog> {
         label: "使用英制单位",
         value: canvasStyle.axisUnit is InchUnit,
         onValueChanged: (value) {
-          canvasStyle.axisUnit = value ? IUnit.inch : IUnit.dp;
+          canvasDelegate.axisUnit = value ? IUnit.inch : IUnit.dp;
           updateState();
-          canvasDelegate.refresh();
           canvasDelegate.dispatchCanvasStyleChanged();
         },
       ),

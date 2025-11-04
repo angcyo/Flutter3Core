@@ -59,6 +59,9 @@ class CanvasMenuManager
             canvasKeyManager.selectAllElement();
           }, enable: enableSelect)
           .popMenu(enable: enableSelect),
+      "100%".text().menuStyleItem().inkWell(() {
+        canvasViewBox.scaleTo(sx: 1, sy: 1);
+      }).popMenu(),
       "放大".text().menuStyleItem().inkWell(() {
         canvasKeyManager.zoomIn(anchorPosition: anchorPosition);
       }).popMenu(),

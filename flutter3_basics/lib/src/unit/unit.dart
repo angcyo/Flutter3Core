@@ -37,6 +37,8 @@ const kFractionDigits = 2;
 const kInchFractionDigits = 3;
 
 /// dp
+///
+/// - [2]
 @Dp()
 double get dpr => devicePixelRatio;
 
@@ -168,16 +170,19 @@ abstract class IUnit {
   /// [baseGap] 1:1时的刻度间隔
   @Dp()
   double baseAxisGap(int index, double scale, @Dp() double baseGap) {
-    if (scale >= 4) {
-      //放大4倍后
+    //baseGap *= dpr;
+    if (scale >= 6) {
+      //放大n倍后
       return baseGap / 2;
     } else if (scale <= 0.1) {
+      //缩小10倍后
       return baseGap * 50;
     } else if (scale <= 0.25) {
       //缩小4倍后
-      return baseGap * 10;
+      return baseGap * 20;
     } else if (scale <= 0.75) {
-      return baseGap * 5;
+      //缩小3倍后
+      return baseGap * 10;
     } else {
       return baseGap;
     }
@@ -333,8 +338,10 @@ class MmUnit extends IUnit {
   double toUnit(num value) => value / dpi / sInchesPerMM;
 
   @override
-  double getAxisGap(int index, double scale) =>
-      baseAxisGap(index, scale, 1.toDpFromMm());
+  double getAxisGap(int index, double scale) {
+    //debugger(when: index == 0);
+    return baseAxisGap(index, scale, 1.toDpFromMm() * dpr);
+  }
 }
 
 /// 以 Windows 下的 96 dpi 来计算
@@ -609,6 +616,16 @@ extension UnitNumEx on num {
   @Dp()
   double toDpFromMm([@unit IUnit unit = IUnit.mm]) {
     return IUnit.dp.toUnit(toPixel(unit));
+  }
+
+  /// ```
+  /// 1.toPxFromMm() = 12.598425196850393
+  /// ```
+  ///
+  /// - [toDpFromMm] * [dpr] = [toPxFromMm]
+  @px
+  double toPxFromMm([@unit IUnit unit = IUnit.mm]) {
+    return IUnit.px.toUnit(toPixel(unit));
   }
 
   @Dp()

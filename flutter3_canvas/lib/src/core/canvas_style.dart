@@ -238,6 +238,8 @@ class CanvasStyle {
   double axisLabelOffset = 2;
 
   /// 坐标系的单位
+  /// - [CanvasDelegate.axisUnit]
+  /// - [CanvasDelegate.dispatchCanvasUnitChanged]
   IUnit axisUnit = IUnit.mm;
 
   ///dark #b0b0b0

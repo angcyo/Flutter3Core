@@ -427,6 +427,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 使用指定比例缩放画布
   @api
   void scaleTo({double? sx, double? sy, Offset? pivot, bool anim = true}) {
+    pivot ??= canvasSceneVisibleBounds.center;
     sx = sx != null ? clamp(sx, minScaleX, maxScaleX) : null;
     sy = sy != null ? clamp(sy, minScaleY, maxScaleY) : null;
     assert(() {
@@ -434,12 +435,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       return true;
     }());
     changeMatrix(
-      canvasMatrix.clone()..scaleTo(
-        sx: sx,
-        sy: sy,
-        pivotX: pivot?.dx ?? 0,
-        pivotY: pivot?.dy ?? 0,
-      ),
+      canvasMatrix.clone()
+        ..scaleTo(sx: sx, sy: sy, pivotX: pivot.dx, pivotY: pivot.dy),
       animate: anim,
     );
   }
