@@ -42,8 +42,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// final isGroup = selectedElement is ElementSelectComponent;
   /// ```
   /// @return
-  /// - [ElementPainter]
-  /// - [ElementSelectComponent]
+  /// - [ElementPainter] 单选中元素时返回
+  /// - [ElementSelectComponent] 多选中元素时返回
   ElementPainter? get selectedElement {
     if (!isSelectedElement) {
       return null;

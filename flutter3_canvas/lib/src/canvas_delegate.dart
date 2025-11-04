@@ -434,12 +434,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   //--
 
   /// 画布覆盖组件, 独立绘制, 拦截所有元素手势.
-  /// [attachOverlay]
-  /// [detachOverlay]
+  /// - [attachOverlay]
+  /// - [detachOverlay]
   ///
   /// [CanvasElementManager.paintElements]
   /// [CanvasEventManager.handlePointerEvent]
   CanvasOverlayComponent? _overlayComponent;
+
+  CanvasOverlayComponent? get overlayComponent => _overlayComponent;
 
   //--属性
 
@@ -1464,10 +1466,17 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 构建画布右键菜单
   /// [canvasListeners]
   /// @return 返回菜单列表
-  List<Widget> dispatchBuildCanvasMenu() {
+  WidgetNullList dispatchBuildCanvasMenu({
+    @viewCoordinate Offset? anchorPosition,
+  }) {
     List<Widget> list = [];
     _eachCanvasListener((element) {
-      element.onBuildCanvasMenu?.call(this, canvasMenuManager, list);
+      element.onBuildCanvasMenu?.call(
+        this,
+        canvasMenuManager,
+        anchorPosition,
+        list,
+      );
     });
     return list;
   }

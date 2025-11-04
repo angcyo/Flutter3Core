@@ -2770,7 +2770,7 @@ extension WidgetEx on Widget {
   ///
   /// - [disableColor] 是否要禁用所有颜色效果
   ///
-  /// - [InkWell]
+  /// - [InkWell] 继承自 [InkResponse], 修改了2个属性的默认值
   /// - [InkResponse]
   /// - [CircleBorder]
   ///
@@ -2836,7 +2836,7 @@ extension WidgetEx on Widget {
       customBorder: customBorder,
       //边框裁剪
       highlightShape: highlightShape,
-      containedInkWell: true,
+      containedInkWell: true /*裁剪边界*/,
       child: this,
     );
     if (onLongPressPeriodic != null) {

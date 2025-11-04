@@ -1717,6 +1717,14 @@ class ElementPainter extends IElementPainter {
     return hover;
   }
 
+  /// 当选中元素时, 右键需要显示的菜单
+  ///
+  /// - [CanvasMenuManager._buildElementMenuWidget] 驱动
+  @overridePoint
+  WidgetNullList? buildPainterMenus({@viewCoordinate Offset? anchorPosition}) {
+    return null;
+  }
+
   //endregion ---canvas---
 
   //region ---创建/恢复回退栈---

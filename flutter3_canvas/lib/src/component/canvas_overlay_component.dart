@@ -11,11 +11,13 @@ part of '../../flutter3_canvas.dart';
 class CanvasOverlayComponent extends IElementPainter
     with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 回调方法
+  /// - [attachToCanvasDelegate]
   @configProperty
   void Function(CanvasDelegate delegate, CanvasOverlayComponent overlay)?
   onOverlayAttachToCanvasDelegate;
 
   /// 回调方法
+  /// - [detachFromCanvasDelegate]
   @configProperty
   void Function(CanvasDelegate delegate, CanvasOverlayComponent overlay)?
   onOverlayDetachFromCanvasDelegate;
@@ -48,6 +50,12 @@ class CanvasOverlayComponent extends IElementPainter
     onOverlayDetachFromCanvasDelegate?.call(canvasDelegate, this);
   }
 
+  /// 绘制
+  @override
+  void painting(Canvas canvas, PaintMeta paintMeta) {
+    super.painting(canvas, paintMeta);
+  }
+
   /// 处理元素事件
   /// [CanvasEventManager.handlePointerEvent]驱动
   @override
@@ -66,6 +74,10 @@ class CanvasOverlayComponent extends IElementPainter
 }
 
 /// 钢笔工具覆盖层
+///
+/// 使用 [CanvasDelegate.attachOverlay] 添加覆盖层.
+///
+/// 通过 [outputSvgPath] 或 [onSvgPathAction] 拿到输出的数据
 class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   /// 圈圈的大小/半径
   @configProperty
@@ -511,4 +523,5 @@ class CanvasPointerOverlayComponent extends CanvasOverlayComponent {
 }
 
 /// 用来触发
+@implementation
 class CanvasTextOverlayComponent extends CanvasOverlayComponent {}

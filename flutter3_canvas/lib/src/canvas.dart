@@ -679,6 +679,7 @@ class CanvasListener {
   final void Function(
     CanvasDelegate delegate,
     CanvasMenuManager manager,
+    @viewCoordinate Offset? anchorPosition,
     List<Widget> menus,
   )?
   onBuildCanvasMenu;

@@ -48,30 +48,30 @@ class CanvasMenuManager
       "粘贴"
           .text(textColor: enablePaste ? null : globalTheme.disableTextColor)
           .menuStyleItem()
-          .ink(() {
+          .inkWell(() {
             canvasKeyManager.pasteSelectedElement();
           }, enable: enablePaste)
           .popMenu(enable: enablePaste),
       "全选"
           .text(textColor: enableSelect ? null : globalTheme.disableTextColor)
           .menuStyleItem()
-          .ink(() {
+          .inkWell(() {
             canvasKeyManager.selectAllElement();
           }, enable: enableSelect)
           .popMenu(enable: enableSelect),
-      "放大".text().menuStyleItem().ink(() {
+      "放大".text().menuStyleItem().inkWell(() {
         canvasKeyManager.zoomIn(anchorPosition: anchorPosition);
       }).popMenu(),
-      "缩小".text().menuStyleItem().ink(() {
+      "缩小".text().menuStyleItem().inkWell(() {
         canvasKeyManager.zoomOut(anchorPosition: anchorPosition);
       }).popMenu(),
-      "画布选项".text().menuStyleItem().ink(() {
+      "画布选项".text().menuStyleItem().inkWell(() {
         canvasDelegate.showWidgetDialog(CanvasOptionsDialog(canvasDelegate));
       }).popMenu(),
       hLine(context).size(width: kMenuMinWidth),
       if (!canvasDelegate.isCurrentCanvasEmpty &&
           !canvasElementManager.isAllElementHidden())
-        "隐藏所有元素".text().menuStyleItem().ink(() {
+        "隐藏所有元素".text().menuStyleItem().inkWell(() {
           canvasElementManager.visibleElementList(
             canvasElementManager.elements,
             visible: false,
@@ -79,7 +79,7 @@ class CanvasMenuManager
         }).popMenu(),
       if (!canvasDelegate.isCurrentCanvasEmpty &&
           canvasElementManager.isAnyElementHidden())
-        "显示所有元素".text().menuStyleItem().ink(() {
+        "显示所有元素".text().menuStyleItem().inkWell(() {
           canvasElementManager.visibleElementList(
             canvasElementManager.elements,
             visible: true,
@@ -106,21 +106,30 @@ class CanvasMenuManager
     final enableUngroup =
         canvasElementManager.canvasElementControlManager.canUngroupElements;
 
+    // 选中的元素
+    final element = selectedElement;
+    //元素菜单
+    final elementMenus = element?.buildPainterMenus(
+      anchorPosition: anchorPosition,
+    );
+
     //外部菜单
-    final otherMenus = canvasDelegate.dispatchBuildCanvasMenu();
+    final otherMenus = canvasDelegate.dispatchBuildCanvasMenu(
+      anchorPosition: anchorPosition,
+    );
     return [
       //--
-      "复制".text().menuStyleItem().ink(() {
+      "复制".text().menuStyleItem().inkWell(() {
         canvasKeyManager.copySelectedElement();
       }).popMenu(),
       "粘贴"
           .text(textColor: enablePaste ? null : globalTheme.disableTextColor)
           .menuStyleItem()
-          .ink(() {
+          .inkWell(() {
             canvasKeyManager.pasteSelectedElement();
           }, enable: enablePaste)
           .popMenu(enable: enablePaste),
-      "删除".text().menuStyleItem().ink(() {
+      "删除".text().menuStyleItem().inkWell(() {
         canvasKeyManager.deleteSelectedElement();
       }).popMenu(),
       //--
@@ -128,25 +137,29 @@ class CanvasMenuManager
       "组合"
           .text(textColor: enableGroup ? null : globalTheme.disableTextColor)
           .menuStyleItem()
-          .ink(() {
+          .inkWell(() {
             canvasKeyManager.groupSelectedElement();
           }, enable: enableGroup)
           .popMenu(enable: enableGroup),
       "取消组合"
           .text(textColor: enableUngroup ? null : globalTheme.disableTextColor)
           .menuStyleItem()
-          .ink(() {
+          .inkWell(() {
             canvasKeyManager.ungroupSelectedElement();
           }, enable: enableUngroup)
           .popMenu(enable: enableUngroup),
       //--
       hLine(context).size(width: kMenuMinWidth),
-      "隐藏元素".text().menuStyleItem().ink(() {
+      "隐藏元素".text().menuStyleItem().inkWell(() {
         canvasElementManager.visibleElementList(
           canvasElementManager.elementSelectComponent?.children,
           visible: false,
         );
       }).popMenu(),
+      //--
+      if (elementMenus?.isNotEmpty == true)
+        hLine(context).size(width: kMenuMinWidth),
+      ...?elementMenus,
       //--
       if (otherMenus.isNotEmpty) hLine(context).size(width: kMenuMinWidth),
       ...otherMenus,
