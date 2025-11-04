@@ -139,6 +139,9 @@ class CanvasStyle {
   /// 当按下此键时, 视为忽略等比缩放
   LogicalKeyboardKey ignoreLockKeyboardKey = LogicalKeyboardKey.control;
 
+  /// 当按下此键时, 视为忽略智能吸附查询
+  LogicalKeyboardKey ignoreAdsorbKeyboardKey = LogicalKeyboardKey.control;
+
   /// 当按下此键时, 视为多选元素
   /// [enableMultiSelect] 需要先开启此项
   LogicalKeyboardKey multiSelectKeyboardKey = LogicalKeyboardKey.control;

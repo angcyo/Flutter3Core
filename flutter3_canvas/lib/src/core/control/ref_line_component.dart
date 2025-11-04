@@ -30,6 +30,11 @@ class RefLineComponent
   /// 吸附控制
   ElementAdsorbControl? _adsorbControl;
 
+  /// 是否要查找吸附
+  bool get findAdsorb =>
+      _adsorbControl?.isCanvasComponentEnable == true &&
+      !_adsorbControl!.isIgnoreAdsorb;
+
   @override
   bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
     if (event.isPointerDown) {
@@ -77,7 +82,7 @@ class RefLineComponent
 
       //自动吸附查找值
       final adsorbControl = _adsorbControl;
-      if (adsorbControl != null) {
+      if (findAdsorb && adsorbControl != null) {
         if (axis == Axis.horizontal) {
           @sceneCoordinate
           final refValue = adsorbControl.findYAdsorbRefValue(
@@ -102,6 +107,13 @@ class RefLineComponent
             return true;
           }
         }
+      } else {
+        /*assert(() {
+          if (adsorbControl != null) {
+            l.w("忽略吸附查询");
+          }
+          return true;
+        }());*/
       }
 
       final scenePoint = axisManager.toScenePoint(localPosition);

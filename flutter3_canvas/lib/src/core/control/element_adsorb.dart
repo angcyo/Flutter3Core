@@ -28,7 +28,8 @@ class ElementAdsorbControl
       .enableElementAdsorb;
 
   /// 是否临时关闭吸附
-  bool get isIgnoreAdsorb => isCtrlPressed;
+  bool get isIgnoreAdsorb =>
+      isKeyPressed(key: canvasStyle.ignoreAdsorbKeyboardKey);
 
   @override
   set isCanvasComponentEnable(bool componentEnable) {

@@ -147,12 +147,17 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// 拦截了键盘事件的客户端
+  /// - [requestInterceptKeyEvent]
   KeyEventClientMixin? _keyEventInterceptClient;
 
   /// 键盘事件处理
   /// [CanvasDelegate.handleKeyEvent]驱动
   @entryPoint
   bool handleKeyEvent(KeyEvent event) {
+    /*assert(() {
+      l.i("handleKeyEvent->$event");
+      return true;
+    }());*/
     final overlayComponent = canvasDelegate._overlayComponent;
     if (overlayComponent != null) {
       return overlayComponent.handleKeyEvent(event);
