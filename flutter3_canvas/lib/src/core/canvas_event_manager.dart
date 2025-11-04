@@ -168,8 +168,25 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   bool handleKeyEvent(KeyEvent event) {
     /*assert(() {
       l.i("handleKeyEvent->$event");
+      l.v(
+        "logicalKeysPressed->${HardwareKeyboard.instance.logicalKeysPressed.length}",
+      );
+      l.v(
+        "physicalKeysPressed->${HardwareKeyboard.instance.physicalKeysPressed.length}",
+      );
       return true;
     }());*/
+
+    if (event.isKeyDown &&
+        isKeyPressed(
+          key: canvasDelegate.canvasStyle.measureKeyboardKey,
+          matchKeyCount: true,
+        )) {
+      //触发测量模式
+      if (canvasDelegate._overlayComponent == null) {
+        canvasDelegate.attachOverlay(CanvasMeasureComponent());
+      }
+    }
     final overlayComponent = canvasDelegate._overlayComponent;
     if (overlayComponent != null) {
       return overlayComponent.handleKeyEvent(event);

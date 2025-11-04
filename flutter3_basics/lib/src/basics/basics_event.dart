@@ -59,13 +59,22 @@ bool isKeyPressed({
   //--
   Set<LogicalKeyboardKey>? logicalPressedKeys,
   Set<PhysicalKeyboardKey>? physicalPressedKeys,
+  bool matchKeyCount = false,
 }) {
   if (key != null) {
     if (key is LogicalKeyboardKey) {
-      return isLogicalKeyPressed([key], pressedKeys: logicalPressedKeys);
+      return isLogicalKeyPressed(
+        [key],
+        pressedKeys: logicalPressedKeys,
+        matchKeyCount: matchKeyCount,
+      );
     }
     if (key is PhysicalKeyboardKey) {
-      return isPhysicalKeyPressed([key], pressedKeys: physicalPressedKeys);
+      return isPhysicalKeyPressed(
+        [key],
+        pressedKeys: physicalPressedKeys,
+        matchKeyCount: matchKeyCount,
+      );
     }
     return false;
   }
@@ -75,68 +84,82 @@ bool isKeyPressed({
   return isLogicalKeyPressed(
         keys!.filterLogicalKeysPressed,
         pressedKeys: logicalPressedKeys,
+        matchKeyCount: matchKeyCount,
       ) &&
       isPhysicalKeyPressed(
         keys!.filterPhysicalKeysPressed,
         pressedKeys: physicalPressedKeys,
+        matchKeyCount: matchKeyCount,
       );
 }
 
 /// 所有的逻辑按键是否都按下
+/// - [matchKeyCount] 是否要匹配按键的数量
 bool isLogicalKeyPressed(
   Iterable<LogicalKeyboardKey>? keys, {
   Set<LogicalKeyboardKey>? pressedKeys,
-}) =>
-    isNil(keys) ||
-    keys?.every((key) {
-          final keyboard = HardwareKeyboard.instance;
-          final logicalKeysPressed = pressedKeys ?? keyboard.logicalKeysPressed;
-          if (key == LogicalKeyboardKey.control) {
-            return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
-              LogicalKeyboardKey.control,
-              LogicalKeyboardKey.controlLeft,
-              LogicalKeyboardKey.controlRight,
-            });
-          }
-          if (key == LogicalKeyboardKey.alt) {
-            return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
-              LogicalKeyboardKey.alt,
-              LogicalKeyboardKey.altLeft,
-              LogicalKeyboardKey.altRight,
-            });
-          }
-          if (key == LogicalKeyboardKey.meta) {
-            return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
-              LogicalKeyboardKey.meta,
-              LogicalKeyboardKey.metaLeft,
-              LogicalKeyboardKey.metaRight,
-            });
-          }
-          if (key == LogicalKeyboardKey.shift) {
-            return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
-              LogicalKeyboardKey.shift,
-              LogicalKeyboardKey.shiftLeft,
-              LogicalKeyboardKey.shiftRight,
-            });
-          }
-          return pressedKeys == null
-              ? HardwareKeyboard.instance.isLogicalKeyPressed(key)
-              : pressedKeys.contains(key);
-        }) ==
-        true;
+  bool matchKeyCount = false,
+}) {
+  final keyboard = HardwareKeyboard.instance;
+  final logicalKeysPressed = pressedKeys ?? keyboard.logicalKeysPressed;
+  bool result =
+      isNil(keys) ||
+      keys?.every((key) {
+            if (key == LogicalKeyboardKey.control) {
+              return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
+                LogicalKeyboardKey.control,
+                LogicalKeyboardKey.controlLeft,
+                LogicalKeyboardKey.controlRight,
+              });
+            }
+            if (key == LogicalKeyboardKey.alt) {
+              return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
+                LogicalKeyboardKey.alt,
+                LogicalKeyboardKey.altLeft,
+                LogicalKeyboardKey.altRight,
+              });
+            }
+            if (key == LogicalKeyboardKey.meta) {
+              return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
+                LogicalKeyboardKey.meta,
+                LogicalKeyboardKey.metaLeft,
+                LogicalKeyboardKey.metaRight,
+              });
+            }
+            if (key == LogicalKeyboardKey.shift) {
+              return logicalKeysPressed.containsAny(<LogicalKeyboardKey>{
+                LogicalKeyboardKey.shift,
+                LogicalKeyboardKey.shiftLeft,
+                LogicalKeyboardKey.shiftRight,
+              });
+            }
+            return pressedKeys == null
+                ? HardwareKeyboard.instance.isLogicalKeyPressed(key)
+                : pressedKeys.contains(key);
+          }) ==
+          true;
+  if (matchKeyCount) {
+    result = result && keys?.length == logicalKeysPressed.length;
+  }
+  return result;
+}
 
 /// 所有的物理按键是否都按下
 bool isPhysicalKeyPressed(
   Iterable<PhysicalKeyboardKey>? keys, {
   Set<PhysicalKeyboardKey>? pressedKeys,
-}) =>
-    isNil(keys) ||
-    keys?.every(
-          (key) => pressedKeys == null
-              ? HardwareKeyboard.instance.isPhysicalKeyPressed(key)
-              : pressedKeys.contains(key),
-        ) ==
-        true;
+  bool matchKeyCount = false,
+}) {
+  final keyboard = HardwareKeyboard.instance;
+  final physicalKeysPressed = pressedKeys ?? keyboard.physicalKeysPressed;
+  bool result =
+      isNil(keys) ||
+      keys?.every((key) => physicalKeysPressed.contains(key)) == true;
+  if (matchKeyCount) {
+    result = result && keys?.length == physicalKeysPressed.length;
+  }
+  return result;
+}
 
 /// 是否是相同的按键
 bool isSameLogicalKey(KeyboardKey? key1, KeyboardKey? key2) {
@@ -405,22 +428,16 @@ extension KeyEventEx on KeyEvent {
   bool get isEscKey => isKeyboardKey(LogicalKeyboardKey.escape);
 
   /// 是否是Ctrl键
-  bool get isCtrlKey =>
-      isKeyboardKey(LogicalKeyboardKey.control) ||
-      isKeyboardKey(LogicalKeyboardKey.controlLeft) ||
-      isKeyboardKey(LogicalKeyboardKey.controlRight);
+  bool get isCtrlKey => isKeyboardKey(LogicalKeyboardKey.control);
 
   /// 是否是Alt键
-  bool get isAltKey =>
-      isKeyboardKey(LogicalKeyboardKey.alt) ||
-      isKeyboardKey(LogicalKeyboardKey.altLeft) ||
-      isKeyboardKey(LogicalKeyboardKey.altRight);
+  bool get isAltKey => isKeyboardKey(LogicalKeyboardKey.alt);
 
   /// 是否是Shift键
-  bool get isShiftKey =>
-      isKeyboardKey(LogicalKeyboardKey.shift) ||
-      isKeyboardKey(LogicalKeyboardKey.shiftLeft) ||
-      isKeyboardKey(LogicalKeyboardKey.shiftRight);
+  bool get isShiftKey => isKeyboardKey(LogicalKeyboardKey.shift);
+
+  /// 是否是Meta键
+  bool get isMetaKey => isKeyboardKey(LogicalKeyboardKey.meta);
 
   /// 是否是数字键
   bool get isNumberKey =>
@@ -444,7 +461,30 @@ extension KeyEventEx on KeyEvent {
   bool get isDotKey => logicalKey == LogicalKeyboardKey.period;
 
   /// 是否是指定的按键
-  bool isKeyboardKey(KeyboardKey key) => key == logicalKey;
+  /// - [PhysicalKeyboardKey]
+  /// - [LogicalKeyboardKey]
+  bool isKeyboardKey(KeyboardKey? key) {
+    if (key is LogicalKeyboardKey) {
+      if (key == LogicalKeyboardKey.control) {
+        return logicalKey == LogicalKeyboardKey.controlLeft ||
+            logicalKey == LogicalKeyboardKey.controlRight;
+      }
+      if (key == LogicalKeyboardKey.alt) {
+        return logicalKey == LogicalKeyboardKey.altLeft ||
+            logicalKey == LogicalKeyboardKey.altRight;
+      }
+      if (key == LogicalKeyboardKey.shift) {
+        return logicalKey == LogicalKeyboardKey.shiftLeft ||
+            logicalKey == LogicalKeyboardKey.shiftRight;
+      }
+      if (key == LogicalKeyboardKey.meta) {
+        return logicalKey == LogicalKeyboardKey.metaLeft ||
+            logicalKey == LogicalKeyboardKey.metaRight;
+      }
+      return key == logicalKey;
+    }
+    return key == physicalKey;
+  }
 }
 
 /// 事件处理

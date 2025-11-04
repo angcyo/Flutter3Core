@@ -995,6 +995,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     CanvasOverlayComponent? overlay, {
     bool cancelSelectedElement = true,
   }) {
+    if (overlay == _overlayComponent) {
+      return;
+    }
     detachOverlay();
     if (overlay != null) {
       if (cancelSelectedElement && canvasElementManager.isSelectedElement) {
@@ -1002,14 +1005,20 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       }
       _overlayComponent = overlay;
       overlay.attachToCanvasDelegate(this);
+      refresh();
     }
   }
 
   /// 移除覆盖层[_overlayComponent]
+  /// - [overlay] 指定需要移除的覆盖层, 不指定则移除已存在的覆盖层
   @api
-  void detachOverlay() {
+  void detachOverlay({CanvasOverlayComponent? overlay}) {
+    if (overlay != null && overlay != _overlayComponent) {
+      return;
+    }
     _overlayComponent?.detachFromCanvasDelegate(this);
     _overlayComponent = null;
+    refresh();
   }
 
   /// 更新画布模式

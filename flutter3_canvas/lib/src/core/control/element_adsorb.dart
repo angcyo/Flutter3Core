@@ -472,14 +472,18 @@ class ElementAdsorbControl
                       distance.radians == -pi ||
                       distance.radians == pi / 2 ||
                       distance.radians == -pi / 2
-                  ? ''
+                  ? '' //特定角度不显示
                   : ' ${distance.radians.jd.toDigits()}°',
             ),
         textColor: canvasStyle.adsorbTextColor,
         fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
         getOffset: (painter) {
           return distance.center -
-              Offset(painter.size.width / 2, painter.size.height);
+              Offset(
+                painter.size.width / 2,
+                painter.size.height +
+                    canvasStyle.axisLabelOffset / paintMeta.canvasScale,
+              );
         },
       );
       /*assert(() {

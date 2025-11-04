@@ -115,6 +115,83 @@ class FourPoint {
   String toString() => listString;
 }
 
+/// 定义一个包含2个点的数据结构
+class TwoPoint {
+  static TwoPoint? fromListString(String? src) {
+    if (src == null || src.isEmpty) {
+      return null;
+    }
+    final list = src.split(",").map((e) => double.parse(e)).toList();
+    if (list.length != 4) {
+      return null;
+    }
+    return TwoPoint.fromList(list);
+  }
+
+  double x1 = 0.0;
+  double y1 = 0.0;
+
+  double x2 = 0.0;
+  double y2 = 0.0;
+
+  TwoPoint();
+
+  TwoPoint.fromList(List<double> list) {
+    x1 = list.getOrNull(0) ?? x1;
+    y1 = list.getOrNull(1) ?? y1;
+    x2 = list.getOrNull(2) ?? x2;
+    y2 = list.getOrNull(3) ?? y2;
+  }
+
+  TwoPoint.fromOffset(Offset offset1, Offset offset2) {
+    x1 = offset1.dx;
+    y1 = offset1.dy;
+    x2 = offset2.dx;
+    y2 = offset2.dy;
+  }
+
+  List<double> get list => [x1, y1, x2, y2];
+
+  Offset get $1 => Offset(x1, y1);
+
+  set $1(Offset offset) {
+    x1 = offset.dx;
+    y1 = offset.dy;
+  }
+
+  Offset get $2 => Offset(x2, y2);
+
+  set $2(Offset offset) {
+    x2 = offset.dx;
+    y2 = offset.dy;
+  }
+
+  /// 2点之间的距离
+  double get distance => c(x1, y1, x2, y2);
+
+  /// 调整为横竖直线, 避免斜线
+  @api
+  TwoPoint get adjustStraightLine {
+    final dx = x2 - x1;
+    final dy = y2 - y1;
+    if (dx.abs() > dy.abs()) {
+      // 横向
+      y2 = y1;
+    } else {
+      // 纵向
+      x2 = x1;
+    }
+    return this;
+  }
+
+  //--
+
+  String get listString => list.join(",");
+
+  @override
+  String toString() => listString;
+}
+
 extension FourPointStringEx on String {
   FourPoint? get fourPoint => FourPoint.fromListString(this);
 }

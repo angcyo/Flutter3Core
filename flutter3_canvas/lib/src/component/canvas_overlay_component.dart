@@ -525,3 +525,92 @@ class CanvasPointerOverlayComponent extends CanvasOverlayComponent {
 /// 用来触发
 @implementation
 class CanvasTextOverlayComponent extends CanvasOverlayComponent {}
+
+/// 画布测距工具覆盖层
+/// - 用来绘制2点之间的距离和连线
+class CanvasMeasureComponent extends CanvasOverlayComponent {
+  /// 每条线段的集合
+  @output
+  final List<TwoPoint> pointList = [];
+
+  /// 定义一个最小有效距离, 小于这个距离的数据无效
+  @configProperty
+  double minDistance = 0.005;
+
+  @override
+  void painting(Canvas canvas, PaintMeta paintMeta) {
+    super.painting(canvas, paintMeta);
+    for (final point in pointList) {
+      canvasDelegate
+          ?.canvasElementManager
+          .canvasElementControlManager
+          .elementAdsorbControl
+          .paintDistance(
+            canvas,
+            paintMeta,
+            DistanceValue(from: point.$1, to: point.$2),
+          );
+    }
+  }
+
+  /// 当前编辑/需要创建的线段
+  @tempFlag
+  TwoPoint? _currentPoint;
+
+  /// 当前的鼠标位置
+  @tempFlag
+  Offset _currentPosition = Offset.zero;
+
+  @override
+  bool handlePainterPointerEvent(PointerEvent event) {
+    //l.d("PointerEvent->$event");
+    final position =
+        canvasViewBox?.toScenePoint(event.localPosition) ?? event.localPosition;
+    _currentPosition = position;
+    if (event.isPointerDown) {
+      _currentPoint = TwoPoint.fromOffset(position, position);
+      pointList.add(_currentPoint!);
+      canvasDelegate?.refresh();
+    } else if (event.isPointerMove) {
+      _currentPoint?.$2 = position;
+      if (isShiftPressed) {
+        _currentPoint?.adjustStraightLine;
+      }
+      canvasDelegate?.refresh();
+    } else if (event.isPointerFinish) {
+      if ((_currentPoint?.distance ?? 0) <= minDistance) {
+        pointList.remove(_currentPoint);
+        canvasDelegate?.refresh();
+      }
+    }
+    return super.handlePainterPointerEvent(event);
+  }
+
+  @override
+  bool handleKeyEvent(KeyEvent event) {
+    super.handleKeyEvent(event);
+    //l.d("KeyEvent->$event");
+    //debugger(when: event.isKeyUp);
+    if (event.isShiftKey) {
+      //调整为横竖直线
+      if (_currentPoint != null) {
+        if (event.isKeyDown) {
+          _currentPoint?.adjustStraightLine;
+          canvasDelegate?.refresh();
+        } else if (event.isKeyUp) {
+          _currentPoint?.$2 = _currentPosition;
+          canvasDelegate?.refresh();
+        }
+      }
+    } else if (event.isKeyUp && event.isEscKey) {
+      if (_currentPoint != null) {
+        pointList.remove(_currentPoint);
+        canvasDelegate?.refresh();
+      }
+    } else if (event.isKeyUp &&
+        event.isKeyboardKey(canvasStyle?.measureKeyboardKey)) {
+      canvasDelegate?.detachOverlay(overlay: this);
+    }
+    return true;
+  }
+}
