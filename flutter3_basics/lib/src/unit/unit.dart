@@ -51,6 +51,7 @@ double get $mmFactor => 1.toDpFromMm();
 
 abstract class IUnit {
   /// 单位常量
+  static const origin = OriginUnit();
   static const px = PixelUnit();
   static const dp = DpUnit();
   static const mm = MmUnit();
@@ -206,6 +207,41 @@ abstract class IUnit {
   }
 
   //endregion ---坐标轴---
+}
+
+/// 原单位, 就是无单位
+class OriginUnit extends IUnit {
+  @override
+  String get suffix => "";
+
+  const OriginUnit();
+
+  @override
+  double toUnitFromMm(num value) => value.toDouble();
+
+  @override
+  double toUnitFromDp(num value) => value.toDouble();
+
+  @override
+  String format(
+    num value, {
+    bool showSuffix = true,
+    bool removeZero = true,
+    bool ensureInt = false,
+    int? fractionDigits,
+    String space = " ",
+  }) {
+    return "${value.toDigits(digits: fractionDigits ?? digits, removeZero: removeZero, ensureInt: ensureInt)}${showSuffix ? space + suffix : ''}";
+  }
+
+  @override
+  double toPx(num value) => value.toDouble();
+
+  @override
+  double toUnit(num value) => value.toDouble();
+
+  @override
+  double getAxisGap(int index, double scale) => 1;
 }
 
 /// 像素单位

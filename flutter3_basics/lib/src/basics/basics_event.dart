@@ -421,11 +421,17 @@ extension KeyEventEx on KeyEvent {
 
   bool get isKeyUp => this is KeyUpEvent;
 
+  /// 是否是回车键
+  bool get isEnterKey => isKeyboardKey(LogicalKeyboardKey.enter);
+
   /// 是否是空格键
   bool get isSpaceKey => isKeyboardKey(LogicalKeyboardKey.space);
 
   /// 是否是Esc键
   bool get isEscKey => isKeyboardKey(LogicalKeyboardKey.escape);
+
+  /// 是否是退格键
+  bool get isBackKey => isKeyboardKey(LogicalKeyboardKey.backspace);
 
   /// 是否是Ctrl键
   bool get isCtrlKey => isKeyboardKey(LogicalKeyboardKey.control);

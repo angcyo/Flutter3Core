@@ -89,7 +89,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     BoxConstraints? constraints,
     BorderRadiusGeometry? borderRadius,
     double radius = kDefaultBorderRadiusXX,
-    bool? blur,
+    bool? blur /*是否启用模糊*/,
+    bool? shadow = true /*是否启用阴影*/,
   }) {
     final globalTheme = GlobalTheme.of(context);
     borderRadius ??= BorderRadius.circular(radius);
@@ -99,20 +100,30 @@ mixin DialogMixin implements TranslationTypeImpl {
     blur ??= dialogBlur;
     return Padding(
       padding: margin,
-      child: ConstrainedBox(
-        constraints: constraints,
-        child: DecoratedBox(
-          decoration:
-              decoration ??
-              BoxDecoration(
-                color:
-                    decorationColor ??
-                    globalTheme.themeWhiteColor.withOpacity(blur ? 0.85 : 1.0),
-                borderRadius: borderRadius,
+      child:
+          ConstrainedBox(
+                constraints: constraints,
+                child: DecoratedBox(
+                  decoration:
+                      decoration ??
+                      BoxDecoration(
+                        color:
+                            decorationColor ??
+                            globalTheme.themeWhiteColor.withOpacity(
+                              blur ? 0.85 : 1.0,
+                            ),
+                        borderRadius: borderRadius,
+                        /*boxShadow: [kBoxShadow],*/
+                      ),
+                  child: child.paddingInsets(padding).material(),
+                ).blur(sigma: blur ? kL : null).iw(),
+              )
+              .clip(borderRadius: borderRadius)
+              .shadowDecorated(
+                radius: kDefaultBorderRadiusXX,
+                /*shadowColor: shadow,*/
+                enable: shadow == true,
               ),
-          child: child.paddingInsets(padding).material(),
-        ).blur(sigma: blur ? kL : null).iw(),
-      ).clip(borderRadius: borderRadius),
     );
   }
 
@@ -156,23 +167,28 @@ mixin DialogMixin implements TranslationTypeImpl {
     EdgeInsets? margin,
     EdgeInsets? contentPadding = EdgeInsets.zero,
     Color? decorationColor,
-    bool? blur,
+    bool? blur /*是否启用模糊*/,
+    bool? shadow = true /*是否启用阴影*/,
     double radius = kDefaultBorderRadiusXX,
     BoxConstraints? contentConstraints,
     //--
+    FocusOnKeyEventCallback? onKeyEvent,
     dynamic result,
   }) {
     return Center(
-      child: buildDialogContainer(
-        context,
-        margin: margin,
-        padding: contentPadding,
-        content.desktopConstrained().matchParent(matchHeight: false),
-        constraints: contentConstraints,
-        radius: radius,
-        decorationColor: decorationColor,
-      ),
-    ).blur(enable: blur == true).autoCloseDialog(context, result: result);
+          child: buildDialogContainer(
+            context,
+            margin: margin,
+            padding: contentPadding,
+            content.desktopConstrained().matchParent(matchHeight: false),
+            constraints: contentConstraints,
+            radius: radius,
+            decorationColor: decorationColor,
+            shadow: shadow,
+          ),
+        )
+        .blur(enable: blur == true)
+        .autoCloseDialog(context, onKeyEvent: onKeyEvent, result: result);
   }
 
   /// 底部撑满显示的对话框样式

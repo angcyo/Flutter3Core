@@ -517,6 +517,8 @@ class NumberKeyboardInputController {
   //--
 
   /// 当前输入的文本
+  /// - [numberText]
+  /// - [numberValue]
   String numberText = "";
 
   /// 首次输入, 是否要清空所有.
@@ -563,16 +565,32 @@ class NumberKeyboardInputController {
     return true;
   }
 
+  /// - [numberText]
+  /// - [numberValue]
+  @api
+  num? get numberValue {
+    if (checkInputValue(numberText)) {
+      if (isSupportDecimal) {
+        final result = numberText.toDoubleOrNull();
+        return result;
+      } else {
+        final result = numberText.toIntOrNull();
+        return result;
+      }
+    }
+    return null;
+  }
+
   /// 完成输入时调用
   /// @return 验证没问题后, 返回输入的键盘值
   @callPoint
-  num? onKeyboardInputFinish(BuildContext? context) {
+  num? onKeyboardInputFinish(BuildContext? context, {Object? popResult}) {
     //debugger();
     if (checkInputValue(numberText)) {
       if (isSupportDecimal) {
         final result = numberText.toDoubleOrNull();
         if (onNumberInputFinishIntercept == null) {
-          context?.pop(result);
+          context?.pop(popResult ?? result);
         } else {
           onNumberInputFinishIntercept?.call(context, result);
         }
@@ -580,7 +598,7 @@ class NumberKeyboardInputController {
       } else {
         final result = numberText.toIntOrNull();
         if (onNumberInputFinishIntercept == null) {
-          context?.pop(result);
+          context?.pop(popResult ?? result);
         } else {
           onNumberInputFinishIntercept?.call(context, result);
         }
@@ -599,6 +617,9 @@ class NumberKeyboardInputController {
   @callPoint
   void onKeyboardInput(String value, NumberKeyboardType type) {
     //debugger();
+    if (type == NumberKeyboardType.finish) {
+      return;
+    }
     if (isFirstClearAll || numberText.toIntOrNull() == 0) {
       if (type == NumberKeyboardType.decimal) {
         numberText = "0";
@@ -637,5 +658,46 @@ class NumberKeyboardInputController {
         numberText += value;
       }
     }
+  }
+
+  /// 处理桌面端按键事件
+  /// - [NumberKeyEventDetectorMixin]
+  ///
+  /// @return true 表示处理了, 否则返回false
+  @callPoint
+  @desktopLayout
+  bool onKeyEventInput(
+    BuildContext? context,
+    KeyEvent event, {
+    Object? popResult,
+  }) {
+    assert(() {
+      l.d("event[${event.character}]->$event");
+      return true;
+    }());
+    if (event.isKeyDownOrRepeat) {
+      final character = event.character;
+      if (event.isBackKey) {
+        onKeyboardInput("", NumberKeyboardType.backspace);
+        return true;
+      } else if (event.isEnterKey) {
+        //onKeyboardInput("", NumberKeyboardType.finish);
+        onKeyboardInputFinish(context, popResult: popResult);
+        return true;
+      } else if (character != null) {
+        //有效输入
+        if (character == ".") {
+          onKeyboardInput(character, NumberKeyboardType.decimal);
+          return true;
+        } else if (character == "-" || character == "+") {
+          onKeyboardInput(character, NumberKeyboardType.positiveNegative);
+          return true;
+        } else if (character.isInt) {
+          onKeyboardInput(character, NumberKeyboardType.number);
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

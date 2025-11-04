@@ -353,6 +353,7 @@ mixin NumberKeyEventDetectorMixin {
 
 //--
 
+/// 快捷键注册监听[KeyEventRegister]
 /// [KeyEventMixin]
 class KeyEventWidget extends StatefulWidget {
   /// 按键匹配处理列表

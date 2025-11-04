@@ -1018,6 +1018,7 @@ extension WidgetEx on Widget {
   Widget autoCloseDialog(
     BuildContext? context, {
     bool onlyDesktop = true,
+    FocusOnKeyEventCallback? onKeyEvent,
     KeyEventResult otherKeyEventResult = KeyEventResult.ignored,
     Key? key,
     //--
@@ -1037,6 +1038,9 @@ extension WidgetEx on Widget {
                 context?.maybePop(result);
                 return KeyEventResult.handled;
               }
+            }
+            if (onKeyEvent != null) {
+              return onKeyEvent(node, event);
             }
             //如果处理了所有的键盘事件, 此时child内部有输入框, 则可以会拦截键盘事件.
             return otherKeyEventResult;
@@ -2067,7 +2071,7 @@ extension WidgetEx on Widget {
   /// [shadowRadius]
   /// [shadowDecorated]
   Widget shadowDecorated({
-    Offset shadowOffset = Offset.zero,
+    Offset shadowOffset = kShadowOffset,
     Color? shadowColor = kShadowColor,
     double? radius = kDefaultBorderRadiusXXX,
     double shadowBlurRadius = kDefaultBlurRadius,
@@ -2078,8 +2082,9 @@ extension WidgetEx on Widget {
     BoxShape shape = BoxShape.rectangle,
     BorderRadiusGeometry? borderRadius,
     Color? decorationColor = Colors.white,
+    bool enable = true,
   }) {
-    if (shadowColor == null) {
+    if (!enable || shadowColor == null) {
       return this;
     }
     borderRadius ??= BorderRadius.all(Radius.circular(radius ?? 0));
