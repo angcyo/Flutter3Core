@@ -467,9 +467,13 @@ class ElementAdsorbControl
         axisUnit
             .format(distance.distance.toUnitFromDp(axisUnit))
             .connect(
-              distance.radians != 0
-                  ? ' ${distance.radians.jd.toDigits()}°'
-                  : '',
+              distance.radians == 0 ||
+                      distance.radians == pi ||
+                      distance.radians == -pi ||
+                      distance.radians == pi / 2 ||
+                      distance.radians == -pi / 2
+                  ? ''
+                  : ' ${distance.radians.jd.toDigits()}°',
             ),
         textColor: canvasStyle.adsorbTextColor,
         fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
@@ -478,10 +482,10 @@ class ElementAdsorbControl
               Offset(painter.size.width / 2, painter.size.height);
         },
       );
-      assert(() {
+      /*assert(() {
         l.w("${distance}");
         return true;
-      }());
+      }());*/
       //debugger();
     });
   }

@@ -10,6 +10,11 @@ part of '../../flutter3_canvas.dart';
 ///
 /// - [updateAxisData] 更新坐标轴数据
 /// - [painting] 绘制坐标轴
+/// - [paintRefLine] 最后绘制参考线
+///
+/// - [xAxisData] x轴数据
+/// - [yAxisData] y轴数据
+/// - [refLineDataList] 参考线数据
 ///
 class CanvasAxisManager extends IPainter
     with IPainterEventHandlerMixin, KeyEventClientMixin {
@@ -562,7 +567,7 @@ class CanvasAxisManager extends IPainter
       final downRefLineData = findRefLineData(localPosition);
       if (downRefLineData != null) {
         _refLineComponent = RefLineComponent(this, downRefLineData.axis)
-          .._refLineData = downRefLineData;
+          ..refLineData = downRefLineData;
         canvasDelegate.refresh();
       } else {
         if (xAxisBounds?.contains(localPosition) == true) {
@@ -577,8 +582,8 @@ class CanvasAxisManager extends IPainter
       if (_refLineComponent != null) {
         final handle = _refLineComponent!.handlePainterPointerEvent(event);
         if (event.isPointerFinish) {
-          if (isRefLineMoveToAxis(_refLineComponent?._refLineData)) {
-            removeRefLine(_refLineComponent?._refLineData);
+          if (isRefLineMoveToAxis(_refLineComponent?.refLineData)) {
+            removeRefLine(_refLineComponent?.refLineData);
           }
           //_refLineComponent = null;
         }
@@ -681,10 +686,46 @@ class CanvasAxisManager extends IPainter
           }
         }
       }
+      //--参考线之间的距离提示
+      final refLineData = _refLineComponent?.refLineData;
+      final nearestLineData = _refLineComponent?.nearestLineData;
+      if (refLineData != null && nearestLineData != null) {
+        @dp
+        @sceneCoordinate
+        final pointerPosition = canvasViewBox.toScenePoint(
+          canvasDelegate.canvasEventManager.pointerPosition,
+        );
+        @dp
+        @sceneCoordinate
+        final fromX = nearestLineData.axis == Axis.horizontal
+            ? pointerPosition.x
+            : refLineData.sceneValue;
+        final toX = nearestLineData.axis == Axis.horizontal
+            ? pointerPosition.x
+            : nearestLineData.sceneValue;
+        @dp
+        @sceneCoordinate
+        final fromY = nearestLineData.axis == Axis.horizontal
+            ? refLineData.sceneValue
+            : pointerPosition.y;
+        final toY = nearestLineData.axis == Axis.horizontal
+            ? nearestLineData.sceneValue
+            : pointerPosition.y;
+        canvasDelegate
+            .canvasElementManager
+            .canvasElementControlManager
+            .elementAdsorbControl
+            .paintDistance(
+              canvas,
+              paintMeta,
+              DistanceValue(from: Offset(fromX, fromY), to: Offset(toX, toY)),
+            );
+      }
     }
   }
 
   /// 查找点击命中的参考线
+  @api
   RefLineData? findRefLineData(@viewCoordinate Offset point) {
     for (final lineData in refLineDataList.reversed) {
       if (isHitRefLineData(lineData, point)) {
@@ -692,6 +733,32 @@ class CanvasAxisManager extends IPainter
       }
     }
     return null;
+  }
+
+  /// 使用指定的参考线, 查找距离最近的参考线
+  @api
+  RefLineData? findNearestRefLineData(RefLineData? refLineData) {
+    if (refLineData == null) {
+      return null;
+    }
+    double minDistance = double.infinity;
+    RefLineData? nearestLineData;
+    for (final lineData in refLineDataList) {
+      if (refLineData == lineData || refLineData.axis != lineData.axis) {
+        continue;
+      }
+      //debugger();
+      final distance = (refLineData.sceneValue - lineData.sceneValue).abs();
+      /*l.d(
+        "distance->${refLineData.sceneValue} ${lineData.sceneValue} :$distance",
+      );*/
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestLineData = lineData;
+      }
+    }
+    //l.i("distance->...");
+    return nearestLineData;
   }
 
   /// 点[point]是否命中[lineData]参考线
@@ -737,7 +804,7 @@ class CanvasAxisManager extends IPainter
 
   /// 当前参考线是否要高亮
   bool isHighlightRefLine(RefLineData lineData) {
-    return lineData == _refLineComponent?._refLineData;
+    return lineData == _refLineComponent?.refLineData;
   }
 
   /// 当前参考线是否在画布中可见, 不可见不绘制
@@ -777,7 +844,7 @@ class CanvasAxisManager extends IPainter
     if (data == null) {
       return;
     }
-    if (data == _refLineComponent?._refLineData) {
+    if (data == _refLineComponent?.refLineData) {
       //移除的是正在编辑的参考线
       _refLineComponent = null;
     }

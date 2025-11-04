@@ -41,9 +41,19 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   late CanvasBoundsEventComponent canvasBoundsEventComponent =
       CanvasBoundsEventComponent(canvasDelegate);
 
+  /// 当前手势按下时的位置
+  @output
+  @viewCoordinate
+  Offset? pointerDownPosition;
+
+  /// 当前鼠标或者手势的位置
+  @output
+  @viewCoordinate
+  Offset pointerPosition = Offset.zero;
+
   /// 鼠标或者手势是否按下
   @output
-  bool isPointerDown = false;
+  bool get isPointerDown => pointerDownPosition != null;
 
   CanvasEventManager(this.canvasDelegate) {
     //
@@ -58,6 +68,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   /// [CanvasDelegate.handlePointerEvent]驱动
   @entryPoint
   void handlePointerEvent(@viewCoordinate PointerEvent event) {
+    final localPosition = event.localPosition;
+    pointerPosition = localPosition;
     if (!canvasDelegate.canvasStyle.enableCanvasEvent) {
       //事件总开关被关闭, 不处理任何手势
       return;
@@ -82,7 +94,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
     //--
     if (event.isPointerDown) {
-      isPointerDown = true;
+      pointerDownPosition = localPosition;
     }
 
     if (!_cancelDispatchEvent) {
@@ -132,13 +144,13 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     //--finish
     if (event.isPointerFinish) {
       _cancelDispatchEvent = false;
-      isPointerDown = false;
+      pointerDownPosition = null;
       _painterEventInterceptHandler = null;
     }
 
     assert(() {
       /*if (event.isPointerUp) {
-        final pivot = event.localPosition;
+        final pivot = localPosition;
         l.v('抬手点:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
             '->${canvasDelegate.canvasViewBox.toScenePoint(pivot)}');
       }*/

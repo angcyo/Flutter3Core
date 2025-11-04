@@ -35,6 +35,20 @@ class RefLineComponent
       _adsorbControl?.isCanvasComponentEnable == true &&
       !_adsorbControl!.isIgnoreAdsorb;
 
+  /// 当前创建/编辑的参考线数据
+  @output
+  RefLineData? _refLineData;
+
+  RefLineData? get refLineData => _refLineData;
+
+  set refLineData(RefLineData? value) {
+    _refLineData = value;
+  }
+
+  /// 按下/移动时距离最近的参考线数据
+  @output
+  RefLineData? nearestLineData;
+
   @override
   bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
     if (event.isPointerDown) {
@@ -53,18 +67,20 @@ class RefLineComponent
         );*/
         _adsorbControl = elementAdsorbControl;
       }
+      nearestLineData = axisManager.findNearestRefLineData(_refLineData);
     } else if (event.isPointerMove) {
       /*_adsorbControl?.updateControlElementsBounds(
         axisManager.getRefLineSceneRect(_refLineData),
       );*/
+      //debugger();
+      nearestLineData = axisManager.findNearestRefLineData(_refLineData);
     } else if (event.isPointerFinish) {
       _adsorbControl?.dispose(ControlTypeEnum.translate);
       _adsorbControl = null;
+      nearestLineData = null;
     }
     return addTranslateDetectorPointerEvent(event);
   }
-
-  RefLineData? _refLineData;
 
   @override
   bool handleTranslateDetectorPointerEvent(
