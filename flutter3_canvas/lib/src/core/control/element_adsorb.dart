@@ -451,8 +451,9 @@ class ElementAdsorbControl
   void paintDistance(
     Canvas canvas,
     PaintMeta paintMeta,
-    DistanceValue distance,
-  ) {
+    DistanceValue distance, {
+    @defInjectMark Color? textColor,
+  }) {
     paintMeta.withPaintMatrix(canvas, () {
       //先绘制线
       canvas.drawLine(
@@ -475,7 +476,7 @@ class ElementAdsorbControl
                   ? '' //特定角度不显示
                   : ' ${distance.radians.jd.toDigits()}°',
             ),
-        textColor: canvasStyle.adsorbTextColor,
+        textColor: textColor ?? canvasStyle.adsorbTextColor,
         fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
         getOffset: (painter) {
           return distance.center -
