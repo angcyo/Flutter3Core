@@ -443,6 +443,49 @@ class ElementAdsorbControl
     return yRefValue;
   }
 
+  /// 绘制一段距离提示
+  /// - 起点到终点的距离
+  /// - 支持斜线绘制
+  /// - 支持距离文本绘制
+  @api
+  void paintDistance(
+    Canvas canvas,
+    PaintMeta paintMeta,
+    DistanceValue distance,
+  ) {
+    paintMeta.withPaintMatrix(canvas, () {
+      //先绘制线
+      canvas.drawLine(
+        distance.from,
+        distance.to,
+        Paint()
+          ..color = canvasStyle.adsorbLineColor
+          ..strokeWidth = 1 / paintMeta.canvasScale,
+      );
+      //在绘制距离文本
+      canvas.drawText(
+        axisUnit
+            .format(distance.distance.toUnitFromDp(axisUnit))
+            .connect(
+              distance.radians != 0
+                  ? ' ${distance.radians.jd.toDigits()}°'
+                  : '',
+            ),
+        textColor: canvasStyle.adsorbTextColor,
+        fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
+        getOffset: (painter) {
+          return distance.center -
+              Offset(painter.size.width / 2, painter.size.height);
+        },
+      );
+      assert(() {
+        l.w("${distance}");
+        return true;
+      }());
+      //debugger();
+    });
+  }
+
   //endregion --core--
 
   //region --辅助--
@@ -726,4 +769,35 @@ class AdsorbRefValue {
   @override
   String toString() =>
       'AdsorbRefValue(refType: $refType, refValue: $refValue, refBounds: $refBounds, adsorbValue: $adsorbValue, refElement: $refElement)';
+}
+
+/// 距离数据结构
+class DistanceValue {
+  /// 画布中的起点
+  @dp
+  @sceneCoordinate
+  final Offset from;
+
+  /// 画布中的终点
+  @dp
+  @sceneCoordinate
+  final Offset to;
+
+  DistanceValue({required this.from, required this.to});
+
+  /// 获取中心点
+  @dp
+  Offset get center => (from + to) / 2;
+
+  /// 两点之间的距离
+  @dp
+  double get distance => (to - from).distance;
+
+  /// 两点之间的弧度
+  double get radians => (to - from).direction;
+
+  @override
+  String toString() {
+    return "起点: $from, 终点: $to, 距离: $distance, 弧度: $radians";
+  }
 }

@@ -154,6 +154,8 @@ class RefLineComponent
 }
 
 /// 参考线数据
+///
+/// - [CanvasAxisManager]
 final class RefLineData {
   /// 轴向
   ///

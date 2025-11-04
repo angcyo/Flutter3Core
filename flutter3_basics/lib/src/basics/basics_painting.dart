@@ -795,6 +795,7 @@ extension CanvasEx on Canvas {
   /// @return 返回文本的大小
   Size drawText(
     String? text, {
+    @defInjectMark TextDirection? textDirection,
     //--
     TextStyle? textStyle,
     Color? textColor = Colors.black,
@@ -810,9 +811,13 @@ extension CanvasEx on Canvas {
     Alignment alignment = Alignment.topLeft,
     ui.Offset offset = ui.Offset.zero,
     Offset? Function(TextPainter painter)? getOffset,
+    //--拦截绘制操作
+    void Function(TextPainter painter, Offset offset)? onPaintAction,
     //--绘制前的回调
     void Function(TextPainter painter, Offset offset)? onBeforeAction,
+    String? debugLabel,
   }) {
+    debugger(when: debugLabel != null);
     final painter = TextPainter(
       text: TextSpan(
         text: text,
@@ -836,7 +841,7 @@ extension CanvasEx on Canvas {
             ),
       ),
       textAlign: textAlign,
-      textDirection: TextDirection.ltr,
+      textDirection: textDirection ?? TextDirection.ltr,
     )..layout();
     final textOffset =
         (getOffset?.call(painter) ??
@@ -847,7 +852,11 @@ extension CanvasEx on Canvas {
                       .topLeft)) +
         offset;
     onBeforeAction?.call(painter, textOffset);
-    painter.paint(this, textOffset);
+    if (onPaintAction != null) {
+      onPaintAction(painter, textOffset);
+    } else {
+      painter.paint(this, textOffset);
+    }
     return painter.size;
   }
 

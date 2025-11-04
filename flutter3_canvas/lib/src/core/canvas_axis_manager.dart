@@ -623,7 +623,11 @@ class CanvasAxisManager extends IPainter
             ? canvasStyle.axisRefLineHighlightColor
             : canvasStyle.axisRefLineColor;
 
+        final fontSize =
+            paintManager.canvasDelegate.canvasStyle.axisLabelFontSize;
+
         if (lineData.axis == Axis.horizontal) {
+          //绘制横向参考线
           canvas.drawLine(
             Offset(paintBounds.left, viewPoint.dy),
             Offset(paintBounds.right, viewPoint.dy),
@@ -632,39 +636,30 @@ class CanvasAxisManager extends IPainter
 
           if (isHighlight || isHover) {
             //绘制参考刻度值
-            canvas.withRotate(
-              -90,
-              () {
-                TextPainter(
-                    text: TextSpan(
-                      text: axisUnit.formatFromDp(
-                        lineData.sceneValue,
-                        showSuffix: false,
-                      ),
-                      style: TextStyle(
-                        color: linePaint.color,
-                        fontSize: paintManager
-                            .canvasDelegate
-                            .canvasStyle
-                            .axisLabelFontSize,
-                      ),
-                    ),
-                    textDirection: TextDirection.ltr,
-                  )
-                  ..layout()
-                  ..paint(
-                    canvas,
-                    Offset(
-                      yAxisBounds?.left ?? 0,
-                      viewPoint.y - axisLabelOffset,
-                    ),
-                  );
+            canvas.drawText(
+              axisUnit.formatFromDp(lineData.sceneValue, showSuffix: true),
+              textStyle: TextStyle(color: linePaint.color, fontSize: fontSize),
+              getOffset: (painter) {
+                final x =
+                    (xAxisBounds?.right ?? 0) -
+                    painter.height -
+                    axisLabelOffset;
+                return Offset(x, viewPoint.y - axisLabelOffset);
               },
-              pivotX: yAxisBounds?.left ?? 0,
-              pivotY: viewPoint.y - axisLabelOffset,
+              onPaintAction: (painter, offset) {
+                canvas.withRotate(
+                  -90,
+                  () {
+                    painter.paint(canvas, offset);
+                  },
+                  pivotX: offset.x,
+                  pivotY: offset.y,
+                );
+              },
             );
           }
         } else if (lineData.axis == Axis.vertical) {
+          //纵向参考线
           canvas.drawLine(
             Offset(viewPoint.dx, paintBounds.top),
             Offset(viewPoint.dx, paintBounds.bottom),
@@ -673,27 +668,16 @@ class CanvasAxisManager extends IPainter
 
           if (isHighlight || isHover) {
             //绘制参考刻度值
-            TextPainter(
-                text: TextSpan(
-                  text: axisUnit.formatFromDp(
-                    lineData.sceneValue,
-                    showSuffix: false,
-                  ),
-                  style: TextStyle(
-                    color: linePaint.color,
-                    fontSize: paintManager
-                        .canvasDelegate
-                        .canvasStyle
-                        .axisLabelFontSize,
-                  ),
-                ),
-                textDirection: TextDirection.ltr,
-              )
-              ..layout()
-              ..paint(
-                canvas,
-                Offset(viewPoint.x + axisLabelOffset, xAxisBounds?.top ?? 0),
-              );
+            canvas.drawText(
+              axisUnit.formatFromDp(lineData.sceneValue, showSuffix: true),
+              textStyle: TextStyle(color: linePaint.color, fontSize: fontSize),
+              getOffset: (painter) {
+                return Offset(
+                  viewPoint.x + axisLabelOffset,
+                  (yAxisBounds?.bottom ?? 0) - fontSize - axisLabelOffset,
+                );
+              },
+            );
           }
         }
       }
