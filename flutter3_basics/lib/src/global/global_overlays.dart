@@ -495,7 +495,7 @@ OverlayEntry? showOverlay(
           loadingInfoNotifier: loadingInfoNotifier,
           onRemoveAction: onRemoveAction,
         ),
-      ).material();
+      ).material(type: MaterialType.transparency /*浮窗不拦截手势*/);
     },
   );
 
