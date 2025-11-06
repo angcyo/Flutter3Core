@@ -179,10 +179,10 @@ abstract class IUnit {
       return baseGap * 50;
     } else if (scale <= 0.25) {
       //缩小4倍后
-      return baseGap * 20;
+      return baseGap * (isTabletLandscape ? 20 : 10);
     } else if (scale <= 0.75) {
       //缩小3倍后
-      return baseGap * 10;
+      return baseGap * (isTabletLandscape ? 10 : 5);
     } else {
       return baseGap;
     }
