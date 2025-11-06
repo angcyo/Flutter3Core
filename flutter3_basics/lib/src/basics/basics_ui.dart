@@ -3546,9 +3546,17 @@ extension RenderObjectEx on RenderObject {
 
   /// 标记下一帧需要重绘
   /// [markNeedsPaint]
-  void postMarkNeedsPaint() {
+  void postMarkNeedsPaint({String? debugLabel}) {
     postFrameCallback((timeStamp) {
-      markNeedsPaint();
+      try {
+        //Failed assertion: line 3182 pos 12: '!_debugDisposed': is not true.
+        markNeedsPaint();
+      } catch (e) {
+        assert(() {
+          printError(e);
+          return true;
+        }());
+      }
     });
   }
 

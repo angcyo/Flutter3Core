@@ -12,6 +12,10 @@ final class DataChunkInfo {
   /// 数据发送开始的时间, 毫秒
   final int startTime;
 
+  /// 数据发送结束的时间, 毫秒
+  /// 不填就是当前时间
+  final int? endTime;
+
   /// 总共需要发送的字节数
   /// 如果是[String]数据, 参数就是发送的字符长度
   final int total;
@@ -19,7 +23,12 @@ final class DataChunkInfo {
   /// 已经发送的字节数
   final int count;
 
-  DataChunkInfo({this.startTime = -1, this.total = 0, this.count = 0});
+  const DataChunkInfo({
+    this.startTime = -1,
+    this.total = 0,
+    this.count = 0,
+    this.endTime,
+  });
 
   /// 当前传输的进度[0~1]
   /// - [ProgressStateInfo]
@@ -33,9 +42,9 @@ final class DataChunkInfo {
   /// 计算速率 bytes/s
   int get speed {
     if (startTime <= 0) {
-      return 0;
+      return count;
     }
-    final time = nowTime();
+    final time = endTime ?? nowTime();
     final dTime = time - startTime;
     return dTime >= 1000 ? (count * 1000 / (time - startTime)).round() : count;
   }
@@ -47,7 +56,10 @@ final class DataChunkInfo {
 
   /// 使用指定的时间, 计算出速度
   String getSpeedStr([int? time]) {
-    time ??= nowTime();
+    if (startTime <= 0) {
+      return '${this.speed.toSizeStr()}/s';
+    }
+    time ??= endTime ?? nowTime();
     final dTime = time - startTime;
     int speed = dTime >= 1000
         ? (count * 1000 / (time - startTime)).round()
@@ -55,13 +67,9 @@ final class DataChunkInfo {
     return '${speed.toSizeStr()}/s';
   }
 
-  int? _endTime;
-
   String time([int? endTime]) {
-    if (isFinish && _endTime == null) {
-      _endTime = nowTime();
-    }
-    return LTime.diffTime(startTime, endTime: _endTime ?? endTime ?? nowTime());
+    endTime ??= this.endTime ?? nowTime();
+    return LTime.diffTime(startTime, endTime: endTime);
   }
 
   @override
