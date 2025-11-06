@@ -32,6 +32,9 @@ class LabelNumberSliderTile extends StatefulWidget {
   /// 是否显示数字
   final bool showNumber;
 
+  /// 是否显示滑块
+  final bool showSlider;
+
   /// 活跃/不活跃的轨道渐变颜色
   final List<Color>? activeTrackGradientColors;
   final List<Color>? inactiveTrackGradientColors;
@@ -78,6 +81,7 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.maxDigits = 2,
     this.onValueChanged,
     this.showNumber = true,
+    this.showSlider = true,
     NumType? numType,
     //--
     this.divisions,
@@ -91,12 +95,13 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.valueIndicatorTextStyle,
     this.thumbColor,
     this.thumbShape,
-  }) : _numType = numType ??
-            (value != null
-                ? (value is int ? NumType.i : NumType.d)
-                : (minValue != null
-                    ? (minValue is int ? NumType.i : NumType.d)
-                    : (maxValue is int ? NumType.i : NumType.d)));
+  }) : _numType =
+           numType ??
+           (value != null
+               ? (value is int ? NumType.i : NumType.d)
+               : (minValue != null
+                     ? (minValue is int ? NumType.i : NumType.d)
+                     : (maxValue is int ? NumType.i : NumType.d)));
 
   @override
   State<LabelNumberSliderTile> createState() => _LabelNumberSliderTileState();
@@ -138,41 +143,41 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
         : formatNumber(_currentValue!, numType: widget._numType);
     final numberWidget = widget.showNumber
         ? isDesktopOrWeb
-            ? buildNumberInputWidget(
-                context,
-                numberStr,
-                minValue: widget.minValue,
-                maxValue: widget.maxValue,
-                maxDigits: widget.maxDigits,
-                numType: widget._numType,
-                onChanged: (value) {
-                  if (value != null) {
-                    _currentValue = value;
-                    widget.onValueChanged?.call(value);
-                    updateState();
-                  }
-                },
-              )
-            : buildNumberWidget(
-                context,
-                numberStr,
-                onTap: () async {
-                  final value = await context.showWidgetDialog(
-                    NumberKeyboardDialog(
-                      number: _currentValue ?? widget.minValue,
-                      minValue: widget.minValue,
-                      maxValue: widget.maxValue,
-                      maxDigits: widget.maxDigits,
-                      numType: widget._numType,
-                    ),
-                  );
-                  if (value != null) {
-                    _currentValue = value;
-                    widget.onValueChanged?.call(value);
-                    updateState();
-                  }
-                },
-              )
+              ? buildNumberInputWidget(
+                  context,
+                  numberStr,
+                  minValue: widget.minValue,
+                  maxValue: widget.maxValue,
+                  maxDigits: widget.maxDigits,
+                  numType: widget._numType,
+                  onChanged: (value) {
+                    if (value != null) {
+                      _currentValue = value;
+                      widget.onValueChanged?.call(value);
+                      updateState();
+                    }
+                  },
+                )
+              : buildNumberWidget(
+                  context,
+                  numberStr,
+                  onTap: () async {
+                    final value = await context.showWidgetDialog(
+                      NumberKeyboardDialog(
+                        number: _currentValue ?? widget.minValue,
+                        minValue: widget.minValue,
+                        maxValue: widget.maxValue,
+                        maxDigits: widget.maxDigits,
+                        numType: widget._numType,
+                      ),
+                    );
+                    if (value != null) {
+                      _currentValue = value;
+                      widget.onValueChanged?.call(value);
+                      updateState();
+                    }
+                  },
+                )
         : null;
 
     //
@@ -199,7 +204,8 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       minValue: minValue,
       maxValue: maxValue,
       activeTrackGradientColors: widget.activeTrackGradientColors,
-      activeTrackColor: widget.activeTrackColor ??
+      activeTrackColor:
+          widget.activeTrackColor ??
           (widget.inactiveTrackGradientColors == null
               ? globalTheme.primaryColor
               : Colors.transparent),
@@ -224,7 +230,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       },
     );
 
-    return [top, bottom].column()!.material();
+    return [top, if (widget.showSlider) bottom].column()!.material();
   }
 }
 
@@ -343,48 +349,76 @@ class _LabelRangeNumberSliderTileState extends State<LabelRangeNumberSliderTile>
       labelWidget: widget.labelWidget,
     );
     //number
-    final startNumberStr =
-        formatNumber(_currentStartValue, numType: widget._numType);
+    final startNumberStr = formatNumber(
+      _currentStartValue,
+      numType: widget._numType,
+    );
     final startNumber = widget.showNumber
-        ? buildNumberWidget(context, startNumberStr, onTap: () async {
-            final value = await context.showWidgetDialog(NumberKeyboardDialog(
-              number: _currentStartValue,
-              minValue: widget.minValue,
-              maxValue: _currentEndValue,
-              maxDigits: widget.maxDigits,
-              numType: widget._numType,
-            ));
-            if (value != null) {
-              _currentStartValue = value;
-              widget.onValueChanged?.call(_currentStartValue, _currentEndValue);
-              widget.onRangeValueChanged?.call(RangeValues(
-                  _currentStartValue.toNumDouble(),
-                  _currentEndValue.toNumDouble()));
-              updateState();
-            }
-          })
+        ? buildNumberWidget(
+            context,
+            startNumberStr,
+            onTap: () async {
+              final value = await context.showWidgetDialog(
+                NumberKeyboardDialog(
+                  number: _currentStartValue,
+                  minValue: widget.minValue,
+                  maxValue: _currentEndValue,
+                  maxDigits: widget.maxDigits,
+                  numType: widget._numType,
+                ),
+              );
+              if (value != null) {
+                _currentStartValue = value;
+                widget.onValueChanged?.call(
+                  _currentStartValue,
+                  _currentEndValue,
+                );
+                widget.onRangeValueChanged?.call(
+                  RangeValues(
+                    _currentStartValue.toNumDouble(),
+                    _currentEndValue.toNumDouble(),
+                  ),
+                );
+                updateState();
+              }
+            },
+          )
         : null;
 
-    final endNumberStr =
-        formatNumber(_currentEndValue, numType: widget._numType);
+    final endNumberStr = formatNumber(
+      _currentEndValue,
+      numType: widget._numType,
+    );
     final endNumber = widget.showNumber
-        ? buildNumberWidget(context, endNumberStr, onTap: () async {
-            final value = await context.showWidgetDialog(NumberKeyboardDialog(
-              number: _currentEndValue,
-              minValue: _currentStartValue,
-              maxValue: widget.maxValue,
-              maxDigits: widget.maxDigits,
-              numType: widget._numType,
-            ));
-            if (value != null) {
-              _currentEndValue = value;
-              widget.onValueChanged?.call(_currentStartValue, _currentEndValue);
-              widget.onRangeValueChanged?.call(RangeValues(
-                  _currentStartValue.toNumDouble(),
-                  _currentEndValue.toNumDouble()));
-              updateState();
-            }
-          })
+        ? buildNumberWidget(
+            context,
+            endNumberStr,
+            onTap: () async {
+              final value = await context.showWidgetDialog(
+                NumberKeyboardDialog(
+                  number: _currentEndValue,
+                  minValue: _currentStartValue,
+                  maxValue: widget.maxValue,
+                  maxDigits: widget.maxDigits,
+                  numType: widget._numType,
+                ),
+              );
+              if (value != null) {
+                _currentEndValue = value;
+                widget.onValueChanged?.call(
+                  _currentStartValue,
+                  _currentEndValue,
+                );
+                widget.onRangeValueChanged?.call(
+                  RangeValues(
+                    _currentStartValue.toNumDouble(),
+                    _currentEndValue.toNumDouble(),
+                  ),
+                );
+                updateState();
+              }
+            },
+          )
         : null;
 
     //
@@ -422,8 +456,12 @@ class _LabelRangeNumberSliderTileState extends State<LabelRangeNumberSliderTile>
       },
       onChangeEnd: (value) {
         widget.onValueChanged?.call(_currentStartValue, _currentEndValue);
-        widget.onRangeValueChanged?.call(RangeValues(
-            _currentStartValue.toNumDouble(), _currentEndValue.toNumDouble()));
+        widget.onRangeValueChanged?.call(
+          RangeValues(
+            _currentStartValue.toNumDouble(),
+            _currentEndValue.toNumDouble(),
+          ),
+        );
       },
     );
 
