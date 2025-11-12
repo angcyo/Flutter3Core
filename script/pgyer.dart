@@ -21,31 +21,24 @@ const host = "https://www.pgyer.com";
 const apiBase = "https://www.pgyer.com/apiv2/app";
 
 void main(List<String> arguments) async {
-  final currentPath = Directory.current.path;
   colorLog('[pgyer]工作路径->$currentPath');
-
-  final localYamlFile = File("$currentPath/script.local.yaml");
-  final yamlFile = File("$currentPath/script.yaml");
-
-  final localYaml = loadYaml(
-      localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
-  final yaml =
-      loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
-  //print(yaml);
-
-  final apiKey = localYaml?["pgyer_api_key"] ?? yaml?["pgyer_api_key"];
+  final pgyerConfig = $value("pgyer");
+  if (pgyerConfig! is YamlMap) {
+    throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[pgyer]脚本";
+  }
+  final apiKey = pgyerConfig["api_key"];
   if (apiKey == null) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置蒲公英[pgyer_api_key]";
   }
 
   //是否要使用飞书的webhook通知
-  final useFeishuWebhook =
-      localYaml["use_feishu_webhook"] ?? yaml["use_feishu_webhook"];
+  final useFeishuWebhook = pgyerConfig["use_feishu_webhook"];
+  //需要上传的文件夹路径集合
+  final path = pgyerConfig["path"];
 
   //上传成功的数量
   int count = 0;
-  for (final folder
-      in (localYaml?["pgyer_path"] ?? yaml?["pgyer_path"] ?? [])) {
+  for (final folder in (path ?? [])) {
     final fileList = await _getFileList(folder);
     if (fileList.isEmpty) {
       continue;
@@ -80,10 +73,8 @@ void main(List<String> arguments) async {
                   index == length - 1 &&
                   url != null) {
                 //只在最后一个文件上传成功之后, 进行飞书webhook通知
-                final webhook =
-                    localYaml["feishu_webhook"] ?? yaml["feishu_webhook"];
-                final logUrl =
-                    localYaml["change_log_url"] ?? yaml["change_log_url"];
+                final webhook = pgyerConfig["feishu_webhook"];
+                final logUrl = pgyerConfig["change_log_url"];
                 await sendFeishuWebhookInteractive(
                   webhook,
                   _assembleVersionTitle(versionMap),
@@ -108,6 +99,7 @@ void main(List<String> arguments) async {
       index++;
     }
   }
+  colorLog('完成上传-> $count 个文件');
 
   //await _checkAppIsPublish(apiKey, "123");
 }

@@ -65,10 +65,15 @@ Future runCommand(String executable, {String? dir, List<String>? args}) async {
 
 //---
 
+/// 优先读取`script.local.yaml`
 dynamic _localYaml;
+
+/// 其次读取`script.yaml`
 dynamic _yaml;
 
 /// 获取脚本`script.local.yaml`和`script.yaml`配置文件中配置的值
+/// - [YamlMap] 自动合并值
+/// - [YamlList] 自动合并值
 dynamic getScriptYamlValue(String key) {
   if (_localYaml == null) {
     final localYamlFile = File("$currentPath/script.local.yaml");
@@ -82,7 +87,22 @@ dynamic getScriptYamlValue(String key) {
     _yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
   }
 
-  return _localYaml?[key] ?? _yaml?[key];
+  final localValue = _localYaml?[key];
+  final value = _yaml?[key];
+
+  if (localValue is YamlMap && value is YamlMap) {
+    return {
+      ...value,
+      ...localValue,
+    };
+  }
+  if (localValue is YamlList && value is YamlList) {
+    return [
+      ...value,
+      ...localValue,
+    ];
+  }
+  return localValue ?? value;
 }
 
 /// [getScriptYamlValue]的别名
@@ -91,9 +111,20 @@ dynamic $value(String key) {
 }
 
 /// 获取列表配置
-List? $list(String key) {
+/// - [YamlList]
+YamlList? $list(String key) {
   final value = $value(key);
-  if (value is List) {
+  if (value is YamlList) {
+    return value;
+  }
+  return null;
+}
+
+/// 获取映射配置
+/// - [YamlMap]
+YamlMap? $map(String key) {
+  final value = $value(key);
+  if (value is YamlMap) {
     return value;
   }
   return null;
