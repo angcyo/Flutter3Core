@@ -134,6 +134,14 @@ abstract class LocalUdpBase {
     return messageList;
   }
 
+  /// 清空指定远程客户端发过来的消息
+  @api
+  void clearRemoteMessageList(String? deviceId) {
+    final messageMap = remoteMessageMapStream.value ?? {};
+    messageMap.remove(deviceId);
+    remoteMessageMapStream.updateValue(messageMap);
+  }
+
   //region api
 
   //region core
