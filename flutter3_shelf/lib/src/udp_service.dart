@@ -368,8 +368,8 @@ class DefaultUdpService extends UdpService {
         final client = packetBean.client ?? UdpClientInfoBean();
         client
           ..deviceId = packetBean.deviceId
-          ..clientAddress = packet.address.address.toString()
-          ..clientPort = packet.port;
+          ..remoteAddress = packet.address.address.toString()
+          ..remotePort = packet.port;
         onSelfServerHandleClientPacket(packetBean, client);
       } else {
         final message = packetBean.message;
@@ -379,8 +379,8 @@ class DefaultUdpService extends UdpService {
           message
             ..deviceId = packetBean.deviceId
             ..receiveTime = nowTime()
-            ..clientAddress = packet.address.address.toString()
-            ..clientPort = packet.port;
+            ..remoteAddress = packet.address.address.toString()
+            ..remotePort = packet.port;
           onSelfServerHandleMessagePacket(packetBean, message);
         }
       }

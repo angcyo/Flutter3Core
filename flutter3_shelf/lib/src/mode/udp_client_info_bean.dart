@@ -53,11 +53,11 @@ class UdpClientInfoBean {
 
   /// 客户端连接的地址, 在服务端收到后自动赋值
   @autoInjectMark
-  String? clientAddress;
+  String? remoteAddress;
 
   /// 客户端连接的端口, 在服务端收到后自动赋值
   @autoInjectMark
-  int? clientPort;
+  int? remotePort;
 
   //region get
 
@@ -74,7 +74,7 @@ class UdpClientInfoBean {
 
   /// ip地址
   /// [InternetAddress]
-  String? get clientIpAddress => "$clientAddress:$clientPort";
+  String? get clientIpAddress => "$remoteAddress:$remotePort";
 
   //endregion get
 
@@ -85,7 +85,7 @@ class UdpClientInfoBean {
     time = newBean.time ?? time;
     updateTime = newBean.updateTime ?? updateTime;
     offlineTime = newBean.offlineTime ?? offlineTime;
-    clientAddress = newBean.clientAddress ?? clientAddress;
-    clientPort = newBean.clientPort ?? clientPort;
+    remoteAddress = newBean.remoteAddress ?? remoteAddress;
+    remotePort = newBean.remotePort ?? remotePort;
   }
 }

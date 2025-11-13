@@ -16,17 +16,17 @@ UdpMessageBean _$UdpMessageBeanFromJson(Map<String, dynamic> json) =>
           ?.map((e) => (e as num).toInt())
           .toList()
       ..receiveTime = (json['receiveTime'] as num?)?.toInt()
-      ..clientAddress = json['clientAddress'] as String?
-      ..clientPort = (json['clientPort'] as num?)?.toInt();
+      ..remoteAddress = json['remoteAddress'] as String?
+      ..remotePort = (json['remotePort'] as num?)?.toInt();
 
 Map<String, dynamic> _$UdpMessageBeanToJson(UdpMessageBean instance) =>
     <String, dynamic>{
-      if (instance.deviceId case final value?) 'deviceId': value,
-      if (instance.messageId case final value?) 'messageId': value,
-      if (instance.time case final value?) 'time': value,
-      if (instance.type case final value?) 'type': value,
-      if (instance.data case final value?) 'data': value,
-      if (instance.receiveTime case final value?) 'receiveTime': value,
-      if (instance.clientAddress case final value?) 'clientAddress': value,
-      if (instance.clientPort case final value?) 'clientPort': value,
+      'deviceId': ?instance.deviceId,
+      'messageId': ?instance.messageId,
+      'time': ?instance.time,
+      'type': ?instance.type,
+      'data': ?instance.data,
+      'receiveTime': ?instance.receiveTime,
+      'remoteAddress': ?instance.remoteAddress,
+      'remotePort': ?instance.remotePort,
     };

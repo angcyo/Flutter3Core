@@ -15,7 +15,7 @@ class LocalUdpClient extends LocalUdpBase {
   /// 发送数据给所有服务端
   @api
   void sendUpdData() {
-    for (final server in clientList) {
+    for (final server in remoteList) {
       //sendUdpData(server.clientAddress, server.clientPort, bean: heart);
     }
   }
@@ -62,8 +62,8 @@ class LocalUdpClient extends LocalUdpBase {
       final packetBean = UdpPacketBean.fromJson(json);
       final server = packetBean.client;
       if (server != null) {
-        server.clientPort ??= datagram.port;
-        server.clientAddress ??= datagram.address.address;
+        server.remotePort ??= datagram.port;
+        server.remoteAddress ??= datagram.address.address;
         //服务端发来的心跳数据, 此时应该保存服务端信息, 用于上报数据
         handleClientInfoMessage(server);
       }

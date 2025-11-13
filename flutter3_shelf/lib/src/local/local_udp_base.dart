@@ -45,31 +45,32 @@ abstract class LocalUdpBase {
 
   /// 服务端/客户端设备列表
   @output
-  final clientListStream = $live<List<UdpClientInfoBean>?>();
+  final remoteListStream = $live<List<UdpClientInfoBean>?>();
 
-  List<UdpClientInfoBean> get clientList => clientListStream.value ?? [];
+  /// [remoteListStream]
+  List<UdpClientInfoBean> get remoteList => remoteListStream.value ?? [];
 
   /// 服务端/客户端上线通知
   @output
-  final clientOnlineStreamOnce = $liveOnce<UdpClientInfoBean?>();
+  final remoteOnlineStreamOnce = $liveOnce<UdpClientInfoBean?>();
 
   /// 服务端/客户端更新通知
   @output
-  final clientUpdateStreamOnce = $liveOnce<UdpClientInfoBean?>();
+  final remoteUpdateStreamOnce = $liveOnce<UdpClientInfoBean?>();
 
   /// 服务端/客户端下线通知
   @output
-  final clientOfflineStreamOnce = $liveOnce<UdpClientInfoBean?>();
+  final remoteOfflineStreamOnce = $liveOnce<UdpClientInfoBean?>();
 
   //--
 
   /// 所有客户端收到的消息
   @output
-  final clientMessageMapStream = $live<Map<String, List<UdpMessageBean>>>({});
+  final remoteMessageMapStream = $live<Map<String, List<UdpMessageBean>>>({});
 
   /// 指定客户端收到新的消息时通知
   @output
-  final clientNewMessageStreamOnce = $liveOnce<UdpMessageBean?>();
+  final remoteNewMessageStreamOnce = $liveOnce<UdpMessageBean?>();
 
   //region api
 
@@ -96,11 +97,11 @@ abstract class LocalUdpBase {
     packet.deviceId ??= $deviceUuid;
     packet.time ??= nowTime();
 
-    for (final server in clientList) {
+    for (final server in remoteList) {
       if (server.isOffline) {
         //服务端离线
       } else {
-        sendUdpData(server.clientAddress, server.clientPort, bean: packet);
+        sendUdpData(server.remoteAddress, server.remotePort, bean: packet);
       }
     }
   }
@@ -122,13 +123,13 @@ abstract class LocalUdpBase {
   /// 获取指定的客户端设备信息
   @api
   UdpClientInfoBean? getClientInfo(String? deviceId) {
-    return clientList.findFirst((e) => e.deviceId == deviceId);
+    return remoteList.findFirst((e) => e.deviceId == deviceId);
   }
 
   /// 获取服务端指定客户端的消息
   @api
   List<UdpMessageBean> getClientMessageList(String? deviceId) {
-    final messageMap = clientMessageMapStream.value ?? {};
+    final messageMap = remoteMessageMapStream.value ?? {};
     final messageList = messageMap[deviceId] ?? [];
     return messageList;
   }
@@ -204,15 +205,15 @@ abstract class LocalUdpBase {
   @callPoint
   void handleClientInfoMessage(UdpClientInfoBean client) {
     final deviceId = client.deviceId;
-    final list = clientList;
+    final list = remoteList;
     final old = list.findFirst((e) => e.deviceId == deviceId);
     if (old == null) {
       //新增
 
       list.add(client);
-      clientListStream.updateValue(list);
+      remoteListStream.updateValue(list);
 
-      clientOnlineStreamOnce.updateValue(client);
+      remoteOnlineStreamOnce.updateValue(client);
     } else {
       //更新
       //debugger();
@@ -221,9 +222,9 @@ abstract class LocalUdpBase {
       old.updateFrom(client);
       //l.w("客户端在线时间->${old.updateTime}");
 
-      clientUpdateStreamOnce.updateValue(client);
+      remoteUpdateStreamOnce.updateValue(client);
       if (isOffline) {
-        clientOnlineStreamOnce.updateValue(client);
+        remoteOnlineStreamOnce.updateValue(client);
       }
     }
   }
@@ -235,14 +236,14 @@ abstract class LocalUdpBase {
     if (deviceId == null) {
       return;
     }
-    final messageMap = clientMessageMapStream.value ?? {};
+    final messageMap = remoteMessageMapStream.value ?? {};
     final messageList = messageMap[deviceId] ?? [];
     messageList.add(bean);
     messageMap[deviceId] = messageList;
     //--
-    clientMessageMapStream.updateValue(messageMap);
+    remoteMessageMapStream.updateValue(messageMap);
     //--
-    clientNewMessageStreamOnce.updateValue(bean);
+    remoteNewMessageStreamOnce.updateValue(bean);
   }
 
   //--
@@ -250,11 +251,11 @@ abstract class LocalUdpBase {
   /// 检查客户端是否离线
   /// [onSelfHandleHeart]
   ///
-  /// [clientListStream]
+  /// [remoteListStream]
   void checkClientOffline() {
     try {
       final now = nowTime();
-      final list = clientList;
+      final list = remoteList;
       if (isNil(list)) {
         return;
       }
@@ -276,7 +277,7 @@ abstract class LocalUdpBase {
           //debugger();
           //l.w("客户端离线->$now ${client.updateTime}");
           client.offlineTime = now;
-          clientOfflineStreamOnce.updateValue(client);
+          remoteOfflineStreamOnce.updateValue(client);
         }
       }
     } catch (e, s) {

@@ -35,7 +35,7 @@ class LocalUdpServer extends LocalUdpBase {
     UdpClientInfoBean? serverInfo = localInfoStream.value;
     serverInfo ??= UdpClientInfoBean()
       ..time = nowTime()
-      ..clientPort = dataPort;
+      ..remotePort = dataPort;
     serverInfo.updateTime = nowTime();
 
     //--
@@ -57,8 +57,8 @@ class LocalUdpServer extends LocalUdpBase {
       final packetBean = UdpPacketBean.fromJson(json);
       final client = packetBean.client;
       if (client != null) {
-        client.clientPort ??= datagram.port;
-        client.clientAddress ??= datagram.address.address;
+        client.remotePort ??= datagram.port;
+        client.remoteAddress ??= datagram.address.address;
         //客户端发来的心跳数据, 此时应该保存客户端信息, 用户接受归纳客户端数据
         //debugger();
         handleClientInfoMessage(client);
@@ -66,8 +66,8 @@ class LocalUdpServer extends LocalUdpBase {
         final message = packetBean.message;
         if (message != null) {
           message.receiveTime ??= nowTime();
-          message.clientPort ??= datagram.port;
-          message.clientAddress ??= datagram.address.address;
+          message.remotePort ??= datagram.port;
+          message.remoteAddress ??= datagram.address.address;
           handleClientMessageBean(message);
         }
       }

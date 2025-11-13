@@ -74,11 +74,11 @@ class UdpMessageBean {
 
   /// 客户端连接的地址, 在服务端收到后自动赋值
   @autoInjectMark
-  String? clientAddress;
+  String? remoteAddress;
 
   /// 客户端连接的端口, 在服务端收到后自动赋值
   @autoInjectMark
-  int? clientPort;
+  int? remotePort;
 
   //--
 

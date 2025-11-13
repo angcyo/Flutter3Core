@@ -17,11 +17,10 @@ ServiceInfoBean _$ServiceInfoBeanFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ServiceInfoBeanToJson(ServiceInfoBean instance) =>
     <String, dynamic>{
-      if (instance.serviceUuid case final value?) 'serviceUuid': value,
-      if (instance.serviceVersion case final value?) 'serviceVersion': value,
-      if (instance.servicePort case final value?) 'servicePort': value,
-      if (instance.serviceStartTime case final value?)
-        'serviceStartTime': value,
-      if (instance.deviceId case final value?) 'deviceId': value,
-      if (instance.deviceName case final value?) 'deviceName': value,
+      'serviceUuid': ?instance.serviceUuid,
+      'serviceVersion': ?instance.serviceVersion,
+      'servicePort': ?instance.servicePort,
+      'serviceStartTime': ?instance.serviceStartTime,
+      'deviceId': ?instance.deviceId,
+      'deviceName': ?instance.deviceName,
     };

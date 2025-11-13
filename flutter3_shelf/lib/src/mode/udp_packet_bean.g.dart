@@ -18,9 +18,9 @@ UdpPacketBean _$UdpPacketBeanFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$UdpPacketBeanToJson(UdpPacketBean instance) =>
     <String, dynamic>{
-      if (instance.packetId case final value?) 'packetId': value,
-      if (instance.time case final value?) 'time': value,
-      if (instance.deviceId case final value?) 'deviceId': value,
-      if (instance.type case final value?) 'type': value,
-      if (instance.data case final value?) 'data': value,
+      'packetId': ?instance.packetId,
+      'time': ?instance.time,
+      'deviceId': ?instance.deviceId,
+      'type': ?instance.type,
+      'data': ?instance.data,
     };
