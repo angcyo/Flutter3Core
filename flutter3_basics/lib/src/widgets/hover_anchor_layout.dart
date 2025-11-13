@@ -379,6 +379,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
 
   /// 构建悬浮布局
   Widget _buildOverlayChild(BuildContext ctx) {
+    final globalTheme = GlobalTheme.of(context);
     final overlayRender = Overlay.maybeOf(
       context,
       rootOverlay: widget.rootOverlay,
@@ -394,7 +395,7 @@ class _HoverAnchorLayoutState extends State<HoverAnchorLayout>
       arrowSize: widget.arrowSize,
       screenSize: overlayRender?.getSizeOrNull(),
       arrowOffset: widget.arrowOffset,
-      backgroundColor: widget.backgroundColor ?? Colors.white,
+      backgroundColor: widget.backgroundColor ?? globalTheme.themeWhiteColor,
       backgroundShadows:
           widget.backgroundShadows ??
           (widget.showShadow
@@ -714,14 +715,14 @@ extension HoverAnchorLayoutEx on Widget {
   /// - [arrowPosition] 箭头位置
   Widget hoverTooltip(
     Widget? tooltip, {
-    bool enable = true,
+    bool enable = true /*是否激活*/,
     //--
     ArrowPosition? arrowPosition,
-    bool showArrow = true,
+    bool showArrow = true /*是否显示箭头*/,
     //--
-    bool showShadow = true,
-    bool enableTapDismiss = false,
-    Color? backgroundColor,
+    bool showShadow = true /*是否显示影响*/,
+    bool enableTapDismiss = false /*是否点击后销毁*/,
+    @autoInjectMark Color? backgroundColor /*颜色*/,
   }) => HoverAnchorLayout(
     anchor: this,
     content: tooltip,
