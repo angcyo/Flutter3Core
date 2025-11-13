@@ -7,6 +7,12 @@ import 'package:flutter3_shelf/src/local/api/udp_api_bean.dart';
 ///
 /// Udp 对应的接口列表
 final class UdpApis {
+  /// 请求app分享日志
+  /// - [shareAppLog]
+  @api
+  static UdpApiBean requestAppShareLog() =>
+      UdpApiBean()..method = "requestAppShareLog";
+
   /// 请求app日志
   /// - [shareAppLog]
   @api
@@ -26,6 +32,15 @@ extension UdpApiBeanEx on UdpApiBean {
       "fileName": zipPath.fileName(),
     };
     //debugger();
+    return this;
+  }
+
+  /// 响应app分享日志
+  /// [UdpApis.requestAppShareLog]
+  @api
+  Future<UdpApiBean> responseAppShareLog() async {
+    final zipPath = await shareAppLog(share: true, clearTempPath: false);
+    data = "分享文件:$zipPath ${zipPath.file().fileSizeSync().toSizeStr()}".bytes;
     return this;
   }
 }

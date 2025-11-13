@@ -133,9 +133,9 @@ abstract class LocalUdpBase {
             bean: packet,
           );
           if (!packet.isHeart) {
-            l.v(
+            /*l.v(
               "发送至[${server.deviceId}/${server.name}]UDP发送数据成功,长度:${byteCount.toSizeStr()}",
-            );
+            );*/
           }
           remoteCount++;
         }
@@ -242,12 +242,12 @@ abstract class LocalUdpBase {
         //收到的广播数据,开始解析数据
         try {
           final bytes = datagram?.data;
-          l.d(
+          /*l.d(
             "bytes->${bytes?.getOrNull(0)} ${bytes?.getOrNull(1)} ${bytes?.getOrNull(2)} ${bytes?.getOrNull(3)}",
           );
           l.d(
             "bytes2->${bytes?.getOrNull(0)?.ascii} ${bytes?.getOrNull(1)?.ascii} ${bytes?.getOrNull(2)?.ascii} ${bytes?.getOrNull(3)?.ascii}",
-          );
+          );*/
           final message = bytes?.utf8Str;
           if (message != null) {
             onSelfHandleReceiveUdpBroadcast(datagram!, message);
