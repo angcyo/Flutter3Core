@@ -9,6 +9,10 @@ part of flutter3_shelf;
 /// 服务端主要实现功能:
 /// - 每隔1s向指定端口发送UDP广播, 广播服务端的信息. (主要包含服务端用于接收客户端数据的端口)
 /// - 服务端监听指定数据端口, 用于接收客户端的数据.
+///
+/// - 服务端启动时, 启动一个数据监听广播端口[dataPort]用于客户端通信
+/// - 服务端在心跳中向公共端口[serverBroadcastPort]发送服务端信息的广播
+///
 class LocalUdpServer extends LocalUdpBase {
   /// 服务端用来接收客户端数据的端口
   @output
@@ -61,14 +65,14 @@ class LocalUdpServer extends LocalUdpBase {
         client.remoteAddress ??= datagram.address.address;
         //客户端发来的心跳数据, 此时应该保存客户端信息, 用户接受归纳客户端数据
         //debugger();
-        handleClientInfoMessage(client);
+        handleRemoteInfoMessage(client);
       } else {
         final message = packetBean.message;
         if (message != null) {
           message.receiveTime ??= nowTime();
           message.remotePort ??= datagram.port;
           message.remoteAddress ??= datagram.address.address;
-          handleClientMessageBean(message);
+          handleRemoteMessageBean(message);
         }
       }
     } catch (e) {

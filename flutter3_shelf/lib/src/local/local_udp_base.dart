@@ -7,15 +7,15 @@ part of flutter3_shelf;
 /// - [start] 启动服务
 ///   - [startHeartTimer] 启动心跳
 ///     - [onSelfHandleHeart] 自定义心跳逻辑
-///       - [checkClientOffline] 检查客户端是否离线
+///       - [checkRemoteOffline] 检查客户端是否离线
 ///   - [startReceiveUdpBroadcast] 启动服务端接收客户端数据的广播
 ///   - [startReceiveUdpBroadcast] 客户端接收服务端信息
 /// - [stop] 停止服务
 ///   - [stopHeartTimer] 停止心跳
 ///   - [stopReceiveUdpBroadcast] 停止接收广播数据
 ///
-/// - [sendClientPacket] 向服务端发送一包数据[UdpPacketBean]
-///   - [sendClientMessage] 向服务端上报消息[UdpMessageBean]
+/// - [sendRemotePacket] 向服务端发送一包数据[UdpPacketBean]
+///   - [sendRemoteMessage] 向服务端上报消息[UdpMessageBean]
 ///
 abstract class LocalUdpBase {
   //--
@@ -92,7 +92,7 @@ abstract class LocalUdpBase {
 
   /// 向所有服务端上报一包数据
   @api
-  Future sendClientPacket(UdpPacketBean packet) async {
+  Future sendRemotePacket(UdpPacketBean packet) async {
     packet.packetId ??= $uuid;
     packet.deviceId ??= $deviceUuid;
     packet.time ??= nowTime();
@@ -108,7 +108,7 @@ abstract class LocalUdpBase {
 
   /// 向所有服务端上报消息
   @api
-  Future sendClientMessage(UdpMessageBean message) async {
+  Future sendRemoteMessage(UdpMessageBean message) async {
     final packet = UdpPacketBean();
     packet.deviceId ??= $deviceUuid;
     message
@@ -117,18 +117,18 @@ abstract class LocalUdpBase {
     packet
       ..type = UdpPacketTypeEnum.message.name
       ..data = jsonString(message.toJson())?.bytes;
-    sendClientPacket(packet);
+    sendRemotePacket(packet);
   }
 
   /// 获取指定的客户端设备信息
   @api
-  UdpClientInfoBean? getClientInfo(String? deviceId) {
+  UdpClientInfoBean? getRemoteInfo(String? deviceId) {
     return remoteList.findFirst((e) => e.deviceId == deviceId);
   }
 
   /// 获取服务端指定客户端的消息
   @api
-  List<UdpMessageBean> getClientMessageList(String? deviceId) {
+  List<UdpMessageBean> getRemoteMessageList(String? deviceId) {
     final messageMap = remoteMessageMapStream.value ?? {};
     final messageList = messageMap[deviceId] ?? [];
     return messageList;
@@ -159,7 +159,7 @@ abstract class LocalUdpBase {
   /// 重写此方法, 处理定时心跳回调
   @overridePoint
   void onSelfHandleHeart(Timer timer) {
-    checkClientOffline();
+    checkRemoteOffline();
   }
 
   //--
@@ -201,9 +201,12 @@ abstract class LocalUdpBase {
   void onSelfHandleUdpBroadcast(Datagram datagram, String message) {}
 
   /// 处理客户端[client]结构数据
-  /// [checkClientOffline]
+  /// [checkRemoteOffline]
+  ///
+  /// - [handleRemoteInfoMessage]
+  /// - [handleRemoteMessageBean]
   @callPoint
-  void handleClientInfoMessage(UdpClientInfoBean client) {
+  void handleRemoteInfoMessage(UdpClientInfoBean client) {
     final deviceId = client.deviceId;
     final list = remoteList;
     final old = list.findFirst((e) => e.deviceId == deviceId);
@@ -230,8 +233,11 @@ abstract class LocalUdpBase {
   }
 
   /// 处理客户端[UdpMessageBean]发过来的消息结构数据
+  ///
+  /// - [handleRemoteInfoMessage]
+  /// - [handleRemoteMessageBean]
   @callPoint
-  void handleClientMessageBean(UdpMessageBean bean) {
+  void handleRemoteMessageBean(UdpMessageBean bean) {
     final deviceId = bean.deviceId;
     if (deviceId == null) {
       return;
@@ -252,7 +258,7 @@ abstract class LocalUdpBase {
   /// [onSelfHandleHeart]
   ///
   /// [remoteListStream]
-  void checkClientOffline() {
+  void checkRemoteOffline() {
     try {
       final now = nowTime();
       final list = remoteList;
@@ -264,7 +270,7 @@ abstract class LocalUdpBase {
           continue;
         }
         if (client.deviceId == localInfoStream.value?.deviceId) {
-          //本身
+          //自身/本身
           continue;
         }
         //debugger();

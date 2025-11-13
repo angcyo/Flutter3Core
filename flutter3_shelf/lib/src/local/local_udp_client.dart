@@ -9,6 +9,10 @@ part of flutter3_shelf;
 /// 客户端对接实现功能:
 /// - 监听指定端口的UDP广播, 用来获取服务端接收数据的端口
 /// - 向服务端的数据端口发送本地数据
+///
+/// - 客户端监听公共端口[serverBroadcastPort]的广播, 获取服务端信息, 比如通信端口. 保存之后用于通信
+/// - [sendRemotePacket]
+/// - [sendRemoteMessage]
 class LocalUdpClient extends LocalUdpBase {
   //region api
 
@@ -49,7 +53,7 @@ class LocalUdpClient extends LocalUdpBase {
       localInfoStream.updateValue(info);
 
       final heart = UdpPacketBean.heart(info);
-      sendClientPacket(heart);
+      sendRemotePacket(heart);
     }
   }
 
@@ -65,7 +69,7 @@ class LocalUdpClient extends LocalUdpBase {
         server.remotePort ??= datagram.port;
         server.remoteAddress ??= datagram.address.address;
         //服务端发来的心跳数据, 此时应该保存服务端信息, 用于上报数据
-        handleClientInfoMessage(server);
+        handleRemoteInfoMessage(server);
       }
     } catch (e) {
       assert(() {
