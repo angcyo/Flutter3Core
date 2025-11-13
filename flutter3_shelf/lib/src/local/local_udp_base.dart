@@ -219,9 +219,9 @@ abstract class LocalUdpBase {
   Future<UDP> startReceiveUdpBroadcast(int port) async {
     receiveBroadcastUdp?.close();
     receiveBroadcastUdp = null;
-    final udp = await receiveUdpBroadcast(
+    final udp = await receiveUdpData(
       port,
-      onDatagramAction: (datagram) {
+      onDatagramAction: (datagram, error) {
         //收到的广播数据,开始解析数据
         try {
           final message = datagram?.data.utf8Str;
