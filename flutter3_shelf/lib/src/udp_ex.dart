@@ -152,8 +152,9 @@ Future<int> sendUdpBroadcast(
 
   // send a simple string to a broadcast endpoint on port 65001.
   //debugger();
+  final bytes = data ?? text?.bytes ?? jsonString(bean?.toJson())?.bytes ?? [];
   final dataLength = await sender.send(
-    data ?? text?.bytes ?? jsonString(bean?.toJson())?.bytes ?? [],
+    bytes,
     Endpoint.broadcast(port: Port(port)),
   );
   sender.close();

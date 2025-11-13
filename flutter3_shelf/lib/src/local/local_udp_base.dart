@@ -224,11 +224,19 @@ abstract class LocalUdpBase {
       onDatagramAction: (datagram, error) {
         //收到的广播数据,开始解析数据
         try {
-          final message = datagram?.data.utf8Str;
+          final bytes = datagram?.data;
+          l.d(
+            "bytes->${bytes?.getOrNull(0)} ${bytes?.getOrNull(1)} ${bytes?.getOrNull(2)} ${bytes?.getOrNull(3)}",
+          );
+          l.d(
+            "bytes2->${bytes?.getOrNull(0)?.ascii} ${bytes?.getOrNull(1)?.ascii} ${bytes?.getOrNull(2)?.ascii} ${bytes?.getOrNull(3)?.ascii}",
+          );
+          final message = bytes?.utf8Str;
           if (message != null) {
             onSelfHandleReceiveUdpBroadcast(datagram!, message);
           }
         } catch (e) {
+          debugger();
           assert(() {
             printError(e);
             return true;
