@@ -93,16 +93,19 @@ abstract class LocalUdpBase {
 
   /// 向所有服务端上报一包数据
   /// - [remoteIdList] 指定需要发送的远程,不指定则全部
+  /// - [remotePort] 远程端口, 不指定则使用[UdpClientInfoBean.remotePort]
   /// @return 发送了的远程服务端数量
   @api
   Future<int> sendRemotePacket(
     UdpPacketBean packet, {
     List<String>? remoteIdList,
+    int? remotePort,
   }) async {
     packet.packetId ??= $uuid;
     packet.deviceId ??= $deviceUuid;
     packet.time ??= nowTime();
 
+    //debugger();
     var remoteCount = 0;
     for (final server in remoteList) {
       if (remoteIdList != null && !remoteIdList.contains(server.deviceId)) {
@@ -112,7 +115,11 @@ abstract class LocalUdpBase {
       if (server.isOffline) {
         //服务端离线
       } else {
-        sendUdpData(server.remoteAddress, server.remotePort, bean: packet);
+        sendUdpData(
+          server.remoteAddress,
+          remotePort ?? server.remotePort,
+          bean: packet,
+        );
         remoteCount++;
       }
     }
@@ -126,6 +133,7 @@ abstract class LocalUdpBase {
   Future sendRemoteMessage(
     UdpMessageBean message, {
     List<String>? remoteIdList,
+    int? remotePort,
   }) async {
     final packet = UdpPacketBean();
     packet.deviceId ??= $deviceUuid;
@@ -135,7 +143,11 @@ abstract class LocalUdpBase {
     packet
       ..type = UdpPacketTypeEnum.message.name
       ..data = jsonString(message.toJson())?.bytes;
-    sendRemotePacket(packet, remoteIdList: remoteIdList);
+    sendRemotePacket(
+      packet,
+      remoteIdList: remoteIdList,
+      remotePort: remotePort,
+    );
   }
 
   /// 获取指定的客户端设备信息
@@ -174,6 +186,7 @@ abstract class LocalUdpBase {
     heartTimer = Timer.periodic(heartPeriod, (timer) {
       onSelfHandleHeart(timer);
     });
+    onSelfHandleHeart(heartTimer!);
   }
 
   /// 停止心跳定时器

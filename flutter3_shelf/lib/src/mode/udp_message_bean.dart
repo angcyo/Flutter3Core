@@ -42,7 +42,7 @@ class UdpMessageBean {
 
   UdpMessageBean.api(UdpApiBean? api)
     : type = UdpMessageTypeEnum.api.name,
-      data = api.toJson().toString().bytes;
+      data = api.toJsonString().bytes;
 
   //--
 

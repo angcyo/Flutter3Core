@@ -22,7 +22,7 @@ class UdpApiBean {
 
   /// 请求的id
   @configProperty
-  String? id;
+  String? id = $uuid;
 
   /// 请求的方法
   @configProperty

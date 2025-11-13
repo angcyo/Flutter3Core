@@ -28,6 +28,7 @@ export 'package:shelf_multipart/shelf_multipart.dart';
 export 'package:shelf_router/shelf_router.dart';
 export 'package:udp/udp.dart';
 
+export 'src/local/api/udp_api_bean.dart';
 export 'src/mode/service_info_bean.dart';
 export 'src/mode/udp_client_info_bean.dart';
 export 'src/mode/udp_message_bean.dart';
