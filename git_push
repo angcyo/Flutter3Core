@@ -7,5 +7,5 @@ set +x
 git remote -v
 
 git add .
-git commit -a -m "* rename udp client -> remote"
+git commit -a -m "* fix udp log"
 git push origin

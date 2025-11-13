@@ -89,20 +89,23 @@ class L {
   /// tag
   static String kTag = 'angcyo';
 
-  /// 日志输出函数
+  /// 日志输出函数, 日志等级[fileLogLevel]影响
   LPrint? filePrint;
 
-  /// 额外的输出函数
+  /// 额外的输出函数, 受日志等级[logLevel]影响
   /// [printLog]
   List<LPrint> printList = [];
 
-  /// 文件日志输出级别>=info
+  /// 日志输出级别>=[debug]
+  int logLevel = debug;
+
+  /// 文件日志输出级别>=[info]
   int fileLogLevel = info;
 
   /// 开始输出日志
   /// [forward] 向前追溯几个调用.
   /// [object] 日志内容
-  log(
+  String? log(
     Object? object, {
     int level = debug,
     String? tag,
@@ -126,9 +129,10 @@ class L {
         debugLabel: debugLabel,
       );
     }
+    return null;
   }
 
-  v(
+  String? v(
     Object? object, {
     int level = verbose,
     String? tag,
@@ -152,9 +156,10 @@ class L {
         debugLabel: debugLabel,
       );
     }
+    return null;
   }
 
-  d(
+  String? d(
     Object? object, {
     int level = debug,
     String? tag,
@@ -178,9 +183,10 @@ class L {
         debugLabel: debugLabel,
       );
     }
+    return null;
   }
 
-  i(
+  String? i(
     Object? object, {
     int level = info,
     String? tag,
@@ -204,9 +210,10 @@ class L {
         debugLabel: debugLabel,
       );
     }
+    return null;
   }
 
-  w(
+  String? w(
     Object? object, {
     int level = warn,
     String? tag,
@@ -230,9 +237,10 @@ class L {
         debugLabel: debugLabel,
       );
     }
+    return null;
   }
 
-  e(
+  String? e(
     Object? object, {
     int level = error,
     String? tag,
@@ -256,6 +264,7 @@ class L {
         debugLabel: debugLabel,
       );
     }
+    return null;
   }
 
   /// [forward] 向前追溯几个调用. 默认是3. 用来获取调用的文件,函数和行数
@@ -274,8 +283,9 @@ class L {
     final time = showTime ?? kShowTime ? '${nowTimeString(kTimePattern)} ' : '';
     final levelStr = showLevel ?? kShowLevel ? _levelStr(level) : '';
     final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}] ' : '';
-    final msgType =
-        object?.runtimeType == null ? '' : '[${object?.runtimeType}]';
+    final msgType = object?.runtimeType == null
+        ? ''
+        : '[${object?.runtimeType}]';
     final msg = object?.toString() ?? 'null';
 
     //获取当前调用方法的文件名和行数
@@ -287,7 +297,9 @@ class L {
     //获取当前的文件名称以及路径行号:列号
     //package:flutter3_basics/src/l.dart:352:33
     final filePathStr = lineStackTrace.substring(
-        lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
+      lineStackTrace.indexOf("(") + 1,
+      lineStackTrace.indexOf(")"),
+    );
     //调用的方法名
     final methodNameList = lineStackTrace
         .replaceAll('<anonymous closure>', '<anonymous_closure>')
@@ -297,7 +309,7 @@ class L {
     final log =
         '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}] $tagStr$levelStr->$msgType $msg';
 
-    if ((isDebug && level >= verbose) || level > debug) {
+    if ((isDebug && level >= verbose) || level >= logLevel) {
       //print(StackTrace.fromString("...test"));
       //StringBuffer()
 
@@ -311,8 +323,10 @@ class L {
         debugPrintStack(stackTrace: stack);
       }
 
-      //外部输出
-      printLog(log);
+      if (level >= logLevel) {
+        //外部输出
+        printLog(log);
+      }
     }
 
     //输出到文件
@@ -329,7 +343,7 @@ class L {
     return log;
   }
 
-  _levelStr(int level) {
+  String _levelStr(int level) {
     switch (level) {
       case verbose:
         return 'V';
@@ -374,7 +388,9 @@ String? get $currentFileName {
   //获取当前的文件名称以及路径行号:列号
   //package:flutter3_basics/src/l.dart:352:33
   final filePathStr = lineStackTrace.substring(
-      lineStackTrace.indexOf("(") + 1, lineStackTrace.indexOf(")"));
+    lineStackTrace.indexOf("(") + 1,
+    lineStackTrace.indexOf(")"),
+  );
   final filePath = filePathStr.split(":").subListCount(0, 2).join(":");
   //debugger();
   return filePath;

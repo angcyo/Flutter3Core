@@ -54,6 +54,8 @@ class LocalUdpClient extends LocalUdpBase {
 
       final heart = UdpPacketBean.heart(info);
       sendRemotePacket(heart);
+
+      l.v("客户端UDP心跳->$info");
     }
   }
 
