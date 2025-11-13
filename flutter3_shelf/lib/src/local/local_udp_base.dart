@@ -4,6 +4,19 @@ part of flutter3_shelf;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/07/02
 ///
+/// - [start] 启动服务
+///   - [startHeartTimer] 启动心跳
+///     - [onSelfHandleHeart] 自定义心跳逻辑
+///       - [checkClientOffline] 检查客户端是否离线
+///   - [startReceiveUdpBroadcast] 启动服务端接收客户端数据的广播
+///   - [startReceiveUdpBroadcast] 客户端接收服务端信息
+/// - [stop] 停止服务
+///   - [stopHeartTimer] 停止心跳
+///   - [stopReceiveUdpBroadcast] 停止接收广播数据
+///
+/// - [sendClientPacket] 向服务端发送一包数据[UdpPacketBean]
+///   - [sendClientMessage] 向服务端上报消息[UdpMessageBean]
+///
 abstract class LocalUdpBase {
   //--
 
@@ -24,6 +37,9 @@ abstract class LocalUdpBase {
 
   /// 本地客户端设备信息
   /// 如果为null, 表示服务端未启动
+  ///
+  /// - 服务端/客户端 每隔一段时间[heartPeriod], 广播自身的信息
+  ///
   @output
   final localInfoStream = $live<UdpClientInfoBean?>();
 
@@ -151,6 +167,10 @@ abstract class LocalUdpBase {
   UDP? receiveBroadcastUdp;
 
   /// 启动一个用于接收广播的UDP
+  ///
+  /// - 如果是服务端, 则监听客户端发过来的数据
+  /// - 如果是客户端, 则监听服务端发过来的数据, 用于保存服务端信息
+  ///
   Future<UDP> startReceiveUdpBroadcast(int port) async {
     receiveBroadcastUdp?.close();
     receiveBroadcastUdp = null;
@@ -267,5 +287,5 @@ abstract class LocalUdpBase {
     }
   }
 
-//endregion core
+  //endregion core
 }
