@@ -86,6 +86,9 @@ class UdpPacketBean {
 
   //region get
 
+  /// 是否是心跳数据
+  bool get isHeart => type == UdpPacketTypeEnum.heart.name;
+
   /// 消息数据包
   /// 将[data]解析成[UdpMessageBean]
   UdpMessageBean? get message {
@@ -98,7 +101,7 @@ class UdpPacketBean {
   /// 心跳数据包
   /// 将[data]解析成[UdpClientInfoBean]
   UdpClientInfoBean? get client {
-    if (type == UdpPacketTypeEnum.heart.name) {
+    if (isHeart) {
       if (data != null) {
         return UdpClientInfoBean.fromJson(jsonDecode(data!.utf8Str));
       }
@@ -106,7 +109,7 @@ class UdpPacketBean {
     return null;
   }
 
-//endregion get
+  //endregion get
 }
 
 /// 数据包的类型
@@ -117,5 +120,4 @@ enum UdpPacketTypeEnum {
 
   /// 消息类型
   message,
-  ;
 }

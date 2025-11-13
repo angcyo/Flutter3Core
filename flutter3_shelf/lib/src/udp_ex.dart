@@ -7,13 +7,15 @@ part of '../flutter3_shelf.dart';
 ///
 
 /// 向指定地址和端口, 发送指定的UDP数据
-/// @return 返回发送的数据长度
+/// @return 返回发送的数据字节长度
 Future<int> sendUdpData(
   String? host,
   int? port, {
   String? text,
   List<int>? data,
   dynamic bean,
+  int bufferSize = 4096,
+  int partDelay = 0,
   Duration timeout = const Duration(seconds: 1),
 }) async {
   if (host == null || port == null) {
@@ -21,14 +23,25 @@ Future<int> sendUdpData(
   }
   try {
     final udp = await UDP.bind(Endpoint.any());
-    final result = await udp
-        .send(
-          data ?? text?.bytes ?? jsonString(bean?.toJson())?.bytes ?? [],
-          Endpoint.unicast(InternetAddress(host), port: Port(port)),
-        )
-        .wait(timeout);
+    final bytes =
+        data ?? text?.bytes ?? jsonString(bean?.toJson())?.bytes ?? [];
+    final length = bytes.length;
+    //udp 一包最多发送65535字节, 所以这里需要分包发送
+    int sendSize = 0;
+    //debugger(when: length > bufferSize);
+    for (var i = 0; i < length; i += bufferSize) {
+      final part = bytes.sublist(i, minOf(length, i + bufferSize));
+      final result = await udp
+          .send(part, Endpoint.unicast(InternetAddress(host), port: Port(port)))
+          .wait(timeout);
+      await sleep(partDelay);
+      sendSize += result;
+    }
     udp.close();
-    return result;
+    if (length != sendSize) {
+      l.w("UDP发送数据失败, 应发: ${length.toSizeStr()}, 实发: ${sendSize.toSizeStr()}");
+    }
+    return sendSize;
   } catch (e, s) {
     assert(() {
       printError(e, s);
@@ -112,25 +125,27 @@ Future<UDP> receiveUdpBroadcast(
   final receiver = await UDP.bind(Endpoint.any(port: Port(port)));
   //debugger();
   // receiving\listening
-  receiver.asStream(timeout: timeout).listen(
-    (datagram) {
-      //var str = String.fromCharCodes(datagram.data);
-      //stdout.write(str);
-      //debugger();
-      onDatagramAction?.call(datagram);
-    },
-    onDone: () {
-      //完成, 超时之后流会被close, 会走此方法.
-      debugger();
-      onDatagramAction?.call(null);
-    },
-    onError: (e) {
-      //错误
-      debugger();
-      onDatagramAction?.call(null);
-    },
-    cancelOnError: true,
-  );
+  receiver
+      .asStream(timeout: timeout)
+      .listen(
+        (datagram) {
+          //var str = String.fromCharCodes(datagram.data);
+          //stdout.write(str);
+          //debugger();
+          onDatagramAction?.call(datagram);
+        },
+        onDone: () {
+          //完成, 超时之后流会被close, 会走此方法.
+          debugger();
+          onDatagramAction?.call(null);
+        },
+        onError: (e) {
+          //错误
+          debugger();
+          onDatagramAction?.call(null);
+        },
+        cancelOnError: true,
+      );
   return receiver;
 
   /*final receiver = await UDP.bind(Endpoint.any(port: Port(port)));

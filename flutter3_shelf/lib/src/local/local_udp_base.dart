@@ -115,11 +115,16 @@ abstract class LocalUdpBase {
       if (server.isOffline) {
         //服务端离线
       } else {
-        sendUdpData(
+        final byteCount = await sendUdpData(
           server.remoteAddress,
           remotePort ?? server.remotePort,
           bean: packet,
         );
+        if (!packet.isHeart) {
+          l.v(
+            "发送至[${server.deviceId}/${server.name}]UDP发送数据成功,长度:${byteCount.toSizeStr()}",
+          );
+        }
         remoteCount++;
       }
     }
@@ -218,9 +223,16 @@ abstract class LocalUdpBase {
       port,
       onDatagramAction: (datagram) {
         //收到的广播数据,开始解析数据
-        final message = datagram?.data.utf8Str;
-        if (message != null) {
-          onSelfHandleReceiveUdpBroadcast(datagram!, message);
+        try {
+          final message = datagram?.data.utf8Str;
+          if (message != null) {
+            onSelfHandleReceiveUdpBroadcast(datagram!, message);
+          }
+        } catch (e) {
+          assert(() {
+            printError(e);
+            return true;
+          }());
         }
       },
     );

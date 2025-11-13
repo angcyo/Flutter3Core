@@ -22,7 +22,7 @@ extension AppLogPathListEx on List<String> {
     );
     assert(() {
       final log =
-          "压缩完成[${size()}]:$output :${(output.file().fileSizeSync()).toSizeStr()}";
+          "压缩完成[${size()}个]:$output :${(output.file().fileSizeSync()).toSizeStr()}";
       l.i(log);
       return true;
     }());
