@@ -340,7 +340,7 @@ class MmUnit extends IUnit {
   @override
   double getAxisGap(int index, double scale) {
     //debugger(when: index == 0);
-    return baseAxisGap(index, scale, 1.toDpFromMm() * dpr);
+    return baseAxisGap(index, scale, 1.toDpFromMm()); //* dpr
   }
 }
 
