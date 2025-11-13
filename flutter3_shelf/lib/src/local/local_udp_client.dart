@@ -55,7 +55,7 @@ class LocalUdpClient extends LocalUdpBase {
       final heart = UdpPacketBean.heart(info);
       () async {
         final remoteCount = await sendRemotePacket(heart);
-        l.v("客户端UDP心跳[$remoteCount]->$info");
+        //l.v("客户端UDP心跳[$remoteCount]->$info");
       }();
     }
   }
@@ -72,13 +72,14 @@ class LocalUdpClient extends LocalUdpBase {
     final apiBean = bean.apiBean;
     if (apiBean != null) {
       //一些底层命令的处理
-      sendRemoteMessage(message)
-      if(){
-
-      }
-      () async {
+      sendRemoteMessage(
+        UdpMessageBean.api(apiBean),
+        remoteIdList: [bean.deviceId!],
+      );
+      l.i("收到指令->$apiBean");
+      /*() async {
         final zipPath = await shareAppLog(share: false, clearTempPath: false);
-      }();
+      }();*/
     }
   }
 }

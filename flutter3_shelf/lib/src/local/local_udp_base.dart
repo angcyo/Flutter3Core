@@ -77,6 +77,7 @@ abstract class LocalUdpBase {
   /// 启动
   @api
   Future<bool> start() async {
+    l.d("UDP服务已启动->${classHash()} 广播端口:$serverBroadcastPort 心跳:$heartPeriod");
     startHeartTimer();
     return true;
   }
@@ -153,9 +154,9 @@ abstract class LocalUdpBase {
 
   /// 清空指定远程客户端发过来的消息
   @api
-  void clearRemoteMessageList(String? deviceId) {
+  void clearRemoteMessageList(String? remoteId) {
     final messageMap = remoteMessageMapStream.value ?? {};
-    messageMap.remove(deviceId);
+    messageMap.remove(remoteId);
     remoteMessageMapStream.updateValue(messageMap);
   }
 
