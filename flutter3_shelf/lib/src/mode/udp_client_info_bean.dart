@@ -69,12 +69,12 @@ class UdpClientInfoBean {
     if (name != null && deviceName != null) {
       return "$name ($deviceName)";
     }
-    return name ?? deviceName ?? clientIpAddress;
+    return name ?? deviceName ?? remoteIpAddress;
   }
 
   /// ip地址
   /// [InternetAddress]
-  String? get clientIpAddress => "$remoteAddress:$remotePort";
+  String? get remoteIpAddress => "$remoteAddress:$remotePort";
 
   //endregion get
 
