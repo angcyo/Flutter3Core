@@ -91,19 +91,23 @@ abstract class LocalUdpBase {
   }
 
   /// 向所有服务端上报一包数据
+  /// @return 发送了的远程服务端数量
   @api
-  Future sendRemotePacket(UdpPacketBean packet) async {
+  Future<int> sendRemotePacket(UdpPacketBean packet) async {
     packet.packetId ??= $uuid;
     packet.deviceId ??= $deviceUuid;
     packet.time ??= nowTime();
 
+    var remoteCount = 0;
     for (final server in remoteList) {
       if (server.isOffline) {
         //服务端离线
       } else {
         sendUdpData(server.remoteAddress, server.remotePort, bean: packet);
+        remoteCount++;
       }
     }
+    return remoteCount;
   }
 
   /// 向所有服务端上报消息

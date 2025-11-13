@@ -53,9 +53,10 @@ class LocalUdpClient extends LocalUdpBase {
       localInfoStream.updateValue(info);
 
       final heart = UdpPacketBean.heart(info);
-      sendRemotePacket(heart);
-
-      l.v("客户端UDP心跳->$info");
+      () async {
+        final remoteCount = await sendRemotePacket(heart);
+        l.v("客户端UDP心跳[$remoteCount]->$info");
+      }();
     }
   }
 
