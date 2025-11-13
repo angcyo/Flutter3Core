@@ -63,11 +63,14 @@ class LocalUdpServer extends LocalUdpBase {
   /// 服务端收到客户端的消息
   @override
   void handleReceiveRemoteMessageBean(UdpMessageBean bean) async {
-    super.handleReceiveRemoteMessageBean(bean);
     final apiBean = bean.apiBean;
     if (apiBean != null) {
       //服务端一些底层命令的处理
-      if (apiBean.method == UdpApis.requestAppLog().method) {
+      if (apiBean.method == UdpApis
+          .requestAppLog()
+          .method) {
+        super.handleReceiveRemoteMessageBean(bean);
+        //收到客户端的api返回数据
         final fileName =
             apiBean["fileName"] ?? "app_log_${nowTimeFileName()}.zip";
         final bytes = apiBean.data;
@@ -80,7 +83,12 @@ class LocalUdpServer extends LocalUdpBase {
             data: "文件保存在:${file.path}".bytes,
           ),
         );
+      } else {
+        //debugger();
+        super.handleReceiveRemoteMessageBean(bean);
       }
+    } else {
+      super.handleReceiveRemoteMessageBean(bean);
     }
   }
 }

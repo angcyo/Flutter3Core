@@ -110,6 +110,16 @@ class UdpMessageBean {
 
   //--
 
+  /// 消息的文本内容
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String? get text {
+    //debugger();
+    if (type == UdpMessageTypeEnum.api.name) {
+      return apiBean?.data?.utf8Str;
+    }
+    return data?.utf8Str;
+  }
+
   /// 数据接收耗时
   @JsonKey(includeFromJson: false, includeToJson: false)
   String? get receiveDurationStr =>
