@@ -60,26 +60,25 @@ class LocalUdpClient extends LocalUdpBase {
     }
   }
 
-  /// 收到服务端发来的广播
+  /// 客户端收到服务端发来的广播
   @override
-  void onSelfHandleUdpBroadcast(Datagram datagram, String message) {
-    try {
-      //debugger();
-      final json = jsonDecode(message);
-      final packetBean = UdpPacketBean.fromJson(json);
-      final server = packetBean.client;
-      if (server != null) {
-        server.remotePort ??= datagram.port;
-        server.remoteAddress ??= datagram.address.address;
-        //服务端发来的心跳数据, 此时应该保存服务端信息, 用于上报数据
-        handleRemoteInfoMessage(server);
+  void onSelfHandleReceiveUdpBroadcast(Datagram datagram, String message) {
+    super.onSelfHandleReceiveUdpBroadcast(datagram, message);
+  }
+
+  @override
+  void handleReceiveRemoteMessageBean(UdpMessageBean bean) {
+    super.handleReceiveRemoteMessageBean(bean);
+    final apiBean = bean.apiBean;
+    if (apiBean != null) {
+      //一些底层命令的处理
+      sendRemoteMessage(message)
+      if(){
+
       }
-    } catch (e) {
-      assert(() {
-        print(e);
-        return true;
-      }());
+      () async {
+        final zipPath = await shareAppLog(share: false, clearTempPath: false);
+      }();
     }
-    super.onSelfHandleUdpBroadcast(datagram, message);
   }
 }

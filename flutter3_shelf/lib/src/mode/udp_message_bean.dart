@@ -2,6 +2,8 @@ import 'package:flutter3_app/flutter3_app.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../local/api/udp_api_bean.dart';
+
 part 'udp_message_bean.g.dart';
 
 ///
@@ -27,16 +29,20 @@ class UdpMessageBean {
   UdpMessageBean.bytes(this.data) : type = UdpMessageTypeEnum.bytes.name;
 
   UdpMessageBean.text(String? text)
-      : type = UdpMessageTypeEnum.text.name,
-        data = text?.bytes;
+    : type = UdpMessageTypeEnum.text.name,
+      data = text?.bytes;
 
   UdpMessageBean.html(String? html)
-      : type = UdpMessageTypeEnum.html.name,
-        data = html?.bytes;
+    : type = UdpMessageTypeEnum.html.name,
+      data = html?.bytes;
 
   UdpMessageBean.markdown(String? markdown)
-      : type = UdpMessageTypeEnum.markdown.name,
-        data = markdown?.bytes;
+    : type = UdpMessageTypeEnum.markdown.name,
+      data = markdown?.bytes;
+
+  UdpMessageBean.api(UdpApiBean? api)
+    : type = UdpMessageTypeEnum.api.name,
+      data = api.toJson().toString().bytes;
 
   //--
 
@@ -83,13 +89,27 @@ class UdpMessageBean {
   //--
 
   /// 数据接收耗时
+  @JsonKey(includeFromJson: false, includeToJson: false)
   String? get receiveDurationStr =>
       receiveTime != null && time != null && receiveTime! >= time!
-          ? LTime.diffTime(time!, endTime: receiveTime!)
-          : null;
+      ? LTime.diffTime(time!, endTime: receiveTime!)
+      : null;
 
   /// 数据大小字符串
+  @JsonKey(includeFromJson: false, includeToJson: false)
   String? get dataSizeStr => data?.size().toSizeStr();
+
+  /// 获取请求的api结构体
+  UdpApiBean? get apiBean {
+    if (type == UdpMessageTypeEnum.api.name) {
+      final jsonString = data?.utf8Str;
+      if (isNil(jsonString)) {
+        return null;
+      }
+      return UdpApiBean.fromJson(jsonString!.fromJson());
+    }
+    return null;
+  }
 }
 
 /// 消息数据的类型
@@ -105,5 +125,7 @@ enum UdpMessageTypeEnum {
 
   /// markdown文本消息
   markdown,
-  ;
+
+  /// api 消息 [UdpMessageBean.data]是[UdpApiBean]结构体的jsonString
+  api,
 }

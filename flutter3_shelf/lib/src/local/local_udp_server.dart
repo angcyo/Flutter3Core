@@ -54,35 +54,9 @@ class LocalUdpServer extends LocalUdpBase {
     l.v("服务端UDP发送心跳[$serverBroadcastPort]->$serverInfo");
   }
 
-  /// 收到客户端的数据
+  /// 服务端收到客户端的数据
   @override
-  void onSelfHandleUdpBroadcast(Datagram datagram, String message) {
-    try {
-      //debugger();
-      final json = jsonDecode(message);
-      final packetBean = UdpPacketBean.fromJson(json);
-      final client = packetBean.client;
-      if (client != null) {
-        client.remotePort ??= datagram.port;
-        client.remoteAddress ??= datagram.address.address;
-        //客户端发来的心跳数据, 此时应该保存客户端信息, 用户接受归纳客户端数据
-        //debugger();
-        handleRemoteInfoMessage(client);
-      } else {
-        final message = packetBean.message;
-        if (message != null) {
-          message.receiveTime ??= nowTime();
-          message.remotePort ??= datagram.port;
-          message.remoteAddress ??= datagram.address.address;
-          handleRemoteMessageBean(message);
-        }
-      }
-    } catch (e) {
-      assert(() {
-        print(e);
-        return true;
-      }());
-    }
-    super.onSelfHandleUdpBroadcast(datagram, message);
+  void onSelfHandleReceiveUdpBroadcast(Datagram datagram, String message) {
+    super.onSelfHandleReceiveUdpBroadcast(datagram, message);
   }
 }

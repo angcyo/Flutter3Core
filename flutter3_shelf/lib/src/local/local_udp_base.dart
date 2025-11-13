@@ -91,15 +91,23 @@ abstract class LocalUdpBase {
   }
 
   /// 向所有服务端上报一包数据
+  /// - [remoteIdList] 指定需要发送的远程,不指定则全部
   /// @return 发送了的远程服务端数量
   @api
-  Future<int> sendRemotePacket(UdpPacketBean packet) async {
+  Future<int> sendRemotePacket(
+    UdpPacketBean packet, {
+    List<String>? remoteIdList,
+  }) async {
     packet.packetId ??= $uuid;
     packet.deviceId ??= $deviceUuid;
     packet.time ??= nowTime();
 
     var remoteCount = 0;
     for (final server in remoteList) {
+      if (remoteIdList != null && !remoteIdList.contains(server.deviceId)) {
+        //指定了需要发送的远程, 不包含此远程
+        continue;
+      }
       if (server.isOffline) {
         //服务端离线
       } else {
@@ -111,8 +119,13 @@ abstract class LocalUdpBase {
   }
 
   /// 向所有服务端上报消息
+  ///
+  /// - [sendRemotePacket]
   @api
-  Future sendRemoteMessage(UdpMessageBean message) async {
+  Future sendRemoteMessage(
+    UdpMessageBean message, {
+    List<String>? remoteIdList,
+  }) async {
     final packet = UdpPacketBean();
     packet.deviceId ??= $deviceUuid;
     message
@@ -121,20 +134,20 @@ abstract class LocalUdpBase {
     packet
       ..type = UdpPacketTypeEnum.message.name
       ..data = jsonString(message.toJson())?.bytes;
-    sendRemotePacket(packet);
+    sendRemotePacket(packet, remoteIdList: remoteIdList);
   }
 
   /// 获取指定的客户端设备信息
   @api
-  UdpClientInfoBean? getRemoteInfo(String? deviceId) {
-    return remoteList.findFirst((e) => e.deviceId == deviceId);
+  UdpClientInfoBean? getRemoteInfo(String? remoteId) {
+    return remoteList.findFirst((e) => e.deviceId == remoteId);
   }
 
   /// 获取服务端指定客户端的消息
   @api
-  List<UdpMessageBean> getRemoteMessageList(String? deviceId) {
+  List<UdpMessageBean> getRemoteMessageList(String? remoteId) {
     final messageMap = remoteMessageMapStream.value ?? {};
-    final messageList = messageMap[deviceId] ?? [];
+    final messageList = messageMap[remoteId] ?? [];
     return messageList;
   }
 
@@ -193,7 +206,7 @@ abstract class LocalUdpBase {
         //收到的广播数据,开始解析数据
         final message = datagram?.data.utf8Str;
         if (message != null) {
-          onSelfHandleUdpBroadcast(datagram!, message);
+          onSelfHandleReceiveUdpBroadcast(datagram!, message);
         }
       },
     );
@@ -209,16 +222,44 @@ abstract class LocalUdpBase {
   }
 
   /// 重写此方法, 处理收到的udp广播回调
+  /// - [handleReceiveRemoteInfoMessage]
+  /// - [handleReceiveRemoteMessageBean]
   @overridePoint
-  void onSelfHandleUdpBroadcast(Datagram datagram, String message) {}
+  void onSelfHandleReceiveUdpBroadcast(Datagram datagram, String message) {
+    try {
+      //debugger();
+      final json = jsonDecode(message);
+      final packetBean = UdpPacketBean.fromJson(json);
+      final remote = packetBean.client;
+      if (remote != null) {
+        remote.remotePort ??= datagram.port;
+        remote.remoteAddress ??= datagram.address.address;
+        //客户端发来的心跳数据, 此时应该保存客户端信息, 用户接受归纳客户端数据
+        //debugger();
+        handleReceiveRemoteInfoMessage(remote);
+      } else {
+        final message = packetBean.message;
+        if (message != null) {
+          message.receiveTime ??= nowTime();
+          message.remotePort ??= datagram.port;
+          message.remoteAddress ??= datagram.address.address;
+          handleReceiveRemoteMessageBean(message);
+        }
+      }
+    } catch (e) {
+      assert(() {
+        print(e);
+        return true;
+      }());
+    }
+  }
 
   /// 处理客户端[client]结构数据
   /// [checkRemoteOffline]
   ///
-  /// - [handleRemoteInfoMessage]
-  /// - [handleRemoteMessageBean]
+  /// - [onSelfHandleReceiveUdpBroadcast]
   @callPoint
-  void handleRemoteInfoMessage(UdpClientInfoBean client) {
+  void handleReceiveRemoteInfoMessage(UdpClientInfoBean client) {
     final deviceId = client.deviceId;
     final list = remoteList;
     final old = list.findFirst((e) => e.deviceId == deviceId);
@@ -246,10 +287,9 @@ abstract class LocalUdpBase {
 
   /// 处理客户端[UdpMessageBean]发过来的消息结构数据
   ///
-  /// - [handleRemoteInfoMessage]
-  /// - [handleRemoteMessageBean]
+  /// - [onSelfHandleReceiveUdpBroadcast]
   @callPoint
-  void handleRemoteMessageBean(UdpMessageBean bean) {
+  void handleReceiveRemoteMessageBean(UdpMessageBean bean) {
     final deviceId = bean.deviceId;
     if (deviceId == null) {
       return;
