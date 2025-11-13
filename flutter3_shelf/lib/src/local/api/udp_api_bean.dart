@@ -28,7 +28,11 @@ class UdpApiBean {
   @configProperty
   String? method;
 
-  /// 请求/返回的数据
+  /// 请求/响应的header
+  @configProperty
+  Map<String, dynamic>? headers;
+
+  /// 请求/响应的数据
   @configProperty
   List<int>? data;
 }

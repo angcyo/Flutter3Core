@@ -106,7 +106,14 @@ class UdpMessageBean {
       if (isNil(jsonString)) {
         return null;
       }
-      return UdpApiBean.fromJson(jsonString!.fromJson());
+      try {
+        return UdpApiBean.fromJson(jsonString!.fromJson());
+      } catch (e) {
+        assert(() {
+          printError(e);
+          return true;
+        }());
+      }
     }
     return null;
   }

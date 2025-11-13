@@ -68,6 +68,7 @@ class LocalUdpClient extends LocalUdpBase {
 
   @override
   void handleReceiveRemoteMessageBean(UdpMessageBean bean) {
+    debugger();
     super.handleReceiveRemoteMessageBean(bean);
     final apiBean = bean.apiBean;
     if (apiBean != null) {
