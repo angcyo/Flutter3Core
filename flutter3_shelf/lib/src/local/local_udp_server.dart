@@ -51,7 +51,7 @@ class LocalUdpServer extends LocalUdpBase {
       bean: UdpPacketBean.heart(serverInfo),
     );
 
-    l.v("服务端UDP心跳->$serverInfo");
+    l.v("服务端UDP发送心跳[$serverBroadcastPort]->$serverInfo");
   }
 
   /// 收到客户端的数据
