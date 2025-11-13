@@ -9,7 +9,7 @@ part 'udp_api_bean.g.dart';
 ///
 /// UDP 发送指令的数据结构
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
-class UdpApiBean {
+class UdpApiBean with EquatableMixin {
   factory UdpApiBean.fromJson(Map<String, dynamic> json) =>
       _$UdpApiBeanFromJson(json);
 
@@ -35,4 +35,13 @@ class UdpApiBean {
   /// 请求/响应的数据
   @configProperty
   List<int>? data;
+
+  //--
+
+  /// -[headers]
+  dynamic operator [](String? key) => headers?[key];
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  List<Object?> get props => [id];
 }

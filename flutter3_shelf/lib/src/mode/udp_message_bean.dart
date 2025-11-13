@@ -44,6 +44,28 @@ class UdpMessageBean {
     : type = UdpMessageTypeEnum.api.name,
       data = api.toJsonString().bytes;
 
+  /// copyWith
+  UdpMessageBean copyWith({
+    String? deviceId,
+    String? messageId,
+    int? time,
+    String? type,
+    List<int>? data,
+    int? receiveTime,
+    String? remoteAddress,
+    int? remotePort,
+  }) {
+    return UdpMessageBean()
+      ..deviceId = deviceId ?? this.deviceId
+      ..messageId = messageId ?? this.messageId
+      ..time = time ?? this.time
+      ..type = type ?? this.type
+      ..data = data ?? this.data
+      ..receiveTime = receiveTime ?? this.receiveTime
+      ..remoteAddress = remoteAddress ?? this.remoteAddress
+      ..remotePort = remotePort ?? this.remotePort;
+  }
+
   //--
 
   /// 客户端的id

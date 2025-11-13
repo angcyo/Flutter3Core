@@ -59,4 +59,28 @@ class LocalUdpServer extends LocalUdpBase {
   void onSelfHandleReceiveUdpBroadcast(Datagram datagram, String message) {
     super.onSelfHandleReceiveUdpBroadcast(datagram, message);
   }
+
+  /// 服务端收到客户端的消息
+  @override
+  void handleReceiveRemoteMessageBean(UdpMessageBean bean) async {
+    super.handleReceiveRemoteMessageBean(bean);
+    final apiBean = bean.apiBean;
+    if (apiBean != null) {
+      //服务端一些底层命令的处理
+      if (apiBean == UdpApis.requestAppLog()) {
+        final fileName =
+            apiBean["fileName"] ?? "app_log_${nowTimeFileName()}.zip";
+        final bytes = apiBean.data;
+        final file = (await cacheFilePath(fileName)).file();
+        await bytes?.saveToFile(file);
+        //--
+        super.handleReceiveRemoteMessageBean(
+          bean.copyWith(
+            type: UdpMessageTypeEnum.text.name,
+            data: "文件保存在:${file.path}".bytes,
+          ),
+        );
+      }
+    }
+  }
 }

@@ -66,18 +66,21 @@ class LocalUdpClient extends LocalUdpBase {
     super.onSelfHandleReceiveUdpBroadcast(datagram, message);
   }
 
+  /// 客户端收到服务端的消息
   @override
-  void handleReceiveRemoteMessageBean(UdpMessageBean bean) {
-    debugger();
+  void handleReceiveRemoteMessageBean(UdpMessageBean bean) async {
+    //debugger();
     super.handleReceiveRemoteMessageBean(bean);
     final apiBean = bean.apiBean;
     if (apiBean != null) {
       //一些底层命令的处理
-      sendRemoteMessage(
-        UdpMessageBean.api(apiBean),
-        remoteIdList: [bean.deviceId!],
-      );
-      l.i("收到指令->$apiBean");
+      if (apiBean == UdpApis.requestAppLog()) {
+        sendRemoteMessage(
+          UdpMessageBean.api(await apiBean.responseAppLog()),
+          remoteIdList: [bean.deviceId!],
+        );
+      }
+      //l.i("收到指令->$apiBean");
       /*() async {
         final zipPath = await shareAppLog(share: false, clearTempPath: false);
       }();*/

@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter3_app/flutter3_app.dart';
+import 'package:flutter3_shelf/src/local/api/udp_apis.dart';
 import 'package:flutter3_shelf/src/shelf_html.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:shelf/shelf.dart' as shelf;
@@ -28,6 +29,7 @@ export 'package:shelf_multipart/shelf_multipart.dart';
 export 'package:shelf_router/shelf_router.dart';
 export 'package:udp/udp.dart';
 
+export 'src/local/api/udp_apis.dart';
 export 'src/local/api/udp_api_bean.dart';
 export 'src/mode/service_info_bean.dart';
 export 'src/mode/udp_client_info_bean.dart';
