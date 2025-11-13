@@ -67,7 +67,7 @@ class LocalUdpServer extends LocalUdpBase {
     final apiBean = bean.apiBean;
     if (apiBean != null) {
       //服务端一些底层命令的处理
-      if (apiBean == UdpApis.requestAppLog()) {
+      if (apiBean.method == UdpApis.requestAppLog().method) {
         final fileName =
             apiBean["fileName"] ?? "app_log_${nowTimeFileName()}.zip";
         final bytes = apiBean.data;

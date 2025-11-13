@@ -74,7 +74,8 @@ class LocalUdpClient extends LocalUdpBase {
     final apiBean = bean.apiBean;
     if (apiBean != null) {
       //一些底层命令的处理
-      if (apiBean == UdpApis.requestAppLog()) {
+      //debugger();
+      if (apiBean.method == UdpApis.requestAppLog().method) {
         sendRemoteMessage(
           UdpMessageBean.api(await apiBean.responseAppLog()),
           remoteIdList: [bean.deviceId!],

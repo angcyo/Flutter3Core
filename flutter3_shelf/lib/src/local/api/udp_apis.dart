@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter3_app/flutter3_app.dart';
 import 'package:flutter3_shelf/src/local/api/udp_api_bean.dart';
 
@@ -25,6 +27,7 @@ extension UdpApiBeanEx on UdpApiBean {
       "filePath": zipPath,
       "fileName": zipPath.fileName(),
     };
+    debugger();
     return this;
   }
 }
