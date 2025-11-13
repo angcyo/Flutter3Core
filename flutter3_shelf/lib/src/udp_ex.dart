@@ -16,7 +16,7 @@ Future<int> sendUdpData(
   List<int>? data,
   dynamic bean,
   int bufferSize = 4096,
-  int partDelay = 0,
+  int partDelay = 6,
   Duration timeout = const Duration(seconds: 1),
 }) async {
   if (host == null || port == null) {

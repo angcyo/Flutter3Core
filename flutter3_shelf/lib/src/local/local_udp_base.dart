@@ -72,6 +72,10 @@ abstract class LocalUdpBase {
   @output
   final remoteNewMessageStreamOnce = $liveOnce<UdpMessageBean?>();
 
+  /// 是否正在发送udp数据, 如果是则应该暂停, 或者等待数据发送完成
+  @output
+  Completer<bool>? sendDataCompleter;
+
   //region api
 
   /// 启动
@@ -88,6 +92,8 @@ abstract class LocalUdpBase {
     stopHeartTimer();
     stopReceiveUdpBroadcast();
     localInfoStream.updateValue(null);
+    sendDataCompleter?.completeError("stop");
+    sendDataCompleter = null;
     return true;
   }
 
@@ -101,33 +107,44 @@ abstract class LocalUdpBase {
     List<String>? remoteIdList,
     int? remotePort,
   }) async {
+    if (sendDataCompleter != null) {
+      await sendDataCompleter!.future;
+    }
+    sendDataCompleter = Completer();
+
     packet.packetId ??= $uuid;
     packet.deviceId ??= $deviceUuid;
     packet.time ??= nowTime();
 
     //debugger();
     var remoteCount = 0;
-    for (final server in remoteList) {
-      if (remoteIdList != null && !remoteIdList.contains(server.deviceId)) {
-        //指定了需要发送的远程, 不包含此远程
-        continue;
-      }
-      if (server.isOffline) {
-        //服务端离线
-      } else {
-        final byteCount = await sendUdpData(
-          server.remoteAddress,
-          remotePort ?? server.remotePort,
-          bean: packet,
-        );
-        if (!packet.isHeart) {
-          l.v(
-            "发送至[${server.deviceId}/${server.name}]UDP发送数据成功,长度:${byteCount.toSizeStr()}",
-          );
+    try {
+      for (final server in remoteList) {
+        if (remoteIdList != null && !remoteIdList.contains(server.deviceId)) {
+          //指定了需要发送的远程, 不包含此远程
+          continue;
         }
-        remoteCount++;
+        if (server.isOffline) {
+          //服务端离线
+        } else {
+          final byteCount = await sendUdpData(
+            server.remoteAddress,
+            remotePort ?? server.remotePort,
+            bean: packet,
+          );
+          if (!packet.isHeart) {
+            l.v(
+              "发送至[${server.deviceId}/${server.name}]UDP发送数据成功,长度:${byteCount.toSizeStr()}",
+            );
+          }
+          remoteCount++;
+        }
       }
+      sendDataCompleter?.complete(true);
+    } catch (e) {
+      sendDataCompleter?.completeError(e);
     }
+    sendDataCompleter = null;
     return remoteCount;
   }
 
