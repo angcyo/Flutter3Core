@@ -136,11 +136,11 @@ class CoreDialogTitle extends StatelessWidget {
                       trailingSvgIconKey ?? Assets.svg.coreConfirm,
                       tintColor:
                           trailingTintColor ??
-                          (context.isThemeDark
-                              ? globalTheme.textTitleStyle.color
-                              : trailingUseThemeColor
+                          (trailingUseThemeColor
                               ? globalTheme.accentColor
-                              : null),
+                              : (context.isThemeDark
+                                    ? globalTheme.textTitleStyle.color
+                                    : null)),
                     ),
                 enable: enableTrailing,
                 onTap: () {
