@@ -2550,6 +2550,9 @@ extension ListIntEx on List<int> {
 /// [ListEx]
 /// [IterableEx]
 extension IterableEx<E> on Iterable<E> {
+  /// [length]
+  int size() => length;
+
   /// [Iterable] 转成流, 之后就可以使用
   /// ```
   /// await for (final metric in metrics.stream) {
@@ -2851,9 +2854,6 @@ extension IterableEx<E> on Iterable<E> {
 /// [ListEx]
 /// [IterableEx]
 extension ListEx<T> on List<T> {
-  /// [length]
-  int size() => length;
-
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 

@@ -24,7 +24,7 @@ class Flutter3ShelfHttp {
   @autoInjectMark
   String? address;
 
-  /// 路由
+  /// 接口路由处理路由
   final _router = Router();
 
   /// http核心服务服务
