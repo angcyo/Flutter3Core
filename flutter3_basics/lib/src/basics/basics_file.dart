@@ -54,7 +54,26 @@ extension FileStringEx on String {
   Directory toFolder() => Directory(this);
 
   /// 确保文件夹存在, 如果不存在, 则创建
-  Directory ensureDirectory() => Directory(this).ensureDirectory();
+  Directory ensureDirectory() {
+    try {
+      final file = File(this);
+      if (file.existsSync()) {
+        assert(() {
+          l.w("当前路径[$this]已存在一个文件,即将删除后创建文件夹.");
+          return true;
+        }());
+        file.deleteSafeSync();
+      }
+      //--
+      return Directory(this).ensureDirectory();
+    } catch (e) {
+      assert(() {
+        l.w("创建文件夹失败[$this]->$e");
+        return true;
+      }());
+      rethrow;
+    }
+  }
 
   /// 确保文件的文件夹目录存在, 如果不存在, 则创建
   Directory ensureParentDirectory() {
