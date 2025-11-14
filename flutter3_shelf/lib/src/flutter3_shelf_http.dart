@@ -4,7 +4,10 @@ part of '../flutter3_shelf.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/17
 ///
-/// http 服务端
+/// 使用[shelf_io.serve]实现的一个[HttpServer] http 服务端.
+///
+/// - [Router] 接口路由
+///
 class Flutter3ShelfHttp {
   /// 端口, 如果端口被占用, 会自动++
   int port;
@@ -39,10 +42,7 @@ class Flutter3ShelfHttp {
 
   //--
 
-  Flutter3ShelfHttp({
-    this.port = 9200,
-    this.scheme = "http",
-  }) {
+  Flutter3ShelfHttp({this.port = 9200, this.scheme = "http"}) {
     /*get("/favicon.ico", (shelf.Request request) async {
       final logo = await loadAssetBytes(Assets.png.flutter.keyName);
       return responseOkFile(fileStream: logo.stream);
@@ -108,8 +108,13 @@ class Flutter3ShelfHttp {
         if (request.isAcceptHtml) {
           return result != null
               ? responseOkHtml(ShelfHtml.getResponseHtml(title, "$result"))
-              : responseOkHtml(ShelfHtml.getReceiveSucceedHtml(
-                  title, isDebug ? msg : "上传成功", "重新传输"));
+              : responseOkHtml(
+                  ShelfHtml.getReceiveSucceedHtml(
+                    title,
+                    isDebug ? msg : "上传成功",
+                    "重新传输",
+                  ),
+                );
         } else {
           return responseOk("${result ?? msg}");
         }
@@ -117,8 +122,10 @@ class Flutter3ShelfHttp {
       final text =
           "不支持的数据类型, 请使用[multipart/form-data]格式上传文件!\n${(await request.read().toBytes()).utf8Str}";
       if (request.isAcceptHtml) {
-        return shelf.Response(500,
-            body: ShelfHtml.getResponseHtml(title, text));
+        return shelf.Response(
+          500,
+          body: ShelfHtml.getResponseHtml(title, text),
+        );
       }
       return shelf.Response(500, body: text);
     });
@@ -166,14 +173,19 @@ class Flutter3ShelfHttp {
         }
         host = ip ?? host;
         //debugger();
-        _httpServer =
-            await shelf_io.serve(handler, host, port).get((value, error) {
-          //debugger();
-          if (error != null) {
-            throw error;
-          }
-          return value;
-        }, null, true);
+        _httpServer = await shelf_io
+            .serve(handler, host, port)
+            .get(
+              (value, error) {
+                //debugger();
+                if (error != null) {
+                  throw error;
+                }
+                return value;
+              },
+              null,
+              true,
+            );
         startTime = nowTimestamp();
         /*_httpServer?.handleError((e) {
           l.w('服务关闭:$e');
@@ -220,7 +232,7 @@ class Flutter3ShelfHttp {
     }
   }
 
-/*Router router() {
+  /*Router router() {
     final app = Router();
 
     app.get('/api', (Request request) {
