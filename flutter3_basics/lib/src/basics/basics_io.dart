@@ -4,7 +4,40 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/04/10
 ///
-/// io操作相关, 密集操作相关
+/// io操作相关, 密集操作相关.
+///
+/// 被执行的方法需要是静态的, 并且使用`@pragma('vm:entry-point')`注释,
+/// 运行在[Isolate]中, 可以执行耗时操作.
+///
+/// [compute] 会创建一个新的[Isolate]来执行[callback]. 内部使用[Isolate.run]执行.
+///
+/// ```
+/// import 'dart:isolate';
+///
+/// void main() async {
+///   // 启动一个 isolate 来处理计算
+///   final receivePort = ReceivePort();
+///   await Isolate.spawn(heavyComputation, receivePort.sendPort);
+///
+///   // 监听来自新的 Isolate 的消息
+///   receivePort.listen((message) {
+///     print('Received from isolate: $message');
+///     // 关闭 ReceivePort
+///     receivePort.close();
+///   });
+/// }
+///
+/// // 重载 Isolate 执行的函数
+/// void heavyComputation(SendPort sendPort) {
+///   // 进行一些耗时操作
+///   int result = 0;
+///   for (int i = 0; i < 10;0000; i++) {
+///     result += i;
+///   }
+///   // 给主 isolate 发送结果
+///   sendPort.send(result);
+/// }
+/// ```
 ///
 
 //region 性能
@@ -51,8 +84,15 @@ const kIsolateComputeBytesSize = 1024 * 1024 * 1;
 /// ```
 ///
 /// [Completer]
-Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
-    compute(callback, message, debugLabel: "io-${nowTimeString()}");
+Future<R> io<M, R>(
+  M message,
+  @pragma('vm:entry-point') ComputeCallback<M, R> callback, {
+  String? debugLabel,
+}) => compute(
+  callback,
+  message,
+  debugLabel: debugLabel ?? "io-${nowTimeString()}",
+);
 
 /// 在[Isolate]中运行, [callback]可以直接访问上下文的数据(能够send的数据), 不需要主动send
 /// - [SendPort.send]
@@ -70,8 +110,14 @@ Future<R> io<M, R>(M message, ComputeCallback<M, R> callback) =>
 /// ```
 ///
 /// - [Future.sync]
-Future<R> run<R>(ResultCallback<R> callback) {
-  return Isolate.run(() => callback(), debugName: "run-${nowTimeString()}");
+Future<R> run<R>(
+  @pragma('vm:entry-point') ResultCallback<R> callback, {
+  String? debugName,
+}) {
+  return Isolate.run(
+    () => callback(),
+    debugName: debugName ?? "run-${nowTimeString()}",
+  );
 }
 
 /// 内存隔离, 不共享. 只能传递基础数据类型, 或者可以被`send`的对象
@@ -88,7 +134,10 @@ Future<R> run<R>(ResultCallback<R> callback) {
 ///
 /// - [Isolate.run]
 /// - [Isolate.spawn]
-Future<R> isolateRun<R>(ResultCallback<R> callback) => run(callback);
+Future<R> isolateRun<R>(
+  @pragma('vm:entry-point') ResultCallback<R> callback, {
+  String? debugName,
+}) => run(callback, debugName: debugName);
 
 ///
 /// https://santhosh-adiga-u.medium.com/multithreading-in-flutter-238aa63e29bd
