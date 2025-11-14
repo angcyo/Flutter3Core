@@ -85,9 +85,7 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
     return AfterLayout(
       child: body.gesture(
         onPanUpdate: (details) {
-          setState(() {
-            positionOffset = positionOffset + details.delta;
-          });
+          onUpdateOverlayPosition(positionOffset + details.delta);
         },
         onPanStart: (details) {
           disposeAnyByKey("animation");
@@ -134,13 +132,18 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
     hookAnyByKey(
       "animation",
       animation(this, (value, isCompleted) {
-        positionOffset = lerpOffset(
-          currentOffset,
-          Offset(targetX, targetY),
-          value,
+        onUpdateOverlayPosition(
+          lerpOffset(currentOffset, Offset(targetX, targetY), value),
         );
-        updateState();
       }, curve: Curves.easeOut),
     );
+  }
+
+  /// 当需要更新位置到[position]时触发
+  @overridePoint
+  void onUpdateOverlayPosition(Offset position) {
+    setState(() {
+      positionOffset = position;
+    });
   }
 }

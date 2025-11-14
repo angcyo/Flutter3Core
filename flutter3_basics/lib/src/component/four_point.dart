@@ -199,3 +199,17 @@ extension FourPointStringEx on String {
 extension FourPointRectEx on Rect {
   FourPoint? get fourPoint => FourPoint.fromRect(this);
 }
+
+extension PointStringEx on String {
+  Offset? get point {
+    final list = split(",").map((e) => double.parse(e)).toList();
+    if (list.length != 2) {
+      return null;
+    }
+    return Offset(list[0], list[1]);
+  }
+}
+
+extension PointEx on Offset {
+  String get listString => [x, y].join(",");
+}

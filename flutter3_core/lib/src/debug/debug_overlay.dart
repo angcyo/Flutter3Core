@@ -130,19 +130,32 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton>
         HookMixin,
         HookStateMixin,
         OverlayPositionMixin {
+  Offset? get hivePositionOffset =>
+      "_key_debug_overlay_button_offset".hiveGet<String>()?.point;
+
+  set hivePositionOffset(Offset? value) {
+    "_key_debug_overlay_button_offset".hivePut(value?.listString);
+  }
+
   /// 按钮的大小
   final buttonSize = 40.0;
 
   @override
   void initState() {
     super.initState();
-    positionOffset = Offset(0, $screenHeight * 4 / 5);
+    positionOffset = hivePositionOffset ?? Offset(0, $screenHeight * 4 / 5);
     onTapBody = () {
       //toast("click".text());
       //$globalDebugLabel = "debug";
       //_testGlobalTheme(context);
       buildContext?.showWidgetDialog(DebugOverlayDialog());
     };
+  }
+
+  @override
+  void onUpdateOverlayPosition(Offset position) {
+    super.onUpdateOverlayPosition(position);
+    hivePositionOffset = position;
   }
 
   @override
