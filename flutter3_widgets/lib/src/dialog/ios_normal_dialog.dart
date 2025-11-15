@@ -33,7 +33,7 @@ class IosNormalDialog extends AndroidNormalDialog {
     super.onInterceptConfirmTap,
     super.useIcon = false,
     super.contentConstraints,
-    super.radius = 0,
+    super.controlRadius = 0,
   });
 
   @override
@@ -51,25 +51,23 @@ class IosNormalDialog extends AndroidNormalDialog {
 
     //line
     final Widget? hLine = (cancel != null || neutral != null || confirm != null)
-        ? Line(
-            axis: Axis.horizontal,
-            color: globalTheme.lineDarkColor,
-          )
+        ? Line(axis: Axis.horizontal, color: globalTheme.lineDarkColor)
         : null;
     final Widget vLine = Line(
       axis: Axis.vertical,
       color: globalTheme.lineDarkColor,
     );
 
-    final controlRow = [
-      if (cancel != null) cancel.expanded(),
-      if (neutral != null) neutral.expanded(),
-      if (confirm != null) confirm.expanded(),
-    ].row(
-      gapWidget: vLine,
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-    );
+    final controlRow =
+        [
+          if (cancel != null) cancel.expanded(),
+          if (neutral != null) neutral.expanded(),
+          if (confirm != null) confirm.expanded(),
+        ].row(
+          gapWidget: vLine,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+        );
 
     final bodyColumn = Column(
       mainAxisAlignment: MainAxisAlignment.center,

@@ -61,11 +61,21 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   final double gap = kX;
 
-  final double radius;
+  /// 背景的圆角
+  final double contentRadius;
+
+  /// 控制按钮的圆角
+  final double controlRadius;
 
   //--
 
+  /// 按钮按钮的排列轴向
+  final Axis controlAxis;
+
   final BoxConstraints? contentConstraints;
+
+  /// 是否使用模糊背景
+  final bool useBlur;
 
   const AndroidNormalDialog({
     super.key,
@@ -90,24 +100,66 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.useIcon = false,
     this.interceptPop = false,
     this.contentConstraints,
-    this.radius = kX,
+    this.contentRadius = kDefaultBorderRadiusL,
+    this.controlRadius = kX,
+    this.controlAxis = Axis.horizontal,
+    this.useBlur = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final textAlign = controlAxis == Axis.vertical
+        ? TextAlign.center
+        : TextAlign.start;
 
     // 标题 / 内容
-    Widget? title = _buildTitle(context);
-    Widget? message = _buildMessage(
+    final title = _buildTitle(context, textAlign: textAlign);
+    final message = _buildMessage(
       context,
-      textAlign: messageTextAlign ?? TextAlign.left,
+      textAlign: messageTextAlign ?? textAlign,
     );
 
+    // 控制按钮
+    final controlRow = controlAxis == Axis.horizontal
+        ? _buildControlRow(context)
+        : null;
+    final controlColumn = controlAxis == Axis.vertical
+        ? _buildControlColumn(context, globalTheme)
+        : null;
+
+    final bodyColumn = Column(
+      mainAxisAlignment: controlAxis == Axis.vertical
+          ? MainAxisAlignment.center
+          : MainAxisAlignment.start,
+      crossAxisAlignment: controlAxis == Axis.vertical
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (title != null) title,
+        if (message != null) message,
+        if (controlRow != null) controlRow,
+        if (controlColumn != null) ...controlColumn,
+      ],
+    );
+
+    return buildCenterDialog(
+      context,
+      bodyColumn,
+      padding: EdgeInsets.zero,
+      blur: useBlur,
+      radius: contentRadius,
+      contentConstraints: contentConstraints,
+    ).interceptPop(interceptPop);
+  }
+
+  /// 构建横向控制按钮
+  Widget? _buildControlRow(BuildContext context) {
     // 取消 / 中立 / 确定
-    Widget? cancel = _buildCancelButton(context);
-    Widget? neutral = _buildNeutralButton(context);
-    Widget? confirm = _buildConfirmButton(context);
+    final cancel = _buildCancelButton(context);
+    final neutral = _buildNeutralButton(context);
+    final confirm = _buildConfirmButton(context);
 
     final controlRow = [cancel, neutral, confirm]
         .row(
@@ -117,24 +169,31 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
         )
         ?.paddingOnly(bottom: kL, right: kH);
 
-    final bodyColumn = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (title != null) title,
-        if (message != null) message,
-        if (controlRow != null) controlRow,
-      ],
-    );
+    return controlRow;
+  }
 
-    return buildCenterDialog(
+  /// 构建纵向控制按钮
+  WidgetList? _buildControlColumn(
+    BuildContext context,
+    GlobalTheme globalTheme,
+  ) {
+    // 取消 / 中立 / 确定
+    final cancel = _buildCancelButton(context)?.matchParent(matchHeight: false);
+    final neutral = _buildNeutralButton(
       context,
-      bodyColumn,
-      padding: EdgeInsets.zero,
-      radius: kDefaultBorderRadiusL,
-      contentConstraints: contentConstraints,
-    ).interceptPop(interceptPop);
+    )?.matchParent(matchHeight: false);
+    final confirm = _buildConfirmButton(
+      context,
+    )?.matchParent(matchHeight: false);
+
+    //line
+    final hLine = Line(axis: Axis.horizontal, color: globalTheme.lineDarkColor);
+
+    return [
+      if (confirm != null) ...[hLine, confirm],
+      if (neutral != null) ...[hLine, neutral],
+      if (cancel != null) ...[hLine, cancel],
+    ];
   }
 
   /// 构建内容
@@ -197,7 +256,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             widget: cancelWidget,
             text: cancelText,
             useIcon: useIcon,
-            radius: radius ?? this.radius,
+            radius: radius ?? controlRadius,
             onTap: () async {
               if (onInterceptCancelTap == null) {
                 Navigator.pop(context, false);
@@ -229,7 +288,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             widget: neutralWidget,
             text: neutralText,
             useIcon: useIcon,
-            radius: radius ?? this.radius,
+            radius: radius ?? controlRadius,
             onTap: () {
               Navigator.pop(context, null);
             },
@@ -250,7 +309,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             widget: confirmWidget,
             text: confirmText,
             useIcon: useIcon,
-            radius: radius ?? this.radius,
+            radius: radius ?? controlRadius,
             onTap: () {
               _doConfirmTap(context);
             },
