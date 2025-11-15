@@ -46,6 +46,11 @@ extension ThrottleEx on dynamic {
 
   /// 限流, 短时间内的连续事件忽略
   ///
+  /// ```
+  /// doLast = true, doFirst = false; //相对于抖动仅触发最后一次
+  /// doLast = false, doFirst = true; //限流
+  /// ```
+  ///
   /// - [doFirst] 立即执行第一次?
   /// - [doLast] 最后一次是否执行?
   ///
