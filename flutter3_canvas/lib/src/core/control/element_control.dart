@@ -423,7 +423,9 @@ class BaseControl
   void applyTargetMatrix(Matrix4 matrix, [ControlTypeEnum? controlType]) {
     //debugger();
     isControlApply = true;
+    //l.w("restore...start ${_targetElement?.elementsBounds?.toRectMm()}");
     _elementStateStack?.restore(mute: true);
+    //l.w("restore...end ${_targetElement?.elementsBounds?.toRectMm()}");
 
     controlType ??= this.controlType;
     if (_targetElement == null) {
@@ -434,7 +436,9 @@ class BaseControl
     } else if (controlType == ControlTypeEnum.rotate) {
       _targetElement?.rotateElement(matrix, fromObj: this);
     } else if (controlType == ControlTypeEnum.translate) {
+      //l.e("restore...start2 ${_targetElement?.elementsBounds?.toRectMm()}");
       _targetElement?.translateElement(matrix, fromObj: this);
+      //l.e("restore...end2 ${_targetElement?.elementsBounds?.toRectMm()}");
     } else {
       assert(() {
         l.d('未适配的控制操作[$controlType]');

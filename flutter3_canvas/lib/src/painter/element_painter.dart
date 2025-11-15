@@ -2281,11 +2281,7 @@ class ElementGroupPainter extends ElementPainter {
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
-    super.translateElement(
-      matrix,
-      fromObj: fromObj,
-      fromUndoType: fromUndoType,
-    );
+    //先children
     children?.forEach((element) {
       element.translateElement(
         matrix,
@@ -2293,6 +2289,12 @@ class ElementGroupPainter extends ElementPainter {
         fromUndoType: fromUndoType,
       );
     });
+    //再self
+    super.translateElement(
+      matrix,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 
   @override
