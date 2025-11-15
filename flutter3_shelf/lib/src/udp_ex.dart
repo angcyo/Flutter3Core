@@ -63,6 +63,7 @@ Future<int> sendUdpData(
 
     if (length != sendSize) {
       l.w("UDP发送数据失败, 应发: ${length.toSizeStr()}, 实发: ${sendSize.toSizeStr()}");
+      debugger();
     }
     return sendSize;
   } catch (e, s) {

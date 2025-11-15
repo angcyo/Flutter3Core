@@ -519,7 +519,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       refresh();
       assert(() {
         l.v(
-          "canvasStyle->${canvasStyle.yAxisWidth} ${canvasStyle.xAxisHeight}",
+          "canvasStyle->yAxisWidth:${canvasStyle.yAxisWidth} xAxisHeight:${canvasStyle.xAxisHeight}",
         );
         return true;
       }());
