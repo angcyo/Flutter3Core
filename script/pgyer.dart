@@ -77,7 +77,7 @@ void main(List<String> arguments) async {
                 final logUrl = pgyerConfig["change_log_url"];
                 await sendFeishuWebhookInteractive(
                   webhook,
-                  _assembleVersionTitle(versionMap),
+                  assembleVersionTitle(versionMap),
                   versionMap?["versionDes"],
                   linkUrl: url,
                   changeLogUrl: logUrl,
@@ -258,46 +258,4 @@ Future _checkAppIsPublish(String apiKey, String buildKey) async {
     }
   }
   return null;
-}
-
-extension MapEx<K, V> on Map<K, V> {
-  /// 遍历移除所有value为null的key
-  Map<K, V> removeAllNull([bool copy = false]) {
-    final map = copy ? Map.from(this) : this;
-    final keys = <K>[];
-    map.forEach((key, value) {
-      if (value == null) {
-        keys.add(key);
-      }
-    });
-    keys.forEach(map.remove);
-    return map as Map<K, V>;
-  }
-}
-
-/// 组装版本发布通知的标题
-String? _assembleVersionTitle(Map<String, dynamic>? json) {
-  final versionTitle = json?["versionTitle"]?.toString();
-  if (versionTitle != null) {
-    return versionTitle;
-  }
-
-  final versionDate = json?["versionDate"]?.toString();
-  final versionName = json?["versionName"]?.toString();
-  final versionCode = json?["versionCode"]?.toString();
-
-  StringBuffer buffer = StringBuffer();
-  if (versionDate != null) {
-    buffer.write("$versionDate ");
-  }
-  buffer.write("新版本发布");
-  if (versionName != null) {
-    //版本名
-    buffer.write(" V$versionName");
-    if (versionCode != null) {
-      //版本号
-      buffer.write("($versionCode)");
-    }
-  }
-  return buffer.toString();
 }

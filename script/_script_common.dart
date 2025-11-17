@@ -105,16 +105,65 @@ dynamic getScriptYamlValue(String key) {
   return localValue ?? value;
 }
 
+/// 解析`xxx.xxx.xxx`这样的路径[keyPath]对应的数据
+/// [getScriptYamlValue]
+dynamic getScriptYamlValuePath(String keyPath) {
+  if (_localYaml == null) {
+    final localYamlFile = File("$currentPath/script.local.yaml");
+    _localYaml = loadYaml(
+      localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "",
+    );
+  }
+
+  if (_yaml == null) {
+    final yamlFile = File("$currentPath/script.yaml");
+    _yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
+  }
+
+  dynamic localValue;
+  dynamic value;
+  final keys = keyPath.split(".");
+  bool isFirst = true;
+  for (var key in keys) {
+    if (isFirst) {
+      isFirst = false;
+      localValue = _localYaml?[key];
+      value = _yaml?[key];
+    } else {
+      localValue = localValue?[key];
+      value = value?[key];
+    }
+  }
+  if (localValue is YamlMap && value is YamlMap) {
+    return {
+      ...value,
+      ...localValue,
+    };
+  }
+  if (localValue is YamlList && value is YamlList) {
+    return [
+      ...value,
+      ...localValue,
+    ];
+  }
+  return localValue ?? value;
+}
+
 /// [getScriptYamlValue]的别名
 dynamic $value(String key) {
   return getScriptYamlValue(key);
 }
 
+/// [getScriptYamlValuePath]的别名
+dynamic $valueKeys(String keyPath) {
+  return getScriptYamlValuePath(keyPath);
+}
+
 /// 获取列表配置
 /// - [YamlList]
-YamlList? $list(String key) {
+List? $list(String key) {
   final value = $value(key);
-  if (value is YamlList) {
+  if (value is List) {
     return value;
   }
   return null;
@@ -122,9 +171,17 @@ YamlList? $list(String key) {
 
 /// 获取映射配置
 /// - [YamlMap]
-YamlMap? $map(String key) {
+Map? $map(String key) {
   final value = $value(key);
-  if (value is YamlMap) {
+  if (value is Map) {
+    return value;
+  }
+  return null;
+}
+
+Map? $mapKeys(String keyPath) {
+  final value = $valueKeys(keyPath);
+  if (value is Map) {
     return value;
   }
   return null;
@@ -295,4 +352,46 @@ Future sendFeishuWebhookInteractive(
     headers: {"Content-Type": "application/json"},
   );
   print(response.body);
+}
+
+extension MapEx<K, V> on Map<K, V> {
+  /// 遍历移除所有value为null的key
+  Map<K, V> removeAllNull([bool copy = false]) {
+    final map = copy ? Map.from(this) : this;
+    final keys = <K>[];
+    map.forEach((key, value) {
+      if (value == null) {
+        keys.add(key);
+      }
+    });
+    keys.forEach(map.remove);
+    return map as Map<K, V>;
+  }
+}
+
+/// 组装版本发布通知的标题
+String? assembleVersionTitle(Map<String, dynamic>? json) {
+  final versionTitle = json?["versionTitle"]?.toString();
+  if (versionTitle != null) {
+    return versionTitle;
+  }
+
+  final versionDate = json?["versionDate"]?.toString();
+  final versionName = json?["versionName"]?.toString();
+  final versionCode = json?["versionCode"]?.toString();
+
+  StringBuffer buffer = StringBuffer();
+  if (versionDate != null) {
+    buffer.write("$versionDate ");
+  }
+  buffer.write("新版本发布");
+  if (versionName != null) {
+    //版本名
+    buffer.write(" V$versionName");
+    if (versionCode != null) {
+      //版本号
+      buffer.write("($versionCode)");
+    }
+  }
+  return buffer.toString();
 }

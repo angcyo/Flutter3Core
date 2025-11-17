@@ -4,12 +4,43 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:yaml/yaml.dart';
 
+import '_script_common.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/07/16
 ///
 /// Webhook
 void main(List<String> arguments) async {
+  colorLog('[webhook]工作路径->$currentPath');
+  final webhookConfig = $value("webhook");
+  if (webhookConfig is! Map) {
+    throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[webhook]脚本";
+  }
+  final webhookVersionMap = $mapKeys("webhook.version");
+  if (webhookVersionMap is Map) {
+    final versionPath = webhookVersionMap["path"];
+    final file = File(versionPath);
+    if (!file.existsSync()) {
+      colorErrorLog("未找到版本描述文件");
+    } else {
+      final text = file.readAsStringSync();
+      final versionMap = jsonDecode(text);
+      final feishuWebhook = webhookVersionMap["feishu_webhook"];
+      if (feishuWebhook != null) {
+        //发送飞书版本更新通知
+        final logUrl = webhookVersionMap["change_log_url"];
+        await sendFeishuWebhookInteractive(
+          feishuWebhook,
+          assembleVersionTitle(versionMap),
+          versionMap?["versionDes"],
+          linkUrl: null,
+          changeLogUrl: logUrl,
+        );
+      }
+    }
+  }
+
   /*final currentPath = Directory.current.path;
   print('工作路径->$currentPath');
   final yamlFile = File("$currentPath/script.yaml");
@@ -20,7 +51,8 @@ void main(List<String> arguments) async {
   //---
   //_sendFeishuText(webhook, "text");
 
-  await _sendFeishuVersion();
+  //await _sendFeishuVersion();
+
   //await _sendLP5xVersion("E:/AndroidProjects/LaserPeckerRNPro/android/.apk");
   /*await _sendLP5xVersion(
       "/Users/angcyo/project/android/laserpecker-rn-pro/android/.apk/");*/
@@ -44,7 +76,7 @@ Future _sendLP5xVersion(
   final versionMap = await _getVersionDes(versionFilePath);
   _sendFeishuWebhook(
     localYaml?["feishu_webhook_lp5"] ?? yaml?["feishu_webhook_lp5"],
-    _assembleVersionTitle(versionMap),
+    assembleVersionTitle(versionMap),
     versionDes ?? versionMap?["versionDes"],
     linkUrl: "https://www.pgyer.com/PNbc",
     changeLogUrl:
@@ -55,7 +87,7 @@ Future _sendLP5xVersion(
 //--
 
 /// 组装版本发布通知的标题
-String? _assembleVersionTitle(Map<String, dynamic>? json) {
+String? assembleVersionTitle(Map<String, dynamic>? json) {
   final versionTitle = json?["versionTitle"]?.toString();
   if (versionTitle != null) {
     return versionTitle;
@@ -102,7 +134,7 @@ Future _sendFeishuVersion({
     final versionMap = await _getVersionDes(folder);
     _sendFeishuWebhook(
       localYaml["feishu_webhook"] ?? yaml["feishu_webhook"],
-      _assembleVersionTitle(versionMap),
+      assembleVersionTitle(versionMap),
       versionDes ?? versionMap?["versionDes"],
       linkUrl: linkUrl ??
           versionMap?["downloadUrl"] ??
