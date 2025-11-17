@@ -804,17 +804,18 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     isLockRatio ??= elementPainter.isLockRatio;
     double sx = 1;
     double sy = 1;
+    //debugger();
     if (!isLockRatio) {
       //自由比例
-      sx = width == null ? 1.0 : width / bounds.width;
-      sy = height == null ? 1.0 : height / bounds.height;
+      sx = width == null ? 1.0 : (width / bounds.width).ensureValid(1);
+      sy = height == null ? 1.0 : (height / bounds.height).ensureValid(1);
     } else {
       //锁定比例
       if (width != null) {
-        sx = width / bounds.width;
+        sx = (width / bounds.width).ensureValid(1);
         sy = sx;
       } else {
-        sy = height == null ? 1.0 : height / bounds.height;
+        sy = height == null ? 1.0 : (height / bounds.height).ensureValid(1);
         sx = sy;
       }
     }

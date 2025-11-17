@@ -502,6 +502,9 @@ class NumberKeyboardInputController {
   /// 输入的数字类型
   NumType? numType;
 
+  /// 初始化的值
+  num? initValue;
+
   /// 小数时, 保留后几位
   int maxDigits = 2;
 
@@ -534,6 +537,7 @@ class NumberKeyboardInputController {
 
   /// 初始化当前输入的值
   void initInputValue(num? value) {
+    initValue = value;
     numberText = formatValue(value) ?? "";
   }
 
@@ -556,11 +560,13 @@ class NumberKeyboardInputController {
     if (number == null) {
       return false;
     }
-    if (maxValue != null && number > maxValue!) {
-      return false;
-    }
-    if (minValue != null && number < minValue!) {
-      return false;
+    if (number != initValue) {
+      if (maxValue != null && number > maxValue!) {
+        return false;
+      }
+      if (minValue != null && number < minValue!) {
+        return false;
+      }
     }
     return true;
   }
