@@ -590,8 +590,12 @@ class ElementPainter extends IElementPainter {
     final property = paintProperty;
     if (property != null) {
       final oldBounds = property.getBounds(true);
-      double sx = width == null ? 1.0 : width / oldBounds.width;
-      double sy = height == null ? 1.0 : height / oldBounds.height;
+      double sx = width == null
+          ? 1.0
+          : (width / oldBounds.width).ensureValid(1);
+      double sy = height == null
+          ? 1.0
+          : (height / oldBounds.height).ensureValid(1);
 
       if (keepAspectRatio) {
         if (width == null) {
