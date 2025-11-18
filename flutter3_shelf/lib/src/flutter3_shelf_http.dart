@@ -9,6 +9,10 @@ part of '../flutter3_shelf.dart';
 /// - [Router] 接口路由
 ///
 class Flutter3ShelfHttp {
+  /// [favicon.ico] 对应的base64数据
+  static String faviconBase64 =
+      "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";
+
   /// 端口, 如果端口被占用, 会自动++
   int port;
 
@@ -42,11 +46,13 @@ class Flutter3ShelfHttp {
 
   //--
 
+  /// https://raw.githubusercontent.com/dart-lang/shelf/refs/heads/master/pkgs/shelf_static/example/files/favicon.ico
   Flutter3ShelfHttp({this.port = 9200, this.scheme = "http"}) {
-    /*get("/favicon.ico", (shelf.Request request) async {
-      final logo = await loadAssetBytes(Assets.png.flutter.keyName);
-      return responseOkFile(fileStream: logo.stream);
-    });*/
+    get("/favicon.ico", (shelf.Request request) async {
+      //final logo = await loadAssetBytes(Assets.png.flutter.keyName);
+      final bytes = faviconBase64.toBase64Bytes;
+      return responseOkFile(fileStream: bytes.stream);
+    });
   }
 
   /// [handler]需要时[shelf.Handler]类型
@@ -150,6 +156,15 @@ class Flutter3ShelfHttp {
   /// 创建处理程序
   @overridePoint
   shelf.Handler createHandler() => const shelf.Pipeline()
+      .addMiddleware((innerHandler) {
+        return (request) {
+          assert(() {
+            l.d("收到请求[${request.method}]->${request.url}");
+            return true;
+          }());
+          return innerHandler(request);
+        };
+      })
       .addMiddleware(shelf.logRequests())
       .addHandler(_router.call);
 

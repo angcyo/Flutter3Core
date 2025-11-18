@@ -200,7 +200,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
 
   /// 默认的调试日志服务器地址, 启动后才会自动赋值
   @output
-  static String? debugLogServerAddress;
+  static LiveStreamController<String?> debugLogServerAddressStream = $live();
 
   /// udp广播收到的客户端uuid映射列表
   @output
@@ -243,7 +243,14 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
     //注册接口apis
     //--进入首页页面
     get('/', (shelf.Request request) {
-      final text = ShelfHtml.getDebugLogIndexHtml();
+      final text = ShelfHtml.getDebugLogIndexHtml().replaceKeyTemplate(
+        "bottomInfo",
+        nowTimeString().connect(
+          DebugPage.lastDebugCopyStringBuilder(
+            GlobalConfig.def.globalContext,
+          )?.connect(null, "<br>").replaceAll("\n", "<br>"),
+        ),
+      );
       if (request.isAcceptHtml) {
         return responseOkHtml(text);
       }
@@ -281,11 +288,13 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
         targetPath = rootPath.connectUrl(path);
       }
       if (await targetPath.isFile()) {
+        //返回文件数据流
         return responseOkFile(filePath: targetPath);
       } else {
-        buffer.write(ShelfHtml.getFilesHeaderHtml("文件浏览", targetPath));
-        buffer.write(await ShelfHtml.getFilesListHtml(rootPath, targetPath));
-        buffer.write(ShelfHtml.getFilesFooterHtml());
+        //返回文件目录
+        buffer.write(ShelfHtml.getFilesHeaderHtml("文件浏览", targetPath));//头
+        buffer.write(await ShelfHtml.getFilesListHtml(rootPath, targetPath));//内容
+        buffer.write(ShelfHtml.getFilesFooterHtml());//尾
         return responseOkHtml(buffer.toString());
       }
     });
@@ -363,7 +372,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
       checkNetwork: checkNetwork,
       retryCount: retryCount,
     );
-    debugLogServerAddress = address;
+    debugLogServerAddressStream << address;
     return server;
   }
 
@@ -378,7 +387,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
         "_command": "stop",
       }.toJsonString(),
     );
-    debugLogServerAddress = null;
+    debugLogServerAddressStream << null;
     _broadcastTimer?.cancel();
     _broadcastTimer = null;
     super.stop();

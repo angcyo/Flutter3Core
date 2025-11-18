@@ -8,7 +8,8 @@ import 'package:flutter3_core/flutter3_core.dart';
 ///
 abstract final class ShelfHtml {
   /// 响应html内容的模板
-  static String getResponseHtml(String tile, String body) => '''
+  static String getResponseHtml(String tile, String body) =>
+      '''
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -25,7 +26,8 @@ abstract final class ShelfHtml {
         ''';
 
   /// 响应成功的html内容的模板(带有√图标)
-  static String getResponseSucceedHtml(String tile, String body) => '''
+  static String getResponseSucceedHtml(String tile, String body) =>
+      '''
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -114,7 +116,8 @@ abstract final class ShelfHtml {
 </html>
   ''';
 
-  static String getWebSocketHtml(String tile, String ws) => '''
+  static String getWebSocketHtml(String tile, String ws) =>
+      '''
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -140,7 +143,7 @@ abstract final class ShelfHtml {
 
     // 当连接打开时触发
     socket.onopen = function (event) {
-        document.getElementById('content').innerHTML = 'WebSocket 已连接!';
+        document.getElementById('content').innerHTML = 'WebSocket 已连接->$ws';
         /*socket.send('Hello, WebSocket!');
         setInterval(() => {
             socket.send('Hello, WebSocket! ' + new Date().toLocaleTimeString());
@@ -229,14 +232,15 @@ abstract final class ShelfHtml {
   //--
 
   /// 文件浏览头部html
-  static String getFilesHeaderHtml(String tile, String parent) => '''
+  static String getFilesHeaderHtml(String tile, String parent) =>
+      '''
 <!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
     <title>$tile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style> * {word-wrap: break-word; padding: 4px} a {line-height: 30px;} .time {color: #d3d3d3;font-size: 12px;}</style>
+    <style> * {word-wrap: break-word; padding: 0px} a {line-height: 30px;} .time {color: #d3d3d3;font-size: 12px;} body span {padding: 4px}</style>
 </head>
 <body>
 <h1>$parent</h1>
@@ -255,15 +259,21 @@ abstract final class ShelfHtml {
           final targetPath = folder.parentPath.replaceAll(root, '');
           buffer.write("<a href='/files?path=$targetPath'>..</a><br>");
         }
-        for (final entity in folderFile
-                .listFilesSync()
-                ?.sortFileList(modifiedTimeDesc: true) ??
-            <FileSystemEntity>[]) {
+        for (final entity
+            in folderFile.listFilesSync()?.sortFileList(
+                  modifiedTimeDesc: true,
+                ) ??
+                <FileSystemEntity>[]) {
           final folderName = entity.fileName();
           final targetPath = entity.path.replaceAll(root, '');
-          //debugger();
+          final des = entity.isDirectorySync()
+              ? (entity as Directory).listSync().length.toString().connect("项")
+              : (entity as File).fileSizeSync().toSizeStr().connect(
+                  " ${entity.lastModifiedSync()}",
+                );
           buffer.write(
-              "<a href='/files?path=$targetPath'>$folderName</a><span class='time'>${entity.lastModifiedSync}</span><br>");
+            "<a href='/files?path=$targetPath'>$folderName</a><span class='time'>$des</span><br>",
+          );
         }
       } else {
         buffer.write("<p>即将下载文件:$folder<p>");
@@ -281,9 +291,10 @@ abstract final class ShelfHtml {
 </html>
   ''';
 
-//--
+  //--
 
-  static String getUdpClientListHeaderHtml(String tile, String h1) => '''
+  static String getUdpClientListHeaderHtml(String tile, String h1) =>
+      '''
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -336,7 +347,8 @@ abstract final class ShelfHtml {
 <div style="display: flex; flex-wrap: wrap;">
   ''';
 
-  static String getUdpClientListItemHtml(Map map, bool isSelf) => '''
+  static String getUdpClientListItemHtml(Map map, bool isSelf) =>
+      '''
   <a target="_blank" href="${map["address"]}">
       <div class="card ${isSelf ? "self-card" : ""}">
           <p>
@@ -361,7 +373,8 @@ abstract final class ShelfHtml {
   </a>
   ''';
 
-  static String getUdpClientListFooterHtml({int refresh = 5000}) => '''
+  static String getUdpClientListFooterHtml({int refresh = 5000}) =>
+      '''
 <script>
 setInterval(() => {
         if (document.getElementById('refresh_check').checked) {
@@ -380,66 +393,88 @@ setInterval(() => {
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>首页</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {
-            word-wrap: break-word;
-            padding: 0;
-            margin: 0;
-        }
+  <meta charset="UTF-8">
+  <title>服务首页</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      word-wrap: break-word;
+      padding: 0;
+      margin: 0;
+    }
 
-        * span {
-            line-height: 30px;
-        }
+    * span {
+      line-height: 30px;
+    }
 
-        a {
-            text-decoration: none;
-            color: #333;
-        }
+    a {
+      text-decoration: none;
+      color: #333;
+    }
 
-        .card {
-            background-color: #f9f9f9;
-            border: 1px solid #f9f9f9;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 10px;
-            box-shadow: 0 0 5px #ccc;
-            transition: box-shadow 0.3s;
-        }
+    .flex-content {
+      display: flex;
+      flex-direction: column;
+    }
 
-        .card:hover {
-            border: 1px solid #0aa6ec;
-            border-radius: 5px;
-            box-shadow: 0 0 10px #ccc;
-        }
+    .flex-full-item {
+      flex-grow: 1;
+    }
 
-    </style>
+    .card {
+      background-color: #f9f9f9;
+      border: 1px solid #f9f9f9;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px;
+      box-shadow: 0 0 5px #ccc;
+      transition: box-shadow 0.3s;
+    }
+
+    .card:hover {
+      border: 1px solid #0aa6ec;
+      border-radius: 5px;
+      box-shadow: 0 0 10px #ccc;
+    }
+
+    /* 添加时间显示样式 */
+    .bottom-display {
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      color: #666;
+      font-size: 14px;
+    }
+
+  </style>
 </head>
-<body style="padding: 10px;">
-<h1>首页</h1>
+<body style="padding: 10px; width: 100%; height: 100%">
+<h1>服务首页</h1>
 <!--复选框-->
 <div style="display: flex; flex-wrap: wrap;">
-    <a href="/ws">
-        <div class="card">
-            <p><strong>WebSocket 日志服务</strong></p>
-            <p><span>实时查看设备调试信息</span></p>
-        </div>
-    </a>
-    <a href="/files">
-        <div class="card">
-            <p><strong>Http 文件服务</strong></p>
-            <p><span>浏览查看设备文件信息</span></p>
-        </div>
-    </a>
-    <a href="/list">
-        <div class="card">
-            <p><strong>UDP 客户端服务</strong></p>
-            <p><span>浏览查看广播的设备终端信息</span></p>
-        </div>
-    </a>
+  <a href="/ws">
+    <div class="card">
+      <p><strong>WebSocket 日志服务</strong></p>
+      <p><span>实时查看设备调试信息</span></p>
+    </div>
+  </a>
+  <a href="/files">
+    <div class="card">
+      <p><strong>Http 文件服务</strong></p>
+      <p><span>浏览查看设备文件信息</span></p>
+    </div>
+  </a>
+  <a href="/list">
+    <div class="card">
+      <p><strong>UDP 客户端服务</strong></p>
+      <p><span>浏览查看广播的设备终端信息</span></p>
+    </div>
+  </a>
 </div>
+<!-- 在底部插入当前时间 -->
+<footer>
+  <div class="bottom-display">{{bottomInfo}}</div>
+</footer>
 </body>
 </html>
 ''';

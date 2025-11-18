@@ -939,7 +939,15 @@ extension StringEx on String {
   /// 'Dart is open source' -> `RGFydCBpcyBvcGVuIHNvdXJjZQ==`
   String get toBase64 => base64Encode(bytes);
 
+  /// - [StringEx.fromBase64]
+  /// - [ListIntEx.toBase64]
+  /// - [StringEx.toBase64Bytes]
+  Uint8List get toBase64Bytes => base64Decode(this);
+
   /// 使用base64解密当前的字符串
+  /// - [StringEx.fromBase64]
+  /// - [ListIntEx.toBase64]
+  /// - [StringEx.toBase64Bytes]
   String get fromBase64 => base64Decode(this).utf8Str;
 
   /// 判断当前字符串是否是http协议开头
@@ -1436,6 +1444,26 @@ extension StringEx on String {
   String toVersionString() => split("").join(".");
 
   //endregion 功能
+}
+
+/// 字符串正则相关扩展
+extension StringRegexEx on String {
+  /// 将`{{key}}`正则匹配替换成[value]
+  String replaceKeyTemplate(String key, String value) {
+    return replaceAll("{{$key}}", value);
+  }
+
+  /// 正则匹配字符串
+  /// [regex] 正则表达式
+  /// [group] 匹配到的分组, 默认为1
+  /// [defaultValue] 匹配不到时, 返回的默认值
+  String? match(String regex, [int group = 1, String? defaultValue]) {
+    final match = RegExp(regex).firstMatch(this);
+    if (match == null) {
+      return defaultValue;
+    }
+    return match.group(group);
+  }
 }
 
 /// 清空剪切板
@@ -2462,6 +2490,11 @@ extension ListIntEx on List<int> {
   /// 转成[utf8]字符串
   /// [toStr]
   String get utf8Str => toStr();
+
+  /// - [StringEx.fromBase64]
+  /// - [ListIntEx.toBase64]
+  /// - [StringEx.toBase64Bytes]
+  String get toBase64 => base64.encode(this);
 
   /// [IntEx.toSizeStr]
   String get bytesSizeStr => length.toSizeStr();

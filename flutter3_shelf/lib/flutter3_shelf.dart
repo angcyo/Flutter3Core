@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter3_app/flutter3_app.dart';
 import 'package:flutter3_shelf/src/local/api/udp_apis.dart';
@@ -29,8 +28,8 @@ export 'package:shelf_multipart/shelf_multipart.dart';
 export 'package:shelf_router/shelf_router.dart';
 export 'package:udp/udp.dart';
 
-export 'src/local/api/udp_apis.dart';
 export 'src/local/api/udp_api_bean.dart';
+export 'src/local/api/udp_apis.dart';
 export 'src/mode/service_info_bean.dart';
 export 'src/mode/udp_client_info_bean.dart';
 export 'src/mode/udp_message_bean.dart';
@@ -49,7 +48,14 @@ part 'src/udp_service.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2024-7-15
 ///
-
+/// 包含 `shelf` 实现的http客户端
+///
+/// - [Flutter3ShelfHttp] http服务
+/// - [Flutter3ShelfWebSocketServer] 支持[WebSocket]的服务
+/// - [DebugLogWebSocketServer] 调试日志服务
+///
+/// - [LocalUdpClient] udp客户端
+/// - [LocalUdpServer] udp服务端
 
 final _defaultMimeTypeResolver = MimeTypeResolver();
 
@@ -66,29 +72,22 @@ shelf.Response responseOk(
   Map<String, /* String | List<String> */ Object>? headers,
   Encoding? encoding = utf8,
   Map<String, Object>? context,
-}) =>
-    shelf.Response.ok(
-      body,
-      headers: headers,
-      encoding: encoding,
-      context: context,
-    );
+}) => shelf.Response.ok(
+  body,
+  headers: headers,
+  encoding: encoding,
+  context: context,
+);
 
 /// 响应成功, 文本类型
 shelf.Response responseOkHtml(
   Object? body, {
   Map<String, /* String | List<String> */ Object>? headers = const {
-    HttpHeaders.contentTypeHeader: 'text/html'
+    HttpHeaders.contentTypeHeader: 'text/html',
   },
   Encoding? encoding = utf8,
   Map<String, Object>? context,
-}) =>
-    responseOk(
-      body,
-      headers: headers,
-      encoding: encoding,
-      context: context,
-    );
+}) => responseOk(body, headers: headers, encoding: encoding, context: context);
 
 /// 响应成功, 文件类型
 shelf.Response responseOkFile({
@@ -98,18 +97,21 @@ shelf.Response responseOkFile({
   Encoding? encoding = utf8,
   Map<String, Object>? context,
 }) {
-  final file = File(filePath!);
+  final file = filePath?.file();
   return responseOk(
-    fileStream ?? file.openRead(),
-    headers: headers ??
-        {
-          HttpHeaders.contentDisposition:
-              'attachment; filename="${file.fileName()}"',
-          HttpHeaders.contentLengthHeader: file.lengthSync().toString(),
-          HttpHeaders.contentTypeHeader:
-              _defaultMimeTypeResolver.lookup(file.path) ??
-                  'application/octet-stream'
-        },
+    fileStream ?? file?.openRead(),
+    headers:
+        headers ??
+        (file == null
+            ? null
+            : {
+                HttpHeaders.contentDisposition:
+                    'attachment; filename="${file.fileName()}"',
+                HttpHeaders.contentLengthHeader: file.lengthSync().toString(),
+                HttpHeaders.contentTypeHeader:
+                    _defaultMimeTypeResolver.lookup(file.path) ??
+                    'application/octet-stream',
+              }),
     encoding: encoding,
     context: context,
   );
