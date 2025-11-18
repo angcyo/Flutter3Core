@@ -90,6 +90,13 @@ shelf.Response responseOkHtml(
 }) => responseOk(body, headers: headers, encoding: encoding, context: context);
 
 /// 响应成功, 文件类型
+///
+/// ```
+/// Invalid HTTP header field value: "attachment;
+/// filename=\"LOG_中国人_1.0.1_3_2025-11-18_15-03-38_745.zip\"" (at character 27)
+/// attachment; filename="LOG_中国人_1.0.1_3_2025-11-18_15-03-38_745.zip"
+/// ```
+///
 shelf.Response responseOkFile({
   String? filePath,
   Stream<List<int>>? fileStream,
@@ -106,7 +113,7 @@ shelf.Response responseOkFile({
             ? null
             : {
                 HttpHeaders.contentDisposition:
-                    'attachment; filename="${file.fileName()}"',
+                    'attachment; filename="${file.fileName().encodeUri()}"',
                 HttpHeaders.contentLengthHeader: file.lengthSync().toString(),
                 HttpHeaders.contentTypeHeader:
                     _defaultMimeTypeResolver.lookup(file.path) ??

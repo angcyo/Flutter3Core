@@ -159,6 +159,8 @@ class Flutter3ShelfHttp {
       .addMiddleware((innerHandler) {
         return (request) {
           assert(() {
+            final headers = request.headers;
+            //debugger();
             l.d("收到请求[${request.method}]->${request.url}");
             return true;
           }());
