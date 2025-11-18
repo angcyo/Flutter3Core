@@ -116,18 +116,19 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
       final globalTheme = GlobalTheme.of(context);
       result = _buildRouteState(context)
           .wrapTextStyle(
-              style: TextStyle(
-            fontSize: 8,
-            fontWeight: FontWeight.bold,
-            color: globalTheme.accentColor,
-            shadows: const <Shadow>[
-              Shadow(
-                offset: Offset(1, 1),
-                color: Colors.black,
-                blurRadius: 2,
-              ),
-            ],
-          ))
+            style: TextStyle(
+              fontSize: 8,
+              fontWeight: FontWeight.bold,
+              color: globalTheme.accentColor,
+              shadows: const <Shadow>[
+                Shadow(
+                  offset: Offset(1, 1),
+                  color: Colors.black,
+                  blurRadius: 2,
+                ),
+              ],
+            ),
+          )
           .paddingAll(kM)
           .elevation(2.0)
           .animatedSize();
@@ -174,19 +175,17 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
         final radius = size.width / 2;
         final center = size.center(Offset.zero);
         canvas.drawCircle(
-            center,
-            radius,
-            Paint()
-              ..shader = radialGradientShader(
-                  radius,
-                  [
-                    globalTheme.primaryColorDark,
-                    globalTheme.primaryColor,
-                    /*Colors.transparent,*/
-                  ],
-                  center: center)
-              ..color = Colors.redAccent
-              ..style = PaintingStyle.fill);
+          center,
+          radius,
+          Paint()
+            ..shader = radialGradientShader(radius, [
+              globalTheme.primaryColorDark,
+              globalTheme.primaryColor,
+              /*Colors.transparent,*/
+            ], center: center)
+            ..color = Colors.redAccent
+            ..style = PaintingStyle.fill,
+        );
       },
       size: Size(size, size),
     ).align(Alignment.bottomLeft).size(size: interactiveSize);
@@ -199,14 +198,17 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
     if (_routeTextSpan == null) {
       postFrameCallback((_) {
         final routeList = GlobalConfig.def.findModalRouteList();
-        StringBuffer logBuffer = StringBuffer();
+        final length = routeList.length;
+        int index = 1;
+        final logBuffer = StringBuffer();
         _routeTextSpan = textSpanBuilder((builder) {
           bool isFirst = true;
           for (final part in routeList) {
             //debugger();
-            if (!isFirst) {
-              builder.newLine();
+            if (isFirst) {
+              builder.addTextStyle("当前路由信息如下↓");
             }
+            builder.newLine();
             final route = part.$1;
             final element = part.$2;
 
@@ -221,12 +223,14 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
               widgetName =
                   "${route.buildPage(context, animation, animation).runtimeType}";
             }*/
+            builder.addTextStyle("[$index/$length] ");
             builder.addTextStyle(widgetName);
             if (name != null) {
               builder.addTextStyle("($name)");
             }
             //
             isFirst = false;
+            index++;
           }
         }, logBuffer: logBuffer);
         assert(() {

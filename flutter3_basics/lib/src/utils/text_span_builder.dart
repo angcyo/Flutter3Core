@@ -146,7 +146,8 @@ class TextSpanBuilder {
   /// -> [WidgetSpan]
   TextSpan buildTextSpan() => TextSpan(children: _textSpans);
 
-  /// 构建
+  /// 使用[TextSpan]构建[Widget]
+  /// - [logBuffer] 将[TextSpan]的文本内容写入[StringBuffer]
   Widget build({
     Key? key,
     TextStyle? style,
@@ -162,16 +163,16 @@ class TextSpanBuilder {
     TextWidthBasis? textWidthBasis,
     TextHeightBehavior? textHeightBehavior,
     Color? selectionColor,
-    StringBuffer? logBuffer,
     bool selectable = false,
+    @output StringBuffer? logBuffer,
   }) {
     final textSpan = buildTextSpan();
     if (logBuffer != null) {
-      logBuffer.writeln(textSpan.toPlainText());
+      logBuffer.write(textSpan.toPlainText());
     }
     return selectable
         ? SelectableText.rich(
-            buildTextSpan(),
+            textSpan,
             key: key,
             style: style,
             strutStyle: strutStyle,
@@ -188,7 +189,7 @@ class TextSpanBuilder {
             selectionColor: selectionColor,*/
           )
         : Text.rich(
-            buildTextSpan(),
+            textSpan,
             key: key,
             style: style,
             strutStyle: strutStyle,
