@@ -39,6 +39,9 @@ class SingleBottomInputDialog extends StatefulWidget
   final String? inputText;
 
   @override
+  final ValueNotifier<String?>? inputTextNotifier;
+
+  @override
   final bool? autofocus;
 
   @override
@@ -106,6 +109,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputFieldConfig,
     this.inputHint,
     this.inputText,
+    this.inputTextNotifier,
     this.autofocus = true,
     this.onInputTextChanged,
     this.onInputTextResult,
@@ -139,6 +143,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.inputFieldConfig,
     this.inputHint,
     this.inputText,
+    this.inputTextNotifier,
     this.autofocus = true,
     this.onInputTextChanged,
     this.onInputTextResult,
@@ -167,6 +172,7 @@ class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
     with InputStateMixin {
   @override
   Widget build(BuildContext context) {
+    l.d("input->${textMixin}");
     final globalTheme = GlobalTheme.of(context);
     //input
     final input = buildInputWidgetMixin(context);

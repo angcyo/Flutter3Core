@@ -919,6 +919,14 @@ extension StringEx on String {
 
   int charAt(int index) => codeUnitAt(index);
 
+  /// 从后开始取多少位字符串
+  /// - [substring]
+  String lastSubstring(int count) {
+    final length = this.length;
+    //return substring(length - min(length, 10));
+    return substring(max(0, length - count));
+  }
+
   /// 将ascii对应的int值解析出来
   /// 7e2b7dfc->2116779516
   /// [StringEx.toAsciiInt]

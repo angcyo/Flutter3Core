@@ -76,6 +76,9 @@ mixin InputMixin {
   /// 默认输入的文本
   String? get inputText => null;
 
+  /// - 支持监听改变的[inputText]
+  ValueNotifier<String?>? get inputTextNotifier => null;
+
   /// 是否自动获取焦点
   bool? get autofocus => false;
 
@@ -119,7 +122,12 @@ mixin InputMixin {
 /// 输入状态的混入
 /// [InputMixin]
 mixin InputStateMixin<T extends StatefulWidget> on State<T> {
+  /// 核心配置[InputMixin]
   InputMixin get inputMixin => widget as InputMixin;
+
+  /// 获取当前对应的文本
+  String? get textMixin =>
+      inputMixin.inputTextNotifier?.value ?? inputMixin.inputText;
 
   /// 输入框初始化的值
   String? initialInputText;
@@ -129,7 +137,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 输入框配置
   late final TextFieldConfig inputMixinConfig = TextFieldConfig(
-    text: inputMixin.inputText,
+    text: textMixin,
     hintText: inputMixin.inputHint,
     autofocus: inputMixin.autofocus,
     textInputAction: TextInputAction.done,
@@ -212,18 +220,38 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
 
   @override
   void initState() {
-    initialInputText = inputMixin.inputText;
+    initialInputText = textMixin;
     currentInputText = initialInputText;
     _inputMixinConfig.updateText(currentInputText);
+    inputMixin.inputTextNotifier?.addListener(updateInputText);
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant T oldWidget) {
-    initialInputText = inputMixin.inputText;
+    initialInputText = textMixin;
     currentInputText = initialInputText;
     _inputMixinConfig.updateText(currentInputText);
+    if (oldWidget is InputMixin) {
+      (oldWidget as InputMixin).inputTextNotifier?.removeListener(
+        updateInputText,
+      );
+    }
+    inputMixin.inputTextNotifier?.addListener(updateInputText);
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    inputMixin.inputTextNotifier?.removeListener(updateInputText);
+    super.dispose();
+  }
+
+  /// - [InputMixin.inputTextNotifier] 输入改变时调用, 用于更新界面
+  @overridePoint
+  void updateInputText() {
+    _inputMixinConfig.updateText(textMixin);
+    updateState();
   }
 
   /// 输入结果回调

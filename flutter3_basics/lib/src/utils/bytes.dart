@@ -241,7 +241,7 @@ class BytesWriter {
   }
 
   /// 写入一个字符串.
-  /// - [writeEnd] 默认true
+  /// - [writeEnd] 是否写入结束字节0x00. 默认true
   ///
   /// - [writeText]
   /// - [writeString]
