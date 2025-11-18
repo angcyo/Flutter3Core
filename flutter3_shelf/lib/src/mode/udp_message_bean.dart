@@ -115,7 +115,8 @@ class UdpMessageBean {
   String? get text {
     //debugger();
     if (type == UdpMessageTypeEnum.api.name) {
-      return apiBean?.data?.utf8Str;
+      final apiBean = this.apiBean;
+      return apiBean?.data?.utf8Str ?? apiBean?.headers?.toString();
     }
     return data?.utf8Str;
   }

@@ -446,7 +446,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 打开url
   ///
   /// ```
-  /// GlobalConfig.def.openUrlFn = (context, url) {
+  /// GlobalConfig.def.openUrlFn = (context, url, meta) {
   ///     if (isDesktopOrWeb) {
   ///       url?.launch(mode: LaunchMode.platformDefault);
   ///     } else {

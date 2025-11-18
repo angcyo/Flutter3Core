@@ -76,6 +76,12 @@ Future runGlobalApp(
 
   lTime.tick();
 
+  // 打开url链接
+  GlobalConfig.def.openUrlFn = (context, url, meta) {
+    url?.launch(mode: LaunchMode.platformDefault);
+    return Future.value(true);
+  };
+
   // 分享app日志
   GlobalConfig.def.shareAppLogFn = (context, data) async {
     await shareAppLog();
