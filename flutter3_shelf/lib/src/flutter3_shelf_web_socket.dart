@@ -283,6 +283,9 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
       } else if (path == "..") {
         // 请求上级
         targetPath = filePathDir.parent.path;
+      } else if (path?.isFileExistsSync() == true) {
+        // 请求文件
+        targetPath = path!;
       } else {
         // 请求子目录
         targetPath = rootPath.connectUrl(path);
@@ -292,9 +295,11 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
         return responseOkFile(filePath: targetPath);
       } else {
         //返回文件目录
-        buffer.write(ShelfHtml.getFilesHeaderHtml("文件浏览", targetPath));//头
-        buffer.write(await ShelfHtml.getFilesListHtml(rootPath, targetPath));//内容
-        buffer.write(ShelfHtml.getFilesFooterHtml());//尾
+        buffer.write(ShelfHtml.getFilesHeaderHtml("文件浏览", targetPath)); //头
+        buffer.write(
+          await ShelfHtml.getFilesListHtml(rootPath, targetPath),
+        ); //内容
+        buffer.write(ShelfHtml.getFilesFooterHtml()); //尾
         return responseOkHtml(buffer.toString());
       }
     });

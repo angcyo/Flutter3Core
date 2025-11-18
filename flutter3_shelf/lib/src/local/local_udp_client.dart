@@ -81,6 +81,12 @@ class LocalUdpClient extends LocalUdpBase {
       } else if (apiBean.method == UdpApis.requestAppShareLog().method) {
         final message = UdpMessageBean.api(await apiBean.responseAppShareLog());
         sendRemoteMessage(message, remoteIdList: [bean.deviceId!]);
+      } else if (apiBean.method == UdpApis.requestLocalServer().method) {
+        final message = UdpMessageBean.api(await apiBean.responseLocalServer());
+        sendRemoteMessage(message, remoteIdList: [bean.deviceId!]);
+      } else {
+        final message = UdpMessageBean.text("无法处理的请求->${apiBean.method}");
+        sendRemoteMessage(message, remoteIdList: [bean.deviceId!]);
       }
       //l.i("收到指令->$apiBean");
       /*() async {

@@ -54,6 +54,11 @@ extension AppLogDirectoryEx on Directory {
 /// - [includeFilePath] 是否要包含文件路径数据的分享
 /// - [clearTempPath] 是否要清理临时文件
 /// - [share] 是否要分享
+///
+/// ```
+/// /storage/emulated/0/Android/data/com.laser.abc.beeb.app/cache/LOG_蜂鸟激光_1.0.1_3_2025-11-18_14-28-32_179.zip
+/// ```
+///
 /// @return 返回zip包文件本地全路径
 Future<String> shareAppLog({
   String? logName,
