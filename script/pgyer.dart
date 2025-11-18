@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -23,7 +24,7 @@ const apiBase = "https://www.pgyer.com/apiv2/app";
 void main(List<String> arguments) async {
   colorLog('[pgyer]工作路径->$currentPath');
   final pgyerConfig = $value("pgyer");
-  if (pgyerConfig! is YamlMap) {
+  if (pgyerConfig is! Map) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[pgyer]脚本";
   }
   final apiKey = pgyerConfig["api_key"];
@@ -53,12 +54,15 @@ void main(List<String> arguments) async {
         final buildType = filePath.endsWith(".apk")
             ? "android"
             : filePath.endsWith(".ipa")
-                ? "ios"
-                : null;
+            ? "ios"
+            : null;
         if (buildType != null) {
           final versionMap = await _getVersionDes(folder);
-          final tokenText = await _getCOSToken(apiKey, buildType,
-              buildUpdateDescription: versionMap?["versionDes"]);
+          final tokenText = await _getCOSToken(
+            apiKey,
+            buildType,
+            buildUpdateDescription: versionMap?["versionDes"],
+          );
 
           final tokenJson = jsonDecode(tokenText);
 
@@ -67,8 +71,10 @@ void main(List<String> arguments) async {
             final result = await _uploadAppFile(tokenJson["data"], file);
             if (result) {
               await _writeUploadRecord(folder, file);
-              final url =
-                  await _checkAppIsPublish(apiKey, tokenJson["data"]["key"]);
+              final url = await _checkAppIsPublish(
+                apiKey,
+                tokenJson["data"]["key"],
+              );
               if (useFeishuWebhook != false &&
                   index == length - 1 &&
                   url != null) {
@@ -187,9 +193,11 @@ Future<String> _getCOSToken(
     "buildDescription": buildDescription,
     "buildUpdateDescription": buildUpdateDescription,
   }.removeAllNull();
-  final response = await http.post(Uri.parse(api),
-      body: postBody,
-      headers: {"Content-Type": "application/x-www-form-urlencoded"});
+  final response = await http.post(
+    Uri.parse(api),
+    body: postBody,
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+  );
   final body = response.body;
   print(body);
   return body;
@@ -238,10 +246,11 @@ Future<bool> _uploadAppFile(dynamic tokenData, File file) async {
 Future _checkAppIsPublish(String apiKey, String buildKey) async {
   const api = "$apiBase/buildInfo";
   //get请求
-  final response = await http.get(Uri.parse(api).replace(queryParameters: {
-    "_api_key": apiKey,
-    "buildKey": buildKey,
-  }));
+  final response = await http.get(
+    Uri.parse(
+      api,
+    ).replace(queryParameters: {"_api_key": apiKey, "buildKey": buildKey}),
+  );
   print(response.body);
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body)?["data"];
