@@ -213,7 +213,8 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
             final element = part.$2;
 
             final name = route.settings.name;
-            String? widgetName = element?.widget.runtimeType.toString();
+            final widget = element?.widget;
+            String? widgetName = widget.runtimeType.toString();
             /*if (route is MaterialPageRoute) {
               widgetName = "${route.builder(context).runtimeType}";
             } else if (route is CupertinoPageRoute) {
@@ -227,6 +228,11 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
             builder.addTextStyle(widgetName);
             if (name != null) {
               builder.addTextStyle("($name)");
+            }
+            if (widget is TranslationTypeImpl) {
+              builder.addTextStyle(
+                " - ${(widget as TranslationTypeImpl).translationType.name}",
+              );
             }
             //
             isFirst = false;

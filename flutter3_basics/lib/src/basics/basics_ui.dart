@@ -599,9 +599,15 @@ extension WidgetEx on Widget {
       key == null ? this : KeyedSubtree(key: key, child: this);
 
   /// [Tooltip] 提示
-  Widget tooltip(String? tip, {InlineSpan? richMessage}) => tip == null
+  Widget tooltip(String? tip, {InlineSpan? richMessage, bool? preferBelow}) =>
+      tip == null
       ? this
-      : Tooltip(message: tip, richMessage: richMessage, child: this);
+      : Tooltip(
+          message: tip,
+          richMessage: richMessage,
+          preferBelow: preferBelow,
+          child: this,
+        );
 
   /// [Hero]
   /// hero动画不能在Dialog中使用
