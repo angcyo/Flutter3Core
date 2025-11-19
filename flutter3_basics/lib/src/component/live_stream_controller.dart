@@ -148,6 +148,8 @@ class LiveStreamController<T> {
   /// 监听流
   /// [allowBackward] 是否允许回溯, 是否发送最后一个值
   /// [autoCancel] 当[onData]返回true时, 是否自动取消监听
+  ///
+  /// - [StreamSubscription.cancel]
   @callPoint
   StreamSubscription<T> listen(
     dynamic Function(T data) onData, {
