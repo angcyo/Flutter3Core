@@ -146,13 +146,19 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
 /// [WidgetsBinding.addObserver]
 /// [WidgetsBinding.removeObserver]
 class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
+  /// 全局App生命周期监听
+  /// 刚启动的时候, 不会有这个值
+  static LiveStream<AppLifecycleState?> appLifecycleStateStream = $live();
+
   /// 注册一个全局的生命周期监听
+  @api
   static AppLifecycleLog install() {
     WidgetsFlutterBinding.ensureInitialized();
     return AppLifecycleLog();
   }
 
   /// 移除监听
+  @api
   void uninstall() {
     dispose();
   }
@@ -168,4 +174,18 @@ class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
   void didChangeMetrics() {
     super.didChangeMetrics();
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    appLifecycleStateStream <= state;
+  }
 }
+
+/// 判断App是否处于后台运行
+bool get $isAppPaused =>
+    AppLifecycleLog.appLifecycleStateStream.value == AppLifecycleState.paused;
+
+/// 判断App是否处于前台运行
+bool get $isAppResumed =>
+    AppLifecycleLog.appLifecycleStateStream.value == AppLifecycleState.resumed;
