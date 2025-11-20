@@ -26,12 +26,11 @@ class SliverExpandWidget extends SingleChildRenderObjectWidget
   });
 
   @override
-  SliverExpandBox createRenderObject(BuildContext context) =>
-      SliverExpandBox(
-        alignment: alignment,
-        excludeWidth: excludeWidth,
-        excludeHeight: excludeHeight,
-      );
+  SliverExpandBox createRenderObject(BuildContext context) => SliverExpandBox(
+    alignment: alignment,
+    excludeWidth: excludeWidth,
+    excludeHeight: excludeHeight,
+  );
 
   @override
   void updateRenderObject(BuildContext context, SliverExpandBox renderObject) {
@@ -110,7 +109,7 @@ class SliverExpandBox extends RenderShiftedBox {
         height = parentConstraints.viewportMainAxisExtent;
       }
     }
-    // debugger();
+    //debugger();
     size = Size(width - excludeWidth, height - excludeHeight);
 
     //child
@@ -158,17 +157,19 @@ class SliverExpandBox extends RenderShiftedBox {
     }*/
   }
 
-/*@override
+  @override
   void paint(PaintingContext context, ui.Offset offset) {
-    assert(() {
+    super.paint(context, offset);
+    /*assert(() {
       context.canvas.drawRect(
         offset & size,
-        Paint()..color = Colors.purpleAccent,
+        Paint()
+          ..color = Colors.purpleAccent
+          ..style = PaintingStyle.stroke,
       );
       return true;
-    }());
-    super.paint(context, offset);
-  }*/
+    }());*/
+  }
 }
 
 extension SliverExpandWidgetEx on Widget {
@@ -177,7 +178,11 @@ extension SliverExpandWidgetEx on Widget {
     AlignmentDirectional alignment = AlignmentDirectional.center,
     double excludeWidth = 0,
     double excludeHeight = 0,
+    bool enable = true,
   }) {
+    if (!enable) {
+      return this;
+    }
     return SliverExpandWidget(
       alignment: alignment,
       excludeWidth: excludeWidth,

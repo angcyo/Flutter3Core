@@ -66,8 +66,10 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   ///系统窗口改变回调 如键盘弹出 屏幕旋转等
   @override
   void didChangeMetrics() {
-    '[${classHash()}]AppLifecycle didChangeMetrics screen:${screenWidth.toDigits(ensureInt: true)}x${screenHeight.toDigits(ensureInt: true)} ${screenInch.toDigits(ensureInt: true)}\''
+    '[${classHash()}]didChangeMetrics'
+            ' screen:${screenWidth.toDigits(ensureInt: true)}x${screenHeight.toDigits(ensureInt: true)} ${screenInch.toDigits(ensureInt: true)}\''
             ' device:${deviceWidth.toDigits(ensureInt: true)}x${deviceHeight.toDigits(ensureInt: true)} ${deviceInch.toDigits(ensureInt: true)}\' [$dpr]'
+            ' viewInsets:${platformMediaQueryData.viewInsets} viewPadding:${platformMediaQueryData.viewPadding}'
         .writeToLog(level: L.verbose);
     super.didChangeMetrics();
   }
@@ -150,6 +152,12 @@ class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
   /// 刚启动的时候, 不会有这个值
   static LiveStream<AppLifecycleState?> appLifecycleStateStream = $live();
 
+  /// 底部键盘的高度监听
+  /// - [MediaQueryData]
+  /// - [MediaQueryData.viewInsets]
+  /// - [platformMediaQueryData]
+  static LiveStream<double?> appBottomInsetHeightStream = $live();
+
   /// 注册一个全局的生命周期监听
   @api
   static AppLifecycleLog install() {
@@ -173,6 +181,7 @@ class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
+    appBottomInsetHeightStream <= platformMediaQueryData.viewInsets.bottom;
   }
 
   @override
@@ -189,3 +198,7 @@ bool get $isAppPaused =>
 /// 判断App是否处于前台运行
 bool get $isAppResumed =>
     AppLifecycleLog.appLifecycleStateStream.value == AppLifecycleState.resumed;
+
+/// 判断App键盘是否显示
+bool get $isAppKeyboardShow =>
+    (AppLifecycleLog.appBottomInsetHeightStream.value ?? 0) > 0;
