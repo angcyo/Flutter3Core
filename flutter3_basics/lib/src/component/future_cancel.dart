@@ -28,6 +28,10 @@ class FutureCancelToken {
   @api
   void cancel([Object? reason]) {
     if (!isCanceled && !_completer.isCompleted) {
+      assert(() {
+        l.w("[${classHash()}]取消请求->$reason");
+        return true;
+      }());
       _cancelException = FutureCancelException(
         reason: reason,
         stackTrace: StackTrace.current,
@@ -43,10 +47,7 @@ class FutureCancelException implements Exception {
   final Object? reason;
   final StackTrace? stackTrace;
 
-  FutureCancelException({
-    this.reason,
-    this.stackTrace,
-  });
+  FutureCancelException({this.reason, this.stackTrace});
 
   @override
   String toString() {
