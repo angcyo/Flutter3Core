@@ -23,19 +23,19 @@ const apiBase = "https://www.pgyer.com/apiv2/app";
 
 void main(List<String> arguments) async {
   colorLog('[pgyer]工作路径->$currentPath');
-  final pgyerConfig = $value("pgyer");
-  if (pgyerConfig is! Map) {
+  final config = $value("pgyer");
+  if (config is! Map) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[pgyer]脚本";
   }
-  final apiKey = pgyerConfig["api_key"];
+  final apiKey = config["api_key"];
   if (apiKey == null) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置蒲公英[pgyer_api_key]";
   }
 
   //是否要使用飞书的webhook通知
-  final useFeishuWebhook = pgyerConfig["use_feishu_webhook"];
+  final useFeishuWebhook = config["use_feishu_webhook"];
   //需要上传的文件夹路径集合
-  final path = pgyerConfig["path"];
+  final path = config["path"];
 
   //上传成功的数量
   int count = 0;
@@ -79,8 +79,8 @@ void main(List<String> arguments) async {
                   index == length - 1 &&
                   url != null) {
                 //只在最后一个文件上传成功之后, 进行飞书webhook通知
-                final webhook = pgyerConfig["feishu_webhook"];
-                final logUrl = pgyerConfig["change_log_url"];
+                final webhook = config["feishu_webhook"];
+                final logUrl = config["change_log_url"];
                 await sendFeishuWebhookInteractive(
                   webhook,
                   assembleVersionTitle(versionMap),

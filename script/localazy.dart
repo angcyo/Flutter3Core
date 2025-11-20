@@ -16,39 +16,48 @@ import '_script_common.dart';
 /// ## 脚本配置项
 ///
 /// ```
-/// localazy_feishu_webhook: xxx
-/// localazy_write_key: xxx
-/// localazy_read_key: xxx
-/// localazy_download_folder: .output/.download
-/// localazy_upload_folder: /Users/angcyo/project/android/UICoreDemo/.apk/Android_LDS/中文
-/// localazy_upload_files:
-///   - "**.xml"
+/// localazy:
+///   write_key:
+///   read_key:
+///   feishu_webhook: https://open.feishu.cn/open-apis/bot/v2/hook/7c739dfe-ce69-4525-98c6-ed93579cfe57
+///   upload_folder: /Users/angcyo/project/android/UICoreDemo/.apk/Android_LDS/中文
+///   upload_files:
+///     - "**.xml"
+///   download_folder: .output/.download
+///   do_download: true
+///   do_upload: true
+///   do_webhook: true
 /// ```
 ///
 void main(List<String> arguments) async {
   colorLog('[localazy]工作路径->$currentPath');
+  final config = $value("localazy");
+  if (config is! Map) {
+    throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[localazy]脚本";
+  }
+
   //await runCommand("localazy", args: ["list"]);
 
-  final lang = $value("localazy_upload_lang") ?? "zh-Hans-CN";
-  final uploadFiles = $list("localazy_upload_files");
+  final lang = config["upload_lang"] ?? "zh-Hans-CN";
+  final uploadFiles = config["upload_files"];
 
   // 是否要执行下载
-  final doDownload = $value("localazy_do_download") == true;
+  final doDownload = config["do_download"] == true;
   // 是否要执行上传
-  final doUpload = $value("localazy_do_upload") == true;
+  final doUpload = config["do_upload"] == true;
   // webhook
-  final doWebhook = $value("localazy_do_webhook") == true;
+  final doWebhook = config["do_webhook"] == true;
 
   final configOutput = "$currentPath/.output/localazy.json";
   _configLocalazyJson({
-    "writeKey": $value("localazy_write_key"),
-    "readKey": $value("localazy_read_key"),
+    "writeKey": config["write_key"],
+    "readKey": config["read_key"],
     "upload": {
-      "type": $value("localazy_upload_type") ?? "android",
-      "folder": $value("localazy_upload_folder"),
+      "type": config["upload_type"] ?? "android",
+      "folder": config["upload_folder"],
       "files": uploadFiles == null
           ? {
-              "pattern": $value("localazy_upload_pattern") ?? "**.xml",
+              "pattern": config["upload_pattern"] ?? "**.xml",
               "lang": lang,
             }
           : [
@@ -60,16 +69,16 @@ void main(List<String> arguments) async {
             ]
     },
     "download": {
-      "folder": $value("localazy_download_folder"),
+      "folder": config["download_folder"],
       "files": {
-        "output": $value("localazy_download_output") ?? r"${lang}/${file}",
+        "output": config["download_output"] ?? r"${lang}/${file}",
       }
     }
   }, configOutput);
 
   //--
   if (doDownload) {
-    ensureFolder($value("localazy_download_folder"));
+    ensureFolder(config["download_folder"]);
 
     //执行下载
     await runCommand("localazy", args: [
@@ -89,7 +98,7 @@ void main(List<String> arguments) async {
   }
 
   if (doWebhook) {
-    final webhook = $value("localazy_feishu_webhook"); //feishu_webhook_test
+    final webhook = config["feishu_webhook"]; //feishu_webhook_test
     await sendFeishuWebhookInteractive(
       webhook,
       "🫡 localazy(lds-app-android)",
