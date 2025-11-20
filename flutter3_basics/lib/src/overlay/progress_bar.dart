@@ -25,6 +25,10 @@ class ProgressBar extends StatefulWidget {
   /// 进度渐变颜色
   final List<Color>? progressColorList;
 
+  /// Flow进度渐变颜色, 默认是[progressColorList]
+  @defInjectMark
+  final List<Color>? flowProgressColorList;
+
   /// 进度背景颜色
   final Color? bgColor;
 
@@ -39,6 +43,7 @@ class ProgressBar extends StatefulWidget {
     this.enableFlowProgressAnimate = true,
     this.progressColor,
     this.progressColorList,
+    this.flowProgressColorList,
     this.bgColor = Colors.black12,
     this.bgColorList,
   });
@@ -92,10 +97,7 @@ class _ProgressBarState extends State<ProgressBar>
       final newProgress = widget.progress ?? 0;
       if (oldProgress != newProgress) {
         //debugger();
-        _controller.animateTo(
-          newProgress,
-          duration: kDefaultAnimationDuration,
-        );
+        _controller.animateTo(newProgress, duration: kDefaultAnimationDuration);
       }
     }
   }
@@ -127,6 +129,13 @@ class _ProgressBarState extends State<ProgressBar>
   /// 构建进度条
   Widget buildProgressBar(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    /*assert(() {
+      l.d("buildProgressBar-->${_flowController?.value}");
+      return true;
+    }());*/
+    final progressColorList =
+        widget.progressColorList ??
+        [globalTheme.primaryColor, globalTheme.primaryColorDark];
     return CustomPaint(
       painter: ProgressBarPainter(
         radius: widget.radius,
@@ -135,11 +144,9 @@ class _ProgressBarState extends State<ProgressBar>
             ? math.min(_flowController?.value ?? 0, widget.progress ?? 0)
             : null,
         progressColor: widget.progressColor ?? globalTheme.accentColor,
-        progressColorList: widget.progressColorList ??
-            [
-              globalTheme.primaryColor,
-              globalTheme.primaryColorDark,
-            ],
+        progressColorList: progressColorList,
+        flowProgressColorList:
+            widget.flowProgressColorList ?? progressColorList,
         bgColor: widget.bgColor,
         bgColorList: widget.bgColorList,
       ),
@@ -166,6 +173,10 @@ class ProgressBarPainter extends CustomPainter {
   /// 进度渐变颜色
   List<Color>? progressColorList;
 
+  /// Flow进度渐变颜色, 默认是[progressColorList]
+  @defInjectMark
+  List<Color>? flowProgressColorList;
+
   /// 进度背景颜色
   Color? bgColor;
 
@@ -178,6 +189,7 @@ class ProgressBarPainter extends CustomPainter {
     this.flowProgress,
     this.progressColor,
     this.progressColorList,
+    this.flowProgressColorList,
     this.bgColor,
     this.bgColorList,
   });
@@ -208,8 +220,10 @@ class ProgressBarPainter extends CustomPainter {
         paint.color = progressColor!;
       }
       if (progressColorList != null) {
-        paint.shader =
-            linearGradientShader(progressColorList!, rect: progressRect);
+        paint.shader = linearGradientShader(
+          progressColorList!,
+          rect: progressRect,
+        );
       }
       if (progress != null) {
         canvas.drawRRect(progressRect.toRRect(radius), paint);
@@ -217,11 +231,14 @@ class ProgressBarPainter extends CustomPainter {
 
       //--flowProgress
       if (flowProgress != null) {
+        final colorList = flowProgressColorList ?? progressColorList;
         final flowProgressRect =
             Offset.zero & Size(size.width * (flowProgress ?? 0), size.height);
-        if (progressColorList != null) {
-          paint.shader =
-              linearGradientShader(progressColorList!, rect: flowProgressRect);
+        if (colorList != null) {
+          paint.shader = linearGradientShader(
+            colorList,
+            rect: flowProgressRect,
+          );
         }
         canvas.drawRRect(flowProgressRect.toRRect(radius), paint);
       }
