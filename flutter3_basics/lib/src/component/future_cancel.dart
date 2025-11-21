@@ -15,19 +15,35 @@ class FutureCancelToken {
   FutureCancelException? _cancelException;
 
   /// 主动判断是否已经取消
-  bool get isCanceled => _cancelException != null;
+  bool get isCanceled => _cancelException != null || _completer.isCompleted;
 
   /// 监听此方法, 可以监听到取消信号
   /// When cancelled, this future will be resolved.
   @streamMark
   Future<FutureCancelException> get whenCancel => _completer.future;
 
+  /// 监听被取消了
+  @api
+  void thenCancel(void Function() callback) {
+    if (isCanceled) {
+      callback();
+    } else {
+      whenCancel.then((e) => callback());
+    }
+  }
+
   /// 调用此方法, 可以取消[Future]
   /// 使用给定的原因, 取消[Future]
   /// Cancel the request with the given [reason].
   @api
   void cancel([Object? reason]) {
-    if (!isCanceled && !_completer.isCompleted) {
+    if (isCanceled) {
+      assert(() {
+        l.w("[${classHash()}]已经被取消!");
+        return true;
+      }());
+      debugger();
+    } else {
       assert(() {
         l.w("[${classHash()}]取消请求->$reason");
         return true;
