@@ -162,8 +162,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       CanvasStateData._canvasStateCount = canvasStateList.length;
     }
     CanvasStateData._canvasStateCount++;
-    canvasStateData.name ??=
-        "${CanvasStateData.customCanvasDefNamePrefix ?? CanvasStateData.canvasDefNamePrefix} ${CanvasStateData._canvasStateCount}";
+    canvasStateData.index = CanvasStateData._canvasStateCount;
 
     canvasStateList.add(canvasStateData);
     if (notify) {
@@ -354,20 +353,17 @@ class CanvasStateData {
   @flagProperty
   static var _canvasStateCount = 0;
 
-  /// 画布默认的名称前缀
-  static const canvasDefNamePrefix = "Canvas";
-
-  /// 用户自定义的名称前缀
-  @configProperty
-  static String? customCanvasDefNamePrefix;
-
   //--
 
   /// 画布状态id1
   @configProperty
   String id = $uuid;
 
-  /// 当前画布的名字
+  /// 系统自动生成的画布索引, 支持国际化的画布名称
+  @autoInjectMark
+  int? index;
+
+  /// 当前画布的名称, 通常是自定义的名称
   @configProperty
   String? name;
 
@@ -397,6 +393,7 @@ class CanvasStateData {
   CanvasStateData({
     String? id,
     String? name,
+    int? index,
     this.isSelected = false,
     List<ElementPainter>? elements,
     List<UndoActionItem>? undoList,
@@ -408,6 +405,9 @@ class CanvasStateData {
     }
     if (name != null) {
       this.name = name;
+    }
+    if (index != null) {
+      this.index = index;
     }
     //--
     if (elements != null) {

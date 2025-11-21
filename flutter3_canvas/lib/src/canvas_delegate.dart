@@ -16,46 +16,6 @@ part of '../flutter3_canvas.dart';
 /// - [CanvasWidget]
 /// - [CanvasRenderBox]
 class CanvasDelegate with Diagnosticable implements TickerProvider {
-  /// 设置新建画布默认的名称前缀
-  @api
-  static void setCanvasStateDefName(String? defName) {
-    CanvasStateData.customCanvasDefNamePrefix =
-        defName ?? CanvasStateData.canvasDefNamePrefix;
-  }
-
-  @api
-  static void setCanvasStateDefNameIfNeed(String? defName) {
-    CanvasStateData.customCanvasDefNamePrefix ??=
-        defName ?? CanvasStateData.canvasDefNamePrefix;
-  }
-
-  /// [CanvasStateData.customCanvasDefNamePrefix]
-  /// ```
-  /// When an inherited widget changes, for example if the value of Theme.of() changes,
-  /// its dependent widgets are rebuilt.
-  /// If the dependent widget's reference to the inherited widget is in a constructor or an initState() method,
-  /// then the rebuilt dependent widget will not reflect the changes in the inherited widget.
-  /// ```
-  @api
-  static void postSetCanvasStateDefName(String? Function() getName) {
-    scheduleMicrotask(() {
-      setCanvasStateDefName(getName());
-    });
-    /*debugger();
-    postFrameCallbackIfNeed((_) {
-      debugger();
-      setCanvasStateDefName(getName());
-    });*/
-
-    /*postDelayCallback(() {
-      debugger();
-      postFrameCallbackIfNeed((_) {
-        debugger();
-        setCanvasStateDefName(getName());
-      });
-    }, 5.seconds);*/
-  }
-
   //region ---入口点---
 
   /// 上下文, 用来发送通知
