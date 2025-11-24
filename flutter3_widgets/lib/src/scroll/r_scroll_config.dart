@@ -20,10 +20,7 @@ class RScrollConfig {
   /// [_defaultTileTransformChain]
   final RTileTransformChain? transformChain;
 
-  const RScrollConfig({
-    this.filterChain,
-    this.transformChain,
-  });
+  const RScrollConfig({this.filterChain, this.transformChain});
 
   /// 向过滤一遍[children], 然后转换一遍[children]得到新的[children]
   @api
@@ -51,23 +48,24 @@ class RScrollConfig {
   }
 }
 
-/// 默认的滚动配置
-/// [_RScrollViewState._transformTileList]入口点
-RScrollConfig defaultScrollConfig = RScrollConfig(
-  filterChain: _defaultTileFilterChain,
-  transformChain: _defaultTileTransformChain,
-);
-
 //--
 
 /// 默认的过滤链
-const RTileFilterChain _defaultTileFilterChain =
-    RTileFilterChain([ItemTileFilter()]);
+const RTileFilterChain _defaultTileFilterChain = RTileFilterChain([
+  ItemTileFilter(),
+]);
 
 /// 默认的转换链
-RTileTransformChain _defaultTileTransformChain = RTileTransformChain([
+final RTileTransformChain _defaultTileTransformChain = RTileTransformChain([
   SliverListTransform(),
   SliverGridTransform(),
   SliverMainAxisGroupTransform(),
   SliverReorderableListTransform(),
 ]);
+
+/// 默认的滚动配置
+/// [_RScrollViewState._transformTileList]入口点
+final RScrollConfig defaultScrollConfig = RScrollConfig(
+  filterChain: _defaultTileFilterChain,
+  transformChain: _defaultTileTransformChain,
+);
