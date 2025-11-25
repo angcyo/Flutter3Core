@@ -29,6 +29,7 @@ import 'package:lifecycle/lifecycle.dart';
 import 'package:rich_readmore/rich_readmore.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wheel_picker/wheel_picker.dart';
 
 import 'src/pub/flutter_verification_code.dart';
@@ -39,6 +40,7 @@ export 'package:lifecycle/lifecycle.dart';
 export 'package:list_wheel_scroll_view_nls/list_wheel_scroll_view_nls.dart';
 export 'package:sliver_tools/sliver_tools.dart';
 export 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
+export 'package:visibility_detector/visibility_detector.dart';
 //export 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 export 'src/dialog/dialog.dart';
@@ -59,6 +61,7 @@ part 'src/pub/watermark.dart';
 part 'src/pub/wheel.dart';
 part 'src/pub/scroll/scrollview_observer_ex.dart';
 part 'src/pub/rating_bar.dart';
+part 'src/pub/widget_visibility_detector.dart';
 part 'src/scroll/page/abs_scroll_page.dart';
 part 'src/scroll/page/r_scroll_page.dart';
 part 'src/scroll/page/r_status_scroll_page.dart';
