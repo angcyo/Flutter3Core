@@ -3320,7 +3320,7 @@ extension ContextEx on BuildContext {
   /// ```
   /// 此方法不能在build阶段调用
   /// [RenderObjectEx.eachVisitChildRenderObject]
-  eachVisitChildElements(
+  void eachVisitChildElements(
     ConditionalElementVisitorDepth visitor, {
     int depth = 0,
   }) {
@@ -3429,7 +3429,7 @@ extension ContextEx on BuildContext {
   Element? findElementOfWidget<T extends Widget>() {
     Element? result;
     eachVisitChildElements((element, depth, childIndex) {
-      if (element.widget is T) {
+      if (element.widget is T || element.widget.runtimeType == T) {
         result = element;
         return false;
       }
@@ -3442,7 +3442,8 @@ extension ContextEx on BuildContext {
   T? findState<T extends State>() {
     T? result;
     eachVisitChildElements((element, depth, childIndex) {
-      if (element is StatefulElement && element.state is T) {
+      if (element is StatefulElement &&
+          (element.state is T || element.state.runtimeType == T)) {
         result = element.state as T;
         return false;
       }
