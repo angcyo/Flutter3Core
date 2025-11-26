@@ -51,6 +51,9 @@ part of flutter3_widgets;
 ///
 /// `animated_flip_counter: ^0.3.4`
 /// https://github.com/h65wang/flutter-animated-counter
+///
+/// `animated_digit: ^3.3.2`
+/// https://pub.dev/packages/animated_digit
 class AnimatedFlipCounter extends StatelessWidget {
   /// The value of this counter.
   ///
