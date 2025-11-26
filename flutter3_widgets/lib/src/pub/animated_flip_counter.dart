@@ -4,6 +4,51 @@ part of flutter3_widgets;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/11/26
 ///
+/// # Animated Counter
+///
+/// ```
+/// AnimatedFlipCounter(
+///   duration: Duration(milliseconds: 500),
+///   value: _value, // pass in a value like 2014
+/// )
+/// ```
+///
+/// # Decimal Display
+///
+/// ```
+/// AnimatedFlipCounter(
+///   value: _value,
+///   fractionDigits: 2, // decimal precision
+///   suffix: "%",
+///   textStyle: TextStyle(
+///       fontSize: 40,
+///       color: _value >= 0 ? Colors.green : Colors.red,
+///   ),
+/// )
+/// ```
+///
+/// # Custom Style
+///
+/// ```
+/// AnimatedFlipCounter(
+///   value: _value,
+///   prefix: "Level ",
+///   textStyle: TextStyle(
+///     fontSize: 80,
+///     fontWeight: FontWeight.bold,
+///     letterSpacing: -8.0,
+///     color: Colors.yellow,
+///     shadows: [
+///       BoxShadow(
+///         color: Colors.orange,
+///         offset: Offset(8, 8),
+///         blurRadius: 8,
+///       ),
+///     ],
+///   ),
+/// )
+/// ```
+///
 /// `animated_flip_counter: ^0.3.4`
 /// https://github.com/h65wang/flutter-animated-counter
 class AnimatedFlipCounter extends StatelessWidget {
