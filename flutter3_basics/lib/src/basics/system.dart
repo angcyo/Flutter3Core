@@ -240,10 +240,26 @@ extension SystemWidgetEx on Widget {
       ScreenOrientationWidget(orientations, child: this);
 }
 
+/// @return 键盘当前是否可见。
+bool isKeyboardVisible(BuildContext context) {
+  var myContext = context.findRootAncestorStateOfType<ScaffoldState>()?.context;
+  myContext ??= context;
+  var keyboardVisible = false;
+  if (MediaQuery.of(myContext).viewInsets.bottom > 0) {
+    keyboardVisible = true;
+  }
+  return keyboardVisible;
+}
+
 /// 隐藏键盘
 /// 发送消息以隐藏键盘，但不改变输入框的焦点
-Future<T?> hideKeyboard<T>() =>
-    SystemChannels.textInput.invokeMethod<T>('TextInput.hide');
+Future<T?> hideKeyboard<T>({BuildContext? unfocus}) {
+  final result = SystemChannels.textInput.invokeMethod<T>('TextInput.hide');
+  if (unfocus != null) {
+    FocusScope.of(unfocus).unfocus();
+  }
+  return result;
+}
 
 //region network
 
