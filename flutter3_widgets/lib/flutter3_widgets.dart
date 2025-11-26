@@ -62,6 +62,7 @@ part 'src/pub/wheel.dart';
 part 'src/pub/scroll/scrollview_observer_ex.dart';
 part 'src/pub/rating_bar.dart';
 part 'src/pub/widget_visibility_detector.dart';
+part 'src/pub/animated_flip_counter.dart';
 part 'src/scroll/page/abs_scroll_page.dart';
 part 'src/scroll/page/r_scroll_page.dart';
 part 'src/scroll/page/r_status_scroll_page.dart';
