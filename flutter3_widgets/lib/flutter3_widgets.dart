@@ -102,6 +102,7 @@ part 'src/widgets/app/search.dart';
 part 'src/widgets/app/tab.dart';
 part 'src/widgets/app/text_field.dart';
 part 'src/widgets/app/slider_captcha.dart';
+part 'src/widgets/app/mask_text_input_formatter.dart';
 part 'src/widgets/child_background_widget.dart';
 part 'src/widgets/layout/flow_layout.dart';
 part 'src/widgets/layout/frame_layout.dart';
