@@ -666,6 +666,8 @@ class SingleInputWidget extends StatefulWidget {
   /// [numberTextInputFormatter]
   /// [decimalTextInputFormatter]
   ///
+  /// https://pub.dev/packages/mask_text_input_formatter
+  ///
   final List<TextInputFormatter>? inputFormatters;
 
   /// 输入的文本样式
