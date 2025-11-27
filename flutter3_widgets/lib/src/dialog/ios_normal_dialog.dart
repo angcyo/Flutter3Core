@@ -11,8 +11,10 @@ class IosNormalDialog extends AndroidNormalDialog {
   const IosNormalDialog({
     super.key,
     super.title,
+    super.titleTextAlign,
     super.titleWidget,
     super.message,
+    super.messageTextAlign,
     super.messageWidget,
     //--
     super.cancel,

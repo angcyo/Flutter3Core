@@ -16,6 +16,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 标题
   final String? title;
   final Widget? titleWidget;
+  final TextAlign? titleTextAlign;
 
   /// 内容
   final String? message;
@@ -80,6 +81,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   const AndroidNormalDialog({
     super.key,
     this.title,
+    this.titleTextAlign,
     this.titleWidget,
     this.message,
     this.messageWidget,
@@ -212,7 +214,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
                   globalTheme.textGeneralStyle.copyWith(
                     fontSize: globalTheme.textInfoStyle.fontSize,
                   ),
-              textAlign: textAlign,
+              textAlign: messageTextAlign ?? textAlign,
             )
             .paddingAll(padding ?? gap);
   }
@@ -232,7 +234,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
                   globalTheme.textTitleStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
-              textAlign: textAlign,
+              textAlign: titleTextAlign ?? textAlign,
             )
             .padding(
               gap,
