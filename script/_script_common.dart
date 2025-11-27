@@ -25,22 +25,38 @@ final String _reset = '\x1B[0m';
 
 /// 输出带颜色的日志
 void colorLog(dynamic msg, [int col = 93]) {
-  print('\x1B[38;5;${col}m$msg$_reset');
+  if (Platform.isWindows) {
+    print(msg);
+  } else {
+    print('\x1B[38;5;${col}m$msg$_reset');
+  }
 }
 
 /// 输出带颜色的错误日志
 void colorErrorLog(dynamic msg, [int col = 9]) {
-  print('\x1B[38;5;${col}m$msg$_reset');
+  if (Platform.isWindows) {
+    print(msg);
+  } else {
+    print('\x1B[38;5;${col}m$msg$_reset');
+  }
 }
 
 /// 控制台前景颜色日志输出
 void fgPrint(dynamic msg, [int col = 93]) {
-  print('\x1B[38;5;${col}m$msg\x1B[0m');
+  if (Platform.isWindows) {
+    print(msg);
+  } else {
+    print('\x1B[38;5;${col}m$msg\x1B[0m');
+  }
 }
 
 /// 控制台背景颜色日志输出
 void bgPrint(dynamic msg, [int col = 93]) {
-  print('\x1B[48;5;${col}m$msg\x1B[0m');
+  if (Platform.isWindows) {
+    print(msg);
+  } else {
+    print('\x1B[48;5;${col}m$msg\x1B[0m');
+  }
 }
 
 //--
@@ -111,8 +127,9 @@ dynamic getScriptYamlValue(String key) {
 
   if ($pubspec == null) {
     final yamlFile = File("$currentPath/pubspec.yaml");
-    $pubspec =
-        loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
+    $pubspec = loadYaml(
+      yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
+    );
   }
 
   final localValue = $localYaml?[key];
@@ -120,18 +137,10 @@ dynamic getScriptYamlValue(String key) {
   final pubValue = $pubspec?[key];
 
   if (localValue is YamlMap && value is YamlMap && pubValue is YamlMap) {
-    return {
-      ...value,
-      ...localValue,
-      ...pubValue,
-    };
+    return {...value, ...localValue, ...pubValue};
   }
   if (localValue is YamlList && value is YamlList && pubValue is YamlList) {
-    return [
-      ...value,
-      ...localValue,
-      ...pubValue,
-    ];
+    return [...value, ...localValue, ...pubValue];
   }
   return localValue ?? value ?? pubValue;
 }
@@ -153,8 +162,9 @@ dynamic getScriptYamlValuePath(String keyPath) {
 
   if ($pubspec == null) {
     final yamlFile = File("$currentPath/pubspec.yaml");
-    $pubspec =
-        loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
+    $pubspec = loadYaml(
+      yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
+    );
   }
 
   dynamic localValue;
@@ -172,16 +182,10 @@ dynamic getScriptYamlValuePath(String keyPath) {
     }
   }
   if (localValue is YamlMap && value is YamlMap) {
-    return {
-      ...value,
-      ...localValue,
-    };
+    return {...value, ...localValue};
   }
   if (localValue is YamlList && value is YamlList) {
-    return [
-      ...value,
-      ...localValue,
-    ];
+    return [...value, ...localValue];
   }
   return localValue ?? value;
 }
