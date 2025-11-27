@@ -53,10 +53,12 @@ void main(List<String> arguments) async {
   final versionName = _getVersionName();
   final buildTypeName = _getBuildTypeName();
   final buildFlavorName = _getBuildFlavorName();
-  print("appName: $appName"
-      "\nversionName: $versionName"
-      "\nbuildTypeName: $buildTypeName"
-      "\nbuildFlavorName: $buildFlavorName");
+  print(
+    "appName: $appName"
+    "\nversionName: $versionName"
+    "\nbuildTypeName: $buildTypeName"
+    "\nbuildFlavorName: $buildFlavorName",
+  );
 
   //输出路径
   final outputPath = config["output_path"] ?? ".output";
@@ -189,10 +191,12 @@ void main(List<String> arguments) async {
   }
 
   //输出结果
-  if(collectProductCount==0){
+  if (collectProductCount == 0) {
     colorErrorLog('请检查是否执行过`flutter build xxx --release`');
   }
-  colorLog('收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}');
+  colorLog(
+    '收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}',
+  );
 }
 
 String? _getAppName() {
@@ -305,18 +309,17 @@ String? readWindowsExeName() {
 }
 
 /// 复制文件到指定路径
-bool copyFile(
-  String srcPath,
-  String dstPath, {
-  bool inner = false,
-}) {
+bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
   //如果是文件夹, 则复制文件夹
   if (FileSystemEntity.isDirectorySync(srcPath)) {
     //--
     Directory(dstPath).createSync(recursive: true);
     Directory(srcPath).listSync().forEach((element) {
-      copyFile(element.path, "$dstPath/${element.path.split("/").last}",
-          inner: true);
+      copyFile(
+        element.path,
+        "$dstPath/${element.path.split("/").last}",
+        inner: true,
+      );
     });
     if (!inner) {
       colorLog('复制文件夹: $srcPath -> $dstPath');
@@ -403,29 +406,25 @@ Future<bool> zipFolderByPlatform(
     workingDirectory: workPath,
     /*runInShell: true,*/
   );
-  colorLog('压缩文件夹: $srcPath -> $dstPath');
-  if (result.exitCode != 0) {
+  colorLog('压缩文件夹(${result.exitCode}): $srcPath -> $dstPath');
+  if (result.exitCode < 0) {
     colorErrorLog(result.stderr);
   }
-  return result.exitCode == 0;
+  return result.exitCode >= 0;
 }
 
 /// 使用平台cp命令, 复制文件夹
 Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
-  final result = await Process.run(
-    Platform.isWindows ? "cp" : "cp",
-    [
-      Platform.isWindows ? "" : "-R",
-      srcPath,
-      dstPath,
-    ],
-    runInShell: true,
-  );
-  colorLog('复制文件夹: $srcPath -> $dstPath');
-  if (result.exitCode != 0) {
+  final result = await Process.run(Platform.isWindows ? "cp" : "cp", [
+    Platform.isWindows ? "" : "-R",
+    srcPath,
+    dstPath,
+  ], runInShell: true);
+  colorLog('复制文件夹(${result.exitCode}): $srcPath -> $dstPath');
+  if (result.exitCode < 0) {
     colorErrorLog(result.stderr);
   }
-  return result.exitCode == 0;
+  return result.exitCode >= 0;
 }
 
 //--
