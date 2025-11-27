@@ -69,14 +69,16 @@ void main(List<String> arguments) async {
     //收集 apk
     final outputName = formatName(androidApkName);
     final from = "$currentPath/build/app/outputs/flutter-apk/app-release.apk";
-    final key = "app-release.apk/${File(from).lastModifiedSync()}";
-    if (copiedLines.contains(key)) {
-      colorLog("已复制过: $from");
-    } else {
-      final to = "$currentPath/$outputPath/.apk/$outputName";
-      if (copyFile(from, to)) {
-        copiedLines.add(key);
-        copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+    if (File(from).existsSync()) {
+      final key = "app-release.apk/${File(from).lastModifiedSync()}";
+      if (copiedLines.contains(key)) {
+        colorLog("已复制过: $from");
+      } else {
+        final to = "$currentPath/$outputPath/.apk/$outputName";
+        if (copyFile(from, to)) {
+          copiedLines.add(key);
+          copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+        }
       }
     }
   }
@@ -87,14 +89,16 @@ void main(List<String> arguments) async {
     final outputName = formatName(androidAppbundleName);
     final from =
         "$currentPath/build/app/outputs/bundle/release/app-release.aab";
-    final key = "app-release.aab/${File(from).lastModifiedSync()}";
-    if (copiedLines.contains(key)) {
-      colorLog("已复制过: $from");
-    } else {
-      final to = "$currentPath/$outputPath/.apk/$outputName";
-      if (copyFile(from, to)) {
-        copiedLines.add(key);
-        copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+    if (File(from).existsSync()) {
+      final key = "app-release.aab/${File(from).lastModifiedSync()}";
+      if (copiedLines.contains(key)) {
+        colorLog("已复制过: $from");
+      } else {
+        final to = "$currentPath/$outputPath/.apk/$outputName";
+        if (copyFile(from, to)) {
+          copiedLines.add(key);
+          copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+        }
       }
     }
   }
@@ -105,15 +109,16 @@ void main(List<String> arguments) async {
     final targetFileName = readIosBundleName();
     final outputName = formatName(iosIpaName);
     final from = "$currentPath/build/ios/ipa/$targetFileName.ipa";
-    final key =
-        "$targetFileName.ipa/${File(from).lastModifiedSync()}";
-    if (copiedLines.contains(key)) {
-      colorLog("已复制过: $from");
-    } else {
-      final to = "$currentPath/$outputPath/.ipa/$outputName";
-      if (copyFile(from, to)) {
-        copiedLines.add(key);
-        copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+    if (File(from).existsSync()) {
+      final key = "$targetFileName.ipa/${File(from).lastModifiedSync()}";
+      if (copiedLines.contains(key)) {
+        colorLog("已复制过: $from");
+      } else {
+        final to = "$currentPath/$outputPath/.ipa/$outputName";
+        if (copyFile(from, to)) {
+          copiedLines.add(key);
+          copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+        }
       }
     }
   }
