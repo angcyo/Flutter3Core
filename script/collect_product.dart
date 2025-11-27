@@ -63,6 +63,7 @@ void main(List<String> arguments) async {
   //记录复制过的文件
   final copiedFile = ensureFile("$currentPath/$outputPath/.copy");
   final copiedLines = copiedFile?.readAsLinesSync() ?? [];
+  int collectProductCount = 0;
 
   final androidApkName = config["android_apk_name"];
   if (androidApkName is String) {
@@ -76,6 +77,7 @@ void main(List<String> arguments) async {
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
         if (copyFile(from, to)) {
+          collectProductCount++;
           copiedLines.add(key);
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
         }
@@ -96,6 +98,7 @@ void main(List<String> arguments) async {
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
         if (copyFile(from, to)) {
+          collectProductCount++;
           copiedLines.add(key);
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
         }
@@ -116,6 +119,7 @@ void main(List<String> arguments) async {
       } else {
         final to = "$currentPath/$outputPath/.ipa/$outputName";
         if (copyFile(from, to)) {
+          collectProductCount++;
           copiedLines.add(key);
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
         }
@@ -139,11 +143,13 @@ void main(List<String> arguments) async {
         final to = "$currentPath/$outputPath/.app/$outputName";
         if (outputName.endsWith(".app")) {
           if (await copyFolderByPlatform(from, to)) {
+            collectProductCount++;
             copiedLines.add(key);
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
           }
         } else {
           if (await zipFolderByPlatform(from, to)) {
+            collectProductCount++;
             copiedLines.add(key);
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
           }
@@ -167,11 +173,13 @@ void main(List<String> arguments) async {
         final to = "$currentPath/$outputPath/.exe/$outputName";
         if (outputName.endsWith(".exe")) {
           if (copyFile(from, to)) {
+            collectProductCount++;
             copiedLines.add(key);
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
           }
         } else {
           if (await zipFolder(from, to, excludeRoot: true)) {
+            collectProductCount++;
             copiedLines.add(key);
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
           }
@@ -181,7 +189,10 @@ void main(List<String> arguments) async {
   }
 
   //输出结果
-  colorLog('收集完成, 耗时: ${DateTime.now().difference(time)}');
+  if(collectProductCount==0){
+    colorErrorLog('请检查是否执行过`flutter build xxx --release`');
+  }
+  colorLog('收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}');
 }
 
 String? _getAppName() {
