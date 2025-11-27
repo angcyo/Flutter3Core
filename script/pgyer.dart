@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
-import 'package:yaml/yaml.dart';
 
 import '_script_common.dart';
 
@@ -22,7 +20,7 @@ const host = "https://www.pgyer.com";
 const apiBase = "https://www.pgyer.com/apiv2/app";
 
 void main(List<String> arguments) async {
-  colorLog('[pgyer]工作路径->$currentPath');
+  colorLog('[$currentFileName]工作路径->$currentPath');
   final config = $value("pgyer");
   if (config is! Map) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[pgyer]脚本";
@@ -54,8 +52,8 @@ void main(List<String> arguments) async {
         final buildType = filePath.endsWith(".apk")
             ? "android"
             : filePath.endsWith(".ipa")
-            ? "ios"
-            : null;
+                ? "ios"
+                : null;
         if (buildType != null) {
           final versionMap = await _getVersionDes(folder);
           final tokenText = await _getCOSToken(

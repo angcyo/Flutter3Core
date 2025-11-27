@@ -2,55 +2,131 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
-import 'package:yaml/yaml.dart';
+
+import '_script_common.dart';
+import 'build_config.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/02/12
 ///
-/// 收集ios ipa产物
-/// 请使用`flutter build ipa --release --export-method ad-hoc`构建ipa
-/// 默认输出路径在`build/ios/ipa/xxx.ipa`
-/// 默认文件名是`ios/Runner/Info.plist`中`CFBundleName`对应的值
-///
-/// 收集macos app产物(macos)
-/// 默认输出路径在`build/macos/Build/Products/Release/xxx.app`
-/// 默认文件名是`macos/Runner/Configs/AppInfo.xcconfig`中`PRODUCT_NAME`对应的值
-///
-/// 收集windows exe产物(windows)
-/// 默认输出路径在`build/windows/x64/runner/Release`
-/// 默认文件名是`windows/CMakeLists.txt`中`BINARY_NAME`对应的值
+/// 将目标产物, 复制重命名到指定路径
 ///
 /// 配置项(在根的`script.yaml`文件中配置):
-/// 产物文件名格式: {app_name}-{version}_{build_config.buildType}.ipa
-/// - app_name : 指定收集产物的文件名
-/// - build_config.buildType : 构建类型
+/// # 可用参数:
+/// - #an: app名字, 默认是`pubspec.yaml`中的`name`对应的值
+/// - #vn: 版本名, 默认是`pubspec.yaml`中的`version`对应的值
+/// - #bn: 编译类型名, `build_config`中的`buildType`对应的值
+/// - #fn: 风味名, `build_config`中的`buildFlavor`对应的值
+///
+/// # 收集Android apk/aab 产物
+/// `flutter build apk --release`
+/// 默认输出路径在: `build/app/outputs/flutter-apk/app-release.apk` (41.9MB)
+/// `flutter build appbundle --release`
+/// 默认输出路径在: `build/app/outputs/bundle/release/app-release.aab` (38.2MB)
+///
+/// # 收集ios ipa产物
+/// 请使用`flutter build ipa --release --export-method ad-hoc`构建ipa
+/// 默认输出路径在: `build/ios/ipa/xxx.ipa`
+/// 默认文件名是: `ios/Runner/Info.plist`中`CFBundleName`对应的值
+///
+/// # 收集macos app产物(macos)
+/// `flutter build macos --release`
+/// 默认输出路径在: `build/macos/Build/Products/Release/xxx.app` (36.9MB)
+/// 默认文件名是: `macos/Runner/Configs/AppInfo.xcconfig`中`PRODUCT_NAME`对应的值
+///
+/// # 收集windows exe产物(windows)
+/// `flutter build windows --release`
+/// 默认输出路径在: `build/windows/x64/runner/Release/xxx.exe`
+/// 默认文件名是: `windows/CMakeLists.txt`中`BINARY_NAME`对应的值
 ///
 void main(List<String> arguments) async {
-  colorLog(
-      '[${Platform.script.path.split("/").last.split(".")[0]}]工作路径->${Directory.current.path}');
-  //--
-  final isCollectMacos = arguments.contains("macos");
-  final isCollectWindows = arguments.contains("windows");
+  colorLog('[$currentFileName]工作路径->$currentPath');
+  final config = $value(currentFileName);
+  if (config is! Map) {
+    throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本";
+  }
 
-  //--
-  final fileName = Platform.script.path.split("/").last.split(".")[0];
-
-  final currentPath = Directory.current.path;
+  final appName = _getAppName();
+  final versionName = _getVersionName();
+  final buildTypeName = _getBuildTypeName();
+  final buildFlavorName = _getBuildFlavorName();
+  print("appName: $appName"
+      "\nversionName: $versionName"
+      "\nbuildTypeName: $buildTypeName"
+      "\nbuildFlavorName: $buildFlavorName");
 
   //输出路径
-  final outputPath = isCollectWindows
-      ? ".output/.exe"
+  final outputPath = config["output_path"] ?? ".output";
+  /*? ".output/.exe"
       : isCollectMacos
           ? ".output/.app"
-          : ".output/.ipa";
+          : ".output/.ipa";*/
+
+  final androidApkName = config["android_apk_name"];
+  if (androidApkName is String) {
+    //收集 apk
+    final outputName = formatName(androidApkName);
+    final from = "$currentPath/build/app/outputs/flutter-apk/app-release.apk";
+    final to = "$currentPath/$outputPath/.apk/$outputName";
+    copyFile(from, to);
+  }
+
+  final androidAppbundleName = config["android_appbundle_name"];
+  if (androidAppbundleName is String) {
+    //收集 aab
+    final outputName = formatName(androidAppbundleName);
+    final from =
+        "$currentPath/build/app/outputs/bundle/release/app-release.aab";
+    final to = "$currentPath/$outputPath/.apk/$outputName";
+    copyFile(from, to);
+  }
+
+  final iosIpaName = config["ios_ipa_name"];
+  if (iosIpaName is String) {
+    //收集 ipa
+    final targetFileName = readIosBundleName();
+    final outputName = formatName(iosIpaName);
+    final from = "$currentPath/build/ios/ipa/$targetFileName.ipa";
+    final to = "$currentPath/$outputPath/.ipa/$outputName";
+    copyFile(from, to);
+  }
+
+  final macosAppName = config["macos_app_name"];
+  if (macosAppName is String) {
+    //收集 app
+    final targetFileName = readMacosProductName();
+    final outputName = formatName(macosAppName);
+    final from =
+        "$currentPath/build/macos/Build/Products/Release/$targetFileName.app";
+    final to = "$currentPath/$outputPath/.app/$outputName";
+    if (outputName.endsWith(".app")) {
+      copyFile(from, to);
+    } else {
+      await zipFolderByPlatform(from, to);
+    }
+  }
+
+  final windowsExeName = config["windows_exe_name"];
+  if (windowsExeName is String) {
+    //收集 exe
+    final targetFileName = readWindowsExeName();
+    final outputName = formatName(windowsExeName);
+    final from = "$currentPath/build/windows/x64/runner/Release";
+    final to = "$currentPath/$outputPath/.exe/$outputName";
+    if (outputName.endsWith(".exe")) {
+      copyFile(from, to);
+    } else {
+      await zipFolder(from, to, excludeRoot: true);
+    }
+  }
 
   //--
-  final targetFileName = isCollectWindows
-      ? readExeName()
+  /*final targetFileName = isCollectWindows
+      ? readWindowsExeName()
       : isCollectMacos
-          ? readProductName()
-          : readBundleName();
+          ? readMacosProductName()
+          : readIosBundleName();
   if (targetFileName == null || targetFileName.isEmpty) {
     if (isCollectMacos) {
       colorErrorLog(
@@ -59,9 +135,9 @@ void main(List<String> arguments) async {
       colorErrorLog("读取`ios/Runner/Info.plist`中`CFBundleName`对应的值失败");
     }
     return;
-  }
+  }*/
 
-  final localYamlFile = File("$currentPath/script.local.yaml");
+  /*final localYamlFile = File("$currentPath/script.local.yaml");
   final yamlFile = File("$currentPath/script.yaml");
 
   final localYaml = loadYaml(
@@ -116,13 +192,45 @@ void main(List<String> arguments) async {
   } else {
     copyFile(scrPath, outputPathString);
   }
-
+*/
   //输出结果
-  colorLog('[$fileName]收集完成->$outputPathString');
+  colorLog('收集完成!');
 }
 
+String? _getAppName() {
+  return $pubspec["name"];
+}
+
+String? _getVersionName() {
+  return $pubspec?["version"]?.toString().split("+")[0];
+}
+
+String? _getBuildTypeName() {
+  final buildConfig = readBuildConfigMap("build_config");
+  return buildConfig?["buildType"];
+}
+
+String? _getBuildFlavorName() {
+  final buildConfig = readBuildConfigMap("build_config");
+  return buildConfig?["buildFlavor"];
+}
+
+/// 格式化名称
+String formatName(String pattern) {
+  String output = pattern;
+  output = output.replaceAll("#an", _getAppName() ?? "");
+  output = output.replaceAll("#vn", _getVersionName() ?? "");
+  output = output.replaceAll("#bn", _getBuildTypeName() ?? "");
+  output = output.replaceAll("#fn", _getBuildFlavorName() ?? "");
+  output = output.replaceAll("--", "-");
+  output = output.replaceAll("__", "_");
+  return output;
+}
+
+//--
+
 /// 读取`ios/Runner/Info.plist`中`CFBundleName`对应的值
-String? readBundleName() {
+String? readIosBundleName() {
   final file = File("ios/Runner/Info.plist");
   if (!file.existsSync()) {
     return null;
@@ -151,7 +259,7 @@ String? readBundleName() {
 }
 
 /// 读取`macos/Runner/Configs/AppInfo.xcconfig`中`PRODUCT_NAME`对应的值
-String? readProductName() {
+String? readMacosProductName() {
   final file = File("macos/Runner/Configs/AppInfo.xcconfig");
   if (!file.existsSync()) {
     return null;
@@ -175,7 +283,7 @@ String? readProductName() {
 }
 
 /// 默认文件名是`windows/CMakeLists.txt`中`BINARY_NAME`对应的值
-String? readExeName() {
+String? readWindowsExeName() {
   final file = File("windows/CMakeLists.txt");
   if (!file.existsSync()) {
     return null;
@@ -187,7 +295,7 @@ String? readExeName() {
 
   for (final line in lines) {
     if (line.contains("BINARY_NAME")) {
-      final match = RegExp(r'BINARY_NAME \"(.*)\"').firstMatch(line);
+      final match = RegExp(r'BINARY_NAME "(.*)"').firstMatch(line);
       if (match != null) {
         productName = match.group(1);
         break;
@@ -208,8 +316,12 @@ void copyFile(String srcPath, String dstPath) {
     return;
   }
 
+  //--
   dstFile.createSync(recursive: true);
   dstFile.writeAsBytesSync(srcFile.readAsBytesSync());
+
+  //--
+  colorLog('复制文件: $srcPath -> $dstPath');
 }
 
 /// 压缩源文件夹到指定路径
@@ -269,14 +381,6 @@ Future<void> zipFolderByPlatform(
     workingDirectory: workPath,
     /*runInShell: true,*/
   );
-}
-
-void colorLog(dynamic msg, [int col = 93]) {
-  print('\x1B[38;5;${col}m$msg\x1B[0m');
-}
-
-void colorErrorLog(dynamic msg, [int col = 9]) {
-  print('\x1B[38;5;${col}m$msg\x1B[0m');
 }
 
 //--

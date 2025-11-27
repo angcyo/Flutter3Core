@@ -18,6 +18,9 @@ String get currentPath => Directory.current.path;
 /// 当前脚本文件的路径
 String get currentFilePath => Platform.script.path;
 
+/// 当前脚本文件名
+String get currentFileName => currentFilePath.split("/").last.split(".")[0];
+
 final String _reset = '\x1B[0m';
 
 /// 输出带颜色的日志
@@ -66,58 +69,76 @@ Future runCommand(String executable, {String? dir, List<String>? args}) async {
 //---
 
 /// 优先读取`script.local.yaml`
-dynamic _localYaml;
+dynamic $localYaml;
 
 /// 其次读取`script.yaml`
-dynamic _yaml;
+dynamic $yaml;
+
+/// 最后读取`pubspec.yaml`
+dynamic $pubspec;
 
 /// 获取脚本`script.local.yaml`和`script.yaml`配置文件中配置的值
 /// - [YamlMap] 自动合并值
 /// - [YamlList] 自动合并值
 dynamic getScriptYamlValue(String key) {
-  if (_localYaml == null) {
-    final localYamlFile = File("$currentPath/script.local.yaml");
-    _localYaml = loadYaml(
-      localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "",
+  if ($localYaml == null) {
+    final yamlFile = File("$currentPath/script.local.yaml");
+    $localYaml = loadYaml(
+      yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
     );
   }
 
-  if (_yaml == null) {
+  if ($yaml == null) {
     final yamlFile = File("$currentPath/script.yaml");
-    _yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
+    $yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
   }
 
-  final localValue = _localYaml?[key];
-  final value = _yaml?[key];
+  if ($pubspec == null) {
+    final yamlFile = File("$currentPath/pubspec.yaml");
+    $pubspec =
+        loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
+  }
 
-  if (localValue is YamlMap && value is YamlMap) {
+  final localValue = $localYaml?[key];
+  final value = $yaml?[key];
+  final pubValue = $pubspec?[key];
+
+  if (localValue is YamlMap && value is YamlMap && pubValue is YamlMap) {
     return {
       ...value,
       ...localValue,
+      ...pubValue,
     };
   }
-  if (localValue is YamlList && value is YamlList) {
+  if (localValue is YamlList && value is YamlList && pubValue is YamlList) {
     return [
       ...value,
       ...localValue,
+      ...pubValue,
     ];
   }
-  return localValue ?? value;
+  return localValue ?? value ?? pubValue;
 }
 
 /// 解析`xxx.xxx.xxx`这样的路径[keyPath]对应的数据
 /// [getScriptYamlValue]
 dynamic getScriptYamlValuePath(String keyPath) {
-  if (_localYaml == null) {
-    final localYamlFile = File("$currentPath/script.local.yaml");
-    _localYaml = loadYaml(
-      localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "",
+  if ($localYaml == null) {
+    final yamlFile = File("$currentPath/script.local.yaml");
+    $localYaml = loadYaml(
+      yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
     );
   }
 
-  if (_yaml == null) {
+  if ($yaml == null) {
     final yamlFile = File("$currentPath/script.yaml");
-    _yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
+    $yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
+  }
+
+  if ($pubspec == null) {
+    final yamlFile = File("$currentPath/pubspec.yaml");
+    $pubspec =
+        loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
   }
 
   dynamic localValue;
@@ -127,8 +148,8 @@ dynamic getScriptYamlValuePath(String keyPath) {
   for (var key in keys) {
     if (isFirst) {
       isFirst = false;
-      localValue = _localYaml?[key];
-      value = _yaml?[key];
+      localValue = $localYaml?[key];
+      value = $yaml?[key];
     } else {
       localValue = localValue?[key];
       value = value?[key];

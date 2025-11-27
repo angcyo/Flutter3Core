@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:yaml/yaml.dart';
 
+import '_script_common.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/11/08
@@ -32,28 +34,8 @@ void main(List<String> arguments) {
   final buildVersionName = version.split("+")[0];
   final buildVersionCode = version.split("+")[1];
 
-  //读取指定key对应的map数据
-  Map? readConfigMap(String key) {
-    final value = yaml?[key] ?? localYaml?[key];
-    if (value is Map) {
-      return value;
-    }
-    if (value is String) {
-      //当做json路径读取
-      final jsonFile = File(value);
-      if (jsonFile.existsSync()) {
-        return jsonDecode(jsonFile.readAsStringSync());
-      } else {
-        colorErrorLog("配置[$key]对应的json文件不存在: $value");
-      }
-    } else if (value != null) {
-      colorErrorLog("不支持的[$key]数据类[${value.runtimeType}]");
-    }
-    return null;
-  }
-
   //1:
-  final buildConfig = readConfigMap("build_config");
+  final buildConfig = readBuildConfigMap("build_config");
   if (buildConfig == null) {
     colorLog(
       "未找到自定义的[build_config]]配置:请在项目根目录中的[script.yaml]文件中加入[build_config]配置信息.",
@@ -81,10 +63,22 @@ void main(List<String> arguments) {
   colorLog('构建信息修改->${outputFile.path}↓\n$json');
 }
 
-void colorLog(dynamic msg, [int col = 93]) {
-  print('\x1B[38;5;${col}m$msg\x1B[0m');
-}
-
-void colorErrorLog(dynamic msg, [int col = 9]) {
-  print('\x1B[38;5;${col}m$msg\x1B[0m');
+/// 读取指定key对应的map数据
+Map? readBuildConfigMap(String key) {
+  final value = $localYaml?[key] ?? $yaml?[key] ?? $pubspec?[key];
+  if (value is Map) {
+    return value;
+  }
+  if (value is String) {
+    //当做json路径读取
+    final jsonFile = File(value);
+    if (jsonFile.existsSync()) {
+      return jsonDecode(jsonFile.readAsStringSync());
+    } else {
+      colorErrorLog("配置[$key]对应的json文件不存在: $value");
+    }
+  } else if (value != null) {
+    colorErrorLog("不支持的[$key]数据类[${value.runtimeType}]");
+  }
+  return null;
 }
