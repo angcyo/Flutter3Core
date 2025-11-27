@@ -22,6 +22,9 @@ class DebugAction {
   String? hiveKey;
 
   /// [hiveKey]属性对应的类型
+  /// - [bool]
+  /// - [double]
+  /// - [String]
   Type? hiveType;
 
   /// [hiveKey]对应的默认值
@@ -56,22 +59,26 @@ mixin DebugActionMixin {
     List<DebugAction> hiveList,
   ) {
     //debugger();
+    final globalTheme = GlobalTheme.of(context);
+    final labelStyle = globalTheme.textTitleStyle;
     return [
       for (final action in hiveList)
         if (action.hiveType == String)
           LabelSingleInputTile(
-              label: action.label,
-              inputHint: action.des,
-              inputText:
-                  action.defHiveValue ?? action.hiveKey?.hiveGet<String>(),
-              onInputTextChanged: (value) {
-                action.hiveKey?.hivePut(value);
-              })
+            label: action.label,
+            labelTextStyle: labelStyle,
+            inputHint: action.des,
+            inputText: action.hiveKey?.hiveGet<String>(action.defHiveValue),
+            onInputTextChanged: (value) {
+              action.hiveKey?.hivePut(value);
+            },
+          )
         else if (action.hiveType == int)
           LabelNumberTile(
             label: action.label,
+            labelTextStyle: labelStyle,
             des: action.des,
-            value: action.defHiveValue ?? action.hiveKey?.hiveGet<int>(0) ?? 0,
+            value: action.hiveKey?.hiveGet<int>(action.defHiveValue) ?? 0,
             onValueChanged: (value) {
               action.hiveKey?.hivePut(value);
             },
@@ -79,23 +86,23 @@ mixin DebugActionMixin {
         else if (action.hiveType == double)
           LabelNumberTile(
             label: action.label,
+            labelTextStyle: labelStyle,
             des: action.des,
-            value: action.defHiveValue ??
-                action.hiveKey?.hiveGet<double>(0.0) ??
-                0.0,
+            value: action.hiveKey?.hiveGet<double>(action.defHiveValue) ?? 0.0,
             onValueChanged: (value) {
               action.hiveKey?.hivePut(value);
             },
           )
         else if (action.hiveType == bool)
           LabelSwitchTile(
-              label: action.label,
-              des: action.des,
-              value: action.defHiveValue ??
-                  action.hiveKey?.hiveGet<bool>(false) == true,
-              onValueChanged: (value) {
-                action.hiveKey?.hivePut(value);
-              })
+            label: action.label,
+            labelTextStyle: labelStyle,
+            des: action.des,
+            value: action.hiveKey?.hiveGet<bool>(action.defHiveValue) == true,
+            onValueChanged: (value) {
+              action.hiveKey?.hivePut(value);
+            },
+          )
         else
           "不支持的类型:${action.label}:[${action.hiveType}]".text(),
     ];

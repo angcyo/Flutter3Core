@@ -174,6 +174,7 @@ class DebugPage extends StatefulWidget {
   }
 
   /// [debugActions]
+  /// - [hiveType]
   static void addHiveDebugAction(
     String label,
     String des,
