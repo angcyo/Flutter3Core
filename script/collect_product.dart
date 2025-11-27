@@ -14,7 +14,7 @@ import 'build_config.dart';
 ///
 /// 配置项(在根的`script.yaml`文件中配置):
 /// # 可用参数:
-/// - #an: app名字, 默认是`pubspec.yaml`中的`name`对应的值
+/// - #an: app名字, 默认是`pubspec.yaml`中的`app_name` ?? `name`对应的值
 /// - #vn: 版本名, 默认是`pubspec.yaml`中的`version`对应的值
 /// - #bn: 编译类型名, `build_config`中的`buildType`对应的值
 /// - #fn: 风味名, `build_config`中的`buildFlavor`对应的值
@@ -47,6 +47,8 @@ void main(List<String> arguments) async {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本";
   }
 
+  final time = DateTime.now();
+
   final appName = _getAppName();
   final versionName = _getVersionName();
   final buildTypeName = _getBuildTypeName();
@@ -58,10 +60,6 @@ void main(List<String> arguments) async {
 
   //输出路径
   final outputPath = config["output_path"] ?? ".output";
-  /*? ".output/.exe"
-      : isCollectMacos
-          ? ".output/.app"
-          : ".output/.ipa";*/
 
   final androidApkName = config["android_apk_name"];
   if (androidApkName is String) {
@@ -101,7 +99,7 @@ void main(List<String> arguments) async {
         "$currentPath/build/macos/Build/Products/Release/$targetFileName.app";
     final to = "$currentPath/$outputPath/.app/$outputName";
     if (outputName.endsWith(".app")) {
-      copyFile(from, to);
+      await copyFolderByPlatform(from, to);
     } else {
       await zipFolderByPlatform(from, to);
     }
@@ -121,84 +119,12 @@ void main(List<String> arguments) async {
     }
   }
 
-  //--
-  /*final targetFileName = isCollectWindows
-      ? readWindowsExeName()
-      : isCollectMacos
-          ? readMacosProductName()
-          : readIosBundleName();
-  if (targetFileName == null || targetFileName.isEmpty) {
-    if (isCollectMacos) {
-      colorErrorLog(
-          "读取`macos/Runner/Configs/AppInfo.xcconfig`中`PRODUCT_NAME`对应的值失败");
-    } else {
-      colorErrorLog("读取`ios/Runner/Info.plist`中`CFBundleName`对应的值失败");
-    }
-    return;
-  }*/
-
-  /*final localYamlFile = File("$currentPath/script.local.yaml");
-  final yamlFile = File("$currentPath/script.yaml");
-
-  final localYaml = loadYaml(
-      localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "");
-  final yaml =
-      loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
-
-  //--读取配置的app_name
-  final appName = yaml?["app_name"] ?? localYaml?["app_name"] ?? targetFileName;
-  final buildConfig = yaml?["build_config"] ?? localYaml?["build_config"];
-  String? buildType;
-  if (buildConfig is YamlMap) {
-    buildType = buildConfig["buildType"];
-  }
-  //--读取version
-  final pubspecYamlFile = File("$currentPath/pubspec.yaml");
-  final pubspecYaml = loadYaml(
-      pubspecYamlFile.existsSync() ? pubspecYamlFile.readAsStringSync() : "");
-  String? version = pubspecYaml?["version"]?.toString().split("+")[0];
-
-  //源文件文件路径
-  final scrPath = isCollectWindows
-      ? "$currentPath/build/windows/x64/runner/Release"
-      : isCollectMacos
-          ? "$currentPath/build/macos/Build/Products/Release/$targetFileName.app"
-          : "$currentPath/build/ios/ipa/$targetFileName.ipa";
-
-  //输出路径
-  StringBuffer outputPathBuffer = StringBuffer();
-  outputPathBuffer.write("$currentPath/$outputPath");
-  if (!outputPath.endsWith("/")) {
-    outputPathBuffer.write("/");
-  }
-  outputPathBuffer.write(appName);
-  if (version != null) {
-    outputPathBuffer.write("-$version");
-  }
-  if (buildType != null) {
-    outputPathBuffer.write("_$buildType");
-  }
-  if (isCollectMacos || isCollectWindows) {
-    outputPathBuffer.write(".zip");
-  } else {
-    outputPathBuffer.write(".ipa");
-  }
-
-  final outputPathString = outputPathBuffer.toString();
-  if (isCollectWindows) {
-    await zipFolder(scrPath, outputPathString, excludeRoot: true);
-  } else if (isCollectMacos) {
-    await zipFolderByPlatform(scrPath, outputPathString);
-  } else {
-    copyFile(scrPath, outputPathString);
-  }
-*/
   //输出结果
-  colorLog('收集完成!');
+  colorLog('收集完成, 耗时: ${DateTime.now().difference(time)}');
 }
 
 String? _getAppName() {
-  return $pubspec["name"];
+  return $pubspec["app_name"] ?? $pubspec["name"];
 }
 
 String? _getVersionName() {
@@ -307,7 +233,25 @@ String? readWindowsExeName() {
 }
 
 /// 复制文件到指定路径
-void copyFile(String srcPath, String dstPath) {
+void copyFile(
+  String srcPath,
+  String dstPath, {
+  bool inner = false,
+}) {
+  //如果是文件夹, 则复制文件夹
+  if (FileSystemEntity.isDirectorySync(srcPath)) {
+    //--
+    Directory(dstPath).createSync(recursive: true);
+    Directory(srcPath).listSync().forEach((element) {
+      copyFile(element.path, "$dstPath/${element.path.split("/").last}",
+          inner: true);
+    });
+    if (!inner) {
+      colorLog('复制文件夹: $srcPath -> $dstPath');
+    }
+    return;
+  }
+
   final srcFile = File(srcPath);
   final dstFile = File(dstPath);
 
@@ -321,7 +265,9 @@ void copyFile(String srcPath, String dstPath) {
   dstFile.writeAsBytesSync(srcFile.readAsBytesSync());
 
   //--
-  colorLog('复制文件: $srcPath -> $dstPath');
+  if (!inner) {
+    colorLog('复制文件: $srcPath -> $dstPath');
+  }
 }
 
 /// 压缩源文件夹到指定路径
@@ -356,7 +302,7 @@ Future zipFolder(
 }
 
 /// 使用平台压缩命令进行文件夹压缩
-Future<void> zipFolderByPlatform(
+Future zipFolderByPlatform(
   String srcPath,
   String dstPath, {
   bool excludeRoot = false,
@@ -371,7 +317,7 @@ Future<void> zipFolderByPlatform(
       : [srcPath];
 
   final workPath = srcFolder.parent.path;
-  await Process.run(
+  final result = await Process.run(
     Platform.isWindows ? "7z" : "zip",
     [
       Platform.isWindows ? "-a -c -f" : "-r",
@@ -381,6 +327,29 @@ Future<void> zipFolderByPlatform(
     workingDirectory: workPath,
     /*runInShell: true,*/
   );
+  colorLog('压缩文件夹: $srcPath -> $dstPath');
+  if (result.exitCode != 0) {
+    colorErrorLog(result.stderr);
+  }
+  return result;
+}
+
+/// 使用平台cp命令, 复制文件夹
+Future copyFolderByPlatform(String srcPath, String dstPath) async {
+  final result = await Process.run(
+    Platform.isWindows ? "cp" : "cp",
+    [
+      Platform.isWindows ? "" : "-R",
+      srcPath,
+      dstPath,
+    ],
+    runInShell: true,
+  );
+  colorLog('复制文件夹: $srcPath -> $dstPath');
+  if (result.exitCode != 0) {
+    colorErrorLog(result.stderr);
+  }
+  return;
 }
 
 //--
