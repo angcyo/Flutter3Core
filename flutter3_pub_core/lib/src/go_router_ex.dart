@@ -286,7 +286,30 @@ GoRouter goRouter(
     ],
     debugLogDiagnostics: isDebug,
     navigatorKey: navigatorKey ?? GlobalConfig.def.rootNavigatorKey,
-    redirect: redirect,
+    /*errorBuilder: (ctx, state) {
+      debugger();
+      state.error;
+      throw Exception("[${state.uri}]${state.error}");
+    },*/
+    /*errorPageBuilder: (ctx, state) {
+      debugger();
+      state.error;
+      throw Exception("[${state.uri}]${state.error}");
+    },*/
+    redirect:
+        redirect ??
+        (initialLocation == null
+            ? null
+            : (ctx, state) {
+                /*l.w(
+                  "路由重定向->${state.uri} name:${state.name} path:${state.path}",
+                );*/
+                if (state.matchedLocation == "/") {
+                  //debugger();
+                  return initialLocation;
+                }
+                return null;
+              }),
   );
 }
 
@@ -323,10 +346,10 @@ GoRoute goRoute(
                 child?.toRoute() ??
                 translationType!.toRoute((ctx) => buildChild!);
 
-            final body = child ?? buildChild;
+            final body = child ?? buildChild ?? empty;
             return CustomTransitionPage(
               key: state.pageKey,
-              child: body!,
+              child: body,
               transitionsBuilder:
                   (
                     BuildContext context,

@@ -80,10 +80,11 @@ class TextFieldConfig {
   Widget? prefixIcon;
 
   /// 键盘上的输入类型, 比如完成, 下一步等
-  /// [onSubmitted] 配合此方法, 请求下一个输入框的焦点.
-  /// [SingleInputWidget.textInputAction]
-  /// [TextInputAction.done]
-  /// [TextInputAction.search]
+  /// - [onSubmitted] 配合此方法, 请求下一个输入框的焦点.
+  /// - [SingleInputWidget.textInputAction]
+  /// - [TextInputAction.done]
+  /// - [TextInputAction.search]
+  /// - [TextInputAction.newline] 多行输入
   TextInputAction? textInputAction;
 
   /// 输入过滤

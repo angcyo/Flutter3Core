@@ -29,22 +29,25 @@ class RScrollController extends ScrollController {
 
   /// 当前的刷新状态, 可以监听这个值的变化触发刷新
   /// [WidgetBuildState]
-  final ValueNotifier<WidgetBuildState> refreshStateValue =
-      ValueNotifier(WidgetBuildState.none);
+  final ValueNotifier<WidgetBuildState> refreshStateValue = ValueNotifier(
+    WidgetBuildState.none,
+  );
 
   /// 情感图的状态
   /// [WidgetBuildState]
   ///
   /// [buildAdapterStateWidget]
-  final ValueNotifier<WidgetBuildState> adapterStateValue =
-      ValueNotifier(WidgetBuildState.preLoading);
+  final ValueNotifier<WidgetBuildState> adapterStateValue = ValueNotifier(
+    WidgetBuildState.preLoading,
+  );
 
   /// 加载更多的状态
   /// [WidgetBuildState]
   ///
   /// [buildLoadMoreStateWidget]
-  final ValueNotifier<WidgetBuildState> loadMoreStateValue =
-      ValueNotifier(WidgetBuildState.none);
+  final ValueNotifier<WidgetBuildState> loadMoreStateValue = ValueNotifier(
+    WidgetBuildState.none,
+  );
 
   /// 请求的分页信息
   RequestPage requestPage = RequestPage();
@@ -92,7 +95,7 @@ class RScrollController extends ScrollController {
     //debugger();
     if (!position.isScrollingNotifier.value /*没有在滚动*/ &&
         position.hasContentDimensions /*具有内容的尺寸信息*/ &&
-        position.pixels >= position.maxScrollExtent /*到底了*/) {
+        position.pixels >= position.maxScrollExtent /*到底了*/ ) {
       //滚动到底部了
       if (adapterStateValue.value != WidgetBuildState.none) {
         //debugger();
@@ -176,10 +179,7 @@ class RScrollController extends ScrollController {
   /// [state] 用来触发界面刷新
   @callPoint
   @updateMark
-  void startRefresh({
-    bool useWidgetState = false,
-    bool atTop = true,
-  }) {
+  void startRefresh({bool useWidgetState = false, bool atTop = true}) {
     if (useWidgetState) {
       updateAdapterState(WidgetBuildState.loading, null);
     } else {
@@ -202,7 +202,8 @@ class RScrollController extends ScrollController {
   ]) {
     //debugger();
     //stopScroll();
-    WidgetBuildState toState = widgetState ??
+    WidgetBuildState toState =
+        widgetState ??
         widgetStateIntercept.interceptorWidgetBuildState(
           requestPage,
           loadData,
@@ -291,20 +292,23 @@ class RScrollController extends ScrollController {
   @configProperty
   late WidgetStateBuilder buildAdapterStateWidget =
       (context, widgetState, stateData) {
-    return widgetStateBuilderMap[widgetState]
-            ?.call(context, widgetState, stateData) ??
-        AdapterStateWidget(
-          widgetState: widgetState,
-          stateData: stateData,
-          requestChangeStateFn: (_, oldWidgetState, newWidgetState) {
-            adapterStateValue.value = newWidgetState;
-            if (newWidgetState == WidgetBuildState.loading) {
-              _onRefreshStart();
-            }
-            return false;
-          },
-        );
-  };
+        return widgetStateBuilderMap[widgetState]?.call(
+              context,
+              widgetState,
+              stateData,
+            ) ??
+            AdapterStateWidget(
+              widgetState: widgetState,
+              stateData: stateData,
+              requestChangeStateFn: (_, oldWidgetState, newWidgetState) {
+                adapterStateValue.value = newWidgetState;
+                if (newWidgetState == WidgetBuildState.loading) {
+                  _onRefreshStart();
+                }
+                return false;
+              },
+            );
+      };
 
   /// 为加载更多指定的[WidgetBuildState]状态, 注册指定的[Widget]
   /// [buildLoadMoreStateWidget]驱动
@@ -316,22 +320,25 @@ class RScrollController extends ScrollController {
   @configProperty
   late WidgetStateBuilder buildLoadMoreStateWidget =
       (context, widgetState, stateData) {
-    _isEnableLoadMore = true;
-    return loadMoreStateBuilderMap[widgetState]
-            ?.call(context, widgetState, stateData) ??
-        LoadMoreStateWidget(
-          key: loadMoreKey,
-          widgetState: widgetState,
-          stateData: stateData,
-          requestChangeStateFn: (context, oldWidgetState, newWidgetState) {
-            loadMoreStateValue.value = newWidgetState;
-            if (newWidgetState == WidgetBuildState.loading) {
-              _onLoadMoreStart();
-            }
-            return false;
-          },
-        );
-  };
+        _isEnableLoadMore = true;
+        return loadMoreStateBuilderMap[widgetState]?.call(
+              context,
+              widgetState,
+              stateData,
+            ) ??
+            LoadMoreStateWidget(
+              key: loadMoreKey,
+              widgetState: widgetState,
+              stateData: stateData,
+              requestChangeStateFn: (context, oldWidgetState, newWidgetState) {
+                loadMoreStateValue.value = newWidgetState;
+                if (newWidgetState == WidgetBuildState.loading) {
+                  _onLoadMoreStart();
+                }
+                return false;
+              },
+            );
+      };
 
   /// [RefreshIndicator]的刷新回调
   @property
@@ -404,6 +411,7 @@ class WidgetBuildStateIntercept {
   }
 }
 
+/// [ScrollController]扩展
 extension ScrollControllerEx on ScrollController {
   /// 滚动到顶部
   @api
@@ -428,11 +436,7 @@ extension ScrollControllerEx on ScrollController {
       return;
     }
     if (anim) {
-      animateTo(
-        offset,
-        duration: duration,
-        curve: curve,
-      );
+      animateTo(offset, duration: duration, curve: curve);
     } else {
       jumpTo(offset);
     }
@@ -444,9 +448,11 @@ extension ScrollControllerEx on ScrollController {
     position.didEndScroll();
   }
 
+  /// 滚动到当前位置
+
   /// 滚动到底部
   @api
-  void scrollToBottom({
+  Timer? scrollToBottom({
     bool anim = true,
     Duration? duration,
     Curve curve = Curves.easeOut,
@@ -459,7 +465,7 @@ extension ScrollControllerEx on ScrollController {
         l.w('操作被忽略,无客户端!');
         return true;
       }());
-      return;
+      return null;
     }
     duration ??= kDefaultAnimationDuration;
     if (position.maxScrollExtent.isValid) {
@@ -494,10 +500,11 @@ extension ScrollControllerEx on ScrollController {
       timerDelay(timeoutDuration, () {
         timer.cancel();
       });
+      return timer;
     }
+    return null;
   }
 
-  /// 滚动到当前位置
   @api
   void scrollToCurrent({
     bool anim = false,
