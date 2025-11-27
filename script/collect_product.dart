@@ -371,6 +371,7 @@ Future<bool> zipFolder(
     } else {
       await [srcPath].zipEncoder(encoder);
     }
+    colorLog('压缩文件夹: $srcPath -> $dstPath');
     return true;
   } catch (e) {
     colorErrorLog(e);
