@@ -45,12 +45,28 @@ void bgPrint(dynamic msg, [int col = 93]) {
 
 //--
 
-/// 确保文件夹存在
-void ensureFolder(String? folderPath) {
-  if (folderPath == null || folderPath.isEmpty) {
-    return;
+/// 确保文件存在
+File? ensureFile(String? filePath) {
+  if (filePath == null || filePath.isEmpty) {
+    return null;
   }
-  Directory(folderPath).createSync(recursive: true);
+  final file = File(filePath);
+  if (!file.existsSync()) {
+    file.createSync(recursive: true);
+  }
+  return file;
+}
+
+/// 确保文件夹存在
+Directory? ensureFolder(String? folderPath) {
+  if (folderPath == null || folderPath.isEmpty) {
+    return null;
+  }
+  final directory = Directory(folderPath);
+  if (!directory.existsSync()) {
+    directory.createSync(recursive: true);
+  }
+  return directory;
 }
 
 //---

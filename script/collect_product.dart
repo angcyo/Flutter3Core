@@ -60,14 +60,25 @@ void main(List<String> arguments) async {
 
   //输出路径
   final outputPath = config["output_path"] ?? ".output";
+  //记录复制过的文件
+  final copiedFile = ensureFile("$currentPath/$outputPath/.copy");
+  final copiedLines = copiedFile?.readAsLinesSync() ?? [];
 
   final androidApkName = config["android_apk_name"];
   if (androidApkName is String) {
     //收集 apk
     final outputName = formatName(androidApkName);
     final from = "$currentPath/build/app/outputs/flutter-apk/app-release.apk";
-    final to = "$currentPath/$outputPath/.apk/$outputName";
-    copyFile(from, to);
+    final key = "app-release.apk/${File(from).lastModifiedSync()}";
+    if (copiedLines.contains(key)) {
+      colorLog("已复制过: $from");
+    } else {
+      final to = "$currentPath/$outputPath/.apk/$outputName";
+      if (copyFile(from, to)) {
+        copiedLines.add(key);
+        copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+      }
+    }
   }
 
   final androidAppbundleName = config["android_appbundle_name"];
@@ -76,8 +87,16 @@ void main(List<String> arguments) async {
     final outputName = formatName(androidAppbundleName);
     final from =
         "$currentPath/build/app/outputs/bundle/release/app-release.aab";
-    final to = "$currentPath/$outputPath/.apk/$outputName";
-    copyFile(from, to);
+    final key = "app-release.aab/${File(from).lastModifiedSync()}";
+    if (copiedLines.contains(key)) {
+      colorLog("已复制过: $from");
+    } else {
+      final to = "$currentPath/$outputPath/.apk/$outputName";
+      if (copyFile(from, to)) {
+        copiedLines.add(key);
+        copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+      }
+    }
   }
 
   final iosIpaName = config["ios_ipa_name"];
@@ -86,8 +105,17 @@ void main(List<String> arguments) async {
     final targetFileName = readIosBundleName();
     final outputName = formatName(iosIpaName);
     final from = "$currentPath/build/ios/ipa/$targetFileName.ipa";
-    final to = "$currentPath/$outputPath/.ipa/$outputName";
-    copyFile(from, to);
+    final key =
+        "$targetFileName.ipa/${File(from).lastModifiedSync()}";
+    if (copiedLines.contains(key)) {
+      colorLog("已复制过: $from");
+    } else {
+      final to = "$currentPath/$outputPath/.ipa/$outputName";
+      if (copyFile(from, to)) {
+        copiedLines.add(key);
+        copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+      }
+    }
   }
 
   final macosAppName = config["macos_app_name"];
@@ -97,11 +125,25 @@ void main(List<String> arguments) async {
     final outputName = formatName(macosAppName);
     final from =
         "$currentPath/build/macos/Build/Products/Release/$targetFileName.app";
-    final to = "$currentPath/$outputPath/.app/$outputName";
-    if (outputName.endsWith(".app")) {
-      await copyFolderByPlatform(from, to);
-    } else {
-      await zipFolderByPlatform(from, to);
+    if (Directory(from).existsSync()) {
+      final key =
+          "$targetFileName.app/${File("$from/Contents/Info.plist").lastModifiedSync()}";
+      if (copiedLines.contains(key)) {
+        colorLog("已复制过: $from");
+      } else {
+        final to = "$currentPath/$outputPath/.app/$outputName";
+        if (outputName.endsWith(".app")) {
+          if (await copyFolderByPlatform(from, to)) {
+            copiedLines.add(key);
+            copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+          }
+        } else {
+          if (await zipFolderByPlatform(from, to)) {
+            copiedLines.add(key);
+            copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+          }
+        }
+      }
     }
   }
 
@@ -111,11 +153,25 @@ void main(List<String> arguments) async {
     final targetFileName = readWindowsExeName();
     final outputName = formatName(windowsExeName);
     final from = "$currentPath/build/windows/x64/runner/Release";
-    final to = "$currentPath/$outputPath/.exe/$outputName";
-    if (outputName.endsWith(".exe")) {
-      copyFile(from, to);
-    } else {
-      await zipFolder(from, to, excludeRoot: true);
+    if (Directory(from).existsSync()) {
+      final key =
+          "$targetFileName.exe/${File("$from/$targetFileName.exe").lastModifiedSync()}";
+      if (copiedLines.contains(key)) {
+        colorLog("已复制过: $from");
+      } else {
+        final to = "$currentPath/$outputPath/.exe/$outputName";
+        if (outputName.endsWith(".exe")) {
+          if (copyFile(from, to)) {
+            copiedLines.add(key);
+            copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+          }
+        } else {
+          if (await zipFolder(from, to, excludeRoot: true)) {
+            copiedLines.add(key);
+            copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+          }
+        }
+      }
     }
   }
 
@@ -233,7 +289,7 @@ String? readWindowsExeName() {
 }
 
 /// 复制文件到指定路径
-void copyFile(
+bool copyFile(
   String srcPath,
   String dstPath, {
   bool inner = false,
@@ -249,7 +305,7 @@ void copyFile(
     if (!inner) {
       colorLog('复制文件夹: $srcPath -> $dstPath');
     }
-    return;
+    return true;
   }
 
   final srcFile = File(srcPath);
@@ -257,7 +313,7 @@ void copyFile(
 
   if (!srcFile.existsSync()) {
     colorErrorLog("源文件不存在:$srcPath");
-    return;
+    return false;
   }
 
   //--
@@ -268,11 +324,13 @@ void copyFile(
   if (!inner) {
     colorLog('复制文件: $srcPath -> $dstPath');
   }
+
+  return true;
 }
 
 /// 压缩源文件夹到指定路径
 /// [excludeRoot] 是否排除根目录
-Future zipFolder(
+Future<bool> zipFolder(
   String srcPath,
   String dstPath, {
   bool excludeRoot = false,
@@ -280,7 +338,7 @@ Future zipFolder(
   final srcFolder = Directory(srcPath);
   if (!srcFolder.existsSync()) {
     colorErrorLog("源文件夹不存在:$srcPath");
-    return;
+    return false;
   }
   final encoder = ZipFileEncoder();
   try {
@@ -294,15 +352,17 @@ Future zipFolder(
     } else {
       await [srcPath].zipEncoder(encoder);
     }
+    return true;
   } catch (e) {
     colorErrorLog(e);
   } finally {
     encoder.close();
   }
+  return false;
 }
 
 /// 使用平台压缩命令进行文件夹压缩
-Future zipFolderByPlatform(
+Future<bool> zipFolderByPlatform(
   String srcPath,
   String dstPath, {
   bool excludeRoot = false,
@@ -310,7 +370,7 @@ Future zipFolderByPlatform(
   final srcFolder = Directory(srcPath);
   if (!srcFolder.existsSync()) {
     colorErrorLog("源文件夹不存在:$srcPath");
-    return;
+    return false;
   }
   final pathList = excludeRoot
       ? srcFolder.listSync().map((e) => e.path).toList()
@@ -331,11 +391,11 @@ Future zipFolderByPlatform(
   if (result.exitCode != 0) {
     colorErrorLog(result.stderr);
   }
-  return result;
+  return result.exitCode == 0;
 }
 
 /// 使用平台cp命令, 复制文件夹
-Future copyFolderByPlatform(String srcPath, String dstPath) async {
+Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
   final result = await Process.run(
     Platform.isWindows ? "cp" : "cp",
     [
@@ -349,7 +409,7 @@ Future copyFolderByPlatform(String srcPath, String dstPath) async {
   if (result.exitCode != 0) {
     colorErrorLog(result.stderr);
   }
-  return;
+  return result.exitCode == 0;
 }
 
 //--
