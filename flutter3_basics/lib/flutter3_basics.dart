@@ -53,6 +53,8 @@ export 'package:flutter3_res/flutter3_res.dart';
 
 //export 'package:leak_tracker/leak_tracker.dart';
 
+// @formatter:off
+
 part 'src/basics/basics.dart';
 part 'src/basics/basics_animation.dart';
 part 'src/basics/basics_date_time.dart';
@@ -164,6 +166,8 @@ part 'src/widgets/anchor_location_layout.dart';
 part 'src/widgets/anchor_trace_layout.dart';
 part 'src/widgets/hover_anchor_layout.dart';
 part 'src/widgets/media_query_data_widget.dart';
+
+// @formatter:on
 
 /// 类型重定义
 typedef UiImage = ui.Image;
