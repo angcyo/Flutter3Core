@@ -34,6 +34,10 @@ class TextFieldConfig {
   /// 输入的文本
   String get text => controller.text;
 
+  /// 选中的文本
+  /// - [TextRange.isCollapsed] 未选中文本
+  String get selectedText => controller.selection.textInside(text);
+
   /// [updateText]
   set text(String? text) {
     updateText(text);

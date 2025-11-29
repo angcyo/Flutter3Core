@@ -812,6 +812,9 @@ extension StringEx on String {
   /// [Uri.host]
   Uri? get uri => Uri.tryParse(this);
 
+  /// 获取当前字符串, 如果为空, 则返回[value]
+  String orEmpty(String value) => isEmpty ? value : this;
+
   /// 追加查询参数
   String? appendUriQuery(Map<String, dynamic>? queryParameters) {
     if (queryParameters == null || queryParameters.isEmpty) {
