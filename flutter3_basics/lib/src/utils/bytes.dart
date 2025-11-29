@@ -431,6 +431,34 @@ class ByteReader {
     }
   }
 
+  /// 读取一个float
+  double readFloat([double overflow = -1, Endian? endian]) {
+    int length = 4;
+    if (isDone || length > sumLength - _index) {
+      return overflow;
+    }
+    endian ??= this.endian;
+    final bd = ByteData(length);
+    for (int i = 0; i < length; i++) {
+      bd.setUint8(i, bytes[_index++]);
+    }
+    return bd.getFloat32(0, endian);
+  }
+
+  /// 读取一个double
+  double readDouble([double overflow = -1, Endian? endian]) {
+    int length = 8;
+    if (isDone || length > sumLength - _index) {
+      return overflow;
+    }
+    endian ??= this.endian;
+    final bd = ByteData(length);
+    for (int i = 0; i < length; i++) {
+      bd.setUint8(i, bytes[_index++]);
+    }
+    return bd.getFloat64(0, endian);
+  }
+
   /// 读取一个其它字节数组
   /// [length] 需要读取的字节长度
   ///
