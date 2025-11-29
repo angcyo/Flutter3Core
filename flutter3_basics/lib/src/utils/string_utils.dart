@@ -24,11 +24,16 @@ String stringBuilder(void Function(StringBuilder builder) action) {
 class StringBuilder {
   StringBuffer stringBuffer = StringBuffer();
 
-  void write(Object? object) {
+  StringBuilder write(Object? object) {
     if (object != null) {
       stringBuffer.write(object);
     }
+    return this;
   }
+
+  StringBuilder operator +(Object? object) => write(object);
+
+  StringBuilder operator <<(Object? object) => write(object);
 
   @alias
   void add(Object? object) => write(object);

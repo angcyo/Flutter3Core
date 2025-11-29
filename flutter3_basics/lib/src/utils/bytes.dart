@@ -38,6 +38,7 @@ part of '../../flutter3_basics.dart';
 ///
 ///
 class BytesWriter {
+  /// 字节数组
   final List<int> _bytes = [];
 
   /// 限制写入的最大字节长度
@@ -324,6 +325,7 @@ class BytesWriter {
 
 /// 字节读取器
 class ByteReader {
+  /// 字节数组
   final List<int> bytes;
 
   int get sumLength => bytes.length - excludeLength;
@@ -334,6 +336,9 @@ class ByteReader {
   /// 字节序, 默认大端序, 低位在前, 高位在后
   /// 小端序, 低位在前, 高位在后
   Endian endian;
+
+  /// 剩余字节数组
+  List<int> get remainBytes => bytes.sublist(_index, sumLength);
 
   ByteReader(this.bytes, {this.excludeLength = 0, Endian? endian})
     : endian = endian ?? Endian.big;
@@ -486,7 +491,7 @@ class ByteReader {
         return byte.uint == 0;
       });
       if (bytes.isEmpty) {
-        break;
+        continue;
       }
       result.add(bytes.toStr(codec));
       count += bytes.size();
