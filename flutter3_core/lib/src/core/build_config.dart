@@ -162,8 +162,8 @@ class BuildConfig {
   //--
 
   /// 获取指定构建类型的配置
-  /// [getBuildTypeConfigOrThis]
-  /// [getBuildFlavorConfigOrThis]
+  /// - [getBuildTypeConfigOrThis]
+  /// - [getBuildFlavorConfigOrThis]
   BuildConfig getBuildTypeConfigOrThis(String? buildType, BuildConfig? or) {
     if (buildType == null) {
       return this;
@@ -171,8 +171,9 @@ class BuildConfig {
     return buildTypeMap?[buildType] ?? or ?? this;
   }
 
-  /// [getBuildTypeConfigOrThis]
-  /// [getBuildFlavorConfigOrThis]
+  /// - [getBuildTypeConfigOrThis]
+  /// - [getBuildFlavorConfigOrThis]
+  /// - [flutterAppFlavor]
   BuildConfig getBuildFlavorConfigOrThis(String? buildFlavor, BuildConfig? or) {
     if (buildFlavor == null) {
       return this;

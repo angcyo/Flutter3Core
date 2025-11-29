@@ -6,7 +6,7 @@ part of '../../flutter3_app.dart';
 ///
 /// 平台权限相关处理
 abstract class Permissions {
-  //region --蓝牙相关权限--
+  //region 蓝牙相关权限
 
   /// 蓝牙的基础权限
   static final bluetoothPermissions = [
@@ -43,7 +43,7 @@ abstract class Permissions {
   /// ```
   /// [openAppSettings]打开应用设置页面
   static Future<Map<Permission, PermissionStatus>>
-      requestBluetoothPermissions() async {
+  requestBluetoothPermissions() async {
     final result = await bluetoothPermissions.request();
     assert(() {
       l.d('请求权限返回:$result');
@@ -52,14 +52,12 @@ abstract class Permissions {
     return result;
   }
 
-  //endregion --蓝牙相关权限--
+  //endregion 蓝牙相关权限
 
-  //region --Wifi相关权限--
+  //region Wifi相关权限
 
   /// 获取wifi名称需要的权限
-  static final wifiPermissions = [
-    Permission.location,
-  ];
+  static final wifiPermissions = [Permission.location];
 
   /// 是否有Wifi权限
   static Future<bool> hasWifiPermissions() async {
@@ -73,7 +71,7 @@ abstract class Permissions {
 
   /// 请求Wifi权限
   static Future<Map<Permission, PermissionStatus>>
-      requestWifiPermissions() async {
+  requestWifiPermissions() async {
     final result = await wifiPermissions.request();
     assert(() {
       l.d('请求权限返回:$result');
@@ -82,5 +80,29 @@ abstract class Permissions {
     return result;
   }
 
-//endregion --Wifi相关权限--
+  //endregion Wifi相关权限
+
+  //region 平台权限
+
+  /// Android平台 忽略电池优化
+  ///
+  /// https://developer.android.com/training/monitoring-device-state/doze-standby#exemption-cases
+  ///
+  /// ```
+  /// <uses-permission  android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+  /// ```
+  @PlatformFlag("Android")
+  static Future<PermissionStatus> requestIgnoreBatteryOptimizations() async {
+    if (!isAndroid) {
+      return PermissionStatus.denied;
+    }
+    final result = await Permission.ignoreBatteryOptimizations.request();
+    assert(() {
+      l.d('请求权限返回:$result');
+      return true;
+    }());
+    return result;
+  }
+
+  //endregion 平台权限
 }

@@ -660,6 +660,8 @@ String get $platformName {
 /// flutter run --flavor free
 /// ```
 /// https://docs.flutter.dev/deployment/flavors
+///
+/// https://juejin.cn/post/7237020208648077373
 const String? flutterAppFlavor = appFlavor;
 
 //---
