@@ -92,12 +92,15 @@ extension HexStringEx on String {
   Uint8List toHexBuffer() => Uint8List.fromList(toHexBytes());
 
   /// 每个2个字符添加一个空格
-  String fillHexSpace() {
+  String fillHexSpace([String? space = ' ']) {
+    if (space == null || space.isEmpty) {
+      return this;
+    }
     final buffer = StringBuffer();
     for (int i = 0; i < length; i++) {
       buffer.write(this[i]);
       if (i % 2 == 1 && i != length - 1) {
-        buffer.write(' ');
+        buffer.write(space);
       }
     }
     return buffer.toString();
@@ -131,7 +134,8 @@ extension HexBytesEx on List<int> {
   /// Convert a byte array to a hexadecimal string.
   /// 将字节数组转换为十六进制字符串。
   /// 默认大写
-  String toHex() => _HEX.encoder.convert(this);
+  String toHex([String? space]) =>
+      _HEX.encoder.convert(this).fillHexSpace(space);
 
   /// Convert a byte array to a byte buffer.
   /// 将字节数组转换为字节缓冲区。
@@ -419,6 +423,6 @@ abstract final class _CRC16 {
     0x4100,
     0x81C1,
     0x8081,
-    0x4040
+    0x4040,
   ];
 }
