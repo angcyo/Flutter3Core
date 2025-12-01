@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// @date 2024/07/26
 ///
 void main() {
-  test('test bit', () {
+  /*test('test bit', () {
     for (var i = 0; i < 8; i++) {
       int byteLength = i;
       int value = (1 << 8 * byteLength) - 1;
@@ -16,5 +16,13 @@ void main() {
 
   int n = 0xFFFFFFFF;
   print(n);
-  print(n.bits(8, 2));
+  print(n.bits(8, 2));*/
+
+  test("test set bits", () {
+    //print("${0.setBits(0, 1, 1)}");
+    //print("${0.setBits(0, 2, 1)}");
+    print(15.toRadixString(2));
+    print(0.setBits(0, 4, 0xffffffff).toRadixString(2));
+    print("...");
+  });
 }

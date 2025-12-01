@@ -2337,7 +2337,21 @@ extension IntEx on int {
     if (startBit < 0 || count < 1) {
       return 0;
     }
+    // 1. **创建 N 个 1 的掩码** (用于确保 value 不溢出，并用于创建清除掩码)
+    // (1 << count) - 1 创建了 count 个 1，例如 count=3 时为 7 (0b111)
+    //final int onesMask = (1 << count) - 1;
     return (this >> startBit) & ((1 << count) - 1);
+  }
+
+  /// 从右到左, 从0开始数, 在[startBit]开始设置[count]个bit的数据为[value]
+  int setBits(int startBit, int count, int value) {
+    count = math.min(count, 32 - startBit);
+    count = math.min(count, startBit + 1);
+    if (startBit < 0 || count < 1) {
+      return this;
+    }
+    final leftShift = max(0, startBit + 1 - count);
+    return this | ((value & ((1 << count) - 1)) << leftShift);
   }
 
   /// 当前字节数, 能表示的最大无符号整数
