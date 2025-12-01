@@ -315,7 +315,7 @@ class NumberInputWidget extends StatefulWidget {
   final bool autoSubmitOnUnFocus;
 
   /// 显示后缀icon
-  final bool autoShowSuffixIcon;
+  final bool? alwaysShowSuffixIcon;
 
   const NumberInputWidget({
     super.key,
@@ -335,7 +335,7 @@ class NumberInputWidget extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.autoSubmitOnUnFocus = true,
-    this.autoShowSuffixIcon = false,
+    this.alwaysShowSuffixIcon = false,
   });
 
   @override
@@ -426,7 +426,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
       inputBorderType: InputBorderType.none,
       inputBuildCounter: null,
       contentPadding: widget.contentPadding,
-      autoShowSuffixIcon: widget.autoShowSuffixIcon,
+      alwaysShowSuffixIcon: widget.alwaysShowSuffixIcon,
       autoSubmitOnUnFocus: widget.autoSubmitOnUnFocus,
       //--
       hintText: widget.hintText,
@@ -515,7 +515,7 @@ class LabelNumberInputTile extends StatefulWidget with LabelMixin {
   final EdgeInsetsGeometry? contentPadding;
   @defInjectMark
   final TextStyle? numberTextStyle;
-  final bool autoShowSuffixIcon;
+  final bool? alwaysShowSuffixIcon;
 
   /// 格式化数字
   final FormatNumNullCallback? onNumberFormat;
@@ -550,7 +550,7 @@ class LabelNumberInputTile extends StatefulWidget with LabelMixin {
     this.numType,
     this.contentPadding = kNumberInputPadding,
     this.numberTextStyle,
-    this.autoShowSuffixIcon = false,
+    this.alwaysShowSuffixIcon = false,
     this.onNumberFormat,
     //--trailing
     this.trailing,
@@ -612,7 +612,7 @@ class _LabelNumberInputTileState extends State<LabelNumberInputTile>
                 inputFocusNode: hoverFocusNodeMixin,
                 textStyle: widget.numberTextStyle ?? globalTheme.textBodyStyle,
                 textAlign: TextAlign.start,
-                autoShowSuffixIcon: widget.autoShowSuffixIcon,
+                alwaysShowSuffixIcon: widget.alwaysShowSuffixIcon,
                 onNumberFormat: widget.onNumberFormat,
                 onChanged: (value) {
                   _currentNumber = value;

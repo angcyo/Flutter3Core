@@ -22,6 +22,12 @@ class TextFieldConfig {
   /// [FocusNode.requestFocus]
   FocusNode? focusNode;
 
+  /// 后缀按钮的焦点控制
+  FocusNode? suffixFocusNode;
+
+  /// 前缀按钮的焦点控制
+  FocusNode? prefixFocusNode;
+
   /// 密码输入控制
   final ObscureNode obscureNode;
 
@@ -210,6 +216,8 @@ class TextFieldConfig {
     FocusNode? focusNode /*请求焦点*/,
     bool? obscureText /*是否是密码*/,
     bool notifyDefaultTextChange = false /*是否要触发默认文本改变*/,
+    FocusNode? suffixFocusNode,
+    FocusNode? prefixFocusNode,
     this.autofocus,
     this.textInputAction,
     this.onSubmitted,
@@ -246,6 +254,8 @@ class TextFieldConfig {
     this.tag,
   }) : controller = controller ?? TextEditingController(text: text),
        focusNode = focusNode ?? FocusNode(),
+       suffixFocusNode = suffixFocusNode ?? FocusNode(skipTraversal: true),
+       prefixFocusNode = prefixFocusNode ?? FocusNode(skipTraversal: true),
        obscureNode = ObscureNode(obscureText ?? false) {
     if (notifyDefaultTextChange) {
       onChanged?.call(this.controller.value.text);
@@ -569,8 +579,9 @@ class SingleInputWidget extends StatefulWidget {
   /// 是否激活
   final bool enabled;
 
-  /// 是否自动显示后缀图标, 一般是清除按钮和查看密码按钮
-  final bool autoShowSuffixIcon;
+  /// 是否一直显示后缀图标, 一般是清除按钮和查看密码按钮
+  /// - 不指定则在有焦点时自动显示, 否则隐藏
+  final bool? alwaysShowSuffixIcon;
 
   /// 输入控制配置
   final TextFieldConfig config;
@@ -825,7 +836,7 @@ class SingleInputWidget extends StatefulWidget {
     this.keyboardType,
     this.inputFormatters,
     this.enabled = true,
-    this.autoShowSuffixIcon = true,
+    this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
     this.disabledFillColor,
@@ -891,7 +902,7 @@ class SingleInputWidget extends StatefulWidget {
     this.keyboardType,
     this.inputFormatters,
     this.enabled = true,
-    this.autoShowSuffixIcon = true,
+    this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
     this.disabledFillColor,
@@ -959,7 +970,7 @@ class SingleInputWidget extends StatefulWidget {
     this.keyboardType,
     this.inputFormatters,
     this.enabled = true,
-    this.autoShowSuffixIcon = true,
+    this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
     this.disabledFillColor,
@@ -1010,7 +1021,7 @@ class SingleInputWidget extends StatefulWidget {
 class _SingleInputWidgetState extends State<SingleInputWidget> {
   /// 是否显示后缀图标, 一般是清除按钮和查看密码按钮
   bool get _showSuffixIcon =>
-      widget.autoShowSuffixIcon &&
+      widget.alwaysShowSuffixIcon != false &&
       widget.enabled &&
       widget.config.hasFocus &&
       widget.config.controller.text.isNotEmpty;
@@ -1035,6 +1046,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           color: globalTheme.icoNormalColor,
           padding: widget.suffixIconPadding,
           constraints: widget.suffixIconConstraints,
+          focusNode: widget.config.suffixFocusNode,
           //tapTargetSize: MaterialTapTargetSize.shrinkWrap, //收紧大小
           //最小视觉密度
           //visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
@@ -1062,6 +1074,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           color: globalTheme.icoNormalColor,
           padding: widget.suffixIconPadding,
           constraints: widget.suffixIconConstraints,
+          focusNode: widget.config.suffixFocusNode,
           onPressed: () {
             _updateFieldText("");
           },
@@ -1157,7 +1170,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 
   /// 检查是否需要显示后缀图标
   void _checkSuffixIcon() {
-    if (widget.autoShowSuffixIcon) {
+    if (widget.alwaysShowSuffixIcon == true ||
+        (widget.alwaysShowSuffixIcon == null && widget.config.hasFocus)) {
       setState(() {});
     }
   }
