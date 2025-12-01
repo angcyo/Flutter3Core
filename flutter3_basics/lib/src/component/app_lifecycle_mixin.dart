@@ -168,7 +168,7 @@ class AgentAppLifecycleListener extends AppLifecycleListener {
 
 //---
 
-/// 路由导航监听
+/// 路由导航监听, 为[NavigatorObserverMixin]提供功能支持
 /// [NavigatorObserverDispatcher]
 /// [NavigatorObserverMixin]
 /// [AppLifecycleStateMixin]
@@ -319,7 +319,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   //endregion --回调--
 }
 
-/// 导航监听混入
+/// 导航监听混入, 需要将[navigatorObserverDispatcher]加入到导航观察者中.
 /// [NavigatorObserverDispatcher]
 /// [NavigatorObserverMixin]
 /// [NavigatorObserverLogMixin]

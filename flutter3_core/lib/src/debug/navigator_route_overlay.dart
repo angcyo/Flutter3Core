@@ -5,7 +5,11 @@ part of '../../flutter3_core.dart';
 /// @date 2024/06/18
 ///
 /// 调试模式下, 用来显示导航的路由栈信息以及一些额外的调试信息
-/// [GlobalConfig.findModalRouteList]
+///
+/// - [NavigatorRouteOverlay.show]
+/// - [checkOrShowNavigatorRouteOverlay]
+///
+/// - [GlobalConfig.findModalRouteList]
 class NavigatorRouteOverlay extends StatefulWidget {
   /// 是否显示了视图
   static bool _isShow = false;
@@ -15,20 +19,23 @@ class NavigatorRouteOverlay extends StatefulWidget {
   /// Some widgets require an Overlay widget ancestor for correct operation.
   /// The most common way to add an Overlay to an application is to include a MaterialApp, CupertinoApp or
   /// Navigator widget in the runApp() call.
-  static void show(BuildContext context) {
+  static void show(BuildContext context, {String? debugLabel}) {
     if (_isShow) {
       return;
     }
     _isShow = true;
     postFrameCallback((_) {
+      //debugger(when: debugLabel != null);
       showOverlay((entry, state, context, progress) {
+        debugger(when: debugLabel != null);
         return NavigatorRouteOverlay(entry);
       }, context: context);
     });
   }
 
   /// 圆圈的大小
-  final double size;
+  @autoInjectMark
+  final double? size;
 
   /// 交互的大小
   final double interactiveSize;
@@ -39,7 +46,7 @@ class NavigatorRouteOverlay extends StatefulWidget {
   const NavigatorRouteOverlay(
     this.entry, {
     super.key,
-    this.size = 12.0,
+    this.size,
     this.interactiveSize = 40.0,
   });
 
@@ -112,6 +119,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
   @override
   Widget build(BuildContext context) {
     Widget result;
+    //debugger();
     if (showState == _NavigatorRouteOverlayStateEnum.routeStack) {
       final globalTheme = GlobalTheme.of(context);
       result = _buildRouteState(context)
@@ -167,8 +175,8 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
 
   /// 正常状态, 显示小圆点
   Widget _buildNormalState(BuildContext context) {
-    final size = widget.size;
-    final interactiveSize = widget.size;
+    final size = widget.size ?? (isDesktopOrWeb ? 16 : 12);
+    final interactiveSize = size;
     final globalTheme = GlobalTheme.of(context);
     return paintWidget(
       (canvas, size) {

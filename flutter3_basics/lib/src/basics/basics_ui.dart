@@ -3356,6 +3356,7 @@ extension ContextEx on BuildContext {
   /// 从上往下查找, 查找到非系统的元素[Widget]
   /// 查找第一个非系统元素[Widget]的[Element]
   Element? findFirstNotSystemElement() {
+    //Type 过滤
     const systemWidgetList = [
       Actions,
       Align,
@@ -3373,12 +3374,15 @@ extension ContextEx on BuildContext {
       ClipPath,
       ClipRect,
       CustomPaint,
+      CupertinoPageTransition,
       CustomMultiChildLayout,
       Card,
       DualTransitionBuilder,
       DisplayFeatureSubScreen,
       DefaultTextStyle,
       DefaultSelectionStyle,
+      DecoratedBox,
+      DecoratedBoxTransition,
       ElevatedButton,
       FadeTransition,
       FractionalTranslation,
@@ -3402,6 +3406,7 @@ extension ContextEx on BuildContext {
       PageStorage,
       Padding,
       Positioned,
+      PositionedDirectional,
       PhysicalModel,
       PhysicalShape,
       RepaintBoundary,
@@ -3424,7 +3429,8 @@ extension ContextEx on BuildContext {
       Text,
       UnconstrainedBox,
     ];
-    const prefixWidgetList = ["Notification"];
+    //前缀过滤
+    const prefixWidgetList = ["Notification", "Cupertino", "Decorated"];
     Element? result;
     eachVisitChildElements((element, depth, childIndex) {
       final runtimeType = element.widget.runtimeType;

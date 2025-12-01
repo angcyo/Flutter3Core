@@ -183,9 +183,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   BuildContext? get globalContext => globalAppContext ?? globalTopContext;
 
   /// 全局App上下文变化监听
+  /// - [addOnGlobalAppContextChanged]
   Set<ContextAction> onGlobalAppContextChangedActions = {};
 
-  /// 更新全局App上下文
+  /// 更新全局App上下文, 同时通知监听者
+  /// - [onGlobalAppContextChangedActions]
   @callPoint
   void updateGlobalAppContext(BuildContext context) {
     assert(() {
@@ -194,6 +196,25 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     }());
     globalAppContext = context;
     for (final action in onGlobalAppContextChangedActions) {
+      try {
+        action(context);
+      } catch (e) {
+        assert(() {
+          print(e);
+          return true;
+        }());
+      }
+    }
+  }
+
+  /// 添加一个全局上下文改变回调
+  /// - [updateGlobalAppContext]
+  /// - [addOnGlobalAppContextChanged]
+  @api
+  void addOnGlobalAppContextChanged(ContextAction action) {
+    onGlobalAppContextChangedActions.add(action);
+    final context = globalAppContext;
+    if (context != null) {
       try {
         action(context);
       } catch (e) {
@@ -923,7 +944,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
 /// 注册一个全局App上下文改变的监听[ContextAction]
 void $onGlobalAppContextChanged(ContextAction action) {
-  GlobalConfig.def.onGlobalAppContextChangedActions.add(action);
+  GlobalConfig.def.addOnGlobalAppContextChanged(action);
 }
 
 /// 注册一个主题改变的监听[GlobalConfig]
