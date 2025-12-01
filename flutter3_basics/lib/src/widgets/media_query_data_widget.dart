@@ -82,12 +82,17 @@ typedef MediaQueryDataWidgetBuilder =
     Widget Function(BuildContext context, MediaQueryData mediaQueryData);
 
 /// [MediaQueryData]数据改变监听小部件
+/// - 屏幕大小改变
+/// - 窗口大小改变
+/// - 窗口方向改变
 mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
     on State<T>, WidgetsBindingObserver {
-  ///
+  /// 当前视图
+  @output
   ui.FlutterView? viewMixin;
 
-  ///
+  /// 当前查询到媒体数据
+  @output
   MediaQueryData? mediaQueryDataMixin;
 
   @override
@@ -124,6 +129,7 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
   }
 
   /// [MediaQueryData]数据改变
+  @overridePoint
   void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
     updateState();
   }

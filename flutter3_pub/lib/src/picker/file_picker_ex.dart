@@ -20,12 +20,24 @@ Future<PlatformFile?> pickSingleImage({
 }
 
 /// 选择单个文件, 选择多个文件请使用[pickFiles]
-Future<PlatformFile?> pickFile() async {
+/// @return null表示取消了选择
+Future<PlatformFile?> pickFile({
+  String? dialogTitle,
+  String? initialDirectory,
+  List<String>? allowedExtensions,
+  bool withData = false,
+  bool withReadStream = false,
+}) async {
   return (await pickFiles(
     type: FileType.any,
     allowCompression: false,
     compressionQuality: 0,
     allowMultiple: false,
+    dialogTitle: dialogTitle,
+    initialDirectory: initialDirectory,
+    allowedExtensions: allowedExtensions,
+    withData: withData,
+    withReadStream: withReadStream,
   ))?.files.firstOrNull;
 }
 
