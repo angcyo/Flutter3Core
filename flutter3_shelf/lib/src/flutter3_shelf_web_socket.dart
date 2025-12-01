@@ -246,9 +246,9 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
       final text = ShelfHtml.getDebugLogIndexHtml().replaceKeyTemplate(
         "bottomInfo",
         nowTimeString().connect(
-          DebugPage.lastDebugCopyStringBuilder(
+          DebugPage.buildLastDebugCopyString(
             GlobalConfig.def.globalContext,
-          )?.connect(null, "<br>").replaceAll("\n", "<br>"),
+          ).connect(null, "<br>").replaceAll("\n", "<br>"),
         ),
       );
       if (request.isAcceptHtml) {

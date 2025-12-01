@@ -10,7 +10,6 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter3_basics/src/import_test/import_test.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
@@ -46,6 +45,7 @@ export 'package:time/time.dart';
 export 'package:vector_math/vector_math_64.dart'
     show Vector, Vector2, Vector3, Vector4, Quaternion, Matrix3, Matrix4;
 
+export 'src/basics/basics_actions.dart';
 export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
 export 'src/utils/hex.dart';

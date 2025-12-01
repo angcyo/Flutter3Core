@@ -1,4 +1,8 @@
-part of '../../flutter3_app.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
+
+import '../../assets_generated/assets.gen.dart';
+import '../../flutter3_app.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -8,7 +12,7 @@ part of '../../flutter3_app.dart';
 ///
 /// ```
 /// /// App Info
-/// String androidAppId = 'com.felipheallef.tasks';
+/// String androidAppId = 'com.angcyo.tasks';
 /// String iOSAppId = '324684580';
 ///
 /// AppInstaller.goStore(androidAppId, iOSAppId);
@@ -23,6 +27,8 @@ part of '../../flutter3_app.dart';
 /// - [AppUpdateDialog]
 /// - [AppUpdateLogDialog]
 /// - [AppUpdateLogListScreen]
+///
+/// - [AppUpdateDialog.checkUpdateAndShow] 检测更新并显示[LibAppVersionBean]
 ///
 class AppUpdateDialog extends StatefulWidget with DialogMixin {
   /// 检查更新并且显示

@@ -20,7 +20,7 @@ part of '../flutter3_app.dart';
 /// ```
 /// # 在Release模式下运行会报错
 /// ```
-/// Unhandled Exception: MissingPluginException(No implementation found for method getAll on channel dev.fluttercommunity.plus/package_info)
+/// Unhandled Exception: MissingPluginException(No implementation found for method getAll on channel dev.flutter.community.plus/package_info)
 /// ```
 Future<PackageInfo> get $platformPackageInfo async {
   final packageInfo = await PackageInfo.fromPlatform();

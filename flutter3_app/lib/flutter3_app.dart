@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
-import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
 import 'package:flutter_move_task_back/flutter_move_task_back.dart';
 import 'package:flutter_uri_to_file/flutter_uri_to_file.dart' as uri_to_file;
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
@@ -21,12 +20,10 @@ import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'src/mode/lib_app_setting_bean.dart';
-import 'src/mode/lib_app_version_bean.dart';
 
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:flutter3_core/flutter3_core.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
-export 'package:flutter3_widgets/flutter3_widgets.dart';
 export 'package:flutter_animate/flutter_animate.dart';
 export 'package:package_info_plus/package_info_plus.dart';
 export 'package:permission_handler/permission_handler.dart';
@@ -34,6 +31,8 @@ export 'package:share_plus/share_plus.dart';
 
 export 'src/mode/lib_app_setting_bean.dart';
 export 'src/mode/lib_app_version_bean.dart';
+export 'src/pages/app_about_dialog.dart';
+export 'src/pages/app_update_dialog.dart';
 
 part 'src/android_app.dart';
 part 'src/app_ex.dart';
@@ -41,7 +40,6 @@ part 'src/app_info_interceptor.dart';
 part 'src/app_log.dart';
 part 'src/app_swiper_ex.dart';
 part 'src/mobile_ex.dart';
-part 'src/pages/app_update_dialog.dart';
 part 'src/platform/permissions.dart';
 part 'src/receive/receive_intent.dart';
 

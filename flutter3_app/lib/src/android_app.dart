@@ -6,6 +6,7 @@ part of '../flutter3_app.dart';
 ///
 
 /// 仅支持Android平台
+@PlatformFlag("Android")
 Future moveTaskToBack([bool nonRoot = true]) async {
   if (isAndroid) {
     FlutterMoveTaskBack.moveTaskToBack(nonRoot: nonRoot);

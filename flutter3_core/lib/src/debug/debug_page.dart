@@ -199,6 +199,38 @@ class DebugPage extends StatefulWidget {
   /// [_initDebugLastInfo]
   static final List<WidgetNullBuilder> debugLastWidgetBuilderList = [];
 
+  /// - [buildDebugLastWidget]
+  /// - [buildLastDebugCopyString]
+  static Widget buildDebugLastWidget(
+    BuildContext context,
+    GlobalTheme globalTheme,
+  ) {
+    //当前语言
+    final currentLocale = Localizations.localeOf(context);
+    DebugPage._currentLocale = currentLocale;
+    return [
+      //--
+      for (final builder in DebugPage.debugLastWidgetBuilderList)
+        builder(context),
+      //--
+      "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr"
+          .text(style: globalTheme.textPlaceStyle),
+      "$platformMediaQueryDataList".text(
+        style: globalTheme.textPlaceStyle,
+        textAlign: .center,
+      ),
+      //--
+      $coreKeys.deviceUuid.text(
+        style: globalTheme.textPlaceStyle.copyWith(
+          color: globalTheme.accentColor,
+        ),
+      ),
+    ].column()!.matchParentWidth().click(() {
+      DebugPage.buildLastDebugCopyString(context).copy();
+      toastBlur(text: "已复制");
+    });
+  }
+
   //--
 
   /// 底部点击要复制的文本信息
@@ -207,20 +239,25 @@ class DebugPage extends StatefulWidget {
   debugLastCopyStringBuilderList = [];
 
   /// [debugLastCopyString]
-  static String? Function(BuildContext? context)
-  get lastDebugCopyStringBuilder => (context) {
+  /// - [buildDebugLastWidget]
+  /// - [buildLastDebugCopyString]
+  static String buildLastDebugCopyString(BuildContext? context) {
     return stringBuilder((builder) {
+      //--
       for (final b in debugLastCopyStringBuilderList) {
         builder.append(b(context));
       }
+      //--
       builder.newLineIfNotEmpty();
       builder.append(
-        "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()} $dpr",
+        "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr",
       );
+      builder.append("$platformMediaQueryDataList");
+      //--
       builder.newLineIfNotEmpty();
       builder.append($coreKeys.deviceUuid);
     });
-  };
+  }
 
   static Locale? _currentLocale;
 
@@ -244,10 +281,6 @@ class _DebugPageState extends State<DebugPage>
   WidgetList? buildScrollBody(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
     final globalTheme = GlobalTheme.of(context);
-
-    //当前语言
-    final currentLocale = Localizations.localeOf(context);
-    DebugPage._currentLocale = currentLocale;
 
     final defClickList = DebugPage.defDebugActions.filter(
       (item) => item.clickAction != null,
@@ -280,25 +313,10 @@ class _DebugPageState extends State<DebugPage>
             .paddingOnly(all: kL),
       if (defHiveList.isNotEmpty) ...buildHiveActionList(context, defHiveList),
       if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
-      [
-            for (final builder in DebugPage.debugLastWidgetBuilderList)
-              builder(context),
-            "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr"
-                .text(style: globalTheme.textPlaceStyle),
-            $coreKeys.deviceUuid.text(
-              style: globalTheme.textPlaceStyle.copyWith(
-                color: globalTheme.accentColor,
-              ),
-            ),
-          ]
-          .column()
-          ?.matchParentWidth()
-          .click(() {
-            DebugPage.lastDebugCopyStringBuilder(context)?.copy();
-            toastBlur(text: "已复制");
-          })
-          .align(Alignment.bottomCenter)
-          .rFill(),
+      DebugPage.buildDebugLastWidget(
+        context,
+        globalTheme,
+      ).align(Alignment.bottomCenter).rFill(),
     ].filterNull();
   }
 

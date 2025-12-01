@@ -127,6 +127,41 @@ mixin DialogMixin implements TranslationTypeImpl {
     );
   }
 
+  /// 自动适配居中显示的对话框
+  /// - [buildCenterDialog]
+  /// - [buildDesktopCenterDialog]
+  @api
+  @entryPoint
+  @adaptiveLayout
+  Widget buildAdaptiveCenterDialog(
+    BuildContext context,
+    Widget content, {
+    EdgeInsets? margin,
+    EdgeInsets? contentPadding = EdgeInsets.zero,
+    Color? decorationColor,
+    bool? blur /*是否启用模糊*/,
+    bool? shadow = true /*是否启用阴影*/,
+    double radius = kDefaultBorderRadiusXX,
+    BoxConstraints? contentConstraints,
+    //--
+    FocusOnKeyEventCallback? onKeyEvent,
+    dynamic result,
+  }) {
+    return buildDesktopCenterDialog(
+      context,
+      content,
+      margin: margin,
+      contentPadding: contentPadding,
+      decorationColor: decorationColor,
+      blur: blur,
+      shadow: shadow,
+      radius: radius,
+      contentConstraints: contentConstraints,
+      onKeyEvent: onKeyEvent,
+      result: result,
+    );
+  }
+
   /// 居中显示的对话框样式
   /// [buildCenterDialog]
   @api

@@ -11,10 +11,10 @@ extension AppLogPathListEx on List<String> {
         if (hiveJson != null && hiveJson.isNotEmpty) {
           encoder.writeStringSync(hiveJson, 'hive.json');
         }
-        final lastInfo = DebugPage.lastDebugCopyStringBuilder(
+        final lastInfo = DebugPage.buildLastDebugCopyString(
           GlobalConfig.def.globalContext,
         );
-        if (lastInfo != null && lastInfo.isNotEmpty) {
+        if (lastInfo.isNotEmpty) {
           encoder.writeStringSync(lastInfo, 'last_debug_info.log');
         }
       },

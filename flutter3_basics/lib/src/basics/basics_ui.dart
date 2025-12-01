@@ -1053,6 +1053,22 @@ extension WidgetEx on Widget {
           },
         );
 
+  /// 拦截所有键盘事件
+  Widget ignoreKeyEvent({
+    Key? key,
+    //--
+    bool autofocus = true,
+    bool enable = true,
+  }) => !enable
+      ? this
+      : focusScope(
+          enable: true,
+          autofocus: autofocus,
+          onKeyEvent: (node, event) {
+            return KeyEventResult.handled;
+          },
+        );
+
   /// -[pointerListener] 手势/鼠标事件监听
   /// -[keyboardListener] 键盘事件监听
   ///

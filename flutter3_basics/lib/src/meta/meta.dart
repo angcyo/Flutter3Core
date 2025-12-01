@@ -253,4 +253,5 @@ const webFlag = PlatformFlag('web应用');
 const desktopLayout = PlatformFlag('表示当前在桌面布局中生效');
 const padLayout = PlatformFlag('表示当前在平板布局中生效');
 const mobileLayout = PlatformFlag('表示当前在移动布局中生效');
+const adaptiveLayout = PlatformFlag('表示当前布局自动适配桌面/移动布局');
 //endregion---base

@@ -405,6 +405,9 @@ extension NavigatorEx on BuildContext {
     return null;
   }
 
+  /// 当前路由是否是根路由
+  bool get isInRootNavigator => navigatorOf(false) == navigatorOf(true);
+
   //---Route↓
 
   /// 获取当前路由

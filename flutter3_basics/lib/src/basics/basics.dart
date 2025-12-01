@@ -359,6 +359,12 @@ Iterable<RenderView> get renderViews => WidgetsBinding.instance.renderViews;
 MediaQueryData get platformMediaQueryData =>
     MediaQueryData.fromView(flutterView);
 
+/// 多显示器支持
+Iterable<MediaQueryData> get platformMediaQueryDataList => RendererBinding
+    .instance
+    .renderViews
+    .map((v) => MediaQueryData.fromView(v.flutterView));
+
 @alias
 MediaQueryData get $platformMediaQueryData => platformMediaQueryData;
 
