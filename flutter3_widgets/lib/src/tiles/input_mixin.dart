@@ -15,7 +15,13 @@ enum InputBorderType {
   underline,
 
   /// [UnderlineInputBorder]
-  outline;
+  outline,
+
+  /// 默认时, 是fill样式
+  /// 焦点时是[outline]
+  fillOutline;
+
+  bool get isOutline => this == outline || this == fillOutline;
 
   /// 构建边框
   /// [InputDecoration.border]
@@ -40,6 +46,7 @@ enum InputBorderType {
           borderRadius: BorderRadius.circular(borderRadius),
         );
       case InputBorderType.outline:
+      case InputBorderType.fillOutline:
         return OutlineInputBorder(
           gapPadding: gapPadding,
           borderRadius: BorderRadius.circular(borderRadius),

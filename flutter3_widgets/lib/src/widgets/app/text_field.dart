@@ -873,7 +873,7 @@ class SingleInputWidget extends StatefulWidget {
   const SingleInputWidget.decoration({
     super.key,
     required this.config,
-    this.fillColor = const Color(0xfff9f9f9) /*整体填充颜色*/,
+    this.fillColor /*整体填充颜色*/,
     this.borderColor = Colors.transparent /*去掉正常边框的颜色*/,
     this.focusBorderColor /*焦点时的边框颜色*/,
     this.disableBorderColor,
@@ -918,7 +918,7 @@ class SingleInputWidget extends StatefulWidget {
     this.isDense = true,
     this.contentPadding = kInputPadding,
     this.decoration,
-    this.inputBorderType = InputBorderType.outline,
+    this.inputBorderType = InputBorderType.fillOutline,
     this.border,
     this.focusedBorder,
     this.disabledBorder,
@@ -1215,7 +1215,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     final normalBorder =
         widget.border ??
         switch (widget.inputBorderType) {
-          InputBorderType.outline => OutlineInputBorder(
+          InputBorderType.outline ||
+          InputBorderType.fillOutline => OutlineInputBorder(
             gapPadding: widget.gapPadding,
             borderRadius: BorderRadius.circular(widget.borderRadius),
             borderSide: normalBorderSide,
@@ -1239,7 +1240,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     final focusedBorder =
         widget.focusedBorder ??
         switch (widget.inputBorderType) {
-          InputBorderType.outline => OutlineInputBorder(
+          InputBorderType.outline ||
+          InputBorderType.fillOutline => OutlineInputBorder(
             gapPadding: widget.gapPadding,
             borderRadius: BorderRadius.circular(widget.borderRadius),
             borderSide: focusedBorderSide,
@@ -1263,7 +1265,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     final disabledBorder =
         widget.disabledBorder ??
         switch (widget.inputBorderType) {
-          InputBorderType.outline => OutlineInputBorder(
+          InputBorderType.outline ||
+          InputBorderType.fillOutline => OutlineInputBorder(
             gapPadding: widget.gapPadding,
             borderRadius: BorderRadius.circular(widget.borderRadius),
             borderSide: disableBorderSide,
@@ -1275,22 +1278,28 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           _ => InputBorder.none,
         };
 
+    // InputBorderType.fillOutline
+    final fillColor =
+        widget.fillColor ??
+        (widget.inputBorderType == InputBorderType.fillOutline
+            ? globalTheme.itemWhiteSubBgColor
+            : null);
     final decoration =
         widget.decoration ??
         InputDecoration(
           filled:
-              widget.fillColor != null ||
+              fillColor != null ||
               (!widget.enabled && widget.disabledFillColor != null),
           fillColor: widget.enabled
-              ? widget.fillColor
-              : widget.disabledFillColor ?? widget.fillColor?.disabledColor,
+              ? fillColor
+              : widget.disabledFillColor ?? fillColor?.disabledColor,
           isDense: widget.isDense,
           isCollapsed: widget.isCollapsed,
           counterText: widget.counterText,
           contentPadding:
               widget.contentPadding ??
               switch (widget.inputBorderType) {
-                InputBorderType.outline => null,
+                InputBorderType.outline || InputBorderType.fillOutline => null,
                 InputBorderType.underline => const EdgeInsets.all(12),
                 _ => const EdgeInsets.all(4),
               },
