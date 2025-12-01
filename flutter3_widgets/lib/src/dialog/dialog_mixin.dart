@@ -179,16 +179,22 @@ mixin DialogMixin implements TranslationTypeImpl {
     dynamic result,
   }) {
     return Center(
-      child: buildDialogContainer(
-        context,
-        margin: margin,
-        padding: padding,
-        child.matchParent(matchHeight: false),
-        constraints: contentConstraints,
-        radius: radius,
-        decorationColor: decorationColor,
-      ),
-    ).blur(enable: blur == true).autoCloseDialog(context, result: result);
+          child: buildDialogContainer(
+            context,
+            margin: margin,
+            padding: padding,
+            child.matchParent(matchHeight: false),
+            constraints: contentConstraints,
+            radius: radius,
+            decorationColor: decorationColor,
+          ),
+        )
+        .blur(enable: blur == true)
+        .autoCloseDialog(
+          context,
+          result: result,
+          enable: dialogBarrierDismissible,
+        );
   }
 
   /// 居中显示的桌面样式的对话框
@@ -223,7 +229,12 @@ mixin DialogMixin implements TranslationTypeImpl {
           ),
         )
         .blur(enable: blur == true)
-        .autoCloseDialog(context, onKeyEvent: onKeyEvent, result: result);
+        .autoCloseDialog(
+          context,
+          onKeyEvent: onKeyEvent,
+          result: result,
+          enable: dialogBarrierDismissible,
+        );
   }
 
   /// 底部撑满显示的对话框样式
@@ -245,7 +256,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           topRight: Radius.circular(radius),
         ),
       ),
-    ).autoCloseDialog(context);
+    ).autoCloseDialog(context, enable: dialogBarrierDismissible);
   }
 
   /// 底部撑满显示的对话框样式
@@ -326,7 +337,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(context)
         .blur(sigma: blur ? kL : null)
-        .autoCloseDialog(context);
+        .autoCloseDialog(context, enable: dialogBarrierDismissible);
   }
 
   /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
@@ -571,7 +582,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(context)
         .blur(sigma: blur ? kL : null)
-        .autoCloseDialog(context);
+        .autoCloseDialog(context, enable: dialogBarrierDismissible);
   }
 
   //endregion ---对话框包裹---
