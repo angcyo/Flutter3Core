@@ -32,7 +32,17 @@ class TextFieldConfig {
   bool get isEmpty => text.isEmpty;
 
   /// 输入的文本
+  /// - [value]
+  /// - [text]
   String get text => controller.text;
+
+  /// 输入框选中的文本范围
+  TextSelection get selection => controller.selection;
+
+  /// 设置选中的文本范围
+  set selection(TextSelection value) {
+    controller.selection = value;
+  }
 
   /// 选中的文本
   /// - [TextRange.isCollapsed] 未选中文本
@@ -44,6 +54,8 @@ class TextFieldConfig {
   }
 
   /// 输入的文本
+  /// - [value]
+  /// - [text]
   TextEditingValue get value => controller.value;
 
   /// [updateText]
@@ -56,6 +68,10 @@ class TextFieldConfig {
   /// 此方法会在自动绑定[_SingleInputWidgetState._updateFieldValue]
   @autoInjectMark
   void Function(TextEditingValue value, bool? notify)? updateFieldValueFn;
+
+  /// 是否保持选择范围
+  @configProperty
+  bool keepSelectionRange = false;
 
   //region TextField的属性,优先级低
 
@@ -183,6 +199,8 @@ class TextFieldConfig {
   /// 自定义的标签数据
   final String? tag;
 
+  TextSelection? _lastSelection;
+
   //endregion 自动完成
 
   /// [SingleInputWidget] 的配置信息
@@ -210,6 +228,7 @@ class TextFieldConfig {
     this.onContextValueChanged,
     this.onEditingComplete,
     this.onFocusAction,
+    this.keepSelectionRange = false,
     //--
     this.autoOptionsBuilder,
     this.autoDisplayStringForOption = RawAutocomplete.defaultStringForOption,
@@ -325,7 +344,10 @@ class TextFieldConfig {
     bool? notify,
   }) {
     //过滤
-    TextEditingValue oldValue = const TextEditingValue(text: "");
+    TextEditingValue oldValue = TextEditingValue(
+      text: "",
+      selection: selection,
+    );
     /*TextEditingValue value = TextEditingValue(text: text);*/
     value =
         (inputFormatters ?? this.inputFormatters)?.fold<TextEditingValue>(
@@ -357,6 +379,24 @@ class TextFieldConfig {
       //update
       updateFieldValueFn?.call(value, notify);
     }
+  }
+
+  /// 当焦点发生改变时触发
+  @callPoint
+  void onFocusChanged() {
+    final hasFocus = this.hasFocus;
+    if (hasFocus) {
+      //恢复选中范围
+      if (keepSelectionRange) {
+        final lastSelection = _lastSelection;
+        if (lastSelection != null && !lastSelection.isCollapsed) {
+          selection = lastSelection;
+        }
+      }
+    } else {
+      _lastSelection = selection;
+    }
+    onFocusAction?.call(hasFocus, text);
   }
 
   //endregion api
@@ -1100,12 +1140,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     _checkSuffixIcon();
     final hasFocus = widget.config.hasFocus;
     assert(() {
-      l.d("[${classHash()}] 焦点变化：$hasFocus");
+      l.d("[${classHash()}] 焦点变化：$hasFocus :${widget.config.selection}");
       return true;
     }());
     final text = widget.config.value.text;
     widget.onFocusAction?.call(hasFocus);
-    widget.config.onFocusAction?.call(hasFocus, text);
+    widget.config.onFocusChanged();
     if (!hasFocus) {
       //丢失焦点
       if (widget.autoSubmitOnUnFocus) {
