@@ -273,6 +273,7 @@ extension ObjectEx on Object {
     bool words = false,
     bool selectable = false,
   }) {
+    style ??= GlobalConfig.def.globalTheme.textGeneralStyle;
     if (maxLines != null) {
       overflow ??= TextOverflow.ellipsis;
     }
