@@ -2359,7 +2359,8 @@ extension IntEx on int {
 
   /// 从右到左, 从0开始数, 在[startBit]开始设置[count]个bit的数据为[value]
   int setBits(int startBit, int count, int value) {
-    count = math.min(count, 32 - startBit);
+    startBit = math.min(startBit, 32);
+    count = math.min(count, 32);
     count = math.min(count, startBit + 1);
     if (startBit < 0 || count < 1) {
       return this;
