@@ -83,7 +83,7 @@ class LogFileInterceptor extends Interceptor {
     super.onError(err, handler);
     assert(() {
       l.e(
-        "${err.response?.statusCode?.toString().connect("]", "[")}"
+        "${err.response?.statusCode?.toString().connect("]", "[") ?? ""}"
         "请求失败[${err.requestOptions.uri}]->$err",
       );
       return true;
