@@ -5,7 +5,8 @@ part of '../../flutter3_widgets.dart';
 /// @author angcyo
 /// @date 2023/11/09
 ///
-/// 渐变按钮
+/// 渐变按钮, 内部使用[Material]+[InkWell]实现
+///
 class GradientButton extends StatefulWidget {
   /// 主题渐变样式
   const GradientButton({

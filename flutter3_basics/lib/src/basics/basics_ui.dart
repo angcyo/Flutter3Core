@@ -673,21 +673,21 @@ extension WidgetEx on Widget {
   ///
   /// [RenderPointerListener]->[RenderProxyBoxWithHitTestBehavior]
   ///
-  /// [GestureDetector] 多个手势识别器, 才会有手势竞争
-  /// [Listener] 监听手势, 不会有手势竞争
-  /// [GestureRecognizer] 手势识别器base
-  /// [TapGestureRecognizer] 单击手势识别器
-  /// [DoubleTapGestureRecognizer] 双击手势识别器
-  /// [LongPressGestureRecognizer] 长按手势识别器
-  /// [DragGestureRecognizer] 拖动手势识别器
-  /// [ScaleGestureRecognizer] 缩放手势识别器
-  /// [PanGestureRecognizer] 拖动手势识别器
-  /// [MultiTapGestureRecognizer] 多击手势识别器
-  /// [EagerGestureRecognizer] 急切手势识别器
-  /// [RotateGestureRecognizer] 旋转手势识别
-  /// [RenderProxyBoxWithHitTestBehavior]
-  /// [click]
-  /// [doubleClick]
+  /// - [GestureDetector] 多个手势识别器, 才会有手势竞争
+  /// - [Listener] 监听手势, 不会有手势竞争
+  /// - [GestureRecognizer] 手势识别器base
+  /// - [TapGestureRecognizer] 单击手势识别器
+  /// - [DoubleTapGestureRecognizer] 双击手势识别器
+  /// - [LongPressGestureRecognizer] 长按手势识别器
+  /// - [DragGestureRecognizer] 拖动手势识别器
+  /// - [ScaleGestureRecognizer] 缩放手势识别器
+  /// - [PanGestureRecognizer] 拖动手势识别器
+  /// - [MultiTapGestureRecognizer] 多击手势识别器
+  /// - [EagerGestureRecognizer] 急切手势识别器
+  /// - [RotateGestureRecognizer] 旋转手势识别
+  /// - [RenderProxyBoxWithHitTestBehavior]
+  /// - [click]
+  /// - [doubleClick]
   ///
   /// 键盘监听
   /// ```
@@ -695,12 +695,15 @@ extension WidgetEx on Widget {
   /// ```
   ///
   /// 鼠标监听
-  /// [Listener.onPointerSignal]
+  /// - [Listener.onPointerSignal]
+  /// - [cursor] 设置鼠标样式, 需要使用[MouseRegion]
   Widget click(
     GestureTapCallback? onTap, {
     bool enable = true,
     GestureLongPressCallback? onLongPress,
     HitTestBehavior? behavior = HitTestBehavior.translucent,
+    //
+    MouseCursor? cursor,
   }) => onTap == null || !enable
       ? this
       : GestureDetector(
@@ -708,6 +711,9 @@ extension WidgetEx on Widget {
           behavior: behavior,
           onLongPress: onLongPress,
           child: this,
+        ).mouse(
+          cursor: cursor ?? WidgetStateMouseCursor.clickable,
+          enable: enable && cursor != null,
         );
 
   /// 双击事件
@@ -804,6 +810,12 @@ extension WidgetEx on Widget {
   ///
   /// [onHover].来自[PointerHoverEvent]事件
   ///
+  /// - [cursor] 鼠标样式
+  ///  - [MouseCursor]
+  ///   - [SystemMouseCursor]
+  ///   - [WidgetStateMouseCursor]
+  ///     - [WidgetStateMouseCursor.clickable]
+  ///
   /// [_TransformedPointerEnterEvent]
   /// [_TransformedPointerHoverEvent]
   /// [_TransformedPointerExitEvent]
@@ -873,7 +885,7 @@ extension WidgetEx on Widget {
               onFocusChange ??
               (isDebug
                   ? (value) {
-                      l.i('[${classHash()}] focus change: $value');
+                      l.i('[${classHash()}] FocusScope focus change: $value');
                     }
                   : null),
           child: this,
@@ -2474,7 +2486,7 @@ extension WidgetEx on Widget {
       //debugger();
       if (fitDesktop) {
         minWidth ??= minOf($screenMinSize, kDesktopDialogMinWidth);
-        maxHeight ??= minOf(minWidth, $screenHeight * 3 / 4); //最大是正方向
+        maxHeight ??= maxOf(minWidth, $screenHeight * 5 / 6); //最大是正方向
         //maxHeight ??= $screenHeight;
       } else {
         minWidth ??= minOf($screenMinSize, kDialogMinWidth);

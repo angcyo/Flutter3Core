@@ -10,6 +10,8 @@ part 'build_config.g.dart';
 /// 构建数据模版`build_config.tl.json`
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class BuildConfig {
+  /// 需要在[initBuildConfig]之后才有值
+  @tempFlag
   static BuildConfig? _buildConfig;
 
   /// 从[Asset]资源中解析构建信息
@@ -25,6 +27,7 @@ class BuildConfig {
     String? package, //flutter3_app,
   }) async {
     try {
+      //debugger();
       final string = await loadAssetString(
         name,
         prefix: prefix,
@@ -37,7 +40,9 @@ class BuildConfig {
       //debugger();
     } catch (e) {
       assert(() {
-        l.e("${e.toString().trimLines(" ")}, 是否在`yaml`文件中配置了资产[$prefix$name]");
+        l.e(
+          "${e.toString().trimLines(" ")}, 是否在`pubspec.yaml`文件中配置了构建资产[assets] - $prefix$name",
+        );
         return true;
       }());
     }

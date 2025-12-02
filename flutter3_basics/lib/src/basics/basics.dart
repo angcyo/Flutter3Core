@@ -614,7 +614,7 @@ int rgbToGray(int r, int g, int b) {
   return (r * 0.34 + g * 0.5 + b * 0.16).toInt().clamp(0, 255);
 }
 
-/// 平台的名称, 例如: Android, iOS, Windows, Linux, MacOS, Fuchsia
+/// 平台的名称, 例如: Android, iOS, Windows, Linux, MacOS, Fuchsia, Web
 /// 统一小写
 String get $platformName {
   if (isAndroid) {
@@ -629,6 +629,8 @@ String get $platformName {
     return "Linux".toLowerCase();
   } else if (isFuchsia) {
     return "Fuchsia".toLowerCase();
+  } else if (isWeb) {
+    return "Web".toLowerCase();
   } else {
     return "Unknown".toLowerCase();
   }
@@ -722,10 +724,15 @@ Future<Uint8List> loadAssetBytes(
 
 /// 判断指定的[key]是否存在
 Future<bool> isAssetKeyExists(String? key) async {
+  key ??= key?.transformKey();
   try {
-    await rootBundle.load(key!.transformKey());
+    await rootBundle.load(key!);
     return true;
   } catch (e) {
+    assert(() {
+      l.w("无法加载资产: $key");
+      return true;
+    }());
     return false;
   }
 }

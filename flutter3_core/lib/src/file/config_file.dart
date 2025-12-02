@@ -37,15 +37,17 @@ class ConfigFile {
     String? httpUrl,
     ValueCallback? onHttpAction,
     ValueCallback? onValueAction,
+    String? debugLabel,
   }) async {
     String? result;
     final configFolder = await configFolderFile;
     _configFolderFilePath = configFolder.path;
     //目标配置文件对象
-    final file = (subFolder == null
-            ? p.join(configFolder.path, key)
-            : p.join(configFolder.path, subFolder, key))
-        .file();
+    final file =
+        (subFolder == null
+                ? p.join(configFolder.path, key)
+                : p.join(configFolder.path, subFolder, key))
+            .file();
     try {
       if (!forceAssetToFile && file.existsSync()) {
         //磁盘上的文件已经存在, 则直接读取
@@ -114,10 +116,11 @@ class ConfigFile {
     final configFolder = await configFolderFile;
     _configFolderFilePath = configFolder.path;
     //目标配置文件对象
-    final file = (subFolder == null
-            ? p.join(configFolder.path, key)
-            : p.join(configFolder.path, subFolder, key))
-        .file();
+    final file =
+        (subFolder == null
+                ? p.join(configFolder.path, key)
+                : p.join(configFolder.path, subFolder, key))
+            .file();
     try {
       result = await file.readString(ignoreErrorLog: true);
     } catch (e) {
@@ -131,17 +134,15 @@ class ConfigFile {
 
   /// 同步读取配置文件内容, 请确保调用过一次[readConfigFile]
   /// [_configFolderFilePath]
-  static String? readConfigFileStringSync(
-    String key, {
-    String? subFolder,
-  }) {
+  static String? readConfigFileStringSync(String key, {String? subFolder}) {
     String? result;
     final configFolder = _configFolderFilePath ?? "";
     //目标配置文件对象
-    final file = (subFolder == null
-            ? p.join(configFolder, key)
-            : p.join(configFolder, subFolder, key))
-        .file();
+    final file =
+        (subFolder == null
+                ? p.join(configFolder, key)
+                : p.join(configFolder, subFolder, key))
+            .file();
     try {
       result = file.readAsStringSync();
     } catch (e) {
