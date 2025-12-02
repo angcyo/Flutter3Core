@@ -175,28 +175,28 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
 
   /// 正常状态, 显示小圆点
   Widget _buildNormalState(BuildContext context) {
-    final size = widget.size ?? (isDesktopOrWeb ? 16 : 12);
+    final size = widget.size ?? 12;
     final interactiveSize = size;
     final globalTheme = GlobalTheme.of(context);
-    return paintWidget(
-      (canvas, size) {
-        final radius = size.width / 2;
-        final center = size.center(Offset.zero);
-        canvas.drawCircle(
-          center,
-          radius,
-          Paint()
-            ..shader = radialGradientShader(radius, [
-              globalTheme.primaryColorDark,
-              globalTheme.primaryColor,
-              /*Colors.transparent,*/
-            ], center: center)
-            ..color = Colors.redAccent
-            ..style = PaintingStyle.fill,
-        );
-      },
-      size: Size(size, size),
-    ).align(Alignment.bottomLeft).size(size: interactiveSize);
+    return paintWidget((canvas, size) {
+          final radius = size.width / 2;
+          final center = size.center(Offset.zero);
+          canvas.drawCircle(
+            center,
+            radius,
+            Paint()
+              ..shader = radialGradientShader(radius, [
+                globalTheme.primaryColorDark,
+                globalTheme.primaryColor,
+                /*Colors.transparent,*/
+              ], center: center)
+              ..color = Colors.redAccent
+              ..style = PaintingStyle.fill,
+          );
+        }, size: Size(size, size))
+        .align(Alignment.bottomLeft)
+        .size(size: interactiveSize)
+        .paddingOnly(all: isDesktop ? 4 : 0);
   }
 
   Widget? _routeTextSpan;
@@ -214,7 +214,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
           for (final part in routeList) {
             //debugger();
             if (isFirst) {
-              builder.addTextStyle("当前路由信息如下↓");
+              builder.addTextStyle("当前路由信息如下[$length]↓");
             }
             builder.newLine();
             final route = part.$1;
@@ -232,7 +232,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
               widgetName =
                   "${route.buildPage(context, animation, animation).runtimeType}";
             }*/
-            builder.addTextStyle("[$index/$length] ");
+            builder.addTextStyle("[$index] ");
             builder.addTextStyle(widgetName);
             if (name != null) {
               builder.addTextStyle("($name)");
