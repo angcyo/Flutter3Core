@@ -194,6 +194,9 @@ class _DebugOverlayButtonState extends State<DebugOverlayButton>
 
 /// [DebugOverlayButton]弹出的测试弹窗
 class DebugOverlayDialog extends StatefulWidget with DialogMixin {
+  @override
+  TranslationType get translationType => TranslationType.translation;
+
   const DebugOverlayDialog({super.key});
 
   @override

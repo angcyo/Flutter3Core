@@ -103,29 +103,48 @@ mixin SameRouteTransitionMixin<T> on ModalRoute<T> {
   }
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     //debugger();
     return super.buildPage(context, animation, secondaryAnimation);
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     var settings = this.settings;
     //debugger();
     if (_isPopSameRoute) {
-      return buildSameTransitions(context, animation, secondaryAnimation,
-          child) /*.dataProvider(animation)*/;
+      return buildSameTransitions(
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ) /*.dataProvider(animation)*/;
     }
-    return super
-        .buildTransitions(context, animation, secondaryAnimation, child);
+    return super.buildTransitions(
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
   }
 
   /// 需要实现的方法
   @protected
-  Widget buildSameTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child);
+  Widget buildSameTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  );
 }
 
 /// https://api.flutter.dev/flutter/animation/Curves-class.html
@@ -168,22 +187,17 @@ class FadePageRoute<T> extends MaterialPageRoute<T>
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
 
     if (!_enableSecondaryAnimation) {
-      return FadeTransition(
-        opacity: enter,
-        child: child,
-      );
+      return FadeTransition(opacity: enter, child: child);
     }
     return FadeTransition(
       opacity: enter,
-      child: FadeTransition(
-        opacity: exit,
-        child: child,
-      ),
+      child: FadeTransition(opacity: exit, child: child),
     );
   }
 }
 
 /// 上下滑动路由动画
+/// - 默认从下往上滑动
 class TranslationPageRoute<T> extends MaterialPageRoute<T>
     with SameRouteTransitionMixin<T> {
   /// 通否同时激活透明渐隐动画
@@ -230,17 +244,11 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
 
     final Widget slide;
     if (!_enableSecondaryAnimation) {
-      slide = SlideTransition(
-        position: enter,
-        child: child,
-      );
+      slide = SlideTransition(position: enter, child: child);
     } else {
       slide = SlideTransition(
         position: enter,
-        child: SlideTransition(
-          position: exit,
-          child: child,
-        ),
+        child: SlideTransition(position: exit, child: child),
       );
     }
 
@@ -291,7 +299,7 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
     /*return super
         .buildTransitions(context, animation, secondaryAnimation, child);*/
 
-/*
+    /*
     const begin = Offset(1, 0);
     const end = Offset.zero;
     final tween = Tween(begin: begin, end: end);
@@ -323,17 +331,11 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
     ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
 
     if (!_enableSecondaryAnimation) {
-      return SlideTransition(
-        position: enter,
-        child: child,
-      );
+      return SlideTransition(position: enter, child: child);
     }
     return SlideTransition(
       position: enter,
-      child: SlideTransition(
-        position: exit,
-        child: child,
-      ),
+      child: SlideTransition(position: exit, child: child),
     );
   }
 }
