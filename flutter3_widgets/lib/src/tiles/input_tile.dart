@@ -174,6 +174,9 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   /// 输入框的宽度
   final double? inputWidth;
 
+  /// 交叉轴对齐方式
+  final CrossAxisAlignment? crossAxisAlignment;
+
   const SingleLabelInputTile({
     super.key,
     //LabelMixin
@@ -201,6 +204,7 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
     this.inputKeyboardType,
     //--
     this.inputWidth,
+    this.crossAxisAlignment,
   });
 
   @override
@@ -247,7 +251,11 @@ class _SingleLabelInputTileState extends State<SingleLabelInputTile>
           .paddingSymmetric(horizontal: kX, vertical: kL)
           .align(Alignment.centerRight)
           .expanded(),
-    ].row()!;
+    ].row(
+      crossAxisAlignment: (widget.inputMaxLines ?? 0) > 1
+          ? widget.crossAxisAlignment ?? CrossAxisAlignment.start
+          : widget.crossAxisAlignment,
+    )!;
   }
 }
 

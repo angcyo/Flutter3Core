@@ -22,6 +22,7 @@ const kMinute = 60 * kSecond;
 const kSecond = 1000;
 
 /// [uuid]
+/// 默认小写输出 `11341dea9934435487e415bc66048394`
 String get $uuid {
   //debugger();
   return uuid();
@@ -60,6 +61,7 @@ Future delayed([Duration? duration]) =>
 /// // Generate a v5 (namespace-name-sha1-based) id
 /// uuid.v5(Uuid.NAMESPACE_URL, 'www.google.com'); // -> 'c74a196f-f19d-5ea9-bffd-a2742432fc9c'
 /// ```
+/// 默认小写输出 `11341dea9934435487e415bc66048394`
 //String get uuid => uuidOrigin(true);
 String uuid([bool trim = true]) {
   var v4 = const Uuid().v4();
@@ -809,6 +811,17 @@ Future<void> setClipboardText([String? text]) =>
     Clipboard.setData(ClipboardData(text: text ?? ""));
 
 extension StringEx on String {
+  /// https://semver.org/lang/zh-CN/
+  /// 语义化版本信息数据
+  /// 主版本
+  int get major => split(".").getOrNull(0)?.toIntOrNull() ?? 0;
+
+  /// 次版本
+  int get minor => split(".").getOrNull(1)?.toIntOrNull() ?? 0;
+
+  /// 修订版本
+  int get patch => split(".").getOrNull(2)?.toIntOrNull() ?? 0;
+
   /// [Uri]
   /// [Uri.host]
   Uri? get uri => Uri.tryParse(this);

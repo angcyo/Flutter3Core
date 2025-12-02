@@ -182,11 +182,13 @@ extension PickerImageEx on UiImage {
   Future<File?> saveAsFile({
     String? dialogTitle,
     String? fileName,
+    String? initialDirectory,
     UiImageByteFormat format = UiImageByteFormat.png,
   }) async {
     final filePath = await saveFile(
       dialogTitle: dialogTitle,
       fileName: fileName,
+      initialDirectory: initialDirectory,
     );
     if (!isNil(filePath)) {
       final Uint8List? bytes = await toBytes(format);
@@ -194,6 +196,26 @@ extension PickerImageEx on UiImage {
         return null;
       }
       return filePath!.file().writeAsBytes(bytes);
+    }
+    return null;
+  }
+}
+
+extension PickerBytesEx on List<int> {
+  /// 调用系统弹窗, 选择文件路径, 保存数据
+  @desktopFlag
+  Future<File?> saveAsFile({
+    String? dialogTitle,
+    String? fileName,
+    String? initialDirectory,
+  }) async {
+    final filePath = await saveFile(
+      dialogTitle: dialogTitle,
+      fileName: fileName,
+      initialDirectory: initialDirectory,
+    );
+    if (!isNil(filePath)) {
+      return filePath!.file().writeAsBytes(this);
     }
     return null;
   }

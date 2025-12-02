@@ -9,16 +9,22 @@ part 'lib_label_value_bean.g.dart';
 ///
 /// 为一个[value]添加一个[label]标签，用于显示在UI上
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
-class LibLabelValueBean with ITextProvider {
+class LibLabelValueBean with ITextProvider, EquatableMixin {
   factory LibLabelValueBean.fromJson(Map<String, dynamic> json) =>
       _$LibLabelValueBeanFromJson(json);
 
   Map<String, dynamic> toJson() => _$LibLabelValueBeanToJson(this);
 
-  LibLabelValueBean({this.label, this.des, this.value});
+  LibLabelValueBean({this.label, this.des, this.value, this.summary});
+
+  /// 唯一标识符
+  String? uuid;
 
   /// 显示在界面上标签
   String? label;
+
+  /// 简要信息
+  String? summary;
 
   /// 描述
   String? des;
@@ -31,4 +37,7 @@ class LibLabelValueBean with ITextProvider {
 
   @override
   String toString() => toJson().toString();
+
+  @override
+  List<Object?> get props => [uuid, value];
 }
