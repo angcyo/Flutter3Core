@@ -264,7 +264,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   /// 输入结果回调
   @overridePoint
   void onSelfInputTextResult(BuildContext context, {String? result}) {
-    buildContext?.pop(result ?? currentInputText);
+    buildContext?.pop(result: result ?? currentInputText);
     inputMixin.onInputTextResult?.call(result ?? currentInputText);
   }
 }

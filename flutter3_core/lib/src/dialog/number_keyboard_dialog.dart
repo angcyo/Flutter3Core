@@ -596,7 +596,7 @@ class NumberKeyboardInputController {
       if (isSupportDecimal) {
         final result = numberText.toDoubleOrNull();
         if (onNumberInputFinishIntercept == null) {
-          context?.pop(popResult ?? result);
+          context?.pop(result: popResult ?? result);
         } else {
           onNumberInputFinishIntercept?.call(context, result);
         }
@@ -604,7 +604,7 @@ class NumberKeyboardInputController {
       } else {
         final result = numberText.toIntOrNull();
         if (onNumberInputFinishIntercept == null) {
-          context?.pop(popResult ?? result);
+          context?.pop(result: popResult ?? result);
         } else {
           onNumberInputFinishIntercept?.call(context, result);
         }

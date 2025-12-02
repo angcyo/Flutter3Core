@@ -39,6 +39,7 @@ class MessageDialog extends AndroidNormalDialog {
     super.contentRadius = kDefaultBorderRadiusXX,
     super.controlRadius = 0,
     super.controlAxis = Axis.vertical,
+    super.dialogBarrierDismissible,
   });
 }
 

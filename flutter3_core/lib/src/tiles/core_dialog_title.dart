@@ -145,7 +145,7 @@ class CoreDialogTitle extends StatelessWidget {
                 enable: enableTrailing,
                 onTap: () {
                   if (onTrailingTap == null) {
-                    context.pop(onPop == null ? true : onPop?.call());
+                    context.pop(result: onPop == null ? true : onPop?.call());
                   } else {
                     onTrailingTap?.call(context);
                   }
@@ -313,7 +313,9 @@ class CoreDialogBottomTitle extends StatelessWidget {
                     : buttonPadding,
                 onTap: () {
                   if (onTrailingTap == null) {
-                    context.maybePop(onPop == null ? true : onPop?.call());
+                    context.maybePop(
+                      result: onPop == null ? true : onPop?.call(),
+                    );
                   } else {
                     onTrailingTap?.call(context);
                   }

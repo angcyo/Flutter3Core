@@ -55,21 +55,18 @@ class BottomMenuItemTile extends StatelessWidget {
     return (children ?? [child])
         .row(gap: kH, mainAxisAlignment: MainAxisAlignment.center)!
         .colorFiltered(
-            color: enable
-                ? filterColor
-                : (disableFilterColor ??
-                    filterColor ??
-                    globalTheme.disableColor))
+          color: enable
+              ? filterColor
+              : (disableFilterColor ?? filterColor ?? globalTheme.disableColor),
+        )
         .paddingAll(kX)
         .constrainedMin(minHeight: kMinInteractiveDimension)
-        .ink(
-      () async {
-        if (closeAfterTap) {
-          context.pop(popResult);
-        }
-        await onTap?.call();
-      },
-      enable: enable,
-    ).material(color: backgroundColor ?? globalTheme.surfaceBgColor);
+        .ink(() async {
+          if (closeAfterTap) {
+            context.pop(result: popResult);
+          }
+          await onTap?.call();
+        }, enable: enable)
+        .material(color: backgroundColor ?? globalTheme.surfaceBgColor);
   }
 }

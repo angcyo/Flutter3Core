@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter3_app/flutter3_app.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../../assets_generated/assets.gen.dart';
 
 part 'lib_app_version_bean.g.dart';
 
@@ -17,40 +21,71 @@ part 'lib_app_version_bean.g.dart';
 /// [AppUpdateDialog]
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class LibAppVersionBean {
+  /// 缓存
+  /// - [$appVersionBean]
+  @tempFlag
   static LibAppVersionBean? _appVersionBean;
 
-  /// 从网络中获取[LibAppVersionBean]配置, 并且存储到本地
+  /// [_appVersionBean] 获取成功后对应的url
+  @output
+  static String? appVersionUrl;
+
+  /// 从网络地址[url]中获取[LibAppVersionBean]配置, 并且存储到本地
   /// 应用程序初始化成功后初始化...
   /// [checkUpdate] 是否检查更新弹窗
   ///
+  /// - [onUpdateAction] 有无新版本的回调
+  ///
   /// [AppUpdateDialog.checkUpdateAndShow]
   static Future fetchConfig(
-    String url, {
+    String? url, {
     String name = "app_version.json",
-    String package = "flutter3_app",
+    String package = Assets.package,
     String prefix = 'assets/$kConfigPathName/',
     bool checkUpdate = true,
-  }) {
+    BoolCallback? onUpdateAction,
+    bool? forceShow,
+    bool? forceForbiddenShow,
+    String? debugLabel,
+  }) async {
+    if (url == null) {
+      onUpdateAction?.call(false);
+      return;
+    }
     return ConfigFile.readConfigFile(
       name,
       package: package,
       prefix: prefix,
-      forceAssetToFile: isDebug,
+      forceAssetToFile: false,
       forceFetch: true,
       waitHttp: false,
       httpUrl: url,
+      debugLabel: debugLabel,
       onHttpAction: (data) async {
+        debugger(when: debugLabel != null);
         if (data is String) {
-          //debugger();
+          appVersionUrl = url;
           final bean = LibAppVersionBean.fromJson(data.jsonDecode());
           _appVersionBean = bean;
           //debugger();
-          if (checkUpdate) {
-            AppUpdateDialog.checkUpdateAndShow(
+          if (checkUpdate || forceShow == true || forceForbiddenShow == true) {
+            final update = await AppUpdateDialog.checkUpdateAndShow(
               GlobalConfig.def.globalContext,
               bean,
+              forceShow: forceShow,
+              forceForbiddenShow: forceForbiddenShow,
+              debugLabel: debugLabel,
             );
+            onUpdateAction?.call(update);
+          } else {
+            onUpdateAction?.call(false);
           }
+          assert(() {
+            l.i("当前版本信息->${$appVersionBean}");
+            return true;
+          }());
+        } else {
+          onUpdateAction?.call(false);
         }
       },
     );
@@ -230,10 +265,23 @@ class LibAppVersionBean {
   //region --权限信息--
 
   /// 版本号段对应的 forbidden 信息
+  /// ```
+  /// "100~999" : {
+  ///   "forceForbidden": true,
+  ///   "forbiddenTile": "forbiddenTile",
+  ///   "forbiddenReason": "forbiddenReason",
+  /// }
+  /// ```
   /// [VersionMatcher]
   Map<String, LibAppVersionBean>? forbiddenVersionMap;
+
+  /// 标题
   String? forbiddenTile;
+
+  /// 原因
   String? forbiddenReason;
+
+  /// 强制禁用
   bool? forceForbidden;
 
   //endregion --权限信息--
@@ -243,6 +291,7 @@ class LibAppVersionBean {
 }
 
 /// [LibAppVersionBean]
+@api
 LibAppVersionBean? get $appVersionBean {
   LibAppVersionBean? bean = LibAppVersionBean._appVersionBean;
 

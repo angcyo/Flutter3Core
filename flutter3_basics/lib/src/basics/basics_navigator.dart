@@ -194,6 +194,9 @@ class TranslationTypeImpl {
   @defInjectMark
   Color? get dialogBarrierColor => null;
 
+  /// [Dialog]对话框路径是否使用根导航器
+  bool get dialogUseRootNavigator => true;
+
   /// [TranslationType]
   /// [DialogPageRoute]
   TranslationType get translationType => TranslationType.material;
@@ -208,6 +211,9 @@ mixin TranslationTypeMixin implements TranslationTypeImpl {
 
   @override
   Color? get dialogBarrierColor => null;
+
+  @override
+  bool get dialogUseRootNavigator => true;
 
   /// 对话框路径过度动画
   @override
@@ -300,6 +306,34 @@ extension RouteWidgetEx on Widget {
         final child = (this as dynamic).child;
         if (child is Widget) {
           return child.getWidgetDialogBarrierColor(depth: depth - 1);
+        }
+      } catch (e, s) {
+        /*assert(() {
+          printError(e, s);
+          return true;
+        }());*/
+      }
+    }
+    return null;
+  }
+
+  /// 获取[Widget]的路由使用情况
+  bool? getWidgetDialogUseRootNavigator({int depth = 3}) {
+    if (depth <= 0) {
+      return null;
+    }
+    if (this is TranslationTypeImpl) {
+      return (this as TranslationTypeImpl).dialogUseRootNavigator;
+    } else if (this is SingleChildRenderObjectWidget) {
+      final child = (this as SingleChildRenderObjectWidget).child;
+      if (child != null) {
+        return child.getWidgetDialogUseRootNavigator(depth: depth - 1);
+      }
+    } else {
+      try {
+        final child = (this as dynamic).child;
+        if (child is Widget) {
+          return child.getWidgetDialogUseRootNavigator(depth: depth - 1);
         }
       } catch (e, s) {
         /*assert(() {
@@ -580,7 +614,7 @@ extension NavigatorEx on BuildContext {
 
   /// 是否可以弹出一个路由
   /// [checkDismissal] 是否检测弹出最后一个根路由
-  bool canPop([bool rootNavigator = false, bool checkDismissal = true]) {
+  bool canPop({bool rootNavigator = false, bool checkDismissal = true}) {
     if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
       return navigatorOf(rootNavigator).canPop();
     } else {
@@ -595,11 +629,12 @@ extension NavigatorEx on BuildContext {
   /// - [checkDismissal] 是否弹出检测, 保留最后一个根路由页面.
   ///
   /// - [isAppBarDismissal]
-  void pop<T extends Object?>([
+  void pop<T extends Object?>({
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = true,
-  ]) {
+  }) {
+    //debugger();
     if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
       navigatorOf(rootNavigator).pop(result);
     }
@@ -607,18 +642,26 @@ extension NavigatorEx on BuildContext {
 
   /// 别名, 和go路由命名冲突
   @alias
-  void popRoute<T extends Object?>([
+  void popRoute<T extends Object?>({
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = true,
-  ]) => pop(result, rootNavigator, checkDismissal);
+  }) => pop(
+    result: result,
+    rootNavigator: rootNavigator,
+    checkDismissal: checkDismissal,
+  );
 
   /// 弹出一个菜单路由
   void popDialog<T extends Object?>([
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = false,
-  ]) => pop(result, rootNavigator, checkDismissal);
+  ]) => pop(
+    result: result,
+    rootNavigator: rootNavigator,
+    checkDismissal: checkDismissal,
+  );
 
   /// 弹出一个菜单路由
   @alias
@@ -626,14 +669,19 @@ extension NavigatorEx on BuildContext {
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = false,
-  ]) => pop(result, rootNavigator, checkDismissal);
+  ]) => pop(
+    result: result,
+    rootNavigator: rootNavigator,
+    checkDismissal: checkDismissal,
+  );
 
   /// 尝试弹出一个路由, 可以被[PopScope]拦截
-  Future<bool> maybePop<T extends Object?>([
+  Future<bool> maybePop<T extends Object?>({
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = true,
-  ]) async {
+  }) async {
+    //debugger();
     if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
       return navigatorOf(rootNavigator).maybePop(result);
     }

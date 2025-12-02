@@ -873,6 +873,7 @@ extension WidgetEx on Widget {
     //--
     bool? canRequestFocus,
     bool? skipTraversal,
+    String? tag,
   }) => enable
       ? FocusScope(
           node: node,
@@ -885,7 +886,9 @@ extension WidgetEx on Widget {
               onFocusChange ??
               (isDebug
                   ? (value) {
-                      l.i('[${classHash()}] FocusScope focus change: $value');
+                      l.i(
+                        '[${tag ?? classHash()}] FocusScope focus change: $value',
+                      );
                     }
                   : null),
           child: this,
@@ -1045,15 +1048,30 @@ extension WidgetEx on Widget {
     bool autofocus = true,
     //--
     bool enable = true,
+    bool rootNavigator = false,
+    String? tag,
+    String? debugLabel,
   }) => !enable
       ? this
       : focusScope(
+          tag: tag,
           enable: onlyDesktop ? isDesktopOrWeb : true,
           autofocus: autofocus,
           onKeyEvent: (node, event) {
             if (event.logicalKey == LogicalKeyboardKey.escape) {
-              if (event.isKeyUp) {
-                context?.maybePop(result);
+              if (event.isKeyDown) {
+                //系统也是使用[KeyDownEvent]而非[KeyUpEvent]
+                //debugger();
+                if (context?.canPop(rootNavigator: rootNavigator) == true) {
+                  assert(() {
+                    l.i('尝试自动关闭弹窗[$tag],hasFocus:${node.hasFocus.toDC()}');
+                    return true;
+                  }());
+                  context?.maybePop(
+                    rootNavigator: rootNavigator,
+                    result: result,
+                  );
+                }
                 return KeyEventResult.handled;
               }
             }
@@ -1071,9 +1089,11 @@ extension WidgetEx on Widget {
     //--
     bool autofocus = true,
     bool enable = true,
+    String? tag,
   }) => !enable
       ? this
       : focusScope(
+          tag: tag,
           enable: true,
           autofocus: autofocus,
           onKeyEvent: (node, event) {
@@ -2337,7 +2357,9 @@ extension WidgetEx on Widget {
             if (!didPop && !$isShowLoading) {
               final result = await action();
               if (result is bool && !result) {
-                (context ?? GlobalConfig.def.globalContext)?.pop(result);
+                (context ?? GlobalConfig.def.globalContext)?.pop(
+                  result: result,
+                );
               }
             }
           })

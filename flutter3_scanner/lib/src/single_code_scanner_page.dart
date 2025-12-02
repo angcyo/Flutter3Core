@@ -108,7 +108,7 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
       if (widget.autoPop) {
         _isDisposed = true;
         postFrameCallback((_) {
-          buildContext?.pop(list);
+          buildContext?.pop(result: list);
         });
       }
     }

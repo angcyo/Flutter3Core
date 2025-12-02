@@ -15,7 +15,10 @@ class AppAboutDialog extends StatefulWidget with DialogMixin {
   @autoInjectMark
   final Widget? logo;
 
-  const AppAboutDialog({super.key, this.logo});
+  /// 是否是debug模式
+  final bool debug;
+
+  const AppAboutDialog({super.key, this.logo, this.debug = false});
 
   @override
   State<AppAboutDialog> createState() => _AppAboutDialogState();
@@ -30,20 +33,41 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    return $platformPackageInfo.toWidget((ctx, info) {
-      return widget.buildAdaptiveCenterDialog(
-        context,
-        [
-          widget.logo ?? FlutterLogo(size: 64),
-          "${info?.appName}".text(style: globalTheme.tileTextTitleStyle),
-          ("${"Version".connect($buildFlavor == null ? "" : "(${$buildFlavor})")}: ${info?.version}(${info?.buildNumber})")
-              .text(style: globalTheme.textDesStyle)
-              .paddingOnly(vertical: kX),
-          "${info?.packageName}".text(style: globalTheme.textDesStyle),
-          if (isDebugFlag) DebugPage.buildDebugLastWidget(context, globalTheme),
-        ].column()!.paddingOnly(vertical: kXh),
-      );
-    }).ignoreKeyEvent();
+    return $platformPackageInfo
+        .toWidget((ctx, info) {
+          return widget.buildAdaptiveCenterDialog(
+            context,
+            [
+              widget.logo ?? FlutterLogo(size: 64),
+              "${info?.appName}".text(style: globalTheme.tileTextTitleStyle),
+              ("${"Version".connect($buildFlavor == null ? "" : "(${$buildFlavor})")}: ${info?.version}(${info?.buildNumber})")
+                  .text(style: globalTheme.textDesStyle)
+                  .paddingOnly(vertical: kX)
+                  .click(() {
+                    showLoading();
+                    LibAppVersionBean.fetchConfig(
+                      LibAppVersionBean.appVersionUrl,
+                      checkUpdate: true,
+                      forceShow: null,
+                      forceForbiddenShow: null,
+                      onUpdateAction: (update) {
+                        hideLoading();
+                        if (!update) {
+                          toast("已是最新版本".text());
+                        }
+                      },
+                      /*debugLabel: "test",*/
+                    );
+                  }),
+              "${info?.packageName}".text(style: globalTheme.textDesStyle),
+              if (widget.debug)
+                DebugPage.buildDebugLastWidget(context, globalTheme),
+            ].column()!.paddingOnly(vertical: kXh),
+            autoCloseDialog: true,
+            showCloseButton: true,
+          );
+        })
+        .ignoreKeyEvent(tag: classHash());
   }
 }
 

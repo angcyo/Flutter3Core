@@ -20,6 +20,9 @@ mixin DialogMixin implements TranslationTypeImpl {
   @override
   Color? get dialogBarrierColor => null;
 
+  @override
+  bool get dialogUseRootNavigator => true;
+
   /// 对话框路径过度动画
   @override
   TranslationType get translationType {
@@ -75,6 +78,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// - [margin] 整体外边距
   /// - [padding] 内容内边距
   /// - [blur] 是否使用模糊
+  /// - [showCloseButton] 是否显示关闭按钮
   ///
   /// - [fillDecoration]
   /// - [strokeDecoration]
@@ -91,6 +95,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     double radius = kDefaultBorderRadiusXX,
     bool? blur /*是否启用模糊*/,
     bool? shadow = true /*是否启用阴影*/,
+    bool? showCloseButton,
   }) {
     final globalTheme = GlobalTheme.of(context);
     borderRadius ??= BorderRadius.circular(radius);
@@ -115,12 +120,25 @@ mixin DialogMixin implements TranslationTypeImpl {
                         borderRadius: borderRadius,
                         /*boxShadow: [kBoxShadow],*/
                       ),
-                  child: child.paddingInsets(padding).material(),
+                  child: child
+                      .paddingInsets(padding)
+                      .stackOf(
+                        showCloseButton == true
+                            ? IconButton(
+                                onPressed: () {
+                                  closeDialogIf(context);
+                                },
+                                icon: const Icon(Icons.close),
+                              ).position(right: 0, top: 0)
+                            : null,
+                      )
+                      .material(),
                 ).blur(sigma: blur ? kL : null).iw(),
               )
               .clip(borderRadius: borderRadius)
               .shadowDecorated(
                 radius: kDefaultBorderRadiusXX,
+                decorationColor: decorationColor,
                 /*shadowColor: shadow,*/
                 enable: shadow == true,
               ),
@@ -146,6 +164,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     //--
     FocusOnKeyEventCallback? onKeyEvent,
     dynamic result,
+    bool? autoCloseDialog,
+    bool? showCloseButton,
   }) {
     return buildDesktopCenterDialog(
       context,
@@ -159,6 +179,8 @@ mixin DialogMixin implements TranslationTypeImpl {
       contentConstraints: contentConstraints,
       onKeyEvent: onKeyEvent,
       result: result,
+      autoCloseDialog: autoCloseDialog,
+      showCloseButton: showCloseButton,
     );
   }
 
@@ -177,6 +199,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     BoxConstraints? contentConstraints,
     //--
     dynamic result,
+    //--
+    bool? autoCloseDialog,
   }) {
     return Center(
           child: buildDialogContainer(
@@ -193,7 +217,9 @@ mixin DialogMixin implements TranslationTypeImpl {
         .autoCloseDialog(
           context,
           result: result,
-          enable: dialogBarrierDismissible,
+          rootNavigator: dialogUseRootNavigator,
+          enable: autoCloseDialog ?? dialogBarrierDismissible,
+          tag: classHash(),
         );
   }
 
@@ -215,6 +241,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     //--
     FocusOnKeyEventCallback? onKeyEvent,
     dynamic result,
+    bool? autoCloseDialog,
+    bool? showCloseButton,
   }) {
     return Center(
           child: buildDialogContainer(
@@ -226,6 +254,7 @@ mixin DialogMixin implements TranslationTypeImpl {
             radius: radius,
             decorationColor: decorationColor,
             shadow: shadow,
+            showCloseButton: showCloseButton,
           ),
         )
         .blur(enable: blur == true)
@@ -233,7 +262,8 @@ mixin DialogMixin implements TranslationTypeImpl {
           context,
           onKeyEvent: onKeyEvent,
           result: result,
-          enable: dialogBarrierDismissible,
+          tag: classHash(),
+          enable: autoCloseDialog ?? dialogBarrierDismissible,
         );
   }
 
@@ -647,12 +677,19 @@ mixin DialogMixin implements TranslationTypeImpl {
   }) async {
     if (close && context?.isMounted == true) {
       if (maybePop) {
-        return await context?.maybePop(result ?? popDialogResult) ?? false;
+        return await context?.maybePop(
+              rootNavigator: dialogUseRootNavigator,
+              result: result ?? popDialogResult,
+            ) ??
+            false;
       }
       if (route == null) {
-        context?.pop(result ?? popDialogResult);
+        context?.pop(
+          rootNavigator: dialogUseRootNavigator,
+          result: result ?? popDialogResult,
+        );
       } else {
-        context?.removeRouteIf(route);
+        context?.removeRouteIf(route, dialogUseRootNavigator);
       }
       return true;
     }
@@ -989,7 +1026,7 @@ extension NavigatorStateDialogEx on NavigatorState {
     bool useSafeArea = true,
     bool maintainBottomViewPadding = false,
     bool useBarrierColorAnimate = true,
-    bool useRootNavigator = true,
+    bool? useRootNavigator,
     RouteSettings? routeSettings,
     TraversalEdgeBehavior? traversalEdgeBehavior,
     Offset? anchorPoint,
@@ -1004,14 +1041,17 @@ extension NavigatorStateDialogEx on NavigatorState {
       }());
       return null;
     }
-    final CapturedThemes themes = InheritedTheme.capture(
-      from: context,
-      to: Navigator.of(context, rootNavigator: useRootNavigator).context,
-    );
 
     type ??= widget.getWidgetTranslationType();
     barrierDismissible ??= widget.getWidgetDialogBarrierDismissible() ?? true;
     barrierColor ??= widget.getWidgetDialogBarrierColor() ?? Colors.black54;
+    useRootNavigator ??= widget.getWidgetDialogUseRootNavigator() ?? true;
+
+    final navigator = Navigator.of(context, rootNavigator: useRootNavigator);
+    final CapturedThemes themes = InheritedTheme.capture(
+      from: context,
+      to: navigator.context,
+    );
 
     return push<T>(
       DialogPageRoute<T>(

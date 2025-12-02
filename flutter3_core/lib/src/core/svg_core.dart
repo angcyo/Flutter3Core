@@ -44,7 +44,7 @@ class AppPackageAssetsSvgWidget extends StatefulWidget {
     this.size,
     this.width,
     this.height,
-    this.fit = BoxFit.contain,
+    this.fit = BoxFit.fill,
   });
 
   @override

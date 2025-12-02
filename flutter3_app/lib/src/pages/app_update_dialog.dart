@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
 
@@ -34,21 +36,24 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
   /// 检查更新并且显示
   /// [forceShow] 是否强制显示更新, 不检查版本号
   /// 在[AppVersionBean.fetchConfig]中触发
+  ///
+  /// @return 是否有新版本
   @api
-  static void checkUpdateAndShow(
+  static Future<bool> checkUpdateAndShow(
     BuildContext? context,
     LibAppVersionBean bean, {
     bool? forceShow,
+    bool? forceForbiddenShow,
+    String? debugLabel,
   }) async {
+    debugger(when: debugLabel != null);
+    NavigatorState? navigator;
+    LibRes? libRes;
     if (context == null || context.isMounted != true) {
-      assert(() {
-        l.w("无效的操作");
-        return true;
-      }());
-      return;
+    } else {
+      navigator = context.navigatorOf(true);
+      libRes = LibRes.of(context);
     }
-    final navigator = context.navigatorOf();
-    final libRes = LibRes.of(context);
 
     //1: 平台检查, 获取对应平台的版本信息
     final LibAppVersionBean platformBean =
@@ -90,7 +95,8 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
     //check
     final localVersionCode = (await $appVersionCode).toIntOrNull() ?? 0;
     //debugger();
-    if (versionBean.debug != true ||
+    if (forceForbiddenShow == true ||
+        versionBean.debug != true ||
         (versionBean.debug == true && isDebugFlag)) {
       //forbidden检查
       final forbiddenVersionMap = versionBean.forbiddenVersionMap;
@@ -99,15 +105,19 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
               ?.find((key, value) => key.matchVersion(localVersionCode))
               ?.value ??
           versionBean;
-      if (forbiddenBean.forbiddenReason != null) {
-        (GlobalConfig.def.findNavigatorState() ?? navigator).showWidgetDialog(
+      if (forceForbiddenShow == true || forbiddenBean.forbiddenReason != null) {
+        final forceForbidden = forbiddenBean.forceForbidden == true;
+        (GlobalConfig.def.findNavigatorState() ?? navigator)?.showWidgetDialog(
           MessageDialog(
             title: forbiddenBean.forbiddenTile,
-            message: forbiddenBean.forbiddenReason,
-            confirm: libRes.libConfirm,
-            showConfirm: forbiddenBean.forceForbidden != true,
-            interceptPop: forbiddenBean.forceForbidden == true,
-          ),
+            message: forbiddenBean.forbiddenReason ?? "（o´ﾟ□ﾟ`o）",
+            confirm: libRes?.libKnown,
+            showConfirm: !forceForbidden,
+            interceptPop: forceForbidden,
+            dialogBarrierDismissible: !forceForbidden,
+          ).click(() {
+            exitApp();
+          }, enable: forceForbidden).ignoreKeyEvent(),
         );
       }
 
@@ -116,10 +126,20 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
         final versionCode = versionBean.versionCode ?? 0;
         if (forceShow == true || versionCode > localVersionCode) {
           //需要更新
-          navigator.showWidgetDialog(AppUpdateDialog(versionBean));
+          assert(() {
+            l.i(
+              "需要更新->forceShow:${forceShow?.toDC()} versionCode:$versionCode localVersionCode:$localVersionCode",
+            );
+            return true;
+          }());
+          navigator?.showWidgetDialog(
+            AppUpdateDialog(versionBean, forceUpdate: null),
+          );
+          return true;
         }
       }
     }
+    return false;
   }
 
   @override
@@ -128,12 +148,16 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
   /// 信息
   final LibAppVersionBean versionBean;
 
+  /// 是否强制更新
+  final bool? forceUpdate;
+
   final double headerMarginTop;
   final double headerPaddingTop;
 
   const AppUpdateDialog(
     this.versionBean, {
     super.key,
+    this.forceUpdate,
     this.headerMarginTop = 22,
     this.headerPaddingTop = 60,
   });
@@ -153,10 +177,12 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final lRes = libRes(context);
+    final forceUpdate =
+        widget.forceUpdate == true || widget.versionBean.forceUpdate == true;
 
     //控制按钮
     Widget control = [
-      if (widget.versionBean.forceUpdate != true)
+      if (forceUpdate != true)
         GradientButton(
           onTap: () {
             context.pop();
@@ -229,9 +255,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
       widget.versionBean.versionName
           ?.connect(
             null,
-            widget.versionBean.versionName?.startsWith("V") == true
+            widget.versionBean.versionName?.toLowerCase().startsWith("v") ==
+                    true
                 ? null
-                : "V",
+                : "v",
           )
           .text(
             style: globalTheme.textGeneralStyle,
@@ -242,14 +269,14 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
           ?.text(style: globalTheme.textBodyStyle)
           .scroll()
           .constrainedMax(
-            minWidth: double.infinity,
+            minWidth: 300 /*$screenWidth / 3*/ /*double.infinity*/,
             maxHeight: $screenHeight / 3,
           )
           .paddingSymmetric(vertical: kX)
           .expanded(),
       _buildProgress(),
       control,
-    ].column(crossAxisAlignment: CrossAxisAlignment.start)!;
+    ].column(crossAxisAlignment: CrossAxisAlignment.start)!.ih();
 
     //头部
     Widget header = [
@@ -279,15 +306,19 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
       ].stack()!,
       padding: EdgeInsets.zero,
       decorationColor: Colors.transparent,
+      /*autoCloseDialog: true,*/
     );
 
-    return body.interceptPopResult(() {
-      if (widget.versionBean.forceUpdate == true) {
-        //强制更新, 不允许关闭
-      } else {
-        buildContext?.pop();
-      }
-    });
+    return body
+        .interceptPopResult(() {
+          //debugger();
+          if (forceUpdate) {
+            //强制更新, 不允许关闭
+          } else {
+            buildContext?.pop(rootNavigator: widget.dialogUseRootNavigator);
+          }
+        })
+        .focusScope(tag: classHash());
   }
 
   /// 构建下载进度小部件

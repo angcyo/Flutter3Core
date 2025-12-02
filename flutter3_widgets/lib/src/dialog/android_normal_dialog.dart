@@ -60,6 +60,9 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   @override
   TranslationType get translationType => TranslationType.scaleFade;
 
+  @override
+  final bool dialogBarrierDismissible;
+
   final double gap = kX;
 
   /// 背景的圆角
@@ -106,6 +109,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.controlRadius = kX,
     this.controlAxis = Axis.horizontal,
     this.useBlur = false,
+    this.dialogBarrierDismissible = true,
   });
 
   @override
