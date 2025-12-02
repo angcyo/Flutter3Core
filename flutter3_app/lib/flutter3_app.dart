@@ -275,18 +275,26 @@ Future _initDebugLastInfo() async {
       final textStyle = GlobalConfig.def.globalTheme.textPlaceStyle;
       //--app包的信息
       DebugPage.debugLastWidgetBuilderList.add(
-        (_) => packageInfo.text(textAlign: TextAlign.center, style: textStyle),
+        (_) => packageInfo.text(
+          textAlign: .center,
+          style: textStyle,
+          selectable: true,
+        ),
       );
       //--平台设备信息
       DebugPage.debugLastWidgetBuilderList.add(
-        (_) =>
-            deviceInfoData.text(textAlign: TextAlign.center, style: textStyle),
+        (_) => deviceInfoData.text(
+          textAlign: .center,
+          style: textStyle,
+          selectable: true,
+        ),
       );
       //--build信息
       DebugPage.debugLastWidgetBuilderList.add(
         (_) => $buildConfig?.toString().text(
-          textAlign: TextAlign.center,
+          textAlign: .center,
           style: textStyle,
+          selectable: true,
         ),
       );
 

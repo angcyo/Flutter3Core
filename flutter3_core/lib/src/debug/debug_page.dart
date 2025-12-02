@@ -214,13 +214,15 @@ class DebugPage extends StatefulWidget {
         builder(context),
       //--
       "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr"
-          .text(style: globalTheme.textPlaceStyle),
+          .text(style: globalTheme.textPlaceStyle, selectable: true),
       "$platformMediaQueryDataList".text(
         style: globalTheme.textPlaceStyle,
         textAlign: .center,
+        selectable: true,
       ),
       //--
       $coreKeys.deviceUuid.text(
+        selectable: true,
         style: globalTheme.textPlaceStyle.copyWith(
           color: globalTheme.accentColor,
         ),
