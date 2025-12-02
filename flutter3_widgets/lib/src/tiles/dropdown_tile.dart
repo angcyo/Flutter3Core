@@ -4,14 +4,32 @@ part of '../../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/13
 ///
-/// 下拉按钮菜单tile, 使用[PopupRoute]实现
-/// [DropdownButtonTile]
-/// [DropdownMenuTile]
-class DropdownButtonTile extends StatelessWidget with TileMixin {
+/// 下拉按钮菜单tile, 系统内部使用[PopupRoute]实现
+///
+/// - [DropdownButton]
+/// - [DropdownMenu]
+///
+/// - [DropdownMenuTile]
+/// - [DropdownButtonTile]
+///
+class DropdownButtonTile extends StatefulWidget with TileMixin {
   /// 标签
   final String? label;
   final EdgeInsets? labelPadding;
   final Widget? labelWidget;
+
+  ///
+  final MainAxisSize? mainAxisSize;
+
+  //--Item
+
+  /// [DropdownMenuItem]
+  final AlignmentGeometry itemAlignment;
+
+  /// 变换小部件
+  final TransformDataWidgetBuilder? itemTransformBuilder;
+
+  //--Dropdown
 
   /// Dropdown
   final dynamic dropdownValue;
@@ -24,80 +42,121 @@ class DropdownButtonTile extends StatelessWidget with TileMixin {
 
   final AlignmentGeometry alignment;
 
-  /// [DropdownMenuItem]
-  final AlignmentGeometry itemAlignment;
-
-  ///
-  final MainAxisSize? mainAxisSize;
+  final bool isDense;
+  final bool isExpanded;
+  final Widget? underline;
 
   const DropdownButtonTile({
     super.key,
     this.label,
     this.labelWidget,
     this.labelPadding = kLabelPadding,
+    //--
+    this.itemAlignment = AlignmentDirectional.centerStart,
+    this.itemTransformBuilder,
+    //--Dropdown
     this.dropdownValue,
     this.dropdownValueList,
     this.onChanged,
     this.icon,
     this.iconSize = 24.0,
     this.alignment = AlignmentDirectional.center,
-    this.itemAlignment = AlignmentDirectional.centerStart,
     this.mainAxisSize,
+    this.isDense = false,
+    this.isExpanded = false,
+    this.underline,
   });
+
+  @override
+  State<DropdownButtonTile> createState() => _DropdownButtonTileState();
+}
+
+class _DropdownButtonTileState extends State<DropdownButtonTile>
+    with ValueChangeMixin<DropdownButtonTile, dynamic> {
+  @override
+  dynamic getInitialValueMixin() => widget.dropdownValue;
 
   @override
   Widget build(BuildContext context) {
     return [
-      buildTextWidget(
-        context,
-        textWidget: labelWidget,
-        text: label ?? "",
-        textPadding: labelPadding,
-      )?.expanded(enable: mainAxisSize != MainAxisSize.min),
+      widget
+          .buildTextWidget(
+            context,
+            textWidget: widget.labelWidget,
+            text: widget.label ?? "",
+            textPadding: widget.labelPadding,
+          )
+          ?.expanded(enable: widget.mainAxisSize != MainAxisSize.min),
       DropdownButton(
-          items: _buildDropdownMenuItems(context),
-          value: dropdownValue,
-          //文本样式
-          style: null,
-          icon: icon,
-          iconSize: iconSize,
-          itemHeight: kMinInteractiveDimension,
-          menuMaxHeight: null,
-          //紧凑的高度
-          isDense: false,
-          isExpanded: false,
-          //下划线
-          underline: null,
-          //下拉菜单的背景颜色
-          //[ThemeData.canvasColor]
-          dropdownColor: null,
-          enableFeedback: true,
-          alignment: alignment,
-          onChanged: (value) {
-            /*initialValue = value;
+        items: _buildDropdownMenuItems(context),
+        value: currentValueMixin,
+        //文本样式
+        style: null,
+        icon: widget.icon,
+        iconSize: widget.iconSize,
+        itemHeight: kMinInteractiveDimension,
+        menuMaxHeight: null,
+        //紧凑的高度
+        isDense: widget.isDense,
+        isExpanded: widget.isExpanded,
+        //下划线
+        underline: widget.underline,
+        //下拉菜单的背景颜色
+        //[ThemeData.canvasColor]
+        dropdownColor: null,
+        enableFeedback: true,
+        alignment: widget.alignment,
+        onChanged: (value) {
+          /*initialValue = value;
             updateState();*/
-            onChanged?.call(value);
-          }),
-    ].row(mainAxisSize: mainAxisSize)!;
+          assert(() {
+            l.w("DropdownButtonTile.onChanged[${value.runtimeType}]: $value");
+            return true;
+          }());
+          updateValueMixin(value);
+          widget.onChanged?.call(value);
+        },
+      ),
+    ].row(mainAxisSize: widget.mainAxisSize)!;
   }
 
   /// [DropdownMenuItem]
   List<DropdownMenuItem> _buildDropdownMenuItems(BuildContext context) {
     return [
-      for (final value in dropdownValueList ?? [])
+      for (final (index, value) in (widget.dropdownValueList ?? []).indexed)
         DropdownMenuItem(
           value: value,
           enabled: true,
-          alignment: itemAlignment,
-          child: widgetOf(context, value) ?? textOf(value, context)!.text(),
-        )
+          alignment: widget.itemAlignment,
+          child: _transformItemWidget(
+            context,
+            widgetOf(context, value) ?? textOf(value, context)!.text(),
+            index,
+            value,
+          ),
+        ),
     ];
+  }
+
+  /// [itemTransformBuilder]
+  Widget _transformItemWidget(
+    BuildContext context,
+    Widget item,
+    int index,
+    dynamic data,
+  ) {
+    return widget.itemTransformBuilder?.call(context, item, index, data) ??
+        item;
   }
 }
 
-/// 下拉输入框菜单tile, 使用[Overlay]实现
-/// [DropdownMenuTile]
-/// [DropdownButtonTile]
+/// 下拉输入框菜单tile, 系统内部使用[Overlay]实现
+///
+/// - [DropdownButton]
+/// - [DropdownMenu]
+///
+/// - [DropdownMenuTile]
+/// - [DropdownButtonTile]
 class DropdownMenuTile extends StatelessWidget with TileMixin {
   /// 标签
   final String? label;
@@ -131,8 +190,7 @@ class DropdownMenuTile extends StatelessWidget with TileMixin {
         textWidget: labelWidget,
         text: label ?? "",
         textPadding: labelPadding,
-      )!
-          .expanded(),
+      )!.expanded(),
       DropdownMenu(
         dropdownMenuEntries: _buildDropdownMenuEntry(context),
         enabled: true,
@@ -177,7 +235,7 @@ class DropdownMenuTile extends StatelessWidget with TileMixin {
           trailingIcon: null,
           enabled: true,
           style: null,
-        )
+        ),
     ];
   }
 }
@@ -232,8 +290,7 @@ class _MenuAnchorTileState extends State<MenuAnchorTile> with TileMixin {
       textWidget: widget.labelWidget,
       text: widget.label ?? "",
       textPadding: widget.labelPadding,
-    )!
-        .expanded();
+    )!.expanded();
     //--
     final menuAnchor = MenuAnchor(
       controller: menuController,
@@ -254,9 +311,7 @@ class _MenuAnchorTileState extends State<MenuAnchorTile> with TileMixin {
       },
       builder: widget.anchorBuilder,
       child: (widget.anchorChild == null && widget.anchorBuilder == null)
-          ? [
-              label,
-            ].row()?.click(() {
+          ? [label].row()?.click(() {
               //debugger();
               if (menuController.isOpen) {
                 menuController.close();
@@ -284,9 +339,10 @@ class _MenuAnchorTileState extends State<MenuAnchorTile> with TileMixin {
                 .paddingSymmetric(horizontal: kX)
                 .align(AlignmentDirectional.centerStart)
                 .ink(() {
-              widget.onChanged?.call(value);
-              menuController.close();
-            }).constrainedMin(minHeight: kMinInteractiveDimension),
+                  widget.onChanged?.call(value);
+                  menuController.close();
+                })
+                .constrainedMin(minHeight: kMinInteractiveDimension),
     ];
   }
 }
