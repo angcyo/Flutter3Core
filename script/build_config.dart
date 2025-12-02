@@ -65,6 +65,8 @@ void main(List<String> arguments) {
 
 /// 读取指定key对应的map数据
 Map? readBuildConfigMap(String key) {
+  initScriptCommon();
+
   final value = $localYaml?[key] ?? $yaml?[key] ?? $pubspec?[key];
   if (value is Map) {
     return value;

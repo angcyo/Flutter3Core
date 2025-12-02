@@ -109,28 +109,34 @@ dynamic $yaml;
 /// 最后读取`pubspec.yaml`
 dynamic $pubspec;
 
-/// 获取脚本`script.local.yaml`和`script.yaml`配置文件中配置的值
-/// - [YamlMap] 自动合并值
-/// - [YamlList] 自动合并值
-dynamic getScriptYamlValue(String key) {
+/// 初始化脚本配置
+void initScriptCommon() {
+  final path = currentPath;
   if ($localYaml == null) {
-    final yamlFile = File("$currentPath/script.local.yaml");
+    final yamlFile = File("$path/script.local.yaml");
     $localYaml = loadYaml(
       yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
     );
   }
 
   if ($yaml == null) {
-    final yamlFile = File("$currentPath/script.yaml");
+    final yamlFile = File("$path/script.yaml");
     $yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
   }
 
   if ($pubspec == null) {
-    final yamlFile = File("$currentPath/pubspec.yaml");
+    final yamlFile = File("$path/pubspec.yaml");
     $pubspec = loadYaml(
       yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
     );
   }
+}
+
+/// 获取脚本`script.local.yaml`和`script.yaml`配置文件中配置的值
+/// - [YamlMap] 自动合并值
+/// - [YamlList] 自动合并值
+dynamic getScriptYamlValue(String key) {
+  initScriptCommon();
 
   final localValue = $localYaml?[key];
   final value = $yaml?[key];
@@ -148,24 +154,7 @@ dynamic getScriptYamlValue(String key) {
 /// 解析`xxx.xxx.xxx`这样的路径[keyPath]对应的数据
 /// [getScriptYamlValue]
 dynamic getScriptYamlValuePath(String keyPath) {
-  if ($localYaml == null) {
-    final yamlFile = File("$currentPath/script.local.yaml");
-    $localYaml = loadYaml(
-      yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
-    );
-  }
-
-  if ($yaml == null) {
-    final yamlFile = File("$currentPath/script.yaml");
-    $yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
-  }
-
-  if ($pubspec == null) {
-    final yamlFile = File("$currentPath/pubspec.yaml");
-    $pubspec = loadYaml(
-      yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
-    );
-  }
+  initScriptCommon();
 
   dynamic localValue;
   dynamic value;
