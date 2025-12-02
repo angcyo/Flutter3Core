@@ -297,7 +297,7 @@ mixin AbsScrollPage {
 
   /// 是否激活标题栏
   @property
-  bool? enableAppBar(BuildContext context) => true;
+  bool? enableAppBar(BuildContext context) => context.isInRootNavigator;
 
   /// 是否使用[SliverAppBar], 否则使用[buildAppBar]
   @property
