@@ -94,6 +94,9 @@ mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
       currentValueMixin = toValue;
       mixin.onValueChanged?.call(toValue);
       updateState();
+    } else {
+      currentValueMixin = toValue;
+      updateState();
     }
   }
 }

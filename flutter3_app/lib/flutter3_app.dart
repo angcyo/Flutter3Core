@@ -31,6 +31,7 @@ export 'package:share_plus/share_plus.dart';
 
 export 'src/mode/lib_app_setting_bean.dart';
 export 'src/mode/lib_app_version_bean.dart';
+export 'src/mode/lib_label_value_bean.dart';
 export 'src/pages/app_about_dialog.dart';
 export 'src/pages/app_update_dialog.dart';
 
