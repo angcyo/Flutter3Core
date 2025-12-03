@@ -57,6 +57,7 @@ export 'package:flutter3_res/flutter3_res.dart';
 
 part 'src/basics/basics.dart';
 part 'src/basics/basics_animation.dart';
+part 'src/basics/basics_breakpoints.dart';
 part 'src/basics/basics_date_time.dart';
 part 'src/basics/basics_decoration.dart';
 part 'src/basics/basics_event.dart';

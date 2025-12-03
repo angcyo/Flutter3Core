@@ -169,7 +169,7 @@ Future runGlobalApp(
       printError(e, s);
       debugger(when: isDebug);
     }
-    AppLifecycleLog.install();
+    AppLifecycleLog.install(); //app生命周期监听/日志
 
     //debug info
     _initDebugLastInfo();

@@ -1156,6 +1156,53 @@ extension WidgetEx on Widget {
   Widget dataProvider([Object? data]) =>
       DataProviderScope(data: data, child: this);
 
+  /// 动画容器
+  /// [AnimatedContainer]
+  Widget animatedContainer({
+    Key? key,
+    //--
+    Duration? duration = kDefaultAnimationDuration,
+    Curve curve = Curves.linear,
+    VoidCallback? onEnd,
+    //--
+    AlignmentGeometry? alignment,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    //--
+    Color? color,
+    Decoration? decoration,
+    Decoration? foregroundDecoration,
+    //--
+    double? size,
+    double? width,
+    double? height,
+    BoxConstraints? constraints,
+    //--
+    Matrix4? transform,
+    AlignmentGeometry? transformAlignment,
+    Clip clipBehavior = Clip.none,
+  }) => duration == null
+      ? this
+      : AnimatedContainer(
+          key: key,
+          alignment: alignment,
+          padding: padding,
+          color: color,
+          decoration: decoration,
+          foregroundDecoration: foregroundDecoration,
+          width: size ?? width,
+          height: size ?? height,
+          constraints: constraints,
+          margin: margin,
+          transform: transform,
+          transformAlignment: transformAlignment,
+          clipBehavior: clipBehavior,
+          onEnd: onEnd,
+          curve: curve,
+          duration: duration,
+          child: this,
+        );
+
   /// 当child的大小发生改变时, 自动触发动画
   Widget animatedSize({
     Key? key,

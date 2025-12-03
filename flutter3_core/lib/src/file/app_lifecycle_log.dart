@@ -7,7 +7,7 @@ part of '../../flutter3_core.dart';
 
 /// 只要创建了[AppLifecycleListener]对象, 就会自动调用[WidgetsBinding.addObserver]方法
 /// [WidgetsBindingObserver]
-/// [AppLifecycleLog]
+/// [AppLifecycleLog] //app生命周期监听
 /// [AppLifecycleStateMixin]
 /// [NavigatorObserverMixin]
 mixin AppLifecycleLogMixin on AppLifecycleListener {

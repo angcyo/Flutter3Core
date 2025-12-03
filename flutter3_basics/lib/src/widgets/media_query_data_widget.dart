@@ -35,46 +35,22 @@ class MediaQueryDataBuilderWidget extends StatefulWidget {
       _MediaQueryDataBuilderWidgetState();
 }
 
+/// - [MediaQueryDataBuilderWidget]
 class _MediaQueryDataBuilderWidgetState
-    extends State<MediaQueryDataBuilderWidget>
-    with WidgetsBindingObserver {
-  ui.FlutterView? _view;
-  late MediaQueryData _mediaQueryData;
-
-  @override
-  void initState() {
-    _view =
-        widget.view ??
-        WidgetsBinding.instance.platformDispatcher.views.firstOrNull ??
-        flutterViews.firstOrNull ??
-        flutterView;
-    _mediaQueryData = MediaQueryData.fromView(_view!);
-    WidgetsBinding.instance.addObserver(this);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
+    extends MediaQueryDataState<MediaQueryDataBuilderWidget> {
   @override
   Widget build(BuildContext context) {
-    return widget.builder(context, _mediaQueryData);
+    return widget.builder(
+      context,
+      mediaQueryDataMixin ?? platformMediaQueryData,
+    );
   }
 
   @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
-    final mediaQueryData = MediaQueryData.fromView(_view!);
-    if (_mediaQueryData != mediaQueryData) {
-      _mediaQueryData = mediaQueryData;
-      if (widget.onChange?.call(context, mediaQueryData) != true) {
-        updateState();
-      }
+  void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
+    if (widget.onChange?.call(context, to) != true) {
+      updateState();
     }
-    //debugger();
   }
 }
 
@@ -85,6 +61,7 @@ typedef MediaQueryDataWidgetBuilder =
 /// - 屏幕大小改变
 /// - 窗口大小改变
 /// - 窗口方向改变
+/// - [MediaQueryDataState]
 mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
     on State<T>, WidgetsBindingObserver {
   /// 当前视图
@@ -134,3 +111,7 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
     updateState();
   }
 }
+
+/// - [MediaQueryDataChangeMixin]
+abstract class MediaQueryDataState<T extends StatefulWidget> extends State<T>
+    with WidgetsBindingObserver, MediaQueryDataChangeMixin<T> {}
