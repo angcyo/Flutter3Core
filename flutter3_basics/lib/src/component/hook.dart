@@ -111,7 +111,9 @@ mixin HookMixin {
   @callPoint
   @autoDispose
   void hookAnyListenableValue<Data>(
-      Listenable? value, ValueCallback<Data> action) {
+    Listenable? value,
+    ValueCallback<Data> action,
+  ) {
     if (value == null) {
       return;
     }
@@ -249,7 +251,7 @@ mixin HookMixin {
     }
   }
 
-//endregion --dispose--
+  //endregion --dispose--
 }
 
 /// [HookMixin]
@@ -260,3 +262,9 @@ mixin HookStateMixin<T extends StatefulWidget> on State<T>, HookMixin {
     super.dispose();
   }
 }
+
+/// 集成
+/// - [HookMixin]
+/// - [HookStateMixin]
+abstract class HookState<T extends StatefulWidget> extends State<T>
+    with HookMixin, HookStateMixin {}
