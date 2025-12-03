@@ -10,21 +10,11 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_core/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_core/src/debug/debug_file_tiles.dart';
-import 'package:flutter3_core/src/debug/debug_overlay.dart';
-import 'package:flutter3_core/src/view_model/jetpack/livedata.dart';
-import 'package:flutter3_core/src/view_model/jetpack/viewmodel.dart';
-import 'package:flutter3_http/flutter3_http.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
-import 'package:flutter3_widgets/flutter3_widgets.dart';
-import 'package:hive/hive.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 import 'src/isar/isar_test_collection.dart';
 
@@ -42,13 +32,13 @@ export 'package:path_provider/path_provider.dart';
 export 'package:provider/provider.dart';
 
 export 'src/core/build_config.dart';
+export 'src/debug/debug_overlay.dart';
 export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
-export 'src/debug/debug_overlay.dart';
 
 part 'src/core/core_keys.dart';
-part 'src/core/svg_core.dart';
 part 'src/core/hive_data_mix.dart';
+part 'src/core/svg_core.dart';
 part 'src/debug/core_debug.dart';
 part 'src/debug/debug_file_page.dart';
 part 'src/debug/debug_mix.dart';
@@ -56,11 +46,11 @@ part 'src/debug/debug_page.dart';
 part 'src/debug/navigator_route_overlay.dart';
 part 'src/debug/screen_capture_overlay.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
+part 'src/dialog/options_dialog.dart';
 part 'src/dialog/single_bottom_input_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
 part 'src/dialog/wheel_dialog.dart';
-part 'src/dialog/options_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/config_file.dart';
 part 'src/file/file_log.dart';
@@ -91,8 +81,7 @@ Future<void> initFlutter3Core() async {
       fileName: fileName,
       folder: folder,
       limitLength: fileName.endsWith(kLogExtension),
-    ))
-        .path;
+    )).path;
   };
 
   // 文件日志
@@ -100,8 +89,8 @@ Future<void> initFlutter3Core() async {
     GlobalConfig.def.writeFileFn
         ?.call(kLFileName, kLogPathName, log)
         .catchError((error) {
-      debugPrint('写入文件调用失败: $error');
-    });
+          debugPrint('写入文件调用失败: $error');
+        });
   };
 
   //--
@@ -124,7 +113,7 @@ Future<void> initHive() async {
   } catch (e, s) {
     debugger(when: isDebug);
     throw RCoreException(
-      message: '初始化Hive数据库失败:$e',
+      message: isDebug ? '初始化Hive数据库失败:$e' : "初始化数据库失败, 请关闭已存在的应用程序, 重新启动.",
       cause: e,
       stackTrace: s,
     );
@@ -145,11 +134,7 @@ Future<void> initIsar() async {
     await openIsar();
   } catch (e, s) {
     debugger(when: isDebug);
-    throw RCoreException(
-      message: '初始化Isar数据库失败:$e',
-      cause: e,
-      stackTrace: s,
-    );
+    throw RCoreException(message: '初始化Isar数据库失败:$e', cause: e, stackTrace: s);
   }
 }
 
@@ -166,16 +151,15 @@ SvgPicture? loadCoreAssetSvgPicture(
   double? height,
   UiColor? tintColor,
   UiColorFilter? colorFilter,
-}) =>
-    key == null
-        ? null
-        : SvgPicture.asset(
-            key.ensurePackagePrefix(package, prefix).transformKey(),
-            fit: fit ?? BoxFit.contain,
-            width: size ?? width,
-            height: size ?? height,
-            colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-          );
+}) => key == null
+    ? null
+    : SvgPicture.asset(
+        key.ensurePackagePrefix(package, prefix).transformKey(),
+        fit: fit ?? BoxFit.contain,
+        width: size ?? width,
+        height: size ?? height,
+        colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+      );
 
 /// [loadAssetSvgWidget]
 Widget loadCoreSvgWidget(
@@ -188,18 +172,17 @@ Widget loadCoreSvgWidget(
   double? size,
   double? width,
   double? height,
-}) =>
-    loadAssetSvgWidget(
-      key,
-      prefix: prefix,
-      package: package,
-      tintColor: tintColor,
-      colorFilter: colorFilter,
-      size: size,
-      width: width,
-      height: height,
-      fit: fit,
-    );
+}) => loadAssetSvgWidget(
+  key,
+  prefix: prefix,
+  package: package,
+  tintColor: tintColor,
+  colorFilter: colorFilter,
+  size: size,
+  width: width,
+  height: height,
+  fit: fit,
+);
 
 /// 下一步svg图标
 SvgPicture coreNextSvgPicture({
@@ -209,16 +192,15 @@ SvgPicture coreNextSvgPicture({
   double? height,
   UiColor? tintColor,
   UiColorFilter? colorFilter,
-}) =>
-    loadCoreAssetSvgPicture(
-      Assets.svg.coreNext,
-      fit: fit,
-      size: size,
-      width: width,
-      height: height,
-      tintColor: tintColor,
-      colorFilter: colorFilter,
-    )!;
+}) => loadCoreAssetSvgPicture(
+  Assets.svg.coreNext,
+  fit: fit,
+  size: size,
+  width: width,
+  height: height,
+  tintColor: tintColor,
+  colorFilter: colorFilter,
+)!;
 
 /// [Image].[StatefulWidget]
 Image? loadCoreAssetImageWidget(
@@ -231,14 +213,13 @@ Image? loadCoreAssetImageWidget(
   double? height,
   UiColor? color,
   UiBlendMode? colorBlendMode,
-}) =>
-    key == null
-        ? null
-        : Image.asset(
-            key.ensurePackagePrefix(package, prefix).transformKey(),
-            fit: fit,
-            width: size ?? width,
-            height: size ?? height,
-            color: color,
-            colorBlendMode: colorBlendMode,
-          );
+}) => key == null
+    ? null
+    : Image.asset(
+        key.ensurePackagePrefix(package, prefix).transformKey(),
+        fit: fit,
+        width: size ?? width,
+        height: size ?? height,
+        color: color,
+        colorBlendMode: colorBlendMode,
+      );

@@ -190,19 +190,16 @@ class Flutter3ShelfHttp {
         }
         host = ip ?? host;
         //debugger();
-        _httpServer = await shelf_io
-            .serve(handler, host, port)
-            .get(
-              (value, error) {
-                //debugger();
-                if (error != null) {
-                  throw error;
-                }
-                return value;
-              },
-              null,
-              true,
-            );
+        _httpServer = await shelf_io.serve(handler, host, port).get((
+          value,
+          error,
+        ) {
+          //debugger();
+          if (error != null) {
+            throw error;
+          }
+          return value;
+        }, throwError: true);
         startTime = nowTimestamp();
         /*_httpServer?.handleError((e) {
           l.w('服务关闭:$e');

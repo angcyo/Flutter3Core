@@ -504,8 +504,13 @@ extension ObjectEx on Object {
 
 extension FutureEx<T> on Future<T> {
   /// 合并[Future.then]和[Future.catchError]方法
-  /// [throwError] [get]中遇到的错误是否重新抛出?
-  Future get([ValueErrorCallback? get, StackTrace? stack, bool? throwError]) {
+  /// - [throwError] [get]中遇到的错误是否重新抛出?
+  Future get(
+    ValueErrorCallback? get, {
+    StackTrace? stack,
+    bool? throwError,
+    String? tag,
+  }) {
     stack ??= StackTrace.current;
     return then(
       (value) {
@@ -519,7 +524,7 @@ extension FutureEx<T> on Future<T> {
             rethrow;
           } else {
             assert(() {
-              l.w('FutureGet异常:$error↓');
+              l.w('[$tag]FutureGet异常:$error↓');
               printError(error, s /*stack*/);
               return true;
             }());
@@ -533,12 +538,12 @@ extension FutureEx<T> on Future<T> {
         //此处无法捕获[get]中的异常
         if (error is RCancelException) {
           assert(() {
-            l.w('操作被取消:$error');
+            l.w('[$tag]操作被取消:$error');
             return true;
           }());
         } else if (error is FutureCancelException) {
           assert(() {
-            l.w('Future被取消:$error');
+            l.w('[$tag]Future被取消:$error');
             return true;
           }());
         } else {
@@ -546,7 +551,7 @@ extension FutureEx<T> on Future<T> {
             throw error;
           } else {
             assert(() {
-              l.w('Future异常:$error↓');
+              l.w('[$tag]Future异常:$error↓');
               printError(error, stack ?? errorStack);
               return true;
             }());
@@ -558,27 +563,43 @@ extension FutureEx<T> on Future<T> {
   }
 
   /// 支持类型的[FutureEx.get]方法
-  Future getValue([
-    dynamic Function(T? value, dynamic error)? get,
+  Future getValue(
+    dynamic Function(T? value, dynamic error)? get, {
     StackTrace? stack,
-  ]) => this.get((value, error) {
-    if (error != null) {
-      get?.call(null, error);
-      return null;
-    } else {
-      get?.call(value, null);
-      return value;
-    }
-  }, stack);
+    bool? throwError,
+    String? tag,
+  }) => this.get(
+    (value, error) {
+      if (error != null) {
+        get?.call(null, error);
+        return null;
+      } else {
+        get?.call(value, null);
+        return value;
+      }
+    },
+    stack: stack,
+    throwError: throwError,
+    tag: tag,
+  );
 
   /// 获取[Future]的错误信息, 有错误时, 才会触发[get]方法
-  Future getError([dynamic Function(dynamic error)? get, StackTrace? stack]) =>
-      this.get((value, error) {
-        if (error != null) {
-          get?.call(error);
-        }
-        return value;
-      }, stack);
+  Future getError(
+    dynamic Function(dynamic error)? get, {
+    StackTrace? stack,
+    bool? throwError,
+    String? tag,
+  }) => this.get(
+    (value, error) {
+      if (error != null) {
+        get?.call(error);
+      }
+      return value;
+    },
+    stack: stack,
+    throwError: throwError,
+    tag: tag,
+  );
 
   /// 等待[Future]完成
   Future<T> wait(Duration timeLimit, {FutureOr<T> Function()? onTimeout}) {
