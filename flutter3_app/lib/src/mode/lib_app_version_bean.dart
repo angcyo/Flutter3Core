@@ -187,7 +187,7 @@ class LibAppVersionBean {
     return bean;
   }
 
-  //region --精确平台/包名/指定设备--
+  //region 精确平台/包名/指定设备
 
   /// 1. 每个平台单独设置信息, 小写字母
   /// [$platformName]
@@ -202,9 +202,9 @@ class LibAppVersionBean {
   /// [CoreKeys.deviceUuid]
   Map<String, LibAppVersionBean>? versionUuidMap;
 
-  //endregion --精确平台/包名/指定设备--
+  //endregion 精确平台/包名/指定设备
 
-  //region --过滤--
+  //region 过滤
 
   /// 指定那些设备uuid能更新
   List<String>? allowVersionUuidList;
@@ -215,9 +215,9 @@ class LibAppVersionBean {
   /// 是否仅用于调试?
   bool? debug;
 
-  //endregion --过滤--
+  //endregion 过滤
 
-  //region --核心信息--
+  //region 核心信息
 
   /// 抬头, 不指定则使用[versionName]
   String? versionTile;
@@ -227,6 +227,12 @@ class LibAppVersionBean {
 
   /// 版本号, 用来比对
   int? versionCode;
+
+  /// 可以更新到此版本范围
+  /// - [versionCode]
+  /// - [VersionMatcher]
+  ///   - [ValueRange]
+  String? versionRange;
 
   /// 版本描述信息, Markdown格式
   ///
@@ -260,9 +266,9 @@ class LibAppVersionBean {
   /// `2025-06-10`
   String? versionDate;
 
-  //endregion --核心信息--
+  //endregion 核心信息
 
-  //region --权限信息--
+  //region 权限信息
 
   /// 版本号段对应的 forbidden 信息
   /// ```
@@ -284,7 +290,7 @@ class LibAppVersionBean {
   /// 强制禁用
   bool? forceForbidden;
 
-  //endregion --权限信息--
+  //endregion 权限信息
 
   @override
   String toString() => toJson().toString();

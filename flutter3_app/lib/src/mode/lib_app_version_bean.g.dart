@@ -30,6 +30,7 @@ LibAppVersionBean _$LibAppVersionBeanFromJson(Map<String, dynamic> json) =>
       ..versionTile = json['versionTile'] as String?
       ..versionName = json['versionName'] as String?
       ..versionCode = (json['versionCode'] as num?)?.toInt()
+      ..versionRange = json['versionRange'] as String?
       ..versionDes = json['versionDes'] as String?
       ..forceUpdate = json['forceUpdate'] as bool?
       ..downloadUrl = json['downloadUrl'] as String?
@@ -64,6 +65,7 @@ Map<String, dynamic> _$LibAppVersionBeanToJson(
   'versionTile': ?instance.versionTile,
   'versionName': ?instance.versionName,
   'versionCode': ?instance.versionCode,
+  'versionRange': ?instance.versionRange,
   'versionDes': ?instance.versionDes,
   'forceUpdate': ?instance.forceUpdate,
   'downloadUrl': ?instance.downloadUrl,
