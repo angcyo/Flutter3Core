@@ -136,6 +136,8 @@ class LibAppVersionBean {
     return result;
   }
 
+  //MARK: - bean
+
   factory LibAppVersionBean.fromJson(Map<String, dynamic> json) =>
       _$LibAppVersionBeanFromJson(json);
 
@@ -206,6 +208,9 @@ class LibAppVersionBean {
 
   //region 过滤
 
+  /// 允许自定义的标签字段
+  String? tag;
+
   /// 指定那些设备uuid能更新
   List<String>? allowVersionUuidList;
 
@@ -213,6 +218,7 @@ class LibAppVersionBean {
   List<String>? denyVersionUuidList;
 
   /// 是否仅用于调试?
+  /// 开启后, 仅在[isDebugFlag]为true时有效
   bool? debug;
 
   //endregion 过滤

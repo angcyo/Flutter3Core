@@ -20,6 +20,7 @@ LibAppVersionBean _$LibAppVersionBeanFromJson(Map<String, dynamic> json) =>
         (k, e) =>
             MapEntry(k, LibAppVersionBean.fromJson(e as Map<String, dynamic>)),
       )
+      ..tag = json['tag'] as String?
       ..allowVersionUuidList = (json['allowVersionUuidList'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList()
@@ -59,6 +60,7 @@ Map<String, dynamic> _$LibAppVersionBeanToJson(
   'versionUuidMap': ?instance.versionUuidMap?.map(
     (k, e) => MapEntry(k, e.toJson()),
   ),
+  'tag': ?instance.tag,
   'allowVersionUuidList': ?instance.allowVersionUuidList,
   'denyVersionUuidList': ?instance.denyVersionUuidList,
   'debug': ?instance.debug,

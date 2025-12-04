@@ -35,6 +35,12 @@ class ProgressBar extends StatefulWidget {
   /// 进度背景渐变颜色
   final List<Color>? bgColorList;
 
+  //MARK: - size
+
+  /// 宽高大小
+  final double width;
+  final double height;
+
   const ProgressBar({
     super.key,
     this.radius,
@@ -46,6 +52,8 @@ class ProgressBar extends StatefulWidget {
     this.flowProgressColorList,
     this.bgColor = Colors.black12,
     this.bgColorList,
+    this.width = double.infinity,
+    this.height = kMinInteractiveHeight,
   });
 
   @override
@@ -150,7 +158,7 @@ class _ProgressBarState extends State<ProgressBar>
         bgColor: widget.bgColor,
         bgColorList: widget.bgColorList,
       ),
-      size: const Size(double.infinity, kMinInteractiveHeight),
+      size: Size(widget.width, widget.height),
     );
   }
 }

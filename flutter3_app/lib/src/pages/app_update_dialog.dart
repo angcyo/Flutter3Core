@@ -272,7 +272,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
             minWidth: 300 /*$screenWidth / 3*/ /*double.infinity*/,
             maxHeight: $screenHeight / 3,
           )
-          .paddingSymmetric(vertical: kX)
+          .insets(vertical: kX)
           .expanded(),
       _buildProgress(),
       control,
@@ -331,7 +331,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
     return ProgressBar(
       progress: progress == -1 ? 1 : progress,
       enableFlowProgressAnimate: _downloadState == DownloadState.downloading,
-    ).size(height: 6).paddingSymmetric(vertical: kL);
+    ).size(height: 6).insets(vertical: kL);
   }
 
   /// 下载的状态
@@ -437,7 +437,7 @@ class AppUpdateLogDialog extends StatelessWidget with DialogMixin {
             minWidth: double.infinity,
             maxHeight: $screenHeight / 3,
           )
-          .paddingSymmetric(vertical: kX)
+          .insets(vertical: kX)
           .expanded(),
       hLine(context),
       if (showMore)
@@ -524,7 +524,7 @@ class _AppUpdateLogTile extends StatelessWidget {
               "${bean.versionDate?.connect(bean.versionName != null ? " / ${bean.versionName}" : null)}")
           .text(style: globalTheme.textTitleStyle, bold: true)
           .paddingOnly(horizontal: kX, top: kX),
-      bean.versionDes?.text().paddingSymmetric(vertical: kX),
+      bean.versionDes?.text().insets(vertical: kX),
       hLine(context),
     ].column(crossAxisAlignment: CrossAxisAlignment.start)!;
   }

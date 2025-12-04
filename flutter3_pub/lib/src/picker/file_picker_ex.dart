@@ -74,7 +74,7 @@ Future<FilePickerResult?> pickFiles({
 }) async {
   final FilePickerResult? result = await FilePicker.platform.pickFiles(
     dialogTitle: dialogTitle,
-    initialDirectory: initialDirectory,
+    initialDirectory: initialDirectory ?? _lastPickDirectory,
     type: type,
     allowedExtensions: allowedExtensions,
     compressionQuality: allowCompression ? (compressionQuality ?? 30) : 0,
@@ -86,6 +86,9 @@ Future<FilePickerResult?> pickFiles({
     lockParentWindow: lockParentWindow,
     readSequential: readSequential,
   );
+
+  //temp
+  _lastPickDirectory = result?.files.firstOrNull?.path ?? _lastPickDirectory;
 
   //Android girl.jpg:/data/user/0/com.angcyo.flutter3.abc/cache/file_picker/girl.jpg
   assert(() {
@@ -160,11 +163,13 @@ Future<String?> saveFile({
   final path = await FilePicker.platform.saveFile(
     dialogTitle: dialogTitle,
     fileName: fileName,
-    initialDirectory: initialDirectory,
+    initialDirectory: initialDirectory ?? _lastPickDirectory,
     type: type,
     allowedExtensions: allowedExtensions,
     lockParentWindow: lockParentWindow,
   );
+  //temp
+  _lastPickDirectory = path ?? _lastPickDirectory;
   assert(() {
     if (path != null) {
       l.d('保存文件至->$path [${path.fileSizeStr}]');
@@ -175,6 +180,10 @@ Future<String?> saveFile({
   }());
   return path;
 }
+
+/// 缓存上次选择的文件夹路径
+@tempFlag
+String? _lastPickDirectory;
 
 extension PickerImageEx on UiImage {
   /// 调用系统弹窗, 选择文件路径, 保存图片

@@ -64,6 +64,8 @@
   "libDownloadNow": "立即下载",
   "libClickRetry": "点击重试",
   "libInstallNow": "立即安装",
+  "libUpgradeNow": "开始升级",
+  "libUpgradeFailure": "更新失败",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

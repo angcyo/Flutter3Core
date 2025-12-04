@@ -293,6 +293,16 @@ class LibRes {
   String get libInstallNow {
     return Intl.message('立即安装', name: 'libInstallNow', desc: '', args: []);
   }
+
+  /// `开始升级`
+  String get libUpgradeNow {
+    return Intl.message('开始升级', name: 'libUpgradeNow', desc: '', args: []);
+  }
+
+  /// `更新失败`
+  String get libUpgradeFailure {
+    return Intl.message('更新失败', name: 'libUpgradeFailure', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

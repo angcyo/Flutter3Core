@@ -7,6 +7,8 @@ part of '../../flutter3_basics.dart';
 ///
 /// 用来实现[Future]取消, 使用[Future.any]来实现
 /// 参考dio的[CancelToken]
+///
+/// - [FutureCancelException] 异常
 class FutureCancelToken {
   /// 用来发送取消信号的[Completer]
   final Completer<FutureCancelException> _completer =
@@ -83,5 +85,23 @@ extension FutureCancelEx<T> on Future<T> {
       if (cancelToken != null) cancelToken.whenCancel.then((e) => throw e),
       this as Future<T>,
     ]);
+  }
+}
+
+/// [FutureCancelToken]
+mixin FutureCancelStateMixin<T extends StatefulWidget> on State<T> {
+  /// [FutureCancelToken]
+  FutureCancelToken? futureCancelTokenMixin;
+
+  @override
+  void initState() {
+    futureCancelTokenMixin = FutureCancelToken();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    futureCancelTokenMixin?.cancel();
+    super.dispose();
   }
 }

@@ -38,8 +38,11 @@ Future<UiImage?> saveScreenCapture([
 /// ```
 /// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
 /// ```
-///[getApplicationDocumentsDirectory]
-///[getApplicationCacheDirectory]
+/// - [getApplicationDocumentsDirectory]
+/// - [getApplicationCacheDirectory]
+///
+/// - [fileDirectory]
+/// - [cacheDirectory]
 ///
 Future<Directory> fileDirectory() async {
   Directory? directory;
@@ -87,11 +90,13 @@ Future<Directory> fileDirectory() async {
 /// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
 /// ```
 ///
+/// - [fileDirectory]
+/// - [cacheDirectory]
 Future<Directory> cacheDirectory() async {
   Directory? directory;
   try {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      // /storage/emulated/0/Android/data/com.angcyo.flutter3_abc/cache
+      // android: /storage/emulated/0/Android/data/com.angcyo.flutter3_abc/cache
       try {
         directory = (await getExternalCacheDirectories())?.firstOrNull;
       } catch (e) {
@@ -104,7 +109,9 @@ Future<Directory> cacheDirectory() async {
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
       try {
-        // /data/user/0/com.angcyo.flutter3_abc/cache
+        // android: /data/user/0/com.angcyo.flutter3_abc/cache
+        // ios:
+        // macos: /Users/angcyo/Library/Containers/com.laserabc.laserabcFactoryTools/Data/Library/Caches/G01%20V41.01.0004.ydb
         directory = await getTemporaryDirectory();
       } catch (e) {
         assert(() {
@@ -150,10 +157,7 @@ extension DirectoryPubEx on Directory {
   }) {
     try {
       //2024-3-26`listSync`偶尔会返回数据空
-      final list = listSync(
-        recursive: recursive,
-        followLinks: followLinks,
-      );
+      final list = listSync(recursive: recursive, followLinks: followLinks);
       assert(() {
         l.d('listFilesSync->$path:${list.length}');
         return true;
@@ -287,9 +291,10 @@ extension FileStringPubEx on String {
     if (contains('?')) {
       text = split('?').first;
     }
-    return withoutExtension
+    final name = withoutExtension
         ? p.basenameWithoutExtension(text)
         : p.basename(text);
+    return name.decodeUri();
   }
 
   /// 获取扩展名
@@ -329,8 +334,9 @@ extension FileStringPubEx on String {
     String? subFolder,
     bool useCacheFolder = false,
   ]) async {
-    final folderPath =
-        useCacheFolder ? (await cacheFolder()).path : (await fileFolder()).path;
+    final folderPath = useCacheFolder
+        ? (await cacheFolder()).path
+        : (await fileFolder()).path;
     if (subFolder == null) {
       subFolder = folderPath;
     } else {
@@ -347,21 +353,23 @@ extension FileStringPubEx on String {
   /// context.join('directory', 'file.txt');
   /// ```
   /// https://pub.dev/packages/path
-  String join(String part1,
-      [String? part2,
-      String? part3,
-      String? part4,
-      String? part5,
-      String? part6,
-      String? part7,
-      String? part8,
-      String? part9,
-      String? part10,
-      String? part11,
-      String? part12,
-      String? part13,
-      String? part14,
-      String? part15]) {
+  String join(
+    String part1, [
+    String? part2,
+    String? part3,
+    String? part4,
+    String? part5,
+    String? part6,
+    String? part7,
+    String? part8,
+    String? part9,
+    String? part10,
+    String? part11,
+    String? part12,
+    String? part13,
+    String? part14,
+    String? part15,
+  ]) {
     return p.join(
       this,
       part1,
@@ -388,10 +396,7 @@ extension FileStringPubEx on String {
   bool renameSync(String newPath) => file().renameToSync(newPath);
 
   /// 获取一个自身路径对应的文件夹对象
-  Directory directory({
-    String? parentPath,
-    String? childPath,
-  }) =>
+  Directory directory({String? parentPath, String? childPath}) =>
       Directory(p.join(parentPath ?? '', this, childPath ?? ''));
 
   /// 获取一个自身路径对应的文件对象
@@ -399,10 +404,7 @@ extension FileStringPubEx on String {
   /// `The argument type 'File/*1*/' can't be assigned to the parameter type 'File/*2*/'.`
   /// [fileName] 文件名, 如果指定了文件名, 则自身就是文件夹路径,并返回当前目录下的文件
   /// [parentPath] 父路径, 如果指定了父路径, 则自身就是文件名,并返回父路径下的文件
-  File file({
-    String? fileName,
-    String? parentPath,
-  }) {
+  File file({String? fileName, String? parentPath}) {
     String path = this;
     if (fileName != null) {
       path = p.join(this, fileName);
@@ -413,10 +415,7 @@ extension FileStringPubEx on String {
   }
 
   /// 2024-03-31, 名字冲突
-  File file2({
-    String? fileName,
-    String? parentPath,
-  }) =>
+  File file2({String? fileName, String? parentPath}) =>
       file(fileName: fileName, parentPath: parentPath);
 
   /// 删除文件或文件夹
@@ -462,8 +461,10 @@ extension FileStringPubEx on String {
 //---
 
 /// 快速获取一个文件类型的文件夹路径, 会自动创建文件夹
-/// [filePath]
-/// [cacheFolder]
+/// - [filePath]
+/// - [fileFolder]
+/// - [cacheFolder]
+/// - [cacheFilePath]
 Future<Directory> fileFolder([
   String? part1,
   String? part2,
@@ -510,7 +511,10 @@ Future<Directory> fileFolder([
 /// /storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/2855283474
 /// File: '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/transfer/2855283474'
 /// ```
-/// [fileFolder]
+/// - [filePath]
+/// - [fileFolder]
+/// - [cacheFolder]
+/// - [cacheFilePath]
 Future<String> filePath(
   String fileName, [
   String? part1,
@@ -529,13 +533,29 @@ Future<String> filePath(
   String? part14,
   String? part15,
 ]) async {
-  final folder = await fileFolder(part1, part2, part3, part4, part5, part6,
-      part7, part8, part9, part10, part11, part12, part13, part14, part15);
+  final folder = await fileFolder(
+    part1,
+    part2,
+    part3,
+    part4,
+    part5,
+    part6,
+    part7,
+    part8,
+    part9,
+    part10,
+    part11,
+    part12,
+    part13,
+    part14,
+    part15,
+  );
   return p.join(folder.path, fileName);
 }
 
 /// 快速获取一个缓存文件路径, 会自动创建文件夹.
-/// [cacheFilePath]
+/// - [cacheFolder]
+/// - [cacheFilePath]
 Future<Directory> cacheFolder([
   String? part1,
   String? part2,
@@ -578,7 +598,8 @@ Future<Directory> cacheFolder([
 }
 
 /// 快速获取一个缓存文件路径, 会自动创建文件夹.
-/// [cacheFolder]
+/// - [cacheFolder]
+/// - [cacheFilePath]
 Future<String> cacheFilePath(
   String fileName, [
   String? part1,
@@ -597,7 +618,22 @@ Future<String> cacheFilePath(
   String? part14,
   String? part15,
 ]) async {
-  final folder = await cacheFolder(part1, part2, part3, part4, part5, part6,
-      part7, part8, part9, part10, part11, part12, part13, part14, part15);
+  final folder = await cacheFolder(
+    part1,
+    part2,
+    part3,
+    part4,
+    part5,
+    part6,
+    part7,
+    part8,
+    part9,
+    part10,
+    part11,
+    part12,
+    part13,
+    part14,
+    part15,
+  );
   return p.join(folder.path, fileName);
 }

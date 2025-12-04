@@ -3111,8 +3111,18 @@ extension WidgetEx on Widget {
   /// 控制当前的[Widget]可见性
   /// [AnimatedContainer]
   /// [AnimatedOpacity]
-  Widget visible({required bool visible, bool anim = false}) {
-    Widget result = Visibility(visible: visible, child: this);
+  Widget visible({
+    required bool visible,
+    bool maintainSize = false /*是否占据空间*/,
+    bool anim = false,
+  }) {
+    Widget result = Visibility(
+      visible: visible,
+      maintainSize: maintainSize,
+      maintainAnimation: maintainSize,
+      maintainState: maintainSize,
+      child: this,
+    );
     if (anim) {
       result = AnimatedOpacity(
         opacity: visible ? 1 : 0,

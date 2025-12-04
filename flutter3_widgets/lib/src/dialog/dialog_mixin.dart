@@ -132,7 +132,7 @@ mixin DialogMixin implements TranslationTypeImpl {
                                   closeDialogIf(context);
                                 },
                                 icon: const Icon(Icons.close),
-                              ).position(right: 0, top: 0)
+                              ).insets(all: kL).position(right: 0, top: 0)
                             : null,
                       )
                       .material(),

@@ -56,6 +56,14 @@ extension DioStringEx on String {
   /// GridOptionBean.fromJson(res.data);
   /// ```
   ///
+  /// ```
+  /// api.get().get((data, error) {
+  ///   if (data != null) {
+  ///     final list = data?.data?.map((e) => LibAppVersionBean.fromJson(e)).toList().cast<LibAppVersionBean>();
+  ///   }
+  /// });
+  /// ```
+  ///
   /// [Response.data]数据类型通常是[_Map<String, dynamic>]
   /// @return [Response<dynamic>]
   ///
@@ -242,6 +250,32 @@ extension DioStringEx on String {
   }
 
   /// 下载
+  ///
+  /// ```
+  /// final savePath = await cacheFilePath(url.fileName());
+  /// url
+  ///     .download(
+  ///       savePath: savePath,
+  ///       cancelToken: cancelTokenMixin,
+  ///       onReceiveProgress: (count, total) {
+  ///         if (total > 0) {
+  ///           _progress = count / total;
+  ///         } else {
+  ///           _progress = 0;
+  ///         }
+  ///         updateState();
+  ///       },
+  ///     )
+  ///     .get((response, error) {
+  ///       if (response != null) {
+  ///         //下载成功
+  ///       } else if (error != null) {
+  ///         //下载失败
+  ///       }
+  ///       updateState();
+  ///     });
+  /// ```
+  ///
   /// [context] 用来获取dio
   /// [data] 请求体 [DioMixin._transformData]
   /// [savePath] 保存路径
@@ -267,12 +301,17 @@ extension DioStringEx on String {
     Options? options,
     bool debugLog = false, //debug模式下, 是否打印日志
   }) async {
+    final url = transformUrl();
     final dio = RDio.get(context: context).dio;
     final saveFilePath = savePath ?? (await getSavePath);
     if (overwrite == false && saveFilePath?.isExistsSync() == true) {
       //文件已经存在
       final length = saveFilePath!.length;
       onReceiveProgress?.call(length, length);
+      assert(() {
+        l.i("文件已经存在: $url -> $saveFilePath");
+        return true;
+      }());
       return Response(
         requestOptions: RequestOptions(path: this),
         data: saveFilePath,
@@ -283,16 +322,16 @@ extension DioStringEx on String {
       saveFilePath,
       onReceiveProgress: (count, total) {
         assert(() {
-          if (debugLog) {
+          if (count >= total) {
+            l.i("下载完成: $url -> $savePath");
+          } else if (debugLog) {
             if (total > 0) {
               // 日志限流
               l.d(
-                "下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$this]->[$saveFilePath]",
+                "下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n$url -> $saveFilePath",
               );
             } else {
-              l.d(
-                "下载进度:$count ${count.toSizeStr()} \n[$this]->[$saveFilePath]",
-              );
+              l.d("下载进度:$count ${count.toSizeStr()} \n$url -> $saveFilePath");
             }
           }
           return true;
@@ -418,5 +457,23 @@ extension ResponseEx<T> on Response<T> {
     final host = realUri.host;
     //debugger();
     return origin.uri?.host == host;
+  }
+}
+
+/// [CancelToken]
+mixin CancelTokenStateMixin<T extends StatefulWidget> on State<T> {
+  /// [FutureCancelToken]
+  CancelToken? cancelTokenMixin;
+
+  @override
+  void initState() {
+    cancelTokenMixin = CancelToken();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    cancelTokenMixin?.cancel();
+    super.dispose();
   }
 }
