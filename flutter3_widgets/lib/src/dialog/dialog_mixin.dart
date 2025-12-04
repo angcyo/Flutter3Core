@@ -34,6 +34,9 @@ mixin DialogMixin implements TranslationTypeImpl {
     if (type.contains("desktop")) {
       return TranslationType.scaleFade;
     }
+    if (type.contains("bottom")) {
+      return TranslationType.translationFade;
+    }
     return isDesktopOrWeb
         ? TranslationType.scaleFade
         : TranslationType.translationFade;
