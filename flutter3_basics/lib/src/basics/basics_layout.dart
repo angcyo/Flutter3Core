@@ -101,8 +101,11 @@ Offset alignRectOffset(
   Rect containsBounds,
   Size childSize,
 ) {
-  final offset =
-      alignChildOffset(alignment, containsBounds.size, childSize: childSize);
+  final offset = alignChildOffset(
+    alignment,
+    containsBounds.size,
+    childSize: childSize,
+  );
   return containsBounds.topLeft + offset;
 }
 
