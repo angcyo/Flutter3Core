@@ -1115,11 +1115,24 @@ extension StringEx on String {
   /// 重复字符串多少次[repeat]
   String operator *(int repeat) => List.filled(repeat, this).join();
 
+  //MARK: - wrap
+
+  /// 将字符串用[]号包裹起来
+  String wsb() => "[$this]";
+
+  /// 将字符串用{}号包裹起来
+  String wcb() => "{$this}";
+
+  /// 将字符串用()包裹起来
+  String wph() => "($this)";
+
   /// 接上一个字符
   /// - [after] 在后面拼接
   /// - [before] 在前面拼接
   String connect([String? after, String? before]) =>
       "${before ?? ""}$this${after ?? ""}";
+
+  //MARK: - to
 
   /// 字符串转换成int
   int toInt({int? radix}) => int.parse(this, radix: radix);
