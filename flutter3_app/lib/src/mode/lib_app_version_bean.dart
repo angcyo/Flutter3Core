@@ -229,6 +229,12 @@ class LibAppVersionBean {
   int? versionCode;
 
   /// 可以更新到此版本范围
+  ///
+  /// ```
+  /// [100~999] 版本号
+  /// [1.0.0~9.9.9] 版本名称
+  /// ```
+  ///
   /// - [versionCode]
   /// - [VersionMatcher]
   ///   - [ValueRange]

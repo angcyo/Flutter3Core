@@ -24,23 +24,25 @@ class VersionMatcher {
     final rangeStringList = config?.split(kRS);
     final list = <ValueRange>[];
     rangeStringList?.forEach((range) {
-      final r = range.range;
-      if (r != null) {
-        list.add(r);
+      if (range.isNotEmpty) {
+        final r = range.range;
+        if (r != null) {
+          list.add(r);
+        }
       }
     });
     return list;
   }
 
   /// 当前的版本[version]适配满足配置的规则[min~max]
-  /// [version] 当前的版本 比如:678
+  /// [version] 当前的版本 比如:678 / 1.0.0
   /// [config] 版本配置 比如:xxx~xxx ~xxx xxx~
   ///
   /// [defOrNull] 默认值, 当版本号[version]未指定时, 或者匹配范围未指定时, 返回的默认值
   /// [defOrEmpty] 当匹配范围为空时的默认值
   ///
   static bool matches(
-    int? version,
+    dynamic version,
     String? config, {
     /*未配置[config]规则时返回*/
     bool defOrNull = false,
@@ -71,12 +73,54 @@ class VersionMatcher {
   }
 
   /// 匹配, 当前输入的版本号[version]是否在指定的范围内
-  static bool matchesRange(int? version, List<ValueRange> rangeList) {
+  /// - [version] 支持版本号, 语义化版本名
+  static bool matchesRange(dynamic version, List<ValueRange> rangeList) {
     if (version == null) {
       return false;
     }
-    for (var range in rangeList) {
-      if (version >= range.minInt && version <= range.maxInt) {
+    for (final range in rangeList) {
+      //debugger();
+      if (version is String && version.contains(".")) {
+        //语义化版本号名匹配
+        final valueList = version.split(".");
+        int major = double.tryParse(valueList.getOrNull(0) ?? "")?.round() ?? 0;
+        int minor = double.tryParse(valueList.getOrNull(1) ?? "")?.round() ?? 0;
+        int patch = double.tryParse(valueList.getOrNull(2) ?? "")?.round() ?? 0;
+
+        //MARK: - min
+        bool match = major >= range.minMajor.round();
+        if (match) {
+          if (minor > (range.minMinor?.round() ?? 0)) {
+            match = true;
+          } else {
+            match = patch >= (range.minPatch?.round() ?? 0);
+          }
+
+          //MARK: - max
+          if (match) {
+            match = major <= range.maxMajor.round();
+            if (match) {
+              if (minor < (range.maxMinor?.round() ?? 0)) {
+                match = true;
+              } else {
+                match = patch <= (range.minPatch?.round() ?? 0);
+              }
+            }
+          }
+        }
+        if (match) {
+          return match;
+        }
+      }
+      if (range.isSemver) {
+        continue;
+      }
+      final v =
+          (version is num
+                  ? version.toDouble()
+                  : double.tryParse(version.toString()) ?? 0.0)
+              .round();
+      if (v >= range.minInt && v <= range.maxInt) {
         return true;
       }
     }
@@ -85,8 +129,11 @@ class VersionMatcher {
 }
 
 /// 数值范围最小和最大值
-/// 版本规则数据结构[min~max]
+/// - 版本规则数据结构[min~max]
+/// - 如果是语义化的版本号, 则是[]
 class ValueRange {
+  //MARK: - number 常规数值
+
   final double min;
   final double max;
 
@@ -94,15 +141,53 @@ class ValueRange {
 
   int get maxInt => max.round();
 
+  //--
+
+  ///
+  double get num => max - min;
+
   /// 值
   int get numInt => num.round();
 
-  double get num => max - min;
+  //MARK: - semver 语义化版本号
 
-  ValueRange(this.min, this.max);
+  /// [major] + [minor] + [patch]
+  /// https://semver.org/lang/zh-CN/
+  /// 主版本
+  double get minMajor => min;
+
+  double get maxMajor => max;
+
+  /// 次版本
+  final double? minMinor;
+  final double? maxMinor;
+
+  /// 修订版本
+  final double? minPatch;
+  final double? maxPatch;
+
+  /// 是否是语义化版本号
+  bool get isSemver =>
+      minMinor != null ||
+      maxMinor != null ||
+      minPatch != null ||
+      maxPatch != null;
+
+  ValueRange(
+    this.min,
+    this.max, {
+    this.minMinor,
+    this.maxMinor,
+    this.minPatch,
+    this.maxPatch,
+  });
 
   @override
   String toString() {
+    if (isSemver) {
+      return '[min:${minMajor.round()}.${minMinor?.round() ?? 0}.${minPatch?.round() ?? 0} '
+          'max:${maxMajor.round()}.${maxMinor?.round() ?? 0}.${maxPatch?.round() ?? 0}]';
+    }
     return '[min:$min max:$max]';
   }
 }
@@ -129,7 +214,7 @@ extension VersionIntEx on int {
 /// [VersionIntEx]
 extension VersionStringEx on String {
   /// 解析范围
-  /// 格式 [ x x~ ~x xxx~xxx xxx~xxx]
+  /// 格式 [* / x / x~ / ~x / xxx~xxx / x.x.x~x.x.x]
   ValueRange? get range {
     if (this == VersionMatcher.kAll) {
       return ValueRange(
@@ -139,26 +224,58 @@ extension VersionStringEx on String {
     } else {
       final rangeString = split(VersionMatcher.kVS);
       if (rangeString.length == 1) {
-        final min = double.parse(rangeString[0]);
-        if (have(VersionMatcher.kAll)) {
-          if (startsWith(VersionMatcher.kVS)) {
-            //[~xxx] 的格式
-            return ValueRange(intMinValue.roundToDouble(), min);
-          } else {
-            //[x~] 的格式
-            return ValueRange(min, intMaxValue.roundToDouble());
-          }
+        final value = rangeString[0];
+        if (contains(".")) {
+          //[x.x.x] 的格式, 固定版本
+          final valueList = value.split(".");
+          double? major = double.tryParse(valueList.getOrNull(0) ?? "");
+          double? minor = double.tryParse(valueList.getOrNull(1) ?? "");
+          double? patch = double.tryParse(valueList.getOrNull(2) ?? "");
+          return ValueRange(
+            major ?? 0.0,
+            major ?? 0.0,
+            minMinor: minor,
+            maxMinor: minor,
+            minPatch: patch,
+            maxPatch: patch,
+          );
         } else {
-          //[x] 的格式
+          final min = double.tryParse(value) ?? 0.0;
+          //[x] 的格式, 固定版本
           return ValueRange(min, min);
         }
       } else if (rangeString.length >= 2) {
-        //[x~]
-        //[~x]
-        final min = double.tryParse(rangeString[0]) ?? 0.0;
-        final max =
-            double.tryParse(rangeString[1]) ?? intMax32Value.roundToDouble();
-        return ValueRange(min, max);
+        //[x~x]
+        if (contains(".")) {
+          final minValueList = rangeString[0].split(".");
+          final maxValueList = rangeString[1].split(".");
+          double? minMajor = double.tryParse(minValueList.getOrNull(0) ?? "");
+          double? minMinor = double.tryParse(minValueList.getOrNull(1) ?? "");
+          double? minPatch = double.tryParse(minValueList.getOrNull(2) ?? "");
+          double? maxMajor = double.tryParse(maxValueList.getOrNull(0) ?? "");
+          double? maxMinor = double.tryParse(maxValueList.getOrNull(1) ?? "");
+          double? maxPatch = double.tryParse(maxValueList.getOrNull(2) ?? "");
+          return ValueRange(
+            minMajor ?? 0.0,
+            maxMajor ?? intMax32Value.roundToDouble(),
+            minMinor: minMinor,
+            maxMinor: maxMinor,
+            minPatch: minPatch,
+            maxPatch: maxPatch,
+          );
+        } else {
+          final min = double.tryParse(rangeString[0]) ?? 0.0;
+          final max =
+              double.tryParse(rangeString[1]) ?? intMax32Value.roundToDouble();
+          if (startsWith(VersionMatcher.kVS)) {
+            //[~x] 的格式
+            return ValueRange(intMinValue.roundToDouble(), min);
+          } else if (endsWith(VersionMatcher.kVS)) {
+            //[x~] 的格式
+            return ValueRange(min, intMaxValue.roundToDouble());
+          }
+          return ValueRange(min, max);
+        }
       }
     }
     return null;
