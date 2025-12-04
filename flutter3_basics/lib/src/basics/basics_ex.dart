@@ -3375,6 +3375,15 @@ extension MapEx<K, V> on Map<K, V> {
     return result;
   }
 
+  /// 如果[key]为空, 则移除所有, 否则移除这个key
+  void removeAllIfNull(K? key) {
+    if (key == null) {
+      clear();
+    } else {
+      remove(key);
+    }
+  }
+
   /// 如果value为null, 则移除这个key
   void removeIfNull(K key) {
     if (this[key] == null) {
@@ -3494,15 +3503,17 @@ extension MapEx<K, V> on Map<K, V> {
   }
 
   /// 替换key
-  Map<K, V> replaceKey(K oldKey, K newKey) {
+  /// @return true 替换成功
+  bool replaceKey(K oldKey, K newKey) {
     if (containsKey(oldKey)) {
       final value = this[oldKey];
       remove(oldKey);
       if (value != null) {
         this[newKey] = value;
       }
+      return true;
     }
-    return this;
+    return false;
   }
 }
 

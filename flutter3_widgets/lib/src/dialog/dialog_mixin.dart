@@ -692,7 +692,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           result: result ?? popDialogResult,
         );
       } else {
-        context?.removeRouteIf(route, dialogUseRootNavigator);
+        context?.removeRouteIf(route, rootNavigator: dialogUseRootNavigator);
       }
       return true;
     }

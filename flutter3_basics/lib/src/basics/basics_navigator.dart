@@ -716,9 +716,23 @@ extension NavigatorEx on BuildContext {
     navigatorOf(rootNavigator).popToRoot(predicate);
   }
 
+  /// 移除当前路由
+  @api
+  void removeModalRoute<T extends Object?>({
+    bool rootNavigator = false,
+    T? result,
+  }) {
+    removeRouteIf(modalRoute, rootNavigator: rootNavigator, result: result);
+  }
+
   /// 移除指定的路由
-  void removeRouteIf([Route<dynamic>? route, bool rootNavigator = false]) {
-    navigatorOf(rootNavigator).removeRouteIf(route);
+  /// - [route] 路由, 不指定则表示当前
+  void removeRouteIf<T extends Object?>(
+    Route<dynamic>? route, {
+    bool rootNavigator = false,
+    T? result,
+  }) {
+    navigatorOf(rootNavigator).removeRouteIf(route, result);
   }
 }
 
@@ -839,9 +853,9 @@ extension NavigatorStateEx on NavigatorState {
   }
 
   /// 移除指定的路由
-  void removeRouteIf(Route<dynamic>? route) {
+  void removeRouteIf<T extends Object?>([Route<dynamic>? route, T? result]) {
     if (route != null) {
-      removeRoute(route);
+      removeRoute(route, result);
     }
   }
 

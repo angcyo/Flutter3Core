@@ -64,7 +64,7 @@ final class CoreKeys {
   }
 }
 
-/// CoreKeys的实例
+/// [CoreKeys]的实例
 @globalInstance
 final $coreKeys = CoreKeys._();
 
