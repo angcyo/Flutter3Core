@@ -303,6 +303,11 @@ class LibRes {
   String get libUpgradeFailure {
     return Intl.message('更新失败', name: 'libUpgradeFailure', desc: '', args: []);
   }
+
+  /// `升级成功`
+  String get libUpgradeSuccess {
+    return Intl.message('升级成功', name: 'libUpgradeSuccess', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

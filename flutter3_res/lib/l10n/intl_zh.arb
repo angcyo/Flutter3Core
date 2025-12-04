@@ -66,6 +66,7 @@
   "libInstallNow": "立即安装",
   "libUpgradeNow": "开始升级",
   "libUpgradeFailure": "更新失败",
+  "libUpgradeSuccess": "升级成功",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

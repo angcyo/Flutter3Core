@@ -62,6 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libTips": MessageLookupByLibrary.simpleMessage("提示"),
     "libUpgradeFailure": MessageLookupByLibrary.simpleMessage("更新失败"),
     "libUpgradeNow": MessageLookupByLibrary.simpleMessage("开始升级"),
+    "libUpgradeSuccess": MessageLookupByLibrary.simpleMessage("升级成功"),
     "libValidRangeTip": MessageLookupByLibrary.simpleMessage("有效范围"),
     "libWaitTip": MessageLookupByLibrary.simpleMessage("请稍等..."),
     "libWarn": MessageLookupByLibrary.simpleMessage("警告"),
