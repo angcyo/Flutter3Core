@@ -62,6 +62,10 @@ Future delayed([Duration? duration]) =>
 /// uuid.v5(Uuid.NAMESPACE_URL, 'www.google.com'); // -> 'c74a196f-f19d-5ea9-bffd-a2742432fc9c'
 /// ```
 /// 默认小写输出 `11341dea9934435487e415bc66048394`
+///
+/// - https://pub.dev/packages/flake_uuid
+/// - https://pub.dev/packages/ulid
+///
 //String get uuid => uuidOrigin(true);
 String uuid([bool trim = true]) {
   var v4 = const Uuid().v4();
