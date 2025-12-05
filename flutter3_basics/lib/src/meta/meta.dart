@@ -69,6 +69,7 @@ class Api {
 }
 
 const api = Api();
+const apiRelay = Api("标识当前是一个转发的api接口调用");
 
 /// websocket接口调用
 class WS {
@@ -203,6 +204,7 @@ const inch = AnnotationMeta('in英寸单位');
 /// [reason] 用于标记dsl方法的原因
 const dsl = AnnotationMeta('dsl方法');
 const callPoint = AnnotationMeta('调用点');
+const callRelay = AnnotationMeta('转发的调用点');
 const overridePoint = AnnotationMeta('覆盖点');
 const testPoint = AnnotationMeta('测试点');
 const experimental = AnnotationMeta('测试功能, 不稳定');
