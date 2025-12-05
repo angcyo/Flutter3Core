@@ -7,6 +7,7 @@ part of '../../flutter3_basics.dart';
 /// 全局常量
 //region 全局常量
 
+/// xs sm md lg xl xxl
 @dp
 const double kS = 2;
 const double kM = 4;
