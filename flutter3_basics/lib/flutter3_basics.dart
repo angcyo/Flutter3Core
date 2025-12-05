@@ -298,12 +298,25 @@ String libAssetsStateNoDataKey = Assets.png.stateNoData.keyName;
 //--
 
 /// 弹出应用
+@api
 void popApp() {
   SystemChannels.platform.invokeMethod('SystemNavigator.pop');
 }
 
 /// 退出应用
-void exitApp([int code = 1]) {
+/// - [code] 0..255 , 退出码,含义,状态,约定使用范围
+///   - 0,       成功 (Success),             唯一,  程序正常完成其所有任务。
+///   - 1,       通用错误 (General Error),    失败,  最常见的非零退出码，表示发生了未指明的内部错误、文件未找到等。
+///   - 2,       使用错误 (Misuse of Shell),  失败,  通常表示命令参数错误、权限不足或文件不存在等。
+///   - 126,     命令不可执行,                 失败,  Shell 找到了命令但无法执行（如权限问题）。
+///   - 127,     命令未找到,                   失败,  Shell 无法找到指定的命令。
+///   - 128 + N, 信号退出,                    失败,  程序被信号 N 终止。例如，被 SIGKILL 信号 (9) 终止，退出码为 128+9=137。
+///
+/// - [Isolate.current]
+/// - [Isolate.kill]
+/// - [exit]
+@api
+void exitApp([int code = 0]) {
   exit(code);
 }
 
