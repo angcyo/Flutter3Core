@@ -7,7 +7,7 @@ part of '../../flutter3_core.dart';
 
 /// 只要创建了[AppLifecycleListener]对象, 就会自动调用[WidgetsBinding.addObserver]方法
 /// [WidgetsBindingObserver]
-/// [AppLifecycleLog] //app生命周期监听
+/// [AppLifecycleObserver] //app生命周期监听
 /// [AppLifecycleStateMixin]
 /// [NavigatorObserverMixin]
 mixin AppLifecycleLogMixin on AppLifecycleListener {
@@ -138,16 +138,19 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   }
 }
 
+//MARK: - AppLifecycleObserver
+
 ///
-/// App的生命周期
-/// @author <a href="mailto:angcyo@126.com">angcyo</a>
-/// @since 2023/10/23
+/// App的生命周期观察
 ///
 /// 只要创建了[AppLifecycleListener]对象, 就会自动调用[WidgetsBinding.addObserver]方法
-/// [WidgetsBindingObserver]
-/// [WidgetsBinding.addObserver]
-/// [WidgetsBinding.removeObserver]
-class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
+/// 需要先调用[AppLifecycleObserver.install]进行安装.
+///
+/// - [WidgetsBindingObserver]
+/// - [WidgetsBinding.addObserver]
+/// - [WidgetsBinding.removeObserver]
+class AppLifecycleObserver extends AppLifecycleListener
+    with AppLifecycleLogMixin {
   /// 全局App生命周期监听
   /// 刚启动的时候, 不会有这个值
   static LiveStream<AppLifecycleState?> appLifecycleStateStream = $live();
@@ -160,9 +163,9 @@ class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
 
   /// 注册一个全局的生命周期监听
   @api
-  static AppLifecycleLog install() {
+  static AppLifecycleObserver install() {
     WidgetsFlutterBinding.ensureInitialized();
-    return AppLifecycleLog();
+    return AppLifecycleObserver();
   }
 
   /// 移除监听
@@ -193,12 +196,14 @@ class AppLifecycleLog extends AppLifecycleListener with AppLifecycleLogMixin {
 
 /// 判断App是否处于后台运行
 bool get $isAppPaused =>
-    AppLifecycleLog.appLifecycleStateStream.value == AppLifecycleState.paused;
+    AppLifecycleObserver.appLifecycleStateStream.value ==
+    AppLifecycleState.paused;
 
 /// 判断App是否处于前台运行
 bool get $isAppResumed =>
-    AppLifecycleLog.appLifecycleStateStream.value == AppLifecycleState.resumed;
+    AppLifecycleObserver.appLifecycleStateStream.value ==
+    AppLifecycleState.resumed;
 
 /// 判断App键盘是否显示
 bool get $isAppKeyboardShow =>
-    (AppLifecycleLog.appBottomInsetHeightStream.value ?? 0) > 0;
+    (AppLifecycleObserver.appBottomInsetHeightStream.value ?? 0) > 0;

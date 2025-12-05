@@ -166,7 +166,7 @@ class AgentAppLifecycleListener extends AppLifecycleListener {
   }
 }
 
-//---
+//MARK: - NavigatorObserver
 
 /// 路由导航监听, 为[NavigatorObserverMixin]提供功能支持
 /// [NavigatorObserverDispatcher]
@@ -180,6 +180,7 @@ NavigatorObserverDispatcher get navigatorObserverDispatcherGet =>
     NavigatorObserverDispatcher();
 
 /// 路由回调派发
+/// - [NavigatorObserverMixin]功能的提供者
 class NavigatorObserverDispatcher extends NavigatorObserver {
   //region --观察者--
 
@@ -320,9 +321,10 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
 }
 
 /// 导航监听混入, 需要将[navigatorObserverDispatcher]加入到导航观察者中.
-/// [NavigatorObserverDispatcher]
-/// [NavigatorObserverMixin]
-/// [NavigatorObserverLogMixin]
+/// 需要使用[NavigatorObserverDispatcher]监听观察导航事件
+///
+/// - [NavigatorObserverMixin]
+/// - [NavigatorObserverLogMixin]
 mixin NavigatorObserverMixin<T extends StatefulWidget> on State<T> {
   /// 当前的[ModalRoute]
   ModalRoute? currentModalRoute;

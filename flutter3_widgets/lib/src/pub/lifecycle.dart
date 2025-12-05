@@ -13,6 +13,8 @@ part of '../../flutter3_widgets.dart';
 ///   ...
 /// );
 /// ```
+///
+/// - [WidgetLifecycleEx.lifecycle] 功能的支持
 final NavigatorObserver lifecycleNavigatorObserver = defaultLifecycleObserver;
 
 /// 每次都创建新的[LifecycleObserver]对象
@@ -25,10 +27,8 @@ extension WidgetLifecycleEx on Widget {
   /// 监听当前页面的生命周期
   /// [LifecycleWrapper]
   /// [LifecycleEvent]
-  Widget lifecycle(OnLifecycleEvent onLifecycleEvent) => LifecycleWrapper(
-        onLifecycleEvent: onLifecycleEvent,
-        child: this,
-      );
+  Widget lifecycle(OnLifecycleEvent onLifecycleEvent) =>
+      LifecycleWrapper(onLifecycleEvent: onLifecycleEvent, child: this);
 
   /// 为[PageView]提供生命周期支持
   /// Wrap PageView
@@ -39,13 +39,12 @@ extension WidgetLifecycleEx on Widget {
   Widget pageLifecycle([
     bool enable = true,
     OnLifecycleEvent? onLifecycleEvent,
-  ]) =>
-      enable
-          ? PageViewLifecycleWrapper(
-              onLifecycleEvent: onLifecycleEvent,
-              child: this,
-            )
-          : this;
+  ]) => enable
+      ? PageViewLifecycleWrapper(
+          onLifecycleEvent: onLifecycleEvent,
+          child: this,
+        )
+      : this;
 
   /// 将[PageView]的child界面使用[ChildPageLifecycleWrapper]包裹起来,
   /// 使得对应的[child]可以接收到[LifecycleAware]生命周期回调
@@ -62,16 +61,17 @@ extension WidgetLifecycleEx on Widget {
     required int index,
     OnLifecycleEvent? onLifecycleEvent,
     bool? wantKeepAlive = true,
-  }) =>
-      ChildPageLifecycleWrapper(
-        index: index,
-        wantKeepAlive: wantKeepAlive,
-        onLifecycleEvent: onLifecycleEvent,
-        child: this,
-      );
+  }) => ChildPageLifecycleWrapper(
+    index: index,
+    wantKeepAlive: wantKeepAlive,
+    onLifecycleEvent: onLifecycleEvent,
+    child: this,
+  );
 }
 
-/// [LifecycleAware]
+/// 页面声明周期感知
+/// - [LifecycleAware]
+/// - [BaseLifecycleState]
 mixin VisibleLifecycleAware on LifecycleAware {
   /// 页面可见的次数, 可以用来统计页面显示次数
   int _lifecycleVisibleCount = 0;
@@ -106,20 +106,42 @@ mixin VisibleLifecycleAware on LifecycleAware {
 
   /// 页面首次可见的回调
   @overridePoint
-  void onLifecycleFirstVisible(BuildContext context) {}
+  void onLifecycleFirstVisible(BuildContext context) {
+    assert(() {
+      l.d(
+        '${classHash().wsb()}onLifecycleFirstVisible:$_lifecycleVisibleCount',
+      );
+      return true;
+    }());
+  }
 
   /// 页面可见的回调
   @overridePoint
-  void onLifecycleVisible(BuildContext context) {}
+  void onLifecycleVisible(BuildContext context) {
+    assert(() {
+      if (_lifecycleVisibleCount > 1) {
+        l.d('${classHash().wsb()}onLifecycleVisible:$_lifecycleVisibleCount');
+      }
+      return true;
+    }());
+  }
 
   /// 页面不可见的回调
   @overridePoint
-  void onLifecycleInvisible(BuildContext context) {}
+  void onLifecycleInvisible(BuildContext context) {
+    assert(() {
+      l.d('${classHash().wsb()}onLifecycleInvisible:$_lifecycleInvisibleCount');
+      return true;
+    }());
+  }
 }
 
 /// 生命周期状态基类, 当前类只能感知整体页面的生命周期
+/// 需要[defaultLifecycleObserver]的支持
+///
 /// https://github.com/chenenyu/lifecycle
 /// https://github.com/zhaolongs/flutter_life_state
+///
 abstract class BaseLifecycleState<T extends StatefulWidget> extends State<T>
     with LifecycleAware, LifecycleMixin, VisibleLifecycleAware {}
 
@@ -148,7 +170,9 @@ abstract class BasePageChildLifecycleWidget extends StatefulWidget {
 /// [PageView]需要使用[PageViewLifecycleWrapper]包裹
 /// [_ChildPageLifecycleWrapperState]
 abstract class BasePageChildLifecycleState<
-        T extends BasePageChildLifecycleWidget> extends State<T>
+  T extends BasePageChildLifecycleWidget
+>
+    extends State<T>
     with
         LifecycleAware,
         ChildPageSubscribeLifecycleMixin,
