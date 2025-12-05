@@ -7,7 +7,7 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 输入框tile
 /// 上[label]
-/// 下[inputHint]](des)
+/// 下[inputHint].(des)
 ///
 /// - [LabelSingleInputTile]
 /// - [SingleLabelInputTile]
@@ -54,6 +54,11 @@ class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
   @override
   final FutureValueCallback<String>? onInputTextConfirmChange;
 
+  /// [onEditingComplete]回调之后会马上触发[onSubmitted]回调
+  /// 按回车键之后会触发此回调
+  @override
+  final FutureValueCallback<String>? onInputSubmitted;
+
   /// 下划线的输入框样式
   @override
   final InputBorderType inputBorderType;
@@ -89,6 +94,7 @@ class LabelSingleInputTile extends StatefulWidget with LabelMixin, InputMixin {
     this.inputText,
     this.onInputTextChanged,
     this.onInputTextConfirmChange,
+    this.onInputSubmitted,
     this.inputBorderType = InputBorderType.underline,
     this.inputMaxLines = 1,
     this.inputMaxLength,
@@ -128,7 +134,13 @@ class _LabelSingleInputTileState extends State<LabelSingleInputTile>
   }
 }
 
-/// 左[label] 右[input] 的输入tile
+/// - [axis]
+/// # 横向排列
+/// 左[label]...撑满[inputFieldConfig]...[trailingWidget] 的输入tile
+///
+/// # 纵向排列
+/// [label]...[trailingWidget]
+/// [inputFieldConfig]
 ///
 /// - [LabelSingleInputTile]
 /// - [SingleLabelInputTile]
@@ -161,6 +173,8 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   @override
   final FutureValueCallback<String>? onInputTextConfirmChange;
   @override
+  final FutureValueCallback<String>? onInputSubmitted;
+  @override
   final InputBorderType inputBorderType;
   @override
   final int? inputMaxLines;
@@ -171,11 +185,19 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
   @override
   final TextInputType? inputKeyboardType;
 
-  /// 输入框的宽度
+  //MARK: -
+
+  /// 布局排列方向
+  final Axis axis;
+
+  /// 仅指定输入框的宽度
   final double? inputWidth;
 
   /// 交叉轴对齐方式
   final CrossAxisAlignment? crossAxisAlignment;
+
+  /// 尾部的小部件
+  final Widget? trailingWidget;
 
   const SingleLabelInputTile({
     super.key,
@@ -191,6 +213,7 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
     this.inputText,
     this.onInputTextChanged,
     this.onInputTextConfirmChange,
+    this.onInputSubmitted,
     this.inputBorderType = InputBorderType.none,
     this.inputMaxLines = 1,
     this.inputMaxLength,
@@ -203,8 +226,10 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
     ),
     this.inputKeyboardType,
     //--
+    this.axis = Axis.horizontal,
     this.inputWidth,
     this.crossAxisAlignment,
+    this.trailingWidget,
   });
 
   @override
@@ -237,6 +262,31 @@ class _SingleLabelInputTileState extends State<SingleLabelInputTile>
       suffixIconConstraints: iconConstraints,
       suffixIconPadding: const EdgeInsets.all(iconPadding),
     );
+
+    if (widget.axis == .vertical) {
+      return [
+        [label?.expanded(), widget.trailingWidget].row(mainAxisAlignment: .end),
+        input
+            .container(
+              color: globalTheme.itemWhiteBgColor,
+              radius: kDefaultBorderRadiusX,
+              constraints: widget.inputWidth != null
+                  ? BoxConstraints(
+                      minHeight: widget.inputWidth ?? 0,
+                      maxHeight: widget.inputWidth ?? double.infinity,
+                    )
+                  : null,
+            )
+            .insets(horizontal: kX, vertical: kL)
+            .align(Alignment.centerLeft)
+            .expanded(enable: (widget.inputMaxLines ?? 0) > 1),
+      ].column(
+        crossAxisAlignment: (widget.inputMaxLines ?? 0) > 1
+            ? widget.crossAxisAlignment ?? CrossAxisAlignment.start
+            : widget.crossAxisAlignment,
+      )!;
+    }
+
     return [
       label,
       input
@@ -248,9 +298,10 @@ class _SingleLabelInputTileState extends State<SingleLabelInputTile>
               maxWidth: widget.inputWidth ?? double.infinity,
             ),
           )
-          .paddingSymmetric(horizontal: kX, vertical: kL)
+          .insets(horizontal: kX, vertical: kL)
           .align(Alignment.centerRight)
           .expanded(),
+      widget.trailingWidget,
     ].row(
       crossAxisAlignment: (widget.inputMaxLines ?? 0) > 1
           ? widget.crossAxisAlignment ?? CrossAxisAlignment.start
@@ -482,10 +533,10 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
         return clamp(value.toInt(), widget.inputMinValue, widget.inputMaxValue);
       }
     } catch (e, s) {
-      /*assert(() {
+      assert(() {
         printError(e, s);
         return true;
-      }());*/
+      }());
     }
     return null;
   }

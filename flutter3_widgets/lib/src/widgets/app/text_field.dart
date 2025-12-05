@@ -1150,6 +1150,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 
   /// 焦点改变后的回调
   void _onFocusChanged() {
+    //debugger();
     _checkSuffixIcon();
     final hasFocus = widget.config.hasFocus;
     assert(() {
@@ -1170,8 +1171,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
 
   /// 检查是否需要显示后缀图标
   void _checkSuffixIcon() {
-    if (widget.alwaysShowSuffixIcon == true ||
-        (widget.alwaysShowSuffixIcon == null && widget.config.hasFocus)) {
+    if (widget.alwaysShowSuffixIcon != true) {
       setState(() {});
     }
   }

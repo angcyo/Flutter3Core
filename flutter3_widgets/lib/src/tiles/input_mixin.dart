@@ -96,13 +96,19 @@ mixin InputMixin {
   TextAlign get inputTextAlign => TextAlign.start;
 
   /// 并不需要在此方法中更新界面
+  /// - [InputStateMixin.onSelfInputTextChanged]
   ValueChanged<String>? get onInputTextChanged => null;
 
   /// 确认输入后的字符串返回
   ValueCallback<String?>? get onInputTextResult => null;
 
+  /// [onEditingComplete]回调之后会马上触发[onSubmitted]回调
+  /// 按回车键之后会触发此回调
+  ValueChanged<String>? get onInputSubmitted => null;
+
   /// 在改变时, 需要进行的确认回调
   /// 返回false, 则不进行输入框的输入改变
+  /// - [InputStateMixin.onSelfInputTextChanged]
   FutureValueCallback<String>? get onInputTextConfirmChange => null;
 
   /// 下划线的输入框样式
@@ -188,6 +194,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   }) {
     final Widget input = SingleInputWidget(
       config: _inputMixinConfig,
+      hintText: inputMixin.inputHint,
       maxLines: inputMixin.inputMaxLines,
       maxLength: inputMixin.inputMaxLength,
       showInputCounter: inputMixin.showInputCounter,
@@ -206,6 +213,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
       suffixIconPadding: suffixIconPadding,
       prefixIconConstraints: prefixIconConstraints,
       suffixIconConstraints: suffixIconConstraints,
+      onSubmitted: inputMixin.onInputSubmitted,
       /*autoShowSuffixIcon: false,*/
     );
     return input;

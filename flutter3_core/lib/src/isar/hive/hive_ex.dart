@@ -173,6 +173,7 @@ extension HiveEx on HiveInterface {
   }
 }
 
+/// 监听值的改变,自动存入hive中
 mixin HiveHookMixin<T extends StatefulWidget> on State<T> {
   late final Map<ValueListenable, VoidCallback> hiveHookMap = {};
 

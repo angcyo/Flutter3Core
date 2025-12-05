@@ -1117,20 +1117,36 @@ extension StringEx on String {
 
   //MARK: - wrap
 
+  /// 将字符串用()包裹起来
+  String wph() => "($this)";
+
   /// 将字符串用[]号包裹起来
   String wsb() => "[$this]";
 
   /// 将字符串用{}号包裹起来
   String wcb() => "{$this}";
 
-  /// 将字符串用()包裹起来
-  String wph() => "($this)";
-
-  /// 接上一个字符
+  /// 拼接字符
   /// - [after] 在后面拼接
   /// - [before] 在前面拼接
   String connect([String? after, String? before]) =>
       "${before ?? ""}$this${after ?? ""}";
+
+  /// 在前面拼接字符
+  String cb(String? before) {
+    if (before != null && before.isNotEmpty) {
+      return "$before$this";
+    }
+    return this;
+  }
+
+  /// 在后面拼接字符
+  String ca(String? after) {
+    if (after != null && after.isNotEmpty) {
+      return "$this$after";
+    }
+    return this;
+  }
 
   //MARK: - to
 

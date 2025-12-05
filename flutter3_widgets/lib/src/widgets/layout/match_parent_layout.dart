@@ -40,14 +40,14 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) => MatchParentBox(
-        alignment: alignment,
-        matchWidth: matchWidth,
-        matchHeight: matchHeight,
-        childWrapWidth: childWrapWidth,
-        childWrapHeight: childWrapHeight,
-        debugLabel: debugLabel,
-        textDirection: Directionality.of(context),
-      );
+    alignment: alignment,
+    matchWidth: matchWidth,
+    matchHeight: matchHeight,
+    childWrapWidth: childWrapWidth,
+    childWrapHeight: childWrapHeight,
+    debugLabel: debugLabel,
+    textDirection: Directionality.of(context),
+  );
 
   @override
   void updateRenderObject(BuildContext context, MatchParentBox renderObject) {
@@ -103,13 +103,16 @@ class MatchParentBox extends WrapContentBox {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
       final childConstraints = BoxConstraints(
         minWidth: matchWidth
-            ? constraints.maxWidth
-                .ensureValid(constraints.minWidth.ensureValid(0))
+            ? constraints.maxWidth.ensureValid(
+                constraints.minWidth.ensureValid(0),
+              )
             : constraints.minWidth,
         minHeight: matchHeight
-            ? constraints.maxHeight.ensureValid(constraints.minHeight
-                .ensureValid(0)
-                .maxOf(parentConstraints?.minHeight ?? 0))
+            ? constraints.maxHeight.ensureValid(
+                constraints.minHeight
+                    .ensureValid(0)
+                    .maxOf(parentConstraints?.minHeight ?? 0),
+              )
             : constraints.minHeight,
         maxWidth: constraints.maxWidth,
         maxHeight: constraints.maxHeight,
@@ -147,16 +150,15 @@ extension MatchParentLayoutEx on Widget {
     bool? childWrapWidth,
     bool? childWrapHeight,
     String? debugLabel,
-  }) =>
-      MatchParentLayout(
-        alignment: alignment,
-        matchWidth: matchBoth ?? matchWidth,
-        matchHeight: matchBoth ?? matchHeight,
-        childWrapWidth: childWrapWidth,
-        childWrapHeight: childWrapHeight,
-        debugLabel: debugLabel,
-        child: this,
-      );
+  }) => MatchParentLayout(
+    alignment: alignment,
+    matchWidth: matchBoth ?? matchWidth,
+    matchHeight: matchBoth ?? matchHeight,
+    childWrapWidth: childWrapWidth,
+    childWrapHeight: childWrapHeight,
+    debugLabel: debugLabel,
+    child: this,
+  );
 
   /// [matchParent]
   /// [matchParentWidth]
@@ -168,33 +170,34 @@ extension MatchParentLayoutEx on Widget {
     bool? childWrapWidth,
     bool? childWrapHeight,
     String? debugLabel,
-  }) =>
-      matchParent(
-        matchWidth: matchWidth,
-        matchHeight: matchHeight,
-        alignment: alignment,
-        childWrapWidth: childWrapWidth,
-        childWrapHeight: childWrapHeight,
-        debugLabel: debugLabel,
-      );
+  }) => matchParent(
+    matchWidth: matchWidth,
+    matchHeight: matchHeight,
+    alignment: alignment,
+    childWrapWidth: childWrapWidth,
+    childWrapHeight: childWrapHeight,
+    debugLabel: debugLabel,
+  );
 
   /// [matchParent]
   /// [matchParentWidth]
   /// [matchParentHeight]
   Widget matchParentHeight({
+    bool enable = true,
     bool matchWidth = false,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
     bool? childWrapWidth,
     bool? childWrapHeight,
     String? debugLabel,
-  }) =>
-      matchParent(
-        matchWidth: matchWidth,
-        matchHeight: matchHeight,
-        alignment: alignment,
-        childWrapWidth: childWrapWidth,
-        childWrapHeight: childWrapHeight,
-        debugLabel: debugLabel,
-      );
+  }) => !enable
+      ? this
+      : matchParent(
+          matchWidth: matchWidth,
+          matchHeight: matchHeight,
+          alignment: alignment,
+          childWrapWidth: childWrapWidth,
+          childWrapHeight: childWrapHeight,
+          debugLabel: debugLabel,
+        );
 }
