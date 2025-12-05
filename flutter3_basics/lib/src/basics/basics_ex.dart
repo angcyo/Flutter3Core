@@ -2410,7 +2410,7 @@ extension IntEx on int {
   }
 
   /// 从右到左, 从0开始数, 在[startBit]开始设置[count]个bit的数据为[value]
-  /// 
+  ///
   /// https://pub.dev/packages/bit_array
   int setBits(int startBit, int count, int value) {
     startBit = math.min(startBit, 32);
