@@ -108,9 +108,7 @@ mixin VisibleLifecycleAware on LifecycleAware {
   @overridePoint
   void onLifecycleFirstVisible(BuildContext context) {
     assert(() {
-      l.d(
-        '${classHash().wsb()}onLifecycleFirstVisible:$_lifecycleVisibleCount',
-      );
+      l.d('${classHash().wsb}onLifecycleFirstVisible:$_lifecycleVisibleCount');
       return true;
     }());
   }
@@ -120,7 +118,7 @@ mixin VisibleLifecycleAware on LifecycleAware {
   void onLifecycleVisible(BuildContext context) {
     assert(() {
       if (_lifecycleVisibleCount > 1) {
-        l.d('${classHash().wsb()}onLifecycleVisible:$_lifecycleVisibleCount');
+        l.d('${classHash().wsb}onLifecycleVisible:$_lifecycleVisibleCount');
       }
       return true;
     }());
@@ -130,7 +128,7 @@ mixin VisibleLifecycleAware on LifecycleAware {
   @overridePoint
   void onLifecycleInvisible(BuildContext context) {
     assert(() {
-      l.d('${classHash().wsb()}onLifecycleInvisible:$_lifecycleInvisibleCount');
+      l.d('${classHash().wsb}onLifecycleInvisible:$_lifecycleInvisibleCount');
       return true;
     }());
   }

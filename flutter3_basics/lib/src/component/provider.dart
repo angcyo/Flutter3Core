@@ -114,7 +114,7 @@ Widget? widgetOf(
     }
   }
   assert(() {
-    l.v('${tag?.wsb() ?? ""}当前类型[${data.runtimeType}]不支持[$IWidgetProvider]操作.');
+    l.v('${tag?.wsb ?? ""}当前类型[${data.runtimeType}]不支持[$IWidgetProvider]操作.');
     return true;
   }());
   return null;

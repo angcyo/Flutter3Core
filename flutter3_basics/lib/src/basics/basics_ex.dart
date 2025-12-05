@@ -1118,13 +1118,16 @@ extension StringEx on String {
   //MARK: - wrap
 
   /// 将字符串用()包裹起来
-  String wph() => "($this)";
+  String get wph => "($this)";
 
   /// 将字符串用[]号包裹起来
-  String wsb() => "[$this]";
+  String get wsb => "[$this]";
 
   /// 将字符串用{}号包裹起来
-  String wcb() => "{$this}";
+  String get wcb => "{$this}";
+
+  /// 将字符串用quoted "" 引号包裹起来
+  String get wqs => '"$this"';
 
   /// 拼接字符
   /// - [after] 在后面拼接
