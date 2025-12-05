@@ -57,6 +57,7 @@ part 'src/file/file_log.dart';
 part 'src/file/file_pub_ex.dart';
 part 'src/file/file_type.dart';
 part 'src/isar/hive/hive_ex.dart';
+part 'src/isar/hive/hive_string_value.dart';
 part 'src/isar/isar_ex.dart';
 part 'src/tiles/core_dialog_title.dart';
 part 'src/tiles/label_number_slider_tile.dart';
