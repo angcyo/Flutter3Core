@@ -231,6 +231,7 @@ Future runGlobalApp(
     return await realRun();
   }
 
+  //在新的空间中运行
   return runZonedGuarded(realRun, (error, stack) {
     "Zoned未捕捉的异常[${error.runtimeType}]:↓".writeToErrorLog();
     error.writeToErrorLog();
