@@ -2397,6 +2397,8 @@ extension IntEx on int {
   /// 从右到左, 从0开始, 获取[count]个bit对应的数值
   /// - [startBit]第几位[0~31]
   /// - [count]需要几位[1-32]
+  ///
+  /// https://pub.dev/packages/bit_array
   int bits(int startBit, int count) {
     if (startBit < 0 || count < 1) {
       return 0;

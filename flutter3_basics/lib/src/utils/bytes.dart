@@ -36,6 +36,8 @@ part of '../../flutter3_basics.dart';
 /// debugger();
 /// ```
 ///
+/// https://pub.dev/packages/buffer
+///
 ///
 class BytesWriter {
   /// 字节数组
