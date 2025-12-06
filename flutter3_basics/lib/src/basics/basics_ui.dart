@@ -887,7 +887,7 @@ extension WidgetEx on Widget {
               (isDebug
                   ? (value) {
                       l.i(
-                        '[${tag ?? classHash()}] FocusScope focus change: $value',
+                        '${(tag ?? classHash()).wsb} FocusScope focus change: $value',
                       );
                     }
                   : null),
@@ -1064,7 +1064,9 @@ extension WidgetEx on Widget {
                 //debugger();
                 if (context?.canPop(rootNavigator: rootNavigator) == true) {
                   assert(() {
-                    l.i('尝试自动关闭弹窗[$tag],hasFocus:${node.hasFocus.toDC()}');
+                    l.i(
+                      '${tag?.wsb ?? ""}尝试自动关闭弹窗,hasFocus:${node.hasFocus.toDC()}',
+                    );
                     return true;
                   }());
                   context?.maybePop(
