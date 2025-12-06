@@ -263,6 +263,7 @@ Future<T?> hideKeyboard<T>({BuildContext? unfocus}) {
 
 //region network
 
+/// 获取系统网口/网卡信息
 /// - IPV4环回地址: 127.0.0.1
 /// - IPV6环回地址: ::1
 ///
@@ -328,6 +329,15 @@ Future<List<NetworkInterface>> $getNetworkInterfaceList({
   //final ipv4 = InternetAddress.anyIPv4.address; //0.0.0.0
   //final ipv6 = InternetAddress.anyIPv6.address; //::
   return list;
+}
+
+/// 打印网络接口信息
+void logNetworkInterfaceList() async {
+  final list = await $getNetworkInterfaceList();
+  //debugger();
+  final ipv4 = InternetAddress.anyIPv4.address; //0.0.0.0
+  final ipv6 = InternetAddress.anyIPv6.address; //::
+  l.v("网络接口信息(网关)↓\n${list.join("↓\n")}\n\n默认ipv4->$ipv4, 默认ipv6->$ipv6");
 }
 
 /// 获取本地IP地址[InternetAddress], 本机ip

@@ -4,7 +4,7 @@ part of '../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/13
 ///
-/// 开关tile
+/// 系统[Switch]样式的开关tile
 /// [text]     ...[Switch]
 class SwitchTile extends StatefulWidget {
   /// 文本

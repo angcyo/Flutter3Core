@@ -4,7 +4,7 @@ part of '../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/06/07
 ///
-/// 复选框tile
+/// 系统[Checkbox]样式的复选框tile
 /// [CheckboxTile]
 /// [LabelSwitchTile]
 ///

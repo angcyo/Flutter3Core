@@ -64,6 +64,7 @@ part 'src/basics/basics_decoration.dart';
 part 'src/basics/basics_event.dart';
 part 'src/basics/basics_ex.dart';
 part 'src/basics/basics_file.dart';
+part 'src/basics/basics_geometry.dart';
 part 'src/basics/basics_image.dart';
 part 'src/basics/basics_io.dart';
 part 'src/basics/basics_layout.dart';
