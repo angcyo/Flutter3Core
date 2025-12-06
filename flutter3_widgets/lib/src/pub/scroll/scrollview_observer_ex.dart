@@ -14,12 +14,14 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
 
   /// 不一样的[Widget]请使用不一样的控制器
   /// [ListView]
-  late ListObserverController observerListController =
-      ListObserverController(controller: scrollControllerMixin);
+  late ListObserverController observerListController = ListObserverController(
+    controller: scrollControllerMixin,
+  );
 
   /// [GridView]
-  late GridObserverController observerGridController =
-      GridObserverController(controller: scrollControllerMixin);
+  late GridObserverController observerGridController = GridObserverController(
+    controller: scrollControllerMixin,
+  );
 
   //--
 
@@ -32,7 +34,7 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
       SliverObserverController(controller: scrollControllerMixin)
         ..cacheJumpIndexOffset = false;
 
-/*late SliverViewObserver observerSliverController =
+  /*late SliverViewObserver observerSliverController =
       SliverViewObserver(controller: scrollControllerMixin, child: null,);*/
 
   @override
@@ -66,7 +68,9 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
         //ListViewObserveModel
         //debugger();
         assert(() {
-          l.d("${resultMap.runtimeType}->${resultMap.values.connect(",", (e) => e.runtimeType.toString())}");
+          l.v(
+            "${resultMap.runtimeType}->${resultMap.values.connect(",", (e) => e.runtimeType.toString())}",
+          );
           return true;
         }());
       },
@@ -97,17 +101,16 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
   Widget buildObserverSliverListBuilder(
     BuildContext context,
     NullableIndexedWidgetBuilder itemBuilder,
-  ) =>
-      SliverList.builder(
-        itemBuilder: (BuildContext context, int index) {
-          if (!observerSliverContexts.contains(context)) {
-            observerSliverContexts.add(context);
-          }
-          final item = itemBuilder(context, index);
-          //l.d("build item->$index");
-          return item;
-        },
-      );
+  ) => SliverList.builder(
+    itemBuilder: (BuildContext context, int index) {
+      if (!observerSliverContexts.contains(context)) {
+        observerSliverContexts.add(context);
+      }
+      final item = itemBuilder(context, index);
+      //l.d("build item->$index");
+      return item;
+    },
+  );
 
   /// 滚动到指定位置
   /// [alignment] 参数用于指定你期望定位到子部件的对齐位置，该值需要在 [0.0, 1.0] 这个范围之间。默认为 0，比如：
@@ -170,12 +173,12 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
     Duration? duration = const Duration(milliseconds: 300),
     Curve curve = Curves.easeInOut,
   }) {
-      observerSliverController.controller?.scrollToBottom(
-        anim: duration != null,
-        duration: duration,
-        curve: curve,
-      );
+    observerSliverController.controller?.scrollToBottom(
+      anim: duration != null,
+      duration: duration,
+      curve: curve,
+    );
   }
 
-//--
+  //--
 }
