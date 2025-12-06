@@ -12,6 +12,8 @@ part of '../../../flutter3_widgets.dart';
 /// - [DropdownMenuTile]
 /// - [DropdownButtonTile]
 ///
+/// - `dropdown_flutter: ^1.0.3`
+///
 class DropdownButtonTile extends StatefulWidget with TileMixin {
   /// 标签
   final String? label;

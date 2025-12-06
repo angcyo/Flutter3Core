@@ -18,12 +18,19 @@ dependencies:
   flutter3_basics:
     path: ../flutter3_basics
 
+  # https://pub.dev/packages/any_image_view
+  # https://pub.dev/packages/cached_network_image
+  # https://pub.dev/packages/cross_file
+  # https://pub.dev/packages/flutter_svg
+  # https://pub.dev/packages/lottie
+  #any_image_view: ^1.8.0
+
   # https://pub.dev/packages/flutter_svg
   # https://github.com/dnfield/flutter_svg/tree/master/packages/flutter_svg
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/vector_graphics_compiler
-  flutter_svg: ^2.2.0
+  flutter_svg: ^2.2.3
   # https://pub.dev/packages/vector_graphics_compiler
   # https://github.com/dnfield/vector_graphics
   # https://pub.dev/packages/args
@@ -32,7 +39,7 @@ dependencies:
   # https://pub.dev/packages/xml # collection, meta, petitparser
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/path
-  vector_graphics_compiler: ^1.1.18
+  vector_graphics_compiler: ^1.1.19
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/http
   # https://pub.dev/packages/vector_graphics_codec
@@ -56,7 +63,7 @@ dependencies:
   # https://pub.dev/packages/petitparser
   #Because vector_graphics_compiler 1.1.18 depends on xml >=6.3.0 <=6.5.0 and no versions of vector_graphics_compiler match >1.1.18 <2.0.0, vector_graphics_compiler ^1.1.18 requires xml >=6.3.0 <=6.5.0.
   #So, because flutter3_vector depends on both vector_graphics_compiler ^1.1.18 and xml ^6.6.1, version solving failed.
-  xml: ^6.5.0
+  xml: ^6.6.1
 
 dev_dependencies:
   flutter_test:

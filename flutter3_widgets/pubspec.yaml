@@ -39,7 +39,7 @@ dependencies:
   # https://pub.dev/packages/flutter_slidable
   # https://github.com/letsar/flutter_slidable
   # hashValues
-  flutter_slidable: ^4.0.0
+  flutter_slidable: ^4.0.3
 
   # https://pub.dev/packages/flutter_verification_code
   # https://github.com/awaik/flutter_verification_code
@@ -68,6 +68,9 @@ dependencies:
 
   # https://pub.dev/packages/visibility_detector
   visibility_detector: ^0.4.0+2
+
+  # https://pub.dev/packages/dropdown_flutter
+  dropdown_flutter: ^1.0.3
 
 dev_dependencies:
   flutter_test:
