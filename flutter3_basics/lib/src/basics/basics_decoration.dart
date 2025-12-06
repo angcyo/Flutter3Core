@@ -303,7 +303,8 @@ BoxDecoration lineaGradientDecoration(
 }
 
 /// 图片装饰
-/// [Decoration]->[BoxDecoration]
+/// - [Decoration]->[BoxDecoration]
+/// - [DecorationImage]
 BoxDecoration imageDecoration(ImageProvider image, {BoxFit fit = BoxFit.fill}) {
   return BoxDecoration(
     image: DecorationImage(image: image, fit: fit),
