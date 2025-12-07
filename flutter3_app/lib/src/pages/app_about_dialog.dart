@@ -64,7 +64,11 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
               if (widget.debug ?? isDebugFlag) ...[
                 $platformDeviceInfoCache
                     ?.toString()
-                    .text(style: globalTheme.textDesStyle, selectable: true)
+                    .text(
+                      style: globalTheme.textDesStyle,
+                      selectable: true,
+                      textAlign: .center,
+                    )
                     .insets(all: kX),
                 DebugPage.buildDebugLastWidget(context, globalTheme),
               ],
