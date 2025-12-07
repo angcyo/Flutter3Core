@@ -302,6 +302,27 @@ class LibAppVersionBean {
 
   //endregion 权限信息
 
+  /// debug匹配通过
+  bool get matchDebug => (debug == true && isDebugFlag) || debug == null;
+
+  /// 允许的设备uuid匹配通过
+  bool get matchAllowVersionUuid =>
+      (allowVersionUuidList == null || allowVersionUuidList!.isEmpty)
+      ? true
+      : allowVersionUuidList!.contains($deviceUuid);
+
+  /// 拒绝的设备uuid匹配通过
+  bool get matchDenyVersionUuid =>
+      (denyVersionUuidList == null || denyVersionUuidList!.isEmpty)
+      ? true
+      : !denyVersionUuidList!.contains($deviceUuid);
+
+  /// 所有匹配通过
+  bool get matchAll =>
+      matchDebug &&
+      matchAllowVersionUuid &&
+      matchDenyVersionUuid;
+
   @override
   String toString() => toJson().toString();
 }
