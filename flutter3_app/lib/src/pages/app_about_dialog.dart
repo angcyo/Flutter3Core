@@ -16,9 +16,9 @@ class AppAboutDialog extends StatefulWidget with DialogMixin {
   final Widget? logo;
 
   /// 是否是debug模式
-  final bool debug;
+  final bool? debug;
 
-  const AppAboutDialog({super.key, this.logo, this.debug = false});
+  const AppAboutDialog({super.key, this.logo, this.debug});
 
   @override
   State<AppAboutDialog> createState() => _AppAboutDialogState();
@@ -42,7 +42,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
               "${info?.appName}".text(style: globalTheme.tileTextTitleStyle),
               ("${"Version".connect($buildFlavor == null ? "" : "(${$buildFlavor})")}: ${info?.version}(${info?.buildNumber})")
                   .text(style: globalTheme.textDesStyle)
-                  .paddingOnly(vertical: kX)
+                  .insets(vertical: kX)
                   .click(() {
                     showLoading();
                     LibAppVersionBean.fetchConfig(
@@ -60,9 +60,14 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                     );
                   }),
               "${info?.packageName}".text(style: globalTheme.textDesStyle),
-              if (widget.debug)
+              if (widget.debug ?? isDebugFlag) ...[
+                $platformDeviceInfoCache
+                    ?.toString()
+                    .text(style: globalTheme.textDesStyle)
+                    .insets(all: kX),
                 DebugPage.buildDebugLastWidget(context, globalTheme),
-            ].column()!.paddingOnly(vertical: kXh),
+              ],
+            ].column()!.insets(vertical: kXh),
             autoCloseDialog: true,
             showCloseButton: true,
           );
