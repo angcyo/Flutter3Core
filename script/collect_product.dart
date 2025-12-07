@@ -16,8 +16,10 @@ import 'build_config.dart';
 /// # 可用参数:
 /// - #an: app名字, 默认是`pubspec.yaml`中的`app_name` ?? `name`对应的值
 /// - #vn: 版本名, 默认是`pubspec.yaml`中的`version`对应的值
+/// - #vc: 版本号, 默认是`pubspec.yaml`中的`version`对应的值
 /// - #bn: 编译类型名, `build_config`中的`buildType`对应的值
 /// - #fn: 风味名, `build_config`中的`buildFlavor`对应的值
+/// - [formatName]
 ///
 /// # 收集Android apk/aab 产物
 /// `flutter build apk --release`
@@ -44,18 +46,20 @@ void main(List<String> arguments) async {
   colorLog('[$currentFileName]工作路径->$currentPath');
   final config = $value(currentFileName);
   if (config is! Map) {
-    throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本";
+    throw "请在[$currentPath]目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本的收集产品名称";
   }
 
   final time = DateTime.now();
 
   final appName = _getAppName();
   final versionName = _getVersionName();
+  final versionCode = _getVersionCode();
   final buildTypeName = _getBuildTypeName();
   final buildFlavorName = _getBuildFlavorName();
   print(
     "appName: $appName"
     "\nversionName: $versionName"
+    "\nversionCode: $versionCode"
     "\nbuildTypeName: $buildTypeName"
     "\nbuildFlavorName: $buildFlavorName",
   );
@@ -65,6 +69,10 @@ void main(List<String> arguments) async {
   //记录复制过的文件
   final copiedFile = ensureFile("$currentPath/$outputPath/.copy");
   final copiedLines = copiedFile?.readAsLinesSync() ?? [];
+
+  //已经复制过的产物数量
+  int exitProductCount = 0;
+  //收集的产物数量
   int collectProductCount = 0;
 
   final androidApkName = config["android_apk_name"];
@@ -76,6 +84,7 @@ void main(List<String> arguments) async {
       final key = "app-release.apk/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("已复制过: $from");
+        exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
         if (copyFile(from, to)) {
@@ -97,6 +106,7 @@ void main(List<String> arguments) async {
       final key = "app-release.aab/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("已复制过: $from");
+        exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
         if (copyFile(from, to)) {
@@ -118,6 +128,7 @@ void main(List<String> arguments) async {
       final key = "$targetFileName.ipa/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("已复制过: $from");
+        exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.ipa/$outputName";
         if (copyFile(from, to)) {
@@ -141,6 +152,7 @@ void main(List<String> arguments) async {
           "$targetFileName.app/${File("$from/Contents/Info.plist").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("已复制过: $from");
+        exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.app/$outputName";
         if (outputName.endsWith(".app")) {
@@ -171,6 +183,7 @@ void main(List<String> arguments) async {
           "$targetFileName.exe/${File("$from/$targetFileName.exe").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("已复制过: $from");
+        exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.exe/$outputName";
         if (outputName.endsWith(".exe")) {
@@ -191,7 +204,7 @@ void main(List<String> arguments) async {
   }
 
   //输出结果
-  if (collectProductCount == 0) {
+  if (exitProductCount == 0 && collectProductCount == 0) {
     colorErrorLog('请检查是否执行过`flutter build xxx --release`');
   }
   colorLog(
@@ -200,11 +213,17 @@ void main(List<String> arguments) async {
 }
 
 String? _getAppName() {
-  return $pubspec["app_name"] ?? $pubspec["name"];
+  return $value(currentFileName)["app_name"] ??
+      $pubspec["app_name"] ??
+      $pubspec["name"];
 }
 
 String? _getVersionName() {
   return $pubspec?["version"]?.toString().split("+")[0];
+}
+
+String? _getVersionCode() {
+  return $pubspec?["version"]?.toString().split("+")[1];
 }
 
 String? _getBuildTypeName() {
@@ -222,10 +241,13 @@ String formatName(String pattern) {
   String output = pattern;
   output = output.replaceAll("#an", _getAppName() ?? "");
   output = output.replaceAll("#vn", _getVersionName() ?? "");
+  output = output.replaceAll("#vc", _getVersionCode() ?? "");
   output = output.replaceAll("#bn", _getBuildTypeName() ?? "");
   output = output.replaceAll("#fn", _getBuildFlavorName() ?? "");
   output = output.replaceAll("--", "-");
   output = output.replaceAll("__", "_");
+  output = output.replaceAll("-.", ".");
+  output = output.replaceAll("_.", ".");
   return output;
 }
 
