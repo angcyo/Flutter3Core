@@ -8,15 +8,23 @@ part of '../../../flutter3_core.dart';
 /// - set 自动存入hive
 @immutable
 final class HiveStringValue {
+  /// 关键key
   final String key;
 
-  const HiveStringValue(this.key);
+  /// 将这个值转存到另一个key中
+  final String? relayKey;
+
+  /// 默认值
+  final String? def;
+
+  const HiveStringValue(this.key, {this.def, this.relayKey});
 
   //MARK: - setter
 
   /// 赋值
   String? operator <<(String? value) {
     key.hivePut(value);
+    relayKey?.hivePut(value);
     return value;
   }
 
@@ -26,11 +34,12 @@ final class HiveStringValue {
   //MARK: - getter
 
   /// 获取
-  String? get value => key.hiveGet();
+  String? get value => key.hiveGet() ?? def;
 
   /// 获取
   String? get() => value;
 }
 
 /// [HiveStringValue]
-HiveStringValue $hiveString(String? key) => HiveStringValue(key ?? $uuid);
+HiveStringValue $hiveString(String? key, {String? def, String? relayKey}) =>
+    HiveStringValue(key ?? $uuid, def: def, relayKey: relayKey);

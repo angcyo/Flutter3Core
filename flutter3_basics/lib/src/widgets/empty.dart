@@ -25,6 +25,8 @@ class Empty extends StatelessWidget {
 
   const Empty.zero({super.key}) : size = const Size(0, 0);
 
+  Empty.size(double size, {super.key}) : size = Size(size, size);
+
   Empty.width(double width, {super.key}) : size = Size(width, 0);
 
   Empty.height(double height, {super.key}) : size = Size(0, height);
