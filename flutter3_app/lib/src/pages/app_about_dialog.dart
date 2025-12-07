@@ -28,6 +28,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
   @override
   void initState() {
     super.initState();
+    $platformDeviceInfoCache;
   }
 
   @override
@@ -63,7 +64,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
               if (widget.debug ?? isDebugFlag) ...[
                 $platformDeviceInfoCache
                     ?.toString()
-                    .text(style: globalTheme.textDesStyle)
+                    .text(style: globalTheme.textDesStyle, selectable: true)
                     .insets(all: kX),
                 DebugPage.buildDebugLastWidget(context, globalTheme),
               ],

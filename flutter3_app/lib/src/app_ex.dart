@@ -205,7 +205,7 @@ extension PlatformDeviceInfoEx on BaseDeviceInfo {
         AndroidDeviceInfo info => info.model,
         WindowsDeviceInfo info => info.productName,
         IosDeviceInfo info => info.modelName,
-        MacOsDeviceInfo info => info.modelName,
+        MacOsDeviceInfo info => info.modelName /*MacBook Pro (14-inch, 2023)*/,
         LinuxDeviceInfo info => info.prettyName,
         _ => null,
       };
