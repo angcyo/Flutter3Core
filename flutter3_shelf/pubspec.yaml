@@ -108,7 +108,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: any
   # https://pub.dev/packages/shelf_router_generator
-  shelf_router_generator: ^1.1.2
+  shelf_router_generator: ^1.1.3
   # https://pub.dev/packages/build_runner
   build_runner: any
   json_serializable: any

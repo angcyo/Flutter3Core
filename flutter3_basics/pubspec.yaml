@@ -76,9 +76,9 @@ dependencies:
   # https://pub.dev/packages/sprintf
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/fixnum
-  uuid: ^4.5.1
+  uuid: ^4.5.2
   # https://pub.dev/packages/crypto
-  crypto: ^3.0.6
+  crypto: ^3.0.7
   # https://pub.dev/packages/fixnum
   fixnum: ^1.1.1
 
@@ -105,8 +105,9 @@ dependencies:
   # https://pub.dev/packages/path
   # https://pub.dev/packages/time
   dartx: ^1.2.0
+  # https://pub.dev/packages/time
   # https://pub.dev/packages/clock
-  time: ^2.1.5
+  time: ^2.1.6
 
   # https://pub.dev/packages/equatable
   # https://github.com/felangel/equatable
@@ -124,7 +125,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   # https://pub.dev/packages/flutter_gen
-  flutter_gen: ^5.11.0
+  flutter_gen: ^5.12.0
   # https://pub.dev/packages/build_runner
   # https://pub.dev/packages/web_socket_channel # async, crypto, stream_channel, web
   # https://pub.dev/packages/stream_channel
@@ -135,7 +136,7 @@ dev_dependencies:
   flutter_gen_runner: any
   # totp
   # https://pub.dev/packages/cryptography
-  cryptography: ^2.7.0
+  cryptography: ^2.9.0
 
 # https://pub.dev/packages/flutter_gen#configuration-file
 # dart run build_runner build --delete-conflicting-outputs

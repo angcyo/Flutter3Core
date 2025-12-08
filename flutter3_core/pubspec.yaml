@@ -37,7 +37,7 @@ dependencies:
   # https://pub.dev/packages/js
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/web
-  cross_file: ^0.3.4+2
+  cross_file: ^0.3.5+1
   # https://pub.dev/packages/web
   # mobile_scanner ^5.1.1 requires web ^0.5.1.
   web: ^1.1.1

@@ -72,7 +72,7 @@ dependencies:
   # https://pub.dev/packages/plugin_platform_interface
   # https://pub.dev/packages/path
   # https://pub.dev/packages/win32
-  file_picker: ^10.3.3
+  file_picker: ^10.3.7
 
   # https://pub.dev/packages/archive
   # https://github.com/brendan-duncan/archive

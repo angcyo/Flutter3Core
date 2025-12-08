@@ -24,7 +24,7 @@ dependencies:
   # mobile_scanner ^5.2.3
   # mobile_scanner ^6.0.0 # 最小支持iOS 15.5.0 支持16KB 需要Kotlin 2.x
   # mobile_scanner ^7.0.0 # 最小支持iOS 12.0.0
-  mobile_scanner: ^7.1.2
+  mobile_scanner: ^7.1.3
 #  mobile_scanner:
 #    git:
 #      url: git@github.com:FlutterStudioIst/mobile_scanner.git
@@ -32,7 +32,10 @@ dependencies:
 
   # https://pub.dev/packages/image_picker
   # 适用于 iOS 和 Android 的 Flutter 插件，用于从图像库中选取图像，并使用相机拍摄新照片。
-  image_picker: ^1.2.0
+  #          |Android | iOS     | Linux   | macOS   |Web      |Windows
+  # --------|---------|---------|---------|---------|---------|---------
+  # Support |SDK 24+  |iOS 12+  |Any      |10.14+   |See image_picker_for_web | Windows 10+
+  image_picker: ^1.2.1
   #image_picker_for_web: ^3.0.4
 
 # mobile_scanner ^5.1.1 requires web ^0.5.1.

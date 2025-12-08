@@ -27,7 +27,7 @@ dependencies:
   # https://pub.dev/packages/crypto
   # https://pub.dev/packages/http
   # https://pub.dev/packages/path_provider
-  google_fonts: ^6.3.0
+  google_fonts: ^6.3.3
 
 dev_dependencies:
   flutter_test:

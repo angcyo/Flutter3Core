@@ -22,7 +22,7 @@ dependencies:
     path: ../flutter3_widgets
 
   # https://pub.dev/packages/three_js
-  three_js: ^0.2.5
+  three_js: ^0.2.6
   # https://pub.dev/packages/three_dart
   #three_dart: ^0.0.16
   # https://pub.dev/packages/flutter_gl
