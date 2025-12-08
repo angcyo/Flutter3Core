@@ -10,7 +10,7 @@ environment:
 
 # https://pub.dev/packages/isar
 # https://pub.dev/packages/isar_community
-isar_version: &isar_version ^3.3.0-dev.3
+isar_version: &isar_version ^3.3.0
 # https://pub.dev/packages/hive
 hive_version: &hive_version ^2.2.3
 
@@ -123,6 +123,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: any
   #isar_generator: *isar_version
+  # https://pub.dev/packages/isar_community_generator
   isar_community_generator: *isar_version
   #flutter_isar_generator_fixed: ^0.0.3
   #hive_generator: ^2.0.1

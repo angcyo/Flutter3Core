@@ -50,10 +50,15 @@ part 'src/receive/receive_intent.dart';
 ///
 /// 使用此方法代替系统的[runApp]
 ///
-/// [beforeAction] 启动之前初始化, 请在此进行数据库表注册[registerIsarCollection]
-/// [afterAction] 启动之后初始化
-/// [zonedGuarded] 决定是否使用[runZonedGuarded]进行区域异常捕获,
-/// [onZonedError] .[runZonedGuarded]中的异常回调
+/// ```
+/// # Android
+/// I/flutter ( 5846): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+/// ```
+///
+/// - [beforeAction] 启动之前初始化, 请在此进行数据库表注册[registerIsarCollection]
+/// - [afterAction] 启动之后初始化
+/// - [zonedGuarded] 决定是否使用[runZonedGuarded]进行区域异常捕获,
+/// - [onZonedError] .[runZonedGuarded]中的异常回调
 ///
 @entryPoint
 @initialize
