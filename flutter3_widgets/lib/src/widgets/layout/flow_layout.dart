@@ -707,6 +707,9 @@ class FlowLayoutRender extends RenderBox
       //debugger();
       ChildLayoutHelper.layoutChild(child, childConstraints);
       final childSize = child.size;
+      /*if (maxWidth != double.infinity && childSize.width > refMaxWidth) {
+        //child宽度超出了最大宽度, 进行二次测量
+      }*/
       childMaxWidth = max(childMaxWidth, childSize.width);
       childMaxHeight = max(childMaxHeight, childSize.height);
     }

@@ -463,17 +463,31 @@ extension ResponseEx<T> on Response<T> {
 /// [CancelToken]
 mixin CancelTokenStateMixin<T extends StatefulWidget> on State<T> {
   /// [FutureCancelToken]
-  CancelToken? cancelTokenMixin;
+  CancelToken? _cancelTokenMixin;
+
+  CancelToken get cancelTokenMixin {
+    if (_cancelTokenMixin == null || _cancelTokenMixin?.isCancelled == true) {
+      _cancelTokenMixin = CancelToken();
+    }
+    return _cancelTokenMixin!;
+  }
+
+  /// 取消[CancelToken]
+  @api
+  void cancelToken() {
+    _cancelTokenMixin?.cancel();
+  }
+
+  //MARK: - override
 
   @override
   void initState() {
-    cancelTokenMixin = CancelToken();
     super.initState();
   }
 
   @override
   void dispose() {
-    cancelTokenMixin?.cancel();
+    _cancelTokenMixin?.cancel();
     super.dispose();
   }
 }

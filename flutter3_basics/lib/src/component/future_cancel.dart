@@ -90,18 +90,34 @@ extension FutureCancelEx<T> on Future<T> {
 
 /// [FutureCancelToken]
 mixin FutureCancelStateMixin<T extends StatefulWidget> on State<T> {
+  /// 当前的[FutureCancelToken]
+  FutureCancelToken? _futureCancelTokenMixin;
+
   /// [FutureCancelToken]
-  FutureCancelToken? futureCancelTokenMixin;
+  FutureCancelToken get futureCancelTokenMixin {
+    if (_futureCancelTokenMixin == null ||
+        _futureCancelTokenMixin?.isCanceled == true) {
+      _futureCancelTokenMixin = FutureCancelToken();
+    }
+    return _futureCancelTokenMixin!;
+  }
+
+  /// 取消当前[FutureCancelToken]
+  @api
+  void cancelFutureToken() {
+    _futureCancelTokenMixin?.cancel();
+  }
+
+  //MARK: - override
 
   @override
   void initState() {
-    futureCancelTokenMixin = FutureCancelToken();
     super.initState();
   }
 
   @override
   void dispose() {
-    futureCancelTokenMixin?.cancel();
+    _futureCancelTokenMixin?.cancel();
     super.dispose();
   }
 }
