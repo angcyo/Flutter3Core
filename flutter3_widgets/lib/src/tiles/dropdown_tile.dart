@@ -418,11 +418,20 @@ class DropdownTile extends StatefulWidget {
 class _DropdownTileState extends State<DropdownTile> {
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     return DropdownFlutter(
       enabled: widget.enabled,
       excludeSelected: widget.excludeSelected,
       hintText: widget.hintText,
       maxlines: widget.textMaxLines,
+      decoration: CustomDropdownDecoration(
+        closedFillColor: globalTheme.themeWhiteColor,
+        expandedFillColor: globalTheme.themeWhiteColor,
+      ),
+      /*closedHeaderPadding: insets(),
+      expandedHeaderPadding: insets(),*/
+      /*itemsListPadding: ,
+      listItemPadding: ,*/
       /*searchHintText: "searchHintText",*/
       /*hideSelectedFieldWhenExpanded:,*/
       initialItem: widget.dropdownValue,
