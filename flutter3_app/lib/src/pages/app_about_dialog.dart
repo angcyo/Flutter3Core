@@ -39,7 +39,13 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
           return widget.buildAdaptiveCenterDialog(
             context,
             [
-              widget.logo ?? FlutterLogo(size: 64),
+              (widget.logo ??
+                      AppPackageAssetsWidget(
+                        appKey: "assets/png/logo.png",
+                        size: 64,
+                        emptyWidget: FlutterLogo(size: 64),
+                      ))
+                  .tooltip($platformDeviceName),
               "${info?.appName}".text(style: globalTheme.tileTextTitleStyle),
               ("${"Version".connect($buildFlavor == null ? "" : "(${$buildFlavor})")}: ${info?.version}(${info?.buildNumber})")
                   .text(style: globalTheme.textDesStyle)
@@ -61,17 +67,18 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                     );
                   }),
               "${info?.packageName}".text(style: globalTheme.textDesStyle),
-              if (widget.debug ?? isDebugFlag) ...[
-                $platformDeviceInfoCache
-                    ?.toString()
-                    .text(
-                      style: globalTheme.textDesStyle,
-                      selectable: true,
-                      textAlign: .center,
-                    )
-                    .insets(all: kX),
-                DebugPage.buildDebugLastWidget(context, globalTheme),
-              ],
+              if (widget.debug ?? isDebugFlag)
+                [
+                  $platformDeviceInfoCache
+                      ?.toString()
+                      .text(
+                        style: globalTheme.textDesStyle,
+                        selectable: true,
+                        textAlign: .center,
+                      )
+                      .insets(all: kX),
+                  DebugPage.buildDebugLastWidget(context, globalTheme),
+                ].scrollVertical()?.expanded(),
             ].column()!.insets(vertical: kXh),
             autoCloseDialog: true,
             showCloseButton: true,

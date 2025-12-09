@@ -34,6 +34,8 @@ class DebugOverlayButton extends StatefulWidget {
   //region action配置
 
   /// 默认的调试动作
+  /// - [DebugOverlayButton.defDebugActions]
+  /// - [DebugPage.defDebugActions]
   static final List<DebugAction> defDebugActions = [
     DebugAction(
       label: "切换ThemeMode",

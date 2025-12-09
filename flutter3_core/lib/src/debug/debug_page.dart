@@ -74,6 +74,8 @@ class DebugPage extends StatefulWidget {
   }
 
   /// 默认的调试动作
+  /// - [DebugOverlayButton.defDebugActions]
+  /// - [DebugPage.defDebugActions]
   static final List<DebugAction> defDebugActions = [
     DebugAction(
       label: "分享App日志",

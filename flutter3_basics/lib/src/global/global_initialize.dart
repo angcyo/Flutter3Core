@@ -35,24 +35,28 @@ void $registerGlobalComplianceInitialize(FutureVoidAction action) {
   complianceGlobalInitializeList.add(action);
 }
 
-/// 执行全局初始化方法
+/// 执行全局初始化后的方法
 @initialize
 @callPoint
+@api
 Future<void> executeGlobalInitialize({
   bool? before,
   bool? after,
   bool? compliance,
 }) async {
+  //MARK: - 执行前置初始化方法
   if (before ?? false) {
     for (final element in beforeGlobalInitializeList) {
       await element();
     }
   }
+  //MARK: - 执行后置初始化方法
   if (after ?? false) {
     for (final element in afterGlobalInitializeList) {
       await element();
     }
   }
+  //MARK: - 执行合规之后的初始化方法
   if (compliance ?? false) {
     for (final element in complianceGlobalInitializeList) {
       await element();

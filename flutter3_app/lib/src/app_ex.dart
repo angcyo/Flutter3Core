@@ -61,37 +61,37 @@ String? get $appPlatformPackageNameCache =>
 
 /// 获取应用构建的版本
 Future<String> get $appBuildVersion async => stringBuilder((builder) async {
-      builder.append(await $appVersionName);
-      builder.append("(${await $appVersionCode})");
-      final config = $buildConfig;
-      if (!isNil(config?.buildType)) {
-        builder.append("-${config?.buildType}");
-      }
-      final flavor = $buildFlavor;
-      if (!isNil(flavor)) {
-        builder.append("-$flavor");
-      }
-      if (isDebugFlag) {
-        builder.append("(debug)");
-      }
-    });
+  builder.append(await $appVersionName);
+  builder.append("(${await $appVersionCode})");
+  final config = $buildConfig;
+  if (!isNil(config?.buildType)) {
+    builder.append("-${config?.buildType}");
+  }
+  final flavor = $buildFlavor;
+  if (!isNil(flavor)) {
+    builder.append("-$flavor");
+  }
+  if (isDebugFlag) {
+    builder.append("(debug)");
+  }
+});
 
 /// 获取应用构建的版本
 String get $appBuildVersionCache => stringBuilder((builder) async {
-      builder.append($appVersionNameCache);
-      builder.append("(${$appVersionCodeCache})");
-      final config = $buildConfig;
-      if (!isNil(config?.buildType)) {
-        builder.append("-${config?.buildType}");
-      }
-      final flavor = $buildFlavor;
-      if (!isNil(flavor)) {
-        builder.append("-$flavor");
-      }
-      if (isDebug) {
-        builder.append("(debug)");
-      }
-    });
+  builder.append($appVersionNameCache);
+  builder.append("(${$appVersionCodeCache})");
+  final config = $buildConfig;
+  if (!isNil(config?.buildType)) {
+    builder.append("-${config?.buildType}");
+  }
+  final flavor = $buildFlavor;
+  if (!isNil(flavor)) {
+    builder.append("-$flavor");
+  }
+  if (isDebug) {
+    builder.append("(debug)");
+  }
+});
 
 //--
 
@@ -101,14 +101,14 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
   final deviceInfo = isAndroid
       ? await DeviceInfoPlugin().androidInfo
       : isIos
-          ? await DeviceInfoPlugin().iosInfo
-          : isLinux
-              ? await DeviceInfoPlugin().linuxInfo
-              : isMacOS
-                  ? await DeviceInfoPlugin().macOsInfo
-                  : isWindows
-                      ? await DeviceInfoPlugin().windowsInfo
-                      : await DeviceInfoPlugin().webBrowserInfo;
+      ? await DeviceInfoPlugin().iosInfo
+      : isLinux
+      ? await DeviceInfoPlugin().linuxInfo
+      : isMacOS
+      ? await DeviceInfoPlugin().macOsInfo
+      : isWindows
+      ? await DeviceInfoPlugin().windowsInfo
+      : await DeviceInfoPlugin().webBrowserInfo;
   _platformDeviceInfoCache = deviceInfo;
   return deviceInfo;
 }
@@ -187,28 +187,31 @@ Future<String?> get $platformDeviceModel async => isAndroid
     //supportedAbis: [arm64-v8a, armeabi-v7a, armeabi]
     ? ((await $platformDeviceInfo) as AndroidDeviceInfo?)?.model
     : isIos
-        ? ((await $platformDeviceInfo) as IosDeviceInfo?)?.model
-        : isLinux
-            ? ((await $platformDeviceInfo) as LinuxDeviceInfo?)?.prettyName
-            : isMacOS
-                ? ((await $platformDeviceInfo) as MacOsDeviceInfo?)?.model
-                : isWindows
-                    ? ((await $platformDeviceInfo) as WindowsDeviceInfo?)
-                        ?.productName
-                    : null;
+    ? ((await $platformDeviceInfo) as IosDeviceInfo?)?.model
+    : isLinux
+    ? ((await $platformDeviceInfo) as LinuxDeviceInfo?)?.prettyName
+    : isMacOS
+    ? ((await $platformDeviceInfo) as MacOsDeviceInfo?)?.model
+    : isWindows
+    ? ((await $platformDeviceInfo) as WindowsDeviceInfo?)?.productName
+    : null;
+
+/// 平台上的设备名称
+/// - [$platformDeviceInfoCache]
+String? get $platformDeviceName => $platformDeviceInfoCache?.platformDeviceName;
 
 /// [BaseDeviceInfo]
 extension PlatformDeviceInfoEx on BaseDeviceInfo {
   /// 平台设备的名称
   /// [Platform.operatingSystem]
   String? get platformDeviceName => switch (this) {
-        AndroidDeviceInfo info => info.model,
-        WindowsDeviceInfo info => info.productName,
-        IosDeviceInfo info => info.modelName,
-        MacOsDeviceInfo info => info.modelName /*MacBook Pro (14-inch, 2023)*/,
-        LinuxDeviceInfo info => info.prettyName,
-        _ => null,
-      };
+    AndroidDeviceInfo info => info.model,
+    WindowsDeviceInfo info => info.productName,
+    IosDeviceInfo info => info.modelName,
+    MacOsDeviceInfo info => info.modelName /*MacBook Pro (14-inch, 2023)*/,
+    LinuxDeviceInfo info => info.prettyName,
+    _ => null,
+  };
 }
 
 /// https://pub.dev/packages/share_plus
@@ -250,7 +253,7 @@ extension ShareImageEx on UiImage {
           bytes ?? Uint8List(0),
           mimeType: imageName?.mimeType(bytes) ?? "image/png",
           name: imageName,
-        )
+        ),
       ],
       subject: subject,
       text: text,
@@ -268,15 +271,14 @@ extension ShareFileEx on File {
     String? mimeType,
     BuildContext? shareContext,
     Rect? sharePositionOrigin,
-  }) async =>
-      path.shareFile(
-        otherFiles: null,
-        subject: subject,
-        text: text,
-        mimeType: mimeType ?? 'application/octet-stream',
-        shareContext: shareContext,
-        sharePositionOrigin: sharePositionOrigin,
-      );
+  }) async => path.shareFile(
+    otherFiles: null,
+    subject: subject,
+    text: text,
+    mimeType: mimeType ?? 'application/octet-stream',
+    shareContext: shareContext,
+    sharePositionOrigin: sharePositionOrigin,
+  );
 }
 
 /// https://pub.dev/packages/share_plus
@@ -313,7 +315,7 @@ extension ShareStringEx on String {
     return Share.shareXFiles(
       [
         XFile(this, mimeType: mimeType),
-        ...?otherFiles?.map((e) => XFile(e, mimeType: mimeType))
+        ...?otherFiles?.map((e) => XFile(e, mimeType: mimeType)),
       ],
       subject: subject,
       text: text,

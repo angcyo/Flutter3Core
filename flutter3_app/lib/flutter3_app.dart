@@ -9,6 +9,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
+import 'package:flutter3_app/src/pages/app_about_dialog.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_move_task_back/flutter_move_task_back.dart';
@@ -177,7 +178,7 @@ Future runGlobalApp(
     AppLifecycleObserver.install(); //app生命周期监听/日志
 
     //debug info
-    _initDebugLastInfo();
+    _initAppDebugInfo();
 
     //--before
     try {
@@ -269,9 +270,28 @@ void wrapPlatformDispatcherOnError([ErrorCallback? onErrorCallback]) {
   };
 }
 
+/// 调试信息初始化
 /// [DebugPage]
 @initialize
-Future _initDebugLastInfo() async {
+Future _initAppDebugInfo() async {
+  DebugPage.defDebugActions.insert(
+    0,
+    DebugAction(
+      label: "About",
+      clickAction: (context) {
+        context.showWidgetDialog(AppAboutDialog());
+      },
+    ),
+  );
+  DebugOverlayButton.defDebugActions.insert(
+    0,
+    DebugAction(
+      label: "About",
+      clickAction: (context) {
+        context.showWidgetDialog(AppAboutDialog());
+      },
+    ),
+  );
   $compliance.wait((context, agree) async {
     if (agree) {
       final packageInfo = await $platformPackageInfo;

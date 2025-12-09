@@ -802,6 +802,7 @@ Image? loadAssetImageWidget(
   double? width,
   double? height,
   Color? color,
+  Color? tintColor,
   BlendMode? colorBlendMode,
 }) => key == null
     ? null
@@ -810,7 +811,7 @@ Image? loadAssetImageWidget(
         fit: fit ?? BoxFit.cover,
         width: size ?? width,
         height: size ?? height,
-        color: color,
+        color: tintColor ?? color,
         colorBlendMode: colorBlendMode,
       );
 

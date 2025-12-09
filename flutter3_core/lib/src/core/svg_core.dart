@@ -5,9 +5,9 @@ part of '../../flutter3_core.dart';
 /// @author angcyo
 /// @date 2023/11/19
 ///
-/// 优先从app的资产中读取svg, 然后降级到lib的资产中读取
-class AppPackageAssetsSvgWidget extends StatefulWidget {
-  //--package
+/// 优先从app的资产中读取svg/image, 然后降级到lib的资产中读取
+class AppPackageAssetsWidget extends StatefulWidget {
+  //MARK: - package
 
   /// 资产在app中的全路径key
   final String? appKey;
@@ -22,7 +22,7 @@ class AppPackageAssetsSvgWidget extends StatefulWidget {
   /// 全路径是[libPackage]+[resKey]
   final String? resKey;
 
-  //--svg
+  //MARK: - svg / image
 
   final Color? tintColor;
   final UiColorFilter? colorFilter;
@@ -32,7 +32,11 @@ class AppPackageAssetsSvgWidget extends StatefulWidget {
   final double? width;
   final double? height;
 
-  const AppPackageAssetsSvgWidget({
+  /// 显示空Widget
+  @defInjectMark
+  final Widget? emptyWidget;
+
+  const AppPackageAssetsWidget({
     super.key,
     this.appKey,
     this.libKey,
@@ -45,16 +49,19 @@ class AppPackageAssetsSvgWidget extends StatefulWidget {
     this.width,
     this.height,
     this.fit = BoxFit.fill,
+    this.emptyWidget,
   });
 
   @override
-  State<AppPackageAssetsSvgWidget> createState() =>
-      _AppPackageAssetsSvgWidgetState();
+  State<AppPackageAssetsWidget> createState() => _AppPackageAssetsWidgetState();
 }
 
-class _AppPackageAssetsSvgWidgetState extends State<AppPackageAssetsSvgWidget> {
+class _AppPackageAssetsWidgetState extends State<AppPackageAssetsWidget> {
   /// 正在加载的资源key
   String? loadResKey;
+
+  /// 是否是svg
+  bool get isSvg => widget.resKey?.endsWith(".svg") ?? false;
 
   @override
   void initState() {
@@ -63,16 +70,18 @@ class _AppPackageAssetsSvgWidgetState extends State<AppPackageAssetsSvgWidget> {
   }
 
   @override
-  void didUpdateWidget(covariant AppPackageAssetsSvgWidget oldWidget) {
+  void didUpdateWidget(covariant AppPackageAssetsWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     _checkOrLoadResKey();
   }
 
   @override
   Widget build(BuildContext context) {
+    final empty = widget.emptyWidget ?? const Empty();
     return isNil(loadResKey)
         ? empty
-        : loadAssetSvgWidget(
+        : isSvg
+        ? loadAssetSvgWidget(
             loadResKey!,
             package: null,
             tintColor: widget.tintColor,
@@ -81,22 +90,36 @@ class _AppPackageAssetsSvgWidgetState extends State<AppPackageAssetsSvgWidget> {
             width: widget.width,
             height: widget.height,
             fit: widget.fit,
-          );
+          )
+        : loadAssetImageWidget(
+                loadResKey!,
+                package: null,
+                tintColor: widget.tintColor,
+                /*colorFilter: widget.colorFilter,*/
+                size: widget.size,
+                width: widget.width,
+                height: widget.height,
+                fit: widget.fit,
+              ) ??
+              empty;
   }
 
   /// 检查[widget.appKey]是否存在, 如果不存在, 则使用[widget.libKey]
   Future _checkOrLoadResKey([bool update = true]) async {
     //debugger();
 
-    final libPackagePath =
-        isNil(widget.libPackage) ? "" : "packages/${widget.libPackage}/";
+    final libPackagePath = isNil(widget.libPackage)
+        ? ""
+        : "packages/${widget.libPackage}/";
 
-    final appKey = widget.appKey ??
+    final appKey =
+        widget.appKey ??
         widget.resKey
             ?.replaceAll(libPackagePath, "")
             .ensurePackagePrefix()
             .transformKey();
-    final libKey = widget.libKey ??
+    final libKey =
+        widget.libKey ??
         widget.resKey?.ensurePackagePrefix(widget.libPackage).transformKey();
 
     final old = loadResKey;
@@ -138,16 +161,15 @@ SvgPicture loadAssetSvgWidget(
   BoxFit fit = BoxFit.contain,
   ColorFilter? colorFilter,
   WidgetBuilder? placeholderBuilder,
-}) =>
-    SvgPicture.asset(
-      key.ensurePackagePrefix(package, prefix).transformKey(),
-      semanticsLabel: key,
-      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      width: size ?? width,
-      height: size ?? height,
-      fit: fit,
-      placeholderBuilder: placeholderBuilder,
-    );
+}) => SvgPicture.asset(
+  key.ensurePackagePrefix(package, prefix).transformKey(),
+  semanticsLabel: key,
+  colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+  width: size ?? width,
+  height: size ?? height,
+  fit: fit,
+  placeholderBuilder: placeholderBuilder,
+);
 
 SvgPicture loadHttpSvgWidget(
   String url, {
@@ -158,20 +180,18 @@ SvgPicture loadHttpSvgWidget(
   double? height,
   UiColorFilter? colorFilter,
   WidgetBuilder? placeholderBuilder,
-}) =>
-    SvgPicture.network(
-      url,
-      semanticsLabel: url,
-      fit: fit,
-      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      width: size ?? width,
-      height: size ?? height,
-      placeholderBuilder: placeholderBuilder ??
-          (context) => LoadingWrapWidget(
-                width: size ?? width,
-                height: size ?? height,
-              ),
-    );
+}) => SvgPicture.network(
+  url,
+  semanticsLabel: url,
+  fit: fit,
+  colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+  width: size ?? width,
+  height: size ?? height,
+  placeholderBuilder:
+      placeholderBuilder ??
+      (context) =>
+          LoadingWrapWidget(width: size ?? width, height: size ?? height),
+);
 
 SvgPicture loadFileSvgWidget(
   String path, {
@@ -182,20 +202,18 @@ SvgPicture loadFileSvgWidget(
   double? height,
   UiColorFilter? colorFilter,
   WidgetBuilder? placeholderBuilder,
-}) =>
-    SvgPicture.file(
-      path.file(),
-      semanticsLabel: path,
-      fit: fit,
-      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      width: size ?? width,
-      height: size ?? height,
-      placeholderBuilder: placeholderBuilder ??
-          (context) => LoadingWrapWidget(
-                width: size ?? width,
-                height: size ?? height,
-              ),
-    );
+}) => SvgPicture.file(
+  path.file(),
+  semanticsLabel: path,
+  fit: fit,
+  colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+  width: size ?? width,
+  height: size ?? height,
+  placeholderBuilder:
+      placeholderBuilder ??
+      (context) =>
+          LoadingWrapWidget(width: size ?? width, height: size ?? height),
+);
 
 SvgPicture loadStringSvgWidget(
   String string, {
@@ -206,19 +224,17 @@ SvgPicture loadStringSvgWidget(
   double? height,
   UiColorFilter? colorFilter,
   WidgetBuilder? placeholderBuilder,
-}) =>
-    SvgPicture.string(
-      string,
-      semanticsLabel: string,
-      fit: fit,
-      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      width: size ?? width,
-      height: size ?? height,
-      placeholderBuilder: placeholderBuilder ??
-          (context) => LoadingWrapWidget(
-                width: size ?? width,
-                height: size ?? height,
-              ),
-    );
+}) => SvgPicture.string(
+  string,
+  semanticsLabel: string,
+  fit: fit,
+  colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+  width: size ?? width,
+  height: size ?? height,
+  placeholderBuilder:
+      placeholderBuilder ??
+      (context) =>
+          LoadingWrapWidget(width: size ?? width, height: size ?? height),
+);
 
 //endregion Asset

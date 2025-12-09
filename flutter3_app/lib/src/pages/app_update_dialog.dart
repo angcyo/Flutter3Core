@@ -280,7 +280,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
 
     //头部
     Widget header = [
-      AppPackageAssetsSvgWidget(
+      AppPackageAssetsWidget(
         resKey: Assets.svg.appUpdateHeader,
         libPackage: Assets.package,
       ).position(left: 0, right: 0),
@@ -474,7 +474,7 @@ class AppUpdateLogDialog extends StatelessWidget with DialogMixin {
             fillRadius: kDefaultBorderRadiusXX,
           )
           .position(top: marginTop, left: 0, right: 0, bottom: 0),
-      AppPackageAssetsSvgWidget(
+      AppPackageAssetsWidget(
         resKey: Assets.svg.appUpdateLogHeader,
         libPackage: Assets.package,
         size: 200,
