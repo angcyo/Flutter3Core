@@ -87,6 +87,8 @@ extension GeometryWidgetEx on Widget {
     //全部设置
     double? all,
     //水平垂直设置
+    double? v,
+    double? h,
     double? vertical,
     double? horizontal,
     //除了此方向, 其它都设置
@@ -104,10 +106,13 @@ extension GeometryWidgetEx on Widget {
   }) => paddingInsets(
     insets ??
         EdgeInsets.only(
-          left: left ?? nTop ?? nRight ?? nBottom ?? horizontal ?? all ?? 0,
-          top: top ?? nLeft ?? nRight ?? nBottom ?? vertical ?? all ?? 0,
-          right: right ?? nLeft ?? nTop ?? nBottom ?? horizontal ?? all ?? 0,
-          bottom: bottom ?? nLeft ?? nTop ?? nRight ?? vertical ?? all ?? 0,
+          left:
+              left ?? nTop ?? nRight ?? nBottom ?? h ?? horizontal ?? all ?? 0,
+          top: top ?? nLeft ?? nRight ?? nBottom ?? v ?? vertical ?? all ?? 0,
+          right:
+              right ?? nLeft ?? nTop ?? nBottom ?? h ?? horizontal ?? all ?? 0,
+          bottom:
+              bottom ?? nLeft ?? nTop ?? nRight ?? v ?? vertical ?? all ?? 0,
         ),
   );
 
@@ -119,6 +124,8 @@ extension GeometryWidgetEx on Widget {
     //全部设置
     double? all,
     //水平垂直设置
+    double? v,
+    double? h,
     double? vertical,
     double? horizontal,
     //除了此方向, 其它都设置
@@ -135,6 +142,8 @@ extension GeometryWidgetEx on Widget {
     EdgeInsetsGeometry? insets,
   }) => this.insets(
     all: all,
+    v: v,
+    h: h,
     vertical: vertical,
     horizontal: horizontal,
     nLeft: nLeft,

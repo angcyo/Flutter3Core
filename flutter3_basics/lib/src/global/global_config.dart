@@ -559,6 +559,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///
   /// [WidgetStateBuildWidgetState]
   WidgetArgumentBuilder emptyPlaceholderBuilder = <T>(context, data) {
+    debugger();
     final icon =
         loadAssetImageWidget(
           libAssetsStateNoDataKey,
@@ -576,7 +577,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return [
       icon,
       if (data is Widget) data,
-      "$data".text(textAlign: TextAlign.center).paddingAll(kX),
+      if (data is! Widget)
+        "$data".text(textAlign: TextAlign.center).paddingAll(kX),
     ].column()!;
   };
 

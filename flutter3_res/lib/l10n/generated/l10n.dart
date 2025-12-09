@@ -299,6 +299,11 @@ class LibRes {
     return Intl.message('开始升级', name: 'libUpgradeNow', desc: '', args: []);
   }
 
+  /// `开始降级`
+  String get libDowngradeNow {
+    return Intl.message('开始降级', name: 'libDowngradeNow', desc: '', args: []);
+  }
+
   /// `更新失败`
   String get libUpgradeFailure {
     return Intl.message('更新失败', name: 'libUpgradeFailure', desc: '', args: []);
@@ -307,6 +312,16 @@ class LibRes {
   /// `升级成功`
   String get libUpgradeSuccess {
     return Intl.message('升级成功', name: 'libUpgradeSuccess', desc: '', args: []);
+  }
+
+  /// `降级成功`
+  String get libDowngradeSuccess {
+    return Intl.message(
+      '降级成功',
+      name: 'libDowngradeSuccess',
+      desc: '',
+      args: [],
+    );
   }
 }
 

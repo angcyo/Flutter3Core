@@ -39,6 +39,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "libCopy": MessageLookupByLibrary.simpleMessage("复制"),
     "libDelete": MessageLookupByLibrary.simpleMessage("删除"),
     "libDeleteTip": MessageLookupByLibrary.simpleMessage("删除后无法恢复，确认删除吗？"),
+    "libDowngradeNow": MessageLookupByLibrary.simpleMessage("开始降级"),
+    "libDowngradeSuccess": MessageLookupByLibrary.simpleMessage("降级成功"),
     "libDownloadNow": MessageLookupByLibrary.simpleMessage("立即下载"),
     "libDownloading": MessageLookupByLibrary.simpleMessage("下载中..."),
     "libEdit": MessageLookupByLibrary.simpleMessage("编辑"),

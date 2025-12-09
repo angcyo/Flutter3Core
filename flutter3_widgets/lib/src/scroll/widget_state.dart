@@ -7,11 +7,12 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// [WidgetBuilder]
-typedef WidgetStateBuilder = Widget Function(
-  BuildContext context,
-  WidgetBuildState widgetState,
-  dynamic stateData,
-);
+typedef WidgetStateBuilder =
+    Widget Function(
+      BuildContext context,
+      WidgetBuildState widgetState,
+      dynamic stateData,
+    );
 
 /// 创建一个字符串
 typedef GenerateString = String? Function(BuildContext context);
@@ -22,8 +23,12 @@ typedef WidgetWrapBuilder = Widget Function(BuildContext context, Widget child);
 /// 请求改变状态,
 /// 返回true表示拦截改变.
 /// 返回false表示允许改变, 并且会更新当前的状态
-typedef RequestChangeStateFn = bool Function(BuildContext context,
-    WidgetBuildState oldWidgetState, WidgetBuildState newWidgetState);
+typedef RequestChangeStateFn =
+    bool Function(
+      BuildContext context,
+      WidgetBuildState oldWidgetState,
+      WidgetBuildState newWidgetState,
+    );
 
 enum WidgetBuildState {
   /// 预加载状态, 会显示加载界面, 但是不会触发加载回调
@@ -109,13 +114,11 @@ extension WidgetStateEx on Widget {
   Widget widgetState({WidgetBuildState? widgetState, bool? loading}) {
     //debugger();
     if (widgetState == null && loading != null) {
-      widgetState =
-          loading ? WidgetBuildState.loading : WidgetBuildState.preLoading;
+      widgetState = loading
+          ? WidgetBuildState.loading
+          : WidgetBuildState.preLoading;
     }
-    return WidgetStateScope(
-      widgetState: widgetState,
-      child: this,
-    );
+    return WidgetStateScope(widgetState: widgetState, child: this);
   }
 }
 
@@ -177,11 +180,20 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
 
   /// [WidgetBuildState.loading]状态
   @override
-  Widget defBuildLoadingWidget(BuildContext context,
-      [dynamic data, double? progressValue, Color? color]) {
+  Widget defBuildLoadingWidget(
+    BuildContext context, [
+    dynamic data,
+    double? progressValue,
+    Color? color,
+  ]) {
     return (widget.buildLoadingWidgetState ?? widget.buildWidgetStateWidget)
             ?.call(context, _buildState, widget.stateData) ??
-        super.defBuildLoadingWidget(context, widget.stateData, progressValue, color);
+        super.defBuildLoadingWidget(
+          context,
+          widget.stateData,
+          progressValue,
+          color,
+        );
   }
 
   /// [WidgetBuildState.empty]状态
@@ -189,7 +201,7 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   Widget defBuildEmptyWidget(BuildContext context, [dynamic data]) {
     return (widget.buildEmptyWidgetStateWidget ?? widget.buildWidgetStateWidget)
             ?.call(context, _buildState, widget.stateData) ??
-        super.defBuildEmptyWidget(context);
+        super.defBuildEmptyWidget(context, widget.stateData);
   }
 
   /// [WidgetBuildState.error]状态
@@ -202,8 +214,11 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
 
   /// 其他默认状态
   Widget _buildDefaultWidget(BuildContext context) {
-    var result = widget.buildWidgetStateWidget
-        ?.call(context, _buildState, widget.stateData);
+    var result = widget.buildWidgetStateWidget?.call(
+      context,
+      _buildState,
+      widget.stateData,
+    );
     if (result != null) {
       return result;
     }
@@ -218,6 +233,7 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
 
   @override
   Widget build(BuildContext context) {
+    //debugger();
     return buildStateWidget(context, _buildState, widget.stateData) ??
         _buildDefaultWidget(context);
   }
@@ -252,10 +268,15 @@ class AdapterStateWidget extends WidgetStateBuildWidget {
 class AdapterStateWidgetState extends WidgetStateBuildWidgetState {
   /// [WidgetBuildState.loading]状态
   @override
-  Widget defBuildLoadingWidget(BuildContext context,
-      [dynamic data, double? progressValue, Color? color]) {
-    return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, data, progressValue, color);
+  Widget defBuildLoadingWidget(
+    BuildContext context, [
+    dynamic data,
+    double? progressValue,
+    Color? color,
+  ]) {
+    return GlobalConfig.of(
+      context,
+    ).loadingIndicatorBuilder(context, data, progressValue, color);
   }
 
   /// [WidgetBuildState.empty]状态
@@ -268,10 +289,10 @@ class AdapterStateWidgetState extends WidgetStateBuildWidgetState {
     Widget result = loadAssetImageWidget(
       libAssetsStateNoDataKey,
       package: 'flutter3_basics',
-    )!
-        .size(width: size, height: size);
+    )!.size(width: size, height: size);
 
-    final stateData = widget.stateData ??
+    final stateData =
+        widget.stateData ??
         widget.noDataStringGenerate?.call(context) ??
         LibRes.of(context).libAdapterNoData;
     if (stateData != null) {
@@ -296,27 +317,27 @@ class AdapterStateWidgetState extends WidgetStateBuildWidgetState {
     Widget result = loadAssetImageWidget(
       libAssetsStateLoadErrorKey,
       package: 'flutter3_basics',
-    )!
-        .size(width: size, height: size);
+    )!.size(width: size, height: size);
 
-    final stateData = widget.stateData ??
+    final stateData =
+        widget.stateData ??
         widget.loadErrorStringGenerate?.call(context) ??
         LibRes.of(context).libAdapterLoadMoreError;
 
     if (stateData != null) {
       result = result.columnOf(
         "$stateData"
-            .text(
-              textAlign: TextAlign.center,
-              style: globalTheme.textBodyStyle,
-            )
+            .text(textAlign: TextAlign.center, style: globalTheme.textBodyStyle)
             .padding(globalTheme.xh),
       );
     }
     return result.align(Alignment.center).matchParent().click(() {
       //点击重试
-      if (widget.requestChangeStateFn
-              ?.call(context, _buildState, WidgetBuildState.loading) ==
+      if (widget.requestChangeStateFn?.call(
+            context,
+            _buildState,
+            WidgetBuildState.loading,
+          ) ==
           false) {
         _updateState = WidgetBuildState.loading;
         updateState();
@@ -348,8 +369,12 @@ class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
 
   /// [WidgetBuildState.loading]状态
   @override
-  Widget defBuildLoadingWidget(BuildContext context,
-      [dynamic data, double? progressValue, Color? color]) {
+  Widget defBuildLoadingWidget(
+    BuildContext context, [
+    dynamic data,
+    double? progressValue,
+    Color? color,
+  ]) {
     return GlobalConfig.of(context)
         .loadingIndicatorBuilder(context, data, progressValue, color)
         .wrapContent(minHeight: kInteractiveHeight)
@@ -361,49 +386,50 @@ class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
   @override
   Widget defBuildEmptyWidget(BuildContext context, [dynamic data]) {
     final globalTheme = GlobalTheme.of(context);
-    final stateData = widget.stateData ??
+    final stateData =
+        widget.stateData ??
         widget.noDataStringGenerate?.call(context) ??
         LibRes.of(context).libAdapterNoMoreData;
 
     Widget result = "$stateData"
-        .text(
-          textAlign: TextAlign.center,
-          style: globalTheme.textSubTitleStyle,
-        )
+        .text(textAlign: TextAlign.center, style: globalTheme.textSubTitleStyle)
         .padding(globalTheme.xh);
 
     return result.container(
-        constraints: const BoxConstraints(minHeight: kInteractiveHeight));
+      constraints: const BoxConstraints(minHeight: kInteractiveHeight),
+    );
   }
 
   /// [WidgetBuildState.error]状态
   @override
   Widget defBuildErrorWidget(BuildContext context, [dynamic error]) {
     final globalTheme = GlobalTheme.of(context);
-    final stateData = widget.stateData ??
+    final stateData =
+        widget.stateData ??
         widget.loadErrorStringGenerate?.call(context) ??
         LibRes.of(context).libAdapterLoadMoreError;
 
     Widget result = "$stateData"
-        .text(
-          textAlign: TextAlign.center,
-          style: globalTheme.textBodyStyle,
-        )
+        .text(textAlign: TextAlign.center, style: globalTheme.textBodyStyle)
         .padding(globalTheme.xh);
 
     return result
         .container(
-            constraints: const BoxConstraints(minHeight: kInteractiveHeight))
+          constraints: const BoxConstraints(minHeight: kInteractiveHeight),
+        )
         .wrapContent()
         .click(() {
-      //点击重试
-      if (widget.requestChangeStateFn
-              ?.call(context, _buildState, WidgetBuildState.loading) ==
-          false) {
-        _updateState = WidgetBuildState.loading;
-        updateState();
-      }
-    });
+          //点击重试
+          if (widget.requestChangeStateFn?.call(
+                context,
+                _buildState,
+                WidgetBuildState.loading,
+              ) ==
+              false) {
+            _updateState = WidgetBuildState.loading;
+            updateState();
+          }
+        });
   }
 }
 
@@ -415,14 +441,17 @@ mixin StateWidgetBuildMixin {
   /// [WidgetBuildState]
   @entryPoint
   Widget? buildStateWidget(
-      BuildContext context, WidgetBuildState state, dynamic stateData,
-      [WidgetStateBuilder? otherBuilder]) {
+    BuildContext context,
+    WidgetBuildState state,
+    dynamic stateData, [
+    WidgetStateBuilder? otherBuilder,
+  ]) {
     switch (state) {
       case WidgetBuildState.preLoading:
       case WidgetBuildState.loading:
-        return defBuildLoadingWidget(context);
+        return defBuildLoadingWidget(context, stateData);
       case WidgetBuildState.empty:
-        return defBuildEmptyWidget(context);
+        return defBuildEmptyWidget(context, stateData);
       case WidgetBuildState.error:
         return defBuildErrorWidget(context, stateData);
       default:
@@ -431,10 +460,15 @@ mixin StateWidgetBuildMixin {
   }
 
   /// [WidgetBuildState.loading]状态
-  Widget defBuildLoadingWidget(BuildContext context,
-      [dynamic data, double? progressValue, Color? color]) {
-    return GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, data, progressValue, color);
+  Widget defBuildLoadingWidget(
+    BuildContext context, [
+    dynamic data,
+    double? progressValue,
+    Color? color,
+  ]) {
+    return GlobalConfig.of(
+      context,
+    ).loadingIndicatorBuilder(context, data, progressValue, color);
   }
 
   /// [WidgetBuildState.empty]状态
