@@ -6,13 +6,14 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 下拉按钮菜单tile, 系统内部使用[PopupRoute]实现
 ///
-/// - [DropdownButton]
-/// - [DropdownMenu]
+/// - [DropdownButton] 系统
+/// - [DropdownMenu] 系统
+/// - [MenuAnchor] 系统
 ///
-/// - [DropdownMenuTile]
-/// - [DropdownButtonTile]
-///
-/// - `dropdown_flutter: ^1.0.3`
+/// - [DropdownTile] tile
+/// - [DropdownMenuTile] tile
+/// - [DropdownButtonTile] tile
+/// - [MenuAnchorTile] tile
 ///
 class DropdownButtonTile extends StatefulWidget with TileMixin {
   /// 标签
@@ -154,11 +155,14 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
 
 /// 下拉输入框菜单tile, 系统内部使用[Overlay]实现
 ///
-/// - [DropdownButton]
-/// - [DropdownMenu]
+/// - [DropdownButton] 系统
+/// - [DropdownMenu] 系统
+/// - [MenuAnchor] 系统
 ///
-/// - [DropdownMenuTile]
-/// - [DropdownButtonTile]
+/// - [DropdownTile] tile
+/// - [DropdownMenuTile] tile
+/// - [DropdownButtonTile] tile
+/// - [MenuAnchorTile] tile
 class DropdownMenuTile extends StatelessWidget with TileMixin {
   /// 标签
   final String? label;
@@ -244,6 +248,15 @@ class DropdownMenuTile extends StatelessWidget with TileMixin {
 
 /// 锚点菜单tile, 使用[MenuAnchor]实现
 /// 内部使用[Overlay]实现
+///
+/// - [DropdownButton] 系统
+/// - [DropdownMenu] 系统
+/// - [MenuAnchor] 系统
+///
+/// - [DropdownTile] tile
+/// - [DropdownMenuTile] tile
+/// - [DropdownButtonTile] tile
+/// - [MenuAnchorTile] tile
 class MenuAnchorTile extends StatefulWidget {
   /// 标签
   final String? label;
@@ -346,5 +359,84 @@ class _MenuAnchorTileState extends State<MenuAnchorTile> with TileMixin {
                 })
                 .constrainedMin(minHeight: kMinInteractiveDimension),
     ];
+  }
+}
+
+/// 使用 `dropdown_flutter: ^1.0.3` 实现的下拉菜单tile
+/// 内部使用[OverlayPortal]实现
+/// - [CompositedTransformTarget]
+/// - [CompositedTransformFollower]
+///
+/// - [DropdownButton] 系统
+/// - [DropdownMenu] 系统
+/// - [MenuAnchor] 系统
+///
+/// - [DropdownTile] tile
+/// - [DropdownMenuTile] tile
+/// - [DropdownButtonTile] tile
+/// - [MenuAnchorTile] tile
+class DropdownTile extends StatefulWidget {
+  //MARK: - config
+
+  /// 是否启用
+  final bool enabled;
+
+  /// 是否排除已选择的项在下拉菜单中
+  final bool excludeSelected;
+
+  /// 提示语
+  final String? hintText;
+
+  /// 搜索框提示语
+  final String? searchHintText;
+
+  final int textMaxLines;
+
+  //MARK: - Dropdown
+
+  /// Dropdown
+  final dynamic dropdownValue;
+  final List<dynamic>? dropdownValueList;
+  final ValueChanged<dynamic>? onChanged;
+
+  const DropdownTile({
+    super.key,
+    this.enabled = true,
+    this.excludeSelected = true,
+    this.hintText,
+    this.searchHintText,
+    this.textMaxLines = 1,
+    this.dropdownValue,
+    this.dropdownValueList,
+    this.onChanged,
+  });
+
+  @override
+  State<DropdownTile> createState() => _DropdownTileState();
+}
+
+class _DropdownTileState extends State<DropdownTile> {
+  @override
+  Widget build(BuildContext context) {
+    return DropdownFlutter(
+      enabled: widget.enabled,
+      excludeSelected: widget.excludeSelected,
+      hintText: widget.hintText,
+      maxlines: widget.textMaxLines,
+      /*searchHintText: "searchHintText",*/
+      /*hideSelectedFieldWhenExpanded:,*/
+      initialItem: widget.dropdownValue,
+      /*initialItems: widget.dropdownValue,*/
+      items: widget.dropdownValueList,
+      /*onListChanged: widget.dropdownValueList,*/
+      onChanged: (value) {
+        //debugger();
+        assert(() {
+          l.d("${value.runtimeType} value: $value");
+          return true;
+        }());
+        widget.onChanged?.call(value);
+      },
+    );
   }
 }

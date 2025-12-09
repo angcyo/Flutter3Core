@@ -7,6 +7,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:badges/badges.dart' as badges;
+import 'package:dropdown_flutter/custom_dropdown.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
