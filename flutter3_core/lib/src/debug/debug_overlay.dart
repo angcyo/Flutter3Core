@@ -125,13 +125,8 @@ class DebugOverlayButton extends StatefulWidget {
   State<DebugOverlayButton> createState() => _DebugOverlayButtonState();
 }
 
-class _DebugOverlayButtonState extends State<DebugOverlayButton>
-    with
-        GlobalAppStateMixin,
-        TickerProviderStateMixin,
-        HookMixin,
-        HookStateMixin,
-        OverlayPositionMixin {
+class _DebugOverlayButtonState extends OverlayPositionState<DebugOverlayButton>
+    with GlobalAppStateMixin {
   Offset? get hivePositionOffset =>
       "_key_debug_overlay_button_offset".hiveGet<String>()?.point;
 

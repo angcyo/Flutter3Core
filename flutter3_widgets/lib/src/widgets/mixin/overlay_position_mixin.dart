@@ -147,3 +147,18 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
     });
   }
 }
+
+/// - [OverlayPositionMixin]
+abstract class OverlayPositionState<T extends StatefulWidget>
+    extends MediaQueryDataState<T>
+    with
+        TickerProviderStateMixin,
+        HookMixin,
+        HookStateMixin<T>,
+        OverlayPositionMixin {
+  @override
+  void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
+    //super.onSelfMediaQueryDataChanged(from, to);
+    resetOverlayOffset();
+  }
+}
