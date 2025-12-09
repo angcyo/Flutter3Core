@@ -5,6 +5,8 @@ part of flutter3_shelf;
 /// @date 2025/07/02
 ///
 /// - [start] 启动服务
+///   - 客户端启动服务用于发送日志
+///   - 服务端启动用于接收日志
 ///   - [startHeartTimer] 启动心跳
 ///     - [onSelfHandleHeart] 自定义心跳逻辑
 ///       - [checkRemoteOffline] 检查客户端是否离线
@@ -81,7 +83,7 @@ abstract class LocalUdpBase {
   /// 启动
   @api
   Future<bool> start() async {
-    l.d("UDP服务已启动->${classHash()} 广播端口:$serverBroadcastPort 心跳:$heartPeriod");
+    l.d("[${classHash()}]UDP服务已启动->广播端口:$serverBroadcastPort 心跳:$heartPeriod");
     startHeartTimer();
     return true;
   }

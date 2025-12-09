@@ -211,6 +211,8 @@ class Flutter3ShelfHttp {
         });*/
         //debugger();
         address = getServerAddress();
+
+        //打开此服务链接, 可以访问本机的日志信息和一些设备信息, 等其它公开的服务
         l.d("[${classHash()}]服务启动->$address");
         break;
       } catch (e) {

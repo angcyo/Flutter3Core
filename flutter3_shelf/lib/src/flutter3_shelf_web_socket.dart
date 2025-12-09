@@ -400,6 +400,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
 }
 
 /// 调试日志数据输出服务
-/// 以及文件浏览接口
+/// - Websocket日志浏览服务
+/// - 以及文件浏览接口服务
 final DebugLogWebSocketServer $debugLogWebSocketServer =
     DebugLogWebSocketServer()..start(checkNetwork: false, retryCount: 100);
