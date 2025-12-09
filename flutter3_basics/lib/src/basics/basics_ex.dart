@@ -1121,17 +1121,48 @@ extension StringEx on String {
 
   //MARK: - wrap
 
-  /// 将字符串用()包裹起来
+  /// 将字符串用()圆括号 (Parentheses / Round Brackets)包裹起来
   String get wph => "($this)";
 
-  /// 将字符串用[]号包裹起来
+  /// （）
+  String get wph2 => "（$this）";
+
+  /// 将字符串用[]方括号 (Square Brackets / Brackets)包裹起来
   String get wsb => "[$this]";
 
-  /// 将字符串用{}号包裹起来
+  ///【】
+  String get wsb2 => "【$this】";
+
+  /// 将字符串用{}花括号 (Curly Braces / Braces)包裹起来
   String get wcb => "{$this}";
 
-  /// 将字符串用quoted "" 引号包裹起来
+  /// ｛｝
+  String get wcb2 => "｛$this｝";
+
+  /// 将字符串用quoted "" 引号 (Quotation Marks)包裹起来
+  /// - 单引号 (Single Quotation Marks)
   String get wqs => '"$this"';
+
+  /// “” “ ” 双引号 (Double Quotation Marks)
+  String get wqs2 => "“$this”";
+
+  /// 将字符串用『』 双鱼尾引号 (Square Quotation Marks / Corner Brackets)
+  /// - 「 」 单角引号 (Single Corner Brackets / Single Quotation Marks)
+  String get wqf => "『$this』";
+
+  /// 将字符串用‹›尖括号 (Angle Brackets / Chevrons)包裹起来
+  String get wab => "<$this>";
+
+  /// 将字符串用《》书名号 (Title Mark / Double Angle Quotation Marks)
+  String get wtm => "《$this》";
+
+  /// 将字符串用 «» 双角引号 (Guillemets)
+  String get wgm => "«$this»";
+
+  /// ‹› 单角引号 (Single Guillemets)
+  String get wsg => "‹$this›";
+
+  /// 〈〉 / 〔〕/ 〖〗 / 〘〙 / 〚〛
 
   /// 拼接字符
   /// - [after] 在后面拼接
