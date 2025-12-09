@@ -75,10 +75,7 @@ final Map<String, List<CollectionSchema<dynamic>>> _collectionSchemaMap = {};
 /// [name] 注册到那个数据库的名称, 默认是[kIsarName]
 /// [xxxSchema]
 /// [TestCollectionSchema]
-void registerIsarCollection(
-  CollectionSchema<dynamic> schema, {
-  String? name,
-}) {
+void registerIsarCollection(CollectionSchema<dynamic> schema, {String? name}) {
   //注册isar数据库
   name ??= kIsarName;
   //list
@@ -126,18 +123,16 @@ Future<void> openIsar([
   //https://isar.dev/zh/recipes/data_migration.html
 
   defIsarFilePath = isarPath.join("$name.isar");
-  assert(() {
-    //Android : /storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/isar/isar.isar :1MB
-    l.i("[$name]isar数据库路径:$defIsarFilePath :${defIsarFilePath.file().lengthSync().toSizeStr()}");
-    return true;
-  }());
+  //MARK: -
+  //Android : /storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/isar/isar.isar :1MB
+  //macOS : /Users/angcyo/Library/Containers/com.laserabc.laserabcFactoryTools/Data/Library/Application Support/com.laserabc.laserabcFactoryTools/isar/isar.isar
+  l.i(
+    "[$name]isar数据库路径:$defIsarFilePath :${defIsarFilePath.file().lengthSync().toSizeStr()}",
+  );
 }
 
 /// 默认的迁移方法, 用于简单的数据迁移
-Future<void> defaultIsarMigrate<T>({
-  Isar? isar,
-  String? name,
-}) async {
+Future<void> defaultIsarMigrate<T>({Isar? isar, String? name}) async {
   try {
     isar ??= $isar;
     name ??= kIsarName;

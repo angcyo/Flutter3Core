@@ -143,9 +143,14 @@ extension HiveStringEx on String {
 
 /// Flutter extensions for Hive.
 extension HiveEx on HiveInterface {
+
+  /// # Android
   /// 默认路径在:/data/user/0/com.angcyo.flutter3_abc/app_flutter
   /// 移动到:/storage/emulated/0/Android/data/com.angcyo.flutter3_abc/files
   /// Initializes Hive with the path from [getApplicationDocumentsDirectory].
+  ///
+  /// # macOS
+  /// /Users/angcyo/Library/Containers/com.laserabc.laserabcFactoryTools/Data/Library/Application Support/com.laserabc.laserabcFactoryTools/hive/hivebox.hive
   ///
   /// You can provide a [subDir] where the boxes should be stored.
   /// [Hive.initFlutter]
@@ -163,6 +168,7 @@ extension HiveEx on HiveInterface {
 
     _hiveBox = await Hive.openBox(kHiveBox);
     defHiveBoxFilePath = hiveBoxPath.join("${kHiveBox.toLowerCase()}.hive");
+    //MARK: -
     l.i(
       "[$kHiveBox]HiveBox数据库路径:$defHiveBoxFilePath :${defHiveBoxFilePath.file().lengthSync().toSizeStr()}",
     );
