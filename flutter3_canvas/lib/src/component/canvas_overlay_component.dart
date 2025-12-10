@@ -77,7 +77,7 @@ class CanvasOverlayComponent extends IElementPainter
 ///
 /// 使用 [CanvasDelegate.attachOverlay] 添加覆盖层.
 ///
-/// 通过 [outputSvgPath] 或 [onSvgPathAction] 拿到输出的数据
+/// 通过 [outputSvgPath] 或 [onSvgPathAction] 拿到输出的数据, 自行处理.
 class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   /// 圈圈的大小/半径
   @configProperty
@@ -280,7 +280,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
     }
   }
 
-  //--
+  //MARK: - pointer
 
   /// 悬停的点, 也就是鼠标位置
   @sceneCoordinate
@@ -357,6 +357,8 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
     return true;
   }
 
+  //MARK: - key
+
   /// 是否是编辑模式
   @output
   bool _isEditMode = false;
@@ -430,9 +432,9 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
     }
   }
 
-  //--
+  //MARK: - point
 
-  /// 找到的点
+  /// 找到的点, 单独移动某个点的坐标值
   Point? _parentPoint;
 
   /// 找到的控制点, 如果此值有值, 那么[_parentPoint]就是它的父节点
