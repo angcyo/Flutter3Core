@@ -104,8 +104,6 @@ class CanvasAxisManager extends IPainter
 
   IUnit get axisUnit => canvasStyle.axisUnit;
 
-  int get drawType => canvasStyle.drawType;
-
   @dp
   double get axisLabelOffset => canvasStyle.axisLabelOffset;
 
@@ -123,9 +121,10 @@ class CanvasAxisManager extends IPainter
     yAxisData.clear();
 
     //debugger();
-    if (drawType.have(CanvasStyle.sDrawAxis) ||
-        drawType.have(CanvasStyle.sDrawGrid)) {
+    if (canvasStyle.showAxis || canvasStyle.showGrid) {
+      //show
     } else {
+      //hide
       return;
     }
 
@@ -215,9 +214,18 @@ class CanvasAxisManager extends IPainter
     final paintBounds = canvasViewBox.paintBounds;
     final canvasBounds = canvasViewBox.canvasBounds;
 
-    primaryPaint.color = canvasStyle.axisPrimaryColor;
-    secondaryPaint.color = canvasStyle.axisSecondaryColor;
-    normalPaint.color = canvasStyle.axisNormalColor;
+    primaryPaint.color = canvasStyle.axisPrimaryColor.darkOr(
+      canvasDelegate.isThemeDark,
+      canvasStyle.axisPrimaryColorDark,
+    );
+    secondaryPaint.color = canvasStyle.axisSecondaryColor.darkOr(
+      canvasDelegate.isThemeDark,
+      canvasStyle.axisSecondaryColorDark,
+    );
+    normalPaint.color = canvasStyle.axisNormalColor.darkOr(
+      canvasDelegate.isThemeDark,
+      canvasStyle.axisNormalColorDark,
+    );
 
     primaryPaint.strokeWidth = canvasStyle.axisPrimaryWidth;
     secondaryPaint.strokeWidth = canvasStyle.axisSecondaryWidth;

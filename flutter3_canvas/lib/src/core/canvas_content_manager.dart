@@ -156,7 +156,10 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
             path,
             Paint()
               ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
-              ..color = canvasStyle.axisSecondaryColor
+              ..color = canvasStyle.axisPrimaryColor.darkOr(
+                canvasDelegate.isThemeDark,
+                canvasStyle.axisPrimaryColorDark,
+              )
               ..style = PaintingStyle.stroke,
           );
         }
@@ -170,7 +173,10 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
             rect,
             Paint()
               ..strokeWidth = canvasStyle.contentTemplateStrokeWidth
-              ..color = canvasStyle.axisSecondaryColor
+              ..color = canvasStyle.axisPrimaryColor.darkOr(
+                canvasDelegate.isThemeDark,
+                canvasStyle.axisPrimaryColorDark,
+              )
               ..style = PaintingStyle.stroke,
           );
         }

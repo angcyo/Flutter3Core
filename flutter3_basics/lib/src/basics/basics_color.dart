@@ -112,6 +112,10 @@ extension ColorEx on Color {
   /// 反色
   Color inverse({bool enable = true}) => enable ? inverseColor : this;
 
+  /// 如果是暗色主题, 则返回 [darkColor] 否则返回[this]
+  Color darkOr(bool? isDark, Color? darkColor) =>
+      isDark == true ? darkColor ?? this : this;
+
   /// 获取当前颜色的禁用颜色变体
   /// [withAlpha] [0~255] 值越大, 越不透明.
   /// [withOpacity] [0~1] 值越小, 越透明.

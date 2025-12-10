@@ -31,32 +31,34 @@ class CanvasMonitorPainter extends IPainter {
       if (isDebug) {
         //元素数量:单元素数量/画布数量
         builder.addText(
-            ' ${canvasDelegate.elementCount}:${canvasDelegate.singleElementCount}/${canvasDelegate.canvasCount}');
+          ' ${canvasDelegate.elementCount}:${canvasDelegate.singleElementCount}/${canvasDelegate.canvasCount}',
+        );
         //fps帧率
         builder.addText(' ${fps.fps}');
         //画布移动位置
         builder.addText(
-            ' (${viewBox.translateX.toDigits()}, ${viewBox.translateY.toDigits()})');
+          ' (${viewBox.translateX.toDigits()}, ${viewBox.translateY.toDigits()})',
+        );
       }
     });
 
     //--
-    final drawAxis = canvasDelegate.canvasPaintManager.axisManager.drawType
-        .have(CanvasStyle.sDrawAxis);
+    final drawAxis = canvasDelegate.canvasStyle.showAxis;
     final x = drawAxis
         ? canvasDelegate.canvasPaintManager.axisManager.yAxisWidth
         : 0.0;
     final painter = TextPainter(
-        text: TextSpan(
-            text: text,
-            style: TextStyle(
-              color: GlobalTheme.of(canvasDelegate.delegateContext)
-                  .textBodyStyle
-                  .color,
-              fontSize: 9,
-            )),
-        textDirection: TextDirection.ltr)
-      ..layout();
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: GlobalTheme.of(
+            canvasDelegate.delegateContext,
+          ).textBodyStyle.color,
+          fontSize: 9,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
     //debugger();
     painter.paint(
       canvas,

@@ -19,7 +19,7 @@ class CanvasStyle {
   /// 绘制坐标参考线
   static const int sDrawRefLine = sDrawGrid << 1;
 
-  //region ---core---
+  //region core
 
   //--CanvasDelegate
 
@@ -38,6 +38,7 @@ class CanvasStyle {
   //--CanvasAxisManager
 
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
+  /// - [CanvasAxisManager.painting] 绘制坐标轴和网格
   int drawType = sDrawAxis | sDrawGrid | sDrawRefLine;
 
   /// 是否绘制网格
@@ -157,9 +158,9 @@ class CanvasStyle {
   @mm
   Offset canvasArrowAdjustOffset = Offset(1.0, 1.0);
 
-  //endregion ---core---
+  //endregion core
 
-  //region ---basics---
+  //region basics
 
   /// 圆角大小
   @dp
@@ -204,9 +205,9 @@ class CanvasStyle {
   /// 绘制信息是否单行格式
   bool paintInfoSingleLine = false;
 
-  //endregion ---basics---
+  //endregion basics
 
-  //region ---config---
+  //region config
 
   /// [CanvasContentManager] 画布整体的背景颜色, 指定了就会绘制
   /// - [CanvasViewBox.canvasBounds]内的背景颜色, 不影响坐标轴的背景
@@ -218,6 +219,7 @@ class CanvasStyle {
 
   /// 当设置了[CanvasContentManager.contentTemplate]内容模版时,
   /// 是否要在内容模版的边界上绘制一层描边
+  /// - [axisPrimaryColor] 使用这个颜色绘制
   bool paintContentTemplateStroke = true;
 
   /// [paintContentTemplateStroke]开启后, 绘制的宽度
@@ -229,9 +231,9 @@ class CanvasStyle {
   /// 内容模版暗色默认的描边颜色
   Color? contentTemplateStrokeColorDark = "#2c2c2c".toColorOrNull();
 
-  //endregion ---config---
+  //endregion config
 
-  //region ---axis---
+  //region axis
 
   /// 绘制label时, 额外需要的偏移量
   @dp
@@ -242,11 +244,17 @@ class CanvasStyle {
   /// - [CanvasDelegate.dispatchCanvasUnitChanged]
   IUnit axisUnit = IUnit.mm;
 
-  ///dark #b0b0b0
+  /// dark #b0b0b0
   Color axisPrimaryColor = const Color(0xffbcbcbc); //const Color(0xFFB2B2B2);
-  ///dark #6f6f6f
+  Color? axisPrimaryColorDark = const Color(0xff737373);
+
+  /// dark #6f6f6f
   Color axisSecondaryColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
+  Color? axisSecondaryColorDark = const Color(0xff6f6f6f);
+
+  /// dark #6f6f6f
   Color axisNormalColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
+  Color? axisNormalColorDark = const Color(0xff6f6f6f);
 
   @dp
   double axisPrimaryWidth = 1.toDpFromPx();
@@ -291,9 +299,9 @@ class CanvasStyle {
   /// - 在选中时使用
   Color axisRefLineHighlightColor = Colors.blueAccent;
 
-  //endregion ---axis---
+  //endregion axis
 
-  //region ---menu---
+  //region menu
 
   /// 菜单的圆角大小
   @dp
@@ -317,9 +325,9 @@ class CanvasStyle {
   @dp
   double menuTriangleHeight = 6;
 
-  //endregion ---menu---
+  //endregion menu
 
-  //region ---adsorb---
+  //region adsorb
 
   /// 吸附提示线的颜色
   Color adsorbLineColor = const Color(0xffff443d);
@@ -345,5 +353,5 @@ class CanvasStyle {
   @viewCoordinate
   double adsorbEscapeThreshold = 10;
 
-  //endregion ---adsorb---
+  //endregion adsorb
 }
