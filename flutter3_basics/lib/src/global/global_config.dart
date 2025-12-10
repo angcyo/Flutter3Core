@@ -276,7 +276,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// - 调用[updateThemeAction]更新主题
   ///   - [notifyThemeChanged]通知监听者
   /// - 使用全局的[$onGlobalThemeChanged]方法快速监听主题改变
-  /// - 或者使用[GlobalAppStateMixin]混入[State]自动刷新界面
+  /// - 或者使用[State]混入[GlobalAppStateMixin]自动刷新界面
   final themeStreamOnce = $liveOnce<GlobalConfig>();
 
   /// 全局的主题样式
