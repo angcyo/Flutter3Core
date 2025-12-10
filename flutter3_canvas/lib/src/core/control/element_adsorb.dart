@@ -476,7 +476,11 @@ class ElementAdsorbControl
                   ? '' //特定角度不显示
                   : ' ${distance.radians.jd.toDigits()}°',
             ),
-        textColor: textColor ?? canvasStyle.adsorbTextColor,
+        textColor:
+            textColor ??
+            canvasStyle.adsorbTextColor.inverse(
+              enable: canvasDelegate.isThemeDark,
+            ),
         fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
         getOffset: (painter) {
           return distance.center -

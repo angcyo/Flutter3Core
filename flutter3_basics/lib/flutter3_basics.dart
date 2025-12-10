@@ -74,6 +74,7 @@ part 'src/basics/basics_painting.dart';
 part 'src/basics/basics_path.dart';
 part 'src/basics/basics_render.dart';
 part 'src/basics/basics_ui.dart';
+part 'src/basics/basics_color.dart';
 part 'src/basics/custom_page_route.dart';
 part 'src/basics/matrix_ex.dart';
 part 'src/basics/system.dart';

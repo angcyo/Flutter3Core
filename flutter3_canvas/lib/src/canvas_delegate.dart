@@ -1516,9 +1516,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //region ---辅助---
 
+  /// 是否是暗色主题
+  /// - [darkOr]
+  @api
+  bool get isThemeDark => delegateContext?.isThemeDark == true;
+
   /// 暗色主题时, 返回[dark], 否则返回[light]
-  T? darkOr<T>([T? dark, T? light]) =>
-      delegateContext?.isThemeDark == true ? dark : light;
+  /// - [isThemeDark]
+  T? darkOr<T>([T? dark, T? light]) => isThemeDark ? dark : light;
 
   //endregion ---辅助---
 
