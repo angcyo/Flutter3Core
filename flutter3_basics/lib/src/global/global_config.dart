@@ -273,7 +273,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// - 语言改变
   /// - 主题色改变
   ///
-  /// [notifyThemeChanged]
+  /// - 调用[updateThemeAction]更新主题
+  ///   - [notifyThemeChanged]通知监听者
+  /// - 使用全局的[$onGlobalThemeChanged]方法快速监听主题改变
+  /// - 或者使用[GlobalAppStateMixin]混入[State]自动刷新界面
   final themeStreamOnce = $liveOnce<GlobalConfig>();
 
   /// 全局的主题样式
@@ -983,6 +986,7 @@ class PlaceholderBuildContext extends BuildContext {
 /// 混入一个主题改变回调
 /// [GlobalConfig]
 mixin GlobalAppStateMixin<T extends StatefulWidget> on State<T> {
+  /// 订阅全局主题改变
   StreamSubscription<GlobalConfig?>? _subscription;
 
   @override
@@ -990,7 +994,6 @@ mixin GlobalAppStateMixin<T extends StatefulWidget> on State<T> {
     _subscription = $onGlobalThemeChanged((config) {
       //主题改变后, 持久化
       onGlobalThemeChanged(config);
-      updateState();
     });
     super.initState();
   }
@@ -1001,8 +1004,12 @@ mixin GlobalAppStateMixin<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
+  //MARK: - override
+
   @overridePoint
-  void onGlobalThemeChanged(GlobalConfig config) {}
+  void onGlobalThemeChanged(GlobalConfig config) {
+    updateState();
+  }
 }
 
 extension ThemeModeEx on ThemeMode {
