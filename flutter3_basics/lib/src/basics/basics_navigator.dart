@@ -86,6 +86,7 @@ enum TranslationType {
         targetRoute = PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
               builder(context),
+          settings: settings,
           transitionDuration: Duration.zero,
           reverseTransitionDuration: Duration.zero,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -828,16 +829,16 @@ extension NavigatorStateEx on NavigatorState {
   //---pop↓
 
   /// 是否可以弹出一个路由
-  bool canPop() => canPop();
+  bool canPop() => this.canPop();
 
   /// 弹出一个路由
   void pop<T extends Object?>([T? result]) {
-    pop(result);
+    this.pop(result);
   }
 
   /// 尝试弹出一个路由
   Future<bool> maybePop<T extends Object?>([T? result]) {
-    return maybePop(result);
+    return this.maybePop(result);
   }
 
   /*void popUntil<T extends Object?>(RoutePredicate predicate) {
@@ -849,7 +850,11 @@ extension NavigatorStateEx on NavigatorState {
     TO? result,
     Object? arguments,
   }) {
-    return popAndPushNamed(routeName, arguments: arguments, result: result);
+    return this.popAndPushNamed(
+      routeName,
+      arguments: arguments,
+      result: result,
+    );
   }
 
   /// 弹出所有非指定的路由
@@ -864,6 +869,15 @@ extension NavigatorStateEx on NavigatorState {
     if (route != null) {
       removeRoute(route, result);
     }
+  }
+
+  /// 移除指定名字的路由
+  /// - 现将[name]上面的所有路由移除
+  /// - 再移除自身
+  void removeRouteByName(String name, [Object? result]) {
+    final root = ModalRoute.withName(name);
+    popUntil(root);
+    pop(result);
   }
 
   /// [removeRoute]
