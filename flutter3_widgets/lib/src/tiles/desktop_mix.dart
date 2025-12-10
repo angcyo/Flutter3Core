@@ -14,6 +14,8 @@ part of '../../../flutter3_widgets.dart';
 @desktopLayout
 mixin DesktopPopupStateMixin<T extends StatefulWidget> on State<T> {
   /// 当前是否显示了弹窗
+  /// 实现当[locationNotifierMixin]锚点位置发生变化时, 自动关闭弹窗
+  @output
   bool isShowPopupMixin = false;
 
   /// 卸载时, 自动移除弹窗

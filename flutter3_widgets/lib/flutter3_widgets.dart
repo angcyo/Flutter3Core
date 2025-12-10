@@ -23,7 +23,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_widgets/src/dialog/dialog.dart';
 import 'package:flutter3_widgets/src/popup/popup_mix.dart';
-import 'package:flutter_constraintlayout/flutter_constraintlayout.dart' as cl_layout;
+import 'package:flutter_constraintlayout/flutter_constraintlayout.dart'
+    as cl_layout;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:lifecycle/lifecycle.dart';
@@ -50,6 +51,7 @@ export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';
 export 'src/pub/swiper/transformer_page_view/transformer_page_view.dart';
 
+// @formatter:off
 part 'src/navigation/navigate_ex.dart';
 part 'src/pub/accurate_sized_box.dart';
 part 'src/pub/badges_ex.dart';
@@ -131,6 +133,7 @@ part 'src/widgets/mixin/overlay_position_mixin.dart';
 part 'src/widgets/pull_back_widget.dart';
 part 'src/widgets/radar_scan_widget.dart';
 part 'src/widgets/size_animation_widget.dart';
+part 'src/widgets/sliver/sliver_ex.dart';
 part 'src/widgets/sliver/sliver_expand_widget.dart';
 part 'src/widgets/sliver/sliver_scroll_coordinate_layout_widget.dart';
 part 'src/widgets/state_decoration_widget.dart';
@@ -157,3 +160,4 @@ part 'src/graffiti/graffiti_paint_manager.dart';
 part 'src/graffiti/graffiti_element_manager.dart';
 part 'src/graffiti/graffiti_painter.dart';
 part 'src/graffiti/graffiti_undo_manager.dart';
+// @formatter:on

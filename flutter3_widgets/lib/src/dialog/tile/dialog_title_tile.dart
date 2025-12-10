@@ -119,7 +119,7 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
 ///  [bottomLine]
 @desktopLayout
 class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
-  ///
+  //MARK: - tile
   final Widget? leading;
   @defInjectMark
   final Widget? trailing;
@@ -128,7 +128,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
   final bool enableLeading;
   final bool enableTrailing;
 
-  ///
+  //MARK: - title
   final String? title;
   final TextSpan? titleSpan;
   final Widget? titleWidget;
@@ -138,7 +138,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
   final Widget? subTitleWidget;
   final TextStyle? subTitleTextStyle;
 
-  ///
+  //MARK: - line
   final bool enableTopLine;
   final Widget? topLine;
 
@@ -211,7 +211,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
                         Icons.close,
                         color: globalTheme.icoNormalColor,
                         size: 20,
-                      ).paddingOnly(all: kH).inkWellCircle(() {
+                      ).paddingOnly(all: kX).inkWellCircle(() {
                         context.popDialog();
                       }))
                   .colorFiltered(

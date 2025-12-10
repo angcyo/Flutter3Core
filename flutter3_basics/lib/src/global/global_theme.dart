@@ -263,9 +263,12 @@ class GlobalTheme {
 
   //region 文本样式
 
-  /// [_kDefaultFontSize] 14
+  /// [_kDefaultFontSize] 18
   TextStyle get textPrimaryStyle =>
       const TextStyle(fontSize: 18, color: Color(0xff161B26));
+
+  TextStyle get textPrimaryBoldStyle =>
+      textPrimaryStyle.copyWith(fontWeight: FontWeight.bold);
 
   /// 常规文本颜色
   TextStyle get textGeneralStyle =>
@@ -277,6 +280,14 @@ class GlobalTheme {
 
   TextStyle get textTitleStyle =>
       const TextStyle(fontSize: 16, color: Color(0xff333333));
+
+  TextStyle get textTitleBoldStyle =>
+      textTitleStyle.copyWith(fontWeight: FontWeight.bold);
+
+  TextStyle get textTitleBigStyle => textTitleStyle.copyWith(fontSize: 18);
+
+  TextStyle get textTitleBigBoldStyle =>
+      textTitleBigStyle.copyWith(fontWeight: FontWeight.bold);
 
   TextStyle get textSubTitleStyle =>
       const TextStyle(fontSize: 14, color: Color(0xff929292));

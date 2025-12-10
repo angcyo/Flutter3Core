@@ -23,13 +23,14 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
     controller: scrollControllerMixin,
   );
 
-  //--
+  //MARK: - late
 
   /// 如果你的视图是 CustomScrollView，其 slivers 中包含了 SliverList 和 SliverGrid，这种情况也是支持的，
   /// 只不过需要使用 SliverViewObserver，并在调用滚动方法时传入对应的 BuildContext 以区分对应的 Sliver。
   late List<BuildContext> observerSliverContexts = [];
 
   /// [CustomScrollView]
+  /// - [SliverObserverController.dispatchOnceObserve] 触发一次
   late SliverObserverController observerSliverController =
       SliverObserverController(controller: scrollControllerMixin)
         ..cacheJumpIndexOffset = false;
@@ -43,10 +44,12 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
-  //--sliver
+  //MARK: - sliver
 
   /// 使用此方法创建[CustomScrollView], 再用[buildObserverSliverListBuilder]创建滚动内容
   /// 之后就可以使用[scrollObserverTo]滚动内容
+  ///
+  /// - [slivers]需要是使用[buildObserverSliverListBuilder]创建的滚动内容
   @callPoint
   Widget buildObserverCustomScrollView(
     BuildContext context,
@@ -60,6 +63,9 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
     Key? center,
     ScrollPhysics? physics,
     ScrollBehavior? scrollBehavior,
+    //--
+    OnObserveAllCallback<ObserveModel>? onObserveAll,
+    OnObserveCallback<ObserveModel>? onObserve,
   }) {
     return SliverViewObserver(
       controller: observerSliverController,
@@ -68,11 +74,13 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
         //ListViewObserveModel
         //debugger();
         assert(() {
-          l.v(
-            "${resultMap.runtimeType}->${resultMap.values.connect(",", (e) => e.runtimeType.toString())}",
-          );
+          //[_YDDesktopCreationSettingDialogState(b7a6689)]_Map<BuildContext, ObserveModel>[1]->ListViewObserveModel
+          /*l.v(
+            "[${classHash()}]${resultMap.runtimeType}[${resultMap.length}]->${resultMap.values.connect(",", (e) => e.runtimeType.toString())}",
+          );*/
           return true;
         }());
+        onObserveAll?.call(resultMap);
       },
       onObserve: (result) {
         //ListViewObserveModel
@@ -80,6 +88,15 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
         //final c1 = observerSliverController;
         //l.d("maxScrollExtent->${m1.position.maxScrollExtent}");
         //debugger();
+        assert(() {
+          //[_YDDesktopCreationSettingDialogState(b7a6689)]ListViewObserveModel->[1, 2, 3]
+          /*l.v(
+            '[${classHash()}]${result.runtimeType}->${result.displayingChildIndexList}',
+          );*/
+          return true;
+        }());
+        onObserve?.call(result);
+        onObserverVisibleItemChanged(result.displayingChildIndexList);
       },
       child: CustomScrollView(
         controller: scrollControllerMixin,
@@ -97,20 +114,29 @@ mixin ScrollObserverMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  /// [SliverList.builder]
+  /// 构建一个可以被观察的[SliverList.builder]
   Widget buildObserverSliverListBuilder(
-    BuildContext context,
-    NullableIndexedWidgetBuilder itemBuilder,
-  ) => SliverList.builder(
-    itemBuilder: (BuildContext context, int index) {
-      if (!observerSliverContexts.contains(context)) {
-        observerSliverContexts.add(context);
+    BuildContext context, {
+    List<Widget>? children,
+    NullableIndexedWidgetBuilder? itemBuilder,
+  }) => SliverList.builder(
+    itemBuilder: (BuildContext ctx, int index) {
+      if (!observerSliverContexts.contains(ctx)) {
+        observerSliverContexts.add(ctx);
       }
-      final item = itemBuilder(context, index);
+      final item = itemBuilder?.call(ctx, index) ?? children?.getOrNull(index);
       //l.d("build item->$index");
       return item;
     },
   );
+
+  /// 当滚动时, 可见的item发生改变时回调
+  @overridePoint
+  void onObserverVisibleItemChanged(List<int> childIndexList) {
+    //no op
+  }
+
+  //MARKl: - api
 
   /// 滚动到指定位置
   /// [alignment] 参数用于指定你期望定位到子部件的对齐位置，该值需要在 [0.0, 1.0] 这个范围之间。默认为 0，比如：

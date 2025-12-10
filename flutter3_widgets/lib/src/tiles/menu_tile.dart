@@ -291,6 +291,7 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
           trailingWidget ?? SizedBox.fromSize(size: placeholderSize),
         ]
         .row()!
+        .insets(vertical: kL)
         .colorFiltered(
           color: isEnableTap ? null : globalTheme.textDisableStyle.color,
         )

@@ -165,6 +165,10 @@ abstract class IUnit {
 
   //region ---坐标轴---
 
+  /// 无倍数时, 1个刻度之间的距离
+  @Dp()
+  double baseGap() => dp.toUnitFromUnit(this, 1);
+
   /// 根据缩放比例, 计算坐标轴上的刻度间隔
   /// [scale] 缩放比例
   /// [baseGap] 1:1时的刻度间隔
@@ -190,7 +194,14 @@ abstract class IUnit {
 
   /// 在坐标轴上, 每隔多少个dp距离单位, 显示一个刻度
   @Dp()
-  double getAxisGap(int index, double scale);
+  double getAxisGap(int index, double scale) {
+    double baseGap = this.baseGap();
+    if (dpr <= 2.0) {
+      //大屏幕, 低密度的屏幕
+      baseGap *= 5;
+    }
+    return baseAxisGap(index, scale, baseGap); //* dpr
+  }
 
   /// 获取坐标轴的类型
   /// [index] 当前刻度距离0开始的索引
@@ -199,10 +210,12 @@ abstract class IUnit {
   /// [axisTypePrimary]
   /// [axisTypeLabel]
   int getAxisType(int index, double scale) {
-    if (index % 10 == 0) {
+    final primary = 10;
+    final secondary = 5;
+    if (index % primary == 0) {
       return IUnit.axisTypePrimary | IUnit.axisTypeLabel;
     }
-    if (index % 10 == 5) {
+    if (index % primary == secondary) {
       if (scale < 0.75) {
         return IUnit.axisTypeSecondary | IUnit.axisTypeLabel;
       }
@@ -309,7 +322,7 @@ class DpUnit extends IUnit {
   double toUnit(num value) => value / dpr;
 
   @override
-  double getAxisGap(int index, double scale) => baseAxisGap(index, scale, 10);
+  double baseGap() => 10;
 }
 
 @mm
@@ -336,12 +349,6 @@ class MmUnit extends IUnit {
 
   @override
   double toUnit(num value) => value / dpi / sInchesPerMM;
-
-  @override
-  double getAxisGap(int index, double scale) {
-    //debugger(when: index == 0);
-    return baseAxisGap(index, scale, 1.toDpFromMm()); //* dpr
-  }
 }
 
 /// 以 Windows 下的 96 dpi 来计算
@@ -431,31 +438,21 @@ class InchUnit extends IUnit {
   }
 
   @override
-  String formatFromDp(
-    num value, {
-    bool showSuffix = true,
-    int? fractionDigits,
-    bool removeZero = true,
-    bool ensureInt = true,
-  }) {
-    return super.formatFromDp(
-      value,
-      showSuffix: showSuffix,
-      fractionDigits: fractionDigits,
-      removeZero: removeZero,
-      ensureInt: ensureInt,
-    );
-  }
-
-  @override
   double toPx(num value) => value * dpi;
 
   @override
   double toUnit(num value) => value / dpi;
 
   @override
+  double baseGap() => 0.125.toDpFromMm(IUnit.inch);
+
+  @override
   double getAxisGap(int index, double scale) {
-    final baseGap = 0.125.toDpFromMm(IUnit.inch);
+    double baseGap = this.baseGap();
+    if (dpr <= 2.0) {
+      //大屏幕, 低密度的屏幕
+      baseGap *= 4;
+    }
     if (scale >= 4) {
       //放大4倍后
       return baseGap / 8;
