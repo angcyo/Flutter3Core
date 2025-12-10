@@ -562,7 +562,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///
   /// [WidgetStateBuildWidgetState]
   WidgetArgumentBuilder emptyPlaceholderBuilder = <T>(context, data) {
-    debugger();
+    //debugger();
     final icon =
         loadAssetImageWidget(
           libAssetsStateNoDataKey,

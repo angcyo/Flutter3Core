@@ -204,6 +204,11 @@ class SingleDesktopGridTile extends StatefulWidget {
   /// - 使用此功能需要指定[key]
   final bool autoRemovePopup;
 
+  //--
+
+  /// 长按提示文本
+  final String? tooltip;
+
   const SingleDesktopGridTile({
     super.key,
     this.iconWidget,
@@ -214,6 +219,8 @@ class SingleDesktopGridTile extends StatefulWidget {
     this.popupBodyWidget,
     this.autoRemovePopup = true,
     this.onTap,
+    //--
+    this.tooltip,
   });
 
   @override
@@ -266,6 +273,7 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile>
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )
+        .tooltip(widget.tooltip)
         .material()
         .localLocation(
           key: widget.key,
