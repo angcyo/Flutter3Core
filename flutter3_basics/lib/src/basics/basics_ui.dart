@@ -2915,7 +2915,7 @@ extension WidgetEx on Widget {
   Widget invisible({
     bool enable = true,
     //--
-    bool invisible = false,
+    bool invisible = true,
     bool maintainSize = true,
     bool maintainState = true,
     bool maintainAnimation = true,
