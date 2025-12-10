@@ -387,11 +387,13 @@ extension NavigatorWidgetEx on Widget {
     RouteFactory? onGenerateRoute,
     List<NavigatorObserver>? observers,
     NavigatorObserverMixin? navigatorObserver,
+    //--
     String? debugLabel,
   }) {
     return Navigator(
       key: key,
       initialRoute: Navigator.defaultRouteName,
+      /*transitionDelegate: NoTransitionDelegate(),*/
       observers: [
         /*navigatorObserverDispatcher,*/
         NavigatorObserverDispatcher()
@@ -402,6 +404,11 @@ extension NavigatorWidgetEx on Widget {
       ],
       onGenerateRoute: (settings) {
         return onGenerateRoute?.call(settings) ??
+            /*PageRouteBuilder(
+              settings: settings,
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  home ?? this,
+            );*/
             MaterialPageRoute(
               settings: settings,
               builder: (context) => home ?? this,
@@ -868,3 +875,18 @@ extension NavigatorStateEx on NavigatorState {
 }
 
 //endregion 导航相关
+
+/// 没有过度动画的[DefaultTransitionDelegate]
+class NoTransitionDelegate<T> extends TransitionDelegate<T> {
+  @override
+  Iterable<RouteTransitionRecord> resolve({
+    required List<RouteTransitionRecord> newPageRouteHistory,
+    required Map<RouteTransitionRecord?, RouteTransitionRecord>
+    locationToExitingPageRoute,
+    required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
+    pageRouteToPagelessRoutes,
+  }) {
+    debugger();
+    throw UnimplementedError();
+  }
+}
