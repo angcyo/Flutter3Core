@@ -343,6 +343,8 @@ void logNetworkInterfaceList() async {
 /// 获取本地IP地址[InternetAddress], 本机ip
 ///
 /// [$getNetworkInterfaceList]
+/// - [$getLocalInternetAddress]
+/// - [$discoverDeviceIp]
 ///
 /// @return 无网络时, 返回null
 Future<InternetAddress?> $getLocalInternetAddress({

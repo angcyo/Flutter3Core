@@ -41,3 +41,40 @@ part 'src/doh/r_doh.dart';
 part 'src/http.dart';
 part 'src/network_string_loader.dart';
 // @formatter:on
+
+/// 发现设备IP地址 - 本机ip
+/// - [$getLocalInternetAddress]
+/// - [$discoverDeviceIp]
+Future<String> $discoverDeviceIp({
+  InternetAddressType type = InternetAddressType.IPv4,
+}) async {
+  final interfaces = await NetworkInterface.list(
+    type: type,
+    includeLinkLocal: true,
+  );
+  try {
+    // Try VPN connection first
+    NetworkInterface vpnInterface = interfaces.firstWhere(
+      (element) => element.name == "tun0",
+    );
+    return vpnInterface.addresses.first.address;
+  } on StateError {
+    // Try wlan connection next
+    try {
+      NetworkInterface interface = interfaces.firstWhere(
+        (element) => element.name == "wlan0",
+      );
+      return interface.addresses.first.address;
+    } catch (ex) {
+      // Try any other connection next
+      try {
+        NetworkInterface interface = interfaces.firstWhere(
+          (element) => !(element.name == "tun0" || element.name == "wlan0"),
+        );
+        return interface.addresses.first.address;
+      } catch (ex) {
+        return "";
+      }
+    }
+  }
+}
