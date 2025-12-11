@@ -35,6 +35,12 @@ dependencies:
   # https://github.com/google/json_serializable.dart/tree/master/json_annotation
   json_annotation: ^4.9.0
 
+  # https://pub.dev/packages/doh
+  doh: ^0.0.4+2
+
+  # https://pub.dev/packages/xml
+  xml: ^6.6.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -56,6 +62,8 @@ dev_dependencies:
   # Because flutter3_core depends on isar_generator ^3.1.0+1 and no versions of isar_generator match >3.1.0+1 <4.0.0, isar_generator 3.1.0+1 is required.
   #And because isar_generator 3.1.0+1 depends on source_gen ^1.2.2, source_gen ^1.2.2 is required.
   #So, because flutter3_http depends on json_serializable ^6.9.4 which depends on source_gen ^2.0.0, version solving failed.
+  #...
+  # source_gen: ^4.1.1 / isar_generator
   json_serializable: ^6.11.2
 
 # For information on the generic Dart part of this file, see the

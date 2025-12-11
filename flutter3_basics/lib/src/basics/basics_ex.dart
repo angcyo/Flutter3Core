@@ -233,7 +233,7 @@ extension ObjectEx on Object {
   /// 使用[Text]包裹
   /// [textSpan] 富文本.[InlineSpan]->[TextSpan]
   /// ...
-  /// [style] 文本样式
+  /// [textStyle] 文本样式
   /// [bold] 是否加粗[fontWeight]
   /// [lineHeight].[TextStyle.height] 行高, 默认值`1.464`附近
   /// ...
@@ -255,6 +255,7 @@ extension ObjectEx on Object {
     TextSpan? textSpan,
     //--
     TextStyle? style,
+    TextStyle? textStyle,
     //--
     double? fontSize,
     Color? textColor,
@@ -279,7 +280,7 @@ extension ObjectEx on Object {
     bool words = false,
     bool selectable = false,
   }) {
-    style ??= GlobalConfig.def.globalTheme.textGeneralStyle;
+    textStyle ??= style ?? GlobalConfig.def.globalTheme.textGeneralStyle;
     if (maxLines != null) {
       overflow ??= TextOverflow.ellipsis;
     }
@@ -288,7 +289,7 @@ extension ObjectEx on Object {
     }
     //使用正则匹配高亮文本
     if (!isNullOrEmpty(highlight) || !isNullOrEmpty(highlightList)) {
-      highlightTextStyle ??= style?.copyWith(
+      highlightTextStyle ??= textStyle?.copyWith(
         color: highlightColor ?? Colors.red,
       );
 
@@ -394,7 +395,7 @@ extension ObjectEx on Object {
       if (selectable) {
         return SelectableText.rich(
           TextSpan(children: children, style: highlightTextStyle),
-          style: style,
+          style: textStyle,
           textAlign: textAlign,
           maxLines: maxLines,
           /*softWrap: softWrap,
@@ -403,7 +404,7 @@ extension ObjectEx on Object {
       }
       return Text.rich(
         TextSpan(children: children, style: highlightTextStyle),
-        style: style,
+        style: textStyle,
         textAlign: textAlign,
         maxLines: maxLines,
         softWrap: softWrap,
@@ -412,7 +413,7 @@ extension ObjectEx on Object {
     }
 
     //普通文本处理
-    if (style != null) {
+    if (textStyle != null) {
       //如果style不为空, 则使用参数覆盖style
       if (fontSize != null ||
           textColor != null ||
@@ -422,14 +423,14 @@ extension ObjectEx on Object {
           lineHeight != null ||
           isUnderline ||
           isLineThrough) {
-        style = style.copyWith(
-          fontSize: fontSize ?? style.fontSize,
-          color: textColor ?? style.color,
-          fontWeight: fontWeight ?? style.fontWeight,
-          fontStyle: fontStyle ?? style.fontStyle,
-          fontFamily: fontFamily ?? style.fontFamily,
-          height: lineHeight ?? style.height,
-          decorationColor: textColor ?? style.color,
+        textStyle = textStyle.copyWith(
+          fontSize: fontSize ?? textStyle.fontSize,
+          color: textColor ?? textStyle.color,
+          fontWeight: fontWeight ?? textStyle.fontWeight,
+          fontStyle: fontStyle ?? textStyle.fontStyle,
+          fontFamily: fontFamily ?? textStyle.fontFamily,
+          height: lineHeight ?? textStyle.height,
+          decorationColor: textColor ?? textStyle.color,
           decoration: TextDecoration.combine([
             if (isUnderline) TextDecoration.underline,
             if (isLineThrough) TextDecoration.lineThrough,
@@ -439,8 +440,8 @@ extension ObjectEx on Object {
     }
 
     //style参数为空, 则使用参数创建样式
-    final textStyle =
-        style ??
+    final innerTextStyle =
+        textStyle ??
         (fontSize == null &&
                 textColor == null &&
                 fontWeight == null &&
@@ -469,14 +470,14 @@ extension ObjectEx on Object {
       if (textSpan != null) {
         return SelectableText.rich(
           textSpan,
-          style: textStyle,
+          style: innerTextStyle,
           textAlign: textAlign,
           maxLines: maxLines,
         );
       }
       return SelectableText(
         "$this",
-        style: textStyle,
+        style: innerTextStyle,
         textAlign: textAlign,
         maxLines: maxLines,
         /*softWrap: softWrap,
@@ -488,7 +489,7 @@ extension ObjectEx on Object {
     if (textSpan != null) {
       return Text.rich(
         textSpan,
-        style: textStyle,
+        style: innerTextStyle,
         textAlign: textAlign,
         maxLines: maxLines,
         softWrap: softWrap,
@@ -497,7 +498,7 @@ extension ObjectEx on Object {
     }
     return Text(
       "$this",
-      style: textStyle,
+      style: innerTextStyle,
       textAlign: textAlign,
       maxLines: maxLines,
       softWrap: softWrap,

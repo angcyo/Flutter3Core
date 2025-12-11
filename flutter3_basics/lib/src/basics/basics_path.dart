@@ -769,3 +769,70 @@ extension ListPathEx on List<Path> {
     });
   }
 }
+
+/// Catmull-Rom 或 B-Spline 算法
+extension PathOffsetListEx on List<Offset> {
+  /// 平滑
+  /// - 曲线拟合库
+  /// - https://pub.dev/packages/catmull_rom_spline_curve
+  ///   - https://github.com/mohamed-aly1/catmull_rom_spline_curve/blob/main/lib/catmull_rom_spline_curve.dart
+  Path smooth() {
+    final path = Path();
+    final points = this;
+
+    for (int i = 0; i < points.length - 1; i++) {
+      Offset p1;
+      Offset p2;
+      Offset p3;
+
+      Offset p1Spline;
+      Offset p2Spline;
+      Offset p3Spline;
+      Offset p4Spline;
+      if (points.length < 3) {
+        p1 = points[i];
+        p2 = points[i + 1];
+        p3 = points[i];
+        p1Spline = p1;
+        p2Spline = p1;
+        p3Spline = p2;
+        p4Spline = p2;
+      } else if (i == 0) {
+        p1 = points[i];
+        p2 = points[i + 1];
+        p3 = points[i + 2];
+        p1Spline = p1;
+        p2Spline = p1 - ((p1 - p2) / 6);
+        p3Spline = p2 - ((p3 - p1) / 6);
+        p4Spline = p2;
+      } else if (i == points.length - 1) {
+        p1 = points[i - 1];
+        p2 = points[i];
+        p3 = points[i + 1];
+        p1Spline = p2;
+        p2Spline = p2 + ((p2 - p1) / 6);
+        p3Spline = p3 - ((p3 - p2) / 6);
+        p4Spline = p3;
+      } else {
+        p1 = points[i - 1];
+        p2 = points[i];
+        p3 = points[i + 1];
+        p1Spline = p2;
+        p2Spline = p2 + ((p2 - p1) / 6);
+        p3Spline = p3 - ((p3 - p1) / 6);
+        p4Spline = p3;
+      }
+
+      path.moveTo(p1Spline.dx, p1Spline.dy);
+      path.cubicTo(
+        p2Spline.dx,
+        p2Spline.dy,
+        p3Spline.dx,
+        p3Spline.dy,
+        p4Spline.dx,
+        p4Spline.dy,
+      );
+    }
+    return path;
+  }
+}
