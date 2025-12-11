@@ -862,6 +862,9 @@ extension StringEx on String {
   /// 判断当前字符串是否是ip字符串
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
 
+  /// 取ip地址的前3段
+  String get subnet => substring(0, lastIndexOf('.'));
+
   String get local => endsWith('.local') ? this : '$this.local';
 
   /// 判断当前字符串
