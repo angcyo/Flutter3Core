@@ -1,0 +1,82 @@
+# 国际化 Localizations
+
+https://pub.dev/packages/syncfusion_localizations
+
+- af - Afrikaans
+- am - Amharic
+- ar - Arabic - 阿拉伯语
+- az - Azerbaijani
+- be - Belarusian - 白俄罗斯语
+- bg - Bulgarian - 保加利亚语
+- bn - Bengali Bangla - 孟加拉语
+- bs - Bosnian
+- ca - Catalan Valencian
+- cs - Czech
+- da - Danish
+- de - German - 德语
+- el - Modern Greek
+- en - English - 英语
+- es - Spanish Castilian
+- et - Estonian
+- eu - Basque
+- fa - Persian - 波斯语
+- fi - Finnish - 芬兰语
+- fil - Filipino Pilipino
+- fr - French - 法语
+- gl - Galician
+- gu - Gujarati
+- he - Hebrew
+- hi - Hindi
+- hr - Croatian
+- hu - Hungarian
+- hy - Armenian
+- id - Indonesian
+- is - Icelandic
+- it - Italian - 意大利语
+- ja - Japanese - 日语
+- ka - Georgian
+- kk - Kazakh
+- km - Khmer Central Khmer
+- kn - Kannada
+- ko - Korean - 韩语
+- ky - Kirghiz Kyrgyz
+- lo - Lao - 老挝语
+- lt - Lithuanian
+- lv - Latvian
+- mk - Macedonian
+- ml - Malayalam
+- mn - Mongolian
+- mr - Marathi
+- ms - Malay - 马来语
+- my - Burmese
+- nb - Norwegian Bokmål
+- ne - Nepali
+- nl - Dutch Flemish
+- pa - Panjabi Punjabi
+- pl - Polish - 波兰语
+- ps - Pushto Pashto
+- pt - Portuguese (+ one country variation) - 葡萄牙语
+- ro - Romanian Moldavian Moldovan - 罗马尼亚语
+- ru - Russian - 俄语
+- si - Sinhala Sinhalese
+- sk - Slovak
+- sl - Slovenian
+- sq - Albanian
+- sr - Serbian - 塞尔维亚语
+- sv - Swedish - 瑞典语
+- sw - Swahili
+- ta - Tamil
+- te - Telugu
+- th - Thai - 泰语
+- tl - Tagalog
+- tr - Turkish - 土耳其语
+- uk - Ukrainian - 乌克兰语
+- ur - Urdu - 乌尔都语
+- uz - Uzbek
+- vi - Vietnamese - 越南语
+- zh - Chinese (+ 2 country variations) - 中文
+- zu - Zulu - 祖鲁语
+
+# 时区 TimeZone
+
+https://www.iana.org/time-zones

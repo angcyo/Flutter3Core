@@ -4,7 +4,9 @@ part of '../flutter3_http.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/04/08
 ///
-
+/// 通过网络地址[url], 解析出对应的字符串数据
+/// - [BaseStringLoader]
+///   - [StringLoader]
 class NetworkStringLoader extends StringLoader<Uint8List> {
   /// See class doc.
   const NetworkStringLoader(

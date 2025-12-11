@@ -2775,7 +2775,8 @@ extension IterableEx<E> on Iterable<E> {
   /// 复制一份, 浅拷贝
   /// [growable] 是否可变, 不可变的列表, 不能操作元素
   /// `Cannot remove from a fixed-length list`
-  List<E> clone([bool growable = false]) => toList(growable: growable);
+  List<E> clone([bool growable = false]) =>
+      growable ? toList() : List.unmodifiable(this);
 
   /// 将当前的列表和新的列表进行合并, 去除重复的元素, 添加新的元素, 返回新的列表
   List<E> merge(Iterable<E> elements) {
