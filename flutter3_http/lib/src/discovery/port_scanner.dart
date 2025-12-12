@@ -15,6 +15,7 @@ class PortScanner {
     int port, {
     Duration timeout = const Duration(milliseconds: 400),
     void Function(NetworkAddress address)? onFindAddress,
+    FutureCancelToken? cancelToken,
   }) {
     if (port < 1 || port > 65535) {
       throw 'Provide a valid port range between 0 to 65535';
@@ -34,18 +35,22 @@ class PortScanner {
       socket
           .then((Socket s) {
             s.destroy();
-            final address = NetworkAddress(
-              host,
-              openPorts: [port],
-              exists: true,
-            );
-            out.sink.add(address);
-            onFindAddress?.call(address);
+            if (cancelToken?.isCanceled == true) {
+              //no op
+            } else {
+              final address = NetworkAddress(
+                host,
+                openPorts: [port],
+                exists: true,
+              );
+              out.sink.add(address);
+              onFindAddress?.call(address);
+            }
           })
           .catchError((dynamic e) {
-            if (e is! SocketException) {
+            /*if (e is! SocketException) {
               throw e;
-            }
+            }*/
           });
     }
 
@@ -61,6 +66,7 @@ class PortScanner {
     List<int> ports, {
     Duration timeout = const Duration(milliseconds: 400),
     void Function(NetworkAddress address)? onFindAddress,
+    FutureCancelToken? cancelToken,
   }) {
     if (!DiscoveryUtils.isValidPort(ports)) {
       throw 'Provide a valid port range between 0 to 65535';
@@ -82,13 +88,17 @@ class PortScanner {
         socket
             .then((Socket s) async {
               s.destroy();
-              networkAddress.openPorts.add(port);
-              onFindAddress?.call(networkAddress);
+              if (cancelToken?.isCanceled == true) {
+                //no op
+              } else {
+                networkAddress.openPorts.add(port);
+                onFindAddress?.call(networkAddress);
+              }
             })
             .catchError((dynamic e) async {
-              if (e is! SocketException) {
+              /*if (e is! SocketException) {
                 throw e;
-              }
+              }*/
             });
       }
 
