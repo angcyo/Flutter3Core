@@ -2660,6 +2660,7 @@ extension WidgetEx on Widget {
     BorderRadius? borderRadius,
     Color? splashColor,
     Color? highlightColor,
+    Color? hoverColor,
     BoxShape highlightShape = BoxShape.rectangle,
     double? radius /*飞溅的半径*/,
     ShapeBorder? customBorder,
@@ -2667,7 +2668,6 @@ extension WidgetEx on Widget {
     bool enable = true,
     //--
     bool disableColor = false,
-    Color? hoverColor,
     //--
     Duration? periodicDuration,
     GestureLongPressCallback? onLongPressPeriodic,
