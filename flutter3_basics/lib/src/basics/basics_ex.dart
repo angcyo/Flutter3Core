@@ -863,7 +863,7 @@ extension StringEx on String {
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
 
   /// 取ip地址的前3段
-  String get subnet => substring(0, lastIndexOf('.'));
+  String get subnet => contains(".") ? substring(0, lastIndexOf('.')) : "";
 
   String get local => endsWith('.local') ? this : '$this.local';
 
