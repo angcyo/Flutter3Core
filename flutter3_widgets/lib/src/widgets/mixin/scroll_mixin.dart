@@ -72,7 +72,8 @@ abstract class ScrollContainerWidget extends StatefulWidget {
 }
 
 abstract class ScrollContainerState<T extends ScrollContainerWidget>
-    extends State<T> with ScrollContainerStateMixin {}
+    extends State<T>
+    with ScrollContainerStateMixin {}
 
 /// 使用[Scrollable]包裹[ViewPort]的方式
 mixin ScrollContainerStateMixin<T extends ScrollContainerWidget> on State<T> {
@@ -92,10 +93,13 @@ mixin ScrollContainerStateMixin<T extends ScrollContainerWidget> on State<T> {
   ) {
     final AxisDirection axisDirection = _getDirection(context);
     //debugger();
-    final bool effectivePrimary = widget.primary ??
+    final bool effectivePrimary =
+        widget.primary ??
         widget.scrollController == null &&
             PrimaryScrollController.shouldInherit(
-                context, widget.scrollDirection);
+              context,
+              widget.scrollDirection,
+            );
 
     final ScrollController? scrollController = effectivePrimary
         ? PrimaryScrollController.maybeOf(context)
@@ -140,7 +144,8 @@ mixin ScrollContainerStateMixin<T extends ScrollContainerWidget> on State<T> {
 /// [SingleChildScrollView]
 /// [_RenderSingleChildViewport]
 abstract class ScrollContainerRenderBox<
-        ParentDataType extends ContainerBoxParentData<RenderBox>>
+  ParentDataType extends ContainerBoxParentData<RenderBox>
+>
     extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, ParentDataType>,
@@ -150,21 +155,29 @@ abstract class ScrollContainerRenderBox<
   ScrollContainerRenderBox({
     AxisDirection axisDirection = AxisDirection.right,
     required AxisDirection crossAxisDirection,
-    required ViewportOffset offset,
+    required ViewportOffset viewport,
     Clip clipBehavior = Clip.hardEdge,
     this.scrollController,
     this.padding,
     this.gap = 0,
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.selfConstraints,
-  })  : _axisDirection = axisDirection,
-        _crossAxisDirection = crossAxisDirection,
-        _clipBehavior = clipBehavior,
-        _offset = offset;
+  }) : _axisDirection = axisDirection,
+       _crossAxisDirection = crossAxisDirection,
+       _clipBehavior = clipBehavior,
+       _viewport = viewport;
 
   /// 滚动控制器
   /// [ScrollContainerController]
   ScrollController? scrollController;
+
+  /// [scrollController]
+  ScrollContainerController? get scrollContainerController {
+    if (scrollController is ScrollContainerController) {
+      return scrollController as ScrollContainerController;
+    }
+    return null;
+  }
 
   /// 交叉轴上的布局对齐方式
   /// 如果设置了此时, 那child的大小测量就是wrap_content, 否则是match_parent
@@ -230,19 +243,20 @@ abstract class ScrollContainerRenderBox<
   Axis get axis => axisDirectionToAxis(axisDirection);
 
   /// [RenderViewportBase.offset]
-  ViewportOffset get offset => _offset;
-  ViewportOffset _offset;
+  ViewportOffset get viewport => _viewport;
+  ViewportOffset _viewport;
 
-  set offset(ViewportOffset value) {
-    if (value == _offset) {
+  set viewport(ViewportOffset value) {
+    //debugger();
+    if (value == _viewport) {
       return;
     }
     if (attached) {
-      _offset.removeListener(_hasScrolled);
+      _viewport.removeListener(_hasScrolled);
     }
-    _offset = value;
+    _viewport = value;
     if (attached) {
-      _offset.addListener(_hasScrolled);
+      _viewport.addListener(_hasScrolled);
     }
     // We need to go through layout even if the new offset has the same pixels
     // value as the old offset so that we will apply our viewport and content
@@ -278,18 +292,19 @@ abstract class ScrollContainerRenderBox<
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
-    _offset.addListener(_hasScrolled);
+    _viewport.addListener(_hasScrolled);
   }
 
   @override
   void detach() {
-    _offset.removeListener(_hasScrolled);
+    _viewport.removeListener(_hasScrolled);
     super.detach();
   }
 
   @override
   bool get isRepaintBoundary => true;
 
+  /// 视口可视化的最大宽高
   double get _viewportExtent {
     assert(hasSize);
     switch (axis) {
@@ -305,6 +320,7 @@ abstract class ScrollContainerRenderBox<
     return 0.0;
   }
 
+  /// 视口外还有多少可滚动距离
   double get _maxScrollExtent {
     assert(hasSize);
     if (childCount <= 0) {
@@ -313,10 +329,14 @@ abstract class ScrollContainerRenderBox<
     switch (axis) {
       case Axis.horizontal:
         return max(
-            0.0, _scrollChildSize.width + paddingHorizontal - size.width);
+          0.0,
+          _scrollChildSize.width + paddingHorizontal - size.width,
+        );
       case Axis.vertical:
         return max(
-            0.0, _scrollChildSize.height + paddingVertical - size.height);
+          0.0,
+          _scrollChildSize.height + paddingVertical - size.height,
+        );
     }
   }
 
@@ -325,39 +345,46 @@ abstract class ScrollContainerRenderBox<
     switch (axis) {
       case Axis.horizontal:
         return Size(
-            getAllLinearChildWidth(getScrollChildren(), gap: gap), size.height);
+          getAllLinearChildWidth(getScrollChildren(), gap: gap),
+          size.height,
+        );
       case Axis.vertical:
         return Size(
-            size.width, getAllLinearChildHeight(getScrollChildren(), gap: gap));
+          size.width,
+          getAllLinearChildHeight(getScrollChildren(), gap: gap),
+        );
     }
   }
 
   //---
 
-  Offset get _paintOffset => _paintOffsetForPosition(offset.pixels);
+  /// 绘制的偏移, 视口已经滚动的距离
+  Offset get paintOffsetMixin => paintOffsetForPosition(viewport.pixels);
 
-  Offset _paintOffsetForPosition(double position) {
+  Offset paintOffsetForPosition(double position) {
     switch (axisDirection) {
       case AxisDirection.up:
         return Offset(
-            0.0,
-            position -
-                getAllLinearChildHeight(getScrollChildren(), gap: gap) +
-                size.height);
+          0.0,
+          position -
+              getAllLinearChildHeight(getScrollChildren(), gap: gap) +
+              size.height,
+        );
       case AxisDirection.down:
         return Offset(0.0, -position);
       case AxisDirection.left:
         return Offset(
-            position -
-                getAllLinearChildWidth(getScrollChildren(), gap: gap) +
-                size.width,
-            0.0);
+          position -
+              getAllLinearChildWidth(getScrollChildren(), gap: gap) +
+              size.width,
+          0.0,
+        );
       case AxisDirection.right:
         return Offset(-position, 0.0);
     }
   }
 
-  bool _shouldClipAtPaintOffset(Offset paintOffset) {
+  bool shouldClipAtPaintOffset(Offset paintOffset) {
     switch (clipBehavior) {
       case Clip.none:
         return false;
@@ -387,14 +414,14 @@ abstract class ScrollContainerRenderBox<
   /// 水波纹绘制时, 会调用此方法
   @override
   void applyPaintTransform(RenderBox child, Matrix4 transform) {
-    final Offset paintOffset = _paintOffset;
+    final Offset paintOffset = paintOffsetMixin;
     transform.translate(paintOffset.dx, paintOffset.dy);
     super.applyPaintTransform(child, transform);
   }
 
   @override
   Rect? describeApproximatePaintClip(RenderObject? child) {
-    if (child != null && _shouldClipAtPaintOffset(_paintOffset)) {
+    if (child != null && shouldClipAtPaintOffset(paintOffsetMixin)) {
       return Offset.zero & size;
     }
     return null;
@@ -403,23 +430,23 @@ abstract class ScrollContainerRenderBox<
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<Offset>('offset', _paintOffset));
+    properties.add(DiagnosticsProperty<Offset>('offset', paintOffsetMixin));
   }
 
   @override
   Rect describeSemanticsClip(RenderObject child) {
-    final double remainingOffset = _maxScrollExtent - offset.pixels;
+    final double remainingOffset = _maxScrollExtent - viewport.pixels;
     switch (axisDirection) {
       case AxisDirection.up:
         return Rect.fromLTRB(
           semanticBounds.left,
           semanticBounds.top - remainingOffset,
           semanticBounds.right,
-          semanticBounds.bottom + offset.pixels,
+          semanticBounds.bottom + viewport.pixels,
         );
       case AxisDirection.right:
         return Rect.fromLTRB(
-          semanticBounds.left - offset.pixels,
+          semanticBounds.left - viewport.pixels,
           semanticBounds.top,
           semanticBounds.right + remainingOffset,
           semanticBounds.bottom,
@@ -427,7 +454,7 @@ abstract class ScrollContainerRenderBox<
       case AxisDirection.down:
         return Rect.fromLTRB(
           semanticBounds.left,
-          semanticBounds.top - offset.pixels,
+          semanticBounds.top - viewport.pixels,
           semanticBounds.right,
           semanticBounds.bottom + remainingOffset,
         );
@@ -435,7 +462,7 @@ abstract class ScrollContainerRenderBox<
         return Rect.fromLTRB(
           semanticBounds.left - remainingOffset,
           semanticBounds.top,
-          semanticBounds.right + offset.pixels,
+          semanticBounds.right + viewport.pixels,
           semanticBounds.bottom,
         );
     }
@@ -529,8 +556,8 @@ abstract class ScrollContainerRenderBox<
     );
 
     //---
-    if (scrollController is ScrollContainerController) {
-      final controller = scrollController as ScrollContainerController;
+    final controller = scrollContainerController;
+    if (controller != null) {
       controller.maxScrollExtent = _maxScrollExtent;
       controller.scrollContainerLayoutSize = size;
       controller.scrollContainerScrollDirection = axis;
@@ -540,35 +567,39 @@ abstract class ScrollContainerRenderBox<
     }
 
     //scroll
-    if (offset.hasPixels) {
-      if (offset.pixels > _maxScrollExtent) {
-        offset.correctBy(_maxScrollExtent - offset.pixels);
-      } else if (offset.pixels < _minScrollExtent) {
-        offset.correctBy(_minScrollExtent - offset.pixels);
+    //debugger();
+    if (viewport.hasPixels) {
+      if (viewport.pixels > _maxScrollExtent) {
+        viewport.correctBy(_maxScrollExtent - viewport.pixels);
+      } else if (viewport.pixels < _minScrollExtent) {
+        viewport.correctBy(_minScrollExtent - viewport.pixels);
       }
     }
 
-    offset.applyViewportDimension(_viewportExtent);
-    offset.applyContentDimensions(_minScrollExtent, _maxScrollExtent);
+    viewport.applyViewportDimension(_viewportExtent);
+    viewport.applyContentDimensions(_minScrollExtent, _maxScrollExtent);
   }
 
   /// 测量子节点的大小
   /// 返回最大的尺寸
   (double childMaxWidth, double childMaxHeight) measureChildren(
-      List<RenderBox> children) {
+    List<RenderBox> children,
+  ) {
     final BoxConstraints constraints = this.constraints;
     //debugger();
     double? childWidth;
     double? childHeight;
     if ((isChildMatchParent || constraints.isFixedWidth) &&
         axis == Axis.vertical) {
-      childWidth = constraints.maxWidth
-          .ensureValid(constraints.minWidth + paddingHorizontal);
+      childWidth = constraints.maxWidth.ensureValid(
+        constraints.minWidth + paddingHorizontal,
+      );
     }
     if ((isChildMatchParent || constraints.isFixedHeight) &&
         axis == Axis.horizontal) {
-      childHeight = constraints.maxHeight
-          .ensureValid(constraints.minHeight + paddingVertical);
+      childHeight = constraints.maxHeight.ensureValid(
+        constraints.minHeight + paddingVertical,
+      );
     }
     return measureWrapChildren(
       children,
@@ -579,9 +610,10 @@ abstract class ScrollContainerRenderBox<
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
-    final Offset paintOffset = _paintOffset;
+    final paintOffset = paintOffsetMixin;
+    scrollContainerController?.paintOffset = paintOffset;
 
-    if (_shouldClipAtPaintOffset(paintOffset)) {
+    if (shouldClipAtPaintOffset(paintOffset)) {
       _clipRectLayer.layer = context.pushClipRect(
         needsCompositing,
         offset,
@@ -598,13 +630,17 @@ abstract class ScrollContainerRenderBox<
 
   /// 绘制滚动内容
   /// [paint]
-  /// [_shouldClipAtPaintOffset]
+  /// [shouldClipAtPaintOffset]
   /// [clipBehavior]
   /// [_clipRectLayer]
   void paintScrollContents(PaintingContext context, Offset offset) {
-    final Offset paintOffset = _paintOffset;
-    paintLayoutChildren(getScrollChildren(), context, offset,
-        paintOffset: paintOffset);
+    final Offset paintOffset = paintOffsetMixin;
+    paintLayoutChildren(
+      getScrollChildren(),
+      context,
+      offset,
+      paintOffset: paintOffset,
+    );
   }
 
   @override
@@ -614,11 +650,11 @@ abstract class ScrollContainerRenderBox<
       getScrollChildren(),
       result,
       position: position,
-      paintOffset: _paintOffset,
+      paintOffset: paintOffsetMixin,
     );
   }
 
-//endregion ---布局核心方法---
+  //endregion ---布局核心方法---
 }
 
 /// 滚动控制器
@@ -645,6 +681,11 @@ class ScrollContainerController extends ScrollController {
   /// [ScrollContainerRenderBox.performLayout]中赋值
   @autoInjectMark
   double maxScrollExtent = 0;
+
+  /// 滚动容器当前绘制时的偏移量
+  /// [ScrollContainerRenderBox.paint]中赋值
+  @autoInjectMark
+  Offset? paintOffset;
 
   ScrollContainerController({
     super.initialScrollOffset = 0.0,
@@ -696,7 +737,7 @@ class ScrollContainerController extends ScrollController {
   }
 
   /// 滚动到指定的位置
-  /// [center] 自动将指定的位置, 居中显示
+  /// [center] 是否自动将指定的位置, 居中显示
   void scrollTo(
     double offset, {
     bool center = true,

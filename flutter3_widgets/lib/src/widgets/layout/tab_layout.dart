@@ -34,6 +34,11 @@ class TabLayoutController extends TabController {
     this.onIndexChanged,
   }) : scrollController = scrollController ?? ScrollContainerController();
 
+  /// 动画开始时绘制偏移量, 绘制时使用防止tab动画跨屏切换抖动
+  /// - [selectedItem]
+  @property
+  Offset? animateStartPaintOffset;
+
   /// 选择tab的位置
   /// [pageController] [PageView]页面控制
   /// [kTabScrollDuration]
@@ -45,13 +50,19 @@ class TabLayoutController extends TabController {
     Curve curve = Curves.ease,
     PageController? pageController,
   }) {
+    assert(() {
+      l.d("Offset:$offset");
+      return true;
+    }());
     duration ??= animationDuration;
+    animateStartPaintOffset = scrollController?.paintOffset;
     scrollController?.scrollToIndex(
       index,
       animate: animate ?? true,
       duration: duration,
       curve: curve,
     );
+    //this.index = index; //无动画
     animateTo(
       index,
       duration: (animate ?? true) ? duration : Duration.zero,
@@ -139,6 +150,7 @@ class _TabLayoutState extends ScrollContainerState<TabLayout> {
     widget.tabLayoutController.addListener(_handleTabLayoutChanged);
     super.initState();
     if (widget.firstIndexNotify) {
+      widget.tabLayoutController.onIndexChanged?.call(-1, _initialIndex);
       widget.onIndexChanged?.call(-1, _initialIndex);
     }
   }
@@ -149,6 +161,7 @@ class _TabLayoutState extends ScrollContainerState<TabLayout> {
     super.dispose();
   }
 
+  /// 监听索引变化
   void _handleTabLayoutChanged() {
     final to = widget.tabLayoutController.index;
     if (to != _initialIndex) {
@@ -168,7 +181,7 @@ class _TabLayoutState extends ScrollContainerState<TabLayout> {
     return buildScrollContainer(
       context,
       (context, position) => TabLayoutViewport(
-        offset: position,
+        viewport: position,
         axisDirection: _getDirection(context),
         padding: widget.padding,
         clipBehavior: widget.clipBehavior,
@@ -205,7 +218,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
   const TabLayoutViewport({
     super.key,
     super.children,
-    required this.offset,
+    required this.viewport,
     this.axisDirection = AxisDirection.left,
     this.crossAxisDirection,
     this.padding,
@@ -227,7 +240,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
   final AxisDirection? crossAxisDirection;
 
   /// 滚动偏移
-  final ViewportOffset offset;
+  final ViewportOffset viewport;
 
   /// The amount of space by which to inset the child.
   final EdgeInsets? padding;
@@ -259,7 +272,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       crossAxisDirection:
           crossAxisDirection ??
           Viewport.getDefaultCrossAxisDirection(context, axisDirection),
-      offset: offset,
+      viewport: viewport,
       scrollController: scrollController ?? tabController?.scrollController,
       crossAxisAlignment: crossAxisAlignment,
       tabController: tabController,
@@ -281,7 +294,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       ..crossAxisDirection =
           crossAxisDirection ??
           Viewport.getDefaultCrossAxisDirection(context, axisDirection)
-      ..offset = offset
+      ..viewport = viewport
       ..scrollController = scrollController ?? tabController?.scrollController
       ..tabController = tabController
       ..padding = padding
@@ -330,7 +343,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
   TabLayoutRender({
     super.axisDirection = AxisDirection.right,
     required super.crossAxisDirection,
-    required super.offset,
+    required super.viewport,
     super.clipBehavior = Clip.hardEdge,
     super.scrollController,
     super.crossAxisAlignment = CrossAxisAlignment.center,
@@ -1041,10 +1054,40 @@ class TabLayoutRender extends ScrollContainerRenderBox {
   }
 
   @override
+  Offset get paintOffsetMixin {
+    Offset paintOffset = super.paintOffsetMixin;
+    final animateStartPaintOffset = tabController?.animateStartPaintOffset;
+    if (tabController?.indexIsChanging == true &&
+        animateStartPaintOffset != null) {
+      // 动画中, 防止抖动
+      //debugger();
+      final previousIndex = tabController?.previousIndex ?? 0;
+      final index = tabController?.index ?? 0;
+      if (index >= previousIndex) {
+        //正向动画
+        paintOffset = Offset(
+          min(paintOffset.dx, animateStartPaintOffset.dx),
+          min(paintOffset.dy, animateStartPaintOffset.dy),
+        );
+      } else {
+        //反向动画
+        paintOffset = Offset(
+          max(paintOffset.dx, animateStartPaintOffset.dx),
+          max(paintOffset.dy, animateStartPaintOffset.dy),
+        );
+      }
+    }
+    return paintOffset;
+  }
+
+  @override
   void paintScrollContents(PaintingContext context, ui.Offset offset) {
     //debugger();
     //_relayoutIndicator();
-    final Offset paintOffset = _paintOffset;
+    Offset paintOffset = paintOffsetMixin;
+    /*l.w(
+      "paintOffset[${tabController?.previousIndex}->${tabController?.index}][${tabController?.indexIsChanging}]->${animateStartPaintOffset} -> $paintOffset",
+    );*/
 
     // 绘制指定类型的子节点
     // 这里的绘制支持滚动
