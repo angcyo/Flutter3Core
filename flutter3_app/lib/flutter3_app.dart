@@ -54,7 +54,11 @@ part 'src/receive/receive_intent.dart';
 /// ```
 /// # Android
 /// I/flutter ( 5846): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+///
+/// # macOS
+/// [IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(51)] Using the Impeller rendering backend (Metal).
 /// ```
+///
 ///
 /// - [beforeAction] 启动之前初始化, 请在此进行数据库表注册[registerIsarCollection]
 /// - [afterAction] 启动之后初始化

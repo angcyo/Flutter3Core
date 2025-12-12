@@ -144,7 +144,7 @@ extension AnimationWidgetEx on Widget {
     );
   }
 
-  /// 旋转变换动画
+  /// 旋转变换动画, 旋转动画
   /// [from] 旋转角度, 角度单位
   /// [to] 旋转角度, 角度单位
   ///
@@ -209,6 +209,14 @@ extension AnimationWidgetEx on Widget {
   /// - [rotationTransition]
   Widget rotateAnimation({Key? key, bool enable = true}) =>
       enable ? RotateAnimation(this, key: key) : this;
+
+  /// 动画旋转
+  /// - [angle]角度
+  /// -[AnimatedRotationWidget]
+  Widget animatedRotation(double angle, {Key? key, bool enable = true}) =>
+      enable
+      ? AnimatedRotationWidget(key: key, angle: angle, child: this)
+      : this;
 }
 
 //--

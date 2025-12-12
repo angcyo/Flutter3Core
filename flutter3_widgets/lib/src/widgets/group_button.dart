@@ -5,7 +5,7 @@ part of '../../flutter3_widgets.dart';
 /// @date 2025/12/12
 ///
 /// 分割按钮
-/// [mainWidget]..[optionWidget]
+/// [child]..[optionWidget]
 ///
 /// - split_button: ^0.1.0
 /// - split_button_m3e: ^0.2.1
@@ -13,7 +13,7 @@ class SplitButton extends StatefulWidget {
   //MARK: - main
 
   /// 主要的小部件
-  final Widget? mainWidget;
+  final Widget? child;
 
   final GestureTapCallback? onMainTap;
 
@@ -28,6 +28,9 @@ class SplitButton extends StatefulWidget {
   /// - 弹出弹窗之后, 会自动进入选中状态
   final Widget? popupBodyWidget;
 
+  /// 弹窗对齐锚点的位置
+  final Alignment? popupAlignment;
+
   //MARK: - part
 
   /// 填充的颜色, 默认样式
@@ -36,6 +39,9 @@ class SplitButton extends StatefulWidget {
 
   /// 描边的颜色, 指定描边之后, 则优先使用描边样式
   final Color? strokeColor;
+
+  /// 描边的宽度
+  final double strokeWidth;
 
   /// 圆角大小
   final double radius;
@@ -49,15 +55,17 @@ class SplitButton extends StatefulWidget {
   const SplitButton({
     super.key,
     //MARK: - main
-    this.mainWidget,
+    this.child,
     this.onMainTap,
     //MARK: - option
     this.optionWidget,
     this.popupBodyWidget,
+    this.popupAlignment,
     //--
     this.mainAxisSize = .min,
     this.fillColor,
     this.strokeColor,
+    this.strokeWidth = 1,
     this.height = 30,
     this.radius = 4,
   });
@@ -72,9 +80,9 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
     final globalTheme = GlobalTheme.of(context);
     final optionWidget =
         widget.optionWidget ??
-        Icon(Icons.arrow_drop_down, size: 16).box(width: widget.height);
+        Icon(Icons.keyboard_arrow_down, size: 16).box(width: widget.height);
     return [
-      widget.mainWidget
+      widget.child
           ?.center()
           .inkWell(
             () {},
@@ -90,9 +98,12 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
           )
           .expanded(enable: widget.mainAxisSize == .max),
       optionWidget
+          .animatedRotation(isShowPopupMixin ? 180 : 0)
           .center()
           .inkWell(
-            () {},
+            () {
+              showPopup(context);
+            },
             /*hoverColor: Colors.purpleAccent,*/
             /*highlightColor: Colors.blue,*/
             borderRadius: buildEndBorderRadius(),
@@ -108,18 +119,36 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
 
   //MARK: - decoration
 
+  /// 圆角
   BorderRadius buildStartBorderRadius() => BorderRadius.only(
     topLeft: Radius.circular(widget.radius),
     bottomLeft: Radius.circular(widget.radius),
   );
 
+  /// 边框
+  BorderSide buildStartBorderSide() => BorderSide(
+    color: widget.strokeColor ?? Colors.transparent,
+    width: widget.strokeWidth,
+  );
+
+  /// 主要的按钮装饰
   Decoration buildStartFillDecoration(
     BuildContext context,
     GlobalTheme globalTheme,
   ) {
     return BoxDecoration(
       borderRadius: buildStartBorderRadius(),
-      color: widget.fillColor ?? globalTheme.accentColor,
+      border: widget.strokeColor != null
+          ? Border(
+              top: buildStartBorderSide(),
+              left: buildStartBorderSide(),
+              bottom: buildStartBorderSide(),
+              right: buildStartBorderSide(),
+            )
+          : null,
+      color: widget.strokeColor != null
+          ? null
+          : widget.fillColor ?? globalTheme.accentColor,
     );
   }
 
@@ -128,13 +157,37 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
     bottomRight: Radius.circular(widget.radius),
   );
 
+  /// 结束按钮的装饰
   Decoration buildEndFillDecoration(
     BuildContext context,
     GlobalTheme globalTheme,
   ) {
     return BoxDecoration(
       borderRadius: buildEndBorderRadius(),
-      color: widget.fillColor ?? globalTheme.accentColor,
+      border: widget.strokeColor != null
+          ? Border(
+              top: buildStartBorderSide(),
+              right: buildStartBorderSide(),
+              bottom: buildStartBorderSide(),
+            )
+          : null,
+      color: widget.strokeColor != null
+          ? null
+          : widget.fillColor ?? globalTheme.accentColor,
     );
+  }
+
+  /// 显示弹窗
+  @api
+  void showPopup(BuildContext? context) {
+    final popupBodyWidget = widget.popupBodyWidget;
+    if (popupBodyWidget != null) {
+      wrapShowPopupMixin(() async {
+        await context?.showPopupDialog(
+          popupBodyWidget,
+          alignment: widget.popupAlignment ?? Alignment.topCenter,
+        );
+      });
+    }
   }
 }

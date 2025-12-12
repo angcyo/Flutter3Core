@@ -47,6 +47,10 @@ extension PopupEx on BuildContext {
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) {
+    final navigator = Navigator.of(this, rootNavigator: rootNavigator);
+    final parentSize = navigator.context.findRenderObject()?.renderSize;
+    final parentWidth = parentSize?.width ?? $screenWidth;
+    final parentHeight = parentSize?.height ?? $screenHeight;
     return showArrowPopupRoute(
       body,
       anchorKey: anchorKey,
@@ -91,45 +95,38 @@ extension PopupEx on BuildContext {
                 }
               }
             }
+            //debugger();
+            double offsetX = anchorRect.right + bodyMargin;
+            double offsetY = anchorRect.top;
             if (bodyAlign == Alignment.topLeft) {
-              return Offset(
-                anchorRect.left - childRect.w - bodyMargin,
-                anchorRect.top,
-              );
+              offsetX = anchorRect.left - childRect.w - bodyMargin;
+              offsetY = anchorRect.top;
             } else if (bodyAlign == Alignment.topCenter) {
-              return Offset(
-                anchorRect.center.dx - childRect.w / 2,
-                anchorRect.top - childRect.h - bodyMargin,
-              );
+              offsetX = anchorRect.center.dx - childRect.w / 2;
+              offsetY = anchorRect.top - childRect.h - bodyMargin;
             } else if (bodyAlign == Alignment.topRight) {
-              return Offset(anchorRect.right + bodyMargin, anchorRect.top);
+              offsetX = anchorRect.right + bodyMargin;
+              offsetY = anchorRect.top;
             } else if (bodyAlign == Alignment.centerRight) {
-              return Offset(
-                anchorRect.right + bodyMargin,
-                anchorRect.center.dy - childRect.h / 2,
-              );
+              offsetX = anchorRect.right + bodyMargin;
+              offsetY = anchorRect.center.dy - childRect.h / 2;
             } else if (bodyAlign == Alignment.bottomRight) {
-              return Offset(
-                anchorRect.right + bodyMargin,
-                anchorRect.bottom - childRect.h,
-              );
+              offsetX = anchorRect.right + bodyMargin;
+              offsetY = anchorRect.bottom - childRect.h;
             } else if (bodyAlign == Alignment.bottomCenter) {
-              return Offset(
-                anchorRect.center.dx - childRect.w / 2,
-                anchorRect.bottom + bodyMargin,
-              );
+              offsetX = anchorRect.center.dx - childRect.w / 2;
+              offsetY = anchorRect.bottom + bodyMargin;
             } else if (bodyAlign == Alignment.bottomLeft) {
-              return Offset(
-                anchorRect.left - childRect.w - bodyMargin,
-                anchorRect.bottom - childRect.h,
-              );
+              offsetX = anchorRect.left - childRect.w - bodyMargin;
+              offsetY = anchorRect.bottom - childRect.h;
             } else if (bodyAlign == Alignment.centerLeft) {
-              return Offset(
-                anchorRect.left - childRect.w - bodyMargin,
-                anchorRect.centerY - childRect.h / 2,
-              );
+              offsetX = anchorRect.left - childRect.w - bodyMargin;
+              offsetY = anchorRect.centerY - childRect.h / 2;
             }
-            return Offset(anchorRect.right + 8, anchorRect.top);
+            return Offset(
+              offsetX.clamp(bodyMargin, parentWidth - bodyMargin),
+              offsetY.clamp(bodyMargin, parentHeight - bodyMargin),
+            );
           },
     );
   }
@@ -171,11 +168,11 @@ extension PopupEx on BuildContext {
   }) async {
     //debugger();
     final that = this;
-    final navigator = Navigator.of(this, rootNavigator: rootNavigator);
+    final navigator = Navigator.of(that, rootNavigator: rootNavigator);
     final ancestor = navigator.context.findRenderObject();
     anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds(ancestor);
     anchorRect ??= findRenderObject()?.getGlobalBounds(ancestor) ?? Rect.zero;
-    final globalTheme = GlobalTheme.of(this);
+    final globalTheme = GlobalTheme.of(that);
     return navigator.push(
       ArrowPopupRoute(
         child: child /*AnchorLocationLayout(

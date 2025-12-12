@@ -53,10 +53,7 @@ class _RotateAnimationState extends State<RotateAnimation> {
     } else if (widget.rotateState == RotateState.stop) {
       angle = 0;
     }
-    return Transform.rotate(
-      angle: angle.hd,
-      child: widget.child,
-    );
+    return Transform.rotate(angle: angle.hd, child: widget.child);
   }
 }
 
@@ -89,3 +86,73 @@ class _RotateAnimatedBox extends RenderProxyBox {
   void paint(PaintingContext context, Offset offset) {}
 }
 */
+
+/// 动画旋转小部件, 参考[AnimatedContainer]
+/// - 当传入的角度不一样时,自动进行旋转动画
+/// - [RotationTransition] 旋转过度
+/// - [Transform] 变砖
+class AnimatedRotationWidget extends ImplicitlyAnimatedWidget {
+  /// 当前旋转的角度, 角度单位
+  final double angle;
+
+  final Widget? child;
+
+  const AnimatedRotationWidget({
+    super.key,
+    this.angle = 0,
+    this.child,
+    super.curve,
+    super.duration = kDefaultAnimationDuration,
+    super.onEnd,
+  });
+
+  @override
+  AnimatedWidgetBaseState<AnimatedRotationWidget> createState() =>
+      _AnimatedRotationWidgetState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      DiagnosticsProperty<double>(
+        'angle',
+        angle,
+        showName: true,
+        defaultValue: 0,
+      ),
+    );
+  }
+}
+
+class _AnimatedRotationWidgetState
+    extends AnimatedWidgetBaseState<AnimatedRotationWidget> {
+  DoubleTween? _angle;
+
+  @override
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _angle =
+        visitor(
+              _angle,
+              widget.angle,
+              (dynamic value) => DoubleTween(begin: value),
+            )
+            as DoubleTween?;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Animation<double> animation = this.animation;
+    return Transform.rotate(
+      angle: _angle?.evaluate(animation).hd ?? 0,
+      child: widget.child,
+    );
+  }
+}
+
+/// - [IntTween]
+class DoubleTween extends Tween<double> {
+  DoubleTween({super.begin, super.end});
+
+  @override
+  double lerp(double t) => begin! + (end! - begin!) * t;
+}
