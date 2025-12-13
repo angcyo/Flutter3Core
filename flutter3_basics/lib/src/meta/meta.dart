@@ -235,7 +235,8 @@ const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 const animateFlag = AnnotationMeta('标识当前操作执行动画');
 const tempFlag = AnnotationMeta('临时存储的缓存');
 const dynamicGet = AnnotationMeta('表示当前的属性会通过(xxx as dynamic)的方式动态读取');
-//--
+const isolateFlag = AnnotationMeta('标识当前操作是耗时的, 需要放到[Isolate]中');
+//MARK: - platform
 const platformFlag = PlatformFlag();
 const allPlatformFlag = PlatformFlag(
   '全平台: Android iOS Linux macOS web Windows',
