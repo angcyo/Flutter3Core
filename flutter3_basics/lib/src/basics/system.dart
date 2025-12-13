@@ -344,22 +344,72 @@ void logNetworkInterfaceList() async {
 ///
 /// [$getNetworkInterfaceList]
 /// - [$getLocalInternetAddress]
-/// - [$discoverDeviceIp]
+/// - [$getLocalIp]
 ///
 /// @return 无网络时, 返回null
 Future<InternetAddress?> $getLocalInternetAddress({
   InternetAddressType type = InternetAddressType.IPv4,
+  bool includeLinkLocal = false /*是否包含本地连接的网络*/,
+  String fallbackIp = "192.168" /*备用ip地址前缀*/,
 }) async {
   //debugger();
-  final list = await NetworkInterface.list(type: type);
+  final list = await NetworkInterface.list(
+    type: type,
+    includeLoopback: false,
+    includeLinkLocal: includeLinkLocal,
+  );
+  //回滚的地址
+  InternetAddress? rollback;
   for (final element in list) {
-    if (element.name.startsWith("wlan") ||
-        element.name.startsWith("eth") ||
-        element.name.startsWith("en")) {
+    rollback ??= element.addresses.findFirst(
+      (e) => e.address.startsWith(fallbackIp),
+    );
+    final name = element.name;
+    if (name.startsWith("wlan") ||
+        name.startsWith("eth") ||
+        name.startsWith("以太网") ||
+        name.startsWith("en")) {
       return element.addresses.first;
     }
   }
-  return null;
+  return rollback;
+}
+
+/// 获取本机ip
+Future<String> $getLocalIp({
+  InternetAddressType type = InternetAddressType.IPv4,
+}) async {
+  return (await $getLocalInternetAddress(type: type))?.address ?? "";
+  /*final interfaces = await NetworkInterface.list(
+    type: type,
+    includeLinkLocal: true,
+  );
+  debugger();
+  try {
+    // Try VPN connection first
+    final vpnInterface = interfaces.firstWhere(
+          (element) => element.name == "tun0",
+    );
+    return vpnInterface.addresses.first.address;
+  } on StateError {
+    // Try wlan connection next
+    try {
+      final interface = interfaces.firstWhere(
+            (element) => element.name == "wlan0",
+      );
+      return interface.addresses.first.address;
+    } catch (ex) {
+      // Try any other connection next
+      try {
+        final interface = interfaces.firstWhere(
+              (element) => !(element.name == "tun0" || element.name == "wlan0"),
+        );
+        return interface.addresses.first.address;
+      } catch (ex) {
+        return "";
+      }
+    }
+  }*/
 }
 
 //endregion network
