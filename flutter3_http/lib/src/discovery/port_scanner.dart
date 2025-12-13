@@ -10,10 +10,13 @@ part of '../../flutter3_http.dart';
 ///   - https://github.com/mattsouza26/network_discovery
 class PortScanner {
   /// 扫描子网下指定的端口有效的ip
+  /// - [subnet] 子网
+  /// - [excludeAddresses] 排除的ip地址列表
   static Stream<NetworkAddress> discover(
     String subnet,
     int port, {
-    Duration timeout = const Duration(milliseconds: 400),
+    Iterable<String?>? excludeAddresses,
+    Duration timeout = const Duration(milliseconds: 1000),
     void Function(NetworkAddress address)? onFindAddress,
     FutureCancelToken? cancelToken,
   }) {
@@ -25,6 +28,9 @@ class PortScanner {
 
     for (int i = 1; i < 256; ++i) {
       final host = '$subnet.$i';
+      if (excludeAddresses?.contains(host) == true) {
+        continue;
+      }
       final Future<Socket> socket = DiscoveryUtils.getPortFromPing(
         host,
         port,
@@ -33,7 +39,7 @@ class PortScanner {
       futures.add(socket);
 
       socket
-          .then((Socket s) {
+          .then((Socket s) async {
             s.destroy();
             if (cancelToken?.isCanceled == true) {
               //no op

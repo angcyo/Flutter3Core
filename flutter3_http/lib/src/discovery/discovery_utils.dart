@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter3_basics/flutter3_basics.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/12/11
@@ -38,6 +40,10 @@ class DiscoveryUtils {
     int port,
     Duration timeout,
   ) {
+    /*assert(() {
+      l.v("准备connect:$host:$port $timeout");
+      return true;
+    }());*/
     return Socket.connect(host, port, timeout: timeout).then((socket) {
       return socket;
     });
