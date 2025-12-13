@@ -75,12 +75,19 @@ class SplitButton extends StatefulWidget {
 }
 
 class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
+  /// 显示选项按钮
+  bool get showOptionWidget => widget.popupBodyWidget != null;
+
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final optionWidget =
-        widget.optionWidget ??
-        Icon(Icons.keyboard_arrow_down, size: 16).box(width: widget.height);
+    final optionWidget = !showOptionWidget
+        ? null
+        : (widget.optionWidget ??
+              Icon(
+                Icons.keyboard_arrow_down,
+                size: 16,
+              ).box(width: widget.height));
     return [
       widget.child
           ?.center()
@@ -98,7 +105,7 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
           )
           .expanded(enable: widget.mainAxisSize == .max),
       optionWidget
-          .animatedRotation(isShowPopupMixin ? 180 : 0)
+          ?.animatedRotation(isShowPopupMixin ? 180 : 0)
           .center()
           .inkWell(
             () {
@@ -123,6 +130,10 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
   BorderRadius buildStartBorderRadius() => BorderRadius.only(
     topLeft: Radius.circular(widget.radius),
     bottomLeft: Radius.circular(widget.radius),
+    topRight: showOptionWidget ? Radius.zero : Radius.circular(widget.radius),
+    bottomRight: showOptionWidget
+        ? Radius.zero
+        : Radius.circular(widget.radius),
   );
 
   /// 边框
