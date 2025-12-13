@@ -15,7 +15,7 @@ class SplitButton extends StatefulWidget {
   /// 主要的小部件
   final Widget? child;
 
-  final GestureTapCallback? onMainTap;
+  final GestureTapCallback? onTap;
 
   //MARK: - option
 
@@ -56,7 +56,7 @@ class SplitButton extends StatefulWidget {
     super.key,
     //MARK: - main
     this.child,
-    this.onMainTap,
+    this.onTap,
     //MARK: - option
     this.optionWidget,
     this.popupBodyWidget,
@@ -92,7 +92,7 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
       widget.child
           ?.center()
           .inkWell(
-            () {},
+            widget.onTap,
             /*hoverColor: Colors.purpleAccent,*/
             /*highlightColor: Colors.blue,*/
             borderRadius: buildStartBorderRadius(),
@@ -108,14 +108,20 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
           ?.animatedRotation(isShowPopupMixin ? 180 : 0)
           .center()
           .inkWell(
-            () {
-              showPopup(context);
-            },
+            showOptionWidget
+                ? () {
+                    showPopup(context);
+                  }
+                : null,
             /*hoverColor: Colors.purpleAccent,*/
             /*highlightColor: Colors.blue,*/
             borderRadius: buildEndBorderRadius(),
           )
           .material()
+          .localLocation(
+            key: ValueKey("option"),
+            locationNotifier: locationNotifierMixin,
+          )
           .size(height: widget.height)
           .animatedContainer(
             alignment: Alignment.center,

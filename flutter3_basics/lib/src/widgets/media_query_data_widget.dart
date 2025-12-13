@@ -100,6 +100,12 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
         final old = mediaQueryDataMixin;
         mediaQueryDataMixin = mediaQueryData;
         onSelfMediaQueryDataChanged(old, mediaQueryData);
+        if (old?.platformBrightness != mediaQueryData.platformBrightness) {
+          onSelfPlatformBrightnessChanged(
+            old?.platformBrightness,
+            mediaQueryData.platformBrightness,
+          );
+        }
       }
     }
     //debugger();
@@ -109,6 +115,12 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
   @overridePoint
   void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
     updateState();
+  }
+
+  /// 平台[Brightness]暗色模式发生改变
+  @overridePoint
+  void onSelfPlatformBrightnessChanged(Brightness? from, Brightness to) {
+    debugger();
   }
 }
 

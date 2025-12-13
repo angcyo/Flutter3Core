@@ -279,8 +279,12 @@ extension ObjectEx on Object {
     // default is to match substrings (hence the package name!)
     bool words = false,
     bool selectable = false,
+    //--
+    bool useDefStyle = true /*是否使用默认的文本样式*/,
   }) {
-    textStyle ??= style ?? GlobalConfig.def.globalTheme.textGeneralStyle;
+    textStyle ??=
+        style ??
+        (useDefStyle ? GlobalConfig.def.globalTheme.textGeneralStyle : null);
     if (maxLines != null) {
       overflow ??= TextOverflow.ellipsis;
     }

@@ -3030,11 +3030,25 @@ extension StateEx on State {
         }());
         if (post) {
           postFrame(() {
-            setState(() {});
+            try {
+              setState(() {});
+            } catch (e) {
+              assert(() {
+                printError(e);
+                return true;
+              }());
+            }
           });
         } else {
           postFrameCallbackIfNeed((_) {
-            setState(() {});
+            try {
+              setState(() {});
+            } catch (e) {
+              assert(() {
+                printError(e);
+                return true;
+              }());
+            }
           });
         }
         return true;

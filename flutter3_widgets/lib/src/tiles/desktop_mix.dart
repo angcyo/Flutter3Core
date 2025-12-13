@@ -27,24 +27,51 @@ mixin DesktopPopupStateMixin<T extends StatefulWidget> on State<T> {
   /// - [autoRemovePopupMixin]
   final ValueNotifier<Rect?> locationNotifierMixin = ValueNotifier(null);
 
+  /// 记录最后一次的位置
+  @output
+  @tempFlag
+  Rect? _lastLocation;
+
   @override
   void initState() {
     //debugger();
     locationNotifierMixin.addListener(() {
       //debugger(when: locationNotifier.value == null);
-      if (locationNotifierMixin.value == null || buildContext == null) {
-        //unmount
-        if (autoRemovePopupMixin && isShowPopupMixin) {
-          //debugger();
-          $nextFrame(() {
-            GlobalConfig.def.findNavigatorState()?.pop();
-            isShowPopupMixin = false;
-          });
-          //buildContext?.pop();
+      final location = locationNotifierMixin.value;
+      assert(() {
+        l.d("位置发生改变:$location");
+        return true;
+      }());
+      if (location == null) {
+        //unmount 被移除
+        popPopupMixin();
+      } else {
+        if (_lastLocation == null) {
+          _lastLocation = location;
+        } else if (_lastLocation != location) {
+          //位置发生改变
+          popPopupMixin();
         }
       }
     });
     super.initState();
+  }
+
+  /// 弹出弹窗
+  @api
+  void popPopupMixin() {
+    if (autoRemovePopupMixin && isShowPopupMixin) {
+      //debugger();
+      if (buildContext == null) {
+        $nextFrame(() {
+          GlobalConfig.def.findNavigatorState()?.pop();
+          isShowPopupMixin = false;
+        });
+      } else {
+        buildContext?.pop(rootNavigator: false);
+        isShowPopupMixin = false;
+      }
+    }
   }
 
   /// 包裹一个用来显示弹窗的操作

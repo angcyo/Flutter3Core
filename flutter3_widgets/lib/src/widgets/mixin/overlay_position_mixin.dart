@@ -142,9 +142,8 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
   /// 当需要更新位置到[position]时触发
   @overridePoint
   void onUpdateOverlayPosition(Offset position) {
-    setState(() {
-      positionOffset = position;
-    });
+    positionOffset = position;
+    updateState();
   }
 }
 
