@@ -195,10 +195,12 @@ abstract class IUnit {
   /// 在坐标轴上, 每隔多少个dp距离单位, 显示一个刻度
   @Dp()
   double getAxisGap(int index, double scale) {
+    //debugger();
     double baseGap = this.baseGap();
     if (dpr <= 2.0) {
       //大屏幕, 低密度的屏幕
       baseGap *= 5;
+      scale *= 2;
     }
     return baseAxisGap(index, scale, baseGap); //* dpr
   }
