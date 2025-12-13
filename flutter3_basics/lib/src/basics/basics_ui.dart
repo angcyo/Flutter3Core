@@ -2546,8 +2546,8 @@ extension WidgetEx on Widget {
     Widget child = this;
     if (minSize == true) {
       iconSize ??= 28;
+      child = child.insets(all: 6, insets: padding);
       padding = EdgeInsets.zero;
-      child = child.insets(all: 6);
     }
     return IconButton(
       onPressed: enable ? onTap : null,
