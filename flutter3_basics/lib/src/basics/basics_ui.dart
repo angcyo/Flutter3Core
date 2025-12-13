@@ -2524,6 +2524,7 @@ extension WidgetEx on Widget {
   Widget icon(
     GestureTapCallback? onTap, {
     bool enable = true,
+    bool? minSize /*是否使用小号大小*/,
     bool? enableFeedback,
     String? tooltip,
     Color? color,
@@ -2542,9 +2543,15 @@ extension WidgetEx on Widget {
     bool? isSelected,
     Widget? selectedIcon,
   }) {
+    Widget child = this;
+    if (minSize == true) {
+      iconSize ??= 28;
+      padding = EdgeInsets.zero;
+      child = child.insets(all: 6);
+    }
     return IconButton(
       onPressed: enable ? onTap : null,
-      icon: this,
+      icon: child,
       tooltip: tooltip,
       enableFeedback: enableFeedback,
       color: color,
