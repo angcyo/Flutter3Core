@@ -23,6 +23,9 @@ class SplitButton extends StatefulWidget {
   @defInjectMark
   final Widget? optionWidget;
 
+  /// 指定箭头的颜色
+  final Color? optionColor;
+
   /// 弹窗内容小部件
   /// - 设置之后才会显示[trailingWidget]
   /// - 弹出弹窗之后, 会自动进入选中状态
@@ -59,6 +62,7 @@ class SplitButton extends StatefulWidget {
     this.onTap,
     //MARK: - option
     this.optionWidget,
+    this.optionColor,
     this.popupBodyWidget,
     this.popupAlignment,
     //--
@@ -78,6 +82,8 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
   /// 显示选项按钮
   bool get showOptionWidget => widget.popupBodyWidget != null;
 
+  bool get isStrokeStyle => widget.strokeColor != null;
+
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -87,6 +93,7 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
               Icon(
                 Icons.keyboard_arrow_down,
                 size: 16,
+                color: widget.optionColor,
               ).box(width: widget.height));
     return [
       widget.child
