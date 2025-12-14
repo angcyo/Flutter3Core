@@ -87,6 +87,7 @@ part 'src/tiles/single_label_info_tile.dart';
 part 'src/tiles/slider_tile.dart';
 part 'src/tiles/switch_tile.dart';
 part 'src/tiles/checkbox_tile.dart';
+part 'src/tiles/radio_tile.dart';
 part 'src/tiles/text_mixin.dart';
 part 'src/tiles/text_tile.dart';
 part 'src/tiles/input_tile.dart';

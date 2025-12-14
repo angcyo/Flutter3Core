@@ -7,6 +7,10 @@ part of '../../flutter3_basics.dart';
 /// 在[State]中, 保持监听[Widget]中的初始化值和当前值
 /// 并计算当前值和初始化是否发生了改变
 /// 并保持只刷新自身的情况下保持ui
+///
+/// - 配合[ValueMixin]一起使用
+/// - 或者重写[getInitialValueMixin]主动调用[updateValueMixin]
+///   - [currentValueMixin]
 mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
   /// 初始化的值
   late V? initialValueMixin;
@@ -60,6 +64,7 @@ mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
   }
 
   /// 获取指定的数据[data]在[ValueMixin.values]中的索引
+  @api
   int indexOfValuesMixin(dynamic data) {
     final widget = this.widget;
     if (widget is ValueMixin) {
@@ -76,6 +81,8 @@ mixin ValueChangeMixin<T extends StatefulWidget, V> on State<T> {
   }
 
   //--
+
+  /// 调用此方法更新值
   @api
   void updateValueMixin(V? toValue) async => changeValueMixin(toValue);
 

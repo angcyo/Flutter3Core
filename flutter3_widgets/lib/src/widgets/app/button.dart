@@ -87,7 +87,8 @@ class FillGradientButton extends StatelessWidget {
     final globalTheme = GlobalTheme.of(context);
     final fillRefColor = fillColor ?? gradientColors?.firstOrNull;
     final isLightFill = fillRefColor?.isLight == true;
-    final textColor = this.textColor ??
+    final textColor =
+        this.textColor ??
         (isLightFill
             ? globalTheme.textPrimaryStyle.color
             : globalTheme.themeWhiteColor);
@@ -96,12 +97,12 @@ class FillGradientButton extends StatelessWidget {
     return GradientButton(
       onTap: enabled
           ? onTap ??
-              () {
-                assert(() {
-                  debugPrint("FillButton.onTap is null");
-                  return true;
-                }());
-              }
+                () {
+                  assert(() {
+                    debugPrint("FillButton.onTap is null");
+                    return true;
+                  }());
+                }
           : null,
       color: fillColor,
       colors: fillColor == null ? gradientColors : [],
@@ -177,32 +178,29 @@ class FillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final radius = borderRadius ??
+    final radius =
+        borderRadius ??
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
     final fillColor = this.fillColor ?? globalTheme.accentColor;
     final textColor = this.textColor ?? globalTheme.themeWhiteColor;
 
     return Container(
-            padding: padding,
-            alignment: Alignment.center,
-            constraints: BoxConstraints(
-              minWidth: minWidth ?? 0,
-              minHeight: minHeight ?? 0,
-            ),
-            child: DefaultTextStyle.merge(
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: textColor,
-              ),
-              child: text?.text() ?? child ?? const Empty(),
-            ))
+          padding: padding,
+          alignment: Alignment.center,
+          constraints: BoxConstraints(
+            minWidth: minWidth ?? 0,
+            minHeight: minHeight ?? 0,
+          ),
+          child: DefaultTextStyle.merge(
+            textAlign: TextAlign.center,
+            style: TextStyle(color: textColor),
+            child: text?.text() ?? child ?? const Empty(),
+          ),
+        )
         .ink(
           onTap,
           borderRadius: radius,
-          decoration: BoxDecoration(
-            color: fillColor,
-            borderRadius: radius,
-          ),
+          decoration: BoxDecoration(color: fillColor, borderRadius: radius),
         )
         .material();
   }
@@ -261,27 +259,23 @@ class StrokeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final radius = borderRadius ??
+    final radius =
+        borderRadius ??
         (this.radius == null ? null : BorderRadius.circular(this.radius!));
     final borderColor = this.borderColor ?? globalTheme.accentColor;
     final textColor = this.textColor ?? borderColor;
     return Container(
-            padding: padding,
-            child: DefaultTextStyle.merge(
-              style: textStyle ??
-                  TextStyle(
-                    color: textColor,
-                  ),
-              child: text?.text() ?? child ?? const Empty(),
-            ))
+          padding: padding,
+          child: DefaultTextStyle.merge(
+            style: textStyle ?? TextStyle(color: textColor),
+            child: text?.text() ?? child ?? const Empty(),
+          ),
+        )
         .ink(
           onTap,
           borderRadius: radius,
           decoration: BoxDecoration(
-            border: Border.all(
-              color: borderColor,
-              width: borderWidth,
-            ),
+            border: Border.all(color: borderColor, width: borderWidth),
             borderRadius: radius,
           ),
         )
@@ -366,7 +360,8 @@ class CheckButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final borderColor = this.borderColor ??
+    final borderColor =
+        this.borderColor ??
         globalTheme.textPlaceStyle.color ??
         globalTheme.icoNormalColor;
     return Checkbox(
@@ -374,23 +369,16 @@ class CheckButton extends StatelessWidget {
       onChanged: onChanged,
       activeColor: fillColor ?? globalTheme.accentColor,
       checkColor: checkColor,
-      side: BorderSide(
-        color: borderColor,
-        width: borderWidth,
-      ),
+      side: BorderSide(color: borderColor, width: borderWidth),
       shape: shape ?? (isCircle == true ? const CircleBorder() : null),
       //visualDensity: VisualDensity.compact,
       visualDensity: visualDensity ?? VisualDensity.compact,
     ).rowOf(
-      (child ??
-              text?.text(
-                style: globalTheme.textPrimaryStyle,
-              ))
-          ?.click(
-        () {
-          onChanged?.call(!isChecked);
-        },
-      ).expanded(enable: mainAxisSize == MainAxisSize.max),
+      (child ?? text?.text(style: globalTheme.textPrimaryStyle))
+          ?.click(() {
+            onChanged?.call(!isChecked);
+          })
+          .expanded(enable: mainAxisSize == MainAxisSize.max),
       mainAxisSize: mainAxisSize,
       mainAxisAlignment: MainAxisAlignment.start, //全部靠左布局
       crossAxisAlignment: crossAxisAlignment, //全部顶部对齐
@@ -399,6 +387,8 @@ class CheckButton extends StatelessWidget {
 }
 
 /// 圈圈单选框, 带文本
+/// - [RadioGroup] 系统
+/// - [Radio] 系统
 class RadioButton extends StatelessWidget {
   /// 是否选中
   final bool isChecked;
@@ -424,6 +414,9 @@ class RadioButton extends StatelessWidget {
   /// 显示在框框右边的文本
   final String? text;
 
+  /// 文本的填充
+  final EdgeInsetsGeometry? textPadding;
+
   /// 主轴大小
   final MainAxisSize? mainAxisSize;
 
@@ -440,13 +433,18 @@ class RadioButton extends StatelessWidget {
   /// [VisualDensity.maximumDensity]
   final VisualDensity? visualDensity;
 
+  /// 整体的填充
+  final EdgeInsetsGeometry? padding;
+
   const RadioButton({
     super.key,
     this.isChecked = false,
     this.onChanged,
     this.text,
+    this.padding,
+    this.textPadding = const EdgeInsets.only(right: 8),
     this.mainAxisSize = MainAxisSize.min,
-    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
     this.child,
     this.visualDensity,
     this.activeColor,
@@ -459,42 +457,45 @@ class RadioButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final normalFillColor = this.normalFillColor ??
+    final normalFillColor =
+        this.normalFillColor ??
         globalTheme.textPlaceStyle.color ??
         globalTheme.icoNormalColor;
     return Radio<bool>(
-      value: true,
-      groupValue: isChecked,
-      onChanged: onChanged,
-      focusColor: focusColor ?? normalFillColor,
-      activeColor: activeColor ?? globalTheme.accentColor,
-      //fillColor: MaterialStateProperty.all(fillColor ?? globalTheme.accentColor),
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.disabled)) {
-          return disabledFillColor ?? globalTheme.accentColor.disabledColor;
-        }
-        if (states.contains(MaterialState.selected)) {
-          return fillColor ?? globalTheme.accentColor;
-        }
-        return normalFillColor;
-      }),
-      toggleable: false,
-      //三个状态
-      //visualDensity: VisualDensity.compact,
-      visualDensity: visualDensity ?? VisualDensity.compact,
-    ).rowOf(
-      (child ??
-              text?.text(
-                style: globalTheme.textPrimaryStyle,
-              ))
-          ?.click(
-        () {
+          value: true,
+          groupValue: isChecked,
+          onChanged: onChanged,
+          focusColor: focusColor ?? normalFillColor,
+          activeColor: activeColor ?? globalTheme.accentColor,
+          //fillColor: MaterialStateProperty.all(fillColor ?? globalTheme.accentColor),
+          fillColor: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.disabled)) {
+              return disabledFillColor ?? globalTheme.accentColor.disabledColor;
+            }
+            if (states.contains(MaterialState.selected)) {
+              return fillColor ?? globalTheme.accentColor;
+            }
+            return normalFillColor;
+          }),
+          toggleable: false,
+          //三个状态
+          //visualDensity: VisualDensity.compact,
+          visualDensity: visualDensity ?? VisualDensity.compact,
+        )
+        .rowOf(
+          (child ??
+                  text
+                      ?.text(style: globalTheme.textBodyStyle)
+                      .insets(insets: textPadding))
+              ?.expanded(enable: mainAxisSize == MainAxisSize.max),
+          mainAxisSize: mainAxisSize,
+          mainAxisAlignment: MainAxisAlignment.start, //全部靠左布局
+          crossAxisAlignment: crossAxisAlignment, //全部顶部对齐
+        )
+        .insets(insets: padding)
+        .inkWell(() {
           onChanged?.call(!isChecked);
-        },
-      ).expanded(enable: mainAxisSize == MainAxisSize.max),
-      mainAxisSize: mainAxisSize,
-      mainAxisAlignment: MainAxisAlignment.start, //全部靠左布局
-      crossAxisAlignment: crossAxisAlignment, //全部顶部对齐
-    );
+        })
+        .material();
   }
 }

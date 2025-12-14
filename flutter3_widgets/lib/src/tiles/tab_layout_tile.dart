@@ -7,10 +7,13 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 可以滑动切换多个值的tile
 class LabelTabLayoutTile extends StatefulWidget {
+
+  //MARK: - label
   /// label
   final String? label;
   final Widget? labelWidget;
 
+  //MARK: - content
   /// content
   final dynamic initValue;
   final List? values;
@@ -22,7 +25,7 @@ class LabelTabLayoutTile extends StatefulWidget {
   /// [label].[values]布局方向
   final Axis axis;
 
-  //--
+  //MARK: - config
 
   /// [TabLayout] 是否完全展开
   final bool isExpanded;
