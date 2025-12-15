@@ -795,12 +795,15 @@ class FlowLayoutRender extends RenderBox
     //matchLineHeight 功能适配
     childrenLineList.forEachIndexed((index, lineChildList) {
       /*debugger(when: debugLabel != null);*/
-      final lineHeight = getLineUsedHeight(lineChildList);
+      double lineHeight = getLineUsedHeight(lineChildList);
       for (final child in lineChildList) {
         final childParentData = child.parentData! as FlowLayoutParentData;
         final childMatchLineHeight =
             childParentData.matchLineHeight ?? matchLineHeight;
         if (childMatchLineHeight == true) {
+          if (childrenLineList.length == 1) {
+            lineHeight = max(lineHeight, size.height);
+          }
           final childSize = child.size;
           final childHeight = childSize.height;
           if (childHeight != lineHeight) {
@@ -970,12 +973,12 @@ extension FlowLayoutListEx on WidgetNullList {
     double? childVerticalGap,
     BoxConstraints? childConstraints = const BoxConstraints(),
     String? equalWidthRange,
-    int? lineMaxChildCount,
-    int? lineChildCount,
+    int? lineMaxChildCount /*一行最大多少个child*/,
+    int? lineChildCount /*一行多少个child*/,
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.center,
     MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.center,
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
-    bool? matchLineHeight,
+    bool? matchLineHeight /*撑满行高?*/,
     //--
     AnyWidgetPaintAction? onBeforePaint,
     AnyWidgetPaintAction? onAfterPaint,

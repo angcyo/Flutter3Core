@@ -9,10 +9,14 @@ typedef SegmentWidgetBuilder =
     Widget Function(BuildContext context, int index, bool isSelected);
 
 ///
-/// 系统[SegmentedButton]
+/// 使用[FlowLayout]实现
 ///
+/// 系统实现[SegmentedButton]
+///
+/// - [SegmentTile] - 仅支持[Widget]类型的segment
+/// - [ValueSegmentTile] - 支持很多类型的segment
 class SegmentTile extends StatefulWidget {
-  /// 区段按钮
+  /// 区段按钮小部件
   final List<Widget>? segments;
 
   /// 或者指定数量
@@ -291,10 +295,13 @@ class _SegmentTileState extends State<SegmentTile> {
 
 //--
 
-/// - [SegmentTile]
-/// - [ValueSegmentTile]
+/// Segment Tile 使用[FlowLayout]实现
+/// - [SegmentTile] - 仅支持[Widget]类型的segment
+/// - [ValueSegmentTile] - 支持很多类型的segment
 class ValueSegmentTile extends StatefulWidget {
-  /// 值列表
+  //MARK: - config
+
+  /// 值列表, 支持很多类型
   /// - [widgetOf]
   final List? values;
 
@@ -304,7 +311,13 @@ class ValueSegmentTile extends StatefulWidget {
   /// 值列表对应的Widget
   final List<Widget>? valuesWidget;
 
-  //--
+  /// 点击事件回调
+  final ValueCallback? onTapValue;
+
+  /// 选中的值列表改变回调
+  final ValueCallback<List>? onValuesSelected;
+
+  //MARK: - style
 
   /// 是否激活交互
   final bool enable;
@@ -327,16 +340,20 @@ class ValueSegmentTile extends StatefulWidget {
   /// 选中样式: 文本样式
   final TextStyle? textSelectedStyle;
 
-  //--
-
-  /// 点击事件回调
-  final ValueCallback? onTapValue;
-
   /// 边距
+  @defInjectMark
   final EdgeInsetsGeometry? tileInsets;
 
-  /// 选中的值列表改变回调
-  final ValueCallback<List>? onValuesSelected;
+  /// item距离容器的边距
+  @defInjectMark
+  final EdgeInsets? itemMargin;
+
+  /// tile 整体背景颜色
+  @defInjectMark
+  final Color? tileBgColor;
+
+  /// 最小高度
+  final double minHeight;
 
   const ValueSegmentTile({
     super.key,
@@ -344,18 +361,20 @@ class ValueSegmentTile extends StatefulWidget {
     this.values,
     this.selectedValues,
     this.valuesWidget,
+    this.onTapValue,
+    this.onValuesSelected,
     //--
     this.enable = true,
     this.maxSelectedCount = 1,
     this.enableSelectedEmpty = false,
     this.selectedBgColor,
+    this.tileBgColor,
     this.textStyle,
     this.textSelectedStyle,
     this.selectedBorderRadius = kDefaultBorderRadiusXX,
-    //--
     this.tileInsets,
-    this.onTapValue,
-    this.onValuesSelected,
+    this.itemMargin,
+    this.minHeight = kMinInteractiveHeight,
   });
 
   @override
@@ -367,6 +386,12 @@ class _ValueSegmentTileState extends State<ValueSegmentTile> {
 
   /// 是否是多选模式
   bool get _isMultiSelect => widget.maxSelectedCount > 1;
+
+  @override
+  void didUpdateWidget(covariant ValueSegmentTile oldWidget) {
+    _selectedValues = [...?widget.selectedValues];
+    super.didUpdateWidget(oldWidget);
+  }
 
   @override
   void initState() {
@@ -434,15 +459,16 @@ class _ValueSegmentTileState extends State<ValueSegmentTile> {
     return segmentList
             ?.flowLayout(
               equalWidthRange: "",
-              padding: const EdgeInsets.all(kL),
-              selfConstraints: const LayoutBoxConstraints(
+              matchLineHeight: false,
+              padding: widget.itemMargin ?? const EdgeInsets.all(kL),
+              selfConstraints: LayoutBoxConstraints(
                 widthType: ConstraintsType.matchParent,
-                minHeight: kMinInteractiveHeight,
+                minHeight: widget.minHeight,
               ),
             )
             ?.backgroundDecoration(
               fillDecoration(
-                color: globalTheme.whiteSubBgColor,
+                color: widget.tileBgColor ?? globalTheme.whiteSubBgColor,
                 radius: borderRadius,
               ),
             )
