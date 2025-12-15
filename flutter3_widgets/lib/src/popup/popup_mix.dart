@@ -33,6 +33,7 @@ extension PopupEx on BuildContext {
     BuildContext? anchorChild,
     bool rootNavigator = false,
     double bodyMargin = kH,
+    double edgeMargin = kX /*距离容器的边界距离*/,
     //--
     Alignment? alignment,
     //--
@@ -123,9 +124,16 @@ extension PopupEx on BuildContext {
               offsetX = anchorRect.left - childRect.w - bodyMargin;
               offsetY = anchorRect.centerY - childRect.h / 2;
             }
+            //debugger();
             return Offset(
-              offsetX.clamp(bodyMargin, parentWidth - bodyMargin),
-              offsetY.clamp(bodyMargin, parentHeight - bodyMargin),
+              offsetX.clamp(
+                edgeMargin,
+                parentWidth - edgeMargin - childRect.width,
+              ),
+              offsetY.clamp(
+                edgeMargin,
+                parentHeight - edgeMargin - childRect.height,
+              ),
             );
           },
     );
