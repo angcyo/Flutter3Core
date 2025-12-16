@@ -83,7 +83,7 @@ class _DesktopOptionsPopupState extends State<DesktopOptionsPopup>
                     Icons.check_sharp,
                     color: globalTheme.successColor,
                   ).invisible(enable: !(isSelected == true)).insets(h: kL),
-                  child.expanded().ignorePointer(),
+                  child.ignorePointer().expanded(),
                 ]
                 .row()
                 ?.inkWell(() {

@@ -107,6 +107,39 @@ extension PopupEx on BuildContext {
                 }
               }
             }
+            //检查是否空间充足
+            if (alignment == .bottomLeft ||
+                alignment == .bottomRight ||
+                alignment == .bottomCenter) {
+              //底部剩余空间
+              //debugger();
+              final bottomSpace = parentHeight - anchorRect.bottom;
+              if (bottomSpace < childRect.height) {
+                //底部空间不够
+                if (alignment == .bottomLeft) {
+                  bodyAlign = Alignment.topLeft;
+                } else if (alignment == .bottomRight) {
+                  bodyAlign = Alignment.topRight;
+                } else if (alignment == .bottomCenter) {
+                  bodyAlign = Alignment.topCenter;
+                }
+              }
+            } else if (alignment == .topLeft ||
+                alignment == .topRight ||
+                alignment == .topCenter) {
+              //顶部剩余空间
+              final topSpace = anchorRect.top;
+              if (topSpace < childRect.height) {
+                if (alignment == .topLeft) {
+                  bodyAlign = Alignment.bottomLeft;
+                } else if (alignment == .topRight) {
+                  bodyAlign = Alignment.bottomRight;
+                } else if (alignment == .topCenter) {
+                  bodyAlign = Alignment.bottomCenter;
+                }
+              }
+            }
+            //MARK: - offset
             //debugger();
             double offsetX = anchorRect.right + bodyMargin;
             double offsetY = anchorRect.top;
@@ -114,19 +147,19 @@ extension PopupEx on BuildContext {
               offsetX = anchorRect.left - childRect.w - bodyMargin;
               offsetY = anchorRect.top;
               if (offsetAlignment) {
-                offsetY += anchorRect.height;
+                offsetY -= childRect.height + bodyMargin;
               }
             } else if (bodyAlign == Alignment.topCenter) {
               offsetX = anchorRect.center.dx - childRect.w / 2;
               offsetY = anchorRect.top - childRect.h - bodyMargin;
               if (offsetAlignment) {
-                offsetY += anchorRect.height;
+                offsetY -= childRect.height + bodyMargin;
               }
             } else if (bodyAlign == Alignment.topRight) {
               offsetX = anchorRect.right + bodyMargin;
               offsetY = anchorRect.top;
               if (offsetAlignment) {
-                offsetY += anchorRect.height;
+                offsetY -= childRect.height + bodyMargin;
               }
             } else if (bodyAlign == Alignment.centerRight) {
               offsetX = anchorRect.right + bodyMargin;
@@ -135,7 +168,7 @@ extension PopupEx on BuildContext {
               offsetX = anchorRect.right + bodyMargin;
               offsetY = anchorRect.bottom - childRect.h - bodyMargin;
               if (offsetAlignment) {
-                offsetY += anchorRect.height + childRect.h;
+                offsetY += childRect.h + bodyMargin;
               }
             } else if (bodyAlign == Alignment.bottomCenter) {
               offsetX = anchorRect.center.dx - childRect.w / 2;
