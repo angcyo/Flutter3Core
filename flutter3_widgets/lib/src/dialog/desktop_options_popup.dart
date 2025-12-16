@@ -48,6 +48,10 @@ class DesktopOptionsPopup extends StatefulWidget with MultiValueConfigMixin {
   /// 圆角
   final double? radius;
 
+  /// 弹窗最大高度
+  @defInjectMark
+  final double? maxHeight;
+
   const DesktopOptionsPopup({
     super.key,
     //--
@@ -60,6 +64,7 @@ class DesktopOptionsPopup extends StatefulWidget with MultiValueConfigMixin {
     this.enableSelectedEmpty = false,
     //--
     this.radius = kDefaultBorderRadius,
+    this.maxHeight,
   });
 
   @override
@@ -98,6 +103,9 @@ class _DesktopOptionsPopupState extends State<DesktopOptionsPopup>
             child;
       },
     );
-    return segmentList?.column() ?? empty;
+    return segmentList?.scrollVertical()?.constrainedMax(
+          maxHeight: widget.maxHeight ?? $screenMinSize / 2,
+        ) ??
+        empty;
   }
 }

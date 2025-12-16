@@ -39,7 +39,7 @@ mixin DesktopPopupStateMixin<T extends StatefulWidget> on State<T> {
       //debugger(when: locationNotifier.value == null);
       final location = locationNotifierMixin.value;
       assert(() {
-        l.d("位置发生改变:$location");
+        l.d("[${classHash()}]位置发生改变:$location $isShowPopupMixin");
         return true;
       }());
       if (location == null) {
@@ -61,7 +61,6 @@ mixin DesktopPopupStateMixin<T extends StatefulWidget> on State<T> {
   @api
   void popPopupMixin() {
     if (autoRemovePopupMixin && isShowPopupMixin) {
-      //debugger();
       if (buildContext == null) {
         $nextFrame(() {
           GlobalConfig.def.findNavigatorState()?.pop();

@@ -23,7 +23,7 @@ class LocalLocationWidget extends SingleChildRenderObjectWidget {
   final String? debugLabel;
 
   const LocalLocationWidget({
-    required super.key,
+    required super.key /*必须指定*/,
     this.locationNotifier,
     this.ancestor,
     this.debugLabel,
@@ -142,16 +142,19 @@ extension LocalLocationWidgetEx on Widget {
   /// - [LocalLocationWidget]
   Widget localLocation({
     required Key? key,
+    bool enable = true,
     ValueNotifier<Rect?>? locationNotifier,
     RenderObject? ancestor,
     String? debugLabel,
   }) {
-    return LocalLocationWidget(
-      key: key,
-      locationNotifier: locationNotifier,
-      ancestor: ancestor,
-      debugLabel: debugLabel,
-      child: this,
-    );
+    return enable
+        ? LocalLocationWidget(
+            key: key ?? ValueKey("location"),
+            locationNotifier: locationNotifier,
+            ancestor: ancestor,
+            debugLabel: debugLabel,
+            child: this,
+          )
+        : this;
   }
 }
