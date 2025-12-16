@@ -27,6 +27,8 @@ class PathWidget extends LeafRenderObjectWidget {
   /// 绘制填充的大小
   final EdgeInsets? padding;
 
+  final double strokeWidth;
+
   const PathWidget({
     super.key,
     this.path,
@@ -37,6 +39,7 @@ class PathWidget extends LeafRenderObjectWidget {
     this.alignment = Alignment.center,
     this.shader,
     this.padding,
+    this.strokeWidth = 0,
   });
 
   @override
@@ -48,6 +51,7 @@ class PathWidget extends LeafRenderObjectWidget {
     alignment: alignment,
     shader: shader,
     padding: padding,
+    strokeWidth: strokeWidth,
   );
 
   @override
@@ -60,6 +64,7 @@ class PathWidget extends LeafRenderObjectWidget {
       ..alignment = alignment
       ..shader = shader
       ..padding = padding
+      ..strokeWidth = strokeWidth
       ..markNeedsPaint();
   }
 }
@@ -72,6 +77,8 @@ class PathRenderBox extends RenderBox {
 
   /// The fill color to use when rendering the path.
   Color color;
+
+  double strokeWidth;
 
   BoxFit fit;
 
@@ -93,6 +100,7 @@ class PathRenderBox extends RenderBox {
     this.alignment = Alignment.center,
     this.shader,
     this.padding,
+    this.strokeWidth = 0,
   });
 
   void updatePath(List<Path>? newPathList) {
@@ -146,6 +154,7 @@ class PathRenderBox extends RenderBox {
           ..strokeCap = StrokeCap.round
           ..strokeJoin = StrokeJoin.round
           ..shader = shader
+          ..strokeWidth = strokeWidth
           ..style = style,
       );
     }

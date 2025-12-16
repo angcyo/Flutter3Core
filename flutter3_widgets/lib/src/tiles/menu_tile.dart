@@ -226,6 +226,9 @@ class DesktopTextMenuTile extends StatefulWidget {
   /// 是否处于选中状态, 会有背景装饰
   final bool isSelected;
 
+  /// 是否处于勾选状态, 会有前置勾选icon
+  final bool? isChecked;
+
   /// 弹窗内容小部件
   /// - 设置之后才会显示[trailingWidget]
   /// - 弹出弹窗之后, 会自动进入选中状态
@@ -251,6 +254,7 @@ class DesktopTextMenuTile extends StatefulWidget {
     this.trailingWidget,
     //--
     this.isSelected = false,
+    this.isChecked,
     this.tileMinWidth = 100,
     this.popupBodyWidget,
     this.onTap,
@@ -284,6 +288,11 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
       ).paddingOnly(horizontal: kL);
     }
     return [
+          if (widget.isChecked != null)
+            Icon(
+              Icons.check_sharp,
+              color: globalTheme.successColor,
+            ).invisible(enable: !(widget.isChecked == true)).insets(h: kL),
           //-- leading
           widget.leadingWidget ?? SizedBox.fromSize(size: placeholderSize),
           (widget.text ?? "").text(style: globalTheme.textBodyStyle).expanded(),
