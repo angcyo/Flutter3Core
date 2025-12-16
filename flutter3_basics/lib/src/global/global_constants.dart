@@ -80,7 +80,7 @@ const double kStateImageSize = 160.0;
 
 const kLabelMinWidth = 80.0;
 const kLabelMaxWidth = 130.0;
-const kNumberMinWidth = 50.0;
+const kNumberMinWidth = 66.0;
 const kNumberMinHeight = 26.0;
 const kMenuMinWidth = 160.0;
 

@@ -4,6 +4,44 @@ part of '../../flutter3_widgets.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/24
 ///
+
+class CustomRoundedRectSliderTrackShape extends RoundedRectSliderTrackShape {
+  /// 激活的滑块额外高度
+  final double? additionalActiveTrackHeight;
+
+  const CustomRoundedRectSliderTrackShape({this.additionalActiveTrackHeight});
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset offset, {
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required TextDirection textDirection,
+    required Offset thumbCenter,
+    Offset? secondaryOffset,
+    bool isDiscrete = false,
+    bool isEnabled = false,
+    double additionalActiveTrackHeight = 2,
+  }) {
+    super.paint(
+      context,
+      offset,
+      parentBox: parentBox,
+      sliderTheme: sliderTheme,
+      enableAnimation: enableAnimation,
+      textDirection: textDirection,
+      thumbCenter: thumbCenter,
+      secondaryOffset: secondaryOffset,
+      isDiscrete: isDiscrete,
+      isEnabled: isEnabled,
+      additionalActiveTrackHeight:
+          this.additionalActiveTrackHeight ?? additionalActiveTrackHeight,
+    );
+  }
+}
+
 /// 渐变滑块轨道Shape
 /// [RoundedRectSliderTrackShape]
 /// [RoundedRectRangeSliderTrackShape]
@@ -16,11 +54,15 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
   final List<Color>? activeColors;
   final List<double>? activeColorStops;
 
+  /// 激活的滑块额外高度
+  final double? additionalActiveTrackHeight;
+
   const GradientSliderTrackShape({
     this.activeColors,
     this.activeColorStops,
     this.inactiveColors,
     this.inactiveColorStops,
+    this.additionalActiveTrackHeight,
   });
 
   @override
@@ -49,14 +91,20 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
       return;
     }
 
+    //--
+    additionalActiveTrackHeight =
+        this.additionalActiveTrackHeight ?? additionalActiveTrackHeight;
+
     // Assign the track segment paints, which are leading: active and
     // trailing: inactive.
     final ColorTween activeTrackColorTween = ColorTween(
-        begin: sliderTheme.disabledActiveTrackColor,
-        end: sliderTheme.activeTrackColor);
+      begin: sliderTheme.disabledActiveTrackColor,
+      end: sliderTheme.activeTrackColor,
+    );
     final ColorTween inactiveTrackColorTween = ColorTween(
-        begin: sliderTheme.disabledInactiveTrackColor,
-        end: sliderTheme.inactiveTrackColor);
+      begin: sliderTheme.disabledInactiveTrackColor,
+      end: sliderTheme.inactiveTrackColor,
+    );
     final Paint activePaint = Paint()
       ..color = activeTrackColorTween.evaluate(enableAnimation)!;
     final Paint inactivePaint = Paint()
@@ -89,8 +137,9 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
     //--
 
     final Radius trackRadius = Radius.circular(trackRect.height / 2);
-    final Radius activeTrackRadius =
-        Radius.circular((trackRect.height + additionalActiveTrackHeight) / 2);
+    final Radius activeTrackRadius = Radius.circular(
+      (trackRect.height + additionalActiveTrackHeight) / 2,
+    );
 
     context.canvas.drawRRect(
       RRect.fromLTRBAndCorners(
@@ -173,15 +222,17 @@ class GradientSliderTrackShape extends RoundedRectSliderTrackShape {
       );
     }
 
-    final bool showSecondaryTrack = (secondaryOffset != null) &&
+    final bool showSecondaryTrack =
+        (secondaryOffset != null) &&
         ((textDirection == TextDirection.ltr)
             ? (secondaryOffset.dx > thumbCenter.dx)
             : (secondaryOffset.dx < thumbCenter.dx));
 
     if (showSecondaryTrack) {
       final ColorTween secondaryTrackColorTween = ColorTween(
-          begin: sliderTheme.disabledSecondaryActiveTrackColor,
-          end: sliderTheme.secondaryActiveTrackColor);
+        begin: sliderTheme.disabledSecondaryActiveTrackColor,
+        end: sliderTheme.secondaryActiveTrackColor,
+      );
       final Paint secondaryTrackPaint = Paint()
         ..color = secondaryTrackColorTween.evaluate(enableAnimation)!;
       if (textDirection == TextDirection.ltr) {
@@ -258,11 +309,13 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
     // Assign the track segment paints, which are left: active, right: inactive,
     // but reversed for right to left text.
     final ColorTween activeTrackColorTween = ColorTween(
-        begin: sliderTheme.disabledActiveTrackColor,
-        end: sliderTheme.activeTrackColor);
+      begin: sliderTheme.disabledActiveTrackColor,
+      end: sliderTheme.activeTrackColor,
+    );
     final ColorTween inactiveTrackColorTween = ColorTween(
-        begin: sliderTheme.disabledInactiveTrackColor,
-        end: sliderTheme.inactiveTrackColor);
+      begin: sliderTheme.disabledInactiveTrackColor,
+      end: sliderTheme.inactiveTrackColor,
+    );
     final Paint activePaint = Paint()
       ..color = activeTrackColorTween.evaluate(enableAnimation)!;
     final Paint inactivePaint = Paint()
@@ -276,8 +329,10 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
       isDiscrete: isDiscrete,
     );
     final trackCenter = trackRect.center;
-    final Size thumbSize =
-        sliderTheme.thumbShape!.getPreferredSize(isEnabled, isDiscrete);
+    final Size thumbSize = sliderTheme.thumbShape!.getPreferredSize(
+      isEnabled,
+      isDiscrete,
+    );
     // final Rect leftTrackSegment = Rect.fromLTRB(
     //     trackRect.left + trackRect.height / 2,
     //     trackRect.top,
@@ -295,10 +350,11 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
 
     if (trackCenter.dx < thumbCenter.dx) {
       final Rect leftTrackSegment = Rect.fromLTRB(
-          trackRect.left,
-          trackRect.top,
-          min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
-          trackRect.bottom);
+        trackRect.left,
+        trackRect.top,
+        min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
+        trackRect.bottom,
+      );
 
       if (!leftTrackSegment.isEmpty) {
         inactivePaint.shader = linearGradientShader(
@@ -330,10 +386,11 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
       }
 
       final Rect rightTrackSegment = Rect.fromLTRB(
-          thumbCenter.dx + thumbSize.width / 2,
-          trackRect.top,
-          trackRect.right,
-          trackRect.bottom);
+        thumbCenter.dx + thumbSize.width / 2,
+        trackRect.top,
+        trackRect.right,
+        trackRect.bottom,
+      );
       if (!rightTrackSegment.isEmpty) {
         inactivePaint.shader = linearGradientShader(
           inactiveColors,
@@ -385,19 +442,21 @@ class CenteredRectangularSliderTrackShape extends RectangularSliderTrackShape {
       }
     } else {
       final Rect leftTrackSegment = Rect.fromLTRB(
-          trackRect.left,
-          trackRect.top,
-          min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
-          trackRect.bottom);
+        trackRect.left,
+        trackRect.top,
+        min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
+        trackRect.bottom,
+      );
       if (!leftTrackSegment.isEmpty) {
         context.canvas.drawRect(leftTrackSegment, inactivePaint);
       }
 
       final Rect rightTrackSegment = Rect.fromLTRB(
-          min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
-          trackRect.top,
-          trackRect.right,
-          trackRect.bottom);
+        min(trackCenter.dx, thumbCenter.dx - thumbSize.width / 2),
+        trackRect.top,
+        trackRect.right,
+        trackRect.bottom,
+      );
       if (!rightTrackSegment.isEmpty) {
         context.canvas.drawRect(rightTrackSegment, inactivePaint);
       }
@@ -436,17 +495,20 @@ class StrokeSliderThumbShape extends RoundSliderThumbShape {
   double get _disabledThumbRadius => disabledThumbRadius ?? enabledThumbRadius;
 
   @override
-  void paint(PaintingContext context, ui.Offset center,
-      {required Animation<double> activationAnimation,
-      required Animation<double> enableAnimation,
-      required bool isDiscrete,
-      required TextPainter labelPainter,
-      required RenderBox parentBox,
-      required SliderThemeData sliderTheme,
-      required ui.TextDirection textDirection,
-      required double value,
-      required double textScaleFactor,
-      required ui.Size sizeWithOverflow}) {
+  void paint(
+    PaintingContext context,
+    ui.Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required ui.TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required ui.Size sizeWithOverflow,
+  }) {
     super.paint(
       context,
       center,
@@ -488,10 +550,7 @@ class StrokeSliderThumbShape extends RoundSliderThumbShape {
           center -
               labelPainter.size.center(Offset.zero) *
                   (textDirection == TextDirection.ltr ? 1 : -1) +
-              ui.Offset(
-                0,
-                radius + labelPainter.size.height / 2,
-              ),
+              ui.Offset(0, radius + labelPainter.size.height / 2),
         );
       }, tintColor: strokeColor);
     }
@@ -530,26 +589,32 @@ class StrokeRangeSliderThumbShape extends RoundRangeSliderThumbShape {
   double get _disabledThumbRadius => disabledThumbRadius ?? enabledThumbRadius;
 
   @override
-  void paint(PaintingContext context, ui.Offset center,
-      {required Animation<double> activationAnimation,
-      required Animation<double> enableAnimation,
-      bool isDiscrete = false,
-      bool isEnabled = false,
-      bool? isOnTop,
-      required SliderThemeData sliderTheme,
-      ui.TextDirection? textDirection,
-      Thumb? thumb,
-      bool? isPressed}) {
-    super.paint(context, center,
-        activationAnimation: activationAnimation,
-        enableAnimation: enableAnimation,
-        isDiscrete: isDiscrete,
-        isEnabled: isEnabled,
-        isOnTop: isOnTop,
-        sliderTheme: sliderTheme,
-        textDirection: textDirection,
-        thumb: thumb,
-        isPressed: isPressed);
+  void paint(
+    PaintingContext context,
+    ui.Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    bool isDiscrete = false,
+    bool isEnabled = false,
+    bool? isOnTop,
+    required SliderThemeData sliderTheme,
+    ui.TextDirection? textDirection,
+    Thumb? thumb,
+    bool? isPressed,
+  }) {
+    super.paint(
+      context,
+      center,
+      activationAnimation: activationAnimation,
+      enableAnimation: enableAnimation,
+      isDiscrete: isDiscrete,
+      isEnabled: isEnabled,
+      isOnTop: isOnTop,
+      sliderTheme: sliderTheme,
+      textDirection: textDirection,
+      thumb: thumb,
+      isPressed: isPressed,
+    );
 
     final Canvas canvas = context.canvas;
     final Tween<double> radiusTween = Tween<double>(

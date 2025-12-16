@@ -433,8 +433,9 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   /// 格式化数字字符串
   String _formatDigits(String value) {
     if (isDouble || isInt) {
-      return widget.onNumberFormat?.call(value.toDoubleOrNull()) ??
-          value.toDoubleOrNull()?.toDigits(
+      final num = value.toDoubleOrNull();
+      return widget.onNumberFormat?.call(num) ??
+          num?.toDigits(
             digits: widget.inputMaxDigits,
             ensureInt: isInt,
             removeZero: !value.contains("."),
@@ -504,7 +505,16 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
             inputConfig.text = newValue;
           }
         }
-        widget.onChanged?.call(_formatResultValue(value));
+        widget.onChanged?.call(
+          _formatResultValue(
+            value,
+            didClamp: (clamp, value) {
+              if (clamp) {
+                inputConfig.text = _formatDigits("$value");
+              }
+            },
+          ),
+        );
       },
       onSubmitted: (value) {
         /*assert(() {
@@ -518,7 +528,10 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   }
 
   /// 格式化输出的结果值
-  dynamic _formatResultValue(String value) {
+  dynamic _formatResultValue(
+    String value, {
+    void Function(bool, dynamic)? didClamp /*是否clamp过*/,
+  }) {
     //debugger();
     try {
       if (isString) {
@@ -528,9 +541,15 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
           value.toDouble(),
           widget.inputMinValue,
           widget.inputMaxValue,
+          didClamp: didClamp,
         );
       } else if (isInt) {
-        return clamp(value.toInt(), widget.inputMinValue, widget.inputMaxValue);
+        return clamp(
+          value.toInt(),
+          widget.inputMinValue,
+          widget.inputMaxValue,
+          didClamp: didClamp,
+        );
       }
     } catch (e, s) {
       assert(() {

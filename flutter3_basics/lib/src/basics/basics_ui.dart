@@ -1930,8 +1930,8 @@ extension WidgetEx on Widget {
   }
 
   /// 装饰[DecoratedBox]
-  Widget decoration(Decoration? decoration) {
-    if (decoration == null) {
+  Widget decoration(Decoration? decoration, {bool enable = true}) {
+    if (decoration == null || enable != true) {
       return this;
     }
     return DecoratedBox(decoration: decoration, child: this);

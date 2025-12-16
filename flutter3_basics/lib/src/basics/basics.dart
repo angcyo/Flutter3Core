@@ -69,7 +69,13 @@ double nextDouble([double? min, double? max]) {
 ///
 /// - [correctMinMaxValue] 是否修正[min]和[max]的值, 默认false
 ///
-dynamic clamp(num? x, num? min, num? max, {bool correctMinMaxValue = false}) {
+dynamic clamp(
+  num? x,
+  num? min,
+  num? max, {
+  bool correctMinMaxValue = false,
+  void Function(bool, dynamic)? didClamp /*是否clamp过*/,
+}) {
   if (correctMinMaxValue) {
     if (min != null && max != null) {
       final temp = min;
@@ -81,9 +87,11 @@ dynamic clamp(num? x, num? min, num? max, {bool correctMinMaxValue = false}) {
     return min ?? max ?? 0;
   }
   if (min != null && x <= min) {
+    didClamp?.call(true, min);
     return min;
   }
   if (max != null && x >= max) {
+    didClamp?.call(true, max);
     return max;
   }
   if (x.isNaN) {

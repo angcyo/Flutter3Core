@@ -176,6 +176,8 @@ EdgeInsets edgeOnly({
   //水平垂直设置
   double? vertical,
   double? horizontal,
+  double? v,
+  double? h,
   //除了此方向, 其它都设置
   double? nLeft,
   double? nTop,
@@ -187,10 +189,10 @@ EdgeInsets edgeOnly({
   double? right,
   double? bottom,
 }) => EdgeInsets.only(
-  left: left ?? nTop ?? nRight ?? nBottom ?? horizontal ?? all ?? 0,
-  top: top ?? nLeft ?? nRight ?? nBottom ?? vertical ?? all ?? 0,
-  right: right ?? nLeft ?? nTop ?? nBottom ?? horizontal ?? all ?? 0,
-  bottom: bottom ?? nLeft ?? nTop ?? nRight ?? vertical ?? all ?? 0,
+  left: left ?? nTop ?? nRight ?? nBottom ?? h ?? horizontal ?? all ?? 0,
+  top: top ?? nLeft ?? nRight ?? nBottom ?? v ?? vertical ?? all ?? 0,
+  right: right ?? nLeft ?? nTop ?? nBottom ?? h ?? horizontal ?? all ?? 0,
+  bottom: bottom ?? nLeft ?? nTop ?? nRight ?? v ?? vertical ?? all ?? 0,
 );
 
 /// [edgeOnly]
@@ -201,6 +203,8 @@ EdgeInsets insets({
   //水平垂直设置
   double? vertical,
   double? horizontal,
+  double? v,
+  double? h,
   //除了此方向, 其它都设置
   double? nLeft,
   double? nTop,
@@ -215,6 +219,8 @@ EdgeInsets insets({
   all: all,
   vertical: vertical,
   horizontal: horizontal,
+  v: v,
+  h: h,
   nLeft: nLeft,
   nTop: nTop,
   nRight: nRight,

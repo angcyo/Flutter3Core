@@ -42,6 +42,9 @@ class LabelNumberSliderTile extends StatefulWidget {
   /// 轨道高度
   final double? trackHeight;
 
+  /// 轨道激活状态下的额外高度
+  final double? additionalActiveTrackHeight;
+
   /// 轨道颜色
   @defInjectMark
   final Color? activeTrackColor;
@@ -65,6 +68,12 @@ class LabelNumberSliderTile extends StatefulWidget {
   /// 自定义的浮子
   final SliderComponentShape? thumbShape;
 
+  /// 浮子的半径, 默认10
+  final double? thumbRadius;
+
+  /// 光晕的半径,默认24
+  final double? overlayRadius;
+
   /// 回调, 改变后的回调. 拖动过程中不回调
   final NumCallback? onValueChanged;
 
@@ -86,6 +95,7 @@ class LabelNumberSliderTile extends StatefulWidget {
     //--
     this.divisions,
     this.trackHeight,
+    this.additionalActiveTrackHeight,
     this.useCenteredTrackShape,
     this.activeTrackColor,
     this.inactiveTrackColor,
@@ -95,6 +105,8 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.valueIndicatorTextStyle,
     this.thumbColor,
     this.thumbShape,
+    this.thumbRadius,
+    this.overlayRadius,
   }) : _numType =
            numType ??
            (value != null
@@ -133,11 +145,14 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
+    //MARK: - label
     final labelWidget = buildLabelWidget(
       context,
       label: widget.label,
       labelWidget: widget.labelWidget,
     );
+
+    //MARK: - number
     final numberStr = _currentValue == null
         ? widget.valueText
         : formatNumber(_currentValue!, numType: widget._numType);
@@ -180,7 +195,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                 )
         : null;
 
-    //
+    //MARK: - top
     final top = [
       labelWidget?.expanded(),
       numberWidget?.paddingOnly(right: kX),
@@ -196,6 +211,8 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       }());
       value = value.clamp(minValue, maxValue);
     }
+
+    //MARK: - slider
     final bottom = buildSliderWidget(
       context,
       value,
@@ -212,11 +229,14 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       inactiveTrackColor: widget.inactiveTrackColor,
       inactiveTrackGradientColors: widget.inactiveTrackGradientColors,
       trackHeight: widget.trackHeight,
+      additionalActiveTrackHeight: widget.additionalActiveTrackHeight,
       useCenteredTrackShape: widget.useCenteredTrackShape,
       thumbColor: widget.thumbColor ?? globalTheme.accentColor,
       valueIndicatorColor: widget.valueIndicatorColor,
       valueIndicatorTextStyle: widget.valueIndicatorTextStyle,
       thumbShape: widget.thumbShape,
+      overlayRadius: widget.overlayRadius,
+      thumbRadius: widget.thumbRadius,
       onChanged: (value) {
         _currentValue = value;
         updateState();

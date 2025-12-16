@@ -468,6 +468,9 @@ mixin TileMixin {
     SliderComponentShape? thumbShape /*浮子的shape*/,
     SliderComponentShape? overlayShape /*光晕的shape*/,
     TextStyle? valueIndicatorTextStyle /*指示器中的文本样式*/,
+    //--
+    double? additionalActiveTrackHeight /*激活时滑块的额外高度*/,
+    EdgeInsetsGeometry? sliderPadding /*填充*/,
   }) {
     if (trackShape == null) {
       //渐变进度在渐变颜色中的颜色值
@@ -484,6 +487,13 @@ mixin TileMixin {
         );
       }
 
+      if (additionalActiveTrackHeight != null) {
+        //系统的[RoundedRectSliderTrackShape]不支持设置, 需要自定义
+        trackShape = CustomRoundedRectSliderTrackShape(
+          additionalActiveTrackHeight: additionalActiveTrackHeight,
+        );
+      }
+
       //居中双边shape
       //debugger();
       if (useCenteredTrackShape == true) {
@@ -492,6 +502,7 @@ mixin TileMixin {
           activeColorStops: activeTrackGradientColorStops,
           inactiveColors: inactiveTrackGradientColors,
           inactiveColorStops: inactiveTrackGradientColorStops,
+          additionalActiveTrackHeight: additionalActiveTrackHeight ?? 2,
         );
         //--
         final color = gradientColor ?? activeTrackGradientColors?.last;
@@ -506,6 +517,7 @@ mixin TileMixin {
             activeColorStops: activeTrackGradientColorStops,
             inactiveColors: inactiveTrackGradientColors,
             inactiveColorStops: inactiveTrackGradientColorStops,
+            additionalActiveTrackHeight: additionalActiveTrackHeight,
           );
           //--
           final color = gradientColor ?? activeTrackGradientColors?.last;
@@ -540,6 +552,10 @@ mixin TileMixin {
                 : RoundSliderOverlayShape(overlayRadius: overlayRadius)),
         trackHeight: trackHeight,
         valueIndicatorTextStyle: valueIndicatorTextStyle,
+        //--
+        padding: sliderPadding /*?? insets(h: 16)*/,
+        /*trackGap: 10,
+        thumbSize: WidgetStatePropertyAll(Size(10,10)),*/
       ),
       child: Slider(
         value: value,
@@ -812,6 +828,7 @@ mixin TileMixin {
     Decoration? decoration,
     Color? backgroundColor,
     BoxConstraints? constraints = kNumberInputConstraints,
+    TextStyle? numberTextStyle,
     //--
     num? maxValue,
     num? minValue,
@@ -835,6 +852,7 @@ mixin TileMixin {
             inputText: number,
             contentPadding: contentPadding,
             inputNumType: numType ?? NumType.from(number),
+            textStyle: numberTextStyle ?? globalTheme.textBodyStyle,
             inputMinValue: minValue,
             inputMaxValue: maxValue,
             inputMaxDigits: maxDigits,
