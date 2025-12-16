@@ -488,11 +488,13 @@ extension PathEx on Path {
   /// @return 返回新的路径
   @dp
   Path moveToZero({
-    //--
+    //--额外的偏移
+    @dp Offset? offset,
+    //--缩放到的大小
     @dp Size? size,
     @dp double? width,
     @dp double? height,
-    //--
+    //--缩放倍率
     double? scale,
     double? sx,
     double? sy,
@@ -502,6 +504,7 @@ extension PathEx on Path {
   }) {
     return ofList<Path>()
         .moveToZero(
+          offset: offset,
           size: size,
           width: width,
           height: height,
@@ -672,21 +675,27 @@ extension ListPathEx on List<Path> {
   /// [PathEx.moveToZero]
   /// [ListPathEx.moveToZero]
   List<Path> moveToZero({
+    //--额外的偏移
+    @dp Offset? offset,
+    //--顺便缩放到的大小
     @dp Size? size,
     @dp double? width,
     @dp double? height,
-    //--
+    //--或者直接指定缩放倍率
     double? scale,
     double? sx,
     double? sy,
     //--
     Offset? scaleAnchor,
-    //--
+    //--精确计算bounds?
     bool? exact,
   }) {
     final bounds = getExactBounds(exact);
     final translate = Matrix4.identity();
-    translate.translate(-bounds.left, -bounds.top);
+    translate.translate(
+      -bounds.left + (offset?.dx ?? 0),
+      -bounds.top + (offset?.dy ?? 0),
+    );
 
     width ??= size?.width.ensureValid();
     height ??= size?.height.ensureValid();

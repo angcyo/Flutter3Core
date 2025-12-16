@@ -311,8 +311,8 @@ extension PointerEventEx on PointerEvent {
     if (other == null) {
       return false;
     }
-    return (localPosition.dx - other.dx).abs() > threshold ||
-        (localPosition.dy - other.dy).abs() > threshold;
+    return (localPosition.dx - other.dx).abs() >= threshold ||
+        (localPosition.dy - other.dy).abs() >= threshold;
   }
 
   //-- mouse event
@@ -1057,8 +1057,8 @@ mixin DoubleTapDetectorMixin {
     if (event.isPointerDown) {
       isDoubleFirstTouch =
           nowTime.difference(lastDownTime) > doubleTapTime ||
-          (point.dx - lastDownPoint.dx).abs() > doubleTapThreshold ||
-          (point.dy - lastDownPoint.dy).abs() > doubleTapThreshold;
+          (point.dx - lastDownPoint.dx).abs() >= doubleTapThreshold ||
+          (point.dy - lastDownPoint.dy).abs() >= doubleTapThreshold;
 
       if (isDoubleFirstTouch) {
         lastDownTime = DateTime.now();
@@ -1279,7 +1279,7 @@ mixin MultiPointerDetectorMixin {
     final move = pointerMoveMap[pointer];
     final down = pointerDownMap[pointer];
     if (move != null && down != null) {
-      return (move.localPosition.dx - down.localPosition.dx).abs() > threshold;
+      return (move.localPosition.dx - down.localPosition.dx).abs() >= threshold;
     }
     return false;
   }

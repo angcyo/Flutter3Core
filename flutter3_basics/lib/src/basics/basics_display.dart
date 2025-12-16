@@ -80,8 +80,8 @@ double get screenHeight => platformMediaQueryData.size.height;
 double get $screenHeight => screenHeight;
 
 /// 屏幕最小边长
-/// - [Size.shortestSide]
-/// - [Size.longestSide]
+/// - [Size.shortestSide] 最短边
+/// - [Size.longestSide] 最长边
 @dp
 double get $screenMinSize => min(screenWidth, screenHeight);
 

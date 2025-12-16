@@ -84,7 +84,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   double circleRadius = 4;
 
   /// 完成后的输出回调
-  /// - 自动在此方法中调用[CanvasDelegate.detachOverlay]
+  /// - 自动调用[CanvasDelegate.detachOverlay]
   @configProperty
   ValueCallback<String?>? onSvgPathAction;
 
@@ -306,7 +306,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   bool _isPointerDown = false;
 
   @override
-  bool handlePainterPointerEvent(PointerEvent event) {
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
     //l.d("handleEvent->$event");
     final viewBox = canvasViewBox;
     if (viewBox == null) {
@@ -387,7 +387,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
     return true;
   }
 
-  //--
+  //MARK: - op
 
   /// 重置
   void reset() {
@@ -510,7 +510,142 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   }
 }
 
+/// 用于实现在画布上绘制[Path], 并输出绘制后的目标位置和大小
+class CanvasPathOverlayComponent extends CanvasOverlayComponent {
+  /// 需要绘制的路径
+  @dp
+  @configProperty
+  final Path? path;
+
+  /// 完成后的输出回调
+  /// - 自动调用[CanvasDelegate.detachOverlay]
+  @dp
+  @configProperty
+  @sceneCoordinate
+  ValueCallback<Rect?>? onOutputAction;
+
+  /// 绘制路径的颜色
+  @defInjectMark
+  @configProperty
+  Color? color;
+
+  /// 当目标大小超过阈值时, 才允许输出
+  @dp
+  @configProperty
+  double touchSlop = kTouchSlop;
+
+  /// 等比控制按键
+  @configProperty
+  LogicalKeyboardKey? equalRatioKey = LogicalKeyboardKey.shift;
+
+  /// 输出的矩形
+  @dp
+  @sceneCoordinate
+  @output
+  Rect get outputRect {
+    final rect = Rect.fromPoints(_downPoint, _movePoint);
+    if (isKeyPressed(key: equalRatioKey)) {
+      final maxSide = max(rect.width, rect.height);
+      return Rect.fromLTWH(
+        (_movePoint.dx >= _downPoint.dx)
+            ? _downPoint.dx
+            : _downPoint.dx - maxSide,
+        (_movePoint.dy >= _downPoint.dy)
+            ? _downPoint.dy
+            : _downPoint.dy - maxSide,
+        maxSide,
+        maxSide,
+      );
+    }
+    return rect;
+  }
+
+  CanvasPathOverlayComponent({this.path, this.color, this.onOutputAction}) {
+    cursorStyle = SystemMouseCursors.precise;
+  }
+
+  @override
+  void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
+    if (_isPointerDown && path != null) {
+      //核心路径
+      paint
+        ..style = PaintingStyle.stroke
+        ..color = color ?? Colors.black;
+      canvas.drawPath(
+        path!.moveToZero(offset: outputRect.lt, size: outputRect.size),
+        paint,
+      );
+    }
+  }
+
+  /// 按下的点坐标
+  @property
+  @sceneCoordinate
+  Offset _downPoint = Offset.zero;
+
+  /// 移动的点坐标
+  @property
+  @sceneCoordinate
+  Offset _movePoint = Offset.zero;
+
+  @property
+  bool _isPointerDown = false;
+
+  @override
+  bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
+    //l.v("event->$event");
+    final viewBox = canvasViewBox;
+    if (viewBox == null) {
+      return super.handlePainterPointerEvent(event);
+    }
+    final point = viewBox.toScenePoint(event.localPosition);
+    if (event.isPointerDown) {
+      _downPoint = point;
+      _movePoint = point;
+      _isPointerDown = true;
+    } else if (event.isPointerMove) {
+      _movePoint = point;
+    } else if (event.isPointerFinish) {
+      _isPointerDown = false;
+      _handleOutputAction();
+    }
+    refresh();
+    return true;
+  }
+
+  @override
+  bool handleKeyEvent(KeyEvent event) {
+    //l.v("event->$event");
+    if (equalRatioKey != null &&
+        isLogicalKeyPressed(
+          [equalRatioKey!],
+          pressedKeys: {event.logicalKey},
+        )) {
+      refresh();
+    }
+    if (event.isKeyDown) {
+      if (event.isEscKey) {
+        _handleOutputAction();
+      }
+    }
+    return true;
+  }
+
+  /// 处理输出
+  void _handleOutputAction() {
+    if ((_movePoint.dx - _downPoint.dx).abs() >= touchSlop ||
+        (_movePoint.dy - _downPoint.dy).abs() >= touchSlop) {
+      //满足阈值
+      onOutputAction?.call(outputRect);
+    } else {
+      onOutputAction?.call(null);
+    }
+    canvasDelegate?.detachOverlay(overlay: this);
+  }
+}
+
 /// 用来触发手势事件的覆盖层
+/// - 添加此覆盖层, 可以在拦截画布上的手势操作
 class CanvasPointerOverlayComponent extends CanvasOverlayComponent {
   /// 完成后的输出回调
   @configProperty
@@ -526,7 +661,7 @@ class CanvasPointerOverlayComponent extends CanvasOverlayComponent {
   }
 }
 
-/// 用来触发
+/// 用来实现在画布中直接输入文本
 @implementation
 class CanvasTextOverlayComponent extends CanvasOverlayComponent {}
 
