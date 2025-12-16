@@ -298,35 +298,42 @@ class _SegmentTileState extends State<SegmentTile> {
 /// Segment Tile 使用[FlowLayout]实现
 /// - [SegmentTile] - 仅支持[Widget]类型的segment
 /// - [ValueSegmentTile] - 支持很多类型的segment
-class ValueSegmentTile extends StatefulWidget {
-  //MARK: - config
+class ValueSegmentTile extends StatefulWidget with MultiValueConfigMixin {
+  //MARK: - MultipleValue
 
   /// 值列表, 支持很多类型
   /// - [widgetOf]
+  @override
   final List? values;
 
   /// 选中的值列表
+  @override
   final List? selectedValues;
 
   /// 值列表对应的Widget
+  @override
   final List<Widget>? valuesWidget;
 
   /// 点击事件回调
+  @override
   final ValueCallback? onTapValue;
 
   /// 选中的值列表改变回调
+  @override
   final ValueCallback<List>? onValuesSelected;
+
+  /// 最多选中数量
+  @override
+  final int maxSelectedCount;
+
+  /// 是否允许空选择
+  @override
+  final bool enableSelectedEmpty;
 
   //MARK: - style
 
   /// 是否激活交互
   final bool enable;
-
-  /// 最多选中数量
-  final int maxSelectedCount;
-
-  /// 是否允许空选择
-  final bool enableSelectedEmpty;
 
   /// 选中样式: 背景颜色
   final Color? selectedBgColor;
@@ -363,10 +370,10 @@ class ValueSegmentTile extends StatefulWidget {
     this.valuesWidget,
     this.onTapValue,
     this.onValuesSelected,
-    //--
-    this.enable = true,
     this.maxSelectedCount = 1,
     this.enableSelectedEmpty = false,
+    //--
+    this.enable = true,
     this.selectedBgColor,
     this.tileBgColor,
     this.textStyle,
@@ -381,81 +388,21 @@ class ValueSegmentTile extends StatefulWidget {
   State<ValueSegmentTile> createState() => _ValueSegmentTileState();
 }
 
-class _ValueSegmentTileState extends State<ValueSegmentTile> {
-  late List _selectedValues;
-
-  /// 是否是多选模式
-  bool get _isMultiSelect => widget.maxSelectedCount > 1;
-
-  @override
-  void didUpdateWidget(covariant ValueSegmentTile oldWidget) {
-    _selectedValues = [...?widget.selectedValues];
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void initState() {
-    _selectedValues = [...?widget.selectedValues];
-    super.initState();
-  }
-
+class _ValueSegmentTileState extends State<ValueSegmentTile>
+    with MultiValueMixin {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final borderRadius = widget.selectedBorderRadius ?? kDefaultBorderRadiusX;
-    final segmentList =
-        widget.valuesWidget ??
-        widget.values?.mapIndexed((index, value) {
-          return widgetOf(
-                context,
-                value,
-                tryTextWidget: true,
-                textAlign: TextAlign.center,
-                textStyle: _isSelectedValue(value)
-                    ? widget.textSelectedStyle
-                    : widget.textStyle,
-              )
-              ?.paddingOnly(all: kL)
-              .backgroundDecoration(
-                !widget.enable
-                    ? fillDecoration(
-                        color: globalTheme.disableColor,
-                        radius: borderRadius,
-                      )
-                    : _isSelectedValue(value)
-                    ? fillDecoration(
-                        color:
-                            widget.selectedBgColor ?? globalTheme.accentColor,
-                        radius: borderRadius,
-                      )
-                    : null,
-              )
-              .click(
-                () {
-                  //debugger();
-                  widget.onTapValue?.call(value);
-                  if (_isSelectedValue(value)) {
-                    if (_canCancelSelectedValue(value)) {
-                      _selectedValues.remove(value);
-                      widget.onValuesSelected?.call(_selectedValues);
-                      updateState();
-                    }
-                  } else {
-                    if (_canSelectedValue(value)) {
-                      if (!_isMultiSelect) {
-                        _selectedValues.clear();
-                      }
-                      _selectedValues.add(value);
-                      widget.onValuesSelected?.call(_selectedValues);
-                      updateState();
-                    }
-                  }
-                },
-                enable: widget.enable /*&&
-                    !disableTap &&
-                    (selectedDisableTap ? !isSelected : true)*/,
-              );
-        }).toList();
+    final radius = widget.selectedBorderRadius ?? kDefaultBorderRadiusX;
+    final segmentList = buildValuesWidgetList(
+      context,
+      globalTheme,
+      textStyle: widget.textStyle,
+      textSelectedStyle: widget.textSelectedStyle,
+      selectedBgColor: widget.selectedBgColor,
+      radius: radius,
+      enable: widget.enable,
+    );
     return segmentList
             ?.flowLayout(
               equalWidthRange: "",
@@ -469,7 +416,7 @@ class _ValueSegmentTileState extends State<ValueSegmentTile> {
             ?.backgroundDecoration(
               fillDecoration(
                 color: widget.tileBgColor ?? globalTheme.whiteSubBgColor,
-                radius: borderRadius,
+                radius: radius,
               ),
             )
             .paddingOnly(
@@ -478,33 +425,5 @@ class _ValueSegmentTileState extends State<ValueSegmentTile> {
               insets: widget.tileInsets,
             ) ??
         empty;
-  }
-
-  /// 指定的值[value]是否选中了
-  bool _isSelectedValue(dynamic value) {
-    return _selectedValues.contains(value) ?? false;
-  }
-
-  /// 是否可以选中指定的值[value]
-  bool _canSelectedValue(dynamic value) {
-    if (_isSelectedValue(value)) {
-      return false;
-    }
-    if (!_isMultiSelect) {
-      return true;
-    }
-    final selectedCount = _selectedValues.size();
-    if (selectedCount >= widget.maxSelectedCount) {
-      return false;
-    }
-    return true;
-  }
-
-  /// 是否可以取消指定的值[value]
-  bool _canCancelSelectedValue(dynamic value) {
-    if (_isMultiSelect) {
-      return widget.enableSelectedEmpty || _selectedValues.contains(value);
-    }
-    return widget.enableSelectedEmpty;
   }
 }

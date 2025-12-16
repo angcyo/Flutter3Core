@@ -932,7 +932,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [showMenus]
   @api
   void hideMenu<T extends Object?>([T? result]) {
-    delegateContext?.popMenu(result);
+    delegateContext?.popMenu(result: result);
   }
 
   /// 用来触发显示一个对话框路由

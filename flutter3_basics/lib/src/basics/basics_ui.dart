@@ -1283,18 +1283,20 @@ extension WidgetEx on Widget {
   /// [RotateAnimation] 旋转动画
   /// [RotationTransition] 旋转变换
   Widget rotate(
-    double radians, {
+    double? radians, {
     AlignmentGeometry alignment = Alignment.center,
     Offset? origin,
     bool transformHitTests = true,
   }) {
-    return Transform.rotate(
-      alignment: alignment,
-      angle: radians,
-      origin: origin,
-      transformHitTests: transformHitTests,
-      child: this,
-    );
+    return radians == null
+        ? this
+        : Transform.rotate(
+            alignment: alignment,
+            angle: radians,
+            origin: origin,
+            transformHitTests: transformHitTests,
+            child: this,
+          );
   }
 
   //endregion ---Flexible---
@@ -2664,7 +2666,7 @@ extension WidgetEx on Widget {
   /// - [inkWellCircle]
   Widget inkWell(
     GestureTapCallback? onTap, {
-    BorderRadius? borderRadius,
+    BorderRadius? borderRadius /*边框的圆角*/,
     Color? splashColor,
     Color? highlightColor,
     Color? hoverColor,

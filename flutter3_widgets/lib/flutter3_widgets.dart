@@ -101,6 +101,7 @@ part 'src/tiles/segment_tile.dart';
 part 'src/tiles/menu_tile.dart';
 part 'src/tiles/hover_mixin.dart';
 part 'src/tiles/desktop_mix.dart';
+part 'src/tiles/multi_value_change_mixin.dart';
 part 'src/widgets/layout/after_layout.dart';
 part 'src/widgets/app/button.dart';
 part 'src/widgets/app/search.dart';

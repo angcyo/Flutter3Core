@@ -19,7 +19,7 @@ part 'arrow_popup_route.dart';
 
 /// 弹窗路由扩展
 extension PopupEx on BuildContext {
-  /// 在指定锚点位置显示一个弹窗路由
+  /// 在指定锚点位置显示一个弹窗路由[PopupRoute]
   ///
   /// - [alignment]弹窗需要对齐锚点的哪个方向
   /// - [bodyMargin] 弹窗的在对应方向上的边距
@@ -33,21 +33,30 @@ extension PopupEx on BuildContext {
     BuildContext? anchorChild,
     bool rootNavigator = false,
     double bodyMargin = kH,
-    double edgeMargin = kX /*距离容器的边界距离*/,
+    double? edgeMargin /*距离容器的边界距离*/,
     //--
-    Alignment? alignment,
+    Alignment? alignment /*对齐方式*/,
+    bool offsetAlignment = false /*根据[alignment]是否偏移自身的宽高*/,
+    bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
+    Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,
     //--
     Color? backgroundColor,
     double? radius,
     bool animate = true,
     Color? barriersColor = Colors.transparent,
-    EdgeInsets? contentPadding = const EdgeInsets.all(kS),
-    EdgeInsets? contentMargin = EdgeInsets.zero,
+    EdgeInsets? contentPadding,
+    EdgeInsets? contentMargin,
     IgnorePointerType? barrierIgnorePointerType,
     TranslationType? translationType,
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) {
+    if (matchAnchorSize) {
+    } else {
+      edgeMargin ??= kX;
+      contentPadding ??= const EdgeInsets.all(kS);
+      contentMargin ??= EdgeInsets.zero;
+    }
     final navigator = Navigator.of(this, rootNavigator: rootNavigator);
     final parentSize = navigator.context.findRenderObject()?.renderSize;
     final parentWidth = parentSize?.width ?? $screenWidth;
@@ -61,6 +70,8 @@ extension PopupEx on BuildContext {
       backgroundColor: backgroundColor,
       animate: animate,
       showArrow: false,
+      matchAnchorSize: matchAnchorSize,
+      matchAnchorSizeOffset: matchAnchorSizeOffset,
       contentMargin: contentMargin,
       contentPadding: contentPadding,
       radius: radius,
@@ -102,38 +113,61 @@ extension PopupEx on BuildContext {
             if (bodyAlign == Alignment.topLeft) {
               offsetX = anchorRect.left - childRect.w - bodyMargin;
               offsetY = anchorRect.top;
+              if (offsetAlignment) {
+                offsetY += anchorRect.height;
+              }
             } else if (bodyAlign == Alignment.topCenter) {
               offsetX = anchorRect.center.dx - childRect.w / 2;
               offsetY = anchorRect.top - childRect.h - bodyMargin;
+              if (offsetAlignment) {
+                offsetY += anchorRect.height;
+              }
             } else if (bodyAlign == Alignment.topRight) {
               offsetX = anchorRect.right + bodyMargin;
               offsetY = anchorRect.top;
+              if (offsetAlignment) {
+                offsetY += anchorRect.height;
+              }
             } else if (bodyAlign == Alignment.centerRight) {
               offsetX = anchorRect.right + bodyMargin;
               offsetY = anchorRect.center.dy - childRect.h / 2;
             } else if (bodyAlign == Alignment.bottomRight) {
               offsetX = anchorRect.right + bodyMargin;
-              offsetY = anchorRect.bottom - childRect.h;
+              offsetY = anchorRect.bottom - childRect.h - bodyMargin;
+              if (offsetAlignment) {
+                offsetY += anchorRect.height + childRect.h;
+              }
             } else if (bodyAlign == Alignment.bottomCenter) {
               offsetX = anchorRect.center.dx - childRect.w / 2;
               offsetY = anchorRect.bottom + bodyMargin;
+              if (offsetAlignment) {
+                offsetY += anchorRect.height + childRect.h;
+              }
             } else if (bodyAlign == Alignment.bottomLeft) {
               offsetX = anchorRect.left - childRect.w - bodyMargin;
               offsetY = anchorRect.bottom - childRect.h;
+              if (offsetAlignment) {
+                offsetY += anchorRect.height + childRect.h;
+              }
             } else if (bodyAlign == Alignment.centerLeft) {
               offsetX = anchorRect.left - childRect.w - bodyMargin;
               offsetY = anchorRect.centerY - childRect.h / 2;
             }
             //debugger();
+            final offsetMargin = edgeMargin ?? 0;
             return Offset(
-              offsetX.clamp(
-                edgeMargin,
-                parentWidth - edgeMargin - childRect.width,
-              ),
-              offsetY.clamp(
-                edgeMargin,
-                parentHeight - edgeMargin - childRect.height,
-              ),
+              childRect.width >= parentWidth
+                  ? 0
+                  : offsetX.clamp(
+                      offsetMargin,
+                      parentWidth - offsetMargin - childRect.width,
+                    ),
+              childRect.height >= parentHeight
+                  ? 0
+                  : offsetY.clamp(
+                      offsetMargin,
+                      parentHeight - offsetMargin - childRect.height,
+                    ),
             );
           },
     );
@@ -147,7 +181,7 @@ extension PopupEx on BuildContext {
   /// - [arrowDirection] 指定箭头的方向
   /// - [arrowDirectionMinOffset] 箭头的偏移量
   ///
-  /// - [ArrowPopupRoute]
+  /// - [ArrowPopupRoute] -> [PopupRoute] 路由
   ///
   /// - [showArrowPopupOverlay] 手势可以穿透
   /// - [showArrowPopupRoute] 手势不可以穿透
@@ -158,6 +192,8 @@ extension PopupEx on BuildContext {
     Rect? anchorRect,
     BuildContext? anchorChild,
     bool rootNavigator = false,
+    bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
+    Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,
     //--
     Color? backgroundColor,
     double? radius,
@@ -168,13 +204,21 @@ extension PopupEx on BuildContext {
     AxisDirection? arrowDirection,
     double arrowDirectionMinOffset = 15,
     EdgeInsets? contentPadding = const EdgeInsets.all(kH),
-    EdgeInsets? contentMargin = const EdgeInsets.all(kX),
+    EdgeInsets? contentMargin,
     IgnorePointerType? barrierIgnorePointerType,
     TranslationType? translationType,
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) async {
     //debugger();
+    if (matchAnchorSize) {
+      /*contentPadding ??= const EdgeInsets.all(kH);*/
+      /*contentMargin ??= const EdgeInsets.all(kX); */
+    } else {
+      /*contentPadding ??= const EdgeInsets.all(kH);*/
+      contentMargin ??= const EdgeInsets.all(kX);
+    }
+
     final that = this;
     final navigator = Navigator.of(that, rootNavigator: rootNavigator);
     final ancestor = navigator.context.findRenderObject();
@@ -183,7 +227,11 @@ extension PopupEx on BuildContext {
     final globalTheme = GlobalTheme.of(that);
     return navigator.push(
       ArrowPopupRoute(
-        child: child /*AnchorLocationLayout(
+        child: matchAnchorSize
+            ? child.size(
+                width: anchorRect.width + (matchAnchorSizeOffset?.dx ?? 0),
+              )
+            : child /*AnchorLocationLayout(
           anchor: that,
           anchorKey: anchorKey,
           anchorAncestor: ancestor,

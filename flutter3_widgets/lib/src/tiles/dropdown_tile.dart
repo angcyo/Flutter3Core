@@ -136,6 +136,7 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
             widgetOf(context, value) ?? textOf(value, context)!.text(),
             index,
             value,
+            value == currentValueMixin,
           ),
         ),
     ];
@@ -147,8 +148,15 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
     Widget item,
     int index,
     dynamic data,
+    bool? isSelected,
   ) {
-    return widget.itemTransformBuilder?.call(context, item, index, data) ??
+    return widget.itemTransformBuilder?.call(
+          context,
+          item,
+          index,
+          data,
+          isSelected,
+        ) ??
         item;
   }
 }

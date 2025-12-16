@@ -45,7 +45,7 @@ class _RadioGroupTileState extends State<RadioGroupTile>
       values: widget.values,
       valuesWidget: widget.valuesWidget,
       /*selectedIndex: widget.initValue,*/
-      transformValueWidget: (ctx, child, index, data) {
+      transformValueWidget: (ctx, child, index, data, isSelected) {
         return RadioButton(
           isChecked: data == currentValueMixin,
           padding: widget.itemPadding,

@@ -1967,6 +1967,9 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
+  /// 创建一个圆角[BorderRadius]
+  BorderRadius get borderRadius => BorderRadius.circular(this.toDouble());
+
   /// 异步循环生成器
   /// 循环[this]的次数
   /// [step] 循环的步长
@@ -2059,7 +2062,7 @@ extension NumEx on num {
   }
 
   /// 正负取反
-  get inverted => -this;
+  num get inverted => -this;
 
   /// 是否正负取反
   num invert([bool invert = true]) => invert == true ? -this : this;

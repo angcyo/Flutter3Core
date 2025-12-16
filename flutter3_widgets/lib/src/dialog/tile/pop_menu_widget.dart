@@ -33,7 +33,10 @@ class _PopMenuWidgetState extends State<PopMenuWidget> {
     tapRecognizer.onTap = () {
       //debugger();
       if (widget.enable) {
-        context.popMenu(widget.result, widget.rootNavigator, false);
+        context.popMenu(
+          result: widget.result,
+          rootNavigator: widget.rootNavigator,
+        );
       }
     };
     super.initState();

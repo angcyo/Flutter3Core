@@ -709,7 +709,13 @@ mixin TileMixin {
       result = values?.mapIndex((data, index) {
         final widget = widgetOf(context, data, tryTextWidget: false);
         if (widget != null) {
-          return transformValueWidget?.call(context, widget, index, data) ??
+          return transformValueWidget?.call(
+                context,
+                widget,
+                index,
+                data,
+                index == selectedIndex,
+              ) ??
               widget;
         }
         //debugger();
@@ -733,7 +739,13 @@ mixin TileMixin {
               ? selectedTextStyle ?? style
               : textStyle ?? style,
         );
-        return transformValueWidget?.call(context, textWidget, index, data) ??
+        return transformValueWidget?.call(
+              context,
+              textWidget,
+              index,
+              data,
+              index == selectedIndex,
+            ) ??
             textWidget.min();
       }).toList();
     } else {

@@ -83,7 +83,7 @@ class _OptionsDialogState extends State<OptionsDialog>
       context,
       transformValueWidget:
           widget.transformValueWidget ??
-          (ctx, child, index, data) {
+          (ctx, child, index, data, isSelected) {
             //debugger();
             return [
                   (isSelectedValueMixin(index)
@@ -136,7 +136,7 @@ class _OptionsDialogState extends State<OptionsDialog>
         onTap: () {
           final value = widget.values?.getOrNull(currentValueMixin!);
           widget.onValueChanged?.call(value);
-          buildContext?.popDialog(value);
+          buildContext?.popDialog(result: value);
         },
         child: lRes?.libConfirm.text(),
       ).expanded(),

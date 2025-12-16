@@ -661,11 +661,11 @@ extension NavigatorEx on BuildContext {
   );
 
   /// 弹出一个菜单路由
-  void popDialog<T extends Object?>([
+  void popDialog<T extends Object?>({
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = false,
-  ]) => pop(
+  }) => pop(
     result: result,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,
@@ -673,11 +673,11 @@ extension NavigatorEx on BuildContext {
 
   /// 弹出一个菜单路由
   @alias
-  void popMenu<T extends Object?>([
+  void popMenu<T extends Object?>({
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = false,
-  ]) => pop(
+  }) => pop(
     result: result,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,

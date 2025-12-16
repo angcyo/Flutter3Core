@@ -206,7 +206,13 @@ mixin ValueMixin {
           textAlign: textAlign,
         );
         if (widget != null) {
-          return transformValueWidget?.call(context, widget, index, data) ??
+          return transformValueWidget?.call(
+                context,
+                widget,
+                index,
+                data,
+                index == selectedIndex,
+              ) ??
               widget;
         }
         //debugger();
@@ -231,7 +237,13 @@ mixin ValueMixin {
               : textStyle ?? style,
           textAlign: textAlign,
         );
-        return transformValueWidget?.call(context, textWidget, index, data) ??
+        return transformValueWidget?.call(
+              context,
+              textWidget,
+              index,
+              data,
+              index == selectedIndex,
+            ) ??
             textWidget.min();
       }).toList();
     } else {

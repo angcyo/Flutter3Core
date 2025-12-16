@@ -61,7 +61,7 @@ extension ColorPickerEx on BuildContext {
             child: 'Ok'.text(),
             onPressed: () {
               //debugger();
-              ctx.popDialog(result);
+              ctx.popDialog(result: result);
             },
           ),
         ],

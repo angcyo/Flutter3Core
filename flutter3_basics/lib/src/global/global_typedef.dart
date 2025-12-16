@@ -123,6 +123,7 @@ typedef TransformDataWidgetBuilder =
       Widget widget,
       int index,
       dynamic data,
+      bool? isSelected,
     );
 
 /// [TransformWidgetBuilder] 的支持null版本

@@ -302,11 +302,15 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
         )
         .inkWell(
           widget.onTap ??
-              () {
-                wrapShowPopupMixin(() async {
-                  await buildContext?.showPopupDialog(widget.popupBodyWidget!);
-                });
-              },
+              (widget.popupBodyWidget == null
+                  ? null
+                  : () {
+                      wrapShowPopupMixin(() async {
+                        await buildContext?.showPopupDialog(
+                          widget.popupBodyWidget!,
+                        );
+                      });
+                    }),
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )
