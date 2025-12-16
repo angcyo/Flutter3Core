@@ -84,6 +84,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   double circleRadius = 4;
 
   /// 完成后的输出回调
+  /// - 自动在此方法中调用[CanvasDelegate.detachOverlay]
   @configProperty
   ValueCallback<String?>? onSvgPathAction;
 
@@ -371,6 +372,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
         //如果已经是编辑模式, 则输出数据并上屏
         //l.d(outputSvgPath);
         onSvgPathAction?.call(outputSvgPath);
+        canvasDelegate?.detachOverlay(overlay: this);
       } else {
         _hoverPoint = null;
         _isPointerDown = false;

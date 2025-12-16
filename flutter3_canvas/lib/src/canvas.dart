@@ -715,6 +715,14 @@ class CanvasListener {
   final void Function(CanvasDelegate delegate, dynamic project)?
   onCanvasOpenProject;
 
+  /// [CanvasDelegate.dispatchCanvasOverlayComponentChanged]
+  final void Function(
+    CanvasDelegate delegate,
+    CanvasOverlayComponent? from,
+    CanvasOverlayComponent? to,
+  )?
+  onCanvasOverlayComponentAction;
+
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
@@ -749,5 +757,6 @@ class CanvasListener {
     this.onCanvasStyleModeChangedAction,
     this.onCanvasStyleChangedAction,
     this.onCanvasOpenProject,
+    this.onCanvasOverlayComponentAction,
   });
 }
