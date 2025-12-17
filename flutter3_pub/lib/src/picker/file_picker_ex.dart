@@ -29,7 +29,7 @@ Future<PlatformFile?> pickFile({
   bool withReadStream = false,
 }) async {
   return (await pickFiles(
-    type: FileType.any,
+    type: isNil(allowedExtensions) ? FileType.any : FileType.custom,
     allowCompression: false,
     compressionQuality: 0,
     allowMultiple: false,

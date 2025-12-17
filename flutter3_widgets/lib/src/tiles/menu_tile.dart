@@ -216,6 +216,9 @@ class DesktopTextMenuTile extends StatefulWidget {
   @defInjectMark
   final Widget? trailingWidget;
 
+  /// 不指定[leadingWidget].[trailingWidget]时的占位大小
+  final Size placeholderSize;
+
   //--text
 
   /// 中间的文本内容
@@ -234,6 +237,9 @@ class DesktopTextMenuTile extends StatefulWidget {
   /// - 弹出弹窗之后, 会自动进入选中状态
   final Widget? popupBodyWidget;
 
+  /// 当显示的[popupBodyWidget]被关闭时, 是否自动关闭当前的[PopupRoute]
+  final bool? autoClosePopup;
+
   /// 自定义点击事件
   /// - 会拦截默认的弹出[popupBodyWidget]处理
   final GestureTapCallback? onTap;
@@ -251,12 +257,14 @@ class DesktopTextMenuTile extends StatefulWidget {
     super.key,
     this.text,
     this.leadingWidget,
+    this.placeholderSize = const Size(24, 24),
     this.trailingWidget,
     //--
     this.isSelected = false,
     this.isChecked,
     this.tileMinWidth = 100,
     this.popupBodyWidget,
+    this.autoClosePopup,
     this.onTap,
     //--
     this.tilePadding,
@@ -268,9 +276,6 @@ class DesktopTextMenuTile extends StatefulWidget {
 
 class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
     with DesktopPopupStateMixin {
-  /// 占位的小部件大小
-  final Size placeholderSize = const Size(24, 24);
-
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -294,10 +299,11 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
               color: globalTheme.successColor,
             ).invisible(enable: !(widget.isChecked == true)).insets(h: kL),
           //-- leading
-          widget.leadingWidget ?? SizedBox.fromSize(size: placeholderSize),
+          widget.leadingWidget ??
+              SizedBox.fromSize(size: widget.placeholderSize),
           (widget.text ?? "").text(style: globalTheme.textBodyStyle).expanded(),
           //-- trailing
-          trailingWidget ?? SizedBox.fromSize(size: placeholderSize),
+          trailingWidget ?? SizedBox.fromSize(size: widget.placeholderSize),
         ]
         .row()!
         .insets(vertical: kL)
@@ -318,6 +324,10 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
                         await buildContext?.showPopupDialog(
                           widget.popupBodyWidget!,
                         );
+                      }).get((data, error) {
+                        if (widget.autoClosePopup == true) {
+                          buildContext?.popMenu();
+                        }
                       });
                     }),
           borderRadius: BorderRadius.circular(radius),
