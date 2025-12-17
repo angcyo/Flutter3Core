@@ -72,7 +72,13 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
       ),
       afterLayoutAction: (ctx, child) {
         debugger(when: debugLabel != null);
+        final size = child.size;
         _overlayContainerSize = child.size;
+        if (positionOffset.x > size.width || positionOffset.y > size.height) {
+          //纠正位置
+          resetOverlayOffset();
+        }
+        //debugger();
       },
     );
   }
@@ -96,7 +102,7 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
         onTap: onTapBody,
       ),
       afterLayoutAction: (ctx, child) {
-        debugger(when: debugLabel != null);
+        //debugger(when: debugLabel != null);
         _overlayBodySize = child.size;
       },
     );
@@ -105,6 +111,7 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
   //--
 
   /// 归位, 自动贴边处理
+  @api
   void resetOverlayOffset() {
     final currentOffset = positionOffset;
     double targetX = currentOffset.dx;
@@ -127,6 +134,18 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
         targetY = maxBottom - _overlayBodySize.height;
       }
     }
+
+    //debugger();
+    if (currentOffset == Offset(targetX, targetY)) {
+      return;
+    }
+
+    assert(() {
+      l.d(
+        "[${classHash()}]resetOverlayOffset[$_overlayContainerSize]: $currentOffset -> $targetX, $targetY",
+      );
+      return true;
+    }());
 
     //使用动画移动归位
     hookAnyByKey(
@@ -158,6 +177,8 @@ abstract class OverlayPositionState<T extends StatefulWidget>
   @override
   void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
     //super.onSelfMediaQueryDataChanged(from, to);
-    resetOverlayOffset();
+    postFrame(() {
+      resetOverlayOffset();
+    });
   }
 }

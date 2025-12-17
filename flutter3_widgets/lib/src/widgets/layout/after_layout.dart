@@ -48,9 +48,10 @@ class AfterLayout extends SingleChildRenderObjectWidget {
     AfterLayoutRenderObject renderObject,
   ) {
     renderObject
+      ..context = context
       ..afterLayoutAction = afterLayoutAction
       ..postAfterLayoutAction = postAfterLayoutAction
-      ..context = context;
+      ..markNeedsLayout();
   }
 }
 
