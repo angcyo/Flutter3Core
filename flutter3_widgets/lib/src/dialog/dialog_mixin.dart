@@ -247,6 +247,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool? autoCloseDialog,
     bool? showCloseButton,
   }) {
+    //debugger();
     return Center(
           child: buildDialogContainer(
             context,

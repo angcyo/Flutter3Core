@@ -85,6 +85,9 @@ double get $screenHeight => screenHeight;
 @dp
 double get $screenMinSize => min(screenWidth, screenHeight);
 
+@dp
+double get $screenMaxSize => max(screenWidth, screenHeight);
+
 /// 屏幕尺寸
 @dp
 Size get $screenSize => Size(screenWidth, screenHeight);

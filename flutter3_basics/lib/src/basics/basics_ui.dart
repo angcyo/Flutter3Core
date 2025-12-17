@@ -2327,8 +2327,8 @@ extension WidgetEx on Widget {
     //--
     fitDesktop ??= isDesktopOrWeb;
     fixedWidth ??= fitDesktop;
+    //debugger();
     if (fitDialog) {
-      //debugger();
       if (fitDesktop) {
         minWidth ??= minOf($screenMinSize, kDesktopDialogMinWidth);
         maxHeight ??= maxOf(minWidth, $screenHeight * 5 / 6); //最大是正方向
@@ -2342,6 +2342,8 @@ extension WidgetEx on Widget {
     //--
     if (fixedWidth == true) {
       maxWidth ??= minWidth;
+    } else {
+      maxWidth ??= $screenMinSize;
     }
     if (fixedHeight == true) {
       minHeight ??= maxHeight;
