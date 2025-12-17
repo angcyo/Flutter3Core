@@ -2217,16 +2217,17 @@ extension WidgetEx on Widget {
   /// [ConstrainedBox]
   /// [constrainedMin]
   /// [constrainedMax]
-  Widget constrainedBox(BoxConstraints? constraints) {
+  Widget constrainedBox(BoxConstraints? constraints, {Key? key}) {
     return constraints == null
         ? this
-        : ConstrainedBox(constraints: constraints, child: this);
+        : ConstrainedBox(key: key, constraints: constraints, child: this);
   }
 
   /// 约束大小
   /// [enableRatio] 是否激活百分比, 则小小于1的值会被当做比例处理
   /// [constrainedBox]
   Widget constrained({
+    Key? key,
     double? width,
     double? height,
     double minWidth = 0.0,
@@ -2256,6 +2257,7 @@ extension WidgetEx on Widget {
     }
     //--
     return constrainedBox(
+      key: key,
       BoxConstraints(
         minWidth: minWidth,
         maxWidth: maxWidth,
@@ -2392,6 +2394,7 @@ extension WidgetEx on Widget {
   /// [constrainedBox]
   /// [ConstrainedBox]
   Widget constrainedMax({
+    Key? key,
     double? minWidth,
     double? minHeight,
     double? maxWidth = double.infinity,
@@ -2415,20 +2418,41 @@ extension WidgetEx on Widget {
 
   /// 指定大小
   /// [SizedBox]
-  Widget size({double? size, double? width, double? height}) =>
-      box(size: size, width: width, height: height);
+  Widget size({
+    Key? key,
+    double? size,
+    double? width,
+    double? height,
+    bool? limited,
+  }) =>
+      box(key: key, size: size, width: width, height: height, limited: limited);
 
   /// 指定大小
-  /// [SizedBox]
-  Widget box({double? size, double? width, double? height}) {
-    {
-      width ??= size;
-      height ??= size;
-      if (width == null && height == null) {
-        return this;
-      }
-      return SizedBox(width: width, height: height, child: this);
+  /// - [limited] 是否只在宽高没有约束时, 才约束指定的大小?
+  ///
+  /// - [SizedBox]
+  /// - [LimitedBox]
+  Widget box({
+    Key? key,
+    double? size,
+    double? width,
+    double? height,
+    bool? limited,
+  }) {
+    width ??= size;
+    height ??= size;
+    if (width == null && height == null) {
+      return this;
     }
+    if (limited == true) {
+      return LimitedBox(
+        key: key,
+        maxWidth: width ?? double.infinity,
+        maxHeight: height ?? double.infinity,
+        child: this,
+      );
+    }
+    return SizedBox(key: key, width: width, height: height, child: this);
   }
 
   /// [size]
@@ -2441,8 +2465,13 @@ extension WidgetEx on Widget {
 
   /// 使用[child]固有的宽度, 在系统的[AlertDialog]中使用
   /// [IntrinsicWidth] 固有的宽度
-  Widget iw({double? stepWidth, double? stepHeight}) =>
-      IntrinsicWidth(stepWidth: stepWidth, stepHeight: stepHeight, child: this);
+  Widget iw({Key? key, double? stepWidth, double? stepHeight}) =>
+      IntrinsicWidth(
+        key: key,
+        stepWidth: stepWidth,
+        stepHeight: stepHeight,
+        child: this,
+      );
 
   /// 使用[child]固有的高度
   Widget ih([bool enable = true]) =>
@@ -2450,6 +2479,7 @@ extension WidgetEx on Widget {
 
   /// [FittedBox]
   Widget fittedBox({
+    Key? key,
     BoxFit? fit = BoxFit.contain,
     Alignment alignment = Alignment.center,
     Clip clipBehavior = Clip.none,
@@ -2458,6 +2488,7 @@ extension WidgetEx on Widget {
       return this;
     }
     return FittedBox(
+      key: key,
       fit: fit,
       alignment: alignment,
       clipBehavior: clipBehavior,
@@ -2470,10 +2501,12 @@ extension WidgetEx on Widget {
   /// [PreferredSize]
   /// [TabBar]
   PreferredSizeWidget sizePreferred({
+    Key? key,
     double? width,
     double? height = kTabHeight,
   }) {
     return PreferredSize(
+      key: key,
       preferredSize: Size(width ?? double.infinity, height ?? double.infinity),
       child: this,
     );
