@@ -253,6 +253,10 @@ bool get isDebugType {
   return config.buildType != BuildTypeEnum.release.name;
 }
 
+/// 构建类型
+String? get $buildType =>
+    $buildConfig?.buildType ?? (isDebug ? BuildTypeEnum.debug.name : null);
+
 /// 构建风味
 String? get $buildFlavor => $buildConfig?.buildFlavor ?? flutterAppFlavor;
 
