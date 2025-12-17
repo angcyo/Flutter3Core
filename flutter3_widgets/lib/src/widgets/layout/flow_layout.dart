@@ -791,6 +791,7 @@ class FlowLayoutRender extends RenderBox
     }
 
     newLine(); //最后一行
+    double maxHeight = refMaxHeight;
 
     //matchLineHeight 功能适配
     childrenLineList.forEachIndexed((index, lineChildList) {
@@ -802,7 +803,11 @@ class FlowLayoutRender extends RenderBox
             childParentData.matchLineHeight ?? matchLineHeight;
         if (childMatchLineHeight == true) {
           if (childrenLineList.length == 1) {
-            lineHeight = max(lineHeight, size.height);
+            //debugger();
+            lineHeight = max(
+              lineHeight,
+              (hasSize ? size.height : maxHeight).ensureValid(lineHeight),
+            );
           }
           final childSize = child.size;
           final childHeight = childSize.height;
@@ -826,7 +831,6 @@ class FlowLayoutRender extends RenderBox
     _childUsedHeight = childUsedHeight;
 
     debugger(when: debugLabel != null);
-    double maxHeight = refMaxHeight;
 
     final paddingTop = padding?.top ?? 0;
     final paddingBottom = padding?.bottom ?? 0;
