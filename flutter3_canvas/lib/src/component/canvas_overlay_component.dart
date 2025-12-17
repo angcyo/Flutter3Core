@@ -371,8 +371,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
       if (_isEditMode) {
         //如果已经是编辑模式, 则输出数据并上屏
         //l.d(outputSvgPath);
-        onSvgPathAction?.call(outputSvgPath);
-        canvasDelegate?.detachOverlay(overlay: this);
+        handleOutputAction();
       } else {
         _hoverPoint = null;
         _isPointerDown = false;
@@ -388,6 +387,13 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   }
 
   //MARK: - op
+
+  /// 处理输出
+  @api
+  void handleOutputAction() {
+    onSvgPathAction?.call(outputSvgPath);
+    canvasDelegate?.detachOverlay(overlay: this);
+  }
 
   /// 重置
   void reset() {
@@ -607,7 +613,7 @@ class CanvasPathOverlayComponent extends CanvasOverlayComponent {
       _movePoint = point;
     } else if (event.isPointerFinish) {
       _isPointerDown = false;
-      _handleOutputAction();
+      handleOutputAction();
     }
     refresh();
     return true;
@@ -625,14 +631,15 @@ class CanvasPathOverlayComponent extends CanvasOverlayComponent {
     }
     if (event.isKeyDown) {
       if (event.isEscKey) {
-        _handleOutputAction();
+        handleOutputAction();
       }
     }
     return true;
   }
 
   /// 处理输出
-  void _handleOutputAction() {
+  @api
+  void handleOutputAction() {
     if ((_movePoint.dx - _downPoint.dx).abs() >= touchSlop ||
         (_movePoint.dy - _downPoint.dy).abs() >= touchSlop) {
       //满足阈值
