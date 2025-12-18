@@ -2422,12 +2422,19 @@ extension WidgetEx on Widget {
   /// [SizedBox]
   Widget size({
     Key? key,
+    Size? s,
     double? size,
     double? width,
     double? height,
     bool? limited,
-  }) =>
-      box(key: key, size: size, width: width, height: height, limited: limited);
+  }) => box(
+    key: key,
+    s: s,
+    size: size,
+    width: width,
+    height: height,
+    limited: limited,
+  );
 
   /// 指定大小
   /// - [limited] 是否只在宽高没有约束时, 才约束指定的大小?
@@ -2436,13 +2443,14 @@ extension WidgetEx on Widget {
   /// - [LimitedBox]
   Widget box({
     Key? key,
+    Size? s,
     double? size,
     double? width,
     double? height,
     bool? limited,
   }) {
-    width ??= size;
-    height ??= size;
+    width ??= size ?? s?.width;
+    height ??= size ?? s?.height;
     if (width == null && height == null) {
       return this;
     }
@@ -2788,6 +2796,7 @@ extension WidgetEx on Widget {
     Color? splashColor,
     Color? disableColor,
     Color? highlightColor,
+    Color? hoverColor,
     double? radius,
     bool enable = true,
     GestureLongPressCallback? onLongPress,
@@ -2801,6 +2810,7 @@ extension WidgetEx on Widget {
           //borderRadius: BorderRadius.circular(999),
           customBorder: const CircleBorder(),
           splashColor: splashColor,
+          hoverColor: hoverColor,
           highlightColor: highlightColor,
           highlightShape: BoxShape.rectangle,
           radius: radius,
