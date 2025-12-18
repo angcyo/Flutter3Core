@@ -443,7 +443,7 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
 
   /// 创建添加标签按钮
   Widget buildAddNewTabButton(BuildContext context, GlobalTheme globalTheme) {
-    return Icon(Icons.add, color: Colors.white)
+    return Icon(Icons.add, color: Colors.white, size: 16)
         .box(width: tabItemWidth, height: tabItemHeight)
         .insets(h: kX)
         .inkWell(
@@ -462,8 +462,8 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
     GlobalTheme globalTheme,
     TabEntryInfo entry,
   ) {
-    return Icon(Icons.close, color: Colors.white, size: 16)
-        .insets(all: 4)
+    return Icon(Icons.close, color: Colors.white, size: 14)
+        .insets(all: 6)
         .inkWellCircle(
           () {
             widget.controller.removeTab(entry);
