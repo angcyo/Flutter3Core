@@ -2956,6 +2956,7 @@ extension WidgetEx on Widget {
   ///
   /// - [invisible]
   /// - [offstage]
+  /// - [Visibility.maintain]
   Widget invisible({
     bool enable = true,
     //--

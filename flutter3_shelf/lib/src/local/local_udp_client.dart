@@ -27,7 +27,7 @@ class LocalUdpClient extends LocalUdpBase {
   //endregion api
 
   @override
-  Future<bool> start() {
+  Future<bool> start() async {
     UdpClientInfoBean clientInfo = localInfoStream.value ?? UdpClientInfoBean();
     clientInfo
       ..deviceId = $deviceUuid
@@ -38,7 +38,20 @@ class LocalUdpClient extends LocalUdpBase {
     //--
     localInfoStream.add(clientInfo);
 
-    startReceiveUdpBroadcast(serverBroadcastPort);
+    bool isStart = false;
+    while (!isStart) {
+      try {
+        await startReceiveUdpBroadcast(serverBroadcastPort);
+        isStart = true;
+      } catch (e) {
+        assert(() {
+          l.w("[${classHash()}]监听UDP广播失败, 切换端口重新开始监听...");
+          return true;
+        }());
+        serverBroadcastPort++;
+        isStart = false;
+      }
+    }
     return super.start();
   }
 
