@@ -38,6 +38,7 @@ void main(List<String> arguments) async {
   //上传成功的数量
   int count = 0;
   for (final folder in (path ?? [])) {
+    colorLog('检查文件夹->$folder');
     final fileList = await _getFileList(folder);
     if (fileList.isEmpty) {
       continue;
@@ -52,8 +53,8 @@ void main(List<String> arguments) async {
         final buildType = filePath.endsWith(".apk")
             ? "android"
             : filePath.endsWith(".ipa")
-                ? "ios"
-                : null;
+            ? "ios"
+            : null;
         if (buildType != null) {
           final versionMap = await _getVersionDes(folder);
           final tokenText = await _getCOSToken(

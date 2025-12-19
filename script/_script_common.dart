@@ -142,11 +142,22 @@ dynamic getScriptYamlValue(String key) {
   final value = $yaml?[key];
   final pubValue = $pubspec?[key];
 
-  if (localValue is YamlMap && value is YamlMap && pubValue is YamlMap) {
-    return {...value, ...localValue, ...pubValue};
+  if (localValue == null && value == null && pubValue == null) {
+    return null;
   }
-  if (localValue is YamlList && value is YamlList && pubValue is YamlList) {
-    return [...value, ...localValue, ...pubValue];
+
+  if ((localValue == null || localValue is YamlMap) &&
+      (value == null || value is YamlMap) &&
+      (pubValue == null || pubValue is YamlMap)) {
+    return {}
+      ..addAll(pubValue ?? {})
+      ..addAll(value ?? {})
+      ..addAll(localValue ?? {});
+  }
+  if ((localValue == null || localValue is YamlList) &&
+      (value == null || value is YamlList) &&
+      (pubValue == null || pubValue is YamlList)) {
+    return [...?pubValue, ...?value, ...?localValue];
   }
   return localValue ?? value ?? pubValue;
 }
