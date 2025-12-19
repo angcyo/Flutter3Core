@@ -63,6 +63,8 @@ dependencies:
   wakelock_plus: ^1.4.0
   # https://pub.dev/packages/keep_screen_on
   # keep_screen_on: ^4.0.0
+  # https://pub.dev/packages/desktop_keep_screen_on
+  # desktop_keep_screen_on: ^0.0.3
 
 dev_dependencies:
   flutter_test:

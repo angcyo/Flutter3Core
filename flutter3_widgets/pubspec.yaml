@@ -27,6 +27,8 @@ dependencies:
   # https://pub.dev/packages/lifecycle
   # https://github.com/chenenyu/lifecycle
   lifecycle: ^0.10.0
+  # https://pub.dev/packages/desktop_lifecycle
+  #desktop_lifecycle: ^0.1.1
 
   # https://pub.dev/packages/expandable
   # https://github.com/aryzhov/flutter-expandable
