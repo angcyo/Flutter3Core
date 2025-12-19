@@ -156,7 +156,7 @@ mixin HookMixin {
   void disposeAny() {
     try {
       if (_hookAnyList != null) {
-        for (final any in _hookAnyList!) {
+        for (final any in _hookAnyList!.clone()) {
           _disposeAny(any);
         }
       }
@@ -169,7 +169,7 @@ mixin HookMixin {
   void disposeAnyListenable() {
     try {
       if (_hookAnyListenableMap != null) {
-        for (final key in _hookAnyListenableMap!.keys) {
+        for (final key in _hookAnyListenableMap!.keys.clone()) {
           try {
             final value = _hookAnyListenableMap?[key];
             if (value != null) {
@@ -192,7 +192,7 @@ mixin HookMixin {
   void disposeAnyByKeyAll() {
     try {
       if (_hookAnyByKeyMap != null) {
-        for (final key in _hookAnyByKeyMap!.keys) {
+        for (final key in _hookAnyByKeyMap!.keys.clone()) {
           disposeAnyByKey(key);
         }
       }
@@ -205,7 +205,7 @@ mixin HookMixin {
   void disposeAnyKey() {
     try {
       if (_hookAnyKeyMap != null) {
-        for (final key in _hookAnyKeyMap!.keys) {
+        for (final key in _hookAnyKeyMap!.keys.clone()) {
           try {
             final value = _hookAnyKeyMap?[key];
             if (value is DebugValueChanged) {

@@ -449,7 +449,7 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   }) => StreamBuilder(
     stream: stream,
     initialData: allowBackward ? latestValue : null,
-    builder: (_, __) {
+    builder: (_, _) {
       debugger(when: debugLabel != null);
       return builder() ?? empty;
     },

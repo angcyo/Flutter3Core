@@ -117,12 +117,12 @@ typedef TransformWidgetBuilder =
     Widget Function(BuildContext context, Widget widget);
 
 /// 转变一个[widget], 携带一个[data]参数
-typedef TransformDataWidgetBuilder =
+typedef TransformDataWidgetBuilder<T> =
     Widget Function(
       BuildContext context,
       Widget widget,
       int index,
-      dynamic data,
+      T data,
       bool? isSelected,
     );
 

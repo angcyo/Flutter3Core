@@ -2938,11 +2938,13 @@ extension WidgetEx on Widget {
   /// [AnimatedContainer]
   /// [AnimatedOpacity]
   Widget visible({
+    Key? key,
     required bool visible,
     bool maintainSize = false /*是否占据空间*/,
     bool anim = false,
   }) {
     Widget result = Visibility(
+      key: anim ? null : key,
       visible: visible,
       maintainSize: maintainSize,
       maintainAnimation: maintainSize,
@@ -2951,6 +2953,7 @@ extension WidgetEx on Widget {
     );
     if (anim) {
       result = AnimatedOpacity(
+        key: key,
         opacity: visible ? 1 : 0,
         duration: kDefaultAnimationDuration,
         child: result,

@@ -112,7 +112,7 @@ class TabsManagerController {
   @api
   WidgetList buildTabList(
     BuildContext context, {
-    TransformDataWidgetBuilder? transformWidgetBuilder,
+    TransformDataWidgetBuilder<TabEntryInfo>? transformWidgetBuilder,
   }) {
     return [
       for (final (index, entry) in tabEntryListLive.value!.indexed)
@@ -139,7 +139,7 @@ class TabsManagerController {
   @api
   WidgetList buildContentList(
     BuildContext context, {
-    TransformDataWidgetBuilder? transformWidgetBuilder,
+    TransformDataWidgetBuilder<TabEntryInfo>? transformWidgetBuilder,
   }) {
     return [
       for (final (index, entry) in tabEntryListLive.value!.indexed)
@@ -159,7 +159,10 @@ class TabsManagerController {
                   index,
                   entry == currentTabEntryLive.value,
                 ))
-            .visible(visible: entry == currentTabEntryLive.value),
+            .visible(
+              key: ValueKey(entry.tabInfoLive.hashCode),
+              visible: entry == currentTabEntryLive.value,
+            ),
     ];
   }
 }
@@ -179,14 +182,14 @@ class TabEntryInfo with EquatableMixin {
   /// 标签小部件
   final Widget? tabWidget;
 
-  /// 完全自定义的tab构建方法
+  /// 完全自定义的tab构建方法, 数据是[tabInfoLive.value]
   @configProperty
   final TransformDataWidgetBuilder? tabBuilder;
 
   /// 内容小部件
   final Widget? contentWidget;
 
-  /// 完全自定义的内容构建方法
+  /// 完全自定义的内容构建方法, 数据是[tabInfoLive.value]
   @configProperty
   final TransformDataWidgetBuilder? contentBuilder;
 
@@ -207,8 +210,9 @@ class TabEntryInfo with EquatableMixin {
 
   //MARK: - build
 
-  /// 构建tab
+  /// [TabEntryInfo]构建tab
   @api
+  @overridePoint
   Widget buildTabWidget(BuildContext context, int index, bool isSelected) {
     return tabInfoLive.buildFn(() {
       final child =
@@ -228,8 +232,9 @@ class TabEntryInfo with EquatableMixin {
     });
   }
 
-  /// 构建内容
+  /// [TabEntryInfo]构建内容
   @api
+  @overridePoint
   Widget buildContentWidget(BuildContext context, int index, bool isSelected) {
     return contentWidget ??
         contentBuilder?.call(
@@ -422,7 +427,7 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
               radius: radius,
               hoverColor: getHoverColor(context, globalTheme),
             )
-            .material();
+            .material(key: ValueKey(entry.tabInfoLive.hashCode));
       },
     );
     if (haveAddNewTab) {
