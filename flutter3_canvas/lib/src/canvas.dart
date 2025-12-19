@@ -202,10 +202,7 @@ class CanvasRenderBox extends RenderBox
   late final FocusNode _canvasFocusNode = FocusNode(
     debugLabel: "CanvasRenderBoxFocusNode",
     onKeyEvent: (node, event) {
-      if (onHandleKeyEventMixin(event)) {
-        return KeyEventResult.handled;
-      }
-      return KeyEventResult.handled;
+      return handleKeyEventResultMixin(event);
     },
   );
 
@@ -469,17 +466,18 @@ class CanvasRenderBox extends RenderBox
 
   /// 画布键盘事件处理
   @override
-  bool onHandleKeyEventMixin(KeyEvent event) {
-    bool handle = false;
+  KeyEventResult handleKeyEventResultMixin(KeyEvent event) {
+    KeyEventResult handler = KeyEventResult.ignored;
     //--
     if (canvasDelegate.canvasStyle.enableElementControl ||
         canvasDelegate.canvasStyle.enableCanvasKeyEvent == true) {
-      handle = super.onHandleKeyEventMixin(event);
+      //快捷按键匹配
+      handler = super.handleKeyEventResultMixin(event);
     }
-    if (canvasDelegate.handleKeyEvent(this, event)) {
-      handle = true;
+    if (canvasDelegate.handleKeyEvent(this, event, handler)) {
+      handler = KeyEventResult.handled;
     }
-    return handle;
+    return handler;
   }
 
   //endregion --KeyEvent--
@@ -685,10 +683,12 @@ class CanvasListener {
   onBuildCanvasMenu;
 
   /// [CanvasDelegate.dispatchKeyEvent]
+  /// @return true: 拦截事件, false: 不拦截事件
   final bool Function(
     CanvasDelegate delegate,
     RenderObject render,
     KeyEvent event,
+    KeyEventResult handler,
   )?
   onKeyEventAction;
 

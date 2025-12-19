@@ -92,13 +92,13 @@ class CanvasStyle {
   bool? enableCanvasMenu;
 
   /// 是否要开启画布键盘事件, 不指定则使用[enableElementControl]的值
-  /// [CanvasRenderBox.onHandleKeyEventMixin]处理
+  /// [CanvasRenderBox.handleKeyEventResultMixin]处理
   /// - [enableCanvasKeyEvent]
   /// - [enableCanvasEvent]
   bool? enableCanvasKeyEvent;
 
   /// 是否要开启画布元素键盘事件, 不指定则使用[enableElementControl]的值
-  /// [CanvasRenderBox.onHandleKeyEventMixin]处理
+  /// [CanvasRenderBox.handleKeyEventResultMixin]处理
   bool? enableElementKeyEvent;
 
   //--

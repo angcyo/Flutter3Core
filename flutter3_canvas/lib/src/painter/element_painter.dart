@@ -213,7 +213,7 @@ class IElementPainter extends IPainter
   }
 
   /// 处理键盘事件
-  /// [CanvasRenderBox.onHandleKeyEventMixin]驱动
+  /// [CanvasRenderBox.handleKeyEventResultMixin]驱动
   @override
   bool handleKeyEvent(KeyEvent event) => false;
 

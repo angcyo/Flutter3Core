@@ -42,7 +42,7 @@ class CanvasKeyManager
           }
           renderObject.markNeedsPaint();
           //renderObject.postMarkNeedsPaint();
-          return true;
+          return .handled;
         },
         keyUp: true,
       );
@@ -65,7 +65,7 @@ class CanvasKeyManager
           } else if (info.isKeyUp) {
             lockControl.setIgnoreLockRation(false);
           }
-          return true;
+          return .handled;
         },
         keyUp: true,
       );
@@ -79,7 +79,7 @@ class CanvasKeyManager
       ],
       (info) {
         deleteSelectedElement();
-        return true;
+        return .handled;
       },
     );
 
@@ -113,7 +113,7 @@ class CanvasKeyManager
             dy: dy,
           );
         }
-        return true;
+        return .handled;
       },
       matchKeyCount: false,
     );
@@ -130,7 +130,7 @@ class CanvasKeyManager
       ],
       (info) {
         undo();
-        return true;
+        return .handled;
       },
     );
 
@@ -150,7 +150,7 @@ class CanvasKeyManager
       ],
       (info) {
         redo();
-        return true;
+        return .handled;
       },
     );
 
@@ -166,7 +166,7 @@ class CanvasKeyManager
       ],
       (info) {
         copySelectedElement();
-        return true;
+        return .handled;
       },
     );
 
@@ -181,8 +181,7 @@ class CanvasKeyManager
         ],
       ],
       (info) {
-        pasteSelectedElement();
-        return true;
+        return pasteSelectedElement() ? .handled : .ignored;
       },
     );
 
@@ -198,7 +197,7 @@ class CanvasKeyManager
       ],
       (info) {
         selectAllElement();
-        return true;
+        return .handled;
       },
     );
 
@@ -214,7 +213,7 @@ class CanvasKeyManager
       ],
       (info) {
         zoomIn();
-        return true;
+        return .handled;
       },
     );
 
@@ -230,7 +229,7 @@ class CanvasKeyManager
       ],
       (info) {
         zoomOut();
-        return true;
+        return .handled;
       },
     );
   }

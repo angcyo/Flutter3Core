@@ -163,9 +163,10 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   KeyEventClientMixin? _keyEventInterceptClient;
 
   /// 键盘事件处理
+  /// - [handler] 事件是否已经被处理
   /// [CanvasDelegate.handleKeyEvent]驱动
   @entryPoint
-  bool handleKeyEvent(KeyEvent event) {
+  bool handleKeyEvent(KeyEvent event, KeyEventResult handler) {
     /*assert(() {
       l.i("handleKeyEvent->$event");
       l.v(

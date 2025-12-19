@@ -60,7 +60,7 @@ mixin KeyEventMixin {
   final Set<PhysicalKeyboardKey> _physicalKeysPressed = {};
 
   /// 注册一个键盘事件监听
-  /// [onHandleKeyEventMixin]
+  /// [handleKeyEventResultMixin]
   @api
   void registerKeyEvent(
     List<List<LogicalKeyboardKey>>? eventGroupKeys,
@@ -108,11 +108,22 @@ mixin KeyEventMixin {
     _keyEventRegisterList.clear();
   }
 
-  /// 处理入口
   @callPoint
   @overridePoint
   bool onHandleKeyEventMixin(KeyEvent event) {
-    bool handle = false;
+    return handleKeyEventResultMixin(event) != KeyEventResult.ignored;
+  }
+
+  /// 处理入口
+  /// - 实现快捷方式按键匹配
+  /// @return 按键事件返回
+  ///  - [KeyEventResult.ignored] 没有处理了
+  ///  - [KeyEventResult.handled] 被处理了
+  ///  - [KeyEventResult.skipRemainingHandlers] 跳过剩余处理者
+  @callPoint
+  @overridePoint
+  KeyEventResult handleKeyEventResultMixin(KeyEvent event) {
+    KeyEventResult handle = KeyEventResult.ignored;
     //l.w("onHandleKeyEventMixin[${event.isKeyUp}]->$event");
     //debugger(when: event.isKeyUp);
     if (event.isKeyDown) {
@@ -167,8 +178,10 @@ mixin KeyEventMixin {
                     " + ", (e) => e.debugName ?? e.keyLabel)}] $handle");
                 return true;
               }());*/
-              if (handle && register.stopPropagation) {
-                interrupt = true;
+              if (handle != KeyEventResult.ignored) {
+                if (register.stopPropagation) {
+                  interrupt = true;
+                }
                 break;
               }
             }
@@ -182,7 +195,7 @@ mixin KeyEventMixin {
     if (event.isKeyUp) {
       _physicalKeysPressed.remove(event.physicalKey);
     }
-    if (handle) {
+    if (handle != KeyEventResult.ignored) {
       //清空
       _physicalKeysPressed.clear();
     }
@@ -190,7 +203,7 @@ mixin KeyEventMixin {
   }
 }
 
-typedef KeyEventHandleAction = bool Function(KeyEventHitInfo event);
+typedef KeyEventHandleAction = KeyEventResult Function(KeyEventHitInfo event);
 
 /// 键盘事件, 注册的信息
 /// - [KeyEventRegister]
@@ -406,11 +419,7 @@ class _KeyEventWidgetState extends State<KeyEventWidget> with KeyEventMixin {
         }());
         //debugger(when: event.physicalKey == PhysicalKeyboardKey.keyS);
         //debugger(when: event.isKeyUp);
-        final handle = onHandleKeyEventMixin(event);
-        if (handle) {
-          return KeyEventResult.handled;
-        }
-        return KeyEventResult.ignored;
+        return handleKeyEventResultMixin(event);
       },
       child: widget.child,
     );
