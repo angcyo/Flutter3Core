@@ -38,10 +38,10 @@ mixin DesktopPopupStateMixin<T extends StatefulWidget> on State<T> {
     locationNotifierMixin.addListener(() {
       //debugger(when: locationNotifier.value == null);
       final location = locationNotifierMixin.value;
-      assert(() {
+      /*assert(() {
         l.d("[${classHash()}]位置发生改变:$location $isShowPopupMixin");
         return true;
-      }());
+      }());*/
       if (location == null) {
         //unmount 被移除
         popPopupMixin();

@@ -19,6 +19,8 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 画布状态列表
+  /// - 包含了画布中的所有元素
+  /// - 包含了回退栈信息
   final List<CanvasStateData> canvasStateList = [];
 
   /// 当前选中的画布状态

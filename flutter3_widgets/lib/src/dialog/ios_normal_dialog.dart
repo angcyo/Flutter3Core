@@ -7,6 +7,7 @@ part of './dialog.dart';
 ///
 /// ios 风格的对话框, 居中显示
 /// [showDialogWidget]
+/// @return true: 表示点击了确认按钮
 class IosNormalDialog extends AndroidNormalDialog {
   const IosNormalDialog({
     super.key,

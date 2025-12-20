@@ -25,8 +25,10 @@ part of '../../flutter3_basics.dart';
 /// [RenderObjectElement.mount]->[RenderObjectElement.attachRenderObject]->
 /// [SingleChildRenderObjectElement.insertRenderObjectChild]->[RenderObjectWithChildMixin.child]
 ///
-extension ContainerRenderObjectMixinEx<ChildType extends RenderObject,
-        ParentDataType extends ContainerParentDataMixin<ChildType>>
+extension ContainerRenderObjectMixinEx<
+  ChildType extends RenderObject,
+  ParentDataType extends ContainerParentDataMixin<ChildType>
+>
     on ContainerRenderObjectMixin<ChildType, ParentDataType> {
   /// 可以使用`for in`语法遍历所有的子元素
   /// [ContainerRenderObjectMixin]
@@ -102,11 +104,14 @@ extension RenderObjectMixinEx on RenderObject {
           return (this as RenderBox).size;
         }
       } catch (e) {
-        assert(() {
-          l.e(e);
-          //printError(e);
-          return true;
-        }());
+        if (!isSchedulerPhase) {
+          assert(() {
+            l.e(e);
+            //debugger();
+            //printError(e);
+            return true;
+          }());
+        }
         return null;
       }
     }
@@ -168,9 +173,14 @@ extension RenderObjectMixinEx on RenderObject {
   /// 裁剪图层
   /// [PaintingContext.pushClipRect]
   /// [ClipRectLayer]
-  void pushClipRectLayer(PaintingContext context, Offset offset, Rect clipRect,
-      PaintingContextCallback painter,
-      {Clip clipBehavior = Clip.hardEdge, ClipRectLayer? oldLayer}) {
+  void pushClipRectLayer(
+    PaintingContext context,
+    Offset offset,
+    Rect clipRect,
+    PaintingContextCallback painter, {
+    Clip clipBehavior = Clip.hardEdge,
+    ClipRectLayer? oldLayer,
+  }) {
     layer = context.pushClipRect(
       needsCompositing,
       offset,

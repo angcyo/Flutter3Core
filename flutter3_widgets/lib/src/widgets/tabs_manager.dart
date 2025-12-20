@@ -9,16 +9,16 @@ part of '../../flutter3_widgets.dart';
 class TabsManagerController {
   /// 从[BuildContext]中获取到[TabsManagerController]
   static TabsManagerController? of(
-    BuildContext context, {
+    BuildContext? context, {
     bool createDependency = false,
   }) {
     if (createDependency) {
       return context
-          .dependOnInheritedWidgetOfExactType<TabsManagerControllerScope>()
+          ?.dependOnInheritedWidgetOfExactType<TabsManagerControllerScope>()
           ?.controller;
     } else {
       return context
-          .getInheritedWidgetOfExactType<TabsManagerControllerScope>()
+          ?.getInheritedWidgetOfExactType<TabsManagerControllerScope>()
           ?.controller;
     }
   }
@@ -47,6 +47,12 @@ class TabsManagerController {
 
   //MARK: - api
 
+  /// 关闭当前选中的标签
+  @api
+  bool closeCurrentTab() {
+    return removeTab(currentTabEntryLive.value);
+  }
+
   /// 切换到指定的标签
   /// - [force] 是否强制选中
   @api
@@ -63,6 +69,8 @@ class TabsManagerController {
     }
     currentTabEntryLive << tabEntry;
     tabEntryListLive.notify();
+    //--请求内容焦点
+    tabEntry.requestContentFocus();
     return true;
   }
 
@@ -143,27 +151,58 @@ class TabsManagerController {
   }) {
     return [
       for (final (index, entry) in tabEntryListLive.value!.indexed)
-        (transformWidgetBuilder?.call(
-                  context,
-                  entry.buildContentWidget(
-                    context,
-                    index,
-                    entry == currentTabEntryLive.value,
-                  ),
-                  index,
-                  entry,
-                  entry == currentTabEntryLive.value,
-                ) ??
+        buildContentContainer(
+          context,
+          (transformWidgetBuilder?.call(
+                context,
                 entry.buildContentWidget(
                   context,
                   index,
                   entry == currentTabEntryLive.value,
-                ))
-            .visible(
-              key: ValueKey(entry.tabInfoLive.hashCode),
-              visible: entry == currentTabEntryLive.value,
-            ),
+                ),
+                index,
+                entry,
+                entry == currentTabEntryLive.value,
+              ) ??
+              entry.buildContentWidget(
+                context,
+                index,
+                entry == currentTabEntryLive.value,
+              )),
+          entry,
+        ),
     ];
+  }
+
+  /// 构建内容的容器
+  @api
+  Widget buildContentContainer(
+    BuildContext context,
+    Widget content,
+    TabEntryInfo entry,
+  ) {
+    final contentKey = entry.contentKey ??= GlobalKey(
+      debugLabel: "content_${entry.tabInfoLive.hashCode}",
+    );
+    final contentFocusNode = entry.contentFocusNode ??= FocusScopeNode(
+      debugLabel: "content_${entry.tabInfoLive.hashCode}",
+    );
+    return FocusScope(
+      key: contentKey,
+      node: contentFocusNode,
+      autofocus: false,
+      onFocusChange: (focus) {
+        assert(() {
+          l.d("[${entry.tabInfoLive.value}]内容焦点变化:$focus");
+          return true;
+        }());
+      },
+      child: content.visible(
+        key: ValueKey(entry.tabInfoLive.hashCode),
+        visible: entry == currentTabEntryLive.value,
+        maintainState: true /*保持页面状态*/,
+      ),
+    );
   }
 }
 
@@ -206,6 +245,30 @@ class TabEntryInfo with EquatableMixin {
   }) {
     tabInfoLive << tabInfo;
     fixedLive << fixed;
+  }
+
+  //MARK: - property
+
+  /// 内容的key
+  @property
+  GlobalKey? contentKey;
+
+  /// 内容的焦点
+  @property
+  FocusScopeNode? contentFocusNode;
+
+  //MARK: - api
+
+  /// 切换标签时, 标签的内容需要请求到焦点
+  @api
+  void requestContentFocus() {
+    final content = contentKey?.currentContext;
+    if (content != null) {
+      final focusScope = FocusScope.of(content);
+      //debugger();
+      focusScope.requestFocus(contentFocusNode);
+    }
+    //contentFocusNode?.requestScopeFocus();
   }
 
   //MARK: - build
@@ -387,9 +450,21 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
             .expanded(),
       ].row(mainAxisSize: .max)!;
     }
-    return TabsManagerControllerScope(
-      controller: widget.controller,
-      child: child,
+    return FocusScope(
+      autofocus: true,
+      canRequestFocus: true,
+      skipTraversal: true,
+      onFocusChange: (focus) {
+        //debugger();
+        assert(() {
+          l.d("[${classHash()}]焦点状态变化:$focus");
+          return true;
+        }());
+      },
+      child: TabsManagerControllerScope(
+        controller: widget.controller,
+        child: child,
+      ),
     );
   }
 

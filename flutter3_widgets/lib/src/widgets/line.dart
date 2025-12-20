@@ -163,7 +163,7 @@ class Line extends LeafRenderObjectWidget {
 }
 
 /// 定义一个动态计算大小的[RenderObject]
-/// - 动态大小的组件不允许在布局期间获取尺寸
+/// - 动态大小的组件不允许在布局期间获取尺寸, 读取[RenderObject.size]时, 需要跳过对象
 mixin DynamicComponentSizeMixin {}
 
 /// 线条渲染

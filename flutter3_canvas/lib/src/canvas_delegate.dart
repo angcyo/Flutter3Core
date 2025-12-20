@@ -70,18 +70,28 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasPaintManager.onUpdatePaintBounds();
   }
 
+  /// 当前还不是否有焦点
+  @output
+  bool hasFocus = false;
+
+  /// 当前画布是否附着在界面上
+  @output
+  bool isAttached = false;
+
   /// [RenderObject.attach]
   @entryPoint
-  void attach() {
+  void attach(RenderObject object) {
     //no op
+    isAttached = true;
   }
 
   /// [RenderObject.detach]
   @entryPoint
-  void detach() {
+  void detach(RenderObject object) {
     _cancelIdleTimer();
     _ticker?.dispose();
     _ticker = null;
+    isAttached = false;
   }
 
   /// 释放所有资源, 主动调用, 请在主界面销毁时主动调用
@@ -1041,6 +1051,38 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }
   }
 
+  /// 派发画布元素保存请求
+  /// - [isAllCanvasEmpty]
+  /// - [isSelectedElement]
+  /// - [canvasMultiManager]
+  /// - [CanvasMultiManager.canvasStateList]
+  /// @return true, 表示可以关闭画布
+  @api
+  Future<bool> dispatchCanvasMaybePop() async {
+    bool? canPop;
+    await _eachCanvasListenerAsync((element) async {
+      final result = await element.onCanvasMaybePop?.call(this);
+      canPop = result == true || canPop == true;
+    });
+    return canPop ?? true;
+  }
+
+  /// 派发画布焦点变化
+  @api
+  void dispatchCanvasFocusChanged(bool focus, bool isAttached) {
+    assert(() {
+      //debugger();
+      //debugger(when: isAttached && !hasFocus);
+      l.i("[${classHash()}]画布焦点状态变化:$hasFocus isAttached:$isAttached");
+      return true;
+    }());
+    hasFocus = focus;
+    isAttached = isAttached;
+    _eachCanvasListener((element) {
+      element.onCanvasFocusChanged?.call(this, focus, isAttached);
+    });
+  }
+
   /// [project]类型强转
   Bean? projectBean<Bean>() {
     return project as Bean?;
@@ -1064,6 +1106,35 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
               : canvasListeners) {
         try {
           final result = action(client);
+          if (result is bool && result) {
+            break;
+          }
+        } catch (e, s) {
+          assert(() {
+            printError(e, s);
+            return true;
+          }());
+        }
+      }
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+    }
+  }
+
+  Future _eachCanvasListenerAsync(
+    FutureOr Function(CanvasListener listener) action, {
+    bool reverse = false,
+  }) async {
+    try {
+      for (final client
+          in reverse
+              ? canvasListeners.toList(growable: false).reversed
+              : canvasListeners) {
+        try {
+          final result = await action(client);
           if (result is bool && result) {
             break;
           }

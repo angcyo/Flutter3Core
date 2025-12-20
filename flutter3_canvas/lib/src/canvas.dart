@@ -6,9 +6,21 @@ part of '../flutter3_canvas.dart';
 ///
 /// 画布小部件代理核心类
 class CanvasWidget extends LeafRenderObjectWidget {
+  @configProperty
   final CanvasDelegate canvasDelegate;
 
-  const CanvasWidget(this.canvasDelegate, {super.key});
+  @configProperty
+  final FocusNode? parentNode;
+
+  @configProperty
+  final bool autofocus;
+
+  const CanvasWidget(
+    this.canvasDelegate, {
+    super.key,
+    this.autofocus = true,
+    this.parentNode,
+  });
 
   @override
   LeafRenderObjectElement createElement() =>
@@ -17,8 +29,12 @@ class CanvasWidget extends LeafRenderObjectWidget {
       : LeafRenderObjectElement(this);
 
   @override
-  RenderObject createRenderObject(BuildContext context) =>
-      CanvasRenderBox(context, canvasDelegate..delegateContext = context);
+  RenderObject createRenderObject(BuildContext context) => CanvasRenderBox(
+    context,
+    canvasDelegate..delegateContext = context,
+    autofocus: autofocus,
+    parentNode: parentNode,
+  );
 
   @override
   void updateRenderObject(BuildContext context, CanvasRenderBox renderObject) {
@@ -27,6 +43,8 @@ class CanvasWidget extends LeafRenderObjectWidget {
     renderObject
       ..context = context
       ..canvasDelegate = canvasDelegate
+      ..autofocus = autofocus
+      ..parentNode = parentNode
       ..markNeedsPaint();
   }
 
@@ -46,6 +64,7 @@ class CanvasWidget extends LeafRenderObjectWidget {
         ifTrue: "支持[Widget]渲染",
       ),
     );
+    properties.add(DiagnosticsProperty('autofocus', autofocus));
   }
 }
 
@@ -141,7 +160,7 @@ class CanvasRenderObjectElement extends LeafRenderObjectElement {
     super.attachRenderObject(newSlot);
   }
 
-  //--
+  //
 
   /// 安装一个[Widget]得到对应的[Element]
   /// 通过[Element.findRenderObject]获取对应的[RenderObject]
@@ -193,12 +212,24 @@ class CanvasRenderObjectElement extends LeafRenderObjectElement {
 class CanvasRenderBox extends RenderBox
     with KeyEventMixin
     implements MouseTrackerAnnotation {
+  @property
   BuildContext context;
+
+  @property
   CanvasDelegate canvasDelegate;
 
-  //--
+  /// 父级焦点[FocusNode]
+  @configProperty
+  FocusNode? parentNode;
 
-  /// 焦点
+  /// 是否自动请求焦点
+  @configProperty
+  bool autofocus = true;
+
+  //
+
+  /// 焦点[FocusNode]
+  /// - [Focus]
   late final FocusNode _canvasFocusNode = FocusNode(
     debugLabel: "CanvasRenderBoxFocusNode",
     onKeyEvent: (node, event) {
@@ -206,9 +237,14 @@ class CanvasRenderBox extends RenderBox
     },
   );
 
-  CanvasRenderBox(this.context, this.canvasDelegate);
+  CanvasRenderBox(
+    this.context,
+    this.canvasDelegate, {
+    this.autofocus = true,
+    this.parentNode,
+  });
 
-  //region --core--
+  //region core
 
   @override
   bool get isRepaintBoundary => true;
@@ -309,7 +345,7 @@ class CanvasRenderBox extends RenderBox
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     //debugger();
     if (event.isPointerDown) {
-      requestFocus();
+      requestFocus(reason: "PointerDown");
     }
     final hitInterceptBox = GestureHitInterceptScope.of(context);
     hitInterceptBox?.interceptHitBox = this;
@@ -335,7 +371,16 @@ class CanvasRenderBox extends RenderBox
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
-    _canvasFocusNode.attach(context);
+    assert(() {
+      l.d("[${classHash()}]attach");
+      return true;
+    }());
+
+    //--
+    _canvasFocusNode.addListener(onFocusChange);
+    _focusAttachment = _canvasFocusNode.attach(context);
+    _focusAttachment?.reparent(parent: parentNode);
+
     //debugger();
     if (isDesktopOrWeb) {
       canvasDelegate.canvasKeyManager.registerKeyEventHandler(this);
@@ -347,7 +392,9 @@ class CanvasRenderBox extends RenderBox
       });
     });
     canvasDelegate.repaint.addListener(_repaintListener);
-    canvasDelegate.attach();
+    canvasDelegate.attach(this);
+    //
+    _handleAutofocus();
   }
 
   /// [CanvasRenderBox]
@@ -361,7 +408,16 @@ class CanvasRenderBox extends RenderBox
   @override
   void detach() {
     //debugger();
-    _canvasFocusNode.unfocus();
+    assert(() {
+      l.d("[${classHash()}]detach:$hasFocus");
+      return true;
+    }());
+    //debugger();
+    _canvasFocusNode
+      ..unfocus()
+      ..removeListener(onFocusChange);
+    _focusAttachment?.detach();
+    //--
     _validForMouseTracker = false;
     visitWidgetElementPainter((painter) {
       final render = painter._widgetRender;
@@ -371,29 +427,60 @@ class CanvasRenderBox extends RenderBox
       }
     });
     super.detach();
+    //--
     _validForMouseTracker = true;
     canvasDelegate.repaint.removeListener(_repaintListener);
-    canvasDelegate.detach();
+    canvasDelegate.detach(this);
   }
 
   @override
   void dispose() {
     _canvasFocusNode.dispose();
+    _didAutofocus = false;
     //2025-09-26 有可能是从一个浮窗界面, 移动到另一个浮窗界面, 所以这里不销毁数据,
     //canvasDelegate.dispose();
     super.dispose();
   }
 
-  //endregion --core--
+  /// [FocusNode]的附加点
+  FocusAttachment? _focusAttachment;
 
-  //region --api--
+  /// 是否已经处理过自动请求焦点
+  @tempFlag
+  bool _didAutofocus = false;
 
-  /// 请求焦点
-  void requestFocus() {
-    FocusScope.of(context).requestFocus(_canvasFocusNode);
+  /// 处理自动请求焦点
+  void _handleAutofocus() {
+    if (!_didAutofocus && autofocus) {
+      FocusScope.of(context).autofocus(_canvasFocusNode);
+      _didAutofocus = true;
+    }
   }
 
-  //--
+  /// 焦点变化监听
+  @overridePoint
+  void onFocusChange() {
+    canvasDelegate.dispatchCanvasFocusChanged(hasFocus, isAttached);
+  }
+
+  //endregion core
+
+  //region api
+
+  /// 画布是否已挂载
+  bool get isAttached => attached;
+
+  /// 是否有焦点
+  bool get hasFocus => _canvasFocusNode.hasFocus;
+
+  /// 请求焦点
+  void requestFocus({String? reason}) {
+    if (!hasFocus) {
+      FocusScope.of(context).requestFocus(_canvasFocusNode);
+    }
+  }
+
+  //
 
   /// 重绘
   void _repaintListener() {
@@ -406,7 +493,7 @@ class CanvasRenderBox extends RenderBox
     }
   }
 
-  //--
+  //
 
   /// 只有在[Layer]层的[RenderObject]才能调用[paint]方法
   ///
@@ -460,15 +547,15 @@ class CanvasRenderBox extends RenderBox
     });
   }
 
-  //endregion --api--
+  //endregion api
 
-  //region --KeyEvent--
+  //region KeyEvent
 
   /// 画布键盘事件处理
   @override
   KeyEventResult handleKeyEventResultMixin(KeyEvent event) {
     KeyEventResult handler = KeyEventResult.ignored;
-    //--
+    //
     if (canvasDelegate.canvasStyle.enableElementControl ||
         canvasDelegate.canvasStyle.enableCanvasKeyEvent == true) {
       //快捷按键匹配
@@ -480,9 +567,9 @@ class CanvasRenderBox extends RenderBox
     return handler;
   }
 
-  //endregion --KeyEvent--
+  //endregion KeyEvent
 
-  //region --Mouse--
+  //region Mouse
 
   @override
   MouseCursor get cursor => (canvasDelegate.isDragMode
@@ -499,10 +586,11 @@ class CanvasRenderBox extends RenderBox
 
   bool _validForMouseTracker = false;
 
+  /// 鼠标追踪
   @override
   bool get validForMouseTracker => _validForMouseTracker;
 
-  //endregion --Mouse--
+  //endregion Mouse
 }
 
 /// 画布回调监听
@@ -723,6 +811,13 @@ class CanvasListener {
   )?
   onCanvasOverlayComponentAction;
 
+  /// [CanvasDelegate.dispatchCanvasOverlayComponentChanged]
+  final Future<bool> Function(CanvasDelegate delegate)? onCanvasMaybePop;
+
+  /// [CanvasDelegate.dispatchCanvasFocusChanged]
+  final void Function(CanvasDelegate delegate, bool focus, bool isAttached)?
+  onCanvasFocusChanged;
+
   CanvasListener({
     this.onCanvasPaintAction,
     this.onCanvasIdleAction,
@@ -758,5 +853,7 @@ class CanvasListener {
     this.onCanvasStyleChangedAction,
     this.onCanvasOpenProject,
     this.onCanvasOverlayComponentAction,
+    this.onCanvasMaybePop,
+    this.onCanvasFocusChanged,
   });
 }

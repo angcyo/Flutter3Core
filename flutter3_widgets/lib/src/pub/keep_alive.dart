@@ -53,9 +53,6 @@ class KeepAliveWrapperState extends State<KeepAliveWrapper>
 extension KeepAliveWrapperExtension on Widget {
   /// 自动保活
   KeepAliveWrapper keepAlive({bool keepAlive = true}) {
-    return KeepAliveWrapper(
-      keepAlive: keepAlive,
-      child: this,
-    );
+    return KeepAliveWrapper(keepAlive: keepAlive, child: this);
   }
 }

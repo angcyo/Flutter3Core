@@ -1307,6 +1307,8 @@ extension WidgetEx on Widget {
   /// - 没有大小
   /// - 不触发绘制
   ///
+  /// - [always] 总是离屏渲染
+  ///
   /// - [invisible]
   /// - [offstage]
   Widget offstage([bool offstage = true, bool always = false]) =>
@@ -2941,14 +2943,17 @@ extension WidgetEx on Widget {
     Key? key,
     required bool visible,
     bool maintainSize = false /*是否占据空间*/,
+    bool maintainState = false /*是否维护状态*/,
+    bool? maintainFocusability /*是否维护焦点状态*/,
     bool anim = false,
   }) {
     Widget result = Visibility(
       key: anim ? null : key,
       visible: visible,
       maintainSize: maintainSize,
-      maintainAnimation: maintainSize,
-      maintainState: maintainSize,
+      maintainState: maintainFocusability == true || maintainState,
+      maintainAnimation: maintainState,
+      maintainFocusability: maintainFocusability ?? maintainState,
       child: this,
     );
     if (anim) {

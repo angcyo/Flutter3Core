@@ -279,7 +279,7 @@ class CanvasKeyManager
       canvasElementManager.addElementList(
         elementList,
         selected: true,
-        followPainter: true,
+        followPainter: !isDesktopOrWeb,
         offset: canvasStyle.canvasCopyOffset.toOffsetDp(),
       );
       _copyElementList = elementList;
