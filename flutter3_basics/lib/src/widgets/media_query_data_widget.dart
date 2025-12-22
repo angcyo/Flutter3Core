@@ -64,6 +64,20 @@ typedef MediaQueryDataWidgetBuilder =
 /// - [MediaQueryDataState]
 mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
     on State<T>, WidgetsBindingObserver {
+  /// 只要媒体数据改变, 就更新界面
+  @configProperty
+  bool updateByAny = true;
+
+  /// 屏幕大小改变, 就更新界面
+  @configProperty
+  bool updateBySize = false;
+
+  /// 暗色模式改变, 就更新界面
+  @configProperty
+  bool updateByBrightness = false;
+
+  //MARK: -
+
   /// 当前视图
   @output
   ui.FlutterView? viewMixin;
@@ -100,6 +114,9 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
         final old = mediaQueryDataMixin;
         mediaQueryDataMixin = mediaQueryData;
         onSelfMediaQueryDataChanged(old, mediaQueryData);
+        if (old?.size != mediaQueryData.size) {
+          onSelfPlatformSizeChanged(old?.size, mediaQueryData.size);
+        }
         if (old?.platformBrightness != mediaQueryData.platformBrightness) {
           onSelfPlatformBrightnessChanged(
             old?.platformBrightness,
@@ -114,13 +131,27 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
   /// [MediaQueryData]数据改变
   @overridePoint
   void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
-    updateState();
+    if (updateByAny) {
+      updateState();
+    }
+  }
+
+  /// 平台[Size]尺寸发生改变
+  @overridePoint
+  void onSelfPlatformSizeChanged(Size? from, Size to) {
+    //debugger();
+    if (updateBySize) {
+      updateState();
+    }
   }
 
   /// 平台[Brightness]暗色模式发生改变
   @overridePoint
   void onSelfPlatformBrightnessChanged(Brightness? from, Brightness to) {
     debugger();
+    if (updateByBrightness) {
+      updateState();
+    }
   }
 }
 

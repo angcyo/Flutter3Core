@@ -20,3 +20,13 @@ part of '../../flutter3_basics.dart';
 /// ```
 double $wXlBp({double min = 300, double max = 400}) =>
     $screenWidth >= 1200 ? max : min;
+
+/// 断点网格列数
+int $gridBp() => switch ($screenWidth) {
+  >= 1600 => 6,
+  >= 1400 => 5,
+  >= 1100 => 4,
+  >= 700 => 3,
+  >= 300 => 2,
+  _ => 1,
+};
