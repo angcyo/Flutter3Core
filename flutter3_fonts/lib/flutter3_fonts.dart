@@ -6,7 +6,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter3_core/flutter3_core.dart';
-import 'package:flutter3_widgets/flutter3_widgets.dart';
+import 'package:flutter3_fonts/src/pub/dynamic_font.dart';
 import 'package:http/http.dart' as http;
 
 export 'package:google_fonts/google_fonts.dart';
@@ -40,6 +40,35 @@ part 'src/fonts_manager.dart';
 /// [Typography.blackMountainView]
 /// [Typography.whiteMountainView]
 ///
+/// # chinese_font_library: ^1.2.0
+///
+/// https://pub.dev/packages/chinese_font_library
+///
+/// ```
+/// # TextStyle
+/// Text(
+///      '你好世界 hello world',
+///      style: TextStyle(fontWeight: FontWeight.w100).useSystemChineseFont(),
+/// )
+/// # TextTheme
+/// return MaterialApp(
+///     ...
+///     theme: Theme(
+///         data: ThemeData(
+///           textTheme: yourCustomTextTheme.useSystemChineseFont(),
+///         ),
+///     ),
+///     ...
+/// )
+/// # ThemeData
+/// return MaterialApp(
+///    ...
+///    theme: Theme(
+///        data: yourCustomThemeData.useSystemChineseFont(),
+///    ),
+///    ...
+/// )
+/// ```
 class SystemChineseFont {
   const SystemChineseFont._();
 
@@ -51,65 +80,50 @@ class SystemChineseFont {
   ];
 
   /// Chinese font family fallback, for xiaomi & redmi phone
-  static const List<String> xiaomiFontFamily = [
-    'miui',
-    'mipro',
-  ];
+  static const List<String> xiaomiFontFamily = ['miui', 'mipro'];
 
   /// Chinese font family fallback, for windows
-  static const List<String> windowsFontFamily = [
-    'Microsoft YaHei',
-  ];
+  static const List<String> windowsFontFamily = ['Microsoft YaHei'];
 
   static const systemFont = "system-font";
 
   static bool systemFontLoaded = false;
 
   /// Chinese font family fallback, for VIVO Origin OS 1.0
-  static final vivoSystemFont = FontFamilyMeta(
-    displayFontFamily: systemFont,
-    source: FontFamilySource.file,
-  )..variantList.add(FontFamilyVariantMeta(
-      displayFontFamily: "DroidSansFallbackMonster",
-      fontFamily: "DroidSansFallbackMonster",
-      uri: '/system/fonts/DroidSansFallbackMonster.ttf',
-    ));
+  static final vivoSystemFont = DynamicFont.file(
+    fontFamily: systemFont,
+    filepath: '/system/fonts/DroidSansFallbackMonster.ttf',
+  );
 
   /// Chinese font family fallback, for honor Magic UI 4.0
-  static final honorSystemFont = FontFamilyMeta(
-    displayFontFamily: systemFont,
-    source: FontFamilySource.file,
-  )..variantList.add(FontFamilyVariantMeta(
-      displayFontFamily: "DroidSansChinese",
-      fontFamily: "DroidSansChinese",
-      uri: '/system/fonts/DroidSansChinese.ttf',
-    ));
+  static final honorSystemFont = DynamicFont.file(
+    fontFamily: systemFont,
+    filepath: '/system/fonts/DroidSansChinese.ttf',
+  );
 
   /// Chinese font family fallback, for most platforms
   static List<String> get fontFamilyFallback {
+    // @formatter:off
     if (!systemFontLoaded) {
       // honorSystemFont.load();
       () async {
         final vivoFont = File("/system/fonts/VivoFont.ttf");
-        final exist = await vivoFont.exists();
-        if (exist) {
-          final haveLinks = vivoFont
-              .resolveSymbolicLinksSync()
-              .contains("DroidSansFallbackBBK");
-          if (haveLinks) {
-            await vivoSystemFont.load();
-          }
+        if ((await vivoFont.exists()) &&
+            (await vivoFont.resolveSymbolicLinks()).contains("DroidSansFallbackBBK")) {
+             await vivoSystemFont.load();
         }
       }();
       systemFontLoaded = true;
     }
+    // @formatter:on
 
-    return [
+      return [
       systemFont,
       "sans-serif",
-      ...appleFontFamily,
-      ...xiaomiFontFamily,
-      ...windowsFontFamily,
+    ...appleFontFamily,
+    ...xiaomiFontFamily,
+    ...windowsFontFamily
+    ,
     ];
   }
 
@@ -122,13 +136,19 @@ class SystemChineseFont {
   static TextTheme textTheme(Brightness brightness) {
     switch (brightness) {
       case Brightness.dark:
-        return Typography.material2021()
+        return Typography
+            .material2021()
             .white
-            .apply(fontFamilyFallback: fontFamilyFallback);
+            .apply(
+          fontFamilyFallback: fontFamilyFallback,
+        );
       case Brightness.light:
-        return Typography.material2021()
+        return Typography
+            .material2021()
             .black
-            .apply(fontFamilyFallback: fontFamilyFallback);
+            .apply(
+          fontFamilyFallback: fontFamilyFallback,
+        );
     }
   }
 }
