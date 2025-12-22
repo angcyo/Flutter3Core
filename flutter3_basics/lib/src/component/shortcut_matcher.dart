@@ -50,7 +50,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
   @api
   void addShortcut(
     ShortcutActivator activator,
-    KeyEventResult Function(dynamic data)? action, {
+    KeyEventResult Function(BuildContext? context, dynamic data)? action, {
     String? tag,
   }) {
     _shortcuts[activator] = ShortcutIntent(action, tag: tag);
@@ -65,7 +65,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
   @api
   void addSingleShortcut(
     LogicalKeyboardKey trigger,
-    KeyEventResult Function(dynamic data)? action, {
+    KeyEventResult Function(BuildContext? context, dynamic data)? action, {
     String? tag,
     //--
     bool meta = false,
@@ -97,7 +97,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
   @api
   void addCharacterShortcut(
     String character,
-    KeyEventResult Function(dynamic data)? action, {
+    KeyEventResult Function(BuildContext? context, dynamic data)? action, {
     String? tag,
     //--
     bool meta = false,
@@ -149,7 +149,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
     // Marking some variables as "late" ensures that they aren't evaluated unless needed.
     late final Intent? intent = _find(event, HardwareKeyboard.instance);
     if (intent is ShortcutIntent && intent.action != null) {
-      return intent.action!.call(data);
+      return intent.action!.call(context, data);
     }
 
     //MARK: - system
@@ -269,7 +269,7 @@ class ShortcutIntent extends Intent {
   final String? tag;
 
   /// [data] 传递的数据
-  final KeyEventResult Function(dynamic data)? action;
+  final KeyEventResult Function(BuildContext? context, dynamic data)? action;
 
   const ShortcutIntent(this.action, {this.tag});
 }

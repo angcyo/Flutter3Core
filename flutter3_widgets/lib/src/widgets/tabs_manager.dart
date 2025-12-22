@@ -35,6 +35,7 @@ class TabsManagerController {
   TabsManagerController({
     List<TabEntryInfo>? tabEntryList,
     TabEntryInfo? currentTabEntry,
+    this.onCreateNewTabAction,
   }) {
     if (!isNil(tabEntryList)) {
       tabEntryListLive << (tabEntryList ?? []);
@@ -44,6 +45,11 @@ class TabsManagerController {
       currentTabEntryLive << currentTabEntry;
     }
   }
+
+  /// 创建新的标签
+  @configProperty
+  final TabEntryInfo? Function(BuildContext?, dynamic data)?
+  onCreateNewTabAction;
 
   //MARK: - api
 
@@ -82,13 +88,29 @@ class TabsManagerController {
 
   /// 添加新的标签
   @api
-  bool addTab(TabEntryInfo? tabEntry) {
+  bool addTab(TabEntryInfo? tabEntry, {bool selected = true}) {
     if (tabEntry == null) {
       return false;
     }
     tabEntryListLive << [...tabEntryListLive.value!, tabEntry];
-    switchTab(tabEntry);
+    if (selected) {
+      switchTab(tabEntry);
+    }
     return true;
+  }
+
+  /// 添加新标签
+  @api
+  TabEntryInfo? addNewTab(
+    BuildContext? context, {
+    dynamic data,
+    bool selected = true,
+  }) {
+    final tabEntry = onCreateNewTabAction?.call(context, data);
+    if (tabEntry != null) {
+      addTab(tabEntry, selected: selected);
+    }
+    return tabEntry;
   }
 
   /// 移除指定的标签
@@ -377,10 +399,6 @@ class TabsManagerWidget extends StatefulWidget {
 
   //MARK: -
 
-  /// 创建新的标签
-  /// - 自动出现+号
-  final TabEntryInfo Function(BuildContext)? addNewTabAction;
-
   const TabsManagerWidget({
     super.key,
     required this.controller,
@@ -393,8 +411,6 @@ class TabsManagerWidget extends StatefulWidget {
     //--
     this.onKeyEvent,
     this.onFocusChange,
-    //--
-    this.addNewTabAction,
   });
 
   @override
@@ -404,7 +420,7 @@ class TabsManagerWidget extends StatefulWidget {
 class _TabsManagerWidgetState extends State<TabsManagerWidget>
     with HookMixin, HookStateMixin {
   /// 是否有创建标签的按钮
-  bool get haveAddNewTab => widget.addNewTabAction != null;
+  bool get haveAddNewTab => widget.controller.onCreateNewTabAction != null;
 
   /// 圆角
   double get radius => widget.axis == .vertical ? 0.0 : 4.0;
@@ -559,7 +575,7 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
         .insets(h: kX)
         .inkWell(
           () {
-            widget.controller.addTab(widget.addNewTabAction!(context));
+            widget.controller.addNewTab(context, data: this);
           },
           radius: radius,
           hoverColor: getHoverColor(context, globalTheme),
