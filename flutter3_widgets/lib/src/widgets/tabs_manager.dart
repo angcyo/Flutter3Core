@@ -53,6 +53,12 @@ class TabsManagerController {
     return removeTab(currentTabEntryLive.value);
   }
 
+  /// 按照索引选择标签
+  @api
+  bool selectTab(int index) {
+    return switchTab(tabEntryListLive.value?.get(index));
+  }
+
   /// 切换到指定的标签
   /// - [force] 是否强制选中
   @api
@@ -361,6 +367,16 @@ class TabsManagerWidget extends StatefulWidget {
   /// 内容的背景装饰
   final Decoration? contentDecoration;
 
+  //MARK: - focus
+
+  /// 有焦点时的按键事件
+  final FocusOnKeyEventCallback? onKeyEvent;
+
+  /// 焦点事件
+  final ValueChanged<bool>? onFocusChange;
+
+  //MARK: -
+
   /// 创建新的标签
   /// - 自动出现+号
   final TabEntryInfo Function(BuildContext)? addNewTabAction;
@@ -374,6 +390,10 @@ class TabsManagerWidget extends StatefulWidget {
     this.tabDecoration,
     this.tabSelectedDecoration,
     this.contentDecoration,
+    //--
+    this.onKeyEvent,
+    this.onFocusChange,
+    //--
     this.addNewTabAction,
   });
 
@@ -454,13 +474,24 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
       autofocus: true,
       canRequestFocus: true,
       skipTraversal: true,
-      onFocusChange: (focus) {
-        //debugger();
-        assert(() {
-          l.d("[${classHash()}]焦点状态变化:$focus");
-          return true;
-        }());
-      },
+      onFocusChange:
+          widget.onFocusChange ??
+          (focus) {
+            //debugger();
+            assert(() {
+              l.d("[${classHash()}]焦点状态变化:$focus");
+              return true;
+            }());
+          },
+      onKeyEvent:
+          widget.onKeyEvent ??
+          (node, event) {
+            assert(() {
+              l.d("[${classHash()}]按键事件:$event");
+              return true;
+            }());
+            return .ignored;
+          },
       child: TabsManagerControllerScope(
         controller: widget.controller,
         child: child,

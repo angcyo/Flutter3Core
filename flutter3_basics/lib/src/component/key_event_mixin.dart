@@ -5,7 +5,7 @@ part of '../../flutter3_basics.dart';
 /// @author angcyo
 /// @date 2024/12/27
 ///
-/// 键盘事件监听
+/// 全局键盘事件监听
 /// [HardwareKeyboard]
 /// [KeyboardListener]
 /// [ServicesBinding.instance.keyEventManager.keyMessageHandler]

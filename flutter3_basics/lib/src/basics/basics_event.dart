@@ -445,6 +445,12 @@ extension KeyEventEx on KeyEvent {
   /// 是否是Meta键
   bool get isMetaKey => isKeyboardKey(LogicalKeyboardKey.meta);
 
+  /// 数字按键对应的数字
+  int? get number => character?.toIntOrNull();
+
+  /// 是否是数字键
+  bool get isDigitKey => isNumberKey;
+
   /// 是否是数字键
   bool get isNumberKey =>
       logicalKey == LogicalKeyboardKey.digit1 ||
