@@ -127,6 +127,7 @@ part 'src/global/global_queue.dart';
 part 'src/global/global_theme.dart';
 part 'src/global/global_typedef.dart';
 part 'src/global/global_initialize.dart';
+part 'src/global/global_shortcut_manager.dart';
 part 'src/global/overlay/overlay_animation.dart';
 part 'src/global/overlay/overlay_manage.dart';
 part 'src/global/overlay/overlay_notification.dart';

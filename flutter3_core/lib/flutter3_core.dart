@@ -51,6 +51,7 @@ part 'src/dialog/single_bottom_input_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
 part 'src/dialog/wheel_dialog.dart';
+part 'src/dialog/shortcut_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/config_file.dart';
 part 'src/file/file_log.dart';

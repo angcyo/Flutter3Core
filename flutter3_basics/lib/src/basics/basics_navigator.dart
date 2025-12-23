@@ -486,8 +486,26 @@ extension NavigatorEx on BuildContext {
   BuildContext? get navigatorContext => navigatorOf().buildContext;
 
   /// 获取一个导航器[NavigatorState]
-  NavigatorState navigatorOf([bool rootNavigator = false]) =>
-      Navigator.of(this, rootNavigator: rootNavigator);
+  NavigatorState navigatorOf([bool rootNavigator = false]) {
+    try {
+      return Navigator.of(this, rootNavigator: rootNavigator);
+    } catch (e) {
+      if (rootNavigator) {
+        final findNavigator = findNavigatorState();
+        if (findNavigator == null) {
+          rethrow;
+        }
+        assert(() {
+          l.w(
+            "当前上下文[${classHash()}]中, 未找到[Navigator widget], 降级成[findNavigatorState]处理",
+          );
+          return true;
+        }());
+        return findNavigator;
+      }
+      rethrow;
+    }
+  }
 
   /// 获取导航中的所有页面
   List<Page<dynamic>>? getRoutePages({bool rootNavigator = false}) {
@@ -723,6 +741,15 @@ extension NavigatorEx on BuildContext {
   void popToRoot([bool rootNavigator = false, RoutePredicate? predicate]) {
     navigatorOf(rootNavigator).popToRoot(predicate);
   }
+
+  /// 关闭当前路由
+  /// - [popCurrentRoute]
+  /// - [removeModalRoute]
+  @api
+  void popCurrentRoute<T extends Object?>({
+    T? result,
+    bool rootNavigator = false,
+  }) => removeModalRoute(result: result, rootNavigator: rootNavigator);
 
   /// 移除当前路由
   @api

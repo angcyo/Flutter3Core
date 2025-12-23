@@ -10,11 +10,8 @@ part of '../../flutter3_basics.dart';
 ///
 /// - [ShortcutMatcher.handleKeypress]调用此方法匹配快捷键
 class ShortcutMatcher with Diagnosticable, ChangeNotifier {
-  ShortcutMatcher({
-    Map<ShortcutActivator, Intent>? shortcuts,
-    this.modal = false,
-    this.onHandleKeypress,
-  }) : _shortcuts = shortcuts ?? {} {
+  ShortcutMatcher({this.modal = false, this.onHandleKeypress})
+    : _shortcuts = {} {
     if (kFlutterMemoryAllocationsEnabled) {
       ChangeNotifier.maybeDispatchObjectCreation(this);
     }
@@ -25,6 +22,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
   final KeyEventResult Function(
     BuildContext? context,
     KeyEvent event,
+    dynamic host,
     dynamic data,
   )?
   onHandleKeypress;
@@ -39,6 +37,17 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
     notifyListeners();
   }
 
+  /// 添加一个快捷键描述
+  @api
+  void addShortcutDescription(ShortcutDescription? description) {
+    if (description == null) {
+      return;
+    }
+    _shortcuts[description.activator] = ShortcutIntent(description);
+    _indexedShortcutsCache = null;
+    notifyListeners();
+  }
+
   /// 添加一个快捷键
   /// - [ShortcutActivator]
   ///   - [SingleActivator]
@@ -48,14 +57,16 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
   /// - [addSingleShortcut]
   /// - [addCharacterShortcut]
   @api
-  void addShortcut(
+  ShortcutDescription addShortcut(
     ShortcutActivator activator,
-    KeyEventResult Function(BuildContext? context, dynamic data)? action, {
+    ShortcutIntentAction? action, {
     String? tag,
   }) {
-    _shortcuts[activator] = ShortcutIntent(action, tag: tag);
+    final description = ShortcutDescription(tag ?? $uuid, activator, action);
+    _shortcuts[activator] = ShortcutIntent(description);
     _indexedShortcutsCache = null;
     notifyListeners();
+    return description;
   }
 
   /// 添加一个简单的快捷键
@@ -63,9 +74,9 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
   /// - [addSingleShortcut]
   /// - [addCharacterShortcut]
   @api
-  void addSingleShortcut(
+  ShortcutDescription addSingleShortcut(
     LogicalKeyboardKey trigger,
-    KeyEventResult Function(BuildContext? context, dynamic data)? action, {
+    ShortcutIntentAction? action, {
     String? tag,
     //--
     bool meta = false,
@@ -75,7 +86,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
     LockState numLock = LockState.ignored,
     bool includeRepeats = true,
   }) {
-    addShortcut(
+    return addShortcut(
       SingleActivator(
         trigger,
         meta: meta,
@@ -95,9 +106,9 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
   /// - [addSingleShortcut]
   /// - [addCharacterShortcut]
   @api
-  void addCharacterShortcut(
+  ShortcutDescription addCharacterShortcut(
     String character,
-    KeyEventResult Function(BuildContext? context, dynamic data)? action, {
+    ShortcutIntentAction? action, {
     String? tag,
     //--
     bool meta = false,
@@ -105,7 +116,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
     bool alt = false,
     bool includeRepeats = true,
   }) {
-    addShortcut(
+    return addShortcut(
       CharacterActivator(
         character,
         meta: meta,
@@ -124,7 +135,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
     for (final entry in _indexedShortcuts.entries) {
       for (final pair in entry.value) {
         final intent = pair.intent;
-        if (intent is ShortcutIntent && intent.tag == tag) {
+        if (intent is ShortcutIntent && intent.description.tag == tag) {
           return pair.activator;
         }
       }
@@ -138,18 +149,19 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
   KeyEventResult handleKeypress(
     BuildContext? context,
     KeyEvent event,
+    dynamic host,
     dynamic data,
   ) {
     //-
-    if (onHandleKeypress?.call(context, event, data) == .handled) {
+    if (onHandleKeypress?.call(context, event, host, data) == .handled) {
       return .handled;
     }
 
     //-
     // Marking some variables as "late" ensures that they aren't evaluated unless needed.
     late final Intent? intent = _find(event, HardwareKeyboard.instance);
-    if (intent is ShortcutIntent && intent.action != null) {
-      return intent.action!.call(context, data);
+    if (intent is ShortcutIntent && intent.description.action != null) {
+      return intent.description.action!.call(context, host, data);
     }
 
     //MARK: - system
@@ -265,13 +277,10 @@ class _ActivatorIntentPair with Diagnosticable {
 
 /// 快捷键触发的意图
 class ShortcutIntent extends Intent {
-  /// 标记
-  final String? tag;
+  /// 快捷方式描述
+  final ShortcutDescription description;
 
-  /// [data] 传递的数据
-  final KeyEventResult Function(BuildContext? context, dynamic data)? action;
-
-  const ShortcutIntent(this.action, {this.tag});
+  const ShortcutIntent(this.description);
 }
 
 /// 快捷键可视化小部件

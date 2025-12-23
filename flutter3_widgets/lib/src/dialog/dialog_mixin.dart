@@ -1051,15 +1051,23 @@ extension NavigatorStateDialogEx on NavigatorState {
     barrierColor ??= widget.getWidgetDialogBarrierColor() ?? Colors.black54;
     useRootNavigator ??= widget.getWidgetDialogUseRootNavigator() ?? true;
 
-    final navigator = Navigator.of(context, rootNavigator: useRootNavigator);
-    final CapturedThemes themes = InheritedTheme.capture(
-      from: context,
-      to: navigator.context,
-    );
+    CapturedThemes? capturedThemes;
+    try {
+      final navigator = Navigator.of(context, rootNavigator: useRootNavigator);
+      capturedThemes = InheritedTheme.capture(
+        from: context,
+        to: navigator.context,
+      );
+    } catch (e) {
+      assert(() {
+        printError(e);
+        return true;
+      }());
+    }
 
     return push<T>(
       DialogPageRoute<T>(
-        context: context,
+        context: this.context,
         builder: (context) {
           return widget;
         },
@@ -1070,7 +1078,7 @@ extension NavigatorStateDialogEx on NavigatorState {
         maintainBottomViewPadding: maintainBottomViewPadding,
         useBarrierColorAnimate: useBarrierColorAnimate,
         settings: routeSettings,
-        themes: themes,
+        themes: capturedThemes,
         anchorPoint: anchorPoint,
         traversalEdgeBehavior:
             traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
