@@ -29,6 +29,9 @@ class TabsManagerController {
   /// 当前选中的标签
   final currentTabEntryLive = $live<TabEntryInfo?>(null);
 
+  /// 当前选中标签对应的数据信息
+  dynamic get currentTabInfo => currentTabEntryLive.value?.tabInfoLive.value;
+
   /// 标签数量
   int get tabCount => tabEntryListLive.value?.length ?? 0;
 
@@ -142,6 +145,22 @@ class TabsManagerController {
     return true;
   }
 
+  /// 更新指定标签
+  @api
+  void updateTabEntry({dynamic tabInfo}) {
+    tabEntryListLive.value?.forEach((element) {
+      if (element.tabInfoLive.value == tabInfo) {
+        element.tabInfoLive << tabInfo;
+      }
+    });
+  }
+
+  /// 更新所有标签信息
+  @api
+  void updateTabEntryList({List<TabEntryInfo>? tabEntryList}) {
+    tabEntryListLive << (tabEntryList ?? tabEntryListLive.value);
+  }
+
   //MARK: - build
 
   /// 构建标签列表
@@ -221,7 +240,7 @@ class TabsManagerController {
       autofocus: false,
       onFocusChange: (focus) {
         assert(() {
-          l.d("[${entry.tabInfoLive.value}]内容焦点变化:$focus");
+          l.d("[${entry.tabInfoLive.value}]标签内容焦点变化:$focus");
           return true;
         }());
       },

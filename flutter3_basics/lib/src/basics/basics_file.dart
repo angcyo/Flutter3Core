@@ -182,6 +182,9 @@ extension FileStringEx on String {
 
 //region File 扩展
 
+/// - [FileSystemEntityEx]
+/// - [FileEx]
+/// - [DirectoryEx]
 extension FileSystemEntityEx on FileSystemEntity {
   Future<DateTime?> get lastModified {
     if (this is File) {
@@ -227,6 +230,9 @@ extension FileSystemEntityEx on FileSystemEntity {
   }
 }
 
+/// - [FileSystemEntityEx]
+/// - [FileEx]
+/// - [DirectoryEx]
 extension FileEx on File {
   /// 文件流
   Stream<List<int>> get stream {
@@ -537,7 +543,12 @@ extension FileEx on File {
   /// PathNotFoundException: Cannot delete file, path = '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/2024-03-30_22-08-34-053.lp2' (OS Error: No such file or directory, errno = 2)
   Future<FileSystemEntity?> deleteSafe({bool recursive = false}) async {
     try {
-      return await delete(recursive: recursive);
+      final result = await delete(recursive: recursive);
+      assert(() {
+        l.i("删除文件成功->$this");
+        return true;
+      }());
+      return result;
     } catch (e) {
       assert(() {
         l.w(e);
@@ -551,6 +562,10 @@ extension FileEx on File {
   bool deleteSafeSync({bool recursive = false}) {
     try {
       deleteSync(recursive: recursive);
+      assert(() {
+        l.i("删除文件成功->$this");
+        return true;
+      }());
       return true;
     } catch (e) {
       assert(() {
@@ -667,6 +682,9 @@ extension FileEx on File {
 
 //region Directory 扩展
 
+/// - [FileSystemEntityEx]
+/// - [FileEx]
+/// - [DirectoryEx]
 extension DirectoryEx on Directory {
   /// 确保文件夹存在, 如果不存在, 则创建
   Directory ensureDirectory() {
@@ -680,7 +698,12 @@ extension DirectoryEx on Directory {
   /// PathNotFoundException: Cannot delete file, path = '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/2024-03-30_22-08-34-053.lp2' (OS Error: No such file or directory, errno = 2)
   Future<FileSystemEntity?> deleteSafe({bool recursive = false}) async {
     try {
-      return await delete(recursive: recursive);
+      final result = await delete(recursive: recursive);
+      assert(() {
+        l.i("删除文件夹成功->$this");
+        return true;
+      }());
+      return result;
     } catch (e) {
       assert(() {
         l.w("无法删除文件夹->$e");
@@ -694,6 +717,10 @@ extension DirectoryEx on Directory {
   bool deleteSafeSync({bool recursive = false}) {
     try {
       deleteSync(recursive: recursive);
+      assert(() {
+        l.i("删除文件夹成功->$this");
+        return true;
+      }());
       return true;
     } catch (e) {
       assert(() {

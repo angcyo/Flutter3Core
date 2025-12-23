@@ -1085,8 +1085,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// [project]类型强转
+  /// - [dispatchCanvasOpenProject]
   Bean? projectBean<Bean>() {
-    return project as Bean?;
+    if (project is Bean) {
+      return project as Bean?;
+    }
+    return null;
   }
 
   //endregion ---api---
@@ -1623,16 +1627,19 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 派发画布打开工程, 框架只做事件派发, 没有相关逻辑.
   /// 此方法需要主动触发, 框架不触发.
   /// 使用者可以在[CanvasListener.onCanvasOpenProject]会调用,根据项目结构信息,恢复画布状态信息.
-  /// [project]
+  /// - [project]工程数据
+  /// - [isUpdate]是否仅是更新工程数据
+  @api
   void dispatchCanvasOpenProject(dynamic project) {
     //debugger();
     assert(() {
-      l.d("打开工程->$project");
+      l.d("[${classHash()}]打开工程->$project");
       return true;
     }());
+    final old = this.project;
     this.project = project;
     _eachCanvasListener((element) {
-      element.onCanvasOpenProject?.call(this, project);
+      element.onCanvasOpenProject?.call(this, old, project);
     });
   }
 
