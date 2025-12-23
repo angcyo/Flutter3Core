@@ -96,6 +96,44 @@ class TabsManagerController {
     return true;
   }
 
+  /// 切换下一个标签
+  @api
+  bool switchNextTab() {
+    final list = tabEntryListLive.value;
+    if (list == null || list.isEmpty) {
+      return false;
+    }
+    final current = currentTabEntryLive.value;
+    if (current == null) {
+      return false;
+    }
+    final index = list.indexOf(current);
+    int nextIndex = index + 1;
+    if (nextIndex >= list.length) {
+      nextIndex = 0;
+    }
+    return switchTab(list[nextIndex]);
+  }
+
+  /// 切换上一个标签
+  @api
+  bool switchPrevTab() {
+    final list = tabEntryListLive.value;
+    if (list == null || list.isEmpty) {
+      return false;
+    }
+    final current = currentTabEntryLive.value;
+    if (current == null) {
+      return false;
+    }
+    final index = list.indexOf(current);
+    int prevIndex = index - 1;
+    if (prevIndex < 0) {
+      prevIndex = list.length - 1;
+    }
+    return switchTab(list[prevIndex]);
+  }
+
   /// 添加新的标签
   @api
   bool addTab(TabEntryInfo? tabEntry, {bool selected = true}) {
