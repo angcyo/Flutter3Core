@@ -62,15 +62,14 @@ mixin KeyEventMixin {
   /// 注册一个键盘事件监听
   /// [handleKeyEventResultMixin]
   @api
-  void registerKeyEvent(
-    List<List<LogicalKeyboardKey>>? eventGroupKeys,
-    KeyEventHandleAction? onKeyEventAction, {
-    bool matchKeyCount = true,
-    bool stopPropagation = true,
-    bool keyDown = true,
-    bool keyRepeat = false,
-    bool keyUp = false,
-  }) {
+  void registerKeyEvent(List<List<LogicalKeyboardKey>>? eventGroupKeys,
+      KeyEventHandleAction? onKeyEventAction, {
+        bool matchKeyCount = true,
+        bool stopPropagation = true,
+        bool keyDown = true,
+        bool keyRepeat = false,
+        bool keyUp = false,
+      }) {
     addKeyEventRegister(
       KeyEventRegister(
         eventGroupKeys,
@@ -153,12 +152,12 @@ mixin KeyEventMixin {
           bool interrupt = false;
           for (final keys in eventGroupKeys) {
             if ((((register.keyDown && event.isKeyDown) ||
-                        (register.keyRepeat && event.isKeyRepeat)) &&
-                    isKeysPressedAll(
-                      keys,
-                      matchKeyCount: register.matchKeyCount,
-                      physicalPressedKeys: _physicalKeysPressed,
-                    )) ||
+                (register.keyRepeat && event.isKeyRepeat)) &&
+                isKeysPressedAll(
+                  keys,
+                  matchKeyCount: register.matchKeyCount,
+                  physicalPressedKeys: _physicalKeysPressed,
+                )) ||
                 (register.keyUp &&
                     event.isKeyUp &&
                     isSameLogicalKey(
@@ -194,9 +193,11 @@ mixin KeyEventMixin {
     }
     if (event.isKeyUp) {
       _physicalKeysPressed.remove(event.physicalKey);
+      //debugger();
     }
-    if (handle != KeyEventResult.ignored) {
+    if (handle == .handled) {
       //清空
+      //debugger();
       _physicalKeysPressed.clear();
     }
     return handle;
@@ -230,8 +231,7 @@ class KeyEventRegister {
   /// 处理键盘抬起事件
   final bool keyUp;
 
-  const KeyEventRegister(
-    this.eventGroupKeys, {
+  const KeyEventRegister(this.eventGroupKeys, {
     this.onKeyEventAction,
     this.stopPropagation = true,
     this.matchKeyCount = true,
@@ -256,8 +256,7 @@ class KeyEventHitInfo {
   /// 是否是抬起事件
   final bool isKeyUp;
 
-  const KeyEventHitInfo(
-    this.keys, {
+  const KeyEventHitInfo(this.keys, {
     this.isKeyRepeat = false,
     this.isKeyDown = false,
     this.isKeyUp = false,
@@ -408,8 +407,8 @@ class _KeyEventWidgetState extends State<KeyEventWidget> with KeyEventMixin {
       skipTraversal: null,
       onFocusChange: isDebug
           ? (value) {
-              l.i('[${classHash()}] focus change $value');
-            }
+        l.i('[${classHash()}] focus change $value');
+      }
           : null,
       onKeyEvent: (node, event) {
         assert(() {

@@ -233,6 +233,7 @@ class CanvasRenderBox extends RenderBox
   late final FocusNode _canvasFocusNode = FocusNode(
     debugLabel: "CanvasRenderBoxFocusNode",
     onKeyEvent: (node, event) {
+      //debugger();
       return handleKeyEventResultMixin(event);
     },
   );
@@ -560,6 +561,7 @@ class CanvasRenderBox extends RenderBox
         canvasDelegate.canvasStyle.enableCanvasKeyEvent == true) {
       //快捷按键匹配
       handler = super.handleKeyEventResultMixin(event);
+      //debugger();
     }
     if (canvasDelegate.handleKeyEvent(this, event, handler)) {
       handler = KeyEventResult.handled;

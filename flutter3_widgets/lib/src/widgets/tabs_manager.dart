@@ -69,9 +69,16 @@ class TabsManagerController {
   }
 
   /// 切换到指定的标签
+  /// - [tabEntry] 标签
+  /// - [tabInfo] 通过标签数据获取[tabEntry]
   /// - [force] 是否强制选中
   @api
-  bool switchTab(TabEntryInfo? tabEntry, {bool force = false}) {
+  bool switchTab(
+    TabEntryInfo? tabEntry, {
+    bool force = false,
+    dynamic tabInfo,
+  }) {
+    tabEntry ??= findTabEntryByTabInfo(tabInfo);
     if (tabEntry == null) {
       return false;
     }
@@ -112,6 +119,12 @@ class TabsManagerController {
     final tabEntry = onCreateNewTabAction?.call(context, data);
     if (tabEntry != null) {
       addTab(tabEntry, selected: selected);
+    } else {
+      assert(() {
+        l.w("[${classHash()}]创建标签失败: $data");
+        //debugger();
+        return true;
+      }());
     }
     return tabEntry;
   }
@@ -148,11 +161,21 @@ class TabsManagerController {
   /// 更新指定标签
   @api
   void updateTabEntry({dynamic tabInfo}) {
-    tabEntryListLive.value?.forEach((element) {
-      if (element.tabInfoLive.value == tabInfo) {
-        element.tabInfoLive << tabInfo;
-      }
-    });
+    final tabEntry = findTabEntryByTabInfo(tabInfo);
+    if (tabEntry != null) {
+      tabEntry.tabInfoLive << tabInfo;
+    }
+  }
+
+  /// 通过[tabInfo]查找指定的标签
+  @api
+  TabEntryInfo? findTabEntryByTabInfo(dynamic tabInfo) {
+    if (tabInfo == null) {
+      return null;
+    }
+    return tabEntryListLive.value?.firstWhereOrNull(
+      (element) => element.tabInfoLive.value == tabInfo,
+    );
   }
 
   /// 更新所有标签信息
