@@ -497,7 +497,7 @@ extension NavigatorEx on BuildContext {
         }
         assert(() {
           l.w(
-            "当前上下文[${classHash()}]中, 未找到[Navigator widget], 降级成[findNavigatorState]处理",
+            "当前上下文[${classHash()}]中, 未找到[Navigator widget], 降级成[findNavigatorState]处理!",
           );
           return true;
         }());
