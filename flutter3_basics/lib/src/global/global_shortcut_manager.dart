@@ -36,6 +36,23 @@ class GlobalShortcutManager {
   ShortcutDescription? findShortcutByTag(String? tag) {
     return shortcutDescriptions.firstWhere((element) => element.tag == tag);
   }
+
+  /// 触发指定[tag]对应的快捷键意图
+  /// - [ShortcutDescription]
+  /// - [ShortcutIntentAction]
+  @api
+  KeyEventResult? triggerShortcut(
+    String? tag, {
+    BuildContext? context,
+    dynamic host,
+    dynamic data,
+  }) {
+    final shortcutDescription = findShortcutByTag(tag);
+    if (shortcutDescription != null) {
+      return shortcutDescription.action?.call(context, host, data);
+    }
+    return null;
+  }
 }
 
 /// 快捷键触发的回调
