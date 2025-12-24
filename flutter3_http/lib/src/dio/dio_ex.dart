@@ -309,7 +309,7 @@ extension DioStringEx on String {
       final length = saveFilePath!.length;
       onReceiveProgress?.call(length, length);
       assert(() {
-        l.i("文件已经存在: $url -> $saveFilePath");
+        l.v("文件已经存在: $url -> $saveFilePath");
         return true;
       }());
       return Response(

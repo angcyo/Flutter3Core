@@ -8,21 +8,17 @@ part of '../../flutter3_basics.dart';
 class DataProviderScope extends InheritedWidget {
   final Object? data;
 
-  const DataProviderScope({
-    super.key,
-    required super.child,
-    this.data,
-  });
+  const DataProviderScope({super.key, required super.child, this.data});
 
   /// 获取一个上层提供的数据
   /// [DataProviderScope.data]
-  static Object? get(BuildContext context, {bool depend = false}) {
+  static Object? get(BuildContext? context, {bool depend = false}) {
     if (depend) {
       return context
-          .dependOnInheritedWidgetOfExactType<DataProviderScope>()
+          ?.dependOnInheritedWidgetOfExactType<DataProviderScope>()
           ?.data;
     } else {
-      return context.getInheritedWidgetOfExactType<DataProviderScope>()?.data;
+      return context?.getInheritedWidgetOfExactType<DataProviderScope>()?.data;
     }
   }
 

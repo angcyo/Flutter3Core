@@ -174,6 +174,7 @@ part 'src/widgets/anchor_location_layout.dart';
 part 'src/widgets/anchor_trace_layout.dart';
 part 'src/widgets/hover_anchor_layout.dart';
 part 'src/widgets/media_query_data_widget.dart';
+part 'src/widgets/mouse_region_scope.dart';
 
 // @formatter:on
 
