@@ -664,7 +664,7 @@ class HoverAnchorLayoutController {
 
 //--
 
-/// [_ExclusiveMouseRegion]
+/// 来自系统的[_ExclusiveMouseRegion]
 @fromFramework
 class _ExclusiveMouseRegion extends MouseRegion {
   const _ExclusiveMouseRegion({super.onEnter, super.onExit, super.child});
