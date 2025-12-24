@@ -160,7 +160,7 @@ class _GlobalShortcutTriggerWidgetState
       //延迟显示
       _timer?.cancel();
       _timer = timerDelay(widget.delay, () {
-        if (_isShowing) {
+        if (_isShowing && $isAppResumed) {
           buildContext?.showWidgetDialog(
             ShortcutDialog(
               shortcutDescriptions: $globalShortcutManager.shortcutDescriptions,
