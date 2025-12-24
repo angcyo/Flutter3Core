@@ -158,9 +158,9 @@ extension MouseHoverScopeEx on Widget {
   Widget mouseHoverProvider({
     Key? key,
     MouseCursor cursor = MouseCursor.defer,
-    bool enable = true,
+    bool? enable,
   }) {
-    return enable
+    return (enable ?? isMouseConnected)
         ? MouseHoverProvider(key: key, cursor: cursor, child: this)
         : this;
   }
@@ -170,11 +170,11 @@ extension MouseHoverScopeEx on Widget {
     Key? key,
     Duration duration = kDefaultAnimationDuration,
     Curve curve = Curves.linear,
-    bool enable = true,
+    bool? enable,
     //--
     Widget? normalChild,
   }) {
-    return enable
+    return (enable ?? isMouseConnected)
         ? MouseHoverVisibility(
             key: key,
             duration: duration,
