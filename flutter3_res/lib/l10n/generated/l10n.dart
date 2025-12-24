@@ -323,6 +323,11 @@ class LibRes {
       args: [],
     );
   }
+
+  /// `自适应`
+  String get libCanvasAdaptive {
+    return Intl.message('自适应', name: 'libCanvasAdaptive', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

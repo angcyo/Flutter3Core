@@ -97,6 +97,8 @@ class AnimatedRotationWidget extends ImplicitlyAnimatedWidget {
 
   final Widget? child;
 
+  final String? debugLabel;
+
   const AnimatedRotationWidget({
     super.key,
     this.angle = 0,
@@ -104,6 +106,7 @@ class AnimatedRotationWidget extends ImplicitlyAnimatedWidget {
     super.curve,
     super.duration = kDefaultAnimationDuration,
     super.onEnd,
+    this.debugLabel,
   });
 
   @override
@@ -113,14 +116,8 @@ class AnimatedRotationWidget extends ImplicitlyAnimatedWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<double>(
-        'angle',
-        angle,
-        showName: true,
-        defaultValue: 0,
-      ),
-    );
+    properties.add(DoubleProperty('angle', angle));
+    properties.add(StringProperty('debugLabel', debugLabel));
   }
 }
 
@@ -130,6 +127,7 @@ class _AnimatedRotationWidgetState
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
+    debugger(when: widget.debugLabel != null);
     _angle =
         visitor(
               _angle,
@@ -140,12 +138,27 @@ class _AnimatedRotationWidgetState
   }
 
   @override
+  void didUpdateTweens() {
+    //_opacityAnimation = animation.drive(_opacity!);
+    debugger(when: widget.debugLabel != null);
+    super.didUpdateTweens();
+  }
+
+  @override
+  void didUpdateWidget(covariant AnimatedRotationWidget oldWidget) {
+    debugger(when: widget.debugLabel != null);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Animation<double> animation = this.animation;
-    return Transform.rotate(
-      angle: _angle?.evaluate(animation).hd ?? 0,
-      child: widget.child,
-    );
+    final angle = _angle?.evaluate(animation).hd ?? 0;
+    /*assert(() {
+      l.v("angle: $angle");
+      return true;
+    }());*/
+    return Transform.rotate(angle: angle, child: widget.child);
   }
 }
 

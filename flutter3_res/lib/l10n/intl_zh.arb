@@ -69,6 +69,7 @@
   "libUpgradeFailure": "更新失败",
   "libUpgradeSuccess": "升级成功",
   "libDowngradeSuccess": "降级成功",
+  "libCanvasAdaptive": "自适应",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

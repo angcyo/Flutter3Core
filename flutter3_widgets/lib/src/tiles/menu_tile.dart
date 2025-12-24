@@ -371,6 +371,10 @@ class DesktopIconMenuTile extends StatefulWidget {
 
   //--
 
+  final MainAxisAlignment? mainAxisAlignment;
+
+  //--
+
   /// 是否处于选中状态, 会有背景装饰
   final bool isSelected;
 
@@ -380,8 +384,8 @@ class DesktopIconMenuTile extends StatefulWidget {
   final Widget? popupBodyWidget;
 
   /// 自定义点击事件
-  /// - 会拦截默认的弹出[popupBodyWidget]处理
-  final GestureTapCallback? onTap;
+  /// - 会拦截默认的弹出[popupBodyWidget]处理, 返回true表示拦截默认处理
+  final ResultDynamicAction? onTap;
 
   /// 弹窗对齐锚点的方式
   final Alignment? popupAlignment;
@@ -393,6 +397,8 @@ class DesktopIconMenuTile extends StatefulWidget {
 
   const DesktopIconMenuTile({
     super.key,
+    this.mainAxisAlignment = .start,
+    //--
     this.iconWidget,
     this.leadingWidget,
     this.trailingWidget,
@@ -425,7 +431,7 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
         Icons.navigate_next,
         size: 16,
         color: globalTheme.icoDisableColor,
-      ).rotate(90.hd);
+      ).rotate(90.hd).animatedRotation(isShowPopupMixin ? 180 : 0);
     }
     return [
           //-- leading
@@ -438,24 +444,32 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
           //-- trailing
           trailingWidget,
         ]
-        .row()!
+        .row(mainAxisAlignment: widget.mainAxisAlignment)!
         .colorFiltered(
           color: isEnableTap ? null : globalTheme.textDisableStyle.color,
         )
         .backgroundColor(
-          isSelected ? globalTheme.hoverColor : null,
+          isSelected ? globalTheme.hoverColor : Colors.transparent,
           fillRadius: radius,
         )
         .inkWell(
-          widget.onTap ??
-              () {
-                wrapShowPopupMixin(() async {
-                  await buildContext?.showPopupDialog(
-                    widget.popupBodyWidget!,
-                    alignment: widget.popupAlignment,
-                  );
-                });
-              },
+          widget.onTap != null
+              ? () {
+                  final result = widget.onTap!();
+                  if (result is bool && result == true) {
+                    // 拦截默认处理
+                  } else {
+                    buildContext?.popMenu();
+                  }
+                }
+              : () {
+                  wrapShowPopupMixin(() async {
+                    await buildContext?.showPopupDialog(
+                      widget.popupBodyWidget!,
+                      alignment: widget.popupAlignment,
+                    );
+                  });
+                },
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )

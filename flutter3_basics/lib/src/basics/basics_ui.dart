@@ -2562,6 +2562,51 @@ extension WidgetEx on Widget {
     child: this,
   );
 
+  @alias
+  Widget ib(
+    GestureTapCallback? onTap, {
+    bool enable = true,
+    bool? minSize /*是否使用小号大小*/,
+    bool? enableFeedback,
+    String? tooltip,
+    Color? color,
+    Color? disabledColor,
+    Color? highlightColor,
+    Color? splashColor,
+    Color? hoverColor,
+    Color? focusColor,
+    double? iconSize /*系统默认 24*/,
+    double? splashRadius,
+    AlignmentGeometry? alignment,
+    EdgeInsetsGeometry? padding /*系统默认 const EdgeInsets.all(8.0)*/,
+    VisualDensity? visualDensity,
+    BoxConstraints? constraints,
+    ButtonStyle? style,
+    bool? isSelected,
+    Widget? selectedIcon,
+  }) => icon(
+    onTap,
+    enable: enable,
+    minSize: minSize,
+    enableFeedback: enableFeedback,
+    tooltip: tooltip,
+    color: color,
+    iconSize: iconSize,
+    disabledColor: disabledColor,
+    highlightColor: highlightColor,
+    splashColor: splashColor,
+    hoverColor: hoverColor,
+    focusColor: focusColor,
+    splashRadius: splashRadius,
+    alignment: alignment,
+    padding: padding,
+    visualDensity: visualDensity,
+    constraints: constraints,
+    style: style,
+    isSelected: isSelected,
+    selectedIcon: selectedIcon,
+  );
+
   /// 有大小, 有圆形波纹, 有提示
   /// [highlightColor] 按下时, 高亮的波纹颜色
   /// [visualDensity]

@@ -32,6 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libAdd": MessageLookupByLibrary.simpleMessage("添加"),
     "libBack": MessageLookupByLibrary.simpleMessage("返回"),
     "libCancel": MessageLookupByLibrary.simpleMessage("取消"),
+    "libCanvasAdaptive": MessageLookupByLibrary.simpleMessage("自适应"),
     "libChoose": MessageLookupByLibrary.simpleMessage("请选择"),
     "libClickRetry": MessageLookupByLibrary.simpleMessage("点击重试"),
     "libConfirm": MessageLookupByLibrary.simpleMessage("确定"),

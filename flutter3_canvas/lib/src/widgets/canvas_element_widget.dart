@@ -30,8 +30,9 @@ class CanvasElementWidget extends LeafRenderObjectWidget {
     super.key,
     this.padding = const EdgeInsets.all(kL),
     this.fit = BoxFit.contain,
-  }) : elementPainter =
-            ElementGroupPainter.createGroupIfNeed(canvasStateData.elements);
+  }) : elementPainter = ElementGroupPainter.createGroupIfNeed(
+         canvasStateData.elements,
+       );
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
@@ -50,16 +51,13 @@ class CanvasElementWidget extends LeafRenderObjectWidget {
   }
 }
 
+/// 用来渲染[ElementPainter]的[RenderObject]
 class CanvasElementRenderObject extends RenderBox {
   ElementPainter? elementPainter;
   EdgeInsets? padding;
   BoxFit? fit;
 
-  CanvasElementRenderObject(
-    this.elementPainter,
-    this.padding,
-    this.fit,
-  );
+  CanvasElementRenderObject(this.elementPainter, this.padding, this.fit);
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -190,29 +188,34 @@ class _CanvasElementAsyncWidgetState extends State<CanvasElementAsyncWidget> {
     _activeCallbackIdentity = callbackIdentity;
     () async {
       return await widget.action!();
-    }()
-        .then<void>((ElementPainter? data) {
-      if (_activeCallbackIdentity == callbackIdentity) {
-        setState(() {
-          _snapshot = AsyncSnapshot.withData(ConnectionState.done, data);
-          widget.onSnapshotChanged?.call(_snapshot);
-        });
-      }
-    }, onError: (Object error, StackTrace stackTrace) {
-      if (_activeCallbackIdentity == callbackIdentity) {
-        setState(() {
-          _snapshot =
-              AsyncSnapshot.withError(ConnectionState.done, error, stackTrace);
-          widget.onSnapshotChanged?.call(_snapshot);
-        });
-      }
-      assert(() {
-        if (FutureBuilder.debugRethrowError) {
-          Future<Object>.error(error, stackTrace);
+    }().then<void>(
+      (ElementPainter? data) {
+        if (_activeCallbackIdentity == callbackIdentity) {
+          setState(() {
+            _snapshot = AsyncSnapshot.withData(ConnectionState.done, data);
+            widget.onSnapshotChanged?.call(_snapshot);
+          });
         }
-        return true;
-      }());
-    });
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        if (_activeCallbackIdentity == callbackIdentity) {
+          setState(() {
+            _snapshot = AsyncSnapshot.withError(
+              ConnectionState.done,
+              error,
+              stackTrace,
+            );
+            widget.onSnapshotChanged?.call(_snapshot);
+          });
+        }
+        assert(() {
+          if (FutureBuilder.debugRethrowError) {
+            Future<Object>.error(error, stackTrace);
+          }
+          return true;
+        }());
+      },
+    );
     // An implementation like `SynchronousFuture` may have already called the
     // .then closure. Do not overwrite it in that case.
     if (_snapshot.connectionState != ConnectionState.done) {
@@ -233,8 +236,9 @@ class _CanvasElementAsyncWidgetState extends State<CanvasElementAsyncWidget> {
     //future
     if (_snapshot.hasError) {
       return widget.errorBuilder?.call(context, _snapshot.error) ??
-          GlobalConfig.of(context)
-              .errorPlaceholderBuilder(context, _snapshot.error);
+          GlobalConfig.of(
+            context,
+          ).errorPlaceholderBuilder(context, _snapshot.error);
     }
     if (_snapshot.hasData) {
       if (_snapshot.data == null) {
@@ -245,7 +249,8 @@ class _CanvasElementAsyncWidgetState extends State<CanvasElementAsyncWidget> {
       }
     }
     return widget.loadingBuilder?.call(context) ??
-        GlobalConfig.of(context)
-            .loadingIndicatorBuilder(context, this, null, null);
+        GlobalConfig.of(
+          context,
+        ).loadingIndicatorBuilder(context, this, null, null);
   }
 }

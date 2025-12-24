@@ -213,9 +213,20 @@ extension AnimationWidgetEx on Widget {
   /// 动画旋转
   /// - [angle]角度
   /// -[AnimatedRotationWidget]
-  Widget animatedRotation(double angle, {Key? key, bool enable = true}) =>
-      enable
-      ? AnimatedRotationWidget(key: key, angle: angle, child: this)
+  Widget animatedRotation(
+    double angle, {
+    Key? key,
+    bool enable = true,
+    Duration? duration,
+    String? debugLabel,
+  }) => enable
+      ? AnimatedRotationWidget(
+          key: key,
+          angle: angle,
+          duration: duration ?? kDefaultAnimationDuration,
+          debugLabel: debugLabel,
+          child: this,
+        )
       : this;
 }
 

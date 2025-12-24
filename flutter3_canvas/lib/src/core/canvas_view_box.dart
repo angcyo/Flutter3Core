@@ -399,6 +399,9 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 使用比例缩放画布
   /// [pivot] 缩放的锚点
+  ///
+  /// - [CanvasKeyManager.zoomIn]
+  /// - [CanvasKeyManager.zoomOut]
   @api
   void scaleBy({double? sx, double? sy, Offset? pivot, bool anim = true}) {
     if (sx != null) {
