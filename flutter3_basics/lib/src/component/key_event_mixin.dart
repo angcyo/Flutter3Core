@@ -62,14 +62,16 @@ mixin KeyEventMixin {
   /// 注册一个键盘事件监听
   /// [handleKeyEventResultMixin]
   @api
-  void registerKeyEvent(List<List<LogicalKeyboardKey>>? eventGroupKeys,
-      KeyEventHandleAction? onKeyEventAction, {
-        bool matchKeyCount = true,
-        bool stopPropagation = true,
-        bool keyDown = true,
-        bool keyRepeat = false,
-        bool keyUp = false,
-      }) {
+  void registerKeyEvent(
+    List<List<LogicalKeyboardKey>>? eventGroupKeys,
+    KeyEventHandleAction? onKeyEventAction, {
+    bool matchKeyCount = true,
+    bool stopPropagation = true,
+    bool keyDown = true,
+    bool keyRepeat = false,
+    bool keyUp = false,
+    String? tag,
+  }) {
     addKeyEventRegister(
       KeyEventRegister(
         eventGroupKeys,
@@ -79,6 +81,7 @@ mixin KeyEventMixin {
         keyRepeat: keyRepeat,
         keyUp: keyUp,
         onKeyEventAction: onKeyEventAction,
+        tag: tag,
       ),
     );
   }
@@ -103,8 +106,12 @@ mixin KeyEventMixin {
 
   /// 移除所有键盘事件监听
   @api
-  void removeAllKeyEventRegister() {
-    _keyEventRegisterList.clear();
+  void removeAllKeyEventRegister({String? tag}) {
+    if (tag == null) {
+      _keyEventRegisterList.clear();
+    } else {
+      _keyEventRegisterList.removeWhere((element) => element.tag == tag);
+    }
   }
 
   @callPoint
@@ -152,12 +159,12 @@ mixin KeyEventMixin {
           bool interrupt = false;
           for (final keys in eventGroupKeys) {
             if ((((register.keyDown && event.isKeyDown) ||
-                (register.keyRepeat && event.isKeyRepeat)) &&
-                isKeysPressedAll(
-                  keys,
-                  matchKeyCount: register.matchKeyCount,
-                  physicalPressedKeys: _physicalKeysPressed,
-                )) ||
+                        (register.keyRepeat && event.isKeyRepeat)) &&
+                    isKeysPressedAll(
+                      keys,
+                      matchKeyCount: register.matchKeyCount,
+                      physicalPressedKeys: _physicalKeysPressed,
+                    )) ||
                 (register.keyUp &&
                     event.isKeyUp &&
                     isSameLogicalKey(
@@ -231,13 +238,18 @@ class KeyEventRegister {
   /// 处理键盘抬起事件
   final bool keyUp;
 
-  const KeyEventRegister(this.eventGroupKeys, {
+  /// 标签
+  final String? tag;
+
+  const KeyEventRegister(
+    this.eventGroupKeys, {
     this.onKeyEventAction,
     this.stopPropagation = true,
     this.matchKeyCount = true,
     this.keyDown = true,
     this.keyRepeat = false,
     this.keyUp = false,
+    this.tag,
   });
 }
 
@@ -256,7 +268,8 @@ class KeyEventHitInfo {
   /// 是否是抬起事件
   final bool isKeyUp;
 
-  const KeyEventHitInfo(this.keys, {
+  const KeyEventHitInfo(
+    this.keys, {
     this.isKeyRepeat = false,
     this.isKeyDown = false,
     this.isKeyUp = false,
@@ -407,8 +420,8 @@ class _KeyEventWidgetState extends State<KeyEventWidget> with KeyEventMixin {
       skipTraversal: null,
       onFocusChange: isDebug
           ? (value) {
-        l.i('[${classHash()}] focus change $value');
-      }
+              l.i('[${classHash()}] focus change $value');
+            }
           : null,
       onKeyEvent: (node, event) {
         assert(() {

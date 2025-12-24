@@ -129,6 +129,9 @@ class CanvasStyle {
 
   //--key
 
+  /// 是否激活画布的快捷键事件
+  bool enableCanvasKeyEventRegister = isDesktopOrWeb;
+
   /// 当这些控制按键任意被按下时, 鼠标的滚动视为需要缩放画布
   List<LogicalKeyboardKey>? scaleControlKeyboardKeys = [
     LogicalKeyboardKey.control,

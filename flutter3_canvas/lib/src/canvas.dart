@@ -383,8 +383,10 @@ class CanvasRenderBox extends RenderBox
     _focusAttachment?.reparent(parent: parentNode);
 
     //debugger();
-    if (isDesktopOrWeb) {
+    if (canvasDelegate.canvasStyle.enableCanvasKeyEventRegister) {
       canvasDelegate.canvasKeyManager.registerKeyEventHandler(this);
+    } else {
+      canvasDelegate.canvasKeyManager.unregisterKeyEventHandler(this);
     }
     postFrame(() {
       visitWidgetElementPainter((painter) {

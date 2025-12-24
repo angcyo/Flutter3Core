@@ -18,6 +18,8 @@ class CanvasKeyManager
   /// 复制的元素列表
   List<ElementPainter>? _copyElementList;
 
+  String get keyTag => "$runtimeType";
+
   /// 注册所有键盘事件
   ///
   /// - [CanvasRenderBox.attach] 驱动
@@ -45,6 +47,7 @@ class CanvasKeyManager
           return .handled;
         },
         keyUp: true,
+        tag: keyTag,
       );
     }
 
@@ -68,6 +71,7 @@ class CanvasKeyManager
           return .handled;
         },
         keyUp: true,
+        tag: keyTag,
       );
     }
 
@@ -81,6 +85,7 @@ class CanvasKeyManager
         deleteSelectedElement();
         return .handled;
       },
+      tag: keyTag,
     );
 
     //方向键, 移动选中元素
@@ -116,6 +121,7 @@ class CanvasKeyManager
         return .handled;
       },
       matchKeyCount: false,
+      tag: keyTag,
     );
 
     //撤销
@@ -132,6 +138,7 @@ class CanvasKeyManager
         undo();
         return .handled;
       },
+      tag: keyTag,
     );
 
     //重做
@@ -152,6 +159,7 @@ class CanvasKeyManager
         redo();
         return .handled;
       },
+      tag: keyTag,
     );
 
     //复制
@@ -168,6 +176,7 @@ class CanvasKeyManager
         copySelectedElement();
         return .handled;
       },
+      tag: keyTag,
     );
 
     //粘贴
@@ -183,6 +192,7 @@ class CanvasKeyManager
       (info) {
         return pasteSelectedElement() ? .handled : .ignored;
       },
+      tag: keyTag,
     );
 
     //全选
@@ -199,6 +209,7 @@ class CanvasKeyManager
         selectAllElement();
         return .handled;
       },
+      tag: keyTag,
     );
 
     //放大画布
@@ -215,6 +226,7 @@ class CanvasKeyManager
         zoomIn();
         return .handled;
       },
+      tag: keyTag,
     );
 
     //缩小画布
@@ -231,7 +243,14 @@ class CanvasKeyManager
         zoomOut();
         return .handled;
       },
+      tag: keyTag,
     );
+  }
+
+  /// 取消所有按键的注册
+  @callPoint
+  void unregisterKeyEventHandler(CanvasRenderBox renderObject) {
+    renderObject.removeAllKeyEventRegister(tag: keyTag);
   }
 
   //--
