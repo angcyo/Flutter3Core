@@ -10,9 +10,6 @@ part of '../../flutter3_basics.dart';
 
 /// 鼠标区域悬停状态域
 class MouseHoverScope extends InheritedWidget {
-  /// 鼠标是否在区域内悬停
-  final ValueNotifier<bool> hover;
-
   /// 获取鼠标域内的数据
   static ValueNotifier<bool>? get(
     BuildContext? context, {
@@ -26,6 +23,9 @@ class MouseHoverScope extends InheritedWidget {
       return context?.getInheritedWidgetOfExactType<MouseHoverScope>()?.hover;
     }
   }
+
+  /// 鼠标是否在区域内悬停
+  final ValueNotifier<bool> hover;
 
   const MouseHoverScope({super.key, required this.hover, required super.child});
 

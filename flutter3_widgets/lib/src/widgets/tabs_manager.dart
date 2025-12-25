@@ -84,7 +84,7 @@ class TabsManagerController {
     }
     if (!force && tabEntry == currentTabEntryLive.value) {
       assert(() {
-        l.w("当前已是标签: ${currentTabEntryLive.value}");
+        l.w("[${classHash()}]当前已是标签: ${currentTabEntryLive.value}");
         return true;
       }());
       return false;
