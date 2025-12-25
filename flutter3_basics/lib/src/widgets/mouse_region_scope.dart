@@ -114,12 +114,12 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
     super.initState();
     hover = MouseHoverScope.get(buildContext);
     isHover = hover?.value ?? isHover;
-    hover?.addListener(_handleMouseHover);
+    hover?.addListener(handleMouseHoverMixin);
   }
 
   @override
   void dispose() {
-    hover?.removeListener(_handleMouseHover);
+    hover?.removeListener(handleMouseHoverMixin);
     super.dispose();
   }
 
@@ -143,7 +143,8 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
     );
   }
 
-  void _handleMouseHover() {
+  @overridePoint
+  void handleMouseHoverMixin() {
     final value = hover?.value ?? isHover;
     if (value != isHover) {
       setState(() {
