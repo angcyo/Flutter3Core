@@ -126,12 +126,24 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool followContent = false,
     //--
     bool? resetCanvasState,
+    bool mergeCanvasState = true,
     //--
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     resetCanvasState ??= isAllCanvasEmpty;
     if (resetCanvasState) {
       canvasStateList.reset(stateList);
+    } else if (mergeCanvasState) {
+      canvasStateList.addAll(
+        mergeCanvasStateList(
+          canvasStateList,
+          stateList,
+          selectedElement: selectedElement,
+          followPainter: followPainter,
+          followContent: followContent,
+          selectType: selectType,
+        ),
+      );
     } else {
       canvasStateList.addAll(stateList);
     }
@@ -147,6 +159,88 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
           followContent: followContent,
           selectType: selectType,
         );
+      }
+    }
+  }
+
+  /// 合并相同画布状态的元素
+  /// @return 未处理的画布状态
+  List<CanvasStateData> mergeCanvasStateList(
+    List<CanvasStateData> src,
+    List<CanvasStateData> dst, {
+    bool selectedElement = false,
+    bool followPainter = false,
+    bool followContent = false,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    List<CanvasStateData> result = [];
+    for (final srcState in src) {
+      var find = dst.findFirst((e) => e.id == srcState.id);
+      if (find != null) {
+        srcState.merge(find);
+        if (srcState == selectedCanvasState) {
+          if (!isNil(find.elements)) {
+            canvasElementManager.attachElementToCanvasDelegate(find.elements);
+            canvasDelegate.dispatchCanvasElementListChanged(
+              srcState.elements,
+              srcState.elements,
+              find.elements,
+              .add,
+              .none,
+            );
+
+            // 选中元素/跟随元素
+            selectedCanvasStateElementList(
+              find.elements,
+              selectedElement: selectedElement,
+              followPainter: followPainter,
+              followContent: followContent,
+              selectType: selectType,
+            );
+          }
+        }
+      } else {
+        result.add(srcState);
+      }
+    }
+    return result;
+  }
+
+  /// 选中画布元素或者跟随元素
+  void selectedCanvasStateElementList(
+    List<ElementPainter>? elements, {
+    bool selectedElement = false,
+    bool followPainter = false,
+    bool followContent = false,
+    ElementSelectType selectType = ElementSelectType.code,
+  }) {
+    if (selectedElement) {
+      canvasDelegate.canvasElementManager.resetSelectedElementList(
+        elements,
+        selectType: selectType,
+      );
+      if (followContent) {
+        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
+          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
+          followPainter = false;
+        }
+      }
+      if (followPainter) {
+        canvasDelegate.followPainter(
+          elementPainter: canvasElementManager.selectComponent,
+        );
+      }
+    } else {
+      if (followContent) {
+        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
+          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
+          followPainter = false;
+        }
+      }
+      if (followPainter) {
+        ElementGroupPainter painter = ElementGroupPainter();
+        painter.resetChildren(elements);
+        canvasDelegate.followPainter(elementPainter: painter);
       }
     }
   }
@@ -226,7 +320,6 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selectedCanvasStateElement = false,
     bool followPainter = false,
     bool followContent = false,
-    //--
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (selectedCanvasState == canvasStateData) {
@@ -305,35 +398,14 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     }
 
     // 选中元素/跟随元素
-    if (selectedCanvasStateElement) {
-      canvasDelegate.canvasElementManager.resetSelectedElementList(
-        newElements,
-        selectType: selectType,
-      );
-      if (followContent) {
-        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
-          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
-          followPainter = false;
-        }
-      }
-      if (followPainter) {
-        canvasDelegate.followPainter(
-          elementPainter: canvasElementManager.selectComponent,
-        );
-      }
-    } else {
-      if (followContent) {
-        if (canvasDelegate.canvasContentManager.followCanvasContentTemplate()) {
-          //跟随内容成功之后, 不需要降级跟随元素, 否则降级处理
-          followPainter = false;
-        }
-      }
-      if (followPainter) {
-        ElementGroupPainter painter = ElementGroupPainter();
-        painter.resetChildren(newElements);
-        canvasDelegate.followPainter(elementPainter: painter);
-      }
-    }
+    selectedCanvasStateElementList(
+      newElements,
+      selectedElement: selectedCanvasStateElement,
+      followPainter: followPainter,
+      followContent: followContent,
+      selectType: selectType,
+    );
+
     return true;
   }
 }
@@ -454,5 +526,14 @@ class CanvasStateData {
     if (redoList != null) {
       this.redoList = redoList;
     }
+  }
+
+  /// 合并另一个画布状态的数据
+  void merge(CanvasStateData other) {
+    index ??= other.index;
+    name ??= other.name;
+    elements.addAll(other.elements);
+    /*undoList.addAll(other.undoList);
+    redoList.addAll(other.redoList);*/
   }
 }

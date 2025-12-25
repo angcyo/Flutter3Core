@@ -72,10 +72,12 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 当前还不是否有焦点
+  /// - [dispatchCanvasFocusChanged]
   @output
   bool hasFocus = false;
 
   /// 当前画布是否附着在界面上
+  /// - [attach]
   @output
   bool isAttached = false;
 
