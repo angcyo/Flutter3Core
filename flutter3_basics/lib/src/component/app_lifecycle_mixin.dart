@@ -144,7 +144,11 @@ class AgentAppLifecycleListener extends AppLifecycleListener {
 
   @override
   void didHaveMemoryPressure() {
-    l.w("系统内存不足...");
+    //当前内存占用
+    final currentRss = ProcessInfo.currentRss;
+    //最大内存占用
+    final maxRss = ProcessInfo.maxRss;
+    l.w("准备释放内存[${currentRss.toSizeStr()}/${maxRss.toSizeStr()}]...");
     onHaveMemoryPressure?.call();
   }
 
