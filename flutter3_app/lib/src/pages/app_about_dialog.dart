@@ -39,6 +39,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
           return widget.buildAdaptiveCenterDialog(
             context,
             [
+              //MARK: - main
               (widget.logo ??
                       AppPackageAssetsWidget(
                         appKey: "assets/png/logo.png",
@@ -68,6 +69,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                     );
                   }),
               "${info?.packageName}".text(style: globalTheme.textDesStyle),
+              //MARK: - debug
               if (widget.debug ?? isDebugFlag)
                 [
                   $platformDeviceInfoCache

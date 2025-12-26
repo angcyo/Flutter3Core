@@ -300,7 +300,11 @@ Future _initAppDebugInfo() async {
     if (agree) {
       final packageInfo = await $platformPackageInfo;
       final deviceInfo = await $platformDeviceInfo;
+      final fileDirectory_ = await fileDirectory();
+      final cacheDirectory_ = await cacheDirectory();
       final deviceInfoData = deviceInfo.data..remove("systemFeatures");
+
+      final directory = "${fileDirectory_.path}\n${cacheDirectory_.path}";
 
       //widget
       final textStyle = GlobalConfig.def.globalTheme.textPlaceStyle;
@@ -328,6 +332,14 @@ Future _initAppDebugInfo() async {
           selectable: true,
         ),
       );
+      //--directory
+      DebugPage.debugLastWidgetBuilderList.add(
+        (_) => directory.text(
+          textAlign: .center,
+          style: textStyle,
+          selectable: true,
+        ),
+      );
 
       //string-copy
       DebugPage.debugLastCopyStringBuilderList.add(
@@ -338,6 +350,7 @@ Future _initAppDebugInfo() async {
           if ($buildConfig != null) {
             builder.appendLine($buildConfig?.toString());
           }
+          builder.appendLine(directory);
         }),
       );
 

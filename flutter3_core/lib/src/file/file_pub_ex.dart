@@ -34,7 +34,7 @@ Future<UiImage?> saveScreenCapture([
   return image;
 }
 
-/// 获取一个files类型的文件夹
+/// 获取一个files类型的文件夹, 用于存储文件
 /// ```
 /// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
 /// ```
@@ -85,7 +85,7 @@ Future<Directory> fileDirectory() async {
   return directory ?? Directory.systemTemp;
 }
 
-/// 获取一个cache类型的文件夹
+/// 获取一个cache类型的文件夹, 用于存储缓存文件
 /// ```
 /// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
 /// ```
