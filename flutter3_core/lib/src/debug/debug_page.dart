@@ -214,21 +214,25 @@ class DebugPage extends StatefulWidget {
       //--
       for (final builder in DebugPage.debugLastWidgetBuilderList)
         builder(context),
-      //--
+      //--本机信息
       "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr"
           .text(style: globalTheme.textPlaceStyle, selectable: true),
+      //--本机媒体信息
       "$platformMediaQueryDataList".text(
         style: globalTheme.textPlaceStyle,
         textAlign: .center,
         selectable: true,
       ),
-      //--
+      //--设备id
       $coreKeys.deviceUuid.text(
         selectable: true,
         style: globalTheme.textPlaceStyle.copyWith(
           color: globalTheme.accentColor,
         ),
       ),
+      //--内存使用情况
+      "${ProcessInfo.currentRss.toSizeStr()}/${ProcessInfo.maxRss.toSizeStr()}"
+          .text(selectable: true, style: globalTheme.textPlaceStyle),
     ].column()!.matchParentWidth().click(() {
       DebugPage.buildLastDebugCopyString(context).copy();
       toastBlur(text: "已复制");
@@ -258,8 +262,12 @@ class DebugPage extends StatefulWidget {
       );
       builder.append("$platformMediaQueryDataList");
       //--
-      builder.newLineIfNotEmpty();
-      builder.append($coreKeys.deviceUuid);
+      builder
+        ..newLineIfNotEmpty()
+        ..append($coreKeys.deviceUuid)
+        ..append(
+          "${ProcessInfo.currentRss.toSizeStr()}/${ProcessInfo.maxRss.toSizeStr()}",
+        );
     });
   }
 
