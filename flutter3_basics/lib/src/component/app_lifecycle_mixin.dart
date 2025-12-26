@@ -142,6 +142,12 @@ class AgentAppLifecycleListener extends AppLifecycleListener {
 
   //--
 
+  /// # leak_tracker: ^11.0.2
+  /// 内存泄漏跟踪
+  /// https://pub.dev/packages/leak_tracker
+  /// # memory_usage: ^0.1.0
+  /// 内存使用
+  /// https://pub.dev/packages/memory_usage
   @override
   void didHaveMemoryPressure() {
     //当前内存占用
