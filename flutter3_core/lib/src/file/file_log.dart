@@ -4,6 +4,7 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/18
 ///
+/// - [logFilePath]
 
 /// 日志文件的最大大小字节
 const kMaxLogLength = 2 * 1024 * 1024; //2M
@@ -19,6 +20,7 @@ const kWebSocketFileName = "websocket.log"; //websocket接收的日志
 const kErrorFileName = "error.log"; //错误日志
 const kHttpFileName = "http.log"; //网络请求日志
 const kPerfFileName = "perf.log"; //性能相关日志
+const kMcpFileName = "mcp.log"; //mcp相关日志
 /// 路径
 const kLogPathName = "log"; //日志存放的文件夹
 const kConfigPathName = "config"; //配置存放的文件夹
@@ -36,6 +38,15 @@ const kPrintPathName = "print"; //打印雕刻的数据存放文件夹
 ///
 typedef FileDataType = Object;
 
+/// 获取默认的日志文件路径
+@alias
+Future<String> logFilePath(
+  String fileName, {
+  String? subFolder = kLogPathName,
+  bool useCacheFolder = true,
+}) async =>
+    fileName.logFilePath(subFolder: subFolder, useCacheFolder: useCacheFolder);
+
 extension ObjectLogEx on Object {
   /// 包裹一下日志信息
   String wrapLogString([String? prefix]) =>
@@ -48,8 +59,7 @@ extension ObjectLogEx on Object {
   Future<String> logFilePath({
     String? subFolder = kLogPathName,
     bool useCacheFolder = true,
-  }) async =>
-      "$this".filePathOf(subFolder, useCacheFolder);
+  }) async => "$this".filePathOf(subFolder, useCacheFolder);
 
   /// [writeToFile]
   Future<File> saveToFile(File? file) => writeToFile(file: file);
@@ -198,8 +208,9 @@ extension ObjectLogEx on Object {
     } else if (this is Directory) {
       //debugger();
       //文件夹复制
-      await (this as Directory)
-          .copyDirectory(Directory(folder ?? fileObj.parent.path));
+      await (this as Directory).copyDirectory(
+        Directory(folder ?? fileObj.parent.path),
+      );
     } else {
       await writeString("$this");
     }

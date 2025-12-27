@@ -14,6 +14,7 @@ void main() async {
     });
   });
 
+  //启动一个服务/支持WebSocket服务
   await shelf_io.serve(handler, 'localhost', 8080).then((server) {
     print('Serving at ws://${server.address.host}:${server.port}');
   });

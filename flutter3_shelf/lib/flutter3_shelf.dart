@@ -123,3 +123,37 @@ shelf.Response responseOkFile({
     context: context,
   );
 }
+
+/// 启动一个WebSocket服务
+@api
+Future<HttpServer> startWebSocketServer(
+  int port,
+  void Function(WebSocketChannel webSocket, String? subprotocol)?
+  onConnection, {
+  Object? host,
+  String? debugLabel,
+}) async {
+  final handler = webSocketHandler((webSocket, subProtocol) {
+    if (onConnection == null) {
+      webSocket.stream.listen((message) {
+        webSocket.sink.add("[debug] echo->$message");
+      });
+      debugger(when: debugLabel != null);
+    }
+    onConnection?.call(webSocket, subProtocol);
+  });
+  debugger(when: debugLabel != null);
+  //启动一个服务/支持WebSocket服务
+  return await shelf_io.serve(handler, host ?? 'localhost', port).then((
+    server,
+  ) {
+    debugger(when: debugLabel != null);
+    assert(() {
+      l.d(
+        '${debugLabel?.wsb}Serving at ws://${server.address.host}:${server.port}',
+      );
+      return true;
+    }());
+    return server;
+  });
+}

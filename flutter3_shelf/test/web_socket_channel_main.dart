@@ -7,6 +7,7 @@ import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() async {
+  // 连接到ws服务器
   final wsUrl = Uri.parse('ws://localhost:8080');
   final channel = WebSocketChannel.connect(wsUrl);
 
