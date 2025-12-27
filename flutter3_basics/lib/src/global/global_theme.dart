@@ -427,7 +427,7 @@ class GlobalThemeDark extends GlobalTheme {
   ui.Color get borderColor => super.borderColor;
 
   @override
-  Color get fillColor => const Color(0xffb0b0b0);
+  Color get fillColor => const Color(0xff3e3e3e);
 
   @override
   TextStyle get textPrimaryStyle =>
