@@ -84,6 +84,27 @@ class StringBuilder {
     return this;
   }
 
+  @alias
+  StringBuilder appendLn(
+    Object? object, [
+    Object? object2,
+    Object? object3,
+    Object? object4,
+    Object? object6,
+    Object? object7,
+    Object? object8,
+    Object? object9,
+  ]) => appendLine(
+    object,
+    object2,
+    object3,
+    object4,
+    object6,
+    object7,
+    object8,
+    object9,
+  );
+
   StringBuilder appendLine(
     Object? object, [
     Object? object2,

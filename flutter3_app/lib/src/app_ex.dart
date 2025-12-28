@@ -93,7 +93,7 @@ String get $appBuildVersionCache => stringBuilder((builder) async {
   }
 });
 
-//--
+//MARK: - BaseDeviceInfo
 
 /// https://pub.dev/packages/device_info_plus
 /// 获取对应平台的设备信息
@@ -214,6 +214,18 @@ extension PlatformDeviceInfoEx on BaseDeviceInfo {
   };
 }
 
+/// [PackageInfo]
+extension PackageInfoEx on PackageInfo {
+  /// 构建版本名和构建版本号
+  String get versionText => "$version($buildNumber)";
+
+  /// debug更详细的信息
+  String get debugVersionString =>
+      versionText.connect($buildFlavor?.wph).connect($buildType?.wph);
+}
+
+//MARK: - share
+
 /// https://pub.dev/packages/share_plus
 /// `share_plus 需要 iPad 用户提供参数 sharePositionOrigin 。`
 extension ShareBytesEx on Uint8List {
@@ -324,3 +336,19 @@ extension ShareStringEx on String {
     );
   }
 }
+
+//MARK: - debug
+
+/// App名称, 非包名
+String? get $appName => $platformPackageInfoCache?.appName;
+
+/// App的一些基础调试信息
+String get $debugAppInfo => stringBuilder((builder) {
+  final info = $platformPackageInfoCache;
+
+  builder
+    ..writeln($platformDeviceName) //设备名称
+    ..write(info?.packageName.connect(" ")) //包名
+    ..writeln(info?.debugVersionString) //版本信息
+    ;
+});

@@ -48,8 +48,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                       ))
                   .tooltip($platformDeviceName),
               "${info?.appName}".text(style: globalTheme.tileTextTitleStyle),
-              ("${"Version".connect($buildFlavor == null ? "" : "(${$buildFlavor})")}: ${info?.version}(${info?.buildNumber})"
-                      .connect($buildType == null ? "" : "(${$buildType})"))
+              ("Version:".connect(info?.debugVersionString))
                   .text(style: globalTheme.textDesStyle)
                   .insets(vertical: kX)
                   .click(() {
