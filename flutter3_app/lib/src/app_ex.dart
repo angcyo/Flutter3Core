@@ -350,5 +350,6 @@ String get $debugAppInfo => stringBuilder((builder) {
     ..writeln($platformDeviceName) //设备名称
     ..write(info?.packageName.connect(" ")) //包名
     ..writeln(info?.debugVersionString) //版本信息
+    ..writeln($deviceUuid) //设备id
     ;
 });

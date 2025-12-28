@@ -901,6 +901,9 @@ extension StringEx on String {
     }
   }
 
+  /// 判断当前字符串是否是邮箱
+  bool get isEmail => isMatch(r'^.+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$');
+
   /// 判断当前字符是否是数字
   bool get isNumber => isMatch(r'^\d+$');
 
