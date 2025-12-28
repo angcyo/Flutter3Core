@@ -179,6 +179,7 @@ class _GlobalShortcutTriggerWidgetState
   }
 }
 
+/// 自动显示[ShortcutDialog]全局快捷键列表对话框
 /// - [GlobalShortcutManager]
 /// - [GlobalShortcutTriggerWidget]
 extension GlobalShortcutTriggerWidgetEx on Widget {
