@@ -80,10 +80,7 @@ String uuid([bool trim = true]) {
 int get uniqueId => UniqueKey().hashCode;
 
 /// [4219854331] 32位
-int get microsecondsId =>
-    DateTime
-        .now()
-        .microsecondsSinceEpoch & 0xFFFFFFFF;
+int get microsecondsId => DateTime.now().microsecondsSinceEpoch & 0xFFFFFFFF;
 
 /// 行的分隔符
 /// [_newlineRegExp]
@@ -94,7 +91,7 @@ String get lineSeparator =>
 /// [WidgetBuilder]
 /// [WidgetErrorBuilder]
 typedef WidgetErrorBuilder =
-Widget Function(BuildContext context, Object error, StackTrace stackTrace);
+    Widget Function(BuildContext context, Object error, StackTrace stackTrace);
 
 /// 判断当前数据是否是普通类型/基础数据类型
 bool isBaseType(dynamic value) {
@@ -131,10 +128,9 @@ extension DynamicEx on dynamic {
   dynamic fromJson() =>
       this is String ? (this as String).fromJson() : toString().fromJson();
 
-  Iterable<dynamic>? fromJsonArray() =>
-      this is String
-          ? (this as String).fromJsonArray()
-          : toString().fromJsonArray();
+  Iterable<dynamic>? fromJsonArray() => this is String
+      ? (this as String).fromJsonArray()
+      : toString().fromJsonArray();
 
   /// 请在具体的类型上实现[toJson]方法, 否则会抛异常
   /// 此方法通常返回的是Map<String, dynamic>类型
@@ -288,9 +284,7 @@ extension ObjectEx on Object {
   }) {
     textStyle ??=
         style ??
-            (useDefStyle
-                ? GlobalConfig.def.globalTheme.textGeneralStyle
-                : null);
+        (useDefStyle ? GlobalConfig.def.globalTheme.textGeneralStyle : null);
     if (maxLines != null) {
       overflow ??= TextOverflow.ellipsis;
     }
@@ -321,11 +315,9 @@ extension ObjectEx on Object {
       int idx = 0; // walks text (string that is searched)
       while (idx < textLC.length) {
         // print('=== idx=$idx');
-        nonHighlightAdd(int end) =>
-            children.add(
-              TextSpan(
-                  text: text.substring(start, end), style: highlightTextStyle),
-            );
+        nonHighlightAdd(int end) => children.add(
+          TextSpan(text: text.substring(start, end), style: highlightTextStyle),
+        );
 
         // find index of term that's closest to current idx position
         int iNearest = -1;
@@ -334,7 +326,7 @@ extension ObjectEx on Object {
           // print('*** i=$i');
           int at;
           if ((at = textLC.indexOf(termListLC[i], idx)) >= 0) //MAGIC//CORE
-              {
+          {
             // print('idx=$idx i=$i at=$at => FOUND: ${termListLC[i]}');
 
             if (words) {
@@ -342,7 +334,7 @@ extension ObjectEx on Object {
                   !wordDelimiters.contains(
                     textLC[at - 1],
                   )) // is preceding character a delimiter?
-                  {
+              {
                 // print('disqualify preceding: idx=$idx i=$i');
                 continue; // preceding character isn't delimiter so disqualify
               }
@@ -352,7 +344,7 @@ extension ObjectEx on Object {
                   !wordDelimiters.contains(
                     textLC[followingIdx],
                   )) // is character following the search term a delimiter?
-                  {
+              {
                 // print('disqualify following: idx=$idx i=$i');
                 continue; // following character isn't delimiter so disqualify
               }
@@ -454,7 +446,7 @@ extension ObjectEx on Object {
     //style参数为空, 则使用参数创建样式
     final innerTextStyle =
         textStyle ??
-            (fontSize == null &&
+        (fontSize == null &&
                 textColor == null &&
                 fontWeight == null &&
                 fontFamily == null &&
@@ -462,20 +454,20 @@ extension ObjectEx on Object {
                 lineHeight == null &&
                 !isUnderline &&
                 !isLineThrough
-                ? null
-                : TextStyle(
-              fontSize: fontSize,
-              color: textColor,
-              fontWeight: fontWeight,
-              fontStyle: fontStyle,
-              fontFamily: fontFamily,
-              height: lineHeight,
-              decorationColor: textColor,
-              decoration: TextDecoration.combine([
-                if (isUnderline) TextDecoration.underline,
-                if (isLineThrough) TextDecoration.lineThrough,
-              ]),
-            ));
+            ? null
+            : TextStyle(
+                fontSize: fontSize,
+                color: textColor,
+                fontWeight: fontWeight,
+                fontStyle: fontStyle,
+                fontFamily: fontFamily,
+                height: lineHeight,
+                decorationColor: textColor,
+                decoration: TextDecoration.combine([
+                  if (isUnderline) TextDecoration.underline,
+                  if (isLineThrough) TextDecoration.lineThrough,
+                ]),
+              ));
 
     if (selectable) {
       //SelectableText
@@ -522,14 +514,15 @@ extension ObjectEx on Object {
 extension FutureEx<T> on Future<T> {
   /// 合并[Future.then]和[Future.catchError]方法
   /// - [throwError] [get]中遇到的错误是否重新抛出?
-  Future get(ValueErrorCallback? get, {
+  Future get(
+    ValueErrorCallback? get, {
     StackTrace? stack,
     bool? throwError,
     String? tag,
   }) {
     stack ??= StackTrace.current;
     return then(
-          (value) {
+      (value) {
         try {
           //debugger();
           final data = get?.call(value, null); //这一层的错误会被捕获
@@ -579,43 +572,43 @@ extension FutureEx<T> on Future<T> {
   }
 
   /// 支持类型的[FutureEx.get]方法
-  Future getValue(dynamic Function(T? value, dynamic error)? get, {
+  Future getValue(
+    dynamic Function(T? value, dynamic error)? get, {
     StackTrace? stack,
     bool? throwError,
     String? tag,
-  }) =>
-      this.get(
-            (value, error) {
-          if (error != null) {
-            get?.call(null, error);
-            return null;
-          } else {
-            get?.call(value, null);
-            return value;
-          }
-        },
-        stack: stack,
-        throwError: throwError,
-        tag: tag,
-      );
+  }) => this.get(
+    (value, error) {
+      if (error != null) {
+        get?.call(null, error);
+        return null;
+      } else {
+        get?.call(value, null);
+        return value;
+      }
+    },
+    stack: stack,
+    throwError: throwError,
+    tag: tag,
+  );
 
   /// 获取[Future]的错误信息, 有错误时, 才会触发[get]方法
-  Future getError(dynamic Function(dynamic error)? get, {
+  Future getError(
+    dynamic Function(dynamic error)? get, {
     StackTrace? stack,
     bool? throwError,
     String? tag,
-  }) =>
-      this.get(
-            (value, error) {
-          if (error != null) {
-            get?.call(error);
-          }
-          return value;
-        },
-        stack: stack,
-        throwError: throwError,
-        tag: tag,
-      );
+  }) => this.get(
+    (value, error) {
+      if (error != null) {
+        get?.call(error);
+      }
+      return value;
+    },
+    stack: stack,
+    throwError: throwError,
+    tag: tag,
+  );
 
   /// 等待[Future]完成
   Future<T> wait(Duration timeLimit, {FutureOr<T> Function()? onTimeout}) {
@@ -642,7 +635,8 @@ extension FutureEx<T> on Future<T> {
   /// [initialData] 当初始化的值有值时, 则直接触发[builder]
   /// [FutureBuilder]
   /// [FutureOrBuilder]
-  Widget toWidget(Widget Function(BuildContext context, T? value) builder, {
+  Widget toWidget(
+    Widget Function(BuildContext context, T? value) builder, {
     Widget Function(BuildContext context, dynamic error)? errorBuilder,
     Widget Function(BuildContext context)? loadingBuilder,
     Widget Function(BuildContext context)? emptyBuilder,
@@ -762,8 +756,8 @@ extension StringEx on String {
   /// 系统用的时[_kEllipsis]
   String ellipsis(int? length, [String ellipsis = '\u2026']) =>
       (length != null && length < this.length)
-          ? "${substring(0, length)}$ellipsis"
-          : this;
+      ? "${substring(0, length)}$ellipsis"
+      : this;
 
   /// 从指定的字符串开始, 截取后面的所有字符串
   /// [last] 是否截取最后一个
@@ -883,7 +877,7 @@ extension StringEx on String {
   /// - 如果是域名, 则返回 http://域名.local:port
   String toLocal([int? port]) {
     port ??= 80;
-    if (isHttpScheme /*isMatch(r'^https?://')*/) {
+    if (isHttpScheme /*isMatch(r'^https?://')*/ ) {
       //已经是http开头
       if (port == 80) {
         return this;
@@ -955,7 +949,8 @@ extension StringEx on String {
   }
 
   /// 分割文本, 并且去除空白字符
-  List<String> splitAndTrim(String separator, {
+  List<String> splitAndTrim(
+    String separator, {
     bool trim = true,
     bool removeEmpty = true,
   }) {
@@ -979,10 +974,7 @@ extension StringEx on String {
 
   /// 转换成[utf8]字节数组
   /// [bytes]
-  ByteData get byteData =>
-      ByteData.view(Uint8List
-          .fromList(bytes)
-          .buffer);
+  ByteData get byteData => ByteData.view(Uint8List.fromList(bytes).buffer);
 
   /// 重复字符串多少次[repeat]
   String operator *(int repeat) => List.filled(repeat, this).join();
@@ -1286,8 +1278,12 @@ extension StringEx on String {
 
   /// [Uri]
   /// [amendScheme] 如果解析失败, 则使用此scheme再解析一次
-  /// [Uri.parse]
-  /// [Uri.tryParse]
+  /// - [Uri.parse]
+  /// - [Uri.tryParse]
+  ///
+  /// - [Uri.file]
+  /// - [Uri.http]
+  /// - [Uri.https]
   Uri? toUri([String? amendScheme]) {
     //debugger();
     final uri = Uri.tryParse(this);
@@ -1330,7 +1326,8 @@ extension StringEx on String {
       return this;
     }
     var before = "";
-    if (package == null || package.isEmpty) {} else {
+    if (package == null || package.isEmpty) {
+    } else {
       before = "packages/$package/";
     }
     if (prefix == null || prefix.isEmpty) {
@@ -1423,7 +1420,7 @@ extension StringEx on String {
   /// 将`8000`转换成`8.0.0.0`
   String toVersionString() => split("").join(".");
 
-//endregion 功能
+  //endregion 功能
 }
 
 /// 字符串正则相关扩展
@@ -1500,9 +1497,7 @@ extension OffsetEx on Offset {
   Offset abs() => Offset(dx.abs(), dy.abs());
 
   /// 平移矩阵
-  Matrix4 get translateMatrix =>
-      Matrix4.identity()
-        ..translate(dx, dy);
+  Matrix4 get translateMatrix => Matrix4.identity()..translate(dx, dy);
 
   /// mm单位的offset, 转换成dp单位
   @dp
@@ -1522,15 +1517,11 @@ Rect rectLTRB({double l = 0, double t = 0, double r = 0, double b = 0}) =>
 extension RectEx on Rect {
   /// [toString]
   String get log =>
-      "Rect.LTRB(${left.toDigits(digits: 1)}, ${top.toDigits(
-          digits: 1)}, ${right.toDigits(digits: 1)}, ${bottom.toDigits(
-          digits: 1)})";
+      "Rect.LTRB(${left.toDigits(digits: 1)}, ${top.toDigits(digits: 1)}, ${right.toDigits(digits: 1)}, ${bottom.toDigits(digits: 1)})";
 
   /// [toString]
   String get logSize =>
-      "Rect.LTWH(${left.toDigits(digits: 1)}, ${top.toDigits(
-          digits: 1)}, ${width.toDigits(digits: 1)}, ${height.toDigits(
-          digits: 1)})";
+      "Rect.LTWH(${left.toDigits(digits: 1)}, ${top.toDigits(digits: 1)}, ${width.toDigits(digits: 1)}, ${height.toDigits(digits: 1)})";
 
   /// 是否是有效有效的值
   /// `0/0`:Nan
@@ -1601,9 +1592,7 @@ extension RectEx on Rect {
   }
 
   /// 转换成[Path]
-  Path toPath() =>
-      Path()
-        ..addRect(this);
+  Path toPath() => Path()..addRect(this);
 
   /// 转换成圆角矩形
   /// [RRect]
@@ -1624,14 +1613,13 @@ extension RectEx on Rect {
     Radius topRight = Radius.zero,
     Radius bottomRight = Radius.zero,
     Radius bottomLeft = Radius.zero,
-  }) =>
-      RRect.fromRectAndCorners(
-        this,
-        topLeft: topLeft,
-        topRight: topRight,
-        bottomRight: bottomRight,
-        bottomLeft: bottomLeft,
-      );
+  }) => RRect.fromRectAndCorners(
+    this,
+    topLeft: topLeft,
+    topRight: topRight,
+    bottomRight: bottomRight,
+    bottomLeft: bottomLeft,
+  );
 
   /// [toRRect]
   RRect toRRectTB({double topRadius = 0, double bottomRadius = 0}) =>
@@ -1785,17 +1773,16 @@ extension RectEx on Rect {
     double? minTop /*top必须小过此值*/,
     double? maxRight /*right必须打过此值*/,
     double? maxBottom /*bottom必须打过此值*/,
-  }) =>
-      Rect.fromLTRB(
-        minLeft == null ? (left ?? this.left) : min(minLeft, left ?? this.left),
-        minTop == null ? (top ?? this.top) : min(minTop, top ?? this.top),
-        maxRight == null
-            ? (right ?? this.right)
-            : max(maxRight, right ?? this.right),
-        maxBottom == null
-            ? (bottom ?? this.bottom)
-            : max(maxBottom, bottom ?? this.bottom),
-      );
+  }) => Rect.fromLTRB(
+    minLeft == null ? (left ?? this.left) : min(minLeft, left ?? this.left),
+    minTop == null ? (top ?? this.top) : min(minTop, top ?? this.top),
+    maxRight == null
+        ? (right ?? this.right)
+        : max(maxRight, right ?? this.right),
+    maxBottom == null
+        ? (bottom ?? this.bottom)
+        : max(maxBottom, bottom ?? this.bottom),
+  );
 
   /// dp单位的坐标, 转换成mm单位的坐标
   @mm
@@ -1805,40 +1792,38 @@ extension RectEx on Rect {
     double? right,
     double? bottom,
     bool? enable,
-  }) =>
-      enable != false
-          ? Rect.fromLTRB(
-        left ?? this.left.toMmFromDp(),
-        top ?? this.top.toMmFromDp(),
-        right ?? this.right.toMmFromDp(),
-        bottom ?? this.bottom.toMmFromDp(),
-      )
-          : this;
+  }) => enable != false
+      ? Rect.fromLTRB(
+          left ?? this.left.toMmFromDp(),
+          top ?? this.top.toMmFromDp(),
+          right ?? this.right.toMmFromDp(),
+          bottom ?? this.bottom.toMmFromDp(),
+        )
+      : this;
 
   /// dp单位的坐标, 转换成unit单位的坐标
   @unit
-  Rect toRectUnit(IUnit? unit, {
+  Rect toRectUnit(
+    IUnit? unit, {
     double? left,
     double? top,
     double? right,
     double? bottom,
-  }) =>
-      Rect.fromLTRB(
-        left ?? this.left.toUnitFromDp(unit),
-        top ?? this.top.toUnitFromDp(unit),
-        right ?? this.right.toUnitFromDp(unit),
-        bottom ?? this.bottom.toUnitFromDp(unit),
-      );
+  }) => Rect.fromLTRB(
+    left ?? this.left.toUnitFromDp(unit),
+    top ?? this.top.toUnitFromDp(unit),
+    right ?? this.right.toUnitFromDp(unit),
+    bottom ?? this.bottom.toUnitFromDp(unit),
+  );
 
   /// mm单位的坐标, 转换成dp单位的坐标
   @dp
-  Rect toRectDp() =>
-      Rect.fromLTRB(
-        left.toDpFromMm(),
-        top.toDpFromMm(),
-        right.toDpFromMm(),
-        bottom.toDpFromMm(),
-      );
+  Rect toRectDp() => Rect.fromLTRB(
+    left.toDpFromMm(),
+    top.toDpFromMm(),
+    right.toDpFromMm(),
+    bottom.toDpFromMm(),
+  );
 
   /// 作用一个矩阵, 并保持某个锚点在作用矩阵后不变
   /// [applyMatrix] 本次需要作用的矩阵, 会叠加在[originMatrix]上
@@ -1846,15 +1831,15 @@ extension RectEx on Rect {
   /// [anchor] 需要保持不动的锚点, 在(0,0)原始矩形中的坐标
   /// [limitContainerRect] 限制操作后的矩形在此矩形范围内, 不指定则不限制
   /// @return 返回保持[anchor]不变的矩形
-  Rect applyMatrix(Matrix4 applyMatrix, {
+  Rect applyMatrix(
+    Matrix4 applyMatrix, {
     Offset anchor = Offset.zero,
     Matrix4? originMatrix,
     Rect? limitContainerRect,
   }) {
     //基础矩形
     final rect = Rect.fromLTWH(0, 0, width, height);
-    final translateMatrix = Matrix4.identity()
-      ..translate(left, top);
+    final translateMatrix = Matrix4.identity()..translate(left, top);
     final Matrix4 beforeMatrix;
     if (originMatrix == null) {
       beforeMatrix = translateMatrix;
@@ -1946,11 +1931,10 @@ extension SizeEx on Size {
   Rect toRect([Offset? offset]) => (offset ?? Offset.zero) & this;
 
   /// 确保是一个有效的[Size]
-  Size ensureValid({double? width, double? height}) =>
-      Size(
-        this.width.ensureValid(width ?? this.width),
-        this.height.ensureValid(height ?? this.height),
-      );
+  Size ensureValid({double? width, double? height}) => Size(
+    this.width.ensureValid(width ?? this.width),
+    this.height.ensureValid(height ?? this.height),
+  );
 }
 
 //endregion Rect/Offset/Size 扩展
@@ -2460,12 +2444,14 @@ extension DoubleEx on double {
       (this - other).abs() >= epsilon;
 
   /// this >= other
-  bool greaterThanOrEqualTo(double other, [
+  bool greaterThanOrEqualTo(
+    double other, [
     double epsilon = precisionErrorTolerance,
   ]) => this > other || equalTo(other, epsilon);
 
   /// this <=  other
-  bool lessThanOrEqualTo(double other, [
+  bool lessThanOrEqualTo(
+    double other, [
     double epsilon = precisionErrorTolerance,
   ]) => this < other || equalTo(other, epsilon);
 
@@ -2566,10 +2552,11 @@ extension ListIntEx on List<int> {
   Future<ui.Image> toImage() => bytes.toImage();
 
   /// [Uint8ListImageEx.toImageFromPixels]
-  Future<ui.Image> toImageFromPixels(int width,
-      int height, [
-        ui.PixelFormat format = ui.PixelFormat.rgba8888,
-      ]) => bytes.toImageFromPixels(width, height, format);
+  Future<ui.Image> toImageFromPixels(
+    int width,
+    int height, [
+    ui.PixelFormat format = ui.PixelFormat.rgba8888,
+  ]) => bytes.toImageFromPixels(width, height, format);
 
   /// 将字节数组转成对应的整型数字
   /// [length] 需要用几个字节来转换
@@ -2623,7 +2610,8 @@ extension IterableEx<E> on Iterable<E> {
     do {
       final text =
           covertString?.call(iterator.current) ?? textOf(iterator.current);
-      if (separator == null || separator.isEmpty) {} else {
+      if (separator == null || separator.isEmpty) {
+      } else {
         buffer.write(separator);
       }
       if (text != null) {
@@ -2692,10 +2680,9 @@ extension IterableEx<E> on Iterable<E> {
 
   /// 统计满足条件的元素数量
   /// [fold]
-  int count(bool Function(E element) test) =>
-      fold(0, (int count, E element) {
-        return test(element) ? count + 1 : count;
-      });
+  int count(bool Function(E element) test) => fold(0, (int count, E element) {
+    return test(element) ? count + 1 : count;
+  });
 
   /// 所有元素求和
   T sum<T extends num>(T Function(E element) test) {
@@ -2761,7 +2748,8 @@ extension IterableEx<E> on Iterable<E> {
   /// [MappedIterable]
   /// [IterableEx.mapToList]
   /// [ListEx.mapToList]
-  List<Type> mapToList<Type>(Type Function(dynamic e) toElement, {
+  List<Type> mapToList<Type>(
+    Type Function(dynamic e) toElement, {
     bool growable = false,
   }) {
     return map<Type>((e) {
@@ -2881,7 +2869,8 @@ extension IterableEx<E> on Iterable<E> {
   /// 等待所有异步的结果
   /// [asyncFuture]
   FutureOr<List<R>> asyncForEach<R>(
-      R Function(E element, Completer completer) action,) async {
+    R Function(E element, Completer completer) action,
+  ) async {
     List<R> result = [];
     for (final item in this) {
       final completer = Completer();
@@ -2915,13 +2904,13 @@ extension ListEx<T> on List<T> {
 
   /// [StatelessWidget]->[ScrollView]->[BoxScrollView]->[ListView]
   ListView toListView(
-      Widget Function(BuildContext context, T element, int index) itemBuilder, {
-        Axis scrollDirection = Axis.vertical,
-        ScrollController? controller,
-        bool? primary,
-        ScrollPhysics? physics,
-        bool shrinkWrap = false,
-      }) {
+    Widget Function(BuildContext context, T element, int index) itemBuilder, {
+    Axis scrollDirection = Axis.vertical,
+    ScrollController? controller,
+    bool? primary,
+    ScrollPhysics? physics,
+    bool shrinkWrap = false,
+  }) {
     return ListView.builder(
       itemCount: length,
       scrollDirection: scrollDirection,
@@ -2955,7 +2944,8 @@ extension ListEx<T> on List<T> {
   /// 映射类型转换成[Type]的[List]
   /// [IterableEx.mapToList]
   /// [ListEx.mapToList]
-  List<Type> mapToList<Type>(Type Function(T e) toElement, {
+  List<Type> mapToList<Type>(
+    Type Function(T e) toElement, {
     bool growable = false,
   }) {
     return map<Type>((e) {
@@ -3235,17 +3225,19 @@ extension ListIndexEx<T> on List<T> {
   /// [startRow].[startColumn] 需要获取的开始行列,从0开始
   /// [rowCount].[columnCount] 需要获取的行列数量
   /// [width] 二维数组的宽度
-  List<T> getArrayPartData(int startRow,
-      int startColumn,
-      int rowCount,
-      int columnCount,
-      int width,) {
+  List<T> getArrayPartData(
+    int startRow,
+    int startColumn,
+    int rowCount,
+    int columnCount,
+    int width,
+  ) {
     final result = <T>[];
     for (var row = startRow; row < startRow + rowCount; row++) {
       for (
-      var column = startColumn;
-      column < startColumn + columnCount;
-      column++
+        var column = startColumn;
+        column < startColumn + columnCount;
+        column++
       ) {
         final index = arrayIndex(row, column, width);
         result.add(this[index]);
@@ -3272,16 +3264,18 @@ extension ListListEx<T> on List<List<T>> {
   }
 
   /// 获取二维数组中指定开始行/列, 行数量/列数量的一部分数据
-  List<T> getArrayPartData(int startRow,
-      int startColumn,
-      int rowCount,
-      int columnCount,) {
+  List<T> getArrayPartData(
+    int startRow,
+    int startColumn,
+    int rowCount,
+    int columnCount,
+  ) {
     final result = <T>[];
     for (var row = startRow; row < startRow + rowCount; row++) {
       for (
-      var column = startColumn;
-      column < startColumn + columnCount;
-      column++
+        var column = startColumn;
+        column < startColumn + columnCount;
+        column++
       ) {
         result.add(this[row][column]);
       }

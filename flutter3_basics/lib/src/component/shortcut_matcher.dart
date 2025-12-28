@@ -449,3 +449,25 @@ class ShortcutHint extends StatelessWidget {
     return character ?? key?.keyLabel.toUpperCase() ?? "";
   }
 }
+
+//MARK: -
+
+extension ShortcutWidgetEx on Widget {
+  /// 添加快捷键匹配
+  /// - [ShortcutMatcher]
+  Widget shortcutMatcher(
+    ShortcutMatcher matcher, {
+    BuildContext? context,
+    dynamic host,
+    dynamic data,
+    //--
+    bool autofocus = true,
+  }) {
+    return focus(
+      autofocus: autofocus,
+      onKeyEvent: (node, event) {
+        return matcher.handleKeypress(context, event, host, data);
+      },
+    );
+  }
+}
