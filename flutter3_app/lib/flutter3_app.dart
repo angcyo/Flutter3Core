@@ -45,6 +45,14 @@ part 'src/mobile_ex.dart';
 part 'src/platform/permissions.dart';
 part 'src/receive/receive_intent.dart';
 
+/// - [runGlobalApp]启动的时间
+@output
+int globalAppStartTime = 0;
+
+/// - [globalAppEndTime] 启动结束时间
+@output
+int globalAppEndTime = 0;
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/28
@@ -83,7 +91,7 @@ Future runGlobalApp(
     io(() => testTime());
   }*/
 
-  lTime.tick();
+  globalAppStartTime = lTime.tick();
 
   // 打开url链接
   GlobalConfig.def.openUrlFn = (context, url, meta) {
@@ -146,7 +154,7 @@ Future runGlobalApp(
 
   //ErrorWidget.builder = ;
 
-  //runApp
+  //MARK: - runApp fn
   Future realRun() async {
     Object? error;
     StackTrace? stack;
@@ -184,7 +192,7 @@ Future runGlobalApp(
     //debug info
     _initAppDebugInfo();
 
-    //--before
+    //MARK: - before
     try {
       await beforeAction?.call();
       await executeGlobalInitialize(before: true);
@@ -219,7 +227,7 @@ Future runGlobalApp(
         app: useViewModelProvider ? app.wrapGlobalViewModelProvider() : app,
       ),
     );
-    //--after
+    //MARK: - after
     try {
       await afterAction?.call();
       await executeGlobalInitialize(after: true);
@@ -231,11 +239,14 @@ Future runGlobalApp(
       }
     }
 
-    //--
+    //MARK: - end
+    globalAppEndTime = nowTimestamp();
     "启动完成[${Platform.resolvedExecutable}]:${lTime.time()}".writeToLog(
       level: L.info,
     );
   }
+
+  //MARK: - run
 
   if (!zonedGuarded) {
     return await realRun();
