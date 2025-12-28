@@ -37,67 +37,84 @@ class HttpResultHandle {
   bool useDataCodeStatus = true;
 
   /// 处理当前[code]码是否表示成功
-  late bool Function(dynamic code) isSuccessCode =
-      (code) => code is int && code >= 200 && code < 300;
+  late bool Function(dynamic code) isSuccessCode = (code) =>
+      code is int && code >= 200 && code < 300;
 
   /// 处理网络请求返回的数据
   late dynamic Function(dynamic response) handleResponse = (response) {
     //debugger();
+
+    //状态码和数据
+    int? code;
+    dynamic data;
+
+    //MARK: - response
     if (response is Response) {
-      final code = response.statusCode ?? 0;
+      code = response.statusCode ?? 0;
       if (isSuccessCode(code)) {
-        //http 状态成功
-        dynamic data = response.data;
-        if (needJsonDecode && data is String) {
-          data = jsonDecode(data);
-        }
-        if (data is! Map) {
-          return data;
-        } else {
-          if (useDataCodeStatus) {
-            //需要判断逻辑code码
-            if (!isNil(codeKeyList)) {
-              final dataCode = data.getValue(codeKeyList);
-              if (isSuccessCode(dataCode)) {
-                //成功
-                return isNil(dataKeyList)
-                    ? data
-                    : data.getValue(dataKeyList, data);
-              } else {
-                throw RHttpException(
-                  message: (isNil(messageKeyList)
-                          ? null
-                          : data.getValue(
-                              messageKeyList, defHttpErrorMessage)) ??
-                      defHttpErrorMessage,
-                  statusCode: dataCode,
-                  error: data,
-                );
-              }
-            } else {
+        data = response.data;
+      }
+    } else if (response is http.Response) {
+      //throw RException(message: "无法解析的数据类型");
+      code = response.statusCode;
+      if (isSuccessCode(code)) {
+        data = response.body;
+      }
+    } else {
+      assert(() {
+        l.w("未处理的response类型[${response.runtimeType}]");
+        return true;
+      }());
+      return response;
+    }
+
+    //MARK: - handle
+    if (isSuccessCode(code)) {
+      //http 状态成功
+      if (needJsonDecode && data is String) {
+        data = jsonDecode(data);
+      }
+      if (data is! Map) {
+        return data;
+      } else {
+        if (useDataCodeStatus) {
+          //需要判断逻辑code码
+          if (!isNil(codeKeyList)) {
+            final dataCode = data.getValue(codeKeyList);
+            if (isSuccessCode(dataCode)) {
+              //成功
               return isNil(dataKeyList)
                   ? data
                   : data.getValue(dataKeyList, data);
+            } else {
+              throw RHttpException(
+                message:
+                    (isNil(messageKeyList)
+                        ? null
+                        : data.getValue(messageKeyList, defHttpErrorMessage)) ??
+                    defHttpErrorMessage,
+                statusCode: dataCode,
+                error: data,
+              );
             }
           } else {
-            //不需要判断逻辑code码, 则直接返回数据
-            return data;
+            return isNil(dataKeyList) ? data : data.getValue(dataKeyList, data);
           }
+        } else {
+          //不需要判断逻辑code码, 则直接返回数据
+          return data;
         }
-      } else {
-        assert(() {
-          l.w("网络请求状态码[$code]");
-          return true;
-        }());
-        throw RHttpException(
-          message: "code[$code]${response.statusMessage ?? ""}",
-          statusCode: code,
-          error: response,
-        );
       }
     } else {
-      //throw RException(message: "无法解析的数据类型");
-      return response;
+      assert(() {
+        l.w("网络请求状态码[$code]");
+        return true;
+      }());
+      throw RHttpException(
+        message: "code[$code]${response.statusMessage ?? ""}",
+        statusCode: code,
+        error: response,
+      );
     }
   };
 
@@ -130,16 +147,10 @@ class HttpResultHandle {
     if (showErrorToast) {
       toastBlur(text: tip.toString());
     }
-    return RHttpException(
-      message: tip,
-      statusCode: statusCode,
-      error: error,
-    );
+    return RHttpException(message: tip, statusCode: statusCode, error: error);
   };
 }
 
 /// 网络请求返回的数据处理回调
-typedef HttpValueCallback<T> = dynamic Function(
-  T? value,
-  RHttpException? error,
-);
+typedef HttpValueCallback<T> =
+    dynamic Function(T? value, RHttpException? error);

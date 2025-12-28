@@ -12,9 +12,16 @@ class Webhook {
     String webhook,
     String? text, {
     bool atAll = false,
+    //--
+    String? secret /*签名密钥*/,
   }) async {
+    final timestamp = nowTimestampSecond(); // 时间戳。
+    final sign = secret?.feishuSign(timestamp); // 得到的签名字符串。
+
     //post请求
     final postBody = {
+      if (sign != null) "timestamp": timestamp,
+      if (sign != null) "sign": sign,
       "msg_type": "text",
       "content": {
         "text": '''${atAll ? "<at user_id=\"all\">所有人</at>" : ""}$text''',
@@ -35,9 +42,16 @@ class Webhook {
     String? title,
     String? text, {
     bool atAll = false,
+    //--
+    String? secret /*签名密钥*/,
   }) async {
+    final timestamp = nowTimestampSecond(); // 时间戳。
+    final sign = secret?.feishuSign(timestamp); // 得到的签名字符串。
+
     //post请求
     final postBody = {
+      if (sign != null) "timestamp": timestamp,
+      if (sign != null) "sign": sign,
       "msg_type": "post",
       "content": {
         "post": {
@@ -79,9 +93,15 @@ class Webhook {
     String? text, {
     String? subTitle,
     bool atAll = false,
+    //--
+    String? secret /*签名密钥*/,
   }) async {
+    final timestamp = nowTimestampSecond(); // 时间戳。 1766898281
+    final sign = secret?.feishuSign(timestamp); // 得到的签名字符串。
     //post请求
     final postBody = {
+      if (sign != null) "timestamp": timestamp,
+      if (sign != null) "sign": sign,
       "msg_type": "interactive",
       "card": {
         "schema": "2.0",
@@ -133,5 +153,16 @@ class Webhook {
       headers: {"Content-Type": "application/json"},
     );
     return response;
+  }
+}
+
+extension WebhookStringEx on String {
+  /// 使用指定密钥, 构建飞书Webhook签名
+  /// https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot?lang=zh-CN#3c6592d6
+  String feishuSign(int timestamp) {
+    final secret = this;
+    //把timestamp+"\n"+密钥当做签名字符串
+    final stringToSign = "$timestamp\n$secret";
+    return "".hmacSHA256Bytes(stringToSign).toBase64;
   }
 }

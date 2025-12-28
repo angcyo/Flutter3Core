@@ -373,6 +373,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     List<String>? dataKeyList,
     List<String>? messageKeyList,
     bool? useDataCodeStatus,
+    bool Function(dynamic code)? isSuccessCode /*当前code码是否表示成功*/,
     String? debugLabel,
   }) async {
     //debugger();
@@ -382,6 +383,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     handle.messageKeyList = messageKeyList ?? handle.messageKeyList;
     handle.showErrorToast = showErrorToast ?? handle.showErrorToast;
     handle.useDataCodeStatus = useDataCodeStatus ?? handle.useDataCodeStatus;
+    handle.isSuccessCode = isSuccessCode ?? handle.isSuccessCode;
     return get((response, error) {
       debugger(when: debugLabel != null);
       if (error != null) {

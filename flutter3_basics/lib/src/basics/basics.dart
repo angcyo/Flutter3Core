@@ -22,6 +22,9 @@ int nowTime() => nowTimestamp();
 /// [DateTime]
 int nowTimestamp() => DateTime.now().millisecondsSinceEpoch;
 
+/// 当前时间戳 `1699064019` 10位秒
+int nowTimestampSecond() => nowTimestamp() ~/ 1000;
+
 /// 当前的[Duration]
 Duration nowDuration() => Duration(milliseconds: nowTimestamp());
 

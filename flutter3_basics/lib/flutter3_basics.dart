@@ -51,6 +51,7 @@ export 'src/component/dart_scope_functions.dart';
 export 'src/component/rnd.dart';
 export 'src/utils/hex.dart';
 export 'package:flutter3_res/flutter3_res.dart';
+export 'package:crypto/crypto.dart';
 
 //export 'package:leak_tracker/leak_tracker.dart';
 
@@ -59,6 +60,7 @@ export 'package:flutter3_res/flutter3_res.dart';
 part 'src/basics/basics.dart';
 part 'src/basics/basics_animation.dart';
 part 'src/basics/basics_breakpoints.dart';
+part 'src/basics/basics_crypto.dart';
 part 'src/basics/basics_date_time.dart';
 part 'src/basics/basics_decoration.dart';
 part 'src/basics/basics_event.dart';
