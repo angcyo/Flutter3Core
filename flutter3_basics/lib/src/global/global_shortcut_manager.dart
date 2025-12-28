@@ -34,7 +34,9 @@ class GlobalShortcutManager {
 
   @api
   ShortcutDescription? findShortcutByTag(String? tag) {
-    return shortcutDescriptions.firstWhere((element) => element.tag == tag);
+    return shortcutDescriptions.firstWhereOrNull(
+      (element) => element.tag == tag,
+    );
   }
 
   /// 触发指定[tag]对应的快捷键意图
