@@ -40,4 +40,5 @@ part 'src/discovery/port_scanner.dart';
 part 'src/doh/r_doh.dart';
 part 'src/http.dart';
 part 'src/network_string_loader.dart';
+part 'src/webhook.dart';
 // @formatter:on
