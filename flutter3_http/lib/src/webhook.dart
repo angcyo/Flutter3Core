@@ -10,6 +10,20 @@ part of '../flutter3_http.dart';
 /// - 自定义机器人的频率控制和普通应用不同，为单租户单机器人 100 次/分钟，5 次/秒。
 ///   建议发送消息尽量避开诸如 10:00、17:30 等整点及半点时间，否则可能出现因系统压力导致的 11232 限流错误，导致消息发送失败。
 /// - 发送消息时，请求体的数据大小不能超过 20 KB。
+///
+/// # 飞书 - 😋 Emoji 表情符号大全
+/// https://www.feishu.cn/docx/doxcnG6utI72jB4eHJF1s5IgVJf
+///
+/// # 飞书 - 图标库
+/// https://open.feishu.cn/document/feishu-cards/enumerations-for-icons
+///
+/// # 飞书 - 标题主题样式枚举
+/// https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/title#6056191b
+///
+/// # 飞书 - 特殊字符转义说明
+/// https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/rich-text#a4c5d27e
+///
+/// - [Webhook.sendFeishuInteractive]
 class Webhook {
   /// 发送飞书文本消息
   /// https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot#756b882f
@@ -86,11 +100,20 @@ class Webhook {
     return response;
   }
 
-  /// 发送飞书卡片
+  /// # 发送飞书卡片
   /// https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot#478cb64f
   ///
-  /// 卡片样式编辑:
+  /// #卡片样式编辑:
   /// https://open.feishu.cn/cardkit
+  ///
+  /// # 标题主题样式枚举
+  /// - [template] 模板样式
+  ///   - `blue` `wathet`
+  ///   - `green` `turquoise`
+  ///   - `yellow` `orange`
+  ///   - `red` `carmine` `violet` `purple`
+  ///   - `grey` `default`
+  /// https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/title#6056191b
   ///
   static Future<http.Response> sendFeishuInteractive(
     String webhook,
@@ -98,6 +121,12 @@ class Webhook {
     String? text, {
     String? subTitle,
     bool atAll = false,
+    //--
+    String? template,
+    List<String?>? titleTagList /*标题后面跟随的标签*/,
+    List<String>? titleTagColorList /*标签的颜色*/,
+    List<Map>? beforeElements,
+    List<Map>? afterElements,
     //--
     String? secret /*签名密钥*/,
   }) async {
@@ -127,14 +156,27 @@ class Webhook {
             : {
                 "title": {"tag": "plain_text", "content": title},
                 "subtitle": {"tag": "plain_text", "content": subTitle},
-                "template": "blue",
+                "text_tag_list": titleTagList == null
+                    ? null
+                    : [
+                        for (final (index, item) in titleTagList.indexed)
+                          if (item != null)
+                            {
+                              "tag": "text_tag",
+                              "text": {"tag": "plain_text", "content": item},
+                              "color":
+                                  titleTagColorList?.get(index) ?? "turquoise",
+                            },
+                      ],
                 // blue wathet turquoise green yellow orange red carmine violet purple indigo grey default
+                "template": template ?? "blue",
                 "padding": "12px 12px 12px 12px",
               },
         "body": {
           "direction": "vertical",
           "padding": "12px 12px 12px 12px",
           "elements": [
+            ...?beforeElements,
             if (text != null)
               {
                 "tag": "markdown",
@@ -148,6 +190,7 @@ class Webhook {
                 "tag": "div",
                 "text": {"content": "<at id=all></at>", "tag": "lark_md"},
               },
+            ...?afterElements,
           ],
         },
       },
