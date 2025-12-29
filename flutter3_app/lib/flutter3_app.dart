@@ -149,6 +149,7 @@ Future runGlobalApp(
     final details = FlutterErrorDetails(exception: error, stack: stack);
     details.exceptionAsString().writeToErrorLog();
     "错误详情↓\n${dumpErrorToString(details)}".writeToErrorLog();
+    debugger();
     return false;
   });
 
@@ -274,10 +275,12 @@ void wrapFlutterOnError([FlutterExceptionHandler? onErrorHandler]) {
   };
 }
 
-/// 包裹[PlatformDispatcher.instance.onError]处理, 保持旧逻辑不变
+/// 包裹[PlatformDispatcher.onError]处理, 保持旧逻辑不变
+/// - [Completer.completeError] 调用这个方法之后, 就会触发[PlatformDispatcher.onError]
 void wrapPlatformDispatcherOnError([ErrorCallback? onErrorCallback]) {
-  final oldOnError = PlatformDispatcher.instance.onError;
-  PlatformDispatcher.instance.onError = (error, stack) {
+  final instance = PlatformDispatcher.instance;
+  final oldOnError = instance.onError;
+  instance.onError = (error, stack) {
     bool handle = false;
     handle = oldOnError?.call(error, stack) ?? handle;
     handle = onErrorCallback?.call(error, stack) ?? handle;

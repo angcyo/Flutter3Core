@@ -269,13 +269,19 @@ void reportError(exception) {
   );
 }
 
-/// 打印错误
+/// 打印错误, 会被平台的[PlatformDispatcher.onError]方法处理
+/// - 如果使用了崩溃日志库 则会被捕获.
+///
 /// [FlutterError.presentError]
 /// [FlutterError.resetErrorCount]
 /// [StackTrace.current]
 /// [reportError]
 /// [printError]
 void printError(dynamic exception, [StackTrace? stack]) {
+  assert(() {
+    l.w("上报错误信息->$exception");
+    return true;
+  }());
   FlutterError.dumpErrorToConsole(
     exception is FlutterErrorDetails
         ? exception
