@@ -69,7 +69,6 @@ class LibAppVersionBean {
           appVersionUrl = url;
           final bean = LibAppVersionBean.fromJson(data.jsonDecode());
           _appVersionBean = bean;
-          //debugger();
           if (checkUpdate || forceShow == true || forceForbiddenShow == true) {
             final update = await AppUpdateDialog.checkUpdateAndShow(
               GlobalConfig.def.globalContext,

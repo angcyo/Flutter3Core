@@ -69,12 +69,12 @@ class OssClient {
 
   /// 阿里云OSS的Bucket 域名
   static String? get ossBaseUrl {
-    final String? url = $buildConfig?["ossBaseUrl"];
+    final String? url = $bc?["ossBaseUrl"];
     if (url != null) {
       return url;
     }
-    String? ossBucket = $buildConfig?["ossBucket"];
-    String? ossEndpoint = $buildConfig?["ossEndpoint"];
+    String? ossBucket = $bc?["ossBucket"];
+    String? ossEndpoint = $bc?["ossEndpoint"];
     if (ossBucket != null && ossEndpoint != null) {
       if (ossEndpoint.startsWith("^https?://")) {
         return "$ossBucket.$ossEndpoint";
@@ -108,8 +108,8 @@ void initAliyunOssSts({
   FutureOr<Auth> Function()? authGetter,
   //--
 }) {
-  ossEndpoint ??= $buildConfig?["ossEndpoint"];
-  ossBucket ??= $buildConfig?["ossBucket"];
+  ossEndpoint ??= $bc?["ossEndpoint"];
+  ossBucket ??= $bc?["ossBucket"];
   if (ossEndpoint != null && ossEndpoint.startsWith("^https?://")) {
     ossEndpoint = ossEndpoint.replaceFirst(RegExp(r"^https?://"), "");
   }
@@ -237,7 +237,8 @@ Future<String> uploadAliyunOssFile(
     filepath,
     fileKey: key,
     cancelToken: cancelToken,
-    option: option ??
+    option:
+        option ??
         _putRequestOption(
           bucketName: bucketName,
           override: override,
@@ -277,7 +278,8 @@ Future<List<String>> uploadAliyunOssFileList(
   int allReceiveCount = 0;
 
   pathList.forEachIndexed((index, filepath) {
-    final key = keyList?[index] ??
+    final key =
+        keyList?[index] ??
         (prefixKey == null
             ? filepath.fileName()
             : "$prefixKey/${filepath.fileName()}");
@@ -292,20 +294,24 @@ Future<List<String>> uploadAliyunOssFileList(
           onSendAction: (chunk) {
             allSendCount += chunk.count;
             allSendTotal += chunk.total;
-            onSendAction?.call(DataChunkInfo(
-              startTime: startTime,
-              count: allSendCount,
-              total: allSendTotal,
-            ));
+            onSendAction?.call(
+              DataChunkInfo(
+                startTime: startTime,
+                count: allSendCount,
+                total: allSendTotal,
+              ),
+            );
           },
           onReceiveAction: (chunk) {
             allReceiveCount += chunk.count;
             allReceiveTotal += chunk.total;
-            onReceiveAction?.call(DataChunkInfo(
-              startTime: startTime,
-              count: allReceiveCount,
-              total: allReceiveTotal,
-            ));
+            onReceiveAction?.call(
+              DataChunkInfo(
+                startTime: startTime,
+                count: allReceiveCount,
+                total: allReceiveTotal,
+              ),
+            );
           },
         ),
       ),
@@ -343,7 +349,8 @@ Future<String> uploadAliyunOssBytes(
     bytes,
     key,
     cancelToken: cancelToken,
-    option: option ??
+    option:
+        option ??
         _putRequestOption(
           bucketName: bucketName,
           override: override,

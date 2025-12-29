@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -56,18 +58,18 @@ class BuildConfig {
 
   Map<String, dynamic> toJson() => _$BuildConfigToJson(this);
 
-  /// 每个平台单独设置信息, 平台名统一小写
+  /// 1. 每个平台单独设置信息, 平台名统一小写
   /// [$platformName] 对应的配置
   @configProperty
-  Map<String, BuildConfig>? platformMap;
+  Map<String, BuildConfig?>? platformMap;
 
-  /// [buildType] 对应的配置
+  /// 2. [buildType] 对应的配置
   @configProperty
-  Map<String, BuildConfig>? buildTypeMap;
+  Map<String, BuildConfig?>? buildTypeMap;
 
-  /// [buildFlavor] 对应的配置
+  /// 3. [buildFlavor] 对应的配置
   @configProperty
-  Map<String, BuildConfig>? buildFlavorMap;
+  Map<String, BuildConfig?>? buildFlavorMap;
 
   //--
 
@@ -130,6 +132,7 @@ class BuildConfig {
   Map<String, dynamic>? json;
 
   /// [json]
+  @api
   dynamic operator [](Object? key) {
     BuildConfig? rootConfig = this;
     final rootPlatformConfig = rootConfig.platformMap?[$platformName];
@@ -144,6 +147,7 @@ class BuildConfig {
 
   /// 从自身中获取数据, 获取不到则从[$rootBuildConfig]中获取
   /// [json]
+  @api
   dynamic getOrRoot(Object? key) {
     if (this == $rootBuildConfig) {
       return this[key];
@@ -203,41 +207,49 @@ enum BuildTypeEnum {
 /// - 在获取[BuildConfig.json]中的数据时, 优先使用顶层对象.
 BuildConfig? get $rootBuildConfig => BuildConfig._buildConfig;
 
+/// 获取构建[BuildConfig.json]中断额数据时, 优先使用此对象
+@alias
+BuildConfig? get $bc => $rootBuildConfig;
+
 /// 指定平台配置->构建类型配置->构建风味配置后的[BuildConfig]
 BuildConfig? get $buildConfig {
   BuildConfig? rootConfig = BuildConfig._buildConfig;
-  final rootPlatformConfig = rootConfig?.platformMap?[$platformName];
-  final rootBuildTypeConfig = rootConfig?.buildTypeMap?[rootConfig.buildType];
+  debugger(when: rootConfig == null);
+  if (rootConfig == null) {
+    return null;
+  }
+  final rootPlatformConfig = rootConfig.platformMap?[$platformName];
+  final rootBuildTypeConfig = rootConfig.buildTypeMap?[rootConfig.buildType];
   final rootBuildFlavorConfig = (rootBuildTypeConfig ?? rootConfig)
-      ?.buildFlavorMap?[rootConfig?.buildFlavor];
+      .buildFlavorMap?[rootConfig.buildFlavor];
   //debugger();
   // 指定平台配置->构建类型配置->构建风味配置
   final resultConfig = (rootPlatformConfig ?? rootConfig)
-      ?.getBuildTypeConfigOrThis(rootConfig?.buildType, rootBuildTypeConfig)
+      .getBuildTypeConfigOrThis(rootConfig.buildType, rootBuildTypeConfig)
       .getBuildFlavorConfigOrThis(
-        rootConfig?.buildFlavor,
+        rootConfig.buildFlavor,
         rootBuildFlavorConfig,
       );
 
   // 赋值指定属性
   if (resultConfig != rootConfig) {
-    resultConfig?.buildPackageName = rootConfig?.buildPackageName;
-    resultConfig?.buildType = rootConfig?.buildType;
-    resultConfig?.buildFlavor = rootConfig?.buildFlavor;
+    resultConfig.buildPackageName = rootConfig.buildPackageName;
+    resultConfig.buildType = rootConfig.buildType;
+    resultConfig.buildFlavor = rootConfig.buildFlavor;
 
-    resultConfig?.buildVersionName = rootConfig?.buildVersionName;
-    resultConfig?.buildVersionCode = rootConfig?.buildVersionCode;
-    resultConfig?.buildTime = rootConfig?.buildTime;
-    resultConfig?.buildOperatingSystem = rootConfig?.buildOperatingSystem;
-    resultConfig?.buildOperatingSystemVersion =
-        rootConfig?.buildOperatingSystemVersion;
-    resultConfig?.buildOperatingSystemLocaleName =
-        rootConfig?.buildOperatingSystemLocaleName;
-    resultConfig?.buildOperatingSystemUserName =
-        rootConfig?.buildOperatingSystemUserName;
+    resultConfig.buildVersionName = rootConfig.buildVersionName;
+    resultConfig.buildVersionCode = rootConfig.buildVersionCode;
+    resultConfig.buildTime = rootConfig.buildTime;
+    resultConfig.buildOperatingSystem = rootConfig.buildOperatingSystem;
+    resultConfig.buildOperatingSystemVersion =
+        rootConfig.buildOperatingSystemVersion;
+    resultConfig.buildOperatingSystemLocaleName =
+        rootConfig.buildOperatingSystemLocaleName;
+    resultConfig.buildOperatingSystemUserName =
+        rootConfig.buildOperatingSystemUserName;
   }
 
-  return resultConfig ?? rootConfig;
+  return resultConfig;
 }
 
 /// 是否是调试构建类型状态
@@ -254,8 +266,9 @@ bool get isDebugType {
 }
 
 /// 构建类型
+/// - [isDebug] 下, 强行返回[BuildTypeEnum.debug]
 String? get $buildType =>
-    $buildConfig?.buildType ?? (isDebug ? BuildTypeEnum.debug.name : null);
+    isDebug ? BuildTypeEnum.debug.name : $buildConfig?.buildType;
 
 /// 构建风味
 String? get $buildFlavor => $buildConfig?.buildFlavor ?? flutterAppFlavor;

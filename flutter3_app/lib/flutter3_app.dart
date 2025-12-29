@@ -312,6 +312,7 @@ Future _initAppDebugInfo() async {
   );
   $compliance.wait((context, agree) async {
     if (agree) {
+      //合规之后的初始化
       final packageInfo = await $platformPackageInfo;
       final deviceInfo = await $platformDeviceInfo;
       final fileDirectory_ = await fileDirectory();

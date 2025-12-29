@@ -22,6 +22,8 @@ part of '../flutter3_app.dart';
 /// ```
 /// Unhandled Exception: MissingPluginException(No implementation found for method getAll on channel dev.flutter.community.plus/package_info)
 /// ```
+/// - [$platformDeviceInfo] 平台设备信息
+/// - [$platformPackageInfo] 平台软件信息
 Future<PackageInfo> get $platformPackageInfo async {
   final packageInfo = await PackageInfo.fromPlatform();
   _platformPackageInfoCache = packageInfo;
@@ -33,6 +35,9 @@ Future<PackageInfo> get $platformPackageInfo async {
 /// [PackageInfo.version]
 /// [PackageInfo.buildNumber]
 /// [PackageInfo.packageName]
+///
+/// - [$platformDeviceInfoCache]
+/// - [$platformPackageInfoCache]
 PackageInfo? get $platformPackageInfoCache {
   $platformPackageInfo.ignore();
   return _platformPackageInfoCache;
@@ -97,6 +102,8 @@ String get $appBuildVersionCache => stringBuilder((builder) async {
 
 /// https://pub.dev/packages/device_info_plus
 /// 获取对应平台的设备信息
+/// - [$platformDeviceInfo] 平台设备信息
+/// - [$platformPackageInfo] 平台软件信息
 Future<BaseDeviceInfo> get $platformDeviceInfo async {
   final deviceInfo = isAndroid
       ? await DeviceInfoPlugin().androidInfo
@@ -163,6 +170,8 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 /// modelName: MacBook Pro (16-inch, 2023)}
 /// ```
 ///
+/// - [$platformDeviceInfoCache]
+/// - [$platformDeviceInfoCache]
 BaseDeviceInfo? get $platformDeviceInfoCache {
   $platformDeviceInfo.ignore();
   /*assert(() {
@@ -198,6 +207,7 @@ Future<String?> get $platformDeviceModel async => isAndroid
 
 /// 平台上的设备名称
 /// - [$platformDeviceInfoCache]
+/// - [$platformPackageInfoCache]
 String? get $platformDeviceName => $platformDeviceInfoCache?.platformDeviceName;
 
 /// [BaseDeviceInfo]
@@ -344,12 +354,22 @@ String? get $appName => $platformPackageInfoCache?.appName;
 
 /// App的一些基础调试信息
 String get $debugAppInfo => stringBuilder((builder) {
-  final info = $platformPackageInfoCache;
-
+  final packageInfo = $platformPackageInfoCache;
+  final deviceInfo = $platformDeviceInfoCache;
+  final mediaData = platformMediaQueryData;
   builder
-    ..writeln("${$platformDeviceName} - $currentPlatformName") //设备名称
-    ..write(info?.packageName.connect(" ")) //包名
-    ..writeln(info?.debugVersionString) //版本信息
+    ..write("${deviceInfo?.platformDeviceName} - $currentPlatformName") //设备名称
+    ..writeln(
+      " - ${Platform.operatingSystemVersion}/${Platform.numberOfProcessors}",
+    ) //平台信息
+    ..writeln(
+      "${Platform.localHostname} - ${Platform.localeName}/$platformLocale",
+    ) //平台信息
+    ..write(packageInfo?.packageName.connect(" ")) //包名
+    ..writeln(packageInfo?.debugVersionString) //版本信息
+    ..writeln(
+      "${mediaData.size}/${mediaData.devicePixelRatio} - ${mediaData.platformBrightness}",
+    ) //屏幕信息
     ..writeln($deviceUuid) //设备id
     ;
 });
