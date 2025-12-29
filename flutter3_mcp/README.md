@@ -11,3 +11,9 @@ https://inspector.mcp-use.com/inspector
 https://pub.dev/packages/dart_mcp
 
 https://github.com/dart-lang/ai/tree/main/pkgs/dart_mcp/example
+
+# mcp_dart: ^1.1.2
+
+https://pub.dev/packages/mcp_dart
+
+https://github.com/leehack/mcp_dart
