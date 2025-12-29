@@ -149,7 +149,7 @@ Future runGlobalApp(
     final details = FlutterErrorDetails(exception: error, stack: stack);
     details.exceptionAsString().writeToErrorLog();
     "错误详情↓\n${dumpErrorToString(details)}".writeToErrorLog();
-    debugger();
+    //debugger();
     return false;
   });
 

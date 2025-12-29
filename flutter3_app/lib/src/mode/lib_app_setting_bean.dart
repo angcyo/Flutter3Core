@@ -8,6 +8,8 @@ part 'lib_app_setting_bean.g.dart';
 /// @date 2024/06/19
 ///
 /// 应用程序设置信息
+///
+/// - 通过[$appSettingBean]获取内存缓存
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class LibAppSettingBean {
   static LibAppSettingBean? _appSettingBean;
@@ -46,8 +48,27 @@ class LibAppSettingBean {
 
   LibAppSettingBean();
 
-  /// 每个平台单独设置信息, 平台名统一小写
-  Map<String, LibAppSettingBean>? platformMap;
+  //region 精确平台/包名/指定设备
+
+  /// 1. 每个平台单独设置信息, 小写字母
+  /// [$platformName]
+  Map<String, LibAppSettingBean?>? platformMap;
+
+  /// 2. 每个包名单独的版本信息
+  /// [$buildPackageName]
+  /// [AppSettingBean.packageName]
+  Map<String, LibAppSettingBean?>? packageNameMap;
+
+  /// 3. 每个编译类型单独的版本信息
+  /// [$buildType]
+  /// [BuildConfig.buildType]
+  Map<String, LibAppSettingBean?>? buildTypeMap;
+
+  /// 4. 每个设备单独的版本信息
+  /// [CoreKeys.deviceUuid]
+  Map<String, LibAppSettingBean?>? versionUuidMap;
+
+  //endregion 精确平台/包名/指定设备
 
   //--
 
@@ -63,6 +84,27 @@ class LibAppSettingBean {
 
   @override
   String toString() => toJson().toString();
+
+  //MARK: - get
+
+  /// 获取匹配的版本配置信息
+  LibAppSettingBean get it {
+    LibAppSettingBean bean = this;
+    //1: 平台检查, 获取对应平台的版本信息
+    bean = bean.platformMap?[$platformName] ?? bean;
+
+    //2: 区分package, 获取对应报名的版本信息
+    bean = bean.packageNameMap?[$buildPackageName] ?? bean;
+
+    //3: 区分buildType, 获取对应报名的版本信息
+    bean = bean.buildTypeMap?[$buildType] ?? bean;
+
+    //4: 获取指定设备的版本信息
+    final deviceUuid = $coreKeys.deviceUuid;
+    bean = bean.versionUuidMap?[deviceUuid] ?? bean;
+
+    return bean;
+  }
 }
 
 /// 应用程序的状态
@@ -77,16 +119,12 @@ enum AppStateEnum {
   test,
 
   /// 发布
-  publish
+  publish,
 }
 
 /// [LibAppSettingBean]
-LibAppSettingBean get $appSettingBean {
-  LibAppSettingBean bean =
-      LibAppSettingBean._appSettingBean ?? LibAppSettingBean();
-  bean = bean.platformMap?[$platformName] ?? bean;
-  return bean;
-}
+LibAppSettingBean get $appSettingBean =>
+    LibAppSettingBean._appSettingBean?.it ?? LibAppSettingBean();
 
 /// 当前的设备id, 是否处于调试状态
 /// [CoreKeys.deviceUuid]

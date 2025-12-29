@@ -12,10 +12,12 @@ part 'lib_app_version_bean.g.dart';
 /// @date 2024/06/19
 ///
 /// 应用程序版本信息
+/// 通过[$appVersionBean]获取内存缓存信息
 ///
 /// 1. 先获取对应平台的版本信息[LibAppVersionBean.platformMap]
 /// 2. 通过包名获取对应的设备版本信息[LibAppVersionBean.packageNameMap]
-/// 3. 通过uuid获取对应的设备版本信息[LibAppVersionBean.versionUuidMap]
+/// 3. 通过编译类型获取对应的版本信息[LibAppVersionBean.buildTypeMap]
+/// 4. 通过uuid获取对应的设备版本信息[LibAppVersionBean.versionUuidMap]
 ///
 /// [AppUpdateDialog.checkUpdateAndShow]
 /// [AppUpdateDialog]
@@ -193,16 +195,21 @@ class LibAppVersionBean {
 
   /// 1. 每个平台单独设置信息, 小写字母
   /// [$platformName]
-  Map<String, LibAppVersionBean>? platformMap;
+  Map<String, LibAppVersionBean?>? platformMap;
 
   /// 2. 每个包名单独的版本信息
   /// [$buildPackageName]
   /// [AppSettingBean.packageName]
-  Map<String, LibAppVersionBean>? packageNameMap;
+  Map<String, LibAppVersionBean?>? packageNameMap;
 
-  /// 3. 每个设备单独的版本信息
+  /// 3. 每个编译类型单独的版本信息
+  /// [$buildType]
+  /// [BuildConfig.buildType]
+  Map<String, LibAppVersionBean?>? buildTypeMap;
+
+  /// 4. 每个设备单独的版本信息
   /// [CoreKeys.deviceUuid]
-  Map<String, LibAppVersionBean>? versionUuidMap;
+  Map<String, LibAppVersionBean?>? versionUuidMap;
 
   //endregion 精确平台/包名/指定设备
 
@@ -319,31 +326,33 @@ class LibAppVersionBean {
 
   /// 所有匹配通过
   bool get matchAll =>
-      matchDebug &&
-      matchAllowVersionUuid &&
-      matchDenyVersionUuid;
+      matchDebug && matchAllowVersionUuid && matchDenyVersionUuid;
 
   @override
   String toString() => toJson().toString();
+
+  //MARK: - get
+
+  /// 获取匹配的版本配置信息
+  LibAppVersionBean get it {
+    LibAppVersionBean bean = this;
+    //1: 平台检查, 获取对应平台的版本信息
+    bean = bean.platformMap?[$platformName] ?? bean;
+
+    //2: 区分package, 获取对应报名的版本信息
+    bean = bean.packageNameMap?[$buildPackageName] ?? bean;
+
+    //3: 区分buildType, 获取对应报名的版本信息
+    bean = bean.buildTypeMap?[$buildType] ?? bean;
+
+    //4: 获取指定设备的版本信息
+    final deviceUuid = $coreKeys.deviceUuid;
+    bean = bean.versionUuidMap?[deviceUuid] ?? bean;
+
+    return bean;
+  }
 }
 
 /// [LibAppVersionBean]
 @api
-LibAppVersionBean? get $appVersionBean {
-  LibAppVersionBean? bean = LibAppVersionBean._appVersionBean;
-
-  //1: 平台检查, 获取对应平台的版本信息
-  bean = bean?.platformMap?[$platformName] ?? bean;
-  if (bean == null) {
-    return null;
-  }
-
-  //2: 区分package, 获取对应报名的版本信息
-  bean = bean.packageNameMap?[$buildPackageName] ?? bean;
-
-  //3: 获取指定设备的版本信息
-  final deviceUuid = $coreKeys.deviceUuid;
-  bean = bean.versionUuidMap?[deviceUuid] ?? bean;
-
-  return bean;
-}
+LibAppVersionBean? get $appVersionBean => LibAppVersionBean._appVersionBean?.it;
