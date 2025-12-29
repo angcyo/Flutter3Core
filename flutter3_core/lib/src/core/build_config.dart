@@ -271,7 +271,8 @@ String? get $buildType =>
     isDebug ? BuildTypeEnum.debug.name : $buildConfig?.buildType;
 
 /// 构建风味
-String? get $buildFlavor => $buildConfig?.buildFlavor ?? flutterAppFlavor;
+String? get $buildFlavor =>
+    $buildConfig?.buildFlavor ?? flutterAppFlavor ?? (isDebug ? "debug" : null);
 
 /// 构建时的app包名
 /// 真正的app包名通过以下方法获取↓
