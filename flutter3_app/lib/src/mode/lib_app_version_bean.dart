@@ -295,7 +295,7 @@ class LibAppVersionBean {
   /// }
   /// ```
   /// [VersionMatcher]
-  Map<String, LibAppVersionBean>? forbiddenVersionMap;
+  Map<String, LibAppVersionBean?>? forbiddenVersionMap;
 
   /// 标题
   String? forbiddenTile;

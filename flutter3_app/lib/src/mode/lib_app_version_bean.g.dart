@@ -54,8 +54,12 @@ LibAppVersionBean _$LibAppVersionBeanFromJson(
   ..versionDate = json['versionDate'] as String?
   ..forbiddenVersionMap = (json['forbiddenVersionMap'] as Map<String, dynamic>?)
       ?.map(
-        (k, e) =>
-            MapEntry(k, LibAppVersionBean.fromJson(e as Map<String, dynamic>)),
+        (k, e) => MapEntry(
+          k,
+          e == null
+              ? null
+              : LibAppVersionBean.fromJson(e as Map<String, dynamic>),
+        ),
       )
   ..forbiddenTile = json['forbiddenTile'] as String?
   ..forbiddenReason = json['forbiddenReason'] as String?
@@ -90,7 +94,7 @@ Map<String, dynamic> _$LibAppVersionBeanToJson(
   'jumpToMarket': ?instance.jumpToMarket,
   'versionDate': ?instance.versionDate,
   'forbiddenVersionMap': ?instance.forbiddenVersionMap?.map(
-    (k, e) => MapEntry(k, e.toJson()),
+    (k, e) => MapEntry(k, e?.toJson()),
   ),
   'forbiddenTile': ?instance.forbiddenTile,
   'forbiddenReason': ?instance.forbiddenReason,
