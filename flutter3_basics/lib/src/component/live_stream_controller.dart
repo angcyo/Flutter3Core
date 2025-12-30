@@ -421,12 +421,26 @@ extension StreamSubscriptionEx<T> on StreamSubscription<T> {
 typedef LiveStream<T> = LiveStreamController<T>;
 
 /// [LiveStreamController]
-LiveStream<T?> $live<T>([T? initialValue, bool autoClearValue = false]) =>
-    LiveStream<T?>(initialValue, autoClearValue: autoClearValue);
+LiveStream<T?> $live<T>([
+  T? initialValue,
+  bool autoClearValue = false,
+  ValueCallback<T?>? onUpdateValueAction,
+]) => LiveStream<T?>(
+  initialValue,
+  autoClearValue: autoClearValue,
+  onUpdateValueAction: onUpdateValueAction,
+);
 
 /// [LiveStreamController]
-LiveStream<T?> $liveOnce<T>([T? initialValue, bool autoClearValue = true]) =>
-    LiveStream<T?>(initialValue, autoClearValue: autoClearValue);
+LiveStream<T?> $liveOnce<T>([
+  T? initialValue,
+  bool autoClearValue = true,
+  ValueCallback<T?>? onUpdateValueAction,
+]) => LiveStream<T?>(
+  initialValue,
+  autoClearValue: autoClearValue,
+  onUpdateValueAction: onUpdateValueAction,
+);
 
 extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   /// [RebuildWidget]
