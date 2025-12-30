@@ -39,6 +39,13 @@ part of '../../flutter3_basics.dart';
 /// }
 /// ```
 ///
+/// # isolate_manager: ^6.1.2
+///
+/// https://pub.dev/packages/isolate_manager
+///
+/// # worker_manager: ^7.2.7
+///
+/// https://pub.dev/packages/worker_manager
 
 //region 性能
 
