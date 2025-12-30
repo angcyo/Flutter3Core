@@ -21,6 +21,21 @@ part of '../../flutter3_basics.dart';
 double $wXlBp({double min = 300, double max = 400}) =>
     $screenWidth >= 1200 ? max : min;
 
+//mark: - 断点
+
+/// end container Breakpoints
+/// - 结束面板(右边的面板)容器宽度断点
+/// - 使用[animatedContainer]动画改变大小
+@dp
+double $ecwBp() => switch ($screenWidth) {
+  >= 1600 => 600,
+  >= 1400 => 500,
+  >= 1100 => 400,
+  >= 700 => 300,
+  >= 300 => 200,
+  _ => 100,
+};
+
 /// 断点网格列数
 int $gridBp() => switch ($screenWidth) {
   >= 1600 => 6,

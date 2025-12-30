@@ -62,6 +62,8 @@ typedef MediaQueryDataWidgetBuilder =
 /// - 窗口大小改变
 /// - 窗口方向改变
 /// - [MediaQueryDataState]
+///
+/// - 使用[animatedContainer]动画改变大小
 mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
     on State<T>, WidgetsBindingObserver {
   /// 只要媒体数据改变, 就更新界面

@@ -115,6 +115,7 @@ class L {
     int forward = 3,
     StackTrace? stack,
     String? debugLabel,
+    String? filterType,
   }) {
     if (level >= verbose) {
       return _log(
@@ -127,6 +128,7 @@ class L {
         forward: forward,
         stack: stack,
         debugLabel: debugLabel,
+        filterType: filterType,
       );
     }
     return null;
@@ -142,6 +144,7 @@ class L {
     int forward = 3,
     StackTrace? stack,
     String? debugLabel,
+    String? filterType,
   }) {
     if (level >= verbose) {
       return _log(
@@ -154,6 +157,7 @@ class L {
         forward: forward,
         stack: stack,
         debugLabel: debugLabel,
+        filterType: filterType,
       );
     }
     return null;
@@ -169,6 +173,7 @@ class L {
     int forward = 3,
     StackTrace? stack,
     String? debugLabel,
+    String? filterType,
   }) {
     if (level >= debug) {
       return _log(
@@ -181,6 +186,7 @@ class L {
         forward: forward,
         stack: stack,
         debugLabel: debugLabel,
+        filterType: filterType,
       );
     }
     return null;
@@ -196,6 +202,7 @@ class L {
     int forward = 3,
     StackTrace? stack,
     String? debugLabel,
+    String? filterType,
   }) {
     if (level >= info) {
       return _log(
@@ -208,6 +215,7 @@ class L {
         forward: forward,
         stack: stack,
         debugLabel: debugLabel,
+        filterType: filterType,
       );
     }
     return null;
@@ -250,6 +258,7 @@ class L {
     int forward = 3,
     StackTrace? stack,
     String? debugLabel,
+    String? filterType,
   }) {
     if (level >= error) {
       return _log(
@@ -262,6 +271,7 @@ class L {
         forward: forward,
         stack: stack,
         debugLabel: debugLabel,
+        filterType: filterType,
       );
     }
     return null;
@@ -278,6 +288,7 @@ class L {
     int forward = 3,
     StackTrace? stack,
     String? debugLabel,
+    String? filterType,
   }) {
     debugger(when: debugLabel != null);
     final time = showTime ?? kShowTime ? '${nowTimeString(kTimePattern)} ' : '';
@@ -309,6 +320,12 @@ class L {
     final log =
         '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}] $tagStr$levelStr->$msgType $msg';
 
+    //MARK: - log panel
+    final controller =
+        LogScope.get(GlobalConfig.def.globalAppContext) ?? $logController;
+    controller.addLogData(LogScopeData.log(log, filterType: filterType));
+
+    //MARK: - print
     if ((isDebug && level >= verbose) || level >= logLevel) {
       //print(StackTrace.fromString("...test"));
       //StringBuffer()
@@ -328,6 +345,8 @@ class L {
         printLog(log);
       }
     }
+
+    //MARK: - file
 
     //输出到文件
     if (filePrint != null && level >= fileLogLevel) {

@@ -426,7 +426,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   GlobalConfig({this.globalTopContext, this.globalAppContext});
 
   GlobalConfig._() {
-    l.v('初始化默认的[${classHash()}]');
+    assert(() {
+      debugPrint('初始化默认的[${classHash()}]');
+      return true;
+    }());
   }
 
   /// 全局默认

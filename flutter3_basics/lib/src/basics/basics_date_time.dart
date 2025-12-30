@@ -74,16 +74,18 @@ extension TimeEx on int {
   ///
   /// moment
   /// [TimeEx.toTimeAgo]
-  String toTimeAgo(
-      {String just = "刚刚",
-      String s = "秒前",
-      String m = "分钟前",
-      String h = "小时前",
-      String d = "天前",
-      String yesterday = "昨天",
-      String beforeYesterday = "前天",
-      String? timePattern = "yyyy-MM-dd HH:mm:ss"}) {
+  String toTimeAgo({
+    String just = "刚刚",
+    String s = "秒前",
+    String m = "分钟前",
+    String h = "小时前",
+    String d = "天前",
+    String yesterday = "昨天",
+    String beforeYesterday = "前天",
+    String? timePattern = "yyyy-MM-dd HH:mm:ss",
+  }) {
     //10秒之内, 显示刚刚
+    //debugger();
     final now = nowTimestamp();
     final diff = now - this;
     if (diff < 10 * kSecond) return just;
