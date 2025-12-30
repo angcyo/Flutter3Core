@@ -111,7 +111,12 @@ class HttpResultHandle {
         return true;
       }());
       throw RHttpException(
-        message: "code[$code]${response.statusMessage ?? ""}",
+        message:
+            "code[$code]${switch (null) {
+                  _ when response is Response => response.statusMessage,
+                  _ when response is http.Response => response.reasonPhrase,
+                  _ => null,
+                } ?? ""}",
         statusCode: code,
         error: response,
       );
