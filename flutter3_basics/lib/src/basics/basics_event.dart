@@ -421,6 +421,9 @@ extension KeyEventEx on KeyEvent {
 
   bool get isKeyUp => this is KeyUpEvent;
 
+  /// 是否是Tab键
+  bool get isTabKey => isKeyboardKey(LogicalKeyboardKey.tab);
+
   /// 是否是回车键
   bool get isEnterKey => isKeyboardKey(LogicalKeyboardKey.enter);
 
