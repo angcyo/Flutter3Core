@@ -106,6 +106,24 @@ Future<bool> openFilePath(
   }
 }
 
+/// 快速保存/分享file path
+@dsl
+Future<bool> saveFilePath(
+  String? filePath, [
+  BuildContext? context,
+  Object? meta,
+]) async {
+  if (context == null) {
+    final fn = GlobalConfig.def.saveFileFn;
+    if (fn == null) {
+      return false;
+    }
+    return await fn.call(GlobalConfig.def.globalContext, filePath, meta);
+  } else {
+    return context.saveFilePath(filePath, meta: meta);
+  }
+}
+
 extension GlobalConfigEx on BuildContext {
   /// [GlobalConfig.of]
   GlobalConfig globalConfig({bool depend = false}) =>
@@ -123,6 +141,15 @@ extension GlobalConfigEx on BuildContext {
   /// [GlobalConfig.openFileFn]
   Future<bool> openFilePath(String? filePath, {Object? meta}) async {
     var fn = GlobalConfig.of(this).openFileFn ?? GlobalConfig.def.openFileFn;
+    if (fn == null) {
+      return false;
+    }
+    return await fn.call(this, filePath, meta);
+  }
+
+  /// [GlobalConfig.saveFileFn]
+  Future<bool> saveFilePath(String? filePath, {Object? meta}) async {
+    var fn = GlobalConfig.of(this).saveFileFn ?? GlobalConfig.def.saveFileFn;
     if (fn == null) {
       return false;
     }
@@ -448,7 +475,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return null;
   };
 
-  /// 注册一个全局的打开file方法, 可以是内部打开文件/也可以使用系统本机打开
+  /// 注册一个全局的打开[filePath]方法, 可以是内部打开文件/也可以使用系统本机打开
   /// - 支持文件路径
   /// - 支持文件夹路径
   /// ```
@@ -458,9 +485,43 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// };
   /// ```
   /// [openFilePath]
-  GlobalOpenUrlFn? openFileFn = (context, file, meta) {
+  @allPlatformFlag
+  GlobalOpenUrlFn? openFileFn = (context, filePath, meta) {
     assert(() {
-      l.w("企图打开file:$file from:$context meta:$meta");
+      l.w("企图打开filePath:$filePath from:$context meta:$meta");
+      return true;
+    }());
+    return Future.value(false);
+  };
+
+  /// 注册一个全局的保存[filePath]方法
+  /// - 移动端分享文件
+  /// - 桌面端调用系统保存文件弹窗
+  ///   - [meta] 桌面端对话框的标题
+  /// ```
+  /// GlobalConfig.def.saveFileFn = (context, filePath, meta) async {
+  ///   if (filePath == null || isNil(filePath)) {
+  ///     return false;
+  ///   }
+  ///   if (isDesktopOrWeb) {
+  ///     final savePath = await saveFile(
+  ///       dialogTitle: meta?.toString(),
+  ///       fileName: filePath.fileName(),
+  ///     );
+  ///     if (savePath != null) {
+  ///       return (await filePath.copyTo(savePath)) != null;
+  ///     } else {
+  ///       return false;
+  ///     }
+  ///   }
+  ///   return filePath.shareFile();
+  /// };
+  /// ```
+  /// [saveFilePath]
+  @allPlatformFlag
+  GlobalOpenUrlFn? saveFileFn = (context, filePath, meta) {
+    assert(() {
+      l.w("企图保存filePath:$filePath from:$context meta:$meta");
       return true;
     }());
     return Future.value(false);
@@ -907,6 +968,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     ThemeData? themeData,
     GlobalTheme? globalTheme,
     GlobalOpenUrlFn? openFileFn,
+    GlobalOpenUrlFn? saveFileFn,
     GlobalOpenUrlFn? openUrlFn,
     GlobalShareDataFn? shareDataFn,
     GlobalWriteFileFn? writeFileFn,
@@ -926,6 +988,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       ..themeData = themeData ?? this.themeData
       ..globalTheme = globalTheme ?? this.globalTheme
       ..openFileFn = openFileFn ?? this.openFileFn
+      ..saveFileFn = saveFileFn ?? this.saveFileFn
       ..openUrlFn = openUrlFn ?? this.openUrlFn
       ..shareDataFn = shareDataFn ?? this.shareDataFn
       ..writeFileFn = writeFileFn ?? this.writeFileFn

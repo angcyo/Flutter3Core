@@ -93,10 +93,28 @@ Future runGlobalApp(
 
   globalAppStartTime = lTime.tick();
 
+  // 保存文件
+  GlobalConfig.def.saveFileFn = (context, filePath, meta) async {
+    if (filePath == null || isNil(filePath)) {
+      return false;
+    }
+    if (isDesktopOrWeb) {
+      final savePath = await saveFile(
+        dialogTitle: meta?.toString(),
+        fileName: filePath.fileName(),
+      );
+      if (savePath != null) {
+        return (await filePath.copyTo(savePath)) != null;
+      } else {
+        return false;
+      }
+    }
+    return filePath.shareFile();
+  };
+
   // 打开url链接
   GlobalConfig.def.openUrlFn = (context, url, meta) {
-    url?.launch(mode: LaunchMode.platformDefault);
-    return Future.value(true);
+    return url?.launch(mode: LaunchMode.platformDefault) ?? Future.value(false);
   };
 
   // 分享app日志

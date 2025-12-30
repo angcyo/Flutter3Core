@@ -287,7 +287,7 @@ extension ShareImageEx on UiImage {
 
 extension ShareFileEx on File {
   /// 分享文件
-  Future<ShareResult> share({
+  Future<bool> share({
     String? subject,
     String? text,
     String? mimeType,
@@ -308,17 +308,18 @@ extension ShareStringEx on String {
   /// 分享文本
   /// https://pub.dev/packages/share_plus
   @allPlatformFlag
-  Future<ShareResult> share({
+  Future<bool> share({
     String? subject,
     BuildContext? shareContext,
     Rect? sharePositionOrigin,
   }) async {
-    return Share.share(
+    final result = await Share.share(
       this,
       subject: subject,
       sharePositionOrigin:
           sharePositionOrigin ?? shareContext?.findRenderObject()?.paintBounds,
     );
+    return result.status == ShareResultStatus.success;
   }
 
   /// 分享文件
@@ -326,7 +327,7 @@ extension ShareStringEx on String {
   ///
   /// https://pub.dev/packages/share_plus
   @PlatformFlag("Android iOS MacOS Web Windows")
-  Future<ShareResult> shareFile({
+  Future<bool> shareFile({
     List<String>? otherFiles,
     String? subject,
     String? text,
@@ -334,7 +335,7 @@ extension ShareStringEx on String {
     BuildContext? shareContext,
     Rect? sharePositionOrigin,
   }) async {
-    return Share.shareXFiles(
+    final result = await Share.shareXFiles(
       [
         XFile(this, mimeType: mimeType),
         ...?otherFiles?.map((e) => XFile(e, mimeType: mimeType)),
@@ -344,6 +345,7 @@ extension ShareStringEx on String {
       sharePositionOrigin:
           sharePositionOrigin ?? shareContext?.findRenderObject()?.paintBounds,
     );
+    return result.status == ShareResultStatus.success;
   }
 }
 
