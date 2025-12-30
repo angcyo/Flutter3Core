@@ -146,7 +146,7 @@ BoxDecoration strokeDecoration({
   );
 }
 
-/// 线条装饰
+/// 线条描边装饰
 BoxBorder strokeBorder({
   Color? color,
   BuildContext? context,
@@ -195,22 +195,53 @@ BoxDecoration lineDecoration({
     border: Border(
       left:
           leftSide ??
-          BorderSide(color: leftLineColor ?? lineColor, width: leftLineWidth),
+          (leftLineWidth > 0
+              ? BorderSide(
+                  color: leftLineColor ?? lineColor,
+                  width: leftLineWidth,
+                )
+              : BorderSide.none),
       top:
           topSide ??
-          BorderSide(color: topLineColor ?? lineColor, width: topLineWidth),
+          (topLineWidth > 0
+              ? BorderSide(
+                  color: topLineColor ?? lineColor,
+                  width: topLineWidth,
+                )
+              : BorderSide.none),
       right:
           rightSide ??
-          BorderSide(color: rightLineColor ?? lineColor, width: rightLineWidth),
+          (rightLineWidth > 0
+              ? BorderSide(
+                  color: rightLineColor ?? lineColor,
+                  width: rightLineWidth,
+                )
+              : BorderSide.none),
       bottom:
           bottomSide ??
-          BorderSide(
-            color: bottomLineColor ?? lineColor,
-            width: bottomLineWidth,
-          ),
+          (bottomLineWidth > 0
+              ? BorderSide(
+                  color: bottomLineColor ?? lineColor,
+                  width: bottomLineWidth,
+                )
+              : BorderSide.none),
     ),
   );
 }
+
+/// 下划线装饰
+BoxDecoration underlineDecoration({
+  BuildContext? context,
+  Color? bottomLineColor,
+  double bottomLineWidth = kM,
+}) => lineDecoration(
+  context: context,
+  bottomLineColor: bottomLineColor ?? GlobalTheme.of(context).infoColor,
+  bottomLineWidth: bottomLineWidth,
+  leftLineWidth: 0,
+  rightLineWidth: 0,
+  topLineWidth: 0,
+);
 
 /// 纯色填充装饰, 支持圆角
 /// [color] 填充颜色

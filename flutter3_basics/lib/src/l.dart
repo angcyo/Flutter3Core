@@ -323,7 +323,12 @@ class L {
     //MARK: - log panel
     final controller =
         LogScope.get(GlobalConfig.def.globalAppContext) ?? $logController;
-    controller.addLogData(LogScopeData.log(log, filterType: filterType));
+    controller.addLogData(
+      LogScopeData.log(
+        log,
+        filterTypeList: [LLevel.fromValue(level).name, ?filterType],
+      ),
+    );
 
     //MARK: - print
     if ((isDebug && level >= verbose) || level >= logLevel) {
@@ -430,6 +435,28 @@ String? get $currentMethodName {
   final methodName = methodNameList.get(-2);
   //debugger();
   return methodName;
+}
+
+enum LLevel {
+  none(L.none),
+  verbose(L.verbose),
+  debug(L.debug),
+  info(L.info),
+  warn(L.warn),
+  error(L.error);
+
+  const LLevel(this.value);
+
+  final int value;
+
+  static LLevel fromValue(int value) {
+    for (final level in LLevel.values) {
+      if (level.value == value) {
+        return level;
+      }
+    }
+    return LLevel.none;
+  }
 }
 
 /// 全局对象

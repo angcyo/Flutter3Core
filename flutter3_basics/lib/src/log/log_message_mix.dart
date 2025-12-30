@@ -61,12 +61,20 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   /// 构建日志类型列表小部件
   /// - 纯列表形式
   @callPoint
-  Widget buildLogDataListWidget(BuildContext context, GlobalTheme globalTheme) {
+  Widget buildLogDataListWidget(
+    BuildContext context,
+    GlobalTheme globalTheme, {
+    String? filterType,
+  }) {
+    final list = logDataList.filter(
+      (e) =>
+          e.filterTypeList?.contains(filterType) == true || isNil(filterType),
+    );
     return ListView.builder(
       physics: kScrollPhysics,
       controller: scrollController,
       itemBuilder: (context, index) {
-        final item = logDataList.getOrNull(index);
+        final item = list.getOrNull(index);
         return item == null
             ? null
             : [
@@ -96,7 +104,11 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   void addLastLog(String log, {String? filterType, bool isReceived = false}) {
     //debugger(when: isReceived);
     logDataList.add(
-      LogScopeData.log(log, filterType: filterType, isReceived: isReceived),
+      LogScopeData.log(
+        log,
+        filterTypeList: [?filterType],
+        isReceived: isReceived,
+      ),
     );
     updateState();
     postFrame(() {

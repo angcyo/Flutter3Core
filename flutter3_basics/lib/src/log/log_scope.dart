@@ -27,17 +27,20 @@ class LogScopeData {
   //MARK: -
 
   /// 用于过滤的类型
-  final String? filterType;
+  final List<String>? filterTypeList;
 
   /// 是否是接收到的数据
   final bool isReceived;
 
   /// 消息类型的日志
-  LogScopeData.message(this.content, {this.filterType, this.isReceived = false})
-    : timestamp = nowTimestamp();
+  LogScopeData.message(
+    this.content, {
+    this.filterTypeList,
+    this.isReceived = false,
+  }) : timestamp = nowTimestamp();
 
   /// 日志类型
-  LogScopeData.log(this.content, {this.filterType, this.isReceived = false})
+  LogScopeData.log(this.content, {this.filterTypeList, this.isReceived = false})
     : timestamp = nowTimestamp();
 }
 
@@ -60,6 +63,20 @@ class LogScopeController {
   /// 日志数据列表
   @configProperty
   final logDataListLive = $live<List<LogScopeData>>([]);
+
+  /// 过滤类型列表
+  @output
+  List<String> get filterTypeList {
+    final set = <String>{};
+    for (final logData in logDataListLive.value ?? <LogScopeData>[]) {
+      for (final filterType in logData.filterTypeList ?? <String>[]) {
+        if (filterType.isNotEmpty) {
+          set.add(filterType);
+        }
+      }
+    }
+    return set.toList();
+  }
 
   //MARK: - api
 
@@ -166,6 +183,15 @@ class LogPanelWidget extends StatefulWidget {
 
 class _LogPanelWidgetState extends State<LogPanelWidget>
     with HookMixin, HookStateMixin, LogMessageStateMixin {
+  /// 过滤所有, 显示时使用 `All` 字符串
+  static const kAll = "";
+
+  /// 选中的过滤类型
+  String selectedFilterType = kAll;
+
+  /// 过滤类型列表
+  List<String> get filterTypeList => [kAll, ...?widget.control?.filterTypeList];
+
   @override
   void initState() {
     hookAny(
@@ -181,9 +207,63 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    return buildLogDataListWidget(context, globalTheme)
+    return [
+          buildHeaderTabWidget(context, globalTheme),
+          buildLogFilterWidget(context, globalTheme),
+          Divider(height: 1),
+          buildLogDataListWidget(
+            context,
+            globalTheme,
+            filterType: selectedFilterType,
+          ).expanded(),
+        ]
+        .column()!
         .animatedContainer(width: $ecwBp())
         .material(color: globalTheme.surfaceBgColor);
+  }
+
+  //MARK: - build
+
+  /// 构建头部标签
+  Widget buildHeaderTabWidget(BuildContext context, GlobalTheme globalTheme) {
+    return [
+      "LOG".text().insets(h: kX, v: kH).decoration(underlineDecoration()),
+    ].row()!;
+  }
+
+  /// 构建Log过滤
+  Widget buildLogFilterWidget(BuildContext context, GlobalTheme globalTheme) {
+    final radius = kDefaultBorderRadiusXX;
+    return [
+          for (final filterType in filterTypeList)
+            (filterType == "" ? "All" : filterType)
+                .text()
+                .insets(h: kX, v: kM)
+                .decoration(
+                  selectedFilterType == filterType
+                      ? fillDecoration(
+                          color: globalTheme.lineColor,
+                          radius: radius,
+                        )
+                      : strokeDecoration(
+                          color: globalTheme.lineColor,
+                          radius: radius,
+                        ),
+                )
+                .inkWell(
+                  selectedFilterType == filterType
+                      ? null
+                      : () {
+                          setState(() {
+                            selectedFilterType = filterType;
+                          });
+                        },
+                  borderRadius: radius.borderRadius,
+                ),
+        ]
+        .wrap()!
+        .constrainedMax(minWidth: double.infinity)
+        .insets(all: kM) /*.bounds()*/;
   }
 }
 
