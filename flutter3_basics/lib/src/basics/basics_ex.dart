@@ -534,7 +534,7 @@ extension FutureEx<T> on Future<T> {
           } else {
             assert(() {
               l.w('[$tag]FutureGet异常:$error↓');
-              printError(error, s /*stack*/);
+              printError(error, stack /*s */ /*stack*/);
               return true;
             }());
           }

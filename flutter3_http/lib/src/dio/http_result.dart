@@ -110,13 +110,14 @@ class HttpResultHandle {
         l.w("网络请求状态码[$code]");
         return true;
       }());
+      //debugger();
+      final error = switch (null) {
+        _ when response is Response => response.statusMessage,
+        _ when response is http.Response => response.reasonPhrase,
+        _ => null,
+      };
       throw RHttpException(
-        message:
-            "code[$code]${switch (null) {
-                  _ when response is Response => response.statusMessage,
-                  _ when response is http.Response => response.reasonPhrase,
-                  _ => null,
-                } ?? ""}",
+        message: "[$response]code[$code]${error ?? ""}",
         statusCode: code,
         error: response,
       );

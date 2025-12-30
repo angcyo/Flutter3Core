@@ -374,9 +374,12 @@ extension DioFutureResponseEx<T> on Future<T> {
     List<String>? messageKeyList,
     bool? useDataCodeStatus,
     bool Function(dynamic code)? isSuccessCode /*当前code码是否表示成功*/,
+    String? tag,
     String? debugLabel,
+    StackTrace? stack,
   }) async {
     //debugger();
+    stack ??= StackTrace.current;
     final handle = resultHandle ?? HttpResultHandle();
     handle.codeKeyList = codeKeyList ?? handle.codeKeyList;
     handle.dataKeyList = dataKeyList ?? handle.dataKeyList;
@@ -413,7 +416,7 @@ extension DioFutureResponseEx<T> on Future<T> {
         final callbackValue = callback?.call(data, null);
         return callbackValue ?? data;
       }
-    }).catchError((error) {
+    }, tag: tag ?? debugLabel,throwError:throwError).catchError((error) {
       //debugger();
       final err = handle.handleError(error);
       callback?.call(null, err);

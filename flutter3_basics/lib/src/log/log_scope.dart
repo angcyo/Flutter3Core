@@ -64,10 +64,15 @@ class LogScopeController {
   @configProperty
   final logDataListLive = $live<List<LogScopeData>>([]);
 
+  /// 过滤列表缓存
+  /// - 防止跳动
+  @tempFlag
+  final List<String> _filterTypeList = [];
+
   /// 过滤类型列表
   @output
   List<String> get filterTypeList {
-    final set = <String>{};
+    final set = <String>{..._filterTypeList};
     for (final logData in logDataListLive.value ?? <LogScopeData>[]) {
       for (final filterType in logData.filterTypeList ?? <String>[]) {
         if (filterType.isNotEmpty) {
@@ -75,7 +80,9 @@ class LogScopeController {
         }
       }
     }
-    return set.toList();
+    final list = set.toList();
+    _filterTypeList.resetAll(list);
+    return list;
   }
 
   //MARK: - api
@@ -230,6 +237,11 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
       "LOG".text().insets(h: kX, v: kH).decoration(underlineDecoration()),
     ].row()!;
   }
+
+  /// 构建输入过滤标签
+  /*Widget buildInputFilterWidget(BuildContext context, GlobalTheme globalTheme) {
+    return SingleInput
+  }*/
 
   /// 构建Log过滤
   Widget buildLogFilterWidget(BuildContext context, GlobalTheme globalTheme) {
