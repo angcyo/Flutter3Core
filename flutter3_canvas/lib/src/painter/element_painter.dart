@@ -137,7 +137,10 @@ class IElementPainter extends IPainter
       onPaintingSelfBefore(canvas, paintMeta);
       onPaintingSelf(canvas, paintMeta);
     });
-    painterTouchSpotHandler?.painting(canvas, paintMeta);
+    //触点
+    if (painterTouchSpotHandler?.enable == true) {
+      painterTouchSpotHandler?.painting(canvas, paintMeta);
+    }
   }
 
   /// [painting]驱动
@@ -183,7 +186,7 @@ class IElementPainter extends IPainter
     bool handle = false;
     //debugger();
     //--
-    if (painterTouchSpotHandler != null) {
+    if (painterTouchSpotHandler?.enable == true) {
       final localPosition = event.localPosition;
       final offset = canvasDelegate?.canvasViewBox.toScenePoint(localPosition);
       if (offset != null) {
@@ -879,8 +882,10 @@ class ElementPainter extends IElementPainter {
         );
       }
     });
-    //--
-    painterTouchSpotHandler?.painting(canvas, paintMeta);
+    //触点
+    if (painterTouchSpotHandler?.enable == true) {
+      painterTouchSpotHandler?.painting(canvas, paintMeta);
+    }
   }
 
   /// 重写此方法, 实现在画布内绘制自己

@@ -8,6 +8,13 @@ part of '../../flutter3_canvas.dart';
 /// - 所有触点事件分发
 /// - 所有触点绘制入口
 class PainterTouchSpotHandler extends IPainter {
+  /// 是否激活组件
+  /// - 影响绘制
+  /// - 影响手势
+  /// - 影响鼠标
+  @configProperty
+  bool enable = true;
+
   /// 所在容器的矩阵
   @configProperty
   Matrix4? parentMatrix;
@@ -31,7 +38,9 @@ class PainterTouchSpotHandler extends IPainter {
     super.applyPaintTransform(child, transform);
   }
 
-  /// 绘制入口
+  /// 绘制入口,
+  ///
+  /// - [IElementPainter.painting] 驱动
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     PaintMeta meta = paintMeta;
@@ -158,7 +167,7 @@ class PainterTouchSpotHandler extends IPainter {
 }
 
 /// 触点
-/// - [PainterTouchSpotHandler]
+/// - [PainterTouchSpotHandler] 处理管理
 class TouchSpot extends IPainter
     with
         IPainterEventHandlerMixin,
@@ -185,6 +194,8 @@ class TouchSpot extends IPainter
   double coordinateScaleX = 1;
   double coordinateScaleY = 1;
 
+  /// 绘制入口
+  /// - [PainterTouchSpotHandler.painting] 驱动
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     coordinateScaleX = paintMeta.canvasScaleX;
