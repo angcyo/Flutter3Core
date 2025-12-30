@@ -35,16 +35,20 @@ class StringBuilder {
 
   StringBuilder operator <<(Object? object) => write(object);
 
-  @alias
-  void add(Object? object) => write(object);
+  /// 带换行
+  StringBuilder operator <=(Object? object) => writeln(object);
 
   @alias
-  void addText(Object? object) => write(object);
+  StringBuilder add(Object? object) => write(object);
 
-  void writeln([Object? object = ""]) {
+  @alias
+  StringBuilder addText(Object? object) => write(object);
+
+  StringBuilder writeln([Object? object = ""]) {
     if (object != null) {
       stringBuffer.writeln(object);
     }
+    return this;
   }
 
   StringBuilder append(

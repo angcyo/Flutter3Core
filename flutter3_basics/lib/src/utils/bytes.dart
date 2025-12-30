@@ -582,6 +582,11 @@ class ByteReader {
     _index += length;
   }
 
+  /// 跳过指定的字节数
+  void skipBytes([int length = 1]) {
+    _index += length;
+  }
+
   /// 回退指定的字节数
   void back([int length = 1]) {
     _index -= length;

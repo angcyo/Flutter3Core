@@ -90,8 +90,11 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 添加一条记录消息, 并且滚动到底部
   @api
-  void addLastMessage(String message, {bool isReceived = false}) {
+  void addLastMessage(String? message, {bool isReceived = false}) {
     //debugger(when: isReceived);
+    if (message == null) {
+      return;
+    }
     logDataList.add(LogScopeData.message(message, isReceived: isReceived));
     updateState();
     postFrame(() {
@@ -101,8 +104,11 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 添加一条日志记录, 并且滚动到底部
   @api
-  void addLastLog(String log, {String? filterType, bool isReceived = false}) {
+  void addLastLog(String? log, {String? filterType, bool isReceived = false}) {
     //debugger(when: isReceived);
+    if (log == null) {
+      return;
+    }
     logDataList.add(
       LogScopeData.log(
         log,
