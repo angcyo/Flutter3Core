@@ -26,6 +26,10 @@ BuildConfig _$BuildConfigFromJson(Map<String, dynamic> json) => BuildConfig()
     ),
   )
   ..buildPackageName = json['buildPackageName'] as String?
+  ..platformPackageNameMap =
+      (json['platformPackageNameMap'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String?),
+      )
   ..buildType = json['buildType'] as String?
   ..buildFlavor = json['buildFlavor'] as String?
   ..buildVersionName = json['buildVersionName'] as String?
@@ -50,6 +54,7 @@ Map<String, dynamic> _$BuildConfigToJson(
     (k, e) => MapEntry(k, e?.toJson()),
   ),
   'buildPackageName': ?instance.buildPackageName,
+  'platformPackageNameMap': ?instance.platformPackageNameMap,
   'buildType': ?instance.buildType,
   'buildFlavor': ?instance.buildFlavor,
   'buildVersionName': ?instance.buildVersionName,

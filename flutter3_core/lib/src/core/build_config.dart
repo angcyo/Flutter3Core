@@ -79,6 +79,11 @@ class BuildConfig {
   @configProperty
   String? buildPackageName;
 
+  /// [$platformName] 对应的[buildPackageName]配置
+  /// - [platformMap]
+  @configProperty
+  Map<String, String?>? platformPackageNameMap;
+
   /// 构建类型
   /// [BuildTypeEnum]
   @configProperty
@@ -278,4 +283,6 @@ String? get $buildFlavor =>
 /// 真正的app包名通过以下方法获取↓
 /// [platformPackageInfo]
 /// [appPlatformPackageName]
-String? get $buildPackageName => $buildConfig?.buildPackageName;
+String? get $buildPackageName =>
+    $buildConfig?.platformPackageNameMap?[$platformName] ??
+    $buildConfig?.buildPackageName;
