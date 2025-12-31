@@ -1314,6 +1314,21 @@ extension WidgetEx on Widget {
   Widget offstage([bool offstage = true, bool always = false]) =>
       (offstage || always) ? Offstage(offstage: offstage, child: this) : this;
 
+  /// 轻量级脚手架
+  /// - 用于启动一个内嵌的容器页面
+  ///
+  /// - [Scaffold] 参考
+  Widget scaffoldLight({Key? key}) {
+    /*Overlay(
+      initialEntries: [
+        OverlayEntry(
+
+        ),
+      ],
+    );*/
+    return Scaffold(backgroundColor: Colors.transparent, body: this);
+  }
+
   /// 脚手架, 会消耗手势事件
   /// 脚手架并不会处理[SafeArea]区域的内容.
   Widget scaffold({

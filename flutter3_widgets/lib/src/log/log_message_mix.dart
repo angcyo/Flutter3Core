@@ -60,15 +60,20 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 构建日志类型列表小部件
   /// - 纯列表形式
+  /// - [filterType] 筛选类型
+  /// - [filterContent] 过滤内容
   @callPoint
   Widget buildLogDataListWidget(
     BuildContext context,
     GlobalTheme globalTheme, {
     String? filterType,
+    String? filterContent,
   }) {
     final list = logDataList.filter(
       (e) =>
-          e.filterTypeList?.contains(filterType) == true || isNil(filterType),
+          (e.filterTypeList?.contains(filterType) == true ||
+              isNil(filterType)) &&
+          (isNil(filterContent) || e.content.contains(filterContent!) == true),
     );
     return ListView.builder(
       physics: kScrollPhysics,
