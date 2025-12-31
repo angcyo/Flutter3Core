@@ -29,27 +29,34 @@ class _LogPanelContainerState extends State<LogPanelContainer>
     with WidgetsBindingObserver, MediaQueryDataChangeMixin {
   @override
   Widget build(BuildContext context) {
-    return Overlay(
-      initialEntries: [
-        OverlayEntry(
-          builder: (context) {
-            return LogScope(
-              control: widget.control,
-              child:
-                  widget.control?.showPanelLive.build((ctx, showPanel) {
-                    return showPanel
-                        ? [
-                            widget.child.expanded(),
-                            LogPanelWidget(control: widget.control),
-                          ].row()
-                        : widget.child;
-                  }) ??
-                  widget.child,
-            );
-          },
-        ),
-      ],
+    return SimpleApp(
+      home:
+          widget.control?.showPanelLive.build((ctx, showPanel) {
+            return showPanel
+                ? [
+                    widget.child.expanded(),
+                    //MARK: - app
+                    LogPanelWidget(control: widget.control),
+                  ].row()
+                : widget.child;
+          }) ??
+          widget.child,
     );
+    /*return LogScope(
+      control: widget.control,
+      child:
+          widget.control?.showPanelLive.build((ctx, showPanel) {
+            return showPanel
+                ? [
+                    widget.child.expanded(),
+                    //MARK: - app
+              */ /*LogPanelWidget(control: widget.control)*/ /*
+                    SimpleApp(home: LogPanelWidget(control: widget.control)),
+                  ].row()
+                : widget.child;
+          }) ??
+          widget.child,
+    );*/
   }
 }
 
@@ -96,8 +103,7 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
     final globalTheme = GlobalTheme.of(context);
     return [
           buildHeaderTabWidget(context, globalTheme),
-          /*Divider(height: 1),
-          buildInputFilterWidget(context, globalTheme),*/
+          buildInputFilterWidget(context, globalTheme),
           buildLogFilterWidget(context, globalTheme),
           Divider(height: 1),
           buildLogDataListWidget(
