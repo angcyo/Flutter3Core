@@ -30,7 +30,6 @@ import 'package:uuid/uuid.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
 import 'assets_generated/assets.gen.dart';
-import 'flutter3_basics.dart';
 
 export 'package:async/async.dart';
 export 'package:clock/clock.dart';
@@ -54,6 +53,7 @@ export 'src/utils/hex.dart';
 export 'package:flutter3_res/flutter3_res.dart';
 export 'package:crypto/crypto.dart';
 export 'src/log/log_scope.dart';
+export 'src/widgets/simple_app.dart';
 
 //export 'package:leak_tracker/leak_tracker.dart';
 

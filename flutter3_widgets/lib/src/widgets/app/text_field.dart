@@ -81,6 +81,9 @@ class TextFieldConfig {
 
   //region TextField的属性,优先级低
 
+  /// [SingleInputWidget.textStyle]
+  TextStyle? textStyle;
+
   /// 浮动在输入框上方的提示文字, 单独指定[labelText]也会[hintText]的效果
   /// [SingleInputWidget.labelText]
   String? labelText;
@@ -224,6 +227,7 @@ class TextFieldConfig {
     this.inputFormatters,
     this.keyboardType,
     this.updateFieldValueFn,
+    this.textStyle,
     this.labelText,
     this.labelTextStyle,
     this.labelTextBuilder,
@@ -1400,7 +1404,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
             //l.w("onEditingComplete");
             _onSelfEditingComplete();
           },
-          style: widget.textStyle,
+          style:
+              widget.textStyle ??
+              widget.config.textStyle ??
+              globalTheme.textGeneralStyle,
           textAlign: widget.textAlign,
           expands: false,
           maxLines: widget.maxLines,
@@ -1563,6 +1570,7 @@ class AutocompleteOptionsWidget<T extends Object> extends StatelessWidget {
 class BorderSingleInputWidget extends StatefulWidget {
   /// 默认的文本
   final String? text;
+  final TextStyle? textStyle;
 
   /// 提示文本
   final String? hintText;
@@ -1598,6 +1606,7 @@ class BorderSingleInputWidget extends StatefulWidget {
   const BorderSingleInputWidget({
     super.key,
     this.text,
+    this.textStyle,
     this.hintText,
     this.autofocus,
     this.inputFormatters,
@@ -1640,6 +1649,7 @@ class _BorderSingleInputWidgetState extends State<BorderSingleInputWidget> {
       maxLength: widget.maxLength,
       maxLines: widget.maxLines,
       showInputCounter: widget.showInputCounter,
+      textStyle: widget.textStyle,
       border: outlineInputBorder(
         color: globalTheme.borderColor,
         borderRadius: widget.borderRadius,
