@@ -129,21 +129,61 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
 
   /// 构建输入过滤标签
   Widget buildInputFilterWidget(BuildContext context, GlobalTheme globalTheme) {
-    return BorderSingleInputWidget(
-      hintText: "过滤内容",
-      maxLines: 1,
-      maxLength: 100,
-      text: filterContent,
-      onChanged: (text) {
-        filterContent = text;
-        updateState();
-      },
-    );
+    return [
+      BorderSingleInputWidget(
+        hintText: "过滤内容",
+        maxLines: 1,
+        maxLength: 100,
+        text: filterContent,
+        onChanged: (text) {
+          filterContent = text;
+          updateState();
+        },
+      ).expanded(),
+      scrollToBottomLive
+          .buildFn(
+            () =>
+                paintWidget((canvas, size) {
+                      //绘制一个滚动到底的图标
+                      final path = Path();
+                      path
+                        ..moveTo(0, size.height)
+                        ..lineTo(size.width, size.height);
+                      path
+                        ..moveTo(0, 0)
+                        ..lineTo(size.width / 2, size.height * 4 / 7)
+                        ..lineTo(size.width, 0);
+                      canvas.drawPath(
+                        path,
+                        Paint()
+                          ..color = globalTheme.icoNormalColor
+                          ..strokeCap = .round
+                          ..strokeJoin = .round
+                          ..strokeWidth = 2
+                          ..style = .stroke,
+                      );
+                    }, size: Size(14, 14))
+                    .insets(all: kX)
+                    .inkWell(() {
+                      isScrollToBottom = !isScrollToBottom;
+                    }, borderRadius: radius.borderRadius)
+                    .decoration(
+                      fillDecoration(
+                        color: isScrollToBottom
+                            ? globalTheme.pressColor
+                            : Colors.transparent,
+                        radius: radius,
+                      ),
+                    ),
+          )
+          .insets(right: kL),
+    ].row()!;
   }
+
+  final radius = kDefaultBorderRadiusX;
 
   /// 构建Log过滤
   Widget buildLogFilterWidget(BuildContext context, GlobalTheme globalTheme) {
-    final radius = kDefaultBorderRadiusXX;
     return [
           for (final filterType in filterTypeList)
             (filterType == "" ? "All" : filterType)

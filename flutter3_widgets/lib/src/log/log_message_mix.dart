@@ -15,14 +15,21 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   @override
   void initState() {
     super.initState();
-    postFrame(() {
-      scrollController.scrollToBottom();
-    });
+    autoScrollToBottom();
   }
 
   //MARK: - scroll
 
   //region 滚动体列表
+
+  /// 是否自动滚动到底部
+  final scrollToBottomLive = $live(true);
+
+  bool get isScrollToBottom => scrollToBottomLive.value == true;
+
+  set isScrollToBottom(bool value) {
+    scrollToBottomLive <= value;
+  }
 
   /// 滚动列表
   late final ScrollController scrollController = ScrollController();
@@ -102,9 +109,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
     }
     logDataList.add(LogScopeData.message(message, isReceived: isReceived));
     updateState();
-    postFrame(() {
-      scrollController.scrollToBottom();
-    });
+    autoScrollToBottom();
   }
 
   /// 添加一条日志记录, 并且滚动到底部
@@ -122,9 +127,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
       ),
     );
     updateState();
-    postFrame(() {
-      scrollController.scrollToBottom();
-    });
+    autoScrollToBottom();
   }
 
   /// 添加多条日志记录, 滚动到底部
@@ -137,9 +140,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
       this.logDataList.addAll(logDataList);
     }
     updateState();
-    postFrame(() {
-      scrollController.scrollToBottom();
-    });
+    autoScrollToBottom();
   }
 
   /// 清除所有数据
@@ -147,6 +148,16 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   void clearLogData() {
     logDataList.clear();
     updateState();
+  }
+
+  /// 自动滚到到底部
+  @api
+  void autoScrollToBottom() {
+    if (isScrollToBottom) {
+      postFrame(() {
+        scrollController.scrollToBottom();
+      });
+    }
   }
 
   //endregion 滚动体列表
