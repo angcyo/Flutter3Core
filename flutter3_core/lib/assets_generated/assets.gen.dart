@@ -126,6 +126,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/core_back.svg
   String get coreBack => 'packages/flutter3_core/assets/svg/core_back.svg';
 
+  /// File path: assets/svg/core_clear.svg
+  String get coreClear => 'packages/flutter3_core/assets/svg/core_clear.svg';
+
   /// File path: assets/svg/core_close.svg
   String get coreClose => 'packages/flutter3_core/assets/svg/core_close.svg';
 
@@ -174,6 +177,7 @@ class $AssetsSvgGen {
   /// List of all assets
   List<String> get values => [
     coreBack,
+    coreClear,
     coreClose,
     coreConfirm,
     coreNext,

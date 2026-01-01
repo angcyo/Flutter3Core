@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
@@ -131,10 +129,6 @@ class LogScopeController {
     } else {
       //关闭日志时, 清空数据
       logDataListLive << [];
-      assert(() {
-        debugger();
-        return true;
-      }());
     }
   }
 
@@ -149,6 +143,12 @@ class LogScopeController {
       }
       logDataListLive << list;
     }
+  }
+
+  /// 清空日志数据
+  @api
+  void clearLogData() {
+    logDataListLive << [];
   }
 }
 

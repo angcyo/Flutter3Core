@@ -94,7 +94,7 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
   void initState() {
     hookAny(
       widget.control?.logDataListLive.listen((data) {
-        if (data != null && !isNil(data)) {
+        if (data != null) {
           addLogDatList(data, reset: true);
         }
       }, allowBackward: false),
@@ -144,61 +144,67 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
           updateState();
         },
       ).expanded(),
-      //MARK: - 滚动到底部
-      scrollToBottomLive
-          .buildFn(
-            () =>
-                loadCoreAssetSvgPicture(
-                      Assets.svg.scrollToBottom,
-                      tintColor: context.isThemeDark
-                          ? globalTheme.textTitleStyle.color
-                          : null,
-                      size: 14,
-                    )!
-                    .insets(all: 10)
-                    .inkWell(() {
-                      isScrollToBottom = !isScrollToBottom;
-                    }, borderRadius: buttonRadius.borderRadius)
-                    .decoration(
-                      fillDecoration(
-                        color: isScrollToBottom
-                            ? globalTheme.pressColor
-                            : Colors.transparent,
-                        radius: buttonRadius,
-                      ),
-                    ),
-          )
-          .insets(right: kL),
-      //MARK: - 暂停
-      widget.control?.isPauseLogLive
-          .buildFn(
-            () =>
-                loadCoreAssetSvgPicture(
-                      Assets.svg.scrollPause,
-                      tintColor: context.isThemeDark
-                          ? globalTheme.textTitleStyle.color
-                          : null,
-                      size: 14,
-                    )!
-                    .insets(all: 10)
-                    .inkWell(() {
-                      widget.control!.isPauseLog = !widget.control!.isPauseLog;
-                    }, borderRadius: buttonRadius.borderRadius)
-                    .decoration(
-                      fillDecoration(
-                        color: widget.control!.isPauseLog
-                            ? globalTheme.pressColor
-                            : Colors.transparent,
-                        radius: buttonRadius,
-                      ),
-                    ),
-          )
-          .insets(right: kL),
-    ].row()!;
+      //MARK: - scrollToBottom
+      scrollToBottomLive.buildFn(
+        () =>
+            loadCoreAssetSvgPicture(
+                  Assets.svg.scrollToBottom,
+                  tintColor: context.isThemeDark
+                      ? globalTheme.textTitleStyle.color
+                      : null,
+                  size: 14,
+                )!
+                .insets(all: 10)
+                .inkWell(() {
+                  isScrollToBottom = !isScrollToBottom;
+                }, borderRadius: buttonRadius.borderRadius)
+                .decoration(
+                  fillDecoration(
+                    color: isScrollToBottom
+                        ? globalTheme.pressColor
+                        : Colors.transparent,
+                    radius: buttonRadius,
+                  ),
+                ),
+      ),
+      //MARK: - pause
+      widget.control?.isPauseLogLive.buildFn(
+        () =>
+            loadCoreAssetSvgPicture(
+                  Assets.svg.scrollPause,
+                  tintColor: context.isThemeDark
+                      ? globalTheme.textTitleStyle.color
+                      : null,
+                  size: 14,
+                )!
+                .insets(all: 10)
+                .inkWell(() {
+                  widget.control!.isPauseLog = !widget.control!.isPauseLog;
+                }, borderRadius: buttonRadius.borderRadius)
+                .decoration(
+                  fillDecoration(
+                    color: widget.control!.isPauseLog
+                        ? globalTheme.pressColor
+                        : Colors.transparent,
+                    radius: buttonRadius,
+                  ),
+                ),
+      ),
+      //MARK: - clear
+      loadCoreAssetSvgPicture(
+        Assets.svg.coreClear,
+        tintColor: context.isThemeDark
+            ? globalTheme.textTitleStyle.color
+            : null,
+        size: 14,
+      )!.insets(all: 10).inkWell(() {
+        widget.control?.clearLogData();
+      }, borderRadius: buttonRadius.borderRadius),
+    ].row(gap: kL)!.insets(right: kL);
   }
 
   final buttonRadius = kDefaultBorderRadiusX;
-  final filterRadius = kDefaultBorderRadiusXX;
+  final filterRadius = kDefaultBorderRadiusXXX;
 
   /// 构建Log过滤
   Widget buildLogFilterWidget(BuildContext context, GlobalTheme globalTheme) {
