@@ -160,6 +160,14 @@ class $AssetsSvgGen {
   String get keyboardPackUp =>
       'packages/flutter3_core/assets/svg/keyboard_pack_up.svg';
 
+  /// File path: assets/svg/scroll_pause.svg
+  String get scrollPause =>
+      'packages/flutter3_core/assets/svg/scroll_pause.svg';
+
+  /// File path: assets/svg/scroll_to_bottom.svg
+  String get scrollToBottom =>
+      'packages/flutter3_core/assets/svg/scroll_to_bottom.svg';
+
   /// Directory path: packages/flutter3_core/assets/svg
   String get path => 'packages/flutter3_core/assets/svg';
 
@@ -175,6 +183,8 @@ class $AssetsSvgGen {
     fileBrowseShare,
     keyboardBackspace,
     keyboardPackUp,
+    scrollPause,
+    scrollToBottom,
   ];
 }
 

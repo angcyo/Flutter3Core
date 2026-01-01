@@ -89,6 +89,12 @@ class LogScopeController {
   @configProperty
   final isPauseLogLive = $live(false);
 
+  bool get isPauseLog => isPauseLogLive.value == true;
+
+  set isPauseLog(bool value) {
+    isPauseLogLive <= value;
+  }
+
   /// 日志数据列表
   @configProperty
   final logDataListLive = $live<List<LogScopeData>>([]);

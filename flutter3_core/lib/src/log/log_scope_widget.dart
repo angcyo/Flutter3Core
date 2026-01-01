@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter3_basics/flutter3_basics.dart' hide ContextAction;
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 
+import '../../assets_generated/assets.gen.dart';
+import '../../flutter3_core.dart' show loadCoreAssetSvgPicture;
 import 'log_message_mix.dart';
 
 ///
@@ -142,39 +144,52 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
           updateState();
         },
       ).expanded(),
+      //MARK: - 滚动到底部
       scrollToBottomLive
           .buildFn(
             () =>
-                paintWidget((canvas, size) {
-                      //绘制一个滚动到底的图标
-                      final path = Path();
-                      path
-                        ..moveTo(0, size.height)
-                        ..lineTo(size.width, size.height);
-                      path
-                        ..moveTo(0, 0)
-                        ..lineTo(size.width / 2, size.height * 4 / 7)
-                        ..lineTo(size.width, 0);
-                      canvas.drawPath(
-                        path,
-                        Paint()
-                          ..color = globalTheme.icoNormalColor
-                          ..strokeCap = .round
-                          ..strokeJoin = .round
-                          ..strokeWidth = 2
-                          ..style = .stroke,
-                      );
-                    }, size: Size(14, 14))
+                loadCoreAssetSvgPicture(
+                      Assets.svg.scrollToBottom,
+                      tintColor: context.isThemeDark
+                          ? globalTheme.textTitleStyle.color
+                          : null,
+                      size: 14,
+                    )!
                     .insets(all: 10)
                     .inkWell(() {
                       isScrollToBottom = !isScrollToBottom;
-                    }, borderRadius: radius.borderRadius)
+                    }, borderRadius: buttonRadius.borderRadius)
                     .decoration(
                       fillDecoration(
                         color: isScrollToBottom
                             ? globalTheme.pressColor
                             : Colors.transparent,
-                        radius: radius,
+                        radius: buttonRadius,
+                      ),
+                    ),
+          )
+          .insets(right: kL),
+      //MARK: - 暂停
+      widget.control?.isPauseLogLive
+          .buildFn(
+            () =>
+                loadCoreAssetSvgPicture(
+                      Assets.svg.scrollPause,
+                      tintColor: context.isThemeDark
+                          ? globalTheme.textTitleStyle.color
+                          : null,
+                      size: 14,
+                    )!
+                    .insets(all: 10)
+                    .inkWell(() {
+                      widget.control!.isPauseLog = !widget.control!.isPauseLog;
+                    }, borderRadius: buttonRadius.borderRadius)
+                    .decoration(
+                      fillDecoration(
+                        color: widget.control!.isPauseLog
+                            ? globalTheme.pressColor
+                            : Colors.transparent,
+                        radius: buttonRadius,
                       ),
                     ),
           )
@@ -182,7 +197,8 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
     ].row()!;
   }
 
-  final radius = kDefaultBorderRadiusX;
+  final buttonRadius = kDefaultBorderRadiusX;
+  final filterRadius = kDefaultBorderRadiusXX;
 
   /// 构建Log过滤
   Widget buildLogFilterWidget(BuildContext context, GlobalTheme globalTheme) {
@@ -195,11 +211,11 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
                   selectedFilterType == filterType
                       ? fillDecoration(
                           color: globalTheme.lineColor,
-                          radius: radius,
+                          radius: filterRadius,
                         )
                       : strokeDecoration(
                           color: globalTheme.lineColor,
-                          radius: radius,
+                          radius: filterRadius,
                         ),
                 )
                 .inkWell(
@@ -210,7 +226,7 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
                             selectedFilterType = filterType;
                           });
                         },
-                  borderRadius: radius.borderRadius,
+                  borderRadius: filterRadius.borderRadius,
                 ),
         ]
         .wrap()!
