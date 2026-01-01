@@ -50,8 +50,6 @@ export 'src/popup/popup_mix.dart';
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';
 export 'src/pub/swiper/transformer_page_view/transformer_page_view.dart';
-export 'src/log/log_message_mix.dart';
-export 'src/log/log_scope_widget.dart';
 
 // @formatter:off
 part 'src/navigation/navigate_ex.dart';

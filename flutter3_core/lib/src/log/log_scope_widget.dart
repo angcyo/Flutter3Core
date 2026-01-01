@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter3_basics/flutter3_basics.dart' hide ContextAction;
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 
+import 'log_message_mix.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/12/30
@@ -31,7 +33,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
   Widget build(BuildContext context) {
     return SimpleApp(
       home:
-          widget.control?.showPanelLive.build((ctx, showPanel) {
+          widget.control?.isShowPanelLive.build((ctx, showPanel) {
             return showPanel
                 ? [
                     widget.child.expanded(),

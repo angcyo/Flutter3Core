@@ -35,6 +35,8 @@ export 'src/core/build_config.dart';
 export 'src/debug/debug_overlay.dart';
 export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
+export 'src/log/log_message_mix.dart';
+export 'src/log/log_scope_widget.dart';
 
 part 'src/core/core_keys.dart';
 part 'src/core/hive_data_mix.dart';

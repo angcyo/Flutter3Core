@@ -83,7 +83,11 @@ class LogScopeController {
 
   /// 是否显示日志面板
   @configProperty
-  final showPanelLive = $live(false);
+  final isShowPanelLive = $live(false);
+
+  /// 是否暂停接收日志
+  @configProperty
+  final isPauseLogLive = $live(false);
 
   /// 日志数据列表
   @configProperty
@@ -115,8 +119,8 @@ class LogScopeController {
   /// 开关显示日志面板
   @api
   void togglePanel() {
-    showPanelLive <= !(showPanelLive.value == true);
-    if (showPanelLive.value == true) {
+    isShowPanelLive <= !(isShowPanelLive.value == true);
+    if (isShowPanelLive.value == true) {
       //op
     } else {
       //关闭日志时, 清空数据
@@ -131,7 +135,7 @@ class LogScopeController {
   /// 添加日志数据
   @api
   void addLogData(LogScopeData log) {
-    if (showPanelLive.value == true) {
+    if (isShowPanelLive.value == true && isPauseLogLive.value != true) {
       final list = logDataListLive.value ?? [];
       list.add(log);
       while (list.length > logMaxCount) {
