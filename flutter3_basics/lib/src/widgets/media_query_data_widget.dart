@@ -150,7 +150,7 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
   /// 平台[Brightness]暗色模式发生改变
   @overridePoint
   void onSelfPlatformBrightnessChanged(Brightness? from, Brightness to) {
-    debugger();
+    //debugger();
     if (updateByBrightness) {
       updateState();
     }
