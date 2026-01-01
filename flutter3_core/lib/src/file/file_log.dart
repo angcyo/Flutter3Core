@@ -226,10 +226,11 @@ extension ObjectLogEx on Object {
     bool limitLength = true,
     int level = L.none,
     int forward = 4,
+    String? filterType,
     bool append = true,
   }) {
     //debugger();
-    l.log(this, level: level, forward: forward);
+    l.log(this, level: level, forward: forward, filterType: filterType);
     return appendToFile(
       fileName: fileName,
       folder: folder,
@@ -246,6 +247,7 @@ extension ObjectLogEx on Object {
     bool limitLength = true,
     int level = L.debug,
     int forward = 5,
+    String? filterType,
     bool append = true,
   }) {
     return appendToLog(
@@ -254,6 +256,7 @@ extension ObjectLogEx on Object {
       limitLength: limitLength,
       level: level,
       forward: forward,
+      filterType: filterType,
       append: append,
     );
   }

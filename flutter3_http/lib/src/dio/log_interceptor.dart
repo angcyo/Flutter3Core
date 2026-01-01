@@ -85,6 +85,7 @@ class LogFileInterceptor extends Interceptor {
       l.e(
         "${err.response?.statusCode?.toString().connect("]", "[") ?? ""}"
         "请求失败[${err.requestOptions.uri}]->$err",
+        filterType: LogScope.kError,
       );
       return true;
     }());
@@ -224,7 +225,7 @@ class LogFileInterceptor extends Interceptor {
       GlobalConfig.def.writeFileFn?.call('http.log', 'log', log);
     }
     if (toPrint ?? this.toPrint) {
-      l.d(log);
+      l.d(log, filterType: LogScope.kHttp);
     }
   }
 }

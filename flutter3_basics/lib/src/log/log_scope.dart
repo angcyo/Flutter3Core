@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 
@@ -95,6 +97,10 @@ class LogScopeController {
     } else {
       //关闭日志时, 清空数据
       logDataListLive << [];
+      assert(() {
+        debugger();
+        return true;
+      }());
     }
   }
 
@@ -115,6 +121,19 @@ class LogScopeController {
 /// 日志域, 用来显示日志面板
 /// - [LogScopeController]
 class LogScope extends InheritedWidget {
+  /// 日志过滤类型
+  /// - http 请求
+  static const String kHttp = "http";
+
+  /// - 错误类型
+  static const String kError = "error";
+
+  /// - 请求类型 / 设备请求
+  static const String kRequest = "request";
+
+  /// - 通道类型
+  static const String kChannel = "channel";
+
   @api
   static LogScopeController? get(BuildContext? context, {bool depend = false}) {
     if (depend) {
