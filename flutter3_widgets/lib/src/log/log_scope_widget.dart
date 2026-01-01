@@ -163,7 +163,7 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
                           ..style = .stroke,
                       );
                     }, size: Size(14, 14))
-                    .insets(all: kX)
+                    .insets(all: 10)
                     .inkWell(() {
                       isScrollToBottom = !isScrollToBottom;
                     }, borderRadius: radius.borderRadius)
