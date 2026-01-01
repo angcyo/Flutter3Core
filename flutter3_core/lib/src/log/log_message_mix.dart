@@ -54,7 +54,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
                   style: globalTheme.textDesStyle,
                   selectable: true,
                 ),
-                item.content.text(
+                item.content.limit().text(
                   selectable: true,
                   textAlign: item.isReceived ? .start : .end,
                 ),
@@ -94,7 +94,10 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
                   style: globalTheme.textDesStyle,
                   selectable: true,
                 ),
-                item.content.text(selectable: true, textColor: item.color),
+                item.content.limit().text(
+                  selectable: true,
+                  textColor: item.color,
+                ),
               ].column(crossAxisAlignment: .start) /*?.bounds()*/;
       },
     ).paddingOnly(all: kL);

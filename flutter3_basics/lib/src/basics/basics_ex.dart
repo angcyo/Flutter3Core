@@ -693,6 +693,8 @@ Future<void> setClipboardText([String? text]) =>
     Clipboard.setData(ClipboardData(text: text ?? ""));
 
 extension StringEx on String {
+  //MARK: - semver
+
   /// https://semver.org/lang/zh-CN/
   /// 语义化版本信息数据
   /// 主版本
@@ -703,6 +705,18 @@ extension StringEx on String {
 
   /// 修订版本
   int get patch => split(".").getOrNull(2)?.toIntOrNull() ?? 0;
+
+  //MARK: - part
+
+  /// 限制字符串返回的最大长度
+  /// - [length] 最大返回的长度
+  /// - [ellipsis] 超过之后使用"..."
+  String limit({int length = 1024 * 64, String? ellipsis = "..."}) {
+    if (length > 0 && this.length > length) {
+      return substring(0, length).connect(ellipsis);
+    }
+    return this;
+  }
 
   /// [Uri]
   /// [Uri.host]
