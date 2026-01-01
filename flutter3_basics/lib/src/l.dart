@@ -70,6 +70,7 @@ class L {
   static const int info = 3;
   static const int warn = 4;
   static const int error = 5;
+  static const int trace = 6;
 
   /// 是否显示日志时间
   static bool kShowTime = true;
@@ -277,6 +278,35 @@ class L {
     return null;
   }
 
+  String? t(
+    Object? object, {
+    int level = trace,
+    String? tag,
+    bool? showTime,
+    bool? showLevel,
+    bool? showTag,
+    int forward = 3,
+    StackTrace? stack,
+    String? debugLabel,
+    String? filterType,
+  }) {
+    if (level >= trace) {
+      return _log(
+        object,
+        level: level,
+        tag: tag,
+        showTime: showTime,
+        showLevel: showLevel,
+        showTag: showTag,
+        forward: forward,
+        stack: stack,
+        debugLabel: debugLabel,
+        filterType: filterType,
+      );
+    }
+    return null;
+  }
+
   /// [forward] 向前追溯几个调用. 默认是3. 用来获取调用的文件,函数和行数
   String _log(
     Object? object, {
@@ -443,7 +473,8 @@ enum LLevel {
   debug(L.debug),
   info(L.info),
   warn(L.warn),
-  error(L.error);
+  error(L.error),
+  trace(L.trace);
 
   const LLevel(this.value);
 

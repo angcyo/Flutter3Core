@@ -1174,7 +1174,7 @@ extension StringEx on String {
 
   /// 通过正则匹配, 判断字符串中是否包含指定的字符
   /// [match] 是否是全匹配, 否则包含即可
-  bool have(String? text, [bool match = false]) {
+  bool have(Pattern? text, [bool match = false]) {
     if (text == null) {
       return false;
     }
@@ -1182,7 +1182,7 @@ extension StringEx on String {
       return true;
     }
     try {
-      final regex = text.toRegex();
+      final regex = text is RegExp ? text : text.toString().toRegex();
       if (match) {
         return regex.hasMatch(this);
       } else {

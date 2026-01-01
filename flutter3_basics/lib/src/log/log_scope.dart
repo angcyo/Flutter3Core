@@ -18,6 +18,30 @@ class LogScopeData {
   /// 日志的内容
   final String content;
 
+  @tempFlag
+  Color? _color;
+
+  /// 获取内容匹配到的颜色
+  Color? get color {
+    if (_color != null) {
+      return _color;
+    }
+    if (content.have(".*E->.*")) {
+      _color = const Color(0xffCC666E);
+    } else if (content.have(".*W->.*")) {
+      _color = const Color(0xffE2B507);
+    } else if (content.have(".*I->.*")) {
+      _color = const Color(0xff3BDE09);
+    } else if (content.have(".*D->.*")) {
+      _color = const Color(0xff299999);
+    } else if (content.have(".*V->.*")) {
+      _color = const Color(0xff5394EC);
+    } else if (content.have(".*T->.*")) {
+      _color = const Color(0xFF9C27B0);
+    }
+    return _color;
+  }
+
   //MARK: -
 
   /// 消息的时间, 13位毫秒时间戳
