@@ -409,6 +409,8 @@ class L {
         return 'W';
       case error:
         return 'E';
+      case trace:
+        return 'T';
       default:
         return 'D';
     }
