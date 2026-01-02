@@ -128,6 +128,10 @@ extension HexIntEx on int {
   /// 1->01
   /// 200->C8
   String toHex([int? length]) => _HEX.encoder.convert(toBytes(length));
+
+  /// - [toHex]
+  String toHexDebug([int? length]) =>
+      _HEX.encoder.convert(toBytes(length)).connect("($this)");
 }
 
 extension HexBytesEx on List<int> {

@@ -80,7 +80,7 @@ void postFrameCallback(
   );
 }
 
-/// 下一针回调
+/// 下一帧回调
 /// [postFrameCallback]
 void postFrame(VoidCallback? callback, [bool microtask = false]) {
   if (callback == null) {
@@ -93,6 +93,8 @@ void postFrame(VoidCallback? callback, [bool microtask = false]) {
   }
 }
 
+/// - [microtask] 是否使用[scheduleMicrotask]
+///
 /// - [scheduleMicrotask]
 /// - [postFrameCallback]
 ///
@@ -110,6 +112,10 @@ void $next(void Function()? callback, [bool microtask = true]) {
 void $nextFrame(void Function()? callback, [bool microtask = false]) {
   postFrame(callback, microtask);
 }
+
+/// - [delayCallback]
+Future<T> $nextDelay<T>(Duration? duration, T Function() callback) =>
+    delayCallback(callback, duration);
 
 /// 如果正在布局阶段, 则立即安排一帧, 否则立即执行回调
 void postFrameCallbackIfNeed(FrameCallback callback) {
