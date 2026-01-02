@@ -145,61 +145,68 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
         },
       ).expanded(),
       //MARK: - scrollToBottom
-      scrollToBottomLive.buildFn(
-        () =>
-            loadCoreAssetSvgPicture(
-                  Assets.svg.scrollToBottom,
-                  tintColor: context.isThemeDark
-                      ? globalTheme.textTitleStyle.color
-                      : null,
-                  size: 14,
-                )!
-                .insets(all: 10)
-                .inkWell(() {
-                  isScrollToBottom = !isScrollToBottom;
-                }, borderRadius: buttonRadius.borderRadius)
-                .decoration(
-                  fillDecoration(
-                    color: isScrollToBottom
-                        ? globalTheme.pressColor
-                        : Colors.transparent,
-                    radius: buttonRadius,
-                  ),
-                ),
-      ),
+      scrollToBottomLive
+          .buildFn(
+            () =>
+                loadCoreAssetSvgPicture(
+                      Assets.svg.scrollToBottom,
+                      tintColor: context.isThemeDark
+                          ? globalTheme.textTitleStyle.color
+                          : null,
+                      size: 14,
+                    )!
+                    .insets(all: 10)
+                    .inkWell(() {
+                      isScrollToBottom = !isScrollToBottom;
+                    }, borderRadius: buttonRadius.borderRadius)
+                    .decoration(
+                      fillDecoration(
+                        color: isScrollToBottom
+                            ? globalTheme.pressColor
+                            : Colors.transparent,
+                        radius: buttonRadius,
+                      ),
+                    ),
+          )
+          .tooltip("锁定滚动到底部"),
       //MARK: - pause
-      widget.control?.isPauseLogLive.buildFn(
-        () =>
-            loadCoreAssetSvgPicture(
-                  Assets.svg.scrollPause,
-                  tintColor: context.isThemeDark
-                      ? globalTheme.textTitleStyle.color
-                      : null,
-                  size: 14,
-                )!
-                .insets(all: 10)
-                .inkWell(() {
-                  widget.control!.isPauseLog = !widget.control!.isPauseLog;
-                }, borderRadius: buttonRadius.borderRadius)
-                .decoration(
-                  fillDecoration(
-                    color: widget.control!.isPauseLog
-                        ? globalTheme.pressColor
-                        : Colors.transparent,
-                    radius: buttonRadius,
-                  ),
-                ),
-      ),
+      widget.control?.isPauseLogLive
+          .buildFn(
+            () =>
+                loadCoreAssetSvgPicture(
+                      Assets.svg.scrollPause,
+                      tintColor: context.isThemeDark
+                          ? globalTheme.textTitleStyle.color
+                          : null,
+                      size: 14,
+                    )!
+                    .insets(all: 10)
+                    .inkWell(() {
+                      widget.control!.isPauseLog = !widget.control!.isPauseLog;
+                    }, borderRadius: buttonRadius.borderRadius)
+                    .decoration(
+                      fillDecoration(
+                        color: widget.control!.isPauseLog
+                            ? globalTheme.pressColor
+                            : Colors.transparent,
+                        radius: buttonRadius,
+                      ),
+                    ),
+          )
+          .tooltip("暂停接收日志"),
       //MARK: - clear
       loadCoreAssetSvgPicture(
-        Assets.svg.coreClear,
-        tintColor: context.isThemeDark
-            ? globalTheme.textTitleStyle.color
-            : null,
-        size: 14,
-      )!.insets(all: 10).inkWell(() {
-        widget.control?.clearLogData();
-      }, borderRadius: buttonRadius.borderRadius),
+            Assets.svg.coreClear,
+            tintColor: context.isThemeDark
+                ? globalTheme.textTitleStyle.color
+                : null,
+            size: 14,
+          )!
+          .insets(all: 10)
+          .inkWell(() {
+            widget.control?.clearLogData();
+          }, borderRadius: buttonRadius.borderRadius)
+          .tooltip("清除日志"),
     ].row(gap: kL)!.insets(right: kL);
   }
 
