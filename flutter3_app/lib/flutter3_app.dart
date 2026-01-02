@@ -359,7 +359,7 @@ Future _initAppDebugInfo() async {
       );
       //--build信息
       DebugPage.debugLastWidgetBuilderList.add(
-        (_) => $buildConfig?.toString().text(
+        (_) => $rootBuildConfig?.toString().text(
           textAlign: .center,
           style: textStyle,
           selectable: true,

@@ -171,7 +171,7 @@ class BuildConfig {
   }
 
   @override
-  String toString() => json?.toString() ?? "" /*"${toJson()}"*/;
+  String toString() => toJson().toString();
 
   //--
 
