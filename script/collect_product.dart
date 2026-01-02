@@ -152,7 +152,7 @@ void main(List<String> arguments) async {
         "$currentPath/build/macos/Build/Products/Release/$targetFileName.app";
     if (Directory(from).existsSync()) {
       final key =
-          "$targetFileName.app/${File("$from/Contents/Info.plist").lastModifiedSync()}";
+          "$targetFileName.app/${File("$from/Contents/MacOS/Laserabc Factory Tools").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("已复制过: $from");
         exitProductCount++;
