@@ -87,6 +87,7 @@ void main(List<String> arguments) async {
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
+        ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
           copiedLines.add(key);
@@ -109,6 +110,7 @@ void main(List<String> arguments) async {
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
+        ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
           copiedLines.add(key);
@@ -131,6 +133,7 @@ void main(List<String> arguments) async {
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.ipa/$outputName";
+        ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
           copiedLines.add(key);
@@ -155,6 +158,7 @@ void main(List<String> arguments) async {
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.app/$outputName";
+        ensureFolder(to, parent: true);
         if (outputName.endsWith(".app")) {
           if (await copyFolderByPlatform(from, to)) {
             collectProductCount++;
@@ -186,6 +190,7 @@ void main(List<String> arguments) async {
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.exe/$outputName";
+        ensureFolder(to, parent: true);
         if (outputName.endsWith(".exe")) {
           if (copyFile(from, to)) {
             collectProductCount++;
@@ -393,7 +398,7 @@ Future<bool> zipFolder(
     } else {
       await [srcPath].zipEncoder(encoder);
     }
-    colorLog('压缩文件夹: $srcPath -> $dstPath');
+    colorLog('压缩文件夹: $srcPath -> $dstPath ${dstPath.fileSizeStr}');
     return true;
   } catch (e) {
     colorErrorLog(e);
@@ -429,7 +434,9 @@ Future<bool> zipFolderByPlatform(
     workingDirectory: workPath,
     /*runInShell: true,*/
   );
-  colorLog('压缩文件夹(${result.exitCode}): $srcPath -> $dstPath');
+  colorLog(
+    '压缩文件夹(${result.exitCode}): $srcPath -> $dstPath ${dstPath.fileSizeStr}',
+  );
   if (result.exitCode < 0) {
     colorErrorLog(result.stderr);
   }

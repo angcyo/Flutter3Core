@@ -74,11 +74,15 @@ File? ensureFile(String? filePath) {
 }
 
 /// 确保文件夹存在
-Directory? ensureFolder(String? folderPath) {
+/// - [parent] 是否仅创建父文件夹
+Directory? ensureFolder(String? folderPath, {bool? parent}) {
   if (folderPath == null || folderPath.isEmpty) {
     return null;
   }
-  final directory = Directory(folderPath);
+  var directory = Directory(folderPath);
+  if (parent == true) {
+    directory = directory.parent;
+  }
   if (!directory.existsSync()) {
     directory.createSync(recursive: true);
   }
@@ -435,4 +439,65 @@ String? assembleVersionTitle(Map<String, dynamic>? json) {
     }
   }
   return buffer.toString();
+}
+
+extension FileStringPubEx on String {
+  String get fileSizeStr => fileSize(File(this).lengthSync());
+}
+
+String fileSize(dynamic size, [int round = 2, String space = ""]) {
+  final divider = 1024;
+  int s;
+  try {
+    s = int.parse(size.toString());
+  } catch (e) {
+    throw ArgumentError('Can not parse the size parameter: $e');
+  }
+
+  if (s < divider) {
+    return '$s${space}B';
+  }
+
+  if (s < divider * divider && s % divider == 0) {
+    return '${(s / divider).toStringAsFixed(0)}${space}KB';
+  }
+
+  if (s < divider * divider) {
+    return '${(s / divider).toStringAsFixed(round)}${space}KB';
+  }
+
+  if (s < divider * divider * divider && s % divider == 0) {
+    return '${(s / (divider * divider)).toStringAsFixed(0)}${space}MB';
+  }
+
+  if (s < divider * divider * divider) {
+    return '${(s / divider / divider).toStringAsFixed(round)}${space}MB';
+  }
+
+  if (s < divider * divider * divider * divider && s % divider == 0) {
+    return '${(s / (divider * divider * divider)).toStringAsFixed(0)}${space}GB';
+  }
+
+  if (s < divider * divider * divider * divider) {
+    return '${(s / divider / divider / divider).toStringAsFixed(round)}${space}GB';
+  }
+
+  if (s < divider * divider * divider * divider * divider && s % divider == 0) {
+    num r = s / divider / divider / divider / divider;
+    return '${r.toStringAsFixed(0)}${space}TB';
+  }
+
+  if (s < divider * divider * divider * divider * divider) {
+    num r = s / divider / divider / divider / divider;
+    return '${r.toStringAsFixed(round)}${space}TB';
+  }
+
+  if (s < divider * divider * divider * divider * divider * divider &&
+      s % divider == 0) {
+    num r = s / divider / divider / divider / divider / divider;
+    return '${r.toStringAsFixed(0)}${space}PB';
+  } else {
+    num r = s / divider / divider / divider / divider / divider;
+    return '${r.toStringAsFixed(round)}${space}PB';
+  }
 }
