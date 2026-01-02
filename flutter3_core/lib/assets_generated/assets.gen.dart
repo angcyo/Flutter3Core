@@ -136,6 +136,9 @@ class $AssetsSvgGen {
   String get coreConfirm =>
       'packages/flutter3_core/assets/svg/core_confirm.svg';
 
+  /// File path: assets/svg/core_copy.svg
+  String get coreCopy => 'packages/flutter3_core/assets/svg/core_copy.svg';
+
   /// File path: assets/svg/core_next.svg
   String get coreNext => 'packages/flutter3_core/assets/svg/core_next.svg';
 
@@ -180,6 +183,7 @@ class $AssetsSvgGen {
     coreClear,
     coreClose,
     coreConfirm,
+    coreCopy,
     coreNext,
     fileBrowseDelete,
     fileBrowseHome,

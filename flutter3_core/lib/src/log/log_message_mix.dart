@@ -35,6 +35,21 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   late final ScrollController scrollController = ScrollController();
   late final List<LogScopeData> logDataList = [LogScopeData.message("欢迎访问!")];
 
+  /// 过滤后的日志数据列表
+  @api
+  List<LogScopeData> filterLogDataList({
+    String? filterType,
+    String? filterContent,
+  }) {
+    final list = logDataList.filter(
+      (e) =>
+          (e.filterTypeList?.contains(filterType) == true ||
+              isNil(filterType)) &&
+          (isNil(filterContent) || e.content.contains(filterContent!) == true),
+    );
+    return list;
+  }
+
   /// 构建消息类型列表小部件
   /// - 对话的样式
   @callPoint
@@ -76,11 +91,9 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
     String? filterType,
     String? filterContent,
   }) {
-    final list = logDataList.filter(
-      (e) =>
-          (e.filterTypeList?.contains(filterType) == true ||
-              isNil(filterType)) &&
-          (isNil(filterContent) || e.content.contains(filterContent!) == true),
+    final list = filterLogDataList(
+      filterType: filterType,
+      filterContent: filterContent,
     );
     return ListView.builder(
       physics: kScrollPhysics,

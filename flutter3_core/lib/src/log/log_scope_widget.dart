@@ -207,6 +207,29 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
             widget.control?.clearLogData();
           }, borderRadius: buttonRadius.borderRadius)
           .tooltip("清除日志"),
+      //MARK: - copy
+      loadCoreAssetSvgPicture(
+            Assets.svg.coreCopy,
+            tintColor: context.isThemeDark
+                ? globalTheme.textTitleStyle.color
+                : null,
+            size: 14,
+          )!
+          .insets(all: 10)
+          .inkWell(() {
+            final list = filterLogDataList(
+              filterType: selectedFilterType,
+              filterContent: filterContent,
+            );
+            buildString((builder) {
+              for (final item in list) {
+                builder.write(item.time);
+                builder.write("/");
+                builder.writeln(item.content);
+              }
+            }).copy();
+          }, borderRadius: buttonRadius.borderRadius)
+          .tooltip("复制日志"),
     ].row(gap: kL)!.insets(right: kL);
   }
 
