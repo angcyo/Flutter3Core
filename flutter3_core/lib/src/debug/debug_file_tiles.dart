@@ -61,16 +61,13 @@ class DebugFileTile extends StatelessWidget {
         "${folder.listFilesSync(sort: false)?.length ?? "--"} 项".text(
           style: globalConfig.globalTheme.textDesStyle,
         ),
-        Empty.width(kX),
         stat.size
             .toSizeStr()
             .text(style: globalConfig.globalTheme.textDesStyle)
             .expanded(),
-        Empty.width(kX),
         stat.modeString().text(style: globalConfig.globalTheme.textDesStyle),
-        Empty.width(kX),
         modified.text(style: globalConfig.globalTheme.textDesStyle),
-      ].row();
+      ].row(gap: kX);
       list = [
         loadCoreAssetImageWidget(
           Assets.png.coreFileIconFolder.keyName,
@@ -89,11 +86,9 @@ class DebugFileTile extends StatelessWidget {
             .toSizeStr()
             .text(style: globalConfig.globalTheme.textDesStyle)
             .expanded(),
-        Empty.width(kX),
         stat.modeString().text(style: globalConfig.globalTheme.textDesStyle),
-        Empty.width(kX),
         modified.text(style: globalConfig.globalTheme.textDesStyle),
-      ].row();
+      ].row(gap: kX);
       list = [
         getFileIconWidget(fileName, width: iconSize, height: iconSize),
         Empty.width(kX),
@@ -101,7 +96,7 @@ class DebugFileTile extends StatelessWidget {
           [
             fileName.text(style: globalConfig.globalTheme.textBodyStyle),
             infoRow,
-            file.md5Sync()?.toUpperCase().text(
+            file.md5Sync()?.toLowerCase().text(
               style: globalConfig.globalTheme.textDesStyle,
             ),
           ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),

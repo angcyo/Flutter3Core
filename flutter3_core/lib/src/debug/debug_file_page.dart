@@ -62,12 +62,12 @@ class _DebugFilePageState extends State<DebugFilePage>
             })
             .tooltip(widget.initPath),
         currentLoadFolderPath
-            ?.text(style: globalTheme.textTitleStyle)
+            ?.text(style: globalTheme.textBodyStyle)
             .scroll(
               scrollDirection: Axis.horizontal,
               controller: _pathScrollController,
             )
-            .padding(0, kX, kX, kX)
+            .insets(h: kH, v: kH)
             .ink(() {
               loadPathMixin(currentLoadFolderPath?.parentPath);
             })
