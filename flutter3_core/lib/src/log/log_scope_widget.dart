@@ -10,7 +10,8 @@ import '../../flutter3_core.dart'
         fileFolder,
         cacheFolder,
         DebugFileListWidget,
-        DebugFilePage;
+        DebugFilePage,
+        LogTempFileListWidget;
 import 'log_message_mix.dart';
 
 ///
@@ -160,7 +161,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
         ].row()!;
       },
       contentBuilder: (ctx, child, index, data, isSelected) {
-        return "临时文件".text();
+        return LogTempFileListWidget(key: ValueKey("tempFile"));
       },
     ),
   ];

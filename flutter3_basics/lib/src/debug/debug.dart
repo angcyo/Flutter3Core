@@ -53,6 +53,7 @@ void addToShareLogPath(
     }());
     return;
   }
+  $logController.addLogTempFilePath(path);
   if (key != null) {
     zipEntryKeyMap[path] = key;
   }
@@ -125,11 +126,11 @@ String randomImagePlaceholderUrl([String? text]) {
 /// 获取一个随机的颜色, 随机颜色
 /// https://pub.dev/packages/random_color
 Color randomColor({int min = 120, int max = 200}) => Color.fromARGB(
-      255,
-      nextInt(max, min),
-      nextInt(max, min),
-      nextInt(max, min),
-    );
+  255,
+  nextInt(max, min),
+  nextInt(max, min),
+  nextInt(max, min),
+);
 
 /// 获取一个随机的[StateLogWidget]
 StateLogWidget randomLogWidget(
@@ -137,16 +138,15 @@ StateLogWidget randomLogWidget(
   double? height,
   double fontSize = 12,
   Color? color = Colors.white,
-}) =>
-    StateLogWidget(
-      logTag: text,
-      child: randomWidget(
-        text: text,
-        height: height,
-        fontSize: fontSize,
-        textColor: color,
-      ),
-    );
+}) => StateLogWidget(
+  logTag: text,
+  child: randomWidget(
+    text: text,
+    height: height,
+    fontSize: fontSize,
+    textColor: color,
+  ),
+);
 
 /// 获取一个随机的[Widget]
 Widget randomWidget({
@@ -167,10 +167,7 @@ Widget randomWidget({
     child: Text(
       "${text ?? ""}\nh:${h.toDigits()} c:${bgColor.toHexColor()}",
       textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: fontSize,
-        color: textColor,
-      ),
+      style: TextStyle(fontSize: fontSize, color: textColor),
     ),
   );
 }
@@ -190,7 +187,9 @@ void logAnimation(
   Animation secondaryAnimation,
 ) {
   l.d("[$prefix]first:${animation.status}->${animation.value}");
-  l.v("[$prefix]secondary:${secondaryAnimation.status}->${secondaryAnimation.value}");
+  l.v(
+    "[$prefix]secondary:${secondaryAnimation.status}->${secondaryAnimation.value}",
+  );
 }
 
 /// 调试图片

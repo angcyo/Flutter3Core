@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter3_core/flutter3_core.dart';
-import 'package:flutter3_widgets/flutter3_widgets.dart';
 
 import '../../assets_generated/assets.gen.dart';
 import 'debug_file_menu_dialog.dart';
@@ -23,6 +22,9 @@ class DebugFileTile extends StatelessWidget {
   /// 点击事件
   final FilePathTapAction? onTap;
 
+  /// 点击事件
+  final ClickAction? onClick;
+
   /// 图标大小
   final iconSize = 50.0;
 
@@ -33,6 +35,7 @@ class DebugFileTile extends StatelessWidget {
     super.key,
     this.path,
     this.onTap,
+    this.onClick,
     this.isSelected = false,
     this.onDeleteAction,
   });
@@ -61,18 +64,12 @@ class DebugFileTile extends StatelessWidget {
         Empty.width(kX),
         stat.size
             .toSizeStr()
-            .text(
-              style: globalConfig.globalTheme.textDesStyle,
-            )
+            .text(style: globalConfig.globalTheme.textDesStyle)
             .expanded(),
         Empty.width(kX),
-        stat.modeString().text(
-              style: globalConfig.globalTheme.textDesStyle,
-            ),
+        stat.modeString().text(style: globalConfig.globalTheme.textDesStyle),
         Empty.width(kX),
-        modified.text(
-          style: globalConfig.globalTheme.textDesStyle,
-        ),
+        modified.text(style: globalConfig.globalTheme.textDesStyle),
       ].row();
       list = [
         loadCoreAssetImageWidget(
@@ -82,9 +79,7 @@ class DebugFileTile extends StatelessWidget {
         ),
         Empty.width(kX),
         [
-          fileName.text(
-            style: globalConfig.globalTheme.textBodyStyle,
-          ),
+          fileName.text(style: globalConfig.globalTheme.textBodyStyle),
           infoRow,
         ].column(crossAxisAlignment: CrossAxisAlignment.start)!.expanded(),
       ];
@@ -92,31 +87,23 @@ class DebugFileTile extends StatelessWidget {
       final infoRow = [
         stat.size
             .toSizeStr()
-            .text(
-              style: globalConfig.globalTheme.textDesStyle,
-            )
+            .text(style: globalConfig.globalTheme.textDesStyle)
             .expanded(),
         Empty.width(kX),
-        stat.modeString().text(
-              style: globalConfig.globalTheme.textDesStyle,
-            ),
+        stat.modeString().text(style: globalConfig.globalTheme.textDesStyle),
         Empty.width(kX),
-        modified.text(
-          style: globalConfig.globalTheme.textDesStyle,
-        ),
+        modified.text(style: globalConfig.globalTheme.textDesStyle),
       ].row();
       list = [
         getFileIconWidget(fileName, width: iconSize, height: iconSize),
         Empty.width(kX),
         [
           [
-            fileName.text(
-              style: globalConfig.globalTheme.textBodyStyle,
-            ),
+            fileName.text(style: globalConfig.globalTheme.textBodyStyle),
             infoRow,
             file.md5Sync()?.toUpperCase().text(
-                  style: globalConfig.globalTheme.textDesStyle,
-                ),
+              style: globalConfig.globalTheme.textDesStyle,
+            ),
           ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
         ].row()?.expanded(),
       ];
@@ -126,21 +113,21 @@ class DebugFileTile extends StatelessWidget {
         .row()!
         .paddingAll(kH)
         .container(
-            color: isSelected ? globalTheme.accentColor.withOpacity(0.3) : null)
+          color: isSelected ? globalTheme.accentColor.withOpacity(0.3) : null,
+        )
         .ink(() {
-      onTap?.call(path);
-    });
+          onTap?.call(path);
+          onClick?.call(context);
+        });
 
     result = result.longClick(() {
       //长按分享文件
       //l.d('长按');
       //globalConfig.shareDataFn?.call(context, file);
       context.showWidgetDialog(
-          DebugFileMenuDialog(
-            this.path,
-            onDeleteAction: onDeleteAction,
-          ),
-          type: TranslationType.translation);
+        DebugFileMenuDialog(this.path, onDeleteAction: onDeleteAction),
+        type: TranslationType.translation,
+      );
     });
 
     return result;

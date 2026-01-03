@@ -77,7 +77,7 @@ class LogScopeController {
 
   /// 日志数据最大数量
   @configProperty
-  int logMaxCount = 100;
+  int logMaxCount = 1024;
 
   /// 是否显示日志面板
   @configProperty
@@ -149,6 +149,30 @@ class LogScopeController {
   @api
   void clearLogData() {
     logDataListLive << [];
+  }
+
+  //MARK: - temp file
+
+  /// 临时产生的临时文件路径列表
+  @configProperty
+  final logTempFilePathListLive = $live<List<String>>([]);
+
+  /// 添加日志数据
+  @api
+  void addLogTempFilePath(String? path) {
+    if (isNil(path)) {
+      return;
+    }
+    final list = logTempFilePathListLive.value ?? [];
+    list.remove(path!); //移除
+    list.add(path); //添加, 保证最新的在最下面
+    logTempFilePathListLive << list;
+  }
+
+  /// 清空日志数据
+  @api
+  void clearLogTempFilePath() {
+    logTempFilePathListLive << [];
   }
 }
 

@@ -147,3 +147,41 @@ class _DebugFileListWidgetState extends State<DebugFileListWidget>
         "loading...".text().insets(all: kX);
   }
 }
+
+/// 日志临时文件列表
+/// - [LogScopeController.logTempFilePathListLive]
+class LogTempFileListWidget extends StatefulWidget {
+  const LogTempFileListWidget({super.key});
+
+  @override
+  State<LogTempFileListWidget> createState() => _LogTempFileListWidgetState();
+}
+
+class _LogTempFileListWidgetState extends State<LogTempFileListWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final globalConfig = GlobalConfig.of(context);
+    return $logController.logTempFilePathListLive.buildFn(() {
+      final list = $logController.logTempFilePathListLive.value ?? [];
+      return [
+        if (isNil(list))
+          globalConfig
+              .emptyPlaceholderBuilder(
+                context,
+                LibRes.maybeOf(context)?.libAdapterNoData ?? "暂无数据",
+              )
+              .align(Alignment.center)
+              .sliverExpand(),
+        if (!isNil(list))
+          for (final path in list)
+            DebugFileTile(
+              path: path,
+              onClick: (ctx) {
+                ctx.tryUpdateState();
+                saveFilePath(path, context);
+              },
+            ),
+      ].rScroll();
+    });
+  }
+}
