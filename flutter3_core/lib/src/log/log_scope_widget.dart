@@ -4,7 +4,13 @@ import 'package:flutter3_basics/flutter3_basics.dart' hide ContextAction;
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 
 import '../../assets_generated/assets.gen.dart';
-import '../../flutter3_core.dart' show loadCoreAssetSvgPicture;
+import '../../flutter3_core.dart'
+    show
+        loadCoreAssetSvgPicture,
+        fileFolder,
+        cacheFolder,
+        DebugFileListWidget,
+        DebugFilePage;
 import 'log_message_mix.dart';
 
 ///
@@ -31,8 +37,30 @@ class LogPanelContainer extends StatefulWidget {
 
 class _LogPanelContainerState extends State<LogPanelContainer>
     with WidgetsBindingObserver, MediaQueryDataChangeMixin {
+  //MARK: - folder
+
+  /// 文件文件夹
+  @configProperty
+  String? fileFolderPath;
+
+  /// 缓存文件夹
+  @configProperty
+  String? cacheFolderPath;
+
+  @override
+  void initState() {
+    fileFolder().then((value) {
+      fileFolderPath = value.path;
+    });
+    cacheFolder().then((value) {
+      cacheFolderPath = value.path;
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     return SimpleApp(
       home:
           widget.control?.isShowPanelLive.build((ctx, showPanel) {
@@ -40,7 +68,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
                 ? [
                     widget.child.expanded(),
                     //MARK: - app
-                    LogPanelWidget(control: widget.control),
+                    buildPanelApp(context, globalTheme),
                   ].row()
                 : widget.child;
           }) ??
@@ -62,6 +90,97 @@ class _LogPanelContainerState extends State<LogPanelContainer>
           widget.child,
     );*/
   }
+
+  //MARK : panel app
+
+  /// 标签页集合
+  late List<TabEntryInfo>? tabEntryList = [
+    TabEntryInfo(
+      tabInfo: LogPanelTabData(title: "Log"),
+      fixed: true,
+      tabBuilder: (ctx, child, index, data, isSelected) {
+        return [
+          "日志"
+              .text()
+              .insets(h: kX, v: kH)
+              .decoration(isSelected == true ? underlineDecoration() : null),
+        ].row()!;
+      },
+      contentBuilder: (ctx, child, index, data, isSelected) {
+        return LogPanelWidget(control: widget.control, key: ValueKey("Log"));
+      },
+    ),
+    TabEntryInfo(
+      tabInfo: LogPanelTabData(title: "files"),
+      fixed: true,
+      tabBuilder: (ctx, child, index, data, isSelected) {
+        return [
+          "文件"
+              .text()
+              .insets(h: kX, v: kH)
+              .decoration(isSelected == true ? underlineDecoration() : null),
+        ].row()!;
+      },
+      contentBuilder: (ctx, child, index, data, isSelected) {
+        return DebugFilePage(
+          /*folderPath: fileFolderPath,*/
+          initPath: fileFolderPath,
+          key: ValueKey(fileFolderPath),
+        );
+      },
+    ),
+    TabEntryInfo(
+      tabInfo: LogPanelTabData(title: "caches"),
+      fixed: true,
+      tabBuilder: (ctx, child, index, data, isSelected) {
+        return [
+          "缓存文件"
+              .text()
+              .insets(h: kX, v: kH)
+              .decoration(isSelected == true ? underlineDecoration() : null),
+        ].row()!;
+      },
+      contentBuilder: (ctx, child, index, data, isSelected) {
+        return DebugFilePage(
+          /*folderPath: cacheFolderPath,*/
+          initPath: cacheFolderPath,
+          key: ValueKey(cacheFolderPath),
+        );
+      },
+    ),
+    TabEntryInfo(
+      tabInfo: LogPanelTabData(title: "tempFile"),
+      fixed: true,
+      tabBuilder: (ctx, child, index, data, isSelected) {
+        return [
+          "临时文件"
+              .text()
+              .insets(h: kX, v: kH)
+              .decoration(isSelected == true ? underlineDecoration() : null),
+        ].row()!;
+      },
+      contentBuilder: (ctx, child, index, data, isSelected) {
+        return "临时文件".text();
+      },
+    ),
+  ];
+
+  late TabsManagerController controller = TabsManagerController(
+    tabEntryList: tabEntryList,
+  );
+
+  Widget buildPanelApp(BuildContext context, GlobalTheme globalTheme) {
+    return TabsManagerWidget(controller: controller)
+        .animatedContainer(width: $ecwBp())
+        .material(color: globalTheme.surfaceBgColor);
+  }
+}
+
+/// - [TabEntryInfo.tabInfo]
+class LogPanelTabData {
+  final String title;
+
+  const LogPanelTabData({required this.title});
 }
 
 /// 日志信息面板
@@ -106,30 +225,19 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     return [
-          buildHeaderTabWidget(context, globalTheme),
-          buildInputFilterWidget(context, globalTheme),
-          buildLogFilterWidget(context, globalTheme),
-          Divider(height: 1),
-          buildLogDataListWidget(
-            context,
-            globalTheme,
-            filterType: selectedFilterType,
-            filterContent: filterContent,
-          ).expanded(),
-        ]
-        .column()!
-        .animatedContainer(width: $ecwBp())
-        .material(color: globalTheme.surfaceBgColor);
+      buildInputFilterWidget(context, globalTheme),
+      buildLogFilterWidget(context, globalTheme),
+      Divider(height: 1),
+      buildLogDataListWidget(
+        context,
+        globalTheme,
+        filterType: selectedFilterType,
+        filterContent: filterContent,
+      ).expanded(),
+    ].column()!;
   }
 
   //MARK: - build
-
-  /// 构建头部标签
-  Widget buildHeaderTabWidget(BuildContext context, GlobalTheme globalTheme) {
-    return [
-      "LOG".text().insets(h: kX, v: kH).decoration(underlineDecoration()),
-    ].row()!;
-  }
 
   /// 构建输入过滤标签
   Widget buildInputFilterWidget(BuildContext context, GlobalTheme globalTheme) {

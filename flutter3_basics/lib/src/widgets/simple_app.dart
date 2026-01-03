@@ -107,36 +107,44 @@ class _SimpleAppState extends State<SimpleApp> {
       result = DefaultTextStyle(style: widget.textStyle!, child: result);
     }*/
     //--
-    return SharedAppData(
-      child: Shortcuts(
-        debugLabel: '<Default WidgetsApp Shortcuts>',
-        shortcuts: WidgetsApp.defaultShortcuts,
-        // DefaultTextEditingShortcuts is nested inside Shortcuts so that it can
-        // fall through to the defaultShortcuts.
-        child: DefaultTextEditingShortcuts(
-          child: Actions(
-            actions: <Type, Action<Intent>>{
-              ...WidgetsApp.defaultActions,
-              ScrollIntent: Action<ScrollIntent>.overridable(
-                context: context,
-                defaultAction: ScrollAction(),
-              ),
-            },
-            child: FocusTraversalGroup(
-              policy: ReadingOrderTraversalPolicy(),
-              child: TapRegionSurface(
-                child: ShortcutRegistrar(
-                  child: ListenableBuilder(
-                    listenable: _localizationsResolver,
-                    builder: (BuildContext context, _) {
-                      return Localizations(
-                        isApplicationLevel: true,
-                        locale: _localizationsResolver.locale,
-                        delegates: _localizationsResolver.localizationsDelegates
-                            .toList(),
-                        child: result,
-                      );
-                    },
+    /*if (kDebugMode) {
+      result = SemanticsDebugger(child: result);
+    }*/
+
+    return ScrollConfiguration(
+      behavior: const MaterialScrollBehavior(),
+      child: SharedAppData(
+        child: Shortcuts(
+          debugLabel: '<Default WidgetsApp Shortcuts>',
+          shortcuts: WidgetsApp.defaultShortcuts,
+          // DefaultTextEditingShortcuts is nested inside Shortcuts so that it can
+          // fall through to the defaultShortcuts.
+          child: DefaultTextEditingShortcuts(
+            child: Actions(
+              actions: <Type, Action<Intent>>{
+                ...WidgetsApp.defaultActions,
+                ScrollIntent: Action<ScrollIntent>.overridable(
+                  context: context,
+                  defaultAction: ScrollAction(),
+                ),
+              },
+              child: FocusTraversalGroup(
+                policy: ReadingOrderTraversalPolicy(),
+                child: TapRegionSurface(
+                  child: ShortcutRegistrar(
+                    child: ListenableBuilder(
+                      listenable: _localizationsResolver,
+                      builder: (BuildContext context, _) {
+                        return Localizations(
+                          isApplicationLevel: true,
+                          locale: _localizationsResolver.locale,
+                          delegates: _localizationsResolver
+                              .localizationsDelegates
+                              .toList(),
+                          child: result,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

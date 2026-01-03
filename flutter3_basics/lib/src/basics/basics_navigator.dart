@@ -448,7 +448,8 @@ extension NavigatorEx on BuildContext {
   }
 
   /// 当前路由是否是根路由
-  bool get isInRootNavigator => navigatorOf(false) == navigatorOf(true);
+  bool get isInRootNavigator =>
+      navigatorMaybeOf(false) == navigatorMaybeOf(true);
 
   //---Route↓
 
@@ -484,6 +485,15 @@ extension NavigatorEx on BuildContext {
 
   /// 获取导航元素的上下文
   BuildContext? get navigatorContext => navigatorOf().buildContext;
+
+  ///  - [navigatorOf]
+  NavigatorState? navigatorMaybeOf([bool rootNavigator = false]) {
+    try {
+      return navigatorOf(rootNavigator);
+    } catch (e) {
+      return null;
+    }
+  }
 
   /// 获取一个导航器[NavigatorState]
   NavigatorState navigatorOf([bool rootNavigator = false]) {

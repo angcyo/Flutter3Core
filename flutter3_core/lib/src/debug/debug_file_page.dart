@@ -16,20 +16,9 @@ class DebugFilePage extends StatefulWidget {
   State<DebugFilePage> createState() => _DebugFilePageState();
 }
 
-class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
+class _DebugFilePageState extends State<DebugFilePage>
+    with AbsScrollPage, DebugFileListStateMixin {
   final ScrollController _pathScrollController = ScrollController();
-
-  /// 当前加载的路径
-  String? currentLoadPath;
-
-  /// 选中的文件路径
-  String? _selectPath;
-
-  /// 加载出来的文件列表, 如果为null, 则表示正在加载中
-  List<FileSystemEntity>? _fileList;
-
-  /// 加载出错时的数据
-  dynamic _error;
 
   @override
   PreferredSizeWidget? buildAppBar(
@@ -52,36 +41,43 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: [
         loadCoreAssetSvgPicture(
-          Assets.svg.fileBrowseHome,
-          width: 25,
-          height: 25,
-          tintColor:
-              context.isThemeDark ? globalTheme.textTitleStyle.color : null,
-        )?.paddingAll(kX).inkWellCircle(() {
-          _reload();
-        }),
-        currentLoadPath
+              Assets.svg.fileBrowseHome,
+              width: 25,
+              height: 25,
+              tintColor: context.isThemeDark
+                  ? globalTheme.textTitleStyle.color
+                  : null,
+            )
+            ?.paddingAll(kX)
+            .inkWellCircle(() {
+              _reload();
+            })
+            .tooltip(widget.initPath),
+        currentLoadFolderPath
             ?.text(style: globalTheme.textTitleStyle)
             .scroll(
-                scrollDirection: Axis.horizontal,
-                controller: _pathScrollController)
+              scrollDirection: Axis.horizontal,
+              controller: _pathScrollController,
+            )
             .padding(0, kX, kX, kX)
             .ink(() {
-          _loadPath(currentLoadPath?.parentPath);
-        }).expanded(),
+              loadPathMixin(currentLoadFolderPath?.parentPath);
+            })
+            .tooltip(currentLoadFolderPath)
+            .expanded(),
         GradientButton.min(
-            onTap: _handleResult,
-            enable: _selectPath != null,
-            padding: const EdgeInsets.symmetric(horizontal: kX, vertical: kL),
-            child: LibRes.of(context).libConfirm.text()),
-        Empty.width(kX),
+          onTap: _handleResult,
+          enable: selectFilePath != null,
+          padding: const EdgeInsets.symmetric(horizontal: kX, vertical: kL),
+          child: (LibRes.maybeOf(context)?.libConfirm ?? "确定").text(),
+        ).insets(h: kH),
       ].row()!.safeArea(),
     );
   }
 
   /// 选中文件并返回路由
   void _handleResult() {
-    Navigator.of(context).pop(_selectPath);
+    context.navigatorMaybeOf()?.pop(selectFilePath);
   }
 
   @override
@@ -93,7 +89,7 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
   @override
   void reassemble() {
     super.reassemble();
-    _loadPath(currentLoadPath ?? widget.initPath);
+    loadPathMixin(currentLoadFolderPath ?? widget.initPath);
   }
 
   /// 重新加载
@@ -101,98 +97,60 @@ class _DebugFilePageState extends State<DebugFilePage> with AbsScrollPage {
     if (widget.initPath == null) {
       fileDirectory().getValue((value, error) {
         //l.d(value);
-        _loadPath(value?.path);
+        loadPathMixin(value?.path);
         postCallback(() {
           _pathScrollController.scrollToBottom();
         });
       });
     } else {
-      _loadPath(widget.initPath);
+      loadPathMixin(widget.initPath);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     try {
-      return _buildPathWidget(context, currentLoadPath);
+      return _buildPathWidget(context, currentLoadFolderPath);
     } catch (e) {
       assert(() {
         l.e(e);
         return true;
       }());
-      return _buildPathWidget(context, _beforePath);
+      return _buildPathWidget(context, beforeLoadFolderPath);
     }
   }
 
   Widget _buildPathWidget(BuildContext context, String? path) {
     final globalConfig = GlobalConfig.of(context);
-    return buildScaffold(context, children: [
-      if (_error != null)
-        globalConfig
-            .errorPlaceholderBuilder(context, _error)
-            .align(Alignment.center)
-            .sliverExpand(),
-      if (_fileList == null)
-        globalConfig
-            .loadingIndicatorBuilder(context, this, null, null)
-            .align(Alignment.center)
-            .sliverExpand(),
-      if (_fileList?.isEmpty == true)
-        globalConfig
-            .emptyPlaceholderBuilder(
-                context, LibRes.of(context).libAdapterNoData)
-            .align(Alignment.center)
-            .sliverExpand(),
-      if (_fileList != null)
-        for (var path in _fileList!)
-          DebugFileTile(
-            path: path.path,
-            onTap: _loadPath,
-            isSelected: path.path == _selectPath,
-            onDeleteAction: () {
-              _loadPath(currentLoadPath);
-            },
-          ),
-    ]);
+    return buildScaffold(
+      context,
+      children: [
+        if (loadError != null)
+          globalConfig
+              .errorPlaceholderBuilder(context, loadError)
+              .align(Alignment.center)
+              .sliverExpand(),
+        if (loadFileList == null)
+          globalConfig
+              .loadingIndicatorBuilder(context, this, null, null)
+              .align(Alignment.center)
+              .sliverExpand(),
+        if (loadFileList?.isEmpty == true)
+          globalConfig
+              .emptyPlaceholderBuilder(
+                context,
+                LibRes.maybeOf(context)?.libAdapterNoData ?? "暂无数据",
+              )
+              .align(Alignment.center)
+              .sliverExpand(),
+        ...buildFileListWidget(context),
+      ],
+    );
   }
 
-  String? _beforePath;
-
-  /// 加载指定路径
-  void _loadPath(String? path) {
-    assert(() {
-      l.d('准备加载路径:$path');
-      return true;
-    }());
-    if (path?.isFileSync() == true) {
-      _selectPath = path;
-      updateState();
-      return;
-    }
-
-    _error = null;
-    _fileList = null;
-    _beforePath = currentLoadPath;
-    currentLoadPath = path;
+  @override
+  void onSelfLoadPath(String? path) {
     _pathScrollController.scrollToBottom();
-    updateState();
-
-    /*compute<String?, List<FileSystemEntity>?>(
-            (message) => message?.folder.listFilesSync(), path)
-        .getValue((value, error) {
-      _fileList = value;
-      updateState();
-    });*/
-
-    io(path, (message) => message?.folder.listFilesSync(throwError: true))
-        .getValue((value, error) {
-      assert(() {
-        l.d('加载->$value $error');
-        return true;
-      }());
-      _fileList = value;
-      _error = error;
-      updateState();
-    });
+    super.onSelfLoadPath(path);
   }
 }

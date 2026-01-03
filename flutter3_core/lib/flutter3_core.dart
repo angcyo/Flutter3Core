@@ -38,10 +38,13 @@ export 'src/view_model/jetpack/viewmodel.dart';
 export 'src/log/log_message_mix.dart';
 export 'src/log/log_scope_widget.dart';
 
+// @formatter:off
+
 part 'src/core/core_keys.dart';
 part 'src/core/hive_data_mix.dart';
 part 'src/core/svg_core.dart';
 part 'src/debug/core_debug.dart';
+part 'src/debug/debug_file_mix.dart';
 part 'src/debug/debug_file_page.dart';
 part 'src/debug/debug_mix.dart';
 part 'src/debug/debug_page.dart';
@@ -68,6 +71,8 @@ part 'src/tiles/label_number_tile.dart';
 part 'src/tiles/wheel_tile.dart';
 part 'src/view_model/mutable_live_data.dart';
 part 'src/view_model/view_model_ex.dart';
+
+// @formatter:on
 
 /// 获取当前的工作目录
 /// [Directory.current]

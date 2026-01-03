@@ -6,6 +6,7 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 多标签管理
 /// - [TabEntryInfo] 被管理的标签信息
+/// - [TabsManagerWidget] 管理多个标签的小部件
 class TabsManagerController {
   /// 从[BuildContext]中获取到[TabsManagerController]
   static TabsManagerController? of(
@@ -322,6 +323,8 @@ class TabEntryInfo with EquatableMixin {
   @configProperty
   final tabInfoLive = $live<dynamic>(null);
 
+  dynamic get tabInfo => tabInfoLive.value;
+
   /// 是否固定的标签, 固定的标签不能被移除
   @configProperty
   final fixedLive = $live<bool>(false);
@@ -340,15 +343,16 @@ class TabEntryInfo with EquatableMixin {
   @configProperty
   final TransformDataWidgetBuilder? contentBuilder;
 
-  /// 是否固定的标签
+  /// 是否固定的标签, 固定的标签不支持关闭
+  /// - [buildCloseTabButton]
   bool get isFixed => fixedLive.value == true;
 
   TabEntryInfo({
+    dynamic tabInfo,
     this.tabWidget,
     this.tabBuilder,
     this.contentWidget,
     this.contentBuilder,
-    dynamic tabInfo,
     bool fixed = false,
   }) {
     tabInfoLive << tabInfo;
@@ -430,6 +434,7 @@ class TabEntryInfo with EquatableMixin {
 }
 
 /// 用于提供[TabsManagerController]的小部件
+/// - 使用[TabsManagerControllerScope]
 class TabsManagerControllerScope extends InheritedWidget {
   final TabsManagerController controller;
 
