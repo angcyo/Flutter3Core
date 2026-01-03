@@ -10,7 +10,12 @@ class DebugFilePage extends StatefulWidget {
   /// 初始化的路径, 不指定则使用默认的
   final String? initPath;
 
-  const DebugFilePage({super.key, this.initPath});
+  /// 选中的文件是否显示保存
+  /// - [isDesktopOrWeb]
+  @defInjectMark
+  final bool? isSaveSelectedPath;
+
+  const DebugFilePage({super.key, this.initPath, this.isSaveSelectedPath});
 
   @override
   State<DebugFilePage> createState() => _DebugFilePageState();
@@ -19,6 +24,9 @@ class DebugFilePage extends StatefulWidget {
 class _DebugFilePageState extends State<DebugFilePage>
     with AbsScrollPage, DebugFileListStateMixin {
   final ScrollController _pathScrollController = ScrollController();
+
+  /// 是否保存选中的文件路径
+  bool get isSaveSelectedPath => widget.isSaveSelectedPath ?? isDesktopOrWeb;
 
   @override
   PreferredSizeWidget? buildAppBar(
@@ -69,7 +77,11 @@ class _DebugFilePageState extends State<DebugFilePage>
           onTap: _handleResult,
           enable: selectFilePath != null,
           padding: const EdgeInsets.symmetric(horizontal: kX, vertical: kL),
-          child: (LibRes.maybeOf(context)?.libConfirm ?? "确定").text(),
+          child:
+              (isSaveSelectedPath
+                      ? (LibRes.maybeOf(context)?.libSave ?? "保存")
+                      : (LibRes.maybeOf(context)?.libConfirm ?? "确定"))
+                  .text(),
         ).insets(h: kH),
       ].row()!.safeArea(),
     );
@@ -77,7 +89,11 @@ class _DebugFilePageState extends State<DebugFilePage>
 
   /// 选中文件并返回路由
   void _handleResult() {
-    context.navigatorMaybeOf()?.pop(selectFilePath);
+    if (isSaveSelectedPath) {
+      saveFilePath(selectFilePath, context, null);
+    } else {
+      context.navigatorMaybeOf()?.pop(selectFilePath);
+    }
   }
 
   @override
