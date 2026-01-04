@@ -25,21 +25,25 @@ dependencies:
   flutter3_shelf:
     path: ../flutter3_shelf
 
-  # https://pub.dev/packages/dart_mcp
-  # https://pub.dev/packages/async
-  # https://pub.dev/packages/collection
-  # https://pub.dev/packages/json_rpc_2
-  # https://pub.dev/packages/meta
-  # https://pub.dev/packages/stream_channel
-  # https://pub.dev/packages/stream_transform
-  dart_mcp: ^0.4.0
-  # https://pub.dev/packages/stack_trace
-  # https://pub.dev/packages/stream_channel
-  json_rpc_2: ^4.0.0
-  # https://pub.dev/packages/stream_channel
-  stream_channel: ^2.1.4
-  # https://pub.dev/packages/stream_transform
-  stream_transform: ^2.1.1
+  # https://pub.dev/packages/mcp_dart
+  # https://pub.dev/packages/http
+  mcp_dart: ^1.2.0
+
+#  # https://pub.dev/packages/dart_mcp
+#  # https://pub.dev/packages/async
+#  # https://pub.dev/packages/collection
+#  # https://pub.dev/packages/json_rpc_2
+#  # https://pub.dev/packages/meta
+#  # https://pub.dev/packages/stream_channel
+#  # https://pub.dev/packages/stream_transform
+#  dart_mcp: ^0.4.0
+#  # https://pub.dev/packages/stack_trace
+#  # https://pub.dev/packages/stream_channel
+#  json_rpc_2: ^4.0.0
+#  # https://pub.dev/packages/stream_channel
+#  stream_channel: ^2.1.4
+#  # https://pub.dev/packages/stream_transform
+#  stream_transform: ^2.1.1
 
   # https://pub.dev/packages/async
   # https://pub.dev/packages/collection
