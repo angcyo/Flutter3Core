@@ -184,7 +184,7 @@ void main(List<String> arguments) async {
     final from = "$currentPath/build/windows/x64/runner/Release";
     if (Directory(from).existsSync()) {
       final key =
-          "$targetFileName.exe/${File("$from/$targetFileName.exe").lastModifiedSync()}";
+          "$targetFileName.exe/${File("$from/data/app.so").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("已复制过: $from");
         exitProductCount++;
