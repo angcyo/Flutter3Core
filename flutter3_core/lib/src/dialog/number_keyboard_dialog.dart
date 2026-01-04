@@ -275,6 +275,24 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
         .willPop(() async {
           return widget.canPop;
         })
+        .focus(
+          onKeyEvent: (node, event) {
+            if (event.isKeyDownOrRepeat) {
+              if (event.isEnterKey) {
+                _onSelfFinishInput();
+                return .handled;
+              } else if (event.isEscKey) {
+                context.pop(result: null);
+                return .handled;
+              }
+            }
+            final result = _controller.onKeyEventInput(context, event);
+            if (result) {
+              updateState();
+            }
+            return result ? .handled : .ignored;
+          },
+        )
         .material();
   }
 
@@ -678,7 +696,7 @@ class NumberKeyboardInputController {
     Object? popResult,
   }) {
     assert(() {
-      l.d("event[${event.character}]->$event");
+      l.d("[${classHash()}]onKeyEventInput[${event.character}]->$event");
       return true;
     }());
     if (event.isKeyDownOrRepeat) {
@@ -688,6 +706,7 @@ class NumberKeyboardInputController {
         return true;
       } else if (event.isEnterKey) {
         //onKeyboardInput("", NumberKeyboardType.finish);
+        //debugger();
         onKeyboardInputFinish(context, popResult: popResult);
         return true;
       } else if (character != null) {
