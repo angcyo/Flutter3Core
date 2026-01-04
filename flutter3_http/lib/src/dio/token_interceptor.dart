@@ -33,11 +33,7 @@ class TokenInterceptor extends Interceptor {
   /// @return true:表示刷新成功, false/null: 默认处理
   Future<bool> Function(Response response)? refreshToken;
 
-  TokenInterceptor({
-    this.configToken,
-    this.isTokenInvalid,
-    this.refreshToken,
-  }) {
+  TokenInterceptor({this.configToken, this.isTokenInvalid, this.refreshToken}) {
     isTokenInvalid ??= (response) {
       if (response.statusCode == 401 && response.isSameOrigin()) {
         assert(() {
@@ -56,16 +52,19 @@ class TokenInterceptor extends Interceptor {
     super.onRequest(options, handler);
     try {
       configToken?.call(options);
-    } catch (e) {
+    } catch (e, s) {
+      debugger();
       l.w('配置token失败[${options.uri}]:$e↓');
-      printError(e);
+      printError(e, s);
     }
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
-    final refreshToken =
-        await checkOrRefreshToken(response.requestOptions, response);
+    final refreshToken = await checkOrRefreshToken(
+      response.requestOptions,
+      response,
+    );
     if (refreshToken == true) {
       //刷新了token, 则重新请求
       final newResponse = await rDio.reRequest(response.requestOptions);
@@ -77,8 +76,10 @@ class TokenInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    final refreshToken =
-        await checkOrRefreshToken(err.requestOptions, err.response);
+    final refreshToken = await checkOrRefreshToken(
+      err.requestOptions,
+      err.response,
+    );
     if (refreshToken == true) {
       //刷新了token, 则重新请求
       final newResponse = await rDio.reRequest(err.requestOptions);
