@@ -28,7 +28,7 @@ class OpenFileScopeData {
 class OpenFileScope extends InheritedWidget {
   /// 获取需要打开的数据
   @api
-  static ValueNotifier<OpenFileScopeData?>? get(
+  static UpdateValueNotifier<OpenFileScopeData?>? get(
     BuildContext? context, {
     bool depend = false,
   }) {
@@ -39,10 +39,10 @@ class OpenFileScope extends InheritedWidget {
     }
   }
 
-  //MARK:  -
+  //MARK:  - scope
 
   /// 需要打开的数据, 请在处理之后主动清空
-  final ValueNotifier<OpenFileScopeData?>? data;
+  final UpdateValueNotifier<OpenFileScopeData?>? data;
 
   const OpenFileScope({super.key, required this.data, required super.child});
 
@@ -54,8 +54,9 @@ class OpenFileScope extends InheritedWidget {
 //MARK: - ex
 extension OpenFileScopeEx on Widget {
   /// 提供一个需要打开的数据[OpenFileScopeData]
+  /// - 监听这个值, 并且处理对应的数据
   Widget provideOpenFileData(
-    ValueNotifier<OpenFileScopeData?>? data, {
+    UpdateValueNotifier<OpenFileScopeData?>? data, {
     Key? key,
   }) => OpenFileScope(data: data, key: key, child: this);
 }
@@ -65,7 +66,11 @@ extension OpenFileScopeEx on Widget {
 /// 混入操作, 自动处理[OpenFileScope.data]中的数据
 mixin OpenFileScopeStateMixin<T extends StatefulWidget> on State<T> {
   /// 需要监听的数据
-  ValueNotifier<OpenFileScopeData?>? openFileDataMixin;
+  UpdateValueNotifier<OpenFileScopeData?>? openFileDataMixin;
+
+  /// 当前终端是否是最后一个处理器
+  bool get isLastOpenFileHandler =>
+      openFileDataMixin?.lastListener == handleOpenFileDataMixin;
 
   @override
   void initState() {
@@ -91,7 +96,7 @@ mixin OpenFileScopeStateMixin<T extends StatefulWidget> on State<T> {
           return;
         } else {
           assert(() {
-            l.w("[${classHash()}]未处理的数据[${data}]->$error");
+            l.w("[${classHash()}]未处理的数据[$data]->$error");
             return true;
           }());
         }

@@ -71,6 +71,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     canvasPaintManager.onUpdatePaintBounds();
   }
 
+  /// 画布焦点节点
+  @output
+  FocusNode? canvasNode;
+
   /// 当前还不是否有焦点
   /// - [dispatchCanvasFocusChanged]
   @output
@@ -1072,17 +1076,20 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 派发画布焦点变化
   @api
-  void dispatchCanvasFocusChanged(bool focus, bool isAttached) {
+  void dispatchCanvasFocusChanged(FocusNode node, bool focus, bool isAttached) {
     assert(() {
       //debugger();
       //debugger(when: isAttached && !hasFocus);
-      l.i("[${classHash()}]画布焦点状态变化:$hasFocus -> $focus isAttached:$isAttached");
+      l.i(
+        "[${classHash()}]画布焦点[${node.classHash()}]状态变化:$hasFocus -> $focus isAttached:$isAttached",
+      );
       return true;
     }());
+    canvasNode = node;
     hasFocus = focus;
     isAttached = isAttached;
     _eachCanvasListener((element) {
-      element.onCanvasFocusChanged?.call(this, focus, isAttached);
+      element.onCanvasFocusChanged?.call(this, node, focus, isAttached);
     });
   }
 

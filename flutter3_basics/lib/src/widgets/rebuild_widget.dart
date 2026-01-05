@@ -1,4 +1,4 @@
-part of '../../flutter3_widgets.dart';
+part of '../../flutter3_basics.dart';
 
 ///
 /// Email:angcyo@126.com
@@ -53,9 +53,10 @@ class RebuildWidgetState extends State<RebuildWidget> {
   @override
   Widget build(BuildContext context) {
     return widget.builder(
-            context,
-            widget.updateSignal?.value ??
-                widget.updateSignalList?.map((element) => element.value)) ??
+          context,
+          widget.updateSignal?.value ??
+              widget.updateSignalList?.map((element) => element.value),
+        ) ??
         empty;
   }
 
@@ -255,10 +256,7 @@ Widget rebuild(
   @updateSignalMark ValueNotifier updateSignal,
   DynamicDataWidgetBuilder builder,
 ) {
-  return RebuildWidget(
-    updateSignal: updateSignal,
-    builder: builder,
-  );
+  return RebuildWidget(updateSignal: updateSignal, builder: builder);
 }
 
 /// [Iterable<dynamic>]
@@ -267,10 +265,7 @@ Widget rebuildList(
   @updateSignalMark Iterable<Listenable> updateSignalList,
   DynamicDataWidgetBuilder builder,
 ) {
-  return RebuildWidget(
-    updateSignalList: updateSignalList,
-    builder: builder,
-  );
+  return RebuildWidget(updateSignalList: updateSignalList, builder: builder);
 }
 
 /// 简单的[rebuild]
@@ -278,7 +273,6 @@ Widget rebuildList(
 Widget rebuildSingle(
   @updateSignalMark ValueNotifier updateSignal,
   Widget Function() action,
-) =>
-    rebuild(updateSignal, (context, value) => action());
+) => rebuild(updateSignal, (context, value) => action());
 
 //--

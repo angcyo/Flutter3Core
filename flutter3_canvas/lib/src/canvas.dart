@@ -219,6 +219,9 @@ class CanvasRenderBox extends RenderBox
   CanvasDelegate canvasDelegate;
 
   /// 父级焦点[FocusNode]
+  ///
+  /// - [parentNode]
+  /// - [_canvasFocusNode]
   @configProperty
   FocusNode? parentNode;
 
@@ -230,6 +233,9 @@ class CanvasRenderBox extends RenderBox
 
   /// 焦点[FocusNode]
   /// - [Focus]
+  ///
+  /// - [parentNode]
+  /// - [_canvasFocusNode]
   late final FocusNode _canvasFocusNode = FocusNode(
     debugLabel: "CanvasRenderBoxFocusNode",
     onKeyEvent: (node, event) {
@@ -463,7 +469,11 @@ class CanvasRenderBox extends RenderBox
   /// 焦点变化监听
   @overridePoint
   void onFocusChange() {
-    canvasDelegate.dispatchCanvasFocusChanged(hasFocus, isAttached);
+    canvasDelegate.dispatchCanvasFocusChanged(
+      _canvasFocusNode,
+      hasFocus,
+      isAttached,
+    );
   }
 
   //endregion core
@@ -819,7 +829,12 @@ class CanvasListener {
   final Future<bool> Function(CanvasDelegate delegate)? onCanvasMaybePop;
 
   /// [CanvasDelegate.dispatchCanvasFocusChanged]
-  final void Function(CanvasDelegate delegate, bool focus, bool isAttached)?
+  final void Function(
+    CanvasDelegate delegate,
+    FocusNode node,
+    bool focus,
+    bool isAttached,
+  )?
   onCanvasFocusChanged;
 
   CanvasListener({
