@@ -100,7 +100,7 @@ class LogScopeController {
   /// 过滤列表缓存
   /// - 防止跳动
   @tempFlag
-  final List<String> _filterTypeList = [];
+  final List<String> _filterTypeList = [...LLevel.values.map((e) => e.name)];
 
   /// 过滤类型列表
   @output

@@ -13,14 +13,13 @@ extension WidgetBadgesEx on Widget {
   /// [badges.BadgeStyle] 角标样式
   Widget badge({
     String? text = "",
-    TextStyle? textStyle = const TextStyle(
-      fontSize: 10,
-      color: Colors.white,
-    ),
+    TextStyle? textStyle = const TextStyle(fontSize: 10, color: Colors.white),
     Alignment alignment = Alignment.topRight,
     EdgeInsetsGeometry? padding,
     Offset? offset,
     bool? showBadge,
+    //--
+    double? minSize = 12,
   }) {
     showBadge ??= text != null;
     final isDot = isNullOrEmpty(text);
@@ -28,34 +27,52 @@ extension WidgetBadgesEx on Widget {
     switch (alignment) {
       case Alignment.topLeft:
         position = badges.BadgePosition.topStart(
-            top: offset?.dy ?? -5, start: offset?.dx ?? -10);
+          top: offset?.dy ?? -5,
+          start: offset?.dx ?? -10,
+        );
         break;
       case Alignment.topRight:
         if (isDot) {
           offset ??= const Offset(0, 0);
         }
         position = badges.BadgePosition.topEnd(
-            top: offset?.dy ?? -8, end: offset?.dx ?? -10);
+          top: offset?.dy ?? -8,
+          end: offset?.dx ?? -10,
+        );
         break;
       case Alignment.bottomLeft:
         position = badges.BadgePosition.bottomStart(
-            bottom: offset?.dy ?? -8, start: offset?.dx ?? -10);
+          bottom: offset?.dy ?? -8,
+          start: offset?.dx ?? -10,
+        );
         break;
       case Alignment.bottomRight:
         position = badges.BadgePosition.bottomEnd(
-            bottom: offset?.dy ?? -8, end: offset?.dx ?? -10);
+          bottom: offset?.dy ?? -8,
+          end: offset?.dx ?? -10,
+        );
         break;
       default:
         position = badges.BadgePosition.center();
         break;
     }
+    final badges.BadgeShape shape = (text?.length ?? 0) > 2 ? .square : .circle;
     return badges.Badge(
       position: position,
       badgeStyle: badges.BadgeStyle(
-        padding: padding ?? const EdgeInsets.all(3),
+        shape: shape,
+        borderRadius: BorderRadius.circular(kDefaultBorderRadiusL),
+        padding:
+            padding ??
+            (shape == .circle
+                ? const EdgeInsets.all(2)
+                : const EdgeInsets.symmetric(horizontal: 2)),
       ),
-      badgeContent:
-          text != null && text.isNotEmpty ? text.text(style: textStyle) : null,
+      badgeContent: text != null && text.isNotEmpty
+          ? text
+                .text(style: textStyle, textAlign: .center)
+                .constrainedMin(minSize: minSize)
+          : null,
       showBadge: showBadge,
       child: this,
     );

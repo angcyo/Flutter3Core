@@ -345,12 +345,18 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
   final buttonRadius = kDefaultBorderRadiusX;
   final filterRadius = kDefaultBorderRadiusXXX;
 
-  /// 构建Log过滤
+  /// 构建Log过滤列表
   Widget buildLogFilterWidget(BuildContext context, GlobalTheme globalTheme) {
     return [
           for (final filterType in filterTypeList)
             (filterType == "" ? "All" : filterType)
                 .text()
+                .badge(
+                  text: filterLogDataList(
+                    filterType: filterType,
+                    filterContent: filterContent,
+                  ).size().map((e) => e > 0 ? e.toString() : null),
+                )
                 .insets(h: kX, v: kM)
                 .decoration(
                   selectedFilterType == filterType

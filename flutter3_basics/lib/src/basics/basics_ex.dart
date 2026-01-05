@@ -1988,8 +1988,12 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
+
+  /// 映射
+  T map<T>(T Function(num) map) => map(this);
+
   /// 创建一个圆角[BorderRadius]
-  BorderRadius get borderRadius => BorderRadius.circular(this.toDouble());
+  BorderRadius get borderRadius => BorderRadius.circular(toDouble());
 
   /// 异步循环生成器
   /// 循环[this]的次数
