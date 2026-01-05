@@ -12,14 +12,22 @@ import 'package:yaml/yaml.dart';
 ///
 /// emoji : https://getemoji.com/
 ///
+
+/// 当前运行环境是否是Windows
+bool get isWindows => Platform.isWindows;
+
+/// 当前系统路径分隔符
+String get pathSeparator => Platform.pathSeparator;
+
 /// 当前脚本运行的路径
 String get currentPath => Directory.current.path;
 
 /// 当前脚本文件的路径
-String get currentFilePath => Platform.script.path;
+String get currentFilePath => Platform.script.toFilePath(windows: isWindows);
 
 /// 当前脚本文件名
-String get currentFileName => currentFilePath.split("/").last.split(".")[0];
+String get currentFileName =>
+    currentFilePath.split(pathSeparator).last.split(".")[0];
 
 final String _reset = '\x1B[0m';
 

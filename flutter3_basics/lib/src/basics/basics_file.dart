@@ -19,7 +19,12 @@ extension FileUriEx on Uri {
   /// Unsupported operation: Cannot extract a file path from a https URI
   /// ```
   ///
-  String get filePath => toFilePath();
+  /// Windows下: 直接获取的[Uri.path]会无法访问.
+  ///
+  /// - [Platform.pathSeparator] 路径分割符号: Windows: `\` POSIX: `/`
+  /// Portable Operating System Interface（可移植操作系统接口）。
+  ///
+  String get filePath => toFilePath(windows: isWindows);
 
   /// 如果是文件scheme, 则返回文件路径
   /// 否则返回...

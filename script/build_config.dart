@@ -12,7 +12,7 @@ import '_script_common.dart';
 /// 用来构建[BuildConfig]
 void main(List<String> arguments) {
   colorLog(
-    '[${Platform.script.path.split("/").last.split(".")[0]}]工作路径->${Directory.current.path}',
+    '[${Platform.script.toFilePath(windows: isWindows).split("/").last.split(".")[0]}]工作路径->${Directory.current.path}',
   );
   final currentPath = Directory.current.path;
 
