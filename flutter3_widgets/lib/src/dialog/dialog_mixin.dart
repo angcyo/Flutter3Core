@@ -619,6 +619,48 @@ mixin DialogMixin implements TranslationTypeImpl {
         .autoCloseDialog(context, enable: dialogBarrierDismissible);
   }
 
+  /// 构建桌面端右边侧滑全屏高度显示的对话框布局
+  @api
+  @callPoint
+  @desktopLayout
+  Widget buildSlideDialog(
+    BuildContext context,
+    Widget content, {
+    bool? blur /*是否启用模糊*/,
+    Color? decorationColor,
+    Decoration? decoration,
+    double? width,
+    AlignmentGeometry? alignment /*slide内容对齐的方向*/,
+    //--
+    FocusOnKeyEventCallback? onKeyEvent,
+    dynamic result,
+    bool? autoCloseDialog,
+    bool? showCloseButton,
+  }) {
+    final globalTheme = GlobalTheme.of(context);
+    blur ??= dialogBlur;
+    return content
+        .animatedContainer(
+          decoration:
+              decoration ??
+              BoxDecoration(
+                color: decorationColor ?? globalTheme.dialogSurfaceBgColor,
+                /*boxShadow: [kBoxShadow],*/
+              ),
+          width: width ?? $ecwBp(),
+          height: double.infinity,
+        )
+        .align(alignment ?? .centerRight)
+        .blur(enable: blur == true)
+        .autoCloseDialog(
+          context,
+          onKeyEvent: onKeyEvent,
+          result: result,
+          tag: classHash(),
+          enable: autoCloseDialog ?? dialogBarrierDismissible,
+        );
+  }
+
   //endregion ---对话框包裹---
 
   //region ---小部件---

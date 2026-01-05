@@ -32,7 +32,9 @@ enum TranslationType {
   fade,
 
   /// [SlidePageRoute]
-  slide,
+  /// - 默认rtl滑动动画
+  slide(withFade: false, withLeftToRight: false),
+  slideLeftToRight(withFade: false, withLeftToRight: true),
 
   /// [ScalePageRoute]
   scale,
@@ -57,11 +59,13 @@ enum TranslationType {
     this.withTranslation = false,
     this.withFade = false,
     this.withTopToBottom = false,
+    this.withLeftToRight = false,
   });
 
   final bool withTranslation;
   final bool withFade;
   final bool withTopToBottom;
+  final bool withLeftToRight;
 
   /// [MaterialPageRoute]
   /// [CupertinoPageRoute]
@@ -115,6 +119,7 @@ enum TranslationType {
         );
         break;
       case TranslationType.slide:
+      case TranslationType.slideLeftToRight:
         targetRoute = SlidePageRoute(
           builder: builder,
           settings: settings,
@@ -122,6 +127,8 @@ enum TranslationType {
           fullscreenDialog: fullscreenDialog,
           allowSnapshotting: allowSnapshotting,
           barrierDismissible: barrierDismissible,
+          fade: type.withFade == true,
+          leftToRight: type.withLeftToRight == true,
         );
         break;
       case TranslationType.scale:

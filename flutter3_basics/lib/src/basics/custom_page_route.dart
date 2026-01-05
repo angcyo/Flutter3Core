@@ -262,6 +262,12 @@ class TranslationPageRoute<T> extends MaterialPageRoute<T>
 /// 左右滑动路由动画
 class SlidePageRoute<T> extends MaterialPageRoute<T>
     with SameRouteTransitionMixin<T> {
+  /// 通否同时激活透明渐隐动画
+  final bool fade;
+
+  /// 是否从左到右, 默认是从右到左
+  final bool leftToRight;
+
   SlidePageRoute({
     required super.builder,
     super.settings,
@@ -270,6 +276,8 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
     bool enableSecondaryAnimation = true,
+    this.fade = false,
+    this.leftToRight = false,
   }) {
     _enableSecondaryAnimation = enableSecondaryAnimation;
   }
@@ -320,23 +328,30 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
     );*/
     //logAnimation("Slide", animation, secondaryAnimation);
     //顶部进入动画
-    var enter = Tween<Offset>(
-      begin: const Offset(1.0, 0),
-      end: Offset.zero,
-    ).chain(CurveTween(curve: Curves.easeOut)).animate(animation);
+    final enter =
+        (leftToRight
+                ? Tween<Offset>(begin: const Offset(-1.0, 0), end: Offset.zero)
+                : Tween<Offset>(begin: const Offset(1.0, 0), end: Offset.zero))
+            .chain(CurveTween(curve: Curves.easeOut))
+            .animate(animation);
     //底部退出动画
-    var exit = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(-1.0, 0),
-    ).chain(CurveTween(curve: Curves.easeIn)).animate(secondaryAnimation);
-
-    if (!_enableSecondaryAnimation) {
-      return SlideTransition(position: enter, child: child);
+    final exit =
+        (leftToRight
+                ? Tween<Offset>(begin: Offset.zero, end: const Offset(0, 1.0))
+                : Tween<Offset>(begin: Offset.zero, end: const Offset(-1.0, 0)))
+            .chain(CurveTween(curve: Curves.easeIn))
+            .animate(secondaryAnimation);
+    //MARK: - slide
+    final slide = _enableSecondaryAnimation
+        ? SlideTransition(
+            position: enter,
+            child: SlideTransition(position: exit, child: child),
+          )
+        : SlideTransition(position: enter, child: child);
+    if (fade || isDebug) {
+      return slide.fadeTransition(animation);
     }
-    return SlideTransition(
-      position: enter,
-      child: SlideTransition(position: exit, child: child),
-    );
+    return slide;
   }
 }
 

@@ -280,10 +280,12 @@ Widget buildDialogTransitions(
       enableSecondaryAnimation: false,
     ).buildSameTransitions(context, animation, secondaryAnimation, child);
   }
-  if (type == TranslationType.slide) {
+  if (type == TranslationType.slide || type == .slideLeftToRight) {
     return SlidePageRoute(
       builder: (content) => child,
       enableSecondaryAnimation: false,
+      fade: type?.withFade == true,
+      leftToRight: type?.withLeftToRight == true,
     ).buildSameTransitions(context, animation, secondaryAnimation, child);
   }
   if (type == TranslationType.scale || type == TranslationType.scaleFade) {
