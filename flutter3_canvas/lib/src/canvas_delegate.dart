@@ -1076,7 +1076,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     assert(() {
       //debugger();
       //debugger(when: isAttached && !hasFocus);
-      l.i("[${classHash()}]画布焦点状态变化:$hasFocus isAttached:$isAttached");
+      l.i("[${classHash()}]画布焦点状态变化:$hasFocus -> $focus isAttached:$isAttached");
       return true;
     }());
     hasFocus = focus;

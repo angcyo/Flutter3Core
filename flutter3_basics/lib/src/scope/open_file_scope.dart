@@ -91,7 +91,7 @@ mixin OpenFileScopeStateMixin<T extends StatefulWidget> on State<T> {
           return;
         } else {
           assert(() {
-            l.w("[${classHash()}]未处理的数据->$data");
+            l.w("[${classHash()}]未处理的数据[${data}]->$error");
             return true;
           }());
         }
