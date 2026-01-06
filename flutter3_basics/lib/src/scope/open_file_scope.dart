@@ -28,14 +28,17 @@ class OpenFileScopeData {
 class OpenFileScope extends InheritedWidget {
   /// 获取需要打开的数据
   @api
-  static UpdateValueNotifier<OpenFileScopeData?>? get(
-    BuildContext? context, {
+  static UpdateValueNotifier<OpenFileScopeData?>? get(BuildContext? context, {
     bool depend = false,
   }) {
     if (depend) {
-      return context?.dependOnInheritedWidgetOfExactType<OpenFileScope>()?.data;
+      return context
+          ?.dependOnInheritedWidgetOfExactType<OpenFileScope>()
+          ?.data;
     } else {
-      return context?.getInheritedWidgetOfExactType<OpenFileScope>()?.data;
+      return context
+          ?.getInheritedWidgetOfExactType<OpenFileScope>()
+          ?.data;
     }
   }
 
@@ -55,8 +58,7 @@ class OpenFileScope extends InheritedWidget {
 extension OpenFileScopeEx on Widget {
   /// 提供一个需要打开的数据[OpenFileScopeData]
   /// - 监听这个值, 并且处理对应的数据
-  Widget provideOpenFileData(
-    UpdateValueNotifier<OpenFileScopeData?>? data, {
+  Widget provideOpenFileData(UpdateValueNotifier<OpenFileScopeData?>? data, {
     Key? key,
   }) => OpenFileScope(data: data, key: key, child: this);
 }
@@ -104,6 +106,7 @@ mixin OpenFileScopeStateMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
+  /// - [isLastOpenFileHandler]
   ///@return 返回true 表示处理了数据
   @overridePoint
   Future<bool> onHandleOpenFileDataMixin(OpenFileScopeData data) async {

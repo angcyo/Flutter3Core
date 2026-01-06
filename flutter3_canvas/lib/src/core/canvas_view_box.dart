@@ -54,7 +54,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// - [PaintMeta.canvasMatrix]
   ///
   /// - [changeMatrix] 在此方法中修改
-  Matrix4 canvasMatrix = Matrix4.identity();
+  final Matrix4 canvasMatrix = Matrix4.identity();
 
   double get scaleX => canvasMatrix.scaleX;
 

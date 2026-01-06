@@ -807,7 +807,7 @@ extension CanvasEx on Canvas {
     //--
     TextAlign textAlign = TextAlign.start,
     //--
-    Rect? bounds,
+    Rect? bounds /*alignment的容器*/,
     Alignment alignment = Alignment.topLeft,
     ui.Offset offset = ui.Offset.zero,
     Offset? Function(TextPainter painter)? getOffset,

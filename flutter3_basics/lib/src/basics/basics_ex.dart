@@ -77,9 +77,15 @@ String uuid([bool trim = true]) {
 
 /// [UniqueKey]
 /// [868497392] 28位
+/// - [uuid]
+/// - [uniqueId]
+/// - [microsecondsId]
 int get uniqueId => UniqueKey().hashCode;
 
 /// [4219854331] 32位
+/// - [uuid]
+/// - [uniqueId]
+/// - [microsecondsId]
 int get microsecondsId => DateTime.now().microsecondsSinceEpoch & 0xFFFFFFFF;
 
 /// 行的分隔符

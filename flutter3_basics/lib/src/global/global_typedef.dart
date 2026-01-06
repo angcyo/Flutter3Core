@@ -5,6 +5,16 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/05/24
 ///
 
+//region type
+
+/// 8位无符号整型, 1个字节
+typedef U8 = int;
+
+/// 32位无符号整型, 4个字节
+typedef UInt = int;
+
+//endregion type
+
 //region Fn Callback
 
 typedef Action = VoidCallback;

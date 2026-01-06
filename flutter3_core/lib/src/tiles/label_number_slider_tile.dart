@@ -77,6 +77,9 @@ class LabelNumberSliderTile extends StatefulWidget {
   /// 回调, 改变后的回调. 拖动过程中不回调
   final NumCallback? onValueChanged;
 
+  /// 回调, 值更新就触发的回调. (拖动过程中也触发)
+  final NumCallback? onValueUpdated;
+
   const LabelNumberSliderTile({
     super.key,
     //--
@@ -88,6 +91,7 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.minValue,
     this.maxValue,
     this.maxDigits = 2,
+    this.onValueUpdated,
     this.onValueChanged,
     this.showNumber = true,
     this.showSlider = true,
@@ -168,6 +172,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                   onChanged: (value) {
                     if (value != null) {
                       _currentValue = value;
+                      widget.onValueUpdated?.call(value);
                       widget.onValueChanged?.call(value);
                       updateState();
                     }
@@ -188,6 +193,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                     );
                     if (value != null) {
                       _currentValue = value;
+                      widget.onValueUpdated?.call(value);
                       widget.onValueChanged?.call(value);
                       updateState();
                     }
@@ -239,6 +245,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       thumbRadius: widget.thumbRadius,
       onChanged: (value) {
         _currentValue = value;
+        widget.onValueUpdated?.call(value);
         updateState();
       },
       onChangeEnd: (value) {
