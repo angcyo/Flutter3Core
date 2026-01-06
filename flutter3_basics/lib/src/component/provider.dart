@@ -17,6 +17,9 @@ mixin ITextProvider {
   }
 }
 
+@alias
+typedef IProviderText = ITextProvider;
+
 /// 提供一个Widget
 mixin IWidgetProvider {
   WidgetBuilder? get provideWidget => null;

@@ -383,6 +383,29 @@ class ByteReader {
     return readBytes(length)?.toInt(length, endian) ?? overflow;
   }
 
+  /// 读取无符号的int
+  int readUint([int length = 4, int overflow = -1, Endian? endian]) {
+    if (isDone) {
+      return overflow;
+    }
+    endian ??= this.endian;
+    final bytes = readBytes(length);
+    if (bytes == null) {
+      return overflow;
+    }
+    ByteData byteData = ByteData.sublistView(Uint8List.fromList(bytes));
+    if (length == 1) {
+      return byteData.getUint8(0);
+    } else if (length == 2) {
+      return byteData.getUint16(0, endian);
+    } else if (length == 4) {
+      return byteData.getUint32(0, endian);
+    } else if (length == 8) {
+      return byteData.getUint64(0, endian);
+    }
+    return overflow;
+  }
+
   /// 读取有符号的int
   int readIntSigned([int length = 4, int overflow = -1, Endian? endian]) {
     if (isDone) {

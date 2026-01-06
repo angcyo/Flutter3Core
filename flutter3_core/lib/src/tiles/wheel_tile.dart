@@ -205,6 +205,19 @@ class LabelWheelTile extends StatefulWidget {
   @defInjectMark
   final Widget? rightWidget;
 
+  //--
+
+  /// 强制控制尾随小部件的显示状态
+  final bool? showTrailingWidget;
+
+  /// 是否使用[PopupRoute]显示选择列表
+  /// - 桌面端默认true
+  @defInjectMark
+  final bool? usePopupRoute;
+
+  /// 弹窗的圆角
+  final double? popupRadius;
+
   const LabelWheelTile({
     super.key,
     this.label,
@@ -223,6 +236,10 @@ class LabelWheelTile extends StatefulWidget {
     this.wheelSelectedIndexColor,
     this.onContainerTap,
     this.wheelTitle,
+    //--
+    this.showTrailingWidget,
+    this.usePopupRoute,
+    this.popupRadius = kDefaultBorderRadiusL,
   });
 
   @override
@@ -230,7 +247,10 @@ class LabelWheelTile extends StatefulWidget {
 }
 
 class _LabelWheelTileState extends State<LabelWheelTile>
-    with TileMixin, ValueChangeMixin<LabelWheelTile, dynamic> {
+    with
+        TileMixin,
+        ValueChangeMixin<LabelWheelTile, dynamic>,
+        DesktopPopupStateMixin {
   @override
   getInitialValueMixin() => widget.initValue;
 
@@ -256,6 +276,16 @@ class _LabelWheelTileState extends State<LabelWheelTile>
               )
             : null);
 
+    //是否显示箭头
+    final showTrailingWidget =
+        widget.showTrailingWidget ??
+        (widget.onContainerTap != null ||
+            isMore(widget.values) ||
+            isMore(widget.valuesWidget));
+
+    //popup
+    final usePopupRoute = widget.usePopupRoute ?? isDesktopOrWeb;
+
     final content =
         Container(
               padding: const EdgeInsets.symmetric(horizontal: kH, vertical: kX),
@@ -275,39 +305,9 @@ class _LabelWheelTileState extends State<LabelWheelTile>
             )
             .ink(
               widget.onContainerTap ??
-                  () async {
-                    if (isNil(widget.values) && isNil(widget.valuesWidget)) {
-                      return;
-                    }
-                    final resultIndex = await context.showWidgetDialog(
-                      WheelDialog(
-                        title: widget.wheelTitle ?? widget.label,
-                        initValue: currentValueMixin,
-                        values: widget.values,
-                        valuesWidget: widget.valuesWidget,
-                        transformValueWidget: widget.transformValueWidget,
-                        wheelSelectedIndexColor: widget.wheelSelectedIndexColor,
-                        enableWheelSelectedIndexColor:
-                            widget.enableWheelSelectedIndexColor,
-                      ),
-                    );
-                    if (resultIndex is int) {
-                      currentValueMixin =
-                          widget.values?.getOrNull(resultIndex) ??
-                          currentValueMixin;
-                      widget.onValueIndexChanged?.call(resultIndex);
-                      widget.onValueChanged?.call(
-                        widget.values?.getOrNull(resultIndex) ??
-                            widget.valuesWidget?.getOrNull(resultIndex),
-                      );
-                      updateState();
-                    } else {
-                      assert(() {
-                        l.w('无效的wheel返回值类型[$resultIndex]');
-                        return true;
-                      }());
-                    }
-                  },
+                  (showTrailingWidget
+                      ? (usePopupRoute ? showPopupDialog : showWheelDialog)
+                      : null),
               backgroundColor: globalTheme.itemWhiteBgColor,
               radius: kDefaultBorderRadiusXX,
             )
@@ -318,6 +318,94 @@ class _LabelWheelTileState extends State<LabelWheelTile>
       label,
       content.align(Alignment.centerRight).expanded(),
     ].row()!.material();
+  }
+
+  //MARK: - dialog
+
+  /// 显示[WheelDialog]
+  Future showWheelDialog() async {
+    if (isNil(widget.values) && isNil(widget.valuesWidget)) {
+      return;
+    }
+    final resultIndex = await context.showWidgetDialog(
+      WheelDialog(
+        title: widget.wheelTitle ?? widget.label,
+        initValue: currentValueMixin,
+        values: widget.values,
+        valuesWidget: widget.valuesWidget,
+        transformValueWidget: widget.transformValueWidget,
+        wheelSelectedIndexColor: widget.wheelSelectedIndexColor,
+        enableWheelSelectedIndexColor: widget.enableWheelSelectedIndexColor,
+        /*enableTitleLine: false,
+        enableTrailingUseThemeColor: true,
+        titleUseCloseIcon: true,*/
+      ),
+    );
+    //debugger();
+    dynamic resultValue;
+    if (resultIndex is int) {
+      resultValue = widget.values?.getOrNull(resultIndex) ?? currentValueMixin;
+      currentValueMixin = resultValue;
+      widget.onValueIndexChanged?.call(resultIndex);
+      widget.onValueChanged?.call(
+        resultValue ?? widget.valuesWidget?.getOrNull(resultIndex),
+      );
+      updateState();
+    } else if (resultIndex != null) {
+      //当做数据结构处理
+      resultValue = resultIndex;
+      currentValueMixin = resultIndex;
+
+      final index = widget.values?.indexOf(resultValue);
+      if (index != null && index != -1) {
+        widget.onValueIndexChanged?.call(index);
+      }
+      widget.onValueChanged?.call(resultValue);
+      /*assert(() {
+                            l.w('无效的wheel返回值类型[$resultIndex]');
+                            return true;
+                          }());*/
+      updateState();
+    }
+  }
+
+  /// 显示[WheelDialog]
+  Future showPopupDialog() async {
+    if (isNil(widget.values) && isNil(widget.valuesWidget)) {
+      return;
+    }
+    wrapShowPopupMixin(() async {
+      final resultValues = await context.showPopupDialog(
+        DesktopOptionsPopup(
+          /*title: widget.label,*/
+          /*initValue: currentValueMixin,*/
+          values: widget.values,
+          valuesWidget: widget.valuesWidget,
+          selectedValues: [currentValueMixin],
+          /*transformValueWidget: widget.transformValueWidget,
+        wheelSelectedIndexColor: widget.wheelSelectedIndexColor,
+        enableWheelSelectedIndexColor: widget.enableWheelSelectedIndexColor,
+        enableTitleLine: false,
+        enableTrailingUseThemeColor: true,
+        titleUseCloseIcon: true,*/
+          radius: widget.popupRadius,
+        ),
+        radius: widget.popupRadius,
+        alignment: .bottomRight,
+        offsetAlignment: true,
+        matchAnchorSize: true,
+      );
+      //debugger();
+      if (resultValues is List) {
+        dynamic resultValue = resultValues.firstOrNull ?? currentValueMixin;
+        currentValueMixin = resultValue;
+        widget.onValueIndexChanged?.call(resultValue);
+        widget.onValueChanged?.call(resultValue);
+        updateState();
+      } else if (resultValues != null) {
+        debugger();
+      }
+    });
   }
 }
 
