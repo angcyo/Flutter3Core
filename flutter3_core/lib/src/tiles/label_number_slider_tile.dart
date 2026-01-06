@@ -170,7 +170,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                   maxDigits: widget.maxDigits,
                   numType: widget._numType,
                   onChanged: (value) {
-                    if (value != null) {
+                    if (value is num) {
                       _currentValue = value;
                       widget.onValueUpdated?.call(value);
                       widget.onValueChanged?.call(value);

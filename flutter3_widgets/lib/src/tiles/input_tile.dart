@@ -534,18 +534,18 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   }) {
     //debugger();
     try {
-      if (isString) {
+      if (isString || value.isEmpty) {
         return value;
       } else if (isDouble) {
         return clamp(
-          value.toDouble(),
+          value.toDoubleOrNull() ?? 0.0,
           widget.inputMinValue,
           widget.inputMaxValue,
           didClamp: didClamp,
         );
       } else if (isInt) {
         return clamp(
-          value.toInt(),
+          value.toIntOrNull() ?? 0,
           widget.inputMinValue,
           widget.inputMaxValue,
           didClamp: didClamp,

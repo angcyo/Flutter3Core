@@ -253,6 +253,7 @@ class CanvasRenderBox extends RenderBox
 
   //region core
 
+  /// 重绘边界, 不影响绘制到边界外
   @override
   bool get isRepaintBoundary => true;
 

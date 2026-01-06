@@ -3579,20 +3579,41 @@ extension RenderObjectEx on RenderObject {
     return parent?.findSliverConstraints();
   }
 
+  /// 尝试标记下一帧需要重绘
+  void tryMarkNeedsPaint() {
+    try {
+      //Failed assertion: line 3182 pos 12: '!_debugDisposed': is not true.
+      markNeedsPaint();
+    } catch (e) {
+      assert(() {
+        printError(e);
+        return true;
+      }());
+    }
+  }
+
   /// 标记下一帧需要重绘
+  /// - [refreshRate]指定刷新的帧率,
+  ///   不能超过[Display.refreshRate]屏幕的刷新率
   /// [markNeedsPaint]
-  void postMarkNeedsPaint({String? debugLabel}) {
-    postFrameCallback((timeStamp) {
-      try {
-        //Failed assertion: line 3182 pos 12: '!_debugDisposed': is not true.
-        markNeedsPaint();
-      } catch (e) {
-        assert(() {
-          printError(e);
-          return true;
-        }());
+  void postMarkNeedsPaint({
+    double? refreshRate,
+    ValueCallback<double>? onRefresh,
+    String? debugLabel,
+  }) {
+    if (refreshRate != null) {
+      //主动控制刷新率
+      if (refreshRate > 0) {
+        final delay = 1000 / refreshRate;
+        delayCallback(() {
+          //l.i("delayCallback->$delay");
+          onRefresh?.call(delay);
+        }, delay.milliseconds);
       }
-    });
+    } else {
+      onRefresh?.call(0);
+      tryMarkNeedsPaint();
+    }
   }
 
   /// 获取盒子的位置
