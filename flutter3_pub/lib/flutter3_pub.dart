@@ -45,3 +45,4 @@ part 'src/photo/photo_ex.dart';
 part 'src/photo/single_photo_dialog.dart';
 part 'src/picker/file_picker_ex.dart';
 part 'src/picker/color_picker_ex.dart';
+part 'src/picker/label_color_pick_tile.dart';

@@ -19,14 +19,18 @@ extension ColorPickerEx on BuildContext {
     Color currentColor, {
     ValueCallback<Color>? onColorAction,
     //--
+    Widget? titleWidget,
+    //--
     bool enableAlpha = true,
     bool hexInputBar = false,
   }) async {
     Color? result;
+    final globalTheme = GlobalTheme.of(this);
     await showDialog(
       context: this,
       builder: (ctx) => AlertDialog(
-        title: 'Pick a color!'.text(),
+        title: titleWidget,
+        backgroundColor: globalTheme.dialogSurfaceBgColor,
         content: SingleChildScrollView(
           child: ColorPicker(
             pickerColor: currentColor,
@@ -58,7 +62,14 @@ extension ColorPickerEx on BuildContext {
         ),
         actions: <Widget>[
           ElevatedButton(
-            child: 'Ok'.text(),
+            child: (LibRes.maybeOf(this)?.libCancel ?? "Cancel").text(),
+            onPressed: () {
+              //debugger();
+              ctx.popDialog();
+            },
+          ),
+          ElevatedButton(
+            child: (LibRes.maybeOf(this)?.libConfirm ?? "Ok").text(),
             onPressed: () {
               //debugger();
               ctx.popDialog(result: result);

@@ -641,7 +641,19 @@ extension ListPathEx on List<Path> {
     return transformPath(scaleMatrix);
   }
 
-  /// 变换路径, 返回新的路径
+  /// 缩放路径
+  List<Path> scaleTo({double? scale, double? sx, double? sy, Offset? anchor}) {
+    final scaleMatrix = createScaleMatrix(
+      scale: scale,
+      sx: sx,
+      sy: sy,
+      anchor: anchor,
+    );
+    return transformPath(scaleMatrix);
+  }
+
+  /// 变换路径
+  /// @return 返回新的路径
   List<Path> transformPath([Matrix4? matrix4]) {
     if (matrix4 == null) {
       return map((path) {
