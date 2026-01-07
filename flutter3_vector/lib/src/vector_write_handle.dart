@@ -920,7 +920,7 @@ extension VectorPathEx on Path {
     return handle.getVectorString();
   }
 
-  /// [toVectorString]
+  /// [toVectorString] 的异步api
   Future<String?> toVectorStringAsync(
     VectorWriteMixin handle, {
     @dp double? pathStep,
@@ -1103,6 +1103,8 @@ extension VectorPathEx on Path {
     handle ??= PointWriteHandle();
     handle.digits = precision;
     if (isMmPath) {
+      handle.unit = IUnit.mm;
+    } else {
       handle.unit = null;
     }
     toVectorString(
