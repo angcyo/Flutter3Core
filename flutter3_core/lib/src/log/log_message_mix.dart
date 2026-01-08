@@ -32,7 +32,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// 滚动列表
-  late final ScrollController scrollController = ScrollController();
+  late final ScrollController logScrollController = ScrollController();
   late final List<LogScopeData> logDataList = [LogScopeData.message("欢迎访问!")];
 
   /// 过滤后的日志数据列表
@@ -59,7 +59,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   ) {
     return ListView.builder(
       physics: kScrollPhysics,
-      controller: scrollController,
+      controller: logScrollController,
       itemBuilder: (context, index) {
         final item = logDataList.getOrNull(index);
         return item == null
@@ -97,7 +97,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
     );
     return ListView.builder(
       physics: kScrollPhysics,
-      controller: scrollController,
+      controller: logScrollController,
       itemBuilder: (context, index) {
         final item = list.getOrNull(index);
         return item == null
@@ -171,7 +171,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   void autoScrollToBottom() {
     if (isScrollToBottom) {
       postFrame(() {
-        scrollController.scrollToBottom();
+        logScrollController.scrollToBottom();
       });
     }
   }
