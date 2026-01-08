@@ -27,7 +27,7 @@ dependencies:
 
   # https://pub.dev/packages/mcp_dart
   # https://pub.dev/packages/http
-  mcp_dart: ^1.2.0
+  mcp_dart: ^1.2.1
 
 #  # https://pub.dev/packages/dart_mcp
 #  # https://pub.dev/packages/async

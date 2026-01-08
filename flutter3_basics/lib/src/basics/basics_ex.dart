@@ -1994,7 +1994,6 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
-
   /// 映射
   T map<T>(T Function(num) map) => map(this);
 
@@ -2315,6 +2314,9 @@ extension IntEx on int {
 
   /// [FileSizeEx.toSizeStr]
   String toSizeStr({int round = 2, String space = ""}) {
+    if (this < 0) {
+      return "$this";
+    }
     return fileSize(this, round, space);
   }
 

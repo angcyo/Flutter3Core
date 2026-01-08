@@ -6,6 +6,10 @@ part of '../../flutter3_mcp.dart';
 ///
 /// Debug MCP Server.
 ///
+/// # MCP 协议
+///
+/// https://modelcontextprotocol.io/specification/2025-11-25
+///
 /// # mcp_dart 服务器指南
 ///
 /// https://github.com/leehack/mcp_dart/blob/main/doc/server-guide.md
@@ -19,15 +23,15 @@ final class DebugMcpServer extends McpServer {
   /// - [start] 启动mcp服务
   /// - [close] 关闭mcp服务
   ///
-  /// - [StreamableMcpServer]
+  /// - [HttpStreamableMcpServer]
   /// - [StreamableHTTPServerTransport]
-  static Future<StreamableMcpServer?> start() async {
+  static Future<HttpStreamableMcpServer?> start() async {
     try {
-      final server = StreamableMcpServer(
-        serverFactory: (String sessionId) {
+      final server = HttpStreamableMcpServer(
+        serverFactory: (HttpStreamableMcpServer server, String sessionId) {
           //debugger();
           assert(() {
-            l.i("sessionId->$sessionId");
+            l.i("[${server.classHash()}]收到会话sessionId->$sessionId");
             return true;
           }());
           return DebugMcpServer();
@@ -51,6 +55,33 @@ final class DebugMcpServer extends McpServer {
     }
   }
 
+  /// # initialize
+  /// ```
+  /// {"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{"elicitation":{},"sampling":{}},"clientInfo":{"name":"Postman Client","version":"1.0.0"}},"jsonrpc":"2.0","id":0}
+  /// ```
+  ///
+  /// ```
+  /// {"method":"notifications/initialized","jsonrpc":"2.0"}
+  /// ```
+  ///
+  /// # tools/list
+  ///
+  /// ```
+  /// {"method":"tools/list","jsonrpc":"2.0","id":1}
+  /// ```
+  ///
+  /// # prompts/list
+  ///
+  /// ```
+  /// {"method":"prompts/list","jsonrpc":"2.0","id":2}
+  /// ```
+  ///
+  /// # resources/list
+  ///
+  /// ```
+  /// {"method":"resources/list","jsonrpc":"2.0","id":3}
+  /// ```
+  ///
   DebugMcpServer()
     : super(
         Implementation(
@@ -60,16 +91,31 @@ final class DebugMcpServer extends McpServer {
         ),
         options: McpServerOptions(
           capabilities: ServerCapabilities(
+            prompts: ServerCapabilitiesPrompts(),
             tools: ServerCapabilitiesTools(),
             resources: ServerCapabilitiesResources(),
-            prompts: ServerCapabilitiesPrompts(),
             //--
             //logging: ServerCapabilitiesLogging(),
             //experimental: ServerCapabilitiesExperimental(),
+            //completions:
+            //tasks:
+            //elicitation:
           ),
           instructions: "!instructions!",
         ),
       ) {
+    //MARK: - tools
+    registerTool(
+      'Tool name',
+      title: '!Tool title!',
+      description: '!Tool description!',
+      callback: (args, extra) async {
+        //debugger();
+        return const CallToolResult(
+          content: [TextContent(text: '!ToolResult text!')],
+        );
+      },
+    );
     //MARK: - prompt
     registerPrompt(
       'Prompt name',
@@ -83,6 +129,7 @@ final class DebugMcpServer extends McpServer {
         ),
       },*/
       callback: (args, extra) async {
+        //debugger();
         return const GetPromptResult(
           description: '!GetPromptResult description!',
           messages: [
@@ -94,6 +141,23 @@ final class DebugMcpServer extends McpServer {
         );
       },
     );
+    //MARK: - resource
+    registerResource('Resource name', "https://www.baidu.com", null, (
+      uri,
+      extra,
+    ) async {
+      //debugger();
+      return const ReadResourceResult(
+        contents: [
+          TextResourceContents(
+            text: '!ReadResourceResult text!',
+            uri: 'https://www.baidu.com',
+            mimeType: null,
+          ),
+        ],
+        meta: null,
+      );
+    });
   }
 
   //MARK: - api
