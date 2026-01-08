@@ -44,7 +44,7 @@ class IdiomWidget extends StatelessWidget {
                 //idiomBean!.url.launch();
                 openWebUrl(idiomBean!.url, context);
               });
-    return body.card();
+    return body.animatedSize(alignment: Alignment.topCenter).card();
   }
 }
 
@@ -85,7 +85,6 @@ class _RandomIdiomWidgetState extends State<RandomIdiomWidget> {
               .align(Alignment.topRight)
               .material(),
         )
-        .animatedSize(alignment: Alignment.topCenter)
         .mouse(
           onMouseAction: (enter) {
             _isHover = enter;

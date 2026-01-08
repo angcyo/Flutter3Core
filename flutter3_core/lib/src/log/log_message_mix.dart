@@ -7,7 +7,8 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 ///
 /// 日志消息状态页面混入
 ///
-/// - [buildLogMessageListWidget]
+/// - [buildLogMessageListWidget] log对话样式
+/// - [buildLogDataListWidget] 日志列表样式
 /// - [addLastMessage]
 mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   //MARK: - init
