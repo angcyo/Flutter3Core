@@ -141,6 +141,8 @@ extension DynamicEx on dynamic {
   /// 请在具体的类型上实现[toJson]方法, 否则会抛异常
   /// 此方法通常返回的是Map<String, dynamic>类型
   /// [json.decode(this)]
+  /// - [DynamicEx.toJson]
+  /// - [StringEx.toJson]
   dynamic toJson() => this.toJson();
 
   /// 直接转成json字符串
@@ -699,6 +701,12 @@ Future<void> setClipboardText([String? text]) =>
     Clipboard.setData(ClipboardData(text: text ?? ""));
 
 extension StringEx on String {
+  //MARK: - json
+
+  /// - [DynamicEx.toJson]
+  /// - [StringEx.toJson]
+  dynamic toJson() => isNil(this) ? null : jsonDecode();
+
   //MARK: - semver
 
   /// https://semver.org/lang/zh-CN/

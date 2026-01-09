@@ -14,6 +14,8 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 ///
 /// [LogInterceptor]
 class LogFileInterceptor extends Interceptor {
+  //MARK: - static
+
   /// 禁止打印日志
   static const String kNoLogPrintKey = 'noLogPrint';
 
@@ -25,6 +27,14 @@ class LogFileInterceptor extends Interceptor {
 
   /// 禁止日志写入文件
   static const String kNoLogFileKey = 'noLogFile';
+
+  //MARK: - stream
+
+  static LiveStream<String?> requestLogOnceLive = $liveOnce<String>();
+  static LiveStream<String?> responseLogOnceLive = $liveOnce<String>();
+
+  //MARK: - config
+
   final Map<int, (String id, int startTime)> uuidMap = {};
   final bool toFile;
   final bool toPrint;
@@ -160,11 +170,14 @@ class LogFileInterceptor extends Interceptor {
         }
       }
     });
+    //--
     _printLog(
       log,
       toFile: noLogFile == false,
       toPrint: noLogPrint == false && noRequestLogPrint == false,
     );
+    //--
+    requestLogOnceLive << log;
   }
 
   void _logResponse(Response response) {
@@ -189,11 +202,14 @@ class LogFileInterceptor extends Interceptor {
       builder.appendLine("<--${value?.$1} ${LTime.diffTime(value?.$2)}");
       builder.append(_responseLog(response));
     });
+    //--
     _printLog(
       log,
       toFile: noLogFile == false,
       toPrint: noLogPrint == false && noResponseLogPrint == false,
     );
+    //--
+    responseLogOnceLive << log;
   }
 
   String _responseLog(Response response) {

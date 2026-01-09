@@ -44,6 +44,7 @@ part 'src/app_swiper_ex.dart';
 part 'src/mobile_ex.dart';
 part 'src/platform/permissions.dart';
 part 'src/receive/receive_intent.dart';
+part 'src/test/http_api_mix.dart';
 
 /// - [runGlobalApp]启动的时间
 @output

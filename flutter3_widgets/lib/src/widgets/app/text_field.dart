@@ -136,6 +136,9 @@ class TextFieldConfig {
   /// [TextField.onChanged]
   final ValueChanged<String>? onChanged;
 
+  /// - [onChanged]
+  final TextFieldConfigValueChanged<String>? onConfigChanged;
+
   final ContextValueChanged<String>? onContextValueChanged;
 
   /// [textInputAction]
@@ -237,6 +240,7 @@ class TextFieldConfig {
     this.inputBuildCounter,
     this.prefixIcon,
     this.onChanged,
+    this.onConfigChanged,
     this.onContextValueChanged,
     this.onEditingComplete,
     this.onFocusAction,
@@ -262,12 +266,38 @@ class TextFieldConfig {
        prefixFocusNode = prefixFocusNode ?? FocusNode(skipTraversal: true),
        obscureNode = ObscureNode(obscureText ?? false) {
     if (notifyDefaultTextChange) {
-      onChanged?.call(this.controller.value.text);
+      final value = this.controller.value.text;
+      notifyValueChanged(value);
       //onContextValueChanged?.call(this, this.controller.text);
     }
   }
 
   //region api
+
+  /// - [_onSelfValueChanged]
+  @callPoint
+  void notifyValueChanged(String value, {BuildContext? context}) {
+    onChanged?.call(value);
+    onConfigChanged?.call(this, value);
+    if (context != null) {
+      onContextValueChanged?.call(context, value);
+    }
+  }
+
+  /// 更新输入框的值, 如果值是json格式的话
+  /// @return 格式化后的json字符串, 失败则返回原来的字符串
+  @api
+  String formatIfJson({String? text}) {
+    text ??= this.text;
+    try {
+      final json = jsonDecode(text);
+      final jsonString = JsonEncoder.withIndent('  ').convert(json);
+      updateText(jsonString, restoreSelection: true);
+      return jsonString;
+    } catch (e) {
+      return text;
+    }
+  }
 
   /// 请求焦点
   @api
@@ -501,6 +531,9 @@ class TextFieldConfig {
 
   //endregion Autocomplete
 }
+
+typedef TextFieldConfigValueChanged<T> =
+    void Function(TextFieldConfig config, T value);
 
 /// 清除图标的大小
 const kSuffixIconSize = 18.0;
@@ -1142,9 +1175,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   void _onSelfValueChanged(TextEditingValue value, {bool? notify}) {
     if (notify != false) {
       widget.onChanged?.call(value.text);
-      widget.config.onChanged?.call(value.text);
       widget.onContextValueChanged?.call(context, value.text);
-      widget.config.onContextValueChanged?.call(context, value.text);
+      widget.config.notifyValueChanged(value.text, context: context);
     }
     _checkSuffixIcon();
 

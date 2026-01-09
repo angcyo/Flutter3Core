@@ -40,7 +40,6 @@ extension GeometryWidgetEx on Widget {
 
   /// 对称
   /// [paddingSymmetric]
-  @Deprecated("请使用[paddingOnly]")
   Widget paddingItem({double vertical = kXh / 2, double horizontal = kXh}) {
     return paddingSymmetric(vertical: vertical, horizontal: horizontal);
   }

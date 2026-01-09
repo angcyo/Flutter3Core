@@ -11,8 +11,8 @@ part of '../../../flutter3_widgets.dart';
 /// - [MenuAnchor] 系统
 ///
 /// - [DropdownTile] tile
-/// - [DropdownMenuTile] tile
-/// - [DropdownButtonTile] tile
+/// - [DropdownMenuTile] tile 内部[Overlay]
+/// - [DropdownButtonTile] tile 内部[PopupRoute]
 /// - [MenuAnchorTile] tile
 ///
 class DropdownButtonTile extends StatefulWidget with TileMixin {
@@ -81,15 +81,16 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
 
   @override
   Widget build(BuildContext context) {
+    final labelWidget = widget
+        .buildTextWidget(
+          context,
+          textWidget: widget.labelWidget,
+          text: widget.label,
+          textPadding: widget.labelPadding,
+        )
+        ?.expanded(enable: widget.mainAxisSize != MainAxisSize.min);
     return [
-      widget
-          .buildTextWidget(
-            context,
-            textWidget: widget.labelWidget,
-            text: widget.label ?? "",
-            textPadding: widget.labelPadding,
-          )
-          ?.expanded(enable: widget.mainAxisSize != MainAxisSize.min),
+      labelWidget,
       DropdownButton(
         items: _buildDropdownMenuItems(context),
         value: currentValueMixin,
@@ -168,8 +169,8 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
 /// - [MenuAnchor] 系统
 ///
 /// - [DropdownTile] tile
-/// - [DropdownMenuTile] tile
-/// - [DropdownButtonTile] tile
+/// - [DropdownMenuTile] tile 内部[Overlay]
+/// - [DropdownButtonTile] tile 内部[PopupRoute]
 /// - [MenuAnchorTile] tile
 class DropdownMenuTile extends StatelessWidget with TileMixin {
   /// 标签

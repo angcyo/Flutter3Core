@@ -48,6 +48,22 @@ extension DioMapEx on Map<String, dynamic> {
 /// 请求的子路径需要以`/`开头
 /// Dio使用文档 https://github.com/cfug/dio/blob/main/dio/README-ZH.md
 extension DioStringEx on String {
+  /// 顶级入口请求
+  Future<Response<T>> fetch<T>(
+    void Function(RequestOptions options) config, {
+    BuildContext? context,
+    RequestOptions? requestOptions,
+  }) async {
+    requestOptions ??= RequestOptions();
+    requestOptions.path = transformUrl();
+    config(requestOptions);
+    final response = await RDio.get(
+      context: context,
+    ).dio.fetch<T>(requestOptions);
+    //debugger();
+    return response;
+  }
+
   /// get请求
   /// [context] 用来获取dio
   /// [body] 请求体 [DioMixin._transformData]
@@ -387,36 +403,40 @@ extension DioFutureResponseEx<T> on Future<T> {
     handle.showErrorToast = showErrorToast ?? handle.showErrorToast;
     handle.useDataCodeStatus = useDataCodeStatus ?? handle.useDataCodeStatus;
     handle.isSuccessCode = isSuccessCode ?? handle.isSuccessCode;
-    return get((response, error) {
-      debugger(when: debugLabel != null);
-      if (error != null) {
-        //有错误
-        final err = handle.handleError(error);
-        callback?.call(response, err);
-        if (throwError == true) {
-          throw error;
+    return get(
+      (response, error) {
+        debugger(when: debugLabel != null);
+        if (error != null) {
+          //有错误
+          final err = handle.handleError(error);
+          callback?.call(response, err);
+          if (throwError == true) {
+            throw error;
+          }
+          return null;
+        } else if (response == null) {
+          //没有数据
+          final exception = RHttpException(
+            message: "response is null",
+            error: error,
+          );
+          final err = handle.handleError(exception);
+          final callbackValue = callback?.call(response, err);
+          if (throwError == true) {
+            throw exception;
+          }
+          return callbackValue;
+        } else {
+          //有数据
+          //debugger();
+          final data = handle.handleResponse(response);
+          final callbackValue = callback?.call(data, null);
+          return callbackValue ?? data;
         }
-        return null;
-      } else if (response == null) {
-        //没有数据
-        final exception = RHttpException(
-          message: "response is null",
-          error: error,
-        );
-        final err = handle.handleError(exception);
-        final callbackValue = callback?.call(response, err);
-        if (throwError == true) {
-          throw exception;
-        }
-        return callbackValue;
-      } else {
-        //有数据
-        //debugger();
-        final data = handle.handleResponse(response);
-        final callbackValue = callback?.call(data, null);
-        return callbackValue ?? data;
-      }
-    }, tag: tag ?? debugLabel,throwError:throwError).catchError((error) {
+      },
+      tag: tag ?? debugLabel,
+      throwError: throwError,
+    ).catchError((error) {
       //debugger();
       final err = handle.handleError(error);
       callback?.call(null, err);
