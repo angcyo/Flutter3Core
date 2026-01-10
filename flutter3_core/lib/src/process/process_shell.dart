@@ -57,7 +57,8 @@ class ProcessShell {
     final result = await shell.run(script, onProcess: onProcess);
     //result.firstOrNull?.outText;
     assert(() {
-      debugger(when: !isNil(result.firstOrNull?.errText));
+      final errText = result.firstOrNull?.errText;
+      debugger(when: !isNil(errText));
       return true;
     }());
     return result;
