@@ -140,7 +140,7 @@ mixin HttpApiLogStateMixin<T extends StatefulWidget>
               l.w(e);
               return true;
             }());
-            addLastMessage("$e", isReceived: false);
+            addLastMessage("$e", isReceived: true);
           }
         }, child: "Send".text()),
       ].flowLayout(childGap: kL)!.insets(all: kL),

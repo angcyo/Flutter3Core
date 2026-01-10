@@ -116,6 +116,19 @@ dependencies:
   # https://pub.dev/packages/path
   hive_flutter: ^1.1.0
 
+  # https://pub.dev/packages/process_run
+  # https://pub.dev/packages/args
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/pub_semver
+  # https://pub.dev/packages/string_scanner
+  # https://pub.dev/packages/synchronized
+  # https://pub.dev/packages/yaml
+  process_run: ^1.2.4
+  # https://pub.dev/packages/synchronized
+  synchronized: ^3.4.0
+
 # dependency_overrides:
 
 dev_dependencies:

@@ -37,6 +37,7 @@ export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
 export 'src/log/log_message_mix.dart';
 export 'src/log/log_scope_widget.dart';
+export 'src/process/process_shell.dart';
 
 // @formatter:off
 
