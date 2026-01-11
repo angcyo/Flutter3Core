@@ -94,13 +94,21 @@ extension ZipEx on String {
     return true;
   }
 
-  /// 解压文件到指定目录下
+  /// 解压所有文件到指定目录下
   /// [extractFileToDisk]
   /// [extractArchiveToDisk]
-  Future<String> unzip([String? outputPath]) async {
+  /// @return 输出目录
+  Future<String?> unzip([String? outputPath]) async {
     outputPath ??= folderPath().join(fileName(true));
-    l.d("解压:$this->$outputPath");
-    await extractFileToDisk(this, outputPath);
+    assert(() {
+      l.d("解压:$this->$outputPath");
+      return true;
+    }());
+    try {
+      await extractFileToDisk(this, outputPath);
+    } catch (e) {
+      return null;
+    }
     return outputPath;
   }
 }

@@ -85,7 +85,7 @@ class _ProgressBarState extends State<ProgressBar>
       vsync: this,
       value: value,
       lowerBound: 0,
-      upperBound: toValue,
+      upperBound: max(value, toValue),
     );
     if (widget.enableFlowProgressAnimate) {
       _flowController?.repeat();

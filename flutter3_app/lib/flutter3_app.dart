@@ -41,8 +41,11 @@ part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';
 part 'src/app_log.dart';
 part 'src/app_swiper_ex.dart';
+part 'src/download_mixin.dart';
 part 'src/mobile_ex.dart';
 part 'src/platform/permissions.dart';
+part 'src/plugins/plugin_install_dialog.dart';
+part 'src/plugins/process_plugin.dart';
 part 'src/receive/receive_intent.dart';
 part 'src/test/http_api_mix.dart';
 

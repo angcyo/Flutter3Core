@@ -153,10 +153,11 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
   State<AppUpdateDialog> createState() => _AppUpdateDialogState();
 }
 
-class _AppUpdateDialogState extends State<AppUpdateDialog> {
+class _AppUpdateDialogState extends State<AppUpdateDialog>
+    with DioDownloadMixin {
   @override
   void dispose() {
-    _downloadToken?.cancel();
+    downloadTokenMixin?.cancel();
     super.dispose();
   }
 
@@ -200,9 +201,9 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
       else
         GradientButton(
           onTap: () {
-            switch (_downloadState) {
+            switch (downloadStateMixin) {
               case DownloadState.none:
-                _startDownload(widget.versionBean.downloadUrl ?? "");
+                startDownloadMixin(widget.versionBean.downloadUrl ?? "");
                 break;
               case DownloadState.downloading:
                 break;
@@ -211,7 +212,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
                 _startInstallApk();
                 break;
               case DownloadState.downloadFailed:
-                _startDownload(widget.versionBean.downloadUrl ?? "");
+                startDownloadMixin(widget.versionBean.downloadUrl ?? "");
                 break;
               default:
                 break;
@@ -219,13 +220,13 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
           },
           radius: kMaxBorderRadius,
           child:
-              (_downloadState == DownloadState.none
+              (downloadStateMixin == DownloadState.none
                       ? lRes?.libDownloadNow
-                      : (_downloadState == DownloadState.downloading
+                      : (downloadStateMixin == DownloadState.downloading
                             ? lRes?.libDownloading
-                            : (_downloadState == DownloadState.downloaded
+                            : (downloadStateMixin == DownloadState.downloaded
                                   ? lRes?.libInstallNow
-                                  : (_downloadState ==
+                                  : (downloadStateMixin ==
                                             DownloadState.downloadFailed
                                         ? lRes?.libClickRetry
                                         : "Unknown"))))
@@ -261,7 +262,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
           )
           .insets(vertical: kX)
           .expanded(),
-      _buildProgress(),
+      buildProgressWidget(context),
       control,
     ].column(crossAxisAlignment: CrossAxisAlignment.start)!.ih();
 
@@ -295,7 +296,6 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
       decorationColor: Colors.transparent,
       /*autoCloseDialog: true,*/
     );
-
     return body
         .interceptPopResult(() {
           //debugger();
@@ -308,76 +308,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> {
         .focusScope(tag: classHash());
   }
 
-  /// 构建下载进度小部件
-  Widget? _buildProgress() {
-    double progress = _downloadProgress;
-    if (_downloadState == DownloadState.none) {
-      return null;
-    }
-    //debugger();
-    return ProgressBar(
-      progress: progress == -1 ? 1 : progress,
-      enableFlowProgressAnimate: _downloadState == DownloadState.downloading,
-    ).size(height: 6).insets(vertical: kL);
-  }
-
-  /// 下载的状态
-  DownloadState _downloadState = DownloadState.none;
-
-  /// 用来取消下载
-  CancelToken? _downloadToken;
-
-  /// 下载进度[0~1]
-  double _downloadProgress = 0;
-
-  String _downloadFilePathCache = "";
-
-  /// 开始下载
-  /// `/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/cache/AutoCalibrate-2.4.0_apk_release_app.apk`
-  void _startDownload(String url) async {
-    _downloadToken?.cancel();
-    _downloadToken = CancelToken();
-
-    _downloadProgress = -1;
-    _downloadState = DownloadState.downloading;
-    final name = url.fileName();
-    final filePath = await cacheFilePath(name);
-    _downloadFilePathCache = filePath;
-    url
-        .download(
-          savePath: filePath,
-          cancelToken: _downloadToken,
-          onReceiveProgress: (count, total) {
-            if (total > 0) {
-              //l.d("下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n[$url]->[$filePath]");
-              _downloadProgress = count / total;
-              updateState();
-            } else {
-              //l.d("下载进度:$count ${count.toSizeStr()} \n[$url]->[$filePath]");
-              _downloadProgress = -1;
-            }
-          },
-        )
-        .get((response, error) {
-          if (response != null) {
-            _downloadState = DownloadState.downloaded;
-            updateState();
-            _startInstallApk();
-            //l.d("下载完成:$filePath");
-          } else if (error != null) {
-            if (_downloadProgress == -1) {
-              _downloadProgress = 0;
-            }
-            _downloadState = DownloadState.downloadFailed;
-            updateState();
-          }
-        });
-  }
-
   /// iOS 平台无法安装APK
   void _startInstallApk() {
     //debugger();
-    AndroidPackageInstaller.installApk(apkFilePath: _downloadFilePathCache);
+    AndroidPackageInstaller.installApk(apkFilePath: downloadFilePathCacheMixin);
   }
 }
 

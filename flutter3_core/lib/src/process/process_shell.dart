@@ -64,3 +64,25 @@ class ProcessShell {
     return result;
   }
 }
+
+/// - copy from [ProcessRunProcessResultsExt]
+extension ProcessRunProcessResultsEx on List<ProcessResult> {
+  String get outText2 => outText;
+
+  String get errText2 => errText;
+
+  Iterable<String> get outLines2 => outLines;
+
+  Iterable<String> get errLines2 => errLines;
+}
+
+/// - copy from [ProcessRunProcessResultExt]
+extension ProcessRunProcessResultEx on ProcessResult {
+  String get outText2 => outText;
+
+  String get errText2 => errText;
+
+  Iterable<String> get outLines2 => outLines;
+
+  Iterable<String> get errLines2 => errLines;
+}
