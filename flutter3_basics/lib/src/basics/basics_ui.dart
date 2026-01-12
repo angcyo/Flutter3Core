@@ -2867,6 +2867,8 @@ extension WidgetEx on Widget {
     Color? hoverColor,
     double? radius,
     bool enable = true,
+    //--
+    BorderRadius? borderRadius /*指定圆角之后, 就不是圆了*/,
     GestureLongPressCallback? onLongPress,
     //--
     Duration? periodicDuration,
@@ -2875,8 +2877,8 @@ extension WidgetEx on Widget {
       ? colorFiltered(color: disableColor)
       : inkWell(
           onTap,
-          //borderRadius: BorderRadius.circular(999),
-          customBorder: const CircleBorder(),
+          borderRadius: borderRadius,
+          customBorder: borderRadius == null ? const CircleBorder() : null,
           splashColor: splashColor,
           hoverColor: hoverColor,
           highlightColor: highlightColor,

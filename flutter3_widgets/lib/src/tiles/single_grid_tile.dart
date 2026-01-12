@@ -8,6 +8,9 @@ part of '../../../flutter3_widgets.dart';
 /// [label]
 ///
 /// 上图标[icon], 下文字[label]的tile
+///
+/// - [SingleGridTile]
+/// - [GridTile] 系统
 class SingleGridTile extends StatelessWidget with TileMixin {
   /// 图标
   final IconData? icon;
@@ -40,6 +43,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
   final TextStyle? labelStyle;
   final Widget? labelWidget;
   final TextOverflow labelOverflow;
+  final EdgeInsetsGeometry? labelPadding;
 
   //--
 
@@ -64,6 +68,10 @@ class SingleGridTile extends StatelessWidget with TileMixin {
   /// 显示在背景的小部件
   final Widget? bgWidget;
 
+  /// 涟漪的圆角, 不指定默认是圆
+  @defInjectMark
+  final BorderRadius? wellBorderRadius;
+
   const SingleGridTile({
     super.key,
     //--
@@ -84,12 +92,15 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     this.labelMaxLength,
     this.labelWidget,
     this.labelOverflow = TextOverflow.fade,
+    this.labelPadding,
+    //--
     this.padding,
     this.margin,
     this.onTap,
     this.enable = true,
     //--
     this.bgWidget,
+    this.wellBorderRadius,
   });
 
   @override
@@ -140,7 +151,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
                       softWrap: false,
                       overflow: labelOverflow,
                     )
-                    .paddingAll(kM))
+                    .insets(all: kM, insets: labelPadding))
             ?.colorFiltered(color: enable ? null : globalTheme.icoDisableColor);
 
     //--
@@ -157,10 +168,20 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     }
 
     return Padding(
-      padding:
-          padding ?? const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
-      child: body.constrainedMin(minHeight: minHeight),
-    ).inkWellCircle(onTap, enable: enable).material().paddingInsets(margin);
+          padding:
+              padding ??
+              const EdgeInsets.symmetric(horizontal: kX, vertical: kH),
+          child: body.constrainedMin(minHeight: minHeight),
+        )
+        .inkWellCircle(
+          onTap,
+          enable: enable,
+          borderRadius:
+              wellBorderRadius ??
+              (isDesktopOrWeb ? kDefaultBorderRadiusX.borderRadius : null),
+        )
+        .material()
+        .paddingInsets(margin);
   }
 }
 

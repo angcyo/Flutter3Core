@@ -37,6 +37,7 @@ double $ecwBp() => switch ($screenWidth) {
 };
 
 /// 断点网格列数
+/// - 根据不同的屏幕宽度, 返回不同的列数
 int $gridBp() => switch ($screenWidth) {
   >= 1600 => 6,
   >= 1400 => 5,
