@@ -84,7 +84,9 @@ mixin AbsScrollPage {
   Color? getBackgroundColor(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     //final globalConfig = GlobalConfig.of(context);
-    return globalTheme.surfaceBgColor;
+    return context.isInRootNavigator
+        ? globalTheme.surfaceBgColor
+        : Colors.transparent;
   }
 
   /// 默认不适配底部键盘

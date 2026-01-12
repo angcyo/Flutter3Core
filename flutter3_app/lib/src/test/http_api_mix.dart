@@ -89,12 +89,6 @@ mixin HttpApiLogStateMixin<T extends StatefulWidget>
   WidgetList buildApiTestHeader(BuildContext context, GlobalTheme globalTheme) {
     return [
       //MARK: - host
-      SingleInputWidget(
-        config: hostConfig,
-        labelText: "服务器地址",
-        hintText: "服务器地址",
-      ).paddingItem(),
-      //MARK: - path
       [
         DropdownButtonTile(
           dropdownValue: method,
@@ -105,25 +99,31 @@ mixin HttpApiLogStateMixin<T extends StatefulWidget>
           },
         ).size(width: 100),
         SingleInputWidget(
-          config: pathConfig,
-          labelText: "请求路径",
-          hintText: "请求路径",
+          config: hostConfig,
+          labelText: "服务器地址",
+          hintText: "服务器地址",
         ).expanded(),
-      ].row()!.paddingItem(),
+      ].row()!.insets(h: kL, vertical: kL),
+      //MARK: - path
+      SingleInputWidget(
+        config: pathConfig,
+        labelText: "请求路径",
+        hintText: "请求路径",
+      ).insets(h: kL, vertical: kL),
       //MARK: - header
       SingleInputWidget(
         config: headerConfig,
         labelText: "请求头",
         hintText: "请求头jsonArray",
-        maxLines: 5,
-      ).paddingItem(),
+        maxLines: 8,
+      ).insets(h: kL, vertical: kL),
       //MARK: - body
       SingleInputWidget(
         config: bodyConfig,
         labelText: "请求体",
         hintText: "请求体json",
-        maxLines: 10,
-      ).paddingItem(),
+        maxLines: 15,
+      ).insets(h: kL, vertical: kL),
       //MARK: - button
       [
         GradientButton.normal(clearLogData, child: "清屏".text()),
@@ -142,7 +142,7 @@ mixin HttpApiLogStateMixin<T extends StatefulWidget>
             }());
             addLastMessage("$e", isReceived: true);
           }
-        }, child: "Send".text()),
+        }, child: "发送请求".text()),
       ].flowLayout(childGap: kL)!.insets(all: kL),
     ];
   }
