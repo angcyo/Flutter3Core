@@ -1269,7 +1269,7 @@ extension StringEx on String {
   /// [StringEx]
   String sha256() => bytes.sha256();
 
-  /// [StringEx]
+  /// [StringEx] 小写
   String md5() => bytes.md5();
 
   /// [Uri]
@@ -2562,7 +2562,7 @@ extension ListIntEx on List<int> {
   String sha256() => crypto.sha256.convert(this).toString();
 
   /// [ListIntEx]
-  /// hex 32位
+  /// hex 32位 小写
   /// `13b2943ce931bd41aec6052bbe37aba0` 32个字符, hex 16字节 128位
   String md5() => crypto.md5.convert(this).toString();
 
