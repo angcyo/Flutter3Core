@@ -324,23 +324,23 @@ extension DioStringEx on String {
       //文件已经存在
       final length = saveFilePath!.length;
       onReceiveProgress?.call(length, length);
-      assert(() {
-        l.v("文件已经存在: $url -> $saveFilePath");
-        return true;
-      }());
+      l.d("文件已经存在: $url -> $saveFilePath");
       return Response(
         requestOptions: RequestOptions(path: this),
         data: saveFilePath,
       );
+    } else {
+      l.d("准备下载: $url -> $saveFilePath");
     }
     final response = dio.download(
       transformUrl(),
       saveFilePath,
       onReceiveProgress: (count, total) {
+        if (count >= total) {
+          l.i("下载完成: $url -> $savePath");
+        }
         assert(() {
-          if (count >= total) {
-            l.i("下载完成: $url -> $savePath");
-          } else if (debugLog) {
+          if (debugLog) {
             if (total > 0) {
               // 日志限流
               l.d(

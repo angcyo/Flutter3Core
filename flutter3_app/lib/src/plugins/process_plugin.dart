@@ -8,12 +8,19 @@ part of '../../flutter3_app.dart';
 /// - [ProcessShell]
 
 mixin PluginMixin {
+  //MARK: - state
+
   /// 插件是否安装
   Future<bool> get isInstalled async => false;
+
+  /// 插件是否有更新
+  Future<bool> get isUpdate async => false;
 
   /// 插件下载地址
   @configProperty
   String? get downloadUrl => null;
+
+  //MARK: - api
 
   /// 卸载插件
   /// @return 是否卸载成功
@@ -24,18 +31,44 @@ mixin PluginMixin {
   Future<String?> start(BuildContext? context) async => null;
 
   /// 从本地文件安装插件
+  /// - [filePath]通常是下载成功的zip文件
   /// @return 是否安装成功
   Future<bool> install(String filePath) async => false;
 }
 
 /// 执行进程程序的插件
+/// - 本地进程
+/// - 内置进程等
 class ProcessPlugin with PluginMixin {
+  /// 进程执行的脚本
+  @configProperty
+  Future<String?> get script async => null;
+
   @override
-  Future<bool> get isInstalled => super.isInstalled;
+  Future<bool> get isInstalled async => !isNil((await script));
 
   @override
   Future<String?> start(BuildContext? context) async {
-    return super.start(context);
+    if (await isInstalled && !(await isUpdate)) {
+      //已经安装了插件并且无新插件, 则直接启动
+      final exeScript = await script;
+      if (exeScript == null) {
+        debugger();
+        return null;
+      } else {
+        l.i("[${classHash()}]启动进程->$exeScript");
+        final ProcessShell shell = ProcessShell();
+        /*shell.stdout.stream.listen((value) {
+            addLastMessage(value.utf8Str, isReceived: true);
+        });*/
+        final resultList = await shell.run(exeScript);
+        return resultList.outText2;
+      }
+    } else {
+      //下载或更新并安装插件
+      context?.buildContext?.showWidgetDialog(PluginInstallDialog(this));
+      return null;
+    }
   }
 }
 
@@ -45,28 +78,13 @@ class ExecutablePlugin extends ProcessPlugin {
   @configProperty
   Future<String?> get executablePath async => null;
 
+  @override
+  Future<String?> get script => executablePath;
+
   /// 本地文件存在则视为已安装
   @override
   Future<bool> get isInstalled async =>
       (await executablePath)?.isFileExistsSync() == true;
-
-  @override
-  Future<String?> start(BuildContext? context) async {
-    if (await isInstalled) {
-      //已经安装了插件则, 直接启动
-      final exe = await executablePath;
-      final ProcessShell shell = ProcessShell();
-      /*shell.stdout.stream.listen((value) {
-      addLastMessage(value.utf8Str, isReceived: true);
-    });*/
-      final resultList = await shell.run(exe!);
-      return resultList.outText2;
-    } else {
-      //下载并安装插件
-      context?.buildContext?.showWidgetDialog(PluginInstallDialog(this));
-      return null;
-    }
-  }
 }
 
 /// 插件的状态

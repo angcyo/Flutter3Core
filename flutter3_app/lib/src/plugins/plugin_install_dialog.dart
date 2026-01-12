@@ -75,7 +75,8 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
             final url = widget.plugin.downloadUrl;
             if (url != null) {
               pluginState = .downloading;
-              startDownloadMixin(widget.plugin.downloadUrl!);
+              l.i("[${classHash()}]准备下载插件->$url");
+              startDownloadMixin(url);
               updateState();
             }
           },
