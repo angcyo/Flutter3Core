@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter3_basics/flutter3_basics.dart';
@@ -15,8 +16,23 @@ import 'package:process_run/stdio.dart';
 /// - [ShellLinesController]
 class ProcessShell {
   /// 核心执行器
-  @output
-  late Shell shell;
+  Shell? _shell;
+
+  Shell get shell {
+    return _shell ??= Shell(
+      /// 不抛出异常, 异常在[stderr]中返回
+      throwOnError: false,
+      verbose: verbose,
+      commandVerbose: null,
+      runInShell: runInShell,
+      /*stdin: shellLinesController.binaryStream,*/
+      stdin: stdin.stream,
+      stdout: stdout,
+      stderr: stderr,
+      stdoutEncoding: stdoutEncoding,
+      stderrEncoding: stderrEncoding,
+    );
+  }
 
   //MARK: config
 
@@ -24,6 +40,13 @@ class ProcessShell {
   bool verbose = true;
   @configProperty
   bool? runInShell;
+
+  /// - [systemEncoding]
+  /// - [systemEncoding]
+  @configProperty
+  Encoding stdoutEncoding = utf8;
+  @configProperty
+  Encoding stderrEncoding = utf8;
 
   @output
   late ShellLinesController shellLinesController;
@@ -44,19 +67,6 @@ class ProcessShell {
 
   ProcessShell({this.verbose = true}) {
     shellLinesController = ShellLinesController();
-    shell = Shell(
-      /// 不抛出异常, 异常在[stderr]中返回
-      throwOnError: false,
-      verbose: verbose,
-      commandVerbose: null,
-      runInShell: runInShell,
-      /*stdin: shellLinesController.binaryStream,*/
-      stdin: stdin.stream,
-      stdout: stdout,
-      stderr: stderr,
-      /*stdoutEncoding: systemEncoding,
-      stderrEncoding: systemEncoding,*/
-    );
   }
 
   /// 执行shell脚本批量命令
@@ -92,8 +102,8 @@ class ProcessShell {
         arguments ?? [],
         workingDirectory: workingDirectory,
         runInShell: runInShell ?? this.runInShell,
-        /*stdoutEncoding: systemEncoding,
-        stderrEncoding: systemEncoding,*/
+        stdoutEncoding: stdoutEncoding,
+        stderrEncoding: stderrEncoding,
       ),
       verbose: verbose,
       commandVerbose: null,
