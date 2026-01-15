@@ -54,6 +54,8 @@ class ProcessShell {
       stdin: stdin.stream,
       stdout: stdout,
       stderr: stderr,
+      /*stdoutEncoding: systemEncoding,
+      stderrEncoding: systemEncoding,*/
     );
   }
 
@@ -90,6 +92,8 @@ class ProcessShell {
         arguments ?? [],
         workingDirectory: workingDirectory,
         runInShell: runInShell ?? this.runInShell,
+        /*stdoutEncoding: systemEncoding,
+        stderrEncoding: systemEncoding,*/
       ),
       verbose: verbose,
       commandVerbose: null,
