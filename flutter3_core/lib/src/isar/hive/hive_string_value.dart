@@ -38,6 +38,22 @@ final class HiveStringValue {
 
   /// 获取
   String? get() => value;
+
+  //MARK: - other
+
+  /// 判断是否和String对象相等
+  bool isEqual(String? value) => value == this.value;
+
+  /*@override
+  bool operator ==(Object value) {
+    if (value is String) {
+      return value == get();
+    }
+    return this == value;
+  }
+
+  @override
+  int get hashCode => value?.hashCode ?? super.hashCode;*/
 }
 
 /// [HiveStringValue]

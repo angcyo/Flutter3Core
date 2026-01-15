@@ -48,6 +48,8 @@ extension DioMapEx on Map<String, dynamic> {
 /// 请求的子路径需要以`/`开头
 /// Dio使用文档 https://github.com/cfug/dio/blob/main/dio/README-ZH.md
 extension DioStringEx on String {
+  //MARK: fetch
+
   /// 顶级入口请求
   Future<Response<T>> fetch<T>(
     void Function(RequestOptions options) config, {
@@ -63,6 +65,24 @@ extension DioStringEx on String {
     //debugger();
     return response;
   }
+
+  /// 获取url对应资源的`Last-Modified`数据
+  Future<String?> dioGetLastModified({
+    BuildContext? context,
+    RequestOptions? requestOptions,
+  }) async {
+    try {
+      final response = await fetch((options) {
+        options.method = "HEAD";
+      });
+      return response.headers.value("Last-Modified");
+    } catch (e) {
+      l.e("[dioGetLastModified]->$this $e");
+      return null;
+    }
+  }
+
+  //MARK: get
 
   /// get请求
   /// [context] 用来获取dio
@@ -162,6 +182,8 @@ extension DioStringEx on String {
     );
     return bytes?.toImage();
   }
+
+  //MARK: post
 
   /// post请求
   /// [context] 用来获取dio

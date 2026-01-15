@@ -420,6 +420,11 @@ extension FileStringPubEx on String {
 
   /// 删除文件或文件夹
   /// [recursive] 如果是文件夹,是否递归删除
+  ///
+  /// ```
+  /// '/Users/angcyo/Library/Containers/com.laserabc.laserabcFactoryTools/Data/Library/Caches/plugins'/Point_Cloud->PathNotFoundException: Deletion failed, path = 'Directory: '/Users/angcyo/Library/Containers/com.laserabc.laserabcFactoryTools/Data/Library/Caches/plugins'/Point_Cloud' (OS Error: No such file or directory, errno = 2)
+  /// ```
+  ///
   Future<bool> delete({bool recursive = true}) async {
     try {
       if (isFileSync()) {
@@ -428,11 +433,8 @@ extension FileStringPubEx on String {
       }
       await folder.delete(recursive: recursive);
       return true;
-    } catch (e) {
-      assert(() {
-        l.e(e);
-        return true;
-      }());
+    } catch (e, s) {
+      l.w("删除失败$this->$e");
     }
     return false;
   }

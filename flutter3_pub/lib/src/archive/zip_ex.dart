@@ -94,9 +94,13 @@ extension ZipEx on String {
     return true;
   }
 
-  /// 解压所有文件到指定目录下
+  /// 解压所有文件到指定目录下. 如果目录不为空, 则会失败.
   /// [extractFileToDisk]
   /// [extractArchiveToDisk]
+  ///
+  /// ```
+  /// PathAccessException: Cannot create file, path = '/Users/angcyo/Library/Containers/com.laserabc.laserabcFactoryTools/Data/Library/Caches/plugins/Point_Cloud/D3Dcompiler_47.dll' (OS Error: Permission denied, errno = 13)
+  /// ```
   /// @return 输出目录
   Future<String?> unzip([String? outputPath]) async {
     outputPath ??= folderPath().join(fileName(true));
@@ -106,7 +110,9 @@ extension ZipEx on String {
     }());
     try {
       await extractFileToDisk(this, outputPath);
-    } catch (e) {
+    } catch (e, s) {
+      l.w("解压失败$this->$e");
+      debugger();
       return null;
     }
     return outputPath;

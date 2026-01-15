@@ -102,7 +102,7 @@ class TokenInterceptor extends Interceptor {
         requestOptions.getQuery(kNoTokenVerify)?.toBoolOrNull() == true;
     if (!noTokenVerify && isTokenInvalid?.call(response) == true) {
       debugger();
-      //token失效, 请求新的token
+      //token失效, 请求新的token, 刷新token请求
       final value = response.getQuery(kNoRefreshTokenKey);
       if (value != null && value.toBoolOrNull() == true) {
         //不重新请求token
