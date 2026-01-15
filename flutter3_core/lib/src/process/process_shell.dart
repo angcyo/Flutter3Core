@@ -123,10 +123,14 @@ class ProcessShell {
 }
 
 extension ExceptionEx on Object {
-  bool get isShellException => this is ShellException;
+  bool get isShellException =>
+      this is ShellException || this is ProcessException;
 
-  String get message =>
-      isShellException ? (this as ShellException).message : toString();
+  String get message => switch (null) {
+    _ when this is ShellException => (this as ShellException).message,
+    _ when this is ProcessException => (this as ProcessException).message,
+    _ => toString(),
+  };
 }
 
 /// - copy from [ProcessRunProcessResultsExt]
