@@ -65,6 +65,13 @@ class ProcessShell {
   }
 }
 
+extension ExceptionEx on Object {
+  bool get isShellException => this is ShellException;
+
+  String get message =>
+      isShellException ? (this as ShellException).message : toString();
+}
+
 /// - copy from [ProcessRunProcessResultsExt]
 extension ProcessRunProcessResultsEx on List<ProcessResult> {
   String get outText2 => outText;

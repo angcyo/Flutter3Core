@@ -24,16 +24,29 @@ mixin PluginMixin {
 
   /// 卸载插件
   /// @return 是否卸载成功
-  Future<bool> uninstall() async => false;
+  @api
+  Future<bool> uninstall({String? reason}) async => false;
 
   /// 启动插件, 自动触发下载插件
+  /// - [ignoreUpdate] 是否忽略插件的更新, 直接运行?
   /// @return 插件返回值
-  Future<String?> start(BuildContext? context) async => null;
+  @api
+  Future<Object?> start(
+    BuildContext? context, {
+    bool? ignoreUpdate,
+    String? reason,
+  }) async => null;
 
   /// 从本地文件安装插件
   /// - [filePath]通常是下载成功的zip文件
   /// @return 是否安装成功
-  Future<bool> install(String filePath) async => false;
+  @api
+  Future<bool> install(String filePath, {String? reason}) async => false;
+
+  /// 插进安装成功回调
+  /// - [path] 插件安装所在的路径
+  @overridePoint
+  Future onSelfInstallSuccess(String path, {String? reason}) async {}
 }
 
 /// 执行进程程序的插件
@@ -47,9 +60,33 @@ class ProcessPlugin with PluginMixin {
   @override
   Future<bool> get isInstalled async => !isNil((await script));
 
+  /// 是否是否有更新的缓存
+  @configProperty
+  bool? isUpdateCached;
+
+  /// 插件是否有更新
   @override
-  Future<String?> start(BuildContext? context) async {
-    if (await isInstalled && !(await isUpdate)) {
+  Future<bool> get isUpdate async => isUpdateCached ?? false;
+
+  @override
+  Future<dynamic> onSelfInstallSuccess(String path, {String? reason}) {
+    //清楚缓存
+    if (isUpdateCached != null) {
+      //debugger();
+      isUpdateCached = null;
+    }
+    return super.onSelfInstallSuccess(path, reason: reason);
+  }
+
+  @override
+  Future<Object?> start(
+    BuildContext? context, {
+    bool? ignoreUpdate,
+    String? reason,
+  }) async {
+    final bool isInstalled = await this.isInstalled;
+    final bool isUpdate = await this.isUpdate;
+    if (isInstalled && (ignoreUpdate == true || !isUpdate)) {
       //已经安装了插件并且无新插件, 则直接启动
       final exeScript = await script;
       if (exeScript == null) {
@@ -61,12 +98,31 @@ class ProcessPlugin with PluginMixin {
         /*shell.stdout.stream.listen((value) {
             addLastMessage(value.utf8Str, isReceived: true);
         });*/
-        final resultList = await shell.run(exeScript);
-        return resultList.outText2;
+        try {
+          final resultList = await shell.run(exeScript);
+          final errText = resultList.errText2;
+          final outText = resultList.outText2;
+          if (!isNil(errText)) {
+            l.w("[${classHash()}]插件运行错误->$errText");
+          }
+          /*if(isNil(outText)){}*/
+          //resultList.errText2;
+          return outText;
+        } catch (e) {
+          l.e("[${classHash()}]插件运行失败->$e");
+          if (e.isShellException) {
+            toast(e.message.text(useDefStyle: false));
+            return null;
+          } else {
+            rethrow;
+          }
+        }
       }
     } else {
       //下载或更新并安装插件
-      context?.buildContext?.showWidgetDialog(PluginInstallDialog(this));
+      context?.buildContext?.showWidgetDialog(
+        PluginInstallDialog(this, pluginState: isUpdate ? .update : null),
+      );
       return null;
     }
   }
@@ -91,6 +147,9 @@ class ExecutablePlugin extends ProcessPlugin {
 enum PluginState {
   /// 未安装
   uninstall,
+
+  /// 需要更新
+  update,
 
   /// 下载中...
   downloading,

@@ -4,6 +4,8 @@ part of '../../flutter3_app.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2026/01/11
 ///
+/// [PluginMixin]插件安装/更新弹窗
+///
 /// - [PluginMixin] 安装插件的小部件
 /// 目前就是下载插件, 并解压到本地
 class PluginInstallDialog extends StatefulWidget with DialogMixin {
@@ -13,7 +15,10 @@ class PluginInstallDialog extends StatefulWidget with DialogMixin {
   /// 需要安装的插件
   final PluginMixin plugin;
 
-  const PluginInstallDialog(this.plugin, {super.key});
+  /// 插件当前的状态
+  final PluginState? pluginState;
+
+  const PluginInstallDialog(this.plugin, {super.key, this.pluginState});
 
   @override
   State<PluginInstallDialog> createState() => _PluginInstallDialogState();
@@ -22,7 +27,15 @@ class PluginInstallDialog extends StatefulWidget with DialogMixin {
 class _PluginInstallDialogState extends State<PluginInstallDialog>
     with DioDownloadMixin {
   /// 插件的状态
-  PluginState pluginState = .uninstall;
+  PluginState pluginState = PluginState.uninstall;
+
+  @override
+  void initState() {
+    if (widget.pluginState != null) {
+      pluginState = widget.pluginState!;
+    }
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -39,6 +52,8 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
           context,
           pluginState == .uninstall
               ? buildInstallContent(context, globalTheme)
+              : pluginState == .update
+              ? buildUpdateContent(context, globalTheme)
               : pluginState == .downloading
               ? buildDownloadingContent(context, globalTheme)
               : pluginState == .installing
@@ -76,6 +91,38 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
             if (url != null) {
               pluginState = .downloading;
               l.i("[${classHash()}]准备下载插件->$url");
+              startDownloadMixin(url);
+              updateState();
+            }
+          },
+        ).expanded(),
+      ].row(gap: kX),
+    ].column()!.insets(all: kX);
+  }
+
+  /// 构建更新提示小部件
+  @property
+  Widget buildUpdateContent(BuildContext context, GlobalTheme globalTheme) {
+    return [
+      "发现新版本插件, 是否更新"
+          .text(textStyle: globalTheme.textTitleStyle)
+          .insets(all: kX, bottom: kXx),
+      [
+        GradientButton.stroke(
+          child: "取消".text(),
+          onTap: () {
+            //取消更新, 则直接运行
+            widget.closeDialogIf(context);
+            widget.plugin.start(buildContext, ignoreUpdate: true);
+          },
+        ).expanded(),
+        GradientButton(
+          child: "更新".text(),
+          onTap: () {
+            final url = widget.plugin.downloadUrl;
+            if (url != null) {
+              pluginState = .downloading;
+              l.i("[${classHash()}]准备更新下载插件->$url");
               startDownloadMixin(url);
               updateState();
             }
@@ -126,6 +173,8 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
       widget.plugin.start(buildContext);
     } else {
       debugger();
+      widget.closeDialogIf(context);
+      toast("插件安装失败".text(useDefStyle: false));
     }
   }
 }
