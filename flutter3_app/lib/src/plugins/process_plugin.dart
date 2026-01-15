@@ -99,7 +99,7 @@ class ProcessPlugin with PluginMixin {
             addLastMessage(value.utf8Str, isReceived: true);
         });*/
         try {
-          final resultList = await shell.run(exeScript);
+          final resultList = await shell.cmd(exeScript);
           final errText = resultList.errText2;
           final outText = resultList.outText2;
           if (!isNil(errText)) {

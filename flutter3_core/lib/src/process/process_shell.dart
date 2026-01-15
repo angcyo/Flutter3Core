@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:process_run/cmd_run.dart';
 import 'package:process_run/process_run.dart';
 import 'package:process_run/stdio.dart';
 
@@ -16,6 +17,13 @@ class ProcessShell {
   /// 核心执行器
   @output
   late Shell shell;
+
+  //MARK: config
+
+  @configProperty
+  bool verbose = true;
+  @configProperty
+  bool? runInShell;
 
   @output
   late ShellLinesController shellLinesController;
@@ -34,11 +42,14 @@ class ProcessShell {
   @output
   final StreamController<List<int>> stderr = StreamController.broadcast();
 
-  ProcessShell() {
+  ProcessShell({this.verbose = true}) {
     shellLinesController = ShellLinesController();
     shell = Shell(
       /// 不抛出异常, 异常在[stderr]中返回
       throwOnError: false,
+      verbose: verbose,
+      commandVerbose: null,
+      runInShell: runInShell,
       /*stdin: shellLinesController.binaryStream,*/
       stdin: stdin.stream,
       stdout: stdout,
@@ -46,8 +57,9 @@ class ProcessShell {
     );
   }
 
-  /// 执行shell命令
-  /// - [script] 支持多条指令
+  /// 执行shell脚本批量命令
+  /// - [script] 支持多条指令, 会在[shellSplit]方法中进行指令分割.
+  ///   - 所以包含空格字符的指令, 需要使用双引号包裹起来.
   /// - [onProcess]返回系统的[Process]对象
   @api
   Future<List<ProcessResult>> run(
@@ -58,6 +70,37 @@ class ProcessShell {
     //result.firstOrNull?.outText;
     assert(() {
       final errText = result.firstOrNull?.errText;
+      debugger(when: !isNil(errText));
+      return true;
+    }());
+    return result;
+  }
+
+  /// 运行单条命令
+  @api
+  Future<ProcessResult> cmd(
+    String executable, {
+    List<String>? arguments,
+    String? workingDirectory,
+    bool? runInShell,
+  }) async {
+    final result = await runCmd(
+      ProcessCmd(
+        executable,
+        arguments ?? [],
+        workingDirectory: workingDirectory,
+        runInShell: runInShell ?? this.runInShell,
+      ),
+      verbose: verbose,
+      commandVerbose: null,
+      stdin: stdin.stream,
+      stdout: stdout,
+      stderr: stderr,
+    );
+    //final result = await shell.run(script, onProcess: onProcess);
+    //result.firstOrNull?.outText;
+    assert(() {
+      final errText = result.errText;
       debugger(when: !isNil(errText));
       return true;
     }());
