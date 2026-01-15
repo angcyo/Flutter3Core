@@ -3582,15 +3582,18 @@ extension RenderObjectEx on RenderObject {
   }
 
   /// 尝试标记下一帧需要重绘
-  void tryMarkNeedsPaint() {
+  bool tryMarkNeedsPaint() {
     try {
       //Failed assertion: line 3182 pos 12: '!_debugDisposed': is not true.
       markNeedsPaint();
+      return true;
     } catch (e) {
       assert(() {
+        //l.e(e);
         printError(e);
         return true;
       }());
+      return false;
     }
   }
 
@@ -3613,8 +3616,10 @@ extension RenderObjectEx on RenderObject {
         }, delay.milliseconds);
       }
     } else {
-      onRefresh?.call(0);
-      tryMarkNeedsPaint();
+      postFrame(() {
+        onRefresh?.call(0);
+        tryMarkNeedsPaint();
+      });
     }
   }
 

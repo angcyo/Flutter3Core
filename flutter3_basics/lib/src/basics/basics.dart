@@ -279,7 +279,7 @@ void reportError(exception) {
 /// [printError]
 void printError(dynamic exception, [StackTrace? stack]) {
   assert(() {
-    l.w("上报错误信息->$exception");
+    l.e("[printError]上报错误信息->$exception");
     return true;
   }());
   FlutterError.dumpErrorToConsole(
