@@ -101,19 +101,15 @@ class _Bitmap {
   int w, h, size;
   Uint8List data;
 
-  _Bitmap(this.w, this.h)
-      : size = w * h,
-        data = Uint8List(w * h);
+  _Bitmap(this.w, this.h) : size = w * h, data = Uint8List(w * h);
 
   _Bitmap.fromData(this.w, this.h, this.data) : size = w * h;
 
-  _Bitmap.fromImg(
-    img.Image image, {
-    int grayThreshold = 128 /*小于这个值, 视为黑色*/,
-  })  : w = image.width,
-        h = image.height,
-        size = image.width * image.height,
-        data = Uint8List(image.width * image.height) {
+  _Bitmap.fromImg(img.Image image, {int grayThreshold = 128 /*小于这个值, 视为黑色*/})
+    : w = image.width,
+      h = image.height,
+      size = image.width * image.height,
+      data = Uint8List(image.width * image.height) {
     for (int i = 0; i < image.length; i++) {
       int pixel = image.getPixelColor(i);
       //img.Pixel pixel = image.getPixel(i);
@@ -157,12 +153,12 @@ class _Curve {
   List<num> alpha, alpha0, beta;
 
   _Curve(this.n)
-      : tag = List.filled(n, ""),
-        c = List.filled(n * 3, _DPoint()),
-        vertex = List.filled(n, _DPoint()),
-        alpha = List.filled(n, 0),
-        alpha0 = List.filled(n, 0),
-        beta = List.filled(n, 0);
+    : tag = List.filled(n, ""),
+      c = List.filled(n * 3, _DPoint()),
+      vertex = List.filled(n, _DPoint()),
+      alpha = List.filled(n, 0),
+      alpha0 = List.filled(n, 0),
+      beta = List.filled(n, 0);
 }
 
 class _Path {
@@ -201,8 +197,8 @@ class _BitmapToPathlist {
   int turdsize;
 
   _BitmapToPathlist(_Bitmap bM, this.turnpolicy, this.turdsize)
-      : bm = bM,
-        bm1 = bM.copy();
+    : bm = bM,
+      bm1 = bM.copy();
 
   _Point? findNext(_Point? point) {
     if (point == null) {
@@ -332,8 +328,8 @@ class _ProcessPath {
     return a >= n
         ? a % n
         : a >= 0
-            ? a
-            : n - 1 - (-1 - a) % n;
+        ? a
+        : n - 1 - (-1 - a) % n;
   }
 
   static int xprod(_Point p1, _Point p2) {
@@ -352,8 +348,8 @@ class _ProcessPath {
     return i > 0
         ? 1
         : i < 0
-            ? -1
-            : 0;
+        ? -1
+        : 0;
   }
 
   static double quadform(_Quad Q, _DPoint w) {
@@ -436,7 +432,13 @@ class _ProcessPath {
   }
 
   static num tangent(
-      _DPoint p0, _DPoint p1, _DPoint p2, _DPoint p3, _DPoint q0, _DPoint q1) {
+    _DPoint p0,
+    _DPoint p1,
+    _DPoint p2,
+    _DPoint p3,
+    _DPoint q0,
+    _DPoint q1,
+  ) {
     num A = cprod(p0, p1, q0, q1);
     num B = cprod(p1, p2, q0, q1);
     num C = cprod(p2, p3, q0, q1);
@@ -476,8 +478,15 @@ class _ProcessPath {
     for (int i = 0; i < path.len; i++) {
       int x = path.pt[i].x - path.x0;
       int y = path.pt[i].y - path.y0;
-      s.add(_Sum(s[i].x + x, s[i].y + y, s[i].xy + x * y, s[i].x2 + x * x,
-          s[i].y2 + y * y));
+      s.add(
+        _Sum(
+          s[i].x + x,
+          s[i].y + y,
+          s[i].xy + x * y,
+          s[i].x2 + x * x,
+          s[i].y2 + y * y,
+        ),
+      );
     }
   }
 
@@ -503,11 +512,12 @@ class _ProcessPath {
 
     for (i = n - 1; i >= 0; i--) {
       ct[0] = ct[1] = ct[2] = ct[3] = 0;
-      dir = ((3 +
-                  3 * (pt[mod(i + 1, n)].x - pt[i].x) +
-                  (pt[mod(i + 1, n)].y - pt[i].y)) /
-              2)
-          .floor();
+      dir =
+          ((3 +
+                      3 * (pt[mod(i + 1, n)].x - pt[i].x) +
+                      (pt[mod(i + 1, n)].y - pt[i].y)) /
+                  2)
+              .floor();
       ct[dir]++;
 
       constraint[0].x = 0;
@@ -967,8 +977,15 @@ class _ProcessPath {
     curve.alphacurve = true;
   }
 
-  static bool optiPenalty(_Path path, int i, int j, _Opti res, num opttolerance,
-      List<int> convc, List<num> areac) {
+  static bool optiPenalty(
+    _Path path,
+    int i,
+    int j,
+    _Opti res,
+    num opttolerance,
+    List<int> convc,
+    List<num> areac,
+  ) {
     int m = path.curve.n;
     int k, k1, k2, conv, i1;
     num area, alpha, d, d1, d2;
@@ -1114,8 +1131,9 @@ class _ProcessPath {
 
     for (i = 0; i < m; i++) {
       if (curve.tag[i] == "CURVE") {
-        convc[i] =
-            sign(dpara(vert[mod(i - 1, m)], vert[i], vert[mod(i + 1, m)]));
+        convc[i] = sign(
+          dpara(vert[mod(i - 1, m)], vert[i], vert[mod(i + 1, m)]),
+        );
       } else {
         convc[i] = 0;
       }
@@ -1128,7 +1146,8 @@ class _ProcessPath {
       i1 = mod(i + 1, m);
       if (curve.tag[i1] == "CURVE") {
         alpha = curve.alpha[i1];
-        area += 0.3 *
+        area +=
+            0.3 *
             alpha *
             (4 - alpha) *
             dpara(curve.c[i * 3 + 2], vert[i1], curve.c[i1 * 3 + 2]) /
@@ -1183,8 +1202,11 @@ class _ProcessPath {
         ocurve.c[i * 3 + 0] = opt[j].c[0];
         ocurve.c[i * 3 + 1] = opt[j].c[1];
         ocurve.c[i * 3 + 2] = curve.c[mod(j, m) * 3 + 2];
-        ocurve.vertex[i] =
-            interval(opt[j].s, curve.c[mod(j, m) * 3 + 2], vert[mod(j, m)]);
+        ocurve.vertex[i] = interval(
+          opt[j].s,
+          curve.c[mod(j, m) * 3 + 2],
+          vert[mod(j, m)],
+        );
         ocurve.alpha[i] = opt[j].alpha;
         ocurve.alpha0[i] = opt[j].alpha;
         s[i] = opt[j].s;
@@ -1291,18 +1313,21 @@ class _GetPath {
   void path(_Curve curve) {
     int n = curve.n;
     ret.moveTo(
-        curve.c[(n - 1) * 3 + 2].x * size, curve.c[(n - 1) * 3 + 2].y * size);
+      curve.c[(n - 1) * 3 + 2].x * size,
+      curve.c[(n - 1) * 3 + 2].y * size,
+    );
 
     for (int i = 0; i < n; i++) {
       switch (curve.tag[i]) {
         case 'CURVE':
           ret.cubicTo(
-              curve.c[i * 3 + 0].x * size,
-              curve.c[i * 3 + 0].y * size,
-              curve.c[i * 3 + 1].x * size,
-              curve.c[i * 3 + 1].y * size,
-              curve.c[i * 3 + 2].x * size,
-              curve.c[i * 3 + 2].y * size);
+            curve.c[i * 3 + 0].x * size,
+            curve.c[i * 3 + 0].y * size,
+            curve.c[i * 3 + 1].x * size,
+            curve.c[i * 3 + 1].y * size,
+            curve.c[i * 3 + 2].x * size,
+            curve.c[i * 3 + 2].y * size,
+          );
           break;
 
         case 'CORNER':

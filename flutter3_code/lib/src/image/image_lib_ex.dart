@@ -120,33 +120,36 @@ extension ImageEx on LImage {
     }
 
     return switch (format) {
-      LImageFormat.jpg =>
-        img.encodeJpg(image, quality: quality, chroma: chroma),
+      LImageFormat.jpg => img.encodeJpg(
+        image,
+        quality: quality,
+        chroma: chroma,
+      ),
       LImageFormat.png => img.encodePng(
-          image,
-          level: level,
-          filter: filter,
-          singleFrame: singleFrame,
-        ),
+        image,
+        level: level,
+        filter: filter,
+        singleFrame: singleFrame,
+      ),
       LImageFormat.gif => img.encodeGif(
-          image,
-          singleFrame: singleFrame,
-          repeat: repeat,
-          samplingFactor: samplingFactor,
-          dither: dither,
-          ditherSerpentine: ditherSerpentine,
-        ),
+        image,
+        singleFrame: singleFrame,
+        repeat: repeat,
+        samplingFactor: samplingFactor,
+        dither: dither,
+        ditherSerpentine: ditherSerpentine,
+      ),
       LImageFormat.bmp => img.encodeBmp(image),
       LImageFormat.tiff => img.encodeTiff(image, singleFrame: singleFrame),
       LImageFormat.tga => img.encodeTga(image),
       LImageFormat.pvr => img.encodePvr(image, singleFrame: singleFrame),
       LImageFormat.ico => img.encodeIco(image, singleFrame: singleFrame),
       _ => img.encodePng(
-          image,
-          level: level,
-          filter: filter,
-          singleFrame: singleFrame,
-        ),
+        image,
+        level: level,
+        filter: filter,
+        singleFrame: singleFrame,
+      ),
     };
   }
 
@@ -158,16 +161,15 @@ extension ImageEx on LImage {
     bool optcurve = true /*是否输出曲线*/,
     num alphamax = 1,
     num opttolerance = 0.2 /*公差*/,
-  }) =>
-      potrace(
-        this,
-        grayThreshold: grayThreshold,
-        turnpolicy: turnpolicy,
-        turdsize: turdsize,
-        optcurve: optcurve,
-        alphamax: alphamax,
-        opttolerance: opttolerance,
-      );
+  }) => potrace(
+    this,
+    grayThreshold: grayThreshold,
+    turnpolicy: turnpolicy,
+    turdsize: turdsize,
+    optcurve: optcurve,
+    alphamax: alphamax,
+    opttolerance: opttolerance,
+  );
 
   /// 将图片转成[Path]路径对象
   Path? toUiPath({
@@ -177,16 +179,15 @@ extension ImageEx on LImage {
     bool optcurve = true,
     num alphamax = 1,
     num opttolerance = 0.2,
-  }) =>
-      potracePath(
-        this,
-        grayThreshold: grayThreshold,
-        turnpolicy: turnpolicy,
-        turdsize: turdsize,
-        optcurve: optcurve,
-        alphamax: alphamax,
-        opttolerance: opttolerance,
-      );
+  }) => potracePath(
+    this,
+    grayThreshold: grayThreshold,
+    turnpolicy: turnpolicy,
+    turdsize: turdsize,
+    optcurve: optcurve,
+    alphamax: alphamax,
+    opttolerance: opttolerance,
+  );
 }
 
 extension ImageColorEx on LImageColor {
