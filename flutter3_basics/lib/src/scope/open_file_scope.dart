@@ -28,17 +28,14 @@ class OpenFileScopeData {
 class OpenFileScope extends InheritedWidget {
   /// 获取需要打开的数据
   @api
-  static UpdateValueNotifier<OpenFileScopeData?>? get(BuildContext? context, {
+  static UpdateValueNotifier<OpenFileScopeData?>? get(
+    BuildContext? context, {
     bool depend = false,
   }) {
     if (depend) {
-      return context
-          ?.dependOnInheritedWidgetOfExactType<OpenFileScope>()
-          ?.data;
+      return context?.dependOnInheritedWidgetOfExactType<OpenFileScope>()?.data;
     } else {
-      return context
-          ?.getInheritedWidgetOfExactType<OpenFileScope>()
-          ?.data;
+      return context?.getInheritedWidgetOfExactType<OpenFileScope>()?.data;
     }
   }
 
@@ -58,7 +55,8 @@ class OpenFileScope extends InheritedWidget {
 extension OpenFileScopeEx on Widget {
   /// 提供一个需要打开的数据[OpenFileScopeData]
   /// - 监听这个值, 并且处理对应的数据
-  Widget provideOpenFileData(UpdateValueNotifier<OpenFileScopeData?>? data, {
+  Widget provideOpenFileData(
+    UpdateValueNotifier<OpenFileScopeData?>? data, {
     Key? key,
   }) => OpenFileScope(data: data, key: key, child: this);
 }
@@ -66,6 +64,7 @@ extension OpenFileScopeEx on Widget {
 //MARK: - open mixin
 
 /// 混入操作, 自动处理[OpenFileScope.data]中的数据
+/// - 需要重写[onHandleOpenFileDataMixin]实现对应逻辑即可
 mixin OpenFileScopeStateMixin<T extends StatefulWidget> on State<T> {
   /// 需要监听的数据
   UpdateValueNotifier<OpenFileScopeData?>? openFileDataMixin;

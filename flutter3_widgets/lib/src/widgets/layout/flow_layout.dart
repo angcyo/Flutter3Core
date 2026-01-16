@@ -470,8 +470,8 @@ class FlowLayoutRender extends RenderBox
   void performLayout() {
     final constraints = this.constraints;
     debugger(when: debugLabel != null);
-    measureChild();
-    layoutChild(/*debugLabel: "test"*/);
+    measureChild(/*debugLabel: debugLabel*/);
+    layoutChild(/*debugLabel: debugLabel*/);
 
     final childSize = Size(_childUsedWidth, _childUsedHeight);
     size =
@@ -479,6 +479,7 @@ class FlowLayoutRender extends RenderBox
         constraints.constrain(
           childSize + UiOffset(paddingHorizontal, paddingVertical),
         );
+    debugger(when: debugLabel != null);
     /*assert(() {
       l.i(
         "size:$size _childUsedWidth:$_childUsedWidth _childUsedHeight:$_childUsedHeight",
@@ -498,7 +499,9 @@ class FlowLayoutRender extends RenderBox
         selfConstraints?.maxWidth != double.infinity) {
       maxWidth = selfConstraints!.maxWidth;
     } else if (constraints.maxWidth != double.infinity) {
-      if (selfConstraints == null ||
+      if (selfConstraints?.heightType == .wrapContent) {
+        maxWidth = hasSize ? size.width : double.infinity;
+      } else if (selfConstraints == null ||
           selfConstraints?.widthType == ConstraintsType.matchParent ||
           _childUsedWidth <= 0) {
         maxWidth = constraints.maxWidth;
@@ -514,12 +517,12 @@ class FlowLayoutRender extends RenderBox
         padding,
       );
       maxWidth = size?.width ?? double.infinity;
-      if (maxWidth == double.infinity) {
-        assert(() {
-          l.w('[${classHash()}]无法确定的maxWidth,[weight]属性失效,只能左对齐,并且无法根据宽度换行');
-          return true;
-        }());
-      }
+    }
+    if (maxWidth == double.infinity) {
+      assert(() {
+        l.w('[${classHash()}]无法确定的maxWidth,[weight]属性失效,只能左对齐,并且无法根据宽度换行');
+        return true;
+      }());
     }
     return maxWidth;
   }
@@ -535,8 +538,10 @@ class FlowLayoutRender extends RenderBox
         selfConstraints?.maxHeight != double.infinity) {
       maxHeight = selfConstraints!.maxHeight;
     } else if (constraints.maxHeight != double.infinity) {
-      if (selfConstraints == null ||
-          selfConstraints?.heightType == ConstraintsType.matchParent ||
+      if (selfConstraints?.heightType == .wrapContent) {
+        maxHeight = hasSize ? size.height : double.infinity;
+      } else if (selfConstraints == null ||
+          selfConstraints?.heightType == .matchParent ||
           _childUsedHeight <= 0) {
         maxHeight = constraints.maxHeight;
       } else {
@@ -551,12 +556,12 @@ class FlowLayoutRender extends RenderBox
         padding,
       );
       maxHeight = size?.height ?? double.infinity;
-      if (maxHeight == double.infinity) {
-        assert(() {
-          l.w('无法确定的maxHeight, 只能顶部对齐');
-          return true;
-        }());
-      }
+    }
+    if (maxHeight == double.infinity) {
+      assert(() {
+        l.w('无法确定的maxHeight, 只能顶部对齐');
+        return true;
+      }());
     }
     return maxHeight;
   }
@@ -704,7 +709,7 @@ class FlowLayoutRender extends RenderBox
         }
       }
       //--
-      //debugger();
+      debugger(when: debugLabel != null);
       ChildLayoutHelper.layoutChild(child, childConstraints);
       final childSize = child.size;
       /*if (maxWidth != double.infinity && childSize.width > refMaxWidth) {
@@ -869,6 +874,7 @@ class FlowLayoutRender extends RenderBox
         final childParentData = child.parentData! as FlowLayoutParentData;
 
         //行内对齐偏移
+        debugger(when: debugLabel != null);
         double lineTop = top;
         if (lineMainAxisAlignment == MainAxisAlignment.center) {
           lineTop = top + (lineMaxHeight - child.size.height) / 2;
