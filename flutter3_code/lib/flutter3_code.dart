@@ -11,7 +11,7 @@ import 'package:image/image.dart' as img;
 export 'package:barcode/barcode.dart';
 // export 'package:image/image.dart';
 
-part 'src/image_lib_ex.dart';
+part 'src/image/image_lib_ex.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
