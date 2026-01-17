@@ -259,6 +259,31 @@ extension PhotoObjectEx on Object {
       PhotoViewHeroAttributes(tag: this);
 }
 
+extension PhotoImageEx on UiImage {
+  /// [PhotoView]
+  Widget toPhotoView({
+    PhotoViewController? photoStateController,
+    PhotoViewScaleStateController? scaleStateController,
+    //--
+    PhotoViewHeroAttributes? heroAttributes,
+    LoadingBuilder? loadingBuilder,
+    //--
+    BoxDecoration? backgroundDecoration,
+    bool enableRotation = false,
+    bool? enablePanAlways /*默认: false*/,
+    //--
+    double scale = 1,
+  }) => toImageProvider(scale).toPhotoView(
+    photoStateController: photoStateController,
+    scaleStateController: scaleStateController,
+    heroAttributes: heroAttributes,
+    loadingBuilder: loadingBuilder,
+    backgroundDecoration: backgroundDecoration,
+    enableRotation: enableRotation,
+    enablePanAlways: enablePanAlways,
+  );
+}
+
 extension PhotoViewEx on BuildContext {
   /// 显示图片预览界面
   /// [imageProvider] 单张图片, 传递这一个值就行
