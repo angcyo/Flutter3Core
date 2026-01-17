@@ -193,6 +193,9 @@ class LabelSwitchTile extends StatefulWidget {
   /// tile的填充
   final EdgeInsets? tilePadding;
 
+  /// 涟漪的圆角大小
+  final BorderRadius? inkBorderRadius;
+
   const LabelSwitchTile({
     super.key,
     //--
@@ -213,6 +216,7 @@ class LabelSwitchTile extends StatefulWidget {
     this.trackOutlineColor,
     //--
     this.tilePadding = kTilePadding,
+    this.inkBorderRadius,
   });
 
   @override
@@ -265,10 +269,14 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
         ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
         .paddingInsets(widget.tilePadding)
-        .ink(() {
-          //debugger();
-          _changeValue(!currentValueMixin!);
-        }, splashColor: Colors.transparent)
+        .inkWell(
+          () {
+            //debugger();
+            _changeValue(!currentValueMixin!);
+          },
+          splashColor: Colors.transparent,
+          borderRadius: widget.inkBorderRadius,
+        )
         .material();
   }
 

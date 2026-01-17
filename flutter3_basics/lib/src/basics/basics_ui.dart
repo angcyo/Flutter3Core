@@ -2766,11 +2766,13 @@ extension WidgetEx on Widget {
       radius = Material.defaultSplashRadius;
     }
     final bRadius = borderRadius ?? BorderRadius.all(Radius.circular(radius));
-    decoration ??= BoxDecoration(
-      /*shape: shape,*/
-      color: backgroundColor,
-      borderRadius: bRadius,
-    );
+    decoration ??= backgroundColor == null
+        ? null
+        : BoxDecoration(
+            /*shape: shape,*/
+            color: backgroundColor,
+            borderRadius: bRadius,
+          );
     return Ink(
       padding: padding,
       decoration: decoration,
