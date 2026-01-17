@@ -10,8 +10,8 @@ extension FileSizeEx on num {
   /// filesize(664365320);              // "633.59 MB"
   /// filesize(4324324232343);          // "3.93 TB"
   /// [fileSize]
-  String toSizeStr([int round = 2, String space = ""]) {
-    return fileSize(ceil(), round, space);
+  String toSizeStr({int round = 2, String space = "", int divider = 1024}) {
+    return fileSize(ceil(), round: round, space: space, divider: divider);
   }
 }
 
@@ -22,8 +22,12 @@ extension FileSizeEx on num {
 /// the optional parameter [round] specifies the number
 /// of digits after comma/point (default is 2)
 ///
-String fileSize(dynamic size, [int round = 2, String space = ""]) {
-  final divider = 1024;
+String fileSize(
+  dynamic size, {
+  int round = 2,
+  String space = "",
+  int divider = 1024,
+}) {
   int s;
   try {
     s = int.parse(size.toString());

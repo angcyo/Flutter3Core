@@ -2321,11 +2321,11 @@ extension IntEx on int {
   }
 
   /// [FileSizeEx.toSizeStr]
-  String toSizeStr({int round = 2, String space = ""}) {
+  String toSizeStr({int round = 2, String space = "", int divider = 1024}) {
     if (this < 0) {
       return "$this";
     }
-    return fileSize(this, round, space);
+    return fileSize(this, round: round, space: space, divider: divider);
   }
 
   /// 从整型数中取第[bit]位的数
