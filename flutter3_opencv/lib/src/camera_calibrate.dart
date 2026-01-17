@@ -90,7 +90,7 @@ class CameraCalibrateHelper {
       final revImage = await cv
           .drawChessboardCorners(img.rgb, patternSize, corners2, true)
           .toUiImage();
-      cornersImageMap[tag] = revImage;
+      cornersImageMap[tag] = revImage!;
     } else {
       cornersMap.remove(tag);
       originCornersMap.remove(tag);
@@ -189,7 +189,7 @@ class CameraCalibrateHelper {
 
   /// 测试区畸变
   @api
-  Future<UiImage> undistort(UiImage image) async {
+  Future<UiImage?> undistort(UiImage image) async {
     testImage = image;
     final img = await image.toMatAsync();
     //undistort 去畸变

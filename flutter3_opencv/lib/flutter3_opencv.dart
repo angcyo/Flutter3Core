@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -8,10 +7,12 @@ import 'package:opencv_dart/opencv.dart' as cv;
 
 export 'package:opencv_dart/opencv.dart';
 
-part 'src/widgets/histogram_widget.dart';
 part 'src/camera_calibrate.dart';
 part 'src/image_frame_info.dart';
 part 'src/opencv.dart';
+part 'src/opencv_image.dart';
+part 'src/opencv_mat.dart';
+part 'src/widgets/histogram_widget.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

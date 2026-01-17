@@ -17,6 +17,16 @@ class ImageFrameInfo {
 
   //MARK: - output
 
+  /// 处理后输出的图片
+  UiImage? _resultImage;
+
+  /// 处理后的图片
+  UiImage? get outputImage => _resultImage ?? uiImage;
+
+  set outputImage(UiImage? value) {
+    _resultImage = value;
+  }
+
   /// 图片直方图数据 `histogram`
   List<List<double>>? histData;
 
