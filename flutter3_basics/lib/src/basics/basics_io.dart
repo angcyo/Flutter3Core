@@ -91,6 +91,7 @@ const kIsolateComputeBytesSize = 1024 * 1024 * 1;
 /// ```
 ///
 /// [Completer]
+/// - [compute] 内部也是[Isolate.run]回调函数就是多了一个入参
 Future<R> io<M, R>(
   M message,
   @pragma('vm:entry-point') ComputeCallback<M, R> callback, {
@@ -116,16 +117,18 @@ Future<R> io<M, R>(
 /// Isolate._spawnFunction (dart:isolate-patch/isolate_patch.dart:398:25)
 /// ```
 ///
+/// - [run]
+/// - [isolateRun]
+///
 /// - [Future.sync]
+/// - [Isolate.run]
 Future<R> run<R>(
   @pragma('vm:entry-point') ResultCallback<R> callback, {
   String? debugName,
-}) {
-  return Isolate.run(
-    () => callback(),
-    debugName: debugName ?? "run-${nowTimeString()}",
-  );
-}
+}) => Isolate.run(
+  () => callback(),
+  debugName: debugName ?? "run-${nowTimeString()}",
+);
 
 /// 内存隔离, 不共享. 只能传递基础数据类型, 或者可以被`send`的对象
 /// [SendPort.send]
@@ -139,8 +142,12 @@ Future<R> run<R>(
 /// documentation for more information)
 /// ```
 ///
+/// - [run]
+/// - [isolateRun]
+///
 /// - [Isolate.run]
 /// - [Isolate.spawn]
+@alias
 Future<R> isolateRun<R>(
   @pragma('vm:entry-point') ResultCallback<R> callback, {
   String? debugName,

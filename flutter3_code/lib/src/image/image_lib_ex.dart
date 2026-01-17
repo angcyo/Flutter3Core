@@ -89,6 +89,7 @@ extension ImageEx on LImage {
 
   /// 按照指定格式编码图片
   /// [resize] 调整大小
+  /// @return 输出对应格式的图片数据, 用于保存
   Uint8List encode(
     LImageFormat? format, {
     //--
