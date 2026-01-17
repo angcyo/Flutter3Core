@@ -35,6 +35,14 @@ class LabelNumberSliderTile extends StatefulWidget {
   /// 是否显示滑块
   final bool showSlider;
 
+  /// 回调, 改变后的回调. 拖动过程中不回调
+  final NumCallback? onValueChanged;
+
+  /// 回调, 值更新就触发的回调. (拖动过程中也触发)
+  final NumCallback? onValueUpdated;
+
+  //MARK: -
+
   /// 活跃/不活跃的轨道渐变颜色
   final List<Color>? activeTrackGradientColors;
   final List<Color>? inactiveTrackGradientColors;
@@ -74,11 +82,8 @@ class LabelNumberSliderTile extends StatefulWidget {
   /// 光晕的半径,默认24
   final double? overlayRadius;
 
-  /// 回调, 改变后的回调. 拖动过程中不回调
-  final NumCallback? onValueChanged;
-
-  /// 回调, 值更新就触发的回调. (拖动过程中也触发)
-  final NumCallback? onValueUpdated;
+  /// 首次是否要通知
+  final bool? firstNotify;
 
   const LabelNumberSliderTile({
     super.key,
@@ -91,13 +96,13 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.minValue,
     this.maxValue,
     this.maxDigits = 2,
+    this.divisions,
     this.onValueUpdated,
     this.onValueChanged,
     this.showNumber = true,
     this.showSlider = true,
     NumType? numType,
     //--
-    this.divisions,
     this.trackHeight,
     this.additionalActiveTrackHeight,
     this.useCenteredTrackShape,
@@ -111,6 +116,8 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.thumbShape,
     this.thumbRadius,
     this.overlayRadius,
+    //--
+    this.firstNotify,
   }) : _numType =
            numType ??
            (value != null
@@ -130,7 +137,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
 
   @override
   void initState() {
-    _updateValue();
+    _updateValue(initial: true);
     super.initState();
   }
 
@@ -140,9 +147,13 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     super.didUpdateWidget(oldWidget);
   }
 
-  void _updateValue() {
+  void _updateValue({bool initial = false}) {
     _initialValue = widget.value;
     _currentValue = _initialValue;
+    if (initial && widget.firstNotify == true && _currentValue != null) {
+      //debugger();
+      notifyValueUpdated(_currentValue!);
+    }
   }
 
   @override
@@ -172,8 +183,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                   onChanged: (value) {
                     if (value is num) {
                       _currentValue = value;
-                      widget.onValueUpdated?.call(value);
-                      widget.onValueChanged?.call(value);
+                      notifyValueUpdated(value);
                       updateState();
                     }
                   },
@@ -193,8 +203,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                     );
                     if (value != null) {
                       _currentValue = value;
-                      widget.onValueUpdated?.call(value);
-                      widget.onValueChanged?.call(value);
+                      notifyValueUpdated(value);
                       updateState();
                     }
                   },
@@ -258,6 +267,12 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     );
 
     return [top, if (widget.showSlider) bottom].column()!.material();
+  }
+
+  /// 通知
+  void notifyValueUpdated(num value) {
+    widget.onValueUpdated?.call(value);
+    widget.onValueChanged?.call(value);
   }
 }
 

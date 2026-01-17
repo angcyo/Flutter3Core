@@ -42,6 +42,11 @@ mixin DialogMixin implements TranslationTypeImpl {
         : TranslationType.translationFade;
   }
 
+  @override
+  Alignment? get popupPreferredAlignment => .bottomCenter;
+
+  //MARK: -
+
   /// 弹出对话框时, 返回对话框的结果
   dynamic get popDialogResult => null;
 

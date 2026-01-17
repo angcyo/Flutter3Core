@@ -16,6 +16,7 @@ import '../../flutter3_widgets.dart';
 part 'arrow_layout.dart';
 part 'arrow_popup_overlay.dart';
 part 'arrow_popup_route.dart';
+part 'popup_container_dialog.dart';
 
 /// 弹窗路由扩展
 extension PopupEx on BuildContext {
@@ -35,6 +36,7 @@ extension PopupEx on BuildContext {
     double bodyMargin = kH,
     double? edgeMargin /*距离容器的边界距离*/,
     //--
+    Alignment? popupPreferredAlignment /*优先对齐方式*/,
     Alignment? alignment /*对齐方式*/,
     bool offsetAlignment = false /*根据[alignment]是否偏移自身的宽高*/,
     bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
@@ -57,6 +59,7 @@ extension PopupEx on BuildContext {
       contentPadding ??= const EdgeInsets.all(kS);
       contentMargin ??= EdgeInsets.zero;
     }
+    popupPreferredAlignment ??= body.getWidgetPopupPreferredAlignment();
     final navigator = Navigator.of(this, rootNavigator: rootNavigator);
     final parentSize = navigator.context.findRenderObject()?.renderSize;
     final parentWidth = parentSize?.width ?? $screenWidth;
@@ -82,6 +85,7 @@ extension PopupEx on BuildContext {
           childOffsetCallback ??
           (anchorRect, childRect) {
             Alignment bodyAlign;
+            //debugger();
             if (alignment != null) {
               bodyAlign = alignment;
             } else {
@@ -92,18 +96,18 @@ extension PopupEx on BuildContext {
               if (anchorCx < screenCx) {
                 if (anchorCy < screenCy) {
                   //锚点在屏幕左上
-                  bodyAlign = Alignment.topRight;
+                  bodyAlign = popupPreferredAlignment ?? Alignment.topRight;
                 } else {
                   //锚点在屏幕左下
-                  bodyAlign = Alignment.bottomRight;
+                  bodyAlign = popupPreferredAlignment ?? Alignment.bottomRight;
                 }
               } else {
                 if (anchorCy < screenCy) {
                   //锚点在屏幕右上
-                  bodyAlign = Alignment.topLeft;
+                  bodyAlign = popupPreferredAlignment ?? Alignment.topLeft;
                 } else {
                   //锚点在屏幕右下
-                  bodyAlign = Alignment.bottomLeft;
+                  bodyAlign = popupPreferredAlignment ?? Alignment.bottomLeft;
                 }
               }
             }

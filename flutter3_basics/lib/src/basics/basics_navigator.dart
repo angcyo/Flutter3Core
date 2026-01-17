@@ -208,6 +208,9 @@ class TranslationTypeImpl {
   /// [TranslationType]
   /// [DialogPageRoute]
   TranslationType get translationType => TranslationType.material;
+
+  /// [PopupEx.showPopupDialog] 弹窗优先对齐方式
+  Alignment? get popupPreferredAlignment => .bottomCenter;
 }
 
 /// [DialogMixin]
@@ -233,6 +236,9 @@ mixin TranslationTypeMixin implements TranslationTypeImpl {
     }
     return TranslationType.translationFade;
   }
+
+  @override
+  Alignment? get popupPreferredAlignment => .bottomCenter;
 }
 
 /// [TranslationTypeImpl]
@@ -342,6 +348,34 @@ extension RouteWidgetEx on Widget {
         final child = (this as dynamic).child;
         if (child is Widget) {
           return child.getWidgetDialogUseRootNavigator(depth: depth - 1);
+        }
+      } catch (e, s) {
+        /*assert(() {
+          printError(e, s);
+          return true;
+        }());*/
+      }
+    }
+    return null;
+  }
+
+  /// 获取[Widget]的指定的过渡动画类型
+  Alignment? getWidgetPopupPreferredAlignment({int depth = 3}) {
+    if (depth <= 0) {
+      return null;
+    }
+    if (this is TranslationTypeImpl) {
+      return (this as TranslationTypeImpl).popupPreferredAlignment;
+    } else if (this is SingleChildRenderObjectWidget) {
+      final child = (this as SingleChildRenderObjectWidget).child;
+      if (child != null) {
+        return child.getWidgetPopupPreferredAlignment(depth: depth - 1);
+      }
+    } else {
+      try {
+        final child = (this as dynamic).child;
+        if (child is Widget) {
+          return child.getWidgetPopupPreferredAlignment(depth: depth - 1);
         }
       } catch (e, s) {
         /*assert(() {

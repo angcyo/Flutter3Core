@@ -66,6 +66,7 @@ part 'src/file/file_type.dart';
 part 'src/isar/hive/hive_ex.dart';
 part 'src/isar/hive/hive_string_value.dart';
 part 'src/isar/isar_ex.dart';
+part 'src/popup/slider_popup_dialog.dart';
 part 'src/tiles/core_dialog_title.dart';
 part 'src/tiles/label_number_slider_tile.dart';
 part 'src/tiles/label_number_tile.dart';
