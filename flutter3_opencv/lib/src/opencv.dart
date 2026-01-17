@@ -340,6 +340,8 @@ cv.Mat? cvStitchMat(List<cv.InputArray> images) {
   return status == cv.StitcherStatus.OK ? dst : null;
 }
 
+//MARK: - Mat扩展
+
 /// Mat扩展
 extension MatEx on cv.Mat {
   /// 获取图片的宽高
@@ -445,16 +447,75 @@ extension MatEx on cv.Mat {
   /// [25.115459457396405, -0.37128071248135014, -6985.416105677234],[10.56256529565071, 15.73150297766723, -8164.720811665292],[0.019392064126516825, -0.0004494108804756873, 1.0]
   /// ```
   String matrix3String() => flattenString();
+
+  //MARK: - list
+
+  /// - [toList]
+  List<List<double>> toDoubleList() {
+    final ret = <List<double>>[];
+    forEachRow((r, v) => ret.add(v.map((e) => e.toDouble()).toList()));
+    return ret;
+  }
+
+  /// - [toList]
+  List<List<int>> toIntList() {
+    final ret = <List<int>>[];
+    forEachRow((r, v) => ret.add(v.map((e) => e.round()).toList()));
+    return ret;
+  }
 }
+
+//MARK: - UiImage
 
 extension MatUiImageEx on UiImage {
   /// [UiImage]图片转成[cv.Mat]
+  ///
+  /// - [cv.IMREAD_GRAYSCALE] 读取灰度图片[cv.MatType.CV_8UC1]
+  /// - [cv.IMREAD_COLOR] 读取彩色图片[cv.MatType.CV_8UC3]
+  /// - [cv.IMREAD_UNCHANGED] 读取所有通道[cv.MatType.CV_8UC4]
+  ///
+  /// 可以使用 [cv.cvtColor] 进行颜色转换
   Future<cv.Mat> toMatAsync({
     UiImageByteFormat format = UiImageByteFormat.png,
-    int flags = cv.IMREAD_COLOR,
+    int flags = cv.IMREAD_UNCHANGED,
   }) async {
     final bytes = await toBytes(format);
     return cvImgDecodeMatAsync(bytes!, flags: flags);
+  }
+
+  /// 获取图片的直方图信息`histogram`
+  /// - Channels: 你要统计哪个通道？（如灰度图为 [0]，彩色图 BGR 分别为 [0, 1, 2]）。
+  /// - Bins (histSize): 你要把 0-255 分成多少份？（默认通常是 256，即每一级亮度一个桶）。
+  /// - Ranges: 像素值的范围，通常是 [0, 256]。
+  Future<List<List<double>>> calcHist({
+    UiImageByteFormat format = UiImageByteFormat.png,
+  }) async {
+    final mat = await toMatAsync(format: format);
+    final rgba = cv.split(mat); //BGRA
+    //使用A通道, 创建掩码
+    //final mask = cv.inRange(rgba[3], cv.Scalar(255), cv.Scalar(255));
+    //将所有A通道中>127的值改成255, 其余改成0
+    final (threshold, mask) = cv.threshold(
+      rgba[3],
+      127 /*阈值*/,
+      255 /*新值*/,
+      cv.THRESH_BINARY /*cv.THRESH_BINARY_INV*/,
+    );
+
+    /*// 创建掩码：只有 Alpha >= 255 (不透明) 的地方才是 255 (白色)
+    final (threshold, mask) = cv.threshold(mat, 128, 255, cv.THRESH_BINARY);
+    debugger();*/
+
+    //enumerate;
+    //final mat = await toMatAsync(flags: cv.IMREAD_GRAYSCALE, format: format);
+    final res = cv.calcHist(
+      cv.VecMat.fromList([mat.gray]),
+      cv.VecI32.fromList([0]), // Channels
+      mask /*cv.Mat.empty()*/,
+      cv.VecI32.fromList([256]), // Bins
+      cv.VecF32.fromList([0, 256]), // Ranges
+    );
+    return res.toDoubleList();
   }
 }
 

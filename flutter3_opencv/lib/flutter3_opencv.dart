@@ -1,12 +1,16 @@
 import 'dart:developer';
+import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:opencv_dart/opencv.dart' as cv;
 
 export 'package:opencv_dart/opencv.dart';
 
+part 'src/widgets/histogram_widget.dart';
 part 'src/camera_calibrate.dart';
+part 'src/image_frame_info.dart';
 part 'src/opencv.dart';
 
 ///

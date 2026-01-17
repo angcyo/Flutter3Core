@@ -201,17 +201,24 @@ extension RenderBoxEx on RenderBox {
 
   /// 调试模式下, 绘制盒子的边界
   /// [debugDrawBoxBounds]
-  void debugPaintBoxBounds(PaintingContext context, Offset offset) =>
-      debugDrawBoxBounds(context, offset);
+  void debugPaintBoxBounds(
+    PaintingContext context,
+    Offset offset, {
+    double? strokeWidth,
+  }) => debugDrawBoxBounds(context, offset, strokeWidth: strokeWidth);
 
   /// 绘制盒子的边界
-  void debugDrawBoxBounds(PaintingContext context, Offset offset) {
+  void debugDrawBoxBounds(
+    PaintingContext context,
+    Offset offset, {
+    double? strokeWidth,
+  }) {
     assert(() {
       context.canvas.drawRect(
         offset & size,
         Paint()
           ..color = Colors.purpleAccent
-          ..strokeWidth = 4
+          ..strokeWidth = strokeWidth ?? 4
           ..style = ui.PaintingStyle.stroke,
       );
       return true;
