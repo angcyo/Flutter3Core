@@ -502,6 +502,7 @@ extension WidgetListEx on WidgetNullList {
     bool shrinkWrap = false,
     double? gap,
     Widget? gapWidget,
+    EdgeInsetsGeometry? padding,
   }) {
     WidgetList children = filterAndFillGap(gap: gap, gapWidget: gapWidget);
     if (isNullOrEmpty(children)) {
@@ -516,6 +517,7 @@ extension WidgetListEx on WidgetNullList {
       primary: primary,
       reverse: reverse,
       shrinkWrap: shrinkWrap,
+      padding: padding,
     );
   }
 

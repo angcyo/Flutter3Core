@@ -2952,6 +2952,8 @@ extension ListEx<T> on List<T> {
     bool? primary,
     bool reverse = false,
     bool shrinkWrap = false,
+    //--
+    EdgeInsetsGeometry? padding,
   }) {
     return ListView.builder(
       key: key,
@@ -2962,6 +2964,7 @@ extension ListEx<T> on List<T> {
       physics: physics,
       shrinkWrap: shrinkWrap,
       reverse: reverse,
+      padding: padding,
       itemBuilder: (context, index) {
         return itemBuilder(context, this[index], index);
       },

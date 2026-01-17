@@ -13,4 +13,5 @@ export 'package:barcode/barcode.dart';
 // export 'package:image/image.dart';
 
 part 'src/code/code_ex.dart';
+part 'src/image/image_decoder_mix.dart';
 part 'src/image/image_lib_ex.dart';
