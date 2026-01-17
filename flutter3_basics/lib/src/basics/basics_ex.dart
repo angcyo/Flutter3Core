@@ -2661,7 +2661,10 @@ extension IterableEx<E> on Iterable<E> {
 
   /// [List]
   /// [Iterable]
-  E? getOrNull(int index, [E? nul]) {
+  E? getOrNull(int? index, [E? nul]) {
+    if (index == null) {
+      return nul;
+    }
     if (index < 0 || index >= length) {
       return nul;
     }
@@ -2942,19 +2945,23 @@ extension ListEx<T> on List<T> {
   /// [StatelessWidget]->[ScrollView]->[BoxScrollView]->[ListView]
   ListView toListView(
     Widget Function(BuildContext context, T element, int index) itemBuilder, {
+    Key? key,
     Axis scrollDirection = Axis.vertical,
+    ScrollPhysics? physics,
     ScrollController? controller,
     bool? primary,
-    ScrollPhysics? physics,
+    bool reverse = false,
     bool shrinkWrap = false,
   }) {
     return ListView.builder(
+      key: key,
       itemCount: length,
       scrollDirection: scrollDirection,
       controller: controller,
       primary: primary,
       physics: physics,
       shrinkWrap: shrinkWrap,
+      reverse: reverse,
       itemBuilder: (context, index) {
         return itemBuilder(context, this[index], index);
       },

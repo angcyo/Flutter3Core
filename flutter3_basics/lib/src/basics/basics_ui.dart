@@ -430,9 +430,9 @@ extension WidgetListEx on WidgetNullList {
     Key? key,
     //--
     Axis axis = Axis.vertical,
+    EdgeInsetsGeometry? padding,
     ScrollPhysics? physics = kScrollPhysics,
     ScrollController? controller,
-    EdgeInsetsGeometry? padding,
     bool? primary,
     bool reverse = false,
     //--
@@ -464,9 +464,9 @@ extension WidgetListEx on WidgetNullList {
     Key? key,
     //--
     Axis axis = Axis.horizontal,
+    EdgeInsetsGeometry? padding,
     ScrollPhysics? physics = kScrollPhysics,
     ScrollController? controller,
-    EdgeInsetsGeometry? padding,
     bool? primary,
     bool reverse = false,
     //--
@@ -490,6 +490,34 @@ extension WidgetListEx on WidgetNullList {
     gap: gap,
     gapWidget: gapWidget,
   );
+
+  /// [ListView]
+  Widget? listView({
+    Key? key,
+    Axis scrollDirection = Axis.vertical,
+    ScrollPhysics? physics = kScrollPhysics,
+    ScrollController? controller,
+    bool? primary,
+    bool reverse = false,
+    bool shrinkWrap = false,
+    double? gap,
+    Widget? gapWidget,
+  }) {
+    WidgetList children = filterAndFillGap(gap: gap, gapWidget: gapWidget);
+    if (isNullOrEmpty(children)) {
+      return null;
+    }
+    return children.toListView(
+      (ctx, element, index) => element,
+      key: key,
+      scrollDirection: scrollDirection,
+      physics: physics,
+      controller: controller,
+      primary: primary,
+      reverse: reverse,
+      shrinkWrap: shrinkWrap,
+    );
+  }
 
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
