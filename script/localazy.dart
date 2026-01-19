@@ -97,7 +97,7 @@ void main(List<String> arguments) async {
     ]);
   }
 
-  if (doWebhook) {
+  if (doUpload && doWebhook) {
     final webhook = config["feishu_webhook"]; //feishu_webhook_test
     await sendFeishuWebhookInteractive(
       webhook,
