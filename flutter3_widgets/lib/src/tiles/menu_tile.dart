@@ -7,7 +7,7 @@ part of '../../../flutter3_widgets.dart';
 /// 菜单相关tile
 
 /// 左[label]...右[value]
-///
+/// - 悬停时, 显示[value]菜单布局
 /// 使用[HoverAnchorLayout]实现的点击浮窗弹窗tile
 ///
 class LabelMenuTile extends StatefulWidget with LabelMixin {
@@ -63,6 +63,9 @@ class LabelMenuTile extends StatefulWidget with LabelMixin {
   /// tile的填充
   final EdgeInsets? tilePadding;
 
+  /// 点击回调
+  final GestureTapCallback? onTap;
+
   const LabelMenuTile({
     super.key,
     //--label
@@ -83,6 +86,7 @@ class LabelMenuTile extends StatefulWidget with LabelMixin {
     //--
     this.tilePadding = kTilePadding,
     this.menuPadding = kItemPadding,
+    this.onTap,
   });
 
   @override
@@ -120,7 +124,7 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
       );
     }
 
-    //
+    //需要悬浮显示的值(菜单)
     Widget? value = widget.valueWidget ?? _buildValueWidget(context, initValue);
     //debugger();
     if (value != null) {
@@ -160,7 +164,8 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
 
     return [label, value?.expanded()]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
-        .paddingInsets(widget.tilePadding);
+        .paddingInsets(widget.tilePadding)
+        .inkWell(widget.onTap, enable: widget.onTap != null);
   }
 
   /// 构建值小部件

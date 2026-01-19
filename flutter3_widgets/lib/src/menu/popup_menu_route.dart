@@ -1,12 +1,12 @@
-part of './dialog.dart';
+part of 'menu_mix.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/01/11
 ///
-/// 弹窗菜单路由
+/// 弹窗菜单路由, 支持[Widget]结构
 /// 参考[_PopupMenuRoute]
-/// [showMenu]
+/// [showMenu] - 只能支持[PopupMenuEntry]items
 class PopupMenuRoute<T> extends PopupRoute<T> {
   final Widget menu;
   final RelativeRect position;
@@ -112,7 +112,8 @@ class PopupMenuRoute<T> extends PopupRoute<T> {
       return _animation ??= CurvedAnimation(
         parent: super.createAnimation(),
         curve: popUpAnimationStyle?.curve ?? Curves.linear,
-        reverseCurve: popUpAnimationStyle?.reverseCurve ??
+        reverseCurve:
+            popUpAnimationStyle?.reverseCurve ??
             const Interval(0.0, _kMenuCloseIntervalEnd),
       );
     }
@@ -180,9 +181,9 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     // The menu can be at most the size of the overlay minus 8.0 pixels in each
     // direction.
-    return BoxConstraints.loose(constraints.biggest).deflate(
-      const EdgeInsets.all(_kMenuScreenPadding) + padding,
-    );
+    return BoxConstraints.loose(
+      constraints.biggest,
+    ).deflate(const EdgeInsets.all(_kMenuScreenPadding) + padding);
   }
 
   @override
@@ -211,7 +212,9 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     final Offset originCenter = position.toRect(Offset.zero & size).center;
     final Iterable<Rect> subScreens =
         DisplayFeatureSubScreen.subScreensInBounds(
-            Offset.zero & size, avoidBounds);
+          Offset.zero & size,
+          avoidBounds,
+        );
     final Rect subScreen = _closestScreen(subScreens, originCenter);
     return _fitInsideScreen(subScreen, childSize, wantedPosition);
   }
@@ -242,7 +245,8 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
       y = _kMenuScreenPadding + padding.top;
     } else if (y + childSize.height >
         screen.bottom - _kMenuScreenPadding - padding.bottom) {
-      y = screen.bottom -
+      y =
+          screen.bottom -
           childSize.height -
           _kMenuScreenPadding -
           padding.bottom;

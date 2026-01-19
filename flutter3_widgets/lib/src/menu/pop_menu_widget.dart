@@ -1,4 +1,4 @@
-part of '../dialog.dart';
+part of 'menu_mix.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

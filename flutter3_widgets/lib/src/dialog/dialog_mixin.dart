@@ -807,6 +807,7 @@ extension DialogExtension on BuildContext {
   }
 
   /// 在指定位置弹出一个菜单
+  ///
   /// [showMenu]
   /// [PopupMenuButton]
   ///
@@ -826,10 +827,11 @@ extension DialogExtension on BuildContext {
   /// [_PopupMenuDefaultsM3]
   /// [menuItemPadding]
   ///
-  /// [showMenus]
-  /// [showWidgetMenu]
+  /// [showMenus] - 支持[PopupMenuEntry]list
+  /// [showWidgetMenu] - 支持[Widget]
   Future<T?> showMenus<T>(
     List<Widget>? menus /*辅助生成items*/, {
+    List<VoidCallback>? onMenusTap /*菜单对应的点击事件*/,
     List<PopupMenuEntry<T>>? items /*菜单项*/,
     //--
     T? initialValue,
@@ -863,8 +865,12 @@ extension DialogExtension on BuildContext {
       return null;
     }
 
-    items ??= menus?.map((e) {
-      return PopupMenuItem<T>(value: e as dynamic, child: e);
+    items ??= menus?.mapIndex((e, index) {
+      return PopupMenuItem<T>(
+        value: e as dynamic,
+        onTap: onMenusTap?.getOrNull(index),
+        child: e,
+      );
     }).toList();
 
     if (isNil(items)) {
@@ -933,6 +939,7 @@ extension DialogExtension on BuildContext {
       items: items ?? [],
       initialValue: initialValue,
       position: relativePosition,
+      //positionBuilder: ,
       shape: shape,
       menuPadding: menuPadding,
       color: color,
@@ -945,8 +952,8 @@ extension DialogExtension on BuildContext {
     );
   }
 
-  /// [showMenus]
-  /// [showWidgetMenu]
+  /// [showMenus] - 支持[PopupMenuEntry]list
+  /// [showWidgetMenu] - 支持[Widget]
   Future<T?> showWidgetMenu<T>(
     Widget menu, {
     PopupMenuPosition? menuPosition /*PopupMenuPosition.over*/,

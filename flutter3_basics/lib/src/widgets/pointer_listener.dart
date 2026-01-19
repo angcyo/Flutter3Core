@@ -5,9 +5,10 @@ part of '../../flutter3_basics.dart';
 /// @author angcyo
 /// @date 2024/12/27
 ///
-///
+/// 回调
 typedef PointerEventListener = void Function(PointerEvent event);
 
+/// 用来回调[PointerEvent]事件
 /// [Listener]
 class PointerListenerWidget extends SingleChildRenderObjectWidget {
   const PointerListenerWidget({
@@ -22,15 +23,14 @@ class PointerListenerWidget extends SingleChildRenderObjectWidget {
 
   @override
   PointerListener createRenderObject(BuildContext context) {
-    return PointerListener(
-      onPointer: onPointer,
-      behavior: behavior,
-    );
+    return PointerListener(onPointer: onPointer, behavior: behavior);
   }
 
   @override
   void updateRenderObject(
-      BuildContext context, covariant PointerListener renderObject) {
+    BuildContext context,
+    covariant PointerListener renderObject,
+  ) {
     renderObject
       ..onPointer = onPointer
       ..behavior = behavior;
@@ -41,11 +41,7 @@ class PointerListenerWidget extends SingleChildRenderObjectWidget {
 class PointerListener extends RenderProxyBoxWithHitTestBehavior {
   PointerEventListener? onPointer;
 
-  PointerListener({
-    super.behavior,
-    super.child,
-    this.onPointer,
-  });
+  PointerListener({super.behavior, super.child, this.onPointer});
 
   @override
   Size computeSizeForNoChild(BoxConstraints constraints) {
@@ -61,12 +57,10 @@ class PointerListener extends RenderProxyBoxWithHitTestBehavior {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(FlagsSummary<Function?>(
-      'listeners',
-      <String, Function?>{
+    properties.add(
+      FlagsSummary<Function?>('listeners', <String, Function?>{
         'pointer': onPointer,
-      },
-      ifEmpty: '<none>',
-    ));
+      }, ifEmpty: '<none>'),
+    );
   }
 }

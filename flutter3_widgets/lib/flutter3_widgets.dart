@@ -47,6 +47,7 @@ export 'package:visibility_detector/visibility_detector.dart';
 //export 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 export 'src/dialog/dialog.dart';
+export 'src/menu/menu_mix.dart';
 export 'src/popup/popup_mix.dart';
 export 'src/pub/swiper/flutter_page_indicator/flutter_page_indicator.dart';
 export 'src/pub/swiper/swiper.dart';

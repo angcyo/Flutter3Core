@@ -108,7 +108,9 @@ Future<bool> openFilePath(
   }
 }
 
-/// 快速保存/分享file path
+/// 快速另存为保存/分享file path
+///  - save as
+///  - share
 @dsl
 Future<bool> saveFilePath(
   String? filePath, [
@@ -529,7 +531,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///   return filePath.shareFile();
   /// };
   /// ```
-  /// [saveFilePath]
+  /// [saveFilePath] - 全局入口方法
   @allPlatformFlag
   GlobalOpenUrlFn? saveFileFn = (context, filePath, meta) {
     l.w("企图保存filePath:$filePath from:$context meta:$meta");

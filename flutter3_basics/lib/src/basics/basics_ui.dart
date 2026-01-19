@@ -574,6 +574,8 @@ extension WidgetEx on Widget {
   SliverToBoxAdapter toSliver([Key? key]) =>
       SliverToBoxAdapter(key: key, child: this);
 
+  //MARK: - event
+
   /// 监听手势
   /// [Listener]
   /// [click]
@@ -812,6 +814,8 @@ extension WidgetEx on Widget {
           child: this,
         )
       : this;
+
+  //MARK: - event
 
   /// 焦点域
   /// - [FocusScope]
@@ -1072,6 +1076,8 @@ extension WidgetEx on Widget {
     behavior: behavior,
     child: this,
   );
+
+  //MARK: - paint
 
   /// [CustomPaint]
   /// [paint] 背景绘制
