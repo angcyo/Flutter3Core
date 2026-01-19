@@ -29,9 +29,14 @@ extension MatUiImageEx on UiImage {
   /// - Channels: 你要统计哪个通道？（如灰度图为 [0]，彩色图 BGR 分别为 [0, 1, 2]）。
   /// - Bins (histSize): 你要把 0-255 分成多少份？（默认通常是 256，即每一级亮度一个桶）。
   /// - Ranges: 像素值的范围，通常是 [0, 256]。
+  ///
+  /// - [fromThreshold]
+  /// - [toThreshold]
   Future<List<List<double>>> calcHist({
     UiImageByteFormat format = UiImageByteFormat.png,
     double alphaThreshold = 127,
+    double fromThreshold = 0 /*直方图开始的灰度值>=*/,
+    double toThreshold = 256 /*直方图结束的灰度值<*/,
   }) async {
     final mat = await toMatAsync(format: format);
     final rgba = cv.split(mat); //BGRA
@@ -56,7 +61,7 @@ extension MatUiImageEx on UiImage {
       cv.VecI32.fromList([0]), // Channels
       mask /*cv.Mat.empty()*/,
       cv.VecI32.fromList([256]), // Bins
-      cv.VecF32.fromList([0, 256]), // Ranges
+      cv.VecF32.fromList([fromThreshold, toThreshold]), // Ranges
     );
     return res.toDoubleList();
   }
