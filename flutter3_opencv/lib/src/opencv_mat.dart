@@ -65,14 +65,25 @@ extension MatEx on cv.Mat {
 
   Matrix4 get matrix4 => matrix3.toMatrix4();
 
+  //MARK: - channel
+
+  /// 是否是单通道数据
+  /// - 单通道就是灰度图
+  bool get isGray => channels == 1;
+
   /// 转成灰度图片
   cv.Mat get gray {
     return cv.cvtColor(this, cv.COLOR_BGR2GRAY);
   }
 
-  /// 转成RGB图片
+  /// BGR转成RGB图片
   cv.Mat get rgb {
     return cv.cvtColor(this, cv.COLOR_BGR2RGB);
+  }
+
+  /// 灰度图转成RGB图片
+  cv.Mat get gray2rgb {
+    return cv.cvtColor(this, cv.COLOR_GRAY2RGB);
   }
 
   /// 将矩阵转换成字符串

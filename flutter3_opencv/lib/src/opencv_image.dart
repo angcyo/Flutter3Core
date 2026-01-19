@@ -6,9 +6,14 @@ part of "../flutter3_opencv.dart";
 ///
 //MARK: - UiImage
 extension MatUiImageEx on UiImage {
+  /// 获取4通道颜色对应的[cv.Mat]
   /// - [toMatAsync]
   @alias
   Future<cv.Mat> get cvMat async => await toMatAsync();
+
+  /// 获取灰度颜色对应的[cv.Mat]
+  Future<cv.Mat> get cvGrayMat async =>
+      await toMatAsync(flags: cv.IMREAD_GRAYSCALE);
 
   /// [UiImage]图片转成[cv.Mat]
   ///
@@ -23,65 +28,5 @@ extension MatUiImageEx on UiImage {
   }) async {
     final bytes = await toBytes(format);
     return cvImgDecodeMatAsync(bytes!, flags: flags);
-  }
-
-  /// 获取图片的直方图信息`histogram`
-  /// - Channels: 你要统计哪个通道？（如灰度图为 [0]，彩色图 BGR 分别为 [0, 1, 2]）。
-  /// - Bins (histSize): 你要把 0-255 分成多少份？（默认通常是 256，即每一级亮度一个桶）。
-  /// - Ranges: 像素值的范围，通常是 [0, 256]。
-  ///
-  /// - [fromThreshold]
-  /// - [toThreshold]
-  Future<List<List<double>>> calcHist({
-    UiImageByteFormat format = UiImageByteFormat.png,
-    double alphaThreshold = 127,
-    double fromThreshold = 0 /*直方图开始的灰度值>=*/,
-    double toThreshold = 256 /*直方图结束的灰度值<*/,
-  }) async {
-    final mat = await toMatAsync(format: format);
-    final rgba = cv.split(mat); //BGRA
-    //使用A通道, 创建掩码
-    //final mask = cv.inRange(rgba[3], cv.Scalar(255), cv.Scalar(255));
-    //将所有A通道中>127的值改成255, 其余改成0
-    final (threshold, mask) = cv.threshold(
-      rgba[3],
-      alphaThreshold /*阈值*/,
-      255 /*新值*/,
-      cv.THRESH_BINARY /*cv.THRESH_BINARY_INV*/,
-    );
-
-    /*// 创建掩码：只有 Alpha >= 255 (不透明) 的地方才是 255 (白色)
-    final (threshold, mask) = cv.threshold(mat, 128, 255, cv.THRESH_BINARY);
-    debugger();*/
-
-    //enumerate;
-    //final mat = await toMatAsync(flags: cv.IMREAD_GRAYSCALE, format: format);
-    final res = cv.calcHist(
-      cv.VecMat.fromList([mat.gray]),
-      cv.VecI32.fromList([0]), // Channels
-      mask /*cv.Mat.empty()*/,
-      cv.VecI32.fromList([256]), // Bins
-      cv.VecF32.fromList([fromThreshold, toThreshold]), // Ranges
-    );
-    return res.toDoubleList();
-  }
-
-  /// 二值化
-  /// - [threshold] 阈值
-  /// - [invert] 是否反转
-  Future<UiImage?> threshold({
-    double threshold = 127,
-    bool invert = false,
-  }) async {
-    final mat = await cvMat;
-    return cv
-        .threshold(
-          mat,
-          threshold,
-          255,
-          invert ? cv.THRESH_BINARY_INV : cv.THRESH_BINARY,
-        )
-        .$2
-        .uiImage;
   }
 }

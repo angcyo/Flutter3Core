@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -12,6 +13,7 @@ part 'src/image_frame_info.dart';
 part 'src/opencv.dart';
 part 'src/opencv_image.dart';
 part 'src/opencv_mat.dart';
+part 'src/opencv_mat_image.dart';
 part 'src/widgets/histogram_widget.dart';
 
 ///

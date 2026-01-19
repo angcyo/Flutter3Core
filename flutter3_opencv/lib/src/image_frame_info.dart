@@ -36,12 +36,10 @@ class ImageFrameInfo {
   @api
   Future<bool> updateHistData({
     UiImage? image,
-    UiImageByteFormat format = UiImageByteFormat.png,
     double fromThreshold = 0 /*直方图开始的灰度值>=*/,
     double toThreshold = 256 /*直方图结束的灰度值<*/,
   }) async {
-    final ret = await (image ?? uiImage)?.calcHist(
-      format: format,
+    final ret = await (await (image ?? uiImage)?.cvGrayMat)?.calcHist(
       fromThreshold: fromThreshold,
       toThreshold: toThreshold,
     );

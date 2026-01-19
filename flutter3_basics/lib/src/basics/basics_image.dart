@@ -310,9 +310,12 @@ extension Uint8ListImageEx on Uint8List {
 /// [UiImageEx]
 /// [Uint8ListImageEx]
 extension ImageEx on UiImage {
-  double get cx => width / 2;
+  /// 图片尺寸
+  Size get imageSize => Size(width.roundToDouble(), height.roundToDouble());
 
-  double get cy => height / 2;
+  double get cx => width / 2.0;
+
+  double get cy => height / 2.0;
 
   /// [UiImageProvider]
   /// [ImageProviderEx.toImage]
