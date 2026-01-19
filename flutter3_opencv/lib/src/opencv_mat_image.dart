@@ -70,8 +70,12 @@ extension MatImageEx on cv.Mat {
         .uiImage;
   }
 
+  //MARK: filter
+
   /// 中值滤波 (Median Blur)
   /// - 能极好地保护边缘，但如果核太大，图像会看起来像“油画”。
+  /// - 极快，不损边缘
+  /// - 容易产生块状感
   Future<UiImage?> medianBlur({int kSize = 5 /*卷积核的大小, 影响性能, 必须要是基数*/}) async {
     final mat = this;
     if (kSize % 2 == 0) {
@@ -82,6 +86,8 @@ extension MatImageEx on cv.Mat {
 
   /// 高斯模糊
   /// - （边缘会变模糊）来换取平滑。
+  /// - 极快，最通用
+  /// - 模糊边缘
   Future<UiImage?> gaussianBlur({
     int kSize = 5 /*卷积核的大小, 影响性能, 必须要是基数*/,
     double sigmaX = kSigma /*高斯核的sigma值, 影响性能*/,
@@ -92,6 +98,63 @@ extension MatImageEx on cv.Mat {
     }
     return cv.gaussianBlur(mat, (kSize, kSize), sigmaX).uiImage;
   }
+
+  /// 双边滤波 (Bilateral Filter)
+  ///
+  /// - [diameter] 像素邻域直径
+  /// - [sigmaColor]: 颜色空间标准差；
+  /// - [sigmaSpace] 坐标空间标准差
+  ///
+  /// - 保护轮廓清晰
+  /// - 运算速度中等
+  Future<UiImage?> bilateralFilter({
+    int diameter = 9,
+    double sigmaColor = 75,
+    double sigmaSpace = 75,
+  }) async {
+    final mat = this;
+    return cv.bilateralFilter(mat, diameter, sigmaColor, sigmaSpace).uiImage;
+  }
+
+  /// 非局部均值去噪 (Non-Local Means Denoising)
+  ///
+  /// - [h] (Luminance H - 亮度分量去噪强度)
+  ///   - 决定了算法对亮度噪声的过滤程度。
+  /// - [hColor] (Color H - 颜色分量去噪强度)
+  ///   - 专门针对彩色噪声（Color Artifacts）的强度。
+  /// - [templateWindowSize] (模板窗口大小)
+  ///   - 计算相似度时使用的小滑块的大小（以像素为单位）。必须是奇数。
+  /// - [searchWindowSize] (搜索窗口大小)
+  ///   - 算法寻找相似块的范围。必须是奇数。
+  ///
+  /// - 这是目前 OpenCV 中去噪效果最自然的方法，能保留精细纹理，但计算开销非常大。
+  /// - 细节保留最好
+  /// - 非常慢
+  ///
+  /// ```
+  /// # 实验建议参数
+  /// # 轻微去噪：h=3, hColor=3, template=7, search=21
+  /// # 强力去噪：h=10, hColor=10, template=7, search=21
+  /// ```
+  Future<UiImage?> fastNlMeansDenoisingColored({
+    double h = 3,
+    double hColor = 3,
+    int templateWindowSize = 7,
+    int searchWindowSize = 21,
+  }) async {
+    final mat = this;
+    return cv
+        .fastNlMeansDenoisingColored(
+          mat,
+          h: h,
+          hColor: hColor,
+          templateWindowSize: templateWindowSize,
+          searchWindowSize: searchWindowSize,
+        )
+        .uiImage;
+  }
+
+  //MARK: find
 
   /// 边缘检测
   Future<UiImage?> canny() async {

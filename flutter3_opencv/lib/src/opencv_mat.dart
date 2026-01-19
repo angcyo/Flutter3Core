@@ -67,6 +67,28 @@ extension MatEx on cv.Mat {
 
   //MARK: - channel
 
+  /// 获取指定x/y的颜色
+  Color getColor(int x, int y) {
+    final list = atPixel(x, y);
+    if (list.length == 4) {
+      //BGRA
+      final b = list[0].round();
+      final g = list[1].round();
+      final r = list[2].round();
+      final a = list[3].round();
+      return Color.fromARGB(a, r, g, b);
+    } else if (list.length == 3) {
+      //BGR
+      final b = list[0].round();
+      final g = list[1].round();
+      final r = list[2].round();
+      final a = 255;
+      return Color.fromARGB(a, r, g, b);
+    }
+    final gray = list[0].round();
+    return Color.fromARGB(255, gray, gray, gray);
+  }
+
   /// 是否是单通道数据
   /// - 单通道就是灰度图
   bool get isGray => channels == 1;
