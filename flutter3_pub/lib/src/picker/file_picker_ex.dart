@@ -119,7 +119,7 @@ Future<String?> pickDirectoryPath({
   final path = await FilePicker.platform.getDirectoryPath(
     dialogTitle: dialogTitle,
     lockParentWindow: lockParentWindow,
-    initialDirectory: initialDirectory,
+    initialDirectory: initialDirectory ?? _lastPickDirectory,
   );
   assert(() {
     if (path != null) {

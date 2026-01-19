@@ -89,6 +89,8 @@ Future<bool> openWebUrl(
 }
 
 /// 快速打开file path
+/// - 支持文件路径
+/// - 支持文件夹路径
 @dsl
 Future<bool> openFilePath(
   String? filePath, [
@@ -490,10 +492,17 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [openFilePath]
   @allPlatformFlag
   GlobalOpenUrlFn? openFileFn = (context, filePath, meta) {
-    assert(() {
-      l.w("企图打开filePath:$filePath from:$context meta:$meta");
-      return true;
-    }());
+    l.w("企图打开filePath:$filePath from:$context meta:$meta");
+    if (filePath != null && isDesktopOrWeb) {
+      if (Platform.isWindows) {
+        Process.run('explorer.exe', [filePath]);
+      } else if (Platform.isMacOS) {
+        Process.run('open', [filePath]);
+      } else if (Platform.isLinux) {
+        Process.run('xdg-open', [filePath]);
+      }
+      return Future.value(true);
+    }
     return Future.value(false);
   };
 
@@ -523,10 +532,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [saveFilePath]
   @allPlatformFlag
   GlobalOpenUrlFn? saveFileFn = (context, filePath, meta) {
-    assert(() {
-      l.w("企图保存filePath:$filePath from:$context meta:$meta");
-      return true;
-    }());
+    l.w("企图保存filePath:$filePath from:$context meta:$meta");
     return Future.value(false);
   };
 
@@ -544,19 +550,26 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// };
   /// ```
   GlobalOpenUrlFn? openUrlFn = (context, url, meta) {
-    assert(() {
-      l.w("企图打开url:$url from:$context meta:$meta");
-      return true;
-    }());
+    l.w("企图打开url:$url from:$context meta:$meta");
+    if (url != null && isDesktopOrWeb) {
+      //final Uri uri = Uri.parse(url);
+      if (Platform.isWindows) {
+        // Windows 命令行中，start 命令第一个参数如果是引号会被当作窗口标题
+        // 因此这里传入一个空字符串作为标题占位符
+        Process.run('cmd', ['/c', 'start', '', url]);
+      } else if (Platform.isMacOS) {
+        Process.run('open', [url]);
+      } else if (Platform.isLinux) {
+        Process.run('xdg-open', [url]);
+      }
+      return Future.value(true);
+    }
     return Future.value(false);
   };
 
   /// 注册一个全局写入文件内容的方法, 返回文件路径
   GlobalWriteFileFn? writeFileFn = (fileName, folder, content) async {
-    assert(() {
-      l.w("企图写入文件:$fileName ->$content");
-      return true;
-    }());
+    l.w("企图写入文件:$fileName ->$content");
     //return Future.error(RException("未注册写入文件方法"), StackTrace.current);
     return Future.value(null);
   };
@@ -564,10 +577,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 注册一个全局的分享数据的方法, 一般是调用系统分享
   /// 分享数据给第三方app
   GlobalShareDataFn? shareDataFn = (context, data) {
-    assert(() {
-      l.w("企图分享数据:$data");
-      return true;
-    }());
+    l.w("企图分享数据:$data");
     return Future.value(false);
   };
 
@@ -576,10 +586,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [shareDataFn]
   /// [shareAppLog]
   GlobalShareDataFn? shareAppLogFn = (context, data) {
-    assert(() {
-      l.w("企图分享App日志:$data");
-      return true;
-    }());
+    l.w("企图分享App日志:$data");
     return Future.value(false);
   };
 
