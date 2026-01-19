@@ -37,16 +37,23 @@ class HistogramRenderBox extends RenderBox {
     if (_histData == value) return;
     _histData = value;
     _maxHistSize = 0;
+    _sumHistSize = 0;
     if (value != null) {
       for (final hist in value) {
+        _sumHistSize += hist.sum;
         _maxHistSize = max(_maxHistSize, hist.sum);
       }
     }
     markNeedsPaint();
   }
 
+  /// 最大柱子的大小
   @tempFlag
   double _maxHistSize = 0;
+
+  /// 所有柱子数值的和
+  @tempFlag
+  double _sumHistSize = 0;
 
   @override
   void performLayout() {
@@ -94,7 +101,7 @@ class HistogramRenderBox extends RenderBox {
 
       //MARK: - gray range
       canvas.drawText(
-        "$firstGrayPixelValue~$lastGrayPixelValue",
+        "$firstGrayPixelValue~$lastGrayPixelValue / ${_sumHistSize.round()}",
         textColor: Colors.grey,
         bounds: size.toRect(offset),
         alignment: .topRight,

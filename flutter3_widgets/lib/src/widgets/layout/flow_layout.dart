@@ -559,7 +559,7 @@ class FlowLayoutRender extends RenderBox
     }
     if (maxHeight == double.infinity) {
       assert(() {
-        l.w('无法确定的maxHeight, 只能顶部对齐');
+        l.w('[${classHash()}]无法确定的maxHeight, 只能顶部对齐');
         return true;
       }());
     }
