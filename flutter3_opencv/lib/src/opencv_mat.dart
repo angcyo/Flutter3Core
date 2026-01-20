@@ -108,6 +108,28 @@ extension MatEx on cv.Mat {
     return cv.cvtColor(this, cv.COLOR_GRAY2RGB);
   }
 
+  /// 将黑色像素变成透明, 并返回透明像素的Mat
+  cv.Mat get transparentBlack {
+    //return cv.cvtColor(this, cv.COLOR_GRAY2RGB);
+    final thresh = 10.0; //透明阈值, 灰度<此值视为透明颜色
+    if (channels == 1) {
+      final gray = this;
+      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
+      return cv.merge(cv.VecMat.fromList([gray, gray, gray, alpha]));
+    } else if (channels == 3) {
+      final gray = cv.cvtColor(this, cv.COLOR_BGR2GRAY);
+      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
+      final bgr = cv.split(this);
+      return cv.merge(cv.VecMat.fromList([bgr[0], bgr[1], bgr[2], alpha]));
+    } else if (channels == 4) {
+      final gray = cv.cvtColor(this, cv.COLOR_BGRA2GRAY);
+      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
+      final bgr = cv.split(this);
+      return cv.merge(cv.VecMat.fromList([bgr[0], bgr[1], bgr[2], alpha]));
+    }
+    return this;
+  }
+
   /// 将矩阵转换成字符串
   String flattenString() {
     final list = toList();

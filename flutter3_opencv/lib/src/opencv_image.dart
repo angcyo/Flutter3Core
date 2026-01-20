@@ -15,6 +15,14 @@ extension MatUiImageEx on UiImage {
   Future<cv.Mat> get cvGrayMat async =>
       await toMatAsync(flags: cv.IMREAD_GRAYSCALE);
 
+  /// 使用otsu自动阈值，获取二值化图片对应的[cv.Mat]
+  Future<cv.Mat> get cvOtsuMat async =>
+      cv.threshold(await cvMat, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU).$2;
+
+  /// 自适应二值化
+  Future<cv.Mat> get cvAdaptiveMat async =>
+      cvAdaptiveThresholdMat(await cvGrayMat, size: 15, c: -2);
+
   /// [UiImage]图片转成[cv.Mat]
   ///
   /// - [cv.IMREAD_GRAYSCALE] 读取灰度图片[cv.MatType.CV_8UC1]

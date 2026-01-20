@@ -243,15 +243,24 @@ cv.Mat cvFilterMat(cv.InputArray src, int size) {
 /// 学习不同的函数，如：cv.erode()，cv.dilate()，cv.morphologyEx()等
 ///
 /// - [cv.erode] 侵蚀操作
+///   - 腐蚀 (Erosion): 核在图像上滑动，只有当核覆盖的所有像素都是 1 时，中心像素才保持 1。效果是“收缩”白色区域，去除细小的噪声。
 /// - [cv.dilate] 膨胀操作
+///   - 膨胀 (Dilation): 核在图像上滑动，只要核覆盖范围内有一个像素是 1，中心像素就变为 1。效果是“扩张”白色区域，填充小孔洞。
 /// - [cv.morphologyEx] 形态学操作
 ///  - [cv.MORPH_OPEN] 开操作
+///   - 先腐蚀，后膨胀. 去噪：消除亮点、断开细长的连接。
 ///  - [cv.MORPH_CLOSE] 闭操作
+///   - 先膨胀，后腐蚀. 填洞：填充黑色小孔，连接断开的物体。
 ///  - [cv.MORPH_GRADIENT] 形态学梯度
-///  - [cv.MORPH_TOPHAT] 礼帽
+///   - 膨胀图 - 腐蚀图. 提取轮廓：获得物体的边缘。
+///  - [cv.MORPH_TOPHAT] 顶帽 (礼帽)
+///   - 原图 - 开运算图. 背景补光：提取比背景亮的细节（如光照不均时的文字）。
 ///  - [cv.MORPH_BLACKHAT] 黑帽
+///   - 闭运算图 - 原图. 闭运算差值：提取比背景暗的细节。
 ///
-/// - [cv.getStructuringElement] 创建结构元素, 获得所需的卷积核。
+/// - [kernel]
+///   - [cv.getStructuringElement] 创建结构元素, 获得所需的卷积核。
+///     - [cv.MORPH_RECT]
 ///
 /// https://opencv-python-tutorials.readthedocs.io/zh/latest/4.%20OpenCV%E4%B8%AD%E7%9A%84%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/4.5.%20%E5%BD%A2%E6%80%81%E5%8F%98%E6%8D%A2/
 cv.Mat cvMorphologyMat(
