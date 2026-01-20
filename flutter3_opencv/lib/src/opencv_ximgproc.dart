@@ -15,4 +15,30 @@ extension MatXimgprocEx on cv.Mat {
     final mat = this;
     return cv.ximgproc.thinning(mat).uiImage;
   }
+
+  /// 使用形态学细化
+  Future<UiImage?> morphologyThinning({int kSize = 3}) {
+    cv.Mat img = this;
+    cv.Mat temp;
+    cv.Mat skel = cv.Mat.zeros(img.rows, img.cols, cv.MatType.CV_8UC1);
+    // 定义 3x3 结构元素
+    if (kSize % 2 == 0) {
+      kSize++;
+    }
+    final kernel = cv.getStructuringElement(cv.MORPH_CROSS, (kSize, kSize));
+    bool done = false;
+    while (!done) {
+      // Step 1: 腐蚀
+      final eroded = cv.erode(img, kernel);
+      // Step 2: 开运算 (消除小物体/平滑边界)
+      temp = cv.dilate(eroded, kernel);
+      temp = cv.subtract(img, temp);
+      // Step 3: 将提取出的边缘骨架合并
+      skel = cv.bitwiseOR(skel, temp);
+      cv.copyTo(eroded, img);
+      // 如果所有像素都被腐蚀完，则退出
+      if (cv.countNonZero(img) == 0) done = true;
+    }
+    return skel.uiImage;
+  }
 }
