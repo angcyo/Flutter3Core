@@ -88,14 +88,16 @@ class HistogramRenderBox extends RenderBox {
         if (sum > 0) {
           firstGrayPixelValue ??= index;
           lastGrayPixelValue = index;
+
+          final binsHeight = sum / (max(_maxHistSize, sum)) * height;
+          //debugger();
+          canvas.drawRect(
+            Rect.fromLTWH(left, bottom - binsHeight, binsWidth, binsHeight),
+            Paint()
+              ..color = Colors.black
+              ..style = .fill,
+          );
         }
-        final binsHeight = sum / _maxHistSize * height;
-        canvas.drawRect(
-          Rect.fromLTWH(left, bottom - binsHeight, binsWidth, binsHeight),
-          Paint()
-            ..color = Colors.black
-            ..style = .fill,
-        );
         left += binsWidth;
       }
 

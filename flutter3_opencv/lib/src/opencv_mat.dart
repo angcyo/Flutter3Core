@@ -130,6 +130,11 @@ extension MatEx on cv.Mat {
     return this;
   }
 
+  /// 将灰度图进行二值化处理
+  /// - [thresh] 阈值>这个值的灰度值会被设置为255
+  cv.Mat cvThreshold({double thresh = 10}) =>
+      cv.threshold(this, thresh, 255, cv.THRESH_BINARY).$2;
+
   /// 将矩阵转换成字符串
   String flattenString() {
     final list = toList();

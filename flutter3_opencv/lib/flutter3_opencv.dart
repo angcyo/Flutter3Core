@@ -14,6 +14,7 @@ part 'src/opencv.dart';
 part 'src/opencv_image.dart';
 part 'src/opencv_mat.dart';
 part 'src/opencv_mat_image.dart';
+part 'src/opencv_ximgproc.dart';
 part 'src/widgets/histogram_widget.dart';
 
 ///
