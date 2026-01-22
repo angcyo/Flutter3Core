@@ -68,6 +68,7 @@ void main() {
     _ => "s1 is not int",
   });
 
+  //MARK: null
   print(switch (null) {
     _ when s1 > s2 => "s1 > s2",
     _ when s1 < s2 => "s1 < s2",

@@ -82,3 +82,18 @@ https://github.com/angcyo/Flutter3Core
 #### flutter3_core
 
 2023-10-20
+
+# Mobile platforms
+
+https://docs.flutter.dev/reference/supported-platforms#mobile-platforms
+
+- `Android` Supported `24 to 36` | `x64` `Arm32` `Arm64`
+- `iOS` Supported `13 to 26` | `Arm64`
+- `Windows` Supported `10, 11` | `x64` `Arm64`
+- `macOS` Supported `Catalina (10.15) to Tahoe (26)` | `x64` `Arm64`
+- `Debian (Linux)` Supported `10, 11, 12` | `x64` `Arm64`
+- `Ubuntu (Linux)` Supported `20.04 LTS to 24.04 LTS` | `x64` `Arm64`
+- `Chrome` Supported `Latest 2` | `JavaScript` `WebAssembly`
+- `Edge` Supported `Latest 2` | `JavaScript` `WebAssembly`
+- `Firefox` Supported `Latest 2` | `JavaScript`
+- `Safari` Supported `15.6 and newer` | `JavaScript`

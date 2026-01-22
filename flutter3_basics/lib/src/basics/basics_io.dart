@@ -92,6 +92,16 @@ const kIsolateComputeBytesSize = 1024 * 1024 * 1;
 ///
 /// [Completer]
 /// - [compute] 内部也是[Isolate.run]回调函数就是多了一个入参
+///
+/// ```
+/// 在 Flutter 2.15 中，工作隔离区可以调用 Isolate.exit() ，并将结果作为参数传递。
+/// Dart 运行时会将包含结果的内存从工作隔离区传递给主隔离区，而无需复制，
+/// 主隔离区可以在恒定时间内接收到结果。
+/// 我们在 Flutter 2.8 中更新了 compute() 实用函数，以利用 Isolate.exit() 的特性。
+/// 如果您已经在使用 compute() ，那么升级到 Flutter 2.8 后，您将自动获得这些性能提升。
+/// ```
+/// - [Isolate.exit]
+/// https://blog.dart.dev/dart-2-15-7e7a598e508a
 Future<R> io<M, R>(
   M message,
   @pragma('vm:entry-point') ComputeCallback<M, R> callback, {
