@@ -77,3 +77,29 @@ https://ort.pyke.io/
 https://a2ui.org/
 
 A2UI 使 AI 代理能够生成丰富的交互式用户界面，这些界面可以在 Web、移动设备和桌面设备上原生渲染，而无需执行任意代码。
+
+# langchain: ^0.8.1
+
+https://pub.dev/packages/langchain
+
+LangChain.dart 是由 Harrison Chase 创建的流行的 LangChain Python 框架的非官方 Dart 移植版。
+
+LangChain 提供了一套用于处理语言模型的即用型组件，以及一个标准接口，可以将这些组件链接在一起，以构建更高级的用例（例如聊天机器人、带 RAG 的问答、代理、摘要、翻译、提取、推荐系统等）。
+
+# openai_dart: ^0.6.2
+
+https://pub.dev/packages/openai_dart
+
+用于 OpenAI API 的非官方 Dart 客户端。
+
+# openai_realtime_dart: ^0.1.0+1
+
+https://pub.dev/packages/openai_realtime_dart
+
+OpenAI Realtime API 的非官方强类型 Dart 客户端，OpenAI Realtime API 是一个有状态、基于事件的 API，通过 WebSocket 进行通信。
+
+# dart_openai: ^6.1.1
+
+https://pub.dev/packages/dart_openai
+
+Dart OpenAI 是一个非官方但功能全面的客户端软件包，它允许开发者轻松地将 OpenAI 的先进 AI 模型集成到他们的 Dart/Flutter 应用程序中。该软件包提供了简单直观的方法来请求 OpenAI 的各种 API，包括 GPT 模型、DALL-E 图像生成、Whisper 音频处理等等。
