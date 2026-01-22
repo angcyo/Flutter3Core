@@ -103,3 +103,16 @@ OpenAI Realtime API 的非官方强类型 Dart 客户端，OpenAI Realtime API �
 https://pub.dev/packages/dart_openai
 
 Dart OpenAI 是一个非官方但功能全面的客户端软件包，它允许开发者轻松地将 OpenAI 的先进 AI 模型集成到他们的 Dart/Flutter 应用程序中。该软件包提供了简单直观的方法来请求 OpenAI 的各种 API，包括 GPT 模型、DALL-E 图像生成、Whisper 音频处理等等。
+
+# flutter_llama: ^1.1.2
+
+https://pub.dev/packages/flutter_llama
+
+用于在 Android、iOS 和 macOS 上使用 llama.cpp 和 GGUF 模型运行 LLM 推理的 Flutter 插件。
+
+# llama_cpp_dart: ^0.2.2
+
+https://pub.dev/packages/llama_cpp_dart
+
+llama.cpp 的高性能 Dart 绑定，可在 Dart 和 Flutter 应用程序中实现高级文本生成功能，并提供灵活的集成选项。
+
